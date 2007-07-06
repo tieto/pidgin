@@ -368,6 +368,16 @@ void
 purple_certificate_destroy_list (GList * crt_list);
 
 /**
+ * Imports a PurpleCertificate from a file
+ *
+ * @param scheme      Scheme to import under
+ * @param filename    File path to import from
+ * @return Pointer to a new PurpleCertificate, or NULL on failure
+ */
+PurpleCertificate *
+purple_import_certificate(PurpleCertificateScheme *scheme, const gchar *filename);
+
+/**
  * Exports a PurpleCertificate to a file
  *
  * @param filename    File to export the certificate to

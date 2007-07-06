@@ -125,6 +125,16 @@ purple_certificate_destroy_list (GList * crt_list)
 	g_list_free(crt_list);
 }
 
+PurpleCertificate *
+purple_import_certificate(PurpleCertificateScheme *scheme, const gchar *filename)
+{
+	g_return_val_if_fail(scheme, NULL);
+	g_return_val_if_fail(scheme->import_certificate, NULL);
+	g_return_val_if_fail(filename, NULL);
+
+	return (scheme->import_certificate)(filename);
+}
+
 gboolean
 purple_certificate_export(const gchar *filename, PurpleCertificate *crt)
 {
