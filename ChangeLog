@@ -30,6 +30,7 @@ version 2.1.0 (??/??/????):
 	* Some improvements for tab-completion, tooltip and the password entries
 	* Some bugs regarding search results fixed
 	* A new DBus-script to create a docklet for finch
+	* Support for showing empty groups in the buddy list (Eric Polino)
 
 version 2.0.2 (06/14/2007):
 	Pidgin:
