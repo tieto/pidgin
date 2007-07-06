@@ -116,18 +116,20 @@ menu_tree_add(GntMenu *menu, GntMenuItem *item, GntMenuItem *parent)
 	}
 }
 
-#define GET_VAL(ch)  ((ch >= '0' && ch <= '9') ? (ch - '0') : (ch >= 'a' && ch <= 'z') ? (10 + ch - 'a') : ch)
+#define GET_VAL(ch)  ((ch >= '0' && ch <= '9') ? (ch - '0') : (ch >= 'a' && ch <= 'z') ? (10 + ch - 'a') : 36)
 
 static void
 assign_triggers(GntMenu *menu)
 {
 	GList *iter;
-	gboolean bools[36];
+	gboolean bools[37];
 
 	memset(bools, 0, sizeof(bools));
+	bools[36] = 1;
+
 	for (iter = menu->list; iter; iter = iter->next) {
 		GntMenuItem *item = iter->data;
-		char trigger = gnt_menuitem_get_trigger(item);
+		char trigger = tolower(gnt_menuitem_get_trigger(item));
 		if (trigger == '\0' || trigger == ' ')
 			continue;
 		bools[(int)GET_VAL(trigger)] = 1;
@@ -141,7 +143,7 @@ assign_triggers(GntMenu *menu)
 			continue;
 		while (*text) {
 			char ch = tolower(*text++);
-			if (bools[(int)GET_VAL(ch)])
+			if (ch == ' ' || bools[(int)GET_VAL(ch)])
 				continue;
 			trigger = ch;
 			break;
