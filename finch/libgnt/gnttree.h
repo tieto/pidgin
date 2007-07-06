@@ -86,6 +86,7 @@ struct _GntTree
 	int search_timeout;
 
 	GCompareFunc compare;
+	int lastvisible;
 };
 
 struct _GntTreeClass
