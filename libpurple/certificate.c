@@ -126,7 +126,7 @@ purple_certificate_destroy_list (GList * crt_list)
 }
 
 PurpleCertificate *
-purple_import_certificate(PurpleCertificateScheme *scheme, const gchar *filename)
+purple_certificate_import(PurpleCertificateScheme *scheme, const gchar *filename)
 {
 	g_return_val_if_fail(scheme, NULL);
 	g_return_val_if_fail(scheme->import_certificate, NULL);
