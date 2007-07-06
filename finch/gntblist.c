@@ -2139,15 +2139,10 @@ account_signed_on_cb(PurpleConnection *pc, gpointer null)
 		}
 	}
 }
-static void show_empty_cb(GntMenuItem *item, gpointer n)
+
+static void toggle_pref_cb(GntMenuItem *item, gpointer n)
 {
-	purple_prefs_set_bool(PREF_ROOT "/emptygroups",
-		!purple_prefs_get_bool(PREF_ROOT "/emptygroups"));
-}
-static void show_offline_cb(GntMenuItem *item, gpointer n)
-{
-	purple_prefs_set_bool(PREF_ROOT "/showoffline",
-		!purple_prefs_get_bool(PREF_ROOT "/showoffline"));
+	purple_prefs_set_bool(n, !purple_prefs_get_bool(n));
 }
 
 static void sort_blist_change_cb(GntMenuItem *item, gpointer n)
@@ -2232,13 +2227,13 @@ create_menu()
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
 				purple_prefs_get_bool(PREF_ROOT "/emptygroups"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
-	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), show_empty_cb, NULL);
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), toggle_pref_cb, PREF_ROOT "/emptygroups");
 	
 	item = gnt_menuitem_check_new(_("Show offline buddies"));
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
 				purple_prefs_get_bool(PREF_ROOT "/showoffline"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
-	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), show_offline_cb, NULL);
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), toggle_pref_cb, PREF_ROOT "/showoffline");
 
 	item = gnt_menuitem_new(_("Sort by status"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
