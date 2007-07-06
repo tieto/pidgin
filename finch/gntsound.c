@@ -591,6 +591,7 @@ save_cb(GntWidget *button, gpointer win)
 		purple_prefs_set_bool(boolpref,gnt_tree_get_choice(GNT_TREE(pref_dialog->events),itr->data));
 		purple_prefs_set_path(filepref,event->file ? event->file : "");
 		g_free(filepref);
+		g_free(boolpref);
 	}
 	gnt_widget_destroy(GNT_WIDGET(win));
 }
@@ -707,9 +708,7 @@ finch_sounds_show_all(void)
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"beep",_("Console Beep"));
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"custom",_("Command"));
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"nosound",_("No Sound"));
-	buf = g_strdup(purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method"));
-	gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),buf);
-	g_free(buf);
+	gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),(gchar *)purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method"));
 
 	label = gnt_label_new_with_format(_("Sound Method"),GNT_TEXT_FLAG_BOLD);
 	gnt_box_add_widget(GNT_BOX(win),label); 
