@@ -310,18 +310,42 @@ x509_tls_peers_init(void)
 static gboolean
 x509_tls_peers_cert_in_pool(const gchar *id)
 {
+	gchar *keypath;
+	gboolean ret = FALSE;
+	
 	g_return_val_if_fail(id, FALSE);
 
-	/* TODO: Fill this out */
-	return FALSE;
+	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);
+
+	ret = g_file_test(keypath, G_FILE_TEST_IS_REGULAR);
+	
+	g_free(keypath);
+	return ret;
 }
 
 static PurpleCertificate *
 x509_tls_peers_get_cert(const gchar *id)
 {
+	PurpleCertificateScheme *x509;
+	PurpleCertificate *crt;
+	gchar *keypath;
+	
 	g_return_val_if_fail(id, NULL);
 
-	/* TODO: Fill this out */
+	/* Is it in the pool? */
+	if ( !x509_tls_peers_cert_in_pool(id) ) {
+		return NULL;
+	}
+	
+	/* Look up the X.509 scheme */
+	x509 = purple_certificate_find_scheme("x509");
+	g_return_val_if_fail(x509, NULL);
+
+	/* Okay, now find and load that key */
+	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);
+
+	/* TODO: finish this */
+
 	return NULL;
 }
 
