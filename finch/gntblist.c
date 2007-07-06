@@ -195,8 +195,8 @@ node_remove(PurpleBuddyList *list, PurpleBlistNode *node)
 			node_update(list, (PurpleBlistNode*)contact);
 	} else if (!PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		PurpleGroup *group = (PurpleGroup*)node->parent;
-		if ((!purple_prefs_get_bool(PREF_ROOT "/showoffline") && !is_group_online(group)) ||
-				group->currentsize < 1)
+		if ((group->currentsize < 1 && !purple_prefs_get_bool(PREF_ROOT "/emptygroups")) ||
+				(!purple_prefs_get_bool(PREF_ROOT "/showoffline") && !is_group_online(group)))
 			node_remove(list, node->parent);
 		for (node = node->child; node; node = node->next)
 			node->ui_data = NULL;
@@ -253,8 +253,8 @@ node_update(PurpleBuddyList *list, PurpleBlistNode *node)
 		}
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		PurpleGroup *group = (PurpleGroup*)node;
-		if ((!purple_prefs_get_bool(PREF_ROOT "/showoffline") && !is_group_online(group)) ||
-				group->currentsize < 1)
+		if (!purple_prefs_get_bool(PREF_ROOT "/emptygroups") && ((!purple_prefs_get_bool(PREF_ROOT "/showoffline") && !is_group_online(group)) ||
+				group->currentsize < 1))
 			node_remove(list, node);
 		else
 			add_node(node, list->ui_data);
@@ -1717,8 +1717,11 @@ void finch_blist_init()
 	purple_prefs_add_int(PREF_ROOT "/position/y", 0);
 	purple_prefs_add_bool(PREF_ROOT "/idletime", TRUE);
 	purple_prefs_add_bool(PREF_ROOT "/showoffline", FALSE);
+	purple_prefs_add_bool(PREF_ROOT "/emptygroups", FALSE);
 	purple_prefs_add_string(PREF_ROOT "/sort_type", "text");
 
+	purple_prefs_connect_callback(finch_blist_get_handle(),
+			PREF_ROOT "/emptygroups", redraw_blist, NULL);
 	purple_prefs_connect_callback(finch_blist_get_handle(),
 			PREF_ROOT "/showoffline", redraw_blist, NULL);
 	purple_prefs_connect_callback(finch_blist_get_handle(),
@@ -2126,7 +2129,11 @@ account_signed_on_cb(PurpleConnection *pc, gpointer null)
 		}
 	}
 }
-
+static void show_empty_cb(GntMenuItem *item, gpointer n)
+{
+	purple_prefs_set_bool(PREF_ROOT "/emptygroups",
+		!purple_prefs_get_bool(PREF_ROOT "/emptygroups"));
+}
 static void show_offline_cb(GntMenuItem *item, gpointer n)
 {
 	purple_prefs_set_bool(PREF_ROOT "/showoffline",
@@ -2211,6 +2218,12 @@ create_menu()
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), send_im_select, NULL);
 
+	item = gnt_menuitem_check_new(_("Show empty groups"));
+	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
+				purple_prefs_get_bool(PREF_ROOT "/emptygroups"));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), show_empty_cb, NULL);
+	
 	item = gnt_menuitem_check_new(_("Show offline buddies"));
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
 				purple_prefs_get_bool(PREF_ROOT "/showoffline"));
