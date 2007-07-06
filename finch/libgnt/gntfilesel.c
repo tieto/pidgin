@@ -653,6 +653,7 @@ GntWidget *gnt_file_sel_new(void)
 	gnt_tree_set_show_title(GNT_TREE(sel->files), TRUE);
 	gnt_tree_set_col_width(GNT_TREE(sel->files), 0, 25);
 	gnt_tree_set_col_width(GNT_TREE(sel->files), 1, 10);
+	gnt_tree_set_column_is_right_aligned(GNT_TREE(sel->files), 1, TRUE);
 	g_signal_connect(G_OBJECT(sel->files), "selection_changed", G_CALLBACK(file_sel_changed), sel);
 
 	/* The location entry */

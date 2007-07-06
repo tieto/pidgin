@@ -33,6 +33,7 @@
 
 #define COLUMN_INVISIBLE(tree, index)  (tree->columns[index].flags & GNT_TREE_COLUMN_INVISIBLE)
 #define BINARY_DATA(tree, index)       (tree->columns[index].flags & GNT_TREE_COLUMN_BINARY_DATA)
+#define RIGHT_ALIGNED(tree, index)       (tree->columns[index].flags & GNT_TREE_COLUMN_RIGHT_ALIGNED)
 
 enum
 {
@@ -306,10 +307,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 
 		len = gnt_util_onscreen_width(display, NULL);
 
-		if (i == tree->lastvisible)
-			width = GNT_WIDGET(tree)->priv.width - gnt_util_onscreen_width(string->str, NULL);
-		else
-			width = tree->columns[i].width;
+		width = tree->columns[i].width;
 
 		if (i == 0)
 		{
@@ -348,6 +346,11 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 			len = width - 1;
 			cut = TRUE;
 		}
+
+		if (RIGHT_ALIGNED(tree, i) && len < tree->columns[i].width) {
+			g_string_append_printf(string, "%*s", width - len, "");
+		}
+
 		text = gnt_util_onscreen_width_to_pointer(display, len - fl, NULL);
 		string = g_string_append_len(string, display, text - display);
 		if (cut) { /* ellipsis */
@@ -358,7 +361,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 			len++;
 		}
 
-		if (len < tree->columns[i].width && iter->next)
+		if (!RIGHT_ALIGNED(tree, i) && len < tree->columns[i].width && iter->next)
 			g_string_append_printf(string, "%*s", width - len, "");
 	}
 	return g_string_free(string, FALSE);
@@ -1707,6 +1710,12 @@ void gnt_tree_set_column_is_binary(GntTree *tree, int col, gboolean bin)
 {
 	g_return_if_fail(col < tree->ncol);
 	set_column_flag(tree, col, GNT_TREE_COLUMN_FIXED_SIZE, bin);
+}
+
+void gnt_tree_set_column_is_right_aligned(GntTree *tree, int col, gboolean right)
+{
+	g_return_if_fail(col < tree->ncol);
+	set_column_flag(tree, col, GNT_TREE_COLUMN_RIGHT_ALIGNED, right);
 }
 
 void gnt_tree_set_column_width_ratio(GntTree *tree, int cols[])
