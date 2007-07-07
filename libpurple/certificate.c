@@ -369,7 +369,7 @@ x509_tls_peers_put_cert(const gchar *id, PurpleCertificate *crt)
 	g_return_val_if_fail(crt, FALSE);
 	g_return_val_if_fail(crt->scheme, FALSE);
 	/* Make sure that this is some kind of X.509 certificate */
-	/* This check may be excessively paranoid */
+	/* TODO: Perhaps just check crt->scheme->name instead? */
 	g_return_val_if_fail(crt->scheme == purple_certificate_find_scheme(x509_tls_peers.scheme_name), FALSE);
 
 	/* Work out the filename and export */
