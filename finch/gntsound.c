@@ -70,6 +70,7 @@ typedef struct {
 	GntWidget *volume;
 	GntWidget *events;
 	GntWidget *window;
+	GntWidget *selector;
 } SoundPrefDialog;
 
 SoundPrefDialog *pref_dialog;
@@ -650,14 +651,24 @@ choose_cb(GntWidget *button, gpointer null)
 	GntFileSel *sel = GNT_FILE_SEL(w);
 	PurpleSoundEventID id = GPOINTER_TO_INT(gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events)));
 	FinchSoundEvent * event = &sounds[id];
+	char *path = NULL;
 
 	gnt_file_sel_set_current_location(sel,
-			(event && event->file) ? g_path_get_dirname(event->file) : purple_home_dir());
+			(event && event->file) ? (path = g_path_get_dirname(event->file))
+				: purple_home_dir());
 
 	g_signal_connect_swapped(G_OBJECT(sel->cancel),"activate",G_CALLBACK(gnt_widget_destroy),sel);
 	g_signal_connect(G_OBJECT(sel), "file_selected", G_CALLBACK(file_cb), event);
+	g_signal_connect_swapped(G_OBJECT(sel), "destroy", G_CALLBACK(g_nullify_pointer), &pref_dialog->selector);
+
+	/* If there's an already open file-selector, close that one. */
+	if (pref_dialog->selector)
+		gnt_widget_destroy(pref_dialog->selector);
+
+	pref_dialog->selector = w;
 
 	gnt_widget_show(w);
+	g_free(path);
 }
 
 static void
@@ -669,6 +680,8 @@ release_pref_dialog(GntBindable *data, gpointer null)
 		FinchSoundEvent * e = &sounds[id];
 		g_free(e->file);
 	}
+	if (pref_dialog->selector)
+		gnt_widget_destroy(pref_dialog->selector);
 	g_free(pref_dialog);
 	pref_dialog = NULL;
 }
@@ -817,7 +830,6 @@ finch_sounds_show_all(void)
 	g_signal_connect_swapped(G_OBJECT(button),"activate",G_CALLBACK(gnt_widget_destroy),win);
 	gnt_box_add_widget(GNT_BOX(box),button);
 	gnt_box_add_widget(GNT_BOX(win),box);
-
 
 	g_signal_connect(G_OBJECT(win),"destroy",G_CALLBACK(release_pref_dialog),NULL);
 
