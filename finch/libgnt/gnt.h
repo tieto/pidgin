@@ -156,4 +156,3 @@ gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
 		gint *stin, gint *stout, gint *sterr);
 
 gboolean gnt_is_refugee(void);
-

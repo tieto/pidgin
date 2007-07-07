@@ -127,12 +127,21 @@ int gnt_slider_advance_step(GntSlider *slider, int steps);
 void gnt_slider_set_value(GntSlider *slider, int value);
 
 /**
+ * Get the current value for the slider.
+ *
+ * @param slider The slider
+ *
+ */
+int gnt_slider_get_value(GntSlider *slider);
+
+/**
  * Update a label with the value of the slider whenever the value changes.
  *
  * @param slider   The slider
  * @param label    The label to update
  */
 void gnt_slider_reflect_label(GntSlider *slider, GntLabel *label);
+
 
 G_END_DECLS
 
