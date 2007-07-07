@@ -698,10 +698,9 @@ finch_sounds_show_all(void)
 
 	pref_dialog->window = win = gnt_window_box_new(FALSE,TRUE);
 	gnt_box_set_pad(GNT_BOX(win),0);
-	gnt_box_set_fill(GNT_BOX(win),FALSE);
 	gnt_box_set_toplevel(GNT_BOX(win), TRUE);
-	gnt_box_set_title(GNT_BOX(win),_("Sound Preferences"));
-	gnt_box_set_fill(GNT_BOX(win),TRUE);
+	gnt_box_set_title(GNT_BOX(win), _("Sound Preferences"));
+	gnt_box_set_fill(GNT_BOX(win), TRUE);
 	gnt_box_set_alignment(GNT_BOX(win),GNT_ALIGN_LEFT);
 
 	pref_dialog->method = cmbox = gnt_combo_box_new();
@@ -797,13 +796,13 @@ finch_sounds_show_all(void)
 	gnt_box_add_widget(GNT_BOX(win),tree);
 
 	box = gnt_hbox_new(FALSE);
-	button = gnt_button_new("Test");
+	button = gnt_button_new(_("Test"));
 	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(test_cb),NULL);
 	gnt_box_add_widget(GNT_BOX(box),button);
-	button = gnt_button_new("Reset");
+	button = gnt_button_new(_("Reset"));
 	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(reset_cb),NULL);
 	gnt_box_add_widget(GNT_BOX(box),button);
-	button = gnt_button_new("Choose...");
+	button = gnt_button_new(_("Choose..."));
 	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(choose_cb),NULL);
 	gnt_box_add_widget(GNT_BOX(box),button);
 	gnt_box_add_widget(GNT_BOX(win),box);
@@ -811,10 +810,10 @@ finch_sounds_show_all(void)
 	box = gnt_hbox_new(FALSE);
 	gnt_box_set_pad(GNT_BOX(box),0);
 	gnt_box_set_fill(GNT_BOX(box),TRUE);
-	button = gnt_button_new("Save");
+	button = gnt_button_new(_("Save"));
 	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(save_cb),win);
 	gnt_box_add_widget(GNT_BOX(box),button);
-	button = gnt_button_new("Cancel");
+	button = gnt_button_new(_("Cancel"));
 	g_signal_connect_swapped(G_OBJECT(button),"activate",G_CALLBACK(gnt_widget_destroy),win);
 	gnt_box_add_widget(GNT_BOX(box),button);
 	gnt_box_add_widget(GNT_BOX(win),box);
