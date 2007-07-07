@@ -587,7 +587,7 @@ gnt_file_sel_class_init(GntFileSelClass *klass)
 					 G_STRUCT_OFFSET(GntFileSelClass, file_selected),
 					 NULL, NULL,
 					 gnt_closure_marshal_VOID__STRING_STRING,
-					 G_TYPE_NONE, 0);
+					 G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 
 	gnt_bindable_class_register_action(bindable, "toggle-tag", toggle_tag_selection, "t", NULL);
 	gnt_bindable_class_register_action(bindable, "clear-tags", clear_tags, "c", NULL);
@@ -634,6 +634,16 @@ gnt_file_sel_get_gtype(void)
 	return type;
 }
 
+static void
+select_activated_cb(GntWidget *button, GntFileSel *sel)
+{
+	char *path = gnt_file_sel_get_selected_file(sel);
+	char *file = g_path_get_basename(path);
+	g_signal_emit(sel, signals[SIG_FILE_SELECTED], 0, path, file);
+	g_free(file);
+	g_free(path);
+}
+
 GntWidget *gnt_file_sel_new(void)
 {
 	GntWidget *widget = g_object_new(GNT_TYPE_FILE_SEL, NULL);
@@ -662,6 +672,8 @@ GntWidget *gnt_file_sel_new(void)
 
 	sel->cancel = gnt_button_new("Cancel");
 	sel->select = gnt_button_new("Select");
+
+	g_signal_connect(G_OBJECT(sel->select), "activate", G_CALLBACK(select_activated_cb), sel);
 
 	return widget;
 }
