@@ -362,7 +362,25 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 			}
 		}
 
-		msn_session_set_error(session, MSN_ERROR_SERV_UNAVAILABLE, error);
+		msn_session_set_error(session, MSN_ERROR_AUTH, error);
+	}
+	/* Handle Passport 3.0 authentication failures.
+	 * Further info: http://msnpiki.msnfanatic.com/index.php/MSNP13:SOAPTweener
+	 */
+	else if (strstr(soapconn->read_buf,
+				"<faultcode>wsse:FailedAuthentication</faultcode>") != NULL)
+	{
+		char *faultstring;
+
+		faultstring = strstr(soapconn->read_buf, "<faultstring>");
+
+		if (faultstring != NULL)
+		{
+			faultstring += strlen("<faultstring>");
+			*strstr(soapconn->read_buf, "</faultstring>") = '\0';
+		}
+		
+		msn_session_set_error(session, MSN_ERROR_AUTH, faultstring);
 	}
 	else if (strstr(soapconn->read_buf, "HTTP/1.1 503 Service Unavailable"))
 	{
@@ -610,7 +628,7 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 					"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
 					"Accept: */*\r\n"
 					"Host: %s\r\n"
-					"Content-Length: %d\r\n"
+					"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 					"Connection: Keep-Alive\r\n"
 					"Cache-Control: no-cache\r\n\r\n",
 					request->login_path,
