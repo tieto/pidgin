@@ -363,10 +363,21 @@ x509_tls_peers_get_cert(const gchar *id)
 static gboolean
 x509_tls_peers_put_cert(const gchar *id, PurpleCertificate *crt)
 {
-	g_return_val_if_fail(crt, FALSE);
+	gboolean ret = FALSE;
+	gchar *keypath;
 
-	/* TODO: Fill this out */
-	return FALSE;
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme, FALSE);
+	/* Make sure that this is some kind of X.509 certificate */
+	/* This check may be excessively paranoid */
+	g_return_val_if_fail(crt->scheme == purple_certificate_find_scheme(x509_tls_peers.scheme_name), FALSE);
+
+	/* Work out the filename and export */
+	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);
+	ret = purple_certificate_export(keypath, crt);
+	
+	g_free(keypath);
+	return ret;
 }
 
 static PurpleCertificatePool x509_tls_peers = {
