@@ -391,7 +391,29 @@ static PurpleCertificatePool x509_tls_peers = {
 	x509_tls_peers_get_cert,      /* Cert retriever */
 	x509_tls_peers_put_cert       /* Cert writer */
 };
-	
+
+
+
+static PurpleCertificateVerifier x509_tls_cached;
+
+static void
+x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
+{
+	g_return_if_fail(vrq);
+}
+
+static void
+x509_tls_cached_destroy_request(PurpleCertificateVerificationRequest *vrq)
+{
+	g_return_if_fail(vrq);
+}
+
+static PurpleCertificateVerifier x509_tls_cached = {
+	"x509",                         /* Scheme name */
+	"tls_cached",                   /* Verifier name */
+	x509_tls_cached_start_verify,   /* Verification begin */
+	x509_tls_cached_destroy_request /* Request cleanup */
+};
 
 /****************************************************************************/
 /* Subsystem                                                                */
@@ -402,6 +424,7 @@ purple_certificate_init(void)
 	/* Register builtins */
 	purple_certificate_register_verifier(&x509_singleuse);
 	purple_certificate_register_pool(&x509_tls_peers);
+	purple_certificate_register_verifier(&x509_tls_cached);
 }
 
 void
@@ -410,6 +433,7 @@ purple_certificate_uninit(void)
 	/* Unregister the builtins */
 	purple_certificate_unregister_verifier(&x509_singleuse);
 	purple_certificate_unregister_pool(&x509_tls_peers);
+	purple_certificate_unregister_verifier(&x509_tls_cached);
 	
 	/* TODO: Unregistering everything would be good... */
 }
