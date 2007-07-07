@@ -55,6 +55,7 @@
 #include "gntfilesel.h"
 
 typedef struct {
+	PurpleSoundEventID id;
 	char *label;
 	char *pref;
 	char *def;
@@ -83,18 +84,17 @@ static gboolean gst_init_failed;
 #endif /* USE_GSTREAMER */
 
 static FinchSoundEvent sounds[PURPLE_NUM_SOUNDS] = {
-	{N_("Buddy logs in"), "login", "login.wav",NULL},
-	{N_("Buddy logs out"), "logout", "logout.wav",NULL},
-	{N_("Message received"), "im_recv", "receive.wav",NULL},
-	{N_("Message received begins conversation"), "first_im_recv", "receive.wav",NULL},
-	{N_("Message sent"), "send_im", "send.wav",NULL},
-	{N_("Person enters chat"), "join_chat", "login.wav",NULL},
-	{N_("Person leaves chat"), "left_chat", "logout.wav",NULL},
-	{N_("You talk in chat"), "send_chat_msg", "send.wav",NULL},
-	{N_("Others talk in chat"), "chat_msg_recv", "receive.wav",NULL},
-	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
-	{NULL, "pounce_default", "alert.wav",NULL},
-	{N_("Someone says your screen name in chat"), "nick_said", "alert.wav",NULL}
+	{PURPLE_SOUND_BUDDY_ARRIVE, N_("Buddy logs in"), "login", "login.wav",NULL},
+	{PURPLE_SOUND_BUDDY_LEAVE,  N_("Buddy logs out"), "logout", "logout.wav",NULL},
+	{PURPLE_SOUND_RECEIVE,      N_("Message received"), "im_recv", "receive.wav",NULL},
+	{PURPLE_SOUND_FIRST_RECEIVE,N_("Message received begins conversation"), "first_im_recv", "receive.wav",NULL},
+	{PURPLE_SOUND_SEND,         N_("Message sent"), "send_im", "send.wav",NULL},
+	{PURPLE_SOUND_CHAT_JOIN,    N_("Person enters chat"), "join_chat", "login.wav",NULL},
+	{PURPLE_SOUND_CHAT_LEAVE,   N_("Person leaves chat"), "left_chat", "logout.wav",NULL},
+	{PURPLE_SOUND_CHAT_YOU_SAY, N_("You talk in chat"), "send_chat_msg", "send.wav",NULL},
+	{PURPLE_SOUND_CHAT_SAY,     N_("Others talk in chat"), "chat_msg_recv", "receive.wav",NULL},
+	{PURPLE_SOUND_POUNCE_DEFAULT, NULL, "pounce_default", "alert.wav",NULL},
+	{PURPLE_SOUND_CHAT_NICK,    N_("Someone says your screen name in chat"), "nick_said", "alert.wav",NULL}
 };
 
 static gboolean
@@ -595,20 +595,18 @@ save_cb(GntWidget *button, gpointer win)
 	}
 	gnt_widget_destroy(GNT_WIDGET(win));
 }
+
 static void
-file_cb(GntWidget *w, gpointer data)
+file_cb(GntFileSel *w, const char *path, const char *file, gpointer data)
 {
-	GntFileSel *sel = GNT_FILE_SEL(data);
-	const char * file = gnt_file_sel_get_selected_file(sel);
-	gpointer key = gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events));
-	FinchSoundEvent * event = &sounds[GPOINTER_TO_INT(key)];
+	FinchSoundEvent *event = data;
 
 	g_free(event->file);
-	event->file = g_strdup(file);
+	event->file = g_strdup(path);
 
-	gnt_tree_change_text(GNT_TREE(pref_dialog->events),key,1,g_path_get_basename(file));
+	gnt_tree_change_text(GNT_TREE(pref_dialog->events), GINT_TO_POINTER(event->id), 1, file);
 	
-	gnt_widget_destroy(GNT_WIDGET(data));
+	gnt_widget_destroy(GNT_WIDGET(w));
 }
 
 static void
@@ -649,12 +647,15 @@ static void
 choose_cb(GntWidget *button, gpointer null)
 {
 	GntWidget *w = gnt_file_sel_new();
-
 	GntFileSel *sel = GNT_FILE_SEL(w);
-	gnt_file_sel_set_current_location(sel,purple_home_dir());
+	PurpleSoundEventID id = GPOINTER_TO_INT(gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events)));
+	FinchSoundEvent * event = &sounds[id];
+
+	gnt_file_sel_set_current_location(sel,
+			(event && event->file) ? g_path_get_dirname(event->file) : purple_home_dir());
 
 	g_signal_connect_swapped(G_OBJECT(sel->cancel),"activate",G_CALLBACK(gnt_widget_destroy),sel);
-	g_signal_connect(G_OBJECT(sel->select),"activate",G_CALLBACK(file_cb),sel);
+	g_signal_connect(G_OBJECT(sel), "file_selected", G_CALLBACK(file_cb), event);
 
 	gnt_widget_show(w);
 }
@@ -795,7 +796,7 @@ finch_sounds_show_all(void)
 	gnt_tree_adjust_columns(GNT_TREE(tree));
 	gnt_box_add_widget(GNT_BOX(win),tree);
 
-	box = gnt_hbox_new(TRUE);
+	box = gnt_hbox_new(FALSE);
 	button = gnt_button_new("Test");
 	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(test_cb),NULL);
 	gnt_box_add_widget(GNT_BOX(box),button);
@@ -807,7 +808,7 @@ finch_sounds_show_all(void)
 	gnt_box_add_widget(GNT_BOX(box),button);
 	gnt_box_add_widget(GNT_BOX(win),box);
 
-	box = gnt_hbox_new(TRUE);
+	box = gnt_hbox_new(FALSE);
 	gnt_box_set_pad(GNT_BOX(box),0);
 	gnt_box_set_fill(GNT_BOX(box),TRUE);
 	button = gnt_button_new("Save");
