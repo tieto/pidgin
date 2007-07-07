@@ -4857,8 +4857,14 @@ pidgin_conv_destroy(PurpleConversation *conv)
 
 	gtkconv->convs = g_list_remove(gtkconv->convs, conv);
 	/* Don't destroy ourselves until all our convos are gone */
-	if (gtkconv->convs)
+	if (gtkconv->convs) {
+		/* Make sure the destroyed conversation is not the active one */
+		if (gtkconv->active_conv == conv) {
+			gtkconv->active_conv = gtkconv->convs->data;
+			purple_conversation_update(gtkconv->active_conv, PURPLE_CONV_UPDATE_FEATURES);
+		}
 		return;
+	}
 
 	pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
 
