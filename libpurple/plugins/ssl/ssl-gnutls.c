@@ -530,9 +530,12 @@ x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
 	}
 
 	/* Write it out to an actual file */
-	success = purple_util_write_data_to_file(filename,
-						 out_buf,
-						 out_size);
+	/* TODO: THIS IS A COMPATIBILITY VIOLATION
+	   Look into util.c write_data_to_file. */
+	success = g_file_set_contents(filename,
+				      out_buf,
+				      out_size,
+				      NULL);
 
 	
 	g_free(out_buf);
