@@ -8333,6 +8333,9 @@ pidgin_conv_window_new()
 #ifdef _WIN32
 	g_signal_connect(G_OBJECT(win->window), "show",
 	                 G_CALLBACK(winpidgin_ensure_onscreen), win->window);
+
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/win32/minimize_new_convs"))
+		gtk_window_iconify(GTK_WINDOW(win->window));
 #endif
 
 	return win;
