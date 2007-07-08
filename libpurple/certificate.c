@@ -231,8 +231,12 @@ purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, Purp
 	g_return_val_if_fail(id, FALSE);
 	g_return_val_if_fail(pool->put_cert, FALSE);
 
-	/* TODO: Should we check about scheme matches here or make that
-	   someone else's problem? */
+	/* TODO: Should this just be someone else's problem? */
+	/* Whether crt->scheme matches find_scheme(pool->scheme_name) is not
+	   relevant... I think... */
+	g_return_val_if_fail(
+		g_ascii_strcasecmp(pool->scheme_name, crt->scheme->name) == 0,
+		FALSE);
 
 	return (pool->put_cert)(id, crt);
 }	
