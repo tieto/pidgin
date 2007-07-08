@@ -1296,6 +1296,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 {
 	GString *xhtml = g_string_new("");
 	GString *plain = g_string_new("");
+	GString *url = NULL;
 	GList *tags = NULL, *tag;
 	const char *c = html;
 
@@ -1315,6 +1316,10 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					while(tags) {
 						struct purple_parse_tag *pt = tags->data;
 						g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
+						if(!strcmp(pt->src_tag, "a")) {
+							/* if this is a link, we have to add the url to the plaintext, too */
+							g_string_append_printf(plain, " <%s>", g_strstrip(url->str));
+						}
 						if(tags == tag)
 							break;
 						tags = g_list_remove(tags, pt);
@@ -1338,7 +1343,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					}
 				}
 			} else { /* opening tag */
-				ALLOW_TAG("a");
+				/*ALLOW_TAG("a");*/
 				ALLOW_TAG("blockquote");
 				ALLOW_TAG("cite");
 				ALLOW_TAG("div");
@@ -1421,6 +1426,35 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					tags = g_list_prepend(tags, pt);
 					c = strchr(c, '>') + 1;
 					xhtml = g_string_append(xhtml, "<span style='vertical-align:super;'>");
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<a", 2) && (*(c+2) == '>' || *(c+2) == ' ')) {
+					const char *p = c;
+					struct purple_parse_tag *pt;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "href=", strlen("href="))) {
+							const char *q = p + strlen("href=");
+							g_string_free(url, TRUE);
+							url = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								url = g_string_append_c(url, *q);
+								q++;
+							}
+							p = q;
+						}
+						p++;
+					}
+					if ((c = strchr(c, '>')) != NULL)
+						c++;
+					else
+						c = p;
+					pt = g_new0(struct purple_parse_tag, 1);
+					pt->src_tag = "a";
+					pt->dest_tag = "a";
+					tags = g_list_prepend(tags, pt);
+					g_string_append_printf(xhtml, "<a href='%s'>", g_strstrip(url->str));
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
@@ -1598,6 +1632,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 		*plain_out = g_strdup(plain->str);
 	g_string_free(xhtml, TRUE);
 	g_string_free(plain, TRUE);
+	g_string_free(url, TRUE);
 }
 
 /* The following are probably reasonable changes:
