@@ -55,15 +55,34 @@ debug_init()
 	purple_debug_set_ui_ops(finch_debug_get_ui_ops());
 }
 
+/* XXX: this "leaks" a hashtable on shutdown.  I'll let
+ * the finch guys decide if they want to go through the trouble
+ * of properly freeing it, since their quit function doesn't
+ * live in this file */
+
+static GHashTable *ui_info = NULL;
+
+static GHashTable *finch_ui_get_info()
+{
+	if(NULL == ui_info) {
+		ui_info = g_hash_table_new(g_str_hash, g_str_equal);
+
+		g_hash_table_insert(ui_info, "name", (char*)_("Finch"));
+		g_hash_table_insert(ui_info, "version", VERSION);
+	}
+
+	return ui_info;
+}
+
 static PurpleCoreUiOps core_ops =
 {
 	finch_prefs_init,
 	debug_init,
 	gnt_ui_init,
 	gnt_ui_uninit,
+	finch_ui_get_info,
 
 	/* padding */
-	NULL,
 	NULL,
 	NULL,
 	NULL
