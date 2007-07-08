@@ -204,6 +204,38 @@ purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 	return path;
 }
 
+gboolean
+purple_certificate_pool_contains(PurpleCertificatePool *pool, const gchar *id)
+{
+	g_return_val_if_fail(pool, FALSE);
+	g_return_val_if_fail(id, FALSE);
+	g_return_val_if_fail(pool->cert_in_pool, FALSE);
+
+	return (pool->cert_in_pool)(id);
+}
+
+PurpleCertificate *
+purple_certificate_pool_retrieve(PurpleCertificatePool *pool, const gchar *id)
+{
+	g_return_val_if_fail(pool, NULL);
+	g_return_val_if_fail(id, NULL);
+	g_return_val_if_fail(pool->get_cert, NULL);
+
+	return (pool->get_cert)(id);
+}
+
+gboolean
+purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, PurpleCertificate *crt)
+{
+	g_return_val_if_fail(pool, FALSE);
+	g_return_val_if_fail(id, FALSE);
+	g_return_val_if_fail(pool->put_cert, FALSE);
+
+	/* TODO: Should we check about scheme matches here or make that
+	   someone else's problem? */
+
+	return (pool->put_cert)(id, crt);
+}	
 
 /****************************************************************************/
 /* Builtin Verifiers, Pools, etc.                                           */

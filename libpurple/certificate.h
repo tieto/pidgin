@@ -73,7 +73,7 @@ struct _PurpleCertificate
 /**
  * Database for retrieval or storage of Certificates
  *
- * More or less a hash table; all lookups and writes are performed by a string
+ * More or less a hash table; all lookups and writes are controlled by a string
  * key.
  */
 struct _PurpleCertificatePool
@@ -437,6 +437,37 @@ purple_certificate_get_subject_name(PurpleCertificate *crt);
  */
 gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id);
+
+/**
+ * Check for presence of an ID in a pool.
+ * @param pool   Pool to look in
+ * @param id     ID to look for
+ * @return TRUE if the ID is in the pool, else FALSE
+ */
+gboolean
+purple_certificate_pool_contains(PurpleCertificatePool *pool, const gchar *id);
+
+/**
+ * Retrieve a certificate from a pool.
+ * @param pool   Pool to fish in
+ * @param id     ID to look up
+ * @return Retrieved certificate, or NULL if it wasn't there
+ */
+PurpleCertificate *
+purple_certificate_pool_retrieve(PurpleCertificatePool *pool, const gchar *id);
+
+/**
+ * Add a certificate to a pool
+ *
+ * Any pre-existing certificate of the same ID will be overwritten.
+ *
+ * @param pool   Pool to add to
+ * @param id     ID to store the certificate with
+ * @param crt    Certificate to store
+ * @return TRUE if the operation succeeded, otherwise FALSE
+ */
+gboolean
+purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, PurpleCertificate *crt);
 
 /*@}*/
 
