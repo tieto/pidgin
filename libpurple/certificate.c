@@ -433,14 +433,84 @@ static PurpleCertificatePool x509_tls_peers = {
 static PurpleCertificateVerifier x509_tls_cached;
 
 static void
+x509_tls_cached_unknown_peer_cb (PurpleCertificateVerificationRequest *vrq, gint id)
+{
+	PurpleCertificatePool *tls_peers;
+	
+	g_return_if_fail(vrq);
+
+	tls_peers = purple_certificate_find_pool("x509","tls_peers");
+
+	if (1 == id) {
+		gchar *cache_id = vrq->subject_name;
+		purple_debug_info("certificate/x509/tls_cached",
+				  "User ACCEPTED cert\nCaching first in chain for future use as %s...\n",
+				  cache_id);
+		
+		purple_certificate_pool_store(tls_peers, cache_id,
+					      vrq->cert_chain->data);
+			
+		(vrq->cb)(PURPLE_CERTIFICATE_VALID, vrq->cb_data);
+	} else {
+		purple_debug_info("certificate/x509/tls_cached",
+				  "User REJECTED cert\n");
+		(vrq->cb)(PURPLE_CERTIFICATE_INVALID, vrq->cb_data);
+	}
+
+	/* Finish off the request */
+	purple_certificate_verify_destroy(vrq);
+}
+
+static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 {
-	/* TODO: Prompt the user, etc. */
+	gchar *sha_asc;
+	GByteArray *sha_bin;
+	gchar *cn;
+	const gchar *cn_match;
+	gchar *primary, *secondary;
+	PurpleCertificate *crt = (PurpleCertificate *) vrq->cert_chain->data;
 
-	(vrq->cb)(PURPLE_CERTIFICATE_INVALID, vrq->cb_data);
-	/* Okay, we're done here */
-	purple_certificate_verify_destroy(vrq);
-	return;
+	/* Pull out the SHA1 checksum */
+	sha_bin = purple_certificate_get_fingerprint_sha1(crt);
+	/* Now decode it for display */
+	sha_asc = purple_base16_encode_chunked(sha_bin->data,
+					       sha_bin->len);
+
+	/* Get the cert Common Name */
+	cn = purple_certificate_get_subject_name(crt);
+
+	/* Determine whether the name matches */
+	/* TODO: Worry about strcmp safety? */
+	if (!strcmp(cn, vrq->subject_name)) {
+		cn_match = _("");
+	} else {
+		cn_match = _("(DOES NOT MATCH)");
+	}
+	
+	/* Make messages */
+	primary = g_strdup_printf(_("%s has presented the following certificate:"), vrq->subject_name);
+	secondary = g_strdup_printf(_("Common name: %s %s\nFingerprint (SHA1): %s"), cn, cn_match, sha_asc);
+	
+	/* Make a semi-pretty display */
+	purple_request_accept_cancel(
+		vrq->cb_data, /* TODO: Find what the handle ought to be */
+		_("SSL Certificate Verification"),
+		primary,
+		secondary,
+		1,            /* Accept by default */
+		NULL,         /* No account */
+		NULL,         /* No other user */
+		NULL,         /* No associated conversation */
+		vrq,
+		x509_tls_cached_unknown_peer_cb,
+		x509_tls_cached_unknown_peer_cb );
+	
+	/* Cleanup */
+	g_free(primary);
+	g_free(secondary);
+	g_free(sha_asc);
+	g_byte_array_free(sha_bin, TRUE);
 }
 
 static void
