@@ -1,4 +1,8 @@
 /**
+ * @file gnttree.h Tree API
+ * @ingroup gnt
+ */
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -36,16 +40,17 @@
 #define GNT_IS_TREE_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_TREE))
 #define GNT_TREE_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_TREE, GntTreeClass))
 
-#define GNT_TREE_FLAGS(obj)				(GNT_TREE(obj)->priv.flags)
-#define GNT_TREE_SET_FLAGS(obj, flags)		(GNT_TREE_FLAGS(obj) |= flags)
-#define GNT_TREE_UNSET_FLAGS(obj, flags)	(GNT_TREE_FLAGS(obj) &= ~(flags))
-
 typedef struct _GntTree			GntTree;
 typedef struct _GntTreePriv		GntTreePriv;
 typedef struct _GntTreeClass		GntTreeClass;
 
 typedef struct _GntTreeRow		GntTreeRow;
 typedef struct _GntTreeCol		GntTreeCol;
+
+typedef enum {
+	GNT_TREE_COLUMN_INVISIBLE    = 1 << 0,
+	GNT_TREE_COLUMN_FIXED_SIZE   = 1 << 1,
+} GntTreeColumnFlag;
 
 struct _GntTree
 {
@@ -70,7 +75,8 @@ struct _GntTree
 	{
 		int width;
 		char *title;
-		gboolean invisible;
+		int width_ratio;
+		GntTreeColumnFlag flags;
 	} *columns;             /* Would a GList be better? */
 	gboolean show_title;
 	gboolean show_separator; /* Whether to show column separators */
@@ -298,6 +304,15 @@ GntTreeRow * gnt_tree_create_row_from_list(GntTree *tree, GList *list);
 void gnt_tree_set_col_width(GntTree *tree, int col, int width);
 
 /**
+ * Set the title for a column.
+ *
+ * @param tree   The tree
+ * @param index  The index of the column
+ * @param title  The title for the column
+ */
+void gnt_tree_set_column_title(GntTree *tree, int index, const char *title);
+
+/**
  * 
  * @param tree
  */
@@ -355,15 +370,38 @@ void gnt_tree_adjust_columns(GntTree *tree);
  */
 void gnt_tree_set_hash_fns(GntTree *tree, gpointer hash, gpointer eq, gpointer kd);
 
-/* This can be useful when, for example, we want to store some data
- * which we don't want/need to display. */
 /**
+ * Set whether a column is visible or not.
+ * This can be useful when, for example, we want to store some data
+ * which we don't want/need to display.
  * 
- * @param tree
- * @param col
- * @param vis
+ * @param tree  The tree
+ * @param col   The index of the column
+ * @param vis   If @c FALSE, the column will not be displayed
  */
 void gnt_tree_set_column_visible(GntTree *tree, int col, gboolean vis);
+
+/**
+ * Set whether a column can be resized to keep the same ratio when the
+ * tree is resized.
+ * 
+ * @param tree  The tree
+ * @param col   The index of the column
+ * @param res   If @c FALSE, the column will not be resized when the
+ *              tree is resized
+ */
+void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res);
+
+/**
+ * Set column widths to use when calculating column widths after a tree
+ * is resized.
+ *
+ * @param tree   The tree
+ * @param cols   Array of widths. The width must have the same number
+ *               of entries as the number of columns in the tree, or
+ *               end with a negative value for a column-width.
+ */
+void gnt_tree_set_column_width_ratio(GntTree *tree, int cols[]);
 
 G_END_DECLS
 

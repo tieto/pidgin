@@ -111,11 +111,16 @@
 # include <unistd.h>
 #endif
 
-#ifndef MAXPATHLEN
-# ifdef PATH_MAX
-#  define MAXPATHLEN PATH_MAX
-# else
-#  define MAXPATHLEN 1024
+/* MAXPATHLEN should only be used with readlink() on glib < 2.4.0.  For
+ * anything else, use g_file_read_link() or other dynamic functions.  This is
+ * important because Hurd has no hard limits on path length. */
+#if !GLIB_CHECK_VERSION(2,4,0)
+# ifndef MAXPATHLEN
+#  ifdef PATH_MAX
+#   define MAXPATHLEN PATH_MAX
+#  else
+#   define MAXPATHLEN 1024
+#  endif
 # endif
 #endif
 

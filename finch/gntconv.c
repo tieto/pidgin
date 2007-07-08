@@ -140,13 +140,6 @@ entry_key_pressed(GntWidget *w, const char *key, FinchConv *ggconv)
 					break;
 			}
 			g_free(error);
-#if 0
-			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-					_("Commands are not supported yet. Message was NOT sent."),
-					GNT_TEXT_FLAG_DIM | GNT_TEXT_FLAG_UNDERLINE);
-			gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
-			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
-#endif
 		}
 		else
 		{
@@ -451,6 +444,13 @@ gained_focus_cb(GntWindow *window, FinchConv *fc)
 }
 
 static void
+completion_cb(GntEntry *entry, const char *start, const char *end)
+{
+	if (start == entry->start)
+		gnt_widget_key_pressed(GNT_WIDGET(entry), ": ");
+}
+
+static void
 finch_create_conversation(PurpleConversation *conv)
 {
 	FinchConv *ggc = conv->ui_data;
@@ -542,6 +542,7 @@ finch_create_conversation(PurpleConversation *conv)
 
 	gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(ggc->tv), ggc->entry);
 	g_signal_connect_after(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(entry_key_pressed), ggc);
+	g_signal_connect(G_OBJECT(ggc->entry), "completion", G_CALLBACK(completion_cb), NULL);
 	g_signal_connect(G_OBJECT(ggc->window), "destroy", G_CALLBACK(closing_window), ggc);
 
 	gnt_widget_set_position(ggc->window, purple_prefs_get_int(PREF_ROOT "/position/x"),

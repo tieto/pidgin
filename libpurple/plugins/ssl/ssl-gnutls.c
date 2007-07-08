@@ -428,7 +428,7 @@ x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode)
 	PurpleCertificate * crt;
 
 	/* Allocate and prepare the internal certificate data */
-	certdat = g_new(gnutls_x509_crt_t, 1);
+	certdat = g_new0(gnutls_x509_crt_t, 1);
 	gnutls_x509_crt_init(certdat);
 
 	/* Perform the actual certificate parse */
@@ -436,7 +436,7 @@ x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode)
 	gnutls_x509_crt_import(*certdat, &dt, mode);
 	
 	/* Allocate the certificate and load it with data */
-	crt = g_new(PurpleCertificate, 1);
+	crt = g_new0(PurpleCertificate, 1);
 	crt->scheme = &x509_gnutls;
 	crt->data = certdat;
 
@@ -482,6 +482,62 @@ x509_import_from_file(const gchar * filename)
 	g_free(buf);
 
 	return crt;
+}
+
+/**
+ * Exports a PEM-formatted X.509 certificate to the specified file.
+ * @param filename Filename to export to. Format will be PEM
+ * @param crt      Certificate to export
+ *
+ * @return TRUE if success, otherwise FALSE
+ */
+static gboolean
+x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
+{
+	gnutls_x509_crt_t crt_dat; /* GnuTLS cert struct */
+	int ret;
+	gchar * out_buf; /* Data to output */
+	size_t out_size; /* Output size */
+	gboolean success = FALSE;
+
+	/* Paranoia paranoia paranoia! */
+	g_return_val_if_fail(filename, FALSE);
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_gnutls, FALSE);
+	g_return_val_if_fail(crt->data, FALSE);
+
+	crt_dat = *( (gnutls_x509_crt_t *) crt->data);
+
+	/* Obtain the output size required */
+	ret = gnutls_x509_crt_export(crt_dat, GNUTLS_X509_FMT_PEM,
+				     NULL, /* Provide no buffer yet */
+				     &out_size /* Put size here */
+		);
+	g_return_val_if_fail(ret == 0, FALSE);
+
+	/* Now allocate a buffer and *really* export it */
+	out_buf = g_new0(gchar, out_size);
+	ret = gnutls_x509_crt_export(crt_dat, GNUTLS_X509_FMT_PEM,
+				     out_buf, /* Export to our new buffer */
+				     &out_size /* Put size here */
+		);
+	if (ret != 0) {
+		purple_debug_error("gnutls/x509",
+				   "Failed to export cert to buffer with code %d\n",
+				   ret);
+		g_free(out_buf);
+		return FALSE;
+	}
+
+	/* Write it out to an actual file */
+	success = purple_util_write_data_to_file(filename,
+						 out_buf,
+						 out_size);
+
+	
+	g_free(out_buf);
+	g_return_val_if_fail(success, FALSE);
+	return success;
 }
 
 /** Frees a Certificate
@@ -543,8 +599,8 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 	g_return_val_if_fail(issuer, FALSE);
 
 	/* Verify that both certs are the correct scheme */
-	g_return_val_if_fail(crt->scheme != &x509_gnutls, FALSE);
-	g_return_val_if_fail(issuer->scheme != &x509_gnutls, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_gnutls, FALSE);
+	g_return_val_if_fail(issuer->scheme == &x509_gnutls, FALSE);
 
 	/* TODO: check for more nullness? */
 
@@ -616,17 +672,54 @@ x509_sha1sum(PurpleCertificate *crt)
 	return hash;
 }
 
+static gchar *
+x509_common_name (PurpleCertificate *crt)
+{
+	gnutls_x509_crt_t cert_dat;
+	gchar *cn = NULL;
+	size_t cn_size;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_gnutls, NULL);
+
+	cert_dat = *( (gnutls_x509_crt_t *) crt->data );
+
+	/* TODO: Not return values? */
+	
+	/* Figure out the length of the Common Name */
+	/* Claim that the buffer is size 0 so GnuTLS just tells us how much
+	   space it needs */
+	cn_size = 0;
+	gnutls_x509_crt_get_dn_by_oid(cert_dat,
+				      GNUTLS_OID_X520_COMMON_NAME,
+				      0, /* First CN found, please */
+				      0, /* Not in raw mode */
+				      cn, &cn_size);
+
+	/* Now allocate and get the Common Name */
+	cn = g_new0(gchar, cn_size);
+	gnutls_x509_crt_get_dn_by_oid(cert_dat,
+				      GNUTLS_OID_X520_COMMON_NAME,
+				      0, /* First CN found, please */
+				      0, /* Not in raw mode */
+				      cn, &cn_size);
+	
+	return cn;
+}
+
 /* X.509 certificate operations provided by this plugin */
 /* TODO: Flesh this out! */
 static PurpleCertificateScheme x509_gnutls = {
 	"x509",                          /* Scheme name */
 	N_("X.509 Certificates"),        /* User-visible scheme name */
 	x509_import_from_file,           /* Certificate import function */
+	x509_export_certificate,         /* Certificate export function */
 	x509_destroy_certificate,        /* Destroy cert */
 	x509_sha1sum,                    /* SHA1 fingerprint */
 	NULL,                            /* Subject */
 	NULL,                            /* Unique ID */
-	NULL                             /* Issuer Unique ID */
+	NULL,                            /* Issuer Unique ID */
+	x509_common_name                 /* Subject name */
 };
 
 static PurpleSslOps ssl_ops =

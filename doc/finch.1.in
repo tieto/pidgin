@@ -110,14 +110,26 @@ Jump to the 1st, 2nd ... 10th window.
 Bring up the menu (if there is one) for a window. Note that currently only the
 buddylist has a menu.
 .TP
-.B Alt \+ Shift \+ .
+.B Alt \+ /
+Show a list of available key-bindings for the current widget in focus.
+.TP
+.B Alt \+ \>
 Switch to the next workspace
 .TP
-.B Alt \+ Shift \+ ,
+.B Alt \+ \<
 Switch to the previous workspace
+.TP
+.B Alt \+ t
+Tag (or untag) the current window
+.TP
+.B Alt \+ T
+Attached all the tag windows to the current workspace
 .TP
 .B Alt \+ s
 Show the workspace list
+.TP
+.B F9
+Create a new workspace and switch to it
 
 .SH FILES
 \fI~/.gntrc\fR: configuration file for gnt applications.
@@ -135,7 +147,9 @@ mouse = 1
 .br
 # To use some custom window-manager
 .br
-wm = /usr/local/lib/purple/s.so
+wm = /usr/local/lib/gnt/s.so
+.br
+# There's also a custom window manager called irssi.so
 .br
 # Remember window-positions based on the titles (on by default)
 .br
@@ -308,6 +322,8 @@ pageup = page-up
 .br
 pagedown = page-down
 .br
+backspace = move-parent
+.br
 # Following is the default binding for the context-menu
 .br
 menu = context-menu
@@ -377,6 +393,16 @@ a-q = wm-quit
 .br
 a-l = refresh-screen
 .br
+a-s = workspace-list
+.br
+a-t = window-tag
+.br
+a-T = place-tagged
+.br
+a-C = toggle-clipboard
+.br
+a-/ = help-for-widget
+.br
 # The following action is still incomplete, and doesn't have a default binding
 .br
 # switch-window-n
@@ -387,8 +413,18 @@ a-l = refresh-screen
 [GntS::binding]
 .br
 a-b = toggle-buddylist
+
+# For the irssi window manager
 .br
-a-C = toggle-clipboard
+[Irssi::binding]
+.br
+a-L = move-right
+.br
+a-H = move-left
+.br
+a-J = move-down
+.br
+a-K = move-up
 
 .SH Conversation Commands
 There are a few helpful commands in addition to the regular commands. You can

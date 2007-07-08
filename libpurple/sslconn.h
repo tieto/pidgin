@@ -145,6 +145,14 @@ extern "C" {
 gboolean purple_ssl_is_supported(void);
 
 /**
+ * Returns a human-readable string for an SSL error
+ *
+ * @param error      Error code
+ * @return Human-readable error explanation
+ */
+const gchar * purple_ssl_strerror(PurpleSslErrorType error);
+
+/**
  * Makes a SSL connection to the specified host and port.  The caller
  * should keep track of the returned value and use it to cancel the
  * connection, if needed.

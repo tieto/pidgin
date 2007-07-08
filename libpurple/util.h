@@ -1105,12 +1105,13 @@ gboolean purple_utf8_has_word(const char *haystack, const char *needle);
 void purple_print_utf8_to_console(FILE *filestream, char *message);
 
 /**
- * Checks for messages starting with "/me "
+ * Checks for messages starting (post-HTML) with "/me ", including the space.
  *
  * @param message The message to check
  * @param len     The message length, or -1
  *
- * @return TRUE if it starts with /me, and it has been removed, otherwise FALSE
+ * @return TRUE if it starts with "/me ", and it has been removed, otherwise
+ *         FALSE
  */
 gboolean purple_message_meify(char *message, size_t len);
 

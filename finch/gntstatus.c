@@ -163,8 +163,11 @@ edit_savedstatus_cb(GntWidget *widget, gpointer null)
 void finch_savedstatus_show_all()
 {
 	GntWidget *window, *tree, *box, *button;
-	if (statuses.window)
+	int widths[] = {25, 12, 35};
+	if (statuses.window) {
+		gnt_window_present(statuses.window);
 		return;
+	}
 
 	statuses.window = window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
@@ -177,9 +180,8 @@ void finch_savedstatus_show_all()
 	statuses.tree = tree = gnt_tree_new_with_columns(3);
 	gnt_tree_set_column_titles(GNT_TREE(tree), _("Title"), _("Type"), _("Message"));
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
-	gnt_tree_set_col_width(GNT_TREE(tree), 0, 25);
-	gnt_tree_set_col_width(GNT_TREE(tree), 1, 12);
-	gnt_tree_set_col_width(GNT_TREE(tree), 2, 35);
+	gnt_tree_set_column_width_ratio(GNT_TREE(tree), widths);
+	gnt_widget_set_size(tree, 72, 0);
 	gnt_box_add_widget(GNT_BOX(window), tree);
 
 	populate_statuses(GNT_TREE(tree));

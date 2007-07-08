@@ -38,6 +38,8 @@
 static GList *cert_schemes = NULL;
 /** List of registered Verifiers */
 static GList *cert_verifiers = NULL;
+/** List of registered Pools */
+static GList *cert_pools = NULL;
 
 void
 purple_certificate_verify (PurpleCertificateVerifier *verifier,
@@ -60,7 +62,7 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 
 	/* Check that at least the first cert in the chain matches the
 	   Verifier scheme */
-	g_return_if_fail(scheme !=
+	g_return_if_fail(scheme ==
 			 ((PurpleCertificate *) (cert_chain->data))->scheme);
 
 	/* Construct and fill in the request fields */
@@ -123,6 +125,31 @@ purple_certificate_destroy_list (GList * crt_list)
 	g_list_free(crt_list);
 }
 
+PurpleCertificate *
+purple_certificate_import(PurpleCertificateScheme *scheme, const gchar *filename)
+{
+	g_return_val_if_fail(scheme, NULL);
+	g_return_val_if_fail(scheme->import_certificate, NULL);
+	g_return_val_if_fail(filename, NULL);
+
+	return (scheme->import_certificate)(filename);
+}
+
+gboolean
+purple_certificate_export(const gchar *filename, PurpleCertificate *crt)
+{
+	PurpleCertificateScheme *scheme;
+
+	g_return_val_if_fail(filename, FALSE);
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme, FALSE);
+
+	scheme = crt->scheme;
+	g_return_val_if_fail(scheme->export_certificate, FALSE);
+
+	return (scheme->export_certificate)(filename, crt);
+}
+
 GByteArray *
 purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
 {
@@ -140,6 +167,79 @@ purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
 
 	return fpr;
 }
+
+gchar *
+purple_certificate_get_subject_name(PurpleCertificate *crt)
+{
+	PurpleCertificateScheme *scheme;
+	gchar *subject_name;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme, NULL);
+
+	scheme = crt->scheme;
+
+	g_return_val_if_fail(scheme->get_subject_name, NULL);
+
+	subject_name = (scheme->get_subject_name)(crt);
+
+	return subject_name;
+}
+
+gchar *
+purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
+{
+	gchar *path;
+	
+	g_return_val_if_fail(pool, NULL);
+	g_return_val_if_fail(pool->scheme_name, NULL);
+	g_return_val_if_fail(pool->name, NULL);
+
+	path = g_build_filename(purple_user_dir(),
+				"certificates", /* TODO: constantize this? */
+				pool->scheme_name,
+				pool->name,
+				id,
+				NULL);
+	return path;
+}
+
+gboolean
+purple_certificate_pool_contains(PurpleCertificatePool *pool, const gchar *id)
+{
+	g_return_val_if_fail(pool, FALSE);
+	g_return_val_if_fail(id, FALSE);
+	g_return_val_if_fail(pool->cert_in_pool, FALSE);
+
+	return (pool->cert_in_pool)(id);
+}
+
+PurpleCertificate *
+purple_certificate_pool_retrieve(PurpleCertificatePool *pool, const gchar *id)
+{
+	g_return_val_if_fail(pool, NULL);
+	g_return_val_if_fail(id, NULL);
+	g_return_val_if_fail(pool->get_cert, NULL);
+
+	return (pool->get_cert)(id);
+}
+
+gboolean
+purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, PurpleCertificate *crt)
+{
+	g_return_val_if_fail(pool, FALSE);
+	g_return_val_if_fail(id, FALSE);
+	g_return_val_if_fail(pool->put_cert, FALSE);
+
+	/* TODO: Should this just be someone else's problem? */
+	/* Whether crt->scheme matches find_scheme(pool->scheme_name) is not
+	   relevant... I think... */
+	g_return_val_if_fail(
+		g_ascii_strcasecmp(pool->scheme_name, crt->scheme->name) == 0,
+		FALSE);
+
+	return (pool->put_cert)(id, crt);
+}	
 
 /****************************************************************************/
 /* Builtin Verifiers, Pools, etc.                                           */
@@ -172,6 +272,8 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 {
 	gchar *sha_asc;
 	GByteArray *sha_bin;
+	gchar *cn;
+	const gchar *cn_match;
 	gchar *primary, *secondary;
 	PurpleCertificate *crt = (PurpleCertificate *) vrq->cert_chain->data;
 
@@ -181,9 +283,20 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 	sha_asc = purple_base16_encode_chunked(sha_bin->data,
 					       sha_bin->len);
 
+	/* Get the cert Common Name */
+	cn = purple_certificate_get_subject_name(crt);
+
+	/* Determine whether the name matches */
+	/* TODO: Worry about strcmp safety? */
+	if (!strcmp(cn, vrq->subject_name)) {
+		cn_match = _("");
+	} else {
+		cn_match = _("(DOES NOT MATCH)");
+	}
+	
 	/* Make messages */
 	primary = g_strdup_printf(_("%s has presented the following certificate for just-this-once use:"), vrq->subject_name);
-	secondary = g_strdup_printf(_("Fingerprint (SHA1): %s"), sha_asc);
+	secondary = g_strdup_printf(_("Common name: %s %s\nFingerprint (SHA1): %s"), cn, cn_match, sha_asc);
 	
 	/* Make a semi-pretty display */
 	purple_request_accept_cancel(
@@ -220,6 +333,124 @@ PurpleCertificateVerifier x509_singleuse = {
 };
 
 
+
+
+static PurpleCertificatePool x509_tls_peers;
+
+static gboolean
+x509_tls_peers_init(void)
+{
+	gchar *poolpath;
+	int ret;
+	
+	/* Set up key cache here if it isn't already done */
+	poolpath = purple_certificate_pool_mkpath(&x509_tls_peers, NULL);
+	ret = purple_build_dir(poolpath, 0700); /* Make it this user only */
+
+	g_free(poolpath);
+
+	g_return_val_if_fail(ret == 0, FALSE);
+	return TRUE;
+}
+
+static gboolean
+x509_tls_peers_cert_in_pool(const gchar *id)
+{
+	gchar *keypath;
+	gboolean ret = FALSE;
+	
+	g_return_val_if_fail(id, FALSE);
+
+	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);
+
+	ret = g_file_test(keypath, G_FILE_TEST_IS_REGULAR);
+	
+	g_free(keypath);
+	return ret;
+}
+
+static PurpleCertificate *
+x509_tls_peers_get_cert(const gchar *id)
+{
+	PurpleCertificateScheme *x509;
+	PurpleCertificate *crt;
+	gchar *keypath;
+	
+	g_return_val_if_fail(id, NULL);
+
+	/* Is it in the pool? */
+	if ( !x509_tls_peers_cert_in_pool(id) ) {
+		return NULL;
+	}
+	
+	/* Look up the X.509 scheme */
+	x509 = purple_certificate_find_scheme("x509");
+	g_return_val_if_fail(x509, NULL);
+
+	/* Okay, now find and load that key */
+	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);
+	crt = purple_certificate_import(x509, keypath);
+
+	g_free(keypath);
+
+	return crt;
+}
+
+static gboolean
+x509_tls_peers_put_cert(const gchar *id, PurpleCertificate *crt)
+{
+	gboolean ret = FALSE;
+	gchar *keypath;
+
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme, FALSE);
+	/* Make sure that this is some kind of X.509 certificate */
+	/* TODO: Perhaps just check crt->scheme->name instead? */
+	g_return_val_if_fail(crt->scheme == purple_certificate_find_scheme(x509_tls_peers.scheme_name), FALSE);
+
+	/* Work out the filename and export */
+	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);
+	ret = purple_certificate_export(keypath, crt);
+	
+	g_free(keypath);
+	return ret;
+}
+
+static PurpleCertificatePool x509_tls_peers = {
+	"x509",                       /* Scheme name */
+	"tls_peers",                  /* Pool name */
+	N_("SSL Peers Cache"),        /* User-friendly name */
+	NULL,                         /* Internal data */
+	x509_tls_peers_init,          /* init */
+	NULL,                         /* uninit not required */
+	x509_tls_peers_cert_in_pool,  /* Certificate exists? */
+	x509_tls_peers_get_cert,      /* Cert retriever */
+	x509_tls_peers_put_cert       /* Cert writer */
+};
+
+
+
+static PurpleCertificateVerifier x509_tls_cached;
+
+static void
+x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
+{
+	g_return_if_fail(vrq);
+}
+
+static void
+x509_tls_cached_destroy_request(PurpleCertificateVerificationRequest *vrq)
+{
+	g_return_if_fail(vrq);
+}
+
+static PurpleCertificateVerifier x509_tls_cached = {
+	"x509",                         /* Scheme name */
+	"tls_cached",                   /* Verifier name */
+	x509_tls_cached_start_verify,   /* Verification begin */
+	x509_tls_cached_destroy_request /* Request cleanup */
+};
+
 /****************************************************************************/
 /* Subsystem                                                                */
 /****************************************************************************/
@@ -228,6 +459,8 @@ purple_certificate_init(void)
 {
 	/* Register builtins */
 	purple_certificate_register_verifier(&x509_singleuse);
+	purple_certificate_register_pool(&x509_tls_peers);
+	purple_certificate_register_verifier(&x509_tls_cached);
 }
 
 void
@@ -235,7 +468,9 @@ purple_certificate_uninit(void)
 {
 	/* Unregister the builtins */
 	purple_certificate_unregister_verifier(&x509_singleuse);
-
+	purple_certificate_unregister_pool(&x509_tls_peers);
+	purple_certificate_unregister_verifier(&x509_tls_cached);
+	
 	/* TODO: Unregistering everything would be good... */
 }
 
@@ -277,7 +512,7 @@ purple_certificate_register_scheme(PurpleCertificateScheme *scheme)
 	}
 
 	/* Okay, we're golden. Register it. */
-	cert_schemes = g_list_append(cert_schemes, scheme);
+	cert_schemes = g_list_prepend(cert_schemes, scheme);
 
 	/* TODO: Signalling and such? */
 	return TRUE;
@@ -288,7 +523,8 @@ purple_certificate_unregister_scheme(PurpleCertificateScheme *scheme)
 {
 	if (NULL == scheme) {
 		purple_debug_warning("certificate",
-				     "Attempting to unregister NULL scheme");
+				     "Attempting to unregister NULL scheme\n");
+		return FALSE;
 	}
 
 	/* TODO: signalling? */
@@ -342,7 +578,7 @@ purple_certificate_register_verifier(PurpleCertificateVerifier *vr)
 	}
 
 	/* Okay, we're golden. Register it. */
-	cert_verifiers = g_list_append(cert_verifiers, vr);
+	cert_verifiers = g_list_prepend(cert_verifiers, vr);
 
 	/* TODO: Signalling and such? */
 	return TRUE;
@@ -353,12 +589,107 @@ purple_certificate_unregister_verifier(PurpleCertificateVerifier *vr)
 {
 	if (NULL == vr) {
 		purple_debug_warning("certificate",
-				     "Attempting to unregister NULL verifier");
+				     "Attempting to unregister NULL verifier\n");
+		return FALSE;
 	}
 
 	/* TODO: signalling? */
 
 	cert_verifiers = g_list_remove(cert_verifiers, vr);
 
+	return TRUE;
+}
+
+PurpleCertificatePool *
+purple_certificate_find_pool(const gchar *scheme_name, const gchar *pool_name)
+{
+	PurpleCertificatePool *pool = NULL;
+	GList *l;
+
+	g_return_val_if_fail(scheme_name, NULL);
+	g_return_val_if_fail(pool_name, NULL);
+
+	/* Traverse the list of registered pools and locate the
+	   one whose name matches */
+	for(l = cert_pools; l; l = l->next) {
+		pool = (PurpleCertificatePool *)(l->data);
+
+		/* Scheme and name match? */
+		if(!g_ascii_strcasecmp(pool->scheme_name, scheme_name) &&
+		   !g_ascii_strcasecmp(pool->name, pool_name))
+			return pool;
+	}
+
+	purple_debug_warning("certificate",
+			     "CertificatePool %s, %s requested but not found.\n",
+			     scheme_name, pool_name);
+
+	/* TODO: Signalling and such? */
+	
+	return NULL;
+
+}
+
+
+gboolean
+purple_certificate_register_pool(PurpleCertificatePool *pool)
+{
+	gboolean success = FALSE;
+	g_return_val_if_fail(pool, FALSE);
+	g_return_val_if_fail(pool->scheme_name, FALSE);
+	g_return_val_if_fail(pool->name, FALSE);
+	g_return_val_if_fail(pool->fullname, FALSE);
+
+	/* Make sure no pools are registered under this name */
+	if (purple_certificate_find_pool(pool->scheme_name, pool->name)) {
+		return FALSE;
+	}
+
+	/* Initialize the pool if needed */
+	if (pool->init) {
+		success = pool->init();
+	} else {
+		success = TRUE;
+	}
+	
+	if (success) {
+		/* Register the Pool */
+		cert_pools = g_list_prepend(cert_pools, pool);
+
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+	
+	/* Control does not reach this point */
+}
+
+gboolean
+purple_certificate_unregister_pool(PurpleCertificatePool *pool)
+{
+	/* TODO: Better error checking? */
+	if (NULL == pool) {
+		purple_debug_warning("certificate",
+				     "Attempting to unregister NULL pool\n");
+		return FALSE;
+	}
+
+	/* Check that the pool is registered */
+	if (!g_list_find(cert_pools, pool)) {
+		purple_debug_warning("certificate",
+				     "Pool to unregister isn't registered!\n");
+
+		return FALSE;
+	}
+
+	/* Uninit the pool if needed */
+	if (pool->uninit) {
+		pool->uninit();
+	}
+
+	cert_pools = g_list_remove(cert_pools, pool);
+	
+	/* TODO: Signalling? */
+		
 	return TRUE;
 }

@@ -126,7 +126,7 @@ irssi_new_window(GntWM *wm, GntWidget *win)
 	int x, y, w, h;
 
 	name = gnt_widget_get_name(win);
-	if (!name || strcmp(name, "conversation-window")) {
+	if (!name || !strstr(name, "conversation-window")) {
 		if (!GNT_IS_MENU(win) && !GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT)) {
 			if ((!name || strcmp(name, "buddylist"))) {
 				gnt_widget_get_size(win, &w, &h);
@@ -191,7 +191,7 @@ irssi_update_window(GntWM *wm, GntNode *node)
 {
 	GntWidget *win = node->me;
 	const char *name = gnt_widget_get_name(win);
-	if (!name || !GNT_IS_BOX(win) || strcmp(name, "conversation-window"))
+	if (!name || !GNT_IS_BOX(win) || !strstr(name, "conversation-window"))
 		return;
 	g_object_set_data(G_OBJECT(win), "irssi-index", GINT_TO_POINTER(g_list_index(wm->cws->list, win)));
 	g_timeout_add(0, (GSourceFunc)update_conv_window_title, node);
@@ -248,6 +248,12 @@ move_direction(GntBindable *bindable, GList *list)
 }
 
 static void
+irssi_terminal_refresh(GntWM *wm)
+{
+	draw_line_separators((Irssi*)wm);
+}
+
+static void
 irssi_class_init(IrssiClass *klass)
 {
 	GntWMClass *pclass = GNT_WM_CLASS(klass);
@@ -258,6 +264,7 @@ irssi_class_init(IrssiClass *klass)
 	pclass->window_resized = irssi_window_resized;
 	pclass->close_window = irssi_close_window;
 	pclass->window_update = irssi_update_window;
+	pclass->terminal_refresh = irssi_terminal_refresh;
 
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "move-up", move_direction,
 			"\033" "K", GINT_TO_POINTER('k'), NULL);
@@ -274,17 +281,19 @@ irssi_class_init(IrssiClass *klass)
 
 void gntwm_init(GntWM **wm)
 {
-	const char *style = NULL;
+	char *style = NULL;
 	Irssi *irssi;
 
 	irssi = g_object_new(TYPE_IRSSI, NULL);
 	*wm = GNT_WM(irssi);
 
-	style = gnt_style_get_from_name("irssi-split-v");
+	style = gnt_style_get_from_name("irssi", "split-v");
 	irssi->vert = style ? atoi(style) : 1;
+	g_free(style);
 
-	style = gnt_style_get_from_name("irssi-split-h");
+	style = gnt_style_get_from_name("irssi", "split-h");
 	irssi->horiz = style ? atoi(style) : 1;
+	g_free(style);
 
 	irssi->vert = MAX(irssi->vert, 1);
 	irssi->horiz = MAX(irssi->horiz, 1);

@@ -494,14 +494,7 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 	js = gc->proto_data;
 	js->gsc = NULL;
 
-	switch(error) {
-		case PURPLE_SSL_CONNECT_FAILED:
-			purple_connection_error(gc, _("Connection Failed"));
-			break;
-		case PURPLE_SSL_HANDSHAKE_FAILED:
-			purple_connection_error(gc, _("SSL Handshake Failed"));
-			break;
-	}
+	purple_connection_error(gc, purple_ssl_strerror(error));
 }
 
 static void tls_init(JabberStream *js)
@@ -1367,11 +1360,13 @@ static void jabber_password_change(PurplePluginAction *action)
 	field = purple_request_field_string_new("password1", _("Password"),
 			"", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("password2", _("Password (again)"),
 			"", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(js->gc, _("Change XMPP Password"),

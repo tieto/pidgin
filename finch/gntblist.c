@@ -1260,7 +1260,7 @@ draw_context_menu(FinchBlist *ggblist)
 }
 
 static void
-tooltip_for_buddy(PurpleBuddy *buddy, GString *str)
+tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 {
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
@@ -1273,7 +1273,7 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str)
 
 	account = purple_buddy_get_account(buddy);
 
-	if (g_utf8_collate(purple_buddy_get_name(buddy), alias))
+	if (!full || g_utf8_collate(purple_buddy_get_name(buddy), alias))
 		purple_notify_user_info_add_pair(user_info, _("Nickname"), alias);
 
 	tmp = g_strdup_printf("%s (%s)",
@@ -1285,7 +1285,7 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str)
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	if (prpl_info && prpl_info->tooltip_text) {
-		prpl_info->tooltip_text(buddy, user_info, TRUE);
+		prpl_info->tooltip_text(buddy, user_info, full);
 	}
 
 	if (purple_prefs_get_bool("/finch/blist/idletime")) {
@@ -1357,7 +1357,7 @@ draw_tooltip_real(FinchBlist *ggblist)
 		const char *name = purple_buddy_get_name(pr);
 
 		title = g_strdup(name);
-		tooltip_for_buddy(pr, str);
+		tooltip_for_buddy(pr, str, TRUE);
 		for (node = node->child; node; node = node->next) {
 			PurpleBuddy *buddy = (PurpleBuddy*)node;
 			if (offline) {
@@ -1372,11 +1372,11 @@ draw_tooltip_real(FinchBlist *ggblist)
 			if (!showoffline && !PURPLE_BUDDY_IS_ONLINE(buddy))
 				continue;
 			str = g_string_append(str, "\n----------\n");
-			tooltip_for_buddy(buddy, str);
+			tooltip_for_buddy(buddy, str, FALSE);
 		}
 	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		PurpleBuddy *buddy = (PurpleBuddy *)node;
-		tooltip_for_buddy(buddy, str);
+		tooltip_for_buddy(buddy, str, TRUE);
 		title = g_strdup(purple_buddy_get_name(buddy));
 		if (!PURPLE_BUDDY_IS_ONLINE((PurpleBuddy*)node))
 			lastseen = purple_blist_node_get_int(node, "last_seen");
@@ -1422,9 +1422,10 @@ draw_tooltip_real(FinchBlist *ggblist)
 
 	str = make_sure_text_fits(str);
 	gnt_util_get_text_bound(str->str, &w, &h);
-	h = MAX(2, h);
+	h = MAX(1, h);
 	tv = gnt_text_view_new();
 	gnt_widget_set_size(tv, w + 1, h);
+	gnt_text_view_set_flag(GNT_TEXT_VIEW(tv), GNT_TEXT_VIEW_NO_SCROLL);
 	gnt_box_add_widget(GNT_BOX(box), tv);
 
 	gnt_widget_set_position(box, x, y);
@@ -2249,8 +2250,10 @@ blist_show(PurpleBuddyList *list)
 {
 	if (ggblist == NULL)
 		new_list(list);
-	else if (ggblist->window)
+	else if (ggblist->window) {
+		gnt_window_present(ggblist->window);
 		return;
+	}
 
 	ggblist->window = gnt_vwindow_new(FALSE);
 	gnt_widget_set_name(ggblist->window, "buddylist");

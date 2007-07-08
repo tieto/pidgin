@@ -645,8 +645,10 @@ void finch_accounts_show_all()
 	GList *iter;
 	GntWidget *box, *button;
 
-	if (accounts.window)
+	if (accounts.window) {
+		gnt_window_present(accounts.window);
 		return;
+	}
 
 	accounts.window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(accounts.window), TRUE);

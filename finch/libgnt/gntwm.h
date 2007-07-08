@@ -1,4 +1,8 @@
 /**
+ * @file gntwm.h Window-manager API
+ * @ingroup gnt
+ */
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -165,10 +169,15 @@ struct _GntWMClass
 	 */
 	/*GList *(*window_list)();*/
 
+	/* This is invoked whenever the terminal window is resized, or the
+	 * screen session is attached to a new terminal. (ie, from the
+	 * SIGWINCH callback)
+	 */
+	void (*terminal_refresh)(GntWM *wm);
+
 	void (*res1)(void);
 	void (*res2)(void);
 	void (*res3)(void);
-	void (*res4)(void);
 };
 
 G_BEGIN_DECLS

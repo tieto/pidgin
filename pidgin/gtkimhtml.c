@@ -494,6 +494,8 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	GSList *tags = NULL, *templist = NULL;
 	GdkColor *norm, *pre;
 	GtkTextTag *tag = NULL, *oldprelit_tag;
+	GtkTextChildAnchor* anchor;
+	gboolean hand = TRUE;
 
 	oldprelit_tag = GTK_IMHTML(imhtml)->prelit_tag;
 
@@ -551,8 +553,15 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 		GTK_IMHTML(imhtml)->tip_timer = 0;
 	}
 
+	/* If we don't have a tip from a URL, let's see if we have a tip from a smiley */
+	anchor = gtk_text_iter_get_child_anchor(&iter);
+	if (anchor) {
+		tip = g_object_get_data(G_OBJECT(anchor), "gtkimhtml_plaintext");
+		hand = FALSE;
+	}
+
 	if (tip){
-		if (!GTK_IMHTML(imhtml)->editable)
+		if (!GTK_IMHTML(imhtml)->editable && hand)
 			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
 		GTK_IMHTML(imhtml)->tip_timer = g_timeout_add (TOOLTIP_TIMEOUT,
 							       gtk_imhtml_tip, imhtml);
@@ -1002,11 +1011,12 @@ static void imhtml_paste_insert(GtkIMHtml *imhtml, const char *text, gboolean pl
 		gtk_imhtml_close_tags(imhtml, &iter);
 
 	gtk_imhtml_insert_html_at_iter(imhtml, text, flags, &iter);
-	if (!imhtml->wbfo && !plaintext)
-		gtk_imhtml_close_tags(imhtml, &iter);
 	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &iter);
 	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(imhtml), gtk_text_buffer_get_insert(imhtml->text_buffer),
 	                             0, FALSE, 0.0, 0.0);
+	if (!imhtml->wbfo && !plaintext)
+		gtk_imhtml_close_tags(imhtml, &iter);
+
 }
 
 static void paste_plaintext_received_cb (GtkClipboard *clipboard, const gchar *text, gpointer data)
@@ -2152,7 +2162,7 @@ static int gtk_imhtml_is_protocol(const char *text)
 	gint i;
 
 	for(i=0; i<accepted_protocols_size; i++){
-		if( strncasecmp(text, accepted_protocols[i], strlen(accepted_protocols[i])) == 0  ){
+		if( g_ascii_strncasecmp(text, accepted_protocols[i], strlen(accepted_protocols[i])) == 0  ){
 			return strlen(accepted_protocols[i]);
 		}
 	}
@@ -2725,7 +2735,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						/* NEW_BIT (NEW_TEXT_BIT); */
 
 						/* Bi-Directional text support */
-						if (direction && (!strncasecmp(direction, "RTL", 3))) {
+						if (direction && (!g_ascii_strncasecmp(direction, "RTL", 3))) {
 							rtl_direction = TRUE;
 							/* insert RLE character to set direction */
 							ws[wpos++]  = 0xE2;
@@ -2737,7 +2747,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						}
 						g_free(direction);
 
-						if (alignment && (!strncasecmp(alignment, "RIGHT", 5))) {
+						if (alignment && (!g_ascii_strncasecmp(alignment, "RIGHT", 5))) {
 							align_right = TRUE;
 							align_line = gtk_text_iter_get_line(iter);
 						}
@@ -4620,6 +4630,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 			GtkWidget *img = gtk_image_new_from_stock(GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_MENU);
 			gtk_container_add(GTK_CONTAINER(ebox), img);
 			gtk_widget_show(img);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(unescaped), g_free);
 			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), ebox, anchor);
 		}
 	} else {
@@ -4938,9 +4949,6 @@ void gtk_imhtml_close_tags(GtkIMHtml *imhtml, GtkTextIter *iter)
 
 	if (imhtml->edit.link)
 		gtk_imhtml_toggle_link(imhtml, NULL);
-
-	gtk_text_buffer_remove_all_tags(imhtml->text_buffer, iter, iter);
-
 }
 
 char *gtk_imhtml_get_markup(GtkIMHtml *imhtml)
