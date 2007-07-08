@@ -513,7 +513,7 @@ x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
 				     NULL, /* Provide no buffer yet */
 				     &out_size /* Put size here */
 		);
-	g_return_val_if_fail(ret == 0, FALSE);
+	g_return_val_if_fail(ret == GNUTLS_E_SHORT_MEMORY_BUFFER, FALSE);
 
 	/* Now allocate a buffer and *really* export it */
 	out_buf = g_new0(gchar, out_size);
