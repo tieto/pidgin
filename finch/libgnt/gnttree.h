@@ -51,6 +51,7 @@ typedef enum {
 	GNT_TREE_COLUMN_INVISIBLE    = 1 << 0,
 	GNT_TREE_COLUMN_FIXED_SIZE   = 1 << 1,
 	GNT_TREE_COLUMN_BINARY_DATA  = 1 << 2,
+	GNT_TREE_COLUMN_RIGHT_ALIGNED = 1 << 3,
 } GntTreeColumnFlag;
 
 struct _GntTree
@@ -86,6 +87,7 @@ struct _GntTree
 	int search_timeout;
 
 	GCompareFunc compare;
+	int lastvisible;
 };
 
 struct _GntTreeClass
@@ -478,6 +480,15 @@ void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res);
  * @param bin   @c TRUE if the data for the column is binary
  */
 void gnt_tree_set_column_is_binary(GntTree *tree, int col, gboolean bin);
+
+/**
+ * Set whether text in a column should be right-aligned.
+ *
+ * @param tree  The tree
+ * @param col   The index of the column
+ * @param right @c TRUE if the text in the column should be right aligned
+ */
+void gnt_tree_set_column_is_right_aligned(GntTree *tree, int col, gboolean right);
 
 /**
  * Set column widths to use when calculating column widths after a tree

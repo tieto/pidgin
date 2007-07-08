@@ -93,8 +93,9 @@
 #include <langinfo.h>
 #endif
 
+#include <gmodule.h>
+
 #ifdef PURPLE_PLUGINS
-# include <gmodule.h>
 # ifndef _WIN32
 #  include <dlfcn.h>
 # endif

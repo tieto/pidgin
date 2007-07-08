@@ -28,8 +28,8 @@
 #include <config.h>
 #endif
 
-#include "pidgin.h"
 #include "internal.h"
+#include "pidgin.h"
 
 #include "debug.h"
 #include "util.h"

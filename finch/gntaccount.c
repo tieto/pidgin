@@ -472,6 +472,14 @@ edit_account(PurpleAccount *account)
 		}
 	}
 
+	list = purple_plugins_get_protocols();
+	if (list == NULL) {
+		purple_notify_error(NULL, _("Error"),
+				_("There's no protocol plugins installed."),
+				_("(You probably forgot to 'make install'.)"));
+		return;
+	}
+
 	dialog = g_new0(AccountEditDialog, 1);
 	accountdialogs = g_list_prepend(accountdialogs, dialog);
 
@@ -489,7 +497,6 @@ edit_account(PurpleAccount *account)
 	gnt_box_add_widget(GNT_BOX(window), hbox);
 
 	dialog->protocol = combo = gnt_combo_box_new();
-	list = purple_plugins_get_protocols();
 	for (iter = list; iter; iter = iter->next)
 	{
 		gnt_combo_box_add_data(GNT_COMBO_BOX(combo), iter->data,

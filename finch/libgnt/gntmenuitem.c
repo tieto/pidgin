@@ -104,3 +104,13 @@ void gnt_menuitem_set_submenu(GntMenuItem *item, GntMenu *menu)
 	item->submenu = menu;
 }
 
+void gnt_menuitem_set_trigger(GntMenuItem *item, char trigger)
+{
+	item->priv.trigger = trigger;
+}
+
+char gnt_menuitem_get_trigger(GntMenuItem *item)
+{
+	return item->priv.trigger;
+}
+

@@ -2183,6 +2183,7 @@ void
 purple_accounts_delete(PurpleAccount *account)
 {
 	PurpleBlistNode *gnode, *cnode, *bnode;
+	GList *iter;
 
 	g_return_if_fail(account != NULL);
 
@@ -2229,6 +2230,14 @@ purple_accounts_delete(PurpleAccount *account)
 			}
 			cnode = cnode_next;
 		}
+	}
+
+	/* Remove any open conversation for this account */
+	for (iter = purple_get_conversations(); iter; ) {
+		PurpleConversation *conv = iter->data;
+		iter = iter->next;
+		if (purple_conversation_get_account(conv) == account)
+			purple_conversation_destroy(conv);
 	}
 
 	/* Remove this account's pounces */
