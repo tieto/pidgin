@@ -310,7 +310,7 @@ struct _PurpleCertificateVerificationRequest
 };
 
 /*****************************************************************************/
-/** @name PurpleCertificate API                                              */
+/** @name Certificate Verification Functions                                 */
 /*****************************************************************************/
 /*@{*/
 
@@ -350,6 +350,13 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
  */
 void
 purple_certificate_verify_destroy (PurpleCertificateVerificationRequest *vrq);
+
+/*@}*/
+
+/*****************************************************************************/
+/** @name Certificate Functions                                              */
+/*****************************************************************************/
+/*@{*/
 
 /**
  * Destroys and free()'s a Certificate
@@ -412,6 +419,12 @@ purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt);
 gchar *
 purple_certificate_get_subject_name(PurpleCertificate *crt);
 
+/*@}*/
+
+/*****************************************************************************/
+/** @name Certificate Pool Functions                                         */
+/*****************************************************************************/
+/*@{*/
 /**
  * Helper function for generating file paths in ~/.purple/certificates for
  * CertificatePools that use them.
@@ -428,7 +441,7 @@ purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id);
 /*@}*/
 
 /*****************************************************************************/
-/** @name PurpleCertificate Subsystem API                                    */
+/** @name Certificate Subsystem API                                          */
 /*****************************************************************************/
 /*@{*/
 
