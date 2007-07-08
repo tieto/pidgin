@@ -433,6 +433,28 @@ static PurpleCertificatePool x509_tls_peers = {
 static PurpleCertificateVerifier x509_tls_cached;
 
 static void
+x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
+{
+	/* TODO: Prompt the user, etc. */
+
+	(vrq->cb)(PURPLE_CERTIFICATE_INVALID, vrq->cb_data);
+	/* Okay, we're done here */
+	purple_certificate_verify_destroy(vrq);
+	return;
+}
+
+static void
+x509_tls_cached_peer_cert_changed(PurpleCertificateVerificationRequest *vrq)
+{
+	/* TODO: Prompt the user, etc. */
+
+	(vrq->cb)(PURPLE_CERTIFICATE_INVALID, vrq->cb_data);
+	/* Okay, we're done here */
+	purple_certificate_verify_destroy(vrq);
+	return;
+}
+
+static void
 x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 {
 	PurpleCertificate *peer_crt = (PurpleCertificate *) vrq->cert_chain->data;
@@ -481,18 +503,13 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 					  "Peer cert matched cached\n");
 			(vrq->cb)(PURPLE_CERTIFICATE_VALID, vrq->cb_data);
 
-			/* Okay, we're done here */
+			/* vrq is now finished */
 			purple_certificate_verify_destroy(vrq);
-			return;
 		} else {
 			purple_debug_info("certificate/x509/tls_cached",
 					  "Peer cert did NOT match cached\n");
-			/* TODO: Prompt the user, etc. */
-
-			(vrq->cb)(PURPLE_CERTIFICATE_INVALID, vrq->cb_data);
-			/* Okay, we're done here */
-			purple_certificate_verify_destroy(vrq);
-			return;
+			/* vrq now becomes the problem of cert_changed */
+			x509_tls_cached_peer_cert_changed(vrq);
 		}
 
 		purple_certificate_destroy(cached_crt);
@@ -502,11 +519,8 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 		/* TODO: Prompt the user, etc. */
 		purple_debug_info("certificate/x509/tls_cached",
 				  "...Not in cache\n");
-
-		(vrq->cb)(PURPLE_CERTIFICATE_INVALID, vrq->cb_data);
-		/* Okay, we're done here */
-		purple_certificate_verify_destroy(vrq);
-		return;	
+		/* vrq now becomes the problem of unknown_peer */
+		x509_tls_cached_unknown_peer(vrq);
 	}
 }
 
