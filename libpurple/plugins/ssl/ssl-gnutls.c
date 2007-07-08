@@ -509,6 +509,7 @@ x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
 	crt_dat = *( (gnutls_x509_crt_t *) crt->data);
 
 	/* Obtain the output size required */
+	out_size = 0;
 	ret = gnutls_x509_crt_export(crt_dat, GNUTLS_X509_FMT_PEM,
 				     NULL, /* Provide no buffer yet */
 				     &out_size /* Put size here */
