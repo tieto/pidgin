@@ -118,6 +118,9 @@ purple_ssl_connect(PurpleAccount *account, const char *host, int port,
 	gsc->connect_cb      = func;
 	gsc->error_cb        = error_func;
 
+	/* TODO: Move this elsewhere */
+	gsc->verifier = purple_certificate_find_verifier("x509","tls_cached");
+
 	gsc->connect_data = purple_proxy_connect(NULL, account, host, port, purple_ssl_connect_cb, gsc);
 
 	if (gsc->connect_data == NULL)
@@ -206,6 +209,10 @@ purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
     if(host)
         gsc->host            = g_strdup(host);
 
+	/* TODO: Move this elsewhere */
+	gsc->verifier = purple_certificate_find_verifier("x509","tls_cached");
+
+    
 	ops = purple_ssl_get_ops();
 	ops->connectfunc(gsc);
 
