@@ -224,6 +224,12 @@ struct _PurpleCertificateScheme
 	 * @return Newly allocated string with the certificate subject.
 	 */
 	gchar * (* get_subject_name)(PurpleCertificate *crt);
+
+	/** Retrieve the certificate activation time */
+	time_t (* get_activation_time)(PurpleCertificate *crt);
+	/** Retrieve the expiration time */
+	time_t (* get_expiration_time)(PurpleCertificate *crt);
+	
 	/* TODO: Fill out this structure */
 };
 

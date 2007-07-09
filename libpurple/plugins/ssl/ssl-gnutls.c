@@ -723,7 +723,9 @@ static PurpleCertificateScheme x509_gnutls = {
 	NULL,                            /* Subject */
 	NULL,                            /* Unique ID */
 	NULL,                            /* Issuer Unique ID */
-	x509_common_name                 /* Subject name */
+	x509_common_name,                /* Subject name */
+	NULL,                            /* Activation time */
+	NULL                             /* Expiration time */
 };
 
 static PurpleSslOps ssl_ops =
