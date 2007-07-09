@@ -711,6 +711,24 @@ x509_common_name (PurpleCertificate *crt)
 	return cn;
 }
 
+static gboolean
+x509_check_name (PurpleCertificate *crt, const gchar *name)
+{
+	gnutls_x509_crt_t crt_dat;
+
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_gnutls, FALSE);
+	g_return_val_if_fail(name, FALSE);
+
+	crt_dat = *( (gnutls_x509_crt_t *) crt->data );
+
+	if (gnutls_x509_crt_check_hostname(crt_dat, name)) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
+
 /* X.509 certificate operations provided by this plugin */
 /* TODO: Flesh this out! */
 static PurpleCertificateScheme x509_gnutls = {
@@ -723,6 +741,7 @@ static PurpleCertificateScheme x509_gnutls = {
 	NULL,                            /* Unique ID */
 	NULL,                            /* Issuer Unique ID */
 	x509_common_name,                /* Subject name */
+	x509_check_name,                 /* Check subject name */
 	NULL,                            /* Activation time */
 	NULL                             /* Expiration time */
 };

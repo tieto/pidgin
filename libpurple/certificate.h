@@ -213,6 +213,13 @@ struct _PurpleCertificateScheme
 	 */
 	gchar * (* get_subject_name)(PurpleCertificate *crt);
 
+	/**
+	 * Check the subject name against that on the certificate
+	 * @see purple_certificate_check_subject_name()
+	 * @return TRUE if it is a match, else FALSE
+	 */
+	gboolean (* check_subject_name)(PurpleCertificate *crt, const gchar *name);
+
 	/** Retrieve the certificate activation time */
 	time_t (* get_activation_time)(PurpleCertificate *crt);
 	/** Retrieve the expiration time */
@@ -412,6 +419,16 @@ purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt);
  */
 gchar *
 purple_certificate_get_subject_name(PurpleCertificate *crt);
+
+/**
+ * Check the subject name against that on the certificate
+ * @param crt   Certificate instance
+ * @param name  Name to check. 
+ * @return TRUE if it is a match, else FALSE
+ */
+gboolean
+purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name);
+
 
 /*@}*/
 

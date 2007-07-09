@@ -186,6 +186,24 @@ purple_certificate_get_subject_name(PurpleCertificate *crt)
 	return subject_name;
 }
 
+gboolean
+purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name)
+{
+	PurpleCertificateScheme *scheme;
+
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme, FALSE);
+	g_return_val_if_fail(name, FALSE);
+
+	scheme = crt->scheme;
+
+	/* TODO: Instead of failing, maybe use get_subject_name and strcmp? */
+	g_return_val_if_fail(scheme->check_subject_name, FALSE);
+
+	return (scheme->check_subject_name)(crt, name);
+}
+
+
 gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 {
@@ -481,8 +499,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	cn = purple_certificate_get_subject_name(crt);
 
 	/* Determine whether the name matches */
-	/* TODO: Worry about strcmp safety? */
-	if (!strcmp(cn, vrq->subject_name)) {
+	if (purple_certificate_check_subject_name(crt, vrq->subject_name)) {
 		cn_match = _("");
 	} else {
 		cn_match = _("(DOES NOT MATCH)");
