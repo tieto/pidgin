@@ -65,6 +65,7 @@
  */
 
 static GIOChannel *channel = NULL;
+static int channel_read_callback;
 
 static gboolean ascii_only;
 static gboolean mouse_enabled;
@@ -220,8 +221,13 @@ static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
 	char keys[256];
-	int rd = read(STDIN_FILENO, keys + HOLDING_ESCAPE, sizeof(keys) - 1 - HOLDING_ESCAPE);
+	int rd;
 	char *k;
+
+	if (wm->mode == GNT_KP_MODE_WAIT_ON_CHILD)
+		return FALSE;
+
+	rd = read(STDIN_FILENO, keys + HOLDING_ESCAPE, sizeof(keys) - 1 - HOLDING_ESCAPE);
 	if (rd < 0)
 	{
 		int ch = getch(); /* This should return ERR, but let's see what it really returns */
@@ -288,7 +294,7 @@ setup_io()
 	g_io_channel_set_flags(channel, G_IO_FLAG_NONBLOCK, NULL );
 #endif
 
-	result = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
+	channel_read_callback = result = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
 					(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI),
 					io_invoke, NULL, NULL);
 	
@@ -345,6 +351,14 @@ ask_before_exit()
 {
 	static GntWidget *win = NULL;
 	GntWidget *bbox, *button;
+
+	if (wm->menu) {
+		do {
+			gnt_widget_hide(GNT_WIDGET(wm->menu));
+			if (wm->menu)
+				wm->menu = wm->menu->parentmenu;
+		} while (wm->menu);
+	}
 
 	if (win)
 		goto raise;
@@ -622,7 +636,51 @@ GntClipboard *gnt_get_clipboard()
 {
 	return clipboard;
 }
+
 gchar *gnt_get_clipboard_string()
 {
 	return gnt_clipboard_get_string(clipboard);
 }
+
+#if GLIB_CHECK_VERSION(2,4,0)
+static void
+reap_child(GPid pid, gint status, gpointer data)
+{
+	wm->mode = GNT_KP_MODE_NORMAL;
+	clear();
+	setup_io();
+	refresh_screen();
+}
+#endif
+
+gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
+		gint *stin, gint *stout, gint *sterr)
+{
+#if GLIB_CHECK_VERSION(2,4,0)
+	GPid pid = 0;
+
+	if (!g_spawn_async_with_pipes(wd, argv, envp,
+			G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
+			(GSpawnChildSetupFunc)endwin, NULL,
+			&pid, stin, stout, sterr, NULL))
+		return FALSE;
+
+	g_source_remove(channel_read_callback);
+	wm->mode = GNT_KP_MODE_WAIT_ON_CHILD;
+	g_child_watch_add(pid, reap_child, NULL);
+
+	return TRUE;
+#else
+	return FALSE;
+#endif
+}
+
+gboolean gnt_is_refugee()
+{
+#if GLIB_CHECK_VERSION(2,4,0)
+	return (wm && wm->mode == GNT_KP_MODE_WAIT_ON_CHILD);
+#else
+	return FALSE;
+#endif
+}
+

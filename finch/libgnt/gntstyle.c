@@ -269,7 +269,8 @@ read_general_style(GKeyFile *kfile)
 {
 	GError *error = NULL;
 	gsize nkeys;
-	char **keys = g_key_file_get_keys(kfile, "general", &nkeys, &error);
+	const char *prgname = g_get_prgname();
+	char **keys = NULL;
 	int i;
 	struct
 	{
@@ -282,6 +283,14 @@ read_general_style(GKeyFile *kfile)
 	              {"remember_position", GNT_STYLE_REMPOS},
 	              {NULL, 0}};
 
+	if (prgname && *prgname)
+		keys = g_key_file_get_keys(kfile, prgname, &nkeys, NULL);
+
+	if (keys == NULL) {
+		prgname = "general";
+		keys = g_key_file_get_keys(kfile, prgname, &nkeys, &error);
+	}
+
 	if (error)
 	{
 		g_printerr("GntStyle: %s\n", error->message);
@@ -292,7 +301,7 @@ read_general_style(GKeyFile *kfile)
 		for (i = 0; styles[i].style; i++)
 		{
 			str_styles[styles[i].en] =
-					g_key_file_get_string(kfile, "general", styles[i].style, NULL);
+					g_key_file_get_string(kfile, prgname, styles[i].style, NULL);
 		}
 	}
 	g_strfreev(keys);

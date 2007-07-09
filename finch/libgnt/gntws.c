@@ -35,6 +35,9 @@ gnt_ws_draw_taskbar(GntWS *ws, gboolean reposition)
 	int n, width = 0;
 	int i;
 
+	if (gnt_is_refugee())
+		return;
+
 	if (taskbar == NULL) {
 		taskbar = newwin(1, getmaxx(stdscr), getmaxy(stdscr) - 1, 0);
 	} else if (reposition) {
@@ -114,11 +117,13 @@ gnt_ws_hide(GntWS *ws, GHashTable *nodes)
 	g_list_foreach(ws->ordered, widget_hide, nodes);
 }
 
-void gnt_ws_widget_hide(GntWidget *widget, GHashTable *nodes) {
+void gnt_ws_widget_hide(GntWidget *widget, GHashTable *nodes)
+{
 	widget_hide(widget, nodes);
 }
 
-void gnt_ws_widget_show(GntWidget *widget, GHashTable *nodes) {
+void gnt_ws_widget_show(GntWidget *widget, GHashTable *nodes)
+{
 	widget_show(widget, nodes);
 }
 

@@ -2873,7 +2873,11 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
+#if GTK_CHECK_VERSION(2,6,0)	
+	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<StockItem>", GTK_STOCK_ABOUT },
+#else
 	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<Item>", NULL },
+#endif
 };
 
 /*********************************************************
@@ -3413,13 +3417,16 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 			time_t idle_secs = purple_presence_get_idle_time(presence);
 
 			if (idle_secs > 0) {
-				int ihrs, imin;
+				int iday, ihrs, imin;
 
 				time(&t);
-				ihrs = (t - idle_secs) / 3600;
+				iday = (t - idle_secs) / (24 * 60 * 60);
+				ihrs = ((t - idle_secs) / 60 / 60) % 24;
 				imin = ((t - idle_secs) / 60) % 60;
 
-				if (ihrs)
+                if (iday)
+					idletime = g_strdup_printf(_("Idle %dd %dh %02dm"), iday, ihrs, imin);
+				else if (ihrs)
 					idletime = g_strdup_printf(_("Idle %dh %02dm"), ihrs, imin);
 				else
 					idletime = g_strdup_printf(_("Idle %dm"), imin);

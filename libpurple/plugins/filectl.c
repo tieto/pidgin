@@ -56,7 +56,7 @@ run_commands()
 		purple_debug_misc("filectl", "read: %s\n", buffer);
 		command = getarg(buffer, 0, 0);
 
-		if (!strncasecmp(command, "login", 6)) {
+		if (!g_ascii_strncasecmp(command, "login", 6)) {
 			PurpleAccount *account;
 
 			arg1 = getarg(buffer, 1, 0);
@@ -69,7 +69,7 @@ run_commands()
 			free(arg1);
 			free(arg2);
 
-		} else if (!strncasecmp(command, "logout", 7)) {
+		} else if (!g_ascii_strncasecmp(command, "logout", 7)) {
 			PurpleAccount *account;
 
 			arg1 = getarg(buffer, 1, 1);
@@ -88,7 +88,7 @@ run_commands()
 
 /* purple_find_conversation() is gone in 2.0.0. */
 #if 0
-		} else if (!strncasecmp(command, "send", 4)) {
+		} else if (!g_ascii_strncasecmp(command, "send", 4)) {
 			PurpleConversation *conv;
 
 			arg1 = getarg(buffer, 1, 0);
@@ -107,21 +107,21 @@ run_commands()
 			free(arg2);
 #endif
 
-		} else if (!strncasecmp(command, "away", 4)) {
+		} else if (!g_ascii_strncasecmp(command, "away", 4)) {
 			arg1 = getarg(buffer, 1, 1);
 			/* serv_set_away_all(arg1); */
 			free(arg1);
 
-		} else if (!strncasecmp(command, "hide", 4)) {
+		} else if (!g_ascii_strncasecmp(command, "hide", 4)) {
 			purple_blist_set_visible(FALSE);
 
-		} else if (!strncasecmp(command, "unhide", 6)) {
+		} else if (!g_ascii_strncasecmp(command, "unhide", 6)) {
 			purple_blist_set_visible(TRUE);
 
-		} else if (!strncasecmp(command, "back", 4)) {
+		} else if (!g_ascii_strncasecmp(command, "back", 4)) {
 			/* do_im_back(); */
 
-		} else if (!strncasecmp(command, "quit", 4)) {
+		} else if (!g_ascii_strncasecmp(command, "quit", 4)) {
 			purple_core_quit();
 
 		}

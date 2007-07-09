@@ -61,6 +61,7 @@ enum
 	SIG_GIVE_FOCUS,
 	SIG_KEY_PRESS,
 	SIG_MOUSE_CLICK,
+	SIG_TERMINAL_REFRESH,
 	SIGS
 };
 
@@ -203,6 +204,9 @@ update_act_msg()
 static gboolean
 update_screen(GntWM *wm)
 {
+	if (wm->mode == GNT_KP_MODE_WAIT_ON_CHILD)
+		return TRUE;
+
 	if (wm->menu) {
 		GntMenu *top = wm->menu;
 		while (top) {
@@ -376,13 +380,7 @@ switch_window(GntWM *wm, int direction)
 	else if (pos >= 0)
 		wid = g_list_nth_data(wm->cws->list, pos);
 
-	wm->cws->ordered = g_list_bring_to_front(wm->cws->ordered, wid);
-
-	gnt_wm_raise_window(wm, wm->cws->ordered->data);
-
-	if (w != wid) {
-		gnt_widget_set_focus(w, FALSE);
-	}
+	gnt_wm_raise_window(wm, wid);
 }
 
 static gboolean
@@ -405,7 +403,6 @@ static gboolean
 switch_window_n(GntBindable *bind, GList *list)
 {
 	GntWM *wm = GNT_WM(bind);
-	GntWidget *w = NULL;
 	GList *l;
 	int n;
 
@@ -417,17 +414,11 @@ switch_window_n(GntBindable *bind, GList *list)
 	else
 		n = 0;
 
-	w = wm->cws->ordered->data;
-
 	if ((l = g_list_nth(wm->cws->list, n)) != NULL)
 	{
 		gnt_wm_raise_window(wm, l->data);
 	}
 
-	if (l && w != l->data)
-	{
-		gnt_widget_set_focus(w, FALSE);
-	}
 	return TRUE;
 }
 
@@ -1031,11 +1022,13 @@ refresh_screen(GntBindable *bindable, GList *null)
 	endwin();
 
 	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_node, NULL);
+	refresh();
+	g_signal_emit(wm, signals[SIG_TERMINAL_REFRESH], 0);
 	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, TRUE);
 	curs_set(0);   /* endwin resets the cursor to normal */
 
-	return FALSE;
+	return TRUE;
 }
 
 static gboolean
@@ -1238,6 +1231,15 @@ gnt_wm_class_init(GntWMClass *klass)
 					 gnt_closure_marshal_BOOLEAN__INT_INT_INT_POINTER,
 					 G_TYPE_BOOLEAN, 4, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_POINTER);
 
+	signals[SIG_TERMINAL_REFRESH] = 
+		g_signal_new("terminal-refresh",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(GntWMClass, terminal_refresh),
+					 NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
+
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-next", window_next,
 				"\033" "n", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-prev", window_prev,
@@ -1350,7 +1352,6 @@ gnt_wm_switch_workspace(GntWM *wm, gint n)
 	gnt_ws_draw_taskbar(wm->cws, TRUE);
 	update_screen(wm);
 	if (wm->cws->ordered) {
-		gnt_widget_set_focus(wm->cws->ordered->data, TRUE);
 		gnt_wm_raise_window(wm, wm->cws->ordered->data);
 	}
 
@@ -1561,29 +1562,16 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 	if (!transient) {
 		GntWS *ws = wm->cws;
 		if (node->me != wm->_list.window) {
-			GntWidget *w = NULL;
-
 			if (GNT_IS_BOX(widget)) {
 				ws = new_widget_find_workspace(wm, widget);
 			}
-
-			if (ws->ordered)
-				w = ws->ordered->data;
-
 			node->ws = ws;
 			ws->list = g_list_append(ws->list, widget);
-
-			if (wm->event_stack)
-				ws->ordered = g_list_prepend(ws->ordered, widget);
-			else
-				ws->ordered = g_list_append(ws->ordered, widget);
-
-			gnt_widget_set_focus(widget, TRUE);
-			if (w)
-				gnt_widget_set_focus(w, FALSE);
+			ws->ordered = g_list_append(ws->ordered, widget);
 		}
 
-		if (wm->event_stack || node->me == wm->_list.window) {
+		if (wm->event_stack || node->me == wm->_list.window ||
+				node->me == ws->ordered->data) {
 			gnt_wm_raise_window(wm, node->me);
 		} else {
 			bottom_panel(node->panel);     /* New windows should not grab focus */
@@ -1964,6 +1952,14 @@ void gnt_wm_raise_window(GntWM *wm, GntWidget *widget)
 	GntWS *ws = gnt_wm_widget_find_workspace(wm, widget);
 	if (wm->cws != ws)
 		gnt_wm_switch_workspace(wm, g_list_index(wm->workspaces, ws));
+	if (widget != wm->cws->ordered->data) {
+		GntWidget *wid = wm->cws->ordered->data;
+		wm->cws->ordered = g_list_bring_to_front(wm->cws->ordered, widget);
+		gnt_widget_set_focus(wid, FALSE);
+		gnt_widget_draw(wid);
+	}
+	gnt_widget_set_focus(widget, TRUE);
+	gnt_widget_draw(widget);
 	g_signal_emit(wm, signals[SIG_GIVE_FOCUS], 0, widget);
 }
 

@@ -2406,9 +2406,6 @@ redraw_icon(gpointer data)
 		return FALSE;
 	}
 
-	gtkconv->auto_resize = TRUE;
-	g_idle_add(reset_auto_resize_cb, gtkconv);
-
 	gdk_pixbuf_animation_iter_advance(gtkconv->u.im->iter, NULL);
 	buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
 
@@ -4256,7 +4253,7 @@ static void resize_imhtml_cb(PidginConversation *gtkconv)
 	if (sr.height < height + PIDGIN_HIG_BOX_SPACE) {
 		gtkconv->auto_resize = TRUE;
 		gtkconv->entry_growing = TRUE;
-	        gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height + PIDGIN_HIG_BOX_SPACE);
+	        gtk_widget_set_size_request(gtkconv->entry, -1, height);
 	        g_idle_add(reset_auto_resize_cb, gtkconv);
 	}
 }
@@ -4860,8 +4857,14 @@ pidgin_conv_destroy(PurpleConversation *conv)
 
 	gtkconv->convs = g_list_remove(gtkconv->convs, conv);
 	/* Don't destroy ourselves until all our convos are gone */
-	if (gtkconv->convs)
+	if (gtkconv->convs) {
+		/* Make sure the destroyed conversation is not the active one */
+		if (gtkconv->active_conv == conv) {
+			gtkconv->active_conv = gtkconv->convs->data;
+			purple_conversation_update(gtkconv->active_conv, PURPLE_CONV_UPDATE_FEATURES);
+		}
 		return;
+	}
 
 	pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
 
@@ -8330,6 +8333,9 @@ pidgin_conv_window_new()
 #ifdef _WIN32
 	g_signal_connect(G_OBJECT(win->window), "show",
 	                 G_CALLBACK(winpidgin_ensure_onscreen), win->window);
+
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/win32/minimize_new_convs"))
+		gtk_window_iconify(GTK_WINDOW(win->window));
 #endif
 
 	return win;

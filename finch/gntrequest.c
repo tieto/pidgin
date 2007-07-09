@@ -42,6 +42,7 @@ typedef struct
 	void *user_data;
 	GntWidget *dialog;
 	GCallback *cbs;
+	gboolean save;
 } PurpleGntFileRequest;
 
 static GntWidget *
@@ -581,7 +582,7 @@ finch_request_fields(const char *title, const char *primary,
 }
 
 static void
-file_cancel_cb(GntWidget *wid, gpointer fq)
+file_cancel_cb(gpointer fq, GntWidget *wid)
 {
 	PurpleGntFileRequest *data = fq;
 	if (data->cbs[1] != NULL)
@@ -591,13 +592,17 @@ file_cancel_cb(GntWidget *wid, gpointer fq)
 }
 
 static void
-file_ok_cb(GntWidget *wid, gpointer fq)
+file_ok_cb(gpointer fq, GntWidget *widget)
 {
 	PurpleGntFileRequest *data = fq;
 	char *file = gnt_file_sel_get_selected_file(GNT_FILE_SEL(data->dialog));
+	char *dir = g_path_get_dirname(file);
 	if (data->cbs[0] != NULL)
 		((PurpleRequestFileCb)data->cbs[0])(data->user_data, file);
 	g_free(file);
+	purple_prefs_set_path(data->save ? "/finch/filelocations/last_save_folder" :
+			"/finch/filelocations/last_open_folder", dir);
+	g_free(dir);
 
 	purple_request_close(PURPLE_REQUEST_FILE, data->dialog);
 }
@@ -619,23 +624,34 @@ finch_request_file(const char *title, const char *filename,
 	GntWidget *window = gnt_file_sel_new();
 	GntFileSel *sel = GNT_FILE_SEL(window);
 	PurpleGntFileRequest *data = g_new0(PurpleGntFileRequest, 1);
+	const char *path;
 
 	data->user_data = user_data;
 	data->cbs = g_new0(GCallback, 2);
 	data->cbs[0] = ok_cb;
 	data->cbs[1] = cancel_cb;
 	data->dialog = window;
+	data->save = savedialog;
 	gnt_box_set_title(GNT_BOX(window), title ? title : (savedialog ? _("Save File...") : _("Open File...")));
-	gnt_file_sel_set_current_location(sel, purple_home_dir());  /* XXX: */
+
+	path = purple_prefs_get_path(savedialog ? "/finch/filelocations/last_save_folder" : "/finch/filelocations/last_open_folder");
+	gnt_file_sel_set_current_location(sel, (path && *path) ? path : purple_home_dir());
+
 	if (savedialog)
 		gnt_file_sel_set_suggested_filename(sel, filename);
-	g_signal_connect(G_OBJECT(sel->cancel), "activate",
-			G_CALLBACK(file_cancel_cb), data);
-	g_signal_connect(G_OBJECT(sel->select), "activate",
-			G_CALLBACK(file_ok_cb), data);
-	g_signal_connect_swapped(G_OBJECT(window), "destroy",
-			G_CALLBACK(file_request_destroy), data);
 
+	g_signal_connect(G_OBJECT(sel->cancel), "activate",
+			G_CALLBACK(action_performed), window);
+	g_signal_connect(G_OBJECT(sel->select), "activate",
+			G_CALLBACK(action_performed), window);
+	g_signal_connect_swapped(G_OBJECT(sel->cancel), "activate",
+			G_CALLBACK(file_cancel_cb), data);
+	g_signal_connect_swapped(G_OBJECT(sel->select), "activate",
+			G_CALLBACK(file_ok_cb), data);
+
+	setup_default_callback(window, file_cancel_cb, data);
+	g_object_set_data_full(G_OBJECT(window), "filerequestdata", data,
+			(GDestroyNotify)file_request_destroy);
 	gnt_widget_show(window);
 
 	return window;

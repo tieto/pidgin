@@ -184,6 +184,13 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget);
 
 /**
+ * 
+ * @param view
+ * @param widget
+ */
+void gnt_text_view_attach_pager_widget(GntTextView *view, GntWidget *pager);
+
+/**
  * Set a GntTextViewFlag for the textview widget.
  *
  * @param view  The textview widget
