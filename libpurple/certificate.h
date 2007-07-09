@@ -440,11 +440,11 @@ purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name)
  * Helper function for generating file paths in ~/.purple/certificates for
  * CertificatePools that use them.
  *
- * @todo Passing in filesystem-unfriendly characters will cause breakage!
  * @param pool   CertificatePool to build a path for
  * @param id     Key to look up a Certificate by. May be NULL.
  * @return A newly allocated path of the form
- *         ~/.purple/certificates/scheme_name/pool_name/unique_id
+ *         ~/.purple/certificates/scheme_name/pool_name/unique_id, on which
+ *         purple_escape_filename() has been run.
  */
 gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id);

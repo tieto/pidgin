@@ -207,7 +207,7 @@ purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name)
 gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 {
-	gchar *path;
+	gchar *path, *path2;
 	
 	g_return_val_if_fail(pool, NULL);
 	g_return_val_if_fail(pool->scheme_name, NULL);
@@ -219,7 +219,11 @@ purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 				pool->name,
 				id,
 				NULL);
-	return path;
+
+	path2 = g_strdup(purple_escape_filename(path));
+	
+	g_free(path);
+	return path2;
 }
 
 gboolean
