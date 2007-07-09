@@ -720,7 +720,6 @@ static PurpleCertificateScheme x509_gnutls = {
 	x509_export_certificate,         /* Certificate export function */
 	x509_destroy_certificate,        /* Destroy cert */
 	x509_sha1sum,                    /* SHA1 fingerprint */
-	NULL,                            /* Subject */
 	NULL,                            /* Unique ID */
 	NULL,                            /* Issuer Unique ID */
 	x509_common_name,                /* Subject name */

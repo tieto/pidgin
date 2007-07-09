@@ -183,18 +183,6 @@ struct _PurpleCertificateScheme
 	GByteArray * (* get_fingerprint_sha1)(PurpleCertificate *crt);
 
 	/**
-	 * Reads "who the certificate is assigned to"
-	 *
-	 * For SSL X.509 certificates, this is something like
-	 * "gmail.com" or "jabber.org"
-	 *
-	 * @param crt   Certificate instance
-	 * @return Newly allocated string specifying "whose certificate this
-	 *         is"
-	 */
-	gchar * (* get_certificate_subject)(PurpleCertificate *crt);
-
-	/**
 	 * Retrieves a unique certificate identifier
 	 *
 	 * @param crt   Certificate instance
