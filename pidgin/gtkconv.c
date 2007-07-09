@@ -184,7 +184,6 @@ static gboolean color_is_visible(GdkColor foreground, GdkColor background, int c
 static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields);
 static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
-static gboolean infopane_release_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 
 static GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
@@ -4410,8 +4409,6 @@ setup_common_pane(PidginConversation *gtkconv)
 	                      GDK_BUTTON1_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event_box), "button_press_event",
 	                 G_CALLBACK(infopane_press_cb), gtkconv);
-	g_signal_connect(G_OBJECT(event_box), "button_release_event",
-	                 G_CALLBACK(infopane_release_cb), gtkconv);
 
 
 	gtkconv->infopane = gtk_cell_view_new();
@@ -7739,12 +7736,6 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		g_signal_connect(G_OBJECT(widget), "leave_notify_event",
 		                 G_CALLBACK(notebook_leave_cb), win);
 
-	return FALSE;
-}
-
-static gboolean
-infopane_release_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
-{
 	return FALSE;
 }
 
