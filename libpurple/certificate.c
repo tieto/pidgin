@@ -207,23 +207,29 @@ purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name)
 gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 {
-	gchar *path, *path2;
+	gchar *path;
+	gchar *esc_scheme_name, *esc_name, *esc_id;
 	
 	g_return_val_if_fail(pool, NULL);
 	g_return_val_if_fail(pool->scheme_name, NULL);
 	g_return_val_if_fail(pool->name, NULL);
 
+	/* Escape all the elements for filesystem-friendliness */
+	esc_scheme_name = g_strdup(purple_escape_filename(pool->scheme_name));
+	esc_name = g_strdup(purple_escape_filename(pool->name));
+	esc_id = g_strdup(purple_escape_filename(id));
+	
 	path = g_build_filename(purple_user_dir(),
 				"certificates", /* TODO: constantize this? */
-				pool->scheme_name,
-				pool->name,
-				id,
+				esc_scheme_name,
+				esc_name,
+				esc_id,
 				NULL);
 
-	path2 = g_strdup(purple_escape_filename(path));
-	
-	g_free(path);
-	return path2;
+	g_free(esc_scheme_name);
+	g_free(esc_name);
+	g_free(esc_id);
+	return path;
 }
 
 gboolean
