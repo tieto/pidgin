@@ -750,8 +750,7 @@ adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (!initial)
         {
-                purple_debug_info("--[","Initial ADL received\n");
-                msn_set_psm(cmdproc->session);
+                purple_debug_info("::","Initial ADL received\n");
                 msn_session_finish_login(cmdproc->session);
         }
 }
