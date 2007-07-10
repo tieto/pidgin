@@ -1353,6 +1353,7 @@ purple_prefs_get_children_names(const char *name)
 	for(child = node->child;child;child = child->next){
 		list = g_list_append(list,xmlnode_get_attrib(child,"name"));
 	}
+	xmlnode_free(node);
 	return list;
 
 }
