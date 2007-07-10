@@ -4,15 +4,15 @@
 
 # Package a new msimprpl for release. Must be run with bash.
 
-VERSION=0.10
+VERSION=0.11
 make
-cd ..
 # Include 'myspace' directory in archive, so it can easily be unextracted
 # into ~/pidgin/libpurple/protocols at the correct location.
 # (if this command fails, run it manually).
 # This convenient command requires bash.
-tar -cf msimprpl-$VERSION.tar myspace/{CHANGES,ChangeLog,LICENSE,Makefile*,*.c,*.h,README,release.sh,.deps/*}
-cd myspace
+cd ../../..
+tar -cf libpurple/protocols/msimprpl-$VERSION.tar libpurple/protocols/myspace/{CHANGES,ChangeLog,LICENSE,Makefile.*,*.c,*.h,README,release.sh,.deps/*} autogen.sh configure.ac
+cd libpurple/protocols/myspace
 gzip ../msimprpl-$VERSION.tar
 
 mv ~/pidgin/config.h ~/pidgin/config.h-
