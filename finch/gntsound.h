@@ -48,6 +48,27 @@ const char *finch_sound_get_event_option(PurpleSoundEventID event);
 */
 const char *finch_sound_get_event_label(PurpleSoundEventID event);
 
+/*
+ * Get the name of the active sound profile.
+ *
+ * @return the name
+ */
+const char *finch_sound_get_active_profile(void);
+
+/**
+ * Set the active profile.  If the profile doesn't exist, nothing is changed.
+ * 
+ * 
+ */
+void finch_sound_set_active_profile(const char *name);
+
+/**
+ * Get a list of available sound profiles.
+ *
+ * @return A list of strings denoting sound profile names.  Free this list when you're done with it.
+ */
+GList *finch_sound_get_profiles(void);
+
 /**
 * Gets GNT sound UI ops.
 *
