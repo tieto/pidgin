@@ -764,3 +764,12 @@ purple_core_migrate(void)
 	g_free(status_file);
 	return TRUE;
 }
+
+GHashTable* purple_core_get_ui_info() {
+	PurpleCoreUiOps *ops = purple_core_get_ui_ops();
+
+	if(NULL == ops || NULL == ops->get_ui_info)
+		return NULL;
+
+	return ops->get_ui_info();
+}

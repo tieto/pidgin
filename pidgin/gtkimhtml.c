@@ -216,7 +216,6 @@ static gchar *
 clipboard_html_to_win32(char *html) {
 	int length;
 	GString *clipboard;
-	gchar *tmp;
 
 	if (html == NULL)
 		return NULL;
@@ -224,13 +223,9 @@ clipboard_html_to_win32(char *html) {
 	length = strlen(html);
 	clipboard = g_string_new ("Version:1.0\r\n");
 	g_string_append(clipboard, "StartHTML:0000000105\r\n");
-	tmp = g_strdup_printf("EndHTML:%010d\r\n", 147 + length);
-	g_string_append(clipboard, tmp);
-	g_free(tmp);
+	g_string_append_printf(clipboard, "EndHTML:%010d\r\n", 147 + length);
 	g_string_append(clipboard, "StartFragment:0000000127\r\n");
-	tmp = g_strdup_printf("EndFragment:%010d\r\n", 127 + length);
-	g_string_append(clipboard, tmp);
-	g_free(tmp);
+	g_string_append_printf(clipboard, "EndFragment:%010d\r\n", 127 + length);
 	g_string_append(clipboard, "<!--StartFragment-->\r\n");
 	g_string_append(clipboard, html);
 	g_string_append(clipboard, "\r\n<!--EndFragment-->");
@@ -909,7 +904,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		gtk_selection_data_set(selection_data, gdk_atom_intern("text/html", FALSE), 16, (const guchar *)selection, len);
 		g_string_free(str, TRUE);
 #else
-		selection = clipboard_html_to_win32(imhtml->clipboard_html_string);
+		selection = clipboard_html_to_win32(html_clipboard);
 		gtk_selection_data_set(selection_data, gdk_atom_intern("HTML Format", FALSE), 8, (const guchar *)selection, strlen(selection));
 #endif
 		g_free(selection);
@@ -957,8 +952,8 @@ static void copy_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 						 (GtkClipboardGetFunc)gtk_imhtml_clipboard_get,
 						 (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, G_OBJECT(imhtml));
 
-		g_free(imhtml->clipboard_html_string);
-		g_free(imhtml->clipboard_text_string);
+		g_free(html_clipboard);
+		g_free(text_clipboard);
 
 		imhtml->clipboard_html_string = gtk_imhtml_get_markup_range(imhtml, &start, &end);
 		imhtml->clipboard_text_string = gtk_imhtml_get_text(imhtml, &start, &end);
@@ -982,8 +977,8 @@ static void cut_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 						 (GtkClipboardGetFunc)gtk_imhtml_clipboard_get,
 						 (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, G_OBJECT(imhtml));
 
-		g_free(imhtml->clipboard_html_string);
-		g_free(imhtml->clipboard_text_string);
+		g_free(html_clipboard);
+		g_free(text_clipboard);
 
 		imhtml->clipboard_html_string = gtk_imhtml_get_markup_range(imhtml, &start, &end);
 		imhtml->clipboard_text_string = gtk_imhtml_get_text(imhtml, &start, &end);
