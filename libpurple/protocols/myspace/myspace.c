@@ -1389,7 +1389,8 @@ msim_set_status_code(MsimSession *session, guint status_code)
 			"status", MSIM_TYPE_INTEGER, status_code,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			"statstring", MSIM_TYPE_STRING, g_strdup(""),
-			"locstring", MSIM_TYPE_STRING, g_strdup("")))
+			"locstring", MSIM_TYPE_STRING, g_strdup(""),
+            NULL))
 	{
 		purple_debug_info("msim", "msim_set_status: failed to set status");
 	}
@@ -1612,7 +1613,7 @@ msim_check_alive(gpointer data)
     purple_debug_info("msim", "msim_check_alive: delta=%d\n", delta);
     if (delta >= MSIM_KEEPALIVE_INTERVAL)
     {
-        errmsg = g_strdup_printf(_("Connection to server lost (no data received within %d seconds)"), delta);
+        errmsg = g_strdup_printf(_("Connection to server lost (no data received within %d seconds)"), (int)delta);
 
         purple_debug_info("msim", "msim_check_alive: %s > interval of %d, presumed dead\n",
                 errmsg, MSIM_KEEPALIVE_INTERVAL);
