@@ -1467,8 +1467,6 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						if(!src)
 							xhtml = g_string_append(xhtml, alt->str);
 					}
-					g_string_free(alt, TRUE);
-					g_string_free(src, TRUE);
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<a", 2) && (*(c+2) == '>' || *(c+2) == ' ')) {
