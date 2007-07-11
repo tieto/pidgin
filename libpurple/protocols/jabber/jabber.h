@@ -157,8 +157,9 @@ struct _JabberStream
 	int sasl_state;
 	int sasl_maxbuf;
 	GString *sasl_mechs;
-#endif
 	char *serverFQDN;
+	
+	gboolean vcard_fetched;
 	
 	/* does the local server support PEP? */
 	gboolean pep;
