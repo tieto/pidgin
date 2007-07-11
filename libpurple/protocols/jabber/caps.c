@@ -309,13 +309,13 @@ void jabber_caps_free_clientinfo(JabberCapsClientInfo *clientinfo) {
 		g_free(id->name);
 		g_free(id);
 		
-		clientinfo->identities = g_list_remove_link(clientinfo->identities,clientinfo->identities);
+		clientinfo->identities = g_list_delete_link(clientinfo->identities,clientinfo->identities);
 	}
 	while(clientinfo->features) {
 		char *feat = clientinfo->features->data;
 		g_free(feat);
 		
-		clientinfo->features = g_list_remove_link(clientinfo->features,clientinfo->features);
+		clientinfo->features = g_list_delete_link(clientinfo->features,clientinfo->features);
 	}
 	
 	g_free(clientinfo);
@@ -340,7 +340,7 @@ static void jabber_caps_get_info_check_completion(jabber_caps_cbplususerdata *us
 		g_free(userdata->ver);
 		while(userdata->ext) {
 			g_free(userdata->ext->data);
-			userdata->ext = g_list_remove_link(userdata->ext,userdata->ext);
+			userdata->ext = g_list_delete_link(userdata->ext,userdata->ext);
 		}
 		g_free(userdata);
 	}
