@@ -94,12 +94,14 @@ void jabber_adhoc_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 	}
 }
 
+static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data);
+
 static void do_adhoc_action_cb(JabberStream *js, xmlnode *result, const char *actionhandle, gpointer user_data) {
 	xmlnode *command;
 	GList *action;
 	JabberAdHocActionInfo *actionInfo = user_data;
 	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
-/*	jabber_iq_set_callback(iq, do_adhoc_parse_iq, NULL);*/
+	jabber_iq_set_callback(iq, jabber_adhoc_parse, NULL);
 	
 	xmlnode_set_attrib(iq->node, "to", actionInfo->who);
 	command = xmlnode_new_child(iq->node,"command");
