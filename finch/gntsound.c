@@ -597,18 +597,23 @@ finch_sound_play_event(PurpleSoundEventID event)
 GList *
 finch_sound_get_profiles()
 {
-	return purple_prefs_get_children_names(FINCH_PREFS_ROOT "/sound/profiles"); 
+	GList *list = NULL, *iter;
+	iter = purple_prefs_get_children_names(FINCH_PREFS_ROOT "/sound/profiles");
+	while (iter) {
+		list = g_list_append(list, g_strdup(strrchr(iter->data, '/') + 1));
+		g_free(iter->data);
+		iter = g_list_delete_link(iter, iter);
+	}
+	return list;
 }
 
 static gboolean
 profile_exists(const char *name)
 {
-	GList *itr = NULL;
-	for(itr = finch_sound_get_profiles();itr;itr = itr->next){
-		if(!strcmp(itr->data,name))
-			return TRUE;
-	}
-	return FALSE;
+	char *str = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s", name);
+	gboolean ret = purple_prefs_exists(str);
+	g_free(str);
+	return ret;
 }
 
 void
@@ -908,6 +913,7 @@ finch_sounds_show_all(void)
 	box = gnt_hbox_new(FALSE);
 	pref_dialog->profiles = cmbox = gnt_combo_box_new();
 	list = itr = finch_sound_get_profiles();
+	gnt_tree_set_hash_fns(GNT_TREE(GNT_COMBO_BOX(cmbox)->dropdown), g_str_hash, g_str_equal, g_free);
 	for(;itr;itr = itr->next){
 		gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),itr->data,itr->data);
 	}
