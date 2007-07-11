@@ -268,6 +268,22 @@ xmlnode_free(xmlnode *node)
 
 	g_return_if_fail(node != NULL);
 
+	/* if we're part of a tree, remove ourselves from the tree first */
+	if(NULL != node->parent) {
+		if(node->parent->child == node) {
+			node->parent->child = node->next;
+		} else {
+			xmlnode *prev = node->parent->child;
+			while(prev && prev->next != node) {
+				prev = prev->next;
+			}
+			if(prev) {
+				prev->next = node->next;
+			}
+		}
+	}
+
+	/* now free our children */
 	x = node->child;
 	while(x) {
 		y = x->next;
@@ -275,6 +291,7 @@ xmlnode_free(xmlnode *node)
 		x = y;
 	}
 
+	/* now dispose of ourselves */
 	g_free(node->name);
 	g_free(node->data);
 	g_free(node->xmlns);
@@ -333,8 +350,9 @@ xmlnode_get_data(xmlnode *node)
 	for(c = node->child; c; c = c->next) {
 		if(c->type == XMLNODE_TYPE_DATA) {
 			if(!str)
-				str = g_string_new("");
-			str = g_string_append_len(str, c->data, c->data_sz);
+				str = g_string_new_len(c->data, c->data_sz);
+			else
+				str = g_string_append_len(str, c->data, c->data_sz);
 		}
 	}
 
@@ -342,6 +360,18 @@ xmlnode_get_data(xmlnode *node)
 		return NULL;
 
 	return g_string_free(str, FALSE);
+}
+
+char *
+xmlnode_get_data_unescaped(xmlnode *node)
+{
+	char *escaped = xmlnode_get_data(node);
+
+	char *unescaped = escaped ? purple_unescape_html(escaped) : NULL;
+
+	g_free(escaped);
+
+	return unescaped;
 }
 
 static char *
@@ -519,38 +549,38 @@ xmlnode_parser_error_libxml(void *user_data, const char *msg, ...)
 }
 
 static xmlSAXHandler xmlnode_parser_libxml = {
-	.internalSubset         = NULL,
-	.isStandalone           = NULL,
-	.hasInternalSubset      = NULL,
-	.hasExternalSubset      = NULL,
-	.resolveEntity          = NULL,
-	.getEntity              = NULL,
-	.entityDecl             = NULL,
-	.notationDecl           = NULL,
-	.attributeDecl          = NULL,
-	.elementDecl            = NULL,
-	.unparsedEntityDecl     = NULL,
-	.setDocumentLocator     = NULL,
-	.startDocument          = NULL,
-	.endDocument            = NULL,
-	.startElement           = NULL,
-	.endElement             = NULL,
-	.reference              = NULL,
-	.characters             = xmlnode_parser_element_text_libxml,
-	.ignorableWhitespace    = NULL,
-	.processingInstruction  = NULL,
-	.comment                = NULL,
-	.warning                = NULL,
-	.error                  = xmlnode_parser_error_libxml,
-	.fatalError             = NULL,
-	.getParameterEntity     = NULL,
-	.cdataBlock             = NULL,
-	.externalSubset         = NULL,
-	.initialized            = XML_SAX2_MAGIC,
-	._private               = NULL,
-	.startElementNs         = xmlnode_parser_element_start_libxml,
-	.endElementNs           = xmlnode_parser_element_end_libxml,
-	.serror                 = NULL
+	NULL, /* internalSubset */
+	NULL, /* isStandalone */
+	NULL, /* hasInternalSubset */
+	NULL, /* hasExternalSubset */
+	NULL, /* resolveEntity */
+	NULL, /* getEntity */
+	NULL, /* entityDecl */
+	NULL, /* notationDecl */
+	NULL, /* attributeDecl */
+	NULL, /* elementDecl */
+	NULL, /* unparsedEntityDecl */
+	NULL, /* setDocumentLocator */
+	NULL, /* startDocument */
+	NULL, /* endDocument */
+	NULL, /* startElement */
+	NULL, /* endElement */
+	NULL, /* reference */
+	xmlnode_parser_element_text_libxml, /* characters */
+	NULL, /* ignorableWhitespace */
+	NULL, /* processingInstruction */
+	NULL, /* comment */
+	NULL, /* warning */
+	xmlnode_parser_error_libxml, /* error */
+	NULL, /* fatalError */
+	NULL, /* getParameterEntity */
+	NULL, /* cdataBlock */
+	NULL, /* externalSubset */
+	XML_SAX2_MAGIC, /* initialized */
+	NULL, /* _private */
+	xmlnode_parser_element_start_libxml, /* startElementNs */
+	xmlnode_parser_element_end_libxml,   /* endElementNs   */
+	NULL, /* serror */
 };
 
 xmlnode *

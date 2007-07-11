@@ -1,3 +1,25 @@
+/**
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include "gntbutton.h"
 #include "gntentry.h"
 #include "gntfilesel.h"
@@ -24,6 +46,7 @@ enum
 static GntWindowClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
 static void (*orig_map)(GntWidget *widget);
+static void (*orig_size_request)(GntWidget *widget);
 
 static void
 gnt_file_sel_destroy(GntWidget *widget)
@@ -425,6 +448,9 @@ gnt_file_sel_map(GntWidget *widget)
 	GntFileSel *sel = GNT_FILE_SEL(widget);
 	GntWidget *hbox, *vbox;
 
+	if (sel->current == NULL)
+		gnt_file_sel_set_current_location(sel, g_get_home_dir());
+
 	vbox = gnt_vbox_new(FALSE);
 	gnt_box_set_pad(GNT_BOX(vbox), 0);
 	gnt_box_set_alignment(GNT_BOX(vbox), GNT_ALIGN_MID);
@@ -530,6 +556,19 @@ up_directory(GntBindable *bind, GList *null)
 }
 
 static void
+gnt_file_sel_size_request(GntWidget *widget)
+{
+	GntFileSel *sel;
+	if (widget->priv.height > 0)
+		return;
+
+	sel = GNT_FILE_SEL(widget);
+	sel->dirs->priv.height = 16;
+	sel->files->priv.height = 16;
+	orig_size_request(widget);
+}
+
+static void
 gnt_file_sel_class_init(GntFileSelClass *klass)
 {
 	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
@@ -538,6 +577,8 @@ gnt_file_sel_class_init(GntFileSelClass *klass)
 	kl->destroy = gnt_file_sel_destroy;
 	orig_map = kl->map;
 	kl->map = gnt_file_sel_map;
+	orig_size_request = kl->size_request;
+	kl->size_request = gnt_file_sel_size_request;
 
 	signals[SIG_FILE_SELECTED] = 
 		g_signal_new("file_selected",
@@ -546,7 +587,7 @@ gnt_file_sel_class_init(GntFileSelClass *klass)
 					 G_STRUCT_OFFSET(GntFileSelClass, file_selected),
 					 NULL, NULL,
 					 gnt_closure_marshal_VOID__STRING_STRING,
-					 G_TYPE_NONE, 0);
+					 G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 
 	gnt_bindable_class_register_action(bindable, "toggle-tag", toggle_tag_selection, "t", NULL);
 	gnt_bindable_class_register_action(bindable, "clear-tags", clear_tags, "c", NULL);
@@ -593,6 +634,16 @@ gnt_file_sel_get_gtype(void)
 	return type;
 }
 
+static void
+select_activated_cb(GntWidget *button, GntFileSel *sel)
+{
+	char *path = gnt_file_sel_get_selected_file(sel);
+	char *file = g_path_get_basename(path);
+	g_signal_emit(sel, signals[SIG_FILE_SELECTED], 0, path, file);
+	g_free(file);
+	g_free(path);
+}
+
 GntWidget *gnt_file_sel_new(void)
 {
 	GntWidget *widget = g_object_new(GNT_TYPE_FILE_SEL, NULL);
@@ -612,6 +663,7 @@ GntWidget *gnt_file_sel_new(void)
 	gnt_tree_set_show_title(GNT_TREE(sel->files), TRUE);
 	gnt_tree_set_col_width(GNT_TREE(sel->files), 0, 25);
 	gnt_tree_set_col_width(GNT_TREE(sel->files), 1, 10);
+	gnt_tree_set_column_is_right_aligned(GNT_TREE(sel->files), 1, TRUE);
 	g_signal_connect(G_OBJECT(sel->files), "selection_changed", G_CALLBACK(file_sel_changed), sel);
 
 	/* The location entry */
@@ -620,6 +672,8 @@ GntWidget *gnt_file_sel_new(void)
 
 	sel->cancel = gnt_button_new("Cancel");
 	sel->select = gnt_button_new("Select");
+
+	g_signal_connect(G_OBJECT(sel->select), "activate", G_CALLBACK(select_activated_cb), sel);
 
 	return widget;
 }

@@ -1,3 +1,29 @@
+/**
+ * @file gntkeys.h Keys API
+ * @ingroup gnt
+ */
+/*
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #ifndef GNT_KEYS_H
 #define GNT_KEYS_H
 
@@ -39,6 +65,7 @@ extern char *gnt_key_cright;
 #define GNT_KEY_BACKSPACE SAFE(key_backspace)
 #define GNT_KEY_DEL    SAFE(key_dc)
 #define GNT_KEY_INS    SAFE(key_ic)
+#define GNT_KEY_BACK_TAB SAFE(back_tab)
 
 #define GNT_KEY_CTRL_A     "\001"
 #define GNT_KEY_CTRL_B     "\002"
@@ -79,15 +106,39 @@ extern char *gnt_key_cright;
 /**
  * This will do stuff with the terminal settings and stuff.
  */
+/**
+ * 
+ */
 void gnt_init_keys(void);
+
+/**
+ * 
+ * @param text
+ */
 void gnt_keys_refine(char *text);
+
 const char *gnt_key_translate(const char *name);
 const char *gnt_key_lookup(const char *key);
 
+/**
+ * 
+ * @param path
+ */
 void gnt_keys_add_combination(const char *path);
-void gnt_keys_del_combination(const char *path);
-int gnt_keys_find_combination(const char *path);
 
+/**
+ * 
+ * @param path
+ */
+void gnt_keys_del_combination(const char *path);
+
+/**
+ * 
+ * @param path
+ *
+ * @return
+ */
+int gnt_keys_find_combination(const char *path);
 
 /* A lot of commonly used variable names are defined in <term.h>. 
  * #undef them to make life easier for everyone. */

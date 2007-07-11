@@ -93,6 +93,18 @@ void pidgin_setup_imhtml(GtkWidget *imhtml);
 GtkWidget *pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
 
 /**
+ * Creates a new window
+ *
+ * @param title        The window title, or @c NULL
+ * @param border_width The window's desired border width
+ * @param role         A string indicating what the window is responsible for doing, or @c NULL
+ * @param resizable    Whether the window should be resizable (@c TRUE) or not (@c FALSE)
+ *
+ * @since 2.1.0
+ */
+GtkWidget *pidgin_create_window(const char *title, guint border_width, const char *role, gboolean resizable);
+
+/**
  * Toggles the sensitivity of a widget.
  *
  * @param widget    @c NULL. Used for signal handlers.
@@ -130,8 +142,10 @@ void pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle);
  * Adds a separator to a menu.
  *
  * @param menu The menu to add a separator to.
+ *
+ * @return The separator.
  */
-void pidgin_separator(GtkWidget *menu);
+GtkWidget *pidgin_separator(GtkWidget *menu);
 
 /**
  * Creates a menu item.
@@ -222,6 +236,15 @@ GtkWidget *pidgin_protocol_option_menu_new(const char *id,
 											 gpointer user_data);
 
 /**
+ * Gets the currently selected protocol from a protocol drop down box.
+ *
+ * @param optmenu The drop-down option menu created by
+ *        pidgin_account_option_menu_new.
+ * @return Returns the protocol ID that is currently selected.
+ */
+const char *pidgin_protocol_option_menu_get_selected(GtkWidget *optmenu);
+
+/**
  * Creates a drop-down option menu filled with accounts.
  *
  * @param default_account The account to select by default.
@@ -241,7 +264,7 @@ GtkWidget *pidgin_account_option_menu_new(PurpleAccount *default_account,
 /**
  * Gets the currently selected account from an account drop down box.
  *
- * @param optmenu The GtkOptionMenu created by
+ * @param optmenu The drop-down option menu created by
  *        pidgin_account_option_menu_new.
  * @return Returns the PurpleAccount that is currently selected.
  */
@@ -307,6 +330,23 @@ gboolean pidgin_save_accels(gpointer data);
 void pidgin_load_accels(void);
 
 /**
+ * Get information about a user. Show immediate feedback.
+ *
+ * @param conn   The connection to get information from.
+ * @param name   The user to get information about.
+ */
+void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name);
+
+/**
+ * Get information about a user in a chat. Show immediate feedback.
+ *
+ * @param conn   The connection to get information from.
+ * @param name   The user to get information about.
+ * @param chatid The chat id.
+ */
+void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name, int chatid);
+
+/**
  * Parses an application/x-im-contact MIME message and returns the
  * data inside.
  *
@@ -335,6 +375,21 @@ gboolean pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
  * @param l A GtkLabel that we want to use as the ATK name for the widget.
  */
 void pidgin_set_accessible_label(GtkWidget *w, GtkWidget *l);
+
+/**
+ * A helper function for GtkMenuPositionFuncs. This ensures the menu will
+ * be kept on screen if possible.
+ *
+ * @param menu The menu we are positioning.
+ * @param x Address of the gint representing the horizontal position
+ *        where the menu shall be drawn. This is an output parameter.
+ * @param y Address of the gint representing the vertical position
+ *        where the menu shall be drawn. This is an output parameter.
+ * @param push_in This is an output parameter?
+ * @param user_data Not used by this particular position function.
+ */
+void pidgin_menu_position_func_helper(GtkMenu *menu, gint *x, gint *y,
+										gboolean *push_in, gpointer data);
 
 /**
  * A valid GtkMenuPositionFunc.  This is used to determine where 
@@ -404,8 +459,10 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive primitive, GtkWidget
  * @param menu    The menu to append to.
  * @param act     The PurpleMenuAction to append.
  * @param gobject The object to be passed to the action callback.
+ *
+ * @return   The menuitem added.
  */
-void pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
+GtkWidget *pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
                                  gpointer gobject);
 
 /**
@@ -525,6 +582,22 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent);
  * @return TRUE if the pixbuf is opaque around the edges, FALSE otherwise
  */
 gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf);
+
+/**
+ * Rounds the corners of a 32x32 GdkPixbuf in place
+ *
+ * @param pixbuf  The buddy icon to transform
+ */
+void pidgin_gdk_pixbuf_make_round(GdkPixbuf *pixbuf);
+
+/**
+ * Returns an HTML-style color string for use as a dim grey
+ * string
+ *
+ * @param widget  The widget to return dim grey for
+ * @return The dim grey string
+ */
+const char *pidgin_get_dim_grey_string(GtkWidget *widget);
 
 #if !GTK_CHECK_VERSION(2,2,0)
 /**

@@ -60,6 +60,7 @@ static GtkWidget *prefsnotebook;
 
 static GtkWidget *sound_entry = NULL;
 static GtkListStore *smiley_theme_store = NULL;
+static GtkTreeSelection *smiley_theme_sel = NULL;
 static GtkWidget *prefs_proxy_frame = NULL;
 
 static GtkWidget *prefs = NULL;
@@ -366,9 +367,12 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	GValue val;
 	GtkTreePath *path, *oldpath;
 	struct smiley_theme *new_theme, *old_theme;
+	GtkWidget *remove_button = g_object_get_data(G_OBJECT(sel), "remove_button");
 
-	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
+	if (!gtk_tree_selection_get_selected(sel, &model, &iter)) {
+		gtk_widget_set_sensitive(remove_button, FALSE);
 		return;
+	}
 
 	old_theme = current_smiley_theme;
 	val.g_type = 0;
@@ -376,6 +380,9 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	path = gtk_tree_model_get_path(model, &iter);
 	themename = g_value_get_string(&val);
 	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", themename);
+
+	gtk_widget_set_sensitive(remove_button, (strcmp(themename, "none") &&
+	                                         strcmp(themename, _("Default"))));
 	g_value_unset (&val);
 
 	/* current_smiley_theme is set in callback for the above pref change */
@@ -514,8 +521,13 @@ static void theme_install_theme(char *path, char *extn) {
 	g_free(destdir);
 
 	theme_rowref = theme_refresh_theme_list();
-	if (theme_rowref != NULL)
+	if (theme_rowref != NULL) {
+		GtkTreePath *tp = gtk_tree_row_reference_get_path(theme_rowref);
+
+		if (tp)
+			gtk_tree_selection_select_path(smiley_theme_sel, tp);
 		gtk_tree_row_reference_free(theme_rowref);
+	}
 }
 
 static void
@@ -619,9 +631,55 @@ static gint pidgin_sort_smileys (GtkTreeModel	*model,
 	return ret;
 }
 
+static void
+request_theme_file_name_cb(gpointer data, char *theme_file_name)
+{
+	theme_install_theme(theme_file_name, NULL) ;
+}
+
+static void
+add_theme_button_clicked_cb(GtkWidget *widget, gpointer null)
+{
+	purple_request_file(NULL, _("Install Theme"), NULL, FALSE, (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, NULL) ;
+}
+
+static void
+remove_theme_button_clicked_cb(GtkWidget *button, GtkTreeView *tv)
+{
+	char *theme_name = NULL, *theme_file = NULL;
+	GtkTreeModel *tm;
+	GtkTreeIter itr;
+	GtkTreeRowReference *trr = NULL;
+
+	if ((tm = gtk_tree_view_get_model(tv)) == NULL)
+		return;
+	if (!gtk_tree_selection_get_selected(smiley_theme_sel, NULL, &itr))
+		return;
+	gtk_tree_model_get(tm, &itr, 2, &theme_file, 3, &theme_name, -1);
+
+	if (theme_file && theme_name && strcmp(theme_name, "none"))
+		pidgin_themes_remove_smiley_theme(theme_file);
+
+	if ((trr = theme_refresh_theme_list()) != NULL) {
+		GtkTreePath *tp = gtk_tree_row_reference_get_path(trr);
+
+		if (tp) {
+			gtk_tree_selection_select_path(smiley_theme_sel, tp);
+			gtk_tree_path_free(tp);
+		}
+		gtk_tree_row_reference_free(trr);
+	}
+
+	g_free(theme_file);
+	g_free(theme_name);
+}
+
 static GtkWidget *
 theme_page()
 {
+	GtkWidget *add_button, *remove_button;
+	GtkWidget *hbox_buttons;
+	GtkWidget *alignment;
 	GtkWidget *ret;
 	GtkWidget *sw;
 	GtkWidget *view;
@@ -661,7 +719,7 @@ theme_page()
 	g_signal_connect(G_OBJECT(view), "drag_data_received", G_CALLBACK(theme_dnd_recv), smiley_theme_store);
 
 	rend = gtk_cell_renderer_pixbuf_new();
-	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+	smiley_theme_sel = sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
 
 	/* Custom sort so "none" theme is at top of list */
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(smiley_theme_store),
@@ -686,6 +744,25 @@ theme_page()
 	gtk_container_add(GTK_CONTAINER(sw), view);
 
 	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(smiley_sel), NULL);
+
+	alignment = gtk_alignment_new(1.0, 0.5, 0.0, 1.0);
+	gtk_widget_show(alignment);
+	gtk_box_pack_start(GTK_BOX(ret), alignment, FALSE, TRUE, 0);
+
+	hbox_buttons = gtk_hbox_new(TRUE, PIDGIN_HIG_CAT_SPACE);
+	gtk_widget_show(hbox_buttons);
+	gtk_container_add(GTK_CONTAINER(alignment), hbox_buttons);
+
+	add_button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	gtk_widget_show(add_button);
+	gtk_box_pack_start(GTK_BOX(hbox_buttons), add_button, FALSE, TRUE, 0);
+	g_signal_connect(G_OBJECT(add_button), "clicked", (GCallback)add_theme_button_clicked_cb, view);
+
+	remove_button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+	gtk_widget_show(remove_button);
+	gtk_box_pack_start(GTK_BOX(hbox_buttons), remove_button, FALSE, TRUE, 0);
+	g_signal_connect(G_OBJECT(remove_button), "clicked", (GCallback)remove_theme_button_clicked_cb, view);
+	g_object_set_data(G_OBJECT(sel), "remove_button", remove_button);
 
 	if (rowref) {
 		GtkTreePath *path = gtk_tree_row_reference_get_path(rowref);
@@ -937,6 +1014,8 @@ conv_page()
 
 #ifdef _WIN32
 	pidgin_prefs_checkbox(_("F_lash window when IMs are received"), PIDGIN_PREFS_ROOT "/win32/blink_im", vbox);
+
+	pidgin_prefs_checkbox(_("Minimi_ze new conversation windows"), PIDGIN_PREFS_ROOT "/win32/minimize_new_convs", vbox);
 #endif
 
 #if GTK_CHECK_VERSION(2,4,0)
@@ -949,7 +1028,7 @@ conv_page()
 	label = gtk_label_new_with_mnemonic(_("Conversation _font:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	font_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
-	font_button = gtk_font_button_new_with_font(purple_prefs_get_string(font_name ? font_name : NULL));
+	font_button = gtk_font_button_new_with_font(font_name ? font_name : NULL);
 	gtk_font_button_set_show_style(GTK_FONT_BUTTON(font_button), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), font_button, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -975,21 +1054,11 @@ conv_page()
 									GTK_IMHTML_BACKCOLOR |
 									GTK_IMHTML_BACKGROUND);
 
-	gtk_imhtml_append_text(GTK_IMHTML(imhtml), _("This is how your outgoing message text will appear when you use protocols that support formatting. :)"), 0);
+	gtk_imhtml_append_text(GTK_IMHTML(imhtml), _("This is how your outgoing message text will appear when you use protocols that support formatting."), 0);
 
-	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold"))
-		gtk_imhtml_toggle_bold(GTK_IMHTML(imhtml));
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_italic"))
-		gtk_imhtml_toggle_italic(GTK_IMHTML(imhtml));
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline"))
-		gtk_imhtml_toggle_underline(GTK_IMHTML(imhtml));
-
-	gtk_imhtml_font_set_size(GTK_IMHTML(imhtml), purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/font_size"));
-	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"));
-	gtk_imhtml_toggle_background(GTK_IMHTML(imhtml), purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"));
-	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/font_face"));
+	gtk_imhtml_setup_entry(GTK_IMHTML(imhtml), PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_FORMATTING_WBFO);
 
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_toggle",
 					 G_CALLBACK(formatting_toggle_cb), toolbar);
@@ -1224,9 +1293,10 @@ network_page()
 	}
 
 	gtk_widget_show_all(ret);
-	if (proxy_info == NULL ||
+	/* Only hide table if not running gnome otherwise we hide the IP address table! */
+	if (!purple_running_gnome() && (proxy_info == NULL ||
 	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_NONE ||
-	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_ENVVAR)
+	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_ENVVAR))
 		gtk_widget_hide(table);
 	return ret;
 }
@@ -1987,11 +2057,7 @@ void pidgin_prefs_show(void)
 	/* Back to instant-apply! I win!  BU-HAHAHA! */
 
 	/* Create the window */
-	prefs = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(prefs), "preferences");
-	gtk_window_set_title(GTK_WINDOW(prefs), _("Preferences"));
-	gtk_window_set_resizable (GTK_WINDOW(prefs), FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(prefs), PIDGIN_HIG_BORDER);
+	prefs = pidgin_create_window(_("Preferences"), PIDGIN_HIG_BORDER, "preferences", FALSE);
 	g_signal_connect(G_OBJECT(prefs), "destroy",
 					 G_CALLBACK(delete_prefs), NULL);
 

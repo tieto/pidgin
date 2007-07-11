@@ -22,6 +22,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "internal.h"
+
 #include "conversation.h"
 #include "debug.h"
 #include "internal.h"
@@ -571,7 +573,7 @@ void qq_process_send_im_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_SEND_IM_REPLY_OK) {
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Send IM fail\n");
-			purple_notify_error(gc, _("Server ACK"), _("Send IM fail\n"), NULL);
+			purple_notify_error(gc, _("Server ACK"), _("Failed to send IM."), NULL);
 		}
 		else
 			purple_debug(PURPLE_DEBUG_INFO, "QQ", "IM ACK OK\n");

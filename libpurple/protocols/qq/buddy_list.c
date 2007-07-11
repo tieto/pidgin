@@ -23,8 +23,10 @@
  */
 
 #include <string.h>
-#include "debug.h"
 
+#include "qq.h"
+
+#include "debug.h"
 #include "notify.h"
 #include "utils.h"
 #include "packet_parse.h"
@@ -35,9 +37,8 @@
 #include "char_conv.h"
 #include "crypt.h"
 #include "header_info.h"
-#include "keep_alive.h"	
+#include "keep_alive.h"
 #include "send_core.h"
-#include "qq.h"	
 #include "group.h"
 #include "group_find.h"
 #include "group_internal.h"

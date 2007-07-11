@@ -397,6 +397,11 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	xmlnode *vc_node;
 	struct tag_attr *tag_attr;
 
+	/* if we have't grabbed the remote vcard yet, we can't
+	 * assume that what we have here is correct */
+	if(!js->vcard_fetched)
+		return;
+
 	g_free(js->avatar_hash);
 	js->avatar_hash = NULL;
 
@@ -426,6 +431,10 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 			avatar_data = purple_imgstore_get_data(img);
 			avatar_len = purple_imgstore_get_size(img);
+			/* have to get rid of the old PHOTO if it exists */
+			if((photo = xmlnode_get_child(vc_node, "PHOTO"))) {
+				xmlnode_free(photo);
+			}
 			photo = xmlnode_new_child(vc_node, "PHOTO");
 			type = xmlnode_new_child(photo, "TYPE");
 			xmlnode_insert_data(type, "image/png", -1);
@@ -872,6 +881,40 @@ static void jabber_buddy_info_remove_id(JabberBuddyInfo *jbi, const char *id)
 		}
 		l = l->next;
 	}
+}
+
+static void jabber_vcard_save_mine(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	xmlnode *vcard;
+	char *txt;
+	PurpleStoredImage *img;
+
+	if((vcard = xmlnode_get_child(packet, "vCard")) ||
+			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp")))
+	{
+		txt = xmlnode_to_str(vcard, NULL);
+		purple_account_set_user_info(purple_connection_get_account(js->gc), txt);
+
+		g_free(txt);
+	} else {
+		/* if we have no vCard, then lets not overwrite what we might have locally */
+	}
+
+	js->vcard_fetched = TRUE;
+
+	if(NULL != (img = purple_buddy_icons_find_account_icon(js->gc->account))) {
+		jabber_set_buddy_icon(js->gc, img);
+		purple_imgstore_unref(img);
+	}
+}
+
+void jabber_vcard_fetch_mine(JabberStream *js)
+{
+	JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET, "vcard-temp");
+
+	jabber_iq_set_callback(iq, jabber_vcard_save_mine, NULL);
+
+	jabber_iq_send(iq);
 }
 
 static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)

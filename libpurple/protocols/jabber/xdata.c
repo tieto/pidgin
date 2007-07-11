@@ -110,7 +110,7 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 				case JABBER_X_DATA_LIST_SINGLE:
 				case JABBER_X_DATA_LIST_MULTI:
 					{
-					const GList *selected = purple_request_field_list_get_selected(field);
+					GList *selected = purple_request_field_list_get_selected(field);
 					char *value;
 					fieldnode = xmlnode_new_child(result, "field");
 					xmlnode_set_attrib(fieldnode, "var", id);

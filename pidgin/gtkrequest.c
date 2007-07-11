@@ -323,7 +323,8 @@ pidgin_request_input(const char *title, const char *primary,
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
 	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER/2);
-	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+	if (!multiline)
+		gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), 0);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
@@ -341,7 +342,7 @@ pidgin_request_input(const char *title, const char *primary,
 	/* Vertical box */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 
-	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
 	/* Descriptive label */
 	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
@@ -359,7 +360,7 @@ pidgin_request_input(const char *title, const char *primary,
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 	g_free(label_text);
 
@@ -973,7 +974,7 @@ create_list_field(PurpleRequestField *field)
 	GtkTreeSelection *sel;
 	GtkTreeViewColumn *column;
 	GtkTreeIter iter;
-	const GList *l;
+	GList *l;
 
 	/* Create the scrolled window */
 	sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1069,16 +1070,12 @@ pidgin_request_fields(const char *title, const char *primary,
 	data->cbs[0] = ok_cb;
 	data->cbs[1] = cancel_cb;
 
-	data->dialog = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-	if (title != NULL)
-		gtk_window_set_title(GTK_WINDOW(win), title);
+	
 #ifdef _WIN32
-		gtk_window_set_title(GTK_WINDOW(win), PIDGIN_ALERT_TITLE);
-#endif
-
-	gtk_window_set_role(GTK_WINDOW(win), "multifield");
-	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
+	data->dialog = win = pidgin_create_window(PIDGIN_ALERT_TITLE, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
+#else /* !_WIN32 */
+	data->dialog = win = pidgin_create_window(title, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
+#endif /* _WIN32 */
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(destroy_multifield_cb), data);

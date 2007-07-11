@@ -29,10 +29,11 @@
 #include <gnttree.h>
 #include <gntutils.h>
 
+#include "finch.h"
+
 #include <util.h>
 
 #include "gntnotify.h"
-#include "finch.h"
 
 static struct
 {
@@ -69,6 +70,7 @@ finch_notify_message(PurpleNotifyMsgType type, const char *title,
 	gnt_box_set_title(GNT_BOX(window), title);
 	gnt_box_set_fill(GNT_BOX(window), FALSE);
 	gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
+	gnt_box_set_pad(GNT_BOX(window), 0);
 
 	if (primary)
 		gnt_box_add_widget(GNT_BOX(window),
@@ -168,7 +170,7 @@ setup_email_dialog()
 			gnt_label_new_with_format(_("You have mail!"), GNT_TEXT_FLAG_BOLD));
 
 	emaildialog.tree = tree = gnt_tree_new_with_columns(3);
-	gnt_tree_set_column_titles(GNT_TREE(tree), _("Account"), _("From"), _("Subject"));
+	gnt_tree_set_column_titles(GNT_TREE(tree), _("Account"), _("Sender"), _("Subject"));
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, 15);
 	gnt_tree_set_col_width(GNT_TREE(tree), 1, 25);
@@ -268,11 +270,11 @@ finch_notify_userinfo(PurpleConnection *gc, const char *who, PurpleNotifyUserInf
 		char *strip = purple_markup_strip_html(info);
 		int tvw, tvh, width, height, ntvw, ntvh;
 
+		while (GNT_WIDGET(ui_handle)->parent)
+			ui_handle = GNT_WIDGET(ui_handle)->parent;
 		gnt_widget_get_size(GNT_WIDGET(ui_handle), &width, &height);
 		gnt_widget_get_size(GNT_WIDGET(msg), &tvw, &tvh);
 
-		/* Ideally, I would replace the information in "info". But replacing tagged text is a
-		 * bit nasty right now. So clear the view and add the new stuff instead. */
 		gnt_text_view_clear(msg);
 		gnt_text_view_append_text_with_flags(msg, strip, GNT_TEXT_FLAG_NORMAL);
 		gnt_text_view_scroll(msg, 0);
@@ -280,7 +282,7 @@ finch_notify_userinfo(PurpleConnection *gc, const char *who, PurpleNotifyUserInf
 		ntvw += 3;
 		ntvh++;
 
-		gnt_screen_resize_widget(GNT_WIDGET(ui_handle), width + (ntvw - tvw), height + (ntvh - tvh));
+		gnt_screen_resize_widget(GNT_WIDGET(ui_handle), width + MAX(0, ntvw - tvw), height + MAX(0, ntvh - tvh));
 		g_free(strip);
 		g_free(key);
 	} else {
@@ -302,7 +304,7 @@ notify_button_activated(GntWidget *widget, PurpleNotifySearchButton *b)
 	PurpleAccount *account = g_object_get_data(G_OBJECT(widget), "notify-account");
 	gpointer data = g_object_get_data(G_OBJECT(widget), "notify-data");
 
-	list = gnt_tree_get_selection_text_list(GNT_TREE(widget));
+	list = gnt_tree_get_selection_text_list(GNT_TREE(g_object_get_data(G_OBJECT(widget), "notify-tree")));
 
 	b->callback(purple_account_get_connection(account), list, data);
 	g_list_foreach(list, (GFunc)g_free, NULL);
@@ -333,22 +335,30 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 {
 	GntWidget *window, *tree, *box, *button;
 	GList *iter;
+	int columns, i;
 
 	window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 	gnt_box_set_title(GNT_BOX(window), title);
-	gnt_box_set_fill(GNT_BOX(window), FALSE);
+	gnt_box_set_fill(GNT_BOX(window), TRUE);
 	gnt_box_set_pad(GNT_BOX(window), 0);
 	gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
 
-	gnt_box_add_widget(GNT_BOX(window),
+	if (primary)
+		gnt_box_add_widget(GNT_BOX(window),
 			gnt_label_new_with_format(primary, GNT_TEXT_FLAG_BOLD));
-	gnt_box_add_widget(GNT_BOX(window),
+	if (secondary)
+		gnt_box_add_widget(GNT_BOX(window),
 			gnt_label_new_with_format(secondary, GNT_TEXT_FLAG_NORMAL));
 
-	tree = gnt_tree_new_with_columns(g_list_length(results->columns));
+	columns = purple_notify_searchresults_get_columns_count(results);
+	tree = gnt_tree_new_with_columns(columns);
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
 	gnt_box_add_widget(GNT_BOX(window), tree);
+
+	for (i = 0; i < columns; i++)
+		gnt_tree_set_column_title(GNT_TREE(tree), i, 
+				purple_notify_searchresults_column_get_title(results, i));
 
 	box = gnt_hbox_new(TRUE);
 
@@ -387,7 +397,8 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 		button = gnt_button_new(text);
 		g_object_set_data(G_OBJECT(button), "notify-account", purple_connection_get_account(gc));
 		g_object_set_data(G_OBJECT(button), "notify-data", data);
-		g_signal_connect_swapped(G_OBJECT(button), "activate",
+		g_object_set_data(G_OBJECT(button), "notify-tree", tree);
+		g_signal_connect(G_OBJECT(button), "activate",
 				G_CALLBACK(notify_button_activated), b);
 
 		gnt_box_add_widget(GNT_BOX(box), button);

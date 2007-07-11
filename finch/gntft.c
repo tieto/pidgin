@@ -86,7 +86,7 @@ enum
 static void
 update_title_progress()
 {
-	const GList *list;
+	GList *list;
 	int num_active_xfers = 0;
 	guint64 total_bytes_xferred = 0;
 	guint64 total_file_size = 0;
@@ -172,12 +172,13 @@ stop_button_cb(GntButton *button)
 void
 finch_xfer_dialog_new(void)
 {
-	const GList *iter;
+	GList *iter;
 	GntWidget *window;
 	GntWidget *bbox;
 	GntWidget *button;
 	GntWidget *checkbox;
 	GntWidget *tree;
+	int widths[] = {8, 12, 8, 8, 8, 8, -1};
 
 	if (!xfer_dialog)
 		xfer_dialog = g_new0(PurpleGntXferDialog, 1);
@@ -195,12 +196,12 @@ finch_xfer_dialog_new(void)
 
 	xfer_dialog->tree = tree = gnt_tree_new_with_columns(NUM_COLUMNS);
 	gnt_tree_set_column_titles(GNT_TREE(tree), _("Progress"), _("Filename"), _("Size"), _("Speed"), _("Remaining"), _("Status"));
-	gnt_tree_set_col_width(GNT_TREE(tree), COLUMN_PROGRESS, 8);
-	gnt_tree_set_col_width(GNT_TREE(tree), COLUMN_FILENAME, 8);
-	gnt_tree_set_col_width(GNT_TREE(tree), COLUMN_SIZE, 10);
-	gnt_tree_set_col_width(GNT_TREE(tree), COLUMN_SPEED, 10);
-	gnt_tree_set_col_width(GNT_TREE(tree), COLUMN_REMAINING, 10);
-	gnt_tree_set_col_width(GNT_TREE(tree), COLUMN_STATUS, 10);
+	gnt_tree_set_column_width_ratio(GNT_TREE(tree), widths);
+	gnt_tree_set_column_resizable(GNT_TREE(tree), COLUMN_PROGRESS, FALSE);
+	gnt_tree_set_column_resizable(GNT_TREE(tree), COLUMN_SIZE, FALSE);
+	gnt_tree_set_column_resizable(GNT_TREE(tree), COLUMN_SPEED, FALSE);
+	gnt_tree_set_column_resizable(GNT_TREE(tree), COLUMN_REMAINING, FALSE);
+	gnt_widget_set_size(tree, 70, -1);
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
 	gnt_box_add_widget(GNT_BOX(window), tree);
 
@@ -262,6 +263,8 @@ finch_xfer_dialog_show()
 {
 	if (xfer_dialog == NULL)
 		finch_xfer_dialog_new();
+	else
+		gnt_window_present(xfer_dialog->window);
 }
 
 void
@@ -411,7 +414,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 
 	size_str      = purple_str_size_to_units(purple_xfer_get_size(xfer));
 	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
-	kbsec = g_strdup_printf(_("%.2f KB/s"), kbps);
+	kbsec = g_strdup_printf(_("%.2f KiB/s"), kbps);
 
 	gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_PROGRESS,
 			g_ascii_dtostr(prog_str, sizeof(prog_str), purple_xfer_get_progress(xfer) * 100.));

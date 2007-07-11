@@ -1,3 +1,25 @@
+/**
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include "gntkeys.h"
 
 #include <glib.h>
@@ -50,6 +72,7 @@ void gnt_init_keys()
 	INSERT_KEY("pagedown", GNT_KEY_PGDOWN);
 	INSERT_KEY("insert",   GNT_KEY_INS);
 	INSERT_KEY("delete",   GNT_KEY_DEL);
+	INSERT_KEY("back_tab", GNT_KEY_BACK_TAB);
 
 	INSERT_KEY("left",   GNT_KEY_LEFT);
 	INSERT_KEY("right",  GNT_KEY_RIGHT);
@@ -131,7 +154,7 @@ void gnt_keys_refine(char *text)
 
 const char *gnt_key_translate(const char *name)
 {
-	return g_hash_table_lookup(specials, name);
+	return name ? g_hash_table_lookup(specials, name) : NULL;
 }
 
 typedef struct {
@@ -183,8 +206,8 @@ static void add_path(struct _node *node, const char *path)
 		node->flags |= IS_END;
 		return;
 	}
-	while (*path && node->next[*path]) {
-		node = node->next[*path];
+	while (*path && node->next[(unsigned char)*path]) {
+		node = node->next[(unsigned char)*path];
 		node->ref++;
 		path++;
 	}
@@ -192,7 +215,7 @@ static void add_path(struct _node *node, const char *path)
 		return;
 	n = g_new0(struct _node, 1);
 	n->ref = 1;
-	node->next[*path++] = n;
+	node->next[(unsigned char)*path++] = n;
 	add_path(n, path);
 }
 
@@ -207,13 +230,13 @@ static void del_path(struct _node *node, const char *path)
 
 	if (!*path)
 		return;
-	next = node->next[*path];
+	next = node->next[(unsigned char)*path];
 	if (!next)
 		return;
 	del_path(next, path + 1);
 	next->ref--;
 	if (next->ref == 0) {
-		node->next[*path] = NULL;
+		node->next[(unsigned char)*path] = NULL;
 		g_free(next);
 	}
 }
@@ -229,12 +252,12 @@ int gnt_keys_find_combination(const char *path)
 	struct _node *n = &root;
 
 	root.flags &= ~IS_END;
-	while (*path && n->next[*path] && !(n->flags & IS_END)) {
+	while (*path && n->next[(unsigned char)*path] && !(n->flags & IS_END)) {
 		if (!g_ascii_isspace(*path) &&
 				!g_ascii_iscntrl(*path) &&
 				!g_ascii_isgraph(*path))
 			return 0;
-		n = n->next[*path++];
+		n = n->next[(unsigned char)*path++];
 		depth++;
 	}
 

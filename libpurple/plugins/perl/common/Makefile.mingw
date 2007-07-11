@@ -20,6 +20,7 @@ CFLAGS += -Wno-comment -Wno-unused
 INCLUDE_PATHS +=		-I. \
 			-I$(PIDGIN_TREE_TOP) \
 			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \

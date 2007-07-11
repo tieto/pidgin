@@ -25,8 +25,9 @@
  * share code.
  */
 
-#include "accountopt.h"
 #include "internal.h"
+
+#include "accountopt.h"
 #include "version.h"
 
 #include "iq.h"
@@ -46,9 +47,11 @@ static PurplePluginProtocolInfo prpl_info =
 {
 #ifdef HAVE_CYRUS_SASL
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_PASSWORD_OPTIONAL,
+	OPT_PROTO_MAIL_CHECK | OPT_PROTO_PASSWORD_OPTIONAL |
+	OPT_PROTO_SLASH_COMMANDS_NATIVE,
 #else
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK,
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK |
+	OPT_PROTO_SLASH_COMMANDS_NATIVE,
 #endif
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
@@ -67,7 +70,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_set_info,				/* set_info */
 	jabber_send_typing,				/* send_typing */
 	jabber_buddy_get_info,			/* get_info */
-	jabber_presence_send,			/* set_away */
+	jabber_presence_send,			/* set_status */
 	jabber_idle_set,				/* set_idle */
 	NULL,							/* change_passwd */
 	jabber_roster_add_buddy,		/* add_buddy */
@@ -196,9 +199,11 @@ init_plugin(PurplePlugin *plugin)
 
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
         split = purple_account_user_split_new(_("Domain"), NULL, '@');
+		purple_account_user_split_set_reverse(split, FALSE);
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
         split = purple_account_user_split_new(_("Resource"), "Home", '/');
+		purple_account_user_split_set_reverse(split, FALSE);
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 		option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", FALSE);

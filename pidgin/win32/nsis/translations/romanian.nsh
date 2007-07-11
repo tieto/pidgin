@@ -35,9 +35,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE               "Vizitaþi pagina de web Windows Pidgin"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (doar dezinstalare)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Eroare la instalarea mediului GTK+."
 !define GTK_BAD_INSTALL_PATH			"Directorul specificat nu poate fi accesat sau creat."

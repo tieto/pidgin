@@ -86,6 +86,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("jabber:iq:last")
 			SUPPORT_FEATURE("jabber:iq:oob")
 			SUPPORT_FEATURE("jabber:iq:time")
+			SUPPORT_FEATURE("xmpp:urn:time")
 			SUPPORT_FEATURE("jabber:iq:version")
 			SUPPORT_FEATURE("jabber:x:conference")
 			SUPPORT_FEATURE("http://jabber.org/protocol/bytestreams")
@@ -99,6 +100,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://jabber.org/protocol/si")
 			SUPPORT_FEATURE("http://jabber.org/protocol/si/profile/file-transfer")
 			SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
+			SUPPORT_FEATURE("urn:xmpp:ping")
 			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0199.html#ns")
                 
             if(!node) { /* non-caps disco#info, add all enabled extensions */
@@ -280,8 +282,8 @@ void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
 static void
 jabber_disco_finish_server_info_result_cb(JabberStream *js)
 {
-	PurplePresence *gpresence;
-	PurpleStatus *status;
+
+	jabber_vcard_fetch_mine(js);
 
 	if (!(js->server_caps & JABBER_CAP_GOOGLE_ROSTER)) {
 		/* If the server supports JABBER_CAP_GOOGLE_ROSTER; we will have already requested it */

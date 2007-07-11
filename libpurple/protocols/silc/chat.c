@@ -4,7 +4,7 @@
 
   Author: Pekka Riikonen <priikone@silcnet.org>
 
-  Copyright (C) 2004 Pekka Riikonen
+  Copyright (C) 2004 - 2007 Pekka Riikonen
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 */
 
-#include "silcincludes.h"
+#include "silc.h"
 #include "silcclient.h"
 #include "silcpurple.h"
 #include "wb.h"
@@ -61,10 +61,10 @@ silcpurple_chat_getinfo(PurpleConnection *gc, GHashTable *components);
 
 static void
 silcpurple_chat_getinfo_res(SilcClient client,
-			  SilcClientConnection conn,
-			  SilcChannelEntry *channels,
-			  SilcUInt32 channels_count,
-			  void *context)
+			    SilcClientConnection conn,
+			    SilcStatus status,
+			    SilcDList channels,
+			    void *context)
 {
 	GHashTable *components = context;
 	PurpleConnection *gc = client->application;
@@ -134,13 +134,14 @@ silcpurple_chat_getinfo(PurpleConnection *gc, GHashTable *components)
 	}
 	silc_hash_table_list_reset(&htl);
 
-	if (channel->channel_key)
+	if (channel->cipher)
 		g_string_append_printf(s, _("<br><b>Channel Cipher:</b> %s"),
-				       silc_cipher_get_name(channel->channel_key));
+				       channel->cipher);
+
 	if (channel->hmac)
 		/* Definition of HMAC: http://en.wikipedia.org/wiki/HMAC */
 		g_string_append_printf(s, _("<br><b>Channel HMAC:</b> %s"),
-				       silc_hmac_get_name(channel->hmac));
+				       channel->hmac);
 
 	if (channel->topic) {
 		tmp2 = g_markup_escape_text(channel->topic, -1);
@@ -211,7 +212,7 @@ typedef struct {
 	SilcPurple sg;
 	SilcChannelEntry channel;
 	PurpleChat *c;
-	SilcBuffer pubkeys;
+	SilcDList pubkeys;
 } *SilcPurpleChauth;
 
 static void
@@ -227,22 +228,21 @@ silcpurple_chat_chpk_add(void *user_data, const char *name)
 	SilcUInt32 m;
 
 	/* Load the public key */
-	if (!silc_pkcs_load_public_key(name, &public_key, SILC_PKCS_FILE_PEM) &&
-	    !silc_pkcs_load_public_key(name, &public_key, SILC_PKCS_FILE_BIN)) {
+	if (!silc_pkcs_load_public_key(name, &public_key)) {
 		silcpurple_chat_chauth_show(sgc->sg, sgc->channel, sgc->pubkeys);
-		silc_buffer_free(sgc->pubkeys);
+		silc_dlist_uninit(sgc->pubkeys);
 		silc_free(sgc);
 		purple_notify_error(client->application,
-				  _("Add Channel Public Key"),
-				  _("Could not load public key"), NULL);
+				    _("Add Channel Public Key"),
+				    _("Could not load public key"), NULL);
 		return;
 	}
 
-	pk = silc_pkcs_public_key_payload_encode(public_key);
+	pk = silc_public_key_payload_encode(public_key);
 	chpks = silc_buffer_alloc_size(2);
 	SILC_PUT16_MSB(1, chpks->head);
 	chpks = silc_argument_payload_encode_one(chpks, pk->data,
-						 pk->len, 0x00);
+						 silc_buffer_len(pk), 0x00);
 	silc_buffer_free(pk);
 
 	m = sgc->channel->mode;
@@ -250,15 +250,20 @@ silcpurple_chat_chpk_add(void *user_data, const char *name)
 
 	/* Send CMODE */
 	SILC_PUT32_MSB(m, mode);
-	chidp = silc_id_payload_encode(sgc->channel->id, SILC_ID_CHANNEL);
+	chidp = silc_id_payload_encode(&sgc->channel->id, SILC_ID_CHANNEL);
 	silc_client_command_send(client, conn, SILC_COMMAND_CMODE,
-				 ++conn->cmd_ident, 3,
-				 1, chidp->data, chidp->len,
+				 silcpurple_command_reply, NULL, 3,
+				 1, chidp->data, silc_buffer_len(chidp),
 				 2, mode, sizeof(mode),
-				 9, chpks->data, chpks->len);
+				 9, chpks->data, silc_buffer_len(chpks));
 	silc_buffer_free(chpks);
 	silc_buffer_free(chidp);
-	silc_buffer_free(sgc->pubkeys);
+	if (sgc->pubkeys) {
+	  silc_dlist_start(sgc->pubkeys);
+	  while ((public_key = silc_dlist_get(sgc->pubkeys)))
+		silc_pkcs_public_key_free(public_key);
+	  silc_dlist_uninit(sgc->pubkeys);
+	}
 	silc_free(sgc);
 }
 
@@ -266,8 +271,16 @@ static void
 silcpurple_chat_chpk_cancel(void *user_data, const char *name)
 {
 	SilcPurpleChauth sgc = (SilcPurpleChauth)user_data;
+	SilcPublicKey public_key;
+
 	silcpurple_chat_chauth_show(sgc->sg, sgc->channel, sgc->pubkeys);
-	silc_buffer_free(sgc->pubkeys);
+
+	if (sgc->pubkeys) {
+	  silc_dlist_start(sgc->pubkeys);
+	  while ((public_key = silc_dlist_get(sgc->pubkeys)))
+		silc_pkcs_public_key_free(public_key);
+	  silc_dlist_uninit(sgc->pubkeys);
+	}
 	silc_free(sgc);
 }
 
@@ -278,7 +291,7 @@ silcpurple_chat_chpk_cb(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	PurpleRequestField *f;
-	const GList *list;
+	GList *list;
 	SilcPublicKey public_key;
 	SilcBuffer chpks, pk, chidp;
 	SilcUInt16 c = 0, ct;
@@ -289,9 +302,9 @@ silcpurple_chat_chpk_cb(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 	if (!purple_request_field_list_get_selected(f)) {
 		/* Add new public key */
 		purple_request_file(sg->gc, _("Open Public Key..."), NULL, FALSE,
-				  G_CALLBACK(silcpurple_chat_chpk_add),
-				  G_CALLBACK(silcpurple_chat_chpk_cancel),
-				  purple_connection_get_account(sg->gc), NULL, NULL, sgc);
+				    G_CALLBACK(silcpurple_chat_chpk_add),
+				    G_CALLBACK(silcpurple_chat_chpk_cancel),
+				    purple_connection_get_account(sg->gc), NULL, NULL, sgc);
 		return;
 	}
 
@@ -302,13 +315,12 @@ silcpurple_chat_chpk_cb(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 		public_key = purple_request_field_list_get_data(f, list->data);
 		if (purple_request_field_list_is_selected(f, list->data)) {
 			/* Delete this public key */
-			pk = silc_pkcs_public_key_payload_encode(public_key);
+			pk = silc_public_key_payload_encode(public_key);
 			chpks = silc_argument_payload_encode_one(chpks, pk->data,
-								 pk->len, 0x01);
+								 silc_buffer_len(pk), 0x01);
 			silc_buffer_free(pk);
 			c++;
 		}
-		silc_pkcs_public_key_free(public_key);
 	}
 	if (!c) {
 		silc_buffer_free(chpks);
@@ -322,15 +334,20 @@ silcpurple_chat_chpk_cb(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 
 	/* Send CMODE */
 	SILC_PUT32_MSB(m, mode);
-	chidp = silc_id_payload_encode(sgc->channel->id, SILC_ID_CHANNEL);
+	chidp = silc_id_payload_encode(&sgc->channel->id, SILC_ID_CHANNEL);
 	silc_client_command_send(client, conn, SILC_COMMAND_CMODE,
-				 ++conn->cmd_ident, 3,
-				 1, chidp->data, chidp->len,
+				 silcpurple_command_reply, NULL, 3,
+				 1, chidp->data, silc_buffer_len(chidp),
 				 2, mode, sizeof(mode),
-				 9, chpks->data, chpks->len);
+				 9, chpks->data, silc_buffer_len(chpks));
 	silc_buffer_free(chpks);
 	silc_buffer_free(chidp);
-	silc_buffer_free(sgc->pubkeys);
+	if (sgc->pubkeys) {
+	  silc_dlist_start(sgc->pubkeys);
+	  while ((public_key = silc_dlist_get(sgc->pubkeys)))
+		silc_pkcs_public_key_free(public_key);
+	  silc_dlist_uninit(sgc->pubkeys);
+	}
 	silc_free(sgc);
 }
 
@@ -339,6 +356,7 @@ silcpurple_chat_chauth_ok(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 {
 	SilcPurple sg = sgc->sg;
 	PurpleRequestField *f;
+	SilcPublicKey public_key;
 	const char *curpass, *val;
 	int set;
 
@@ -365,19 +383,23 @@ silcpurple_chat_chauth_ok(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 		purple_blist_node_remove_setting((PurpleBlistNode *)sgc->c, "passphrase");
 	}
 
-	silc_buffer_free(sgc->pubkeys);
+	if (sgc->pubkeys) {
+	  silc_dlist_start(sgc->pubkeys);
+	  while ((public_key = silc_dlist_get(sgc->pubkeys)))
+		silc_pkcs_public_key_free(public_key);
+	  silc_dlist_uninit(sgc->pubkeys);
+	}
 	silc_free(sgc);
 }
 
 void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
-			       SilcBuffer channel_pubkeys)
+				 SilcDList channel_pubkeys)
 {
-	SilcUInt16 argc;
-	SilcArgumentPayload chpks;
+	SilcPublicKey public_key;
+	SilcSILCPublicKey silc_pubkey;
 	unsigned char *pk;
-	SilcUInt32 pk_len, type;
+	SilcUInt32 pk_len;
 	char *fingerprint, *babbleprint;
-	SilcPublicKey pubkey;
 	SilcPublicKeyIdentifier ident;
 	char tmp2[1024], t[512];
 	PurpleRequestFields *fields;
@@ -399,7 +421,7 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 
 	g = purple_request_field_group_new(NULL);
 	f = purple_request_field_string_new("passphrase", _("Channel Passphrase"),
-					  curpass, FALSE);
+					    curpass, FALSE);
 	purple_request_field_string_set_masked(f, TRUE);
 	purple_request_field_group_add_field(g, f);
 	purple_request_fields_add_group(fields, g);
@@ -416,55 +438,49 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 		     "is required to be able to join. If channel public keys are set "
 		     "then only users whose public keys are listed are able to join."));
 
-	if (!channel_pubkeys) {
+	if (!channel_pubkeys || !silc_dlist_count(channel_pubkeys)) {
 		f = purple_request_field_list_new("list", NULL);
 		purple_request_field_group_add_field(g, f);
 		purple_request_fields(sg->gc, _("Channel Authentication"),
-				    _("Channel Authentication"), t, fields,
-				    _("Add / Remove"), G_CALLBACK(silcpurple_chat_chpk_cb),
-				    _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok),
-					purple_connection_get_account(sg->gc), NULL, NULL, sgc);
+				      _("Channel Authentication"), t, fields,
+				      _("Add / Remove"), G_CALLBACK(silcpurple_chat_chpk_cb),
+				      _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok),
+				      purple_connection_get_account(sg->gc), NULL, NULL, sgc);
+		if (channel_pubkeys)
+		  silc_dlist_uninit(channel_pubkeys);
 		return;
 	}
-	sgc->pubkeys = silc_buffer_copy(channel_pubkeys);
+	sgc->pubkeys = channel_pubkeys;
 
 	g = purple_request_field_group_new(NULL);
 	f = purple_request_field_list_new("list", NULL);
 	purple_request_field_group_add_field(g, f);
 	purple_request_fields_add_group(fields, g);
 
-	SILC_GET16_MSB(argc, channel_pubkeys->data);
-	chpks = silc_argument_payload_parse(channel_pubkeys->data + 2,
-					    channel_pubkeys->len - 2, argc);
-	if (!chpks)
-		return;
-
-	pk = silc_argument_get_first_arg(chpks, &type, &pk_len);
-	while (pk) {
+	silc_dlist_start(channel_pubkeys);
+	while ((public_key = silc_dlist_get(channel_pubkeys))) {
+		pk = silc_pkcs_public_key_encode(public_key, &pk_len);
 		fingerprint = silc_hash_fingerprint(NULL, pk + 4, pk_len - 4);
 		babbleprint = silc_hash_babbleprint(NULL, pk + 4, pk_len - 4);
-		silc_pkcs_public_key_payload_decode(pk, pk_len, &pubkey);
-		ident = silc_pkcs_decode_identifier(pubkey->identifier);
+
+		silc_pubkey = silc_pkcs_get_context(SILC_PKCS_SILC, public_key);
+		ident = &silc_pubkey->identifier;
 
 		g_snprintf(tmp2, sizeof(tmp2), "%s\n  %s\n  %s",
 			   ident->realname ? ident->realname : ident->username ?
 			   ident->username : "", fingerprint, babbleprint);
-		purple_request_field_list_add(f, tmp2, pubkey);
+		purple_request_field_list_add(f, tmp2, public_key);
 
 		silc_free(fingerprint);
 		silc_free(babbleprint);
-		silc_pkcs_free_identifier(ident);
-		pk = silc_argument_get_next_arg(chpks, &type, &pk_len);
 	}
 
 	purple_request_field_list_set_multi_select(f, FALSE);
 	purple_request_fields(sg->gc, _("Channel Authentication"),
-			    _("Channel Authentication"), t, fields,
-			    _("Add / Remove"), G_CALLBACK(silcpurple_chat_chpk_cb),
-			    _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok),
-				purple_connection_get_account(sg->gc), NULL, NULL, sgc);
-
-	silc_argument_payload_free(chpks);
+			      _("Channel Authentication"), t, fields,
+			      _("Add / Remove"), G_CALLBACK(silcpurple_chat_chpk_cb),
+			      _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok),
+			      purple_connection_get_account(sg->gc), NULL, NULL, sgc);
 }
 
 static void
@@ -525,9 +541,9 @@ silcpurple_chat_prv_add(SilcPurpleCharPrv p, PurpleRequestFields *fields)
 
 	/* Add private group to buddy list */
 	g_snprintf(tmp, sizeof(tmp), "%s [Private Group]", name);
-	comp = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	g_hash_table_replace(comp, g_strdup("channel"), g_strdup(tmp));
-	g_hash_table_replace(comp, g_strdup("passphrase"), g_strdup(passphrase));
+	comp = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
+	g_hash_table_replace(comp, "channel", g_strdup(tmp));
+	g_hash_table_replace(comp, "passphrase", g_strdup(passphrase));
 
 	cn = purple_chat_new(sg->account, alias, comp);
 	g = (PurpleGroup *)p->c->node.parent;
@@ -596,9 +612,9 @@ silcpurple_chat_prv(PurpleBlistNode *node, gpointer data)
 		   _("Please enter the %s channel private group name and passphrase."),
 		   p->channel);
 	purple_request_fields(gc, _("Add Channel Private Group"), NULL, tmp, fields,
-			    _("Add"), G_CALLBACK(silcpurple_chat_prv_add),
-			    _("Cancel"), G_CALLBACK(silcpurple_chat_prv_cancel),
-				purple_connection_get_account(gc), NULL, NULL, p);
+			      _("Add"), G_CALLBACK(silcpurple_chat_prv_add),
+			      _("Cancel"), G_CALLBACK(silcpurple_chat_prv_cancel),
+			      purple_connection_get_account(gc), NULL, NULL, p);
 }
 
 
@@ -907,7 +923,7 @@ GList *silcpurple_chat_menu(PurpleChat *chat)
 		m = g_list_append(m, act);
 	}
 
-	if (mode & SILC_CHANNEL_UMODE_CHANFO) {
+	if (chu && mode & SILC_CHANNEL_UMODE_CHANFO) {
 		act = purple_menu_action_new(_("Channel Authentication"),
 		                           PURPLE_CALLBACK(silcpurple_chat_chauth),
 		                           NULL, NULL);
@@ -926,7 +942,7 @@ GList *silcpurple_chat_menu(PurpleChat *chat)
 		}
 	}
 
-	if (mode & SILC_CHANNEL_UMODE_CHANOP) {
+	if (chu && mode & SILC_CHANNEL_UMODE_CHANOP) {
 		act = purple_menu_action_new(_("Set User Limit"),
 		                           PURPLE_CALLBACK(silcpurple_chat_ulimit),
 		                           NULL, NULL);
@@ -969,7 +985,7 @@ GList *silcpurple_chat_menu(PurpleChat *chat)
 		}
 	}
 
-	if (channel) {
+	if (chu && channel) {
 		SilcPurpleChatWb wb;
 		wb = silc_calloc(1, sizeof(*wb));
 		wb->sg = sg;
@@ -986,86 +1002,10 @@ GList *silcpurple_chat_menu(PurpleChat *chat)
 
 /******************************* Joining Etc. ********************************/
 
-void silcpurple_chat_join_done(SilcClient client,
-			     SilcClientConnection conn,
-			     SilcClientEntry *clients,
-			     SilcUInt32 clients_count,
-			     void *context)
-{
-	PurpleConnection *gc = client->application;
-	SilcPurple sg = gc->proto_data;
-	SilcChannelEntry channel = context;
-	PurpleConversation *convo;
-	SilcUInt32 retry = SILC_PTR_TO_32(channel->context);
-	SilcHashTableList htl;
-	SilcChannelUser chu;
-	GList *users = NULL, *flags = NULL;
-	char tmp[256];
-
-	if (!clients && retry < 1) {
-		/* Resolving users failed, try again. */
-		channel->context = SILC_32_TO_PTR(retry + 1);
-		silc_client_get_clients_by_channel(client, conn, channel,
-						   silcpurple_chat_join_done, channel);
-		return;
-	}
-
-	/* Add channel to Purple */
-	channel->context = SILC_32_TO_PTR(++sg->channel_ids);
-	serv_got_joined_chat(gc, sg->channel_ids, channel->channel_name);
-	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
-							channel->channel_name, sg->account);
-	if (!convo)
-		return;
-
-	/* Add all users to channel */
-	silc_hash_table_list(channel->user_list, &htl);
-	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
-		PurpleConvChatBuddyFlags f = PURPLE_CBFLAGS_NONE;
-		if (!chu->client->nickname)
-			continue;
-		chu->context = SILC_32_TO_PTR(sg->channel_ids);
-
-		if (chu->mode & SILC_CHANNEL_UMODE_CHANFO)
-			f |= PURPLE_CBFLAGS_FOUNDER;
-		if (chu->mode & SILC_CHANNEL_UMODE_CHANOP)
-			f |= PURPLE_CBFLAGS_OP;
-		users = g_list_append(users, g_strdup(chu->client->nickname));
-		flags = g_list_append(flags, GINT_TO_POINTER(f));
-
-		if (chu->mode & SILC_CHANNEL_UMODE_CHANFO) {
-			if (chu->client == conn->local_entry)
-				g_snprintf(tmp, sizeof(tmp),
-					   _("You are channel founder on <I>%s</I>"),
-					   channel->channel_name);
-			else
-				g_snprintf(tmp, sizeof(tmp),
-					   _("Channel founder on <I>%s</I> is <I>%s</I>"),
-					   channel->channel_name, chu->client->nickname);
-
-			purple_conversation_write(convo, NULL, tmp,
-						PURPLE_MESSAGE_SYSTEM, time(NULL));
-
-		}
-	}
-	silc_hash_table_list_reset(&htl);
-
-	purple_conv_chat_add_users(PURPLE_CONV_CHAT(convo), users, NULL, flags, FALSE);
-	g_list_free(users);
-	g_list_free(flags);
-
-	/* Set topic */
-	if (channel->topic)
-		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(convo), NULL, channel->topic);
-
-	/* Set nick */
-	purple_conv_chat_set_nick(PURPLE_CONV_CHAT(convo), conn->local_entry->nickname);
-}
-
 char *silcpurple_get_chat_name(GHashTable *data)
 {
 	return g_strdup(g_hash_table_lookup(data, "channel"));
-}	
+}
 
 void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 {
@@ -1073,6 +1013,9 @@ void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	const char *channel, *passphrase, *parentch;
+#if 0
+	PurpleChat *chat;
+#endif
 
 	if (!conn)
 		return;
@@ -1128,6 +1071,22 @@ void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 		return;
 	}
 
+#if 0
+	/* If the channel is not on buddy list, automatically add it there. */
+	chat = purple_blist_find_chat(sg->account, channel);
+	if (!chat) {
+		data = g_hash_table_new_full(g_str_hash, g_str_equal,
+					     g_free, g_free);
+		g_hash_table_replace(data, g_strdup("channel"),
+				     g_strdup(channel));
+		if (passphrase)
+		  g_hash_table_replace(data, g_strdup("passphrase"),
+				       g_strdup(passphrase));
+		chat = purple_chat_new(sg->account, NULL, data);
+		purple_blist_add_chat(chat, NULL, NULL);
+	}
+#endif
+
 	/* XXX We should have other properties here as well:
 	   1. whether to try to authenticate to the channel
 	     1a. with default key,
@@ -1150,7 +1109,7 @@ void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 }
 
 void silcpurple_chat_invite(PurpleConnection *gc, int id, const char *msg,
-			  const char *name)
+			    const char *name)
 {
 	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
@@ -1264,7 +1223,8 @@ void silcpurple_chat_leave(PurpleConnection *gc, int id)
 		}
 }
 
-int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg, PurpleMessageFlags msgflags)
+int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
+			 PurpleMessageFlags msgflags)
 {
 	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
@@ -1274,10 +1234,11 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg, PurpleMe
 	SilcChannelEntry channel = NULL;
 	SilcChannelPrivateKey key = NULL;
 	SilcUInt32 flags;
-	int ret;
+	int ret = 0;
 	char *msg2, *tmp;
 	gboolean found = FALSE;
 	gboolean sign = purple_account_get_bool(sg->account, "sign-verify", FALSE);
+	SilcDList list;
 
 	if (!msg || !conn)
 		return 0;
@@ -1297,7 +1258,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg, PurpleMe
 	} else if (strlen(msg) > 1 && msg[0] == '/') {
 		if (!silc_client_command_call(client, conn, msg + 1))
 			purple_notify_error(gc, _("Call Command"), _("Cannot call command"),
-							  _("Unknown command"));
+					    _("Unknown command"));
 		g_free(tmp);
 		return 0;
 	}
@@ -1346,10 +1307,35 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg, PurpleMe
 		channel = chu->channel;
 	}
 
+	/* Check for images */
+	if (msgflags & PURPLE_MESSAGE_IMAGES) {
+		list = silcpurple_image_message(msg, &flags);
+		if (list) {
+			/* Send one or more MIME message.  If more than one, they
+			   are MIME fragments due to over large message */
+			SilcBuffer buf;
+
+			silc_dlist_start(list);
+			while ((buf = silc_dlist_get(list)) != SILC_LIST_END)
+				ret =
+			 	silc_client_send_channel_message(client, conn,
+								 channel, key,
+								 flags, NULL,
+								 buf->data,
+								 silc_buffer_len(buf));
+			silc_mime_partial_free(list);
+			g_free(tmp);
+
+			if (ret)
+				  serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), 0, msg, time(NULL));
+			return ret;
+		}
+	}
+
 	/* Send channel message */
 	ret = silc_client_send_channel_message(client, conn, channel, key,
-					       flags, (unsigned char *)msg2,
-					       strlen(msg2), TRUE);
+					       flags, NULL, (unsigned char *)msg2,
+					       strlen(msg2));
 	if (ret) {
 		serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), 0, msg,
 				 time(NULL));

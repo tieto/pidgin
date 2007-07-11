@@ -149,6 +149,11 @@ struct _JabberStream
 #ifdef HAVE_CYRUS_SASL
 	sasl_conn_t *sasl;
 	sasl_callback_t *sasl_cb;
+#else /* keep the struct the same size */
+	void *sasl;
+	void *sasl_cb;
+#endif
+
 	int sasl_state;
 	int sasl_maxbuf;
 	GString *sasl_mechs;

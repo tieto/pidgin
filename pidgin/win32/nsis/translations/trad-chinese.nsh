@@ -40,7 +40,6 @@
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"拜訪 Windows Pidgin 網頁"
 
 ; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (只供移除)"
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"無法移除目前已安裝的 Pidgin，新版本將在未經移除舊版本的情況下進行安裝。"
 
 ; GTK+ Section Prompts

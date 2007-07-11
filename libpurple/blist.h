@@ -21,6 +21,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @see @ref blist-signals
  */
 #ifndef _PURPLE_BLIST_H_
 #define _PURPLE_BLIST_H_
@@ -633,7 +635,7 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name);
 /**
  * Finds a group by name
  *
- * @param name    The groups name
+ * @param name    The group's name
  * @return        The group or NULL if the group does not exist
  */
 PurpleGroup *purple_find_group(const char *name);
@@ -863,6 +865,15 @@ void purple_blist_node_set_flags(PurpleBlistNode *node, PurpleBlistNodeFlags fla
  * @return The flags on the node.  This is a bitmask.
  */
 PurpleBlistNodeFlags purple_blist_node_get_flags(PurpleBlistNode *node);
+
+/**
+ * Get the type of a given node.
+ *
+ * @param node The node.
+ *
+ * @return The type of the node.
+ */
+PurpleBlistNodeType purple_blist_node_get_type(PurpleBlistNode *node);
 
 /*@}*/
 

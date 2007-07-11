@@ -31,6 +31,9 @@
 #include <gntlabel.h>
 #include <gntline.h>
 #include <gnttree.h>
+#include <gntwindow.h>
+
+#include "finch.h"
 
 #include <account.h>
 #include <accountopt.h>
@@ -40,7 +43,7 @@
 #include <request.h>
 
 #include "gntaccount.h"
-#include "finch.h"
+#include "gntblist.h"
 
 #include <string.h>
 
@@ -280,7 +283,11 @@ update_user_splits(AccountEditDialog *dialog)
 
 		if (dialog->account)
 		{
-			s = strrchr(username, purple_account_user_split_get_separator(split));
+			if(purple_account_user_split_get_reverse(split))
+				s = strrchr(username, purple_account_user_split_get_separator(split));
+			else
+				s = strchr(username, purple_account_user_split_get_separator(split));
+
 			if (s != NULL)
 			{
 				*s = '\0';
@@ -465,6 +472,14 @@ edit_account(PurpleAccount *account)
 		}
 	}
 
+	list = purple_plugins_get_protocols();
+	if (list == NULL) {
+		purple_notify_error(NULL, _("Error"),
+				_("There's no protocol plugins installed."),
+				_("(You probably forgot to 'make install'.)"));
+		return;
+	}
+
 	dialog = g_new0(AccountEditDialog, 1);
 	accountdialogs = g_list_prepend(accountdialogs, dialog);
 
@@ -482,7 +497,6 @@ edit_account(PurpleAccount *account)
 	gnt_box_add_widget(GNT_BOX(window), hbox);
 
 	dialog->protocol = combo = gnt_combo_box_new();
-	list = purple_plugins_get_protocols();
 	for (iter = list; iter; iter = iter->next)
 	{
 		gnt_combo_box_add_data(GNT_COMBO_BOX(combo), iter->data,
@@ -638,8 +652,10 @@ void finch_accounts_show_all()
 	GList *iter;
 	GntWidget *box, *button;
 
-	if (accounts.window)
+	if (accounts.window) {
+		gnt_window_present(accounts.window);
 		return;
+	}
 
 	accounts.window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(accounts.window), TRUE);
@@ -743,12 +759,18 @@ void finch_accounts_init()
 			finch_accounts_get_handle(),
 			PURPLE_CALLBACK(account_abled_cb), GINT_TO_POINTER(TRUE));
 
-	for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
-		if (purple_account_get_enabled(iter->data, FINCH_UI))
-			break;
-	}
-	if (!iter)
+	iter = purple_accounts_get_all();
+	if (iter) {
+		for (; iter; iter = iter->next) {
+			if (purple_account_get_enabled(iter->data, FINCH_UI))
+				break;
+		}
+		if (!iter)
+			finch_accounts_show_all();
+	} else {
+		edit_account(NULL);
 		finch_accounts_show_all();
+	}
 }
 
 void finch_accounts_uninit()
@@ -865,25 +887,25 @@ typedef struct {
 } auth_and_add;
 
 static void
-authorize_and_add_cb(auth_and_add *aa)
+free_auth_and_add(auth_and_add *aa)
 {
-	aa->auth_cb(aa->data);
-	purple_blist_request_add_buddy(aa->account, aa->username,
-	 	                    NULL, aa->alias);
-
 	g_free(aa->username);
 	g_free(aa->alias);
 	g_free(aa);
 }
 
 static void
+authorize_and_add_cb(auth_and_add *aa)
+{
+	aa->auth_cb(aa->data);
+	purple_blist_request_add_buddy(aa->account, aa->username,
+	 	                    NULL, aa->alias);
+}
+
+static void
 deny_no_add_cb(auth_and_add *aa)
 {
 	aa->deny_cb(aa->data);
-
-	g_free(aa->username);
-	g_free(aa->alias);
-	g_free(aa);
 }
 
 static void *
@@ -912,19 +934,47 @@ finch_request_authorize(PurpleAccount *account, const char *remote_user,
 		                (message != NULL ? ": " : "."),
 		                (message != NULL ? message  : ""));
 	if (!on_list) {
+		GntWidget *widget;
+		GList *iter;
 		auth_and_add *aa = g_new(auth_and_add, 1);
+
 		aa->auth_cb = (PurpleAccountRequestAuthorizationCb)auth_cb;
 		aa->deny_cb = (PurpleAccountRequestAuthorizationCb)deny_cb;
 		aa->data = user_data;
 		aa->username = g_strdup(remote_user);
 		aa->alias = g_strdup(alias);
 		aa->account = account;
-		uihandle = purple_request_action(NULL, _("Authorize buddy?"), buffer, NULL,
+
+		uihandle = gnt_vwindow_new(FALSE);
+		gnt_box_set_title(GNT_BOX(uihandle), _("Authorize buddy?"));
+		gnt_box_set_pad(GNT_BOX(uihandle), 0);
+
+		widget = purple_request_action(NULL, _("Authorize buddy?"), buffer, NULL,
 			PURPLE_DEFAULT_ACTION_NONE,
 			account, remote_user, NULL,
 			aa, 2,
 			_("Authorize"), authorize_and_add_cb,
 			_("Deny"), deny_no_add_cb);
+		gnt_screen_release(widget);
+		gnt_box_set_toplevel(GNT_BOX(widget), FALSE);
+		gnt_box_add_widget(GNT_BOX(uihandle), widget);
+
+		gnt_box_add_widget(GNT_BOX(uihandle), gnt_hline_new());
+
+		widget = finch_retrieve_user_info(account->gc, remote_user);
+		for (iter = GNT_BOX(widget)->list; iter; iter = iter->next) {
+			if (GNT_IS_BUTTON(iter->data)) {
+				gnt_widget_destroy(iter->data);
+				gnt_box_remove(GNT_BOX(widget), iter->data);
+				break;
+			}
+		}
+		gnt_box_set_toplevel(GNT_BOX(widget), FALSE);
+		gnt_screen_release(widget);
+		gnt_box_add_widget(GNT_BOX(uihandle), widget);
+		gnt_widget_show(uihandle);
+
+		g_signal_connect_swapped(G_OBJECT(uihandle), "destroy", G_CALLBACK(free_auth_and_add), aa);
 	} else {
 		uihandle = purple_request_action(NULL, _("Authorize buddy?"), buffer, NULL,
 			PURPLE_DEFAULT_ACTION_NONE,

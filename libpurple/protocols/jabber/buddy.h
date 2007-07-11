@@ -117,4 +117,6 @@ void jabber_user_search_begin(PurplePluginAction *);
 
 void jabber_buddy_remove_all_pending_buddy_info_requests(JabberStream *js);
 
+void jabber_vcard_fetch_mine(JabberStream *js);
+
 #endif /* _PURPLE_JABBER_BUDDY_H_ */

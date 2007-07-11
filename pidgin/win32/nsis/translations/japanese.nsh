@@ -38,9 +38,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Windows PidginのWebページを訪れてください。"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (削除のみ)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"GTK+ランタイムのインストールでエラーが発生しました。"
 !define GTK_BAD_INSTALL_PATH			"あなたの入力したパスにアクセスまたは作成できません。"

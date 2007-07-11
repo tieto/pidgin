@@ -7,6 +7,8 @@
  *
  */
 
+#include "internal.h"
+
 #include "yahoo.h"
 #include "yahoo_auth.h"
 

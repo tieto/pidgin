@@ -45,14 +45,11 @@ libxmpp_la_LDFLAGS = -module -avoid-version
 if STATIC_JABBER
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES = libjabber.a libxmpp.a
+noinst_LIBRARIES = libjabber.a
 pkg_LTLIBRARIES =
 
-libjabber_a_SOURCES = $(JABBERSOURCES)
+libjabber_a_SOURCES = $(JABBERSOURCES) libxmpp.c
 libjabber_a_CFLAGS  = $(AM_CFLAGS)
-
-libxmpp_a_SOURCES = libxmpp.c
-libxmpp_a_CFLAGS = $(AM_CFLAGS)
 
 else
 

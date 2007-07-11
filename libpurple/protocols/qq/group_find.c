@@ -22,13 +22,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "qq.h"
+
 #include "conversation.h"
 #include "debug.h"
 #include "util.h"
 
 #include "group_find.h"
 #include "group_network.h"
-#include "qq.h"
 #include "utils.h"
 
 /* find the internal_group_id by the reply packet sequence

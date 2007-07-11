@@ -32,7 +32,6 @@
 #undef HAVE_LONG_LONG /* Make Mozilla less angry. If angry, Mozilla SMASH! */
 
 #include <nspr.h>
-#include <private/pprio.h>
 #include <nss.h>
 #include <pk11func.h>
 #include <prio.h>
@@ -41,6 +40,10 @@
 #include <ssl.h>
 #include <sslerr.h>
 #include <sslproto.h>
+
+/* This is defined in NSPR's <private/pprio.h>, but to avoid including a
+ * private header we duplicate the prototype here */
+NSPR_API(PRFileDesc*)  PR_ImportTCPSocket(PRInt32 osfd);
 
 typedef struct
 {
@@ -311,8 +314,13 @@ ssl_nss_close(PurpleSslConnection *gsc)
 	if(!nss_data)
 		return;
 
-	if (nss_data->in) PR_Close(nss_data->in);
-	/* if (nss_data->fd) PR_Close(nss_data->fd); */
+	if (nss_data->in) {
+		PR_Close(nss_data->in);
+		gsc->fd = -1;
+	} else if (nss_data->fd) {
+		PR_Close(nss_data->fd);
+		gsc->fd = -1;
+	}
 
 	if (nss_data->handshake_handler)
 		purple_input_remove(nss_data->handshake_handler);

@@ -20,9 +20,9 @@
  *
  */
 
-#include "blist.h"
-
 #include "internal.h"
+
+#include "blist.h"
 #include "cipher.h"
 #include "debug.h"
 #include "ft.h"
@@ -105,6 +105,9 @@ jabber_si_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_
 	jsx->connect_data = NULL;
 
 	if(source < 0) {
+		purple_debug_warning("jabber",
+				"si connection failed, jid was %s, host was %s, error was %s\n",
+				streamhost->jid, streamhost->host, error_message);
 		jsx->streamhosts = g_list_remove(jsx->streamhosts, streamhost);
 		g_free(streamhost->jid);
 		g_free(streamhost->host);

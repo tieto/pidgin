@@ -1,6 +1,6 @@
 /*
  * purple
- * 
+ *
  * Copyright (C) 2002-2003, Herman Bloggs <hermanator12002@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,7 +74,7 @@ int wpurple_connect(int socket, struct sockaddr *addr, u_long length) {
 	int ret;
 
 	ret = connect( socket, addr, length );
-	
+
 	if( ret == SOCKET_ERROR ) {
 		errno = WSAGetLastError();
 		if( errno == WSAEWOULDBLOCK )
@@ -129,6 +129,8 @@ int wpurple_sendto(int socket, const void *buf, size_t len, int flags, const str
 	if ((ret = sendto(socket, buf, len, flags, to, tolen)
 			) == SOCKET_ERROR) {
 		errno = WSAGetLastError();
+		if(errno == WSAEWOULDBLOCK || errno == WSAEINPROGRESS)
+			errno = EAGAIN;
 		return -1;
 	}
 	return ret;
@@ -302,7 +304,7 @@ int wpurple_read(int fd, void *buf, unsigned int size) {
 	if(wpurple_is_socket(fd)) {
 		if((ret = recv(fd, buf, size, 0)) == SOCKET_ERROR) {
 			errno = WSAGetLastError();
-			if(errno == WSAEWOULDBLOCK)
+			if(errno == WSAEWOULDBLOCK || errno == WSAEINPROGRESS)
 				errno = EAGAIN;
 			return -1;
 		}
@@ -330,7 +332,7 @@ int wpurple_send(int fd, const void *buf, unsigned int size, int flags) {
 
 	if (ret == SOCKET_ERROR) {
 		errno = WSAGetLastError();
-		if(errno == WSAEWOULDBLOCK)
+		if(errno == WSAEWOULDBLOCK || errno == WSAEINPROGRESS)
 			errno = EAGAIN;
 		return -1;
 	}
@@ -350,7 +352,7 @@ int wpurple_recv(int fd, void *buf, size_t len, int flags) {
 
 	if((ret = recv(fd, buf, len, flags)) == SOCKET_ERROR) {
 			errno = WSAGetLastError();
-			if(errno == WSAEWOULDBLOCK)
+			if(errno == WSAEWOULDBLOCK || errno == WSAEINPROGRESS)
 				errno = EAGAIN;
 			return -1;
 	} else {
@@ -392,7 +394,7 @@ int wpurple_gettimeofday(struct timeval *p, struct timezone *z) {
 		z->tz_minuteswest = _timezone/60;
 		z->tz_dsttime = _daylight;
 	}
-	
+
 	if (p != 0) {
 		_ftime(&timebuffer);
 	   	p->tv_sec = timebuffer.time;			/* seconds since 1-1-1970 */
@@ -411,8 +413,8 @@ int wpurple_rename (const char *oldname, const char *newname) {
 		/* newname exists */
 		if(g_stat(newname, &newstat) == 0) {
 			/* oldname is a dir */
-			if(_S_ISDIR(oldstat.st_mode)) {
-				if(!_S_ISDIR(newstat.st_mode)) {
+			if(S_ISDIR(oldstat.st_mode)) {
+				if(!S_ISDIR(newstat.st_mode)) {
 					return g_rename(oldname, newname);
 				}
 				/* newname is a dir */
@@ -428,7 +430,7 @@ int wpurple_rename (const char *oldname, const char *newname) {
 			/* oldname is not a dir */
 			else {
 				/* newname is a dir */
-				if(_S_ISDIR(newstat.st_mode)) {
+				if(S_ISDIR(newstat.st_mode)) {
 					errno = EISDIR;
 					return -1;
 				}
@@ -1044,7 +1046,7 @@ wpurple_get_timezone_abbreviation(const struct tm *tm)
  * Returns: zero if the pathname refers to an existing file system
  * object that has all the tested permissions, or -1 otherwise or on
  * error.
- * 
+ *
  * Since: 2.8
  */
 int
@@ -1056,7 +1058,7 @@ wpurple_g_access (const gchar *filename,
       wchar_t *wfilename = g_utf8_to_utf16 (filename, -1, NULL, NULL, NULL);
       int retval;
       int save_errno;
-      
+
       if (wfilename == NULL)
 	{
 	  errno = EINVAL;
@@ -1072,7 +1074,7 @@ wpurple_g_access (const gchar *filename,
       return retval;
     }
   else
-    {    
+    {
       gchar *cp_filename = g_locale_from_utf8 (filename, -1, NULL, NULL, NULL);
       int retval;
       int save_errno;
