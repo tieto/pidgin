@@ -691,19 +691,15 @@ reset_cb(GntWidget *button,gpointer null)
 }
 
 static void
-pref_load_cb(GntWidget *button, gpointer null)
+prof_del_cb(GntWidget *button, gpointer null)
 {
+	const gchar * value = gnt_entry_get_text(GNT_ENTRY(pref_dialog->profiles));
+	gchar * pref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s",value);
 
-	const gchar * value = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(pref_dialog->profiles));
+	if(purple_prefs_exists(pref))
+		purple_prefs_remove(pref);
 
-	purple_prefs_set_string(FINCH_PREFS_ROOT "/sound/actprofile",value);
-
-}
-
-static void
-pref_save_cb(GntWidget *button, gpointer null)
-{
-
+	g_free(pref);
 }
 
 static void
@@ -749,7 +745,7 @@ release_pref_dialog(GntBindable *data, gpointer null)
 }
 
 static void
-reload_pref_window(GntComboBox *box, gpointer oldkey, gpointer newkey, gpointer null)
+reload_pref_window(const char * newkey)
 {
 	gint i;
 	purple_prefs_set_string(FINCH_PREFS_ROOT "/sound/actprofile",(gchar *)newkey);
@@ -778,6 +774,22 @@ reload_pref_window(GntComboBox *box, gpointer oldkey, gpointer newkey, gpointer 
 		g_free(boolpref);
 		g_free(filepref);
 	}
+}
+
+static void
+profile_text_load(GntEntry *entry, gpointer null)
+{
+	const char * profile = gnt_entry_get_text(entry);
+	gchar * pref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s",profile);
+	if(purple_prefs_exists(pref))
+		reload_pref_window(profile);
+	g_free(pref);
+}
+
+static void
+profile_text_completion(GntEntry *entry, gpointer val1, gpointer val2, gpointer null)
+{
+	profile_text_load(entry,null);
 }
 
 void
@@ -903,22 +915,20 @@ finch_sounds_show_all(void)
 
 	gnt_box_add_widget(GNT_BOX(win),gnt_label_new_with_format(_("Profiles"),GNT_TEXT_FLAG_BOLD));
 	box = gnt_hbox_new(FALSE);
-	pref_dialog->profiles = cmbox = gnt_combo_box_new();
+	pref_dialog->profiles = entry = gnt_entry_new("");
 	list = itr = finch_sound_get_profiles();
 	for(;itr;itr = itr->next){
-		gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),itr->data,itr->data);
+		gnt_entry_add_suggest(GNT_ENTRY(entry),itr->data);
 	}
-	g_signal_connect(G_OBJECT(cmbox),"selection-changed",G_CALLBACK(reload_pref_window),NULL);
 	g_list_free(list);
-	gnt_box_add_widget(GNT_BOX(box),cmbox);
-	button = gnt_button_new("Load");
-	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(pref_load_cb),NULL);
-	gnt_box_add_widget(GNT_BOX(box),button);
-	button = gnt_button_new("Save");
-	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(pref_save_cb),NULL);
+	g_signal_connect(G_OBJECT(entry),"text_changed",G_CALLBACK(profile_text_load),NULL);
+	g_signal_connect(G_OBJECT(entry),"completion",G_CALLBACK(profile_text_completion),NULL);
+	g_signal_connect(G_OBJECT(entry),"activate",G_CALLBACK(profile_text_load),NULL);
+	gnt_box_add_widget(GNT_BOX(box),entry);
+	button = gnt_button_new("Delete");
+	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(prof_del_cb),NULL);
 	gnt_box_add_widget(GNT_BOX(box),button);
 	gnt_box_add_widget(GNT_BOX(win),box);
-
 
 	/* Add new stuff before this */
 	box = gnt_hbox_new(FALSE);
@@ -934,7 +944,7 @@ finch_sounds_show_all(void)
 
 	g_signal_connect(G_OBJECT(win),"destroy",G_CALLBACK(release_pref_dialog),NULL);
 
-	reload_pref_window(NULL,NULL,(gchar *)finch_sound_get_active_profile(),NULL);
+	reload_pref_window(finch_sound_get_active_profile());
 
 	gnt_widget_show(win);
 
