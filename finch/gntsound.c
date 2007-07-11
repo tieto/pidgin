@@ -74,13 +74,12 @@ typedef struct {
 	GntWidget *profiles;
 } SoundPrefDialog;
 
-SoundPrefDialog *pref_dialog;
+static SoundPrefDialog *pref_dialog;
 
 #define PLAY_SOUND_TIMEOUT 15000
 
 static guint mute_login_sounds_timeout = 0;
 static gboolean mute_login_sounds = FALSE;
-static gchar * pref_string = NULL;
 
 #ifdef USE_GSTREAMER
 static gboolean gst_init_failed;
@@ -113,8 +112,9 @@ finch_sound_get_active_profile()
 static gchar *
 make_pref(const char *name)
 {
-	g_free(pref_string);
-	pref_string = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s%s",finch_sound_get_active_profile(),name);
+	static char pref_string[512];
+	g_snprintf(pref_string, sizeof(pref_string),
+			FINCH_PREFS_ROOT "/sound/profiles/%s%s", finch_sound_get_active_profile(), name);
 	return pref_string;
 }
 
@@ -191,10 +191,9 @@ im_msg_received_cb(PurpleAccount *account, char *sender,
 	if (flags & PURPLE_MESSAGE_DELAYED)
 		return;
 
-	if (conv==NULL){
+	if (conv==NULL) {
 		purple_sound_play_event(PURPLE_SOUND_FIRST_RECEIVE, account);
-	}
-	else{
+	} else {
 		play_conv_event(conv, event);
 	}
 }
@@ -274,10 +273,10 @@ account_signon_cb(PurpleConnection *gc, gpointer data)
 	if (mute_login_sounds_timeout != 0)
 		g_source_remove(mute_login_sounds_timeout);
 	mute_login_sounds = TRUE;
-	mute_login_sounds_timeout = purple_timeout_add(10000, unmute_login_sounds_cb, NULL);
+	mute_login_sounds_timeout = purple_timeout_add_seconds(10, unmute_login_sounds_cb, NULL);
 }
 
-void *
+static void *
 finch_sound_get_handle()
 {
 	static int handle;
@@ -290,38 +289,39 @@ finch_sound_get_handle()
 static void
 load_profile(const char *name, PurplePrefType type, gconstpointer val, gpointer null)
 {
-	if(!purple_prefs_exists(make_pref(""))){
-		purple_prefs_add_none(make_pref(""));
-		purple_prefs_add_none(make_pref("/enabled"));
-		purple_prefs_add_none(make_pref("/file"));
-		purple_prefs_add_bool(make_pref("/enabled/login"), TRUE);
-		purple_prefs_add_path(make_pref("/file/login"), "");
-		purple_prefs_add_bool(make_pref("/enabled/logout"), TRUE);
-		purple_prefs_add_path(make_pref("/file/logout"), "");
-		purple_prefs_add_bool(make_pref("/enabled/im_recv"), TRUE);
-		purple_prefs_add_path(make_pref("/file/im_recv"), "");
-		purple_prefs_add_bool(make_pref("/enabled/first_im_recv"), FALSE);
-		purple_prefs_add_path(make_pref("/file/first_im_recv"), "");
-		purple_prefs_add_bool(make_pref("/enabled/send_im"), TRUE);
-		purple_prefs_add_path(make_pref("/file/send_im"), "");
-		purple_prefs_add_bool(make_pref("/enabled/join_chat"), FALSE);
-		purple_prefs_add_path(make_pref("/file/join_chat"), "");
-		purple_prefs_add_bool(make_pref("/enabled/left_chat"), FALSE);
-		purple_prefs_add_path(make_pref("/file/left_chat"), "");
-		purple_prefs_add_bool(make_pref("/enabled/send_chat_msg"), FALSE);
-		purple_prefs_add_path(make_pref("/file/send_chat_msg"), "");
-		purple_prefs_add_bool(make_pref("/enabled/chat_msg_recv"), FALSE);
-		purple_prefs_add_path(make_pref("/file/chat_msg_recv"), "");
-		purple_prefs_add_bool(make_pref("/enabled/nick_said"), FALSE);
-		purple_prefs_add_path(make_pref("/file/nick_said"), "");
-		purple_prefs_add_bool(make_pref("/enabled/pounce_default"), TRUE);
-		purple_prefs_add_path(make_pref("/file/pounce_default"), "");
-		purple_prefs_add_bool(make_pref("/conv_focus"), TRUE);
-		purple_prefs_add_bool(make_pref("/mute"), FALSE);
-		purple_prefs_add_path(make_pref("/command"), "");
-		purple_prefs_add_string(make_pref("/method"), "automatic");
-		purple_prefs_add_int(make_pref("/volume"), 50);
-	}
+	if(purple_prefs_exists(make_pref("")))
+		return;
+
+	purple_prefs_add_none(make_pref(""));
+	purple_prefs_add_none(make_pref("/enabled"));
+	purple_prefs_add_none(make_pref("/file"));
+	purple_prefs_add_bool(make_pref("/enabled/login"), TRUE);
+	purple_prefs_add_path(make_pref("/file/login"), "");
+	purple_prefs_add_bool(make_pref("/enabled/logout"), TRUE);
+	purple_prefs_add_path(make_pref("/file/logout"), "");
+	purple_prefs_add_bool(make_pref("/enabled/im_recv"), TRUE);
+	purple_prefs_add_path(make_pref("/file/im_recv"), "");
+	purple_prefs_add_bool(make_pref("/enabled/first_im_recv"), FALSE);
+	purple_prefs_add_path(make_pref("/file/first_im_recv"), "");
+	purple_prefs_add_bool(make_pref("/enabled/send_im"), TRUE);
+	purple_prefs_add_path(make_pref("/file/send_im"), "");
+	purple_prefs_add_bool(make_pref("/enabled/join_chat"), FALSE);
+	purple_prefs_add_path(make_pref("/file/join_chat"), "");
+	purple_prefs_add_bool(make_pref("/enabled/left_chat"), FALSE);
+	purple_prefs_add_path(make_pref("/file/left_chat"), "");
+	purple_prefs_add_bool(make_pref("/enabled/send_chat_msg"), FALSE);
+	purple_prefs_add_path(make_pref("/file/send_chat_msg"), "");
+	purple_prefs_add_bool(make_pref("/enabled/chat_msg_recv"), FALSE);
+	purple_prefs_add_path(make_pref("/file/chat_msg_recv"), "");
+	purple_prefs_add_bool(make_pref("/enabled/nick_said"), FALSE);
+	purple_prefs_add_path(make_pref("/file/nick_said"), "");
+	purple_prefs_add_bool(make_pref("/enabled/pounce_default"), TRUE);
+	purple_prefs_add_path(make_pref("/file/pounce_default"), "");
+	purple_prefs_add_bool(make_pref("/conv_focus"), TRUE);
+	purple_prefs_add_bool(make_pref("/mute"), FALSE);
+	purple_prefs_add_path(make_pref("/command"), "");
+	purple_prefs_add_string(make_pref("/method"), "automatic");
+	purple_prefs_add_int(make_pref("/volume"), 50);
 }
 
 static void
@@ -614,7 +614,7 @@ profile_exists(const char *name)
 void
 finch_sound_set_active_profile(const char *name)
 {
-	if(profile_exists(name)){	
+	if(profile_exists(name)) {
 		purple_prefs_set_string(FINCH_PREFS_ROOT "/sound/actprofile",name);
 	}
 }
@@ -703,7 +703,7 @@ pref_load_cb(GntWidget *button, gpointer null)
 static void
 pref_save_cb(GntWidget *button, gpointer null)
 {
-
+	/* XXX: */
 }
 
 static void
@@ -764,26 +764,25 @@ reload_pref_window(GntComboBox *box, gpointer oldkey, gpointer newkey, gpointer 
 		gchar *filepref;
 		const char * profile = finch_sound_get_active_profile();
 
-		boolpref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s/enabled/%s",profile,event->pref);
-
 		filepref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s/file/%s",profile,event->pref);
 		event->file = g_strdup(purple_prefs_get_path(filepref));
-		if(event->label == NULL){
+		g_free(filepref);
+		if (event->label == NULL) {
 			continue;
 		}
 
+		boolpref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s/enabled/%s",profile,event->pref);
 		gnt_tree_change_text(GNT_TREE(pref_dialog->events),GINT_TO_POINTER(i),0,event->label);
 		gnt_tree_change_text(GNT_TREE(pref_dialog->events),GINT_TO_POINTER(i),1,event->file[0] ? g_path_get_basename(event->file) : "(default)");
 		gnt_tree_set_choice(GNT_TREE(pref_dialog->events),GINT_TO_POINTER(i),purple_prefs_get_bool(boolpref));
 		g_free(boolpref);
-		g_free(filepref);
 	}
 }
 
 void
 finch_sounds_show_all(void)
 {
-	GntWidget *box; GntWidget *cmbox; GntWidget *slider;
+	GntWidget *box, *cmbox, *slider;
 	GntWidget *entry;
 	GntWidget *chkbox;
 	GntWidget *button;
@@ -794,7 +793,7 @@ finch_sounds_show_all(void)
 	GList *itr,*list;
 	gint i;
 
-	if(pref_dialog){
+	if(pref_dialog) {
 		gnt_window_present(pref_dialog->window);
 		return;
 	}
@@ -817,6 +816,7 @@ finch_sounds_show_all(void)
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"custom",_("Command"));
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"nosound",_("No Sound"));
 
+	/* Sound method */
 	label = gnt_label_new_with_format(_("Sound Method"),GNT_TEXT_FLAG_BOLD);
 	gnt_box_add_widget(GNT_BOX(win),label); 
 	box = gnt_hbox_new(TRUE);
@@ -836,6 +836,7 @@ finch_sounds_show_all(void)
 
 	gnt_box_add_widget(GNT_BOX(win), gnt_line_new(FALSE));
 
+	/* Sound options */
 	gnt_box_add_widget(GNT_BOX(win),gnt_label_new_with_format(_("Sound Options"),GNT_TEXT_FLAG_BOLD)); 
 	pref_dialog->conv_focus = chkbox = gnt_check_box_new(_("Sounds when conversation has focus"));
 	gnt_box_add_widget(GNT_BOX(win),chkbox);
@@ -865,8 +866,9 @@ finch_sounds_show_all(void)
 	gnt_box_add_widget(GNT_BOX(box),label);
 	gnt_box_add_widget(GNT_BOX(win),box);
 
-	gnt_box_add_widget(GNT_BOX(win), gnt_line_new(FALSE));
+	gnt_box_add_widget(GNT_BOX(win), gnt_hline_new());
 
+	/* Sound events */
 	gnt_box_add_widget(GNT_BOX(win),gnt_label_new_with_format(_("Sound Events"),GNT_TEXT_FLAG_BOLD)); 
 	pref_dialog->events = tree = gnt_tree_new_with_columns(2);
 	gnt_tree_set_column_titles(GNT_TREE(tree),_("Event"),_("File"));
@@ -901,6 +903,7 @@ finch_sounds_show_all(void)
 
 	gnt_box_add_widget(GNT_BOX(win), gnt_line_new(FALSE));
 
+	/* Sound profiles */
 	gnt_box_add_widget(GNT_BOX(win),gnt_label_new_with_format(_("Profiles"),GNT_TEXT_FLAG_BOLD));
 	box = gnt_hbox_new(FALSE);
 	pref_dialog->profiles = cmbox = gnt_combo_box_new();
@@ -957,3 +960,4 @@ finch_sound_get_ui_ops(void)
 {
 	return &sound_ui_ops;
 }
+
