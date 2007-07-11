@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: mk\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-05-20 00:01-0400\n"
-"PO-Revision-Date: 2007-05-24 00:33+0200\n"
-"Last-Translator: Arangel Angov <ufo@linux.net.mk>\n"
+"PO-Revision-Date: 2007-06-17 17:17+0200\n"
+"Last-Translator: Jovan Naumovski <jovan@lugola.net>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2407,7 +2407,7 @@ msgstr ""
 
 #: ../libpurple/plugins/joinpart.c:229
 msgid "Join/Part Hiding Configuration"
-msgstr ""
+msgstr "Конфигурација за криење на приклучувањето/напуштањето"
 
 #: ../libpurple/plugins/joinpart.c:233
 msgid "Minimum Room Size"
@@ -2425,21 +2425,21 @@ msgstr "Времетраење на неактивноста на корисни
 #. *< id
 #: ../libpurple/plugins/joinpart.c:270
 msgid "Join/Part Hiding"
-msgstr ""
+msgstr "Криење на приклучување/напуштање"
 
 #. *< name
 #. *< version
 #. *  summary
 #: ../libpurple/plugins/joinpart.c:273
 msgid "Hides extraneous join/part messages."
-msgstr ""
+msgstr "Криј ги неважните пораки за приклучување/напуштање."
 
 #. *  description
 #: ../libpurple/plugins/joinpart.c:275
 msgid ""
 "This plugin hides join/part messages in large rooms, except for those users "
 "actively taking part in a conversation."
-msgstr ""
+msgstr "Овој приклучок ги крие пораките за приклучување/напуштање во големите соби, освен за тие корисници кои активно се вклучени во разговорот."
 
 #. This is used in the place of a timezone abbreviation if the
 #. * offset is way off.  The user should never really see it, but
@@ -3773,7 +3773,7 @@ msgstr "Прекарот или каналот е привремено недо�
 #: ../libpurple/protocols/irc/msgs.c:1144
 #, c-format
 msgid "Wallops from %s"
-msgstr ""
+msgstr "Wallop-и од %s"
 
 #: ../libpurple/protocols/irc/parse.c:122
 msgid "action &lt;action to perform&gt;:  Perform an action."
@@ -3796,6 +3796,8 @@ msgid ""
 "deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from "
 "someone. You must be a channel operator to do this."
 msgstr ""
+"deop &lt;nick1&gt; [nick2] ...:  Отстрани го оператоскиот статус од некого. Мора "
+"да имате операторски статус за да го направите тоа."
 
 #: ../libpurple/protocols/irc/parse.c:126
 msgid ""
@@ -3803,6 +3805,9 @@ msgid ""
 "someone, preventing them from speaking if the channel is moderated (+m). You "
 "must be a channel operator to do this."
 msgstr ""
+"devoice &lt;nick1&gt; [nick2] ...:  Отстрани го статусот за глас од некого, со што "
+"се спречува да зборува ако каналот е модериран (+m). Мора да бидете оператор "
+"на канал за да го направите ова."
 
 #: ../libpurple/protocols/irc/parse.c:127
 msgid ""
@@ -3951,23 +3956,27 @@ msgstr "topic [нов наслов]:  Прегледај или промени �
 
 #: ../libpurple/protocols/irc/parse.c:150
 msgid "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode."
-msgstr ""
+msgstr "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Постави го или тргни го корисничкиот режим."
 
 #: ../libpurple/protocols/irc/parse.c:151
 msgid "version [nick]: send CTCP VERSION request to a user"
-msgstr ""
+msgstr "version [nick]: испрати CTCP VERSION барање до некој корисник"
 
 #: ../libpurple/protocols/irc/parse.c:152
 msgid ""
 "voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You "
 "must be a channel operator to do this."
 msgstr ""
+"voice &lt;nick1&gt; [nick2] ...:  Додели некому статус за глас. Мора да сте "
+"оператор на каналот за да го направите ова."
 
 #: ../libpurple/protocols/irc/parse.c:153
 msgid ""
 "wallops &lt;message&gt;:  If you don't know what this is, you probably can't "
 "use it."
 msgstr ""
+"wallops &lt;message&gt;:  Ако не знаете што е ова, најверојатно не можете да го "
+"користите."
 
 #: ../libpurple/protocols/irc/parse.c:154
 msgid "whois [server] &lt;nick&gt;:  Get information on a user."
@@ -4554,7 +4563,7 @@ msgstr "Двете"
 
 #: ../libpurple/protocols/jabber/jabber.c:1172
 msgid "From (To pending)"
-msgstr ""
+msgstr "Од (се чека)"
 
 #: ../libpurple/protocols/jabber/jabber.c:1177
 msgid "To"
@@ -4562,7 +4571,7 @@ msgstr "До"
 
 #: ../libpurple/protocols/jabber/jabber.c:1179
 msgid "None (To pending)"
-msgstr ""
+msgstr "Ништо (се чека)"
 
 #: ../libpurple/protocols/jabber/jabber.c:1181
 #: ../pidgin/plugins/gevolution/eds-utils.c:73
@@ -4875,12 +4884,16 @@ msgid ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
 "affiliation with the room."
 msgstr ""
+"affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Постави ја врската на корисникот "
+"со собата."
 
 #: ../libpurple/protocols/jabber/jabber.c:1847
 msgid ""
 "role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
 "role in the room."
 msgstr ""
+"role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Постави ја улогата на корисникот во "
+"собата."
 
 #: ../libpurple/protocols/jabber/jabber.c:1853
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
@@ -5763,7 +5776,24 @@ msgid_plural ""
 "After the maintenance has been completed, you will be able to successfully "
 "sign in."
 msgstr[0] ""
+"MSN серверот ќе се исклучи поради одржување за %d минута. Ќе бидете"
+"автоматски одјавени во тоа време.  Ве молам, довршете ги сите тековни "
+"разговори.\n"
+"\n"
+"Откако ќе заврши прекинот за одржување, ќе можете повторно да се најавите."
 msgstr[1] ""
+"MSN серверот ќе се исклучи поради одржување за %d минути. Ќе бидете"
+"автоматски одјавени во тоа време.  Ве молам, довршете ги сите тековни "
+"разговори.\n"
+"\n"
+"Откако ќе заврши прекинот за одржување, ќе можете повторно да се најавите."
+msgstr[2] ""
+"MSN серверот ќе се исклучи поради одржување за %d минути. Ќе бидете"
+"автоматски одјавени во тоа време.  Ве молам, довршете ги сите тековни "
+"разговори.\n"
+"\n"
+"Откако ќе заврши прекинот за одржување, ќе можете повторно да се најавите."
+
 
 #: ../libpurple/protocols/msn/servconn.c:135
 msgid "Writing error"
@@ -6411,7 +6441,7 @@ msgstr "Барањето е одбиено"
 
 #: ../libpurple/protocols/oscar/oscar.c:129
 msgid "Busted SNAC payload"
-msgstr ""
+msgstr "Скршена SNAC пратка"
 
 #: ../libpurple/protocols/oscar/oscar.c:130
 msgid "Insufficient rights"
@@ -6460,6 +6490,10 @@ msgid ""
 "encoding he is using, you can specify it in the advanced account options for "
 "your AIM/ICQ account.)"
 msgstr ""
+"(Имаше грешка во примањето на оваа порака.  Пријателот со кој што зборувате "
+"најверојатно користи поинакво енкодирање од тоа што е очекувано.  Ако знаете какво "
+"енкодирање користи вашиот пријател, можете да го наведете во напредните опции за сметката за "
+"вашата AIM/ICQ смета.)"
 
 #: ../libpurple/protocols/oscar/oscar.c:439
 #, c-format
@@ -7206,6 +7240,8 @@ msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
 "list is not lost, and will probably become available in a few hours."
 msgstr ""
+"AIM серверите привремено не можеа да ја испратат вашата листа со пријатели.  Вашата листа "
+"на пријатели не е изгубена и најверојатно повторно ќе е достапна за неколку часови."
 
 #: ../libpurple/protocols/oscar/oscar.c:4889
 #: ../libpurple/protocols/oscar/oscar.c:4890
@@ -7214,7 +7250,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:5072
 #: ../libpurple/protocols/oscar/oscar.c:5077
 msgid "Orphans"
-msgstr ""
+msgstr "Без родител"
 
 #: ../libpurple/protocols/oscar/oscar.c:5001
 #, c-format
@@ -8530,6 +8566,9 @@ msgid ""
 "Book groups. Please select the correct group from the list below to add it "
 "to your buddy list."
 msgstr ""
+"Ознаката „%s“ најверојатно се однесува на било кои од следните групи за белешки"
+"во адресарот. Ве молам, одберете ја точната група од подолната листа за да ја додадете "
+"во вашата листа со пријатели."
 
 #: ../libpurple/protocols/sametime/sametime.c:5394
 msgid "Select Notes Address Book"
@@ -9033,7 +9072,7 @@ msgstr "<br><b>Отпечаток од клучот на основачот:</b>
 #: ../libpurple/protocols/silc/chat.c:166
 #, c-format
 msgid "<br><b>Founder Key Babbleprint:</b><br>%s"
-msgstr ""
+msgstr "<br><b>Отпечаток на клучот на основачот:</b><br>%s"
 
 #: ../libpurple/protocols/silc/chat.c:236
 msgid "Add Channel Public Key"
@@ -9339,7 +9378,7 @@ msgstr "Отпечаток од јавниот клуч"
 #: ../libpurple/protocols/silc/ops.c:1286
 #: ../libpurple/protocols/silc/ops.c:1358
 msgid "Public Key Babbleprint"
-msgstr ""
+msgstr "Јавен отпечаток од клучот"
 
 #: ../libpurple/protocols/silc/ops.c:1298
 msgid "_More..."
@@ -9550,6 +9589,10 @@ msgid ""
 "%s\n"
 "%s\n"
 msgstr ""
+"Отпечатокот и печатот од клучот за %s се:\n"
+"\n"
+"%s\n"
+"%s\n"
 
 #: ../libpurple/protocols/silc/pk.c:116 ../libpurple/protocols/silc/pk.c:142
 msgid "Verify Public Key"
@@ -10038,6 +10081,8 @@ msgid ""
 "Public Key Babbleprint:\n"
 "%s"
 msgstr ""
+"Јавен отпечаток од клучот:\n"
+"%s"
 
 #: ../libpurple/protocols/silc/util.c:374
 #: ../libpurple/protocols/silc/util.c:375
@@ -11325,7 +11370,7 @@ msgstr "Ако погледнеш од блиску"
 #. This is an easter egg. See the comment on the previous line in the source.
 #: ../pidgin/gtkaccount.c:985
 msgid "you can see the butterflies mating"
-msgstr ""
+msgstr "можеш да ги видиш пеперутките кај што се парат"
 
 #: ../pidgin/gtkaccount.c:1006
 msgid "Proxy Options"
@@ -13269,6 +13314,23 @@ msgid ""
 "on other protocols is at\n"
 "%swiki/DeveloperPages\n"
 msgstr ""
+"%s имаше „segfault“ и проба да го исфрли јадрото во датотека.\n"
+"Ова е грешка во софтверот и не се случи поради ваша\n"
+"грешка.\n"
+"\n"
+"Ако можете да ја репродуцирате грешката, Ве молам, известете\n"
+"ги развивачите со пријавување на бубачка на:\n"
+"%snewticket/\n"
+"\n"
+"Осигурете се дека точно наведивте што правевте во тоа време\n"
+"и испратете ја трагата од датотеката со јадрото(core).  Ако не знаете\n"
+"како да го направите тоа, видете го упатството на\n"
+"%swiki/GetABacktrace\n"
+"\n"
+"Ако ви требаат понатамошни упатства контактирајте со SeanEgn или\n"
+"LSchiere (преку AIM).  Информациите за контакт на Sean и Luke \n"
+"на другите протоколи се достапни на\n"
+"%swiki/DeveloperPages\n"
 
 #: ../pidgin/gtknotify.c:337
 msgid "Open All Messages"
@@ -15182,7 +15244,7 @@ msgstr ""
 #. *< id
 #: ../pidgin/plugins/ticker/ticker.c:77 ../pidgin/plugins/ticker/ticker.c:355
 msgid "Buddy Ticker"
-msgstr ""
+msgstr "Лента со пријатели"
 
 #. *< name
 #. *< version
@@ -15431,7 +15493,7 @@ msgstr "Внеси <message/> станца."
 #. *  summary
 #: ../pidgin/plugins/xmppconsole.c:863
 msgid "Send and receive raw XMPP stanzas."
-msgstr ""
+msgstr "Испрати и прими чисти XMPP делови."
 
 #. *  description
 #: ../pidgin/plugins/xmppconsole.c:865
