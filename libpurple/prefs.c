@@ -1325,6 +1325,22 @@ purple_prefs_disconnect_by_handle(void *handle)
 	disco_callback_helper_handle(&prefs, handle);
 }
 
+GList *
+purple_prefs_get_children_names(const char *name)
+{
+	GList * list = NULL;
+	struct purple_pref *pref = find_pref(name), *child;
+
+	if (pref == NULL)
+		return NULL;
+
+	for (child = pref->first_child; child; child = child->sibling) {
+		list = g_list_append(list, g_strdup(child->name));
+	}
+	return list;
+
+}
+
 void
 purple_prefs_update_old()
 {
