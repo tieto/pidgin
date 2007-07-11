@@ -105,8 +105,8 @@ msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 
 /* Replacement codes to be replaced with associated replacement text,
  * used for protocol message escaping / unescaping. */
-static gchar* msim_replacement_code[] = { "/1", "/2", NULL };
-static gchar* msim_replacement_text[] = { "/", "\\", NULL };
+static gchar* msim_replacement_code[] = { "/1", "/2", "/3", NULL };
+static gchar* msim_replacement_text[] = { "/", "\\", "|", NULL };
 
 /**
  * Unescape or escape a protocol message.
