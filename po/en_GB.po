@@ -5925,7 +5925,7 @@ msgstr "%s has added you to his or her buddy list."
 #: ../libpurple/protocols/msn/userlist.c:319
 #, c-format
 msgid "%s has removed you from his or her buddy list."
-msgstr "%s has removed you from his or her boddy list."
+msgstr "%s has removed you from his or her buddy list."
 
 #: ../libpurple/protocols/msn/userlist.c:641
 #, c-format
