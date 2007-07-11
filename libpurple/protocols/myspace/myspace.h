@@ -108,6 +108,9 @@
 /* Authentication algorithm for login2 */
 #define MSIM_AUTH_ALGORITHM	196610
 
+/* Recognized challenge length */
+#define MSIM_AUTH_CHALLENGE_LENGTH      0x40
+
 /* TODO: obtain IPs of network interfaces from user's machine, instead of
  * hardcoding these values below (used in msim_compute_login_response). 
  * This is not immediately

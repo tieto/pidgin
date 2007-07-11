@@ -356,9 +356,9 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 
     purple_debug_info("msim", "nc is %d bytes, decoded\n", nc_len);
 
-    if (nc_len != 0x40)
+    if (nc_len != MSIM_AUTH_CHALLENGE_LENGTH)
     {
-        purple_debug_info("msim", "bad nc length: %x != 0x40\n", nc_len);
+        purple_debug_info("msim", "bad nc length: %x != 0x%x\n", nc_len, MSIM_AUTH_CHALLENGE_LENGTH);
         purple_connection_error(session->gc, _("Unexpected challenge length from server"));
         return FALSE;
     }
@@ -403,7 +403,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
     guchar hash_pw[HASH_SIZE];
     guchar key[HASH_SIZE];
-    gchar *password_utf16le;
+    gchar *password_utf16le, *password_ascii_lc;
     guchar *data;
 	guchar *data_out;
 	size_t data_len, data_out_len;
@@ -418,11 +418,18 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
     g_return_val_if_fail(password != NULL, NULL);
     g_return_val_if_fail(response_len != NULL, NULL);
 
+    /* Convert password to lowercase (required for passwords containing
+     * uppercase characters). MySpace passwords are lowercase,
+     * see ticket #2066. */
+    password_ascii_lc = g_strdup(password);
+    g_strdown(password_ascii_lc);
+
     /* Convert ASCII password to UTF16 little endian */
     purple_debug_info("msim", "converting password to UTF-16LE\n");
 	conv_error = NULL;
-	password_utf16le = g_convert(password, -1, "UTF-16LE", "UTF-8", 
+	password_utf16le = g_convert(password_ascii_lc, -1, "UTF-16LE", "UTF-8", 
 			&conv_bytes_read, &conv_bytes_written, &conv_error);
+    g_free(password_ascii_lc);
 
 	g_return_val_if_fail(conv_bytes_read == strlen(password), NULL);
 
