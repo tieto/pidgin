@@ -225,7 +225,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 		char *value = NULL;
 
 		if(!type)
-			continue;
+			type = "text-single";
 
 		if(!var && strcmp(type, "fixed"))
 			continue;
