@@ -1,3 +1,7 @@
+2007-07-xx Jeff Connelly <jeff2@soc.pidgin.im> - 0.12
+* Allow logging in with passwords containing uppercase letters (bug #2066)
+* Add /3 -> | translation to escaping.
+
 2007-07-09 Jeff Connelly <jeff2@soc.pidgin.im> - 0.11
 * Allow going idle (tested with I'dle Ma'ker) and viewing idle status of 
   buddies (thanks to Scott Ellis, developing a MySpaceIM plugin for Miranda IM,
