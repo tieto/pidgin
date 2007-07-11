@@ -1170,7 +1170,6 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_INITIALIZING_ENCRYPTION:
 			purple_connection_update_progress(js->gc, _("Initializing SSL/TLS"),
 											  6, JABBER_CONNECT_STEPS);
-			jabber_stream_init(js);
 			break;
 		case JABBER_STREAM_AUTHENTICATING:
 			purple_connection_update_progress(js->gc, _("Authenticating"),
