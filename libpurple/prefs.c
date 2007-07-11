@@ -35,7 +35,6 @@
 #include "prefs.h"
 #include "debug.h"
 #include "util.h"
-#include "xmlnode.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -127,7 +126,6 @@ pref_to_xmlnode(xmlnode *parent, struct purple_pref *pref)
 	xmlnode_set_attrib(node, "name", pref->name);
 
 	/* Set the type of this node (if type == PURPLE_PREF_NONE then do nothing) */
-	/* XXX: Why aren't we using a switch here? */
 	if (pref->type == PURPLE_PREF_INT) {
 		xmlnode_set_attrib(node, "type", "int");
 		snprintf(buf, sizeof(buf), "%d", pref->value.integer);
@@ -1325,36 +1323,6 @@ purple_prefs_disconnect_by_handle(void *handle)
 	g_return_if_fail(handle != NULL);
 
 	disco_callback_helper_handle(&prefs, handle);
-}
-
-static xmlnode*
-single_pref_to_xmlnode(const struct purple_pref *pref)
-{
-	xmlnode *node;
-	struct purple_pref *child;
-
-	node = xmlnode_new("pref");
-	xmlnode_set_attrib(node,"name",pref->name);
-
-	for(child = pref->first_child; child != NULL; child = child->sibling)
-		pref_to_xmlnode(node, child);
-
-	return node;
-}
-
-GList *
-purple_prefs_get_children_names(const char *name)
-{
-	struct purple_pref *pref = find_pref(name);
-	xmlnode * node = single_pref_to_xmlnode(pref);
-	xmlnode * child = node->child;
-	GList * list = NULL;
-
-	for(child = node->child;child;child = child->next){
-		list = g_list_append(list,xmlnode_get_attrib(child,"name"));
-	}
-	return list;
-
 }
 
 void
