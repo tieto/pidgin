@@ -277,24 +277,6 @@ account_signon_cb(PurpleConnection *gc, gpointer data)
 	mute_login_sounds_timeout = purple_timeout_add(10000, unmute_login_sounds_cb, NULL);
 }
 
-const char *
-finch_sound_get_event_option(PurpleSoundEventID event)
-{
-	if(event >= PURPLE_NUM_SOUNDS)
-		return 0;
-
-	return sounds[event].pref;
-}
-
-const char *
-finch_sound_get_event_label(PurpleSoundEventID event)
-{
-	if(event >= PURPLE_NUM_SOUNDS)
-		return NULL;
-
-	return sounds[event].label;
-}
-
 void *
 finch_sound_get_handle()
 {
