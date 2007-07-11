@@ -3819,16 +3819,12 @@ static void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 		return;
 	}
 
-	/* Step 1:  Add buddy to new group. */
-	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc),
-	                  7, who, 65, gpn, 14, "");
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CHGRP_15, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, "ssssssss", 1, purple_connection_get_display_name(gc),
+	                  302, "240", 300, "240", 7, who, 224, gpo, 264, gpn, 301,
+	                  "240", 303, "240");
 	yahoo_packet_send_and_free(pkt, yd);
 
-	/* Step 2:  Remove buddy from old group */
-	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 65, gpo);
-	yahoo_packet_send_and_free(pkt, yd);
 	g_free(gpn);
 	g_free(gpo);
 }
