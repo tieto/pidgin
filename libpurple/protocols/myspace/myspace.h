@@ -227,7 +227,7 @@ void msim_get_info(PurpleConnection *gc, const gchar *name);
 
 void msim_set_status(PurpleAccount *account, PurpleStatus *status);
 void msim_set_idle(PurpleConnection *gc, int time);
-void msim_set_status_code(MsimSession *session, guint code);
+void msim_set_status_code(MsimSession *session, guint code, gchar *statstring);
 
 void msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_store_buddy_info(MsimSession *session, MsimMessage *msg);

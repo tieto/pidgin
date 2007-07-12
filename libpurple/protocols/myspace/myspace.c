@@ -72,17 +72,31 @@ msim_status_types(PurpleAccount *acct)
 
     types = NULL;
 
-    status = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, NULL, NULL, FALSE, TRUE, FALSE);
-    types = g_list_append(types, status);
+    /* Statuses are almost all the same. Define a macro to reduce code repetition. */
+#define _MSIM_ADD_NEW_STATUS(prim) status =                         \
+        purple_status_type_new_with_attrs(                          \
+        prim,   /* PurpleStatusPrimitive */                         \
+        NULL,   /* id - use default */                              \
+        NULL,   /* name - use default */                            \
+        TRUE,   /* savable */                                       \
+        TRUE,   /* user_settable */                                 \
+        FALSE,  /* not independent */                               \
+                                                                    \
+        /* Attributes - each status can have a message. */          \
+        "message",                                                  \
+        _("Message"),                                               \
+        purple_value_new(PURPLE_TYPE_STRING),                       \
+        NULL);                                                      \
+                                                                    \
+                                                                    \
+        types = g_list_append(types, status)
+        
 
-    status = purple_status_type_new_full(PURPLE_STATUS_AWAY, NULL, NULL, FALSE, TRUE, FALSE);
-    types = g_list_append(types, status);
+    _MSIM_ADD_NEW_STATUS(PURPLE_STATUS_AVAILABLE);
+    _MSIM_ADD_NEW_STATUS(PURPLE_STATUS_AWAY);
+    _MSIM_ADD_NEW_STATUS(PURPLE_STATUS_OFFLINE);
+    _MSIM_ADD_NEW_STATUS(PURPLE_STATUS_INVISIBLE);
 
-    status = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, NULL, NULL, FALSE, TRUE, FALSE);
-    types = g_list_append(types, status);
-
-    status = purple_status_type_new_full(PURPLE_STATUS_INVISIBLE, NULL, NULL, FALSE, TRUE, FALSE);
-    types = g_list_append(types, status);
 
     return types;
 }
@@ -205,10 +219,10 @@ print_hash_item(gpointer key, gpointer value, gpointer user_data)
 gboolean 
 msim_send_raw(MsimSession *session, const gchar *msg)
 {
-	purple_debug_info("msim", "msim_send_raw: writing <%s>\n", msg);
-
     g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
     g_return_val_if_fail(msg != NULL, FALSE);
+	
+    purple_debug_info("msim", "msim_send_raw: writing <%s>\n", msg);
 
 	return msim_send_really_raw(session->gc, msg, strlen(msg)) ==
 		strlen(msg);
@@ -1322,13 +1336,15 @@ msim_get_info(PurpleConnection *gc, const gchar *user)
 	g_free(user_to_lookup); 
 }
 
-/** Set your status - callback for when user manually sets it. */
+/** Set your status - callback for when user manually sets it. 
+ * TODO: find out why when setting status with a message, it ALWAYS goes to away! */
 void
 msim_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleStatusType *type;
 	MsimSession *session;
     guint status_code;
+    const gchar *statstring;
 
 	session = (MsimSession *)account->gc->proto_data;
 
@@ -1339,14 +1355,20 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 	switch (purple_status_type_get_primitive(type))
 	{
 		case PURPLE_STATUS_AVAILABLE:
+            purple_debug_info("msim", "msim_set_status: available (%d->%d)\n", PURPLE_STATUS_AVAILABLE,
+                    MSIM_STATUS_CODE_ONLINE);
 			status_code = MSIM_STATUS_CODE_ONLINE;
 			break;
 
 		case PURPLE_STATUS_INVISIBLE:
+            purple_debug_info("msim", "msim_set_status: invisible (%d->%d)\n", PURPLE_STATUS_INVISIBLE,
+                    MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN);
 			status_code = MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN;
 			break;
 
 		case PURPLE_STATUS_AWAY:
+            purple_debug_info("msim", "msim_set_status: away (%d->%d)\n", PURPLE_STATUS_AWAY,
+                    MSIM_STATUS_CODE_AWAY);
 			status_code = MSIM_STATUS_CODE_AWAY;
 			break;
 
@@ -1357,8 +1379,12 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 			break;
 	}
 
+    statstring = purple_status_get_attr_string(status, "message");
 
-    msim_set_status_code(session, status_code);
+    if (!statstring)
+        statstring = g_strdup("");
+
+    msim_set_status_code(session, status_code, g_strdup(statstring));
 }
 
 /** Go idle. */
@@ -1379,23 +1405,30 @@ msim_set_idle(PurpleConnection *gc, int time)
          * from the other states (you can only be away or idle, but not
          * both, for example), so by going non-idle I go online.
          */
-        msim_set_status_code(session, MSIM_STATUS_CODE_ONLINE);
+        /* TODO: find out how to keep old status string? */
+        msim_set_status_code(session, MSIM_STATUS_CODE_ONLINE, g_strdup(""));
     } else {
         /* msim doesn't support idle time, so just go idle */
-        msim_set_status_code(session, MSIM_STATUS_CODE_IDLE);
+        msim_set_status_code(session, MSIM_STATUS_CODE_IDLE, g_strdup(""));
     }
 }
 
-/** Set status using an MSIM_STATUS_CODE_* value. (TODO: also set message) */
+/** Set status using an MSIM_STATUS_CODE_* value.
+ * @param status_code An MSIM_STATUS_CODE_* value.
+ * @param statstring Status string, must be a dynamic string (will be freed by msim_send).
+ */
 void 
-msim_set_status_code(MsimSession *session, guint status_code)
+msim_set_status_code(MsimSession *session, guint status_code, gchar *statstring)
 {
     g_return_if_fail(MSIM_SESSION_VALID(session));
+
+    purple_debug_info("msim", "msim_set_status_code: going to set status to code=%d,str=%s\n",
+            status_code, statstring);
 
 	if (!msim_send(session,
 			"status", MSIM_TYPE_INTEGER, status_code,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			"statstring", MSIM_TYPE_STRING, g_strdup(""),
+			"statstring", MSIM_TYPE_STRING, statstring, 
 			"locstring", MSIM_TYPE_STRING, g_strdup(""),
             NULL))
 	{
@@ -1660,10 +1693,13 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
     session->username = msim_msg_get_string(msg, "uniquenick");
 
 #ifdef MSIM_FAKE_SELF_ONLINE
-    /* Fake our self coming online. */
-    purple_prpl_got_user_status(session->account, session->username, purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE), NULL);
+    purple_debug_info("msim", "msim_we_are_logged_on: faking self as coming online\n");
+    /* Fake our self coming online. TODO: do we need this anymore?! */
+    purple_prpl_got_user_status(session->account, session->username, 
+            purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE), NULL);
 #endif
 
+    purple_debug_info("msim", "msim_we_are_logged_on: notifying servers of status\n");
     /* Notify servers of our current status. */
     msim_set_status(session->account,
             purple_account_get_active_status(session->account));

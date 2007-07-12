@@ -249,6 +249,7 @@ msim_msg_send(MsimSession *session, MsimMessage *msg)
 	gboolean success;
 	
 	raw = msim_msg_pack(msg);
+    g_return_val_if_fail(raw != NULL, FALSE);
 	success = msim_send_raw(session, raw);
 	g_free(raw);
 
@@ -477,6 +478,8 @@ msim_msg_dump(const gchar *fmt_string, MsimMessage *msg)
 		debug_str = msim_msg_pack_using(msg, msim_msg_debug_string_element, 
 				"\n", "<MsimMessage: \n", "\n/MsimMessage>");
 	}
+
+    g_return_if_fail(debug_str != NULL);
 
 	purple_debug_info("msim", fmt_string, debug_str);
 
