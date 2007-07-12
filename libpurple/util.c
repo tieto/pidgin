@@ -1416,6 +1416,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				ALLOW_TAG("q");
 				ALLOW_TAG("span");
 				ALLOW_TAG("strong");
+				ALLOW_TAG("ul");
 
 				
 				/* we skip <HR> because it's not legal in XHTML-IM.  However,
@@ -1432,40 +1433,6 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						xhtml = g_string_append(xhtml, "<br/>");
 					if(plain && *c != '\n')
 						plain = g_string_append_c(plain, '\n');
-					continue;
-				}
-				if(!g_ascii_strncasecmp(c, "<img", 4) && (*(c+4) == '>' || *(c+4) == ' ')) {
-					const char *p = c;
-					GString *src = NULL;
-					struct purple_parse_tag *pt;
-					while(*p && *p != '>') {
-						if(!g_ascii_strncasecmp(p, "src=", strlen("src="))) {
-							const char *q = p + strlen("src=");
-							src = g_string_new("");
-							if(*q == '\'' || *q == '\"')
-								q++;
-							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
-								src = g_string_append_c(src, *q);
-								q++;
-							}
-							p = q;
-						}
-						p++;
-					}
-					if ((c = strchr(c, '>')) != NULL)
-						c++;
-					else
-						c = p;
-					pt = g_new0(struct purple_parse_tag, 1);
-					pt->src_tag = "img";
-					pt->dest_tag = "img";
-					tags = g_list_prepend(tags, pt);
-					if(xhtml && src && src->len)
-						g_string_append_printf(xhtml, "<img src='%s' alt=''>", g_strstrip(src->str));
-					else
-						pt->ignore = TRUE;
-					if (src)
-						g_string_free(src, TRUE);
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<b>", 3) || !g_ascii_strncasecmp(c, "<bold>", strlen("<bold>"))) {
@@ -1516,6 +1483,50 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					c = strchr(c, '>') + 1;
 					if(xhtml)
 						xhtml = g_string_append(xhtml, "<span style='vertical-align:super;'>");
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<img", 4) && (*(c+4) == '>' || *(c+4) == ' ')) {
+					const char *p = c;
+					GString *src = NULL, *alt = NULL;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "src=", strlen("src="))) {
+							const char *q = p + strlen("src=");
+							src = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								src = g_string_append_c(src, *q);
+								q++;
+							}
+							p = q;
+						} else if(!g_ascii_strncasecmp(p, "alt=", strlen("alt="))) {
+							const char *q = p + strlen("alt=");
+							alt = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								alt = g_string_append_c(alt, *q);
+								q++;
+							}
+							p = q;
+						}
+						p++;
+					}
+					if ((c = strchr(c, '>')) != NULL)
+						c++;
+					else
+						c = p;
+					/* src and alt are required! */
+					if(src && xhtml)
+						g_string_append_printf(xhtml, "<img src='%s' alt='%s' />", g_strstrip(src->str), alt?alt->str:"");
+					if(alt) {
+						if(plain)
+							plain = g_string_append(plain, alt->str);
+						if(!src && xhtml)
+							xhtml = g_string_append(xhtml, alt->str);
+					}
+					g_string_free(alt, TRUE);
+					g_string_free(src, TRUE);
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<a", 2) && (*(c+2) == '>' || *(c+2) == ' ')) {
@@ -1721,7 +1732,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 			struct purple_parse_tag *pt = tag->data;
 			if(!pt->ignore)
 				g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
-		}
+	g_list_free(tags);
 	}
 		*xhtml_out = g_strdup(xhtml->str);
 	if(xhtml_out)
