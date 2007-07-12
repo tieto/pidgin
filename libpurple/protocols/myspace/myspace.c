@@ -867,12 +867,6 @@ void msim_markup_tag_to_html(xmlnode *root, gchar **begin, gchar **end)
 /** Convert an individual HTML tag to msim markup. */
 void html_tag_to_msim_markup(xmlnode *root, gchar **begin, gchar **end)
 {
-    /* TODO: TODO XXX */
-    /*
-    *begin = g_strdup_printf("[begin-%s]", root->name);
-    *end = g_strdup_printf("[end-%s]", root->name);
-    */
-
     /* TODO: Coalesce nested tags into one <f> tag!
      * Currently, the 's' value will be overwritten when b/i/u is nested
      * within another one, and only the inner-most formatting will be 
@@ -1336,8 +1330,7 @@ msim_get_info(PurpleConnection *gc, const gchar *user)
 	g_free(user_to_lookup); 
 }
 
-/** Set your status - callback for when user manually sets it. 
- * TODO: find out why when setting status with a message, it ALWAYS goes to away! */
+/** Set your status - callback for when user manually sets it.  */
 void
 msim_set_status(PurpleAccount *account, PurpleStatus *status)
 {
@@ -1692,12 +1685,6 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
      * address and not username. Will be freed in msim_session_destroy(). */
     session->username = msim_msg_get_string(msg, "uniquenick");
 
-#ifdef MSIM_FAKE_SELF_ONLINE
-    purple_debug_info("msim", "msim_we_are_logged_on: faking self as coming online\n");
-    /* Fake our self coming online. TODO: do we need this anymore?! */
-    purple_prpl_got_user_status(session->account, session->username, 
-            purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE), NULL);
-#endif
 
     purple_debug_info("msim", "msim_we_are_logged_on: notifying servers of status\n");
     /* Notify servers of our current status. */
@@ -2043,16 +2030,7 @@ msim_status(MsimSession *session, MsimMessage *msg)
 				purple_status_code = PURPLE_STATUS_AVAILABLE;
 	}
 
-#ifdef MSIM_FAKE_SELF_ONLINE
-	if (!strcmp(username, session->username) && purple_status_code == PURPLE_STATUS_OFFLINE)
-	{
-		/* Hack to ignore offline status notices on self. */
-	} else if (status_code != MSIM_STATUS_CODE_IDLE) {
-#endif
-		purple_prpl_got_user_status(session->account, username, purple_primitive_get_id_from_type(purple_status_code), NULL);
-#ifdef MSIM_FAKE_SELF_ONLINE
-	}
-#endif
+    purple_prpl_got_user_status(session->account, username, purple_primitive_get_id_from_type(purple_status_code), NULL);
 
     if (status_code == MSIM_STATUS_CODE_IDLE)
     {

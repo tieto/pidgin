@@ -64,14 +64,6 @@
  * you want to actually use the plugin! */
 /*#define MSIM_SELF_TEST				*/
 
-/* Define to fake our own user account always being online. Needed
- * because msim doesn't allow adding oneself to ones list. */
-#define MSIM_FAKE_SELF_ONLINE
-
-/* TODO: (one release after) when RC4 makes it into libpurple, use the PURPLE_VERSION_CHECK 
- * macro to conditionally compile. And then later, get rid of our own
- * RC4 code and only support libpurple with RC4. */
-
 /* Constants */
 
 /* Maximum length of a password that is acceptable. This is the limit
