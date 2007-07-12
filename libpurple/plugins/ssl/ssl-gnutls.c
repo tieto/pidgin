@@ -729,6 +729,34 @@ x509_check_name (PurpleCertificate *crt, const gchar *name)
 	}
 }
 
+static time_t
+x509_activation (PurpleCertificate *crt)
+{
+	gnutls_x509_crt_t crt_dat;
+
+	g_assert(crt);
+	g_assert(crt->scheme == &x509_gnutls);
+
+	crt_dat = *( (gnutls_x509_crt_t *) crt->data );
+
+	/* TODO: Errorcheck this? */
+	return gnutls_x509_crt_get_activation_time(crt_dat);
+}
+
+static time_t
+x509_expiration (PurpleCertificate *crt)
+{
+	gnutls_x509_crt_t crt_dat;
+
+	g_assert(crt);
+	g_assert(crt->scheme == &x509_gnutls);
+
+	crt_dat = *( (gnutls_x509_crt_t *) crt->data );
+
+	/* TODO: Errorcheck this? */
+	return gnutls_x509_crt_get_expiration_time(crt_dat);
+}
+
 /* X.509 certificate operations provided by this plugin */
 /* TODO: Flesh this out! */
 static PurpleCertificateScheme x509_gnutls = {
@@ -742,8 +770,8 @@ static PurpleCertificateScheme x509_gnutls = {
 	NULL,                            /* Issuer Unique ID */
 	x509_common_name,                /* Subject name */
 	x509_check_name,                 /* Check subject name */
-	NULL,                            /* Activation time */
-	NULL                             /* Expiration time */
+	x509_activation,                 /* Activation time */
+	x509_expiration                  /* Expiration time */
 };
 
 static PurpleSslOps ssl_ops =
