@@ -524,6 +524,9 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	GByteArray *sha_bin;
 	gchar *cn;
 	const gchar *cn_match;
+	time_t activation, expiration;
+	/* Length of these buffers is dictated by 'man ctime_r' */
+	gchar activ_str[26], expir_str[26];
 	gchar *primary, *secondary;
 	PurpleCertificate *crt = (PurpleCertificate *) vrq->cert_chain->data;
 
@@ -542,10 +545,17 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	} else {
 		cn_match = _("(DOES NOT MATCH)");
 	}
+
+	/* Get the certificate times */
+	/* TODO: Check the times against localtime */
+	/* TODO: errorcheck? */
+	g_assert(purple_certificate_get_times(crt, &activation, &expiration));
+	ctime_r(&activation, activ_str);
+	ctime_r(&expiration, expir_str);
 	
 	/* Make messages */
 	primary = g_strdup_printf(_("%s has presented the following certificate:"), vrq->subject_name);
-	secondary = g_strdup_printf(_("Common name: %s %s\nFingerprint (SHA1): %s"), cn, cn_match, sha_asc);
+	secondary = g_strdup_printf(_("Common name: %s %s\n\nFingerprint (SHA1): %s\n\nActivation date: %s\nExpiration date: %s\n"), cn, cn_match, sha_asc, activ_str, expir_str);
 	
 	/* Make a semi-pretty display */
 	purple_request_accept_cancel(
