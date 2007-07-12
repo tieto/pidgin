@@ -281,7 +281,7 @@ account_signon_cb(PurpleConnection *gc, gpointer data)
 	mute_login_sounds_timeout = purple_timeout_add_seconds(10, unmute_login_sounds_cb, NULL);
 }
 
-static void *
+void *
 finch_sound_get_handle()
 {
 	static int handle;
@@ -619,6 +619,13 @@ finch_sound_set_active_profile(const char *name)
 	purple_prefs_set_string(FINCH_PREFS_ROOT "/sound/actprofile",name);
 }
 
+gboolean
+finch_sound_profile_exists(const char *name){
+	gchar * tmp;
+	gboolean ret = purple_prefs_exists(tmp = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s",name));
+	g_free(tmp);
+	return ret;
+}
 
 static void
 save_cb(GntWidget *button, gpointer win)
@@ -775,9 +782,8 @@ load_pref_window(const char * profile)
 		g_free(boolpref);
 	}
 
-	/* Can someone double check to make sure there isn't a leak in the way I'm keeping
-	 * track of thest profile suggests in the entry.  Thanks!
-	 */
+	gnt_tree_set_selected(GNT_TREE(pref_dialog->profiles),(gchar *)finch_sound_get_active_profile());
+
 	gnt_widget_draw(pref_dialog->window);
 }
 
@@ -794,28 +800,49 @@ static void
 prof_del_cb(GntWidget *button, gpointer null)
 {
 
-	const gchar * profile = gnt_entry_get_text(GNT_ENTRY(pref_dialog->profiles));
-	gchar * pref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s",profile);
+	gchar * profile = gnt_tree_get_selection_data(GNT_TREE(pref_dialog->profiles));
+	gchar * pref;
 
 	if(!strcmp(profile,DEFAULT_PROFILE))
 		return;
 
+	pref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s",profile);
 	purple_prefs_remove(pref);
 	g_free(pref);
 
-	g_free(pref_dialog->original_profile);
-	pref_dialog->original_profile = g_strdup(DEFAULT_PROFILE);
+	if(!strcmp(pref_dialog->original_profile,profile)){
+		g_free(pref_dialog->original_profile);
+		pref_dialog->original_profile = g_strdup(DEFAULT_PROFILE);
+	}
+
+	gnt_tree_remove(GNT_TREE(pref_dialog->profiles),profile);
 
 	reload_pref_window(DEFAULT_PROFILE);
 }
 
 static void
-prof_add_cb(GntEntry *entry, gpointer null)
+prof_add_cb(GntButton *button, GntEntry * entry)
 {
 	const char * profile = gnt_entry_get_text(entry);
-	
+	GntTreeRow * row;
+	if(!finch_sound_profile_exists(profile)){
+		gpointer key = g_strdup(profile);
+		row = gnt_tree_create_row(GNT_TREE(pref_dialog->profiles),profile);
+		gnt_tree_add_row_after(GNT_TREE(pref_dialog->profiles),key,
+														row,
+														NULL,NULL);
+		gnt_entry_set_text(entry,"");
+		gnt_tree_set_selected(GNT_TREE(pref_dialog->profiles),key);
+	}
+
 	reload_pref_window(profile);
 
+}
+
+static void
+prof_load_cb(GntTree *tree, gpointer oldkey, gpointer newkey, gpointer null)
+{
+	reload_pref_window(newkey);
 }
 
 static void
@@ -837,6 +864,7 @@ finch_sounds_show_all(void)
 	GntWidget *win;
 
 	gint i;
+	GList *itr,*list;
 
 	if(pref_dialog) {
 		gnt_window_present(pref_dialog->window);
@@ -860,6 +888,16 @@ finch_sounds_show_all(void)
 	box = gnt_vbox_new(FALSE);
 	gnt_box_add_widget(GNT_BOX(box),gnt_label_new_with_format(_("Profiles"),GNT_TEXT_FLAG_BOLD));
 	pref_dialog->profiles = tree = gnt_tree_new();
+	gnt_tree_set_hash_fns(GNT_TREE(tree), g_str_hash, g_str_equal, g_free);
+	gnt_tree_set_compare_func(GNT_TREE(tree),(GCompareFunc)g_ascii_strcasecmp);
+	g_signal_connect(G_OBJECT(tree),"selection-changed",G_CALLBACK(prof_load_cb),NULL);
+
+	itr = list = finch_sound_get_profiles();
+	for(;itr;itr = itr->next){
+		gnt_tree_add_row_after(GNT_TREE(tree),itr->data,gnt_tree_create_row(GNT_TREE(tree),itr->data),NULL,NULL);
+	}
+	g_list_free(list);
+
 	gnt_box_add_widget(GNT_BOX(box),tree);
 
 	pref_dialog->new_profile = entry = gnt_entry_new("");
@@ -867,7 +905,7 @@ finch_sounds_show_all(void)
 
 	tmpbox = gnt_hbox_new(FALSE);
 	button = gnt_button_new("Add");
-	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(prof_add_cb),NULL);
+	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(prof_add_cb),entry);
 	gnt_box_add_widget(GNT_BOX(tmpbox),button);
 	button = gnt_button_new("Delete");
 	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(prof_del_cb),NULL);

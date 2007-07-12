@@ -28,43 +28,75 @@
 #include "sound.h"
 
 /**********************************************************************/
-/** @name GNT Sound API                                               */
+/** @name GNT Sound API																								*/
 /**********************************************************************/
 /*@{*/
 
 /**
+* Get the prefs option for an event.
+*
+* @param event The event.
+* @return The option.
+*/
+const char *finch_sound_get_event_option(PurpleSoundEventID event);
+
+/**
+* Get the label for an event.
+*
+* @param event The event.
+* @return The label.
+*/
+const char *finch_sound_get_event_label(PurpleSoundEventID event);
+
+/*
  * Get the name of the active sound profile.
  *
- * @return The name of the profile
+ * @return the name
  */
 const char *finch_sound_get_active_profile(void);
 
 /**
  * Set the active profile.  If the profile doesn't exist, nothing is changed.
  * 
- * @param name  The name of the profile
+ * 
  */
 void finch_sound_set_active_profile(const char *name);
 
 /**
+ * Returns whether a profile exists or not.
+ *
+ * @parame name The name of the profile to check for
+ * return Existance value
+ *
+ */
+gboolean finch_sound_profile_exists(const char *name);
+
+
+/**
  * Get a list of available sound profiles.
  *
- * @return A list of strings denoting sound profile names.
- *         Caller must free the list (but not the data).
+ * @return A list of strings denoting sound profile names.  Free this list when you're done with it.
  */
 GList *finch_sound_get_profiles(void);
 
 /**
- * Gets GNT sound UI ops.
- *
- * @return The UI operations structure.
- */
+* Gets GNT sound UI ops.
+*
+* @return The UI operations structure.
+*/
 PurpleSoundUiOps *finch_sound_get_ui_ops(void);
 
 /**
  * Show the sound settings dialog.
  */
 void finch_sounds_show_all(void);
+
+/**
+* Get the handle for the GNT sound system.
+*
+* @return The handle to the sound system
+*/
+void *finch_sound_get_handle(void);
 
 /*@}*/
 
