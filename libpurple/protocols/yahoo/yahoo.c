@@ -3681,8 +3681,18 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 
 	group2 = yahoo_string_encode(gc, group, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc),
-	                  7, buddy->name, 65, group2, 14, "");
+	yahoo_packet_hash(pkt, "ssssssssss",
+	                  14, "",
+	                  65, group2,
+	                  97, "1",
+	                  1, purple_connection_get_display_name(gc),
+	                  302, "319",
+	                  300, "319",
+	                  7, buddy->name,
+	                  334, "0",
+	                  301, "319",
+	                  303, "319"
+	);
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(group2);
 }
