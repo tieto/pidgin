@@ -35,12 +35,14 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	const char *type = xmlnode_get_attrib(packet, "type");
 	xmlnode *child;
 	xmlnode *message, *sender_node, *subject_node;
-	const char *from, *to, *subject, *url, *tid;
+	const char *from, *to, *url, *tid;
+	char *subject;
 	const char *in_str;
 	char *to_name;
 	int i, count = 1, returned_count;
 
-	const char **tos, **froms, **subjects, **urls;
+	const char **tos, **froms, **urls;
+	char **subjects;
 
 	if (strcmp(type, "result"))
 		return;
@@ -66,7 +68,7 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 
 	froms    = g_new0(const char* , returned_count);
 	tos      = g_new0(const char* , returned_count);
-	subjects = g_new0(const char* , returned_count);
+	subjects = g_new0(char* , returned_count);
 	urls     = g_new0(const char* , returned_count);
 
 	to = xmlnode_get_attrib(packet, "to");
@@ -99,7 +101,7 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 		 */
 		tos[i] = (to_name != NULL ?  to_name : "");
 		froms[i] = (from != NULL ?  from : "");
-		subjects[i] = (subject != NULL ? subject : "");
+		subjects[i] = (subject != NULL ? subject : g_strdup(""));
 		urls[i] = (url != NULL ? url : "");
 
 		tid = xmlnode_get_attrib(message, "tid");
@@ -111,12 +113,14 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	}
 
 	if (i>0)
-		purple_notify_emails(js->gc, count, count == returned_count, subjects, froms, tos,
+		purple_notify_emails(js->gc, count, count == returned_count, (const char**) subjects, froms, tos,
 				urls, NULL, NULL);
 
 	g_free(to_name);
 	g_free(tos);
 	g_free(froms);
+	for (; i >= 0; i--)
+		g_free(subjects[i]);
 	g_free(subjects);
 	g_free(urls);
 
@@ -204,6 +208,8 @@ void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *it
 		list = list->next;
 	}
 
+	g_free(jid_norm);
+
 }
 
 gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
@@ -236,6 +242,7 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 	if (grt && (*grt == 'H' || *grt == 'h')) {
 		PurpleBuddy *buddy = purple_find_buddy(account, jid_norm);
 		purple_blist_remove_buddy(buddy);
+		g_free(jid_norm);
 		return FALSE;
 	}
 
@@ -246,6 +253,8 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 		purple_debug_info("jabber", "Unblocking %s\n", jid_norm);
 		purple_privacy_deny_remove(account, jid_norm, TRUE);
 	}
+
+	g_free(jid_norm);
 	return TRUE;
 }
 
