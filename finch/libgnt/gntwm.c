@@ -829,6 +829,9 @@ shift_left(GntBindable *bindable, GList *null)
 	if (wm->_list.window)
 		return TRUE;
 
+	if(!wm->cws->ordered)
+		return FALSE;
+
 	shift_window(wm, wm->cws->ordered->data, -1);
 	return TRUE;
 }
@@ -839,6 +842,9 @@ shift_right(GntBindable *bindable, GList *null)
 	GntWM *wm = GNT_WM(bindable);
 	if (wm->_list.window)
 		return TRUE;
+
+	if(!wm->cws->ordered)
+		return FALSE;
 
 	shift_window(wm, wm->cws->ordered->data, 1);
 	return TRUE;
