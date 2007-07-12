@@ -1428,6 +1428,47 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					xhtml = g_string_append(xhtml, "<span style='vertical-align:super;'>");
 					continue;
 				}
+				if(!g_ascii_strncasecmp(c, "<img", 4) && (*(c+4) == '>' || *(c+4) == ' ')) {
+					const char *p = c;
+					GString *src = NULL, *alt = NULL;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "src=", strlen("src="))) {
+							const char *q = p + strlen("src=");
+							src = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								src = g_string_append_c(src, *q);
+								q++;
+							}
+							p = q;
+						} else if(!g_ascii_strncasecmp(p, "alt=", strlen("alt="))) {
+							const char *q = p + strlen("alt=");
+							alt = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								alt = g_string_append_c(alt, *q);
+								q++;
+							}
+							p = q;
+						}
+						p++;
+					}
+					if ((c = strchr(c, '>')) != NULL)
+						c++;
+					else
+						c = p;
+					/* src and alt are required! */
+					if(src && alt)
+						g_string_append_printf(xhtml, "<img src='%s' alt='%s' />", g_strstrip(src->str), alt->str);
+					if(alt) {
+						plain = g_string_append(plain, alt->str);
+						if(!src)
+							xhtml = g_string_append(xhtml, alt->str);
+					}
+					continue;
+				}
 				if(!g_ascii_strncasecmp(c, "<a", 2) && (*(c+2) == '>' || *(c+2) == ' ')) {
 					const char *p = c;
 					struct purple_parse_tag *pt;
