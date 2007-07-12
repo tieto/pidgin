@@ -783,7 +783,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	gtk_widget_show(table);
 
 	dialog->on_away =
-		gtk_check_button_new_with_mnemonic(_("P_ounce only when my status is not available"));
+		gtk_check_button_new_with_mnemonic(_("P_ounce only when my status is not Available"));
 	gtk_table_attach(GTK_TABLE(table), dialog->on_away, 0, 1, 0, 1,
 					 GTK_FILL, 0, 0, 0);
 

@@ -37,9 +37,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Were Malpera Pidgin a Windowsê"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (bi tenê rake)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Di sazkirina GTK+ de çewtî derket."
 !define GTK_BAD_INSTALL_PATH			"rêya te nivîsand nayê gihiþtin an afirandin."

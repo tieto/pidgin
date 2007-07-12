@@ -110,6 +110,29 @@ size_t yahoo_packet_length(struct yahoo_packet *pkt)
 	return len;
 }
 
+/*
+ * 'len' is the value given to us by the server that is supposed to
+ * be the length of 'data'.  But apparently there's a time when this
+ * length is incorrect.  Christopher Layne thinks it might be a bug
+ * in their server code.
+ *
+ * The following information is from Christopher:
+ *
+ * It sometimes happens when Yahoo! sends a packet continuation within
+ * chat.  Sometimes when joining a large chatroom the initial
+ * SERVICE_CHATJOIN packet will be so large that it will need to be
+ * split into multiple packets.  That's fine, except that the length
+ * of the second packet is wrong.  The packet has the same length as
+ * the first packet, and the length given in the header is the same,
+ * however the actual data in the packet is shorter than this length.
+ * So half of the packet contains good, valid data, and then the rest
+ * of the packet is junk.  Luckily there is a null terminator after
+ * the valid data and before the invalid data.
+ *
+ * What does all this mean?  It means that we parse through the data
+ * pulling out key/value pairs until we've parsed 'len' bytes, or until
+ * we run into a null terminator, whichever comes first.
+ */
 void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 {
 	int pos = 0;
@@ -121,18 +144,8 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 
 	while (pos + 1 < len)
 	{
-		/* this is weird, and in one of the chat packets, and causes us to
-		 * think all the values are keys and all the keys are values after
-		 * this point if we don't handle it */
-		if (data[pos] == '\0') {
-			while (pos + 1 < len) {
-				if (data[pos] == 0xc0 && data[pos + 1] == 0x80)
-					break;
-				pos++;
-			}
-			pos += 2;
-			continue;
-		}
+		if (data[pos] == '\0')
+			break;
 
 		pair = g_new0(struct yahoo_pair, 1);
 

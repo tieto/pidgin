@@ -70,6 +70,7 @@
 #define PIDGIN_STOCK_STATUS_LOGIN      "pidgin-status-login"
 #define PIDGIN_STOCK_STATUS_LOGOUT     "pidgin-status-logout"
 #define PIDGIN_STOCK_STATUS_OFFLINE    "pidgin-status-offline"
+#define PIDGIN_STOCK_STATUS_OFFLINE_I  "pidgin-status-offline"
 #define PIDGIN_STOCK_STATUS_PERSON     "pidgin-status-person"
 #define PIDGIN_STOCK_STATUS_MESSAGE    "pidgin-status-message"
 
@@ -135,6 +136,9 @@
 #define PIDGIN_STOCK_TRAY_OFFLINE         "pidgin-tray-offline"
 #define PIDGIN_STOCK_TRAY_CONNECT         "pidgin-tray-connect"
 #define PIDGIN_STOCK_TRAY_PENDING         "pidgin-tray-pending"
+/* Uncomment me after 2.0.2! 
+ * #define PIDGIN_STOCK_TRAY_EMAIL		  "pidgin-tray-email"
+ */
 
 
 /*@}*/

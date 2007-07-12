@@ -12,7 +12,7 @@ pidgin plugin packages should be named pidgin-<plugin name>, so for
 Guifications, the package name should be pidgin-guifications. Plugin packages
 should build-depend on pidgin-dev (>= minimum pidgin version required to
 support plugin).  Normally the minimum version of pidgin-dev will just
-be 1:2.0.0 for the 2.x series, or higher if the plugin uses a new function
+be 2.0.0 for the 2.x series, or higher if the plugin uses a new function
 introduced in a later version.
 
 Plugin packages should also use dh_pidgin to set the correct dependencies

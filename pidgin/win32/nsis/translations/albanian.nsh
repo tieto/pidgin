@@ -28,9 +28,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Vizitoni Faqen Web të Pidgin-it për Windows"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Pidgin (vetëm hiq)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"gabim gjatë instalimit të GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Shtegu që treguat nuk mund të arrihet ose krijohet."

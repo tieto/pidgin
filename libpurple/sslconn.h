@@ -170,6 +170,7 @@ PurpleSslConnection *purple_ssl_connect_fd(PurpleAccount *account, int fd,
 
 /**
  * Adds an input watcher for the specified SSL connection.
+ * Once the SSL handshake is complete, use this to watch for actual data across it.
  *
  * @param gsc   The SSL connection handle.
  * @param func  The callback function.

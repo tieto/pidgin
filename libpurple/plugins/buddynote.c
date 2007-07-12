@@ -58,6 +58,9 @@ buddynote_extended_menu_cb(PurpleBlistNode *node, GList **m)
 {
 	PurpleMenuAction *bna = NULL;
 
+	if (purple_blist_node_get_flags(node) & PURPLE_BLIST_NODE_FLAG_NO_SAVE)
+		return;
+
 	*m = g_list_append(*m, bna);
 	bna = purple_menu_action_new(_("Edit Notes..."), PURPLE_CALLBACK(buddynote_edit_cb), NULL, NULL);
 	*m = g_list_append(*m, bna);

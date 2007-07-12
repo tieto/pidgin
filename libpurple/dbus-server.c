@@ -108,14 +108,14 @@ purple_dbus_unregister_pointer(gpointer node)
 }
 
 gint
-purple_dbus_pointer_to_id(gpointer node)
+purple_dbus_pointer_to_id(gconstpointer node)
 {
 	gint id = GPOINTER_TO_INT(g_hash_table_lookup(map_node_id, node));
 	if ((id == 0) && (node != NULL))
 	{
 		purple_debug_warning("dbus",
 				"Need to register an object with the dbus subsystem.\n");
-		g_return_val_if_reached(0);
+		return 0;
 	}
 	return id;
 }
@@ -138,7 +138,7 @@ purple_dbus_id_to_pointer(gint id, PurpleDBusType *type)
 }
 
 gint
-purple_dbus_pointer_to_id_error(gpointer ptr, DBusError *error)
+purple_dbus_pointer_to_id_error(gconstpointer ptr, DBusError *error)
 {
 	gint id = purple_dbus_pointer_to_id(ptr);
 

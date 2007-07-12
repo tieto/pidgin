@@ -1,3 +1,12 @@
+pidgin (2.0.2-1) unstable; urgency=low
+
+  * New upstream version (Closes: #429222)
+  * Enable SILC support (Closes: #260420)
+  * 21_purple-remote_syntax.patch:
+    - Fix syntax error in purple-remote script (Closes: #429623)
+
+ -- Ari Pollak <ari@debian.org>  Thu, 12 Jul 2007 10:37:09 -0400
+
 pidgin (2.0.1-1) unstable; urgency=low
 
   * New upstream release

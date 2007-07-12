@@ -31,9 +31,6 @@
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Uma versão antiga do ambiente de tempo de execução do GTK+ foi encontrada. Você deseja atualizá-lo?$\rNota: O $(^Name) poderá não funcionar a menos que você o faça."
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (apenas remover)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Erro ao instalar o ambiente de tempo de execução do GTK+."
 !define GTK_BAD_INSTALL_PATH			"O caminho que você digitou não pôde ser acessado ou criado."

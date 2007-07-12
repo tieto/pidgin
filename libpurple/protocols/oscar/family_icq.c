@@ -474,14 +474,14 @@ static int
 icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int ret = 0;
-	aim_tlvlist_t *tl;
+	GSList *tlvlist;
 	aim_tlv_t *datatlv;
 	ByteStream qbs;
 	guint32 ouruin;
 	guint16 cmdlen, cmd, reqid;
 
-	if (!(tl = aim_tlvlist_read(bs)) || !(datatlv = aim_tlv_gettlv(tl, 0x0001, 1))) {
-		aim_tlvlist_free(&tl);
+	if (!(tlvlist = aim_tlvlist_read(bs)) || !(datatlv = aim_tlv_gettlv(tlvlist, 0x0001, 1))) {
+		aim_tlvlist_free(tlvlist);
 		purple_debug_misc("oscar", "corrupt ICQ response\n");
 		return 0;
 	}
@@ -661,7 +661,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 		}
 	}
 
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }

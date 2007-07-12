@@ -27,9 +27,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Посетите веб-страницу Pidgin для пользователей Windows."
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Pidgin (только удаление)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Ошибка при установке окружения GTK+."
 !define GTK_BAD_INSTALL_PATH			"Путь который Вы ввели недоступен или не существует."

@@ -1,5 +1,16 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.0.2
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* English (British) translation updated (Luke Ross)
+	* Finnish translation updated (Timo Jyrinki)
+	* Lithuanian translation updated (Laurynas Biveinis)
+	* Portuguese (Brazilian) translation updated (Mauricio de
+	  L R Collares Neto)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Slovenian win32 installer updated (Martin Srebotnjak)
+
 version 2.0.1
 	* Chinese (Hong Kong) translation added (Ambrose C. Li, Abel Cheung)
 	* Chinese (Simplified) translation updated (Funda Wang)

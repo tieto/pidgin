@@ -36,9 +36,6 @@
 ; Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"浏览 Windows Pidgin 网页"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (只能删除)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"安装 GTK+ 运行时刻失败。"
 !define GTK_BAD_INSTALL_PATH			"无法访问或创建您输入的路径。"

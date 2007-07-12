@@ -25,10 +25,7 @@
 !define GTK_UPGRADE_PROMPT			"È stata trovata una versione precedente di GTK+. Vuoi aggiornarla?$\rNota: $(^Name) potrebbe non funzionare senza l'aggiornamento."
 
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE		"Visita la pagina web di Pidgin per Windows" 
-
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (solo rimozione)"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"Visita la pagina web di Pidgin per Windows"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Errore di installazione di GTK+."

@@ -183,16 +183,17 @@ static void message_send_cb(GtkWidget *widget, gpointer p)
 	char *text;
 
 	gc = console->gc;
-	
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-	
+
+	if (gc)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
 	gtk_text_buffer_get_start_iter(buffer, &start);
 	gtk_text_buffer_get_end_iter(buffer, &end);
-		
+
 	text = gtk_imhtml_get_text(GTK_IMHTML(console->entry), &start, &end);
-			
-	if (gc && prpl_info->convo_closed != NULL)
+
+	if (prpl_info && prpl_info->send_raw != NULL)
 		prpl_info->send_raw(gc, text, strlen(text));
 
 	g_free(text);

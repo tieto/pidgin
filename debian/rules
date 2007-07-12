@@ -13,9 +13,9 @@ DEB_CONFIGURE_INVOKE = cd "$(DEB_BUILDDIR)"; $(DEB_CONFIGURE_SCRIPT_ENV) \
 	../configure $(DEB_CONFIGURE_NORMAL_ARGS)
 LDFLAGS = -Wl,--as-needed
 
-DEB_CONFIGURE_EXTRA_FLAGS := --enable-perl --disable-silc --with-zephyr=/usr --enable-dbus --enable-gnutls=no --enable-nss=yes --enable-cyrus-sasl
+DEB_CONFIGURE_EXTRA_FLAGS := --enable-perl --with-zephyr=/usr --enable-dbus --enable-gnutls=no --enable-nss=yes --enable-cyrus-sasl
 DEB_DH_MAKESHLIBS_ARGS_pidgin := -V -X/usr/lib/finch -X/usr/lib/purple-2 -X/usr/lib/pidgin
-DEB_DH_SHLIBDEPS_ARGS_pidgin := -X/usr/lib/purple-2/libgg.so -X/usr/lib/purple-2/libzephyr.so -X/usr/lib/purple-2/tcl.so -X/usr/lib/pidgin/gevolution.so -X/usr/lib/purple-2/libsametime.so -- -dSuggests debian/pidgin/usr/lib/purple-2/libgg.so debian/pidgin/usr/lib/purple-2/libzephyr.so debian/pidgin/usr/lib/purple-2/tcl.so debian/pidgin/usr/lib/purple-2/libsametime.so -dDepends
+DEB_DH_SHLIBDEPS_ARGS_pidgin := -X/usr/lib/purple-2/libgg.so -X/usr/lib/purple-2/libzephyr.so -X/usr/lib/purple-2/tcl.so -X/usr/lib/pidgin/gevolution.so -X/usr/lib/purple-2/libsametime.so -- -dSuggests debian/pidgin/usr/lib/purple-2/libgg.so debian/pidgin/usr/lib/purple-2/libzephyr.so debian/pidgin/usr/lib/purple-2/tcl.so debian/pidgin/usr/lib/purple-2/libsametime.so debian/pidgin/usr/lib/purple-2/libsilcpurple.so -dDepends
 
 # documentation is in the pidgin-data package
 DEB_DH_LINK_pidgin := usr/share/doc/pidgin-data usr/share/doc/pidgin

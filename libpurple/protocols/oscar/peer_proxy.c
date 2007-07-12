@@ -224,7 +224,7 @@ peer_proxy_connection_recv_cb(gpointer data, gint source, PurpleInputCondition c
 		}
 
 		/* If there was an error then close the connection */
-		if (read == -1)
+		if (read < 0)
 		{
 			if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
 				/* No worries */
@@ -285,7 +285,8 @@ peer_proxy_connection_recv_cb(gpointer data, gint source, PurpleInputCondition c
 			return;
 		}
 
-		if (read == -1)
+		/* If there was an error then close the connection */
+		if (read < 0)
 		{
 			if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
 				/* No worries */

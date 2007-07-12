@@ -1,0 +1,6 @@
+- bug #421282/428678: create libpurple0, libpurple-dev, and finch packages. Move all
+  of the Recommends and Suggests to Depends except for the gstreamer plugins,
+  panel, evolution-data-server, and tcl/tk. Add a dh_purple and/or
+  dh_finch for people who want to package plugins for those since they may not
+  have a NEEDED dependency on libpurple.so. dh_purple should only need to do
+  libpurple0 (>= 2.x), since libpurple0 is versioned anyway.
