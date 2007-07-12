@@ -943,7 +943,7 @@ purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT(
 	guint arg5 = va_arg(args, guint);
 
 	ret_val =
-		((gboolean (*)(void *, void *, void *, void *, void *, guint))cb)(
+		((gboolean (*)(void *, void *, void *, void *, guint, void *))cb)(
 			arg1, arg2, arg3, arg4, arg5, data);
 
 	if (return_val != NULL)
