@@ -1732,11 +1732,10 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 			struct purple_parse_tag *pt = tag->data;
 			if(!pt->ignore)
 				g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
-	g_list_free(tags);
 	}
-		*xhtml_out = g_strdup(xhtml->str);
+	g_list_free(tags);
 	if(xhtml_out)
-		*xhtml_out = g_string_free(xhtml, FALSE);
+		*xhtml_out = g_strdup(xhtml->str);
 	if(plain_out)
 		*plain_out = g_strdup(plain->str);
 	g_string_free(xhtml, TRUE);
