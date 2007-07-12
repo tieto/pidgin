@@ -113,7 +113,7 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	}
 
 	if (i>0)
-		purple_notify_emails(js->gc, count, count == returned_count, (const char**) subjects, froms, tos,
+		purple_notify_emails(js->gc, count, count == i, (const char**) subjects, froms, tos,
 				urls, NULL, NULL);
 
 	g_free(to_name);
