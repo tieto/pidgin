@@ -429,6 +429,18 @@ purple_certificate_get_subject_name(PurpleCertificate *crt);
 gboolean
 purple_certificate_check_subject_name(PurpleCertificate *crt, const gchar *name);
 
+/**
+ * Get the expiration/activation times.
+ *
+ * @param crt          Certificate instance
+ * @param activation   Reference to store the activation time at. May be NULL
+ *                     if you don't actually want it.
+ * @param expiration   Reference to store the expiration time at. May be NULL
+ *                     if you don't actually want it.
+ * @return TRUE if the requested values were obtained, otherwise FALSE.
+ */
+gboolean
+purple_certificate_get_times(PurpleCertificate *crt, time_t *activation, time_t *expiration);
 
 /*@}*/
 
