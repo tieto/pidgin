@@ -1365,7 +1365,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						struct purple_parse_tag *pt = tags->data;
 						if(xhtml)
 							g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
-						if(!strcmp(pt->src_tag, "a")) {
+						if(plain && !strcmp(pt->src_tag, "a")) {
 							/* if this is a link, we have to add the url to the plaintext, too */
 							g_string_append_printf(plain, " <%s>", g_strstrip(url->str));
 						}
@@ -1518,7 +1518,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						c = p;
 					/* src and alt are required! */
 					if(src && xhtml)
-						g_string_append_printf(xhtml, "<img src='%s' alt='%s' />", g_strstrip(src->str), alt?alt->str:"");
+						g_string_append_printf(xhtml, "<img src='%s' alt='%s' />", g_strstrip(src->str), alt ? alt->str : "");
 					if(alt) {
 						if(plain)
 							plain = g_string_append(plain, alt->str);
@@ -1555,7 +1555,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->src_tag = "a";
 					pt->dest_tag = "a";
 					tags = g_list_prepend(tags, pt);
-					g_string_append_printf(xhtml, "<a href='%s'>", g_strstrip(url->str));
+					if(xhtml)
+						g_string_append_printf(xhtml, "<a href='%s'>", g_strstrip(url->str));
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
@@ -1736,11 +1737,9 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 	}
 	g_list_free(tags);
 	if(xhtml_out)
-		*xhtml_out = g_strdup(xhtml->str);
+		*xhtml_out = g_string_free(xhtml, FALSE);
 	if(plain_out)
-		*plain_out = g_strdup(plain->str);
-	g_string_free(xhtml, TRUE);
-	g_string_free(plain, TRUE);
+		*plain_out = g_string_free(plain, FALSE);
 	g_string_free(url, TRUE);
 }
 
