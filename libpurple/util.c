@@ -1732,6 +1732,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 			struct purple_parse_tag *pt = tag->data;
 			if(!pt->ignore)
 				g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
+		}
 	}
 	g_list_free(tags);
 	if(xhtml_out)
