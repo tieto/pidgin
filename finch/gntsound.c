@@ -876,7 +876,7 @@ finch_sounds_show_all(void)
 	gnt_box_set_toplevel(GNT_BOX(win), TRUE);
 	gnt_box_set_title(GNT_BOX(win), _("Sound Preferences"));
 	gnt_box_set_fill(GNT_BOX(win), TRUE);
-	gnt_box_set_alignment(GNT_BOX(win), GNT_ALIGN_LEFT);
+	gnt_box_set_alignment(GNT_BOX(win), GNT_ALIGN_MID);
 
 	/* Profiles */
 	splitbox = gnt_hbox_new(FALSE);
