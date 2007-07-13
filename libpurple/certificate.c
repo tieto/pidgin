@@ -70,7 +70,7 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 	vrq->verifier = verifier;
 	vrq->scheme = scheme;
 	vrq->subject_name = g_strdup(subject_name);
-	vrq->cert_chain = cert_chain;
+	vrq->cert_chain = purple_certificate_copy_list(cert_chain);
 	vrq->cb = cb;
 	vrq->cb_data = cb_data;
 

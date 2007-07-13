@@ -341,7 +341,8 @@ struct _PurpleCertificateVerificationRequest
  * @param cert_chain    Certificate chain to check. If there is more than one
  *                      certificate in the chain (X.509), the peer's
  *                      certificate comes first, then the issuer/signer's
- *                      certificate, etc.
+ *                      certificate, etc. The whole list is duplicated into the
+ *                      Request struct.
  *
  * @param cb            Callback function to be called with whether the
  *                      certificate was approved or not.

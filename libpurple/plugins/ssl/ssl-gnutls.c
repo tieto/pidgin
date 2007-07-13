@@ -236,7 +236,8 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 						  peers,
 						  ssl_gnutls_verified_cb,
 						  gsc);
-						  
+
+			purple_certificate_destroy_list(peers);
 		} else {
 			/* Otherwise, just call the "connection complete"
 			   callback */
