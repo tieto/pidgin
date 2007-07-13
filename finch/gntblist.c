@@ -139,7 +139,8 @@ is_group_online(PurpleGroup *group)
 {
 	PurpleBlistNode *node;
 	for (node = ((PurpleBlistNode*)group)->child; node; node = node->next) {
-		if (PURPLE_BLIST_NODE_IS_CHAT(node))
+		if (PURPLE_BLIST_NODE_IS_CHAT(node) &&
+				purple_account_is_connected(((PurpleChat *)node)->account))
 			return TRUE;
 		else if (is_contact_online((PurpleContact*)node))
 			return TRUE;
