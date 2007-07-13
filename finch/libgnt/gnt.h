@@ -153,7 +153,8 @@ void gnt_set_clipboard_string(gchar *string);
  * Spawn a different application that will consume the console.
  */
 gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
-		gint *stin, gint *stout, gint *sterr);
+		gint *stin, gint *stout, gint *sterr,
+		void (*callback)(int status, gpointer data), gpointer data);
 
 gboolean gnt_is_refugee(void);
 
