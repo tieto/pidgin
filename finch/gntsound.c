@@ -814,6 +814,9 @@ prof_del_cb(GntWidget *button, gpointer null)
 		pref_dialog->original_profile = g_strdup(DEFAULT_PROFILE);
 	}
 
+	if(!strcmp(profile,finch_sound_get_active_profile()))
+		reload_pref_window(DEFAULT_PROFILE);
+
 	gnt_tree_remove(GNT_TREE(pref_dialog->profiles), profile);
 }
 
