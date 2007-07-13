@@ -581,6 +581,23 @@ x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
 	return success;
 }
 
+static PurpleCertificate *
+x509_copy_certificate(PurpleCertificate *crt)
+{
+	x509_crtdata_t *crtdat;
+	PurpleCertificate *newcrt;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_gnutls, NULL);
+
+	crtdat = (x509_crtdata_t *) crt->data;
+
+	newcrt = g_new0(PurpleCertificate, 1);
+	newcrt->scheme = &x509_gnutls;
+	newcrt->data = x509_crtdata_addref(crtdat);
+
+	return newcrt;
+}
 /** Frees a Certificate
  *
  *  Destroys a Certificate's internal data structures and frees the pointer
@@ -799,7 +816,7 @@ static PurpleCertificateScheme x509_gnutls = {
 	N_("X.509 Certificates"),        /* User-visible scheme name */
 	x509_import_from_file,           /* Certificate import function */
 	x509_export_certificate,         /* Certificate export function */
-	NULL,                            /* Copy */
+	x509_copy_certificate,           /* Copy */
 	x509_destroy_certificate,        /* Destroy cert */
 	x509_sha1sum,                    /* SHA1 fingerprint */
 	NULL,                            /* Unique ID */
