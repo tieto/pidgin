@@ -141,7 +141,7 @@ chat_nick_matches_name(PurpleConversation *conv, const char *aname)
 	gboolean ret = FALSE;
 	chat = purple_conversation_get_chat_data(conv);
 
-	if (chat==NULL)
+	if (chat == NULL)
 		return ret;
 
 	nick = g_strdup(purple_normalize(conv->account, chat->nick));
@@ -196,7 +196,7 @@ im_msg_received_cb(PurpleAccount *account, char *sender,
 	if (flags & PURPLE_MESSAGE_DELAYED)
 		return;
 
-	if (conv==NULL) {
+	if (conv == NULL) {
 		purple_sound_play_event(PURPLE_SOUND_FIRST_RECEIVE, account);
 	} else {
 		play_conv_event(conv, event);
@@ -294,7 +294,7 @@ finch_sound_get_handle()
 static void
 initialize_profile(const char *name, PurplePrefType type, gconstpointer val, gpointer null)
 {
-	if(purple_prefs_exists(make_pref("")))
+	if (purple_prefs_exists(make_pref("")))
 		return;
 
 	purple_prefs_add_none(make_pref(""));
@@ -476,12 +476,12 @@ finch_sound_play_file(const char *filename)
 
 		esc_filename = g_shell_quote(filename);
 
-		if(strstr(sound_cmd, "%s"))
+		if (strstr(sound_cmd, "%s"))
 			command = purple_strreplace(sound_cmd, "%s", esc_filename);
 		else
 			command = g_strdup_printf("%s %s", sound_cmd, esc_filename);
 
-		if(!g_spawn_command_line_async(command, &error)) {
+		if (!g_spawn_command_line_async(command, &error)) {
 			purple_debug_error("gntsound", "sound command could not be launched: %s\n", error->message);
 			g_error_free(error);
 		}
@@ -585,7 +585,7 @@ finch_sound_play_event(PurpleSoundEventID event)
 	/* check NULL for sounds that don't have an option, ie buddy pounce */
 	if (purple_prefs_get_bool(enable_pref)) {
 		char *filename = g_strdup(purple_prefs_get_path(file_pref));
-		if(!filename || !strlen(filename)) {
+		if (!filename || !strlen(filename)) {
 			g_free(filename);
 			/* XXX Consider creating a constant for "sounds/purple" to be shared with Pidgin */
 			filename = g_build_filename(DATADIR, "sounds", "purple", sounds[event].def, NULL);
@@ -620,7 +620,7 @@ finch_sound_set_active_profile(const char *name)
 }
 
 gboolean
-finch_sound_profile_exists(const char *name){
+finch_sound_profile_exists(const char *name) {
 	gchar * tmp;
 	gboolean ret = purple_prefs_exists(tmp = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s", name));
 	g_free(tmp);
@@ -638,7 +638,7 @@ save_cb(GntWidget *button, gpointer win)
 	purple_prefs_set_int("/purple/sound/while_status", GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(pref_dialog->while_status))));
 	purple_prefs_set_int(make_pref("/volume"), gnt_slider_get_value(GNT_SLIDER(pref_dialog->volume)));
 
-	for(itr = gnt_tree_get_rows(GNT_TREE(pref_dialog->events));itr;itr = itr->next){
+	for (itr = gnt_tree_get_rows(GNT_TREE(pref_dialog->events)); itr; itr = itr->next) {
 		FinchSoundEvent * event = &sounds[GPOINTER_TO_INT(itr->data)];
 		char * filepref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s/file/%s", finch_sound_get_active_profile(), event->pref);
 		char * boolpref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s/enabled/%s", finch_sound_get_active_profile(), event->pref);
@@ -729,7 +729,7 @@ static void
 release_pref_dialog(GntBindable *data, gpointer null)
 {
 	GList * itr;
-	for(itr = gnt_tree_get_rows(GNT_TREE(pref_dialog->events));itr;itr = itr->next){
+	for (itr = gnt_tree_get_rows(GNT_TREE(pref_dialog->events)); itr; itr = itr->next) {
 		PurpleSoundEventID id = GPOINTER_TO_INT(itr->data);
 		FinchSoundEvent * e = &sounds[id];
 		g_free(e->file);
@@ -757,7 +757,7 @@ load_pref_window(const char * profile)
 
 	gnt_slider_set_value(GNT_SLIDER(pref_dialog->volume), CLAMP(purple_prefs_get_int(make_pref("/volume")), 0, 100));
 
-	for(i = 0;i < PURPLE_NUM_SOUNDS;i++){
+	for (i = 0; i < PURPLE_NUM_SOUNDS; i++) {
 		FinchSoundEvent * event = &sounds[i];
 		gchar *boolpref;
 		gchar *filepref;
@@ -790,10 +790,9 @@ load_pref_window(const char * profile)
 static void
 reload_pref_window(const char *profile)
 {
-	if(!strcmp(profile, finch_sound_get_active_profile()))
+	if (!strcmp(profile, finch_sound_get_active_profile()))
 		return;
 	load_pref_window(profile);
-	
 }
 
 static void
@@ -803,14 +802,14 @@ prof_del_cb(GntWidget *button, gpointer null)
 	gchar * profile = gnt_tree_get_selection_data(GNT_TREE(pref_dialog->profiles));
 	gchar * pref;
 
-	if(!strcmp(profile, DEFAULT_PROFILE))
+	if (!strcmp(profile, DEFAULT_PROFILE))
 		return;
 
 	pref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s", profile);
 	purple_prefs_remove(pref);
 	g_free(pref);
 
-	if(!strcmp(pref_dialog->original_profile, profile)){
+	if (!strcmp(pref_dialog->original_profile, profile)) {
 		g_free(pref_dialog->original_profile);
 		pref_dialog->original_profile = g_strdup(DEFAULT_PROFILE);
 	}
@@ -825,18 +824,17 @@ prof_add_cb(GntButton *button, GntEntry * entry)
 {
 	const char * profile = gnt_entry_get_text(entry);
 	GntTreeRow * row;
-	if(!finch_sound_profile_exists(profile)){
+	if (!finch_sound_profile_exists(profile)) {
 		gpointer key = g_strdup(profile);
 		row = gnt_tree_create_row(GNT_TREE(pref_dialog->profiles), profile);
 		gnt_tree_add_row_after(GNT_TREE(pref_dialog->profiles), key,
-														row,
-														NULL, NULL);
+				row,
+				NULL, NULL);
 		gnt_entry_set_text(entry, "");
 		gnt_tree_set_selected(GNT_TREE(pref_dialog->profiles), key);
-	}
-
-	reload_pref_window(profile);
-
+		finch_sound_set_active_profile(key);
+	} else 
+		reload_pref_window(profile);
 }
 
 static void
@@ -866,7 +864,7 @@ finch_sounds_show_all(void)
 	gint i;
 	GList *itr, *list;
 
-	if(pref_dialog) {
+	if (pref_dialog) {
 		gnt_window_present(pref_dialog->window);
 		return;
 	}
@@ -896,7 +894,7 @@ finch_sounds_show_all(void)
 	g_signal_connect(G_OBJECT(tree), "selection-changed", G_CALLBACK(prof_load_cb), NULL);
 
 	itr = list = finch_sound_get_profiles();
-	for(;itr;itr = itr->next){
+	for (; itr; itr = itr->next) {
 		gnt_tree_add_row_after(GNT_TREE(tree), itr->data, gnt_tree_create_row(GNT_TREE(tree), itr->data), NULL, NULL);
 	}
 	g_list_free(list);
@@ -992,10 +990,10 @@ finch_sounds_show_all(void)
 	gnt_tree_set_column_titles(GNT_TREE(tree), _("Event"), _("File"));
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
 
-	for(i = 0;i < PURPLE_NUM_SOUNDS;i++){
+	for (i = 0; i < PURPLE_NUM_SOUNDS; i++) {
 		FinchSoundEvent * event = &sounds[i];
 		
-		if(event->label == NULL){
+		if (event->label == NULL) {
 			continue;
 		}
 
