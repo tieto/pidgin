@@ -586,8 +586,8 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		dll_prep();
 
 	winpidgin_set_locale();
-	/* If help or version flag used, do not check Mutex */
-	if (!strstr(lpszCmdLine, "-h") && !strstr(lpszCmdLine, "-v"))
+	/* If help, version or multiple flag used, do not check Mutex */
+	if (!strstr(lpszCmdLine, "-h") && !strstr(lpszCmdLine, "-v") && !strstr(lpszCmdLine, "-m"))
 		if (!getenv("PIDGIN_MULTI_INST") && !winpidgin_set_running())
 			return 0;
 
