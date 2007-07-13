@@ -815,8 +815,6 @@ prof_del_cb(GntWidget *button, gpointer null)
 	}
 
 	gnt_tree_remove(GNT_TREE(pref_dialog->profiles), profile);
-
-	reload_pref_window(DEFAULT_PROFILE);
 }
 
 static void
@@ -1021,7 +1019,6 @@ finch_sounds_show_all(void)
 
 	/* Add new stuff before this */
 	box = gnt_hbox_new(FALSE);
-	gnt_box_set_pad(GNT_BOX(box), 0);
 	gnt_box_set_fill(GNT_BOX(box), TRUE);
 	button = gnt_button_new(_("Save"));
 	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(save_cb), win);
