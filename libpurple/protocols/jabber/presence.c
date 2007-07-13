@@ -655,18 +655,22 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		g_free(room_jid);
 	} else {
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
-				jid->node ? "@" : "", jid->domain);
+									 jid->node ? "@" : "", jid->domain);
 		if((b = purple_find_buddy(js->gc->account, buddy_name)) == NULL) {
-			purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%x)\n",
-				buddy_name, purple_account_get_username(js->gc->account), js->gc->account);
-			jabber_id_free(jid);
-			g_free(avatar_hash);
-			g_free(buddy_name);
-			g_free(status);
-			return;
+			if(!jid->node || strcmp(jid->node,js->user->node) || strcmp(jid->domain,js->user->domain)) {
+				purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%x)\n",
+									 buddy_name, purple_account_get_username(js->gc->account), js->gc->account);
+				jabber_id_free(jid);
+				g_free(avatar_hash);
+				g_free(buddy_name);
+				g_free(status);
+				return;
+			} else {
+				/* this is a different resource of our own account. Resume even when this account isn't on our blist */
+			}
 		}
 
-		if(avatar_hash) {
+		if(b && avatar_hash) {
 			const char *avatar_hash2 = purple_buddy_icons_get_checksum_for_user(b);
 			if(!avatar_hash2 || strcmp(avatar_hash, avatar_hash2)) {
 				JabberIq *iq;

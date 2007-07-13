@@ -262,11 +262,34 @@ void jabber_adhoc_server_execute(PurplePluginAction *action) {
 
 void jabber_adhoc_init_server_commands(JabberStream *js, GList **m) {
 	GList *cmdlst;
+	JabberBuddy *jb;
 	
+	/* also add commands for other clients connected to the same account on another resource */
+	char *accountname = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+	if((jb = jabber_buddy_find(js, accountname, TRUE))) {
+		GList *iter;
+		for(iter = jb->resources; iter; iter = g_list_next(iter)) {
+			JabberBuddyResource *jbr = iter->data;
+			GList *riter;
+			for(riter = jbr->commands; riter; riter = g_list_next(riter)) {
+				JabberAdHocCommands *cmd = riter->data;
+				char *cmdname = g_strdup_printf("[%s] %s",jbr->name,cmd->name);
+				PurplePluginAction *act = purple_plugin_action_new(cmdname, jabber_adhoc_server_execute);
+				act->user_data = cmd;
+				*m = g_list_append(*m, act);
+				g_free(cmdname);
+			}
+		}
+	}
+	g_free(accountname);
+	
+	/* now add server commands */
 	for(cmdlst = js->commands; cmdlst; cmdlst = g_list_next(cmdlst)) {
 		JabberAdHocCommands *cmd = cmdlst->data;
-		PurplePluginAction *act = purple_plugin_action_new(cmd->name, jabber_adhoc_server_execute);
+		char *cmdname = g_strdup_printf("[%s] %s",js->user->domain,cmd->name);
+		PurplePluginAction *act = purple_plugin_action_new(cmdname, jabber_adhoc_server_execute);
 		act->user_data = cmd;
 		*m = g_list_append(*m, act);
+		g_free(cmdname);
 	}
 }
