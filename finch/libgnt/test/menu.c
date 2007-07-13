@@ -33,16 +33,23 @@ int main()
 	GntWidget *sub = gnt_menu_new(GNT_MENU_POPUP);
 	gnt_menuitem_set_submenu(GNT_MENU_ITEM(item), GNT_MENU(sub));
 
+	item = gnt_menuitem_new("Online Helpasd");
+	gnt_menuitem_set_trigger(GNT_MENU_ITEM(item), 'h');
+	gnt_menu_add_item(GNT_MENU(sub), GNT_MENU_ITEM(item));
+
 	item = gnt_menuitem_new("Online Help");
+	gnt_menuitem_set_trigger(GNT_MENU_ITEM(item), 'h');
 	gnt_menu_add_item(GNT_MENU(sub), GNT_MENU_ITEM(item));
 
 	item = gnt_menuitem_new("About");
+	gnt_menuitem_set_trigger(GNT_MENU_ITEM(item), 'a');
 	gnt_menu_add_item(GNT_MENU(sub), GNT_MENU_ITEM(item));
 
 	sub = gnt_menu_new(GNT_MENU_POPUP);
 	gnt_menuitem_set_submenu(GNT_MENU_ITEM(item), GNT_MENU(sub));
 
 	item = gnt_menuitem_new("Online Help");
+	gnt_menuitem_set_trigger(GNT_MENU_ITEM(item), 'O');
 	gnt_menu_add_item(GNT_MENU(sub), GNT_MENU_ITEM(item));
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), dothis, NULL);
 
