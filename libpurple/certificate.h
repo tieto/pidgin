@@ -379,6 +379,15 @@ PurpleCertificate *
 purple_certificate_copy(PurpleCertificate *crt);
 
 /**
+ * Duplicates an entire list of certificates
+ *
+ * @param crt_list   List to duplicate
+ * @return New list copy
+ */
+GList *
+purple_certificate_copy_list(GList *crt_list);
+
+/**
  * Destroys and free()'s a Certificate
  *
  * @param crt        Instance to destroy. May be NULL.

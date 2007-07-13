@@ -108,6 +108,22 @@ purple_certificate_copy(PurpleCertificate *crt)
 	return (crt->scheme->copy_certificate)(crt);
 }
 
+GList *
+purple_certificate_copy_list(GList *crt_list)
+{
+	GList *new, *l;
+
+	/* First, make a shallow copy of the list */
+	new = g_list_copy(crt_list);
+
+	/* Now go through and actually duplicate each certificate */
+	for (l = new; l; l = l->next) {
+		l->data = purple_certificate_copy(l->data);
+	}
+
+	return new;
+}
+
 void
 purple_certificate_destroy (PurpleCertificate *crt)
 {
