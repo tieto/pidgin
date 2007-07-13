@@ -306,7 +306,7 @@ setup_io()
 	                                 But irssi does this, so I am going to assume the
 	                                 crashes were caused by some other stuff. */
 
-	g_printerr("gntmain: setting up IO\n");
+	g_printerr("gntmain: setting up IO (%d)\n", channel_read_callback);
 }
 
 static gboolean
@@ -643,9 +643,21 @@ gchar *gnt_get_clipboard_string()
 }
 
 #if GLIB_CHECK_VERSION(2,4,0)
+typedef struct
+{
+	void (*callback)(int status, gpointer data);
+	gpointer data;
+} ChildProcess;
+
 static void
 reap_child(GPid pid, gint status, gpointer data)
 {
+	ChildProcess *cp = data;
+	if (cp->callback) {
+		cp->callback(status, cp->data);
+	}
+	g_free(cp);
+	clean_pid();
 	wm->mode = GNT_KP_MODE_NORMAL;
 	clear();
 	setup_io();
@@ -654,10 +666,12 @@ reap_child(GPid pid, gint status, gpointer data)
 #endif
 
 gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
-		gint *stin, gint *stout, gint *sterr)
+		gint *stin, gint *stout, gint *sterr,
+		void (*callback)(int status, gpointer data), gpointer data)
 {
 #if GLIB_CHECK_VERSION(2,4,0)
 	GPid pid = 0;
+	ChildProcess *cp = NULL;
 
 	if (!g_spawn_async_with_pipes(wd, argv, envp,
 			G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
@@ -665,9 +679,12 @@ gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
 			&pid, stin, stout, sterr, NULL))
 		return FALSE;
 
+	cp = g_new0(ChildProcess, 1);
+	cp->callback = callback;
+	cp->data = data;
 	g_source_remove(channel_read_callback);
 	wm->mode = GNT_KP_MODE_WAIT_ON_CHILD;
-	g_child_watch_add(pid, reap_child, NULL);
+	g_child_watch_add(pid, reap_child, cp);
 
 	return TRUE;
 #else

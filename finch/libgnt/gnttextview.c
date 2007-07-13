@@ -26,6 +26,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 enum
 {
@@ -795,6 +796,13 @@ void gnt_text_view_set_flag(GntTextView *view, GntTextViewFlag flag)
 	view->flags |= flag;
 }
 
+static void
+pager_end_cb(int status, gpointer data)
+{
+	unlink(data);
+	g_free(data);
+}
+
 static gboolean
 check_for_pager_cb(GntWidget *widget, const char *key, GntTextView *view)
 {
@@ -803,6 +811,7 @@ check_for_pager_cb(GntWidget *widget, const char *key, GntTextView *view)
 	static char path[1024];
 	static int len = -1;
 	FILE *file;
+	gboolean ret;
 
 	if (combin == NULL) {
 		combin = gnt_key_translate(gnt_style_get_from_name("pager", "key"));
@@ -826,8 +835,11 @@ check_for_pager_cb(GntWidget *widget, const char *key, GntTextView *view)
 	argv[0] = gnt_style_get_from_name("pager", "path");
 	argv[0] = argv[0] ? argv[0] : getenv("PAGER");
 	argv[0] = argv[0] ? argv[0] : "less";
-	argv[1] = path;
-	return gnt_giveup_console(NULL, argv, NULL, NULL, NULL, NULL);
+	argv[1] = g_strdup(path);
+	ret = gnt_giveup_console(NULL, argv, NULL, NULL, NULL, NULL, pager_end_cb, argv[1]);
+	if (!ret)
+		g_free(argv[1]);
+	return ret;
 }
 
 void gnt_text_view_attach_pager_widget(GntTextView *view, GntWidget *pager)
