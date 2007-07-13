@@ -48,7 +48,11 @@ const char *gnt_style_get(GntStyle style)
 char *gnt_style_get_from_name(const char *group, const char *key)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
-	if ((group == NULL && (group = g_get_prgname()) == NULL) || *group == '\0')
+	if (group == NULL && (group = g_get_prgname()) != NULL && *group != '\0') {
+		return g_key_file_get_value(gkfile, group, key, NULL);
+	}
+
+	if (!group || !*group)
 		group = "general";
 	return g_key_file_get_value(gkfile, group, key, NULL);
 #endif
