@@ -267,21 +267,12 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
 	int sub_id = SUBLANGID(lcid);
 
 	switch (lang_id) {
+		case LANG_AFRIKAANS: posix = "af"; break;
 		case LANG_ARABIC: posix = "ar"; break;
 		case LANG_AZERI: posix = "az"; break;
 		case LANG_BENGALI: posix = "bn"; break;
 		case LANG_BULGARIAN: posix = "bg"; break;
 		case LANG_CATALAN: posix = "ca"; break;
-		case LANG_CHINESE:
-			switch (sub_id) {
-				case SUBLANG_CHINESE_SIMPLIFIED:
-					posix = "zh_CN"; break;
-				case SUBLANG_CHINESE_TRADITIONAL:
-					posix = "zh_TW"; break;
-				default:
-					posix = "zh"; break;
-			}
-			break;
 		case LANG_CZECH: posix = "cs"; break;
 		case LANG_DANISH: posix = "da"; break;
 		case LANG_ESTONIAN: posix = "et"; break;
@@ -310,9 +301,11 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
 		case LANG_HINDI: posix = "hi"; break;
 		case LANG_HUNGARIAN: posix = "hu"; break;
 		case LANG_ICELANDIC: break;
+		case LANG_INDONESIAN: posix = "id"; break;
 		case LANG_ITALIAN: posix = "it"; break;
 		case LANG_JAPANESE: posix = "ja"; break;
 		case LANG_GEORGIAN: posix = "ka"; break;
+		case LANG_KANNADA: posix = "kn"; break;
 		case LANG_KOREAN: posix = "ko"; break;
 		case LANG_LITHUANIAN: posix = "lt"; break;
 		case LANG_MACEDONIAN: posix = "mk"; break;
@@ -328,6 +321,7 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
 			break;
 		case LANG_PUNJABI: posix = "pa"; break;
 		case LANG_POLISH: posix = "pl"; break;
+		case LANG_PASHTO: posix = "ps"; break;
 		case LANG_PORTUGUESE:
 			switch (sub_id) {
 				case SUBLANG_PORTUGUESE_BRAZILIAN:
@@ -339,6 +333,9 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
 		case LANG_ROMANIAN: posix = "ro"; break;
 		case LANG_RUSSIAN: posix = "ru"; break;
 		/* LANG_CROATIAN == LANG_SERBIAN == LANG_BOSNIAN */
+		case LANG_SLOVAK: posix = "sk"; break;
+		case LANG_SLOVENIAN: posix = "sl"; break;
+		case LANG_ALBANIAN: posix = "sq"; break;
 		case LANG_SERBIAN:
 			switch (sub_id) {
 				case SUBLANG_SERBIAN_LATIN:
@@ -352,9 +349,6 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
 					posix = "hr"; break;
 			}
 			break;
-		case LANG_SLOVAK: posix = "sk"; break;
-		case LANG_SLOVENIAN: posix = "sl"; break;
-		case LANG_ALBANIAN: posix = "sq"; break;
 		case LANG_SWEDISH: posix = "sv"; break;
 		case LANG_TAMIL: posix = "ta"; break;
 		case LANG_TELUGU: posix = "te"; break;
@@ -363,12 +357,20 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
 		case LANG_UKRAINIAN: posix = "uk"; break;
 		case LANG_VIETNAMESE: posix = "vi"; break;
 		case LANG_XHOSA: posix = "xh"; break;
+		case LANG_CHINESE:
+			switch (sub_id) {
+				case SUBLANG_CHINESE_SIMPLIFIED:
+					posix = "zh_CN"; break;
+				case SUBLANG_CHINESE_TRADITIONAL:
+					posix = "zh_TW"; break;
+				default:
+					posix = "zh"; break;
+			}
+			break;
 		case LANG_URDU: break;
-		case LANG_INDONESIAN: break;
 		case LANG_BELARUSIAN: break;
 		case LANG_LATVIAN: break;
 		case LANG_ARMENIAN: break;
-		case LANG_AFRIKAANS: break;
 		case LANG_FAEROESE: break;
 		case LANG_MALAY: break;
 		case LANG_KAZAK: break;
@@ -377,7 +379,6 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
 		case LANG_UZBEK: break;
 		case LANG_TATAR: break;
 		case LANG_ORIYA: break;
-		case LANG_KANNADA: break;
 		case LANG_MALAYALAM: break;
 		case LANG_ASSAMESE: break;
 		case LANG_MARATHI: break;
