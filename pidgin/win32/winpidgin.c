@@ -55,6 +55,8 @@ typedef int (CALLBACK* LPFNPIDGINMAIN)(HINSTANCE, int, char**);
 typedef void (CALLBACK* LPFNSETDLLDIRECTORY)(LPCTSTR);
 typedef BOOL (CALLBACK* LPFNATTACHCONSOLE)(DWORD);
 
+static BOOL portable_mode = FALSE;
+
 /*
  *  PROTOTYPES
  */
@@ -106,78 +108,10 @@ static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data
 	return ret;
 }
 
-static void dll_prep() {
-	char path[MAX_PATH + 1];
+static void common_dll_prep(const char *path) {
 	HMODULE hmod;
 	HKEY hkey;
-#ifdef PORTABLE
-	/* We assume that GTK+ is installed under \\path\to\Pidgin\..\GTK
-	 * First we find \\path\to
-	 */
-	if (GetModuleFileName(NULL, path, MAX_PATH) != 0) {
-		char *tmp = path;
-		char *prev = NULL;
-		char *prev2 = NULL;
 
-		while ((tmp = strchr(tmp, '\\'))) {
-			prev2 = prev;
-			prev = tmp;
-			tmp++;
-		}
-
-		if (prev2) {
-			prev2[0] = '\0';
-		}
-	} else {
-		printf("Unable to determine current executable path. \n"
-			"This will prevent the settings dir from being set.\n"
-			"Assuming GTK+ is in the PATH.\n");
-	}
-
-	if (path) {
-		/* Set up the settings dir base to be \\path\to
-		 * The actual settings dir will be \\path\to\.purple */
-		char settingsdir[strlen(path) + strlen("PURPLEHOME=") + 1];
-		char aspelldir[strlen(path) + strlen("PIDGIN_ASPELL_DIR=\\Aspell\\bin") + 1];
-
-		snprintf(settingsdir, sizeof(settingsdir), "PURPLEHOME=%s", path);
-		printf("Setting settings dir: %s\n", settingsdir);
-		putenv(settingsdir);
-
-		snprintf(aspelldir, sizeof(aspelldir), "PIDGIN_ASPELL_DIR=%s\\Aspell\\bin", path);
-		printf("%s\n", aspelldir);
-		putenv(aspelldir);
-
-		/* set the GTK+ path to be \\path\to\GTK\bin */
-		strcat(path, "\\GTK\\bin");
-	} else
-		return;
-#else /* PORTABLE */
-	char gtkpath[MAX_PATH + 1];
-	DWORD plen;
-
-	plen = sizeof(gtkpath);
-	hkey = HKEY_CURRENT_USER;
-	if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "Path",
-			(LPBYTE) &gtkpath, &plen)) {
-		hkey = HKEY_LOCAL_MACHINE;
-		if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "Path",
-				(LPBYTE) &gtkpath, &plen)) {
-			printf("GTK+ Path Registry Key not found. "
-				"Assuming GTK+ is in the PATH.\n");
-			return;
-		}
-	}
-
-	/* this value is replaced during a successful RegQueryValueEx() */
-	plen = sizeof(path);
-	/* Determine GTK+ dll path .. */
-	if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "DllPath",
-				(LPBYTE) &path, &plen)) {
-		strcpy(path, gtkpath);
-		strcat(path, "\\bin");
-	}
-#endif
 	printf("GTK+ path found: %s\n", path);
 
 	if ((hmod = GetModuleHandle("kernel32.dll"))) {
@@ -247,6 +181,84 @@ static void dll_prep() {
 				printf("SafeDllSearchMode is set to 0\n");
 		}/*end else*/
 	}
+}
+
+static void portable_mode_dll_prep(const char *pidgin_dir) {
+	/* need to be able to fit MAX_PATH + "PIDGIN_ASPELL_DIR=\\Aspell\\bin" in path2 */
+	char path[MAX_PATH + 1];
+	char path2[MAX_PATH + 33];
+	const char *prev = NULL;
+
+	/* We assume that GTK+ is installed under \\path\to\Pidgin\..\GTK
+	 * First we find \\path\to
+	 */
+	if (*pidgin_dir) {
+		/* pidgin_dir points to \\path\to\Pidgin */
+		const char *tmp = pidgin_dir;
+
+		while ((tmp = strchr(tmp, '\\'))) {
+			prev = tmp;
+			tmp++;
+		}
+	}
+
+	if (prev) {
+		int cnt = (prev - pidgin_dir);
+		strncpy(path, pidgin_dir, cnt);
+		path[cnt] = '\0';
+	} else {
+		printf("Unable to determine current executable path. \n"
+			"This will prevent the settings dir from being set.\n"
+			"Assuming GTK+ is in the PATH.\n");
+		return;
+	}
+
+
+	/* Set up the settings dir base to be \\path\to
+	 * The actual settings dir will be \\path\to\.purple */
+	snprintf(path2, sizeof(path2), "PURPLEHOME=%s", path);
+	printf("Setting settings dir: %s\n", path2);
+	putenv(path2);
+
+	snprintf(path2, sizeof(path2), "PIDGIN_ASPELL_DIR=%s\\Aspell\\bin", path);
+	printf("%s\n", path2);
+	putenv(path2);
+
+	/* set the GTK+ path to be \\path\to\GTK\bin */
+	strcat(path, "\\GTK\\bin");
+
+	common_dll_prep(path);
+}
+
+static void dll_prep() {
+	char path[MAX_PATH + 1];
+	HKEY hkey;
+	char gtkpath[MAX_PATH + 1];
+	DWORD plen;
+
+	plen = sizeof(gtkpath);
+	hkey = HKEY_CURRENT_USER;
+	if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "Path",
+			(LPBYTE) &gtkpath, &plen)) {
+		hkey = HKEY_LOCAL_MACHINE;
+		if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "Path",
+				(LPBYTE) &gtkpath, &plen)) {
+			printf("GTK+ Path Registry Key not found. "
+				"Assuming GTK+ is in the PATH.\n");
+			return;
+		}
+	}
+
+	/* this value is replaced during a successful RegQueryValueEx() */
+	plen = sizeof(path);
+	/* Determine GTK+ dll path .. */
+	if (!read_reg_string(hkey, "SOFTWARE\\GTK\\2.0", "DllPath",
+				(LPBYTE) &path, &plen)) {
+		strcpy(path, gtkpath);
+		strcat(path, "\\bin");
+	}
+
+	common_dll_prep(path);
 }
 
 static char* winpidgin_lcid_to_posix(LCID lcid) {
@@ -398,22 +410,18 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
 static const char *winpidgin_get_locale() {
 	const char *locale = NULL;
 	LCID lcid;
-#ifndef PORTABLE
 	char data[10];
 	DWORD datalen = 10;
-#endif
 
 	/* Check if user set PIDGINLANG env var */
 	if ((locale = getenv("PIDGINLANG")))
 		return locale;
 
-#ifndef PORTABLE
-	if (read_reg_string(HKEY_CURRENT_USER, "SOFTWARE\\pidgin",
+	if (!portable_mode && read_reg_string(HKEY_CURRENT_USER, "SOFTWARE\\pidgin",
 			"Installer Language", (LPBYTE) &data, &datalen)) {
 		if ((locale = winpidgin_lcid_to_posix(atoi(data))))
 			return locale;
 	}
-#endif
 
 	lcid = GetUserDefaultLCID();
 	if ((locale = winpidgin_lcid_to_posix(lcid)))
@@ -525,7 +533,8 @@ int _stdcall
 WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		char *lpszCmdLine, int nCmdShow) {
 	char errbuf[512];
-	char pidgindir[MAX_PATH];
+	char pidgin_dir[MAX_PATH];
+	char exe_name[MAX_PATH];
 	HMODULE hmod;
 	char *tmp;
 
@@ -555,10 +564,11 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	}
 
 	/* Load exception handler if we have it */
-	if (GetModuleFileName(NULL, pidgindir, MAX_PATH) != 0) {
+	if (GetModuleFileName(NULL, pidgin_dir, MAX_PATH) != 0) {
 		char *prev = NULL;
-		tmp = pidgindir;
+		tmp = pidgin_dir;
 
+		/* primitive dirname() */
 		while ((tmp = strchr(tmp, '\\'))) {
 			prev = tmp;
 			tmp++;
@@ -566,9 +576,15 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 		if (prev) {
 			prev[0] = '\0';
-			strcat(pidgindir, "\\exchndl.dll");
-			if (LoadLibrary(pidgindir))
+
+			/* prev++ will now point to the executable file name */
+			strcpy(exe_name, prev + 1);
+
+			strcat(pidgin_dir, "\\exchndl.dll");
+			if (LoadLibrary(pidgin_dir))
 				printf("Loaded exchndl.dll\n");
+
+			prev[0] = '\0';
 		}
 	} else {
 		DWORD dw = GetLastError();
@@ -578,11 +594,19 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 			(UINT) dw, err_msg);
 		printf("%s", errbuf);
 		MessageBox(NULL, errbuf, NULL, MB_OK | MB_TOPMOST);
+		pidgin_dir[0] = '\0';
 	}
 
-#ifndef PORTABLE
-	if (!getenv("PIDGIN_NO_DLL_CHECK"))
-#endif
+	/* Determine if we're running in portable mode */
+	if (strstr(lpszCmdLine, "--portable-mode")
+			|| (exe_name != NULL && strstr(exe_name, "-portable.exe"))) {
+		printf("Running in PORTABLE mode.\n");
+		portable_mode = TRUE;
+	}
+
+	if (portable_mode)
+		portable_mode_dll_prep(pidgin_dir);
+	else if (!getenv("PIDGIN_NO_DLL_CHECK"))
 		dll_prep();
 
 	winpidgin_set_locale();
@@ -592,9 +616,8 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 			return 0;
 
 	/* Now we are ready for Pidgin .. */
-	if ((hmod = LoadLibrary("pidgin.dll"))) {
+	if ((hmod = LoadLibrary("pidgin.dll")))
 		pidgin_main = (LPFNPIDGINMAIN) GetProcAddress(hmod, "pidgin_main");
-	}
 
 	if (!pidgin_main) {
 		DWORD dw = GetLastError();
