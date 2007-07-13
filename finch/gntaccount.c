@@ -924,7 +924,7 @@ finch_request_authorize(PurpleAccount *account, const char *remote_user,
 	if (message != NULL && *message == '\0')
 		message = NULL;
 
-	buffer = g_strdup_printf(_("%s%s%s%s wants to add %s%s%s%s to his or her buddy list%s%s"),
+	buffer = g_strdup_printf(_("%s%s%s%s wants to add %s to his or her buddy list%s%s"),
 				remote_user,
 	 	                (alias != NULL ? " ("  : ""),
 		                (alias != NULL ? alias : ""),
@@ -934,10 +934,7 @@ finch_request_authorize(PurpleAccount *account, const char *remote_user,
 		                : (purple_connection_get_display_name(gc) != NULL
 		                ? purple_connection_get_display_name(gc)
 		                : purple_account_get_username(account))),
-						id ? " (" : "",
-						id ? purple_account_get_username(account) : "",
-						id ? ")" : "",
-		                (message != NULL ? ":\n" : "."),
+		                (message != NULL ? ": " : "."),
 		                (message != NULL ? message  : ""));
 	if (!on_list) {
 		GntWidget *widget;
