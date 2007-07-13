@@ -410,6 +410,42 @@ const gchar * SCHEME_NAME = "x509";
 
 static PurpleCertificateScheme x509_gnutls;
 
+/** Refcounted GnuTLS certificate data instance */
+typedef struct {
+	gint refcount;
+	gnutls_x509_crt_t crt;
+} x509_crtdata_t;
+
+/** Helper functions for reference counting */
+static x509_crtdata_t *
+x509_crtdata_addref(x509_crtdata_t *cd)
+{
+	(cd->refcount)++;
+	return cd;
+}
+
+static void
+x509_crtdata_delref(x509_crtdata_t *cd)
+{
+	g_assert(cd->refcount > 0);
+	
+	(cd->refcount)--;
+
+	/* If the refcount reaches zero, kill the structure */
+	if (cd->refcount == 0) {
+		purple_debug_info("gnutls/x509",
+				  "Freeing unused cert data at %p\n",
+				  cd);
+		/* Kill the internal data */
+		gnutls_x509_crt_deinit( cd->crt );
+		/* And kill the struct */
+		g_free( cd );
+	}
+}
+
+/** Helper macro to retrieve the GnuTLS crt_t from a PurpleCertificate */
+#define X509_GET_GNUTLS_DATA(pcrt) ( ((x509_crtdata_t *) (pcrt->data))->crt)
+
 /** Transforms a gnutls_datum_t containing an X.509 certificate into a Certificate instance under the x509_gnutls scheme
  *
  * @param dt   Datum to transform
@@ -423,22 +459,23 @@ static PurpleCertificate *
 x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode)
 {
 	/* Internal certificate data structure */
-	gnutls_x509_crt_t *certdat;
+	x509_crtdata_t *certdat;
 	/* New certificate to return */
 	PurpleCertificate * crt;
 
 	/* Allocate and prepare the internal certificate data */
-	certdat = g_new0(gnutls_x509_crt_t, 1);
-	gnutls_x509_crt_init(certdat);
-
+	certdat = g_new0(x509_crtdata_t, 1);
+	gnutls_x509_crt_init(&(certdat->crt));
+	certdat->refcount = 0;
+	
 	/* Perform the actual certificate parse */
-	/* Yes, certdat SHOULD be dereferenced */
-	gnutls_x509_crt_import(*certdat, &dt, mode);
+	/* Yes, certdat->crt should be passed as-is */
+	gnutls_x509_crt_import(certdat->crt, &dt, mode);
 	
 	/* Allocate the certificate and load it with data */
 	crt = g_new0(PurpleCertificate, 1);
 	crt->scheme = &x509_gnutls;
-	crt->data = certdat;
+	crt->data = x509_crtdata_addref(certdat);
 
 	return crt;
 }
@@ -506,7 +543,7 @@ x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
 	g_return_val_if_fail(crt->scheme == &x509_gnutls, FALSE);
 	g_return_val_if_fail(crt->data, FALSE);
 
-	crt_dat = *( (gnutls_x509_crt_t *) crt->data);
+	crt_dat = X509_GET_GNUTLS_DATA(crt);
 
 	/* Obtain the output size required */
 	out_size = 0;
@@ -571,12 +608,10 @@ x509_destroy_certificate(PurpleCertificate * crt)
 	g_return_if_fail(crt->data != NULL);
 	g_return_if_fail(crt->scheme != NULL);
 
-	/* Destroy the GnuTLS-specific data */
-	gnutls_x509_crt_deinit( *( (gnutls_x509_crt_t *) crt->data ) );
-	g_free(crt->data);
-
-	/* TODO: Reference counting here? */
-
+	/* Use the reference counting system to free (or not) the
+	   underlying data */
+	x509_crtdata_delref((x509_crtdata_t *)crt->data);
+	
 	/* Kill the structure itself */
 	g_free(crt);
 }
@@ -608,8 +643,8 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 
 	/* TODO: check for more nullness? */
 
-	crt_dat = *((gnutls_x509_crt_t *) crt->data);
-	issuer_dat = *((gnutls_x509_crt_t *) issuer->data);
+	crt_dat = X509_GET_GNUTLS_DATA(crt);
+	issuer_dat = X509_GET_GNUTLS_DATA(issuer);
 
 	/* First, let's check that crt.issuer is actually issuer */
 	ret = gnutls_x509_crt_check_issuer(crt_dat, issuer_dat);
@@ -659,7 +694,7 @@ x509_sha1sum(PurpleCertificate *crt)
 
 	g_return_val_if_fail(crt, NULL);
 
-	crt_dat = *( (gnutls_x509_crt_t *) crt->data );
+	crt_dat = X509_GET_GNUTLS_DATA(crt);
 
 	/* Extract the fingerprint */
 	/* TODO: Errorcheck? */
@@ -686,9 +721,9 @@ x509_common_name (PurpleCertificate *crt)
 	g_return_val_if_fail(crt, NULL);
 	g_return_val_if_fail(crt->scheme == &x509_gnutls, NULL);
 
-	cert_dat = *( (gnutls_x509_crt_t *) crt->data );
+	cert_dat = X509_GET_GNUTLS_DATA(crt);
 
-	/* TODO: Not return values? */
+	/* TODO: Note return values? */
 	
 	/* Figure out the length of the Common Name */
 	/* Claim that the buffer is size 0 so GnuTLS just tells us how much
@@ -720,7 +755,7 @@ x509_check_name (PurpleCertificate *crt, const gchar *name)
 	g_return_val_if_fail(crt->scheme == &x509_gnutls, FALSE);
 	g_return_val_if_fail(name, FALSE);
 
-	crt_dat = *( (gnutls_x509_crt_t *) crt->data );
+	crt_dat = X509_GET_GNUTLS_DATA(crt);
 
 	if (gnutls_x509_crt_check_hostname(crt_dat, name)) {
 		return TRUE;
@@ -737,7 +772,7 @@ x509_activation (PurpleCertificate *crt)
 	g_assert(crt);
 	g_assert(crt->scheme == &x509_gnutls);
 
-	crt_dat = *( (gnutls_x509_crt_t *) crt->data );
+	crt_dat = X509_GET_GNUTLS_DATA(crt);
 
 	/* TODO: Errorcheck this? */
 	return gnutls_x509_crt_get_activation_time(crt_dat);
@@ -751,7 +786,7 @@ x509_expiration (PurpleCertificate *crt)
 	g_assert(crt);
 	g_assert(crt->scheme == &x509_gnutls);
 
-	crt_dat = *( (gnutls_x509_crt_t *) crt->data );
+	crt_dat = X509_GET_GNUTLS_DATA(crt);
 
 	/* TODO: Errorcheck this? */
 	return gnutls_x509_crt_get_expiration_time(crt_dat);
