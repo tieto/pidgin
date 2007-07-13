@@ -679,7 +679,7 @@ context_menu_callback(GntMenuItem *item, gpointer data)
 		void (*callback)(PurpleBlistNode *, gpointer);
 		callback = (void (*)(PurpleBlistNode *, gpointer))action->callback;
 		if (callback)
-			callback(action->data, node);
+			callback(node, action->data);
 		else
 			return;
 	}
