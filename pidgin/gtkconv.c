@@ -7618,34 +7618,49 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 {
 	int nb_x, nb_y;
 
-	if (e->button != 1 || e->type != GDK_BUTTON_PRESS)
+	if (e->type != GDK_BUTTON_PRESS)
 		return FALSE;
 
+	if (e->button == 3) {
+		/* Right click was pressed. Popup the Send To menu. */
+		GtkWidget *menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
+		if (menu)
+			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
+		else
+			return FALSE;
+		return TRUE;
+	} else if (e->button != 1) {
+		return FALSE;
+	}
+
 	if (gtkconv->win->in_drag) {
-		  purple_debug(PURPLE_DEBUG_WARNING, "gtkconv",
-                           "Already in the middle of a window drag at tab_press_cb\n");
-                return TRUE;
-        }
-	
+		purple_debug(PURPLE_DEBUG_WARNING, "gtkconv",
+				"Already in the middle of a window drag at tab_press_cb\n");
+		return TRUE;
+	}
+
+	/* If we have more than one tab, then we don't want drag-n-drop from the infopane */
+	if (g_list_length(gtkconv->win->gtkconvs) != 1)
+		return FALSE;
+
 	gtkconv->win->in_predrag = TRUE;
 	gtkconv->win->drag_tab = gtk_notebook_page_num(GTK_NOTEBOOK(gtkconv->win->notebook), gtkconv->tab_cont);
 
-        gdk_window_get_origin(gtkconv->infopane_hbox->window, &nb_x, &nb_y);
+	gdk_window_get_origin(gtkconv->infopane_hbox->window, &nb_x, &nb_y);
 
-        gtkconv->win->drag_min_x = gtkconv->infopane_hbox->allocation.x      + nb_x;
-        gtkconv->win->drag_min_y = gtkconv->infopane_hbox->allocation.y      + nb_y;
-        gtkconv->win->drag_max_x = gtkconv->infopane_hbox->allocation.width  + gtkconv->win->drag_min_x;
-        gtkconv->win->drag_max_y = gtkconv->infopane_hbox->allocation.height + gtkconv->win->drag_min_y;
-
+	gtkconv->win->drag_min_x = gtkconv->infopane_hbox->allocation.x      + nb_x;
+	gtkconv->win->drag_min_y = gtkconv->infopane_hbox->allocation.y      + nb_y;
+	gtkconv->win->drag_max_x = gtkconv->infopane_hbox->allocation.width  + gtkconv->win->drag_min_x;
+	gtkconv->win->drag_max_y = gtkconv->infopane_hbox->allocation.height + gtkconv->win->drag_min_y;
 
 	/* Connect the new motion signals. */
 	gtkconv->win->drag_motion_signal =
 		g_signal_connect(G_OBJECT(gtkconv->win->notebook), "motion_notify_event",
-		                 G_CALLBACK(notebook_motion_cb), gtkconv->win);
+				G_CALLBACK(notebook_motion_cb), gtkconv->win);
 
 	gtkconv->win->drag_leave_signal =
 		g_signal_connect(G_OBJECT(gtkconv->win->notebook), "leave_notify_event",
-		                 G_CALLBACK(notebook_leave_cb), gtkconv->win);
+				G_CALLBACK(notebook_leave_cb), gtkconv->win);
 
 	return FALSE;
 
