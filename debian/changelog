@@ -1,3 +1,10 @@
+pidgin (2.0.2-2) unstable; urgency=low
+
+  * Make package binNMU-safe (Closes: #430101)
+  * Add Depends: python
+
+ -- Ari Pollak <ari@debian.org>  Fri, 13 Jul 2007 14:55:15 -0400
+
 pidgin (2.0.2-1) unstable; urgency=low
 
   * New upstream version (Closes: #429222)

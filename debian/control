@@ -18,7 +18,7 @@ XS-Vcs-Browser: http://svn.debian.org/wsvn/pkg-gnome/packages/unstable/pidgin/
 
 Package: pidgin
 Architecture: any
-Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z) (${shlibs:Depends}, libsasl2-modules
+Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, python, libsasl2-modules
 Conflicts: gaim (<< 1:2.0.0+beta6-3)
 Replaces: gaim (<< 1:2.0.0+beta6-3)
 Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good, python-dbus
@@ -64,7 +64,7 @@ Description: multi-protocol instant messaging client - data files
 Package: pidgin-dev
 Section: devel
 Architecture: all
-Depends: pidgin (= ${source:Version}), pidgin-data (= ${source:Version}), pkg-config, libgtk2.0-dev
+Depends: pidgin (>= ${source:Version}), pidgin-data (= ${source:Version}), pkg-config, libgtk2.0-dev
 Conflicts: gaim-dev (<< 1:2.0.0+beta6-3)
 Replaces: gaim-dev (<< 1:2.0.0+beta6-3)
 Description: multi-protocol instant messaging client - development files
@@ -78,7 +78,7 @@ Description: multi-protocol instant messaging client - development files
 Package: pidgin-dbg
 Priority: extra
 Architecture: any
-Depends: pidgin (= ${source:Version}), pidgin-data (= ${source:Version}), ${shlibs:Depends}
+Depends: pidgin (= ${binary:Version}), pidgin-data (= ${source:Version}), ${shlibs:Depends}
 Conflicts: gaim-dbg (<< 1:2.0.0+beta6-3)
 Replaces: gaim-dbg (<< 1:2.0.0+beta6-3)
 Description: Debugging symbols for Pidgin 
