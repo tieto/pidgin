@@ -799,7 +799,7 @@ static void
 prof_del_cb(GntWidget *button, gpointer null)
 {
 
-	gchar * profile = gnt_tree_get_selection_data(GNT_TREE(pref_dialog->profiles));
+	const char * profile = gnt_entry_get_text(GNT_ENTRY(pref_dialog->new_profile));
 	gchar * pref;
 
 	if (!strcmp(profile, DEFAULT_PROFILE))
@@ -817,7 +817,7 @@ prof_del_cb(GntWidget *button, gpointer null)
 	if(!strcmp(profile,finch_sound_get_active_profile()))
 		reload_pref_window(DEFAULT_PROFILE);
 
-	gnt_tree_remove(GNT_TREE(pref_dialog->profiles), profile);
+	gnt_tree_remove(GNT_TREE(pref_dialog->profiles),(gchar *) profile);
 }
 
 static void
