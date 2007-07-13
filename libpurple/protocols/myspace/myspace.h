@@ -196,6 +196,10 @@ const gchar *msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 int msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, 
 	PurpleMessageFlags flags);
 gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type);
+guint msim_point_to_purple_size(guint point);
+guint msim_purple_size_to_point(guint size);
+guint msim_height_to_point(guint height);
+guint msim_point_to_height(guint point);
 void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
 
 void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);

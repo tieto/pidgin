@@ -630,31 +630,80 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 	return rc;
 }
 
+/* Indexes of this array + 1 map HTML font size to scale of normal font size. *
+ * Based on _point_sizes from libpurple/gtkimhtml.c 
+ *                                 1    2  3    4     5      6       7 */
+static gdouble _font_scale[] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736 };
 
-#ifdef MSIM_FONT_SIZE_WORKS
-/** Convert a msim markup font height to points. */
-static guint 
-msim_font_height_to_point(guint height)
+#define MAX_FONT_SIZE                   7       /* Purple maximum font size */
+#define POINTS_PER_INCH                 72      /* How many pt's in an inch */
+
+/* Baseline size of purple's fonts, in points. What is size 3 in points. 
+ * _font_scale specifies scaling factor relative to this point size.
+ * TODO: configurable */
+#define BASE_FONT_POINT_SIZE            8
+
+/* Display's DPI. 96 is common but it can differ. TODO: configurable */
+#define DOTS_PER_INCH                   96
+
+/** Convert typographical font point size to HTML font size. 
+ * Based on libpurple/gtkimhtml.c */
+guint
+msim_point_to_purple_size(guint point)
 {
+    guint size, this_point;
+    gdouble scale;
+   
+    for (size = 0; size < sizeof(_font_scale) / sizeof(_font_scale[0]); ++size)
+    {
+        scale = _font_scale[CLAMP(size, 1, MAX_FONT_SIZE) - 1];
+        this_point = (guint)round(scale * BASE_FONT_POINT_SIZE);
+
+        if (this_point >= point)
+        {
+            purple_debug_info("msim", "msim_point_to_purple_size: %d pt -> size=%d\n",
+                    point, size);
+            return size;
+        }
+    }
+
+    /* No HTML font size was this big; return largest possible. */
+    return this_point;
+}
+
+/** Convert HTML font size to point size. */
+guint
+msim_purple_size_to_point(guint size)
+{
+    gdouble scale;
+    guint point;
+
+    scale = _font_scale[CLAMP(size, 1, MAX_FONT_SIZE) - 1];
+
+    point = (guint)round(scale * BASE_FONT_POINT_SIZE);
+
+    purple_debug_info("msim", "msim_purple_size_to_point: size=%d -> %d pt\n",
+                    size, point);
+
+    return point;
+}
+
+/** Convert a msim markup font pixel height to the more usual point size, for incoming messages. */
+guint 
+msim_height_to_point(guint height)
+{
+    return (guint)round((POINTS_PER_INCH * 1. / DOTS_PER_INCH) * height);
+
 	/* See also: libpurple/protocols/bonjour/jabber.c
 	 * _font_size_ichat_to_purple */
-	switch (height)
-	{
-	case 11: return 8;
-	case 12: return 9;
-	case 13: return 10;
-	case 14: 
-	case 15: return 11;
-	case 16: return 12;
-	case 17:
-	case 18: return 13;
-	case 19: return 14;
-	case 20: return 15;
-	case 21: return 16;	 
-	default: return 12;
-	}
 }
-#endif
+
+/** Convert point size to msim pixel height font size specification, for outgoing messages. */
+guint
+msim_point_to_height(guint point)
+{
+    return (guint)round((DOTS_PER_INCH * 1. / POINTS_PER_INCH) * point);
+}
 
 /** Convert the msim markup <f> (font) tag into HTML. */
 static void 
@@ -679,27 +728,19 @@ msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
 		decor = 0;
 
 	gs_begin = g_string_new("");
-#ifdef MSIM_FONT_SIZE_WORKS
 	/* TODO: get font size working */
-	if (!face)
-		g_string_printf(gs_begin, "<font size='%d'>",
-				msim_font_height_to_point(height)); 
-	else
-		g_string_printf(gs_begin, "<font face='%s' size='%d'>", face, 
-				msim_font_height_to_point(height)); 
-#else
-	if (face)
-	{
-		g_string_printf(gs_begin, "<font face='%s'>", face);
-	} else {
-		g_string_printf(gs_begin, "<font>");
-	}
-#endif
-
+	if (height && !face)
+		g_string_printf(gs_begin, "<font size='%d'>", 
+                msim_point_to_purple_size(msim_height_to_point(height)));
+    else if (height && face)
+		g_string_printf(gs_begin, "<font face='%s' size='%d'>", face,  
+                msim_point_to_purple_size(msim_height_to_point(height)));
+    else
+        g_string_printf(gs_begin, "<font>");
 
 	/* No support for font-size CSS? */
 	/* g_string_printf(gs_begin, "<span style='font-family: %s; font-size: %dpt'>", face, 
-			msim_font_height_to_point(height)); */
+			msim_height_to_point(height)); */
 
 	gs_end = g_string_new("</font>");
 
@@ -871,8 +912,11 @@ void html_tag_to_msim_markup(xmlnode *root, gchar **begin, gchar **end)
      * Currently, the 's' value will be overwritten when b/i/u is nested
      * within another one, and only the inner-most formatting will be 
      * applied to the text. */
-    if (!strcmp(root->name, "b"))
+    if (!strcmp(root->name, "root"))
     {
+        *begin = g_strdup("");
+        *end = g_strdup("");
+    } else if (!strcmp(root->name, "b")) {
         *begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_BOLD);
         *end = g_strdup("</f>");
     } else if (!strcmp(root->name, "i")) {
@@ -889,13 +933,19 @@ void html_tag_to_msim_markup(xmlnode *root, gchar **begin, gchar **end)
         face = xmlnode_get_attrib(root, "face");
 
         if (face && size)
-            *begin = g_strdup_printf("<f f='%s' h='%s'>", face, size);
-        else if (face)
+        {
+            *begin = g_strdup_printf("<f f='%s' h='%d'>", face, 
+                    msim_point_to_height(msim_purple_size_to_point(
+                            atoi(size))));
+        } else if (face) {
             *begin = g_strdup_printf("<f f='%s'>", face);
-        else if (size)
-            *begin = g_strdup_printf("<f h='%s'>", face);
-        else
+        } else if (size) {
+            *begin = g_strdup_printf("<f h='%d'>", 
+                     msim_point_to_height(msim_purple_size_to_point(
+                            atoi(size))));
+        } else {
             *begin = g_strdup("<f>");
+        }
 
         *end = g_strdup("</f>");
 
@@ -917,7 +967,7 @@ msim_convert_xmlnode(xmlnode *root, MSIM_XMLNODE_CONVERT f)
 {
 	xmlnode *node;
 	gchar *begin, *inner, *end;
-	gchar *final;
+    GString *final;
 
 	if (!root || !root->name)
 		return g_strdup("");
@@ -927,7 +977,11 @@ msim_convert_xmlnode(xmlnode *root, MSIM_XMLNODE_CONVERT f)
 
 	begin = inner = end = NULL;
 
+    final = g_string_new("");
+
     f(root, &begin, &end);
+    
+    g_string_append(final, begin);
 
 	/* Loop over all child nodes. */
  	for (node = root->child; node != NULL; node = node->next)
@@ -950,7 +1004,7 @@ msim_convert_xmlnode(xmlnode *root, MSIM_XMLNODE_CONVERT f)
 			/* Literal text. */
 			inner = g_new0(char, node->data_sz + 1);
 			strncpy(inner, node->data, node->data_sz);
-			inner[node->data_sz + 1] = 0;
+			inner[node->data_sz] = 0;
 
 			purple_debug_info("msim", " ** node data=%s\n", inner);
 			break;
@@ -960,17 +1014,21 @@ msim_convert_xmlnode(xmlnode *root, MSIM_XMLNODE_CONVERT f)
 					"msim_convert_xmlnode: strange node\n");
 			inner = g_strdup("");
 		}
-	}
 
-	final = g_strconcat(begin, inner, end, NULL);
-	g_free(begin);
-	g_free(inner);
-	g_free(end);
+        if (inner)
+            g_string_append(final, inner);
+    }
+
+    /* TODO: Note that msim counts each piece of text enclosed by <f> as
+     * a paragraph and will display each on its own line. You actually have
+     * to _nest_ <f> tags to intersperse different text in one paragraph!
+     * Comment out this line below to see. */
+    g_string_append(final, end);
 
 	purple_debug_info("msim", "msim_markup_xmlnode_to_gtkhtml: RETURNING %s\n",
-			final);
+			final->str);
 
-	return final;
+	return final->str;
 }
 
 /** Convert XML to something based on MSIM_XMLNODE_CONVERT. */
@@ -985,6 +1043,7 @@ msim_convert_xml(const gchar *raw, MSIM_XMLNODE_CONVERT f)
 	{
 		purple_debug_info("msim", "msim_markup_to_html: couldn't parse "
 				"%s as XML, returning raw\n", raw);
+        /* TODO: msim_unrecognized */
 		return g_strdup(raw);
 	}
 
@@ -1012,8 +1071,18 @@ msim_markup_to_html(const gchar *raw)
 gchar *
 html_to_msim_markup(const gchar *raw)
 {
-    return msim_convert_xml(raw,
+    gchar *markup;
+    gchar *enclosed_raw;
+
+    /* Enclose text in one root tag, to try to make it valid XML for parsing. */
+    enclosed_raw = g_strconcat("<root>", raw, "</root>", NULL);
+
+    markup = msim_convert_xml(enclosed_raw,
             (MSIM_XMLNODE_CONVERT)(html_tag_to_msim_markup));
+
+    g_free(enclosed_raw);
+
+    return markup;
 }
 
 /**
@@ -1643,7 +1712,7 @@ msim_check_alive(gpointer data)
     g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 
     delta = time(NULL) - session->last_comm;
-    purple_debug_info("msim", "msim_check_alive: delta=%d\n", delta);
+    //purple_debug_info("msim", "msim_check_alive: delta=%d\n", delta);
     if (delta >= MSIM_KEEPALIVE_INTERVAL)
     {
         errmsg = g_strdup_printf(_("Connection to server lost (no data received within %d seconds)"), (int)delta);
@@ -1747,7 +1816,7 @@ msim_process(MsimSession *session, MsimMessage *msg)
 		 * disconnect the user. As it stands, if Internet connection goes out (this
 		 * just happened here), msimprpl will appear to be connected forever, while
 		 * other plugins (oscar, etc.) will time out. Msimprpl should timeout too. */
-        purple_debug_info("msim", "msim_process: got keep alive\n");
+        //purple_debug_info("msim", "msim_process: got keep alive\n");
         return TRUE;
     } else {
 		msim_unrecognized(session, msg, "in msim_process");
