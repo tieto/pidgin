@@ -884,8 +884,11 @@ finch_sounds_show_all(void)
 
 	/* Profiles */
 	splitbox = gnt_hbox_new(FALSE);
+	gnt_box_set_pad(GNT_BOX(splitbox), 0);
+	gnt_box_set_alignment(GNT_BOX(splitbox), GNT_ALIGN_TOP);
 
 	box = gnt_vbox_new(FALSE);
+	gnt_box_set_pad(GNT_BOX(box), 0);
 	gnt_box_add_widget(GNT_BOX(box), gnt_label_new_with_format(_("Profiles"), GNT_TEXT_FLAG_BOLD));
 	pref_dialog->profiles = tree = gnt_tree_new();
 	gnt_tree_set_hash_fns(GNT_TREE(tree), g_str_hash, g_str_equal, g_free);
@@ -918,6 +921,7 @@ finch_sounds_show_all(void)
 	/* Sound method */
 
 	box = gnt_vbox_new(FALSE);
+	gnt_box_set_pad(GNT_BOX(box), 0);
 
 	pref_dialog->method = cmbox = gnt_combo_box_new();
 	gnt_tree_set_hash_fns(GNT_TREE(GNT_COMBO_BOX(cmbox)->dropdown), g_str_hash, g_str_equal, NULL);
