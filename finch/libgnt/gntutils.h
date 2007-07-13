@@ -130,3 +130,12 @@ GntWidget * gnt_widget_bindings_view(GntWidget *widget);
  */
 void gnt_util_parse_widgets(const char *string, int num, ...);
 
+/**
+ * Make some keypress activate a button when some key is pressed with 'wid' in focus.
+ *
+ * @param widget  The widget
+ * @param key     The key to trigger the button
+ * @param button  The button to trigger
+ */
+void gnt_util_set_trigger_widget(GntWidget *wid, const char *text, GntWidget *button);
+

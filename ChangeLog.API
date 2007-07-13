@@ -107,6 +107,8 @@ version 2.1.0 (??/??/????):
 			* gnt_tree_set_column_resizable
 			* gnt_tree_set_column_is_right_aligned
 			* 'file-selected' signal is emited for GntFileSel
+			* gnt_style_parse_bool
+			* gnt_util_set_trigger_widget
 
 			Changed:
 			* gnt_tree_get_rows() now returns a GList* instead of a const

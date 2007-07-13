@@ -30,6 +30,7 @@
 #include <gntlabel.h>
 #include <gntline.h>
 #include <gnttree.h>
+#include <gntutils.h>
 
 #include "finch.h"
 
@@ -196,6 +197,7 @@ void finch_savedstatus_show_all()
 
 	button = gnt_button_new(_("Add"));
 	gnt_box_add_widget(GNT_BOX(box), button);
+	gnt_util_set_trigger_widget(tree, GNT_KEY_INS, button);
 	g_signal_connect_swapped(G_OBJECT(button), "activate",
 			G_CALLBACK(finch_savedstatus_edit), NULL);
 
@@ -206,6 +208,7 @@ void finch_savedstatus_show_all()
 
 	button = gnt_button_new(_("Delete"));
 	gnt_box_add_widget(GNT_BOX(box), button);
+	gnt_util_set_trigger_widget(tree, GNT_KEY_DEL, button);
 	g_signal_connect(G_OBJECT(button), "activate",
 			G_CALLBACK(ask_before_delete), NULL);
 
