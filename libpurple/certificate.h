@@ -162,6 +162,16 @@ struct _PurpleCertificateScheme
 	 */
 	gboolean (* export_certificate)(const gchar *filename, PurpleCertificate *crt);
 
+	/**
+	 * Duplicates a certificate
+	 *
+	 * Certificates are generally assumed to be read-only, so feel free to
+	 * do any sort of reference-counting magic you want here. If this ever
+	 * changes, please remember to change the magic accordingly.
+	 * @return Reference to the new copy
+	 */
+	PurpleCertificate * (* copy_certificate)(PurpleCertificate *crt);
+
 	/** Destroys and frees a Certificate structure
 	 *
 	 *  Destroys a Certificate's internal data structures and calls
@@ -358,6 +368,15 @@ purple_certificate_verify_destroy (PurpleCertificateVerificationRequest *vrq);
 /** @name Certificate Functions                                              */
 /*****************************************************************************/
 /*@{*/
+
+/**
+ * Makes a duplicate of a certificate
+ *
+ * @param crt        Instance to duplicate
+ * @return Pointer to new instance
+ */
+PurpleCertificate *
+purple_certificate_copy(PurpleCertificate *crt);
 
 /**
  * Destroys and free()'s a Certificate

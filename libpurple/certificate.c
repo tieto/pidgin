@@ -98,6 +98,15 @@ purple_certificate_verify_destroy (PurpleCertificateVerificationRequest *vrq)
 	g_free(vrq);
 }
 
+PurpleCertificate *
+purple_certificate_copy(PurpleCertificate *crt)
+{
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme, NULL);
+	g_return_val_if_fail(crt->scheme->copy_certificate, NULL);
+
+	return (crt->scheme->copy_certificate)(crt);
+}
 
 void
 purple_certificate_destroy (PurpleCertificate *crt)

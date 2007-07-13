@@ -799,6 +799,7 @@ static PurpleCertificateScheme x509_gnutls = {
 	N_("X.509 Certificates"),        /* User-visible scheme name */
 	x509_import_from_file,           /* Certificate import function */
 	x509_export_certificate,         /* Certificate export function */
+	NULL,                            /* Copy */
 	x509_destroy_certificate,        /* Destroy cert */
 	x509_sha1sum,                    /* SHA1 fingerprint */
 	NULL,                            /* Unique ID */
