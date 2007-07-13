@@ -7639,10 +7639,6 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 		return TRUE;
 	}
 
-	/* If we have more than one tab, then we don't want drag-n-drop from the infopane */
-	if (g_list_length(gtkconv->win->gtkconvs) != 1)
-		return FALSE;
-
 	gtkconv->win->in_predrag = TRUE;
 	gtkconv->win->drag_tab = gtk_notebook_page_num(GTK_NOTEBOOK(gtkconv->win->notebook), gtkconv->tab_cont);
 
