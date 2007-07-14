@@ -83,11 +83,7 @@ struct _GntTree
 	gboolean show_title;
 	gboolean show_separator; /* Whether to show column separators */
 
-	GString *search;
-	int search_timeout;
-
-	GCompareFunc compare;
-	int lastvisible;
+	GntTreePriv *priv;
 };
 
 struct _GntTreeClass
@@ -503,6 +499,14 @@ void gnt_tree_set_column_is_right_aligned(GntTree *tree, int col, gboolean right
  * @see gnt_tree_set_column_resizable
  */
 void gnt_tree_set_column_width_ratio(GntTree *tree, int cols[]);
+
+/**
+ * Set the column to use for typeahead searching.
+ *
+ * @param tree   The tree
+ * @param col    The index of the column
+ */
+void gnt_tree_set_search_column(GntTree *tree, int col);
 
 G_END_DECLS
 
