@@ -129,7 +129,7 @@ include $(PIDGIN_COMMON_RULES)
 ##
 ## TARGET DEFINITIONS
 ##
-.PHONY: all install install_shallow clean clean_exe
+.PHONY: all install install_shallow clean
 
 all: $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
 	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE)
@@ -161,12 +161,6 @@ $(PIDGIN_TARGET).dll $(PIDGIN_TARGET).dll.a: $(PURPLE_DLL).a $(PIDGIN_IDLETRACK_
 $(EXE_TARGET).exe: $(PIDGIN_CONFIG_H) $(PIDGIN_DLL).a $(PIDGIN_IDLETRACK_DLL).a $(EXE_OBJECTS)
 	$(CC) $(LDFLAGS) $(EXE_OBJECTS) -o $(EXE_TARGET).exe
 
-$(EXE_TARGET)-portable.exe: DEFINES += -DPORTABLE
-$(EXE_TARGET)-portable.exe: EXE_NAME := $(EXE_TARGET)-portable.exe
-$(EXE_TARGET)-portable.exe: clean_exe $(PIDGIN_CONFIG_H) $(PIDGIN_DLL).a $(PIDGIN_IDLETRACK_DLL).a $(EXE_OBJECTS)
-	$(CC) $(LDFLAGS) $(EXE_OBJECTS) -o $(EXE_TARGET)-portable.exe
-	$(MAKE) -f $(MINGW_MAKEFILE) clean_exe
-
 ##
 ## CLEAN RULES
 ##
@@ -175,9 +169,6 @@ clean:
 	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean
 	rm -f $(PIDGIN_OBJECTS) $(PIDGIN_RC_SRC) $(EXE_OBJECTS) $(EXE_RC_SRC)
 	rm -f $(PIDGIN_TARGET).dll $(PIDGIN_TARGET).dll.a
-	rm -f $(EXE_TARGET).exe $(EXE_TARGET)-portable.exe
-
-clean_exe:
-	rm -f $(EXE_OBJECTS) $(EXE_RC_SRC)
+	rm -f $(EXE_TARGET).exe
 
 include $(PIDGIN_COMMON_TARGETS)
