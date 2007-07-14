@@ -1798,3 +1798,8 @@ void gnt_tree_set_search_column(GntTree *tree, int col)
 	tree->priv->search_column = col;
 }
 
+gboolean gnt_tree_is_searching(GntTree *tree)
+{
+	return (tree->priv->search != NULL);
+}
+

@@ -508,6 +508,14 @@ void gnt_tree_set_column_width_ratio(GntTree *tree, int cols[]);
  */
 void gnt_tree_set_search_column(GntTree *tree, int col);
 
+/**
+ * Check whether the user is currently in the middle of a search.
+ *
+ * @param tree   The tree
+ * @return  @c TRUE if the user is searching, @c FALSE otherwise.
+ */
+gboolean gnt_tree_is_searching(GntTree *tree);
+
 G_END_DECLS
 
 #endif /* GNT_TREE_H */
