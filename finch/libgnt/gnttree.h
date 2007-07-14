@@ -506,9 +506,4 @@ void gnt_tree_set_column_width_ratio(GntTree *tree, int cols[]);
 
 G_END_DECLS
 
-/* The following functions should NOT be used by applications. */
-
-/* This should be called by the subclasses of GntTree's in their _new function */
-void _gnt_tree_init_internals(GntTree *tree, int col);
-
 #endif /* GNT_TREE_H */

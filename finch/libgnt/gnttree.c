@@ -37,6 +37,12 @@
 
 enum
 {
+	PROP_0,
+	PROP_COLUMNS,
+};
+
+enum
+{
 	SIG_SELECTION_CHANGED,
 	SIG_SCROLLED,
 	SIG_TOGGLED,
@@ -76,6 +82,7 @@ struct _GntTreeCol
 };
 
 static void tree_selection_changed(GntTree *, GntTreeRow *, GntTreeRow *);
+static void _gnt_tree_init_internals(GntTree *tree, int col);
 
 static GntWidgetClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
@@ -906,9 +913,39 @@ end_search_action(GntBindable *bindable, GList *list)
 }
 
 static void
+gnt_tree_set_property(GObject *obj, guint prop_id, const GValue *value,
+		GParamSpec *spec)
+{
+	GntTree *tree = GNT_TREE(obj);
+	switch (prop_id) {
+		case PROP_COLUMNS:
+			_gnt_tree_init_internals(tree, g_value_get_int(value));
+			break;
+		default:
+			break;
+	}
+}
+
+static void
+gnt_tree_get_property(GObject *obj, guint prop_id, GValue *value,
+		GParamSpec *spec)
+{
+	GntTree *tree = GNT_TREE(obj);
+	switch (prop_id) {
+		case PROP_COLUMNS:
+			g_value_set_int(value, tree->ncol);
+			break;
+		default:
+			break;
+	}
+}
+
+static void
 gnt_tree_class_init(GntTreeClass *klass)
 {
 	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
+	GObjectClass *gclass = G_OBJECT_CLASS(klass);
+
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_tree_destroy;
 	parent_class->draw = gnt_tree_draw;
@@ -917,6 +954,17 @@ gnt_tree_class_init(GntTreeClass *klass)
 	parent_class->key_pressed = gnt_tree_key_pressed;
 	parent_class->clicked = gnt_tree_clicked;
 	parent_class->size_changed = gnt_tree_size_changed;
+
+	gclass->set_property = gnt_tree_set_property;
+	gclass->get_property = gnt_tree_get_property;
+	g_object_class_install_property(gclass,
+			PROP_COLUMNS,
+			g_param_spec_int("columns", "Columns",
+				"Number of columns in the tree.",
+				1, G_MAXINT, 1,
+				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+			)
+		);
 
 	signals[SIG_SELECTION_CHANGED] = 
 		g_signal_new("selection-changed",
@@ -1501,8 +1549,10 @@ void gnt_tree_set_selected(GntTree *tree , void *key)
 	tree_selection_changed(tree, row, tree->current);
 }
 
-void _gnt_tree_init_internals(GntTree *tree, int col)
+static void _gnt_tree_init_internals(GntTree *tree, int col)
 {
+	gnt_tree_destroy(GNT_WIDGET(tree));
+
 	tree->ncol = col;
 	tree->hash = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free_tree_row);
 	tree->columns = g_new0(struct _GntTreeColInfo, col);
@@ -1513,15 +1563,15 @@ void _gnt_tree_init_internals(GntTree *tree, int col)
 	}
 	tree->list = NULL;
 	tree->show_title = FALSE;
+	g_object_notify(G_OBJECT(tree), "columns");
 }
 
 GntWidget *gnt_tree_new_with_columns(int col)
 {
-	GntWidget *widget = g_object_new(GNT_TYPE_TREE, NULL);
-	GntTree *tree = GNT_TREE(widget);
+	GntWidget *widget = g_object_new(GNT_TYPE_TREE,
+			"columns", col,
+			NULL);
 
-	_gnt_tree_init_internals(tree, col);
-	
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_SHADOW);
 	gnt_widget_set_take_focus(widget, TRUE);
 
