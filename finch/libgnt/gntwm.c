@@ -683,6 +683,7 @@ dump_screen(GntBindable *bindable, GList *null)
 		{'m', "&#x2514;"},
 		{'j', "&#x2518;"},
 		{'a', "&#x2592;"},
+		{'n', "&#x253c;"},
 		{'\0', NULL}
 	};
 
