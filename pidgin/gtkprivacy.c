@@ -366,7 +366,7 @@ privacy_dialog_new(void)
 
 	dialog = g_new0(PidginPrivacyDialog, 1);
 
-	dialog->win = pidgin_create_window(_("Privacy"), PIDGIN_HIG_BORDER, "privacy", FALSE);
+	dialog->win = pidgin_create_window(_("Privacy"), PIDGIN_HIG_BORDER, "privacy", TRUE);
 
 	g_signal_connect(G_OBJECT(dialog->win), "delete_event",
 					 G_CALLBACK(destroy_cb), dialog);

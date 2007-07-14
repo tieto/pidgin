@@ -28,6 +28,7 @@ version 2.1.0 (??/??/????):
 		    longer than 1 second away.  Be aware of the rounding, though.
 		* purple_xfer_get_remote_user
 		* purple_pounces_get_all_for_ui
+		* purple_prefs_get_children_names
 
 		Changed:
 		* The documentation of the following functions now properly
@@ -73,6 +74,7 @@ version 2.1.0 (??/??/????):
 		* pidgin_menu_position_func_helper
 		* pidgin_blist_get_name_markup, returns the buddy list markup
 		  text for a given buddy.
+		* pidgin_themes_remove_smiley_theme
 
 		Changed:
 		* pidgin_append_menu_action returns the menuitem added to the menu.
@@ -88,10 +90,32 @@ version 2.1.0 (??/??/????):
 		Added:
 		* finch_retrieve_user_info
 
-		Changed:
-		* gnt_tree_get_rows() now returns a GList* instead of a const
-		  GList*, as const is not very useful with GLists.  The
-		  returned value still must not be modified or freed.
+		libgnt:
+			Added:
+			* GntWS for workspaces
+			* gnt_tree_set_column_title
+			* GntSlider widget
+			* "completion" signal for GntEntry
+			* "terminal-refresh" signal for GntWM, with a corresponding entry
+			  in GntWMClass
+			* New flags for GntTextView to decide whether to word-wrap or show
+			  scrollbars (GntTextViewFlag) which can be set by
+			  gnt_text_view_set_flag
+			* gnt_style_get_from_name
+			* gnt_window_present
+			* gnt_tree_set_column_width_ratio
+			* gnt_tree_set_column_resizable
+			* gnt_tree_set_column_is_right_aligned
+			* 'file-selected' signal is emited for GntFileSel
+			* gnt_style_parse_bool
+			* gnt_util_set_trigger_widget
+
+			Changed:
+			* gnt_tree_get_rows() now returns a GList* instead of a const
+			  GList*, as const is not very useful with GLists.  The
+			  returned value still must not be modified or freed.
+			* Instead of keeping an 'invisible' item, the GntTreeColumns now
+			  maintain 'flags' with the appropriate flags set
 
 version 2.0.2 (6/14/2007):
 	Pidgin:

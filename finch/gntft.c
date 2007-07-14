@@ -178,6 +178,7 @@ finch_xfer_dialog_new(void)
 	GntWidget *button;
 	GntWidget *checkbox;
 	GntWidget *tree;
+	int widths[] = {8, 12, 8, 8, 8, 8, -1};
 
 	if (!xfer_dialog)
 		xfer_dialog = g_new0(PurpleGntXferDialog, 1);
@@ -195,12 +196,12 @@ finch_xfer_dialog_new(void)
 
 	xfer_dialog->tree = tree = gnt_tree_new_with_columns(NUM_COLUMNS);
 	gnt_tree_set_column_titles(GNT_TREE(tree), _("Progress"), _("Filename"), _("Size"), _("Speed"), _("Remaining"), _("Status"));
-	gnt_tree_set_col_width(GNT_TREE(tree), COLUMN_PROGRESS, 8);
-	gnt_tree_set_col_width(GNT_TREE(tree), COLUMN_FILENAME, 8);
-	gnt_tree_set_col_width(GNT_TREE(tree), COLUMN_SIZE, 10);
-	gnt_tree_set_col_width(GNT_TREE(tree), COLUMN_SPEED, 10);
-	gnt_tree_set_col_width(GNT_TREE(tree), COLUMN_REMAINING, 10);
-	gnt_tree_set_col_width(GNT_TREE(tree), COLUMN_STATUS, 10);
+	gnt_tree_set_column_width_ratio(GNT_TREE(tree), widths);
+	gnt_tree_set_column_resizable(GNT_TREE(tree), COLUMN_PROGRESS, FALSE);
+	gnt_tree_set_column_resizable(GNT_TREE(tree), COLUMN_SIZE, FALSE);
+	gnt_tree_set_column_resizable(GNT_TREE(tree), COLUMN_SPEED, FALSE);
+	gnt_tree_set_column_resizable(GNT_TREE(tree), COLUMN_REMAINING, FALSE);
+	gnt_widget_set_size(tree, 70, -1);
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
 	gnt_box_add_widget(GNT_BOX(window), tree);
 
@@ -262,6 +263,8 @@ finch_xfer_dialog_show()
 {
 	if (xfer_dialog == NULL)
 		finch_xfer_dialog_new();
+	else
+		gnt_window_present(xfer_dialog->window);
 }
 
 void

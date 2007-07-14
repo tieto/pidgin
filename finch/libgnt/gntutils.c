@@ -375,3 +375,36 @@ void gnt_util_parse_widgets(const char *string, int num, ...)
 #endif
 }
 
+/* Setup trigger widget */
+typedef struct {
+	char *text;
+	GntWidget *button;
+} TriggerButton;
+
+static void
+free_trigger_button(TriggerButton *b)
+{
+	g_free(b->text);
+	g_free(b);
+}
+
+static gboolean
+key_pressed(GntWidget *widget, const char *text, TriggerButton *trig)
+{
+	if (text && trig->text &&
+			strcmp(text, trig->text) == 0) {
+		gnt_widget_activate(trig->button);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void gnt_util_set_trigger_widget(GntWidget *wid, const char *text, GntWidget *button)
+{
+	TriggerButton *tb = g_new0(TriggerButton, 1);
+	tb->text = g_strdup(text);
+	tb->button = button;
+	g_signal_connect(G_OBJECT(wid), "key_pressed", G_CALLBACK(key_pressed), tb);
+	g_signal_connect_swapped(G_OBJECT(button), "destroy", G_CALLBACK(free_trigger_button), tb);
+}
+

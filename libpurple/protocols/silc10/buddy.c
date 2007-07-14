@@ -1246,7 +1246,7 @@ silcpurple_add_buddy_resolved(SilcClient client,
 			   buddy nickname. */
 			int i;
 			for (i = 0; i < clients_count; i++) {
-				if (!strncasecmp(b->name, clients[i]->nickname,
+				if (!g_ascii_strncasecmp(b->name, clients[i]->nickname,
 						 strlen(b->name))) {
 					clients[0] = clients[i];
 					break;

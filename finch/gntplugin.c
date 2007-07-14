@@ -242,8 +242,10 @@ void finch_plugins_show_all()
 	GList *iter;
 	GList *seen;
 
-	if (plugins.window)
+	if (plugins.window) {
+		gnt_window_present(plugins.window);
 		return;
+	}
 
 	purple_plugins_probe(G_MODULE_SUFFIX);
 
@@ -276,6 +278,14 @@ void finch_plugins_show_all()
 	for (iter = purple_plugins_get_all(); iter; iter = iter->next)
 	{
 		PurplePlugin *plug = iter->data;
+
+		if (plug->info->type == PURPLE_PLUGIN_LOADER) {
+			GList *cur;
+			for (cur = PURPLE_PLUGIN_LOADER_INFO(plug)->exts; cur != NULL;
+					 cur = cur->next)
+				purple_plugins_probe(cur->data);
+			continue;
+		}
 
 		if (plug->info->type != PURPLE_PLUGIN_STANDARD ||
 			(plug->info->flags & PURPLE_PLUGIN_FLAG_INVISIBLE) ||

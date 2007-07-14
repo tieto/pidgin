@@ -316,6 +316,8 @@ pidgin_ui_init(void)
 	pidgin_docklet_init();
 }
 
+static GHashTable *ui_info = NULL;
+
 static void
 pidgin_quit(void)
 {
@@ -337,8 +339,23 @@ pidgin_quit(void)
 	pidgin_xfers_uninit();
 	pidgin_debug_uninit();
 
+	if(NULL != ui_info)
+		g_hash_table_destroy(ui_info);
+
 	/* and end it all... */
 	gtk_main_quit();
+}
+
+static GHashTable *pidgin_ui_get_info()
+{
+	if(NULL == ui_info) {
+		ui_info = g_hash_table_new(g_str_hash, g_str_equal);
+
+		g_hash_table_insert(ui_info, "name", (char*)PIDGIN_NAME);
+		g_hash_table_insert(ui_info, "version", VERSION);
+	}
+
+	return ui_info;
 }
 
 static PurpleCoreUiOps core_ops =
@@ -347,7 +364,7 @@ static PurpleCoreUiOps core_ops =
 	debug_init,
 	pidgin_ui_init,
 	pidgin_quit,
-	NULL,
+	pidgin_ui_get_info,
 	NULL,
 	NULL,
 	NULL
@@ -677,6 +694,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	g_set_application_name(_("Pidgin"));
+
 #ifdef _WIN32
 	winpidgin_init(hint);
 #endif
@@ -855,7 +874,6 @@ int main(int argc, char *argv[])
 	winpidgin_post_init();
 #endif
 
-	g_set_application_name(_("Pidgin"));
 	gtk_main();
 
 #ifdef HAVE_SIGNAL_H

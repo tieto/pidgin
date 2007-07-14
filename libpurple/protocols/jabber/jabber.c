@@ -1116,9 +1116,11 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 
 char *jabber_status_text(PurpleBuddy *b)
 {
-	JabberBuddy *jb = jabber_buddy_find(b->account->gc->proto_data, b->name,
-			FALSE);
 	char *ret = NULL;
+	JabberBuddy *jb = NULL;
+	
+	if (b->account->gc && b->account->gc->proto_data)
+		jb = jabber_buddy_find(b->account->gc->proto_data, b->name, FALSE);
 
 	if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && (jb->subscription & JABBER_SUB_PENDING || !(jb->subscription & JABBER_SUB_TO))) {
 		ret = g_strdup(_("Not Authorized"));
@@ -1367,11 +1369,13 @@ static void jabber_password_change(PurplePluginAction *action)
 	field = purple_request_field_string_new("password1", _("Password"),
 			"", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("password2", _("Password (again)"),
 			"", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(js->gc, _("Change XMPP Password"),

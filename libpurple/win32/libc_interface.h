@@ -29,6 +29,16 @@
 #include "libc_internal.h"
 #include <glib.h>
 
+#ifdef _MSC_VER
+#define S_IRUSR S_IREAD
+#define S_IWUSR S_IWRITE
+#define S_IXUSR S_IEXEC
+
+#define S_ISDIR(m)	 (((m)&S_IFDIR)==S_IFDIR)
+
+#define F_OK 0
+#endif
+
 /* sys/socket.h */
 #define socket( namespace, style, protocol ) \
 wpurple_socket( namespace, style, protocol )
@@ -36,11 +46,11 @@ wpurple_socket( namespace, style, protocol )
 #define connect( socket, addr, length ) \
 wpurple_connect( socket, addr, length )
 
-#define getsockopt( args... ) \
-wpurple_getsockopt( args )
+#define getsockopt( socket, level, optname, optval, optlenptr ) \
+wpurple_getsockopt( socket, level, optname, optval, optlenptr )
 
-#define setsockopt( args... ) \
-wpurple_setsockopt( args )
+#define setsockopt( socket, level, optname, optval, optlen ) \
+wpurple_setsockopt( socket, level, optname, optval, optlen )
 
 #define getsockname( socket, addr, lenptr ) \
 wpurple_getsockname( socket, addr, lenptr )

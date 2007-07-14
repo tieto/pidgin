@@ -329,7 +329,7 @@ msn_import_html(const char *html, char **attributes, char **message)
 							char *attr_dir;
 							attributes = g_strndup(c, attr_len);
 							attr_dir = purple_markup_get_css_property(attributes, "direction");
-							if (attr_dir && (!strncasecmp(attr_dir, "RTL", 3)))
+							if (attr_dir && (!g_ascii_strncasecmp(attr_dir, "RTL", 3)))
 								direction = '1';
 							g_free(attr_dir);
 							g_free(attributes);

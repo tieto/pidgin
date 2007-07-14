@@ -1147,7 +1147,7 @@ if test x"$enable_dbus" = "xyes" ; then
 			dnl # no prefix given, so we look for the correct dbus system paths.
 			dnl # if a prefix is given, we use it.
 
-			serviceprefixes="$datadir $libdir /usr/share /usr/local/share"
+			serviceprefixes="$prefix/share $prefix/lib /usr/share /usr/local/share"
 			DBUS_SERVICES_DIR=""
 
 			for d in $serviceprefixes ; do

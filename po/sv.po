@@ -1774,7 +1774,7 @@ msgstr "/Hjälp/_Felsökningsfönster"
 
 #: ../gtk/gtkblist.c:2542
 msgid "/Help/_About"
-msgstr "/Hjälp/_Om Gaim"
+msgstr "/Hjälp/_Om"
 
 #: ../gtk/gtkblist.c:2574
 #, c-format

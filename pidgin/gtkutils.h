@@ -236,6 +236,15 @@ GtkWidget *pidgin_protocol_option_menu_new(const char *id,
 											 gpointer user_data);
 
 /**
+ * Gets the currently selected protocol from a protocol drop down box.
+ *
+ * @param optmenu The drop-down option menu created by
+ *        pidgin_account_option_menu_new.
+ * @return Returns the protocol ID that is currently selected.
+ */
+const char *pidgin_protocol_option_menu_get_selected(GtkWidget *optmenu);
+
+/**
  * Creates a drop-down option menu filled with accounts.
  *
  * @param default_account The account to select by default.
@@ -255,7 +264,7 @@ GtkWidget *pidgin_account_option_menu_new(PurpleAccount *default_account,
 /**
  * Gets the currently selected account from an account drop down box.
  *
- * @param optmenu The GtkOptionMenu created by
+ * @param optmenu The drop-down option menu created by
  *        pidgin_account_option_menu_new.
  * @return Returns the PurpleAccount that is currently selected.
  */

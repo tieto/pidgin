@@ -3,7 +3,9 @@
 #include <gntbutton.h>
 #include <gntcheckbox.h>
 #include <gntcombobox.h>
+#include <gntentry.h>
 #include <gntlabel.h>
+#include <gntslider.h>
 
 static void
 button_activated(GntWidget *b, GntComboBox *combo)
@@ -14,6 +16,16 @@ button_activated(GntWidget *b, GntComboBox *combo)
 			gnt_label_new(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo))));
 	fprintf(stderr, "%s\n", gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo)));
 	gnt_box_readjust(GNT_BOX(w->parent));
+}
+
+static void
+update_label(GntSlider *slider, int current_value, GntEntry *entry)
+{
+	char value[256];
+	g_snprintf(value, sizeof(value), "%d/%d", current_value, slider->max);
+	/*gnt_label_set_text(label, value);*/
+	/*gnt_widget_draw(GNT_WIDGET(label));*/
+	gnt_entry_set_text(entry, value);
 }
 
 int main()
@@ -69,7 +81,18 @@ int main()
 
 	gnt_box_add_widget(GNT_BOX(box), gnt_check_box_new("check box"));
 
+	GntWidget *e = gnt_entry_new(NULL);
+	gnt_box_add_widget(GNT_BOX(box), e);
+
+	GntWidget *slider = gnt_slider_new(TRUE, 0, 100);
+	gnt_slider_set_value(GNT_SLIDER(slider), 50);
+	gnt_box_add_widget(GNT_BOX(box), slider);
+	g_signal_connect(G_OBJECT(slider), "changed", G_CALLBACK(update_label), e);
+	gnt_slider_reflect_label(GNT_SLIDER(slider), GNT_LABEL(l));
+
 	gnt_widget_show(box);
+
+	gnt_widget_show(gnt_file_sel_new());
 
 #ifdef STANDALONE
 	gnt_main();

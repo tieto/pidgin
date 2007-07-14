@@ -49,5 +49,6 @@ gboolean pidgin_themes_smileys_disabled(void);
 void pidgin_themes_smiley_themeize(GtkWidget *);
 void pidgin_themes_smiley_theme_probe(void);
 void pidgin_themes_load_smiley_theme(const char *file, gboolean load);
+void pidgin_themes_remove_smiley_theme(const char *file);
 GSList *pidgin_themes_get_proto_smileys(const char *id);
 #endif /* _PIDGINDIALOGS_H_ */
