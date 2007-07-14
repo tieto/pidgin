@@ -712,12 +712,31 @@ purple_certificate_init(void)
 void
 purple_certificate_uninit(void)
 {
-	/* Unregister the builtins */
-	purple_certificate_unregister_verifier(&x509_singleuse);
-	purple_certificate_unregister_pool(&x509_tls_peers);
-	purple_certificate_unregister_verifier(&x509_tls_cached);
-	
-	/* TODO: Unregistering everything would be good... */
+	GList *full_list, *l;
+
+	/* Unregister all Schemes */
+	full_list = g_list_copy(cert_schemes); /* Make a working copy */
+	for (l = full_list; l; l = l->next) {
+		purple_certificate_unregister_scheme(
+			(PurpleCertificateScheme *) l->data );
+	}
+	g_list_free(full_list);
+
+	/* Unregister all Verifiers */
+	full_list = g_list_copy(cert_verifiers); /* Make a working copy */
+	for (l = full_list; l; l = l->next) {
+		purple_certificate_unregister_verifier(
+			(PurpleCertificateVerifier *) l->data );
+	}
+	g_list_free(full_list);
+
+	/* Unregister all Pools */
+	full_list = g_list_copy(cert_pools); /* Make a working copy */
+	for (l = full_list; l; l = l->next) {
+		purple_certificate_unregister_pool(
+			(PurpleCertificatePool *) l->data );
+	}
+	g_list_free(full_list);
 }
 
 gpointer
