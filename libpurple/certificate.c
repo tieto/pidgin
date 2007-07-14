@@ -754,6 +754,12 @@ purple_certificate_find_scheme(const gchar *name)
 	return NULL;
 }
 
+GList *
+purple_certificate_get_schemes(void)
+{
+	return cert_schemes;
+}
+
 gboolean
 purple_certificate_register_scheme(PurpleCertificateScheme *scheme)
 {
@@ -820,6 +826,12 @@ purple_certificate_find_verifier(const gchar *scheme_name, const gchar *ver_name
 }
 
 
+GList *
+purple_certificate_get_verifiers(void)
+{
+	return cert_verifiers;
+}
+
 gboolean
 purple_certificate_register_verifier(PurpleCertificateVerifier *vr)
 {
@@ -883,6 +895,11 @@ purple_certificate_find_pool(const gchar *scheme_name, const gchar *pool_name)
 
 }
 
+GList *
+purple_certificate_get_pools(void)
+{
+	return cert_pools;
+}
 
 gboolean
 purple_certificate_register_pool(PurpleCertificatePool *pool)

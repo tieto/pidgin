@@ -554,6 +554,14 @@ purple_certificate_get_handle(void);
 PurpleCertificateScheme *
 purple_certificate_find_scheme(const gchar *name);
 
+/**
+ * Get all registered CertificateSchemes
+ *
+ * @return GList pointing to all registered CertificateSchemes
+ */
+GList *
+purple_certificate_get_schemes(void);
+
 /** Register a CertificateScheme with libpurple
  *
  * No two schemes can be registered with the same name; this function enforces
@@ -583,6 +591,13 @@ purple_certificate_unregister_scheme(PurpleCertificateScheme *scheme);
 PurpleCertificateVerifier *
 purple_certificate_find_verifier(const gchar *scheme_name, const gchar *ver_name);
 
+/**
+ * Get the list of registered CertificateVerifiers
+ *
+ * @return GList of all registered PurpleCertificateVerifier
+ */
+GList *
+purple_certificate_get_verifiers(void);
 
 /**
  * Register a CertificateVerifier with libpurple
@@ -609,6 +624,14 @@ purple_certificate_unregister_verifier(PurpleCertificateVerifier *vr);
  */
 PurpleCertificatePool *
 purple_certificate_find_pool(const gchar *scheme_name, const gchar *pool_name);
+
+/**
+ * Get the list of registered Pools
+ *
+ * @return GList of all registered PurpleCertificatePool s
+ */
+GList *
+purple_certificate_get_pools(void);
 
 /**
  * Register a CertificatePool with libpurple and call its init function
