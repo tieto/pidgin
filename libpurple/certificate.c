@@ -720,6 +720,13 @@ purple_certificate_uninit(void)
 	/* TODO: Unregistering everything would be good... */
 }
 
+gpointer
+purple_certificate_get_handle(void)
+{
+	static gint handle;
+	return &handle;
+}
+
 PurpleCertificateScheme *
 purple_certificate_find_scheme(const gchar *name)
 {

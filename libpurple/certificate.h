@@ -541,6 +541,12 @@ purple_certificate_init(void);
 void
 purple_certificate_uninit(void);
 
+/**
+ * Get the Certificate subsystem handle for signalling purposes
+ */
+gpointer
+purple_certificate_get_handle(void);
+
 /** Look up a registered CertificateScheme by name
  * @param name   The scheme name. Case insensitive.
  * @return Pointer to the located Scheme, or NULL if it isn't found.
