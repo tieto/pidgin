@@ -592,7 +592,8 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport,in
 	char *email,*domain;
 	char *list_op_str,*type_str;
 
-	purple_debug_info("MaYuan","passport:%s type: %d\n",passport, type);
+	purple_debug_info("::","msn_add_contact_xml()\n");
+	purple_debug_info("MaYuan","Passport: %s, type: %d\n",passport, type);
 	tokens = g_strsplit(passport, "@", 2);
 	email = tokens[0];
 	domain = tokens[1];
@@ -601,7 +602,7 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport,in
 	for(d_node = xmlnode_get_child(mlNode,"d"); d_node; d_node = xmlnode_get_next_twin(d_node))
 	{
 		const char * attr = NULL;
-		purple_debug_info("MaYuan","d_node:%s\n",d_node->name);
+		purple_debug_info("MaYuan","d_node: %s\n",d_node->name);
 		attr = xmlnode_get_attrib(d_node,"n");
 		if(attr == NULL){
 			continue;
@@ -624,7 +625,7 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport,in
 	xmlnode_set_attrib(c_node,"n",email);
 
 	list_op_str = g_strdup_printf("%d",list_op);
-	purple_debug_info("MaYuan","list_op:%d\n",list_op);
+	purple_debug_info("MaYuan","list_op: %d\n",list_op);
 	xmlnode_set_attrib(c_node,"l",list_op_str);
 	g_free(list_op_str);
 
@@ -650,8 +651,8 @@ static void
 msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_len)
 {
 	MsnTransaction *trans;
-
-	purple_debug_info("MaYuan","Send ADL{%s}\n",payload);
+	purple_debug_info("::","msn_notification_post_adl()\n");
+	purple_debug_info("MaYuan","Sending ADL with payload: %s\n",payload);
 	trans = msn_transaction_new(cmdproc, "ADL","%d",strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
@@ -669,6 +670,7 @@ msn_notification_dump_contact(MsnSession *session)
 	int adl_count = 0;
 	const char *display_name;
 
+	purple_debug_info("::","msn_notification_dump_contact()\n");
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
 	xmlnode_set_attrib(adl_node, "l", "1");
@@ -750,7 +752,7 @@ adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (!initial)
         {
-                purple_debug_info("::","Initial ADL received\n");
+                purple_debug_info("typ0","Initial ADL received\n");
                 msn_session_finish_login(cmdproc->session);
         }
 }
@@ -892,6 +894,8 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	gint group_id;
 	const char *group_name;
 
+	purple_debug_info("::","adg_cmd()\n");
+	
 	session = cmdproc->session;
 
 	group_id = atoi(cmd->params[3]);
@@ -1551,7 +1555,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 static void
 ubx_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("MaYuan","UBX... \n");
+	purple_debug_info("typ0","UBX received.\n");
 	if(cmd->payload_len == 0){
 		return;
 	}
@@ -1561,7 +1565,7 @@ ubx_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 uux_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("MaYuan","UUX... \n");
+	purple_debug_info("typ0","UUX received.\n");
 }
 
 /**************************************************************************
@@ -1575,7 +1579,7 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *value;
 	const char *clLastChange;
 
-	purple_debug_info("MaYuan","profile_msg... \n");
+	purple_debug_info("::","profile_msg()\n");
 	session = cmdproc->session;
 
 	if (strcmp(msg->remote_user, "Hotmail"))
@@ -1760,6 +1764,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 static void
 delete_oim_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
+	purple_debug_info("::","delete_oim_msg()\n");
 }
 
 static void
@@ -1871,7 +1876,7 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 	xmlnode *adl_node;
 	char *payload;
 	int payload_len;
-
+	purple_debug_info("::","msn_notification_add_buddy()\n");
 	cmdproc = notification->servconn->cmdproc;
 
 	adl_node = xmlnode_new("ml");
@@ -1902,6 +1907,7 @@ msn_notification_rem_buddy(MsnNotification *notification, const char *list,
 	char *payload;
 	int payload_len;
 
+	purple_debug_info("::","msn_notification_rem_buddy()\n");
 	cmdproc = notification->servconn->cmdproc;
 
 	rml_node = xmlnode_new("ml");
@@ -1912,7 +1918,7 @@ msn_notification_rem_buddy(MsnNotification *notification, const char *list,
 	payload = xmlnode_to_str(rml_node,&payload_len);
 	xmlnode_free(rml_node);
 
-	purple_debug_info("MaYuan","RML{%s}\n",payload);
+	purple_debug_info("MaYuan","Send RML with payload {%s}\n",payload);
 	trans = msn_transaction_new(cmdproc, "RML","%d",strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);

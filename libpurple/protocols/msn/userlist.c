@@ -196,6 +196,7 @@ msn_get_list_id(const char *list)
 	return -1;
 }
 
+/* this function msn_got_add_user isn't called anywhere */
 void
 msn_got_add_user(MsnSession *session, MsnUser *user,
 				 MsnListId list_id, const char * group_id)
@@ -348,6 +349,8 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	PurpleAccount *account;
 	const char *passport;
 	const char *store;
+
+	purple_debug_info("::","msn_got_lst_user()\n");
 
 	account = session->account;
 	gc = purple_account_get_connection(account);
@@ -744,6 +747,8 @@ msn_userlist_load(MsnSession *session)
 	PurpleConnection *gc = purple_account_get_connection(session->account);
 	GSList *l;
 	MsnUser * user;
+
+	purple_debug_info("::","msn_userlist_load()\n");
 
 	g_return_if_fail(gc != NULL);
 

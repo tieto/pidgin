@@ -90,6 +90,9 @@ msn_contact_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 static int
 msn_get_memberrole(char * role)
 {
+	
+	purple_debug_info("::","msn_get_memberrole()\n");
+
 	if(!strcmp(role,"Allow")){
 		return MSN_LIST_AL_OP;
 	}else if(!strcmp(role,"Block")){
@@ -124,25 +127,31 @@ static void
 msn_parse_contact_list(MsnContact * contact)
 {
 	MsnSession * session;
-	int list_op =0;
-	char * passport;
-	xmlnode * node,*body,*response,*result,*services;
-	xmlnode *service,*memberships;
+	int list_op = 0;
+	char * passport, *debugdata, *typedata;
+	xmlnode *node, *body, *response, *result, *services;
+	xmlnode *service, *memberships, *info, *handle, *handletype;
 	xmlnode *LastChangeNode;
-	xmlnode *membershipnode,*members,*member,*passportNode;
+	xmlnode *membershipnode, *members, *member, *passportNode;
 	char *LastChangeStr;
 
+	purple_debug_info("::","msn_parse_contact_list()\n");
+
 	session = contact->session;
-	purple_debug_misc("MSNCL","parse contact list:{%s}\nsize:%d\n",contact->soapconn->body,contact->soapconn->body_len);
-	node = 	xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
+	node = xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
+
+	debugdata = xmlnode_to_formatted_str(node, NULL);
+	purple_debug_info("MSNCL","Received contact list, parsing:\n%s",debugdata);
+	g_free(debugdata);
 
 	if(node == NULL){
-		purple_debug_misc("MSNCL","parse contact from str err!\n");
+		purple_debug_error("MSNCL","Unable to parse SOAP data!\n");
 		return;
 	}
-	purple_debug_misc("MSNCL","node{%p},name:%s,child:%s,last:%s\n",node,node->name,node->child->name,node->lastchild->name);
+
+	purple_debug_info("MSNCL","Root node @ %p: Name: '%s', child: '%s', lastchild: '%s'\n",node,node->name,node->child->name,node->lastchild->name);
 	body = xmlnode_get_child(node,"Body");
-	purple_debug_misc("MSNCL","body{%p},name:%s\n",body,body->name);
+	purple_debug_info("MSNCL","Body @ %p:  Name: '%s'\n",body,body->name);
 	response = xmlnode_get_child(body,"FindMembershipResponse");
 
 	if (response == NULL) {
@@ -154,77 +163,115 @@ msn_parse_contact_list(MsnContact * contact)
 		msn_get_contact_list(contact, NULL);
 		return;
 	}
+	purple_debug_info("MSNCL","Response @ %p: Name: '%s'\n",response,response->name);
 
-	purple_debug_misc("MSNCL","response{%p},name:%s\n",response,response->name);
-	result =xmlnode_get_child(response,"FindMembershipResult");
+	result = xmlnode_get_child(response,"FindMembershipResult");
 	if(result == NULL){
-		purple_debug_misc("MSNCL","receive No Update!\n");
+		purple_debug_warning("MSNCL","receive No Update!\n");
 		return;
 	}
-	purple_debug_misc("MSNCL","result{%p},name:%s\n",result,result->name);
-	services =xmlnode_get_child(result,"Services");
-	purple_debug_misc("MSNCL","services{%p},name:%s\n",services,services->name);
-	service =xmlnode_get_child(services,"Service");
-	purple_debug_misc("MSNCL","service{%p},name:%s\n",service,service->name);
+	purple_debug_info("MSNCL","Result @ %p: Name: '%s'\n",result,result->name);
+
+	services = xmlnode_get_child(result,"Services");
+	purple_debug_info("MSNCL","Services @ %p\n",services);
 	
-	/*Last Change Node*/
-	LastChangeNode = xmlnode_get_child(service,"LastChange");
-	LastChangeStr = xmlnode_get_data(LastChangeNode);
-	purple_debug_misc("MSNCL","LastChangeNode0 %s\n",LastChangeStr);	
-	purple_account_set_string(session->account, "CLLastChange",LastChangeStr);
-	purple_debug_misc("MSNCL","LastChangeNode %s\n",LastChangeStr);
+	for( service = xmlnode_get_child(services, "Service"); service;
+	                                service = xmlnode_get_next_twin(service)) {
+		purple_debug_info("MSNCL","Service @ %p\n",service);
 	
-	memberships =xmlnode_get_child(service,"Memberships");
-	if (memberships == NULL) {
-		xmlnode_free(node);
-		return;
-	}
-	purple_debug_misc("MSNCL","memberships{%p},name:%s\n",memberships,memberships->name);
-	for(membershipnode = xmlnode_get_child(memberships, "Membership"); membershipnode;
-					membershipnode = xmlnode_get_next_twin(membershipnode)){
-		xmlnode *roleNode;
-		char *role;
-		roleNode = xmlnode_get_child(membershipnode,"MemberRole");
-		role=xmlnode_get_data(roleNode);
-		list_op = msn_get_memberrole(role);
-		purple_debug_misc("MSNCL","MemberRole role:%s,list_op:%d\n",role,list_op);
-		g_free(role);
-		members = xmlnode_get_child(membershipnode,"Members");
-		for(member = xmlnode_get_child(members, "Member"); member;
-				member = xmlnode_get_next_twin(member)){
-			MsnUser *user;
-			xmlnode * typeNode;
-			char * type;
+		if ( (info = xmlnode_get_child(service,"Info")) == NULL ) {
+			purple_debug_error("MSNCL","Error getting 'Info' child node\n");
+			continue;
+		}
+		if ( (handle = xmlnode_get_child(info,"Handle")) == NULL ) {
+			purple_debug_error("MSNCL","Error getting 'Handle' child node\n");
+			continue;
+		}
+		if ( (handletype = xmlnode_get_child(handle,"Type")) == NULL ) {
+			purple_debug_error("MSNCL","Error getting 'Type' child node\n");
+			continue;
+		}
 
-			purple_debug_misc("MSNCL","type:%s\n",xmlnode_get_attrib(member,"type"));
-			if(!g_strcasecmp(xmlnode_get_attrib(member,"type"),"PassportMember")){
-				passportNode = xmlnode_get_child(member,"PassportName");
-				passport = xmlnode_get_data(passportNode);
-				typeNode = xmlnode_get_child(member,"Type");
-				type = xmlnode_get_data(typeNode);
-				purple_debug_misc("MSNCL","Passport name:%s,type:%s\n",passport,type);
-				g_free(type);
+		if ( (typedata = xmlnode_get_data(handletype)) == NULL) {
+			purple_debug_error("MSNCL","Error retrieving data from 'Type' child node\n");
+			continue;
+		}
 
-				user = msn_userlist_find_add_user(session->userlist,passport,NULL);
-				msn_got_lst_user(session, user, list_op, NULL);
-				g_free(passport);
-			}
-			if(!g_strcasecmp(xmlnode_get_attrib(member,"type"),"PhoneMember")){
-			}
-			if(!g_strcasecmp(xmlnode_get_attrib(member,"type"),"EmailMember")){
-				xmlnode *emailNode;
+		purple_debug_info("MSNCL","processing '%s' Service\n",typedata);
 
-				emailNode = xmlnode_get_child(member,"Email");
-				passport = xmlnode_get_data(emailNode);
-				purple_debug_info("MSNCL","Email Member :name:%s,list_op:%d\n",passport,list_op);
-				user = msn_userlist_find_add_user(session->userlist,passport,NULL);
-				msn_got_lst_user(session,user,list_op,NULL);
-				g_free(passport);
+		if ( !g_strcasecmp(typedata, "Profile") ) {
+			/* Process Windows Live 'Messenger Roaming Identity' */
+			g_free(typedata);
+			continue;
+		}
+
+		if ( !g_strcasecmp(typedata, "Messenger") ) {
+
+			/*Last Change Node*/
+			LastChangeNode = xmlnode_get_child(service, "LastChange");
+			LastChangeStr = xmlnode_get_data(LastChangeNode);
+			purple_debug_info("MSNCL","LastChangeNode: '%s'\n",LastChangeStr);	
+			purple_account_set_string(session->account, "CLLastChange",LastChangeStr);
+	
+			memberships = xmlnode_get_child(service,"Memberships");
+			if (memberships == NULL) {
+				purple_debug_warning("MSNCL","Memberships = NULL, cleaning up and returning.\n");
+				g_free(typedata);
+				xmlnode_free(node);
+				return;
 			}
+			purple_debug_info("MSNCL","Memberships @ %p: Name: '%s'\n",memberships,memberships->name);
+			for(membershipnode = xmlnode_get_child(memberships, "Membership"); membershipnode;
+							membershipnode = xmlnode_get_next_twin(membershipnode)){
+				xmlnode *roleNode;
+				char *role;
+
+				roleNode = xmlnode_get_child(membershipnode,"MemberRole");
+				role = xmlnode_get_data(roleNode);
+				list_op = msn_get_memberrole(role);
+				purple_debug_info("MSNCL","MemberRole role: %s, list_op: %d\n",role,list_op);
+				
+				g_free(role);
+				
+				members = xmlnode_get_child(membershipnode,"Members");
+				for(member = xmlnode_get_child(members, "Member"); member;
+						member = xmlnode_get_next_twin(member)){
+					MsnUser *user;
+					xmlnode * typeNode;
+					char * type;
+
+					purple_debug_info("MSNCL","Member type: %s\n",xmlnode_get_attrib(member,"type"));
+					if(!g_strcasecmp(xmlnode_get_attrib(member,"type"),"PassportMember")){
+						passportNode = xmlnode_get_child(member,"PassportName");
+						passport = xmlnode_get_data(passportNode);
+						typeNode = xmlnode_get_child(member,"Type");
+						type = xmlnode_get_data(typeNode);
+						purple_debug_info("MSNCL","Passport name: '%s', Type: %s\n",passport,type);
+						g_free(type);
+
+						user = msn_userlist_find_add_user(session->userlist,passport,NULL);
+						msn_got_lst_user(session, user, list_op, NULL);
+						g_free(passport);
+					}
+					if(!g_strcasecmp(xmlnode_get_attrib(member,"type"),"PhoneMember")){
+					}
+					if(!g_strcasecmp(xmlnode_get_attrib(member,"type"),"EmailMember")){
+						xmlnode *emailNode;
+
+						emailNode = xmlnode_get_child(member,"Email");
+						passport = xmlnode_get_data(emailNode);
+						purple_debug_info("MSNCL","Email Member: Name: '%s', list_op: %d\n",passport,list_op);
+						user = msn_userlist_find_add_user(session->userlist,passport,NULL);
+						msn_got_lst_user(session,user,list_op,NULL);
+						g_free(passport);
+					}
+				}
+			}
+			g_free(typedata);	/* Free 'Type' node data after processing 'Messenger' Service */
 		}
 	}
 
-	xmlnode_free(node);
+	xmlnode_free(node);	/* Free the whole XML tree */
 }
 
 static void
@@ -236,13 +283,15 @@ msn_get_contact_list_cb(gpointer data, gint source, PurpleInputCondition cond)
 	const char *abLastChange;
 	const char *dynamicItemLastChange;
 
+	purple_debug_info("::","msn_get_contact_list_cb()\n");
+
 	contact = soapconn->parent;
 	g_return_if_fail(contact != NULL);
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
 
 #ifdef  MSN_CONTACT_SOAP_DEBUG
-	purple_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
+	purple_debug_info("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
 #endif
 	msn_parse_contact_list(contact);
 	/*free the read buffer*/
@@ -278,7 +327,9 @@ msn_get_contact_list(MsnContact * contact, const char *update_time)
 	MsnSoapReq *soap_request;
 	char *body = NULL;
 	char * update_str;
-	
+
+	purple_debug_info("::","msn_get_contact_list()\n");
+
 	purple_debug_info("MaYuan","Getting Contact List...\n");
 	if(update_time != NULL){
 		purple_debug_info("MSNCL","last update time:{%s}\n",update_time);
@@ -303,6 +354,8 @@ msn_parse_addressbook_groups(MsnContact *contact, xmlnode *node)
 	MsnSession *session = contact->session;
 	xmlnode *group;
 
+	purple_debug_info("::","msn_parse_addressbook_groups()\n");
+
 	for(group = xmlnode_get_child(node, "Group"); group;
 					group = xmlnode_get_next_twin(group)){
 		xmlnode *groupId, *groupInfo, *groupname;
@@ -321,7 +374,7 @@ msn_parse_addressbook_groups(MsnContact *contact, xmlnode *node)
 			continue;
 		}
 
-		purple_debug_misc("MsnAB","group_id:%s name:%s\n",group_id,group_name);
+		purple_debug_info("MsnAB","group_id: %s, name: %s\n",group_id,group_name);
 		if ((purple_find_group(group_name)) == NULL){
 			PurpleGroup *g = purple_group_new(group_name);
 			purple_blist_add_group(g, NULL);
