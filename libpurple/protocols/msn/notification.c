@@ -1492,14 +1492,30 @@ static void
 gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
-	/*get the payload content*/
-	purple_debug_info("MaYuan","GCF{%s}\n",cmd->payload);
+	xmlnode * root;
+	gchar * buf;
+
+	g_return_if_fail(cmd->payload != NULL);
+
+	if ( (root = xmlnode_from_str(cmd->payload, cmd->payload_len)) == NULL)
+	{
+		purple_debug_error("MSN","Unable to parse GCF payload into a XML tree");
+		return;
+	}
+	
+	buf = xmlnode_to_formatted_str(root, NULL);
+
+	/* get the payload content */
+	purple_debug_info("MaYuan","GCF command payload:\n\"%s\"\n",buf);
+	
+	g_free(buf);
+	xmlnode_free(root);
 }
 
 static void
 gcf_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("MaYuan","Processing GCF... \n");
+	purple_debug_info("MaYuan","Processing GCF command\n");
 	cmdproc->last_cmd->payload_cb  = gcf_cmd_post;
 	return;
 }
