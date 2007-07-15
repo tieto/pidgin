@@ -1731,16 +1731,56 @@ msim_check_alive(gpointer data)
     return TRUE;
 }
 
+/** Handle mail reply checks. */
 void
-msim_check_mail_cb(MsimSession *session, MsimMessage *reply, gpointer data)
+msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 {
     GHashTable *body;
     gchar *body_str;
     GString *notification;
+    guint old_inbox_status;
+    guint i;
+
+    /* Three parallel arrays for each new inbox message type. */
+    static const gchar *inbox_keys[] = 
+    { 
+        "Mail", 
+        "BlogComment", 
+        "ProfileComment", 
+        "FriendRequest", 
+        "PictureComment" 
+    };
+
+    static const guint inbox_bits[] = 
+    { 
+        MSIM_INBOX_MAIL, 
+        MSIM_INBOX_BLOG_COMMENT,
+        MSIM_INBOX_PROFILE_COMMENT,
+        MSIM_INBOX_FRIEND_REQUEST,
+        MSIM_INBOX_PICTURE_COMMENT
+    };
+
+    static const gchar *inbox_urls[] =
+    {
+        "http://messaging.myspace.com/index.cfm?fuseaction=mail.inbox",
+        "http://blog.myspace.com/index.cfm?fuseaction=blog",
+        "http://home.myspace.com/index.cfm?fuseaction=user",
+        "http://messaging.myspace.com/index.cfm?fuseaction=mail.friendRequests",
+        "http://home.myspace.com/index.cfm?fuseaction=user"
+    };
+
+    static const gchar *inbox_text[5];
+
+    /* Can't write _()'d strings in array initializers. Workaround. */
+    inbox_text[0] = _("New mail messages");
+    inbox_text[1] = _("New blog comments");
+    inbox_text[2] = _("New profile comments");
+    inbox_text[3] = _("New friend requests!");
+    inbox_text[4] = _("New picture comments");
 
     g_return_if_fail(reply != NULL);
 
-    msim_msg_dump("msim_check_mail_cb: reply=%s\n", reply);
+    msim_msg_dump("msim_check_inbox_cb: reply=%s\n", reply);
 
     body_str = msim_msg_get_string(reply, "body");
     g_return_if_fail(body_str != NULL);
@@ -1750,33 +1790,52 @@ msim_check_mail_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 
     notification = g_string_new("");
 
-    if (g_hash_table_lookup(body, "Mail"))
-        g_string_append(notification, _("New mail messages\n"));
- 
-    if (g_hash_table_lookup(body, "BlogComment"))
-        g_string_append(notification, _("New blog comments\n"));
-    
-    if (g_hash_table_lookup(body, "ProfileComment"))
-        g_string_append(notification, _("New profile comments\n"));
+    old_inbox_status = session->inbox_status;
 
-    if (g_hash_table_lookup(body, "FriendRequest"))
-        g_string_append(notification, _("New friend requests!\n"));
+    for (i = 0; i < sizeof(inbox_keys) / sizeof(inbox_keys[0]); ++i)
+    {
+        const gchar *key;
+        guint bit;
+        
+        key = inbox_keys[i];
+        bit = inbox_bits[i];
 
-    if (g_hash_table_lookup(body, "PictureComment"))
-        g_string_append(notification, _("New picture comments\n"));
+        if (g_hash_table_lookup(body, key))
+        {
+            /* Notify only on when _changes_ from no mail -> has mail
+             * (edge triggered) */
+            if (!(session->inbox_status & bit))
+            {
+                gchar *str;
+
+                str = g_strdup_printf(
+                        "<p><a href=\"%s\">%s</a><br>\n",
+                        inbox_urls[i], inbox_text[i]);
+
+                g_string_append(notification, str);
+                
+                g_free(str);
+            } else {
+                purple_debug_info("msim",
+                        "msim_check_inbox_cb: already notified of %s\n",
+                        key);
+                /* TODO: some kind of non-intrusitive notification? */
+            }
+
+            session->inbox_status |= bit;
+        }
+    }
 
     if (notification->len)
     {
-        g_string_append(notification,
-                _("\nRead at <a href='http://myspace.com/'>MySpace"));
+        purple_debug_info("msim",
+                "msim_check_inbox_cb: notifying %s\n", notification->str);
 
         purple_notify_formatted(session->account, 
-                _("New Mail"), notification->str, NULL,
+                _("New Inbox Messages"), _("New Inbox Messages"), NULL,
                 notification->str,
                 NULL, NULL);
 
-        /* TODO: stop notifying! Official client changes icon to a mail
-         * message, that can be clicked to open up the relevant page. */
     }
 
     g_hash_table_destroy(body);
@@ -1784,13 +1843,13 @@ msim_check_mail_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 
 /* Send request to check if there is new mail. */
 gboolean
-msim_check_mail(gpointer data)
+msim_check_inbox(gpointer data)
 {
     MsimSession *session;
 
     session = (MsimSession *)data;
 
-    purple_debug_info("msim", "msim_check_mail: checking mail\n");
+    purple_debug_info("msim", "msim_check_inbox: checking mail\n");
     g_return_val_if_fail(msim_send(session, 
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
@@ -1799,7 +1858,7 @@ msim_check_mail(gpointer data)
 			"lid", MSIM_TYPE_INTEGER, MG_CHECK_MAIL_LID,
 			"uid", MSIM_TYPE_INTEGER, session->userid,
 			"rid", MSIM_TYPE_INTEGER, 
-                msim_new_reply_callback(session, msim_check_mail_cb, NULL),
+                msim_new_reply_callback(session, msim_check_inbox_cb, NULL),
 			"body", MSIM_TYPE_STRING, g_strdup(""),
 			NULL), TRUE);
 
@@ -1836,11 +1895,16 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
     msim_set_status(session->account,
             purple_account_get_active_status(session->account));
 
+    /* Disable due to problems with timeouts. TODO: fix. */
+#ifdef MSIM_USE_KEEPALIVE
     purple_timeout_add(MSIM_KEEPALIVE_INTERVAL_CHECK, 
             (GSourceFunc)msim_check_alive, session);
+#endif
 
     purple_timeout_add(MSIM_MAIL_INTERVAL_CHECK, 
-            (GSourceFunc)msim_check_mail, session);
+            (GSourceFunc)msim_check_inbox, session);
+
+    msim_check_inbox(session);
 
     return TRUE;
 }
@@ -2735,6 +2799,7 @@ msim_session_new(PurpleAccount *acct)
     session->rxbuf = g_new0(gchar, MSIM_READ_BUF_SIZE);
 	session->next_rid = 1;
     session->last_comm = time(NULL);
+    session->inbox_status = 0;
     
     return session;
 }
@@ -3008,10 +3073,10 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 PurplePluginProtocolInfo prpl_info =
 {
 	/* options */
-    OPT_PROTO_USE_POINTSIZE		/* specify font size in sane point size */
-	/* | OPT_PROTO_MAIL_CHECK - TODO: myspace will notify of mail */
+      OPT_PROTO_USE_POINTSIZE		/* specify font size in sane point size */
+	| OPT_PROTO_MAIL_CHECK,
+
 	/* | OPT_PROTO_IM_IMAGE - TODO: direct images. */	
-	,
     NULL,              /* user_splits */
     NULL,              /* protocol_options */
     NO_BUDDY_ICONS,    /* icon_spec - TODO: eventually should add this */

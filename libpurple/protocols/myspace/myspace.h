@@ -146,6 +146,13 @@
 /* Random number in every MsimSession, to ensure it is valid. */
 #define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
 
+/* Inbox status bitfield values for MsimSession.inbox_status */
+#define MSIM_INBOX_MAIL                 (1 << 0)
+#define MSIM_INBOX_BLOG_COMMENT         (1 << 1)
+#define MSIM_INBOX_PROFILE_COMMENT      (1 << 2)
+#define MSIM_INBOX_FRIEND_REQUEST       (1 << 3)
+#define MSIM_INBOX_PICTURE_COMMENT      (1 << 4)
+
 /* Everything needed to keep track of a session. */
 typedef struct _MsimSession
 {
@@ -165,6 +172,7 @@ typedef struct _MsimSession
     guint rxoff;                        /**< Receive buffer offset */
 	guint next_rid;						/**< Next request/response ID */
     time_t last_comm;                   /**< Time received last communication */
+    guint inbox_status;                 /**< Bit field of inbox notifications */
 } MsimSession;
 
 /* Check if an MsimSession is valid */
@@ -254,8 +262,8 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
 
 gboolean msim_offline_message(const PurpleBuddy *buddy);
 
-void msim_check_mail_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
-gboolean msim_check_mail(gpointer data);
+void msim_check_inbox_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+gboolean msim_check_inbox(gpointer data);
 
 void msim_input_cb(gpointer gc_uncasted, gint source, 
 		PurpleInputCondition cond);
