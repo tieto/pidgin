@@ -49,7 +49,7 @@ char *gnt_style_get_from_name(const char *group, const char *key)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
 	const char *prg = g_get_prgname();
-	if ((group == NULL || *group != '\0') && prg &&
+	if ((group == NULL || *group == '\0') && prg &&
 			g_key_file_has_group(gkfile, prg))
 		group = prg;
 	if (!group)
