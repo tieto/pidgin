@@ -1340,7 +1340,7 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, gpointer data
 	//purple_notify_user_info_destroy(user_info);
 	/* Do not free username, since it will be used by user_info. */
 
-	//g_hash_table_destroy(body);
+	g_hash_table_destroy(body);
 }
 
 /** Retrieve a user's profile. */
@@ -1731,6 +1731,82 @@ msim_check_alive(gpointer data)
     return TRUE;
 }
 
+void
+msim_check_mail_cb(MsimSession *session, MsimMessage *reply, gpointer data)
+{
+    GHashTable *body;
+    gchar *body_str;
+    GString *notification;
+
+    g_return_if_fail(reply != NULL);
+
+    msim_msg_dump("msim_check_mail_cb: reply=%s\n", reply);
+
+    body_str = msim_msg_get_string(reply, "body");
+    g_return_if_fail(body_str != NULL);
+
+    body = msim_parse_body(body_str);
+    g_free(body_str);
+
+    notification = g_string_new("");
+
+    if (g_hash_table_lookup(body, "Mail"))
+        g_string_append(notification, _("New mail messages\n"));
+ 
+    if (g_hash_table_lookup(body, "BlogComment"))
+        g_string_append(notification, _("New blog comments\n"));
+    
+    if (g_hash_table_lookup(body, "ProfileComment"))
+        g_string_append(notification, _("New profile comments\n"));
+
+    if (g_hash_table_lookup(body, "FriendRequest"))
+        g_string_append(notification, _("New friend requests!\n"));
+
+    if (g_hash_table_lookup(body, "PictureComment"))
+        g_string_append(notification, _("New picture comments\n"));
+
+    if (notification->len)
+    {
+        g_string_append(notification,
+                _("\nRead at <a href='http://myspace.com/'>MySpace"));
+
+        purple_notify_formatted(session->account, 
+                _("New Mail"), notification->str, NULL,
+                notification->str,
+                NULL, NULL);
+
+        /* TODO: stop notifying! Official client changes icon to a mail
+         * message, that can be clicked to open up the relevant page. */
+    }
+
+    g_hash_table_destroy(body);
+}
+
+/* Send request to check if there is new mail. */
+gboolean
+msim_check_mail(gpointer data)
+{
+    MsimSession *session;
+
+    session = (MsimSession *)data;
+
+    purple_debug_info("msim", "msim_check_mail: checking mail\n");
+    g_return_val_if_fail(msim_send(session, 
+			"persist", MSIM_TYPE_INTEGER, 1,
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_GET,
+			"dsn", MSIM_TYPE_INTEGER, MG_CHECK_MAIL_DSN,
+			"lid", MSIM_TYPE_INTEGER, MG_CHECK_MAIL_LID,
+			"uid", MSIM_TYPE_INTEGER, session->userid,
+			"rid", MSIM_TYPE_INTEGER, 
+                msim_new_reply_callback(session, msim_check_mail_cb, NULL),
+			"body", MSIM_TYPE_STRING, g_strdup(""),
+			NULL), TRUE);
+
+    /* Always return true, so that we keep checking for mail. */
+    return TRUE;
+}
+
 /** Called when the session key arrives. */
 gboolean
 msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
@@ -1760,7 +1836,11 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
     msim_set_status(session->account,
             purple_account_get_active_status(session->account));
 
-    purple_timeout_add(MSIM_KEEPALIVE_INTERVAL_CHECK, msim_check_alive, session);
+    purple_timeout_add(MSIM_KEEPALIVE_INTERVAL_CHECK, 
+            (GSourceFunc)msim_check_alive, session);
+
+    purple_timeout_add(MSIM_MAIL_INTERVAL_CHECK, 
+            (GSourceFunc)msim_check_mail, session);
 
     return TRUE;
 }
@@ -1812,11 +1892,6 @@ msim_process(MsimSession *session, MsimMessage *msg)
     } else if (msim_msg_get(msg, "error")) {
         return msim_error(session, msg);
     } else if (msim_msg_get(msg, "ka")) {
-		/* TODO: Setup a timer, if keep-alive is not received within ~3 minutes, then 
-		 * disconnect the user. As it stands, if Internet connection goes out (this
-		 * just happened here), msimprpl will appear to be connected forever, while
-		 * other plugins (oscar, etc.) will time out. Msimprpl should timeout too. */
-        //purple_debug_info("msim", "msim_process: got keep alive\n");
         return TRUE;
     } else {
 		msim_unrecognized(session, msg, "in msim_process");
@@ -1882,11 +1957,16 @@ msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
 	{
 		purple_debug_info("msim", 
 			"msim_process_reply: not caching body, no UserName\n");
+        g_hash_table_destroy(body);
 		return FALSE;
 	}
 
 	uid = g_hash_table_lookup(body, "UserID");
-	g_return_val_if_fail(uid, FALSE);
+    if (!uid)
+    {
+        g_hash_table_destroy(body);
+        g_return_val_if_fail(uid, FALSE);
+    }
 
 	purple_debug_info("msim", "associating uid %d with username %s\n", uid, username);
 
@@ -1895,6 +1975,8 @@ msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
 	{
 		g_hash_table_foreach(body, msim_store_buddy_info_each, buddy);
 	}
+
+    g_hash_table_destroy(body);
 
 	return TRUE;
 }
@@ -2283,6 +2365,8 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, gpoint
 	 */
 	g_free(uid_field_name);
 	g_free(uid_before);
+
+    g_hash_table_destroy(body);
 
 	//msim_msg_free(msg);
 }

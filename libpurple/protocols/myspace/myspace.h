@@ -85,6 +85,10 @@
 /* Time to check if alive (milliseconds) */
 #define MSIM_KEEPALIVE_INTERVAL_CHECK   (30 * 1000)
 
+/* Time to check for new mail (milliseconds) */
+#define MSIM_MAIL_INTERVAL_CHECK        (30 * 1000)  //(2 * 60 * 1000)
+
+
 /* Constants */
 #define HASH_SIZE           0x14        /**< Size of SHA-1 hash for login */
 #define NONCE_SIZE          0x20        /**< Half of decoded 'nc' field */
@@ -249,6 +253,9 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 
 gboolean msim_offline_message(const PurpleBuddy *buddy);
+
+void msim_check_mail_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+gboolean msim_check_mail(gpointer data);
 
 void msim_input_cb(gpointer gc_uncasted, gint source, 
 		PurpleInputCondition cond);
