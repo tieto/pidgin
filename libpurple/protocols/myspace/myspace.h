@@ -86,7 +86,7 @@
 #define MSIM_KEEPALIVE_INTERVAL_CHECK   (30 * 1000)
 
 /* Time to check for new mail (milliseconds) */
-#define MSIM_MAIL_INTERVAL_CHECK        (30 * 1000)  //(2 * 60 * 1000)
+#define MSIM_MAIL_INTERVAL_CHECK        (60 * 1000) 
 
 
 /* Constants */
