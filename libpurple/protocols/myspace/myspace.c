@@ -1739,7 +1739,8 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
     gchar *body_str;
     GString *notification;
     guint old_inbox_status;
-    guint i;
+    guint i, n;
+    const gchar *froms[5], *tos[5], *urls[5], *subjects[5];
 
     /* Three parallel arrays for each new inbox message type. */
     static const gchar *inbox_keys[] = 
@@ -1792,6 +1793,8 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 
     old_inbox_status = session->inbox_status;
 
+    n = 0;
+
     for (i = 0; i < sizeof(inbox_keys) / sizeof(inbox_keys[0]); ++i)
     {
         const gchar *key;
@@ -1806,35 +1809,36 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
              * (edge triggered) */
             if (!(session->inbox_status & bit))
             {
-                gchar *str;
+                purple_debug_info("msim", "msim_check_inbox_cb: got %s, at %d\n",
+                        key, n);
 
-                str = g_strdup_printf(
-                        "<p><a href=\"%s\">%s</a><br>\n",
-                        inbox_urls[i], inbox_text[i]);
+                subjects[n] = inbox_text[i];
+                froms[n] = _("MySpace");
+                tos[n] = session->username;
+                /* TODO: append token, web challenge, so automatically logs in.
+                 * Would also need to free strings because they won't be static
+                 */
+                urls[n] = inbox_urls[i];
 
-                g_string_append(notification, str);
-                
-                g_free(str);
+                ++n;
             } else {
                 purple_debug_info("msim",
                         "msim_check_inbox_cb: already notified of %s\n",
                         key);
-                /* TODO: some kind of non-intrusitive notification? */
             }
 
             session->inbox_status |= bit;
         }
     }
 
-    if (notification->len)
+    if (n)
     {
         purple_debug_info("msim",
-                "msim_check_inbox_cb: notifying %s\n", notification->str);
+                "msim_check_inbox_cb: notifying of %d\n", n);
 
-        purple_notify_formatted(session->account, 
-                _("New Inbox Messages"), _("New Inbox Messages"), NULL,
-                notification->str,
-                NULL, NULL);
+        /* TODO: free strings with callback _if_ change to dynamic (w/ token) */
+        purple_notify_emails(session->account,
+                n, TRUE, subjects, froms, tos, urls, NULL, NULL);
 
     }
 
