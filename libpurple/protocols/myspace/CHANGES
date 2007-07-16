@@ -1,7 +1,11 @@
-2007-07-xx Jeff Connelly <jeff2@soc.pidgin.im> - 0.12
+2007-07-15 Jeff Connelly <jeff2@soc.pidgin.im> - 0.12
 * Allow logging in with passwords containing uppercase letters (bug #2066)
 * Add /3 -> | translation to escaping.
 * Allow setting status string.
+* Disable keepalive timeout.
+* Remove faking self online, instead show real status (now that it exists).
+* Support font sizes in incoming instant messages.
+* Add support for mail notifications.
 
 2007-07-09 Jeff Connelly <jeff2@soc.pidgin.im> - 0.11
 * Allow going idle (tested with I'dle Ma'ker) and viewing idle status of 

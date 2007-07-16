@@ -2710,7 +2710,8 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
  * @param cb The callback, an MSIM_USER_LOOKUP_CB.
  * @param data Arbitrary user data to be passed to callback (probably an MsimMessage *).
  *
- * @return The request/reply ID, used to link replies with requests. Put the rid in your request.
+ * @return The request/reply ID, used to link replies with requests, or -1.
+ *         Put the rid in your request, 'rid' field.
  *
  * TODO: Make more generic and more specific:
  * 1) MSIM_USER_LOOKUP_CB - make it for PERSIST_REPLY, not just user lookup
@@ -2721,6 +2722,8 @@ msim_new_reply_callback(MsimSession *session, MSIM_USER_LOOKUP_CB cb,
 		gpointer data)
 {
 	guint rid;
+
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), -1);
 
 	rid = session->next_rid++;
 
@@ -3164,7 +3167,7 @@ PurplePluginInfo info =
 
     "prpl-myspace",                                   /**< id             */
     "MySpaceIM",                                      /**< name           */
-    "0.10",                                           /**< version        */
+    "0.12",                                           /**< version        */
                                                       /**  summary        */
     "MySpaceIM Protocol Plugin",
                                                       /**  description    */

@@ -4,7 +4,7 @@
 
 # Package a new msimprpl for release. Must be run with bash.
 
-VERSION=0.11
+VERSION=0.12
 make
 # Include 'myspace' directory in archive, so it can easily be unextracted
 # into ~/pidgin/libpurple/protocols at the correct location.
