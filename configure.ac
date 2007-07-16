@@ -2038,6 +2038,8 @@ if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
+AM_CONDITIONAL(PURPLE_AVAILABLE, true)
+
 AC_OUTPUT([Makefile
 		   Doxyfile
 		   doc/Makefile

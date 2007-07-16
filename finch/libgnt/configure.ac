@@ -314,6 +314,8 @@ if test "x$have_libxml" = "xno"; then
 	AC_DEFINE(NO_LIBXML, 1, [Do not have libxml2.])
 fi
 
+AM_CONDITIONAL(PURPLE_AVAILABLE, false)
+
 AC_OUTPUT([Makefile
            gnt.pc
            wms/Makefile
