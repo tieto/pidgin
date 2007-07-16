@@ -685,6 +685,32 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		jabber_connection_schedule_close(js);
 }
 
+static void
+jabber_unregistration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	const char *type = xmlnode_get_attrib(packet, "type");
+	char *buf;
+	char *to = data;
+	
+	if(!strcmp(type, "result")) {
+		buf = g_strdup_printf(_("Registration from %s successfully removed"),
+							  to);
+		purple_notify_info(NULL, _("Unregistration Successful"),
+						   _("Unregistration Successful"), buf);
+		g_free(buf);
+	} else {
+		char *msg = jabber_parse_error(js, packet);
+		
+		if(!msg)
+			msg = g_strdup(_("Unknown Error"));
+		
+		purple_notify_error(NULL, _("Unregistration Failed"),
+							_("Unregistration Failed"), msg);
+		g_free(msg);
+	}
+	g_free(to);
+}
+
 typedef struct _JabberRegisterCBData {
 	JabberStream *js;
 	char *who;
@@ -708,47 +734,66 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 				flds; flds = flds->next) {
 			PurpleRequestField *field = flds->data;
 			const char *id = purple_request_field_get_id(field);
-			const char *value = purple_request_field_string_get_value(field);
-
-			if(!strcmp(id, "username")) {
-				y = xmlnode_new_child(query, "username");
-			} else if(!strcmp(id, "password")) {
-				y = xmlnode_new_child(query, "password");
-			} else if(!strcmp(id, "name")) {
-				y = xmlnode_new_child(query, "name");
-			} else if(!strcmp(id, "email")) {
-				y = xmlnode_new_child(query, "email");
-			} else if(!strcmp(id, "nick")) {
-				y = xmlnode_new_child(query, "nick");
-			} else if(!strcmp(id, "first")) {
-				y = xmlnode_new_child(query, "first");
-			} else if(!strcmp(id, "last")) {
-				y = xmlnode_new_child(query, "last");
-			} else if(!strcmp(id, "address")) {
-				y = xmlnode_new_child(query, "address");
-			} else if(!strcmp(id, "city")) {
-				y = xmlnode_new_child(query, "city");
-			} else if(!strcmp(id, "state")) {
-				y = xmlnode_new_child(query, "state");
-			} else if(!strcmp(id, "zip")) {
-				y = xmlnode_new_child(query, "zip");
-			} else if(!strcmp(id, "phone")) {
-				y = xmlnode_new_child(query, "phone");
-			} else if(!strcmp(id, "url")) {
-				y = xmlnode_new_child(query, "url");
-			} else if(!strcmp(id, "date")) {
-				y = xmlnode_new_child(query, "date");
+			if(!strcmp(id,"unregister")) {
+				gboolean value = purple_request_field_bool_get_value(field);
+				if(value) {
+					/* unregister from service. this doesn't include any of the fields, so remove them from the stanza by recreating it
+					   (there's no "remove child" function for xmlnode) */
+					jabber_iq_free(iq);
+					iq = jabber_iq_new_query(cbdata->js, JABBER_IQ_SET, "jabber:iq:register");
+					query = xmlnode_get_child(iq->node, "query");
+					xmlnode_set_attrib(iq->node,"to",cbdata->who);
+					xmlnode_new_child(query, "remove");
+					
+					jabber_iq_set_callback(iq, jabber_unregistration_result_cb, cbdata->who);
+					
+					jabber_iq_send(iq);
+					g_free(cbdata);
+					return;
+				}
 			} else {
-				continue;
+				const char *value = purple_request_field_string_get_value(field);
+				
+				if(!strcmp(id, "username")) {
+					y = xmlnode_new_child(query, "username");
+				} else if(!strcmp(id, "password")) {
+					y = xmlnode_new_child(query, "password");
+				} else if(!strcmp(id, "name")) {
+					y = xmlnode_new_child(query, "name");
+				} else if(!strcmp(id, "email")) {
+					y = xmlnode_new_child(query, "email");
+				} else if(!strcmp(id, "nick")) {
+					y = xmlnode_new_child(query, "nick");
+				} else if(!strcmp(id, "first")) {
+					y = xmlnode_new_child(query, "first");
+				} else if(!strcmp(id, "last")) {
+					y = xmlnode_new_child(query, "last");
+				} else if(!strcmp(id, "address")) {
+					y = xmlnode_new_child(query, "address");
+				} else if(!strcmp(id, "city")) {
+					y = xmlnode_new_child(query, "city");
+				} else if(!strcmp(id, "state")) {
+					y = xmlnode_new_child(query, "state");
+				} else if(!strcmp(id, "zip")) {
+					y = xmlnode_new_child(query, "zip");
+				} else if(!strcmp(id, "phone")) {
+					y = xmlnode_new_child(query, "phone");
+				} else if(!strcmp(id, "url")) {
+					y = xmlnode_new_child(query, "url");
+				} else if(!strcmp(id, "date")) {
+					y = xmlnode_new_child(query, "date");
+				} else {
+					continue;
+				}
+				xmlnode_insert_data(y, value, -1);
+				if(cbdata->js->registration && !strcmp(id, "username")) {
+					if(cbdata->js->user->node)
+						g_free(cbdata->js->user->node);
+					cbdata->js->user->node = g_strdup(value);
+				}
+				if(cbdata->js->registration && !strcmp(id, "password"))
+					purple_account_set_password(cbdata->js->gc->account, value);
 			}
-			xmlnode_insert_data(y, value, -1);
-			if(cbdata->js->registration && !strcmp(id, "username")) {
-				if(cbdata->js->user->node)
-					g_free(cbdata->js->user->node);
-				cbdata->js->user->node = g_strdup(value);
-			}
-			if(cbdata->js->registration && !strcmp(id, "password"))
-				purple_account_set_password(cbdata->js->gc->account, value);
 		}
 	}
 
@@ -805,6 +850,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 	xmlnode *query, *x, *y;
 	char *instructions;
 	JabberRegisterCBData *cbdata;
+	gboolean registered = FALSE;
 
 	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result"))
 		return;
@@ -815,15 +861,17 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 
 	query = xmlnode_get_child(packet, "query");
 
-	if(js->registration && xmlnode_get_child(query, "registered")) {
-		purple_notify_error(NULL, _("Already Registered"),
-				_("Already Registered"), NULL);
+	if(xmlnode_get_child(query, "registered")) {
+		registered = TRUE;
+		
 		if(js->registration) {
+			purple_notify_error(NULL, _("Already Registered"),
+					_("Already Registered"), NULL);
 			if(account->registration_cb)
 				(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
 			jabber_connection_schedule_close(js);
+			return;
 		}
-		return;
 	}
 
 	if((x = xmlnode_get_child_with_namespace(packet, "x",
@@ -939,9 +987,16 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 				NULL, FALSE);
 		purple_request_field_group_add_field(group, field);
 	}
+	if(registered) {
+		field = purple_request_field_bool_new("unregister", _("Unregister"), FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
 
 	if((y = xmlnode_get_child(query, "instructions")))
 		instructions = xmlnode_get_data(y);
+	else if(registered)
+		instructions = g_strdup(_("Please fill out the information below "
+					"to change your account registration."));
 	else
 		instructions = g_strdup(_("Please fill out the information below "
 					"to register your new account."));
@@ -958,10 +1013,11 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 				purple_connection_get_account(js->gc), NULL, NULL,
 				cbdata);
 	else {
-		char *title = g_strdup_printf(_("Register New Account at %s"), from);
+		char *title = registered?g_strdup_printf(_("Change Account Registration at %s"), from)
+								:g_strdup_printf(_("Register New Account at %s"), from);
 		purple_request_fields(js->gc, title,
 			  title, instructions, fields,
-			  _("Register"), G_CALLBACK(jabber_register_cb),
+			  registered?_("Change Registration"):_("Register"), G_CALLBACK(jabber_register_cb),
 			  _("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
 			  purple_connection_get_account(js->gc), NULL, NULL,
 			  cbdata);
