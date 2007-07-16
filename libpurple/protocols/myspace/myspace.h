@@ -143,6 +143,16 @@
 #define MSIM_TEXT_ITALIC                2   
 #define MSIM_TEXT_UNDERLINE             4
 
+/* Default baseline size of purple's fonts, in points. What is size 3 in points. 
+ * _font_scale specifies scaling factor relative to this point size. Note this 
+ * is only the default; it is configurable in account options. */
+#define MSIM_BASE_FONT_POINT_SIZE       8
+
+/* Default display's DPI. 96 is common but it can differ. Also configurable
+ * in account options. */
+#define MSIM_DEFAULT_DPI                96
+
+
 /* Random number in every MsimSession, to ensure it is valid. */
 #define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
 
@@ -208,23 +218,23 @@ const gchar *msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 int msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, 
 	PurpleMessageFlags flags);
 gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type);
-guint msim_point_to_purple_size(guint point);
-guint msim_purple_size_to_point(guint size);
-guint msim_height_to_point(guint height);
-guint msim_point_to_height(guint point);
+guint msim_point_to_purple_size(MsimSession *session, guint point);
+guint msim_purple_size_to_point(MsimSession *session, guint size);
+guint msim_height_to_point(MsimSession *session, guint height);
+guint msim_point_to_height(MsimSession *session, guint point);
 void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
 
 void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);
 
 
-typedef void (*MSIM_XMLNODE_CONVERT)(xmlnode *, gchar **, gchar **);
-void msim_markup_tag_to_html(xmlnode *root, gchar **begin, gchar **end);
-void html_tag_to_msim_markup(xmlnode *root, gchar **begin, gchar **end);
-gchar *msim_convert_xml(const gchar *raw, MSIM_XMLNODE_CONVERT f);
+typedef void (*MSIM_XMLNODE_CONVERT)(MsimSession *, xmlnode *, gchar **, gchar **);
+void msim_markup_tag_to_html(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
+void html_tag_to_msim_markup(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
+gchar *msim_convert_xml(MsimSession *, const gchar *raw, MSIM_XMLNODE_CONVERT f);
 
 /* High-level msim markup <=> html conversion functions. */
-gchar *msim_markup_to_html(const gchar *raw);
-gchar *html_to_msim_markup(const gchar *raw);
+gchar *msim_markup_to_html(MsimSession *, const gchar *raw);
+gchar *html_to_msim_markup(MsimSession *, const gchar *raw);
 
 int msim_incoming_im(MsimSession *session, MsimMessage *msg);
 int msim_incoming_action(MsimSession *session, MsimMessage *msg);

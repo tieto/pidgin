@@ -551,7 +551,7 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), -1);
 
-    message_msim = html_to_msim_markup(message);
+    message_msim = html_to_msim_markup(session, message);
 
 	if (msim_send_bm(session, who, message_msim, MSIM_BM_INSTANT))
 	{
@@ -638,26 +638,20 @@ static gdouble _font_scale[] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736 };
 #define MAX_FONT_SIZE                   7       /* Purple maximum font size */
 #define POINTS_PER_INCH                 72      /* How many pt's in an inch */
 
-/* Baseline size of purple's fonts, in points. What is size 3 in points. 
- * _font_scale specifies scaling factor relative to this point size.
- * TODO: configurable */
-#define BASE_FONT_POINT_SIZE            8
-
-/* Display's DPI. 96 is common but it can differ. TODO: configurable */
-#define DOTS_PER_INCH                   96
-
 /** Convert typographical font point size to HTML font size. 
  * Based on libpurple/gtkimhtml.c */
 guint
-msim_point_to_purple_size(guint point)
+msim_point_to_purple_size(MsimSession *session, guint point)
 {
-    guint size, this_point;
+    guint size, this_point, base;
     gdouble scale;
+    
+    base = purple_account_get_int(session->account, "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
    
     for (size = 0; size < sizeof(_font_scale) / sizeof(_font_scale[0]); ++size)
     {
         scale = _font_scale[CLAMP(size, 1, MAX_FONT_SIZE) - 1];
-        this_point = (guint)round(scale * BASE_FONT_POINT_SIZE);
+        this_point = (guint)round(scale * base);
 
         if (this_point >= point)
         {
@@ -673,14 +667,17 @@ msim_point_to_purple_size(guint point)
 
 /** Convert HTML font size to point size. */
 guint
-msim_purple_size_to_point(guint size)
+msim_purple_size_to_point(MsimSession *session, guint size)
 {
     gdouble scale;
     guint point;
+    guint base;
 
     scale = _font_scale[CLAMP(size, 1, MAX_FONT_SIZE) - 1];
 
-    point = (guint)round(scale * BASE_FONT_POINT_SIZE);
+    base = purple_account_get_int(session->account, "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
+
+    point = (guint)round(scale * base);
 
     purple_debug_info("msim", "msim_purple_size_to_point: size=%d -> %d pt\n",
                     size, point);
@@ -690,9 +687,13 @@ msim_purple_size_to_point(guint size)
 
 /** Convert a msim markup font pixel height to the more usual point size, for incoming messages. */
 guint 
-msim_height_to_point(guint height)
+msim_height_to_point(MsimSession *session, guint height)
 {
-    return (guint)round((POINTS_PER_INCH * 1. / DOTS_PER_INCH) * height);
+    guint dpi;
+
+    dpi = purple_account_get_int(session->account, "port", MSIM_DEFAULT_DPI);
+
+    return (guint)round((POINTS_PER_INCH * 1. / dpi) * height);
 
 	/* See also: libpurple/protocols/bonjour/jabber.c
 	 * _font_size_ichat_to_purple */
@@ -700,14 +701,18 @@ msim_height_to_point(guint height)
 
 /** Convert point size to msim pixel height font size specification, for outgoing messages. */
 guint
-msim_point_to_height(guint point)
+msim_point_to_height(MsimSession *session, guint point)
 {
-    return (guint)round((DOTS_PER_INCH * 1. / POINTS_PER_INCH) * point);
+    guint dpi;
+
+    dpi = purple_account_get_int(session->account, "port", MSIM_DEFAULT_DPI);
+
+    return (guint)round((dpi * 1. / POINTS_PER_INCH) * point);
 }
 
 /** Convert the msim markup <f> (font) tag into HTML. */
 static void 
-msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
+msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *face, *height_str, *decor_str;
 	GString *gs_end, *gs_begin;
@@ -731,10 +736,10 @@ msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
 	/* TODO: get font size working */
 	if (height && !face)
 		g_string_printf(gs_begin, "<font size='%d'>", 
-                msim_point_to_purple_size(msim_height_to_point(height)));
+                msim_point_to_purple_size(session, msim_height_to_point(session, height)));
     else if (height && face)
 		g_string_printf(gs_begin, "<font face='%s' size='%d'>", face,  
-                msim_point_to_purple_size(msim_height_to_point(height)));
+                msim_point_to_purple_size(session, msim_height_to_point(session, height)));
     else
         g_string_printf(gs_begin, "<font>");
 
@@ -793,7 +798,7 @@ msim_color_to_purple(const char *msim)
 
 /** Convert the msim markup <p> (paragraph) tag into HTML. */
 static void 
-msim_markup_p_to_html(xmlnode *root, gchar **begin, gchar **end)
+msim_markup_p_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
     /* Just pass through unchanged. 
 	 *
@@ -804,7 +809,7 @@ msim_markup_p_to_html(xmlnode *root, gchar **begin, gchar **end)
 
 /** Convert the msim markup <c> tag (text color) into HTML. TODO: Test */
 static void 
-msim_markup_c_to_html(xmlnode *root, gchar **begin, gchar **end)
+msim_markup_c_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *color;
 	gchar *purple_color;
@@ -831,7 +836,7 @@ msim_markup_c_to_html(xmlnode *root, gchar **begin, gchar **end)
 
 /** Convert the msim markup <b> tag (background color) into HTML. TODO: Test */
 static void 
-msim_markup_b_to_html(xmlnode *root, gchar **begin, gchar **end)
+msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *color;
 	gchar *purple_color;
@@ -858,7 +863,7 @@ msim_markup_b_to_html(xmlnode *root, gchar **begin, gchar **end)
 
 /** Convert the msim markup <i> tag (emoticon image) into HTML. TODO: Test */
 static void 
-msim_markup_i_to_html(xmlnode *root, gchar **begin, gchar **end)
+msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *name;
 
@@ -884,19 +889,19 @@ msim_markup_i_to_html(xmlnode *root, gchar **begin, gchar **end)
 }
 
 /** Convert an individual msim markup tag to HTML. */
-void msim_markup_tag_to_html(xmlnode *root, gchar **begin, gchar **end)
+void msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
 	if (!strcmp(root->name, "f"))
 	{
-		msim_markup_f_to_html(root, begin, end);
+		msim_markup_f_to_html(session, root, begin, end);
 	} else if (!strcmp(root->name, "p")) {
-		msim_markup_p_to_html(root, begin, end);
+		msim_markup_p_to_html(session, root, begin, end);
 	} else if (!strcmp(root->name, "c")) {
-		msim_markup_c_to_html(root, begin, end);
+		msim_markup_c_to_html(session, root, begin, end);
 	} else if (!strcmp(root->name, "b")) {
-		msim_markup_b_to_html(root, begin, end);
+		msim_markup_b_to_html(session, root, begin, end);
 	} else if (!strcmp(root->name, "i")) {
-		msim_markup_i_to_html(root, begin, end);
+		msim_markup_i_to_html(session, root, begin, end);
 	} else {
 		purple_debug_info("msim", "msim_markup_tag_to_html: "
 				"unknown tag name=%s, ignoring", root->name);
@@ -906,7 +911,7 @@ void msim_markup_tag_to_html(xmlnode *root, gchar **begin, gchar **end)
 }
 
 /** Convert an individual HTML tag to msim markup. */
-void html_tag_to_msim_markup(xmlnode *root, gchar **begin, gchar **end)
+void html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
     /* TODO: Coalesce nested tags into one <f> tag!
      * Currently, the 's' value will be overwritten when b/i/u is nested
@@ -935,14 +940,14 @@ void html_tag_to_msim_markup(xmlnode *root, gchar **begin, gchar **end)
         if (face && size)
         {
             *begin = g_strdup_printf("<f f='%s' h='%d'>", face, 
-                    msim_point_to_height(msim_purple_size_to_point(
-                            atoi(size))));
+                    msim_point_to_height(session,
+                        msim_purple_size_to_point(session, atoi(size))));
         } else if (face) {
             *begin = g_strdup_printf("<f f='%s'>", face);
         } else if (size) {
             *begin = g_strdup_printf("<f h='%d'>", 
-                     msim_point_to_height(msim_purple_size_to_point(
-                            atoi(size))));
+                     msim_point_to_height(session,
+                         msim_purple_size_to_point(session, atoi(size))));
         } else {
             *begin = g_strdup("<f>");
         }
@@ -963,7 +968,7 @@ void html_tag_to_msim_markup(xmlnode *root, gchar **begin, gchar **end)
  * @return An HTML string. Caller frees.
  */
 static gchar *
-msim_convert_xmlnode(xmlnode *root, MSIM_XMLNODE_CONVERT f)
+msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f)
 {
 	xmlnode *node;
 	gchar *begin, *inner, *end;
@@ -979,7 +984,7 @@ msim_convert_xmlnode(xmlnode *root, MSIM_XMLNODE_CONVERT f)
 
     final = g_string_new("");
 
-    f(root, &begin, &end);
+    f(session, root, &begin, &end);
     
     g_string_append(final, begin);
 
@@ -994,7 +999,7 @@ msim_convert_xmlnode(xmlnode *root, MSIM_XMLNODE_CONVERT f)
 
 		case XMLNODE_TYPE_TAG:
 			/* A tag or tag with attributes. Recursively descend. */
-			inner = msim_convert_xmlnode(node, f);
+			inner = msim_convert_xmlnode(session, node, f);
             g_return_val_if_fail(inner != NULL, NULL);
 
 			purple_debug_info("msim", " ** node name=%s\n", node->name);
@@ -1033,7 +1038,7 @@ msim_convert_xmlnode(xmlnode *root, MSIM_XMLNODE_CONVERT f)
 
 /** Convert XML to something based on MSIM_XMLNODE_CONVERT. */
 gchar *
-msim_convert_xml(const gchar *raw, MSIM_XMLNODE_CONVERT f)
+msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 {
 	xmlnode *root;
 	gchar *str;
@@ -1047,7 +1052,7 @@ msim_convert_xml(const gchar *raw, MSIM_XMLNODE_CONVERT f)
 		return g_strdup(raw);
 	}
 
-	str = msim_convert_xmlnode(root, f);
+	str = msim_convert_xmlnode(session, root, f);
 	purple_debug_info("msim", "msim_markup_to_html: returning %s\n", str);
 
 	xmlnode_free(root);
@@ -1059,9 +1064,9 @@ msim_convert_xml(const gchar *raw, MSIM_XMLNODE_CONVERT f)
  *
  * @return Purple markup string, must be g_free()'d. */
 gchar *
-msim_markup_to_html(const gchar *raw)
+msim_markup_to_html(MsimSession *session, const gchar *raw)
 {
-    return msim_convert_xml(raw, 
+    return msim_convert_xml(session, raw, 
             (MSIM_XMLNODE_CONVERT)(msim_markup_tag_to_html));
 }
 
@@ -1069,7 +1074,7 @@ msim_markup_to_html(const gchar *raw)
  *
  * @return HTML markup string, must be g_free()'d. */
 gchar *
-html_to_msim_markup(const gchar *raw)
+html_to_msim_markup(MsimSession *session, const gchar *raw)
 {
     gchar *markup;
     gchar *enclosed_raw;
@@ -1077,7 +1082,7 @@ html_to_msim_markup(const gchar *raw)
     /* Enclose text in one root tag, to try to make it valid XML for parsing. */
     enclosed_raw = g_strconcat("<root>", raw, "</root>", NULL);
 
-    markup = msim_convert_xml(enclosed_raw,
+    markup = msim_convert_xml(session, enclosed_raw,
             (MSIM_XMLNODE_CONVERT)(html_tag_to_msim_markup));
 
     g_free(enclosed_raw);
@@ -1108,7 +1113,7 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg)
 	msg_msim_markup = msim_msg_get_string(msg, "msg");
     g_return_val_if_fail(msg_msim_markup != NULL, FALSE);
 
-	msg_purple_markup = msim_markup_to_html(msg_msim_markup);
+	msg_purple_markup = msim_markup_to_html(session, msg_msim_markup);
 	g_free(msg_msim_markup);
 
     serv_got_im(session->gc, username, msg_purple_markup, 
@@ -3405,6 +3410,12 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Show headline in status text"), "show_headline", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+    option = purple_account_option_int_new(_("Screen resolution (dots per inch)"), "dpi", MSIM_DEFAULT_DPI);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+    option = purple_account_option_int_new(_("Base font size (points)"), "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 }
 
