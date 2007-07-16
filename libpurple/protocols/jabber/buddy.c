@@ -34,6 +34,8 @@
 #include "iq.h"
 #include "presence.h"
 #include "xdata.h"
+#include "pep.h"
+#include "adhoccommands.h"
 
 typedef struct {
 	long idle_seconds;
@@ -116,7 +118,6 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 		int priority, JabberBuddyState state, const char *status)
 {
 	JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, resource);
-
 	if(!jbr) {
 		jbr = g_new0(JabberBuddyResource, 1);
 		jbr->jb = jb;
@@ -141,6 +142,17 @@ void jabber_buddy_resource_free(JabberBuddyResource *jbr)
 	g_return_if_fail(jbr != NULL);
 
 	jbr->jb->resources = g_list_remove(jbr->jb->resources, jbr);
+	
+	while(jbr->commands) {
+		JabberAdHocCommands *cmd = jbr->commands->data;
+		g_free(cmd->jid);
+		g_free(cmd->node);
+		g_free(cmd->name);
+		g_free(cmd);
+		jbr->commands = g_list_delete_link(jbr->commands, jbr->commands);
+	}
+	
+	jabber_caps_free_clientinfo(jbr->caps);
 
 	g_free(jbr->name);
 	g_free(jbr->status);
@@ -411,7 +423,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		if ((img = purple_buddy_icons_find_account_icon(gc->account))) {
 			gconstpointer avatar_data;
 			gsize avatar_len;
-			xmlnode *photo, *binval;
+			xmlnode *photo, *binval, *type;
 			gchar *enc;
 			int i;
 			unsigned char hashval[20];
@@ -424,6 +436,8 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 				xmlnode_free(photo);
 			}
 			photo = xmlnode_new_child(vc_node, "PHOTO");
+			type = xmlnode_new_child(photo, "TYPE");
+			xmlnode_insert_data(type, "image/png", -1);
 			binval = xmlnode_new_child(photo, "BINVAL");
 			enc = purple_base64_encode(avatar_data, avatar_len);
 
@@ -452,9 +466,135 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
+	PurplePresence *gpresence;
+	PurpleStatus *status;
+	
+	if(((JabberStream*)gc->proto_data)->pep) {
+		/* XEP-0084: User Avatars */
+		if(img) {
+			/* A PNG header, including the IHDR, but nothing else */
+			const struct {
+				guchar signature[8]; /* must be hex 89 50 4E 47 0D 0A 1A 0A */
+				struct {
+					guint32 length; /* must be 0x0d */
+					guchar type[4]; /* must be 'I' 'H' 'D' 'R' */
+					guint32 width;
+					guint32 height;
+					guchar bitdepth;
+					guchar colortype;
+					guchar compression;
+					guchar filter;
+					guchar interlace;
+				} ihdr;
+			} *png = purple_imgstore_get_data(img); /* ATTN: this is in network byte order! */
+
+			/* check if the data is a valid png file (well, at least to some extend) */
+			if(png->signature[0] == 0x89 &&
+			   png->signature[1] == 0x50 &&
+			   png->signature[2] == 0x4e &&
+			   png->signature[3] == 0x47 &&
+			   png->signature[4] == 0x0d &&
+			   png->signature[5] == 0x0a &&
+			   png->signature[6] == 0x1a &&
+			   png->signature[7] == 0x0a &&
+			   ntohl(png->ihdr.length) == 0x0d &&
+			   png->ihdr.type[0] == 'I' &&
+			   png->ihdr.type[1] == 'H' &&
+			   png->ihdr.type[2] == 'D' &&
+			   png->ihdr.type[3] == 'R') {
+				/* parse PNG header to get the size of the image (yes, this is required) */
+				guint32 width = ntohl(png->ihdr.width);
+				guint32 height = ntohl(png->ihdr.height);
+				xmlnode *publish, *item, *data, *metadata, *info;
+				char *lengthstring, *widthstring, *heightstring;
+				
+				/* compute the sha1 hash */
+				PurpleCipherContext *ctx;
+				unsigned char digest[20];
+				char *hash;
+				char *base64avatar;
+				
+				ctx = purple_cipher_context_new_by_name("sha1", NULL);
+				purple_cipher_context_append(ctx, purple_imgstore_get_data(img), purple_imgstore_get_size(img));
+				purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
+				
+				/* convert digest to a string */
+				hash = g_strdup_printf("%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x",digest[0],digest[1],digest[2],digest[3],digest[4],digest[5],digest[6],digest[7],digest[8],digest[9],digest[10],digest[11],digest[12],digest[13],digest[14],digest[15],digest[16],digest[17],digest[18],digest[19]);
+				
+				publish = xmlnode_new("publish");
+				xmlnode_set_attrib(publish,"node",AVATARNAMESPACEDATA);
+				
+				item = xmlnode_new_child(publish, "item");
+				xmlnode_set_attrib(item, "id", hash);
+				
+				data = xmlnode_new_child(item, "data");
+				xmlnode_set_namespace(data,AVATARNAMESPACEDATA);
+				
+				base64avatar = purple_base64_encode(purple_imgstore_get_data(img), purple_imgstore_get_size(img));
+				xmlnode_insert_data(data,base64avatar,-1);
+				g_free(base64avatar);
+				
+				/* publish the avatar itself */
+				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
+				
+				/* next step: publish the metadata */
+				publish = xmlnode_new("publish");
+				xmlnode_set_attrib(publish,"node",AVATARNAMESPACEMETA);
+				
+				item = xmlnode_new_child(publish, "item");
+				xmlnode_set_attrib(item, "id", hash);
+				
+				metadata = xmlnode_new_child(item, "metadata");
+				xmlnode_set_namespace(metadata,AVATARNAMESPACEMETA);
+				
+				info = xmlnode_new_child(metadata, "info");
+				xmlnode_set_attrib(info, "id", hash);
+				xmlnode_set_attrib(info, "type", "image/png");
+				lengthstring = g_strdup_printf("%u", (unsigned)purple_imgstore_get_size(img));
+				xmlnode_set_attrib(info, "bytes", lengthstring);
+				g_free(lengthstring);
+				widthstring = g_strdup_printf("%u", width);
+				xmlnode_set_attrib(info, "width", widthstring);
+				g_free(widthstring);
+				heightstring = g_strdup_printf("%u", height);
+				xmlnode_set_attrib(info, "height", heightstring);
+				g_free(lengthstring);
+				
+				/* publish the metadata */
+				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
+				
+				g_free(hash);
+			} else { /* if(img) */
+				/* remove the metadata */
+				xmlnode *metadata, *item;
+				xmlnode *publish = xmlnode_new("publish");
+				xmlnode_set_attrib(publish,"node",AVATARNAMESPACEMETA);
+				
+				item = xmlnode_new_child(publish, "item");
+				
+				metadata = xmlnode_new_child(item, "metadata");
+				xmlnode_set_namespace(metadata,AVATARNAMESPACEMETA);
+				
+				xmlnode_new_child(metadata, "stop");
+				
+				/* publish the metadata */
+				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
+			}
+		} else {
+			purple_debug(PURPLE_DEBUG_ERROR, "jabber",
+						 "jabber_set_buddy_icon received non-png data");
+		}
+	}
+
+	/* even when the image is not png, we can still publish the vCard, since this
+	   one doesn't require a specific image type */
+
+	/* publish vCard for those poor older clients */
 	jabber_set_info(gc, purple_account_get_user_info(gc->account));
 
-	jabber_presence_send(gc->account, NULL);
+	gpresence = purple_account_get_presence(gc->account);
+	status = purple_presence_get_active_status(gpresence);
+	jabber_presence_send(gc->account, status);
 }
 
 /*
@@ -1023,6 +1163,109 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	jabber_buddy_info_show_if_ready(jbi);
 }
 
+typedef struct _JabberBuddyAvatarUpdateURLInfo {
+	JabberStream *js;
+	char *from;
+	char *id;
+} JabberBuddyAvatarUpdateURLInfo;
+
+static void do_buddy_avatar_update_fromurl(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, gsize len, const gchar *error_message) {
+	JabberBuddyAvatarUpdateURLInfo *info = user_data;
+	if(!url_text) {
+		purple_debug(PURPLE_DEBUG_ERROR, "jabber",
+					 "do_buddy_avatar_update_fromurl got error \"%s\"", error_message);
+		return;
+	}
+	
+	purple_buddy_icons_set_for_user(purple_connection_get_account(info->js->gc), info->from, (void*)url_text, len, info->id);
+	g_free(info->from);
+	g_free(info->id);
+	g_free(info);
+}
+
+static void do_buddy_avatar_update_data(JabberStream *js, const char *from, xmlnode *items) {
+	xmlnode *item, *data;
+	const char *checksum;
+	char *b64data;
+	void *img;
+	size_t size;
+	if(!items)
+		return;
+	
+	item = xmlnode_get_child(items, "item");
+	if(!item)
+		return;
+	
+	data = xmlnode_get_child_with_namespace(item,"data",AVATARNAMESPACEDATA);
+	if(!data)
+		return;
+	
+	checksum = xmlnode_get_attrib(item,"id");
+	if(!checksum)
+		return;
+	
+	b64data = xmlnode_get_data(data);
+	if(!b64data)
+		return;
+	
+	img = purple_base64_decode(b64data, &size);
+	if(!img)
+		return;
+	
+	purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, img, size, checksum);
+}
+
+void jabber_buddy_avatar_update_metadata(JabberStream *js, const char *from, xmlnode *items) {
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(js->gc), from);
+	const char *checksum;
+	xmlnode *item, *metadata;
+	if(!buddy)
+		return;
+	
+	checksum = purple_buddy_icons_get_checksum_for_user(buddy);
+	item = xmlnode_get_child(items,"item");
+	metadata = xmlnode_get_child_with_namespace(item, "metadata", AVATARNAMESPACEMETA);
+	if(!metadata)
+		return;
+	/* check if we have received a stop */
+	if(xmlnode_get_child(metadata, "stop")) {
+		purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, NULL, 0, NULL);
+	} else {
+		xmlnode *info, *goodinfo = NULL;
+		
+		/* iterate over all info nodes to get one we can use */
+		for(info = metadata->child; info; info = info->next) {
+			if(info->type == XMLNODE_TYPE_TAG && !strcmp(info->name,"info")) {
+				const char *type = xmlnode_get_attrib(info,"type");
+				const char *id = xmlnode_get_attrib(info,"id");
+				
+				if(checksum && id && !strcmp(id, checksum)) {
+					/* we already have that avatar, so we don't have to do anything */
+					goodinfo = NULL;
+					break;
+				}
+				/* We'll only pick the png one for now. It's a very nice image format anyways. */
+				if(type && id && !goodinfo && !strcmp(type, "image/png"))
+					goodinfo = info;
+			}
+		}
+		if(goodinfo) {
+			const char *url = xmlnode_get_attrib(goodinfo,"url");
+			const char *id = xmlnode_get_attrib(goodinfo,"id");
+			
+			/* the avatar might either be stored in a pep node, or on a HTTP/HTTPS URL */
+			if(!url)
+				jabber_pep_request_item(js, from, AVATARNAMESPACEDATA, id, do_buddy_avatar_update_data);
+			else {
+				JabberBuddyAvatarUpdateURLInfo *info = g_new0(JabberBuddyAvatarUpdateURLInfo, 1);
+				info->js = js;
+				info->from = g_strdup(from);
+				info->id = g_strdup(id);
+				purple_util_fetch_url(url, TRUE, NULL, TRUE, do_buddy_avatar_update_fromurl, info);
+			}
+		}
+	}
+}
 
 static void jabber_buddy_info_resource_free(gpointer data)
 {
@@ -1295,7 +1538,7 @@ static void jabber_buddy_set_invisibility(JabberStream *js, const char *who,
 	status    = purple_presence_get_active_status(gpresence);
 
 	purple_status_to_jabber(status, &state, &msg, &priority);
-	presence = jabber_presence_create(state, msg, priority);
+	presence = jabber_presence_create_js(js, state, msg, priority);
 
 	g_free(msg);
 
@@ -1389,12 +1632,54 @@ static void jabber_buddy_unsubscribe(PurpleBlistNode *node, gpointer data)
 	jabber_presence_subscription_set(js, buddy->name, "unsubscribe");
 }
 
+static void jabber_buddy_login(PurpleBlistNode *node, gpointer data) {
+	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		/* simply create a directed presence of the current status */
+		PurpleBuddy *buddy = (PurpleBuddy *) node;
+		PurpleConnection *gc = purple_account_get_connection(buddy->account);
+		JabberStream *js = gc->proto_data;
+		PurpleAccount *account = purple_connection_get_account(gc);
+		PurplePresence *gpresence = purple_account_get_presence(account);
+		PurpleStatus *status = purple_presence_get_active_status(gpresence);
+		xmlnode *presence;
+		JabberBuddyState state;
+		char *msg;
+		int priority;
+		
+		purple_status_to_jabber(status, &state, &msg, &priority);
+		presence = jabber_presence_create_js(js, state, msg, priority);
+		
+		g_free(msg);
+		
+		xmlnode_set_attrib(presence, "to", buddy->name);
+		
+		jabber_send(js, presence);
+		xmlnode_free(presence);
+	}
+}
+
+static void jabber_buddy_logout(PurpleBlistNode *node, gpointer data) {
+	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		/* simply create a directed unavailable presence */
+		PurpleBuddy *buddy = (PurpleBuddy *) node;
+		JabberStream *js = purple_account_get_connection(buddy->account)->proto_data;
+		xmlnode *presence;
+		
+		presence = jabber_presence_create_js(js, JABBER_BUDDY_STATE_UNAVAILABLE, NULL, 0);
+		
+		xmlnode_set_attrib(presence, "to", buddy->name);
+		
+		jabber_send(js, presence);
+		xmlnode_free(presence);
+	}
+}
 
 static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 {
 	PurpleConnection *gc = purple_account_get_connection(buddy->account);
 	JabberStream *js = gc->proto_data;
 	JabberBuddy *jb = jabber_buddy_find(js, buddy->name, TRUE);
+	GList *jbrs;
 
 	GList *m = NULL;
 	PurpleMenuAction *act;
@@ -1438,6 +1723,38 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 		                           PURPLE_CALLBACK(jabber_buddy_unsubscribe),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
+	}
+	
+	/*
+	 * This if-condition implements parts of XEP-0100: Gateway Interaction
+	 *
+	 * According to stpeter, there is no way to know if a jid on the roster is a gateway without sending a disco#info.
+	 * However, since the gateway might appear offline to us, we cannot get that information. Therefore, I just assume
+	 * that gateways on the roster can be identified by having no '@' in their jid. This is a faily safe assumption, since
+	 * people don't tend to have a server or other service there.
+	 */
+	if (g_utf8_strchr(buddy->name, -1, '@') == NULL) {
+		act = purple_menu_action_new(_("Log In"),
+									 PURPLE_CALLBACK(jabber_buddy_login),
+									 NULL, NULL);
+		m = g_list_append(m, act);
+		act = purple_menu_action_new(_("Log Out"),
+									 PURPLE_CALLBACK(jabber_buddy_logout),
+									 NULL, NULL);
+		m = g_list_append(m, act);
+	}
+	
+	/* add all ad hoc commands to the action menu */
+	for(jbrs = jb->resources; jbrs; jbrs = g_list_next(jbrs)) {
+		JabberBuddyResource *jbr = jbrs->data;
+		GList *commands;
+		if (!jbr->commands)
+			continue;
+		for(commands = jbr->commands; commands; commands = g_list_next(commands)) {
+			JabberAdHocCommands *cmd = commands->data;
+			act = purple_menu_action_new(cmd->name, PURPLE_CALLBACK(jabber_adhoc_execute_action), cmd, NULL);
+			m = g_list_append(m, act);
+		}
 	}
 
 	return m;
@@ -1824,14 +2141,14 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 				_("Search for XMPP users"), instructions, fields,
 				_("Search"), G_CALLBACK(user_search_cb),
 				_("Cancel"), G_CALLBACK(user_search_cancel_cb),
-				NULL, NULL, NULL,
+				purple_connection_get_account(js->gc), NULL, NULL,
 				usi);
 
 		g_free(instructions);
 	}
 }
 
-static void jabber_user_search_ok(JabberStream *js, const char *directory)
+void jabber_user_search(JabberStream *js, const char *directory)
 {
 	JabberIq *iq;
 
@@ -1858,7 +2175,7 @@ void jabber_user_search_begin(PurplePluginAction *action)
 			_("Select a user directory to search"),
 			js->user_directories ? js->user_directories->data : NULL,
 			FALSE, FALSE, NULL,
-			_("Search Directory"), PURPLE_CALLBACK(jabber_user_search_ok),
+			_("Search Directory"), PURPLE_CALLBACK(jabber_user_search),
 			_("Cancel"), NULL,
 			NULL, NULL, NULL,
 			js);

@@ -37,22 +37,39 @@ typedef enum {
 struct jabber_x_data_data {
 	GHashTable *fields;
 	GSList *values;
-	jabber_x_data_cb cb;
+	jabber_x_data_action_cb cb;
 	gpointer user_data;
 	JabberStream *js;
+	GList *actions;
+	PurpleRequestFieldGroup *actiongroup;
 };
 
 static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFields *fields) {
 	xmlnode *result = xmlnode_new("x");
-	jabber_x_data_cb cb = data->cb;
+	jabber_x_data_action_cb cb = data->cb;
 	gpointer user_data = data->user_data;
 	JabberStream *js = data->js;
 	GList *groups, *flds;
+	char *actionhandle = NULL;
+	gboolean hasActions = (data->actions != NULL);
 
 	xmlnode_set_namespace(result, "jabber:x:data");
 	xmlnode_set_attrib(result, "type", "submit");
 
 	for(groups = purple_request_fields_get_groups(fields); groups; groups = groups->next) {
+		if(groups->data == data->actiongroup) {
+			for(flds = purple_request_field_group_get_fields(groups->data); flds; flds = flds->next) {
+				PurpleRequestField *field = flds->data;
+				const char *id = purple_request_field_get_id(field);
+				int handleindex;
+				if(strcmp(id, "libpurple:jabber:xdata:actions"))
+					continue;
+				handleindex = purple_request_field_choice_get_value(field);
+				actionhandle = g_strdup(g_list_nth_data(data->actions, handleindex));
+				break;
+			}
+			continue;
+		}
 		for(flds = purple_request_field_group_get_fields(groups->data); flds; flds = flds->next) {
 			xmlnode *fieldnode, *valuenode;
 			PurpleRequestField *field = flds->data;
@@ -127,30 +144,58 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 		g_free(data->values->data);
 		data->values = g_slist_delete_link(data->values, data->values);
 	}
+	if (data->actions) {
+		GList *action;
+		for(action = data->actions; action; action = g_list_next(action)) {
+			g_free(action->data);
+		}
+		g_list_free(data->actions);
+	}
 	g_free(data);
 
-	cb(js, result, user_data);
+	if (hasActions) {
+		cb(js, result, actionhandle, user_data);
+		g_free(actionhandle);
+	} else
+		((jabber_x_data_cb)cb)(js, result, user_data);
 }
 
 static void jabber_x_data_cancel_cb(struct jabber_x_data_data *data, PurpleRequestFields *fields) {
 	xmlnode *result = xmlnode_new("x");
-	jabber_x_data_cb cb = data->cb;
+	jabber_x_data_action_cb cb = data->cb;
 	gpointer user_data = data->user_data;
 	JabberStream *js = data->js;
+	gboolean hasActions = FALSE;
 	g_hash_table_destroy(data->fields);
 	while(data->values) {
 		g_free(data->values->data);
 		data->values = g_slist_delete_link(data->values, data->values);
+	}
+	if (data->actions) {
+		hasActions = TRUE;
+		GList *action;
+		for(action = data->actions; action; action = g_list_next(action)) {
+			g_free(action->data);
+		}
+		g_list_free(data->actions);
 	}
 	g_free(data);
 
 	xmlnode_set_namespace(result, "jabber:x:data");
 	xmlnode_set_attrib(result, "type", "cancel");
 
-	cb(js, result, user_data);
+	if (hasActions)
+		cb(js, result, NULL, user_data);
+	else
+		((jabber_x_data_cb)cb)(js, result, user_data);
 }
 
 void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb cb, gpointer user_data)
+{
+	return jabber_x_data_request_with_actions(js, packet, NULL, 0, (jabber_x_data_action_cb)cb, user_data);
+}
+
+void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GList *actions, int defaultaction, jabber_x_data_action_cb cb, gpointer user_data)
 {
 	void *handle;
 	xmlnode *fn, *x;
@@ -180,7 +225,7 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 		char *value = NULL;
 
 		if(!type)
-			continue;
+			type = "text-single";
 
 		if(!var && strcmp(type, "fixed"))
 			continue;
@@ -190,8 +235,6 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 		if((valuenode = xmlnode_get_child(fn, "value")))
 			value = xmlnode_get_data(valuenode);
 
-
-		/* XXX: handle <required/> */
 
 		if(!strcmp(type, "text-private")) {
 			if((valuenode = xmlnode_get_child(fn, "value")))
@@ -324,6 +367,26 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 
 			g_free(value);
 		}
+        
+        if(field && xmlnode_get_child(fn, "required"))
+            purple_request_field_set_required(field,TRUE);
+	}
+	
+	if(actions != NULL) {
+		PurpleRequestField *actionfield;
+		GList *action;
+		data->actiongroup = group = purple_request_field_group_new(_("Actions"));
+		purple_request_fields_add_group(fields, group);
+		actionfield = purple_request_field_choice_new("libpurple:jabber:xdata:actions", _("Select an action"), defaultaction);
+
+		for(action = actions; action; action = g_list_next(action)) {
+			JabberXDataAction *a = action->data;
+			
+			purple_request_field_choice_add(actionfield, a->name);
+			data->actions = g_list_append(data->actions, g_strdup(a->handle));
+		}
+		purple_request_field_set_required(actionfield,TRUE);
+		purple_request_field_group_add_field(group, actionfield);
 	}
 
 	if((x = xmlnode_get_child(packet, "title")))

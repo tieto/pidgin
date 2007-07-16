@@ -323,7 +323,7 @@ struct _PurplePluginProtocolInfo
 
 	/* room list serialize */
 	char *(*roomlist_room_serialize)(PurpleRoomlistRoom *room);
-
+	
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);

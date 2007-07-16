@@ -913,6 +913,15 @@ purple_account_destroy(PurpleAccount *account)
 }
 
 void
+purple_account_set_register_callback(PurpleAccount *account, PurpleAccountRegistrationCb cb, void *user_data)
+{
+	g_return_if_fail(account != NULL);
+	
+	account->registration_cb = cb;
+	account->registration_cb_user_data = user_data;
+}
+
+void
 purple_account_register(PurpleAccount *account)
 {
 	g_return_if_fail(account != NULL);
