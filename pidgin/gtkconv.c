@@ -184,7 +184,6 @@ static gboolean color_is_visible(GdkColor foreground, GdkColor background, int c
 static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields);
 static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
-static gboolean infopane_release_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 
 static GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
@@ -4410,8 +4409,6 @@ setup_common_pane(PidginConversation *gtkconv)
 	                      GDK_BUTTON1_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event_box), "button_press_event",
 	                 G_CALLBACK(infopane_press_cb), gtkconv);
-	g_signal_connect(G_OBJECT(event_box), "button_release_event",
-	                 G_CALLBACK(infopane_release_cb), gtkconv);
 
 
 	gtkconv->infopane = gtk_cell_view_new();
@@ -4857,8 +4854,14 @@ pidgin_conv_destroy(PurpleConversation *conv)
 
 	gtkconv->convs = g_list_remove(gtkconv->convs, conv);
 	/* Don't destroy ourselves until all our convos are gone */
-	if (gtkconv->convs)
+	if (gtkconv->convs) {
+		/* Make sure the destroyed conversation is not the active one */
+		if (gtkconv->active_conv == conv) {
+			gtkconv->active_conv = gtkconv->convs->data;
+			purple_conversation_update(gtkconv->active_conv, PURPLE_CONV_UPDATE_FEATURES);
+		}
 		return;
+	}
 
 	pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
 
@@ -7737,12 +7740,6 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 }
 
 static gboolean
-infopane_release_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
-{
-	return FALSE;
-}
-
-static gboolean
 notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 {
 	PidginWindow *dest_win;
@@ -8327,6 +8324,9 @@ pidgin_conv_window_new()
 #ifdef _WIN32
 	g_signal_connect(G_OBJECT(win->window), "show",
 	                 G_CALLBACK(winpidgin_ensure_onscreen), win->window);
+
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/win32/minimize_new_convs"))
+		gtk_window_iconify(GTK_WINDOW(win->window));
 #endif
 
 	return win;

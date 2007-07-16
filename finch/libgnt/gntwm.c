@@ -1990,8 +1990,11 @@ void gnt_wm_update_window(GntWM *wm, GntWidget *widget)
 
 	while (widget->parent)
 		widget = widget->parent;
-	if (!GNT_IS_MENU(widget))
+	if (!GNT_IS_MENU(widget)) {
+		if (!GNT_IS_BOX(widget))
+			return;
 		gnt_box_sync_children(GNT_BOX(widget));
+	}
 
 	ws = gnt_wm_widget_find_workspace(wm, widget);
 	node = g_hash_table_lookup(wm->nodes, widget);
@@ -2004,7 +2007,7 @@ void gnt_wm_update_window(GntWM *wm, GntWidget *widget)
 		gnt_wm_copy_win(widget, node);
 		update_screen(wm);
 		gnt_ws_draw_taskbar(wm->cws, FALSE);
-	} else if (ws != wm->cws && GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_URGENT)) {
+	} else if (ws && ws != wm->cws && GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_URGENT)) {
 		if (!act || (act && !g_list_find(act, ws)))
 			act = g_list_prepend(act, ws);
 		update_act_msg();

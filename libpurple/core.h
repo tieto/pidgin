@@ -34,11 +34,11 @@ typedef struct
 	void (*debug_ui_init)(void); /* Unfortunate necessity. */
 	void (*ui_init)(void);
 	void (*quit)(void);
+	GHashTable* (*get_ui_info)(void);
 
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
 } PurpleCoreUiOps;
 
 #ifdef __cplusplus
@@ -132,6 +132,17 @@ gboolean purple_core_migrate(void);
  * @since 2.1.0
  */
 gboolean purple_core_ensure_single_instance(void);
+
+/**
+ * Returns a hashtable containing various information about the UI
+ *
+ * @return A GHashTable with strings for keys and values.  This
+ * hash table must not be freed.
+ *
+ * @since 2.1.0
+ *
+ */
+GHashTable* purple_core_get_ui_info(void);
 
 #ifdef __cplusplus
 }

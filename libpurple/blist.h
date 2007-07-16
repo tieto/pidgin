@@ -635,7 +635,7 @@ GSList *purple_find_buddies(PurpleAccount *account, const char *name);
 /**
  * Finds a group by name
  *
- * @param name    The groups name
+ * @param name    The group's name
  * @return        The group or NULL if the group does not exist
  */
 PurpleGroup *purple_find_group(const char *name);
