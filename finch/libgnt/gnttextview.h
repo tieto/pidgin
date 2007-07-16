@@ -191,6 +191,13 @@ void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget);
 void gnt_text_view_attach_pager_widget(GntTextView *view, GntWidget *pager);
 
 /**
+ * 
+ * @param view
+ * @param widget
+ */
+void gnt_text_view_attach_editor_widget(GntTextView *view, GntWidget *pager);
+
+/**
  * Set a GntTextViewFlag for the textview widget.
  *
  * @param view  The textview widget

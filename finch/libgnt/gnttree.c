@@ -410,7 +410,7 @@ redraw_tree(GntTree *tree)
 	int start, i;
 	GntWidget *widget = GNT_WIDGET(tree);
 	GntTreeRow *row;
-	int pos, up, down;
+	int pos, up, down = 0;
 	int rows, scrcol;
 
 	if (!GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_MAPPED))
@@ -547,7 +547,7 @@ redraw_tree(GntTree *tree)
 	rows--;
 	if (rows > 0)
 	{
-		int total;
+		int total = 0;
 		int showing, position;
 
 		get_next_n_opt(tree->root, g_list_length(tree->list), &total);
