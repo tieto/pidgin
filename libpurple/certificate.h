@@ -118,6 +118,9 @@ struct _PurpleCertificatePool
 	 *  @return TRUE if the operation succeeded, otherwise FALSE
 	 */
 	gboolean (* put_cert)(const gchar *id, PurpleCertificate *crt);
+
+	/** Returns a list of IDs stored in the pool */
+	GList * (* get_idlist)(void);
 };
 
 /** A certificate type
@@ -521,6 +524,24 @@ purple_certificate_pool_retrieve(PurpleCertificatePool *pool, const gchar *id);
  */
 gboolean
 purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, PurpleCertificate *crt);
+
+/**
+ * Get the list of IDs currently in the pool.
+ *
+ * @param pool   Pool to enumerate
+ * @return GList pointing to newly-allocated id strings. Free using
+ *         purple_certificate_pool_destroy_idlist()
+ */
+GList *
+purple_certificate_pool_get_idlist(PurpleCertificatePool *pool);
+
+/**
+ * Destroys the result given by purple_certificate_pool_get_idlist()
+ *
+ * @param idlist ID List to destroy
+ */
+void
+purple_certificate_pool_destroy_idlist(GList *idlist);
 
 /*@}*/
 

@@ -322,6 +322,29 @@ purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, Purp
 	return (pool->put_cert)(id, crt);
 }	
 
+GList *
+purple_certificate_pool_get_idlist(PurpleCertificatePool *pool)
+{
+	g_return_val_if_fail(pool, NULL);
+	g_return_val_if_fail(pool->get_idlist, NULL);
+
+	return (pool->get_idlist)();
+}
+
+void
+purple_certificate_pool_destroy_idlist(GList *idlist)
+{
+	GList *l;
+	
+	/* Iterate through and free them strings */
+	for ( l = idlist; l; l = l->next ) {
+		g_free(l->data);
+	}
+
+	g_list_free(idlist);
+}
+
+
 /****************************************************************************/
 /* Builtin Verifiers, Pools, etc.                                           */
 /****************************************************************************/
@@ -506,7 +529,8 @@ static PurpleCertificatePool x509_tls_peers = {
 	NULL,                         /* uninit not required */
 	x509_tls_peers_cert_in_pool,  /* Certificate exists? */
 	x509_tls_peers_get_cert,      /* Cert retriever */
-	x509_tls_peers_put_cert       /* Cert writer */
+	x509_tls_peers_put_cert,      /* Cert writer */
+	NULL                          /* idlist retriever */
 };
 
 
