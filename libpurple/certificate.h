@@ -578,7 +578,8 @@ purple_certificate_find_scheme(const gchar *name);
 /**
  * Get all registered CertificateSchemes
  *
- * @return GList pointing to all registered CertificateSchemes
+ * @return GList pointing to all registered CertificateSchemes . This value
+ *         is owned by libpurple
  */
 GList *
 purple_certificate_get_schemes(void);
@@ -615,7 +616,8 @@ purple_certificate_find_verifier(const gchar *scheme_name, const gchar *ver_name
 /**
  * Get the list of registered CertificateVerifiers
  *
- * @return GList of all registered PurpleCertificateVerifier
+ * @return GList of all registered PurpleCertificateVerifier. This value
+ *         is owned by libpurple
  */
 GList *
 purple_certificate_get_verifiers(void);
@@ -649,7 +651,8 @@ purple_certificate_find_pool(const gchar *scheme_name, const gchar *pool_name);
 /**
  * Get the list of registered Pools
  *
- * @return GList of all registered PurpleCertificatePool s
+ * @return GList of all registered PurpleCertificatePool s. This value
+ *         is owned by libpurple
  */
 GList *
 purple_certificate_get_pools(void);
