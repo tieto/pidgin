@@ -11,6 +11,7 @@ import dbus.decorators
 import gobject
 import os
 import gnt
+import sys
 
 from time import strftime
 
@@ -33,8 +34,7 @@ def wrote_msg(account, who, msg, conv, flags):
     tv.append_text_with_flags(who + ": ", 1)
     tv.append_text_with_flags(msg, 0)
     tv.scroll(0)
-
-gnt.gnt_init()
+    stuff[0].set_urgent()
 
 bus = dbus.SessionBus()
 obj = bus.get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
@@ -92,6 +92,30 @@ def show_conversation(conv):
     win.show()
     convwins[key] = [win, tv, entry]
     return convwins[key]
+
+def show_buddylist():
+	win = gnt.Window()
+	tree = gnt.Tree()
+	tree.set_property("columns", 1)
+	win.add_widget(tree)
+	node = purple.PurpleBlistGetRoot()
+	while node:
+		if purple.PurpleBlistNodeIsGroup(node):
+			sys.stderr.write(str(node) + "\n")
+			tree.add_row_after(str(node), ["asd", ""], None, None)
+			#tree.add_row_after(node, [str(purple.PurpleGroupGetName(node)), ""], None, None)
+			#tree.add_row_after(node, ["aasd", ""], None, None)
+		elif purple.PurpleBlistNodeIsContact(node):
+			buddy = purple.PurpleContactGetPriorityBuddy(node)
+			group = purple.PurpleBuddyGetGroup(buddy)
+			#tree.add_row_after(node, [str(purple.PurpleBuddyGetName(buddy)), ""], group, None)
+
+		node = purple.PurpleBlistNodeNext(node, False)
+	win.show()
+
+gnt.gnt_init()
+
+# show_buddylist()
 
 convs = purple.PurpleGetConversations()
 for conv in convs:

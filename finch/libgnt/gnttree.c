@@ -1041,7 +1041,7 @@ gnt_tree_init(GTypeInstance *instance, gpointer class)
 	GntTree *tree = GNT_TREE(widget);
 	tree->show_separator = TRUE;
 	tree->priv = g_new0(GntTreePriv, 1);
-	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y | GNT_WIDGET_CAN_TAKE_FOCUS);
 	widget->priv.minw = 4;
 	widget->priv.minh = 1;
 	GNTDEBUG;
