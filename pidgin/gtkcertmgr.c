@@ -28,6 +28,7 @@
 #include "pidgin.h"
 
 #include "certificate.h"
+#include "debug.h"
 #include "notify.h"
 
 #include "gtkcertmgr.h"
@@ -35,4 +36,29 @@
 void pidgin_certmgr_show(void)
 {
 	purple_notify_info(NULL, "Certificate Manager!!!1", "Certificates!!!", "LOL");
+	/* Enumerate all the certificates on file */
+	{
+		GList *idlist, *poollist;
+
+		for ( poollist = purple_certificate_get_pools();
+		      poollist;
+		      poollist = poollist->next ) {
+			PurpleCertificatePool *pool = poollist->data;
+			GList *l;
+			
+			purple_debug_info("gtkcertmgr",
+					  "Pool %s found for scheme %s -"
+					  "Enumerating certificates:\n",
+					  pool->name, pool->scheme_name);
+
+			idlist = purple_certificate_pool_get_idlist(pool);
+
+			for (l=idlist; l; l = l->next) {
+				purple_debug_info("gtkcertmgr",
+						  "- %s\n",
+						  (gchar *) l->data);
+			} /* idlist */
+			purple_certificate_pool_destroy_idlist(idlist);
+		} /* poollist */
+	}
 }
