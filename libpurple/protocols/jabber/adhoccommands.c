@@ -128,6 +128,20 @@ static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	xmlnode *command = xmlnode_get_child_with_namespace(packet, "command", "http://jabber.org/protocol/commands");
 	const char *status = xmlnode_get_attrib(command,"status");
 	xmlnode *xdata = xmlnode_get_child_with_namespace(command,"x","jabber:x:data");
+	const char *type = xmlnode_get_attrib(packet,"type");
+	
+	if(type && !strcmp(type,"error")) {
+		char *msg = jabber_parse_error(js, packet);
+		if(!msg)
+			msg = g_strdup(_("Unknown Error"));
+		
+		purple_notify_error(NULL, _("Ad-Hoc Command Failed"),
+							_("Ad-Hoc Command Failed"), msg);
+		g_free(msg);
+		return;
+	}
+	if(!type || strcmp(type,"result"))
+		return;
 	
 	if(!status)
 		return;
