@@ -205,7 +205,7 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 	const char *passport;
 	const char *friendly;
 
-	purple_debug_info("MaYuan","got add user...\n");
+	purple_debug_info("MSNP14","got add user...\n");
 	account = session->account;
 
 	passport = msn_user_get_passport(user);
@@ -349,8 +349,6 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	PurpleAccount *account;
 	const char *passport;
 	const char *store;
-
-	purple_debug_info("::","msn_got_lst_user()\n");
 
 	account = session->account;
 	gc = purple_account_get_connection(account);
@@ -661,7 +659,7 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 	const char *list;
 	const char *store_name;
 
-	purple_debug_info("MaYuan", "userlist add buddy,name:{%s},group:{%s}\n",who ,group_name);
+	purple_debug_info("MSNP14", "userlist add buddy,name:{%s},group:{%s}\n",who ,group_name);
 	group_id = NULL;
 
 	if (!purple_email_is_valid(who))
@@ -715,7 +713,7 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 	/* Then request the add to the server. */
 	list = lists[list_id];
 
-	purple_debug_info("MaYuan", "add user:{%s} to group id {%s}\n",store_name ,group_id);
+	purple_debug_info("MSNP14", "add user:{%s} to group id {%s}\n",store_name ,group_id);
 	msn_add_contact(userlist->session->contact,who,group_id);
 	msn_notification_add_buddy(userlist->session->notification, list, who,
 							   store_name, group_id);

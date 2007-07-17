@@ -120,7 +120,7 @@ msn_command_from_string(const char *string)
 
 	/*add payload Length checking*/
 	msn_set_payload_len(cmd);
-	purple_debug_info("MaYuan","get payload len:%d\n",cmd->payload_len);
+	purple_debug_info("MSNP14","get payload len:%d\n",cmd->payload_len);
 
 	msn_command_ref(cmd);
 

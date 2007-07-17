@@ -271,7 +271,7 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			tokens = g_strsplit(*cur, "=", 2);
 			if(tokens[0]&&tokens[1])
 			{
-				purple_debug_info("MaYuan","challenge %p,key:%s,value:%s\n",
+				purple_debug_info("MSNP14","challenge %p,key:%s,value:%s\n",
 									session->nexus->challenge_data,tokens[0],tokens[1]);
 				g_hash_table_insert(session->nexus->challenge_data, tokens[0], tokens[1]);
 			}
@@ -405,7 +405,7 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 static void
 msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("MaYuan","Processing MSG... \n");
+	purple_debug_info("MSNP14","Processing MSG... \n");
 	if(cmd->payload_len == 0){
 		return;
 	}
@@ -420,7 +420,7 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
-		purple_debug_info("MaYuan","MSG payload:{%s}\n",cmd->payload);
+		purple_debug_info("MSNP14","MSG payload:{%s}\n",cmd->payload);
 		cmd->payload_cb(cmdproc, cmd, cmd->payload, cmd->payload_len);
 	}
 }
@@ -438,7 +438,7 @@ uum_send_msg(MsnSession *session,MsnMessage *msg)
 	cmdproc = session->notification->cmdproc;
 	g_return_if_fail(msg     != NULL);
 	payload = msn_message_gen_payload(msg, &payload_len);
-	purple_debug_info("MaYuan","send UUM,payload{%s},strlen:%d,len:%d\n",
+	purple_debug_info("MSNP14","send UUM,payload{%s},strlen:%d,len:%d\n",
 		payload,strlen(payload),payload_len);
 	type = msg->type;
 	trans = msn_transaction_new(cmdproc, "UUM","%s 32 %d %d",msg->remote_user,type,payload_len);
@@ -455,7 +455,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	const char *passport;
 	const char *content_type;
 
-	purple_debug_info("MaYuan","Process UBM payload:%s\n",payload);
+	purple_debug_info("MSNP14","Process UBM payload:%s\n",payload);
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
 	msn_message_parse_payload(msg, payload, len,MSG_LINE_DEM,MSG_BODY_DEM);
@@ -467,7 +467,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	passport = msg->remote_user;
 
 	content_type = msn_message_get_content_type(msg);
-	purple_debug_info("MaYuan","type:%d\n",content_type);
+	purple_debug_info("MSNP14","type:%d\n",content_type);
 	if(!strcmp(content_type,"text/plain")){
 		const char *value;
 		const char *body;
@@ -526,7 +526,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("MaYuan","Processing UBM... \n");
+	purple_debug_info("MSNP14","Processing UBM... \n");
 	if(cmd->payload_len == 0){
 		return;
 	}
@@ -538,7 +538,7 @@ ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}else{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
-		purple_debug_info("MaYuan","UBM payload:{%s}\n",cmd->payload);
+		purple_debug_info("MSNP14","UBM payload:{%s}\n",cmd->payload);
 		ubm_cmd_post(cmdproc, cmd, cmd->payload, cmd->payload_len);
 	}
 }
@@ -572,7 +572,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 #else
 	msn_handle_chl(cmd->params[1], buf);
 #endif
-//	purple_debug_info("MaYuan","<<challenge:{%s}:{%s}\n",cmd->params[1],buf);
+//	purple_debug_info("MSNP14","<<challenge:{%s}:{%s}\n",cmd->params[1],buf);
 	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", MSNP13_WLM_PRODUCT_ID);
 
 	msn_transaction_set_payload(trans, buf, 32);
@@ -593,7 +593,7 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport,in
 	char *list_op_str,*type_str;
 
 	purple_debug_info("::","msn_add_contact_xml()\n");
-	purple_debug_info("MaYuan","Passport: %s, type: %d\n",passport, type);
+	purple_debug_info("MSNP14","Passport: %s, type: %d\n",passport, type);
 	tokens = g_strsplit(passport, "@", 2);
 	email = tokens[0];
 	domain = tokens[1];
@@ -602,7 +602,7 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport,in
 	for(d_node = xmlnode_get_child(mlNode,"d"); d_node; d_node = xmlnode_get_next_twin(d_node))
 	{
 		const char * attr = NULL;
-		purple_debug_info("MaYuan","d_node: %s\n",d_node->name);
+		purple_debug_info("MSNP14","d_node: %s\n",d_node->name);
 		attr = xmlnode_get_attrib(d_node,"n");
 		if(attr == NULL){
 			continue;
@@ -614,7 +614,7 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport,in
 	if(d_node == NULL)
 	{
 		/*domain not found, create a new domain Node*/
-		purple_debug_info("MaYuan","get No d_node\n");
+		purple_debug_info("MSNP14","get No d_node\n");
 		d_node = xmlnode_new("d");
 		xmlnode_set_attrib(d_node,"n",domain);
 		xmlnode_insert_child(mlNode,d_node);
@@ -625,7 +625,7 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport,in
 	xmlnode_set_attrib(c_node,"n",email);
 
 	list_op_str = g_strdup_printf("%d",list_op);
-	purple_debug_info("MaYuan","list_op: %d\n",list_op);
+	purple_debug_info("MSNP14","list_op: %d\n",list_op);
 	xmlnode_set_attrib(c_node,"l",list_op_str);
 	g_free(list_op_str);
 
@@ -652,7 +652,7 @@ msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_
 {
 	MsnTransaction *trans;
 	purple_debug_info("::","msn_notification_post_adl()\n");
-	purple_debug_info("MaYuan","Sending ADL with payload: %s\n",payload);
+	purple_debug_info("MSNP14","Sending ADL with payload: %s\n",payload);
 	trans = msn_transaction_new(cmdproc, "ADL","%d",strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
@@ -740,7 +740,7 @@ msn_notification_fqy_yahoo(MsnSession *session, const char *passport)
 static void
 blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("MaYuan","Process BLP\n");
+	purple_debug_info("MSNP14","Process BLP\n");
 }
 
 static void
@@ -748,11 +748,11 @@ adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	static int initial;
 
-	purple_debug_info("MaYuan","Process ADL\n");
+	purple_debug_info("MSNP14","Process ADL\n");
 
 	if (!initial)
         {
-                purple_debug_info("typ0","Initial ADL received\n");
+                purple_debug_misc("MSNP14","Initial ADL received\n");
                 msn_session_finish_login(cmdproc->session);
         }
 }
@@ -779,14 +779,14 @@ static void
 fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
-	purple_debug_info("MaYuan","FQY payload{%s}\n",payload);
+	purple_debug_info("MSNP14","FQY payload{%s}\n",payload);
 	msn_notification_post_adl(cmdproc,payload,len);
 }
 
 static void
 fqy_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("MaYuan","Process FQY\n");
+	purple_debug_info("MSNP14","Process FQY\n");
 	cmdproc->last_cmd->payload_cb  = fqy_cmd_post;
 }
 
@@ -798,7 +798,7 @@ rml_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	char * payload;
 #endif
 
-	purple_debug_info("MaYuan","Process RML\n");
+	purple_debug_info("MSNP14","Process RML\n");
 #if 0
 	trans = msn_transaction_new(cmdproc, "RML","");
 
@@ -1506,7 +1506,7 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	buf = xmlnode_to_formatted_str(root, NULL);
 
 	/* get the payload content */
-	purple_debug_info("MaYuan","GCF command payload:\n\"%s\"\n",buf);
+	purple_debug_info("MSNP14","GCF command payload:\n%s\n",buf);
 	
 	g_free(buf);
 	xmlnode_free(root);
@@ -1515,7 +1515,7 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 static void
 gcf_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("MaYuan","Processing GCF command\n");
+	purple_debug_info("MSNP14","Processing GCF command\n");
 	cmdproc->last_cmd->payload_cb  = gcf_cmd_post;
 	return;
 }
@@ -1523,7 +1523,7 @@ gcf_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 sbs_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("MaYuan","Processing SBS... \n");
+	purple_debug_info("MSNP14","Processing SBS... \n");
 	if(cmd->payload_len == 0){
 		return;
 	}
@@ -1547,7 +1547,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	char *psm_str, *currentmedia_str;
 
 	/*get the payload content*/
-//	purple_debug_info("MaYuan","UBX {%s} payload{%s}\n",cmd->params[0], cmd->payload);
+//	purple_debug_info("MSNP14","UBX {%s} payload{%s}\n",cmd->params[0], cmd->payload);
 
 	session = cmdproc->session;
 	account = session->account;
@@ -1571,7 +1571,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 static void
 ubx_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("typ0","UBX received.\n");
+	purple_debug_misc("MSNP14","UBX received.\n");
 	if(cmd->payload_len == 0){
 		return;
 	}
@@ -1581,7 +1581,7 @@ ubx_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 uux_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("typ0","UUX received.\n");
+	purple_debug_misc("MSNP14","UUX received.\n");
 }
 
 /**************************************************************************
@@ -1934,7 +1934,7 @@ msn_notification_rem_buddy(MsnNotification *notification, const char *list,
 	payload = xmlnode_to_str(rml_node,&payload_len);
 	xmlnode_free(rml_node);
 
-	purple_debug_info("MaYuan","Send RML with payload {%s}\n",payload);
+	purple_debug_info("MSNP14","Send RML with payload {%s}\n",payload);
 	trans = msn_transaction_new(cmdproc, "RML","%d",strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);

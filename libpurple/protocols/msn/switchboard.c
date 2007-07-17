@@ -534,7 +534,7 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	payload = msn_message_gen_payload(msg, &payload_len);
 
 #ifdef MSN_DEBUG_SB
-	purple_debug_info("MaYuan","SB length:{%d}",payload_len);
+	purple_debug_info("MSNP14","SB length:{%d}",payload_len);
 	msn_message_show_readable(msg, "SB SEND", FALSE);
 #endif
 
@@ -622,7 +622,7 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg,
 	g_return_if_fail(swboard != NULL);
 	g_return_if_fail(msg     != NULL);
 
-	purple_debug_info("Ma Yuan","switchboard send msg..\n");
+	purple_debug_info("MSNP14","switchboard send msg..\n");
 	if (msn_switchboard_can_send(swboard))
 		release_msg(swboard, msg);
 	else if (queue)
@@ -754,7 +754,7 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_misc("MaYuan","get UBM...\n");
+	purple_debug_misc("MSNP14","get UBM...\n");
 	cmdproc->servconn->payload_len = atoi(cmd->params[4]);
 	cmdproc->last_cmd->payload_cb = msg_cmd_post;
 }
@@ -1124,7 +1124,7 @@ cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	/*offline Message send Process*/
 
 	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL){
-		purple_debug_warning("Ma Yuan","offline msg to send:{%s}\n",msg->body);
+		purple_debug_warning("MSNP14","offline msg to send:{%s}\n",msg->body);
 		/* The messages could not be sent due to a switchboard error */
 		swboard->error = MSN_SB_ERROR_USER_OFFLINE;
 		msg_error_helper(swboard->cmdproc, msg,
@@ -1174,7 +1174,7 @@ got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* The conversation window was closed. */
 		return;
 
-	purple_debug_info("MaYuan","Switchboard:auth:{%s} socket:{%s}\n",cmd->params[4],cmd->params[2]);
+	purple_debug_info("MSNP14","Switchboard:auth:{%s} socket:{%s}\n",cmd->params[4],cmd->params[2]);
 	msn_switchboard_set_auth_key(swboard, cmd->params[4]);
 
 	msn_parse_socket(cmd->params[2], &host, &port);

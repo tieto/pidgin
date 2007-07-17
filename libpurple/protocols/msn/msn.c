@@ -874,7 +874,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	char *msgformat;
 	char *msgtext;
 
-	purple_debug_info("MaYuan","send IM {%s} to %s\n",message,who);
+	purple_debug_info("MSNP14","send IM {%s} to %s\n",message,who);
 	account = purple_connection_get_account(gc);
 
 	if (buddy) {
@@ -907,7 +907,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		g_free(msgformat);
 		g_free(msgtext);
 
-		purple_debug_info("MaYuan","prepare to send online Message\n");
+		purple_debug_info("MSNP14","prepare to send online Message\n");
 		if (g_ascii_strcasecmp(who, purple_account_get_username(account)))
 		{
 			MsnSession *session;
@@ -916,10 +916,10 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			session = gc->proto_data;
 			if(msn_user_is_yahoo(account,who)){
 				/*we send the online and offline Message to Yahoo User via UBM*/
-				purple_debug_info("MaYuan","send to Yahoo User\n");
+				purple_debug_info("MSNP14","send to Yahoo User\n");
 				uum_send_msg(session,msg);
 			}else{
-				purple_debug_info("MaYuan","send via switchboard\n");
+				purple_debug_info("MSNP14","send via switchboard\n");
 				swboard = msn_session_get_swboard(session, who, MSN_SB_FLAG_IM);
 				msn_switchboard_send_msg(swboard, msg, TRUE);
 			}
@@ -961,7 +961,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		MsnOim *oim;
 		char *friendname;
 
-		purple_debug_info("MaYuan","prepare to send offline Message\n");
+		purple_debug_info("MSNP14","prepare to send offline Message\n");
 		session = gc->proto_data;
 		/* XXX/khc: hack */
 		if (!session->oim)
@@ -1111,7 +1111,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	userlist = session->userlist;
 	who = msn_normalize(gc->account, buddy->name);
 
-	purple_debug_info("MaYuan","add user:{%s} to group:{%s}\n",who,group->name);
+	purple_debug_info("MSNP14","add user:{%s} to group:{%s}\n",who,group->name);
 	if (!session->logged_in)
 	{
 #if 0
@@ -1395,7 +1395,7 @@ msn_rename_group(PurpleConnection *gc, const char *old_name,
 	cmdproc = session->notification->cmdproc;
 	enc_new_group_name = purple_url_encode(group->name);
 
-	purple_debug_info("MaYuan","rename group:old{%s},new{%s}",old_name,enc_new_group_name);
+	purple_debug_info("MSNP14","rename group:old{%s},new{%s}",old_name,enc_new_group_name);
 	old_gid = msn_userlist_find_group_id(session->userlist, old_name);
 
 	if (old_gid != NULL)
@@ -1985,7 +1985,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 #if PHOTO_SUPPORT
 	/* Find the URL to the photo; must be before the marshalling [Bug 994207] */
 	photo_url_text = msn_get_photo_url(url_text);
-	purple_debug_info("Ma Yuan","photo url:{%s}\n",photo_url_text);
+	purple_debug_info("MSNP14","photo url:{%s}\n",photo_url_text);
 
 	/* Marshall the existing state */
 	info2_data = g_malloc0(sizeof(MsnGetInfoStepTwoData));
