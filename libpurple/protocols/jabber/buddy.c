@@ -799,6 +799,123 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				purple_notify_user_info_add_pair(user_info, _("Operating System"), jbr->client.os);
 			}
 		}
+		if(jbr && jbr->caps) {
+			GString *tmp = g_string_new("");
+			GList *iter;
+			for(iter = jbr->caps->features; iter; iter = g_list_next(iter)) {
+				const char *feature = iter->data;
+				
+				if(!strcmp(feature, "jabber:iq:last"))
+					feature = _("Last Activity");
+				else if(!strcmp(feature, "http://jabber.org/protocol/disco#info"))
+					feature = _("Service Discovery Info");
+				else if(!strcmp(feature, "http://jabber.org/protocol/disco#items"))
+					feature = _("Service Discovery Items");
+				else if(!strcmp(feature, "http://jabber.org/protocol/address"))
+					feature = _("Extended Stanza Addressing");
+				else if(!strcmp(feature, "http://jabber.org/protocol/muc"))
+					feature = _("Multi-User Chat");
+				else if(!strcmp(feature, "http://jabber.org/protocol/muc#user"))
+					feature = _("Multi-User Chat Extended Presence Information");
+				else if(!strcmp(feature, "http://jabber.org/protocol/ibb"))
+					feature = _("In-Band Bytestreams");
+				else if(!strcmp(feature, "http://jabber.org/protocol/commands"))
+					feature = _("Ad-Hoc Commands");
+				else if(!strcmp(feature, "http://jabber.org/protocol/pubsub"))
+					feature = _("PubSub Service");
+				else if(!strcmp(feature, "http://jabber.org/protocol/bytestreams"))
+					feature = _("SOCKS5 Bytestreams");
+				else if(!strcmp(feature, "jabber:x:oob"))
+					feature = _("Out of Band Data");
+				else if(!strcmp(feature, "http://jabber.org/protocol/xhtml-im"))
+					feature = _("XHTML-IM");
+				else if(!strcmp(feature, "jabber:iq:register"))
+					feature = _("In-Band Registration");
+				else if(!strcmp(feature, "http://jabber.org/protocol/geoloc"))
+					feature = _("User Location");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0084.html"))
+					feature = _("User Avatar");
+				else if(!strcmp(feature, "http://jabber.org/protocol/chatstates"))
+					feature = _("Chat State Notifications");
+				else if(!strcmp(feature, "jabber:iq:version"))
+					feature = _("Software Version");
+				else if(!strcmp(feature, "http://jabber.org/protocol/si"))
+					feature = _("Stream Initiation");
+				else if(!strcmp(feature, "http://jabber.org/protocol/si/profile/file-transfer"))
+					feature = _("File Transfer");
+				else if(!strcmp(feature, "http://jabber.org/protocol/mood"))
+					feature = _("User Mood");
+				else if(!strcmp(feature, "http://jabber.org/protocol/activity"))
+					feature = _("User Activity");
+				else if(!strcmp(feature, "http://jabber.org/protocol/caps"))
+					feature = _("Entity Capabilities");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0116.html"))
+					feature = _("Encrypted Session Negotiations");
+				else if(!strcmp(feature, "http://jabber.org/protocol/tune"))
+					feature = _("User Tune");
+				else if(!strcmp(feature, "http://jabber.org/protocol/rosterx"))
+					feature = _("Roster Item Exchange");
+				else if(!strcmp(feature, "http://jabber.org/protocol/reach"))
+					feature = _("Reachability Address");
+				else if(!strcmp(feature, "http://jabber.org/protocol/profile"))
+					feature = _("User Profile");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0166.html#ns"))
+					feature = _("Jingle");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0167.html#ns"))
+					feature = _("Jingle Audio");
+				else if(!strcmp(feature, "http://jabber.org/protocol/nick"))
+					feature = _("User Nickname");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0176.html#ns-udp"))
+					feature = _("Jingle ICE UDP");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0176.html#ns-tcp"))
+					feature = _("Jingle ICE TCP");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0177.html#ns"))
+					feature = _("Jingle Raw UDP");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0180.html#ns"))
+					feature = _("Jingle Video");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0181.html#ns"))
+					feature = _("Jingle DTMF");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0184.html#ns"))
+					feature = _("Message Receipts");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0189.html#ns"))
+					feature = _("Public Key Publishing");
+				else if(!strcmp(feature, "http://jabber.org/protocol/chatting"))
+					feature = _("User Chatting");
+				else if(!strcmp(feature, "http://jabber.org/protocol/browsing"))
+					feature = _("User Browsing");
+				else if(!strcmp(feature, "http://jabber.org/protocol/gaming"))
+					feature = _("User Gaming");
+				else if(!strcmp(feature, "http://jabber.org/protocol/viewing"))
+					feature = _("User Viewing");
+				else if(!strcmp(feature, "urn:xmpp:ping") || !strcmp(feature, "http://www.xmpp.org/extensions/xep-0199.html#ns"))
+					feature = _("Ping");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0200.html#ns"))
+					feature = _("Stanza Encryption");
+				else if(!strcmp(feature, "urn:xmpp:time"))
+					feature = _("Entity Time");
+				else if(!strcmp(feature, "urn:xmpp:delay"))
+					feature = _("Delayed Delivery");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0204.html#ns"))
+					feature = _("Collaborative Data Objects");
+				else if(!strcmp(feature, "http://jabber.org/protocol/fileshare"))
+					feature = _("File Repository and Sharing");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0215.html#ns"))
+					feature = _("STUN Service Discovery for Jingle");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0116.html#ns"))
+					feature = _("Simplified Encrypted Session Negotiation");
+				else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0219.html#ns"))
+					feature = _("Hop Check");
+				else if(g_str_has_suffix(feature, "+notify"))
+					feature = NULL;
+				
+				if(feature)
+					g_string_append_printf(tmp, "%s\n", feature);
+			}
+			if(strlen(tmp->str) > 0)
+				purple_notify_user_info_add_pair(user_info, _("Capabilities"), tmp->str);
+			
+			g_string_free(tmp, TRUE);
+		}
 	} else {
 		for(resources = jbi->jb->resources; resources; resources = resources->next) {
 			char *purdy = NULL;
@@ -839,6 +956,123 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				if(jbr->client.os) {
 					purple_notify_user_info_add_pair(user_info, _("Operating System"), jbr->client.os);
 				}
+			}
+			if(jbr && jbr->caps) {
+				GString *tmp = g_string_new("");
+				GList *iter;
+				for(iter = jbr->caps->features; iter; iter = g_list_next(iter)) {
+					const char *feature = iter->data;
+					
+					if(!strcmp(feature, "jabber:iq:last"))
+						feature = _("Last Activity");
+					else if(!strcmp(feature, "http://jabber.org/protocol/disco#info"))
+						feature = _("Service Discovery Info");
+					else if(!strcmp(feature, "http://jabber.org/protocol/disco#items"))
+						feature = _("Service Discovery Items");
+					else if(!strcmp(feature, "http://jabber.org/protocol/address"))
+						feature = _("Extended Stanza Addressing");
+					else if(!strcmp(feature, "http://jabber.org/protocol/muc"))
+						feature = _("Multi-User Chat");
+					else if(!strcmp(feature, "http://jabber.org/protocol/muc#user"))
+						feature = _("Multi-User Chat Extended Presence Information");
+					else if(!strcmp(feature, "http://jabber.org/protocol/ibb"))
+						feature = _("In-Band Bytestreams");
+					else if(!strcmp(feature, "http://jabber.org/protocol/commands"))
+						feature = _("Ad-Hoc Commands");
+					else if(!strcmp(feature, "http://jabber.org/protocol/pubsub"))
+						feature = _("PubSub Service");
+					else if(!strcmp(feature, "http://jabber.org/protocol/bytestreams"))
+						feature = _("SOCKS5 Bytestreams");
+					else if(!strcmp(feature, "jabber:x:oob"))
+						feature = _("Out of Band Data");
+					else if(!strcmp(feature, "http://jabber.org/protocol/xhtml-im"))
+						feature = _("XHTML-IM");
+					else if(!strcmp(feature, "jabber:iq:register"))
+						feature = _("In-Band Registration");
+					else if(!strcmp(feature, "http://jabber.org/protocol/geoloc"))
+						feature = _("User Location");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0084.html"))
+						feature = _("User Avatar");
+					else if(!strcmp(feature, "http://jabber.org/protocol/chatstates"))
+						feature = _("Chat State Notifications");
+					else if(!strcmp(feature, "jabber:iq:version"))
+						feature = _("Software Version");
+					else if(!strcmp(feature, "http://jabber.org/protocol/si"))
+						feature = _("Stream Initiation");
+					else if(!strcmp(feature, "http://jabber.org/protocol/si/profile/file-transfer"))
+						feature = _("File Transfer");
+					else if(!strcmp(feature, "http://jabber.org/protocol/mood"))
+						feature = _("User Mood");
+					else if(!strcmp(feature, "http://jabber.org/protocol/activity"))
+						feature = _("User Activity");
+					else if(!strcmp(feature, "http://jabber.org/protocol/caps"))
+						feature = _("Entity Capabilities");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0116.html"))
+						feature = _("Encrypted Session Negotiations");
+					else if(!strcmp(feature, "http://jabber.org/protocol/tune"))
+						feature = _("User Tune");
+					else if(!strcmp(feature, "http://jabber.org/protocol/rosterx"))
+						feature = _("Roster Item Exchange");
+					else if(!strcmp(feature, "http://jabber.org/protocol/reach"))
+						feature = _("Reachability Address");
+					else if(!strcmp(feature, "http://jabber.org/protocol/profile"))
+						feature = _("User Profile");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0166.html#ns"))
+						feature = _("Jingle");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0167.html#ns"))
+						feature = _("Jingle Audio");
+					else if(!strcmp(feature, "http://jabber.org/protocol/nick"))
+						feature = _("User Nickname");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0176.html#ns-udp"))
+						feature = _("Jingle ICE UDP");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0176.html#ns-tcp"))
+						feature = _("Jingle ICE TCP");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0177.html#ns"))
+						feature = _("Jingle Raw UDP");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0180.html#ns"))
+						feature = _("Jingle Video");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0181.html#ns"))
+						feature = _("Jingle DTMF");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0184.html#ns"))
+						feature = _("Message Receipts");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0189.html#ns"))
+						feature = _("Public Key Publishing");
+					else if(!strcmp(feature, "http://jabber.org/protocol/chatting"))
+						feature = _("User Chatting");
+					else if(!strcmp(feature, "http://jabber.org/protocol/browsing"))
+						feature = _("User Browsing");
+					else if(!strcmp(feature, "http://jabber.org/protocol/gaming"))
+						feature = _("User Gaming");
+					else if(!strcmp(feature, "http://jabber.org/protocol/viewing"))
+						feature = _("User Viewing");
+					else if(!strcmp(feature, "urn:xmpp:ping") || !strcmp(feature, "http://www.xmpp.org/extensions/xep-0199.html#ns"))
+						feature = _("Ping");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0200.html#ns"))
+						feature = _("Stanza Encryption");
+					else if(!strcmp(feature, "urn:xmpp:time"))
+						feature = _("Entity Time");
+					else if(!strcmp(feature, "urn:xmpp:delay"))
+						feature = _("Delayed Delivery");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0204.html#ns"))
+						feature = _("Collaborative Data Objects");
+					else if(!strcmp(feature, "http://jabber.org/protocol/fileshare"))
+						feature = _("File Repository and Sharing");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0215.html#ns"))
+						feature = _("STUN Service Discovery for Jingle");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0116.html#ns"))
+						feature = _("Simplified Encrypted Session Negotiation");
+					else if(!strcmp(feature, "http://www.xmpp.org/extensions/xep-0219.html#ns"))
+						feature = _("Hop Check");
+					else if(g_str_has_suffix(feature, "+notify"))
+						feature = NULL;
+					
+					if(feature)
+						g_string_append_printf(tmp, "%s\n", feature);
+				}
+				if(strlen(tmp->str) > 0)
+					purple_notify_user_info_add_pair(user_info, _("Capabilities"), tmp->str);
+				
+				g_string_free(tmp, TRUE);
 			}
 		}
 	}
