@@ -520,6 +520,36 @@ x509_tls_peers_put_cert(const gchar *id, PurpleCertificate *crt)
 	return ret;
 }
 
+static GList *
+x509_tls_peers_get_idlist(void)
+{
+	GList *idlist = NULL;
+	GDir *dir;
+	const gchar *entry;
+	gchar *poolpath;
+
+	/* Get a handle on the pool directory */
+	poolpath = purple_certificate_pool_mkpath(&x509_tls_peers, NULL);
+	dir = g_dir_open(poolpath,
+			 0,     /* No flags */
+			 NULL); /* Not interested in what the error is */
+	g_free(poolpath);
+
+	g_return_val_if_fail(dir, NULL);
+
+	/* Traverse the directory listing and create an idlist */
+	while ( (entry = g_dir_read_name(dir)) != NULL ) {
+		/* Copy the entry name into our list (GLib owns the original
+		   string) */
+		idlist = g_list_prepend(idlist, g_strdup(entry));
+	}
+
+	/* Release the directory */
+	g_dir_close(dir);
+	
+	return idlist;
+}
+
 static PurpleCertificatePool x509_tls_peers = {
 	"x509",                       /* Scheme name */
 	"tls_peers",                  /* Pool name */
@@ -530,7 +560,7 @@ static PurpleCertificatePool x509_tls_peers = {
 	x509_tls_peers_cert_in_pool,  /* Certificate exists? */
 	x509_tls_peers_get_cert,      /* Cert retriever */
 	x509_tls_peers_put_cert,      /* Cert writer */
-	NULL                          /* idlist retriever */
+	x509_tls_peers_get_idlist     /* idlist retriever */
 };
 
 
