@@ -26,6 +26,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 enum
 {
@@ -795,43 +796,107 @@ void gnt_text_view_set_flag(GntTextView *view, GntTextViewFlag flag)
 	view->flags |= flag;
 }
 
-static gboolean
-check_for_pager_cb(GntWidget *widget, const char *key, GntTextView *view)
+/* Pager and editor setups */
+struct
 {
-	static const char *combin = NULL;
+	GntTextView *tv;
+	char *file;
+} pageditor;
+
+
+static void
+cleanup_pageditor()
+{
+	unlink(pageditor.file);
+	g_free(pageditor.file);
+
+	pageditor.file = NULL;
+	pageditor.tv = NULL;
+}
+
+static void
+editor_end_cb(int status, gpointer data)
+{
+	if (status == 0) {
+		char *text = NULL;
+		if (g_file_get_contents(pageditor.file, &text, NULL, NULL)) {
+			gnt_text_view_clear(pageditor.tv);
+			gnt_text_view_append_text_with_flags(pageditor.tv, text, GNT_TEXT_FLAG_NORMAL);
+			gnt_text_view_scroll(GNT_TEXT_VIEW(pageditor.tv), 0);
+			g_free(text);
+		}
+	}
+	cleanup_pageditor();
+}
+
+static void
+pager_end_cb(int status, gpointer data)
+{
+	cleanup_pageditor();
+}
+
+static gboolean
+check_for_ext_cb(GntWidget *widget, const char *key, GntTextView *view)
+{
+	static const char *pager = NULL;
+	static const char *editor = NULL;
 	char *argv[] = {NULL, NULL, NULL};
 	static char path[1024];
 	static int len = -1;
 	FILE *file;
+	gboolean ret;
+	gboolean pg;
 
-	if (combin == NULL) {
-		combin = gnt_key_translate(gnt_style_get_from_name("pager", "key"));
-		if (combin == NULL)
-			combin = "\033" "v";
+	if (pager == NULL) {
+		pager = gnt_key_translate(gnt_style_get_from_name("pager", "key"));
+		if (pager == NULL)
+			pager = "\033" "v";
+		editor = gnt_key_translate(gnt_style_get_from_name("editor", "key"));
+		if (editor == NULL)
+			editor = "\033" "e";
 		len = g_snprintf(path, sizeof(path), "%s" G_DIR_SEPARATOR_S "gnt", g_get_tmp_dir());
 	} else {
 		g_snprintf(path + len, sizeof(path) - len, "XXXXXX");
 	}
 
-	if (strcmp(key, combin)) {
+	if (strcmp(key, pager) == 0) {
+		if (g_object_get_data(G_OBJECT(widget), "pager-for") != view)
+			return FALSE;
+		pg = TRUE;
+	} else if (strcmp(key, editor) == 0) {
+		if (g_object_get_data(G_OBJECT(widget), "editor-for") != view)
+			return FALSE;
+		pg = FALSE;
+	} else {
 		return FALSE;
 	}
 
 	file = fdopen(g_mkstemp(path), "wb");
 	if (!file)
 		return FALSE;
-
 	fprintf(file, "%s", view->string->str);
 	fclose(file);
-	argv[0] = gnt_style_get_from_name("pager", "path");
-	argv[0] = argv[0] ? argv[0] : getenv("PAGER");
-	argv[0] = argv[0] ? argv[0] : "less";
+
+	pageditor.tv = view;
+	pageditor.file = g_strdup(path);
+
+	argv[0] = gnt_style_get_from_name(pg ? "pager" : "editor", "path");
+	argv[0] = argv[0] ? argv[0] : getenv(pg ? "PAGER" : "EDITOR");
+	argv[0] = argv[0] ? argv[0] : (pg ? "less" : "vim");
 	argv[1] = path;
-	return gnt_giveup_console(NULL, argv, NULL, NULL, NULL, NULL);
+	ret = gnt_giveup_console(NULL, argv, NULL, NULL, NULL, NULL, pg ? pager_end_cb : editor_end_cb, NULL);
+	return ret;
 }
 
 void gnt_text_view_attach_pager_widget(GntTextView *view, GntWidget *pager)
 {
-	g_signal_connect(pager, "key_pressed", G_CALLBACK(check_for_pager_cb), view);
+	g_signal_connect(pager, "key_pressed", G_CALLBACK(check_for_ext_cb), view);
+	g_object_set_data(G_OBJECT(pager), "pager-for", view);
+}
+
+void gnt_text_view_attach_editor_widget(GntTextView *view, GntWidget *wid)
+{
+	g_signal_connect(wid, "key_pressed", G_CALLBACK(check_for_ext_cb), view);
+	g_object_set_data(G_OBJECT(wid), "editor-for", view);
 }
 

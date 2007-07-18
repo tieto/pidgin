@@ -48,13 +48,18 @@ const char *gnt_style_get(GntStyle style)
 char *gnt_style_get_from_name(const char *group, const char *key)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
+	const char *prg = g_get_prgname();
+	if ((group == NULL || *group == '\0') && prg &&
+			g_key_file_has_group(gkfile, prg))
+		group = prg;
+	if (!group)
+		group = "general";
 	return g_key_file_get_value(gkfile, group, key, NULL);
 #endif
 }
 
 gboolean gnt_style_get_bool(GntStyle style, gboolean def)
 {
-	int i;
 	const char * str;
 
 	if (bool_styles[style] != -1)
@@ -62,11 +67,20 @@ gboolean gnt_style_get_bool(GntStyle style, gboolean def)
 	
 	str = gnt_style_get(style);
 
+	bool_styles[style] = str ? gnt_style_parse_bool(str) : def;
+	return bool_styles[style];
+}
+
+gboolean gnt_style_parse_bool(const char *str)
+{
+	gboolean def = FALSE;
+	int i;
+
 	if (str)
 	{
-		if (strcmp(str, "false") == 0)
+		if (g_ascii_strcasecmp(str, "false") == 0)
 			def = FALSE;
-		else if (strcmp(str, "true") == 0)
+		else if (g_ascii_strcasecmp(str, "true") == 0)
 			def = TRUE;
 		else if (sscanf(str, "%d", &i) == 1)
 		{
@@ -76,9 +90,7 @@ gboolean gnt_style_get_bool(GntStyle style, gboolean def)
 				def = FALSE;
 		}
 	}
-
-	bool_styles[style] = def;
-	return bool_styles[style];
+	return def;
 }
 
 static void

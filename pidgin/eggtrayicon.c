@@ -543,7 +543,7 @@ egg_tray_icon_send_message (EggTrayIcon *icon,
       xdisplay = egg_tray_icon_get_x_display(icon);
 
       if (xdisplay == NULL)
-        return;
+        return 0;
 
       ev.type = ClientMessage;
       ev.window = (Window)gtk_plug_get_id (GTK_PLUG (icon));

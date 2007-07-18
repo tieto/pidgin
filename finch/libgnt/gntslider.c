@@ -241,6 +241,11 @@ void gnt_slider_set_value(GntSlider *slider, int value)
 	slider_value_changed(slider);
 }
 
+int gnt_slider_get_value(GntSlider *slider)
+{
+	return slider->current;
+}
+
 int gnt_slider_advance_step(GntSlider *slider, int steps)
 {
 	slider->current += steps * slider->step;

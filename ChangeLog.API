@@ -28,6 +28,7 @@ version 2.1.0 (??/??/????):
 		    longer than 1 second away.  Be aware of the rounding, though.
 		* purple_xfer_get_remote_user
 		* purple_pounces_get_all_for_ui
+		* purple_prefs_get_children_names
 
 		Changed:
 		* The documentation of the following functions now properly
@@ -104,6 +105,10 @@ version 2.1.0 (??/??/????):
 			* gnt_window_present
 			* gnt_tree_set_column_width_ratio
 			* gnt_tree_set_column_resizable
+			* gnt_tree_set_column_is_right_aligned
+			* 'file-selected' signal is emited for GntFileSel
+			* gnt_style_parse_bool
+			* gnt_util_set_trigger_widget
 
 			Changed:
 			* gnt_tree_get_rows() now returns a GList* instead of a const

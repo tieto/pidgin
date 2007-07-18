@@ -1,4 +1,4 @@
-# translation of gaim_gl.po to galician
+# translation of gl.po to galician
 # This file is distributed under the same license as the gaim package.
 # Copyright (C) 2006 THE PACKAGE'S COPYRIGHT HOLDER.
 #
@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: gaim_2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-01-15 11:50+0100\n"
-"PO-Revision-Date: 2007-03-28 13:13+0200\n"
+"PO-Revision-Date: 2007-06-26 10:04+0200\n"
 "Last-Translator: Mar Castro <mariamarcp@gmail.com>\n"
 "Language-Team: galician\n"
 "MIME-Version: 1.0\n"
@@ -179,7 +179,7 @@ msgstr "Contas"
 
 #: ../console/gntaccount.c:650
 msgid "You can enable/disable accounts from the following list."
-msgstr "Pode activar/desactivar contas da seguinte lista"
+msgstr "Pode activar/desactivar contas da seguinte lista."
 
 #: ../console/gntaccount.c:673 ../console/gntaccount.c:833
 #: ../console/gntblist.c:313 ../console/gntblist.c:380
@@ -208,11 +208,11 @@ msgstr "Quere engadir o contacto á súa lista?"
 
 #: ../console/gntblist.c:264
 msgid "You must provide a screename for the buddy."
-msgstr "Debe especificarlle un nome de usuario ao contacto"
+msgstr "Debe especificarlle un nome de usuario ao contacto."
 
 #: ../console/gntblist.c:266
 msgid "You must provide a group."
-msgstr "Debe especificar un grupo"
+msgstr "Debe especificar un grupo."
 
 #: ../console/gntblist.c:268
 msgid "You must select an account."
@@ -282,7 +282,7 @@ msgstr "Engadir conversa"
 
 #: ../console/gntblist.c:379
 msgid "You can edit more information from the context menu later."
-msgstr "Pode editar máis información desde o menu de contexto máis tarde"
+msgstr "Pode editar máis información desde o menu de contexto máis tarde."
 
 #: ../console/gntblist.c:390 ../console/gntblist.c:403
 msgid "Error adding group"
@@ -294,7 +294,7 @@ msgstr "Debe proporcionarlle un nome ao grupo que quere engadir."
 
 #: ../console/gntblist.c:404
 msgid "A group with the name already exists."
-msgstr "Xa existe un grupo con ese nome"
+msgstr "Xa existe un grupo con ese nome."
 
 #: ../console/gntblist.c:411 ../console/gntblist.c:788 ../gtk/gtkblist.c:5655
 #: ../libgaim/protocols/sametime/sametime.c:5399
@@ -304,7 +304,7 @@ msgstr "Engadir un grupo"
 
 #: ../console/gntblist.c:411
 msgid "Enter the name of the group"
-msgstr "Introduza o nome do grupo."
+msgstr "Introduza o nome do grupo"
 
 #: ../console/gntblist.c:736
 msgid "Edit Chat"
@@ -312,7 +312,7 @@ msgstr "Editar a conversa"
 
 #: ../console/gntblist.c:736
 msgid "Please Update the necessary fields."
-msgstr "Actualice os campos necesarios"
+msgstr "Actualice os campos necesarios."
 
 #: ../console/gntblist.c:737 ../console/gntstatus.c:196
 msgid "Edit"
@@ -355,7 +355,7 @@ msgstr "Renomear"
 
 #: ../console/gntblist.c:904
 msgid "Enter empty string to reset the name."
-msgstr "Introduza unha cadea baleira para restablecer o nome"
+msgstr "Introduza unha cadea baleira para restablecer o nome."
 
 #: ../console/gntblist.c:977
 msgid "Removing this contact will also remove all the buddies in the contact"
@@ -807,7 +807,7 @@ msgstr ""
 
 #: ../console/gntplugin.c:155
 msgid "Plugin need to be loaded before you can configure it."
-msgstr "O complemento precisa ser cargado antes de poder configuralo"
+msgstr "O complemento precisa ser cargado antes de poder configuralo."
 
 #: ../console/gntplugin.c:193
 msgid "..."
@@ -815,7 +815,7 @@ msgstr "..."
 
 #: ../console/gntplugin.c:194
 msgid "Still need to do something about this."
-msgstr "Aínda precisa facer algo sobre isto"
+msgstr "Aínda precisa facer algo sobre isto."
 
 #: ../console/gntplugin.c:200
 msgid "No configuration options for this plugin."
@@ -883,7 +883,7 @@ msgstr "Funcionalidade non implementada."
 #: ../console/gntstatus.c:135
 #, c-format
 msgid "Are you sure you want to delete \"%s\""
-msgstr "Está seguro de que quere borrar \"%s\"?"
+msgstr "Está seguro de que quere borrar \"%s\""
 
 #: ../console/gntstatus.c:138
 msgid "Delete Status"
@@ -952,7 +952,7 @@ msgstr "O título non é válido"
 
 #: ../console/gntstatus.c:292
 msgid "Please enter a non-empty title for the status."
-msgstr "Introduza un título non baleiro para o estado"
+msgstr "Introduza un título non baleiro para o estado."
 
 #: ../console/gntstatus.c:299
 msgid "Duplicate title"
@@ -960,7 +960,7 @@ msgstr "Título duplicado"
 
 #: ../console/gntstatus.c:300
 msgid "Please enter a different title for the status."
-msgstr "Introduza un título diferente para o estado"
+msgstr "Introduza un título diferente para o estado."
 
 #: ../console/gntstatus.c:440
 msgid "Substatus"
@@ -1021,17 +1021,17 @@ msgstr "Estados"
 #: ../console/plugins/gntgf.c:209
 #, c-format
 msgid "%s just signed on"
-msgstr "%s conectouse."
+msgstr "%s conectouse"
 
 #: ../console/plugins/gntgf.c:216
 #, c-format
 msgid "%s just signed off"
-msgstr "%s desconectouse."
+msgstr "%s desconectouse"
 
 #: ../console/plugins/gntgf.c:224
 #, c-format
 msgid "%s sent you a message"
-msgstr "%s envioulle unha mensaxe."
+msgstr "%s envioulle unha mensaxe"
 
 #: ../console/plugins/gntgf.c:243
 #, c-format
@@ -1070,7 +1070,7 @@ msgstr "Emitir ton de aviso tamén!"
 
 #: ../console/plugins/gntgf.c:335
 msgid "Set URGENT for the terminal window."
-msgstr "Activar URXENTE para a ventá do terminal"
+msgstr "Activar URXENTE para a ventá do terminal."
 
 #: ../console/plugins/gntgf.c:355
 msgid "GntGf"
@@ -1123,7 +1123,7 @@ msgstr "Lastlog"
 
 #: ../console/plugins/lastlog.c:99
 msgid "lastlog: Searches for a substring in the backlog."
-msgstr "lastlog: busca unha subcadea no backlog"
+msgstr "lastlog: Busca unha subcadea no backlog."
 
 #: ../console/plugins/lastlog.c:121
 msgid "GntLastlog"
@@ -1131,7 +1131,7 @@ msgstr "GntLastlog"
 
 #: ../console/plugins/lastlog.c:123 ../console/plugins/lastlog.c:124
 msgid "Lastlog plugin for gaim-text."
-msgstr "Complemento de última conversa para texto de Gaim"
+msgstr "Complemento de última conversa para texto de Gaim."
 
 #: ../gtk/eggtrayicon.c:129
 msgid "Orientation"
@@ -1197,7 +1197,7 @@ msgstr "Opcións de usuario"
 #. Buddy icon
 #: ../gtk/gtkaccount.c:572
 msgid "Use this buddy icon for this account:"
-msgstr "Usar esta icona de contacto para esta conta"
+msgstr "Usar esta icona de contacto para esta conta:"
 
 #. Build the protocol options frame.
 #: ../gtk/gtkaccount.c:684
@@ -1321,7 +1321,7 @@ msgstr ""
 #: ../gtk/gtkaccount.c:2483
 #, c-format
 msgid "%s%s%s%s wants to add %s to his or her buddy list%s%s"
-msgstr "%s%s%s%s quere engadir a %s á súa lista de contactos%s%s."
+msgstr "%s%s%s%s quere engadir a %s á súa lista de contactos%s%s"
 
 #: ../gtk/gtkaccount.c:2506 ../gtk/gtkaccount.c:2512
 msgid "Authorize buddy?"
@@ -1359,7 +1359,7 @@ msgstr "Des_bloquear"
 
 #: ../gtk/gtkblist.c:1066
 msgid "Get _Info"
-msgstr "Obter _información:"
+msgstr "Obter _información"
 
 #: ../gtk/gtkblist.c:1075
 msgid "_Send File"
@@ -2244,7 +2244,7 @@ msgstr "Nivel"
 
 #: ../gtk/gtkdebug.c:852 ../gtk/gtkdebug.c:858
 msgid "Select the debug filter level."
-msgstr "Seleccione o nivel do filtro de depuración"
+msgstr "Seleccione o nivel do filtro de depuración."
 
 #: ../gtk/gtkdebug.c:860
 msgid "All"
@@ -2668,7 +2668,7 @@ msgstr "_Eliminar o contacto"
 msgid ""
 "You are about to merge the group called %s into the group called %s. Do you "
 "want to continue?"
-msgstr "Está a piques de combinar o grupo chamado %s dentro do grupo %s.Desexa continuar? "
+msgstr "Está a piques de combinar o grupo chamado %s dentro do grupo %s.Desexa continuar?"
 
 #: ../gtk/gtkdialogs.c:1054
 msgid "Merge Groups"
@@ -3329,7 +3329,7 @@ msgid ""
 "Check the plugin website for an update.</span>"
 msgstr ""
 "%s\n"
-"<span·foreground=\"#ff0000\"·weight=\"bold\">Erro:·%s\n"
+"<span foreground=\"#ff0000\" weight=\"bold\">Erro:·%s\n"
 "Comprobe o sitio web do complemento para obter unha actualización.</span>"
 
 #: ../gtk/gtkplugin.c:533
@@ -3548,7 +3548,7 @@ msgstr "Icona da área de notificación do sistema"
 
 #: ../gtk/gtkprefs.c:817
 msgid "_Show system tray icon:"
-msgstr "Mo_strar icona da área de notificación do sistema"
+msgstr "Mo_strar icona da área de notificación do sistema:"
 
 #: ../gtk/gtkprefs.c:819 ../gtk/gtkprefs.c:831 ../gtk/gtkprefs.c:1646
 #: ../gtk/plugins/timestamp_format.c:39 ../gtk/plugins/timestamp_format.c:48
@@ -3881,7 +3881,7 @@ msgstr "Sons cando a conversa ten o _foco"
 
 #: ../gtk/gtkprefs.c:1642
 msgid "Enable sounds:"
-msgstr "Activar os sons"
+msgstr "Activar os sons:"
 
 #: ../gtk/gtkprefs.c:1644
 msgid "Only when available"
@@ -4224,7 +4224,7 @@ msgstr "Fallo de GStreamer"
 
 #: ../gtk/gtksound.c:311
 msgid "GStreamer failed to initialize."
-msgstr "O GStreamer errou ao iniciar"
+msgstr "O GStreamer errou ao iniciar."
 
 #. connect to the server
 #: ../gtk/gtkstatusbox.c:569 ../libgaim/protocols/irc/irc.c:329
@@ -4382,7 +4382,7 @@ msgstr "Estatísticas de visualización"
 
 #: ../gtk/plugins/cap/cap.c:458 ../gtk/plugins/cap/cap.c:461
 msgid "Response Probability:"
-msgstr "Probabilidade de resposta"
+msgstr "Probabilidade de resposta:"
 
 #: ../gtk/plugins/cap/cap.c:807
 msgid "Statistics Configuration"
@@ -4391,7 +4391,7 @@ msgstr "Configuración das estatísticas"
 #. msg_difference spinner
 #: ../gtk/plugins/cap/cap.c:810
 msgid "Maximum response timeout:"
-msgstr "Tempo máximo de espera de resposta"
+msgstr "Tempo máximo de espera de resposta:"
 
 #: ../gtk/plugins/cap/cap.c:813 ../gtk/plugins/cap/cap.c:820
 #: ../gtk/plugins/cap/cap.c:827
@@ -4401,7 +4401,7 @@ msgstr "minutos"
 #. last_seen spinner
 #: ../gtk/plugins/cap/cap.c:817
 msgid "Maximum last-seen difference:"
-msgstr "Diferenza máxima da última vista"
+msgstr "Diferenza máxima da última vista:"
 
 #. threshold spinner
 #: ../gtk/plugins/cap/cap.c:824
@@ -4418,7 +4418,7 @@ msgstr "Límite:"
 #. *< version
 #: ../gtk/plugins/cap/cap.c:933
 msgid "Contact Availability Prediction plugin."
-msgstr "Complemento de predición da dispoñibilidade do contacto"
+msgstr "Complemento de predición da dispoñibilidade do contacto."
 
 #. *  summary
 #: ../gtk/plugins/cap/cap.c:934
@@ -4820,7 +4820,7 @@ msgstr "Ningún"
 #: ../gtk/plugins/gevolution/gevolution.c:239
 #: ../gtk/plugins/gevolution/gevolution.c:245
 msgid "Unable to send e-mail"
-msgstr "Imposible enviar o correo electrónico."
+msgstr "Imposible enviar o correo electrónico"
 
 #: ../gtk/plugins/gevolution/gevolution.c:240
 msgid "The evolution executable was not found in the PATH."
@@ -4848,7 +4848,7 @@ msgstr "Configuración da integración con Evolution"
 msgid "Select all accounts that buddies should be auto-added to."
 msgstr ""
 "Seleccione todas as contas ás que se engadirán os contactos de forma "
-"automática"
+"automática."
 
 #. *< type
 #. *< ui_requirement
@@ -5276,7 +5276,7 @@ msgstr "Monitor de contactos"
 #. *  description
 #: ../gtk/plugins/ticker/ticker.c:358 ../gtk/plugins/ticker/ticker.c:360
 msgid "A horizontal scrolling version of the buddy list."
-msgstr "Unha versión da lista de contactos con desprazamento horizontal"
+msgstr "Unha versión da lista de contactos con desprazamento horizontal."
 
 #: ../gtk/plugins/timestamp.c:186
 msgid "iChat Timestamp"
@@ -5698,7 +5698,7 @@ msgstr "Fallo ao crear o fío: %s"
 
 #: ../libgaim/dnsquery.c:736
 msgid "Unknown reason"
-msgstr "Razón descoñecida."
+msgstr "Razón descoñecida"
 
 #: ../libgaim/ft.c:195 ../libgaim/protocols/msn/msn.c:408
 #, c-format
@@ -5729,7 +5729,7 @@ msgstr ""
 
 #: ../libgaim/ft.c:239
 msgid "Directory is not writable."
-msgstr "Non se pode escribir no directorio"
+msgstr "Non se pode escribir no directorio."
 
 #: ../libgaim/ft.c:254
 msgid "Cannot send a file of 0 bytes."
@@ -5897,66 +5897,58 @@ msgid "The handler for \"ymsgr\" URLs"
 msgstr "Manipulador para URLs \"ymsgr\""
 
 #: ../libgaim/gconf/gaim.schemas.in.h:18
-#, fuzzy
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
 "URLs."
-msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URLs \"aim\""
+msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"aim\"."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:19
-#, fuzzy
 msgid ""
 "True if the command specified in the \"command\" key should handle \"gg\" "
 "URLs."
-msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"gg\""
+msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"gg\"."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:20
-#, fuzzy
 msgid ""
 "True if the command specified in the \"command\" key should handle \"icq\" "
 "URLs."
-msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"icq\""
+msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"icq\"."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:21
-#, fuzzy
 msgid ""
 "True if the command specified in the \"command\" key should handle \"irc\" "
 "URLs."
-msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"irc\""
+msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"irc\"."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:22
-#, fuzzy
 msgid ""
 "True if the command specified in the \"command\" key should handle \"msnim\" "
 "URLs."
-msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"msnim\""
+msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"msnim\"."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:23
-#, fuzzy
 msgid ""
 "True if the command specified in the \"command\" key should handle \"sip\" "
 "URLs."
-msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"sip\""
+msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"sip\"."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:24
-#, fuzzy
 msgid ""
 "True if the command specified in the \"command\" key should handle \"xmpp\" "
 "URLs."
-msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular URL \"xmpp\""
+msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular URL \"xmpp\"."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:25
-#, fuzzy
 msgid ""
 "True if the command specified in the \"command\" key should handle \"ymsgr\" "
 "URLs."
-msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"ymsgr\""
+msgstr "Verdadeiro se o comando específicado na chave de \"command\" debería manipular os URL \"ymsgr\"."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:26
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
 "terminal."
-msgstr "Verdadeiro se o comando usado para manipular este tipo de URL debe ser executado nun terminal"
+msgstr "Verdadeiro se o comando usado para manipular este tipo de URL debe ser executado nun terminal."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:27
 msgid "Whether the specified command should handle \"aim\" URLs"
@@ -6291,7 +6283,7 @@ msgstr "Almacenar anotacións de contactos particulares."
 #. *  summary
 #: ../libgaim/plugins/buddynote.c:90
 msgid "Adds the option to store notes for buddies on your buddy list."
-msgstr "Engade a opción para almacenar anotacións para os contactos da súa lista de amigos"
+msgstr "Engade a opción para almacenar anotacións para os contactos da súa lista de amigos."
 
 # Ollo con ese Cipher!! É probable que sexa CIFRA
 #. *< type
@@ -6605,7 +6597,7 @@ msgid ""
 "the screen name in the conversation window."
 msgstr ""
 "Engadir unha nova liña ao comezo das mensaxes para que a probra da mensaxe apareza abaixo "
-"do nome de usuario na ventá de conversa"
+"do nome de usuario na ventá de conversa."
 
 #: ../libgaim/plugins/offlinemsg.c:95
 msgid ""
@@ -6638,7 +6630,7 @@ msgstr "Gardar as mensaxes sen conexión en aviso"
 
 #: ../libgaim/plugins/offlinemsg.c:191
 msgid "Do not ask. Always save in pounce."
-msgstr "Non preguntar. Gardar sempre en avisos"
+msgstr "Non preguntar. Gardar sempre en avisos."
 
 #. *< type
 #. *< ui_requirement
@@ -7127,7 +7119,7 @@ msgstr "Contrasinal actual"
 
 #: ../libgaim/protocols/gg/gg.c:784
 msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Introduza o seu contrasinal actual e o contrasinal novo para UIN:"
+msgstr "Introduza o seu contrasinal actual e o contrasinal novo para UIN: "
 
 #: ../libgaim/protocols/gg/gg.c:788 ../libgaim/protocols/gg/gg.c:789
 msgid "Change Gadu-Gadu Password"
@@ -7687,7 +7679,7 @@ msgid ""
 "someone, preventing them from speaking if the channel is moderated (+m). You "
 "must be a channel operator to do this."
 msgstr ""
-"devoice &lt,alias1&gt; [alias2] ...: Silenciar a alguén e impedirlle"
+"devoice &lt;alias1&gt; [alias2] ...: Silenciar a alguén e impedirlle"
 "falar na canle se está moderada (+m). Só o pode facer un operador de canle."
 
 #: ../libgaim/protocols/irc/parse.c:121
@@ -10115,7 +10107,7 @@ msgstr ""
 #: ../libgaim/proxy.c:1210 ../libgaim/proxy.c:1309 ../libgaim/proxy.c:1381
 #: ../libgaim/proxy.c:1438
 msgid "Received invalid data on connection with server."
-msgstr "Recibíronse datos non válidos na conexión co servidor"
+msgstr "Recibíronse datos non válidos na conexión co servidor."
 
 #: ../libgaim/protocols/oscar/flap_connection.c:386
 #, c-format
@@ -10201,7 +10193,7 @@ msgstr "Non se puido establecer a conexión co usuario remoto."
 
 #: ../libgaim/protocols/oscar/odc.c:560
 msgid "Direct IM established"
-msgstr "MI directa establecida."
+msgstr "MI directa establecida"
 
 #: ../libgaim/protocols/oscar/oft.c:657
 #, c-format
@@ -10698,8 +10690,8 @@ msgstr[1] "Perdéronse %hu mensaxes de %s porque eran demasiado longas."
 #, c-format
 msgid "You missed %hu message from %s because the rate limit has been exceeded."
 msgid_plural "You missed %hu messages from %s because the rate limit has been exceeded."
-msgstr[0] "Perdeu %hu mensaxe de %s porque se mandou damasiado rápido"
-msgstr[1] "Perdéronse %hu mensaxes de %s porque se mandaron demasiado rápido"
+msgstr[0] "Perdeu %hu mensaxe de %s porque se mandou damasiado rápido."
+msgstr[1] "Perdéronse %hu mensaxes de %s porque se mandaron demasiado rápido."
 
 #: ../libgaim/protocols/oscar/oscar.c:2578
 #, c-format
@@ -11233,11 +11225,11 @@ msgstr ""
 
 #: ../libgaim/protocols/oscar/oscar.c:6187
 msgid "Find Buddy by E-Mail"
-msgstr "Buscar un contacto polo correo electrónico."
+msgstr "Buscar un contacto polo correo electrónico"
 
 #: ../libgaim/protocols/oscar/oscar.c:6188
 msgid "Search for a buddy by e-mail address"
-msgstr "Buscar un contacto polo enderezo de correo electrónico."
+msgstr "Buscar un contacto polo enderezo de correo electrónico"
 
 #: ../libgaim/protocols/oscar/oscar.c:6189
 msgid "Type the e-mail address of the buddy you are searching for."
@@ -11304,7 +11296,7 @@ msgstr "Mostrar o tempo que estivo inactivo"
 #: ../libgaim/protocols/oscar/peer.c:674
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
-msgstr "Preguntando a %s para conectarnos a %s: %hu para MI Directa"
+msgstr "Preguntando a %s para conectarnos a %s: %hu para MI Directa."
 
 #: ../libgaim/protocols/oscar/peer.c:759
 #, c-format
@@ -11520,7 +11512,7 @@ msgstr "Rexeitou a solicitude de %d"
 #: ../libgaim/protocols/qq/buddy_opt.c:208
 #: ../libgaim/protocols/qq/group_opt.c:136
 msgid "Input your reason:"
-msgstr "Introduza a súa razón"
+msgstr "Introduza a súa razón:"
 
 #: ../libgaim/protocols/qq/buddy_opt.c:210
 msgid "Reject request"
@@ -11739,7 +11731,7 @@ msgstr "Erro de operación do grupo"
 #: ../libgaim/protocols/qq/group_opt.c:124
 #: ../libgaim/protocols/qq/sys_msg.c:84
 msgid "Do you wanna approve the request?"
-msgstr "Quere aprobar a solicitude? "
+msgstr "Quere aprobar a solicitude?"
 
 #: ../libgaim/protocols/qq/group_opt.c:230
 msgid "You have successfully modify Qun member"
@@ -11965,7 +11957,7 @@ msgstr "Foi engadido por %s"
 
 #: ../libgaim/protocols/qq/sys_msg.c:158
 msgid "Would like to add him?"
-msgstr "Quere engadilo? "
+msgstr "Quere engadilo?"
 
 #: ../libgaim/protocols/qq/sys_msg.c:164
 #, c-format
@@ -12991,11 +12983,11 @@ msgstr ""
 
 #: ../libgaim/protocols/silc/ft.c:222
 msgid "Could not start the file transfer"
-msgstr "Non se puido comezar a transferencia de ficheiros."
+msgstr "Non se puido comezar a transferencia de ficheiros"
 
 #: ../libgaim/protocols/silc/ft.c:341
 msgid "Cannot send file"
-msgstr "Non se pode enviar o ficheiro."
+msgstr "Non se pode enviar o ficheiro"
 
 #: ../libgaim/protocols/silc/ops.c:554 ../libgaim/protocols/silc/ops.c:563
 #: ../libgaim/protocols/silc/ops.c:572
@@ -13430,7 +13422,7 @@ msgstr "Crear un novo par de chaves SILC"
 
 #: ../libgaim/protocols/silc/silc.c:837
 msgid "Passphrases do not match"
-msgstr "As frases contrasinais non coinciden."
+msgstr "As frases contrasinais non coinciden"
 
 #: ../libgaim/protocols/silc/silc.c:881
 msgid "Key Pair Generation failed"
@@ -13878,7 +13870,7 @@ msgstr "Proxy"
 
 #: ../libgaim/protocols/simple/simple.c:1851
 msgid "Auth User"
-msgstr "Uusuario de autenticación"
+msgstr "Usuario de autenticación"
 
 #: ../libgaim/protocols/simple/simple.c:1853
 msgid "Auth Domain"
@@ -13984,7 +13976,7 @@ msgstr "O usuario non ten información no directorio."
 
 #: ../libgaim/protocols/toc/toc.c:543
 msgid "Country not supported."
-msgstr "País non admitido"
+msgstr "País non admitido."
 
 #: ../libgaim/protocols/toc/toc.c:546
 #, c-format
@@ -14512,7 +14504,7 @@ msgstr "Síntoo, os perfís con contido só para adultos non están admitidos a�
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser:"
-msgstr "Se desexa ver este perfil, debería visitar esta ligazón co seu navegador web"
+msgstr "Se desexa ver este perfil, debería visitar esta ligazón co seu navegador web:"
 
 #: ../libgaim/protocols/yahoo/yahoo_profile.c:1010
 msgid "Yahoo! ID"
@@ -14631,7 +14623,7 @@ msgstr "Calquera"
 
 #: ../libgaim/protocols/zephyr/zephyr.c:2354
 msgid "_Class:"
-msgstr "_Clase"
+msgstr "_Clase:"
 
 #: ../libgaim/protocols/zephyr/zephyr.c:2360
 msgid "_Instance:"
@@ -14976,7 +14968,7 @@ msgstr "Non se puido conectar a %s"
 msgid ""
 "Unable to allocate enough memory to hold the contents from %s.  The web "
 "server may be trying something malicious."
-msgstr "Non é posible asignar memoria suficiente para manter os contidos de %s. O servidor web talvez pode estar a intentar algo malintencionado"
+msgstr "Non é posible asignar memoria suficiente para manter os contidos de %s. O servidor web talvez pode estar a intentar algo malintencionado."
 
 #: ../libgaim/util.c:3327
 #, c-format

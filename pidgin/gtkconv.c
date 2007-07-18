@@ -184,7 +184,6 @@ static gboolean color_is_visible(GdkColor foreground, GdkColor background, int c
 static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields);
 static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
-static gboolean infopane_release_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 
 static GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
@@ -4410,8 +4409,6 @@ setup_common_pane(PidginConversation *gtkconv)
 	                      GDK_BUTTON1_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event_box), "button_press_event",
 	                 G_CALLBACK(infopane_press_cb), gtkconv);
-	g_signal_connect(G_OBJECT(event_box), "button_release_event",
-	                 G_CALLBACK(infopane_release_cb), gtkconv);
 
 
 	gtkconv->infopane = gtk_cell_view_new();
@@ -7621,34 +7618,45 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 {
 	int nb_x, nb_y;
 
-	if (e->button != 1 || e->type != GDK_BUTTON_PRESS)
+	if (e->type != GDK_BUTTON_PRESS)
 		return FALSE;
 
+	if (e->button == 3) {
+		/* Right click was pressed. Popup the Send To menu. */
+		GtkWidget *menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
+		if (menu)
+			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
+		else
+			return FALSE;
+		return TRUE;
+	} else if (e->button != 1) {
+		return FALSE;
+	}
+
 	if (gtkconv->win->in_drag) {
-		  purple_debug(PURPLE_DEBUG_WARNING, "gtkconv",
-                           "Already in the middle of a window drag at tab_press_cb\n");
-                return TRUE;
-        }
-	
+		purple_debug(PURPLE_DEBUG_WARNING, "gtkconv",
+				"Already in the middle of a window drag at tab_press_cb\n");
+		return TRUE;
+	}
+
 	gtkconv->win->in_predrag = TRUE;
 	gtkconv->win->drag_tab = gtk_notebook_page_num(GTK_NOTEBOOK(gtkconv->win->notebook), gtkconv->tab_cont);
 
-        gdk_window_get_origin(gtkconv->infopane_hbox->window, &nb_x, &nb_y);
+	gdk_window_get_origin(gtkconv->infopane_hbox->window, &nb_x, &nb_y);
 
-        gtkconv->win->drag_min_x = gtkconv->infopane_hbox->allocation.x      + nb_x;
-        gtkconv->win->drag_min_y = gtkconv->infopane_hbox->allocation.y      + nb_y;
-        gtkconv->win->drag_max_x = gtkconv->infopane_hbox->allocation.width  + gtkconv->win->drag_min_x;
-        gtkconv->win->drag_max_y = gtkconv->infopane_hbox->allocation.height + gtkconv->win->drag_min_y;
-
+	gtkconv->win->drag_min_x = gtkconv->infopane_hbox->allocation.x      + nb_x;
+	gtkconv->win->drag_min_y = gtkconv->infopane_hbox->allocation.y      + nb_y;
+	gtkconv->win->drag_max_x = gtkconv->infopane_hbox->allocation.width  + gtkconv->win->drag_min_x;
+	gtkconv->win->drag_max_y = gtkconv->infopane_hbox->allocation.height + gtkconv->win->drag_min_y;
 
 	/* Connect the new motion signals. */
 	gtkconv->win->drag_motion_signal =
 		g_signal_connect(G_OBJECT(gtkconv->win->notebook), "motion_notify_event",
-		                 G_CALLBACK(notebook_motion_cb), gtkconv->win);
+				G_CALLBACK(notebook_motion_cb), gtkconv->win);
 
 	gtkconv->win->drag_leave_signal =
 		g_signal_connect(G_OBJECT(gtkconv->win->notebook), "leave_notify_event",
-		                 G_CALLBACK(notebook_leave_cb), gtkconv->win);
+				G_CALLBACK(notebook_leave_cb), gtkconv->win);
 
 	return FALSE;
 
@@ -7739,12 +7747,6 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		g_signal_connect(G_OBJECT(widget), "leave_notify_event",
 		                 G_CALLBACK(notebook_leave_cb), win);
 
-	return FALSE;
-}
-
-static gboolean
-infopane_release_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
-{
 	return FALSE;
 }
 
@@ -8333,6 +8335,9 @@ pidgin_conv_window_new()
 #ifdef _WIN32
 	g_signal_connect(G_OBJECT(win->window), "show",
 	                 G_CALLBACK(winpidgin_ensure_onscreen), win->window);
+
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/win32/minimize_new_convs"))
+		gtk_window_iconify(GTK_WINDOW(win->window));
 #endif
 
 	return win;

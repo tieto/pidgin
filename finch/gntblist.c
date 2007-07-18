@@ -139,7 +139,8 @@ is_group_online(PurpleGroup *group)
 {
 	PurpleBlistNode *node;
 	for (node = ((PurpleBlistNode*)group)->child; node; node = node->next) {
-		if (PURPLE_BLIST_NODE_IS_CHAT(node))
+		if (PURPLE_BLIST_NODE_IS_CHAT(node) &&
+				purple_account_is_connected(((PurpleChat *)node)->account))
 			return TRUE;
 		else if (is_contact_online((PurpleContact*)node))
 			return TRUE;
@@ -678,7 +679,7 @@ context_menu_callback(GntMenuItem *item, gpointer data)
 		void (*callback)(PurpleBlistNode *, gpointer);
 		callback = (void (*)(PurpleBlistNode *, gpointer))action->callback;
 		if (callback)
-			callback(action->data, node);
+			callback(node, action->data);
 		else
 			return;
 	}
@@ -1494,7 +1495,7 @@ key_pressed(GntWidget *widget, const char *text, FinchBlist *ggblist)
 	} else if (strcmp(text, GNT_KEY_CTRL_O) == 0) {
 		purple_prefs_set_bool(PREF_ROOT "/showoffline",
 				!purple_prefs_get_bool(PREF_ROOT "/showoffline"));
-	} else if (GNT_TREE(ggblist->tree)->search == NULL) {
+	} else if (!gnt_tree_is_searching(GNT_TREE(ggblist->tree))) {
 		if (strcmp(text, "t") == 0) {
 			finch_blist_toggle_tag_buddy(gnt_tree_get_selection_data(GNT_TREE(ggblist->tree)));
 			gnt_bindable_perform_action_named(GNT_BINDABLE(ggblist->tree), "move-down");

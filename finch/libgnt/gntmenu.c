@@ -423,7 +423,7 @@ GntWidget *gnt_menu_new(GntMenuType type)
 		widget->priv.y = 0;
 	} else {
 		GNT_TREE(widget)->show_separator = FALSE;
-		_gnt_tree_init_internals(GNT_TREE(widget), NUM_COLUMNS);
+		g_object_set(G_OBJECT(widget), "columns", NUM_COLUMNS, NULL);
 		gnt_tree_set_col_width(GNT_TREE(widget), ITEM_TRIGGER, 3);
 		gnt_tree_set_column_resizable(GNT_TREE(widget), ITEM_TRIGGER, FALSE);
 		gnt_tree_set_col_width(GNT_TREE(widget), ITEM_SUBMENU, 1);
