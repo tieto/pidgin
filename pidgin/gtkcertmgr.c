@@ -108,6 +108,9 @@ pidgin_certmgr_show(void)
 				     PIDGIN_HIG_BORDER, /*Window border*/
 				     "certmgr",         /* Role */
 				     TRUE); /* Allow resizing */
+	g_signal_connect(G_OBJECT(win), "delete_event",
+			 G_CALLBACK(certmgr_close_cb), dlg);
+
 	
 	/* TODO: Retrieve the user-set window size and use it */
 	gtk_window_set_default_size(GTK_WINDOW(win), 400, 400);
