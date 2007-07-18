@@ -1090,6 +1090,33 @@ html_to_msim_markup(MsimSession *session, const gchar *raw)
     return markup;
 }
 
+/** Handle an incoming buddy message. */
+gboolean
+msim_incoming_bm(MsimSession *session, MsimMessage *msg)
+{
+    guint bm;
+   
+    bm = msim_msg_get_integer(msg, "bm");
+
+    switch (bm)
+    {
+        case MSIM_BM_STATUS:
+            return msim_incoming_status(session, msg);
+        case MSIM_BM_INSTANT:
+            return msim_incoming_im(session, msg);
+        case MSIM_BM_ACTION:
+            return msim_incoming_action(session, msg);
+        case MSIM_BM_MEDIA:
+            return msim_incoming_media(session, msg);
+        case MSIM_BM_UNOFFICIAL_CLIENT:
+            return msim_incoming_unofficial_client(session, msg);
+        default:
+            /* Not really an IM, but show it for informational 
+             * purposes during development. */
+            return msim_incoming_im(session, msg);
+    }
+}
+
 /**
  * Handle an incoming instant message.
  *
@@ -1208,6 +1235,82 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	return rc;
 }
 
+/* Process an incoming media (buddy icon) message. */
+gboolean
+msim_incoming_media(MsimSession *session, MsimMessage *msg)
+{
+    gchar *username, *text;
+
+    username = msim_msg_get_string(msg, "_username");
+    text = msim_msg_get_string(msg, "msg");
+
+    g_return_val_if_fail(username != NULL, FALSE);
+    g_return_val_if_fail(text != NULL, FALSE);
+
+    purple_debug_info("msim", "msim_incoming_media: from %s, got msg=%s\n", username, text);
+
+    /* Media messages are sent when the user opens a window to someone.
+     * Tell libpurple they started typing and stopped typing, to inform the Psychic
+     * Mode plugin so it too can open a window to the user. */
+    serv_got_typing(session->gc, username, 0, PURPLE_TYPING);
+    serv_got_typing_stopped(session->gc, username);
+
+    g_free(username);
+
+    return TRUE;
+}
+
+/* Process an incoming "unofficial client" message. The plugin for
+ * Miranda IM sends this message with the plugin information. */
+gboolean
+msim_incoming_unofficial_client(MsimSession *session, MsimMessage *msg)
+{
+    PurpleBuddy *buddy;
+    gchar *username, *client_info;
+
+    username = msim_msg_get_string(msg, "_username");
+    client_info = msim_msg_get_string(msg, "msg");
+
+    g_return_val_if_fail(username != NULL, FALSE);
+    g_return_val_if_fail(client_info != NULL, FALSE);
+
+    purple_debug_info("msim", "msim_incoming_unofficial_client: %s is using client %s\n",
+        username, client_info);
+
+	buddy = purple_find_buddy(session->account, username);
+    
+    g_return_val_if_fail(buddy != NULL, FALSE);
+
+    purple_blist_node_set_string(&buddy->node, "client", client_info);
+
+
+    g_free(username);
+    /* Do not free client_info - the blist now owns it. */
+
+    return TRUE;
+}
+
+
+/** Send our client version to another unofficial client that understands it. */
+gboolean
+msim_send_unofficial_client(MsimSession *session, gchar *username)
+{
+    gchar *our_info;
+    gboolean ret;
+
+    our_info = g_strdup_printf("Libpurple %d.%d.%d - msimprpl %s", 
+            PURPLE_MAJOR_VERSION,
+            PURPLE_MINOR_VERSION,
+            PURPLE_MICRO_VERSION,
+            MSIM_PRPL_VERSION_STRING);
+
+	ret = msim_send_bm(session, username, our_info, MSIM_BM_UNOFFICIAL_CLIENT);
+
+    g_free(our_info);
+
+    return ret;
+}
+
 /** 
  * Handle when our user starts or stops typing to another user.
  *
@@ -1314,9 +1417,9 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, gpointer data
 
 	/* Other information */
 
-	/* Headline comes from buddy status messages */
 	if (buddy)
 	{
+        /* Headline comes from buddy status messages */
 		str = purple_blist_node_get_string(&buddy->node, "Headline");
 		if (str)
 			purple_notify_user_info_add_pair(user_info, "Headline", str);
@@ -1339,6 +1442,14 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, gpointer data
 	if (str)
 		purple_notify_user_info_add_pair(user_info, _("Total Friends"), 
 			g_strdup(str));
+
+    if (buddy)
+    {
+        str = purple_blist_node_get_string(&buddy->node, "client");
+        if (str)
+            purple_notify_user_info_add_pair(user_info, _("Client Version"),
+                    g_strdup(str));
+    }
 
 	purple_notify_userinfo(session->gc, user, user_info, NULL, NULL);
 	purple_debug_info("msim", "msim_get_info_cb: username=%s\n", user);
@@ -1944,22 +2055,7 @@ msim_process(MsimSession *session, MsimMessage *msg)
     } else if (msim_msg_get(msg, "sesskey")) {
         return msim_we_are_logged_on(session, msg);
     } else if (msim_msg_get(msg, "bm"))  {
-        guint bm;
-       
-        bm = msim_msg_get_integer(msg, "bm");
-        switch (bm)
-        {
-            case MSIM_BM_STATUS:
-                return msim_status(session, msg);
-            case MSIM_BM_INSTANT:
-                return msim_incoming_im(session, msg);
-			case MSIM_BM_ACTION:
-				return msim_incoming_action(session, msg);
-            default:
-                /* Not really an IM, but show it for informational 
-                 * purposes during development. */
-                return msim_incoming_im(session, msg);
-        }
+        return msim_incoming_bm(session, msg);
     } else if (msim_msg_get(msg, "rid")) {
         return msim_process_reply(session, msg);
     } else if (msim_msg_get(msg, "error")) {
@@ -2148,7 +2244,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
  * @return TRUE if successful.
  */
 gboolean 
-msim_status(MsimSession *session, MsimMessage *msg)
+msim_incoming_status(MsimSession *session, MsimMessage *msg)
 {
     PurpleBuddyList *blist;
     PurpleBuddy *buddy;
@@ -2263,6 +2359,12 @@ msim_status(MsimSession *session, MsimMessage *msg)
     } else {
         /* All other statuses indicate going back to non-idle. */
         purple_prpl_got_user_idle(session->account, username, FALSE, time(NULL));
+    }
+
+    if (status_code == MSIM_STATUS_CODE_ONLINE)
+    {
+        /* Secretly whisper to unofficial clients our own version as they come online */
+        msim_send_unofficial_client(session, username);
     }
 
     g_strfreev(status_array);
@@ -2651,6 +2753,8 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
     }
 
     /* Null terminate */
+    purple_debug_info("msim", "msim_input_cb: going to null terminate "
+            "at n=%d\n", n);
     session->rxbuf[session->rxoff + n] = 0;
 
 #ifdef MSIM_CHECK_EMBEDDED_NULLS
@@ -2685,8 +2789,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
         msg = msim_parse(g_strdup(session->rxbuf));
         if (!msg)
         {
-            purple_debug_info("msim", "msim_input_cb: couldn't parse <%s>\n", 
-					session->rxbuf);
+            purple_debug_info("msim", "msim_input_cb: couldn't parse rxbuf\n");
             purple_connection_error(gc, _("Unparseable message"));
         }
         else
@@ -3172,7 +3275,7 @@ PurplePluginInfo info =
 
     "prpl-myspace",                                   /**< id             */
     "MySpaceIM",                                      /**< name           */
-    "0.12",                                           /**< version        */
+    MSIM_PRPL_VERSION_STRING,                         /**< version        */
                                                       /**  summary        */
     "MySpaceIM Protocol Plugin",
                                                       /**  description    */

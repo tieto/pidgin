@@ -73,7 +73,10 @@
 #define MSIM_MAX_PASSWORD_LENGTH 	10
 
 /* Build version of MySpaceIM to report to servers (1.0.xxx.0) */
-#define MSIM_CLIENT_VERSION     673
+#define MSIM_CLIENT_VERSION         673
+
+/* msimprpl version string of this plugin */
+#define MSIM_PRPL_VERSION_STRING    "0.12"
 
 /* Default server */
 #define MSIM_SERVER         "im.myspace.akadns.net"
@@ -96,10 +99,12 @@
 #define MSIM_FINAL_STRING   "\\final\\" /**< Message end marker */
 
 /* Messages */
-#define MSIM_BM_INSTANT     1
-#define MSIM_BM_STATUS      100
-#define MSIM_BM_ACTION      121
-/* #define MSIM_BM_UNKNOWN1    122 */
+#define MSIM_BM_INSTANT             1
+#define MSIM_BM_STATUS              100
+#define MSIM_BM_ACTION              121
+#define MSIM_BM_MEDIA               122
+#define MSIM_BM_PROFILE             124
+#define MSIM_BM_UNOFFICIAL_CLIENT   200
 
 /* Authentication algorithm for login2 */
 #define MSIM_AUTH_ALGORITHM	196610
@@ -236,8 +241,14 @@ gchar *msim_convert_xml(MsimSession *, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 gchar *msim_markup_to_html(MsimSession *, const gchar *raw);
 gchar *html_to_msim_markup(MsimSession *, const gchar *raw);
 
-int msim_incoming_im(MsimSession *session, MsimMessage *msg);
-int msim_incoming_action(MsimSession *session, MsimMessage *msg);
+gboolean msim_incoming_bm(MsimSession *session, MsimMessage *msg);
+gboolean msim_incoming_status(MsimSession *session, MsimMessage *msg);
+gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg);
+gboolean msim_incoming_action(MsimSession *session, MsimMessage *msg);
+gboolean msim_incoming_media(MsimSession *session, MsimMessage *msg);
+gboolean msim_incoming_unofficial_client(MsimSession *session, MsimMessage *msg);
+
+gboolean msim_send_unofficial_client(MsimSession *session, gchar *username);
 
 unsigned int msim_send_typing(PurpleConnection *gc, const gchar *name, PurpleTypingState state);
 void msim_get_info_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
@@ -265,7 +276,6 @@ gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, const
 
 
 gboolean msim_error(MsimSession *session, MsimMessage *msg);
-gboolean msim_status(MsimSession *session, MsimMessage *msg);
 
 void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
