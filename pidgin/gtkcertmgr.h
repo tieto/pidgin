@@ -31,6 +31,7 @@
 /**************************************************************************
  * @name Structures                                                       *
  **************************************************************************/
+/* @TODO : this stuff may not be needed; see .c file */
 typedef struct _PidginCertificateManager PidginCertificateManager;
 
 /** GTK+ Certificate Manager */
@@ -48,6 +49,11 @@ struct _PidginCertificateManager {
  * Show the certificate manager window
  */
 void pidgin_certmgr_show(void);
+
+/**
+ * Hide the certificate manager window
+ */
+void pidgin_certmgr_hide(void);
 
 /*@}*/
 

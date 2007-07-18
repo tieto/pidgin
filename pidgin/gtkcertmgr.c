@@ -24,6 +24,9 @@
  *
  */
 
+#include <glib.h>
+
+#include "core.h"
 #include "internal.h"
 #include "pidgin.h"
 
@@ -31,11 +34,38 @@
 #include "debug.h"
 #include "notify.h"
 
+#include "gtkblist.h"
+#include "gtkutils.h"
+
 #include "gtkcertmgr.h"
 
-void pidgin_certmgr_show(void)
+
+typedef struct
 {
-	purple_notify_info(NULL, "Certificate Manager!!!1", "Certificates!!!", "LOL");
+	GtkWidget *window;
+	GtkWidget *notebook;
+
+	GtkWidget *closebutton;
+} CertMgrDialog;
+
+/* If a certificate manager window is open, this will point to it.
+   So if it is set, don't open another one! */
+CertMgrDialog *certmgr_dialog = NULL;
+
+static void
+certmgr_close_cb(GtkWidget *w, CertMgrDialog *dlg)
+{
+	pidgin_certmgr_hide();
+}
+
+void
+pidgin_certmgr_show(void)
+{
+	CertMgrDialog *dlg;
+	GtkWidget *win;
+	GtkWidget *vbox;
+	GtkWidget *bbox;
+
 	/* Enumerate all the certificates on file */
 	{
 		GList *idlist, *poollist;
@@ -60,5 +90,75 @@ void pidgin_certmgr_show(void)
 			} /* idlist */
 			purple_certificate_pool_destroy_idlist(idlist);
 		} /* poollist */
+	}
+
+	
+	/* If the manager is already open, bring it to the front */
+	if (certmgr_dialog != NULL) {
+		gtk_window_present(GTK_WINDOW(certmgr_dialog->window));
+		return;
+	}
+
+	/* Create the dialog, and set certmgr_dialog so we never create
+	   more than one at a time */
+	dlg = certmgr_dialog = g_new0(CertMgrDialog, 1);
+
+	win = dlg->window =
+		pidgin_create_window(_("Certificate Manager"),/* Title */
+				     PIDGIN_HIG_BORDER, /*Window border*/
+				     "certmgr",         /* Role */
+				     TRUE); /* Allow resizing */
+	
+	/* TODO: Retrieve the user-set window size and use it */
+	gtk_window_set_default_size(GTK_WINDOW(win), 400, 400);
+
+	/* Main vbox */
+	vbox = gtk_vbox_new( FALSE, PIDGIN_HIG_BORDER );
+	gtk_container_add(GTK_CONTAINER(win), vbox);
+	gtk_widget_show(vbox);
+
+	/* Notebook of various certificate managers */
+	dlg->notebook = gtk_notebook_new();
+	gtk_box_pack_start(GTK_BOX(vbox), dlg->notebook,
+			   TRUE, TRUE, /* Notebook should take extra space */
+			   0);
+
+	/* Box for the close button */
+	bbox = gtk_hbutton_box_new();
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
+	gtk_widget_show(bbox);
+
+	/* Close button */
+	dlg->closebutton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	gtk_box_pack_start(GTK_BOX(bbox), dlg->closebutton, FALSE, FALSE, 0);
+	gtk_widget_show(dlg->closebutton);
+	g_signal_connect(G_OBJECT(dlg->closebutton), "clicked",
+			 G_CALLBACK(certmgr_close_cb), dlg);
+
+	gtk_widget_show(win);
+}
+
+void
+pidgin_certmgr_hide(void)
+{
+	/* If it isn't open, do nothing */
+	if (certmgr_dialog == NULL) {
+		return;
+	}
+
+	purple_signals_disconnect_by_handle(certmgr_dialog);
+	purple_prefs_disconnect_by_handle(certmgr_dialog);
+
+	gtk_widget_destroy(certmgr_dialog->window);
+	g_free(certmgr_dialog);
+	certmgr_dialog = NULL;
+
+	/* If this was the only window left, quit */
+	if (PIDGIN_BLIST(purple_get_blist())->window == NULL &&
+		purple_connections_get_all() == NULL) {
+
+		purple_core_quit();
 	}
 }
