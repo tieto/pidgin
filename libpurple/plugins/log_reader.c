@@ -1919,7 +1919,6 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	char *c;
 	const char *line;
 	gchar *contents;
-	char *selected;
 	GError *error;
 	char *utf8_string;
 	FILE *file;
