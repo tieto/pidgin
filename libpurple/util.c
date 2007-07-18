@@ -1740,7 +1740,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 		*xhtml_out = g_string_free(xhtml, FALSE);
 	if(plain_out)
 		*plain_out = g_string_free(plain, FALSE);
-	g_string_free(url, TRUE);
+	if(url)
+		g_string_free(url, TRUE);
 }
 
 /* The following are probably reasonable changes:
