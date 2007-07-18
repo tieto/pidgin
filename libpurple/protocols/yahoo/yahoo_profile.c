@@ -45,7 +45,7 @@ typedef enum profile_lang_id {
 	ES_AR, ES_ES, ES_MX, ES_US,
 	FR_CA, FR_FR, 
 	IT, JA, KO, NO, PT, SV, 
-	ZH_CN, ZH_HK, ZH_TW, ZH_US
+	ZH_CN, ZH_HK, ZH_TW, ZH_US, PT_BR
 } profile_lang_id_t;
 
 typedef struct profile_lang_node {
@@ -124,6 +124,7 @@ static const profile_lang_node_t profile_langs[] = {
 	{ KO,    "\xb0\xbb\xbd\xc5\x20\xb3\xaf\xc2\xa5&nbsp;",           NULL },
 	{ NO,    "Sist oppdatert&nbsp;",                                 NULL },
 	{ PT,    "\332ltima atualiza\347\343o&nbsp;",                    NULL },
+	{ PT_BR, "\332ltima atualiza\347\343o:",                         NULL },
 	{ SV,    "Senast uppdaterad&nbsp;",                              NULL },
 	{ ZH_CN, "\xd7\xee\xba\xf3\xd0\xde\xb8\xc4\xc8\xd5\xc6\xda",     NULL },
 	{ ZH_HK, "\xb3\xcc\xaa\xf1\xa7\xf3\xb7\x73\xae\xc9\xb6\xa1",     NULL },
@@ -504,6 +505,29 @@ static const profile_strings_node_t profile_strings[] = {
 		"Site legal 1:",
 		"Site legal 2:",
 		"Site legal 3:",
+		NULL
+	},
+	{ PT_BR, "pt_br", "ISO-8859-1",
+		"ID Yahoo!:",
+		"Particular",
+		"Sem resposta",
+		"Meu e-mail",
+		"Nome verdadeiro:",
+		"Localização:",
+		"Idade:",
+		"Estado civil:",
+		"Sexo:",
+		"Ocupação:",
+		"Pasatiempos:",
+		"Últimas novidades:",
+		"Frase preferida:",
+		"Links",
+		"Nenhuma home page especificada",
+		"Página Web:",
+		"Nenhum site legal especificado",
+		"Link legal 1",
+		"Link legal 2",
+		"Link legal 3",
 		NULL
 	},
 	{ SV, "sv", "ISO-8859-1",

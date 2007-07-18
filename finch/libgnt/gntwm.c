@@ -914,7 +914,7 @@ widestringwidth(wchar_t *wide)
 	len = wcstombs(NULL, wide, 0) + 1;
 	string = g_new0(char, len);
 	wcstombs(string, wide, len);
-	ret = gnt_util_onscreen_width(string, NULL);
+	ret = string ? gnt_util_onscreen_width(string, NULL) : 1;
 	g_free(string);
 	return ret;
 }
