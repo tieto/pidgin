@@ -495,6 +495,18 @@ gchar *
 purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id);
 
 /**
+ * Determines whether a pool can be used.
+ *
+ * Checks whether the associated CertificateScheme is loaded.
+ *
+ * @param pool   Pool to check
+ *
+ * @return TRUE if the pool can be used, otherwise FALSE
+ */
+gboolean
+purple_certificate_pool_usable(PurpleCertificatePool *pool);
+
+/**
  * Check for presence of an ID in a pool.
  * @param pool   Pool to look in
  * @param id     ID to look for

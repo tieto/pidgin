@@ -286,6 +286,20 @@ purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 }
 
 gboolean
+purple_certificate_pool_usable(PurpleCertificatePool *pool)
+{
+	g_return_val_if_fail(pool, FALSE);
+	g_return_val_if_fail(pool->scheme_name, FALSE);
+
+	/* Check that the pool's scheme is loaded */
+	if (purple_certificate_find_scheme(pool->scheme_name) == NULL) {
+		return FALSE;
+	}
+	
+	return TRUE;
+}
+
+gboolean
 purple_certificate_pool_contains(PurpleCertificatePool *pool, const gchar *id)
 {
 	g_return_val_if_fail(pool, FALSE);
