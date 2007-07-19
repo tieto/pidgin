@@ -1098,6 +1098,12 @@ msim_incoming_bm(MsimSession *session, MsimMessage *msg)
    
     bm = msim_msg_get_integer(msg, "bm");
 
+    if (msim_msg_get(msg, "cv"))
+    {
+        purple_debug_info("msim_incoming_bm", "cv=%s",
+                msim_msg_get_string(msg, "cv"));
+    }
+
     switch (bm)
     {
         case MSIM_BM_STATUS:
@@ -2137,7 +2143,7 @@ msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
         g_return_val_if_fail(uid, FALSE);
     }
 
-	purple_debug_info("msim", "associating uid %d with username %s\n", uid, username);
+	purple_debug_info("msim", "associating uid %s with username %s\n", uid, username);
 
 	buddy = purple_find_buddy(session->account, username);
 	if (buddy)
@@ -2716,10 +2722,11 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
      * If this happens, try recompiling with a higher MSIM_READ_BUF_SIZE.
      * Should be large enough to hold the largest protocol message.
      */
-    if (session->rxoff == MSIM_READ_BUF_SIZE)
+    if (session->rxoff >= MSIM_READ_BUF_SIZE)
     {
-        purple_debug_error("msim", "msim_input_cb: %d-byte read buffer full!\n",
-                MSIM_READ_BUF_SIZE);
+        purple_debug_error("msim", 
+                "msim_input_cb: %d-byte read buffer full! rxoff=%d\n",
+                MSIM_READ_BUF_SIZE, session->rxoff);
         purple_connection_error(gc, _("Read buffer full"));
         return;
     }
@@ -2750,6 +2757,13 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
         purple_debug_info("msim", "msim_input_cb: server disconnected\n");
         purple_connection_error(gc, _("Server has disconnected"));
         return;
+    }
+
+    if (n + session->rxoff >= MSIM_READ_BUF_SIZE)
+    {
+        purple_debug_info("msim_input_cb", "received %d bytes, pushing rxoff to %d, over buffer size of %d\n",
+                n, n + session->rxoff, MSIM_READ_BUF_SIZE);
+        purple_connection_error(gc, _("Read buffer full"));
     }
 
     /* Null terminate */
