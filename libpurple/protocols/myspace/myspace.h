@@ -241,6 +241,7 @@ gchar *msim_convert_xml(MsimSession *, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 gchar *msim_markup_to_html(MsimSession *, const gchar *raw);
 gchar *html_to_msim_markup(MsimSession *, const gchar *raw);
 
+gboolean msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg);
 gboolean msim_incoming_bm(MsimSession *session, MsimMessage *msg);
 gboolean msim_incoming_status(MsimSession *session, MsimMessage *msg);
 gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg);

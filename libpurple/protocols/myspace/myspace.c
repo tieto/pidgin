@@ -1090,6 +1090,41 @@ html_to_msim_markup(MsimSession *session, const gchar *raw)
     return markup;
 }
 
+/** Record the client version in the buddy list, from an incoming message. */
+gboolean
+msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg)
+{
+    gchar *username, *cv;
+    gboolean ret;
+    PurpleBuddy *buddy;
+    gchar *client_info;
+
+
+    username = msim_msg_get_string(msg, "_username");
+    cv = msim_msg_get_string(msg, "cv");
+
+    g_return_val_if_fail(username != NULL, FALSE);
+    g_return_val_if_fail(cv != NULL, FALSE);
+
+    buddy = purple_find_buddy(session->account, username);
+
+    if (buddy)
+    {
+        client_info = g_strdup_printf("MySpaceIM build %s", cv);
+
+        purple_blist_node_set_string(&buddy->node, "client", client_info);
+        /* Do not free client_info - blist owns */
+        ret = TRUE;
+    } else {
+        ret = FALSE;
+    }
+
+    g_free(username);
+    g_free(cv);
+
+    return ret;
+}
+
 /** Handle an incoming buddy message. */
 gboolean
 msim_incoming_bm(MsimSession *session, MsimMessage *msg)
@@ -1098,11 +1133,7 @@ msim_incoming_bm(MsimSession *session, MsimMessage *msg)
    
     bm = msim_msg_get_integer(msg, "bm");
 
-    if (msim_msg_get(msg, "cv"))
-    {
-        purple_debug_info("msim_incoming_bm", "cv=%s",
-                msim_msg_get_string(msg, "cv"));
-    }
+    msim_incoming_bm_record_cv(session, msg);
 
     switch (bm)
     {
