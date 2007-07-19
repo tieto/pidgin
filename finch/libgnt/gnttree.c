@@ -1363,22 +1363,28 @@ char *gnt_tree_get_selection_text(GntTree *tree)
 	return NULL;
 }
 
-GList *gnt_tree_get_selection_text_list(GntTree *tree)
+GList *gnt_tree_get_row_text_list(GntTree *tree, gpointer key)
 {
 	GList *list = NULL, *iter;
+	GntTreeRow *row = key ? g_hash_table_lookup(tree->hash, key) : tree->current;
 	int i;
 
-	if (!tree->current)
+	if (!row)
 		return NULL;
 
-	for (i = 0, iter = tree->current->columns; i < tree->ncol && iter;
+	for (i = 0, iter = row->columns; i < tree->ncol && iter;
 			i++, iter = iter->next)
 	{
 		GntTreeCol *col = iter->data;
-		list = g_list_append(list, g_strdup(col->text));
+		list = g_list_append(list, BINARY_DATA(tree, i) ? col->text : g_strdup(col->text));
 	}
 
 	return list;
+}
+
+GList *gnt_tree_get_selection_text_list(GntTree *tree)
+{
+	return gnt_tree_get_row_text_list(tree, NULL);
 }
 
 void gnt_tree_remove(GntTree *tree, gpointer key)

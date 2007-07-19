@@ -200,8 +200,26 @@ gpointer gnt_tree_get_selection_data(GntTree *tree);
  * @param tree  The tree
  *
  * @return  The text, which needs to be freed by the caller
+ * @see gnt_tree_get_row_text_list
+ * @see gnt_tree_get_selection_text_list
  */
 char * gnt_tree_get_selection_text(GntTree *tree);
+
+/**
+ * Get a list of text for a row.
+ *
+ * @param tree  The tree
+ * @param key   A key corresponding to the row in question. If key
+ *              is @c NULL, the text list for the selected row will
+ *              be returned.
+ *
+ * @return A list of texts of a row. The list and its data should be
+ *         freed by the caller. The caller should make sure that if
+ *         any column of the tree contains binary data, it's not freed.
+ * @see gnt_tree_get_selection_text_list 
+ * @see gnt_tree_get_selection_text
+ */
+GList * gnt_tree_get_row_text_list(GntTree *tree, gpointer key);
 
 /**
  * Get a list of text of the current row.
@@ -209,7 +227,11 @@ char * gnt_tree_get_selection_text(GntTree *tree);
  * @param tree  The tree
  *
  * @return A list of texts of the currently selected row. The list
- *         and its data should be freed by the caller.
+ *         and its data should be freed by the caller. The caller
+ *         should make sure that if any column of the tree contains
+ *         binary data, it's not freed.
+ * @see gnt_tree_get_row_text_list
+ * @see gnt_tree_get_selection_text
  */
 GList * gnt_tree_get_selection_text_list(GntTree *tree);
 
