@@ -31,14 +31,14 @@
 /**************************************************************************
  * @name Structures                                                       *
  **************************************************************************/
-/* @TODO : this stuff may not be needed; see .c file */
 typedef struct _PidginCertificateManager PidginCertificateManager;
 
-/** GTK+ Certificate Manager */
+/**
+ * GTK+ Certificate Manager subwidget
+ */
 struct _PidginCertificateManager {
-	GtkWidget *window;
-
-	/* I am very empty :( */
+	/** Create, configure, show, and return the management interface */
+	GtkWidget * (* build)(void);
 };
 
 /**************************************************************************/
