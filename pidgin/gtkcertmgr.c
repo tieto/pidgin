@@ -39,7 +39,9 @@
 
 #include "gtkcertmgr.h"
 
-
+/*****************************************************************************
+ * GTK+ main certificate manager                                             *
+ *****************************************************************************/
 typedef struct
 {
 	GtkWidget *window;
@@ -55,6 +57,8 @@ CertMgrDialog *certmgr_dialog = NULL;
 static void
 certmgr_close_cb(GtkWidget *w, CertMgrDialog *dlg)
 {
+	/* TODO: Ignoring the arguments to this function may not be ideal,
+	   but there *should* only be "one dialog to rule them all" at a time*/
 	pidgin_certmgr_hide();
 }
 
