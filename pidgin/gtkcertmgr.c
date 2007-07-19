@@ -40,6 +40,22 @@
 #include "gtkcertmgr.h"
 
 /*****************************************************************************
+ * X.509 tls_peers management interface                                      *
+ *****************************************************************************/
+static GtkWidget *
+tls_peers_mgmt_build(void)
+{
+	GtkWidget *label = gtk_label_new("TLS PEEERSSSSS!!!");
+	gtk_widget_show(label);
+	return label;
+}
+
+PidginCertificateManager tls_peers_mgmt = {
+	tls_peers_mgmt_build, /* Widget creation function */
+	N_("SSL Servers")
+};
+
+/*****************************************************************************
  * GTK+ main certificate manager                                             *
  *****************************************************************************/
 typedef struct
@@ -129,6 +145,7 @@ pidgin_certmgr_show(void)
 	gtk_box_pack_start(GTK_BOX(vbox), dlg->notebook,
 			   TRUE, TRUE, /* Notebook should take extra space */
 			   0);
+	gtk_widget_show(dlg->notebook);
 
 	/* Box for the close button */
 	bbox = gtk_hbutton_box_new();
@@ -143,6 +160,13 @@ pidgin_certmgr_show(void)
 	gtk_widget_show(dlg->closebutton);
 	g_signal_connect(G_OBJECT(dlg->closebutton), "clicked",
 			 G_CALLBACK(certmgr_close_cb), dlg);
+
+	/* Add the defined certificate managers */
+	/* TODO: Find a way of determining whether each is shown or not */
+	/* TODO: Implement this correctly */
+	gtk_notebook_append_page(GTK_NOTEBOOK (dlg->notebook),
+				 (tls_peers_mgmt.build)(),
+				 gtk_label_new(_(tls_peers_mgmt.label)) );
 
 	gtk_widget_show(win);
 }
