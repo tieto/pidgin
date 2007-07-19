@@ -520,10 +520,14 @@ gboolean gnt_tree_is_searching(GntTree *tree);
  * Set a custom search function.
  *
  * @param tree  The tree
- * @param func  The custom search function
+ * @param func  The custom search function. The search function is
+ *              sent the tree itself, the key of a row, the search
+ *              string and the content of row in the search column.
+ *              If the function returns @c TRUE, the row is dislayed,
+ *              otherwise it's not.
  */
 void gnt_tree_set_search_function(GntTree *tree,
-		gboolean (*func)(GntTree *tree, gpointer key, const char *current));
+		gboolean (*func)(GntTree *tree, gpointer key, const char *search, const char *current));
 
 G_END_DECLS
 
