@@ -55,6 +55,7 @@ struct _GntTreePriv
 	GString *search;
 	int search_timeout;
 	int search_column;
+	gboolean (*search_func)(GntTree *tree, gpointer key, const char *current);
 
 	GCompareFunc compare;
 	int lastvisible;
@@ -159,9 +160,12 @@ row_matches_search(GntTreeRow *row)
 	GntTree *t = row->tree;
 	if (t->priv->search && t->priv->search->len > 0) {
 		GntTreeCol *col = (col = g_list_nth_data(row->columns, t->priv->search_column)) ? col : row->columns->data;
-		char *one = g_utf8_casefold(col->text, -1);
-		char *two = g_utf8_casefold(t->priv->search->str, -1);
-		char *z = strstr(one, two);
+		char *one, *two, *z;
+		if (t->priv->search_func)
+			return t->priv->search_func(t, row->key, col->text);
+		one = g_utf8_casefold(col->text, -1);
+		two = g_utf8_casefold(t->priv->search->str, -1);
+		z = strstr(one, two);
 		g_free(one);
 		g_free(two);
 		if (z == NULL)
@@ -1801,5 +1805,11 @@ void gnt_tree_set_search_column(GntTree *tree, int col)
 gboolean gnt_tree_is_searching(GntTree *tree)
 {
 	return (tree->priv->search != NULL);
+}
+
+void gnt_tree_set_search_function(GntTree *tree,
+		gboolean (*func)(GntTree *tree, gpointer key, const char *current))
+{
+	tree->priv->search_func = func;
 }
 
