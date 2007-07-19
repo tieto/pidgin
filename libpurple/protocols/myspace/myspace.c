@@ -119,8 +119,8 @@ msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 
 /* Replacement codes to be replaced with associated replacement text,
  * used for protocol message escaping / unescaping. */
-static gchar* msim_replacement_code[] = { "/1", "/2", "/3", NULL };
-static gchar* msim_replacement_text[] = { "/", "\\", "|", NULL };
+static gchar* msim_replacement_code[] = { "/1", "/2", /* "/3", */ NULL };
+static gchar* msim_replacement_text[] = { "/", "\\", /* "|", */ NULL };
 
 /**
  * Unescape or escape a protocol message.
@@ -861,12 +861,32 @@ msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	*end = g_strdup("</p>");
 }
 
-/** Convert the msim markup <i> tag (emoticon image) into HTML. TODO: Test */
+/** Convert the msim markup <i> tag (emoticon image) into HTML. */
 static void 
 msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *name;
+    guint i;
 
+    /* Based on Miranda plugin by Scott Ellis, formatting.cpp, 
+     * https://server.scottellis.com.au/websvn/filedetails.php?repname=Miranda+Plugins&path=%2FMySpace%2Fformatting.cpp&rev=0&sc=0 */
+
+    static const char *words[] = {
+        "happi", /* ??? */
+        "bigsmile", "growl", "mad", "scared", "tongue", 
+        "devil", "happy", "messed", "sidefrown", "upset", 
+        "frazzled", "heart", "nerd", "sinister", "wink", /* wink doesn't work */
+        "geek", "laugh", "oops", "smirk", "worried", 
+        "googles", "mohawk", "pirate", "straight", "kiss"};
+
+    static const char *symbols[] = {
+        ":-)",
+        ":D", ">:o", ":-[", "=-O", ":p", 
+        "O:-)" /*:)*/, ":)", "8-)", ":-$", ":-$", 
+        ":-/", ";-)", "8-)" /*:)*/, ":-D", ";-)",
+        ":-X", ":-D", ":-/", "8-)", ":(", 
+        "8-)", ":-X", ":-)", ":-$", ":-*"};
+        
 	name = xmlnode_get_attrib(root, "n");
 	if (!name)
 	{
@@ -877,15 +897,18 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 		return;
 	}
 
-	/* TODO: Support these emoticons:
-	 *
-	 * bigsmile growl mad scared tongue devil happy messed sidefrown upset 
-	 * frazzled heart nerd sinister wink geek laugh oops smirk worried 
-	 * googles mohawk pirate straight kiss 
-	 */
+    for (i = 0; i < sizeof(words) / sizeof(words[0]); ++i)
+    {
+        if (!strcmp(name, words[i]))
+        {
+            *begin = g_strdup(symbols[i]);
+            *end = g_strdup("");
+            return;
+        }
+    }
 
-	*begin = g_strdup_printf("<img id='%s'>", name);
-	*end = g_strdup("</p>");
+    *begin = g_strdup(name);
+    *end = g_strdup("");
 }
 
 /** Convert an individual msim markup tag to HTML. */
