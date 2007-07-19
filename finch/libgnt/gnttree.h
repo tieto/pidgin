@@ -516,6 +516,15 @@ void gnt_tree_set_search_column(GntTree *tree, int col);
  */
 gboolean gnt_tree_is_searching(GntTree *tree);
 
+/**
+ * Set a custom search function.
+ *
+ * @param tree  The tree
+ * @param func  The custom search function
+ */
+void gnt_tree_set_search_function(GntTree *tree,
+		gboolean (*func)(GntTree *tree, gpointer key, const char *current));
+
 G_END_DECLS
 
 #endif /* GNT_TREE_H */

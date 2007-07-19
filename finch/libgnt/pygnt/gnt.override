@@ -18,12 +18,19 @@ headers
 #include "gntmenu.h"
 #include "gntmenuitem.h"
 #include "gntmenuitemcheck.h"
+#include "gntslider.h"
 #include "gntstyle.h"
 #include "gnttextview.h"
 #include "gnttree.h"
 #include "gntutils.h"
 #include "gntwindow.h"
 #include "gntwm.h"
+#include "gntws.h"
+#include "common.h"
+%%
+include
+ gntfilesel.override
+ gnttree.override
 %%
 modulename gnt
 %%
