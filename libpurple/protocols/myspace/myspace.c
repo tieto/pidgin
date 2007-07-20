@@ -1068,15 +1068,23 @@ msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 {
 	xmlnode *root;
 	gchar *str;
+    gchar *enclosed_raw;
 
-	root = xmlnode_from_str(raw, -1);
+    /* Enclose text in one root tag, to try to make it valid XML for parsing. */
+    enclosed_raw = g_strconcat("<root>", raw, "</root>", NULL);
+
+	root = xmlnode_from_str(enclosed_raw, -1);
+
 	if (!root)
 	{
 		purple_debug_info("msim", "msim_markup_to_html: couldn't parse "
-				"%s as XML, returning raw\n", raw);
+				"%s as XML, returning raw: %s\n", enclosed_raw, raw);
         /* TODO: msim_unrecognized */
+        g_free(enclosed_raw);
 		return g_strdup(raw);
 	}
+
+    g_free(enclosed_raw);
 
 	str = msim_convert_xmlnode(session, root, f);
 	purple_debug_info("msim", "msim_markup_to_html: returning %s\n", str);
@@ -1136,18 +1144,13 @@ gchar *
 html_to_msim_markup(MsimSession *session, const gchar *raw)
 {
     gchar *markup;
-    gchar *enclosed_raw;
 
-    /* Enclose text in one root tag, to try to make it valid XML for parsing. */
-    enclosed_raw = g_strconcat("<root>", raw, "</root>", NULL);
-
-    markup = msim_convert_xml(session, enclosed_raw,
+    markup = msim_convert_xml(session, raw,
             (MSIM_XMLNODE_CONVERT)(html_tag_to_msim_markup));
     
-    g_free(enclosed_raw);
-
     if (purple_account_get_bool(session->account, "smileys", TRUE))
     {
+        /* Frees markup and allocates a new one. */
         markup = msim_convert_smileys_to_markup(markup);
     }
 
@@ -3622,6 +3625,9 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Show headline in status text"), "show_headline", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+    option = purple_account_option_bool_new(_("Send emoticons"), "emoticons", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
     option = purple_account_option_int_new(_("Screen resolution (dots per inch)"), "dpi", MSIM_DEFAULT_DPI);
