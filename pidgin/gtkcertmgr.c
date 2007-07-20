@@ -42,12 +42,25 @@
 /*****************************************************************************
  * X.509 tls_peers management interface                                      *
  *****************************************************************************/
+
+static void
+tls_peers_mgmt_destroy(GtkWidget *mgmt_widget, gpointer data)
+{
+	purple_debug_info("certmgr",
+			  "tls peers self-destructs\n");
+}
+
 static GtkWidget *
 tls_peers_mgmt_build(void)
 {
-	GtkWidget *label = gtk_label_new("TLS PEEERSSSSS!!!");
-	gtk_widget_show(label);
-	return label;
+	GtkWidget *mgmt_widget = gtk_label_new("TLS PEEERSSSSS!!!");
+	gtk_widget_show(mgmt_widget);
+
+	/* Ensure that everything gets cleaned up when the dialog box
+	   is closed */
+	g_signal_connect(G_OBJECT(mgmt_widget), "destroy",
+			 G_CALLBACK(tls_peers_mgmt_destroy), NULL);
+	return mgmt_widget;
 }
 
 PidginCertificateManager tls_peers_mgmt = {
