@@ -37,6 +37,28 @@
 #include "persist.h"
 #include "myspace.h"
 
+
+/* Based on Miranda plugin by Scott Ellis, formatting.cpp, 
+ * https://server.scottellis.com.au/websvn/filedetails.php?repname=Miranda+Plugins&path=%2FMySpace%2Fformatting.cpp&rev=0&sc=0 */
+
+static const char *emoticon_names[] = {
+    "bigsmile", "growl", "mad", "scared", "tongue", 
+    "devil", "happy", "messed", "sidefrown", "upset", 
+    "frazzled", "heart", "nerd", "sinister", "wink", /* wink doesn't work */
+    "geek", "laugh", "oops", "smirk", "worried", 
+    "googles", "mohawk", "pirate", "straight", "kiss",
+    "happi" /* ??? */,
+    NULL};
+
+static const char *emoticon_symbols[] = {
+    ":D", ">:o", ":-[", "=-O", ":p", 
+    "O:-)" /*:)*/, ":)", "8-)", ":-$", ":-$", 
+    ":-/", ";-)", "8-)" /*:)*/, ":-D", ";-)",
+    ":-X", ":-D", ":-/", "8-)", ":(", 
+    "8-)", ":-X", ":-)", ":-$", ":-*",
+    ":-)",
+    NULL};
+
 /** 
  * Load the plugin.
  */
@@ -867,26 +889,7 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 {
 	const gchar *name;
     guint i;
-
-    /* Based on Miranda plugin by Scott Ellis, formatting.cpp, 
-     * https://server.scottellis.com.au/websvn/filedetails.php?repname=Miranda+Plugins&path=%2FMySpace%2Fformatting.cpp&rev=0&sc=0 */
-
-    static const char *words[] = {
-        "happi", /* ??? */
-        "bigsmile", "growl", "mad", "scared", "tongue", 
-        "devil", "happy", "messed", "sidefrown", "upset", 
-        "frazzled", "heart", "nerd", "sinister", "wink", /* wink doesn't work */
-        "geek", "laugh", "oops", "smirk", "worried", 
-        "googles", "mohawk", "pirate", "straight", "kiss"};
-
-    static const char *symbols[] = {
-        ":-)",
-        ":D", ">:o", ":-[", "=-O", ":p", 
-        "O:-)" /*:)*/, ":)", "8-)", ":-$", ":-$", 
-        ":-/", ";-)", "8-)" /*:)*/, ":-D", ";-)",
-        ":-X", ":-D", ":-/", "8-)", ":(", 
-        "8-)", ":-X", ":-)", ":-$", ":-*"};
-        
+       
 	name = xmlnode_get_attrib(root, "n");
 	if (!name)
 	{
@@ -897,11 +900,11 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 		return;
 	}
 
-    for (i = 0; i < sizeof(words) / sizeof(words[0]); ++i)
+    for (i = 0; emoticon_names[i] != NULL; ++i)
     {
-        if (!strcmp(name, words[i]))
+        if (!strcmp(name, emoticon_names[i]))
         {
-            *begin = g_strdup(symbols[i]);
+            *begin = g_strdup(emoticon_symbols[i]);
             *end = g_strdup("");
             return;
         }
@@ -1083,6 +1086,39 @@ msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 	return str;
 }
 
+/** Convert plaintext smileys to <i> markup tags.
+ *
+ * @param before Original text with ASCII smileys. Will be freed.
+ * @return A new string with <i> tags, if applicable. Must be g_free()'d.
+ */
+gchar *
+msim_convert_smileys_to_markup(gchar *before)
+{
+    gchar *old, *new, *replacement;
+    guint i;
+
+    old = before;
+    new = NULL;
+
+    for (i = 0; emoticon_symbols[i] != NULL; ++i)
+    {
+
+        replacement = g_strdup_printf("<i n=\"%s\">", emoticon_names[i]);
+
+        purple_debug_info("msim", "msim_convert_smileys_to_markup: %s->%s\n",
+                emoticon_symbols[i], replacement);
+        new = str_replace(old, emoticon_symbols[i], replacement);
+        
+        g_free(replacement);
+        g_free(old);
+
+        old = new;
+    }
+
+    return new;
+}
+    
+
 /** High-level function to convert MySpaceIM markup to Purple (HTML) markup. 
  *
  * @return Purple markup string, must be g_free()'d. */
@@ -1107,8 +1143,13 @@ html_to_msim_markup(MsimSession *session, const gchar *raw)
 
     markup = msim_convert_xml(session, enclosed_raw,
             (MSIM_XMLNODE_CONVERT)(html_tag_to_msim_markup));
-
+    
     g_free(enclosed_raw);
+
+    if (purple_account_get_bool(session->account, "smileys", TRUE))
+    {
+        markup = msim_convert_smileys_to_markup(markup);
+    }
 
     return markup;
 }
