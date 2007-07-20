@@ -393,7 +393,8 @@ gnt_widget_key_pressed(GntWidget *widget, const char *keys)
 	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_CAN_TAKE_FOCUS))
 		return FALSE;
 
-	if (gnt_bindable_perform_action_key(GNT_BINDABLE(widget), keys))
+	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_DISABLE_ACTIONS) &&
+			gnt_bindable_perform_action_key(GNT_BINDABLE(widget), keys))
 		return TRUE;
 
 	keys = gnt_bindable_remap_keys(GNT_BINDABLE(widget), keys);

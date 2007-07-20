@@ -804,6 +804,8 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 			redraw_tree(tree);
 			g_source_remove(tree->priv->search_timeout);
 			tree->priv->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
+		} else {
+			gnt_bindable_perform_action_key(GNT_BINDABLE(tree), text);
 		}
 		return TRUE;
 	} else if (text[0] == ' ' && text[1] == 0) {
@@ -914,6 +916,7 @@ start_search(GntBindable *bindable, GList *list)
 	GntTree *tree = GNT_TREE(bindable);
 	if (tree->priv->search)
 		return FALSE;
+	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(tree), GNT_WIDGET_DISABLE_ACTIONS);
 	tree->priv->search = g_string_new(NULL);
 	tree->priv->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
 	return TRUE;
@@ -925,6 +928,7 @@ end_search_action(GntBindable *bindable, GList *list)
 	GntTree *tree = GNT_TREE(bindable);
 	if (tree->priv->search == NULL)
 		return FALSE;
+	GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(tree), GNT_WIDGET_DISABLE_ACTIONS);
 	end_search(tree);
 	redraw_tree(tree);
 	return TRUE;
