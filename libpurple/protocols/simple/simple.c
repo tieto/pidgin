@@ -976,14 +976,16 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 
 		if(!isc) {
 			purple_debug_info("simple", "process_incoming_message: can not parse iscomposing\n");
+			g_free(from);
 			return;
 		}
 
 		state = xmlnode_get_child(isc, "state");
 
 		if(!state) {
-				purple_debug_info("simple", "process_incoming_message: no state found\n");
-				xmlnode_free(isc);
+			purple_debug_info("simple", "process_incoming_message: no state found\n");
+			xmlnode_free(isc);
+			g_free(from);
 			return;
 		}
 
@@ -1063,6 +1065,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 
 	if(!pidf) {
 		purple_debug_info("simple", "process_incoming_notify: no parseable pidf\n");
+		g_free(from);
 		return;
 	}
 
@@ -1073,6 +1076,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	if(!basicstatus) {
 		purple_debug_info("simple", "process_incoming_notify: no basic found\n");
 		xmlnode_free(pidf);
+		g_free(from);
 		return;
 	}
 
@@ -1081,6 +1085,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	if(!tmp2) {
 		purple_debug_info("simple", "process_incoming_notify: no basic data found\n");
 		xmlnode_free(pidf);
+		g_free(from);
 		return;
 	}
 
