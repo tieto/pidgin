@@ -672,13 +672,12 @@ pidgin_notify_searchresults_new_rows(PurpleConnection *gc, PurpleNotifySearchRes
 
 		for (j = 1; j < col_num; j++) {
 			GValue v;
-			char *escaped = g_list_nth_data(row, j - 1);
+			char *data = g_list_nth_data(row, j - 1)1;
 
 			v.g_type = 0;
 			g_value_init(&v, G_TYPE_STRING);
-			g_value_set_string(&v, escaped);
+			g_value_set_string(&v, data);
 			gtk_list_store_set_value(model, &iter, j, &v);
-			g_free(escaped);
 		}
 	}
 
