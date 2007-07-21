@@ -236,6 +236,7 @@ typedef void (*MSIM_XMLNODE_CONVERT)(MsimSession *, xmlnode *, gchar **, gchar *
 void msim_markup_tag_to_html(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
 void html_tag_to_msim_markup(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
 gchar *msim_convert_xml(MsimSession *, const gchar *raw, MSIM_XMLNODE_CONVERT f);
+gchar *msim_convert_smileys_to_markup(gchar *before);
 
 /* High-level msim markup <=> html conversion functions. */
 gchar *msim_markup_to_html(MsimSession *, const gchar *raw);

@@ -1120,7 +1120,7 @@ msim_convert_smileys_to_markup(gchar *before)
     for (i = 0; emoticon_symbols[i] != NULL; ++i)
     {
 
-        replacement = g_strdup_printf("<i n=\"%s\">", emoticon_names[i]);
+        replacement = g_strdup_printf("<i n=\"%s\"/>", emoticon_names[i]);
 
         purple_debug_info("msim", "msim_convert_smileys_to_markup: %s->%s\n",
                 emoticon_symbols[i], replacement);
@@ -1157,7 +1157,7 @@ html_to_msim_markup(MsimSession *session, const gchar *raw)
     markup = msim_convert_xml(session, raw,
             (MSIM_XMLNODE_CONVERT)(html_tag_to_msim_markup));
     
-    if (purple_account_get_bool(session->account, "smileys", TRUE))
+    if (purple_account_get_bool(session->account, "emoticons", TRUE))
     {
         /* Frees markup and allocates a new one. */
         markup = msim_convert_smileys_to_markup(markup);
