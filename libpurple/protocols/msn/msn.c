@@ -569,13 +569,12 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		psm = purple_status_get_attr_string(status, "message");
 		currentmedia = purple_status_get_attr_string(status, "currentmedia");
 
-		purple_notify_user_info_add_pair(user_info, _("Status"),
-									   (purple_presence_is_idle(presence) ? _("Idle") : purple_status_get_name(status)));
-		if (psm) {
+		if (psm && *psm) {
 			tmp = g_markup_escape_text(psm, -1);
-			purple_notify_user_info_add_pair(user_info, _("PSM"), tmp);
+			purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
 			g_free(tmp);
 		}
+
 		if (currentmedia) {
 			tmp = g_markup_escape_text(currentmedia, -1);
 			purple_notify_user_info_add_pair(user_info, _("Current media"), tmp);

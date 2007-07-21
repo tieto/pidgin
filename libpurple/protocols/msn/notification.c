@@ -1160,11 +1160,14 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			msn_user_set_work_phone(session->user, NULL);
 		else if (!strcmp(type, "PHM"))
 			msn_user_set_mobile_phone(session->user, NULL);
-		else if (!strcmp(type, "MFM")) {
+		else {
 			type = cmd->params[1];
-			purple_connection_set_display_name(
-				purple_account_get_connection(session->account),
-				purple_url_decode(cmd->params[2]));
+			if (!strcmp(type, "MFN")) {
+
+				purple_connection_set_display_name(
+					purple_account_get_connection(session->account),
+					purple_url_decode(cmd->params[2]));
+			}
 		}
 	}
 }
