@@ -68,7 +68,7 @@ msn_soap_connect_cb(gpointer data, PurpleSslConnection *gsc,
 	MsnSoapConn * soapconn;
 	MsnSession *session;
 
-	purple_debug_info("MaYuan","Soap connection connected!\n");
+	purple_debug_info("MSNP14","Soap connection connected!\n");
 	soapconn = data;
 	g_return_if_fail(soapconn != NULL);
 
@@ -94,7 +94,7 @@ msn_soap_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data
 	MsnSoapConn * soapconn = data;
 
 	g_return_if_fail(data != NULL);
-	purple_debug_info("MaYuan","Soap connection error!\n");
+	purple_debug_info("MSNP14","Soap connection error!\n");
 	msn_soap_set_process_step(soapconn, MSN_SOAP_UNCONNECTED);
 
 	/*error callback*/
@@ -109,7 +109,7 @@ msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,
 				PurpleSslInputFunction	connect_cb,
 				PurpleSslErrorFunction	error_cb)
 {
-	purple_debug_info("MaYuan","msn_soap_init...\n");
+	purple_debug_info("MSNP14","msn_soap_init...\n");
 	soapconn->login_host = g_strdup(host);
 	soapconn->ssl_conn = ssl;
 	soapconn->connect_cb = connect_cb;
@@ -221,8 +221,8 @@ msn_soap_read(MsnSoapConn *soapconn)
 		soapconn->read_buf[soapconn->read_len] = '\0';
 	}
 #ifdef MSN_SOAP_DEBUG
-	purple_debug_info("MaYuan","++soap ssl read:{%d}\n",len);
-	purple_debug_info("MaYuan","nexus ssl read:{%s}\n",soapconn->read_buf);
+	purple_debug_info("MSNP14","++soap ssl read:{%d}\n",len);
+	purple_debug_info("MSNP14","nexus ssl read:{%s}\n",soapconn->read_buf);
 #endif
 	return len;
 }
@@ -237,7 +237,7 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	char * body_start,*body_len;
 	char *length_start,*length_end;
 
-//	purple_debug_misc("MaYuan", "soap read cb\n");
+//	purple_debug_misc("MSNP14", "soap read cb\n");
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
 
@@ -270,7 +270,7 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		/* Redirect. */
 		char *location, *c;
 
-		purple_debug_error("MaYuan", "soap redirect\n");
+		purple_debug_error("MSNP14", "soap redirect\n");
 		location = strstr(soapconn->read_buf, "Location: ");
 		if (location == NULL)
 		{
@@ -343,7 +343,7 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	{
 		const char *error;
 
-		purple_debug_error("MaYuan", "soap 401\n");
+		purple_debug_error("MSNP14", "soap 401\n");
 		if ((error = strstr(soapconn->read_buf, "WWW-Authenticate")) != NULL)
 		{
 			if ((error = strstr(error, "cbtxt=")) != NULL)
@@ -362,7 +362,25 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 			}
 		}
 
-		msn_session_set_error(session, MSN_ERROR_SERV_UNAVAILABLE, error);
+		msn_session_set_error(session, MSN_ERROR_AUTH, error);
+	}
+	/* Handle Passport 3.0 authentication failures.
+	 * Further info: http://msnpiki.msnfanatic.com/index.php/MSNP13:SOAPTweener
+	 */
+	else if (strstr(soapconn->read_buf,
+				"<faultcode>wsse:FailedAuthentication</faultcode>") != NULL)
+	{
+		char *faultstring;
+
+		faultstring = strstr(soapconn->read_buf, "<faultstring>");
+
+		if (faultstring != NULL)
+		{
+			faultstring += strlen("<faultstring>");
+			*strstr(soapconn->read_buf, "</faultstring>") = '\0';
+		}
+		
+		msn_session_set_error(session, MSN_ERROR_AUTH, faultstring);
 	}
 	else if (strstr(soapconn->read_buf, "HTTP/1.1 503 Service Unavailable"))
 	{
@@ -390,7 +408,7 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 			soapconn->body		= body_start;
 			soapconn->body_len	= atoi(body_len);
 #ifdef MSN_SOAP_DEBUG
-			purple_debug_misc("MaYuan","SOAP Read length :%d,body len:%d\n",soapconn->read_len,soapconn->body_len);
+			purple_debug_misc("MSNP14","SOAP Read length :%d,body len:%d\n",soapconn->read_len,soapconn->body_len);
 #endif
 			soapconn->need_to_read = (body_start - soapconn->read_buf +soapconn->body_len) - soapconn->read_len;
 			if(soapconn->need_to_read >0){
@@ -450,7 +468,7 @@ msn_soap_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	g_return_if_fail(soapconn != NULL);
 	if(soapconn->write_buf == NULL){
-		purple_debug_error("MaYuan","soap buffer is NULL\n");
+		purple_debug_error("MSNP14","soap buffer is NULL\n");
 		purple_input_remove(soapconn->output_handler);
 		soapconn->output_handler = -1;
 		return;
@@ -574,12 +592,12 @@ msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,
 	if(!msn_soap_connected(soapconn)&&(soapconn->step == MSN_SOAP_UNCONNECTED)
 					&&(!g_queue_is_empty(soapconn->soap_queue))){
 		/*not connected?and we have something to process connect it first*/
-		purple_debug_info("Ma Yuan","soap is not connected!\n");
+		purple_debug_info("MSNP14","soap is not connected!\n");
 		msn_soap_init_func(soapconn);
 		msn_soap_connect(soapconn);
 		return;
 	}
-	purple_debug_info("Ma Yuan","soap  connected!\n");
+	purple_debug_info("MSNP14","soap  connected!\n");
 
 	/*if connected, what we only needed to do is to queue the request, 
 	 * when SOAP request in the queue processed done, will do this command.
@@ -600,7 +618,7 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 	char * soap_head = NULL;
 	char * request_str = NULL;
 
-	purple_debug_info("MaYuan","msn_soap_post_request()...\n");
+	purple_debug_info("MSNP14","msn_soap_post_request()...\n");
 	msn_soap_set_process_step(soapconn,MSN_SOAP_PROCESSING);
 	soap_head = g_strdup_printf(
 					"POST %s HTTP/1.1\r\n"
@@ -610,7 +628,7 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 					"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
 					"Accept: */*\r\n"
 					"Host: %s\r\n"
-					"Content-Length: %d\r\n"
+					"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 					"Connection: Keep-Alive\r\n"
 					"Cache-Control: no-cache\r\n\r\n",
 					request->login_path,
@@ -623,7 +641,7 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 	g_free(soap_head);
 
 #ifdef MSN_SOAP_DEBUG
-	purple_debug_info("MaYuan","send to  server{%s}\n",request_str);
+	purple_debug_info("MSNP14","send to  server{%s}\n",request_str);
 #endif
 
 	/*free read buffer*/

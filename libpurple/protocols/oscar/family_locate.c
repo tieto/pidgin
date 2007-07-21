@@ -1264,10 +1264,13 @@ userinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	 * this buddy's info explicitly, then notify them that we have info
 	 * for this buddy.
 	 */
-	was_explicit = aim_locate_gotuserinfo(od, conn, userinfo2->sn);
-	if (was_explicit == TRUE)
-		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-			ret = userfunc(od, conn, frame, userinfo2);
+	if (userinfo2 != NULL)
+	{
+		was_explicit = aim_locate_gotuserinfo(od, conn, userinfo2->sn);
+		if (was_explicit == TRUE)
+			if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
+				ret = userfunc(od, conn, frame, userinfo2);
+	}
 
 	return ret;
 }

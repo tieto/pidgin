@@ -23,6 +23,17 @@ key_pressed(GntWidget *w, const char *key, GntWidget *view)
 
 		return TRUE;
 	}
+    else if (strcmp(key, "\033" "e") == 0)
+    {
+        if (fork() == 0) {
+            endwin();
+            printf("%s\n", GNT_TEXT_VIEW(view)->string->str);
+            fflush(stdout);
+            getch();
+            refresh();
+            exit(0);
+        }
+    }
 	else if (key[0] == 27)
 	{
 		if (strcmp(key, GNT_KEY_UP) == 0)
@@ -35,6 +46,13 @@ key_pressed(GntWidget *w, const char *key, GntWidget *view)
 	}
 		
 	return FALSE;
+}
+
+static void
+completion_cb(GntEntry *entry, const char *start, const char *end)
+{
+	if (start == entry->start)
+		gnt_widget_key_pressed(GNT_WIDGET(entry), ": ");
 }
 
 int main()
@@ -57,6 +75,8 @@ int main()
 	entry = gnt_entry_new(NULL);
 	gnt_widget_set_name(entry, "entry");
 	GNT_WIDGET_SET_FLAGS(entry, GNT_WIDGET_CAN_TAKE_FOCUS);
+
+	g_signal_connect(G_OBJECT(entry), "completion", G_CALLBACK(completion_cb), NULL);
 
 	gnt_entry_set_word_suggest(GNT_ENTRY(entry), TRUE);
 	gnt_entry_set_always_suggest(GNT_ENTRY(entry), FALSE);
@@ -81,6 +101,7 @@ int main()
 	gnt_widget_show(hbox);
 
 	gnt_entry_set_history_length(GNT_ENTRY(entry), -1);
+	gnt_text_view_attach_pager_widget(GNT_TEXT_VIEW(view), entry);
 	g_signal_connect_after(G_OBJECT(entry), "key_pressed", G_CALLBACK(key_pressed), view);
 
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "\n", GNT_TEXT_FLAG_NORMAL);

@@ -676,6 +676,12 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 	return aop_option_menu_new(create_protocols_menu(id), cb, user_data);
 }
 
+const char *
+pidgin_protocol_option_menu_get_selected(GtkWidget *optmenu)
+{
+	return (const char *)aop_option_menu_get_selected(optmenu, NULL);
+}
+
 PurpleAccount *
 pidgin_account_option_menu_get_selected(GtkWidget *optmenu)
 {

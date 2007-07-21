@@ -19,6 +19,7 @@
  *
  */
 #include "internal.h"
+#include "core.h"
 #include "debug.h"
 #include "prefs.h"
 #include "util.h"
@@ -250,6 +251,8 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 	type = xmlnode_get_attrib(packet, "type");
 
 	if(type && !strcmp(type, "get")) {
+		GHashTable *ui_info;
+		const char *ui_name = NULL, *ui_version = NULL;
 
 		if(!purple_prefs_get_bool("/plugins/prpl/jabber/hide_os")) {
 			struct utsname osinfo;
@@ -268,9 +271,23 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 
 		query = xmlnode_get_child(iq->node, "query");
 
-		/* TODO: ask the core for the version of libpurple and the name and version of the UI */
-		xmlnode_insert_data(xmlnode_new_child(query, "name"), "libpurple", -1);
-		xmlnode_insert_data(xmlnode_new_child(query, "version"), VERSION, -1);
+		ui_info = purple_core_get_ui_info();
+
+		if(NULL != ui_info) {
+			ui_name = g_hash_table_lookup(ui_info, "name");
+			ui_version = g_hash_table_lookup(ui_info, "version");
+		}
+
+		if(NULL != ui_name && NULL != ui_version) {
+			char *version_complete = g_strdup_printf("%s (libpurple " VERSION ")", ui_version);
+			xmlnode_insert_data(xmlnode_new_child(query, "name"), ui_name, -1);
+			xmlnode_insert_data(xmlnode_new_child(query, "version"), version_complete, -1);
+			g_free(version_complete);
+		} else {
+			xmlnode_insert_data(xmlnode_new_child(query, "name"), "libpurple", -1);
+			xmlnode_insert_data(xmlnode_new_child(query, "version"), VERSION, -1);
+		}
+
 		if(os) {
 			xmlnode_insert_data(xmlnode_new_child(query, "os"), os, -1);
 			g_free(os);

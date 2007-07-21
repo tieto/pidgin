@@ -1168,6 +1168,35 @@ Function .onInit
   ;Preselect the URI handlers as appropriate
   Call SelectURIHandlerSelections
 
+  ;Preselect the "shortcuts" checkboxes according to the previous installation
+  ClearErrors
+  ;Make sure that there was a previous installation
+  ReadRegStr $R0 HKCU "${PIDGIN_REG_KEY}" "Installer Language"
+  IfErrors done_preselecting_shortcuts
+    ;Does the Desktop shortcut exist?
+    GetFileTime "$DESKTOP\Pidgin.lnk" $R0 $R0
+    IfErrors +1 +4
+    ClearErrors
+    SetShellVarContext "all"
+    GetFileTime "$DESKTOP\Pidgin.lnk" $R0 $R0
+    IfErrors preselect_startmenu_shortcut ;Desktop Shortcut if off by default
+    !insertmacro SelectSection ${SecDesktopShortcut}
+  preselect_startmenu_shortcut:
+    ;Reset ShellVarContext because we may have changed it
+    SetShellVarContext "current"
+    ClearErrors
+    ;Does the StartMenu shortcut exist?
+    GetFileTime "$SMPROGRAMS\Pidgin.lnk" $R0 $R0
+    IfErrors +1 done_preselecting_shortcuts ;StartMenu Shortcut is on by default
+    ClearErrors
+    SetShellVarContext "all"
+    GetFileTime "$SMPROGRAMS\Pidgin.lnk" $R0 $R0
+    IfErrors +1 done_preselecting_shortcuts ;StartMenu Shortcut is on by default
+    !insertmacro UnselectSection ${SecStartMenuShortcut}
+  done_preselecting_shortcuts:
+  ;Reset ShellVarContext because we may have changed it
+  SetShellVarContext "current"
+
   StrCpy $ISSILENT "/NOUI"
 
   ; GTK installer has two silent states.. one with Message boxes, one without
@@ -1305,7 +1334,7 @@ Function preWelcomePage
 
 !ifndef WITH_GTK
   ; If this installer dosn't have GTK, check whether we need it.
-  ; We do this here an not in .onInit because language change in
+  ; We do this here and not in .onInit because language change in
   ; .onInit doesn't take effect until it is finished.
   Call DoWeNeedGtk
   Pop $R0

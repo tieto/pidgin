@@ -185,15 +185,15 @@ msn_get_psm(char *xml_str, gsize len)
 	xmlnode *payloadNode, *psmNode;
 	char *psm_str, *psm;
 	
-	purple_debug_info("Ma Yuan","msn get PSM\n");
+	purple_debug_info("MSNP14","msn get PSM\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
 	if (!payloadNode){
-		purple_debug_error("MaYuan","PSM XML parse Error!\n");
+		purple_debug_error("MSNP14","PSM XML parse Error!\n");
 		return NULL;
 	}
 	psmNode = xmlnode_get_child(payloadNode, "PSM");
 	if (psmNode == NULL){
-		purple_debug_info("Ma Yuan","No PSM status Node");
+		purple_debug_info("MSNP14","No PSM status Node");
 		g_free(payloadNode);
 		return NULL;
 	}
@@ -219,6 +219,7 @@ msn_set_psm(MsnSession *session)
 	MsnTransaction *trans;
 	char *payload;
 	const char *statusline;
+	gchar *unescapedstatusline;
 
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->notification != NULL);
@@ -232,10 +233,12 @@ msn_set_psm(MsnSession *session)
 	presence = purple_account_get_presence(account);
 	status = purple_presence_get_active_status(presence);
 	statusline = purple_status_get_attr_string(status, "message");
-	session->psm = msn_build_psm(statusline, NULL, NULL);
+	unescapedstatusline = purple_unescape_html(statusline);
+	session->psm = msn_build_psm(unescapedstatusline, NULL, NULL);
+	g_free(unescapedstatusline);
 	payload = session->psm;
 
-	purple_debug_info("MaYuan","UUX{%s}\n",payload);
+	purple_debug_misc("MSNP14","Sending UUX command with payload: %s\n",payload);
 	trans = msn_transaction_new(cmdproc, "UUX","%d",strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);

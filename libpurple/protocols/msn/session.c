@@ -300,17 +300,17 @@ msn_session_sync_users(MsnSession *session)
 						const char *group_id;
 						GList *l;
 
-						purple_debug_info("MaYuan","remote user:{%s}\n",b->name);
+						purple_debug_info("MSNP14","remote user:{%s}\n",b->name);
 						group_id = msn_userlist_find_group_id(remote_user->userlist,
 								group_name);
 						if(group_id == NULL){
 							continue;
 						}
-						purple_debug_info("MaYuan","group_id:{%s}\n",group_id);
+						purple_debug_info("MSNP14","group_id:{%s}\n",group_id);
 
 						for (l = remote_user->group_ids; l != NULL; l = l->next)
 						{
-							purple_debug_info("MaYuan","l->data:{%s}\n",l->data);
+							purple_debug_info("MSNP14","l->data:{%s}\n",l->data);
 							if (!g_strcasecmp(group_id ,l->data))
 							{
 								found = TRUE;

@@ -20,9 +20,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "gntbutton.h"
+#include "gntstyle.h"
 #include "gntutils.h"
 
 enum
@@ -31,20 +33,26 @@ enum
 };
 
 static GntWidgetClass *parent_class = NULL;
+static gboolean small_button = FALSE;
 
 static void
 gnt_button_draw(GntWidget *widget)
 {
 	GntButton *button = GNT_BUTTON(widget);
 	GntColorType type;
+	gboolean focus;
 
-	if (gnt_widget_has_focus(widget))
+	if ((focus = gnt_widget_has_focus(widget)))
 		type = GNT_COLOR_HIGHLIGHT;
 	else
 		type = GNT_COLOR_NORMAL;
-	
+
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(type));
-	mvwaddstr(widget->window, 1, 2, button->priv->text);
+	mvwaddstr(widget->window, (small_button) ? 0 : 1, 2, button->priv->text);
+	if (small_button) {
+		type = GNT_COLOR_HIGHLIGHT;
+		mvwchgat(widget->window, 0, 0, widget->priv.width, focus ? A_BOLD : A_REVERSE, type, NULL);
+	}
 
 	GNTDEBUG;
 }
@@ -92,6 +100,8 @@ gnt_button_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 static void
 gnt_button_class_init(GntWidgetClass *klass)
 {
+	char *style;
+
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->draw = gnt_button_draw;
 	parent_class->map = gnt_button_map;
@@ -99,6 +109,8 @@ gnt_button_class_init(GntWidgetClass *klass)
 	parent_class->key_pressed = gnt_button_key_pressed;
 	parent_class->clicked = gnt_button_clicked;
 
+	style = gnt_style_get_from_name(NULL, "small-button");
+	small_button = gnt_style_parse_bool(style);
 	GNTDEBUG;
 }
 
@@ -110,7 +122,9 @@ gnt_button_init(GTypeInstance *instance, gpointer class)
 	button->priv = g_new0(GntButtonPriv, 1);
 
 	widget->priv.minw = 4;
-	widget->priv.minh = 3;
+	widget->priv.minh = small_button ? 1 : 3;
+	if (small_button)
+		GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 	GNTDEBUG;
 }
 

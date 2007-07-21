@@ -83,11 +83,7 @@ struct _GntTree
 	gboolean show_title;
 	gboolean show_separator; /* Whether to show column separators */
 
-	GString *search;
-	int search_timeout;
-
-	GCompareFunc compare;
-	int lastvisible;
+	GntTreePriv *priv;
 };
 
 struct _GntTreeClass
@@ -504,11 +500,22 @@ void gnt_tree_set_column_is_right_aligned(GntTree *tree, int col, gboolean right
  */
 void gnt_tree_set_column_width_ratio(GntTree *tree, int cols[]);
 
+/**
+ * Set the column to use for typeahead searching.
+ *
+ * @param tree   The tree
+ * @param col    The index of the column
+ */
+void gnt_tree_set_search_column(GntTree *tree, int col);
+
+/**
+ * Check whether the user is currently in the middle of a search.
+ *
+ * @param tree   The tree
+ * @return  @c TRUE if the user is searching, @c FALSE otherwise.
+ */
+gboolean gnt_tree_is_searching(GntTree *tree);
+
 G_END_DECLS
-
-/* The following functions should NOT be used by applications. */
-
-/* This should be called by the subclasses of GntTree's in their _new function */
-void _gnt_tree_init_internals(GntTree *tree, int col);
 
 #endif /* GNT_TREE_H */
