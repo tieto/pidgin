@@ -234,7 +234,7 @@ GntWidget *gnt_widget_bindings_view(GntWidget *widget)
 
 #ifndef NO_LIBXML
 static GntWidget *
-gnt_widget_from_xmlnode(xmlNode *node, GntWidget **data[])
+gnt_widget_from_xmlnode(xmlNode *node, GntWidget **data[], int max)
 {
 	GntWidget *widget = NULL;
 	char *name;
@@ -284,7 +284,7 @@ gnt_widget_from_xmlnode(xmlNode *node, GntWidget **data[])
 		}
 
 		for (ch = node->children; ch; ch=ch->next)
-			gnt_box_add_widget(GNT_BOX(widget), gnt_widget_from_xmlnode(ch, data));
+			gnt_box_add_widget(GNT_BOX(widget), gnt_widget_from_xmlnode(ch, data, max));
 	} else if (strcmp(name, "button") == 0) {
 		widget = gnt_button_new(content);
 	} else if (strcmp(name, "label") == 0) {
@@ -313,9 +313,10 @@ gnt_widget_from_xmlnode(xmlNode *node, GntWidget **data[])
 	id = (char*)xmlGetProp(node, (xmlChar*)"id");
 	if (id) {
 		int i;
-		sscanf(id, "%d", &i);
-		*data[i] = widget;
-		xmlFree(id);
+		if (sscanf(id, "%d", &i) == 1 && i >= 0 && i < max) {
+			*data[i] = widget;
+			xmlFree(id);
+		}
 	}
 
 	prop = (char*)xmlGetProp(node, (xmlChar*)"border");
@@ -366,7 +367,7 @@ void gnt_util_parse_widgets(const char *string, int num, ...)
 		data[id] = va_arg(list, gpointer);
 
 	node = xmlDocGetRootElement(doc);
-	gnt_widget_from_xmlnode(node, data);
+	gnt_widget_from_xmlnode(node, data, num);
 
 	xmlFreeDoc(doc);
 	xmlCleanupParser();
