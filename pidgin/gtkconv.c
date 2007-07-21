@@ -167,7 +167,6 @@ static gboolean update_send_to_selection(PidginWindow *win);
 static void generate_send_to_items(PidginWindow *win);
 
 /* Prototypes. <-- because Paco-Paco hates this comment. */
-static gboolean tabby_alias_entry(PidginConversation *gtkconv);
 static void got_typing_keypress(PidginConversation *gtkconv, gboolean first);
 static void gray_stuff_out(PidginConversation *gtkconv);
 static GList *generate_invite_user_names(PurpleConnection *gc);
@@ -1806,108 +1805,17 @@ move_to_next_unread_tab(PidginConversation *gtkconv, gboolean forward)
 }
 
 static gboolean
-conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
-{
-	PidginWindow *win;
-	PurpleConversation *conv;
-	int curconv;
-
-	conv     = gtkconv->active_conv;
-	win      = gtkconv->win;
-	curconv = gtk_notebook_get_current_page(GTK_NOTEBOOK(win->notebook));
-
-	/* If CTRL was held down... */
-	if (event->state & GDK_CONTROL_MASK) {
-		switch (event->keyval) {
-			case GDK_Page_Down:
-			case ']':
-				if (!pidgin_conv_window_get_gtkconv_at_index(win, curconv + 1))
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), 0);
-				else
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), curconv + 1);
-				return TRUE;
-				break;
-
-			case GDK_Page_Up:
-			case '[':
-				if (!pidgin_conv_window_get_gtkconv_at_index(win, curconv - 1))
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), -1);
-				else
-					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), curconv - 1);
-				return TRUE;
-				break;
-
-			case GDK_Tab:
-			case GDK_ISO_Left_Tab:
-				if (event->state & GDK_SHIFT_MASK) {
-					move_to_next_unread_tab(gtkconv, FALSE);
-				} else {
-					move_to_next_unread_tab(gtkconv, TRUE);
-				}
-
-				return TRUE;
-				break;
-
-			case GDK_comma:
-				gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook),
-						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), curconv),
-						curconv - 1);
-				break;
-
-			case GDK_period:
-				gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook),
-						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), curconv),
-#if GTK_CHECK_VERSION(2,2,0)
-						(curconv + 1) % gtk_notebook_get_n_pages(GTK_NOTEBOOK(win->notebook)));
-#else
-						(curconv + 1) % g_list_length(GTK_NOTEBOOK(win->notebook)->children));
-#endif
-				break;
-
-		} /* End of switch */
-	}
-
-	/* If ALT (or whatever) was held down... */
-	else if (event->state & GDK_MOD1_MASK)
-	{
-		if (event->keyval > '0' && event->keyval <= '9')
-		{
-			guint switchto = event->keyval - '1';
-			if (switchto < pidgin_conv_window_get_gtkconv_count(win))
-				gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), switchto);
-
-			return TRUE;
-		}
-	}
-
-	/* If neither CTRL nor ALT were held down... */
-	else
-	{
-		switch (event->keyval) {
-		case GDK_F2:
-			if (gtk_widget_is_focus(GTK_WIDGET(win->notebook))) {
-				tabby_alias_entry(gtkconv);
-				return TRUE;
-			}
-			break;
-		}
-	}
-	return FALSE;
-}
-
-static gboolean
 entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 {
 	PidginWindow *win;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
+	int curconv;
 
 	gtkconv  = (PidginConversation *)data;
 	conv     = gtkconv->active_conv;
 	win      = gtkconv->win;
-	
-	if (conv_keypress_common(gtkconv, event))
-		return TRUE;
+	curconv = gtk_notebook_get_current_page(GTK_NOTEBOOK(win->notebook));
 
 	/* If CTRL was held down... */
 	if (event->state & GDK_CONTROL_MASK) {
@@ -2005,32 +1913,88 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 				return TRUE;
 				break;
+
+			case GDK_Page_Down:
+			case ']':
+				if (!pidgin_conv_window_get_gtkconv_at_index(win, curconv + 1))
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), 0);
+				else
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), curconv + 1);
+				return TRUE;
+				break;
+
+			case GDK_Page_Up:
+			case '[':
+				if (!pidgin_conv_window_get_gtkconv_at_index(win, curconv - 1))
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), -1);
+				else
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), curconv - 1);
+				return TRUE;
+				break;
+
+			case GDK_Tab:
+			case GDK_ISO_Left_Tab:
+				if (event->state & GDK_SHIFT_MASK) {
+					move_to_next_unread_tab(gtkconv, FALSE);
+				} else {
+					move_to_next_unread_tab(gtkconv, TRUE);
+				}
+
+				return TRUE;
+				break;
+
+			case GDK_comma:
+				gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook),
+						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), curconv),
+						curconv - 1);
+				break;
+
+			case GDK_period:
+				gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook),
+						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), curconv),
+#if GTK_CHECK_VERSION(2,2,0)
+						(curconv + 1) % gtk_notebook_get_n_pages(GTK_NOTEBOOK(win->notebook)));
+#else
+						(curconv + 1) % g_list_length(GTK_NOTEBOOK(win->notebook)->children));
+#endif
+				break;
+
 		} /* End of switch */
 	}
 
 	/* If ALT (or whatever) was held down... */
-	else if (event->state & GDK_MOD1_MASK) 	{
+	else if (event->state & GDK_MOD1_MASK)
+	{
+		if (event->keyval > '0' && event->keyval <= '9')
+		{
+			guint switchto = event->keyval - '1';
+			if (switchto < pidgin_conv_window_get_gtkconv_count(win))
+				gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), switchto);
 
+			return TRUE;
+		}
 	}
 
 	/* If neither CTRL nor ALT were held down... */
-	else {
-		switch (event->keyval) {
-		case GDK_Tab:
-			if (gtkconv->entry != entry)
+	else
+	{
+		switch (event->keyval)
+		{
+			case GDK_Tab:
+				if (gtkconv->entry != entry)
+					break;
+				return tab_complete(conv);
 				break;
-			return tab_complete(conv);
-			break;
 
-		case GDK_Page_Up:
-			gtk_imhtml_page_up(GTK_IMHTML(gtkconv->imhtml));
-			return TRUE;
-			break;
+			case GDK_Page_Up:
+				gtk_imhtml_page_up(GTK_IMHTML(gtkconv->imhtml));
+				return TRUE;
+				break;
 
-		case GDK_Page_Down:
-			gtk_imhtml_page_down(GTK_IMHTML(gtkconv->imhtml));
-			return TRUE;
-			break;
+			case GDK_Page_Down:
+				gtk_imhtml_page_down(GTK_IMHTML(gtkconv->imhtml));
+				return TRUE;
+				break;
 
 		}
 	}
@@ -2071,7 +2035,6 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 
 	/* If we have a valid key for the conversation display, then exit */
 	if ((event->state & GDK_CONTROL_MASK) ||
-		(event->keyval == GDK_F6) ||
 		(event->keyval == GDK_F10) ||
 		(event->keyval == GDK_Shift_L) ||
 		(event->keyval == GDK_Shift_R) ||
@@ -2082,17 +2045,11 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 		(event->keyval == GDK_Down) ||
 		(event->keyval == GDK_Left) ||
 		(event->keyval == GDK_Right) ||
-		(event->keyval == GDK_Page_Up) ||
-		(event->keyval == GDK_Page_Down) ||
 		(event->keyval == GDK_Home) ||
 		(event->keyval == GDK_End) ||
 		(event->keyval == GDK_Tab) ||
 		(event->keyval == GDK_ISO_Left_Tab))
-	{
-		if (event->type == GDK_KEY_PRESS)
-			return conv_keypress_common(gtkconv, event);
-		return FALSE;
-	}
+			return FALSE;
 
 	if (event->type == GDK_KEY_RELEASE)
 		gtk_widget_grab_focus(gtkconv->entry);
@@ -8111,9 +8068,13 @@ alias_cb(GtkEntry *entry, gpointer user_data)
 }
 
 static gboolean
-tabby_alias_entry(PidginConversation *gtkconv)
+alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConversation *gtkconv)
 {
 	GtkWidget *entry = NULL;
+
+	if (event->button != 1 || event->type != GDK_2BUTTON_PRESS) {
+		return FALSE;
+	}
 
 	if (!GTK_WIDGET_VISIBLE(gtkconv->tab_label)) {
 		/* There's already an entry for alias. Let's not create another one. */
@@ -8146,26 +8107,7 @@ tabby_alias_entry(PidginConversation *gtkconv)
 	gtk_widget_hide(gtkconv->tab_label);
 	gtk_widget_grab_focus(entry);
 
-	return TRUE;
-}
-
-static gboolean
-alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConversation *gtkconv)
-{
-	if (event->button != 1 || event->type != GDK_2BUTTON_PRESS) {
-		return FALSE;
-	}
-	
-	tabby_alias_entry(gtkconv);
 	return FALSE;
-}
-
-static gboolean
-window_keypress_cb(GtkWidget *widget, GdkEventKey *event, PidginWindow *win)
-{
-	PidginConversation *gtkconv = pidgin_conv_window_get_active_gtkconv(win);
-
-	return conv_keypress_common(gtkconv, event);
 }
 
 static void
@@ -8337,11 +8279,6 @@ pidgin_conv_window_new()
 			 G_CALLBACK(gtk_conv_configure_cb), NULL);
 	g_signal_connect(G_OBJECT(win->window), "focus_in_event",
 	                 G_CALLBACK(focus_win_cb), win);
-
-	/* Intercept keystrokes from the menu items */
-	g_signal_connect(G_OBJECT(win->window), "key_press_event",
-					 G_CALLBACK(window_keypress_cb), win);
-	
 
 	/* Create the notebook. */
 	win->notebook = gtk_notebook_new();

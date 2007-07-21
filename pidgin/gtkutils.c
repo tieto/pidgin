@@ -2097,9 +2097,8 @@ repopulate_autocomplete(gpointer something, gpointer data)
 	add_completion_list(data);
 }
 
-
 void
-pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data)
+pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gboolean all)
 {
 	gpointer cb_data = NULL;
 
@@ -2172,30 +2171,6 @@ pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, Pi
 
 	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(screenname_autocomplete_destroyed_cb), data);
 }
-
-gboolean
-pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *completion_entry, gpointer all_accounts) {
-	gboolean all = GPOINTER_TO_INT(all_accounts);
-
-	if (completion_entry->is_buddy) {
-		return all || purple_account_is_connected(completion_entry->entry.buddy->account);
-	} else {
-		return all || (completion_entry->entry.logged_buddy->account != NULL && purple_account_is_connected(completion_entry->entry.logged_buddy->account));
-	}
-}
-
-
-gboolean
-pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *completion_entry, gpointer all_accounts) {
-	gboolean all = GPOINTER_TO_INT(all_accounts);
-
-	if (completion_entry->is_buddy) {
-		return all || purple_account_is_connected(completion_entry->entry.buddy->account);
-	} else {
-		return all || (completion_entry->entry.logged_buddy->account != NULL && purple_account_is_connected(completion_entry->entry.logged_buddy->account));
-	}
-}
-
 
 void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
 {
