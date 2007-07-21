@@ -38,25 +38,34 @@
 #include "myspace.h"
 
 
-/* Based on Miranda plugin by Scott Ellis, formatting.cpp, 
+/* Loosely based on Miranda plugin by Scott Ellis, formatting.cpp, 
  * https://server.scottellis.com.au/websvn/filedetails.php?repname=Miranda+Plugins&path=%2FMySpace%2Fformatting.cpp&rev=0&sc=0 */
 
+/* The names in in emoticon_names (for <i n=whatever>) map to corresponding 
+ * entries in emoticon_symbols (for the ASCII representation of the emoticon).
+ */
 static const char *emoticon_names[] = {
-    "bigsmile", "growl", "mad", "scared", "tongue", 
-    "devil", "happy", "messed", "sidefrown", "upset", 
-    "frazzled", "heart", "nerd", "sinister", "wink", /* wink doesn't work */
-    "geek", "laugh", "oops", "smirk", "worried", 
+    "bigsmile", "growl", "growl", "mad", "scared", "scared", "tongue", "tongue",
+    "devil", "devil", "happy", "happy", "happi", 
+    "messed", "sidefrown", "upset", 
+    "frazzled", "heart", "heart", "nerd", "sinister", "wink", "winc",
+    "geek", "laugh", "laugh", "oops", "smirk", "worried", "worried",
     "googles", "mohawk", "pirate", "straight", "kiss",
-    "happi" /* ??? */,
     NULL};
 
+/* Multiple emoticon symbols in Pidgin can map to one name. List the
+ * canonical form, as inserted by the "Smile!" dialog, first. For example,
+ * :) comes before :-), because although both are recognized as 'happy',
+ * the first is inserted by the smiley button. 
+ *
+ * Note that symbols are case-sensitive in Pidgin -- :-X is not :-x. */
 static const char *emoticon_symbols[] = {
-    ":D", ">:o", ":-[", "=-O", ":P", 
-    "O:-)" /*:)*/, ":)", "8-)", ":-$", ":-$", 
-    ":-/", ";-)", "8-)" /*:)*/, ":-D", ";-)",
-    ":-X", ":-D", ":'(", "8-)", ":-(", 
+    ":D", ">:o", ">:O", ":-[", "=-O", "=-o", ":P",  ":p",
+    "O:-)", "o:-)", ":)", ":-)", ":-)",
+    "8-)", ":-$", ":-$", 
+    ":-/", ";-)", ";)", "8-)" /*:)*/, ":-D", ";-)", ";-)",
+    ":-X", ":-D", ":-d", ":'(", "8-)", ":-(", ":(",
     "8-)", ":-X", ":-)", ":-!", ":-*",
-    ":-)",
     NULL};
 
 /** 
