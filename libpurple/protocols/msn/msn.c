@@ -536,49 +536,18 @@ msn_status_text(PurpleBuddy *buddy)
 {
 	PurplePresence *presence;
 	PurpleStatus *status;
-	const char *msg, *name, *cmedia;
-	char *psm_str, *tmp2, *text;
+	const char *msg, *cmedia;
 
 	presence = purple_buddy_get_presence(buddy);
 	status = purple_presence_get_active_status(presence);
 
 	msg = purple_status_get_attr_string(status, "message");
-	cmedia=purple_status_get_attr_string(status, "currentmedia");
+	cmedia = purple_status_get_attr_string(status, "currentmedia");
 
-	if (!purple_presence_is_available(presence) && !purple_presence_is_idle(presence)){
-		name = purple_status_get_name(status);
-	}else{
-		name = NULL;
-	}
-
-	if (cmedia != NULL) {
-		if(name) {
-			tmp2 = g_strdup_printf("%s - %s", name, cmedia);
-			text = g_markup_escape_text(tmp2, -1);
-		} else {
-			text = g_markup_escape_text(cmedia, -1);
-		}
-		return text;
-	} else if (msg != NULL) {
-		tmp2 = purple_markup_strip_html(msg);
-		if (name){
-			psm_str = g_strdup_printf("%s - %s", name, tmp2);
-			g_free(tmp2);
-		}else{
-			psm_str = tmp2;
-		}
-		text = g_markup_escape_text(psm_str, -1);
-		g_free(psm_str);
-		return text;
-	} else {
-		if (!purple_presence_is_available(presence) && !purple_presence_is_idle(presence)){
-			psm_str = g_strdup(purple_status_get_name(status));
-			text = g_markup_escape_text(psm_str, -1);
-			g_free(psm_str);
-			return text;
-		}
-	}
-
+	if (cmedia)
+		return g_markup_escape_text(cmedia, -1);
+	else if (msg)
+		return g_markup_escape_text(msg, -1);
 	return NULL;
 }
 
