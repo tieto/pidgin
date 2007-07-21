@@ -672,7 +672,7 @@ pidgin_notify_searchresults_new_rows(PurpleConnection *gc, PurpleNotifySearchRes
 
 		for (j = 1; j < col_num; j++) {
 			GValue v;
-			char *escaped = g_markup_escape_text(g_list_nth_data(row, j - 1), -1);
+			char *escaped = g_list_nth_data(row, j - 1);
 
 			v.g_type = 0;
 			g_value_init(&v, G_TYPE_STRING);
