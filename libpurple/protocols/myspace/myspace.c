@@ -132,6 +132,107 @@ msim_status_types(PurpleAccount *acct)
     return types;
 }
 
+/** Zap someone. Callback from msim_blist_node_menu zap menu. */
+void
+msim_send_zap(PurpleBlistNode *node, gpointer zap_num_ptr)
+{
+    PurpleBuddy *buddy;
+    PurpleConnection *gc;
+    MsimSession *session;
+    gchar *username, *zap_string, *zap_text;
+    guint zap;
+    const gchar *zap_gerund[10];
+
+    if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+    {
+        /* Only know about buddies for now. */
+        return;
+    }
+
+    zap_gerund[0] = _("Zapping");
+    zap_gerund[1] = _("Whacking");
+    zap_gerund[2] = _("Torching");
+    zap_gerund[3] = _("Smooching");
+    zap_gerund[4] = _("Hugging");
+    zap_gerund[5] = _("Bslapping");
+    zap_gerund[6] = _("Goosing");
+    zap_gerund[7] = _("Hi-fiving");
+    zap_gerund[8] = _("Punking");
+    zap_gerund[9] = _("Raspberry'ing");
+ 
+    g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+
+    buddy = (PurpleBuddy *)node;
+    gc = purple_account_get_connection(buddy->account);
+    g_return_if_fail(gc != NULL);
+
+    session = (MsimSession *)(gc->proto_data);
+    g_return_if_fail(session != NULL);
+
+    username = buddy->name;
+    g_return_if_fail(username != NULL);
+
+    zap = GPOINTER_TO_INT(zap_num_ptr);
+    zap_string = g_strdup_printf("!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", zap);
+    zap_text = g_strdup_printf("*** %s! ***", zap_gerund[zap]);
+
+    serv_got_im(session->gc, username, zap_text, 
+			PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_SYSTEM, time(NULL));
+
+	if (!msim_send_bm(session, username, zap_string, MSIM_BM_ACTION))
+    {
+        purple_debug_info("msim_send_zap", "msim_send_bm failed: zapping %s with %s",
+                username, zap_string);
+    }
+
+    g_free(zap_string);
+    g_free(zap_text);
+    return;
+}
+
+
+/** Return menu, if any, for a buddy list node. */
+GList *
+msim_blist_node_menu(PurpleBlistNode *node)
+{
+    GList *menu, *zap_menu;
+    PurpleMenuAction *act;
+    const gchar *zap_names[10];
+    guint i;
+
+    if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+    {
+        /* Only know about buddies for now. */
+        return NULL;
+    }
+
+    /* Names from official client. */
+    zap_names[0] = _("zap");
+    zap_names[1] = _("whack");
+    zap_names[2] = _("torch");
+    zap_names[3] = _("smooch");
+    zap_names[4] = _("hug");
+    zap_names[5] = _("bslap");
+    zap_names[6] = _("goose");
+    zap_names[7] = _("hi-five");
+    zap_names[8] = _("punk'd");
+    zap_names[9] = _("raspberry");
+ 
+    menu = zap_menu = NULL;
+
+    for (i = 0; i < sizeof(zap_names) / sizeof(zap_names[0]); ++i)
+    {
+        act = purple_menu_action_new(zap_names[i], PURPLE_CALLBACK(msim_send_zap),
+                GUINT_TO_POINTER(i), NULL);
+        zap_menu = g_list_append(zap_menu, act);
+    }
+
+    act = purple_menu_action_new(_("Zap"), NULL, NULL, zap_menu);
+    menu = g_list_append(menu, act);
+
+    return menu;
+}
+
 /**
  * Return the icon name for a buddy and account.
  *
@@ -1304,13 +1405,7 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 {
     gchar *msg_text, *username, *zap_text;
     gint zap;
-    /* Names from official client dropdown menu. */
-    static const gchar *zap_names[] = 
-    {
-        "zap", "whack", "torch", "smooch", "hug", "bslap", "goose",
-        "hi-five", "punk'd", "raspberry"
-    };
-    const gchar *zap_past_tense[sizeof(zap_names) / sizeof(zap_names[0])];
+    const gchar *zap_past_tense[10];
 
     zap_past_tense[0] = _("zapped");
     zap_past_tense[1] = _("whacked");
@@ -1333,7 +1428,7 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 
     zap = CLAMP(zap, 0, sizeof(zap_past_tense) / sizeof(zap_past_tense[0]));
 
-    zap_text = g_strdup_printf(_("You have been %s!"), zap_past_tense[zap]);
+    zap_text = g_strdup_printf(_("*** You have been %s! ***"), zap_past_tense[zap]);
 
     serv_got_im(session->gc, username, zap_text, 
 			PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_SYSTEM, time(NULL));
@@ -3369,7 +3464,7 @@ PurplePluginProtocolInfo prpl_info =
     msim_status_text,  /* status_text */
     msim_tooltip_text, /* tooltip_text */
     msim_status_types, /* status_types */
-    NULL,              /* blist_node_menu */
+    msim_blist_node_menu,  /* blist_node_menu */
     NULL,              /* chat_info */
     NULL,              /* chat_info_defaults */
     msim_login,        /* login */

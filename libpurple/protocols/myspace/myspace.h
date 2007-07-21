@@ -202,6 +202,10 @@ typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, MsimMessage *userinfo,
 /* Functions */
 gboolean msim_load(PurplePlugin *plugin);
 GList *msim_status_types(PurpleAccount *acct);
+
+void msim_send_zap(PurpleBlistNode *node, gpointer zap_num_ptr);
+GList *msim_blist_node_menu(PurpleBlistNode *node);
+
 const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy);
 
 /* TODO: move these three functions to message.c/h */
