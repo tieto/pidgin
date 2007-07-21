@@ -1670,7 +1670,7 @@ populate_status_dropdown()
 	}
 
 	/* Now the popular statuses */
-	for (iter = purple_savedstatuses_get_popular(6); iter; iter = iter->next)
+	for (iter = purple_savedstatuses_get_popular(6); iter; iter = g_list_delete_link(iter, iter))
 	{
 		item = g_new0(StatusBoxItem, 1);
 		item->type = STATUS_SAVED_POPULAR;
