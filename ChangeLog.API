@@ -106,6 +106,8 @@ version 2.1.0 (??/??/????):
 			* gnt_tree_set_column_width_ratio
 			* gnt_tree_set_column_resizable
 			* gnt_tree_set_column_is_right_aligned
+			* gnt_tree_set_search_function, gnt_tree_set_search_column,
+			  gnt_tree_is_searching
 			* 'file-selected' signal is emited for GntFileSel
 			* gnt_style_parse_bool
 			* gnt_util_set_trigger_widget

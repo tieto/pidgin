@@ -74,15 +74,7 @@ static void
 gnt_widget_dispose(GObject *obj)
 {
 	GntWidget *self = GNT_WIDGET(obj);
-
-	if(!(GNT_WIDGET_FLAGS(self) & GNT_WIDGET_DESTROYING)) {
-		GNT_WIDGET_SET_FLAGS(self, GNT_WIDGET_DESTROYING);
-
-		g_signal_emit(self, signals[SIG_DESTROY], 0);
-
-		GNT_WIDGET_UNSET_FLAGS(self, GNT_WIDGET_DESTROYING);
-	}
-
+	g_signal_emit(self, signals[SIG_DESTROY], 0);
 	parent_class->dispose(obj);
 	GNTDEBUG;
 }
@@ -320,10 +312,12 @@ gnt_widget_destroy(GntWidget *obj)
 {
 	g_return_if_fail(GNT_IS_WIDGET(obj));
 
-	gnt_widget_hide(obj);
-	delwin(obj->window);
-	if(!(GNT_WIDGET_FLAGS(obj) & GNT_WIDGET_DESTROYING))
+	if(!(GNT_WIDGET_FLAGS(obj) & GNT_WIDGET_DESTROYING)) {
+		GNT_WIDGET_SET_FLAGS(obj, GNT_WIDGET_DESTROYING);
+		gnt_widget_hide(obj);
+		delwin(obj->window);
 		g_object_run_dispose(G_OBJECT(obj));
+	}
 	GNTDEBUG;
 }
 
@@ -399,7 +393,8 @@ gnt_widget_key_pressed(GntWidget *widget, const char *keys)
 	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_CAN_TAKE_FOCUS))
 		return FALSE;
 
-	if (gnt_bindable_perform_action_key(GNT_BINDABLE(widget), keys))
+	if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_DISABLE_ACTIONS) &&
+			gnt_bindable_perform_action_key(GNT_BINDABLE(widget), keys))
 		return TRUE;
 
 	keys = gnt_bindable_remap_keys(GNT_BINDABLE(widget), keys);

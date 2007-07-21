@@ -200,8 +200,26 @@ gpointer gnt_tree_get_selection_data(GntTree *tree);
  * @param tree  The tree
  *
  * @return  The text, which needs to be freed by the caller
+ * @see gnt_tree_get_row_text_list
+ * @see gnt_tree_get_selection_text_list
  */
 char * gnt_tree_get_selection_text(GntTree *tree);
+
+/**
+ * Get a list of text for a row.
+ *
+ * @param tree  The tree
+ * @param key   A key corresponding to the row in question. If key
+ *              is @c NULL, the text list for the selected row will
+ *              be returned.
+ *
+ * @return A list of texts of a row. The list and its data should be
+ *         freed by the caller. The caller should make sure that if
+ *         any column of the tree contains binary data, it's not freed.
+ * @see gnt_tree_get_selection_text_list 
+ * @see gnt_tree_get_selection_text
+ */
+GList * gnt_tree_get_row_text_list(GntTree *tree, gpointer key);
 
 /**
  * Get a list of text of the current row.
@@ -209,7 +227,11 @@ char * gnt_tree_get_selection_text(GntTree *tree);
  * @param tree  The tree
  *
  * @return A list of texts of the currently selected row. The list
- *         and its data should be freed by the caller.
+ *         and its data should be freed by the caller. The caller
+ *         should make sure that if any column of the tree contains
+ *         binary data, it's not freed.
+ * @see gnt_tree_get_row_text_list
+ * @see gnt_tree_get_selection_text
  */
 GList * gnt_tree_get_selection_text_list(GntTree *tree);
 
@@ -515,6 +537,19 @@ void gnt_tree_set_search_column(GntTree *tree, int col);
  * @return  @c TRUE if the user is searching, @c FALSE otherwise.
  */
 gboolean gnt_tree_is_searching(GntTree *tree);
+
+/**
+ * Set a custom search function.
+ *
+ * @param tree  The tree
+ * @param func  The custom search function. The search function is
+ *              sent the tree itself, the key of a row, the search
+ *              string and the content of row in the search column.
+ *              If the function returns @c TRUE, the row is dislayed,
+ *              otherwise it's not.
+ */
+void gnt_tree_set_search_function(GntTree *tree,
+		gboolean (*func)(GntTree *tree, gpointer key, const char *search, const char *current));
 
 G_END_DECLS
 
