@@ -246,6 +246,7 @@ gboolean msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg);
 gboolean msim_incoming_bm(MsimSession *session, MsimMessage *msg);
 gboolean msim_incoming_status(MsimSession *session, MsimMessage *msg);
 gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg);
+gboolean msim_incoming_zap(MsimSession *session, MsimMessage *msg);
 gboolean msim_incoming_action(MsimSession *session, MsimMessage *msg);
 gboolean msim_incoming_media(MsimSession *session, MsimMessage *msg);
 gboolean msim_incoming_unofficial_client(MsimSession *session, MsimMessage *msg);

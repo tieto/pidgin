@@ -1298,6 +1298,53 @@ msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
     }
 }
 
+/** Process an incoming zap. */
+gboolean
+msim_incoming_zap(MsimSession *session, MsimMessage *msg)
+{
+    gchar *msg_text, *username, *zap_text;
+    gint zap;
+    /* Names from official client dropdown menu. */
+    static const gchar *zap_names[] = 
+    {
+        "zap", "whack", "torch", "smooch", "hug", "bslap", "goose",
+        "hi-five", "punk'd", "raspberry"
+    };
+    const gchar *zap_past_tense[sizeof(zap_names) / sizeof(zap_names[0])];
+
+    zap_past_tense[0] = _("zapped");
+    zap_past_tense[1] = _("whacked");
+    zap_past_tense[2] = _("torched");
+    zap_past_tense[3] = _("smooched");
+    zap_past_tense[4] = _("hugged");
+    zap_past_tense[5] = _("bslapped");
+    zap_past_tense[6] = _("goosed");
+    zap_past_tense[7] = _("hi-fived");
+    zap_past_tense[8] = _("punk'd");
+    zap_past_tense[9] = _("raspberried");
+
+    msg_text = msim_msg_get_string(msg, "msg");
+    username = msim_msg_get_string(msg, "_username");
+
+    g_return_val_if_fail(msg_text != NULL, FALSE);
+    g_return_val_if_fail(username != NULL, FALSE);
+
+    g_return_val_if_fail(sscanf(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", &zap) == 1, FALSE);
+
+    zap = CLAMP(zap, 0, sizeof(zap_past_tense) / sizeof(zap_past_tense[0]));
+
+    zap_text = g_strdup_printf(_("You have been %s!"), zap_past_tense[zap]);
+
+    serv_got_im(session->gc, username, zap_text, 
+			PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_SYSTEM, time(NULL));
+
+    g_free(zap_text);
+    g_free(msg_text);
+    g_free(username);
+
+    return TRUE;
+}
+
 /**
  * Handle an incoming action message.
  *
@@ -1306,7 +1353,6 @@ msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
  *
  * @return TRUE if successful.
  *
- * UNTESTED
  */
 gboolean 
 msim_incoming_action(MsimSession *session, MsimMessage *msg)
@@ -1336,6 +1382,8 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	} else if (strcmp(msg_text, "%stoptyping%") == 0) {
 		serv_got_typing_stopped(session->gc, username);
 		rc = TRUE;
+    } else if (strstr(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_")) {
+        rc = msim_incoming_zap(session, msg);
 	} else {
 		msim_unrecognized(session, msg, 
                 "got to msim_incoming_action but unrecognized value for 'msg'");
