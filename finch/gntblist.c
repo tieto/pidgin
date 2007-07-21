@@ -98,7 +98,7 @@ typedef struct
 	} u;
 } StatusBoxItem;
 
-FinchBlist *ggblist;
+static FinchBlist *ggblist;
 
 static void add_buddy(PurpleBuddy *buddy, FinchBlist *ggblist);
 static void add_contact(PurpleContact *contact, FinchBlist *ggblist);
