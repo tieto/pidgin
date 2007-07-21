@@ -145,8 +145,8 @@ void gnt_style_read_workspaces(GntWM *wm)
 		int j;
 		GntWS *ws;
 		gchar **titles;
-		char *group = calloc(12, 1);
-		g_sprintf(group, "Workspace-%d", i);
+		char group[32];
+		g_snprintf(group, sizeof(group), "Workspace-%d", i);
 		name = g_key_file_get_value(gkfile, group, "name", NULL);
 		if (!name)
 			return;
@@ -168,7 +168,6 @@ void gnt_style_read_workspaces(GntWM *wm)
 				g_hash_table_replace(wm->title_places, g_strdup(titles[j]), ws);
 			g_strfreev(titles);
 		}
-		g_free(group);
 	}
 #endif
 }
