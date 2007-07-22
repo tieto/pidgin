@@ -380,7 +380,10 @@ flap_connection_destroy_cb(gpointer data)
 	{
 		/* No more FLAP connections!  Sign off this PurpleConnection! */
 		gchar *tmp;
-		if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
+		if (conn->disconnect_code == 0x0001) {
+			tmp = g_strdup(_("You have signed on from another location."));
+			od->gc->wants_to_die = TRUE;
+		} else if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
 			tmp = g_strdup(_("Server closed the connection."));
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_LOST_CONNECTION)
 			tmp = g_strdup_printf(_("Lost connection with server:\n%s"),

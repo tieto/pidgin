@@ -3474,15 +3474,7 @@ static int purple_connerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 
 	g_return_val_if_fail(conn != NULL, 1);
 
-	if (conn->type == SNAC_FAMILY_LOCATE) {
-		if (code == 0x0001) {
-			gc->wants_to_die = TRUE;
-			purple_connection_error(gc, _("You have signed on from another location."));
-		} else {
-			purple_connection_error(gc, _("You have been signed off for an unknown reason."));
-		}
-		od->killme = TRUE;
-	} else if (conn->type == SNAC_FAMILY_CHAT) {
+	if (conn->type == SNAC_FAMILY_CHAT) {
 		struct chat_connection *cc;
 		PurpleConversation *conv;
 
@@ -3491,6 +3483,11 @@ static int purple_connerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 
 		if (conv != NULL)
 		{
+			/*
+			 * TOOD: Have flap_connection_destroy_cb() send us the
+			 *       error message stored in 'tmp', which should be
+			 *       human-friendly, and print that to the chat room.
+			 */
 			gchar *buf;
 			buf = g_strdup_printf(_("You have been disconnected from chat "
 									"room %s."), cc->name);
