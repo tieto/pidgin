@@ -54,16 +54,34 @@ MsimMessage *msim_msg_insert_before(MsimMessage *msg, const gchar *name_before, 
 void msim_msg_dump(const char *fmt_string, MsimMessage *msg);
 gchar *msim_msg_pack(MsimMessage *msg);
 
+GList *msim_msg_list_copy(GList *old);
+void msim_msg_list_free(GList *l);
+GList *msim_msg_list_parse(const gchar *raw);
+
 /* Defined in myspace.h */
 struct _MsimSession;
 
-gboolean msim_send(struct _MsimSession *session, ...) 
+/* Based on http://permalink.gmane.org/gmane.comp.parsers.sparse/695 
+ * Define macros for useful gcc attributes. */
 #ifdef __GNUC__
-	/* Cause gcc to emit "a missing sentinel in function call" if forgot
-	 * to write NULL as last, terminating parameter. */
-	__attribute__((__sentinel__(0)))
-#endif
-	;
+#define GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__)
+#define FORMAT_ATTR(pos) __attribute__ ((__format__ (__printf__, pos, pos+1)))
+#define NORETURN_ATTR __attribute__ ((__noreturn__))
+/* __sentinel__ attribute was introduced in gcc 3.5 */
+#if (GCC_VERSION >= 3005)
+  #define SENTINEL_ATTR __attribute__ ((__sentinel__(0)))
+#else
+ #define SENTINEL_ATTR
+#endif /* gcc >= 3.5 */
+#else
+  #define FORMAT_ATTR(pos)
+  #define NORETURN_ATTR
+  #define SENTINEL_ATTR
+#endif 
+
+/* Cause gcc to emit "a missing sentinel in function call" if forgot
+ * to write NULL as last, terminating parameter. */
+gboolean msim_send(struct _MsimSession *session, ...) SENTINEL_ATTR;
 
 gboolean msim_msg_send(struct _MsimSession *session, MsimMessage *msg);
 
@@ -72,6 +90,7 @@ GHashTable *msim_parse_body(const gchar *body_str);
 
 MsimMessageElement *msim_msg_get(MsimMessage *msg, const gchar *name);
 gchar *msim_msg_get_string(MsimMessage *msg, const gchar *name);
+GList *msim_msg_get_list(MsimMessage *msg, const gchar *name);
 guint msim_msg_get_integer(MsimMessage *msg, const gchar *name);
 gboolean msim_msg_get_binary(MsimMessage *msg, const gchar *name, gchar **binary_data, gsize *binary_length);
 

@@ -62,6 +62,7 @@ msim_msg_new_v(va_list argp)
 	gchar *key, *value;
 	MsimMessageType type;
 	GString *gs;
+    GList *gl;
 	MsimMessage *msg;
 
 	/* Begin with an empty message. */
@@ -103,6 +104,13 @@ msim_msg_new_v(va_list argp)
 				msg = msim_msg_append(msg, key, type, gs);
 				break;
 
+            case MSIM_TYPE_LIST:
+                gl = va_arg(argp, GList *);
+
+                g_return_val_if_fail(gl != NULL, FALSE);
+
+                msg = msim_msg_append(msg, key, type, gl);
+
 			default:
 				purple_debug_info("msim", "msim_send: unknown type %d\n", type);
 				break;
@@ -113,6 +121,55 @@ msim_msg_new_v(va_list argp)
 	return msg;
 }
 
+/** Perform a deep copy on a GList * of gchar * strings. Free with msim_msg_list_free(). */
+GList *
+msim_msg_list_copy(GList *old)
+{
+    GList *new_list;
+
+    new_list = NULL;
+
+    /* Deep copy (g_list_copy is shallow). Copy each string. */
+    for (; old != NULL; old = g_list_next(old))
+    {
+        new_list = g_list_append(new_list, g_strdup(old->data));
+    }
+
+    return new_list;
+}
+
+/** Free a GList * of gchar * strings. */
+void
+msim_msg_list_free(GList *l)
+{
+
+    for (; l != NULL; l = g_list_next(l))
+    {
+        g_free((gchar *)(l->data));
+    }
+    g_list_free(l);
+}
+
+/** Parse a |-separated string into a new GList. Free with msim_msg_list_free(). */
+GList *
+msim_msg_list_parse(const gchar *raw)
+{
+    gchar **array;
+    GList *list;
+    guint i;
+
+    array = g_strsplit(raw, "|", 0);
+    list = NULL;
+    
+    for (i = 0; array[i] != NULL; ++i)
+    {
+        list = g_list_append(list, g_strdup(array[i]));
+    }
+
+    g_strfreev(array);
+
+    return list;
+}
 
 /** Clone an individual element.
  *
@@ -140,6 +197,10 @@ msim_msg_clone_element(gpointer data, gpointer user_data)
 		case MSIM_TYPE_STRING:
 			new_data = g_strdup((gchar *)elem->data);
 			break;
+
+        case MSIM_TYPE_LIST:
+            new_data = (gpointer)msim_msg_list_copy((GList *)(elem->data));
+            break;
 
 		case MSIM_TYPE_BINARY:
 			{
@@ -216,7 +277,7 @@ msim_msg_free_element(gpointer data, gpointer user_data)
 			break;
 			
 		case MSIM_TYPE_LIST:
-			/* TODO: free list */
+            g_list_free((GList *)elem->data);
 			break;
 
 		default:
@@ -236,6 +297,8 @@ msim_msg_free(MsimMessage *msg)
 		/* already free as can be */
 		return;
 	}
+
+    msim_msg_dump("msim_msg_free: freeing %s", msg);
 
 	g_list_foreach(msg, msim_msg_free_element, NULL);
 	g_list_free(msg);
@@ -334,7 +397,7 @@ msim_msg_element_new(const gchar *name, MsimMessageType type, gpointer data)
  *
  * * MSIM_TYPE_DICTIONARY: TODO
  *
- * * MSIM_TYPE_LIST: TODO
+ * * MSIM_TYPE_LIST: GList * of gchar *. Again, everything will be freed.
  *
  * */
 MsimMessage *
@@ -449,8 +512,23 @@ msim_msg_debug_string_element(gpointer data, gpointer user_data)
 			break;
 			
 		case MSIM_TYPE_LIST:
-			/* TODO: provide human-readable output of list. */
-			string = g_strdup_printf("%s(list): TODO", elem->name);
+            {
+                GString *gs;
+                GList *gl;
+                guint i;
+
+                gs = g_string_new("");
+                g_string_append_printf(gs, "%s(list): \n", elem->name);
+
+                i = 0;
+                for (gl = (GList *)elem->data; gl != NULL; gl = g_list_next(gl))
+                {
+                    g_string_append_printf(gs, " %d. %s\n", i, (gchar *)(gl->data));
+                    ++i;
+                }
+                
+                string = gs->str;
+            }
 			break;
 
 		default:
@@ -528,8 +606,20 @@ msim_msg_pack_element_data(MsimMessageElement *elem)
 			return NULL;
 			
 		case MSIM_TYPE_LIST:
-			/* TODO: pack using a|b|c|d|... */
-			return NULL;
+			/* Pack using a|b|c|d|... */
+            {
+                GString *gs;
+                GList *gl;
+
+                gs = g_string_new("");
+
+                for (gl = (GList *)elem->data; gl != NULL; gl = g_list_next(gl))
+                {
+                    g_string_append_printf(gs, "%s|", (gchar*)(gl->data));
+                }
+                
+                return gs->str;
+            }
 
 		default:
 			purple_debug_info("msim", "field %s, unknown type %d\n", elem->name, elem->type);
@@ -843,6 +933,31 @@ msim_msg_get_string(MsimMessage *msg, const gchar *name)
 					elem->type, name);
 			return NULL;
 	}
+}
+
+/** Return an element as a new list. Caller frees with msim_msg_list_free(). */
+GList *
+msim_msg_get_list(MsimMessage *msg, const gchar *name)
+{
+    MsimMessageElement *elem;
+
+    elem = msim_msg_get(msg, name);
+    if (!elem)
+        return NULL;
+
+    switch (elem->type)
+    {
+        case MSIM_TYPE_LIST:
+            return msim_msg_list_copy((GList *)(elem->data));
+
+        case MSIM_TYPE_RAW:
+            return msim_msg_list_parse((gchar *)(elem->data));
+
+        default:
+            purple_debug_info("msim_msg_get_list", "type %d unknown, name %s\n",
+                    elem->type, name);
+            return NULL;
+    }
 }
 
 /** Return the data of an element of a given name, as an integer.
