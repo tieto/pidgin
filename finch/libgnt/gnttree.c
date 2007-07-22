@@ -55,7 +55,7 @@ struct _GntTreePriv
 	GString *search;
 	int search_timeout;
 	int search_column;
-	gboolean (*search_func)(GntTree *tree, gpointer key, const char *current);
+	gboolean (*search_func)(GntTree *tree, gpointer key, const char *search, const char *current);
 
 	GCompareFunc compare;
 	int lastvisible;
@@ -162,7 +162,7 @@ row_matches_search(GntTreeRow *row)
 		GntTreeCol *col = (col = g_list_nth_data(row->columns, t->priv->search_column)) ? col : row->columns->data;
 		char *one, *two, *z;
 		if (t->priv->search_func)
-			return t->priv->search_func(t, row->key, col->text);
+			return t->priv->search_func(t, row->key, t->priv->search->str, col->text);
 		one = g_utf8_casefold(col->text, -1);
 		two = g_utf8_casefold(t->priv->search->str, -1);
 		z = strstr(one, two);
@@ -804,6 +804,8 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 			redraw_tree(tree);
 			g_source_remove(tree->priv->search_timeout);
 			tree->priv->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
+		} else {
+			gnt_bindable_perform_action_key(GNT_BINDABLE(tree), text);
 		}
 		return TRUE;
 	} else if (text[0] == ' ' && text[1] == 0) {
@@ -914,6 +916,7 @@ start_search(GntBindable *bindable, GList *list)
 	GntTree *tree = GNT_TREE(bindable);
 	if (tree->priv->search)
 		return FALSE;
+	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(tree), GNT_WIDGET_DISABLE_ACTIONS);
 	tree->priv->search = g_string_new(NULL);
 	tree->priv->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
 	return TRUE;
@@ -925,6 +928,7 @@ end_search_action(GntBindable *bindable, GList *list)
 	GntTree *tree = GNT_TREE(bindable);
 	if (tree->priv->search == NULL)
 		return FALSE;
+	GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(tree), GNT_WIDGET_DISABLE_ACTIONS);
 	end_search(tree);
 	redraw_tree(tree);
 	return TRUE;
@@ -1363,22 +1367,28 @@ char *gnt_tree_get_selection_text(GntTree *tree)
 	return NULL;
 }
 
-GList *gnt_tree_get_selection_text_list(GntTree *tree)
+GList *gnt_tree_get_row_text_list(GntTree *tree, gpointer key)
 {
 	GList *list = NULL, *iter;
+	GntTreeRow *row = key ? g_hash_table_lookup(tree->hash, key) : tree->current;
 	int i;
 
-	if (!tree->current)
+	if (!row)
 		return NULL;
 
-	for (i = 0, iter = tree->current->columns; i < tree->ncol && iter;
+	for (i = 0, iter = row->columns; i < tree->ncol && iter;
 			i++, iter = iter->next)
 	{
 		GntTreeCol *col = iter->data;
-		list = g_list_append(list, g_strdup(col->text));
+		list = g_list_append(list, BINARY_DATA(tree, i) ? col->text : g_strdup(col->text));
 	}
 
 	return list;
+}
+
+GList *gnt_tree_get_selection_text_list(GntTree *tree)
+{
+	return gnt_tree_get_row_text_list(tree, NULL);
 }
 
 void gnt_tree_remove(GntTree *tree, gpointer key)
@@ -1808,7 +1818,7 @@ gboolean gnt_tree_is_searching(GntTree *tree)
 }
 
 void gnt_tree_set_search_function(GntTree *tree,
-		gboolean (*func)(GntTree *tree, gpointer key, const char *current))
+		gboolean (*func)(GntTree *tree, gpointer key, const char *search, const char *current))
 {
 	tree->priv->search_func = func;
 }

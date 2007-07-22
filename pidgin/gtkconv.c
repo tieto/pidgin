@@ -83,9 +83,10 @@ typedef  enum
 }PidginConvFields;
 
 enum {
-	ICON_COLUMN,
-	TEXT_COLUMN,
-	NUM_COLUMNS
+	CONV_ICON_COLUMN,
+	CONV_TEXT_COLUMN,
+	CONV_EMBLEM_COLUMN,
+	CONV_NUM_COLUMNS
 } PidginInfopaneColumns;
 
 #define	PIDGIN_CONV_ALL	((1 << 7) - 1)
@@ -2335,8 +2336,10 @@ update_tab_icon(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv;
 	PidginWindow *win;
+	PurpleBuddy *b;
 	GList *l;
 	GdkPixbuf *status = NULL;
+	GdkPixbuf *emblem = NULL;
 
 	g_return_if_fail(conv != NULL);
 
@@ -2345,7 +2348,11 @@ update_tab_icon(PurpleConversation *conv)
 	if (conv != gtkconv->active_conv)
 		return;
 
+
 	status = pidgin_conv_get_tab_icon(conv, TRUE);
+	b = purple_find_buddy(conv->account, conv->name);
+	if (b)
+		emblem = pidgin_blist_get_emblem((PurpleBlistNode*)b);
 
 	g_return_if_fail(status != NULL);
 
@@ -2354,7 +2361,12 @@ update_tab_icon(PurpleConversation *conv)
 
 	gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model), 
 			&(gtkconv->infopane_iter),
-			ICON_COLUMN, status, -1);
+			CONV_ICON_COLUMN, status, -1);
+
+	gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model), 
+			&(gtkconv->infopane_iter),
+			CONV_EMBLEM_COLUMN, emblem, -1);
+
 
 	if (status != NULL)
 		g_object_unref(status);
@@ -4412,7 +4424,7 @@ setup_common_pane(PidginConversation *gtkconv)
 
 
 	gtkconv->infopane = gtk_cell_view_new();
-	gtkconv->infopane_model = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING);
+	gtkconv->infopane_model = gtk_list_store_new(CONV_NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, GDK_TYPE_PIXBUF);
 	gtk_cell_view_set_model(GTK_CELL_VIEW(gtkconv->infopane), 
 				GTK_TREE_MODEL(gtkconv->infopane_model));
 	gtk_list_store_append(gtkconv->infopane_model, &(gtkconv->infopane_iter));
@@ -4425,17 +4437,22 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, FALSE);
-	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "pixbuf", ICON_COLUMN, NULL);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "pixbuf", CONV_ICON_COLUMN, NULL);
 	g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, TRUE);
-	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "markup", TEXT_COLUMN, NULL);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "markup", CONV_TEXT_COLUMN, NULL);
 	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 
 #if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
+
+	rend = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, FALSE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "pixbuf", CONV_EMBLEM_COLUMN, NULL);
+	g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
 
 	/* Setup the gtkimhtml widget */
 	frame = pidgin_create_imhtml(FALSE, &gtkconv->imhtml, NULL, &imhtml_sw);
@@ -6199,7 +6216,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 						topic ? topic : "");
 		}
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
-				TEXT_COLUMN, markup, -1);
+				CONV_TEXT_COLUMN, markup, -1);
 	
 		if (title != markup)
 			g_free(markup);
