@@ -443,7 +443,6 @@ struct _OscarData
 	GHashTable *buddyinfo;
 	GSList *requesticon;
 
-	gboolean killme;
 	gboolean icq;
 	guint icontimer;
 	guint getblisttimer;

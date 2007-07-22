@@ -1383,7 +1383,6 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		}
 		purple_debug_info("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
 		purple_debug_info("oscar", "Error URL: %s\n", info->errorurl);
-		od->killme = TRUE;
 		return 1;
 	}
 
@@ -1410,7 +1409,6 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	if (newconn->connect_data == NULL)
 	{
 		purple_connection_error(gc, _("Could Not Connect"));
-		od->killme = TRUE;
 		return 0;
 	}
 
@@ -1438,7 +1436,6 @@ purple_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
 	/* Disconnect */
 	gc->wants_to_die = TRUE;
 	purple_connection_error(gc, _("The SecurID key entered is invalid."));
-	od->killme = TRUE;
 }
 
 static int
