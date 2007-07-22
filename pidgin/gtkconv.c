@@ -8448,6 +8448,10 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	win->gtkconvs = g_list_append(win->gtkconvs, gtkconv);
 	gtkconv->win = win;
 
+	if (win->gtkconvs && win->gtkconvs->next && win->gtkconvs->next->next == NULL) 
+		pidgin_conv_tab_pack(win, ((PidginConversation*)win->gtkconvs->data));
+
+
 	/* Close button. */
 	gtkconv->close = gtk_button_new();
 	gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &close_button_width, &close_button_height);
@@ -8517,9 +8521,11 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 		/* Er, bug in notebooks? Switch to the page manually. */
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), 0);
 
-		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), FALSE);
-	} else
+		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), 
+					   purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/tabs"));
+	} else {
 		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), TRUE);
+	}
 
 	focus_gtkconv = g_list_nth_data(pidgin_conv_window_get_gtkconvs(win),
 	                             gtk_notebook_get_current_page(GTK_NOTEBOOK(win->notebook)));
@@ -8545,11 +8551,14 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 		angle = 270;
 
 #if GTK_CHECK_VERSION(2,6,0)
-	if (!angle)
+	if (!angle && pidgin_conv_window_get_gtkconv_count(win) > 1) {
 		g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_END,  NULL);
-	else
+		gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), 6);
+	} else {
 		g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_NONE, NULL);
-	gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), 6);
+		gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), -1);
+	}
+
 	if (tabs_side) {
 		gtk_label_set_width_chars(
 			GTK_LABEL(gtkconv->tab_label),
@@ -8608,7 +8617,9 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 		gtk_notebook_set_tab_label(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, ebox);
 	}
 
-	gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, !tabs_side && !angle, TRUE, GTK_PACK_START);
+	gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, 
+					   !tabs_side && !angle && pidgin_conv_window_get_gtkconv_count(win) > 1, 
+					   TRUE, GTK_PACK_START);
 
 	/* show the widgets */
 /* XXX	gtk_widget_show(gtkconv->icon); */
@@ -8635,13 +8646,14 @@ pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 
 	/* go back to tabless */
 	if (pidgin_conv_window_get_gtkconv_count(win) <= 2) {
-		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), FALSE);
+		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), 
+  					   purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/tabs"));
 	}
 
 	win->gtkconvs = g_list_remove(win->gtkconvs, gtkconv);
 
-	if (!win->gtkconvs || !win->gtkconvs->next)
-		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), FALSE);
+	if (win->gtkconvs && win->gtkconvs->next == NULL)
+		pidgin_conv_tab_pack(win, win->gtkconvs->data);
 
 	if (!win->gtkconvs && win != hidden_convwin)
 		pidgin_conv_window_destroy(win);
