@@ -4328,10 +4328,15 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			
 			tmp2 = purple_markup_strip_html(tmp1);
 			g_free(tmp1);
-			
-			tmp1 = purple_strdup_withhtml(tmp2);
+
+			/* re-escape the entities */
+			tmp1 = g_markup_escape_text(tmp2, -1);
 			g_free(tmp2);
 			
+			tmp2 = purple_strdup_withhtml(tmp1);
+			g_free(tmp1);
+			tmp1 = tmp2;
+
 			purple_plugin_oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
 
 			purple_debug_info("oscar", "Sending %s as %s because the original was too long.",

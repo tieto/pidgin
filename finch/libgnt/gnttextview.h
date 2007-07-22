@@ -47,7 +47,7 @@ typedef struct _GntTextView			GntTextView;
 typedef struct _GntTextViewPriv		GntTextViewPriv;
 typedef struct _GntTextViewClass		GntTextViewClass;
 
-typedef enum {
+typedef enum _GntTextViewFlag {
 	GNT_TEXT_VIEW_NO_SCROLL     = 1 << 0,
 	GNT_TEXT_VIEW_WRAP_CHAR     = 1 << 1,
 } GntTextViewFlag;
@@ -189,6 +189,13 @@ void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget);
  * @param widget
  */
 void gnt_text_view_attach_pager_widget(GntTextView *view, GntWidget *pager);
+
+/**
+ * 
+ * @param view
+ * @param widget
+ */
+void gnt_text_view_attach_editor_widget(GntTextView *view, GntWidget *pager);
 
 /**
  * Set a GntTextViewFlag for the textview widget.

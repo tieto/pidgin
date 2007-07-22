@@ -1337,6 +1337,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 {
 	GString *xhtml = NULL;
 	GString *plain = NULL;
+	GString *url = NULL;
 	GList *tags = NULL, *tag;
 	const char *c = html;
 
@@ -1364,6 +1365,10 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						struct purple_parse_tag *pt = tags->data;
 						if(xhtml)
 							g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
+						if(plain && !strcmp(pt->src_tag, "a")) {
+							/* if this is a link, we have to add the url to the plaintext, too */
+							g_string_append_printf(plain, " <%s>", g_strstrip(url->str));
+						}
 						if(tags == tag)
 							break;
 						tags = g_list_remove(tags, pt);
@@ -1389,7 +1394,6 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					}
 				}
 			} else { /* opening tag */
-				ALLOW_TAG("a");
 				ALLOW_TAG("blockquote");
 				ALLOW_TAG("cite");
 				ALLOW_TAG("div");
@@ -1413,7 +1417,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				ALLOW_TAG("span");
 				ALLOW_TAG("strong");
 				ALLOW_TAG("ul");
-				ALLOW_TAG("img");
+
 				
 				/* we skip <HR> because it's not legal in XHTML-IM.  However,
 				 * we still want to send something sensible, so we put a
@@ -1429,40 +1433,6 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						xhtml = g_string_append(xhtml, "<br/>");
 					if(plain && *c != '\n')
 						plain = g_string_append_c(plain, '\n');
-					continue;
-				}
-				if(!g_ascii_strncasecmp(c, "<img", 4) && (*(c+4) == '>' || *(c+4) == ' ')) {
-					const char *p = c;
-					GString *src = NULL;
-					struct purple_parse_tag *pt;
-					while(*p && *p != '>') {
-						if(!g_ascii_strncasecmp(p, "src=", strlen("src="))) {
-							const char *q = p + strlen("src=");
-							src = g_string_new("");
-							if(*q == '\'' || *q == '\"')
-								q++;
-							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
-								src = g_string_append_c(src, *q);
-								q++;
-							}
-							p = q;
-						}
-						p++;
-					}
-					if ((c = strchr(c, '>')) != NULL)
-						c++;
-					else
-						c = p;
-					pt = g_new0(struct purple_parse_tag, 1);
-					pt->src_tag = "img";
-					pt->dest_tag = "img";
-					tags = g_list_prepend(tags, pt);
-					if(xhtml && src && src->len)
-						g_string_append_printf(xhtml, "<img src='%s' alt=''>", g_strstrip(src->str));
-					else
-						pt->ignore = TRUE;
-					if (src)
-						g_string_free(src, TRUE);
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<b>", 3) || !g_ascii_strncasecmp(c, "<bold>", strlen("<bold>"))) {
@@ -1513,6 +1483,80 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					c = strchr(c, '>') + 1;
 					if(xhtml)
 						xhtml = g_string_append(xhtml, "<span style='vertical-align:super;'>");
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<img", 4) && (*(c+4) == '>' || *(c+4) == ' ')) {
+					const char *p = c;
+					GString *src = NULL, *alt = NULL;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "src=", strlen("src="))) {
+							const char *q = p + strlen("src=");
+							src = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								src = g_string_append_c(src, *q);
+								q++;
+							}
+							p = q;
+						} else if(!g_ascii_strncasecmp(p, "alt=", strlen("alt="))) {
+							const char *q = p + strlen("alt=");
+							alt = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								alt = g_string_append_c(alt, *q);
+								q++;
+							}
+							p = q;
+						}
+						p++;
+					}
+					if ((c = strchr(c, '>')) != NULL)
+						c++;
+					else
+						c = p;
+					/* src and alt are required! */
+					if(src && xhtml)
+						g_string_append_printf(xhtml, "<img src='%s' alt='%s' />", g_strstrip(src->str), alt ? alt->str : "");
+					if(alt) {
+						if(plain)
+							plain = g_string_append(plain, alt->str);
+						if(!src && xhtml)
+							xhtml = g_string_append(xhtml, alt->str);
+					}
+					g_string_free(alt, TRUE);
+					g_string_free(src, TRUE);
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<a", 2) && (*(c+2) == '>' || *(c+2) == ' ')) {
+					const char *p = c;
+					struct purple_parse_tag *pt;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "href=", strlen("href="))) {
+							const char *q = p + strlen("href=");
+							g_string_free(url, TRUE);
+							url = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								url = g_string_append_c(url, *q);
+								q++;
+							}
+							p = q;
+						}
+						p++;
+					}
+					if ((c = strchr(c, '>')) != NULL)
+						c++;
+					else
+						c = p;
+					pt = g_new0(struct purple_parse_tag, 1);
+					pt->src_tag = "a";
+					pt->dest_tag = "a";
+					tags = g_list_prepend(tags, pt);
+					if(xhtml)
+						g_string_append_printf(xhtml, "<a href='%s'>", g_strstrip(url->str));
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
@@ -1696,6 +1740,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 		*xhtml_out = g_string_free(xhtml, FALSE);
 	if(plain_out)
 		*plain_out = g_string_free(plain, FALSE);
+	if(url)
+		g_string_free(url, TRUE);
 }
 
 /* The following are probably reasonable changes:

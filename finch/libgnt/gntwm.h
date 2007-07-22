@@ -41,7 +41,7 @@
 #define GNT_IS_WM_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_WM))
 #define GNT_WM_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_WM, GntWMClass))
 
-typedef enum
+typedef enum _GntKeyPressMode
 {
 	GNT_KP_MODE_NORMAL,
 	GNT_KP_MODE_RESIZE,
@@ -49,7 +49,7 @@ typedef enum
 	GNT_KP_MODE_WAIT_ON_CHILD
 } GntKeyPressMode;
 
-typedef struct
+typedef struct _GntNode
 {
 	GntWidget *me;
 

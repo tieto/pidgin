@@ -222,6 +222,7 @@ gnt_box_size_request(GntWidget *widget)
 				h = maxh;
 		}
 
+		gnt_widget_confirm_size(wid, w, h);
 		gnt_widget_set_size(wid, w, h);
 	}
 

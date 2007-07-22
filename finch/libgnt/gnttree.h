@@ -47,7 +47,7 @@ typedef struct _GntTreeClass		GntTreeClass;
 typedef struct _GntTreeRow		GntTreeRow;
 typedef struct _GntTreeCol		GntTreeCol;
 
-typedef enum {
+typedef enum _GntTreeColumnFlag {
 	GNT_TREE_COLUMN_INVISIBLE    = 1 << 0,
 	GNT_TREE_COLUMN_FIXED_SIZE   = 1 << 1,
 	GNT_TREE_COLUMN_BINARY_DATA  = 1 << 2,
@@ -83,11 +83,7 @@ struct _GntTree
 	gboolean show_title;
 	gboolean show_separator; /* Whether to show column separators */
 
-	GString *search;
-	int search_timeout;
-
-	GCompareFunc compare;
-	int lastvisible;
+	GntTreePriv *priv;
 };
 
 struct _GntTreeClass
@@ -204,8 +200,26 @@ gpointer gnt_tree_get_selection_data(GntTree *tree);
  * @param tree  The tree
  *
  * @return  The text, which needs to be freed by the caller
+ * @see gnt_tree_get_row_text_list
+ * @see gnt_tree_get_selection_text_list
  */
 char * gnt_tree_get_selection_text(GntTree *tree);
+
+/**
+ * Get a list of text for a row.
+ *
+ * @param tree  The tree
+ * @param key   A key corresponding to the row in question. If key
+ *              is @c NULL, the text list for the selected row will
+ *              be returned.
+ *
+ * @return A list of texts of a row. The list and its data should be
+ *         freed by the caller. The caller should make sure that if
+ *         any column of the tree contains binary data, it's not freed.
+ * @see gnt_tree_get_selection_text_list 
+ * @see gnt_tree_get_selection_text
+ */
+GList * gnt_tree_get_row_text_list(GntTree *tree, gpointer key);
 
 /**
  * Get a list of text of the current row.
@@ -213,7 +227,11 @@ char * gnt_tree_get_selection_text(GntTree *tree);
  * @param tree  The tree
  *
  * @return A list of texts of the currently selected row. The list
- *         and its data should be freed by the caller.
+ *         and its data should be freed by the caller. The caller
+ *         should make sure that if any column of the tree contains
+ *         binary data, it's not freed.
+ * @see gnt_tree_get_row_text_list
+ * @see gnt_tree_get_selection_text
  */
 GList * gnt_tree_get_selection_text_list(GntTree *tree);
 
@@ -504,11 +522,35 @@ void gnt_tree_set_column_is_right_aligned(GntTree *tree, int col, gboolean right
  */
 void gnt_tree_set_column_width_ratio(GntTree *tree, int cols[]);
 
+/**
+ * Set the column to use for typeahead searching.
+ *
+ * @param tree   The tree
+ * @param col    The index of the column
+ */
+void gnt_tree_set_search_column(GntTree *tree, int col);
+
+/**
+ * Check whether the user is currently in the middle of a search.
+ *
+ * @param tree   The tree
+ * @return  @c TRUE if the user is searching, @c FALSE otherwise.
+ */
+gboolean gnt_tree_is_searching(GntTree *tree);
+
+/**
+ * Set a custom search function.
+ *
+ * @param tree  The tree
+ * @param func  The custom search function. The search function is
+ *              sent the tree itself, the key of a row, the search
+ *              string and the content of row in the search column.
+ *              If the function returns @c TRUE, the row is dislayed,
+ *              otherwise it's not.
+ */
+void gnt_tree_set_search_function(GntTree *tree,
+		gboolean (*func)(GntTree *tree, gpointer key, const char *search, const char *current));
+
 G_END_DECLS
-
-/* The following functions should NOT be used by applications. */
-
-/* This should be called by the subclasses of GntTree's in their _new function */
-void _gnt_tree_init_internals(GntTree *tree, int col);
 
 #endif /* GNT_TREE_H */

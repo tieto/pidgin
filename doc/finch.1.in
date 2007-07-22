@@ -155,6 +155,9 @@ wm = /usr/local/lib/gnt/s.so
 .br
 remember_position = 1
 .br
+# Use borderless one-line high buttons
+.br
+small-button = true
 
 .br
 # Workspaces are created simply by adding Workspace-X groups as follows:

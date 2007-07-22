@@ -48,6 +48,8 @@ static guint signals[SIGS] = { 0 };
 static void (*orig_map)(GntWidget *widget);
 static void (*orig_size_request)(GntWidget *widget);
 
+static void select_activated_cb(GntWidget *button, GntFileSel *sel);
+
 static void
 gnt_file_sel_destroy(GntWidget *widget)
 {
@@ -600,7 +602,33 @@ gnt_file_sel_class_init(GntFileSelClass *klass)
 static void
 gnt_file_sel_init(GTypeInstance *instance, gpointer class)
 {
-	GNTDEBUG;
+	GntFileSel *sel = GNT_FILE_SEL(instance);
+
+	sel->dirs = gnt_tree_new();
+	gnt_tree_set_compare_func(GNT_TREE(sel->dirs), (GCompareFunc)g_utf8_collate);
+	gnt_tree_set_hash_fns(GNT_TREE(sel->dirs), g_str_hash, g_str_equal, g_free);
+	gnt_tree_set_column_titles(GNT_TREE(sel->dirs), "Directories");
+	gnt_tree_set_show_title(GNT_TREE(sel->dirs), TRUE);
+	gnt_tree_set_col_width(GNT_TREE(sel->dirs), 0, 20);
+	g_signal_connect(G_OBJECT(sel->dirs), "key_pressed", G_CALLBACK(dir_key_pressed), sel);
+
+	sel->files = gnt_tree_new_with_columns(2);  /* Name, Size */
+	gnt_tree_set_compare_func(GNT_TREE(sel->files), (GCompareFunc)g_utf8_collate);
+	gnt_tree_set_column_titles(GNT_TREE(sel->files), "Filename", "Size");
+	gnt_tree_set_show_title(GNT_TREE(sel->files), TRUE);
+	gnt_tree_set_col_width(GNT_TREE(sel->files), 0, 25);
+	gnt_tree_set_col_width(GNT_TREE(sel->files), 1, 10);
+	gnt_tree_set_column_is_right_aligned(GNT_TREE(sel->files), 1, TRUE);
+	g_signal_connect(G_OBJECT(sel->files), "selection_changed", G_CALLBACK(file_sel_changed), sel);
+
+	/* The location entry */
+	sel->location = gnt_entry_new(NULL);
+	g_signal_connect(G_OBJECT(sel->location), "key_pressed", G_CALLBACK(location_key_pressed), sel);
+
+	sel->cancel = gnt_button_new("Cancel");
+	sel->select = gnt_button_new("Select");
+
+	g_signal_connect(G_OBJECT(sel->select), "activate", G_CALLBACK(select_activated_cb), sel);
 }
 
 /******************************************************************************
@@ -647,34 +675,6 @@ select_activated_cb(GntWidget *button, GntFileSel *sel)
 GntWidget *gnt_file_sel_new(void)
 {
 	GntWidget *widget = g_object_new(GNT_TYPE_FILE_SEL, NULL);
-	GntFileSel *sel = GNT_FILE_SEL(widget);
-
-	sel->dirs = gnt_tree_new();
-	gnt_tree_set_compare_func(GNT_TREE(sel->dirs), (GCompareFunc)g_utf8_collate);
-	gnt_tree_set_hash_fns(GNT_TREE(sel->dirs), g_str_hash, g_str_equal, g_free);
-	gnt_tree_set_column_titles(GNT_TREE(sel->dirs), "Directories");
-	gnt_tree_set_show_title(GNT_TREE(sel->dirs), TRUE);
-	gnt_tree_set_col_width(GNT_TREE(sel->dirs), 0, 20);
-	g_signal_connect(G_OBJECT(sel->dirs), "key_pressed", G_CALLBACK(dir_key_pressed), sel);
-
-	sel->files = gnt_tree_new_with_columns(2);  /* Name, Size */
-	gnt_tree_set_compare_func(GNT_TREE(sel->files), (GCompareFunc)g_utf8_collate);
-	gnt_tree_set_column_titles(GNT_TREE(sel->files), "Filename", "Size");
-	gnt_tree_set_show_title(GNT_TREE(sel->files), TRUE);
-	gnt_tree_set_col_width(GNT_TREE(sel->files), 0, 25);
-	gnt_tree_set_col_width(GNT_TREE(sel->files), 1, 10);
-	gnt_tree_set_column_is_right_aligned(GNT_TREE(sel->files), 1, TRUE);
-	g_signal_connect(G_OBJECT(sel->files), "selection_changed", G_CALLBACK(file_sel_changed), sel);
-
-	/* The location entry */
-	sel->location = gnt_entry_new(NULL);
-	g_signal_connect(G_OBJECT(sel->location), "key_pressed", G_CALLBACK(location_key_pressed), sel);
-
-	sel->cancel = gnt_button_new("Cancel");
-	sel->select = gnt_button_new("Select");
-
-	g_signal_connect(G_OBJECT(sel->select), "activate", G_CALLBACK(select_activated_cb), sel);
-
 	return widget;
 }
 

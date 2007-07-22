@@ -2064,7 +2064,7 @@ purple_conversations_init(void)
 	 * Register signals
 	 **********************************************************************/
 	purple_signal_register(handle, "writing-im-msg",
-						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
+						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT,
 						 purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_ACCOUNT),
@@ -2124,7 +2124,7 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_UINT));
 
 	purple_signal_register(handle, "writing-chat-msg",
-						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
+						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT,
 						 purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_ACCOUNT),

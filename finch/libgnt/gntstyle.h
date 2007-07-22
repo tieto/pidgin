@@ -45,7 +45,25 @@ void gnt_style_read_configure_file(const char *filename);
 
 const char *gnt_style_get(GntStyle style);
 
+/**
+ * Get the value of a preference in ~/.gntrc.
+ *
+ * @param group   The name of the group in the keyfile. If @c NULL, the prgname
+ *                will be used first, if available. Otherwise, "general" will be used.
+ * @param key     The key
+ *
+ * @return  The value of the setting as a string, or @c NULL
+ */
 char *gnt_style_get_from_name(const char *group, const char *key);
+
+/**
+ * Parse a boolean preference. For example, if 'value' is "false" (ignoring case)
+ * or "0", the return value will be @c FALSE, otherwise @c TRUE.
+ *
+ * @param value   The value of the boolean setting as a string
+ * @return    The boolean value
+ */
+gboolean gnt_style_parse_bool(const char *value);
 
 /**
  * 

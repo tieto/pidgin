@@ -55,12 +55,14 @@ include $(PIDGIN_COMMON_RULES)
 ##
 ## TARGET DEFINITIONS
 ##
-.PHONY: all install clean
+.PHONY: all install install_real clean
 
 all: $(TARGET).dll
 
-install: all $(DLL_INSTALL_DIR) $(PURPLE_INSTALL_DIR)
+install_real: all $(DLL_INSTALL_DIR) $(PURPLE_INSTALL_DIR)
 	cp $(TARGET).dll $(DLL_INSTALL_DIR)
+
+install: all
 
 $(OBJECTS): $(PURPLE_CONFIG_H)
 
