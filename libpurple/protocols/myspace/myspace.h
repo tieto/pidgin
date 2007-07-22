@@ -73,7 +73,11 @@
 #define MSIM_MAX_PASSWORD_LENGTH 	10
 
 /* Build version of MySpaceIM to report to servers (1.0.xxx.0) */
-#define MSIM_CLIENT_VERSION         673
+#define MSIM_CLIENT_VERSION         697
+
+/* Language codes from http://www.microsoft.com/globaldev/reference/oslocversion.mspx */
+#define MSIM_LANGUAGE_ID_ENGLISH    1033
+#define MSIM_LANGUAGE_NAME_ENGLISH  "ENGLISH"
 
 /* msimprpl version string of this plugin */
 #define MSIM_PRPL_VERSION_STRING    "0.12"
@@ -270,6 +274,7 @@ void msim_set_status_code(MsimSession *session, guint code, gchar *statstring);
 void msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_store_buddy_info(MsimSession *session, MsimMessage *msg);
 gboolean msim_process_server_info(MsimSession *session, MsimMessage *msg);
+gboolean msim_web_challenge(MsimSession *session, MsimMessage *msg); 
 gboolean msim_process_reply(MsimSession *session, MsimMessage *msg);
 
 gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg);

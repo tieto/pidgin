@@ -522,6 +522,8 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 			/* GString and gchar * response will be freed in msim_msg_free() in msim_send(). */
 			"response", MSIM_TYPE_BINARY, g_string_new_len(response, response_len),
 			"clientver", MSIM_TYPE_INTEGER, MSIM_CLIENT_VERSION,
+            "langid", MSIM_TYPE_INTEGER, MSIM_LANGUAGE_ID_ENGLISH,
+            "imlang", MSIM_TYPE_STRING, g_strdup(MSIM_LANGUAGE_NAME_ENGLISH),
 			"reconn", MSIM_TYPE_INTEGER, 0,
 			"status", MSIM_TYPE_INTEGER, 100,
 			"id", MSIM_TYPE_INTEGER, 1,
@@ -2252,15 +2254,23 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
     g_return_val_if_fail(msg != NULL, FALSE);
 
     purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
+    purple_connection_set_state(session->gc, PURPLE_CONNECTED);
 
     session->sesskey = msim_msg_get_integer(msg, "sesskey");
     purple_debug_info("msim", "SESSKEY=<%d>\n", session->sesskey);
+
+    /* What is proof? Used to be uid, but now is 52 base64'd bytes... */
 
     /* Comes with: proof,profileid,userid,uniquenick -- all same values
      * some of the time, but can vary. This is our own user ID. */
     session->userid = msim_msg_get_integer(msg, "userid");
 
-    purple_connection_set_state(session->gc, PURPLE_CONNECTED);
+    /* Not sure what profileid is used for. */
+    if (msim_msg_get_integer(msg, "profileid") != session->userid)
+    {
+        msim_unrecognized(session, msg, 
+                "Profile ID didn't match user ID, don't know why");
+    }
 
     /* We now know are our own username, only after we're logged in..
      * which is weird, but happens because you login with your email
@@ -2272,6 +2282,30 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
         purple_debug_info("msim_we_are_logged_on", "TODO: pick username");
     }
 
+
+    /* Request IM info about ourself. */
+    msim_send(session,
+            "persist", MSIM_TYPE_STRING, g_strdup("persist"),
+            "sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+            "dsn", MSIM_TYPE_INTEGER, MG_OWN_MYSPACE_INFO_DSN,
+            "uid", MSIM_TYPE_INTEGER, session->userid,
+            "lid", MSIM_TYPE_INTEGER, MG_OWN_MYSPACE_INFO_LID,
+            "rid", MSIM_TYPE_INTEGER, session->next_rid++,
+            "body", MSIM_TYPE_STRING,
+                g_strdup_printf("UserID=%d", session->userid),
+            NULL);
+
+    /* Request MySpace info about ourself. */
+    msim_send(session,
+            "persist", MSIM_TYPE_STRING, g_strdup("persist"),
+            "sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+            "dsn", MSIM_TYPE_INTEGER, MG_OWN_IM_INFO_DSN,
+            "uid", MSIM_TYPE_INTEGER, session->userid,
+            "lid", MSIM_TYPE_INTEGER, MG_OWN_IM_INFO_LID,
+            "rid", MSIM_TYPE_INTEGER, session->next_rid++,
+            "body", MSIM_TYPE_STRING, g_strdup(""),
+            NULL);
+
     /* TODO: set options (persist cmd=514,dsn=1,lid=10) */
     /* TODO: set blocklist */
 
@@ -2280,7 +2314,15 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
     msim_set_status(session->account,
             purple_account_get_active_status(session->account));
 
-    /* TODO: find out what 'setinfo' is */
+    /* TODO: setinfo */
+    /*
+    msim_send(session,
+            "setinfo", MSIM_TYPE_BOOLEAN, TRUE,
+            "sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+            "info", MSIM_TYPE_STRING,
+            g_strdup_printf("TotalFriends=666"),
+            NULL);
+            */
 
     /* Disable due to problems with timeouts. TODO: fix. */
 #ifdef MSIM_USE_KEEPALIVE
@@ -2412,6 +2454,17 @@ msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
 		g_hash_table_foreach(body, msim_store_buddy_info_each, buddy);
 	}
 
+    if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
+        msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID)
+    {
+        /* TODO: do something with our own IM info, if we need it for some
+         * specific purpose. Otherwise it is available on the buddy list,
+         * if the user has themselves as their own buddy. */
+    } else if (msim_msg_get_integer(msg, "dsn") == MG_OWN_MYSPACE_INFO_DSN &&
+            msim_msg_get_integer(msg, "lid") == MG_OWN_MYSPACE_INFO_LID) {
+        /* TODO: same as above, but for MySpace info. */
+    }
+
     g_hash_table_destroy(body);
 
 	return TRUE;
@@ -2459,6 +2512,14 @@ WebTicketGoHome=False
     return TRUE;
 }
 
+/** Process a web challenge, used to login to the web site. */
+gboolean
+msim_web_challenge(MsimSession *session, MsimMessage *msg)
+{
+    /* TODO: web challenge, store token */
+    return FALSE;
+}
+
 /**
  * Process a persistance message reply from the server.
  *
@@ -2486,11 +2547,15 @@ msim_process_reply(MsimSession *session, MsimMessage *msg)
     dsn = msim_msg_get_integer(msg, "dsn");
     lid = msim_msg_get_integer(msg, "lid");
 
-    if (cmd == (MSIM_CMD_BIT_REPLY | MSIM_CMD_GET) &&
-        dsn == MG_SERVER_INFO_DSN &&
-        lid == MG_SERVER_INFO_LID)
+    /* Unsolicited messages */
+    if (cmd == (MSIM_CMD_BIT_REPLY | MSIM_CMD_GET))
     {
-        return msim_process_server_info(session, msg);
+        if (dsn == MG_SERVER_INFO_DSN && lid == MG_SERVER_INFO_LID)
+        {
+            return msim_process_server_info(session, msg);
+        } else if (dsn == MG_WEB_CHALLENGE_DSN && lid == MG_WEB_CHALLENGE_LID) {
+            return msim_web_challenge(session, msg);
+        }
     }
 
     /* If a callback is registered for this userid lookup, call it. */
@@ -3857,11 +3922,13 @@ init_plugin(PurplePlugin *plugin)
     option = purple_account_option_bool_new(_("Send emoticons"), "emoticons", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
+#ifdef MSIM_USER_REALLY_CARES_ABOUT_PRECISE_FONT_SIZES
     option = purple_account_option_int_new(_("Screen resolution (dots per inch)"), "dpi", MSIM_DEFAULT_DPI);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
     option = purple_account_option_int_new(_("Base font size (points)"), "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+#endif
 }
 
 PURPLE_INIT_PLUGIN(myspace, init_plugin, info);

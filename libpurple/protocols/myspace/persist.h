@@ -56,9 +56,10 @@
 #endif
 */
 
-/** Messages to Get information */
+/** Messages to Get information                dsn lid */
 MSIM_PERSIST_DSN_LID(MG_LIST_ALL_CONTACTS, 		0, 1)
 MSIM_PERSIST_DSN_LID(MG_USER_INFO_BY_ID, 		0, 2)
+MSIM_PERSIST_DSN_LID(MG_OWN_IM_INFO,            1, 4)
 MSIM_PERSIST_DSN_LID(MG_IM_INFO_BY_ID, 			1, 17)
 MSIM_PERSIST_DSN_LID(MG_LIST_ALL_GROUPS,		2, 6)
 MSIM_PERSIST_DSN_LID(MG_MYSPACE_INFO_BY_ID, 	4, 3)
