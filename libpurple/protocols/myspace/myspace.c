@@ -1562,8 +1562,6 @@ msim_send_unofficial_client(MsimSession *session, gchar *username)
 
 	ret = msim_send_bm(session, username, our_info, MSIM_BM_UNOFFICIAL_CLIENT);
 
-    g_free(our_info);
-
     return ret;
 }
 
@@ -1898,12 +1896,16 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
 	username = g_hash_table_lookup(body, "UserName");
 	g_return_if_fail(username != NULL);
 
+
 	msg = (MsimMessage *)data;
     g_return_if_fail(msg != NULL);
 
+    /* TODO: more elegant solution than below. attach whole message? */
 	/* Special elements name beginning with '_', we'll use internally within the
-	 * program (did not come from the wire). */
+	 * program (did not come directly from the wire). */
 	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, g_strdup(username));
+  
+    /* TODO: attach more useful information, like ImageURL */
 
 	msim_process(session, msg);
 
@@ -2265,11 +2267,20 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
      * address and not username. Will be freed in msim_session_destroy(). */
     session->username = msim_msg_get_string(msg, "uniquenick");
 
+    if (msim_msg_get_integer(msg, "uniquenick") == session->userid)
+    {
+        purple_debug_info("msim_we_are_logged_on", "TODO: pick username");
+    }
 
-    purple_debug_info("msim", "msim_we_are_logged_on: notifying servers of status\n");
+    /* TODO: set options (persist cmd=514,dsn=1,lid=10) */
+    /* TODO: set blocklist */
+
     /* Notify servers of our current status. */
+    purple_debug_info("msim", "msim_we_are_logged_on: notifying servers of status\n");
     msim_set_status(session->account,
             purple_account_get_active_status(session->account));
+
+    /* TODO: find out what 'setinfo' is */
 
     /* Disable due to problems with timeouts. TODO: fix. */
 #ifdef MSIM_USE_KEEPALIVE
@@ -2305,10 +2316,10 @@ msim_process(MsimSession *session, MsimMessage *msg)
 	}
 #endif
 
-    if (msim_msg_get(msg, "nc"))
+    if (msim_msg_get_integer(msg, "lc") == 1)
     {
         return msim_login_challenge(session, msg);
-    } else if (msim_msg_get(msg, "sesskey")) {
+    } else if (msim_msg_get_integer(msg, "lc") == 2) {
         return msim_we_are_logged_on(session, msg);
     } else if (msim_msg_get(msg, "bm"))  {
         return msim_incoming_bm(session, msg);
@@ -2505,54 +2516,38 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
     PurpleBuddyList *blist;
     PurpleBuddy *buddy;
     //PurpleStatus *status;
-    gchar **status_array;
+    //gchar **status_array;
     GList *list;
     gchar *status_headline;
-    gchar *status_str;
-    gint i, status_code, purple_status_code;
+    //gchar *status_str;
+    //gint i;
+    gint status_code, purple_status_code;
     gchar *username;
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
     g_return_val_if_fail(msg != NULL, FALSE);
 
-    status_str = msim_msg_get_string(msg, "msg");
-	g_return_val_if_fail(status_str != NULL, FALSE);
-
 	msim_msg_dump("msim_status msg=%s\n", msg);
 
 	/* Helpfully looked up by msim_incoming_resolve() for us. */
     username = msim_msg_get_string(msg, "_username");
-    /* Note: DisplayName doesn't seem to be resolvable. It could be displayed on
-     * the buddy list, if the UserID was stored along with it. */
+    g_return_val_if_fail(username != NULL, FALSE);
 
-	if (username == NULL)
-	{
-		g_free(status_str);
-		g_return_val_if_fail(NULL, FALSE);
-	}
-
-    purple_debug_info("msim", 
-			"msim_status: updating status for <%s> to <%s>\n", 
-			username, status_str);
-
-    /* TODO: generic functions to split into a GList, part of MsimMessage */
-    status_array = g_strsplit(status_str, "|", 0);
-    for (list = NULL, i = 0;
-            status_array[i];
-            i++)
     {
-		/* Note: this adds the 0th ordinal too, which might not be a value
-		 * at all (the 0 in the 0|1|2|3... status fields, but 0 always appears blank).
-		 */
-        list = g_list_append(list, status_array[i]);
+        gchar *ss;
+
+        ss = msim_msg_get_string(msg, "msg");
+        purple_debug_info("msim", 
+                "msim_status: updating status for <%s> to <%s>\n",
+                username, ss);
+        g_free(ss);
     }
 
     /* Example fields: 
 	 *  |s|0|ss|Offline 
 	 *  |s|1|ss|:-)|ls||ip|0|p|0 
-	 *
-	 * TODO: write list support in MsimMessage, and use it here.
 	 */
+    list = msim_msg_get_list(msg, "msg");
 
     status_code = atoi(g_list_nth_data(list, MSIM_STATUS_ORDINAL_ONLINE));
 	purple_debug_info("msim", "msim_status: %s's status code = %d\n", username, status_code);
@@ -2623,10 +2618,8 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
         msim_send_unofficial_client(session, username);
     }
 
-    g_strfreev(status_array);
-	g_free(status_str);
 	g_free(username);
-    g_list_free(list);
+    msim_msg_list_free(list);
 
     return TRUE;
 }
@@ -3448,6 +3441,33 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
     }
 }
 
+/** Actions menu for account. */
+GList *
+msim_actions(PurplePlugin *plugin, gpointer context)
+{
+    PurpleConnection *gc;
+    GList *menu;
+    //PurplePluginAction *act;
+
+    gc = (PurpleConnection *)context;
+
+    menu = NULL;
+
+#if 0
+    /* TODO: find out how */
+    act = purple_plugin_action_new(_("Find people..."), msim_);
+    menu = g_list_append(menu, act);
+
+    act = purple_plugin_action_new(_("Import friends..."), NULL);
+    menu = g_list_append(menu, act);
+
+    act = purple_plugin_action_new(_("Change IM name..."), NULL);
+    menu = g_list_append(menu, act);
+#endif
+
+    return menu;
+}
+
 /** Callbacks called by Purple, to access this plugin. */
 PurplePluginProtocolInfo prpl_info =
 {
@@ -3553,10 +3573,7 @@ PurplePluginInfo info =
     NULL,                                             /**< ui_info        */
     &prpl_info,                                       /**< extra_info     */
     NULL,                                             /**< prefs_info     */
-
-    /* msim_actions */
-    NULL,
-
+    msim_actions,                                     /**< msim_actions   */
 	NULL,											  /**< reserved1      */
 	NULL,											  /**< reserved2      */
 	NULL,											  /**< reserved3      */

@@ -314,6 +314,7 @@ void msim_lookup_user(MsimSession *session, const gchar *user,
 char *msim_status_text(PurpleBuddy *buddy);
 void msim_tooltip_text(PurpleBuddy *buddy, 
 		PurpleNotifyUserInfo *user_info, gboolean full);
+GList *msim_actions(PurplePlugin *plugin, gpointer context);
 
 #ifdef MSIM_SELF_TEST
 void msim_test_all(void) __attribute__((__noreturn__));
