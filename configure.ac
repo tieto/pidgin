@@ -2069,6 +2069,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/icons/Makefile
 		   pidgin/pixmaps/icons/16/Makefile
 		   pidgin/pixmaps/icons/16/scalable/Makefile
+		   pidgin/pixmaps/icons/22/Makefile
+		   pidgin/pixmaps/icons/22/scalable/Makefile
 		   pidgin/pixmaps/icons/24/Makefile
 		   pidgin/pixmaps/icons/24/scalable/Makefile
 		   pidgin/pixmaps/icons/32/Makefile
