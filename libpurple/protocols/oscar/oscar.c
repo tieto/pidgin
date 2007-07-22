@@ -1431,7 +1431,6 @@ static void
 purple_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
 {
 	PurpleConnection *gc = user_data;
-	OscarData *od = gc->proto_data;
 
 	/* Disconnect */
 	gc->wants_to_die = TRUE;
@@ -3473,25 +3472,28 @@ static int purple_connerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 
 	if (conn->type == SNAC_FAMILY_CHAT) {
 		struct chat_connection *cc;
-		PurpleConversation *conv;
+		PurpleConversation *conv = NULL;
 
 		cc = find_oscar_chat_by_conn(gc, conn);
-		conv = purple_find_chat(gc, cc->id);
-
-		if (conv != NULL)
+		if (cc != NULL)
 		{
-			/*
-			 * TOOD: Have flap_connection_destroy_cb() send us the
-			 *       error message stored in 'tmp', which should be
-			 *       human-friendly, and print that to the chat room.
-			 */
-			gchar *buf;
-			buf = g_strdup_printf(_("You have been disconnected from chat "
-									"room %s."), cc->name);
-			purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_ERROR, time(NULL));
-			g_free(buf);
+			conv = purple_find_chat(gc, cc->id);
+
+			if (conv != NULL)
+			{
+				/*
+				 * TOOD: Have flap_connection_destroy_cb() send us the
+				 *       error message stored in 'tmp', which should be
+				 *       human-friendly, and print that to the chat room.
+				 */
+				gchar *buf;
+				buf = g_strdup_printf(_("You have been disconnected from chat "
+										"room %s."), cc->name);
+				purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_ERROR, time(NULL));
+				g_free(buf);
+			}
+			oscar_chat_kill(gc, cc);
 		}
-		oscar_chat_kill(gc, cc);
 	}
 
 	return 1;
