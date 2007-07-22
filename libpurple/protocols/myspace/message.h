@@ -44,6 +44,9 @@ typedef gchar MsimMessageType;
 #define MSIM_TYPE_DICTIONARY	'd'
 #define MSIM_TYPE_LIST			'l'
 
+gchar *msim_escape(const gchar *msg);
+gchar *msim_unescape(const gchar *msg);
+
 MsimMessage *msim_msg_new(gboolean not_empty, ...);
 /* No sentinel attribute, because can leave off varargs if not_empty is FALSE. */
 
