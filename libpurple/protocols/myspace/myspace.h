@@ -183,6 +183,8 @@ typedef struct _MsimSession
     GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */
     GHashTable *user_lookup_cb_data;    /**< Username -> userid lookup callback data */
 
+    GHashTable *server_info;            /**< Parameters from server */
+
     gchar *rxbuf;                       /**< Receive buffer */
     guint rxoff;                        /**< Receive buffer offset */
 	guint next_rid;						/**< Next request/response ID */
@@ -267,6 +269,7 @@ void msim_set_status_code(MsimSession *session, guint code, gchar *statstring);
 
 void msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_store_buddy_info(MsimSession *session, MsimMessage *msg);
+gboolean msim_process_server_info(MsimSession *session, MsimMessage *msg);
 gboolean msim_process_reply(MsimSession *session, MsimMessage *msg);
 
 gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg);

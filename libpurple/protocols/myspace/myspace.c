@@ -2417,6 +2417,48 @@ msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
 	return TRUE;
 }
 
+/** Process the initial server information from the server. */
+gboolean
+msim_process_server_info(MsimSession *session, MsimMessage *msg)
+{
+    gchar *body_str;
+    GHashTable *body;
+
+    body_str = msim_msg_get_string(msg, "body");
+    g_return_val_if_fail(body_str != NULL, FALSE);
+    body = msim_parse_body(body_str);
+    g_free(body_str);
+    g_return_val_if_fail(body != NULL, FALSE);
+ 
+    /* Example body:
+AdUnitRefreshInterval=10.
+AlertPollInterval=360.
+AllowChatRoomEmoticonSharing=False.
+ChatRoomUserIDs=78744676;163733130;1300326231;123521495;142663391.
+CurClientVersion=673.
+EnableIMBrowse=True.
+EnableIMStuffAvatars=False.
+EnableIMStuffZaps=False.
+MaxAddAllFriends=100.
+MaxContacts=1000.
+MinClientVersion=594.
+MySpaceIM_ENGLISH=78744676.
+MySpaceNowTimer=720.
+PersistenceDataTimeout=900.
+UseWebChallenge=1.
+WebTicketGoHome=False
+
+    Anything useful? TODO: use what is useful, and use it.
+*/
+    purple_debug_info("msim_process_server_info",
+            "maximum contacts: %s\n", g_hash_table_lookup(body, "MaxContacts"));
+
+    session->server_info = body;
+    /* session->server_info freed in msim_session_destroy */
+
+    return TRUE;
+}
+
 /**
  * Process a persistance message reply from the server.
  *
@@ -2424,39 +2466,48 @@ msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
  * @param msg Message reply from server.
  *
  * @return TRUE if successful.
+ *
+ * msim_lookup_user sets callback for here 
  */
 gboolean 
 msim_process_reply(MsimSession *session, MsimMessage *msg)
 {
+    MSIM_USER_LOOKUP_CB cb;
+    gpointer data;
+    guint rid, cmd, dsn, lid;
+
     g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
     g_return_val_if_fail(msg != NULL, FALSE);
-    
-    if (msim_msg_get(msg, "rid"))  /* msim_lookup_user sets callback for here */
+
+    msim_store_buddy_info(session, msg);		
+
+    rid = msim_msg_get_integer(msg, "rid");
+    cmd = msim_msg_get_integer(msg, "cmd");
+    dsn = msim_msg_get_integer(msg, "dsn");
+    lid = msim_msg_get_integer(msg, "lid");
+
+    if (cmd == (MSIM_CMD_BIT_REPLY | MSIM_CMD_GET) &&
+        dsn == MG_SERVER_INFO_DSN &&
+        lid == MG_SERVER_INFO_LID)
     {
-        MSIM_USER_LOOKUP_CB cb;
-        gpointer data;
-        guint rid;
+        return msim_process_server_info(session, msg);
+    }
 
-		msim_store_buddy_info(session, msg);		
+    /* If a callback is registered for this userid lookup, call it. */
+    cb = g_hash_table_lookup(session->user_lookup_cb, GUINT_TO_POINTER(rid));
+    data = g_hash_table_lookup(session->user_lookup_cb_data, GUINT_TO_POINTER(rid));
 
-		rid = msim_msg_get_integer(msg, "rid");
-
-        /* If a callback is registered for this userid lookup, call it. */
-        cb = g_hash_table_lookup(session->user_lookup_cb, GUINT_TO_POINTER(rid));
-        data = g_hash_table_lookup(session->user_lookup_cb_data, GUINT_TO_POINTER(rid));
-
-        if (cb)
-        {
-            purple_debug_info("msim", 
-					"msim_process_body: calling callback now\n");
-			/* Clone message, so that the callback 'cb' can use it (needs to free it also). */
-            cb(session, msim_msg_clone(msg), data);
-            g_hash_table_remove(session->user_lookup_cb, GUINT_TO_POINTER(rid));
-            g_hash_table_remove(session->user_lookup_cb_data, GUINT_TO_POINTER(rid));
-        } else {
-            purple_debug_info("msim", 
-					"msim_process_body: no callback for rid %d\n", rid);
-        }
+    if (cb)
+    {
+        purple_debug_info("msim", 
+                "msim_process_body: calling callback now\n");
+        /* Clone message, so that the callback 'cb' can use it (needs to free it also). */
+        cb(session, msim_msg_clone(msg), data);
+        g_hash_table_remove(session->user_lookup_cb, GUINT_TO_POINTER(rid));
+        g_hash_table_remove(session->user_lookup_cb_data, GUINT_TO_POINTER(rid));
+    } else {
+        purple_debug_info("msim", 
+                "msim_process_body: no callback for rid %d\n", rid);
     }
 
 	return TRUE;
@@ -3167,6 +3218,10 @@ msim_session_new(PurpleAccount *acct)
 											 they could be integers inside gpointers
 											 or strings, so I don't freed them.
 											 Figure this out, once free cache. */
+
+    /* Created in msim_process_server_info() */
+    session->server_info = NULL;
+
     session->rxoff = 0;
     session->rxbuf = g_new0(gchar, MSIM_READ_BUF_SIZE);
 	session->next_rid = 1;
@@ -3194,6 +3249,9 @@ msim_session_destroy(MsimSession *session)
 	/* TODO: Remove. */
 	g_hash_table_destroy(session->user_lookup_cb);
 	g_hash_table_destroy(session->user_lookup_cb_data);
+
+    if (session->server_info)
+        g_hash_table_destroy(session->server_info);
 	
     g_free(session);
 }
