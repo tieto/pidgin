@@ -140,13 +140,6 @@ entry_key_pressed(GntWidget *w, const char *key, FinchConv *ggconv)
 					break;
 			}
 			g_free(error);
-#if 0
-			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-					_("Commands are not supported yet. Message was NOT sent."),
-					GNT_TEXT_FLAG_DIM | GNT_TEXT_FLAG_UNDERLINE);
-			gnt_text_view_next_line(GNT_TEXT_VIEW(ggconv->tv));
-			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 0);
-#endif
 		}
 		else
 		{
@@ -451,6 +444,13 @@ gained_focus_cb(GntWindow *window, FinchConv *fc)
 }
 
 static void
+completion_cb(GntEntry *entry, const char *start, const char *end)
+{
+	if (start == entry->start)
+		gnt_widget_key_pressed(GNT_WIDGET(entry), ": ");
+}
+
+static void
 finch_create_conversation(PurpleConversation *conv)
 {
 	FinchConv *ggc = conv->ui_data;
@@ -485,7 +485,24 @@ finch_create_conversation(PurpleConversation *conv)
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
 	gnt_box_set_pad(GNT_BOX(ggc->window), 0);
-	gnt_widget_set_name(ggc->window, "conversation-window");
+
+	switch(conv->type){
+		case PURPLE_CONV_TYPE_UNKNOWN:
+			gnt_widget_set_name(ggc->window, "conversation-window-unknown" );
+			break;
+		case PURPLE_CONV_TYPE_IM:
+			gnt_widget_set_name(ggc->window, "conversation-window-im" );
+			break;
+		case PURPLE_CONV_TYPE_CHAT:
+			gnt_widget_set_name(ggc->window, "conversation-window-chat" );
+			break;
+		case PURPLE_CONV_TYPE_MISC:
+			gnt_widget_set_name(ggc->window, "conversation-window-misc" );
+			break;
+		case PURPLE_CONV_TYPE_ANY:
+			gnt_widget_set_name(ggc->window, "conversation-window-any" );
+			break;
+	}
 
 	gg_create_menu(ggc);
 
@@ -524,7 +541,10 @@ finch_create_conversation(PurpleConversation *conv)
 	gnt_entry_set_always_suggest(GNT_ENTRY(ggc->entry), FALSE);
 
 	gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(ggc->tv), ggc->entry);
+	gnt_text_view_attach_pager_widget(GNT_TEXT_VIEW(ggc->tv), ggc->entry);
+
 	g_signal_connect_after(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(entry_key_pressed), ggc);
+	g_signal_connect(G_OBJECT(ggc->entry), "completion", G_CALLBACK(completion_cb), NULL);
 	g_signal_connect(G_OBJECT(ggc->window), "destroy", G_CALLBACK(closing_window), ggc);
 
 	gnt_widget_set_position(ggc->window, purple_prefs_get_int(PREF_ROOT "/position/x"),
@@ -554,7 +574,8 @@ finch_destroy_conversation(PurpleConversation *conv)
 	
 	if (ggc->list == NULL) {
 		g_free(ggc->u.chat);
-		gnt_widget_destroy(ggc->window);
+		if (ggc->window)
+			gnt_widget_destroy(ggc->window);
 		g_free(ggc);
 	}
 }

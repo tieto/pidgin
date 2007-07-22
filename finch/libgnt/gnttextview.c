@@ -20,10 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "gntstyle.h"
 #include "gnttextview.h"
 #include "gntutils.h"
 
+#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 enum
 {
@@ -65,6 +68,7 @@ gnt_text_view_draw(GntWidget *widget)
 	int i = 0;
 	GList *lines;
 	int rows, scrcol;
+	gboolean has_scroll = !(view->flags & GNT_TEXT_VIEW_NO_SCROLL);
 
 	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(widget->window);
@@ -111,12 +115,12 @@ gnt_text_view_draw(GntWidget *widget)
 			*end = back;
 		}
 		wattroff(widget->window, A_UNDERLINE | A_BLINK | A_REVERSE);
-		whline(widget->window, ' ', widget->priv.width - line->length - 1);
+		whline(widget->window, ' ', widget->priv.width - line->length - has_scroll);
 	}
 
 	scrcol = widget->priv.width - 1;
 	rows = widget->priv.height - 2;
-	if (rows > 0)
+	if (has_scroll && rows > 0)
 	{
 		int total = g_list_length(g_list_first(view->list));
 		int showing, position, up, down;
@@ -143,11 +147,13 @@ gnt_text_view_draw(GntWidget *widget)
 				ACS_CKBOARD | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D), showing);
 	}
 
-	mvwaddch(widget->window, 0, scrcol,
-			(lines ? ACS_UARROW : ' ') | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
-	mvwaddch(widget->window, widget->priv.height - 1, scrcol,
-			((view->list && view->list->prev) ? ACS_DARROW : ' ') |
-				COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+	if (has_scroll) {
+		mvwaddch(widget->window, 0, scrcol,
+				(lines ? ACS_UARROW : ' ') | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+		mvwaddch(widget->window, widget->priv.height - 1, scrcol,
+				((view->list && view->list->prev) ? ACS_DARROW : ' ') |
+					COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+	}
 
 	GNTDEBUG;
 }
@@ -483,6 +489,8 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 	GList *list = view->list;
 	GntTextLine *line;
 	int len;
+	gboolean has_scroll = !(view->flags & GNT_TEXT_VIEW_NO_SCROLL);
+	gboolean wrap_word = !(view->flags & GNT_TEXT_VIEW_WRAP_CHAR);
 
 	if (text == NULL || *text == '\0')
 		return;
@@ -519,7 +527,7 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 		}
 
 		line = view->list->data;
-		if (line->length == widget->priv.width - 1) {
+		if (line->length == widget->priv.width - has_scroll) {
 			/* The last added line was exactly the same width as the widget */
 			line = g_new0(GntTextLine, 1);
 			line->soft = TRUE;
@@ -528,15 +536,15 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 
 		if ((end = strchr(start, '\r')) != NULL ||
 			(end = strchr(start, '\n')) != NULL) {
-			len = gnt_util_onscreen_width(start, end - 1);
-			if (len >= widget->priv.width - line->length - 1) {
+			len = gnt_util_onscreen_width(start, end - has_scroll);
+			if (len >= widget->priv.width - line->length - has_scroll) {
 				end = NULL;
 			}
 		}
 
 		if (end == NULL)
 			end = gnt_util_onscreen_width_to_pointer(start,
-					widget->priv.width - line->length - 1, &len);
+					widget->priv.width - line->length - has_scroll, &len);
 
 		/* Try to append to the previous segment if possible */
 		if (line->segments) {
@@ -554,7 +562,7 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 		}
 
 		oldl = line;
-		if (*end && *end != '\n' && *end != '\r') {
+		if (wrap_word && *end && *end != '\n' && *end != '\r') {
 			const char *tmp = end;
 			while (end && *end != '\n' && *end != '\r' && !g_ascii_isspace(*end)) {
 				end = g_utf8_find_prev_char(seg->start + view->string->str, end);
@@ -781,5 +789,114 @@ scroll_tv(GntWidget *wid, const char *key, GntTextView *tv)
 void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget)
 {
 	g_signal_connect(G_OBJECT(widget), "key_pressed", G_CALLBACK(scroll_tv), view);
+}
+
+void gnt_text_view_set_flag(GntTextView *view, GntTextViewFlag flag)
+{
+	view->flags |= flag;
+}
+
+/* Pager and editor setups */
+struct
+{
+	GntTextView *tv;
+	char *file;
+} pageditor;
+
+
+static void
+cleanup_pageditor()
+{
+	unlink(pageditor.file);
+	g_free(pageditor.file);
+
+	pageditor.file = NULL;
+	pageditor.tv = NULL;
+}
+
+static void
+editor_end_cb(int status, gpointer data)
+{
+	if (status == 0) {
+		char *text = NULL;
+		if (g_file_get_contents(pageditor.file, &text, NULL, NULL)) {
+			gnt_text_view_clear(pageditor.tv);
+			gnt_text_view_append_text_with_flags(pageditor.tv, text, GNT_TEXT_FLAG_NORMAL);
+			gnt_text_view_scroll(GNT_TEXT_VIEW(pageditor.tv), 0);
+			g_free(text);
+		}
+	}
+	cleanup_pageditor();
+}
+
+static void
+pager_end_cb(int status, gpointer data)
+{
+	cleanup_pageditor();
+}
+
+static gboolean
+check_for_ext_cb(GntWidget *widget, const char *key, GntTextView *view)
+{
+	static const char *pager = NULL;
+	static const char *editor = NULL;
+	char *argv[] = {NULL, NULL, NULL};
+	static char path[1024];
+	static int len = -1;
+	FILE *file;
+	gboolean ret;
+	gboolean pg;
+
+	if (pager == NULL) {
+		pager = gnt_key_translate(gnt_style_get_from_name("pager", "key"));
+		if (pager == NULL)
+			pager = "\033" "v";
+		editor = gnt_key_translate(gnt_style_get_from_name("editor", "key"));
+		if (editor == NULL)
+			editor = "\033" "e";
+		len = g_snprintf(path, sizeof(path), "%s" G_DIR_SEPARATOR_S "gnt", g_get_tmp_dir());
+	} else {
+		g_snprintf(path + len, sizeof(path) - len, "XXXXXX");
+	}
+
+	if (strcmp(key, pager) == 0) {
+		if (g_object_get_data(G_OBJECT(widget), "pager-for") != view)
+			return FALSE;
+		pg = TRUE;
+	} else if (strcmp(key, editor) == 0) {
+		if (g_object_get_data(G_OBJECT(widget), "editor-for") != view)
+			return FALSE;
+		pg = FALSE;
+	} else {
+		return FALSE;
+	}
+
+	file = fdopen(g_mkstemp(path), "wb");
+	if (!file)
+		return FALSE;
+	fprintf(file, "%s", view->string->str);
+	fclose(file);
+
+	pageditor.tv = view;
+	pageditor.file = g_strdup(path);
+
+	argv[0] = gnt_style_get_from_name(pg ? "pager" : "editor", "path");
+	argv[0] = argv[0] ? argv[0] : getenv(pg ? "PAGER" : "EDITOR");
+	argv[0] = argv[0] ? argv[0] : (pg ? "less" : "vim");
+	argv[1] = path;
+	ret = gnt_giveup_console(NULL, argv, NULL, NULL, NULL, NULL, pg ? pager_end_cb : editor_end_cb, NULL);
+	return ret;
+}
+
+void gnt_text_view_attach_pager_widget(GntTextView *view, GntWidget *pager)
+{
+	g_signal_connect(pager, "key_pressed", G_CALLBACK(check_for_ext_cb), view);
+	g_object_set_data(G_OBJECT(pager), "pager-for", view);
+}
+
+void gnt_text_view_attach_editor_widget(GntTextView *view, GntWidget *wid)
+{
+	g_signal_connect(wid, "key_pressed", G_CALLBACK(check_for_ext_cb), view);
+	g_object_set_data(G_OBJECT(wid), "editor-for", view);
 }
 

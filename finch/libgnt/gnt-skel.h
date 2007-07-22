@@ -1,4 +1,8 @@
 /**
+ * @file gnt-skel.h -skel API
+ * @ingroup gnt
+ */
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -34,10 +38,6 @@
 #define GNT_IS_SKEL(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_SKEL))
 #define GNT_IS_SKEL_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_SKEL))
 #define GNT_SKEL_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_SKEL, GntSkelClass))
-
-#define GNT_SKEL_FLAGS(obj)				(GNT_SKEL(obj)->priv.flags)
-#define GNT_SKEL_SET_FLAGS(obj, flags)		(GNT_SKEL_FLAGS(obj) |= flags)
-#define GNT_SKEL_UNSET_FLAGS(obj, flags)	(GNT_SKEL_FLAGS(obj) &= ~(flags))
 
 typedef struct _GntSkel			GntSkel;
 typedef struct _GntSkelPriv		GntSkelPriv;

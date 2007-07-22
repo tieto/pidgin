@@ -29,7 +29,7 @@ shout.png           >:o     >:O
 smile.png           :-)     :)
 wink.png            ;-)     ;)
 sad.png             :-(     :(
-tongue.png          :-P     :P
+tongue.png          :-P     :P      :-p    :p
 shock.png           =-O
 kiss.png            :-*
 shout.png           >:o
@@ -229,35 +229,36 @@ boy.png             /男     /<11>    /nan      /man
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)
 
-### Following ICQ 5.1
+### Following ICQ 6.0
 [ICQ]
 smile.png           :-)     :)
+neutral.png         :-$
 sad.png             :-(     :(
+shock.png           =-O
 wink.png            ;-)     ;)
-tongue.png          :-P     :P
+tongue.png          :-P     :P      :-p     :p
+#[:-}
 laugh.png           *JOKINGLY*
+sleepy.png          *TIRED*
 crying.png          :'(
+sick.png            :-!
 #*KISSED*
+#*STOP*
 kiss.png            :-*
+#*KISSING* 
 embarrassed.png     :-[
+devil.png           ]:->
 angel.png           O:-)
-shut-mouth.png      :-X     :X
+rose.png            @}->--
+shut-mouth.png      :-X     :X      :-x     :x
+bomb.png            @=
 thinking.png        :-\\    :-/
+good.png            *THUMBS\ UP*
 shout.png           >:o     >:O
+beer.png            *DRINK*
 smile-big.png       :-D     :D
 moneymouth.png      :-$
-shock.png           =-O
 glasses-cool.png    8-)
-#[:-}
-sleepy.png          *TIRED*
-sick.png            :-!
-#*STOP*
-#*KISSING* 
-devil.png           ]:->
-rose.png            @}->--
-bomb.png            @=
-good.png            *THUMBS\ UP*
-beer.png            *DRINK*
 in-love.png         *IN\ LOVE*
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)
@@ -272,7 +273,7 @@ angel.png           O:-)    o:-)    0:-)
 sick.png            :-&
 yawn.png            (:|
 hypnotized.png      @-)
-#on_the_phone       :)]     MISSING: "Wait,I'm phoning!" (not phone.png)    => smily showing phone and hand ("stop")
+on-the-phone.png    :)]
 sad.png             :(      :-(
 in-love.png         :x      :-x     :X      :-X
 angry.png           X-(     x-(     X(      x(
@@ -290,7 +291,7 @@ bye.png             =;
 arrogant.png        [-(
 thinking.png        :-?
 waiting.png         :-w     :-W
-#at_wits_end        ~x(     ~X(     MISSING: "Why.Does.This.Not.Work.AAAAARGH!!"    => angry smily shouting and pulling hair off
+at-wits-end.png     ~x(     ~X(
 smile-big.png       :D      :-D     :d      :-d
 tongue.png          :-P     :P      :-p     :p
 glasses-cool.png    B-)     b-)
@@ -308,7 +309,7 @@ eyeroll.png         8-|
 silly.png           8-}
 clap.png            =D>     =d>
 mad-tongue.png      >:P     >:p
-#timeout            :-t     :-T     MISSING: "Let's have a break."
+time-out.png        :-t     :-T
 hug-left.png        >:D<    >:d<
 love-over.png       =((
 sweat.png           #:-S    #:-s
@@ -350,8 +351,8 @@ star.png            (*)
 #youkiddingme.png   :-j :-J
 
 ### These only work in a certain IMvironment
-#malefighter1.png   o->     O->
-#malefighter2.png   o=>     O=>
-#femalefighter.png  o-+     O-+
+#male-fighter1.png  o->     O->
+#male-fighter2.png  o=>     O=>
+female-fighter.png  o-+     O-+
 yin-yang.png        (%)
 

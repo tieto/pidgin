@@ -425,7 +425,7 @@ purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcesn,
 		charsetstr1 = "UCS-2BE";
 		charsetstr2 = "UTF-8";
 	} else if (charset == AIM_CHARSET_CUSTOM) {
-		if ((sourcesn != NULL) && isdigit(sourcesn[0]))
+		if ((sourcesn != NULL) && aim_sn_is_icq(sourcesn))
 			charsetstr1 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 		else
 			charsetstr1 = "ISO-8859-1";
@@ -1258,7 +1258,7 @@ oscar_login(PurpleAccount *account)
 
 	if (!aim_snvalid(purple_account_get_username(account))) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
+		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
 		gc->wants_to_die = TRUE;
 		purple_connection_error(gc, buf);
 		g_free(buf);
@@ -4328,10 +4328,15 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			
 			tmp2 = purple_markup_strip_html(tmp1);
 			g_free(tmp1);
-			
-			tmp1 = purple_strdup_withhtml(tmp2);
+
+			/* re-escape the entities */
+			tmp1 = g_markup_escape_text(tmp2, -1);
 			g_free(tmp2);
 			
+			tmp2 = purple_strdup_withhtml(tmp1);
+			g_free(tmp1);
+			tmp1 = tmp2;
+
 			purple_plugin_oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
 
 			purple_debug_info("oscar", "Sending %s as %s because the original was too long.",
@@ -4623,7 +4628,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 
 	if (!aim_snvalid(buddy->name)) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
+		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
 		if (!purple_conv_present_error(buddy->name, purple_connection_get_account(gc), buf))
 			purple_notify_error(gc, NULL, _("Unable To Add"), buf);
 		g_free(buf);
@@ -5060,7 +5065,8 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 			default: { /* La la la */
 				gchar *buf;
 				purple_debug_error("oscar", "ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
-				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason.  The most common reason for this is that you have the maximum number of allowed buddies in your buddy list."), (retval->name ? retval->name : _("(no name)")));
+				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason."),
+						(retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
 					purple_notify_error(gc, NULL, _("Unable To Add"), buf);
 				g_free(buf);

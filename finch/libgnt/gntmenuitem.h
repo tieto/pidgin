@@ -1,4 +1,8 @@
 /**
+ * @file gntmenuitem.h Menuitem API
+ * @ingroup gnt
+ */
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -48,6 +52,7 @@ struct _GntMenuItemPriv
 	/* These will be used to determine the position of the submenu */
 	int x;
 	int y;
+	char trigger;
 };
 
 typedef void (*GntMenuItemCallback)(GntMenuItem *item, gpointer data);
@@ -109,6 +114,25 @@ void gnt_menuitem_set_callback(GntMenuItem *item, GntMenuItemCallback callback, 
  * @param menu
  */
 void gnt_menuitem_set_submenu(GntMenuItem *item, GntMenu *menu);
+
+/**
+ * Set a trigger key for the item.
+ *
+ * @param item     The menuitem
+ * @param trigger  The key that will trigger the item when the parent manu is visible
+ */
+void gnt_menuitem_set_trigger(GntMenuItem *item, char trigger);
+
+/**
+ * Get the trigger key for a menuitem.
+ *
+ * @param item   The menuitem
+ *
+ * @return The trigger key for the menuitem.
+ *
+ * @see gnt_menuitem_set_trigger
+ */
+char gnt_menuitem_get_trigger(GntMenuItem *item);
 
 G_END_DECLS
 

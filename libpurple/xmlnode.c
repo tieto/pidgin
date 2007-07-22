@@ -268,6 +268,22 @@ xmlnode_free(xmlnode *node)
 
 	g_return_if_fail(node != NULL);
 
+	/* if we're part of a tree, remove ourselves from the tree first */
+	if(NULL != node->parent) {
+		if(node->parent->child == node) {
+			node->parent->child = node->next;
+		} else {
+			xmlnode *prev = node->parent->child;
+			while(prev && prev->next != node) {
+				prev = prev->next;
+			}
+			if(prev) {
+				prev->next = node->next;
+			}
+		}
+	}
+
+	/* now free our children */
 	x = node->child;
 	while(x) {
 		y = x->next;
@@ -275,6 +291,7 @@ xmlnode_free(xmlnode *node)
 		x = y;
 	}
 
+	/* now dispose of ourselves */
 	g_free(node->name);
 	g_free(node->data);
 	g_free(node->xmlns);

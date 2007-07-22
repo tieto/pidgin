@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include "internal.h"
 #include "network.h"
 #include "eventloop.h"
 #include "connection.h"

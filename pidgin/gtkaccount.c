@@ -504,7 +504,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		/* Google Talk default domain hackery! */
 		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
 		item = gtk_menu_get_active(GTK_MENU(menu));
-		if (value == NULL && g_object_get_data(G_OBJECT(item), "fake") && 
+		if (value == NULL && g_object_get_data(G_OBJECT(item), "fake") &&
 			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
 			value = "gmail.com";
 
@@ -1814,6 +1814,10 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 static gint
 accedit_win_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsWindow *dialog)
 {
+	/* Since this is called as the window is closing, we don't need
+	 * pidgin_accounts_window_hide() to also dispose of the window */
+	dialog->window = NULL;
+
 	pidgin_accounts_window_hide();
 
 	return 0;
@@ -1924,8 +1928,6 @@ ask_delete_account_cb(GtkWidget *w, AccountsWindow *dialog)
 static void
 close_accounts_cb(GtkWidget *w, AccountsWindow *dialog)
 {
-	gtk_widget_destroy(dialog->window);
-
 	pidgin_accounts_window_hide();
 }
 
@@ -2088,7 +2090,6 @@ add_account_to_liststore(PurpleAccount *account, gpointer user_data)
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook),1);
 
 	set_account(accounts_window->model, &iter, account, global_buddyicon);
-	gtk_window_present(GTK_WINDOW(pidgin_blist_get_default_gtk_blist()->window));
 }
 
 static gboolean
@@ -2401,6 +2402,9 @@ pidgin_accounts_window_hide(void)
 {
 	if (accounts_window == NULL)
 		return;
+
+	if (accounts_window->window != NULL)
+		gtk_widget_destroy(accounts_window->window);
 
 	purple_signals_disconnect_by_handle(accounts_window);
 	purple_prefs_disconnect_by_handle(accounts_window);

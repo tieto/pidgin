@@ -78,8 +78,26 @@ def generate_status_menu(menu):
 def toggle_pref(item, pref):
 	purple.PurplePrefsSetBool(pref, item.get_active())
 
+def quit_finch(item, null):
+	# XXX: Ask first
+	purple.PurpleCoreQuit()
+	gtk.main_quit()
+
+def close_docklet(item, null):
+	gtk.main_quit()
+
 def popup_menu(icon, button, tm, none):
 	menu = gtk.Menu()
+
+	#item = gtk.ImageMenuItem(gtk.STOCK_QUIT)
+	#item.connect("activate", quit_finch, None)
+	#menu.append(item)
+
+	item = gtk.ImageMenuItem(gtk.STOCK_CLOSE)
+	item.connect("activate", close_docklet, None)
+	menu.append(item)
+
+	menu.append(gtk.MenuItem())
 
 	item = gtk.CheckMenuItem("Blink for unread IM")
 	item.set_active(purple.PurplePrefsGetBool("/plugins/dbus/docklet/blink/im"))
@@ -176,8 +194,14 @@ bus.add_signal_receiver(savedstatus_changed,
 t = gtk.StatusIcon()
 t.connect("popup-menu", popup_menu, None)
 
-init_prefs()
-detect_unread_conversations()
-
-gtk.main ()
+try:
+	init_prefs()
+	detect_unread_conversations()
+	gtk.main ()
+except:
+	dialog = gtk.Dialog("pietray: Error", None, gtk.DIALOG_NO_SEPARATOR | gtk.DIALOG_MODAL, ("Close", gtk.RESPONSE_CLOSE))
+	dialog.set_resizable(False)
+	dialog.vbox.pack_start(gtk.Label("There was some error. Perhaps a purple client is not running."), False, False, 0)
+	dialog.show_all()
+	dialog.run()
 

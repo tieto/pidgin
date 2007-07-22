@@ -234,7 +234,7 @@ GntWidget *gnt_widget_bindings_view(GntWidget *widget)
 
 #ifndef NO_LIBXML
 static GntWidget *
-gnt_widget_from_xmlnode(xmlNode *node, GntWidget **data[])
+gnt_widget_from_xmlnode(xmlNode *node, GntWidget **data[], int max)
 {
 	GntWidget *widget = NULL;
 	char *name;
@@ -284,7 +284,7 @@ gnt_widget_from_xmlnode(xmlNode *node, GntWidget **data[])
 		}
 
 		for (ch = node->children; ch; ch=ch->next)
-			gnt_box_add_widget(GNT_BOX(widget), gnt_widget_from_xmlnode(ch, data));
+			gnt_box_add_widget(GNT_BOX(widget), gnt_widget_from_xmlnode(ch, data, max));
 	} else if (strcmp(name, "button") == 0) {
 		widget = gnt_button_new(content);
 	} else if (strcmp(name, "label") == 0) {
@@ -313,9 +313,10 @@ gnt_widget_from_xmlnode(xmlNode *node, GntWidget **data[])
 	id = (char*)xmlGetProp(node, (xmlChar*)"id");
 	if (id) {
 		int i;
-		sscanf(id, "%d", &i);
-		*data[i] = widget;
-		xmlFree(id);
+		if (sscanf(id, "%d", &i) == 1 && i >= 0 && i < max) {
+			*data[i] = widget;
+			xmlFree(id);
+		}
 	}
 
 	prop = (char*)xmlGetProp(node, (xmlChar*)"border");
@@ -366,12 +367,45 @@ void gnt_util_parse_widgets(const char *string, int num, ...)
 		data[id] = va_arg(list, gpointer);
 
 	node = xmlDocGetRootElement(doc);
-	gnt_widget_from_xmlnode(node, data);
+	gnt_widget_from_xmlnode(node, data, num);
 
 	xmlFreeDoc(doc);
 	xmlCleanupParser();
 	va_end(list);
 	g_free(data);
 #endif
+}
+
+/* Setup trigger widget */
+typedef struct {
+	char *text;
+	GntWidget *button;
+} TriggerButton;
+
+static void
+free_trigger_button(TriggerButton *b)
+{
+	g_free(b->text);
+	g_free(b);
+}
+
+static gboolean
+key_pressed(GntWidget *widget, const char *text, TriggerButton *trig)
+{
+	if (text && trig->text &&
+			strcmp(text, trig->text) == 0) {
+		gnt_widget_activate(trig->button);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void gnt_util_set_trigger_widget(GntWidget *wid, const char *text, GntWidget *button)
+{
+	TriggerButton *tb = g_new0(TriggerButton, 1);
+	tb->text = g_strdup(text);
+	tb->button = button;
+	g_signal_connect(G_OBJECT(wid), "key_pressed", G_CALLBACK(key_pressed), tb);
+	g_signal_connect_swapped(G_OBJECT(button), "destroy", G_CALLBACK(free_trigger_button), tb);
 }
 

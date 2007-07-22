@@ -222,11 +222,10 @@ purple_core_quit(void)
 	purple_sound_uninit();
 
 	purple_plugins_uninit();
-	purple_signals_uninit();
-
 #ifdef HAVE_DBUS
 	purple_dbus_uninit();
 #endif
+	purple_signals_uninit();
 
 	g_free(core->ui);
 	g_free(core);
@@ -764,4 +763,13 @@ purple_core_migrate(void)
 
 	g_free(status_file);
 	return TRUE;
+}
+
+GHashTable* purple_core_get_ui_info() {
+	PurpleCoreUiOps *ops = purple_core_get_ui_ops();
+
+	if(NULL == ops || NULL == ops->get_ui_info)
+		return NULL;
+
+	return ops->get_ui_info();
 }

@@ -56,7 +56,7 @@ EXTERNAL_DLLS = \
 #build an expression for `find` to use to ignore the above files
 EXTERNAL_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(EXTERNAL_DLLS))
 
-.PHONY: all install installer installer_nogtk installer_debug installers clean uninstall create_release_install_dir
+.PHONY: all docs install installer installer_nogtk installer_debug installers clean uninstall create_release_install_dir
 
 all: $(PIDGIN_CONFIG_H)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE)
@@ -88,11 +88,19 @@ installer_debug: install
 
 installers: installer installer_nogtk installer_debug
 
+Doxyfile.mingw: Doxyfile.in
+	sed -e "s/@PACKAGE@/pidgin/" -e "s/@VERSION@/$(PIDGIN_VERSION)/" -e "s/@top_srcdir@/$(PIDGIN_TREE_TOP)/g" -e "s/@enable_dot@/NO/" Doxyfile.in > Doxyfile.mingw
+
+docs: Doxyfile.mingw
+	@echo "Running doxygen..."
+	@doxygen Doxyfile.mingw
+
 clean:
 	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) clean
 	rm -f $(PIDGIN_CONFIG_H) ./VERSION pidgin*.exe
+	rm -rf doc/html Doxyfile.mingw
 
 uninstall:
 	rm -rf $(PURPLE_INSTALL_PERLMOD_DIR) $(PIDGIN_INSTALL_PLUGINS_DIR) $(PURPLE_INSTALL_PO_DIR) $(PIDGIN_INSTALL_DIR) $(PIDGIN_INSTALL_DIR).release

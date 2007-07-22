@@ -658,17 +658,16 @@ pidgin_status_window_show(void)
 					 G_CALLBACK(status_window_close_cb), dialog);
 
 	purple_signal_connect(purple_savedstatuses_get_handle(),
-			"savedstatus-changed", dialog,
+			"savedstatus-changed", status_window,
 			PURPLE_CALLBACK(current_status_changed), dialog);
-
 	purple_signal_connect(purple_savedstatuses_get_handle(),
-			"savedstatus-added", dialog,
+			"savedstatus-added", status_window,
 			PURPLE_CALLBACK(saved_status_updated_cb), dialog);
 	purple_signal_connect(purple_savedstatuses_get_handle(),
-			"savedstatus-deleted", dialog,
+			"savedstatus-deleted", status_window,
 			PURPLE_CALLBACK(saved_status_updated_cb), dialog);
 	purple_signal_connect(purple_savedstatuses_get_handle(),
-			"savedstatus-modified", dialog,
+			"savedstatus-modified", status_window,
 			PURPLE_CALLBACK(saved_status_updated_cb), dialog);
 
 	gtk_widget_show_all(win);
@@ -685,6 +684,7 @@ pidgin_status_window_hide(void)
 
 	purple_request_close_with_handle(status_window);
 	purple_notify_close_with_handle(status_window);
+	purple_signals_disconnect_by_handle(status_window);
 	g_free(status_window);
 	status_window = NULL;
 }
@@ -1140,7 +1140,7 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	if (edit)
 		dialog->original_title = g_strdup(purple_savedstatus_get_title(saved_status));
 
-	dialog->window = win = pidgin_create_window (_("Status"), PIDGIN_HIG_BORDER, "status", FALSE) ;
+	dialog->window = win = pidgin_create_window(_("Status"), PIDGIN_HIG_BORDER, "status", TRUE);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(status_editor_destroy_cb), dialog);
@@ -1475,7 +1475,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	dialog->account = account;
 
 	tmp = g_strdup_printf(_("Status for %s"), purple_account_get_username(account));
-	dialog->window = win = pidgin_create_window(tmp, PIDGIN_HIG_BORDER, "substatus", FALSE) ;
+	dialog->window = win = pidgin_create_window(tmp, PIDGIN_HIG_BORDER, "substatus", TRUE);
 	g_free(tmp);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
@@ -1520,7 +1520,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 
 	/* Status mesage */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("_Message:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
