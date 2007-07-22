@@ -14,6 +14,12 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	Many thanks to everyone who has helped with tracking down the
 	various issues, testing fixes, and getting patches in.
 
+	Tim: Sean finally got me to fix some of the buddy list bugs with
+	Yahoo! when in version 15 mode. So now we have some Yahoo! to
+	MSN support, which is kind of nice. Looks like some others have
+	been contributing to Yahoo! while I've been AWOL, so many thanks
+	to them.
+
 2.1.0 (7/28/2007):
 	Sean: This release took a bit longer than 3 weeks, but boy is it 
 	worth it! We're beginning to experiment with new UI concepts and
