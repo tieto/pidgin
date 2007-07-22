@@ -378,6 +378,7 @@ struct _FlapConnection
 	guint destroy_timeout;
 	OscarDisconnectReason disconnect_reason;
 	gchar *error_message;
+	guint16 disconnect_code;
 
 	/* A few variables that are only used when connecting */
 	PurpleProxyConnectData *connect_data;

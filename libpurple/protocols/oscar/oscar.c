@@ -3472,7 +3472,6 @@ static int purple_connerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	purple_debug_info("oscar", "Disconnected.  Code is 0x%04x and msg is %s\n",
 					code, (msg != NULL ? msg : ""));
 
-	g_return_val_if_fail(fr       != NULL, 1);
 	g_return_val_if_fail(conn != NULL, 1);
 
 	if (conn->type == SNAC_FAMILY_LOCATE) {
