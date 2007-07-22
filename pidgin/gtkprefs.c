@@ -994,7 +994,7 @@ conv_page()
 	pidgin_prefs_checkbox(_("Show _formatting on incoming messages"),
 				PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting", vbox);
 
-	iconpref1 = pidgin_prefs_checkbox(_("Show buddy _icons"),
+	iconpref1 = pidgin_prefs_checkbox(_("Show Buddy _Details"),
 			PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", vbox);
 	iconpref2 = pidgin_prefs_checkbox(_("Enable buddy ic_on animation"),
 			PIDGIN_PREFS_ROOT "/conversations/im/animate_buddy_icons", vbox);
