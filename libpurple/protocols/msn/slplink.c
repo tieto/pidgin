@@ -112,8 +112,10 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 	if (slplink->remote_user != NULL)
 		g_free(slplink->remote_user);
 
+#if 0
 	if (slplink->directconn != NULL)
 		msn_directconn_destroy(slplink->directconn);
+#endif
 
 	while (slplink->slp_calls != NULL)
 		msn_slp_call_destroy(slplink->slp_calls->data);
@@ -244,11 +246,13 @@ msn_slplink_find_slp_call_with_session_id(MsnSlpLink *slplink, long id)
 void
 msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 {
+#if 0
 	if (slplink->directconn != NULL)
 	{
 		msn_directconn_send_msg(slplink->directconn, msg);
 	}
 	else
+#endif
 	{
 		if (slplink->swboard == NULL)
 		{
@@ -634,9 +638,10 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			MsnDirectConn *directconn;
 
 			directconn = slplink->directconn;
-
+#if 0
 			if (!directconn->acked)
 				msn_directconn_send_handshake(directconn);
+#endif
 		}
 		else if (slpmsg->flags == 0x0 || slpmsg->flags == 0x20 ||
 				 slpmsg->flags == 0x1000030)
