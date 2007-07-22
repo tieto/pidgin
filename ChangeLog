@@ -6,7 +6,7 @@ version 2.1.1 (??/??/????):
 	* Added support for Unicode status messages in Yahoo.
 	* Server-stored aliases for Yahoo. (John Moody)
 	* Fixed support for Yahoo! doodling.
-	* Support for MSN Messenger contacts
+	* Limited support for MSN Messenger contacts
 	
 	Bonjour:
 	* Bonjour plugin uses native Avahi instead of Howl
