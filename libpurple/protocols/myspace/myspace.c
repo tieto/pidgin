@@ -68,6 +68,109 @@ static const char *emoticon_symbols[] = {
     "8-)", ":-X", ":-)", ":-!", ":-*",
     NULL};
 
+
+/* Internal functions */
+static void msim_send_zap(PurpleBlistNode *node, gpointer zap_num_ptr);
+
+#ifdef MSIM_DEBUG_MSG
+static void print_hash_item(gpointer key, gpointer value, gpointer user_data);
+#endif
+
+static int msim_send_really_raw(PurpleConnection *gc, const char *buf,
+        int total_bytes);
+static gboolean msim_login_challenge(MsimSession *session, MsimMessage *msg);
+static const gchar *msim_compute_login_response(
+        const gchar nonce[2 * NONCE_SIZE], const gchar *email, 
+        const gchar *password, guint *response_len);
+static gboolean msim_send_bm(MsimSession *session, const gchar *who, 
+        const gchar *text, int type);
+
+static guint msim_point_to_purple_size(MsimSession *session, guint point);
+static guint msim_purple_size_to_point(MsimSession *session, guint size);
+static guint msim_height_to_point(MsimSession *session, guint height);
+static guint msim_point_to_height(MsimSession *session, guint point);
+
+static void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);
+
+static void msim_markup_tag_to_html(MsimSession *, xmlnode *root, 
+        gchar **begin, gchar **end);
+static void html_tag_to_msim_markup(MsimSession *, xmlnode *root, 
+        gchar **begin, gchar **end);
+static gchar *msim_convert_xml(MsimSession *, const gchar *raw, 
+        MSIM_XMLNODE_CONVERT f);
+static gchar *msim_convert_smileys_to_markup(gchar *before);
+
+/* High-level msim markup <=> html conversion functions. */
+static gchar *msim_markup_to_html(MsimSession *, const gchar *raw);
+static gchar *html_to_msim_markup(MsimSession *, const gchar *raw);
+
+static gboolean msim_incoming_bm_record_cv(MsimSession *session, 
+        MsimMessage *msg);
+static gboolean msim_incoming_bm(MsimSession *session, MsimMessage *msg);
+static gboolean msim_incoming_status(MsimSession *session, MsimMessage *msg);
+static gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg);
+static gboolean msim_incoming_zap(MsimSession *session, MsimMessage *msg);
+static gboolean msim_incoming_action(MsimSession *session, MsimMessage *msg);
+static gboolean msim_incoming_media(MsimSession *session, MsimMessage *msg);
+static gboolean msim_incoming_unofficial_client(MsimSession *session, 
+        MsimMessage *msg);
+
+static gboolean msim_send_unofficial_client(MsimSession *session, 
+        gchar *username);
+
+static void msim_get_info_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+
+static void msim_set_status_code(MsimSession *session, guint code, 
+        gchar *statstring);
+
+static void msim_store_buddy_info_each(gpointer key, gpointer value, 
+        gpointer user_data);
+static gboolean msim_store_buddy_info(MsimSession *session, MsimMessage *msg);
+static gboolean msim_process_server_info(MsimSession *session, 
+        MsimMessage *msg);
+static gboolean msim_web_challenge(MsimSession *session, MsimMessage *msg); 
+static gboolean msim_process_reply(MsimSession *session, MsimMessage *msg);
+
+static gboolean msim_preprocess_incoming(MsimSession *session,MsimMessage *msg);
+
+#ifdef MSIM_USE_KEEPALIVE
+static gboolean msim_check_alive(gpointer data);
+#endif
+
+static gboolean msim_we_are_logged_on(MsimSession *session, MsimMessage *msg);
+
+static gboolean msim_process(MsimSession *session, MsimMessage *msg);
+
+static MsimMessage *msim_do_postprocessing(MsimMessage *msg, 
+        const gchar *uid_field_name, const gchar *uid_before, guint uid);
+static void msim_postprocess_outgoing_cb(MsimSession *session, 
+        MsimMessage *userinfo, gpointer data);
+static gboolean msim_postprocess_outgoing(MsimSession *session, 
+        MsimMessage *msg, const gchar *username, const gchar *uid_field_name, 
+        const gchar *uid_before); 
+
+static gboolean msim_error(MsimSession *session, MsimMessage *msg);
+
+static void msim_check_inbox_cb(MsimSession *session, MsimMessage *userinfo, 
+        gpointer data);
+static gboolean msim_check_inbox(gpointer data);
+
+static void msim_input_cb(gpointer gc_uncasted, gint source, 
+        PurpleInputCondition cond);
+
+static guint msim_new_reply_callback(MsimSession *session, 
+        MSIM_USER_LOOKUP_CB cb, gpointer data);
+
+static void msim_connect_cb(gpointer data, gint source, 
+		const gchar *error_message);
+
+static gboolean msim_is_userid(const gchar *user);
+static gboolean msim_is_email(const gchar *user);
+
+static void msim_lookup_user(MsimSession *session, const gchar *user, 
+		MSIM_USER_LOOKUP_CB cb, gpointer data);
+
+
 /** 
  * Load the plugin.
  */
@@ -133,7 +236,7 @@ msim_status_types(PurpleAccount *acct)
 }
 
 /** Zap someone. Callback from msim_blist_node_menu zap menu. */
-void
+static void
 msim_send_zap(PurpleBlistNode *node, gpointer zap_num_ptr)
 {
     PurpleBuddy *buddy;
@@ -249,8 +352,6 @@ msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
     return "myspace";
 }
 
-
-
 /**
  * Replace 'old' with 'new' in 'str'.
  *
@@ -278,7 +379,7 @@ str_replace(const gchar *str, const gchar *old, const gchar *new)
 }
 
 #ifdef MSIM_DEBUG_MSG
-void 
+static void 
 print_hash_item(gpointer key, gpointer value, gpointer user_data)
 {
     purple_debug_info("msim", "%s=%s\n", (gchar *)key, (gchar *)value);
@@ -318,7 +419,7 @@ msim_send_raw(MsimSession *session, const gchar *msg)
  *
  * @return Bytes successfully sent, or -1 on error.
  */
-int 
+static int 
 msim_send_really_raw(PurpleConnection *gc, const char *buf, int total_bytes)
 {
 	int total_bytes_sent;
@@ -426,7 +527,7 @@ msim_login(PurpleAccount *acct)
  *
  * @return TRUE if successful, FALSE if not
  */
-gboolean 
+static gboolean 
 msim_login_challenge(MsimSession *session, MsimMessage *msg) 
 {
     PurpleAccount *account;
@@ -487,7 +588,7 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
  * @return Binary login challenge response, ready to send to the server. 
  * Must be g_free()'d when finished. NULL if error.
  */
-const gchar *
+static const gchar *
 msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE], 
 		const gchar *email, const gchar *password, guint *response_len)
 {
@@ -678,7 +779,7 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
  * Buddy messages ('bm') include instant messages, action messages, status messages, etc.
  *
  */
-gboolean 
+static gboolean 
 msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, 
 		int type)
 {
@@ -720,7 +821,7 @@ static gdouble _font_scale[] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736 };
 
 /** Convert typographical font point size to HTML font size. 
  * Based on libpurple/gtkimhtml.c */
-guint
+static guint
 msim_point_to_purple_size(MsimSession *session, guint point)
 {
     guint size, this_point, base;
@@ -746,7 +847,7 @@ msim_point_to_purple_size(MsimSession *session, guint point)
 }
 
 /** Convert HTML font size to point size. */
-guint
+static guint
 msim_purple_size_to_point(MsimSession *session, guint size)
 {
     gdouble scale;
@@ -766,7 +867,7 @@ msim_purple_size_to_point(MsimSession *session, guint size)
 }
 
 /** Convert a msim markup font pixel height to the more usual point size, for incoming messages. */
-guint 
+static guint 
 msim_height_to_point(MsimSession *session, guint height)
 {
     guint dpi;
@@ -780,7 +881,7 @@ msim_height_to_point(MsimSession *session, guint height)
 }
 
 /** Convert point size to msim pixel height font size specification, for outgoing messages. */
-guint
+static guint
 msim_point_to_height(MsimSession *session, guint point)
 {
     guint dpi;
@@ -973,7 +1074,9 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 }
 
 /** Convert an individual msim markup tag to HTML. */
-void msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
+static void 
+msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin, 
+        gchar **end)
 {
 	if (!strcmp(root->name, "f"))
 	{
@@ -995,7 +1098,9 @@ void msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 }
 
 /** Convert an individual HTML tag to msim markup. */
-void html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
+static void 
+html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin, 
+        gchar **end)
 {
     /* TODO: Coalesce nested tags into one <f> tag!
      * Currently, the 's' value will be overwritten when b/i/u is nested
@@ -1121,7 +1226,7 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 }
 
 /** Convert XML to something based on MSIM_XMLNODE_CONVERT. */
-gchar *
+static gchar *
 msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 {
 	xmlnode *root;
@@ -1157,7 +1262,7 @@ msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
  * @param before Original text with ASCII smileys. Will be freed.
  * @return A new string with <i> tags, if applicable. Must be g_free()'d.
  */
-gchar *
+static gchar *
 msim_convert_smileys_to_markup(gchar *before)
 {
     gchar *old, *new, *replacement;
@@ -1188,7 +1293,7 @@ msim_convert_smileys_to_markup(gchar *before)
 /** High-level function to convert MySpaceIM markup to Purple (HTML) markup. 
  *
  * @return Purple markup string, must be g_free()'d. */
-gchar *
+static gchar *
 msim_markup_to_html(MsimSession *session, const gchar *raw)
 {
     return msim_convert_xml(session, raw, 
@@ -1198,7 +1303,7 @@ msim_markup_to_html(MsimSession *session, const gchar *raw)
 /** High-level function to convert Purple (HTML) to MySpaceIM markup.
  *
  * @return HTML markup string, must be g_free()'d. */
-gchar *
+static gchar *
 html_to_msim_markup(MsimSession *session, const gchar *raw)
 {
     gchar *markup;
@@ -1216,7 +1321,7 @@ html_to_msim_markup(MsimSession *session, const gchar *raw)
 }
 
 /** Record the client version in the buddy list, from an incoming message. */
-gboolean
+static gboolean
 msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg)
 {
     gchar *username, *cv;
@@ -1251,7 +1356,7 @@ msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg)
 }
 
 /** Handle an incoming buddy message. */
-gboolean
+static gboolean
 msim_incoming_bm(MsimSession *session, MsimMessage *msg)
 {
     guint bm;
@@ -1288,7 +1393,7 @@ msim_incoming_bm(MsimSession *session, MsimMessage *msg)
  *
  * @return TRUE if successful.
  */
-gboolean 
+static gboolean 
 msim_incoming_im(MsimSession *session, MsimMessage *msg)
 {
     gchar *username, *msg_msim_markup, *msg_purple_markup;
@@ -1321,7 +1426,7 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg)
  * @param msg An MsimMessage that was unrecognized, or NULL.
  * @param note Information on what was unrecognized, or NULL.
  */
-void 
+static void 
 msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
 {
 	/* TODO: Some more context, outwardly equivalent to a backtrace, 
@@ -1348,7 +1453,7 @@ msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
 }
 
 /** Process an incoming zap. */
-gboolean
+static gboolean
 msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 {
     gchar *msg_text, *username, *zap_text;
@@ -1397,7 +1502,7 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
  * @return TRUE if successful.
  *
  */
-gboolean 
+static gboolean 
 msim_incoming_action(MsimSession *session, MsimMessage *msg)
 {
 	gchar *msg_text, *username;
@@ -1440,7 +1545,7 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 }
 
 /* Process an incoming media (buddy icon) message. */
-gboolean
+static gboolean
 msim_incoming_media(MsimSession *session, MsimMessage *msg)
 {
     gchar *username, *text;
@@ -1466,7 +1571,7 @@ msim_incoming_media(MsimSession *session, MsimMessage *msg)
 
 /* Process an incoming "unofficial client" message. The plugin for
  * Miranda IM sends this message with the plugin information. */
-gboolean
+static gboolean
 msim_incoming_unofficial_client(MsimSession *session, MsimMessage *msg)
 {
     PurpleBuddy *buddy;
@@ -1496,7 +1601,7 @@ msim_incoming_unofficial_client(MsimSession *session, MsimMessage *msg)
 
 
 /** Send our client version to another unofficial client that understands it. */
-gboolean
+static gboolean
 msim_send_unofficial_client(MsimSession *session, gchar *username)
 {
     gchar *our_info;
@@ -1555,8 +1660,9 @@ msim_send_typing(PurpleConnection *gc, const gchar *name,
 }
 
 /** Callback for msim_get_info(), for when user info is received. */
-void 
-msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, gpointer data)
+static void 
+msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, 
+        gpointer data)
 {
 	GHashTable *body;
 	gchar *body_str;
@@ -1797,7 +1903,7 @@ msim_set_idle(PurpleConnection *gc, int time)
  * @param status_code An MSIM_STATUS_CODE_* value.
  * @param statstring Status string, must be a dynamic string (will be freed by msim_send).
  */
-void 
+static void 
 msim_set_status_code(MsimSession *session, guint status_code, gchar *statstring)
 {
     g_return_if_fail(MSIM_SESSION_VALID(session));
@@ -1972,7 +2078,7 @@ or:
  * @param session
  * @param msg MsimMessage *, freed by caller.
  */
-gboolean 
+static gboolean 
 msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 {
     g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
@@ -2021,8 +2127,9 @@ msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 	}
 }
 
+#ifdef MSIM_USE_KEEPALIVE
 /** Check if the connection is still alive, based on last communication. */
-gboolean
+static gboolean
 msim_check_alive(gpointer data)
 {
     MsimSession *session;
@@ -2052,9 +2159,10 @@ msim_check_alive(gpointer data)
 
     return TRUE;
 }
+#endif
 
 /** Handle mail reply checks. */
-void
+static void
 msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 {
     GHashTable *body;
@@ -2168,7 +2276,7 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 }
 
 /* Send request to check if there is new mail. */
-gboolean
+static gboolean
 msim_check_inbox(gpointer data)
 {
     MsimSession *session;
@@ -2193,7 +2301,7 @@ msim_check_inbox(gpointer data)
 }
 
 /** Called when the session key arrives. */
-gboolean
+static gboolean
 msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 {
     g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
@@ -2292,7 +2400,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
  *
  * @return TRUE if successful. FALSE if processing failed.
  */
-gboolean 
+static gboolean 
 msim_process(MsimSession *session, MsimMessage *msg)
 {
     g_return_val_if_fail(session != NULL, FALSE);
@@ -2324,7 +2432,7 @@ msim_process(MsimSession *session, MsimMessage *msg)
 }
 
 /** Store an field of information about a buddy. */
-void 
+static void 
 msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data)
 {
 	PurpleBuddy *buddy;
@@ -2354,7 +2462,7 @@ msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data)
  *
  * The information is saved to the buddy's blist node, which ends up in blist.xml.
  */
-gboolean 
+static gboolean 
 msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
 {
 	GHashTable *body;
@@ -2417,7 +2525,7 @@ msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
 }
 
 /** Process the initial server information from the server. */
-gboolean
+static gboolean
 msim_process_server_info(MsimSession *session, MsimMessage *msg)
 {
     gchar *body_str;
@@ -2459,7 +2567,7 @@ WebTicketGoHome=False
 }
 
 /** Process a web challenge, used to login to the web site. */
-gboolean
+static gboolean
 msim_web_challenge(MsimSession *session, MsimMessage *msg)
 {
     /* TODO: web challenge, store token */
@@ -2476,7 +2584,7 @@ msim_web_challenge(MsimSession *session, MsimMessage *msg)
  *
  * msim_lookup_user sets callback for here 
  */
-gboolean 
+static gboolean 
 msim_process_reply(MsimSession *session, MsimMessage *msg)
 {
     MSIM_USER_LOOKUP_CB cb;
@@ -2532,7 +2640,7 @@ msim_process_reply(MsimSession *session, MsimMessage *msg)
  *
  * @return TRUE if successfully reported error.
  */
-gboolean 
+static gboolean 
 msim_error(MsimSession *session, MsimMessage *msg)
 {
     gchar *errmsg, *full_errmsg;
@@ -2572,7 +2680,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
  *
  * @return TRUE if successful.
  */
-gboolean 
+static gboolean 
 msim_incoming_status(MsimSession *session, MsimMessage *msg)
 {
     PurpleBuddyList *blist;
@@ -2760,7 +2868,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
  *
  * Does not handle sending, or scheduling userid lookup. For that, see msim_postprocess_outgoing().
  */ 
-MsimMessage *
+static MsimMessage *
 msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before, 
 		const gchar *uid_field_name, guint uid)
 {	
@@ -2813,8 +2921,9 @@ msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before,
  *
  *
 */
-void 
-msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
+static void 
+msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, 
+        gpointer data)
 {
 	gchar *body_str;
 	GHashTable *body;
@@ -3001,7 +3110,7 @@ msim_offline_message(const PurpleBuddy *buddy)
  *
  * Reads the input, and calls msim_preprocess_incoming() to handle it.
  */
-void 
+static void 
 msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 {
     PurpleConnection *gc;
@@ -3144,7 +3253,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
  * 1) MSIM_USER_LOOKUP_CB - make it for PERSIST_REPLY, not just user lookup
  * 2) data - make it an MsimMessage?
  */
-guint 
+static guint 
 msim_new_reply_callback(MsimSession *session, MSIM_USER_LOOKUP_CB cb, 
 		gpointer data)
 {
@@ -3167,7 +3276,7 @@ msim_new_reply_callback(MsimSession *session, MSIM_USER_LOOKUP_CB cb,
  * @param source File descriptor.
  * @param error_message
  */
-void 
+static void 
 msim_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
     PurpleConnection *gc;
@@ -3303,7 +3412,7 @@ msim_close(PurpleConnection *gc)
  *
  * @return TRUE if is userid, FALSE if not.
  */
-gboolean 
+static gboolean 
 msim_is_userid(const gchar *user)
 {
     g_return_val_if_fail(user != NULL, FALSE);
@@ -3323,7 +3432,7 @@ msim_is_userid(const gchar *user)
  * between a user represented by an email address from
  * other forms of identification.
  */ 
-gboolean 
+static gboolean 
 msim_is_email(const gchar *user)
 {
     g_return_val_if_fail(user != NULL, FALSE);
@@ -3341,7 +3450,7 @@ msim_is_email(const gchar *user)
  * @param data An arbitray data pointer passed to the callback.
  */
 /* TODO: change to not use callbacks */
-void 
+static void 
 msim_lookup_user(MsimSession *session, const gchar *user, 
 		MSIM_USER_LOOKUP_CB cb, gpointer data)
 {

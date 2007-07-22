@@ -52,7 +52,7 @@
 /* Conditional compilation options */
 
 /* Debugging options */
-#define MSIM_DEBUG_MSG					
+/*#define MSIM_DEBUG_MSG			    */
 /* Low-level and rarely needed */
 /*#define MSIM_DEBUG_PARSE 				*/
 /*#define MSIM_DEBUG_LOGIN_CHALLENGE	*/
@@ -200,6 +200,8 @@ typedef struct _MsimSession
 #define MSIM_SESSION_VALID(s) (session != NULL && \
 		session->magic == MSIM_SESSION_STRUCT_MAGIC)
 
+gchar *str_replace(const gchar *str, const gchar *old, const gchar *new);
+
 /* Callback function pointer type for when a user's information is received, 
  * initiated from a user lookup. */
 typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, MsimMessage *userinfo,
@@ -209,115 +211,40 @@ typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, MsimMessage *userinfo,
 gboolean msim_load(PurplePlugin *plugin);
 GList *msim_status_types(PurpleAccount *acct);
 
-void msim_send_zap(PurpleBlistNode *node, gpointer zap_num_ptr);
 GList *msim_blist_node_menu(PurpleBlistNode *node);
 
 const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy);
 
-gchar *str_replace(const gchar *str, const gchar *old, const gchar *new);
-
-void print_hash_item(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_send_raw(MsimSession *session, const gchar *msg);
-int msim_send_really_raw(PurpleConnection *gc, const char *buf,int total_bytes);
 
 void msim_login(PurpleAccount *acct);
-gboolean msim_login_challenge(MsimSession *session, MsimMessage *msg);
-const gchar *msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
-		        const gchar *email, const gchar *password, guint *response_len);
-
 
 int msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, 
 	PurpleMessageFlags flags);
-gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type);
-guint msim_point_to_purple_size(MsimSession *session, guint point);
-guint msim_purple_size_to_point(MsimSession *session, guint size);
-guint msim_height_to_point(MsimSession *session, guint height);
-guint msim_point_to_height(MsimSession *session, guint point);
-void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
-
-void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);
-
 
 typedef void (*MSIM_XMLNODE_CONVERT)(MsimSession *, xmlnode *, gchar **, gchar **);
-void msim_markup_tag_to_html(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
-void html_tag_to_msim_markup(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
-gchar *msim_convert_xml(MsimSession *, const gchar *raw, MSIM_XMLNODE_CONVERT f);
-gchar *msim_convert_smileys_to_markup(gchar *before);
-
-/* High-level msim markup <=> html conversion functions. */
-gchar *msim_markup_to_html(MsimSession *, const gchar *raw);
-gchar *html_to_msim_markup(MsimSession *, const gchar *raw);
-
-gboolean msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg);
-gboolean msim_incoming_bm(MsimSession *session, MsimMessage *msg);
-gboolean msim_incoming_status(MsimSession *session, MsimMessage *msg);
-gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg);
-gboolean msim_incoming_zap(MsimSession *session, MsimMessage *msg);
-gboolean msim_incoming_action(MsimSession *session, MsimMessage *msg);
-gboolean msim_incoming_media(MsimSession *session, MsimMessage *msg);
-gboolean msim_incoming_unofficial_client(MsimSession *session, MsimMessage *msg);
-
-gboolean msim_send_unofficial_client(MsimSession *session, gchar *username);
 
 unsigned int msim_send_typing(PurpleConnection *gc, const gchar *name, PurpleTypingState state);
-void msim_get_info_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
 void msim_get_info(PurpleConnection *gc, const gchar *name);
 
 void msim_set_status(PurpleAccount *account, PurpleStatus *status);
 void msim_set_idle(PurpleConnection *gc, int time);
-void msim_set_status_code(MsimSession *session, guint code, gchar *statstring);
 
-void msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data);
-gboolean msim_store_buddy_info(MsimSession *session, MsimMessage *msg);
-gboolean msim_process_server_info(MsimSession *session, MsimMessage *msg);
-gboolean msim_web_challenge(MsimSession *session, MsimMessage *msg); 
-gboolean msim_process_reply(MsimSession *session, MsimMessage *msg);
-
-gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg);
-
-gboolean msim_check_alive(gpointer data);
-gboolean msim_we_are_logged_on(MsimSession *session, MsimMessage *msg);
-
-gboolean msim_process(MsimSession *session, MsimMessage *msg);
-
-MsimMessage *msim_do_postprocessing(MsimMessage *msg, const gchar *uid_field_name, const gchar *uid_before, guint uid);
-void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
-gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, const gchar *username, 
-	const gchar *uid_field_name, const gchar *uid_before);
-
-
-gboolean msim_error(MsimSession *session, MsimMessage *msg);
-
-void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
-void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
+void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, 
+        PurpleGroup *group);
+void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, 
+        PurpleGroup *group);
 
 gboolean msim_offline_message(const PurpleBuddy *buddy);
-
-void msim_check_inbox_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
-gboolean msim_check_inbox(gpointer data);
-
-void msim_input_cb(gpointer gc_uncasted, gint source, 
-		PurpleInputCondition cond);
-
-guint msim_new_reply_callback(MsimSession *session, MSIM_USER_LOOKUP_CB cb, gpointer data);
-
-void msim_connect_cb(gpointer data, gint source, 
-		const gchar *error_message);
 
 MsimSession *msim_session_new(PurpleAccount *acct);
 void msim_session_destroy(MsimSession *session);
 
 void msim_close(PurpleConnection *gc);
 
-gboolean msim_is_userid(const gchar *user);
-gboolean msim_is_email(const gchar *user);
-
-void msim_lookup_user(MsimSession *session, const gchar *user, 
-		MSIM_USER_LOOKUP_CB cb, gpointer data);
-
 char *msim_status_text(PurpleBuddy *buddy);
-void msim_tooltip_text(PurpleBuddy *buddy, 
-		PurpleNotifyUserInfo *user_info, gboolean full);
+void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, 
+        gboolean full);
 GList *msim_actions(PurplePlugin *plugin, gpointer context);
 
 #ifdef MSIM_SELF_TEST
