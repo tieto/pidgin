@@ -3189,7 +3189,8 @@ static char *mw_prpl_status_text(PurpleBuddy *b) {
   pd = gc->proto_data;
 
   ret = mwServiceAware_getText(pd->srvc_aware, &t);
-  return ret? g_markup_escape_text(ret, -1): NULL;
+  
+  return (ret && g_utf8_validate(ret, -1, NULL)) ? g_markup_escape_text(ret, -1): NULL;
 }
 
 
@@ -3254,7 +3255,7 @@ static void mw_prpl_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info
   message = mwServiceAware_getText(pd->srvc_aware, &idb);
   status = status_text(b);
 
-  if(message != NULL && purple_utf8_strcasecmp(status, message)) {
+  if(message != NULL && g_utf8_validate(message, -1, NULL) && purple_utf8_strcasecmp(status, message)) {
     tmp = g_markup_escape_text(message, -1);
 	purple_notify_user_info_add_pair(user_info, status, tmp);
     g_free(tmp);
@@ -4151,7 +4152,7 @@ static void mw_prpl_get_info(PurpleConnection *gc, const char *who) {
 
 	/* XXX Is this adding a status message in its own section rather than with the "Status" label? */
     tmp2 = mwServiceAware_getText(pd->srvc_aware, &idb);
-    if(tmp2) {
+    if(tmp2 && g_utf8_validate(tmp2, -1, NULL)) {
       tmp = g_markup_escape_text(tmp2, -1);
 	  purple_notify_user_info_add_section_break(user_info);
 	  purple_notify_user_info_add_pair(user_info, NULL, tmp);
