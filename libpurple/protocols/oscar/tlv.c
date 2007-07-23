@@ -718,12 +718,10 @@ aim_tlv_t *aim_tlv_gettlv(GSList *list, const guint16 type, const int nth)
 
 	for (cur = list, i = 0; cur != NULL; cur = cur->next) {
 		tlv = cur->data;
-		if (tlv != NULL) { /* TODO: This NULL check shouldn't be needed */
-			if (tlv->type == type)
-				i++;
-			if (i >= nth)
-				return tlv;
-		}
+		if (tlv->type == type)
+			i++;
+		if (i >= nth)
+			return tlv;
 	}
 
 	return NULL;

@@ -27,6 +27,7 @@ int main()
 	gnt_widget_set_name(box2, "box2");
 
 	tree = gnt_tree_new_with_columns(3);
+	gnt_tree_set_search_column(GNT_TREE(tree), 1);
 	GNT_WIDGET_SET_FLAGS(tree, GNT_WIDGET_NO_BORDER);
 	gnt_tree_set_column_titles(GNT_TREE(tree), "12345678901234567890", "column 2", "column3");
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
@@ -61,8 +62,6 @@ int main()
 	gnt_tree_add_row_after(GNT_TREE(tree), "5", gnt_tree_create_row(GNT_TREE(tree), "5", " long text", "a2"), "d", NULL);
 
 	gnt_tree_add_row_after(GNT_TREE(tree), "6", gnt_tree_create_row(GNT_TREE(tree), "6", " long text", "a2"), "4", NULL);
-
-	gnt_tree_add_row_after(GNT_TREE(tree), NULL, gnt_tree_create_separator(GNT_TREE(tree)), NULL, "c");
 
 	int i;
 	for (i = 110; i < 430; i++)

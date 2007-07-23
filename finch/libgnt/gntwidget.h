@@ -65,6 +65,7 @@ typedef enum _GntWidgetFlags
 	GNT_WIDGET_GROW_Y         = 1 << 9,
 	GNT_WIDGET_INVISIBLE      = 1 << 10,
 	GNT_WIDGET_TRANSIENT      = 1 << 11,
+	GNT_WIDGET_DISABLE_ACTIONS = 1 << 12,
 } GntWidgetFlags;
 
 /* XXX: This will probably move elsewhere */

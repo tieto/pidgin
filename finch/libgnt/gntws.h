@@ -72,14 +72,14 @@ G_BEGIN_DECLS
 GType gnt_ws_get_gtype(void);
 
 GntWS *gnt_ws_new(const char *name);
-void gnt_ws_set_name(GntWS *, const gchar *);
-void gnt_ws_add_widget(GntWS *, GntWidget *);
-void gnt_ws_remove_widget(GntWS *, GntWidget *);
-void gnt_ws_widget_hide(GntWidget *, GHashTable *nodes);
-void gnt_ws_widget_show(GntWidget *, GHashTable *nodes);
-void gnt_ws_draw_taskbar(GntWS *, gboolean reposition);
-void gnt_ws_hide(GntWS *, GHashTable *);
-void gnt_ws_show(GntWS *, GHashTable *);
+void gnt_ws_set_name(GntWS *ws, const gchar *name);
+void gnt_ws_add_widget(GntWS *ws, GntWidget *widget);
+void gnt_ws_remove_widget(GntWS *ws, GntWidget *widget);
+void gnt_ws_widget_hide(GntWidget *widget, GHashTable *nodes);
+void gnt_ws_widget_show(GntWidget *widget, GHashTable *nodes);
+void gnt_ws_draw_taskbar(GntWS *ws, gboolean reposition);
+void gnt_ws_hide(GntWS *ws, GHashTable *table);
+void gnt_ws_show(GntWS *ws, GHashTable *table);
 
 const char * gnt_ws_get_name(GntWS *ws);
 
