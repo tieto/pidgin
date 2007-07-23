@@ -8622,7 +8622,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 					   TRUE, GTK_PACK_START);
 
 	/* show the widgets */
-/* XXX	gtk_widget_show(gtkconv->icon); */
+	gtk_widget_show(gtkconv->icon);
 	gtk_widget_show(gtkconv->tab_label);
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/close_on_tabs"))
 		gtk_widget_show(gtkconv->close);
