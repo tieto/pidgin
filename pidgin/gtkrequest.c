@@ -580,6 +580,7 @@ pidgin_request_action(const char *title, const char *primary,
 
 	/* Create the dialog. */
 	data->dialog = dialog = gtk_dialog_new();
+	gtk_window_set_deletable(GTK_WINDOW(data->dialog), FALSE);
 
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
