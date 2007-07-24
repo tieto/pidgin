@@ -816,7 +816,11 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			 */
 			int type2, number, length2;
 
-			while (byte_stream_curpos(bs) < endpos) {
+			/*
+			 * Continue looping as long as we're able to read type2,
+			 * number, and length2.
+			 */
+			while (byte_stream_curpos(bs) + 4 <= endpos) {
 				type2 = byte_stream_get16(bs);
 				number = byte_stream_get8(bs);
 				length2 = byte_stream_get8(bs);
