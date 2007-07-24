@@ -2824,8 +2824,12 @@ static void pidgin_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer n
 static void
 toggle_debug(void)
 {
+	gboolean current_setting = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled");
+
+	if (!current_setting)
+		pidgin_set_toplevel(GTK_WINDOW(gtkblist->window));
 	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/debug/enabled",
-			!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"));
+			!current_setting);
 }
 
 static void
