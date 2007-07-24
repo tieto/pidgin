@@ -692,7 +692,10 @@ purple_plugin_unload(PurplePlugin *plugin)
 
 		dependency = purple_plugins_find_with_id(dep_name);
 
-		dependency->dependent_plugins = g_list_remove(dependency->dependent_plugins, plugin->info->id);
+		if (dependency != NULL)
+			dependency->dependent_plugins = g_list_remove(dependency->dependent_plugins, plugin->info->id);
+		else
+			purple_debug_error("plugins", "Unable to remove from dependency list for %s\n", dep_name);
 	}
 
 	if (plugin->native_plugin) {

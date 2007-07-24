@@ -107,8 +107,6 @@ check_for_buddynote(gpointer data)
 
 		bninfo->flags = PURPLE_PLUGIN_FLAG_INVISIBLE;
 
-		info.dependencies = g_list_append(info.dependencies,
-		                                  "core-plugin_pack-buddynote");
 
 		/* If non-gtk buddy note plugin is loaded, but we are not, then load
 		 * ourselves, otherwise people upgrading from pre-gtkbuddynote days
@@ -134,6 +132,9 @@ init_plugin(PurplePlugin *plugin)
 	/* Use g_idle_add so that the rest of the plugins can get loaded
 	 * before we do our check. */
 	g_idle_add(check_for_buddynote, plugin);
+
+	info.dependencies = g_list_append(info.dependencies,
+	                                  "core-plugin_pack-buddynote");
 }
 
 PURPLE_INIT_PLUGIN(gtkbuddynote, init_plugin, info)
