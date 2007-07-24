@@ -8269,14 +8269,46 @@ static gboolean gtk_conv_configure_cb(GtkWidget *w, GdkEventConfigure *event, gp
 		return FALSE; /* carry on normally */
 
         /* store the position */
-        purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/x",      x);
-	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/y",      y);
+        purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/x", x);
+	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/y", y);
 	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/width",  event->width);
 	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/height", event->height);
 
 	/* continue to handle event normally */
 	return FALSE;
 						
+}
+
+static void
+pidgin_conv_restore_position(PidginWindow *win) {
+	int conv_x, conv_y, conv_width, conv_height;
+
+	conv_width = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/width");
+
+	 /* if the window exists, is hidden, we're saving positions, and the
+          * position is sane... */
+        if (win && win->window &&
+                !GTK_WIDGET_VISIBLE(win->window) && conv_width != 0) {
+
+                conv_x      = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/x");
+                conv_y      = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/y");
+                conv_height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/height");
+
+	       /* ...check position is on screen... */
+                if (conv_x >= gdk_screen_width())
+                        conv_x = gdk_screen_width() - 100;
+                else if (conv_x + conv_width < 0)
+                        conv_x = 100;
+
+                if (conv_y >= gdk_screen_height())
+                        conv_y = gdk_screen_height() - 100;
+                else if (conv_y + conv_height < 0)
+                        conv_y = 100;
+
+                /* ...and move it back. */
+                gtk_window_move(GTK_WINDOW(win->window), conv_x, conv_y);
+                gtk_window_resize(GTK_WINDOW(win->window), conv_width, conv_height);
+        }
 }
 
 PidginWindow *
@@ -8293,8 +8325,7 @@ pidgin_conv_window_new()
 
 	/* Create the window. */
 	win->window = pidgin_create_window(NULL, 0, "conversation", TRUE);
-	gtk_window_set_default_size(GTK_WINDOW(win->window), purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/width"),
-							     purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/height"));
+	pidgin_conv_restore_position(win);
 
 	if (available_list == NULL) {
 		create_icon_lists(win->window);
@@ -8622,7 +8653,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 					   TRUE, GTK_PACK_START);
 
 	/* show the widgets */
-/* XXX	gtk_widget_show(gtkconv->icon); */
+	gtk_widget_show(gtkconv->icon);
 	gtk_widget_show(gtkconv->tab_label);
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/close_on_tabs"))
 		gtk_widget_show(gtkconv->close);
