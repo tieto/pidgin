@@ -1058,7 +1058,7 @@ pounces_manager_connection_cb(PurpleConnection *gc, GtkWidget *add_button)
 static void
 pounces_manager_add_cb(GtkButton *button, gpointer user_data)
 {
-	pidgin_set_toplevel(gtk_widget_get_toplevel(GTK_WIDGET(button)));
+	pidgin_set_toplevel(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(button))));
 	pidgin_pounce_editor_show(NULL, NULL, NULL);
 }
 
