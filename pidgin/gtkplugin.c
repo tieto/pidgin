@@ -528,7 +528,7 @@ void pidgin_plugin_dialog_show()
 	}
 
 	plugin_dialog = gtk_dialog_new_with_buttons(_("Plugins"),
-						    pidgin_get_current_toplevel(),
+						    pidgin_get_toplevel(),
 						    GTK_DIALOG_NO_SEPARATOR,
 						    NULL);
 
