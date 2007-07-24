@@ -814,7 +814,9 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			 * contain information about the buddy icon the user
 			 * has stored on the server.
 			 */
-			int type2, number, length2;
+			guint16 type2;
+			guint8 number, length2;
+			int endpos2;
 
 			/*
 			 * Continue looping as long as we're able to read type2,
@@ -824,6 +826,8 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 				type2 = byte_stream_get16(bs);
 				number = byte_stream_get8(bs);
 				length2 = byte_stream_get8(bs);
+
+				endpos2 = byte_stream_curpos(bs) + length2;
 
 				switch (type2) {
 					case 0x0000: { /* This is an official buddy icon? */
@@ -883,11 +887,10 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 							outinfo->itmsurl_encoding = NULL;
 						}
 					} break;
-
-					default: {
-						byte_stream_advance(bs, length2);
-					} break;
 				}
+
+				/* Save ourselves. */
+				byte_stream_setpos(bs, endpos2);
 			}
 
 		} else if (type == 0x001e) {
