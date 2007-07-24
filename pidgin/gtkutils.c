@@ -61,12 +61,46 @@
 #include "gtkthemes.h"
 #include "gtkutils.h"
 
+#define PIDGIN_TOPLEVEL_REFFED_FLAG "pidgin-toplevel-is-weakly-reffed"
+
 typedef struct {
 	GtkWidget *menu;
 	gint default_item;
 } AopMenu;
 
 static guint accels_save_timer = 0;
+
+static GtkWindow *toplevel = NULL;
+
+static void
+toplevel_weak_notify(gpointer null, GtkWindow *window)
+{
+	if (toplevel == window)
+		toplevel = NULL;
+}
+
+void
+pidgin_set_toplevel(GtkWindow *new_toplevel)
+{
+	g_return_if_fail(toplevel != NULL);
+	g_return_if_fail(GTK_IS_WINDOW(toplevel));
+
+	if (toplevel) {
+		g_object_weak_unref(G_OBJECT(toplevel), toplevel_weak_notify, NULL);
+		toplevel = NULL;
+	}
+
+	if (new_topleve) {
+		g_object_weak_ref(G_OBJECT(new_toplevel), toplevel_weak_notify, NULL);
+		toplevel = new_toplevel;
+	}
+}
+
+GtkWindow *
+pidgin_get_toplevel()
+{
+	return toplevel;
+}
 
 static gboolean
 url_clicked_idle_cb(gpointer data)

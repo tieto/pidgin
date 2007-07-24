@@ -65,6 +65,24 @@ typedef enum
 #endif /* _WIN32 */
 
 /**
+ * Designate new_toplevel as the preferred window for ensuring proper
+ * transience relationships for subsequent dialogs.
+ *
+ * @param new_toplevel The GtkWindow to be used for transience.
+ */
+void pidgin_set_toplevel(GtkWindow *new_toplevel);
+
+/**
+ * Retrieve the currently preferred toplevel window (set by a previous
+ * call top pidgin_set_toplevel()) and *not* since destroyed.
+ *
+ * @return The GtkWindow most recently given to pidgin_set_toplevel(), or #NULL.
+ *         #NULL will be returned either if no toplevel has been set, or if the
+ *         most recently set toplevel has since been destroyed.
+ */
+GtkWindow *pidgin_get_toplevel();
+
+/**
  * Sets up a gtkimhtml widget, loads it with smileys, and sets the
  * default signal handlers.
  *

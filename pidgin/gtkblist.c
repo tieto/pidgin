@@ -2828,6 +2828,12 @@ toggle_debug(void)
 			!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"));
 }
 
+static void
+blist_show_plugins_cb(GtkWidget *widget, gpointer null)
+{
+	pidgin_set_toplevel(GTK_WINDOW(gtkblist->window));
+	pidgin_plugin_dialog_show();
+}
 
 /***************************************************
  *            Crap                                 *
@@ -2860,7 +2866,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_pounces_manager_show, 0, "<Item>", NULL },
-	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
+	{ N_("/Tools/Plu_gins"), "<CTL>U", blist_show_plugins_cb, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },

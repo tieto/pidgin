@@ -516,6 +516,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	dialog->window = window = pidgin_create_window((cur_pounce == NULL ? _("New Buddy Pounce") : _("Edit Buddy Pounce")),
 		PIDGIN_HIG_BORDER, "buddy_pounce", FALSE) ;
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_window_set_transient_for(GTK_WINDOW(window), pidgin_get_toplevel());
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
@@ -1057,6 +1058,7 @@ pounces_manager_connection_cb(PurpleConnection *gc, GtkWidget *add_button)
 static void
 pounces_manager_add_cb(GtkButton *button, gpointer user_data)
 {
+	pidgin_set_toplevel(gtk_widget_get_toplevel(button));
 	pidgin_pounce_editor_show(NULL, NULL, NULL);
 }
 
