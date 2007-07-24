@@ -86,12 +86,12 @@ pidgin_set_toplevel(GtkWindow *new_toplevel)
 	g_return_if_fail(GTK_IS_WINDOW(toplevel));
 
 	if (toplevel) {
-		g_object_weak_unref(G_OBJECT(toplevel), toplevel_weak_notify, NULL);
+		g_object_weak_unref(G_OBJECT(toplevel), (GWeakNotify)toplevel_weak_notify, NULL);
 		toplevel = NULL;
 	}
 
-	if (new_topleve) {
-		g_object_weak_ref(G_OBJECT(new_toplevel), toplevel_weak_notify, NULL);
+	if (new_toplevel) {
+		g_object_weak_ref(G_OBJECT(new_toplevel), (GWeakNotify)toplevel_weak_notify, NULL);
 		toplevel = new_toplevel;
 	}
 }
