@@ -4410,6 +4410,9 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	/* Setup the info pane */
 	event_box = gtk_event_box_new();
+#if GTK_CHECK_VERSION(2,4,0)
+	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event_box), FALSE);
+#endif
 	gtk_widget_show(event_box);
 	gtkconv->infopane_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), event_box, FALSE, FALSE, 0);
