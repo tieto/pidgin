@@ -30,6 +30,7 @@
 #include "debug.h"
 #include "prefs.h"
 #include "request.h"
+#include "gtkblist.h"
 
 #include <string.h>
 
@@ -521,16 +522,20 @@ void pidgin_plugin_dialog_show()
 	GtkCellRenderer *rend, *rendt;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
+	PidginBuddyList *blist;
 
 	if (plugin_dialog != NULL) {
 		gtk_window_present(GTK_WINDOW(plugin_dialog));
 		return;
 	}
 
+	blist = pidgin_blist_get_default_gtk_blist();
+
 	plugin_dialog = gtk_dialog_new_with_buttons(_("Plugins"),
-						    NULL,
+						    NULL == blist ? NULL : NULL == blist->window ? NULL : blist->window,
 						    GTK_DIALOG_NO_SEPARATOR,
 						    NULL);
+
 	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
 						_("Configure Pl_ugin"), PIDGIN_RESPONSE_CONFIGURE);
 	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
