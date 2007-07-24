@@ -82,8 +82,8 @@ toplevel_weak_notify(gpointer null, GtkWindow *window)
 void
 pidgin_set_toplevel(GtkWindow *new_toplevel)
 {
-	g_return_if_fail(toplevel != NULL);
-	g_return_if_fail(GTK_IS_WINDOW(toplevel));
+	/* If new_toplevel is not NULL, then it better be a GtkWindow */
+	g_return_if_fail(!(new_toplevel && !GTK_IS_WINDOW(new_toplevel)));
 
 	if (toplevel) {
 		g_object_weak_unref(G_OBJECT(toplevel), (GWeakNotify)toplevel_weak_notify, NULL);
