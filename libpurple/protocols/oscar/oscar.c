@@ -1383,7 +1383,6 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		}
 		purple_debug_info("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
 		purple_debug_info("oscar", "Error URL: %s\n", info->errorurl);
-		od->killme = TRUE;
 		return 1;
 	}
 
@@ -1410,7 +1409,6 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	if (newconn->connect_data == NULL)
 	{
 		purple_connection_error(gc, _("Could Not Connect"));
-		od->killme = TRUE;
 		return 0;
 	}
 
@@ -1433,12 +1431,10 @@ static void
 purple_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
 {
 	PurpleConnection *gc = user_data;
-	OscarData *od = gc->proto_data;
 
 	/* Disconnect */
 	gc->wants_to_die = TRUE;
 	purple_connection_error(gc, _("The SecurID key entered is invalid."));
-	od->killme = TRUE;
 }
 
 static int
@@ -3472,33 +3468,32 @@ static int purple_connerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	purple_debug_info("oscar", "Disconnected.  Code is 0x%04x and msg is %s\n",
 					code, (msg != NULL ? msg : ""));
 
-	g_return_val_if_fail(fr       != NULL, 1);
 	g_return_val_if_fail(conn != NULL, 1);
 
-	if (conn->type == SNAC_FAMILY_LOCATE) {
-		if (code == 0x0001) {
-			gc->wants_to_die = TRUE;
-			purple_connection_error(gc, _("You have signed on from another location."));
-		} else {
-			purple_connection_error(gc, _("You have been signed off for an unknown reason."));
-		}
-		od->killme = TRUE;
-	} else if (conn->type == SNAC_FAMILY_CHAT) {
+	if (conn->type == SNAC_FAMILY_CHAT) {
 		struct chat_connection *cc;
-		PurpleConversation *conv;
+		PurpleConversation *conv = NULL;
 
 		cc = find_oscar_chat_by_conn(gc, conn);
-		conv = purple_find_chat(gc, cc->id);
-
-		if (conv != NULL)
+		if (cc != NULL)
 		{
-			gchar *buf;
-			buf = g_strdup_printf(_("You have been disconnected from chat "
-									"room %s."), cc->name);
-			purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_ERROR, time(NULL));
-			g_free(buf);
+			conv = purple_find_chat(gc, cc->id);
+
+			if (conv != NULL)
+			{
+				/*
+				 * TOOD: Have flap_connection_destroy_cb() send us the
+				 *       error message stored in 'tmp', which should be
+				 *       human-friendly, and print that to the chat room.
+				 */
+				gchar *buf;
+				buf = g_strdup_printf(_("You have been disconnected from chat "
+										"room %s."), cc->name);
+				purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_ERROR, time(NULL));
+				g_free(buf);
+			}
+			oscar_chat_kill(gc, cc);
 		}
-		oscar_chat_kill(gc, cc);
 	}
 
 	return 1;

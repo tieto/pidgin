@@ -59,7 +59,7 @@ Examples of commands:
     quit
 
     PurpleAccountsFindConnected?name=&protocol=prpl-jabber
-    PurpleAccountFindConnected(,prpl-jabber)
+    PurpleAccountsFindConnected(,prpl-jabber)
 """ % sys.argv[0]
 
 cpurple = CheckedObject(purple)

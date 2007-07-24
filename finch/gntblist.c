@@ -98,7 +98,7 @@ typedef struct
 	} u;
 } StatusBoxItem;
 
-FinchBlist *ggblist;
+static FinchBlist *ggblist;
 
 static void add_buddy(PurpleBuddy *buddy, FinchBlist *ggblist);
 static void add_contact(PurpleContact *contact, FinchBlist *ggblist);
@@ -354,11 +354,13 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 	PurpleGroup *grp;
 	GHashTable *hash = NULL;
 	PurpleConnection *gc;
+	gboolean autojoin;
 
 	account = purple_request_fields_get_account(allfields, "account");
 	name = purple_request_fields_get_string(allfields, "name");
 	alias = purple_request_fields_get_string(allfields, "alias");
 	group = purple_request_fields_get_string(allfields, "group");
+	autojoin = purple_request_fields_get_bool(allfields, "autojoin");
 
 	if (!purple_account_is_connected(account) || !name || !*name)
 		return;
@@ -380,6 +382,9 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 		}
 		purple_blist_add_chat(chat, grp, NULL);
 		purple_blist_alias_chat(chat, alias);
+		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gnt-autojoin", autojoin);
+		if (autojoin)
+			serv_join_chat(chat->account->gc, chat->components);
 	}
 }
 
@@ -405,6 +410,9 @@ finch_request_add_chat(PurpleAccount *account, PurpleGroup *grp, const char *ali
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("group", _("Group"), grp ? grp->name : NULL, FALSE);
+	purple_request_field_group_add_field(group, field);
+
+	field = purple_request_field_bool_new("autojoin", _("Auto-join"), FALSE);
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(NULL, _("Add Chat"), NULL,
@@ -1670,7 +1678,7 @@ populate_status_dropdown()
 	}
 
 	/* Now the popular statuses */
-	for (iter = purple_savedstatuses_get_popular(6); iter; iter = iter->next)
+	for (iter = purple_savedstatuses_get_popular(6); iter; iter = g_list_delete_link(iter, iter))
 	{
 		item = g_new0(StatusBoxItem, 1);
 		item->type = STATUS_SAVED_POPULAR;

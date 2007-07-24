@@ -636,13 +636,15 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 	 * Parse out the Type-Length-Value triples as they're found.
 	 */
 	for (curtlv = 0; curtlv < tlvcnt; curtlv++) {
+		guint16 type;
+		guint8 number, length;
 		int endpos;
-		guint16 type, length;
 
 		type = byte_stream_get16(bs);
-		length = byte_stream_get16(bs);
+		number = byte_stream_get8(bs);
+		length = byte_stream_get8(bs);
 
-		endpos = byte_stream_curpos(bs) + length;
+		endpos = byte_stream_curpos(bs) + MIN(length, byte_stream_empty(bs));
 
 		if (type == 0x0001) {
 			/*
@@ -814,27 +816,33 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			 * contain information about the buddy icon the user
 			 * has stored on the server.
 			 */
-			int type2, number, length2;
+			guint16 type2;
+			guint8 number2, length2;
+			int endpos2;
 
-			while (byte_stream_curpos(bs) < endpos) {
+			/*
+			 * Continue looping as long as we're able to read type2,
+			 * number2, and length2.
+			 */
+			while (byte_stream_curpos(bs) + 4 <= endpos) {
 				type2 = byte_stream_get16(bs);
-				number = byte_stream_get8(bs);
+				number2 = byte_stream_get8(bs);
 				length2 = byte_stream_get8(bs);
+
+				endpos2 = byte_stream_curpos(bs) + MIN(length2, byte_stream_empty(bs));
 
 				switch (type2) {
 					case 0x0000: { /* This is an official buddy icon? */
 						/* This is always 5 bytes of "0x02 01 d2 04 72"? */
-						byte_stream_advance(bs, length2);
 					} break;
 
 					case 0x0001: { /* A buddy icon checksum */
-						if ((length2 > 0) && ((number == 0x00) || (number == 0x01))) {
+						if ((length2 > 0) && ((number2 == 0x00) || (number2 == 0x01))) {
 							g_free(outinfo->iconcsum);
-							outinfo->iconcsumtype = number;
+							outinfo->iconcsumtype = number2;
 							outinfo->iconcsum = byte_stream_getraw(bs, length2);
 							outinfo->iconcsumlen = length2;
-						} else
-							byte_stream_advance(bs, length2);
+						}
 					} break;
 
 					case 0x0002: { /* A status/available message */
@@ -879,11 +887,10 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 							outinfo->itmsurl_encoding = NULL;
 						}
 					} break;
-
-					default: {
-						byte_stream_advance(bs, length2);
-					} break;
 				}
+
+				/* Save ourselves. */
+				byte_stream_setpos(bs, endpos2);
 			}
 
 		} else if (type == 0x001e) {
