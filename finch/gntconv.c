@@ -259,7 +259,7 @@ update_buddy_typing(PurpleAccount *account, const char *who, gpointer null)
 			gnt_text_view_scroll(GNT_TEXT_VIEW(ggc->tv), 0);
  	} else {
 		title = get_conversation_title(conv, account);
-		gnt_text_view_tag_change(GNT_TEXT_VIEW(ggc->tv), "typing", NULL, TRUE);
+		gnt_text_view_tag_change(GNT_TEXT_VIEW(ggc->tv), "typing", " ", TRUE);
 	}
 	gnt_screen_rename_widget(ggc->window, title);
 	g_free(title);
@@ -588,7 +588,6 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 	char *strip, *newline;
 	GntTextFormatFlags fl = 0;
 	int pos;
-	gboolean notify;
 
 	g_return_if_fail(ggconv != NULL);
 
@@ -601,7 +600,7 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 
 	pos = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(ggconv->tv));
 
-	notify = !!gnt_text_view_tag_change(GNT_TEXT_VIEW(ggconv->tv), "typing", NULL, TRUE);
+	gnt_text_view_tag_change(GNT_TEXT_VIEW(ggconv->tv), "typing", NULL, TRUE);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), "\n", GNT_TEXT_FLAG_NORMAL);
 
 	/* Unnecessary to print the timestamp for delayed message */
@@ -643,7 +642,8 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 	g_free(newline);
 	g_free(strip);
 
-	if (notify) {
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
+			purple_conv_im_get_typing_state(PURPLE_CONV_IM(conv)) == PURPLE_TYPING) {
 		strip = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_name(conv));
 		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(ggconv->tv),
 					strip, GNT_TEXT_FLAG_DIM, "typing");
