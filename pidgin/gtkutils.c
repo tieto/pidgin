@@ -137,6 +137,10 @@ pidgin_create_window(const char *title, guint border_width, const char *role, gb
 	wnd = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 	if (title)
 		gtk_window_set_title(wnd, title);
+#ifdef _WIN32
+	else
+		gtk_window_set_title(wnd, PIDGIN_ALERT_TITLE);
+#endif
 	gtk_container_set_border_width(GTK_CONTAINER(wnd), border_width);
 	if (role)
 		gtk_window_set_role(wnd, role);

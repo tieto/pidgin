@@ -25,3 +25,5 @@ AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(SQLITE3_CFLAGS)
+
+EXTRA_DIST = Makefile.mingw

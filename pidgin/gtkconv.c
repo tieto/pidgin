@@ -239,7 +239,6 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, PidginConversation *gt
 
 	if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 		return FALSE;
-
 	if (gtkconv->auto_resize) {
 		return FALSE;
 	}
@@ -264,7 +263,6 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, PidginConversation *gt
 		if (w == gtkconv->lower_hbox)
 			purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/chat/entry_height", allocation->height);
 	}
-
 	return FALSE;
 }
 
@@ -4260,12 +4258,12 @@ static void resize_imhtml_cb(PidginConversation *gtkconv)
         height = (oneline.height + pad_top + pad_bottom) * lines;
         height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
+	gtkconv->auto_resize = TRUE;
+        g_idle_add(reset_auto_resize_cb, gtkconv);
 	gtk_widget_size_request(gtkconv->lower_hbox, &sr);
 	if (sr.height < height + PIDGIN_HIG_BOX_SPACE) {
-		gtkconv->auto_resize = TRUE;
 		gtkconv->entry_growing = TRUE;
-	        gtk_widget_set_size_request(gtkconv->entry, -1, height);
-	        g_idle_add(reset_auto_resize_cb, gtkconv);
+	        gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height + PIDGIN_HIG_BOX_SPACE);
 	}
 }
 
@@ -4412,6 +4410,9 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	/* Setup the info pane */
 	event_box = gtk_event_box_new();
+#if GTK_CHECK_VERSION(2,4,0)
+	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event_box), FALSE);
+#endif
 	gtk_widget_show(event_box);
 	gtkconv->infopane_hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), event_box, FALSE, FALSE, 0);
@@ -4547,7 +4548,6 @@ setup_common_pane(PidginConversation *gtkconv)
 	default_formatize(gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "format_function_clear",
 	                       G_CALLBACK(clear_formatting_cb), gtkconv);
-
 	return paned;
 }
 
@@ -6522,7 +6522,6 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	gtk_widget_show(event);
 
 	gtkconv->u.im->icon = gtk_image_new_from_pixbuf(scale);
-	gtkconv->auto_resize = TRUE;
 	gtk_container_add(GTK_CONTAINER(event), gtkconv->u.im->icon);
 	gtk_widget_show(gtkconv->u.im->icon);
 

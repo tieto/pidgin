@@ -45,6 +45,10 @@ purple_buddy_icon_get_scale_size(spec, width, height)
 	int *width
 	int *height
 
+char *
+purple_buddy_icon_get_full_path(icon);
+	Purple::Buddy::Icon icon
+
 MODULE = Purple::Buddy::Icon PACKAGE = Purple::Buddy::Icons   PREFIX = purple_buddy_icons_
 PROTOTYPES: ENABLE
 
