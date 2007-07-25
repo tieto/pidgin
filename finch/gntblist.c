@@ -1325,8 +1325,10 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 	strip = purple_markup_strip_html(tmp);
 	g_string_append(str, strip);
 
-	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE))
+	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE)) {
+		g_string_append(str, "\n");
 		g_string_append(str, _("On Mobile"));
+	}
 
 	g_free(strip);
 	g_free(tmp);

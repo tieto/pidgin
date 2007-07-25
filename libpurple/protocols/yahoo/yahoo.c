@@ -3915,7 +3915,7 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 			if (message) {
 				/* Spaces are encoded as '+' */
 				g_strdelimit(message, "+", ' ');
-				purple_conv_im_send(PURPLE_CONV_IM(conv), message);
+				purple_conv_send_confirm(conv, message);
 			}
 		}
 		/*else
