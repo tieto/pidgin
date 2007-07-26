@@ -24,6 +24,7 @@
 #include <string.h>
 #include <errno.h>	/* for EAGAIN */
 #include <stdarg.h>
+#include <math.h>   /* for round() */
 
 #include <glib.h>
 
