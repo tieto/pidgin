@@ -43,6 +43,14 @@
  * X.509 tls_peers management interface                                      *
  *****************************************************************************/
 
+/* Columns
+   See http://developer.gnome.org/doc/API/2.0/gtk/TreeWidget.html */
+enum
+{
+	TPM_HOSTNAME_COLUMN,
+	TPM_N_COLUMNS
+};
+
 static void
 tls_peers_mgmt_destroy(GtkWidget *mgmt_widget, gpointer data)
 {
@@ -53,13 +61,69 @@ tls_peers_mgmt_destroy(GtkWidget *mgmt_widget, gpointer data)
 static GtkWidget *
 tls_peers_mgmt_build(void)
 {
-	GtkWidget *mgmt_widget = gtk_label_new("TLS PEEERSSSSS!!!");
+	GtkWidget *treeview;
+	GtkWidget *bbox;
+	GtkWidget *importbutton;
+	GtkWidget *exportbutton;
+	GtkWidget *infobutton;
+	GtkWidget *deletebutton;
+	
+	GtkTreeIter *iter;
+
+	/** Element to return to the Certmgr window to put in the Notebook */
+	GtkWidget *mgmt_widget;
+	mgmt_widget = gtk_hbox_new(FALSE, /* Non-homogeneous */
+				   0);    /* No spacing */
 	gtk_widget_show(mgmt_widget);
 
 	/* Ensure that everything gets cleaned up when the dialog box
 	   is closed */
 	g_signal_connect(G_OBJECT(mgmt_widget), "destroy",
 			 G_CALLBACK(tls_peers_mgmt_destroy), NULL);
+
+	/* List view */
+	treeview = gtk_label_new("TLS PEEERS!!!");
+	gtk_box_pack_start(GTK_BOX(mgmt_widget), treeview,
+			   TRUE, TRUE, /* Take up lots of space */
+			   0); /* TODO: this padding is wrong */
+	gtk_widget_show(treeview);
+	
+	/* Right-hand side controls box */
+	bbox = gtk_vbutton_box_new();
+	gtk_box_pack_end(GTK_BOX(mgmt_widget), bbox,
+			 FALSE, FALSE, /* Do not take up space */
+			 0); /* TODO: this padding is probably wrong */
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_START);
+	gtk_widget_show(bbox);
+
+	/* Import button */
+	/* TODO: This is the wrong stock button */
+	importbutton = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	gtk_box_pack_start(GTK_BOX(bbox), importbutton, FALSE, FALSE, 0);
+	gtk_widget_show(importbutton);
+
+	/* Export button */
+	/* TODO: This is the wrong stock button */
+	exportbutton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	gtk_box_pack_start(GTK_BOX(bbox), exportbutton, FALSE, FALSE, 0);
+	gtk_widget_show(exportbutton);
+
+	/* Info button */
+	infobutton = gtk_button_new_from_stock(GTK_STOCK_INFO);
+	gtk_box_pack_start(GTK_BOX(bbox), infobutton, FALSE, FALSE, 0);
+	gtk_widget_show(infobutton);
+
+	/* Delete button */
+	deletebutton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	gtk_box_pack_start(GTK_BOX(bbox), deletebutton, FALSE, FALSE, 0);
+	gtk_widget_show(deletebutton);
+
+	/* Disable all the buttons */
+	gtk_widget_set_sensitive(importbutton, FALSE);
+	gtk_widget_set_sensitive(exportbutton, FALSE);
+	gtk_widget_set_sensitive(infobutton, FALSE);
+	gtk_widget_set_sensitive(deletebutton, FALSE);
+	
 	return mgmt_widget;
 }
 
