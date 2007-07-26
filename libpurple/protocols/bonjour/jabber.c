@@ -350,7 +350,6 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 	PurpleAccount *account = pb->account;
 	BonjourBuddy *bb = pb->proto_data;
 	gboolean closed_conversation = FALSE;
-	xmlnode *message_node;
 
 	/* Read the data from the socket */
 	if ((message_length = _read_data(socket, &message)) == -1) {
@@ -374,9 +373,6 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 		}
 	}
 
-	/* Parse the message into an XMLnode for analysis */
-	message_node = xmlnode_from_str(message, strlen(message));
-
 	/*
 	 * Check that this is not the end of the conversation.  This is
 	 * using a magic string, but xmlnode won't play nice when just
@@ -396,16 +392,22 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
 		}
-	} else if (message_node != NULL) {
-		/* Parse the message to get the data and send to the ui */
-		_jabber_parse_and_write_message_to_ui(message_node, account->gc, pb);
 	} else {
-		/* TODO: Deal with receiving only a partial message */
+		xmlnode *message_node;
+
+		/* Parse the message into an XMLnode for analysis */
+		message_node = xmlnode_from_str(message, strlen(message));
+
+		if (message_node != NULL) {
+			/* Parse the message to get the data and send to the ui */
+			_jabber_parse_and_write_message_to_ui(message_node, account->gc, pb);
+			xmlnode_free(message_node);
+		} else {
+			/* TODO: Deal with receiving only a partial message */
+		}
 	}
 
 	g_free(message);
-	if (message_node != NULL)
-		xmlnode_free(message_node);
 }
 
 struct _stream_start_data {
@@ -638,7 +640,7 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 	PurpleBuddy *pb = data;
 	BonjourBuddy *bb = pb->proto_data;
 	int len, ret;
-	char *stream_start = g_strdup_printf(DOCTYPE, purple_account_get_username(pb->account), purple_buddy_get_name(pb));
+	char *stream_start;
 
 	bb->conversation->connect_data = NULL;
 
@@ -659,6 +661,7 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 		return;
 	}
 
+	stream_start = g_strdup_printf(DOCTYPE, purple_account_get_username(pb->account), purple_buddy_get_name(pb));
 	len = strlen(stream_start);
 
 	/* Start the stream and send queued messages */
