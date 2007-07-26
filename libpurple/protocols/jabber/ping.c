@@ -69,7 +69,7 @@ gboolean jabber_ping_jid(PurpleConversation *conv, const char *jid)
 	xmlnode_set_attrib(iq->node, "to", jid);
 
 	ping = xmlnode_new_child(iq->node, "ping");
-	xmlnode_set_namespace(ping, "http://www.xmpp.org/extensions/xep-0199.html#ns");
+	xmlnode_set_namespace(ping, "urn:xmpp:ping");
 
 	jabber_iq_set_callback(iq, jabber_ping_result_cb, NULL);
 	jabber_iq_send(iq);

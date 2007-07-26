@@ -348,7 +348,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	
 	purple_debug_info("jabber", "jabber_iq_parse\n");
 
-	if(xmlnode_get_child_with_namespace(packet, "ping", "http://www.xmpp.org/extensions/xep-0199.html#ns")) {
+	if(xmlnode_get_child_with_namespace(packet, "ping", "urn:xmpp:ping")) {
 		jabber_ping_parse(js, packet);
 		return;
 	}
