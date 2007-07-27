@@ -543,6 +543,37 @@ x509_tls_peers_put_cert(const gchar *id, PurpleCertificate *crt)
 	return ret;
 }
 
+static gboolean
+x509_tls_peers_remove_cert(const gchar *id)
+{
+	gboolean ret = FALSE;
+	gchar *keypath;
+
+	g_return_val_if_fail(id, FALSE);
+
+	/* Is the id even in the pool? */
+	if (!x509_tls_peers_cert_in_pool(id)) {
+		purple_debug_warning("certificate/tls_peers",
+				     "Id %s wasn't in the pool\n",
+				     id);
+		return FALSE;
+	}
+
+	/* OK, so work out the keypath and delete the thing */
+	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);	
+	if ( unlink(keypath) != 0 ) {
+		purple_debug_error("certificate/tls_peers",
+				   "Unlink of %s failed!\n",
+				   keypath);
+		ret = FALSE;
+	} else {
+		ret = TRUE;
+	}
+
+	g_free(keypath);
+	return ret;
+}
+
 static GList *
 x509_tls_peers_get_idlist(void)
 {
