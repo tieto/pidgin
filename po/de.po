@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-07-09 09:35+0200\n"
-"PO-Revision-Date: 2007-07-12 14:41+0200\n"
+"POT-Creation-Date: 2007-07-26 22:22+0200\n"
+"PO-Revision-Date: 2007-07-26 20:45+0200\n"
 "Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -192,7 +192,7 @@ msgstr "Alias:"
 #: ../libpurple/protocols/yahoo/yahoo.c:989
 #: ../libpurple/protocols/yahoo/yahoo.c:3248
 #: ../libpurple/protocols/yahoo/yahoo.c:3259 ../pidgin/gtkaccount.c:1908
-#: ../pidgin/gtkaccount.c:2502 ../pidgin/gtkblist.c:5915
+#: ../pidgin/gtkaccount.c:2501 ../pidgin/gtkblist.c:5915
 #: ../pidgin/gtkdialogs.c:725 ../pidgin/gtkdialogs.c:863
 #: ../pidgin/gtkdialogs.c:955 ../pidgin/gtkdialogs.c:975
 #: ../pidgin/gtkdialogs.c:999 ../pidgin/gtkdialogs.c:1021
@@ -237,7 +237,7 @@ msgid "Delete"
 msgstr "Löschen"
 
 #: ../finch/gntaccount.c:662 ../finch/gntblist.c:2103 ../finch/gntui.c:77
-#: ../pidgin/gtkaccount.c:2328 ../pidgin/gtkdocklet.c:522
+#: ../pidgin/gtkaccount.c:2327 ../pidgin/gtkdocklet.c:522
 msgid "Accounts"
 msgstr "Konten"
 
@@ -254,8 +254,8 @@ msgstr "Sie können Konten auf der folgenden Liste (de)aktivieren."
 #: ../libpurple/protocols/qq/sys_msg.c:270
 #: ../libpurple/protocols/sametime/sametime.c:5486
 #: ../libpurple/protocols/silc/chat.c:615
-#: ../libpurple/protocols/silc10/chat.c:599 ../pidgin/gtkaccount.c:2501
-#: ../pidgin/gtkblist.c:5914 ../pidgin/gtkconv.c:1652
+#: ../libpurple/protocols/silc10/chat.c:599 ../pidgin/gtkaccount.c:2500
+#: ../pidgin/gtkblist.c:5914 ../pidgin/gtkconv.c:1651
 #: ../pidgin/gtkrequest.c:274
 msgid "Add"
 msgstr "Hinzufügen"
@@ -265,33 +265,33 @@ msgstr "Hinzufügen"
 msgid "Modify"
 msgstr "Bearbeiten"
 
-#: ../finch/gntaccount.c:797 ../pidgin/gtkaccount.c:2448
+#: ../finch/gntaccount.c:797 ../pidgin/gtkaccount.c:2447
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
 msgstr "%s%s%s%s hat %s zu seinem Buddy gemacht%s%s"
 
-#: ../finch/gntaccount.c:870 ../pidgin/gtkaccount.c:2500
+#: ../finch/gntaccount.c:870 ../pidgin/gtkaccount.c:2499
 msgid "Add buddy to your list?"
 msgstr "Benutzer zu Ihrer Buddy-Liste hinzufügen?"
 
-#: ../finch/gntaccount.c:924 ../pidgin/gtkaccount.c:2552
+#: ../finch/gntaccount.c:924 ../pidgin/gtkaccount.c:2551
 #, c-format
 msgid "%s%s%s%s wants to add %s to his or her buddy list%s%s"
 msgstr "%s%s%s%s möchte %s zu seiner oder ihrer Buddy-Liste hinzufügen%s%s"
 
 #: ../finch/gntaccount.c:949 ../finch/gntaccount.c:952
-#: ../finch/gntaccount.c:979 ../pidgin/gtkaccount.c:2575
-#: ../pidgin/gtkaccount.c:2581
+#: ../finch/gntaccount.c:979 ../pidgin/gtkaccount.c:2574
+#: ../pidgin/gtkaccount.c:2580
 msgid "Authorize buddy?"
 msgstr "Buddy autorisieren?"
 
 #: ../finch/gntaccount.c:956 ../finch/gntaccount.c:983
-#: ../pidgin/gtkaccount.c:2576 ../pidgin/gtkaccount.c:2582
+#: ../pidgin/gtkaccount.c:2575 ../pidgin/gtkaccount.c:2581
 msgid "Authorize"
 msgstr "Autorisieren"
 
 #: ../finch/gntaccount.c:957 ../finch/gntaccount.c:984
-#: ../pidgin/gtkaccount.c:2577 ../pidgin/gtkaccount.c:2583
+#: ../pidgin/gtkaccount.c:2576 ../pidgin/gtkaccount.c:2582
 msgid "Deny"
 msgstr "Sperren"
 
@@ -427,11 +427,11 @@ msgstr "Automatisch beitreten"
 msgid "Edit Settings"
 msgstr "Einstellungen bearbeiten"
 
-#: ../finch/gntblist.c:854 ../pidgin/gtkutils.c:920
+#: ../finch/gntblist.c:854 ../pidgin/gtkutils.c:926
 msgid "Information"
 msgstr "Information"
 
-#: ../finch/gntblist.c:854 ../pidgin/gtkutils.c:920
+#: ../finch/gntblist.c:854 ../pidgin/gtkutils.c:926
 msgid "Retrieving..."
 msgstr "Empfange..."
 
@@ -449,7 +449,7 @@ msgstr "Buddy-Alarm hinzufügen"
 #: ../finch/gntblist.c:905 ../finch/gntconv.c:419
 #: ../libpurple/protocols/jabber/si.c:868
 #: ../libpurple/protocols/oscar/oscar.c:654 ../libpurple/protocols/qq/qq.c:585
-#: ../pidgin/gtkconv.c:1600
+#: ../pidgin/gtkconv.c:1599
 msgid "Send File"
 msgstr "Datei versenden"
 
@@ -476,11 +476,13 @@ msgstr "Geben Sie eine leere Zeichenkette ein, um den Namen zurückzusetzen."
 
 #: ../finch/gntblist.c:1069
 msgid "Removing this contact will also remove all the buddies in the contact"
-msgstr "Wenn Sie diesen Kontakt löschen, löschen Sie auch alle Buddys in dem Kontakt"
+msgstr ""
+"Wenn Sie diesen Kontakt löschen, löschen Sie auch alle Buddys in dem Kontakt"
 
 #: ../finch/gntblist.c:1077
 msgid "Removing this group will also remove all the buddies in the group"
-msgstr "Wenn Sie diese Gruppe löschen, löschen Sie auch alle Buddys in der Gruppe"
+msgstr ""
+"Wenn Sie diese Gruppe löschen, löschen Sie auch alle Buddys in der Gruppe"
 
 #: ../finch/gntblist.c:1082
 #, c-format
@@ -493,7 +495,7 @@ msgid "Confirm Remove"
 msgstr "Entfernen bestätigen"
 
 #: ../finch/gntblist.c:1090 ../finch/gntblist.c:1241 ../finch/gntft.c:224
-#: ../pidgin/gtkconv.c:1649 ../pidgin/gtkrequest.c:275
+#: ../pidgin/gtkconv.c:1648 ../pidgin/gtkrequest.c:275
 #: ../pidgin/gtkstatusbox.c:263
 msgid "Remove"
 msgstr "Entfernen"
@@ -607,8 +609,10 @@ msgid "New Instant Message"
 msgstr "Neue Sofortnachricht"
 
 #: ../finch/gntblist.c:2193 ../pidgin/gtkdialogs.c:721
-msgid "Please enter the screen name or alias of the person you would like to IM."
-msgstr "Bitte geben Sie den Benutzernamen der Person ein, mit der Sie chatten wollen."
+msgid ""
+"Please enter the screen name or alias of the person you would like to IM."
+msgstr ""
+"Bitte geben Sie den Benutzernamen der Person ein, mit der Sie chatten wollen."
 
 #: ../finch/gntblist.c:2196 ../finch/gntnotify.c:79 ../libpurple/account.c:983
 #: ../libpurple/account.c:1233 ../libpurple/protocols/gg/gg.c:501
@@ -698,23 +702,24 @@ msgstr ""
 msgid "No such command."
 msgstr "Es gibt kein solches Kommando."
 
-#: ../finch/gntconv.c:121 ../pidgin/gtkconv.c:493
+#: ../finch/gntconv.c:121 ../pidgin/gtkconv.c:492
 msgid "Syntax Error:  You typed the wrong number of arguments to that command."
-msgstr "Syntaxfehler:  Sie übergaben dem Kommando eine falsche Anzahl von Argumenten."
+msgstr ""
+"Syntaxfehler:  Sie übergaben dem Kommando eine falsche Anzahl von Argumenten."
 
-#: ../finch/gntconv.c:126 ../pidgin/gtkconv.c:499
+#: ../finch/gntconv.c:126 ../pidgin/gtkconv.c:498
 msgid "Your command failed for an unknown reason."
 msgstr "Ihre Kommando scheiterte aus einem unbekannten Grund."
 
-#: ../finch/gntconv.c:131 ../pidgin/gtkconv.c:506
+#: ../finch/gntconv.c:131 ../pidgin/gtkconv.c:505
 msgid "That command only works in chats, not IMs."
 msgstr "Dieses Kommando funktioniert nur in Chats, nicht bei IMs."
 
-#: ../finch/gntconv.c:134 ../pidgin/gtkconv.c:509
+#: ../finch/gntconv.c:134 ../pidgin/gtkconv.c:508
 msgid "That command only works in IMs, not chats."
 msgstr "Dieses Kommando funktioniert nur bei IMs, nicht bei Chats."
 
-#: ../finch/gntconv.c:138 ../pidgin/gtkconv.c:514
+#: ../finch/gntconv.c:138 ../pidgin/gtkconv.c:513
 msgid "That command doesn't work on this protocol."
 msgstr "Dieses Kommando funktioniert nicht in diesem Protokoll."
 
@@ -770,15 +775,15 @@ msgstr "<AUTO-REPLY> "
 msgid "List of users:\n"
 msgstr "Liste der Benutzer:\n"
 
-#: ../finch/gntconv.c:880 ../pidgin/gtkconv.c:336
+#: ../finch/gntconv.c:880 ../pidgin/gtkconv.c:335
 msgid "Supported debug options are:  version"
 msgstr "Unterstützte Debug-Optionen sind:  version"
 
-#: ../finch/gntconv.c:915 ../pidgin/gtkconv.c:385
+#: ../finch/gntconv.c:915 ../pidgin/gtkconv.c:384
 msgid "No such command (in this context)."
 msgstr "Kein solches Kommando (in diesem Kontext)."
 
-#: ../finch/gntconv.c:918 ../pidgin/gtkconv.c:388
+#: ../finch/gntconv.c:918 ../pidgin/gtkconv.c:387
 msgid ""
 "Use \"/help &lt;command&gt;\" for help on a specific command.\n"
 "The following commands are available in this context:\n"
@@ -787,7 +792,7 @@ msgstr ""
 "zu erhalten.\n"
 "Die folgenden Kommandos sind in diesem Kontext verfügbar:\n"
 
-#: ../finch/gntconv.c:976 ../pidgin/gtkconv.c:7201
+#: ../finch/gntconv.c:976 ../pidgin/gtkconv.c:7198
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
@@ -795,13 +800,13 @@ msgstr ""
 "say &lt;Nachricht&gt;:  Sendet eine Nachricht genau so, als wenn Sie die "
 "Nachricht ohne ein Kommando absenden."
 
-#: ../finch/gntconv.c:979 ../pidgin/gtkconv.c:7204
+#: ../finch/gntconv.c:979 ../pidgin/gtkconv.c:7201
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr ""
 "me &lt;Aktion&gt;:  Sende eine IRC-ähnliche Aktion an einen Buddy oder einen "
 "Chat."
 
-#: ../finch/gntconv.c:982 ../pidgin/gtkconv.c:7207
+#: ../finch/gntconv.c:982 ../pidgin/gtkconv.c:7204
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
@@ -809,11 +814,11 @@ msgstr ""
 "debug &lt;Option&gt;:  Verschiedene Debugging-Informationen zur aktuellen "
 "Unterhaltung senden."
 
-#: ../finch/gntconv.c:985 ../pidgin/gtkconv.c:7210
+#: ../finch/gntconv.c:985 ../pidgin/gtkconv.c:7207
 msgid "clear: Clears the conversation scrollback."
 msgstr "clear: Leert das Gesprächsfenster."
 
-#: ../finch/gntconv.c:988 ../pidgin/gtkconv.c:7216
+#: ../finch/gntconv.c:988 ../pidgin/gtkconv.c:7213
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "help &lt;Kommando&gt;:  Hilfe zu einem bestimmten Kommando."
 
@@ -936,7 +941,7 @@ msgstr "Stopp"
 #: ../finch/gntft.c:234 ../finch/gntnotify.c:181 ../finch/gntplugin.c:209
 #: ../finch/gntplugin.c:309 ../finch/gntpounce.c:723 ../finch/gntstatus.c:212
 #: ../libpurple/protocols/msn/msn.c:375 ../libpurple/protocols/silc/util.c:382
-#: ../libpurple/protocols/silc10/util.c:377 ../pidgin/gtkaccount.c:2475
+#: ../libpurple/protocols/silc10/util.c:377 ../pidgin/gtkaccount.c:2474
 #: ../pidgin/gtkrequest.c:272
 msgid "Close"
 msgstr "Schließen"
@@ -1008,11 +1013,11 @@ msgstr "Buddy-Information"
 msgid "Continue"
 msgstr "Fortfahren"
 
-#: ../finch/gntnotify.c:382 ../pidgin/gtkconv.c:1628 ../pidgin/gtkdebug.c:834
+#: ../finch/gntnotify.c:382 ../pidgin/gtkconv.c:1627 ../pidgin/gtkdebug.c:834
 msgid "Info"
 msgstr "Info"
 
-#: ../finch/gntnotify.c:385 ../pidgin/gtkconv.c:1589
+#: ../finch/gntnotify.c:385 ../pidgin/gtkconv.c:1588
 msgid "IM"
 msgstr "Nachricht"
 
@@ -1854,7 +1859,8 @@ msgstr "Kann kein Verzeichnis senden."
 #: ../libpurple/ft.c:285
 #, c-format
 msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
-msgstr "%s ist keine reguläre Datei. Pidgin wird die Datei nicht überschreiben.\n"
+msgstr ""
+"%s ist keine reguläre Datei. Pidgin wird die Datei nicht überschreiben.\n"
 
 #: ../libpurple/ft.c:345
 #, c-format
@@ -2126,7 +2132,7 @@ msgstr "Einfacher Text"
 
 #: ../libpurple/log.c:625
 msgid "Old flat format"
-msgstr "Altes \"flaches\" format"
+msgstr "Altes \"flaches\" Format"
 
 #: ../libpurple/log.c:837
 msgid "Logging of this conversation failed."
@@ -2156,7 +2162,8 @@ msgstr ""
 
 #: ../libpurple/log.c:1424 ../libpurple/log.c:1557
 msgid "<font color=\"red\"><b>Unable to find log path!</b></font>"
-msgstr "<font color=\"red\"><b>Kann den Mitschnitt-Pfad nicht finden!</b></font>"
+msgstr ""
+"<font color=\"red\"><b>Kann den Mitschnitt-Pfad nicht finden!</b></font>"
 
 #: ../libpurple/log.c:1436 ../libpurple/log.c:1566
 #, c-format
@@ -2339,7 +2346,8 @@ msgstr "Notizen über bestimmte Buddys speichern."
 #. *< summary
 #: ../libpurple/plugins/buddynote.c:93 ../pidgin/plugins/gtkbuddynote.c:74
 msgid "Adds the option to store notes for buddies on your buddy list."
-msgstr "Gibt die Möglichkeit, Notizen für Buddys auf Ihrer Buddy-Liste zu speichern."
+msgstr ""
+"Gibt die Möglichkeit, Notizen für Buddys auf Ihrer Buddy-Liste zu speichern."
 
 #. *< type
 #. *< ui_requirement
@@ -2437,7 +2445,8 @@ msgstr "Untätigkeitszeit für alle untätige Konten zurücksetzen"
 
 #: ../libpurple/plugins/idle.c:320 ../libpurple/plugins/idle.c:321
 msgid "Allows you to hand-configure how long you've been idle"
-msgstr "Erlaubt Ihnen manuell zu konfigurieren, wie lange Sie untätig sein wollen"
+msgstr ""
+"Erlaubt Ihnen manuell zu konfigurieren, wie lange Sie untätig sein wollen"
 
 #. *< type
 #. *< ui_requirement
@@ -3011,7 +3020,8 @@ msgid "Unable to listen for incoming IM connections\n"
 msgstr "Kann nicht auf eingehende IM-Verbindungen hören\n"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:137
-msgid "Unable to establish connection with the local mDNS server.  Is it running?"
+msgid ""
+"Unable to establish connection with the local mDNS server.  Is it running?"
 msgstr "Keine Verbindung zum lokalen mDNS-Server. Ist er aktiviert?"
 
 #. get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
@@ -3303,7 +3313,8 @@ msgstr "Aktuelles Passwort"
 
 #: ../libpurple/protocols/gg/gg.c:790
 msgid "Please, enter your current password and your new password for UIN: "
-msgstr "Bitte geben Sie Ihr aktuelles und Ihr neues Passwort für folgende UIN ein: "
+msgstr ""
+"Bitte geben Sie Ihr aktuelles und Ihr neues Passwort für folgende UIN ein: "
 
 #: ../libpurple/protocols/gg/gg.c:794 ../libpurple/protocols/gg/gg.c:795
 msgid "Change Gadu-Gadu Password"
@@ -4091,7 +4102,8 @@ msgstr "topic [neues Thema]:  Ansehen oder Ändern des Themas des Kanals."
 
 #: ../libpurple/protocols/irc/parse.c:150
 msgid "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode."
-msgstr "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Benutzermodus setzen oder zurücknehmen."
+msgstr ""
+"umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Benutzermodus setzen oder zurücknehmen."
 
 #: ../libpurple/protocols/irc/parse.c:151
 msgid "version [nick]: send CTCP VERSION request to a user"
@@ -4120,7 +4132,8 @@ msgstr "whois [Server] &lt;Nick&gt;:  Informationen zu einem Benutzer abrufen."
 
 #: ../libpurple/protocols/irc/parse.c:155
 msgid "whowas &lt;nick&gt;: Get information on a user that has logged off."
-msgstr "whowas &lt;Nick&gt;:  Informationen zu einem abgemeldeten Benutzer abrufen."
+msgstr ""
+"whowas &lt;Nick&gt;:  Informationen zu einem abgemeldeten Benutzer abrufen."
 
 #: ../libpurple/protocols/irc/parse.c:465
 #, c-format
@@ -4571,7 +4584,8 @@ msgstr "Registrierungsfehler"
 
 #: ../libpurple/protocols/jabber/chat.c:627
 msgid "Nick changing not supported in non-MUC chatrooms"
-msgstr "Die Änderung des Nick-Namens wird in nicht-MUC Chaträumen nicht unterstützt"
+msgstr ""
+"Die Änderung des Nick-Namens wird in nicht-MUC Chaträumen nicht unterstützt"
 
 #: ../libpurple/protocols/jabber/chat.c:678
 #: ../libpurple/protocols/jabber/chat.c:689
@@ -5070,7 +5084,8 @@ msgstr ""
 
 #: ../libpurple/protocols/jabber/jabber.c:1853
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
-msgstr "invite &lt;Benutzer&gt; [Nachricht]:  Lade einen Benutzer in den Raum ein."
+msgstr ""
+"invite &lt;Benutzer&gt; [Nachricht]:  Lade einen Benutzer in den Raum ein."
 
 #: ../libpurple/protocols/jabber/jabber.c:1859
 msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
@@ -5081,7 +5096,8 @@ msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
 msgstr "kick &lt;Benutzer&gt; [Raum]:  Kickt einen Benutzer aus dem Raum."
 
 #: ../libpurple/protocols/jabber/jabber.c:1870
-msgid "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
+msgid ""
+"msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
 msgstr ""
 "msg &lt;Benutzer&gt; &lt;Nachricht&gt;:  Sendet eine private Nachricht an "
 "einen anderen Benutzer."
@@ -5225,12 +5241,14 @@ msgstr "Kann die Datei nicht an %s senden, Benutzer ist nicht online"
 #: ../libpurple/protocols/jabber/si.c:836
 #, c-format
 msgid "Unable to send file to %s, not subscribed to user presence"
-msgstr "Kann die Datei nicht an %s senden, Anwesenheit des Benutzers nicht abonniert"
+msgstr ""
+"Kann die Datei nicht an %s senden, Anwesenheit des Benutzers nicht abonniert"
 
 #: ../libpurple/protocols/jabber/si.c:851
 #, c-format
 msgid "Please select which resource of %s you would like to send a file to"
-msgstr "Bitte wählen Sie, welcher Ressource von %s Sie eine Datei schicken möchten"
+msgstr ""
+"Bitte wählen Sie, welcher Ressource von %s Sie eine Datei schicken möchten"
 
 #: ../libpurple/protocols/jabber/si.c:867
 msgid "Select a Resource"
@@ -5338,7 +5356,8 @@ msgstr "Kann die Gruppe „Null“ nicht entfernen"
 
 #: ../libpurple/protocols/msn/error.c:103
 msgid "Tried to add a user to a group that doesn't exist"
-msgstr "Versuchte einen Benutzer zu einer nichtexistierenden Gruppe hinzuzufügen"
+msgstr ""
+"Versuchte einen Benutzer zu einer nichtexistierenden Gruppe hinzuzufügen"
 
 #: ../libpurple/protocols/msn/error.c:107
 msgid "Switchboard failed"
@@ -6043,7 +6062,8 @@ msgid "Unable to authenticate: %s"
 msgstr "Kann nicht authentifizieren: %s"
 
 #: ../libpurple/protocols/msn/session.c:325
-msgid "Your MSN buddy list is temporarily unavailable. Please wait and try again."
+msgid ""
+"Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr ""
 "Ihre MSN-Buddy-Liste ist temporär nicht verfügbar. Bitte warten Sie und "
 "versuchen Sie es später nochmal."
@@ -6117,7 +6137,8 @@ msgstr ""
 "versuchen Sie es in ein paar Minuten erneut:"
 
 #: ../libpurple/protocols/msn/switchboard.c:431
-msgid "Message could not be sent because an error with the switchboard occurred:"
+msgid ""
+"Message could not be sent because an error with the switchboard occurred:"
 msgstr ""
 "Nachricht konnte nicht gesendet werden, da ein Fehler mit dem Switchboard "
 "aufgetreten ist:"
@@ -6238,7 +6259,8 @@ msgstr ""
 msgid ""
 "Your account has been disabled because too many incorrect passwords were "
 "entered"
-msgstr "Ihr Konto wurde wegen zu vielen falsch eingegebenen Passworten gesperrt"
+msgstr ""
+"Ihr Konto wurde wegen zu vielen falsch eingegebenen Passworten gesperrt"
 
 #: ../libpurple/protocols/novell/nmuser.c:1931
 msgid "You cannot add the same person twice to a conversation"
@@ -6268,7 +6290,8 @@ msgstr "Der Benutzer hat Sie blockiert"
 msgid ""
 "This evaluation version does not allow more than ten users to log in at one "
 "time"
-msgstr "Diese Evaluationsversion erlaubt nicht mehr als 10 Benutzer gleichzeitig"
+msgstr ""
+"Diese Evaluationsversion erlaubt nicht mehr als 10 Benutzer gleichzeitig"
 
 #: ../libpurple/protocols/novell/nmuser.c:1953
 msgid "The user is either offline or you are blocked"
@@ -6318,7 +6341,8 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:537
 #, c-format
 msgid "Unable to send message. Could not create the conference (%s)."
-msgstr "Kann die Nachricht nicht senden. Kann die Konferenz nicht erstellen (%s)."
+msgstr ""
+"Kann die Nachricht nicht senden. Kann die Konferenz nicht erstellen (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:584
 #, c-format
@@ -6368,7 +6392,8 @@ msgstr "Kann %s nicht zu Ihrer Privatsphäre-Liste entfernen (%s)."
 #: ../libpurple/protocols/novell/novell.c:1647
 #, c-format
 msgid "Unable to change server side privacy settings (%s)."
-msgstr "Kann die serverseitigen Einstellungen zur Privatsphäre nicht ändern (%s)."
+msgstr ""
+"Kann die serverseitigen Einstellungen zur Privatsphäre nicht ändern (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:1012
 #, c-format
@@ -6461,7 +6486,8 @@ msgstr ""
 
 #: ../libpurple/protocols/novell/novell.c:2069
 #, c-format
-msgid "%s appears to be offline and did not receive the message that you just sent."
+msgid ""
+"%s appears to be offline and did not receive the message that you just sent."
 msgstr ""
 "%s scheint offline zu sein und hat die Nachricht, die Sie gerade gesendet "
 "haben, nicht empfangen."
@@ -6591,11 +6617,13 @@ msgstr "Verbindung zum entfernten Benutzer verloren: <br>%s"
 
 #: ../libpurple/protocols/oscar/odc.c:47
 msgid "Received invalid data on connection with remote user."
-msgstr "Ungültige Daten in der Verbindung mit dem entfernten Benutzer empfangen."
+msgstr ""
+"Ungültige Daten in der Verbindung mit dem entfernten Benutzer empfangen."
 
 #: ../libpurple/protocols/oscar/odc.c:49
 msgid "Could not establish a connection with the remote user."
-msgstr "Die Verbindung mit dem entfernten Benutzer konnte nicht hergestellt werden."
+msgstr ""
+"Die Verbindung mit dem entfernten Benutzer konnte nicht hergestellt werden."
 
 #: ../libpurple/protocols/oscar/odc.c:560
 msgid "Direct IM established"
@@ -6725,8 +6753,8 @@ msgstr ""
 "Client.)"
 
 #. Label
-#: ../libpurple/protocols/oscar/oscar.c:639 ../pidgin/gtkutils.c:2353
-#: ../pidgin/gtkutils.c:2383
+#: ../libpurple/protocols/oscar/oscar.c:639 ../pidgin/gtkutils.c:2359
+#: ../pidgin/gtkutils.c:2389
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:334
 msgid "Buddy Icon"
 msgstr "Buddy-Icon"
@@ -6941,7 +6969,8 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:1372
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
-msgstr "Die Client-Version, die Sie nutzen ist zu alt. Bitte updaten Sie unter %s"
+msgstr ""
+"Die Client-Version, die Sie nutzen ist zu alt. Bitte updaten Sie unter %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:1412
 msgid "Could Not Connect"
@@ -6992,7 +7021,8 @@ msgstr "Konnte keinen gültigen AIM Login-Hash bekommen."
 #: ../libpurple/protocols/oscar/oscar.c:1627
 #, c-format
 msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr "Sie wurden in kurzer Zeit abgemeldet.  Überprüfen Sie %s wegen Updates."
+msgstr ""
+"Sie wurden in kurzer Zeit abgemeldet.  Überprüfen Sie %s wegen Updates."
 
 #: ../libpurple/protocols/oscar/oscar.c:1630
 msgid "Unable to get a valid login hash."
@@ -7116,19 +7146,23 @@ msgstr "_Ablehnen"
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] "Sie haben %hu Nachricht von %s nicht erhalten, da sie ungültig war."
-msgstr[1] "Sie haben %hu Nachrichten von %s nicht erhalten, da sie ungültig waren."
+msgstr[1] ""
+"Sie haben %hu Nachrichten von %s nicht erhalten, da sie ungültig waren."
 
 #: ../libpurple/protocols/oscar/oscar.c:2581
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] "Sie haben %hu Nachricht von %s nicht erhalten, da sie zu groß war."
-msgstr[1] "Sie haben %hu Nachrichten von %s nicht erhalten, da sie zu groß waren."
+msgstr[1] ""
+"Sie haben %hu Nachrichten von %s nicht erhalten, da sie zu groß waren."
 
 #: ../libpurple/protocols/oscar/oscar.c:2590
 #, c-format
-msgid "You missed %hu message from %s because the rate limit has been exceeded."
-msgid_plural "You missed %hu messages from %s because the rate limit has been exceeded."
+msgid ""
+"You missed %hu message from %s because the rate limit has been exceeded."
+msgid_plural ""
+"You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] ""
 "Sie haben %hu Nachricht von %s nicht erhalten, da die Senderate "
 "überschritten wurde."
@@ -7140,22 +7174,28 @@ msgstr[1] ""
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
-msgstr[0] "Sie haben %hu Nachricht von %s nicht erhalten, da er/sie zu boshaft war."
-msgstr[1] "Sie haben %hu Nachrichten von %s nicht erhalten,/sie zu boshaft war."
+msgstr[0] ""
+"Sie haben %hu Nachricht von %s nicht erhalten, da er/sie zu boshaft war."
+msgstr[1] ""
+"Sie haben %hu Nachrichten von %s nicht erhalten,/sie zu boshaft war."
 
 #: ../libpurple/protocols/oscar/oscar.c:2608
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
-msgstr[0] "Sie haben %hu Nachricht von %s nicht erhalten, da Sie zu boshaft sind."
-msgstr[1] "Sie haben %hu Nachrichten von %s nicht erhalten, da Sie zu boshaft sind."
+msgstr[0] ""
+"Sie haben %hu Nachricht von %s nicht erhalten, da Sie zu boshaft sind."
+msgstr[1] ""
+"Sie haben %hu Nachrichten von %s nicht erhalten, da Sie zu boshaft sind."
 
 #: ../libpurple/protocols/oscar/oscar.c:2617
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
-msgstr[0] "Sie haben %hu Nachricht von %s aus unbekannten Gründen nicht erhalten."
-msgstr[1] "Sie haben %hu Nachrichten von %s aus unbekannten Gründen nicht erhalten."
+msgstr[0] ""
+"Sie haben %hu Nachricht von %s aus unbekannten Gründen nicht erhalten."
+msgstr[1] ""
+"Sie haben %hu Nachrichten von %s aus unbekannten Gründen nicht erhalten."
 
 #. Data is assumed to be the destination sn
 #: ../libpurple/protocols/oscar/oscar.c:2772
@@ -7225,7 +7265,7 @@ msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:3483
 msgid "You have been signed off for an unknown reason."
-msgstr "Sie wurden aus einem unbekannten Grund abgemeldet."
+msgstr "Sie haben sich aus einem unbekannten Grund abgemeldet."
 
 #: ../libpurple/protocols/oscar/oscar.c:3496
 #: ../libpurple/protocols/toc/toc.c:977
@@ -7371,7 +7411,8 @@ msgid "Account Info"
 msgstr "Konto-Info"
 
 #: ../libpurple/protocols/oscar/oscar.c:4221
-msgid "Your IM Image was not sent. You must be Direct Connected to send IM Images."
+msgid ""
+"Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr ""
 "Ihr IM-Bild wurde nicht gesendet. Sie müssen direkt verbunden sein, um IM-"
 "Bilder senden zu können."
@@ -7921,7 +7962,7 @@ msgid ""
 "%s."
 msgstr ""
 "Das Setzen von benutzerdefinierten Gesichtern wird momentan nicht "
-"unterstützt. Bitte wählen Sie ein BIld von %s."
+"unterstützt. Bitte wählen Sie ein Bild von %s."
 
 #: ../libpurple/protocols/qq/buddy_info.c:577
 #: ../libpurple/protocols/qq/buddy_info.c:590
@@ -8201,7 +8242,8 @@ msgstr "Senden der Nachricht fehlgeschlagen."
 
 #: ../libpurple/protocols/qq/keep_alive.c:87
 msgid "Keep alive error, seems connection lost!"
-msgstr "\"Keep-alive\"-Fehler, wahrscheinlich ist die Verbindung zusammengebrochen!"
+msgstr ""
+"\"Keep-alive\"-Fehler, wahrscheinlich ist die Verbindung zusammengebrochen!"
 
 #: ../libpurple/protocols/qq/login_logout.c:408
 msgid "Request login token error!"
@@ -8498,8 +8540,10 @@ msgstr "Verbunden"
 
 #: ../libpurple/protocols/sametime/sametime.c:1645
 #, c-format
-msgid "A Sametime administrator has issued the following announcement on server %s"
-msgstr "Ein Sametime-Administrator hat die folgende Ankündigung auf Server %s gemacht"
+msgid ""
+"A Sametime administrator has issued the following announcement on server %s"
+msgstr ""
+"Ein Sametime-Administrator hat die folgende Ankündigung auf Server %s gemacht"
 
 #: ../libpurple/protocols/sametime/sametime.c:1650
 msgid "Sametime Administrator Announcement"
@@ -8619,7 +8663,7 @@ msgstr "Zur Konferenz einladen..."
 msgid "Send TEST Announcement"
 msgstr "Sende TEST-Nachricht"
 
-#: ../libpurple/protocols/sametime/sametime.c:3586 ../pidgin/gtkconv.c:4275
+#: ../libpurple/protocols/sametime/sametime.c:3586 ../pidgin/gtkconv.c:4274
 msgid "Topic:"
 msgstr "Thema:"
 
@@ -9520,7 +9564,8 @@ msgstr "Benutzer-Limit"
 #: ../libpurple/protocols/silc/chat.c:743
 #: ../libpurple/protocols/silc10/chat.c:727
 msgid "Set user limit on channel. Set to zero to reset user limit."
-msgstr "Setze Benutzerlimit auf dem Kanal. Wählen Sie 0, um das Limit aufzuheben."
+msgstr ""
+"Setze Benutzerlimit auf dem Kanal. Wählen Sie 0, um das Limit aufzuheben."
 
 #: ../libpurple/protocols/silc/chat.c:907
 #: ../libpurple/protocols/silc10/chat.c:891
@@ -9585,7 +9630,8 @@ msgstr "Setze geheimen Kanal"
 #: ../libpurple/protocols/silc/chat.c:1045
 #: ../libpurple/protocols/silc10/chat.c:1102
 #, c-format
-msgid "You have to join the %s channel before you are able to join the private group"
+msgid ""
+"You have to join the %s channel before you are able to join the private group"
 msgstr ""
 "Sie müssen den Kanal %s betreten, bevor Sie die private Gruppe betreten "
 "können"
@@ -10060,7 +10106,8 @@ msgstr "Schlüsselaustausch gescheitert"
 
 #: ../libpurple/protocols/silc/silc.c:238
 #: ../libpurple/protocols/silc10/ops.c:1714
-msgid "Resuming detached session failed. Press Reconnect to create new connection."
+msgid ""
+"Resuming detached session failed. Press Reconnect to create new connection."
 msgstr ""
 "Das Fortsetzen der angehaltenen Sitzung ist fehlgeschlagen. Bitte drücken "
 "Sie „Neu Verbinden“, um eine neue Verbindung zu erzeugen."
@@ -10341,7 +10388,8 @@ msgstr "topic [&lt;neues Thema&gt;]:  Thema ändern oder anzeigen"
 #: ../libpurple/protocols/silc/silc.c:1666
 #: ../libpurple/protocols/silc10/silc.c:1595
 msgid "join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"
-msgstr "join &lt;Kanal&gt; [&lt;Passwort&gt;]:  Betrete einen Chat in diesem Netzwerk"
+msgstr ""
+"join &lt;Kanal&gt; [&lt;Passwort&gt;]:  Betrete einen Chat in diesem Netzwerk"
 
 #: ../libpurple/protocols/silc/silc.c:1670
 #: ../libpurple/protocols/silc10/silc.c:1599
@@ -10424,12 +10472,14 @@ msgstr ""
 #: ../libpurple/protocols/silc/silc.c:1724
 #: ../libpurple/protocols/silc10/silc.c:1653
 msgid "umode &lt;usermodes&gt;:  Set your modes in the network"
-msgstr "umode &lt;Benutzeroptionen&gt;:  Setze Ihre Benutzeroptionen im Netzwerk"
+msgstr ""
+"umode &lt;Benutzeroptionen&gt;:  Setze Ihre Benutzeroptionen im Netzwerk"
 
 #: ../libpurple/protocols/silc/silc.c:1728
 #: ../libpurple/protocols/silc10/silc.c:1657
 msgid "oper &lt;nick&gt; [-pubkey]:  Get server operator privileges"
-msgstr "oper &lt;Nick&gt; [-pubkey]:  Privilegien des Server-Operators verlangen"
+msgstr ""
+"oper &lt;Nick&gt; [-pubkey]:  Privilegien des Server-Operators verlangen"
 
 #: ../libpurple/protocols/silc/silc.c:1732
 #: ../libpurple/protocols/silc10/silc.c:1661
@@ -10572,7 +10622,7 @@ msgstr "Erstelle SILC-Schlüsselpaar..."
 #: ../libpurple/protocols/silc/util.c:215
 #: ../libpurple/protocols/silc/util.c:257
 msgid "Cannot create SILC key pair\n"
-msgstr "Kan SILC-Schlüsselpaar nicht erstellen\n"
+msgstr "Kann SILC-Schlüsselpaar nicht erstellen\n"
 
 #. Hint for translators: Please check the tabulator width here and in
 #. the next strings (short strings: 2 tabs, longer strings 1 tab,
@@ -10714,15 +10764,18 @@ msgstr "Fehler: Unterschiedliche Version, aktualisieren Sie Ihren Client"
 
 #: ../libpurple/protocols/silc10/ops.c:1934
 msgid "Failure: Remote does not trust/support your public key"
-msgstr "Fehler: Die entfernte Seite vertraut Ihrem öffentlichen Schlüssel nicht"
+msgstr ""
+"Fehler: Die entfernte Seite vertraut Ihrem öffentlichen Schlüssel nicht"
 
 #: ../libpurple/protocols/silc10/ops.c:1937
 msgid "Failure: Remote does not support proposed KE group"
-msgstr "Fehler: Entferntes Programm unterstützt nicht die vorgeschlagen KE-Gruppe"
+msgstr ""
+"Fehler: Entferntes Programm unterstützt nicht die vorgeschlagen KE-Gruppe"
 
 #: ../libpurple/protocols/silc10/ops.c:1940
 msgid "Failure: Remote does not support proposed cipher"
-msgstr "Fehler: Entferntes Programm unterstützt die vorgeschlagene Cipher nicht"
+msgstr ""
+"Fehler: Entferntes Programm unterstützt die vorgeschlagene Cipher nicht"
 
 #: ../libpurple/protocols/silc10/ops.c:1943
 msgid "Failure: Remote does not support proposed PKCS"
@@ -10730,7 +10783,8 @@ msgstr "Fehler: Entferntes Programm unterstützt die vorgeschlagene PKCS nicht"
 
 #: ../libpurple/protocols/silc10/ops.c:1946
 msgid "Failure: Remote does not support proposed hash function"
-msgstr "Fehler: Entferntes Programm unterstützt die vorgeschlagen Hashfunktion nicht"
+msgstr ""
+"Fehler: Entferntes Programm unterstützt die vorgeschlagen Hashfunktion nicht"
 
 #: ../libpurple/protocols/silc10/ops.c:1949
 msgid "Failure: Remote does not support proposed HMAC"
@@ -10989,7 +11043,8 @@ msgstr "Warte auf Antwort..."
 
 #: ../libpurple/protocols/toc/toc.c:792
 msgid "TOC has come back from its pause. You may now send messages again."
-msgstr "TOC ist von seiner Pause zurückgekehrt. Sie können wieder Nachrichten senden."
+msgstr ""
+"TOC ist von seiner Pause zurückgekehrt. Sie können wieder Nachrichten senden."
 
 #: ../libpurple/protocols/toc/toc.c:995
 msgid "Password Change Successful"
@@ -11026,7 +11081,8 @@ msgstr "Übertragungsverbindung konnte nicht hergestellt werden."
 
 #: ../libpurple/protocols/toc/toc.c:2075
 msgid "Could not write file header.  The file will not be transferred."
-msgstr "Konnte keinen Datei-Header schreiben. Die Datei wurde nicht übermittelt."
+msgstr ""
+"Konnte keinen Datei-Header schreiben. Die Datei wurde nicht übermittelt."
 
 #: ../libpurple/protocols/toc/toc.c:2175
 msgid "Save As..."
@@ -11126,7 +11182,8 @@ msgstr "Buddy ignorieren?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:1955
 msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr "Ihr Konto ist gesperrt. Bitte melden Sie sich auf der Yahoo! Webseite an."
+msgstr ""
+"Ihr Konto ist gesperrt. Bitte melden Sie sich auf der Yahoo! Webseite an."
 
 #: ../libpurple/protocols/yahoo/yahoo.c:1958
 #, c-format
@@ -11615,11 +11672,13 @@ msgstr ""
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2705
 msgid "inst &lt;instance&gt;: Set the instance to be used on this class"
-msgstr "inst &lt;Instanz&gt;: Setze die Instanz, die für diese Klasse benutzt wird"
+msgstr ""
+"inst &lt;Instanz&gt;: Setze die Instanz, die für diese Klasse benutzt wird"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2710
 msgid "topic &lt;instance&gt;: Set the instance to be used on this class"
-msgstr "topic &lt;Instanz&gt;: Setze die Instanz, die für diese Klasse benutzt wird"
+msgstr ""
+"topic &lt;Instanz&gt;: Setze die Instanz, die für diese Klasse benutzt wird"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2716
 msgid "sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"
@@ -11628,7 +11687,8 @@ msgstr ""
 "betreten"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2721
-msgid "zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"
+msgid ""
+"zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"
 msgstr ""
 "zi &lt;Instanz&gt;: Sende eine Nachricht an &lt;Nachricht,<i>Instanz</i>,"
 "*&gt;"
@@ -11659,7 +11719,8 @@ msgstr ""
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2744
 msgid "zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"
-msgstr "zc &lt;Klasse&gt;: Sendet eine Nachricht an &lt;<i>Klasse</i>,PERSONAL,*&gt;"
+msgstr ""
+"zc &lt;Klasse&gt;: Sendet eine Nachricht an &lt;<i>Klasse</i>,PERSONAL,*&gt;"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2850
 msgid "Resubscribe"
@@ -11740,7 +11801,8 @@ msgstr "HTTP-Proxy-Verbindungsfehler %d"
 #: ../libpurple/proxy.c:778
 #, c-format
 msgid "Access denied: HTTP proxy server forbids port %d tunneling."
-msgstr "Zugriff verboten: Der HTTP-Proxy-Server verbietet das Tunneling über Port %d."
+msgstr ""
+"Zugriff verboten: Der HTTP-Proxy-Server verbietet das Tunneling über Port %d."
 
 #: ../libpurple/proxy.c:995
 #, c-format
@@ -12105,7 +12167,7 @@ msgstr "Aktiv"
 msgid "Protocol"
 msgstr "Protokoll"
 
-#: ../pidgin/gtkaccount.c:2204
+#: ../pidgin/gtkaccount.c:2203
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
@@ -12227,9 +12289,10 @@ msgstr "A_usklappen"
 msgid "/Tools/Mute Sounds"
 msgstr "/Werkzeuge/Stummschalten"
 
-#: ../pidgin/gtkblist.c:2043 ../pidgin/gtkconv.c:4605
+#: ../pidgin/gtkblist.c:2043 ../pidgin/gtkconv.c:4602
 #: ../pidgin/gtkpounce.c:429
-msgid "You are not currently signed on with an account that can add that buddy."
+msgid ""
+"You are not currently signed on with an account that can add that buddy."
 msgstr ""
 "Sie sind im Moment nicht mit einem Konto angemeldet, welches benutzt werden "
 "kann, um diesen Buddy hinzuzufügen."
@@ -12573,7 +12636,7 @@ msgstr "<PurpleMain>/Konten"
 msgid "_Edit Account"
 msgstr "Konto _bearbeiten"
 
-#: ../pidgin/gtkblist.c:6589 ../pidgin/gtkconv.c:2983
+#: ../pidgin/gtkblist.c:6589 ../pidgin/gtkconv.c:2982
 msgid "No actions available"
 msgstr "Keine Aktionen verfügbar"
 
@@ -12610,26 +12673,27 @@ msgstr ""
 "%s wird nicht versuchen, das Konto wieder zu verbinden bis Sie den Fehler "
 "behoben und das Konto wieder aktiviert haben."
 
-#: ../pidgin/gtkconv.c:486
+#: ../pidgin/gtkconv.c:485
 msgid "Unknown command."
 msgstr "Unbekanntes Kommando."
 
-#: ../pidgin/gtkconv.c:758 ../pidgin/gtkconv.c:784
+#: ../pidgin/gtkconv.c:757 ../pidgin/gtkconv.c:783
 msgid "That buddy is not on the same protocol as this chat."
 msgstr "Der Buddy hat nicht das gleiche Protokoll wie dieser Chat."
 
-#: ../pidgin/gtkconv.c:778
-msgid "You are not currently signed on with an account that can invite that buddy."
+#: ../pidgin/gtkconv.c:777
+msgid ""
+"You are not currently signed on with an account that can invite that buddy."
 msgstr ""
 "Sie sind im Moment nicht mit einem Konto angemeldet, welches benutzt werden "
 "kann, um diesen Buddy einzuladen."
 
-#: ../pidgin/gtkconv.c:831
+#: ../pidgin/gtkconv.c:830
 msgid "Invite Buddy Into Chat Room"
 msgstr "Buddy in einen Chatraum einladen"
 
 #. Put our happy label in it.
-#: ../pidgin/gtkconv.c:861
+#: ../pidgin/gtkconv.c:860
 msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
@@ -12637,200 +12701,201 @@ msgstr ""
 "Bitte geben Sie den Benutzernamen der Person ein, die Sie einladen möchten "
 "zusammen mit einer optionalen Einladungsnachricht."
 
-#: ../pidgin/gtkconv.c:882
+#: ../pidgin/gtkconv.c:881
 msgid "_Buddy:"
 msgstr "_Buddy:"
 
-#: ../pidgin/gtkconv.c:902 ../pidgin/gtksavedstatuses.c:1193
+#: ../pidgin/gtkconv.c:901 ../pidgin/gtksavedstatuses.c:1193
 #: ../pidgin/gtksavedstatuses.c:1525
 msgid "_Message:"
 msgstr "_Nachricht:"
 
-#: ../pidgin/gtkconv.c:959 ../pidgin/gtkconv.c:2507 ../pidgin/gtkdebug.c:218
+#: ../pidgin/gtkconv.c:958 ../pidgin/gtkconv.c:2506 ../pidgin/gtkdebug.c:218
 #: ../pidgin/gtkft.c:542
 msgid "Unable to open file."
 msgstr "Konnte die Datei nicht öffnen."
 
-#: ../pidgin/gtkconv.c:965
+#: ../pidgin/gtkconv.c:964
 #, c-format
 msgid "<h1>Conversation with %s</h1>\n"
 msgstr "<h1>Unterhaltung mit %s</h1>\n"
 
-#: ../pidgin/gtkconv.c:1001
+#: ../pidgin/gtkconv.c:1000
 msgid "Save Conversation"
 msgstr "Unterhaltung speichern"
 
-#: ../pidgin/gtkconv.c:1150 ../pidgin/gtkdebug.c:166 ../pidgin/gtkdebug.c:742
+#: ../pidgin/gtkconv.c:1149 ../pidgin/gtkdebug.c:166 ../pidgin/gtkdebug.c:742
 msgid "Find"
 msgstr "Suchen"
 
-#: ../pidgin/gtkconv.c:1176 ../pidgin/gtkdebug.c:194
+#: ../pidgin/gtkconv.c:1175 ../pidgin/gtkdebug.c:194
 msgid "_Search for:"
 msgstr "_Suche nach:"
 
-#: ../pidgin/gtkconv.c:1359
+#: ../pidgin/gtkconv.c:1358
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr ""
 "Mitschnitt gestartet. Zukünftige Nachrichten dieser Unterhaltung werden "
 "mitgeschnitten."
 
-#: ../pidgin/gtkconv.c:1367
-msgid "Logging stopped. Future messages in this conversation will not be logged."
+#: ../pidgin/gtkconv.c:1366
+msgid ""
+"Logging stopped. Future messages in this conversation will not be logged."
 msgstr ""
 "Mitschnitt angehalten. Zukünftige Nachrichten dieser Unterhaltung werden "
 "nicht mitgeschnitten."
 
-#: ../pidgin/gtkconv.c:1615
+#: ../pidgin/gtkconv.c:1614
 msgid "Un-Ignore"
 msgstr "Nicht Ignorieren"
 
-#: ../pidgin/gtkconv.c:1618
+#: ../pidgin/gtkconv.c:1617
 msgid "Ignore"
 msgstr "Ignorieren"
 
-#: ../pidgin/gtkconv.c:1638
+#: ../pidgin/gtkconv.c:1637
 msgid "Get Away Message"
 msgstr "Neue Abwesenheitsnachricht abholen"
 
-#: ../pidgin/gtkconv.c:1661
+#: ../pidgin/gtkconv.c:1660
 msgid "Last said"
 msgstr "Zuletzt gesagt"
 
-#: ../pidgin/gtkconv.c:2515
+#: ../pidgin/gtkconv.c:2514
 msgid "Unable to save icon file to disk."
 msgstr "Kann Icon-Datei nicht auf die Festplatte speichern."
 
-#: ../pidgin/gtkconv.c:2566
+#: ../pidgin/gtkconv.c:2565
 msgid "Save Icon"
 msgstr "Icon speichern"
 
-#: ../pidgin/gtkconv.c:2618
+#: ../pidgin/gtkconv.c:2617
 msgid "Animate"
 msgstr "Animieren"
 
-#: ../pidgin/gtkconv.c:2623
+#: ../pidgin/gtkconv.c:2622
 msgid "Hide Icon"
 msgstr "Icon verbergen"
 
-#: ../pidgin/gtkconv.c:2626
+#: ../pidgin/gtkconv.c:2625
 msgid "Save Icon As..."
 msgstr "Icon speichern unter..."
 
-#: ../pidgin/gtkconv.c:2630
+#: ../pidgin/gtkconv.c:2629
 msgid "Set Custom Icon..."
 msgstr "Setze benutzerdefiniertes Icon..."
 
-#: ../pidgin/gtkconv.c:2643
+#: ../pidgin/gtkconv.c:2642
 msgid "Remove Custom Icon"
 msgstr "Benutzerdefiniertes Icon entfernen"
 
 #. Conversation menu
-#: ../pidgin/gtkconv.c:2785
+#: ../pidgin/gtkconv.c:2784
 msgid "/_Conversation"
 msgstr "/_Unterhaltung"
 
-#: ../pidgin/gtkconv.c:2787
+#: ../pidgin/gtkconv.c:2786
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Unterhaltung/_Neue Sofortnachricht..."
 
-#: ../pidgin/gtkconv.c:2792
+#: ../pidgin/gtkconv.c:2791
 msgid "/Conversation/_Find..."
 msgstr "/Unterhaltung/_Finden..."
 
-#: ../pidgin/gtkconv.c:2794
+#: ../pidgin/gtkconv.c:2793
 msgid "/Conversation/View _Log"
 msgstr "/Unterhaltung/Betrachte _Mitschnitt"
 
-#: ../pidgin/gtkconv.c:2795
+#: ../pidgin/gtkconv.c:2794
 msgid "/Conversation/_Save As..."
 msgstr "/Unterhaltung/_Speichern als..."
 
-#: ../pidgin/gtkconv.c:2797
+#: ../pidgin/gtkconv.c:2796
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Unterhaltung/_Leeren"
 
-#: ../pidgin/gtkconv.c:2801
+#: ../pidgin/gtkconv.c:2800
 msgid "/Conversation/Se_nd File..."
 msgstr "/Unterhaltung/Datei _senden..."
 
-#: ../pidgin/gtkconv.c:2802
+#: ../pidgin/gtkconv.c:2801
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Unterhaltung/Buddy-Alar_m hinzufügen..."
 
-#: ../pidgin/gtkconv.c:2804
+#: ../pidgin/gtkconv.c:2803
 msgid "/Conversation/_Get Info"
 msgstr "/Unterhaltung/B_enutzer-Info abrufen"
 
-#: ../pidgin/gtkconv.c:2806
+#: ../pidgin/gtkconv.c:2805
 msgid "/Conversation/In_vite..."
 msgstr "/Unterhaltung/_Einladen..."
 
-#: ../pidgin/gtkconv.c:2808
+#: ../pidgin/gtkconv.c:2807
 msgid "/Conversation/M_ore"
 msgstr "/Unterhaltung/M_ehr"
 
-#: ../pidgin/gtkconv.c:2812
+#: ../pidgin/gtkconv.c:2811
 msgid "/Conversation/Al_ias..."
 msgstr "/Unterhaltung/Al_ias..."
 
-#: ../pidgin/gtkconv.c:2814
+#: ../pidgin/gtkconv.c:2813
 msgid "/Conversation/_Block..."
 msgstr "/Unterhaltung/_Blockieren..."
 
-#: ../pidgin/gtkconv.c:2816
+#: ../pidgin/gtkconv.c:2815
 msgid "/Conversation/_Unblock..."
 msgstr "/Unterhaltung/_Entsperren..."
 
-#: ../pidgin/gtkconv.c:2818
+#: ../pidgin/gtkconv.c:2817
 msgid "/Conversation/_Add..."
 msgstr "/Unterhaltung/_Hinzufügen..."
 
-#: ../pidgin/gtkconv.c:2820
+#: ../pidgin/gtkconv.c:2819
 msgid "/Conversation/_Remove..."
 msgstr "/Unterhaltung/_Entfernen..."
 
-#: ../pidgin/gtkconv.c:2825
+#: ../pidgin/gtkconv.c:2824
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/Unterhaltung/Lin_k einfügen..."
 
-#: ../pidgin/gtkconv.c:2827
+#: ../pidgin/gtkconv.c:2826
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/Unterhaltung/Bil_d einfügen..."
 
-#: ../pidgin/gtkconv.c:2833
+#: ../pidgin/gtkconv.c:2832
 msgid "/Conversation/_Close"
 msgstr "/Unterhaltung/S_chließen"
 
 #. Options
-#: ../pidgin/gtkconv.c:2837
+#: ../pidgin/gtkconv.c:2836
 msgid "/_Options"
 msgstr "/_Optionen"
 
-#: ../pidgin/gtkconv.c:2838
+#: ../pidgin/gtkconv.c:2837
 msgid "/Options/Enable _Logging"
 msgstr "/Optionen/Schalte _Mitschnitt ein"
 
-#: ../pidgin/gtkconv.c:2839
+#: ../pidgin/gtkconv.c:2838
 msgid "/Options/Enable _Sounds"
 msgstr "/Optionen/Schalte _Klänge ein"
 
-#: ../pidgin/gtkconv.c:2840
+#: ../pidgin/gtkconv.c:2839
 msgid "/Options/Show Buddy _Icon"
 msgstr "/Optionen/Buddy-_Icon anzeigen"
 
-#: ../pidgin/gtkconv.c:2842
+#: ../pidgin/gtkconv.c:2841
 msgid "/Options/Show Formatting _Toolbars"
 msgstr "/Optionen/Zeige _Werkzeugleisten für Formatierung"
 
-#: ../pidgin/gtkconv.c:2843
+#: ../pidgin/gtkconv.c:2842
 msgid "/Options/Show Ti_mestamps"
 msgstr "/Optionen/Zeige Zeitste_mpel"
 
-#: ../pidgin/gtkconv.c:2919
+#: ../pidgin/gtkconv.c:2918
 msgid "/Conversation/More"
 msgstr "/Unterhaltung/Mehr"
 
-#: ../pidgin/gtkconv.c:3027
+#: ../pidgin/gtkconv.c:3026
 msgid "/Options"
 msgstr "/Optionen"
 
@@ -12839,176 +12904,177 @@ msgstr "/Optionen"
 #. Make sure the 'Conversation -> More' menuitems are regenerated whenever
 #. * the 'Conversation' menu pops up because the entries can change after the
 #. * conversation is created.
-#: ../pidgin/gtkconv.c:3062 ../pidgin/gtkconv.c:3094
+#: ../pidgin/gtkconv.c:3061 ../pidgin/gtkconv.c:3093
 msgid "/Conversation"
 msgstr "/Unterhaltung"
 
-#: ../pidgin/gtkconv.c:3102
+#: ../pidgin/gtkconv.c:3101
 msgid "/Conversation/View Log"
 msgstr "/Unterhaltung/Betrachte Mitschnitt"
 
-#: ../pidgin/gtkconv.c:3108
+#: ../pidgin/gtkconv.c:3107
 msgid "/Conversation/Send File..."
 msgstr "/Unterhaltung/Datei senden ..."
 
-#: ../pidgin/gtkconv.c:3112
+#: ../pidgin/gtkconv.c:3111
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Unterhaltung/Buddy-Alarm hinzufügen..."
 
-#: ../pidgin/gtkconv.c:3118
+#: ../pidgin/gtkconv.c:3117
 msgid "/Conversation/Get Info"
 msgstr "/Unterhaltung/Info abrufen"
 
-#: ../pidgin/gtkconv.c:3122
+#: ../pidgin/gtkconv.c:3121
 msgid "/Conversation/Invite..."
 msgstr "/Unterhaltung/Einladen ..."
 
-#: ../pidgin/gtkconv.c:3128
+#: ../pidgin/gtkconv.c:3127
 msgid "/Conversation/Alias..."
 msgstr "/Unterhaltung/Alias..."
 
-#: ../pidgin/gtkconv.c:3132
+#: ../pidgin/gtkconv.c:3131
 msgid "/Conversation/Block..."
 msgstr "/Unterhaltung/Blockieren..."
 
-#: ../pidgin/gtkconv.c:3136
+#: ../pidgin/gtkconv.c:3135
 msgid "/Conversation/Unblock..."
 msgstr "/Unterhaltung/Entsperren..."
 
-#: ../pidgin/gtkconv.c:3140
+#: ../pidgin/gtkconv.c:3139
 msgid "/Conversation/Add..."
 msgstr "/Unterhaltung/Hinzufügen..."
 
-#: ../pidgin/gtkconv.c:3144
+#: ../pidgin/gtkconv.c:3143
 msgid "/Conversation/Remove..."
 msgstr "/Unterhaltung/Entfernen..."
 
-#: ../pidgin/gtkconv.c:3150
+#: ../pidgin/gtkconv.c:3149
 msgid "/Conversation/Insert Link..."
 msgstr "/Unterhaltung/Link einfügen..."
 
-#: ../pidgin/gtkconv.c:3154
+#: ../pidgin/gtkconv.c:3153
 msgid "/Conversation/Insert Image..."
 msgstr "/Unterhaltung/Bild einfügen..."
 
-#: ../pidgin/gtkconv.c:3160
+#: ../pidgin/gtkconv.c:3159
 msgid "/Options/Enable Logging"
 msgstr "/Optionen/Schalte Mitschnitt ein"
 
-#: ../pidgin/gtkconv.c:3163
+#: ../pidgin/gtkconv.c:3162
 msgid "/Options/Enable Sounds"
 msgstr "/Optionen/Schalte Klänge ein"
 
-#: ../pidgin/gtkconv.c:3176
+#: ../pidgin/gtkconv.c:3175
 msgid "/Options/Show Formatting Toolbars"
 msgstr "/Optionen/Zeige Werkzeugleisten für Formatierung"
 
-#: ../pidgin/gtkconv.c:3179
+#: ../pidgin/gtkconv.c:3178
 msgid "/Options/Show Timestamps"
 msgstr "/Optionen/Zeige Zeitstempel"
 
-#: ../pidgin/gtkconv.c:3182
+#: ../pidgin/gtkconv.c:3181
 msgid "/Options/Show Buddy Icon"
 msgstr "/Optionen/Zeige Buddy-Icon"
 
-#: ../pidgin/gtkconv.c:3266 ../pidgin/gtkconv.c:3308
+#: ../pidgin/gtkconv.c:3265 ../pidgin/gtkconv.c:3307
 msgid "User is typing..."
 msgstr "Benutzer tippt gerade..."
 
-#: ../pidgin/gtkconv.c:3311
+#: ../pidgin/gtkconv.c:3310
 msgid "User has typed something and stopped"
 msgstr "Benutzer hat etwas getippt und wartet nun"
 
 #. Build the Send To menu
-#: ../pidgin/gtkconv.c:3493
+#: ../pidgin/gtkconv.c:3492
 msgid "_Send To"
 msgstr "_Senden an"
 
-#: ../pidgin/gtkconv.c:4207
+#: ../pidgin/gtkconv.c:4206
 msgid "_Send"
 msgstr "Ab_schicken"
 
 #. Setup the label telling how many people are in the room.
-#: ../pidgin/gtkconv.c:4311
+#: ../pidgin/gtkconv.c:4310
 msgid "0 people in room"
 msgstr "0 Personen im Raum"
 
-#: ../pidgin/gtkconv.c:5499 ../pidgin/gtkconv.c:5620
+#: ../pidgin/gtkconv.c:5496 ../pidgin/gtkconv.c:5617
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d Person im Raum"
 msgstr[1] "%d Personen im Raum"
 
-#: ../pidgin/gtkconv.c:6219 ../pidgin/gtkstatusbox.c:659
+#: ../pidgin/gtkconv.c:6216 ../pidgin/gtkstatusbox.c:659
 msgid "Typing"
 msgstr "Tippt gerade"
 
-#: ../pidgin/gtkconv.c:6225
+#: ../pidgin/gtkconv.c:6222
 msgid "Stopped Typing"
 msgstr "Tippen gestoppt"
 
-#: ../pidgin/gtkconv.c:6230
+#: ../pidgin/gtkconv.c:6227
 msgid "Nick Said"
 msgstr "Spitzname gesagt"
 
-#: ../pidgin/gtkconv.c:6235 ../pidgin/gtkdocklet.c:492
+#: ../pidgin/gtkconv.c:6232 ../pidgin/gtkdocklet.c:492
 msgid "Unread Messages"
 msgstr "Ungelesene Nachrichten"
 
-#: ../pidgin/gtkconv.c:6240
+#: ../pidgin/gtkconv.c:6237
 msgid "New Event"
 msgstr "Neue Ereignisse"
 
-#: ../pidgin/gtkconv.c:7213
+#: ../pidgin/gtkconv.c:7210
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: Leert alle Gesprächsfenster."
 
-#: ../pidgin/gtkconv.c:7377
+#: ../pidgin/gtkconv.c:7374
 msgid "Confirm close"
 msgstr "Schließen bestätigen"
 
-#: ../pidgin/gtkconv.c:7409
+#: ../pidgin/gtkconv.c:7406
 msgid "You have unread messages. Are you sure you want to close the window?"
-msgstr "Sie haben ungelesene Nachrichten. Wollen Sie das Fenster wirklich schließen?"
+msgstr ""
+"Sie haben ungelesene Nachrichten. Wollen Sie das Fenster wirklich schließen?"
 
-#: ../pidgin/gtkconv.c:7976
+#: ../pidgin/gtkconv.c:7967
 msgid "Close other tabs"
 msgstr "Andere Reiter schließen"
 
-#: ../pidgin/gtkconv.c:7982
+#: ../pidgin/gtkconv.c:7973
 msgid "Close all tabs"
 msgstr "Alle Reiter schließen"
 
-#: ../pidgin/gtkconv.c:7990
+#: ../pidgin/gtkconv.c:7981
 msgid "Detach this tab"
 msgstr "Diesen Reiter ablösen"
 
-#: ../pidgin/gtkconv.c:7996
+#: ../pidgin/gtkconv.c:7987
 msgid "Close this tab"
 msgstr "Diesen Reiter schließen"
 
-#: ../pidgin/gtkconv.c:8442
+#: ../pidgin/gtkconv.c:8433
 msgid "Close conversation"
 msgstr "Unterhaltung schließen"
 
-#: ../pidgin/gtkconv.c:8966
+#: ../pidgin/gtkconv.c:8957
 msgid "Last created window"
 msgstr "Letztes erstelltes Fenster"
 
-#: ../pidgin/gtkconv.c:8968
+#: ../pidgin/gtkconv.c:8959
 msgid "Separate IM and Chat windows"
 msgstr "Getrennte IM- und Chat-Fenster"
 
-#: ../pidgin/gtkconv.c:8970 ../pidgin/gtkprefs.c:1410
+#: ../pidgin/gtkconv.c:8961 ../pidgin/gtkprefs.c:1410
 msgid "New window"
 msgstr "Neues Fenster"
 
-#: ../pidgin/gtkconv.c:8972
+#: ../pidgin/gtkconv.c:8963
 msgid "By group"
 msgstr "Nach Gruppe"
 
-#: ../pidgin/gtkconv.c:8974
+#: ../pidgin/gtkconv.c:8965
 msgid "By account"
 msgstr "Nach Konto"
 
@@ -13565,7 +13631,8 @@ msgstr "_Gruppe entfernen"
 
 #: ../pidgin/gtkdialogs.c:1198
 #, c-format
-msgid "You are about to remove %s from your buddy list.  Do you want to continue?"
+msgid ""
+"You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr ""
 "Sie sind dabei, %s aus Ihrer Buddy-Liste zu entfernen. Möchten Sie "
 "fortfahren?"
@@ -13731,7 +13798,8 @@ msgstr "Hyperlink-Farbe"
 
 #: ../pidgin/gtkimhtml.c:1354
 msgid "Color to draw hyperlinks when mouse is over them."
-msgstr "Farbe zum Darstellen von Hyperlinks, wenn sich die Maus darüber befindet."
+msgstr ""
+"Farbe zum Darstellen von Hyperlinks, wenn sich die Maus darüber befindet."
 
 #: ../pidgin/gtkimhtml.c:1575
 msgid "_Copy E-Mail Address"
@@ -13967,7 +14035,8 @@ msgstr ""
 "Sofortnachrichten mitschneiden“ aktiviert ist."
 
 #: ../pidgin/gtklog.c:531
-msgid "Chats will only be logged if the \"Log all chats\" preference is enabled."
+msgid ""
+"Chats will only be logged if the \"Log all chats\" preference is enabled."
 msgstr ""
 "Chats werden nur mitgeschnitten, wenn die Option „Alle Chats mitschneiden“ "
 "aktiviert ist."
@@ -14116,8 +14185,10 @@ msgid "Error launching \"%s\": %s"
 msgstr "Fehler beim Aufruf von „%s“: %s"
 
 #: ../pidgin/gtknotify.c:1121
-msgid "The 'Manual' browser command has been chosen, but no command has been set."
-msgstr "Das benutzerdefinierte Browserkommando wurde ausgewählt, aber nicht gesetzt."
+msgid ""
+"The 'Manual' browser command has been chosen, but no command has been set."
+msgstr ""
+"Das benutzerdefinierte Browserkommando wurde ausgewählt, aber nicht gesetzt."
 
 #: ../pidgin/gtkplugin.c:264
 msgid "The following plugins will be unloaded."
@@ -14743,7 +14814,8 @@ msgstr "Allen Benutzern erlauben, mich zu kontaktieren"
 
 #: ../pidgin/gtkprivacy.c:80
 msgid "Allow only the users on my buddy list"
-msgstr "Nur den Benutzern in meiner Buddy-Liste erlauben mir Nachrichten zu senden"
+msgstr ""
+"Nur den Benutzern in meiner Buddy-Liste erlauben mir Nachrichten zu senden"
 
 #: ../pidgin/gtkprivacy.c:81
 msgid "Allow only the users below"
@@ -14810,7 +14882,8 @@ msgstr "Geben Sie einen Benutzer ein, den Sie blockieren wollen."
 
 #: ../pidgin/gtkprivacy.c:600
 msgid "Please enter the name of the user you wish to block."
-msgstr "Bitte geben Sie den Namen des Benutzers ein, den Sie blockieren wollen."
+msgstr ""
+"Bitte geben Sie den Namen des Benutzers ein, den Sie blockieren wollen."
 
 #: ../pidgin/gtkprivacy.c:608
 #, c-format
@@ -14863,7 +14936,8 @@ msgstr "Chat _hinzufügen"
 
 #: ../pidgin/gtksavedstatuses.c:336
 msgid "Are you sure you want to delete the selected saved statuses?"
-msgstr "Sind Sie sicher, dass Sie die gewählten Statusmeldungen löschen wollen?"
+msgstr ""
+"Sind Sie sicher, dass Sie die gewählten Statusmeldungen löschen wollen?"
 
 #. Use button
 #: ../pidgin/gtksavedstatuses.c:619 ../pidgin/gtksavedstatuses.c:1265
@@ -14958,33 +15032,34 @@ msgstr "Warte auf Netzwerkverbindung"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-#: ../pidgin/gtkutils.c:1378 ../pidgin/gtkutils.c:1401
+#: ../pidgin/gtkutils.c:1384 ../pidgin/gtkutils.c:1407
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Beim Laden von %s ist folgender Fehler aufgetreten: %s"
 
-#: ../pidgin/gtkutils.c:1381 ../pidgin/gtkutils.c:1403
+#: ../pidgin/gtkutils.c:1387 ../pidgin/gtkutils.c:1409
 msgid "Failed to load image"
 msgstr "Laden des Bildes fehlgeschlagen"
 
-#: ../pidgin/gtkutils.c:1477
+#: ../pidgin/gtkutils.c:1483
 #, c-format
 msgid "Cannot send folder %s."
 msgstr "Kann Verzeichnis %s nicht senden."
 
-#: ../pidgin/gtkutils.c:1478
+#: ../pidgin/gtkutils.c:1484
 #, c-format
 msgid ""
 "%s cannot transfer a folder. You will need to send the files within "
 "individually."
-msgstr "%s kann keine Verzeichnisse übertragen. Bitte senden sie die Dateien einzeln."
+msgstr ""
+"%s kann keine Verzeichnisse übertragen. Bitte senden sie die Dateien einzeln."
 
-#: ../pidgin/gtkutils.c:1510 ../pidgin/gtkutils.c:1522
-#: ../pidgin/gtkutils.c:1529
+#: ../pidgin/gtkutils.c:1516 ../pidgin/gtkutils.c:1528
+#: ../pidgin/gtkutils.c:1535
 msgid "You have dragged an image"
 msgstr "Sie haben ein Bild gewählt"
 
-#: ../pidgin/gtkutils.c:1511
+#: ../pidgin/gtkutils.c:1517
 msgid ""
 "You can send this image as a file transfer, embed it into this message, or "
 "use it as the buddy icon for this user."
@@ -14992,23 +15067,23 @@ msgstr ""
 "Sie können dieses Bild senden, es in diese Nachricht einfügen oder es als "
 "Buddy-Icon für diesen Benutzer verwenden."
 
-#: ../pidgin/gtkutils.c:1517 ../pidgin/gtkutils.c:1537
+#: ../pidgin/gtkutils.c:1523 ../pidgin/gtkutils.c:1543
 msgid "Set as buddy icon"
 msgstr "Als Buddy-Icons verwenden"
 
-#: ../pidgin/gtkutils.c:1518 ../pidgin/gtkutils.c:1538
+#: ../pidgin/gtkutils.c:1524 ../pidgin/gtkutils.c:1544
 msgid "Send image file"
 msgstr "Bilddatei senden"
 
-#: ../pidgin/gtkutils.c:1519 ../pidgin/gtkutils.c:1538
+#: ../pidgin/gtkutils.c:1525 ../pidgin/gtkutils.c:1544
 msgid "Insert in message"
 msgstr "In Nachricht einfügen"
 
-#: ../pidgin/gtkutils.c:1523
+#: ../pidgin/gtkutils.c:1529
 msgid "Would you like to set it as the buddy icon for this user?"
 msgstr "Möchten Sie es als Buddy-Icon für diesen Benutzer verwenden?"
 
-#: ../pidgin/gtkutils.c:1530
+#: ../pidgin/gtkutils.c:1536
 msgid ""
 "You can send this image as a file transfer, or use it as the buddy icon for "
 "this user."
@@ -15016,7 +15091,7 @@ msgstr ""
 "Sie können dieses Bild als Dateiübertragung senden oder es als Buddy-Icon "
 "für diesen Benutzer verwenden."
 
-#: ../pidgin/gtkutils.c:1531
+#: ../pidgin/gtkutils.c:1537
 msgid ""
 "You can insert this image into this message, or use it as the buddy icon for "
 "this user"
@@ -15029,11 +15104,11 @@ msgstr ""
 #. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
 #. * Probably not.  I'll just give an error and return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
-#: ../pidgin/gtkutils.c:1589
+#: ../pidgin/gtkutils.c:1595
 msgid "Cannot send launcher"
 msgstr "Kann Verknüpfung nicht senden"
 
-#: ../pidgin/gtkutils.c:1589
+#: ../pidgin/gtkutils.c:1595
 msgid ""
 "You dragged a desktop launcher. Most likely you wanted to send whatever this "
 "launcher points to instead of this launcher itself."
@@ -15041,7 +15116,7 @@ msgstr ""
 "Sie haben eine Verknüpfung gewählt. Wahrscheinlich wollten sie das Ziel der "
 "Verknüpfung senden und nicht die Verknüpfung selbst."
 
-#: ../pidgin/gtkutils.c:2311
+#: ../pidgin/gtkutils.c:2317
 #, c-format
 msgid ""
 "<b>File:</b> %s\n"
@@ -15052,27 +15127,29 @@ msgstr ""
 "<b>Dateigröße:</b> %s\n"
 "<b>Bildgröße:</b> %dx%d"
 
-#: ../pidgin/gtkutils.c:2607
+#: ../pidgin/gtkutils.c:2613
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
-msgstr "Die Datei '%s' ist zu groß für %s.  Bitte versuchen Sie ein kleineres Bild.\n"
+msgstr ""
+"Die Datei '%s' ist zu groß für %s.  Bitte versuchen Sie ein kleineres Bild.\n"
 
-#: ../pidgin/gtkutils.c:2609
+#: ../pidgin/gtkutils.c:2615
 msgid "Icon Error"
 msgstr "Icon-Fehler"
 
-#: ../pidgin/gtkutils.c:2610
+#: ../pidgin/gtkutils.c:2616
 msgid "Could not set icon"
 msgstr "Konnte das Icon nicht setzen"
 
-#: ../pidgin/gtkutils.c:2710
+#: ../pidgin/gtkutils.c:2716
 #, c-format
 msgid "Failed to open file '%s': %s"
 msgstr "Öffnen der Datei '%s' fehlgeschlagen: %s"
 
-#: ../pidgin/gtkutils.c:2759
+#: ../pidgin/gtkutils.c:2765
 #, c-format
-msgid "Failed to load image '%s': reason not known, probably a corrupt image file"
+msgid ""
+"Failed to load image '%s': reason not known, probably a corrupt image file"
 msgstr ""
 "Bild '%s' konnte nicht geladen werden: Grund unbekannt, vermutlich eine "
 "korrupte Bilddatei"
@@ -15237,7 +15314,8 @@ msgstr "Kontaktpriorität"
 #. *< version
 #. *< summary
 #: ../pidgin/plugins/contact_priority.c:190
-msgid "Allows for controlling the values associated with different buddy states."
+msgid ""
+"Allows for controlling the values associated with different buddy states."
 msgstr ""
 "Erlaubt die Anpassung der Werte, die mit den verschiedenen Buddy-Zuständen "
 "verbunden sind."
@@ -15517,7 +15595,8 @@ msgstr "Bitte geben Sie die Informationen zu der Person unten ein."
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:267
 msgid "Please enter the buddy's screen name and account type below."
-msgstr "Geben Sie bitte den Benutzernamen des Buddys und den Kontentyp unten ein."
+msgstr ""
+"Geben Sie bitte den Benutzernamen des Buddys und den Kontentyp unten ein."
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:287
 msgid "Account type:"
@@ -15611,7 +15690,8 @@ msgstr "Markierunglinie"
 
 #: ../pidgin/plugins/markerline.c:25 ../pidgin/plugins/markerline.c:26
 msgid "Draw a line to indicate new messages in a conversation."
-msgstr "Eine Linie zeichnen um neue Nachrichten in einer Unterhaltung anzuzeigen."
+msgstr ""
+"Eine Linie zeichnen um neue Nachrichten in einer Unterhaltung anzuzeigen."
 
 #: ../pidgin/plugins/markerline.c:246
 msgid "Draw Markerline in "
@@ -16026,7 +16106,8 @@ msgstr "Sie _senden:"
 #. Created here so it can be passed to whole_words_button_toggled.
 #: ../pidgin/plugins/spellchk.c:2311
 msgid "_Exact case match (uncheck for automatic case handling)"
-msgstr "_Genaue Groß-/Kleinschreibung (deaktivieren für automatische Behandlung)"
+msgstr ""
+"_Genaue Groß-/Kleinschreibung (deaktivieren für automatische Behandlung)"
 
 #: ../pidgin/plugins/spellchk.c:2313
 msgid "Only replace _whole words"
@@ -16046,7 +16127,8 @@ msgstr "Textersetzung"
 
 #: ../pidgin/plugins/spellchk.c:2372 ../pidgin/plugins/spellchk.c:2373
 msgid "Replaces text in outgoing messages according to user-defined rules."
-msgstr "Ersetzt Text in ausgehenden Nachrichten durch benutzerdefinierte Regeln."
+msgstr ""
+"Ersetzt Text in ausgehenden Nachrichten durch benutzerdefinierte Regeln."
 
 #. *< type
 #. *< ui_requirement
@@ -16260,8 +16342,10 @@ msgid "Options specific to Pidgin for Windows."
 msgstr "Optionen für Pidgin unter Windows."
 
 #: ../pidgin/plugins/win32/winprefs/winprefs.c:378
-msgid "Provides options specific to Pidgin for Windows , such as buddy list docking."
-msgstr "Bietet spezielle Optionen für Windows-Pidgin, wie Buddy-Listen-Docking."
+msgid ""
+"Provides options specific to Pidgin for Windows , such as buddy list docking."
+msgstr ""
+"Bietet spezielle Optionen für Windows-Pidgin, wie Buddy-Listen-Docking."
 
 #: ../pidgin/plugins/xmppconsole.c:667
 msgid "<font color='#777777'>Logged out.</font>"
@@ -16308,5 +16392,5 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 #. *  description
 #: ../pidgin/plugins/xmppconsole.c:865
 msgid "This plugin is useful for debbuging XMPP servers or clients."
-msgstr "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
-
+msgstr ""
+"Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."

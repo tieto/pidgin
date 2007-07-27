@@ -6,7 +6,7 @@
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2007.
-;;  Version 5
+;;  Version 6
 ;;
  
 ; Startup checks
@@ -36,7 +36,7 @@
 !define GTK_WINDOWS_INCOMPATIBLE		"Windows 95/98/Me sind inkompatibel zu GTK+ 2.8.0 oder neuer.  GTK+ ${GTK_INSTALL_VERSION} wird nicht installiert.$\rWenn Sie nicht GTK+ ${GTK_MIN_VERSION} oder neuer installiert haben, wird die Installation jetzt abgebrochent."
  
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE	"Besuchen Sie die Windows Pidgin Webseite"
+!define PIDGIN_FINISH_VISIT_WEB_SITE	"Besuchen Sie die Pidgin Webseite"
  
 ; Pidgin Section Prompts and Texts
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Die aktuell installierte Version von Pidgin kann nicht deinstalliert werden. Die neue Version wird installiert, ohne dass die aktuell installierte Version gelöscht wird."
