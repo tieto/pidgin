@@ -50,6 +50,7 @@ typedef struct {
 	GtkWidget *exportbutton;
 	GtkWidget *infobutton;
 	GtkWidget *deletebutton;
+	PurpleCertificatePool *tls_peers;
 } tls_peers_mgmt_data;
 
 tls_peers_mgmt_data *tpm_dat = NULL;
@@ -68,6 +69,7 @@ tls_peers_mgmt_destroy(GtkWidget *mgmt_widget, gpointer data)
 	purple_debug_info("certmgr",
 			  "tls peers self-destructs\n");
 
+	purple_signals_disconnect_by_handle(tpm_dat);
 	g_free(tpm_dat); tpm_dat = NULL;
 }
 
@@ -101,6 +103,14 @@ tls_peers_mgmt_repopulate_list(void)
 				   -1);
 	}
 	purple_certificate_pool_destroy_idlist(idlist);
+}
+
+static void
+tls_peers_mgmt_mod_cb(PurpleCertificatePool *pool, const gchar *id, gpointer data)
+{
+	g_assert (pool == tpm_dat->tls_peers);
+
+	tls_peers_mgmt_repopulate_list();
 }
 
 static GtkWidget *
@@ -204,6 +214,18 @@ tls_peers_mgmt_build(void)
 	gtk_widget_set_sensitive(infobutton, FALSE);
 	gtk_widget_set_sensitive(deletebutton, FALSE);
 
+	/* Bind us to the tls_peers pool */
+	tpm_dat->tls_peers = purple_certificate_find_pool("x509", "tls_peers");
+	
+	/**** libpurple signals ****/
+	/* Respond to certificate add/remove by just reloading everything */
+	purple_signal_connect(tpm_dat->tls_peers, "certificate-stored",
+			      tpm_dat, PURPLE_CALLBACK(tls_peers_mgmt_mod_cb),
+			      NULL);
+	purple_signal_connect(tpm_dat->tls_peers, "certificate-deleted",
+			      tpm_dat, PURPLE_CALLBACK(tls_peers_mgmt_mod_cb),
+			      NULL);
+	
 	return mgmt_widget;
 }
 
