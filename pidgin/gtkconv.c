@@ -2977,7 +2977,7 @@ regenerate_options_items(PidginWindow *win)
 	for (list = gtk_container_get_children(GTK_CONTAINER(menu)); list; )
 	{
 		GtkWidget *w = list->data;
-		list = list->next;
+		list = g_list_delete_link(list, list);
 		gtk_widget_destroy(w);
 	}
 
@@ -2994,6 +2994,10 @@ regenerate_options_items(PidginWindow *win)
 		GtkWidget *item = gtk_menu_item_new_with_label(_("No actions available"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		gtk_widget_set_sensitive(item, FALSE);
+	}
+	else
+	{
+		g_list_free(list);
 	}
 
 	gtk_widget_show_all(menu);
@@ -3375,7 +3379,7 @@ update_send_to_selection(PidginWindow *win)
 
 	for (child = gtk_container_get_children(GTK_CONTAINER(menu));
 		 child != NULL;
-		 child = child->next) {
+		 child = g_list_delete_link(child, child)) {
 
 		GtkWidget *item = child->data;
 		PurpleBuddy *item_buddy;
