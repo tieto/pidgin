@@ -629,8 +629,7 @@ rebuild_joinchat_entries(PidginJoinChatData *data)
 
 	gc = purple_account_get_connection(data->account);
 
-	while ((tmp = gtk_container_get_children(GTK_CONTAINER(data->entries_box))))
-		gtk_widget_destroy(tmp->data);
+	gtk_container_foreach(GTK_CONTAINER(data->entries_box), (GtkCallback)gtk_widget_destroy, NULL);
 
 	g_list_free(data->entries);
 	data->entries = NULL;
@@ -4000,6 +3999,7 @@ connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
 	char *primary;
 	const char *text;
 	gboolean enabled;
+	GList *list;
 
 	account = user_data;
 	primary = g_strdup_printf(_("%s disconnected"),
@@ -4018,8 +4018,10 @@ connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
 	g_free(primary);
 	gtk_widget_destroy(GTK_WIDGET(widget));
 	g_hash_table_remove(gtkblist->connection_errors, account);
-	if (gtk_container_get_children(GTK_CONTAINER(gtkblist->error_buttons)) == NULL) {
+	if ((list = gtk_container_get_children(GTK_CONTAINER(gtkblist->error_buttons))) == NULL) {
 		gtk_widget_hide(gtkblist->error_buttons);
+	} else {
+		g_list_free(list);
 	}
 }
 
@@ -4089,7 +4091,7 @@ pidgin_blist_update_account_error_state(PurpleAccount *account, const char *text
 	/* Remove the old error buttons */
 	for (l = gtk_container_get_children(GTK_CONTAINER(gtkblist->error_buttons));
 			l != NULL;
-			l = l->next)
+			l = g_list_delete_link(l, l))
 	{
 		gtk_widget_destroy(GTK_WIDGET(l->data));
 	}
@@ -5648,8 +5650,7 @@ rebuild_addchat_entries(PidginAddChatData *data)
 
 	gc = purple_account_get_connection(data->account);
 
-	while ((tmp = gtk_container_get_children(GTK_CONTAINER(data->entries_box))))
-		gtk_widget_destroy(tmp->data);
+	gtk_container_foreach(GTK_CONTAINER(data->entries_box), (GtkCallback)gtk_widget_destroy, NULL);
 
 	g_list_free(data->entries);
 
@@ -6526,7 +6527,7 @@ pidgin_blist_update_accounts_menu(void)
 		return;
 
 	/* Clear the old Accounts menu */
-	for (l = gtk_container_get_children(GTK_CONTAINER(accountmenu)); l; l = l->next) {
+	for (l = gtk_container_get_children(GTK_CONTAINER(accountmenu)); l; l = g_list_delete_link(l, l)) {
 		menuitem = l->data;
 
 		if (menuitem != gtk_item_factory_get_widget(gtkblist->ift, N_("/Accounts/Add\\/Edit")))
@@ -6737,7 +6738,7 @@ pidgin_blist_update_sort_methods(void)
 		return;
 
 	/* Clear the old menu */
-	for (l = gtk_container_get_children(GTK_CONTAINER(sortmenu)); l; l = l->next) {
+	for (l = gtk_container_get_children(GTK_CONTAINER(sortmenu)); l; l = g_list_delete_link(l, l)) {
 		menuitem = l->data;
 		gtk_widget_destroy(GTK_WIDGET(menuitem));
 	}
