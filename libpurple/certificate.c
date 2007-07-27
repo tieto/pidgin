@@ -544,7 +544,7 @@ x509_tls_peers_put_cert(const gchar *id, PurpleCertificate *crt)
 }
 
 static gboolean
-x509_tls_peers_remove_cert(const gchar *id)
+x509_tls_peers_delete_cert(const gchar *id)
 {
 	gboolean ret = FALSE;
 	gchar *keypath;
