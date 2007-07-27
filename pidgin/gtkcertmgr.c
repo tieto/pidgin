@@ -43,6 +43,17 @@
  * X.509 tls_peers management interface                                      *
  *****************************************************************************/
 
+typedef struct {
+	GtkWidget *mgmt_widget;
+	GtkTreeView *listview;
+	GtkWidget *importbutton;
+	GtkWidget *exportbutton;
+	GtkWidget *infobutton;
+	GtkWidget *deletebutton;
+} tls_peers_mgmt_data;
+
+tls_peers_mgmt_data *tpm_dat = NULL;
+
 /* Columns
    See http://developer.gnome.org/doc/API/2.0/gtk/TreeWidget.html */
 enum
@@ -56,11 +67,14 @@ tls_peers_mgmt_destroy(GtkWidget *mgmt_widget, gpointer data)
 {
 	purple_debug_info("certmgr",
 			  "tls peers self-destructs\n");
+
+	g_free(tpm_dat); tpm_dat = NULL;
 }
 
 static void
-tls_peers_mgmt_populate_list(GtkTreeView *listview)
+tls_peers_mgmt_repopulate_list(void)
 {
+	GtkTreeView *listview = tpm_dat->listview;
 	PurpleCertificatePool *tls_peers;
 	GList *idlist, *l;
 	
@@ -92,19 +106,24 @@ tls_peers_mgmt_populate_list(GtkTreeView *listview)
 static GtkWidget *
 tls_peers_mgmt_build(void)
 {
-	GtkWidget *listview;
 	GtkWidget *bbox;
+	GtkListStore *store;
+
+	/* This block of variables will end up in tpm_dat */
+	GtkTreeView *listview;
 	GtkWidget *importbutton;
 	GtkWidget *exportbutton;
 	GtkWidget *infobutton;
 	GtkWidget *deletebutton;
-
-	GtkListStore *store;
-
 	/** Element to return to the Certmgr window to put in the Notebook */
 	GtkWidget *mgmt_widget;
-	mgmt_widget = gtk_hbox_new(FALSE, /* Non-homogeneous */
-				   0);    /* No spacing */
+
+	/* Create a struct to store context information about this window */
+	tpm_dat = g_new0(tls_peers_mgmt_data, 1);
+	
+	tpm_dat->mgmt_widget = mgmt_widget =
+		gtk_hbox_new(FALSE, /* Non-homogeneous */
+			     0);    /* No spacing */
 	gtk_widget_show(mgmt_widget);
 
 	/* Ensure that everything gets cleaned up when the dialog box
@@ -115,7 +134,9 @@ tls_peers_mgmt_build(void)
 	/* List view */
 	store = gtk_list_store_new(TPM_N_COLUMNS, G_TYPE_STRING);
 	
-	listview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+	tpm_dat->listview = listview =
+		GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(store)));
+	
 	{
 		GtkCellRenderer *renderer;
 		GtkTreeViewColumn *column;
@@ -135,11 +156,13 @@ tls_peers_mgmt_build(void)
 		gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 	}
 	
-	gtk_box_pack_start(GTK_BOX(mgmt_widget), listview,
+	gtk_box_pack_start(GTK_BOX(mgmt_widget), GTK_WIDGET(listview),
 			   TRUE, TRUE, /* Take up lots of space */
 			   0); /* TODO: this padding is wrong */
-	gtk_widget_show(listview);
-	tls_peers_mgmt_populate_list(GTK_TREE_VIEW(listview));
+	gtk_widget_show(GTK_WIDGET(listview));
+
+	/* Fill the list for the first time */
+	tls_peers_mgmt_repopulate_list();
 	
 	/* Right-hand side controls box */
 	bbox = gtk_vbutton_box_new();
@@ -151,23 +174,27 @@ tls_peers_mgmt_build(void)
 
 	/* Import button */
 	/* TODO: This is the wrong stock button */
-	importbutton = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	tpm_dat->importbutton = importbutton =
+		gtk_button_new_from_stock(GTK_STOCK_ADD);
 	gtk_box_pack_start(GTK_BOX(bbox), importbutton, FALSE, FALSE, 0);
 	gtk_widget_show(importbutton);
 
 	/* Export button */
 	/* TODO: This is the wrong stock button */
-	exportbutton = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	tpm_dat->exportbutton = exportbutton =
+		gtk_button_new_from_stock(GTK_STOCK_SAVE);
 	gtk_box_pack_start(GTK_BOX(bbox), exportbutton, FALSE, FALSE, 0);
 	gtk_widget_show(exportbutton);
 
 	/* Info button */
-	infobutton = gtk_button_new_from_stock(GTK_STOCK_INFO);
+	tpm_dat->infobutton = infobutton =
+		gtk_button_new_from_stock(GTK_STOCK_INFO);
 	gtk_box_pack_start(GTK_BOX(bbox), infobutton, FALSE, FALSE, 0);
 	gtk_widget_show(infobutton);
 
 	/* Delete button */
-	deletebutton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	tpm_dat->deletebutton = deletebutton =
+		gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	gtk_box_pack_start(GTK_BOX(bbox), deletebutton, FALSE, FALSE, 0);
 	gtk_widget_show(deletebutton);
 
@@ -176,7 +203,7 @@ tls_peers_mgmt_build(void)
 	gtk_widget_set_sensitive(exportbutton, FALSE);
 	gtk_widget_set_sensitive(infobutton, FALSE);
 	gtk_widget_set_sensitive(deletebutton, FALSE);
-	
+
 	return mgmt_widget;
 }
 
