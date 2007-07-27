@@ -58,17 +58,48 @@ tls_peers_mgmt_destroy(GtkWidget *mgmt_widget, gpointer data)
 			  "tls peers self-destructs\n");
 }
 
+static void
+tls_peers_mgmt_populate_list(GtkTreeView *listview)
+{
+	PurpleCertificatePool *tls_peers;
+	GList *idlist, *l;
+	
+	GtkListStore *store = GTK_LIST_STORE(
+		gtk_tree_view_get_model(GTK_TREE_VIEW(listview)));
+	
+	/* First, delete everything in the list */
+	gtk_list_store_clear(store);
+
+	/* Locate the "tls_peers" pool */
+	tls_peers = purple_certificate_find_pool("x509", "tls_peers");
+	g_return_if_fail(tls_peers);
+
+	/* Grab the loaded certificates */
+	idlist = purple_certificate_pool_get_idlist(tls_peers);
+
+	/* Populate the listview */
+	for (l = idlist; l; l = l->next) {
+		GtkTreeIter iter;
+		gtk_list_store_append(store, &iter);
+
+		gtk_list_store_set(GTK_LIST_STORE(store), &iter,
+				   TPM_HOSTNAME_COLUMN, l->data,
+				   -1);
+	}
+	purple_certificate_pool_destroy_idlist(idlist);
+}
+
 static GtkWidget *
 tls_peers_mgmt_build(void)
 {
-	GtkWidget *treeview;
+	GtkWidget *listview;
 	GtkWidget *bbox;
 	GtkWidget *importbutton;
 	GtkWidget *exportbutton;
 	GtkWidget *infobutton;
 	GtkWidget *deletebutton;
-	
-	GtkTreeIter *iter;
+
+	GtkListStore *store;
 
 	/** Element to return to the Certmgr window to put in the Notebook */
 	GtkWidget *mgmt_widget;
@@ -82,11 +113,27 @@ tls_peers_mgmt_build(void)
 			 G_CALLBACK(tls_peers_mgmt_destroy), NULL);
 
 	/* List view */
-	treeview = gtk_label_new("TLS PEEERS!!!");
-	gtk_box_pack_start(GTK_BOX(mgmt_widget), treeview,
+	store = gtk_list_store_new(TPM_N_COLUMNS, G_TYPE_STRING);
+	
+	listview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+	{
+		GtkCellRenderer *renderer;
+		GtkTreeViewColumn *column;
+
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(
+			"Hostname",
+			renderer,
+			"text", TPM_HOSTNAME_COLUMN,
+			NULL);
+		gtk_tree_view_append_column(GTK_TREE_VIEW(listview), column);
+	}
+	
+	gtk_box_pack_start(GTK_BOX(mgmt_widget), listview,
 			   TRUE, TRUE, /* Take up lots of space */
 			   0); /* TODO: this padding is wrong */
-	gtk_widget_show(treeview);
+	gtk_widget_show(listview);
+	tls_peers_mgmt_populate_list(GTK_TREE_VIEW(listview));
 	
 	/* Right-hand side controls box */
 	bbox = gtk_vbutton_box_new();
