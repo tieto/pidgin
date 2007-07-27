@@ -9,6 +9,7 @@ EXTRA_DIST = \
 	TracHeader.html \
 	account-signals.dox \
 	blist-signals.dox \
+	certificate-signals.dox \
 	cipher-signals.dox \
 	connection-signals.dox \
 	conversation-signals.dox \
