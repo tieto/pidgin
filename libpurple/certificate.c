@@ -32,6 +32,7 @@
 #include "debug.h"
 #include "internal.h"
 #include "request.h"
+#include "signals.h"
 #include "util.h"
 
 /** List holding pointers to all registered certificate schemes */
@@ -1013,6 +1014,26 @@ purple_certificate_register_pool(PurpleCertificatePool *pool)
 		/* Register the Pool */
 		cert_pools = g_list_prepend(cert_pools, pool);
 
+		/* TODO: Emit a signal that the pool got registered */
+
+		purple_signal_register(pool, /* Signals emitted from pool */
+				       "certificate-stored",
+				       purple_marshal_VOID__POINTER_POINTER,
+				       NULL, /* No callback return value */
+				       2,    /* Two non-data arguments */
+				       purple_value_new(PURPLE_TYPE_SUBTYPE,
+							PURPLE_SUBTYPE_CERTIFICATEPOOL),
+				       purple_value_new(PURPLE_TYPE_STRING));
+
+		purple_signal_register(pool, /* Signals emitted from pool */
+				       "certificate-deleted",
+				       purple_marshal_VOID__POINTER_POINTER,
+				       NULL, /* No callback return value */
+				       2,    /* Two non-data arguments */
+				       purple_value_new(PURPLE_TYPE_SUBTYPE,
+							PURPLE_SUBTYPE_CERTIFICATEPOOL),
+				       purple_value_new(PURPLE_TYPE_STRING));
+		
 		return TRUE;
 	} else {
 		return FALSE;
@@ -1047,6 +1068,8 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool)
 	cert_pools = g_list_remove(cert_pools, pool);
 	
 	/* TODO: Signalling? */
+	purple_signal_unregister(pool, "certificate-stored");
+	purple_signal_unregister(pool, "certificate-deleted");
 		
 	return TRUE;
 }
