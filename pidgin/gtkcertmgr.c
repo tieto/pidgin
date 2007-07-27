@@ -119,7 +119,9 @@ tls_peers_mgmt_build(void)
 	{
 		GtkCellRenderer *renderer;
 		GtkTreeViewColumn *column;
+		GtkTreeSelection *select;
 
+		/* Set up the display columns */
 		renderer = gtk_cell_renderer_text_new();
 		column = gtk_tree_view_column_new_with_attributes(
 			"Hostname",
@@ -127,6 +129,10 @@ tls_peers_mgmt_build(void)
 			"text", TPM_HOSTNAME_COLUMN,
 			NULL);
 		gtk_tree_view_append_column(GTK_TREE_VIEW(listview), column);
+
+		/* Force the selection mode */
+		select = gtk_tree_view_get_selection(GTK_TREE_VIEW(listview));
+		gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 	}
 	
 	gtk_box_pack_start(GTK_BOX(mgmt_widget), listview,
