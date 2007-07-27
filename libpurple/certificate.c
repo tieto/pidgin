@@ -338,9 +338,11 @@ purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, Purp
 
 	ret = (pool->put_cert)(id, crt);
 
-	/* Signal that the certificate was stored */
-	purple_signal_emit(pool, "certificate-stored",
-			   pool, id);
+	/* Signal that the certificate was stored if success*/
+	if (ret) {
+		purple_signal_emit(pool, "certificate-stored",
+				   pool, id);
+	}
 
 	return ret;
 }	
@@ -356,9 +358,11 @@ purple_certificate_pool_delete(PurpleCertificatePool *pool, const gchar *id)
 
 	ret = (pool->delete_cert)(id);
 
-	/* Signal that the certificate was deleted */
-	purple_signal_emit(pool, "certificate-deleted",
-			   pool, id);
+	/* Signal that the certificate was deleted if success */
+	if (ret) {
+		purple_signal_emit(pool, "certificate-deleted",
+				   pool, id);
+	}
 
 	return ret;
 }
