@@ -170,6 +170,20 @@ static gboolean msim_is_email(const gchar *user);
 static void msim_lookup_user(MsimSession *session, const gchar *user, 
 		MSIM_USER_LOOKUP_CB cb, gpointer data);
 
+#ifndef round
+double round(double round);
+
+/* round is part of C99, but sometimes is unavailable before then.
+ * Based on http://forums.belution.com/en/cpp/000/050/13.shtml
+ */
+double round(double value)
+{
+    if (value < 0)
+        return -(floor(-value + 0.5));
+    else
+        return   floor( value + 0.5);
+}
+#endif
 
 /** 
  * Load the plugin.
