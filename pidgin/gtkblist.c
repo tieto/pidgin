@@ -1246,7 +1246,8 @@ create_group_menu (PurpleBlistNode *node, PurpleGroup *g)
 
 
 static GtkWidget *
-create_chat_menu(PurpleBlistNode *node, PurpleChat *c) {
+create_chat_menu(PurpleBlistNode *node, PurpleChat *c)
+{
 	GtkWidget *menu;
 	gboolean autojoin;
 
@@ -1304,7 +1305,8 @@ create_contact_menu (PurpleBlistNode *node)
 }
 
 static GtkWidget *
-create_buddy_menu(PurpleBlistNode *node, PurpleBuddy *b) {
+create_buddy_menu(PurpleBlistNode *node, PurpleBuddy *b)
+{
 	struct _pidgin_blist_node *gtknode = (struct _pidgin_blist_node *)node->ui_data;
 	GtkWidget *menu;
 	GtkWidget *menuitem;

@@ -2913,21 +2913,18 @@ show_buddy_icons_pref_changed_cb(const char *name, PurplePrefType type,
 	}
 }
 
-static void
-regenerate_options_items(PidginWindow *win)
+/* Returns TRUE if some items were added to the menu, FALSE otherwise */
+static gboolean
+populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolean all)
 {
-	GtkWidget *menu;
 	GList *list;
-	PidginConversation *gtkconv;
 	PurpleConversation *conv;
 	PurpleBlistNode *node = NULL;
 	PurpleChat *chat = NULL;
 	PurpleBuddy *buddy = NULL;
+	gboolean ret;
 
-	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 	conv = gtkconv->active_conv;
-
-	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Conversation/More"));
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		chat = purple_blist_find_chat(conv->account, conv->name);
@@ -2973,6 +2970,34 @@ regenerate_options_items(PidginWindow *win)
 	else if (buddy)
 		node = (PurpleBlistNode *)buddy;
 
+	/* Now add the stuff */
+	if (all && buddy) {
+		pidgin_blist_make_buddy_menu(menu, buddy, TRUE);
+	} else if (node) {
+		if (purple_account_is_connected(conv->account))
+			pidgin_append_blist_node_proto_menu(menu, conv->account->gc, node);
+		pidgin_append_blist_node_extended_menu(menu, node);
+	}
+
+	if ((list = gtk_container_get_children(GTK_CONTAINER(menu))) == NULL) {
+		ret = FALSE;
+	} else {
+		g_list_free(list);
+		ret = TRUE;
+	}
+	return ret;
+}
+
+static void
+regenerate_options_items(PidginWindow *win)
+{
+	GtkWidget *menu;
+	PidginConversation *gtkconv;
+	GList *list;
+
+	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Conversation/More"));
+
 	/* Remove the previous entries */
 	for (list = gtk_container_get_children(GTK_CONTAINER(menu)); list; )
 	{
@@ -2981,23 +3006,11 @@ regenerate_options_items(PidginWindow *win)
 		gtk_widget_destroy(w);
 	}
 
-	/* Now add the stuff */
-	if (node)
-	{
-		if (purple_account_is_connected(conv->account))
-			pidgin_append_blist_node_proto_menu(menu, conv->account->gc, node);
-		pidgin_append_blist_node_extended_menu(menu, node);
-	}
-
-	if ((list = gtk_container_get_children(GTK_CONTAINER(menu))) == NULL)
+	if (!populate_menu_with_options(menu, gtkconv, FALSE))
 	{
 		GtkWidget *item = gtk_menu_item_new_with_label(_("No actions available"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		gtk_widget_set_sensitive(item, FALSE);
-	}
-	else
-	{
-		g_list_free(list);
 	}
 
 	gtk_widget_show_all(menu);
@@ -3374,8 +3387,7 @@ update_send_to_selection(PidginWindow *win)
 
 	gtk_widget_show(win->menu.send_to);
 
-	menu = gtk_menu_item_get_submenu(
-		GTK_MENU_ITEM(win->menu.send_to));
+	menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(win->menu.send_to));
 
 	for (child = gtk_container_get_children(GTK_CONTAINER(menu));
 		 child != NULL;
@@ -7655,11 +7667,30 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 
 	if (e->button == 3) {
 		/* Right click was pressed. Popup the Send To menu. */
-		GtkWidget *menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
-		if (menu)
-			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
-		else
+		GtkWidget *menu = gtk_menu_new(), *sub;
+		sub = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
+
+		if (populate_menu_with_options(menu, gtkconv, TRUE))
+			pidgin_separator(menu);
+		else if (!sub ||
+				!GTK_WIDGET_IS_SENSITIVE(gtkconv->win->menu.send_to)) {
+			gtk_widget_destroy(menu);
 			return FALSE;
+		} else {
+			menu = sub;
+			sub = NULL;
+		}
+
+		if (sub) {
+			GtkWidget *item = gtk_menu_item_new_with_mnemonic(_("_Send To"));
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+			gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);
+			gtk_widget_show(item);
+			gtk_widget_show_all(sub);
+		}
+
+		gtk_widget_show_all(menu);
+		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
 		return TRUE;
 	} else if (e->button != 1) {
 		return FALSE;
