@@ -323,6 +323,8 @@ purple_certificate_pool_retrieve(PurpleCertificatePool *pool, const gchar *id)
 gboolean
 purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, PurpleCertificate *crt)
 {
+	gboolean ret = FALSE;
+	
 	g_return_val_if_fail(pool, FALSE);
 	g_return_val_if_fail(id, FALSE);
 	g_return_val_if_fail(pool->put_cert, FALSE);
@@ -334,7 +336,13 @@ purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, Purp
 		g_ascii_strcasecmp(pool->scheme_name, crt->scheme->name) == 0,
 		FALSE);
 
-	return (pool->put_cert)(id, crt);
+	ret = (pool->put_cert)(id, crt);
+
+	/* Signal that the certificate was stored */
+	purple_signal_emit(pool, "certificate-stored",
+			   pool, id);
+
+	return ret;
 }	
 
 GList *
