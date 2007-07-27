@@ -345,6 +345,24 @@ purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, Purp
 	return ret;
 }	
 
+gboolean
+purple_certificate_pool_delete(PurpleCertificatePool *pool, const gchar *id)
+{
+	gboolean ret = FALSE;
+	
+	g_return_val_if_fail(pool, FALSE);
+	g_return_val_if_fail(id, FALSE);
+	g_return_val_if_fail(pool->delete_cert, FALSE);
+
+	ret = (pool->delete_cert)(id);
+
+	/* Signal that the certificate was deleted */
+	purple_signal_emit(pool, "certificate-deleted",
+			   pool, id);
+
+	return ret;
+}
+
 GList *
 purple_certificate_pool_get_idlist(PurpleCertificatePool *pool)
 {
@@ -614,6 +632,7 @@ static PurpleCertificatePool x509_tls_peers = {
 	x509_tls_peers_cert_in_pool,  /* Certificate exists? */
 	x509_tls_peers_get_cert,      /* Cert retriever */
 	x509_tls_peers_put_cert,      /* Cert writer */
+	x509_tls_peers_delete_cert,   /* Cert remover */
 	x509_tls_peers_get_idlist     /* idlist retriever */
 };
 

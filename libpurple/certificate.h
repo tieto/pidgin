@@ -118,6 +118,8 @@ struct _PurpleCertificatePool
 	 *  @return TRUE if the operation succeeded, otherwise FALSE
 	 */
 	gboolean (* put_cert)(const gchar *id, PurpleCertificate *crt);
+	/** Delete a certificate from the pool */
+	gboolean (* delete_cert)(const gchar *id);
 
 	/** Returns a list of IDs stored in the pool */
 	GList * (* get_idlist)(void);
@@ -536,6 +538,16 @@ purple_certificate_pool_retrieve(PurpleCertificatePool *pool, const gchar *id);
  */
 gboolean
 purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, PurpleCertificate *crt);
+
+/**
+ * Remove a certificate from a pool
+ *
+ * @param pool   Pool to remove from
+ * @param id     ID to remove
+ * @return TRUE if the operation succeeded, otherwise FALSE
+ */
+gboolean
+purple_certificate_pool_delete(PurpleCertificatePool *pool, const gchar *id);
 
 /**
  * Get the list of IDs currently in the pool.
