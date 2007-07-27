@@ -2365,6 +2365,8 @@ update_tab_icon(PurpleConversation *conv)
 			&(gtkconv->infopane_iter),
 			CONV_EMBLEM_COLUMN, emblem, -1);
 
+	/* XXX seanegan Why do I have to do this? */
+	gtk_widget_queue_draw(gtkconv->infopane);
 
 	if (status != NULL)
 		g_object_unref(status);
