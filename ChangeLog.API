@@ -29,6 +29,8 @@ version 2.1.0 (??/??/????):
 		* purple_xfer_get_remote_user
 		* purple_pounces_get_all_for_ui
 		* purple_prefs_get_children_names
+		* added displaying-email-notification and 
+ 	          displaying-emails-notification signals
 
 		Changed:
 		* The documentation of the following functions now properly
