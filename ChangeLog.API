@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.1.0 (??/??/????):
+version 2.1.0 (7/28/2007):
 	libpurple:
 		Added:
 		* purple-remote: added getstatus command
@@ -29,6 +29,8 @@ version 2.1.0 (??/??/????):
 		* purple_xfer_get_remote_user
 		* purple_pounces_get_all_for_ui
 		* purple_prefs_get_children_names
+		* added displaying-email-notification and 
+ 	          displaying-emails-notification signals
 
 		Changed:
 		* The documentation of the following functions now properly
@@ -74,6 +76,8 @@ version 2.1.0 (??/??/????):
 		* pidgin_menu_position_func_helper
 		* pidgin_blist_get_name_markup, returns the buddy list markup
 		  text for a given buddy.
+		* pidgin_blist_draw_tooltip and pidgin_blist_tooltip_destroy
+		  for creating blist tooltips from outside of buddy list code
 		* pidgin_themes_remove_smiley_theme
 
 		Changed:

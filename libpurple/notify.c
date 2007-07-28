@@ -112,6 +112,10 @@ purple_notify_email(void *handle, const char *subject, const char *from,
 		info            = g_new0(PurpleNotifyInfo, 1);
 		info->type      = PURPLE_NOTIFY_EMAIL;
 		info->handle    = handle;
+
+		purple_signal_emit(purple_notify_get_handle(), "displaying-email-notification",
+							subject, from, to, url);
+
 		info->ui_handle = ops->notify_email(handle, subject, from, to, url);
 		info->cb = cb;
 		info->cb_user_data = user_data;
@@ -164,6 +168,10 @@ purple_notify_emails(void *handle, size_t count, gboolean detailed,
 		info            = g_new0(PurpleNotifyInfo, 1);
 		info->type      = PURPLE_NOTIFY_EMAILS;
 		info->handle    = handle;
+
+		purple_signal_emit(purple_notify_get_handle(), "displaying-emails-notification",
+							subjects, froms, tos, urls, count);
+
 		info->ui_handle = ops->notify_emails(handle, count, detailed, subjects,
 											 froms, tos, urls);
 		info->cb = cb;
@@ -798,6 +806,21 @@ void
 purple_notify_init(void)
 {
 	gpointer handle = purple_notify_get_handle();
+
+	purple_signal_register(handle, "displaying-email-notification",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER, NULL, 4,
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "displaying-emails-notification",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT, NULL, 5,
+						 purple_value_new(PURPLE_TYPE_POINTER),
+						 purple_value_new(PURPLE_TYPE_POINTER),
+						 purple_value_new(PURPLE_TYPE_POINTER),
+						 purple_value_new(PURPLE_TYPE_POINTER),
+						 purple_value_new(PURPLE_TYPE_UINT));
 
 	purple_signal_register(handle, "displaying-userinfo",
 						 purple_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
