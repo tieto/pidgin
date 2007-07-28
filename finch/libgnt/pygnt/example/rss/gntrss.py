@@ -154,8 +154,7 @@ class FeedReader(threading.Thread):
 feeds = []
 urls = ("http://rss.slashdot.org/Slashdot/slashdot",
         "http://www.python.org/channews.rdf",
-        "http://pidgin.im/rss.php",
-        "./rss.php"
+        "http://pidgin.im/rss.php"
         )
 
 for url in urls:

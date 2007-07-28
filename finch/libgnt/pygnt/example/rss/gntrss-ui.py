@@ -158,7 +158,6 @@ def item_active_changed(tree, old):
     details.scroll(0)
     if item.unread:
         item.set_property('unread', False)
-    win.give_focus_to_child(browser)
 
 #
 # Look for action keys in the feed-item list.
@@ -196,7 +195,8 @@ box.add_widget(items)
 
 win.add_widget(box)
 
-win.add_widget(gnt.Line(vertical = False))
+line = gnt.Line(vertical = False)
+win.add_widget(line)
 
 # The textview to show the details of a feed
 details = gnt.TextView()
@@ -217,6 +217,7 @@ def update_feed_title(feed, property):
 
 # populate everything
 for feed in gntrss.feeds:
+    feed.refresh()
     add_feed(feed)
 
 gnt.gnt_main()
