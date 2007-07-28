@@ -72,6 +72,7 @@ static struct developer developers[] = {
 	{"Daniel 'datallah' Atallah",	N_("developer"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
 	{"Thomas Butter",				N_("developer"), NULL},
+	{"Ka-Hing Cheung",				N_("developer"), NULL},
 	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
 	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
 	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
@@ -94,7 +95,6 @@ static struct developer developers[] = {
 /* Order: Alphabetical by Last Name */
 static struct developer patch_writers[] = {
 	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
-	{"Ka-Hing 'javabsp' Cheung",	NULL,	NULL},
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
