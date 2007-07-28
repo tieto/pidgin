@@ -74,6 +74,8 @@ version 2.1.0 (??/??/????):
 		* pidgin_menu_position_func_helper
 		* pidgin_blist_get_name_markup, returns the buddy list markup
 		  text for a given buddy.
+		* pidgin_blist_draw_tooltip and pidgin_blist_tooltip_destroy
+		  for creating blist tooltips from outside of buddy list code
 		* pidgin_themes_remove_smiley_theme
 
 		Changed:
