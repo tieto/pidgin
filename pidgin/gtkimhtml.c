@@ -348,13 +348,28 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 	}
 }
 
-static void gtk_size_allocate_cb(GtkIMHtml *widget, GtkAllocation *alloc, gpointer user_data)
+static void (*parent_size_allocate)(GtkWidget *widget, GtkAllocation *alloc);
+
+static void gtk_imhtml_size_allocate(GtkWidget *widget, GtkAllocation *alloc)
 {
+	GtkIMHtml *imhtml = GTK_IMHTML(widget);
 	GdkRectangle rect;
 	int xminus;
+	int height = 0, y = 0;
+	GtkTextIter iter;
+	gboolean scroll = TRUE;
+
+        gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter);
 
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &rect);
-	if(widget->old_rect.width != rect.width || widget->old_rect.height != rect.height){
+        gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
+
+	if(((y + height) - (rect.y + rect.height)) > height
+           && gtk_text_buffer_get_char_count(imhtml->text_buffer)){
+                scroll = FALSE;
+        }
+
+	if(imhtml->old_rect.width != rect.width || imhtml->old_rect.height != rect.height){
 		GList *iter = GTK_IMHTML(widget)->scalables;
 
 		xminus = gtk_text_view_get_left_margin(GTK_TEXT_VIEW(widget)) +
@@ -369,8 +384,9 @@ static void gtk_size_allocate_cb(GtkIMHtml *widget, GtkAllocation *alloc, gpoint
 		}
 	}
 
-	widget->old_rect = rect;
-	return;
+	imhtml->old_rect = rect;
+	parent_size_allocate(widget, alloc);
+	gtk_imhtml_scroll_to_end(imhtml, FALSE);	
 }
 
 static gint
@@ -1345,6 +1361,9 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gobject_class->finalize = gtk_imhtml_finalize;
 	widget_class->drag_motion = gtk_text_view_drag_motion;
 	widget_class->expose_event = gtk_imhtml_expose_event;
+	parent_size_allocate = widget_class->size_allocate;
+	widget_class->size_allocate = gtk_imhtml_size_allocate;
+
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-color",
 	                                        _("Hyperlink color"),
 	                                        _("Color to draw hyperlinks."),
@@ -1409,7 +1428,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 			g_free, (GDestroyNotify)gtk_smiley_tree_destroy);
 	imhtml->default_smilies = gtk_smiley_tree_new();
 
-	g_signal_connect(G_OBJECT(imhtml), "size-allocate", G_CALLBACK(gtk_size_allocate_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "leave-notify-event", G_CALLBACK(gtk_leave_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "enter-notify-event", G_CALLBACK(gtk_enter_event_notify), NULL);
