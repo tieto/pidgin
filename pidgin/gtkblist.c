@@ -136,8 +136,6 @@ static void redo_buddy_list(PurpleBuddyList *list, gboolean remove, gboolean rer
 static void pidgin_blist_collapse_contact_cb(GtkWidget *w, PurpleBlistNode *node);
 static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded);
 
-static void pidgin_blist_tooltip_destroy(void);
-
 struct _pidgin_blist_node {
 	GtkTreeRowReference *row;
 	gboolean contact_expanded;
@@ -1150,7 +1148,8 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	pidgin_new_item_from_stock(menu, _("Add Buddy _Pounce"), NULL,
 			G_CALLBACK(gtk_blist_menu_bp_cb), buddy, 0, 0, NULL);
 
-	if(((PurpleBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
+	if (((PurpleBlistNode*)buddy)->parent && ((PurpleBlistNode*)buddy)->parent->child->next && 
+	      !sub && !contact_expanded) {
 		pidgin_new_item_from_stock(menu, _("View _Log"), NULL,
 				G_CALLBACK(gtk_blist_menu_showlog_cb),
 				contact, 0, 0, NULL);
@@ -1164,7 +1163,8 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 										  (PurpleBlistNode *)buddy);
 	pidgin_append_blist_node_extended_menu(menu, (PurpleBlistNode *)buddy);
 
-	if (((PurpleBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
+	if (((PurpleBlistNode*)buddy)->parent && ((PurpleBlistNode*)buddy)->parent->child->next && 
+              !sub && !contact_expanded) {
 		pidgin_separator(menu);
 		pidgin_append_blist_node_privacy_menu(menu, (PurpleBlistNode *)buddy);
 		pidgin_new_item_from_stock(menu, _("_Alias..."), PIDGIN_STOCK_ALIAS,
@@ -2496,7 +2496,7 @@ static void pidgin_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, Pur
 }
 
 
-static void pidgin_blist_tooltip_destroy()
+void pidgin_blist_tooltip_destroy()
 {
 	while(gtkblist->tooltipdata) {
 		struct tooltip_data *td = gtkblist->tooltipdata->data;
@@ -2584,20 +2584,6 @@ static gboolean pidgin_blist_tooltip_timeout(GtkWidget *tv)
 	GtkTreeIter iter;
 	PurpleBlistNode *node;
 	GValue val;
-	int scr_w, scr_h, w, h, x, y;
-#if GTK_CHECK_VERSION(2,2,0)
-	int mon_num;
-	GdkScreen *screen = NULL;
-#endif
-	gboolean tooltip_top = FALSE;
-	struct _pidgin_blist_node *gtknode;
-	GdkRectangle mon_size;
-
-	/*
-	 * Attempt to free the previous tooltip.  I have a feeling
-	 * this is never needed... but just in case.
-	 */
-	pidgin_blist_tooltip_destroy();
 
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y, &path, NULL, NULL, NULL))
 		return FALSE;
@@ -2606,7 +2592,32 @@ static gboolean pidgin_blist_tooltip_timeout(GtkWidget *tv)
 	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
 	node = g_value_get_pointer(&val);
 
+	pidgin_blist_draw_tooltip(node, gtkblist->window);
+
 	gtk_tree_path_free(path);
+	return FALSE;
+}
+
+void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget)
+{
+	int scr_w, scr_h, w, h, x, y;
+#if GTK_CHECK_VERSION(2,2,0)
+	int mon_num;
+	GdkScreen *screen = NULL;
+#endif
+	gboolean tooltip_top = FALSE;
+	struct _pidgin_blist_node *gtknode;
+	GdkRectangle mon_size;
+	
+	if (node == NULL)
+		return;
+
+	/*
+	 * Attempt to free the previous tooltip.  I have a feeling
+	 * this is never needed... but just in case.
+	 */
+	pidgin_blist_tooltip_destroy();
+
 
 	gtkblist->tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
 
@@ -2644,13 +2655,13 @@ static gboolean pidgin_blist_tooltip_timeout(GtkWidget *tv)
 	} else {
 		gtk_widget_destroy(gtkblist->tipwindow);
 		gtkblist->tipwindow = NULL;
-		return FALSE;
+		return;
 	}
 
 	if (gtkblist->tooltipdata == NULL) {
 		gtk_widget_destroy(gtkblist->tipwindow);
 		gtkblist->tipwindow = NULL;
-		return FALSE;
+		return;
 	}
 
 	gtknode = node->ui_data;
@@ -2686,9 +2697,6 @@ static gboolean pidgin_blist_tooltip_timeout(GtkWidget *tv)
 	  h = mon_size.height - 10;
 #endif
 
-	if (GTK_WIDGET_NO_WINDOW(gtkblist->window))
-		y+=gtkblist->window->allocation.y;
-
 	x -= ((w >> 1) + 4);
 
 	if ((y + h + 4) > scr_h || tooltip_top)
@@ -2714,7 +2722,7 @@ static gboolean pidgin_blist_tooltip_timeout(GtkWidget *tv)
 	gtk_window_move(GTK_WINDOW(gtkblist->tipwindow), x, y);
 	gtk_widget_show(gtkblist->tipwindow);
 
-	return FALSE;
+	return;
 }
 
 static gboolean pidgin_blist_drag_motion_cb(GtkWidget *tv, GdkDragContext *drag_context,
