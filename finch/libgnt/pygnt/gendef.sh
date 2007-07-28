@@ -28,7 +28,7 @@ FILES="
 	gnt.h"
 
 # Generate the def file
-rm gnt.def
+rm -f gnt.def
 for file in $FILES
 do
 	python /usr/share/pygtk/2.0/codegen/h2def.py ../$file >> gnt.def

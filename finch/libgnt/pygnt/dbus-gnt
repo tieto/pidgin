@@ -24,6 +24,7 @@ def conv_closed(conv):
     key = get_dict_key(conv)
     stuff = convwins[key]
     stuff[0].destroy()
+	# if a conv window is closed, then reopened, this thing crashes
     convwins[key] = None
 
 def wrote_msg(account, who, msg, conv, flags):
@@ -34,7 +35,8 @@ def wrote_msg(account, who, msg, conv, flags):
     tv.append_text_with_flags(who + ": ", 1)
     tv.append_text_with_flags(msg, 0)
     tv.scroll(0)
-    stuff[0].set_urgent()
+    if flags & 3:
+        stuff[0].set_urgent()
 
 bus = dbus.SessionBus()
 obj = bus.get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
@@ -91,6 +93,7 @@ def show_conversation(conv):
     tv.clear()
     win.show()
     convwins[key] = [win, tv, entry]
+	# XXX: listen to "destroy" for the window, and reset the key
     return convwins[key]
 
 def show_buddylist():
