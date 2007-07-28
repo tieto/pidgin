@@ -1016,8 +1016,8 @@ add_account_statuses(PidginStatusBox *status_box, PurpleAccount *account)
 	}
 }
 
-static gboolean
-pidgin_status_box_regenerate_real(PidginStatusBox *status_box)
+static void
+pidgin_status_box_regenerate(PidginStatusBox *status_box)
 {
 	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4, *pixbuf5;
 	GtkIconSize icon_size;
@@ -1081,21 +1081,11 @@ pidgin_status_box_regenerate_real(PidginStatusBox *status_box)
 	}
 	gtk_tree_view_set_model(GTK_TREE_VIEW(status_box->tree_view), GTK_TREE_MODEL(status_box->dropdown_store));
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(status_box->tree_view), TEXT_COLUMN);
-
-	return FALSE;
-}
-
-static void
-pidgin_status_box_regenerate(PidginStatusBox *status_box)
-{
-	/* we have to do this in a timeout, so we avoid recursing
-	 * to infinity (and beyond) */
-	purple_timeout_add(0, (GSourceFunc)pidgin_status_box_regenerate_real, status_box);
 }
 
 static gboolean combo_box_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkIMHtml *imhtml)
 {
-	pidgin_status_box_popup(PIDGIN_STATUS_BOX(w));
+  	pidgin_status_box_popup(PIDGIN_STATUS_BOX(w));
 	return TRUE;
 }
 
