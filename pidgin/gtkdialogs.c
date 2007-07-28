@@ -337,7 +337,6 @@ void pidgin_dialogs_about()
 	gtk_window_set_role(GTK_WINDOW(about), "about");
 	gtk_window_set_resizable(GTK_WINDOW(about), TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(about), 340, 450);
-	gtk_window_set_transient_for(GTK_WINDOW(about), pidgin_get_toplevel());
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox), PIDGIN_HIG_BORDER);
