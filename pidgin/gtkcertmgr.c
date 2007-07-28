@@ -185,7 +185,7 @@ tls_peers_mgmt_build(void)
 	
 	tpm_dat->mgmt_widget = mgmt_widget =
 		gtk_hbox_new(FALSE, /* Non-homogeneous */
-			     0);    /* No spacing */
+			     PIDGIN_HIG_BORDER);
 	gtk_widget_show(mgmt_widget);
 
 	/* Ensure that everything gets cleaned up when the dialog box
@@ -238,6 +238,7 @@ tls_peers_mgmt_build(void)
 	gtk_box_pack_end(GTK_BOX(mgmt_widget), bbox,
 			 FALSE, FALSE, /* Do not take up space */
 			 0); /* TODO: this padding is probably wrong */
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_START);
 	gtk_widget_show(bbox);
 
