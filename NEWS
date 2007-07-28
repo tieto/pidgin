@@ -1,5 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.1.0 (7/27/2007):
+	Sean: This release took a bit longer than 3 weeks, but boy is it 
+	worth it! We're beginning to experiment with new UI concepts and
+	this release features a largely re-designed conversation window.
+	We've closed 150 tickets for this release; much thanks go to all
+	the developers, translators, and testers who made this possible.
+
 2.0.2 (6/14/2007):
 	Sean: Another big maintenance release. Again, about 100 tickets were
 	resolved in this release, and they keep coming in. Lots of bug fixes,
