@@ -148,6 +148,7 @@ tls_peers_mgmt_build(void)
 
 	/* This block of variables will end up in tpm_dat */
 	GtkTreeView *listview;
+	GtkTreeSelection *select;
 	GtkWidget *importbutton;
 	GtkWidget *exportbutton;
 	GtkWidget *infobutton;
@@ -177,7 +178,6 @@ tls_peers_mgmt_build(void)
 	{
 		GtkCellRenderer *renderer;
 		GtkTreeViewColumn *column;
-		GtkTreeSelection *select;
 
 		/* Set up the display columns */
 		renderer = gtk_cell_renderer_text_new();
@@ -187,14 +187,14 @@ tls_peers_mgmt_build(void)
 			"text", TPM_HOSTNAME_COLUMN,
 			NULL);
 		gtk_tree_view_append_column(GTK_TREE_VIEW(listview), column);
-
-		/* Get the treeview selector into the struct */
-		tpm_dat->listselect = select =
-			gtk_tree_view_get_selection(GTK_TREE_VIEW(listview));
-		
-		/* Force the selection mode */
-		gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 	}
+	
+	/* Get the treeview selector into the struct */
+	tpm_dat->listselect = select =
+		gtk_tree_view_get_selection(GTK_TREE_VIEW(listview));
+	
+	/* Force the selection mode */
+	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 	
 	gtk_box_pack_start(GTK_BOX(mgmt_widget), GTK_WIDGET(listview),
 			   TRUE, TRUE, /* Take up lots of space */
