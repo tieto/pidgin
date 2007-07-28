@@ -46,6 +46,7 @@
 typedef struct {
 	GtkWidget *mgmt_widget;
 	GtkTreeView *listview;
+	GtkTreeSelection *listselect;
 	GtkWidget *importbutton;
 	GtkWidget *exportbutton;
 	GtkWidget *infobutton;
@@ -113,6 +114,32 @@ tls_peers_mgmt_mod_cb(PurpleCertificatePool *pool, const gchar *id, gpointer dat
 	tls_peers_mgmt_repopulate_list();
 }
 
+static void
+tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
+{
+	GtkTreeSelection *select = tpm_dat->listselect;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+
+	/* See if things are selected */
+	if (gtk_tree_selection_get_selected(select, &model, &iter)) {
+
+		gchar *id;
+
+		/* Retrieve the selected hostname */
+		gtk_tree_model_get(model, &iter, TPM_HOSTNAME_COLUMN, &id, -1);
+
+		/* Now delete the thing */
+		g_assert(purple_certificate_pool_delete(tpm_dat->tls_peers, id));
+		
+		g_free(id);
+	} else {
+		purple_debug_warning("gtkcertmgr/tls_peers_mgmt",
+				     "Delete clicked with no selection?\n");
+		return;
+	}
+}
+
 static GtkWidget *
 tls_peers_mgmt_build(void)
 {
@@ -161,8 +188,11 @@ tls_peers_mgmt_build(void)
 			NULL);
 		gtk_tree_view_append_column(GTK_TREE_VIEW(listview), column);
 
+		/* Get the treeview selector into the struct */
+		tpm_dat->listselect = select =
+			gtk_tree_view_get_selection(GTK_TREE_VIEW(listview));
+		
 		/* Force the selection mode */
-		select = gtk_tree_view_get_selection(GTK_TREE_VIEW(listview));
 		gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 	}
 	
@@ -207,6 +237,8 @@ tls_peers_mgmt_build(void)
 		gtk_button_new_from_stock(GTK_STOCK_DELETE);
 	gtk_box_pack_start(GTK_BOX(bbox), deletebutton, FALSE, FALSE, 0);
 	gtk_widget_show(deletebutton);
+	g_signal_connect(G_OBJECT(deletebutton), "clicked",
+			 G_CALLBACK(tls_peers_mgmt_delete_cb), NULL);
 
 	/* Disable all the buttons */
 	gtk_widget_set_sensitive(importbutton, FALSE);
