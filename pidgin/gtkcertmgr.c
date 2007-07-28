@@ -115,6 +115,30 @@ tls_peers_mgmt_mod_cb(PurpleCertificatePool *pool, const gchar *id, gpointer dat
 }
 
 static void
+tls_peers_mgmt_select_chg_cb(GtkTreeSelection *ignored, gpointer data)
+{
+	GtkTreeSelection *select = tpm_dat->listselect;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+
+	/* See if things are selected */
+	if (gtk_tree_selection_get_selected(select, &model, &iter)) {
+		/* Enable buttons if something is selected */
+		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->importbutton), TRUE);
+		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->exportbutton), TRUE);
+		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->infobutton), TRUE);
+		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->deletebutton), TRUE);
+	} else {
+		/* Otherwise, disable them */
+		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->importbutton), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->exportbutton), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->infobutton), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->deletebutton), FALSE);
+
+	}
+}
+
+static void
 tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
 {
 	GtkTreeSelection *select = tpm_dat->listselect;
@@ -195,6 +219,11 @@ tls_peers_mgmt_build(void)
 	
 	/* Force the selection mode */
 	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
+
+	/* Use a callback to enable/disable the buttons based on whether
+	   something is selected */
+	g_signal_connect(G_OBJECT(select), "changed",
+			 G_CALLBACK(tls_peers_mgmt_select_chg_cb), NULL);
 	
 	gtk_box_pack_start(GTK_BOX(mgmt_widget), GTK_WIDGET(listview),
 			   TRUE, TRUE, /* Take up lots of space */
