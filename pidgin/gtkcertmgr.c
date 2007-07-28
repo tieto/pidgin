@@ -269,11 +269,9 @@ tls_peers_mgmt_build(void)
 	g_signal_connect(G_OBJECT(deletebutton), "clicked",
 			 G_CALLBACK(tls_peers_mgmt_delete_cb), NULL);
 
-	/* Disable all the buttons */
-	gtk_widget_set_sensitive(importbutton, FALSE);
-	gtk_widget_set_sensitive(exportbutton, FALSE);
-	gtk_widget_set_sensitive(infobutton, FALSE);
-	gtk_widget_set_sensitive(deletebutton, FALSE);
+	/* Call the "selection changed" callback, which will probably disable
+	   all the buttons since nothing is selected yet */
+	tls_peers_mgmt_select_chg_cb(select, NULL);
 
 	/* Bind us to the tls_peers pool */
 	tpm_dat->tls_peers = purple_certificate_find_pool("x509", "tls_peers");
