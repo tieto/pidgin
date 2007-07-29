@@ -386,7 +386,8 @@ static void gtk_imhtml_size_allocate(GtkWidget *widget, GtkAllocation *alloc)
 
 	imhtml->old_rect = rect;
 	parent_size_allocate(widget, alloc);
-	gtk_imhtml_scroll_to_end(imhtml, FALSE);	
+	if (scroll)
+		gtk_imhtml_scroll_to_end(imhtml, FALSE);	
 }
 
 static gint
