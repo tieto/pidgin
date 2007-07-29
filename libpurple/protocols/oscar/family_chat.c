@@ -140,6 +140,23 @@ aim_chat_leaveroom(OscarData *od, const char *name)
 	return 0;
 }
 
+/**
+ * Subtype 0x0001
+ */
+static int
+error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
+{
+	guint16 reason;
+
+	reason = byte_stream_get16(bs);
+
+	/* TODO: Reason 0x000e means invalid SNAC format?  Busted SNAC payload? */
+
+	/* TODO: Read in a TLV list.  TLV of type 0x0009 is the error code.  Error code 0x0033 means "invalid name." */
+
+	return 0;
+}
+
 /*
  * Subtype 0x0002 - General room information.  Lots of stuff.
  *
