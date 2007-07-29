@@ -23,6 +23,16 @@ USA
 
 """
 This file deals with the UI part (gnt) of the application
+
+TODO:
+    - Allow showing feeds of only selected 'category' and/or 'priority'. A different
+      window should be used to change such filtering.
+    - Display details of each item in its own window.
+    - Add search capability, and allow searching only in title/body. Also allow
+      filtering in the search results.
+    - Show the data and time for feed items (probably in a separate column .. perhaps not)
+    - Have a simple way to add a feed.
+    - Allow renaming a feed.
 """
 
 import gntrss
@@ -39,13 +49,14 @@ gnt.gnt_init()
 
 class RssTree(gnt.Tree):
     __gsignals__ = {
-        'active_changed' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_OBJECT,)),
-        'key_pressed' : 'override'
+        'active_changed' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_OBJECT,))
     }
 
     def __init__(self):
         self.active = None
         gnt.Tree.__init__(self)
+        gnt.set_flag(self, 8)    # remove borders
+        self.connect('key_pressed', self.do_key_pressed)
 
     def set_active(self, active):
         if self.active == active:
@@ -57,7 +68,7 @@ class RssTree(gnt.Tree):
         self.set_row_flags(self.active, gnt.TEXT_FLAG_UNDERLINE)
         self.emit('active_changed', old)
 
-    def do_key_pressed(self, text):
+    def do_key_pressed(self, null, text):
         if text == '\r':
             now = self.get_selection_data()
             self.set_active(now)
@@ -123,18 +134,48 @@ def add_feed_item(item):
 # [[[ The list of feeds
 ###
 
+# 'Add Feed' dialog
+add_feed_win = None
+def add_feed_win_closed(win):
+    global add_feed_win
+    add_feed_win = None
+
+def add_new_feed():
+    global add_feed_win
+
+    if add_feed_win:
+        gnt.gnt_window_present(add_feed_win)
+        return
+    win = gnt.Window()
+    win.set_title("New Feed")
+
+    box = gnt.Box(False, False)
+    label = gnt.Label("Link")
+    box.add_widget(label)
+    entry = gnt.Entry("")
+    entry.set_size(40, 1)
+    box.add_widget(entry)
+
+    win.add_widget(box)
+    win.show()
+    add_feed_win = win
+    add_feed_win.connect("destroy", add_feed_win_closed)
+
 #
 # The active row in the feed-list has changed. Update the feed-item table.
 def feed_active_changed(tree, old):
     items.remove_all()
     if not tree.active:
         return
+    update_items_title()
     for item in tree.active.items:
         add_feed_item(item)
 
 #
 # Check for the action keys and decide how to deal with them.
 def feed_key_pressed(tree, text):
+    if tree.is_searching():
+        return
     if text == 'r':
         feed = tree.get_selection_data()
         tree.perform_action_key('j')
@@ -144,6 +185,8 @@ def feed_key_pressed(tree, text):
         feeds = tree.get_rows()
         for feed in feeds:
             feed.refresh()
+    elif text == 'a':
+        add_new_feed()
     else:
         return False
     return True
@@ -151,14 +194,17 @@ def feed_key_pressed(tree, text):
 feeds = RssTree()
 feeds.set_property('columns', 2)
 feeds.set_col_width(0, 20)
-feeds.set_col_width(1, 4)
+feeds.set_col_width(1, 8)
 feeds.set_column_resizable(0, False)
 feeds.set_column_resizable(1, False)
 feeds.set_column_is_right_aligned(1, True)
 feeds.set_show_separator(False)
+feeds.set_column_title(0, "Feeds")
+feeds.set_show_title(True)
 
 feeds.connect('active_changed', feed_active_changed)
 feeds.connect('key_pressed', feed_key_pressed)
+gnt.unset_flag(feeds, 256)   # Fix the width
 
 ####
 # ]]] The list of feeds
@@ -177,28 +223,32 @@ def item_active_changed(tree, old):
         return
     item = tree.active
     details.append_text_with_flags(str(item.title) + "\n", gnt.TEXT_FLAG_BOLD)
-    details.append_text_with_flags(str(item.summary), gnt.TEXT_FLAG_NORMAL)
-    details.scroll(0)
-    if item.unread:
-        item.set_property('unread', False)
-    if old and old.unread:
-        old.set_property('unread', True)
+    details.append_text_with_flags("Link: ", gnt.TEXT_FLAG_BOLD)
+    details.append_text_with_flags(str(item.link) + "\n", gnt.TEXT_FLAG_UNDERLINE)
+    details.append_text_with_flags("Date: ", gnt.TEXT_FLAG_BOLD)
+    details.append_text_with_flags(str(item.date) + "\n", gnt.TEXT_FLAG_NORMAL)
+
+    details.append_text_with_flags("\n" + str(item.summary), gnt.TEXT_FLAG_NORMAL)
+    item.mark_unread(False)
+
+    if old and old.unread:   # If the last selected item is marked 'unread', then make sure it's bold
+        items.set_row_flags(old, gnt.TEXT_FLAG_BOLD)
 
 #
 # Look for action keys in the feed-item list.
 def item_key_pressed(tree, text):
+    if tree.is_searching():
+        return
     current = tree.get_selection_data()
     if text == 'M':     # Mark all of the items 'read'
         all = tree.get_rows()
         for item in all:
-            item.unread = False
+            item.mark_unread(False)
     elif text == 'm':     # Mark the current item 'read'
-        if current.unread:
-            current.set_property('unread', False)
+        current.mark_unread(False)
         tree.perform_action_key('j')
     elif text == 'U':     # Mark the current item 'unread'
-        if not current.unread:
-            current.set_property('unread', True)
+        current.mark_unread(True)
     elif text == 'd':
         current.remove()
         tree.perform_action_key('j')
@@ -209,40 +259,73 @@ def item_key_pressed(tree, text):
 items = RssTree()
 items.set_property('columns', 1)
 items.set_col_width(0, 40)
+items.set_column_title(0, "Items")
+items.set_show_title(True)
 items.connect('key_pressed', item_key_pressed)
 items.connect('active_changed', item_active_changed)
+
+size = gnt.screen_size()
+items.set_size(size[0], size[1])
 
 ####
 # ]]] The list of items in the feed
 ####
 
+#
+# Update the title of the items list depending on the selection in the feed list
+def update_items_title():
+    feed = feeds.active
+    if feed:
+        items.set_column_title(0, str(feed.title) + ": " + str(feed.unread) + "(" + str(len(feed.items)) + ")")
+    else:
+        items.set_column_title(0, "Items")
+    items.draw()
+
 # The container on the top
-box = gnt.Box(homo = False, vert = False)
-box.set_pad(0)
-box.add_widget(feeds)
-box.add_widget(items)
-
-win.add_widget(box)
-
 line = gnt.Line(vertical = False)
-win.add_widget(line)
 
 # The textview to show the details of a feed
 details = gnt.TextView()
+details.set_take_focus(True)
+details.set_flag(gnt.TEXT_VIEW_TOP_ALIGN)
+details.attach_scroll_widget(details)
 
-win.add_widget(details)
+# Category tree
+cat = gnt.Tree()
+cat.set_property('columns', 1)
+cat.set_column_title(0, 'Category')
+cat.set_show_title(True)
+gnt.set_flag(cat, 8)    # remove borders
 
-browser = gnt.Button("Open in Browser")
-win.add_widget(browser)
-details.attach_scroll_widget(browser)
+box = gnt.Box(homo = False, vert = False)
+box.set_pad(0)
 
+vbox = gnt.Box(homo = False, vert = True)
+vbox.set_pad(0)
+vbox.add_widget(feeds)
+vbox.add_widget(gnt.Line(False))
+vbox.add_widget(cat)
+box.add_widget(vbox)
+
+box.add_widget(gnt.Line(True))
+
+vbox = gnt.Box(homo = False, vert = True)
+vbox.set_pad(0)
+vbox.add_widget(items)
+vbox.add_widget(gnt.Line(False))
+vbox.add_widget(details)
+box.add_widget(vbox)
+
+win.add_widget(box)
 win.show()
 
 def update_feed_title(feed, property):
     if property.name == 'title':
         feeds.change_text(feed, 0, feed.title)
     elif property.name == 'unread':
-        feeds.change_text(feed, 1, str(feed.unread))
+        feeds.change_text(feed, 1, str(feed.unread) + "(" + str(len(feed.items)) + ")")
+        if feeds.active == feed:
+            update_items_title()
 
 # populate everything
 for feed in gntrss.feeds:

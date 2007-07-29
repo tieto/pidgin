@@ -63,15 +63,27 @@ class FeedItem(gobject.GObject):
         if property.name == 'unread':
             self.unread = value
 
+    def mark_unread(self, unread):
+        if self.unread == unread:
+            return
+        self.set_property('unread', unread)
+
 gobject.type_register(FeedItem)
 
 def item_hash(item):
     return str(item['date'] + item['title'])
 
-##
-# The Feed class. It will update the 'link', 'title', 'desc' and 'items'
-# attributes if/when they are updated (triggering 'notify::<attr>' signal)
-##
+"""
+The Feed class. It will update the 'link', 'title', 'desc' and 'items'
+attributes if/when they are updated (triggering 'notify::<attr>' signal)
+
+TODO:
+    - Add a 'count' attribute
+    - Each feed will have a 'uidata', which will be its display window
+    - Look into 'category'. Is it something that feed defines, or the user?
+    - Have separate refresh times for each feed.
+    - Have 'priority' for each feed. (somewhat like category, perhaps?)
+"""
 class Feed(gobject.GObject):
     __gproperties__ = {
         'link' : (gobject.TYPE_STRING, 'link',
@@ -183,7 +195,8 @@ class FeedReader(threading.Thread):
 feeds = []
 urls = ("http://rss.slashdot.org/Slashdot/slashdot",
         "http://www.python.org/channews.rdf",
-        "http://pidgin.im/rss.php"
+        "http://pidgin.im/rss.php",
+        "http://kerneltrap.org/node/feed"
         )
 
 for url in urls:
