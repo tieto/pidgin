@@ -71,12 +71,15 @@ def update_feed_item(item, property):
     if property.name == 'unread':
         if feeds.active != item.parent:
             return
+        flag = 0
+        if item == items.active:
+            flag = gnt.TEXT_FLAG_UNDERLINE
         if item.unread:
             item.parent.unread = item.parent.unread + 1
-            items.set_row_flags(item, gnt.TEXT_FLAG_BOLD)
+            items.set_row_flags(item, flag | gnt.TEXT_FLAG_BOLD)
         else:
             item.parent.unread = item.parent.unread - 1
-            items.set_row_flags(item, gnt.TEXT_FLAG_NORMAL)
+            items.set_row_flags(item, flag | gnt.TEXT_FLAG_NORMAL)
         item.parent.notify('unread')
 
 def add_feed_item(item):
@@ -158,6 +161,8 @@ def item_active_changed(tree, old):
     details.scroll(0)
     if item.unread:
         item.set_property('unread', False)
+    if old and old.unread:
+        old.set_property('unread', True)
 
 #
 # Look for action keys in the feed-item list.
@@ -170,9 +175,13 @@ def item_key_pressed(tree, text):
     elif text == 'm':     # Mark the current item 'read'
         if current.unread:
             current.set_property('unread', False)
+        tree.perform_action_key('j')
     elif text == 'U':     # Mark the current item 'unread'
         if not current.unread:
             current.set_property('unread', True)
+    elif text == 'd':
+        current.remove()
+        tree.perform_action_key('j')
     else:
         return False
     return True

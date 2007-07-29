@@ -36,6 +36,8 @@ class FeedItem(gobject.GObject):
 
     def remove(self):
         self.emit('delete', self.parent)
+        if self.unread:
+            self.parent.set_property('unread', self.parent.unread - 1)
 
     def do_set_property(self, property, value):
         if property.name == 'unread':
@@ -100,17 +102,20 @@ class Feed(gobject.GObject):
         #result = self.thread.result
         #self.thread = None
         result = feedparser.parse(self.url)
+        # XXX Look at result['bozo'] first, and emit some signal that the UI can use
+        # to indicate (dim the row?) that the feed has invalid XML format or something
+
         channel = result['channel']
         self.set_property('link', channel['link'])
         self.set_property('desc', channel['description'])
         self.set_property('title', channel['title'])
-        self.set_property('unread', len(result['items']))
         self.timer = 0
         items = result['items']
         tmp = {}
         for item in self.items:
             tmp[hash(item)] = item
 
+        unread = self.unread
         for item in items:
             try:
                 exist = self.hash[item_hash(item)]
@@ -120,9 +125,13 @@ class Feed(gobject.GObject):
                 self.items.append(itm)
                 self.emit('added', itm)
                 self.hash[item_hash(item)] = itm
+                unread = unread + 1
+
         for hv in tmp:
             tmp[hv].remove()
 
+        if unread != self.unread:
+            self.set_property('unread', unread)
         return False
 
     def refresh(self):
