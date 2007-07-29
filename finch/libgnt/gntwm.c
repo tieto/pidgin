@@ -1137,9 +1137,37 @@ workspace_new(GntBindable *bindable, GList *null)
 }
 
 static void
+accumulate_windows(gpointer window, gpointer node, gpointer p)
+{
+	GList *list = *(GList**)p;
+	list = g_list_prepend(list, window);
+	*(GList**)p = list;
+}
+
+static void
+gnt_wm_destroy(GObject *obj)
+{
+	GntWM *wm = GNT_WM(obj);
+	GList *list = NULL;
+	g_hash_table_foreach(wm->nodes, accumulate_windows, &list);
+	g_list_foreach(list, gnt_widget_destroy, NULL);
+	g_list_free(list);
+	g_hash_table_destroy(wm->nodes);
+	wm->nodes = NULL;
+
+	while (wm->workspaces) {
+		g_object_unref(wm->workspaces->data);
+		wm->workspaces = g_list_delete_link(wm->workspaces, wm->workspaces);
+	}
+}
+
+static void
 gnt_wm_class_init(GntWMClass *klass)
 {
 	int i;
+	GObjectClass *gclass = G_OBJECT_CLASS(klass);
+
+	gclass->dispose = gnt_wm_destroy;
 
 	klass->new_window = gnt_wm_new_window_real;
 	klass->decorate_window = NULL;
