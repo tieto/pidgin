@@ -68,17 +68,31 @@ gnt_text_view_draw(GntWidget *widget)
 	int i = 0;
 	GList *lines;
 	int rows, scrcol;
+	int comp = 0;          /* Used for top-aligned text */
 	gboolean has_scroll = !(view->flags & GNT_TEXT_VIEW_NO_SCROLL);
 
 	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(widget->window);
+
+	if ((view->flags & GNT_TEXT_VIEW_TOP_ALIGN) &&
+			g_list_length(view->list) < widget->priv.height) {
+		GList *now = view->list;
+		comp = widget->priv.height - g_list_length(view->list);
+		view->list = g_list_nth_prev(view->list, comp);
+		if (!view->list) {
+			view->list = g_list_first(now);
+			comp = widget->priv.height - g_list_length(view->list);
+		} else {
+			comp = 0;
+		}
+	}
 
 	for (i = 0, lines = view->list; i < widget->priv.height && lines; i++, lines = lines->next)
 	{
 		GList *iter;
 		GntTextLine *line = lines->data;
 
-		wmove(widget->window, widget->priv.height - 1 - i, 0);
+		wmove(widget->window, widget->priv.height - 1 - i - comp, 0);
 
 		for (iter = line->segments; iter; iter = iter->next)
 		{
