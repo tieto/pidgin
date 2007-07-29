@@ -76,5 +76,19 @@ _wrap_unset_flag(PyGObject *self, PyObject *args, PyObject *kwargs)
 	Py_INCREF(Py_None);
 	return Py_None;
 }
+%%
+define screen_size noargs
+static PyObject *
+_wrap_screen_size(PyObject *self)
+{
+	PyObject *list = PyList_New(0);
 
+	if (list == NULL)
+		return NULL;
+
+	PyList_Append(list, PyInt_FromLong((long)getmaxx(stdscr)));
+	PyList_Append(list, PyInt_FromLong((long)getmaxy(stdscr)));
+
+	return list;
+}
 
