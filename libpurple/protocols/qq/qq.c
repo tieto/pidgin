@@ -747,7 +747,10 @@ static void init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountOption *option;
 
-	option = purple_account_option_bool_new(_("Connect using TCP"), "use_tcp", FALSE);
+	option = purple_account_option_bool_new(_("Login in TCP"), "use_tcp", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Login Hidden"), "hidden", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_string_new(_("Server"), "server", NULL);
