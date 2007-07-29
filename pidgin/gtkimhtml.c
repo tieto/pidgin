@@ -386,7 +386,9 @@ static void gtk_imhtml_size_allocate(GtkWidget *widget, GtkAllocation *alloc)
 
 	imhtml->old_rect = rect;
 	parent_size_allocate(widget, alloc);
-	if (scroll)
+	
+	/* Don't scroll here if we're in the middle of a smooth scroll */
+	if (scroll && imhtml->scroll_time == NULL)
 		gtk_imhtml_scroll_to_end(imhtml, FALSE);	
 }
 
