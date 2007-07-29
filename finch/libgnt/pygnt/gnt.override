@@ -39,3 +39,42 @@ import gobject.GObject as PyGObject_Type
 ignore-glob
 	*_get_gtype
 %%
+define set_flag
+static PyObject *
+_wrap_set_flag(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+	static char *kwlist[] = {"flags", NULL};
+	PyGObject *widget;
+	int flags;
+
+	if (!PyArg_ParseTuple(args, "O!i:gnt.set_flag", &PyGntWidget_Type, &widget,
+				&flags)) {
+		return NULL;
+	}
+
+	GNT_WIDGET_SET_FLAGS(widget->obj, flags);
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+%%
+define unset_flag
+static PyObject *
+_wrap_unset_flag(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+	static char *kwlist[] = {"flags", NULL};
+	PyGObject *widget;
+	int flags;
+
+	if (!PyArg_ParseTuple(args, "O!i:gnt.unset_flag", &PyGntWidget_Type, &widget,
+				&flags)) {
+		return NULL;
+	}
+
+	GNT_WIDGET_UNSET_FLAGS(widget->obj, flags);
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
+
