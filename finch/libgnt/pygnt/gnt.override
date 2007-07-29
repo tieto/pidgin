@@ -29,6 +29,7 @@ headers
 #include "common.h"
 %%
 include
+ gntbox.override
  gntfilesel.override
  gnttree.override
 %%

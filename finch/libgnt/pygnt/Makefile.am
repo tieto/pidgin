@@ -7,6 +7,7 @@ pgdir = $(libdir)
 sources = \
 	gnt.def \
 	gnt.override \
+	gntbox.override \
 	gntfilesel.override \
 	gnttree.override
 
