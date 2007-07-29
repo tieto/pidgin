@@ -398,7 +398,7 @@ gnt_text_view_reflow(GntTextView *view)
 static void
 gnt_text_view_size_changed(GntWidget *widget, int w, int h)
 {
-	if (w != widget->priv.width) {
+	if (w != widget->priv.width && GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_MAPPED)) {
 		gnt_text_view_reflow(GNT_TEXT_VIEW(widget));
 	}
 }
@@ -422,11 +422,16 @@ static void
 gnt_text_view_init(GTypeInstance *instance, gpointer class)
 {
 	GntWidget *widget = GNT_WIDGET(instance);
-	
-	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(instance), GNT_WIDGET_GROW_Y | GNT_WIDGET_GROW_X);
+	GntTextView *view = GNT_TEXT_VIEW(widget);
+	GntTextLine *line = g_new0(GntTextLine, 1);
 
+	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW | 
+            GNT_WIDGET_GROW_Y | GNT_WIDGET_GROW_X);
 	widget->priv.minw = 5;
 	widget->priv.minh = 2;
+	view->string = g_string_new(NULL);
+	view->list = g_list_append(view->list, line);
+
 	GNTDEBUG;
 }
 
@@ -464,13 +469,6 @@ gnt_text_view_get_gtype(void)
 GntWidget *gnt_text_view_new()
 {
 	GntWidget *widget = g_object_new(GNT_TYPE_TEXT_VIEW, NULL);
-	GntTextView *view = GNT_TEXT_VIEW(widget);
-	GntTextLine *line = g_new0(GntTextLine, 1);
-
-	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
-
-	view->string = g_string_new(NULL);
-	view->list = g_list_append(view->list, line);
 
 	return widget;
 }
