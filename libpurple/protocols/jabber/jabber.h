@@ -12,15 +12,41 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
  */
 #ifndef _PURPLE_JABBER_H_
 #define _PURPLE_JABBER_H_
+
+typedef enum {
+	JABBER_CAP_NONE			  = 0,
+	JABBER_CAP_XHTML		  = 1 << 0,
+	JABBER_CAP_COMPOSING	  = 1 << 1,
+	JABBER_CAP_SI			  = 1 << 2,
+	JABBER_CAP_SI_FILE_XFER	  = 1 << 3,
+	JABBER_CAP_BYTESTREAMS	  = 1 << 4,
+	JABBER_CAP_IBB			  = 1 << 5,
+	JABBER_CAP_CHAT_STATES	  = 1 << 6,
+	JABBER_CAP_IQ_SEARCH	  = 1 << 7,
+	JABBER_CAP_IQ_REGISTER	  = 1 << 8,
+	
+	/* Google Talk extensions: 
+	* http://code.google.com/apis/talk/jep_extensions/extensions.html
+	*/
+	JABBER_CAP_GMAIL_NOTIFY	  = 1 << 9,
+	JABBER_CAP_GOOGLE_ROSTER  = 1 << 10,
+	
+	JABBER_CAP_PING			  = 1 << 11,
+	JABBER_CAP_ADHOC		  = 1 << 12,
+	
+	JABBER_CAP_RETRIEVED	  = 1 << 31
+} JabberCapabilities;
+
+typedef struct _JabberStream JabberStream;
 
 #include <libxml/parser.h>
 #include <glib.h>
@@ -32,6 +58,7 @@
 
 #include "jutil.h"
 #include "xmlnode.h"
+#include "buddy.h"
 
 #ifdef HAVE_CYRUS_SASL
 #include <sasl/sasl.h>
@@ -40,36 +67,16 @@
 #define CAPS0115_NODE "http://pidgin.im/caps"
 
 typedef enum {
-	JABBER_CAP_NONE           = 0,
-	JABBER_CAP_XHTML          = 1 << 0,
-	JABBER_CAP_COMPOSING      = 1 << 1,
-	JABBER_CAP_SI             = 1 << 2,
-	JABBER_CAP_SI_FILE_XFER   = 1 << 3,
-	JABBER_CAP_BYTESTREAMS    = 1 << 4,
-	JABBER_CAP_IBB            = 1 << 5,
-	JABBER_CAP_CHAT_STATES    = 1 << 6,
-	JABBER_CAP_IQ_SEARCH      = 1 << 7,
-	JABBER_CAP_IQ_REGISTER    = 1 << 8,
-
-	/* Google Talk extensions: 
-	 * http://code.google.com/apis/talk/jep_extensions/extensions.html
-	 */
-	JABBER_CAP_GMAIL_NOTIFY   = 1 << 9,
-	JABBER_CAP_GOOGLE_ROSTER  = 1 << 10,
-
-	JABBER_CAP_RETRIEVED      = 1 << 31
-} JabberCapabilities;
-
-typedef enum {
 	JABBER_STREAM_OFFLINE,
 	JABBER_STREAM_CONNECTING,
 	JABBER_STREAM_INITIALIZING,
+	JABBER_STREAM_INITIALIZING_ENCRYPTION,
 	JABBER_STREAM_AUTHENTICATING,
 	JABBER_STREAM_REINITIALIZING,
 	JABBER_STREAM_CONNECTED
 } JabberStreamState;
 
-typedef struct _JabberStream
+struct _JabberStream
 {
 	int fd;
 
@@ -151,12 +158,48 @@ typedef struct _JabberStream
 	int sasl_maxbuf;
 	GString *sasl_mechs;
 	char *serverFQDN;
-
+	
+	gboolean unregistration;
+	
 	gboolean vcard_fetched;
+	
+	/* does the local server support PEP? */
+	gboolean pep;
+	
+	/* Is Buzz enabled? */
+	gboolean allowBuzz;
+	
+	/* A list of JabberAdHocCommands supported by the server */
+	GList *commands;
+	
+	/* last presence update to check for differences */
+	JabberBuddyState old_state;
+	char *old_msg;
+	int old_priority;
+	char *old_avatarhash;
+	
+	/* same for user tune */
+	char *old_artist;
+	char *old_title;
+	char *old_source;
+	char *old_uri;
+	int old_length;
+	char *old_track;
+};
 
-} JabberStream;
+typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *shortname, const gchar *namespace);
 
-void jabber_process_packet(JabberStream *js, xmlnode *packet);
+typedef struct _JabberFeature
+{
+	gchar *shortname;
+	gchar *namespace;
+	JabberFeatureEnabled *is_enabled;
+} JabberFeature;
+
+/* what kind of additional features as returned from disco#info are supported? */
+extern GList *jabber_features;
+
+void jabber_process_packet(JabberStream *js, xmlnode **packet);
 void jabber_send(JabberStream *js, xmlnode *data);
 void jabber_send_raw(JabberStream *js, const char *data, int len);
 
@@ -169,6 +212,9 @@ char *jabber_get_next_id(JabberStream *js);
 
 char *jabber_parse_error(JabberStream *js, xmlnode *packet);
 
+void jabber_add_feature(const gchar *shortname, const gchar *namespace, JabberFeatureEnabled cb); /* cb may be NULL */
+void jabber_remove_feature(const gchar *shortname);
+
 /** PRPL functions */
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);
 const char* jabber_list_emblem(PurpleBuddy *b);
@@ -179,7 +225,9 @@ void jabber_login(PurpleAccount *account);
 void jabber_close(PurpleConnection *gc);
 void jabber_idle_set(PurpleConnection *gc, int idle);
 void jabber_keepalive(PurpleConnection *gc);
+void jabber_register_gateway(JabberStream *js, const char *gateway);
 void jabber_register_account(PurpleAccount *account);
+void jabber_unregister_account(PurpleAccount *account);
 void jabber_convo_closed(PurpleConnection *gc, const char *who);
 PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name);
 gboolean jabber_offline_message(const PurpleBuddy *buddy);

@@ -39,6 +39,9 @@
 #include "message.h"
 #include "presence.h"
 #include "google.h"
+#include "pep.h"
+#include "usertune.h"
+#include "caps.h"
 
 static PurplePluginProtocolInfo prpl_info =
 {
@@ -52,7 +55,7 @@ static PurplePluginProtocolInfo prpl_info =
 #endif
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
-	{"png,gif,jpeg", 32, 32, 96, 96, 8191, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
+	{"png", 32, 32, 96, 96, 8191, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
 	jabber_list_icon,				/* list_icon */
 	jabber_list_emblem,			/* list_emblems */
 	jabber_status_text,				/* status_text */
@@ -111,9 +114,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* whiteboard_prpl_ops */
 	jabber_prpl_send_raw,			/* send_raw */
 	jabber_roomlist_room_serialize, /* roomlist_room_serialize */
+	jabber_unregister_account,		/* unregister_user */
 
 	/* padding */
-	NULL,
 	NULL,
 	NULL,
 	NULL
@@ -203,7 +206,11 @@ init_plugin(PurplePlugin *plugin)
 		purple_account_user_split_set_reverse(split, FALSE);
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-        option = purple_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);
+		option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", FALSE);
+		prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+												   option);
+
+		option = purple_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);
         prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
                         option);
 
@@ -234,6 +241,16 @@ init_plugin(PurplePlugin *plugin)
         jabber_register_commands();
 
         jabber_iq_init();
+        jabber_pep_init();
+		
+		jabber_tune_init();
+		jabber_caps_init();
+
+		jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
+		jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
+		jabber_add_feature("buzz", "http://pidgin.im/libpurple/xmpp/attention", jabber_buzz_isenabled);
+		
+		jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
 }
 
 
