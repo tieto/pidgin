@@ -62,10 +62,16 @@ class RssTree(gnt.Tree):
         if self.active == active:
             return
         if self.active:
-            self.set_row_flags(self.active, gnt.TEXT_FLAG_NORMAL)
+            flag = gnt.TEXT_FLAG_NORMAL
+            if self.active.unread:
+                flag = flag | gnt.TEXT_FLAG_BOLD
+            self.set_row_flags(self.active, flag)
         old = self.active
         self.active = active
-        self.set_row_flags(self.active, gnt.TEXT_FLAG_UNDERLINE)
+        flag = gnt.TEXT_FLAG_UNDERLINE
+        if self.active.unread:
+            flag = flag | gnt.TEXT_FLAG_BOLD
+        self.set_row_flags(self.active, flag)
         self.emit('active_changed', old)
 
     def do_key_pressed(self, null, text):
@@ -100,28 +106,35 @@ def remove_item(item, feed):
 
 def update_feed_item(item, property):
     if property.name == 'unread':
-        if feeds.active != item.parent:
-            return
-        flag = 0
-        if item == items.active:
-            flag = gnt.TEXT_FLAG_UNDERLINE
+        if feeds.active == item.parent:
+            flag = 0
+            if item == items.active:
+                flag = gnt.TEXT_FLAG_UNDERLINE
+            if item.unread:
+                flag = flag | gnt.TEXT_FLAG_BOLD
+            else:
+                flag = flag | gnt.TEXT_FLAG_NORMAL
+            items.set_row_flags(item, flag)
+
+        unread = item.parent.unread
         if item.unread:
-            item.parent.unread = item.parent.unread + 1
-            items.set_row_flags(item, flag | gnt.TEXT_FLAG_BOLD)
+            unread = unread + 1
         else:
-            item.parent.unread = item.parent.unread - 1
-            items.set_row_flags(item, flag | gnt.TEXT_FLAG_NORMAL)
-        item.parent.notify('unread')
+            unread = unread - 1
+        item.parent.set_property('unread', unread)
 
 def add_feed_item(item):
     currentfeed = feeds.active
     if item.parent != currentfeed:
         return
-    items.add_row_after(item, [str(item.title)], None, None)
+    months = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    dt = str(item.date_parsed[2]) + "." + months[item.date_parsed[1]] + "." + str(item.date_parsed[0])
+    items.add_row_after(item, [str(item.title), dt], None, None)
     if item.unread:
         items.set_row_flags(item, gnt.TEXT_FLAG_BOLD)
     if not item.get_data('gntrss-connected'):
         item.set_data('gntrss-connected', True)
+        # this needs to happen *without* having to add the item in the tree
         item.connect('notify', update_feed_item)
         item.connect('delete', remove_item)
 
@@ -170,6 +183,7 @@ def feed_active_changed(tree, old):
     update_items_title()
     for item in tree.active.items:
         add_feed_item(item)
+    win.give_focus_to_child(items)
 
 #
 # Check for the action keys and decide how to deal with them.
@@ -185,6 +199,11 @@ def feed_key_pressed(tree, text):
         feeds = tree.get_rows()
         for feed in feeds:
             feed.refresh()
+    elif text == 'm':
+        feed = tree.get_selection_data()
+        if feed:
+            feed.mark_read()
+            feed.set_property('unread', 0)
     elif text == 'a':
         add_new_feed()
     else:
@@ -194,7 +213,7 @@ def feed_key_pressed(tree, text):
 feeds = RssTree()
 feeds.set_property('columns', 2)
 feeds.set_col_width(0, 20)
-feeds.set_col_width(1, 8)
+feeds.set_col_width(1, 6)
 feeds.set_column_resizable(0, False)
 feeds.set_column_resizable(1, False)
 feeds.set_column_is_right_aligned(1, True)
@@ -241,9 +260,9 @@ def item_key_pressed(tree, text):
         return
     current = tree.get_selection_data()
     if text == 'M':     # Mark all of the items 'read'
-        all = tree.get_rows()
-        for item in all:
-            item.mark_unread(False)
+        feed = feeds.active
+        if feed:
+            feed.mark_read()
     elif text == 'm':     # Mark the current item 'read'
         current.mark_unread(False)
         tree.perform_action_key('j')
@@ -257,15 +276,15 @@ def item_key_pressed(tree, text):
     return True
 
 items = RssTree()
-items.set_property('columns', 1)
+items.set_property('columns', 2)
 items.set_col_width(0, 40)
+items.set_col_width(1, 11)
+items.set_column_resizable(1, False)
 items.set_column_title(0, "Items")
+items.set_column_title(1, "Date")
 items.set_show_title(True)
 items.connect('key_pressed', item_key_pressed)
 items.connect('active_changed', item_active_changed)
-
-size = gnt.screen_size()
-items.set_size(size[0], size[1])
 
 ####
 # ]]] The list of items in the feed
@@ -289,6 +308,13 @@ details = gnt.TextView()
 details.set_take_focus(True)
 details.set_flag(gnt.TEXT_VIEW_TOP_ALIGN)
 details.attach_scroll_widget(details)
+
+# Make it look nice
+s = feeds.get_size()
+size = gnt.screen_size()
+size[0] = size[0] - s[0]
+items.set_size(size[0], size[1] / 2)
+details.set_size(size[0], size[1] / 2)
 
 # Category tree
 cat = gnt.Tree()
@@ -324,14 +350,20 @@ def update_feed_title(feed, property):
         feeds.change_text(feed, 0, feed.title)
     elif property.name == 'unread':
         feeds.change_text(feed, 1, str(feed.unread) + "(" + str(len(feed.items)) + ")")
+        flag = 0
         if feeds.active == feed:
+            flag = gnt.TEXT_FLAG_UNDERLINE
             update_items_title()
+        if feed.unread > 0:
+            flag = flag | gnt.TEXT_FLAG_BOLD
+        feeds.set_row_flags(feed, flag)
 
 # populate everything
 for feed in gntrss.feeds:
     feed.refresh()
     add_feed(feed)
 
+gnt.gnt_register_action("Stuff", add_new_feed)
 gnt.gnt_main()
 
 gnt.gnt_quit()

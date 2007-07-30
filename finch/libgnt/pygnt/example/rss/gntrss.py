@@ -173,6 +173,10 @@ class Feed(gobject.GObject):
         if self.timer == 0:
             self.timer = gobject.timeout_add(1000, self.check_thread_for_death)
 
+    def mark_read(self):
+        for item in self.items:
+            item.mark_unread(False)
+
 gobject.type_register(Feed)
 
 ##
