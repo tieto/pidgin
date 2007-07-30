@@ -6,6 +6,7 @@ EXTRA_DIST = change-bgcolor.png \
 		font-face.png \
 		font-size-down.png \
 		font-size-up.png \
+		insert.png \
 		insert-image.png \
 		insert-link.png \
 		message-new.png \

@@ -517,7 +517,7 @@ static gpointer wpurple_network_change_thread(gpointer data)
 	WSAQUERYSET qs;
 	time_t last_trigger = time(NULL);
 
-	int WSAAPI (*MyWSANSPIoctl) (
+	int (WSAAPI *MyWSANSPIoctl) (
 		HANDLE hLookup, DWORD dwControlCode, LPVOID lpvInBuffer,
 		DWORD cbInBuffer, LPVOID lpvOutBuffer, DWORD cbOutBuffer,
 		LPDWORD lpcbBytesReturned, LPWSACOMPLETION lpCompletion) = NULL;

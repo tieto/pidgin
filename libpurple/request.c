@@ -22,6 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "internal.h"
+
 #include "notify.h"
 #include "request.h"
 #include "debug.h"
@@ -111,7 +113,7 @@ purple_request_fields_exists(const PurpleRequestFields *fields, const char *id)
 	return (g_hash_table_lookup(fields->fields, id) != NULL);
 }
 
-const GList *
+GList *
 purple_request_fields_get_required(const PurpleRequestFields *fields)
 {
 	g_return_val_if_fail(fields != NULL, NULL);
@@ -148,7 +150,8 @@ purple_request_fields_all_required_filled(const PurpleRequestFields *fields)
 		switch (purple_request_field_get_type(field))
 		{
 			case PURPLE_REQUEST_FIELD_STRING:
-				if (purple_request_field_string_get_value(field) == NULL)
+				if (purple_request_field_string_get_value(field) == NULL ||
+				    *(purple_request_field_string_get_value(field)) == '\0')
 					return FALSE;
 
 				break;
@@ -872,9 +875,9 @@ purple_request_field_list_clear_selected(PurpleRequestField *field)
 }
 
 void
-purple_request_field_list_set_selected(PurpleRequestField *field, const GList *items)
+purple_request_field_list_set_selected(PurpleRequestField *field, GList *items)
 {
-	const GList *l;
+	GList *l;
 
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(items != NULL);
@@ -883,7 +886,7 @@ purple_request_field_list_set_selected(PurpleRequestField *field, const GList *i
 	purple_request_field_list_clear_selected(field);
 
 	if (!purple_request_field_list_get_multi_select(field) &&
-		g_list_length((GList*)items) > 1)
+		g_list_length(items) > 1)
 	{
 		purple_debug_warning("request",
 						   "More than one item added to non-multi-select "
@@ -913,7 +916,7 @@ purple_request_field_list_is_selected(const PurpleRequestField *field,
 										item, NULL, NULL);
 }
 
-const GList *
+GList *
 purple_request_field_list_get_selected(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
@@ -922,7 +925,7 @@ purple_request_field_list_get_selected(const PurpleRequestField *field)
 	return field->u.list.selected;
 }
 
-const GList *
+GList *
 purple_request_field_list_get_items(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);

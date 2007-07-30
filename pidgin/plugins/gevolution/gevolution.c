@@ -118,9 +118,9 @@ update_buddies_from_contact(EContact *contact)
 }
 
 static void
-contacts_changed_cb(EBookView *book_view, const GList *contacts)
+contacts_changed_cb(EBookView *book_view, GList *contacts)
 {
-	const GList *l;
+	GList *l;
 
 	if (purple_connections_get_all() == NULL)
 		return;
@@ -227,11 +227,13 @@ menu_item_send_mail_activate_cb(PurpleBlistNode *node, gpointer user_data)
 		if (app != NULL)
 		{
 			char *command_line = g_strdup_printf("%s mailto:%s", app, mail);
+			char *quoted = g_shell_quote(command_line);
 			g_free(app);
 			g_free(mail);
 
-			g_spawn_command_line_async(command_line, NULL);
+			g_spawn_command_line_async(quoted, NULL);
 			g_free(command_line);
+			g_free(quoted);
 		}
 		else
 		{

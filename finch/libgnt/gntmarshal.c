@@ -48,7 +48,7 @@
 #endif /* !G_ENABLE_DEBUG */
 
 
-/* BOOLEAN:VOID (./genmarshal:1) */
+/* BOOLEAN:VOID (/dev/stdin:1) */
 void
 gnt_closure_marshal_BOOLEAN__VOID (GClosure     *closure,
                                    GValue       *return_value,
@@ -85,7 +85,7 @@ gnt_closure_marshal_BOOLEAN__VOID (GClosure     *closure,
   g_value_set_boolean (return_value, v_return);
 }
 
-/* BOOLEAN:STRING (./genmarshal:2) */
+/* BOOLEAN:STRING (/dev/stdin:2) */
 void
 gnt_closure_marshal_BOOLEAN__STRING (GClosure     *closure,
                                      GValue       *return_value,
@@ -124,7 +124,7 @@ gnt_closure_marshal_BOOLEAN__STRING (GClosure     *closure,
   g_value_set_boolean (return_value, v_return);
 }
 
-/* VOID:INT,INT,INT,INT (./genmarshal:3) */
+/* VOID:INT,INT,INT,INT (/dev/stdin:3) */
 void
 gnt_closure_marshal_VOID__INT_INT_INT_INT (GClosure     *closure,
                                            GValue       *return_value,
@@ -165,7 +165,7 @@ gnt_closure_marshal_VOID__INT_INT_INT_INT (GClosure     *closure,
             data2);
 }
 
-/* VOID:INT,INT (./genmarshal:4) */
+/* VOID:INT,INT (/dev/stdin:4) */
 void
 gnt_closure_marshal_VOID__INT_INT (GClosure     *closure,
                                    GValue       *return_value,
@@ -202,7 +202,7 @@ gnt_closure_marshal_VOID__INT_INT (GClosure     *closure,
             data2);
 }
 
-/* VOID:POINTER,POINTER (./genmarshal:5) */
+/* VOID:POINTER,POINTER (/dev/stdin:5) */
 void
 gnt_closure_marshal_VOID__POINTER_POINTER (GClosure     *closure,
                                            GValue       *return_value,
@@ -239,7 +239,7 @@ gnt_closure_marshal_VOID__POINTER_POINTER (GClosure     *closure,
             data2);
 }
 
-/* BOOLEAN:INT,INT (./genmarshal:6) */
+/* BOOLEAN:INT,INT (/dev/stdin:6) */
 void
 gnt_closure_marshal_BOOLEAN__INT_INT (GClosure     *closure,
                                       GValue       *return_value,
@@ -280,7 +280,7 @@ gnt_closure_marshal_BOOLEAN__INT_INT (GClosure     *closure,
   g_value_set_boolean (return_value, v_return);
 }
 
-/* BOOLEAN:INT,INT,INT (./genmarshal:7) */
+/* BOOLEAN:INT,INT,INT (/dev/stdin:7) */
 void
 gnt_closure_marshal_BOOLEAN__INT_INT_INT (GClosure     *closure,
                                           GValue       *return_value,
@@ -323,7 +323,7 @@ gnt_closure_marshal_BOOLEAN__INT_INT_INT (GClosure     *closure,
   g_value_set_boolean (return_value, v_return);
 }
 
-/* BOOLEAN:POINTER,POINTER,POINTER (./genmarshal:8) */
+/* BOOLEAN:POINTER,POINTER,POINTER (/dev/stdin:8) */
 void
 gnt_closure_marshal_BOOLEAN__POINTER_POINTER_POINTER (GClosure     *closure,
                                                       GValue       *return_value,
@@ -366,7 +366,7 @@ gnt_closure_marshal_BOOLEAN__POINTER_POINTER_POINTER (GClosure     *closure,
   g_value_set_boolean (return_value, v_return);
 }
 
-/* BOOLEAN:INT,INT,INT,POINTER (./genmarshal:9) */
+/* BOOLEAN:INT,INT,INT,POINTER (/dev/stdin:9) */
 void
 gnt_closure_marshal_BOOLEAN__INT_INT_INT_POINTER (GClosure     *closure,
                                                   GValue       *return_value,
@@ -411,7 +411,7 @@ gnt_closure_marshal_BOOLEAN__INT_INT_INT_POINTER (GClosure     *closure,
   g_value_set_boolean (return_value, v_return);
 }
 
-/* VOID:STRING,STRING (./genmarshal:10) */
+/* VOID:STRING,STRING (/dev/stdin:10) */
 void
 gnt_closure_marshal_VOID__STRING_STRING (GClosure     *closure,
                                          GValue       *return_value,
@@ -448,7 +448,7 @@ gnt_closure_marshal_VOID__STRING_STRING (GClosure     *closure,
             data2);
 }
 
-/* VOID:POINTER,BOOLEAN (./genmarshal:11) */
+/* VOID:POINTER,BOOLEAN (/dev/stdin:11) */
 void
 gnt_closure_marshal_VOID__POINTER_BOOLEAN (GClosure     *closure,
                                            GValue       *return_value,

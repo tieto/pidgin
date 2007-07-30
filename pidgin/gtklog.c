@@ -172,7 +172,32 @@ static void destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
 
 #ifdef _WIN32
 	if (resp == GTK_RESPONSE_HELP) {
-		char *logdir = g_build_filename(purple_user_dir(), "logs", NULL);
+		GtkTreeSelection *sel;
+		GtkTreeIter iter;
+		GtkTreeModel *model;
+		PurpleLog *log = NULL;
+		char *logdir;
+
+		if (ht != NULL)
+			lv = g_hash_table_lookup(log_viewers, ht);
+		model = GTK_TREE_MODEL(lv->treestore);
+
+		sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(lv->treeview));
+		if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
+			GValue val;
+
+			val.g_type = 0;
+			gtk_tree_model_get_value (model, &iter, 1, &val);
+			log = g_value_get_pointer(&val);
+			g_value_unset(&val);
+		}
+
+
+		if (log == NULL)
+			logdir = g_build_filename(purple_user_dir(), "logs", NULL);
+		else
+			logdir = purple_log_get_log_dir(log->type, log->name, log->account);
+
 		winpidgin_shell_execute(logdir, "explore", NULL);
 		g_free(logdir);
 		return;
@@ -368,7 +393,7 @@ static gboolean log_popup_menu_cb(GtkWidget *treeview, PidginLogViewer *lv)
 	gpointer *data;
 
 	iter = g_new(GtkTreeIter, 1);
-	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(lv));
+	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(lv->treeview));
 	if (!gtk_tree_selection_get_selected(sel, NULL, iter))
 	{
 		return FALSE;

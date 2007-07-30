@@ -152,6 +152,26 @@ egg_tray_icon_get_property (GObject    *object,
     }
 }
 
+static Display *
+egg_tray_icon_get_x_display(EggTrayIcon *icon)
+{
+  Display *xdisplay = NULL;
+
+#if GTK_CHECK_VERSION(2,1,0)
+  {
+    GdkDisplay *display = gtk_widget_get_display (GTK_WIDGET (icon));
+    if (!GDK_IS_DISPLAY (display))
+      display = gdk_display_get_default ();
+
+    xdisplay = GDK_DISPLAY_XDISPLAY (display);
+  }
+#else
+  xdisplay = gdk_display;
+#endif
+
+  return xdisplay;
+}
+
 static void
 egg_tray_icon_get_orientation_property (EggTrayIcon *icon)
 {
@@ -168,11 +188,10 @@ egg_tray_icon_get_orientation_property (EggTrayIcon *icon)
 
   g_return_if_fail(icon->manager_window != None);
 
-#if GTK_CHECK_VERSION(2,1,0)
-  xdisplay = GDK_DISPLAY_XDISPLAY (gtk_widget_get_display (GTK_WIDGET (icon)));
-#else
-  xdisplay = gdk_display;
-#endif
+  xdisplay = egg_tray_icon_get_x_display(icon);
+
+  if (xdisplay == NULL)
+    return;
 
   gdk_error_trap_push ();
   type = None;
@@ -321,11 +340,10 @@ egg_tray_icon_update_manager_window (EggTrayIcon *icon,
   if (icon->manager_window != None)
     return;
 
-#if GTK_CHECK_VERSION(2,1,0)
-  xdisplay = GDK_DISPLAY_XDISPLAY (gtk_widget_get_display (GTK_WIDGET (icon)));
-#else
-  xdisplay = gdk_display;
-#endif
+  xdisplay = egg_tray_icon_get_x_display(icon);
+
+  if (xdisplay == NULL)
+    return;
 
   XGrabServer (xdisplay);
   
@@ -424,12 +442,15 @@ egg_tray_icon_realize (GtkWidget *widget)
 
   make_transparent (widget, NULL);
 
+  xdisplay = egg_tray_icon_get_x_display(icon);
+
+  if (xdisplay == NULL)
+    return;
+
 #if GTK_CHECK_VERSION(2,1,0)
   screen = gdk_screen_get_number (gtk_widget_get_screen (widget));
-  xdisplay = GDK_DISPLAY_XDISPLAY (gtk_widget_get_display (widget));
 #else
   screen = XScreenNumberOfScreen (DefaultScreenOfDisplay (gdk_display));
-  xdisplay = gdk_display;
 #endif
 
   /* Now see if there's a manager window around */
@@ -519,11 +540,10 @@ egg_tray_icon_send_message (EggTrayIcon *icon,
       XClientMessageEvent ev;
       Display *xdisplay;
 
-#if GTK_CHECK_VERSION(2,1,0)
-      xdisplay = GDK_DISPLAY_XDISPLAY (gtk_widget_get_display (GTK_WIDGET (icon)));
-#else
-      xdisplay = gdk_display;
-#endif
+      xdisplay = egg_tray_icon_get_x_display(icon);
+
+      if (xdisplay == NULL)
+        return 0;
 
       ev.type = ClientMessage;
       ev.window = (Window)gtk_plug_get_id (GTK_PLUG (icon));

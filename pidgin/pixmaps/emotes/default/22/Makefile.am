@@ -6,6 +6,7 @@ SMILEYS = 	act-up.png \
 		angel.png \
 		angry.png \
 		arrogant.png \
+		at-wits-end.png \
 		bad.png \
 		bashful.png \
 		beat-up.png \
@@ -56,6 +57,7 @@ SMILEYS = 	act-up.png \
 		embarrassed.png \
 		excruciating.png \
 		eyeroll.png \
+		female-fighter.png \
 		film.png \
 		fingers-crossed.png \
 		flag.png \
@@ -104,6 +106,7 @@ SMILEYS = 	act-up.png \
 		musical-note.png \
 		nailbiting.png \
 		neutral.png \
+		on-the-phone.png \
 		party.png \
 		peace.png \
 		phone.png \
@@ -154,6 +157,7 @@ SMILEYS = 	act-up.png \
 		sweat.png \
 		teeth.png \
 		terror.png \
+		time-out.png \
 		thinking.png \
 		thunder.png \
 		tongue.png \

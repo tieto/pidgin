@@ -281,6 +281,15 @@ const char *purple_prefs_get_path(const char *name);
  */
 GList *purple_prefs_get_path_list(const char *name);
 
+/*
+ * Returns a list of children for a pref
+ *
+ * @param name The parent pref
+ * @return A list of newly allocated strings denoting the names of the children.
+ *         Returns @c NULL if there are no children or if pref doesn't exist.
+ *         The caller must free all the strings and the list.
+ */
+GList *purple_prefs_get_children_names(const char *name);
 
 /**
  * Add a callback to a pref (and its children)

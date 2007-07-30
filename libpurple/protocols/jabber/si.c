@@ -20,9 +20,9 @@
  *
  */
 
-#include "blist.h"
-
 #include "internal.h"
+
+#include "blist.h"
 #include "cipher.h"
 #include "debug.h"
 #include "ft.h"

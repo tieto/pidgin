@@ -66,8 +66,8 @@ am__pidgin_SOURCES_DIST = eggtrayicon.c pidgincombobox.c pidginstock.c \
 	gtkmenutray.c gtknotify.c gtkplugin.c gtkpluginpref.c \
 	gtkpounce.c gtkprefs.c gtkprivacy.c gtkrequest.c gtkroomlist.c \
 	gtksavedstatuses.c gtkscrollbook.c gtksession.c gtksound.c \
-	gtksourceiter.c gtkstatusbox.c gtkthemes.c gtkutils.c \
-	gtkwhiteboard.c
+	gtksourceiter.c gtksourceundomanager.c gtksourceview-marshal.c \
+	gtkstatusbox.c gtkthemes.c gtkutils.c gtkwhiteboard.c
 @ENABLE_GTK_TRUE@am_pidgin_OBJECTS = eggtrayicon.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	pidgincombobox.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	pidginstock.$(OBJEXT) gtkaccount.$(OBJEXT) \
@@ -92,6 +92,8 @@ am__pidgin_SOURCES_DIST = eggtrayicon.c pidgincombobox.c pidginstock.c \
 @ENABLE_GTK_TRUE@	gtksavedstatuses.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	gtkscrollbook.$(OBJEXT) gtksession.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	gtksound.$(OBJEXT) gtksourceiter.$(OBJEXT) \
+@ENABLE_GTK_TRUE@	gtksourceundomanager.$(OBJEXT) \
+@ENABLE_GTK_TRUE@	gtksourceview-marshal.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	gtkstatusbox.$(OBJEXT) gtkthemes.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	gtkutils.$(OBJEXT) gtkwhiteboard.$(OBJEXT)
 pidgin_OBJECTS = $(am_pidgin_OBJECTS)
@@ -133,8 +135,9 @@ am__pidgininclude_HEADERS_DIST = eggtrayicon.h gtkaccount.h gtkblist.h \
 	gtknotify.h gtkplugin.h gtkpluginpref.h gtkprefs.h \
 	gtkprivacy.h gtkpounce.h gtkrequest.h gtkroomlist.h \
 	gtksavedstatuses.h gtkscrollbook.h gtksession.h gtksound.h \
-	gtksourceiter.h gtkstatusbox.h pidginstock.h gtkthemes.h \
-	gtkutils.h gtkwhiteboard.h pidgin.h
+	gtksourceiter.h gtksourceundomanager.h gtksourceview-marshal.h \
+	gtkstatusbox.h pidginstock.h gtkthemes.h gtkutils.h \
+	gtkwhiteboard.h pidgin.h
 pidginincludeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(pidgininclude_HEADERS)
 ETAGS = etags
@@ -249,6 +252,7 @@ GNT_MINOR_VERSION = @GNT_MINOR_VERSION@
 GNT_VERSION = @GNT_VERSION@
 GNUTLS_CFLAGS = @GNUTLS_CFLAGS@
 GNUTLS_LIBS = @GNUTLS_LIBS@
+GREP = @GREP@
 GSTREAMER_CFLAGS = @GSTREAMER_CFLAGS@
 GSTREAMER_LIBS = @GSTREAMER_LIBS@
 GTKSPELL_CFLAGS = @GTKSPELL_CFLAGS@
@@ -315,6 +319,7 @@ MKINSTALLDIRS = @MKINSTALLDIRS@
 MONO_CFLAGS = @MONO_CFLAGS@
 MONO_LIBS = @MONO_LIBS@
 MSGFMT = @MSGFMT@
+MSGFMT_OPTS = @MSGFMT_OPTS@
 NSS_CFLAGS = @NSS_CFLAGS@
 NSS_LIBS = @NSS_LIBS@
 OBJEXT = @OBJEXT@
@@ -344,7 +349,6 @@ PURPLE_VERSION = @PURPLE_VERSION@
 PYTHON = @PYTHON@
 RANLIB = @RANLIB@
 SASL_LIBS = @SASL_LIBS@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SILC_CFLAGS = @SILC_CFLAGS@
@@ -409,6 +413,7 @@ VERSION = @VERSION@
 X11_CFLAGS = @X11_CFLAGS@
 X11_LIBS = @X11_LIBS@
 XGETTEXT = @XGETTEXT@
+XMKMF = @XMKMF@
 XSS_LIBS = @XSS_LIBS@
 X_CFLAGS = @X_CFLAGS@
 X_EXTRA_LIBS = @X_EXTRA_LIBS@
@@ -417,13 +422,9 @@ X_PRE_LIBS = @X_PRE_LIBS@
 ZEPHYR_CFLAGS = @ZEPHYR_CFLAGS@
 ZEPHYR_LDFLAGS = @ZEPHYR_LDFLAGS@
 ZEPHYR_LIBS = @ZEPHYR_LIBS@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_F77 = @ac_ct_F77@
-ac_ct_RANLIB = @ac_ct_RANLIB@
-ac_ct_STRIP = @ac_ct_STRIP@
-ac_pt_PKG_CONFIG = @ac_pt_PKG_CONFIG@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
 am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
@@ -440,6 +441,9 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 datadir = @datadir@
+datarootdir = @datarootdir@
+docdir = @docdir@
+dvidir = @dvidir@
 enable_dbus = @enable_dbus@
 enable_dot = @enable_dot@
 enable_doxygen = @enable_doxygen@
@@ -449,21 +453,25 @@ host_alias = @host_alias@
 host_cpu = @host_cpu@
 host_os = @host_os@
 host_vendor = @host_vendor@
+htmldir = @htmldir@
 includedir = @includedir@
 infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
 pango_CFLAGS = @pango_CFLAGS@
 pango_LIBS = @pango_LIBS@
+pdfdir = @pdfdir@
 perlpath = @perlpath@
 pidginpath = @pidginpath@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
+psdir = @psdir@
 sbindir = @sbindir@
 sedpath = @sedpath@
 sharedstatedir = @sharedstatedir@
@@ -578,6 +586,8 @@ EXTRA_DIST = \
 @ENABLE_GTK_TRUE@	gtksession.c \
 @ENABLE_GTK_TRUE@	gtksound.c \
 @ENABLE_GTK_TRUE@	gtksourceiter.c \
+@ENABLE_GTK_TRUE@	gtksourceundomanager.c \
+@ENABLE_GTK_TRUE@	gtksourceview-marshal.c \
 @ENABLE_GTK_TRUE@	gtkstatusbox.c \
 @ENABLE_GTK_TRUE@	gtkthemes.c \
 @ENABLE_GTK_TRUE@	gtkutils.c \
@@ -625,6 +635,8 @@ EXTRA_DIST = \
 @ENABLE_GTK_TRUE@	gtksession.h \
 @ENABLE_GTK_TRUE@	gtksound.h \
 @ENABLE_GTK_TRUE@	gtksourceiter.h \
+@ENABLE_GTK_TRUE@	gtksourceundomanager.h \
+@ENABLE_GTK_TRUE@	gtksourceview-marshal.h \
 @ENABLE_GTK_TRUE@	gtkstatusbox.h \
 @ENABLE_GTK_TRUE@	pidginstock.h \
 @ENABLE_GTK_TRUE@	gtkthemes.h \
@@ -784,6 +796,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtksession.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtksound.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtksourceiter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtksourceundomanager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtksourceview-marshal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtkstatusbox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtkthemes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gtkutils.Po@am__quote@

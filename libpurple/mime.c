@@ -29,6 +29,8 @@
 #include <glib/glist.h>
 #include <glib/gstring.h>
 
+#include "internal.h"
+
 /* this should become "util.h" if we ever get this into purple proper */
 #include "debug.h"
 #include "mime.h"
@@ -277,7 +279,7 @@ purple_mime_part_new(PurpleMimeDocument *doc)
 }
 
 
-const GList *
+GList *
 purple_mime_part_get_fields(PurpleMimePart *part)
 {
 	g_return_val_if_fail(part != NULL, NULL);
@@ -513,7 +515,7 @@ purple_mime_document_write(PurpleMimeDocument *doc, GString *str)
 }
 
 
-const GList *
+GList *
 purple_mime_document_get_fields(PurpleMimeDocument *doc)
 {
 	g_return_val_if_fail(doc != NULL, NULL);
@@ -537,7 +539,7 @@ purple_mime_document_set_field(PurpleMimeDocument *doc, const char *field, const
 }
 
 
-const GList *
+GList *
 purple_mime_document_get_parts(PurpleMimeDocument *doc)
 {
 	g_return_val_if_fail(doc != NULL, NULL);

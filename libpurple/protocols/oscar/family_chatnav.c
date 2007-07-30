@@ -427,7 +427,7 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	if (snac2->type == 0x0002) /* request chat rights */
 		ret = parseinfo_perms(od, conn, mod, frame, snac, bs, snac2);
 	else if (snac2->type == 0x0003) /* request exchange info */
-		purple_debug_misc("oscar", "chatnav_parse_info: resposne to exchange info\n");
+		purple_debug_misc("oscar", "chatnav_parse_info: response to exchange info\n");
 	else if (snac2->type == 0x0004) /* request room info */
 		purple_debug_misc("oscar", "chatnav_parse_info: response to room info\n");
 	else if (snac2->type == 0x0005) /* request more room info */

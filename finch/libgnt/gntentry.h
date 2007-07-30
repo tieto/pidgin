@@ -1,3 +1,29 @@
+/**
+ * @file gntentry.h Entry API
+ * @ingroup gnt
+ */
+/*
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #ifndef GNT_ENTRY_H
 #define GNT_ENTRY_H
 
@@ -73,32 +99,97 @@ struct _GntEntryClass
 
 G_BEGIN_DECLS
 
+/**
+ * 
+ *
+ * @return
+ */
 GType gnt_entry_get_gtype(void);
 
-GntWidget *gnt_entry_new(const char *text);
+/**
+ * 
+ * @param text
+ *
+ * @return
+ */
+GntWidget * gnt_entry_new(const char *text);
 
+/**
+ * 
+ * @param entry
+ * @param max
+ */
 void gnt_entry_set_max(GntEntry *entry, int max);
 
+/**
+ * 
+ * @param entry
+ * @param text
+ */
 void gnt_entry_set_text(GntEntry *entry, const char *text);
 
+/**
+ * 
+ * @param entry
+ * @param flag
+ */
 void gnt_entry_set_flag(GntEntry *entry, GntEntryFlag flag);
 
 const char *gnt_entry_get_text(GntEntry *entry);
 
+/**
+ * 
+ * @param entry
+ */
 void gnt_entry_clear(GntEntry *entry);
 
+/**
+ * 
+ * @param entry
+ * @param set
+ */
 void gnt_entry_set_masked(GntEntry *entry, gboolean set);
 
+/**
+ * 
+ * @param entry
+ * @param text
+ */
 void gnt_entry_add_to_history(GntEntry *entry, const char *text);
 
+/**
+ * 
+ * @param entry
+ * @param num
+ */
 void gnt_entry_set_history_length(GntEntry *entry, int num);
 
+/**
+ * 
+ * @param entry
+ * @param word
+ */
 void gnt_entry_set_word_suggest(GntEntry *entry, gboolean word);
 
+/**
+ * 
+ * @param entry
+ * @param always
+ */
 void gnt_entry_set_always_suggest(GntEntry *entry, gboolean always);
 
+/**
+ * 
+ * @param entry
+ * @param text
+ */
 void gnt_entry_add_suggest(GntEntry *entry, const char *text);
 
+/**
+ * 
+ * @param entry
+ * @param text
+ */
 void gnt_entry_remove_suggest(GntEntry *entry, const char *text);
 
 G_END_DECLS

@@ -111,7 +111,7 @@ silcpurple_ftp_monitor(SilcClient client,
 		} else if (error == SILC_CLIENT_FILE_TIMEOUT) {
 			purple_notify_error(gc, _("Secure File Transfer"),
 					  _("Error during file transfer"),
-					  _("Connection timedout"));
+					  _("Connection timed out"));
 		} else if (error == SILC_CLIENT_FILE_CONNECT_FAILED) {
 			purple_notify_error(gc, _("Secure File Transfer"),
 					  _("Error during file transfer"),

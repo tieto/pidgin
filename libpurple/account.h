@@ -369,7 +369,7 @@ void purple_account_set_status_types(PurpleAccount *account, GList *status_types
  *                  as a NULL-terminated list of id/value pairs.
  */
 void purple_account_set_status(PurpleAccount *account, const char *status_id,
-							 gboolean active, ...);
+							 gboolean active, ...) G_GNUC_NULL_TERMINATED;
 
 
 /**
@@ -672,9 +672,9 @@ gboolean purple_account_is_status_active(const PurpleAccount *account,
  *
  * @param account The account.
  *
- * @return The account's status types.
+ * @constreturn The account's status types.
  */
-const GList *purple_account_get_status_types(const PurpleAccount *account);
+GList *purple_account_get_status_types(const PurpleAccount *account);
 
 /**
  * Returns a protocol-specific integer setting for an account.
@@ -884,7 +884,7 @@ void purple_accounts_reorder(PurpleAccount *account, gint new_index);
 /**
  * Returns a list of all accounts.
  *
- * @return A list of all accounts.
+ * @constreturn A list of all accounts.
  */
 GList *purple_accounts_get_all(void);
 

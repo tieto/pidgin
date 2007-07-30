@@ -581,9 +581,14 @@ pidgin_request_action(const char *title, const char *primary,
 	/* Create the dialog. */
 	data->dialog = dialog = gtk_dialog_new();
 
+#if GTK_CHECK_VERSION(2,10,0)
+	gtk_window_set_deletable(GTK_WINDOW(data->dialog), FALSE);
+#endif
+
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
 #ifdef _WIN32
+	else
 		gtk_window_set_title(GTK_WINDOW(dialog), PIDGIN_ALERT_TITLE);
 #endif
 
@@ -706,7 +711,7 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 					}
 				}
 			}
-			pidgin_setup_screenname_autocomplete(entry, optmenu, !strcmp(type_hint, "screenname-all"));
+			pidgin_setup_screenname_autocomplete_with_filter(entry, optmenu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(!strcmp(type_hint, "screenname-all")));
 		}
 	}
 }
@@ -974,7 +979,7 @@ create_list_field(PurpleRequestField *field)
 	GtkTreeSelection *sel;
 	GtkTreeViewColumn *column;
 	GtkTreeIter iter;
-	const GList *l;
+	GList *l;
 
 	/* Create the scrolled window */
 	sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1070,16 +1075,12 @@ pidgin_request_fields(const char *title, const char *primary,
 	data->cbs[0] = ok_cb;
 	data->cbs[1] = cancel_cb;
 
-	data->dialog = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-	if (title != NULL)
-		gtk_window_set_title(GTK_WINDOW(win), title);
+	
 #ifdef _WIN32
-		gtk_window_set_title(GTK_WINDOW(win), PIDGIN_ALERT_TITLE);
-#endif
-
-	gtk_window_set_role(GTK_WINDOW(win), "multifield");
-	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
+	data->dialog = win = pidgin_create_window(PIDGIN_ALERT_TITLE, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
+#else /* !_WIN32 */
+	data->dialog = win = pidgin_create_window(title, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
+#endif /* _WIN32 */
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(destroy_multifield_cb), data);

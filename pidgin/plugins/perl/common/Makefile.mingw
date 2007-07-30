@@ -18,6 +18,7 @@ CFLAGS += -Wno-comment -Wno-unused
 INCLUDE_PATHS =		-I. \
 			-I$(PIDGIN_TREE_TOP) \
 			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
 			-I$(PIDGIN_TOP) \
 			-I$(PIDGIN_TOP)/win32 \
 			-I$(GTK_TOP)/include \

@@ -112,6 +112,10 @@ purple_group_on_account(group, account)
 	Purple::BuddyList::Group  group
 	Purple::Account account
 
+const char *
+purple_group_get_name(group)
+	Purple::BuddyList::Group group
+
 MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList  PREFIX = purple_blist_
 PROTOTYPES: ENABLE
 
@@ -248,6 +252,9 @@ purple_blist_get_ui_ops()
 Purple::Handle
 purple_blist_get_handle()
 
+Purple::BuddyList::Node
+purple_blist_get_root()
+
 void
 purple_blist_init()
 
@@ -263,7 +270,7 @@ purple_blist_node_get_extended_menu(node)
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = purple_blist_node_get_extended_menu(node); l != NULL; l = l->next) {
+	for (l = purple_blist_node_get_extended_menu(node); l != NULL; l = g_list_delete_link(l, l)) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Menu::Action")));
 	}
 
@@ -307,6 +314,15 @@ purple_blist_node_set_flags(node, flags)
 Purple::BuddyList::NodeFlags
 purple_blist_node_get_flags(node)
 	Purple::BuddyList::Node node
+
+Purple::BuddyList::NodeType
+purple_blist_node_get_type(node)
+	Purple::BuddyList::Node node
+
+Purple::BuddyList::Node
+purple_blist_node_next(node, offline)
+	Purple::BuddyList::Node node
+	gboolean offline
 
 MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Chat  PREFIX = purple_chat_
 PROTOTYPES: ENABLE

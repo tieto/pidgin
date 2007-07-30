@@ -62,6 +62,7 @@ BOOT:
 		const_iv(RAW),
 		const_iv(IMAGES),
 		const_iv(NOTIFY),
+		const_iv(NO_LINKIFY),
 	};
 	static const constiv cbflags_const_iv[] = {
 #undef const_iv
@@ -217,6 +218,21 @@ void
 purple_conversation_set_account(conv, account);
 	Purple::Conversation conv
 	Purple::Account account
+
+void
+purple_conversation_write(conv, who, message, flags, mtime)
+	Purple::Conversation conv
+	const char *who
+	const char *message
+	Purple::MessageFlags flags
+	time_t mtime
+
+gboolean
+purple_conversation_do_command(conv, cmdline, markup, error)
+	Purple::Conversation conv
+	const char *cmdline
+	const char *markup
+	char **error
 
 MODULE = Purple::Conversation  PACKAGE = Purple::Conversation::IM  PREFIX = purple_conv_im_
 PROTOTYPES: ENABLE

@@ -478,61 +478,53 @@ initialize_default_account_values()
 	}
 
 #else
-	FARPROC myNetUserGetInfo = wpurple_find_and_loadproc("Netapi32.dll",
-		"NetUserGetInfo");
+	wchar_t username[UNLEN + 1];
+	DWORD dwLenUsername = UNLEN + 1;
 
-	if (myNetUserGetInfo) {
-		LPUSER_INFO_10 user_info = NULL;
-		LPSERVER_INFO_100 server_info = NULL;
-		wchar_t *servername = NULL;
-		wchar_t username[UNLEN + 1];
-		DWORD dwLenUsername = UNLEN + 1;
-		FARPROC myNetServerEnum = wpurple_find_and_loadproc(
-			"Netapi32.dll", "NetServerEnum");
-		FARPROC myNetApiBufferFree = wpurple_find_and_loadproc(
-			"Netapi32.dll", "NetApiBufferFree");
+	if (!GetUserNameW((LPWSTR) &username, &dwLenUsername))
+		purple_debug_warning("bonjour", "Unable to look up username\n");
 
-		if (myNetServerEnum && myNetApiBufferFree) {
-			DWORD dwEntriesRead = 0;
-			DWORD dwTotalEntries = 0;
-			DWORD dwResumeHandle = 0;
+	if (username != NULL && *username != '\0') {
+		LPBYTE servername = NULL;
+		LPBYTE info = NULL;
 
-			NET_API_STATUS nStatus = (myNetServerEnum)(NULL, 100,
-				&server_info, MAX_PREFERRED_LENGTH,
-				&dwEntriesRead, &dwTotalEntries,
-				SV_TYPE_DOMAIN_CTRL, NULL, &dwResumeHandle);
+		NetGetDCName(NULL, NULL, &servername);
 
-			if ((nStatus == NERR_Success
-					|| nStatus == ERROR_MORE_DATA)
-					&& dwEntriesRead > 0) {
-				servername = server_info->sv100_name;
-			} else {
-				purple_debug_warning("bonjour", "Unable to look up domain controller. NET_API_STATUS = %d, Entries Read = %d, Total Entries = %d\n", nStatus, dwEntriesRead, dwTotalEntries);
-			}
+		purple_debug_info("bonjour", "Looking up the full name from the %s.\n", (servername ? "domain controller" : "local machine"));
+
+		if (NetUserGetInfo((LPCWSTR) servername, username, 10, &info) == NERR_Success
+				&& info != NULL && ((LPUSER_INFO_10) info)->usri10_full_name != NULL
+				&& *(((LPUSER_INFO_10) info)->usri10_full_name) != '\0') {
+			fullname = g_utf16_to_utf8(
+				((LPUSER_INFO_10) info)->usri10_full_name,
+				-1, NULL, NULL, NULL);
 		}
+		/* Fall back to the local machine if we didn't get the full name from the domain controller */
+		else if (servername != NULL) {
+			purple_debug_info("bonjour", "Looking up the full name from the local machine");
 
-		if (!GetUserNameW((LPWSTR) &username, &dwLenUsername)) {
-			purple_debug_warning("bonjour",
-				"Unable to look up username\n");
-		}
+			if (info != NULL) NetApiBufferFree(info);
+			info = NULL;
 
-		if (username != NULL && *username != '\0'
-				&& (myNetUserGetInfo)(servername, username, 10,
-					&user_info) == NERR_Success) {
-			if (user_info != NULL) {
+			if (NetUserGetInfo(NULL, username, 10, &info) == NERR_Success
+					&& info != NULL && ((LPUSER_INFO_10) info)->usri10_full_name != NULL
+					&& *(((LPUSER_INFO_10) info)->usri10_full_name) != '\0') {
 				fullname = g_utf16_to_utf8(
-					user_info->usri10_full_name,
+					((LPUSER_INFO_10) info)->usri10_full_name,
 					-1, NULL, NULL, NULL);
 			}
 		}
-		if (user_info != NULL)
-			(myNetApiBufferFree)(user_info);
-		if (server_info != NULL)
-			(myNetApiBufferFree)(server_info);
+
+		if (info != NULL) NetApiBufferFree(info);
+		if (servername != NULL) NetApiBufferFree(servername);
 	}
 
-	if (!fullname)
-		fullname = g_strdup(_("Purple Person"));
+	if (!fullname) {
+		if (username != NULL && *username != '\0')
+			fullname = g_utf16_to_utf8(username, -1, NULL, NULL, NULL);
+		else
+			fullname = g_strdup(_("Purple Person"));
+	}
 #endif
 
 	/* Split the real name into a first and last name */

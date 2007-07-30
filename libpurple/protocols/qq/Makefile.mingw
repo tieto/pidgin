@@ -54,7 +54,6 @@ C_SRC = \
 	group_im.c \
 	group_info.c \
 	group_join.c \
-	group_misc.c \
 	group_network.c \
 	group_opt.c \
 	group_search.c \

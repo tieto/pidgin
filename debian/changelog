@@ -1,3 +1,11 @@
+pidgin (2.1.0-1) unstable; urgency=low
+
+  * New upstream version
+    - Fixes a spelling mistake in MSN (Closes: #427170)
+    - Fixes a tray icon scaling problem on vertical panels (Closes: #433909)
+
+ -- Ari Pollak <ari@debian.org>  Mon, 30 Jul 2007 17:57:20 -0400
+
 pidgin (2.0.2-2) unstable; urgency=low
 
   * Make package binNMU-safe (Closes: #430101)

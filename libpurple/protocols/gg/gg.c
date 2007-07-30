@@ -823,7 +823,7 @@ static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestField
 {
 	GGPInfo *info = gc->proto_data;
 	PurpleRequestField *field;
-	const GList *sel;
+	GList *sel;
 
 	field = purple_request_fields_get_field(fields, "name");
 	sel = purple_request_field_list_get_selected(field);
@@ -1074,9 +1074,7 @@ static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 		}
 	}
 
-	val = ggp_buddy_get_name(gc, ggp_str_to_uin(who));
-	purple_notify_userinfo(gc, val, user_info, ggp_sr_close_cb, form);
-	g_free(val);
+	purple_notify_userinfo(gc, who, user_info, ggp_sr_close_cb, form);
 	g_free(who);
 	purple_notify_user_info_destroy(user_info);
 }

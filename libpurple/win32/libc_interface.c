@@ -413,8 +413,8 @@ int wpurple_rename (const char *oldname, const char *newname) {
 		/* newname exists */
 		if(g_stat(newname, &newstat) == 0) {
 			/* oldname is a dir */
-			if(_S_ISDIR(oldstat.st_mode)) {
-				if(!_S_ISDIR(newstat.st_mode)) {
+			if(S_ISDIR(oldstat.st_mode)) {
+				if(!S_ISDIR(newstat.st_mode)) {
 					return g_rename(oldname, newname);
 				}
 				/* newname is a dir */
@@ -430,7 +430,7 @@ int wpurple_rename (const char *oldname, const char *newname) {
 			/* oldname is not a dir */
 			else {
 				/* newname is a dir */
-				if(_S_ISDIR(newstat.st_mode)) {
+				if(S_ISDIR(newstat.st_mode)) {
 					errno = EISDIR;
 					return -1;
 				}

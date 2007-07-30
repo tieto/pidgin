@@ -34,8 +34,6 @@ QQSOURCES = \
 	group_info.h \
 	group_join.c \
 	group_join.h \
-	group_misc.c \
-	group_misc.h \
 	group_network.c \
 	group_network.h \
 	group_opt.c \

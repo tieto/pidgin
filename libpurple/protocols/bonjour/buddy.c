@@ -17,6 +17,7 @@
 #include <glib.h>
 #include <stdlib.h>
 
+#include "internal.h"
 #include "buddy.h"
 #include "account.h"
 #include "blist.h"

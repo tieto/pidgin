@@ -214,6 +214,7 @@ static gboolean
 perl_timeout_cb(gpointer data)
 {
 	PurplePerlTimeoutHandler *handler = (PurplePerlTimeoutHandler *)data;
+	gboolean ret = FALSE;
 
 	dSP;
 	ENTER;
@@ -224,16 +225,16 @@ perl_timeout_cb(gpointer data)
 	call_sv(handler->callback, G_EVAL | G_SCALAR);
 	SPAGAIN;
 
+	ret = POPi;
+
 	PUTBACK;
 	FREETMPS;
 	LEAVE;
 
-	/* We're returning FALSE, so no need to manually remove the source */
-	handler->iotag = 0;
+	if (ret == FALSE)
+		destroy_timeout_handler(handler);
 
-	destroy_timeout_handler(handler);
-
-	return FALSE;
+	return ret;
 }
 
 typedef void *DATATYPE;

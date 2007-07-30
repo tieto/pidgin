@@ -25,6 +25,7 @@ finch_SOURCES = \
 	gntpounce.c \
 	gntprefs.c \
 	gntrequest.c \
+	gntsound.c \
 	gntstatus.c \
 	gntui.c
 
@@ -42,6 +43,7 @@ finch_headers = \
 	gntpounce.h \
 	gntprefs.h \
 	gntrequest.h \
+	gntsound.h \
 	gntstatus.h \
 	gntui.h
 

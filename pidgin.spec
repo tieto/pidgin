@@ -9,9 +9,9 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.0.2"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.1.0"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.0.2
+%define pidginver 2.1.0
 %endif
 
 Summary:    A GTK+ based multiprotocol instant messaging client
@@ -21,7 +21,7 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.0.2.tar.bz2
+Source:     %{name}-2.1.0.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
@@ -207,7 +207,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.0.2
+%setup -q -n %{name}-2.1.0
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -225,8 +225,6 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_with_perlmakehack:--with-perl-lib=%{buildroot}%{_prefix}} \
                                     %{!?_with_perlmakehack:--with-perl-lib=%{_prefix}} \
                                     %{?_with_sasl:--enable-cyrus-sasl} \
-                                    %{!?_without_silc:--with-silc-includes=%{_includedir}/silc} \
-                                    %{!?_without_silc:--with-silc-libs=%{_libdir}/silc} \
                                     %{?_without_tcl:--disable-tcl} \
                                     %{?_without_text:--disable-consoleui}
 
@@ -458,6 +456,11 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 %changelog
+* Thu Jul 12 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Don't hardcode silc header locations, rely on pkg-config for those,
+  because I think I broke non-pkg-config detection of older silc
+  toolkit.
+
 * Tue Jun 5 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Add missing Requires for gtk2-devel, dbus-devel & ncurses-devel to
   appropriate -devel subpackages

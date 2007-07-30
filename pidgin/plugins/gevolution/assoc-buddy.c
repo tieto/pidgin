@@ -329,9 +329,7 @@ gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 
 	dialog->buddy = buddy;
 
-	dialog->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(dialog->win), "assoc_buddy");
-	gtk_container_set_border_width(GTK_CONTAINER(dialog->win), 12);
+	dialog->win = pidgin_create_window(NULL, PIDGIN_HIG_BORDER, "assoc_buddy", TRUE);
 
 	g_signal_connect(G_OBJECT(dialog->win), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);

@@ -113,7 +113,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 	const char *listopts[] = { "-all", "-online", NULL };
 	enum { CMD_ACCOUNTLIST_ALL, CMD_ACCOUNTLIST_ONLINE } listopt;
 	const char *alias;
-	const GList *cur;
+	GList *cur;
 	PurpleAccount *account;
 	PurpleStatus *status;
 	PurpleStatusType *status_type;
@@ -1082,7 +1082,7 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	Tcl_Obj *list, *elem;
 	PurplePresence *presence;
-	const GList *cur;
+	GList *cur;
 	int error, idle, idle_time, login_time;
 
 	if (objc < 2) {
@@ -1524,7 +1524,7 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	PurpleStatusType *status_type;
 	Tcl_Obj *list, *elem;
-	const GList *cur;
+	GList *cur;
 	int error;
 
 	if (objc < 2) {

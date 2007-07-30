@@ -93,8 +93,9 @@
 #include <langinfo.h>
 #endif
 
+#include <gmodule.h>
+
 #ifdef PURPLE_PLUGINS
-# include <gmodule.h>
 # ifndef _WIN32
 #  include <dlfcn.h>
 # endif
@@ -111,15 +112,22 @@
 # include <unistd.h>
 #endif
 
-#ifndef MAXPATHLEN
-# define MAXPATHLEN 1024
+/* MAXPATHLEN should only be used with readlink() on glib < 2.4.0.  For
+ * anything else, use g_file_read_link() or other dynamic functions.  This is
+ * important because Hurd has no hard limits on path length. */
+#if !GLIB_CHECK_VERSION(2,4,0)
+# ifndef MAXPATHLEN
+#  ifdef PATH_MAX
+#   define MAXPATHLEN PATH_MAX
+#  else
+#   define MAXPATHLEN 1024
+#  endif
+# endif
 #endif
 
 #ifndef HOST_NAME_MAX
 # define HOST_NAME_MAX 255
 #endif
-
-#define PATHSIZE 1024
 
 #include <glib.h>
 #if !GLIB_CHECK_VERSION(2,4,0)
@@ -173,6 +181,14 @@
 #		define G_GSIZE_FORMAT "lu"
 #	else
 #		define G_GSIZE_FORMAT "u"
+#	endif
+#endif
+
+#ifndef G_GNUC_NULL_TERMINATED
+#	if     __GNUC__ >= 4
+#		define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
+#	else
+#		define G_GNUC_NULL_TERMINATED
 #	endif
 #endif
 

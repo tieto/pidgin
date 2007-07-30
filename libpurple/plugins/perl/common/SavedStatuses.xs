@@ -130,7 +130,7 @@ PROTOTYPES: ENABLE
 void
 purple_savedstatuses_get_all()
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_savedstatuses_get_all(); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::SavedStatus")));
@@ -140,7 +140,7 @@ void
 purple_savedstatuses_get_popular(how_many)
 	unsigned int how_many
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_savedstatuses_get_popular(how_many); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::SavedStatus")));

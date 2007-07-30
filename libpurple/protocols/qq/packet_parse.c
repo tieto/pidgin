@@ -65,6 +65,19 @@ gint read_packet_dw(guint8 *buf, guint8 **cursor, gint buflen, guint32 *dw)
 	}
 }
 
+/* read four bytes as "time_t" from buf,
+ * return the number of bytes read if succeeds, otherwise return -1
+ * This function is a wrapper around read_packet_dw() to avoid casting. */
+gint read_packet_time(guint8 *buf, guint8 **cursor, gint buflen, time_t *t)
+{
+	guint32 time;
+	gint ret = read_packet_dw(buf, cursor, buflen, &time);
+	if (ret != -1 ) {
+		*t = time;
+	}
+	return ret;
+}
+
 /* read datalen bytes from buf, 
  * return the number of bytes read if succeeds, otherwise return -1 */
 gint read_packet_data(guint8 *buf, guint8 **cursor, gint buflen, guint8 *data, gint datalen) {

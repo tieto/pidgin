@@ -90,7 +90,7 @@ girl.png            (X)     (x)
 good.png            (Y)     (y)
 bad.png             (N)     (n)
 vampire.png         :[      :-[
-goat.png            (nah)
+goat.png           (nah)
 sun.png             (#)
 rainbow.png         (R)     (r)
 quiet.png           :-#
@@ -122,110 +122,109 @@ thunder.png         (li)
 party.png           <:o)
 eyeroll.png         8-)
 yawn.png            |-) 
+goat.png            (nah)
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)
-
-### Hidden MSN emotes
 sigarette.png      	(ci)    (CI)
 handcuffs.png       (%)
-console.png			(xx)    (XX)
+console.png	     		(xx)    (XX)
 fingers-crossed.png	(yn)    (YN)
 
 ### Following QQ 2006
 [QQ]
-shock.png           /惊讶   /:O      /jy       /surprised
-curl-lip.png        /撇嘴   /:~      /pz       /curl_lip
-desire.png          /色     /:*      /se       /desire
-dazed.png           /发呆   /:|      /dazed
-party.png           /得意   /8-)     /dy       /revel
-crying.png          /流泪   /:<      /ll       /cry
-bashful.png         /害羞   /:$      /hx       /bashful
-shut-mouth.png      /闭嘴   /:X      /bz       /shut_mouth
-sleepy.png          /睡     /:Z      /shui     /sleep
-weep.png            /大哭   /:'(     /dk       /weep
-embarrassed.png     /尴尬   /:-|     /gg       /embarassed
-pissed-off.png      /发怒   /:@      /fn       /pissed_off
-act-up.png          /调皮   /:P      /tp       /act_up
-smile-big.png       /呲牙   /:D      /cy       /toothy_smile
-smile.png           /微笑   /:)      /wx       /small_smile
-sad.png             /难过   /:(      /ng       /sad
-glasses-cool.png    /酷     /:+      /kuk      /cool
-doctor.png          /非典   /:#      /feid     /SARS
-silly.png           /抓狂   /:Q      /zk       /crazy
-sick.png            /吐     /:T      /tu       /vomit
-snicker.png         /偷笑   /;p      /tx       /titter
-cute.png            /可爱   /;-D     /ka       /cute
-disdain.png         /白眼   /;d      /by       /disdain
-arrogant.png        /傲慢   /;o      /am       /arrogant
-starving.png        /饥饿   /:g      /jie      /starving
-yawn.png            /困     /|-)     /kun      /sleepy
-terror.png          /惊恐   /:!      /jk       /terror
-sweat.png           /流汗   /:L      /sweat
-smirk.png           /憨笑   /:>      /hanx     /smirk
-soldier.png         /大兵   /:;      /db       /soldier
-struggle.png        /奋斗   /;f      /fendou   /struggle
-curse.png           /咒骂   /:-S     /zhm      /curse
-question.png        /疑问   /?       /yiw      /question
-quiet.png           /嘘...  /;x      /xu       /shh
-hypnotized.png      /晕     /;@      /yun      /dizzy
-excruciating.png    /折磨   /:8      /zhem     /excrutiating
-freaked-out.png     /衰     /;!      /shuai    /freaked_out
-skeleton.png        /骷髅   /!!!     /kl       /skeleton
-hammer.png          /敲打   /xx      /qiao     /hammer
-bye.png             /再见   /bye     /zj       /bye
-go-away.png         /闪人   /go      /shan     /go
-tremble.png         /发抖   /shake   /fad      /shake
-in-love.png         /爱情   /love    /aiq      /love
-jump.png            /跳     /jump    /tiao     /jump
-search.png          /找     /find    /zhao     /search
-lashes.png          /美眉   /&       /mm       /beautiful_eyebrows
-pig.png             /猪头   /pig     /zt       /pig
-cat.png             /猫咪   /cat     /mm       /cat
-dog.png             /小狗   /dog     /xg       /dog
-hug-left.png        /拥抱   /hug     /yb       /hug
-coins.png           /钱     /$       /qianc    /money
-lamp.png            /灯泡   /!       /dp       /lightbulb
-bowl.png            /酒杯   /cup     /bei      /cup
-cake.png            /蛋糕   /cake    /dg       /cake
-thunder.png         /闪电   /li      /shd      /lightning
-bomb.png            /炸弹   /bome    /zhd      /bomb
-knife.png           /刀     /kn      /dao      /knife
-soccerball.png      /足球   /footb   /zq       /soccer
-musical-note.png    /音乐   /music   /yy       /music
-poop.png            /便便   /shit    /bb       /shit
-coffee.png          /咖啡   /coffee  /kf       /coffee
-eat.png             /饭     /eat     /fan      /eat
-pill.png            /药丸   /pill    /yw       /pill
-rose.png            /玫瑰   /rose    /mg       /rose
-wilt.png            /凋谢   /fade    /dx       /wilt
-kiss.png            /吻     /kiss    /wen      /kiss
-love.png            /爱心   /heart   /xin      /heart
-love-over.png       /心碎   /break   /xs       /broken_heart
-meeting.png         /会议   /meeting /hy       /meeting
-present.png         /礼物   /gift    /lw       /gift
-phone.png           /电话   /phone   /dh       /phone
-clock.png           /时间   /time    /sj       /time
-mail.png            /邮件   /email   /yj       /email
-tv.png              /电视   /TV      /ds       /TV
-sun.png             /太阳   /sun     /ty       /sun
-moon.png            /月亮   /moon    /yl       /moon
-good.png            /强     /strong  /qiang    /thumbs_up
-bad.png             /弱     /weak    /ruo      /thumbs_down
-handshake.png       /握手   /share   /ws       /handshake
-victory.png         /胜利   /v       /shl      /victory
-beauty.png          /美女   /<J>     /mn       /beauty
-qq.png              /Q仔    /<QQ>    /qz       /qq
-blowkiss.png        /飞吻   /<L>     /fw       /blow_kiss
-angry.png           /怄火   /<O>     /oh       /angry
-liquor.png          /白酒   /<B>     /bj       /baijiu
-can.png             /汽水   /<U>     /qsh      /soda
-watermelon.png      /西瓜   /<W>     /xigua    /watermelon
-rain.png            /下雨   /<!!>    /xy       /rain
-cloudy.png          /多云   /<~>     /duoy     /cloudy
-snowman.png         /雪人   /<Z>     /xr       /snowman
-star.png            /星星   /<*>     /xixing   /star
-girl.png            /女     /<00>    /nv       /woman
-boy.png             /男     /<11>    /nan      /man
+shock.png             /:O      /jy       /surprised
+curl-lip.png          /:~      /pz       /curl_lip
+desire.png            /:*      /se       /desire
+dazed.png             /:|      /dazed
+party.png             /8-)     /dy       /revel
+crying.png            /:<      /ll       /cry
+bashful.png           /:$      /hx       /bashful
+shut-mouth.png        /:X      /bz       /shut_mouth
+sleepy.png            /:Z      /shui     /sleep
+weep.png              /:'(     /dk       /weep
+embarrassed.png       /:-|     /gg       /embarassed
+pissed-off.png        /:@      /fn       /pissed_off
+act-up.png            /:P      /tp       /act_up
+smile-big.png         /:D      /cy       /toothy_smile
+smile.png             /:)      /wx       /small_smile
+sad.png               /:(      /ng       /sad
+glasses-cool.png      /:+      /kuk      /cool
+doctor.png            /:#      /feid     /SARS
+silly.png             /:Q      /zk       /crazy
+sick.png              /:T      /tu       /vomit
+snicker.png           /;p      /tx       /titter
+cute.png              /;-D     /ka       /cute
+disdain.png           /;d      /by       /disdain
+arrogant.png          /;o      /am       /arrogant
+starving.png          /:g      /jie      /starving
+yawn.png              /|-)     /kun      /sleepy
+terror.png            /:!      /jk       /terror
+sweat.png             /:L      /sweat
+smirk.png             /:>      /hanx     /smirk
+soldier.png           /:;      /db       /soldier
+struggle.png          /;f      /fendou   /struggle
+curse.png             /:-S     /zhm      /curse
+question.png          /?       /yiw      /question
+quiet.png             /;x      /xu       /shh
+hypnotized.png        /;@      /yun      /dizzy
+excruciating.png      /:8      /zhem     /excrutiating
+freaked-out.png       /;!      /shuai    /freaked_out
+skeleton.png          /!!!     /kl       /skeleton
+hammer.png            /xx      /qiao     /hammer
+bye.png               /bye     /zj       /bye
+go-away.png           /go      /shan     /go
+tremble.png           /shake   /fad      /shake
+in-love.png           /love    /aiq      /love
+jump.png              /jump    /tiao     /jump
+search.png            /find    /zhao     /search
+lashes.png            /&       /mm       /beautiful_eyebrows
+pig.png               /pig     /zt       /pig
+cat.png               /cat     /mm       /cat
+dog.png               /dog     /xg       /dog
+hug-left.png          /hug     /yb       /hug
+coins.png             /$       /qianc    /money
+lamp.png              /!       /dp       /lightbulb
+bowl.png              /cup     /bei      /cup
+cake.png              /cake    /dg       /cake
+thunder.png           /li      /shd      /lightning
+bomb.png              /bome    /zhd      /bomb
+knife.png             /kn      /dao      /knife
+soccerball.png        /footb   /zq       /soccer
+musical-note.png      /music   /yy       /music
+poop.png              /shit    /bb       /shit
+coffee.png            /coffee  /kf       /coffee
+eat.png               /eat     /fan      /eat
+pill.png              /pill    /yw       /pill
+rose.png              /rose    /mg       /rose
+wilt.png              /fade    /dx       /wilt
+kiss.png              /kiss    /wen      /kiss
+love.png              /heart   /xin      /heart
+love-over.png         /break   /xs       /broken_heart
+meeting.png           /meeting /hy       /meeting
+present.png           /gift    /lw       /gift
+phone.png             /phone   /dh       /phone
+clock.png             /time    /sj       /time
+mail.png              /email   /yj       /email
+tv.png                /TV      /ds       /TV
+sun.png               /sun     /ty       /sun
+moon.png              /moon    /yl       /moon
+good.png              /strong  /qiang    /thumbs_up
+bad.png               /weak    /ruo      /thumbs_down
+handshake.png         /share   /ws       /handshake
+victory.png           /v       /shl      /victory
+beauty.png            /<J>     /mn       /beauty
+qq.png                /<QQ>    /qz       /qq
+blowkiss.png          /<L>     /fw       /blow_kiss
+angry.png             /<O>     /oh       /angry
+liquor.png            /<B>     /bj       /baijiu
+can.png               /<U>     /qsh      /soda
+watermelon.png        /<W>     /xigua    /watermelon
+rain.png              /<!!>    /xy       /rain
+cloudy.png            /<~>     /duoy     /cloudy
+snowman.png           /<Z>     /xr       /snowman
+star.png              /<*>     /xixing   /star
+girl.png              /<00>    /nv       /woman
+boy.png               /<11>    /nan      /man
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)
 
@@ -272,7 +271,7 @@ angel.png           O:-)    o:-)    0:-)
 sick.png            :-&
 yawn.png            (:|
 hypnotized.png      @-)
-#on_the_phone       :)]     MISSING: "Wait,I'm phoning!" (not phone.png)    => smily showing phone and hand ("stop")
+on-the-phone.png    :)]
 sad.png             :(      :-(
 in-love.png         :x      :-x     :X      :-X
 angry.png           X-(     x-(     X(      x(
@@ -290,7 +289,7 @@ bye.png             =;
 arrogant.png        [-(
 thinking.png        :-?
 waiting.png         :-w     :-W
-#at_wits_end        ~x(     ~X(     MISSING: "Why.Does.This.Not.Work.AAAAARGH!!"    => angry smily shouting and pulling hair off
+at-wits-end.png     ~x(     ~X(
 smile-big.png       :D      :-D     :d      :-d
 tongue.png          :-P     :P      :-p     :p
 glasses-cool.png    B-)     b-)
@@ -308,12 +307,12 @@ eyeroll.png         8-|
 silly.png           8-}
 clap.png            =D>     =d>
 mad-tongue.png      >:P     >:p
-#timeout            :-t     :-T     MISSING: "Let's have a break."
+time-out.png        :-t     :-T
 hug-left.png        >:D<    >:d<
 love-over.png       =((
 sweat.png           #:-S    #:-s
 rotfl.png           =))    
-#loser              L-)     l-)     MISSING/YAHOO 6: "Loser!"
+loser.png           L-)     l-)
 party.png           <:-P    <:-p
 nailbiting.png      :-SS	:-Ss	:-sS	:-ss
 cowboy.png          <):)
@@ -350,8 +349,8 @@ star.png            (*)
 #youkiddingme.png   :-j :-J
 
 ### These only work in a certain IMvironment
-#malefighter1.png   o->     O->
+male-fighter.png   o->     O->
 #malefighter2.png   o=>     O=>
-#femalefighter.png  o-+     O-+
+female-fighter.png  o-+     O-+
 yin-yang.png        (%)
 

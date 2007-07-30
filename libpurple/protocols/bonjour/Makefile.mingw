@@ -57,6 +57,7 @@ LIBS =	\
 			-lws2_32 \
 			-lintl \
 			-ldnssd \
+			-lnetapi32 \
 			-lpurple
 
 include $(PIDGIN_COMMON_RULES)

@@ -153,8 +153,6 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 	if(!query)
 		return;
 
-	js->roster_parsed = TRUE;
-
 	for(item = xmlnode_get_child(query, "item"); item; item = xmlnode_get_next_twin(item))
 	{
 		const char *jid, *name, *subscription, *ask;
@@ -231,6 +229,14 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 					continue;
 			add_purple_buddies_to_groups(js, jid, name, groups);
 		}
+	}
+
+	/* if we're just now parsing the roster for the first time,
+	 * then now would be the time to send our initial presence */
+	if(!js->roster_parsed) {
+		js->roster_parsed = TRUE;
+
+		jabber_presence_send(js->gc->account, NULL);
 	}
 }
 

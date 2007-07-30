@@ -425,7 +425,7 @@ purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcesn,
 		charsetstr1 = "UCS-2BE";
 		charsetstr2 = "UTF-8";
 	} else if (charset == AIM_CHARSET_CUSTOM) {
-		if ((sourcesn != NULL) && isdigit(sourcesn[0]))
+		if ((sourcesn != NULL) && aim_sn_is_icq(sourcesn))
 			charsetstr1 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 		else
 			charsetstr1 = "ISO-8859-1";
@@ -1258,7 +1258,7 @@ oscar_login(PurpleAccount *account)
 
 	if (!aim_snvalid(purple_account_get_username(account))) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
+		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
 		gc->wants_to_die = TRUE;
 		purple_connection_error(gc, buf);
 		g_free(buf);
@@ -1383,7 +1383,6 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		}
 		purple_debug_info("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
 		purple_debug_info("oscar", "Error URL: %s\n", info->errorurl);
-		od->killme = TRUE;
 		return 1;
 	}
 
@@ -1410,7 +1409,6 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	if (newconn->connect_data == NULL)
 	{
 		purple_connection_error(gc, _("Could Not Connect"));
-		od->killme = TRUE;
 		return 0;
 	}
 
@@ -1433,12 +1431,10 @@ static void
 purple_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
 {
 	PurpleConnection *gc = user_data;
-	OscarData *od = gc->proto_data;
 
 	/* Disconnect */
 	gc->wants_to_die = TRUE;
 	purple_connection_error(gc, _("The SecurID key entered is invalid."));
-	od->killme = TRUE;
 }
 
 static int
@@ -2827,6 +2823,7 @@ static int purple_parse_locerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	va_list ap;
 	guint16 reason;
 	char *destn;
+	PurpleNotifyUserInfo *user_info;
 
 	va_start(ap, fr);
 	reason = (guint16) va_arg(ap, unsigned int);
@@ -2836,12 +2833,12 @@ static int purple_parse_locerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	if (destn == NULL)
 		return 1;
 
+	user_info = purple_notify_user_info_new();
 	buf = g_strdup_printf(_("User information not available: %s"), (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
-	if (!purple_conv_present_error(destn, purple_connection_get_account((PurpleConnection*)od->gc), buf)) {
-		g_free(buf);
-		buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
-		purple_notify_error(od->gc, NULL, buf, (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
-	}
+	purple_notify_user_info_add_pair(user_info, NULL, buf);
+	purple_notify_userinfo(od->gc, destn, user_info, NULL, NULL);
+	purple_notify_user_info_destroy(user_info);
+	purple_conv_present_error(destn, purple_connection_get_account(od->gc), buf);
 	g_free(buf);
 
 	return 1;
@@ -3471,33 +3468,32 @@ static int purple_connerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	purple_debug_info("oscar", "Disconnected.  Code is 0x%04x and msg is %s\n",
 					code, (msg != NULL ? msg : ""));
 
-	g_return_val_if_fail(fr       != NULL, 1);
 	g_return_val_if_fail(conn != NULL, 1);
 
-	if (conn->type == SNAC_FAMILY_LOCATE) {
-		if (code == 0x0001) {
-			gc->wants_to_die = TRUE;
-			purple_connection_error(gc, _("You have signed on from another location."));
-		} else {
-			purple_connection_error(gc, _("You have been signed off for an unknown reason."));
-		}
-		od->killme = TRUE;
-	} else if (conn->type == SNAC_FAMILY_CHAT) {
+	if (conn->type == SNAC_FAMILY_CHAT) {
 		struct chat_connection *cc;
-		PurpleConversation *conv;
+		PurpleConversation *conv = NULL;
 
 		cc = find_oscar_chat_by_conn(gc, conn);
-		conv = purple_find_chat(gc, cc->id);
-
-		if (conv != NULL)
+		if (cc != NULL)
 		{
-			gchar *buf;
-			buf = g_strdup_printf(_("You have been disconnected from chat "
-									"room %s."), cc->name);
-			purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_ERROR, time(NULL));
-			g_free(buf);
+			conv = purple_find_chat(gc, cc->id);
+
+			if (conv != NULL)
+			{
+				/*
+				 * TOOD: Have flap_connection_destroy_cb() send us the
+				 *       error message stored in 'tmp', which should be
+				 *       human-friendly, and print that to the chat room.
+				 */
+				gchar *buf;
+				buf = g_strdup_printf(_("You have been disconnected from chat "
+										"room %s."), cc->name);
+				purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_ERROR, time(NULL));
+				g_free(buf);
+			}
+			oscar_chat_kill(gc, cc);
 		}
-		oscar_chat_kill(gc, cc);
 	}
 
 	return 1;
@@ -4327,10 +4323,15 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			
 			tmp2 = purple_markup_strip_html(tmp1);
 			g_free(tmp1);
-			
-			tmp1 = purple_strdup_withhtml(tmp2);
+
+			/* re-escape the entities */
+			tmp1 = g_markup_escape_text(tmp2, -1);
 			g_free(tmp2);
 			
+			tmp2 = purple_strdup_withhtml(tmp1);
+			g_free(tmp1);
+			tmp1 = tmp2;
+
 			purple_plugin_oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
 
 			purple_debug_info("oscar", "Sending %s as %s because the original was too long.",
@@ -4622,7 +4623,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 
 	if (!aim_snvalid(buddy->name)) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
+		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
 		if (!purple_conv_present_error(buddy->name, purple_connection_get_account(gc), buf))
 			purple_notify_error(gc, NULL, _("Unable To Add"), buf);
 		g_free(buf);
@@ -5059,7 +5060,8 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 			default: { /* La la la */
 				gchar *buf;
 				purple_debug_error("oscar", "ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
-				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason.  The most common reason for this is that you have the maximum number of allowed buddies in your buddy list."), (retval->name ? retval->name : _("(no name)")));
+				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason."),
+						(retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !purple_conv_present_error(retval->name, purple_connection_get_account(gc), buf))
 					purple_notify_error(gc, NULL, _("Unable To Add"), buf);
 				g_free(buf);
@@ -5572,7 +5574,7 @@ char *oscar_status_text(PurpleBuddy *b)
 	status = purple_presence_get_active_status(presence);
 	id = purple_status_get_id(status);
 
-	if (!purple_presence_is_online(presence))
+	if ((od != NULL) && !purple_presence_is_online(presence))
 	{
 		char *gname = aim_ssi_itemlist_findparentname(od->ssi.local, b->name);
 		if (aim_ssi_waitingforauth(od->ssi.local, gname, b->name))
@@ -6604,7 +6606,7 @@ static gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable
 			if (message) {
 				/* Spaces are encoded as '+' */
 				g_strdelimit(message, "+", ' ');
-				purple_conv_im_send(PURPLE_CONV_IM(conv), message);
+				purple_conv_send_confirm(conv, message);
 			}
 		}
 		/*else

@@ -116,6 +116,7 @@
 #define PIDGIN_STOCK_TOOLBAR_FONT_FACE	  "pidgin-font-face"
 #define PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER "pidgin-text-smaller"
 #define PIDGIN_STOCK_TOOLBAR_TEXT_LARGER  "pidgin-text-larger"
+#define PIDGIN_STOCK_TOOLBAR_INSERT       "pidgin-insert"
 #define PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE "pidgin-insert-image"
 #define PIDGIN_STOCK_TOOLBAR_INSERT_LINK  "pidgin-insert-link"
 #define PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW  "pidgin-message-new"
@@ -136,9 +137,7 @@
 #define PIDGIN_STOCK_TRAY_OFFLINE         "pidgin-tray-offline"
 #define PIDGIN_STOCK_TRAY_CONNECT         "pidgin-tray-connect"
 #define PIDGIN_STOCK_TRAY_PENDING         "pidgin-tray-pending"
-/* Uncomment me after 2.0.2! 
- * #define PIDGIN_STOCK_TRAY_EMAIL		  "pidgin-tray-email"
- */
+#define PIDGIN_STOCK_TRAY_EMAIL		  "pidgin-tray-email"
 
 
 /*@}*/

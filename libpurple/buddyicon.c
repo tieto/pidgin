@@ -24,7 +24,6 @@
  */
 #include "internal.h"
 #include "buddyicon.h"
-#include "cipher.h"
 #include "conversation.h"
 #include "dbus-maybe.h"
 #include "debug.h"
@@ -91,33 +90,6 @@ unref_filename(const char *filename)
 		g_hash_table_insert(icon_file_cache, g_strdup(filename),
 		                    GINT_TO_POINTER(refs - 1));
 	}
-}
-
-static char *
-purple_buddy_icon_data_calculate_filename(guchar *icon_data, size_t icon_len)
-{
-	PurpleCipherContext *context;
-	gchar digest[41];
-
-	context = purple_cipher_context_new_by_name("sha1", NULL);
-	if (context == NULL)
-	{
-		purple_debug_error("buddyicon", "Could not find sha1 cipher\n");
-		g_return_val_if_reached(NULL);
-	}
-
-	/* Hash the icon data */
-	purple_cipher_context_append(context, icon_data, icon_len);
-	if (!purple_cipher_context_digest_to_str(context, sizeof(digest), digest, NULL))
-	{
-		purple_debug_error("buddyicon", "Failed to get SHA-1 digest.\n");
-		g_return_val_if_reached(NULL);
-	}
-	purple_cipher_context_destroy(context);
-
-	/* Return the filename */
-	return g_strdup_printf("%s.%s", digest,
-	                       purple_util_get_image_extension(icon_data, icon_len));
 }
 
 static void
@@ -238,7 +210,7 @@ purple_buddy_icon_data_new(guchar *icon_data, size_t icon_len, const char *filen
 
 	if (filename == NULL)
 	{
-		file = purple_buddy_icon_data_calculate_filename(icon_data, icon_len);
+		file = purple_util_get_image_filename(icon_data, icon_len);
 		if (file == NULL)
 		{
 			g_free(icon_data);
@@ -966,7 +938,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 
 		g_free(path);
 
-		new_filename = purple_buddy_icon_data_calculate_filename(icon_data, icon_len);
+		new_filename = purple_util_get_image_filename(icon_data, icon_len);
 		if (new_filename == NULL)
 		{
 			purple_debug_error("buddyicon",

@@ -16,6 +16,7 @@
 
 #include <string.h>
 
+#include "internal.h"
 #include "config.h"
 #include "mdns_common.h"
 #include "bonjour.h"

@@ -59,7 +59,7 @@ Examples of commands:
     quit
 
     PurpleAccountsFindConnected?name=&protocol=prpl-jabber
-    PurpleAccountFindConnected(,prpl-jabber)
+    PurpleAccountsFindConnected(,prpl-jabber)
 """ % sys.argv[0]
 
 cpurple = CheckedObject(purple)
@@ -156,6 +156,12 @@ def execute(uri):
             purple.PurpleSavedstatusActivate(saved)
 
         return None
+
+    elif command == "getstatus":
+        current = purple.PurpleSavedstatusGetCurrent()
+        status_type = purple.PurpleSavedstatusGetType(current)
+        status_id = purple.PurplePrimitiveGetIdFromType(status_type)
+        return status_id
 
     elif command == "getinfo":
         account = findaccount(accountname, protocol)

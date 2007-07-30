@@ -20,9 +20,17 @@ purple_check_input_add(gint fd, PurpleInputCondition condition,
 
 static PurpleEventLoopUiOps eventloop_ui_ops = {
 	g_timeout_add,
-	(guint (*)(guint))g_source_remove,
+	g_source_remove,
 	purple_check_input_add,
-	(guint (*)(guint))g_source_remove,
+	g_source_remove,
+	NULL, /* input_get_error */
+#if GLIB_CHECK_VERSION(2,14,0)
+	g_timeout_add_seconds,
+#else
+	NULL,
+#endif
+	NULL,
+	NULL,
 	NULL
 };
 

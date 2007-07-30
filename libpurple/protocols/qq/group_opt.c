@@ -22,6 +22,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "qq.h"
+
 #include "debug.h"
 #include "notify.h"
 #include "request.h"
@@ -35,7 +37,6 @@
 #include "group_network.h"
 #include "group_opt.h"
 #include "packet_parse.h"
-#include "qq.h"
 #include "utils.h"
 
 /* TODO: can't we use qsort here? */

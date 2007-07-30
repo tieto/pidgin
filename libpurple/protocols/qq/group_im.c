@@ -22,6 +22,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "internal.h"
+
 #include "conversation.h"
 #include "debug.h"
 #include "notify.h"
@@ -341,7 +343,7 @@ void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len,
 	read_packet_dw(data, cursor, data_len, &(im_group->member_uid));
 	read_packet_w(data, cursor, data_len, &unknown);	/* 0x0001? */
 	read_packet_w(data, cursor, data_len, &(im_group->msg_seq));
-	read_packet_dw(data, cursor, data_len, (guint32 *) & (im_group->send_time));
+	read_packet_time(data, cursor, data_len, &im_group->send_time);
 	read_packet_dw(data, cursor, data_len, &unknown4);	/* versionID */
 	/*
 	 * length includes font_attr

@@ -1917,6 +1917,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	char *msg;
 	char *url = NULL;
 	char *fullmsg;
+	PurpleAccount *account = gc->account;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -1949,6 +1950,9 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 			return;
 		}
 #endif
+		if (!purple_account_get_remember_password(account))
+			purple_account_set_password(account, NULL);
+
 		msg = g_strdup(_("Incorrect password."));
 		break;
 	case 14:
@@ -3915,7 +3919,7 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 			if (message) {
 				/* Spaces are encoded as '+' */
 				g_strdelimit(message, "+", ' ');
-				purple_conv_im_send(PURPLE_CONV_IM(conv), message);
+				purple_conv_send_confirm(conv, message);
 			}
 		}
 		/*else

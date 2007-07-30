@@ -9,6 +9,16 @@
 #include <EXTERN.h>
 #include <perl.h>
 
+/* XXX: perl defines it's own _ but I think it's safe to undef it */
+#undef _
+/* Dirty hack to prevent the win32 libc compat stuff from interfering with the Perl internal stuff */
+#ifdef _WIN32
+#define _WIN32DEP_H_
+#endif
+#include "internal.h"
+#ifdef _WIN32
+#undef _WIN32DEP_H_
+#endif
 #include "plugin.h"
 #include "value.h"
 
