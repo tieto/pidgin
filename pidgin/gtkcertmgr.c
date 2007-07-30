@@ -33,6 +33,7 @@
 #include "certificate.h"
 #include "debug.h"
 #include "notify.h"
+#include "request.h"
 
 #include "gtkblist.h"
 #include "gtkutils.h"
@@ -71,6 +72,7 @@ tls_peers_mgmt_destroy(GtkWidget *mgmt_widget, gpointer data)
 			  "tls peers self-destructs\n");
 
 	purple_signals_disconnect_by_handle(tpm_dat);
+	purple_request_close_with_handle(tpm_dat);
 	g_free(tpm_dat); tpm_dat = NULL;
 }
 
@@ -134,6 +136,95 @@ tls_peers_mgmt_select_chg_cb(GtkTreeSelection *ignored, gpointer data)
 		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->deletebutton), FALSE);
 
 	}
+}
+
+static void
+tls_peers_mgmt_import_ok2_cb(gpointer data, const char *result)
+{
+	PurpleCertificate *crt = (PurpleCertificate *) data;
+	const char *id = result;
+
+	/* TODO: Perhaps prompt if you're overwriting a cert? */
+
+	/* Drop the certificate into the pool */
+	purple_certificate_pool_store(tpm_dat->tls_peers, id, crt);
+
+	/* And this certificate is not needed any more */
+	purple_certificate_destroy(crt);
+}
+
+static void
+tls_peers_mgmt_import_cancel2_cb(gpointer data, const char *result)
+{
+	PurpleCertificate *crt = (PurpleCertificate *) data;
+	purple_certificate_destroy(crt);
+}
+
+static void
+tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
+{
+	PurpleCertificateScheme *x509;
+	PurpleCertificate *crt;
+
+	/* Load the scheme of our tls_peers pool (ought to be x509) */
+	x509 = purple_certificate_pool_get_scheme(tpm_dat->tls_peers);
+
+	/* Now load the certificate from disk */
+	crt = purple_certificate_import(x509, filename);
+
+	/* Did it work? */
+	if (crt != NULL) {
+		gchar *default_hostname;
+		/* Get name to add to pool as */
+		/* Make a guess about what the hostname should be */
+		 default_hostname = purple_certificate_get_subject_name(crt);
+		/* TODO: Find a way to make sure that crt gets destroyed
+		   if the window gets closed unusually, such as by handle
+		   deletion */
+		/* TODO: Display some more information on the certificate? */
+		purple_request_input(tpm_dat,
+				     _("Certificate Import"),
+				     _("Specify a hostname"),
+				     _("Type the host name this certificate is for."),
+				     default_hostname,
+				     FALSE, /* Not multiline */
+				     FALSE, /* Not masked? */
+				     NULL,  /* No hints? */
+				     _("OK"),
+				     G_CALLBACK(tls_peers_mgmt_import_ok2_cb),
+				     _("Cancel"),
+				     G_CALLBACK(tls_peers_mgmt_import_cancel2_cb),
+				     NULL, NULL, NULL, /* No account/who/conv*/
+				     crt    /* Pass cert instance to callback*/
+				     );
+		
+		g_free(default_hostname);
+	} else {
+		/* Errors! Oh no! */
+		/* TODO: Perhaps find a way to be specific about what just
+		   went wrong? */
+		gchar * secondary;
+
+		secondary = g_strdup_printf(_("File %s could not be imported.\nMake sure that the file is readable and in PEM format.\n"), filename);
+		purple_notify_error(NULL,
+				    _("Certificate Import Error"),
+				    _("X.509 certificate import failed"),
+				    secondary);
+		g_free(secondary);
+	}
+}
+
+static void
+tls_peers_mgmt_import_cb(GtkWidget *button, gpointer data)
+{
+	/* TODO: need to tell the user that we want a .PEM file! */
+	purple_request_file(tpm_dat,
+			    _("Select a PEM certificate"),
+			    "certificate.pem",
+			    FALSE, /* Not a save dialog */
+			    G_CALLBACK(tls_peers_mgmt_import_ok_cb),
+			    NULL,  /* Do nothing if cancelled */
+			    NULL, NULL, NULL, NULL );/* No account,conv,etc. */
 }
 
 static void
@@ -246,6 +337,9 @@ tls_peers_mgmt_build(void)
 		gtk_button_new_from_stock(GTK_STOCK_ADD);
 	gtk_box_pack_start(GTK_BOX(bbox), importbutton, FALSE, FALSE, 0);
 	gtk_widget_show(importbutton);
+	g_signal_connect(G_OBJECT(importbutton), "clicked",
+			 G_CALLBACK(tls_peers_mgmt_import_cb), NULL);
+
 
 	/* Export button */
 	/* TODO: This is the wrong stock button */
