@@ -199,7 +199,6 @@ class FeedReader(threading.Thread):
 feeds = []
 urls = ("http://rss.slashdot.org/Slashdot/slashdot",
         "http://www.python.org/channews.rdf",
-        "http://pidgin.im/rss.php",
         "http://kerneltrap.org/node/feed"
         )
 

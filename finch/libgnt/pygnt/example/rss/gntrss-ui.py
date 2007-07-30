@@ -36,6 +36,7 @@ TODO:
 """
 
 import gntrss
+import gnthtml
 import gnt
 import gobject
 import sys
@@ -246,8 +247,8 @@ def item_active_changed(tree, old):
     details.append_text_with_flags(str(item.link) + "\n", gnt.TEXT_FLAG_UNDERLINE)
     details.append_text_with_flags("Date: ", gnt.TEXT_FLAG_BOLD)
     details.append_text_with_flags(str(item.date) + "\n", gnt.TEXT_FLAG_NORMAL)
-
-    details.append_text_with_flags("\n" + str(item.summary), gnt.TEXT_FLAG_NORMAL)
+    parser = gnthtml.GParser(details)
+    parser.parse(str(item.summary))
     item.mark_unread(False)
 
     if old and old.unread:   # If the last selected item is marked 'unread', then make sure it's bold
