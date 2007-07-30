@@ -285,5 +285,5 @@ static gboolean pidgin_cell_renderer_expander_activate(GtkCellRenderer *r,
 	else
 		gtk_tree_view_expand_row(GTK_TREE_VIEW(widget),path,FALSE);
 	gtk_tree_path_free(path);
-	return TRUE;
+	return FALSE;
 }
