@@ -124,13 +124,11 @@ tls_peers_mgmt_select_chg_cb(GtkTreeSelection *ignored, gpointer data)
 	/* See if things are selected */
 	if (gtk_tree_selection_get_selected(select, &model, &iter)) {
 		/* Enable buttons if something is selected */
-		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->importbutton), TRUE);
 		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->exportbutton), TRUE);
 		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->infobutton), TRUE);
 		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->deletebutton), TRUE);
 	} else {
 		/* Otherwise, disable them */
-		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->importbutton), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->exportbutton), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->infobutton), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(tpm_dat->deletebutton), FALSE);
