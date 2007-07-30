@@ -75,7 +75,6 @@ static struct developer developers[] = {
 	{"Ka-Hing Cheung",				N_("developer"), NULL},
 	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
 	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
-	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
 	{"Casey Harkins",               N_("developer"),   NULL},
 	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
 	{"Richard 'rlaager' Laager",	N_("developer"), NULL},
@@ -95,11 +94,7 @@ static struct developer developers[] = {
 /* Order: Alphabetical by Last Name */
 static struct developer patch_writers[] = {
 	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
-	{"Felipe 'shx' Contreras",		NULL,	NULL},
-	{"Decklin Foster",				NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
-	{"Robert 'Robot101' McQueen",	NULL,	NULL},
-	{"Benjamin Miller",				NULL,	NULL},
 	{"Kevin 'SimGuy' Stange",		NULL,	NULL},
 	{NULL, NULL, NULL}
 };
@@ -110,11 +105,21 @@ static struct developer retired_developers[] = {
 	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
 	{"Rob Flynn",			N_("maintainer"), NULL},
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
+	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
 	{"Jim Seymour",			N_("XMPP developer"), NULL},
 	{"Mark Spencer",		N_("original author"), "markster@marko.net"},
 	{"Eric Warmenhoven",	N_("lead developer"), "warmenhoven@yahoo.com"},
+	{NULL, NULL, NULL}
+};
+
+/* Order: Alphabetical by Last Name */
+static struct developer retired_patch_writers[] = {
+	{"Felipe 'shx' Contreras",		NULL,	NULL},
+	{"Decklin Foster",				NULL,	NULL},
+	{"Robert 'Robot101' McQueen",	NULL,	NULL},
+	{"Benjamin Miller",				NULL,	NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -428,6 +433,21 @@ void pidgin_dialogs_about()
 		} else {
 			g_string_append_printf(str, "  %s (%s)<br/>",
 					retired_developers[i].name, _(retired_developers[i].role));
+		}
+	}
+	g_string_append(str, "<BR/>");
+
+	/* Retired Crazy Patch Writers */
+	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
+						   _("Retired Crazy Patch Writers"));
+	for (i = 0; retired_patch_writers[i].name != NULL; i++) {
+		if (retired_patch_writers[i].email != NULL) {
+			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
+					retired_patch_writers[i].name,
+					retired_patch_writers[i].email, patch_writers[i].email);
+		} else {
+			g_string_append_printf(str, "  %s<br/>",
+					retired_patch_writers[i].name);
 		}
 	}
 	g_string_append(str, "<BR/>");
