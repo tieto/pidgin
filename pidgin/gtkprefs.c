@@ -994,7 +994,7 @@ conv_page()
 	pidgin_prefs_checkbox(_("Show _formatting on incoming messages"),
 				PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting", vbox);
 
-	iconpref1 = pidgin_prefs_checkbox(strchr(_("/Buddies/Show Buddy _Details")+1,'/')+1,
+	iconpref1 = pidgin_prefs_checkbox(_("Show _detailed information"),
 			PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", vbox);
 	iconpref2 = pidgin_prefs_checkbox(_("Enable buddy ic_on animation"),
 			PIDGIN_PREFS_ROOT "/conversations/im/animate_buddy_icons", vbox);
@@ -1947,7 +1947,7 @@ away_page()
 						   "/purple/away/away_when_idle", vbox);
 
 	select = pidgin_prefs_labeled_spin_button(vbox,
-			_("_Minutes before changing status:"), "/purple/away/mins_before_away",
+			_("_Minutes before becoming idle:"), "/purple/away/mins_before_away",
 			1, 24 * 60, sg);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), select);
