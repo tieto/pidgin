@@ -509,6 +509,17 @@ gboolean
 purple_certificate_pool_usable(PurpleCertificatePool *pool);
 
 /**
+ * Looks up the scheme the pool operates under
+ *
+ * @param pool   Pool to get the scheme of
+ *
+ * @return Pointer to the pool's scheme, or NULL if it isn't loaded.
+ * @see purple_certificate_pool_usable()
+ */
+PurpleCertificateScheme *
+purple_certificate_pool_get_scheme(PurpleCertificatePool *pool);
+
+/**
  * Check for presence of an ID in a pool.
  * @param pool   Pool to look in
  * @param id     ID to look for

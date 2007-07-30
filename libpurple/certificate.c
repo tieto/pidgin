@@ -300,6 +300,15 @@ purple_certificate_pool_usable(PurpleCertificatePool *pool)
 	return TRUE;
 }
 
+PurpleCertificateScheme *
+purple_certificate_pool_get_scheme(PurpleCertificatePool *pool)
+{
+	g_return_val_if_fail(pool, NULL);
+	g_return_val_if_fail(pool->scheme_name, NULL);
+
+	return purple_certificate_find_scheme(pool->scheme_name);
+}
+
 gboolean
 purple_certificate_pool_contains(PurpleCertificatePool *pool, const gchar *id)
 {
