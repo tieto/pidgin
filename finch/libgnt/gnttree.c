@@ -450,7 +450,7 @@ redraw_tree(GntTree *tree)
 			if (COLUMN_INVISIBLE(tree, i)) {
 				continue;
 			}
-			mvwaddstr(widget->window, pos, x + 1, tree->columns[i].title);
+			mvwaddnstr(widget->window, pos, x + (x != pos), tree->columns[i].title, tree->columns[i].width);
 			NEXT_X;
 		}
 		if (pos)
