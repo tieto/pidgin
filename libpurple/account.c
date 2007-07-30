@@ -932,6 +932,17 @@ purple_account_register(PurpleAccount *account)
 	purple_connection_new(account, TRUE, purple_account_get_password(account));
 }
 
+void
+purple_account_unregister(PurpleAccount *account)
+{
+	g_return_if_fail(account != NULL);
+	
+	purple_debug_info("account", "Unregistering account %s\n",
+					  purple_account_get_username(account));
+	
+	purple_connection_new_unregister(account, purple_account_get_password(account));
+}
+
 static void
 request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 {

@@ -64,6 +64,8 @@
 static PurplePlugin *my_protocol = NULL;
 GList *jabber_features;
 
+static void jabber_unregister_account_cb(JabberStream *js);
+
 static void jabber_stream_init(JabberStream *js)
 {
 	char *open_stream;
@@ -86,6 +88,8 @@ jabber_session_initialized_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	const char *type = xmlnode_get_attrib(packet, "type");
 	if(type && !strcmp(type, "result")) {
 		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
+		if(js->unregistration)
+			jabber_unregister_account_cb(js);
 	} else {
 		purple_connection_error(js->gc, _("Error initializing session"));
 	}
@@ -1113,6 +1117,56 @@ void jabber_register_account(PurpleAccount *account)
 												  js);
 		}
 	}
+}
+
+static void jabber_unregister_account_iq_cb(JabberStream *js, xmlnode *packet, gpointer data) {
+	const char *type = xmlnode_get_attrib(packet,"type");
+	if(!strcmp(type,"error")) {
+		char *msg = jabber_parse_error(js, packet);
+		
+		purple_notify_error(js->gc, _("Error unregistering account"),
+							_("Error unregistering account"), msg);
+		g_free(msg);
+	} else if(!strcmp(type,"result")) {
+		purple_notify_info(js->gc, _("Account successfully unregistered"),
+						   _("Account successfully unregistered"), NULL);
+	}
+}
+
+static void jabber_unregister_account_cb(JabberStream *js) {
+	JabberIq *iq;
+	xmlnode *query;
+	assert(js->unregistration);
+	
+	iq = jabber_iq_new_query(js,JABBER_IQ_SET,"jabber:iq:register");
+	assert(iq);
+	query = xmlnode_get_child_with_namespace(iq->node,"query","jabber:iq:register");
+	assert(query);
+	xmlnode_new_child(query,"remove");
+	
+	xmlnode_set_attrib(iq->node,"to",js->user->domain);
+	jabber_iq_set_callback(iq,jabber_unregister_account_iq_cb,NULL);
+	
+	jabber_iq_send(iq);
+}
+
+void jabber_unregister_account(PurpleAccount *account) {
+	PurpleConnection *gc = purple_account_get_connection(account);
+	JabberStream *js;
+	
+	if(gc->state != PURPLE_CONNECTED) {
+		if(gc->state != PURPLE_CONNECTING)
+			jabber_login(account);
+		js = gc->proto_data;
+		js->unregistration = TRUE;
+		return;
+	}
+	
+	js = gc->proto_data;
+	assert(!js->unregistration); /* don't allow multiple calls */
+	js->unregistration = TRUE;
+	
+	jabber_unregister_account_cb(js);
 }
 
 void jabber_close(PurpleConnection *gc)

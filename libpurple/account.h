@@ -161,6 +161,13 @@ void purple_account_set_register_callback(PurpleAccount *account, PurpleAccountR
 void purple_account_register(PurpleAccount *account);
 
 /**
+ * Unregisters an account (deleting it from the server).
+ *
+ * @param account The account to unregister.
+ */
+void purple_account_unregister(PurpleAccount *account);
+
+/**
  * Disconnects from an account.
  *
  * @param account The account to disconnect from.
