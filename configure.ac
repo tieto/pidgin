@@ -22,7 +22,7 @@ AC_PREREQ([2.50])
 #   For production releases:    []
 #
 #
-`# If any code has changed in libgnt:
+# If any code has changed in libgnt:
 #   gnt_micro_version += 1
 #
 # If any functions have been added to libgnt:
