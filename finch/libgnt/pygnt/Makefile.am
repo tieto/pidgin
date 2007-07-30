@@ -9,7 +9,8 @@ sources = \
 	gnt.override \
 	gntbox.override \
 	gntfilesel.override \
-	gnttree.override
+	gnttree.override \
+	gntwidget.override
 
 gnt_la_SOURCES = gnt.c common.c common.h gntmodule.c
 

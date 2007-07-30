@@ -32,6 +32,7 @@ include
  gntbox.override
  gntfilesel.override
  gnttree.override
+ gntwidget.override
 %%
 modulename gnt
 %%
@@ -91,5 +92,33 @@ _wrap_screen_size(PyObject *self)
 	PyList_Append(list, PyInt_FromLong((long)getmaxy(stdscr)));
 
 	return list;
+}
+%%
+override gnt_register_action
+static GHashTable *actions;
+
+
+
+static PyObject *
+_wrap_gnt_register_action(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+	static char *kwlist[] = {"name", "callback", NULL};
+	PyGObject *callback;
+	GClosure *closure;
+	char *name;
+
+	if (!PyArg_ParseTuple(args, "sO:gnt.gnt_register_action", &name, &callback)) {
+		return NULL;
+	}
+
+	if (!PyCallable_Check(callback)) {
+		PyErr_SetString(PyExc_TypeError, "the callback must be callable ... doh!");
+		return NULL;
+	}
+
+	gnt_register_action(name, callback->obj);
+
+	Py_INCREF(Py_None);
+	return Py_None;
 }
 
