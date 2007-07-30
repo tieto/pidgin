@@ -484,7 +484,8 @@ static void yahoo_process_cookie(struct yahoo_data *yd, char *c)
 		if (yd->cookie_t)
 			g_free(yd->cookie_t);
 		yd->cookie_t = _getcookie(c);
-	}
+	} else
+		purple_debug_info("yahoo", "Ignoring unrecognized cookie '%c'\n", c[0]);
 }
 
 static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -1152,10 +1153,10 @@ static void yahoo_process_mail(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
-	char *who = NULL;
-	char *email = NULL;
-	char *subj = NULL;
-	char *yahoo_mail_url = (yd->jp? YAHOOJP_MAIL_URL: YAHOO_MAIL_URL);
+	const char *who = NULL;
+	const char *email = NULL;
+	const char *subj = NULL;
+	const char *yahoo_mail_url = (yd->jp? YAHOOJP_MAIL_URL: YAHOO_MAIL_URL);
 	int count = 0;
 	GSList *l = pkt->hash;
 
@@ -3242,11 +3243,79 @@ static void yahoo_act_id(PurpleConnection *gc, const char *entry)
 	purple_connection_set_display_name(gc, entry);
 }
 
+static void
+yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
+		const gchar *token, size_t len, const gchar *error_message)
+{
+	PurpleConnection *gc = user_data;
+	gboolean set_cookie = FALSE;
+	char *url;
+
+	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+
+	if (error_message != NULL)
+		purple_debug_error("yahoo", "Requesting mail login token failed: %s\n", error_message);
+	else if (len > 0 && token && *token) {
+	 	/* Should we not be hardcoding the rd url? */
+		url = g_strdup_printf(
+			"http://login.yahoo.com/config/reset_cookies_token?"
+			".token=%s"
+			"&.done=http://us.rd.yahoo.com/messenger/client/%%3fhttp://mail.yahoo.com/",
+			token);
+		set_cookie = TRUE;
+	}
+
+	if (!set_cookie) {
+		struct yahoo_data *yd = gc->proto_data;
+		purple_debug_error("yahoo", "No mail login token; forwarding to login screen.");
+		url = g_strdup(yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
+	}
+
+	/* Open the mailbox with the parsed url data */
+	purple_notify_uri(gc, url);
+
+	g_free(url);
+}
+
+
+static void yahoo_show_inbox(PurplePluginAction *action)
+{
+	/* Setup a cookie that can be used by the browser */
+	/* XXX I have no idea how this will work with Yahoo! Japan. */
+
+	PurpleConnection *gc = action->context;
+	struct yahoo_data *yd = gc->proto_data;
+
+	PurpleUtilFetchUrlData *url_data;
+	const char* base_url = "http://login.yahoo.com";
+	char *request = g_strdup_printf(
+		"POST /config/cookie_token HTTP/1.0\r\n"
+		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s;\r\n"
+		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
+		"Host: login.yahoo.com\r\n"
+		"Content-Length: 0\r\n\r\n",
+		yd->cookie_t, yd->cookie_y);
+
+	url_data = purple_util_fetch_url_request(base_url, FALSE,
+			"Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, request, FALSE,
+			yahoo_get_inbox_token_cb, gc);
+
+	g_free(request);
+
+	if (url_data == NULL) {
+		const char *yahoo_mail_url = (yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
+		purple_debug_error("yahoo",
+				   "Unable to request mail login token; forwarding to login screen.");
+		purple_notify_uri(gc, yahoo_mail_url);
+	}
+
+}
+
+
 static void yahoo_show_act_id(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	/* XXX Typo: This should be _("Activate which ID?") - fix after string freeze is over */
-	purple_request_input(gc, NULL, _("Active which ID?"), NULL,
+	purple_request_input(gc, NULL, _("Activate which ID?"), NULL,
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
 					   _("Cancel"), NULL,
@@ -3275,6 +3344,11 @@ static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
 
 	act = purple_plugin_action_new(_("Join User in Chat..."),
 			yahoo_show_chat_goto);
+	m = g_list_append(m, act);
+
+	m = g_list_append(m, NULL);
+	act = purple_plugin_action_new(_("Open Inbox"),
+			yahoo_show_inbox);
 	m = g_list_append(m, act);
 
 	return m;
