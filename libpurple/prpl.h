@@ -328,7 +328,7 @@ struct _PurplePluginProtocolInfo
 	 * The account can either be connected or disconnected. After the removal is finished,
 	 * the connection will stay open and has to be closed!
 	 */
-	void (*unregister_user)(PurpleAccount *);
+	void (*unregister_user)(PurpleAccount *, PurpleAccountUnregistrationCb cb, void *user_data);
 	
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);

@@ -158,7 +158,7 @@ purple_connection_new(PurpleAccount *account, gboolean regist, const char *passw
 }
 
 void
-purple_connection_new_unregister(PurpleAccount *account, const char *password)
+purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data)
 {
 	/* Lots of copy/pasted code to avoid API changes. You might want to integrate that into the previous function when posssible. */
 	PurpleConnection *gc;
@@ -182,7 +182,7 @@ purple_connection_new_unregister(PurpleAccount *account, const char *password)
 	}
 
 	if (!purple_account_is_disconnected(account)) {
-		prpl_info->unregister_user(account);
+		prpl_info->unregister_user(account, cb, user_data);
 		return;
 	}
 	
@@ -210,7 +210,7 @@ purple_connection_new_unregister(PurpleAccount *account, const char *password)
 	
 	purple_debug_info("connection", "Unregistering.  gc = %p\n", gc);
 	
-	prpl_info->unregister_user(account);
+	prpl_info->unregister_user(account, cb, user_data);
 }
 
 void

@@ -160,6 +160,8 @@ struct _JabberStream
 	char *serverFQDN;
 	
 	gboolean unregistration;
+	PurpleAccountUnregistrationCb unregistration_cb;
+	void *unregistration_user_data;
 	
 	gboolean vcard_fetched;
 	
@@ -227,7 +229,7 @@ void jabber_idle_set(PurpleConnection *gc, int idle);
 void jabber_keepalive(PurpleConnection *gc);
 void jabber_register_gateway(JabberStream *js, const char *gateway);
 void jabber_register_account(PurpleAccount *account);
-void jabber_unregister_account(PurpleAccount *account);
+void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data);
 void jabber_convo_closed(PurpleConnection *gc, const char *who);
 PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name);
 gboolean jabber_offline_message(const PurpleBuddy *buddy);

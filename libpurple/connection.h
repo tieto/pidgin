@@ -143,7 +143,7 @@ void purple_connection_new(PurpleAccount *account, gboolean regist,
  * @param account  The account to unregister
  * @param password The password to use.
  */
-void purple_connection_new_unregister(PurpleAccount *account, const char *password);
+void purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data);
 
 /**
  * Disconnects and destroys a PurpleConnection.

@@ -37,6 +37,7 @@ typedef struct _PurpleAccount      PurpleAccount;
 typedef gboolean (*PurpleFilterAccountFunc)(PurpleAccount *account);
 typedef void (*PurpleAccountRequestAuthorizationCb)(void *);
 typedef void (*PurpleAccountRegistrationCb)(PurpleAccount *account, gboolean succeeded, void *user_data);
+typedef void (*PurpleAccountUnregistrationCb)(PurpleAccount *account, gboolean succeeded, void *user_data);
 
 #include "connection.h"
 #include "log.h"
@@ -164,8 +165,10 @@ void purple_account_register(PurpleAccount *account);
  * Unregisters an account (deleting it from the server).
  *
  * @param account The account to unregister.
+ * @param cb Optional callback to be called when unregistration is complete
+ * @param user_data user data to pass to the callback
  */
-void purple_account_unregister(PurpleAccount *account);
+void purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data);
 
 /**
  * Disconnects from an account.

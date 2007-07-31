@@ -933,14 +933,14 @@ purple_account_register(PurpleAccount *account)
 }
 
 void
-purple_account_unregister(PurpleAccount *account)
+purple_account_unregister(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data)
 {
 	g_return_if_fail(account != NULL);
 	
 	purple_debug_info("account", "Unregistering account %s\n",
 					  purple_account_get_username(account));
 	
-	purple_connection_new_unregister(account, purple_account_get_password(account));
+	purple_connection_new_unregister(account, purple_account_get_password(account), cb, user_data);
 }
 
 static void
