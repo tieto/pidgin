@@ -121,4 +121,74 @@ _wrap_gnt_register_action(PyGObject *self, PyObject *args, PyObject *kwargs)
 	Py_INCREF(Py_None);
 	return Py_None;
 }
+%%
+define register_bindings
+
+static gboolean
+pygnt_binding_callback(GntBindable *bindable, GList *list)
+{
+	PyObject *wrapper = pygobject_new(G_OBJECT(bindable));
+	PyObject_CallMethod(wrapper, list->data, "O", Py_None);
+	Py_DECREF(wrapper);
+	return TRUE;
+}
+
+static PyObject *
+_wrap_register_bindings(PyObject *self, PyObject *args)
+{
+	PyTypeObject *class;
+	int pos = 0;
+	PyObject *key, *value, *gbindings;
+	GntBindableClass *bindable;
+
+	if (!PyArg_ParseTuple(args, "O!:gnt.register_bindings",
+				&PyType_Type, &class)) {
+		/* Make sure it's a GntBindableClass subclass */
+		PyErr_SetString(PyExc_TypeError,
+				"argument must be a GntBindable subclass");
+		return NULL;
+	}
+
+	gbindings = PyDict_GetItemString(class->tp_dict, "__gntbindings__");
+	if (!gbindings)
+		goto end;
+
+	if (!PyDict_Check(gbindings)) {
+		PyErr_SetString(PyExc_TypeError,
+				"__gntbindings__ attribute not a dict!");
+		return NULL;
+	}
+
+	bindable = g_type_class_ref(pyg_type_from_object((PyObject *)class));
+	while (PyDict_Next(gbindings, &pos, &key, &value)) {
+		const char *trigger, *callback, *name;
+		GList *list = NULL;
+
+		if (!PyString_Check(key)) {
+			PyErr_SetString(PyExc_TypeError,
+					"__gntbindings__ keys must be strings");
+			g_type_class_unref(bindable);
+			return NULL;
+		}
+		name = PyString_AsString(key);
+
+		if (!PyTuple_Check(value) ||
+				!PyArg_ParseTuple(value, "ss", &callback, &trigger)) {
+			PyErr_SetString(PyExc_TypeError,
+					"__gntbindings__ values must be (callback, trigger) tupples");
+			g_type_class_unref(bindable);
+			return NULL;
+		}
+
+		gnt_bindable_class_register_action(bindable, name, pygnt_binding_callback,
+				trigger, g_strdup(callback), NULL);
+	}
+	if (gbindings)
+		PyDict_DelItemString(class->tp_dict, "__gntbindings__");
+	g_type_class_unref(bindable);
+
+end:
+	Py_INCREF(Py_None);
+	return Py_None;
+}
 
