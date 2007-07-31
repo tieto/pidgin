@@ -1129,12 +1129,12 @@ static void jabber_unregister_account_iq_cb(JabberStream *js, xmlnode *packet, g
 							_("Error unregistering account"), msg);
 		g_free(msg);
 		if(js->unregistration_cb)
-			js->unregistration_cb(account, TRUE, js->unregistration_user_data);
+			js->unregistration_cb(account, FALSE, js->unregistration_user_data);
 	} else if(!strcmp(type,"result")) {
 		purple_notify_info(js->gc, _("Account successfully unregistered"),
 						   _("Account successfully unregistered"), NULL);
 		if(js->unregistration_cb)
-			js->unregistration_cb(account, FALSE, js->unregistration_user_data);
+			js->unregistration_cb(account, TRUE, js->unregistration_user_data);
 	}
 }
 
