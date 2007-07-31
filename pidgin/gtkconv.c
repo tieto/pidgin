@@ -5290,7 +5290,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtk_font_options_all |= GTK_IMHTML_USE_SMOOTHSCROLLING;
 
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", gtk_font_options_all);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", gtk_font_options_all | GTK_IMHTML_NO_SCROLL);
 
 	/* First message in a conversation. */
 	if (gtkconv->newday == 0)
@@ -5478,7 +5478,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 				   color, sml_attrib ? sml_attrib : "", mdate, str);
 		}
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all | GTK_IMHTML_NO_SCROLL);
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
 		    !(flags & PURPLE_MESSAGE_SEND)) {

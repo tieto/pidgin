@@ -2270,10 +2270,11 @@ static gboolean scroll_cb(gpointer data)
 	GtkIMHtml *imhtml = data;
 	GtkAdjustment *adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
 	gdouble max_val = adj->upper - adj->page_size;
+	gdouble scroll_val = gtk_adjustment_get_value(adj) + ((max_val - gtk_adjustment_get_value(adj)) / 3);
 
 	g_return_val_if_fail(imhtml->scroll_time != NULL, FALSE);
 
-	if (g_timer_elapsed(imhtml->scroll_time, NULL) > MAX_SCROLL_TIME) {
+	if (g_timer_elapsed(imhtml->scroll_time, NULL) > MAX_SCROLL_TIME || scroll_val >= max_val) {
 		/* time's up. jump to the end and kill the timer */
 		gtk_adjustment_set_value(adj, max_val);
 		g_timer_destroy(imhtml->scroll_time);
@@ -2282,7 +2283,7 @@ static gboolean scroll_cb(gpointer data)
 	}
 
 	/* scroll by 1/3rd the remaining distance */
-	gtk_adjustment_set_value(adj, gtk_adjustment_get_value(adj) + ((max_val - gtk_adjustment_get_value(adj)) / 3));
+	gtk_adjustment_set_value(adj, scroll_val);
 	return TRUE;
 }
 
