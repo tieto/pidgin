@@ -162,3 +162,17 @@ _wrap_gnt_tree_remove(PyGObject *self, PyObject *args, PyObject *kwargs)
 	Py_INCREF(Py_None);
 	return Py_None;
 }
+%%
+override gnt_tree_set_selected
+static PyObject *
+_wrap_gnt_tree_set_selected(PyGObject *self, PyObject *args)
+{
+	gpointer key;
+	if (!PyArg_ParseTuple(args, "O:GntTree.set_selected", &key)) {
+		return NULL;
+	}
+	gnt_tree_set_selected(GNT_TREE(self->obj), key);
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+
