@@ -53,6 +53,27 @@ class RssTree(gnt.Tree):
         'active_changed' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_OBJECT,))
     }
 
+    __gntbindings__ = {
+        'jump-next-unread' : ('jump_next_unread', 'J')
+    }
+
+    def jump_next_unread(self, null):
+        first = None
+        next = None
+        all = self.get_rows()
+        for item in all:
+            if item.unread:
+                if next:
+                    first = item
+                    break
+                elif not first and self.active != item:
+                    first = item
+            if self.active == item:
+                next = item
+        if first:
+            self.set_active(first)
+            self.set_selected(first)
+
     def __init__(self):
         self.active = None
         gnt.Tree.__init__(self)
@@ -83,6 +104,7 @@ class RssTree(gnt.Tree):
         return False
 
 gobject.type_register(RssTree)
+gnt.register_bindings(RssTree)
 
 win = gnt.Box(homo = False, vert = True)
 win.set_toplevel(True)
@@ -247,6 +269,7 @@ def item_active_changed(tree, old):
     details.append_text_with_flags(str(item.link) + "\n", gnt.TEXT_FLAG_UNDERLINE)
     details.append_text_with_flags("Date: ", gnt.TEXT_FLAG_BOLD)
     details.append_text_with_flags(str(item.date) + "\n", gnt.TEXT_FLAG_NORMAL)
+    details.append_text_with_flags("\n", gnt.TEXT_FLAG_NORMAL)
     parser = gnthtml.GParser(details)
     parser.parse(str(item.summary))
     item.mark_unread(False)
@@ -348,7 +371,11 @@ win.show()
 
 def update_feed_title(feed, property):
     if property.name == 'title':
-        feeds.change_text(feed, 0, feed.title)
+        if feed.customtitle:
+            title = feed.customtitle
+        else:
+            title = feed.title
+        feeds.change_text(feed, 0, title)
     elif property.name == 'unread':
         feeds.change_text(feed, 1, str(feed.unread) + "(" + str(len(feed.items)) + ")")
         flag = 0
@@ -362,6 +389,7 @@ def update_feed_title(feed, property):
 # populate everything
 for feed in gntrss.feeds:
     feed.refresh()
+    feed.set_auto_refresh(True)
     add_feed(feed)
 
 gnt.gnt_register_action("Stuff", add_new_feed)
