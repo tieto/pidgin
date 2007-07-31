@@ -572,6 +572,7 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 
     purple_connection_update_progress(session->gc, _("Logging in"), 2, 4);
 
+    response_len = 0;
     response = msim_compute_login_response(nc, account->username, account->password, &response_len);
 
     g_free(nc);
@@ -1341,8 +1342,6 @@ msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg)
     gchar *username, *cv;
     gboolean ret;
     PurpleBuddy *buddy;
-    gchar *client_info;
-
 
     username = msim_msg_get_string(msg, "_username");
     cv = msim_msg_get_string(msg, "cv");
@@ -1354,10 +1353,7 @@ msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg)
 
     if (buddy)
     {
-        client_info = g_strdup_printf("MySpaceIM build %s", cv);
-
-        purple_blist_node_set_string(&buddy->node, "client", client_info);
-        /* Do not free client_info - blist owns */
+        purple_blist_node_set_int(&buddy->node, "client_cv", atol(cv));
         ret = TRUE;
     } else {
         ret = FALSE;
@@ -1604,6 +1600,7 @@ msim_incoming_unofficial_client(MsimSession *session, MsimMessage *msg)
     
     g_return_val_if_fail(buddy != NULL, FALSE);
 
+    purple_blist_node_remove_setting(&buddy->node, "client");
     purple_blist_node_set_string(&buddy->node, "client", client_info);
 
 
@@ -1767,10 +1764,16 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 
     if (buddy)
     {
+        gint cv;
+
         str = purple_blist_node_get_string(&buddy->node, "client");
+        cv = purple_blist_node_get_int(&buddy->node, "client_cv");
+
         if (str)
+        {
             purple_notify_user_info_add_pair(user_info, _("Client Version"),
-                    g_strdup(str));
+                    g_strdup_printf("%s (build %d)", str, cv));
+        }
     }
 
 	purple_notify_userinfo(session->gc, user, user_info, NULL, NULL);
