@@ -84,6 +84,8 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 			buddy->txt_query_fd = purple_input_add(fd, PURPLE_INPUT_READ, _mdns_handle_event, buddy->txt_query);
 
 			bonjour_buddy_add_to_purple(buddy);
+
+			purple_debug_info("bonjour", "Found buddy %s at %s:%d\n", buddy->name, buddy->ip, buddy->port_p2pj);
 		}
 		else
 			bonjour_buddy_delete(buddy);
@@ -262,6 +264,7 @@ _mdns_publish(BonjourDnsSd *data, PublishType type)
 		switch (type)
 		{
 			case PUBLISH_START:
+				purple_debug_info("bonjour", "Registering service on port %d\n", data->port_p2pj);
 				err = DNSServiceRegister(&data->advertisement, 0, 0, purple_account_get_username(data->account), ICHAT_SERVICE,
 					NULL, NULL, htons(data->port_p2pj), TXTRecordGetLength(&dns_data), TXTRecordGetBytesPtr(&dns_data),
 					_mdns_service_register_callback, NULL);

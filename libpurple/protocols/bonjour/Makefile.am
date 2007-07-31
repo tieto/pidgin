@@ -17,7 +17,9 @@ BONJOURSOURCES = \
 	mdns_common.h \
 	mdns_howl.c \
 	mdns_howl.h \
-	mdns_types.h
+	mdns_types.h \
+	parser.c \
+	parser.h
 
 AM_CFLAGS = $(st) -DUSE_BONJOUR_HOWL
 
@@ -36,7 +38,7 @@ else
 st =
 pkg_LTLIBRARIES       = libbonjour.la
 libbonjour_la_SOURCES = $(BONJOURSOURCES)
-libbonjour_la_LIBADD   = $(GLIB_LIBS) $(HOWL_LIBS)
+libbonjour_la_LIBADD   = $(GLIB_LIBS) $(HOWL_LIBS) $(LIBXML_LIBS)
 
 endif
 
@@ -46,4 +48,5 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS) \
-	$(HOWL_CFLAGS)
+	$(HOWL_CFLAGS) \
+	$(LIBXML_CFLAGS)
