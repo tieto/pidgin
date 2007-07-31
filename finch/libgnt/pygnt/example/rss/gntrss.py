@@ -25,7 +25,8 @@ USA
 This file deals with the rss parsing part (feedparser) of the application
 """
 
-import threading
+import os
+import tempfile, urllib2
 import feedparser
 import gobject
 import sys
@@ -46,8 +47,14 @@ class FeedItem(gobject.GObject):
     }
     def __init__(self, item, parent):
         self.__gobject_init__()
-        self.date = item['date']
-        self.date_parsed = item['date_parsed']
+        try:
+            "Apparently some feed items don't have any dates in them"
+            self.date = item['date']
+            self.date_parsed = item['date_parsed']
+        except:
+            item['date'] = self.date = time.ctime()
+            self.date_parsed = feedparser._parse_date(self.date)
+
         self.title = item['title']
         self.summary = item['summary']
         self.link = item['link']
@@ -111,9 +118,9 @@ class Feed(gobject.GObject):
         self.desc = url
         self.title = url
         self.unread = 0
-        self.timer = 0
         self.items = []
         self.hash = {}
+        self.pending = False
 
     def do_set_property(self, property, value):
         if property.name == 'link':
@@ -126,23 +133,19 @@ class Feed(gobject.GObject):
             self.unread = value
         pass
 
-    def check_thread_for_death(self):
-        #if self.thread.running:
-        #    sys.stderr.write(time.ctime() + "continue")
-        #    return True
-        # The thread has ended!!
-        #result = self.thread.result
-        #self.thread = None
-        result = feedparser.parse(self.url)
+    def set_result(self, result):
         # XXX Look at result['bozo'] first, and emit some signal that the UI can use
         # to indicate (dim the row?) that the feed has invalid XML format or something
 
-        channel = result['channel']
-        self.set_property('link', channel['link'])
-        self.set_property('desc', channel['description'])
-        self.set_property('title', channel['title'])
-        self.timer = 0
-        items = result['items']
+        try:
+            channel = result['channel']
+            self.set_property('link', channel['link'])
+            self.set_property('desc', channel['description'])
+            self.set_property('title', channel['title'])
+            items = result['items']
+        except:
+            items = ()
+
         tmp = {}
         for item in self.items:
             tmp[hash(item)] = item
@@ -164,14 +167,14 @@ class Feed(gobject.GObject):
 
         if unread != self.unread:
             self.set_property('unread', unread)
+        self.pending = False
         return False
 
     def refresh(self):
-        #if self.thread == 0:
-        #   self.thread = FeedReader(self)
-        #   self.thread.start()
-        if self.timer == 0:
-            self.timer = gobject.timeout_add(1000, self.check_thread_for_death)
+        if self.pending:
+            return
+        self.pending = True
+        FeedReader(self).run()
 
     def mark_read(self):
         for item in self.items:
@@ -179,27 +182,38 @@ class Feed(gobject.GObject):
 
 gobject.type_register(Feed)
 
-##
-# A FeedReader class, which is threaded to make sure it doesn't freeze the ui
-# (this thing doesn't quite work ... yet)
-##
-class FeedReader(threading.Thread):
+"""
+The FeedReader updates a Feed. It fork()s off a child to avoid blocking.
+"""
+class FeedReader:
     def __init__(self, feed):
         self.feed = feed
-        self.running = True
-        threading.Thread.__init__(self)
+
+    def reap_child(self, pid, status):
+        result = feedparser.parse(self.tmpfile.name)
+        self.tmpfile.close()
+        self.feed.set_result(result)
 
     def run(self):
-        sys.stderr.write(str(time.ctime()) + " STARTED!!!\n\n\n")
-        self.running = True
-        self.result = feedparser.parse(self.feed.url)
-        self.running = False
-        sys.stderr.write(str(time.ctime()) + " DONE!!!\n\n\n")
+        self.tmpfile = tempfile.NamedTemporaryFile()
+        self.pid = os.fork()
+        if self.pid == 0:
+            tmp = urllib2.urlopen(self.feed.url)
+            content = tmp.read()
+            tmp.close()
+            self.tmpfile.write(content)
+            self.tmpfile.flush()
+            # Do NOT close tmpfile here
+            os._exit(os.EX_OK)
+        gobject.child_watch_add(self.pid, self.reap_child)
 
 feeds = []
 urls = ("http://rss.slashdot.org/Slashdot/slashdot",
-        "http://www.python.org/channews.rdf",
-        "http://kerneltrap.org/node/feed"
+        "http://kerneltrap.org/node/feed",
+        "http://pidgin.im/rss.php",
+        "http://www.formula1.com/rss/news/latest.rss",
+        "http://www.pheedo.com/f/freshmeatnet_announcements_unix",
+        "http://www.cricinfo.com/rss/livescores.xml"
         )
 
 for url in urls:
