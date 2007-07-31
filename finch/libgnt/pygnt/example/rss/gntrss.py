@@ -56,7 +56,8 @@ class FeedItem(gobject.GObject):
             self.date_parsed = feedparser._parse_date(self.date)
 
         self.title = item['title']
-        self.summary = item['summary']
+        sum = item['summary']
+        self.summary = item['summary'].encode('utf8')
         self.link = item['link']
         self.parent = parent
         self.unread = True
@@ -111,16 +112,20 @@ class Feed(gobject.GObject):
         'added' : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, (gobject.TYPE_OBJECT,))
     }
 
-    def __init__(self, url):
+    def __init__(self, feed):
         self.__gobject_init__()
+        url = feed['link']
+        name = feed['name']
         self.url = url           # The url of the feed itself
         self.link = url          # The web page associated with the feed
         self.desc = url
-        self.title = url
+        self.title = (name, url)[not name]
+        self.customtitle = name
         self.unread = 0
         self.items = []
         self.hash = {}
         self.pending = False
+        self._refresh = {'time' : 30, 'id' : 0}
 
     def do_set_property(self, property, value):
         if property.name == 'link':
@@ -162,11 +167,13 @@ class Feed(gobject.GObject):
                 self.hash[item_hash(item)] = itm
                 unread = unread + 1
 
-        for hv in tmp:
-            tmp[hv].remove()
-
         if unread != self.unread:
             self.set_property('unread', unread)
+
+        for hv in tmp:
+            tmp[hv].remove()
+            "Also notify the UI about the count change"
+
         self.pending = False
         return False
 
@@ -175,10 +182,24 @@ class Feed(gobject.GObject):
             return
         self.pending = True
         FeedReader(self).run()
+        return True
 
     def mark_read(self):
         for item in self.items:
             item.mark_unread(False)
+
+    def set_auto_refresh(self, auto):
+        if auto:
+            if self._refresh['id']:
+                return
+            if self._refresh['time'] < 1:
+                self._refresh['time'] = 1
+            self.id = gobject.timeout_add(self._refresh['time'] * 1000 * 60, self.refresh)
+        else:
+            if not self._refresh['id']:
+                return
+            gobject.source_remove(self._refresh['id'])
+            self._refresh['id'] = 0
 
 gobject.type_register(Feed)
 
@@ -208,13 +229,20 @@ class FeedReader:
         gobject.child_watch_add(self.pid, self.reap_child)
 
 feeds = []
-urls = ("http://rss.slashdot.org/Slashdot/slashdot",
-        "http://kerneltrap.org/node/feed",
-        "http://pidgin.im/rss.php",
-        "http://www.formula1.com/rss/news/latest.rss",
-        "http://www.pheedo.com/f/freshmeatnet_announcements_unix",
-        "http://www.cricinfo.com/rss/livescores.xml"
-        )
+urls = (
+    {'name': '/.',
+     'link': "http://rss.slashdot.org/Slashdot/slashdot"},
+    {'name': 'KernelTrap',
+     'link': "http://kerneltrap.org/node/feed"},
+    {'name': None,
+     'link': "http://pidgin.im/rss.php"},
+    {'name': "F1",
+     'link': "http://www.formula1.com/rss/news/latest.rss"},
+    {'name': "Freshmeat",
+     'link': "http://www.pheedo.com/f/freshmeatnet_announcements_unix"},
+    {'name': "Cricinfo",
+     'link': "http://www.cricinfo.com/rss/livescores.xml"}
+)
 
 for url in urls:
     feed = Feed(url)

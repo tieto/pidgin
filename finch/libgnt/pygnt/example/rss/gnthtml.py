@@ -41,7 +41,7 @@ class GParser(sgmllib.SGMLParser):
         self.close()
 
     def unknown_starttag(self, tag, attrs):
-        if tag in ["b", "i", "blockquote"]:
+        if tag in ["b", "i", "blockquote", "strong"]:
             self.flag = self.flag | gnt.TEXT_FLAG_BOLD
         elif tag in ["p", "hr", "br"]:
             self.view.append_text_with_flags("\n", self.flag)
@@ -49,7 +49,7 @@ class GParser(sgmllib.SGMLParser):
             print tag
 
     def unknown_endtag(self, tag):
-        if tag in ["b", "i", "blockquote"]:
+        if tag in ["b", "i", "blockquote", "strong"]:
             self.flag = self.flag & ~gnt.TEXT_FLAG_BOLD
         elif tag in ["p", "hr", "br"]:
             self.view.append_text_with_flags("\n", self.flag)
