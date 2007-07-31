@@ -1211,6 +1211,7 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, GSList 
 int aim_ssi_addpermit(OscarData *od, const char *name);
 int aim_ssi_adddeny(OscarData *od, const char *name);
 int aim_ssi_delbuddy(OscarData *od, const char *name, const char *group);
+int aim_ssi_delgroup(OscarData *od, const char *group);
 int aim_ssi_delpermit(OscarData *od, const char *name);
 int aim_ssi_deldeny(OscarData *od, const char *name);
 int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const char *sn);

@@ -78,7 +78,7 @@ static PurplePluginProtocolInfo prpl_info =
 	oscar_convo_closed,		/* convo_closed */
 	oscar_normalize,		/* normalize */
 	oscar_set_icon,			/* set_buddy_icon */
-	NULL,					/* remove_group */
+	oscar_remove_group,		/* remove_group */
 	NULL,					/* get_cb_real_name */
 	NULL,					/* set_chat_topic */
 	NULL,					/* find_blist_chat */
