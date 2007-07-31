@@ -196,6 +196,8 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 	GSList *l = pkt->hash;
 	YahooFriend *f = NULL;
 	char *name = NULL;
+	gboolean unicode = FALSE;
+	char *message = NULL;
 
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
 		gc->wants_to_die = TRUE;
@@ -269,7 +271,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 19: /* custom message */
 			if (f)
-				yahoo_friend_set_status_message(f, yahoo_string_decode(gc, pair->value, FALSE));
+				message = pair->value;
 			break;
 		case 11: /* this is the buddy's session id */
 			break;
@@ -380,6 +382,10 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 				g_free(tmp);
 			}
 			break;
+		case 97: /* Unicode status message */
+			unicode = !strcmp(pair->value, "1");
+			break;
+
 		default:
 			purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
 					   "Unknown status key %d\n", pair->key);
@@ -389,6 +395,9 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 		l = l->next;
 	}
 
+	if (message && f)
+		yahoo_friend_set_status_message(f, yahoo_string_decode(gc, message, unicode));
+		
 	if (name && f) /* update the last buddy */
 		yahoo_update_status(gc, name, f);
 }
@@ -3451,6 +3460,7 @@ static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 	const char *msg = NULL;
 	char *tmp = NULL;
 	char *conv_msg = NULL;
+	gboolean utf8 = TRUE;
 
 	if (!purple_status_is_active(status))
 		return;
@@ -3467,13 +3477,13 @@ static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 		msg = purple_status_get_attr_string(status, "message");
 
 		if (purple_status_is_available(status)) {
-			tmp = yahoo_string_encode(gc, msg, NULL);
+			tmp = yahoo_string_encode(gc, msg, &utf8);
 			conv_msg = purple_markup_strip_html(tmp);
 			g_free(tmp);
 		} else {
 			if ((msg == NULL) || (*msg == '\0'))
 				msg = _("Away");
-			tmp = yahoo_string_encode(gc, msg, NULL);
+			tmp = yahoo_string_encode(gc, msg, &utf8);
 			conv_msg = purple_markup_strip_html(tmp);
 			g_free(tmp);
 		}
@@ -3491,6 +3501,7 @@ static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 	yahoo_packet_hash_int(pkt, 10, yd->current_status);
 
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
+		yahoo_packet_hash_str(pkt, 97, utf8 ? "1" : 0);
 		yahoo_packet_hash_str(pkt, 19, conv_msg);
 	} else {
 		yahoo_packet_hash_str(pkt, 19, "");
