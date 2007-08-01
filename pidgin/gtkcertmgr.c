@@ -353,6 +353,18 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 }
 
 static void
+tls_peers_mgmt_delete_confirm_cb(gchar *id, gint choice)
+{
+	if (1 == choice) {
+		/* Yes, delete was confirmed */
+		/* Now delete the thing */
+		g_assert(purple_certificate_pool_delete(tpm_dat->tls_peers, id));
+	}
+
+	g_free(id);
+}
+	
+static void
 tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
 {
 	GtkTreeSelection *select = tpm_dat->listselect;
@@ -363,14 +375,25 @@ tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
 	if (gtk_tree_selection_get_selected(select, &model, &iter)) {
 
 		gchar *id;
+		gchar *primary;
 
 		/* Retrieve the selected hostname */
 		gtk_tree_model_get(model, &iter, TPM_HOSTNAME_COLUMN, &id, -1);
 
-		/* Now delete the thing */
-		g_assert(purple_certificate_pool_delete(tpm_dat->tls_peers, id));
+		/* Prompt to confirm deletion */
+		primary = g_strdup_printf(
+			_("Really delete certificate for %s?"), id );
 		
-		g_free(id);
+		purple_request_yes_no(tpm_dat, _("Confirm certificate delete"),
+				      primary, NULL, /* Can this be NULL? */
+				      2, /* NO is default action */
+				      NULL, NULL, NULL,
+				      id, /* id ownership passed to callback */
+				      tls_peers_mgmt_delete_confirm_cb,
+				      tls_peers_mgmt_delete_confirm_cb );
+		
+		g_free(primary);
+				      
 	} else {
 		purple_debug_warning("gtkcertmgr/tls_peers_mgmt",
 				     "Delete clicked with no selection?\n");
