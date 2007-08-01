@@ -229,7 +229,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 				  "User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
 				  "Cookie: T=%s; Y=%s\r\n"
 				  "Host: %s\r\n"
-				  "Content-Length: %i\r\n"
+				  "Content-Length: %" G_GSIZE_FORMAT "\r\n"
 				  "Cache-Control: no-cache\r\n\r\n"
 				  "%s",
 				  webpage, yd->cookie_t,yd->cookie_y, webaddress,
