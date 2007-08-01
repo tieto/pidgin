@@ -303,6 +303,54 @@ tls_peers_mgmt_export_cb(GtkWidget *button, gpointer data)
 			    crt); /* Pass the certificate on to the callback */
 }
 
+static void
+tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
+{
+	GtkTreeSelection *select = tpm_dat->listselect;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	gchar *id;
+	PurpleCertificate *crt;
+	gchar *subject;
+	GByteArray *fpr_sha1;
+	gchar *fpr_sha1_asc;
+	gchar *primary, *secondary;
+
+	/* See if things are selected */
+	if (!gtk_tree_selection_get_selected(select, &model, &iter)) {
+		purple_debug_warning("gtkcertmgr/tls_peers_mgmt",
+				     "Info clicked with no selection?\n");
+		return;
+	}
+
+	/* Retrieve the selected hostname */
+	gtk_tree_model_get(model, &iter, TPM_HOSTNAME_COLUMN, &id, -1);
+
+	/* Now retrieve the certificate */
+	crt = purple_certificate_pool_retrieve(tpm_dat->tls_peers, id);
+	g_return_if_fail(crt);
+	
+	/* Build a notification thing */
+	/* TODO: This needs a better GUI, but a notification will do for now */
+	primary = g_strdup_printf(_("Certificate for %s"), id);
+
+	fpr_sha1 = purple_certificate_get_fingerprint_sha1(crt);
+	fpr_sha1_asc = purple_base16_encode_chunked(fpr_sha1->data,
+						    fpr_sha1->len);
+	subject = purple_certificate_get_subject_name(crt);
+
+	secondary = g_strdup_printf(_("Common name: %s\n\nSHA1 fingerprint:\n%s"), subject, fpr_sha1_asc);
+	
+	purple_notify_info(tpm_dat,
+			   _("SSL Host Certificate"),  primary, secondary );
+
+	g_free(primary);
+	g_free(secondary);
+	g_byte_array_free(fpr_sha1, TRUE);
+	g_free(fpr_sha1_asc);
+	g_free(subject);
+	g_free(id);
+}
 
 static void
 tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
@@ -433,6 +481,9 @@ tls_peers_mgmt_build(void)
 		gtk_button_new_from_stock(GTK_STOCK_INFO);
 	gtk_box_pack_start(GTK_BOX(bbox), infobutton, FALSE, FALSE, 0);
 	gtk_widget_show(infobutton);
+	g_signal_connect(G_OBJECT(infobutton), "clicked",
+			 G_CALLBACK(tls_peers_mgmt_info_cb), NULL);
+
 
 	/* Delete button */
 	tpm_dat->deletebutton = deletebutton =
