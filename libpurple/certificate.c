@@ -933,6 +933,11 @@ purple_certificate_register_scheme(PurpleCertificateScheme *scheme)
 	cert_schemes = g_list_prepend(cert_schemes, scheme);
 
 	/* TODO: Signalling and such? */
+
+	purple_debug_info("certificate",
+			  "CertificateScheme %s registered\n",
+			  scheme->name);
+	
 	return TRUE;
 }
 
@@ -951,6 +956,11 @@ purple_certificate_unregister_scheme(PurpleCertificateScheme *scheme)
 	/* TODO: unregister all CertificatePools for this scheme? */
 	/* Neither of the above should be necessary, though */
 	cert_schemes = g_list_remove(cert_schemes, scheme);
+
+	purple_debug_info("certificate",
+			  "CertificateScheme %s unregistered\n",
+			  scheme->name);
+
 
 	return TRUE;
 }
@@ -1005,6 +1015,10 @@ purple_certificate_register_verifier(PurpleCertificateVerifier *vr)
 	cert_verifiers = g_list_prepend(cert_verifiers, vr);
 
 	/* TODO: Signalling and such? */
+
+	purple_debug_info("certificate",
+			  "CertificateVerifier %s registered\n",
+			  vr->name);
 	return TRUE;
 }
 
@@ -1020,6 +1034,11 @@ purple_certificate_unregister_verifier(PurpleCertificateVerifier *vr)
 	/* TODO: signalling? */
 
 	cert_verifiers = g_list_remove(cert_verifiers, vr);
+
+
+	purple_debug_info("certificate",
+			  "CertificateVerifier %s unregistered\n",
+			  vr->name);
 
 	return TRUE;
 }
@@ -1104,7 +1123,11 @@ purple_certificate_register_pool(PurpleCertificatePool *pool)
 				       purple_value_new(PURPLE_TYPE_SUBTYPE,
 							PURPLE_SUBTYPE_CERTIFICATEPOOL),
 				       purple_value_new(PURPLE_TYPE_STRING));
-		
+
+
+		purple_debug_info("certificate",
+			  "CertificatePool %s registered\n",
+			  pool->name);
 		return TRUE;
 	} else {
 		return FALSE;
@@ -1142,5 +1165,8 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool)
 	purple_signal_unregister(pool, "certificate-stored");
 	purple_signal_unregister(pool, "certificate-deleted");
 		
+	purple_debug_info("certificate",
+			  "CertificatePool %s unregistered\n",
+			  pool->name);
 	return TRUE;
 }
