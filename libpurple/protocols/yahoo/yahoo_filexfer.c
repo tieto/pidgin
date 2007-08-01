@@ -484,7 +484,7 @@ void yahoo_process_p2pfilexfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	if(service != NULL && imv != NULL && !strcmp(service, "IMVIRONMENT"))
 	{
 		/* Check for a Doodle packet and handle it accordingly */
-		if(!strcmp(imv, "doodle;11"))
+		if(strstr(imv, "doodle;") != NULL)
 			yahoo_doodle_process(gc, me, from, command, message);
 
 		/* If an IMVIRONMENT packet comes without a specific imviroment name */
@@ -622,12 +622,12 @@ PurpleXfer *yahoo_new_xfer(PurpleConnection *gc, const char *who)
 {
 	PurpleXfer *xfer;
 	struct yahoo_xfer_data *xfer_data;
-	
+
 	g_return_val_if_fail(who != NULL, NULL);
-	
+
 	xfer_data = g_new0(struct yahoo_xfer_data, 1);
 	xfer_data->gc = gc;
-	
+
 	/* Build the file transfer handle. */
 	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
 	if (xfer)

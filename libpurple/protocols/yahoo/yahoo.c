@@ -398,7 +398,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 	if (message && f)
 		yahoo_friend_set_status_message(f, yahoo_string_decode(gc, message, unicode));
-		
+
 	if (name && f) /* update the last buddy */
 		yahoo_update_status(gc, name, f);
 }
@@ -519,7 +519,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 		l = l->next;
 
 		switch (pair->key) {
-		case 302: 
+		case 302:
 			/* This is always 318 before a group, 319 before the first s/n in a group, 320 before any ignored s/n.
 			 * It is not sent for s/n's in a group after the first.
 			 * All ignored s/n's are listed last, so when we see a 320 we clear the group and begin marking the
@@ -559,7 +559,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 
 			} else {
 				/* This buddy is on the ignore list (and therefore in no group) */
-				purple_privacy_deny_add(account, norm_bud, 1);				
+				purple_privacy_deny_add(account, norm_bud, 1);
 			}
 			break;
 		case 241: /* another protocol user */
@@ -829,7 +829,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 	{
 		g_hash_table_replace(yd->imvironments, g_strdup(im->from), g_strdup(imv));
 
-		if (strcmp(imv, "doodle;11") == 0)
+		if (strstr(imv, "doodle;") != NULL)
 		{
 			PurpleWhiteboard *wb;
 
@@ -837,6 +837,8 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				purple_debug_info("yahoo", "Doodle request from %s dropped.\n", im->from);
 				return;
 			}
+
+			/* I'm not sure the following ever happens -DAA */
 
 			wb = purple_whiteboard_get_session(gc->account, im->from);
 
@@ -881,17 +883,17 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			PurpleAccount *account;
 			PurpleConversation *c;
 			char *username, *str;
-			
+
 			account = purple_connection_get_account(gc);
 			c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
-			
+
 			if ((buddy = purple_find_buddy(account, im->from)) != NULL)
 				username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
 			else
 				username = g_markup_escape_text(im->from, -1);
-			
+
 			str = g_strdup_printf(_("%s just sent you a Buzz!"), username);
-			
+
 			purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, im->time);
 
 			g_free(username);
@@ -997,7 +999,7 @@ yahoo_buddy_add_deny_noreason_cb(struct yahoo_add_request *add_req, const char*m
 static void
 yahoo_buddy_add_deny_reason_cb(struct yahoo_add_request *add_req) {
 	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
-			NULL, _("No reason given."), TRUE, FALSE, NULL, 
+			NULL, _("No reason given."), TRUE, FALSE, NULL,
 			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
 			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb),
 			purple_connection_get_account(add_req->gc), add_req->who, NULL,
@@ -1040,7 +1042,7 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 		 */
 		 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
                                                     NULL, add_req->msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
-						    G_CALLBACK(yahoo_buddy_add_authorize_cb), 
+						    G_CALLBACK(yahoo_buddy_add_authorize_cb),
 						    G_CALLBACK(yahoo_buddy_add_deny_reason_cb),
                                                     add_req);
 	} else {
@@ -3401,7 +3403,7 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 	 */
 	wb = purple_whiteboard_get_session(gc->account, who);
 	if (wb)
-		yahoo_packet_hash_str(pkt, 63, "doodle;11");
+		yahoo_packet_hash_str(pkt, 63, DOODLE_IMV_KEY);
 	else
 	{
 		const char *imv;
