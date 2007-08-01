@@ -228,6 +228,83 @@ tls_peers_mgmt_import_cb(GtkWidget *button, gpointer data)
 }
 
 static void
+tls_peers_mgmt_export_ok_cb(gpointer data, const char *filename)
+{
+	PurpleCertificate *crt = (PurpleCertificate *) data;
+
+	g_assert(filename);
+	
+	if (!purple_certificate_export(filename, crt)) {
+		/* Errors! Oh no! */
+		/* TODO: Perhaps find a way to be specific about what just
+		   went wrong? */
+		gchar * secondary;
+
+		secondary = g_strdup_printf(_("Export to file %s failed.\nCheck that you have write permission to the target path\n"), filename);
+		purple_notify_error(NULL,
+				    _("Certificate Export Error"),
+				    _("X.509 certificate export failed"),
+				    secondary);
+		g_free(secondary);
+	}
+
+	purple_certificate_destroy(crt);
+}
+
+static void
+tls_peers_mgmt_export_cancel_cb(gpointer data, const char *filename)
+{
+	PurpleCertificate *crt = (PurpleCertificate *) data;
+	/* Pressing cancel just frees the duplicated certificate */
+	purple_certificate_destroy(crt);
+}
+	
+static void
+tls_peers_mgmt_export_cb(GtkWidget *button, gpointer data)
+{
+	PurpleCertificate *crt;
+	GtkTreeSelection *select = tpm_dat->listselect;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	gchar *id;
+
+	/* See if things are selected */
+	if (!gtk_tree_selection_get_selected(select, &model, &iter)) {
+		purple_debug_warning("gtkcertmgr/tls_peers_mgmt",
+				     "Export clicked with no selection?\n");
+		return;
+	}
+
+	/* Retrieve the selected hostname */
+	gtk_tree_model_get(model, &iter, TPM_HOSTNAME_COLUMN, &id, -1);
+
+	/* Extract the certificate from the pool now to make sure it doesn't
+	   get deleted out from under us */
+	crt = purple_certificate_pool_retrieve(tpm_dat->tls_peers, id);
+
+	if (NULL == crt) {
+		purple_debug_error("gtkcertmgr/tls_peers_mgmt",
+				   "Id %s was not in the peers cache?!\n",
+				   id);
+		g_free(id);
+		return;
+	}
+	g_free(id);
+
+	
+	/* TODO: inform user that it will be a PEM? */
+	purple_request_file(tpm_dat,
+			    _("PEM X.509 Certificate Export"),
+			    "certificate.pem",
+			    TRUE, /* Is a save dialog */
+			    G_CALLBACK(tls_peers_mgmt_export_ok_cb),
+			    G_CALLBACK(tls_peers_mgmt_export_cancel_cb),
+			    NULL, NULL, NULL, /* No account,conv,etc. */
+			    crt); /* Pass the certificate on to the callback */
+}
+
+
+static void
 tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
 {
 	GtkTreeSelection *select = tpm_dat->listselect;
@@ -347,6 +424,9 @@ tls_peers_mgmt_build(void)
 		gtk_button_new_from_stock(GTK_STOCK_SAVE);
 	gtk_box_pack_start(GTK_BOX(bbox), exportbutton, FALSE, FALSE, 0);
 	gtk_widget_show(exportbutton);
+	g_signal_connect(G_OBJECT(exportbutton), "clicked",
+			 G_CALLBACK(tls_peers_mgmt_export_cb), NULL);
+
 
 	/* Info button */
 	tpm_dat->infobutton = infobutton =
