@@ -4,6 +4,7 @@ version 2.1.1 (??/??/????):
 	libpurple:
 	* Added an account action to open your inbox in the yahoo prpl.
 	* Added support for Unicode status messages in Yahoo.
+	* Server-stored aliases for Yahoo. (John Moody)
 
 version 2.1.0 (07/28/2007):
 	libpurple:

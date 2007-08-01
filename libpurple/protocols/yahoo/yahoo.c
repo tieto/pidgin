@@ -41,6 +41,7 @@
 
 #include "yahoo.h"
 #include "yahoochat.h"
+#include "yahoo_aliases.h"
 #include "yahoo_auth.h"
 #include "yahoo_crypt.h"
 #include "yahoo_doodle.h"
@@ -712,6 +713,8 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 		yd->tmp_serv_plist = NULL;
 
 	}
+	/* Now that we've got the list, request aliases */
+	yahoo_fetch_aliases(gc);
 }
 
 static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -4102,7 +4105,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL, /* register_user */
 	NULL, /* get_cb_info */
 	NULL, /* get_cb_away */
-	NULL, /* alias_buddy */
+	yahoo_update_alias, /* alias_buddy */
 	yahoo_change_buddys_group,
 	yahoo_rename_group,
 	NULL, /* buddy_free */
