@@ -902,8 +902,10 @@ menu_position_func (GtkMenu           *menu,
 
 static void pidgin_menu_clicked(GtkWidget *button, GtkMenu *menu)
 {
-	gtk_widget_show_all(GTK_WIDGET(menu));
-	gtk_menu_popup(menu, NULL, NULL, menu_position_func, button, 0, gtk_get_current_event_time());
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button))) {
+		gtk_widget_show_all(GTK_WIDGET(menu));
+		gtk_menu_popup(menu, NULL, NULL, menu_position_func, button, 0, gtk_get_current_event_time());
+	}
 }
 
 static void pidgin_menu_deactivate(GtkWidget *menu, GtkToggleButton *button)
