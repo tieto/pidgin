@@ -6584,8 +6584,14 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	event = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(gtkconv->u.im->icon_container), event);
+	gtk_widget_add_events(event,
+                              GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
 					 G_CALLBACK(icon_menu), gtkconv);
+        g_signal_connect(G_OBJECT(event), "motion-notify-event",
+                         G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
+        g_signal_connect(G_OBJECT(event), "leave-notify-event",
+                         G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 	gtk_widget_show(event);
 
 	gtkconv->u.im->icon = gtk_image_new_from_pixbuf(scale);
