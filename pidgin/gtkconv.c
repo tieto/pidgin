@@ -7175,6 +7175,10 @@ pidgin_conversations_init(void)
 
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new", "never");
 
+#ifdef _WIN32
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/win32/minimize_new_convs", FALSE);
+#endif
+
 	/* Connect callbacks. */
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/close_on_tabs",
 								close_on_tabs_pref_cb, NULL);
