@@ -114,6 +114,11 @@ extern "C" {
  */
 #define MAXCHATMSGLEN 512
 
+/*
+ * Found by trial and error.
+ */
+#define MAXAVAILMSGLEN 251
+
 /**
  * Maximum length for the password of an ICQ account
  */

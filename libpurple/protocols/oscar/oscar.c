@@ -4523,9 +4523,9 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		{
 			status_text = purple_markup_strip_html(status_html);
 			/* If the status_text is longer than 60 character then truncate it */
-			if (strlen(status_text) > 60)
+			if (strlen(status_text) > MAXAVAILMSGLEN)
 			{
-				char *tmp = g_utf8_find_prev_char(status_text, &status_text[58]);
+				char *tmp = g_utf8_find_prev_char(status_text, &status_text[MAXAVAILMSGLEN - 2]);
 				strcpy(tmp, "...");
 			}
 		}
