@@ -30,8 +30,6 @@
 #include "savedstatuses.h"
 #include "signals.h"
 
-#define IDLEMARK 600 /* 10 minutes! */
-
 typedef enum
 {
 	PURPLE_IDLE_NOT_AWAY = 0,
@@ -121,7 +119,7 @@ check_idleness(void)
 	gboolean report_idle = TRUE;
 	gint away_seconds = 0;
 	gint idle_recheck_interval = 0;
-
+	gint idle_poll_seconds = purple_prefs_get_int("/purple/away/mins_before_away") * 60;
 	purple_signal_emit(purple_blist_get_handle(), "update-idle");
 
 	idle_reporting = purple_prefs_get_string("/purple/away/idle_reporting");
@@ -132,7 +130,7 @@ check_idleness(void)
 	{
 		/* Use system idle time (mouse or keyboard movement, etc.) */
 		time_idle = idle_ui_ops->get_time_idle();
-		idle_recheck_interval = 60;
+		idle_recheck_interval = 1;
 	}
 	else if (!strcmp(idle_reporting, "purple"))
 	{
@@ -153,7 +151,7 @@ check_idleness(void)
 			if ((idle_ui_ops != NULL) && (idle_ui_ops->get_time_idle != NULL))
 			{
 				time_idle = idle_ui_ops->get_time_idle();
-				idle_recheck_interval = 60;
+				idle_recheck_interval = 1;
 			}
 			else
 			{
@@ -173,7 +171,7 @@ check_idleness(void)
 		}
 	}
 
-	time_until_next_idle_event = IDLEMARK - time_idle;
+	time_until_next_idle_event = idle_poll_seconds - time_idle;
 	if (time_until_next_idle_event < 0)
 	{
 		/* If we're already idle, check again as appropriate. */
@@ -197,7 +195,7 @@ check_idleness(void)
 	}
 
 	/* Idle reporting stuff */
-	if (report_idle && (time_idle >= IDLEMARK))
+	if (report_idle && (time_idle >= idle_poll_seconds))
 	{
 		GList *l;
 		for (l = purple_connections_get_all(); l != NULL; l = l->next)
@@ -206,7 +204,7 @@ check_idleness(void)
 			set_account_idle(purple_connection_get_account(gc), time_idle);
 		}
 	}
-	else if (!report_idle || (time_idle < IDLEMARK))
+	else if (!report_idle || (time_idle < idle_poll_seconds ))
 	{
 		while (idled_accts != NULL)
 			set_account_unidle(idled_accts->data);
@@ -306,6 +304,11 @@ purple_idle_get_handle()
 
 static gboolean _do_purple_idle_touch_cb(gpointer data)
 {
+	int idle_poll_minutes = purple_prefs_get_int("/purple/away/mins_before_away");
+
+	 /* +1 more for g_timeout_add_seconds rounding. */
+	idle_timer = purple_timeout_add_seconds((idle_poll_minutes * 60) + 2, check_idleness_timer, NULL);
+
 	purple_idle_touch();
 
 	return FALSE;
@@ -315,11 +318,6 @@ static gboolean _do_purple_idle_touch_cb(gpointer data)
 void
 purple_idle_init()
 {
-	/* Add the timer to check if we're idle.
-	 * IDLEMARK + 1 as the boundary,
-	 * +1 more for g_timeout_add_seconds rounding. */
-	idle_timer = purple_timeout_add_seconds((IDLEMARK + 2), check_idleness_timer, NULL);
-
 	purple_signal_connect(purple_conversations_get_handle(), "sent-im-msg",
 						purple_idle_get_handle(),
 						PURPLE_CALLBACK(im_msg_sent_cb), NULL);

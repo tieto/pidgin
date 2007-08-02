@@ -4709,6 +4709,11 @@ void oscar_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup 
 	}
 }
 
+void oscar_remove_group(PurpleConnection *gc, PurpleGroup *group)
+{
+	aim_ssi_delgroup(gc->proto_data, group->name);
+}
+
 static gboolean purple_ssi_rerequestdata(gpointer data) {
 	OscarData *od = data;
 
@@ -4902,14 +4907,21 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	/* Add from server list to local list */
 	for (curitem=od->ssi.local; curitem; curitem=curitem->next) {
-		if ((curitem->name == NULL) || (g_utf8_validate(curitem->name, -1, NULL)))
+	  if ((curitem->name == NULL) || (g_utf8_validate(curitem->name, -1, NULL)))
 		switch (curitem->type) {
 			case 0x0000: { /* Buddy */
 				if (curitem->name) {
-					char *gname = aim_ssi_itemlist_findparentname(od->ssi.local, curitem->name);
+					struct aim_ssi_item *groupitem = aim_ssi_itemlist_find(od->ssi.local, curitem->gid, 0x0000);
+					char *gname = groupitem ? groupitem->name : NULL;
 					char *gname_utf8 = gname ? oscar_utf8_try_convert(gc->account, gname) : NULL;
 					char *alias = aim_ssi_getalias(od->ssi.local, gname, curitem->name);
 					char *alias_utf8;
+
+					g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans"));
+					if (g == NULL) {
+						g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
+						purple_blist_add_group(g, NULL);
+					}
 
 					if (alias != NULL)
 					{
@@ -4917,14 +4929,12 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 							alias_utf8 = g_strdup(alias);
 						else
 							alias_utf8 = oscar_utf8_try_convert(account, alias);
+						g_free(alias);
 					}
 					else
 						alias_utf8 = NULL;
 
-					b = purple_find_buddy(gc->account, curitem->name);
-					/* Should gname be freed here? -- elb */
-					/* Not with the current code, but that might be cleaner -- med */
-					g_free(alias);
+					b = purple_find_buddy_in_group(gc->account, curitem->name, g);
 					if (b) {
 						/* Get server stored alias */
 						if (alias_utf8) {
@@ -4934,13 +4944,8 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					} else {
 						b = purple_buddy_new(gc->account, curitem->name, alias_utf8);
 
-						if (!(g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans")))) {
-							g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
-							purple_blist_add_group(g, NULL);
-						}
-
 						purple_debug_info("oscar",
-								   "ssi: adding buddy %s to group %s to local list\n", curitem->name, gname_utf8 ? gname_utf8 : _("Orphans"));
+								   "ssi: adding buddy %s to group %s to local list\n", curitem->name, g->name);
 						purple_blist_add_buddy(b, NULL, g, NULL);
 					}
 					if (!aim_sncmp(curitem->name, account->username)) {
@@ -4957,7 +4962,12 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			} break;
 
 			case 0x0001: { /* Group */
-				/* Shouldn't add empty groups */
+				char *gname = curitem->name;
+				char *gname_utf8 = gname ? oscar_utf8_try_convert(gc->account, gname) : NULL;
+				if (gname_utf8 != NULL) {
+					g = purple_group_new(gname_utf8);
+					purple_blist_add_group(g, NULL);
+				}
 			} break;
 
 			case 0x0002: { /* Permit buddy */

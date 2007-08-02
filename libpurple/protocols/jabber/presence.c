@@ -372,6 +372,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
 										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
 						}
+					} else if(code && !strcmp(code, "210")) {
+						/*  server rewrote room-nick */
+						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
+							g_free(chat->handle);
+							chat->handle = g_strdup(jid->resource);
+						}
 					}
 				}
 				if((z = xmlnode_get_child(y, "item"))) {
@@ -407,7 +413,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 			if(chat->conv) {
 				title = g_strdup_printf(_("Error in chat %s"), from);
-				serv_got_chat_left(js->gc, chat->id);
+				if (g_hash_table_size(chat->members) == 0)
+					serv_got_chat_left(js->gc, chat->id);
 			} else {
 				title = g_strdup_printf(_("Error joining chat %s"), from);
 			}
@@ -415,7 +422,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			g_free(title);
 			g_free(msg);
 
-			jabber_chat_destroy(chat);
+			if (g_hash_table_size(chat->members) == 0)
+				/* Only destroy the chat if the error happened while joining */
+				jabber_chat_destroy(chat);
 			jabber_id_free(jid);
 			g_free(status);
 			g_free(room_jid);

@@ -2365,6 +2365,8 @@ update_tab_icon(PurpleConversation *conv)
 			&(gtkconv->infopane_iter),
 			CONV_EMBLEM_COLUMN, emblem, -1);
 
+	/* XXX seanegan Why do I have to do this? */
+	gtk_widget_queue_draw(gtkconv->infopane);
 
 	if (status != NULL)
 		g_object_unref(status);
@@ -2911,21 +2913,18 @@ show_buddy_icons_pref_changed_cb(const char *name, PurplePrefType type,
 	}
 }
 
-static void
-regenerate_options_items(PidginWindow *win)
+/* Returns TRUE if some items were added to the menu, FALSE otherwise */
+static gboolean
+populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolean all)
 {
-	GtkWidget *menu;
 	GList *list;
-	PidginConversation *gtkconv;
 	PurpleConversation *conv;
 	PurpleBlistNode *node = NULL;
 	PurpleChat *chat = NULL;
 	PurpleBuddy *buddy = NULL;
+	gboolean ret;
 
-	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 	conv = gtkconv->active_conv;
-
-	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Conversation/More"));
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		chat = purple_blist_find_chat(conv->account, conv->name);
@@ -2971,23 +2970,43 @@ regenerate_options_items(PidginWindow *win)
 	else if (buddy)
 		node = (PurpleBlistNode *)buddy;
 
-	/* Remove the previous entries */
-	for (list = gtk_container_get_children(GTK_CONTAINER(menu)); list; )
-	{
-		GtkWidget *w = list->data;
-		list = list->next;
-		gtk_widget_destroy(w);
-	}
-
 	/* Now add the stuff */
-	if (node)
-	{
+	if (all && buddy) {
+		pidgin_blist_make_buddy_menu(menu, buddy, TRUE);
+	} else if (node) {
 		if (purple_account_is_connected(conv->account))
 			pidgin_append_blist_node_proto_menu(menu, conv->account->gc, node);
 		pidgin_append_blist_node_extended_menu(menu, node);
 	}
 
-	if ((list = gtk_container_get_children(GTK_CONTAINER(menu))) == NULL)
+	if ((list = gtk_container_get_children(GTK_CONTAINER(menu))) == NULL) {
+		ret = FALSE;
+	} else {
+		g_list_free(list);
+		ret = TRUE;
+	}
+	return ret;
+}
+
+static void
+regenerate_options_items(PidginWindow *win)
+{
+	GtkWidget *menu;
+	PidginConversation *gtkconv;
+	GList *list;
+
+	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Conversation/More"));
+
+	/* Remove the previous entries */
+	for (list = gtk_container_get_children(GTK_CONTAINER(menu)); list; )
+	{
+		GtkWidget *w = list->data;
+		list = g_list_delete_link(list, list);
+		gtk_widget_destroy(w);
+	}
+
+	if (!populate_menu_with_options(menu, gtkconv, FALSE))
 	{
 		GtkWidget *item = gtk_menu_item_new_with_label(_("No actions available"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
@@ -3368,12 +3387,11 @@ update_send_to_selection(PidginWindow *win)
 
 	gtk_widget_show(win->menu.send_to);
 
-	menu = gtk_menu_item_get_submenu(
-		GTK_MENU_ITEM(win->menu.send_to));
+	menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(win->menu.send_to));
 
 	for (child = gtk_container_get_children(GTK_CONTAINER(menu));
 		 child != NULL;
-		 child = child->next) {
+		 child = g_list_delete_link(child, child)) {
 
 		GtkWidget *item = child->data;
 		PurpleBuddy *item_buddy;
@@ -4390,6 +4408,50 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	gtk_container_add(GTK_CONTAINER(sw), list);
 }
 
+static int tooltip_timeout = 0;
+
+static gboolean
+pidgin_conv_tooltip_timeout(PidginConversation *gtkconv)
+{
+	PurpleBlistNode *node = NULL;
+	PurpleConversation *conv = gtkconv->active_conv;
+ 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+                node = (PurpleBlistNode*)(purple_blist_find_chat(conv->account, conv->name));
+	} else {
+                node = (PurpleBlistNode*)(purple_find_buddy(conv->account, conv->name));
+	}
+
+	if (node) 
+		pidgin_blist_draw_tooltip(node, gtkconv->infopane);
+	return FALSE;
+}
+
+static void 
+pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv)
+{
+	pidgin_blist_tooltip_destroy();
+	if (tooltip_timeout) {
+		g_source_remove(tooltip_timeout);
+		tooltip_timeout = 0;
+	}
+}
+
+static gboolean 
+pidgin_conv_motion_cb (GtkWidget *infopane, GdkEventMotion *event, PidginConversation *gtkconv)
+{
+	int delay = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay");
+	
+	pidgin_blist_tooltip_destroy();
+	if (delay == 0)
+		return FALSE;
+
+	if (tooltip_timeout != 0) 
+		g_source_remove(tooltip_timeout);
+
+	tooltip_timeout = g_timeout_add(delay, (GSourceFunc)pidgin_conv_tooltip_timeout, gtkconv);
+	return FALSE;
+}
+
 static GtkWidget *
 setup_common_pane(PidginConversation *gtkconv)
 {
@@ -4419,9 +4481,14 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_container_add(GTK_CONTAINER(event_box), gtkconv->infopane_hbox);
 	gtk_widget_show(gtkconv->infopane_hbox);
 	gtk_widget_add_events(event_box,
-	                      GDK_BUTTON1_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
+	                      GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event_box), "button_press_event",
 	                 G_CALLBACK(infopane_press_cb), gtkconv);
+
+        g_signal_connect(G_OBJECT(event_box), "motion-notify-event", 
+			 G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
+        g_signal_connect(G_OBJECT(event_box), "leave-notify-event", 
+			 G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 
 
 	gtkconv->infopane = gtk_cell_view_new();
@@ -5223,7 +5290,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtk_font_options_all |= GTK_IMHTML_USE_SMOOTHSCROLLING;
 
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", gtk_font_options_all);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", gtk_font_options_all | GTK_IMHTML_NO_SCROLL);
 
 	/* First message in a conversation. */
 	if (gtkconv->newday == 0)
@@ -5411,7 +5478,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 				   color, sml_attrib ? sml_attrib : "", mdate, str);
 		}
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all | GTK_IMHTML_NO_SCROLL);
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
 		    !(flags & PURPLE_MESSAGE_SEND)) {
@@ -7642,52 +7709,40 @@ notebook_leave_cb(GtkWidget *widget, GdkEventCrossing *e, PidginWindow *win)
 static gboolean
 infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
 {
-	int nb_x, nb_y;
-
 	if (e->type != GDK_BUTTON_PRESS)
 		return FALSE;
 
 	if (e->button == 3) {
 		/* Right click was pressed. Popup the Send To menu. */
-		GtkWidget *menu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
-		if (menu)
-			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
-		else
+		GtkWidget *menu = gtk_menu_new(), *sub;
+		sub = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
+
+		if (populate_menu_with_options(menu, gtkconv, TRUE))
+			pidgin_separator(menu);
+		else if (!sub ||
+				!GTK_WIDGET_IS_SENSITIVE(gtkconv->win->menu.send_to)) {
+			gtk_widget_destroy(menu);
 			return FALSE;
+		} else {
+			menu = sub;
+			sub = NULL;
+		}
+
+		if (sub) {
+			GtkWidget *item = gtk_menu_item_new_with_mnemonic(_("_Send To"));
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+			gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);
+			gtk_widget_show(item);
+			gtk_widget_show_all(sub);
+		}
+
+		gtk_widget_show_all(menu);
+		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
 		return TRUE;
-	} else if (e->button != 1) {
-		return FALSE;
 	}
-
-	if (gtkconv->win->in_drag) {
-		purple_debug(PURPLE_DEBUG_WARNING, "gtkconv",
-				"Already in the middle of a window drag at tab_press_cb\n");
-		return TRUE;
-	}
-
-	gtkconv->win->in_predrag = TRUE;
-	gtkconv->win->drag_tab = gtk_notebook_page_num(GTK_NOTEBOOK(gtkconv->win->notebook), gtkconv->tab_cont);
-
-	gdk_window_get_origin(gtkconv->infopane_hbox->window, &nb_x, &nb_y);
-
-	gtkconv->win->drag_min_x = gtkconv->infopane_hbox->allocation.x      + nb_x;
-	gtkconv->win->drag_min_y = gtkconv->infopane_hbox->allocation.y      + nb_y;
-	gtkconv->win->drag_max_x = gtkconv->infopane_hbox->allocation.width  + gtkconv->win->drag_min_x;
-	gtkconv->win->drag_max_y = gtkconv->infopane_hbox->allocation.height + gtkconv->win->drag_min_y;
-
-	/* Connect the new motion signals. */
-	gtkconv->win->drag_motion_signal =
-		g_signal_connect(G_OBJECT(gtkconv->win->notebook), "motion_notify_event",
-				G_CALLBACK(notebook_motion_cb), gtkconv->win);
-
-	gtkconv->win->drag_leave_signal =
-		g_signal_connect(G_OBJECT(gtkconv->win->notebook), "leave_notify_event",
-				G_CALLBACK(notebook_leave_cb), gtkconv->win);
-
 	return FALSE;
-
 }
-
+ 
 static gboolean
 notebook_press_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 {

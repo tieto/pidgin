@@ -1162,6 +1162,11 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	{
 		const char *screenname;
 
+		if (purple_accounts_get_all() == NULL) {
+			/* We're adding our first account.  Be polite and show the buddy list */
+			purple_blist_set_visible(TRUE);
+		}
+
 		screenname = gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry));
 		account = purple_account_new(screenname, dialog->protocol_id);
 		new = TRUE;

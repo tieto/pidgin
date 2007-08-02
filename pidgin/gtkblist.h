@@ -365,9 +365,26 @@ void pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback ca
  *
  * @param buddy The buddy to return markup from
  * @param selected  Whether this buddy is selected. If TRUE, the markup will not change the color.
- * @param aliased  TRUE to return the appropriate alias of this buddy, FALSE to return its screenname
+ * @param aliased  TRUE to return the appropriate alias of this buddy, FALSE to return its screenname and status information
  * @return The markup for this buddy
  */
 gchar *pidgin_blist_get_name_markup(PurpleBuddy *buddy, gboolean selected, gboolean aliased);
+
+/**
+ * Creates the Buddy List tooltip at the current pointer location for the given buddy list node.
+ *
+ * This tooltip will be destroyed the next time this function is called, or when XXXX
+ * is called
+ *
+ * @param buddy The buddy to show a tooltip for
+ * @param widget The widget to draw the tooltip on
+ */
+void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget);
+
+/**
+ * Destroys the current (if any) Buddy List tooltip
+ */
+void pidgin_blist_tooltip_destroy(void);
+
 
 #endif /* _PIDGINBLIST_H_ */

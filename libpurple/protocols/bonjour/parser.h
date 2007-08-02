@@ -1,10 +1,9 @@
 /**
- * @file gntsound.c GNT Sound API
- * @ingroup finch
+ * @file parser.h Bonjour Jabber XML parser functions
  *
- * finch
+ * purple
  *
- * Finch is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,29 +21,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "internal.h"
-#include "gntsound.h"
+#ifndef _PURPLE_BONJOUR_PARSER_H_
+#define _PURPLE_BONJOUR_PARSER_H_
 
-const char *finch_sound_get_active_profile(void)
-{
-	return NULL;
-}
+#include "buddy.h"
+#include "jabber.h"
 
-void finch_sound_set_active_profile(const char *name)
-{
-}
+void bonjour_parser_setup(BonjourJabberConversation *bconv);
+void bonjour_parser_process(PurpleBuddy *pb, const char *buf, int len);
 
-GList *finch_sound_get_profiles(void)
-{
-	return NULL;
-}
-
-PurpleSoundUiOps *finch_sound_get_ui_ops(void)
-{
-	return NULL;
-}
-
-void finch_sounds_show_all(void)
-{
-}
-
+#endif /* _PURPLE_BONJOUR_PARSER_H_ */

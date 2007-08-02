@@ -423,25 +423,6 @@ int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps)
 }
 
 /**
- * Adds the given userinfo struct to a TLV chain.
- *
- * @param list Destination chain.
- * @param type TLV type to add.
- * @return The size of the value added.
- */
-int aim_tlvlist_add_userinfo(GSList **list, guint16 type, aim_userinfo_t *userinfo)
-{
-	guint8 buf[1024]; /* TODO: Don't use a fixed length buffer */
-	ByteStream bs;
-
-	byte_stream_init(&bs, buf, sizeof(buf));
-
-	aim_putuserinfo(&bs, userinfo);
-
-	return aim_tlvlist_add_raw(list, type, byte_stream_curpos(&bs), buf);
-}
-
-/**
  * Adds the given chatroom info to a TLV chain.
  *
  * @param list Destination chain.

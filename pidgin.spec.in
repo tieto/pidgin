@@ -244,6 +244,7 @@ make DESTDIR=$RPM_BUILD_ROOT install
 
 # Delete files that we don't want to put in any of the RPMs
 rm -f $RPM_BUILD_ROOT%{_libdir}/finch/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/gnt/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/pidgin/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/liboscar.so
@@ -297,8 +298,6 @@ find $RPM_BUILD_ROOT%{_libdir}/finch -xtype f -print | \
 
 # files -f file can only take one filename :(
 cat %{name}.lang >> %{name}-%{version}-purpleplugins
-cat %{name}.lang >> %{name}-%{version}-pidginplugins
-cat %{name}.lang >> %{name}-%{version}-finchplugins
 
 %clean
 rm -rf %{buildroot}
@@ -442,6 +441,8 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %doc %{_mandir}/man1/finch.*
 %{_bindir}/finch
 %{_libdir}/libgnt.so.*
+%{_libdir}/gnt/irssi.so
+%{_libdir}/gnt/s.so
 
 %files -n finch-devel
 %defattr(-, root, root)

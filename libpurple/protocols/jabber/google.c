@@ -119,8 +119,8 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	g_free(to_name);
 	g_free(tos);
 	g_free(froms);
-	for (; i >= 0; i--)
-		g_free(subjects[i]);
+	for (; i > 0; i--)
+		g_free(subjects[i - 1]);
 	g_free(subjects);
 	g_free(urls);
 

@@ -874,7 +874,8 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	GString *text = NULL;
 	xmlnode *message;
 
-	*flags = PURPLE_LOG_READ_NO_NEWLINE;
+	if (flags != NULL)
+		*flags = PURPLE_LOG_READ_NO_NEWLINE;
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
 	data = log->logger_data;

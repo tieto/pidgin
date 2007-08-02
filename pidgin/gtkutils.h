@@ -30,6 +30,10 @@
 #include "prpl.h"
 #include "util.h"
 
+
+
+
+
 typedef enum
 {
 	PIDGIN_BUTTON_HORIZONTAL,
@@ -63,6 +67,17 @@ typedef enum
 
 } PidginBrowserPlace;
 #endif /* _WIN32 */
+
+typedef struct {
+	gboolean is_buddy;
+	union {
+		PurpleBuddy *buddy;
+		PurpleLogSet *logged_buddy;
+	} entry;
+} PidginBuddyCompletionEntry;
+
+typedef gboolean (*PidginFilterBuddyCompletionEntryFunc) (const PidginBuddyCompletionEntry *completion_entry, gpointer user_data);
+
 
 /**
  * Sets up a gtkimhtml widget, loads it with smileys, and sets the
@@ -280,13 +295,39 @@ PurpleAccount *pidgin_account_option_menu_get_selected(GtkWidget *optmenu);
 void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *account);
 
 /**
+ * Add autocompletion of screenames to an entry, supporting a filtering function.
+ *
+ * @param entry       The GtkEntry on which to setup autocomplete.
+ * @param optmenu     A menu for accounts, returned by gaim_gtk_account_option_menu_new().
+ *                    If @a optmenu is not @c NULL, it'll be updated when a screenname is chosen
+ *                    from the autocomplete list.
+ * @param filter_func A function for checking if an autocomplete entry
+ *                    should be shown. This can be @c NULL.
+ * @param user_data  The data to be passed to the filter_func function.
+ */
+void pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidget *optmenu, PidginFilterBuddyCompletionEntryFunc filter_func, gpointer user_data);
+
+/**
+ * The default filter function for screenname autocomplete.
+ *
+ * @param completion_entry The completion entry to filter.
+ * @param online_accounts  If this is @c FALSE, only the autocompletion entries
+ *                         which belong to an online account will be filtered.
+ * @return Returns @c TRUE if the autocompletion entry is filtered.
+ */
+gboolean pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *completion_entry, gpointer all_accounts);
+
+/**
+ * @deprecated
  * Add autocompletion of screenames to an entry.
+ * The usage of this function is deprecated. For new code, use the equivalent:
+ * pidgin_setup_screenname_autocomplete_with_filter(entry, optmenu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(all))
  *
  * @param entry     The GtkEntry on which to setup autocomplete.
  * @param optmenu   A menu for accounts, returned by pidgin_account_option_menu_new().
  *                  If @a optmenu is not @c NULL, it'll be updated when a screenname is chosen
  *                  from the autocomplete list.
- * @param all       Whether to include screennames from disconnected accounts.
+ * @param all       Whether to include screennames from disconnected accounts. 
  */
 void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, gboolean all);
 
