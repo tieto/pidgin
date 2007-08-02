@@ -961,6 +961,7 @@ static void
 gtk_imhtmltoolbar_finalize (GObject *object)
 {
 	GtkIMHtmlToolbar *toolbar = GTK_IMHTMLTOOLBAR(object);
+	GtkWidget *menu;
 
 	if (toolbar->image_dialog != NULL)
 	{
@@ -984,6 +985,13 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 
 	free(toolbar->sml);
 	gtk_object_sink(GTK_OBJECT(toolbar->tooltips));
+
+	menu = g_object_get_data(object, "font_menu");
+	if (menu)
+		gtk_widget_destroy(menu);
+	menu = g_object_get_data(object, "insert_menu");
+	if (menu)
+		gtk_widget_destroy(menu);
 
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
@@ -1146,8 +1154,8 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show_all(font_button);
 
 	font_menu = gtk_menu_new();
+	g_object_set_data(G_OBJECT(toolbar), "font_menu", font_menu);
 
-	
 	for (i = 0; buttons[i].label; i++) {
 		GtkWidget *old = *buttons[i].button;
 		menuitem = gtk_check_menu_item_new_with_mnemonic(buttons[i].label);
@@ -1201,6 +1209,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show_all(insert_button);
 
 	insert_menu = gtk_menu_new();
+	g_object_set_data(G_OBJECT(toolbar), "insert_menu", insert_menu);
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Smiley"));
 	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
