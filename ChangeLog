@@ -6,6 +6,10 @@ version 2.1.1 (??/??/????):
 	* Added support for Unicode status messages in Yahoo.
 	* Server-stored aliases for Yahoo. (John Moody)
 
+	Pidgin:
+	* Show current outgoing conversation formatting on the font label on
+	  the toolbar
+
 version 2.1.0 (07/28/2007):
 	libpurple:
 	* Core changes to allow UIs to use second-granularity for scheduling.

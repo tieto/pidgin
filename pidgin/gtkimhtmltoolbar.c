@@ -815,6 +815,9 @@ static void update_buttons(GtkIMHtmlToolbar *toolbar)
 	gboolean bold, italic, underline;
 	char *tmp;
 	char *tmp2;
+	GtkLabel *label = g_object_get_data(G_OBJECT(toolbar), "font_label");
+
+	gtk_label_set_label(label, _("_Font"));
 
 	gtk_imhtml_get_current_format(GTK_IMHTML(toolbar->imhtml),
 								  &bold, &italic, &underline);
@@ -822,7 +825,6 @@ static void update_buttons(GtkIMHtmlToolbar *toolbar)
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->bold)) != bold)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bold), bold,
 									   toolbar);
-
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->italic)) != italic)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->italic), italic,
 									   toolbar);
@@ -835,20 +837,57 @@ static void update_buttons(GtkIMHtmlToolbar *toolbar)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smaller_size), FALSE);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->larger_size), FALSE);
 
+	if (bold) {
+		gchar *markup = g_strdup_printf("<b>%s</b>",
+				gtk_label_get_label(label));
+		gtk_label_set_markup_with_mnemonic(label, markup);
+		g_free(markup);
+	}
+	if (italic) {
+		gchar *markup = g_strdup_printf("<i>%s</i>",
+				gtk_label_get_label(label));
+		gtk_label_set_markup_with_mnemonic(label, markup);
+		g_free(markup);
+	}
+	if (underline) {
+		gchar *markup = g_strdup_printf("<u>%s</u>",
+				gtk_label_get_label(label));
+		gtk_label_set_markup_with_mnemonic(label, markup);
+		g_free(markup);
+	}
+
 	tmp = gtk_imhtml_get_current_fontface(GTK_IMHTML(toolbar->imhtml));
 	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->font),
 								   (tmp != NULL), toolbar);
+	if (tmp != NULL) {
+		gchar *markup = g_strdup_printf("<span font_desc=\"%s\">%s</span>",
+				tmp, gtk_label_get_label(label));
+		gtk_label_set_markup_with_mnemonic(label, markup);
+		g_free(markup);
+	}
 	g_free(tmp);
 
 	tmp = gtk_imhtml_get_current_forecolor(GTK_IMHTML(toolbar->imhtml));
 	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->fgcolor),
 								   (tmp != NULL), toolbar);
+	if (tmp != NULL) {
+		gchar *markup = g_strdup_printf("<span foreground=\"%s\">%s</span>",
+				tmp, gtk_label_get_label(label));
+		gtk_label_set_markup_with_mnemonic(label, markup);
+		g_free(markup);
+	}
 	g_free(tmp);
 
 	tmp = gtk_imhtml_get_current_backcolor(GTK_IMHTML(toolbar->imhtml));
 	tmp2 = gtk_imhtml_get_current_background(GTK_IMHTML(toolbar->imhtml));
 	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bgcolor),
 								   (tmp != NULL || tmp2 != NULL), toolbar);
+	if (tmp != NULL) {
+		gchar *markup = g_strdup_printf("<span background=\"%s\">%s</span>",
+				tmp, gtk_label_get_label(label));
+		gtk_label_set_markup_with_mnemonic(label, markup);
+		g_free(markup);
+	}
 	g_free(tmp);
 	g_free(tmp2);
 }
@@ -1100,6 +1139,8 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	image = gtk_image_new_from_stock(GTK_STOCK_BOLD, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
 	label = gtk_label_new_with_mnemonic(_("_Font"));
+	gtk_label_set_use_markup(GTK_LABEL(label), TRUE);
+	g_object_set_data(G_OBJECT(hbox), "font_label", label);
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), font_button, FALSE, FALSE, 0);
 	gtk_widget_show_all(font_button);
