@@ -8,7 +8,6 @@ EXTRA_DIST = 	available.png \
 		invisible.png \
 		log-in.png \
 		log-out.png \
-		message-pending.png \
 		offline.png \
 		person.png 
 
