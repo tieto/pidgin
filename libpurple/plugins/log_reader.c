@@ -236,7 +236,8 @@ static char *adium_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 	/* XXX: TODO: We probably want to set PURPLE_LOG_READ_NO_NEWLINE
 	 * XXX: TODO: for HTML logs. */
-	*flags = 0;
+	if (flags != NULL)
+		*flags = 0;
 
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
@@ -1428,7 +1429,9 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	char *c;
 	const char *line;
 
-	*flags = PURPLE_LOG_READ_NO_NEWLINE;
+	if (flags != NULL)
+		*flags = PURPLE_LOG_READ_NO_NEWLINE;
+
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
 	data = log->logger_data;
@@ -1924,7 +1927,9 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	char *utf8_string;
 	FILE *file;
 
-	*flags = PURPLE_LOG_READ_NO_NEWLINE;
+	if (flags != NULL)
+		*flags = PURPLE_LOG_READ_NO_NEWLINE;
+
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
 	data = log->logger_data;
