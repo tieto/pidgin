@@ -473,7 +473,35 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 static GByteArray *
 x509_sha1sum(PurpleCertificate *crt)
 {
-	return NULL;
+	CERTCertificate *crt_dat;
+	size_t hashlen = 20; /* Size of an sha1sum */
+	GByteArray *sha1sum;
+	SECItem *derCert; /* DER representation of the cert */
+	SECStatus st;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	/* Get the certificate DER representation */
+	derCert = &(crt_dat->derCert);
+
+	/* Make a hash! */
+	sha1sum = g_byte_array_sized_new(hashlen);
+	st = PK11_HashBuf(SEC_OID_SHA1, sha1sum->data,
+			  derCert->data, derCert->len);
+
+	/* Check for errors */
+	if (st != SECSuccess) {
+		g_byte_array_free(sha1sum, TRUE);
+		purple_debug_error("nss/x509",
+				   "Error: hashing failed!\n");
+		return NULL;
+	}
+
+	return sha1sum;
 }
 
 static gchar *
