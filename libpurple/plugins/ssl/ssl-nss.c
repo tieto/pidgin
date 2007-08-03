@@ -443,7 +443,16 @@ x509_copy_certificate(PurpleCertificate *crt)
 static void
 x509_destroy_certificate(PurpleCertificate * crt)
 {
-	/* pass */
+	CERTCertificate *crt_dat;
+
+	g_return_if_fail(crt);
+	g_return_if_fail(crt->scheme == &x509_nss);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_if_fail(crt_dat);
+
+	/* Finally we have the certificate. So let's kill it */
+	CERT_DestroyCertificate(crt_dat);
 }
 
 /** Determines whether one certificate has been issued and signed by another
