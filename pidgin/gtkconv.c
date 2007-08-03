@@ -8660,8 +8660,8 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 			MIN(g_utf8_strlen(gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)), -1), 12)
 		);
 	}
-	if (angle)
-		gtk_label_set_angle(GTK_LABEL(gtkconv->tab_label), angle);
+
+	gtk_label_set_angle(GTK_LABEL(gtkconv->tab_label), angle);
 #endif
 
 #if 0
