@@ -537,7 +537,30 @@ x509_check_name (PurpleCertificate *crt, const gchar *name)
 static gboolean
 x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 {
-	return FALSE;
+	CERTCertificate *crt_dat;
+	PRTime nss_activ, nss_expir;
+	
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_nss, FALSE);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, FALSE);
+
+	/* Extract the times into ugly PRTime thingies */
+	/* TODO: Maybe this shouldn't throw an error? */
+	g_return_val_if_fail(
+		SECSuccess == CERT_GetCertTimes(crt_dat,
+						&nss_activ, &nss_expir),
+		FALSE);
+
+	if (activation) {
+		*activation = nss_activ;
+	}
+	if (expiration) {
+		*expiration = nss_expir;
+	}
+	
+	return TRUE;
 }
 
 static PurpleCertificateScheme x509_nss = {
