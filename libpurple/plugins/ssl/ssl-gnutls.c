@@ -782,32 +782,31 @@ x509_check_name (PurpleCertificate *crt, const gchar *name)
 	}
 }
 
-static time_t
-x509_activation (PurpleCertificate *crt)
+static gboolean
+x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 {
 	gnutls_x509_crt_t crt_dat;
+	/* GnuTLS time functions return this on error */
+	const time_t errval = (time_t) (-1);
 
-	g_assert(crt);
-	g_assert(crt->scheme == &x509_gnutls);
+
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_gnutls, FALSE);
 
 	crt_dat = X509_GET_GNUTLS_DATA(crt);
 
-	/* TODO: Errorcheck this? */
-	return gnutls_x509_crt_get_activation_time(crt_dat);
-}
+	if (activation) {
+		*activation = gnutls_x509_crt_get_activation_time(crt_dat);
+	}
+	if (expiration) {
+		*expiration = gnutls_x509_crt_get_expiration_time(crt_dat);
+	}
 
-static time_t
-x509_expiration (PurpleCertificate *crt)
-{
-	gnutls_x509_crt_t crt_dat;
-
-	g_assert(crt);
-	g_assert(crt->scheme == &x509_gnutls);
-
-	crt_dat = X509_GET_GNUTLS_DATA(crt);
-
-	/* TODO: Errorcheck this? */
-	return gnutls_x509_crt_get_expiration_time(crt_dat);
+	if (*activation == errval || *expiration == errval) {
+		return FALSE;
+	}
+	
+	return TRUE;
 }
 
 /* X.509 certificate operations provided by this plugin */
@@ -824,8 +823,7 @@ static PurpleCertificateScheme x509_gnutls = {
 	NULL,                            /* Issuer Unique ID */
 	x509_common_name,                /* Subject name */
 	x509_check_name,                 /* Check subject name */
-	x509_activation,                 /* Activation time */
-	x509_expiration                  /* Expiration time */
+	x509_times                       /* Activation/Expiration time */
 };
 
 static PurpleSslOps ssl_ops =

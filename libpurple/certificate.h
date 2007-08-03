@@ -235,10 +235,8 @@ struct _PurpleCertificateScheme
 	 */
 	gboolean (* check_subject_name)(PurpleCertificate *crt, const gchar *name);
 
-	/** Retrieve the certificate activation time */
-	time_t (* get_activation)(PurpleCertificate *crt);
-	/** Retrieve the expiration time */
-	time_t (* get_expiration)(PurpleCertificate *crt);
+	/** Retrieve the certificate activation/expiration times */
+	gboolean (* get_times)(PurpleCertificate *crt, time_t *activation, time_t *expiration);
 	
 	/* TODO: Fill out this structure */
 };

@@ -244,17 +244,8 @@ purple_certificate_get_times(PurpleCertificate *crt, time_t *activation, time_t 
 	   this? */
 	g_return_val_if_fail( (activation != NULL) || (expiration != NULL), FALSE);
 
-	/* Fulfill the caller's requests, if possible */
-	if (activation) {
-		g_return_val_if_fail(scheme->get_activation, FALSE);
-		*activation = scheme->get_activation(crt);
-	}
-	if (expiration) {
-		g_return_val_if_fail(scheme->get_expiration, FALSE);
-		*expiration = scheme->get_expiration(crt);
-	}
-
-	return TRUE;
+	/* Throw the request on down to the certscheme */
+	return (scheme->get_times)(crt, activation, expiration);
 }
 
 
