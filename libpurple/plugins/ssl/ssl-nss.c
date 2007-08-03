@@ -21,6 +21,7 @@
  */
 #include "internal.h"
 #include "debug.h"
+#include "certificate.h"
 #include "plugin.h"
 #include "sslconn.h"
 #include "version.h"
@@ -360,6 +361,131 @@ ssl_nss_write(PurpleSslConnection *gsc, const void *data, size_t len)
 	return ret;
 }
 
+static GList *
+ssl_nss_peer_certs(PurpleSslConnection *gsc)
+{
+	PurpleSslNssData *nss_data = PURPLE_SSL_NSS_DATA(gsc);
+	GList *chain = NULL;
+	CERTCertificate *cert;
+	void *pinArg;
+	SECStatus status;
+
+	/* TODO: this is a blind guess */
+	cert = SSL_PeerCertificate(nss_data->fd);
+
+	
+
+	return NULL;
+}
+
+/************************************************************************/
+/* X.509 functionality                                                  */
+/************************************************************************/
+static PurpleCertificateScheme x509_nss;
+
+/** Helpr macro to retrieve the NSS certdata from a PurpleCertificate */
+#define X509_NSS_DATA(pcrt) ( (CERTCertificate * ) (pcrt->data) )
+
+/** Imports a PEM-formatted X.509 certificate from the specified file.
+ * @param filename Filename to import from. Format is PEM
+ *
+ * @return A newly allocated Certificate structure of the x509_gnutls scheme
+ */
+static PurpleCertificate *
+x509_import_from_file(const gchar *filename)
+{
+	/* TODO: Write me! */
+	return NULL;
+}
+
+/**
+ * Exports a PEM-formatted X.509 certificate to the specified file.
+ * @param filename Filename to export to. Format will be PEM
+ * @param crt      Certificate to export
+ *
+ * @return TRUE if success, otherwise FALSE
+ */
+static gboolean
+x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
+{
+	/* TODO: WRITEME */
+	return FALSE;
+}
+
+static PurpleCertificate *
+x509_copy_certificate(PurpleCertificate *crt)
+{
+	return NULL;
+}
+
+/** Frees a Certificate
+ *
+ *  Destroys a Certificate's internal data structures and frees the pointer
+ *  given.
+ *  @param crt  Certificate instance to be destroyed. It WILL NOT be destroyed
+ *              if it is not of the correct CertificateScheme. Can be NULL
+ *
+ */
+static void
+x509_destroy_certificate(PurpleCertificate * crt)
+{
+	/* pass */
+}
+
+/** Determines whether one certificate has been issued and signed by another
+ *
+ * @param crt       Certificate to check the signature of
+ * @param issuer    Issuer's certificate
+ *
+ * @return TRUE if crt was signed and issued by issuer, otherwise FALSE
+ * @TODO  Modify this function to return a reason for invalidity?
+ */
+static gboolean
+x509_certificate_signed_by(PurpleCertificate * crt,
+			   PurpleCertificate * issuer)
+{
+	return FALSE;
+}
+
+static GByteArray *
+x509_sha1sum(PurpleCertificate *crt)
+{
+	return NULL;
+}
+
+static gchar *
+x509_common_name (PurpleCertificate *crt)
+{
+	return NULL;
+}
+
+static gboolean
+x509_check_name (PurpleCertificate *crt, const gchar *name)
+{
+	return FALSE;
+}
+
+static gboolean
+x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
+{
+	return FALSE;
+}
+
+static PurpleCertificateScheme x509_nss = {
+	"x509",                          /* Scheme name */
+	N_("X.509 Certificates"),        /* User-visible scheme name */
+	x509_import_from_file,           /* Certificate import function */
+	x509_export_certificate,         /* Certificate export function */
+	x509_copy_certificate,           /* Copy */
+	x509_destroy_certificate,        /* Destroy cert */
+	x509_sha1sum,                    /* SHA1 fingerprint */
+	NULL,                            /* Unique ID */
+	NULL,                            /* Issuer Unique ID */
+	x509_common_name,                /* Subject name */
+	x509_check_name,                 /* Check subject name */
+	x509_times                       /* Activation/Expiration time */
+};
+
 static PurpleSslOps ssl_ops =
 {
 	ssl_nss_init,
@@ -368,9 +494,9 @@ static PurpleSslOps ssl_ops =
 	ssl_nss_close,
 	ssl_nss_read,
 	ssl_nss_write,
+	ssl_nss_peer_certs,
 
 	/* padding */
-	NULL,
 	NULL,
 	NULL,
 	NULL
@@ -390,6 +516,9 @@ plugin_load(PurplePlugin *plugin)
 	/* Init NSS now, so others can use it even if sslconn never does */
 	ssl_nss_init_nss();
 
+	/* Register the X.509 functions we provide */
+	purple_certificate_register_scheme(&x509_nss);
+
 	return TRUE;
 #else
 	return FALSE;
@@ -403,6 +532,9 @@ plugin_unload(PurplePlugin *plugin)
 	if (purple_ssl_get_ops() == &ssl_ops) {
 		purple_ssl_set_ops(NULL);
 	}
+
+	/* Unregister our X.509 functions */
+	purple_certificate_unregister_scheme(&x509_nss);
 #endif
 
 	return TRUE;
