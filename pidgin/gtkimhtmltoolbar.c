@@ -1109,7 +1109,6 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *font_menu;
 	GtkWidget *insert_menu;
 	GtkWidget *menuitem;
-	GtkWidget *button;
 	GtkWidget *sep;
 	int i;
 	struct {
@@ -1129,7 +1128,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 		{_("_Foreground color"), &toolbar->fgcolor, TRUE},
 		{_("_Background color"), &toolbar->bgcolor, TRUE},
 		{_("_Reset formatting"), &toolbar->clear, FALSE},
-		{NULL, NULL}
+		{NULL, NULL, FALSE}
 	};
 
 
