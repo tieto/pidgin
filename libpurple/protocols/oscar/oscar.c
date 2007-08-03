@@ -4964,7 +4964,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			case 0x0001: { /* Group */
 				char *gname = curitem->name;
 				char *gname_utf8 = gname ? oscar_utf8_try_convert(gc->account, gname) : NULL;
-				if (gname_utf8 != NULL) {
+				if (gname_utf8 != NULL && purple_find_group(gname_utf8) == NULL) {
 					g = purple_group_new(gname_utf8);
 					purple_blist_add_group(g, NULL);
 				}
