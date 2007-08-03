@@ -1125,8 +1125,8 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 #endif
 		{_("_Smaller"), &toolbar->smaller_size, TRUE},
 		{_("_Font face"), &toolbar->font, TRUE},
-		{_("_Foreground color"), &toolbar->fgcolor, TRUE},
-		{_("_Background color"), &toolbar->bgcolor, TRUE},
+		{_("Foreground _color"), &toolbar->fgcolor, TRUE},
+		{_("Bac_kground color"), &toolbar->bgcolor, TRUE},
 		{_("_Reset formatting"), &toolbar->clear, FALSE},
 		{NULL, NULL, FALSE}
 	};
