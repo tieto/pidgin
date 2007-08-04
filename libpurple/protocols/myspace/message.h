@@ -54,8 +54,10 @@ MsimMessage *msim_msg_clone(MsimMessage *old);
 void msim_msg_free(MsimMessage *msg);
 MsimMessage *msim_msg_append(MsimMessage *msg, const gchar *name, MsimMessageType type, gpointer data);
 MsimMessage *msim_msg_insert_before(MsimMessage *msg, const gchar *name_before, const gchar *name, MsimMessageType type, gpointer data);
+gchar *msim_msg_dump_to_str(MsimMessage *msg);
 void msim_msg_dump(const char *fmt_string, MsimMessage *msg);
 gchar *msim_msg_pack(MsimMessage *msg);
+gchar *msim_msg_pack_dict(MsimMessage *msg);
 
 GList *msim_msg_list_copy(GList *old);
 void msim_msg_list_free(GList *l);
@@ -90,10 +92,12 @@ gboolean msim_msg_send(struct _MsimSession *session, MsimMessage *msg);
 
 MsimMessage *msim_parse(gchar *raw);
 GHashTable *msim_parse_body(const gchar *body_str);
+MsimMessage *msim_msg_dictionary_parse(gchar *raw);
 
 MsimMessageElement *msim_msg_get(MsimMessage *msg, const gchar *name);
 gchar *msim_msg_get_string(MsimMessage *msg, const gchar *name);
 GList *msim_msg_get_list(MsimMessage *msg, const gchar *name);
+MsimMessage *msim_msg_get_dictionary(MsimMessage *msg, const gchar *name);
 guint msim_msg_get_integer(MsimMessage *msg, const gchar *name);
 gboolean msim_msg_get_binary(MsimMessage *msg, const gchar *name, gchar **binary_data, gsize *binary_length);
 

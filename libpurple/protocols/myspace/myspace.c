@@ -2284,8 +2284,12 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
                 "msim_check_inbox_cb: notifying of %d\n", n);
 
         /* TODO: free strings with callback _if_ change to dynamic (w/ token) */
-        purple_notify_emails(session->account,
-                n, TRUE, subjects, froms, tos, urls, NULL, NULL);
+        purple_notify_emails(session->gc,       /* handle */
+                n,                              /* count */
+                TRUE,                           /* detailed */
+                subjects, froms, tos, urls, 
+                NULL,       /* PurpleNotifyCloseCallback cb */
+                NULL);      /* gpointer user_data */
 
     }
 
@@ -2889,8 +2893,6 @@ static MsimMessage *
 msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before, 
 		const gchar *uid_field_name, guint uid)
 {	
-	purple_debug_info("msim", "msim_do_postprocessing called with ufn=%s, ub=%s, uid=%d\n",
-			uid_field_name, uid_before, uid);
 	msim_msg_dump("msim_do_postprocessing msg: %s\n", msg);
 
 	/* First, check - if the field already exists, treat it as a format string. */
@@ -2991,7 +2993,7 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
  * @param uid_field_name Name of new field to add, containing uid of username. Static string.
  * @param uid_before Name of existing field to insert username field before. Static string.
  *
- * @return Postprocessed message.
+ * @return TRUE if successful.
  */
 gboolean 
 msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, 
@@ -3002,9 +3004,9 @@ msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg,
 	guint uid;
 	gboolean rc;
 
+    g_return_val_if_fail(msg != NULL, FALSE);
+
 	/* Store information for msim_postprocess_outgoing_cb(). */
-	purple_debug_info("msim", "msim_postprocess_outgoing(u=%s,ufn=%s,ub=%s)\n",
-			username, uid_field_name, uid_before);
 	msim_msg_dump("msim_postprocess_outgoing: msg before=%s\n", msg);
 	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, g_strdup(username));
 	msg = msim_msg_append(msg, "_uid_field_name", MSIM_TYPE_STRING, g_strdup(uid_field_name));
@@ -3067,12 +3069,14 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 				"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 				/* 'delprofileid' with uid will be inserted here. */
 				NULL);
-	/* TODO: free msg */
+
 	if (!msim_postprocess_outgoing(session, delbuddy_msg, buddy->name, "delprofileid", NULL))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("'delbuddy' command failed"));
+        msim_msg_free(delbuddy_msg);
 		return;
 	}
+    msim_msg_free(delbuddy_msg);
 
 	persist_msg = msim_msg_new(TRUE, 
 			"persist", MSIM_TYPE_INTEGER, 1,
@@ -3086,12 +3090,13 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 			"body", MSIM_TYPE_STRING, g_strdup("ContactID=<uid>"),
 			NULL);
 
-	/* TODO: free msg */
 	if (!msim_postprocess_outgoing(session, persist_msg, buddy->name, "body", NULL))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("persist command failed"));	
+        msim_msg_free(persist_msg);
 		return;
 	}
+    msim_msg_free(persist_msg);
 
 	blocklist_msg = msim_msg_new(TRUE,
 			"blocklist", MSIM_TYPE_BOOLEAN, TRUE,
@@ -3103,8 +3108,10 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	if (!msim_postprocess_outgoing(session, blocklist_msg, buddy->name, "idlist", NULL))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("blocklist command failed"));
+        msim_msg_free(blocklist_msg);
 		return;
 	}
+    msim_msg_free(blocklist_msg);
 }
 
 /** Return whether the buddy can be messaged while offline.
@@ -3194,6 +3201,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
     {
         purple_debug_info("msim_input_cb", "received %d bytes, pushing rxoff to %d, over buffer size of %d\n",
                 n, n + session->rxoff, MSIM_READ_BUF_SIZE);
+        /* TODO: g_realloc like msn, yahoo, irc, jabber? */
         purple_connection_error(gc, _("Read buffer full"));
     }
 
