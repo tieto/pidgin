@@ -2803,11 +2803,13 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
         purple_prpl_got_user_idle(session->account, username, FALSE, time(NULL));
     }
 
+#ifdef MSIM_SEND_CLIENT_VERSION
     if (status_code == MSIM_STATUS_CODE_ONLINE)
     {
         /* Secretly whisper to unofficial clients our own version as they come online */
         msim_send_unofficial_client(session, username);
     }
+#endif
 
 	g_free(username);
     msim_msg_list_free(list);

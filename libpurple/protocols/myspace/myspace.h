@@ -51,6 +51,8 @@
 #include "message.h"
 
 /* Conditional compilation options */
+/* Send third-party client version? (Recognized by us and Miranda's plugin) */
+/*#define MSIM_SEND_CLIENT_VERSION      */
 
 /* Debugging options */
 /*#define MSIM_DEBUG_MSG			    */
