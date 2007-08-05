@@ -2236,4 +2236,13 @@ void pidgin_prefs_update_old()
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/away/queue_messages");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/away");
 	purple_prefs_remove("/plugins/gtk/docklet/queue_messages");
+
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/chat/default_width");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/chat/default_height");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/im/default_width");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/im/default_height");
+	purple_prefs_rename(PIDGIN_PREFS_ROOT "/conversations/x",
+			PIDGIN_PREFS_ROOT "/conversations/im/x");
+	purple_prefs_rename(PIDGIN_PREFS_ROOT "/conversations/y",
+			PIDGIN_PREFS_ROOT "/conversations/im/y");
 }

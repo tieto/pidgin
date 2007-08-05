@@ -187,6 +187,9 @@ static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 
+static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
+		int width, int height);
+
 static GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
 	static GdkColor col;
 	GtkStyle *style = gtk_widget_get_style(gtkconv->imhtml);
@@ -7157,25 +7160,28 @@ pidgin_conversations_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/tabs", TRUE);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/tab_side", GTK_POS_TOP);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/scrollback_lines", 4000);
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/x", 0);
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/y", 0);
 
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font", TRUE);
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/custom_font", "");
 
 	/* Conversations -> Chat */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/chat");
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/default_width", 410);
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/default_height", 160);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/entry_height", 50);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/userlist_width", 80);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/x", 0);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/y", 0);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/width", 0);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/height", 0);
+
 	/* Conversations -> IM */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/im");
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/x", 0);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/y", 0);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/width", 0);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/height", 0);
 
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/animate_buddy_icons", TRUE);
 
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/default_width", 410);
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/default_height", 160);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/entry_height", 50);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", TRUE);
 
@@ -8319,10 +8325,8 @@ static gboolean gtk_conv_configure_cb(GtkWidget *w, GdkEventConfigure *event, gp
 		return FALSE;
 	
 	/* don't save if nothing changed */
-	if (x == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/x") &&
-	    y == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/y") &&
-	    event->width  == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/default_width") &&
-	    event->height == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/default_height"))
+	if (x == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/x") &&
+			y == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/y"))
 		return FALSE; /* carry on normally */
 		
 	/* don't save off-screen positioning */
@@ -8332,9 +8336,9 @@ static gboolean gtk_conv_configure_cb(GtkWidget *w, GdkEventConfigure *event, gp
 	    y > gdk_screen_height())
 		return FALSE; /* carry on normally */
 
-        /* store the position */
-        purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/x", x);
-	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/y", y);
+	/* store the position */
+	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/x", x);
+	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/y", y);
 	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/width",  event->width);
 	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/height", event->height);
 
@@ -8344,35 +8348,38 @@ static gboolean gtk_conv_configure_cb(GtkWidget *w, GdkEventConfigure *event, gp
 }
 
 static void
-pidgin_conv_restore_position(PidginWindow *win) {
-	int conv_x, conv_y, conv_width, conv_height;
-
-	conv_width = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/width");
-
+pidgin_conv_set_position_size(PidginWindow *win, int conv_x, int conv_y,
+		int conv_width, int conv_height)
+{
 	 /* if the window exists, is hidden, we're saving positions, and the
           * position is sane... */
-        if (win && win->window &&
-                !GTK_WIDGET_VISIBLE(win->window) && conv_width != 0) {
+	if (win && win->window &&
+			!GTK_WIDGET_VISIBLE(win->window) && conv_width != 0) {
 
-                conv_x      = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/x");
-                conv_y      = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/y");
-                conv_height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/height");
+		/* ...check position is on screen... */
+		if (conv_x >= gdk_screen_width())
+			conv_x = gdk_screen_width() - 100;
+		else if (conv_x + conv_width < 0)
+			conv_x = 100;
 
-	       /* ...check position is on screen... */
-                if (conv_x >= gdk_screen_width())
-                        conv_x = gdk_screen_width() - 100;
-                else if (conv_x + conv_width < 0)
-                        conv_x = 100;
+		if (conv_y >= gdk_screen_height())
+			conv_y = gdk_screen_height() - 100;
+		else if (conv_y + conv_height < 0)
+			conv_y = 100;
 
-                if (conv_y >= gdk_screen_height())
-                        conv_y = gdk_screen_height() - 100;
-                else if (conv_y + conv_height < 0)
-                        conv_y = 100;
+		/* ...and move it back. */
+		gtk_window_move(GTK_WINDOW(win->window), conv_x, conv_y);
+		gtk_window_resize(GTK_WINDOW(win->window), conv_width, conv_height);
+	}
+}
 
-                /* ...and move it back. */
-                gtk_window_move(GTK_WINDOW(win->window), conv_x, conv_y);
-                gtk_window_resize(GTK_WINDOW(win->window), conv_width, conv_height);
-        }
+static void
+pidgin_conv_restore_position(PidginWindow *win) {
+	pidgin_conv_set_position_size(win,
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/x"),
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/y"),
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/width"),
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/height"));
 }
 
 PidginWindow *
@@ -8397,8 +8404,6 @@ pidgin_conv_window_new()
 
 	g_signal_connect(G_OBJECT(win->window), "delete_event",
 	                 G_CALLBACK(close_win_cb), win);
-	g_signal_connect(G_OBJECT(win->window), "configure_event", 
-			 G_CALLBACK(gtk_conv_configure_cb), NULL);
 	g_signal_connect(G_OBJECT(win->window), "focus_in_event",
 	                 G_CALLBACK(focus_win_cb), win);
 
@@ -8924,6 +8929,9 @@ conv_placement_last_created_win(PidginConversation *conv)
 	if (win == NULL) {
 		win = pidgin_conv_window_new();
 
+		g_signal_connect(G_OBJECT(win->window), "configure_event", 
+				G_CALLBACK(gtk_conv_configure_cb), NULL);
+
 		pidgin_conv_window_add_gtkconv(win, conv);
 		pidgin_conv_window_show(win);
 	} else {
@@ -8932,6 +8940,53 @@ conv_placement_last_created_win(PidginConversation *conv)
 }
 
 /* This one places conversations in the last made window of the same type. */
+static gboolean
+conv_placement_last_created_win_type_configured_cb(GtkWidget *w,
+		GdkEventConfigure *event, PidginConversation *conv)
+{
+	int x, y;	
+	PurpleConversationType type = purple_conversation_get_type(conv->active_conv);
+	GList *all;
+
+	if (GTK_WIDGET_VISIBLE(w))
+		gtk_window_get_position(GTK_WINDOW(w), &x, &y);
+	else
+		return FALSE; /* carry on normally */
+
+	/* Workaround for GTK+ bug # 169811 - "configure_event" is fired
+	* when the window is being maximized */
+	if (gdk_window_get_state(w->window) & GDK_WINDOW_STATE_MAXIMIZED)
+		return FALSE;
+	
+	/* don't save off-screen positioning */
+	if (x + event->width < 0 ||
+	    y + event->height < 0 ||
+	    x > gdk_screen_width() ||
+	    y > gdk_screen_height())
+		return FALSE; /* carry on normally */
+
+	for (all = conv->convs; all != NULL; all = all->next) {
+		if (type != purple_conversation_get_type(all->data)) {
+			/* this window has different types of conversation, don't save */
+			return FALSE;
+		}
+	}
+
+	if (type == PURPLE_CONV_TYPE_IM) {
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/x", x);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/y", y);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/width",  event->width);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/height", event->height);
+	} else if (type == PURPLE_CONV_TYPE_CHAT) {
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/chat/x", x);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/chat/y", y);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/chat/width",  event->width);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/chat/height", event->height);
+	}
+
+	return FALSE;
+}
+
 static void
 conv_placement_last_created_win_type(PidginConversation *conv)
 {
@@ -8942,8 +8997,26 @@ conv_placement_last_created_win_type(PidginConversation *conv)
 	if (win == NULL) {
 		win = pidgin_conv_window_new();
 
+		if (PURPLE_CONV_TYPE_IM == purple_conversation_get_type(conv->active_conv) ||
+				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/width") == 0) {
+			pidgin_conv_set_position_size(win,
+				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/x"),
+				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/y"),
+				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/width"),
+				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/height"));
+		} else if (PURPLE_CONV_TYPE_CHAT == purple_conversation_get_type(conv->active_conv)) {
+			pidgin_conv_set_position_size(win,
+				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/x"),
+				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/y"),
+				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/width"),
+				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/height"));
+		}
+				
 		pidgin_conv_window_add_gtkconv(win, conv);
 		pidgin_conv_window_show(win);
+
+		g_signal_connect(G_OBJECT(win->window), "configure_event", 
+				G_CALLBACK(conv_placement_last_created_win_type_configured_cb), conv);
 	} else
 		pidgin_conv_window_add_gtkconv(win, conv);
 }
@@ -8955,6 +9028,8 @@ conv_placement_new_window(PidginConversation *conv)
 	PidginWindow *win;
 
 	win = pidgin_conv_window_new();
+	g_signal_connect(G_OBJECT(win->window), "configure_event", 
+			G_CALLBACK(gtk_conv_configure_cb), NULL);
 
 	pidgin_conv_window_add_gtkconv(win, conv);
 
