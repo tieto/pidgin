@@ -1,6 +1,5 @@
 EXTRA_DIST = \
 		mdns_win32.c \
-		mdns_win32.h \
 		Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
@@ -16,7 +15,7 @@ BONJOURSOURCES = \
 	mdns_common.c \
 	mdns_common.h \
 	mdns_howl.c \
-	mdns_howl.h \
+	mdns_interface.h \
 	mdns_types.h \
 	parser.c \
 	parser.h

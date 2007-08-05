@@ -19,11 +19,7 @@
 
 #include "mdns_types.h"
 
-#ifdef USE_BONJOUR_APPLE
-#include "mdns_win32.h"
-#elif defined USE_BONJOUR_HOWL
-#include "mdns_howl.h"
-#endif
+#include "buddy.h"
 
 /**
  * Allocate space for the dns-sd data.

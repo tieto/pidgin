@@ -15,12 +15,20 @@
  */
 
 #include "internal.h"
-#include "mdns_howl.h"
 
+#include "mdns_interface.h"
 #include "debug.h"
 #include "buddy.h"
 
-sw_result HOWL_API
+#include <howl.h>
+
+/* data used by howl bonjour implementation */
+typedef struct _howl_impl_data {
+	sw_discovery session;
+	sw_discovery_oid session_id;
+} HowlSessionImplData;
+
+static sw_result HOWL_API
 _publish_reply(sw_discovery discovery, sw_discovery_oid oid,
 			   sw_discovery_publish_status status, sw_opaque extra)
 {
@@ -46,7 +54,7 @@ _publish_reply(sw_discovery discovery, sw_discovery_oid oid,
 	return SW_OKAY;
 }
 
-sw_result HOWL_API
+static sw_result HOWL_API
 _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 			   sw_uint32 interface_index, sw_const_string name,
 			   sw_const_string type, sw_const_string domain,
@@ -95,7 +103,7 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 	return SW_OKAY;
 }
 
-sw_result HOWL_API
+static sw_result HOWL_API
 _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 			   sw_discovery_browse_status status,
 			   sw_uint32 interface_index, sw_const_string name,
@@ -154,19 +162,49 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 	return SW_OKAY;
 }
 
-int
-_mdns_publish(BonjourDnsSd *data, PublishType type)
+static void
+_mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition)
 {
+	sw_discovery_read_socket((sw_discovery)data);
+}
+
+/****************************
+ * mdns_interface functions *
+ ****************************/
+
+gboolean _mdns_init_session(BonjourDnsSd *data) {
+	HowlSessionImplData *idata = g_new0(HowlSessionImplData, 1);
+
+	if (sw_discovery_init(&idata->session) != SW_OKAY) {
+		purple_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
+
+		/* In Avahi, sw_discovery_init frees data->session but doesn't clear it */
+		idata->session = NULL;
+
+		g_free(idata);
+
+		return FALSE;
+	}
+
+	data->mdns_impl_data = idata;
+
+	return TRUE;
+}
+
+
+gboolean _mdns_publish(BonjourDnsSd *data, PublishType type) {
 	sw_text_record dns_data;
 	sw_result publish_result = SW_OKAY;
 	char portstring[6];
 	const char *jid, *aim, *email;
+	HowlSessionImplData *idata = data->mdns_impl_data;
+
+	g_return_val_if_fail(idata != NULL, FALSE);
 
 	/* Fill the data for the service */
-	if (sw_text_record_init(&dns_data) != SW_OKAY)
-	{
+	if (sw_text_record_init(&dns_data) != SW_OKAY) {
 		purple_debug_error("bonjour", "Unable to initialize the data for the mDNS.\n");
-		return -1;
+		return FALSE;
 	}
 
 	/* Convert the port to a string */
@@ -208,32 +246,69 @@ _mdns_publish(BonjourDnsSd *data, PublishType type)
 	/* TODO: ext, nick, node */
 
 	/* Publish the service */
-	switch (type)
-	{
+	switch (type) {
 		case PUBLISH_START:
-			publish_result = sw_discovery_publish(data->session, 0, purple_account_get_username(data->account), ICHAT_SERVICE, NULL,
+			publish_result = sw_discovery_publish(idata->session, 0, purple_account_get_username(data->account), ICHAT_SERVICE, NULL,
 								NULL, data->port_p2pj, sw_text_record_bytes(dns_data), sw_text_record_len(dns_data),
-								_publish_reply, NULL, &data->session_id);
+								_publish_reply, NULL, &idata->session_id);
 			break;
 		case PUBLISH_UPDATE:
-			publish_result = sw_discovery_publish_update(data->session, data->session_id,
+			publish_result = sw_discovery_publish_update(idata->session, idata->session_id,
 								sw_text_record_bytes(dns_data), sw_text_record_len(dns_data));
 			break;
 	}
-	if (publish_result != SW_OKAY)
-	{
+
+	if (publish_result != SW_OKAY) {
 		purple_debug_error("bonjour", "Unable to publish or change the status of the _presence._tcp service.\n");
-		return -1;
+		return FALSE;
 	}
 
 	/* Free the memory used by temp data */
 	sw_text_record_fina(dns_data);
 
-	return 0;
+	return TRUE;
 }
 
-void
-_mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition)
-{
-	sw_discovery_read_socket((sw_discovery)data);
+gboolean _mdns_browse(BonjourDnsSd *data) {
+	HowlSessionImplData *idata = data->mdns_impl_data;
+
+	g_return_val_if_fail(idata != NULL, FALSE);
+
+	/* TODO: don't we need to hang onto this to cancel later? */
+	sw_discovery_oid session_id;
+
+	return (sw_discovery_browse(idata->session, 0, ICHAT_SERVICE, NULL, _browser_reply,
+				    data->account, &session_id) == SW_OKAY);
 }
+
+guint _mdns_register_to_mainloop(BonjourDnsSd *data) {
+	HowlSessionImplData *idata = data->mdns_impl_data;
+
+	g_return_val_if_fail(idata != NULL, FALSE);
+
+	return purple_input_add(sw_discovery_socket(idata->session),
+				PURPLE_INPUT_READ, _mdns_handle_event, idata->session);
+}
+
+void _mdns_stop(BonjourDnsSd *data) {
+	HowlSessionImplData *idata = data->mdns_impl_data;
+
+	if (idata == NULL || idata->session == NULL)
+		return;
+
+	sw_discovery_cancel(idata->session, idata->session_id);
+
+	/* TODO: should this really be g_free()'d ??? */
+	g_free(idata->session);
+
+	g_free(idata);
+
+	data->mdns_impl_data = NULL;
+}
+
+void _mdns_init_buddy(BonjourBuddy *buddy) {
+}
+
+void _mdns_delete_buddy(BonjourBuddy *buddy) {
+}
+
