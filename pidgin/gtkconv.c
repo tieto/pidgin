@@ -6256,13 +6256,15 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			(fields & PIDGIN_CONV_SET_TITLE) ||
     			(fields & PIDGIN_CONV_TOPIC))
 	{
-		char *title;
+		char *title, *truncate = NULL, truncchar;
 		PurpleConvIm *im = NULL;
 		PurpleAccount *account = purple_conversation_get_account(conv);
+	 	PurpleBuddy *buddy = NULL;
+		PurplePresence *p = NULL;
 		char *markup = NULL;
 		AtkObject *accessibility_obj;
 		/* I think this is a little longer than it needs to be but I'm lazy. */
-		char style[51];
+		char *style, *status_style;
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 			im = PURPLE_CONV_IM(conv);
@@ -6275,12 +6277,20 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		else
 			title = g_strdup(purple_conversation_get_title(conv));
 
+		if ((truncate = strchr(title, ' ')) || 
+		    (truncate = strchr(title, '@'))) {
+			truncchar = *truncate;
+			*truncate = '\0';
+		}
+
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-		 	PurpleBuddy *buddy = purple_find_buddy(account, conv->name);
-			if (buddy)
+			buddy = purple_find_buddy(account, conv->name);
+			if (buddy) {
+				p = purple_buddy_get_presence(buddy);
 				markup = pidgin_blist_get_name_markup(buddy, FALSE, FALSE);
-			else
+			} else {
 				markup = title;
+			}
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 			PurpleConvChat *chat = PURPLE_CONV_CHAT(conv);
 			const char *topic = purple_conv_chat_get_topic(chat);
@@ -6296,54 +6306,56 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		if (title != markup)
 			g_free(markup);
 
-		*style = '\0';
-
 		if (!GTK_WIDGET_REALIZED(gtkconv->tab_label))
 			gtk_widget_realize(gtkconv->tab_label);
 
 		accessibility_obj = gtk_widget_get_accessible(gtkconv->tab_cont);
 		if (im != NULL &&
-		    purple_conv_im_get_typing_state(im) == PURPLE_TYPING)
-		{
+		    purple_conv_im_get_typing_state(im) == PURPLE_TYPING) {
 			atk_object_set_description(accessibility_obj, _("Typing"));
-			strncpy(style, "color=\"#4e9a06\"", sizeof(style));
-		}
-		else if (im != NULL &&
-		         purple_conv_im_get_typing_state(im) == PURPLE_TYPED)
-		{
+			style = "color=\"#4e9a06\"";
+		} else if (im != NULL &&
+		         purple_conv_im_get_typing_state(im) == PURPLE_TYPED) {
 			atk_object_set_description(accessibility_obj, _("Stopped Typing"));
-			strncpy(style, "color=\"#c4a000\"", sizeof(style));
-		}
-		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)
-		{
+			style = "color=\"#c4a000\"";
+		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)	{
 			atk_object_set_description(accessibility_obj, _("Nick Said"));
-			strncpy(style, "color=\"#204a87\" style=\"italic\" weight=\"bold\"", sizeof(style));
-		}
-		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)
-		{
+			style = "color=\"#204a87\" style=\"italic\" weight=\"bold\"";
+		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
-			strncpy(style, "color=\"#cc0000\" weight=\"bold\"", sizeof(style));
-		}
-		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
-		{
+			style = "color=\"#cc0000\" weight=\"bold\"";
+		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
 			atk_object_set_description(accessibility_obj, _("New Event"));
-			strncpy(style, "color=\"#888a85\" style=\"italic\"", sizeof(style));
+			style = "color=\"#888a85\" style=\"italic\"";
+		} else {
+			style = "";
+		}
+		
+		if (p && purple_presence_is_status_primitive_active(p, PURPLE_STATUS_OFFLINE)) {
+			status_style = "strikethrough='true'";
+		} else if (p && !purple_presence_is_status_primitive_active(p, PURPLE_STATUS_AVAILABLE) &&
+			 !purple_presence_is_status_primitive_active(p, PURPLE_STATUS_INVISIBLE)) {
+			status_style = "style='italic'";
+		} else {
+			status_style = "";
 		}
 
-		if (*style != '\0')
+		if (*style != '\0' || *status_style != '\0')
 		{
 			char *html_title,*label;
 
 			html_title = g_markup_escape_text(title, -1);
-
-			label = g_strdup_printf("<span %s>%s</span>",
-			                        style, html_title);
+			label = g_strdup_printf("<span %s %s>%s</span>",
+			                        style, status_style, html_title);
 			g_free(html_title);
 			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
 			g_free(label);
 		}
 		else
 			gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
+		
+		if (truncate)
+			*truncate = truncchar;
 
 		if (pidgin_conv_window_is_active_conversation(conv))
 			update_typing_icon(gtkconv);
@@ -8606,6 +8618,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	gtk_misc_set_alignment(GTK_MISC(gtkconv->menu_label), 0, 0);
 
 	gtk_widget_show(gtkconv->menu_tabby);
+	gtk_widget_set_size_request(gtkconv->menu_tabby, 0, -1);
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		pidgin_conv_update_buddy_icon(conv);
@@ -8722,7 +8735,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 					   TRUE, GTK_PACK_START);
 
 	/* show the widgets */
-	gtk_widget_show(gtkconv->icon);
+/*	gtk_widget_show(gtkconv->icon); */
 	gtk_widget_show(gtkconv->tab_label);
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/close_on_tabs"))
 		gtk_widget_show(gtkconv->close);

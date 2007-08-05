@@ -19,31 +19,14 @@
 
 #include <glib.h>
 #include "account.h"
-#include "config.h"
-
-#ifdef USE_BONJOUR_APPLE
-#include "dns_sd_proxy.h"
-#else /* USE_BONJOUR_HOWL */
-#include <howl.h>
-#endif
 
 #define ICHAT_SERVICE "_presence._tcp."
 
 /**
  * Data to be used by the dns-sd connection.
  */
-typedef struct _BonjourDnsSd
-{
-#ifdef USE_BONJOUR_APPLE
-	DNSServiceRef advertisement;
-	DNSServiceRef browser;
-
-	int advertisement_handler; /* hack... windows bonjour is broken, so we have to have this */
-#else /* USE_BONJOUR_HOWL */
-	sw_discovery session;
-	sw_discovery_oid session_id;
-#endif
-
+typedef struct _BonjourDnsSd {
+	gpointer mdns_impl_data;
 	PurpleAccount *account;
 	gchar *first;
 	gchar *last;
@@ -58,6 +41,5 @@ typedef enum _PublishType {
 	PUBLISH_START,
 	PUBLISH_UPDATE
 } PublishType;
-
 
 #endif
