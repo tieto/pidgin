@@ -1,3 +1,11 @@
+2007-08-04 Jeff Cnnelly <jeff2@soc.pidgin.im> - 0.13
+* Fix crash when deleting buddies, on Windows.
+* Disable sending client version to oncoming buddies (compile-time option).
+* Updated login process (more closely resembles official client).
+* Zaps, sending and receiving
+* Emoticons, mapped to Pidgin-supported smileys
+* Show official client build in buddy profiles.
+
 2007-07-15 Jeff Connelly <jeff2@soc.pidgin.im> - 0.12
 * Allow logging in with passwords containing uppercase letters (bug #2066)
 * Add /3 -> | translation to escaping.

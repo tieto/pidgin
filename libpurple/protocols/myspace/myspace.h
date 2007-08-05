@@ -83,7 +83,7 @@
 #define MSIM_LANGUAGE_NAME_ENGLISH  "ENGLISH"
 
 /* msimprpl version string of this plugin */
-#define MSIM_PRPL_VERSION_STRING    "0.12"
+#define MSIM_PRPL_VERSION_STRING    "0.13"
 
 /* Default server */
 #define MSIM_SERVER         "im.myspace.akadns.net"
