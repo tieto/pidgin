@@ -156,6 +156,19 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy)
 		purple_prpl_got_user_status(account, buddy->name, status_id, NULL);
 
 	purple_prpl_got_user_idle(account, buddy->name, FALSE, 0);
+
+	/* TODO: Because we don't save Bonjour buddies in blist.xml,
+	 * we will always have to look up the buddy icon at login time.
+	 * I think we should figure out a way to do something about this. */
+
+	/* Deal with the buddy icon */
+	old_hash = purple_buddy_icons_get_checksum_for_user(buddy);
+	new_hash = (bonjour_buddy->phsh && *(bonjour_buddy->phsh)) ? bonjour_buddy->phsh : NULL;
+	if (new_hash && (!old_hash || strcmp(old_hash, new_hash) != 0)) {
+		/* Look up the new icon data */
+		bonjour_dns_sd_retrieve_buddy_icon(bonjour_buddy);
+	} else
+		purple_buddy_icons_set_for_user(account, buddy->name, NULL, 0, NULL);
 }
 
 /**
@@ -166,6 +179,7 @@ bonjour_buddy_delete(BonjourBuddy *buddy)
 {
 	g_free(buddy->name);
 	g_free(buddy->ip);
+	g_free(buddy->full_service_name);
 
 	g_free(buddy->first);
 	g_free(buddy->phsh);

@@ -29,7 +29,6 @@ typedef struct _ResolveCallbackArgs {
 	guint resolver_handler;
 
 	PurpleDnsQueryData *query;
-	gchar *fqn;
 
 	BonjourBuddy* buddy;
 } ResolveCallbackArgs;
@@ -45,6 +44,8 @@ typedef struct _win32_session_impl_data {
 typedef struct _win32_buddy_impl_data {
 	DNSServiceRef txt_query;
 	guint txt_query_handler;
+	DNSServiceRef null_query;
+	guint null_query_handler;
 } Win32BuddyImplData;
 
 static void
@@ -77,10 +78,27 @@ _mdns_text_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags fl
 		purple_debug_error("bonjour", "record query - callback error.\n");
 	else if (flags & kDNSServiceFlagsAdd)
 	{
-		/* New Buddy */
-		BonjourBuddy *buddy = (BonjourBuddy*) context;
-		_mdns_parse_text_record(buddy, rdata, rdlen);
-		bonjour_buddy_add_to_purple(buddy);
+		if (rrtype == kDNSServiceType_TXT) {
+			/* New Buddy */
+			BonjourBuddy *buddy = (BonjourBuddy*) context;
+			_mdns_parse_text_record(buddy, rdata, rdlen);
+			bonjour_buddy_add_to_purple(buddy);
+		} else if (rrtype == kDNSServiceType_NULL) {
+			/* Buddy Icon response */
+			BonjourBuddy *buddy = (BonjourBuddy*) context;
+			Win32BuddyImplData *idata = buddy->mdns_impl_data;
+
+			g_return_if_fail(idata != NULL);
+
+			purple_buddy_icons_set_for_user(buddy->account, buddy->name,
+							g_memdup(rdata, rdlen), rdlen, buddy->phsh);
+
+			/* We've got what we need; stop listening */
+			purple_input_remove(idata->null_query_handler);
+			idata->null_query_handler = -1;
+			DNSServiceRefDeallocate(idata->null_query);
+			idata->null_query = NULL;
+		}
 	}
 }
 
@@ -120,7 +138,6 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 
 	/* free the remaining args memory */
 	purple_dnsquery_destroy(args->query);
-	g_free(args->fqn);
 	g_free(args);
 }
 
@@ -148,14 +165,13 @@ _mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint3
 		_mdns_parse_text_record(args->buddy, txtRecord, txtLen);
 
 		/* set more arguments, and start the host resolver */
-		args->fqn = g_strdup(fullname);
+		args->buddy->full_service_name = g_strdup(fullname);
 
 		if (!(args->query =
 			purple_dnsquery_a(hosttarget, port, _mdns_resolve_host_callback, args)))
 		{
 			purple_debug_error("bonjour", "service resolver - host resolution failed.\n");
 			bonjour_buddy_delete(args->buddy);
-			g_free(args->fqn);
 			g_free(args);
 		}
 	}
@@ -361,8 +377,34 @@ void _mdns_delete_buddy(BonjourBuddy *buddy) {
 		DNSServiceRefDeallocate(idata->txt_query);
 	}
 
+	if (idata->null_query != NULL) {
+		purple_input_remove(idata->null_query_handler);
+		DNSServiceRefDeallocate(idata->null_query);
+	}
+
 	g_free(idata);
 
 	buddy->mdns_impl_data = NULL;
+}
+
+void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy) {
+	Win32BuddyImplData *idata = buddy->mdns_impl_data;
+
+	g_return_if_fail(idata != NULL);
+
+	/* Cancel any existing query */
+	if (idata->null_query != NULL) {
+		purple_input_remove(idata->null_query_handler);
+		idata->null_query_handler = 0;
+		DNSServiceRefDeallocate(idata->null_query);
+		idata->null_query = NULL;
+	}
+
+	if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&idata->null_query, 0, 0, buddy->full_service_name,
+			kDNSServiceType_NULL, kDNSServiceClass_IN, _mdns_text_record_query_callback, buddy)) {
+		int fd = DNSServiceRefSockFD(idata->null_query);
+		idata->null_query_handler = purple_input_add(fd, PURPLE_INPUT_READ, _mdns_handle_event, idata->null_query);
+	}
+
 }
 
