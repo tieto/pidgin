@@ -18,6 +18,7 @@
 #define _BONJOUR_MDNS_INTERFACE
 
 #include "mdns_types.h"
+#include "buddy.h"
 
 gboolean _mdns_init_session(BonjourDnsSd *data);
 

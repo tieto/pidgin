@@ -271,11 +271,10 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type) {
 
 gboolean _mdns_browse(BonjourDnsSd *data) {
 	HowlSessionImplData *idata = data->mdns_impl_data;
-
-	g_return_val_if_fail(idata != NULL, FALSE);
-
 	/* TODO: don't we need to hang onto this to cancel later? */
 	sw_discovery_oid session_id;
+
+	g_return_val_if_fail(idata != NULL, FALSE);
 
 	return (sw_discovery_browse(idata->session, 0, ICHAT_SERVICE, NULL, _browser_reply,
 				    data->account, &session_id) == SW_OKAY);
