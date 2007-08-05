@@ -696,6 +696,8 @@ msim_msg_dump_to_str(MsimMessage *msg)
 static gchar *
 msim_msg_pack_element_data(MsimMessageElement *elem)
 {
+    g_return_val_if_fail(elem != NULL, NULL);
+
 	switch (elem->type)
 	{
 		case MSIM_TYPE_INTEGER:
@@ -746,7 +748,9 @@ msim_msg_pack_element_data(MsimMessageElement *elem)
             }
 
 		default:
-			purple_debug_info("msim", "field %s, unknown type %d\n", elem->name, elem->type);
+			purple_debug_info("msim", "field %s, unknown type %d\n", 
+                    elem->name ? elem->name : "(NULL)", 
+                    elem->type);
 			return NULL;
 	}
 }
@@ -1005,7 +1009,8 @@ msim_parse_body(const gchar *body_str)
         }
 
 #ifdef MSIM_DEBUG_PARSE
-        purple_debug_info("msim", "-- %s: %s\n", key, value);
+        purple_debug_info("msim", "-- %s: %s\n", key ? key : "(NULL)", 
+                value ? value : "(NULL)");
 #endif
 
         /* XXX: This overwrites duplicates. */
@@ -1095,8 +1100,7 @@ msim_msg_get_string(MsimMessage *msg, const gchar *name)
 	MsimMessageElement *elem;
 
 	elem = msim_msg_get(msg, name);
-	if (!elem)
-		return NULL;
+    g_return_val_if_fail(elem != NULL , NULL);
 
 	switch (elem->type)
 	{
@@ -1114,7 +1118,7 @@ msim_msg_get_string(MsimMessage *msg, const gchar *name)
 
 		default:
 			purple_debug_info("msim", "msim_msg_get_string: type %d unknown, name %s\n",
-					elem->type, name);
+					elem->type, name ? name : "(NULL)");
 			return NULL;
 	}
 }
@@ -1139,7 +1143,7 @@ msim_msg_get_list(MsimMessage *msg, const gchar *name)
 
         default:
             purple_debug_info("msim_msg_get_list", "type %d unknown, name %s\n",
-                    elem->type, name);
+                    elem->type, name ? name : "(NULL)");
             return NULL;
     }
 }
@@ -1172,7 +1176,7 @@ msim_msg_get_dictionary(MsimMessage *msg, const gchar *name)
 
         default:
             purple_debug_info("msim_msg_get_dictionary", "type %d unknown, name %s\n",
-                    elem->type, name);
+                    elem->type, name ? name : "(NULL)");
             return NULL;
     }
 }
@@ -1227,6 +1231,8 @@ msim_msg_get_binary(MsimMessage *msg, const gchar *name,
 	MsimMessageElement *elem;
 
 	elem = msim_msg_get(msg, name);
+    if (!elem)
+        return FALSE;
 
 	switch (elem->type)
 	{
@@ -1277,7 +1283,7 @@ msim_msg_get_binary(MsimMessage *msg, const gchar *name,
 
 		default:
 			purple_debug_info("msim", "msim_msg_get_binary: unhandled type %d for key %s\n",
-					elem->type, name);
+					elem->type, name ? name : "(NULL)");
 			return FALSE;
 	}
 }

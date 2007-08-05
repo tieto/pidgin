@@ -115,8 +115,10 @@ static gboolean msim_incoming_media(MsimSession *session, MsimMessage *msg);
 static gboolean msim_incoming_unofficial_client(MsimSession *session, 
         MsimMessage *msg);
 
+#ifdef MSIM_SEND_CLIENT_VERSION
 static gboolean msim_send_unofficial_client(MsimSession *session, 
         gchar *username);
+#endif
 
 static void msim_get_info_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
 
@@ -396,7 +398,9 @@ str_replace(const gchar *str, const gchar *old, const gchar *new)
 static void 
 print_hash_item(gpointer key, gpointer value, gpointer user_data)
 {
-    purple_debug_info("msim", "%s=%s\n", (gchar *)key, (gchar *)value);
+    purple_debug_info("msim", "%s=%s\n",
+            key ? (gchar *)key : "(NULL)", 
+            value ? (gchar *)value : "(NULL)");
 }
 #endif
 
@@ -485,7 +489,7 @@ msim_login(PurpleAccount *acct)
     g_return_if_fail(acct != NULL);
     g_return_if_fail(acct->username != NULL);
 
-    purple_debug_info("myspace", "logging in %s\n", acct->username);
+    purple_debug_info("msim", "logging in %s\n", acct->username);
 
     gc = purple_account_get_connection(acct);
     gc->proto_data = msim_session_new(acct);
@@ -808,6 +812,8 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
    
 	from_username = session->account->username;
 
+    g_return_val_if_fail(from_username != NULL, FALSE);
+
     purple_debug_info("msim", "sending %d message from %s to %s: %s\n",
                   type, from_username, who, text);
 
@@ -1106,7 +1112,8 @@ msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 		msim_markup_i_to_html(session, root, begin, end);
 	} else {
 		purple_debug_info("msim", "msim_markup_tag_to_html: "
-				"unknown tag name=%s, ignoring", root->name);
+				"unknown tag name=%s, ignoring", 
+                (root && root->name) ? root->name : "(NULL)");
 		*begin = g_strdup("");
 		*end = g_strdup("");
 	}
@@ -1206,7 +1213,8 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 			inner = msim_convert_xmlnode(session, node, f);
             g_return_val_if_fail(inner != NULL, NULL);
 
-			purple_debug_info("msim", " ** node name=%s\n", node->name);
+			purple_debug_info("msim", " ** node name=%s\n", 
+                    (node && node->name) ? node->name : "(NULL)");
 			break;
 	
 		case XMLNODE_TYPE_DATA:	
@@ -1215,7 +1223,8 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 			strncpy(inner, node->data, node->data_sz);
 			inner[node->data_sz] = 0;
 
-			purple_debug_info("msim", " ** node data=%s\n", inner);
+			purple_debug_info("msim", " ** node data=%s\n", 
+                    inner ? inner : "(NULL)");
 			break;
 			
 		default:
@@ -1235,7 +1244,7 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
     g_string_append(final, end);
 
 	purple_debug_info("msim", "msim_markup_xmlnode_to_gtkhtml: RETURNING %s\n",
-			final->str);
+			(final && final->str) ? final->str : "(NULL)");
 
 	return final->str;
 }
@@ -1247,6 +1256,8 @@ msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 	xmlnode *root;
 	gchar *str;
     gchar *enclosed_raw;
+
+    g_return_val_if_fail(raw != NULL, NULL);
 
     /* Enclose text in one root tag, to try to make it valid XML for parsing. */
     enclosed_raw = g_strconcat("<root>", raw, "</root>", NULL);
@@ -1265,6 +1276,7 @@ msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
     g_free(enclosed_raw);
 
 	str = msim_convert_xmlnode(session, root, f);
+    g_return_val_if_fail(str != NULL, NULL);
 	purple_debug_info("msim", "msim_markup_to_html: returning %s\n", str);
 
 	xmlnode_free(root);
@@ -1292,7 +1304,8 @@ msim_convert_smileys_to_markup(gchar *before)
         replacement = g_strdup_printf("<i n=\"%s\"/>", emoticon_names[i]);
 
         purple_debug_info("msim", "msim_convert_smileys_to_markup: %s->%s\n",
-                emoticon_symbols[i], replacement);
+                emoticon_symbols[i] ? emoticon_symbols[i] : "(NULL)", 
+                replacement ? replacement : "(NULL)");
         new = str_replace(old, emoticon_symbols[i], replacement);
         
         g_free(replacement);
@@ -1450,7 +1463,8 @@ msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
 	 * by Alexandr Shutko, who maintains OSCAR protocol documentation). */
 
 	purple_debug_info("msim", "Unrecognized data on account for %s\n", 
-            session->account->username);
+            session->account->username ? session->account->username
+            : "(NULL)");
 	if (note)
 	{
 		purple_debug_info("msim", "(Note: %s)\n", note);
@@ -1611,6 +1625,7 @@ msim_incoming_unofficial_client(MsimSession *session, MsimMessage *msg)
 }
 
 
+#ifdef MSIM_SEND_CLIENT_VERSION
 /** Send our client version to another unofficial client that understands it. */
 static gboolean
 msim_send_unofficial_client(MsimSession *session, gchar *username)
@@ -1628,6 +1643,7 @@ msim_send_unofficial_client(MsimSession *session, gchar *username)
 
     return ret;
 }
+#endif
 
 /** 
  * Handle when our user starts or stops typing to another user.
@@ -1924,6 +1940,7 @@ static void
 msim_set_status_code(MsimSession *session, guint status_code, gchar *statstring)
 {
     g_return_if_fail(MSIM_SESSION_VALID(session));
+    g_return_if_fail(statstring != NULL);
 
     purple_debug_info("msim", "msim_set_status_code: going to set status to code=%d,str=%s\n",
             status_code, statstring);
@@ -2257,7 +2274,7 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
             if (!(session->inbox_status & bit))
             {
                 purple_debug_info("msim", "msim_check_inbox_cb: got %s, at %d\n",
-                        key, n);
+                        key ? key : "(NULL)", n);
 
                 subjects[n] = inbox_text[i];
                 froms[n] = _("MySpace");
@@ -2271,7 +2288,7 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
             } else {
                 purple_debug_info("msim",
                         "msim_check_inbox_cb: already notified of %s\n",
-                        key);
+                        key ? key : "(NULL)");
             }
 
             session->inbox_status |= bit;
@@ -2579,7 +2596,9 @@ WebTicketGoHome=False
     Anything useful? TODO: use what is useful, and use it.
 */
     purple_debug_info("msim_process_server_info",
-            "maximum contacts: %s\n", g_hash_table_lookup(body, "MaxContacts"));
+            "maximum contacts: %s\n", 
+            g_hash_table_lookup(body, "MaxContacts") ? 
+            g_hash_table_lookup(body, "MaxContacts") : "(NULL)");
 
     session->server_info = body;
     /* session->server_info freed in msim_session_destroy */
@@ -2730,7 +2749,7 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
         ss = msim_msg_get_string(msg, "msg");
         purple_debug_info("msim", 
                 "msim_status: updating status for <%s> to <%s>\n",
-                username, ss);
+                username, ss ? ss : "(NULL)");
         g_free(ss);
     }
 
@@ -2826,8 +2845,8 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
     /* MsimMessage	*msg_blocklist; */
 
 	session = (MsimSession *)gc->proto_data;
-	purple_debug_info("msim", "msim_add_buddy: want to add %s to %s\n", buddy->name,
-			group ? group->name : "(no group)");
+	purple_debug_info("msim", "msim_add_buddy: want to add %s to %s\n", 
+            buddy->name, (group && group->name) ? group->name : "(no group)");
 
 	msg = msim_msg_new(TRUE,
 			"addbuddy", MSIM_TYPE_BOOLEAN, TRUE,
@@ -2919,7 +2938,7 @@ msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before,
 		g_free(fmt_string);
 
 		purple_debug_info("msim", "msim_postprocess_outgoing_cb: formatted new string, %s\n",
-				elem->data);
+				elem->data ? elem->data : "(NULL)");
 
 	} else {
 		/* Otherwise, insert new field into outgoing message. */
@@ -2972,7 +2991,7 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
 	/* Send */
 	if (!msim_msg_send(session, msg))
 	{
-		purple_debug_info("msim", "msim_postprocess_outgoing_cb: sending failed for message: %s\n", msg);
+		msim_msg_dump("msim_postprocess_outgoing_cb: sending failed for message: %s\n", msg);
 	}
 
 
@@ -3032,7 +3051,7 @@ msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg,
 		{
 			/* Don't have uid offhand - need to ask for it, and wait until hear back before sending. */
 			purple_debug_info("msim", ">>> msim_postprocess_outgoing: couldn't find username %s in blist\n",
-					username);
+					username ? username : "(NULL)");
 			msim_msg_dump("msim_postprocess_outgoing - scheduling lookup, msg=%s\n", msg);
 			/* TODO: where is cloned message freed? Should be in _cb. */
 			msim_lookup_user(session, username, msim_postprocess_outgoing_cb, msim_msg_clone(msg));
@@ -3042,7 +3061,7 @@ msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg,
 	
 	/* Already have uid, postprocess and send msg immediately. */
 	purple_debug_info("msim", "msim_postprocess_outgoing: found username %s has uid %d\n",
-			username, uid);
+			username ? username : "(NULL)", uid);
 
 	msg = msim_do_postprocessing(msg, uid_before, uid_field_name, uid);
 
