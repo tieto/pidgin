@@ -80,12 +80,11 @@ static void _qq_search_before_auth_with_gc_and_uid(gc_and_uid *g)
 	uid = g->uid;
 	g_return_if_fail(gc != 0 && uid != 0);
 
-	qq_send_packet_get_info(gc, uid, TRUE);	/* we wanna see window */
+	qq_send_packet_get_info(gc, uid, TRUE);	/* we want to see window */
 
 	nombre = uid_to_purple_name(uid);
-	/* TODO: 'wanna' is not an appropriate word for this string. Fix after string freeze. */
 	purple_request_action
-	    (gc, NULL, _("Do you wanna approve the request?"), "", 2,
+	    (gc, NULL, _("Do you want to approve the request?"), "", 2,
 		 purple_connection_get_account(gc), nombre, NULL,
 		 g, 2,
 	     _("Reject"), G_CALLBACK(qq_reject_add_request_with_gc_and_uid),
@@ -105,11 +104,10 @@ static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 	uid = g->uid;
 	g_return_if_fail(gc != 0 && uid != 0);
 
-	qq_send_packet_get_info(gc, uid, TRUE);	/* we wanna see window */
-	/* TODO: 'wanna' is not an appropriate word for this string. Fix after string freeze. */
+	qq_send_packet_get_info(gc, uid, TRUE);	/* we want to see window */
 	nombre = uid_to_purple_name(uid);
 	purple_request_action
-	    (gc, NULL, _("Do you wanna add this buddy?"), "", 2,
+	    (gc, NULL, _("Do you want to add this buddy?"), "", 2,
 		 purple_connection_get_account(gc), nombre, NULL,
 		 g, 2,
 	     _("Cancel"), NULL,
@@ -175,7 +173,7 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 					_("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid),
 				    _("Search"), G_CALLBACK(_qq_search_before_add_with_gc_and_uid));
 	} else {
-		message = g_strdup_printf(_("%s has added you [%s]"), from, to);
+		message = g_strdup_printf(_("%s has added you [%s] to his or her buddy list"), from, to);
 		_qq_sys_msg_log_write(gc, message, from);
 		purple_notify_info(gc, NULL, message, NULL);
 	}
@@ -211,7 +209,7 @@ static void _qq_process_msg_sys_add_contact_approved(PurpleConnection *gc, gchar
 	qd = (qq_data *) gc->proto_data;
 	qq_add_buddy_by_recv_packet(gc, strtol(from, NULL, 10), TRUE, TRUE);
 
-	message = g_strdup_printf(_("User %s has approved your request"), from);
+	message = g_strdup_printf(_("User %s approved your request"), from);
 	_qq_sys_msg_log_write(gc, message, from);
 	purple_notify_info(gc, NULL, message, NULL);
 
@@ -236,9 +234,8 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 
 	name = uid_to_purple_name(uid);
 
-	/* TODO: 'wanna' is not an appropriate word for this string. Fix after string freeze */
 	/* TODO: this should go through purple_account_request_authorization() */
-	message = g_strdup_printf(_("%s wanna add you [%s] as friends"), from, to);
+	message = g_strdup_printf(_("%s wants to add you [%s] as a friend"), from, to);
 	reason = g_strdup_printf(_("Message: %s"), msg_utf8);
 	_qq_sys_msg_log_write(gc, message, from);
 

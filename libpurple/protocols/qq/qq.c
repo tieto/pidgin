@@ -195,7 +195,8 @@ static void _qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 {
 	qq_buddy *q_bud;
 	gchar *ip_str;
-	char *tmp, *tmp2;
+	const char *tmp;
+	char *tmp2;
 
 	g_return_if_fail(b != NULL);
 
@@ -206,12 +207,13 @@ static void _qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 	{
 		ip_str = gen_ip_str(q_bud->ip);
 		if (strlen(ip_str) != 0) {
-			tmp = g_strdup_printf(_("%s Address"),
-						  ((q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE) ? "TCP" : "UDP"));
+			if (q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE)
+				tmp = _("TCP Address");
+			else
+				tmp = _("UDP Address");
 			tmp2 = g_strdup_printf("%s:%d", ip_str, q_bud->port);
 			purple_notify_user_info_add_pair(user_info, tmp, tmp2);
 			g_free(tmp2);
-			g_free(tmp);
 		}
 		g_free(ip_str);
 
@@ -238,7 +240,7 @@ static void _qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 		if (q_bud->level) {
 			tmp = g_strdup_printf("%d", q_bud->level);
 			purple_notify_user_info_add_pair(user_info, _("Level"), tmp);
-			g_free(tmp);			
+			g_free(tmp);
 		}
 		/* For debugging */
 		/*
@@ -275,19 +277,19 @@ static GList *_qq_away_states(PurpleAccount *ga)
 	GList *types = NULL;
 
 	status = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE,
-			"available", _("QQ: Available"), FALSE, TRUE, FALSE);
+			"available", _("Available"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_AWAY,
-			"away", _("QQ: Away"), FALSE, TRUE, FALSE);
+			"away", _("Away"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_INVISIBLE,
-			"invisible", _("QQ: Invisible"), FALSE, TRUE, FALSE);
+			"invisible", _("Invisible"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
-			"offline", _("QQ: Offline"), FALSE, TRUE, FALSE);
+			"offline", _("Offline"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_MOBILE,
@@ -416,7 +418,7 @@ static void _qq_menu_block_buddy(PurpleBlistNode * node)
 	g->uid = uid;
 
 	purple_request_action(gc, _("Block Buddy"),
-			    _("Are you sure to block this buddy?"), NULL,
+			    _("Are you sure you want to block this buddy?"), NULL,
 			    1, g, 2,
 			    _("Cancel"),
 			    G_CALLBACK(qq_do_nothing_with_gc_and_uid),
@@ -470,7 +472,7 @@ static void _qq_menu_create_permanent_group(PurplePluginAction * action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	purple_request_input(gc, _("Create QQ Qun"),
 			   _("Input Qun name here"),
-			   _("Only QQ member can create permanent Qun"),
+			   _("Only QQ members can create permanent Qun"),
 			   "OpenQ", FALSE, FALSE, NULL,
 			   _("Create"), G_CALLBACK(qq_group_create_with_name), _("Cancel"), NULL, gc);
 }
@@ -528,7 +530,7 @@ static GList *_qq_actions(PurplePlugin *plugin, gpointer context)
 	PurplePluginAction *act;
 
 	m = NULL;
-	act = purple_plugin_action_new(_("Modify My Information"), _qq_menu_modify_my_info);
+	act = purple_plugin_action_new(_("Set My Information"), _qq_menu_modify_my_info);
 	m = g_list_append(m, act);
 
 	act = purple_plugin_action_new(_("Change Password"), _qq_menu_change_password);
@@ -555,7 +557,7 @@ static GList *_qq_chat_menu(PurpleBlistNode *node)
 	PurpleMenuAction *act;
 
 	m = NULL;
-	act = purple_menu_action_new(_("Exit this QQ Qun"), PURPLE_CALLBACK(_qq_menu_unsubscribe_group), NULL, NULL);
+	act = purple_menu_action_new(_("Leave this QQ Qun"), PURPLE_CALLBACK(_qq_menu_unsubscribe_group), NULL, NULL);
 	m = g_list_append(m, act);
 
 	/* TODO: enable this
