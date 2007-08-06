@@ -195,8 +195,8 @@ static void _qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 {
 	qq_buddy *q_bud;
 	gchar *ip_str;
-	const char *tmp;
-	char *tmp2;
+	char *tmp;
+	const char *tmp2;
 
 	g_return_if_fail(b != NULL);
 
@@ -208,12 +208,12 @@ static void _qq_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gb
 		ip_str = gen_ip_str(q_bud->ip);
 		if (strlen(ip_str) != 0) {
 			if (q_bud->comm_flag & QQ_COMM_FLAG_TCP_MODE)
-				tmp = _("TCP Address");
+				tmp2 = _("TCP Address");
 			else
-				tmp = _("UDP Address");
-			tmp2 = g_strdup_printf("%s:%d", ip_str, q_bud->port);
-			purple_notify_user_info_add_pair(user_info, tmp, tmp2);
-			g_free(tmp2);
+				tmp2 = _("UDP Address");
+			tmp = g_strdup_printf("%s:%d", ip_str, q_bud->port);
+			purple_notify_user_info_add_pair(user_info, tmp2, tmp);
+			g_free(tmp);
 		}
 		g_free(ip_str);
 
