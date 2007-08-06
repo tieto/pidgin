@@ -1,0 +1,107 @@
+2007-08-04 Jeff Cnnelly <jeff2@soc.pidgin.im> - 0.13
+* Fix crash when deleting buddies, on Windows.
+* Disable sending client version to oncoming buddies (compile-time option).
+* Updated login process (more closely resembles official client).
+* Zaps, sending and receiving
+* Emoticons, mapped to Pidgin-supported smileys
+* Show official client build in buddy profiles.
+
+2007-07-15 Jeff Connelly <jeff2@soc.pidgin.im> - 0.12
+* Allow logging in with passwords containing uppercase letters (bug #2066)
+* Add /3 -> | translation to escaping.
+* Allow setting status string.
+* Disable keepalive timeout.
+* Remove faking self online, instead show real status (now that it exists).
+* Support font sizes in incoming instant messages.
+* Add support for mail notifications.
+
+2007-07-09 Jeff Connelly <jeff2@soc.pidgin.im> - 0.11
+* Allow going idle (tested with I'dle Ma'ker) and viewing idle status of 
+  buddies (thanks to Scott Ellis, developing a MySpaceIM plugin for Miranda IM,
+  for finding the idle status code.)
+* Time out if no data from server within a certain amount of time 
+  (keep alives).
+* Remove "Sign on as hidden" option, and always set status to current status
+  when signing on.
+* Some support for sending formatted text.
+* Fix build process on Unix, bug #2086.
+
+2007-07-03 Jeff Connelly <jeff2@soc.pidgin.im> - 0.10
+* On incoming instant messages, add support for:
+ * Text color
+ * Font face
+* Add option to sign on as hidden, default off (previously, always was hidden)
+* Add ability to change status to hidden, available, away
+* Increase password length limit to 10 to match official client (bug #2010)
+
+2007-07-01 Jeff Connelly <jeff2@soc.pidgin.im> - 0.9
+* Fix crash on Windows when logging in (bug #1990)
+* Fix crash on Windows when viewing tooltip text (bug #1999)
+
+2007-06-30 Jeff Connelly <jeff2@soc.pidgin.im> - 0.8
+* Allow "Get Info" on all users, by uid or username
+* Fix crash when re-logging in, if login failed.
+* Show descriptive error message if login password is too long.
+* Fake self from being online, since can't add self to buddy list.
+* Update for Libpurple 2.0.2.
+* Partial support for formatting on incoming instant messages.
+
+2007-06-14 Jeff Connelly <jeff2@soc.pidgin.im> - 0.7
+* Add/delete buddy now functional (required many other code improvements).
+* Show improved buddy information in tooltip text.
+* Show user profile (in "Get Info" option) for buddies on buddy list.
+* Fix crash when re-logging in, if login succeeded.
+
+2007-06-12 Jeff Connelly <jeff2@soc.pidgin.im> - 0.6
+* Use RC4 code from Libpurple 2.0.1
+* Use a new implementation for sending and receiving messages (MsimMessage).
+  This infrastructural change significantly improves extensibility.
+* Show online buddies as online.
+* Send and receive typing notifications (along with other required changes).
+
+2007-05-22 Jeff Connelly <jeff2@soc.pidgin.im> - 0.5
+* Add protocol escaping, so can now send and receive / and \ characters
+* Designed Pidgin 2.0.0beta7
+* Use RC4 code from Samba
+* Use translations (_ macro)
+* No major changes to code, still getting familiar with tools & community
+
+2007-04-29 Jeff Connelly <jeff2@soc.pidgin.im> 
+
+* NOTE: This code is now being developed under Monotone, in the
+  im.pidgin.soc.2007.msimprpl branch on my local computer, which
+  is periodically sync'd with pidgin.im's Monotone database.
+
+  Changes will be logged to Monotone.
+
+2007-04-15 Jeff Connelly <myspaceim@xyzzy.cjb.net> - 0.4
+
+* Gracefully handle a full receive buffer
+* Handle fatal errors
+* Last version for Gaim 2.0.0beta6
+
+2007-04-14 Jeff Connelly <myspaceim@xyzzy.cjb.net> - 0.3
+
+* Win32 support
+* Add a large number of precondition checks and a handful of assertions
+* Add documentation to each function, for doxygen.
+
+2007-04-10 Jeff Connelly <myspaceim@xyzzy.cjb.net> - 0.2
+
+* Add ability to IM by email address.
+* Show usernames on buddy list instead of userids.
+* Show incoming messages as coming from username, instead of userid.
+* Add status messages and tooltip text.
+
+2007-04-09 Jeff Connelly <myspaceim@xyzzy.cjb.net> - 0.1
+
+* Parsing most of the protocol.
+* Logging in using RC4/SHA1-based authentication.
+* Sending messages, by numeric userid or username.
+* Receiving messages, currently only by numeric userid.
+* Some buddy list support (show all users on buddy list as online, by uid).
+
+2007-04-07 Jeff Connelly <myspaceim@xyzzy.cjb.net> - 0.0
+
+* Initial version. Login only. Not publicly released.
+
