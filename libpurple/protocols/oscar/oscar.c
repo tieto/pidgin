@@ -1873,10 +1873,9 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			saved_b16 = purple_buddy_icons_get_checksum_for_user(b);
 
 		if (!b16 || !saved_b16 || strcmp(b16, saved_b16)) {
-			GSList *cur = od->requesticon;
-			while (cur && aim_sncmp((char *)cur->data, info->sn))
-				cur = cur->next;
-			if (!cur) {
+			if (g_slist_find_custom(od->requesticon, info->sn,
+					(GCompareFunc)aim_sncmp) == NULL)
+			{
 				od->requesticon = g_slist_append(od->requesticon, g_strdup(purple_normalize(account, info->sn)));
 				if (od->icontimer == 0)
 					od->icontimer = purple_timeout_add(1, purple_icon_timerfunc, gc);
