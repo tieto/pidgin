@@ -22,9 +22,9 @@ BONJOURSOURCES = \
 if MDNS_AVAHI
   BONJOURSOURCES += mdns_avahi.c
 else
-  if MDNS_HOWL
+if MDNS_HOWL
     BONJOURSOURCES += mdns_howl.c
-  endif
+endif
 endif
 
 AM_CFLAGS = $(st)
@@ -42,9 +42,9 @@ libbonjour_a_LIBADD  =
 if MDNS_AVAHI
   libbonjour_a_LIBADD  += $(AVAHI_LIBS)
 else
-  if MDNS_HOWL
+if MDNS_HOWL
     libbonjour_a_LIBADD  += $(HOWL_LIBS)
-  endif
+endif
 endif
 
 else
@@ -56,9 +56,9 @@ libbonjour_la_LIBADD  = $(GLIB_LIBS) $(LIBXML_LIBS)
 if MDNS_AVAHI
   libbonjour_la_LIBADD  += $(AVAHI_LIBS)
 else
-  if MDNS_HOWL
+if MDNS_HOWL
     libbonjour_la_LIBADD  += $(HOWL_LIBS)
-  endif
+endif
 endif
 
 endif
@@ -74,8 +74,8 @@ AM_CPPFLAGS = \
 if MDNS_AVAHI
   AM_CPPFLAGS += $(AVAHI_CFLAGS)
 else
-  if MDNS_HOWL
+if MDNS_HOWL
     AM_CPPFLAGS += $(HOWL_CFLAGS)
-  endif
+endif
 endif
 
