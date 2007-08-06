@@ -6256,7 +6256,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			(fields & PIDGIN_CONV_SET_TITLE) ||
     			(fields & PIDGIN_CONV_TOPIC))
 	{
-		char *title, *truncate = NULL, truncchar;
+		char *title, *truncate = NULL, truncchar = '\0';
 		PurpleConvIm *im = NULL;
 		PurpleAccount *account = purple_conversation_get_account(conv);
 	 	PurpleBuddy *buddy = NULL;
@@ -6599,7 +6599,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	event = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(gtkconv->u.im->icon_container), event);
-	gtk_event_box_set_visible_window(event, FALSE);
+	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);
 	gtk_widget_add_events(event,
                               GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
@@ -8554,7 +8554,6 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	GtkWidget *close_image;
 	PurpleConversationType conv_type;
 	const gchar *tmp_lab;
-	gint close_button_width, close_button_height, focus_width, focus_pad;
 
 	conv_type = purple_conversation_get_type(conv);
 
@@ -8567,7 +8566,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 	/* Close button. */
 	gtkconv->close = gtk_event_box_new();
-	gtk_event_box_set_visible_window(gtkconv->close, FALSE);
+	gtk_event_box_set_visible_window(GTK_EVENT_BOX(gtkconv->close), FALSE);
 	close_image = gtk_label_new(NULL);
 	gtk_label_set_markup(GTK_LABEL(close_image),"<b>×</b>");
 	gtk_widget_show(close_image);
