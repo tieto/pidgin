@@ -3270,8 +3270,6 @@ purple_icons_fetch(PurpleConnection *gc)
 	aim_userinfo_t *userinfo;
 	FlapConnection *conn;
 
-	od->icontimer = 0;
-
 	conn = flap_connection_getbytype(od, SNAC_FAMILY_BART);
 	if (!conn) {
 		if (!od->iconconnecting) {
