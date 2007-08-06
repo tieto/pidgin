@@ -111,5 +111,6 @@ bonjour_dns_sd_stop(BonjourDnsSd *data)
 	_mdns_stop(data);
 
 	gc = purple_account_get_connection(data->account);
-	purple_input_remove(gc->inpa);
+	if (gc->inpa > 0)
+		purple_input_remove(gc->inpa);
 }
