@@ -340,7 +340,7 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 guint _mdns_register_to_mainloop(BonjourDnsSd *data) {
 	Win32SessionImplData *idata = data->mdns_impl_data;
 
-	g_return_val_if_fail(idata != NULL, FALSE);
+	g_return_val_if_fail(idata != NULL, 0);
 
 	return purple_input_add(DNSServiceRefSockFD(idata->browser),
 				PURPLE_INPUT_READ, _mdns_handle_event, idata->browser);

@@ -145,7 +145,7 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 			break;
 		case SW_DISCOVERY_BROWSE_REMOVE_SERVICE:
 			purple_debug_info("bonjour", "_browser_reply --> Remove service\n");
-			gb = purple_find_buddy((PurpleAccount*)extra, name);
+			gb = purple_find_buddy(account, name);
 			if (gb != NULL)
 			{
 				bonjour_buddy_delete(gb->proto_data);
@@ -258,13 +258,13 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type) {
 			break;
 	}
 
-	if (publish_result != SW_OKAY) {
-		purple_debug_error("bonjour", "Unable to publish or change the status of the _presence._tcp service.\n");
-		return FALSE;
-	}
-
 	/* Free the memory used by temp data */
 	sw_text_record_fina(dns_data);
+
+	if (publish_result != SW_OKAY) {
+		purple_debug_error("bonjour", "Unable to publish or change the status of the " ICHAT_SERVICE " service.\n");
+		return FALSE;
+	}
 
 	return TRUE;
 }
@@ -283,7 +283,7 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 guint _mdns_register_to_mainloop(BonjourDnsSd *data) {
 	HowlSessionImplData *idata = data->mdns_impl_data;
 
-	g_return_val_if_fail(idata != NULL, FALSE);
+	g_return_val_if_fail(idata != NULL, 0);
 
 	return purple_input_add(sw_discovery_socket(idata->session),
 				PURPLE_INPUT_READ, _mdns_handle_event, idata->session);
