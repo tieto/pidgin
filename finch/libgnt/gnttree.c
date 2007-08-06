@@ -1094,7 +1094,7 @@ static void
 free_tree_col(gpointer data)
 {
 	GntTreeCol *col = data;
-	if (col->isbinary)
+	if (!col->isbinary)
 		g_free(col->text);
 	g_free(col);
 }
