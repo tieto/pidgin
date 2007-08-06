@@ -1157,7 +1157,7 @@ flap_connection_established_bart(OscarData *od, FlapConnection *conn)
 	od->iconconnecting = FALSE;
 
 	if (od->icontimer == 0)
-		od->icontimer = purple_timeout_add(100, purple_icon_timerfunc, gc);
+		od->icontimer = purple_timeout_add(1, purple_icon_timerfunc, gc);
 }
 
 static int
@@ -1879,7 +1879,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			if (!cur) {
 				od->requesticon = g_slist_append(od->requesticon, g_strdup(purple_normalize(account, info->sn)));
 				if (od->icontimer == 0)
-					od->icontimer = purple_timeout_add(500, purple_icon_timerfunc, gc);
+					od->icontimer = purple_timeout_add(1, purple_icon_timerfunc, gc);
 			}
 		}
 		g_free(b16);
@@ -3247,7 +3247,7 @@ static int purple_icon_error(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 	g_free(sn);
 
 	if (od->icontimer == 0)
-		od->icontimer = purple_timeout_add(500, purple_icon_timerfunc, gc);
+		od->icontimer = purple_timeout_add(1, purple_icon_timerfunc, gc);
 
 	return 1;
 }
@@ -3292,7 +3292,7 @@ static int purple_icon_parseicon(OscarData *od, FlapConnection *conn, FlapFrame 
 	}
 
 	if (od->icontimer == 0)
-		od->icontimer = purple_timeout_add(250, purple_icon_timerfunc, gc);
+		od->icontimer = purple_timeout_add(1, purple_icon_timerfunc, gc);
 
 	return 1;
 }
@@ -3345,7 +3345,7 @@ static gboolean purple_icon_timerfunc(gpointer data) {
 		g_free(sn);
 	}
 
-	od->icontimer = purple_timeout_add(100, purple_icon_timerfunc, gc);
+	od->icontimer = purple_timeout_add(1, purple_icon_timerfunc, gc);
 
 	return FALSE;
 }
