@@ -210,8 +210,8 @@ static GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
  * Callbacks
  **************************************************************************/
 
-static gint
-close_conv_cb(GtkWidget *w, PidginConversation *gtkconv)
+static gboolean
+close_conv_cb(GtkWidget *w, GdkEventButton *event, PidginConversation *gtkconv)
 {
 	GList *list = g_list_copy(gtkconv->convs);
 
@@ -1328,7 +1328,7 @@ menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = data;
 
-	close_conv_cb(NULL, PIDGIN_CONVERSATION(pidgin_conv_window_get_active_conversation(win)));
+	close_conv_cb(NULL, NULL, PIDGIN_CONVERSATION(pidgin_conv_window_get_active_conversation(win)));
 }
 
 static void
@@ -6596,6 +6596,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	event = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(gtkconv->u.im->icon_container), event);
+	gtk_event_box_set_visible_window(event, FALSE);
 	gtk_widget_add_events(event,
                               GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
@@ -7489,7 +7490,7 @@ build_warn_close_dialog(PidginWindow *gtkwin)
 							_("Confirm close"),
 							GTK_WINDOW(gtkwin->window), GTK_DIALOG_MODAL,
 							GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-							PIDGIN_STOCK_CLOSE_TABS, GTK_RESPONSE_OK, NULL);
+							GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
 
 	gtk_dialog_set_default_response(GTK_DIALOG(warn_close_dialog),
 	                                GTK_RESPONSE_OK);
@@ -7781,7 +7782,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 			return FALSE;
 
 		gtkconv = pidgin_conv_window_get_gtkconv_at_index(win, tab_clicked);
-		close_conv_cb(NULL, gtkconv);
+		close_conv_cb(NULL, NULL, gtkconv);
 		return TRUE;
 	}
 
@@ -8040,7 +8041,7 @@ close_others_cb(GtkWidget *w, GObject *menu)
 
 		if (gconv != gtkconv)
 		{
-			close_conv_cb(NULL, gconv);
+			close_conv_cb(NULL, NULL, gconv);
 		}
 	}
 }
@@ -8052,7 +8053,7 @@ static void close_tab_cb(GtkWidget *w, GObject *menu)
 	gtkconv = g_object_get_data(menu, "clicked_tab");
 
 	if (gtkconv)
-		close_conv_cb(NULL, gtkconv);
+		close_conv_cb(NULL, NULL, gtkconv);
 }
 
 static gboolean
@@ -8560,28 +8561,16 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 
 	/* Close button. */
-	gtkconv->close = gtk_button_new();
-	gtk_icon_size_lookup(GTK_ICON_SIZE_MENU, &close_button_width, &close_button_height);
-	if (gtk_check_version(2, 4, 2) == NULL) {
-		/* Need to account for extra padding around the gtkbutton */
-		gtk_widget_style_get(GTK_WIDGET(gtkconv->close),
-		                     "focus-line-width", &focus_width,
-		                     "focus-padding", &focus_pad,
-		                     NULL);
-		close_button_width += (focus_width + focus_pad) * 2;
-		close_button_height += (focus_width + focus_pad) * 2;
-	}
-	gtk_widget_set_size_request(GTK_WIDGET(gtkconv->close),
-	                            close_button_width, close_button_height);
-
-	gtk_button_set_relief(GTK_BUTTON(gtkconv->close), GTK_RELIEF_NONE);
-	close_image = gtk_image_new_from_stock(GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	gtkconv->close = gtk_event_box_new();
+	gtk_event_box_set_visible_window(gtkconv->close, FALSE);
+	close_image = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(close_image),"<b>×</b>");
 	gtk_widget_show(close_image);
 	gtk_container_add(GTK_CONTAINER(gtkconv->close), close_image);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
 	                     _("Close conversation"), NULL);
 
-	g_signal_connect(G_OBJECT(gtkconv->close), "clicked",
+	g_signal_connect(G_OBJECT(gtkconv->close), "button-press-event",
 	                 G_CALLBACK(close_conv_cb), gtkconv);
 
 #if !GTK_CHECK_VERSION(2,6,0)
