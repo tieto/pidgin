@@ -51,20 +51,50 @@ typedef enum
 	PURPLE_ACCOUNT_REQUEST_AUTHORIZATION = 0 /* Account authorization request */
 } PurpleAccountRequestType;
 
+
+/**  Account UI operations, used to notify the user of status changes and when
+ *   buddies add this account to their buddy lists.
+ */
 struct _PurpleAccountUiOps
 {
-	/* A buddy we already have added us to their buddy list. */
-	void (*notify_added)(PurpleAccount *account, const char *remote_user,
-	                    const char *id, const char *alias,
+	/** A buddy who is already on this account's buddy list added this account
+	 *  to their buddy list.
+	 */
+	void (*notify_added)(PurpleAccount *account,
+	                     const char *remote_user,
+	                     const char *id,
+	                     const char *alias,
 	                     const char *message);
-	void (*status_changed)(PurpleAccount *account, PurpleStatus *status);
-	/* Someone we don't have on our list added us. Will prompt to add them. */
-	void (*request_add)(PurpleAccount *account, const char *remote_user,
-	                    const char *id, const char *alias,
+
+	/** This account's status changed. */
+	void (*status_changed)(PurpleAccount *account,
+	                       PurpleStatus *status);
+
+	/** Someone we don't have on our list added us; prompt to add them. */
+	void (*request_add)(PurpleAccount *account,
+	                    const char *remote_user,
+	                    const char *id,
+	                    const char *alias,
 	                    const char *message);
-	void *(*request_authorize)(PurpleAccount *account, const char *remote_user, const char *id,
-				 const char *alias, const char *message, gboolean on_list, 
-				 GCallback authorize_cb, GCallback deny_cb, void *user_data);
+
+	/** Prompt for authorization when someone adds this account to their buddy
+	 * list.  To authorize them to see this account's presence, call \a
+	 * authorize_cb (\a user_data); otherwise call \a deny_cb (\a user_data);
+	 * @return a UI-specific handle, as passed to #close_account_request.
+	 */
+	void *(*request_authorize)(PurpleAccount *account,
+	                           const char *remote_user,
+	                           const char *id,
+	                           const char *alias,
+	                           const char *message,
+	                           gboolean on_list,
+	                           GCallback authorize_cb,
+	                           GCallback deny_cb,
+	                           void *user_data);
+
+	/** Close a pending request for authorization.  \a ui_handle is a handle
+	 *  as returned by #request_authorize.
+	 */
 	void (*close_account_request)(void *ui_handle);
 
 	void (*_purple_reserved1)(void);
@@ -193,7 +223,7 @@ void purple_account_request_add(PurpleAccount *account, const char *remote_user,
 
 /**
  * Notifies the user that a remote user has wants to add the local user
- * to his or her buddy list and requires authorization to d oso.
+ * to his or her buddy list and requires authorization to do so.
  *
  * This will present a dialog informing the user of this and ask if the 
  * user authorizes or denies the remote user from adding him.
