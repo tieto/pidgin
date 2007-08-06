@@ -405,7 +405,7 @@ void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, PurpleConne
            		           ">>> %d bytes -> [default] decrypt and dump\n%s",
 	                           buf_len, hex_dump);
                		try_dump_as_gbk(buf, buf_len);
-		purple_connection_error(gc, _("Request login token error!"));
+		purple_connection_error(gc, _("Error requesting login token"));
 	}		
 	g_free(hex_dump);
 }
