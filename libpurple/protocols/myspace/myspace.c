@@ -2931,16 +2931,10 @@ msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before,
 		gchar *fmt_string;
 		gchar *uid_str, *new_str;
 
-		/* Warning: this probably violates the encapsulation of MsimMessage */
+        /* Warning: this is a delicate, but safe, operation */
 
 		elem = msim_msg_get(msg, uid_field_name);
-		g_return_val_if_fail(elem->type == MSIM_TYPE_STRING, NULL);
 
-#if 0
-		/* Get the raw string, not with msim_msg_get_string() since that copies it. 
-		 * Want the original string so can free it. */
-		fmt_string = (gchar *)(elem->data);
-#endif
         /* Get the packed element, flattening it. This allows <uid> to be
          * replaced within nested data structures, since the replacement is done
          * on the linear, packed data, not on a complicated data structure.
@@ -2953,9 +2947,6 @@ msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before,
         fmt_string = msim_msg_pack_element_data(elem);
 
 		uid_str = g_strdup_printf("%d", uid);
-#if 0
-		elem->data = str_replace(fmt_string, "<uid>", uid_str);
-#endif
 		new_str = str_replace(fmt_string, "<uid>", uid_str);
 		g_free(uid_str);
 		g_free(fmt_string);
@@ -2967,12 +2958,12 @@ msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before,
         elem->data = new_str;
         elem->type = MSIM_TYPE_RAW;
 
-		purple_debug_info("msim", "msim_postprocess_outgoing_cb: formatted new string, %s\n",
-				elem->data ? elem->data : "(NULL)");
 	} else {
 		/* Otherwise, insert new field into outgoing message. */
 		msg = msim_msg_insert_before(msg, uid_before, uid_field_name, MSIM_TYPE_INTEGER, GUINT_TO_POINTER(uid));
 	}
+
+    msim_msg_dump("msim_postprocess_outgoing_cb: postprocessed msg=%s\n", msg);
 
 	return msg;
 }	
@@ -3150,12 +3141,18 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
     msim_msg_free(persist_msg);
 
     blocklist_updates = NULL;
+    blocklist_updates = g_list_prepend(blocklist_updates, "a-");
+    blocklist_updates = g_list_prepend(blocklist_updates, "<uid>");
+    blocklist_updates = g_list_prepend(blocklist_updates, "b-");
+    blocklist_updates = g_list_prepend(blocklist_updates, "<uid>");
+    blocklist_updates = g_list_reverse(blocklist_updates);
 
 	blocklist_msg = msim_msg_new(TRUE,
 			"blocklist", MSIM_TYPE_BOOLEAN, TRUE,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			/* TODO: MsimMessage lists. Currently <uid> isn't replaced in lists. */
-			"idlist", MSIM_TYPE_STRING, g_strdup("a-|<uid>|b-|<uid>"),
+			//"idlist", MSIM_TYPE_STRING, g_strdup("a-|<uid>|b-|<uid>"),
+            "idlist", MSIM_TYPE_LIST, blocklist_updates,
 			NULL);
 
 	if (!msim_postprocess_outgoing(session, blocklist_msg, buddy->name, "idlist", NULL))
