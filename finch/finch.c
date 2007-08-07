@@ -401,7 +401,9 @@ int main(int argc, char **argv)
 	signal(SIGPIPE, SIG_IGN);
 
 	g_set_prgname("Finch");
+#if GLIB_CHECK_VERSION(2,2,0)
 	g_set_application_name(_("Finch"));
+#endif
 
 	/* Initialize the libpurple stuff */
 	if (!init_libpurple(argc, argv))
