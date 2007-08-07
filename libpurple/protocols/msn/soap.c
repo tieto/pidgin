@@ -474,7 +474,6 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 			if ( soapconn->need_to_read > 0 ) {
 				return;
 			}
-			//g_free(body_len);
 
 			/*remove the read handler*/
 			purple_input_remove(soapconn->input_handler);
@@ -494,7 +493,6 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 			if ( soapconn->read_cb != NULL ) {
 				soapconn->read_cb(soapconn, source, 0);
 			}
-			msn_soap_free_read_buf(soapconn);
 	}
 	return;
 }
@@ -502,7 +500,7 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 void 
 msn_soap_free_read_buf(MsnSoapConn *soapconn)
 {
-	if(soapconn->read_buf){
+	if (soapconn->read_buf) {
 		g_free(soapconn->read_buf);
 	}
 	soapconn->read_buf = NULL;
