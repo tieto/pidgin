@@ -424,6 +424,20 @@ gboolean
 purple_certificate_signed_by(PurpleCertificate *crt, PurpleCertificate *issuer);
 
 /**
+ * Check that a certificate chain is valid
+ *
+ * Uses purple_certificate_signed_by() to verify that each PurpleCertificate
+ * in the chain carries a valid signature from the next. A single-certificate
+ * chain is considered to be valid.
+ *
+ * @param chain      List of PurpleCertificate instances comprising the chain,
+ *                   in the order certificate, issuer, issuer's issuer, etc.
+ * @return TRUE if the chain is valid. See description.
+ */
+gboolean
+purple_certificate_check_signature_chain(GList *chain);
+
+/**
  * Imports a PurpleCertificate from a file
  *
  * @param scheme      Scheme to import under

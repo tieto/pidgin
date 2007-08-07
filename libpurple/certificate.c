@@ -167,6 +167,40 @@ purple_certificate_signed_by(PurpleCertificate *crt, PurpleCertificate *issuer)
 	return (scheme->signed_by)(crt, issuer);
 }
 
+gboolean
+purple_certificate_check_signature_chain(GList *chain)
+{
+	GList *cur;
+	PurpleCertificate *crt, *issuer;
+
+	g_return_val_if_fail(chain, FALSE);
+	
+	/* If this is a single-certificate chain, say that it is valid */
+	if (chain->next == NULL) {
+		return TRUE;
+	}
+
+	/* Load crt with the first certificate */
+	crt = (PurpleCertificate *)(chain->data);
+	/* And start with the second certificate in the chain */
+	for ( cur = chain->next; cur; cur = cur->next ) {
+		
+		issuer = (PurpleCertificate *)(cur->data);
+		
+		/* Check the signature for this link */
+		if (! purple_certificate_signed_by(crt, issuer) ) {
+			return FALSE;
+		}
+
+		/* The issuer is now the next crt whose signature is to be
+		   checked */
+		crt = issuer;
+	}
+
+	/* If control reaches this point, the chain is valid */
+	return TRUE;
+}
+
 PurpleCertificate *
 purple_certificate_import(PurpleCertificateScheme *scheme, const gchar *filename)
 {
