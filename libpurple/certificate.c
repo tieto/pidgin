@@ -1,5 +1,5 @@
 /**
- * @file certificate.h Public-Key Certificate API
+ * @file certificate.c Public-Key Certificate API
  * @ingroup core
  */
 
