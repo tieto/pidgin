@@ -245,6 +245,26 @@ purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
 }
 
 gchar *
+purple_certificate_get_unique_id(PurpleCertificate *crt)
+{
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme, NULL);
+	g_return_val_if_fail(crt->scheme->get_unique_id, NULL);
+
+	return (crt->scheme->get_unique_id)(crt);
+}
+
+gchar *
+purple_certificate_get_issuer_unique_id(PurpleCertificate *crt)
+{
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme, NULL);
+	g_return_val_if_fail(crt->scheme->get_issuer_unique_id, NULL);
+
+	return (crt->scheme->get_issuer_unique_id)(crt);
+}
+
+gchar *
 purple_certificate_get_subject_name(PurpleCertificate *crt)
 {
 	PurpleCertificateScheme *scheme;

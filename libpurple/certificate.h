@@ -469,6 +469,24 @@ purple_certificate_export(const gchar *filename, PurpleCertificate *crt);
 GByteArray *
 purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt);
 
+/**
+ * Get a unique identifier for the certificate
+ *
+ * @param crt        Certificate instance
+ * @return String representing the certificate uniquely. Must be g_free()'ed
+ */
+gchar *
+purple_certificate_get_unique_id(PurpleCertificate *crt);
+
+/**
+ * Get a unique identifier for the certificate's issuer
+ *
+ * @param crt        Certificate instance
+ * @return String representing the certificate's issuer uniquely. Must be
+ *         g_free()'ed
+ */
+gchar *
+purple_certificate_get_issuer_unique_id(PurpleCertificate *crt);
 
 /**
  * Gets the certificate subject's name
