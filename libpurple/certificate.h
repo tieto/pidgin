@@ -188,6 +188,9 @@ struct _PurpleCertificateScheme
 	 */
 	void (* destroy_certificate)(PurpleCertificate * crt);
 
+	/** Find whether "crt" has a valid signature from issuer "issuer"
+	 *  @see purple_certificate_signed_by() */
+	gboolean (*signed_by)(PurpleCertificate *crt, PurpleCertificate *issuer);
 	/**
 	 * Retrieves the certificate public key fingerprint using SHA1
 	 *
@@ -406,6 +409,19 @@ purple_certificate_destroy (PurpleCertificate *crt);
  */
 void
 purple_certificate_destroy_list (GList * crt_list);
+
+/**
+ * Check whether 'crt' has a valid signature made by 'issuer'
+ *
+ * @param crt        Certificate instance to check signature of
+ * @param issuer     Certificate thought to have signed 'crt'
+ *
+ * @return TRUE if 'crt' has a valid signature made by 'issuer',
+ *         otherwise FALSE
+ * @TODO Find a way to give the reason (bad signature, not the issuer, etc.) 
+ */
+gboolean
+purple_certificate_signed_by(PurpleCertificate *crt, PurpleCertificate *issuer);
 
 /**
  * Imports a PurpleCertificate from a file

@@ -151,6 +151,22 @@ purple_certificate_destroy_list (GList * crt_list)
 	g_list_free(crt_list);
 }
 
+gboolean
+purple_certificate_signed_by(PurpleCertificate *crt, PurpleCertificate *issuer)
+{
+	PurpleCertificateScheme *scheme;
+
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(issuer, FALSE);
+
+	scheme = crt->scheme;
+	g_return_val_if_fail(scheme, FALSE);
+	/* We can't compare two certs of unrelated schemes, obviously */
+	g_return_val_if_fail(issuer->scheme == scheme, FALSE);
+
+	return (scheme->signed_by)(crt, issuer);
+}
+
 PurpleCertificate *
 purple_certificate_import(PurpleCertificateScheme *scheme, const gchar *filename)
 {
