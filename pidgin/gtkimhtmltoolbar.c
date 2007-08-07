@@ -1096,6 +1096,13 @@ update_menuitem(GtkToggleButton *button, GtkCheckMenuItem *item)
 	g_signal_handlers_unblock_by_func(G_OBJECT(item), G_CALLBACK(gtk_button_clicked), button);
 }
 
+static void
+enable_markup(GtkWidget *widget, gpointer null)
+{
+	if (GTK_IS_LABEL(widget))
+		g_object_set(G_OBJECT(widget), "use-markup", TRUE, NULL);
+}
+
 static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 {
 	GtkWidget *hbox = GTK_WIDGET(toolbar);
@@ -1114,14 +1121,17 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 		GtkWidget **button;
 		gboolean check;
 	} buttons[] = {
-		{_("_Bold"), &toolbar->bold, TRUE},
-		{_("_Italic"), &toolbar->italic, TRUE},
-		{_("_Underline"), &toolbar->underline, TRUE},
-		{_("_Larger"), &toolbar->larger_size, TRUE},
+		{_("<b>_Bold</b>"), &toolbar->bold, TRUE},
+		{_("<i>_Italic</i>"), &toolbar->italic, TRUE},
+		{_("<u>_Underline</u>"), &toolbar->underline, TRUE},
+		{_("<span size='larger'>_Larger</span>"), &toolbar->larger_size, TRUE},
 #if 0
 		{_("_Normal"), &toolbar->normal_size, TRUE},
 #endif
-		{_("_Smaller"), &toolbar->smaller_size, TRUE},
+		{_("<span size='smaller'>_Smaller</span>"), &toolbar->smaller_size, TRUE},
+		/* If we want to show the formatting for the following items, we would
+		 * need to update them when formatting changes. The above items don't need
+		 * no updating nor nothin' */
 		{_("_Font face"), &toolbar->font, TRUE},
 		{_("Foreground _color"), &toolbar->fgcolor, TRUE},
 		{_("Bac_kground color"), &toolbar->bgcolor, TRUE},
@@ -1175,6 +1185,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 		gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), menuitem);
 		g_signal_connect(G_OBJECT(old), "notify::sensitive",
 				G_CALLBACK(button_sensitiveness_changed), menuitem);
+		gtk_container_foreach(GTK_CONTAINER(menuitem), (GtkCallback)enable_markup, NULL);
 	}
 
 	g_signal_connect(G_OBJECT(font_button), "button-press-event", G_CALLBACK(pidgin_menu_clicked), font_menu);
