@@ -730,6 +730,60 @@ x509_sha1sum(PurpleCertificate *crt)
 }
 
 static gchar *
+x509_cert_dn (PurpleCertificate *crt)
+{
+	gnutls_x509_crt_t cert_dat;
+	gchar *dn = NULL;
+	size_t dn_size;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_gnutls, NULL);
+
+	cert_dat = X509_GET_GNUTLS_DATA(crt);
+
+	/* TODO: Note return values? */
+		
+	/* Figure out the length of the Distinguished Name */
+	/* Claim that the buffer is size 0 so GnuTLS just tells us how much
+	   space it needs */
+	dn_size = 0;
+	gnutls_x509_crt_get_dn(cert_dat, dn, &dn_size);
+
+	/* Now allocate and get the Distinguished Name */
+	dn = g_new0(gchar, dn_size);
+	gnutls_x509_crt_get_dn(cert_dat, dn, &dn_size);
+	
+	return dn;
+}
+
+static gchar *
+x509_issuer_dn (PurpleCertificate *crt)
+{
+	gnutls_x509_crt_t cert_dat;
+	gchar *dn = NULL;
+	size_t dn_size;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_gnutls, NULL);
+
+	cert_dat = X509_GET_GNUTLS_DATA(crt);
+
+	/* TODO: Note return values? */
+		
+	/* Figure out the length of the Distinguished Name */
+	/* Claim that the buffer is size 0 so GnuTLS just tells us how much
+	   space it needs */
+	dn_size = 0;
+	gnutls_x509_crt_get_issuer_dn(cert_dat, dn, &dn_size);
+
+	/* Now allocate and get the Distinguished Name */
+	dn = g_new0(gchar, dn_size);
+	gnutls_x509_crt_get_issuer_dn(cert_dat, dn, &dn_size);
+	
+	return dn;
+}
+
+static gchar *
 x509_common_name (PurpleCertificate *crt)
 {
 	gnutls_x509_crt_t cert_dat;
@@ -820,8 +874,8 @@ static PurpleCertificateScheme x509_gnutls = {
 	x509_destroy_certificate,        /* Destroy cert */
 	x509_certificate_signed_by,      /* Signature checker */
 	x509_sha1sum,                    /* SHA1 fingerprint */
-	NULL,                            /* Unique ID */
-	NULL,                            /* Issuer Unique ID */
+	x509_cert_dn,                    /* Unique ID */
+	x509_issuer_dn,                  /* Issuer Unique ID */
 	x509_common_name,                /* Subject name */
 	x509_check_name,                 /* Check subject name */
 	x509_times                       /* Activation/Expiration time */
