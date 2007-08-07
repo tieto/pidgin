@@ -44,7 +44,7 @@ static struct StockIcon
 #endif
 	{ PIDGIN_STOCK_CHAT,            NULL,      GTK_STOCK_JUMP_TO          },
 	{ PIDGIN_STOCK_CLEAR,           NULL,      GTK_STOCK_CLEAR            },
-	{ PIDGIN_STOCK_CLOSE_TABS,      "buttons", "close-tab.png"            },
+	{ PIDGIN_STOCK_CLOSE_TABS,      NULL,      GTK_STOCK_CLOSE            },
 	{ PIDGIN_STOCK_DEBUG,           NULL,      GTK_STOCK_PROPERTIES       },
 	{ PIDGIN_STOCK_DOWNLOAD,        NULL,      GTK_STOCK_GO_DOWN          },
 #if GTK_CHECK_VERSION(2,6,0)
