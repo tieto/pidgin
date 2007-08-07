@@ -26,7 +26,6 @@ static gchar *msim_unescape_or_escape(gchar *msg, gboolean escape);
 static void msim_msg_free_element(gpointer data, gpointer user_data);
 static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
 static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, const gchar *sep, const gchar *begin, const gchar *end);
-static gchar *msim_msg_pack_element_data(MsimMessageElement *elem);
 static GList *msim_msg_get_node(MsimMessage *msg, const gchar *name);
 static MsimMessage *msim_msg_new_v(va_list argp);
 
@@ -326,19 +325,17 @@ msim_msg_clone(MsimMessage *old)
 	return new;
 }
 
-/** Free an individual message element. 
+/** Free the data of a message element.
  *
- * @param data MsimMessageElement * to free.
- * @param user_data Not used; required to match g_list_foreach() callback prototype.
+ * @param elem The MsimMessageElement *
+ *
+ * Note this only frees the element data; you may also want to free the
+ * element itself with g_free() (see msim_msg_free_element()).
  */
-static void 
-msim_msg_free_element(gpointer data, gpointer user_data)
+void
+msim_msg_free_element_data(MsimMessageElement *elem)
 {
-	MsimMessageElement *elem;
-
-	elem = (MsimMessageElement *)data;
-
-	switch (elem->type)
+    switch (elem->type)
 	{
 		case MSIM_TYPE_BOOLEAN:
 		case MSIM_TYPE_INTEGER:
@@ -366,9 +363,27 @@ msim_msg_free_element(gpointer data, gpointer user_data)
 			break;
 
 		default:
-			purple_debug_info("msim", "msim_msg_free_element: not freeing unknown type %d\n", elem->type);
+			purple_debug_info("msim", "msim_msg_free_element_data: "
+                    "not freeing unknown type %d\n", elem->type);
 			break;
 	}
+}
+
+/** Free an individual message element.
+ *
+ * @param data MsimMessageElement * to free.
+ * @param user_data Not used; required to match g_list_foreach() callback prototype.
+ *
+ * Frees both the element data and the element itself.
+ */
+static void 
+msim_msg_free_element(gpointer data, gpointer user_data)
+{
+	MsimMessageElement *elem;
+
+	elem = (MsimMessageElement *)data;
+
+    msim_msg_free_element_data(elem);
 
 	g_free(elem);
 }
@@ -695,7 +710,7 @@ msim_msg_dump_to_str(MsimMessage *msg)
  * optimal for human consumption. For example, strings are escaped. Use 
  * msim_msg_get_string() if you want a string, which in some cases is same as this.
  */
-static gchar *
+gchar *
 msim_msg_pack_element_data(MsimMessageElement *elem)
 {
     g_return_val_if_fail(elem != NULL, NULL);

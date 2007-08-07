@@ -51,10 +51,12 @@ MsimMessage *msim_msg_new(gboolean not_empty, ...);
 /* No sentinel attribute, because can leave off varargs if not_empty is FALSE. */
 
 MsimMessage *msim_msg_clone(MsimMessage *old);
+void msim_msg_free_element_data(MsimMessageElement *elem);
 void msim_msg_free(MsimMessage *msg);
 MsimMessage *msim_msg_append(MsimMessage *msg, const gchar *name, MsimMessageType type, gpointer data);
 MsimMessage *msim_msg_insert_before(MsimMessage *msg, const gchar *name_before, const gchar *name, MsimMessageType type, gpointer data);
 gchar *msim_msg_dump_to_str(MsimMessage *msg);
+gchar *msim_msg_pack_element_data(MsimMessageElement *elem);
 void msim_msg_dump(const char *fmt_string, MsimMessage *msg);
 gchar *msim_msg_pack(MsimMessage *msg);
 gchar *msim_msg_pack_dict(MsimMessage *msg);
