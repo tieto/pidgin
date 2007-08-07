@@ -706,6 +706,8 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 
 	store_name = (user != NULL) ? get_store_name(user) : who;
 
+	purple_debug_info("MSNCL", "store_name = %s\n",store_name);
+
 	/* XXX: see XXX above, this should really be done when we get the response from
 	   the server */
 	msn_user_set_op(user, list_id);
@@ -713,7 +715,7 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 	/* Then request the add to the server. */
 	list = lists[list_id];
 
-	purple_debug_info("MSNP14", "add user:{%s} to group id {%s}\n",store_name ,group_id);
+	purple_debug_info("MSNP14", "Add user: %s to group id: %s\n",store_name ,group_id);
 	msn_add_contact(userlist->session->contact,who,group_id);
 	msn_notification_add_buddy(userlist->session->notification, list, who,
 							   store_name, group_id);

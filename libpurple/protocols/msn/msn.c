@@ -131,9 +131,6 @@ msn_act_id(PurpleConnection *gc, const char *entry)
 	PurpleAccount *account;
 	const char *alias;
 
-	char *soapbody;
-	MsnSoapReq *soap_request;
-
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
 	account = purple_connection_get_account(gc);
@@ -156,21 +153,6 @@ msn_act_id(PurpleConnection *gc, const char *entry)
 
 	msn_cmdproc_send(cmdproc, "PRP", "MFN %s", alias);
 
-	soapbody = g_strdup_printf(MSN_CONTACT_UPDATE_TEMPLATE, alias);
-	/*build SOAP and POST it*/
-	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
-										MSN_ADDRESS_BOOK_POST_URL,
-										MSN_CONTACT_UPDATE_SOAP_ACTION,
-										soapbody,
-										NULL,
-										NULL);
-
-	session->contact->soapconn->read_cb = NULL;
-	msn_soap_post(session->contact->soapconn,
-				  soap_request,
-				  msn_contact_connect_init);
-
-	g_free(soapbody);
 }
 
 static void

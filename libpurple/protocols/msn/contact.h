@@ -65,7 +65,35 @@
  * Address Book SOAP
  * *********************************************/
 #define MSN_ADDRESS_BOOK_POST_URL	"/abservice/abservice.asmx"
-/*get addressbook soap request template*/
+
+/* Add an address book template */
+#define MSN_ADD_ADDRESSBOOK_SOAP_ACTION     "http://www.msn.com/webservices/AddressBook/ABAdd"
+
+#define MSN_ADD_ADDRESSBOOK_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
+"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
+	"<soap:Header>"\
+		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<IsMigration>false</IsMigration>"\
+			"<PartnerScenario>Initial</PartnerScenario>"\
+		"</ABApplicationHeader>"\
+		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
+		"</ABAuthHeader>"\
+	"</soap:Header>"\
+	"<soap:Body>"\
+		"<ABAdd xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+			"<abInfo>"\
+				"<name/>"\
+				"<ownerPuid>0</ownerPuid>"\
+				"<ownerEmail>%s</ownerEmail>"\
+				"<fDefault>true</fDefault>"\
+			"</abInfo>"\
+		"</ABAdd>"\
+	"</soap:Body>"\
+"</soap:Envelope>"
+
+/* get addressbook soap request template */
 #define MSN_GET_ADDRESS_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/ABFindAll"
 #define MSN_GET_ADDRESS_FULL_TIME "0001-01-01T00:00:00.0000000-08:00"
 #define MSN_GET_ADDRESS_UPDATE_XML "<deltasOnly>true</deltasOnly>"\

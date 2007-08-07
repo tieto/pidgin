@@ -390,14 +390,21 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	len = read(servconn->fd, buf, sizeof(buf) - 1);
 
-	if (len < 0 && errno == EAGAIN)
-		return;
-	else if (len <= 0)
-	{
-		purple_debug_error("msn", "servconn read error, len: %d error: %s\n", len, strerror(errno));
-		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
+	if (len <= 0) {
+		switch (errno) {
 
-		return;
+			case 0:	
+
+			case EBADF:
+			case EAGAIN: return;
+	
+			default: purple_debug_error("msn", "servconn read error,"
+						"len: %d, errno: %d, error: %s\n",
+						len, errno, strerror(errno));
+				 msn_servconn_got_error(servconn, 
+						 MSN_SERVCONN_ERROR_READ);
+				 return;
+		}
 	}
 
 	buf[len] = '\0';

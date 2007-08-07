@@ -335,7 +335,7 @@ nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 					soapconn->login_path,soapconn->login_host,(int)strlen(tail));
 
 	request_str = g_strdup_printf("%s%s", head,tail);
-	purple_debug_misc("msn", "TWN Sending: {%s}\n", request_str);
+	purple_debug_misc("msn", "TWN Sending:\n%s\n", request_str);
 
 	g_free(head);
 	g_free(tail);

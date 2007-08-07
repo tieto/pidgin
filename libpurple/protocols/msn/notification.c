@@ -674,7 +674,19 @@ msn_notification_dump_contact(MsnSession *session)
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
 	xmlnode_set_attrib(adl_node, "l", "1");
-	
+
+
+	if ( session->userlist->users == NULL ) {
+		/* we have no users yet in our contact list */
+		payload = xmlnode_to_str(adl_node,&payload_len);
+
+		msn_notification_post_adl(session->notification->cmdproc,
+			payload, payload_len);
+
+		g_free(payload);
+		xmlnode_free(adl_node);
+	}
+	else {
 	/*get the userlist*/
 	for (l = session->userlist->users; l != NULL; l = l->next){
 		user = l->data;
@@ -703,11 +715,12 @@ msn_notification_dump_contact(MsnSession *session)
 			}
 		}
 	}
-
+	}
 
 	display_name = purple_connection_get_display_name(session->account->gc);
-	if (display_name && strcmp(display_name,
-							   purple_account_get_username(session->account))) {
+	if (display_name 
+	    && strcmp(display_name, 
+		      purple_account_get_username(session->account))) {
 		msn_act_id(session->account->gc, display_name);
 	}
 
@@ -746,15 +759,11 @@ blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	static int initial;
-
 	purple_debug_info("MSNP14","Process ADL\n");
 
-	if (!initial)
-        {
-                purple_debug_misc("MSNP14","Initial ADL received\n");
-                msn_session_finish_login(cmdproc->session);
-        }
+	msn_session_finish_login(cmdproc->session);
+
+	return;
 }
 
 static void
@@ -1136,7 +1145,11 @@ static void
 prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session = cmdproc->session;
-	const char *type, *value;
+	const char *type, *value, *friendlyname;
+	gchar *soapname, *soapbody;
+	MsnSoapReq *soap_request;
+
+	purple_debug_info("MSN Notification", "prp_cmd()\n");
 
 	g_return_if_fail(cmd->param_count >= 3);
 
@@ -1163,10 +1176,28 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		else {
 			type = cmd->params[1];
 			if (!strcmp(type, "MFN")) {
+				friendlyname = purple_url_decode(cmd->params[2]);
+				soapname = g_markup_escape_text(friendlyname,-1);
+				soapbody = g_strdup_printf(MSN_CONTACT_UPDATE_TEMPLATE, soapname);
 
+				soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
+								    MSN_ADDRESS_BOOK_POST_URL,
+								    MSN_CONTACT_UPDATE_SOAP_ACTION,
+								    soapbody,
+								    NULL,
+								    NULL);
+
+				session->contact->soapconn->read_cb = NULL;
+
+				msn_soap_post(session->contact->soapconn,
+					      soap_request,
+					      msn_contact_connect_init);
+
+				g_free(soapbody);
+				g_free(soapname);
 				purple_connection_set_display_name(
 					purple_account_get_connection(session->account),
-					purple_url_decode(cmd->params[2]));
+					friendlyname);
 			}
 		}
 	}
