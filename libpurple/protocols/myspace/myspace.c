@@ -2342,6 +2342,8 @@ msim_check_inbox(gpointer data)
 static gboolean
 msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 {
+    MsimMessage *body;
+
     g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
     g_return_val_if_fail(msg != NULL, FALSE);
 
@@ -2374,6 +2376,9 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
         purple_debug_info("msim_we_are_logged_on", "TODO: pick username");
     }
 
+    body = msim_msg_new(TRUE,
+            "UserID", MSIM_TYPE_INTEGER, session->userid,
+            NULL);
 
     /* Request IM info about ourself. */
     msim_send(session,
@@ -2383,8 +2388,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
             "uid", MSIM_TYPE_INTEGER, session->userid,
             "lid", MSIM_TYPE_INTEGER, MG_OWN_MYSPACE_INFO_LID,
             "rid", MSIM_TYPE_INTEGER, session->next_rid++,
-            "body", MSIM_TYPE_STRING,
-                g_strdup_printf("UserID=%d", session->userid),
+            "body", MSIM_TYPE_DICTIONARY, body,
             NULL);
 
     /* Request MySpace info about ourself. */
@@ -2408,11 +2412,13 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 
     /* TODO: setinfo */
     /*
+    body = msim_msg_new(TRUE,
+        "TotalFriends", MSIM_TYPE_INTEGER, 666,
+        NULL);
     msim_send(session,
             "setinfo", MSIM_TYPE_BOOLEAN, TRUE,
             "sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-            "info", MSIM_TYPE_STRING,
-            g_strdup_printf("TotalFriends=666"),
+            "info", MSIM_TYPE_DICTIONARY, body,
             NULL);
             */
 
@@ -2842,7 +2848,8 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	MsimSession *session;
 	MsimMessage *msg;
-    /* MsimMessage	*msg_blocklist; */
+    MsimMessage	*msg_blocklist;
+    MsimMessage *body;
 
 	session = (MsimSession *)gc->proto_data;
 	purple_debug_info("msim", "msim_add_buddy: want to add %s to %s\n", 
@@ -2866,8 +2873,16 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	/* TODO: if addbuddy fails ('error' message is returned), delete added buddy from
 	 * buddy list since Purple adds it locally. */
 
-	/* TODO: Update blocklist. */
-#if 0
+    body = msim_msg_new(TRUE,
+            "ContactID", MSIM_TYPE_STRING, g_strdup("<uid>"),
+            "GroupName", MSIM_TYPE_STRING, g_strdup(group->name),
+            "Position", MSIM_TYPE_INTEGER, 1000,
+            "Visibility", MSIM_TYPE_INTEGER, 1,
+            "NickName", MSIM_TYPE_STRING, g_strdup(""),
+            "NameSelect", MSIM_TYPE_INTEGER, 0,
+            NULL);
+
+	/* Update blocklist. */
 	msg_blocklist = msim_msg_new(TRUE,
 		"persist", MSIM_TYPE_INTEGER, 1,
 		"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
@@ -2876,14 +2891,8 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		"lid", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_LID,
 		/* TODO: Use msim_new_reply_callback to get rid. */
 		"rid", MSIM_TYPE_INTEGER, session->next_rid++,
-		"body", MSIM_TYPE_STRING,
-			g_strdup_printf("ContactID=<uid>\034"
-			"GroupName=%s\034"
-			"Position=1000\034"
-			"Visibility=1\034"
-			"NickName=\034"
-			"NameSelect=0",
-			"Friends" /*group->name*/ ));
+		"body", MSIM_TYPE_DICTIONARY, body,
+        NULL);
 
 	if (!msim_postprocess_outgoing(session, msg, buddy->name, "body", NULL))
 	{
@@ -2892,7 +2901,6 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		return;
 	}
 	msim_msg_free(msg_blocklist);
-#endif
 }
 
 /** Perform actual postprocessing on a message, adding userid as specified.
@@ -2916,30 +2924,51 @@ msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before,
 {	
 	msim_msg_dump("msim_do_postprocessing msg: %s\n", msg);
 
-	/* First, check - if the field already exists, treat it as a format string. */
+	/* First, check - if the field already exists, replace <uid> within it */
 	if (msim_msg_get(msg, uid_field_name))
 	{
 		MsimMessageElement *elem;
 		gchar *fmt_string;
-		gchar *uid_str;
+		gchar *uid_str, *new_str;
 
 		/* Warning: this probably violates the encapsulation of MsimMessage */
 
 		elem = msim_msg_get(msg, uid_field_name);
 		g_return_val_if_fail(elem->type == MSIM_TYPE_STRING, NULL);
 
+#if 0
 		/* Get the raw string, not with msim_msg_get_string() since that copies it. 
 		 * Want the original string so can free it. */
 		fmt_string = (gchar *)(elem->data);
+#endif
+        /* Get the packed element, flattening it. This allows <uid> to be
+         * replaced within nested data structures, since the replacement is done
+         * on the linear, packed data, not on a complicated data structure.
+         *
+         * For example, if the field was originally a dictionary or a list, you 
+         * would have to iterate over all the items in it to see what needs to
+         * be replaced. But by packing it first, the <uid> marker is easily replaced
+         * just by a string replacement.
+         */
+        fmt_string = msim_msg_pack_element_data(elem);
 
 		uid_str = g_strdup_printf("%d", uid);
+#if 0
 		elem->data = str_replace(fmt_string, "<uid>", uid_str);
+#endif
+		new_str = str_replace(fmt_string, "<uid>", uid_str);
 		g_free(uid_str);
 		g_free(fmt_string);
 
+        /* Free the old element data */
+        msim_msg_free_element_data(elem->data);
+
+        /* Replace it with our new data */
+        elem->data = new_str;
+        elem->type = MSIM_TYPE_RAW;
+
 		purple_debug_info("msim", "msim_postprocess_outgoing_cb: formatted new string, %s\n",
 				elem->data ? elem->data : "(NULL)");
-
 	} else {
 		/* Otherwise, insert new field into outgoing message. */
 		msg = msim_msg_insert_before(msg, uid_before, uid_field_name, MSIM_TYPE_INTEGER, GUINT_TO_POINTER(uid));
@@ -3503,6 +3532,7 @@ static void
 msim_lookup_user(MsimSession *session, const gchar *user, 
 		MSIM_USER_LOOKUP_CB cb, gpointer data)
 {
+    MsimMessage *body;
     gchar *field_name;
     guint rid, cmd, dsn, lid;
 
@@ -3537,6 +3567,9 @@ msim_lookup_user(MsimSession *session, const gchar *user,
         lid = MG_MYSPACE_INFO_BY_STRING_LID;
     }
 
+    body = msim_msg_new(TRUE,
+            field_name, MSIM_TYPE_STRING, g_strdup(user),
+            NULL);
 
 	g_return_if_fail(msim_send(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
@@ -3546,9 +3579,7 @@ msim_lookup_user(MsimSession *session, const gchar *user,
 			"uid", MSIM_TYPE_INTEGER, session->userid,
 			"lid", MSIM_TYPE_INTEGER, lid,
 			"rid", MSIM_TYPE_INTEGER, rid,
-			/* TODO: dictionary field type */
-			"body", MSIM_TYPE_STRING, 
-				g_strdup_printf("%s=%s", field_name, user),
+			"body", MSIM_TYPE_DICTIONARY, body,
 			NULL));
 } 
 

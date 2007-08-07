@@ -65,7 +65,7 @@
  * the results to the Purple debug log, then exit. Useful to 
  * run with 'pidgin -d' to see the output. Don't define if
  * you want to actually use the plugin! */
-#define MSIM_SELF_TEST				
+/*#define MSIM_SELF_TEST				*/
 
 /* Constants */
 
