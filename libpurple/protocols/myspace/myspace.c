@@ -2848,7 +2848,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	MsimSession *session;
 	MsimMessage *msg;
-    MsimMessage	*msg_blocklist;
+    MsimMessage	*msg_persist;
     MsimMessage *body;
 
 	session = (MsimSession *)gc->proto_data;
@@ -2882,8 +2882,10 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
             "NameSelect", MSIM_TYPE_INTEGER, 0,
             NULL);
 
-	/* Update blocklist. */
-	msg_blocklist = msim_msg_new(TRUE,
+	/* TODO: Update blocklist. */
+
+#if 0
+	msg_persist = msim_msg_new(TRUE,
 		"persist", MSIM_TYPE_INTEGER, 1,
 		"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 		"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_PUT,
@@ -2894,13 +2896,15 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		"body", MSIM_TYPE_DICTIONARY, body,
         NULL);
 
-	if (!msim_postprocess_outgoing(session, msg, buddy->name, "body", NULL))
+	if (!msim_postprocess_outgoing(session, msg_persist, buddy->name, "body", NULL))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("persist command failed"));
-		msim_msg_free(msg_blocklist);
+		msim_msg_free(msg_persist);
 		return;
 	}
-	msim_msg_free(msg_blocklist);
+	msim_msg_free(msg_persist);
+#endif
+
 }
 
 /** Perform actual postprocessing on a message, adding userid as specified.
