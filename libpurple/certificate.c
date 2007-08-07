@@ -665,9 +665,12 @@ x509_tls_peers_get_idlist(void)
 
 	/* Traverse the directory listing and create an idlist */
 	while ( (entry = g_dir_read_name(dir)) != NULL ) {
+		/* Unescape the filename */
+		const char *unescaped = purple_unescape_filename(entry);
+		
 		/* Copy the entry name into our list (GLib owns the original
 		   string) */
-		idlist = g_list_prepend(idlist, g_strdup(entry));
+		idlist = g_list_prepend(idlist, g_strdup(unescaped));
 	}
 
 	/* Release the directory */
