@@ -758,7 +758,11 @@ msim_msg_pack_element_data(MsimMessageElement *elem)
 
                 for (gl = (GList *)elem->data; gl != NULL; gl = g_list_next(gl))
                 {
-                    g_string_append_printf(gs, "%s|", (gchar*)(gl->data));
+                    g_string_append_printf(gs, "%s", (gchar*)(gl->data));
+                    
+                    /* All but last element is separated by a bar. */
+                    if (g_list_next(gl)) 
+                        g_string_append(gs, "|");
                 }
                 
                 return gs->str;
