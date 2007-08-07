@@ -517,7 +517,9 @@ msim_msg_insert_before(MsimMessage *msg, const gchar *name_before,
  * Used by msim_msg_dump() and msim_msg_pack().
  */
 gchar *
-msim_msg_pack_using(MsimMessage *msg, GFunc gf, const gchar *sep, 
+msim_msg_pack_using(MsimMessage *msg, 
+        GFunc gf, 
+        const gchar *sep, 
 		const gchar *begin, const gchar *end)
 {
 	gchar **strings;
@@ -788,7 +790,7 @@ msim_msg_pack_element_dict(gpointer data, gpointer user_data)
 		case MSIM_TYPE_DICTIONARY:
 		case MSIM_TYPE_LIST:
 		case MSIM_TYPE_BOOLEAN:     /* Boolean is On or Off */
-			string = g_strconcat(elem->name, "\\", data_string, NULL);
+			string = g_strconcat(elem->name, "=", data_string, NULL);
 			break;
 
 		default:

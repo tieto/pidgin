@@ -65,7 +65,7 @@
  * the results to the Purple debug log, then exit. Useful to 
  * run with 'pidgin -d' to see the output. Don't define if
  * you want to actually use the plugin! */
-/*#define MSIM_SELF_TEST				*/
+#define MSIM_SELF_TEST				
 
 /* Constants */
 
@@ -252,7 +252,6 @@ GList *msim_actions(PurplePlugin *plugin, gpointer context);
 
 #ifdef MSIM_SELF_TEST
 void msim_test_all(void) __attribute__((__noreturn__));
-int msim_test_xml(void);
 int msim_test_msg(void);
 int msim_test_escaping(void);
 #endif

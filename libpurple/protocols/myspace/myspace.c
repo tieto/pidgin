@@ -3082,6 +3082,7 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	MsimMessage *delbuddy_msg;
 	MsimMessage *persist_msg;
 	MsimMessage *blocklist_msg;
+    GList *blocklist_updates;
 
 	session = (MsimSession *)gc->proto_data;
 
@@ -3119,10 +3120,12 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	}
     msim_msg_free(persist_msg);
 
+    blocklist_updates = NULL;
+
 	blocklist_msg = msim_msg_new(TRUE,
 			"blocklist", MSIM_TYPE_BOOLEAN, TRUE,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			/* TODO: MsimMessage lists */
+			/* TODO: MsimMessage lists. Currently <uid> isn't replaced in lists. */
 			"idlist", MSIM_TYPE_STRING, g_strdup("a-|<uid>|b-|<uid>"),
 			NULL);
 
@@ -3818,7 +3821,6 @@ msim_test_all(void)
 
 
 	failures = 0;
-	failures += msim_test_xml();
 	failures += msim_test_msg();
 	failures += msim_test_escaping();
 
@@ -3833,86 +3835,12 @@ msim_test_all(void)
 	exit(0);
 }
 
-int 
-msim_test_xml(void)
-{
-	gchar *msg_text;
-	xmlnode *root, *n;
-	guint failures;
-	char *s;
-	int len;
-
-	failures = 0;
-	
-	msg_text = "<p><f n=\"Arial\" h=\"12\">woo!</f>xxx<c v='black'>yyy</c></p>";
-
-	purple_debug_info("msim", "msim_test_xml: msg_text=%s\n", msg_text);
-
-	root = xmlnode_from_str(msg_text, -1);
-	if (!root)
-	{
-		purple_debug_info("msim", "there is no root\n");
-		exit(0);
-	}
-
-	purple_debug_info("msim", "root name=%s, child name=%s\n", root->name,
-			root->child->name);
-
-	purple_debug_info("msim", "last child name=%s\n", root->lastchild->name);
-	purple_debug_info("msim", "Root xml=%s\n", 
-			xmlnode_to_str(root, &len));
-	purple_debug_info("msim", "Child xml=%s\n", 
-			xmlnode_to_str(root->child, &len));
-	purple_debug_info("msim", "Lastchild xml=%s\n", 
-			xmlnode_to_str(root->lastchild, &len));
-	purple_debug_info("msim", "Next xml=%s\n", 
-			xmlnode_to_str(root->next, &len));
-	purple_debug_info("msim", "Next data=%s\n", 
-			xmlnode_get_data(root->next));
-	purple_debug_info("msim", "Child->next xml=%s\n", 
-			xmlnode_to_str(root->child->next, &len));
-
-	for (n = root->child; n; n = n->next)
-	{
-		if (n->name) 
-		{
-			purple_debug_info("msim", " ** n=%s\n",n->name);
-		} else {
-			purple_debug_info("msim", " ** n data=%s\n", n->data);
-		}
-	}
-
-	purple_debug_info("msim", "root data=%s, child data=%s, child 'h'=%s\n", 
-			xmlnode_get_data(root),
-			xmlnode_get_data(root->child),
-			xmlnode_get_attrib(root->child, "h"));
-
-
-	for (n = root->child;
-			n != NULL;
-			n = n->next)
-	{
-		purple_debug_info("msim", "next name=%s\n", n->name);
-	}
-
-	s = xmlnode_to_str(root, &len);
-	s[len] = 0;
-
-	purple_debug_info("msim", "str: %s\n", s);
-	g_free(s);
-
-	xmlnode_free(root);
-
-	exit(0);
-
-	return failures;
-}
-
 /** Test MsimMessage for basic functionality. */
 int 
 msim_test_msg(void)
 {
-	MsimMessage *msg, *msg_cloned;
+	MsimMessage *msg, *msg_cloned, *msg2;
+    GList *list;
 	gchar *packed, *packed_expected, *packed_cloned;
 	guint failures;
 
@@ -3957,6 +3885,32 @@ msim_test_msg(void)
 	g_free(packed_cloned);
 	msim_msg_free(msg_cloned);
 	msim_msg_free(msg);
+
+    /* Try some of the more advanced functionality */
+    list = NULL;
+
+    list = g_list_prepend(list, "item3");
+    list = g_list_prepend(list, "item2");
+    list = g_list_prepend(list, "item1");
+    list = g_list_prepend(list, "item0");
+
+    msg = msim_msg_new(FALSE);
+    msg = msim_msg_append(msg, "string", MSIM_TYPE_STRING, g_strdup("string value"));
+    msg = msim_msg_append(msg, "raw", MSIM_TYPE_RAW, g_strdup("raw value"));
+    msg = msim_msg_append(msg, "integer", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(3140));
+    msg = msim_msg_append(msg, "boolean", MSIM_TYPE_BOOLEAN, GUINT_TO_POINTER(FALSE));
+    msg = msim_msg_append(msg, "list", MSIM_TYPE_LIST, list);
+
+    msim_msg_dump("msg with list=%s\n", msg);
+    purple_debug_info("msim", "msg with list packed=%s\n", msim_msg_pack(msg));
+
+    msg2 = msim_msg_new(FALSE);
+    msg2 = msim_msg_append(msg2, "outer", MSIM_TYPE_STRING, g_strdup("outer value"));
+    msg2 = msim_msg_append(msg2, "body", MSIM_TYPE_DICTIONARY, msg);
+    msim_msg_dump("msg with dict=%s\n", msg2);      /* msg2 now 'owns' msg */
+    purple_debug_info("msim", "msg with dict packed=%s\n", msim_msg_pack(msg2));
+
+    msim_msg_free(msg2);
 
 	return failures;
 }
