@@ -171,6 +171,18 @@ void purple_connection_new(PurpleAccount *account, gboolean regist,
 									const char *password);
 
 /**
+ * This function should only be called by purple_account_unregister()
+ * in account.c.
+ *
+ * Tries to unregister the account on the server. If the account is not
+ * connected, also creates a new connection.
+ *
+ * @param account  The account to unregister
+ * @param password The password to use.
+ */
+void purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data);
+
+/**
  * Disconnects and destroys a PurpleConnection.
  *
  * This function should only be called by purple_account_disconnect()
