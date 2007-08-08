@@ -2220,7 +2220,7 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 	}
 	for(iter = jbr->caps->features; iter; iter = g_list_next(iter)) {
-		if(!strcmp(iter->data, "http://pidgin.im/libpurple/xmpp/attention")) {
+		if(!strcmp(iter->data, "http://www.xmpp.org/extensions/xep-0224.html#ns")) {
 			msg = xmlnode_new("message");
 			to = g_strdup_printf("%s/%s", args[0], jbr->name);
 			xmlnode_set_attrib(msg,"to",to);
@@ -2230,7 +2230,7 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 			xmlnode_set_attrib(msg,"type","headline");
 			
 			buzz = xmlnode_new_child(msg,"attention");
-			xmlnode_set_namespace(buzz,"http://pidgin.im/libpurple/xmpp/attention");
+			xmlnode_set_namespace(buzz,"http://www.xmpp.org/extensions/xep-0224.html#ns");
 			
 			jabber_send(js,msg);
 			xmlnode_free(msg);

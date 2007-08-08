@@ -248,7 +248,7 @@ init_plugin(PurplePlugin *plugin)
 
 		jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
 		jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
-		jabber_add_feature("buzz", "http://pidgin.im/libpurple/xmpp/attention", jabber_buzz_isenabled);
+		jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns", jabber_buzz_isenabled);
 		
 		jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
 }
