@@ -172,11 +172,20 @@ purple_certificate_check_signature_chain(GList *chain)
 {
 	GList *cur;
 	PurpleCertificate *crt, *issuer;
+	gchar *uid;
 
 	g_return_val_if_fail(chain, FALSE);
+
+	uid = purple_certificate_get_unique_id((PurpleCertificate *) chain->data);
+	purple_debug_info("certificate",
+			  "Checking signature chain for uid=%s\n",
+			  uid);
+	g_free(uid);
 	
 	/* If this is a single-certificate chain, say that it is valid */
 	if (chain->next == NULL) {
+		purple_debug_info("certificate",
+				  "...Singleton. We'll say it's valid.\n");
 		return TRUE;
 	}
 
@@ -189,15 +198,28 @@ purple_certificate_check_signature_chain(GList *chain)
 		
 		/* Check the signature for this link */
 		if (! purple_certificate_signed_by(crt, issuer) ) {
+			uid = purple_certificate_get_unique_id(issuer);
+			purple_debug_info("certificate",
+					  "...Bad or missing signature by %s\nChain is INVALID\n",
+					  uid);
+			g_free(uid);
+		
 			return FALSE;
 		}
 
+		uid = purple_certificate_get_unique_id(issuer);
+		purple_debug_info("certificate",
+				  "...Good signature by %s\n",
+				  uid);
+		g_free(uid);
+		
 		/* The issuer is now the next crt whose signature is to be
 		   checked */
 		crt = issuer;
 	}
 
 	/* If control reaches this point, the chain is valid */
+	purple_debug_info("certificate", "Chain is VALID\n");
 	return TRUE;
 }
 
