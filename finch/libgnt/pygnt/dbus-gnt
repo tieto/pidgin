@@ -17,7 +17,7 @@ from time import strftime
 
 convwins = {}
 
-def buddysignedon():
+def buddysignedon(buddy):
     pass
 
 def conv_closed(conv):
@@ -32,11 +32,13 @@ def wrote_msg(account, who, msg, conv, flags):
     tv = stuff[1]
     tv.append_text_with_flags("\n", 0)
     tv.append_text_with_flags(strftime("(%X) "), 8)
-    tv.append_text_with_flags(who + ": ", 1)
-    tv.append_text_with_flags(msg, 0)
-    tv.scroll(0)
     if flags & 3:
+        tv.append_text_with_flags(who + ": ", 1)
+        tv.append_text_with_flags(msg, 0)
         stuff[0].set_urgent()
+    else:
+        tv.append_text_with_flags(msg, 8)
+    tv.scroll(0)
 
 bus = dbus.SessionBus()
 obj = bus.get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
