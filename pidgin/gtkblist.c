@@ -2838,9 +2838,9 @@ toggle_debug(void)
 }
 
 static void
-pidgin_blist_show_with_parent(gpointer data1, gpointer data2, gpointer data3)
+pidgin_blist_show_with_parent(gpointer data1, void (*callback)(GtkWindow *parent), gpointer data3)
 {
-	g_print("Break here\n");
+	callback(GTK_WINDOW(gtkblist->window));
 }
 
 /***************************************************
