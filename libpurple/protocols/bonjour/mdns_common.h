@@ -42,6 +42,16 @@ void bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const ch
 void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy);
 
 /**
+ * Deal with a buddy icon update
+ */
+void bonjour_dns_sd_update_buddy_icon(BonjourDnsSd *data);
+
+/**
+ * The buddy icon blob has been set, notify everyone watching the TXT record
+ */
+void bonjour_dns_sd_buddy_icon_data_set(BonjourDnsSd *data);
+
+/**
  * Advertise our presence within the dns-sd daemon and start
  * browsing for other bonjour peers.
  */

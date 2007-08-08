@@ -179,8 +179,6 @@ bonjour_buddy_delete(BonjourBuddy *buddy)
 {
 	g_free(buddy->name);
 	g_free(buddy->ip);
-	g_free(buddy->full_service_name);
-
 	g_free(buddy->first);
 	g_free(buddy->phsh);
 	g_free(buddy->status);
