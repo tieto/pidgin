@@ -738,7 +738,6 @@ pidgin_dialogs_im(GtkWindow *parent)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	g_print("pidgin_dialogs_im: Calling purple_request_fields\n");
 	purple_request_fields(purple_get_blist(), _("New Instant Message"),
 						NULL,
 						_("Please enter the screen name or alias of the person "
@@ -747,8 +746,7 @@ pidgin_dialogs_im(GtkWindow *parent)
 						_("OK"), G_CALLBACK(pidgin_dialogs_im_cb),
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
-						NULL);
-	g_print("pidgin_dialogs_im: Called purple_request_fields\n");
+						parent, NULL);
 }
 
 void

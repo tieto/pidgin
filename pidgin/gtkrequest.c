@@ -1048,7 +1048,7 @@ pidgin_request_fields(const char *title, const char *primary,
 						const char *ok_text, GCallback ok_cb,
 						const char *cancel_text, GCallback cancel_cb,
 					    PurpleAccount *account, const char *who, PurpleConversation *conv,
-						void *user_data)
+						void *ui_data, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *win;
@@ -1062,6 +1062,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	GtkWidget *button;
 	GtkWidget *img;
 	GtkWidget *sw;
+	GtkWindow *parent = GTK_WINDOW(ui_data);
 	GtkSizeGroup *sg;
 	GList *gl, *fl;
 	PurpleRequestFieldGroup *group;
@@ -1089,6 +1090,8 @@ pidgin_request_fields(const char *title, const char *primary,
 #else /* !_WIN32 */
 	data->dialog = win = pidgin_create_window(title, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
 #endif /* _WIN32 */
+	if (parent)
+		gtk_window_set_transient_for(GTK_WINDOW(data->dialog), parent);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(destroy_multifield_cb), data);
