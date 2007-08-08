@@ -19,6 +19,7 @@
 #include "mdns_interface.h"
 #include "debug.h"
 #include "buddy.h"
+#include "bonjour.h"
 
 #include <avahi-client/client.h>
 #include <avahi-client/lookup.h>
@@ -32,6 +33,11 @@
 #include <avahi-glib/glib-malloc.h>
 #include <avahi-glib/glib-watch.h>
 
+/* For some reason, this is missing from the Avahi type defines */
+#ifndef AVAHI_DNS_TYPE_NULL
+#define AVAHI_DNS_TYPE_NULL 0x0A
+#endif
+
 /* data used by avahi bonjour implementation */
 typedef struct _avahi_session_impl_data {
 	AvahiClient *client;
@@ -39,6 +45,10 @@ typedef struct _avahi_session_impl_data {
 	AvahiServiceBrowser *sb;
 	AvahiEntryGroup *group;
 } AvahiSessionImplData;
+
+typedef struct _avahi_buddy_impl_data {
+	AvahiRecordBrowser *record_browser;
+} AvahiBuddyImplData;
 
 static void
 _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtocol protocol,
@@ -168,6 +178,20 @@ _entry_group_cb(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userdata) 
 			break;
 	}
 
+}
+
+static void
+_buddy_icon_record_cb(AvahiRecordBrowser *b, AvahiIfIndex interface, AvahiProtocol protocol,
+		      AvahiBrowserEvent event, const char *name, uint16_t clazz, uint16_t type,
+		      const void *rdata, size_t size, AvahiLookupResultFlags flags, void *userdata) {
+	BonjourBuddy *buddy = userdata;
+	AvahiBuddyImplData *idata = buddy->mdns_impl_data;
+
+	purple_buddy_icons_set_for_user(buddy->account, buddy->name,
+					g_memdup(rdata, size), size, buddy->phsh);
+
+	avahi_record_browser_free(idata->record_browser);
+	idata->record_browser = NULL;
 }
 
 /****************************
@@ -340,10 +364,45 @@ void _mdns_stop(BonjourDnsSd *data) {
 }
 
 void _mdns_init_buddy(BonjourBuddy *buddy) {
+	buddy->mdns_impl_data = g_new0(AvahiBuddyImplData, 1);
 }
 
 void _mdns_delete_buddy(BonjourBuddy *buddy) {
+	AvahiBuddyImplData *idata = buddy->mdns_impl_data;
+
+	g_return_if_fail(idata != NULL);
+
+	if (idata->record_browser != NULL)
+		avahi_record_browser_free(idata->record_browser);
+
+	g_free(idata);
+
+	buddy->mdns_impl_data = NULL;
 }
 
 void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy) {
+	PurpleConnection *conn = purple_account_get_connection(buddy->account);
+	BonjourData *bd = conn->proto_data;
+	AvahiSessionImplData *session_idata = bd->dns_sd_data->mdns_impl_data;
+	AvahiBuddyImplData *idata = buddy->mdns_impl_data;
+	gchar *name;
+
+	g_return_if_fail(idata != NULL);
+
+	if (idata->record_browser != NULL)
+		avahi_record_browser_free(idata->record_browser);
+
+	name = g_strdup_printf("%s." ICHAT_SERVICE "local", buddy->name);
+	idata->record_browser = avahi_record_browser_new(session_idata->client, AVAHI_IF_UNSPEC,
+		AVAHI_PROTO_UNSPEC, name, AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_NULL, 0,
+		_buddy_icon_record_cb, buddy);
+	g_free(name);
+
+	if (!idata->record_browser) {
+		purple_debug_error("bonjour",
+			"Unable to initialize record browser.  Error: %s\n.",
+			avahi_strerror(avahi_client_errno(session_idata->client)));
+	}
+
 }
+
