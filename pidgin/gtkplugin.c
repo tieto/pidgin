@@ -513,7 +513,7 @@ show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *co
 	plugin_dialog_response_cb(dialog, PIDGIN_RESPONSE_CONFIGURE, sel);
 }
 
-void pidgin_plugin_dialog_show()
+void pidgin_plugin_dialog_show(GtkWindow *parent)
 {
 	GtkWidget *sw;
 	GtkWidget *event_view;
@@ -523,6 +523,8 @@ void pidgin_plugin_dialog_show()
 	GtkTreeSelection *sel;
 
 	if (plugin_dialog != NULL) {
+		if (parent)
+			gtk_window_set_transient_for(GTK_WINDOW(plugin_dialog), parent);
 		gtk_window_present(GTK_WINDOW(plugin_dialog));
 		return;
 	}
@@ -531,6 +533,8 @@ void pidgin_plugin_dialog_show()
 						    NULL,
 						    GTK_DIALOG_NO_SEPARATOR,
 						    NULL);
+	if (parent)
+		gtk_window_set_transient_for(GTK_WINDOW(plugin_dialog), parent);
 	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
 						_("Configure Pl_ugin"), PIDGIN_RESPONSE_CONFIGURE);
 	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),

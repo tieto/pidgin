@@ -714,7 +714,7 @@ pidgin_dialogs_im_cb(gpointer data, PurpleRequestFields *fields)
 }
 
 void
-pidgin_dialogs_im(GtkWindow *parent)
+pidgin_dialogs_im(void)
 {
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
@@ -746,7 +746,7 @@ pidgin_dialogs_im(GtkWindow *parent)
 						_("OK"), G_CALLBACK(pidgin_dialogs_im_cb),
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
-						parent, NULL);
+						NULL);
 }
 
 void

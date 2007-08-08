@@ -945,7 +945,7 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 static void
 menu_new_conv_cb(gpointer data, guint action, GtkWidget *widget)
 {
-	pidgin_dialogs_im(NULL);
+	pidgin_dialogs_im();
 }
 
 static void

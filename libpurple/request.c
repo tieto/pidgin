@@ -1288,7 +1288,7 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 					const char *ok_text, GCallback ok_cb,
 					const char *cancel_text, GCallback cancel_cb,
 					PurpleAccount *account, const char *who, PurpleConversation *conv,
-					void *ui_data, void *user_data)
+					void *user_data)
 {
 	PurpleRequestUiOps *ops;
 
@@ -1308,7 +1308,7 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 											  fields, ok_text, ok_cb,
 											  cancel_text, cancel_cb,
 											  account, who, conv,
-											  ui_data, user_data);
+											  user_data);
 
 		handles = g_list_append(handles, info);
 
