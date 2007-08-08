@@ -24,15 +24,15 @@ cp ~/pidgin/win32-install-dir/plugins/libmyspace.dll .
 mkdir -p win32-archive/plugins
 cp libmyspace.dll win32-archive/plugins
 mkdir -p win32-archive/pixmaps/pidgin/protocols/{48,22,16}
-cp ~/pidgin/pidgin/pixmaps/protocols/48/myspace.png \
-        win32-archive/pixmaps/pidgin/protocols/48/
-cp ~/pidgin/pidgin/pixmaps/protocols/22/myspace.png \
-        win32-archive/pixmaps/pidgin/protocols/22/
-cp ~/pidgin/pidgin/pixmaps/protocols/16/myspace.png \
-        win32-archive/pixmaps/pidgin/protocols/16/
-mkdir -p win32-archive/pixmaps/emotes/default
-cp ~/pidgin/pidgin/pixmaps/emotes/default/22/theme \
-        win32-archive/pixmaps/emotes/default/theme
+cp ~/pidgin/win32-install-dir/pixmaps/pidgin/protocols/48/myspace.png \
+                win32-archive/pixmaps/pidgin/protocols/48/
+cp ~/pidgin/win32-install-dir/pixmaps/pidgin/protocols/22/myspace.png \
+                win32-archive/pixmaps/pidgin/protocols/22/
+cp ~/pidgin/win32-install-dir/pixmaps/pidgin/protocols/16/myspace.png \
+                win32-archive/pixmaps/pidgin/protocols/16/
+mkdir -p win32-archive/pixmaps/pidgin/emotes/default
+cp ~/pidgin/win32-install-dir/pixmaps/pidgin/emotes/default/theme \
+        win32-archive/pixmaps/pidgin/emotes/default/theme
         # Use DOS line endings and .txt file extension for convenience
 u2d < README > win32-archive/msimprpl-README.txt
 u2d < LICENSE > win32-archive/msimprpl-LICENSE.txt
