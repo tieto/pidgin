@@ -314,7 +314,7 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	g_object_unref(G_OBJECT(pixmap));
 }
 
-void pidgin_dialogs_about()
+void pidgin_dialogs_about(GtkWindow *parent)
 {
 	GtkWidget *hbox;
 	GtkWidget *vbox;
@@ -331,11 +331,15 @@ void pidgin_dialogs_about()
 	GdkPixbuf *pixbuf;
 
 	if (about != NULL) {
+		if (parent)
+			gtk_window_set_transient_for(GTK_WINDOW(about), parent);
 		gtk_window_present(GTK_WINDOW(about));
 		return;
 	}
 
 	PIDGIN_DIALOG(about);
+	if (parent)
+		gtk_window_set_transient_for(GTK_WINDOW(about), parent);
 	tmp = g_strdup_printf(_("About %s"), PIDGIN_NAME);
 	gtk_window_set_title(GTK_WINDOW(about), tmp);
 	g_free(tmp);
