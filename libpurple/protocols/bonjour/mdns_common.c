@@ -67,40 +67,11 @@ bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char *s
 	_mdns_publish(data, PUBLISH_UPDATE); /* <--We must control the errors */
 }
 
-void
-bonjour_dns_sd_buddy_icon_data_set(BonjourDnsSd *data) {
-	PurpleStoredImage *img = purple_buddy_icons_find_account_icon(data->account);
-	gconstpointer avatar_data;
-	gsize avatar_len;
-	gchar *enc;
-	int i;
-	unsigned char hashval[20];
-	char *p, hash[41];
-
-	g_return_if_fail(img != NULL);
-
-	avatar_data = purple_imgstore_get_data(img);
-	avatar_len = purple_imgstore_get_size(img);
-
-	enc = purple_base64_encode(avatar_data, avatar_len);
-
-	purple_cipher_digest_region("sha1", avatar_data,
-				    avatar_len, sizeof(hashval),
-				    hashval, NULL);
-
-	purple_imgstore_unref(img);
-
-	p = hash;
-	for(i=0; i<20; i++, p+=2)
-		snprintf(p, 3, "%02x", hashval[i]);
-
-	g_free(data->phsh);
-	data->phsh = g_strdup(hash);
-
-	g_free(enc);
-
-	/* Update our TXT record */
-	_mdns_publish(data, PUBLISH_UPDATE);
+/**
+ * Retrieve the buddy icon blob
+ */
+void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy) {
+	_mdns_retrieve_retrieve_buddy_icon(buddy);
 }
 
 void
@@ -114,7 +85,30 @@ bonjour_dns_sd_update_buddy_icon(BonjourDnsSd *data) {
 		avatar_data = purple_imgstore_get_data(img);
 		avatar_len = purple_imgstore_get_size(img);
 
-		_mdns_set_buddy_icon_data(data, avatar_data, avatar_len);
+		if (_mdns_set_buddy_icon_data(data, avatar_data, avatar_len)) {
+			int i;
+			gchar *enc;
+			char *p, hash[41];
+			unsigned char hashval[20];
+
+			enc = purple_base64_encode(avatar_data, avatar_len);
+
+			purple_cipher_digest_region("sha1", avatar_data,
+						    avatar_len, sizeof(hashval),
+						    hashval, NULL);
+
+			p = hash;
+			for(i=0; i<20; i++, p+=2)
+				snprintf(p, 3, "%02x", hashval[i]);
+
+			g_free(data->phsh);
+			data->phsh = g_strdup(hash);
+
+			g_free(enc);
+
+			/* Update our TXT record */
+			_mdns_publish(data, PUBLISH_UPDATE);
+		}
 
 		purple_imgstore_unref(img);
 	} else {
