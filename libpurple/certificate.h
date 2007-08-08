@@ -433,6 +433,7 @@ purple_certificate_signed_by(PurpleCertificate *crt, PurpleCertificate *issuer);
  * @param chain      List of PurpleCertificate instances comprising the chain,
  *                   in the order certificate, issuer, issuer's issuer, etc.
  * @return TRUE if the chain is valid. See description.
+ * @TODO Specify which certificate in the chain caused a failure
  */
 gboolean
 purple_certificate_check_signature_chain(GList *chain);
