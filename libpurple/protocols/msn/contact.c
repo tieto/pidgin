@@ -181,15 +181,13 @@ msn_parse_contact_list(MsnContact * contact)
 {
 	MsnSession * session;
 	int list_op = 0;
-	char * passport, *debugdata, *typedata;
+	char * passport, *typedata;
 	xmlnode *fault, *faultstringnode, *faultdetail, *errorcode;
 	xmlnode *node, *body, *response, *result, *services;
 	xmlnode *service, *memberships, *info, *handle, *handletype;
 	xmlnode *LastChangeNode;
 	xmlnode *membershipnode, *members, *member, *passportNode;
 	char *LastChangeStr;
-
-	purple_debug_info("::","msn_parse_contact_list()\n");
 
 	session = contact->session;
 	node = xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
@@ -199,14 +197,9 @@ msn_parse_contact_list(MsnContact * contact)
 		return;
 	}
 
-#ifdef MSN_SOAP_DEBUG
-	debugdata = xmlnode_to_formatted_str(node, NULL);
-	purple_debug_info("MSNCL","Received contact list, parsing:\n%s", debugdata);
-	g_free(debugdata);
-#endif
+	purple_debug_misc("MSNCL","Parsing contact list with size %d\n", contact->soapconn->body_len);
 
-
-	purple_debug_info("MSNCL","Root node @ %p: Name: '%s', child: '%s', lastchild: '%s'\n",node,node->name,node->child->name,node->lastchild->name);
+	purple_debug_misc("MSNCL","Root node @ %p: Name: '%s', child: '%s', lastchild: '%s'\n",node,node->name,node->child->name,node->lastchild->name);
 	body = xmlnode_get_child(node,"Body");
 
 	if (body == NULL) {
@@ -221,7 +214,7 @@ msn_parse_contact_list(MsnContact * contact)
 	        purple_debug_info("MSNCL","Fault received from SOAP server!\n");
 
 		if ( (faultstringnode = xmlnode_get_child(fault, "faultstring")) != NULL ) {
-			gchar * faultstring = xmlnode_get_data(faultstring);
+			gchar * faultstring = xmlnode_get_data(faultstringnode);
 			purple_debug_info("MSNCL","Faultstring: %s\n", faultstring);
 			g_free(faultstring);
 		}
@@ -392,16 +385,13 @@ msn_get_contact_list_cb(gpointer data, gint source, PurpleInputCondition cond)
 	const char *abLastChange;
 	const char *dynamicItemLastChange;
 
-	purple_debug_info("::","msn_get_contact_list_cb()\n");
+	purple_debug_misc("MSNCL","Got the contact list!\n");
 
 	contact = soapconn->parent;
 	g_return_if_fail(contact != NULL);
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
 
-#ifdef  MSN_SOAP_DEBUG
-	purple_debug_info("MSNCL", "SOAP server reply: \n%s\n", soapconn->read_buf);
-#endif
 	msn_parse_contact_list(contact);
 	/*free the read buffer*/
 	msn_soap_free_read_buf(soapconn);
@@ -425,7 +415,7 @@ msn_get_contact_written_cb(gpointer data, gint source, PurpleInputCondition cond
 {
 	MsnSoapConn * soapconn = data;	
 
-	purple_debug_info("MSNP14","finish contact written\n");
+	purple_debug_misc("MSNCL","Sent SOAP request for the contact list.\n");
 	soapconn->read_cb = msn_get_contact_list_cb;
 //	msn_soap_read_cb(data,source,cond);
 }
@@ -438,11 +428,9 @@ msn_get_contact_list(MsnContact * contact, const char *update_time)
 	char *body = NULL;
 	char * update_str;
 
-	purple_debug_info("::","msn_get_contact_list()\n");
-
-	purple_debug_info("MSNP14","Getting Contact List.\n");
+	purple_debug_misc("MSNCL","Getting Contact List.\n");
 	if ( update_time != NULL ) {
-		purple_debug_info("MSNCL","last update time:{%s}\n",update_time);
+		purple_debug_info("MSNCL","Last update time: %s\n",update_time);
 		update_str = g_strdup_printf(MSN_GET_CONTACT_UPDATE_XML,update_time);
 	} else {
 		update_str = g_strdup("");
@@ -465,7 +453,7 @@ msn_parse_addressbook_groups(MsnContact *contact, xmlnode *node)
 	MsnSession *session = contact->session;
 	xmlnode *group;
 
-	purple_debug_info("::","msn_parse_addressbook_groups()\n");
+	purple_debug_info("MsnAb","msn_parse_addressbook_groups()\n");
 
 	for(group = xmlnode_get_child(node, "Group"); group;
 					group = xmlnode_get_next_twin(group)){
@@ -624,7 +612,6 @@ msn_parse_addressbook(MsnContact * contact)
 	xmlnode	*contacts;
 	xmlnode *abNode;
 	xmlnode *fault, *faultstringnode, *faultdetail, *errorcode;
-	gchar *printabledata;
 
 	session = contact->session;
 
@@ -632,13 +619,11 @@ msn_parse_addressbook(MsnContact * contact)
 
 	node = xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
 	if ( node == NULL ) {
-		purple_debug_error("MSN AddressBook","Error parsing received Address Book with size %d:\n \"%s\"\n", contact->soapconn->body_len, contact->soapconn->body);
+		purple_debug_error("MSN AddressBook","Error parsing Address Book with size %d\n", contact->soapconn->body_len);
 		return FALSE;
 	}
 
-	printabledata = xmlnode_to_formatted_str(node, NULL);
-	purple_debug_misc("MSN AddressBook","Received Address Book with size %d:\n %s\n", contact->soapconn->body_len, (char *) printabledata);
-	g_free(printabledata);
+	purple_debug_misc("MSN AddressBook", "Parsing Address Book with size %d\n", contact->soapconn->body_len);
 
 	purple_debug_misc("MSN AddressBook","node{%p},name:%s,child:%s,last:%s\n",node,node->name,node->child->name,node->lastchild->name);
 	
@@ -649,7 +634,7 @@ msn_parse_addressbook(MsnContact * contact)
 		purple_debug_info("MSN AddressBook","Fault received from SOAP server!\n");
 		
 		if ( (faultstringnode = xmlnode_get_child(fault, "faultstring")) != NULL ) {
-			gchar *faultstring = xmlnode_get_data(faultstring);
+			gchar *faultstring = xmlnode_get_data(faultstringnode);
 			purple_debug_info("MSN AddressBook","Faultstring: %s\n", faultstring);
 			g_free(faultstring);
 		}
@@ -754,7 +739,8 @@ msn_get_address_cb(gpointer data, gint source, PurpleInputCondition cond)
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
 
-//	purple_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
+	purple_debug_misc("MSN AddressBook", "Got the Address Book!\n");
+
 	if ( msn_parse_addressbook(contact) ) {
 		msn_soap_free_read_buf(soapconn);
 
@@ -781,7 +767,7 @@ msn_address_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
-	purple_debug_info("MSNP14","finish contact written\n");
+	purple_debug_misc("MSN AddressBook","Sent SOAP request for the Address Book.\n");
 	soapconn->read_cb = msn_get_address_cb;
 }
 
@@ -793,7 +779,7 @@ msn_get_address_book(MsnContact *contact, const char *LastChanged, const char *d
 	char *body = NULL;
 	char *ab_update_str,*update_str;
 
-	purple_debug_info("::","msn_get_address_book()\n");
+	purple_debug_misc("MSN AddressBook","Getting Address Book\n");
 
 	/*build SOAP and POST it*/
 	if ( LastChanged != NULL ) {
@@ -846,7 +832,7 @@ msn_add_contact(MsnContact *contact,const char *passport,const char *groupId)
 	char *contact_xml = NULL;
 	char *soap_action;
 
-	purple_debug_info("::","msn_add_contact()\n");
+	purple_debug_info("MSNCL","msn_add_contact()\n");
 	contact_xml = g_strdup_printf(MSN_CONTACT_XML,passport);
 	if ( groupId == NULL ) {
 		body = g_strdup_printf(MSN_ADD_CONTACT_TEMPLATE,contact_xml);

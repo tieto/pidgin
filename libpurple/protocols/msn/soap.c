@@ -66,7 +66,7 @@ msn_soap_connect_cb(gpointer data, PurpleSslConnection *gsc,
 	MsnSoapConn * soapconn;
 	MsnSession *session;
 
-	purple_debug_info("MSN SOAP","SOAP server connection established!\n");
+	purple_debug_misc("MSN SOAP","SOAP server connection established!\n");
 
 	soapconn = data;
 	g_return_if_fail(soapconn != NULL);
@@ -93,7 +93,7 @@ msn_soap_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data
 	MsnSoapConn * soapconn = data;
 
 	g_return_if_fail(data != NULL);
-	purple_debug_info("MSN SOAP","Soap connection error!\n");
+	purple_debug_warning("MSN SOAP","Soap connection error!\n");
 	msn_soap_set_process_step(soapconn, MSN_SOAP_UNCONNECTED);
 
 	/*error callback*/
@@ -108,7 +108,7 @@ msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,
 				PurpleSslInputFunction	connect_cb,
 				PurpleSslErrorFunction	error_cb)
 {
-	purple_debug_info("MSN SOAP","msn_soap_init()\n");
+	purple_debug_misc("MSN SOAP","Initializing SOAP connection\n");
 	soapconn->login_host = g_strdup(host);
 	soapconn->ssl_conn = ssl;
 	soapconn->connect_cb = connect_cb;
@@ -218,18 +218,14 @@ msn_soap_read(MsnSoapConn *soapconn)
 		len = read(soapconn->fd, temp_buf, requested_len);
 	}
 
+	
 	if ( len <= 0 ) {
 		switch (errno) {
 
 			case 0:
 			case EBADF: /* we are sometimes getting this in Windows */
-			case EAGAIN:
-#ifdef MSN_SOAP_DEBUG
-				purple_debug_info("MSN SOAP",
-					"msn_soap_read(): %s, returning len = %d.\n",
-					strerror(errno), len);
-#endif
-				     return len;
+			case EAGAIN: return len;
+
 			default : purple_debug_error("MSN SOAP", "Read error!"
 						"read len: %d, error = %s\n",
 						len, strerror(errno));
@@ -243,9 +239,6 @@ msn_soap_read(MsnSoapConn *soapconn)
 		}
 	}
 	else {
-#ifdef MSN_SOAP_DEBUG
-		purple_debug_info("MSN SOAP", "Allocating space for more %d bytes from incoming data. Total space now (according to soapconn->read_len = %d\n", len, soapconn->read_len);
-#endif
 		soapconn->read_buf = g_realloc(soapconn->read_buf,
 						soapconn->read_len + len + 1);
 		if ( soapconn->read_buf != NULL ) {
@@ -260,38 +253,11 @@ msn_soap_read(MsnSoapConn *soapconn)
 			
 	}
 
-#ifdef MSN_SOAP_DEBUG
-	purple_debug_info("MSN SOAP","Read SOAP bytes: %d\n", len);
-
-	if (len > -1) {
-		gchar * soapbody = NULL;
-		xmlnode * node = NULL;
-		soapbody = g_strstr_len(soapconn->read_buf, soapconn->read_len, "\r\n\r\n");
-		if (soapbody != NULL)
-			node = xmlnode_from_str(soapbody+4, -1);
-	
-	        if (node != NULL) {
-        	        gchar *pretty = xmlnode_to_formatted_str(node, NULL);
-			gchar *http_headers, *delimiter;
-
-			delimiter = g_strstr_len(soapconn->read_buf, soapconn->read_len,"\r\n\r\n");
-			if (delimiter  != NULL) {
-
-				http_headers = g_strndup(soapconn->read_buf, delimiter + 4 - soapconn->read_buf);
-                		purple_debug_info("MSN SOAP","Nexus server read data:\n%s%s\n", http_headers, pretty);
-				g_free(http_headers);
-			}
-			else
-				purple_debug_info("MSN SOAP","Nexus server read data:\n%s\n", soapconn->read_buf);
-		
-        	        g_free(pretty);
-                	xmlnode_free(node);
-        	}
-        	else
-                	purple_debug_info("MSN SOAP","Received data from Nexus server:\n%s\n", soapconn->read_buf);
-		
-	}
+#if defined(MSN_SOAP_DEBUG)
+	if (len > 0)
+		purple_debug_info("MSN SOAP","Read %d bytes from SOAP server:\n%s\n", len, soapconn->read_buf + soapconn->read_len - len);
 #endif
+
 	return len;
 }
 
@@ -304,15 +270,18 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	int len;
 	char * body_start,*body_len;
 	char *length_start,*length_end;
-
 #ifdef MSN_SOAP_DEBUG
+#if !defined(_WIN32)
+	gchar * formattedxml = NULL;
+	gchar * http_headers = NULL;
+	xmlnode * node = NULL;
+#endif
 	purple_debug_misc("MSN SOAP", "msn_soap_read_cb()\n");
 #endif
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
 
 	
-
 	/*read the request header*/
 	len = msn_soap_read(soapconn);
 	
@@ -468,12 +437,29 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 			soapconn->body_len	= atoi(body_len);
 			g_free(body_len);
 #ifdef MSN_SOAP_DEBUG
-			purple_debug_misc("MSN SOAP","SOAP Read length: %d, Body len: %d\n", soapconn->read_len, soapconn->body_len);
+			purple_debug_misc("MSN SOAP","SOAP bytes read so far: %d, Content-Length: %d\n", soapconn->read_len, soapconn->body_len);
 #endif
 			soapconn->need_to_read = (body_start - soapconn->read_buf + soapconn->body_len) - soapconn->read_len;
 			if ( soapconn->need_to_read > 0 ) {
 				return;
 			}
+
+#if defined(MSN_SOAP_DEBUG) && !defined(_WIN32)
+
+			node = xmlnode_from_str(soapconn->body, soapconn->body_len);
+	
+			if (node != NULL) {
+				formattedxml = xmlnode_to_formatted_str(node, NULL);
+				http_headers = g_strndup(soapconn->read_buf, soapconn->body - soapconn->read_buf);
+				
+				purple_debug_info("MSN SOAP","Data with XML payload received from the SOAP server:\n%s%s\n", http_headers, formattedxml);
+				g_free(http_headers);
+				g_free(formattedxml);
+				xmlnode_free(node);
+			}
+			else
+				purple_debug_info("MSN SOAP","Data received from the SOAP server:\n%s\n", soapconn->read_buf);
+#endif
 
 			/*remove the read handler*/
 			purple_input_remove(soapconn->input_handler);
@@ -658,12 +644,12 @@ msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,
 	if (!msn_soap_connected(soapconn) && (soapconn->step == MSN_SOAP_UNCONNECTED)
 					&&(!g_queue_is_empty(soapconn->soap_queue))) {
 		/*not connected?and we have something to process connect it first*/
-		purple_debug_info("MSN SOAP","No connection to SOAP server. Connecting...\n");
+		purple_debug_misc("MSN SOAP","No connection to SOAP server. Connecting...\n");
 		msn_soap_init_func(soapconn);
 		msn_soap_connect(soapconn);
 		return;
 	}
-	purple_debug_info("MSN SOAP","Connected to SOAP server!\n");
+	purple_debug_misc("MSN SOAP","Connected to SOAP server!\n");
 
 	/*if connected, what we only needed to do is to queue the request, 
 	 * when SOAP request in the queue processed done, will do this command.
@@ -683,12 +669,13 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 {
 	char * soap_head = NULL;
 	char * request_str = NULL;
-
 #ifdef MSN_SOAP_DEBUG
+#if !defined(_WIN32)
 	xmlnode * node;
-
-	purple_debug_info("MSN SOAP","msn_soap_post_request()...\n");
 #endif
+	purple_debug_misc("MSN SOAP","msn_soap_post_request()\n");
+#endif
+
 	msn_soap_set_process_step(soapconn,MSN_SOAP_PROCESSING);
 	soap_head = g_strdup_printf(
 					"POST %s HTTP/1.1\r\n"
@@ -709,16 +696,16 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 					);
 	request_str = g_strdup_printf("%s%s", soap_head, request->body);
 
-#ifdef MSN_SOAP_DEBUG
+#if defined(MSN_SOAP_DEBUG) && !defined(_WIN32)
 	node = xmlnode_from_str(request->body, -1);
 	if (node != NULL) {
-		char *pretty = xmlnode_to_formatted_str(node, NULL);
-		purple_debug_info("MSN SOAP","Posting request to SOAP server:\n%s%s\n",soap_head, pretty);
-		g_free(pretty);
+		char *formattedstr = xmlnode_to_formatted_str(node, NULL);
+		purple_debug_info("MSN SOAP","Posting request to SOAP server:\n%s%s\n",soap_head, formattedstr);
+		g_free(formattedstr);
 		xmlnode_free(node);
 	}
 	else
-		purple_debug_info("MSN SOAP","Failed to parse SOAP request:\n%s\n", request_str);
+		purple_debug_info("MSN SOAP","Failed to parse SOAP request being sent:\n%s\n", request_str);
 #endif
 	
 	g_free(soap_head);

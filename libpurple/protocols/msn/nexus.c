@@ -25,6 +25,7 @@
 #include "soap.h"
 #include "nexus.h"
 #include "notification.h"
+
 #undef NEXUS_LOGIN_TWN
 
 /*Local Function Prototype*/
@@ -158,10 +159,8 @@ nexus_login_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
 
-	purple_debug_misc("msn", "TWN Server Reply: {%s}\n", soapconn->read_buf);
-
 	/*reply OK, we should process the SOAP body*/
-	purple_debug_info("MSNP14","Windows Live ID Reply OK!\n");
+	purple_debug_info("MSN Nexus","TWN Server Windows Live ID Reply OK!\n");
 
 	//TODO: we should parse it using XML
 #ifdef NEXUS_LOGIN_TWN
@@ -205,7 +204,7 @@ nexus_login_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	cert_str = g_strdup_printf("t=%s&p=%s",msn_twn_t,msn_twn_p);
 	msn_got_login_params(session, cert_str);
 
-	purple_debug_info("MSNP14","close nexus connection! \n");
+	purple_debug_info("MSN Nexus","Close nexus connection!\n");
 	g_free(cert_str);
 	g_free(login_params);
 	msn_nexus_destroy(nexus);
@@ -242,7 +241,7 @@ nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 	char *rst1_str,*rst2_str,*rst3_str;
 #endif
 
-	purple_debug_info("MSNP14","starting Windows Live ID authentication\n");
+	purple_debug_info("MSN Nexus","Starting Windows Live ID authentication\n");
 
 	soapconn = data;
 	g_return_if_fail(soapconn != NULL);
@@ -277,7 +276,7 @@ nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 	 * for when windows g_strdup_printf() implementation get NULL point,It crashed!
 	 */
 	if(!(lc && id && tw && ru && ct && kpp && kv && ver && tpf)){
-		purple_debug_error("MSNP14","WLM Authenticate Key Error!\n");
+		purple_debug_error("MSN Nexus","WLM Authenticate Key Error!\n");
 		msn_session_set_error(session, MSN_ERROR_AUTH, _("Windows Live ID authentication Failed"));
 		g_free(username);
 		g_free(password);
@@ -335,8 +334,10 @@ nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 					soapconn->login_path,soapconn->login_host,(int)strlen(tail));
 
 	request_str = g_strdup_printf("%s%s", head,tail);
-	purple_debug_misc("msn", "TWN Sending:\n%s\n", request_str);
 
+#ifdef MSN_SOAP_DEBUG	
+	purple_debug_misc("MSN Nexus", "TWN Sending:\n%s\n", request_str);
+#endif
 	g_free(head);
 	g_free(tail);
 	g_free(username);
@@ -467,7 +468,7 @@ void
 msn_nexus_connect(MsnNexus *nexus)
 {
 	/*  Authenticate via Windows Live ID. */
-	purple_debug_info("MSNP14","msn_nexus_connect...\n");
+	purple_debug_info("MSN Nexus","msn_nexus_connect()\n");
 	msn_soap_init(nexus->soapconn,MSN_TWN_SERVER,1,nexus_login_connect_cb,nexus_login_error_cb);
 	msn_soap_connect(nexus->soapconn);
 }
