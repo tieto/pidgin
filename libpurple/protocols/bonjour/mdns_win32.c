@@ -41,7 +41,7 @@ typedef struct _win32_session_impl_data {
 	DNSServiceRef browser_svc;
 	DNSRecordRef buddy_icon_rec;
 
-	guint presence_handler; /* hack... windows bonjour is broken, so we have to have this */
+	guint presence_handler;
 	guint browser_handler;
 } Win32SessionImplData;
 
@@ -124,14 +124,16 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 
 		/* finally, set up the continuous txt record watcher, and add the buddy to purple */
 
-		if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&idata->txt_query, 0, 0, args->full_service_name,
-				kDNSServiceType_TXT, kDNSServiceClass_IN, _mdns_text_record_query_callback, buddy)) {
-			int fd = DNSServiceRefSockFD(idata->txt_query);
-			idata->txt_query_handler = purple_input_add(fd, PURPLE_INPUT_READ, _mdns_handle_event, idata->txt_query);
-
-			bonjour_buddy_add_to_purple(buddy);
+		if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&idata->txt_query, kDNSServiceFlagsLongLivedQuery,
+				kDNSServiceInterfaceIndexAny, args->full_service_name, kDNSServiceType_TXT,
+				kDNSServiceClass_IN, _mdns_text_record_query_callback, buddy)) {
 
 			purple_debug_info("bonjour", "Found buddy %s at %s:%d\n", buddy->name, buddy->ip, buddy->port_p2pj);
+
+			idata->txt_query_handler = purple_input_add(DNSServiceRefSockFD(idata->txt_query),
+				PURPLE_INPUT_READ, _mdns_handle_event, idata->txt_query);
+
+			bonjour_buddy_add_to_purple(buddy);
 		} else
 			bonjour_buddy_delete(buddy);
 
@@ -188,7 +190,6 @@ static void DNSSD_API
 _mdns_service_register_callback(DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode,
 				const char *name, const char *regtype, const char *domain, void *context) {
 
-	/* we don't actually care about anything said in this callback - this is only here because Bonjour for windows is broken */
 	/* TODO: deal with collision */
 	if (kDNSServiceErr_NoError != errorCode)
 		purple_debug_error("bonjour", "service advertisement - callback error (%d).\n", errorCode);
@@ -324,7 +325,10 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type) {
 			purple_debug_error("bonjour", "Failed to publish presence service.\n");
 			ret = FALSE;
 		} else if (type == PUBLISH_START) {
-			/* hack: Bonjour on windows is broken. We don't care about the callback but we have to listen anyway */
+			/* We need to do this because according to the Apple docs:
+			 * "the client is responsible for ensuring that DNSServiceProcessResult() is called
+			 * whenever there is a reply from the daemon - the daemon may terminate its connection
+			 * with a client that does not process the daemon's responses */
 			idata->presence_handler = purple_input_add(DNSServiceRefSockFD(idata->presence_svc),
 				PURPLE_INPUT_READ, _mdns_handle_event, idata->presence_svc);
 		}
@@ -358,7 +362,6 @@ void _mdns_stop(BonjourDnsSd *data) {
 		return;
 
 	if (idata->presence_svc != NULL) {
-		/* hack: for win32, we need to stop listening to the advertisement pipe too */
 		purple_input_remove(idata->presence_handler);
 		DNSServiceRefDeallocate(idata->presence_svc);
 	}
@@ -438,7 +441,7 @@ void _mdns_retrieve_retrieve_buddy_icon(BonjourBuddy* buddy) {
 	}
 
 	DNSServiceConstructFullName(svc_name, buddy->name, ICHAT_SERVICE, "local");
-	if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&idata->null_query, 0, 0, svc_name,
+	if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&idata->null_query, 0, kDNSServiceInterfaceIndexAny, svc_name,
 			kDNSServiceType_NULL, kDNSServiceClass_IN, _mdns_text_record_query_callback, buddy)) {
 		idata->null_query_handler = purple_input_add(DNSServiceRefSockFD(idata->null_query),
 			PURPLE_INPUT_READ, _mdns_handle_event, idata->null_query);
