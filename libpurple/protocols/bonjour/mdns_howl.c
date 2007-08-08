@@ -26,6 +26,7 @@
 typedef struct _howl_impl_data {
 	sw_discovery session;
 	sw_discovery_oid session_id;
+	guint session_handler;
 } HowlSessionImplData;
 
 static sw_result HOWL_API
@@ -276,18 +277,19 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 
 	g_return_val_if_fail(idata != NULL, FALSE);
 
-	return (sw_discovery_browse(idata->session, 0, ICHAT_SERVICE, NULL, _browser_reply,
-				    data->account, &session_id) == SW_OKAY);
-}
-
-guint _mdns_register_to_mainloop(BonjourDnsSd *data) {
-	HowlSessionImplData *idata = data->mdns_impl_data;
-
-	g_return_val_if_fail(idata != NULL, 0);
-
-	return purple_input_add(sw_discovery_socket(idata->session),
+	if (sw_discovery_browse(idata->session, 0, ICHAT_SERVICE, NULL, _browser_reply,
+				    data->account, &session_id) == SW_OKAY) {
+		idata->session_handler = purple_input_add(sw_discovery_socket(idata->session),
 				PURPLE_INPUT_READ, _mdns_handle_event, idata->session);
+		return TRUE;
+	}
+
+	return FALSE;
 }
+
+void _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data, gsize avatar_len) {
+}
+
 
 void _mdns_stop(BonjourDnsSd *data) {
 	HowlSessionImplData *idata = data->mdns_impl_data;
@@ -296,6 +298,8 @@ void _mdns_stop(BonjourDnsSd *data) {
 		return;
 
 	sw_discovery_cancel(idata->session, idata->session_id);
+
+	purple_input_remove(idata->session_handler);
 
 	/* TODO: should this really be g_free()'d ??? */
 	g_free(idata->session);
@@ -313,3 +317,5 @@ void _mdns_delete_buddy(BonjourBuddy *buddy) {
 
 void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy) {
 }
+
+

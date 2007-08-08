@@ -26,9 +26,9 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type);
 
 gboolean _mdns_browse(BonjourDnsSd *data);
 
-guint _mdns_register_to_mainloop(BonjourDnsSd *data);
-
 void _mdns_stop(BonjourDnsSd *data);
+
+void _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data, gsize avatar_len);
 
 void _mdns_init_buddy(BonjourBuddy *buddy);
 

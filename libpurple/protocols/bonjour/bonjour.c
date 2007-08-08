@@ -138,6 +138,8 @@ bonjour_login(PurpleAccount *account)
 		return;
 	}
 
+	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);
+
 	/* Create a group for bonjour buddies */
 	bonjour_group = purple_group_new(BONJOUR_GROUP_NAME);
 	purple_blist_add_group(bonjour_group, NULL);
@@ -283,6 +285,14 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 	bb->conversation = NULL;
 }
 
+static
+void bonjour_set_buddy_icon(PurpleConnection *conn, PurpleStoredImage *img)
+{
+	BonjourData *bd = conn->proto_data;
+	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);
+}
+
+
 static char *
 bonjour_status_text(PurpleBuddy *buddy)
 {
@@ -339,8 +349,7 @@ static PurplePluginProtocolInfo prpl_info =
 	OPT_PROTO_NO_PASSWORD,
 	NULL,                                                    /* user_splits */
 	NULL,                                                    /* protocol_options */
-	/* {"png", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_DISPLAY}, */ /* icon_spec */
-	NO_BUDDY_ICONS, /* not yet */                            /* icon_spec */
+	{"png,gif,jpeg", 0, 0, 96, 96, 65535, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
 	bonjour_list_icon,                                       /* list_icon */
 	NULL,													 /* list_emblem */
 	bonjour_status_text,                                     /* status_text */
@@ -384,7 +393,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* buddy_free */
 	bonjour_convo_closed,                                    /* convo_closed */
 	NULL,                                                    /* normalize */
-	NULL,                                                    /* set_buddy_icon */
+	bonjour_set_buddy_icon,                                  /* set_buddy_icon */
 	NULL,                                                    /* remove_group */
 	NULL,                                                    /* get_cb_real_name */
 	NULL,                                                    /* set_chat_topic */
@@ -533,7 +542,7 @@ initialize_default_account_values()
 	{
 		default_firstname = g_strndup(fullname, splitpoint - fullname);
 		tmp = &splitpoint[1];
-		
+
 		/* The last name may be followed by a comma and additional data.
 		 * Only use the last name itself.
 		 */

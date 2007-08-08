@@ -10,5 +10,7 @@ gnt.c: gnt.def *.override common.c common.h
 	--override gnt.override \
 	gnt.def > $@
 
+#python codegen/codegen.py --prefix gnt \
+
 clean:
 	@rm *.so *.o gnt.c

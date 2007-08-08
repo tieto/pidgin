@@ -341,10 +341,9 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 	return TRUE;
 }
 
-/* This is done differently than with Howl/Apple Bonjour */
-guint _mdns_register_to_mainloop(BonjourDnsSd *data) {
-	return 0;
+void _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data, gsize avatar_len) {
 }
+
 
 void _mdns_stop(BonjourDnsSd *data) {
 	AvahiSessionImplData *idata = data->mdns_impl_data;

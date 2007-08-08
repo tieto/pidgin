@@ -695,7 +695,9 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+#if GLIB_CHECK_VERSION(2,2,0)
 	g_set_application_name(_("Pidgin"));
+#endif /* glib-2.0 >= 2.2.0 */
 
 #ifdef _WIN32
 	winpidgin_init(hint);
