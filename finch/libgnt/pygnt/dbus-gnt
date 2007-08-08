@@ -24,7 +24,7 @@ def conv_closed(conv):
     key = get_dict_key(conv)
     stuff = convwins[key]
     stuff[0].destroy()
-	# if a conv window is closed, then reopened, this thing crashes
+    # if a conv window is closed, then reopened, this thing crashes
     convwins[key] = None
 
 def wrote_msg(account, who, msg, conv, flags):
@@ -76,6 +76,9 @@ def send_im_cb(entry, key, conv):
             purple.PurpleConvChatSend(chatdata, entry.get_text())
         entry.clear()
 
+def conv_window_destroyed(win, key):
+    del convwins[key]
+
 def show_conversation(conv):
     key = get_dict_key(conv)
     if key in convwins:
@@ -95,28 +98,28 @@ def show_conversation(conv):
     tv.clear()
     win.show()
     convwins[key] = [win, tv, entry]
-	# XXX: listen to "destroy" for the window, and reset the key
+    win.connect("destroy", conv_window_destroyed, key)
     return convwins[key]
 
 def show_buddylist():
-	win = gnt.Window()
-	tree = gnt.Tree()
-	tree.set_property("columns", 1)
-	win.add_widget(tree)
-	node = purple.PurpleBlistGetRoot()
-	while node:
-		if purple.PurpleBlistNodeIsGroup(node):
-			sys.stderr.write(str(node) + "\n")
-			tree.add_row_after(str(node), ["asd", ""], None, None)
-			#tree.add_row_after(node, [str(purple.PurpleGroupGetName(node)), ""], None, None)
-			#tree.add_row_after(node, ["aasd", ""], None, None)
-		elif purple.PurpleBlistNodeIsContact(node):
-			buddy = purple.PurpleContactGetPriorityBuddy(node)
-			group = purple.PurpleBuddyGetGroup(buddy)
-			#tree.add_row_after(node, [str(purple.PurpleBuddyGetName(buddy)), ""], group, None)
+    win = gnt.Window()
+    tree = gnt.Tree()
+    tree.set_property("columns", 1)
+    win.add_widget(tree)
+    node = purple.PurpleBlistGetRoot()
+    while node:
+        if purple.PurpleBlistNodeIsGroup(node):
+            sys.stderr.write(str(node) + "\n")
+            tree.add_row_after(str(node), ["asd", ""], None, None)
+            #tree.add_row_after(node, [str(purple.PurpleGroupGetName(node)), ""], None, None)
+            #tree.add_row_after(node, ["aasd", ""], None, None)
+        elif purple.PurpleBlistNodeIsContact(node):
+            buddy = purple.PurpleContactGetPriorityBuddy(node)
+            group = purple.PurpleBuddyGetGroup(buddy)
+            #tree.add_row_after(node, [str(purple.PurpleBuddyGetName(buddy)), ""], group, None)
 
-		node = purple.PurpleBlistNodeNext(node, False)
-	win.show()
+        node = purple.PurpleBlistNodeNext(node, False)
+    win.show()
 
 gnt.gnt_init()
 
