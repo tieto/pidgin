@@ -517,7 +517,8 @@ void gnt_screen_occupy(GntWidget *widget)
 
 void gnt_screen_release(GntWidget *widget)
 {
-	gnt_wm_window_close(wm, widget);
+	if (wm)
+		gnt_wm_window_close(wm, widget);
 }
 
 void gnt_screen_update(GntWidget *widget)
@@ -564,7 +565,9 @@ void gnt_widget_set_urgent(GntWidget *widget)
 
 void gnt_quit()
 {
-	g_hash_table_destroy(wm->nodes); /* XXX: */
+	g_object_unref(G_OBJECT(wm));
+	wm = NULL;
+
 	update_panels();
 	doupdate();
 	gnt_uninit_colors();

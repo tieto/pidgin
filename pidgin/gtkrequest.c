@@ -711,7 +711,7 @@ setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 					}
 				}
 			}
-			pidgin_setup_screenname_autocomplete(entry, optmenu, !strcmp(type_hint, "screenname-all"));
+			pidgin_setup_screenname_autocomplete_with_filter(entry, optmenu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(!strcmp(type_hint, "screenname-all")));
 		}
 	}
 }
@@ -1003,9 +1003,6 @@ create_list_field(PurpleRequestField *field)
 	if (purple_request_field_list_get_multi_select(field))
 		gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
 
-	g_signal_connect(G_OBJECT(sel), "changed",
-					 G_CALLBACK(list_field_select_changed_cb), field);
-
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 
@@ -1027,6 +1024,17 @@ create_list_field(PurpleRequestField *field)
 		if (purple_request_field_list_is_selected(field, text))
 			gtk_tree_selection_select_iter(sel, &iter);
 	}
+
+	/*
+	 * We only want to catch changes made by the user, so it's important
+	 * that we wait until after the list is created to connect this
+	 * handler.  If we connect the handler before the loop above and
+	 * there are multiple items selected, then selecting the first iter
+	 * in the tree causes list_field_select_changed_cb to be triggered
+	 * which clears out the rest of the list of selected items.
+	 */
+	g_signal_connect(G_OBJECT(sel), "changed",
+					 G_CALLBACK(list_field_select_changed_cb), field);
 
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
 	gtk_widget_show(treeview);

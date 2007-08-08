@@ -200,6 +200,7 @@ pidgin/plugins/gevolution/eds-utils.c
 pidgin/plugins/gevolution/gevolution.c
 pidgin/plugins/gevolution/gevo-util.c
 pidgin/plugins/gevolution/new_person_dialog.c
+pidgin/plugins/gtkbuddynote.c
 pidgin/plugins/gtk-signals-test.c
 pidgin/plugins/history.c
 pidgin/plugins/iconaway.c

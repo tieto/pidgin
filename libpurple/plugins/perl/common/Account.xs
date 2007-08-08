@@ -307,6 +307,9 @@ PPCODE:
     }
     g_list_free(list);
 
+void
+purple_accounts_restore_current_statuses()
+
 Purple::Account
 purple_accounts_find(name, protocol)
     const char * name

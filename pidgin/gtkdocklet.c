@@ -121,7 +121,7 @@ docklet_update_status()
 	/* determine if any ims have unseen messages */
 	convs = get_pending_list(DOCKLET_TOOLTIP_LINE_LIMIT);
 
-	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "pending")) {
+	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "always")) {
 		if (convs && ui_ops->create && !visible) {
 			g_list_free(convs);
 			ui_ops->create();

@@ -129,8 +129,8 @@ static gboolean flap_connection_send_queued(gpointer data)
 
 			new_current = rateclass_get_new_current(conn, rateclass, &now);
 
+			/* (Add 100ms padding to account for inaccuracies in the calculation) */
 			if (new_current < rateclass->alert + 100)
-				/* (Add 100ms padding to account for inaccuracies in the calculation) */
 				/* Not ready to send this SNAC yet--keep waiting. */
 				return TRUE;
 
@@ -186,9 +186,9 @@ flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, g
 		gettimeofday(&now, NULL);
 		new_current = rateclass_get_new_current(conn, rateclass, &now);
 
+		/* (Add 100ms padding to account for inaccuracies in the calculation) */
 		if (new_current < rateclass->alert + 100)
 		{
-			/* (Add 100ms padding to account for inaccuracies in the calculation) */
 			enqueue = TRUE;
 		}
 		else

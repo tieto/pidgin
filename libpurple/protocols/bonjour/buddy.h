@@ -19,22 +19,17 @@
 
 #include <glib.h>
 
-#include "config.h"
 #include "account.h"
 #include "jabber.h"
-
-#ifdef USE_BONJOUR_APPLE 
-#include "dns_sd_proxy.h"
-#else /* USE_BONJOUR_HOWL */
-#include <howl.h>
-#endif
 
 typedef struct _BonjourBuddy
 {
 	PurpleAccount *account;
 
 	gchar *name;
+	/* TODO: Remove and just use the hostname */
 	gchar *ip;
+	gchar *full_service_name;
 	gint port_p2pj;
 
 	gchar *first;
@@ -53,11 +48,7 @@ typedef struct _BonjourBuddy
 
 	BonjourJabberConversation *conversation;
 
-#ifdef USE_BONJOUR_APPLE
-	DNSServiceRef txt_query;
-	int txt_query_fd;
-#endif
-
+	gpointer mdns_impl_data;
 } BonjourBuddy;
 
 static const char *const buddy_TXT_records[] = {

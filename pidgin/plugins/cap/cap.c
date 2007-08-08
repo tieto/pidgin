@@ -107,25 +107,26 @@ static double generate_prediction_for(PurpleBuddy *buddy) {
 }
 
 static CapStatistics * get_stats_for(PurpleBuddy *buddy) {
-	gchar *buddy_name;
 	CapStatistics *stats;
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 
-	buddy_name = g_strdup(buddy->name);
-	stats = g_hash_table_lookup(_buddy_stats, buddy_name);
+	stats = g_hash_table_lookup(_buddy_stats, buddy->name);
 	if(!stats) {
 		stats = g_malloc(sizeof(CapStatistics));
 		stats->last_message = -1;
 		stats->last_message_status_id = NULL;
 		stats->last_status_id = NULL;
 		stats->prediction = NULL;
-		g_hash_table_insert(_buddy_stats, buddy_name, stats);
 		stats->buddy = buddy;
 		stats->last_seen = -1;
 		stats->last_status_id = "";
+
+		g_hash_table_insert(_buddy_stats, g_strdup(buddy->name), stats);
 	} else {
-		g_free(buddy_name);
+		/* This may actually be a different PurpleBuddy than what is in stats.
+		 * We replace stats->buddy to make sure we're looking at a valid pointer. */
+		stats->buddy = buddy;
 	}
 	generate_prediction(stats);
 	return stats;
@@ -409,7 +410,7 @@ static void buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old_status, P
 /* buddy-signed-on */
 static void buddy_signed_on(PurpleBuddy *buddy) {
 	CapStatistics *stats = get_stats_for(buddy);
-	
+
 	/* If the statistic object existed but doesn't have a buddy pointer associated
 	 * with it then reassociate one with it. The pointer being null is a result
 	 * of a buddy with existing stats signing off and Purple sticking around. */
