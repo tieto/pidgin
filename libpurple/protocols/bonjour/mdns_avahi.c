@@ -86,6 +86,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			buddy->port_p2pj = port;
 
 			/* Obtain the parameters from the text_record */
+			clear_bonjour_buddy_values(buddy);
 			l = txt;
 			while (l != NULL) {
 				ret = avahi_string_list_get_pair(l, &key, &value, &size);

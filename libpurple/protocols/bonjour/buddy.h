@@ -75,9 +75,15 @@ static const char *const buddy_TXT_records[] = {
 BonjourBuddy *bonjour_buddy_new(const gchar *name, PurpleAccount *account);
 
 /**
+ * Clear any existing values from the buddy.
+ * This is called before updating so that we can notice removals
+ */
+void clear_bonjour_buddy_values(BonjourBuddy *buddy);
+
+/**
  * Sets a value in the BonjourBuddy struct, destroying the old value
  */
-void set_bonjour_buddy_value(BonjourBuddy* buddy, const char *record_key, const char *value, uint32_t len);
+void set_bonjour_buddy_value(BonjourBuddy *buddy, const char *record_key, const char *value, uint32_t len);
 
 /**
  * Check if all the compulsory buddy data is present.

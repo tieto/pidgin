@@ -42,6 +42,26 @@ bonjour_buddy_new(const gchar *name, PurpleAccount* account)
 	return buddy;
 }
 
+#define _B_CLR(x) g_free(x); x = NULL;
+
+void clear_bonjour_buddy_values(BonjourBuddy *buddy) {
+
+	_B_CLR(buddy->first)
+	_B_CLR(buddy->email);
+	_B_CLR(buddy->ext);
+	_B_CLR(buddy->jid);
+	_B_CLR(buddy->last);
+	_B_CLR(buddy->msg);
+	_B_CLR(buddy->nick);
+	_B_CLR(buddy->node);
+	_B_CLR(buddy->phsh);
+	_B_CLR(buddy->status);
+	_B_CLR(buddy->vc);
+	_B_CLR(buddy->ver);
+	_B_CLR(buddy->AIM);
+
+}
+
 void
 set_bonjour_buddy_value(BonjourBuddy* buddy, const char *record_key, const char *value, uint32_t len){
 	gchar **fld = NULL;

@@ -64,6 +64,7 @@ _mdns_parse_text_record(BonjourBuddy* buddy, const char* record, uint16_t record
 	uint8_t txt_len;
 	int i;
 
+	clear_bonjour_buddy_values(buddy);
 	for (i = 0; buddy_TXT_records[i] != NULL; i++) {
 		txt_entry = TXTRecordGetValuePtr(record_len, record, buddy_TXT_records[i], &txt_len);
 		if (txt_entry != NULL)

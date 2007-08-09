@@ -85,6 +85,7 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 	/* Obtain the parameters from the text_record */
 	if ((text_record_len > 0) && (text_record) && (*text_record != '\0'))
 	{
+		clear_bonjour_buddy_values(buddy);
 		sw_text_record_iterator_init(&iterator, text_record, text_record_len);
 		while (sw_text_record_iterator_next(iterator, key, (sw_octet *)value, &value_length) == SW_OKAY)
 			set_bonjour_buddy_value(buddy, key, value, value_length);
