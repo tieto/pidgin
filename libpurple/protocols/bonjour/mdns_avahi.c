@@ -19,6 +19,7 @@
 #include "mdns_interface.h"
 #include "debug.h"
 #include "buddy.h"
+#include "bonjour.h"
 
 #include <avahi-client/client.h>
 #include <avahi-client/lookup.h>
@@ -32,13 +33,24 @@
 #include <avahi-glib/glib-malloc.h>
 #include <avahi-glib/glib-watch.h>
 
+/* For some reason, this is missing from the Avahi type defines */
+#ifndef AVAHI_DNS_TYPE_NULL
+#define AVAHI_DNS_TYPE_NULL 0x0A
+#endif
+
 /* data used by avahi bonjour implementation */
 typedef struct _avahi_session_impl_data {
 	AvahiClient *client;
 	AvahiGLibPoll *glib_poll;
 	AvahiServiceBrowser *sb;
 	AvahiEntryGroup *group;
+	AvahiEntryGroup *buddy_icon_group;
 } AvahiSessionImplData;
+
+typedef struct _avahi_buddy_impl_data {
+	AvahiServiceResolver *resolver;
+	AvahiRecordBrowser *buddy_icon_rec_browser;
+} AvahiBuddyImplData;
 
 static void
 _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtocol protocol,
@@ -59,10 +71,13 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 		case AVAHI_RESOLVER_FAILURE:
 			purple_debug_error("bonjour", "_resolve_callback - Failure: %s\n",
 				avahi_strerror(avahi_client_errno(avahi_service_resolver_get_client(r))));
+			avahi_service_resolver_free(r);
 			break;
 		case AVAHI_RESOLVER_FOUND:
 			/* create a buddy record */
 			buddy = bonjour_buddy_new(name, account);
+
+			((AvahiBuddyImplData *)buddy->mdns_impl_data)->resolver = r;
 
 			/* Get the ip as a string */
 			buddy->ip = g_malloc(AVAHI_ADDRESS_STR_MAX);
@@ -95,7 +110,6 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			purple_debug_info("bonjour", "Unrecognized Service Resolver event: %d.\n", event);
 	}
 
-	avahi_service_resolver_free(r);
 }
 
 static void
@@ -145,6 +159,30 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 }
 
 static void
+_buddy_icon_group_cb(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userdata) {
+	BonjourDnsSd *data = userdata;
+	AvahiSessionImplData *idata = data->mdns_impl_data;
+
+	g_return_if_fail(g == idata->buddy_icon_group || idata->buddy_icon_group == NULL);
+
+	switch(state) {
+		case AVAHI_ENTRY_GROUP_ESTABLISHED:
+			purple_debug_info("bonjour", "Successfully registered buddy icon data.\n");
+		case AVAHI_ENTRY_GROUP_COLLISION:
+			purple_debug_error("bonjour", "Collision registering buddy icon data.\n");
+			break;
+		case AVAHI_ENTRY_GROUP_FAILURE:
+			purple_debug_error("bonjour", "Error registering buddy icon data: %s\n.",
+				avahi_strerror(avahi_client_errno(avahi_entry_group_get_client(g))));
+			break;
+		case AVAHI_ENTRY_GROUP_UNCOMMITED:
+		case AVAHI_ENTRY_GROUP_REGISTERING:
+			break;
+	}
+
+}
+
+static void
 _entry_group_cb(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userdata) {
 	AvahiSessionImplData *idata = userdata;
 
@@ -168,6 +206,31 @@ _entry_group_cb(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userdata) 
 			break;
 	}
 
+}
+
+static void
+_buddy_icon_record_cb(AvahiRecordBrowser *b, AvahiIfIndex interface, AvahiProtocol protocol,
+		      AvahiBrowserEvent event, const char *name, uint16_t clazz, uint16_t type,
+		      const void *rdata, size_t size, AvahiLookupResultFlags flags, void *userdata) {
+	BonjourBuddy *buddy = userdata;
+	AvahiBuddyImplData *idata = buddy->mdns_impl_data;
+
+	switch (event) {
+		case AVAHI_BROWSER_NEW:
+			bonjour_buddy_got_buddy_icon(buddy, rdata, size);
+			break;
+		case AVAHI_BROWSER_REMOVE:
+		case AVAHI_BROWSER_CACHE_EXHAUSTED:
+		case AVAHI_BROWSER_ALL_FOR_NOW:
+		case AVAHI_BROWSER_FAILURE:
+			purple_debug_error("bonjour", "Error rerieving buddy icon record: %s\n",
+				avahi_strerror(avahi_client_errno(avahi_record_browser_get_client(b))));
+			break;
+	}
+
+	/* Stop listening */
+	avahi_record_browser_free(idata->buddy_icon_rec_browser);
+	idata->buddy_icon_rec_browser = NULL;
 }
 
 /****************************
@@ -290,7 +353,8 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type) {
 		return FALSE;
 	}
 
-	if ((publish_result = avahi_entry_group_commit(idata->group)) < 0) {
+	if (type == PUBLISH_START
+			&& (publish_result = avahi_entry_group_commit(idata->group)) < 0) {
 		purple_debug_error("bonjour",
 			"Failed to commit " ICHAT_SERVICE " service. Error: %s\n",
 			avahi_strerror(publish_result));
@@ -317,9 +381,71 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 	return TRUE;
 }
 
-/* This is done differently than with Howl/Apple Bonjour */
-guint _mdns_register_to_mainloop(BonjourDnsSd *data) {
-	return 0;
+gboolean _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data, gsize avatar_len) {
+	AvahiSessionImplData *idata = data->mdns_impl_data;
+
+	if (idata == NULL || idata->client == NULL)
+		return FALSE;
+
+	if (avatar_data != NULL) {
+		gboolean new_group = FALSE;
+		gchar *svc_name;
+		int ret;
+		AvahiPublishFlags flags = 0;
+
+		if (idata->buddy_icon_group == NULL) {
+			purple_debug_info("bonjour", "Setting new buddy icon.\n");
+			new_group = TRUE;
+
+			idata->buddy_icon_group = avahi_entry_group_new(idata->client,
+				_buddy_icon_group_cb, data);
+		} else {
+			purple_debug_info("bonjour", "Updating existing buddy icon.\n");
+			flags |= AVAHI_PUBLISH_UPDATE;
+		}
+
+		if (idata->buddy_icon_group == NULL) {
+			purple_debug_error("bonjour",
+				"Unable to initialize the buddy icon group (%s).\n",
+				avahi_strerror(avahi_client_errno(idata->client)));
+			return FALSE;
+		}
+
+		svc_name = g_strdup_printf("%s." ICHAT_SERVICE "local",
+				purple_account_get_username(data->account));
+
+		ret = avahi_entry_group_add_record(idata->buddy_icon_group, AVAHI_IF_UNSPEC,
+			AVAHI_PROTO_UNSPEC, flags, svc_name,
+			AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_NULL, 120, avatar_data, avatar_len);
+
+		g_free(svc_name);
+
+		if (ret < 0) {
+			purple_debug_error("bonjour",
+				"Failed to register buddy icon. Error: %s\n", avahi_strerror(ret));
+			if (new_group) {
+				avahi_entry_group_free(idata->buddy_icon_group);
+				idata->buddy_icon_group = NULL;
+			}
+			return FALSE;
+		}
+
+		if (new_group && (ret = avahi_entry_group_commit(idata->buddy_icon_group)) < 0) {
+			purple_debug_error("bonjour",
+				"Failed to commit buddy icon group. Error: %s\n", avahi_strerror(ret));
+			if (new_group) {
+				avahi_entry_group_free(idata->buddy_icon_group);
+				idata->buddy_icon_group = NULL;
+			}
+			return FALSE;
+		}
+	} else if (idata->buddy_icon_group != NULL) {
+		purple_debug_info("bonjour", "Removing existing buddy icon.\n");
+		avahi_entry_group_free(idata->buddy_icon_group);
+		idata->buddy_icon_group = NULL;
+	}
+
+	return TRUE;
 }
 
 void _mdns_stop(BonjourDnsSd *data) {
@@ -340,10 +466,50 @@ void _mdns_stop(BonjourDnsSd *data) {
 }
 
 void _mdns_init_buddy(BonjourBuddy *buddy) {
+	buddy->mdns_impl_data = g_new0(AvahiBuddyImplData, 1);
 }
 
 void _mdns_delete_buddy(BonjourBuddy *buddy) {
+	AvahiBuddyImplData *idata = buddy->mdns_impl_data;
+
+	g_return_if_fail(idata != NULL);
+
+	if (idata->buddy_icon_rec_browser != NULL)
+		avahi_record_browser_free(idata->buddy_icon_rec_browser);
+
+	if (idata->resolver != NULL)
+		avahi_service_resolver_free(idata->resolver);
+
+	g_free(idata);
+
+	buddy->mdns_impl_data = NULL;
 }
 
-void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy) {
+void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
+	PurpleConnection *conn = purple_account_get_connection(buddy->account);
+	BonjourData *bd = conn->proto_data;
+	AvahiSessionImplData *session_idata = bd->dns_sd_data->mdns_impl_data;
+	AvahiBuddyImplData *idata = buddy->mdns_impl_data;
+	gchar *name;
+
+	g_return_if_fail(idata != NULL);
+
+	if (idata->buddy_icon_rec_browser != NULL)
+		avahi_record_browser_free(idata->buddy_icon_rec_browser);
+
+	purple_debug_info("bonjour", "Retrieving buddy icon for '%s'.\n", buddy->name);
+
+	name = g_strdup_printf("%s." ICHAT_SERVICE "local", buddy->name);
+	idata->buddy_icon_rec_browser = avahi_record_browser_new(session_idata->client, AVAHI_IF_UNSPEC,
+		AVAHI_PROTO_UNSPEC, name, AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_NULL, 0,
+		_buddy_icon_record_cb, buddy);
+	g_free(name);
+
+	if (!idata->buddy_icon_rec_browser) {
+		purple_debug_error("bonjour",
+			"Unable to initialize buddy icon record browser.  Error: %s\n.",
+			avahi_strerror(avahi_client_errno(session_idata->client)));
+	}
+
 }
+

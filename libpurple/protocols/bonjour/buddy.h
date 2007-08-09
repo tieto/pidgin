@@ -29,7 +29,6 @@ typedef struct _BonjourBuddy
 	gchar *name;
 	/* TODO: Remove and just use the hostname */
 	gchar *ip;
-	gchar *full_service_name;
 	gint port_p2pj;
 
 	gchar *first;
@@ -89,6 +88,11 @@ gboolean bonjour_buddy_check(BonjourBuddy *buddy);
  * If the buddy doesn't previoulsy exists, it is created. Else, its data is changed (???)
  */
 void bonjour_buddy_add_to_purple(BonjourBuddy *buddy);
+
+/**
+ * We got the buddy icon data; deal with it
+ */
+void bonjour_buddy_got_buddy_icon(BonjourBuddy *buddy, gconstpointer data, gsize len);
 
 /**
  * Deletes a buddy from memory.
