@@ -90,6 +90,11 @@ gboolean bonjour_buddy_check(BonjourBuddy *buddy);
 void bonjour_buddy_add_to_purple(BonjourBuddy *buddy);
 
 /**
+ * We got the buddy icon data; deal with it
+ */
+void bonjour_buddy_got_buddy_icon(BonjourBuddy *buddy, gconstpointer data, gsize len);
+
+/**
  * Deletes a buddy from memory.
  */
 void bonjour_buddy_delete(BonjourBuddy *buddy);

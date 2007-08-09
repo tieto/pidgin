@@ -3,6 +3,5 @@
 ==========================================
 
 * Status changes don't work
-* Avatars
 * File transfers
 * Typing notifications

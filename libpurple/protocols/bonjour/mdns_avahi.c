@@ -341,9 +341,9 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 	return TRUE;
 }
 
-void _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data, gsize avatar_len) {
+gboolean _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data, gsize avatar_len) {
+	return FALSE;
 }
-
 
 void _mdns_stop(BonjourDnsSd *data) {
 	AvahiSessionImplData *idata = data->mdns_impl_data;
@@ -379,7 +379,7 @@ void _mdns_delete_buddy(BonjourBuddy *buddy) {
 	buddy->mdns_impl_data = NULL;
 }
 
-void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy) {
+void _mdns_retrieve_retrieve_buddy_icon(BonjourBuddy* buddy) {
 	PurpleConnection *conn = purple_account_get_connection(buddy->account);
 	BonjourData *bd = conn->proto_data;
 	AvahiSessionImplData *session_idata = bd->dns_sd_data->mdns_impl_data;
@@ -401,7 +401,7 @@ void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy) {
 		purple_debug_error("bonjour",
 			"Unable to initialize record browser.  Error: %s\n.",
 			avahi_strerror(avahi_client_errno(session_idata->client)));
-	}
+}
 
 }
 

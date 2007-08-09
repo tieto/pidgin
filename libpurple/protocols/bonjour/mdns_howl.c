@@ -287,9 +287,9 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 	return FALSE;
 }
 
-void _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data, gsize avatar_len) {
+gboolean _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data, gsize avatar_len) {
+	return FALSE;
 }
-
 
 void _mdns_stop(BonjourDnsSd *data) {
 	HowlSessionImplData *idata = data->mdns_impl_data;
@@ -315,7 +315,7 @@ void _mdns_init_buddy(BonjourBuddy *buddy) {
 void _mdns_delete_buddy(BonjourBuddy *buddy) {
 }
 
-void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy) {
+void _mdns_retrieve_retrieve_buddy_icon(BonjourBuddy* buddy) {
 }
 
 
