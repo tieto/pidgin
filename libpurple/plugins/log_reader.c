@@ -60,14 +60,14 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 	char *path;
 	GDir *dir;
 
-	g_return_val_if_fail(sn != NULL, list);
-	g_return_val_if_fail(account != NULL, list);
+	g_return_val_if_fail(sn != NULL, NULL);
+	g_return_val_if_fail(account != NULL, NULL);
 
 	logdir = purple_prefs_get_string("/plugins/core/log_reader/adium/log_directory");
 
 	/* By clearing the log directory path, this logger can be (effectively) disabled. */
-	if (!*logdir)
-		return list;
+	if (!logdir || !*logdir)
+		return NULL;
 
 	plugin = purple_find_prpl(purple_account_get_protocol_id(account));
 	if (!plugin)
@@ -626,17 +626,17 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	const char *old_session_id = "";
 	struct msn_logger_data *data = NULL;
 
-	g_return_val_if_fail(sn != NULL, list);
-	g_return_val_if_fail(account != NULL, list);
+	g_return_val_if_fail(sn != NULL, NULL);
+	g_return_val_if_fail(account != NULL, NULL);
 
 	if (strcmp(account->protocol_id, "prpl-msn"))
-		return list;
+		return NULL;
 
 	logdir = purple_prefs_get_string("/plugins/core/log_reader/msn/log_directory");
 
 	/* By clearing the log directory path, this logger can be (effectively) disabled. */
-	if (!*logdir)
-		return list;
+	if (!logdir || !*logdir)
+		return NULL;
 
 	buddy = purple_find_buddy(account, sn);
 
@@ -1121,7 +1121,7 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		if (name_guessed != NAME_GUESS_UNKNOWN)
 			text = g_string_append(text, "</span>");
 
-		style     = xmlnode_get_attrib(text_node, "Style");
+		style = xmlnode_get_attrib(text_node, "Style");
 
 		tmp = xmlnode_get_data(text_node);
 		if (style && *style) {
@@ -1211,14 +1211,14 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 	gchar *line;
 	gchar *c;
 
-	g_return_val_if_fail(sn != NULL, list);
-	g_return_val_if_fail(account != NULL, list);
+	g_return_val_if_fail(sn != NULL, NULL);
+	g_return_val_if_fail(account != NULL, NULL);
 
 	logdir = purple_prefs_get_string("/plugins/core/log_reader/trillian/log_directory");
 
 	/* By clearing the log directory path, this logger can be (effectively) disabled. */
-	if (!*logdir)
-		return list;
+	if (!logdir || !*logdir)
+		return NULL;
 
 	plugin = purple_find_prpl(purple_account_get_protocol_id(account));
 	if (!plugin)
@@ -1776,18 +1776,18 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	int offset = 0;
 	GError *error;
 
-	g_return_val_if_fail(sn != NULL, list);
-	g_return_val_if_fail(account != NULL, list);
+	g_return_val_if_fail(sn != NULL, NULL);
+	g_return_val_if_fail(account != NULL, NULL);
 
 	/* QIP only supports ICQ. */
 	if (strcmp(account->protocol_id, "prpl-icq"))
-		return list;
+		return NULL;
 
 	logdir = purple_prefs_get_string("/plugins/core/log_reader/qip/log_directory");
 
 	/* By clearing the log directory path, this logger can be (effectively) disabled. */
-	if (!*logdir)
-		return list;
+	if (!logdir || !*logdir)
+		return NULL;
 
 	plugin = purple_find_prpl(purple_account_get_protocol_id(account));
 	if (!plugin)

@@ -1106,7 +1106,7 @@ purple_conv_im_write(PurpleConvIm *im, const char *who, const char *message,
 
 	c = purple_conv_im_get_conversation(im);
 
-	/* Raise the window, if specified in prefs. */
+	/* Pass this on to either the ops structure or the default write func. */
 	if (c->ui_ops != NULL && c->ui_ops->write_im != NULL)
 		c->ui_ops->write_im(c, who, message, flags, mtime);
 	else

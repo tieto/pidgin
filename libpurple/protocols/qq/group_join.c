@@ -230,7 +230,7 @@ void qq_process_group_cmd_exit_group(guint8 *data, guint8 **cursor, gint len, Pu
 				purple_blist_remove_chat(chat);
 			qq_group_delete_internal_record(qd, internal_group_id);
 		}
-		purple_notify_info(gc, _("QQ Qun Operation"), _("You have successfully exited the group"), NULL);
+		purple_notify_info(gc, _("QQ Qun Operation"), _("You have successfully left the group"), NULL);
 	} else {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Invalid exit group reply, expect %d bytes, read %d bytes\n", expected_bytes, bytes);
@@ -254,8 +254,8 @@ void qq_process_group_cmd_join_group_auth(guint8 *data, guint8 **cursor, gint le
 
 	if (bytes == expected_bytes)
 		purple_notify_info
-		    (gc, _("QQ Group Auth"), 
-		     _("Your authorization operation has been accepted by the QQ server"), NULL);
+		    (gc, _("QQ Group Auth"),
+		     _("Your authorization request has been accepted by the QQ server"), NULL);
 	else
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Invalid join group reply, expect %d bytes, read %d bytes\n", expected_bytes, bytes);
@@ -325,8 +325,8 @@ void qq_group_join(PurpleConnection *gc, GHashTable *data)
 	errno = 0;
 	external_group_id = strtol(external_group_id_ptr, NULL, 10);
 	if (errno != 0) {
-		purple_notify_error(gc, _("Error"), 
-				_("You inputted a group id outside the acceptable range"), NULL);
+		purple_notify_error(gc, _("Error"),
+				_("You entered a group ID outside the acceptable range"), NULL);
 		return;
 	}
 
@@ -357,12 +357,12 @@ void qq_group_exit(PurpleConnection *gc, GHashTable *data)
 	g->uid = internal_group_id;
 
 	purple_request_action(gc, _("QQ Qun Operation"),
-			    _("Are you sure to exit this Qun?"),
+			    _("Are you sure you want to leave this Qun?"),
 			    _
 			    ("Note, if you are the creator, \nthis operation will eventually remove this Qun."),
 			    1,
 				purple_connection_get_account(gc), NULL, NULL,
 			    g, 2, _("Cancel"),
 			    G_CALLBACK(qq_do_nothing_with_gc_and_uid),
-			    _("Go ahead"), G_CALLBACK(_qq_group_exit_with_gc_and_id));
+			    _("Continue"), G_CALLBACK(_qq_group_exit_with_gc_and_id));
 }

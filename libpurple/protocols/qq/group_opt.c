@@ -120,8 +120,8 @@ void qq_group_search_application_with_struct(group_member_opt *g)
 {
 	g_return_if_fail(g != NULL && g->gc != NULL && g->member > 0);
 
-	qq_send_packet_get_info(g->gc, g->member, TRUE);	/* we wanna see window */
-	purple_request_action(g->gc, NULL, _("Do you wanna approve the request?"), "", 2,
+	qq_send_packet_get_info(g->gc, g->member, TRUE);	/* we want to see window */
+	purple_request_action(g->gc, NULL, _("Do you want to approve the request?"), "", 2,
 					purple_connection_get_account(g->gc), NULL, NULL,
 					g, 2,
 					_("Reject"), G_CALLBACK(qq_group_reject_application_with_struct),
@@ -134,7 +134,7 @@ void qq_group_reject_application_with_struct(group_member_opt *g)
 	g_return_if_fail(g != NULL && g->gc != NULL && g->member > 0);
 
 	msg1 = g_strdup_printf(_("You rejected %d's request"), g->member);
-	msg2 = g_strdup(_("Input your reason:"));
+	msg2 = g_strdup(_("Enter your reason:"));
 
 	nombre = uid_to_purple_name(g->member);
 	purple_request_input(g->gc, /* title */ NULL, msg1, msg2,
@@ -232,7 +232,7 @@ void qq_group_process_modify_members_reply(guint8 *data, guint8 **cursor, gint l
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Succeed in modify members for Qun %d\n", group->external_group_id);
 
-	purple_notify_info(gc, _("QQ Qun Operation"), _("You have successfully modify Qun member"), NULL);
+	purple_notify_info(gc, _("QQ Qun Operation"), _("You have successfully modified Qun member"), NULL);
 }
 
 void qq_group_modify_info(PurpleConnection *gc, qq_group *group)
@@ -302,7 +302,7 @@ void qq_group_process_modify_info_reply(guint8 *data, guint8 **cursor, gint len,
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Succeed in modify info for Qun %d\n", group->external_group_id);
 	qq_group_refresh(gc, group);
 
-	purple_notify_info(gc, _("QQ Qun Operation"), _("You have successfully modify Qun information"), NULL);
+	purple_notify_info(gc, _("QQ Qun Operation"), _("You have successfully modified Qun information"), NULL);
 }
 
 /* we create a very simple group first, and then let the user to modify */

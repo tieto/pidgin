@@ -123,7 +123,7 @@ void qq_process_recv_group_im_apply_join
 
 	convert_as_pascal_string(*cursor, &reason_utf8, QQ_CHARSET_DEFAULT);
 
-	msg = g_strdup_printf(_("User %d applied to join group %d"), user_uid, external_group_id);
+	msg = g_strdup_printf(_("User %d requested to join group %d"), user_uid, external_group_id);
 	reason = g_strdup_printf(_("Reason: %s"), reason_utf8);
 
 	g = g_new0(group_member_opt, 1);
@@ -177,7 +177,7 @@ void qq_process_recv_group_im_been_rejected
 	convert_as_pascal_string(*cursor, &reason_utf8, QQ_CHARSET_DEFAULT);
 
 	msg = g_strdup_printf
-	    (_("You request to join group %d has been rejected by admin %d"), external_group_id, admin_uid);
+	    (_("Your request to join group %d has been rejected by admin %d"), external_group_id, admin_uid);
 	reason = g_strdup_printf(_("Reason: %s"), reason_utf8);
 
 	purple_notify_warning(gc, _("QQ Qun Operation"), msg, reason);
@@ -218,7 +218,7 @@ void qq_process_recv_group_im_been_approved
 	convert_as_pascal_string(*cursor, &reason_utf8, QQ_CHARSET_DEFAULT);
 
 	msg = g_strdup_printf
-	    (_("You request to join group %d has been approved by admin %d"), external_group_id, admin_uid);
+	    (_("Your request to join group %d has been approved by admin %d"), external_group_id, admin_uid);
 
 	purple_notify_warning(gc, _("QQ Qun Operation"), msg, NULL);
 
@@ -254,7 +254,7 @@ void qq_process_recv_group_im_been_removed
 
 	g_return_if_fail(external_group_id > 0 && uid > 0);
 
-	msg = g_strdup_printf(_("You [%d] has exit group \"%d\""), uid, external_group_id);
+	msg = g_strdup_printf(_("You [%d] have left group \"%d\""), uid, external_group_id);
 	purple_notify_info(gc, _("QQ Qun Operation"), msg, NULL);
 
 	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
@@ -288,7 +288,7 @@ void qq_process_recv_group_im_been_added
 
 	g_return_if_fail(external_group_id > 0 && uid > 0);
 
-	msg = g_strdup_printf(_("You [%d] has been added by group \"%d\""), uid, external_group_id);
+	msg = g_strdup_printf(_("You [%d] have been added to group \"%d\""), uid, external_group_id);
 	purple_notify_info(gc, _("QQ Qun Operation"), msg, _("This group has been added to your buddy list"));
 
 	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);

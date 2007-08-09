@@ -1053,7 +1053,7 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 	if (!gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml)))
 		return;
 
-	if (selection_data->length < 0) {
+	if (imhtml->wbfo || selection_data->length < 0) {
 		gtk_clipboard_request_text(clipboard, paste_plaintext_received_cb, imhtml);
 		return;
 	} else {

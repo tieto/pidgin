@@ -14,27 +14,27 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef _BONJOUR_MDNS_WIN32
-#define _BONJOUR_MDNS_WIN32
+#ifndef _BONJOUR_MDNS_INTERFACE
+#define _BONJOUR_MDNS_INTERFACE
 
-#ifdef USE_BONJOUR_APPLE
-
-#include <glib.h>
 #include "mdns_types.h"
 #include "buddy.h"
-#include "dnsquery.h"
-#include "dns_sd_proxy.h"
 
-/* Bonjour async callbacks */
+gboolean _mdns_init_session(BonjourDnsSd *data);
 
-void DNSSD_API _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex,
-    DNSServiceErrorType errorCode, const char *serviceName, const char *regtype, const char *replyDomain, void *context);
+gboolean _mdns_publish(BonjourDnsSd *data, PublishType type);
 
-/* interface functions */
+gboolean _mdns_browse(BonjourDnsSd *data);
 
-int _mdns_publish(BonjourDnsSd *data, PublishType type);
-void _mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition);
+guint _mdns_register_to_mainloop(BonjourDnsSd *data);
 
-#endif
+void _mdns_stop(BonjourDnsSd *data);
+
+void _mdns_init_buddy(BonjourBuddy *buddy);
+
+void _mdns_delete_buddy(BonjourBuddy *buddy);
+
+/* This doesn't quite belong here, but there really isn't any shared functionality */
+void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy);
 
 #endif

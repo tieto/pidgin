@@ -270,11 +270,11 @@ void qq_process_add_buddy_auth_reply(guint8 *buf, gint buf_len, PurpleConnection
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_ADD_BUDDY_AUTH_REPLY_OK) {
-			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Add buddy with auth request fails\n");
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Add buddy with auth request failed\n");
 			if (NULL == (segments = split_data(data, len, "\x1f", 2)))
 				return;
 			msg_utf8 = qq_to_utf8(segments[1], QQ_CHARSET_DEFAULT);
-			purple_notify_error(gc, NULL, _("Add buddy with auth request fails"), msg_utf8);
+			purple_notify_error(gc, NULL, _("Add buddy with auth request failed"), msg_utf8);
 			g_free(msg_utf8);
 		} else {
 			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Add buddy with auth request OK\n");
@@ -305,6 +305,7 @@ void qq_process_remove_buddy_reply(guint8 *buf, gint buf_len, PurpleConnection *
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Remove buddy fails\n");
 		} else {		/* if reply */
 			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Remove buddy OK\n");
+			/* TODO: We don't really need to notify the user about this, do we? */
 			purple_notify_info(gc, NULL, _("You have successfully removed a buddy"), NULL);
 		}
 	} else {
@@ -333,7 +334,8 @@ void qq_process_remove_self_reply(guint8 *buf, gint buf_len, PurpleConnection *g
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Remove self fails\n");
 		else {		/* if reply */
 			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Remove self from a buddy OK\n");
-			purple_notify_info(gc, NULL, _("You have successfully removed yourself from a buddy"), NULL);
+			/* TODO: Does the user really need to be notified about this? */
+			purple_notify_info(gc, NULL, _("You have successfully removed yourself from your friend's buddy list"), NULL);
 		}
 	} else {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt remove self reply\n");
@@ -413,7 +415,7 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 			g_free(nombre);
 		} else {	/* add OK */
 			qq_add_buddy_by_recv_packet(gc, for_uid, TRUE, TRUE);
-			msg = g_strdup_printf(_("You have added %d in buddy list"), for_uid);
+			msg = g_strdup_printf(_("You have added %d to buddy list"), for_uid);
 			purple_notify_info(gc, NULL, msg, NULL);
 			g_free(msg);
 		}
