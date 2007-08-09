@@ -72,7 +72,7 @@ _mdns_parse_text_record(BonjourBuddy* buddy, const char* record, uint16_t record
 }
 
 static void DNSSD_API
-_mdns_text_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags flags,
+_mdns_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags flags,
 	uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname,
 	uint16_t rrtype, uint16_t rrclass, uint16_t rdlen, const void *rdata,
 	uint32_t ttl, void *context)
@@ -125,7 +125,7 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 
 		if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&idata->txt_query, kDNSServiceFlagsLongLivedQuery,
 				kDNSServiceInterfaceIndexAny, args->full_service_name, kDNSServiceType_TXT,
-				kDNSServiceClass_IN, _mdns_text_record_query_callback, buddy)) {
+				kDNSServiceClass_IN, _mdns_record_query_callback, buddy)) {
 
 			purple_debug_info("bonjour", "Found buddy %s at %s:%d\n", buddy->name, buddy->ip, buddy->port_p2pj);
 
@@ -441,7 +441,7 @@ void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
 
 	DNSServiceConstructFullName(svc_name, buddy->name, ICHAT_SERVICE, "local");
 	if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&idata->null_query, 0, kDNSServiceInterfaceIndexAny, svc_name,
-			kDNSServiceType_NULL, kDNSServiceClass_IN, _mdns_text_record_query_callback, buddy)) {
+			kDNSServiceType_NULL, kDNSServiceClass_IN, _mdns_record_query_callback, buddy)) {
 		idata->null_query_handler = purple_input_add(DNSServiceRefSockFD(idata->null_query),
 			PURPLE_INPUT_READ, _mdns_handle_event, idata->null_query);
 	}

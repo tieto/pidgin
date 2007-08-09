@@ -7,6 +7,7 @@ version 2.1.1 (??/??/????):
 	* Server-stored aliases for Yahoo. (John Moody)
 	* Fixed support for Yahoo! doodling.
 	* Bonjour plugin uses native Avahi instead of Howl
+	* Bonjour plugin supports Buddy Icons
 
 	Pidgin:
 	* Show current outgoing conversation formatting on the font label on

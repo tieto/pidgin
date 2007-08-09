@@ -296,14 +296,22 @@ void bonjour_set_buddy_icon(PurpleConnection *conn, PurpleStoredImage *img)
 static char *
 bonjour_status_text(PurpleBuddy *buddy)
 {
-	PurplePresence *presence;
+	const PurplePresence *presence;
+	const PurpleStatus *status;
+	const char *message;
+	gchar *ret = NULL;
 
 	presence = purple_buddy_get_presence(buddy);
+	status = purple_presence_get_active_status(presence);
 
-	if (purple_presence_is_online(presence) && !purple_presence_is_available(presence))
-		return g_strdup(_("Away"));
+	message = purple_status_get_attr_string(status, "message");
 
-	return NULL;
+	if (message != NULL) {
+		ret = g_markup_escape_text(message, -1);
+		purple_util_chrreplace(ret, '\n', ' ');
+	}
+
+	return ret;
 }
 
 static void
@@ -351,7 +359,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* protocol_options */
 	{"png,gif,jpeg", 0, 0, 96, 96, 65535, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
 	bonjour_list_icon,                                       /* list_icon */
-	NULL,													 /* list_emblem */
+	NULL,                                                    /* list_emblem */
 	bonjour_status_text,                                     /* status_text */
 	bonjour_tooltip_text,                                    /* tooltip_text */
 	bonjour_status_types,                                    /* status_types */
@@ -421,11 +429,11 @@ static PurplePluginInfo info =
 	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
+	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
 
 	"prpl-bonjour",                                   /**< id             */
 	"Bonjour",                                        /**< name           */
@@ -435,10 +443,10 @@ static PurplePluginInfo info =
 	                                                  /**  description    */
 	N_("Bonjour Protocol Plugin"),
 	NULL,                                             /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                   /**< homepage       */
 
 	NULL,                                             /**< load           */
-	plugin_unload,                                             /**< unload         */
+	plugin_unload,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */
