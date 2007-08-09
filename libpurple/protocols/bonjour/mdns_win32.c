@@ -94,8 +94,7 @@ _mdns_text_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags fl
 
 			g_return_if_fail(idata != NULL);
 
-			purple_buddy_icons_set_for_user(buddy->account, buddy->name,
-							g_memdup(rdata, rdlen), rdlen, buddy->phsh);
+			bonjour_buddy_got_buddy_icon(buddy, rdata, rdlen);
 
 			/* We've got what we need; stop listening */
 			purple_input_remove(idata->null_query_handler);
