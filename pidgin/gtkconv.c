@@ -8324,11 +8324,6 @@ static gboolean gtk_conv_configure_cb(GtkWidget *w, GdkEventConfigure *event, gp
 	if (gdk_window_get_state(w->window) & GDK_WINDOW_STATE_MAXIMIZED)
 		return FALSE;
 	
-	/* don't save if nothing changed */
-	if (x == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/x") &&
-			y == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/y"))
-		return FALSE; /* carry on normally */
-		
 	/* don't save off-screen positioning */
 	if (x + event->width < 0 ||
 	    y + event->height < 0 ||
@@ -8376,10 +8371,10 @@ pidgin_conv_set_position_size(PidginWindow *win, int conv_x, int conv_y,
 static void
 pidgin_conv_restore_position(PidginWindow *win) {
 	pidgin_conv_set_position_size(win,
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/x"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/y"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/width"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/height"));
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/x"),
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/y"),
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/width"),
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/height"));
 }
 
 PidginWindow *
@@ -9028,6 +9023,7 @@ conv_placement_new_window(PidginConversation *conv)
 	PidginWindow *win;
 
 	win = pidgin_conv_window_new();
+
 	g_signal_connect(G_OBJECT(win->window), "configure_event", 
 			G_CALLBACK(gtk_conv_configure_cb), NULL);
 
