@@ -319,6 +319,7 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 {
 	PurplePresence *presence;
 	PurpleStatus *status;
+	BonjourBuddy *bb = buddy->proto_data;
 	const char *status_description;
 	const char *message;
 
@@ -336,6 +337,23 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 	purple_notify_user_info_add_pair(user_info, _("Status"), status_description);
 	if (message != NULL)
 		purple_notify_user_info_add_pair(user_info, _("Message"), message);
+
+	/* Only show first/last name if there is a nickname set (to avoid duplication) */
+	if (bb->nick != NULL) {
+		if (bb->first != NULL)
+			purple_notify_user_info_add_pair(user_info, _("First name"), bb->first);
+		if (bb->first != NULL)
+			purple_notify_user_info_add_pair(user_info, _("Last name"), bb->last);
+	}
+
+	if (bb->email != NULL)
+		purple_notify_user_info_add_pair(user_info, _("E-Mail"), bb->email);
+
+	if (bb->AIM != NULL)
+		purple_notify_user_info_add_pair(user_info, _("AIM Account"), bb->AIM);
+
+	if (bb->jid!= NULL)
+		purple_notify_user_info_add_pair(user_info, _("XMPP Account"), bb->jid);
 }
 
 static gboolean
