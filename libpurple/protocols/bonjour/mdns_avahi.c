@@ -379,7 +379,7 @@ void _mdns_delete_buddy(BonjourBuddy *buddy) {
 	buddy->mdns_impl_data = NULL;
 }
 
-void _mdns_retrieve_retrieve_buddy_icon(BonjourBuddy* buddy) {
+void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
 	PurpleConnection *conn = purple_account_get_connection(buddy->account);
 	BonjourData *bd = conn->proto_data;
 	AvahiSessionImplData *session_idata = bd->dns_sd_data->mdns_impl_data;

@@ -34,6 +34,6 @@ void _mdns_init_buddy(BonjourBuddy *buddy);
 
 void _mdns_delete_buddy(BonjourBuddy *buddy);
 
-void _mdns_retrieve_retrieve_buddy_icon(BonjourBuddy* buddy);
+void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy);
 
 #endif

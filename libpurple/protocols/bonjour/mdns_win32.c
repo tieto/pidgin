@@ -425,7 +425,7 @@ void _mdns_delete_buddy(BonjourBuddy *buddy) {
 	buddy->mdns_impl_data = NULL;
 }
 
-void _mdns_retrieve_retrieve_buddy_icon(BonjourBuddy* buddy) {
+void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
 	Win32BuddyImplData *idata = buddy->mdns_impl_data;
 	char svc_name[kDNSServiceMaxDomainName];
 

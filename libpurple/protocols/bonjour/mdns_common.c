@@ -71,7 +71,7 @@ bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char *s
  * Retrieve the buddy icon blob
  */
 void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy) {
-	_mdns_retrieve_retrieve_buddy_icon(buddy);
+	_mdns_retrieve_buddy_icon(buddy);
 }
 
 void
