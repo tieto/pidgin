@@ -427,6 +427,7 @@ x509_copy_certificate(PurpleCertificate *crt)
 	/* Create the certificate copy */
 	newcrt = g_new0(PurpleCertificate, 1);
 	newcrt->scheme = &x509_nss;
+	/* NSS does refcounting automatically */
 	newcrt->data = CERT_DupCertificate(crt_dat);
 	
 	return newcrt;
@@ -452,6 +453,7 @@ x509_destroy_certificate(PurpleCertificate * crt)
 	g_return_if_fail(crt_dat);
 
 	/* Finally we have the certificate. So let's kill it */
+	/* NSS does refcounting automatically */
 	CERT_DestroyCertificate(crt_dat);
 }
 
