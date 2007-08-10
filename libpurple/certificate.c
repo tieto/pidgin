@@ -99,6 +99,37 @@ purple_certificate_verify_destroy (PurpleCertificateVerificationRequest *vrq)
 	g_free(vrq);
 }
 
+void
+purple_certificate_verify_complete(PurpleCertificateVerificationRequest *vrq,
+				   PurpleCertificateVerificationStatus st)
+{
+	PurpleCertificateVerifier *vr;
+
+	g_return_if_fail(vrq);
+
+	/* Pass the results on to the request's callback */
+	(vrq->cb)(st, vrq->cb_data);
+
+	/* And now to eliminate the request */
+	/* Fetch the Verifier responsible... */
+	vr = vrq->verifier;
+	/* ...and order it to KILL */
+	(vr->destroy_request)(vrq);
+
+	/* Now the internals have been cleaned up, so clean up the libpurple-
+	   created elements */
+	g_free(vrq->subject_name);
+	purple_certificate_destroy_list(vrq->cert_chain);
+
+	/*  A structure born
+	 *          to much ado
+	 *                   and with so much within.
+	 * It reaches now
+	 *             its quiet end. */
+	g_free(vrq);
+}
+
+
 PurpleCertificate *
 purple_certificate_copy(PurpleCertificate *crt)
 {

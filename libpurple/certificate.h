@@ -369,6 +369,17 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 void
 purple_certificate_verify_destroy (PurpleCertificateVerificationRequest *vrq);
 
+/**
+ * Completes and destroys a VerificationRequest
+ *
+ * @param vrq           Request to conclude
+ * @param st            Success/failure code to pass to the request's
+ *                      completion callback.
+ */
+void
+purple_certificate_verify_complete(PurpleCertificateVerificationRequest *vrq,
+				   PurpleCertificateVerificationStatus st);
+
 /*@}*/
 
 /*****************************************************************************/
