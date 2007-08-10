@@ -455,6 +455,9 @@ x509_destroy_certificate(PurpleCertificate * crt)
 	/* Finally we have the certificate. So let's kill it */
 	/* NSS does refcounting automatically */
 	CERT_DestroyCertificate(crt_dat);
+
+	/* Delete the PurpleCertificate as well */
+	g_free(crt);
 }
 
 /** Determines whether one certificate has been issued and signed by another
