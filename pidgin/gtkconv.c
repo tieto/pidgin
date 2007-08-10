@@ -8540,6 +8540,22 @@ pidgin_conv_window_switch_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 		                              gtkconv->tab_cont));
 }
 
+static gboolean
+close_button_left_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
+{
+	gtk_label_set_markup(label, "×");
+	return FALSE;
+}
+
+static gboolean
+close_button_entered_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
+{
+	gtk_label_set_markup(label, "<b>×</b>");
+	return FALSE;
+}
+
+
+
 void
 pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 {
@@ -8562,7 +8578,10 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	/* Close button. */
 	gtkconv->close = gtk_event_box_new();
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(gtkconv->close), FALSE);
+	gtk_widget_set_events(gtkconv->close, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
 	close_image = gtk_label_new("×");
+	g_signal_connect(G_OBJECT(gtkconv->close), "enter-notify-event", G_CALLBACK(close_button_entered_cb), close_image);
+	g_signal_connect(G_OBJECT(gtkconv->close), "leave-notify-event", G_CALLBACK(close_button_left_cb), close_image);
 	gtk_widget_show(close_image);
 	gtk_container_add(GTK_CONTAINER(gtkconv->close), close_image);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
