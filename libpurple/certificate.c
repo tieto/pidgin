@@ -80,26 +80,6 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 }
 
 void
-purple_certificate_verify_destroy (PurpleCertificateVerificationRequest *vrq)
-{
-	PurpleCertificateVerifier *vr;
-
-	if (NULL == vrq) return;
-
-	/* Fetch the Verifier responsible... */
-	vr = vrq->verifier;
-	/* ...and order it to KILL */
-	(vr->destroy_request)(vrq);
-
-	/* Now the internals have been cleaned up, so clean up the libpurple-
-	   created elements */
-	g_free(vrq->subject_name);
-	purple_certificate_destroy_list(vrq->cert_chain);
-
-	g_free(vrq);
-}
-
-void
 purple_certificate_verify_complete(PurpleCertificateVerificationRequest *vrq,
 				   PurpleCertificateVerificationStatus st)
 {

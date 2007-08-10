@@ -361,15 +361,6 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 			   gpointer cb_data);
 
 /**
- * Disposes of a VerificationRequest once it is complete
- *
- * @param vrq           Request to destroy. Will be free()'d.
- *                      The certificate chain involved will also be destroyed.
- */
-void
-purple_certificate_verify_destroy (PurpleCertificateVerificationRequest *vrq);
-
-/**
  * Completes and destroys a VerificationRequest
  *
  * @param vrq           Request to conclude
