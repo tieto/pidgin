@@ -22,7 +22,7 @@
 
 gboolean _mdns_init_session(BonjourDnsSd *data);
 
-gboolean _mdns_publish(BonjourDnsSd *data, PublishType type);
+gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records);
 
 gboolean _mdns_browse(BonjourDnsSd *data);
 

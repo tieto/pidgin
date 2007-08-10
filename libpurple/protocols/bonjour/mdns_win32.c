@@ -243,61 +243,23 @@ gboolean _mdns_init_session(BonjourDnsSd *data) {
 	return TRUE;
 }
 
-gboolean _mdns_publish(BonjourDnsSd *data, PublishType type) {
+gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 	TXTRecordRef dns_data;
-	char portstring[6];
 	gboolean ret = TRUE;
-	const char *jid, *aim, *email;
-	DNSServiceErrorType set_ret;
+	DNSServiceErrorType set_ret = kDNSServiceErr_NoError;
 	Win32SessionImplData *idata = data->mdns_impl_data;
 
 	g_return_val_if_fail(idata != NULL, FALSE);
 
 	TXTRecordCreate(&dns_data, 256, NULL);
 
-	/* Convert the port to a string */
-	snprintf(portstring, sizeof(portstring), "%d", data->port_p2pj);
-
-	jid = purple_account_get_string(data->account, "jid", NULL);
-	aim = purple_account_get_string(data->account, "AIM", NULL);
-	email = purple_account_get_string(data->account, "email", NULL);
-
-	/* We should try to follow XEP-0174, but some clients have "issues", so we humor them.
-	 * See http://telepathy.freedesktop.org/wiki/SalutInteroperability
-	 */
-
-	/* Needed by iChat */
-	set_ret = TXTRecordSetValue(&dns_data, "txtvers", 1, "1");
-	/* Needed by Gaim/Pidgin <= 2.0.1 (remove at some point) */
-	if (set_ret == kDNSServiceErr_NoError)
-		set_ret = TXTRecordSetValue(&dns_data, "1st", strlen(data->first), data->first);
-	/* Needed by Gaim/Pidgin <= 2.0.1 (remove at some point) */
-	if (set_ret == kDNSServiceErr_NoError)
-		set_ret = TXTRecordSetValue(&dns_data, "last", strlen(data->last), data->last);
-	/* Needed by Adium */
-	if (set_ret == kDNSServiceErr_NoError)
-		set_ret = TXTRecordSetValue(&dns_data, "port.p2pj", strlen(portstring), portstring);
-	/* Needed by iChat, Gaim/Pidgin <= 2.0.1 */
-	if (set_ret == kDNSServiceErr_NoError)
-		set_ret = TXTRecordSetValue(&dns_data, "status", strlen(data->status), data->status);
-	if (set_ret == kDNSServiceErr_NoError)
-		set_ret = TXTRecordSetValue(&dns_data, "ver", strlen(VERSION), VERSION);
-	/* Currently always set to "!" since we don't support AV and wont ever be in a conference */
-	if (set_ret == kDNSServiceErr_NoError)
-		set_ret = TXTRecordSetValue(&dns_data, "vc", strlen(data->vc), data->vc);
-	if (set_ret == kDNSServiceErr_NoError && email != NULL && *email != '\0')
-		set_ret = TXTRecordSetValue(&dns_data, "email", strlen(email), email);
-	if (set_ret == kDNSServiceErr_NoError && jid != NULL && *jid != '\0')
-		set_ret = TXTRecordSetValue(&dns_data, "jid", strlen(jid), jid);
-	/* Nonstandard, but used by iChat */
-	if (set_ret == kDNSServiceErr_NoError && aim != NULL && *aim != '\0')
-		set_ret = TXTRecordSetValue(&dns_data, "AIM", strlen(aim), aim);
-	if (set_ret == kDNSServiceErr_NoError && data->msg != NULL && *data->msg != '\0')
-		set_ret = TXTRecordSetValue(&dns_data, "msg", strlen(data->msg), data->msg);
-	if (set_ret == kDNSServiceErr_NoError && data->phsh != NULL && *data->phsh != '\0')
-		set_ret = TXTRecordSetValue(&dns_data, "phsh", strlen(data->phsh), data->phsh);
-
-	/* TODO: ext, nick, node */
+	while (records) {
+		PurpleKeyValuePair *kvp = records->data;
+		set_ret = TXTRecordSetValue(&dns_data, kvp->key, strlen(kvp->value), kvp->value);
+		if (set_ret != kDNSServiceErr_NoError)
+			break;
+		records = records->next;
+	}
 
 	if (set_ret != kDNSServiceErr_NoError) {
 		purple_debug_error("bonjour", "Unable to allocate memory for text record.\n");

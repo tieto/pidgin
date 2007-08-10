@@ -267,10 +267,8 @@ gboolean _mdns_init_session(BonjourDnsSd *data) {
 	return TRUE;
 }
 
-gboolean _mdns_publish(BonjourDnsSd *data, PublishType type) {
+gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 	int publish_result = 0;
-	char portstring[6];
-	const char *jid, *aim, *email;
 	AvahiSessionImplData *idata = data->mdns_impl_data;
 	AvahiStringList *lst = NULL;
 
@@ -287,44 +285,11 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type) {
 		}
 	}
 
-	/* Convert the port to a string */
-	snprintf(portstring, sizeof(portstring), "%d", data->port_p2pj);
-
-	jid = purple_account_get_string(data->account, "jid", NULL);
-	aim = purple_account_get_string(data->account, "AIM", NULL);
-	email = purple_account_get_string(data->account, "email", NULL);
-
-	/* We should try to follow XEP-0174, but some clients have "issues", so we humor them.
-	 * See http://telepathy.freedesktop.org/wiki/SalutInteroperability
-	 */
-
-	/* Needed by iChat */
-	lst = avahi_string_list_add_pair(lst,"txtvers", "1");
-	/* Needed by Gaim/Pidgin <= 2.0.1 (remove at some point) */
-	lst = avahi_string_list_add_pair(lst, "1st", data->first);
-	/* Needed by Gaim/Pidgin <= 2.0.1 (remove at some point) */
-	lst = avahi_string_list_add_pair(lst, "last", data->last);
-	/* Needed by Adium */
-	lst = avahi_string_list_add_pair(lst, "port.p2pj", portstring);
-	/* Needed by iChat, Gaim/Pidgin <= 2.0.1 */
-	lst = avahi_string_list_add_pair(lst, "status", data->status);
-	/* Currently always set to "!" since we don't support AV and wont ever be in a conference */
-	lst = avahi_string_list_add_pair(lst, "vc", data->vc);
-	lst = avahi_string_list_add_pair(lst, "ver", VERSION);
-	if (email != NULL && *email != '\0')
-		lst = avahi_string_list_add_pair(lst, "email", email);
-	if (jid != NULL && *jid != '\0')
-		lst = avahi_string_list_add_pair(lst, "jid", jid);
-	/* Nonstandard, but used by iChat */
-	if (aim != NULL && *aim != '\0')
-		lst = avahi_string_list_add_pair(lst, "AIM", aim);
-	if (data->msg != NULL && *data->msg != '\0')
-		lst = avahi_string_list_add_pair(lst, "msg", data->msg);
-	if (data->phsh != NULL && *data->phsh != '\0')
-		lst = avahi_string_list_add_pair(lst, "phsh", data->phsh);
-
-	/* TODO: ext, nick, node */
-
+	while (records) {
+		PurpleKeyValuePair *kvp = records->data;
+		lst = avahi_string_list_add_pair(lst, kvp->key, kvp->value);
+		records = records->next;
+	}
 
 	/* Publish the service */
 	switch (type) {
