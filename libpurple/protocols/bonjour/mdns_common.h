@@ -42,6 +42,11 @@ void bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const ch
 void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy);
 
 /**
+ * Deal with a buddy icon update
+ */
+void bonjour_dns_sd_update_buddy_icon(BonjourDnsSd *data);
+
+/**
  * Advertise our presence within the dns-sd daemon and start
  * browsing for other bonjour peers.
  */

@@ -20,7 +20,7 @@
  * USA
  */
 %%
-headrs
+headers
 #include "common.h"
 %%
 ignore 
@@ -49,7 +49,7 @@ _wrap_gnt_tree_get_rows(PyGObject *self)
 		return NULL;
 	}
 	while (list) {
-		PyObject *obj = pyg_pointer_new(G_TYPE_POINTER, list->data);
+		PyObject *obj = list->data;
 		PyList_Append(py_list, obj);
 		Py_DECREF(obj);
 		list = list->next;
@@ -97,6 +97,81 @@ _wrap_gnt_tree_add_row_after(PyGObject *self, PyObject *args)
 			parent, bigbro);
 	g_list_free(list);
 
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+%%
+override gnt_tree_get_selection_data noargs
+static PyObject *
+_wrap_gnt_tree_get_selection_data(PyGObject *self)
+{
+	PyObject *ret = gnt_tree_get_selection_data(GNT_TREE(self->obj));
+	if (!ret)
+		ret = Py_None;
+	Py_INCREF(ret);
+	return ret;
+}
+%%
+override gnt_tree_change_text
+static PyObject *
+_wrap_gnt_tree_change_text(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+	static char *kwlist[] = { "key", "colno", "text", NULL };
+	char *text;
+	int colno;
+	gpointer key;
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs,"Ois:GntTree.change_text", kwlist, &key, &colno, &text))
+		return NULL;
+
+	gnt_tree_change_text(GNT_TREE(self->obj), key, colno, text);
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+%%
+override gnt_tree_set_row_flags
+static PyObject *
+_wrap_gnt_tree_set_row_flags(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+	static char *kwlist[] = { "key", "flag", NULL };
+	int flag;
+	gpointer key;
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs,"Oi:GntTree.set_row_flags", kwlist, &key, &flag))
+		return NULL;
+
+	gnt_tree_set_row_flags(GNT_TREE(self->obj), key, flag);
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+%%
+override gnt_tree_remove
+static PyObject *
+_wrap_gnt_tree_remove(PyGObject *self, PyObject *args, PyObject *kwargs)
+{
+	static char *kwlist[] = { "key", NULL };
+	gpointer key;
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwargs,"O:GntTree.remove", kwlist, &key))
+		return NULL;
+
+	gnt_tree_remove(GNT_TREE(self->obj), key);
+
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+%%
+override gnt_tree_set_selected
+static PyObject *
+_wrap_gnt_tree_set_selected(PyGObject *self, PyObject *args)
+{
+	gpointer key;
+	if (!PyArg_ParseTuple(args, "O:GntTree.set_selected", &key)) {
+		return NULL;
+	}
+	gnt_tree_set_selected(GNT_TREE(self->obj), key);
 	Py_INCREF(Py_None);
 	return Py_None;
 }

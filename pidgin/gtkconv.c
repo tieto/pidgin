@@ -6320,13 +6320,13 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			style = "color=\"#c4a000\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)	{
 			atk_object_set_description(accessibility_obj, _("Nick Said"));
-			style = "color=\"#204a87\" style=\"italic\" weight=\"bold\"";
+			style = "color=\"#204a87\" weight=\"bold\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
 			style = "color=\"#cc0000\" weight=\"bold\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
 			atk_object_set_description(accessibility_obj, _("New Event"));
-			style = "color=\"#888a85\" style=\"italic\"";
+			style = "color=\"#888a85\" weight=\"bold\"";
 		} else {
 			style = "";
 		}
@@ -8337,11 +8337,6 @@ static gboolean gtk_conv_configure_cb(GtkWidget *w, GdkEventConfigure *event, gp
 	if (gdk_window_get_state(w->window) & GDK_WINDOW_STATE_MAXIMIZED)
 		return FALSE;
 	
-	/* don't save if nothing changed */
-	if (x == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/x") &&
-			y == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/y"))
-		return FALSE; /* carry on normally */
-		
 	/* don't save off-screen positioning */
 	if (x + event->width < 0 ||
 	    y + event->height < 0 ||
@@ -8389,10 +8384,10 @@ pidgin_conv_set_position_size(PidginWindow *win, int conv_x, int conv_y,
 static void
 pidgin_conv_restore_position(PidginWindow *win) {
 	pidgin_conv_set_position_size(win,
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/x"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/y"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/width"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/height"));
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/x"),
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/y"),
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/width"),
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/height"));
 }
 
 PidginWindow *
@@ -9029,6 +9024,7 @@ conv_placement_new_window(PidginConversation *conv)
 	PidginWindow *win;
 
 	win = pidgin_conv_window_new();
+
 	g_signal_connect(G_OBJECT(win->window), "configure_event", 
 			G_CALLBACK(gtk_conv_configure_cb), NULL);
 
