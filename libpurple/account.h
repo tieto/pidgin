@@ -88,8 +88,8 @@ struct _PurpleAccountUiOps
 	                           const char *alias,
 	                           const char *message,
 	                           gboolean on_list,
-	                           GCallback authorize_cb,
-	                           GCallback deny_cb,
+	                           PurpleAccountRequestAuthorizationCb authorize_cb,
+	                           PurpleAccountRequestAuthorizationCb deny_cb,
 	                           void *user_data);
 
 	/** Close a pending request for authorization.  \a ui_handle is a handle
