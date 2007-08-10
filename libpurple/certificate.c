@@ -921,12 +921,35 @@ static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 {
 	PurpleCertificatePool *ca, *tls_peers;
-	PurpleCertificate *end_crt, *ca_crt;
+	PurpleCertificate *end_crt, *ca_crt, *peer_crt;
 	GList *chain = vrq->cert_chain;
 	GList *last;
 	gchar *ca_id;
 
-	/* First, check that the certificate chain is valid */
+	peer_crt = (PurpleCertificate *) chain->data;
+
+	/* First, check that the hostname matches */
+	if ( ! purple_certificate_check_subject_name(peer_crt,
+						     vrq->subject_name) ) {
+		gchar *sn = purple_certificate_get_subject_name(peer_crt);
+		
+		purple_debug_info("certificate/x509/tls_cached",
+				  "Name mismatch: Certificate given for %s "
+				  "has a name of %s\n",
+				  vrq->subject_name, sn);
+		g_free(sn);
+
+		/* Prompt the user to authenticate the certificate */
+		/* TODO: Provide the user with more guidance about why he is
+		   being prompted */
+		/* vrq will be completed by user_auth */
+		x509_tls_cached_user_auth(vrq);
+		return;
+	} /* if (name mismatch) */
+
+			
+	
+	/* Next, check that the certificate chain is valid */
 	if ( ! purple_certificate_check_signature_chain(chain) ) {
 		/* TODO: Tell the user where the chain broke? */
 		/* TODO: This error will hopelessly confuse any
@@ -1022,7 +1045,6 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 						 "tls_peers");
 
 	if (tls_peers) {
-		PurpleCertificate *peer_crt = (PurpleCertificate *)chain->data;
 		g_assert(purple_certificate_pool_store(tls_peers,
 						       vrq->subject_name,
 						       peer_crt) );
