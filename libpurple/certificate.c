@@ -901,7 +901,7 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 		purple_certificate_destroy(cached_crt);
 		g_byte_array_free(peer_fpr, TRUE);
 		g_byte_array_free(cached_fpr, TRUE);
-	} else {
+	} else { /*** Cached certificate was NOT found ***/
 		/* TODO: Prompt the user, etc. */
 		purple_debug_info("certificate/x509/tls_cached",
 				  "...Not in cache\n");
