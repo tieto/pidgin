@@ -529,14 +529,14 @@ x509_singleuse_verify_cb (PurpleCertificateVerificationRequest *vrq, gint id)
 	/* Signal what happened back to the caller */
 	if (1 == id) {		
 		/* Accepted! */
-		(vrq->cb)(PURPLE_CERTIFICATE_VALID, vrq->cb_data);
+		purple_certificate_verify_complete(vrq,
+						   PURPLE_CERTIFICATE_VALID);
 	} else {
 		/* Not accepted */
-		(vrq->cb)(PURPLE_CERTIFICATE_INVALID, vrq->cb_data);
-	}
+		purple_certificate_verify_complete(vrq,
+						   PURPLE_CERTIFICATE_INVALID);
 
-	/* Now clean up the request */
-	purple_certificate_verify_destroy(vrq);
+	}
 }
 
 static void
@@ -787,16 +787,15 @@ x509_tls_cached_user_auth_cb (PurpleCertificateVerificationRequest *vrq, gint id
 		
 		purple_certificate_pool_store(tls_peers, cache_id,
 					      vrq->cert_chain->data);
-			
-		(vrq->cb)(PURPLE_CERTIFICATE_VALID, vrq->cb_data);
+
+		purple_certificate_verify_complete(vrq,
+						   PURPLE_CERTIFICATE_VALID);
 	} else {
 		purple_debug_info("certificate/x509/tls_cached",
 				  "User REJECTED cert\n");
-		(vrq->cb)(PURPLE_CERTIFICATE_INVALID, vrq->cb_data);
+		purple_certificate_verify_complete(vrq,
+						   PURPLE_CERTIFICATE_INVALID);
 	}
-
-	/* Finish off the request */
-	purple_certificate_verify_destroy(vrq);
 }
 
 /* Validates a certificate by asking the user */
@@ -866,9 +865,12 @@ x509_tls_cached_peer_cert_changed(PurpleCertificateVerificationRequest *vrq)
 {
 	/* TODO: Prompt the user, etc. */
 
-	(vrq->cb)(PURPLE_CERTIFICATE_INVALID, vrq->cb_data);
-	/* Okay, we're done here */
-	purple_certificate_verify_destroy(vrq);
+	purple_debug_info("certificate/x509/tls_cached",
+			  "Certificate for %s does not match cached. "
+			  "Auto-rejecting!\n",
+			  vrq->subject_name);
+	
+	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_INVALID);
 	return;
 }
 
@@ -900,10 +902,9 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 	if (!memcmp(peer_fpr->data, cached_fpr->data, peer_fpr->len)) {
 		purple_debug_info("certificate/x509/tls_cached",
 				  "Peer cert matched cached\n");
-		(vrq->cb)(PURPLE_CERTIFICATE_VALID, vrq->cb_data);
-		
 		/* vrq is now finished */
-		purple_certificate_verify_destroy(vrq);
+		purple_certificate_verify_complete(vrq,
+						   PURPLE_CERTIFICATE_VALID);
 	} else {
 		purple_debug_info("certificate/x509/tls_cached",
 				  "Peer cert did NOT match cached\n");
@@ -1078,8 +1079,9 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 		purple_debug_error("certificate/x509/tls_cached",
 				   "Couldn't find local peers cache %s\nReturning INVALID to callback\n",
 				   tls_peers_name);
-		(vrq->cb)(PURPLE_CERTIFICATE_INVALID, vrq->cb_data);
-		purple_certificate_verify_destroy(vrq);
+
+		purple_certificate_verify_complete(vrq,
+						   PURPLE_CERTIFICATE_INVALID);
 		return;
 	}
 	
