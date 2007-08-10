@@ -8562,8 +8562,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	/* Close button. */
 	gtkconv->close = gtk_event_box_new();
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(gtkconv->close), FALSE);
-	close_image = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(close_image),"<b>×</b>");
+	close_image = gtk_label_new("×");
 	gtk_widget_show(close_image);
 	gtk_container_add(GTK_CONTAINER(gtkconv->close), close_image);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
@@ -8616,9 +8615,6 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	if (pidgin_conv_window_get_gtkconv_count(win) == 1) {
 		/* Er, bug in notebooks? Switch to the page manually. */
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), 0);
-
-		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), 
-					   purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/tabs"));
 	} else {
 		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), TRUE);
 	}
@@ -8717,6 +8713,12 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 					   !tabs_side && !angle && pidgin_conv_window_get_gtkconv_count(win) > 1, 
 					   TRUE, GTK_PACK_START);
 
+	if (pidgin_conv_window_get_gtkconv_count(win) == 1) 
+		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook),
+                                           !purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons") ||  
+                                           purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_LEFT ||
+                                           purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_RIGHT);
+
 	/* show the widgets */
 /*	gtk_widget_show(gtkconv->icon); */
 	gtk_widget_show(gtkconv->tab_label);
@@ -8739,12 +8741,6 @@ pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 	gtk_object_sink(GTK_OBJECT(gtkconv->tab_cont));
 
 	gtk_notebook_remove_page(GTK_NOTEBOOK(win->notebook), index);
-
-	/* go back to tabless */
-	if (pidgin_conv_window_get_gtkconv_count(win) <= 2) {
-		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), 
-  					   purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/tabs"));
-	}
 
 	win->gtkconvs = g_list_remove(win->gtkconvs, gtkconv);
 
