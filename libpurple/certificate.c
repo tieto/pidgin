@@ -740,7 +740,7 @@ static PurpleCertificatePool x509_tls_peers = {
 static PurpleCertificateVerifier x509_tls_cached;
 
 static void
-x509_tls_cached_unknown_peer_cb (PurpleCertificateVerificationRequest *vrq, gint id)
+x509_tls_cached_user_auth_cb (PurpleCertificateVerificationRequest *vrq, gint id)
 {
 	PurpleCertificatePool *tls_peers;
 	
@@ -768,8 +768,9 @@ x509_tls_cached_unknown_peer_cb (PurpleCertificateVerificationRequest *vrq, gint
 	purple_certificate_verify_destroy(vrq);
 }
 
+/* Validates a certificate by asking the user */
 static void
-x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
+x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq)
 {
 	gchar *sha_asc;
 	GByteArray *sha_bin;
@@ -819,8 +820,8 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		NULL,         /* No other user */
 		NULL,         /* No associated conversation */
 		vrq,
-		x509_tls_cached_unknown_peer_cb,
-		x509_tls_cached_unknown_peer_cb );
+		x509_tls_cached_user_auth_cb,
+		x509_tls_cached_user_auth_cb );
 	
 	/* Cleanup */
 	g_free(primary);
@@ -838,6 +839,14 @@ x509_tls_cached_peer_cert_changed(PurpleCertificateVerificationRequest *vrq)
 	/* Okay, we're done here */
 	purple_certificate_verify_destroy(vrq);
 	return;
+}
+
+/* For when we've never communicated with this party before */
+static void
+x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
+{
+	/* For now, just toss it to the user */
+	x509_tls_cached_user_auth(vrq);
 }
 
 static void
