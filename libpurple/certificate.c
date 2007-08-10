@@ -841,6 +841,50 @@ x509_tls_cached_peer_cert_changed(PurpleCertificateVerificationRequest *vrq)
 	return;
 }
 
+static void
+x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
+{
+	/* TODO: Looking this up by name over and over is expensive.
+	   Fix, please! */
+	PurpleCertificatePool *tls_peers =
+		purple_certificate_find_pool(x509_tls_cached.scheme_name,
+					     "tls_peers");
+
+	/* The peer's certificate should be the first in the list */
+	PurpleCertificate *peer_crt =
+		(PurpleCertificate *) vrq->cert_chain->data;
+	
+	PurpleCertificate *cached_crt;
+	GByteArray *peer_fpr, *cached_fpr;
+
+	/* Load up the cached certificate */
+	cached_crt = purple_certificate_pool_retrieve(
+		tls_peers, vrq->subject_name);
+	g_assert(cached_crt);
+
+	/* Now get SHA1 sums for both and compare them */
+	/* TODO: This is not an elegant way to compare certs */
+	peer_fpr = purple_certificate_get_fingerprint_sha1(peer_crt);
+	cached_fpr = purple_certificate_get_fingerprint_sha1(cached_crt);
+	if (!memcmp(peer_fpr->data, cached_fpr->data, peer_fpr->len)) {
+		purple_debug_info("certificate/x509/tls_cached",
+				  "Peer cert matched cached\n");
+		(vrq->cb)(PURPLE_CERTIFICATE_VALID, vrq->cb_data);
+		
+		/* vrq is now finished */
+		purple_certificate_verify_destroy(vrq);
+	} else {
+		purple_debug_info("certificate/x509/tls_cached",
+				  "Peer cert did NOT match cached\n");
+		/* vrq now becomes the problem of cert_changed */
+		x509_tls_cached_peer_cert_changed(vrq);
+	}
+	
+	purple_certificate_destroy(cached_crt);
+	g_byte_array_free(peer_fpr, TRUE);
+	g_byte_array_free(cached_fpr, TRUE);
+}
+
 /* For when we've never communicated with this party before */
 static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
@@ -852,7 +896,6 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 static void
 x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 {
-	PurpleCertificate *peer_crt = (PurpleCertificate *) vrq->cert_chain->data;
 	const gchar *tls_peers_name = "tls_peers"; /* Name of local cache */
 	PurpleCertificatePool *tls_peers;
 
@@ -879,38 +922,11 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 	purple_debug_info("certificate/x509/tls_cached",
 			  "Checking for cached cert...\n");
 	if (purple_certificate_pool_contains(tls_peers, vrq->subject_name)) {
-		PurpleCertificate *cached_crt;
-		GByteArray *peer_fpr, *cached_fpr;
-
 		purple_debug_info("certificate/x509/tls_cached",
 				  "...Found cached cert\n");
-				
-		/* Load up the cached certificate */
-		cached_crt = purple_certificate_pool_retrieve(
-			tls_peers, vrq->subject_name);
-
-		/* Now get SHA1 sums for both and compare them */
-		/* TODO: This is not an elegant way to compare certs */
-		peer_fpr = purple_certificate_get_fingerprint_sha1(peer_crt);
-		cached_fpr = purple_certificate_get_fingerprint_sha1(cached_crt);
-		if (!memcmp(peer_fpr->data, cached_fpr->data, peer_fpr->len)) {
-			purple_debug_info("certificate/x509/tls_cached",
-					  "Peer cert matched cached\n");
-			(vrq->cb)(PURPLE_CERTIFICATE_VALID, vrq->cb_data);
-
-			/* vrq is now finished */
-			purple_certificate_verify_destroy(vrq);
-		} else {
-			purple_debug_info("certificate/x509/tls_cached",
-					  "Peer cert did NOT match cached\n");
-			/* vrq now becomes the problem of cert_changed */
-			x509_tls_cached_peer_cert_changed(vrq);
-		}
-
-		purple_certificate_destroy(cached_crt);
-		g_byte_array_free(peer_fpr, TRUE);
-		g_byte_array_free(cached_fpr, TRUE);
-	} else { /*** Cached certificate was NOT found ***/
+		/* vrq is now the responsibility of cert_in_cache */
+		x509_tls_cached_cert_in_cache(vrq);
+	} else {
 		/* TODO: Prompt the user, etc. */
 		purple_debug_info("certificate/x509/tls_cached",
 				  "...Not in cache\n");
