@@ -920,8 +920,120 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 {
-	/* For now, just toss it to the user */
-	x509_tls_cached_user_auth(vrq);
+	PurpleCertificatePool *ca, *tls_peers;
+	PurpleCertificate *end_crt, *ca_crt;
+	GList *chain = vrq->cert_chain;
+	GList *last;
+	gchar *ca_id;
+
+	/* First, check that the certificate chain is valid */
+	if ( ! purple_certificate_check_signature_chain(chain) ) {
+		/* TODO: Tell the user where the chain broke? */
+		/* TODO: This error will hopelessly confuse any
+		   non-elite user. */
+		gchar *secondary;
+
+		secondary = g_strdup_printf(_("The certificate chain presented"
+					      " for %s is not valid."),
+					    vrq->subject_name);
+
+		/* TODO: Make this error either block the ensuing SSL
+		   connection error until the user dismisses this one, or
+		   stifle it. */
+		purple_notify_error(NULL, /* TODO: Probably wrong. */
+				    _("SSL Certificate Error"),
+				    _("Invalid certificate chain"),
+				    secondary );
+		g_free(secondary);
+
+		/* Okay, we're done here */
+		purple_certificate_verify_complete(vrq,
+						   PURPLE_CERTIFICATE_INVALID);
+	} /* if (signature chain not good) */
+
+	/* Next, attempt to verify the last certificate against a CA */
+	ca = purple_certificate_find_pool(x509_tls_cached.scheme_name, "ca");
+
+	/* If, for whatever reason, there is no Certificate Authority pool
+	   loaded, we will simply present it to the user for checking. */
+	if ( !ca ) {
+		purple_debug_error("certificate/x509/tls_cached",
+				   "No X.509 Certificate Authority pool "
+				   "could be found!\n");
+		
+		/* vrq will be completed by user_auth */
+		x509_tls_cached_user_auth(vrq);
+		return;
+	}
+
+	/* TODO: I don't have the Glib documentation handy; is this correct? */
+	last = g_list_last(chain);
+	end_crt = (PurpleCertificate *) last->data;
+
+	/* Attempt to look up the last certificate's issuer */
+	ca_id = purple_certificate_get_issuer_unique_id(end_crt);
+	if ( !purple_certificate_pool_contains(ca, ca_id) ) {
+		purple_debug_info("certificate/x509/tls_cached",
+				  "Certificate Authority with DN='%s' not "
+				  "found. I'll prompt the user, I guess.\n",
+				  ca_id);
+		g_free(ca_id);
+		/* vrq will be completed by user_auth */
+		x509_tls_cached_user_auth(vrq);
+		return;
+	}
+
+	ca_crt = purple_certificate_pool_retrieve(ca, ca_id);
+	g_free(ca_id);
+	g_assert(ca_crt);
+	
+	/* Check the signature */
+	if ( !purple_certificate_signed_by(end_crt, ca_crt) ) {
+		/* TODO: If signed_by ever returns a reason, maybe mention
+		   that, too. */
+		/* TODO: Also mention the CA involved. While I could do this
+		   now, a full DN is a little much with which to assault the
+		   user's poor, leaky eyes. */
+		/* TODO: This error message makes my eyes cross, and I wrote it */
+		gchar * secondary =
+			g_strdup_printf(_("The certificate chain presented by "
+					  "%s does not have a valid digital "
+					  "signature from the Certificate "
+					  "Authority it claims to have one "
+					  "from."),
+					vrq->subject_name);
+		
+		purple_notify_error(NULL, /* TODO: Probably wrong */
+				    _("SSL Certificate Error"),
+				    _("Invalid certificate authority"
+				      " signature"),
+				    secondary);
+		g_free(secondary);
+
+		/* Signal "bad cert" */
+		purple_certificate_verify_complete(vrq,
+						   PURPLE_CERTIFICATE_INVALID);
+		return;
+	} /* if (CA signature not good) */
+
+	/* If we reach this point, the certificate is good. */
+	/* Look up the local cache and store it there for future use */
+	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,
+						 "tls_peers");
+
+	if (tls_peers) {
+		PurpleCertificate *peer_crt = (PurpleCertificate *)chain->data;
+		g_assert(purple_certificate_pool_store(tls_peers,
+						       vrq->subject_name,
+						       peer_crt) );
+	} else {
+		purple_debug_error("certificate/x509/tls_cached",
+				   "Unable to locate tls_peers certificate "
+				   "cache.\n");
+	}
+	
+	/* Whew! Done! */
+	purple_certificate_verify_complete(vrq, PURPLE_CERTIFICATE_VALID);
 }
 
 static void
