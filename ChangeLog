@@ -15,6 +15,9 @@ version 2.1.1 (??/??/????):
 	* Slim new redesign of conversation tabs to maximize number of
 	  conversations that can fit in a window
 
+	Finch:
+	* Sound support (Eric Polino)
+
 version 2.1.0 (07/28/2007):
 	libpurple:
 	* Core changes to allow UIs to use second-granularity for scheduling.
