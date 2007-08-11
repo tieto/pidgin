@@ -32,13 +32,13 @@ static MsimMessage *msim_msg_new_v(va_list argp);
 /* Escape codes and associated replacement text, used for protocol message
  * escaping and unescaping. */
 static struct MSIM_ESCAPE_REPLACEMENT {
-    gchar *code;
-    gchar *text;
+	gchar *code;
+	gchar *text;
 } msim_escape_replacements[] = {
-    { "/1", "/" },
-    { "/2", "\\" },
-    /* { "/3", "|" }, */        /* Not used here -- only for within arrays */
-    { NULL, NULL }
+	{ "/1", "/" },
+	{ "/2", "\\" },
+	/* { "/3", "|" }, */      /* Not used here -- only for within arrays */
+	{ NULL, NULL }
 };
 
 /**
@@ -54,21 +54,21 @@ msim_unescape_or_escape(const gchar *original_msg, gboolean escape)
 {
 	gchar *tmp, *msg;
 	guint i;
-    struct MSIM_ESCAPE_REPLACEMENT* replacement;
+	struct MSIM_ESCAPE_REPLACEMENT* replacement;
 
-    /* Freed in loop below. */
-    msg = g_strdup(original_msg);
+	/* Freed in loop below. */
+	msg = g_strdup(original_msg);
 
 	/* Replace each code in msim_replacement_code with
 	 * corresponding entry in msim_replacement_text. */
-    for (i = 0; (replacement = &msim_escape_replacements[i]); ++i)	{
-        gchar *code, *text;
+	for (i = 0; (replacement = &msim_escape_replacements[i]); ++i) {
+		gchar *code, *text;
 
-        code = replacement->code;
-        text = replacement->text;
+		code = replacement->code;
+		text = replacement->text;
 
-        if (!code || !text)
-            break;
+		if (!code || !text)
+			break;
 
 		if (escape) {
 			tmp = str_replace(msg, text, code);
@@ -115,9 +115,9 @@ msim_msg_new(gboolean not_empty, ...)
 
 	if (not_empty) {
 		return msim_msg_new_v(argp);
-    } else {
+	} else {
 		return NULL;
-    }
+	}
 }
 
 /** Create a new message from va_list and its first argument.
@@ -134,9 +134,9 @@ msim_msg_new_v(va_list argp)
 	MsimMessageType type;
 	MsimMessage *msg;
 
-    GString *gs;
-    GList *gl;
-    MsimMessage *dict;
+	GString *gs;
+	GList *gl;
+	MsimMessage *dict;
 
 
 	/* Begin with an empty message. */
@@ -167,36 +167,36 @@ msim_msg_new_v(va_list argp)
 				break;
 
 			case MSIM_TYPE_BINARY:
-                gs = va_arg(argp, GString *);
+				gs = va_arg(argp, GString *);
 
-                g_return_val_if_fail(gs != NULL, FALSE);
+				g_return_val_if_fail(gs != NULL, FALSE);
 
-                /* msim_msg_free() will free this GString the caller created. */
-                msg = msim_msg_append(msg, key, type, gs);
-                break;
-            
-            case MSIM_TYPE_LIST:
-                gl = va_arg(argp, GList *);
+				/* msim_msg_free() will free this GString the caller created. */
+				msg = msim_msg_append(msg, key, type, gs);
+				break;
+			
+			case MSIM_TYPE_LIST:
+				gl = va_arg(argp, GList *);
 
-                g_return_val_if_fail(gl != NULL, FALSE);
+				g_return_val_if_fail(gl != NULL, FALSE);
 
-                msg = msim_msg_append(msg, key, type, gl);
-                break;
+				msg = msim_msg_append(msg, key, type, gl);
+				break;
 
-            case MSIM_TYPE_DICTIONARY:
-                dict = va_arg(argp, MsimMessage *);
+			case MSIM_TYPE_DICTIONARY:
+				dict = va_arg(argp, MsimMessage *);
 
-                g_return_val_if_fail(dict != NULL, FALSE);
+				g_return_val_if_fail(dict != NULL, FALSE);
 
-                msg = msim_msg_append(msg, key, type, dict);
-                break;
+				msg = msim_msg_append(msg, key, type, dict);
+				break;
 
 			default:
 				purple_debug_info("msim", "msim_send: unknown type %d\n", type);
 				break;
 		}
 	} while(key);
-	va_end(argp);	
+	va_end(argp);
 
 	return msg;
 }
@@ -205,16 +205,16 @@ msim_msg_new_v(va_list argp)
 GList *
 msim_msg_list_copy(GList *old)
 {
-    GList *new_list;
+	GList *new_list;
 
-    new_list = NULL;
+	new_list = NULL;
 
-    /* Deep copy (g_list_copy is shallow). Copy each string. */
-    for (; old != NULL; old = g_list_next(old)) {
-        new_list = g_list_append(new_list, g_strdup(old->data));
-    }
+	/* Deep copy (g_list_copy is shallow). Copy each string. */
+	for (; old != NULL; old = g_list_next(old)) {
+		new_list = g_list_append(new_list, g_strdup(old->data));
+	}
 
-    return new_list;
+	return new_list;
 }
 
 /** Free a GList * of gchar * strings. */
@@ -222,32 +222,32 @@ void
 msim_msg_list_free(GList *l)
 {
 
-    for (; l != NULL; l = g_list_next(l)) {
-        g_free((gchar *)(l->data));
-    }
-    g_list_free(l);
+	for (; l != NULL; l = g_list_next(l)) {
+		g_free((gchar *)(l->data));
+	}
+	g_list_free(l);
 }
 
 /** Parse a |-separated string into a new GList. Free with msim_msg_list_free(). */
 GList *
 msim_msg_list_parse(const gchar *raw)
 {
-    gchar **array;
-    GList *list;
-    guint i;
+	gchar **array;
+	GList *list;
+	guint i;
 
-    array = g_strsplit(raw, "|", 0);
-    list = NULL;
+	array = g_strsplit(raw, "|", 0);
+	list = NULL;
 
-    /* TODO: escape/unescape /3 <-> | within list elements */
-    
-    for (i = 0; array[i] != NULL; ++i) {
-        list = g_list_append(list, g_strdup(array[i]));
-    }
+	/* TODO: escape/unescape /3 <-> | within list elements */
+	
+	for (i = 0; array[i] != NULL; ++i) {
+		list = g_list_append(list, g_strdup(array[i]));
+	}
 
-    g_strfreev(array);
+	g_strfreev(array);
 
-    return list;
+	return list;
 }
 
 /** Clone an individual element.
@@ -262,8 +262,8 @@ msim_msg_clone_element(gpointer data, gpointer user_data)
 	MsimMessage **new;
 	gpointer new_data;
 				
-    GString *gs;
-    MsimMessage *dict;
+	GString *gs;
+	MsimMessage *dict;
 
 	elem = (MsimMessageElement *)data;
 	new = (MsimMessage **)user_data;
@@ -279,20 +279,20 @@ msim_msg_clone_element(gpointer data, gpointer user_data)
 			new_data = g_strdup((gchar *)elem->data);
 			break;
 
-        case MSIM_TYPE_LIST:
-            new_data = (gpointer)msim_msg_list_copy((GList *)(elem->data));
-            break;
+		case MSIM_TYPE_LIST:
+			new_data = (gpointer)msim_msg_list_copy((GList *)(elem->data));
+			break;
 
 		case MSIM_TYPE_BINARY:
-            gs = (GString *)elem->data;
+			gs = (GString *)elem->data;
 
-            new_data = g_string_new_len(gs->str, gs->len);
+			new_data = g_string_new_len(gs->str, gs->len);
 			break;
-        case MSIM_TYPE_DICTIONARY:
-            dict = (MsimMessage *)elem->data;
+		case MSIM_TYPE_DICTIONARY:
+			dict = (MsimMessage *)elem->data;
 
-            new_data = msim_msg_clone(dict);
-            break;
+			new_data = msim_msg_clone(dict);
+			break;
 
 		default:
 			purple_debug_info("msim", "msim_msg_clone_element: unknown type %d\n", elem->type);
@@ -315,7 +315,7 @@ msim_msg_clone(MsimMessage *old)
 
 	if (old == NULL) {
 		return NULL;
-    }
+	}
 
 	new = msim_msg_new(FALSE);
 
@@ -334,7 +334,7 @@ msim_msg_clone(MsimMessage *old)
 void
 msim_msg_free_element_data(MsimMessageElement *elem)
 {
-    switch (elem->type) {
+	switch (elem->type) {
 		case MSIM_TYPE_BOOLEAN:
 		case MSIM_TYPE_INTEGER:
 			/* Integer value stored in gpointer - no need to free(). */
@@ -353,16 +353,16 @@ msim_msg_free_element_data(MsimMessageElement *elem)
 			break;
 
 		case MSIM_TYPE_DICTIONARY:
-            msim_msg_free((MsimMessage *)elem->data);
+			msim_msg_free((MsimMessage *)elem->data);
 			break;
 			
 		case MSIM_TYPE_LIST:
-            g_list_free((GList *)elem->data);
+			g_list_free((GList *)elem->data);
 			break;
 
 		default:
 			purple_debug_info("msim", "msim_msg_free_element_data: "
-                    "not freeing unknown type %d\n", elem->type);
+					"not freeing unknown type %d\n", elem->type);
 			break;
 	}
 }
@@ -381,7 +381,7 @@ msim_msg_free_element(gpointer data, gpointer user_data)
 
 	elem = (MsimMessageElement *)data;
 
-    msim_msg_free_element_data(elem);
+	msim_msg_free_element_data(elem);
 
 	g_free(elem);
 }
@@ -395,7 +395,7 @@ msim_msg_free(MsimMessage *msg)
 		return;
 	}
 
-    msim_msg_dump("msim_msg_free: freeing %s", msg);
+	msim_msg_dump("msim_msg_free: freeing %s", msg);
 
 	g_list_foreach(msg, msim_msg_free_element, NULL);
 	g_list_free(msg);
@@ -409,7 +409,7 @@ msim_msg_send(MsimSession *session, MsimMessage *msg)
 	gboolean success;
 	
 	raw = msim_msg_pack(msg);
-    g_return_val_if_fail(raw != NULL, FALSE);
+	g_return_val_if_fail(raw != NULL, FALSE);
 	success = msim_send_raw(session, raw);
 	g_free(raw);
 
@@ -438,7 +438,7 @@ msim_send(MsimSession *session, ...)
 	gboolean success;
 	MsimMessage *msg;
 	va_list argp;
-    
+	
 	va_start(argp, session);
 	msg = msim_msg_new_v(argp);
 
@@ -478,7 +478,7 @@ msim_msg_element_new(const gchar *name, MsimMessageType type, gpointer data)
  *
  * @return The new message - must be assigned to as with GList*. For example:
  *
- * 		msg = msim_msg_append(msg, ...)
+ *     msg = msim_msg_append(msg, ...)
  *
  * The data parameter depends on the type given:
  *
@@ -507,7 +507,7 @@ msim_msg_append(MsimMessage *msg, const gchar *name,
 /** Insert a new element into a message, before the given element name.
  *
  * @param name_before Name of the element to insert the new element before. If 
- * 					  could not be found or NULL, new element will be inserted at end.
+ *                    could not be found or NULL, new element will be inserted at end.
  *
  * See msim_msg_append() for usage of other parameters, and an important note about return value.
  */
@@ -518,7 +518,7 @@ msim_msg_insert_before(MsimMessage *msg, const gchar *name_before,
 	MsimMessageElement *new_elem;
 	GList *node_before;
 
-	new_elem = msim_msg_element_new(name, type, data);	
+	new_elem = msim_msg_element_new(name, type, data);
 
 	node_before = msim_msg_get_node(msg, name_before);
 
@@ -530,8 +530,8 @@ msim_msg_insert_before(MsimMessage *msg, const gchar *name_before,
  */
 gchar *
 msim_msg_pack_using(MsimMessage *msg, 
-        GFunc gf, 
-        const gchar *sep, 
+		GFunc gf, 
+		const gchar *sep, 
 		const gchar *begin, const gchar *end)
 {
 	gchar **strings;
@@ -573,11 +573,11 @@ msim_msg_debug_string_element(gpointer data, gpointer user_data)
 	gchar *string;
 	GString *gs;
 	gchar *binary;
-	gchar ***items;	 	/* wow, a pointer to a pointer to a pointer */
-    
-    gchar *s;
-    GList *gl;
-    guint i;
+	gchar ***items;  /* wow, a pointer to a pointer to a pointer */
+	
+	gchar *s;
+	GList *gl;
+	guint i;
 
 	elem = (MsimMessageElement *)data;
 	items = user_data;
@@ -585,17 +585,17 @@ msim_msg_debug_string_element(gpointer data, gpointer user_data)
 	switch (elem->type) {
 		case MSIM_TYPE_INTEGER:
 			string = g_strdup_printf("%s(integer): %d", elem->name, 
-                    GPOINTER_TO_UINT(elem->data));
+					GPOINTER_TO_UINT(elem->data));
 			break;
 
 		case MSIM_TYPE_RAW:
 			string = g_strdup_printf("%s(raw): %s", elem->name, 
-                    elem->data ? (gchar *)elem->data : "(NULL)");
+					elem->data ? (gchar *)elem->data : "(NULL)");
 			break;
 
 		case MSIM_TYPE_STRING:
 			string = g_strdup_printf("%s(string): %s", elem->name, 
-                    elem->data ? (gchar *)elem->data : "(NULL)");
+					elem->data ? (gchar *)elem->data : "(NULL)");
 			break;
 
 		case MSIM_TYPE_BINARY:
@@ -611,36 +611,37 @@ msim_msg_debug_string_element(gpointer data, gpointer user_data)
 			break;
 
 		case MSIM_TYPE_DICTIONARY:
-            if (!elem->data)
-                s = g_strdup("(NULL)");
-            else
-                s = msim_msg_dump_to_str((MsimMessage *)elem->data);
+			if (!elem->data) {
+				s = g_strdup("(NULL)");
+			} else {
+				s = msim_msg_dump_to_str((MsimMessage *)elem->data);
+			}
 
-            if (!s)
-                s = g_strdup("(NULL, couldn't msim_msg_dump_to_str)");
+			if (!s) {
+				s = g_strdup("(NULL, couldn't msim_msg_dump_to_str)");
+			}
 
-            string = g_strdup_printf("%s(dict): %s", elem->name, s);
+			string = g_strdup_printf("%s(dict): %s", elem->name, s);
 
-            g_free(s);
+			g_free(s);
 			break;
 			
 		case MSIM_TYPE_LIST:
-            gs = g_string_new("");
-            g_string_append_printf(gs, "%s(list): \n", elem->name);
+			gs = g_string_new("");
+			g_string_append_printf(gs, "%s(list): \n", elem->name);
 
-            i = 0;
-            for (gl = (GList *)elem->data; gl != NULL; gl = g_list_next(gl))
-            {
-                g_string_append_printf(gs, " %d. %s\n", i, (gchar *)(gl->data));
-                ++i;
-            }
-            
-            string = gs->str;
+			i = 0;
+			for (gl = (GList *)elem->data; gl != NULL; gl = g_list_next(gl)) {
+				g_string_append_printf(gs, " %d. %s\n", i, (gchar *)(gl->data));
+				++i;
+			}
+			
+			string = gs->str;
 			break;
 
 		default:
 			string = g_strdup_printf("%s(unknown type %d", 
-                    elem->name ? elem->name : "(NULL)", elem->type);
+					elem->name ? elem->name : "(NULL)", elem->type);
 			break;
 	}
 
@@ -655,15 +656,15 @@ msim_msg_debug_string_element(gpointer data, gpointer user_data)
 void 
 msim_msg_dump(const gchar *fmt_string, MsimMessage *msg)
 {
-    gchar *debug_str;
+	gchar *debug_str;
 
-    g_return_if_fail(fmt_string != NULL);
+	g_return_if_fail(fmt_string != NULL);
 
-    debug_str = msim_msg_dump_to_str(msg);
-    
-    g_return_if_fail(debug_str != NULL);
+	debug_str = msim_msg_dump_to_str(msg);
+	
+	g_return_if_fail(debug_str != NULL);
 
-    purple_debug_info("msim_msg_dump", "debug_str=%s\n", debug_str);
+	purple_debug_info("msim_msg_dump", "debug_str=%s\n", debug_str);
 
 
 	purple_debug_info("msim", fmt_string, debug_str);
@@ -687,7 +688,7 @@ msim_msg_dump_to_str(MsimMessage *msg)
 				"\n", "<MsimMessage: \n", "\n/MsimMessage>");
 	}
 
-    return debug_str;
+	return debug_str;
 }
 
 /** Return a message element data as a new string for a raw protocol message, converting from other types (integer, etc.) if necessary.
@@ -701,10 +702,10 @@ msim_msg_dump_to_str(MsimMessage *msg)
 gchar *
 msim_msg_pack_element_data(MsimMessageElement *elem)
 {
-    GString *gs;
-    GList *gl;
+	GString *gs;
+	GList *gl;
 
-    g_return_val_if_fail(elem != NULL, NULL);
+	g_return_val_if_fail(elem != NULL, NULL);
 
 	switch (elem->type) {
 		case MSIM_TYPE_INTEGER:
@@ -716,19 +717,19 @@ msim_msg_pack_element_data(MsimMessageElement *elem)
 
 		case MSIM_TYPE_STRING:
 			/* Strings get escaped. msim_escape() creates a new string. */
-            g_return_val_if_fail(elem->data != NULL, NULL);
+			g_return_val_if_fail(elem->data != NULL, NULL);
 			return elem->data ? msim_escape((gchar *)elem->data) :
-                g_strdup("(NULL)");
+				g_strdup("(NULL)");
 
 		case MSIM_TYPE_BINARY:
-            gs = (GString *)elem->data;
-            /* Do not escape! */
-            return purple_base64_encode((guchar *)gs->str, gs->len);
+			gs = (GString *)elem->data;
+			/* Do not escape! */
+			return purple_base64_encode((guchar *)gs->str, gs->len);
 
 		case MSIM_TYPE_BOOLEAN:
 			/* Not used by messages in the wire protocol * -- see msim_msg_pack_element.
-             * Only used by dictionaries, see msim_msg_pack_element_dict. */
-            return elem->data ? g_strdup("On") : g_strdup("Off");
+			 * Only used by dictionaries, see msim_msg_pack_element_dict. */
+			return elem->data ? g_strdup("On") : g_strdup("Off");
 
 		case MSIM_TYPE_DICTIONARY:
 			/* TODO: pack using k=v\034k2=v2\034... */
@@ -736,22 +737,22 @@ msim_msg_pack_element_data(MsimMessageElement *elem)
 			
 		case MSIM_TYPE_LIST:
 			/* Pack using a|b|c|d|... */
-            gs = g_string_new("");
+			gs = g_string_new("");
 
-            for (gl = (GList *)elem->data; gl != NULL; gl = g_list_next(gl)) {
-                g_string_append_printf(gs, "%s", (gchar*)(gl->data));
-                
-                /* All but last element is separated by a bar. */
-                if (g_list_next(gl)) 
-                    g_string_append(gs, "|");
-            }
-            
-            return gs->str;
+			for (gl = (GList *)elem->data; gl != NULL; gl = g_list_next(gl)) {
+				g_string_append_printf(gs, "%s", (gchar*)(gl->data));
+				
+				/* All but last element is separated by a bar. */
+				if (g_list_next(gl)) 
+					g_string_append(gs, "|");
+			}
+			
+			return gs->str;
 
 		default:
 			purple_debug_info("msim", "field %s, unknown type %d\n", 
-                    elem->name ? elem->name : "(NULL)", 
-                    elem->type);
+					elem->name ? elem->name : "(NULL)", 
+					elem->type);
 			return NULL;
 	}
 }
@@ -763,11 +764,11 @@ msim_msg_pack_element_data(MsimMessageElement *elem)
 static void
 msim_msg_pack_element_dict(gpointer data, gpointer user_data)
 {
-    MsimMessageElement *elem;
-    gchar *string, *data_string, ***items;
+	MsimMessageElement *elem;
+	gchar *string, *data_string, ***items;
 
-    elem = (MsimMessageElement *)data;
-    items = (gchar ***)user_data;
+	elem = (MsimMessageElement *)data;
+	items = (gchar ***)user_data;
 
 	/* Exclude elements beginning with '_' from packed protocol messages. */
 	if (elem->name[0] == '_') {
@@ -776,7 +777,7 @@ msim_msg_pack_element_dict(gpointer data, gpointer user_data)
 
 	data_string = msim_msg_pack_element_data(elem);
 
-    g_return_if_fail(data_string != NULL);
+	g_return_if_fail(data_string != NULL);
 
 	switch (elem->type) {
 		/* These types are represented by key name/value pairs (converted above). */
@@ -786,7 +787,7 @@ msim_msg_pack_element_dict(gpointer data, gpointer user_data)
 		case MSIM_TYPE_BINARY:
 		case MSIM_TYPE_DICTIONARY:
 		case MSIM_TYPE_LIST:
-		case MSIM_TYPE_BOOLEAN:     /* Boolean is On or Off */
+		case MSIM_TYPE_BOOLEAN: /* Boolean is On or Off */
 			string = g_strconcat(elem->name, "=", data_string, NULL);
 			break;
 
@@ -883,9 +884,9 @@ msim_msg_pack(MsimMessage *msg)
 gchar *
 msim_msg_pack_dict(MsimMessage *msg)
 {
-    g_return_val_if_fail(msg != NULL, NULL);
+	g_return_val_if_fail(msg != NULL, NULL);
 
-    return msim_msg_pack_using(msg, msim_msg_pack_element_dict, "\034", "", "");
+	return msim_msg_pack_using(msg, msim_msg_pack_element_dict, "\034", "", "");
 }
 
 /** 
@@ -899,37 +900,37 @@ MsimMessage *
 msim_parse(gchar *raw)
 {
 	MsimMessage *msg;
-    gchar *token;
-    gchar **tokens;
-    gchar *key;
-    gchar *value;
-    int i;
+	gchar *token;
+	gchar **tokens;
+	gchar *key;
+	gchar *value;
+	int i;
 
-    g_return_val_if_fail(raw != NULL, NULL);
+	g_return_val_if_fail(raw != NULL, NULL);
 
-    purple_debug_info("msim", "msim_parse: got <%s>\n", raw);
+	purple_debug_info("msim", "msim_parse: got <%s>\n", raw);
 
-    key = NULL;
+	key = NULL;
 
-    /* All messages begin with a \. */
-    if (raw[0] != '\\' || raw[1] == 0) {
-        purple_debug_info("msim", "msim_parse: incomplete/bad string, "
-                "missing initial backslash: <%s>\n", raw);
-        /* XXX: Should we try to recover, and read to first backslash? */
+	/* All messages begin with a \. */
+	if (raw[0] != '\\' || raw[1] == 0) {
+		purple_debug_info("msim", "msim_parse: incomplete/bad string, "
+				"missing initial backslash: <%s>\n", raw);
+		/* XXX: Should we try to recover, and read to first backslash? */
 
-        g_free(raw);
-        return NULL;
-    }
+		g_free(raw);
+		return NULL;
+	}
 
-    msg = msim_msg_new(FALSE);
+	msg = msim_msg_new(FALSE);
 
-    for (tokens = g_strsplit(raw + 1, "\\", 0), i = 0; 
-            (token = tokens[i]);
-            i++) {
+	for (tokens = g_strsplit(raw + 1, "\\", 0), i = 0; 
+			(token = tokens[i]);
+			i++) {
 #ifdef MSIM_DEBUG_PARSE
-        purple_debug_info("msim", "tok=<%s>, i%2=%d\n", token, i % 2);
+		purple_debug_info("msim", "tok=<%s>, i%2=%d\n", token, i % 2);
 #endif
-        if (i % 2) {
+		if (i % 2) {
 			/* Odd-numbered ordinal is a value. */
 
 			value = token;
@@ -941,80 +942,80 @@ msim_parse(gchar *raw)
 #ifdef MSIM_DEBUG_PARSE
 			purple_debug_info("msim", "insert string: |%s|=|%s|\n", key, value);
 #endif
-        } else {
+		} else {
 			/* Even numbered indexes are key names. */
-            key = token;
-        }
-    }
-    g_strfreev(tokens);
+			key = token;
+		}
+	}
+	g_strfreev(tokens);
 
-    /* Can free now since all data was copied to hash key/values */
-    g_free(raw);
+	/* Can free now since all data was copied to hash key/values */
+	g_free(raw);
 
-    return msg;
+	return msg;
 }
 
 /**
  * Parse a \x1c-separated "dictionary" of key=value pairs into a hash table.
  *
  * @param body_str The text of the dictionary to parse. Often the
- *                  value for the 'body' field.
+ *                 value for the 'body' field.
  *
  * @return Hash table of the keys and values. Must g_hash_table_destroy() when done.
  */
 GHashTable *
 msim_parse_body(const gchar *body_str)
 {
-    GHashTable *table;
-    gchar *item;
-    gchar **items;
-    gchar **elements;
-    guint i;
+	GHashTable *table;
+	gchar *item;
+	gchar **items;
+	gchar **elements;
+	guint i;
 
-    g_return_val_if_fail(body_str != NULL, NULL);
+	g_return_val_if_fail(body_str != NULL, NULL);
 
-    table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
  
-    for (items = g_strsplit(body_str, "\x1c", 0), i = 0; 
-        (item = items[i]);
-        i++) {
-        gchar *key, *value;
+	for (items = g_strsplit(body_str, "\x1c", 0), i = 0; 
+		(item = items[i]);
+		i++) {
+		gchar *key, *value;
 
-        elements = g_strsplit(item, "=", 2);
+		elements = g_strsplit(item, "=", 2);
 
-        key = elements[0];
-        if (!key) {
-            purple_debug_info("msim", "msim_parse_body(%s): null key\n", 
+		key = elements[0];
+		if (!key) {
+			purple_debug_info("msim", "msim_parse_body(%s): null key\n", 
 					body_str);
-            g_strfreev(elements);
-            break;
-        }
+			g_strfreev(elements);
+			break;
+		}
 
-        value = elements[1];
-        if (!value) {
-            purple_debug_info("msim", "msim_parse_body(%s): null value\n", 
+		value = elements[1];
+		if (!value) {
+			purple_debug_info("msim", "msim_parse_body(%s): null value\n", 
 					body_str);
-            g_strfreev(elements);
-            break;
-        }
+			g_strfreev(elements);
+			break;
+		}
 
 #ifdef MSIM_DEBUG_PARSE
-        purple_debug_info("msim", "-- %s: %s\n", key ? key : "(NULL)", 
-                value ? value : "(NULL)");
+		purple_debug_info("msim", "-- %s: %s\n", key ? key : "(NULL)", 
+				value ? value : "(NULL)");
 #endif
 
-        /* XXX: This overwrites duplicates. */
-        /* TODO: make the GHashTable values be GList's, and append to the list if 
-         * there is already a value of the same key name. This is important for
-         * the WebChallenge message. */
-        g_hash_table_insert(table, g_strdup(key), g_strdup(value));
-        
-        g_strfreev(elements);
-    }
+		/* XXX: This overwrites duplicates. */
+		/* TODO: make the GHashTable values be GList's, and append to the list if 
+		 * there is already a value of the same key name. This is important for
+		 * the WebChallenge message. */
+		g_hash_table_insert(table, g_strdup(key), g_strdup(value));
+		
+		g_strfreev(elements);
+	}
 
-    g_strfreev(items);
+	g_strfreev(items);
 
-    return table;
+	return table;
 }
 
 /** Search for and return the node in msg, matching name, or NULL. 
@@ -1046,7 +1047,7 @@ msim_msg_get_node(MsimMessage *msg, const gchar *name)
 
 		if (strcmp(elem->name, name) == 0) {
 			return i;
-        }
+		}
 	}
 	return NULL;
 }
@@ -1069,9 +1070,9 @@ msim_msg_get(MsimMessage *msg, const gchar *name)
 	node = msim_msg_get_node(msg, name);
 	if (node) {
 		return (MsimMessageElement *)node->data;
-    } else {
+	} else {
 		return NULL;
-    }
+	}
 }
 
 /** Return the data of an element of a given name, as a string.
@@ -1090,7 +1091,7 @@ msim_msg_get_string(MsimMessage *msg, const gchar *name)
 	MsimMessageElement *elem;
 
 	elem = msim_msg_get(msg, name);
-    g_return_val_if_fail(elem != NULL , NULL);
+	g_return_val_if_fail(elem != NULL , NULL);
 
 	switch (elem->type) {
 		case MSIM_TYPE_INTEGER:
@@ -1116,59 +1117,58 @@ msim_msg_get_string(MsimMessage *msg, const gchar *name)
 GList *
 msim_msg_get_list(MsimMessage *msg, const gchar *name)
 {
-    MsimMessageElement *elem;
+	MsimMessageElement *elem;
 
-    elem = msim_msg_get(msg, name);
-    if (!elem) {
-        return NULL;
-    }
+	elem = msim_msg_get(msg, name);
+	if (!elem) {
+		return NULL;
+	}
 
-    switch (elem->type) {
-        case MSIM_TYPE_LIST:
-            return msim_msg_list_copy((GList *)elem->data);
+	switch (elem->type) {
+		case MSIM_TYPE_LIST:
+			return msim_msg_list_copy((GList *)elem->data);
 
-        case MSIM_TYPE_RAW:
-            return msim_msg_list_parse((gchar *)elem->data);
+		case MSIM_TYPE_RAW:
+			return msim_msg_list_parse((gchar *)elem->data);
 
-        default:
-            purple_debug_info("msim_msg_get_list", "type %d unknown, name %s\n",
-                    elem->type, name ? name : "(NULL)");
-            return NULL;
-    }
+		default:
+			purple_debug_info("msim_msg_get_list", "type %d unknown, name %s\n",
+					elem->type, name ? name : "(NULL)");
+			return NULL;
+	}
 }
 
 /** Parse a \034-deliminated and =-separated string into a dictionary. TODO */
 MsimMessage *
 msim_msg_dictionary_parse(gchar *raw)
 {
-    /* TODO - get code from msim_parse_body, but parse into MsimMessage */
-    return NULL;
+	/* TODO - get code from msim_parse_body, but parse into MsimMessage */
+	return NULL;
 }
 
 /** Return an element as a new dictionary. Caller frees with msim_msg_free(). */
 MsimMessage *
 msim_msg_get_dictionary(MsimMessage *msg, const gchar *name)
 {
-    MsimMessageElement *elem;
+	MsimMessageElement *elem;
 
-    elem = msim_msg_get(msg, name);
-    if (!elem)
-    {
-        return NULL;
-    }
+	elem = msim_msg_get(msg, name);
+	if (!elem) {
+		return NULL;
+	}
 
-    switch (elem->type) {
-        case MSIM_TYPE_DICTIONARY:
-            return msim_msg_clone((MsimMessage *)elem->data);
-        
-        case MSIM_TYPE_RAW:
-            return msim_msg_dictionary_parse((gchar *)elem->data);
+	switch (elem->type) {
+		case MSIM_TYPE_DICTIONARY:
+			return msim_msg_clone((MsimMessage *)elem->data);
+		
+		case MSIM_TYPE_RAW:
+			return msim_msg_dictionary_parse((gchar *)elem->data);
 
-        default:
-            purple_debug_info("msim_msg_get_dictionary", "type %d unknown, name %s\n",
-                    elem->type, name ? name : "(NULL)");
-            return NULL;
-    }
+		default:
+			purple_debug_info("msim_msg_get_dictionary", "type %d unknown, name %s\n",
+					elem->type, name ? name : "(NULL)");
+			return NULL;
+	}
 }
 
 /** Return the data of an element of a given name, as an integer.
@@ -1190,7 +1190,7 @@ msim_msg_get_integer(MsimMessage *msg, const gchar *name)
 
 	if (!elem) {
 		return 0;
-    }
+	}
 
 	switch (elem->type) {
 		case MSIM_TYPE_INTEGER:
@@ -1220,12 +1220,12 @@ msim_msg_get_binary(MsimMessage *msg, const gchar *name,
 {
 	MsimMessageElement *elem;
 				
-    GString *gs;
+	GString *gs;
 
 	elem = msim_msg_get(msg, name);
-    if (!elem) {
-        return FALSE;
-    }
+	if (!elem) {
+		return FALSE;
+	}
 
 	switch (elem->type) {
 		case MSIM_TYPE_RAW:
@@ -1253,15 +1253,15 @@ msim_msg_get_binary(MsimMessage *msg, const gchar *name,
 			return TRUE;
 
 		case MSIM_TYPE_BINARY:
-            gs = (GString *)elem->data;
+			gs = (GString *)elem->data;
 
-            /* Duplicate data, so caller can g_free() it. */
-            *binary_data = g_new0(char, gs->len);
-            memcpy(*binary_data, gs->str, gs->len);
+			/* Duplicate data, so caller can g_free() it. */
+			*binary_data = g_new0(char, gs->len);
+			memcpy(*binary_data, gs->str, gs->len);
 
-            *binary_length = gs->len;
+			*binary_length = gs->len;
 
-            return TRUE;
+			return TRUE;
 
 
 			/* Rejected because if it isn't already a GString, have to g_new0 it and

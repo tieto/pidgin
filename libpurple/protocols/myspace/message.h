@@ -25,24 +25,24 @@
 #include <glib.h>
 
 /* Types */
-#define MsimMessage GList		/* #define instead of typedef to avoid casting */
+#define MsimMessage GList               /* #define instead of typedef to avoid casting */
 typedef struct _MsimMessageElement
 {
-	const gchar *name;				/**< Textual name of element. */
-	guint type;						/**< MSIM_TYPE_* code. */
-	gpointer data;					/**< Pointer to data, or GUINT_TO_POINTER for int/bool. */
+	const gchar *name;              /**< Textual name of element. */
+	guint type;                     /**< MSIM_TYPE_* code. */
+	gpointer data;                  /**< Pointer to data, or GUINT_TO_POINTER for int/bool. */
 } MsimMessageElement;
 
 typedef gchar MsimMessageType;
 
 /* Protocol field types */
-#define MSIM_TYPE_RAW			'-'
-#define MSIM_TYPE_INTEGER		'i'
-#define MSIM_TYPE_STRING		's'
-#define MSIM_TYPE_BINARY		'b'
-#define MSIM_TYPE_BOOLEAN		'f'
-#define MSIM_TYPE_DICTIONARY	'd'
-#define MSIM_TYPE_LIST			'l'
+#define MSIM_TYPE_RAW            '-'
+#define MSIM_TYPE_INTEGER        'i'
+#define MSIM_TYPE_STRING         's'
+#define MSIM_TYPE_BINARY         'b'
+#define MSIM_TYPE_BOOLEAN        'f'
+#define MSIM_TYPE_DICTIONARY     'd'
+#define MSIM_TYPE_LIST           'l'
 
 gchar *msim_escape(const gchar *msg);
 gchar *msim_unescape(const gchar *msg);
@@ -76,14 +76,14 @@ struct _MsimSession;
 #define NORETURN_ATTR __attribute__ ((__noreturn__))
 /* __sentinel__ attribute was introduced in gcc 3.5 */
 #if (GCC_VERSION >= 3005)
-  #define SENTINEL_ATTR __attribute__ ((__sentinel__(0)))
+	#define SENTINEL_ATTR __attribute__ ((__sentinel__(0)))
 #else
- #define SENTINEL_ATTR
+	#define SENTINEL_ATTR
 #endif /* gcc >= 3.5 */
 #else
-  #define FORMAT_ATTR(pos)
-  #define NORETURN_ATTR
-  #define SENTINEL_ATTR
+	#define FORMAT_ATTR(pos)
+	#define NORETURN_ATTR
+	#define SENTINEL_ATTR
 #endif 
 
 /* Cause gcc to emit "a missing sentinel in function call" if forgot

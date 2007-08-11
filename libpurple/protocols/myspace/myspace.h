@@ -22,7 +22,7 @@
 
 /* Other includes */
 #include <string.h>
-#include <errno.h>	/* for EAGAIN */
+#include <errno.h>/* for EAGAIN */
 #include <stdarg.h>
 #include <math.h>
 
@@ -52,20 +52,20 @@
 
 /* Conditional compilation options */
 /* Send third-party client version? (Recognized by us and Miranda's plugin) */
-/*#define MSIM_SEND_CLIENT_VERSION      */
+/*#define MSIM_SEND_CLIENT_VERSION              */
 
 /* Debugging options */
-/*#define MSIM_DEBUG_MSG			    */
+/*#define MSIM_DEBUG_MSG                */
 /* Low-level and rarely needed */
-/*#define MSIM_DEBUG_PARSE 				*/
-/*#define MSIM_DEBUG_LOGIN_CHALLENGE	*/
-/*#define MSIM_DEBUG_RXBUF				*/
+/*#define MSIM_DEBUG_PARSE             */
+/*#define MSIM_DEBUG_LOGIN_CHALLENGE*/
+/*#define MSIM_DEBUG_RXBUF            */
 
 /* Define to cause init_plugin() to run some tests and print
  * the results to the Purple debug log, then exit. Useful to 
  * run with 'pidgin -d' to see the output. Don't define if
  * you want to actually use the plugin! */
-/*#define MSIM_SELF_TEST				*/
+/*#define MSIM_SELF_TEST            */
 
 /* Constants */
 
@@ -73,7 +73,7 @@
  * on the official client (build 679) and on the 'new password' field at
  * http://settings.myspace.com/index.cfm?fuseaction=user.changepassword
  * (though curiously, not on the 'current password' field). */
-#define MSIM_MAX_PASSWORD_LENGTH 	10
+#define MSIM_MAX_PASSWORD_LENGTH    10
 
 /* Build version of MySpaceIM to report to servers (1.0.xxx.0) */
 #define MSIM_CLIENT_VERSION         697
@@ -86,24 +86,24 @@
 #define MSIM_PRPL_VERSION_STRING    "0.13"
 
 /* Default server */
-#define MSIM_SERVER         "im.myspace.akadns.net"
-#define MSIM_PORT           1863        /* TODO: alternate ports and automatic */
+#define MSIM_SERVER                 "im.myspace.akadns.net"
+#define MSIM_PORT                   1863        /* TODO: alternate ports and automatic */
 
 /* Time between keepalives (seconds) - if no data within this time, is dead. */
-#define MSIM_KEEPALIVE_INTERVAL         (3 * 60)
+#define MSIM_KEEPALIVE_INTERVAL     (3 * 60)
 
 /* Time to check if alive (milliseconds) */
 #define MSIM_KEEPALIVE_INTERVAL_CHECK   (30 * 1000)
 
 /* Time to check for new mail (milliseconds) */
-#define MSIM_MAIL_INTERVAL_CHECK        (60 * 1000) 
+#define MSIM_MAIL_INTERVAL_CHECK    (60 * 1000) 
 
 
 /* Constants */
-#define HASH_SIZE           0x14        /**< Size of SHA-1 hash for login */
-#define NONCE_SIZE          0x20        /**< Half of decoded 'nc' field */
-#define MSIM_READ_BUF_SIZE  (15 * 1024) /**< Receive buffer size */
-#define MSIM_FINAL_STRING   "\\final\\" /**< Message end marker */
+#define HASH_SIZE                   0x14        /**< Size of SHA-1 hash for login */
+#define NONCE_SIZE                  0x20        /**< Half of decoded 'nc' field */
+#define MSIM_READ_BUF_SIZE          (15 * 1024) /**< Receive buffer size */
+#define MSIM_FINAL_STRING           "\\final\\" /**< Message end marker */
 
 /* Messages */
 #define MSIM_BM_INSTANT             1
@@ -114,10 +114,10 @@
 #define MSIM_BM_UNOFFICIAL_CLIENT   200
 
 /* Authentication algorithm for login2 */
-#define MSIM_AUTH_ALGORITHM	196610
+#define MSIM_AUTH_ALGORITHM         196610
 
 /* Recognized challenge length */
-#define MSIM_AUTH_CHALLENGE_LENGTH      0x40
+#define MSIM_AUTH_CHALLENGE_LENGTH  0x40
 
 /* TODO: obtain IPs of network interfaces from user's machine, instead of
  * hardcoding these values below (used in msim_compute_login_response). 
@@ -130,25 +130,25 @@
  */
 
 #define MSIM_LOGIN_IP_LIST  "\x00\x00\x00\x00\x05\x7f\x00\x00\x01\x00\x00\x00\x00\x0a\x00\x00\x40\xc0\xa8\x58\x01\xc0\xa8\x3c\x01"
-#define MSIM_LOGIN_IP_LIST_LEN	25
+#define MSIM_LOGIN_IP_LIST_LEN         25
 
 /* Indexes into status string (0|1|2|3|..., but 0 always empty) */
-#define MSIM_STATUS_ORDINAL_EMPTY		0
-#define MSIM_STATUS_ORDINAL_UNKNOWNs	1
-#define MSIM_STATUS_ORDINAL_ONLINE		2
-#define MSIM_STATUS_ORDINAL_UNKNOWNss	3
-#define MSIM_STATUS_ORDINAL_HEADLINE	4
-#define MSIM_STATUS_ORDINAL_UNKNOWNls	5
-#define MSIM_STATUS_ORDINAL_UNKNOWN		6
-#define MSIM_STATUS_ORDINAL_UNKNOWN1	7
-#define MSIM_STATUS_ORDINAL_UNKNOWNp	8
-#define MSIM_STATUS_ORDINAL_UNKNOWN2	9
+#define MSIM_STATUS_ORDINAL_EMPTY       0
+#define MSIM_STATUS_ORDINAL_UNKNOWNs    1
+#define MSIM_STATUS_ORDINAL_ONLINE      2
+#define MSIM_STATUS_ORDINAL_UNKNOWNss   3
+#define MSIM_STATUS_ORDINAL_HEADLINE    4
+#define MSIM_STATUS_ORDINAL_UNKNOWNls   5
+#define MSIM_STATUS_ORDINAL_UNKNOWN     6
+#define MSIM_STATUS_ORDINAL_UNKNOWN1    7
+#define MSIM_STATUS_ORDINAL_UNKNOWNp    8
+#define MSIM_STATUS_ORDINAL_UNKNOWN2    9
 
 /* Status codes - states a buddy (or you!) can be in. */
-#define MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN		0
-#define MSIM_STATUS_CODE_ONLINE			1
-#define MSIM_STATUS_CODE_IDLE           2
-#define MSIM_STATUS_CODE_AWAY			5
+#define MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN    0
+#define MSIM_STATUS_CODE_ONLINE               1
+#define MSIM_STATUS_CODE_IDLE                 2
+#define MSIM_STATUS_CODE_AWAY                 5
 
 /* Text formatting bits for <f s=#> */
 #define MSIM_TEXT_BOLD                  1
@@ -178,37 +178,35 @@
 /* Everything needed to keep track of a session. */
 typedef struct _MsimSession
 {
-    guint magic;                        /**< MSIM_SESSION_STRUCT_MAGIC */
-    PurpleAccount *account;
-    PurpleConnection *gc;
-    guint sesskey;                      /**< Session key from server */
-    guint userid;                       /**< This user's numeric user ID */
-	gchar *username;					/**< This user's unique username */
-    gint fd;                            /**< File descriptor to/from server */
+	guint magic;                        /**< MSIM_SESSION_STRUCT_MAGIC */
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	guint sesskey;                      /**< Session key from server */
+	guint userid;                       /**< This user's numeric user ID */
+	gchar *username;                    /**< This user's unique username */
+	gint fd;                            /**< File descriptor to/from server */
 
 	/* TODO: Remove. */
-    GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */
-    GHashTable *user_lookup_cb_data;    /**< Username -> userid lookup callback data */
+	GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */
+	GHashTable *user_lookup_cb_data;    /**< Username -> userid lookup callback data */
 
-    GHashTable *server_info;            /**< Parameters from server */
+	GHashTable *server_info;            /**< Parameters from server */
 
-    gchar *rxbuf;                       /**< Receive buffer */
-    guint rxoff;                        /**< Receive buffer offset */
-	guint next_rid;						/**< Next request/response ID */
-    time_t last_comm;                   /**< Time received last communication */
-    guint inbox_status;                 /**< Bit field of inbox notifications */
+	gchar *rxbuf;                       /**< Receive buffer */
+	guint rxoff;                        /**< Receive buffer offset */
+	guint next_rid;                     /**< Next request/response ID */
+	time_t last_comm;                   /**< Time received last communication */
+	guint inbox_status;                 /**< Bit field of inbox notifications */
 } MsimSession;
 
 /* Check if an MsimSession is valid */
-#define MSIM_SESSION_VALID(s) (session != NULL && \
-		session->magic == MSIM_SESSION_STRUCT_MAGIC)
+#define MSIM_SESSION_VALID(s) (session != NULL && session->magic == MSIM_SESSION_STRUCT_MAGIC)
 
 gchar *str_replace(const gchar *str, const gchar *old, const gchar *new);
 
 /* Callback function pointer type for when a user's information is received, 
  * initiated from a user lookup. */
-typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, MsimMessage *userinfo,
-          gpointer data);
+typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, MsimMessage *userinfo, gpointer data);
 
 /* Functions */
 gboolean msim_load(PurplePlugin *plugin);
@@ -223,7 +221,7 @@ gboolean msim_send_raw(MsimSession *session, const gchar *msg);
 void msim_login(PurpleAccount *acct);
 
 int msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, 
-	PurpleMessageFlags flags);
+PurpleMessageFlags flags);
 
 typedef void (*MSIM_XMLNODE_CONVERT)(MsimSession *, xmlnode *, gchar **, gchar **);
 
@@ -233,10 +231,8 @@ void msim_get_info(PurpleConnection *gc, const gchar *name);
 void msim_set_status(PurpleAccount *account, PurpleStatus *status);
 void msim_set_idle(PurpleConnection *gc, int time);
 
-void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, 
-        PurpleGroup *group);
-void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, 
-        PurpleGroup *group);
+void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
+void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 
 gboolean msim_offline_message(const PurpleBuddy *buddy);
 
@@ -246,8 +242,7 @@ void msim_session_destroy(MsimSession *session);
 void msim_close(PurpleConnection *gc);
 
 char *msim_status_text(PurpleBuddy *buddy);
-void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, 
-        gboolean full);
+void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean full);
 GList *msim_actions(PurplePlugin *plugin, gpointer context);
 
 #ifdef MSIM_SELF_TEST
