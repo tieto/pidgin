@@ -27,7 +27,7 @@ static void msim_msg_free_element(gpointer data, gpointer user_data);
 static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
 static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, const gchar *sep, const gchar *begin, const gchar *end);
 static GList *msim_msg_get_node(MsimMessage *msg, const gchar *name);
-static MsimMessage *msim_msg_new_v(va_list argp);
+static MsimMessage *msim_msg_new_v(gchar *first_key, va_list argp);
 
 /* Escape codes and associated replacement text, used for protocol message
  * escaping and unescaping. */
@@ -101,20 +101,19 @@ msim_unescape(const gchar *msg)
 
 /** Create a new MsimMessage. 
  * 
- * @param not_empty FALSE if message is empty, TRUE if variadic arguments follow.
+ * @param first_key The first key in the sequence, or NULL for an empty message.
  * @param ... A sequence of gchar* key/type/value triplets, terminated with NULL. 
  *
  * See msim_msg_append() documentation for details on types.
  */
 MsimMessage *
-msim_msg_new(gboolean not_empty, ...)
+msim_msg_new(gchar *first_key, ...)
 {
 	va_list argp;
 
-	va_start(argp, not_empty);
-
-	if (not_empty) {
-		return msim_msg_new_v(argp);
+	if (first_key) {
+        va_start(argp, first_key);
+		return msim_msg_new_v(first_key, argp);
 	} else {
 		return NULL;
 	}
@@ -122,32 +121,43 @@ msim_msg_new(gboolean not_empty, ...)
 
 /** Create a new message from va_list and its first argument.
  *
+ * @param first_key The first argument (a key), or NULL to take all arguments
+ *    from argp.
  * @param argp A va_list of variadic arguments, already started with va_start(). Will be va_end()'d.
  * @return New MsimMessage *, must be freed with msim_msg_free().
  *
  * For internal use - users probably want msim_msg_new() or msim_send().
  */
 static MsimMessage *
-msim_msg_new_v(va_list argp)
+msim_msg_new_v(gchar *first_key, va_list argp)
 {
 	gchar *key, *value;
 	MsimMessageType type;
 	MsimMessage *msg;
+    gboolean first;
 
 	GString *gs;
 	GList *gl;
 	MsimMessage *dict;
 
-
 	/* Begin with an empty message. */
 	msg = NULL;
+    
+    /* First parameter can be given explicitly. */
+    first = first_key != NULL;
 
 	/* Read key, type, value triplets until NULL. */
 	do {
-		key = va_arg(argp, gchar *);
-		if (!key) {
-			break;
-		}
+        if (first)
+        {
+            key = first_key;
+            first = FALSE;
+        } else {
+            key = va_arg(argp, gchar *);
+            if (!key) {
+                break;
+            }
+        }
 
 		type = va_arg(argp, int);
 
@@ -440,7 +450,7 @@ msim_send(MsimSession *session, ...)
 	va_list argp;
 	
 	va_start(argp, session);
-	msg = msim_msg_new_v(argp);
+	msg = msim_msg_new_v(NULL, argp);
 
 	/* Actually send the message. */
 	success = msim_msg_send(session, msg);

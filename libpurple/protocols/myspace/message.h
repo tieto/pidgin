@@ -47,7 +47,7 @@ typedef gchar MsimMessageType;
 gchar *msim_escape(const gchar *msg);
 gchar *msim_unescape(const gchar *msg);
 
-MsimMessage *msim_msg_new(gboolean not_empty, ...);
+MsimMessage *msim_msg_new(gchar *first_key, ...);
 /* No sentinel attribute, because can leave off varargs if not_empty is FALSE. */
 
 MsimMessage *msim_msg_clone(MsimMessage *old);

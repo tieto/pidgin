@@ -830,8 +830,8 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 	purple_debug_info("msim", "sending %d message from %s to %s: %s\n",
 				  type, from_username, who, text);
 
-	msg = msim_msg_new(TRUE,
-			"bm", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(type),
+	msg = msim_msg_new(
+            "bm", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(type),
 			"sesskey", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(session->sesskey),
 			/* 't' will be inserted here */
 			"cv", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(MSIM_CLIENT_VERSION),
@@ -1846,7 +1846,7 @@ msim_get_info(PurpleConnection *gc, const gchar *user)
 	 * by userid, the userinfo message will only contain the uid (not 
 	 * the username).
 	 */
-	user_msg = msim_msg_new(TRUE, 
+	user_msg = msim_msg_new(
 			"user", MSIM_TYPE_STRING, g_strdup(user),
 			NULL);
 	purple_debug_info("msim", "msim_get_info, setting up lookup, user=%s\n", user);
@@ -2366,7 +2366,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 		purple_debug_info("msim_we_are_logged_on", "TODO: pick username");
 	}
 
-	body = msim_msg_new(TRUE,
+	body = msim_msg_new(
 			"UserID", MSIM_TYPE_INTEGER, session->userid,
 			NULL);
 
@@ -2402,7 +2402,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 
 	/* TODO: setinfo */
 	/*
-	body = msim_msg_new(TRUE,
+	body = msim_msg_new(
 		"TotalFriends", MSIM_TYPE_INTEGER, 666,
 		NULL);
 	msim_send(session,
@@ -2825,7 +2825,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	purple_debug_info("msim", "msim_add_buddy: want to add %s to %s\n", 
 			buddy->name, (group && group->name) ? group->name : "(no group)");
 
-	msg = msim_msg_new(TRUE,
+	msg = msim_msg_new(
 			"addbuddy", MSIM_TYPE_BOOLEAN, TRUE,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			/* "newprofileid" will be inserted here with uid. */
@@ -2842,7 +2842,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	/* TODO: if addbuddy fails ('error' message is returned), delete added buddy from
 	 * buddy list since Purple adds it locally. */
 
-	body = msim_msg_new(TRUE,
+	body = msim_msg_new(
 			"ContactID", MSIM_TYPE_STRING, g_strdup("<uid>"),
 			"GroupName", MSIM_TYPE_STRING, g_strdup(group->name),
 			"Position", MSIM_TYPE_INTEGER, 1000,
@@ -2854,7 +2854,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	/* TODO: Update blocklist. */
 
 #if 0
-	msg_persist = msim_msg_new(TRUE,
+	msg_persist = msim_msg_new(
 		"persist", MSIM_TYPE_INTEGER, 1,
 		"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 		"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_PUT,
@@ -3075,7 +3075,7 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 
 	session = (MsimSession *)gc->proto_data;
 
-	delbuddy_msg = msim_msg_new(TRUE,
+	delbuddy_msg = msim_msg_new(
 				"delbuddy", MSIM_TYPE_BOOLEAN, TRUE,
 				"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 				/* 'delprofileid' with uid will be inserted here. */
@@ -3088,7 +3088,7 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	}
 	msim_msg_free(delbuddy_msg);
 
-	persist_msg = msim_msg_new(TRUE, 
+	persist_msg = msim_msg_new(
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_DELETE,
@@ -3114,7 +3114,7 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	blocklist_updates = g_list_prepend(blocklist_updates, "<uid>");
 	blocklist_updates = g_list_reverse(blocklist_updates);
 
-	blocklist_msg = msim_msg_new(TRUE,
+	blocklist_msg = msim_msg_new(
 			"blocklist", MSIM_TYPE_BOOLEAN, TRUE,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			/* TODO: MsimMessage lists. Currently <uid> isn't replaced in lists. */
@@ -3517,7 +3517,7 @@ msim_lookup_user(MsimSession *session, const gchar *user,
 		lid = MG_MYSPACE_INFO_BY_STRING_LID;
 	}
 
-	body = msim_msg_new(TRUE,
+	body = msim_msg_new(
 			field_name, MSIM_TYPE_STRING, g_strdup(user),
 			NULL);
 
@@ -3829,7 +3829,7 @@ msim_test_msg(void)
 	failures = 0;
 
 	purple_debug_info("msim", "\n\nTesting MsimMessage\n");
-	msg = msim_msg_new(FALSE);      /* Create a new, empty message. */
+	msg = msim_msg_new(NULL);      /* Create a new, empty message. */
 
 	/* Append some new elements. */
 	msg = msim_msg_append(msg, "bx", MSIM_TYPE_BINARY, g_string_new_len(g_strdup("XXX"), 3));
@@ -3874,7 +3874,7 @@ msim_test_msg(void)
 	list = g_list_prepend(list, "item1");
 	list = g_list_prepend(list, "item0");
 
-	msg = msim_msg_new(FALSE);
+	msg = msim_msg_new(NULL);
 	msg = msim_msg_append(msg, "string", MSIM_TYPE_STRING, g_strdup("string value"));
 	msg = msim_msg_append(msg, "raw", MSIM_TYPE_RAW, g_strdup("raw value"));
 	msg = msim_msg_append(msg, "integer", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(3140));
@@ -3884,7 +3884,7 @@ msim_test_msg(void)
 	msim_msg_dump("msg with list=%s\n", msg);
 	purple_debug_info("msim", "msg with list packed=%s\n", msim_msg_pack(msg));
 
-	msg2 = msim_msg_new(FALSE);
+	msg2 = msim_msg_new(NULL);
 	msg2 = msim_msg_append(msg2, "outer", MSIM_TYPE_STRING, g_strdup("outer value"));
 	msg2 = msim_msg_append(msg2, "body", MSIM_TYPE_DICTIONARY, msg);
 	msim_msg_dump("msg with dict=%s\n", msg2);      /* msg2 now 'owns' msg */
@@ -3961,6 +3961,22 @@ init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_int_new(_("Base font size (points)"), "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+#endif
+
+	/* TODO: /zap command. Problem with this is that there are different kinds of zaps,
+	 * and the selection is best made available in a drop-down menu, instead of forcing
+	 * the user to type the kind of zap and memorizing available zaps (or putting it in the
+	 * help menu). A new "attention" API, for zap/buzz/nudge (different protocols) will
+	 * solve this. */
+#if 0
+	purple_cmd_register("zap",                                        /* cmd */
+			"w",                                              /* args - accept a single word */
+			PURPLE_CMD_P_PRPL,                                /* priority */
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,   /* flags */
+			"prpl-myspace",                                   /* prpl_id */
+			msim_cmd_zap,                                     /* func */
+			_("zap: zap a user to get their attention"),      /* helpstr */
+			NULL);                                            /* data */
 #endif
 }
 
