@@ -47,7 +47,7 @@
  * Multiple emoticon symbols in Pidgin can map to one name. List the
  * canonical form, as inserted by the "Smile!" dialog, first. For example,
  * :) comes before :-), because although both are recognized as 'happy',
- * the first is inserted by the smiley button. 
+ * the first is inserted by the smiley button. 
  *
  * Note that symbols are case-sensitive in Pidgin -- :-X is not :-x. */
 
@@ -361,6 +361,7 @@ msim_blist_node_menu(PurpleBlistNode *node)
  
     menu = zap_menu = NULL;
 
+    /* TODO: move to / command, or better yet new API  */
     for (i = 0; i < sizeof(zap_names) / sizeof(zap_names[0]); ++i) {
         act = purple_menu_action_new(zap_names[i], PURPLE_CALLBACK(msim_send_zap),
                 GUINT_TO_POINTER(i), NULL);
@@ -633,7 +634,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
     guchar hash_pw[HASH_SIZE];
     guchar key[HASH_SIZE];
-    gchar *password_utf16le, *password_ascii_lc;
+    gchar *password_utf16le, *password_utf8_lc;
     guchar *data;
 	guchar *data_out;
 	size_t data_len, data_out_len;
@@ -651,15 +652,14 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
     /* Convert password to lowercase (required for passwords containing
      * uppercase characters). MySpace passwords are lowercase,
      * see ticket #2066. */
-    password_ascii_lc = g_strdup(password);
-    g_strdown(password_ascii_lc);
+    password_utf8_lc = g_utf8_strdown(password, -1);
 
     /* Convert ASCII password to UTF16 little endian */
     purple_debug_info("msim", "converting password to UTF-16LE\n");
 	conv_error = NULL;
-	password_utf16le = g_convert(password_ascii_lc, -1, "UTF-16LE", "UTF-8", 
+	password_utf16le = g_convert(password_utf8_lc, -1, "UTF-16LE", "UTF-8", 
 			&conv_bytes_read, &conv_bytes_written, &conv_error);
-    g_free(password_ascii_lc);
+    g_free(password_utf8_lc);
 
 	g_return_val_if_fail(conv_bytes_read == strlen(password), NULL);
 
