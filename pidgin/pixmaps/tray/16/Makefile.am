@@ -6,6 +6,7 @@ TRAY_ICONS =	tray-away.png \
 		tray-connecting.png \
 		tray-extended-away.png \
 		tray-message.png \
+		tray-new-im.png \
 		tray-offline.png \
 		tray-online.png
 

@@ -9,7 +9,7 @@
 .*\.dll$
 .*\.exe$
 intltool-.*
-Doxyfile$
+Doxyfile(\.mingw)?$
 aclocal.m4
 compile
 config.cache

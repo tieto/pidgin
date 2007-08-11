@@ -21,6 +21,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @see @ref savedstatus-signals
  */
 #ifndef _PURPLE_SAVEDSTATUSES_H_
 #define _PURPLE_SAVEDSTATUSES_H_
@@ -147,6 +149,16 @@ void purple_savedstatus_unset_substatus(PurpleSavedStatus *saved_status,
  *         with the given title.
  */
 gboolean purple_savedstatus_delete(const char *title);
+
+/**
+ * Delete a saved status.  This removes the saved status from the list
+ * of saved statuses, and writes the revised list to status.xml.
+ *
+ * @param saved_status the status to delete, the pointer is invalid after
+ *        the call
+ *
+ */
+void purple_savedstatus_delete_by_status(PurpleSavedStatus *saved_status);
 
 /**
  * Returns all saved statuses.

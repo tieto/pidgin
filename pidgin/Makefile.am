@@ -65,7 +65,7 @@ if ENABLE_GTK
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = pidgin.pc
 
-SUBDIRS = pixmaps plugins sounds
+SUBDIRS = pixmaps plugins
 
 bin_PROGRAMS = pidgin
 
@@ -197,6 +197,7 @@ AM_CPPFLAGS = \
 	-DLIBDIR=\"$(libdir)/pidgin/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
+	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple/ \
 	$(GLIB_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \

@@ -31,9 +31,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Neem een kijkje op de Windows Pidgin webpagina"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (alleen verwijderen)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fout bij installatie van GTK+ runtime omgeving."
 !define GTK_BAD_INSTALL_PATH			"Het door u gegeven pad kan niet benaderd worden."

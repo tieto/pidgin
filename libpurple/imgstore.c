@@ -25,6 +25,8 @@
 */
 
 #include <glib.h>
+#include "internal.h"
+
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "imgstore.h"
@@ -53,8 +55,8 @@ purple_imgstore_add(gpointer data, size_t size, const char *filename)
 {
 	PurpleStoredImage *img;
 
-	g_return_val_if_fail(data != NULL, 0);
-	g_return_val_if_fail(size > 0, 0);
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(size > 0, NULL);
 
 	img = g_new(PurpleStoredImage, 1);
 	PURPLE_DBUS_REGISTER_POINTER(img, PurpleStoredImage);
@@ -71,11 +73,13 @@ int
 purple_imgstore_add_with_id(gpointer data, size_t size, const char *filename)
 {
 	PurpleStoredImage *img = purple_imgstore_add(data, size, filename);
-	img->id = ++nextid;
+	if (img) {
+		img->id = ++nextid;
 
-	g_hash_table_insert(imgstore, &(img->id), img);
+		g_hash_table_insert(imgstore, &(img->id), img);
+	}
 
-	return img->id;
+	return (img ? img->id : 0);
 }
 
 PurpleStoredImage *purple_imgstore_find_by_id(int id) {

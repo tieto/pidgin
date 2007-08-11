@@ -65,6 +65,7 @@
  */
 
 static GIOChannel *channel = NULL;
+static int channel_read_callback;
 
 static gboolean ascii_only;
 static gboolean mouse_enabled;
@@ -220,8 +221,13 @@ static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
 	char keys[256];
-	int rd = read(STDIN_FILENO, keys + HOLDING_ESCAPE, sizeof(keys) - 1 - HOLDING_ESCAPE);
+	int rd;
 	char *k;
+
+	if (wm->mode == GNT_KP_MODE_WAIT_ON_CHILD)
+		return FALSE;
+
+	rd = read(STDIN_FILENO, keys + HOLDING_ESCAPE, sizeof(keys) - 1 - HOLDING_ESCAPE);
 	if (rd < 0)
 	{
 		int ch = getch(); /* This should return ERR, but let's see what it really returns */
@@ -246,6 +252,12 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	if (HOLDING_ESCAPE)
 		keys[0] = '\033';
 	k = keys;
+	if(*k < 0){ /* Alt not sending ESC* */
+		*(k + 1) = 128 - *k;
+		*k = 27;
+		*(k + 2) = 0;
+		rd++;
+	}
 	while (rd) {
 		char back;
 		int p;
@@ -288,7 +300,7 @@ setup_io()
 	g_io_channel_set_flags(channel, G_IO_FLAG_NONBLOCK, NULL );
 #endif
 
-	result = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
+	channel_read_callback = result = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
 					(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI),
 					io_invoke, NULL, NULL);
 	
@@ -300,7 +312,7 @@ setup_io()
 	                                 But irssi does this, so I am going to assume the
 	                                 crashes were caused by some other stuff. */
 
-	g_printerr("gntmain: setting up IO\n");
+	g_printerr("gntmain: setting up IO (%d)\n", channel_read_callback);
 }
 
 static gboolean
@@ -345,6 +357,14 @@ ask_before_exit()
 {
 	static GntWidget *win = NULL;
 	GntWidget *bbox, *button;
+
+	if (wm->menu) {
+		do {
+			gnt_widget_hide(GNT_WIDGET(wm->menu));
+			if (wm->menu)
+				wm->menu = wm->menu->parentmenu;
+		} while (wm->menu);
+	}
 
 	if (win)
 		goto raise;
@@ -429,10 +449,14 @@ void gnt_init()
 
 	setup_io();
 
+#ifdef NO_WIDECHAR
+	ascii_only = TRUE;
+#else
 	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf")))
 		ascii_only = FALSE;
 	else
 		ascii_only = TRUE;
+#endif
 
 	initscr();
 	typeahead(-1);
@@ -484,8 +508,12 @@ void gnt_main()
  * Stuff for 'window management' *
  *********************************/
 
-void gnt_window_present(GntWidget *window) {
-	gnt_wm_raise_window(wm, window);
+void gnt_window_present(GntWidget *window)
+{
+	if (wm->event_stack)
+		gnt_wm_raise_window(wm, window);
+	else
+		gnt_widget_set_urgent(window);
 }
 
 void gnt_screen_occupy(GntWidget *widget)
@@ -614,7 +642,68 @@ GntClipboard *gnt_get_clipboard()
 {
 	return clipboard;
 }
+
 gchar *gnt_get_clipboard_string()
 {
 	return gnt_clipboard_get_string(clipboard);
 }
+
+#if GLIB_CHECK_VERSION(2,4,0)
+typedef struct
+{
+	void (*callback)(int status, gpointer data);
+	gpointer data;
+} ChildProcess;
+
+static void
+reap_child(GPid pid, gint status, gpointer data)
+{
+	ChildProcess *cp = data;
+	if (cp->callback) {
+		cp->callback(status, cp->data);
+	}
+	g_free(cp);
+	clean_pid();
+	wm->mode = GNT_KP_MODE_NORMAL;
+	clear();
+	setup_io();
+	refresh_screen();
+}
+#endif
+
+gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
+		gint *stin, gint *stout, gint *sterr,
+		void (*callback)(int status, gpointer data), gpointer data)
+{
+#if GLIB_CHECK_VERSION(2,4,0)
+	GPid pid = 0;
+	ChildProcess *cp = NULL;
+
+	if (!g_spawn_async_with_pipes(wd, argv, envp,
+			G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
+			(GSpawnChildSetupFunc)endwin, NULL,
+			&pid, stin, stout, sterr, NULL))
+		return FALSE;
+
+	cp = g_new0(ChildProcess, 1);
+	cp->callback = callback;
+	cp->data = data;
+	g_source_remove(channel_read_callback);
+	wm->mode = GNT_KP_MODE_WAIT_ON_CHILD;
+	g_child_watch_add(pid, reap_child, cp);
+
+	return TRUE;
+#else
+	return FALSE;
+#endif
+}
+
+gboolean gnt_is_refugee()
+{
+#if GLIB_CHECK_VERSION(2,4,0)
+	return (wm && wm->mode == GNT_KP_MODE_WAIT_ON_CHILD);
+#else
+	return FALSE;
+#endif
+}
+

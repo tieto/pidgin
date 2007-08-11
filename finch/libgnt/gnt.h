@@ -1,4 +1,14 @@
 /**
+ * @defgroup gnt GNT (GLib Ncurses Toolkit)
+ *
+ * GNT is an ncurses toolkit for creating text-mode graphical user interfaces
+ * in a fast and easy way.
+ */
+/**
+ * @file gnt.h GNT API
+ * @ingroup gnt
+ */
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -102,7 +112,7 @@ void gnt_widget_set_urgent(GntWidget *widget);
 /**
  * 
  * @param label
- * @param callback)()
+ * @param callback
  */
 void gnt_register_action(const char *label, void (*callback)());
 
@@ -139,3 +149,11 @@ gchar * gnt_get_clipboard_string(void);
  */
 void gnt_set_clipboard_string(gchar *string);
 
+/**
+ * Spawn a different application that will consume the console.
+ */
+gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
+		gint *stin, gint *stout, gint *sterr,
+		void (*callback)(int status, gpointer data), gpointer data);
+
+gboolean gnt_is_refugee(void);

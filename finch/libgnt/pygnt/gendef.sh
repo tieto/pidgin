@@ -17,12 +17,14 @@ FILES="
 	gntmenu.h
 	gntmenuitem.h
 	gntmenuitemcheck.h
+	gntslider.h
 	gntstyle.h
 	gnttextview.h
 	gnttree.h
 	gntutils.h
 	gntwindow.h
 	gntwm.h
+	gntws.h
 	gnt.h"
 
 # Generate the def file

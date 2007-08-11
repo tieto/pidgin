@@ -1228,7 +1228,7 @@ void *purple_request_choice(void *handle, const char *title,
 						  const char *ok_text, GCallback ok_cb,
 						  const char *cancel_text, GCallback cancel_cb,
 						  PurpleAccount *account, const char *who, PurpleConversation *conv,
-						  void *user_data, ...);
+						  void *user_data, ...) G_GNUC_NULL_TERMINATED;
 
 /**
  * Prompts the user for multiple-choice input.

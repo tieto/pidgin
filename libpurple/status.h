@@ -227,7 +227,7 @@ PurpleStatusType *purple_status_type_new_with_attrs(PurpleStatusPrimitive primit
 												gboolean independent,
 												const char *attr_id,
 												const char *attr_name,
-												PurpleValue *attr_value, ...);
+												PurpleValue *attr_value, ...) G_GNUC_NULL_TERMINATED;
 
 /**
  * Destroys a status type.
@@ -270,7 +270,7 @@ void purple_status_type_add_attr(PurpleStatusType *status_type, const char *id,
  * @param ...         Additional attribute information.
  */
 void purple_status_type_add_attrs(PurpleStatusType *status_type, const char *id,
-								const char *name, PurpleValue *value, ...);
+								const char *name, PurpleValue *value, ...) G_GNUC_NULL_TERMINATED;
 
 /**
  * Adds multiple attributes to a status type using a va_list.

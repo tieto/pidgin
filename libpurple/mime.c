@@ -29,6 +29,8 @@
 #include <glib/glist.h>
 #include <glib/gstring.h>
 
+#include "internal.h"
+
 /* this should become "util.h" if we ever get this into purple proper */
 #include "debug.h"
 #include "mime.h"

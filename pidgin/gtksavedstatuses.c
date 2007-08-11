@@ -23,8 +23,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "account.h"
 #include "internal.h"
+
+#include "account.h"
 #include "notify.h"
 #include "request.h"
 #include "savedstatuses.h"
@@ -285,9 +286,11 @@ status_window_delete_confirm_cb(gpointer data)
 
 	for (l = sel_titles; l != NULL; l = l->next) {
 		title = l->data;
-		if (status_window_find_savedstatus(&iter, title))
-			gtk_list_store_remove(status_window->model, &iter);
-		purple_savedstatus_delete(title);
+		if (purple_savedstatus_find(title) != purple_savedstatus_get_current()) {
+			if (status_window_find_savedstatus(&iter, title))
+				gtk_list_store_remove(status_window->model, &iter);
+			purple_savedstatus_delete(title);
+		}
 		g_free(title);
 	}
 	g_list_free(sel_titles);
@@ -302,6 +305,7 @@ status_window_delete_cb(GtkButton *button, gpointer user_data)
 	GList *sel_paths, *l, *sel_titles = NULL;
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	char *title;
+	gpointer handle;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
 #if GTK_CHECK_VERSION(2,2,0)
@@ -324,13 +328,16 @@ status_window_delete_cb(GtkButton *button, gpointer user_data)
 	}
 	g_list_free(sel_paths);
 
-	if (g_list_length(sel_titles) == 1)
+	if (g_list_length(sel_titles) == 1) {
 		title = g_strdup_printf(_("Are you sure you want to delete %s?"),
 				(const gchar *)sel_titles->data);
-	else
+		handle = purple_savedstatus_find(sel_titles->data);
+	} else {
 		title = g_strdup(_("Are you sure you want to delete the selected saved statuses?"));
+		handle = dialog;
+	}
 
-	purple_request_action(dialog, NULL, title, NULL, 0,
+	purple_request_action(handle, NULL, title, NULL, 0,
 		 NULL, NULL, NULL,
 		 sel_titles, 2,
 		_("Delete"), status_window_delete_confirm_cb,
@@ -349,17 +356,39 @@ static void
 status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 {
 	StatusWindow *dialog = user_data;
-	int num_selected = 0;
+	GList *sel_paths, *tmp;
+	gboolean can_use = TRUE, can_delete = TRUE;
+	int num_selected;
+	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 
 #if GTK_CHECK_VERSION(2,2,0)
-	num_selected = gtk_tree_selection_count_selected_rows(sel);
+	sel_paths = gtk_tree_selection_get_selected_rows(sel, NULL);
 #else
-	gtk_tree_selection_selected_foreach(sel, count_selected_helper, &num_selected);
+	gtk_tree_selection_selected_foreach(sel, list_selected_helper, &sel_paths);
 #endif
 
-	gtk_widget_set_sensitive(dialog->use_button, (num_selected == 1));
+	for (tmp = sel_paths, num_selected = 0; tmp; tmp = tmp->next, num_selected++) {
+		GtkTreeIter iter;
+		char *title;
+
+		if (gtk_tree_model_get_iter(model, &iter, tmp->data)) {
+			gtk_tree_model_get(model, &iter,
+					STATUS_WINDOW_COLUMN_TITLE, &title, -1);
+			if (purple_savedstatus_find(title) == purple_savedstatus_get_current()) {
+				can_use = can_delete = FALSE;
+			}
+
+			g_free(title);
+		}
+
+		gtk_tree_path_free(tmp->data);
+	}
+
+	gtk_widget_set_sensitive(dialog->use_button, (num_selected == 1) && can_use);
 	gtk_widget_set_sensitive(dialog->modify_button, (num_selected > 0));
-	gtk_widget_set_sensitive(dialog->delete_button, (num_selected > 0));
+	gtk_widget_set_sensitive(dialog->delete_button, can_delete);
+
+    g_list_free(sel_paths);
 }
 
 static void
@@ -419,6 +448,12 @@ static void
 savedstatus_activated_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, StatusWindow *dialog)
 {
 	status_window_modify_cb(NULL, dialog);
+}
+
+static void
+saved_status_updated_cb(PurpleSavedStatus *status, StatusWindow *sw)
+{
+	populate_saved_status_list(sw);
 }
 
 static GtkWidget *
@@ -529,6 +564,13 @@ configure_cb(GtkWidget *widget, GdkEventConfigure *event, StatusWindow *dialog)
 	return FALSE;
 }
 
+static void
+current_status_changed(PurpleSavedStatus *old, PurpleSavedStatus *new_status,
+		StatusWindow *dialog)
+{
+	status_selected_cb(gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview)), dialog);
+}
+
 void
 pidgin_status_window_show(void)
 {
@@ -615,6 +657,19 @@ pidgin_status_window_show(void)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_window_close_cb), dialog);
 
+	purple_signal_connect(purple_savedstatuses_get_handle(),
+			"savedstatus-changed", status_window,
+			PURPLE_CALLBACK(current_status_changed), dialog);
+	purple_signal_connect(purple_savedstatuses_get_handle(),
+			"savedstatus-added", status_window,
+			PURPLE_CALLBACK(saved_status_updated_cb), dialog);
+	purple_signal_connect(purple_savedstatuses_get_handle(),
+			"savedstatus-deleted", status_window,
+			PURPLE_CALLBACK(saved_status_updated_cb), dialog);
+	purple_signal_connect(purple_savedstatuses_get_handle(),
+			"savedstatus-modified", status_window,
+			PURPLE_CALLBACK(saved_status_updated_cb), dialog);
+
 	gtk_widget_show_all(win);
 }
 
@@ -629,6 +684,7 @@ pidgin_status_window_hide(void)
 
 	purple_request_close_with_handle(status_window);
 	purple_notify_close_with_handle(status_window);
+	purple_signals_disconnect_by_handle(status_window);
 	g_free(status_window);
 	status_window = NULL;
 }
@@ -804,8 +860,10 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 	gtk_widget_destroy(dialog->window);
 	g_free(dialog->original_title);
 
+/*
 	if (status_window != NULL)
 	  add_status_to_saved_status_list(status_window->model, saved_status);
+*/
 
 	/* If they clicked on "Save & Use" or "Use," then activate the status */
 	if (button != dialog->save_button)
@@ -1082,7 +1140,7 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	if (edit)
 		dialog->original_title = g_strdup(purple_savedstatus_get_title(saved_status));
 
-	dialog->window = win = pidgin_create_window (_("Status"), PIDGIN_HIG_BORDER, "status", FALSE) ;
+	dialog->window = win = pidgin_create_window(_("Status"), PIDGIN_HIG_BORDER, "status", TRUE);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(status_editor_destroy_cb), dialog);
@@ -1417,7 +1475,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	dialog->account = account;
 
 	tmp = g_strdup_printf(_("Status for %s"), purple_account_get_username(account));
-	dialog->window = win = pidgin_create_window(tmp, PIDGIN_HIG_BORDER, "substatus", FALSE) ;
+	dialog->window = win = pidgin_create_window(tmp, PIDGIN_HIG_BORDER, "substatus", TRUE);
 	g_free(tmp);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
@@ -1462,7 +1520,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 
 	/* Status mesage */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("_Message:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);

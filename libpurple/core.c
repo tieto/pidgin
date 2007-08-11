@@ -222,11 +222,10 @@ purple_core_quit(void)
 	purple_sound_uninit();
 
 	purple_plugins_uninit();
-	purple_signals_uninit();
-
 #ifdef HAVE_DBUS
 	purple_dbus_uninit();
 #endif
+	purple_signals_uninit();
 
 	g_free(core->ui);
 	g_free(core);
@@ -489,13 +488,33 @@ purple_core_migrate(void)
 			/* We're only going to duplicate a logs symlink. */
 			if (!strcmp(entry, "logs"))
 			{
+				char *link;
+#if GLIB_CHECK_VERSION(2,4,0)
+				GError *err = NULL;
+
+				if ((link = g_file_read_link(name, &err)) == NULL)
+				{
+					char *name_utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
+					purple_debug_error("core", "Error reading symlink %s: %s. Please report this at http://developer.pidgin.im\n",
+					                   name_utf8 ? name_utf8 : name, err->message);
+					g_free(name_utf8);
+					g_error_free(err);
+					g_free(name);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					return FALSE;
+				}
+#else
 				char buf[MAXPATHLEN];
 				size_t linklen;
 
 				if ((linklen = readlink(name, buf, sizeof(buf) - 1) == -1))
 				{
+					char *name_utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
 					purple_debug_error("core", "Error reading symlink %s: %s. Please report this at http://developer.pidgin.im\n",
-					                   name, strerror(errno));
+					                   name_utf8, strerror(errno));
+					g_free(name_utf8);
 					g_free(name);
 					g_dir_close(dir);
 					g_free(status_file);
@@ -504,13 +523,18 @@ purple_core_migrate(void)
 				}
 				buf[linklen] = '\0';
 
-				logs_dir = g_strconcat(user_dir, G_DIR_SEPARATOR_S "logs", NULL);
+				/* This way we don't have to GLIB_VERSION_CHECK every g_free(link) below. */
+				link = g_strdup(buf);
+#endif
 
-				if (!strcmp(buf, "../.purple/logs") || !strcmp(buf, logs_dir))
+				logs_dir = g_build_filename(user_dir, "logs", NULL);
+
+				if (!strcmp(link, "../.purple/logs") || !strcmp(link, logs_dir))
 				{
 					/* If the symlink points to the new directory, we're
 					 * likely just trying again after a failed migration,
 					 * so there's no need to fail here. */
+					g_free(link);
 					g_free(logs_dir);
 					continue;
 				}
@@ -522,12 +546,13 @@ purple_core_migrate(void)
 				g_unlink(logs_dir);
 
 				/* Relative links will most likely still be
-				 * valid from ~/.purple, though not it's not
+				 * valid from ~/.purple, though it's not
 				 * guaranteed.  Oh well. */
-				if (symlink(buf, logs_dir))
+				if (symlink(link, logs_dir))
 				{
 					purple_debug_error("core", "Error symlinking %s to %s: %s. Please report this at http://developer.pidgin.im\n",
-					                   logs_dir, buf, strerror(errno));
+					                   logs_dir, link, strerror(errno));
+					g_free(link);
 					g_free(name);
 					g_free(logs_dir);
 					g_dir_close(dir);
@@ -536,6 +561,7 @@ purple_core_migrate(void)
 					return FALSE;
 				}
 
+				g_free(link);
 				g_free(logs_dir);
 				continue;
 			}
@@ -737,4 +763,13 @@ purple_core_migrate(void)
 
 	g_free(status_file);
 	return TRUE;
+}
+
+GHashTable* purple_core_get_ui_info() {
+	PurpleCoreUiOps *ops = purple_core_get_ui_ops();
+
+	if(NULL == ops || NULL == ops->get_ui_info)
+		return NULL;
+
+	return ops->get_ui_info();
 }

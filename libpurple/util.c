@@ -66,8 +66,8 @@ struct _PurpleUtilFetchUrlData
 	unsigned long data_len;
 };
 
-static char custom_home_dir[MAXPATHLEN];
-static char home_dir[MAXPATHLEN] = "";
+static char *custom_user_dir = NULL;
+static char *home_dir = NULL;
 
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
@@ -531,10 +531,9 @@ static long win32_get_tz_offset() {
 }
 #endif
 
-#ifndef HAVE_STRFTIME_Z_FORMAT
-static const char *get_tmoff(const struct tm *tm)
+const char *purple_get_tzoff_str(const struct tm *tm, gboolean iso)
 {
-	static char buf[6];
+	static char buf[7];
 	long off;
 	gint8 min;
 	gint8 hrs;
@@ -554,7 +553,7 @@ static const char *get_tmoff(const struct tm *tm)
 # else
 #  ifdef HAVE_TIMEZONE
 	tzset();
-	off = -timezone;
+	off = -1 * timezone;
 #  endif /* HAVE_TIMEZONE */
 # endif /* !HAVE_TM_GMTOFF */
 #endif /* _WIN32 */
@@ -562,12 +561,22 @@ static const char *get_tmoff(const struct tm *tm)
 	min = (off / 60) % 60;
 	hrs = ((off / 60) - min) / 60;
 
-	if (g_snprintf(buf, sizeof(buf), "%+03d%02d", hrs, ABS(min)) > 5)
-		g_return_val_if_reached("");
+	if(iso) {
+		if (0 == off) {
+			strcpy(buf, "Z");
+		} else {
+			/* please leave the colons...they're optional for iso, but jabber
+			 * wants them */
+			if(g_snprintf(buf, sizeof(buf), "%+03d:%02d", hrs, ABS(min)) > 6)
+				g_return_val_if_reached("");
+		}
+	} else {
+		if (g_snprintf(buf, sizeof(buf), "%+03d%02d", hrs, ABS(min)) > 5)
+			g_return_val_if_reached("");
+	}
 
 	return buf;
 }
-#endif
 
 /* Windows doesn't HAVE_STRFTIME_Z_FORMAT, but this seems clearer. -- rlaager */
 #if !defined(HAVE_STRFTIME_Z_FORMAT) || defined(_WIN32)
@@ -600,7 +609,7 @@ static size_t purple_internal_strftime(char *s, size_t max, const char *format, 
 			                            fmt ? fmt : "",
 			                            c - start - 1,
 			                            start,
-			                            get_tmoff(tm));
+			                            purple_get_tzoff_str(tm, FALSE));
 			g_free(fmt);
 			fmt = tmp;
 			start = c + 1;
@@ -1328,6 +1337,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 {
 	GString *xhtml = NULL;
 	GString *plain = NULL;
+	GString *url = NULL;
 	GList *tags = NULL, *tag;
 	const char *c = html;
 
@@ -1355,6 +1365,10 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						struct purple_parse_tag *pt = tags->data;
 						if(xhtml)
 							g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
+						if(plain && !strcmp(pt->src_tag, "a")) {
+							/* if this is a link, we have to add the url to the plaintext, too */
+							g_string_append_printf(plain, " <%s>", g_strstrip(url->str));
+						}
 						if(tags == tag)
 							break;
 						tags = g_list_remove(tags, pt);
@@ -1380,7 +1394,6 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					}
 				}
 			} else { /* opening tag */
-				ALLOW_TAG("a");
 				ALLOW_TAG("blockquote");
 				ALLOW_TAG("cite");
 				ALLOW_TAG("div");
@@ -1404,7 +1417,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				ALLOW_TAG("span");
 				ALLOW_TAG("strong");
 				ALLOW_TAG("ul");
-				ALLOW_TAG("img");
+
 				
 				/* we skip <HR> because it's not legal in XHTML-IM.  However,
 				 * we still want to send something sensible, so we put a
@@ -1420,40 +1433,6 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						xhtml = g_string_append(xhtml, "<br/>");
 					if(plain && *c != '\n')
 						plain = g_string_append_c(plain, '\n');
-					continue;
-				}
-				if(!g_ascii_strncasecmp(c, "<img", 4) && (*(c+4) == '>' || *(c+4) == ' ')) {
-					const char *p = c;
-					GString *src = NULL;
-					struct purple_parse_tag *pt;
-					while(*p && *p != '>') {
-						if(!g_ascii_strncasecmp(p, "src=", strlen("src="))) {
-							const char *q = p + strlen("src=");
-							src = g_string_new("");
-							if(*q == '\'' || *q == '\"')
-								q++;
-							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
-								src = g_string_append_c(src, *q);
-								q++;
-							}
-							p = q;
-						}
-						p++;
-					}
-					if ((c = strchr(c, '>')) != NULL)
-						c++;
-					else
-						c = p;
-					pt = g_new0(struct purple_parse_tag, 1);
-					pt->src_tag = "img";
-					pt->dest_tag = "img";
-					tags = g_list_prepend(tags, pt);
-					if(xhtml && src && src->len)
-						g_string_append_printf(xhtml, "<img src='%s' alt=''>", g_strstrip(src->str));
-					else
-						pt->ignore = TRUE;
-					if (src)
-						g_string_free(src, TRUE);
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<b>", 3) || !g_ascii_strncasecmp(c, "<bold>", strlen("<bold>"))) {
@@ -1504,6 +1483,80 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					c = strchr(c, '>') + 1;
 					if(xhtml)
 						xhtml = g_string_append(xhtml, "<span style='vertical-align:super;'>");
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<img", 4) && (*(c+4) == '>' || *(c+4) == ' ')) {
+					const char *p = c;
+					GString *src = NULL, *alt = NULL;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "src=", strlen("src="))) {
+							const char *q = p + strlen("src=");
+							src = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								src = g_string_append_c(src, *q);
+								q++;
+							}
+							p = q;
+						} else if(!g_ascii_strncasecmp(p, "alt=", strlen("alt="))) {
+							const char *q = p + strlen("alt=");
+							alt = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								alt = g_string_append_c(alt, *q);
+								q++;
+							}
+							p = q;
+						}
+						p++;
+					}
+					if ((c = strchr(c, '>')) != NULL)
+						c++;
+					else
+						c = p;
+					/* src and alt are required! */
+					if(src && xhtml)
+						g_string_append_printf(xhtml, "<img src='%s' alt='%s' />", g_strstrip(src->str), alt ? alt->str : "");
+					if(alt) {
+						if(plain)
+							plain = g_string_append(plain, alt->str);
+						if(!src && xhtml)
+							xhtml = g_string_append(xhtml, alt->str);
+					}
+					g_string_free(alt, TRUE);
+					g_string_free(src, TRUE);
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<a", 2) && (*(c+2) == '>' || *(c+2) == ' ')) {
+					const char *p = c;
+					struct purple_parse_tag *pt;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "href=", strlen("href="))) {
+							const char *q = p + strlen("href=");
+							g_string_free(url, TRUE);
+							url = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								url = g_string_append_c(url, *q);
+								q++;
+							}
+							p = q;
+						}
+						p++;
+					}
+					if ((c = strchr(c, '>')) != NULL)
+						c++;
+					else
+						c = p;
+					pt = g_new0(struct purple_parse_tag, 1);
+					pt->src_tag = "a";
+					pt->dest_tag = "a";
+					tags = g_list_prepend(tags, pt);
+					if(xhtml)
+						g_string_append_printf(xhtml, "<a href='%s'>", g_strstrip(url->str));
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
@@ -1687,6 +1740,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 		*xhtml_out = g_string_free(xhtml, FALSE);
 	if(plain_out)
 		*plain_out = g_string_free(plain, FALSE);
+	if(url)
+		g_string_free(url, TRUE);
 }
 
 /* The following are probably reasonable changes:
@@ -1721,7 +1776,7 @@ purple_markup_strip_html(const char *str)
 			if (cdata_close_tag)
 			{
 				/* Note: Don't even assume any other tag is a tag in CDATA */
-				if (strncasecmp(str2 + i, cdata_close_tag,
+				if (g_ascii_strncasecmp(str2 + i, cdata_close_tag,
 						strlen(cdata_close_tag)) == 0)
 				{
 					i += strlen(cdata_close_tag) - 1;
@@ -1729,12 +1784,12 @@ purple_markup_strip_html(const char *str)
 				}
 				continue;
 			}
-			else if (strncasecmp(str2 + i, "<td", 3) == 0 && closing_td_p)
+			else if (g_ascii_strncasecmp(str2 + i, "<td", 3) == 0 && closing_td_p)
 			{
 				str2[j++] = '\t';
 				visible = TRUE;
 			}
-			else if (strncasecmp(str2 + i, "</td>", 5) == 0)
+			else if (g_ascii_strncasecmp(str2 + i, "</td>", 5) == 0)
 			{
 				closing_td_p = TRUE;
 				visible = FALSE;
@@ -1762,7 +1817,7 @@ purple_markup_strip_html(const char *str)
 
 				/* If we've got an <a> tag with an href, save the address
 				 * to print later. */
-				if (strncasecmp(str2 + i, "<a", 2) == 0 &&
+				if (g_ascii_strncasecmp(str2 + i, "<a", 2) == 0 &&
 				    g_ascii_isspace(str2[i+2]))
 				{
 					int st; /* start of href, inclusive [ */
@@ -1771,7 +1826,7 @@ purple_markup_strip_html(const char *str)
 					/* Find start of href */
 					for (st = i + 3; st < k; st++)
 					{
-						if (strncasecmp(str2+st, "href=", 5) == 0)
+						if (g_ascii_strncasecmp(str2+st, "href=", 5) == 0)
 						{
 							st += 5;
 							if (str2[st] == '"' || str2[st] == '\'')
@@ -1803,7 +1858,7 @@ purple_markup_strip_html(const char *str)
 
 				/* Replace </a> with an ascii representation of the
 				 * address the link was pointing to. */
-				else if (href != NULL && strncasecmp(str2 + i, "</a>", 4) == 0)
+				else if (href != NULL && g_ascii_strncasecmp(str2 + i, "</a>", 4) == 0)
 				{
 
 					size_t hrlen = strlen(href);
@@ -1825,29 +1880,29 @@ purple_markup_strip_html(const char *str)
 				}
 
 				/* Check for tags which should be mapped to newline */
-				else if (strncasecmp(str2 + i, "<p>", 3) == 0
-				 || strncasecmp(str2 + i, "<tr", 3) == 0
-				 || strncasecmp(str2 + i, "<br", 3) == 0
-				 || strncasecmp(str2 + i, "<hr", 3) == 0
-				 || strncasecmp(str2 + i, "<li", 3) == 0
-				 || strncasecmp(str2 + i, "<div", 4) == 0
-				 || strncasecmp(str2 + i, "</table>", 8) == 0)
+				else if (g_ascii_strncasecmp(str2 + i, "<p>", 3) == 0
+				 || g_ascii_strncasecmp(str2 + i, "<tr", 3) == 0
+				 || g_ascii_strncasecmp(str2 + i, "<br", 3) == 0
+				 || g_ascii_strncasecmp(str2 + i, "<hr", 3) == 0
+				 || g_ascii_strncasecmp(str2 + i, "<li", 3) == 0
+				 || g_ascii_strncasecmp(str2 + i, "<div", 4) == 0
+				 || g_ascii_strncasecmp(str2 + i, "</table>", 8) == 0)
 				{
 					str2[j++] = '\n';
 				}
 				/* Check for tags which begin CDATA and need to be closed */
 #if 0 /* FIXME.. option is end tag optional, we can't handle this right now */
-				else if (strncasecmp(str2 + i, "<option", 7) == 0)
+				else if (g_ascii_strncasecmp(str2 + i, "<option", 7) == 0)
 				{
 					/* FIXME: We should not do this if the OPTION is SELECT'd */
 					cdata_close_tag = "</option>";
 				}
 #endif
-				else if (strncasecmp(str2 + i, "<script", 7) == 0)
+				else if (g_ascii_strncasecmp(str2 + i, "<script", 7) == 0)
 				{
 					cdata_close_tag = "</script>";
 				}
-				else if (strncasecmp(str2 + i, "<style", 6) == 0)
+				else if (g_ascii_strncasecmp(str2 + i, "<style", 6) == 0)
 				{
 					cdata_close_tag = "</style>";
 				}
@@ -2396,27 +2451,22 @@ purple_home_dir(void)
 const char *
 purple_user_dir(void)
 {
-	if (custom_home_dir != NULL && *custom_home_dir) {
-		strcpy ((char*) &home_dir, (char*) &custom_home_dir);
-	} else if (!*home_dir) {
-		const gchar *hd = purple_home_dir();
-
-		if (hd) {
-			g_strlcpy((char*) &home_dir, hd, sizeof(home_dir));
-			g_strlcat((char*) &home_dir, G_DIR_SEPARATOR_S ".purple",
-					sizeof(home_dir));
-		}
-	}
+	if (custom_user_dir != NULL)
+		return custom_user_dir;
+	else if (!home_dir)
+		home_dir = g_build_filename(purple_home_dir(), ".purple", NULL);
 
 	return home_dir;
 }
 
 void purple_util_set_user_dir(const char *dir)
 {
-	if (dir != NULL && strlen(dir) > 0) {
-		g_strlcpy((char*) &custom_home_dir, dir,
-				sizeof(custom_home_dir));
-	}
+	g_free(custom_user_dir);
+
+	if (dir != NULL && *dir)
+		custom_user_dir = g_strdup(dir);
+	else
+		custom_user_dir = NULL;
 }
 
 int purple_build_dir (const char *path, int mode)
@@ -3075,7 +3125,7 @@ purple_strcasereplace(const char *string, const char *delimiter,
 	i = 0; /* position in the source string */
 	j = 0; /* number of occurrences of "delimiter" */
 	while (string[i] != '\0') {
-		if (!strncasecmp(&string[i], delimiter, length_del)) {
+		if (!g_ascii_strncasecmp(&string[i], delimiter, length_del)) {
 			i += length_del;
 			j += length_rep;
 		} else {
@@ -3089,7 +3139,7 @@ purple_strcasereplace(const char *string, const char *delimiter,
 	i = 0; /* position in the source string */
 	j = 0; /* position in the destination string */
 	while (string[i] != '\0') {
-		if (!strncasecmp(&string[i], delimiter, length_del)) {
+		if (!g_ascii_strncasecmp(&string[i], delimiter, length_del)) {
 			strncpy(&ret[j], replacement, length_rep);
 			i += length_del;
 			j += length_rep;
@@ -3135,7 +3185,7 @@ purple_strcasestr(const char *haystack, const char *needle)
 char *
 purple_str_size_to_units(size_t size)
 {
-	static const char *size_str[4] = { "bytes", "KB", "MB", "GB" };
+	static const char *size_str[4] = { "bytes", "KiB", "MiB", "GiB" };
 	float size_mag;
 	int size_index = 0;
 
@@ -3944,6 +3994,10 @@ purple_email_is_valid(const char *address)
 		if (*c <= ' ' || *c >= 127) return FALSE;
 		if (strchr(rfc822_specials, *c)) return FALSE;
 	}
+
+	/* It's obviously not an email address if we didn't find an '@' above */
+	if (*c == '\0') return FALSE;
+
 	/* strictly we should return false if (*(c - 1) == '.') too, but I think
 	 * we should permit user.@domain type addresses - they do work :) */
 	if (c == address) return FALSE;

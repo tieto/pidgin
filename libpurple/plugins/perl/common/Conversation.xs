@@ -62,6 +62,7 @@ BOOT:
 		const_iv(RAW),
 		const_iv(IMAGES),
 		const_iv(NOTIFY),
+		const_iv(NO_LINKIFY),
 	};
 	static const constiv cbflags_const_iv[] = {
 #undef const_iv

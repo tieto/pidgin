@@ -127,7 +127,7 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
   !define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_LINK			$(PIDGIN_FINISH_VISIT_WEB_SITE)
-  !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im/win32"
+  !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im"
 
 ;--------------------------------
 ;Pages
@@ -358,7 +358,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
   StrCmp $R0 "2" upgrade_gtk
   ;StrCmp $R0 "3" no_gtk no_gtk
 
-  no_gtk:
+  ;no_gtk:
     StrCmp $R1 "NONE" gtk_no_install_rights
     ClearErrors
     ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
@@ -431,7 +431,11 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R1\bin"
     WriteRegStr HKLM ${PIDGIN_REG_KEY} "" "$INSTDIR"
     WriteRegStr HKLM ${PIDGIN_REG_KEY} "Version" "${PIDGIN_VERSION}"
-    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayName" $(PIDGIN_UNINSTALL_DESC)
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayName" "Pidgin"
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayVersion" "${PIDGIN_VERSION}"
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "HelpLink" "http://developer.pidgin.im/wiki/Using Pidgin"
+    WriteRegDWORD HKLM "${PIDGIN_UNINSTALL_KEY}" "NoModify" 1
+    WriteRegDWORD HKLM "${PIDGIN_UNINSTALL_KEY}" "NoRepair" 1
     WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${PIDGIN_UNINST_EXE}"
     ; Sets scope of the desktop and Start Menu entries for all users.
     SetShellVarContext "all"
@@ -444,7 +448,11 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
 
     WriteRegStr HKCU ${PIDGIN_REG_KEY} "" "$INSTDIR"
     WriteRegStr HKCU ${PIDGIN_REG_KEY} "Version" "${PIDGIN_VERSION}"
-    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayName" $(PIDGIN_UNINSTALL_DESC)
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayName" "Pidgin"
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayVersion" "${PIDGIN_VERSION}"
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "HelpLink" "http://developer.pidgin.im/wiki/Using Pidgin"
+    WriteRegDWORD HKCU "${PIDGIN_UNINSTALL_KEY}" "NoModify" 1
+    WriteRegDWORD HKCU "${PIDGIN_UNINSTALL_KEY}" "NoRepair" 1
     WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${PIDGIN_UNINST_EXE}"
     Goto pidgin_install_files
 
@@ -689,6 +697,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\history.dll"
     Delete "$INSTDIR\plugins\iconaway.dll"
     Delete "$INSTDIR\plugins\idle.dll"
+    Delete "$INSTDIR\plugins\joinpart.dll"
     Delete "$INSTDIR\plugins\libaim.dll"
     Delete "$INSTDIR\plugins\libbonjour.dll"
     Delete "$INSTDIR\plugins\libgg.dll"
@@ -1159,6 +1168,35 @@ Function .onInit
   ;Preselect the URI handlers as appropriate
   Call SelectURIHandlerSelections
 
+  ;Preselect the "shortcuts" checkboxes according to the previous installation
+  ClearErrors
+  ;Make sure that there was a previous installation
+  ReadRegStr $R0 HKCU "${PIDGIN_REG_KEY}" "Installer Language"
+  IfErrors done_preselecting_shortcuts
+    ;Does the Desktop shortcut exist?
+    GetFileTime "$DESKTOP\Pidgin.lnk" $R0 $R0
+    IfErrors +1 +4
+    ClearErrors
+    SetShellVarContext "all"
+    GetFileTime "$DESKTOP\Pidgin.lnk" $R0 $R0
+    IfErrors preselect_startmenu_shortcut ;Desktop Shortcut if off by default
+    !insertmacro SelectSection ${SecDesktopShortcut}
+  preselect_startmenu_shortcut:
+    ;Reset ShellVarContext because we may have changed it
+    SetShellVarContext "current"
+    ClearErrors
+    ;Does the StartMenu shortcut exist?
+    GetFileTime "$SMPROGRAMS\Pidgin.lnk" $R0 $R0
+    IfErrors +1 done_preselecting_shortcuts ;StartMenu Shortcut is on by default
+    ClearErrors
+    SetShellVarContext "all"
+    GetFileTime "$SMPROGRAMS\Pidgin.lnk" $R0 $R0
+    IfErrors +1 done_preselecting_shortcuts ;StartMenu Shortcut is on by default
+    !insertmacro UnselectSection ${SecStartMenuShortcut}
+  done_preselecting_shortcuts:
+  ;Reset ShellVarContext because we may have changed it
+  SetShellVarContext "current"
+
   StrCpy $ISSILENT "/NOUI"
 
   ; GTK installer has two silent states.. one with Message boxes, one without
@@ -1296,7 +1334,7 @@ Function preWelcomePage
 
 !ifndef WITH_GTK
   ; If this installer dosn't have GTK, check whether we need it.
-  ; We do this here an not in .onInit because language change in
+  ; We do this here and not in .onInit because language change in
   ; .onInit doesn't take effect until it is finished.
   Call DoWeNeedGtk
   Pop $R0

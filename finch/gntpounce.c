@@ -32,6 +32,8 @@
 #include <gntlabel.h>
 #include <gntline.h>
 #include <gnttree.h>
+#include <gntutils.h>
+
 #include "internal.h"
 #include "finch.h"
 
@@ -141,8 +143,8 @@ populate_pounces_list(PouncesManager *dialog)
 
 	gnt_tree_remove_all(GNT_TREE(dialog->tree));
 
-	for (pounces = purple_pounces_get_all(); pounces != NULL;
-			pounces = g_list_next(pounces))
+	for (pounces = purple_pounces_get_all_for_ui(FINCH_UI); pounces != NULL;
+			pounces = g_list_delete_link(pounces, pounces))
 	{
 		add_pounce_to_treeview(GNT_TREE(dialog->tree), pounces->data);
 	}
@@ -672,6 +674,7 @@ finch_pounces_manager_show(void)
 	GntWidget *win;
 
 	if (pounces_manager != NULL) {
+		gnt_window_present(pounces_manager->window);
 		return;
 	}
 
@@ -698,6 +701,7 @@ finch_pounces_manager_show(void)
 	/* Add button */
 	button = gnt_button_new(_("Add"));
 	gnt_box_add_widget(GNT_BOX(bbox), button);
+	gnt_util_set_trigger_widget(tree, GNT_KEY_INS, button);
 
 	g_signal_connect(G_OBJECT(button), "activate",
 					 G_CALLBACK(pounces_manager_add_cb), dialog);
@@ -714,6 +718,7 @@ finch_pounces_manager_show(void)
 	button = gnt_button_new(_("Delete"));
 	dialog->delete_button = button;
 	gnt_box_add_widget(GNT_BOX(bbox), button);
+	gnt_util_set_trigger_widget(tree, GNT_KEY_DEL, button);
 
 	g_signal_connect(G_OBJECT(button), "activate",
 					 G_CALLBACK(pounces_manager_delete_cb), dialog);

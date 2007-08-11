@@ -37,6 +37,8 @@
 #include "gtkthemes.h"
 #include "gtkutils.h"
 
+#include <gdk/gdkkeysyms.h>
+
 static GtkHBoxClass *parent_class = NULL;
 
 static void toggle_button_set_active_block(GtkToggleButton *button,
@@ -629,7 +631,6 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *widt
 	return ls;
 }
 
-
 static gboolean
 smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley)
 {
@@ -642,6 +643,18 @@ smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley)
 	return TRUE;
 }
 
+static gboolean
+smiley_dialog_input_cb(GtkWidget *dialog, GdkEvent *event, GtkIMHtmlToolbar *toolbar)
+{
+	if ((event->type == GDK_KEY_PRESS && event->key.keyval == GDK_Escape) ||
+	    (event->type == GDK_BUTTON_PRESS && event->button.button == 1))
+	{
+		close_smiley_dialog(NULL, NULL, toolbar);
+		return TRUE;
+	}
+
+	return FALSE;
+}
 
 static void
 insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
@@ -720,11 +733,16 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 			free(it_tmp);
 		}
 		gtk_box_pack_start(GTK_BOX(smiley_table), line, FALSE, TRUE, 0);
+
+		gtk_widget_add_events(dialog, GDK_KEY_PRESS_MASK);
 	}
 	else {
 		smiley_table = gtk_label_new(_("This theme has no available smileys."));
+		gtk_widget_add_events(dialog, GDK_KEY_PRESS_MASK | GDK_BUTTON_PRESS_MASK);
+		g_signal_connect(G_OBJECT(dialog), "button-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
 	}
 
+	g_signal_connect(G_OBJECT(dialog), "key-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
 	gtk_container_add(GTK_CONTAINER(dialog), smiley_table);
 
 	gtk_widget_show(smiley_table);
@@ -865,41 +883,21 @@ menu_position_func (GtkMenu           *menu,
                     gboolean          *push_in,
                     gpointer          data)
 {
-	GtkRequisition menu_req;
-	GtkTextDirection direction;
-	GdkRectangle monitor;
-	gint monitor_num;
-	GdkScreen *screen;
 	GtkWidget *widget = GTK_WIDGET(data);
+	GtkRequisition menu_req;
+	gint ythickness = widget->style->ythickness;
+	int savy;
 
-	gtk_widget_size_request (GTK_WIDGET (menu), &menu_req);
-
-	direction = gtk_widget_get_direction (widget);
-
-	screen = gtk_widget_get_screen (GTK_WIDGET (menu));
-	monitor_num = gdk_screen_get_monitor_at_window (screen, widget->window);
-	if (monitor_num < 0)
-		monitor_num = 0;
-	gdk_screen_get_monitor_geometry (screen, monitor_num, &monitor);
-
-	gdk_window_get_origin (widget->window, x, y);
+	gtk_widget_size_request(GTK_WIDGET (menu), &menu_req);
+	gdk_window_get_origin(widget->window, x, y);
 	*x += widget->allocation.x;
-	*y += widget->allocation.y;
+	*y += widget->allocation.y + widget->allocation.height;
+	savy = *y;
 
-	if (direction == GTK_TEXT_DIR_LTR)
-		*x += MAX (widget->allocation.width - menu_req.width, 0);
-	else if (menu_req.width > widget->allocation.width)
-		*x -= menu_req.width - widget->allocation.width;
+	pidgin_menu_position_func_helper(menu, x, y, push_in, data);
 
-	if ((*y + widget->allocation.height + menu_req.height) <= monitor.y + monitor.height)
-		*y += widget->allocation.height;
-	else if ((*y - menu_req.height) >= monitor.y)
-		*y -= menu_req.height;
-	else if (monitor.y + monitor.height - (*y + widget->allocation.height) > *y)
-		*y += widget->allocation.height;
-	else
-		*y -= menu_req.height;
-	*push_in = FALSE;
+	if (savy > *y + ythickness + 1)
+		*y -= widget->allocation.height;
 }
 
 static void pidgin_menu_clicked(GtkWidget *button, GtkMenu *menu)
@@ -1055,6 +1053,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *font_button;
 	GtkWidget *font_menu;
 	GtkWidget *insert_menu;
+	GtkWidget *menuitem;
 	GtkWidget *button;
 	GtkWidget *sep;
 	int i;
@@ -1108,7 +1107,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	
 	for (i = 0; buttons[i].label; i++) {
 		GtkWidget *old = *buttons[i].button;
-		GtkWidget *menuitem = gtk_check_menu_item_new_with_mnemonic(buttons[i].label);
+		menuitem = gtk_check_menu_item_new_with_mnemonic(buttons[i].label);
 		g_signal_connect_swapped(G_OBJECT(menuitem), "activate",
 				G_CALLBACK(gtk_button_clicked), old);
 		g_signal_connect_after(G_OBJECT(old), "toggled",
@@ -1160,17 +1159,23 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 
 	insert_menu = gtk_menu_new();
 
-	button = gtk_menu_item_new_with_mnemonic(_("_Smiley"));
-	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
-	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
+	menuitem = gtk_menu_item_new_with_mnemonic(_("_Smiley"));
+	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
+	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
+	g_signal_connect(G_OBJECT(toolbar->smiley), "notify::sensitive",
+			G_CALLBACK(button_sensitiveness_changed), menuitem);
 
-	button = gtk_menu_item_new_with_mnemonic(_("_Image"));
-	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->image);
-	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
+	menuitem = gtk_menu_item_new_with_mnemonic(_("_Image"));
+	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->image);
+	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
+	g_signal_connect(G_OBJECT(toolbar->image), "notify::sensitive",
+			G_CALLBACK(button_sensitiveness_changed), menuitem);
 
-	button = gtk_menu_item_new_with_mnemonic(_("_Link"));
-	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->link);
-	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
+	menuitem = gtk_menu_item_new_with_mnemonic(_("_Link"));
+	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->link);
+	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
+	g_signal_connect(G_OBJECT(toolbar->link), "notify::sensitive",
+			G_CALLBACK(button_sensitiveness_changed), menuitem);
 
 	g_signal_connect(G_OBJECT(insert_button), "clicked", G_CALLBACK(pidgin_menu_clicked), insert_menu);
 	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);

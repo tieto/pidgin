@@ -19,6 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "internal.h"
+
 #include "gntui.h"
 
 #include "gntaccount.h"
@@ -33,7 +35,7 @@
 #include "gntprefs.h"
 #include "gntrequest.h"
 #include "gntstatus.h"
-#include "internal.h"
+#include "gntsound.h"
 
 #include <prefs.h>
 
@@ -57,6 +59,9 @@ void gnt_ui_init()
 	finch_blist_init();
 	purple_blist_set_ui_ops(finch_blist_get_ui_ops());
 
+	/* Initialize sound */
+	purple_sound_set_ui_ops(finch_sound_get_ui_ops());
+
 	/* Now the conversations */
 	finch_conversation_init();
 	purple_conversations_set_ui_ops(finch_conv_get_ui_ops());
@@ -79,6 +84,7 @@ void gnt_ui_init()
 	gnt_register_action(_("Debug Window"), finch_debug_window_show);
 	gnt_register_action(_("File Transfers"), finch_xfer_dialog_show);
 	gnt_register_action(_("Plugins"), finch_plugins_show_all);
+	gnt_register_action(_("Sounds"), finch_sounds_show_all);
 	gnt_register_action(_("Preferences"), finch_prefs_show_all);
 	gnt_register_action(_("Statuses"), finch_savedstatus_show_all);
 

@@ -9,6 +9,7 @@
  *	"mit-copyright.h". 
  */
 
+#include "libpurple/internal.h"
 #include "internal.h"
 #include "util.h"
 
@@ -185,7 +186,7 @@ static int varline(bfr, var)
 #define max(a,b) ((a > b) ? (a) : (b))
 #endif
 
-    if (strncasecmp(bfr, var, max(strlen(var),cp - bfr)))
+    if (g_strncasecmp(bfr, var, max(strlen(var), cp - bfr)))
 	return(0);			/* var is not the var in
 					   bfr ==> no match */
 

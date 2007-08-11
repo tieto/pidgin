@@ -11,17 +11,38 @@ version 2.1.0 (??/??/????):
 	  notifications in chats
 	* With the HTML logger, images in conversations are now saved.
 	  NOTE: Saved images are not yet displayed when loading logs.
+	* Added support for QIP logs to the Log Reader plugin (Michael Shkutkov)
 
 	Pidgin:
 	* Ensure only one copy of Pidgin is running with a given configuration
 	  directory.  The net effect of this is that trying to start Pidgin a
 	  second time will raise the buddy list.  (Gabriel Schulhof)
 	* Undo capability in the conversation window
+	* The formatting toolbar has been reorganized to be more concise.
+	* A new status area has been added to the top of conversations to
+	  provide additional detail about the buddy, including buddy icon,
+	  protocol and status message.
+	* Show idle times in the buddy list as days, hours, seconds
 
-version 2.0.2 (??/??/????):
+	Finch:
+	* There's support for workspaces now (details in the manpage)
+	* There's a new custom window manager, Irssi
+	* Some improvements for tab-completion, tooltip and the password entries
+	* Some bugs regarding search results fixed
+	* A new DBus-script to create a docklet for finch
+	* Support for showing empty groups in the buddy list (Eric Polino)
+
+version 2.0.2 (06/14/2007):
 	Pidgin:
 	* Added a custom conversation font option to preferences
 	* Fixed smiley ordering in the insert smiley popup to be more intuitive
+	* Conversation->More menu items work for Chats as well as Buddies,
+	  including those not on your buddy list
+	* newline plugin should work better with conversation colors plugin now
+	* Get Info on users now provides immediate feedback that something is
+	  happening
+	* Aliasing a buddy will not be interrupted by other buddy list activity
+	* Using the -l option to log in to a specific account works better
 
 	libpurple:
 	* Moving an ICQ buddy from one group to another no longer
@@ -32,6 +53,11 @@ version 2.0.2 (??/??/????):
 	* Fix MSN to correctly detect incorrect passwords and disable the account
 	* Get User Info on MSN is now more reliable & accurate
 	* Updated SILC protocol to support SILC Toolkit 1.1 (Pekka Riikonen)
+	* Fix for some QQ authentication problems
+	* Fix for building on FreeBSD
+	* Prevent "Logged in:" times for AIM buddies being ridiculously high
+	* Updates and fixes to Bonjour support
+	* Improve ICQ encoding support for some non-latin languages
 
 	Finch:
 	* Auto account reconnecting

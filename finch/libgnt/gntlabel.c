@@ -138,8 +138,7 @@ void gnt_label_set_text(GntLabel *label, const char *text)
 
 	if (GNT_WIDGET(label)->window)
 	{
-		gnt_widget_hide(GNT_WIDGET(label));
-		gnt_label_size_request(GNT_WIDGET(label));
+		werase(GNT_WIDGET(label)->window);
 		gnt_widget_draw(GNT_WIDGET(label));
 	}
 }

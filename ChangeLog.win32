@@ -1,4 +1,10 @@
-version 2.0.2 (??/??/????):
+version 2.1.0 (??/??/????):
+	* Updated launcher application (pidgin.exe) to support portable mode
+	  via `pidgin.exe --portable-mode` or by renaming the binary to
+	  `pidgin-portable.exe`
+	* Updated GTK+ to 2.10.13
+
+version 2.0.2 (6/14/2007):
 	* Add Bonjour protocol support thanks to Chris Davies. This requires
 	  Apple Bonjour for Windows from:
 	  http://www.apple.com/support/downloads/bonjourforwindows.html

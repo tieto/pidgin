@@ -1,4 +1,8 @@
 /**
+ * @file gntbindable.h Bindable API
+ * @ingroup gnt
+ */
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -53,7 +57,8 @@ struct _GntBindableClass
 	GHashTable *actions;  /* name -> Action */
 	GHashTable *bindings; /* key -> ActionParam */
 
-	void (*gnt_reserved1)(void);
+	GntBindable * help_window;
+
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);
 	void (*gnt_reserved4)(void);
@@ -145,6 +150,31 @@ gboolean gnt_bindable_perform_action_key(GntBindable *bindable, const char *keys
  * @return
  */
 gboolean gnt_bindable_perform_action_named(GntBindable *bindable, const char *name, ...);
+
+/**
+* Returns a GntTree populated with "key" -> "binding" for the widget.
+*/
+/**
+* 
+* @param widget
+*
+* @return
+*/
+GntBindable * gnt_bindable_bindings_view(GntBindable *bind);
+
+/**
+ *
+ * Builds a window that list the key bindings for a GntBindable object.  From this window a user can select a listing to rebind a new key for the given action.
+ *
+ */
+/**
+ * 
+ * @param bindable
+ *	
+ * @return
+ */
+
+gboolean gnt_bindable_build_help_window(GntBindable *bindable);
 
 G_END_DECLS
 

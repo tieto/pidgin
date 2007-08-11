@@ -152,10 +152,10 @@ static struct PurpleStatusPrimitiveMap
 	{ PURPLE_STATUS_UNSET,           "unset",           N_("Unset")           },
 	{ PURPLE_STATUS_OFFLINE,         "offline",         N_("Offline")         },
 	{ PURPLE_STATUS_AVAILABLE,       "available",       N_("Available")       },
-	{ PURPLE_STATUS_UNAVAILABLE,     "unavailable",     N_("Unavailable")     },
+	{ PURPLE_STATUS_UNAVAILABLE,     "unavailable",     N_("Do not disturb")     },
 	{ PURPLE_STATUS_INVISIBLE,       "invisible",       N_("Invisible")       },
 	{ PURPLE_STATUS_AWAY,            "away",            N_("Away")            },
-	{ PURPLE_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended Away")   },
+	{ PURPLE_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended away")   },
 	{ PURPLE_STATUS_MOBILE,          "mobile",          N_("Mobile")          }
 };
 
