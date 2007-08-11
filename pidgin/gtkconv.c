@@ -8554,8 +8554,6 @@ close_button_entered_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *la
 	return FALSE;
 }
 
-
-
 void
 pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 {
@@ -8588,7 +8586,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	                     _("Close conversation"), NULL);
 
 	g_signal_connect(G_OBJECT(gtkconv->close), "button-press-event",
-	                 G_CALLBACK(close_conv_cb), gtkconv);
+			 G_CALLBACK(close_conv_cb), gtkconv);
 
 #if !GTK_CHECK_VERSION(2,6,0)
 	/*
@@ -8609,7 +8607,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	gtkconv->tab_label = gtk_label_new(tmp_lab = purple_conversation_get_title(conv));
 
 	gtkconv->menu_tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtkconv->menu_label = gtk_label_new(purple_conversation_get_title(gtkconv->active_conv));
+	gtkconv->menu_label = gtk_label_new(tmp_lab);
 	gtk_box_pack_start(GTK_BOX(gtkconv->menu_tabby), gtkconv->menu_icon, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(gtkconv->menu_icon);
@@ -8619,7 +8617,6 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	gtk_misc_set_alignment(GTK_MISC(gtkconv->menu_label), 0, 0);
 
 	gtk_widget_show(gtkconv->menu_tabby);
-	gtk_widget_set_size_request(gtkconv->menu_tabby, 0, -1);
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		pidgin_conv_update_buddy_icon(conv);
