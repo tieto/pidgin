@@ -29,10 +29,18 @@ static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, const gchar *sep, 
 static GList *msim_msg_get_node(MsimMessage *msg, const gchar *name);
 static MsimMessage *msim_msg_new_v(va_list argp);
 
-/* Replacement codes to be replaced with associated replacement text,
- * used for protocol message escaping / unescaping. */
-static gchar* msim_replacement_code[] = { "/1", "/2", /* "/3", */ NULL };
-static gchar* msim_replacement_text[] = { "/", "\\", /* "|", */ NULL };
+/* Escape codes and associated replacement text, used for protocol message
+ * escaping and unescaping. */
+static struct MSIM_ESCAPE_REPLACEMENT
+{
+    gchar *code;
+    gchar *text;
+} msim_escape_replacements[] = {
+    { "/1", "/" },
+    { "/2", "\\" },
+    /* { "/3", "|" }, */        /* Not used here -- only for within arrays */
+    { NULL, NULL }
+};
 
 /**
  * Unescape or escape a protocol message.
@@ -45,14 +53,22 @@ static gchar* msim_replacement_text[] = { "/", "\\", /* "|", */ NULL };
 static gchar *
 msim_unescape_or_escape(gchar *msg, gboolean escape)
 {
-	gchar *tmp, *code, *text;
+	gchar *tmp;
 	guint i;
+    struct MSIM_ESCAPE_REPLACEMENT* replacement;
 
 	/* Replace each code in msim_replacement_code with
 	 * corresponding entry in msim_replacement_text. */
-	for (i = 0; (code = msim_replacement_code[i])
-		   	&& (text = msim_replacement_text[i]); ++i)
-	{
+    for (i = 0; (replacement = &msim_escape_replacements[i]); ++i)	
+    {
+        gchar *code, *text;
+
+        code = replacement->code;
+        text = replacement->text;
+
+        if (!code || !text)
+            break;
+
 		if (escape)
 		{
 			tmp = str_replace(msg, text, code);
