@@ -54,9 +54,9 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 
 m4_define([gnt_lt_current], [1])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [0])
+m4_define([gnt_minor_version], [1])
 m4_define([gnt_micro_version], [0])
-m4_define([gnt_version_suffix], [])
+m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))

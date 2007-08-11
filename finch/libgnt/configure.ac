@@ -26,7 +26,7 @@ AC_PREREQ([2.50])
 
 m4_define([gnt_lt_current], [1])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [0])
+m4_define([gnt_minor_version], [1])
 m4_define([gnt_micro_version], [0])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
