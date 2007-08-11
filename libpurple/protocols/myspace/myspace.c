@@ -43,31 +43,58 @@
 
 /* The names in in emoticon_names (for <i n=whatever>) map to corresponding 
  * entries in emoticon_symbols (for the ASCII representation of the emoticon).
- */
-static const char *emoticon_names[] = {
-    "bigsmile", "growl", "growl", "mad", "scared", "scared", "tongue", "tongue",
-    "devil", "devil", "happy", "happy", "happi", 
-    "messed", "sidefrown", "upset", 
-    "frazzled", "heart", "heart", "nerd", "sinister", "wink", "winc",
-    "geek", "laugh", "laugh", "oops", "smirk", "worried", "worried",
-    "googles", "mohawk", "pirate", "straight", "kiss",
-    NULL};
-
-/* Multiple emoticon symbols in Pidgin can map to one name. List the
+ *
+ * Multiple emoticon symbols in Pidgin can map to one name. List the
  * canonical form, as inserted by the "Smile!" dialog, first. For example,
  * :) comes before :-), because although both are recognized as 'happy',
  * the first is inserted by the smiley button. 
  *
  * Note that symbols are case-sensitive in Pidgin -- :-X is not :-x. */
-static const char *emoticon_symbols[] = {
-    ":D", ">:o", ">:O", ":-[", "=-O", "=-o", ":P",  ":p",
-    "O:-)", "o:-)", ":)", ":-)", ":-)",
-    "8-)", ":-$", ":-$", 
-    ":-/", ";-)", ";)", "8-)" /*:)*/, ":-D", ";-)", ";-)",
-    ":-X", ":-D", ":-d", ":'(", "8-)", ":-(", ":(",
-    "8-)", ":-X", ":-)", ":-!", ":-*",
-    NULL};
 
+/* TODO: Use extra smileys not in default theme! Hylke is also working on
+ * some new smileys specific to MySpaceIM, use them too! */
+static struct MSIM_EMOTICON
+{
+    gchar *name;
+    gchar *symbol;
+} msim_emoticons[] = {
+    { "bigsmile", ":D" }, 
+    { "growl", ">:o" }, 
+    { "growl", ">:O" }, 
+    { "mad", ":-[" }, 
+    { "scared", "=-O" }, 
+    { "scared", "=-o" }, 
+    { "tongue", ":P" }, 
+    { "tongue", ":p" },
+    { "devil", "O:-)" }, 
+    { "devil", "o:-)" }, 
+    { "happy", ":)" }, 
+    { "happy", ":-)" }, 
+    { "happi", ":-)" }, 
+    { "messed", "8-)" }, 
+    { "sidefrown", ":-$" } ,
+    { "upset", ":-$" }, 
+    { "frazzled", ":-/" } ,
+    { "heart", ";-)" }, 
+    { "heart", ";)" }, 
+    { "nerd", "8-)"}, 
+    { "sinister", ":-,D" } ,
+    { "wink", ";-)" },
+    { "winc", ";-)" },
+    { "geek", ":-X" }, 
+    { "laugh", ":-D" }, 
+    { "laugh", ":-d" }, 
+    { "oops", ":'(" }, 
+    { "smirk", "8-)" }, 
+    { "worried", ":-(" } ,
+    { "worried", ":(" },
+    { "googles", "8-)" }, 
+    { "mohawk", ":-X" }, 
+    { "pirate", ":-)" }, 
+    { "straight", ":-!" },
+    { "kiss", ":-*" },
+    { NULL, NULL }
+};
 
 /* Internal functions */
 static void msim_send_zap(PurpleBlistNode *node, gpointer zap_num_ptr);
@@ -1053,6 +1080,7 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 {
 	const gchar *name;
     guint i;
+    struct MSIM_EMOTICON *emote;
        
 	name = xmlnode_get_attrib(root, "n");
 	if (!name) {
@@ -1063,9 +1091,15 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 		return;
 	}
 
-    for (i = 0; emoticon_names[i] != NULL; ++i) {
-        if (!strcmp(name, emoticon_names[i])) {
-            *begin = g_strdup(emoticon_symbols[i]);
+    for (i = 0; (emote = &msim_emoticons[i]) && emote->name != NULL; ++i) {
+        gchar *name;
+        gchar *symbol;
+
+        name = emote->name;
+        symbol = emote->symbol;
+
+        if (!strcmp(name, name)) {
+            *begin = g_strdup(symbol);
             *end = g_strdup("");
             return;
         }
@@ -1272,17 +1306,23 @@ msim_convert_smileys_to_markup(gchar *before)
 {
     gchar *old, *new, *replacement;
     guint i;
+    struct MSIM_EMOTICON *emote;
 
     old = before;
     new = NULL;
 
-    for (i = 0; emoticon_symbols[i] != NULL; ++i) {
-        replacement = g_strdup_printf("<i n=\"%s\"/>", emoticon_names[i]);
+    for (i = 0; (emote = &msim_emoticons[i]) && emote->name != NULL; ++i) {
+        gchar *name, *symbol;
+
+        name = emote->name;
+        symbol = emote->symbol;
+
+        replacement = g_strdup_printf("<i n=\"%s\"/>", name);
 
         purple_debug_info("msim", "msim_convert_smileys_to_markup: %s->%s\n",
-                emoticon_symbols[i] ? emoticon_symbols[i] : "(NULL)", 
+                symbol ? symbol : "(NULL)", 
                 replacement ? replacement : "(NULL)");
-        new = str_replace(old, emoticon_symbols[i], replacement);
+        new = str_replace(old, symbol, replacement);
         
         g_free(replacement);
         g_free(old);
