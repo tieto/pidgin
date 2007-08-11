@@ -222,7 +222,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
 	char keys[256];
 	int rd;
-	char *k, *utf8;
+	char *k;
 
 	if (wm->mode == GNT_KP_MODE_WAIT_ON_CHILD)
 		return FALSE;
@@ -251,8 +251,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 	if (HOLDING_ESCAPE)
 		keys[0] = '\033';
-	utf8 = g_locale_to_utf8(keys, rd, NULL, NULL, NULL);
-	k = utf8 ? utf8 : keys;
+	k = keys;
 	while (rd) {
 		char back;
 		int p;
@@ -279,7 +278,6 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	}
 end:
 	gnt_wm_set_event_stack(wm, FALSE);
-	g_free(utf8);
 	return TRUE;
 }
 

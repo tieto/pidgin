@@ -1486,7 +1486,6 @@ void gnt_tree_change_text(GntTree *tree, gpointer key, int colno, const char *te
 
 	g_return_if_fail(colno < tree->ncol);
 	
-	text = gnt_util_localize_string(text);
 	row = g_hash_table_lookup(tree->hash, key);
 	if (row)
 	{
@@ -1626,9 +1625,7 @@ GntTreeRow *gnt_tree_create_row_from_list(GntTree *tree, GList *list)
 			col->text = iter->data;
 			col->isbinary = TRUE;
 		} else {
-			const char *text = iter->data;
-			text = gnt_util_localize_string(text);
-			col->text = g_strdup(text ? text : "");
+			col->text = g_strdup(iter->data ? iter->data : "");
 			col->isbinary = FALSE;
 		}
 
@@ -1670,7 +1667,6 @@ void gnt_tree_set_col_width(GntTree *tree, int col, int width)
 void gnt_tree_set_column_title(GntTree *tree, int index, const char *title)
 {
 	g_free(tree->columns[index].title);
-	title = gnt_util_localize_string(title);
 	tree->columns[index].title = g_strdup(title);
 }
 
@@ -1683,7 +1679,6 @@ void gnt_tree_set_column_titles(GntTree *tree, ...)
 	for (i = 0; i < tree->ncol; i++)
 	{
 		const char *title = va_arg(args, const char *);
-		title = gnt_util_localize_string(title);
 		tree->columns[i].title = g_strdup(title);
 	}
 	va_end(args);

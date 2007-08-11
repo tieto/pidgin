@@ -162,7 +162,6 @@ GntWidget *gnt_button_new(const char *text)
 	GntWidget *widget = g_object_new(GNT_TYPE_BUTTON, NULL);
 	GntButton *button = GNT_BUTTON(widget);
 
-	text = gnt_util_localize_string(text);
 	button->priv->text = gnt_util_onscreen_fit_string(text, -1);
 	gnt_widget_set_take_focus(widget, TRUE);
 

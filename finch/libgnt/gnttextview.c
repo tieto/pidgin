@@ -376,7 +376,6 @@ gnt_text_view_reflow(GntTextView *view)
 	view->string->len = 0;
 	GNT_WIDGET_SET_FLAGS(GNT_WIDGET(view), GNT_WIDGET_DRAWING);
 
-	g_object_set_data(G_OBJECT(view), "resizing", GINT_TO_POINTER(TRUE));
 	for (; back; back = back->prev) {
 		line = back->data;
 		if (back->next && !line->soft) {
@@ -395,7 +394,6 @@ gnt_text_view_reflow(GntTextView *view)
 		free_text_line(line, NULL);
 	}
 	g_list_free(list);
-	g_object_set_data(G_OBJECT(view), "resizing", GINT_TO_POINTER(FALSE));
 
 	list = view->list = g_list_first(view->list);
 	/* Go back to the line that was in view before resizing started */
@@ -509,8 +507,6 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 	if (text == NULL || *text == '\0')
 		return;
 
-	if (!g_object_get_data(G_OBJECT(view), "resizing"))
-		text = gnt_util_localize_string(text);
 	fl = gnt_text_format_flag_to_chtype(flags);
 
 	len = view->string->len;
@@ -705,7 +701,6 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 	GList *list, *next, *iter, *inext;
 	const int text_length = text ? strlen(text) : 0;
 	int count = 0;
-	text = gnt_util_localize_string(text);
 	for (list = view->tags; list; list = next) {
 		GntTextTag *tag = list->data;
 		next = list->next;

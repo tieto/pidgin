@@ -830,7 +830,6 @@ gnt_entry_set_text_internal(GntEntry *entry, const char *text)
 
 	g_free(entry->start);
 
-	text = gnt_util_localize_string(text);
 	if (text && text[0])
 	{
 		len = strlen(text);

@@ -409,14 +409,3 @@ void gnt_util_set_trigger_widget(GntWidget *wid, const char *text, GntWidget *bu
 	g_signal_connect_swapped(G_OBJECT(button), "destroy", G_CALLBACK(free_trigger_button), tb);
 }
 
-const char *gnt_util_localize_string(const char *string)
-{
-	static char *loc = NULL;
-
-	g_free(loc);
-
-	loc = string ? g_locale_from_utf8(string, -1, NULL, NULL, NULL) : NULL;
-
-	return loc ? loc : string;
-}
-
