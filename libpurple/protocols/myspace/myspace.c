@@ -2065,13 +2065,7 @@ msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 		/* 'f' = userid message is from, in buddy messages */
 		uid = msim_msg_get_integer(msg, "f");
 
-		/* TODO: Make caching work. Currently it is commented out because
-		 * it crashes for unknown reasons, memory realloc error. */
-#if 0
 		username = msim_uid2username_from_blist(session, uid); 
-#else
-		username = NULL; 
-#endif
 
 		if (username) {
 			/* Know username already, use it. */
