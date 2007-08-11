@@ -37,13 +37,12 @@ static GObjectClass *parent_class = NULL;
 
 static struct
 {
-	char * okeys; /* Old keystrokes */
-	char * keys; /* New Keystrokes being bound to the action */
+	char * okeys;         /* Old keystrokes */
+	char * keys;          /* New Keystrokes being bound to the action */
 	GntBindableClass * klass; /* Class of the object that's getting keys rebound */
-	char * name; /* The name of the action */
-	GList * params; /* The list of paramaters */
-	
-} rebind_info = {NULL,NULL,NULL,NULL,NULL};
+	char * name;          /* The name of the action */
+	GList * params;       /* The list of paramaters */
+} rebind_info;
 
 static void 
 gnt_bindable_free_rebind_info()
@@ -63,8 +62,7 @@ gnt_bindable_rebinding_cancel(GntWidget *button, gpointer data)
 static void
 gnt_bindable_rebinding_rebind(GntWidget *button, gpointer data)
 {
-
-	if(rebind_info.keys) {
+	if (rebind_info.keys) {
 		gnt_bindable_register_binding(rebind_info.klass,
 				NULL,
 				rebind_info.okeys,
@@ -75,33 +73,30 @@ gnt_bindable_rebinding_rebind(GntWidget *button, gpointer data)
 				rebind_info.params);
 	}
 	gnt_bindable_free_rebind_info();
-
 	gnt_widget_destroy(GNT_WIDGET(data));
 }
 
 static gboolean
-gnt_bindable_rebinding_grab_key(GntBindable *bindable, const char *text, gpointer *data)
+gnt_bindable_rebinding_grab_key(GntBindable *bindable, const char *text, gpointer data)
 {
-
-	GntTextView *textview= GNT_TEXT_VIEW(data);
+	GntTextView *textview = GNT_TEXT_VIEW(data);
 	char *new_text;
 	const char *tmp;
 
-	if(text && *text){
-
-		if(!strcmp(text, GNT_KEY_CTRL_I) || !strcmp(text, GNT_KEY_ENTER)){
+	if (text && *text) {
+		/* Rebinding tab or enter for something is probably not that great an idea */
+		if (!strcmp(text, GNT_KEY_CTRL_I) || !strcmp(text, GNT_KEY_ENTER)) {
 			return FALSE;
 		}
 		
 		tmp = gnt_key_lookup(text);
-		new_text = g_strdup_printf("KEY: \"%s\"",tmp);
+		new_text = g_strdup_printf("KEY: \"%s\"", tmp);
 		gnt_text_view_clear(textview);
-		gnt_text_view_append_text_with_flags(textview,new_text,GNT_TEXT_FLAG_NORMAL);
+		gnt_text_view_append_text_with_flags(textview, new_text, GNT_TEXT_FLAG_NORMAL);
 		g_free(new_text);
 
 		g_free(rebind_info.keys);
 		rebind_info.keys = g_strdup(text);
-
 
 		return TRUE;
 	}
@@ -110,82 +105,71 @@ gnt_bindable_rebinding_grab_key(GntBindable *bindable, const char *text, gpointe
 static void
 gnt_bindable_rebinding_activate(GntBindable *data, gpointer bindable)
 {
-				
-	GntTree * tree = GNT_TREE(data);
-
-	GntWidget *vbox = gnt_box_new(FALSE,TRUE);
-
-	GntWidget *label;
-	const char * widget_name = g_type_name(G_OBJECT_TYPE(bindable));
-	char * keys;
-
+	const char *widget_name = g_type_name(G_OBJECT_TYPE(bindable));
+	char *keys;
 	GntWidget *key_textview;
-	
+	GntWidget *label;
 	GntWidget *bind_button, *cancel_button;
 	GntWidget *button_box;
-	
+	GList *current_row_data, *itr;
+	char *tmp;
 	GntWidget *win = gnt_window_new();
-	GList * current_row_data,*itr;
-	char * tmp;
+	GntTree *tree = GNT_TREE(data);
+	GntWidget *vbox = gnt_box_new(FALSE, TRUE);
 
 	rebind_info.klass = GNT_BINDABLE_GET_CLASS(bindable);
 
 	current_row_data = gnt_tree_get_selection_text_list(tree);
-	rebind_info.name = g_strdup(g_list_nth_data(current_row_data,1));
+	rebind_info.name = g_strdup(g_list_nth_data(current_row_data, 1));
 
 	keys = gnt_tree_get_selection_data(tree);
 	rebind_info.okeys = g_strdup(gnt_key_translate(keys));
 
 	rebind_info.params = NULL;
 
-	itr = current_row_data;
-	while(itr){
-		g_free(itr->data);
-		itr = itr->next;
-	}
+	g_list_foreach(current_row_data, (GFunc)g_free, NULL);
 	g_list_free(current_row_data);
 
 	gnt_box_set_alignment(GNT_BOX(vbox), GNT_ALIGN_MID);
 
-	gnt_box_set_title(GNT_BOX(win),"Key Capture");
+	gnt_box_set_title(GNT_BOX(win), "Key Capture");
 
-	tmp = g_strdup_printf("Type the new bindings for %s in a %s.",rebind_info.name,widget_name);
+	tmp = g_strdup_printf("Type the new bindings for %s in a %s.", rebind_info.name, widget_name);
 	label = gnt_label_new(tmp);
 	g_free(tmp);
-	gnt_box_add_widget(GNT_BOX(vbox),label);
+	gnt_box_add_widget(GNT_BOX(vbox), label);
 
-	tmp = g_strdup_printf("KEY: \"%s\"",keys);
+	tmp = g_strdup_printf("KEY: \"%s\"", keys);
 	key_textview = gnt_text_view_new();
-	gnt_widget_set_size(key_textview,key_textview->priv.x,2);
-	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(key_textview),tmp,GNT_TEXT_FLAG_NORMAL);
+	gnt_widget_set_size(key_textview, key_textview->priv.x, 2);
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(key_textview), tmp, GNT_TEXT_FLAG_NORMAL);
 	g_free(tmp);
-	gnt_widget_set_name(key_textview,"keystroke");
-	gnt_box_add_widget(GNT_BOX(vbox),key_textview);
+	gnt_widget_set_name(key_textview, "keystroke");
+	gnt_box_add_widget(GNT_BOX(vbox), key_textview);
 
-	g_signal_connect(G_OBJECT(win), "key_pressed", G_CALLBACK(gnt_bindable_rebinding_grab_key),key_textview);
+	g_signal_connect(G_OBJECT(win), "key_pressed", G_CALLBACK(gnt_bindable_rebinding_grab_key), key_textview);
 
-	button_box = gnt_box_new(FALSE,FALSE);
+	button_box = gnt_box_new(FALSE, FALSE);
 	
 	bind_button = gnt_button_new("BIND");
-	gnt_widget_set_name(bind_button,"bind");
+	gnt_widget_set_name(bind_button, "bind");
 	gnt_box_add_widget(GNT_BOX(button_box), bind_button);
 	
 	cancel_button = gnt_button_new("Cancel");
-	gnt_widget_set_name(cancel_button,"cancel");
-	gnt_box_add_widget(GNT_BOX(button_box),cancel_button);
+	gnt_widget_set_name(cancel_button, "cancel");
+	gnt_box_add_widget(GNT_BOX(button_box), cancel_button);
 	
-	g_signal_connect(G_OBJECT(bind_button), "activate", G_CALLBACK(gnt_bindable_rebinding_rebind),win);
-	g_signal_connect(G_OBJECT(cancel_button), "activate", G_CALLBACK(gnt_bindable_rebinding_cancel),win);
+	g_signal_connect(G_OBJECT(bind_button), "activate", G_CALLBACK(gnt_bindable_rebinding_rebind), win);
+	g_signal_connect(G_OBJECT(cancel_button), "activate", G_CALLBACK(gnt_bindable_rebinding_cancel), win);
 	
+	gnt_box_add_widget(GNT_BOX(vbox), button_box);
 
-	gnt_box_add_widget(GNT_BOX(vbox),button_box);
-
-	gnt_box_add_widget(GNT_BOX(win),vbox);
+	gnt_box_add_widget(GNT_BOX(win), vbox);
 	gnt_widget_show(win);
-
 }
 
-typedef struct {
+typedef struct
+{
 	GHashTable *hash;
 	GntTree *tree;
 } BindingView;
@@ -273,7 +257,7 @@ gnt_bindable_get_gtype(void)
 {
 	static GType type = 0;
 
-	if(type == 0) {
+	if (type == 0) {
 		static const GTypeInfo info = {
 			sizeof(GntBindableClass),
 			(GBaseInitFunc)duplicate_hashes,	/* base_init		*/

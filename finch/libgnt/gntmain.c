@@ -252,12 +252,18 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	if (HOLDING_ESCAPE)
 		keys[0] = '\033';
 	k = keys;
-	if(*k < 0){ /* Alt not sending ESC* */
+
+#if 0
+	/* I am not sure what's happening here. If this actually does something,
+	 * then this needs to go in gnt_keys_refine. */
+	if (*k < 0) { /* Alt not sending ESC* */
 		*(k + 1) = 128 - *k;
 		*k = 27;
 		*(k + 2) = 0;
 		rd++;
 	}
+#endif
+
 	while (rd) {
 		char back;
 		int p;

@@ -34,13 +34,13 @@
 #include <string.h>
 #include <time.h>
 
-#include "gntbutton.h"
 #include "gntwm.h"
-#include "gntentry.h"
 #include "gntstyle.h"
 #include "gntmarshal.h"
 #include "gnt.h"
 #include "gntbox.h"
+#include "gntbutton.h"
+#include "gntentry.h"
 #include "gntlabel.h"
 #include "gntmenu.h"
 #include "gnttextview.h"
@@ -736,7 +736,6 @@ dump_screen(GntBindable *bindable, GList *null)
 			print = ch;
 #ifndef NO_WIDECHAR
 			if (wch.chars[0] > 255) {
-				/* XXX This lines throws a warning, can we quiet it? */
 				snprintf(unicode, sizeof(unicode), "&#x%x;", wch.chars[0]);
 				print = unicode;
 			}
@@ -1142,7 +1141,6 @@ help_for_bindable(GntWM *wm, GntBindable *bindable)
 		ret =  gnt_bindable_build_help_window(bindable);
 	}
 	return ret;
-
 }
 
 static gboolean
@@ -1156,11 +1154,10 @@ help_for_window(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
 	GntWidget *widget;
-	
-	
+
 	if(!wm->cws->ordered)
 		return FALSE;
-	
+
 	widget = wm->cws->ordered->data;
 
 	return help_for_bindable(wm,GNT_BINDABLE(widget));
@@ -1180,7 +1177,6 @@ help_for_widget(GntBindable *bindable, GList *null)
 		return TRUE;
 
 	return help_for_bindable(wm, GNT_BINDABLE(GNT_BOX(widget)->active));
-
 }
 
 static void
@@ -1338,14 +1334,12 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" "T", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "workspace-list", workspace_list,
 				"\033" "s", NULL);
-	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard",
-				toggle_clipboard, "\033" "C", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard", toggle_clipboard,
+				"\033" "C", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-wm", help_for_wm,
 				"\033" "\\", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-window", help_for_window,
 				"\033" "|", NULL);
-	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard", toggle_clipboard, 
-				"\033" "C", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-start", ignore_keys_start, 
 				GNT_KEY_CTRL_G, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-end", ignore_keys_end, 
@@ -1963,7 +1957,6 @@ gnt_wm_give_focus(GntWM *wm, GntWidget *widget)
 	if (!node)
 		return;
 
-	/* XXX Should there be a check before access to 'data' to make sure 'ordered' isn't NULL? */
 	if (widget != wm->_list.window && !GNT_IS_MENU(widget) &&
 				wm->cws->ordered->data != widget) {
 		GntWidget *w = wm->cws->ordered->data;
@@ -2028,7 +2021,6 @@ void gnt_wm_raise_window(GntWM *wm, GntWidget *widget)
 	GntWS *ws = gnt_wm_widget_find_workspace(wm, widget);
 	if (wm->cws != ws)
 		gnt_wm_switch_workspace(wm, g_list_index(wm->workspaces, ws));
-	/* XXX Should there be a check before access to 'data' to make sure 'ordered' isn't NULL? */
 	if (widget != wm->cws->ordered->data) {
 		GntWidget *wid = wm->cws->ordered->data;
 		wm->cws->ordered = g_list_bring_to_front(wm->cws->ordered, widget);
