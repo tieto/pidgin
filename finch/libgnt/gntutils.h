@@ -139,3 +139,10 @@ void gnt_util_parse_widgets(const char *string, int num, ...);
  */
 void gnt_util_set_trigger_widget(GntWidget *wid, const char *text, GntWidget *button);
 
+/**
+ * Return a string safe to print.
+ *
+ * @param string   The UTF-8 string.
+ */
+const char *gnt_util_localize_string(const char *string);
+

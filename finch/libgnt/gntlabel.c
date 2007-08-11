@@ -134,6 +134,7 @@ GntWidget *gnt_label_new_with_format(const char *text, GntTextFormatFlags flags)
 void gnt_label_set_text(GntLabel *label, const char *text)
 {
 	g_free(label->text);
+	text = gnt_util_localize_string(text);
 	label->text = gnt_util_onscreen_fit_string(text, -1);
 
 	if (GNT_WIDGET(label)->window)

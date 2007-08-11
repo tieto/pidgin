@@ -21,6 +21,7 @@
  */
 
 #include "gntcheckbox.h"
+#include "gntutils.h"
 
 enum
 {
@@ -154,6 +155,7 @@ GntWidget *gnt_check_box_new(const char *text)
 {
 	GntWidget *widget = g_object_new(GNT_TYPE_CHECK_BOX, NULL);
 
+	text = gnt_util_localize_string(text);
 	GNT_BUTTON(widget)->priv->text = g_strdup(text);
 	gnt_widget_set_take_focus(widget, TRUE);
 
