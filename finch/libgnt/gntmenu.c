@@ -247,8 +247,10 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 	int current = menu->selected;
 
 	if (menu->submenu) {
-		do menu = menu->submenu; while (menu->submenu);
-		return (gnt_widget_key_pressed(GNT_WIDGET(menu), text));
+		GntMenu *sub = menu;
+		do sub = sub->submenu; while (sub->submenu);
+		if (gnt_widget_key_pressed(GNT_WIDGET(sub), text))
+			return TRUE;
 	}
 
 	if ((text[0] == 27 && text[1] == 0) ||
@@ -278,6 +280,11 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 		}
 
 		if (current != menu->selected) {
+			GntMenu *sub = menu->submenu;
+			while (sub) {
+				gnt_widget_hide(GNT_WIDGET(sub));
+				sub = sub->submenu;
+			}
 			gnt_widget_draw(widget);
 			return TRUE;
 		}
