@@ -695,7 +695,7 @@ reset_cb(GntWidget *button, gpointer null)
 	FinchSoundEvent * event = &sounds[GPOINTER_TO_INT(key)];
 	g_free(event->file);
 	event->file = NULL;
-	gnt_tree_change_text(GNT_TREE(pref_dialog->events), key, 1, "(default)");
+	gnt_tree_change_text(GNT_TREE(pref_dialog->events), key, 1, _("(default)"));
 }
 
 
@@ -776,7 +776,7 @@ load_pref_window(const char * profile)
 		boolpref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s/enabled/%s", profile, event->pref);
 
 		gnt_tree_change_text(GNT_TREE(pref_dialog->events), GINT_TO_POINTER(i), 0, event->label);
-		gnt_tree_change_text(GNT_TREE(pref_dialog->events), GINT_TO_POINTER(i), 1, event->file[0] ? g_path_get_basename(event->file) : "(default)");
+		gnt_tree_change_text(GNT_TREE(pref_dialog->events), GINT_TO_POINTER(i), 1, event->file[0] ? g_path_get_basename(event->file) : _("(default)"));
 
 		gnt_tree_set_choice(GNT_TREE(pref_dialog->events), GINT_TO_POINTER(i), purple_prefs_get_bool(boolpref));
 
