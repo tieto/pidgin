@@ -337,7 +337,10 @@ gnt_menu_activate(GntWidget *widget)
 static void
 gnt_menu_hide(GntWidget *widget)
 {
-	GntMenu *menu = GNT_MENU(widget);
+	GntMenu *sub, *menu = GNT_MENU(widget);
+
+	while ((sub = menu->submenu))
+		gnt_widget_hide(GNT_WIDGET(sub));
 	if (menu->parentmenu)
 		menu->parentmenu->submenu = NULL;
 }

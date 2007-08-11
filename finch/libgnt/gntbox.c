@@ -316,6 +316,10 @@ gnt_box_key_pressed(GntWidget *widget, const char *text)
 		{
 			find_next_focus(box);
 		}
+		else if (strcmp(text, GNT_KEY_BACK_TAB) == 0)
+		{
+			find_prev_focus(box);
+		}
 	}
 	else if (text[0] == '\t')
 	{
