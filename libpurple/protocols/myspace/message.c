@@ -22,7 +22,7 @@
 #include "myspace.h"
 #include "message.h"
 
-static gchar *msim_unescape_or_escape(gchar *msg, gboolean escape);
+static gchar *msim_unescape_or_escape(const gchar *msg, gboolean escape);
 static void msim_msg_free_element(gpointer data, gpointer user_data);
 static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
 static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, const gchar *sep, const gchar *begin, const gchar *end);
@@ -44,17 +44,20 @@ static struct MSIM_ESCAPE_REPLACEMENT {
 /**
  * Unescape or escape a protocol message.
  *
- * @param msg The message to be unescaped or escaped. WILL BE FREED.
+ * @param msg The message to be unescaped or escaped.
  * @param escape TRUE to escape, FALSE to unescape.
  *
  * @return The unescaped or escaped message. Caller must g_free().
  */
 static gchar *
-msim_unescape_or_escape(gchar *msg, gboolean escape)
+msim_unescape_or_escape(const gchar *original_msg, gboolean escape)
 {
-	gchar *tmp;
+	gchar *tmp, *msg;
 	guint i;
     struct MSIM_ESCAPE_REPLACEMENT* replacement;
+
+    /* Freed in loop below. */
+    msg = g_strdup(original_msg);
 
 	/* Replace each code in msim_replacement_code with
 	 * corresponding entry in msim_replacement_text. */
@@ -87,13 +90,13 @@ msim_unescape_or_escape(gchar *msg, gboolean escape)
 gchar *
 msim_escape(const gchar *msg)
 {
-	return msim_unescape_or_escape(g_strdup(msg), TRUE);
+	return msim_unescape_or_escape(msg, TRUE);
 }
 
 gchar *
 msim_unescape(const gchar *msg)
 {
-	return msim_unescape_or_escape(g_strdup(msg), FALSE);
+	return msim_unescape_or_escape(msg, FALSE);
 }
 
 /** Create a new MsimMessage. 
