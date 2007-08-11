@@ -521,7 +521,7 @@ msim_login(PurpleAccount *acct)
 
 		str = g_strdup_printf(
 				_("Sorry, passwords over %d characters in length (yours is "
-				"%d) are not supported by the MySpaceIM plugin."), 
+				"%d) are not supported by MySpace."), 
 				MSIM_MAX_PASSWORD_LENGTH,
 				(int)strlen(acct->password));
 
@@ -2001,19 +2001,18 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
 	g_hash_table_destroy(body);
 }
 
-#if 0
 /* Lookup a username by userid, from buddy list. 
  *
  * @param wanted_uid
  *
  * @return Username of wanted_uid, if on blist, or NULL. Static string. 
  *
- * XXX WARNING: UNKNOWN MEMORY CORRUPTION HERE! 
  */
 static const gchar *
 msim_uid2username_from_blist(MsimSession *session, guint wanted_uid)
 {
 	GSList *buddies, *cur;
+    gchar *ret;
 
 	buddies = purple_find_buddies(session->account, NULL); 
 
@@ -2023,88 +2022,30 @@ msim_uid2username_from_blist(MsimSession *session, guint wanted_uid)
 		return NULL;
 	}
 
+    ret = NULL;
+
 	for (cur = buddies; cur != NULL; cur = g_slist_next(cur))
 	{
 		PurpleBuddy *buddy;
-		//PurpleBlistNode *node;
 		guint uid;
 		const gchar *name;
 
-
 		/* See finch/gnthistory.c */
 		buddy = cur->data;
-		//node  = cur->data;
 
 		uid = purple_blist_node_get_int(&buddy->node, "UserID");
-		//uid = purple_blist_node_get_int(node, "UserID");
-
-		/* name = buddy->name; */                                /* crash */
-		/* name = PURPLE_BLIST_NODE_NAME(&buddy->node);  */        /* crash */
-
-		/* XXX Is this right? Memory corruption here somehow. Happens only
-		 * when return one of these values. */
-		name = purple_buddy_get_name(buddy);                     /* crash */
-		//name = purple_buddy_get_name((PurpleBuddy *)node);     /* crash */
-		/* return name; */                                        /* crash (with above) */
-
-		/* name = NULL; */                                        /* no crash */
-		/* return NULL; */                                        /* no crash (with anything) */
-
-		/* crash =
-*** glibc detected *** pidgin: realloc(): invalid pointer: 0x0000000000d2aec0 ***
-======= Backtrace: =========
-/lib/libc.so.6(__libc_realloc+0x323)[0x2b7bfc012e03]
-/usr/lib/libglib-2.0.so.0(g_realloc+0x31)[0x2b7bfba79a41]
-/usr/lib/libgtk-x11-2.0.so.0(gtk_tree_path_append_index+0x3a)[0x2b7bfa110d5a]
-/usr/lib/libgtk-x11-2.0.so.0[0x2b7bfa1287dc]
-/usr/lib/libgtk-x11-2.0.so.0[0x2b7bfa128e56]
-/usr/lib/libgtk-x11-2.0.so.0[0x2b7bfa128efd]
-/usr/lib/libglib-2.0.so.0(g_main_context_dispatch+0x1b4)[0x2b7bfba72c84]
-/usr/lib/libglib-2.0.so.0[0x2b7bfba75acd]
-/usr/lib/libglib-2.0.so.0(g_main_loop_run+0x1ca)[0x2b7bfba75dda]
-/usr/lib/libgtk-x11-2.0.so.0(gtk_main+0xa3)[0x2b7bfa0475f3]
-pidgin(main+0x8be)[0x46b45e]
-/lib/libc.so.6(__libc_start_main+0xf4)[0x2b7bfbfbf0c4]
-pidgin(gtk_widget_grab_focus+0x39)[0x429ab9]
-
-or:
- *** glibc detected *** /usr/local/bin/pidgin: malloc(): memory corruption (fast): 0x0000000000c10076 ***
- (gdb) bt
-#0  0x00002b4074ecd47b in raise () from /lib/libc.so.6
-#1  0x00002b4074eceda0 in abort () from /lib/libc.so.6
-#2  0x00002b4074f0453b in __fsetlocking () from /lib/libc.so.6
-#3  0x00002b4074f0c810 in free () from /lib/libc.so.6
-#4  0x00002b4074f0d6dd in malloc () from /lib/libc.so.6
-#5  0x00002b4074974b5b in g_malloc () from /usr/lib/libglib-2.0.so.0
-#6  0x00002b40749868bf in g_strdup () from /usr/lib/libglib-2.0.so.0
-#7  0x00002b407810969f in msim_parse (
-    raw=0xd2a910 "\\bm\\100\\f\\3656574\\msg\\|s|0|ss|Offline")
-        at message.c:648
-#8  0x00002b407810889c in msim_input_cb (gc_uncasted=0xcf92c0, 
-    source=<value optimized out>, cond=<value optimized out>) at myspace.c:1478
-
-
-Why is it crashing in msim_parse()'s g_strdup()?
-*/
-		purple_debug_info("msim", "msim_uid2username_from_blist: %s's uid=%d (want %d)\n",
-				name, uid, wanted_uid);
+		name = purple_buddy_get_name(buddy);
 
 		if (uid == wanted_uid)
 		{
-			gchar *ret;
-
 			ret = g_strdup(name);
-
-			g_slist_free(buddies);
-
-			return ret;
+            break;
 		}
 	}
 
 	g_slist_free(buddies);
-	return NULL;
+	return ret;
 }
-#endif
 
 /** Preprocess incoming messages, resolving as needed, calling msim_process() when ready to process.
  *
@@ -3937,6 +3878,7 @@ init_plugin(PurplePlugin *plugin)
 #ifdef MSIM_SELF_TEST
 	msim_test_all();
 #endif /* MSIM_SELF_TEST */
+
 
 	/* TODO: default to automatically try different ports. Make the user be
 	 * able to set the first port to try (like LastConnectedPort in Windows client).  */
