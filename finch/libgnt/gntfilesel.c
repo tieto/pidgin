@@ -355,6 +355,7 @@ dir_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 		} else if (strcmp(str, "..") == 0) {
 			gnt_tree_set_selected(tree, dir);
 		}
+		gnt_bindable_perform_action_named(GNT_BINDABLE(tree), "end-search", NULL);
 		g_free(dir);
 		g_free(str);
 		g_free(path);
@@ -495,10 +496,11 @@ toggle_tag_selection(GntBindable *bind, GList *null)
 	if (!sel->multiselect)
 		return FALSE;
 	tree = sel->dirsonly ? sel->dirs : sel->files;
-	if (!gnt_widget_has_focus(tree))
+	if (!gnt_widget_has_focus(tree) ||
+			gnt_tree_is_searching(GNT_TREE(tree)))
 		return FALSE;
 
-	file = gnt_tree_get_selection_data(sel->dirsonly ? GNT_TREE(sel->dirs) : GNT_TREE(sel->files));
+	file = gnt_tree_get_selection_data(GNT_TREE(tree));
 
 	str = gnt_file_sel_get_selected_file(sel);
 	if ((find = g_list_find_custom(sel->tags, str, (GCompareFunc)g_utf8_collate)) != NULL) {
@@ -526,7 +528,8 @@ clear_tags(GntBindable *bind, GList *null)
 	if (!sel->multiselect)
 		return FALSE;
 	tree = sel->dirsonly ? sel->dirs : sel->files;
-	if (!gnt_widget_has_focus(tree))
+	if (!gnt_widget_has_focus(tree) ||
+			gnt_tree_is_searching(GNT_TREE(tree)))
 		return FALSE;
 
 	g_list_foreach(sel->tags, (GFunc)g_free, NULL);
@@ -546,6 +549,9 @@ up_directory(GntBindable *bind, GList *null)
 	GntFileSel *sel = GNT_FILE_SEL(bind);
 	if (!gnt_widget_has_focus(sel->dirs) &&
 			!gnt_widget_has_focus(sel->files))
+		return FALSE;
+	if (gnt_tree_is_searching(GNT_TREE(sel->dirs)) ||
+			gnt_tree_is_searching(GNT_TREE(sel->files)))
 		return FALSE;
 
 	path = g_build_filename(sel->current, "..", NULL);

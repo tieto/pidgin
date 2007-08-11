@@ -55,8 +55,7 @@ class FeedItem(gobject.GObject):
             item['date'] = self.date = time.ctime()
             self.date_parsed = feedparser._parse_date(self.date)
 
-        self.title = item['title']
-        sum = item['summary']
+        self.title = item['title'].encode('utf8')
         self.summary = item['summary'].encode('utf8')
         self.link = item['link']
         self.parent = parent
@@ -79,7 +78,7 @@ class FeedItem(gobject.GObject):
 gobject.type_register(FeedItem)
 
 def item_hash(item):
-    return str(item['date'] + item['title'])
+    return str(item['title'])
 
 """
 The Feed class. It will update the 'link', 'title', 'desc' and 'items'
@@ -171,6 +170,7 @@ class Feed(gobject.GObject):
             self.set_property('unread', unread)
 
         for hv in tmp:
+            self.items.remove(tmp[hv])
             tmp[hv].remove()
             "Also notify the UI about the count change"
 

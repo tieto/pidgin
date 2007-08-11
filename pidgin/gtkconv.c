@@ -8337,11 +8337,6 @@ static gboolean gtk_conv_configure_cb(GtkWidget *w, GdkEventConfigure *event, gp
 	if (gdk_window_get_state(w->window) & GDK_WINDOW_STATE_MAXIMIZED)
 		return FALSE;
 	
-	/* don't save if nothing changed */
-	if (x == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/x") &&
-			y == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/y"))
-		return FALSE; /* carry on normally */
-		
 	/* don't save off-screen positioning */
 	if (x + event->width < 0 ||
 	    y + event->height < 0 ||
@@ -8389,10 +8384,10 @@ pidgin_conv_set_position_size(PidginWindow *win, int conv_x, int conv_y,
 static void
 pidgin_conv_restore_position(PidginWindow *win) {
 	pidgin_conv_set_position_size(win,
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/x"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/y"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/width"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/height"));
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/x"),
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/y"),
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/width"),
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/height"));
 }
 
 PidginWindow *
@@ -8545,6 +8540,20 @@ pidgin_conv_window_switch_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 		                              gtkconv->tab_cont));
 }
 
+static gboolean
+close_button_left_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
+{
+	gtk_label_set_markup(label, "×");
+	return FALSE;
+}
+
+static gboolean
+close_button_entered_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
+{
+	gtk_label_set_markup(label, "<b>×</b>");
+	return FALSE;
+}
+
 void
 pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 {
@@ -8567,15 +8576,17 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	/* Close button. */
 	gtkconv->close = gtk_event_box_new();
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(gtkconv->close), FALSE);
-	close_image = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(close_image),"<b>×</b>");
+	gtk_widget_set_events(gtkconv->close, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
+	close_image = gtk_label_new("×");
+	g_signal_connect(G_OBJECT(gtkconv->close), "enter-notify-event", G_CALLBACK(close_button_entered_cb), close_image);
+	g_signal_connect(G_OBJECT(gtkconv->close), "leave-notify-event", G_CALLBACK(close_button_left_cb), close_image);
 	gtk_widget_show(close_image);
 	gtk_container_add(GTK_CONTAINER(gtkconv->close), close_image);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->close,
 	                     _("Close conversation"), NULL);
 
 	g_signal_connect(G_OBJECT(gtkconv->close), "button-press-event",
-	                 G_CALLBACK(close_conv_cb), gtkconv);
+			 G_CALLBACK(close_conv_cb), gtkconv);
 
 #if !GTK_CHECK_VERSION(2,6,0)
 	/*
@@ -8596,7 +8607,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	gtkconv->tab_label = gtk_label_new(tmp_lab = purple_conversation_get_title(conv));
 
 	gtkconv->menu_tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtkconv->menu_label = gtk_label_new(purple_conversation_get_title(gtkconv->active_conv));
+	gtkconv->menu_label = gtk_label_new(tmp_lab);
 	gtk_box_pack_start(GTK_BOX(gtkconv->menu_tabby), gtkconv->menu_icon, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(gtkconv->menu_icon);
@@ -8606,7 +8617,6 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	gtk_misc_set_alignment(GTK_MISC(gtkconv->menu_label), 0, 0);
 
 	gtk_widget_show(gtkconv->menu_tabby);
-	gtk_widget_set_size_request(gtkconv->menu_tabby, 0, -1);
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		pidgin_conv_update_buddy_icon(conv);
@@ -8621,9 +8631,6 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	if (pidgin_conv_window_get_gtkconv_count(win) == 1) {
 		/* Er, bug in notebooks? Switch to the page manually. */
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), 0);
-
-		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), 
-					   purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/tabs"));
 	} else {
 		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), TRUE);
 	}
@@ -8722,6 +8729,12 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 					   !tabs_side && !angle && pidgin_conv_window_get_gtkconv_count(win) > 1, 
 					   TRUE, GTK_PACK_START);
 
+	if (pidgin_conv_window_get_gtkconv_count(win) == 1) 
+		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook),
+                                           !purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons") ||  
+                                           purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_LEFT ||
+                                           purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_RIGHT);
+
 	/* show the widgets */
 /*	gtk_widget_show(gtkconv->icon); */
 	gtk_widget_show(gtkconv->tab_label);
@@ -8744,12 +8757,6 @@ pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 	gtk_object_sink(GTK_OBJECT(gtkconv->tab_cont));
 
 	gtk_notebook_remove_page(GTK_NOTEBOOK(win->notebook), index);
-
-	/* go back to tabless */
-	if (pidgin_conv_window_get_gtkconv_count(win) <= 2) {
-		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), 
-  					   purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/tabs"));
-	}
 
 	win->gtkconvs = g_list_remove(win->gtkconvs, gtkconv);
 
@@ -9029,6 +9036,7 @@ conv_placement_new_window(PidginConversation *conv)
 	PidginWindow *win;
 
 	win = pidgin_conv_window_new();
+
 	g_signal_connect(G_OBJECT(win->window), "configure_event", 
 			G_CALLBACK(gtk_conv_configure_cb), NULL);
 

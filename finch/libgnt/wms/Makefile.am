@@ -1,10 +1,16 @@
+if PURPLE_AVAILABLE
+# These custom wms depend on libpurple
+purple_wms = s.la irssi.la
+else
+purple_wms =
+endif
+
 s_la_LDFLAGS             = -module -avoid-version
 irssi_la_LDFLAGS         = -module -avoid-version
 
 plugin_LTLIBRARIES = \
-	s.la \
-	irssi.la
-
+	$(purple_wms)
+ 
 plugindir = $(libdir)/gnt
 
 irssi_la_SOURCES = irssi.c

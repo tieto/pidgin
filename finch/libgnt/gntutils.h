@@ -40,6 +40,7 @@ typedef gpointer (*GDupFunc)(gconstpointer data);
  */
 void gnt_util_get_text_bound(const char *text, int *width, int *height);
 
+/* excluding *end */
 /**
  * Get the onscreen width of a string, or a substring.
  *

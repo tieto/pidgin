@@ -718,9 +718,9 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 		if (tmp < start)
 			g_string_append_len(newmsg, tmp, start - tmp);
 
-		idstr = g_datalist_get_data(&attributes, "id");
+		if ((idstr = g_datalist_get_data(&attributes, "id")) != NULL)
+			imgid = atoi(idstr);
 
-		imgid = atoi(idstr);
 		if (imgid != 0)
 		{
 			FILE *image_file;
@@ -735,6 +735,7 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 			if (image == NULL)
 			{
 				/* This should never happen. */
+				/* This *does* happen for failed Direct-IMs -DAA */
 				g_string_free(newmsg, TRUE);
 				g_return_val_if_reached((char *)msg);
 			}

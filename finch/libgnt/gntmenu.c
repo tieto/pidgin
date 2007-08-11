@@ -247,11 +247,14 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 	int current = menu->selected;
 
 	if (menu->submenu) {
-		do menu = menu->submenu; while (menu->submenu);
-		return (gnt_widget_key_pressed(GNT_WIDGET(menu), text));
+		GntMenu *sub = menu;
+		do sub = sub->submenu; while (sub->submenu);
+		if (gnt_widget_key_pressed(GNT_WIDGET(sub), text))
+			return TRUE;
 	}
 
-	if (text[0] == 27 && text[1] == 0) {
+	if ((text[0] == 27 && text[1] == 0) ||
+			(menu->type != GNT_MENU_TOPLEVEL && strcmp(text, GNT_KEY_LEFT) == 0)) {
 		/* Escape closes menu */
 		GntMenu *par = menu->parentmenu;
 		if (par != NULL) {
@@ -271,11 +274,17 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 			menu->selected++;
 			if (menu->selected >= g_list_length(menu->list))
 				menu->selected = 0;
-		} else if (strcmp(text, GNT_KEY_ENTER) == 0) {
+		} else if (strcmp(text, GNT_KEY_ENTER) == 0 ||
+				strcmp(text, GNT_KEY_DOWN) == 0) {
 			gnt_widget_activate(widget);
 		}
 
 		if (current != menu->selected) {
+			GntMenu *sub = menu->submenu;
+			while (sub) {
+				gnt_widget_hide(GNT_WIDGET(sub));
+				sub = sub->submenu;
+			}
 			gnt_widget_draw(widget);
 			return TRUE;
 		}
@@ -283,6 +292,12 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 		if (text[1] == '\0') {
 			if (check_for_trigger(menu, text[0]))
 				return TRUE;
+		} else if (strcmp(text, GNT_KEY_RIGHT) == 0) {
+			GntMenuItem *item = gnt_tree_get_selection_data(GNT_TREE(menu));
+			if (item && item->submenu) {
+				menuitem_activate(menu, item);
+				return TRUE;
+			}
 		}
 		return org_key_pressed(widget, text);
 	}

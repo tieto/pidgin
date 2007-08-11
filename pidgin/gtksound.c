@@ -543,7 +543,8 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 		char *filename = g_strdup(purple_prefs_get_path(file_pref));
 		if(!filename || !strlen(filename)) {
 			g_free(filename);
-			filename = g_build_filename(DATADIR, "sounds", "pidgin", sounds[event].def, NULL);
+			/* XXX Consider creating a constant for "sounds/purple" to be shared with Finch */
+			filename = g_build_filename(DATADIR, "sounds", "purple", sounds[event].def, NULL);
 		}
 
 		purple_sound_play_file(filename, NULL);
