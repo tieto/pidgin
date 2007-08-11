@@ -22,9 +22,6 @@ EXTRA_DIST = \
 		win32/giowin32.c \
 		win32/win32dep.h
 
-if USE_GCONFTOOL
-GCONF_DIR=gconf
-endif
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = purple.pc
