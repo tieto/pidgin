@@ -896,8 +896,10 @@ finch_sounds_show_all(void)
 
 	itr = list = finch_sound_get_profiles();
 	for (; itr; itr = itr->next) {
-		gnt_tree_add_row_after(GNT_TREE(tree), itr->data, gnt_tree_create_row(GNT_TREE(tree), itr->data), NULL, NULL);
-		g_free(itr->data);
+		/* Do not free itr->data. It's the stored as a key for the tree, and will
+		 * be freed when the tree is destroyed. */
+		gnt_tree_add_row_after(GNT_TREE(tree), itr->data,
+				gnt_tree_create_row(GNT_TREE(tree), itr->data), NULL, NULL);
 	}
 	g_list_free(list);
 
