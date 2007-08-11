@@ -281,7 +281,7 @@ account_signon_cb(PurpleConnection *gc, gpointer data)
 	mute_login_sounds_timeout = purple_timeout_add_seconds(10, unmute_login_sounds_cb, NULL);
 }
 
-void *
+static void *
 finch_sound_get_handle()
 {
 	static int handle;
@@ -619,7 +619,7 @@ finch_sound_set_active_profile(const char *name)
 	purple_prefs_set_string(FINCH_PREFS_ROOT "/sound/actprofile", name);
 }
 
-gboolean
+static gboolean
 finch_sound_profile_exists(const char *name)
 {
 	gchar * tmp;
@@ -897,6 +897,7 @@ finch_sounds_show_all(void)
 	itr = list = finch_sound_get_profiles();
 	for (; itr; itr = itr->next) {
 		gnt_tree_add_row_after(GNT_TREE(tree), itr->data, gnt_tree_create_row(GNT_TREE(tree), itr->data), NULL, NULL);
+		g_free(itr->data);
 	}
 	g_list_free(list);
 
@@ -1036,7 +1037,6 @@ finch_sounds_show_all(void)
 	load_pref_window(finch_sound_get_active_profile());
 
 	gnt_widget_show(win);
-
 }	
 
 static PurpleSoundUiOps sound_ui_ops =

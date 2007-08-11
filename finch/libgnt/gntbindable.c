@@ -111,7 +111,7 @@ gnt_bindable_rebinding_activate(GntBindable *data, gpointer bindable)
 	GntWidget *label;
 	GntWidget *bind_button, *cancel_button;
 	GntWidget *button_box;
-	GList *current_row_data, *itr;
+	GList *current_row_data;
 	char *tmp;
 	GntWidget *win = gnt_window_new();
 	GntTree *tree = GNT_TREE(data);
@@ -450,7 +450,6 @@ reset_binding_window(GntBindableClass *window, gpointer k)
 gboolean
 gnt_bindable_build_help_window(GntBindable *bindable)
 {
-
 	GntWidget *tree;
 	GntBindableClass *klass = GNT_BINDABLE_GET_CLASS(bindable);
 	char *title;
