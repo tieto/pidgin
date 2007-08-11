@@ -2153,8 +2153,9 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 			ret = g_string_append(ret, c);
 			e += len;
 		} else {
-			ret = g_string_append_c(ret, *e);
-			e++;
+			gunichar uni = g_utf8_get_char(e);
+			ret = g_string_append_unichar(ret, uni);
+			e = g_utf8_next_char(e);
 		}
 	}
 
