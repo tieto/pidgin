@@ -172,13 +172,12 @@ static gboolean msim_is_email(const gchar *user);
 static void msim_lookup_user(MsimSession *session, const gchar *user, 
 		MSIM_USER_LOOKUP_CB cb, gpointer data);
 
-#ifndef round
-double round(double round);
+double msim_round(double round);
 
 /* round is part of C99, but sometimes is unavailable before then.
  * Based on http://forums.belution.com/en/cpp/000/050/13.shtml
  */
-double round(double value)
+double msim_round(double value)
 {
     if (value < 0) {
         return -(floor(-value + 0.5));
@@ -186,7 +185,6 @@ double round(double value)
         return   floor( value + 0.5);
     }
 }
-#endif
 
 /** 
  * Load the plugin.
@@ -842,7 +840,7 @@ msim_point_to_purple_size(MsimSession *session, guint point)
             size < sizeof(_font_scale) / sizeof(_font_scale[0]);
             ++size) {
         scale = _font_scale[CLAMP(size, 1, MAX_FONT_SIZE) - 1];
-        this_point = (guint)round(scale * base);
+        this_point = (guint)msim_round(scale * base);
 
         if (this_point >= point) {
             purple_debug_info("msim", "msim_point_to_purple_size: %d pt -> size=%d\n",
@@ -867,7 +865,7 @@ msim_purple_size_to_point(MsimSession *session, guint size)
 
     base = purple_account_get_int(session->account, "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
 
-    point = (guint)round(scale * base);
+    point = (guint)msim_round(scale * base);
 
     purple_debug_info("msim", "msim_purple_size_to_point: size=%d -> %d pt\n",
                     size, point);
@@ -883,7 +881,7 @@ msim_height_to_point(MsimSession *session, guint height)
 
     dpi = purple_account_get_int(session->account, "port", MSIM_DEFAULT_DPI);
 
-    return (guint)round((POINTS_PER_INCH * 1. / dpi) * height);
+    return (guint)msim_round((POINTS_PER_INCH * 1. / dpi) * height);
 
 	/* See also: libpurple/protocols/bonjour/jabber.c
 	 * _font_size_ichat_to_purple */
@@ -897,7 +895,7 @@ msim_point_to_height(MsimSession *session, guint point)
 
     dpi = purple_account_get_int(session->account, "port", MSIM_DEFAULT_DPI);
 
-    return (guint)round((dpi * 1. / POINTS_PER_INCH) * point);
+    return (guint)msim_round((dpi * 1. / POINTS_PER_INCH) * point);
 }
 
 /** Convert the msim markup <f> (font) tag into HTML. */
