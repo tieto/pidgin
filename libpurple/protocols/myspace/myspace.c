@@ -50,49 +50,47 @@
  * the first is inserted by the smiley button. 
  *
  * Note that symbols are case-sensitive in Pidgin -- :-X is not :-x. */
-
-/* TODO: Use extra smileys not in default theme! Hylke is also working on
- * some new smileys specific to MySpaceIM, use them too! */
 static struct MSIM_EMOTICON
 {
 	gchar *name;
 	gchar *symbol;
 } msim_emoticons[] = {
-	{ "bigsmile", ":D" }, 
-	{ "growl", ">:o" }, 
-	{ "growl", ">:O" }, 
-	{ "mad", ":-[" }, 
-	{ "scared", "=-O" }, 
-	{ "scared", "=-o" }, 
-	{ "tongue", ":P" }, 
+	/* Unfortunately, this list duplicates much of the file
+	 * pidgin/pidgin/pixmaps/emotes/default/22/default.theme.in, because
+	 * that file is part of Pidgin, but we're part of libpurple.
+	 */
+	{ "bigsmile", ":D" },
+	{ "bigsmile", ":-D" },
+	{ "devil", "}:)" },
+	{ "frazzled", ":Z" },
+	{ "geek", "B)" },
+	{ "googles", "%)" },
+	{ "growl", ":E" },
+	{ "laugh", ":))" },		/* Must be before ':)' */
+	{ "happy", ":)" },
+	{ "happy", ":-)" },
+	{ "happi", ":)" },
+	{ "heart", ":X" },
+	{ "mohawk", "-:" },
+	{ "mad", "X(" },
+	{ "messed", "X)" },
+	{ "nerd", "Q)" },
+	{ "oops", ":G" },
+	{ "pirate", "P)" },
+	{ "scared", ":O" },
+	{ "sidefrown", ":{" },
+	{ "sinister", ":B" },
+	{ "smirk", ":," },
+	{ "straight", ":|" },
+	{ "tongue", ":P" },
 	{ "tongue", ":p" },
-	{ "devil", "O:-)" }, 
-	{ "devil", "o:-)" }, 
-	{ "happy", ":)" }, 
-	{ "happy", ":-)" }, 
-	{ "happi", ":-)" }, 
-	{ "messed", "8-)" }, 
-	{ "sidefrown", ":-$" } ,
-	{ "upset", ":-$" }, 
-	{ "frazzled", ":-/" } ,
-	{ "heart", ";-)" }, 
-	{ "heart", ";)" }, 
-	{ "nerd", "8-)"}, 
-	{ "sinister", ":-,D" } ,
+	{ "tongy", ":P" },
+	{ "upset", "B|" },
 	{ "wink", ";-)" },
-	{ "winc", ";-)" },
-	{ "geek", ":-X" }, 
-	{ "laugh", ":-D" }, 
-	{ "laugh", ":-d" }, 
-	{ "oops", ":'(" }, 
-	{ "smirk", "8-)" }, 
-	{ "worried", ":-(" } ,
-	{ "worried", ":(" },
-	{ "googles", "8-)" }, 
-	{ "mohawk", ":-X" }, 
-	{ "pirate", ":-)" }, 
-	{ "straight", ":-!" },
-	{ "kiss", ":-*" },
+	{ "wink", ";)" },
+	{ "winc", ";)" },
+	{ "worried", ":[" },
+	{ "kiss", ":x" },
 	{ NULL, NULL }
 };
 
@@ -1081,7 +1079,7 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	const gchar *name;
 	guint i;
 	struct MSIM_EMOTICON *emote;
-	   
+
 	name = xmlnode_get_attrib(root, "n");
 	if (!name) {
 		purple_debug_info("msim", "msim_markup_i_to_html: <i> w/o n");
@@ -1091,21 +1089,17 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 		return;
 	}
 
+	/* Find and use canonical form of smiley symbol. */
 	for (i = 0; (emote = &msim_emoticons[i]) && emote->name != NULL; ++i) {
-		gchar *name;
-		gchar *symbol;
-
-		name = emote->name;
-		symbol = emote->symbol;
-
-		if (!strcmp(name, name)) {
-			*begin = g_strdup(symbol);
+		if (!strcmp(name, emote->name)) {
+			*begin = g_strdup(emote->symbol);
 			*end = g_strdup("");
 			return;
 		}
 	}
 
-	*begin = g_strdup(name);
+	/* Couldn't find it, sorry. Try to degrade gracefully. */
+	*begin = g_strdup_printf("**%s**", name);
 	*end = g_strdup("");
 }
 

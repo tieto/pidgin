@@ -33,7 +33,11 @@ cp ~/pidgin/win32-install-dir/pixmaps/pidgin/protocols/16/myspace.png \
 mkdir -p win32-archive/pixmaps/pidgin/emotes/default
 cp ~/pidgin/win32-install-dir/pixmaps/pidgin/emotes/default/theme \
         win32-archive/pixmaps/pidgin/emotes/default/theme
-        # Use DOS line endings and .txt file extension for convenience
+# Emoticons in MySpaceIM but not Pidgin 2.1.0
+cp ~/pidgin/win32-install-dir/pixmaps/pidgin/emotes/default/{sinister,sidefrown,pirate,mohawk,messed,bulgy-eyes}.png \
+	win32-archive/pixmaps/pidgin/emotes/default/
+
+# Use DOS line endings and .txt file extension for convenience
 u2d < README > win32-archive/msimprpl-README.txt
 u2d < LICENSE > win32-archive/msimprpl-LICENSE.txt
 u2d < CHANGES > win32-archive/msimprpl-CHANGES.txt
