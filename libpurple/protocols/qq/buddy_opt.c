@@ -410,7 +410,7 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 					   (_qq_send_packet_add_buddy_auth_with_gc_and_uid),
 					   _("Cancel"), G_CALLBACK(qq_do_nothing_with_gc_and_uid),
 					   purple_connection_get_account(gc), nombre, NULL,
-					   g);
+					   "buddy", g);
 			g_free(msg);
 			g_free(nombre);
 		} else {	/* add OK */
