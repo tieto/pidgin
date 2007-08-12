@@ -3340,7 +3340,7 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 
 	presence = purple_buddy_get_presence(b);
 
-	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons"))
+	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons") && aliased)
 	{
 		if (!selected && purple_presence_is_idle(presence))
 		{

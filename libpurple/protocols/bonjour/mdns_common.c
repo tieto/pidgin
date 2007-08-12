@@ -17,30 +17,27 @@
 #include <string.h>
 
 #include "internal.h"
-#include "config.h"
+#include "cipher.h"
+#include "debug.h"
+
 #include "mdns_common.h"
+#include "mdns_interface.h"
 #include "bonjour.h"
 #include "buddy.h"
-#include "debug.h"
 
 
 /**
  * Allocate space for the dns-sd data.
  */
-BonjourDnsSd *
-bonjour_dns_sd_new()
-{
+BonjourDnsSd * bonjour_dns_sd_new() {
 	BonjourDnsSd *data = g_new0(BonjourDnsSd, 1);
-
 	return data;
 }
 
 /**
  * Deallocate the space of the dns-sd data.
  */
-void
-bonjour_dns_sd_free(BonjourDnsSd *data)
-{
+void bonjour_dns_sd_free(BonjourDnsSd *data) {
 	g_free(data->first);
 	g_free(data->last);
 	g_free(data->phsh);
@@ -50,12 +47,90 @@ bonjour_dns_sd_free(BonjourDnsSd *data)
 	g_free(data);
 }
 
+static GSList *generate_presence_txt_records(BonjourDnsSd *data) {
+	GSList *ret = NULL;
+	PurpleKeyValuePair *kvp;
+	char portstring[6];
+	const char *jid, *aim, *email;
+
+	/* Convert the port to a string */
+	snprintf(portstring, sizeof(portstring), "%d", data->port_p2pj);
+
+	jid = purple_account_get_string(data->account, "jid", NULL);
+	aim = purple_account_get_string(data->account, "AIM", NULL);
+	email = purple_account_get_string(data->account, "email", NULL);
+
+#define _M_ADD_R(k, v) \
+	kvp = g_new0(PurpleKeyValuePair, 1); \
+	kvp->key = g_strdup(k); \
+	kvp->value = g_strdup(v); \
+	ret = g_slist_prepend(ret, kvp); \
+
+	/* We should try to follow XEP-0174, but some clients have "issues", so we humor them.
+	 * See http://telepathy.freedesktop.org/wiki/SalutInteroperability
+	 */
+
+	/* Needed by iChat */
+	_M_ADD_R("txtvers", "1")
+	/* Needed by Gaim/Pidgin <= 2.0.1 (remove at some point) */
+	_M_ADD_R("1st", data->first)
+	/* Needed by Gaim/Pidgin <= 2.0.1 (remove at some point) */
+	_M_ADD_R("last", data->last)
+	/* Needed by Adium */
+	_M_ADD_R("port.p2pj", portstring)
+	/* Needed by iChat, Gaim/Pidgin <= 2.0.1 */
+	_M_ADD_R("status", data->status)
+	_M_ADD_R("node", "libpurple")
+	_M_ADD_R("ver", VERSION)
+	/* Currently always set to "!" since we don't support AV and wont ever be in a conference */
+	_M_ADD_R("vc", data->vc)
+	if (email != NULL && *email != '\0') {
+		_M_ADD_R("email", email)
+	}
+	if (jid != NULL && *jid != '\0') {
+		_M_ADD_R("jid", jid)
+	}
+	/* Nonstandard, but used by iChat */
+	if (aim != NULL && *aim != '\0') {
+		_M_ADD_R("AIM", aim)
+	}
+	if (data->msg != NULL && *data->msg != '\0') {
+		_M_ADD_R("msg", data->msg)
+	}
+	if (data->phsh != NULL && *data->phsh != '\0') {
+		_M_ADD_R("phsh", data->phsh)
+	}
+
+	/* TODO: ext, nick */
+	return ret;
+}
+
+static void free_presence_txt_records(GSList *lst) {
+	PurpleKeyValuePair *kvp;
+	while(lst) {
+		kvp = lst->data;
+		g_free(kvp->key);
+		g_free(kvp->value);
+		g_free(kvp);
+		lst = g_slist_remove(lst, lst->data);
+	}
+}
+
+static gboolean publish_presence(BonjourDnsSd *data, PublishType type) {
+	GSList *txt_records;
+	gboolean ret;
+
+	txt_records = generate_presence_txt_records(data);
+	ret = _mdns_publish(data, type, txt_records);
+	free_presence_txt_records(txt_records);
+
+	return ret;
+}
+
 /**
  * Send a new dns-sd packet updating our status.
  */
-void
-bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char *status_message)
-{
+void bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char *status_message) {
 	g_free(data->status);
 	g_free(data->msg);
 
@@ -63,75 +138,85 @@ bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char *s
 	data->msg = g_strdup(status_message);
 
 	/* Update our text record with the new status */
-	_mdns_publish(data, PUBLISH_UPDATE); /* <--We must control the errors */
+	publish_presence(data, PUBLISH_UPDATE);
+}
+
+/**
+ * Retrieve the buddy icon blob
+ */
+void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy) {
+	_mdns_retrieve_buddy_icon(buddy);
+}
+
+void bonjour_dns_sd_update_buddy_icon(BonjourDnsSd *data) {
+	PurpleStoredImage *img;
+
+	if ((img = purple_buddy_icons_find_account_icon(data->account))) {
+		gconstpointer avatar_data;
+		gsize avatar_len;
+
+		avatar_data = purple_imgstore_get_data(img);
+		avatar_len = purple_imgstore_get_size(img);
+
+		if (_mdns_set_buddy_icon_data(data, avatar_data, avatar_len)) {
+			int i;
+			gchar *enc;
+			char *p, hash[41];
+			unsigned char hashval[20];
+
+			enc = purple_base64_encode(avatar_data, avatar_len);
+
+			purple_cipher_digest_region("sha1", avatar_data,
+						    avatar_len, sizeof(hashval),
+						    hashval, NULL);
+
+			p = hash;
+			for(i=0; i<20; i++, p+=2)
+				snprintf(p, 3, "%02x", hashval[i]);
+
+			g_free(data->phsh);
+			data->phsh = g_strdup(hash);
+
+			g_free(enc);
+
+			/* Update our TXT record */
+			publish_presence(data, PUBLISH_UPDATE);
+		}
+
+		purple_imgstore_unref(img);
+	} else {
+		/* We need to do this regardless of whether data->phsh is set so that we
+		 * cancel any icons that are currently in the process of being set */
+		_mdns_set_buddy_icon_data(data, NULL, 0);
+		if (data->phsh != NULL) {
+			/* Clear the buddy icon */
+			g_free(data->phsh);
+			data->phsh = NULL;
+			/* Update our TXT record */
+			publish_presence(data, PUBLISH_UPDATE);
+		}
+	}
 }
 
 /**
  * Advertise our presence within the dns-sd daemon and start browsing
  * for other bonjour peers.
  */
-gboolean
-bonjour_dns_sd_start(BonjourDnsSd *data)
-{
-	PurpleAccount *account;
-	PurpleConnection *gc;
-	gint dns_sd_socket;
-	gpointer opaque_data;
-
-#ifdef USE_BONJOUR_HOWL
-	sw_discovery_oid session_id;
-#endif
-
-	account = data->account;
-	gc = purple_account_get_connection(account);
+gboolean bonjour_dns_sd_start(BonjourDnsSd *data) {
 
 	/* Initialize the dns-sd data and session */
-#ifndef USE_BONJOUR_APPLE
-	if (sw_discovery_init(&data->session) != SW_OKAY)
-	{
-		purple_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
-
-		/* In Avahi, sw_discovery_init frees data->session but doesn't clear it */
-		data->session = NULL;
-
+	if (!_mdns_init_session(data))
 		return FALSE;
-	}
-#endif
 
 	/* Publish our bonjour IM client at the mDNS daemon */
-
-	if (0 != _mdns_publish(data, PUBLISH_START))
-	{
+	if (!publish_presence(data, PUBLISH_START))
 		return FALSE;
-	}
 
 	/* Advise the daemon that we are waiting for connections */
-	
-#ifdef USE_BONJOUR_APPLE
-	if (DNSServiceBrowse(&data->browser, 0, 0, ICHAT_SERVICE, NULL, _mdns_service_browse_callback, account) 
-			!= kDNSServiceErr_NoError)
-#else /* USE_BONJOUR_HOWL */
-	if (sw_discovery_browse(data->session, 0, ICHAT_SERVICE, NULL, _browser_reply,
-			account, &session_id) != SW_OKAY)
-#endif
-	{
+	if (!_mdns_browse(data)) {
 		purple_debug_error("bonjour", "Unable to get service.");
 		return FALSE;
 	}
-
-	/* Get the socket that communicates with the mDNS daemon and bind it to a */
-	/* callback that will handle the dns_sd packets */
-
-#ifdef USE_BONJOUR_APPLE
-	dns_sd_socket = DNSServiceRefSockFD(data->browser);
-	opaque_data = data->browser;
-#else /* USE_BONJOUR_HOWL */
-	dns_sd_socket = sw_discovery_socket(data->session);
-	opaque_data = data->session;
-#endif
-
-	gc->inpa = purple_input_add(dns_sd_socket, PURPLE_INPUT_READ,
-				    _mdns_handle_event, opaque_data);
 
 	return TRUE;
 }
@@ -140,37 +225,6 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
  * Unregister the "_presence._tcp" service at the mDNS daemon.
  */
 
-void
-bonjour_dns_sd_stop(BonjourDnsSd *data)
-{
-	PurpleAccount *account;
-	PurpleConnection *gc;
-
-#ifdef USE_BONJOUR_APPLE
-	if (data->advertisement == NULL || data->browser == NULL)
-#else /* USE_BONJOUR_HOWL */
-	if (data->session == NULL)
-#endif
-		return;
-
-#ifdef USE_BONJOUR_HOWL
-	sw_discovery_cancel(data->session, data->session_id);
-#endif
-
-	account = data->account;
-	gc = purple_account_get_connection(account);
-	purple_input_remove(gc->inpa);
-
-#ifdef USE_BONJOUR_APPLE
-	/* hack: for win32, we need to stop listening to the advertisement pipe too */
-	purple_input_remove(data->advertisement_handler);
-
-	DNSServiceRefDeallocate(data->advertisement);
-	DNSServiceRefDeallocate(data->browser);
-	data->advertisement = NULL;
-	data->browser = NULL;
-#else /* USE_BONJOUR_HOWL */
-	g_free(data->session);
-	data->session = NULL;
-#endif
+void bonjour_dns_sd_stop(BonjourDnsSd *data) {
+	_mdns_stop(data);
 }

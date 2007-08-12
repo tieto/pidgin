@@ -150,7 +150,7 @@ CLEANFILES = \
 # purple dbus server
 
 dbus_sources  = dbus-server.c dbus-useful.c
-dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h
+dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h dbus-types.h
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h \
                 connection.h conversation.h core.h ft.h log.h notify.h prefs.h roomlist.h \

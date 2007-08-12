@@ -19,21 +19,15 @@
 
 #include <glib.h>
 
-#include "config.h"
 #include "account.h"
 #include "jabber.h"
-
-#ifdef USE_BONJOUR_APPLE 
-#include "dns_sd_proxy.h"
-#else /* USE_BONJOUR_HOWL */
-#include <howl.h>
-#endif
 
 typedef struct _BonjourBuddy
 {
 	PurpleAccount *account;
 
 	gchar *name;
+	/* TODO: Remove and just use the hostname */
 	gchar *ip;
 	gint port_p2pj;
 
@@ -53,11 +47,7 @@ typedef struct _BonjourBuddy
 
 	BonjourJabberConversation *conversation;
 
-#ifdef USE_BONJOUR_APPLE
-	DNSServiceRef txt_query;
-	int txt_query_fd;
-#endif
-
+	gpointer mdns_impl_data;
 } BonjourBuddy;
 
 static const char *const buddy_TXT_records[] = {
@@ -85,9 +75,15 @@ static const char *const buddy_TXT_records[] = {
 BonjourBuddy *bonjour_buddy_new(const gchar *name, PurpleAccount *account);
 
 /**
+ * Clear any existing values from the buddy.
+ * This is called before updating so that we can notice removals
+ */
+void clear_bonjour_buddy_values(BonjourBuddy *buddy);
+
+/**
  * Sets a value in the BonjourBuddy struct, destroying the old value
  */
-void set_bonjour_buddy_value(BonjourBuddy* buddy, const char *record_key, const char *value, uint32_t len);
+void set_bonjour_buddy_value(BonjourBuddy *buddy, const char *record_key, const char *value, uint32_t len);
 
 /**
  * Check if all the compulsory buddy data is present.
@@ -98,6 +94,11 @@ gboolean bonjour_buddy_check(BonjourBuddy *buddy);
  * If the buddy doesn't previoulsy exists, it is created. Else, its data is changed (???)
  */
 void bonjour_buddy_add_to_purple(BonjourBuddy *buddy);
+
+/**
+ * We got the buddy icon data; deal with it
+ */
+void bonjour_buddy_got_buddy_icon(BonjourBuddy *buddy, gconstpointer data, gsize len);
 
 /**
  * Deletes a buddy from memory.

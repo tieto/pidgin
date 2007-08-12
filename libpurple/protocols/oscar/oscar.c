@@ -161,7 +161,6 @@ static int purple_conv_chat_leave       (OscarData *, FlapConnection *, FlapFram
 static int purple_conv_chat_info_update (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_conv_chat_incoming_msg(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_email_parseupdate(OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_icon_error       (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_icon_parseicon   (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int oscar_icon_req        (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_msgack     (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -195,7 +194,7 @@ static int purple_ssi_authrequest  (OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_ssi_authreply    (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_ssi_gotadded     (OscarData *, FlapConnection *, FlapFrame *, ...);
 
-static gboolean purple_icon_timerfunc(gpointer data);
+static void purple_icons_fetch(PurpleConnection *gc);
 
 static void recent_buddies_cb(const char *name, PurplePrefType type, gconstpointer value, gpointer data);
 void oscar_set_info(PurpleConnection *gc, const char *info);
@@ -483,7 +482,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 
 	/* Attempt to send as ASCII */
 	if (oscar_charset_check(from) == AIM_CHARSET_ASCII) {
-		*msg = g_convert(from, strlen(from), "ASCII", "UTF-8", NULL, &msglen, NULL);
+		*msg = g_convert(from, -1, "ASCII", "UTF-8", NULL, &msglen, NULL);
 		*charset = AIM_CHARSET_ASCII;
 		*charsubset = 0x0000;
 		*msglen_int = msglen;
@@ -505,7 +504,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 		b = purple_find_buddy(account, destsn);
 		if ((b != NULL) && (PURPLE_BUDDY_IS_ONLINE(b)))
 		{
-			*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
+			*msg = g_convert(from, -1, "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 			if (*msg != NULL)
 			{
 				*charset = AIM_CHARSET_UNICODE;
@@ -528,7 +527,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	 * XXX - We need a way to only attempt to convert if we KNOW "from"
 	 * can be converted to "charsetstr"
 	 */
-	*msg = g_convert(from, strlen(from), charsetstr, "UTF-8", NULL, &msglen, NULL);
+	*msg = g_convert(from, -1, charsetstr, "UTF-8", NULL, &msglen, NULL);
 	if (*msg != NULL) {
 		*charset = AIM_CHARSET_CUSTOM;
 		*charsubset = 0x0000;
@@ -539,7 +538,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	/*
 	 * Nothing else worked, so send as UCS-2BE.
 	 */
-	*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, &msglen, &err);
+	*msg = g_convert(from, -1, "UCS-2BE", "UTF-8", NULL, &msglen, &err);
 	if (*msg != NULL) {
 		*charset = AIM_CHARSET_UNICODE;
 		*charsubset = 0x0000;
@@ -1156,8 +1155,7 @@ flap_connection_established_bart(OscarData *od, FlapConnection *conn)
 
 	od->iconconnecting = FALSE;
 
-	if (od->icontimer == 0)
-		od->icontimer = purple_timeout_add(100, purple_icon_timerfunc, gc);
+	purple_icons_fetch(gc);
 }
 
 static int
@@ -1203,7 +1201,6 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_AUTH, 0x0003, purple_parse_auth_resp, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_AUTH, 0x0007, purple_parse_login, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_AUTH, SNAC_SUBTYPE_AUTH_SECURID_REQUEST, purple_parse_auth_securid_request, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_BART, SNAC_SUBTYPE_BART_ERROR, purple_icon_error, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_BART, SNAC_SUBTYPE_BART_RESPONSE, purple_icon_parseicon, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_BOS, 0x0001, purple_parse_genericerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_BOS, 0x0003, purple_bosrights, 0);
@@ -1873,13 +1870,12 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			saved_b16 = purple_buddy_icons_get_checksum_for_user(b);
 
 		if (!b16 || !saved_b16 || strcmp(b16, saved_b16)) {
-			GSList *cur = od->requesticon;
-			while (cur && aim_sncmp((char *)cur->data, info->sn))
-				cur = cur->next;
-			if (!cur) {
-				od->requesticon = g_slist_append(od->requesticon, g_strdup(purple_normalize(account, info->sn)));
-				if (od->icontimer == 0)
-					od->icontimer = purple_timeout_add(500, purple_icon_timerfunc, gc);
+			if (g_slist_find_custom(od->requesticon, info->sn,
+					(GCompareFunc)aim_sncmp) == NULL)
+			{
+				od->requesticon = g_slist_prepend(od->requesticon,
+						g_strdup(purple_normalize(account, info->sn)));
+				purple_icons_fetch(gc);
 			}
 		}
 		g_free(b16);
@@ -2265,8 +2261,9 @@ purple_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored)
 
 /* When other people ask you for authorization */
 static void
-purple_auth_grant(struct name_data *data)
+purple_auth_grant(gpointer cbdata)
 {
+	struct name_data *data = cbdata;
 	PurpleConnection *gc = data->gc;
 	OscarData *od = gc->proto_data;
 
@@ -2286,8 +2283,9 @@ purple_auth_dontgrant(struct name_data *data, char *msg)
 }
 
 static void
-purple_auth_dontgrant_msgprompt(struct name_data *data)
+purple_auth_dontgrant_msgprompt(gpointer cbdata)
 {
+	struct name_data *data = cbdata;
 	purple_request_input(data->gc, NULL, _("Authorization Denied Message:"),
 					   NULL, _("No reason given."), TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_auth_dontgrant),
@@ -2408,8 +2406,8 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 				purple_account_request_authorization(account, sn, NULL, NULL,
 						reason, purple_find_buddy(account, sn) != NULL,
-						G_CALLBACK(purple_auth_grant),
-						G_CALLBACK(purple_auth_dontgrant_msgprompt), data);
+						purple_auth_grant,
+						purple_auth_dontgrant_msgprompt, data);
 				g_free(reason);
 			}
 		} break;
@@ -3237,24 +3235,8 @@ static int purple_email_parseupdate(OscarData *od, FlapConnection *conn, FlapFra
 	return 1;
 }
 
-static int purple_icon_error(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
-	char *sn;
-
-	sn = od->requesticon->data;
-	purple_debug_misc("oscar", "removing %s from hash table\n", sn);
-	od->requesticon = g_slist_remove(od->requesticon, sn);
-	g_free(sn);
-
-	if (od->icontimer == 0)
-		od->icontimer = purple_timeout_add(500, purple_icon_timerfunc, gc);
-
-	return 1;
-}
-
 static int purple_icon_parseicon(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	PurpleConnection *gc = od->gc;
-	GSList *cur;
 	va_list ap;
 	char *sn;
 	guint8 iconcsumtype, *iconcsum, *icon;
@@ -3280,30 +3262,15 @@ static int purple_icon_parseicon(OscarData *od, FlapConnection *conn, FlapFrame 
 		g_free(b16);
 	}
 
-	cur = od->requesticon;
-	while (cur) {
-		char *cursn = cur->data;
-		if (!aim_sncmp(cursn, sn)) {
-			od->requesticon = g_slist_remove(od->requesticon, cursn);
-			g_free(cursn);
-			cur = od->requesticon;
-		} else
-			cur = cur->next;
-	}
-
-	if (od->icontimer == 0)
-		od->icontimer = purple_timeout_add(250, purple_icon_timerfunc, gc);
-
 	return 1;
 }
 
-static gboolean purple_icon_timerfunc(gpointer data) {
-	PurpleConnection *gc = data;
+static void
+purple_icons_fetch(PurpleConnection *gc)
+{
 	OscarData *od = gc->proto_data;
 	aim_userinfo_t *userinfo;
 	FlapConnection *conn;
-
-	od->icontimer = 0;
 
 	conn = flap_connection_getbytype(od, SNAC_FAMILY_BART);
 	if (!conn) {
@@ -3311,7 +3278,7 @@ static gboolean purple_icon_timerfunc(gpointer data) {
 			aim_srv_requestnew(od, SNAC_FAMILY_BART);
 			od->iconconnecting = TRUE;
 		}
-		return FALSE;
+		return;
 	}
 
 	if (od->set_icon) {
@@ -3322,32 +3289,24 @@ static gboolean purple_icon_timerfunc(gpointer data) {
 		} else {
 			purple_debug_info("oscar",
 				   "Uploading icon to icon server\n");
-			aim_bart_upload(od, purple_imgstore_get_data(img), 
+			aim_bart_upload(od, purple_imgstore_get_data(img),
 			                purple_imgstore_get_size(img));
 			purple_imgstore_unref(img);
 		}
 		od->set_icon = FALSE;
 	}
 
-	if (!od->requesticon) {
-		purple_debug_misc("oscar",
-				   "no more icons to request\n");
-		return FALSE;
+	while (od->requesticon != NULL)
+	{
+		userinfo = aim_locate_finduserinfo(od, (char *)od->requesticon->data);
+		if ((userinfo != NULL) && (userinfo->iconcsumlen > 0))
+			aim_bart_request(od, od->requesticon->data, userinfo->iconcsumtype, userinfo->iconcsum, userinfo->iconcsumlen);
+
+		g_free(od->requesticon->data);
+		od->requesticon = g_slist_delete_link(od->requesticon, od->requesticon);
 	}
 
-	userinfo = aim_locate_finduserinfo(od, (char *)od->requesticon->data);
-	if ((userinfo != NULL) && (userinfo->iconcsumlen > 0)) {
-		aim_bart_request(od, od->requesticon->data, userinfo->iconcsumtype, userinfo->iconcsum, userinfo->iconcsumlen);
-		return FALSE;
-	} else {
-		gchar *sn = od->requesticon->data;
-		od->requesticon = g_slist_remove(od->requesticon, sn);
-		g_free(sn);
-	}
-
-	od->icontimer = purple_timeout_add(100, purple_icon_timerfunc, gc);
-
-	return FALSE;
+	purple_debug_misc("oscar", "no more icons to request\n");
 }
 
 /*
@@ -4389,10 +4348,10 @@ gchar *purple_prpl_oscar_convert_to_infotext(const gchar *str, gsize *ret_len, c
 
 	charset = oscar_charset_check(str);
 	if (charset == AIM_CHARSET_UNICODE) {
-		encoded = g_convert(str, strlen(str), "UCS-2BE", "UTF-8", NULL, ret_len, NULL);
+		encoded = g_convert(str, -1, "UCS-2BE", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "unicode-2-0";
 	} else if (charset == AIM_CHARSET_CUSTOM) {
-		encoded = g_convert(str, strlen(str), "ISO-8859-1", "UTF-8", NULL, ret_len, NULL);
+		encoded = g_convert(str, -1, "ISO-8859-1", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "iso-8859-1";
 	} else {
 		encoded = g_strdup(str);
@@ -4523,9 +4482,9 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		{
 			status_text = purple_markup_strip_html(status_html);
 			/* If the status_text is longer than 60 character then truncate it */
-			if (strlen(status_text) > 60)
+			if (strlen(status_text) > MAXAVAILMSGLEN)
 			{
-				char *tmp = g_utf8_find_prev_char(status_text, &status_text[58]);
+				char *tmp = g_utf8_find_prev_char(status_text, &status_text[MAXAVAILMSGLEN - 2]);
 				strcpy(tmp, "...");
 			}
 		}
@@ -4707,6 +4666,11 @@ void oscar_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup 
 					   "ssi: renamed group %s to %s\n", old_name, group->name);
 		}
 	}
+}
+
+void oscar_remove_group(PurpleConnection *gc, PurpleGroup *group)
+{
+	aim_ssi_delgroup(gc->proto_data, group->name);
 }
 
 static gboolean purple_ssi_rerequestdata(gpointer data) {
@@ -4902,14 +4866,21 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	/* Add from server list to local list */
 	for (curitem=od->ssi.local; curitem; curitem=curitem->next) {
-		if ((curitem->name == NULL) || (g_utf8_validate(curitem->name, -1, NULL)))
+	  if ((curitem->name == NULL) || (g_utf8_validate(curitem->name, -1, NULL)))
 		switch (curitem->type) {
 			case 0x0000: { /* Buddy */
 				if (curitem->name) {
-					char *gname = aim_ssi_itemlist_findparentname(od->ssi.local, curitem->name);
+					struct aim_ssi_item *groupitem = aim_ssi_itemlist_find(od->ssi.local, curitem->gid, 0x0000);
+					char *gname = groupitem ? groupitem->name : NULL;
 					char *gname_utf8 = gname ? oscar_utf8_try_convert(gc->account, gname) : NULL;
 					char *alias = aim_ssi_getalias(od->ssi.local, gname, curitem->name);
 					char *alias_utf8;
+
+					g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans"));
+					if (g == NULL) {
+						g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
+						purple_blist_add_group(g, NULL);
+					}
 
 					if (alias != NULL)
 					{
@@ -4917,14 +4888,12 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 							alias_utf8 = g_strdup(alias);
 						else
 							alias_utf8 = oscar_utf8_try_convert(account, alias);
+						g_free(alias);
 					}
 					else
 						alias_utf8 = NULL;
 
-					b = purple_find_buddy(gc->account, curitem->name);
-					/* Should gname be freed here? -- elb */
-					/* Not with the current code, but that might be cleaner -- med */
-					g_free(alias);
+					b = purple_find_buddy_in_group(gc->account, curitem->name, g);
 					if (b) {
 						/* Get server stored alias */
 						if (alias_utf8) {
@@ -4934,13 +4903,8 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					} else {
 						b = purple_buddy_new(gc->account, curitem->name, alias_utf8);
 
-						if (!(g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans")))) {
-							g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
-							purple_blist_add_group(g, NULL);
-						}
-
 						purple_debug_info("oscar",
-								   "ssi: adding buddy %s to group %s to local list\n", curitem->name, gname_utf8 ? gname_utf8 : _("Orphans"));
+								   "ssi: adding buddy %s to group %s to local list\n", curitem->name, g->name);
 						purple_blist_add_buddy(b, NULL, g, NULL);
 					}
 					if (!aim_sncmp(curitem->name, account->username)) {
@@ -4957,7 +4921,12 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			} break;
 
 			case 0x0001: { /* Group */
-				/* Shouldn't add empty groups */
+				char *gname = curitem->name;
+				char *gname_utf8 = gname ? oscar_utf8_try_convert(gc->account, gname) : NULL;
+				if (gname_utf8 != NULL && purple_find_group(gname_utf8) == NULL) {
+					g = purple_group_new(gname_utf8);
+					purple_blist_add_group(g, NULL);
+				}
 			} break;
 
 			case 0x0002: { /* Permit buddy */
@@ -5203,8 +5172,8 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 
 	purple_account_request_authorization(account, sn, NULL,
 			(buddy ? purple_buddy_get_alias_only(buddy) : NULL),
-			reason, buddy != NULL, G_CALLBACK(purple_auth_grant),
-			G_CALLBACK(purple_auth_dontgrant_msgprompt), data);
+			reason, buddy != NULL, purple_auth_grant,
+			purple_auth_dontgrant_msgprompt, data);
 	g_free(reason);
 
 	return 1;

@@ -1,0 +1,24 @@
+/** @page ui-ops UiOps structures
+
+  When implementing a UI for libpurple, you need to fill in various UiOps
+  structures:
+
+   - #PurpleAccountUiOps
+   - #PurpleBlistUiOps
+   - #PurpleConnectionUiOps
+   - #PurpleConversationUiOps
+   - #PurpleCoreUiOps
+   - #PurpleDebugUiOps
+   - #PurpleDnsQueryUiOps
+   - #PurpleEventLoopUiOps
+   - #PurpleIdleUiOps
+   - #PurpleNotifyUiOps
+   - #PurplePrivacyUiOps
+   - #PurpleRequestUiOps
+   - #PurpleRoomlistUiOps
+   - #PurpleSoundUiOps
+   - #PurpleWhiteboardUiOps
+   - #PurpleXferUiOps
+
+ */
+// vim: ft=c.doxygen

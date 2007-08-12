@@ -1162,6 +1162,11 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	{
 		const char *screenname;
 
+		if (purple_accounts_get_all() == NULL) {
+			/* We're adding our first account.  Be polite and show the buddy list */
+			purple_blist_set_visible(TRUE);
+		}
+
 		screenname = gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry));
 		account = purple_account_new(screenname, dialog->protocol_id);
 		new = TRUE;
@@ -2541,9 +2546,15 @@ deny_no_add_cb(struct auth_and_add *aa)
 }
 
 static void *
-pidgin_accounts_request_authorization(PurpleAccount *account, const char *remote_user,
-					const char *id, const char *alias, const char *message, gboolean on_list,
-					GCallback auth_cb, GCallback deny_cb, void *user_data)
+pidgin_accounts_request_authorization(PurpleAccount *account,
+                                      const char *remote_user,
+                                      const char *id,
+                                      const char *alias,
+                                      const char *message,
+                                      gboolean on_list,
+                                      PurpleAccountRequestAuthorizationCb auth_cb,
+                                      PurpleAccountRequestAuthorizationCb deny_cb,
+                                      void *user_data)
 {
 	char *buffer;
 	PurpleConnection *gc;
@@ -2569,8 +2580,8 @@ pidgin_accounts_request_authorization(PurpleAccount *account, const char *remote
 
 	if (!on_list) {
 		struct auth_and_add *aa = g_new0(struct auth_and_add, 1);
-		aa->auth_cb = (PurpleAccountRequestAuthorizationCb)auth_cb;
-		aa->deny_cb = (PurpleAccountRequestAuthorizationCb)deny_cb;
+		aa->auth_cb = auth_cb;
+		aa->deny_cb = deny_cb;
 		aa->data = user_data;
 		aa->username = g_strdup(remote_user);
 		aa->alias = g_strdup(alias);

@@ -695,18 +695,6 @@ int aim_ssi_cleanlist(OscarData *od)
 		cur = cur->next;
 	}
 
-	/* Check if there are empty groups and delete them */
-	cur = od->ssi.local;
-	while (cur) {
-		next = cur->next;
-		if (cur->type == AIM_SSI_TYPE_GROUP) {
-			aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x00c8, 1);
-			if (!tlv || !tlv->length)
-				aim_ssi_itemlist_del(&od->ssi.local, cur);
-		}
-		cur = next;
-	}
-
 	/* Check if the master group is empty */
 	if ((cur = aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000)) && (!cur->data))
 		aim_ssi_itemlist_del(&od->ssi.local, cur);
@@ -841,18 +829,39 @@ int aim_ssi_delbuddy(OscarData *od, const char *name, const char *group)
 	/* Modify the parent group */
 	aim_ssi_itemlist_rebuildgroup(od->ssi.local, group);
 
-	/* Check if we should delete the parent group */
-	if ((del = aim_ssi_itemlist_finditem(od->ssi.local, group, NULL, AIM_SSI_TYPE_GROUP)) && (!del->data)) {
-		aim_ssi_itemlist_del(&od->ssi.local, del);
+	/* Sync our local list with the server list */
+	return aim_ssi_sync(od);
+}
 
-		/* Modify the parent group */
-		aim_ssi_itemlist_rebuildgroup(od->ssi.local, NULL);
+/**
+ * Deletes a group from the list.
+ *
+ * @param od The oscar odion.
+ * @param group The name of the group.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+int aim_ssi_delgroup(OscarData *od, const char *group)
+{
+	struct aim_ssi_item *del;
+	aim_tlv_t *tlv;
 
-		/* Check if we should delete the parent's parent (the master group) */
-		if ((del = aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000)) && (!del->data)) {
-			aim_ssi_itemlist_del(&od->ssi.local, del);
-		}
-	}
+	if (!od)
+		return -EINVAL;
+
+	/* Find the group */
+	if (!(del = aim_ssi_itemlist_finditem(od->ssi.local, group, NULL, AIM_SSI_TYPE_GROUP)))
+		return -EINVAL;
+
+	/* Don't delete the group if it's not empty */
+	tlv = aim_tlv_gettlv(del->data, 0x00c8, 1);
+	if (tlv && tlv->length > 0)
+		return -EINVAL;
+
+	/* Remove the item from the list */
+	aim_ssi_itemlist_del(&od->ssi.local, del);
+
+	/* Modify the parent group */
+	aim_ssi_itemlist_rebuildgroup(od->ssi.local, group);
 
 	/* Sync our local list with the server list */
 	return aim_ssi_sync(od);

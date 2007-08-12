@@ -19,11 +19,7 @@
 
 #include "mdns_types.h"
 
-#ifdef USE_BONJOUR_APPLE
-#include "mdns_win32.h"
-#elif defined USE_BONJOUR_HOWL
-#include "mdns_howl.h"
-#endif
+#include "buddy.h"
 
 /**
  * Allocate space for the dns-sd data.
@@ -39,6 +35,16 @@ void bonjour_dns_sd_free(BonjourDnsSd *data);
  * Send a new dns-sd packet updating our status.
  */
 void bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char *status_message);
+
+/**
+ * Retrieve the buddy icon blob
+ */
+void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy);
+
+/**
+ * Deal with a buddy icon update
+ */
+void bonjour_dns_sd_update_buddy_icon(BonjourDnsSd *data);
 
 /**
  * Advertise our presence within the dns-sd daemon and start

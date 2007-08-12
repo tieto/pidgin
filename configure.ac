@@ -46,17 +46,17 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [1])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [1])
-m4_define([purple_micro_version], [0])
-m4_define([purple_version_suffix], [])
+m4_define([purple_micro_version], [1])
+m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
 m4_define([gnt_lt_current], [1])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [0])
+m4_define([gnt_minor_version], [1])
 m4_define([gnt_micro_version], [0])
-m4_define([gnt_version_suffix], [])
+m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
@@ -593,6 +593,46 @@ AC_SUBST(MEANWHILE_CFLAGS)
 AC_SUBST(MEANWHILE_LIBS)
 
 dnl #######################################################################
+dnl # Check for Native Avahi headers (for Bonjour)
+dnl #######################################################################
+AC_ARG_WITH(avahi-client-includes, [AC_HELP_STRING([--with-avahi-client-includes=DIR], [compile the Bonjour plugin against the Avahi Client includes in DIR])], [ac_avahi_client_includes="$withval"], [ac_avahi_client_includes="no"])
+AC_ARG_WITH(avahi-client-libs, [AC_HELP_STRING([--with-avahi-client-libs=DIR], [compile the Bonjour plugin against the Avahi Client libs in DIR])], [ac_avahi_client_libs="$withval"], [ac_avahi_client_libs="no"])
+AVAHI_CFLAGS=""
+AVAHI_LIBS=""
+
+dnl Attempt to autodetect Avahi
+PKG_CHECK_MODULES(AVAHI, [avahi-client avahi-glib], [
+	avahiincludes="yes"
+	avahilibs="yes"
+], [
+	AC_MSG_RESULT(no)
+	avahiincludes="no"
+	avahilibs="no"
+])
+
+dnl Override AVAHI_CFLAGS if the user specified an include dir
+if test "$ac_avahi_client_includes" != "no"; then
+	AVAHI_CFLAGS="-I$ac_avahi_client_includes"
+fi
+CPPFLAGS_save="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $AVAHI_CFLAGS"
+AC_CHECK_HEADER(avahi-client/client.h, [avahiincludes=yes], [avahiincludes=no])
+CPPFLAGS="$CPPFLAGS $AVAHI_CFLAGS $GLIB_CFLAGS"
+AC_CHECK_HEADER(avahi-glib/glib-malloc.h, [avahiincludes=yes], [avahiincludes=no])
+CPPFLAGS="$CPPFLAGS_save"
+
+dnl Override AVAHI_LIBS if the user specified a libs dir
+if test "$ac_avahi_client_libs" != "no"; then
+	AVAHI_LIBS="-L$ac_avahi_client_libs -lavahi-common -lavahi-client -lavahi-glib "
+fi
+AC_CHECK_LIB(avahi-client, avahi_client_new, [avahilibs=yes], [avahilibs=no], $AVAHI_LIBS)
+
+AC_SUBST(AVAHI_CFLAGS)
+AC_SUBST(AVAHI_LIBS)
+
+AM_CONDITIONAL(MDNS_AVAHI, test "x$avahiincludes" = "xyes" -a "x$avahilibs" = "xyes")
+
+dnl #######################################################################
 dnl # Check for Howl headers (for Bonjour)
 dnl #######################################################################
 AC_ARG_WITH(howl-includes, [AC_HELP_STRING([--with-howl-includes=DIR], [compile the Bonjour plugin against the Howl includes in DIR])], [ac_howl_includes="$withval"], [ac_howl_includes="no"])
@@ -601,6 +641,7 @@ HOWL_CFLAGS=""
 HOWL_LIBS=""
 
 dnl Attempt to autodetect avahi-compat-howl
+dnl TODO: (This should be removed when the native avahi stuff is stable)
 PKG_CHECK_MODULES(HOWL, avahi-compat-howl, [
 	howlincludes="yes"
 	howllibs="yes"
@@ -639,6 +680,9 @@ AC_CHECK_LIB(howl, sw_discovery_init, [howllibs=yes], [howllibs=no], $HOWL_LIBS)
 
 AC_SUBST(HOWL_CFLAGS)
 AC_SUBST(HOWL_LIBS)
+
+AM_CONDITIONAL(MDNS_HOWL, test "x$howlincludes" = "xyes" -a "x$howllibs" = "xyes")
+
 
 dnl #######################################################################
 dnl # Check for SILC client includes and libraries
@@ -819,8 +863,10 @@ fi
 if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
 fi
-if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
-	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
+if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
+	if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
+		STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
+	fi
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc/silc10/'`
@@ -873,7 +919,7 @@ for i in $STATIC_PRPLS ; do
 		*)			echo "Invalid static protocol $i!!" ; exit ;;
 	esac
 done
-AM_CONDITIONAL(STATIC_BONJOUR, test "x$static_bonjour" = "xyes" -a "x$howlincludes" = "xyes" -a "x$howllibs" = "xyes")
+AM_CONDITIONAL(STATIC_BONJOUR, test "x$static_bonjour" = "xyes")
 AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
 AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
@@ -898,8 +944,10 @@ fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
 fi
-if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
-	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
+if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
+	if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
+		DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
+	fi
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc/silc10/'`
@@ -930,7 +978,7 @@ for i in $DYNAMIC_PRPLS ; do
 		*)			echo "Invalid dynamic protocol $i!!" ; exit ;;
 	esac
 done
-AM_CONDITIONAL(DYNAMIC_BONJOUR, test "x$dynamic_bonjour" = "xyes" -a "x$bonjourincludes" = "xyes" -a "x$bonjourclient" = "xyes")
+AM_CONDITIONAL(DYNAMIC_BONJOUR, test "x$dynamic_bonjour" = "xyes"  -a [ [ "x$avahiincludes" = "xyes" -a "x$avahilibs " = "xyes" ] -o [ "x$howlincludes" = "xyes" -a "x$howllibs" = "xyes" ] ] )
 AM_CONDITIONAL(DYNAMIC_GG, test "x$dynamic_gg" = "xyes")
 AM_CONDITIONAL(DYNAMIC_IRC, test "x$dynamic_irc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
@@ -2038,6 +2086,8 @@ if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
+AM_CONDITIONAL(PURPLE_AVAILABLE, true)
+
 AC_OUTPUT([Makefile
 		   Doxyfile
 		   doc/Makefile
@@ -2116,7 +2166,6 @@ AC_OUTPUT([Makefile
 		   pidgin/plugins/perl/Makefile
 		   pidgin/plugins/perl/common/Makefile.PL
 		   pidgin/plugins/ticker/Makefile
-		   pidgin/sounds/Makefile
 		   libpurple/example/Makefile
 		   libpurple/gconf/Makefile
 		   libpurple/purple.pc
@@ -2149,6 +2198,8 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
 		   libpurple/version.h
+		   share/Makefile
+		   share/sounds/Makefile
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc

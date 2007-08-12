@@ -41,6 +41,7 @@
 
 #include "yahoo.h"
 #include "yahoochat.h"
+#include "yahoo_aliases.h"
 #include "yahoo_auth.h"
 #include "yahoo_crypt.h"
 #include "yahoo_doodle.h"
@@ -196,6 +197,8 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 	GSList *l = pkt->hash;
 	YahooFriend *f = NULL;
 	char *name = NULL;
+	gboolean unicode = FALSE;
+	char *message = NULL;
 
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
 		gc->wants_to_die = TRUE;
@@ -269,7 +272,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 19: /* custom message */
 			if (f)
-				yahoo_friend_set_status_message(f, yahoo_string_decode(gc, pair->value, FALSE));
+				message = pair->value;
 			break;
 		case 11: /* this is the buddy's session id */
 			break;
@@ -380,6 +383,10 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 				g_free(tmp);
 			}
 			break;
+		case 97: /* Unicode status message */
+			unicode = !strcmp(pair->value, "1");
+			break;
+
 		default:
 			purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
 					   "Unknown status key %d\n", pair->key);
@@ -388,6 +395,9 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 		l = l->next;
 	}
+
+	if (message && f)
+		yahoo_friend_set_status_message(f, yahoo_string_decode(gc, message, unicode));
 
 	if (name && f) /* update the last buddy */
 		yahoo_update_status(gc, name, f);
@@ -484,7 +494,8 @@ static void yahoo_process_cookie(struct yahoo_data *yd, char *c)
 		if (yd->cookie_t)
 			g_free(yd->cookie_t);
 		yd->cookie_t = _getcookie(c);
-	}
+	} else
+		purple_debug_info("yahoo", "Ignoring unrecognized cookie '%c'\n", c[0]);
 }
 
 static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -508,7 +519,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 		l = l->next;
 
 		switch (pair->key) {
-		case 302: 
+		case 302:
 			/* This is always 318 before a group, 319 before the first s/n in a group, 320 before any ignored s/n.
 			 * It is not sent for s/n's in a group after the first.
 			 * All ignored s/n's are listed last, so when we see a 320 we clear the group and begin marking the
@@ -548,7 +559,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 
 			} else {
 				/* This buddy is on the ignore list (and therefore in no group) */
-				purple_privacy_deny_add(account, norm_bud, 1);				
+				purple_privacy_deny_add(account, norm_bud, 1);
 			}
 			break;
 		case 241: /* another protocol user */
@@ -702,6 +713,8 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 		yd->tmp_serv_plist = NULL;
 
 	}
+	/* Now that we've got the list, request aliases */
+	yahoo_fetch_aliases(gc);
 }
 
 static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -816,7 +829,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 	{
 		g_hash_table_replace(yd->imvironments, g_strdup(im->from), g_strdup(imv));
 
-		if (strcmp(imv, "doodle;11") == 0)
+		if (strstr(imv, "doodle;") != NULL)
 		{
 			PurpleWhiteboard *wb;
 
@@ -824,6 +837,8 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				purple_debug_info("yahoo", "Doodle request from %s dropped.\n", im->from);
 				return;
 			}
+
+			/* I'm not sure the following ever happens -DAA */
 
 			wb = purple_whiteboard_get_session(gc->account, im->from);
 
@@ -868,17 +883,17 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			PurpleAccount *account;
 			PurpleConversation *c;
 			char *username, *str;
-			
+
 			account = purple_connection_get_account(gc);
 			c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
-			
+
 			if ((buddy = purple_find_buddy(account, im->from)) != NULL)
 				username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
 			else
 				username = g_markup_escape_text(im->from, -1);
-			
+
 			str = g_strdup_printf(_("%s just sent you a Buzz!"), username);
-			
+
 			purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, im->time);
 
 			g_free(username);
@@ -938,7 +953,8 @@ struct yahoo_add_request {
 };
 
 static void
-yahoo_buddy_add_authorize_cb(struct yahoo_add_request *add_req) {
+yahoo_buddy_add_authorize_cb(gpointer data) {
+	struct yahoo_add_request *add_req = data;
 	g_free(add_req->id);
 	g_free(add_req->who);
 	g_free(add_req->msg);
@@ -982,9 +998,10 @@ yahoo_buddy_add_deny_noreason_cb(struct yahoo_add_request *add_req, const char*m
 }
 
 static void
-yahoo_buddy_add_deny_reason_cb(struct yahoo_add_request *add_req) {
+yahoo_buddy_add_deny_reason_cb(gpointer data) {
+	struct yahoo_add_request *add_req = data;
 	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
-			NULL, _("No reason given."), TRUE, FALSE, NULL, 
+			NULL, _("No reason given."), TRUE, FALSE, NULL,
 			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
 			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb),
 			purple_connection_get_account(add_req->gc), add_req->who, NULL,
@@ -1027,8 +1044,8 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 		 */
 		 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
                                                     NULL, add_req->msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
-						    G_CALLBACK(yahoo_buddy_add_authorize_cb), 
-						    G_CALLBACK(yahoo_buddy_add_deny_reason_cb),
+						    yahoo_buddy_add_authorize_cb,
+						    yahoo_buddy_add_deny_reason_cb,
                                                     add_req);
 	} else {
 		g_free(add_req->id);
@@ -1152,10 +1169,10 @@ static void yahoo_process_mail(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
-	char *who = NULL;
-	char *email = NULL;
-	char *subj = NULL;
-	char *yahoo_mail_url = (yd->jp? YAHOOJP_MAIL_URL: YAHOO_MAIL_URL);
+	const char *who = NULL;
+	const char *email = NULL;
+	const char *subj = NULL;
+	const char *yahoo_mail_url = (yd->jp? YAHOOJP_MAIL_URL: YAHOO_MAIL_URL);
 	int count = 0;
 	GSList *l = pkt->hash;
 
@@ -3242,11 +3259,79 @@ static void yahoo_act_id(PurpleConnection *gc, const char *entry)
 	purple_connection_set_display_name(gc, entry);
 }
 
+static void
+yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
+		const gchar *token, size_t len, const gchar *error_message)
+{
+	PurpleConnection *gc = user_data;
+	gboolean set_cookie = FALSE;
+	char *url;
+
+	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+
+	if (error_message != NULL)
+		purple_debug_error("yahoo", "Requesting mail login token failed: %s\n", error_message);
+	else if (len > 0 && token && *token) {
+	 	/* Should we not be hardcoding the rd url? */
+		url = g_strdup_printf(
+			"http://login.yahoo.com/config/reset_cookies_token?"
+			".token=%s"
+			"&.done=http://us.rd.yahoo.com/messenger/client/%%3fhttp://mail.yahoo.com/",
+			token);
+		set_cookie = TRUE;
+	}
+
+	if (!set_cookie) {
+		struct yahoo_data *yd = gc->proto_data;
+		purple_debug_error("yahoo", "No mail login token; forwarding to login screen.");
+		url = g_strdup(yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
+	}
+
+	/* Open the mailbox with the parsed url data */
+	purple_notify_uri(gc, url);
+
+	g_free(url);
+}
+
+
+static void yahoo_show_inbox(PurplePluginAction *action)
+{
+	/* Setup a cookie that can be used by the browser */
+	/* XXX I have no idea how this will work with Yahoo! Japan. */
+
+	PurpleConnection *gc = action->context;
+	struct yahoo_data *yd = gc->proto_data;
+
+	PurpleUtilFetchUrlData *url_data;
+	const char* base_url = "http://login.yahoo.com";
+	char *request = g_strdup_printf(
+		"POST /config/cookie_token HTTP/1.0\r\n"
+		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s;\r\n"
+		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
+		"Host: login.yahoo.com\r\n"
+		"Content-Length: 0\r\n\r\n",
+		yd->cookie_t, yd->cookie_y);
+
+	url_data = purple_util_fetch_url_request(base_url, FALSE,
+			"Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, request, FALSE,
+			yahoo_get_inbox_token_cb, gc);
+
+	g_free(request);
+
+	if (url_data == NULL) {
+		const char *yahoo_mail_url = (yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
+		purple_debug_error("yahoo",
+				   "Unable to request mail login token; forwarding to login screen.");
+		purple_notify_uri(gc, yahoo_mail_url);
+	}
+
+}
+
+
 static void yahoo_show_act_id(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	/* XXX Typo: This should be _("Activate which ID?") - fix after string freeze is over */
-	purple_request_input(gc, NULL, _("Active which ID?"), NULL,
+	purple_request_input(gc, NULL, _("Activate which ID?"), NULL,
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
 					   _("Cancel"), NULL,
@@ -3275,6 +3360,11 @@ static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
 
 	act = purple_plugin_action_new(_("Join User in Chat..."),
 			yahoo_show_chat_goto);
+	m = g_list_append(m, act);
+
+	m = g_list_append(m, NULL);
+	act = purple_plugin_action_new(_("Open Inbox"),
+			yahoo_show_inbox);
 	m = g_list_append(m, act);
 
 	return m;
@@ -3315,7 +3405,7 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 	 */
 	wb = purple_whiteboard_get_session(gc->account, who);
 	if (wb)
-		yahoo_packet_hash_str(pkt, 63, "doodle;11");
+		yahoo_packet_hash_str(pkt, 63, DOODLE_IMV_KEY);
 	else
 	{
 		const char *imv;
@@ -3377,6 +3467,7 @@ static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 	const char *msg = NULL;
 	char *tmp = NULL;
 	char *conv_msg = NULL;
+	gboolean utf8 = TRUE;
 
 	if (!purple_status_is_active(status))
 		return;
@@ -3393,13 +3484,13 @@ static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 		msg = purple_status_get_attr_string(status, "message");
 
 		if (purple_status_is_available(status)) {
-			tmp = yahoo_string_encode(gc, msg, NULL);
+			tmp = yahoo_string_encode(gc, msg, &utf8);
 			conv_msg = purple_markup_strip_html(tmp);
 			g_free(tmp);
 		} else {
 			if ((msg == NULL) || (*msg == '\0'))
 				msg = _("Away");
-			tmp = yahoo_string_encode(gc, msg, NULL);
+			tmp = yahoo_string_encode(gc, msg, &utf8);
 			conv_msg = purple_markup_strip_html(tmp);
 			g_free(tmp);
 		}
@@ -3417,6 +3508,7 @@ static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 	yahoo_packet_hash_int(pkt, 10, yd->current_status);
 
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
+		yahoo_packet_hash_str(pkt, 97, utf8 ? "1" : 0);
 		yahoo_packet_hash_str(pkt, 19, conv_msg);
 	} else {
 		yahoo_packet_hash_str(pkt, 19, "");
@@ -3591,8 +3683,18 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 
 	group2 = yahoo_string_encode(gc, group, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc),
-	                  7, buddy->name, 65, group2, 14, "");
+	yahoo_packet_hash(pkt, "ssssssssss",
+	                  14, "",
+	                  65, group2,
+	                  97, "1",
+	                  1, purple_connection_get_display_name(gc),
+	                  302, "319",
+	                  300, "319",
+	                  7, buddy->name,
+	                  334, "0",
+	                  301, "319",
+	                  303, "319"
+	);
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(group2);
 }
@@ -3729,16 +3831,12 @@ static void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 		return;
 	}
 
-	/* Step 1:  Add buddy to new group. */
-	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc),
-	                  7, who, 65, gpn, 14, "");
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CHGRP_15, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, "ssssssss", 1, purple_connection_get_display_name(gc),
+	                  302, "240", 300, "240", 7, who, 224, gpo, 264, gpn, 301,
+	                  "240", 303, "240");
 	yahoo_packet_send_and_free(pkt, yd);
 
-	/* Step 2:  Remove buddy from old group */
-	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 65, gpo);
-	yahoo_packet_send_and_free(pkt, yd);
 	g_free(gpn);
 	g_free(gpo);
 }
@@ -4017,7 +4115,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL, /* register_user */
 	NULL, /* get_cb_info */
 	NULL, /* get_cb_away */
-	NULL, /* alias_buddy */
+	yahoo_update_alias, /* alias_buddy */
 	yahoo_change_buddys_group,
 	yahoo_rename_group,
 	NULL, /* buddy_free */

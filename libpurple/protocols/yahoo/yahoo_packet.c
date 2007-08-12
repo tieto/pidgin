@@ -223,6 +223,11 @@ void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data)
 	GSList *l = pkt->hash;
 	int pos = 0;
 
+	/* This is only called from one place, and the list is
+	 * always backwards */
+
+	l = g_slist_reverse(l);
+
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 		gchar buf[100];

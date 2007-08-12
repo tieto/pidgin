@@ -1,5 +1,15 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+Version 2.1.1 (x/x/x):
+	libpurple:
+		Changed:
+		* PurpleAccountUiOps.request_authorize's authorize_cb and
+		  deny_cb parameters now correctly have type
+		  PurpleAccountRequestAuthorizationCb rather than GCallback.
+		  (You'll want to change your UI's implementation's signature
+		  to avoid warnings, and then remove some now-redundant casts
+		  back to the proper type.)
+
 version 2.1.0 (7/28/2007):
 	libpurple:
 		Added:
@@ -19,7 +29,6 @@ version 2.1.0 (7/28/2007):
 		* purple_core_ensure_single_instance
 		    This is for UIs to use to ensure only one copy is running.
 		* purple_dbus_is_owner
-		* purple_image_data_calculate_filename
 		* purple_timeout_add_seconds
 		    Callers should prefer this to purple_timeout_add for timers
 		    longer than 1 second away.  Be aware of the rounding, though.

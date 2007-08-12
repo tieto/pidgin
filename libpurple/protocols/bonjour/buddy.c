@@ -18,10 +18,12 @@
 #include <stdlib.h>
 
 #include "internal.h"
+#include "cipher.h"
 #include "buddy.h"
 #include "account.h"
 #include "blist.h"
 #include "bonjour.h"
+#include "mdns_interface.h"
 #include "debug.h"
 
 /**
@@ -35,7 +37,29 @@ bonjour_buddy_new(const gchar *name, PurpleAccount* account)
 	buddy->account = account;
 	buddy->name = g_strdup(name);
 
+	_mdns_init_buddy(buddy);
+
 	return buddy;
+}
+
+#define _B_CLR(x) g_free(x); x = NULL;
+
+void clear_bonjour_buddy_values(BonjourBuddy *buddy) {
+
+	_B_CLR(buddy->first)
+	_B_CLR(buddy->email);
+	_B_CLR(buddy->ext);
+	_B_CLR(buddy->jid);
+	_B_CLR(buddy->last);
+	_B_CLR(buddy->msg);
+	_B_CLR(buddy->nick);
+	_B_CLR(buddy->node);
+	_B_CLR(buddy->phsh);
+	_B_CLR(buddy->status);
+	_B_CLR(buddy->vc);
+	_B_CLR(buddy->ver);
+	_B_CLR(buddy->AIM);
+
 }
 
 void
@@ -102,11 +126,11 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy)
 {
 	PurpleBuddy *buddy;
 	PurpleGroup *group;
-	const char *status_id, *first, *last;
-	gchar *alias;
+	PurpleAccount *account = bonjour_buddy->account;
+	const char *status_id, *old_hash, *new_hash;
 
 	/* Translate between the Bonjour status and the Purple status */
-	if (g_ascii_strcasecmp("dnd", bonjour_buddy->status) == 0)
+	if (bonjour_buddy->status != NULL && g_ascii_strcasecmp("dnd", bonjour_buddy->status) == 0)
 		status_id = BONJOUR_STATUS_ID_AWAY;
 	else
 		status_id = BONJOUR_STATUS_ID_AVAILABLE;
@@ -116,44 +140,95 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy)
 	 * field from the DNS SD.
 	 */
 
-	/* Create the alias for the buddy using the first and the last name */
-	first = bonjour_buddy->first;
-	last = bonjour_buddy->last;
-	alias = g_strdup_printf("%s%s%s",
-							(first && *first ? first : ""),
-							(first && *first && last && *last ? " " : ""),
-							(last && *last ? last : ""));
-
 	/* Make sure the Bonjour group exists in our buddy list */
 	group = purple_find_group(BONJOUR_GROUP_NAME); /* Use the buddy's domain, instead? */
-	if (group == NULL)
-	{
+	if (group == NULL) {
 		group = purple_group_new(BONJOUR_GROUP_NAME);
 		purple_blist_add_group(group, NULL);
 	}
 
 	/* Make sure the buddy exists in our buddy list */
-	buddy = purple_find_buddy(bonjour_buddy->account, bonjour_buddy->name);
+	buddy = purple_find_buddy(account, bonjour_buddy->name);
 
-	if (buddy == NULL)
-	{
-		buddy = purple_buddy_new(bonjour_buddy->account, bonjour_buddy->name, alias);
+	if (buddy == NULL) {
+		buddy = purple_buddy_new(account, bonjour_buddy->name, NULL);
 		buddy->proto_data = bonjour_buddy;
 		purple_blist_node_set_flags((PurpleBlistNode *)buddy, PURPLE_BLIST_NODE_FLAG_NO_SAVE);
 		purple_blist_add_buddy(buddy, NULL, group, NULL);
 	}
 
+	/* Create the alias for the buddy using the first and the last name */
+	if (bonjour_buddy->nick)
+		serv_got_alias(purple_account_get_connection(account), buddy->name, bonjour_buddy->nick);
+	else {
+		gchar *alias = NULL;
+		const char *first, *last;
+		first = bonjour_buddy->first;
+		last = bonjour_buddy->last;
+		if ((first && *first) || (last && *last))
+			alias = g_strdup_printf("%s%s%s",
+						(first && *first ? first : ""),
+						(first && *first && last && *last ? " " : ""),
+						(last && *last ? last : ""));
+		serv_got_alias(purple_account_get_connection(account), buddy->name, alias);
+		g_free(alias);
+	}
+
 	/* Set the user's status */
 	if (bonjour_buddy->msg != NULL)
-		purple_prpl_got_user_status(bonjour_buddy->account, buddy->name, status_id,
-								  "message", bonjour_buddy->msg,
-								  NULL);
+		purple_prpl_got_user_status(account, buddy->name, status_id,
+					    "message", bonjour_buddy->msg, NULL);
 	else
-		purple_prpl_got_user_status(bonjour_buddy->account, buddy->name, status_id,
-								  NULL);
-	purple_prpl_got_user_idle(bonjour_buddy->account, buddy->name, FALSE, 0);
+		purple_prpl_got_user_status(account, buddy->name, status_id, NULL);
 
-	g_free(alias);
+	purple_prpl_got_user_idle(account, buddy->name, FALSE, 0);
+
+	/* TODO: Because we don't save Bonjour buddies in blist.xml,
+	 * we will always have to look up the buddy icon at login time.
+	 * I think we should figure out a way to do something about this. */
+
+	/* Deal with the buddy icon */
+	old_hash = purple_buddy_icons_get_checksum_for_user(buddy);
+	new_hash = (bonjour_buddy->phsh && *(bonjour_buddy->phsh)) ? bonjour_buddy->phsh : NULL;
+	if (new_hash && (!old_hash || strcmp(old_hash, new_hash) != 0)) {
+		/* Look up the new icon data */
+		/* TODO: Make sure the hash assigned to the retrieved buddy icon is the same
+		 * as what we looked up. */
+		bonjour_dns_sd_retrieve_buddy_icon(bonjour_buddy);
+	} else if (!new_hash)
+		purple_buddy_icons_set_for_user(account, buddy->name, NULL, 0, NULL);
+}
+
+/**
+ * We got the buddy icon data; deal with it
+ */
+void bonjour_buddy_got_buddy_icon(BonjourBuddy *buddy, gconstpointer data, gsize len) {
+	/* Recalculate the hash instead of using the current phsh to make sure it is accurate for the icon. */
+	int i;
+	gchar *enc;
+	char *p, hash[41];
+	unsigned char hashval[20];
+
+	if (data == NULL || len == 0)
+		return;
+
+	enc = purple_base64_encode(data, len);
+
+	purple_cipher_digest_region("sha1", data,
+				    len, sizeof(hashval),
+				    hashval, NULL);
+
+	p = hash;
+	for(i=0; i<20; i++, p+=2)
+		snprintf(p, 3, "%02x", hashval[i]);
+
+	purple_debug_info("bonjour", "Got buddy icon for %s icon hash='%s' phsh='%s'.\n", buddy->name,
+			  hash, buddy->phsh ? buddy->phsh : "(null)");
+
+	purple_buddy_icons_set_for_user(buddy->account, buddy->name,
+		g_memdup(data, len), len, hash);
+
+	g_free(enc);
 }
 
 /**
@@ -164,7 +239,6 @@ bonjour_buddy_delete(BonjourBuddy *buddy)
 {
 	g_free(buddy->name);
 	g_free(buddy->ip);
-
 	g_free(buddy->first);
 	g_free(buddy->phsh);
 	g_free(buddy->status);
@@ -182,13 +256,8 @@ bonjour_buddy_delete(BonjourBuddy *buddy)
 	bonjour_jabber_close_conversation(buddy->conversation);
 	buddy->conversation = NULL;
 
-#ifdef USE_BONJOUR_APPLE
-	if (buddy->txt_query != NULL)
-	{
-		purple_input_remove(buddy->txt_query_fd);
-		DNSServiceRefDeallocate(buddy->txt_query);
-	}
-#endif
+	/* Clean up any mdns implementation data */
+	_mdns_delete_buddy(buddy);
 
 	g_free(buddy);
 }

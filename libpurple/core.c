@@ -161,8 +161,9 @@ purple_core_init(const char *ui)
 	/*
 	 * Call this early on to try to auto-detect our IP address and
 	 * hopefully save some time later.
+	 * TODO: do this here after purple_prefs_load() has been moved into purple_prefs_init()
 	 */
-	purple_network_get_my_ip(-1);
+	/*purple_network_get_my_ip(-1);*/
 
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();
