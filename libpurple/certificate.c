@@ -612,11 +612,25 @@ static gboolean x509_ca_initialized = FALSE;
 static gboolean
 x509_ca_lazy_init(void)
 {
+	PurpleCertificateScheme *x509;
+	
 	if (x509_ca_initialized) return TRUE;
+
+	/* Check that X.509 is registered */
+	x509 = purple_certificate_find_scheme(x509_ca.scheme_name);
+	if ( !x509 ) {
+		purple_debug_info("certificate/x509/ca",
+				  "Lazy init failed because an X.509 Scheme "
+				  "is not yet registered. Maybe it will be "
+				  "better later.\n");
+		return FALSE;
+	}
 
 	/* Populate the certificates pool from the system path */
 	/* TODO: Writeme! */
-	
+
+	purple_debug_info("certificate/x509/ca",
+			  "Lazy init completed.\n");
 	x509_ca_initialized = TRUE;
 	return TRUE;
 }
@@ -628,7 +642,7 @@ x509_ca_init(void)
 	   it will get done later */
 	if ( ! x509_ca_lazy_init()) {
 		purple_debug_info("certificate/x509/ca",
-				  "Lazy init failed, probably because a "
+				  "Init failed, probably because a "
 				  "dependency is not yet registered. "
 				  "It has been deferred to later.\n");
 	}
