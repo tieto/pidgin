@@ -939,7 +939,7 @@ menu_position_func (GtkMenu           *menu,
 		*y -= widget->allocation.height;
 }
 
-static void pidgin_menu_clicked(GtkWidget *button, GdkEventButton *event, GtkMenu *menu)
+static void pidgin_menu_clicked(GtkWidget *button, GtkMenu *menu)
 {
 	gtk_widget_show_all(GTK_WIDGET(menu));
 	gtk_menu_popup(menu, NULL, NULL, menu_position_func, button, 0, gtk_get_current_event_time());
@@ -1188,7 +1188,8 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 		gtk_container_foreach(GTK_CONTAINER(menuitem), (GtkCallback)enable_markup, NULL);
 	}
 
-	g_signal_connect(G_OBJECT(font_button), "button-press-event", G_CALLBACK(pidgin_menu_clicked), font_menu);
+	g_signal_connect_swapped(G_OBJECT(font_button), "button-press-event", G_CALLBACK(gtk_widget_activate), font_button);
+	g_signal_connect(G_OBJECT(font_button), "activate", G_CALLBACK(pidgin_menu_clicked), font_menu);
 	g_signal_connect(G_OBJECT(font_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), font_button);
 
 	/* Sep */
@@ -1229,7 +1230,8 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	g_signal_connect(G_OBJECT(toolbar->link), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), menuitem);
 
-	g_signal_connect(G_OBJECT(insert_button), "button-press-event", G_CALLBACK(pidgin_menu_clicked), insert_menu);
+	g_signal_connect_swapped(G_OBJECT(insert_button), "button-press-event", G_CALLBACK(gtk_widget_activate), insert_button);
+	g_signal_connect(G_OBJECT(insert_button), "activate", G_CALLBACK(pidgin_menu_clicked), insert_menu);
 	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);
 	toolbar->sml = NULL;
 }
