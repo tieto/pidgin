@@ -129,6 +129,9 @@ static gchar *msim_convert_smileys_to_markup(gchar *before);
 static gchar *msim_markup_to_html(MsimSession *, const gchar *raw);
 static gchar *html_to_msim_markup(MsimSession *, const gchar *raw);
 
+static MsimUser *msim_get_user_from_buddy(PurpleBuddy *buddy);
+static MsimUser *msim_find_user(MsimSession *session, const gchar *username);
+
 static gboolean msim_incoming_bm_record_cv(MsimSession *session, 
 		MsimMessage *msg);
 static gboolean msim_incoming_bm(MsimSession *session, MsimMessage *msg);
@@ -146,13 +149,14 @@ static gboolean msim_send_unofficial_client(MsimSession *session,
 #endif
 
 static void msim_get_info_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+static gchar *msim_format_now_playing(gchar *band, gchar *song);
 
 static void msim_set_status_code(MsimSession *session, guint code, 
 		gchar *statstring);
 
-static void msim_store_buddy_info_each(gpointer key, gpointer value, 
+static void msim_store_user_info_each(gpointer key, gpointer value, 
 		gpointer user_data);
-static gboolean msim_store_buddy_info(MsimSession *session, MsimMessage *msg);
+static gboolean msim_store_user_info(MsimSession *session, MsimMessage *msg);
 static gboolean msim_process_server_info(MsimSession *session, 
 		MsimMessage *msg);
 static gboolean msim_web_challenge(MsimSession *session, MsimMessage *msg); 
@@ -307,7 +311,7 @@ msim_send_zap(PurpleBlistNode *node, gpointer zap_num_ptr)
 	gc = purple_account_get_connection(buddy->account);
 	g_return_if_fail(gc != NULL);
 
-	session = (MsimSession *)(gc->proto_data);
+	session = (MsimSession *)gc->proto_data;
 	g_return_if_fail(session != NULL);
 
 	username = buddy->name;
@@ -467,7 +471,7 @@ msim_send_really_raw(PurpleConnection *gc, const char *buf, int total_bytes)
 	g_return_val_if_fail(buf != NULL, -1);
 	g_return_val_if_fail(total_bytes >= 0, -1);
 
-	session = (MsimSession *)(gc->proto_data);
+	session = (MsimSession *)gc->proto_data;
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), -1);
 	
@@ -1409,13 +1413,56 @@ html_to_msim_markup(MsimSession *session, const gchar *raw)
 	return markup;
 }
 
+/** Get the MsimUser from a PurpleBuddy, creating it if needed. */
+static MsimUser *
+msim_get_user_from_buddy(PurpleBuddy *buddy)
+{
+	MsimUser *user;
+
+	if (!buddy) {
+		return NULL;
+	}
+
+	if (!buddy->proto_data) {
+		/* TODO: where is this freed? */
+		user = g_new0(MsimUser, 1);
+		user->buddy = buddy;
+		buddy->proto_data = (gpointer)user;
+		purple_debug_info("msim_get_user_from_buddy",
+				"creating new user for %s to %X\n",
+				buddy->name, buddy->proto_data);
+	} 
+
+	user = (MsimUser *)(buddy->proto_data);
+
+	return user;
+}
+
+/** Find and return an MsimUser * representing a user on the buddy list, or NULL. */
+static MsimUser *
+msim_find_user(MsimSession *session, const gchar *username)
+{
+	PurpleBuddy *buddy;
+	MsimUser *user;
+
+	buddy = purple_find_buddy(session->account, username);
+	if (!buddy) {
+		return NULL;
+	}
+
+	user = msim_get_user_from_buddy(buddy);
+
+	return user;
+}
+
+
 /** Record the client version in the buddy list, from an incoming message. */
 static gboolean
 msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg)
 {
 	gchar *username, *cv;
 	gboolean ret;
-	PurpleBuddy *buddy;
+	MsimUser *user;
 
 	username = msim_msg_get_string(msg, "_username");
 	cv = msim_msg_get_string(msg, "cv");
@@ -1426,10 +1473,10 @@ msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg)
 		return FALSE;
 	}
 
-	buddy = purple_find_buddy(session->account, username);
+	user = msim_find_user(session, username);
 
-	if (buddy) {
-		purple_blist_node_set_int(&buddy->node, "client_cv", atol(cv));
+	if (user) {
+		user->client_cv = atol(cv);
 		ret = TRUE;
 	} else {
 		ret = FALSE;
@@ -1657,7 +1704,7 @@ msim_incoming_media(MsimSession *session, MsimMessage *msg)
 static gboolean
 msim_incoming_unofficial_client(MsimSession *session, MsimMessage *msg)
 {
-	PurpleBuddy *buddy;
+	MsimUser *user;
 	gchar *username, *client_info;
 
 	username = msim_msg_get_string(msg, "_username");
@@ -1669,15 +1716,17 @@ msim_incoming_unofficial_client(MsimSession *session, MsimMessage *msg)
 	purple_debug_info("msim", "msim_incoming_unofficial_client: %s is using client %s\n",
 		username, client_info);
 
-	buddy = purple_find_buddy(session->account, username);
+	user = msim_find_user(session, username);
 	
-	g_return_val_if_fail(buddy != NULL, FALSE);
+	g_return_val_if_fail(user != NULL, FALSE);
 
-	purple_blist_node_remove_setting(&buddy->node, "client");
-	purple_blist_node_set_string(&buddy->node, "client", client_info);
+	if (user->client_info) {
+		g_free(user->client_info);
+	}
+	user->client_info = client_info;
 
 	g_free(username);
-	/* Do not free client_info - the blist now owns it. */
+	/* Do not free client_info - the MsimUser now owns it. */
 
 	return TRUE;
 }
@@ -1743,6 +1792,21 @@ msim_send_typing(PurpleConnection *gc, const gchar *name,
 	return 0;
 }
 
+/** Format the "now playing" indicator, showing the artist and song.
+ * @return Return a new string (must be g_free()'d), or NULL.
+ */
+static gchar *
+msim_format_now_playing(gchar *band, gchar *song)
+{
+	if ((band && strlen(band)) || (song && strlen(song))) {
+		return g_strdup_printf("%s - %s",
+			(band && strlen(band)) ? band : "Unknown Artist",
+			(song && strlen(song)) ? song : "Unknown Song");
+	} else {
+		return NULL;
+	}
+}
+
 /** Callback for msim_get_info(), for when user info is received. */
 static void 
 msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, 
@@ -1751,10 +1815,10 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 	GHashTable *body;
 	gchar *body_str;
 	MsimMessage *msg;
-	gchar *user;
+	gchar *username;
 	PurpleNotifyUserInfo *user_info;
-	PurpleBuddy *buddy;
-	const gchar *str, *str2;
+	MsimUser *user;
+	const gchar *str;
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
@@ -1763,30 +1827,30 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 	msg = (MsimMessage *)data;
 	g_return_if_fail(msg != NULL);
 
-	user = msim_msg_get_string(msg, "user");
-	if (!user) {
+	username = msim_msg_get_string(msg, "user");
+	if (!username) {
 		purple_debug_info("msim", "msim_get_info_cb: no 'user' in msg");
 		return;
 	}
 
 	msim_msg_free(msg);
-	purple_debug_info("msim", "msim_get_info_cb: got for user: %s\n", user);
+	purple_debug_info("msim", "msim_get_info_cb: got for user: %s\n", username);
 
 	body_str = msim_msg_get_string(user_info_msg, "body");
 	g_return_if_fail(body_str != NULL);
 	body = msim_parse_body(body_str);
 	g_free(body_str);
 
-	buddy = purple_find_buddy(session->account, user);
-	/* Note: don't assume buddy is non-NULL; will be if lookup random user 
-	 * not on blist. */
+	user = msim_find_user(session, username);
+	/* Note: user will be NULL if not on buddy list. */
 
 	user_info = purple_notify_user_info_new();
 
 	/* Identification */
-	purple_notify_user_info_add_pair(user_info, _("User"), user);
+	purple_notify_user_info_add_pair(user_info, _("User"), username);
 
-	/* note: g_hash_table_lookup does not create a new string! */
+	/* XXX TODO XXX TODO Avoid duplicating this and tooltip text, and
+	 * maybe integrate msim_store_buddy_info() here? */
 	str = g_hash_table_lookup(body, "UserID");
 	if (str)
 		purple_notify_user_info_add_pair(user_info, _("User ID"), 
@@ -1794,35 +1858,31 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 
 	/* a/s/l...the vitals */
 	str = g_hash_table_lookup(body, "Age");
-	if (str)
+	if (str && strcmp(str, "0"))
 		purple_notify_user_info_add_pair(user_info, _("Age"), g_strdup(str));
 
 	str = g_hash_table_lookup(body, "Gender");
-	if (str)
+	if (str && strlen(str) != 0)
 		purple_notify_user_info_add_pair(user_info, _("Gender"), g_strdup(str));
 
 	str = g_hash_table_lookup(body, "Location");
-	if (str)
+	if (str && strlen(str) != 0)
 		purple_notify_user_info_add_pair(user_info, _("Location"), 
 				g_strdup(str));
 
 	/* Other information */
 
-	if (buddy) {
+	if (user) {
 		/* Headline comes from buddy status messages */
-		str = purple_blist_node_get_string(&buddy->node, "Headline");
-		if (str)
-			purple_notify_user_info_add_pair(user_info, "Headline", str);
+		if (user->headline)
+			purple_notify_user_info_add_pair(user_info, "Headline", user->headline);
 	}
 
 
-	str = g_hash_table_lookup(body, "BandName");
-	str2 = g_hash_table_lookup(body, "SongName");
-	if (str || str2) {
-		purple_notify_user_info_add_pair(user_info, _("Song"), 
-			g_strdup_printf("%s - %s",
-				str ? str : "Unknown Artist",
-				str2 ? str2 : "Unknown Song"));
+	str = msim_format_now_playing(g_hash_table_lookup(body, "BandName"), g_hash_table_lookup(body, "SongName"));
+
+	if (str) {
+		purple_notify_user_info_add_pair(user_info, _("Song"), str);
 	}
 
 
@@ -1832,74 +1892,72 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 		purple_notify_user_info_add_pair(user_info, _("Total Friends"), 
 			g_strdup(str));
 	}
+	g_hash_table_destroy(body);
 
-	if (buddy) {
+	if (user) {
 		gint cv;
 
-		str = purple_blist_node_get_string(&buddy->node, "client");
-		cv = purple_blist_node_get_int(&buddy->node, "client_cv");
+		str = user->client_info;
+		cv = user->client_cv;
 
-		if (str) {
+		if (str && cv != 0) {
 			purple_notify_user_info_add_pair(user_info, _("Client Version"),
 					g_strdup_printf("%s (build %d)", str, cv));
+		} else if (str) {
+			purple_notify_user_info_add_pair(user_info, _("Client Version"),
+					g_strdup(str));
+		} else if (cv) {
+			purple_notify_user_info_add_pair(user_info, _("Client Version"),
+					g_strdup_printf("Build %d", cv));
 		}
 	}
 
-	purple_notify_userinfo(session->gc, user, user_info, NULL, NULL);
-	purple_debug_info("msim", "msim_get_info_cb: username=%s\n", user);
-	//purple_notify_user_info_destroy(user_info);
+	purple_notify_userinfo(session->gc, username, user_info, NULL, NULL);
+	purple_debug_info("msim", "msim_get_info_cb: username=%s\n", username);
+
+	/* purple_notify_user_info_destroy(user_info); */
 	/* Do not free username, since it will be used by user_info. */
 
-	g_hash_table_destroy(body);
 }
 
-/** Retrieve a user's profile. */
+/** Retrieve a user's profile. 
+ * @param username Username, user ID, or email address to lookup.
+ */
 void 
-msim_get_info(PurpleConnection *gc, const gchar *user)
+msim_get_info(PurpleConnection *gc, const gchar *username)
 {
-	PurpleBuddy *buddy;
 	MsimSession *session;
+	MsimUser *user;
 	guint uid;
 	gchar *user_to_lookup;
 	MsimMessage *user_msg;
 
 	g_return_if_fail(gc != NULL);
-	g_return_if_fail(user != NULL);
+	g_return_if_fail(username != NULL);
 
 	session = (MsimSession *)gc->proto_data;
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
 	/* Obtain uid of buddy. */
-	buddy = purple_find_buddy(session->account, user);
-	if (buddy) {
-		uid = purple_blist_node_get_int(&buddy->node, "UserID");
-		if (!uid) {
-			PurpleNotifyUserInfo *user_info;
+	user = msim_find_user(session, username);
 
-			user_info = purple_notify_user_info_new();
-			purple_notify_user_info_add_pair(user_info, NULL,
-					_("This buddy appears to not have a userid stored in the buddy list, can't look up. Is the user really on the buddy list?"));
-
-			purple_notify_userinfo(session->gc, user, user_info, NULL, NULL);
-			purple_notify_user_info_destroy(user_info);
-			return;
-		}
-
+	/* If is on buddy list, lookup by uid since it is faster. */
+	if (user && (uid = purple_blist_node_get_int(&user->buddy->node, "UserID"))) {
 		user_to_lookup = g_strdup_printf("%d", uid);
 	} else {
 		/* Looking up buddy not on blist. Lookup by whatever user entered. */
-		user_to_lookup = g_strdup(user);
+		user_to_lookup = g_strdup(username);
 	}
 
 	/* Pass the username to msim_get_info_cb(), because since we lookup
 	 * by userid, the userinfo message will only contain the uid (not 
-	 * the username).
+	 * the username) but it would be useful to display the username too.
 	 */
 	user_msg = msim_msg_new(
-			"user", MSIM_TYPE_STRING, g_strdup(user),
+			"user", MSIM_TYPE_STRING, g_strdup(username),
 			NULL);
-	purple_debug_info("msim", "msim_get_info, setting up lookup, user=%s\n", user);
+	purple_debug_info("msim", "msim_get_info, setting up lookup, user=%s\n", username);
 
 	msim_lookup_user(session, user_to_lookup, msim_get_info_cb, user_msg);
 
@@ -2456,24 +2514,46 @@ msim_process(MsimSession *session, MsimMessage *msg)
 
 /** Store an field of information about a buddy. */
 static void 
-msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data)
+msim_store_user_info_each(gpointer key, gpointer value, gpointer user_data)
 {
-	PurpleBuddy *buddy;
+	MsimUser *user;
 	gchar *key_str, *value_str;
 
-	buddy = (PurpleBuddy *)user_data;
+	user = (MsimUser *)user_data;
 	key_str = (gchar *)key;
 	value_str = (gchar *)value;
 
-	if (strcmp(key_str, "UserID") == 0 ||
-			strcmp(key_str, "Age") == 0 ||
-			strcmp(key_str, "TotalFriends") == 0) {
-		/* Certain fields get set as integers, instead of strings, for
-		 * convenience. May not be the best way to do it, but having at least
-		 * UserID as an integer is convenient...until it overflows! */
-		purple_blist_node_set_int(&buddy->node, key_str, atol(value_str));
+	if (!strcmp(key_str, "UserID")) {
+		purple_blist_node_set_int(&user->buddy->node, "UserID", atol(value_str));
+	} else if (!strcmp(key_str, "Age")) {
+		user->age = atol(value_str);
+	} else if (!strcmp(key_str, "Gender")) {
+		user->gender = g_strdup(value_str);
+	} else if (!strcmp(key_str, "Location")) {
+		user->location = g_strdup(value_str);
+	} else if (!strcmp(key_str, "TotalFriends")) {
+		user->total_friends = atol(value_str);
+	} else if (!strcmp(key_str, "DisplayName")) {
+		user->display_name = g_strdup(value_str);
+	} else if (!strcmp(key_str, "BandName")) {
+		user->band_name = g_strdup(value_str);
+	} else if (!strcmp(key_str, "SongName")) {
+		user->song_name = g_strdup(value_str);
+	} else if (!strcmp(key_str, "UserName")) {
+		/* Ignore because PurpleBuddy knows this already */
+		;
+	} else if (!strcmp(key_str, "ImageURL")) {
+		user->image_url = g_strdup(value_str);
 	} else {
-		purple_blist_node_set_string(&buddy->node, key_str, value_str);
+		/* TODO: other fields in MsimUser */
+		gchar *msg;
+
+		msg = g_strdup_printf("msim_store_user_info_each: unknown field %s=%s",
+				key_str, value_str);
+
+		msim_unrecognized(NULL, NULL, msg);
+
+		g_free(msg);
 	}
 }
 
@@ -2486,14 +2566,14 @@ msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data)
  * blist.xml. If the function has no buddy information, this function
  * is a no-op (and returns FALSE).
  *
- * TODO: Store ephemeral information in MsimBuddy instead.
+ * TODO: Store ephemeral information in MsimUser instead.
  */
 static gboolean 
-msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
+msim_store_user_info(MsimSession *session, MsimMessage *msg)
 {
 	GHashTable *body;
 	gchar *username, *body_str, *uid;
-	PurpleBuddy *buddy;
+	MsimUser *user;
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
@@ -2525,9 +2605,9 @@ msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
 
 	purple_debug_info("msim", "associating uid %s with username %s\n", uid, username);
 
-	buddy = purple_find_buddy(session->account, username);
-	if (buddy) {
-		g_hash_table_foreach(body, msim_store_buddy_info_each, buddy);
+	user = msim_find_user(session, username);
+	if (user) {
+		g_hash_table_foreach(body, msim_store_user_info_each, user);
 	}
 
 	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
@@ -2617,7 +2697,7 @@ msim_process_reply(MsimSession *session, MsimMessage *msg)
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
-	msim_store_buddy_info(session, msg);
+	msim_store_user_info(session, msg);
 
 	rid = msim_msg_get_integer(msg, "rid");
 	cmd = msim_msg_get_integer(msg, "cmd");
@@ -2704,7 +2784,7 @@ static gboolean
 msim_incoming_status(MsimSession *session, MsimMessage *msg)
 {
 	PurpleBuddyList *blist;
-	PurpleBuddy *buddy;
+	MsimUser *user;
 	GList *list;
 	gchar *status_headline;
 	gint status_code, purple_status_code;
@@ -2742,23 +2822,26 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 	blist = purple_get_blist();
 
 	/* Add buddy if not found */
-	buddy = purple_find_buddy(session->account, username);
-	if (!buddy) {
+	user = msim_find_user(session, username);
+	if (!user) {
+		PurpleBuddy *buddy;
+
 		purple_debug_info("msim", 
 				"msim_status: making new buddy for %s\n", username);
 		buddy = purple_buddy_new(session->account, username, NULL);
-
 		purple_blist_add_buddy(buddy, NULL, NULL, NULL);
+
+		user = msim_get_user_from_buddy(buddy);
 
 		/* All buddies on list should have 'uid' integer associated with them. */
 		purple_blist_node_set_int(&buddy->node, "UserID", msim_msg_get_integer(msg, "f"));
 		
-		msim_store_buddy_info(session, msg);
+		msim_store_user_info(session, msg);
 	} else {
 		purple_debug_info("msim", "msim_status: found buddy %s\n", username);
 	}
 
-	purple_blist_node_set_string(&buddy->node, "Headline", status_headline);
+	user->headline = g_strdup(status_headline);
   
 	/* Set user status */
 	switch (status_code) {
@@ -3549,9 +3632,12 @@ char *
 msim_status_text(PurpleBuddy *buddy)
 {
 	MsimSession *session;
+	MsimUser *user;
 	const gchar *display_name, *headline;
 
 	g_return_val_if_fail(buddy != NULL, NULL);
+
+	user = msim_get_user_from_buddy(buddy);
 
 	session = (MsimSession *)buddy->account->gc->proto_data;
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), NULL);
@@ -3560,24 +3646,20 @@ msim_status_text(PurpleBuddy *buddy)
 
 	/* Retrieve display name and/or headline, depending on user preference. */
 	if (purple_account_get_bool(session->account, "show_display_name", TRUE)) {
-		display_name = purple_blist_node_get_string(&buddy->node, "DisplayName");
+		display_name = user->display_name;
 	} 
 
 	if (purple_account_get_bool(session->account, "show_headline", FALSE)) {
-		headline = purple_blist_node_get_string(&buddy->node, "Headline");
+		headline = user->headline;
 	}
 
 	/* Return appropriate combination of display name and/or headline, or neither. */
 
 	if (display_name && headline) {
 		return g_strconcat(display_name, " ", headline, NULL);
-	}
-
-	if (display_name) {
+	} else if (display_name) {
 		return g_strdup(display_name);
-	}
-
-	if (headline) {
+	} else if (headline) {
 		return g_strdup(headline);
 	}
 
@@ -3596,11 +3678,13 @@ void
 msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, 
 		gboolean full)
 {
-	const gchar *str, *str2;
-	gint n;
+	const gchar *str;
+	MsimUser *user;
 
 	g_return_if_fail(buddy != NULL);
 	g_return_if_fail(user_info != NULL);
+
+	user = msim_get_user_from_buddy(buddy);
 
 	if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
 		MsimSession *session;
@@ -3609,51 +3693,41 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 
 		g_return_if_fail(MSIM_SESSION_VALID(session));
 
-		/* TODO: if (full), do something different */
+		/* TODO: if (full), do something different? */
 		
 		/* Useful to identify the account the tooltip refers to. 
 		 *  Other prpls show this. */
-		str = purple_blist_node_get_string(&buddy->node, "UserName"); 
-		if (str) {
-			purple_notify_user_info_add_pair(user_info, _("User Name"), str);
+		if (user->username) {
+			purple_notify_user_info_add_pair(user_info, _("User Name"), user->username);
 		}
 
 		/* a/s/l...the vitals */
-		n = purple_blist_node_get_int(&buddy->node, "Age");
-		if (n) {
+		if (user->age) {
 			purple_notify_user_info_add_pair(user_info, _("Age"),
-					g_strdup_printf("%d", n));
+					g_strdup_printf("%d", user->age));
 		}
 
-		str = purple_blist_node_get_string(&buddy->node, "Gender");
-		if (str) {
-			purple_notify_user_info_add_pair(user_info, _("Gender"), str);
+		if (user->gender) {
+			purple_notify_user_info_add_pair(user_info, _("Gender"), user->gender);
 		}
 
-		str = purple_blist_node_get_string(&buddy->node, "Location");
-		if (str) {
-			purple_notify_user_info_add_pair(user_info, _("Location"), str);
+		if (user->location) {
+			purple_notify_user_info_add_pair(user_info, _("Location"), user->location);
 		}
 
 		/* Other information */
-		str = purple_blist_node_get_string(&buddy->node, "Headline");
+		if (user->headline) {
+			purple_notify_user_info_add_pair(user_info, _("Headline"), user->headline);
+		}
+
+		str = msim_format_now_playing(user->band_name, user->song_name);
 		if (str) {
-			purple_notify_user_info_add_pair(user_info, _("Headline"), str);
+			purple_notify_user_info_add_pair(user_info, _("Song"), str);
 		}
 
-		str = purple_blist_node_get_string(&buddy->node, "BandName");
-		str2 = purple_blist_node_get_string(&buddy->node, "SongName");
-		if (str || str2) {
-			purple_notify_user_info_add_pair(user_info, _("Song"), 
-				g_strdup_printf("%s - %s",
-					str ? str : _("Unknown Artist"),
-					str2 ? str2 : _("Unknown Song")));
-		}
-
-		n = purple_blist_node_get_int(&buddy->node, "TotalFriends");
-		if (n) {
+		if (user->total_friends) {
 			purple_notify_user_info_add_pair(user_info, _("Total Friends"),
-				g_strdup_printf("%d", n));
+				g_strdup_printf("%d", user->total_friends));
 		}
 
 	}

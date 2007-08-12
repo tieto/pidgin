@@ -199,20 +199,24 @@ typedef struct _MsimSession
 	guint inbox_status;                 /**< Bit field of inbox notifications */
 } MsimSession;
 
-#if 0
 /* Hold ephemeral information about buddies, for proto_data of PurpleBuddy. */
 /* GHashTable? */
-typedef struct _MsimBuddy
+typedef struct _MsimUser
 {
+	PurpleBuddy *buddy;
 	guint client_cv;
 	gchar *client_info;
 	guint age;
+	gchar *gender;
+	gchar *location;
 	guint total_friends;
 	gchar *headline;
 	gchar *display_name;
+	/* Note: uid is in &buddy->node (set_blist_node_int), since it never changes */
 	gchar *username;
-} MsimBuddy;
-#endif
+	gchar *band_name, *song_name;
+	gchar *image_url;
+} MsimUser;
 
 /* Check if an MsimSession is valid */
 #define MSIM_SESSION_VALID(s) (session != NULL && session->magic == MSIM_SESSION_STRUCT_MAGIC)
