@@ -17,6 +17,7 @@ SMILEYS = 	act-up.png \
 		bowl.png \
 		boy.png \
 		brb.png \
+		bulgy-eyes.png \
 		bye.png \
 		cake.png \
 		call-me.png \
@@ -95,10 +96,12 @@ SMILEYS = 	act-up.png \
 		mail.png \
 		mean.png \
 		meeting.png \
+		messed.png \
 		mobile.png \
 		monkey.png \
 		moneymouth.png \
 		moon.png \
+		mohawk.png \
 		msn-away.png \
 		msn-busy.png \
 		msn_online.png \
@@ -113,6 +116,7 @@ SMILEYS = 	act-up.png \
 		pig.png \
 		pill.png \
 		pissed-off.png \
+		pirate.png \
 		pizza.png \
 		plate.png \
 		poop.png \
@@ -137,6 +141,8 @@ SMILEYS = 	act-up.png \
 		shout.png \
 		shut-mouth.png \
 		sick.png \
+		sidefrown.png \
+		sinister.png \
 		sigarette.png \
 		silly.png \
 		skeleton.png \
