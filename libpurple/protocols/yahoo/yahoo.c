@@ -953,7 +953,8 @@ struct yahoo_add_request {
 };
 
 static void
-yahoo_buddy_add_authorize_cb(struct yahoo_add_request *add_req) {
+yahoo_buddy_add_authorize_cb(gpointer data) {
+	struct yahoo_add_request *add_req = data;
 	g_free(add_req->id);
 	g_free(add_req->who);
 	g_free(add_req->msg);
@@ -997,7 +998,8 @@ yahoo_buddy_add_deny_noreason_cb(struct yahoo_add_request *add_req, const char*m
 }
 
 static void
-yahoo_buddy_add_deny_reason_cb(struct yahoo_add_request *add_req) {
+yahoo_buddy_add_deny_reason_cb(gpointer data) {
+	struct yahoo_add_request *add_req = data;
 	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
 			NULL, _("No reason given."), TRUE, FALSE, NULL,
 			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
@@ -1042,8 +1044,8 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 		 */
 		 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
                                                     NULL, add_req->msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
-						    G_CALLBACK(yahoo_buddy_add_authorize_cb),
-						    G_CALLBACK(yahoo_buddy_add_deny_reason_cb),
+						    yahoo_buddy_add_authorize_cb,
+						    yahoo_buddy_add_deny_reason_cb,
                                                     add_req);
 	} else {
 		g_free(add_req->id);

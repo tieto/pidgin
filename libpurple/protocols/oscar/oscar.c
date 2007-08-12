@@ -2261,8 +2261,9 @@ purple_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored)
 
 /* When other people ask you for authorization */
 static void
-purple_auth_grant(struct name_data *data)
+purple_auth_grant(gpointer cbdata)
 {
+	struct name_data *data = cbdata;
 	PurpleConnection *gc = data->gc;
 	OscarData *od = gc->proto_data;
 
@@ -2282,8 +2283,9 @@ purple_auth_dontgrant(struct name_data *data, char *msg)
 }
 
 static void
-purple_auth_dontgrant_msgprompt(struct name_data *data)
+purple_auth_dontgrant_msgprompt(gpointer cbdata)
 {
+	struct name_data *data = cbdata;
 	purple_request_input(data->gc, NULL, _("Authorization Denied Message:"),
 					   NULL, _("No reason given."), TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_auth_dontgrant),
@@ -2404,8 +2406,8 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 				purple_account_request_authorization(account, sn, NULL, NULL,
 						reason, purple_find_buddy(account, sn) != NULL,
-						G_CALLBACK(purple_auth_grant),
-						G_CALLBACK(purple_auth_dontgrant_msgprompt), data);
+						purple_auth_grant,
+						purple_auth_dontgrant_msgprompt, data);
 				g_free(reason);
 			}
 		} break;
@@ -5170,8 +5172,8 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 
 	purple_account_request_authorization(account, sn, NULL,
 			(buddy ? purple_buddy_get_alias_only(buddy) : NULL),
-			reason, buddy != NULL, G_CALLBACK(purple_auth_grant),
-			G_CALLBACK(purple_auth_dontgrant_msgprompt), data);
+			reason, buddy != NULL, purple_auth_grant,
+			purple_auth_dontgrant_msgprompt, data);
 	g_free(reason);
 
 	return 1;
