@@ -1009,6 +1009,21 @@ msim_color_to_purple(const char *msim)
 	return g_strdup_printf("#%.2x%.2x%.2x", red, green, blue);
 }
 
+/** Convert the msim markup <a> (anchor) tag into HTML. */
+static void 
+msim_markup_a_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
+{
+	const gchar *href;
+
+	href = xmlnode_get_attrib(root, "h");
+	if (!href) {
+		href = "";
+	}
+
+	*begin = g_strdup_printf("<a href=\"%s\">%s", href, href);
+	*end = g_strdup("</a>");
+}
+
 /** Convert the msim markup <p> (paragraph) tag into HTML. */
 static void 
 msim_markup_p_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
@@ -1110,6 +1125,8 @@ msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 {
 	if (!strcmp(root->name, "f")) {
 		msim_markup_f_to_html(session, root, begin, end);
+	} else if (!strcmp(root->name, "a")) {
+		msim_markup_a_to_html(session, root, begin, end);
 	} else if (!strcmp(root->name, "p")) {
 		msim_markup_p_to_html(session, root, begin, end);
 	} else if (!strcmp(root->name, "c")) {
@@ -1136,19 +1153,55 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 	 * Currently, the 's' value will be overwritten when b/i/u is nested
 	 * within another one, and only the inner-most formatting will be 
 	 * applied to the text. */
-	if (!strcmp(root->name, "root")) {
+	if (!stricmp(root->name, "root")) {
 		*begin = g_strdup("");
 		*end = g_strdup("");
-	} else if (!strcmp(root->name, "b")) {
+	} else if (!stricmp(root->name, "b")) {
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_BOLD);
 		*end = g_strdup("</f>");
-	} else if (!strcmp(root->name, "i")) {
+	} else if (!stricmp(root->name, "i")) {
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_ITALIC);
 		*end = g_strdup("</f>");
-	} else if (!strcmp(root->name, "u")) {
+	} else if (!stricmp(root->name, "u")) {
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_UNDERLINE);
 		*end = g_strdup("</f>");
-	} else if (!strcmp(root->name, "font")) {
+	} else if (!stricmp(root->name, "a")) {
+		const gchar *href, *link_text;
+
+		href = xmlnode_get_attrib(root, "href");
+
+		if (!href) {
+			href = xmlnode_get_attrib(root, "HREF");
+		}
+
+		link_text = xmlnode_get_data(root);
+
+		if (href) {
+			if (!strcmp(link_text, href)) {
+				/* Purple gives us: <a href="URL">URL</a>
+				 * Translate to <a h='URL' />
+				 * Displayed as text of URL with link to URL
+				 */
+				*begin = g_strdup_printf("<a h='%s' />", href);
+			} else {
+				/* But if we get: <a href="URL">text</a>
+				 * Translate to: text: <a h='URL' />
+				 *
+				 * Because official client only supports self-closed <a>
+				 * tags; you can't change the link text.
+				 */
+				*begin = g_strdup_printf("%s: <a h='%s' />", link_text, href);
+			}
+		} else {
+			*begin = g_strdup("<a />");
+		}
+
+		/* Sorry, kid. MySpace doesn't support you within <a> tags. */
+		xmlnode_free(root->child);
+		root->child = NULL;
+
+		*end = g_strdup("");
+	} else if (!stricmp(root->name, "font")) {
 		const gchar *size;
 		const gchar *face;
 
