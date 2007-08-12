@@ -2324,9 +2324,6 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
-	purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
-	purple_connection_set_state(session->gc, PURPLE_CONNECTED);
-
 	session->sesskey = msim_msg_get_integer(msg, "sesskey");
 	purple_debug_info("msim", "SESSKEY=<%d>\n", session->sesskey);
 
@@ -2346,6 +2343,16 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 	 * which is weird, but happens because you login with your email
 	 * address and not username. Will be freed in msim_session_destroy(). */
 	session->username = msim_msg_get_string(msg, "uniquenick");
+
+	/* The session is now set up, ready to be connected. This emits the
+	 * signedOn signal, so clients can now do anything with msimprpl, and
+	 * we're ready for it (session key, userid, username all setup). */
+	purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
+	purple_connection_set_state(session->gc, PURPLE_CONNECTED);
+
+
+	/* Additional post-connect operations */
+
 
 	if (msim_msg_get_integer(msg, "uniquenick") == session->userid) {
 		purple_debug_info("msim_we_are_logged_on", "TODO: pick username");
@@ -2670,7 +2677,8 @@ msim_error(MsimSession *session, MsimMessage *msg)
 
 	g_free(errmsg);
 
-	purple_debug_info("msim", "msim_error: %s\n", full_errmsg);
+	purple_debug_info("msim", "msim_error (sesskey=%d): %s\n", 
+			session->sesskey, full_errmsg);
 
 	purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
 			full_errmsg, NULL);
@@ -3153,6 +3161,13 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 	gc = (PurpleConnection *)(gc_uncasted);
 	account = purple_connection_get_account(gc);
 	session = gc->proto_data;
+
+	/* libpurple/eventloop.h only defines these two */
+	if (cond != PURPLE_INPUT_READ && cond != PURPLE_INPUT_WRITE) {
+		purple_debug_info("msim_input_cb", "unknown condition=%d\n", cond);
+		purple_connection_error(gc, _("Invalid input condition"));
+		return;
+	}
 
 	g_return_if_fail(cond == PURPLE_INPUT_READ);
 	g_return_if_fail(MSIM_SESSION_VALID(session));

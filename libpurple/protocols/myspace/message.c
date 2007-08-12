@@ -425,7 +425,9 @@ msim_msg_free(MsimMessage *msg)
 		return;
 	}
 
+#ifdef MSIM_MSG_DEBUG_FREE
 	msim_msg_dump("msim_msg_free: freeing %s", msg);
+#endif
 
 	g_list_foreach(msg, msim_msg_free_element, NULL);
 	g_list_free(msg);
