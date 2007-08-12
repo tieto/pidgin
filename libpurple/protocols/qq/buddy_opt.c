@@ -213,7 +213,7 @@ void qq_reject_add_request_with_gc_and_uid(gc_and_uid *g)
 			   _("Sorry, you are not my type..."), TRUE, FALSE,
 			   NULL, _("Reject"), G_CALLBACK(_qq_reject_add_request_real), _("Cancel"), NULL,
 			   purple_connection_get_account(gc), nombre, NULL,
-			   g2);
+			   "buddy", g2);
 	g_free(nombre);
 }
 
