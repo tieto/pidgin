@@ -309,7 +309,7 @@ msn_show_set_mobile_phone(PurplePluginAction *action)
 					   _("OK"), G_CALLBACK(msn_set_mobile_phone_cb),
 					   _("Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   gc);
+					   "account", gc);
 }
 
 static void
