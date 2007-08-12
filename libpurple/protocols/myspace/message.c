@@ -1108,7 +1108,8 @@ msim_msg_get(MsimMessage *msg, const gchar *name)
  *
  * @param name Name of element.
  *
- * @return gchar * The data as a string. Caller must g_free().
+ * @return gchar * The data as a string, or NULL if not found. 
+ *     Caller must g_free().
  *
  * Note that msim_msg_pack_element_data() is similar, but returns a string
  * for inclusion into a raw protocol string (escaped and everything).
@@ -1120,7 +1121,9 @@ msim_msg_get_string(MsimMessage *msg, const gchar *name)
 	MsimMessageElement *elem;
 
 	elem = msim_msg_get(msg, name);
-	g_return_val_if_fail(elem != NULL , NULL);
+	if (!elem) {
+		return NULL;
+	}
 
 	switch (elem->type) {
 		case MSIM_TYPE_INTEGER:

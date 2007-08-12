@@ -1421,7 +1421,10 @@ msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg)
 	cv = msim_msg_get_string(msg, "cv");
 
 	g_return_val_if_fail(username != NULL, FALSE);
-	g_return_val_if_fail(cv != NULL, FALSE);
+	if (!cv) {
+		/* No client version to record, don't worry about it. */
+		return FALSE;
+	}
 
 	buddy = purple_find_buddy(session->account, username);
 
@@ -2472,7 +2475,11 @@ msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data)
  * @param session
  * @param msg The user information reply, with any amount of information.
  *
- * The information is saved to the buddy's blist node, which ends up in blist.xml.
+ * The information is saved to the buddy's blist node, which ends up in 
+ * blist.xml. If the function has no buddy information, this function
+ * is a no-op (and returns FALSE).
+ *
+ * TODO: Store ephemeral information in MsimBuddy instead.
  */
 static gboolean 
 msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
@@ -2480,16 +2487,15 @@ msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
 	GHashTable *body;
 	gchar *username, *body_str, *uid;
 	PurpleBuddy *buddy;
-	guint rid;
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
  
-	rid = msim_msg_get_integer(msg, "rid");
-	
-	g_return_val_if_fail(rid != 0, FALSE);
-
 	body_str = msim_msg_get_string(msg, "body");
+	if (!body_str) {
+		return FALSE;
+	}
+
 	g_return_val_if_fail(body_str != NULL, FALSE);
 	body = msim_parse_body(body_str);
 	g_free(body_str);
