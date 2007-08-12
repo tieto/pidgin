@@ -586,7 +586,107 @@ PurpleCertificateVerifier x509_singleuse = {
 
 
 
+/***** X.509 Certificate Authority pool, keyed by Distinguished Name *****/
+static PurpleCertificatePool x509_ca;
 
+static gboolean
+x509_ca_init(void)
+{
+	return TRUE;
+}
+
+static void
+x509_ca_uninit(void)
+{
+	
+}
+
+static gboolean
+x509_ca_cert_in_pool(const gchar *id)
+{
+	gboolean ret = FALSE;
+	
+	g_return_val_if_fail(id, FALSE);
+
+	return ret;
+}
+
+static PurpleCertificate *
+x509_ca_get_cert(const gchar *id)
+{
+	PurpleCertificateScheme *x509;
+	PurpleCertificate *crt = NULL;
+	
+	g_return_val_if_fail(id, NULL);
+
+	/* Is it in the pool? */
+	if ( !x509_ca_cert_in_pool(id) ) {
+		return NULL;
+	}
+	
+	/* Look up the X.509 scheme */
+	x509 = purple_certificate_find_scheme("x509");
+	g_return_val_if_fail(x509, NULL);
+
+	return crt;
+}
+
+static gboolean
+x509_ca_put_cert(const gchar *id, PurpleCertificate *crt)
+{
+	gboolean ret = FALSE;
+
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme, FALSE);
+	/* Make sure that this is some kind of X.509 certificate */
+	/* TODO: Perhaps just check crt->scheme->name instead? */
+	g_return_val_if_fail(crt->scheme == purple_certificate_find_scheme(x509_ca.scheme_name), FALSE);
+
+	return ret;
+}
+
+static gboolean
+x509_ca_delete_cert(const gchar *id)
+{
+	gboolean ret = FALSE;
+
+	g_return_val_if_fail(id, FALSE);
+
+	/* Is the id even in the pool? */
+	if (!x509_ca_cert_in_pool(id)) {
+		purple_debug_warning("certificate/ca",
+				     "Id %s wasn't in the pool\n",
+				     id);
+		return FALSE;
+	}
+
+	return ret;
+}
+
+static GList *
+x509_ca_get_idlist(void)
+{
+	return NULL;
+}
+
+
+static PurpleCertificatePool x509_ca = {
+	"x509",                       /* Scheme name */
+	"ca",                         /* Pool name */
+	N_("Certificate Authorities"),/* User-friendly name */
+	NULL,                         /* Internal data */
+	x509_ca_init,                 /* init */
+	x509_ca_uninit,               /* uninit */
+	x509_ca_cert_in_pool,         /* Certificate exists? */
+	x509_ca_get_cert,             /* Cert retriever */
+	x509_ca_put_cert,             /* Cert writer */
+	x509_ca_delete_cert,          /* Cert remover */
+	x509_ca_get_idlist            /* idlist retriever */
+};
+
+
+
+/***** Cache of certificates given by TLS/SSL peers *****/
 static PurpleCertificatePool x509_tls_peers;
 
 static gboolean
@@ -747,7 +847,7 @@ static PurpleCertificatePool x509_tls_peers = {
 };
 
 
-
+/***** A Verifier that uses the tls_peers cache and the CA pool to validate certificates *****/
 static PurpleCertificateVerifier x509_tls_cached;
 
 static void
@@ -1103,6 +1203,7 @@ purple_certificate_init(void)
 {
 	/* Register builtins */
 	purple_certificate_register_verifier(&x509_singleuse);
+	purple_certificate_register_pool(&x509_ca);
 	purple_certificate_register_pool(&x509_tls_peers);
 	purple_certificate_register_verifier(&x509_tls_cached);
 }
