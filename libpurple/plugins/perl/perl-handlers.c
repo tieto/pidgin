@@ -22,6 +22,7 @@ purple_perl_plugin_action_cb(PurplePluginAction *action)
 	gchar *hvname;
 	PurplePlugin *plugin;
 	PurplePerlScript *gps;
+	STRLEN na;
 	dSP;
 
 	plugin = action->plugin;
@@ -45,8 +46,15 @@ purple_perl_plugin_action_cb(PurplePluginAction *action)
 	XPUSHs(purple_perl_bless_object(gps->plugin, "Purple::Plugin"));
 	PUTBACK;
 
-	call_sv(*callback, G_VOID | G_DISCARD);
+	call_sv(*callback, G_EVAL | G_VOID | G_DISCARD);
+
 	SPAGAIN;
+
+	if (SvTRUE(ERRSV)) {
+		purple_debug_error("perl",
+		                 "Perl plugin action function exited abnormally: %s\n",
+		                 SvPV(ERRSV, na));
+	}
 
 	PUTBACK;
 	FREETMPS;
@@ -59,6 +67,7 @@ purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context)
 	GList *l = NULL;
 	PurplePerlScript *gps;
 	int i = 0, count = 0;
+	STRLEN na;
 	dSP;
 
 	gps = (PurplePerlScript *)plugin->info->extra_info;
@@ -77,9 +86,15 @@ purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context)
 		XPUSHs(&PL_sv_undef);
 	PUTBACK;
 
-	count = call_pv(gps->plugin_action_sub, G_ARRAY);
+	count = call_pv(gps->plugin_action_sub, G_EVAL | G_ARRAY);
 
 	SPAGAIN;
+
+	if (SvTRUE(ERRSV)) {
+		purple_debug_error("perl",
+		                 "Perl plugin actions lookup exited abnormally: %s\n",
+		                 SvPV(ERRSV, na));
+	}
 
 	if (count == 0)
 		croak("The plugin_actions sub didn't return anything.\n");
@@ -113,6 +128,7 @@ purple_perl_gtk_get_plugin_frame(PurplePlugin *plugin)
 	MAGIC *mg;
 	GtkWidget *ret;
 	PurplePerlScript *gps;
+	STRLEN na;
 	dSP;
 
 	gps = (PurplePerlScript *)plugin->info->extra_info;
@@ -120,12 +136,18 @@ purple_perl_gtk_get_plugin_frame(PurplePlugin *plugin)
 	ENTER;
 	SAVETMPS;
 
-	count = call_pv(gps->gtk_prefs_sub, G_SCALAR | G_NOARGS);
+	count = call_pv(gps->gtk_prefs_sub, G_EVAL | G_SCALAR | G_NOARGS);
 	if (count != 1)
 		croak("call_pv: Did not return the correct number of values.\n");
 
 	/* the frame was created in a perl sub and is returned */
 	SPAGAIN;
+
+	if (SvTRUE(ERRSV)) {
+		purple_debug_error("perl",
+		                 "Perl gtk plugin frame init exited abnormally: %s\n",
+		                 SvPV(ERRSV, na));
+	}
 
 	/* We have a Gtk2::Frame on top of the stack */
 	sv = POPs;
@@ -150,6 +172,7 @@ purple_perl_get_plugin_frame(PurplePlugin *plugin)
 	int count;
 	PurplePerlScript *gps;
 	PurplePluginPrefFrame *ret_frame;
+	STRLEN na;
 	dSP;
 
 	gps = (PurplePerlScript *)plugin->info->extra_info;
@@ -161,9 +184,15 @@ purple_perl_get_plugin_frame(PurplePlugin *plugin)
 	PUSHMARK(SP);
 	PUTBACK;
 
-	count = call_pv(gps->prefs_sub, G_SCALAR | G_NOARGS);
+	count = call_pv(gps->prefs_sub, G_EVAL | G_SCALAR | G_NOARGS);
 
 	SPAGAIN;
+
+	if (SvTRUE(ERRSV)) {
+		purple_debug_error("perl",
+		                 "Perl plugin prefs frame init exited abnormally: %s\n",
+		                 SvPV(ERRSV, na));
+	}
 
 	if (count != 1)
 		croak("call_pv: Did not return the correct number of values.\n");
@@ -215,6 +244,7 @@ perl_timeout_cb(gpointer data)
 {
 	PurplePerlTimeoutHandler *handler = (PurplePerlTimeoutHandler *)data;
 	gboolean ret = FALSE;
+	STRLEN na;
 
 	dSP;
 	ENTER;
@@ -224,6 +254,12 @@ perl_timeout_cb(gpointer data)
 	PUTBACK;
 	call_sv(handler->callback, G_EVAL | G_SCALAR);
 	SPAGAIN;
+
+	if (SvTRUE(ERRSV)) {
+		purple_debug_error("perl",
+		                 "Perl timeout function exited abnormally: %s\n",
+		                 SvPV(ERRSV, na));
+	}
 
 	ret = POPi;
 
@@ -285,7 +321,7 @@ perl_signal_cb(va_list args, void *data)
 		else
 			ret_val = purple_perl_data_from_sv(ret_value, POPs);
 	} else {
-		call_sv(handler->callback, G_SCALAR);
+		call_sv(handler->callback, G_EVAL | G_SCALAR);
 
 		SPAGAIN;
 	}
@@ -501,6 +537,7 @@ perl_cmd_cb(PurpleConversation *conv, const gchar *command,
             gchar **args, gchar **error, void *data)
 {
 	int i = 0, count, ret_value = PURPLE_CMD_RET_OK;
+	STRLEN na;
 	SV *cmdSV, *tmpSV, *convSV;
 	PurplePerlCmdHandler *handler = (PurplePerlCmdHandler *)data;
 
@@ -532,10 +569,16 @@ perl_cmd_cb(PurpleConversation *conv, const gchar *command,
 	}
 
 	PUTBACK;
-	count = call_sv(handler->callback, G_EVAL|G_SCALAR);
+	count = call_sv(handler->callback, G_EVAL | G_SCALAR);
 
 	if (count != 1)
 		croak("call_sv: Did not return the correct number of values.\n");
+
+	if (SvTRUE(ERRSV)) {
+		purple_debug_error("perl",
+		                 "Perl plugin command function exited abnormally: %s\n",
+		                 SvPV(ERRSV, na));
+	}
 
 	SPAGAIN;
 
