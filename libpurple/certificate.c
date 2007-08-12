@@ -587,11 +587,52 @@ PurpleCertificateVerifier x509_singleuse = {
 
 
 /***** X.509 Certificate Authority pool, keyed by Distinguished Name *****/
+/* This is implemented in what may be the most inefficient and bugprone way
+   possible; however, future optimizations should not be difficult. */
+
 static PurpleCertificatePool x509_ca;
+
+/** Holds a key-value pair for quickish certificate lookup */
+typedef struct {
+	gchar *dn;
+	PurpleCertificate *crt;
+} x509_ca_element;
+
+/** System directory to probe for CA certificates */
+/* TODO: The current path likely won't work on anything but Debian! Fix! */
+static const gchar *x509_ca_syspath = "/etc/ssl/certs/";
+
+/** A list of loaded CAs, populated from the above path whenever the lazy_init
+    happens. Contains pointers to x509_ca_elements */
+static GList *x509_ca_certs = NULL;
+
+/** Used for lazy initialization purposes. */
+static gboolean x509_ca_initialized = FALSE;
+
+static gboolean
+x509_ca_lazy_init(void)
+{
+	if (x509_ca_initialized) return TRUE;
+
+	/* Populate the certificates pool from the system path */
+	/* TODO: Writeme! */
+	
+	x509_ca_initialized = TRUE;
+	return TRUE;
+}
 
 static gboolean
 x509_ca_init(void)
 {
+	/* Attempt to initialize now, but if it doesn't work, that's OK;
+	   it will get done later */
+	if ( ! x509_ca_lazy_init()) {
+		purple_debug_info("certificate/x509/ca",
+				  "Lazy init failed, probably because a "
+				  "dependency is not yet registered. "
+				  "It has been deferred to later.\n");
+	}
+	
 	return TRUE;
 }
 
@@ -605,7 +646,8 @@ static gboolean
 x509_ca_cert_in_pool(const gchar *id)
 {
 	gboolean ret = FALSE;
-	
+
+	g_return_val_if_fail(x509_ca_lazy_init(), FALSE);
 	g_return_val_if_fail(id, FALSE);
 
 	return ret;
@@ -616,7 +658,8 @@ x509_ca_get_cert(const gchar *id)
 {
 	PurpleCertificateScheme *x509;
 	PurpleCertificate *crt = NULL;
-	
+
+	g_return_val_if_fail(x509_ca_lazy_init(), NULL);
 	g_return_val_if_fail(id, NULL);
 
 	/* Is it in the pool? */
@@ -636,6 +679,7 @@ x509_ca_put_cert(const gchar *id, PurpleCertificate *crt)
 {
 	gboolean ret = FALSE;
 
+	g_return_val_if_fail(x509_ca_lazy_init(), FALSE);
 	g_return_val_if_fail(crt, FALSE);
 	g_return_val_if_fail(crt->scheme, FALSE);
 	/* Make sure that this is some kind of X.509 certificate */
@@ -650,11 +694,12 @@ x509_ca_delete_cert(const gchar *id)
 {
 	gboolean ret = FALSE;
 
+	g_return_val_if_fail(x509_ca_lazy_init(), FALSE);
 	g_return_val_if_fail(id, FALSE);
 
 	/* Is the id even in the pool? */
 	if (!x509_ca_cert_in_pool(id)) {
-		purple_debug_warning("certificate/ca",
+		purple_debug_warning("certificate/x509/ca",
 				     "Id %s wasn't in the pool\n",
 				     id);
 		return FALSE;
@@ -666,6 +711,7 @@ x509_ca_delete_cert(const gchar *id)
 static GList *
 x509_ca_get_idlist(void)
 {
+	g_return_val_if_fail(x509_ca_lazy_init(), NULL);
 	return NULL;
 }
 
