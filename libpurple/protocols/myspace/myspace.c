@@ -1153,19 +1153,19 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 	 * Currently, the 's' value will be overwritten when b/i/u is nested
 	 * within another one, and only the inner-most formatting will be 
 	 * applied to the text. */
-	if (!stricmp(root->name, "root")) {
+	if (!strcmp(root->name, "root")) {
 		*begin = g_strdup("");
 		*end = g_strdup("");
-	} else if (!stricmp(root->name, "b")) {
+	} else if (!strcmp(root->name, "b") || !strcmp(root->name, "B")) {
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_BOLD);
 		*end = g_strdup("</f>");
-	} else if (!stricmp(root->name, "i")) {
+	} else if (!strcmp(root->name, "i") || !strcmp(root->name, "I")) {
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_ITALIC);
 		*end = g_strdup("</f>");
-	} else if (!stricmp(root->name, "u")) {
+	} else if (!strcmp(root->name, "u") || !strcmp(root->name, "U")) {
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_UNDERLINE);
 		*end = g_strdup("</f>");
-	} else if (!stricmp(root->name, "a")) {
+	} else if (!strcmp(root->name, "a") || !strcmp(root->name, "A")) {
 		const gchar *href, *link_text;
 
 		href = xmlnode_get_attrib(root, "href");
@@ -1201,7 +1201,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		root->child = NULL;
 
 		*end = g_strdup("");
-	} else if (!stricmp(root->name, "font")) {
+	} else if (!strcmp(root->name, "font") || !strcmp(root->name, "FONT")) {
 		const gchar *size;
 		const gchar *face;
 
