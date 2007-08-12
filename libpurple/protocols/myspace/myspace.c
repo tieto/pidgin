@@ -2814,7 +2814,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	MsimSession *session;
 	MsimMessage *msg;
-	MsimMessage *msg_persist;
+	/* MsimMessage *msg_persist; */
 	MsimMessage *body;
 
 	session = (MsimSession *)gc->proto_data;

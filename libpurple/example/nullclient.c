@@ -197,7 +197,7 @@ init_libpurple()
 	purple_util_set_user_dir(CUSTOM_USER_DIRECTORY);
 
 	/* We do not want any debugging for now to keep the noise to a minimum. */
-	purple_debug_set_enabled(FALSE);
+	purple_debug_set_enabled(TRUE);
 
 	/* Set the core-uiops, which is used to
 	 * 	- initialize the ui specific preferences.
@@ -257,6 +257,24 @@ connect_to_signals_for_demonstration_purposes_only()
 				PURPLE_CALLBACK(signed_on), NULL);
 }
 
+
+
+
+void signedOn( PurpleConnection *gc, gpointer dummy ) { 
+
+    
+    if( gc ) {
+
+        PurpleAccount* a = purple_connection_get_account( gc );
+
+        if( a ) {
+            
+            purple_presence_set_idle( purple_account_get_presence( a ), TRUE, time( NULL ) );
+        }
+    }    
+}
+
+
 int main()
 {
 	GList *iter;
@@ -282,30 +300,26 @@ int main()
 			names = g_list_append(names, info->id);
 		}
 	}
-	printf("Select the protocol [0-%d]: ", i-1);
-	fgets(name, sizeof(name), stdin);
-	sscanf(name, "%d", &num);
-	prpl = g_list_nth_data(names, num);
-
-	printf("Username: ");
-	fgets(name, sizeof(name), stdin);
-	name[strlen(name) - 1] = 0;  /* strip the \n at the end */
 
 	/* Create the account */
-	account = purple_account_new(name, prpl);
-
-	/* Get the password for the account */
-	password = getpass("Password: ");
-	purple_account_set_password(account, password);
+	account = purple_account_new("msimprpl@xyzzy.cjb.net", "prpl-myspace" );
+	purple_account_set_password(account, "4224jc" );
 
 	/* It's necessary to enable the account first. */
 	purple_account_set_enabled(account, UI_ID, TRUE);
 
+#if 0 
+	static int handle;    
+	purple_signal_connect( purple_connections_get_handle(), 
+                           "signed-on", &handle,
+                           PURPLE_CALLBACK( signedOn ), 
+                           NULL );
+    
 	/* Now, to connect the account(s), create a status and activate it. */
-	status = purple_savedstatus_new(NULL, PURPLE_STATUS_AVAILABLE);
-	purple_savedstatus_activate(status);
+	purple_savedstatus_activate( purple_savedstatus_get_default() );
 
 	connect_to_signals_for_demonstration_purposes_only();
+#endif
 
 	g_main_loop_run(loop);
 

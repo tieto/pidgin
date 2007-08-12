@@ -1,4 +1,17 @@
-2007-08-04 Jeff Cnnelly <jeff2@soc.pidgin.im> - 0.13
+2007-08-12 Jeff Connelly <jeff2@soc.pidgin.im> - 0.14
+* Full emoticon support (except no difference between nerd and geek emoticons),
+  thanks to a number of new icons from Hylke Bons.
+* Package Win32 release archive so that it can easily be extracted directly
+  into the folder Pidgin was installed to.
+* Better password handling, may now support Unicode passwords.
+* Much general clean-up and restructuring of the code.
+* Resolve user ID from buddy list, if it exists. Greatly improves speed of 
+  receiving messages from user IDs.
+* Support sending and receiving hyperlinks.
+* Fix #2521 by reimplementing protocol message escaping to work correctly.
+* Fix #2520 by indicating sign-on at the correct time.
+
+2007-08-04 Jeff Connelly <jeff2@soc.pidgin.im> - 0.13
 * Fix crash when deleting buddies, on Windows.
 * Disable sending client version to oncoming buddies (compile-time option).
 * Updated login process (more closely resembles official client).
