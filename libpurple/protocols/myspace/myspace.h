@@ -65,7 +65,7 @@
  * the results to the Purple debug log, then exit. Useful to 
  * run with 'pidgin -d' to see the output. Don't define if
  * you want to actually use the plugin! */
-/*#define MSIM_SELF_TEST            */
+#define MSIM_SELF_TEST            
 
 /* Constants */
 
@@ -175,7 +175,7 @@
 #define MSIM_INBOX_FRIEND_REQUEST       (1 << 3)
 #define MSIM_INBOX_PICTURE_COMMENT      (1 << 4)
 
-/* Everything needed to keep track of a session. */
+/* Everything needed to keep track of a session (proto_data field in PurpleConnection) */
 typedef struct _MsimSession
 {
 	guint magic;                        /**< MSIM_SESSION_STRUCT_MAGIC */
@@ -198,6 +198,21 @@ typedef struct _MsimSession
 	time_t last_comm;                   /**< Time received last communication */
 	guint inbox_status;                 /**< Bit field of inbox notifications */
 } MsimSession;
+
+#if 0
+/* Hold ephemeral information about buddies, for proto_data of PurpleBuddy. */
+/* GHashTable? */
+typedef struct _MsimBuddy
+{
+	guint client_cv;
+	gchar *client_info;
+	guint age;
+	guint total_friends;
+	gchar *headline;
+	gchar *display_name;
+	gchar *username;
+} MsimBuddy;
+#endif
 
 /* Check if an MsimSession is valid */
 #define MSIM_SESSION_VALID(s) (session != NULL && session->magic == MSIM_SESSION_STRUCT_MAGIC)

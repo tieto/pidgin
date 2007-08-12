@@ -22,7 +22,6 @@
 #include "myspace.h"
 #include "message.h"
 
-static gchar *msim_unescape_or_escape(const gchar *msg, gboolean escape);
 static void msim_msg_free_element(gpointer data, gpointer user_data);
 static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
 static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, const gchar *sep, const gchar *begin, const gchar *end);
@@ -33,54 +32,13 @@ static MsimMessage *msim_msg_new_v(gchar *first_key, va_list argp);
  * escaping and unescaping. */
 static struct MSIM_ESCAPE_REPLACEMENT {
 	gchar *code;
-	gchar *text;
+	gchar text;
 } msim_escape_replacements[] = {
-	{ "/1", "/" },
-	{ "/2", "\\" },
+	{ "/1", '/' },
+	{ "/2", '\\' },
 	/* { "/3", "|" }, */      /* Not used here -- only for within arrays */
-	{ NULL, NULL }
+	{ NULL, 0 }
 };
-
-/**
- * Unescape or escape a protocol message.
- *
- * @param msg The message to be unescaped or escaped.
- * @param escape TRUE to escape, FALSE to unescape.
- *
- * @return The unescaped or escaped message. Caller must g_free().
- */
-static gchar *
-msim_unescape_or_escape(const gchar *original_msg, gboolean escape)
-{
-	gchar *tmp, *msg;
-	guint i;
-	struct MSIM_ESCAPE_REPLACEMENT* replacement;
-
-	/* Freed in loop below. */
-	msg = g_strdup(original_msg);
-
-	/* Replace each code in msim_replacement_code with
-	 * corresponding entry in msim_replacement_text. */
-	for (i = 0; (replacement = &msim_escape_replacements[i]); ++i) {
-		gchar *code, *text;
-
-		code = replacement->code;
-		text = replacement->text;
-
-		if (!code || !text)
-			break;
-
-		if (escape) {
-			tmp = str_replace(msg, text, code);
-		} else {
-			tmp = str_replace(msg, code, text);
-		}
-		g_free(msg);
-		msg = tmp;
-	}
-	
-	return msg;
-}
 
 /**
  * Escape a protocol message.
@@ -90,13 +48,75 @@ msim_unescape_or_escape(const gchar *original_msg, gboolean escape)
 gchar *
 msim_escape(const gchar *msg)
 {
-	return msim_unescape_or_escape(msg, TRUE);
+	GString *gs;
+	guint i, j;
+
+	gs = g_string_new("");
+
+
+	for (i = 0; i < strlen(msg); ++i) {
+		struct MSIM_ESCAPE_REPLACEMENT *replacement;
+		gchar *replace;
+
+		replace = NULL;
+
+		/* Check for characters that need to be escaped, and escape them. */
+		for (j = 0; (replacement = &msim_escape_replacements[j]) &&
+				replacement->code != NULL; ++j) {
+			if (msg[i] == replacement->text) {
+				replace = replacement->code;
+				break;
+			}
+		}
+
+		if (replace) {
+			g_string_append(gs, replace);
+		} else {
+			g_string_append_c(gs, msg[i]);
+		}
+	}
+	
+	purple_debug_info("msim", "msim_escape: msg=%s, ret=%s\n", msg, gs->str);
+
+	return gs->str;
 }
 
+/**
+ * Unescape a protocol message.
+ *
+ * @return The unescaped message, caller must g_free().
+ */
 gchar *
 msim_unescape(const gchar *msg)
 {
-	return msim_unescape_or_escape(msg, FALSE);
+	GString *gs;
+	guint i, j;
+
+	gs = g_string_new("");
+
+	for (i = 0; i < strlen(msg); ++i) {
+		struct MSIM_ESCAPE_REPLACEMENT *replacement;
+		gchar replace;
+
+		replace = msg[i];
+
+		for (j = 0; (replacement = &msim_escape_replacements[j]) &&
+				replacement->code != NULL; ++j) {
+			if (msg[i] == replacement->code[0] &&
+			    i + 1 < strlen(msg) &&
+			    msg[i + 1] == replacement->code[1]) {
+				replace = replacement->text;
+				++i;
+				break;
+			}
+		}
+
+		g_string_append_c(gs, replace);
+	}
+
+	purple_debug_info("msim", "msim_unescape: msg=%s, ret=%s\n", msg, gs->str);
+
+	return gs->str;
 }
 
 /** Create a new MsimMessage. 
@@ -112,7 +132,7 @@ msim_msg_new(gchar *first_key, ...)
 	va_list argp;
 
 	if (first_key) {
-        va_start(argp, first_key);
+	va_start(argp, first_key);
 		return msim_msg_new_v(first_key, argp);
 	} else {
 		return NULL;
@@ -134,7 +154,7 @@ msim_msg_new_v(gchar *first_key, va_list argp)
 	gchar *key, *value;
 	MsimMessageType type;
 	MsimMessage *msg;
-    gboolean first;
+	gboolean first;
 
 	GString *gs;
 	GList *gl;
@@ -142,22 +162,22 @@ msim_msg_new_v(gchar *first_key, va_list argp)
 
 	/* Begin with an empty message. */
 	msg = NULL;
-    
-    /* First parameter can be given explicitly. */
-    first = first_key != NULL;
+
+	/* First parameter can be given explicitly. */
+	first = first_key != NULL;
 
 	/* Read key, type, value triplets until NULL. */
 	do {
-        if (first)
-        {
-            key = first_key;
-            first = FALSE;
-        } else {
-            key = va_arg(argp, gchar *);
-            if (!key) {
-                break;
-            }
-        }
+		if (first)
+		{
+			key = first_key;
+			first = FALSE;
+		} else {
+			key = va_arg(argp, gchar *);
+			if (!key) {
+				break;
+			}
+		}
 
 		type = va_arg(argp, int);
 
@@ -742,7 +762,6 @@ msim_msg_pack_element_data(MsimMessageElement *elem)
 			return elem->data ? g_strdup("On") : g_strdup("Off");
 
 		case MSIM_TYPE_DICTIONARY:
-			/* TODO: pack using k=v\034k2=v2\034... */
 			return msim_msg_pack_dict((MsimMessage *)elem->data);
 			
 		case MSIM_TYPE_LIST:

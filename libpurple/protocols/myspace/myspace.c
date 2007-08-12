@@ -3918,6 +3918,7 @@ init_plugin(PurplePlugin *plugin)
 	PurpleAccountOption *option;
 #ifdef MSIM_SELF_TEST
 	msim_test_all();
+	exit(0);
 #endif /* MSIM_SELF_TEST */
 
 
