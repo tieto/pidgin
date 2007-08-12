@@ -75,8 +75,10 @@ msim_escape(const gchar *msg)
 			g_string_append_c(gs, msg[i]);
 		}
 	}
-	
+
+#ifdef MSIM_DEBUG_ESCAPE
 	purple_debug_info("msim", "msim_escape: msg=%s, ret=%s\n", msg, gs->str);
+#endif
 
 	return gs->str;
 }
@@ -114,7 +116,9 @@ msim_unescape(const gchar *msg)
 		g_string_append_c(gs, replace);
 	}
 
+#ifdef MSIM_DEBUG_ESCAPE
 	purple_debug_info("msim", "msim_unescape: msg=%s, ret=%s\n", msg, gs->str);
+#endif
 
 	return gs->str;
 }
