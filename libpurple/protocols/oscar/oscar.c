@@ -482,7 +482,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 
 	/* Attempt to send as ASCII */
 	if (oscar_charset_check(from) == AIM_CHARSET_ASCII) {
-		*msg = g_convert(from, strlen(from), "ASCII", "UTF-8", NULL, &msglen, NULL);
+		*msg = g_convert(from, -1, "ASCII", "UTF-8", NULL, &msglen, NULL);
 		*charset = AIM_CHARSET_ASCII;
 		*charsubset = 0x0000;
 		*msglen_int = msglen;
@@ -504,7 +504,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 		b = purple_find_buddy(account, destsn);
 		if ((b != NULL) && (PURPLE_BUDDY_IS_ONLINE(b)))
 		{
-			*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
+			*msg = g_convert(from, -1, "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 			if (*msg != NULL)
 			{
 				*charset = AIM_CHARSET_UNICODE;
@@ -527,7 +527,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	 * XXX - We need a way to only attempt to convert if we KNOW "from"
 	 * can be converted to "charsetstr"
 	 */
-	*msg = g_convert(from, strlen(from), charsetstr, "UTF-8", NULL, &msglen, NULL);
+	*msg = g_convert(from, -1, charsetstr, "UTF-8", NULL, &msglen, NULL);
 	if (*msg != NULL) {
 		*charset = AIM_CHARSET_CUSTOM;
 		*charsubset = 0x0000;
@@ -538,7 +538,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	/*
 	 * Nothing else worked, so send as UCS-2BE.
 	 */
-	*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, &msglen, &err);
+	*msg = g_convert(from, -1, "UCS-2BE", "UTF-8", NULL, &msglen, &err);
 	if (*msg != NULL) {
 		*charset = AIM_CHARSET_UNICODE;
 		*charsubset = 0x0000;
@@ -4348,10 +4348,10 @@ gchar *purple_prpl_oscar_convert_to_infotext(const gchar *str, gsize *ret_len, c
 
 	charset = oscar_charset_check(str);
 	if (charset == AIM_CHARSET_UNICODE) {
-		encoded = g_convert(str, strlen(str), "UCS-2BE", "UTF-8", NULL, ret_len, NULL);
+		encoded = g_convert(str, -1, "UCS-2BE", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "unicode-2-0";
 	} else if (charset == AIM_CHARSET_CUSTOM) {
-		encoded = g_convert(str, strlen(str), "ISO-8859-1", "UTF-8", NULL, ret_len, NULL);
+		encoded = g_convert(str, -1, "ISO-8859-1", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "iso-8859-1";
 	} else {
 		encoded = g_strdup(str);
