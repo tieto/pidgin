@@ -692,6 +692,7 @@ static gboolean
 x509_ca_put_cert(const gchar *id, PurpleCertificate *crt)
 {
 	gboolean ret = FALSE;
+	x509_ca_element *el;
 
 	g_return_val_if_fail(x509_ca_lazy_init(), FALSE);
 	g_return_val_if_fail(crt, FALSE);
@@ -699,6 +700,14 @@ x509_ca_put_cert(const gchar *id, PurpleCertificate *crt)
 	/* Make sure that this is some kind of X.509 certificate */
 	/* TODO: Perhaps just check crt->scheme->name instead? */
 	g_return_val_if_fail(crt->scheme == purple_certificate_find_scheme(x509_ca.scheme_name), FALSE);
+
+	/* TODO: This is a quick way of doing this. At some point the change
+	   ought to be flushed to disk somehow. */
+	el = g_new0(x509_ca_element, 1);
+	el->dn = purple_certificate_get_unique_id(crt);
+	el->crt = purple_certificate_copy(crt);
+	x509_ca_certs = g_list_prepend(x509_ca_certs, el);
+	ret = TRUE;
 
 	return ret;
 }
