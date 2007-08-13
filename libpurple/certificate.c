@@ -1249,6 +1249,9 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 
 	/* Attempt to look up the last certificate's issuer */
 	ca_id = purple_certificate_get_issuer_unique_id(end_crt);
+	purple_debug_info("certificate/x509/tls_cached",
+			  "Checking for a CA with DN=%s\n",
+			  ca_id);
 	if ( !purple_certificate_pool_contains(ca, ca_id) ) {
 		purple_debug_info("certificate/x509/tls_cached",
 				  "Certificate Authority with DN='%s' not "
