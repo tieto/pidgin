@@ -154,9 +154,10 @@ static gchar *msim_format_now_playing(gchar *band, gchar *song);
 static void msim_set_status_code(MsimSession *session, guint code, 
 		gchar *statstring);
 
+static void msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, MsimUser *user, gboolean full);
 static void msim_store_user_info_each(gpointer key, gpointer value, 
 		gpointer user_data);
-static gboolean msim_store_user_info(MsimSession *session, MsimMessage *msg);
+static gboolean msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user);
 static gboolean msim_process_server_info(MsimSession *session, 
 		MsimMessage *msg);
 static gboolean msim_web_challenge(MsimSession *session, MsimMessage *msg); 
@@ -1807,18 +1808,88 @@ msim_format_now_playing(gchar *band, gchar *song)
 	}
 }
 
+/** Append user information to a PurpleNotifyUserInfo, given an MsimUser. 
+ * Used by msim_tooltip_text() and msim_get_info_cb() to show a user's profile.
+ */
+static void
+msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, MsimUser *user, gboolean full)
+{
+	gchar *str;
+	guint uid;
+	guint cv;
+
+	/* Useful to identify the account the tooltip refers to. 
+	 *  Other prpls show this. */
+	if (user->username) {
+		purple_notify_user_info_add_pair(user_info, _("User"), user->username);
+	}
+
+	uid = purple_blist_node_get_int(&user->buddy->node, "UserID");
+
+	if (full) {
+		purple_notify_user_info_add_pair(user_info, _("User ID"), g_strdup_printf("%d", uid));
+	}
+
+
+	/* a/s/l...the vitals */
+	if (user->age) {
+		purple_notify_user_info_add_pair(user_info, _("Age"),
+				g_strdup_printf("%d", user->age));
+	}
+
+	if (user->gender && strlen(user->gender)) {
+		purple_notify_user_info_add_pair(user_info, _("Gender"), user->gender);
+	}
+
+	if (user->location && strlen(user->location)) {
+		purple_notify_user_info_add_pair(user_info, _("Location"), user->location);
+	}
+
+	/* Other information */
+	if (user->headline && strlen(user->headline)) {
+		purple_notify_user_info_add_pair(user_info, _("Headline"), user->headline);
+	}
+
+	str = msim_format_now_playing(user->band_name, user->song_name);
+	if (str && strlen(str)) {
+		purple_notify_user_info_add_pair(user_info, _("Song"), str);
+	}
+
+	/* Note: total friends only available if looked up by uid, not username. */
+	if (user->total_friends) {
+		purple_notify_user_info_add_pair(user_info, _("Total Friends"),
+			g_strdup_printf("%d", user->total_friends));
+	}
+
+	if (full) {
+		/* Client information */
+
+		str = user->client_info;
+		cv = user->client_cv;
+
+		if (str && cv != 0) {
+			purple_notify_user_info_add_pair(user_info, _("Client Version"),
+					g_strdup_printf("%s (build %d)", str, cv));
+		} else if (str) {
+			purple_notify_user_info_add_pair(user_info, _("Client Version"),
+					g_strdup(str));
+		} else if (cv) {
+			purple_notify_user_info_add_pair(user_info, _("Client Version"),
+					g_strdup_printf("Build %d", cv));
+		}
+	}
+}
+
 /** Callback for msim_get_info(), for when user info is received. */
 static void 
 msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, 
 		gpointer data)
 {
-	GHashTable *body;
-	gchar *body_str;
 	MsimMessage *msg;
 	gchar *username;
 	PurpleNotifyUserInfo *user_info;
 	MsimUser *user;
-	const gchar *str;
+	gboolean temporary_user;
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
@@ -1836,87 +1907,42 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 	msim_msg_free(msg);
 	purple_debug_info("msim", "msim_get_info_cb: got for user: %s\n", username);
 
-	body_str = msim_msg_get_string(user_info_msg, "body");
-	g_return_if_fail(body_str != NULL);
-	body = msim_parse_body(body_str);
-	g_free(body_str);
-
 	user = msim_find_user(session, username);
-	/* Note: user will be NULL if not on buddy list. */
+
+	if (!user) {
+		/* User isn't on blist, create a temporary user to store info. */
+		temporary_user = TRUE;
+		user = g_new0(MsimUser, 1);
+	} else {
+		temporary_user = FALSE;
+	}
+
+	/* Update user structure with new information */
+	msim_store_user_info(session, user_info_msg, user);
 
 	user_info = purple_notify_user_info_new();
 
-	/* Identification */
-	purple_notify_user_info_add_pair(user_info, _("User"), username);
-
-	/* XXX TODO XXX TODO Avoid duplicating this and tooltip text, and
-	 * maybe integrate msim_store_buddy_info() here? */
-	str = g_hash_table_lookup(body, "UserID");
-	if (str)
-		purple_notify_user_info_add_pair(user_info, _("User ID"), 
-				g_strdup(str));
-
-	/* a/s/l...the vitals */
-	str = g_hash_table_lookup(body, "Age");
-	if (str && strcmp(str, "0"))
-		purple_notify_user_info_add_pair(user_info, _("Age"), g_strdup(str));
-
-	str = g_hash_table_lookup(body, "Gender");
-	if (str && strlen(str) != 0)
-		purple_notify_user_info_add_pair(user_info, _("Gender"), g_strdup(str));
-
-	str = g_hash_table_lookup(body, "Location");
-	if (str && strlen(str) != 0)
-		purple_notify_user_info_add_pair(user_info, _("Location"), 
-				g_strdup(str));
-
-	/* Other information */
-
-	if (user) {
-		/* Headline comes from buddy status messages */
-		if (user->headline)
-			purple_notify_user_info_add_pair(user_info, "Headline", user->headline);
-	}
-
-
-	str = msim_format_now_playing(g_hash_table_lookup(body, "BandName"), g_hash_table_lookup(body, "SongName"));
-
-	if (str) {
-		purple_notify_user_info_add_pair(user_info, _("Song"), str);
-	}
-
-
-	/* Total friends only available if looked up by uid, not username. */
-	str = g_hash_table_lookup(body, "TotalFriends");
-	if (str) {
-		purple_notify_user_info_add_pair(user_info, _("Total Friends"), 
-			g_strdup(str));
-	}
-	g_hash_table_destroy(body);
-
-	if (user) {
-		gint cv;
-
-		str = user->client_info;
-		cv = user->client_cv;
-
-		if (str && cv != 0) {
-			purple_notify_user_info_add_pair(user_info, _("Client Version"),
-					g_strdup_printf("%s (build %d)", str, cv));
-		} else if (str) {
-			purple_notify_user_info_add_pair(user_info, _("Client Version"),
-					g_strdup(str));
-		} else if (cv) {
-			purple_notify_user_info_add_pair(user_info, _("Client Version"),
-					g_strdup_printf("Build %d", cv));
-		}
-	}
+	/* Append data from MsimUser to PurpleNotifyUserInfo for display, full */
+	msim_append_user_info(session, user_info, user, TRUE);
 
 	purple_notify_userinfo(session->gc, username, user_info, NULL, NULL);
 	purple_debug_info("msim", "msim_get_info_cb: username=%s\n", username);
 
-	/* purple_notify_user_info_destroy(user_info); */
-	/* Do not free username, since it will be used by user_info. */
+	purple_notify_user_info_destroy(user_info);
+	/* TODO: do not free username, since it will be used by user_info? */
+
+	if (temporary_user) {
+		g_free(user->client_info);
+		g_free(user->gender);
+		g_free(user->location);
+		g_free(user->headline);
+		g_free(user->display_name);
+		g_free(user->username);
+		g_free(user->band_name);
+		g_free(user->song_name);
+		g_free(user->image_url);
+		g_free(user);
+	}
 
 }
 
@@ -2512,7 +2538,7 @@ msim_process(MsimSession *session, MsimMessage *msg)
 	}
 }
 
-/** Store an field of information about a buddy. */
+/** Store a field of information about a buddy. */
 static void 
 msim_store_user_info_each(gpointer key, gpointer value, gpointer user_data)
 {
@@ -2524,7 +2550,13 @@ msim_store_user_info_each(gpointer key, gpointer value, gpointer user_data)
 	value_str = (gchar *)value;
 
 	if (!strcmp(key_str, "UserID")) {
-		purple_blist_node_set_int(&user->buddy->node, "UserID", atol(value_str));
+		/* Save to buddy list, if it exists, for quick cached uid lookup with msim_uid2username_from_blist(). */
+		if (user->buddy)
+		{
+			purple_debug_info("msim", "associating uid %s with username %s\n", key_str, user->buddy->name);
+			purple_blist_node_set_int(&user->buddy->node, "UserID", atol(value_str));
+		}
+		/* Need to store in MsimUser, too? What if not on blist? */
 	} else if (!strcmp(key_str, "Age")) {
 		user->age = atol(value_str);
 	} else if (!strcmp(key_str, "Gender")) {
@@ -2561,19 +2593,21 @@ msim_store_user_info_each(gpointer key, gpointer value, gpointer user_data)
  *
  * @param session
  * @param msg The user information reply, with any amount of information.
+ * @param user The structure to save to, or NULL to save in PurpleBuddy->proto_data.
  *
- * The information is saved to the buddy's blist node, which ends up in 
- * blist.xml. If the function has no buddy information, this function
+ * Variable information is saved to the passed MsimUser structure. Permanent
+ * information (UserID) is stored in the blist node of the buddy list (and
+ * ends up in blist.xml, persisted to disk) if it exists.
+ *
+ * If the function has no buddy information, this function
  * is a no-op (and returns FALSE).
  *
- * TODO: Store ephemeral information in MsimUser instead.
  */
 static gboolean 
-msim_store_user_info(MsimSession *session, MsimMessage *msg)
+msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
 {
 	GHashTable *body;
-	gchar *username, *body_str, *uid;
-	MsimUser *user;
+	gchar *username, *body_str;
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
@@ -2587,6 +2621,7 @@ msim_store_user_info(MsimSession *session, MsimMessage *msg)
 	body = msim_parse_body(body_str);
 	g_free(body_str);
 
+
 	/* TODO: implement a better hash-like interface, and use it. */
 	username = g_hash_table_lookup(body, "UserName");
 
@@ -2597,24 +2632,22 @@ msim_store_user_info(MsimSession *session, MsimMessage *msg)
 		return FALSE;
 	}
 
-	uid = g_hash_table_lookup(body, "UserID");
-	if (!uid) {
-		g_hash_table_destroy(body);
-		g_return_val_if_fail(uid, FALSE);
+	/* Null user = find and store in PurpleBuddy's proto_data */
+	if (!user) {
+		user = msim_find_user(session, username);
+		g_return_val_if_fail(user != NULL, FALSE);
 	}
 
-	purple_debug_info("msim", "associating uid %s with username %s\n", uid, username);
-
-	user = msim_find_user(session, username);
-	if (user) {
-		g_hash_table_foreach(body, msim_store_user_info_each, user);
-	}
+	g_hash_table_foreach(body, msim_store_user_info_each, user);
 
 	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
 		msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID) {
 		/* TODO: do something with our own IM info, if we need it for some
 		 * specific purpose. Otherwise it is available on the buddy list,
-		 * if the user has themselves as their own buddy. */
+		 * if the user has themselves as their own buddy. 
+		 *
+		 * However, much of the info is already available in MsimSession,
+		 * stored in msim_we_are_logged_on(). */
 	} else if (msim_msg_get_integer(msg, "dsn") == MG_OWN_MYSPACE_INFO_DSN &&
 			msim_msg_get_integer(msg, "lid") == MG_OWN_MYSPACE_INFO_LID) {
 		/* TODO: same as above, but for MySpace info. */
@@ -2697,7 +2730,7 @@ msim_process_reply(MsimSession *session, MsimMessage *msg)
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
 
-	msim_store_user_info(session, msg);
+	msim_store_user_info(session, msg, NULL);
 
 	rid = msim_msg_get_integer(msg, "rid");
 	cmd = msim_msg_get_integer(msg, "cmd");
@@ -2836,7 +2869,7 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		/* All buddies on list should have 'uid' integer associated with them. */
 		purple_blist_node_set_int(&buddy->node, "UserID", msim_msg_get_integer(msg, "f"));
 		
-		msim_store_user_info(session, msg);
+		msim_store_user_info(session, msg, NULL);
 	} else {
 		purple_debug_info("msim", "msim_status: found buddy %s\n", username);
 	}
@@ -3678,7 +3711,6 @@ void
 msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, 
 		gboolean full)
 {
-	const gchar *str;
 	MsimUser *user;
 
 	g_return_if_fail(buddy != NULL);
@@ -3694,42 +3726,16 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 		g_return_if_fail(MSIM_SESSION_VALID(session));
 
 		/* TODO: if (full), do something different? */
-		
-		/* Useful to identify the account the tooltip refers to. 
-		 *  Other prpls show this. */
-		if (user->username) {
-			purple_notify_user_info_add_pair(user_info, _("User Name"), user->username);
-		}
 
-		/* a/s/l...the vitals */
-		if (user->age) {
-			purple_notify_user_info_add_pair(user_info, _("Age"),
-					g_strdup_printf("%d", user->age));
-		}
+		/* TODO: request information? have to figure out how to do
+		 * the asynchronous lookup like oscar does (tooltip shows
+		 * 'retrieving...' if not yet available, then changes when it is).
+		 *
+		 * Right now, only show what we have on hand.
+		 */
 
-		if (user->gender) {
-			purple_notify_user_info_add_pair(user_info, _("Gender"), user->gender);
-		}
-
-		if (user->location) {
-			purple_notify_user_info_add_pair(user_info, _("Location"), user->location);
-		}
-
-		/* Other information */
-		if (user->headline) {
-			purple_notify_user_info_add_pair(user_info, _("Headline"), user->headline);
-		}
-
-		str = msim_format_now_playing(user->band_name, user->song_name);
-		if (str) {
-			purple_notify_user_info_add_pair(user_info, _("Song"), str);
-		}
-
-		if (user->total_friends) {
-			purple_notify_user_info_add_pair(user_info, _("Total Friends"),
-				g_strdup_printf("%d", user->total_friends));
-		}
-
+		/* Show abbreviated user info. */
+		msim_append_user_info(session, user_info, user, FALSE);
 	}
 }
 
