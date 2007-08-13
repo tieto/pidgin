@@ -4031,14 +4031,18 @@ init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_int_new(_("Connect port"), "port", MSIM_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
+#ifdef MSIM_USER_WANTS_TO_CONFIGURE_STATUS_TEXT
 	option = purple_account_option_bool_new(_("Show display name in status text"), "show_display_name", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Show headline in status text"), "show_headline", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+#endif
 
+#ifdef MSIM_USER_WANTS_TO_DISABLE_EMOTICONS
 	option = purple_account_option_bool_new(_("Send emoticons"), "emoticons", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+#endif
 
 #ifdef MSIM_USER_REALLY_CARES_ABOUT_PRECISE_FONT_SIZES
 	option = purple_account_option_int_new(_("Screen resolution (dots per inch)"), "dpi", MSIM_DEFAULT_DPI);
