@@ -155,6 +155,10 @@ static void msim_set_status_code(MsimSession *session, guint code,
 		gchar *statstring);
 
 static void msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, MsimUser *user, gboolean full);
+
+static void msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text,
+		gsize len, const gchar *error_message);
+
 static void msim_store_user_info_each(gpointer key, gpointer value, 
 		gpointer user_data);
 static gboolean msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user);
@@ -2538,6 +2542,28 @@ msim_process(MsimSession *session, MsimMessage *msg)
 	}
 }
 
+/** Callback for when a buddy icon finished being downloaded. */
+static void
+msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
+		gpointer user_data,
+		const gchar *url_text,
+		gsize len,
+		const gchar *error_message)
+{
+	MsimUser *user;
+
+	user = (MsimUser *)user_data;
+
+	purple_debug_info("msim_downloaded_buddy_icon",
+			"Downloaded %d bytes\n", len);
+
+	purple_buddy_icons_set_for_user(user->buddy->account,
+			user->buddy->name,
+			(gchar *)url_text, len, 
+			/*  Use URL itself as buddy icon "checksum" */
+			user->image_url);
+}
+
 /** Store a field of information about a buddy. */
 static void 
 msim_store_user_info_each(gpointer key, gpointer value, gpointer user_data)
@@ -2575,7 +2601,16 @@ msim_store_user_info_each(gpointer key, gpointer value, gpointer user_data)
 		/* Ignore because PurpleBuddy knows this already */
 		;
 	} else if (!strcmp(key_str, "ImageURL")) {
+		const gchar *previous_url;
+
 		user->image_url = g_strdup(value_str);
+		
+		previous_url = purple_buddy_icons_get_checksum_for_user(user->buddy);
+
+		/* Only download if URL changed */
+		if (!previous_url || strcmp(previous_url, user->image_url)) {
+			purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, msim_downloaded_buddy_icon, (gpointer)user);
+		}
 	} else {
 		/* TODO: other fields in MsimUser */
 		gchar *msg;
