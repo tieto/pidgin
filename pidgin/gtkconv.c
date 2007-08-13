@@ -4418,10 +4418,10 @@ pidgin_conv_tooltip_timeout(PidginConversation *gtkconv)
 {
 	PurpleBlistNode *node = NULL;
 	PurpleConversation *conv = gtkconv->active_conv;
- 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-                node = (PurpleBlistNode*)(purple_blist_find_chat(conv->account, conv->name));
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+		node = (PurpleBlistNode*)(purple_blist_find_chat(conv->account, conv->name));
 	} else {
-                node = (PurpleBlistNode*)(purple_find_buddy(conv->account, conv->name));
+		node = (PurpleBlistNode*)(purple_find_buddy(conv->account, conv->name));
 	}
 
 	if (node) 
@@ -4488,11 +4488,10 @@ setup_common_pane(PidginConversation *gtkconv)
 	g_signal_connect(G_OBJECT(event_box), "button_press_event",
 	                 G_CALLBACK(infopane_press_cb), gtkconv);
 
-        g_signal_connect(G_OBJECT(event_box), "motion-notify-event", 
-			 G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
-        g_signal_connect(G_OBJECT(event_box), "leave-notify-event", 
-			 G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
-
+	g_signal_connect(G_OBJECT(event_box), "motion-notify-event", 
+			G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
+	g_signal_connect(G_OBJECT(event_box), "leave-notify-event", 
+			G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 
 	gtkconv->infopane = gtk_cell_view_new();
 	gtkconv->infopane_model = gtk_list_store_new(CONV_NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, GDK_TYPE_PIXBUF);
@@ -6606,10 +6605,10 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
                               GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
 					 G_CALLBACK(icon_menu), gtkconv);
-        g_signal_connect(G_OBJECT(event), "motion-notify-event",
-                         G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
-        g_signal_connect(G_OBJECT(event), "leave-notify-event",
-                         G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
+	g_signal_connect(G_OBJECT(event), "motion-notify-event",
+			G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
+	g_signal_connect(G_OBJECT(event), "leave-notify-event",
+			G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 	gtk_widget_show(event);
 
 	gtkconv->u.im->icon = gtk_image_new_from_pixbuf(scale);
