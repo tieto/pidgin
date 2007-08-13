@@ -1,7 +1,7 @@
-ca-certsdir =	$(datadir)/purple/ca-certs
-ca-certs_DATA =	\
+cacertsdir =	$(datadir)/purple/ca-certs
+cacerts_DATA =	\
 		Equifax_Secure_CA.pem
 
 EXTRA_DIST = \
-                $(ca-certs_DATA)
+                $(cacerts_DATA)
 
