@@ -350,6 +350,7 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 	g_free(fpr_sha1_asc);
 	g_free(subject);
 	g_free(id);
+	purple_certificate_destroy(crt);
 }
 
 static void
