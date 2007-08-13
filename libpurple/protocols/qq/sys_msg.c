@@ -86,7 +86,7 @@ static void _qq_search_before_auth_with_gc_and_uid(gc_and_uid *g)
 	purple_request_action
 	    (gc, NULL, _("Do you want to approve the request?"), "", 2,
 		 purple_connection_get_account(gc), nombre, NULL,
-		 g, 2,
+		 "chat", g, 2,
 	     _("Reject"), G_CALLBACK(qq_reject_add_request_with_gc_and_uid),
 	     _("Approve"), G_CALLBACK(qq_approve_add_request_with_gc_and_uid));
 	g_free(nombre);
@@ -109,7 +109,7 @@ static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 	purple_request_action
 	    (gc, NULL, _("Do you want to add this buddy?"), "", 2,
 		 purple_connection_get_account(gc), nombre, NULL,
-		 g, 2,
+		 "buddy", g, 2,
 	     _("Cancel"), NULL,
 		 _("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid));
 	g_free(nombre);
@@ -168,7 +168,7 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 		purple_request_action(gc, NULL, message,
 				    _("Would like to add him?"), 2,
 					purple_connection_get_account(gc), name, NULL,
-					g, 3,
+					"buddy", g, 3,
 				    _("Cancel"), NULL,
 					_("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid),
 				    _("Search"), G_CALLBACK(_qq_search_before_add_with_gc_and_uid));
@@ -242,7 +242,7 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 	purple_request_action
 	    (gc, NULL, message, reason, 2,
 		purple_connection_get_account(gc), name, NULL,
-		 g, 3,
+		 "buddy", g, 3,
 	     _("Reject"),
 	     G_CALLBACK(qq_reject_add_request_with_gc_and_uid),
 	     _("Approve"),
@@ -262,7 +262,7 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 		purple_request_action(gc, NULL, message,
 				    _("Would you like to add him?"), 2,
 					purple_connection_get_account(gc), name, NULL,
-					g2, 3,
+					"blist", g2, 3,
 					_("Cancel"), NULL,
 					_("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid),
 				    _("Search"), G_CALLBACK(_qq_search_before_add_with_gc_and_uid));
