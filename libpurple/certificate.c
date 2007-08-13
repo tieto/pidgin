@@ -609,10 +609,36 @@ static GList *x509_ca_certs = NULL;
 /** Used for lazy initialization purposes. */
 static gboolean x509_ca_initialized = FALSE;
 
+/** Adds a certificate to the in-memory cache, doing nothing else */
+static gboolean
+x509_ca_quiet_put_cert(PurpleCertificate *crt)
+{
+	x509_ca_element *el;
+
+	/* lazy_init calls this function, so calling lazy_init here is a
+	   Bad Thing */
+	
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme, FALSE);
+	/* Make sure that this is some kind of X.509 certificate */
+	/* TODO: Perhaps just check crt->scheme->name instead? */
+	g_return_val_if_fail(crt->scheme == purple_certificate_find_scheme(x509_ca.scheme_name), FALSE);
+	
+	el = g_new0(x509_ca_element, 1);
+	el->dn = purple_certificate_get_unique_id(crt);
+	el->crt = purple_certificate_copy(crt);
+	x509_ca_certs = g_list_prepend(x509_ca_certs, el);
+
+	return TRUE;
+}
+
 static gboolean
 x509_ca_lazy_init(void)
 {
 	PurpleCertificateScheme *x509;
+	GDir *certdir;
+	const gchar *entry;
+	GPatternSpec *pempat;
 	
 	if (x509_ca_initialized) return TRUE;
 
@@ -627,8 +653,41 @@ x509_ca_lazy_init(void)
 	}
 
 	/* Populate the certificates pool from the system path */
-	/* TODO: Writeme! */
+	certdir = g_dir_open(x509_ca_syspath, 0, NULL);
+	g_return_val_if_fail(certdir, FALSE);
 
+	/* Use a glob to only read .pem files */
+	pempat = g_pattern_spec_new("*.pem");
+	
+	while ( (entry = g_dir_read_name(certdir)) ) {
+		gchar *fullpath;
+		PurpleCertificate *crt;
+
+		if ( !g_pattern_match_string(pempat, entry) ) {
+			continue;
+		}
+
+		fullpath = g_build_filename(x509_ca_syspath, entry, NULL);
+		
+		/* TODO: Respond to a failure in the following? */
+		crt = purple_certificate_import(x509, fullpath);
+
+		if (x509_ca_quiet_put_cert(crt)) {
+			purple_debug_info("certificate/x509/ca",
+					  "Loaded %s\n",
+					  fullpath);
+		} else {
+			purple_debug_error("certificate/x509/ca",
+					  "Failed to load %s\n",
+					  fullpath);
+		}
+				
+		g_free(fullpath);
+	}
+
+	g_pattern_spec_free(pempat);
+	g_dir_close(certdir);
+	
 	purple_debug_info("certificate/x509/ca",
 			  "Lazy init completed.\n");
 	x509_ca_initialized = TRUE;
@@ -692,22 +751,12 @@ static gboolean
 x509_ca_put_cert(const gchar *id, PurpleCertificate *crt)
 {
 	gboolean ret = FALSE;
-	x509_ca_element *el;
-
+	
 	g_return_val_if_fail(x509_ca_lazy_init(), FALSE);
-	g_return_val_if_fail(crt, FALSE);
-	g_return_val_if_fail(crt->scheme, FALSE);
-	/* Make sure that this is some kind of X.509 certificate */
-	/* TODO: Perhaps just check crt->scheme->name instead? */
-	g_return_val_if_fail(crt->scheme == purple_certificate_find_scheme(x509_ca.scheme_name), FALSE);
 
 	/* TODO: This is a quick way of doing this. At some point the change
 	   ought to be flushed to disk somehow. */
-	el = g_new0(x509_ca_element, 1);
-	el->dn = purple_certificate_get_unique_id(crt);
-	el->crt = purple_certificate_copy(crt);
-	x509_ca_certs = g_list_prepend(x509_ca_certs, el);
-	ret = TRUE;
+	ret = x509_ca_quiet_put_cert(crt);
 
 	return ret;
 }
