@@ -1039,6 +1039,7 @@ conv_page()
 #endif
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
+	gtk_box_set_child_packing(GTK_BOX(vbox->parent), vbox, TRUE, TRUE, 0, GTK_PACK_START);
 
 	frame = pidgin_create_imhtml(TRUE, &imhtml, &toolbar, NULL);
 	gtk_widget_set_name(imhtml, "pidgin_prefs_font_imhtml");

@@ -4413,17 +4413,36 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	gtk_container_add(GTK_CONTAINER(sw), list);
 }
 
-static int tooltip_timeout = 0;
+/* Stuff used to display tooltips on the infopane */
+static struct {
+	int timeout;
+	PidginConversation *gtkconv;   /* This is the Pidgin conversation that
+	                                  triggered the tooltip */
+} tooltip;
+
+static void
+reset_tooltip()
+{
+	if (tooltip.timeout != 0) {
+		g_source_remove(tooltip.timeout);
+		tooltip.timeout = 0;
+	}
+	tooltip.gtkconv = NULL;
+}
 
 static gboolean
 pidgin_conv_tooltip_timeout(PidginConversation *gtkconv)
 {
 	PurpleBlistNode *node = NULL;
-	PurpleConversation *conv = gtkconv->active_conv;
- 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-                node = (PurpleBlistNode*)(purple_blist_find_chat(conv->account, conv->name));
+	PurpleConversation *conv;
+
+	g_return_val_if_fail (tooltip.gtkconv == gtkconv, FALSE);
+
+	conv = gtkconv->active_conv;
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+		node = (PurpleBlistNode*)(purple_blist_find_chat(conv->account, conv->name));
 	} else {
-                node = (PurpleBlistNode*)(purple_find_buddy(conv->account, conv->name));
+		node = (PurpleBlistNode*)(purple_find_buddy(conv->account, conv->name));
 	}
 
 	if (node) 
@@ -4435,10 +4454,7 @@ static void
 pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv)
 {
 	pidgin_blist_tooltip_destroy();
-	if (tooltip_timeout) {
-		g_source_remove(tooltip_timeout);
-		tooltip_timeout = 0;
-	}
+	reset_tooltip();
 }
 
 static gboolean 
@@ -4450,10 +4466,11 @@ pidgin_conv_motion_cb (GtkWidget *infopane, GdkEventMotion *event, PidginConvers
 	if (delay == 0)
 		return FALSE;
 
-	if (tooltip_timeout != 0) 
-		g_source_remove(tooltip_timeout);
+	if (tooltip.timeout != 0) 
+		g_source_remove(tooltip.timeout);
 
-	tooltip_timeout = g_timeout_add(delay, (GSourceFunc)pidgin_conv_tooltip_timeout, gtkconv);
+	tooltip.timeout = g_timeout_add(delay, (GSourceFunc)pidgin_conv_tooltip_timeout, gtkconv);
+	tooltip.gtkconv = gtkconv;
 	return FALSE;
 }
 
@@ -4490,11 +4507,10 @@ setup_common_pane(PidginConversation *gtkconv)
 	g_signal_connect(G_OBJECT(event_box), "button_press_event",
 	                 G_CALLBACK(infopane_press_cb), gtkconv);
 
-        g_signal_connect(G_OBJECT(event_box), "motion-notify-event", 
-			 G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
-        g_signal_connect(G_OBJECT(event_box), "leave-notify-event", 
-			 G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
-
+	g_signal_connect(G_OBJECT(event_box), "motion-notify-event", 
+			G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
+	g_signal_connect(G_OBJECT(event_box), "leave-notify-event", 
+			G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 
 	gtkconv->infopane = gtk_cell_view_new();
 	gtkconv->infopane_model = gtk_list_store_new(CONV_NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, GDK_TYPE_PIXBUF);
@@ -4987,6 +5003,9 @@ pidgin_conv_destroy(PurpleConversation *conv)
 	gtkconv->send_history = g_list_first(gtkconv->send_history);
 	g_list_foreach(gtkconv->send_history, (GFunc)g_free, NULL);
 	g_list_free(gtkconv->send_history);
+
+	if (tooltip.gtkconv == gtkconv)
+		reset_tooltip();
 
 	g_free(gtkconv);
 }
@@ -6608,10 +6627,10 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
                               GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
 					 G_CALLBACK(icon_menu), gtkconv);
-        g_signal_connect(G_OBJECT(event), "motion-notify-event",
-                         G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
-        g_signal_connect(G_OBJECT(event), "leave-notify-event",
-                         G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
+	g_signal_connect(G_OBJECT(event), "motion-notify-event",
+			G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
+	g_signal_connect(G_OBJECT(event), "leave-notify-event",
+			G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 	gtk_widget_show(event);
 
 	gtkconv->u.im->icon = gtk_image_new_from_pixbuf(scale);
