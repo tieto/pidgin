@@ -761,21 +761,23 @@ x509_ca_cert_in_pool(const gchar *id)
 static PurpleCertificate *
 x509_ca_get_cert(const gchar *id)
 {
-	PurpleCertificateScheme *x509;
 	PurpleCertificate *crt = NULL;
+	x509_ca_element *el;
 
 	g_return_val_if_fail(x509_ca_lazy_init(), NULL);
 	g_return_val_if_fail(id, NULL);
 
-	/* Is it in the pool? */
-	if ( !x509_ca_cert_in_pool(id) ) {
-		return NULL;
+	/* Search the memory-cached pool */
+	el = x509_ca_locate_cert(x509_ca_certs, id);
+
+	if (el != NULL) {
+		/* Make a copy of the memcached one for the function caller
+		   to play with */
+		crt = purple_certificate_copy(el->crt);
+	} else {
+		crt = NULL;
 	}
 	
-	/* Look up the X.509 scheme */
-	x509 = purple_certificate_find_scheme("x509");
-	g_return_val_if_fail(x509, NULL);
-
 	return crt;
 }
 
