@@ -67,6 +67,9 @@
  * you want to actually use the plugin! */
 /*#define MSIM_SELF_TEST            */
 
+/* Use the attention API for zaps? */
+#define MSIM_USE_ATTENTION_API
+
 /* Constants */
 
 /* Maximum length of a password that is acceptable. This is the limit
@@ -230,6 +233,9 @@ typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, MsimMessage *userinfo,
 /* Functions */
 gboolean msim_load(PurplePlugin *plugin);
 GList *msim_status_types(PurpleAccount *acct);
+
+GList *msim_attention_types(PurpleAccount *acct);
+gboolean msim_send_attention(PurpleConnection *gc, gchar *username, guint code);
 
 GList *msim_blist_node_menu(PurpleBlistNode *node);
 

@@ -67,6 +67,7 @@ void serv_chat_whisper(PurpleConnection *, int, const char *, const char *);
 int  serv_chat_send(PurpleConnection *, int, const char *, PurpleMessageFlags flags);
 void serv_alias_buddy(PurpleBuddy *);
 void serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);
+void serv_got_attention(PurpleConnection *gc, const char *who, PurpleAttentionType *attn, gboolean incoming);
 
 /**
  * Receive a typing message from a remote user.  Either PURPLE_TYPING

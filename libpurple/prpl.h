@@ -91,6 +91,18 @@ struct proto_chat_entry {
 	gboolean secret;
 };
 
+typedef struct _PurpleAttentionType PurpleAttentionType;
+
+/** A type of "attention" message (zap, nudge, buzz, etc. depending on the
+ * protocol) that can be sent and received. */
+struct _PurpleAttentionType {
+	PurpleStoredImage *icon;
+	const gchar *description;		/**< Shown before sending. */
+	const gchar *incoming_description;	/**< Shown when sent. */
+	const gchar *outgoing_description;	/**< Shown when received. */
+};
+
+
 /**
  * Protocol options
  *
@@ -324,8 +336,10 @@ struct _PurplePluginProtocolInfo
 	/* room list serialize */
 	char *(*roomlist_room_serialize)(PurpleRoomlistRoom *room);
 
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
+	/* Attention API, for sending zaps/nudges/buzzes */
+	gboolean (*send_attention)(PurpleConnection *gc, gchar *username, guint type);
+	GList *(*attention_types)(PurpleAccount *acct);
+
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
 };
