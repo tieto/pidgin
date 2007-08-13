@@ -598,6 +598,16 @@ typedef struct {
 	PurpleCertificate *crt;
 } x509_ca_element;
 
+static void
+x509_ca_element_free(x509_ca_element *el)
+{
+	if (NULL == el) return;
+
+	g_free(el->dn);
+	purple_certificate_destroy(el->crt);
+	g_free(el);
+}
+
 /** System directory to probe for CA certificates */
 /* TODO: The current path likely won't work on anything but Debian! Fix! */
 static const gchar *x509_ca_syspath = "/etc/ssl/certs/";
@@ -716,11 +726,7 @@ x509_ca_uninit(void)
 
 	for (l = x509_ca_certs; l; l = l->next) {
 		x509_ca_element *el = l->data;
-
-		/* TODO: Make this its own function */
-		g_free(el->dn);
-		purple_certificate_destroy(el->crt);
-		g_free(el);
+		x509_ca_element_free(el);
 	}
 	g_list_free(x509_ca_certs);
 	x509_ca_certs = NULL;
