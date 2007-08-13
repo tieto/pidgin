@@ -15,6 +15,10 @@
 
 #define TYPE_S				(s_get_gtype())
 
+#ifdef _S
+#undef _S
+#endif
+
 typedef struct _S
 {
 	GntWM inherit;

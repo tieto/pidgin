@@ -11,6 +11,7 @@ finch/gntplugin.c
 finch/gntpounce.c
 finch/gntprefs.c
 finch/gntrequest.c
+finch/gntsound.c
 finch/gntstatus.c
 finch/gntui.c
 finch/libgnt/gntbox.c

@@ -28,7 +28,7 @@ FILES="
 	gnt.h"
 
 # Generate the def file
-rm gnt.def
+rm -f gnt.def
 for file in $FILES
 do
 	python /usr/share/pygtk/2.0/codegen/h2def.py ../$file >> gnt.def
@@ -43,6 +43,7 @@ GNT_TYPE_STYLE
 GNT_TYPE_KEY_PRESS_MODE
 GNT_TYPE_ENTRY_FLAG
 GNT_TYPE_TEXT_FORMAT_FLAGS
+GNT_TYPE_TEXT_VIEW_FLAG
 "
 
 for enum in $ENUMS

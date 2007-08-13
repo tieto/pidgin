@@ -449,7 +449,6 @@ struct _OscarData
 	GSList *requesticon;
 
 	gboolean icq;
-	guint icontimer;
 	guint getblisttimer;
 	guint getinfotimer;
 

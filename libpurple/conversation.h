@@ -149,27 +149,74 @@ typedef enum
  */
 struct _PurpleConversationUiOps
 {
+	/** Called when @a conv is created (but before the @ref
+	 *  conversation-created signal is emitted).
+	 */
 	void (*create_conversation)(PurpleConversation *conv);
+
+	/** Called just before @a conv is freed. */
 	void (*destroy_conversation)(PurpleConversation *conv);
+	/** Write a message to a chat.  If this field is @c NULL, libpurple will
+	 *  fall back to using #write_conv.
+	 *  @see purple_conv_chat_write()
+	 */
 	void (*write_chat)(PurpleConversation *conv, const char *who,
 	                   const char *message, PurpleMessageFlags flags,
 	                   time_t mtime);
+	/** Write a message to an IM conversation.  If this field is @c NULL,
+	 *  libpurple will fall back to using #write_conv.
+	 *  @see purple_conv_im_write()
+	 */
 	void (*write_im)(PurpleConversation *conv, const char *who,
 	                 const char *message, PurpleMessageFlags flags,
 	                 time_t mtime);
-	void (*write_conv)(PurpleConversation *conv, const char *name, const char *alias,
-	                   const char *message, PurpleMessageFlags flags,
+	/** Write a message to a conversation.  This is used rather than
+	 *  the chat- or im-specific ops for generic messages, such as system
+	 *  messages like "x is now know as y".
+	 *  @see purple_conversation_write()
+	 */
+	void (*write_conv)(PurpleConversation *conv,
+	                   const char *name,
+	                   const char *alias,
+	                   const char *message,
+	                   PurpleMessageFlags flags,
 	                   time_t mtime);
 
-	void (*chat_add_users)(PurpleConversation *conv, GList *cbuddies, gboolean new_arrivals);	
-	
+	/** Add @a cbuddies to a chat.
+	 *  @param cbuddies      A @C GList of #PurpleConvChatBuddy structs.
+	 *  @param new_arrivals  Whether join notices should be shown.
+	 *                       (Join notices are actually written to the
+	 *                       conversation by #purple_conv_chat_add_users().)
+	 */
+	void (*chat_add_users)(PurpleConversation *conv,
+	                       GList *cbuddies,
+	                       gboolean new_arrivals);
+	/** Rename the user in this chat named @a old_name to @a new_name.  (The
+	 *  rename message is written to the conversation by libpurple.)
+	 *  @param new_alias  @a new_name's new alias, if they have one.
+	 *  @see purple_conv_chat_add_users()
+	 */
 	void (*chat_rename_user)(PurpleConversation *conv, const char *old_name,
 	                         const char *new_name, const char *new_alias);
+	/** Remove @a users from a chat.
+	 *  @param users    A @C GList of <tt>const char *</tt>s.
+	 *  @see purple_conv_chat_rename_user()
+	 */
 	void (*chat_remove_users)(PurpleConversation *conv, GList *users);
+	/** Called when a user's flags are changed.
+	 *  @see purple_conv_chat_user_set_flags()
+	 */
 	void (*chat_update_user)(PurpleConversation *conv, const char *user);
 
+	/** Present this conversation to the user; for example, by displaying
+	 *  the IM dialog.
+	 */
 	void (*present)(PurpleConversation *conv);
 
+	/** If this UI has a concept of focus (as in a windowing system) and
+	 *  this conversation has the focus, return @c TRUE; otherwise, return
+	 *  @c FALSE.
+	 */
 	gboolean (*has_focus)(PurpleConversation *conv);
 
 	/* Custom Smileys */
@@ -178,6 +225,11 @@ struct _PurpleConversationUiOps
 	                            const guchar *data, gsize size);
 	void (*custom_smiley_close)(PurpleConversation *conv, const char *smile);
 
+	/** Prompt the user for confirmation to send @a message.  This function
+	 *  should arrange for the message to be sent if the user accepts.  If
+	 *  this field is @c NULL, libpurple will fall back to using
+	 *  #purple_request_action().
+	 */
 	void (*send_confirm)(PurpleConversation *conv, const char *message);
 
 	void (*_purple_reserved1)(void);
