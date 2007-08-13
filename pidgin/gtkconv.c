@@ -4411,13 +4411,32 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	gtk_container_add(GTK_CONTAINER(sw), list);
 }
 
-static int tooltip_timeout = 0;
+/* Stuff used to display tooltips on the infopane */
+static struct {
+	int timeout;
+	PidginConversation *gtkconv;   /* This is the Pidgin conversation that
+	                                  triggered the tooltip */
+} tooltip;
+
+static void
+reset_tooltip()
+{
+	if (tooltip.timeout != 0) {
+		g_source_remove(tooltip.timeout);
+		tooltip.timeout = 0;
+	}
+	tooltip.gtkconv = NULL;
+}
 
 static gboolean
 pidgin_conv_tooltip_timeout(PidginConversation *gtkconv)
 {
 	PurpleBlistNode *node = NULL;
-	PurpleConversation *conv = gtkconv->active_conv;
+	PurpleConversation *conv;
+
+	g_return_val_if_fail (tooltip.gtkconv == gtkconv, FALSE);
+
+	conv = gtkconv->active_conv;
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		node = (PurpleBlistNode*)(purple_blist_find_chat(conv->account, conv->name));
 	} else {
@@ -4433,10 +4452,7 @@ static void
 pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv)
 {
 	pidgin_blist_tooltip_destroy();
-	if (tooltip_timeout) {
-		g_source_remove(tooltip_timeout);
-		tooltip_timeout = 0;
-	}
+	reset_tooltip();
 }
 
 static gboolean 
@@ -4448,10 +4464,11 @@ pidgin_conv_motion_cb (GtkWidget *infopane, GdkEventMotion *event, PidginConvers
 	if (delay == 0)
 		return FALSE;
 
-	if (tooltip_timeout != 0) 
-		g_source_remove(tooltip_timeout);
+	if (tooltip.timeout != 0) 
+		g_source_remove(tooltip.timeout);
 
-	tooltip_timeout = g_timeout_add(delay, (GSourceFunc)pidgin_conv_tooltip_timeout, gtkconv);
+	tooltip.timeout = g_timeout_add(delay, (GSourceFunc)pidgin_conv_tooltip_timeout, gtkconv);
+	tooltip.gtkconv = gtkconv;
 	return FALSE;
 }
 
@@ -4984,6 +5001,9 @@ pidgin_conv_destroy(PurpleConversation *conv)
 	gtkconv->send_history = g_list_first(gtkconv->send_history);
 	g_list_foreach(gtkconv->send_history, (GFunc)g_free, NULL);
 	g_list_free(gtkconv->send_history);
+
+	if (tooltip.gtkconv == gtkconv)
+		reset_tooltip();
 
 	g_free(gtkconv);
 }
