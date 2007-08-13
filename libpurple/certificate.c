@@ -804,20 +804,25 @@ x509_ca_put_cert(const gchar *id, PurpleCertificate *crt)
 static gboolean
 x509_ca_delete_cert(const gchar *id)
 {
-	gboolean ret = FALSE;
-
+	x509_ca_element *el;
+	
 	g_return_val_if_fail(x509_ca_lazy_init(), FALSE);
 	g_return_val_if_fail(id, FALSE);
 
 	/* Is the id even in the pool? */
-	if (!x509_ca_cert_in_pool(id)) {
+	el = x509_ca_locate_cert(x509_ca_certs, id);
+	if ( el == NULL ) {
 		purple_debug_warning("certificate/x509/ca",
 				     "Id %s wasn't in the pool\n",
 				     id);
 		return FALSE;
 	}
 
-	return ret;
+	/* Unlink it from the memory cache and destroy it */
+	x509_ca_certs = g_list_remove(x509_ca_certs, el);
+	x509_ca_element_free(el);
+	
+	return TRUE;
 }
 
 static GList *
