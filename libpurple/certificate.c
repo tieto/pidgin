@@ -691,7 +691,8 @@ x509_ca_lazy_init(void)
 					  "Failed to load %s\n",
 					  fullpath);
 		}
-				
+
+		purple_certificate_destroy(crt);
 		g_free(fullpath);
 	}
 
