@@ -294,8 +294,10 @@ purple_ssl_get_ops(void)
 void
 purple_ssl_init(void)
 {
-	/* This doesn't do anything at the moment. All the actual init work
-	 * is handled by purple_ssl_is_supported upon demand. */
+	/* Although purple_ssl_is_supported will do the initialization on
+	   command, SSL plugins tend to register CertificateSchemes as well
+	   as providing SSL ops. */
+	g_assert(ssl_init());
 }
 
 void
