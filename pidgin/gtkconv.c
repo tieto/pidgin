@@ -7181,23 +7181,23 @@ pidgin_conversations_init(void)
 
 	/* Conversations -> Chat */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/chat");
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/entry_height", 50);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/entry_height", 54);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/userlist_width", 80);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/x", 0);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/y", 0);
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/width", 0);
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/height", 0);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/width", 340);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/height", 390);
 
 	/* Conversations -> IM */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/im");
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/x", 0);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/y", 0);
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/width", 0);
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/height", 0);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/width", 340);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/height", 390);
 
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/animate_buddy_icons", TRUE);
 
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/entry_height", 50);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/entry_height", 54);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", TRUE);
 
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new", "never");
