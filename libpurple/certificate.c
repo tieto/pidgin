@@ -828,8 +828,17 @@ x509_ca_delete_cert(const gchar *id)
 static GList *
 x509_ca_get_idlist(void)
 {
+	GList *l, *idlist;
+	
 	g_return_val_if_fail(x509_ca_lazy_init(), NULL);
-	return NULL;
+
+	idlist = NULL;
+	for (l = x509_ca_certs; l; l = l->next) {
+		x509_ca_element *el = l->data;
+		idlist = g_list_prepend(idlist, g_strdup(el->dn));
+	}
+	
+	return idlist;
 }
 
 
