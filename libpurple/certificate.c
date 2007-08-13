@@ -746,12 +746,16 @@ x509_ca_locate_crt(GList *lst, const gchar *dn)
 static gboolean
 x509_ca_cert_in_pool(const gchar *id)
 {
-	gboolean ret = FALSE;
-
 	g_return_val_if_fail(x509_ca_lazy_init(), FALSE);
 	g_return_val_if_fail(id, FALSE);
 
-	return ret;
+	if (x509_ca_locate_crt(x509_ca_certs, id) != NULL) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+
+	return FALSE;
 }
 
 static PurpleCertificate *
