@@ -648,7 +648,7 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 {
 	gnutls_x509_crt_t crt_dat;
 	gnutls_x509_crt_t issuer_dat;
-	unsigned int verify; /* used to store details from GnuTLS verifier */
+	unsigned int verify; /* used to store result from GnuTLS verifier */
 	int ret;
 	
 	/* TODO: Change this error checking? */
@@ -672,6 +672,22 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 			purple_debug_error("gnutls/x509",
 					   "GnuTLS error %d while checking certificate issuer match.",
 					   ret);
+		} else {
+			gchar *crt_id, *issuer_id, *crt_issuer_id;
+			crt_id = purple_certificate_get_unique_id(crt);
+			issuer_id = purple_certificate_get_unique_id(issuer);
+			crt_issuer_id =
+				purple_certificate_get_issuer_unique_id(crt);
+			purple_debug_info("gnutls/x509",
+					  "Certificate for %s claims to be "
+					  "issued by %s, but the certificate "
+					  "for %s does not match. A strcmp "
+					  "says %d\n",
+					  crt_id, crt_issuer_id, issuer_id,
+					  strcmp(crt_issuer_id, issuer_id));
+			g_free(crt_id);
+			g_free(issuer_id);
+			g_free(crt_issuer_id);
 		}
 
 		/* The issuer is not correct, or there were errors */
@@ -683,22 +699,28 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 	   but we're only using one trusted one */
 	ret = gnutls_x509_crt_verify(crt_dat, &issuer_dat, 1, 0, &verify);
 	
-	if (ret > 0) {
-		/* The certificate is good. */
-		return TRUE;
-	}
-	else if (ret < 0) {
+	if (ret != 0) {
 		purple_debug_error("gnutls/x509",
 				   "Attempted certificate verification caused a GnuTLS error code %d. I will just say the signature is bad, but you should look into this.\n", ret);
 		return FALSE;
 	}
-	else {
+
+	if (verify & GNUTLS_CERT_INVALID) {
 		/* Signature didn't check out, but at least
 		   there were no errors*/
+		gchar *crt_id = purple_certificate_get_unique_id(crt);
+		gchar *issuer_id = purple_certificate_get_issuer_unique_id(crt);
+		purple_debug_info("gnutls/x509",
+				  "Bad signature for %s on %s\n",
+				  issuer_id, crt_id);
+		g_free(crt_id);
+		g_free(issuer_id);
+		
 		return FALSE;
 	} /* if (ret, etc.) */
 
-	/* Control does not reach this point */
+	/* If we got here, the signature is good */
+	return TRUE;
 }
 
 static GByteArray *
