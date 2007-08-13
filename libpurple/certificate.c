@@ -727,6 +727,22 @@ x509_ca_uninit(void)
 	x509_ca_initialized = FALSE;
 }
 
+/** Look up a ca_element by dn */
+static x509_ca_element *
+x509_ca_locate_crt(GList *lst, const gchar *dn)
+{
+	GList *cur;
+
+	for (cur = lst; cur; cur = cur->next) {
+		x509_ca_element *el = cur->data;
+		/* TODO: Unsafe? */
+		if ( !strcmp(dn, el->dn) ) {
+			return el;
+		}
+	}
+	return NULL;
+}
+
 static gboolean
 x509_ca_cert_in_pool(const gchar *id)
 {
