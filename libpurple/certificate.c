@@ -729,7 +729,7 @@ x509_ca_uninit(void)
 
 /** Look up a ca_element by dn */
 static x509_ca_element *
-x509_ca_locate_crt(GList *lst, const gchar *dn)
+x509_ca_locate_cert(GList *lst, const gchar *dn)
 {
 	GList *cur;
 
@@ -749,7 +749,7 @@ x509_ca_cert_in_pool(const gchar *id)
 	g_return_val_if_fail(x509_ca_lazy_init(), FALSE);
 	g_return_val_if_fail(id, FALSE);
 
-	if (x509_ca_locate_crt(x509_ca_certs, id) != NULL) {
+	if (x509_ca_locate_cert(x509_ca_certs, id) != NULL) {
 		return TRUE;
 	} else {
 		return FALSE;
