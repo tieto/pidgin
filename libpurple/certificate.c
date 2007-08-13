@@ -712,7 +712,19 @@ x509_ca_init(void)
 static void
 x509_ca_uninit(void)
 {
-	
+	GList *l;
+
+	for (l = x509_ca_certs; l; l = l->next) {
+		x509_ca_element *el = l->data;
+
+		/* TODO: Make this its own function */
+		g_free(el->dn);
+		purple_certificate_destroy(el->crt);
+		g_free(el);
+	}
+	g_list_free(x509_ca_certs);
+	x509_ca_certs = NULL;
+	x509_ca_initialized = FALSE;
 }
 
 static gboolean
