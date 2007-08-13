@@ -697,7 +697,13 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 	/* Now, check the signature */
 	/* The second argument is a ptr to an array of "trusted" issuer certs,
 	   but we're only using one trusted one */
-	ret = gnutls_x509_crt_verify(crt_dat, &issuer_dat, 1, 0, &verify);
+	ret = gnutls_x509_crt_verify(crt_dat, &issuer_dat, 1,
+				     /* Permit signings by X.509v1 certs
+					(Verisign and possibly others have
+					root certificates that predate the
+					current standard) */
+				     GNUTLS_VERIFY_ALLOW_X509_V1_CA_CRT,
+				     &verify);
 	
 	if (ret != 0) {
 		purple_debug_error("gnutls/x509",
