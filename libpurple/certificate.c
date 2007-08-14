@@ -609,8 +609,8 @@ x509_ca_element_free(x509_ca_element *el)
 }
 
 /** System directory to probe for CA certificates */
-/* TODO: The current path likely won't work on anything but Debian! Fix! */
-static const gchar *x509_ca_syspath = "/etc/ssl/certs/";
+/* This is set in the lazy_init function */
+static const gchar *x509_ca_syspath = NULL;
 
 /** A list of loaded CAs, populated from the above path whenever the lazy_init
     happens. Contains pointers to x509_ca_elements */
@@ -642,6 +642,14 @@ x509_ca_quiet_put_cert(PurpleCertificate *crt)
 	return TRUE;
 }
 
+/* Since the libpurple CertificatePools get registered before plugins are
+   loaded, an X.509 Scheme is generally not available when x509_ca_init is
+   called, but x509_ca requires X.509 operations in order to properly load.
+
+   To solve this, I present the lazy_init function. It attempts to finish
+   initialization of the Pool, but it usually fails when it is called from
+   x509_ca_init. However, this is OK; initialization is then simply deferred
+   until someone tries to use functions from the pool. */
 static gboolean
 x509_ca_lazy_init(void)
 {
@@ -660,6 +668,12 @@ x509_ca_lazy_init(void)
 				  "is not yet registered. Maybe it will be "
 				  "better later.\n");
 		return FALSE;
+	}
+
+	/* Attempt to point at the appropriate system path */
+	if (NULL == x509_ca_syspath) {
+		x509_ca_syspath = g_build_filename(DATADIR,
+						   "purple", "ca-certs", NULL);
 	}
 
 	/* Populate the certificates pool from the system path */
