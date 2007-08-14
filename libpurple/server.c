@@ -242,32 +242,6 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 	}
 }
 
-/** Indicate that an attention message was sent or received. */
-void
-serv_got_attention(PurpleConnection *gc, const char *who, PurpleAttentionType *attn, gboolean incoming)
-{
-	gchar *description;
-
-	if (incoming) {
-		if (attn->incoming_description) {
-			description = g_strdup_printf(_("Attention! You have been %s."), attn->incoming_description);
-		} else {
-			description = g_strdup(_("Attention!"));
-		}
-	} else {
-		if (attn->outgoing_description) {
-			description = g_strdup_printf(_("Attention! %s %s."), attn->outgoing_description, who);
-		} else {
-			description = g_strdup(_("Attention!"));
-		}
-	}
-
-	serv_got_im(gc, who, description, PURPLE_MESSAGE_SYSTEM |
-			(incoming ? PURPLE_MESSAGE_RECV : PURPLE_MESSAGE_SEND), time(NULL));
-
-	g_free(description);
-}
-
 /*
  * Move a buddy from one group to another on server.
  *
