@@ -623,6 +623,7 @@ xmlnode_copy(const xmlnode *src)
 	g_return_val_if_fail(src != NULL, NULL);
 
 	ret = new_node(src->name, src->type);
+	ret->xmlns = g_strdup(src->xmlns);
 	if(src->data) {
 		if(src->data_sz) {
 			ret->data = g_memdup(src->data, src->data_sz);
