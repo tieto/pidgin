@@ -61,7 +61,7 @@ char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
 	else
 		to_codeset = purple_account_get_string(purple_connection_get_account(gc), "local_charset",  "ISO-8859-1");
 
-	ret = g_convert_with_fallback(str, strlen(str), to_codeset, "UTF-8", "?", NULL, NULL, NULL);
+	ret = g_convert_with_fallback(str, -1, to_codeset, "UTF-8", "?", NULL, NULL, NULL);
 	if (ret)
 		return ret;
 	else
@@ -92,7 +92,7 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 	else
 		from_codeset = purple_account_get_string(purple_connection_get_account(gc), "local_charset",  "ISO-8859-1");
 
-	ret = g_convert_with_fallback(str, strlen(str), "UTF-8", from_codeset, NULL, NULL, NULL, NULL);
+	ret = g_convert_with_fallback(str, -1, "UTF-8", from_codeset, NULL, NULL, NULL, NULL);
 
 	if (ret)
 		return ret;

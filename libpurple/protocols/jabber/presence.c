@@ -193,16 +193,18 @@ struct _jabber_add_permit {
 	char *who;
 };
 
-static void authorize_add_cb(struct _jabber_add_permit *jap)
+static void authorize_add_cb(gpointer data)
 {
+	struct _jabber_add_permit *jap = data;
 	jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
 			"subscribed");
 	g_free(jap->who);
 	g_free(jap);
 }
 
-static void deny_add_cb(struct _jabber_add_permit *jap)
+static void deny_add_cb(gpointer data)
 {
+	struct _jabber_add_permit *jap = data;
 	jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
 			"unsubscribed");
 
@@ -305,7 +307,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jap->js = js;
 
 		purple_account_request_authorization(purple_connection_get_account(js->gc), from, NULL, NULL, NULL, onlist,
-				G_CALLBACK(authorize_add_cb), G_CALLBACK(deny_add_cb), jap);
+				authorize_add_cb, deny_add_cb, jap);
 		jabber_id_free(jid);
 		return;
 	} else if(type && !strcmp(type, "subscribed")) {

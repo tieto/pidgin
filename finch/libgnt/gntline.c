@@ -24,6 +24,12 @@
 
 enum
 {
+	PROP_0,
+	PROP_VERTICAL
+};
+
+enum
+{
 	SIGS = 1,
 };
 
@@ -65,14 +71,57 @@ gnt_line_map(GntWidget *widget)
 }
 
 static void
+gnt_line_set_property(GObject *obj, guint prop_id, const GValue *value,
+		GParamSpec *spec)
+{
+	GntLine *line = GNT_LINE(obj);
+	switch (prop_id) {
+		case PROP_VERTICAL:
+			line->vertical = g_value_get_boolean(value);
+			if (line->vertical) {
+				GNT_WIDGET_SET_FLAGS(line, GNT_WIDGET_GROW_Y);
+			} else {
+				GNT_WIDGET_SET_FLAGS(line, GNT_WIDGET_GROW_X);
+			}
+			break;
+		default:
+			break;
+	}
+}
+
+static void
+gnt_line_get_property(GObject *obj, guint prop_id, GValue *value,
+		GParamSpec *spec)
+{
+	GntLine *line = GNT_LINE(obj);
+	switch (prop_id) {
+		case PROP_VERTICAL:
+			g_value_set_boolean(value, line->vertical);
+			break;
+		default:
+			break;
+	}
+}
+
+static void
 gnt_line_class_init(GntLineClass *klass)
 {
+	GObjectClass *gclass = G_OBJECT_CLASS(klass);
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->draw = gnt_line_draw;
 	parent_class->map = gnt_line_map;
 	parent_class->size_request = gnt_line_size_request;
 
-	GNTDEBUG;
+	gclass->set_property = gnt_line_set_property;
+	gclass->get_property = gnt_line_get_property;
+	g_object_class_install_property(gclass,
+			PROP_VERTICAL,
+			g_param_spec_boolean("vertical", "Vertical",
+				"Whether it's a vertical line or a horizontal one.",
+				TRUE,
+				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+			)
+		);
 }
 
 static void
@@ -118,20 +167,7 @@ gnt_line_get_gtype(void)
 
 GntWidget *gnt_line_new(gboolean vertical)
 {
-	GntWidget *widget = g_object_new(GNT_TYPE_LINE, NULL);
-	GntLine *line = GNT_LINE(widget);
-
-	line->vertical = vertical;
-
-	if (vertical)
-	{
-		GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_Y);
-	}
-	else
-	{
-		GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X);
-	}
-
+	GntWidget *widget = g_object_new(GNT_TYPE_LINE, "vertical", vertical, NULL);
 	return widget;
 }
 
