@@ -287,11 +287,11 @@ GList *
 msim_attention_types(PurpleAccount *acct)
 {
 	static GList *types = NULL;
-	PurpleAttentionType* attn;
+	MsimAttentionType* attn;
 
 	if (!types) {
 #define _MSIM_ADD_NEW_ATTENTION(icn, des, incoming, outgoing)              \
-		attn = g_new0(PurpleAttentionType, 1);                     \
+		attn = g_new0(MsimAttentionType, 1);                     \
 		attn->icon = icn;                                          \
 		attn->description = des;                                   \
 		attn->incoming_description = incoming;                     \
@@ -320,14 +320,14 @@ msim_send_attention(PurpleConnection *gc, gchar *username, guint code)
 {
 	GList *types;
 	MsimSession *session;
-	PurpleAttentionType *attn;
+	MsimAttentionType *attn;
 	PurpleBuddy *buddy;
 
 	session = (MsimSession *)gc->proto_data;
 
 	/* Look for this attention type, by the code index given. */
 	types = msim_attention_types(gc->account);
-	attn = (PurpleAttentionType *)g_list_nth_data(types, code);
+	attn = (MsimAttentionType *)g_list_nth_data(types, code);
 
 	if (!attn) {
 		purple_debug_info("msim_send_attention", "got invalid zap code %d\n", code);
@@ -339,7 +339,7 @@ msim_send_attention(PurpleConnection *gc, gchar *username, guint code)
 		return FALSE;
 	}
 
-	/* TODO: make use of the PurpleAttentionType we found, instead of
+	/* TODO: make use of the MsimAttentionType we found, instead of
 	 * doing it all over in msim_send_zap_from_menu. */
 	msim_send_zap_from_menu(&buddy->node, GUINT_TO_POINTER(code));
 
@@ -355,7 +355,7 @@ msim_send_zap(MsimSession *session, const gchar *username, guint code)
 	gchar *zap_description;
 #endif
 	GList *types;
-	PurpleAttentionType *attn;
+	MsimAttentionType *attn;
 	gboolean rc;
 
 	g_return_val_if_fail(session != NULL, FALSE);
@@ -449,9 +449,9 @@ msim_blist_node_menu(PurpleBlistNode *node)
 	i = 0;
 	do
 	{
-		PurpleAttentionType *attn;
+		MsimAttentionType *attn;
 
-		attn = (PurpleAttentionType *)types->data;
+		attn = (MsimAttentionType *)types->data;
 		zap_names[i] = attn->description;
 		++i;
 	} while ((types = g_list_next(types)));
@@ -1686,7 +1686,7 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 	gint zap;
 	const gchar *zap_past_tense[10];
 #ifdef MSIM_USE_ATTENTION_API
-	PurpleAttentionType attn;
+	MsimAttentionType attn;
 #else
 	gchar *zap_text;
 #endif

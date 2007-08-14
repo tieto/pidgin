@@ -68,7 +68,8 @@
 /*#define MSIM_SELF_TEST            */
 
 /* Use the attention API for zaps? */
-#define MSIM_USE_ATTENTION_API
+/* Can't have until >=2.2.0, since is a new API. */
+/*#define MSIM_USE_ATTENTION_API 	*/
 
 /* Constants */
 
@@ -202,6 +203,9 @@ typedef struct _MsimSession
 	guint inbox_status;                 /**< Bit field of inbox notifications */
 } MsimSession;
 
+/* Check if an MsimSession is valid */
+#define MSIM_SESSION_VALID(s) (session != NULL && session->magic == MSIM_SESSION_STRUCT_MAGIC)
+
 /* Hold ephemeral information about buddies, for proto_data of PurpleBuddy. */
 /* GHashTable? */
 typedef struct _MsimUser
@@ -221,8 +225,19 @@ typedef struct _MsimUser
 	gchar *image_url;
 } MsimUser;
 
-/* Check if an MsimSession is valid */
-#define MSIM_SESSION_VALID(s) (session != NULL && session->magic == MSIM_SESSION_STRUCT_MAGIC)
+
+/* Different kinds of attention alerts. Not yet in libpurple, so define 
+ * our own structure here. */
+typedef struct _MsimAttentionType MsimAttentionType;
+
+/** A type of "attention" message (zap, nudge, buzz, etc. depending on the
+ * protocol) that can be sent and received. */
+struct _MsimAttentionType {
+	PurpleStoredImage *icon;
+	const gchar *description;		/**< Shown before sending. */
+	const gchar *incoming_description;	/**< Shown when sent. */
+	const gchar *outgoing_description;	/**< Shown when received. */
+};
 
 gchar *str_replace(const gchar *str, const gchar *old, const gchar *new);
 
