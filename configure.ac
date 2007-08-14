@@ -2113,8 +2113,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/emblems/16/scalable/Makefile
 		   pidgin/pixmaps/emotes/Makefile
 		   pidgin/pixmaps/emotes/default/Makefile
-		   pidgin/pixmaps/emotes/default/22/Makefile
-		   pidgin/pixmaps/emotes/default/22/scalable/Makefile
+		   pidgin/pixmaps/emotes/default/24/Makefile
+		   pidgin/pixmaps/emotes/default/24/scalable/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
 		   pidgin/pixmaps/icons/Makefile
 		   pidgin/pixmaps/icons/16/Makefile
