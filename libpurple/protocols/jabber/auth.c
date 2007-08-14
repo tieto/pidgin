@@ -682,11 +682,11 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 
 	gchar *a1, *convnode=NULL, *convpasswd = NULL, *ha1, *ha2, *kd, *x, *z;
 
-	if((convnode = g_convert(jid->node, strlen(jid->node), "iso-8859-1", "utf-8",
+	if((convnode = g_convert(jid->node, -1, "iso-8859-1", "utf-8",
 					NULL, NULL, NULL)) == NULL) {
 		convnode = g_strdup(jid->node);
 	}
-	if(passwd && ((convpasswd = g_convert(passwd, strlen(passwd), "iso-8859-1",
+	if(passwd && ((convpasswd = g_convert(passwd, -1, "iso-8859-1",
 						"utf-8", NULL, NULL, NULL)) == NULL)) {
 		convpasswd = g_strdup(passwd);
 	}

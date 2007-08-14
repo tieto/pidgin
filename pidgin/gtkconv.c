@@ -186,6 +186,7 @@ static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields
 static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
+static gboolean alias_double_click_cb(GtkWidget *widget, GdkEventButton *event, PidginConversation *gtkconv);
 
 static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
 		int width, int height);
@@ -3340,8 +3341,10 @@ update_typing_icon(PidginConversation *gtkconv)
 	} else {
 		stock_id = PIDGIN_STOCK_ANIMATION_TYPING5;
 		tooltip = _("User has typed something and stopped");
-		g_source_remove(gtkconv->u.im->typing_timer);
-		gtkconv->u.im->typing_timer = 0;
+		if (gtkconv->u.im->typing_timer != 0) {
+			g_source_remove(gtkconv->u.im->typing_timer);
+			gtkconv->u.im->typing_timer = 0;
+		}
 	}
 
 	if (gtkwin->menu.typing_icon == NULL)
@@ -4015,7 +4018,6 @@ static void topic_callback(GtkWidget *w, PidginConversation *gtkconv)
 	}
 
 	gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), current_topic);
-
 	prpl_info->set_chat_topic(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)),
 			new_topic);
 
@@ -4383,6 +4385,8 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 				 "foreground-set", TRUE,
 				 "weight-set", TRUE,
 				 NULL);
+        g_object_set(G_OBJECT(rend), "editable", TRUE, NULL);
+
 	col = gtk_tree_view_column_new_with_attributes(NULL, rend,
 	                                               "text", CHAT_USERS_ALIAS_COLUMN,
 	                                               "foreground-gdk", CHAT_USERS_COLOR_COLUMN,
@@ -4411,17 +4415,36 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	gtk_container_add(GTK_CONTAINER(sw), list);
 }
 
-static int tooltip_timeout = 0;
+/* Stuff used to display tooltips on the infopane */
+static struct {
+	int timeout;
+	PidginConversation *gtkconv;   /* This is the Pidgin conversation that
+	                                  triggered the tooltip */
+} tooltip;
+
+static void
+reset_tooltip()
+{
+	if (tooltip.timeout != 0) {
+		g_source_remove(tooltip.timeout);
+		tooltip.timeout = 0;
+	}
+	tooltip.gtkconv = NULL;
+}
 
 static gboolean
 pidgin_conv_tooltip_timeout(PidginConversation *gtkconv)
 {
 	PurpleBlistNode *node = NULL;
-	PurpleConversation *conv = gtkconv->active_conv;
- 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-                node = (PurpleBlistNode*)(purple_blist_find_chat(conv->account, conv->name));
+	PurpleConversation *conv;
+
+	g_return_val_if_fail (tooltip.gtkconv == gtkconv, FALSE);
+
+	conv = gtkconv->active_conv;
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+		node = (PurpleBlistNode*)(purple_blist_find_chat(conv->account, conv->name));
 	} else {
-                node = (PurpleBlistNode*)(purple_find_buddy(conv->account, conv->name));
+		node = (PurpleBlistNode*)(purple_find_buddy(conv->account, conv->name));
 	}
 
 	if (node) 
@@ -4433,10 +4456,7 @@ static void
 pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv)
 {
 	pidgin_blist_tooltip_destroy();
-	if (tooltip_timeout) {
-		g_source_remove(tooltip_timeout);
-		tooltip_timeout = 0;
-	}
+	reset_tooltip();
 }
 
 static gboolean 
@@ -4448,10 +4468,11 @@ pidgin_conv_motion_cb (GtkWidget *infopane, GdkEventMotion *event, PidginConvers
 	if (delay == 0)
 		return FALSE;
 
-	if (tooltip_timeout != 0) 
-		g_source_remove(tooltip_timeout);
+	if (tooltip.timeout != 0) 
+		g_source_remove(tooltip.timeout);
 
-	tooltip_timeout = g_timeout_add(delay, (GSourceFunc)pidgin_conv_tooltip_timeout, gtkconv);
+	tooltip.timeout = g_timeout_add(delay, (GSourceFunc)pidgin_conv_tooltip_timeout, gtkconv);
+	tooltip.gtkconv = gtkconv;
 	return FALSE;
 }
 
@@ -4488,11 +4509,10 @@ setup_common_pane(PidginConversation *gtkconv)
 	g_signal_connect(G_OBJECT(event_box), "button_press_event",
 	                 G_CALLBACK(infopane_press_cb), gtkconv);
 
-        g_signal_connect(G_OBJECT(event_box), "motion-notify-event", 
-			 G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
-        g_signal_connect(G_OBJECT(event_box), "leave-notify-event", 
-			 G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
-
+	g_signal_connect(G_OBJECT(event_box), "motion-notify-event", 
+			G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
+	g_signal_connect(G_OBJECT(event_box), "leave-notify-event", 
+			G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 
 	gtkconv->infopane = gtk_cell_view_new();
 	gtkconv->infopane_model = gtk_list_store_new(CONV_NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, GDK_TYPE_PIXBUF);
@@ -4985,6 +5005,9 @@ pidgin_conv_destroy(PurpleConversation *conv)
 	gtkconv->send_history = g_list_first(gtkconv->send_history);
 	g_list_foreach(gtkconv->send_history, (GFunc)g_free, NULL);
 	g_list_free(gtkconv->send_history);
+
+	if (tooltip.gtkconv == gtkconv)
+		reset_tooltip();
 
 	g_free(gtkconv);
 }
@@ -6277,7 +6300,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		else
 			title = g_strdup(purple_conversation_get_title(conv));
 
-		if ((truncate = strchr(title, ' ')) || 
+		if (((truncate = strchr(title, ' ')) && strcmp(title, conv->name)) || 
 		    (truncate = strchr(title, '@'))) {
 			truncchar = *truncate;
 			*truncate = '\0';
@@ -6292,16 +6315,19 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				markup = title;
 			}
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-			PurpleConvChat *chat = PURPLE_CONV_CHAT(conv);
-			const char *topic = purple_conv_chat_get_topic(chat);
+			const char *topic = gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text));
+			char *esc = topic ? g_markup_escape_text(topic, -1) : NULL;
 			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",
 						purple_conversation_get_title(conv),
-						topic ? "\n" : "",
+						esc  && *esc ? "\n" : "",
 						pidgin_get_dim_grey_string(gtkconv->infopane),
-						topic ? topic : "");
+						esc ? esc : "");
+			g_free(esc);
 		}
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
 				CONV_TEXT_COLUMN, markup, -1);
+	        /* XXX seanegan Why do I have to do this? */
+        	gtk_widget_queue_draw(gtkconv->infopane);
 	
 		if (title != markup)
 			g_free(markup);
@@ -6604,10 +6630,10 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
                               GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
 					 G_CALLBACK(icon_menu), gtkconv);
-        g_signal_connect(G_OBJECT(event), "motion-notify-event",
-                         G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
-        g_signal_connect(G_OBJECT(event), "leave-notify-event",
-                         G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
+	g_signal_connect(G_OBJECT(event), "motion-notify-event",
+			G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
+	g_signal_connect(G_OBJECT(event), "leave-notify-event",
+			G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 	gtk_widget_show(event);
 
 	gtkconv->u.im->icon = gtk_image_new_from_pixbuf(scale);
@@ -7179,23 +7205,23 @@ pidgin_conversations_init(void)
 
 	/* Conversations -> Chat */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/chat");
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/entry_height", 50);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/entry_height", 54);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/userlist_width", 80);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/x", 0);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/y", 0);
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/width", 0);
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/height", 0);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/width", 340);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/chat/height", 390);
 
 	/* Conversations -> IM */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/im");
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/x", 0);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/y", 0);
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/width", 0);
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/height", 0);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/width", 340);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/height", 390);
 
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/animate_buddy_icons", TRUE);
 
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/entry_height", 50);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/im/entry_height", 54);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", TRUE);
 
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new", "never");
@@ -7690,8 +7716,10 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 		gtkconv = pidgin_conv_window_get_gtkconv_at_index(dest_win, page_num);
 		tab = gtkconv->tabby;
-
-		if (horiz_tabs) {
+		if (gtk_notebook_get_show_tabs(dest_notebook) == FALSE) {
+				dnd_hints_show_relative(HINT_ARROW_DOWN, gtkconv->infopane, HINT_POSITION_CENTER, HINT_POSITION_TOP);
+				dnd_hints_show_relative(HINT_ARROW_UP, gtkconv->infopane, HINT_POSITION_CENTER, HINT_POSITION_BOTTOM);
+		} else if (horiz_tabs) {
 			if (((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) || to_right) {
 				dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
 				dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
@@ -7738,9 +7766,37 @@ notebook_leave_cb(GtkWidget *widget, GdkEventCrossing *e, PidginWindow *win)
 static gboolean
 infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
 {
+	if (e->type == GDK_2BUTTON_PRESS && e->button == 1) {
+		if (alias_double_click_cb(widget, e, gtkconv))
+			return TRUE;
+	}
+
 	if (e->type != GDK_BUTTON_PRESS)
 		return FALSE;
 
+	if (e->button == 1) {
+		int nb_x, nb_y;
+
+		if (gtkconv->win->in_drag)
+			return TRUE;
+
+		gtkconv->win->in_predrag = TRUE;
+		gtkconv->win->drag_tab = gtk_notebook_page_num(GTK_NOTEBOOK(gtkconv->win->notebook), gtkconv->tab_cont);
+
+		gdk_window_get_origin(gtkconv->infopane_hbox->window, &nb_x, &nb_y);
+
+		gtkconv->win->drag_min_x = gtkconv->infopane_hbox->allocation.x + nb_x;
+		gtkconv->win->drag_min_y = gtkconv->infopane_hbox->allocation.y + nb_y;
+		gtkconv->win->drag_max_x = gtkconv->infopane_hbox->allocation.width + gtkconv->win->drag_min_x;
+		gtkconv->win->drag_max_y = gtkconv->infopane_hbox->allocation.height + gtkconv->win->drag_min_y;
+
+		gtkconv->win->drag_motion_signal = g_signal_connect(G_OBJECT(gtkconv->win->notebook), "motion_notify_event",
+								    G_CALLBACK(notebook_motion_cb), gtkconv->win);
+		gtkconv->win->drag_leave_signal = g_signal_connect(G_OBJECT(gtkconv->win->notebook), "leave_notify_event",
+								    G_CALLBACK(notebook_leave_cb), gtkconv->win);
+		return FALSE;
+	}
+	
 	if (e->button == 3) {
 		/* Right click was pressed. Popup the Send To menu. */
 		GtkWidget *menu = gtk_menu_new(), *sub;
@@ -8119,7 +8175,7 @@ remove_edit_entry(PidginConversation *gtkconv, GtkWidget *entry)
 {
 	g_signal_handlers_disconnect_matched(G_OBJECT(entry), G_SIGNAL_MATCH_DATA,
 				0, 0, NULL, NULL, gtkconv);
-	gtk_widget_show(gtkconv->tab_label);
+	gtk_widget_show(gtkconv->infopane);
 	gtk_widget_grab_focus(gtkconv->entry);
 	gtk_widget_destroy(entry);
 }
@@ -8166,21 +8222,18 @@ alias_cb(GtkEntry *entry, gpointer user_data)
 		}
 		serv_alias_buddy(buddy);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {	        
-		PurpleChat *chat;
-
-		chat = purple_blist_find_chat(account, name);
-		if (chat != NULL) {
-			purple_blist_alias_chat(chat,
-			                        gtk_entry_get_text(entry));
-		}
+		gtk_entry_set_text(GTK_ENTRY(gtkconv->u.chat->topic_text), gtk_entry_get_text(entry));
+		topic_callback(NULL, gtkconv);
 	}
 	remove_edit_entry(user_data, GTK_WIDGET(entry));
 }
 
 static gboolean
-alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConversation *gtkconv)
+alias_double_click_cb(GtkWidget *widget, GdkEventButton *event, PidginConversation *gtkconv)
 {
 	GtkWidget *entry = NULL;
+        PurpleConversation *conv = gtkconv->active_conv;
+	const char *text = NULL;
 
 	if (event->button != 1 || event->type != GDK_2BUTTON_PRESS) {
 		return FALSE;
@@ -8196,6 +8249,15 @@ alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConver
 		return FALSE;
 	}
 
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		PurpleBuddy *buddy = purple_find_buddy(gtkconv->active_conv->account, gtkconv->active_conv->name);
+		if (!buddy)
+			return FALSE;
+		text = purple_buddy_get_contact_alias(buddy);
+	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+		text = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv));
+	}
+
 	/* alias label */
 	entry = gtk_entry_new();
 	gtk_entry_set_has_frame(GTK_ENTRY(entry), FALSE);
@@ -8204,17 +8266,19 @@ alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConver
 	gtk_entry_set_alignment(GTK_ENTRY(entry), 0.5);
 #endif
 
-	gtk_box_pack_start(GTK_BOX(gtkconv->tabby), entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkconv->infopane_hbox), entry, TRUE, TRUE, 0);
 	/* after the tab label */
-	gtk_box_reorder_child(GTK_BOX(gtkconv->tabby), entry, 2);
+	gtk_box_reorder_child(GTK_BOX(gtkconv->infopane_hbox), entry, 0);
 
 	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(alias_cb), gtkconv);
 	g_signal_connect(G_OBJECT(entry), "focus-out-event", G_CALLBACK(alias_focus_cb), gtkconv);
 	g_signal_connect(G_OBJECT(entry), "key-press-event", G_CALLBACK(alias_key_press_cb), gtkconv);
-	gtk_entry_set_text(GTK_ENTRY(entry),
-			gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+	
+	
+
+	gtk_entry_set_text(GTK_ENTRY(entry), text);
 	gtk_widget_show(entry);
-	gtk_widget_hide(gtkconv->tab_label);
+	gtk_widget_hide(gtkconv->infopane);
 	gtk_widget_grab_focus(entry);
 
 	return FALSE;

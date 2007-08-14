@@ -39,6 +39,7 @@ stringlists = [
     "purple_prefs_get_string_list",
     "purple_uri_list_extract_filenames",
     "purple_uri_list_extract_uris",
+    "purple_prefs_get_children_names",
 ]
 
 # This is a list of functions that return a GList* or GSList* that should
