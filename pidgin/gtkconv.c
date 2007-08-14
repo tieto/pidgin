@@ -186,6 +186,7 @@ static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields
 static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
+static gboolean alias_double_click_cb(GtkWidget *widget, GdkEventButton *event, PidginConversation *gtkconv);
 
 static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
 		int width, int height);
@@ -4017,7 +4018,6 @@ static void topic_callback(GtkWidget *w, PidginConversation *gtkconv)
 	}
 
 	gtk_entry_set_text(GTK_ENTRY(gtkchat->topic_text), current_topic);
-
 	prpl_info->set_chat_topic(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)),
 			new_topic);
 
@@ -4385,6 +4385,8 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 				 "foreground-set", TRUE,
 				 "weight-set", TRUE,
 				 NULL);
+        g_object_set(G_OBJECT(rend), "editable", TRUE, NULL);
+
 	col = gtk_tree_view_column_new_with_attributes(NULL, rend,
 	                                               "text", CHAT_USERS_ALIAS_COLUMN,
 	                                               "foreground-gdk", CHAT_USERS_COLOR_COLUMN,
@@ -6313,18 +6315,19 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				markup = title;
 			}
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-			PurpleConvChat *chat = PURPLE_CONV_CHAT(conv);
-			const char *topic = purple_conv_chat_get_topic(chat);
+			const char *topic = gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text));
 			char *esc = topic ? g_markup_escape_text(topic, -1) : NULL;
 			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",
 						purple_conversation_get_title(conv),
-						esc ? "\n" : "",
+						esc  && *esc ? "\n" : "",
 						pidgin_get_dim_grey_string(gtkconv->infopane),
 						esc ? esc : "");
 			g_free(esc);
 		}
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
 				CONV_TEXT_COLUMN, markup, -1);
+	        /* XXX seanegan Why do I have to do this? */
+        	gtk_widget_queue_draw(gtkconv->infopane);
 	
 		if (title != markup)
 			g_free(markup);
@@ -7761,6 +7764,11 @@ notebook_leave_cb(GtkWidget *widget, GdkEventCrossing *e, PidginWindow *win)
 static gboolean
 infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
 {
+	if (e->type == GDK_2BUTTON_PRESS && e->button == 1) {
+		if (alias_double_click_cb(widget, e, gtkconv))
+			return TRUE;
+	}
+
 	if (e->type != GDK_BUTTON_PRESS)
 		return FALSE;
 
@@ -8142,7 +8150,7 @@ remove_edit_entry(PidginConversation *gtkconv, GtkWidget *entry)
 {
 	g_signal_handlers_disconnect_matched(G_OBJECT(entry), G_SIGNAL_MATCH_DATA,
 				0, 0, NULL, NULL, gtkconv);
-	gtk_widget_show(gtkconv->tab_label);
+	gtk_widget_show(gtkconv->infopane);
 	gtk_widget_grab_focus(gtkconv->entry);
 	gtk_widget_destroy(entry);
 }
@@ -8189,21 +8197,18 @@ alias_cb(GtkEntry *entry, gpointer user_data)
 		}
 		serv_alias_buddy(buddy);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {	        
-		PurpleChat *chat;
-
-		chat = purple_blist_find_chat(account, name);
-		if (chat != NULL) {
-			purple_blist_alias_chat(chat,
-			                        gtk_entry_get_text(entry));
-		}
+		gtk_entry_set_text(GTK_ENTRY(gtkconv->u.chat->topic_text), gtk_entry_get_text(entry));
+		topic_callback(NULL, gtkconv);
 	}
 	remove_edit_entry(user_data, GTK_WIDGET(entry));
 }
 
 static gboolean
-alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConversation *gtkconv)
+alias_double_click_cb(GtkWidget *widget, GdkEventButton *event, PidginConversation *gtkconv)
 {
 	GtkWidget *entry = NULL;
+        PurpleConversation *conv = gtkconv->active_conv;
+	const char *text = NULL;
 
 	if (event->button != 1 || event->type != GDK_2BUTTON_PRESS) {
 		return FALSE;
@@ -8219,6 +8224,15 @@ alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConver
 		return FALSE;
 	}
 
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		PurpleBuddy *buddy = purple_find_buddy(gtkconv->active_conv->account, gtkconv->active_conv->name);
+		if (!buddy)
+			return FALSE;
+		text = purple_buddy_get_contact_alias(buddy);
+	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+		text = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv));
+	}
+
 	/* alias label */
 	entry = gtk_entry_new();
 	gtk_entry_set_has_frame(GTK_ENTRY(entry), FALSE);
@@ -8227,17 +8241,19 @@ alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConver
 	gtk_entry_set_alignment(GTK_ENTRY(entry), 0.5);
 #endif
 
-	gtk_box_pack_start(GTK_BOX(gtkconv->tabby), entry, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkconv->infopane_hbox), entry, TRUE, TRUE, 0);
 	/* after the tab label */
-	gtk_box_reorder_child(GTK_BOX(gtkconv->tabby), entry, 2);
+	gtk_box_reorder_child(GTK_BOX(gtkconv->infopane_hbox), entry, 0);
 
 	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(alias_cb), gtkconv);
 	g_signal_connect(G_OBJECT(entry), "focus-out-event", G_CALLBACK(alias_focus_cb), gtkconv);
 	g_signal_connect(G_OBJECT(entry), "key-press-event", G_CALLBACK(alias_key_press_cb), gtkconv);
-	gtk_entry_set_text(GTK_ENTRY(entry),
-			gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+	
+	
+
+	gtk_entry_set_text(GTK_ENTRY(entry), text);
 	gtk_widget_show(entry);
-	gtk_widget_hide(gtkconv->tab_label);
+	gtk_widget_hide(gtkconv->infopane);
 	gtk_widget_grab_focus(entry);
 
 	return FALSE;
