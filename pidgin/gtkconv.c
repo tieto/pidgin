@@ -6300,7 +6300,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		else
 			title = g_strdup(purple_conversation_get_title(conv));
 
-		if ((truncate = strchr(title, ' ')) || 
+		if (((truncate = strchr(title, ' ')) && strcmp(title, conv->name)) || 
 		    (truncate = strchr(title, '@'))) {
 			truncchar = *truncate;
 			*truncate = '\0';
