@@ -210,19 +210,19 @@ default_gw()
 				struct sockaddr addr, mask;
 
 				get_rtaddrs(rtm->rtm_addrs, sa, rti_info);
-				bzero(&addr, sizeof(addr));
+				memset(&addr, 0, sizeof(addr));
 
 				if (rtm->rtm_addrs & RTA_DST)
-					bcopy(rti_info[RTAX_DST], &addr, rti_info[RTAX_DST]->sa_len);
+					memcpy(&addr, rti_info[RTAX_DST], sizeof(addr));
 
-				bzero(&mask, sizeof(mask));
+				memset(&mask, 0, sizeof(mask));
 
 				if (rtm->rtm_addrs & RTA_NETMASK)
-					bcopy(rti_info[RTAX_NETMASK], &mask, rti_info[RTAX_NETMASK]->sa_len);
+					memcpy(&mask, rti_info[RTAX_NETMASK], sizeof(mask));
 
 				if (rtm->rtm_addrs & RTA_GATEWAY &&
 					is_default_route(&addr, &mask)) 
-				{					
+				{
 					if (rti_info[RTAX_GATEWAY]) {
 						struct sockaddr_in *rti_sin = (struct sockaddr_in *)rti_info[RTAX_GATEWAY];
 						sin = g_new0(struct sockaddr_in, 1);
@@ -291,10 +291,10 @@ purple_pmp_get_public_ip()
 	sendfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
 	/* Clean out both req and resp structures */
-	bzero(&req, sizeof(PurplePmpIpRequest));
-	bzero(&resp, sizeof(PurplePmpIpResponse));
+	memset(&req, 0, sizeof(PurplePmpIpRequest));
+	memset(&resp, 0, sizeof(PurplePmpIpResponse));
 	req.version = 0;
-	req.opcode	= 0;
+	req.opcode = 0;
 
 	/* The NAT-PMP spec says we should attempt to contact the gateway 9 times, doubling the time we wait each time.
 	 * Even starting with a timeout of 0.1 seconds, that means that we have a total waiting of 204.6 seconds.
@@ -323,12 +323,12 @@ purple_pmp_get_public_ip()
 		g_free(gateway);
 		pmp_info.status = PURPLE_PMP_STATUS_UNABLE_TO_DISCOVER;
 		return NULL;
-	}		
+	}
 
 	/* TODO: Non-blocking! */
 	len = sizeof(struct sockaddr_in);
 	if (recvfrom(sendfd, &resp, sizeof(PurplePmpIpResponse), 0, (struct sockaddr *)(&addr), &len) < 0)
-	{			
+	{
 		if (errno != EAGAIN)
 		{
 			purple_debug_info("nat-pmp", "There was an error receiving the response from the NAT-PMP device! (%s)\n", strerror(errno));
@@ -365,7 +365,7 @@ purple_pmp_get_public_ip()
 	struct in_addr in;
 	in.s_addr = resp.address;
 	purple_debug_info("nat-pmp", "address: %s\n", inet_ntoa(in));
-#endif	
+#endif
 
 	publicsockaddr->sin_addr.s_addr = resp.address;
 
@@ -408,9 +408,9 @@ purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned s
 	sendfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
 	/* Set up the req */
-	bzero(&req, sizeof(PurplePmpMapRequest));
+	memset(&req, 0, sizeof(PurplePmpMapRequest));
 	req.version = 0;
-	req.opcode	= ((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP);	
+	req.opcode = ((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP);
 	req.privateport = htons(privateport); /* What a difference byte ordering makes...d'oh! */
 	req.publicport = htons(publicport);
 	req.lifetime = htonl(lifetime);
@@ -509,7 +509,7 @@ purple_pmp_get_handle(void)
 {
 	static int handle;
 
-	return &handle;	
+	return &handle;
 }
 
 void
@@ -517,7 +517,7 @@ purple_pmp_init()
 {
 	purple_signal_connect(purple_network_get_handle(), "network-configuration-changed",
 		  purple_pmp_get_handle(), PURPLE_CALLBACK(purple_pmp_network_config_changed_cb),
-		  GINT_TO_POINTER(0));	
+		  GINT_TO_POINTER(0));
 }
 #else /* #ifdef NET_RT_DUMP */
 char *
