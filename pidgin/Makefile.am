@@ -80,6 +80,7 @@ pidgin_SOURCES = \
 	gtkcellrendererprogress.c \
 	gtkcellview.c \
 	gtkcellviewmenuitem.c \
+	gtkcertmgr.c \
 	gtkconn.c \
 	gtkconv.c \
 	gtkdebug.c \
@@ -127,6 +128,7 @@ pidgin_headers = \
 	gtkcellviewmenuitem.h \
 	gtkcellview.h \
 	gtkcellviewmenuitem.h \
+	gtkcertmgr.h \
 	pidgincombobox.h \
 	gtkconn.h \
 	gtkconv.h \

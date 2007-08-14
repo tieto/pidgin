@@ -33,6 +33,7 @@ purple_coresources = \
 	accountopt.c \
 	blist.c \
 	buddyicon.c \
+	certificate.c \
 	cipher.c \
 	circbuffer.c \
 	cmds.c \
@@ -82,6 +83,7 @@ purple_coreheaders = \
 	accountopt.h \
 	blist.h \
 	buddyicon.h \
+	certificate.h \
 	cipher.h \
 	circbuffer.h \
 	cmds.h \
