@@ -359,7 +359,11 @@ tls_peers_mgmt_delete_confirm_cb(gchar *id, gint choice)
 	if (1 == choice) {
 		/* Yes, delete was confirmed */
 		/* Now delete the thing */
-		g_assert(purple_certificate_pool_delete(tpm_dat->tls_peers, id));
+		if (!purple_certificate_pool_delete(tpm_dat->tls_peers, id)) {
+			purple_debug_warning("gtkcertmgr/tls_peers_mgmt",
+					     "Deletion failed on id %s\n",
+					     id);
+		};
 	}
 
 	g_free(id);
