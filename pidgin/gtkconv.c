@@ -7618,13 +7618,14 @@ gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state)
  * has looked at it so we know there are no longer unseen
  * messages.
  */
-static gint
+static gboolean
 focus_win_cb(GtkWidget *w, GdkEventFocus *e, gpointer d)
 {
 	PidginWindow *win = d;
 	PidginConversation *gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 
-	gtkconv_set_unseen(gtkconv, PIDGIN_UNSEEN_NONE);
+	if (gtkconv)
+		gtkconv_set_unseen(gtkconv, PIDGIN_UNSEEN_NONE);
 
 	return FALSE;
 }
