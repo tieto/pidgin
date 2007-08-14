@@ -7716,8 +7716,10 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 		gtkconv = pidgin_conv_window_get_gtkconv_at_index(dest_win, page_num);
 		tab = gtkconv->tabby;
-
-		if (horiz_tabs) {
+		if (gtk_notebook_get_show_tabs(dest_notebook) == FALSE) {
+				dnd_hints_show_relative(HINT_ARROW_DOWN, gtkconv->infopane, HINT_POSITION_CENTER, HINT_POSITION_TOP);
+				dnd_hints_show_relative(HINT_ARROW_UP, gtkconv->infopane, HINT_POSITION_CENTER, HINT_POSITION_BOTTOM);
+		} else if (horiz_tabs) {
 			if (((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) || to_right) {
 				dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
 				dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
@@ -7772,6 +7774,29 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 	if (e->type != GDK_BUTTON_PRESS)
 		return FALSE;
 
+	if (e->button == 1) {
+		int nb_x, nb_y;
+
+		if (gtkconv->win->in_drag)
+			return TRUE;
+
+		gtkconv->win->in_predrag = TRUE;
+		gtkconv->win->drag_tab = gtk_notebook_page_num(GTK_NOTEBOOK(gtkconv->win->notebook), gtkconv->tab_cont);
+
+		gdk_window_get_origin(gtkconv->infopane_hbox->window, &nb_x, &nb_y);
+
+		gtkconv->win->drag_min_x = gtkconv->infopane_hbox->allocation.x + nb_x;
+		gtkconv->win->drag_min_y = gtkconv->infopane_hbox->allocation.y + nb_y;
+		gtkconv->win->drag_max_x = gtkconv->infopane_hbox->allocation.width + gtkconv->win->drag_min_x;
+		gtkconv->win->drag_max_y = gtkconv->infopane_hbox->allocation.height + gtkconv->win->drag_min_y;
+
+		gtkconv->win->drag_motion_signal = g_signal_connect(G_OBJECT(gtkconv->win->notebook), "motion_notify_event",
+								    G_CALLBACK(notebook_motion_cb), gtkconv->win);
+		gtkconv->win->drag_leave_signal = g_signal_connect(G_OBJECT(gtkconv->win->notebook), "leave_notify_event",
+								    G_CALLBACK(notebook_leave_cb), gtkconv->win);
+		return FALSE;
+	}
+	
 	if (e->button == 3) {
 		/* Right click was pressed. Popup the Send To menu. */
 		GtkWidget *menu = gtk_menu_new(), *sub;
