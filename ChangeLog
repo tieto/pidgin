@@ -22,6 +22,7 @@ version 2.1.1 (??/??/????):
 	* Moved "Reset Formatting" toolbar button to Font menu.
 	* Double click on the infopane to alias buddies and set topics
 	  on chats
+	* New smiley style
 
 	Finch:
 	* Sound support (Eric Polino)
