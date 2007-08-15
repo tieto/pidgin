@@ -69,7 +69,7 @@
 
 /* Use the attention API for zaps? */
 /* Can't have until >=2.2.0, since is a new API. */
-#define MSIM_USE_ATTENTION_API 	
+/*#define MSIM_USE_ATTENTION_API 	 */
 
 /* Constants */
 
