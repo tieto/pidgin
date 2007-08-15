@@ -612,6 +612,7 @@ msim_login(PurpleAccount *acct)
 	gc->proto_data = msim_session_new(acct);
 	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC;
 
+#ifdef MSIM_MAX_PASSWORD_LENGTH
 	/* Passwords are limited in length. */
 	if (strlen(acct->password) > MSIM_MAX_PASSWORD_LENGTH) {
 		gchar *str;
@@ -629,6 +630,7 @@ msim_login(PurpleAccount *acct)
 		
 		g_free(str);
 	}
+#endif
 
 	/* 1. connect to server */
 	purple_connection_update_progress(gc, _("Connecting"),
