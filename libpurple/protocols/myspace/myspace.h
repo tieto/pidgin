@@ -69,7 +69,7 @@
 
 /* Use the attention API for zaps? */
 /* Can't have until >=2.2.0, since is a new API. */
-/*#define MSIM_USE_ATTENTION_API 	*/
+#define MSIM_USE_ATTENTION_API 	
 
 /* Constants */
 
@@ -226,6 +226,9 @@ typedef struct _MsimUser
 } MsimUser;
 
 
+#ifdef MSIM_USE_ATTENTION_API
+#define MsimAttentionType PurpleAttentionType
+#else
 /* Different kinds of attention alerts. Not yet in libpurple, so define 
  * our own structure here. */
 typedef struct _MsimAttentionType MsimAttentionType;
@@ -238,6 +241,7 @@ struct _MsimAttentionType {
 	const gchar *incoming_description;	/**< Shown when sent. */
 	const gchar *outgoing_description;	/**< Shown when received. */
 };
+#endif
 
 gchar *str_replace(const gchar *str, const gchar *old, const gchar *new);
 
