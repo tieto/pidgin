@@ -169,7 +169,7 @@ set_auto_accept_settings(PurpleBlistNode *node, gpointer plugin)
 						_("Auto Accept"), FT_ACCEPT,
 						_("Auto Reject"), FT_REJECT,
 						NULL, purple_contact_get_alias((PurpleContact *)node), NULL,
-						NULL);
+						"xfer", NULL);
 	g_free(message);
 }
 
