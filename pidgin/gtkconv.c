@@ -6279,7 +6279,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			(fields & PIDGIN_CONV_SET_TITLE) ||
     			(fields & PIDGIN_CONV_TOPIC))
 	{
-		char *title, *truncate = NULL, truncchar = '\0';
+		char *title;
 		PurpleConvIm *im = NULL;
 		PurpleAccount *account = purple_conversation_get_account(conv);
 	 	PurpleBuddy *buddy = NULL;
@@ -6299,12 +6299,6 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			title = g_strdup_printf("(%s)", purple_conversation_get_title(conv));
 		else
 			title = g_strdup(purple_conversation_get_title(conv));
-
-		if (((truncate = strchr(title, ' ')) && strcmp(title, conv->name)) || 
-		    (truncate = strchr(title, '@'))) {
-			truncchar = *truncate;
-			*truncate = '\0';
-		}
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
 			buddy = purple_find_buddy(account, conv->name);
@@ -6380,9 +6374,6 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		else
 			gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
 		
-		if (truncate)
-			*truncate = truncchar;
-
 		if (pidgin_conv_window_is_active_conversation(conv))
 			update_typing_icon(gtkconv);
 
@@ -8678,6 +8669,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	/* Status icon. */
 	gtkconv->icon = gtk_image_new();
 	gtkconv->menu_icon = gtk_image_new();
+	gtk_widget_show(gtkconv->icon);
 	update_tab_icon(conv);
 
 	/* Tab label. */
@@ -8738,7 +8730,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 #if GTK_CHECK_VERSION(2,6,0)
 	if (!angle && pidgin_conv_window_get_gtkconv_count(win) > 1) {
 		g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_END,  NULL);
-		gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), 6);
+		gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), 4);
 	} else {
 		g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_NONE, NULL);
 		gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), -1);
