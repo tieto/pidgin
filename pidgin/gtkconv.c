@@ -2301,7 +2301,7 @@ pidgin_conv_get_tab_icon(PurpleConversation *conv, gboolean small_icon)
         const char *name = NULL;
         GdkPixbuf *status = NULL;
         PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-
+	const char *icon_size = small_icon ? "pidgin-icon-size-tango-microscopic" : PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL;
         g_return_val_if_fail(conv != NULL, NULL);
 
         account = purple_conversation_get_account(conv);
@@ -2314,22 +2314,41 @@ pidgin_conv_get_tab_icon(PurpleConversation *conv, gboolean small_icon)
         if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
                 PurpleBuddy *b = purple_find_buddy(account, name);
                 if (b != NULL) {
+			PurplePresence *p = purple_buddy_get_presence(b);
                         /* I hate this hack.  It fixes a bug where the pending message icon
                           * displays in the conv tab even though it shouldn't.
                           * A better solution would be great. */
                         if (ops && ops->update)
                                 ops->update(NULL, (PurpleBlistNode*)b);
 
-                        status = pidgin_blist_get_status_icon((PurpleBlistNode*)b,
-                                (small_icon ? PIDGIN_STATUS_ICON_SMALL : PIDGIN_STATUS_ICON_LARGE));
+			/* XXX Seanegan: We really need a util function to return a pixbuf for a Presence to avoid all this switching */	
+			if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_AWAY))
+	                        status = pidgin_create_status_icon(PURPLE_STATUS_AWAY, PIDGIN_CONVERSATION(conv)->icon, icon_size);
+			else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_EXTENDED_AWAY))
+	                        status = pidgin_create_status_icon(PURPLE_STATUS_EXTENDED_AWAY, PIDGIN_CONVERSATION(conv)->icon, icon_size);
+ 			else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_OFFLINE))
+	                        status = pidgin_create_status_icon(PURPLE_STATUS_OFFLINE, PIDGIN_CONVERSATION(conv)->icon, icon_size);
+ 			else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_AVAILABLE))
+	                        status = pidgin_create_status_icon(PURPLE_STATUS_AVAILABLE, PIDGIN_CONVERSATION(conv)->icon, icon_size);
+ 			else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_INVISIBLE))
+	                        status = pidgin_create_status_icon(PURPLE_STATUS_INVISIBLE, PIDGIN_CONVERSATION(conv)->icon, icon_size);
+ 			else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_UNAVAILABLE))
+	                        status = pidgin_create_status_icon(PURPLE_STATUS_UNAVAILABLE, PIDGIN_CONVERSATION(conv)->icon, icon_size);
                 }
         }
 
         /* If they don't have a buddy icon, then use the PRPL icon */
-        if (status == NULL)
-                status = pidgin_create_prpl_icon(account, small_icon ? PIDGIN_PRPL_ICON_SMALL : PIDGIN_PRPL_ICON_LARGE);
-
-        return status;
+        if (status == NULL) {
+		GtkIconSize size = gtk_icon_size_from_name(icon_size);
+		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+        		status = gtk_widget_render_icon (PIDGIN_CONVERSATION(conv)->icon, PIDGIN_STOCK_STATUS_PERSON,
+                                                 size, "GtkWidget");
+		} else {
+	        		status = gtk_widget_render_icon (PIDGIN_CONVERSATION(conv)->icon, PIDGIN_STOCK_STATUS_CHAT,
+                                                 size, "GtkWidget");
+		}
+	}	
+	return status;
 }
 
 
@@ -2341,6 +2360,7 @@ update_tab_icon(PurpleConversation *conv)
 	PurpleBuddy *b;
 	GList *l;
 	GdkPixbuf *status = NULL;
+	GdkPixbuf *infopane_status = NULL;
 	GdkPixbuf *emblem = NULL;
 
 	g_return_if_fail(conv != NULL);
@@ -2352,6 +2372,8 @@ update_tab_icon(PurpleConversation *conv)
 
 
 	status = pidgin_conv_get_tab_icon(conv, TRUE);
+	infopane_status = pidgin_conv_get_tab_icon(conv, FALSE);
+
 	b = purple_find_buddy(conv->account, conv->name);
 	if (b)
 		emblem = pidgin_blist_get_emblem((PurpleBlistNode*)b);
@@ -2363,7 +2385,7 @@ update_tab_icon(PurpleConversation *conv)
 
 	gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model), 
 			&(gtkconv->infopane_iter),
-			CONV_ICON_COLUMN, status, -1);
+			CONV_ICON_COLUMN, infopane_status, -1);
 
 	gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model), 
 			&(gtkconv->infopane_iter),
@@ -6287,7 +6309,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		char *markup = NULL;
 		AtkObject *accessibility_obj;
 		/* I think this is a little longer than it needs to be but I'm lazy. */
-		char *style, *status_style;
+		char *style;
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 			im = PURPLE_CONV_IM(conv);
@@ -6351,22 +6373,13 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			style = "";
 		}
 		
-		if (p && purple_presence_is_status_primitive_active(p, PURPLE_STATUS_OFFLINE)) {
-			status_style = "strikethrough='true'";
-		} else if (p && !purple_presence_is_status_primitive_active(p, PURPLE_STATUS_AVAILABLE) &&
-			 !purple_presence_is_status_primitive_active(p, PURPLE_STATUS_INVISIBLE)) {
-			status_style = "style='italic'";
-		} else {
-			status_style = "";
-		}
-
-		if (*style != '\0' || *status_style != '\0')
+		if (*style != '\0')
 		{
 			char *html_title,*label;
 
 			html_title = g_markup_escape_text(title, -1);
-			label = g_strdup_printf("<span %s %s>%s</span>",
-			                        style, status_style, html_title);
+			label = g_strdup_printf("<span %s>%s</span>",
+			                        style, html_title);
 			g_free(html_title);
 			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
 			g_free(label);

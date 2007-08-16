@@ -438,6 +438,10 @@ pidgin_stock_init(void)
 
 		if (sized_stock_icons[i].translucent_name) {
 			iconset = gtk_icon_set_new();
+			if (sized_stock_icons[i].microscopic)
+				add_translucent_sized_icon(iconset, microscopic,
+						sized_stock_icons[i].dir, sized_stock_icons[i].rtl,
+						"11", sized_stock_icons[i].filename);
 			if (sized_stock_icons[i].extra_small)
 				add_translucent_sized_icon(iconset, extra_small,
 					       sized_stock_icons[i].dir, sized_stock_icons[i].rtl,
