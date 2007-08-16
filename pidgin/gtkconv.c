@@ -8566,14 +8566,26 @@ pidgin_conv_window_switch_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 static gboolean
 close_button_left_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
 {
+	static GdkCursor *ptr = NULL;
+	if (ptr == NULL) {
+		ptr = gdk_cursor_new(GDK_LEFT_PTR);
+	}
+
 	gtk_label_set_markup(label, "×");
+	gdk_window_set_cursor(event->window, ptr);
 	return FALSE;
 }
 
 static gboolean
 close_button_entered_cb(GtkWidget *widget, GdkEventCrossing *event, GtkLabel *label)
 {
-	gtk_label_set_markup(label, "<b>×</b>");
+	static GdkCursor *hand = NULL;
+	if (hand == NULL) {
+		hand = gdk_cursor_new(GDK_HAND2);
+	}
+
+	gtk_label_set_markup(label, "<u>×</u>");
+	gdk_window_set_cursor(event->window, hand);
 	return FALSE;
 }
 
