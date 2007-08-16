@@ -1543,7 +1543,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 							"OK", (GCallback)dnd_image_ok_callback,
 						    "Cancel", (GCallback)dnd_image_cancel_callback,
 							account, who, NULL,
-							data,
+							"conversation", data,
 						    _("Set as buddy icon"), DND_BUDDY_ICON,
 						    (ft ? _("Send image file") : _("Insert in message")), (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
 							NULL);
