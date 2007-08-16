@@ -1523,7 +1523,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 						    DND_FILE_TRANSFER, "OK", (GCallback)dnd_image_ok_callback,
 						    "Cancel", (GCallback)dnd_image_cancel_callback,
 							account, who, NULL,
-							data,
+							"conversation", data,
 							_("Set as buddy icon"), DND_BUDDY_ICON,
 						    _("Send image file"), DND_FILE_TRANSFER,
 						    _("Insert in message"), DND_IM_IMAGE,
@@ -1533,7 +1533,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 							_("Would you like to set it as the buddy icon for this user?"),
 							0,
 							account, who, NULL,
-							data, (GCallback)dnd_set_icon_ok_cb, (GCallback)dnd_set_icon_cancel_cb);
+							"conversation", data, (GCallback)dnd_set_icon_ok_cb, (GCallback)dnd_set_icon_cancel_cb);
 			else
 				purple_request_choice(NULL, NULL,
 						    _("You have dragged an image"),
