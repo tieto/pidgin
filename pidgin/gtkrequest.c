@@ -286,7 +286,7 @@ pidgin_request_input(const char *title, const char *primary,
 					   const char *ok_text, GCallback ok_cb,
 					   const char *cancel_text, GCallback cancel_cb,
 					   PurpleAccount *account, const char *who, PurpleConversation *conv,
-					   void *user_data)
+					   const char *ui_hint, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *dialog;
@@ -446,7 +446,7 @@ pidgin_request_choice(const char *title, const char *primary,
 			const char *ok_text, GCallback ok_cb,
 			const char *cancel_text, GCallback cancel_cb,
 			PurpleAccount *account, const char *who, PurpleConversation *conv,
-			void *user_data, va_list args)
+			const char *ui_hint, void *user_data, va_list args)
 {
 	PidginRequestData *data;
 	GtkWidget *dialog;
@@ -550,7 +550,7 @@ static void *
 pidgin_request_action(const char *title, const char *primary,
 						const char *secondary, unsigned int default_action,
 					    PurpleAccount *account, const char *who, PurpleConversation *conv,
-						void *user_data, size_t action_count, va_list actions)
+						const char *ui_hint, void *user_data, size_t action_count, va_list actions)
 {
 	PidginRequestData *data;
 	GtkWidget *dialog;
@@ -1048,7 +1048,7 @@ pidgin_request_fields(const char *title, const char *primary,
 						const char *ok_text, GCallback ok_cb,
 						const char *cancel_text, GCallback cancel_cb,
 					    PurpleAccount *account, const char *who, PurpleConversation *conv,
-						void *user_data)
+						const char *ui_hint, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *win;
@@ -1491,7 +1491,7 @@ file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 		purple_request_action(data, NULL, _("That file already exists"),
 							_("Would you like to overwrite it?"), 0,
 							NULL, NULL, NULL,
-							data, 2,
+							"pidgin-request-file", data, 2,
 							_("Overwrite"), G_CALLBACK(file_yes_no_cb),
 							_("Choose New Name"), G_CALLBACK(file_yes_no_cb));
 	} else
@@ -1516,7 +1516,7 @@ pidgin_request_file(const char *title, const char *filename,
 					  gboolean savedialog,
 					  GCallback ok_cb, GCallback cancel_cb,
 					  PurpleAccount *account, const char *who, PurpleConversation *conv,
-					  void *user_data)
+					  const char *ui_hint, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *filesel;
@@ -1615,7 +1615,7 @@ static void *
 pidgin_request_folder(const char *title, const char *dirname,
 					  GCallback ok_cb, GCallback cancel_cb,
 					  PurpleAccount *account, const char *who, PurpleConversation *conv,
-					  void *user_data)
+					  const char *ui_hint, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *dirsel;
