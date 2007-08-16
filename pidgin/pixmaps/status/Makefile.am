@@ -1,4 +1,4 @@
-SUBDIRS = 16 22 32 48
+SUBDIRS = 11 16 22 32 48
 
 EXTRA_DIST = \
 	Makefile.mingw \
