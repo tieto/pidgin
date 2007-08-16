@@ -53,8 +53,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-07-13 03:22-0400\n"
-"PO-Revision-Date: 2007-07-13 20:43+0200\n"
+"POT-Creation-Date: 2007-07-23 03:23-0400\n"
+"PO-Revision-Date: 2007-07-24 02:25+0200\n"
 "Last-Translator: Javier Fernández-Sanguino <jfs@debian.org>\n"
 "Language-Team:  Spanish team <es@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -176,7 +176,7 @@ msgstr "Apodo:"
 #: ../finch/gntaccount.c:569 ../finch/gntaccount.c:632
 #: ../finch/gntaccount.c:878 ../finch/gntblist.c:343 ../finch/gntblist.c:412
 #: ../finch/gntblist.c:447 ../finch/gntblist.c:794 ../finch/gntblist.c:996
-#: ../finch/gntblist.c:1092 ../finch/gntblist.c:2198 ../finch/gntplugin.c:378
+#: ../finch/gntblist.c:1092 ../finch/gntblist.c:2199 ../finch/gntplugin.c:378
 #: ../finch/gntpounce.c:458 ../finch/gntpounce.c:656 ../finch/gntprefs.c:264
 #: ../finch/gntstatus.c:144 ../finch/gntstatus.c:481 ../finch/gntstatus.c:606
 #: ../libpurple/account.c:984 ../libpurple/account.c:1234
@@ -208,12 +208,12 @@ msgstr "Apodo:"
 #: ../libpurple/protocols/qq/sys_msg.c:115
 #: ../libpurple/protocols/qq/sys_msg.c:174
 #: ../libpurple/protocols/qq/sys_msg.c:269
-#: ../libpurple/protocols/sametime/sametime.c:3388
-#: ../libpurple/protocols/sametime/sametime.c:3474
-#: ../libpurple/protocols/sametime/sametime.c:3645
-#: ../libpurple/protocols/sametime/sametime.c:5397
-#: ../libpurple/protocols/sametime/sametime.c:5487
-#: ../libpurple/protocols/sametime/sametime.c:5612
+#: ../libpurple/protocols/sametime/sametime.c:3389
+#: ../libpurple/protocols/sametime/sametime.c:3475
+#: ../libpurple/protocols/sametime/sametime.c:3646
+#: ../libpurple/protocols/sametime/sametime.c:5398
+#: ../libpurple/protocols/sametime/sametime.c:5488
+#: ../libpurple/protocols/sametime/sametime.c:5613
 #: ../libpurple/protocols/silc/buddy.c:455
 #: ../libpurple/protocols/silc/buddy.c:1076
 #: ../libpurple/protocols/silc/buddy.c:1191
@@ -232,8 +232,8 @@ msgstr "Apodo:"
 #: ../libpurple/protocols/silc10/silc.c:942
 #: ../libpurple/protocols/yahoo/yahoo.c:989
 #: ../libpurple/protocols/yahoo/yahoo.c:3248
-#: ../libpurple/protocols/yahoo/yahoo.c:3259 ../pidgin/gtkaccount.c:1908
-#: ../pidgin/gtkaccount.c:2501 ../pidgin/gtkblist.c:5915
+#: ../libpurple/protocols/yahoo/yahoo.c:3259 ../pidgin/gtkaccount.c:1912
+#: ../pidgin/gtkaccount.c:2506 ../pidgin/gtkblist.c:5915
 #: ../pidgin/gtkdialogs.c:727 ../pidgin/gtkdialogs.c:865
 #: ../pidgin/gtkdialogs.c:957 ../pidgin/gtkdialogs.c:977
 #: ../pidgin/gtkdialogs.c:1001 ../pidgin/gtkdialogs.c:1023
@@ -258,7 +258,7 @@ msgstr "Cancelar"
 msgid "Save"
 msgstr "Guardar"
 
-#: ../finch/gntaccount.c:626 ../pidgin/gtkaccount.c:1900
+#: ../finch/gntaccount.c:626 ../pidgin/gtkaccount.c:1904
 #: ../pidgin/gtksavedstatuses.c:332 ../pidgin/gtkstatusbox.c:1576
 #, c-format
 msgid "Are you sure you want to delete %s?"
@@ -271,14 +271,14 @@ msgstr "Borrar cuenta"
 #. Delete button
 #: ../finch/gntaccount.c:631 ../finch/gntaccount.c:701
 #: ../finch/gntpounce.c:655 ../finch/gntpounce.c:718 ../finch/gntstatus.c:143
-#: ../finch/gntstatus.c:209 ../pidgin/gtkaccount.c:1907 ../pidgin/gtklog.c:326
+#: ../finch/gntstatus.c:209 ../pidgin/gtkaccount.c:1911 ../pidgin/gtklog.c:326
 #: ../pidgin/gtkpounce.c:1114 ../pidgin/gtkrequest.c:273
 #: ../pidgin/gtksavedstatuses.c:343 ../pidgin/gtkstatusbox.c:1581
 msgid "Delete"
 msgstr "Borrar"
 
-#: ../finch/gntaccount.c:663 ../finch/gntblist.c:2104 ../finch/gntui.c:77
-#: ../pidgin/gtkaccount.c:2327 ../pidgin/gtkdocklet.c:522
+#: ../finch/gntaccount.c:663 ../finch/gntblist.c:2105 ../finch/gntui.c:77
+#: ../pidgin/gtkaccount.c:2329 ../pidgin/gtkdocklet.c:522
 msgid "Accounts"
 msgstr "Cuentas"
 
@@ -293,10 +293,10 @@ msgstr "Puede (desh)habilitar cuentas de la lista a continuación."
 #: ../libpurple/protocols/gg/gg.c:878 ../libpurple/protocols/qq/sys_msg.c:116
 #: ../libpurple/protocols/qq/sys_msg.c:175
 #: ../libpurple/protocols/qq/sys_msg.c:270
-#: ../libpurple/protocols/sametime/sametime.c:5486
+#: ../libpurple/protocols/sametime/sametime.c:5487
 #: ../libpurple/protocols/silc/chat.c:615
-#: ../libpurple/protocols/silc10/chat.c:599 ../pidgin/gtkaccount.c:2500
-#: ../pidgin/gtkblist.c:5914 ../pidgin/gtkconv.c:1651
+#: ../libpurple/protocols/silc10/chat.c:599 ../pidgin/gtkaccount.c:2505
+#: ../pidgin/gtkblist.c:5914 ../pidgin/gtkconv.c:1652
 #: ../pidgin/gtkrequest.c:274
 msgid "Add"
 msgstr "Añadir"
@@ -306,33 +306,33 @@ msgstr "Añadir"
 msgid "Modify"
 msgstr "Modificar"
 
-#: ../finch/gntaccount.c:800 ../pidgin/gtkaccount.c:2447
+#: ../finch/gntaccount.c:800 ../pidgin/gtkaccount.c:2452
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
 msgstr "%s%s%s%s ha hecho a %s su amigo o amiga%s%s"
 
-#: ../finch/gntaccount.c:873 ../pidgin/gtkaccount.c:2499
+#: ../finch/gntaccount.c:873 ../pidgin/gtkaccount.c:2504
 msgid "Add buddy to your list?"
 msgstr "¿Desea añadir el amigo a su lista?"
 
-#: ../finch/gntaccount.c:927
-# c-format
-msgid "%s%s%s%s wants to add %s%s%s%s to his or her buddy list%s%s"
-msgstr "%s%s%s%s quiere añadir a %s%s%s%s a su lista de amigos%s%s."
+#: ../finch/gntaccount.c:927 ../pidgin/gtkaccount.c:2556
+#, c-format
+msgid "%s%s%s%s wants to add %s to his or her buddy list%s%s"
+msgstr "%s%s%s%s quiere añadir a %s a su lista de amigos%s%s."
 
-#: ../finch/gntaccount.c:955 ../finch/gntaccount.c:958
-#: ../finch/gntaccount.c:985 ../pidgin/gtkaccount.c:2574
-#: ../pidgin/gtkaccount.c:2580
+#: ../finch/gntaccount.c:952 ../finch/gntaccount.c:955
+#: ../finch/gntaccount.c:982 ../pidgin/gtkaccount.c:2579
+#: ../pidgin/gtkaccount.c:2585
 msgid "Authorize buddy?"
 msgstr "¿Autorizar al amigo?"
 
-#: ../finch/gntaccount.c:962 ../finch/gntaccount.c:989
-#: ../pidgin/gtkaccount.c:2575 ../pidgin/gtkaccount.c:2581
+#: ../finch/gntaccount.c:959 ../finch/gntaccount.c:986
+#: ../pidgin/gtkaccount.c:2580 ../pidgin/gtkaccount.c:2586
 msgid "Authorize"
 msgstr "Autorizar"
 
-#: ../finch/gntaccount.c:963 ../finch/gntaccount.c:990
-#: ../pidgin/gtkaccount.c:2576 ../pidgin/gtkaccount.c:2582
+#: ../finch/gntaccount.c:960 ../finch/gntaccount.c:987
+#: ../pidgin/gtkaccount.c:2581 ../pidgin/gtkaccount.c:2587
 msgid "Deny"
 msgstr "Denegar"
 
@@ -356,16 +356,16 @@ msgstr "La cuenta seleccionada no está conectada."
 msgid "Error adding buddy"
 msgstr "Error al añadir al amigo"
 
-#: ../finch/gntblist.c:324 ../libpurple/protocols/oscar/oscar.c:2864
-#: ../pidgin/gtkaccount.c:1983 ../pidgin/gtksavedstatuses.c:979
+#: ../finch/gntblist.c:324 ../libpurple/protocols/oscar/oscar.c:2860
+#: ../pidgin/gtkaccount.c:1985 ../pidgin/gtksavedstatuses.c:979
 msgid "Screen Name"
 msgstr "Nombre de usuario"
 
-#: ../finch/gntblist.c:327 ../finch/gntblist.c:404 ../finch/gntblist.c:1240
+#: ../finch/gntblist.c:327 ../finch/gntblist.c:404 ../finch/gntblist.c:1241
 #: ../libpurple/protocols/msn/msn.c:1364
 #: ../libpurple/protocols/silc/chat.c:606
 #: ../libpurple/protocols/silc10/chat.c:590
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:680
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:704
 #: ../libpurple/protocols/zephyr/zephyr.c:788
 #: ../libpurple/protocols/zephyr/zephyr.c:1207 ../pidgin/gtkdialogs.c:976
 #: ../pidgin/gtkdialogs.c:1000 ../pidgin/gtkdialogs.c:1022
@@ -377,11 +377,11 @@ msgstr "Apodo"
 msgid "Group"
 msgstr "Grupo"
 
-#: ../finch/gntblist.c:334 ../finch/gntblist.c:395 ../finch/gntblist.c:1292
+#: ../finch/gntblist.c:334 ../finch/gntblist.c:395 ../finch/gntblist.c:1293
 #: ../finch/gntnotify.c:173 ../finch/gntstatus.c:572
 #: ../libpurple/plugins/idle.c:153 ../libpurple/plugins/idle.c:190
 #: ../pidgin/gtkblist.c:2974 ../pidgin/gtknotify.c:482
-#: ../pidgin/gtkpounce.c:1282 ../pidgin/plugins/gevolution/gevolution.c:443
+#: ../pidgin/gtkpounce.c:1282 ../pidgin/plugins/gevolution/gevolution.c:445
 msgid "Account"
 msgstr "Cuenta"
 
@@ -440,8 +440,8 @@ msgid "A group with the name already exists."
 msgstr "Ya existe un grupo con ese nombre"
 
 #: ../finch/gntblist.c:445 ../finch/gntblist.c:847
-#: ../libpurple/protocols/sametime/sametime.c:5396
-#: ../libpurple/protocols/sametime/sametime.c:5484 ../pidgin/gtkblist.c:5911
+#: ../libpurple/protocols/sametime/sametime.c:5397
+#: ../libpurple/protocols/sametime/sametime.c:5485 ../pidgin/gtkblist.c:5911
 msgid "Add Group"
 msgstr "Añadir grupo"
 
@@ -493,7 +493,7 @@ msgstr "Añadir aviso de amigo"
 #: ../finch/gntblist.c:906 ../finch/gntconv.c:419
 #: ../libpurple/protocols/jabber/si.c:868
 #: ../libpurple/protocols/oscar/oscar.c:654 ../libpurple/protocols/qq/qq.c:585
-#: ../pidgin/gtkconv.c:1599
+#: ../pidgin/gtkconv.c:1600
 msgid "Send File"
 msgstr "Enviar archivo"
 
@@ -506,7 +506,7 @@ msgstr "Ver registro"
 msgid "Please enter the new name for %s"
 msgstr "Introduzca el nuevo nombre para %s"
 
-#: ../finch/gntblist.c:993 ../finch/gntblist.c:1240
+#: ../finch/gntblist.c:993 ../finch/gntblist.c:1241
 msgid "Rename"
 msgstr "Renombrar"
 
@@ -537,29 +537,29 @@ msgstr "¿Está seguro que quiere borrar a %s?"
 msgid "Confirm Remove"
 msgstr "Confirmar borrado"
 
-#: ../finch/gntblist.c:1091 ../finch/gntblist.c:1242 ../finch/gntft.c:224
-#: ../pidgin/gtkconv.c:1648 ../pidgin/gtkrequest.c:275
+#: ../finch/gntblist.c:1091 ../finch/gntblist.c:1243 ../finch/gntft.c:224
+#: ../pidgin/gtkconv.c:1649 ../pidgin/gtkrequest.c:275
 #: ../pidgin/gtkstatusbox.c:263
 msgid "Remove"
 msgstr "Quitar"
 
 #. Buddy List
-#: ../finch/gntblist.c:1216 ../finch/gntblist.c:2283 ../finch/gntprefs.c:257
+#: ../finch/gntblist.c:1217 ../finch/gntblist.c:2284 ../finch/gntprefs.c:257
 #: ../finch/gntui.c:78 ../pidgin/gtkblist.c:4256
 #: ../pidgin/plugins/win32/winprefs/winprefs.c:330
 msgid "Buddy List"
 msgstr "Lista de amigos"
 
-#: ../finch/gntblist.c:1247
+#: ../finch/gntblist.c:1248
 msgid "Place tagged"
 msgstr "Lugares marcados"
 
-#: ../finch/gntblist.c:1252
+#: ../finch/gntblist.c:1253
 msgid "Toggle Tag"
 msgstr "Cambiar marca"
 
 #. General
-#: ../finch/gntblist.c:1287 ../libpurple/protocols/gg/gg.c:632
+#: ../finch/gntblist.c:1288 ../libpurple/protocols/gg/gg.c:632
 #: ../libpurple/protocols/gg/gg.c:1045 ../libpurple/protocols/gg/gg.c:1118
 #: ../libpurple/protocols/gg/gg.c:2202
 #: ../libpurple/protocols/jabber/buddy.c:274
@@ -577,30 +577,30 @@ msgstr "Cambiar marca"
 #: ../libpurple/protocols/silc10/ops.c:1036
 #: ../libpurple/protocols/silc10/ops.c:1179
 #: ../libpurple/protocols/silc10/ops.c:1328
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1042 ../pidgin/gtkblist.c:2998
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1066 ../pidgin/gtkblist.c:2998
 msgid "Nickname"
 msgstr "Apodo"
 
 #. Idle stuff
-#: ../finch/gntblist.c:1307 ../finch/gntprefs.c:260
+#: ../finch/gntblist.c:1308 ../finch/gntprefs.c:260
 #: ../libpurple/protocols/bonjour/bonjour.c:314
 #: ../libpurple/protocols/jabber/buddy.c:647
 #: ../libpurple/protocols/jabber/buddy.c:687
 #: ../libpurple/protocols/msn/msn.c:516 ../libpurple/protocols/msn/state.c:32
 #: ../libpurple/protocols/novell/novell.c:2825
-#: ../libpurple/protocols/oscar/oscar.c:2888
+#: ../libpurple/protocols/oscar/oscar.c:2884
 #: ../libpurple/protocols/yahoo/yahoo.c:2915
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:686 ../pidgin/gtkblist.c:3026
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:710 ../pidgin/gtkblist.c:3026
 #: ../pidgin/gtkblist.c:3435 ../pidgin/gtkprefs.c:1918
 msgid "Idle"
 msgstr "Está inactivo"
 
 # El latinoamérica se prefiere 'Celular', creo, jfs
-#: ../finch/gntblist.c:1320
+#: ../finch/gntblist.c:1321
 msgid "On Mobile"
 msgstr "En el móvil"
 
-#: ../finch/gntblist.c:1400
+#: ../finch/gntblist.c:1401
 #, c-format
 msgid ""
 "Online: %d\n"
@@ -609,12 +609,12 @@ msgstr ""
 "En línea: %d\n"
 "Total: %d"
 
-#: ../finch/gntblist.c:1409
+#: ../finch/gntblist.c:1410
 #, c-format
 msgid "Account: %s (%s)"
 msgstr "Cuenta: %s (%s)"
 
-#: ../finch/gntblist.c:1421
+#: ../finch/gntblist.c:1422
 #, c-format
 msgid ""
 "\n"
@@ -623,43 +623,43 @@ msgstr ""
 "\n"
 "Visto por última vez: hace %s"
 
-#: ../finch/gntblist.c:1687 ../pidgin/gtkdocklet.c:470
+#: ../finch/gntblist.c:1688 ../pidgin/gtkdocklet.c:470
 #: ../pidgin/gtkstatusbox.c:1070
 msgid "New..."
 msgstr "Nuevo..."
 
-#: ../finch/gntblist.c:1694 ../pidgin/gtkdocklet.c:471
+#: ../finch/gntblist.c:1695 ../pidgin/gtkdocklet.c:471
 #: ../pidgin/gtkstatusbox.c:1071
 msgid "Saved..."
 msgstr "Guardado..."
 
-#: ../finch/gntblist.c:2072 ../finch/gntplugin.c:254 ../finch/gntui.c:82
+#: ../finch/gntblist.c:2073 ../finch/gntplugin.c:254 ../finch/gntui.c:82
 #: ../pidgin/gtkdocklet.c:523 ../pidgin/gtkplugin.c:530
 msgid "Plugins"
 msgstr "Complementos"
 
-#: ../finch/gntblist.c:2179 ../pidgin/gtkdialogs.c:708
+#: ../finch/gntblist.c:2180 ../pidgin/gtkdialogs.c:708
 #: ../pidgin/gtkdialogs.c:846 ../pidgin/gtkdialogs.c:927
 msgid "_Name"
 msgstr "_Nombre"
 
-#: ../finch/gntblist.c:2184 ../pidgin/gtkdialogs.c:713
+#: ../finch/gntblist.c:2185 ../pidgin/gtkdialogs.c:713
 #: ../pidgin/gtkdialogs.c:851 ../pidgin/gtkdialogs.c:932
 msgid "_Account"
 msgstr "_Cuenta"
 
-#: ../finch/gntblist.c:2192 ../pidgin/gtkdialogs.c:721
+#: ../finch/gntblist.c:2193 ../pidgin/gtkdialogs.c:721
 msgid "New Instant Message"
 msgstr "Mensaje instantáneo nuevo"
 
-#: ../finch/gntblist.c:2194 ../pidgin/gtkdialogs.c:723
+#: ../finch/gntblist.c:2195 ../pidgin/gtkdialogs.c:723
 msgid ""
 "Please enter the screen name or alias of the person you would like to IM."
 msgstr ""
 "Introduzca el nombre de usuario o apodo de la persona con la que quiere "
 "comunicarse."
 
-#: ../finch/gntblist.c:2197 ../finch/gntnotify.c:79 ../libpurple/account.c:983
+#: ../finch/gntblist.c:2198 ../finch/gntnotify.c:79 ../libpurple/account.c:983
 #: ../libpurple/account.c:1233 ../libpurple/protocols/gg/gg.c:501
 #: ../libpurple/protocols/gg/gg.c:660 ../libpurple/protocols/gg/gg.c:797
 #: ../libpurple/protocols/jabber/jabber.c:1383
@@ -692,31 +692,31 @@ msgid "OK"
 msgstr "Aceptar"
 
 #. Create the "Options" frame.
-#: ../finch/gntblist.c:2217 ../finch/gntpounce.c:446 ../pidgin/gtkpounce.c:791
+#: ../finch/gntblist.c:2218 ../finch/gntpounce.c:446 ../pidgin/gtkpounce.c:791
 msgid "Options"
 msgstr "Opciones"
 
-#: ../finch/gntblist.c:2223
+#: ../finch/gntblist.c:2224
 msgid "Send IM..."
 msgstr "Enviar MI..."
 
-#: ../finch/gntblist.c:2227
+#: ../finch/gntblist.c:2228
 msgid "Show empty groups"
 msgstr "Mostrar grupos vacíos"
 
-#: ../finch/gntblist.c:2233
+#: ../finch/gntblist.c:2234
 msgid "Show offline buddies"
 msgstr "Mostrar amigos desconectados"
 
-#: ../finch/gntblist.c:2239
+#: ../finch/gntblist.c:2240
 msgid "Sort by status"
 msgstr "Ordenar por estado"
 
-#: ../finch/gntblist.c:2243
+#: ../finch/gntblist.c:2244
 msgid "Sort alphabetically"
 msgstr "Ordenar alfabéticamente"
 
-#: ../finch/gntblist.c:2247
+#: ../finch/gntblist.c:2248
 msgid "Sort by log size"
 msgstr "Ordenar por tamaño de registro"
 
@@ -747,24 +747,24 @@ msgstr ""
 msgid "No such command."
 msgstr "No existe esa orden."
 
-#: ../finch/gntconv.c:121 ../pidgin/gtkconv.c:492
+#: ../finch/gntconv.c:121 ../pidgin/gtkconv.c:493
 msgid "Syntax Error:  You typed the wrong number of arguments to that command."
 msgstr ""
 "Error sintáctico:  Vd. no escribió suficientes argumentos para esa orden."
 
-#: ../finch/gntconv.c:126 ../pidgin/gtkconv.c:498
+#: ../finch/gntconv.c:126 ../pidgin/gtkconv.c:499
 msgid "Your command failed for an unknown reason."
 msgstr "Su orden ha fallado por motivos desconocidos."
 
-#: ../finch/gntconv.c:131 ../pidgin/gtkconv.c:505
+#: ../finch/gntconv.c:131 ../pidgin/gtkconv.c:506
 msgid "That command only works in chats, not IMs."
 msgstr "Esa orden sólo funciona en chats, no en MIs."
 
-#: ../finch/gntconv.c:134 ../pidgin/gtkconv.c:508
+#: ../finch/gntconv.c:134 ../pidgin/gtkconv.c:509
 msgid "That command only works in IMs, not chats."
 msgstr "Esa orden sólo funciona en MIs, no en chats."
 
-#: ../finch/gntconv.c:138 ../pidgin/gtkconv.c:513
+#: ../finch/gntconv.c:138 ../pidgin/gtkconv.c:514
 msgid "That command doesn't work on this protocol."
 msgstr "Esa orden no funciona en este protocolo."
 
@@ -820,15 +820,15 @@ msgstr "<RESPUESTA AUTOMÁTICA> "
 msgid "List of users:\n"
 msgstr "Lista de usuarios:\n"
 
-#: ../finch/gntconv.c:880 ../pidgin/gtkconv.c:335
+#: ../finch/gntconv.c:880 ../pidgin/gtkconv.c:336
 msgid "Supported debug options are:  version"
 msgstr "Las opciones de depuración soportadas son:  version"
 
-#: ../finch/gntconv.c:915 ../pidgin/gtkconv.c:384
+#: ../finch/gntconv.c:915 ../pidgin/gtkconv.c:385
 msgid "No such command (in this context)."
 msgstr "No existe esa orden (en este contexto)."
 
-#: ../finch/gntconv.c:918 ../pidgin/gtkconv.c:387
+#: ../finch/gntconv.c:918 ../pidgin/gtkconv.c:388
 msgid ""
 "Use \"/help &lt;command&gt;\" for help on a specific command.\n"
 "The following commands are available in this context:\n"
@@ -836,7 +836,7 @@ msgstr ""
 "Utilice \"/help &lt;orden&gt;\" para obtener ayuda de una orden concreta.\n"
 "Las siguientes órdenes están disponibles en este contexto:\n"
 
-#: ../finch/gntconv.c:976 ../pidgin/gtkconv.c:7198
+#: ../finch/gntconv.c:976 ../pidgin/gtkconv.c:7225
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
@@ -844,12 +844,12 @@ msgstr ""
 "say &lt;mensaje;gt;:  Enviar un mensaje como si no se estuviera utilizando "
 "una orden."
 
-#: ../finch/gntconv.c:979 ../pidgin/gtkconv.c:7201
+#: ../finch/gntconv.c:979 ../pidgin/gtkconv.c:7228
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr ""
 "me &lt;acción&gt;: enviar una acción estilo IRC a un amigo o a un chat."
 
-#: ../finch/gntconv.c:982 ../pidgin/gtkconv.c:7204
+#: ../finch/gntconv.c:982 ../pidgin/gtkconv.c:7231
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
@@ -857,11 +857,11 @@ msgstr ""
 "debug &lt;opción&gt;: Enviar información de depuración sobre la conversación "
 "actual."
 
-#: ../finch/gntconv.c:985 ../pidgin/gtkconv.c:7207
+#: ../finch/gntconv.c:985 ../pidgin/gtkconv.c:7234
 msgid "clear: Clears the conversation scrollback."
 msgstr "clear: limpia el histórico de la ventana de conversación."
 
-#: ../finch/gntconv.c:988 ../pidgin/gtkconv.c:7213
+#: ../finch/gntconv.c:988 ../pidgin/gtkconv.c:7240
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "help &lt;orden&gt;:  Recibir ayuda sobre una orden concreta."
 
@@ -958,10 +958,10 @@ msgstr "Restante"
 #: ../libpurple/protocols/oscar/oscar.c:821
 #: ../libpurple/protocols/oscar/oscar.c:826
 #: ../libpurple/protocols/oscar/oscar.c:828
-#: ../libpurple/protocols/oscar/oscar.c:2676
-#: ../libpurple/protocols/oscar/oscar.c:3794
-#: ../libpurple/protocols/sametime/sametime.c:3263
-#: ../libpurple/protocols/sametime/sametime.c:4150
+#: ../libpurple/protocols/oscar/oscar.c:2672
+#: ../libpurple/protocols/oscar/oscar.c:3789
+#: ../libpurple/protocols/sametime/sametime.c:3264
+#: ../libpurple/protocols/sametime/sametime.c:4151
 #: ../libpurple/protocols/yahoo/yahoo.c:3066 ../pidgin/gtkblist.c:3070
 #: ../pidgin/gtkblist.c:3083 ../pidgin/gtkblist.c:3085
 #: ../pidgin/gtksavedstatuses.c:998 ../pidgin/gtksavedstatuses.c:1143
@@ -984,7 +984,7 @@ msgstr "Parar"
 #: ../finch/gntft.c:234 ../finch/gntnotify.c:181 ../finch/gntplugin.c:209
 #: ../finch/gntplugin.c:309 ../finch/gntpounce.c:727 ../finch/gntstatus.c:215
 #: ../libpurple/protocols/msn/msn.c:375 ../libpurple/protocols/silc/util.c:382
-#: ../libpurple/protocols/silc10/util.c:377 ../pidgin/gtkaccount.c:2474
+#: ../libpurple/protocols/silc10/util.c:377 ../pidgin/gtkaccount.c:2479
 #: ../pidgin/gtkrequest.c:272
 msgid "Close"
 msgstr "Cerrar"
@@ -1042,13 +1042,13 @@ msgstr[1] "%s (%s) tiene %d nuevos mensajes."
 msgid "New Mail"
 msgstr "Nuevo correo"
 
-#: ../finch/gntnotify.c:289 ../pidgin/gtknotify.c:916
+#: ../finch/gntnotify.c:289 ../pidgin/gtknotify.c:915
 #, c-format
 msgid "Info for %s"
 msgstr "Información sobre %s:"
 
 #: ../finch/gntnotify.c:290 ../libpurple/protocols/toc/toc.c:476
-#: ../pidgin/gtknotify.c:917
+#: ../pidgin/gtknotify.c:916
 msgid "Buddy Information"
 msgstr "Información de amigos"
 
@@ -1056,11 +1056,11 @@ msgstr "Información de amigos"
 msgid "Continue"
 msgstr "Continuar"
 
-#: ../finch/gntnotify.c:382 ../pidgin/gtkconv.c:1627 ../pidgin/gtkdebug.c:834
+#: ../finch/gntnotify.c:382 ../pidgin/gtkconv.c:1628 ../pidgin/gtkdebug.c:834
 msgid "Info"
 msgstr "Info"
 
-#: ../finch/gntnotify.c:385 ../pidgin/gtkconv.c:1588
+#: ../finch/gntnotify.c:385 ../pidgin/gtkconv.c:1589
 msgid "IM"
 msgstr "MI"
 
@@ -1068,7 +1068,7 @@ msgstr "MI"
 msgid "Join"
 msgstr "Unirse"
 
-#: ../finch/gntnotify.c:391 ../libpurple/protocols/sametime/sametime.c:3473
+#: ../finch/gntnotify.c:391 ../libpurple/protocols/sametime/sametime.c:3474
 msgid "Invite"
 msgstr "Invitar"
 
@@ -1370,13 +1370,13 @@ msgstr "Registro"
 msgid "Not implemented yet."
 msgstr "No implementado aún."
 
-#: ../finch/gntrequest.c:635 ../pidgin/gtkrequest.c:1526
-#: ../pidgin/gtkrequest.c:1572
+#: ../finch/gntrequest.c:635 ../pidgin/gtkrequest.c:1531
+#: ../pidgin/gtkrequest.c:1577
 msgid "Save File..."
 msgstr "Enviar archivo.."
 
-#: ../finch/gntrequest.c:635 ../pidgin/gtkrequest.c:1527
-#: ../pidgin/gtkrequest.c:1573
+#: ../finch/gntrequest.c:635 ../pidgin/gtkrequest.c:1532
+#: ../pidgin/gtkrequest.c:1578
 msgid "Open File..."
 msgstr "Abrir archivo..."
 
@@ -1429,10 +1429,10 @@ msgstr "Tipo"
 #: ../libpurple/protocols/oscar/oscar.c:5781
 #: ../libpurple/protocols/oscar/oscar.c:5788
 #: ../libpurple/protocols/oscar/oscar.c:5795
-#: ../libpurple/protocols/sametime/sametime.c:3286
-#: ../libpurple/protocols/sametime/sametime.c:3292
-#: ../libpurple/protocols/sametime/sametime.c:3298
-#: ../libpurple/protocols/sametime/sametime.c:3377
+#: ../libpurple/protocols/sametime/sametime.c:3287
+#: ../libpurple/protocols/sametime/sametime.c:3293
+#: ../libpurple/protocols/sametime/sametime.c:3299
+#: ../libpurple/protocols/sametime/sametime.c:3378
 #: ../libpurple/protocols/silc/buddy.c:1551
 #: ../libpurple/protocols/silc10/buddy.c:1551
 #: ../libpurple/protocols/simple/simple.c:246
@@ -2313,9 +2313,9 @@ msgstr "_Guardar"
 
 #: ../libpurple/plugins/autoaccept.c:165 ../libpurple/plugins/idle.c:170
 #: ../libpurple/plugins/idle.c:204 ../libpurple/plugins/idle.c:230
-#: ../libpurple/protocols/oscar/oscar.c:1458
-#: ../libpurple/protocols/oscar/oscar.c:2251
-#: ../libpurple/protocols/oscar/oscar.c:2298
+#: ../libpurple/protocols/oscar/oscar.c:1454
+#: ../libpurple/protocols/oscar/oscar.c:2247
+#: ../libpurple/protocols/oscar/oscar.c:2294
 #: ../libpurple/protocols/oscar/oscar.c:5865
 #: ../libpurple/protocols/oscar/oscar.c:5920
 #: ../libpurple/protocols/oscar/oscar.c:6146
@@ -2638,66 +2638,66 @@ msgstr "No se envió su mensaje."
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
 #. choose to leave them alone.  Choose what's best for your language.
-#: ../libpurple/plugins/log_reader.c:2344
-#: ../libpurple/plugins/log_reader.c:2467
+#: ../libpurple/plugins/log_reader.c:2343
+#: ../libpurple/plugins/log_reader.c:2466
 msgid "Adium"
 msgstr "Adium"
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
 #. choose to leave them alone.  Choose what's best for your language.
-#: ../libpurple/plugins/log_reader.c:2357
-#: ../libpurple/plugins/log_reader.c:2472
+#: ../libpurple/plugins/log_reader.c:2356
+#: ../libpurple/plugins/log_reader.c:2471
 msgid "Fire"
 msgstr "Fire"
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
 #. choose to leave them alone.  Choose what's best for your language.
-#: ../libpurple/plugins/log_reader.c:2369
-#: ../libpurple/plugins/log_reader.c:2476
+#: ../libpurple/plugins/log_reader.c:2368
+#: ../libpurple/plugins/log_reader.c:2475
 msgid "Messenger Plus!"
 msgstr "Messenger Plus!"
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
 #. choose to leave them alone.  Choose what's best for your language.
-#: ../libpurple/plugins/log_reader.c:2383
-#: ../libpurple/plugins/log_reader.c:2481
+#: ../libpurple/plugins/log_reader.c:2382
+#: ../libpurple/plugins/log_reader.c:2480
 msgid "QIP"
 msgstr "QIP"
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
 #. choose to leave them alone.  Choose what's best for your language.
-#: ../libpurple/plugins/log_reader.c:2395
-#: ../libpurple/plugins/log_reader.c:2485
+#: ../libpurple/plugins/log_reader.c:2394
+#: ../libpurple/plugins/log_reader.c:2484
 msgid "MSN Messenger"
 msgstr "MSN Messenger"
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
 #. choose to leave them alone.  Choose what's best for your language.
-#: ../libpurple/plugins/log_reader.c:2407
-#: ../libpurple/plugins/log_reader.c:2489
+#: ../libpurple/plugins/log_reader.c:2406
+#: ../libpurple/plugins/log_reader.c:2488
 msgid "Trillian"
 msgstr "Trillian"
 
 #. Add general preferences.
-#: ../libpurple/plugins/log_reader.c:2449
+#: ../libpurple/plugins/log_reader.c:2448
 msgid "General Log Reading Configuration"
 msgstr "Configuración general de lectura del registro"
 
-#: ../libpurple/plugins/log_reader.c:2453
+#: ../libpurple/plugins/log_reader.c:2452
 msgid "Fast size calculations"
 msgstr "Cálculos de tamaño rápido"
 
-#: ../libpurple/plugins/log_reader.c:2457
+#: ../libpurple/plugins/log_reader.c:2456
 msgid "Use name heuristics"
 msgstr "Utilizar heurísticos de nombres"
 
 #. Add Log Directory preferences.
-#: ../libpurple/plugins/log_reader.c:2463
+#: ../libpurple/plugins/log_reader.c:2462
 msgid "Log Directory"
 msgstr "Directorio de registro"
 
@@ -2707,19 +2707,19 @@ msgstr "Directorio de registro"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: ../libpurple/plugins/log_reader.c:2518
+#: ../libpurple/plugins/log_reader.c:2517
 msgid "Log Reader"
 msgstr "Lector de registro"
 
 #. *< name
 #. *< version
 #. * summary
-#: ../libpurple/plugins/log_reader.c:2522
+#: ../libpurple/plugins/log_reader.c:2521
 msgid "Includes other IM clients' logs in the log viewer."
 msgstr "Incluir otros registros de clientes de MI en el visor de registro."
 
 #. * description
-#: ../libpurple/plugins/log_reader.c:2526
+#: ../libpurple/plugins/log_reader.c:2525
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
 "Currently, this includes Adium, MSN Messenger, and Trillian.\n"
@@ -3114,31 +3114,31 @@ msgstr "Complemento de protocolo Bonjour"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:470
 #: ../libpurple/protocols/bonjour/bonjour.c:477
-#: ../libpurple/protocols/bonjour/bonjour.c:535
+#: ../libpurple/protocols/bonjour/bonjour.c:526
 msgid "Purple Person"
 msgstr "Persona morada"
 
 #. Creating the user splits
-#: ../libpurple/protocols/bonjour/bonjour.c:583
+#: ../libpurple/protocols/bonjour/bonjour.c:575
 #: ../libpurple/protocols/silc/silc.c:1007
 #: ../libpurple/protocols/silc10/silc.c:918
 msgid "Hostname"
 msgstr "Servidor"
 
 #. Creating the options for the protocol
-#: ../libpurple/protocols/bonjour/bonjour.c:587
+#: ../libpurple/protocols/bonjour/bonjour.c:579
 #: ../libpurple/protocols/gg/gg.c:627
 #: ../libpurple/protocols/jabber/jabber.c:828
 msgid "First name"
 msgstr "Nombre:"
 
-#: ../libpurple/protocols/bonjour/bonjour.c:590
+#: ../libpurple/protocols/bonjour/bonjour.c:582
 #: ../libpurple/protocols/gg/gg.c:622
 #: ../libpurple/protocols/jabber/jabber.c:833
 msgid "Last name"
 msgstr "Apellidos:"
 
-#: ../libpurple/protocols/bonjour/bonjour.c:593
+#: ../libpurple/protocols/bonjour/bonjour.c:585
 #: ../libpurple/protocols/gg/gg.c:472
 #: ../libpurple/protocols/jabber/jabber.c:818
 #: ../libpurple/protocols/silc/silc.c:770
@@ -3148,11 +3148,11 @@ msgstr "Apellidos:"
 msgid "E-mail"
 msgstr "Correo electrónico"
 
-#: ../libpurple/protocols/bonjour/bonjour.c:596
+#: ../libpurple/protocols/bonjour/bonjour.c:588
 msgid "AIM Account"
 msgstr "Cuenta AIM"
 
-#: ../libpurple/protocols/bonjour/bonjour.c:599
+#: ../libpurple/protocols/bonjour/bonjour.c:591
 msgid "XMPP Account"
 msgstr "Cuenta XMPP"
 
@@ -3291,8 +3291,8 @@ msgstr "Por favor, rellene los siguientes campos"
 #: ../libpurple/protocols/gg/gg.c:637 ../libpurple/protocols/gg/gg.c:1049
 #: ../libpurple/protocols/gg/gg.c:1121
 #: ../libpurple/protocols/jabber/jabber.c:843
-#: ../libpurple/protocols/oscar/oscar.c:3803
-#: ../libpurple/protocols/oscar/oscar.c:3816
+#: ../libpurple/protocols/oscar/oscar.c:3798
+#: ../libpurple/protocols/oscar/oscar.c:3811
 #: ../libpurple/protocols/qq/buddy_info.c:49
 msgid "City"
 msgstr "Ciudad"
@@ -3302,11 +3302,11 @@ msgid "Year of birth"
 msgstr "Año de nacimiento"
 
 #: ../libpurple/protocols/gg/gg.c:645 ../libpurple/protocols/msn/msn.c:1558
-#: ../libpurple/protocols/oscar/oscar.c:3746
+#: ../libpurple/protocols/oscar/oscar.c:3741
 #: ../libpurple/protocols/qq/buddy_info.c:46
 #: ../libpurple/protocols/qq/qq.c:224 ../libpurple/protocols/qq/qq.c:227
 #: ../libpurple/protocols/qq/qq.c:230 ../libpurple/protocols/qq/qq.c:234
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1067
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1091
 msgid "Gender"
 msgstr "Sexo"
 
@@ -3315,14 +3315,14 @@ msgid "Male or female"
 msgstr "Hombre o mujer"
 
 #: ../libpurple/protocols/gg/gg.c:647
-#: ../libpurple/protocols/oscar/oscar.c:3746
+#: ../libpurple/protocols/oscar/oscar.c:3741
 #: ../libpurple/protocols/qq/buddy_info.c:83
 #: ../libpurple/protocols/qq/qq.c:224
 msgid "Male"
 msgstr "Hombre"
 
 #: ../libpurple/protocols/gg/gg.c:648
-#: ../libpurple/protocols/oscar/oscar.c:3746
+#: ../libpurple/protocols/oscar/oscar.c:3741
 #: ../libpurple/protocols/qq/buddy_info.c:84
 #: ../libpurple/protocols/qq/qq.c:227
 msgid "Female"
@@ -3404,15 +3404,15 @@ msgid "Available"
 msgstr "Disponible"
 
 #: ../libpurple/protocols/gg/gg.c:1038 ../libpurple/protocols/gg/gg.c:1112
-#: ../libpurple/protocols/oscar/oscar.c:2675
-#: ../libpurple/protocols/oscar/oscar.c:3713
+#: ../libpurple/protocols/oscar/oscar.c:2671
+#: ../libpurple/protocols/oscar/oscar.c:3708
 msgid "UIN"
 msgstr "UIN"
 
 #: ../libpurple/protocols/gg/gg.c:1041 ../libpurple/protocols/gg/gg.c:1115
 #: ../libpurple/protocols/jabber/buddy.c:1623
 #: ../libpurple/protocols/jabber/buddy.c:1799
-#: ../libpurple/protocols/oscar/oscar.c:3724
+#: ../libpurple/protocols/oscar/oscar.c:3719
 #: ../libpurple/protocols/silc/ops.c:990
 #: ../libpurple/protocols/silc10/ops.c:1024
 msgid "First Name"
@@ -3423,7 +3423,7 @@ msgid "Birth Year"
 msgstr "Año de nacimiento"
 
 #: ../libpurple/protocols/gg/gg.c:1106 ../libpurple/protocols/gg/gg.c:1175
-#: ../libpurple/protocols/oscar/oscar.c:3925
+#: ../libpurple/protocols/oscar/oscar.c:3920
 msgid "Unable to display the search results."
 msgstr "No se pueden mostrar los resultados de la búsqueda."
 
@@ -3633,8 +3633,8 @@ msgstr "Los apodos de IRC no pueden tener espacios en blanco"
 #: ../libpurple/protocols/novell/novell.c:2182
 #: ../libpurple/protocols/oscar/oscar.c:1288
 #: ../libpurple/protocols/qq/qq.c:136
-#: ../libpurple/protocols/sametime/sametime.c:3723
-#: ../libpurple/protocols/simple/simple.c:1671
+#: ../libpurple/protocols/sametime/sametime.c:3724
+#: ../libpurple/protocols/simple/simple.c:1676
 #: ../libpurple/protocols/yahoo/yahoo.c:2762
 #: ../libpurple/protocols/zephyr/zephyr.c:1621 ../pidgin/gtkstatusbox.c:661
 msgid "Connecting"
@@ -3648,7 +3648,7 @@ msgstr "Soporte SSL no disponible"
 
 #: ../libpurple/protocols/irc/irc.c:338
 #: ../libpurple/protocols/simple/simple.c:464
-#: ../libpurple/protocols/simple/simple.c:1586
+#: ../libpurple/protocols/simple/simple.c:1591
 msgid "Couldn't create socket"
 msgstr "No se pudo crear el socket"
 
@@ -3679,7 +3679,7 @@ msgid "Users"
 msgstr "Usuarios"
 
 #: ../libpurple/protocols/irc/irc.c:778
-#: ../libpurple/protocols/sametime/sametime.c:3374
+#: ../libpurple/protocols/sametime/sametime.c:3375
 #: ../libpurple/protocols/silc/chat.c:1415
 #: ../libpurple/protocols/silc/ops.c:1389
 #: ../libpurple/protocols/silc10/chat.c:1429
@@ -3710,12 +3710,12 @@ msgstr "Complemento de protocolo IRC menos malo"
 #: ../libpurple/protocols/msn/msn.c:2154
 #: ../libpurple/protocols/oscar/oscar.c:6650
 #: ../libpurple/protocols/qq/qq.c:756
-#: ../libpurple/protocols/sametime/sametime.c:5727
+#: ../libpurple/protocols/sametime/sametime.c:5728
 #: ../libpurple/protocols/silc/ops.c:1249
 #: ../libpurple/protocols/silc/ops.c:1341
 #: ../libpurple/protocols/silc10/ops.c:1244
 #: ../libpurple/protocols/silc10/ops.c:1347
-#: ../libpurple/protocols/simple/simple.c:1850
+#: ../libpurple/protocols/simple/simple.c:1855
 #: ../libpurple/protocols/toc/toc.c:2327
 msgid "Server"
 msgstr "Servidor"
@@ -3724,7 +3724,7 @@ msgstr "Servidor"
 #: ../libpurple/protocols/irc/irc.c:945 ../libpurple/protocols/msn/msn.c:2159
 #: ../libpurple/protocols/oscar/oscar.c:6653
 #: ../libpurple/protocols/qq/qq.c:759
-#: ../libpurple/protocols/sametime/sametime.c:5732
+#: ../libpurple/protocols/sametime/sametime.c:5733
 #: ../libpurple/protocols/silc/silc.c:1918
 #: ../libpurple/protocols/silc10/silc.c:1861
 #: ../libpurple/protocols/toc/toc.c:2331
@@ -3794,7 +3794,7 @@ msgid " <i>(identified)</i>"
 msgstr " <i>(identificado)</i>"
 
 #: ../libpurple/protocols/irc/msgs.c:303
-#: ../libpurple/protocols/oscar/oscar.c:3714
+#: ../libpurple/protocols/oscar/oscar.c:3709
 #: ../libpurple/protocols/silc/ops.c:1418
 #: ../libpurple/protocols/silc10/ops.c:1414
 msgid "Nick"
@@ -4272,7 +4272,7 @@ msgstr "Error de SASL"
 
 #: ../libpurple/protocols/jabber/buddy.c:271
 #: ../libpurple/protocols/jabber/buddy.c:825
-#: ../libpurple/protocols/sametime/sametime.c:4128
+#: ../libpurple/protocols/sametime/sametime.c:4129
 #: ../libpurple/protocols/silc/ops.c:986
 #: ../libpurple/protocols/silc10/ops.c:1020
 msgid "Full Name"
@@ -4341,7 +4341,7 @@ msgstr "Teléfono"
 #: ../libpurple/protocols/silc/util.c:555
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1037
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
 msgid "E-Mail"
 msgstr "Correo electrónico"
 
@@ -4363,7 +4363,7 @@ msgstr "Rol"
 #: ../libpurple/protocols/jabber/buddy.c:288
 #: ../libpurple/protocols/jabber/buddy.c:859
 #: ../libpurple/protocols/msn/msn.c:1627
-#: ../libpurple/protocols/oscar/oscar.c:3763
+#: ../libpurple/protocols/oscar/oscar.c:3758
 msgid "Birthday"
 msgstr "Cumpleaños"
 
@@ -4420,8 +4420,8 @@ msgstr "Nombre medio"
 
 #: ../libpurple/protocols/jabber/buddy.c:879
 #: ../libpurple/protocols/jabber/jabber.c:838
-#: ../libpurple/protocols/oscar/oscar.c:3802
-#: ../libpurple/protocols/oscar/oscar.c:3815
+#: ../libpurple/protocols/oscar/oscar.c:3797
+#: ../libpurple/protocols/oscar/oscar.c:3810
 #: ../libpurple/protocols/qq/buddy_info.c:56
 #: ../libpurple/protocols/silc/ops.c:1030
 #: ../libpurple/protocols/silc10/ops.c:1064
@@ -4477,7 +4477,7 @@ msgstr "Ausencia extendida"
 #: ../libpurple/protocols/jabber/jabber.c:1282
 #: ../libpurple/protocols/oscar/oscar.c:727
 #: ../libpurple/protocols/oscar/oscar.c:5787
-#: ../libpurple/protocols/sametime/sametime.c:3297
+#: ../libpurple/protocols/sametime/sametime.c:3298
 msgid "Do Not Disturb"
 msgstr "No molestar"
 
@@ -4487,7 +4487,7 @@ msgstr "JID"
 
 #: ../libpurple/protocols/jabber/buddy.c:1625
 #: ../libpurple/protocols/jabber/buddy.c:1804
-#: ../libpurple/protocols/oscar/oscar.c:3725
+#: ../libpurple/protocols/oscar/oscar.c:3720
 msgid "Last Name"
 msgstr "Apellidos"
 
@@ -4527,8 +4527,8 @@ msgstr ""
 
 #: ../libpurple/protocols/jabber/buddy.c:1814
 #: ../libpurple/protocols/novell/novell.c:1488
-#: ../libpurple/protocols/oscar/oscar.c:3728
-#: ../libpurple/protocols/oscar/oscar.c:3737
+#: ../libpurple/protocols/oscar/oscar.c:3723
+#: ../libpurple/protocols/oscar/oscar.c:3732
 msgid "E-Mail Address"
 msgstr "Dirección de correo electrónico"
 
@@ -4544,7 +4544,7 @@ msgstr "Buscar un usuario XMPP"
 #: ../libpurple/protocols/qq/sys_msg.c:176
 #: ../libpurple/protocols/qq/sys_msg.c:253
 #: ../libpurple/protocols/qq/sys_msg.c:271
-#: ../libpurple/protocols/sametime/sametime.c:5611
+#: ../libpurple/protocols/sametime/sametime.c:5612
 #: ../pidgin/plugins/gevolution/add_buddy_dialog.c:470
 #: ../pidgin/plugins/gevolution/assoc-buddy.c:356
 msgid "Search"
@@ -4674,7 +4674,7 @@ msgid "Read Error"
 msgstr "Error de lectura"
 
 #: ../libpurple/protocols/jabber/jabber.c:467
-#: ../libpurple/protocols/oscar/flap_connection.c:386
+#: ../libpurple/protocols/oscar/flap_connection.c:394
 #: ../libpurple/protocols/yahoo/yahoo.c:2381
 #: ../libpurple/protocols/yahoo/yahoo.c:2413
 #, c-format
@@ -4724,8 +4724,8 @@ msgid "Already Registered"
 msgstr "Ya está registrado"
 
 #: ../libpurple/protocols/jabber/jabber.c:848
-#: ../libpurple/protocols/oscar/oscar.c:3804
-#: ../libpurple/protocols/oscar/oscar.c:3817
+#: ../libpurple/protocols/oscar/oscar.c:3799
+#: ../libpurple/protocols/oscar/oscar.c:3812
 msgid "State"
 msgstr "Estado"
 
@@ -5178,7 +5178,7 @@ msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Permitir autenticación en claro sobre canales no cifrados"
 
 #: ../libpurple/protocols/jabber/libxmpp.c:216
-#: ../libpurple/protocols/simple/simple.c:1856
+#: ../libpurple/protocols/simple/simple.c:1861
 msgid "Connect port"
 msgstr "Puerto de conexión"
 
@@ -5700,7 +5700,7 @@ msgid "Failed to connect to server."
 msgstr "No se pudo conectar al servidor."
 
 #: ../libpurple/protocols/msn/msn.c:1479 ../libpurple/protocols/msn/msn.c:1827
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:784
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:808
 msgid "Error retrieving profile"
 msgstr "Error al obtener el perfil"
 
@@ -5710,22 +5710,22 @@ msgid "General"
 msgstr "General"
 
 #: ../libpurple/protocols/msn/msn.c:1557
-#: ../libpurple/protocols/oscar/oscar.c:3769
+#: ../libpurple/protocols/oscar/oscar.c:3764
 #: ../libpurple/protocols/qq/buddy_info.c:45
 #: ../libpurple/protocols/qq/qq.c:219
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1057
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1081
 msgid "Age"
 msgstr "Edad"
 
 #: ../libpurple/protocols/msn/msn.c:1559
 #: ../libpurple/protocols/qq/buddy_info.c:51
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1072
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1096
 msgid "Occupation"
 msgstr "Ocupación"
 
 #: ../libpurple/protocols/msn/msn.c:1560
 #: ../libpurple/protocols/novell/novell.c:1478
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1052
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1076
 #: ../libpurple/protocols/zephyr/zephyr.c:798
 #: ../libpurple/protocols/zephyr/zephyr.c:1215
 msgid "Location"
@@ -5747,7 +5747,7 @@ msgid "Social"
 msgstr "Social"
 
 #: ../libpurple/protocols/msn/msn.c:1590
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1062
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1086
 msgid "Marital Status"
 msgstr "Estado civil"
 
@@ -5781,7 +5781,7 @@ msgstr "Música"
 
 #: ../libpurple/protocols/msn/msn.c:1598 ../libpurple/protocols/msn/msn.c:1779
 #: ../libpurple/protocols/msn/msn.c:1785
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1114
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1138
 msgid "Favorite Quote"
 msgstr "Cita preferida"
 
@@ -5806,7 +5806,7 @@ msgid "Home Phone 2"
 msgstr "Teléfono de casa (2)"
 
 #: ../libpurple/protocols/msn/msn.c:1622
-#: ../libpurple/protocols/oscar/oscar.c:3807
+#: ../libpurple/protocols/oscar/oscar.c:3802
 msgid "Home Address"
 msgstr "Domicilio"
 
@@ -5843,7 +5843,7 @@ msgid "Job Title"
 msgstr "Trabajo"
 
 #: ../libpurple/protocols/msn/msn.c:1647
-#: ../libpurple/protocols/oscar/oscar.c:3828
+#: ../libpurple/protocols/oscar/oscar.c:3823
 msgid "Company"
 msgstr "Compañía"
 
@@ -5865,7 +5865,7 @@ msgid "Work Phone 2"
 msgstr "Teléfono del trabajo (2)"
 
 #: ../libpurple/protocols/msn/msn.c:1652
-#: ../libpurple/protocols/oscar/oscar.c:3820
+#: ../libpurple/protocols/oscar/oscar.c:3815
 msgid "Work Address"
 msgstr "Dirección del trabajo"
 
@@ -5933,7 +5933,7 @@ msgstr ""
 "usuario no exista."
 
 #: ../libpurple/protocols/msn/msn.c:1841
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1216
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1240
 msgid "Profile URL"
 msgstr "URL del perfil"
 
@@ -6093,7 +6093,7 @@ msgid "Error parsing HTTP."
 msgstr "Error en el análisis HTTP."
 
 #: ../libpurple/protocols/msn/session.c:307
-#: ../libpurple/protocols/oscar/oscar.c:3481
+#: ../libpurple/protocols/oscar/flap_connection.c:384
 #: ../libpurple/protocols/yahoo/yahoo.c:202
 msgid "You have signed on from another location."
 msgstr "Ha conectado desde otra ubicación."
@@ -6460,7 +6460,7 @@ msgid "Mailstop"
 msgstr "Buzón de correo"
 
 #: ../libpurple/protocols/novell/novell.c:1502
-#: ../libpurple/protocols/sametime/sametime.c:4122
+#: ../libpurple/protocols/sametime/sametime.c:4123
 msgid "User ID"
 msgstr "ID de usuario"
 
@@ -6576,7 +6576,7 @@ msgstr "Dirección del servidor"
 msgid "Server port"
 msgstr "Puerto del servidor"
 
-#: ../libpurple/protocols/oscar/flap_connection.c:379
+#: ../libpurple/protocols/oscar/flap_connection.c:387
 #: ../libpurple/protocols/yahoo/yahoo.c:2292
 #: ../libpurple/protocols/yahoo/yahoo.c:2459
 #: ../libpurple/protocols/yahoo/ycht.c:481 ../libpurple/proxy.c:580
@@ -6585,7 +6585,7 @@ msgstr "Puerto del servidor"
 msgid "Server closed the connection."
 msgstr "El servidor ha cerrado la conexión."
 
-#: ../libpurple/protocols/oscar/flap_connection.c:381
+#: ../libpurple/protocols/oscar/flap_connection.c:389
 #: ../libpurple/protocols/yahoo/yahoo.c:2286
 #: ../libpurple/protocols/yahoo/yahoo.c:2453 ../libpurple/proxy.c:592
 #: ../libpurple/proxy.c:1111 ../libpurple/proxy.c:1220
@@ -6598,7 +6598,7 @@ msgstr ""
 "Se perdió la conexión con el servidor:\n"
 "%s"
 
-#: ../libpurple/protocols/oscar/flap_connection.c:384
+#: ../libpurple/protocols/oscar/flap_connection.c:392
 #: ../libpurple/proxy.c:1128 ../libpurple/proxy.c:1233
 #: ../libpurple/proxy.c:1332 ../libpurple/proxy.c:1404
 #: ../libpurple/proxy.c:1461
@@ -6915,13 +6915,13 @@ msgid "Online"
 msgstr "Conectado"
 
 #: ../libpurple/protocols/oscar/oscar.c:838
-#: ../libpurple/protocols/oscar/oscar.c:3721
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:697 ../pidgin/gtkprefs.c:1121
+#: ../libpurple/protocols/oscar/oscar.c:3716
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:721 ../pidgin/gtkprefs.c:1121
 msgid "IP Address"
 msgstr "Dirección IP"
 
 #: ../libpurple/protocols/oscar/oscar.c:845
-#: ../libpurple/protocols/oscar/oscar.c:2867
+#: ../libpurple/protocols/oscar/oscar.c:2863
 msgid "Warning Level"
 msgstr "Niveles de aviso"
 
@@ -6966,7 +6966,11 @@ msgid ""
 "Unable to login: Could not sign on as %s because the screen name is "
 "invalid.  Screen names must be a valid email address, or start with a letter "
 "and contain only letters, numbers and spaces, or contain only numbers."
-msgstr "Incapaz de registrarse: No pudo conectarse como %s porque el nombre de usuario no es válido. Los nombres de usuario deben ser direcciones de correo válidas, o empezar con una letra y sólo pueden contener letras, números y espacios, o contener sólo números."
+msgstr ""
+"Incapaz de registrarse: No pudo conectarse como %s porque el nombre de "
+"usuario no es válido. Los nombres de usuario deben ser direcciones de correo "
+"válidas, o empezar con una letra y sólo pueden contener letras, números y "
+"espacios, o contener sólo números."
 
 #: ../libpurple/protocols/oscar/oscar.c:1346
 #: ../libpurple/protocols/yahoo/yahoo.c:1934
@@ -6975,7 +6979,7 @@ msgstr "Nombre de usuario no válido"
 
 #: ../libpurple/protocols/oscar/oscar.c:1353
 #: ../libpurple/protocols/qq/login_logout.c:483
-#: ../libpurple/protocols/simple/simple.c:1037
+#: ../libpurple/protocols/simple/simple.c:1039
 #: ../libpurple/protocols/yahoo/yahoo.c:1952
 msgid "Incorrect password."
 msgstr "Contraseña incorrecta."
@@ -7007,39 +7011,39 @@ msgstr ""
 "La versión del cliente que usa es demasiado antigua. Por favor, actualícela "
 "en %s"
 
-#: ../libpurple/protocols/oscar/oscar.c:1412
+#: ../libpurple/protocols/oscar/oscar.c:1411
 msgid "Could Not Connect"
 msgstr "No se pudo conectar"
 
-#: ../libpurple/protocols/oscar/oscar.c:1417
+#: ../libpurple/protocols/oscar/oscar.c:1415
 msgid "Received authorization"
 msgstr "Se recibió la autorización"
 
-#: ../libpurple/protocols/oscar/oscar.c:1440
+#: ../libpurple/protocols/oscar/oscar.c:1437
 msgid "The SecurID key entered is invalid."
 msgstr "La clave SecurID que se ha introducido no es válida."
 
-#: ../libpurple/protocols/oscar/oscar.c:1454
+#: ../libpurple/protocols/oscar/oscar.c:1450
 msgid "Enter SecurID"
 msgstr "Introduzca SecurID"
 
-#: ../libpurple/protocols/oscar/oscar.c:1455
+#: ../libpurple/protocols/oscar/oscar.c:1451
 msgid "Enter the 6 digit number from the digital display."
 msgstr "Introduzca el dígito de seis números que aparece en la pantalla."
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
 #.
-#: ../libpurple/protocols/oscar/oscar.c:1457
-#: ../libpurple/protocols/oscar/oscar.c:2250
-#: ../libpurple/protocols/oscar/oscar.c:2297
+#: ../libpurple/protocols/oscar/oscar.c:1453
+#: ../libpurple/protocols/oscar/oscar.c:2246
+#: ../libpurple/protocols/oscar/oscar.c:2293
 #: ../libpurple/protocols/oscar/oscar.c:5864
 #: ../libpurple/protocols/oscar/oscar.c:6145 ../libpurple/request.h:1387
 msgid "_OK"
 msgstr "_Aceptar"
 
-#: ../libpurple/protocols/oscar/oscar.c:1496
-#: ../libpurple/protocols/oscar/oscar.c:1539
+#: ../libpurple/protocols/oscar/oscar.c:1492
+#: ../libpurple/protocols/oscar/oscar.c:1535
 #, c-format
 msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
@@ -7048,53 +7052,53 @@ msgstr ""
 "Quizá sea desconectado en breve.  Puede querer usar TOC hasta que esto se "
 "resuelva.  Compruebe %s para novedades."
 
-#: ../libpurple/protocols/oscar/oscar.c:1499
-#: ../libpurple/protocols/oscar/oscar.c:1542
+#: ../libpurple/protocols/oscar/oscar.c:1495
+#: ../libpurple/protocols/oscar/oscar.c:1538
 msgid "Unable to get a valid AIM login hash."
 msgstr "No se pudo obtener un «hash» de conexión a AIM válido."
 
-#: ../libpurple/protocols/oscar/oscar.c:1627
+#: ../libpurple/protocols/oscar/oscar.c:1623
 #, c-format
 msgid "You may be disconnected shortly.  Check %s for updates."
 msgstr "Quizá sea desconectado en breve.  Compruebe %s para novedades."
 
-#: ../libpurple/protocols/oscar/oscar.c:1630
+#: ../libpurple/protocols/oscar/oscar.c:1626
 msgid "Unable to get a valid login hash."
 msgstr "No se pudo un «hash» de conexión válido."
 
-#: ../libpurple/protocols/oscar/oscar.c:1659
+#: ../libpurple/protocols/oscar/oscar.c:1655
 msgid "Password sent"
 msgstr "Contraseña enviada"
 
-#: ../libpurple/protocols/oscar/oscar.c:1715
+#: ../libpurple/protocols/oscar/oscar.c:1711
 msgid "Unable to initialize connection"
 msgstr "No se pudo inicializar la conexión"
 
-#: ../libpurple/protocols/oscar/oscar.c:2220
+#: ../libpurple/protocols/oscar/oscar.c:2216
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr "Por favor, autoríceme para que pueda añadirle a mi lista de amigos."
 
-#: ../libpurple/protocols/oscar/oscar.c:2248
+#: ../libpurple/protocols/oscar/oscar.c:2244
 msgid "Authorization Request Message:"
 msgstr "Mensaje de solicitud de autorización:"
 
-#: ../libpurple/protocols/oscar/oscar.c:2249
+#: ../libpurple/protocols/oscar/oscar.c:2245
 msgid "Please authorize me!"
 msgstr "¡Por favor, autoríceme!"
 
-#: ../libpurple/protocols/oscar/oscar.c:2289
-#: ../libpurple/protocols/oscar/oscar.c:2296
-#: ../libpurple/protocols/oscar/oscar.c:2423
+#: ../libpurple/protocols/oscar/oscar.c:2285
+#: ../libpurple/protocols/oscar/oscar.c:2292
+#: ../libpurple/protocols/oscar/oscar.c:2419
 #: ../libpurple/protocols/oscar/oscar.c:5242
 #: ../libpurple/protocols/yahoo/yahoo.c:987
 msgid "No reason given."
 msgstr "No se indicó una razón."
 
-#: ../libpurple/protocols/oscar/oscar.c:2295
+#: ../libpurple/protocols/oscar/oscar.c:2291
 msgid "Authorization Denied Message:"
 msgstr "Mensaje de autorización denegada:"
 
-#: ../libpurple/protocols/oscar/oscar.c:2423
+#: ../libpurple/protocols/oscar/oscar.c:2419
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -7105,18 +7109,18 @@ msgstr ""
 "la siguiente razón:\n"
 "%s"
 
-#: ../libpurple/protocols/oscar/oscar.c:2424
+#: ../libpurple/protocols/oscar/oscar.c:2420
 msgid "ICQ authorization denied."
 msgstr "Autorización ICQ denegada."
 
 #. Someone has granted you authorization
-#: ../libpurple/protocols/oscar/oscar.c:2431
+#: ../libpurple/protocols/oscar/oscar.c:2427
 #, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
 msgstr ""
 "El usuario %u ha autorizado su petición de añadirlo a su lista de amigos."
 
-#: ../libpurple/protocols/oscar/oscar.c:2439
+#: ../libpurple/protocols/oscar/oscar.c:2435
 #, c-format
 msgid ""
 "You have received a special message\n"
@@ -7129,7 +7133,7 @@ msgstr ""
 "De: %s [%s]\n"
 "%s"
 
-#: ../libpurple/protocols/oscar/oscar.c:2447
+#: ../libpurple/protocols/oscar/oscar.c:2443
 #, c-format
 msgid ""
 "You have received an ICQ page\n"
@@ -7142,7 +7146,7 @@ msgstr ""
 "De: %s [%s]\n"
 "%s"
 
-#: ../libpurple/protocols/oscar/oscar.c:2455
+#: ../libpurple/protocols/oscar/oscar.c:2451
 #, c-format
 msgid ""
 "You have received an ICQ e-mail from %s [%s]\n"
@@ -7155,38 +7159,38 @@ msgstr ""
 "El mensaje es:\n"
 "%s"
 
-#: ../libpurple/protocols/oscar/oscar.c:2476
+#: ../libpurple/protocols/oscar/oscar.c:2472
 #, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
 msgstr "El usuario ICQ %u le ha enviado un amigo: %s (%s)"
 
-#: ../libpurple/protocols/oscar/oscar.c:2482
+#: ../libpurple/protocols/oscar/oscar.c:2478
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "¿Desea añadir este amigo a su lista de amigos?"
 
-#: ../libpurple/protocols/oscar/oscar.c:2487 ../pidgin/gtkroomlist.c:308
+#: ../libpurple/protocols/oscar/oscar.c:2483 ../pidgin/gtkroomlist.c:308
 msgid "_Add"
 msgstr "_Añadir"
 
-#: ../libpurple/protocols/oscar/oscar.c:2488
+#: ../libpurple/protocols/oscar/oscar.c:2484
 msgid "_Decline"
 msgstr "_Rehusar"
 
-#: ../libpurple/protocols/oscar/oscar.c:2572
+#: ../libpurple/protocols/oscar/oscar.c:2568
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] "Usted perdió %hu mensaje de %s porque no era válido."
 msgstr[1] "Se perdieron %hu mensajes de %s porque porque no eran válidos."
 
-#: ../libpurple/protocols/oscar/oscar.c:2581
+#: ../libpurple/protocols/oscar/oscar.c:2577
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] "Se perdió %hu mensaje de %s porque era demasiado largo."
 msgstr[1] "Se perdieron %hu mensajes de %s porque eran demasiado largos."
 
-#: ../libpurple/protocols/oscar/oscar.c:2590
+#: ../libpurple/protocols/oscar/oscar.c:2586
 #, c-format
 msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
@@ -7196,21 +7200,21 @@ msgstr[0] "Se perdió %hu mensaje de %s porque fue mandado demasiado rápido."
 msgstr[1] ""
 "Se perdieron %hu mensajes de %s porque fueron mandados demasiado rápido."
 
-#: ../libpurple/protocols/oscar/oscar.c:2599
+#: ../libpurple/protocols/oscar/oscar.c:2595
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
 msgstr[0] "Se perdió %hu mensaje de %s porque el/ella es muy malvado/a."
 msgstr[1] "Se perdieron %hu mensajes de %s porque el/ella es muy malvado/a."
 
-#: ../libpurple/protocols/oscar/oscar.c:2608
+#: ../libpurple/protocols/oscar/oscar.c:2604
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
 msgstr[0] "Se perdió %hu mensaje de %s porque usted es muy malvado/a."
 msgstr[1] "Se perdieron %hu mensajes de %s porque usted es muy malvado/a."
 
-#: ../libpurple/protocols/oscar/oscar.c:2617
+#: ../libpurple/protocols/oscar/oscar.c:2613
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
@@ -7218,55 +7222,55 @@ msgstr[0] "Se perdió %hu mensaje de %s por motivos desconocidos."
 msgstr[1] "Se perdieron %hu mensajes de %s por motivos desconocidos."
 
 #. Data is assumed to be the destination sn
-#: ../libpurple/protocols/oscar/oscar.c:2772
+#: ../libpurple/protocols/oscar/oscar.c:2768
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "No se pudo enviar el mensaje: %s"
 
-#: ../libpurple/protocols/oscar/oscar.c:2772
-#: ../libpurple/protocols/oscar/oscar.c:2777
-#: ../libpurple/protocols/oscar/oscar.c:2841
+#: ../libpurple/protocols/oscar/oscar.c:2768
+#: ../libpurple/protocols/oscar/oscar.c:2773
+#: ../libpurple/protocols/oscar/oscar.c:2837
 msgid "Unknown reason."
 msgstr "Razón desconocida."
 
-#: ../libpurple/protocols/oscar/oscar.c:2775
+#: ../libpurple/protocols/oscar/oscar.c:2771
 #: ../libpurple/protocols/sametime/sametime.c:2409
 #, c-format
 msgid "Unable to send message to %s:"
 msgstr "No se pudo enviar el mensaje a %s:"
 
-#: ../libpurple/protocols/oscar/oscar.c:2841
+#: ../libpurple/protocols/oscar/oscar.c:2837
 #, c-format
 msgid "User information not available: %s"
 msgstr "Información de usuario de no disponible: %s"
 
-#: ../libpurple/protocols/oscar/oscar.c:2872
+#: ../libpurple/protocols/oscar/oscar.c:2868
 msgid "Online Since"
 msgstr "Conectado desde"
 
-#: ../libpurple/protocols/oscar/oscar.c:2877
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1161
+#: ../libpurple/protocols/oscar/oscar.c:2873
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1185
 msgid "Member Since"
 msgstr "Miembro desde"
 
-#: ../libpurple/protocols/oscar/oscar.c:2882
+#: ../libpurple/protocols/oscar/oscar.c:2878
 msgid "Capabilities"
 msgstr "Capacidades"
 
-#: ../libpurple/protocols/oscar/oscar.c:2912
+#: ../libpurple/protocols/oscar/oscar.c:2908
 msgid "Available Message"
 msgstr "Mensajes disponibles"
 
-#: ../libpurple/protocols/oscar/oscar.c:2940
+#: ../libpurple/protocols/oscar/oscar.c:2936
 msgid "Profile"
 msgstr "Perfil"
 
-#: ../libpurple/protocols/oscar/oscar.c:3020
+#: ../libpurple/protocols/oscar/oscar.c:3016
 msgid "Your AIM connection may be lost."
 msgstr "Su conexión AIM puede haberse perdido."
 
 #. The conversion failed!
-#: ../libpurple/protocols/oscar/oscar.c:3208
+#: ../libpurple/protocols/oscar/oscar.c:3204
 msgid ""
 "[Unable to display a message from this user because it contained invalid "
 "characters.]"
@@ -7274,7 +7278,7 @@ msgstr ""
 "[No se pudo mostrar un mensaje de este usuario porque contenía caracteres "
 "inválidos.]"
 
-#: ../libpurple/protocols/oscar/oscar.c:3411
+#: ../libpurple/protocols/oscar/oscar.c:3407
 msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again."
@@ -7283,86 +7287,82 @@ msgstr ""
 "límite en la tasa de envío de mensajes. Por favor, espere 10 segundos y "
 "vuelva a intentarlo."
 
-#: ../libpurple/protocols/oscar/oscar.c:3483
-msgid "You have been signed off for an unknown reason."
-msgstr "Ha sido desconectado por motivos desconocidos."
-
-#: ../libpurple/protocols/oscar/oscar.c:3496
+#: ../libpurple/protocols/oscar/oscar.c:3490
 #: ../libpurple/protocols/toc/toc.c:977
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Ha sido desconectado de la sala de chat %s."
 
-#: ../libpurple/protocols/oscar/oscar.c:3743
+#: ../libpurple/protocols/oscar/oscar.c:3738
 #: ../libpurple/protocols/silc/util.c:585
 #: ../libpurple/protocols/silc10/util.c:581
 msgid "Mobile Phone"
 msgstr "Teléfono móvil"
 
-#: ../libpurple/protocols/oscar/oscar.c:3773
+#: ../libpurple/protocols/oscar/oscar.c:3768
 msgid "Personal Web Page"
 msgstr "Página web personal"
 
-#: ../libpurple/protocols/oscar/oscar.c:3797
+#: ../libpurple/protocols/oscar/oscar.c:3792
 #: ../libpurple/protocols/qq/buddy_info.c:40
 msgid "Additional Information"
 msgstr "Información adicional"
 
-#: ../libpurple/protocols/oscar/oscar.c:3805
-#: ../libpurple/protocols/oscar/oscar.c:3818
+#: ../libpurple/protocols/oscar/oscar.c:3800
+#: ../libpurple/protocols/oscar/oscar.c:3813
 msgid "Zip Code"
 msgstr "Código postal"
 
-#: ../libpurple/protocols/oscar/oscar.c:3829
+#: ../libpurple/protocols/oscar/oscar.c:3824
 msgid "Division"
 msgstr "Sección"
 
-#: ../libpurple/protocols/oscar/oscar.c:3830
+#: ../libpurple/protocols/oscar/oscar.c:3825
 msgid "Position"
 msgstr "Cargo"
 
-#: ../libpurple/protocols/oscar/oscar.c:3832
+#: ../libpurple/protocols/oscar/oscar.c:3827
 msgid "Web Page"
 msgstr "Página web"
 
-#: ../libpurple/protocols/oscar/oscar.c:3835
+#: ../libpurple/protocols/oscar/oscar.c:3830
 msgid "Work Information"
 msgstr "Información de trabajo"
 
-#: ../libpurple/protocols/oscar/oscar.c:3891
+#: ../libpurple/protocols/oscar/oscar.c:3886
 msgid "Pop-Up Message"
 msgstr "Mensaje emergente"
 
-#: ../libpurple/protocols/oscar/oscar.c:3931
+#: ../libpurple/protocols/oscar/oscar.c:3926
 #, c-format
 msgid "The following screen name is associated with %s"
 msgid_plural "The following screen names are associated with %s"
 msgstr[0] "El siguiente nombre de usuario está asociado a %s"
 msgstr[1] "Los siguientes nombres de usuarios están asociados a %s"
 
-#: ../libpurple/protocols/oscar/oscar.c:3936
+#: ../libpurple/protocols/oscar/oscar.c:3931
 msgid "Screen name"
 msgstr "Nombre de usuario"
 
-#: ../libpurple/protocols/oscar/oscar.c:3962
+#: ../libpurple/protocols/oscar/oscar.c:3957
 #, c-format
 msgid "No results found for e-mail address %s"
 msgstr "No se encontraron resultados para la dirección de correo %s"
 
-#: ../libpurple/protocols/oscar/oscar.c:3983
+#: ../libpurple/protocols/oscar/oscar.c:3978
 #, c-format
 msgid "You should receive an e-mail asking to confirm %s."
 msgstr "Debería recibir un mensaje solicitando confirmación de %s."
 
-#: ../libpurple/protocols/oscar/oscar.c:3985
+#: ../libpurple/protocols/oscar/oscar.c:3980
 msgid "Account Confirmation Requested"
 msgstr "Confirmación de cuenta solicitada"
 
-#: ../libpurple/protocols/oscar/oscar.c:4016
+#: ../libpurple/protocols/oscar/oscar.c:4011
 msgid "Error Changing Account Info"
 msgstr "Error cambiando la información de la cuenta"
 
-#: ../libpurple/protocols/oscar/oscar.c:4019
+#: ../libpurple/protocols/oscar/oscar.c:4014
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -7371,14 +7371,14 @@ msgstr ""
 "Error 0x%04x: No se puede dar formato al nombre de usuario porque el nombre "
 "de usuario solicitado difiere del original."
 
-#: ../libpurple/protocols/oscar/oscar.c:4022
+#: ../libpurple/protocols/oscar/oscar.c:4017
 #, c-format
 msgid "Error 0x%04x: Unable to format screen name because it is invalid."
 msgstr ""
 "Error 0x%04x: No se puede dar formato al nombre de usuario porque es "
 "inválido."
 
-#: ../libpurple/protocols/oscar/oscar.c:4025
+#: ../libpurple/protocols/oscar/oscar.c:4020
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -7387,7 +7387,7 @@ msgstr ""
 "Error 0x%04x: No se puede dar formato al nombre de usuario porque el nombre "
 "de usuario solicitado es demasiado largo."
 
-#: ../libpurple/protocols/oscar/oscar.c:4028
+#: ../libpurple/protocols/oscar/oscar.c:4023
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change e-mail address because there is already a "
@@ -7396,7 +7396,7 @@ msgstr ""
 "Error 0x%04x: No se puede cambiar la dirección de correo electrónico porque "
 "ya existe una solicitud pendiente para este nombre de usuario."
 
-#: ../libpurple/protocols/oscar/oscar.c:4031
+#: ../libpurple/protocols/oscar/oscar.c:4026
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change e-mail address because the given address has "
@@ -7405,7 +7405,7 @@ msgstr ""
 "Error 0x%04x: No se puede cambiar la dirección de correo electrónico porque "
 "la dirección dada ya tiene demasiados nombres de usuarios asociados."
 
-#: ../libpurple/protocols/oscar/oscar.c:4034
+#: ../libpurple/protocols/oscar/oscar.c:4029
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change e-mail address because the given address is "
@@ -7414,21 +7414,21 @@ msgstr ""
 "Error 0x%04x: No se puede cambiar la dirección de correo electrónico porque "
 "la dirección dada es inválida."
 
-#: ../libpurple/protocols/oscar/oscar.c:4037
+#: ../libpurple/protocols/oscar/oscar.c:4032
 #, c-format
 msgid "Error 0x%04x: Unknown error."
 msgstr "Error 0x%04x: Error desconocido."
 
-#: ../libpurple/protocols/oscar/oscar.c:4047
+#: ../libpurple/protocols/oscar/oscar.c:4042
 #, c-format
 msgid "The e-mail address for %s is %s"
 msgstr "La dirección de correo electrónico para %s es %s"
 
-#: ../libpurple/protocols/oscar/oscar.c:4049
+#: ../libpurple/protocols/oscar/oscar.c:4044
 msgid "Account Info"
 msgstr "Información de la cuenta"
 
-#: ../libpurple/protocols/oscar/oscar.c:4221
+#: ../libpurple/protocols/oscar/oscar.c:4216
 msgid ""
 "Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr ""
@@ -7491,7 +7491,10 @@ msgid ""
 "Could not add the buddy %s because the screen name is invalid.  Screen names "
 "must be a valid email address, or start with a letter and contain only "
 "letters, numbers and spaces, or contain only numbers."
-msgstr "No se pudo añadir al amigo %s porque el nombre de usuario no es válido. Los nombres de usuario deben ser direcciones de correo válidas o empezar con una letra y contener sólo letras, números y espacios, o contener sólo números."
+msgstr ""
+"No se pudo añadir al amigo %s porque el nombre de usuario no es válido. Los "
+"nombres de usuario deben ser direcciones de correo válidas o empezar con una "
+"letra y contener sólo letras, números y espacios, o contener sólo números."
 
 #: ../libpurple/protocols/oscar/oscar.c:4628
 #: ../libpurple/protocols/oscar/oscar.c:5051
@@ -8573,7 +8576,7 @@ msgstr "Error al leer del socket: %s"
 
 #. this is a regular connect, error out
 #: ../libpurple/protocols/sametime/sametime.c:1732
-#: ../libpurple/protocols/sametime/sametime.c:3726
+#: ../libpurple/protocols/sametime/sametime.c:3727
 msgid "Unable to connect to host"
 msgstr "No se pudo conectar al servidor"
 
@@ -8594,37 +8597,37 @@ msgstr "No se pudo enviar el mensaje:"
 msgid "Place Closed"
 msgstr "Lugar cerrado"
 
-#: ../libpurple/protocols/sametime/sametime.c:3229
+#: ../libpurple/protocols/sametime/sametime.c:3230
 msgid "Microphone"
 msgstr "Micrófono"
 
-#: ../libpurple/protocols/sametime/sametime.c:3230
+#: ../libpurple/protocols/sametime/sametime.c:3231
 msgid "Speakers"
 msgstr "Altavoces"
 
-#: ../libpurple/protocols/sametime/sametime.c:3231
+#: ../libpurple/protocols/sametime/sametime.c:3232
 msgid "Video Camera"
 msgstr "Vídeo cámara"
 
-#: ../libpurple/protocols/sametime/sametime.c:3235
+#: ../libpurple/protocols/sametime/sametime.c:3236
 msgid "File Transfer"
 msgstr "Transferencia de archivo"
 
-#: ../libpurple/protocols/sametime/sametime.c:3269
-#: ../libpurple/protocols/sametime/sametime.c:4145
+#: ../libpurple/protocols/sametime/sametime.c:3270
+#: ../libpurple/protocols/sametime/sametime.c:4146
 msgid "Supports"
 msgstr "Soporta"
 
-#: ../libpurple/protocols/sametime/sametime.c:3274
-#: ../libpurple/protocols/sametime/sametime.c:4119
+#: ../libpurple/protocols/sametime/sametime.c:3275
+#: ../libpurple/protocols/sametime/sametime.c:4120
 msgid "External User"
 msgstr "Usuario externo"
 
-#: ../libpurple/protocols/sametime/sametime.c:3380
+#: ../libpurple/protocols/sametime/sametime.c:3381
 msgid "Create conference with user"
 msgstr "Crear conferencia con el usuario"
 
-#: ../libpurple/protocols/sametime/sametime.c:3381
+#: ../libpurple/protocols/sametime/sametime.c:3382
 #, c-format
 msgid ""
 "Please enter a topic for the new conference, and an invitation message to be "
@@ -8633,27 +8636,27 @@ msgstr ""
 "Por favor ingrese tema para la nueva conferencia, y un mensaje de invitación "
 "que se enviará a %s"
 
-#: ../libpurple/protocols/sametime/sametime.c:3385
+#: ../libpurple/protocols/sametime/sametime.c:3386
 msgid "New Conference"
 msgstr "Nueva conferencia"
 
-#: ../libpurple/protocols/sametime/sametime.c:3387
+#: ../libpurple/protocols/sametime/sametime.c:3388
 msgid "Create"
 msgstr "Crear"
 
-#: ../libpurple/protocols/sametime/sametime.c:3452
+#: ../libpurple/protocols/sametime/sametime.c:3453
 msgid "Available Conferences"
 msgstr "Conferencias disponibles"
 
-#: ../libpurple/protocols/sametime/sametime.c:3458
+#: ../libpurple/protocols/sametime/sametime.c:3459
 msgid "Create New Conference..."
 msgstr "Crear nueva conferencia..."
 
-#: ../libpurple/protocols/sametime/sametime.c:3465
+#: ../libpurple/protocols/sametime/sametime.c:3466
 msgid "Invite user to a conference"
 msgstr "Invitar a un usuario a una conferencia"
 
-#: ../libpurple/protocols/sametime/sametime.c:3466
+#: ../libpurple/protocols/sametime/sametime.c:3467
 #, c-format
 msgid ""
 "Select a conference from the list below to send an invite to user %s. Select "
@@ -8664,27 +8667,27 @@ msgstr ""
 "Seleccione \"Crear nueva conferencia\" si quiere crear una nueva conferencia "
 "para invitar a este usuario también."
 
-#: ../libpurple/protocols/sametime/sametime.c:3471
+#: ../libpurple/protocols/sametime/sametime.c:3472
 msgid "Invite to Conference"
 msgstr "Invitar a conferencia"
 
-#: ../libpurple/protocols/sametime/sametime.c:3562
+#: ../libpurple/protocols/sametime/sametime.c:3563
 msgid "Invite to Conference..."
 msgstr "Invitar a conferencia..."
 
-#: ../libpurple/protocols/sametime/sametime.c:3567
+#: ../libpurple/protocols/sametime/sametime.c:3568
 msgid "Send TEST Announcement"
 msgstr "Enviar anuncio de prueba"
 
-#: ../libpurple/protocols/sametime/sametime.c:3586 ../pidgin/gtkconv.c:4274
+#: ../libpurple/protocols/sametime/sametime.c:3587 ../pidgin/gtkconv.c:4286
 msgid "Topic:"
 msgstr "Tema:"
 
-#: ../libpurple/protocols/sametime/sametime.c:3614
+#: ../libpurple/protocols/sametime/sametime.c:3615
 msgid "No Sametime Community Server specified"
 msgstr "No se ha especificado el servidor de comunidad «Sametime»"
 
-#: ../libpurple/protocols/sametime/sametime.c:3636
+#: ../libpurple/protocols/sametime/sametime.c:3637
 #, c-format
 msgid ""
 "No host or IP address has been configured for the Meanwhile account %s. "
@@ -8693,42 +8696,42 @@ msgstr ""
 "No se ha configurado ninguna dirección IP o nombre de equipo para la cuenta "
 "«Meanwhile» %s. Introduzca uno más abajo para continuar el registro."
 
-#: ../libpurple/protocols/sametime/sametime.c:3641
+#: ../libpurple/protocols/sametime/sametime.c:3642
 msgid "Meanwhile Connection Setup"
 msgstr "Configuración de la conexión «Meanwhile»"
 
-#: ../libpurple/protocols/sametime/sametime.c:3642
+#: ../libpurple/protocols/sametime/sametime.c:3643
 msgid "No Sametime Community Server Specified"
 msgstr "No se ha especificado un servidor de comunidad «Sametime»"
 
-#: ../libpurple/protocols/sametime/sametime.c:3644 ../pidgin/gtkblist.c:4015
+#: ../libpurple/protocols/sametime/sametime.c:3645 ../pidgin/gtkblist.c:4015
 msgid "Connect"
 msgstr "Conectar"
 
-#: ../libpurple/protocols/sametime/sametime.c:4135
+#: ../libpurple/protocols/sametime/sametime.c:4136
 #, c-format
 msgid "Unknown (0x%04x)<br>"
 msgstr "(0x%04x) desconocido<br>"
 
-#: ../libpurple/protocols/sametime/sametime.c:4137
+#: ../libpurple/protocols/sametime/sametime.c:4138
 msgid "Last Known Client"
 msgstr "Último cliente conocido:"
 
-#: ../libpurple/protocols/sametime/sametime.c:4301
-#: ../libpurple/protocols/sametime/sametime.c:5506
+#: ../libpurple/protocols/sametime/sametime.c:4302
+#: ../libpurple/protocols/sametime/sametime.c:5507
 msgid "User Name"
 msgstr "Nombre de usuario"
 
-#: ../libpurple/protocols/sametime/sametime.c:4304
-#: ../libpurple/protocols/sametime/sametime.c:5509
+#: ../libpurple/protocols/sametime/sametime.c:4305
+#: ../libpurple/protocols/sametime/sametime.c:5510
 msgid "Sametime ID"
 msgstr "ID Sametime"
 
-#: ../libpurple/protocols/sametime/sametime.c:4328
+#: ../libpurple/protocols/sametime/sametime.c:4329
 msgid "An ambiguous user ID was entered"
 msgstr "Se ha introducido un identificador de usuario ambiguo"
 
-#: ../libpurple/protocols/sametime/sametime.c:4329
+#: ../libpurple/protocols/sametime/sametime.c:4330
 #, c-format
 msgid ""
 "The identifier '%s' may possibly refer to any of the following users. Please "
@@ -8738,15 +8741,15 @@ msgstr ""
 "usuarios. Por favor seleccione el usuario de la lista mostrada para añadirlo "
 "a su lista de amigos."
 
-#: ../libpurple/protocols/sametime/sametime.c:4334
+#: ../libpurple/protocols/sametime/sametime.c:4335
 msgid "Select User"
 msgstr "Seleccionar usuario"
 
-#: ../libpurple/protocols/sametime/sametime.c:4418
+#: ../libpurple/protocols/sametime/sametime.c:4419
 msgid "Unable to add user: user not found"
 msgstr "No se pudo añadir al usuario: el usuario no se ha encontrado"
 
-#: ../libpurple/protocols/sametime/sametime.c:4420
+#: ../libpurple/protocols/sametime/sametime.c:4421
 #, c-format
 msgid ""
 "The identifier '%s' did not match any users in your Sametime community. This "
@@ -8755,11 +8758,11 @@ msgstr ""
 "El identificador «%s» no coincide con ningún usuario en la comunidad "
 "«Sametime». Se ha eliminado esta entrada de la lista de amigos."
 
-#: ../libpurple/protocols/sametime/sametime.c:4425
+#: ../libpurple/protocols/sametime/sametime.c:4426
 msgid "Unable to add user"
 msgstr "No puede añadir al usuario"
 
-#: ../libpurple/protocols/sametime/sametime.c:5011
+#: ../libpurple/protocols/sametime/sametime.c:5012
 #, c-format
 msgid ""
 "Error reading file %s: \n"
@@ -8768,65 +8771,65 @@ msgstr ""
 "Error al leer el archivo %s: \n"
 "%s\n"
 
-#: ../libpurple/protocols/sametime/sametime.c:5146
+#: ../libpurple/protocols/sametime/sametime.c:5147
 msgid "Remotely Stored Buddy List"
 msgstr "Lista de amigos remotamente almacenada"
 
-#: ../libpurple/protocols/sametime/sametime.c:5151
+#: ../libpurple/protocols/sametime/sametime.c:5152
 msgid "Buddy List Storage Mode"
 msgstr "Modo de almacenamiento de la lista de amigos"
 
 # Usar empotrable? (jfs)
-#: ../libpurple/protocols/sametime/sametime.c:5154
+#: ../libpurple/protocols/sametime/sametime.c:5155
 msgid "Local Buddy List Only"
 msgstr "Solamente lista de amigos local"
 
-#: ../libpurple/protocols/sametime/sametime.c:5156
+#: ../libpurple/protocols/sametime/sametime.c:5157
 msgid "Merge List from Server"
 msgstr "Fusionar lista desde el servidor"
 
-#: ../libpurple/protocols/sametime/sametime.c:5158
+#: ../libpurple/protocols/sametime/sametime.c:5159
 msgid "Merge and Save List to Server"
 msgstr "Fusionar y guardar lista en el servidor"
 
-#: ../libpurple/protocols/sametime/sametime.c:5160
+#: ../libpurple/protocols/sametime/sametime.c:5161
 msgid "Synchronize List with Server"
 msgstr "Sincronizar la lista con el servidor"
 
-#: ../libpurple/protocols/sametime/sametime.c:5215
+#: ../libpurple/protocols/sametime/sametime.c:5216
 #, c-format
 msgid "Import Sametime List for Account %s"
 msgstr "Importar la lista «Sametime» para la cuenta %s"
 
-#: ../libpurple/protocols/sametime/sametime.c:5255
+#: ../libpurple/protocols/sametime/sametime.c:5256
 #, c-format
 msgid "Export Sametime List for Account %s"
 msgstr "Exportar la lista «Sametime» para la cuenta %s"
 
-#: ../libpurple/protocols/sametime/sametime.c:5309
+#: ../libpurple/protocols/sametime/sametime.c:5310
 msgid "Unable to add group: group exists"
 msgstr "No se pudo añadir el grupo: el grupo ya existe"
 
-#: ../libpurple/protocols/sametime/sametime.c:5310
+#: ../libpurple/protocols/sametime/sametime.c:5311
 #, c-format
 msgid "A group named '%s' already exists in your buddy list."
 msgstr "Un grupo llamado '%s' ya existe en su lista de amigos."
 
-#: ../libpurple/protocols/sametime/sametime.c:5313
-#: ../libpurple/protocols/sametime/sametime.c:5443
+#: ../libpurple/protocols/sametime/sametime.c:5314
+#: ../libpurple/protocols/sametime/sametime.c:5444
 msgid "Unable to add group"
 msgstr "No se pudo añadir el grupo"
 
-#: ../libpurple/protocols/sametime/sametime.c:5372
+#: ../libpurple/protocols/sametime/sametime.c:5373
 msgid "Possible Matches"
 msgstr "Posibles coincidencias"
 
-#: ../libpurple/protocols/sametime/sametime.c:5388
+#: ../libpurple/protocols/sametime/sametime.c:5389
 msgid "Notes Address Book group results"
 msgstr ""
 "Resultados de las notas de los grupos de la libreta de direcciones «Notes»"
 
-#: ../libpurple/protocols/sametime/sametime.c:5389
+#: ../libpurple/protocols/sametime/sametime.c:5390
 #, c-format
 msgid ""
 "The identifier '%s' may possibly refer to any of the following Notes Address "
@@ -8837,15 +8840,15 @@ msgstr ""
 "de la libreta de direcciones «Notes». Escoja el grupo más apropiado de la "
 "lista que se muestra abajo para añadirlo a su lista de amigos."
 
-#: ../libpurple/protocols/sametime/sametime.c:5394
+#: ../libpurple/protocols/sametime/sametime.c:5395
 msgid "Select Notes Address Book"
 msgstr "Seleccionar libro de direcciones «Notes»"
 
-#: ../libpurple/protocols/sametime/sametime.c:5437
+#: ../libpurple/protocols/sametime/sametime.c:5438
 msgid "Unable to add group: group not found"
 msgstr "No se pudo añadir el grupo: no se ha encontrado el grupo"
 
-#: ../libpurple/protocols/sametime/sametime.c:5439
+#: ../libpurple/protocols/sametime/sametime.c:5440
 #, c-format
 msgid ""
 "The identifier '%s' did not match any Notes Address Book groups in your "
@@ -8854,11 +8857,11 @@ msgstr ""
 "El identificador «%s» no coincide con ninguno de los grupos de la libreta de "
 "direcciones «Notes» en su comunidad «Sametime»."
 
-#: ../libpurple/protocols/sametime/sametime.c:5480
+#: ../libpurple/protocols/sametime/sametime.c:5481
 msgid "Notes Address Book Group"
 msgstr "Libreta de direcciones de grupos «Notes»"
 
-#: ../libpurple/protocols/sametime/sametime.c:5481
+#: ../libpurple/protocols/sametime/sametime.c:5482
 msgid ""
 "Enter the name of a Notes Address Book group in the field below to add the "
 "group and its members to your buddy list."
@@ -8867,12 +8870,12 @@ msgstr ""
 "campo a continuación para añadir al grupo y a sus miembros en su lista de "
 "amigos."
 
-#: ../libpurple/protocols/sametime/sametime.c:5530
+#: ../libpurple/protocols/sametime/sametime.c:5531
 #, c-format
 msgid "Search results for '%s'"
 msgstr "Resultados de la búsqueda '%s'"
 
-#: ../libpurple/protocols/sametime/sametime.c:5531
+#: ../libpurple/protocols/sametime/sametime.c:5532
 #, c-format
 msgid ""
 "The identifier '%s' may possibly refer to any of the following users. You "
@@ -8884,30 +8887,30 @@ msgstr ""
 "mensajes con los botones de acciones mostrados abajo."
 
 #. Create the window
-#: ../libpurple/protocols/sametime/sametime.c:5538 ../pidgin/gtknotify.c:719
+#: ../libpurple/protocols/sametime/sametime.c:5539 ../pidgin/gtknotify.c:718
 msgid "Search Results"
 msgstr "Resultados de la búsqueda"
 
-#: ../libpurple/protocols/sametime/sametime.c:5563
+#: ../libpurple/protocols/sametime/sametime.c:5564
 msgid "No matches"
 msgstr "No hubo coincidencias"
 
-#: ../libpurple/protocols/sametime/sametime.c:5564
+#: ../libpurple/protocols/sametime/sametime.c:5565
 #, c-format
 msgid "The identifier '%s' did not match any users in your Sametime community."
 msgstr ""
 "El identificador «%s» no coincide con ninguno de los usuarios en su "
 "comunidad «Sametime»."
 
-#: ../libpurple/protocols/sametime/sametime.c:5568
+#: ../libpurple/protocols/sametime/sametime.c:5569
 msgid "No Matches"
 msgstr "No hubo coincidencias"
 
-#: ../libpurple/protocols/sametime/sametime.c:5605
+#: ../libpurple/protocols/sametime/sametime.c:5606
 msgid "Search for a user"
 msgstr "Buscar un usuario"
 
-#: ../libpurple/protocols/sametime/sametime.c:5606
+#: ../libpurple/protocols/sametime/sametime.c:5607
 msgid ""
 "Enter a name or partial ID in the field below to search for matching users "
 "in your Sametime community."
@@ -8915,32 +8918,32 @@ msgstr ""
 "Introduzca el nombre o identificador parcial en el campo mostrado a "
 "continuación para buscar usuarios coincidentes en su comunidad «Sametime»."
 
-#: ../libpurple/protocols/sametime/sametime.c:5609
+#: ../libpurple/protocols/sametime/sametime.c:5610
 msgid "User Search"
 msgstr "Búsqueda de usuarios"
 
-#: ../libpurple/protocols/sametime/sametime.c:5622
+#: ../libpurple/protocols/sametime/sametime.c:5623
 msgid "Import Sametime List..."
 msgstr "Importar la lista «Sametime»..."
 
-#: ../libpurple/protocols/sametime/sametime.c:5626
+#: ../libpurple/protocols/sametime/sametime.c:5627
 msgid "Export Sametime List..."
 msgstr "Exportar la lista «Sametime»..."
 
-#: ../libpurple/protocols/sametime/sametime.c:5630
+#: ../libpurple/protocols/sametime/sametime.c:5631
 msgid "Add Notes Address Book Group..."
 msgstr "Añadir a la libreta de direcciones de grupos «Notes»..."
 
-#: ../libpurple/protocols/sametime/sametime.c:5634
+#: ../libpurple/protocols/sametime/sametime.c:5635
 msgid "User Search..."
 msgstr "Búsqueda de los usuarios..."
 
-#: ../libpurple/protocols/sametime/sametime.c:5740
+#: ../libpurple/protocols/sametime/sametime.c:5741
 msgid "Force login (ignore server redirects)"
 msgstr "Forzar conexión (ignorar redirecciones del servidor)"
 
 #. pretend to be Sametime Connect
-#: ../libpurple/protocols/sametime/sametime.c:5750
+#: ../libpurple/protocols/sametime/sametime.c:5751
 msgid "Hide client identity"
 msgstr "Ocultar identidad de cliente"
 
@@ -9870,7 +9873,7 @@ msgstr "El fundador del canal en <I>%s</I> es <I>%s</I>"
 #: ../libpurple/protocols/silc/ops.c:1326
 #: ../libpurple/protocols/silc10/ops.c:1183
 #: ../libpurple/protocols/silc10/ops.c:1332
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1047
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1071
 msgid "Real Name"
 msgstr "Nombre real"
 
@@ -10829,26 +10832,26 @@ msgid "Could not write"
 msgstr "No se pudo escribir"
 
 #: ../libpurple/protocols/simple/simple.c:438
-#: ../libpurple/protocols/simple/simple.c:1484
+#: ../libpurple/protocols/simple/simple.c:1489
 msgid "Could not connect"
 msgstr "No se pudo conectar"
 
-#: ../libpurple/protocols/simple/simple.c:1518
-#: ../libpurple/protocols/simple/simple.c:1560
-#: ../libpurple/protocols/simple/simple.c:1573
-#: ../libpurple/protocols/simple/simple.c:1624
+#: ../libpurple/protocols/simple/simple.c:1523
+#: ../libpurple/protocols/simple/simple.c:1565
+#: ../libpurple/protocols/simple/simple.c:1578
+#: ../libpurple/protocols/simple/simple.c:1629
 msgid "Could not create listen socket"
 msgstr "No se pudo crear el socket de escucha"
 
-#: ../libpurple/protocols/simple/simple.c:1541
+#: ../libpurple/protocols/simple/simple.c:1546
 msgid "Couldn't resolve host"
 msgstr "No se pudo resolver el nombre"
 
-#: ../libpurple/protocols/simple/simple.c:1632
+#: ../libpurple/protocols/simple/simple.c:1637
 msgid "Could not resolve hostname"
 msgstr "No se pudo resolver el nombre de sistema"
 
-#: ../libpurple/protocols/simple/simple.c:1649
+#: ../libpurple/protocols/simple/simple.c:1654
 msgid "SIP screen names may not contain whitespaces or @ symbols"
 msgstr ""
 "Los nombres de usuario SIP no pueden tener espacios en blanco ni el símbolo @"
@@ -10861,36 +10864,36 @@ msgstr ""
 #. *< id
 #. *< name
 #. *< version
-#: ../libpurple/protocols/simple/simple.c:1824
+#: ../libpurple/protocols/simple/simple.c:1829
 msgid "SIP/SIMPLE Protocol Plugin"
 msgstr "Complemento de protocolo SIP/SIMPLE"
 
 #. *  summary
-#: ../libpurple/protocols/simple/simple.c:1825
+#: ../libpurple/protocols/simple/simple.c:1830
 msgid "The SIP/SIMPLE Protocol Plugin"
 msgstr "El complemento de protocolo SIP/SIMPLE"
 
-#: ../libpurple/protocols/simple/simple.c:1853
+#: ../libpurple/protocols/simple/simple.c:1858
 msgid "Publish status (note: everyone may watch you)"
 msgstr "Estatus público (nota: todos podrán verlo)"
 
-#: ../libpurple/protocols/simple/simple.c:1859
+#: ../libpurple/protocols/simple/simple.c:1864
 msgid "Use UDP"
 msgstr "Utilizar UDP"
 
-#: ../libpurple/protocols/simple/simple.c:1861
+#: ../libpurple/protocols/simple/simple.c:1866
 msgid "Use proxy"
 msgstr "Usar proxy"
 
-#: ../libpurple/protocols/simple/simple.c:1863
+#: ../libpurple/protocols/simple/simple.c:1868
 msgid "Proxy"
 msgstr "Proxy"
 
-#: ../libpurple/protocols/simple/simple.c:1865
+#: ../libpurple/protocols/simple/simple.c:1870
 msgid "Auth User"
 msgstr "Usuario de autenticación"
 
-#: ../libpurple/protocols/simple/simple.c:1867
+#: ../libpurple/protocols/simple/simple.c:1872
 msgid "Auth Domain"
 msgstr "Dominio de autenticación"
 
@@ -11500,15 +11503,15 @@ msgstr "No se pudo establecer el descriptor de archivo."
 msgid "Write Error"
 msgstr "Error de escritura"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:773
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:797
 msgid "Yahoo! Japan Profile"
 msgstr "Perfil de Yahoo! Japón"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:774
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:798
 msgid "Yahoo! Profile"
 msgstr "Perfil Yahoo!"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:814
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:838
 msgid ""
 "Sorry, profiles marked as containing adult content are not supported at this "
 "time."
@@ -11516,61 +11519,61 @@ msgstr ""
 "Lo siento, los perfiles con contenido sólo para adultos no están soportados "
 "aún."
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:816
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:840
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser:"
 msgstr ""
 "Si desea ver este perfil, deberá visitar este enlace con su navegador web:"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1010
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1034
 msgid "Yahoo! ID"
 msgstr "ID Yahoo!"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1085
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1089
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1093
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1109
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1113
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1117
 msgid "Hobbies"
 msgstr "Aficiones"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1103
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1107
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1127
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1131
 msgid "Latest News"
 msgstr "Últimas noticias"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1128
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1152
 msgid "Home Page"
 msgstr "Página personal"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1143
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1167
 msgid "Cool Link 1"
 msgstr "Enlace interesante 1"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1148
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1172
 msgid "Cool Link 2"
 msgstr "Enlace interesante 2"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1152
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1176
 msgid "Cool Link 3"
 msgstr "Enlace interesante 3"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1166
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1190
 msgid "Last Update"
 msgstr "Última actualización"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1175
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1199
 #, c-format
 msgid "User information for %s unavailable"
 msgstr "Información de usuario de %s no disponible"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1181
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1205
 msgid ""
 "Sorry, this profile seems to be in a language or format that is not "
 "supported at this time."
 msgstr ""
 "Lo siento, este perfil parece estar en un idioma o formato aún no soportado."
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1197
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1221
 msgid ""
 "Could not retrieve the user's profile. This most likely is a temporary "
 "server-side problem. Please try again later."
@@ -11578,7 +11581,7 @@ msgstr ""
 "No se pudo obtener el perfil del usuario. Esto es habitualmente un problema "
 "temporal en el lado del servidor. Por favor, pruebe de nuevo más tarde."
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1200
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1224
 msgid ""
 "Could not retrieve the user's profile. This most likely means that the user "
 "does not exist; however, Yahoo! sometimes does fail to find a user's "
@@ -11589,7 +11592,7 @@ msgstr ""
 "de usuario. Si está seguro de que el usuario existe inténtelo de nuevo más "
 "tarde."
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1207
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1231
 msgid "The user's profile is empty."
 msgstr "El perfil del usuario está vacío."
 
@@ -11917,12 +11920,12 @@ msgstr "+++ %s ahora está activo"
 msgid "%x %X"
 msgstr "%x %X"
 
-#: ../libpurple/util.c:2691
+#: ../libpurple/util.c:2692
 #, c-format
 msgid "Error Reading %s"
 msgstr "Error al leer %s"
 
-#: ../libpurple/util.c:2692
+#: ../libpurple/util.c:2693
 #, c-format
 msgid ""
 "An error was encountered reading your %s.  They have not been loaded, and "
@@ -11931,67 +11934,67 @@ msgstr ""
 "Se ha encontrado un error al leer su %s. No se ha cargado, y el archivo "
 "antiguo se ha renombrado a %s~."
 
-#: ../libpurple/util.c:3192
+#: ../libpurple/util.c:3193
 msgid "Calculating..."
 msgstr "Calculando..."
 
-#: ../libpurple/util.c:3195
+#: ../libpurple/util.c:3196
 msgid "Unknown."
 msgstr "Desconocido."
 
-#: ../libpurple/util.c:3221
+#: ../libpurple/util.c:3222
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d segundo"
 msgstr[1] "%d segundos"
 
-#: ../libpurple/util.c:3233
+#: ../libpurple/util.c:3234
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] "%d día"
 msgstr[1] "%d días"
 
-#: ../libpurple/util.c:3241
+#: ../libpurple/util.c:3242
 #, c-format
 msgid "%s, %d hour"
 msgid_plural "%s, %d hours"
 msgstr[0] "%s, %d hora"
 msgstr[1] "%s, %d horas"
 
-#: ../libpurple/util.c:3247
+#: ../libpurple/util.c:3248
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d hora"
 msgstr[1] "%d horas"
 
-#: ../libpurple/util.c:3255
+#: ../libpurple/util.c:3256
 #, c-format
 msgid "%s, %d minute"
 msgid_plural "%s, %d minutes"
 msgstr[0] "%s, %d minuto"
 msgstr[1] "%s, %d minutos"
 
-#: ../libpurple/util.c:3261
+#: ../libpurple/util.c:3262
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minuto"
 msgstr[1] "%d minutos"
 
-#: ../libpurple/util.c:3521
+#: ../libpurple/util.c:3522
 #, c-format
 msgid "Could not open %s: Redirected too many times"
 msgstr "No se pudo abrir %s: se produjeron demasiadas redirecciones"
 
-#: ../libpurple/util.c:3558 ../libpurple/util.c:3853
+#: ../libpurple/util.c:3559 ../libpurple/util.c:3854
 #, c-format
 msgid "Unable to connect to %s"
 msgstr "No se pudo conectar a %s"
 
-#: ../libpurple/util.c:3681
+#: ../libpurple/util.c:3682
 #, c-format
 msgid ""
 "Unable to allocate enough memory to hold the contents from %s.  The web "
@@ -12000,17 +12003,17 @@ msgstr ""
 "No se pudo obtener suficiente memoria para mantener los contenidos de %s. Es "
 "posible que el servidor web esté intentando algo con malas intenciones."
 
-#: ../libpurple/util.c:3716
+#: ../libpurple/util.c:3717
 #, c-format
 msgid "Error reading from %s: %s"
 msgstr "Error al leer de %s: %s"
 
-#: ../libpurple/util.c:3747
+#: ../libpurple/util.c:3748
 #, c-format
 msgid "Error writing to %s: %s"
 msgstr "Error al escribir a %s: %s"
 
-#: ../libpurple/util.c:3772
+#: ../libpurple/util.c:3773
 #, c-format
 msgid "Unable to connect to %s: %s"
 msgstr "No se pudo conectar a %s: %s"
@@ -12154,15 +12157,15 @@ msgstr "_Básica"
 msgid "_Advanced"
 msgstr "_Avanzadas"
 
-#: ../pidgin/gtkaccount.c:1975 ../pidgin/gtkplugin.c:568
+#: ../pidgin/gtkaccount.c:1977 ../pidgin/gtkplugin.c:568
 msgid "Enabled"
 msgstr "Habilitado"
 
-#: ../pidgin/gtkaccount.c:2003
+#: ../pidgin/gtkaccount.c:2005
 msgid "Protocol"
 msgstr "Protocolo"
 
-#: ../pidgin/gtkaccount.c:2203
+#: ../pidgin/gtkaccount.c:2205
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Welcome to %s!</span>\n"
@@ -12181,11 +12184,6 @@ msgstr ""
 "pulsar el botón <b>Añadir</b> que tiene más abajo y configurar su primera "
 "cuenta. Si quiere que %s se conecte a múltiples cuentas de MI, deberá pulsar "
 "<b>Añadir</b> otra vez para configurarlas todas."
-
-#: ../pidgin/gtkaccount.c:2551
-#, c-format
-msgid "%s%s%s%s wants to add %s to his or her buddy list%s%s"
-msgstr "%s%s%s%s quiere añadir a %s a su lista de amigos%s%s."
 
 #: ../pidgin/gtkblist.c:763
 msgid "Join a Chat"
@@ -12283,7 +12281,7 @@ msgstr "_Expandir"
 msgid "/Tools/Mute Sounds"
 msgstr "/Herramientas/Sin sonido"
 
-#: ../pidgin/gtkblist.c:2043 ../pidgin/gtkconv.c:4602
+#: ../pidgin/gtkblist.c:2043 ../pidgin/gtkconv.c:4619
 #: ../pidgin/gtkpounce.c:429
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
@@ -12630,7 +12628,7 @@ msgstr "<PurpleMain>/Cuentas/"
 msgid "_Edit Account"
 msgstr "_Editar cuenta"
 
-#: ../pidgin/gtkblist.c:6589 ../pidgin/gtkconv.c:2982
+#: ../pidgin/gtkblist.c:6589 ../pidgin/gtkconv.c:2994
 msgid "No actions available"
 msgstr "No hay acciones disponibles"
 
@@ -12667,26 +12665,26 @@ msgstr ""
 "%s no intentará reconectarse a esta cuenta hasta que corrija el error y "
 "reactive la cuenta."
 
-#: ../pidgin/gtkconv.c:485
+#: ../pidgin/gtkconv.c:486
 msgid "Unknown command."
 msgstr "Orden desconocida."
 
-#: ../pidgin/gtkconv.c:757 ../pidgin/gtkconv.c:783
+#: ../pidgin/gtkconv.c:758 ../pidgin/gtkconv.c:784
 msgid "That buddy is not on the same protocol as this chat."
 msgstr "Ese amigo no utiliza el mismo protocolo que este chat."
 
-#: ../pidgin/gtkconv.c:777
+#: ../pidgin/gtkconv.c:778
 msgid ""
 "You are not currently signed on with an account that can invite that buddy."
 msgstr ""
 "No está conectado con ninguna cuenta con la que pueda invitar a ese amigo."
 
-#: ../pidgin/gtkconv.c:830
+#: ../pidgin/gtkconv.c:831
 msgid "Invite Buddy Into Chat Room"
 msgstr "Invitar a un amigo a la sala de chat"
 
 #. Put our happy label in it.
-#: ../pidgin/gtkconv.c:860
+#: ../pidgin/gtkconv.c:861
 msgid ""
 "Please enter the name of the user you wish to invite, along with an optional "
 "invite message."
@@ -12694,201 +12692,201 @@ msgstr ""
 "Introduzca el nombre de usuario al que desea invitar, junto con un mensaje "
 "de invitación opcional."
 
-#: ../pidgin/gtkconv.c:881
+#: ../pidgin/gtkconv.c:882
 msgid "_Buddy:"
 msgstr "_Amigo:"
 
-#: ../pidgin/gtkconv.c:901 ../pidgin/gtksavedstatuses.c:1193
+#: ../pidgin/gtkconv.c:902 ../pidgin/gtksavedstatuses.c:1193
 #: ../pidgin/gtksavedstatuses.c:1525
 msgid "_Message:"
 msgstr "_Mensaje:"
 
-#: ../pidgin/gtkconv.c:958 ../pidgin/gtkconv.c:2506 ../pidgin/gtkdebug.c:218
+#: ../pidgin/gtkconv.c:959 ../pidgin/gtkconv.c:2518 ../pidgin/gtkdebug.c:218
 #: ../pidgin/gtkft.c:542
 msgid "Unable to open file."
 msgstr "No se pudo leer el archivo."
 
-#: ../pidgin/gtkconv.c:964
+#: ../pidgin/gtkconv.c:965
 #, c-format
 msgid "<h1>Conversation with %s</h1>\n"
 msgstr "<h1>Conversaciones con %s</h1>\n"
 
-#: ../pidgin/gtkconv.c:1000
+#: ../pidgin/gtkconv.c:1001
 msgid "Save Conversation"
 msgstr "Guardar conversación"
 
-#: ../pidgin/gtkconv.c:1149 ../pidgin/gtkdebug.c:166 ../pidgin/gtkdebug.c:742
+#: ../pidgin/gtkconv.c:1150 ../pidgin/gtkdebug.c:166 ../pidgin/gtkdebug.c:742
 msgid "Find"
 msgstr "Buscar"
 
-#: ../pidgin/gtkconv.c:1175 ../pidgin/gtkdebug.c:194
+#: ../pidgin/gtkconv.c:1176 ../pidgin/gtkdebug.c:194
 msgid "_Search for:"
 msgstr "Término a _buscar:"
 
-#: ../pidgin/gtkconv.c:1358
+#: ../pidgin/gtkconv.c:1359
 msgid "Logging started. Future messages in this conversation will be logged."
 msgstr ""
 "Se inició el registro. A partir de ahora se registrarán todos los mensajes "
 "de esta conversación."
 
-#: ../pidgin/gtkconv.c:1366
+#: ../pidgin/gtkconv.c:1367
 msgid ""
 "Logging stopped. Future messages in this conversation will not be logged."
 msgstr ""
 "Se ha parado el registro. No se registrarán mensajes de esta conversación de "
 "ahora en adelante."
 
-#: ../pidgin/gtkconv.c:1614
+#: ../pidgin/gtkconv.c:1615
 msgid "Un-Ignore"
 msgstr "No ignorar"
 
-#: ../pidgin/gtkconv.c:1617
+#: ../pidgin/gtkconv.c:1618
 msgid "Ignore"
 msgstr "Ignorar"
 
-#: ../pidgin/gtkconv.c:1637
+#: ../pidgin/gtkconv.c:1638
 msgid "Get Away Message"
 msgstr "Mensaje de ausencia"
 
-#: ../pidgin/gtkconv.c:1660
+#: ../pidgin/gtkconv.c:1661
 msgid "Last said"
 msgstr "Dicho la última vez"
 
-#: ../pidgin/gtkconv.c:2514
+#: ../pidgin/gtkconv.c:2526
 msgid "Unable to save icon file to disk."
 msgstr "No se pudo salvar el archivo de iconos al disco."
 
-#: ../pidgin/gtkconv.c:2565
+#: ../pidgin/gtkconv.c:2577
 msgid "Save Icon"
 msgstr "Guardar icono"
 
-#: ../pidgin/gtkconv.c:2617
+#: ../pidgin/gtkconv.c:2629
 msgid "Animate"
 msgstr "Animar"
 
-#: ../pidgin/gtkconv.c:2622
+#: ../pidgin/gtkconv.c:2634
 msgid "Hide Icon"
 msgstr "Ocultar icono"
 
-#: ../pidgin/gtkconv.c:2625
+#: ../pidgin/gtkconv.c:2637
 msgid "Save Icon As..."
 msgstr "Guardar icono como..."
 
-#: ../pidgin/gtkconv.c:2629
+#: ../pidgin/gtkconv.c:2641
 msgid "Set Custom Icon..."
 msgstr "Configurar icono personalizado..."
 
-#: ../pidgin/gtkconv.c:2642
+#: ../pidgin/gtkconv.c:2654
 msgid "Remove Custom Icon"
 msgstr "Eliminar icono personalizado"
 
 #. Conversation menu
-#: ../pidgin/gtkconv.c:2784
+#: ../pidgin/gtkconv.c:2796
 msgid "/_Conversation"
 msgstr "/_Conversación"
 
-#: ../pidgin/gtkconv.c:2786
+#: ../pidgin/gtkconv.c:2798
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Conversación/Mensaje _instantáneo nuevo..."
 
-#: ../pidgin/gtkconv.c:2791
+#: ../pidgin/gtkconv.c:2803
 msgid "/Conversation/_Find..."
 msgstr "/Conversación/_Buscar..."
 
-#: ../pidgin/gtkconv.c:2793
+#: ../pidgin/gtkconv.c:2805
 msgid "/Conversation/View _Log"
 msgstr "/Conversación/Ver _historial"
 
-#: ../pidgin/gtkconv.c:2794
+#: ../pidgin/gtkconv.c:2806
 msgid "/Conversation/_Save As..."
 msgstr "/Conversación/_Guardar como..."
 
-#: ../pidgin/gtkconv.c:2796
+#: ../pidgin/gtkconv.c:2808
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Conversación/Limpia_r deslizable"
 
-#: ../pidgin/gtkconv.c:2800
+#: ../pidgin/gtkconv.c:2812
 msgid "/Conversation/Se_nd File..."
 msgstr "/Conversación/_Enviar archivo..."
 
-#: ../pidgin/gtkconv.c:2801
+#: ../pidgin/gtkconv.c:2813
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Conversación/Añadir _aviso de amigo..."
 
-#: ../pidgin/gtkconv.c:2803
+#: ../pidgin/gtkconv.c:2815
 msgid "/Conversation/_Get Info"
 msgstr "/Conversación/_Obtener información"
 
-#: ../pidgin/gtkconv.c:2805
+#: ../pidgin/gtkconv.c:2817
 msgid "/Conversation/In_vite..."
 msgstr "/Conversación/In_vitar..."
 
-#: ../pidgin/gtkconv.c:2807
+#: ../pidgin/gtkconv.c:2819
 msgid "/Conversation/M_ore"
 msgstr "/Conversación/_Más"
 
-#: ../pidgin/gtkconv.c:2811
+#: ../pidgin/gtkconv.c:2823
 msgid "/Conversation/Al_ias..."
 msgstr "/Conversación/A_podo..."
 
-#: ../pidgin/gtkconv.c:2813
+#: ../pidgin/gtkconv.c:2825
 msgid "/Conversation/_Block..."
 msgstr "/Conversación/_Bloquear..."
 
-#: ../pidgin/gtkconv.c:2815
+#: ../pidgin/gtkconv.c:2827
 msgid "/Conversation/_Unblock..."
 msgstr "/Conversación/_Desbloquear..."
 
-#: ../pidgin/gtkconv.c:2817
+#: ../pidgin/gtkconv.c:2829
 msgid "/Conversation/_Add..."
 msgstr "/Conversación/_Añadir..."
 
-#: ../pidgin/gtkconv.c:2819
+#: ../pidgin/gtkconv.c:2831
 msgid "/Conversation/_Remove..."
 msgstr "/Conversación/Elimina_r..."
 
-#: ../pidgin/gtkconv.c:2824
+#: ../pidgin/gtkconv.c:2836
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/Conversación/Insertar en_lace..."
 
-#: ../pidgin/gtkconv.c:2826
+#: ../pidgin/gtkconv.c:2838
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/Conversación/Insertar imag_en..."
 
-#: ../pidgin/gtkconv.c:2832
+#: ../pidgin/gtkconv.c:2844
 msgid "/Conversation/_Close"
 msgstr "/Conversación/_Cerrar"
 
 #. Options
-#: ../pidgin/gtkconv.c:2836
+#: ../pidgin/gtkconv.c:2848
 msgid "/_Options"
 msgstr "/_Opciones"
 
-#: ../pidgin/gtkconv.c:2837
+#: ../pidgin/gtkconv.c:2849
 msgid "/Options/Enable _Logging"
 msgstr "/Opciones/_Habilitar registro"
 
-#: ../pidgin/gtkconv.c:2838
+#: ../pidgin/gtkconv.c:2850
 msgid "/Options/Enable _Sounds"
 msgstr "/Opciones/Habilitar _sonidos"
 
-#: ../pidgin/gtkconv.c:2839
+#: ../pidgin/gtkconv.c:2851
 msgid "/Options/Show Buddy _Icon"
 msgstr "/Opciones/Mostrar _iconos de los amigos"
 
-#: ../pidgin/gtkconv.c:2841
+#: ../pidgin/gtkconv.c:2853
 msgid "/Options/Show Formatting _Toolbars"
 msgstr "/Opciones/Mostrar _barras de formato"
 
-#: ../pidgin/gtkconv.c:2842
+#: ../pidgin/gtkconv.c:2854
 msgid "/Options/Show Ti_mestamps"
 msgstr "/Opciones/Mostrar _marcas de tiempo"
 
-#: ../pidgin/gtkconv.c:2918
+#: ../pidgin/gtkconv.c:2930
 msgid "/Conversation/More"
 msgstr "/Conversación/Más"
 
-#: ../pidgin/gtkconv.c:3026
+#: ../pidgin/gtkconv.c:3038
 msgid "/Options"
 msgstr "/Opciones"
 
@@ -12897,176 +12895,176 @@ msgstr "/Opciones"
 #. Make sure the 'Conversation -> More' menuitems are regenerated whenever
 #. * the 'Conversation' menu pops up because the entries can change after the
 #. * conversation is created.
-#: ../pidgin/gtkconv.c:3061 ../pidgin/gtkconv.c:3093
+#: ../pidgin/gtkconv.c:3073 ../pidgin/gtkconv.c:3105
 msgid "/Conversation"
 msgstr "/Conversación"
 
-#: ../pidgin/gtkconv.c:3101
+#: ../pidgin/gtkconv.c:3113
 msgid "/Conversation/View Log"
 msgstr "/Conversación/Ver registro"
 
-#: ../pidgin/gtkconv.c:3107
+#: ../pidgin/gtkconv.c:3119
 msgid "/Conversation/Send File..."
 msgstr "/Conversación/Enviar archivo..."
 
-#: ../pidgin/gtkconv.c:3111
+#: ../pidgin/gtkconv.c:3123
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Conversación/Añadir aviso de amigo..."
 
-#: ../pidgin/gtkconv.c:3117
+#: ../pidgin/gtkconv.c:3129
 msgid "/Conversation/Get Info"
 msgstr "/Conversación/Obtener información"
 
-#: ../pidgin/gtkconv.c:3121
+#: ../pidgin/gtkconv.c:3133
 msgid "/Conversation/Invite..."
 msgstr "/Conversación/Invitar..."
 
-#: ../pidgin/gtkconv.c:3127
+#: ../pidgin/gtkconv.c:3139
 msgid "/Conversation/Alias..."
 msgstr "/Conversación/Apodo..."
 
-#: ../pidgin/gtkconv.c:3131
+#: ../pidgin/gtkconv.c:3143
 msgid "/Conversation/Block..."
 msgstr "/Conversación/Bloquear..."
 
-#: ../pidgin/gtkconv.c:3135
+#: ../pidgin/gtkconv.c:3147
 msgid "/Conversation/Unblock..."
 msgstr "/Conversación/Desbloquear..."
 
-#: ../pidgin/gtkconv.c:3139
+#: ../pidgin/gtkconv.c:3151
 msgid "/Conversation/Add..."
 msgstr "/Conversación/Añadir..."
 
-#: ../pidgin/gtkconv.c:3143
+#: ../pidgin/gtkconv.c:3155
 msgid "/Conversation/Remove..."
 msgstr "/Conversación/Eliminar..."
 
-#: ../pidgin/gtkconv.c:3149
+#: ../pidgin/gtkconv.c:3161
 msgid "/Conversation/Insert Link..."
 msgstr "/Opciones/Insertar enlace..."
 
-#: ../pidgin/gtkconv.c:3153
+#: ../pidgin/gtkconv.c:3165
 msgid "/Conversation/Insert Image..."
 msgstr "/Opciones/Insertar imagen..."
 
-#: ../pidgin/gtkconv.c:3159
+#: ../pidgin/gtkconv.c:3171
 msgid "/Options/Enable Logging"
 msgstr "/Opciones/_Habilitar registro"
 
-#: ../pidgin/gtkconv.c:3162
+#: ../pidgin/gtkconv.c:3174
 msgid "/Options/Enable Sounds"
 msgstr "/Opciones/Habilitar _sonidos"
 
-#: ../pidgin/gtkconv.c:3175
+#: ../pidgin/gtkconv.c:3187
 msgid "/Options/Show Formatting Toolbars"
 msgstr "/Opciones/Mostrar barras de formato"
 
-#: ../pidgin/gtkconv.c:3178
+#: ../pidgin/gtkconv.c:3190
 msgid "/Options/Show Timestamps"
 msgstr "/Opciones/Mostrar marcas de tiempo"
 
-#: ../pidgin/gtkconv.c:3181
+#: ../pidgin/gtkconv.c:3193
 msgid "/Options/Show Buddy Icon"
 msgstr "/Opciones/Mostrar _iconos de los amigos"
 
-#: ../pidgin/gtkconv.c:3265 ../pidgin/gtkconv.c:3307
+#: ../pidgin/gtkconv.c:3277 ../pidgin/gtkconv.c:3319
 msgid "User is typing..."
 msgstr "El usuario está escribiendo..."
 
-#: ../pidgin/gtkconv.c:3310
+#: ../pidgin/gtkconv.c:3322
 msgid "User has typed something and stopped"
 msgstr "El usuario ha escrito algo y ha parado"
 
 #. Build the Send To menu
-#: ../pidgin/gtkconv.c:3492
+#: ../pidgin/gtkconv.c:3504
 msgid "_Send To"
 msgstr "_Enviar a"
 
-#: ../pidgin/gtkconv.c:4206
+#: ../pidgin/gtkconv.c:4218
 msgid "_Send"
 msgstr "_Enviar"
 
 #. Setup the label telling how many people are in the room.
-#: ../pidgin/gtkconv.c:4310
+#: ../pidgin/gtkconv.c:4322
 msgid "0 people in room"
 msgstr "0 personas en la conversación"
 
-#: ../pidgin/gtkconv.c:5496 ../pidgin/gtkconv.c:5617
+#: ../pidgin/gtkconv.c:5518 ../pidgin/gtkconv.c:5639
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d persona en la conversación"
 msgstr[1] "%d personas en la conversación"
 
-#: ../pidgin/gtkconv.c:6216 ../pidgin/gtkstatusbox.c:659
+#: ../pidgin/gtkconv.c:6238 ../pidgin/gtkstatusbox.c:659
 msgid "Typing"
 msgstr "Tecleando"
 
-#: ../pidgin/gtkconv.c:6222
+#: ../pidgin/gtkconv.c:6244
 msgid "Stopped Typing"
 msgstr "Deja de escribi_r"
 
-#: ../pidgin/gtkconv.c:6227
+#: ../pidgin/gtkconv.c:6249
 msgid "Nick Said"
 msgstr "Apodo dijo"
 
-#: ../pidgin/gtkconv.c:6232 ../pidgin/gtkdocklet.c:492
+#: ../pidgin/gtkconv.c:6254 ../pidgin/gtkdocklet.c:492
 msgid "Unread Messages"
 msgstr "Mensajes sin leer"
 
-#: ../pidgin/gtkconv.c:6237
+#: ../pidgin/gtkconv.c:6259
 msgid "New Event"
 msgstr "Nuevo acontecimiento"
 
-#: ../pidgin/gtkconv.c:7210
+#: ../pidgin/gtkconv.c:7237
 msgid "clear: Clears all conversation scrollbacks."
 msgstr "clear: limpia todos los históricos de las ventanas de conversación."
 
-#: ../pidgin/gtkconv.c:7374
+#: ../pidgin/gtkconv.c:7401
 msgid "Confirm close"
 msgstr "Confirmar cierre"
 
-#: ../pidgin/gtkconv.c:7406
+#: ../pidgin/gtkconv.c:7433
 msgid "You have unread messages. Are you sure you want to close the window?"
 msgstr "Tiene mensajes sin leer. ¿Está seguro que quiere cerrar la ventana?"
 
-#: ../pidgin/gtkconv.c:7967
+#: ../pidgin/gtkconv.c:8005
 msgid "Close other tabs"
 msgstr "Cerrar otras solapas"
 
-#: ../pidgin/gtkconv.c:7973
+#: ../pidgin/gtkconv.c:8011
 msgid "Close all tabs"
 msgstr "Cerrar todas las solapas"
 
-#: ../pidgin/gtkconv.c:7981
+#: ../pidgin/gtkconv.c:8019
 msgid "Detach this tab"
 msgstr "Despegar esta solapa"
 
-#: ../pidgin/gtkconv.c:7987
+#: ../pidgin/gtkconv.c:8025
 msgid "Close this tab"
 msgstr "Cerrar esta solapa"
 
-#: ../pidgin/gtkconv.c:8433
+#: ../pidgin/gtkconv.c:8475
 msgid "Close conversation"
 msgstr "Cerrar conversación"
 
-#: ../pidgin/gtkconv.c:8957
+#: ../pidgin/gtkconv.c:9007
 msgid "Last created window"
 msgstr "Última ventana creada"
 
-#: ../pidgin/gtkconv.c:8959
+#: ../pidgin/gtkconv.c:9009
 msgid "Separate IM and Chat windows"
 msgstr "Separar ventanas de MIs y chats"
 
-#: ../pidgin/gtkconv.c:8961 ../pidgin/gtkprefs.c:1410
+#: ../pidgin/gtkconv.c:9011 ../pidgin/gtkprefs.c:1410
 msgid "New window"
 msgstr "Ventana nueva"
 
-#: ../pidgin/gtkconv.c:8963
+#: ../pidgin/gtkconv.c:9013
 msgid "By group"
 msgstr "Por grupo"
 
-#: ../pidgin/gtkconv.c:8965
+#: ../pidgin/gtkconv.c:9015
 msgid "By account"
 msgstr "Por cuenta"
 
@@ -14167,22 +14165,22 @@ msgid_plural "<b>You have %d new e-mails.</b>"
 msgstr[0] "<b>Tiene %d nuevo correo.</b>"
 msgstr[1] "<b>Tiene %d nuevos correos.</b>"
 
-#: ../pidgin/gtknotify.c:965
+#: ../pidgin/gtknotify.c:964
 #, c-format
 msgid "The browser command \"%s\" is invalid."
 msgstr "La orden de navegador «%s» no es válida."
 
-#: ../pidgin/gtknotify.c:967 ../pidgin/gtknotify.c:979
-#: ../pidgin/gtknotify.c:992 ../pidgin/gtknotify.c:1120
+#: ../pidgin/gtknotify.c:966 ../pidgin/gtknotify.c:978
+#: ../pidgin/gtknotify.c:991 ../pidgin/gtknotify.c:1119
 msgid "Unable to open URL"
 msgstr "No se pudo abrir la URL"
 
-#: ../pidgin/gtknotify.c:977 ../pidgin/gtknotify.c:990
+#: ../pidgin/gtknotify.c:976 ../pidgin/gtknotify.c:989
 #, c-format
 msgid "Error launching \"%s\": %s"
 msgstr "Error al lanzar «%s»: %s"
 
-#: ../pidgin/gtknotify.c:1121
+#: ../pidgin/gtknotify.c:1120
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr ""
@@ -14436,8 +14434,8 @@ msgid "Show _formatting on incoming messages"
 msgstr "Mostrar el _formato de los mensajes entrantes"
 
 #: ../pidgin/gtkprefs.c:997
-msgid "Show buddy _icons"
-msgstr "Mostrar _iconos de los amigos"
+msgid "Show Buddy _Details"
+msgstr "Mostrar _detalles de amigo"
 
 #: ../pidgin/gtkprefs.c:999
 msgid "Enable buddy ic_on animation"
@@ -14487,7 +14485,9 @@ msgstr "Formato por omisión"
 msgid ""
 "This is how your outgoing message text will appear when you use protocols "
 "that support formatting."
-msgstr "Así se verá el texto de los mensajes que envíe cuando utilice protocolos que soportan el formateo."
+msgstr ""
+"Así se verá el texto de los mensajes que envíe cuando utilice protocolos que "
+"soportan el formateo."
 
 #: ../pidgin/gtkprefs.c:1123
 msgid "ST_UN server:"
@@ -14893,23 +14893,23 @@ msgstr "¿Está seguro de que quiere bloquear a %s?"
 msgid "Apply"
 msgstr "Aplicar"
 
-#: ../pidgin/gtkrequest.c:1478
+#: ../pidgin/gtkrequest.c:1483
 msgid "That file already exists"
 msgstr "Ese archivo ya existe"
 
-#: ../pidgin/gtkrequest.c:1479
+#: ../pidgin/gtkrequest.c:1484
 msgid "Would you like to overwrite it?"
 msgstr "¿Quiere sobreescribirlo?"
 
-#: ../pidgin/gtkrequest.c:1482
+#: ../pidgin/gtkrequest.c:1487
 msgid "Overwrite"
 msgstr "Sobreescribir"
 
-#: ../pidgin/gtkrequest.c:1483
+#: ../pidgin/gtkrequest.c:1488
 msgid "Choose New Name"
 msgstr "Elegir un nuevo nombre"
 
-#: ../pidgin/gtkrequest.c:1621 ../pidgin/gtkrequest.c:1635
+#: ../pidgin/gtkrequest.c:1626 ../pidgin/gtkrequest.c:1640
 msgid "Select Folder..."
 msgstr "Seleccionar carpeta..."
 
@@ -15532,34 +15532,34 @@ msgstr "_Detalles del usuario"
 msgid "_Associate Buddy"
 msgstr "_Asociar amigo"
 
-#: ../pidgin/plugins/gevolution/gevolution.c:238
-#: ../pidgin/plugins/gevolution/gevolution.c:244
+#: ../pidgin/plugins/gevolution/gevolution.c:240
+#: ../pidgin/plugins/gevolution/gevolution.c:246
 msgid "Unable to send e-mail"
 msgstr "No se pudo enviar el correo electrónico"
 
-#: ../pidgin/plugins/gevolution/gevolution.c:239
+#: ../pidgin/plugins/gevolution/gevolution.c:241
 msgid "The evolution executable was not found in the PATH."
 msgstr "No se encontró el ejecutable de Evolution en la ruta."
 
-#: ../pidgin/plugins/gevolution/gevolution.c:245
+#: ../pidgin/plugins/gevolution/gevolution.c:247
 msgid "An e-mail address was not found for this buddy."
 msgstr "No se ha encontrado una dirección de correo para este amigo."
 
-#: ../pidgin/plugins/gevolution/gevolution.c:271
+#: ../pidgin/plugins/gevolution/gevolution.c:273
 msgid "Add to Address Book"
 msgstr "Añadir a la agenda"
 
-#: ../pidgin/plugins/gevolution/gevolution.c:283
+#: ../pidgin/plugins/gevolution/gevolution.c:285
 msgid "Send E-Mail"
 msgstr "Enviar correo electrónico"
 
 #. Configuration frame
-#: ../pidgin/plugins/gevolution/gevolution.c:410
+#: ../pidgin/plugins/gevolution/gevolution.c:412
 msgid "Evolution Integration Configuration"
 msgstr "Configuración de la integración con Evolution"
 
 #. Label
-#: ../pidgin/plugins/gevolution/gevolution.c:413
+#: ../pidgin/plugins/gevolution/gevolution.c:415
 msgid "Select all accounts that buddies should be auto-added to."
 msgstr ""
 "Seleccione todas las cuentas a los que los amigos se añadirán de forma "
@@ -15571,7 +15571,7 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#: ../pidgin/plugins/gevolution/gevolution.c:525
+#: ../pidgin/plugins/gevolution/gevolution.c:527
 msgid "Evolution Integration"
 msgstr "Integración con Evolution"
 
@@ -15579,8 +15579,8 @@ msgstr "Integración con Evolution"
 #. *< version
 #. *  summary
 #. *  description
-#: ../pidgin/plugins/gevolution/gevolution.c:528
 #: ../pidgin/plugins/gevolution/gevolution.c:530
+#: ../pidgin/plugins/gevolution/gevolution.c:532
 msgid "Provides integration with Evolution."
 msgstr "Ofrece integración con Evolution."
 
@@ -16388,6 +16388,16 @@ msgstr "Enviar y recibir entradas XMPP en crudo."
 #: ../pidgin/plugins/xmppconsole.c:865
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
+
+# c-format
+#~ msgid "%s%s%s%s wants to add %s%s%s%s to his or her buddy list%s%s"
+#~ msgstr "%s%s%s%s quiere añadir a %s%s%s%s a su lista de amigos%s%s."
+
+#~ msgid "You have been signed off for an unknown reason."
+#~ msgstr "Ha sido desconectado por motivos desconocidos."
+
+#~ msgid "Show buddy _icons"
+#~ msgstr "Mostrar _iconos de los amigos"
 
 #~ msgid "Commands are not supported yet. Message was NOT sent."
 #~ msgstr "Órdenes no soportadas. NO se ha enviado el mensaje."
