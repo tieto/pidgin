@@ -1003,7 +1003,7 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 					  buf,
 					  TRUE, G_CALLBACK(savelog_writefile_cb), NULL,
 					  NULL, NULL, conv,
-					  conv);
+					  "conversation", conv);
 
 	g_free(buf);
 }
@@ -2580,7 +2580,7 @@ icon_menu_save_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	purple_request_file(gtkconv, _("Save Icon"), buf, TRUE,
 					 G_CALLBACK(saveicon_writefile_cb), NULL,
 					conv->account, NULL, conv,
-					gtkconv);
+					"conversation", gtkconv);
 
 	g_free(buf);
 }
