@@ -40,6 +40,7 @@ SMILEYS = 	act-up.svg \
     curl-lip.svg \
     curse.svg \
     cute.svg \
+    cyclops.svg \
     dance.svg \
     dazed.svg \
     desire.svg \
