@@ -475,7 +475,7 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
 
 static void gtk_blist_menu_bp_cb(GtkWidget *w, PurpleBuddy *b)
 {
-	pidgin_pounce_editor_show(b->account, b->name, NULL);
+	pidgin_pounce_editor_show(GTK_WINDOW(gtkblist->window), b->account, b->name, NULL);
 }
 
 static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)

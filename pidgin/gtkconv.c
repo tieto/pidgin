@@ -1210,7 +1210,7 @@ menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 
 	conv = pidgin_conv_window_get_active_gtkconv(win)->active_conv;
 
-	pidgin_pounce_editor_show(purple_conversation_get_account(conv),
+	pidgin_pounce_editor_show(GTK_WINDOW(win->window), purple_conversation_get_account(conv),
 								purple_conversation_get_name(conv), NULL);
 }
 
