@@ -125,7 +125,7 @@ get_request_parent(const char *ui_hint, PidginConversation *convo)
 		if ((blist = pidgin_blist_get_default_gtk_blist()) != NULL)
 			return GTK_WINDOW(blist->window);
 
-	return NULL;
+	return toplevel;
 }
 
 static void
