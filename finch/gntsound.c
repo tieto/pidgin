@@ -446,7 +446,7 @@ finch_sound_play_file(const char *filename)
 
 	method = purple_prefs_get_string(make_pref("/method"));
 
-	if (!strcmp(method, "none")) {
+	if (!strcmp(method, "nosound")) {
 		return;
 	} else if (!strcmp(method, "beep")) {
 		beep();
@@ -747,6 +747,7 @@ release_pref_dialog(GntBindable *data, gpointer null)
 	}
 	if (pref_dialog->selector)
 		gnt_widget_destroy(pref_dialog->selector);
+	g_free(pref_dialog->original_profile);
 	g_free(pref_dialog);
 	pref_dialog = NULL;
 }
