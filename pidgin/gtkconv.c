@@ -8497,7 +8497,7 @@ pidgin_conv_window_new()
 	gtk_notebook_set_scrollable(GTK_NOTEBOOK(win->notebook), TRUE);
 	gtk_notebook_popup_enable(GTK_NOTEBOOK(win->notebook));
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), FALSE);
-	gtk_notebook_set_show_border(GTK_NOTEBOOK(win->notebook), FALSE);
+	gtk_notebook_set_show_border(GTK_NOTEBOOK(win->notebook), TRUE);
 
 	g_signal_connect(G_OBJECT(win->notebook), "button-press-event",
 					G_CALLBACK(right_click_menu_cb), win);
