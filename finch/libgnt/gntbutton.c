@@ -111,6 +111,7 @@ gnt_button_class_init(GntWidgetClass *klass)
 
 	style = gnt_style_get_from_name(NULL, "small-button");
 	small_button = gnt_style_parse_bool(style);
+	g_free(style);
 	GNTDEBUG;
 }
 
