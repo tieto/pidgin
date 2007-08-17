@@ -800,7 +800,7 @@ void pidgin_syslog_show(GtkWindow *parent)
 	}
 	logs = g_list_sort(logs, purple_log_compare);
 
-	syslog_viewer = display_log_viewer(parent, logs, _("System Log"), NULL, 0);
+	syslog_viewer = display_log_viewer(parent, NULL, logs, _("System Log"), NULL, 0);
 }
 
 /****************************************************************************
