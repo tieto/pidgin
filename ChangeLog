@@ -12,6 +12,10 @@ version 2.1.1 (08/17/2007):
 	* Bonjour plugin uses native Avahi instead of Howl
 	* Bonjour plugin supports Buddy Icons
 
+	XMPP:
+	* Only report conversation close when 'send typing notifications'
+	  preference is turned on (Bob Rossi)
+
 	Pidgin:
 	* Show current outgoing conversation formatting on the font label on
 	  the toolbar

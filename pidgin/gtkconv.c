@@ -8497,7 +8497,7 @@ pidgin_conv_window_new()
 	gtk_notebook_set_scrollable(GTK_NOTEBOOK(win->notebook), TRUE);
 	gtk_notebook_popup_enable(GTK_NOTEBOOK(win->notebook));
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), FALSE);
-	gtk_notebook_set_show_border(GTK_NOTEBOOK(win->notebook), FALSE);
+	gtk_notebook_set_show_border(GTK_NOTEBOOK(win->notebook), TRUE);
 
 	g_signal_connect(G_OBJECT(win->notebook), "button-press-event",
 					G_CALLBACK(right_click_menu_cb), win);
@@ -8783,8 +8783,6 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
 #endif
 	gtk_container_add(GTK_CONTAINER(ebox), gtkconv->tabby);
-	g_signal_connect(G_OBJECT(ebox), "button-press-event",
-					G_CALLBACK(alias_double_click_cb), gtkconv);
 
 	if (gtkconv->tab_label->parent == NULL) {
 		/* Pack if it's a new widget */
