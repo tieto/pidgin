@@ -1450,7 +1450,7 @@ purple_parse_auth_securid_request(OscarData *od, FlapConnection *conn, FlapFrame
 					   _("_OK"), G_CALLBACK(purple_parse_auth_securid_request_yes_cb),
 					   _("_Cancel"), G_CALLBACK(purple_parse_auth_securid_request_no_cb),
 					   account, NULL, NULL,
-					   gc);
+					   "account", gc);
 	g_free(primary);
 
 	return 1;
@@ -2242,7 +2242,7 @@ purple_auth_sendrequest(PurpleConnection *gc, const char *name)
 					   _("_OK"), G_CALLBACK(purple_auth_request),
 					   _("_Cancel"), G_CALLBACK(purple_auth_dontrequest),
 					   purple_connection_get_account(gc), name, NULL,
-					   data);
+					   "blist", data);
 }
 
 
@@ -2291,7 +2291,7 @@ purple_auth_dontgrant_msgprompt(gpointer cbdata)
 					   _("_OK"), G_CALLBACK(purple_auth_dontgrant),
 					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
 					   purple_connection_get_account(data->gc), data->name, NULL,
-					   data);
+					   "blist", data);
 }
 
 /* When someone sends you buddies */
@@ -2477,7 +2477,7 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 										  "to your buddy list?"),
 										PURPLE_DEFAULT_ACTION_NONE,
 										purple_connection_get_account(gc), data->name, NULL,
-										data, 2,
+										"blist", data, 2,
 										_("_Add"), G_CALLBACK(purple_icq_buddyadd),
 										_("_Decline"), G_CALLBACK(oscar_free_name_data));
 					g_free(message);
@@ -5134,7 +5134,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	purple_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
 						PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), sn, NULL,
-						data,
+						"blist", data,
 						G_CALLBACK(purple_icq_buddyadd),
 						G_CALLBACK(oscar_free_name_data));
 	g_free(dialog_msg);
@@ -5833,7 +5833,7 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 					   _("_OK"), G_CALLBACK(oscar_ssi_editcomment),
 					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
 					   purple_connection_get_account(gc), data->name, NULL,
-					   data);
+					   "buddy", data);
 	g_free(title);
 
 	g_free(comment);
@@ -5884,7 +5884,7 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 			  "wish to continue?"),
 			0,
 			purple_connection_get_account(gc), data->who, NULL,
-			data, 2,
+			"buddy", data, 2,
 			_("C_onnect"), G_CALLBACK(oscar_ask_directim_yes_cb),
 			_("_Cancel"), G_CALLBACK(oscar_ask_directim_no_cb));
 	g_free(buf);
@@ -6041,7 +6041,7 @@ oscar_show_icq_privacy_opts(PurplePluginAction *action)
 						_("OK"), G_CALLBACK(oscar_icq_privacy_opts),
 						_("Cancel"), NULL,
 						purple_connection_get_account(gc), NULL, NULL,
-						gc);
+						"account", gc);
 }
 
 static void oscar_format_screenname(PurpleConnection *gc, const char *nick) {
@@ -6114,7 +6114,7 @@ static void oscar_show_change_email(PurplePluginAction *action)
 					   _("_OK"), G_CALLBACK(oscar_change_email),
 					   _("_Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   gc);
+					   "account", gc);
 }
 
 static void oscar_show_awaitingauth(PurplePluginAction *action)
@@ -6184,7 +6184,7 @@ static void oscar_show_find_email(PurplePluginAction *action)
 					   _("_Search"), G_CALLBACK(search_by_email_cb),
 					   _("_Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   gc);
+					   "buddy", gc);
 }
 
 static void oscar_show_set_info(PurplePluginAction *action)

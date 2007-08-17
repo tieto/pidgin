@@ -336,7 +336,7 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 			_("OK"), G_CALLBACK(jabber_x_data_ok_cb),
 			_("Cancel"), G_CALLBACK(jabber_x_data_cancel_cb),
 			purple_connection_get_account(js->gc), /* XXX Do we have a who here? */ NULL, NULL,
-			data);
+			"account", data);
 
 	g_free(title);
 	g_free(instructions);

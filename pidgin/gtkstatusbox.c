@@ -1567,7 +1567,7 @@ tree_view_delete_current_selection(PidginStatusBox *status_box, GtkTreePath *pat
 
 	purple_request_action(saved, NULL, msg, NULL, 0,
 		NULL, NULL, NULL,
-		data, 2,
+		"pidgin-statusbox", data, 2,
 		_("Delete"), tree_view_delete_current_selection_cb,
 		_("Cancel"), NULL);
 

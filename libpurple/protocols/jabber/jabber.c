@@ -881,7 +881,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 				_("Register"), G_CALLBACK(jabber_register_cb),
 				_("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
 				purple_connection_get_account(js->gc), NULL, NULL,
-				js);
+				"register-account", js);
 
 		g_free(instructions);
 	}
@@ -1382,8 +1382,8 @@ static void jabber_password_change(PurplePluginAction *action)
 			_("Change XMPP Password"), _("Please enter your new password"),
 			fields, _("OK"), G_CALLBACK(jabber_password_change_cb),
 			_("Cancel"), NULL,
-			purple_connection_get_account(gc), NULL, NULL,			  
-			js);
+			purple_connection_get_account(gc), NULL, NULL,
+			"account", js);
 }
 
 GList *jabber_actions(PurplePlugin *plugin, gpointer context)
