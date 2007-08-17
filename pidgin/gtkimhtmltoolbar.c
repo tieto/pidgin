@@ -174,6 +174,7 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 			g_signal_connect_after(G_OBJECT(toolbar->font_dialog), "realize",
 							 G_CALLBACK(realize_toolbar_font), toolbar);
 		}
+		gtk_window_set_transient_for(GTK_WINDOW(toolbar->fontdialog), gtk_widget_get_toplevel(toolbar));
 		gtk_window_present(GTK_WINDOW(toolbar->font_dialog));
 	} else {
 		cancel_toolbar_font(font, toolbar);
