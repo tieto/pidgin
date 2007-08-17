@@ -4545,7 +4545,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	path = gtk_tree_path_new_from_string("0");
 	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(gtkconv->infopane), path);
 	gtk_tree_path_free(path);
-	gtk_widget_set_size_request(gtkconv->infopane, -1, 32);
+	gtk_widget_set_size_request(gtkconv->infopane_hbox, -1, 32);
 	gtk_widget_show(gtkconv->infopane);
 
 	rend = gtk_cell_renderer_pixbuf_new();
