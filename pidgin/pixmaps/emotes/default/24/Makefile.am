@@ -42,6 +42,7 @@ SMILEYS = 	act-up.png \
     curl-lip.png \
     curse.png \
     cute.png \
+    cyclops.png \
     dance.png \
     dazed.png \
     desire.png \
