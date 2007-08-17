@@ -394,8 +394,35 @@ static PurpleCertificateScheme x509_nss;
 static PurpleCertificate *
 x509_import_from_file(const gchar *filename)
 {
-	/* TODO: Write me! */
-	return NULL;
+	gchar *rawcert;
+	gsize len = 0;
+	CERTCertificate *crt_dat;
+	PurpleCertificate *crt;
+
+	g_return_val_if_fail(filename, NULL);
+
+	purple_debug_info("nss/x509",
+			  "Loading certificate from %s\n",
+			  filename);
+	
+	/* Load the raw data up */
+	g_return_val_if_fail(
+		g_file_get_contents(filename,
+				    &rawcert, &len,
+				    NULL ),
+		NULL);
+
+	/* Decode the certificate */
+	crt_dat = CERT_DecodeCertFromPackage(rawcert, len);
+	g_free(rawcert);
+
+	g_return_val_if_fail(crt_dat, NULL);
+	
+	crt = g_new0(PurpleCertificate, 1);
+	crt->scheme = &x509_nss;
+	crt->data = crt_dat;
+	
+	return crt;
 }
 
 /**
