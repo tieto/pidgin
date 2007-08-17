@@ -1317,7 +1317,7 @@ create_pounces_list(PouncesManager *dialog)
 }
 
 void
-pidgin_pounces_manager_show(void)
+pidgin_pounces_manager_show(GtkWindow *parent)
 {
 	PouncesManager *dialog;
 	GtkWidget *bbox;
@@ -1329,6 +1329,7 @@ pidgin_pounces_manager_show(void)
 
 	if (pounces_manager != NULL) {
 		gtk_window_present(GTK_WINDOW(pounces_manager->window));
+		gtk_window_set_transient_for(GTK_WINDOW(pounces_manager->window), parent);
 		return;
 	}
 
@@ -1339,6 +1340,7 @@ pidgin_pounces_manager_show(void)
 
 	dialog->window = win = pidgin_create_window(_("Buddy Pounces"), PIDGIN_HIG_BORDER, "pounces", TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
+	gtk_window_set_transient_for(GTK_WINDOW(win), parent);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(pounces_manager_destroy_cb), dialog);
