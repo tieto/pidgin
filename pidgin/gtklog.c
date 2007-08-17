@@ -322,7 +322,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 	data2[2] = log;
 	purple_request_action(lv, NULL, "Delete Log?", tmp, 0, 
 						NULL, NULL, NULL,
-						"pidgin-log", data2, 2,
+						"log_viewer", data2, 2,
 						_("Delete"), delete_log_cb,
 						_("Cancel"), delete_log_cleanup_cb);
 	g_free(tmp);

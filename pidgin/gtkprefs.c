@@ -641,7 +641,7 @@ static void
 add_theme_button_clicked_cb(GtkWidget *widget, gpointer null)
 {
 	purple_request_file(NULL, _("Install Theme"), NULL, FALSE,
-	    (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, "pidgin-prefs", NULL) ;
+	    (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, "preferences", NULL) ;
 }
 
 static void
@@ -1620,7 +1620,7 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 
 	purple_request_file(prefs, _("Sound Selection"), filename, FALSE,
 					  G_CALLBACK(sound_chosen_cb), NULL, 
-					  NULL, NULL, NULL, "pidgin-prefs",
+					  NULL, NULL, NULL, "preferences",
 					  GINT_TO_POINTER(sound_row_sel));
 }
 

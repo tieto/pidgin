@@ -78,6 +78,55 @@ typedef struct
 
 } PidginRequestData;
 
+static GtkWindow *
+find_toplevel(GList *ll_toplevels, const char *role)
+{
+	const char *window_role = NULL;
+	GList *ll_itr = NULL;
+
+	for (ll_itr = ll_toplevels ; ll_itr ; ll_itr = ll_itr->next) {
+		if ((window_role = gtk_window_get_role(GTK_WINDOW(ll_itr->data))) != NULL) {
+			if (!strcmp(window_role, role))
+				return GTK_WINDOW(ll_itr->data);
+		}
+	}
+
+	return NULL;
+}
+
+static GtkWindow *
+get_request_parent(const char *ui_hint, PidginConversation *convo)
+{
+	GtkWindow *toplevel = NULL;
+	PidginBuddyList *blist = NULL;
+
+	if (convo)
+		return GTK_WINDOW(convo->win->window);
+
+	if (strcmp(ui_hint, "blist")) {
+		GList *ll_toplevels = NULL;
+
+		ll_toplevels = gtk_window_list_toplevels();
+
+		if (!(toplevel = find_toplevel(ll_toplevels, ui_hint))) {
+			if (!strcmp(ui_hint, "register-account"))
+				toplevel = find_toplevel(ll_toplevels, "account");
+			else
+			if (!strcmp(ui_hint, "xfer"))
+				toplevel = find_toplevel(ll_toplevels, "file transfer");
+		}
+		
+		g_list_free(ll_toplevels);
+	}
+
+	/* Takes care of "pidgin-statusbox" as well */
+	if (!toplevel)
+		if ((blist = pidgin_blist_get_default_gtk_blist()) != NULL)
+			return GTK_WINDOW(blist->window);
+
+	return NULL;
+}
+
 static void
 generic_response_start(PidginRequestData *data)
 {
@@ -311,7 +360,7 @@ pidgin_request_input(const char *title, const char *primary,
 
 	/* Create the dialog. */
 	dialog = gtk_dialog_new_with_buttons(title ? title : PIDGIN_ALERT_TITLE,
-					     NULL, 0,
+					     get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL), 0,
 					     text_to_stock(cancel_text), 1,
 					     text_to_stock(ok_text),     0,
 					     NULL);
@@ -470,6 +519,8 @@ pidgin_request_choice(const char *title, const char *primary,
 
 	/* Create the dialog. */
 	data->dialog = dialog = gtk_dialog_new();
+	gtk_window_set_transient_for(GTK_WINDOW(dialog),
+		get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL));
 
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
@@ -580,6 +631,8 @@ pidgin_request_action(const char *title, const char *primary,
 
 	/* Create the dialog. */
 	data->dialog = dialog = gtk_dialog_new();
+	gtk_window_set_transient_for(GTK_WINDOW(dialog),
+		get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL));
 
 #if GTK_CHECK_VERSION(2,10,0)
 	gtk_window_set_deletable(GTK_WINDOW(data->dialog), FALSE);
@@ -1089,6 +1142,8 @@ pidgin_request_fields(const char *title, const char *primary,
 #else /* !_WIN32 */
 	data->dialog = win = pidgin_create_window(title, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
 #endif /* _WIN32 */
+	gtk_window_set_transient_for(GTK_WINDOW(win),
+		get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL));
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(destroy_multifield_cb), data);
@@ -1604,6 +1659,9 @@ pidgin_request_file(const char *title, const char *filename,
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button), "clicked",
 					 G_CALLBACK(file_ok_check_if_exists_cb), data);
 #endif /* FILECHOOSER */
+	gtk_window_set_role(GTK_WINDOW(filesel), "pidgin-request-file");
+	gtk_window_set_transient_for(GTK_WINDOW(filesel),
+		get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL));
 
 	data->dialog = filesel;
 	gtk_widget_show(filesel);
@@ -1654,6 +1712,9 @@ pidgin_request_folder(const char *title, const char *dirname,
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dirsel)->ok_button), "clicked",
 					 G_CALLBACK(file_ok_check_if_exists_cb), data);
 #endif
+	gtk_window_set_role(GTK_WINDOW(filesel), "pidgin-request-dir");
+	gtk_window_set_transient_for(GTK_WINDOW(filesel),
+		get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL));
 
 	data->dialog = dirsel;
 	gtk_widget_show(dirsel);
