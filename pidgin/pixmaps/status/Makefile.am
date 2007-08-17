@@ -2,6 +2,7 @@ SUBDIRS = 11 16 22 32 48
 
 EXTRA_DIST = \
 	Makefile.mingw \
+	11/Makefile.mingw \
 	16/Makefile.mingw \
 	16/rtl/Makefile.mingw \
 	22/Makefile.mingw \
