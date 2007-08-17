@@ -522,7 +522,7 @@ static void populate_log_tree(PidginLogViewer *lv)
 	}
 }
 
-static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *logs,
+static PidginLogViewer *display_log_viewer(GtkWindow *parent, struct log_viewer_hash_t *ht, GList *logs,
 						const char *title, GtkWidget *icon, int log_size)
 {
 	PidginLogViewer *lv;
@@ -568,7 +568,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 		g_hash_table_insert(log_viewers, ht, lv);
 
 	/* Window ***********/
-	lv->window = gtk_dialog_new_with_buttons(title, NULL, 0,
+	lv->window = gtk_dialog_new_with_buttons(title, parent, 0,
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
 #ifdef _WIN32
 	/* Steal the "HELP" response and use it to trigger browsing to the logs folder */
@@ -722,7 +722,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	g_free(title);
 }
 
-void pidgin_log_show_contact(PurpleContact *contact) {
+void pidgin_log_show_contact(GtkWindow *parent, PurpleContact *contact) {
 	struct log_viewer_hash_t *ht = g_new0(struct log_viewer_hash_t, 1);
 	PurpleBlistNode *child;
 	PidginLogViewer *lv = NULL;

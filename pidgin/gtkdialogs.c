@@ -919,7 +919,7 @@ pidgin_dialogs_log_cb(gpointer data, PurpleRequestFields *fields)
 			PurpleBlistNode *node = cur->data;
 			if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
 			{
-				pidgin_log_show_contact((PurpleContact *)node->parent);
+				pidgin_log_show_contact(GTK_WINDOW(gtkblist->window), (PurpleContact *)node->parent);
 				g_slist_free(buddies);
 				pidgin_clear_cursor(gtkblist->window);
 				g_free(username);
@@ -928,7 +928,7 @@ pidgin_dialogs_log_cb(gpointer data, PurpleRequestFields *fields)
 		}
 		g_slist_free(buddies);
 
-		pidgin_log_show(PURPLE_LOG_IM, username, account);
+		pidgin_log_show(GTK_WINDOW(gtkblist->window), PURPLE_LOG_IM, username, account);
 
 		pidgin_clear_cursor(gtkblist->window);
 	}

@@ -501,7 +501,7 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 			name = prpl_info->get_chat_name(c->components);
 		}
 	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		pidgin_log_show_contact((PurpleContact *)node);
+		pidgin_log_show_contact(GTK_WINDOW(gtkblist->window), (PurpleContact *)node);
 		pidgin_clear_cursor(gtkblist->window);
 		return;
 	} else {
@@ -513,7 +513,7 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 	}
 
 	if (name && account) {
-		pidgin_log_show(type, name, account);
+		pidgin_log_show(GTK_WINDOW(gtkblist->window), type, name, account);
 		g_free(name);
 
 		pidgin_clear_cursor(gtkblist->window);
