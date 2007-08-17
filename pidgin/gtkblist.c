@@ -520,11 +520,6 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 	}
 }
 
-static void gtk_blist_show_systemlog_cb()
-{
-	pidgin_syslog_show();
-}
-
 static void gtk_blist_show_onlinehelp_cb()
 {
 	purple_notify_uri(NULL, PURPLE_WEBSITE "documentation");
@@ -2883,7 +2878,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
-	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<Item>", NULL },
+	{ N_("/Tools/System _Log"), NULL, pidgin_blist_show_with_parent, (int)pidgin_syslog_show, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 	/* Help */
