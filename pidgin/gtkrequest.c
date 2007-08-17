@@ -1713,8 +1713,8 @@ pidgin_request_folder(const char *title, const char *dirname,
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dirsel)->ok_button), "clicked",
 					 G_CALLBACK(file_ok_check_if_exists_cb), data);
 #endif
-	gtk_window_set_role(GTK_WINDOW(filesel), "pidgin-request-dir");
-	gtk_window_set_transient_for(GTK_WINDOW(filesel),
+	gtk_window_set_role(GTK_WINDOW(dirsel), "pidgin-request-dir");
+	gtk_window_set_transient_for(GTK_WINDOW(dirsel),
 		get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL));
 
 	data->dialog = dirsel;
