@@ -603,6 +603,7 @@ static PurpleCertificateScheme x509_nss = {
 	x509_export_certificate,         /* Certificate export function */
 	x509_copy_certificate,           /* Copy */
 	x509_destroy_certificate,        /* Destroy cert */
+	NULL,                            /* Signed-by */
 	x509_sha1sum,                    /* SHA1 fingerprint */
 	NULL,                            /* Unique ID */
 	NULL,                            /* Issuer Unique ID */
