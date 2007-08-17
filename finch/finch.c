@@ -55,16 +55,10 @@ debug_init()
 	purple_debug_set_ui_ops(finch_debug_get_ui_ops());
 }
 
-/* XXX: this "leaks" a hashtable on shutdown.  I'll let
- * the finch guys decide if they want to go through the trouble
- * of properly freeing it, since their quit function doesn't
- * live in this file */
-
 static GHashTable *ui_info = NULL;
-
 static GHashTable *finch_ui_get_info()
 {
-	if(NULL == ui_info) {
+	if (ui_info == NULL) {
 		ui_info = g_hash_table_new(g_str_hash, g_str_equal);
 
 		g_hash_table_insert(ui_info, "name", (char*)_("Finch"));
@@ -74,12 +68,20 @@ static GHashTable *finch_ui_get_info()
 	return ui_info;
 }
 
+static void
+finch_quit(void)
+{
+	gnt_ui_uninit();
+	if (ui_info)
+		g_hash_table_destroy(ui_info);
+}
+
 static PurpleCoreUiOps core_ops =
 {
 	finch_prefs_init,
 	debug_init,
 	gnt_ui_init,
-	gnt_ui_uninit,
+	finch_quit,
 	finch_ui_get_info,
 
 	/* padding */
@@ -396,7 +398,17 @@ init_libpurple(int argc, char **argv)
 	return 1;
 }
 
-int main(int argc, char **argv)
+static gboolean gnt_start(int *argc, char ***argv)
+{
+	/* Initialize the libpurple stuff */
+	if (!init_libpurple(*argc, *argv))
+		return FALSE;
+ 
+	purple_blist_show();
+	return TRUE;
+}
+
+int main(int argc, char *argv[])
 {
 	signal(SIGPIPE, SIG_IGN);
 
@@ -405,11 +417,10 @@ int main(int argc, char **argv)
 	g_set_application_name(_("Finch"));
 #endif
 
-	/* Initialize the libpurple stuff */
-	if (!init_libpurple(argc, argv))
-		return 0;
- 
-	purple_blist_show();
+	gnt_init();
+
+	gnt_start(&argc, &argv);
+
 	gnt_main();
 
 #ifdef STANDALONE

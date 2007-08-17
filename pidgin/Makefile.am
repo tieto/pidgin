@@ -46,6 +46,7 @@ EXTRA_DIST = \
 		win32/nsis/translations/kurdish.nsh \
 		win32/nsis/translations/lithuanian.nsh \
 		win32/nsis/translations/norwegian.nsh \
+		win32/nsis/translations/persian.nsh \
 		win32/nsis/translations/polish.nsh \
 		win32/nsis/translations/portuguese.nsh \
 		win32/nsis/translations/portuguese-br.nsh \
@@ -65,7 +66,7 @@ if ENABLE_GTK
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = pidgin.pc
 
-SUBDIRS = pixmaps plugins sounds
+SUBDIRS = pixmaps plugins
 
 bin_PROGRAMS = pidgin
 

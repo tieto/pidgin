@@ -54,9 +54,9 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 
 m4_define([gnt_lt_current], [1])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [0])
+m4_define([gnt_minor_version], [1])
 m4_define([gnt_micro_version], [0])
-m4_define([gnt_version_suffix], [])
+m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
@@ -1089,7 +1089,7 @@ dnl # Check for D-Bus libraries
 dnl #######################################################################
 
 AC_ARG_ENABLE(dbus, [AC_HELP_STRING([--enable-dbus], [enable D-Bus support])], , enable_dbus=yes)
-AC_ARG_ENABLE(nm, [AC_HELP_STRING([--enable-nm], [enable NetworkManager support (buggy) (requires D-Bus)])], enable_libnm=yes, enable_libnm=no)
+AC_ARG_ENABLE(nm, [AC_HELP_STRING([--enable-nm], [enable NetworkManager support (buggy) (requires D-Bus)])], enable_libnm=$enableval, enable_libnm=no)
 
 if test "x$enable_dbus" = "xyes" ; then
 	AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
@@ -2086,6 +2086,8 @@ if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
+AM_CONDITIONAL(PURPLE_AVAILABLE, true)
+
 AC_OUTPUT([Makefile
 		   Doxyfile
 		   doc/Makefile
@@ -2111,8 +2113,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/emblems/16/scalable/Makefile
 		   pidgin/pixmaps/emotes/Makefile
 		   pidgin/pixmaps/emotes/default/Makefile
-		   pidgin/pixmaps/emotes/default/22/Makefile
-		   pidgin/pixmaps/emotes/default/22/scalable/Makefile
+		   pidgin/pixmaps/emotes/default/24/Makefile
+		   pidgin/pixmaps/emotes/default/24/scalable/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
 		   pidgin/pixmaps/icons/Makefile
 		   pidgin/pixmaps/icons/16/Makefile
@@ -2133,6 +2135,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/protocols/48/Makefile
 		   pidgin/pixmaps/protocols/48/scalable/Makefile
 		   pidgin/pixmaps/status/Makefile
+		   pidgin/pixmaps/status/11/Makefile
+		   pidgin/pixmaps/status/11/scalable/Makefile
 		   pidgin/pixmaps/status/16/Makefile
 		   pidgin/pixmaps/status/16/rtl/Makefile
 		   pidgin/pixmaps/status/16/scalable/Makefile
@@ -2164,7 +2168,6 @@ AC_OUTPUT([Makefile
 		   pidgin/plugins/perl/Makefile
 		   pidgin/plugins/perl/common/Makefile.PL
 		   pidgin/plugins/ticker/Makefile
-		   pidgin/sounds/Makefile
 		   libpurple/example/Makefile
 		   libpurple/gconf/Makefile
 		   libpurple/purple.pc
@@ -2197,6 +2200,8 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
 		   libpurple/version.h
+		   share/Makefile
+		   share/sounds/Makefile
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc

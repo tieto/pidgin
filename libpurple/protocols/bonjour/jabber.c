@@ -371,6 +371,8 @@ void bonjour_jabber_stream_ended(PurpleBuddy *pb) {
 
 	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", pb->name);
 
+	g_return_if_fail(bb != NULL);
+
 	/* Close the socket, clear the watcher and free memory */
 	bonjour_jabber_close_conversation(bb->conversation);
 	bb->conversation = NULL;

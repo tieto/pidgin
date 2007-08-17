@@ -177,10 +177,10 @@ struct _PurplePluginProtocolInfo
 {
 	PurpleProtocolOptions options;  /**< Protocol options.          */
 
-	GList *user_splits;      /* A GList of PurpleAccountUserSplit */
-	GList *protocol_options; /* A GList of PurpleAccountOption    */
+	GList *user_splits;      /**< A GList of PurpleAccountUserSplit */
+	GList *protocol_options; /**< A GList of PurpleAccountOption    */
 
-	PurpleBuddyIconSpec icon_spec; /* The icon spec. */
+	PurpleBuddyIconSpec icon_spec; /**< The icon spec. */
 
 	/**
 	 * Returns the base icon name for the given buddy and account.
@@ -268,22 +268,22 @@ struct _PurplePluginProtocolInfo
 	int  (*chat_send)(PurpleConnection *, int id, const char *message, PurpleMessageFlags flags);
 	void (*keepalive)(PurpleConnection *);
 
-	/* new user registration */
+	/** new user registration */
 	void (*register_user)(PurpleAccount *);
 
 	/* get "chat buddy" info and away message */
 	void (*get_cb_info)(PurpleConnection *, int, const char *who);
 	void (*get_cb_away)(PurpleConnection *, int, const char *who);
 
-	/* save/store buddy's alias on server list/roster */
+	/** save/store buddy's alias on server list/roster */
 	void (*alias_buddy)(PurpleConnection *, const char *who,
 						const char *alias);
 
-	/* change a buddy's group on a server list/roster */
+	/** change a buddy's group on a server list/roster */
 	void (*group_buddy)(PurpleConnection *, const char *who,
 						const char *old_group, const char *new_group);
 
-	/* rename a group on a server list/roster */
+	/** rename a group on a server list/roster */
 	void (*rename_group)(PurpleConnection *, const char *old_name,
 						 PurpleGroup *group, GList *moved_buddies);
 
@@ -291,10 +291,18 @@ struct _PurplePluginProtocolInfo
 
 	void (*convo_closed)(PurpleConnection *, const char *who);
 
-	const char *(*normalize)(const PurpleAccount *, const char *);
+	/**
+	 *  Convert the username @a who to its canonical form.  (For example,
+	 *  AIM treats "fOo BaR" and "foobar" as the same user; this function
+	 *  should return the same normalized string for both of those.)
+	 */
+	const char *(*normalize)(const PurpleAccount *, const char *who);
 
-	/* The prpl does NOT own a reference to img.  If it needs one, it
-	 * must purple_imgstore_ref(img) itself. */
+	/**
+	 * Set the buddy icon for the given connection to @a img.  The prpl
+	 * does NOT own a reference to @a img; if it needs one, it must
+	 * #purple_imgstore_ref(@a img) itself.
+	 */
 	void (*set_buddy_icon)(PurpleConnection *, PurpleStoredImage *img);
 
 	void (*remove_group)(PurpleConnection *gc, PurpleGroup *group);
@@ -318,7 +326,7 @@ struct _PurplePluginProtocolInfo
 
 	PurpleWhiteboardPrplOps *whiteboard_prpl_ops;
 
-	/* For use in plugins that may understand the underlying protocol */
+	/** For use in plugins that may understand the underlying protocol */
 	int (*send_raw)(PurpleConnection *gc, const char *buf, int len);
 
 	/* room list serialize */

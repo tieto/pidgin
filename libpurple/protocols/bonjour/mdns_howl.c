@@ -26,6 +26,7 @@
 typedef struct _howl_impl_data {
 	sw_discovery session;
 	sw_discovery_oid session_id;
+	guint session_handler;
 } HowlSessionImplData;
 
 static sw_result HOWL_API
@@ -84,6 +85,7 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 	/* Obtain the parameters from the text_record */
 	if ((text_record_len > 0) && (text_record) && (*text_record != '\0'))
 	{
+		clear_bonjour_buddy_values(buddy);
 		sw_text_record_iterator_init(&iterator, text_record, text_record_len);
 		while (sw_text_record_iterator_next(iterator, key, (sw_octet *)value, &value_length) == SW_OKAY)
 			set_bonjour_buddy_value(buddy, key, value, value_length);
@@ -192,11 +194,9 @@ gboolean _mdns_init_session(BonjourDnsSd *data) {
 }
 
 
-gboolean _mdns_publish(BonjourDnsSd *data, PublishType type) {
+gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 	sw_text_record dns_data;
 	sw_result publish_result = SW_OKAY;
-	char portstring[6];
-	const char *jid, *aim, *email;
 	HowlSessionImplData *idata = data->mdns_impl_data;
 
 	g_return_val_if_fail(idata != NULL, FALSE);
@@ -207,43 +207,11 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type) {
 		return FALSE;
 	}
 
-	/* Convert the port to a string */
-	snprintf(portstring, sizeof(portstring), "%d", data->port_p2pj);
-
-	jid = purple_account_get_string(data->account, "jid", NULL);
-	aim = purple_account_get_string(data->account, "AIM", NULL);
-	email = purple_account_get_string(data->account, "email", NULL);
-
-	/* We should try to follow XEP-0174, but some clients have "issues", so we humor them.
-	 * See http://telepathy.freedesktop.org/wiki/SalutInteroperability
-	 */
-
-	/* Needed by iChat */
-	sw_text_record_add_key_and_string_value(dns_data, "txtvers", "1");
-	/* Needed by Gaim/Pidgin <= 2.0.1 (remove at some point) */
-	sw_text_record_add_key_and_string_value(dns_data, "1st", data->first);
-	/* Needed by Gaim/Pidgin <= 2.0.1 (remove at some point) */
-	sw_text_record_add_key_and_string_value(dns_data, "last", data->last);
-	/* Needed by Adium */
-	sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", portstring);
-	/* Needed by iChat, Gaim/Pidgin <= 2.0.1 */
-	sw_text_record_add_key_and_string_value(dns_data, "status", data->status);
-	/* Currently always set to "!" since we don't support AV and wont ever be in a conference */
-	sw_text_record_add_key_and_string_value(dns_data, "vc", data->vc);
-	sw_text_record_add_key_and_string_value(dns_data, "ver", VERSION);
-	if (email != NULL && *email != '\0')
-		sw_text_record_add_key_and_string_value(dns_data, "email", email);
-	if (jid != NULL && *jid != '\0')
-		sw_text_record_add_key_and_string_value(dns_data, "jid", jid);
-	/* Nonstandard, but used by iChat */
-	if (aim != NULL && *aim != '\0')
-		sw_text_record_add_key_and_string_value(dns_data, "AIM", aim);
-	if (data->msg != NULL && *data->msg != '\0')
-		sw_text_record_add_key_and_string_value(dns_data, "msg", data->msg);
-	if (data->phsh != NULL && *data->phsh != '\0')
-		sw_text_record_add_key_and_string_value(dns_data, "phsh", data->phsh);
-
-	/* TODO: ext, nick, node */
+	while (records) {
+		PurpleKeyValuePair *kvp = records->data;
+		sw_text_record_add_key_and_string_value(dns_data, kvp->key, kvp->value);
+		records = records->next;
+	}
 
 	/* Publish the service */
 	switch (type) {
@@ -276,17 +244,18 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 
 	g_return_val_if_fail(idata != NULL, FALSE);
 
-	return (sw_discovery_browse(idata->session, 0, ICHAT_SERVICE, NULL, _browser_reply,
-				    data->account, &session_id) == SW_OKAY);
+	if (sw_discovery_browse(idata->session, 0, ICHAT_SERVICE, NULL, _browser_reply,
+				    data->account, &session_id) == SW_OKAY) {
+		idata->session_handler = purple_input_add(sw_discovery_socket(idata->session),
+				PURPLE_INPUT_READ, _mdns_handle_event, idata->session);
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
-guint _mdns_register_to_mainloop(BonjourDnsSd *data) {
-	HowlSessionImplData *idata = data->mdns_impl_data;
-
-	g_return_val_if_fail(idata != NULL, 0);
-
-	return purple_input_add(sw_discovery_socket(idata->session),
-				PURPLE_INPUT_READ, _mdns_handle_event, idata->session);
+gboolean _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data, gsize avatar_len) {
+	return FALSE;
 }
 
 void _mdns_stop(BonjourDnsSd *data) {
@@ -296,6 +265,8 @@ void _mdns_stop(BonjourDnsSd *data) {
 		return;
 
 	sw_discovery_cancel(idata->session, idata->session_id);
+
+	purple_input_remove(idata->session_handler);
 
 	/* TODO: should this really be g_free()'d ??? */
 	g_free(idata->session);
@@ -311,5 +282,7 @@ void _mdns_init_buddy(BonjourBuddy *buddy) {
 void _mdns_delete_buddy(BonjourBuddy *buddy) {
 }
 
-void bonjour_dns_sd_retrieve_buddy_icon(BonjourBuddy* buddy) {
+void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
 }
+
+

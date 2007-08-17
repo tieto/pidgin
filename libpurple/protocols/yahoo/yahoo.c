@@ -950,10 +950,21 @@ struct yahoo_add_request {
 	char *id;
 	char *who;
 	char *msg;
+	int protocol;
 };
 
 static void
-yahoo_buddy_add_authorize_cb(struct yahoo_add_request *add_req) {
+yahoo_buddy_add_authorize_cb(gpointer data) {
+	struct yahoo_add_request *add_req = data;
+
+	struct yahoo_packet *pkt;
+	struct yahoo_data *yd = add_req->gc->proto_data;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, "ssiii", 1, add_req->id, 5, add_req->who, 241, add_req->protocol,
+	                  13, 1, 334, 0);
+	yahoo_packet_send_and_free(pkt, yd);
+	
 	g_free(add_req->id);
 	g_free(add_req->who);
 	g_free(add_req->msg);
@@ -997,13 +1008,62 @@ yahoo_buddy_add_deny_noreason_cb(struct yahoo_add_request *add_req, const char*m
 }
 
 static void
-yahoo_buddy_add_deny_reason_cb(struct yahoo_add_request *add_req) {
+yahoo_buddy_add_deny_reason_cb(gpointer data) {
+	struct yahoo_add_request *add_req = data;
 	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
 			NULL, _("No reason given."), TRUE, FALSE, NULL,
 			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
 			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb),
 			purple_connection_get_account(add_req->gc), add_req->who, NULL,
 			"blist", add_req);
+}
+
+static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *pkt) {
+	struct yahoo_add_request *add_req;
+	char *msg = NULL;
+	GSList *l = pkt->hash;
+
+	add_req = g_new0(struct yahoo_add_request, 1);
+	add_req->gc = gc;
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+
+		switch (pair->key) {
+		case 5:
+			add_req->id = g_strdup(pair->value);
+			break;
+		case 4:
+			add_req->who = g_strdup(pair->value);
+			break;
+		case 241:
+			add_req->protocol = strtol(pair->value, NULL, 10);
+			break;
+		case 14:
+			msg = pair->value;
+			break;
+		}
+		l = l->next;
+	}
+
+	if (add_req->id) {
+		if (msg)
+			add_req->msg = yahoo_string_decode(gc, msg, FALSE);
+
+		/* DONE! this is almost exactly the same as what MSN does,
+		 * this should probably be moved to the core.
+		 */
+		 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
+                                                    NULL, add_req->msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
+						    yahoo_buddy_add_authorize_cb,
+						    yahoo_buddy_add_deny_reason_cb,
+                                                    add_req);
+	} else {
+		g_free(add_req->id);
+		g_free(add_req->who);
+		/*g_free(add_req->msg);*/
+		g_free(add_req);
+	}
 }
 
 static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt) {
@@ -1042,8 +1102,8 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 		 */
 		 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
                                                     NULL, add_req->msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
-						    G_CALLBACK(yahoo_buddy_add_authorize_cb),
-						    G_CALLBACK(yahoo_buddy_add_deny_reason_cb),
+						    yahoo_buddy_add_authorize_cb,
+						    yahoo_buddy_add_deny_reason_cb,
                                                     add_req);
 	} else {
 		g_free(add_req->id);
@@ -2203,6 +2263,9 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_AUTH:
 		yahoo_process_auth(gc, pkt);
 		break;
+	case YAHOO_SERVICE_AUTH_REQ_15:
+		yahoo_buddy_auth_req_15(gc, pkt);
+		break;	       
 	case YAHOO_SERVICE_ADDBUDDY:
 		yahoo_process_addbuddy(gc, pkt);
 		break;
@@ -3662,6 +3725,7 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 	PurpleGroup *g;
 	char *group = NULL;
 	char *group2 = NULL;
+	YahooFriend *f;
 
 	if (!yd->logged_in)
 		return;
@@ -3669,6 +3733,8 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 	if (!yahoo_privacy_check(gc, purple_buddy_get_name(buddy)))
 		return;
 
+	f = yahoo_friend_find(gc, purple_buddy_get_name(buddy));
+	
 	if (foo)
 		group = foo->name;
 	if (!group) {
@@ -3681,8 +3747,20 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 
 	group2 = yahoo_string_encode(gc, group, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc),
-	                  7, buddy->name, 65, group2, 14, "");
+	yahoo_packet_hash(pkt, "ssssssssss",
+	                  14, "",
+	                  65, group2,
+	                  97, "1",
+	                  1, purple_connection_get_display_name(gc),
+	                  302, "319",
+	                  300, "319",
+	                  7, buddy->name,
+	                  334, "0",
+	                  301, "319",
+	                  303, "319"
+	);
+	if (f && f->protocol)
+		yahoo_packet_hash_int(pkt, 241, f->protocol);
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(group2);
 }
@@ -3819,16 +3897,12 @@ static void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 		return;
 	}
 
-	/* Step 1:  Add buddy to new group. */
-	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc),
-	                  7, who, 65, gpn, 14, "");
+	pkt = yahoo_packet_new(YAHOO_SERVICE_CHGRP_15, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, "ssssssss", 1, purple_connection_get_display_name(gc),
+	                  302, "240", 300, "240", 7, who, 224, gpo, 264, gpn, 301,
+	                  "240", 303, "240");
 	yahoo_packet_send_and_free(pkt, yd);
 
-	/* Step 2:  Remove buddy from old group */
-	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 65, gpo);
-	yahoo_packet_send_and_free(pkt, yd);
 	g_free(gpn);
 	g_free(gpo);
 }

@@ -26,7 +26,7 @@ AC_PREREQ([2.50])
 
 m4_define([gnt_lt_current], [1])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [0])
+m4_define([gnt_minor_version], [1])
 m4_define([gnt_micro_version], [0])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
@@ -36,6 +36,7 @@ m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt
 AC_INIT([libgnt], [gnt_display_version], [devel@pidgin.im])
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
+AC_CONFIG_AUX_DIR([.])
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 
 GNT_MAJOR_VERSION=gnt_major_version
@@ -313,6 +314,8 @@ AC_SUBST(LIBXML_LIBS)
 if test "x$have_libxml" = "xno"; then
 	AC_DEFINE(NO_LIBXML, 1, [Do not have libxml2.])
 fi
+
+AM_CONDITIONAL(PURPLE_AVAILABLE, false)
 
 AC_OUTPUT([Makefile
            gnt.pc
