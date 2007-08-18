@@ -1776,7 +1776,7 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	time_t activation, expiration;
 	/* Length of these buffers is dictated by 'man ctime_r' */
 	gchar activ_str[26], expir_str[26];
-	gchar *title, *primary, *secondary;
+	gchar *secondary;
 
 	/* Pull out the SHA1 checksum */
 	sha_bin = purple_certificate_get_fingerprint_sha1(crt);
@@ -1796,8 +1796,6 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	ctime_r(&expiration, expir_str);
 	
 	/* Make messages */
-	title = _("Certificate Information");
-	primary = ""; /* libpurple doesn't like NULL messages */
 	secondary = g_strdup_printf(_("Common name: %s\n\n"
 				      "Fingerprint (SHA1): %s\n\n"
 				      "Activation date: %s\n"
@@ -1807,14 +1805,12 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	/* Make a semi-pretty display */
 	purple_notify_info(
 		NULL,         /* TODO: Find what the handle ought to be */
-		title,
-		primary,
+		_("Certificate Information"),
+		"",
 		secondary);
 		
 	/* Cleanup */
 	g_free(cn);
-	g_free(title);
-	g_free(primary);
 	g_free(secondary);
 	g_free(sha_asc);
 	g_byte_array_free(sha_bin, TRUE);
