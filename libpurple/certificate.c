@@ -1037,12 +1037,68 @@ static PurpleCertificatePool x509_tls_peers = {
 /***** A Verifier that uses the tls_peers cache and the CA pool to validate certificates *****/
 static PurpleCertificateVerifier x509_tls_cached;
 
-static void
-x509_tls_cached_user_auth_cb (PurpleCertificateVerificationRequest *vrq, gint id)
+
+/* The following is several hacks piled together and needs to be fixed.
+ * It exists because show_cert (see its comments) needs the original reason
+ * given to user_auth in order to rebuild the dialog.
+ */
+/* TODO: This will cause a ua_ctx to become memleaked if the request(s) get
+   closed by handle or otherwise abnormally. */
+typedef struct {
+	PurpleCertificateVerificationRequest *vrq;
+	gchar *reason;
+} x509_tls_cached_ua_ctx;
+
+static x509_tls_cached_ua_ctx *
+x509_tls_cached_ua_ctx_new(PurpleCertificateVerificationRequest *vrq,
+			   const gchar *reason)
 {
+	x509_tls_cached_ua_ctx *c;
+
+	c = g_new0(x509_tls_cached_ua_ctx, 1);
+	c->vrq = vrq;
+	c->reason = g_strdup(reason);
+
+	return c;
+}
+
+
+static void
+x509_tls_cached_ua_ctx_free(x509_tls_cached_ua_ctx *c)
+{
+	g_return_if_fail(c);
+	g_free(c->reason);
+	g_free(c);
+}
+
+static void
+x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
+			  const gchar *reason);
+
+static void
+x509_tls_cached_show_cert(x509_tls_cached_ua_ctx *c, gint id)
+{
+	PurpleCertificate *disp_crt = c->vrq->cert_chain->data;
+	purple_certificate_display_x509(disp_crt);
+
+	/* Since clicking a button closes the request, show it again */
+	x509_tls_cached_user_auth(c->vrq, c->reason);
+
+	x509_tls_cached_ua_ctx_free(c);
+}
+
+static void
+x509_tls_cached_user_auth_cb (x509_tls_cached_ua_ctx *c, gint id)
+{
+	PurpleCertificateVerificationRequest *vrq;
 	PurpleCertificatePool *tls_peers;
+
+	g_return_if_fail(c);
+	g_return_if_fail(c->vrq);
 	
-	g_return_if_fail(vrq);
+	vrq = c->vrq;
+
+	x509_tls_cached_ua_ctx_free(c);
 
 	tls_peers = purple_certificate_find_pool("x509","tls_peers");
 
@@ -1065,66 +1121,39 @@ x509_tls_cached_user_auth_cb (PurpleCertificateVerificationRequest *vrq, gint id
 	}
 }
 
-/* Validates a certificate by asking the user */
+/** Validates a certificate by asking the user
+ * @param reason    String to explain why the user needs to accept/refuse the
+ *                  certificate.
+ * @todo Needs a handle argument
+ */
 static void
-x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq)
+x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
+			  const gchar *reason)
 {
-	gchar *sha_asc;
-	GByteArray *sha_bin;
-	gchar *cn;
-	const gchar *cn_match;
-	time_t activation, expiration;
-	/* Length of these buffers is dictated by 'man ctime_r' */
-	gchar activ_str[26], expir_str[26];
-	gchar *primary, *secondary;
-	PurpleCertificate *crt = (PurpleCertificate *) vrq->cert_chain->data;
+	gchar *primary;
 
-	/* Pull out the SHA1 checksum */
-	sha_bin = purple_certificate_get_fingerprint_sha1(crt);
-	/* Now decode it for display */
-	sha_asc = purple_base16_encode_chunked(sha_bin->data,
-					       sha_bin->len);
-
-	/* Get the cert Common Name */
-	cn = purple_certificate_get_subject_name(crt);
-
-	/* Determine whether the name matches */
-	if (purple_certificate_check_subject_name(crt, vrq->subject_name)) {
-		cn_match = _("");
-	} else {
-		cn_match = _("(DOES NOT MATCH)");
-	}
-
-	/* Get the certificate times */
-	/* TODO: Check the times against localtime */
-	/* TODO: errorcheck? */
-	g_assert(purple_certificate_get_times(crt, &activation, &expiration));
-	ctime_r(&activation, activ_str);
-	ctime_r(&expiration, expir_str);
-	
 	/* Make messages */
-	primary = g_strdup_printf(_("%s has presented the following certificate:"), vrq->subject_name);
-	secondary = g_strdup_printf(_("Common name: %s %s\n\nFingerprint (SHA1): %s\n\nActivation date: %s\nExpiration date: %s\n"), cn, cn_match, sha_asc, activ_str, expir_str);
-	
+	primary = g_strdup_printf(_("Accept certificate for %s?"),
+				  vrq->subject_name);
+		
 	/* Make a semi-pretty display */
-	purple_request_accept_cancel(
+	purple_request_action(
 		vrq->cb_data, /* TODO: Find what the handle ought to be */
 		_("SSL Certificate Verification"),
 		primary,
-		secondary,
+		reason,
 		1,            /* Accept by default */
 		NULL,         /* No account */
 		NULL,         /* No other user */
 		NULL,         /* No associated conversation */
-		vrq,
-		x509_tls_cached_user_auth_cb,
-		x509_tls_cached_user_auth_cb );
+		x509_tls_cached_ua_ctx_new(vrq, reason),
+		3,            /* Number of actions */
+		_("Yes"), x509_tls_cached_user_auth_cb,
+		_("No"),  x509_tls_cached_user_auth_cb,
+		_("_View Certificate..."), x509_tls_cached_show_cert);
 	
 	/* Cleanup */
 	g_free(primary);
-	g_free(secondary);
-	g_free(sha_asc);
-	g_byte_array_free(sha_bin, TRUE);
 }
 
 static void
@@ -1200,18 +1229,27 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	if ( ! purple_certificate_check_subject_name(peer_crt,
 						     vrq->subject_name) ) {
 		gchar *sn = purple_certificate_get_subject_name(peer_crt);
+		gchar *msg;
 		
 		purple_debug_info("certificate/x509/tls_cached",
 				  "Name mismatch: Certificate given for %s "
 				  "has a name of %s\n",
 				  vrq->subject_name, sn);
-		g_free(sn);
 
 		/* Prompt the user to authenticate the certificate */
 		/* TODO: Provide the user with more guidance about why he is
 		   being prompted */
 		/* vrq will be completed by user_auth */
-		x509_tls_cached_user_auth(vrq);
+		msg = g_strdup_printf(_("The certificate given by %s has a "
+					"name on it of %s instead. This could "
+					"mean that you are not connecting to "
+					"the service you want to."),
+				      vrq->subject_name, sn);
+				      
+		x509_tls_cached_user_auth(vrq,msg);
+
+		g_free(sn);
+		g_free(msg);
 		return;
 	} /* if (name mismatch) */
 
@@ -1251,9 +1289,12 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		purple_debug_error("certificate/x509/tls_cached",
 				   "No X.509 Certificate Authority pool "
 				   "could be found!\n");
-		
+
 		/* vrq will be completed by user_auth */
-		x509_tls_cached_user_auth(vrq);
+		x509_tls_cached_user_auth(vrq,_("You have no database of root "
+						"certificates, so this "
+						"certificate cannot be "
+						"validated."));
 		return;
 	}
 
@@ -1273,7 +1314,9 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 				  ca_id);
 		g_free(ca_id);
 		/* vrq will be completed by user_auth */
-		x509_tls_cached_user_auth(vrq);
+		x509_tls_cached_user_auth(vrq,_("The root certificate this "
+						"one claims to be issued by "
+						"is unknown to Pidgin."));
 		return;
 	}
 
@@ -1753,8 +1796,8 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	ctime_r(&expiration, expir_str);
 	
 	/* Make messages */
-	title = g_strdup_printf(_("Certificate: %s"), cn);
-	primary = NULL;
+	title = _("Certificate Information");
+	primary = ""; /* libpurple doesn't like NULL messages */
 	secondary = g_strdup_printf(_("Common name: %s\n\n"
 				      "Fingerprint (SHA1): %s\n\n"
 				      "Activation date: %s\n"
