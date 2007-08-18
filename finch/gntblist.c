@@ -342,7 +342,7 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 			_("Add"), G_CALLBACK(add_buddy_cb),
 			_("Cancel"), NULL,
 			account, NULL, NULL,
-			NULL);
+			"blist", NULL);
 }
 
 static void
@@ -419,7 +419,7 @@ finch_request_add_chat(PurpleAccount *account, PurpleGroup *grp, const char *ali
 			_("You can edit more information from the context menu later."),
 			fields, _("Add"), G_CALLBACK(add_chat_cb), _("Cancel"), NULL,
 			NULL, NULL, NULL,
-			NULL);
+			"blist", NULL);
 }
 
 static void
@@ -454,7 +454,7 @@ finch_request_add_group()
 			NULL, FALSE, FALSE, NULL,
 			_("Add"), G_CALLBACK(add_group_cb), _("Cancel"), NULL,
 			NULL, NULL, NULL,
-			NULL);
+			"blist", NULL);
 }
 
 static PurpleBlistUiOps blist_ui_ops =
@@ -801,7 +801,7 @@ chat_components_edit(PurpleBlistNode *selected, PurpleChat *chat)
 	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please Update the necessary fields."),
 			fields, _("Edit"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
 			NULL, NULL, NULL,
-			chat);
+			"blist", chat);
 }
 
 static void
@@ -1003,7 +1003,7 @@ finch_blist_rename_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 			name, FALSE, FALSE, NULL, text, G_CALLBACK(rename_blist_node),
 			_("Cancel"), NULL,
 			NULL, NULL, NULL,
-			node);
+			"blist", node);
 
 	g_free(prompt);
 }
@@ -1095,7 +1095,7 @@ finch_blist_remove_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 			primary, sec,
 			1,
 			account, name, NULL,
-			node, 2,
+			"blist", node, 2,
 			_("Remove"), finch_blist_remove_node,
 			_("Cancel"), NULL);
 	g_free(primary);
@@ -2211,7 +2211,7 @@ send_im_select(GntMenuItem *item, gpointer n)
 						_("OK"), G_CALLBACK(send_im_select_cb),
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
-						NULL);
+						"blist", NULL);
 }
 
 static void
