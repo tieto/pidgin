@@ -433,14 +433,7 @@ irc_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 
 	irc->gsc = NULL;
 
-	switch(error) {
-		case PURPLE_SSL_CONNECT_FAILED:
-			purple_connection_error(gc, _("Connection Failed"));
-			break;
-		case PURPLE_SSL_HANDSHAKE_FAILED:
-			purple_connection_error(gc, _("SSL Handshake Failed"));
-			break;
-	}
+	purple_connection_error(gc, purple_ssl_strerror(error));
 }
 
 static void irc_close(PurpleConnection *gc)
