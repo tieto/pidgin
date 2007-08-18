@@ -7805,25 +7805,20 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 	if (e->button == 3) {
 		/* Right click was pressed. Popup the Send To menu. */
 		GtkWidget *menu = gtk_menu_new(), *sub;
+		gboolean populated = populate_menu_with_options(menu, gtkconv, TRUE);
 		sub = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
 
-		if (populate_menu_with_options(menu, gtkconv, TRUE))
-			pidgin_separator(menu);
-		else if (!sub ||
-				!GTK_WIDGET_IS_SENSITIVE(gtkconv->win->menu.send_to)) {
-			gtk_widget_destroy(menu);
-			return FALSE;
-		} else {
-			menu = sub;
-			sub = NULL;
-		}
-
-		if (sub) {
+		if (sub && GTK_WIDGET_IS_SENSITIVE(gtkconv->win->menu.send_to)) {
 			GtkWidget *item = gtk_menu_item_new_with_mnemonic(_("_Send To"));
+			if (populated)
+				pidgin_separator(menu);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 			gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), sub);
 			gtk_widget_show(item);
 			gtk_widget_show_all(sub);
+		} else if (!populated) {
+			gtk_widget_destroy(menu);
+			return FALSE;
 		}
 
 		gtk_widget_show_all(menu);
