@@ -263,6 +263,6 @@ void finch_prefs_show_all()
 	pref_request.window = purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(save_cb), _("Cancel"), free_strings,
 			NULL, NULL, NULL,
-			NULL);
+			"preferences", NULL);
 }
 
