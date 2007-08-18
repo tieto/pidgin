@@ -762,6 +762,16 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool);
 /*@}*/
 
 
+/**
+ * Displays a window showing X.509 certificate information
+ *
+ * @param crt    Certificate under an "x509" Scheme
+ * @TODO Will break on CA certs, as they have no Common Name
+ */
+void
+purple_certificate_display_x509(PurpleCertificate *crt);
+
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

@@ -1719,3 +1719,64 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool)
 			  pool->name);
 	return TRUE;
 }
+
+/****************************************************************************/
+/* Scheme-specific functions                                                */
+/****************************************************************************/
+
+void
+purple_certificate_display_x509(PurpleCertificate *crt)
+{
+	gchar *sha_asc;
+	GByteArray *sha_bin;
+	gchar *cn;
+	time_t activation, expiration;
+	/* Length of these buffers is dictated by 'man ctime_r' */
+	gchar activ_str[26], expir_str[26];
+	gchar *title, *primary, *secondary;
+
+	/* Pull out the SHA1 checksum */
+	sha_bin = purple_certificate_get_fingerprint_sha1(crt);
+	/* Now decode it for display */
+	sha_asc = purple_base16_encode_chunked(sha_bin->data,
+					       sha_bin->len);
+
+	/* Get the cert Common Name */
+	/* TODO: Will break on CA certs */
+	cn = purple_certificate_get_subject_name(crt);
+
+	/* Get the certificate times */
+	/* TODO: Check the times against localtime */
+	/* TODO: errorcheck? */
+	g_assert(purple_certificate_get_times(crt, &activation, &expiration));
+	ctime_r(&activation, activ_str);
+	ctime_r(&expiration, expir_str);
+	
+	/* Make messages */
+	title = g_strdup_printf(_("Certificate: %s"), cn);
+	primary = NULL;
+	secondary = g_strdup_printf(_("Common name: %s\n\n"
+				      "Fingerprint (SHA1): %s\n\n"
+				      "Activation date: %s\n"
+				      "Expiration date: %s\n"),
+				    cn, sha_asc, activ_str, expir_str);
+	
+	/* Make a semi-pretty display */
+	purple_notify_info(
+		NULL,         /* TODO: Find what the handle ought to be */
+		title,
+		primary,
+		secondary);
+		
+	/* Cleanup */
+	g_free(cn);
+	g_free(title);
+	g_free(primary);
+	g_free(secondary);
+	g_free(sha_asc);
+	g_byte_array_free(sha_bin, TRUE);
+}
+
+
+
+
