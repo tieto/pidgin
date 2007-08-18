@@ -1102,7 +1102,7 @@ x509_tls_cached_user_auth_cb (x509_tls_cached_ua_ctx *c, gint id)
 
 	tls_peers = purple_certificate_find_pool("x509","tls_peers");
 
-	if (1 == id) {
+	if (2 == id) {
 		gchar *cache_id = vrq->subject_name;
 		purple_debug_info("certificate/x509/tls_cached",
 				  "User ACCEPTED cert\nCaching first in chain for future use as %s...\n",
@@ -1142,7 +1142,7 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 		_("SSL Certificate Verification"),
 		primary,
 		reason,
-		1,            /* Accept by default */
+		2,            /* Accept by default */
 		NULL,         /* No account */
 		NULL,         /* No other user */
 		NULL,         /* No associated conversation */
