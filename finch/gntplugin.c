@@ -377,6 +377,6 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 	return purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(finch_request_save_in_prefs), _("Cancel"), NULL,
 			NULL, NULL, NULL,
-			NULL);
+			"plugins", NULL);
 }
 
