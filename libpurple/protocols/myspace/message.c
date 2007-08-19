@@ -172,8 +172,7 @@ msim_msg_new_v(gchar *first_key, va_list argp)
 
 	/* Read key, type, value triplets until NULL. */
 	do {
-		if (first)
-		{
+		if (first) {
 			key = first_key;
 			first = FALSE;
 		} else {
@@ -988,71 +987,6 @@ msim_parse(gchar *raw)
 	g_free(raw);
 
 	return msg;
-}
-
-/**
- * Parse a \x1c-separated "dictionary" of key=value pairs into a hash table.
- *
- * @param body_str The text of the dictionary to parse. Often the
- *                 value for the 'body' field.
- *
- * @return Hash table of the keys and values. Must g_hash_table_destroy() when done.
- *
- * XXX TODO: This is deprecated in favor of msim_msg_dictionary_parse(); remove it.
- */
-GHashTable *
-msim_parse_body(const gchar *body_str)
-{
-	GHashTable *table;
-	gchar *item;
-	gchar **items;
-	gchar **elements;
-	guint i;
-
-	g_return_val_if_fail(body_str != NULL, NULL);
-
-	table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
- 
-	for (items = g_strsplit(body_str, "\x1c", 0), i = 0; 
-		(item = items[i]);
-		i++) {
-		gchar *key, *value;
-
-		elements = g_strsplit(item, "=", 2);
-
-		key = elements[0];
-		if (!key) {
-			purple_debug_info("msim", "msim_parse_body(%s): null key\n", 
-					body_str);
-			g_strfreev(elements);
-			break;
-		}
-
-		value = elements[1];
-		if (!value) {
-			purple_debug_info("msim", "msim_parse_body(%s): null value\n", 
-					body_str);
-			g_strfreev(elements);
-			break;
-		}
-
-#ifdef MSIM_DEBUG_PARSE
-		purple_debug_info("msim", "-- %s: %s\n", key ? key : "(NULL)", 
-				value ? value : "(NULL)");
-#endif
-
-		/* XXX: This overwrites duplicates. */
-		/* TODO: make the GHashTable values be GList's, and append to the list if 
-		 * there is already a value of the same key name. This is important for
-		 * the WebChallenge message. */
-		g_hash_table_insert(table, g_strdup(key), g_strdup(value));
-		
-		g_strfreev(elements);
-	}
-
-	g_strfreev(items);
-
-	return table;
 }
 
 /** Search for and return the node in msg, matching name, or NULL. 

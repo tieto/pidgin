@@ -95,7 +95,6 @@ gboolean msim_send(struct _MsimSession *session, ...) SENTINEL_ATTR;
 gboolean msim_msg_send(struct _MsimSession *session, MsimMessage *msg);
 
 MsimMessage *msim_parse(gchar *raw);
-GHashTable *msim_parse_body(const gchar *body_str);
 MsimMessage *msim_msg_dictionary_parse(gchar *raw);
 
 MsimMessageElement *msim_msg_get(MsimMessage *msg, const gchar *name);
