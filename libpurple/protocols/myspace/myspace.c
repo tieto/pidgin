@@ -158,8 +158,7 @@ static void msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *us
 static void msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text,
 		gsize len, const gchar *error_message);
 
-static void msim_store_user_info_each(gpointer key, gpointer value, 
-		gpointer user_data);
+static void msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user);
 static gboolean msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user);
 static gboolean msim_process_server_info(MsimSession *session, 
 		MsimMessage *msg);
@@ -2214,23 +2213,18 @@ static void
 msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo, 
 		gpointer data)
 {
-	gchar *body_str;
-	GHashTable *body;
 	gchar *username;
-	MsimMessage *msg;
+	MsimMessage *msg, *body;
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 	g_return_if_fail(userinfo != NULL);
 
-	body_str = msim_msg_get_string(userinfo, "body");
-	g_return_if_fail(body_str != NULL);
-	body = msim_parse_body(body_str);
+	body = msim_msg_get_dictionary(userinfo, "body");
 	g_return_if_fail(body != NULL);
-	g_free(body_str);
 
-	username = g_hash_table_lookup(body, "UserName");
+	username = msim_msg_get_string(body, "UserName");
 	g_return_if_fail(username != NULL);
-
+	/* Note: username will be owned by 'msg' below. */
 
 	msg = (MsimMessage *)data;
 	g_return_if_fail(msg != NULL);
@@ -2238,7 +2232,7 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
 	/* TODO: more elegant solution than below. attach whole message? */
 	/* Special elements name beginning with '_', we'll use internally within the
 	 * program (did not come directly from the wire). */
-	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, g_strdup(username));
+	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, username);
   
 	/* TODO: attach more useful information, like ImageURL */
 
@@ -2246,7 +2240,7 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
 
 	/* TODO: Free copy cloned from  msim_preprocess_incoming(). */
 	//XXX msim_msg_free(msg);
-	g_hash_table_destroy(body);
+	msim_msg_free(body);
 }
 
 /* Lookup a username by userid, from buddy list. 
@@ -2378,8 +2372,7 @@ msim_check_alive(gpointer data)
 static void
 msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 {
-	GHashTable *body;
-	gchar *body_str;
+	MsimMessage *body;
 	GString *notification;
 	guint old_inbox_status;
 	guint i, n;
@@ -2426,11 +2419,8 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 
 	msim_msg_dump("msim_check_inbox_cb: reply=%s\n", reply);
 
-	body_str = msim_msg_get_string(reply, "body");
-	g_return_if_fail(body_str != NULL);
-
-	body = msim_parse_body(body_str);
-	g_free(body_str);
+	body = msim_msg_get_dictionary(reply, "body");
+	g_return_if_fail(body != NULL);
 
 	notification = g_string_new("");
 
@@ -2445,7 +2435,7 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 		key = inbox_keys[i];
 		bit = inbox_bits[i];
 
-		if (g_hash_table_lookup(body, key)) {
+		if (msim_msg_get(body, key)) {
 			/* Notify only on when _changes_ from no mail -> has mail
 			 * (edge triggered) */
 			if (!(session->inbox_status & bit)) {
@@ -2485,7 +2475,7 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 
 	}
 
-	g_hash_table_destroy(body);
+	msim_msg_free(body);
 }
 
 /* Send request to check if there is new mail. */
@@ -2676,15 +2666,8 @@ msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
 
 /** Store a field of information about a buddy. */
 static void 
-msim_store_user_info_each(gpointer key, gpointer value, gpointer user_data)
+msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user)
 {
-	MsimUser *user;
-	gchar *key_str, *value_str;
-
-	user = (MsimUser *)user_data;
-	key_str = (gchar *)key;
-	value_str = (gchar *)value;
-
 	if (!strcmp(key_str, "UserID")) {
 		/* Save to buddy list, if it exists, for quick cached uid lookup with msim_uid2username_from_blist(). */
 		if (user->buddy)
@@ -2751,39 +2734,53 @@ msim_store_user_info_each(gpointer key, gpointer value, gpointer user_data)
 static gboolean 
 msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
 {
-	GHashTable *body;
-	gchar *username, *body_str;
+	gchar *username;
+	MsimMessage *body, *body_node;
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
- 
-	body_str = msim_msg_get_string(msg, "body");
-	if (!body_str) {
+
+	body = msim_msg_get_dictionary(msg, "body");
+	if (!body) {
 		return FALSE;
 	}
 
-	g_return_val_if_fail(body_str != NULL, FALSE);
-	body = msim_parse_body(body_str);
-	g_free(body_str);
-
-
-	/* TODO: implement a better hash-like interface, and use it. */
-	username = g_hash_table_lookup(body, "UserName");
+	username = msim_msg_get_string(body, "UserName");
 
 	if (!username) {
 		purple_debug_info("msim", 
 			"msim_process_reply: not caching body, no UserName\n");
-		g_hash_table_destroy(body);
+		msim_msg_free(body);
+		g_free(username);
 		return FALSE;
 	}
-
+	
 	/* Null user = find and store in PurpleBuddy's proto_data */
 	if (!user) {
 		user = msim_find_user(session, username);
-		g_return_val_if_fail(user != NULL, FALSE);
+		if (!user) {
+			msim_msg_free(body);
+			g_free(username);
+			return FALSE;
+		}
 	}
 
-	g_hash_table_foreach(body, msim_store_user_info_each, user);
+	/* TODO: make looping over MsimMessage's easier. */
+	for (body_node = body; 
+		body_node != NULL; 
+		body_node = msim_msg_get_next_element_node(body_node))
+	{
+		const gchar *key_str;
+		gchar *value_str;
+		MsimMessageElement *elem;
+
+		elem = (MsimMessageElement *)body_node->data;
+		key_str = elem->name;
+
+		value_str = msim_msg_get_string(body, key_str);
+		msim_store_user_info_each(key_str, value_str, user);
+		g_free(value_str);
+	}
 
 	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
 		msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID) {
@@ -2798,7 +2795,7 @@ msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
 		/* TODO: same as above, but for MySpace info. */
 	}
 
-	g_hash_table_destroy(body);
+	msim_msg_free(body);
 
 	return TRUE;
 }
@@ -2807,15 +2804,11 @@ msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
 static gboolean
 msim_process_server_info(MsimSession *session, MsimMessage *msg)
 {
-	gchar *body_str;
-	GHashTable *body;
+	MsimMessage *body;
 
-	body_str = msim_msg_get_string(msg, "body");
-	g_return_val_if_fail(body_str != NULL, FALSE);
-	body = msim_parse_body(body_str);
-	g_free(body_str);
+	body = msim_msg_get_dictionary(msg, "body");
 	g_return_val_if_fail(body != NULL, FALSE);
- 
+
 	/* Example body:
 AdUnitRefreshInterval=10.
 AlertPollInterval=360.
@@ -2837,9 +2830,8 @@ WebTicketGoHome=False
 	Anything useful? TODO: use what is useful, and use it.
 */
 	purple_debug_info("msim_process_server_info",
-			"maximum contacts: %s\n", 
-			g_hash_table_lookup(body, "MaxContacts") ? 
-			g_hash_table_lookup(body, "MaxContacts") : "(NULL)");
+			"maximum contacts: %d\n", 
+			msim_msg_get_integer(body, "MaxContacts"));
 
 	session->server_info = body;
 	/* session->server_info freed in msim_session_destroy */
@@ -3214,28 +3206,25 @@ static void
 msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, 
 		gpointer data)
 {
-	gchar *body_str;
-	GHashTable *body;
-	gchar *uid, *uid_field_name, *uid_before;
-	MsimMessage *msg;
+	gchar *uid_field_name, *uid_before;
+	guint uid;
+	MsimMessage *msg, *body;
 
 	msg = (MsimMessage *)data;
 
 	msim_msg_dump("msim_postprocess_outgoing_cb() got msg=%s\n", msg);
 
 	/* Obtain userid from userinfo message. */
-	body_str = msim_msg_get_string(userinfo, "body");
-	g_return_if_fail(body_str != NULL);
-	body = msim_parse_body(body_str);
-	g_free(body_str);
+	body = msim_msg_get_dictionary(userinfo, "body");
+	g_return_if_fail(body != NULL);
 
-	uid = g_strdup(g_hash_table_lookup(body, "UserID"));
-	g_hash_table_destroy(body);
+	uid = msim_msg_get_integer(body, "UserID");
+	msim_msg_free(body);
 
 	uid_field_name = msim_msg_get_string(msg, "_uid_field_name");
 	uid_before = msim_msg_get_string(msg, "_uid_before");
 
-	msg = msim_do_postprocessing(msg, uid_before, uid_field_name, atol(uid));
+	msg = msim_do_postprocessing(msg, uid_before, uid_field_name, uid);
 
 	/* Send */
 	if (!msim_msg_send(session, msg)) {
@@ -3248,9 +3237,6 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
 	 */
 	g_free(uid_field_name);
 	g_free(uid_before);
-
-	g_hash_table_destroy(body);
-
 	//msim_msg_free(msg);
 }
 
@@ -3660,7 +3646,7 @@ msim_session_destroy(MsimSession *session)
 	g_hash_table_destroy(session->user_lookup_cb_data);
 
 	if (session->server_info) {
-		g_hash_table_destroy(session->server_info);
+		msim_msg_free(session->server_info);
 	}
 	
 	g_free(session);

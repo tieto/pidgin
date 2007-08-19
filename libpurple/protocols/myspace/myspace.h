@@ -197,7 +197,7 @@ typedef struct _MsimSession
 	GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */
 	GHashTable *user_lookup_cb_data;    /**< Username -> userid lookup callback data */
 
-	GHashTable *server_info;            /**< Parameters from server */
+	MsimMessage *server_info;           /**< Parameters from server */
 
 	gchar *rxbuf;                       /**< Receive buffer */
 	guint rxoff;                        /**< Receive buffer offset */
