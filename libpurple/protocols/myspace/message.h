@@ -35,6 +35,8 @@ typedef struct _MsimMessageElement
 
 typedef gchar MsimMessageType;
 
+#define msim_msg_get_next_element_node(msg)    ((MsimMessage *)(msg->next))
+
 /* Protocol field types */
 #define MSIM_TYPE_RAW            '-'
 #define MSIM_TYPE_INTEGER        'i'
