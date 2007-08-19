@@ -26,4 +26,4 @@ PROTOTYPES: ENABLE
 void
 pidgin_syslog_show()
 CODE:
-	pidgin_syslog_show(NULL)
+	pidgin_syslog_show(NULL);
