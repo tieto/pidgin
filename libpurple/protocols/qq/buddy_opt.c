@@ -213,7 +213,7 @@ void qq_reject_add_request_with_gc_and_uid(gc_and_uid *g)
 			   _("Sorry, you are not my type..."), TRUE, FALSE,
 			   NULL, _("Reject"), G_CALLBACK(_qq_reject_add_request_real), _("Cancel"), NULL,
 			   purple_connection_get_account(gc), nombre, NULL,
-			   g2);
+			   "buddy", g2);
 	g_free(nombre);
 }
 
@@ -410,7 +410,7 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 					   (_qq_send_packet_add_buddy_auth_with_gc_and_uid),
 					   _("Cancel"), G_CALLBACK(qq_do_nothing_with_gc_and_uid),
 					   purple_connection_get_account(gc), nombre, NULL,
-					   g);
+					   "buddy", g);
 			g_free(msg);
 			g_free(nombre);
 		} else {	/* add OK */

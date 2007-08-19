@@ -50,7 +50,7 @@ buddynote_edit_cb(PurpleBlistNode *node, gpointer data)
 					   _("Save"), G_CALLBACK(do_it_cb),
 					   _("Cancel"), G_CALLBACK(dont_do_it_cb),
 					   NULL, NULL, NULL,
-					   node);
+					   "buddy", node);
 }
 
 static void

@@ -174,6 +174,8 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 			g_signal_connect_after(G_OBJECT(toolbar->font_dialog), "realize",
 							 G_CALLBACK(realize_toolbar_font), toolbar);
 		}
+		gtk_window_set_transient_for(GTK_WINDOW(toolbar->font_dialog),
+		    GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(toolbar))));
 		gtk_window_present(GTK_WINDOW(toolbar->font_dialog));
 	} else {
 		cancel_toolbar_font(font, toolbar);
@@ -424,7 +426,7 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 					    _("_Insert"), G_CALLBACK(do_insert_link_cb),
 					    _("Cancel"), G_CALLBACK(cancel_link_cb),
 						NULL, NULL, NULL,
-					    toolbar);
+					    "conversation", toolbar);
 		g_free(msg);
 		g_free(desc);
 	} else {
@@ -688,6 +690,8 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
+	gtk_window_set_transient_for(GTK_WINDOW(dialog),
+	    GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(toolbar))));
 
 	if (unique_smileys != NULL) {
 		struct smiley_button_list *ls, *it, *it_tmp;

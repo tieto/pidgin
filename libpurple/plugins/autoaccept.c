@@ -164,7 +164,7 @@ set_auto_accept_settings(PurpleBlistNode *node, gpointer plugin)
 						_("_Save"), G_CALLBACK(save_cb),
 						_("_Cancel"), NULL,
 						NULL, NULL, NULL,
-						node,
+						"xfer", node,
 						_("Ask"), FT_ASK,
 						_("Auto Accept"), FT_ACCEPT,
 						_("Auto Reject"), FT_REJECT,
