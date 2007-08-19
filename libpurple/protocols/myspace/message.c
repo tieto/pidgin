@@ -997,6 +997,8 @@ msim_parse(gchar *raw)
  *                 value for the 'body' field.
  *
  * @return Hash table of the keys and values. Must g_hash_table_destroy() when done.
+ *
+ * XXX TODO: This is deprecated in favor of msim_msg_dictionary_parse(); remove it.
  */
 GHashTable *
 msim_parse_body(const gchar *body_str)
@@ -1176,12 +1178,63 @@ msim_msg_get_list(MsimMessage *msg, const gchar *name)
 	}
 }
 
-/** Parse a \034-deliminated and =-separated string into a dictionary. TODO */
+/**
+ * Parse a \x1c-separated "dictionary" of key=value pairs into a hash table.
+ *
+ * @param raw The text of the dictionary to parse. Often the
+ *                 value for the 'body' field.
+ *
+ * @return A new MsimMessage *. Must msim_msg_free() when done.
+ */
 MsimMessage *
 msim_msg_dictionary_parse(gchar *raw)
 {
-	/* TODO - get code from msim_parse_body, but parse into MsimMessage */
-	return NULL;
+	MsimMessage *dict;
+	gchar *item;
+	gchar **items;
+	gchar **elements;
+	guint i;
+
+	g_return_val_if_fail(raw != NULL, NULL);
+
+	dict = msim_msg_new(NULL);
+ 
+	for (items = g_strsplit(raw, "\x1c", 0), i = 0; 
+		(item = items[i]);
+		i++) {
+		gchar *key, *value;
+
+		elements = g_strsplit(item, "=", 2);
+
+		key = elements[0];
+		if (!key) {
+			purple_debug_info("msim", "msim_msg_parse_dictionary(%s): null key\n", 
+					raw);
+			g_strfreev(elements);
+			break;
+		}
+
+		value = elements[1];
+		if (!value) {
+			purple_debug_info("msim", "msim_msg_parse_dictionary(%s): null value\n", 
+					raw);
+			g_strfreev(elements);
+			break;
+		}
+
+#ifdef MSIM_DEBUG_PARSE
+		purple_debug_info("msim_msg_parse_dictionary","-- %s: %s\n", key ? key : "(NULL)", 
+				value ? value : "(NULL)");
+#endif
+		/* TODO: free key; right now it is treated as static */
+		dict = msim_msg_append(dict, g_strdup(key), MSIM_TYPE_RAW, g_strdup(value));
+
+		g_strfreev(elements);
+	}
+
+	g_strfreev(items);
+
+	return dict;
 }
 
 /** Return an element as a new dictionary. Caller frees with msim_msg_free(). */
