@@ -1067,6 +1067,13 @@ msim_msg_get_string(MsimMessage *msg, const gchar *name)
 		return NULL;
 	}
 
+	return msim_msg_get_string_from_element(elem);
+}
+
+gchar *
+msim_msg_get_string_from_element(MsimMessageElement *elem)
+{
+	g_return_val_if_fail(elem != NULL, NULL);
 	switch (elem->type) {
 		case MSIM_TYPE_INTEGER:
 			return g_strdup_printf("%d", GPOINTER_TO_UINT(elem->data));
@@ -1081,8 +1088,8 @@ msim_msg_get_string(MsimMessage *msg, const gchar *name)
 			return g_strdup((gchar *)elem->data);
 
 		default:
-			purple_debug_info("msim", "msim_msg_get_string: type %d unknown, name %s\n",
-					elem->type, name ? name : "(NULL)");
+			purple_debug_info("msim", "msim_msg_get_string_element: type %d unknown, name %s\n",
+					elem->type, elem->name ? elem->name : "(NULL)");
 			return NULL;
 	}
 }
@@ -1098,6 +1105,13 @@ msim_msg_get_list(MsimMessage *msg, const gchar *name)
 		return NULL;
 	}
 
+	return msim_msg_get_list_from_element(elem);
+}
+
+GList *
+msim_msg_get_list_from_element(MsimMessageElement *elem)
+{
+	g_return_val_if_fail(elem != NULL, NULL);
 	switch (elem->type) {
 		case MSIM_TYPE_LIST:
 			return msim_msg_list_copy((GList *)elem->data);
@@ -1107,7 +1121,7 @@ msim_msg_get_list(MsimMessage *msg, const gchar *name)
 
 		default:
 			purple_debug_info("msim_msg_get_list", "type %d unknown, name %s\n",
-					elem->type, name ? name : "(NULL)");
+					elem->type, elem->name ? elem->name : "(NULL)");
 			return NULL;
 	}
 }
@@ -1182,6 +1196,13 @@ msim_msg_get_dictionary(MsimMessage *msg, const gchar *name)
 		return NULL;
 	}
 
+	return msim_msg_get_dictionary_from_element(elem);
+}
+
+MsimMessage *
+msim_msg_get_dictionary_from_element(MsimMessageElement *elem)
+{
+	g_return_val_if_fail(elem != NULL, NULL);
 	switch (elem->type) {
 		case MSIM_TYPE_DICTIONARY:
 			return msim_msg_clone((MsimMessage *)elem->data);
@@ -1191,12 +1212,12 @@ msim_msg_get_dictionary(MsimMessage *msg, const gchar *name)
 
 		default:
 			purple_debug_info("msim_msg_get_dictionary", "type %d unknown, name %s\n",
-					elem->type, name ? name : "(NULL)");
+					elem->type, elem->name ? elem->name : "(NULL)");
 			return NULL;
 	}
 }
 
-/** Return the data of an element of a given name, as an integer.
+/** Return the data of an element of a given name, as an unsigned integer.
  *
  * @param name Name of element.
  *
@@ -1217,6 +1238,14 @@ msim_msg_get_integer(MsimMessage *msg, const gchar *name)
 		return 0;
 	}
 
+	return msim_msg_get_integer_from_element(elem);
+}
+
+
+guint
+msim_msg_get_integer_from_element(MsimMessageElement *elem)
+{
+	g_return_val_if_fail(elem != NULL, 0);
 	switch (elem->type) {
 		case MSIM_TYPE_INTEGER:
 			return GPOINTER_TO_UINT(elem->data);
@@ -1245,12 +1274,20 @@ msim_msg_get_binary(MsimMessage *msg, const gchar *name,
 {
 	MsimMessageElement *elem;
 				
-	GString *gs;
-
 	elem = msim_msg_get(msg, name);
 	if (!elem) {
 		return FALSE;
 	}
+
+	return msim_msg_get_binary_from_element(elem, binary_data, binary_length);
+}
+
+gboolean
+msim_msg_get_binary_from_element(MsimMessageElement *elem, gchar **binary_data, gsize *binary_length)
+{
+	GString *gs;
+
+	g_return_val_if_fail(elem != NULL, FALSE);
 
 	switch (elem->type) {
 		case MSIM_TYPE_RAW:
@@ -1296,7 +1333,7 @@ msim_msg_get_binary(MsimMessage *msg, const gchar *name,
 
 		default:
 			purple_debug_info("msim", "msim_msg_get_binary: unhandled type %d for key %s\n",
-					elem->type, name ? name : "(NULL)");
+					elem->type, elem->name ? elem->name : "(NULL)");
 			return FALSE;
 	}
 }

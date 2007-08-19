@@ -98,10 +98,20 @@ MsimMessage *msim_parse(gchar *raw);
 MsimMessage *msim_msg_dictionary_parse(gchar *raw);
 
 MsimMessageElement *msim_msg_get(MsimMessage *msg, const gchar *name);
+
+/* Retrieve data by name */
 gchar *msim_msg_get_string(MsimMessage *msg, const gchar *name);
 GList *msim_msg_get_list(MsimMessage *msg, const gchar *name);
 MsimMessage *msim_msg_get_dictionary(MsimMessage *msg, const gchar *name);
 guint msim_msg_get_integer(MsimMessage *msg, const gchar *name);
 gboolean msim_msg_get_binary(MsimMessage *msg, const gchar *name, gchar **binary_data, gsize *binary_length);
+
+/* Retrieve data by element (MsimMessageElement *), returned from msim_msg_get() */
+gchar *msim_msg_get_string_from_element(MsimMessageElement *elem);
+GList *msim_msg_get_list_from_element(MsimMessageElement *elem);
+MsimMessage *msim_msg_get_dictionary_from_element(MsimMessageElement *elem);
+guint msim_msg_get_integer_from_element(MsimMessageElement *elem);
+gboolean msim_msg_get_binary_from_element(MsimMessageElement *elem, 
+		gchar **binary_data, gsize *binary_length);
 
 #endif /* _MYSPACE_MESSAGE_H */
