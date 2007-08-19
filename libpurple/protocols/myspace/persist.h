@@ -73,6 +73,7 @@ MSIM_PERSIST_DSN_LID(MG_SERVER_INFO,             101, 20)
 /** Messages to Change/send information */
 MSIM_PERSIST_DSN_LID(MC_USER_PREFERENCES,          1, 10)
 MSIM_PERSIST_DSN_LID(MC_CONTACT_INFO,              0, 9)
+MSIM_PERSIST_DSN_LID(MC_IMPORT_ALL_FRIENDS,        14, 21)
 MSIM_PERSIST_DSN_LID(MC_INVITE,                   16, 25)
 
 /** Messages to Delete information */

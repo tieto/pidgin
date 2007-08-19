@@ -205,6 +205,8 @@ static gboolean msim_is_email(const gchar *user);
 static void msim_lookup_user(MsimSession *session, const gchar *user, 
 		MSIM_USER_LOOKUP_CB cb, gpointer data);
 
+static void msim_import_friends(PurplePluginAction *action);
+
 double msim_round(double round);
 
 /* round is part of C99, but sometimes is unavailable before then.
@@ -3882,13 +3884,88 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 	}
 }
 
+/** Called when friends have been imported. */
+static void msim_import_friends_cb(MsimSession *session, MsimMessage *reply, gpointer user_data)
+{
+	MsimMessage *body;
+	gchar *completed;
+	msim_msg_dump("msim_import_friends_cb=%s", reply);
+
+	/* Check if the friends were imported successfully. */
+	body = msim_msg_get_dictionary(reply, "body");
+	g_return_if_fail(body != NULL);
+	completed = msim_msg_get_string(body, "Completed");
+	g_return_if_fail(body != NULL);
+	msim_msg_free(body);
+	if (strcmp(completed, "True"))
+	{
+		purple_debug_info("msim_import_friends_cb",
+				"failed to import friends: %s", completed);
+		purple_notify_error(session->account, _("Add friends from MySpace.com"),
+				_("Importing friends failed"), NULL);
+		g_free(completed);
+		return;
+	}
+	g_free(completed);
+
+	purple_notify_info(session->account, _("Add friends from MySpace.com"),
+			_("Successfully added friends (TODO: get new contacts)"), NULL);
+
+	/* TODO: get the contacts from the server, add to buddy list!
+	purple_debug_info("msim_import_friends_cb",
+			"successfully added friends, requesting new contacts from server");
+
+	g_return_if_fail(msim_send(session, 
+			"persist", MSIM_TYPE_INTEGER, 1,
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_GET,
+			"dsn", MSIM_TYPE_INTEGER, MG_LIST_ALL_CONTACTS,
+			"lid", MSIM_TYPE_INTEGER, MG_LIST_ALL_CONTACTS,
+			"uid", MSIM_TYPE_INTEGER, session->userid,
+			"rid", MSIM_TYPE_INTEGER, 
+				msim_new_reply_callback(session, msim_got_contact_list, NULL),
+			"body", MSIM_TYPE_STRING, g_strdup(""),
+			NULL));
+*/
+
+	/* TODO: show, X friends have been added */
+}
+
+/** Import friends from myspace.com. */
+static void msim_import_friends(PurplePluginAction *action)
+{
+	PurpleConnection *gc;
+	MsimSession *session;
+	gchar *group_name;
+
+	gc = (PurpleConnection *)action->context;
+	session = (MsimSession *)gc->proto_data;
+
+	group_name = "MySpace Friends";
+
+	g_return_if_fail(msim_send(session, 
+			"persist", MSIM_TYPE_INTEGER, 1,
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_PUT,
+			"dsn", MSIM_TYPE_INTEGER, MC_IMPORT_ALL_FRIENDS_DSN,
+			"lid", MSIM_TYPE_INTEGER, MC_IMPORT_ALL_FRIENDS_LID,
+			"uid", MSIM_TYPE_INTEGER, session->userid,
+			"rid", MSIM_TYPE_INTEGER, 
+				msim_new_reply_callback(session, msim_import_friends_cb, NULL),
+			"body", MSIM_TYPE_STRING,
+				g_strdup_printf("GroupName=%s", group_name),
+			NULL));
+
+
+}
+
 /** Actions menu for account. */
 GList *
 msim_actions(PurplePlugin *plugin, gpointer context)
 {
 	PurpleConnection *gc;
 	GList *menu;
-	//PurplePluginAction *act;
+	PurplePluginAction *act;
 
 	gc = (PurpleConnection *)context;
 
@@ -3899,12 +3976,13 @@ msim_actions(PurplePlugin *plugin, gpointer context)
 	act = purple_plugin_action_new(_("Find people..."), msim_);
 	menu = g_list_append(menu, act);
 
-	act = purple_plugin_action_new(_("Import friends..."), NULL);
-	menu = g_list_append(menu, act);
-
 	act = purple_plugin_action_new(_("Change IM name..."), NULL);
 	menu = g_list_append(menu, act);
 #endif
+
+	act = purple_plugin_action_new(g_strdup_printf("%s",
+				_("Add friends from MySpace.com")), msim_import_friends);
+	menu = g_list_append(menu, act);
 
 	return menu;
 }
