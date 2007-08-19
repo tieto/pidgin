@@ -1003,21 +1003,21 @@ msim_parse(gchar *raw)
 static GList *
 msim_msg_get_node(MsimMessage *msg, const gchar *name)
 {
-	GList *i;
+	GList *node;
 
 	if (!name) {
 		return NULL;
 	}
 
 	/* Linear search for the given name. O(n) but n is small. */
-	for (i = g_list_first(msg); i != NULL; i = g_list_next(i)) {
+	for (node = msg; node != NULL; node = g_list_next(node)) {
 		MsimMessageElement *elem;
 
-		elem = i->data;
+		elem = node->data;
 		g_return_val_if_fail(elem != NULL, NULL);
 
 		if (strcmp(elem->name, name) == 0) {
-			return i;
+			return node;
 		}
 	}
 	return NULL;
