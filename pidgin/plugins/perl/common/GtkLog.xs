@@ -12,7 +12,7 @@ pidgin_log_show(type, screenname, account)
 	const char * screenname
 	Purple::Account account
 CODE:
-	pidgin_log_show(NULL, type, screename, account);
+	pidgin_log_show(NULL, type, screenname, account);
 
 void
 pidgin_log_show_contact(contact)
