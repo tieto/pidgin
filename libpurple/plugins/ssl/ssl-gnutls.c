@@ -361,8 +361,7 @@ ssl_gnutls_write(PurpleSslConnection *gsc, const void *data, size_t len)
 	return s;
 }
 
-/* Forward declarations are fun!
-   TODO: This is a stupid place for this */
+/* Forward declarations are fun! */
 static PurpleCertificate *
 x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode);
 
@@ -398,8 +397,7 @@ ssl_gnutls_get_peer_certificates(PurpleSslConnection * gsc)
 		peer_certs = g_list_append(peer_certs, newcrt);
 	}
 
-	/* cert_list shouldn't need free()-ing */
-	/* TODO: double-check this */
+	/* cert_list doesn't need free()-ing */
 
 	return peer_certs;
 }
@@ -501,12 +499,13 @@ x509_import_from_file(const gchar * filename)
 	/* Next, we'll simply yank the entire contents of the file
 	   into memory */
 	/* TODO: Should I worry about very large files here? */
-	/* TODO: Error checking */
-	g_file_get_contents(filename,
+	g_return_val_if_fail(
+		g_file_get_contents(filename,
 			    &buf,
 			    &buf_sz,
 			    NULL      /* No error checking for now */
-		);
+		),
+		NULL);
 	
 	/* Load the datum struct */
 	dt.data = (unsigned char *) buf;
