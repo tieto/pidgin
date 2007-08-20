@@ -1297,7 +1297,6 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		return;
 	}
 
-	/* TODO: I don't have the Glib documentation handy; is this correct? */
 	last = g_list_last(chain);
 	end_crt = (PurpleCertificate *) last->data;
 
@@ -1336,7 +1335,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 					  "%s does not have a valid digital "
 					  "signature from the Certificate "
 					  "Authority from which it claims to "
-					  "have a signature from."),
+					  "have a signature."),
 					vrq->subject_name);
 		
 		purple_notify_error(NULL, /* TODO: Probably wrong */
@@ -1406,7 +1405,6 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 		/* vrq is now the responsibility of cert_in_cache */
 		x509_tls_cached_cert_in_cache(vrq);
 	} else {
-		/* TODO: Prompt the user, etc. */
 		purple_debug_info("certificate/x509/tls_cached",
 				  "...Not in cache\n");
 		/* vrq now becomes the problem of unknown_peer */
@@ -1730,7 +1728,6 @@ purple_certificate_register_pool(PurpleCertificatePool *pool)
 gboolean
 purple_certificate_unregister_pool(PurpleCertificatePool *pool)
 {
-	/* TODO: Better error checking? */
 	if (NULL == pool) {
 		purple_debug_warning("certificate",
 				     "Attempting to unregister NULL pool\n");
