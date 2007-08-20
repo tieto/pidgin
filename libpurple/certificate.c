@@ -1240,10 +1240,11 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		/* TODO: Provide the user with more guidance about why he is
 		   being prompted */
 		/* vrq will be completed by user_auth */
-		msg = g_strdup_printf(_("The certificate given by %s has a "
-					"name on it of %s instead. This could "
-					"mean that you are not connecting to "
-					"the service you want to."),
+		msg = g_strdup_printf(_("The certificate presented by \"%s\" "
+					"claims to be from \"%s\" instead.  "
+					"This could mean that you are not "
+					"connecting to the service you "
+					"believe you are."),
 				      vrq->subject_name, sn);
 				      
 		x509_tls_cached_user_auth(vrq,msg);
@@ -1336,8 +1337,8 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 			g_strdup_printf(_("The certificate chain presented by "
 					  "%s does not have a valid digital "
 					  "signature from the Certificate "
-					  "Authority it claims to have one "
-					  "from."),
+					  "Authority from which it claims to "
+					  "have a signature from."),
 					vrq->subject_name);
 		
 		purple_notify_error(NULL, /* TODO: Probably wrong */
