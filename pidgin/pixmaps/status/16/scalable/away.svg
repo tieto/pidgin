@@ -18,7 +18,7 @@
    inkscape:export-filename="/home/hbons/Desktop/Gaim Refresh/status/16/available16.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
-   sodipodi:docbase="/home/hbons/Desktop/experiment/status/16/scalable"
+   sodipodi:docbase="/home/hbons/Desktop/2.0.2/pidgin/pixmaps/status/16/scalable"
    sodipodi:docname="away.svg">
   <defs
      id="defs4">
@@ -122,7 +122,7 @@
      showgrid="true"
      fill="#eeeeec"
      inkscape:window-width="1434"
-     inkscape:window-height="844"
+     inkscape:window-height="840"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:object-paths="false"
@@ -186,7 +186,7 @@
        transform="matrix(0.383404,0,0,0.383404,2.022641,1.646167)" />
     <path
        sodipodi:type="arc"
-       style="opacity:1;fill:#dcdcd8;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:white;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path2796"
        sodipodi:cx="6.0403023"
        sodipodi:cy="7.5551186"
@@ -220,18 +220,6 @@
        x="7"
        y="-9"
        transform="matrix(0,1,-1,0,0,0)" />
-    <path
-       sodipodi:type="arc"
-       style="opacity:1;fill:white;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path2852"
-       sodipodi:cx="6.0403023"
-       sodipodi:cy="7.5551186"
-       sodipodi:rx="1.615877"
-       sodipodi:ry="1.3273276"
-       d="M 4.835244,8.4394021 A 1.615877,1.3273276 0 0 1 6.0776839,6.2281462 L 6.0403023,7.5551186 z"
-       transform="matrix(2.475436,0,0,3.013575,-6.952382,-14.76791)"
-       sodipodi:start="2.4124729"
-       sodipodi:end="4.735525" />
     <rect
        style="opacity:1;fill:#2e3436;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect2838"

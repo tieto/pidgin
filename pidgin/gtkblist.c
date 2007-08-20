@@ -3324,18 +3324,14 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 	}
 
 	/* XXX Good luck cleaning up this crap */
-	if (aliased) {
-		contact = (PurpleContact*)((PurpleBlistNode*)b)->parent;
-		if(contact)
-			gtkcontactnode = ((PurpleBlistNode*)contact)->ui_data;
+	contact = (PurpleContact*)((PurpleBlistNode*)b)->parent;
+	if(contact)
+		gtkcontactnode = ((PurpleBlistNode*)contact)->ui_data;
 
-		if(gtkcontactnode && !gtkcontactnode->contact_expanded && contact->alias)
-			name = contact->alias;
-		else
-			name = purple_buddy_get_alias(b);
-	} else {
-		name = b->name;
-	}
+	if(gtkcontactnode && !gtkcontactnode->contact_expanded && contact->alias)
+		name = contact->alias;
+	else
+		name = purple_buddy_get_alias(b);
 	
 	esc = g_markup_escape_text(name, strlen(name));
 
