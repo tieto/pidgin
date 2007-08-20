@@ -609,7 +609,6 @@ x509_copy_certificate(PurpleCertificate *crt)
 static void
 x509_destroy_certificate(PurpleCertificate * crt)
 {
-	/* TODO: Issue a warning here? */
 	if (NULL == crt) return;
 
 	/* Check that the scheme is x509_gnutls */
@@ -621,7 +620,6 @@ x509_destroy_certificate(PurpleCertificate * crt)
 		return;
 	}
 
-	/* TODO: Different error checking? */
 	g_return_if_fail(crt->data != NULL);
 	g_return_if_fail(crt->scheme != NULL);
 
@@ -650,7 +648,6 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 	unsigned int verify; /* used to store result from GnuTLS verifier */
 	int ret;
 	
-	/* TODO: Change this error checking? */
 	g_return_val_if_fail(crt, FALSE);
 	g_return_val_if_fail(issuer, FALSE);
 
@@ -742,9 +739,10 @@ x509_sha1sum(PurpleCertificate *crt)
 	crt_dat = X509_GET_GNUTLS_DATA(crt);
 
 	/* Extract the fingerprint */
-	/* TODO: Errorcheck? */
-	gnutls_x509_crt_get_fingerprint(crt_dat, GNUTLS_MAC_SHA,
-					hashbuf, &tmpsz);
+	g_return_val_if_fail(
+		0 == gnutls_x509_crt_get_fingerprint(crt_dat, GNUTLS_MAC_SHA,
+						     hashbuf, &tmpsz),
+		NULL);
 
 	/* This shouldn't happen */
 	g_return_val_if_fail(tmpsz == hashlen, NULL);
