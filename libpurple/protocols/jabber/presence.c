@@ -193,16 +193,18 @@ struct _jabber_add_permit {
 	char *who;
 };
 
-static void authorize_add_cb(struct _jabber_add_permit *jap)
+static void authorize_add_cb(gpointer data)
 {
+	struct _jabber_add_permit *jap = data;
 	jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
 			"subscribed");
 	g_free(jap->who);
 	g_free(jap);
 }
 
-static void deny_add_cb(struct _jabber_add_permit *jap)
+static void deny_add_cb(gpointer data)
 {
+	struct _jabber_add_permit *jap = data;
 	jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
 			"unsubscribed");
 
@@ -305,7 +307,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jap->js = js;
 
 		purple_account_request_authorization(purple_connection_get_account(js->gc), from, NULL, NULL, NULL, onlist,
-				G_CALLBACK(authorize_add_cb), G_CALLBACK(deny_add_cb), jap);
+				authorize_add_cb, deny_add_cb, jap);
 		jabber_id_free(jid);
 		return;
 	} else if(type && !strcmp(type, "subscribed")) {
@@ -413,7 +415,8 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 			if(chat->conv) {
 				title = g_strdup_printf(_("Error in chat %s"), from);
-				serv_got_chat_left(js->gc, chat->id);
+				if (g_hash_table_size(chat->members) == 0)
+					serv_got_chat_left(js->gc, chat->id);
 			} else {
 				title = g_strdup_printf(_("Error joining chat %s"), from);
 			}
@@ -421,7 +424,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			g_free(title);
 			g_free(msg);
 
-			jabber_chat_destroy(chat);
+			if (g_hash_table_size(chat->members) == 0)
+				/* Only destroy the chat if the error happened while joining */
+				jabber_chat_destroy(chat);
 			jabber_id_free(jid);
 			g_free(status);
 			g_free(room_jid);

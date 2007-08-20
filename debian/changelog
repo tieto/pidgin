@@ -1,3 +1,11 @@
+pidgin (2.1.1-1) unstable; urgency=low
+
+  * New upstream version
+  * Update new SVN repository information in debian/control
+  * Install Finch's window managers correctly (Closes: #438536)
+
+ -- Ari Pollak <ari@debian.org>  Mon, 20 Aug 2007 17:40:05 -0400
+
 pidgin (2.1.0-1) unstable; urgency=low
 
   * New upstream version

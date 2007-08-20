@@ -60,6 +60,7 @@ finch_LDADD = \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
 	$(GNT_LIBS) \
+	$(GSTREAMER_LIBS) \
 	./libgnt/libgnt.la \
 	$(top_builddir)/libpurple/libpurple.la
 
@@ -77,4 +78,5 @@ AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
 	$(GNT_CFLAGS)

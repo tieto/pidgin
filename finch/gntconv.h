@@ -27,8 +27,12 @@
 
 #include <gnt.h>
 #include <gntwidget.h>
+#include <gntmenuitem.h>
 
 #include "conversation.h"
+
+/* Grabs the conv out of a PurpleConverstation */
+#define FINCH_CONV(conv) ((FinchConv *)(conv)->ui_data)
 
 /***************************************************************************
  * @name GNT Conversations API
@@ -47,7 +51,7 @@ struct _FinchConv
 	GntWidget *window;        /* the container */
 	GntWidget *entry;         /* entry */
 	GntWidget *tv;            /* text-view */
-	GntWidget *menu;          /* future use */
+	GntWidget *menu;
 	GntWidget *info;
 	void *pad;
 
@@ -67,7 +71,7 @@ struct _FinchConvChat
 
 struct _FinchConvIm
 {
-	void *nothing_for_now;
+	GntMenuItem *sendto;
 	void *something_for_later;
 };
 

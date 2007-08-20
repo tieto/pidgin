@@ -60,15 +60,52 @@ typedef enum
 #include "plugin.h"
 #include "status.h"
 
+/** Connection UI operations.  Used to notify the user of changes to
+ *  connections, such as being disconnected, and to respond to the
+ *  underlying network connection appearing and disappearing.  UIs should
+ *  call #purple_connections_set_ui_ops() with an instance of this struct.
+ *
+ *  @see @ref ui-ops
+ */
 typedef struct
 {
-	void (*connect_progress)(PurpleConnection *gc, const char *text,
-							 size_t step, size_t step_count);
+	/** When an account is connecting, this operation is called to notify
+	 *  the UI of what is happening, as well as which @a step out of @a
+	 *  step_count has been reached (which might be displayed as a progress
+	 *  bar).
+	 */
+	void (*connect_progress)(PurpleConnection *gc,
+	                         const char *text,
+	                         size_t step,
+	                         size_t step_count);
+	/** Called when a connection is established (just before the
+	 *  @ref signed-on signal).
+	 */
 	void (*connected)(PurpleConnection *gc);
+	/** Called when a connection is ended (between the @ref signing-off
+	 *  and @ref signed-off signals).
+	 */
 	void (*disconnected)(PurpleConnection *gc);
+	/** Used to display connection-specific notices.  (Pidgin's Gtk user
+	 *  interface implements this as a no-op; #purple_connection_notice(),
+	 *  which uses this operation, is not used by any of the protocols
+	 *  shipped with libpurple.)
+	 */
 	void (*notice)(PurpleConnection *gc, const char *text);
+	/** Called when an error causes a connection to be disconnected.
+	 *  Called before #disconnected.
+	 *  @param text  a localized error message.
+	 */
 	void (*report_disconnect)(PurpleConnection *gc, const char *text);
+	/** Called when libpurple discovers that the computer's network
+	 *  connection is active.  On Linux, this uses Network Manager if
+	 *  available; on Windows, it uses Win32's network change notification
+	 *  infrastructure.
+	 */
 	void (*network_connected)();
+	/** Called when libpurple discovers that the computer's network
+	 *  connection has gone away.
+	 */
 	void (*network_disconnected)();
 
 	void (*_purple_reserved1)(void);

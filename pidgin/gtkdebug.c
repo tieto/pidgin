@@ -183,7 +183,7 @@ find_cb(GtkWidget *w, DebugWindow *win)
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(win->find)->vbox),
 					  hbox);
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,
-								   GTK_ICON_SIZE_DIALOG);
+				       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);

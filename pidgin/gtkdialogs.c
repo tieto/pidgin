@@ -75,7 +75,6 @@ static struct developer developers[] = {
 	{"Ka-Hing Cheung",				N_("developer"), NULL},
 	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
 	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
-	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
 	{"Casey Harkins",               N_("developer"),   NULL},
 	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
 	{"Richard 'rlaager' Laager",	N_("developer"), NULL},
@@ -95,11 +94,7 @@ static struct developer developers[] = {
 /* Order: Alphabetical by Last Name */
 static struct developer patch_writers[] = {
 	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
-	{"Felipe 'shx' Contreras",		NULL,	NULL},
-	{"Decklin Foster",				NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
-	{"Robert 'Robot101' McQueen",	NULL,	NULL},
-	{"Benjamin Miller",				NULL,	NULL},
 	{"Kevin 'SimGuy' Stange",		NULL,	NULL},
 	{NULL, NULL, NULL}
 };
@@ -110,11 +105,21 @@ static struct developer retired_developers[] = {
 	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
 	{"Rob Flynn",			N_("maintainer"), NULL},
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
+	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
 	{"Jim Seymour",			N_("XMPP developer"), NULL},
 	{"Mark Spencer",		N_("original author"), "markster@marko.net"},
 	{"Eric Warmenhoven",	N_("lead developer"), "warmenhoven@yahoo.com"},
+	{NULL, NULL, NULL}
+};
+
+/* Order: Alphabetical by Last Name */
+static struct developer retired_patch_writers[] = {
+	{"Felipe 'shx' Contreras",		NULL,	NULL},
+	{"Decklin Foster",				NULL,	NULL},
+	{"Robert 'Robot101' McQueen",	NULL,	NULL},
+	{"Benjamin Miller",				NULL,	NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -147,6 +152,7 @@ static struct translator current_translators[] = {
 	{N_("British English"),     "en_GB", "Luke Ross", "lukeross@sys3175.co.uk"},
 	{N_("Esperanto"),           "eo", "Stéphane Fillod", "fillods@users.sourceforge.net"},
 	{N_("Spanish"),             "es", "Javier Fernández-Sanguino Peña", "jfs@debian.org"},
+	{N_("Estonian"),            "et", "Ivar Smolin", "okul@linux.ee"},
 	{N_("Euskera(Basque)"),     "eu", "Hizkuntza Politikarako Sailburuordetza", "hizkpol@ej-gv.es"},
 	{N_("Euskera(Basque)"),     "eu", "Iñaki Larrañaga Murgoitio", "dooteo@zundan.com"},
 	{N_("Persian"),             "fa", "Elnaz Sarbar", "elnaz@farsiweb.info"},
@@ -155,7 +161,7 @@ static struct translator current_translators[] = {
 	{N_("Finnish"),             "fi", "Timo Jyrinki", "timo.jyrinki@iki.fi"},
 	{N_("French"),              "fr", "Éric Boumaour", "zongo_fr@users.sourceforge.net"},
 	{N_("Galician"),            "gl", "Mar Castro", "mariamarcp@gmail.com"},
-	{N_("Galician"),            "gl", "Ignacio Casal Quinteiro", "nacho.resa@gmail.com"},
+	{N_("Galician"),            "gl", "Frco. Javier Rial", "fjrial@cesga.es"},
 	{N_("Gujarati"),            "gu", "Ankit Patel", "ankit_patel@users.sf.net"},
 	{N_("Gujarati"),            "gu", N_("Gujarati Language Team"), "indianoss-gujarati@lists.sourceforge.net"},
 	{N_("Hebrew"),              "he", "Shalom Craimer", "scraimer@gmail.com"},
@@ -176,7 +182,6 @@ static struct translator current_translators[] = {
 	{N_("Bokmål Norwegian"),    "nb", "Hallvard Glad", "hallvard.glad@gmail.com"},
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
-	{N_("Norwegian"),           "no", "Petter Johan Olsen", "petter.olsen@cc.uit.no"},
 	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "nynorsk@strilen.net"},
 	{N_("Polish"),              "pl", "Emil Nowak", "emil5@go2.pl"},
 	{N_("Polish"),              "pl", "Paweł Godlewski", "pawel@bajk.pl"},
@@ -192,7 +197,7 @@ static struct translator current_translators[] = {
 	{N_("Albanian"),            "sq", "Besnik Bleta", "besnik@programeshqip.org"},
 	{N_("Serbian"),             "sr", "Danilo Šegan", "dsegan@gmx.net"},
 	{N_("Serbian"),             "sr", "Aleksandar Urosevic", "urke@users.sourceforge.net"},
-	{N_("Swedish"),             "sv", "Tore Lundqvist", "tlt@mima.x.se"},
+	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
 	{N_("Tamil"),               "ta", "Viveka Nathan K", "vivekanathan@users.sourceforge.net"},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
 	{N_("Thai"),                "th", "Isriya Paireepairit", "markpeak@gmail.com"},
@@ -225,6 +230,7 @@ static struct translator past_translators[] = {
 	{N_("French"),              "fr", "Stéphane Pontier", NULL},
 	{N_("French"),              "fr", "Stéphane Wirtel", NULL},
 	{N_("French"),              "fr", "Loïc Jeannin", NULL},
+	{N_("Galician"),            "gl", "Ignacio Casal Quinteiro", NULL},
 	{N_("Hebrew"),              "he", "Pavel Bibergal", NULL},
 	{N_("Italian"),				"it", "Salvatore di Maggio", NULL},
 	{N_("Japanese"),            "ja", "Ryosuke Kutsuna", NULL},
@@ -232,19 +238,21 @@ static struct translator past_translators[] = {
 	{N_("Japanese"),            "ja", "Junichi Uekawa", NULL},
 	{N_("Georgian"),            "ka", "Temuri Doghonadze", NULL},
 	{N_("Korean"),              "ko", "Sang-hyun S, A Ho-seok Lee", NULL},
-	{N_("Korean"),              "ko", "Kyeong-uk Son", "hey@gnome.or.kr"},
+	{N_("Korean"),              "ko", "Kyeong-uk Son", NULL},
 	{N_("Lithuanian"),          "lt", "Andrius Štikonas", NULL},
 	{N_("Lithuanian"),          "lt", "Gediminas Čičinskas", NULL},
-	{N_("Macedonian"),          "mk", "Tomislav Markovski", "herrera@users.sf.net"},
+	{N_("Macedonian"),          "mk", "Tomislav Markovski", NULL},
+	{N_("Bokmål Norwegian"),   "nb", "Petter Johan Olsen", NULL},
 	{N_("Polish"),              "pl", "Przemysław Sułek", NULL},
 	{N_("Russian"),             "ru", "Alexandre Prokoudine", NULL},
 	{N_("Russian"),             "ru", "Sergey Volozhanin", NULL},
 	{N_("Slovak"),              "sk", "Daniel Režný", NULL},
-	{N_("Slovak"),              "sk", "helix84", "helix84@centrum.sk"},
-	{N_("Slovak"),              "sk", "Richard Golier", "golierr@gmail.com"},
+	{N_("Slovak"),              "sk", "helix84", NULL},
+	{N_("Slovak"),              "sk", "Richard Golier", NULL},
 	{N_("Slovenian"),           "sl", "Matjaz Horvat", NULL},
+	{N_("Swedish"),             "sv", "Tore Lundqvist", NULL},
 	{N_("Swedish"),             "sv", "Christian Rose", NULL},
-	{N_("Turkish"),             "tr", "Ahmet Alp BALKAN", "prf_q@users.sf.net"},
+	{N_("Turkish"),             "tr", "Ahmet Alp BALKAN", NULL},
 	{N_("Simplified Chinese"),  "zh_CN", "Hashao, Rocky S. Lee", NULL},
 	{N_("Traditional Chinese"), "zh_TW", "Hashao, Rocky S. Lee", NULL},
 	{NULL, NULL, NULL, NULL}
@@ -293,7 +301,7 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	context = gtk_widget_get_pango_context(widget);
 	layout = pango_layout_new(context);
 
-	markup = g_strdup_printf("<span foreground=\"#5c3566\">%s</span>", VERSION);
+	markup = g_strdup_printf("<span foreground=\"#FFFFFF\">%s</span>", VERSION);
 	pango_layout_set_font_description(layout, style->font_desc);
 	pango_layout_set_markup(layout, markup, strlen(markup));
 	g_free(markup);
@@ -428,6 +436,21 @@ void pidgin_dialogs_about()
 		} else {
 			g_string_append_printf(str, "  %s (%s)<br/>",
 					retired_developers[i].name, _(retired_developers[i].role));
+		}
+	}
+	g_string_append(str, "<BR/>");
+
+	/* Retired Crazy Patch Writers */
+	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
+						   _("Retired Crazy Patch Writers"));
+	for (i = 0; retired_patch_writers[i].name != NULL; i++) {
+		if (retired_patch_writers[i].email != NULL) {
+			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
+					retired_patch_writers[i].name,
+					retired_patch_writers[i].email, patch_writers[i].email);
+		} else {
+			g_string_append_printf(str, "  %s<br/>",
+					retired_patch_writers[i].name);
 		}
 	}
 	g_string_append(str, "<BR/>");

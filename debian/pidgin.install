@@ -6,6 +6,7 @@ debian/tmp/usr/bin/purple-send-async
 debian/tmp/usr/bin/purple-url-handler
 debian/tmp/usr/lib/*.so.*
 debian/tmp/usr/lib/finch
+debian/tmp/usr/lib/gnt
 debian/tmp/usr/lib/perl5
 debian/tmp/usr/lib/pidgin
 debian/tmp/usr/lib/purple-2

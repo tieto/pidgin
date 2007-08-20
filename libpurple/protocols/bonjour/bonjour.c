@@ -138,6 +138,8 @@ bonjour_login(PurpleAccount *account)
 		return;
 	}
 
+	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);
+
 	/* Create a group for bonjour buddies */
 	bonjour_group = purple_group_new(BONJOUR_GROUP_NAME);
 	purple_blist_add_group(bonjour_group, NULL);
@@ -283,17 +285,33 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 	bb->conversation = NULL;
 }
 
+static
+void bonjour_set_buddy_icon(PurpleConnection *conn, PurpleStoredImage *img)
+{
+	BonjourData *bd = conn->proto_data;
+	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);
+}
+
+
 static char *
 bonjour_status_text(PurpleBuddy *buddy)
 {
-	PurplePresence *presence;
+	const PurplePresence *presence;
+	const PurpleStatus *status;
+	const char *message;
+	gchar *ret = NULL;
 
 	presence = purple_buddy_get_presence(buddy);
+	status = purple_presence_get_active_status(presence);
 
-	if (purple_presence_is_online(presence) && !purple_presence_is_available(presence))
-		return g_strdup(_("Away"));
+	message = purple_status_get_attr_string(status, "message");
 
-	return NULL;
+	if (message != NULL) {
+		ret = g_markup_escape_text(message, -1);
+		purple_util_chrreplace(ret, '\n', ' ');
+	}
+
+	return ret;
 }
 
 static void
@@ -301,6 +319,7 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 {
 	PurplePresence *presence;
 	PurpleStatus *status;
+	BonjourBuddy *bb = buddy->proto_data;
 	const char *status_description;
 	const char *message;
 
@@ -318,6 +337,23 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 	purple_notify_user_info_add_pair(user_info, _("Status"), status_description);
 	if (message != NULL)
 		purple_notify_user_info_add_pair(user_info, _("Message"), message);
+
+	/* Only show first/last name if there is a nickname set (to avoid duplication) */
+	if (bb->nick != NULL) {
+		if (bb->first != NULL)
+			purple_notify_user_info_add_pair(user_info, _("First name"), bb->first);
+		if (bb->first != NULL)
+			purple_notify_user_info_add_pair(user_info, _("Last name"), bb->last);
+	}
+
+	if (bb->email != NULL)
+		purple_notify_user_info_add_pair(user_info, _("E-Mail"), bb->email);
+
+	if (bb->AIM != NULL)
+		purple_notify_user_info_add_pair(user_info, _("AIM Account"), bb->AIM);
+
+	if (bb->jid!= NULL)
+		purple_notify_user_info_add_pair(user_info, _("XMPP Account"), bb->jid);
 }
 
 static gboolean
@@ -339,10 +375,9 @@ static PurplePluginProtocolInfo prpl_info =
 	OPT_PROTO_NO_PASSWORD,
 	NULL,                                                    /* user_splits */
 	NULL,                                                    /* protocol_options */
-	/* {"png", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_DISPLAY}, */ /* icon_spec */
-	NO_BUDDY_ICONS, /* not yet */                            /* icon_spec */
+	{"png,gif,jpeg", 0, 0, 96, 96, 65535, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
 	bonjour_list_icon,                                       /* list_icon */
-	NULL,													 /* list_emblem */
+	NULL,                                                    /* list_emblem */
 	bonjour_status_text,                                     /* status_text */
 	bonjour_tooltip_text,                                    /* tooltip_text */
 	bonjour_status_types,                                    /* status_types */
@@ -384,7 +419,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* buddy_free */
 	bonjour_convo_closed,                                    /* convo_closed */
 	NULL,                                                    /* normalize */
-	NULL,                                                    /* set_buddy_icon */
+	bonjour_set_buddy_icon,                                  /* set_buddy_icon */
 	NULL,                                                    /* remove_group */
 	NULL,                                                    /* get_cb_real_name */
 	NULL,                                                    /* set_chat_topic */
@@ -412,11 +447,11 @@ static PurplePluginInfo info =
 	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
+	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
 
 	"prpl-bonjour",                                   /**< id             */
 	"Bonjour",                                        /**< name           */
@@ -426,10 +461,10 @@ static PurplePluginInfo info =
 	                                                  /**  description    */
 	N_("Bonjour Protocol Plugin"),
 	NULL,                                             /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                   /**< homepage       */
 
 	NULL,                                             /**< load           */
-	plugin_unload,                                             /**< unload         */
+	plugin_unload,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */
@@ -533,7 +568,7 @@ initialize_default_account_values()
 	{
 		default_firstname = g_strndup(fullname, splitpoint - fullname);
 		tmp = &splitpoint[1];
-		
+
 		/* The last name may be followed by a comma and additional data.
 		 * Only use the last name itself.
 		 */

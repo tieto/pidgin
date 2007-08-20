@@ -25,22 +25,26 @@
 #ifndef _GTKAPPBAR_H_
 #define _GTKAPPBAR_H_
 
+#include <glib.h>
+#include <gtk/gtk.h>
+
 typedef struct {
-        GtkWidget *win;
+	GtkWidget *win;
 	/** The rectangle of the screen area used for docking */
-        RECT docked_rect;
+	RECT docked_rect;
 	/** The height of the window prior to docking */
-        UINT undocked_height;
+	UINT undocked_height;
 	/** The side of the screen to which the window is docked*/
-        UINT side;
+	UINT side;
 	/** Is the window currently docked? */
-        gboolean docked;
+	gboolean docked;
 	/** Is the window currently in the process of docking? */
-        gboolean docking;
+	gboolean docking;
+	gboolean undocking;
 	/** Is the window currently registered as an appbar */
-        gboolean registered;
+	gboolean registered;
 	/** Callback functions to notify of dock state change */
-        GList *dock_cbs;
+	GSList *dock_cbs;
 	/** Is the window currently iconized? */
 	gboolean iconized;
 } GtkAppBar;

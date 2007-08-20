@@ -135,7 +135,8 @@ am__libpurpleinclude_HEADERS_DIST = account.h accountopt.h blist.h \
 	savedstatuses.h server.h signals.h dnsquery.h dnssrv.h \
 	status.h stringref.h stun.h sound.h sslconn.h upnp.h util.h \
 	value.h version.h xmlnode.h whiteboard.h dbus-bindings.h \
-	dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h
+	dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h \
+	dbus-types.h
 libpurpleincludeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(libpurpleinclude_HEADERS) $(noinst_HEADERS)
 ETAGS = etags
@@ -151,6 +152,8 @@ AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
+AVAHI_CFLAGS = @AVAHI_CFLAGS@
+AVAHI_LIBS = @AVAHI_LIBS@
 AWK = @AWK@
 BUILD_GEVOLUTION_FALSE = @BUILD_GEVOLUTION_FALSE@
 BUILD_GEVOLUTION_TRUE = @BUILD_GEVOLUTION_TRUE@
@@ -311,6 +314,10 @@ LIBXML_LIBS = @LIBXML_LIBS@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MDNS_AVAHI_FALSE = @MDNS_AVAHI_FALSE@
+MDNS_AVAHI_TRUE = @MDNS_AVAHI_TRUE@
+MDNS_HOWL_FALSE = @MDNS_HOWL_FALSE@
+MDNS_HOWL_TRUE = @MDNS_HOWL_TRUE@
 MEANWHILE_CFLAGS = @MEANWHILE_CFLAGS@
 MEANWHILE_LIBS = @MEANWHILE_LIBS@
 MKINSTALLDIRS = @MKINSTALLDIRS@
@@ -339,6 +346,8 @@ POFILES = @POFILES@
 POSUB = @POSUB@
 PO_IN_DATADIR_FALSE = @PO_IN_DATADIR_FALSE@
 PO_IN_DATADIR_TRUE = @PO_IN_DATADIR_TRUE@
+PURPLE_AVAILABLE_FALSE = @PURPLE_AVAILABLE_FALSE@
+PURPLE_AVAILABLE_TRUE = @PURPLE_AVAILABLE_TRUE@
 PURPLE_LT_VERSION_INFO = @PURPLE_LT_VERSION_INFO@
 PURPLE_MAJOR_VERSION = @PURPLE_MAJOR_VERSION@
 PURPLE_MICRO_VERSION = @PURPLE_MICRO_VERSION@
@@ -621,7 +630,7 @@ BUILT_SOURCES = version.h
 
 # purple dbus server
 @ENABLE_DBUS_TRUE@dbus_sources = dbus-server.c dbus-useful.c
-@ENABLE_DBUS_TRUE@dbus_headers = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h
+@ENABLE_DBUS_TRUE@dbus_headers = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h dbus-types.h
 @ENABLE_DBUS_TRUE@dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h \
 @ENABLE_DBUS_TRUE@                connection.h conversation.h core.h ft.h log.h notify.h prefs.h roomlist.h \
 @ENABLE_DBUS_TRUE@                savedstatuses.h status.h server.h util.h xmlnode.h

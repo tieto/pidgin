@@ -175,6 +175,8 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
   !insertmacro MUI_LANGUAGE "TradChinese"
   !insertmacro MUI_LANGUAGE "German"
   !insertmacro MUI_LANGUAGE "Spanish"
+  !insertmacro MUI_LANGUAGE "Farsi"
+  !insertmacro MUI_LANGUAGE "Finnish"
   !insertmacro MUI_LANGUAGE "French"
   !insertmacro MUI_LANGUAGE "Hebrew"
   !insertmacro MUI_LANGUAGE "Italian"
@@ -193,7 +195,6 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
   !insertmacro MUI_LANGUAGE "Serbian"
   !insertmacro MUI_LANGUAGE "Slovak"
   !insertmacro MUI_LANGUAGE "Slovenian"
-  !insertmacro MUI_LANGUAGE "Finnish"
   !insertmacro MUI_LANGUAGE "Swedish"
 
 ;--------------------------------
@@ -211,6 +212,7 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "DANISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\danish.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "DUTCH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\dutch.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ENGLISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\english.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "FARSI"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\persian.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "FINNISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\finnish.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "FRENCH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\french.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "GERMAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\german.nsh"
@@ -1175,7 +1177,7 @@ Function .onInit
   IfErrors done_preselecting_shortcuts
     ;Does the Desktop shortcut exist?
     GetFileTime "$DESKTOP\Pidgin.lnk" $R0 $R0
-    IfErrors +1 +4
+    IfErrors +1 +5
     ClearErrors
     SetShellVarContext "all"
     GetFileTime "$DESKTOP\Pidgin.lnk" $R0 $R0
@@ -1229,16 +1231,6 @@ Function .onInit
   ReadRegStr $INSTDIR HKLM "${PIDGIN_REG_KEY}" ""
   IfErrors +2
   StrCmp $INSTDIR "" 0 instdir_done
-
-  ;If we wanted to reuse the previous gaim installation dir, this would be the way to do it:
-  ;ClearErrors
-  ;ReadRegStr $INSTDIR HKCU "${OLD_GAIM_REG_KEY}" ""
-  ;IfErrors +2
-  ;StrCmp $INSTDIR "" 0 instdir_done
-  ;ClearErrors
-  ;ReadRegStr $INSTDIR HKLM "${OLD_GAIM_REG_KEY}" ""
-  ;IfErrors +2
-  ;StrCmp $INSTDIR "" 0 instdir_done
 
   Call CheckUserInstallRights
   Pop $R0

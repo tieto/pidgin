@@ -38,6 +38,14 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
+@MDNS_AVAHI_TRUE@am__append_1 = mdns_avahi.c
+@MDNS_AVAHI_FALSE@@MDNS_HOWL_TRUE@am__append_2 = mdns_howl.c
+@MDNS_AVAHI_TRUE@@STATIC_BONJOUR_TRUE@am__append_3 = $(AVAHI_LIBS)
+@MDNS_AVAHI_FALSE@@MDNS_HOWL_TRUE@@STATIC_BONJOUR_TRUE@am__append_4 = $(HOWL_LIBS)
+@MDNS_AVAHI_TRUE@@STATIC_BONJOUR_FALSE@am__append_5 = $(AVAHI_LIBS)
+@MDNS_AVAHI_FALSE@@MDNS_HOWL_TRUE@@STATIC_BONJOUR_FALSE@am__append_6 = $(HOWL_LIBS)
+@MDNS_AVAHI_TRUE@am__append_7 = $(AVAHI_CFLAGS)
+@MDNS_AVAHI_FALSE@@MDNS_HOWL_TRUE@am__append_8 = $(HOWL_CFLAGS)
 subdir = libpurple/protocols/bonjour
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -52,16 +60,23 @@ LIBRARIES = $(noinst_LIBRARIES)
 ARFLAGS = cru
 libbonjour_a_AR = $(AR) $(ARFLAGS)
 am__DEPENDENCIES_1 =
+@MDNS_AVAHI_TRUE@@STATIC_BONJOUR_TRUE@am__DEPENDENCIES_2 =  \
+@MDNS_AVAHI_TRUE@@STATIC_BONJOUR_TRUE@	$(am__DEPENDENCIES_1)
+@MDNS_AVAHI_FALSE@@MDNS_HOWL_TRUE@@STATIC_BONJOUR_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
 @STATIC_BONJOUR_TRUE@libbonjour_a_DEPENDENCIES =  \
-@STATIC_BONJOUR_TRUE@	$(am__DEPENDENCIES_1)
+@STATIC_BONJOUR_TRUE@	$(am__DEPENDENCIES_2) \
+@STATIC_BONJOUR_TRUE@	$(am__DEPENDENCIES_3)
 am__libbonjour_a_SOURCES_DIST = bonjour.c bonjour.h buddy.c buddy.h \
-	dns_sd_proxy.h jabber.c jabber.h mdns_common.c mdns_common.h \
-	mdns_howl.c mdns_howl.h mdns_types.h
-am__objects_1 = libbonjour_a-bonjour.$(OBJEXT) \
+	jabber.c jabber.h mdns_common.c mdns_common.h mdns_interface.h \
+	mdns_types.h parser.c parser.h mdns_avahi.c mdns_howl.c
+@MDNS_AVAHI_TRUE@am__objects_1 = libbonjour_a-mdns_avahi.$(OBJEXT)
+@MDNS_AVAHI_FALSE@@MDNS_HOWL_TRUE@am__objects_2 = libbonjour_a-mdns_howl.$(OBJEXT)
+am__objects_3 = libbonjour_a-bonjour.$(OBJEXT) \
 	libbonjour_a-buddy.$(OBJEXT) libbonjour_a-jabber.$(OBJEXT) \
 	libbonjour_a-mdns_common.$(OBJEXT) \
-	libbonjour_a-mdns_howl.$(OBJEXT)
-@STATIC_BONJOUR_TRUE@am_libbonjour_a_OBJECTS = $(am__objects_1)
+	libbonjour_a-parser.$(OBJEXT) $(am__objects_1) \
+	$(am__objects_2)
+@STATIC_BONJOUR_TRUE@am_libbonjour_a_OBJECTS = $(am__objects_3)
 libbonjour_a_OBJECTS = $(am_libbonjour_a_OBJECTS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -72,15 +87,22 @@ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
 am__installdirs = "$(DESTDIR)$(pkgdir)"
 pkgLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(pkg_LTLIBRARIES)
+@MDNS_AVAHI_TRUE@@STATIC_BONJOUR_FALSE@am__DEPENDENCIES_4 =  \
+@MDNS_AVAHI_TRUE@@STATIC_BONJOUR_FALSE@	$(am__DEPENDENCIES_1)
+@MDNS_AVAHI_FALSE@@MDNS_HOWL_TRUE@@STATIC_BONJOUR_FALSE@am__DEPENDENCIES_5 = $(am__DEPENDENCIES_1)
 @STATIC_BONJOUR_FALSE@libbonjour_la_DEPENDENCIES =  \
 @STATIC_BONJOUR_FALSE@	$(am__DEPENDENCIES_1) \
-@STATIC_BONJOUR_FALSE@	$(am__DEPENDENCIES_1)
+@STATIC_BONJOUR_FALSE@	$(am__DEPENDENCIES_1) \
+@STATIC_BONJOUR_FALSE@	$(am__DEPENDENCIES_4) \
+@STATIC_BONJOUR_FALSE@	$(am__DEPENDENCIES_5)
 am__libbonjour_la_SOURCES_DIST = bonjour.c bonjour.h buddy.c buddy.h \
-	dns_sd_proxy.h jabber.c jabber.h mdns_common.c mdns_common.h \
-	mdns_howl.c mdns_howl.h mdns_types.h
-am__objects_2 = bonjour.lo buddy.lo jabber.lo mdns_common.lo \
-	mdns_howl.lo
-@STATIC_BONJOUR_FALSE@am_libbonjour_la_OBJECTS = $(am__objects_2)
+	jabber.c jabber.h mdns_common.c mdns_common.h mdns_interface.h \
+	mdns_types.h parser.c parser.h mdns_avahi.c mdns_howl.c
+@MDNS_AVAHI_TRUE@am__objects_4 = mdns_avahi.lo
+@MDNS_AVAHI_FALSE@@MDNS_HOWL_TRUE@am__objects_5 = mdns_howl.lo
+am__objects_6 = bonjour.lo buddy.lo jabber.lo mdns_common.lo parser.lo \
+	$(am__objects_4) $(am__objects_5)
+@STATIC_BONJOUR_FALSE@am_libbonjour_la_OBJECTS = $(am__objects_6)
 libbonjour_la_OBJECTS = $(am_libbonjour_la_OBJECTS)
 @STATIC_BONJOUR_FALSE@am_libbonjour_la_rpath = -rpath $(pkgdir)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -109,6 +131,8 @@ AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
+AVAHI_CFLAGS = @AVAHI_CFLAGS@
+AVAHI_LIBS = @AVAHI_LIBS@
 AWK = @AWK@
 BUILD_GEVOLUTION_FALSE = @BUILD_GEVOLUTION_FALSE@
 BUILD_GEVOLUTION_TRUE = @BUILD_GEVOLUTION_TRUE@
@@ -269,6 +293,10 @@ LIBXML_LIBS = @LIBXML_LIBS@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
+MDNS_AVAHI_FALSE = @MDNS_AVAHI_FALSE@
+MDNS_AVAHI_TRUE = @MDNS_AVAHI_TRUE@
+MDNS_HOWL_FALSE = @MDNS_HOWL_FALSE@
+MDNS_HOWL_TRUE = @MDNS_HOWL_TRUE@
 MEANWHILE_CFLAGS = @MEANWHILE_CFLAGS@
 MEANWHILE_LIBS = @MEANWHILE_LIBS@
 MKINSTALLDIRS = @MKINSTALLDIRS@
@@ -297,6 +325,8 @@ POFILES = @POFILES@
 POSUB = @POSUB@
 PO_IN_DATADIR_FALSE = @PO_IN_DATADIR_FALSE@
 PO_IN_DATADIR_TRUE = @PO_IN_DATADIR_TRUE@
+PURPLE_AVAILABLE_FALSE = @PURPLE_AVAILABLE_FALSE@
+PURPLE_AVAILABLE_TRUE = @PURPLE_AVAILABLE_TRUE@
 PURPLE_LT_VERSION_INFO = @PURPLE_LT_VERSION_INFO@
 PURPLE_MAJOR_VERSION = @PURPLE_MAJOR_VERSION@
 PURPLE_MICRO_VERSION = @PURPLE_MICRO_VERSION@
@@ -438,43 +468,31 @@ target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
 EXTRA_DIST = \
-		mdns_win32.c \
-		mdns_win32.h \
-		Makefile.mingw
+	mdns_win32.c \
+	dns_sd_proxy.h \
+	Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
-BONJOURSOURCES = \
-	bonjour.c \
-	bonjour.h \
-	buddy.c \
-	buddy.h \
-	dns_sd_proxy.h \
-	jabber.c \
-	jabber.h \
-	mdns_common.c \
-	mdns_common.h \
-	mdns_howl.c \
-	mdns_howl.h \
-	mdns_types.h
-
-AM_CFLAGS = $(st) -DUSE_BONJOUR_HOWL
+BONJOURSOURCES = bonjour.c bonjour.h buddy.c buddy.h jabber.c jabber.h \
+	mdns_common.c mdns_common.h mdns_interface.h mdns_types.h \
+	parser.c parser.h $(am__append_1) $(am__append_2)
+AM_CFLAGS = $(st)
 libbonjour_la_LDFLAGS = -module -avoid-version
 @STATIC_BONJOUR_FALSE@st = 
 @STATIC_BONJOUR_TRUE@st = -DPURPLE_STATIC_PRPL
 @STATIC_BONJOUR_TRUE@noinst_LIBRARIES = libbonjour.a
 @STATIC_BONJOUR_TRUE@libbonjour_a_SOURCES = $(BONJOURSOURCES)
 @STATIC_BONJOUR_TRUE@libbonjour_a_CFLAGS = $(AM_CFLAGS)
-@STATIC_BONJOUR_TRUE@libbonjour_a_LIBADD = $(HOWL_LIBS)
+@STATIC_BONJOUR_TRUE@libbonjour_a_LIBADD = $(am__append_3) \
+@STATIC_BONJOUR_TRUE@	$(am__append_4)
 @STATIC_BONJOUR_FALSE@pkg_LTLIBRARIES = libbonjour.la
 @STATIC_BONJOUR_FALSE@libbonjour_la_SOURCES = $(BONJOURSOURCES)
-@STATIC_BONJOUR_FALSE@libbonjour_la_LIBADD = $(GLIB_LIBS) $(HOWL_LIBS)
-AM_CPPFLAGS = \
-	-I$(top_srcdir)/libpurple \
-	-I$(top_builddir)/libpurple \
-	$(GLIB_CFLAGS) \
-	$(DEBUG_CFLAGS) \
-	$(HOWL_CFLAGS)
-
+@STATIC_BONJOUR_FALSE@libbonjour_la_LIBADD = $(GLIB_LIBS) \
+@STATIC_BONJOUR_FALSE@	$(LIBXML_LIBS) $(am__append_5) \
+@STATIC_BONJOUR_FALSE@	$(am__append_6)
+AM_CPPFLAGS = -I$(top_srcdir)/libpurple -I$(top_builddir)/libpurple \
+	$(GLIB_CFLAGS) $(DEBUG_CFLAGS) $(LIBXML_CFLAGS) \
+	$(am__append_7) $(am__append_8)
 all: all-am
 
 .SUFFIXES:
@@ -557,10 +575,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-bonjour.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-buddy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-jabber.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-mdns_avahi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-mdns_common.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-mdns_howl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libbonjour_a-parser.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdns_avahi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdns_common.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdns_howl.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parser.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -638,6 +660,34 @@ libbonjour_a-mdns_common.obj: mdns_common.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mdns_common.c' object='libbonjour_a-mdns_common.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-mdns_common.obj `if test -f 'mdns_common.c'; then $(CYGPATH_W) 'mdns_common.c'; else $(CYGPATH_W) '$(srcdir)/mdns_common.c'; fi`
+
+libbonjour_a-parser.o: parser.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -MT libbonjour_a-parser.o -MD -MP -MF "$(DEPDIR)/libbonjour_a-parser.Tpo" -c -o libbonjour_a-parser.o `test -f 'parser.c' || echo '$(srcdir)/'`parser.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libbonjour_a-parser.Tpo" "$(DEPDIR)/libbonjour_a-parser.Po"; else rm -f "$(DEPDIR)/libbonjour_a-parser.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parser.c' object='libbonjour_a-parser.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-parser.o `test -f 'parser.c' || echo '$(srcdir)/'`parser.c
+
+libbonjour_a-parser.obj: parser.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -MT libbonjour_a-parser.obj -MD -MP -MF "$(DEPDIR)/libbonjour_a-parser.Tpo" -c -o libbonjour_a-parser.obj `if test -f 'parser.c'; then $(CYGPATH_W) 'parser.c'; else $(CYGPATH_W) '$(srcdir)/parser.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libbonjour_a-parser.Tpo" "$(DEPDIR)/libbonjour_a-parser.Po"; else rm -f "$(DEPDIR)/libbonjour_a-parser.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parser.c' object='libbonjour_a-parser.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-parser.obj `if test -f 'parser.c'; then $(CYGPATH_W) 'parser.c'; else $(CYGPATH_W) '$(srcdir)/parser.c'; fi`
+
+libbonjour_a-mdns_avahi.o: mdns_avahi.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -MT libbonjour_a-mdns_avahi.o -MD -MP -MF "$(DEPDIR)/libbonjour_a-mdns_avahi.Tpo" -c -o libbonjour_a-mdns_avahi.o `test -f 'mdns_avahi.c' || echo '$(srcdir)/'`mdns_avahi.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libbonjour_a-mdns_avahi.Tpo" "$(DEPDIR)/libbonjour_a-mdns_avahi.Po"; else rm -f "$(DEPDIR)/libbonjour_a-mdns_avahi.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mdns_avahi.c' object='libbonjour_a-mdns_avahi.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-mdns_avahi.o `test -f 'mdns_avahi.c' || echo '$(srcdir)/'`mdns_avahi.c
+
+libbonjour_a-mdns_avahi.obj: mdns_avahi.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -MT libbonjour_a-mdns_avahi.obj -MD -MP -MF "$(DEPDIR)/libbonjour_a-mdns_avahi.Tpo" -c -o libbonjour_a-mdns_avahi.obj `if test -f 'mdns_avahi.c'; then $(CYGPATH_W) 'mdns_avahi.c'; else $(CYGPATH_W) '$(srcdir)/mdns_avahi.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libbonjour_a-mdns_avahi.Tpo" "$(DEPDIR)/libbonjour_a-mdns_avahi.Po"; else rm -f "$(DEPDIR)/libbonjour_a-mdns_avahi.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='mdns_avahi.c' object='libbonjour_a-mdns_avahi.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -c -o libbonjour_a-mdns_avahi.obj `if test -f 'mdns_avahi.c'; then $(CYGPATH_W) 'mdns_avahi.c'; else $(CYGPATH_W) '$(srcdir)/mdns_avahi.c'; fi`
 
 libbonjour_a-mdns_howl.o: mdns_howl.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libbonjour_a_CFLAGS) $(CFLAGS) -MT libbonjour_a-mdns_howl.o -MD -MP -MF "$(DEPDIR)/libbonjour_a-mdns_howl.Tpo" -c -o libbonjour_a-mdns_howl.o `test -f 'mdns_howl.c' || echo '$(srcdir)/'`mdns_howl.c; \

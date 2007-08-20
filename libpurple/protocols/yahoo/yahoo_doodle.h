@@ -31,17 +31,19 @@
 #include "whiteboard.h"
 #include "cmds.h"
 
+#define DOODLE_IMV_KEY "doodle;103"
+
 /******************************************************************************
  * Defines
  *****************************************************************************/
 /* Doodle communication commands */
 /* TODO: Should be an enum. */
-#define DOODLE_CMD_REQUEST  0
-#define DOODLE_CMD_READY    1
-#define DOODLE_CMD_CLEAR    2
-#define DOODLE_CMD_DRAW     3
-#define DOODLE_CMD_EXTRA    4
-#define DOODLE_CMD_CONFIRM  5
+#define DOODLE_CMD_REQUEST	0
+#define DOODLE_CMD_CLEAR	1
+#define DOODLE_CMD_DRAW		2
+#define DOODLE_CMD_EXTRA	3
+#define DOODLE_CMD_READY	4
+#define DOODLE_CMD_CONFIRM	5
 /* Doodle communication command for shutting down (also 0) */
 #define DOODLE_CMD_SHUTDOWN 0
 
@@ -54,6 +56,7 @@
 #define DOODLE_STATE_REQUESTING  0
 #define DOODLE_STATE_REQUESTED   1
 #define DOODLE_STATE_ESTABLISHED 2
+#define DOODLE_STATE_CANCELED    3
 
 /* Doodle canvas dimensions */
 #define DOODLE_CANVAS_WIDTH  368
@@ -104,12 +107,6 @@ void yahoo_doodle_process(PurpleConnection *gc, const char *me, const char *from
 						  const char *command, const char *message);
 void yahoo_doodle_initiate(PurpleConnection *gc, const char *to);
 
-void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *from);
-void yahoo_doodle_command_got_ready(PurpleConnection *gc, const char *from);
-void yahoo_doodle_command_got_draw(PurpleConnection *gc, const char *from, const char *message);
-void yahoo_doodle_command_got_clear(PurpleConnection *gc, const char *from);
-void yahoo_doodle_command_got_extra(PurpleConnection *gc, const char *from, const char *message);
-void yahoo_doodle_command_got_confirm(PurpleConnection *gc, const char *from);
 void yahoo_doodle_command_got_shutdown(PurpleConnection *gc, const char *from);
 
 void yahoo_doodle_command_send_request(PurpleConnection *gc, const char *to);

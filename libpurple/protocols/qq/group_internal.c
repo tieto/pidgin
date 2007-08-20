@@ -38,7 +38,7 @@ static gchar *_qq_group_set_my_status_desc(qq_group *group)
 
 	switch (group->my_status) {
 	case QQ_GROUP_MEMBER_STATUS_NOT_MEMBER:
-		status_desc = _("I am not member");
+		status_desc = _("I am not a member");
 		break;
 	case QQ_GROUP_MEMBER_STATUS_IS_MEMBER:
 		status_desc = _("I am a member");

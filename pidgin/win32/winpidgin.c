@@ -332,10 +332,10 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
 			break;
 		case LANG_ROMANIAN: posix = "ro"; break;
 		case LANG_RUSSIAN: posix = "ru"; break;
-		/* LANG_CROATIAN == LANG_SERBIAN == LANG_BOSNIAN */
 		case LANG_SLOVAK: posix = "sk"; break;
 		case LANG_SLOVENIAN: posix = "sl"; break;
 		case LANG_ALBANIAN: posix = "sq"; break;
+		/* LANG_CROATIAN == LANG_SERBIAN == LANG_BOSNIAN */
 		case LANG_SERBIAN:
 			switch (sub_id) {
 				case SUBLANG_SERBIAN_LATIN:
@@ -538,6 +538,8 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	char exe_name[MAX_PATH];
 	HMODULE hmod;
 	char *tmp;
+	int pidgin_argc = __argc;
+	char **pidgin_argv = __argv;
 
 	/* If debug or help or version flag used, create console for output */
 	if (strstr(lpszCmdLine, "-d") || strstr(lpszCmdLine, "-h") || strstr(lpszCmdLine, "-v")) {
@@ -601,8 +603,20 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	/* Determine if we're running in portable mode */
 	if (strstr(lpszCmdLine, "--portable-mode")
 			|| (exe_name != NULL && strstr(exe_name, "-portable.exe"))) {
+		int i = 0, c = 0;
+
 		printf("Running in PORTABLE mode.\n");
 		portable_mode = TRUE;
+
+		/* Remove the --portable-mode arg from the args passed to pidgin so it doesn't choke */
+		pidgin_argv = malloc(sizeof(char*) * pidgin_argc);
+		for (; i < __argc; i++) {
+			if (strstr(__argv[i], "--portable-mode") == NULL) {
+				pidgin_argv[c] = __argv[i];
+				c++;
+			} else
+				pidgin_argc--;
+		}
 	}
 
 	if (portable_mode)
@@ -635,5 +649,5 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		return 0;
 	}
 
-	return pidgin_main(hInstance, __argc, __argv);
+	return pidgin_main(hInstance, pidgin_argc, pidgin_argv);
 }

@@ -151,6 +151,10 @@ email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
 	mail_dialog = NULL;
 }
 
+static void email_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data) {
+	email_response_cb(GTK_DIALOG(mail_dialog->dialog), GTK_RESPONSE_YES, mail_dialog);
+}
+
 static void
 reset_mail_dialog(GtkDialog *dialog)
 {
@@ -274,6 +278,7 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_label_set_selectable(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
@@ -376,6 +381,7 @@ pidgin_get_mail_dialog()
 						 G_CALLBACK(email_response_cb), mail_dialog);
 		g_signal_connect(G_OBJECT(gtk_tree_view_get_selection(GTK_TREE_VIEW(mail_dialog->treeview))),
 						 "changed", G_CALLBACK(selection_changed_cb), mail_dialog);
+		g_signal_connect(G_OBJECT(mail_dialog->treeview), "row-activated", G_CALLBACK(email_row_activated_cb), NULL);
 
 		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(mail_dialog->treeview), FALSE);
 		gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(mail_dialog->treeview), TRUE);
@@ -609,6 +615,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_label_set_selectable(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
@@ -626,6 +633,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
 	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
+	gtk_widget_grab_focus(button);
 
 	g_signal_connect_swapped(G_OBJECT(button), "clicked",
 							 G_CALLBACK(gtk_widget_destroy), window);

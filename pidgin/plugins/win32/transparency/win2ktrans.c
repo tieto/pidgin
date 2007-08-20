@@ -274,9 +274,11 @@ static void add_slider(GtkWidget *win) {
 		gtk_window_get_size(GTK_WINDOW(win), &width, &height);
 		gtk_box_pack_start(GTK_BOX(vbox),
 			slider_box, FALSE, FALSE, 0);
+#if 0 /*Now that we save window sizes, don't resize it or else it causes windows to grow*/
 		/* Make window taller so we don't slowly collapse its message area */
 		gtk_window_resize(GTK_WINDOW(win), width,
 			(height + slidereq.height));
+#endif
 		/* Add window to list, to track that it has a slider */
 		slidwin = g_new0(slider_win, 1);
 		slidwin->win = win;
@@ -292,6 +294,7 @@ static void remove_sliders() {
 			slider_win *slidwin = (slider_win*) tmp->data;
 			if (slidwin != NULL &&
 					GTK_IS_WINDOW(slidwin->win)) {
+#if 0
 				GtkRequisition slidereq;
 				gint width, height;
 				/* Figure out how tall the slider was */
@@ -300,12 +303,13 @@ static void remove_sliders() {
 				gtk_window_get_size(
 					GTK_WINDOW(slidwin->win),
 					&width, &height);
-
+#endif
 				gtk_widget_destroy(slidwin->slider);
-
+#if 0
 				gtk_window_resize(
 					GTK_WINDOW(slidwin->win),
 					width, (height - slidereq.height));
+#endif
 			}
 			g_free(slidwin);
 			tmp = tmp->next;

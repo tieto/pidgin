@@ -146,7 +146,6 @@ install_shallow: $(PIDGIN_INSTALL_DIR) $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
 install: install_shallow all
 	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(PIDGIN_PIXMAPS_TOP) -f $(MINGW_MAKEFILE) install
-	$(MAKE) -C $(PIDGIN_SOUNDS_TOP) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(PIDGIN_IDLETRACK_TOP) -f $(MINGW_MAKEFILE) install
 
 win32/pidgin_dll_rc.rc: win32/pidgin_dll_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION

@@ -26,6 +26,10 @@
 #ifndef _BONJOUR_JABBER_H_
 #define _BONJOUR_JABBER_H_
 
+#include <libxml/parser.h>
+
+#include "xmlnode.h"
+
 #include "account.h"
 #include "circbuffer.h"
 
@@ -43,9 +47,12 @@ typedef struct _BonjourJabberConversation
 	guint rx_handler;
 	guint tx_handler;
 	PurpleCircBuffer *tx_buf;
-	gboolean stream_started;
+	gboolean sent_stream_start;
+	gboolean recv_stream_start;
 	PurpleProxyConnectData *connect_data;
 	gpointer stream_data;
+	xmlParserCtxt *context;
+	xmlnode *current;
 } BonjourJabberConversation;
 
 /**
@@ -59,6 +66,12 @@ gint bonjour_jabber_start(BonjourJabber *data);
 int bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *body);
 
 void bonjour_jabber_close_conversation(BonjourJabberConversation *bconv);
+
+void bonjour_jabber_stream_started(PurpleBuddy *pb);
+
+void bonjour_jabber_stream_ended(PurpleBuddy *pb);
+
+void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet);
 
 void bonjour_jabber_stop(BonjourJabber *data);
 
