@@ -699,9 +699,6 @@ msim_msg_dump(const gchar *fmt_string, MsimMessage *msg)
 	
 	g_return_if_fail(debug_str != NULL);
 
-	purple_debug_info("msim_msg_dump", "debug_str=%s\n", debug_str);
-
-
 	purple_debug_info("msim", fmt_string, debug_str);
 
 	g_free(debug_str);
@@ -1005,7 +1002,7 @@ msim_msg_get_node(MsimMessage *msg, const gchar *name)
 {
 	GList *node;
 
-	if (!name) {
+	if (!name || !msg) {
 		return NULL;
 	}
 
