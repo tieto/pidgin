@@ -796,8 +796,6 @@ x509_issuer_dn (PurpleCertificate *crt)
 
 	cert_dat = X509_GET_GNUTLS_DATA(crt);
 
-	/* TODO: Note return values? */
-		
 	/* Figure out the length of the Distinguished Name */
 	/* Claim that the buffer is size 0 so GnuTLS just tells us how much
 	   space it needs */
@@ -806,7 +804,13 @@ x509_issuer_dn (PurpleCertificate *crt)
 
 	/* Now allocate and get the Distinguished Name */
 	dn = g_new0(gchar, dn_size);
-	gnutls_x509_crt_get_issuer_dn(cert_dat, dn, &dn_size);
+	if (0 != gnutls_x509_crt_get_issuer_dn(cert_dat, dn, &dn_size)) {
+		purple_debug_error("gnutls/x509",
+				   "Failed to get issuer's Distinguished "
+				   "Name\n");
+		g_free(dn);
+		return NULL;
+	}
 	
 	return dn;
 }
@@ -817,14 +821,13 @@ x509_common_name (PurpleCertificate *crt)
 	gnutls_x509_crt_t cert_dat;
 	gchar *cn = NULL;
 	size_t cn_size;
+	int ret;
 
 	g_return_val_if_fail(crt, NULL);
 	g_return_val_if_fail(crt->scheme == &x509_gnutls, NULL);
 
 	cert_dat = X509_GET_GNUTLS_DATA(crt);
 
-	/* TODO: Note return values? */
-	
 	/* Figure out the length of the Common Name */
 	/* Claim that the buffer is size 0 so GnuTLS just tells us how much
 	   space it needs */
@@ -837,11 +840,18 @@ x509_common_name (PurpleCertificate *crt)
 
 	/* Now allocate and get the Common Name */
 	cn = g_new0(gchar, cn_size);
-	gnutls_x509_crt_get_dn_by_oid(cert_dat,
-				      GNUTLS_OID_X520_COMMON_NAME,
-				      0, /* First CN found, please */
-				      0, /* Not in raw mode */
-				      cn, &cn_size);
+	ret = gnutls_x509_crt_get_dn_by_oid(cert_dat,
+					    GNUTLS_OID_X520_COMMON_NAME,
+					    0, /* First CN found, please */
+					    0, /* Not in raw mode */
+					    cn, &cn_size);
+	if (ret != 0) {
+		purple_debug_error("gnutls/x509",
+				   "Failed to get Common Name\n");
+		g_free(cn);
+		return NULL;
+	}
+
 	
 	return cn;
 }
@@ -892,7 +902,6 @@ x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 }
 
 /* X.509 certificate operations provided by this plugin */
-/* TODO: Flesh this out! */
 static PurpleCertificateScheme x509_gnutls = {
 	"x509",                          /* Scheme name */
 	N_("X.509 Certificates"),        /* User-visible scheme name */
@@ -939,7 +948,6 @@ plugin_load(PurplePlugin *plugin)
 	ssl_gnutls_init_gnutls();
 
 	/* Register that we're providing an X.509 CertScheme */
-	/* @TODO : error checking */
 	purple_certificate_register_scheme( &x509_gnutls );
 
 	return TRUE;
