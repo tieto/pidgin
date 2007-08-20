@@ -3872,7 +3872,10 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 }
 
 /** Add contact from server to buddy list, after looking up username.
- * Callback from msim_add_contact_from_server(). */
+ * Callback from msim_add_contact_from_server(). 
+ *
+ * @param data An MsimMessage * of the contact information. Will be freed.
+ */
 static void
 msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_info, gpointer data)
 {
@@ -3884,6 +3887,7 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	guint uid;
 
 	contact_info = (MsimMessage *)data;
+	purple_debug_info("msim_add_contact_from_server_cb", "contact_info addr=%X\n", contact_info);
 	uid = msim_msg_get_integer(contact_info, "ContactID");
 
 	if (!user_lookup_info) {
@@ -3930,6 +3934,8 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	msim_store_user_info(session, contact_info, NULL);
 
 	/* TODO: other fields, store in 'user' */
+
+	msim_msg_free(contact_info);
 }
 
 /** Add first ContactID in contact_info to buddy's list. Used to add
@@ -3937,14 +3943,14 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
  *
  * @return TRUE if added.
  * */
-static gboolean
+static void 
 msim_add_contact_from_server(MsimSession *session, MsimMessage *contact_info)
 {
 	guint uid;
 	const gchar *username;
 
 	uid = msim_msg_get_integer(contact_info, "ContactID");
-	g_return_val_if_fail(uid != 0, FALSE);
+	g_return_if_fail(uid != 0);
 
 	/* Lookup the username, since NickName and IMName is unreliable */
 	username = msim_uid2username_from_blist(session, uid);
@@ -3952,10 +3958,12 @@ msim_add_contact_from_server(MsimSession *session, MsimMessage *contact_info)
 		gchar *uid_str;
 
 		uid_str = g_strdup_printf("%d", uid);
-		msim_lookup_user(session, uid_str, msim_add_contact_from_server_cb, (gpointer)contact_info);
+		purple_debug_info("msim_add_contact_from_server",
+				"contact_info addr=%X\n", contact_info);
+		msim_lookup_user(session, uid_str, msim_add_contact_from_server_cb, (gpointer)msim_msg_clone(contact_info));
 		g_free(uid_str);
 	} else {
-		msim_add_contact_from_server_cb(session, NULL, (gpointer)contact_info);
+		msim_add_contact_from_server_cb(session, NULL, (gpointer)msim_msg_clone(contact_info));
 	}
 }
 

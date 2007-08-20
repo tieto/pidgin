@@ -1010,8 +1010,10 @@ msim_msg_get_node(MsimMessage *msg, const gchar *name)
 	for (node = msg; node != NULL; node = g_list_next(node)) {
 		MsimMessageElement *elem;
 
-		elem = node->data;
+		elem = (MsimMessageElement *)node->data;
+
 		g_return_val_if_fail(elem != NULL, NULL);
+		g_return_val_if_fail(elem->name != NULL, NULL);
 
 		if (strcmp(elem->name, name) == 0) {
 			return node;
