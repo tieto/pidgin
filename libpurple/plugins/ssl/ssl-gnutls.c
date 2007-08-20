@@ -766,8 +766,6 @@ x509_cert_dn (PurpleCertificate *crt)
 
 	cert_dat = X509_GET_GNUTLS_DATA(crt);
 
-	/* TODO: Note return values? */
-		
 	/* Figure out the length of the Distinguished Name */
 	/* Claim that the buffer is size 0 so GnuTLS just tells us how much
 	   space it needs */
@@ -776,7 +774,12 @@ x509_cert_dn (PurpleCertificate *crt)
 
 	/* Now allocate and get the Distinguished Name */
 	dn = g_new0(gchar, dn_size);
-	gnutls_x509_crt_get_dn(cert_dat, dn, &dn_size);
+	if (0 != gnutls_x509_crt_get_dn(cert_dat, dn, &dn_size)) {
+		purple_debug_error("gnutls/x509",
+				   "Failed to get Distinguished Name\n");
+		g_free(dn);
+		return NULL;
+	}
 	
 	return dn;
 }
