@@ -432,7 +432,6 @@ purple_certificate_pool_store(PurpleCertificatePool *pool, const gchar *id, Purp
 	g_return_val_if_fail(id, FALSE);
 	g_return_val_if_fail(pool->put_cert, FALSE);
 
-	/* TODO: Should this just be someone else's problem? */
 	/* Whether crt->scheme matches find_scheme(pool->scheme_name) is not
 	   relevant... I think... */
 	g_return_val_if_fail(
@@ -539,8 +538,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 	cn = purple_certificate_get_subject_name(crt);
 
 	/* Determine whether the name matches */
-	/* TODO: Worry about strcmp safety? */
-	if (!strcmp(cn, vrq->subject_name)) {
+	if (purple_certificate_check_subject_name(crt, vrq->subject_name)) {
 		cn_match = _("");
 	} else {
 		cn_match = _("(DOES NOT MATCH)");
