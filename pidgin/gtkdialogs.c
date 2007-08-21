@@ -86,6 +86,7 @@ static struct developer developers[] = {
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
 	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
 	{"Evan Schoenberg",		N_("developer"), NULL},
+	{"Kevin 'SimGuy' Stange",	N_("developer & webmaster"),	NULL},
 	{"Stu 'nosnilmot' Tomlinson",	N_("developer"), NULL},
 	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
 	{NULL, NULL, NULL}
@@ -95,7 +96,6 @@ static struct developer developers[] = {
 static struct developer patch_writers[] = {
 	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
-	{"Kevin 'SimGuy' Stange",		NULL,	NULL},
 	{NULL, NULL, NULL}
 };
 
