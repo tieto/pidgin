@@ -99,8 +99,6 @@ wpurple_strerror( errno )
 #define strerror( errornum ) \
 wpurple_strerror( errornum )
 
-#define bzero( dest, size ) memset( dest, 0, size )
-
 /* unistd.h */
 #define read( fd, buf, buflen ) \
 wpurple_read( fd, buf, buflen )

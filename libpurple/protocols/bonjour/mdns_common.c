@@ -17,7 +17,6 @@
 #include <string.h>
 
 #include "internal.h"
-#include "cipher.h"
 #include "debug.h"
 
 #include "mdns_common.h"
@@ -159,25 +158,19 @@ void bonjour_dns_sd_update_buddy_icon(BonjourDnsSd *data) {
 		avatar_len = purple_imgstore_get_size(img);
 
 		if (_mdns_set_buddy_icon_data(data, avatar_data, avatar_len)) {
-			int i;
-			gchar *enc;
-			char *p, hash[41];
-			unsigned char hashval[20];
-
-			enc = purple_base64_encode(avatar_data, avatar_len);
-
-			purple_cipher_digest_region("sha1", avatar_data,
-						    avatar_len, sizeof(hashval),
-						    hashval, NULL);
-
-			p = hash;
-			for(i=0; i<20; i++, p+=2)
-				snprintf(p, 3, "%02x", hashval[i]);
+			/* The filename is a SHA-1 hash of the data (conveniently what we need) */
+			const char *p, *filename = purple_imgstore_get_filename(img);
 
 			g_free(data->phsh);
-			data->phsh = g_strdup(hash);
+			data->phsh = NULL;
 
-			g_free(enc);
+			/* Get rid of the extension */
+			p = strchr(filename, '.');
+			if (p)
+				data->phsh = g_strndup(filename, p - filename);
+			else
+				purple_debug_error("bonjour", "account buddy icon returned unexpected filename (%s)"
+								"; unable to extract hash. Clearing buddy icon\n", filename);
 
 			/* Update our TXT record */
 			publish_presence(data, PUBLISH_UPDATE);

@@ -151,6 +151,10 @@ email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
 	mail_dialog = NULL;
 }
 
+static void email_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data) {
+	email_response_cb(GTK_DIALOG(mail_dialog->dialog), GTK_RESPONSE_YES, mail_dialog);
+}
+
 static void
 reset_mail_dialog(GtkDialog *dialog)
 {
@@ -377,6 +381,7 @@ pidgin_get_mail_dialog()
 						 G_CALLBACK(email_response_cb), mail_dialog);
 		g_signal_connect(G_OBJECT(gtk_tree_view_get_selection(GTK_TREE_VIEW(mail_dialog->treeview))),
 						 "changed", G_CALLBACK(selection_changed_cb), mail_dialog);
+		g_signal_connect(G_OBJECT(mail_dialog->treeview), "row-activated", G_CALLBACK(email_row_activated_cb), NULL);
 
 		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(mail_dialog->treeview), FALSE);
 		gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(mail_dialog->treeview), TRUE);

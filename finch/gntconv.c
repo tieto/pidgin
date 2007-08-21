@@ -60,6 +60,7 @@
 
 static void finch_write_common(PurpleConversation *conv, const char *who,
 		const char *message, PurpleMessageFlags flags, time_t mtime);
+static void generate_send_to_menu(FinchConv *ggc);
 
 static void
 send_typing_notification(GntWidget *w, FinchConv *ggconv)
@@ -199,10 +200,10 @@ save_position_cb(GntWidget *w, int x, int y)
 }
 
 static PurpleConversation *
-find_conv_with_contact(PurpleConversation *conv)
+find_conv_with_contact(PurpleAccount *account, const char *name)
 {
 	PurpleBlistNode *node;
-	PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
+	PurpleBuddy *buddy = purple_find_buddy(account, name);
 	PurpleConversation *ret = NULL;
 
 	if (!buddy)
@@ -272,6 +273,28 @@ chat_left_cb(PurpleConversation *conv, gpointer null)
 			PURPLE_MESSAGE_SYSTEM, time(NULL));
 }
 
+static void
+buddy_signed_on_off(PurpleBuddy *buddy, gpointer null)
+{
+	PurpleConversation *conv = find_conv_with_contact(buddy->account, buddy->name);
+	if (conv == NULL)
+		return;
+	generate_send_to_menu(conv->ui_data);
+}
+
+static void
+account_signed_on_off(PurpleConnection *gc, gpointer null)
+{
+	GList *ims = purple_get_ims();
+	while (ims) {
+		PurpleConversation *conv = ims->data;
+		PurpleConversation *cc = find_conv_with_contact(conv->account, conv->name);
+		if (cc)
+			generate_send_to_menu(cc->ui_data);
+		ims = ims->next;
+	}
+}
+
 static gpointer
 finch_conv_get_handle()
 {
@@ -339,12 +362,15 @@ generate_send_to_menu(FinchConv *ggc)
 	if (!buds)
 		return;
 
-	item = gnt_menuitem_new(_("Send To"));
-	gnt_menu_add_item(GNT_MENU(menu), item);
+	if ((item = ggc->u.im->sendto) == NULL) {
+		item = gnt_menuitem_new(_("Send To"));
+		gnt_menu_add_item(GNT_MENU(menu), item);
+		ggc->u.im->sendto = item;
+	}
 	sub = gnt_menu_new(GNT_MENU_POPUP);
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
 
-	for (; buds; buds = buds->next) {
+	for (; buds; buds = g_slist_delete_link(buds, buds)) {
 		PurpleBlistNode *node = (PurpleBlistNode *)purple_buddy_get_contact((PurpleBuddy *)buds->data);
 		for (node = node->child; node != NULL; node = node->next) {
 			PurpleBuddy *buddy = (PurpleBuddy *)node;
@@ -357,7 +383,7 @@ generate_send_to_menu(FinchConv *ggc)
 			}
 		}
 	}
-	for (list = g_list_last(list); list != NULL; list = list->prev) {
+	for (list = g_list_reverse(list); list != NULL; list = g_list_delete_link(list, list)) {
 		PurplePresence *pre = list->data;
 		PurpleBuddy *buddy = purple_presence_get_buddy(pre);
 		PurpleAccount *account = purple_buddy_get_account(buddy);
@@ -370,8 +396,6 @@ generate_send_to_menu(FinchConv *ggc)
 		g_object_set_data(G_OBJECT(item), "purple_account", account);
 		g_object_set_data_full(G_OBJECT(item), "purple_buddy_name", name, g_free);
 	}
-	g_list_free(list);
-	g_slist_free(buds);
 }
 
 static void
@@ -462,7 +486,7 @@ finch_create_conversation(PurpleConversation *conv)
 	if (ggc)
 		return;
 
-	cc = find_conv_with_contact(conv);
+	cc = find_conv_with_contact(conv->account, conv->name);
 	if (cc && cc->ui_data)
 		ggc = cc->ui_data;
 	else
@@ -504,8 +528,6 @@ finch_create_conversation(PurpleConversation *conv)
 			break;
 	}
 
-	gg_create_menu(ggc);
-
 	ggc->tv = gnt_text_view_new();
 	gnt_widget_set_name(ggc->tv, "conversation-window-textview");
 	gnt_widget_set_size(ggc->tv, purple_prefs_get_int(PREF_ROOT "/size/width"),
@@ -527,6 +549,7 @@ finch_create_conversation(PurpleConversation *conv)
 		g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(create_conv_from_userlist), ggc);
 		gnt_widget_set_visible(tree, purple_prefs_get_bool(PREF_USERLIST));
 	} else {
+		ggc->u.im = g_new0(FinchConvIm, 1);
 		gnt_box_add_widget(GNT_BOX(ggc->window), ggc->tv);
 	}
 
@@ -557,6 +580,8 @@ finch_create_conversation(PurpleConversation *conv)
 	if (type == PURPLE_CONV_TYPE_IM) {
 		g_signal_connect(G_OBJECT(ggc->entry), "text_changed", G_CALLBACK(send_typing_notification), ggc);
 	}
+
+	gg_create_menu(ggc);
 
 	g_free(title);
 	gnt_box_give_focus_to_child(GNT_BOX(ggc->window), ggc->entry);
@@ -1016,6 +1041,14 @@ void finch_conversation_init()
 					PURPLE_CALLBACK(update_buddy_typing), NULL);
 	purple_signal_connect(purple_conversations_get_handle(), "chat-left", finch_conv_get_handle(),
 					PURPLE_CALLBACK(chat_left_cb), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on", finch_conv_get_handle(),
+					PURPLE_CALLBACK(buddy_signed_on_off), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off", finch_conv_get_handle(),
+					PURPLE_CALLBACK(buddy_signed_on_off), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-on", finch_conv_get_handle(),
+					PURPLE_CALLBACK(account_signed_on_off), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-off", finch_conv_get_handle(),
+					PURPLE_CALLBACK(account_signed_on_off), NULL);
 }
 
 void finch_conversation_uninit()

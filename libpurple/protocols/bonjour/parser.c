@@ -82,6 +82,11 @@ bonjour_parser_element_start_libxml(void *user_data,
 	}
 }
 
+static gboolean _async_bonjour_jabber_stream_ended_cb(gpointer data) {
+	bonjour_jabber_stream_ended((PurpleBuddy *) data);
+	return FALSE;
+}
+
 static void
 bonjour_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 				 const xmlChar *prefix, const xmlChar *namespace)
@@ -94,7 +99,9 @@ bonjour_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 		/* We don't keep a reference to the start stream xmlnode,
 		 * so we have to check for it here to close the conversation */
 		if(!xmlStrcmp(element_name, (xmlChar*) "stream")) {
-			bonjour_jabber_stream_ended(pb);
+			/* Asynchronously close the conversation to prevent bonjour_parser_setup()
+			 * being called from within this context */
+			g_idle_add(_async_bonjour_jabber_stream_ended_cb, pb);
 		}
 		return;
 	}
