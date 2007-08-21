@@ -95,7 +95,7 @@ SMILEYS = 	act-up.png \
     love-over.png \
     love.png \
     lying.png \
-    madtongue.png \
+    mad-tongue.png \
     mail.png \
     male-fighter1.png \
     male-fighter2.png \
