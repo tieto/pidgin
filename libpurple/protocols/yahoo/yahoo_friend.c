@@ -196,6 +196,8 @@ void yahoo_friend_update_presence(PurpleConnection *gc, const char *name,
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
 	YahooFriend *f;
+	const char *thirtyone, *thirteen;
+	int service = -1;
 
 	if (!yd->logged_in)
 		return;
@@ -211,44 +213,48 @@ void yahoo_friend_update_presence(PurpleConnection *gc, const char *name,
 	}
 
 	if (presence == YAHOO_PRESENCE_PERM_OFFLINE) {
-		pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_PERM,
-				YAHOO_STATUS_AVAILABLE, yd->session_id);
-
-		yahoo_packet_hash(pkt, "ssss",
-				1, purple_connection_get_display_name(gc),
-				31, "1", 13, "2", 7, name);
+		service = YAHOO_SERVICE_PRESENCE_PERM;
+		thirtyone = "1";
+		thirteen = "2";
 	} else if (presence == YAHOO_PRESENCE_DEFAULT) {
 		if (f->presence == YAHOO_PRESENCE_PERM_OFFLINE) {
-			pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_PERM,
-					YAHOO_STATUS_AVAILABLE, yd->session_id);
-
-			yahoo_packet_hash(pkt, "ssss",
-					1, purple_connection_get_display_name(gc),
-					31, "2", 13, "2", 7, name);
+			service = YAHOO_SERVICE_PRESENCE_PERM;
+			thirtyone = "2";
+			thirteen = "2";
 		} else if (yd->current_status == YAHOO_STATUS_INVISIBLE) {
-			pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_SESSION,
-					YAHOO_STATUS_AVAILABLE, yd->session_id);
-			yahoo_packet_hash(pkt, "ssss",
-				1, purple_connection_get_display_name(gc),
-				31, "2", 13, "1", 7, name);
+			service = YAHOO_SERVICE_PRESENCE_SESSION;
+			thirtyone = "2";
+			thirteen = "1";
 		}
 	} else if (presence == YAHOO_PRESENCE_ONLINE) {
 		if (f->presence == YAHOO_PRESENCE_PERM_OFFLINE) {
 			pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_PERM,
 					YAHOO_STATUS_AVAILABLE, yd->session_id);
-			yahoo_packet_hash(pkt, "ssss",
+			yahoo_packet_hash(pkt, "ssssssss",
 					1, purple_connection_get_display_name(gc),
-					31, "2", 13, "2", 7, name);
+					31, "2", 13, "2",
+					302, "319", 300, "319",
+					7, name,
+					301, "319", 303, "319");
 			yahoo_packet_send_and_free(pkt, yd);
 		}
 
-		pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_SESSION,
-				YAHOO_STATUS_AVAILABLE, yd->session_id);
-		yahoo_packet_hash(pkt, "ssss",
-				1, purple_connection_get_display_name(gc),
-				31, "1", 13, "1", 7, name);
+		service = YAHOO_SERVICE_PRESENCE_SESSION;
+		thirtyone = "1";
+		thirteen = "1";
 	}
 
-	if (pkt)
+	if (service > 0) {
+		pkt = yahoo_packet_new(service,
+				YAHOO_STATUS_AVAILABLE, yd->session_id);
+
+		yahoo_packet_hash(pkt, "ssssssss",
+				1, purple_connection_get_display_name(gc),
+				31, thirtyone, 13, thirteen,
+				302, "319", 300, "319",
+				7, name,
+				301, "319", 303, "319");
+
 		yahoo_packet_send_and_free(pkt, yd);
+	}
 }

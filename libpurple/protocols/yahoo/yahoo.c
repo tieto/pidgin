@@ -3723,10 +3723,10 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
 	PurpleGroup *g;
-	char *group = NULL;
-	char *group2 = NULL;
+	const char *group = NULL;
+	char *group2;
 	YahooFriend *f;
-	
+
 	if (!yd->logged_in)
 		return;
 

@@ -396,8 +396,12 @@ conv_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type) {
 			&& pconv->unseen_state == PIDGIN_UNSEEN_NONE
 			&& pidgin_conv_window_get_gtkconv_count(win) == 1) {
 		GtkWidget *window = win->window;
+		gboolean has_focus;
 
-		set_conv_window_trans(NULL, win);
+		g_object_get(G_OBJECT(window), "has-toplevel-focus", &has_focus, NULL);
+
+		if (!has_focus)
+			set_conv_window_trans(NULL, win);
 
 		if (g_signal_handler_find(G_OBJECT(window), G_SIGNAL_MATCH_FUNC,
 				0, 0, NULL, G_CALLBACK(focus_conv_win_cb), NULL) == 0) {
