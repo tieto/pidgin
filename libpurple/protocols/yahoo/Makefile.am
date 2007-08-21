@@ -10,7 +10,7 @@ YAHOOSOURCES = \
 	yahoochat.h \
 	yahoochat.c \
 	yahoo_aliases.c \
-	yahoo_alisaes.h \
+	yahoo_aliases.h \
 	yahoo_auth.c \
 	yahoo_auth.h \
 	yahoo_crypt.h \
