@@ -568,6 +568,11 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 				purple_debug_info("yahoo", "Setting protocol to %d\n", f->protocol);
 			}
 			break;
+		case 317: /* Stealth Setting */
+			if (f && (strtol(pair->value, NULL, 10) == 2)) {
+				f->presence = YAHOO_PRESENCE_PERM_OFFLINE;
+			}
+			break;
 		/* case 242: */ /* this seems related to 241 */
 			/* break; */
 		}
@@ -964,7 +969,7 @@ yahoo_buddy_add_authorize_cb(gpointer data) {
 	yahoo_packet_hash(pkt, "ssiii", 1, add_req->id, 5, add_req->who, 241, add_req->protocol,
 	                  13, 1, 334, 0);
 	yahoo_packet_send_and_free(pkt, yd);
-	
+
 	g_free(add_req->id);
 	g_free(add_req->who);
 	g_free(add_req->msg);
@@ -2265,7 +2270,7 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_AUTH_REQ_15:
 		yahoo_buddy_auth_req_15(gc, pkt);
-		break;	       
+		break;
 	case YAHOO_SERVICE_ADDBUDDY:
 		yahoo_process_addbuddy(gc, pkt);
 		break;
@@ -3734,7 +3739,7 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 		return;
 
 	f = yahoo_friend_find(gc, purple_buddy_get_name(buddy));
-	
+
 	if (foo)
 		group = foo->name;
 	if (!group) {
