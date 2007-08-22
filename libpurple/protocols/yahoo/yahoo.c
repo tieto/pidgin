@@ -773,7 +773,13 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (bud)
 				yahoo_update_status(gc, from, f);
 		}
+	} else if (!g_ascii_strncasecmp(msg, "WEBCAMINVITE", strlen("WEBCAMINVITE"))) {
+                PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, gc->account);
+		char *buf = g_strdup_printf(_("%s has sent you a webcam invite, which is not yet supported."), from);
+		purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
+		g_free(buf);
 	}
+    	
 }
 
 
