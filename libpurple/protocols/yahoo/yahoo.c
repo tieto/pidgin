@@ -981,19 +981,20 @@ yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg) {
 	struct yahoo_packet *pkt;
 	char *encoded_msg = NULL;
 	struct yahoo_data *yd = add_req->gc->proto_data;
+	PurpleAccount *account = purple_connection_get_account(add_req->gc);
 
-	if (msg)
+	if (msg && *msg)
 		encoded_msg = yahoo_string_encode(add_req->gc, msg, NULL);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_REJECTCONTACT,
+	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15,
 			YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, "sss",
-			1, purple_normalize(add_req->gc->account,
-				purple_account_get_username(
-					purple_connection_get_account(
-						add_req->gc))),
-			7, add_req->who,
+	yahoo_packet_hash(pkt, "ssiiis",
+			1, purple_normalize(account, purple_account_get_username(account)),
+			5, add_req->who,
+			13, 2,
+			334, 0,
+			97, 1,
 			14, encoded_msg ? encoded_msg : "");
 
 	yahoo_packet_send_and_free(pkt, yd);
@@ -1023,51 +1024,129 @@ yahoo_buddy_add_deny_reason_cb(gpointer data) {
 			add_req);
 }
 
+static void yahoo_buddy_denied_our_add(PurpleConnection *gc, const char *who, const char *reason)
+{
+	char *notify_msg;
+	struct yahoo_data *yd = gc->proto_data;
+
+	if (who == NULL)
+		return;
+
+	if (reason != NULL) {
+		char *msg2 = yahoo_string_decode(gc, reason, FALSE);
+		notify_msg = g_strdup_printf(_("%s has (retroactively) denied your request to add them to your list for the following reason: %s."), who, msg2);
+		g_free(msg2);
+	} else
+		notify_msg = g_strdup_printf(_("%s has (retroactively) denied your request to add them to your list."), who);
+
+	purple_notify_info(gc, NULL, _("Add buddy rejected"), notify_msg);
+	g_free(notify_msg);
+
+	g_hash_table_remove(yd->friends, who);
+	purple_prpl_got_user_status(purple_connection_get_account(gc), who, "offline", NULL); /* FIXME: make this set not on list status instead */
+	/* TODO: Shouldn't we remove the buddy from our local list? */
+}
+
 static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *pkt) {
-	struct yahoo_add_request *add_req;
-	char *msg = NULL;
 	GSList *l = pkt->hash;
+	const char *msg = NULL;
 
-	add_req = g_new0(struct yahoo_add_request, 1);
-	add_req->gc = gc;
+	/* Buddy authorized/declined our addition */
+	if (pkt->status == 1) {
+		const char *who = NULL;
+		int response = 0;
 
-	while (l) {
-		struct yahoo_pair *pair = l->data;
+		while (l) {
+			struct yahoo_pair *pair = l->data;
 
-		switch (pair->key) {
-		case 5:
-			add_req->id = g_strdup(pair->value);
-			break;
-		case 4:
-			add_req->who = g_strdup(pair->value);
-			break;
-		case 241:
-			add_req->protocol = strtol(pair->value, NULL, 10);
-			break;
-		case 14:
-			msg = pair->value;
-			break;
+			switch (pair->key) {
+			case 4:
+				who = pair->value;
+				break;
+			case 13:
+				response = strtol(pair->value, NULL, 10);
+				break;
+			case 14:
+				msg = pair->value;
+				break;
+			}
+			l = l->next;
 		}
-		l = l->next;
+
+		if (response == 1) /* Authorized */
+			purple_debug_info("yahoo", "Received authorization from buddy '%s'.\n", who ? who : "(Unknown Buddy)");
+		else if (response == 2) { /* Declined */
+			purple_debug_info("yahoo", "Received authorization decline from buddy '%s'.\n", who ? who : "(Unknown Buddy)");
+			yahoo_buddy_denied_our_add(gc, who, msg);
+		} else
+			purple_debug_error("yahoo", "Received unknown authorization response of %d from buddy '%s'.\n", response, who ? who : "(Unknown Buddy)");
+
 	}
+	/* Buddy requested authorization to add us. */
+	else if (pkt->status == 3) {
+		struct yahoo_add_request *add_req;
+		const char *firstname = NULL, *lastname = NULL;
 
-	if (add_req->id) {
-		if (msg)
-			add_req->msg = yahoo_string_decode(gc, msg, FALSE);
+		add_req = g_new0(struct yahoo_add_request, 1);
+		add_req->gc = gc;
 
-		/* DONE! this is almost exactly the same as what MSN does,
-		 * this should probably be moved to the core.
-		 */
-		 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
-                                                    NULL, add_req->msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
+		while (l) {
+			struct yahoo_pair *pair = l->data;
+
+			switch (pair->key) {
+			case 4:
+				add_req->who = g_strdup(pair->value);
+				break;
+			case 5:
+				add_req->id = g_strdup(pair->value);
+				break;
+			case 14:
+				msg = pair->value;
+				break;
+			case 216:
+				firstname = pair->value;
+				break;
+			case 241:
+				add_req->protocol = strtol(pair->value, NULL, 10);
+				break;
+			case 254:
+				lastname = pair->value;
+				break;
+
+			}
+			l = l->next;
+		}
+
+		if (add_req->id) {
+			char *alias = NULL;
+			if (msg)
+				add_req->msg = yahoo_string_decode(gc, msg, FALSE);
+
+			if (firstname && lastname)
+				alias = g_strdup_printf("%s %s", firstname, lastname);
+			else if (firstname)
+				alias = g_strdup(firstname);
+			else if (lastname)
+				alias = g_strdup(lastname);
+
+
+			/* DONE! this is almost exactly the same as what MSN does,
+			 * this should probably be moved to the core.
+			 */
+			 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
+						    alias, add_req->msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
 						    yahoo_buddy_add_authorize_cb,
 						    yahoo_buddy_add_deny_reason_cb,
-                                                    add_req);
+						    add_req);
+			g_free(alias);
+		} else {
+			g_free(add_req->id);
+			g_free(add_req->who);
+			/*g_free(add_req->msg);*/
+			g_free(add_req);
+		}
 	} else {
-		g_free(add_req->id);
-		g_free(add_req->who);
-		/*g_free(add_req->msg);*/
-		g_free(add_req);
+		purple_debug_error("yahoo", "Received authorization of unknown status (%d).\n", pkt->status);
 	}
 }
 
@@ -1118,13 +1197,12 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
-static void yahoo_buddy_denied_our_add(PurpleConnection *gc, struct yahoo_packet *pkt)
+/* I have no idea if this every gets called in version 15 */
+static void yahoo_buddy_denied_our_add_old(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	char *who = NULL;
 	char *msg = NULL;
 	GSList *l = pkt->hash;
-	GString *buf = NULL;
-	struct yahoo_data *yd = gc->proto_data;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -1140,22 +1218,7 @@ static void yahoo_buddy_denied_our_add(PurpleConnection *gc, struct yahoo_packet
 		l = l->next;
 	}
 
-	if (who) {
-		char *msg2;
-		buf = g_string_sized_new(0);
-		if (!msg) {
-			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list."), who);
-		} else {
-			msg2 = yahoo_string_decode(gc, msg, FALSE);
-			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list for the following reason: %s."), who, msg2);
-			g_free(msg2);
-		}
-		purple_notify_info(gc, NULL, _("Add buddy rejected"), buf->str);
-		g_string_free(buf, TRUE);
-		g_hash_table_remove(yd->friends, who);
-		purple_prpl_got_user_status(purple_connection_get_account(gc), who, "offline", NULL); /* FIXME: make this set not on list status instead */
-		/* TODO: Shouldn't we remove the buddy from our local list? */
-	}
+	yahoo_buddy_denied_our_add(gc, who, msg);
 }
 
 static void yahoo_process_contact(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -1168,7 +1231,7 @@ static void yahoo_process_contact(PurpleConnection *gc, struct yahoo_packet *pkt
 		yahoo_buddy_added_us(gc, pkt);
 		break;
 	case 7:
-		yahoo_buddy_denied_our_add(gc, pkt);
+		yahoo_buddy_denied_our_add_old(gc, pkt);
 		break;
 	default:
 		break;
