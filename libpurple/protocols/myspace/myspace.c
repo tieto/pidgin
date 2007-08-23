@@ -2703,6 +2703,15 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		const gchar *previous_url;
 
 		user->image_url = g_strdup(value_str);
+
+		/* Instead of showing 'no photo' picture, show nothing. */
+		if (!strcmp(user->image_url, "http://x.myspace.com/images/no_pic.gif"))
+		{
+			purple_buddy_icons_set_for_user(user->buddy->account,
+				user->buddy->name,
+				NULL, 0, NULL);
+			return;
+		}
 		
 		previous_url = purple_buddy_icons_get_checksum_for_user(user->buddy);
 
