@@ -385,6 +385,7 @@ util_parse_html_to_tv(xmlNode *node, GntTextView *tv, GntTextFormatFlags flag)
 	xmlNode *ch;
 	gboolean processed = FALSE;
 	char *url = NULL;
+	gboolean insert_nl_s = FALSE, insert_nl_e = FALSE;
 
 	if (node == NULL || node->name == NULL || node->type != XML_ELEMENT_NODE)
 		return;
@@ -398,19 +399,34 @@ util_parse_html_to_tv(xmlNode *node, GntTextView *tv, GntTextFormatFlags flag)
 	} else if (g_ascii_strcasecmp(name, "u") == 0) {
 		flag |= GNT_TEXT_FLAG_UNDERLINE;
 	} else if (g_ascii_strcasecmp(name, "br") == 0) {
-		gnt_text_view_append_text_with_flags(tv, "\n", flag);
+		insert_nl_e = TRUE;
 	} else if (g_ascii_strcasecmp(name, "a") == 0) {
 		flag |= GNT_TEXT_FLAG_UNDERLINE;
 		url = (char *)xmlGetProp(node, (xmlChar*)"href");
+	} else if (g_ascii_strcasecmp(name, "h1") == 0 ||
+			g_ascii_strcasecmp(name, "h2") == 0 ||
+			g_ascii_strcasecmp(name, "h3") == 0 ||
+			g_ascii_strcasecmp(name, "h4") == 0 ||
+			g_ascii_strcasecmp(name, "h5") == 0 ||
+			g_ascii_strcasecmp(name, "h6") == 0) {
+		insert_nl_s = TRUE;
+		insert_nl_e = TRUE;
+	} else if (g_ascii_strcasecmp(name, "title") == 0) {
+		insert_nl_s = TRUE;
+		insert_nl_e = TRUE;
+		flag |= GNT_TEXT_FLAG_BOLD | GNT_TEXT_FLAG_UNDERLINE;
 	} else {
 		/* XXX: Process other possible tags */
 	}
 
+	if (insert_nl_s)
+		gnt_text_view_append_text_with_flags(tv, "\n", flag);
+
 	for (ch = node->children; ch; ch = ch->next) {
 		if (ch->type == XML_ELEMENT_NODE) {
 			processed = TRUE;
+			util_parse_html_to_tv(ch, tv, flag);
 		}
-		util_parse_html_to_tv(ch, tv, flag);
 	}
 
 	if (!processed) {
@@ -425,6 +441,9 @@ util_parse_html_to_tv(xmlNode *node, GntTextView *tv, GntTextFormatFlags flag)
 		g_free(href);
 		xmlFree(url);
 	}
+
+	if (insert_nl_e)
+		gnt_text_view_append_text_with_flags(tv, "\n", flag);
 }
 #endif
 
