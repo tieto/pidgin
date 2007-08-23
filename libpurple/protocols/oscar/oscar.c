@@ -3529,6 +3529,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	PurpleStatus *status;
+	PurplePresence *presence;
 	const char *message, *itmsurl;
 	char *tmp;
 	va_list ap;
@@ -3572,7 +3573,8 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	aim_srv_setextrainfo(od, FALSE, 0, TRUE, tmp, itmsurl);
 	g_free(tmp);
 
-	aim_srv_setidle(od, 0);
+	presence = purple_status_get_presence(status);
+	aim_srv_setidle(od, purple_presence_is_idle(presence) ? 0 : time(NULL) - purple_presence_get_idle_time(presence));
 
 	if (od->icq) {
 		aim_icq_reqofflinemsgs(od);
