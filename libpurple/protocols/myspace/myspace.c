@@ -1784,7 +1784,7 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	return rc;
 }
 
-/* Process an incoming media (buddy icon) message. */
+/* Process an incoming media (message background?) message. */
 static gboolean
 msim_incoming_media(MsimSession *session, MsimMessage *msg)
 {
@@ -2656,11 +2656,18 @@ msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
 	purple_debug_info("msim_downloaded_buddy_icon",
 			"Downloaded %d bytes\n", len);
 
+	if (!url_text) {
+		purple_debug_info("msim_downloaded_buddy_icon",
+				"failed to download icon for %s",
+				user->buddy->name);
+		return;
+	}
+
 	purple_buddy_icons_set_for_user(user->buddy->account,
 			user->buddy->name,
-			(gchar *)url_text, len, 
-			/*  Use URL itself as buddy icon "checksum" */
-			user->image_url);
+			g_memdup((gchar *)url_text, len), len, 
+			/* Use URL itself as buddy icon "checksum" (TODO: ETag) */
+			user->image_url);		/* checksum */
 }
 
 /** Store a field of information about a buddy. */
