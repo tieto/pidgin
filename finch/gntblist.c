@@ -2139,20 +2139,29 @@ reconstruct_accounts_menu()
 	}
 }
 
-static void
-account_signed_on_cb(PurpleConnection *pc, gpointer null)
+static gboolean
+auto_join_chats(gpointer data)
 {
 	PurpleBlistNode *node;
+	PurpleConnection *pc = data;
+	PurpleAccount *account = purple_connection_get_account(pc);
 
 	for (node = purple_blist_get_root(); node;
 			node = purple_blist_node_next(node, FALSE)) {
 		if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 			PurpleChat *chat = (PurpleChat*)node;
-			if (chat->account == purple_connection_get_account(pc) &&
+			if (chat->account == account &&
 					purple_blist_node_get_bool(node, "gnt-autojoin"))
 				serv_join_chat(purple_account_get_connection(chat->account), chat->components);
 		}
 	}
+	return FALSE;
+}
+
+static void
+account_signed_on_cb(PurpleConnection *gc, gpointer null)
+{
+	g_idle_add(auto_join_chats, gc);
 }
 
 static void toggle_pref_cb(GntMenuItem *item, gpointer n)
