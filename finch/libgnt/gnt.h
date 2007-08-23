@@ -37,6 +37,15 @@
 #include "gntkeys.h"
 
 /**
+ * Get things to compile in Glib < 2.8
+ */
+#if !GLIB_CHECK_VERSION(2,8,0)
+	#define G_PARAM_STATIC_NAME  G_PARAM_PRIVATE
+	#define G_PARAM_STATIC_NICK  G_PARAM_PRIVATE
+	#define G_PARAM_STATIC_BLURB  G_PARAM_PRIVATE
+#endif
+
+/**
  * 
  */
 void gnt_init(void);
