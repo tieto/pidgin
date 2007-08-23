@@ -3207,7 +3207,7 @@ static void
 msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, 
 		gpointer data)
 {
-	gchar *uid_field_name, *uid_before;
+	gchar *uid_field_name, *uid_before, *username;
 	guint uid;
 	MsimMessage *msg, *body;
 
@@ -3221,6 +3221,19 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
 
 	uid = msim_msg_get_integer(body, "UserID");
 	msim_msg_free(body);
+
+	username = msim_msg_get_string(msg, "_username");
+
+	if (!uid) {
+		gchar *msg;
+
+		msg = g_strdup_printf(_("No such user: %s"), username);
+		purple_notify_error(NULL, NULL, _("User lookup"), msg);
+		g_free(msg);
+		g_free(username);
+		//msim_msg_free(msg);
+		return;
+	}
 
 	uid_field_name = msim_msg_get_string(msg, "_uid_field_name");
 	uid_before = msim_msg_get_string(msg, "_uid_before");
@@ -3238,6 +3251,7 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
 	 */
 	g_free(uid_field_name);
 	g_free(uid_before);
+	g_free(username);
 	//msim_msg_free(msg);
 }
 
