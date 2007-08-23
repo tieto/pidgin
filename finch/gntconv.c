@@ -142,6 +142,11 @@ entry_key_pressed(GntWidget *w, const char *key, FinchConv *ggconv)
 			}
 			g_free(error);
 		}
+		else if (!purple_account_is_connected(ggconv->active_conv->account))
+		{
+			purple_conversation_write(ggconv->active_conv, "", _("Message was not sent, because you are not signed on."),
+					PURPLE_MESSAGE_ERROR | PURPLE_MESSAGE_NO_LOG, time(NULL));
+		}
 		else
 		{
 			char *escape = g_markup_escape_text(text, -1);
