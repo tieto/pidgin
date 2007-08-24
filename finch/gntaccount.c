@@ -222,6 +222,11 @@ save_account_cb(AccountEditDialog *dialog)
 
 	/* XXX: Proxy options */
 
+	if (accounts.window && accounts.tree) {
+		gnt_tree_set_selected(GNT_TREE(accounts.tree), account);
+		gnt_box_give_focus_to_child(GNT_BOX(accounts.window), accounts.tree);
+	}
+
 	gnt_widget_destroy(dialog->window);
 }
 

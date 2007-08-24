@@ -62,8 +62,9 @@ static void yahoo_chat_online(PurpleConnection *gc)
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATONLINE, YAHOO_STATUS_AVAILABLE,0);
-	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
-	                  109, purple_connection_get_display_name(gc), 6, "abcde");
+	yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc),
+	                  109, purple_connection_get_display_name(gc), 6, "abcde",
+	                  135, "ym8.1.0.415");
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
@@ -155,7 +156,7 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 	if (members) {
 		g_hash_table_replace(components, g_strdup("members"), g_strdup(members->str));
 	}
-	if (!yahoo_privacy_check(gc, who) || 
+	if (!yahoo_privacy_check(gc, who) ||
 		(purple_account_get_bool(purple_connection_get_account(gc), "ignore_invites", FALSE))) {
 		purple_debug_info("yahoo",
 		    "Invite to conference %s from %s has been dropped.\n", room, who);
@@ -640,7 +641,7 @@ void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, G
 	GList *w;
 
 	purple_debug_misc("yahoo", "leaving conference %s\n", room);
-	
+
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFLOGOFF, YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash_str(pkt, 1, dn);
@@ -732,7 +733,7 @@ static void yahoo_conf_invite(PurpleConnection *gc, PurpleConversation *c,
 			continue;
 		yahoo_packet_hash(pkt, "ss", 52, name, 53, name);
 	}
-	
+
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(msg2);
 }
