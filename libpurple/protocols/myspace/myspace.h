@@ -90,7 +90,7 @@
 #define MSIM_LANGUAGE_NAME_ENGLISH  "ENGLISH"
 
 /* msimprpl version string of this plugin */
-#define MSIM_PRPL_VERSION_STRING    "0.14"
+#define MSIM_PRPL_VERSION_STRING    "0.16"
 
 /* Default server */
 #define MSIM_SERVER                 "im.myspace.akadns.net"
@@ -226,6 +226,7 @@ typedef struct _MsimUser
 	gchar *username;
 	gchar *band_name, *song_name;
 	gchar *image_url;
+	guint last_image_updated;
 } MsimUser;
 
 

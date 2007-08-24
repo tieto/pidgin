@@ -1669,8 +1669,8 @@ msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
 	 * by Alexandr Shutko, who maintains OSCAR protocol documentation). */
 
 	purple_debug_info("msim", "Unrecognized data on account for %s\n", 
-			session->account->username ? session->account->username
-			: "(NULL)");
+			(session && session->account && session->account->username) ? 
+			session->account->username : "(NULL)");
 	if (note) {
 		purple_debug_info("msim", "(Note: %s)\n", note);
 	}
@@ -1784,7 +1784,7 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	return rc;
 }
 
-/* Process an incoming media (buddy icon) message. */
+/* Process an incoming media (message background?) message. */
 static gboolean
 msim_incoming_media(MsimSession *session, MsimMessage *msg)
 {
@@ -2656,11 +2656,18 @@ msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
 	purple_debug_info("msim_downloaded_buddy_icon",
 			"Downloaded %d bytes\n", len);
 
+	if (!url_text) {
+		purple_debug_info("msim_downloaded_buddy_icon",
+				"failed to download icon for %s",
+				user->buddy->name);
+		return;
+	}
+
 	purple_buddy_icons_set_for_user(user->buddy->account,
 			user->buddy->name,
-			(gchar *)url_text, len, 
-			/*  Use URL itself as buddy icon "checksum" */
-			user->image_url);
+			g_memdup((gchar *)url_text, len), len, 
+			/* Use URL itself as buddy icon "checksum" (TODO: ETag) */
+			user->image_url);		/* checksum */
 }
 
 /** Store a field of information about a buddy. */
@@ -2696,6 +2703,15 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		const gchar *previous_url;
 
 		user->image_url = g_strdup(value_str);
+
+		/* Instead of showing 'no photo' picture, show nothing. */
+		if (!strcmp(user->image_url, "http://x.myspace.com/images/no_pic.gif"))
+		{
+			purple_buddy_icons_set_for_user(user->buddy->account,
+				user->buddy->name,
+				NULL, 0, NULL);
+			return;
+		}
 		
 		previous_url = purple_buddy_icons_get_checksum_for_user(user->buddy);
 
@@ -2703,6 +2719,9 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		if (!previous_url || strcmp(previous_url, user->image_url)) {
 			purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, msim_downloaded_buddy_icon, (gpointer)user);
 		}
+	} else if (!strcmp(key_str, "LastImageUpdated")) {
+		/* TODO: use somewhere */
+		user->last_image_updated = atol(value_str);
 	} else if (!strcmp(key_str, "Headline")) {
 		user->headline = g_strdup(value_str);
 	} else {
@@ -3207,7 +3226,7 @@ static void
 msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, 
 		gpointer data)
 {
-	gchar *uid_field_name, *uid_before;
+	gchar *uid_field_name, *uid_before, *username;
 	guint uid;
 	MsimMessage *msg, *body;
 
@@ -3221,6 +3240,19 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
 
 	uid = msim_msg_get_integer(body, "UserID");
 	msim_msg_free(body);
+
+	username = msim_msg_get_string(msg, "_username");
+
+	if (!uid) {
+		gchar *msg;
+
+		msg = g_strdup_printf(_("No such user: %s"), username);
+		purple_notify_error(NULL, NULL, _("User lookup"), msg);
+		g_free(msg);
+		g_free(username);
+		//msim_msg_free(msg);
+		return;
+	}
 
 	uid_field_name = msim_msg_get_string(msg, "_uid_field_name");
 	uid_before = msim_msg_get_string(msg, "_uid_before");
@@ -3238,6 +3270,7 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
 	 */
 	g_free(uid_field_name);
 	g_free(uid_before);
+	g_free(username);
 	//msim_msg_free(msg);
 }
 
@@ -3908,6 +3941,8 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	group_name = msim_msg_get_string(contact_info, "GroupName");
 	if (group_name) {
 		group = purple_group_new(group_name);
+		purple_debug_info("msim_add_contact_from_server_cb",
+				"adding to GroupName: %s\n", group_name);
 		g_free(group_name);
 	} else {
 		group = purple_group_new(_("IM Friends"));
@@ -3916,12 +3951,16 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	/* 2. Get or create buddy */
 	buddy = purple_find_buddy(session->account, username);
 	if (!buddy) {
+		purple_debug_info("msim_add_contact_from_server_cb",
+				"creating new buddy: %s\n", username);
 		buddy = purple_buddy_new(session->account, username, NULL);
 	}
 
+	/* Add group to beginning. See #2752. */
+	purple_blist_add_group(group, NULL);
+
 	/* TODO: use 'Position' in contact_info to take into account where buddy is */
 	purple_blist_add_buddy(buddy, NULL, group, NULL /* insertion point */);
-
 
 	/* 3. Update buddy information */
 	user = msim_get_user_from_buddy(buddy);
@@ -3943,14 +3982,14 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
  *
  * @return TRUE if added.
  * */
-static void 
+static gboolean
 msim_add_contact_from_server(MsimSession *session, MsimMessage *contact_info)
 {
 	guint uid;
 	const gchar *username;
 
 	uid = msim_msg_get_integer(contact_info, "ContactID");
-	g_return_if_fail(uid != 0);
+	g_return_val_if_fail(uid != 0, FALSE);
 
 	/* Lookup the username, since NickName and IMName is unreliable */
 	username = msim_uid2username_from_blist(session, uid);
@@ -3965,6 +4004,10 @@ msim_add_contact_from_server(MsimSession *session, MsimMessage *contact_info)
 	} else {
 		msim_add_contact_from_server_cb(session, NULL, (gpointer)msim_msg_clone(contact_info));
 	}
+
+	/* Say that the contact was added, even if we're still looking up
+	 * their username. */
+	return TRUE;
 }
 
 /** Called when contact list is received from server. */
@@ -3972,11 +4015,15 @@ static void
 msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_data)
 {
 	MsimMessage *body, *body_node;
+	gchar *msg;
+	guint buddy_count;
 
 	msim_msg_dump("msim_got_contact_list: reply=%s", reply);
 
 	body = msim_msg_get_dictionary(reply, "body");
 	g_return_if_fail(body != NULL);
+
+	buddy_count = 0;
 
 	for (body_node = body;
 		body_node != NULL;
@@ -3989,9 +4036,17 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 		if (!strcmp(elem->name, "ContactID"))
 		{
 			/* Will look for first contact in body_node */
-			msim_add_contact_from_server(session, body_node);
+			if (msim_add_contact_from_server(session, body_node)) {
+				++buddy_count;
+			}
 		}
 	}
+
+	msg = g_strdup_printf(_("%d buddies were added or updated"), buddy_count);
+
+	purple_notify_info(session->account, _("Add contacts from server"), msg, NULL);
+
+	g_free(msg);
 
 	msim_msg_free(body);
 }
