@@ -3941,6 +3941,8 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	group_name = msim_msg_get_string(contact_info, "GroupName");
 	if (group_name) {
 		group = purple_group_new(group_name);
+		purple_debug_info("msim_add_contact_from_server_cb",
+				"adding to GroupName: %s\n", group_name);
 		g_free(group_name);
 	} else {
 		group = purple_group_new(_("IM Friends"));
@@ -3949,12 +3951,16 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	/* 2. Get or create buddy */
 	buddy = purple_find_buddy(session->account, username);
 	if (!buddy) {
+		purple_debug_info("msim_add_contact_from_server_cb",
+				"creating new buddy: %s\n", username);
 		buddy = purple_buddy_new(session->account, username, NULL);
 	}
 
+	/* Add group to beginning. See #2752. */
+	purple_blist_add_group(group, NULL);
+
 	/* TODO: use 'Position' in contact_info to take into account where buddy is */
 	purple_blist_add_buddy(buddy, NULL, group, NULL /* insertion point */);
-
 
 	/* 3. Update buddy information */
 	user = msim_get_user_from_buddy(buddy);
@@ -3976,14 +3982,14 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
  *
  * @return TRUE if added.
  * */
-static void 
+static gboolean
 msim_add_contact_from_server(MsimSession *session, MsimMessage *contact_info)
 {
 	guint uid;
 	const gchar *username;
 
 	uid = msim_msg_get_integer(contact_info, "ContactID");
-	g_return_if_fail(uid != 0);
+	g_return_val_if_fail(uid != 0, FALSE);
 
 	/* Lookup the username, since NickName and IMName is unreliable */
 	username = msim_uid2username_from_blist(session, uid);
@@ -3998,6 +4004,10 @@ msim_add_contact_from_server(MsimSession *session, MsimMessage *contact_info)
 	} else {
 		msim_add_contact_from_server_cb(session, NULL, (gpointer)msim_msg_clone(contact_info));
 	}
+
+	/* Say that the contact was added, even if we're still looking up
+	 * their username. */
+	return TRUE;
 }
 
 /** Called when contact list is received from server. */
@@ -4005,11 +4015,15 @@ static void
 msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_data)
 {
 	MsimMessage *body, *body_node;
+	gchar *msg;
+	guint buddy_count;
 
 	msim_msg_dump("msim_got_contact_list: reply=%s", reply);
 
 	body = msim_msg_get_dictionary(reply, "body");
 	g_return_if_fail(body != NULL);
+
+	buddy_count = 0;
 
 	for (body_node = body;
 		body_node != NULL;
@@ -4022,9 +4036,17 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 		if (!strcmp(elem->name, "ContactID"))
 		{
 			/* Will look for first contact in body_node */
-			msim_add_contact_from_server(session, body_node);
+			if (msim_add_contact_from_server(session, body_node)) {
+				++buddy_count;
+			}
 		}
 	}
+
+	msg = g_strdup_printf(_("%d buddies were added or updated"), buddy_count);
+
+	purple_notify_info(session->account, _("Add contacts from server"), msg, NULL);
+
+	g_free(msg);
 
 	msim_msg_free(body);
 }
