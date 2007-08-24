@@ -133,6 +133,7 @@ gnt_uninit_colors()
 		restore_colors();
 }
 
+#if GLIB_CHECK_VERSION(2,6,0)
 static int
 get_color(char *key)
 {
@@ -164,7 +165,6 @@ get_color(char *key)
 	return color;
 }
 
-#if GLIB_CHECK_VERSION(2,6,0)
 void gnt_colors_parse(GKeyFile *kfile)
 {
 	GError *error = NULL;

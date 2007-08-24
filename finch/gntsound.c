@@ -409,14 +409,14 @@ bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 	GError *err = NULL;
 
 	switch (GST_MESSAGE_TYPE (msg)) {
-	case GST_MESSAGE_EOS:
-		gst_element_set_state(play, GST_STATE_NULL);
-		gst_object_unref(GST_OBJECT(play));
-		break;
 	case GST_MESSAGE_ERROR:
 		gst_message_parse_error(msg, &err, NULL);
 		purple_debug_error("gstreamer", "%s\n", err->message);
 		g_error_free(err);
+		/* fall-through and clean up */
+	case GST_MESSAGE_EOS:
+		gst_element_set_state(play, GST_STATE_NULL);
+		gst_object_unref(GST_OBJECT(play));
 		break;
 	case GST_MESSAGE_WARNING:
 		gst_message_parse_warning(msg, &err, NULL);
@@ -670,28 +670,34 @@ test_cb(GntWidget *button, gpointer null)
 {
 	PurpleSoundEventID id = GPOINTER_TO_INT(gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events)));
 	FinchSoundEvent * event = &sounds[id];
-	char *enabled, *file, *tmpfile;
+	char *enabled, *file, *tmpfile, *volpref;
 	gboolean temp_value;
+	int volume;
 
 	enabled = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s/enabled/%s",
 			finch_sound_get_active_profile(), event->pref);
 	file = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s/file/%s",
 			finch_sound_get_active_profile(), event->pref);
+	volpref = g_strdup(make_pref("/volume"));
 
 	temp_value = purple_prefs_get_bool(enabled);
 	tmpfile = g_strdup(purple_prefs_get_string(file));
+	volume = purple_prefs_get_int(volpref);
 
 	purple_prefs_set_string(file, event->file);
 	if (!temp_value) purple_prefs_set_bool(enabled, TRUE);
+	purple_prefs_set_int(volpref, gnt_slider_get_value(GNT_SLIDER(pref_dialog->volume)));
 
 	purple_sound_play_event(id, NULL);
 
 	if (!temp_value) purple_prefs_set_bool(enabled, FALSE);
 	purple_prefs_set_string(file, tmpfile);
+	purple_prefs_set_int(volpref, volume);
 
 	g_free(enabled);
 	g_free(file);
 	g_free(tmpfile);
+	g_free(volpref);
 }
 
 static void

@@ -1190,6 +1190,9 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 			group = purple_group_new(_("Chats"));
 			purple_blist_add_group(group,
 					purple_blist_get_last_sibling(purplebuddylist->root));
+		} else {
+			/* Fail if tried to add buddy to a group that isn't on the blist. #2752. */
+			g_return_if_fail(purple_find_group(group->name));
 		}
 	} else {
 		group = (PurpleGroup*)node->parent;
@@ -1284,6 +1287,10 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		g = (PurpleGroup *)((PurpleBlistNode *)c)->parent;
 	} else {
 		if (group) {
+			/*  Fail if trying to add buddy to a group that is not on the buddy list. 
+			 *  Fix for #2752. */
+			g_return_if_fail(purple_find_group(group->name));
+
 			g = group;
 		} else {
 			g = purple_group_new(_("Buddies"));

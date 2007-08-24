@@ -1,3 +1,28 @@
+2007-08-23 Jeff Connelly <pidgin@xyzzy.cjb.net> - 0.16
+* Add option to add all friends from myspace.com to your buddy list (#2660)
+* If a user doesn't have a picture, don't display an icon (instead of
+  displaying MySpace's "no photo" icon)
+* Fix #2725, a common crash related to buddy icon data
+* Fix #2752, which led to duplicate groups
+* Fix #2720, crash/disconnect when adding a buddy that doesn't exist
+  (You'll now receive an error when looking up invalid usernames).
+
+2007-08-22 Jeff Connelly <pidgin@xyzzy.cjb.net> - 0.15
+* Incomplete implementation of adding friends from myspace.com.
+* Change msim_msg_get() to start at the given node instead of the beginning.
+* Add msim_msg_get_*_from_element() to access data in MsimMessagElement *'s.
+* Use MsimMessage dictionaries everywhere in incoming messages, instead of
+  the old GHashTable method. Dictionary type is now fully implemented.
+* Add functions to loop over MsimMessages.
+* Link to myspace.com profile in Get Info.
+* Conditionally use my proposed attention API if defined.
+* Propagate to im.pidgin.pidgin branch for 2.1.2.
+* GSoC ended on 2007-08-20. The code in this release hasn't changed since
+  then. I did, however, bump the version number to 0.15 to distinguish this
+  release from the previous one. But there were no code changes. I updated
+  the text files, too.
+* Note: msimprpl will continue to be developed as time permits.
+
 2007-08-12 Jeff Connelly <jeff2@soc.pidgin.im> - 0.14
 * Full emoticon support (except no difference between nerd and geek emoticons),
   thanks to a number of new icons from Hylke Bons.

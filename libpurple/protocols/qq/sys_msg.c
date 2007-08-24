@@ -166,7 +166,7 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 		message = g_strdup_printf(_("You have been added by %s"), from);
 		_qq_sys_msg_log_write(gc, message, from);
 		purple_request_action(gc, NULL, message,
-				    _("Would like to add him?"), 2,
+				    _("Would you like to add him?"), 2,
 					purple_connection_get_account(gc), name, NULL,
 					g, 3,
 				    _("Cancel"), NULL,

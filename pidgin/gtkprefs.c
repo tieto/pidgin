@@ -240,7 +240,7 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 
 	if (label != NULL) {
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), dropdown);
-		pidgin_set_accessible_label (dropdown, label);
+		pidgin_set_accessible_relations (dropdown, label);
 	}
 
 	if (type == PURPLE_PREF_INT)

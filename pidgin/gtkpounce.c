@@ -467,7 +467,6 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	PidginPounceDialog *dialog;
 	GtkWidget *window;
 	GtkWidget *label;
-	GtkWidget *bbox;
 	GtkWidget *vbox1, *vbox2;
 	GtkWidget *hbox;
 	GtkWidget *button;
@@ -513,17 +512,16 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	/* Create the window. */
-	dialog->window = window = pidgin_create_window((cur_pounce == NULL ? _("New Buddy Pounce") : _("Edit Buddy Pounce")),
-		PIDGIN_HIG_BORDER, "buddy_pounce", FALSE) ;
-	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
+	dialog->window = window = gtk_dialog_new();
+	gtk_window_set_title(GTK_WINDOW(window), (cur_pounce == NULL ? _("New Buddy Pounce") : _("Edit Buddy Pounce")));
+	gtk_window_set_role(GTK_WINDOW(window), "buddy_pounce");
+	gtk_container_set_border_width(GTK_CONTAINER(dialog->window), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Create the parent vbox for everything. */
-	vbox1 = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(window), vbox1);
-	gtk_widget_show(vbox1);
+	vbox1 = GTK_DIALOG(window)->vbox;
 
 	/* Create the vbox that will contain all the prefs stuff. */
 	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -808,26 +806,13 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	gtk_widget_show(dialog->on_away);
 	gtk_widget_show(dialog->save_pounce);
 
-	/* Now the button box! */
-	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_end(GTK_BOX(vbox1), bbox, FALSE, FALSE, 0);
-	gtk_widget_show(bbox);
-
 	/* Cancel button */
-	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
+	button = gtk_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(cancel_cb), dialog);
 
 	/* Save button */
-	dialog->save_button = button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
+	dialog->save_button = button = gtk_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_SAVE, GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(save_pounce_cb), dialog);
 
