@@ -1669,8 +1669,8 @@ msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
 	 * by Alexandr Shutko, who maintains OSCAR protocol documentation). */
 
 	purple_debug_info("msim", "Unrecognized data on account for %s\n", 
-			session->account->username ? session->account->username
-			: "(NULL)");
+			(session && session->account && session->account->username) ? 
+			session->account->username : "(NULL)");
 	if (note) {
 		purple_debug_info("msim", "(Note: %s)\n", note);
 	}
@@ -2719,6 +2719,9 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		if (!previous_url || strcmp(previous_url, user->image_url)) {
 			purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, msim_downloaded_buddy_icon, (gpointer)user);
 		}
+	} else if (!strcmp(key_str, "LastImageUpdated")) {
+		/* TODO: use somewhere */
+		user->last_image_updated = atol(value_str);
 	} else if (!strcmp(key_str, "Headline")) {
 		user->headline = g_strdup(value_str);
 	} else {

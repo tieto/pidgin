@@ -226,6 +226,7 @@ typedef struct _MsimUser
 	gchar *username;
 	gchar *band_name, *song_name;
 	gchar *image_url;
+	guint last_image_updated;
 } MsimUser;
 
 
