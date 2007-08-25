@@ -39,6 +39,7 @@ static GList *conversations = NULL;
 static GList *ims = NULL;
 static GList *chats = NULL;
 static PurpleConversationUiOps *default_ops = NULL;
+static GHashTable *histories = NULL;
 
 void
 purple_conversations_set_ui_ops(PurpleConversationUiOps *ops)
@@ -202,6 +203,40 @@ open_log(PurpleConversation *conv)
 							   conv, time(NULL), NULL));
 }
 
+/* Functions that deal with PurpleConvMessage */
+
+static void
+add_message_to_history(PurpleConversation *conv, const char *who, const char *message,
+		PurpleMessageFlags flags, time_t when)
+{
+	GList *list;
+	PurpleConvMessage *msg;
+	
+	msg = g_new0(PurpleConvMessage, 1);
+	msg->who = g_strdup(who);
+	msg->flags = flags;
+	msg->what = g_strdup(message);
+	msg->when = when;
+
+	list = g_hash_table_lookup(histories, conv);
+	list = g_list_prepend(list, msg);
+	g_hash_table_insert(histories, conv, list);
+}
+
+static void
+free_conv_message(PurpleConvMessage *msg)
+{
+	g_free(msg->who);
+	g_free(msg->what);
+	g_free(msg);
+}
+
+static void
+message_history_free(GList *list)
+{
+	g_list_foreach(list, (GFunc)free_conv_message, NULL);
+	g_list_free(list);
+}
 
 /**************************************************************************
  * Conversation API
@@ -472,6 +507,8 @@ purple_conversation_destroy(PurpleConversation *conv)
 		ops->destroy_conversation(conv);
 
 	purple_conversation_close_logs(conv);
+
+	purple_conversation_clear_message_history(conv);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(conv);
 	g_free(conv);
@@ -892,6 +929,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 	}
 
 	ops->write_conv(conv, who, alias, displayed, flags, mtime);
+	add_message_to_history(conv, who, message, flags, mtime);
 
 	purple_signal_emit(purple_conversations_get_handle(),
 		(type == PURPLE_CONV_TYPE_IM ? "wrote-im-msg" : "wrote-chat-msg"),
@@ -1107,9 +1145,10 @@ purple_conv_im_write(PurpleConvIm *im, const char *who, const char *message,
 	c = purple_conv_im_get_conversation(im);
 
 	/* Pass this on to either the ops structure or the default write func. */
-	if (c->ui_ops != NULL && c->ui_ops->write_im != NULL)
+	if (c->ui_ops != NULL && c->ui_ops->write_im != NULL) {
 		c->ui_ops->write_im(c, who, message, flags, mtime);
-	else
+		add_message_to_history(c, who, message, flags, mtime);
+	} else
 		purple_conversation_write(c, who, message, flags, mtime);
 }
 
@@ -1433,9 +1472,10 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 	}
 
 	/* Pass this on to either the ops structure or the default write func. */
-	if (conv->ui_ops != NULL && conv->ui_ops->write_chat != NULL)
+	if (conv->ui_ops != NULL && conv->ui_ops->write_chat != NULL) {
 		conv->ui_ops->write_chat(conv, who, message, flags, mtime);
-	else
+		add_message_to_history(conv, who, message, flags, mtime);
+	} else
 		purple_conversation_write(conv, who, message, flags, mtime);
 }
 
@@ -2020,6 +2060,42 @@ purple_conversation_get_extended_menu(PurpleConversation *conv)
 	return menu;
 }
 
+void purple_conversation_clear_message_history(PurpleConversation *conv)
+{
+	GList *list = g_hash_table_lookup(histories, conv);
+	message_history_free(list);
+	g_hash_table_remove(histories, conv);
+}
+
+GList *purple_conversation_get_message_history(PurpleConversation *conv)
+{
+	return g_hash_table_lookup(histories, conv);
+}
+
+const char *purple_conversation_message_get_sender(PurpleConvMessage *msg)
+{
+	g_return_val_if_fail(msg, NULL);
+	return msg->who;
+}
+
+const char *purple_conversation_message_get_message(PurpleConvMessage *msg)
+{
+	g_return_val_if_fail(msg, NULL);
+	return msg->what;
+}
+
+PurpleMessageFlags purple_conversation_message_get_flags(PurpleConvMessage *msg)
+{
+	g_return_val_if_fail(msg, 0);
+	return msg->flags;
+}
+
+time_t purple_conversation_message_get_timestamp(PurpleConvMessage *msg)
+{
+	g_return_val_if_fail(msg, 0);
+	return msg->when;
+}
+
 gboolean
 purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,
 				const gchar *markup, gchar **error)
@@ -2300,6 +2376,9 @@ purple_conversations_init(void)
 			     purple_value_new(PURPLE_TYPE_SUBTYPE,
 					    PURPLE_SUBTYPE_CONVERSATION),
 			     purple_value_new(PURPLE_TYPE_BOXED, "GList **"));
+
+	/* Initialize the history */
+	histories = g_hash_table_new(g_direct_hash, g_direct_equal);
 }
 
 void
@@ -2308,4 +2387,6 @@ purple_conversations_uninit(void)
 	while (conversations)
 		purple_conversation_destroy((PurpleConversation*)conversations->data);
 	purple_signals_unregister_by_instance(purple_conversations_get_handle());
+	g_hash_table_destroy(histories);
+	histories = NULL;
 }
