@@ -110,6 +110,7 @@ def show_conversation(conv, history):
     
     if history:
         msgs = purple.PurpleConversationGetMessageHistory(conv)
+        msgs.reverse()
         for msg in msgs:
             who = purple.PurpleConversationMessageGetSender(msg)
             what = purple.PurpleConversationMessageGetMessage(msg)
