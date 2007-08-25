@@ -211,6 +211,15 @@ add_message_to_history(PurpleConversation *conv, const char *who, const char *me
 {
 	GList *list;
 	PurpleConvMessage *msg;
+
+	if (flags & PURPLE_MESSAGE_SEND) {
+		const char *me = NULL;
+		if (conv->account->gc)
+			me = conv->account->gc->display_name;
+		if (!me)
+			me = conv->account->username;
+		who = me;
+	}
 	
 	msg = g_new0(PurpleConvMessage, 1);
 	PURPLE_DBUS_REGISTER_POINTER(msg, PurpleConvMessage);
@@ -1145,10 +1154,9 @@ purple_conv_im_write(PurpleConvIm *im, const char *who, const char *message,
 	c = purple_conv_im_get_conversation(im);
 
 	/* Pass this on to either the ops structure or the default write func. */
-	if (c->ui_ops != NULL && c->ui_ops->write_im != NULL) {
+	if (c->ui_ops != NULL && c->ui_ops->write_im != NULL)
 		c->ui_ops->write_im(c, who, message, flags, mtime);
-		add_message_to_history(c, who, message, flags, mtime);
-	} else
+	else
 		purple_conversation_write(c, who, message, flags, mtime);
 }
 
@@ -1472,10 +1480,9 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 	}
 
 	/* Pass this on to either the ops structure or the default write func. */
-	if (conv->ui_ops != NULL && conv->ui_ops->write_chat != NULL) {
+	if (conv->ui_ops != NULL && conv->ui_ops->write_chat != NULL)
 		conv->ui_ops->write_chat(conv, who, message, flags, mtime);
-		add_message_to_history(conv, who, message, flags, mtime);
-	} else
+	else
 		purple_conversation_write(conv, who, message, flags, mtime);
 }
 
