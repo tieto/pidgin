@@ -325,6 +325,7 @@ clear_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
 	clear_conversation_scrollback(conv);
+	purple_conversation_clear_message_history(conv);
 	return PURPLE_CMD_STATUS_OK;
 }
 
