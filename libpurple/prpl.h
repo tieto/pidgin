@@ -30,6 +30,7 @@
 #define _PURPLE_PRPL_H_
 
 typedef struct _PurplePluginProtocolInfo PurplePluginProtocolInfo;
+typedef struct _PurpleAttentionType PurpleAttentionType;
 
 /**************************************************************************/
 /** @name Basic Protocol Information                                      */
@@ -89,6 +90,14 @@ struct proto_chat_entry {
 	int min;
 	int max;
 	gboolean secret;
+};
+
+struct _PurpleAttentionType
+{
+	const char *icon_name;             /**< Icon to display (optional) */
+	const char *name;                  /**< Shown in GUI elements */
+	const char *incoming_description;  /**< Shown when sent */
+	const char *outgoing_description;  /**< Shown when receied */
 };
 
 /**
@@ -332,8 +341,10 @@ struct _PurplePluginProtocolInfo
 	/* room list serialize */
 	char *(*roomlist_room_serialize)(PurpleRoomlistRoom *room);
 
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
+	/* Attention API for sending & receiving zaps/nudges/buzzes etc. */
+	gboolean (*send_attention)(PurpleConnection *gc, 
+			const char *username, guint type);
+	GList *(*attention_types)(PurpleAccount *acct);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
 };
