@@ -589,6 +589,26 @@ gboolean purple_util_write_data_to_file(const char *filename, const char *data,
 									  size_t size);
 
 /**
+ * Write data to a file using the absolute path.
+ *
+ * This exists for Glib backwards compatibility reasons.
+ *
+ * @param filename_full Filename to write to
+ * @param data          A null-terminated string of data to write.
+ * @param size          The size of the data to save.  If data is
+ *                      null-terminated you can pass in -1.
+ *
+ * @return TRUE if the file was written successfully.  FALSE otherwise.
+ *
+ * @todo Remove this function (use g_file_set_contents instead) when 3.0.0
+ *       rolls around.
+ * @see purple_util_write_data_to_file()
+ *
+ */
+gboolean
+purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, size_t size);
+
+/**
  * Read the contents of a given file and parse the results into an
  * xmlnode tree structure.  This is intended to be used to read
  * Purple's configuration xml files (prefs.xml, pounces.xml, etc.)

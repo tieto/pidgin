@@ -2542,10 +2542,8 @@ gboolean
 purple_util_write_data_to_file(const char *filename, const char *data, size_t size)
 {
 	const char *user_dir = purple_user_dir();
-	gchar *filename_temp, *filename_full;
-	FILE *file;
-	size_t real_size, byteswritten;
-	struct stat st;
+	gchar *filename_full;
+	gboolean ret = FALSE;
 
 	g_return_val_if_fail(user_dir != NULL, FALSE);
 
@@ -2564,6 +2562,25 @@ purple_util_write_data_to_file(const char *filename, const char *data, size_t si
 	}
 
 	filename_full = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", user_dir, filename);
+
+	ret = purple_util_write_data_to_file_absolute(filename_full,
+						      data,size);
+
+	g_free(filename_full);
+	return ret;
+}
+
+gboolean
+purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, size_t size)
+{
+	gchar *filename_temp;
+	FILE *file;
+	size_t real_size, byteswritten;
+	struct stat st;
+
+	purple_debug_info("util", "Writing file %s\n",
+					filename_full);
+
 	filename_temp = g_strdup_printf("%s.save", filename_full);
 
 	/* Remove an old temporary file, if one exists */
@@ -2571,8 +2588,9 @@ purple_util_write_data_to_file(const char *filename, const char *data, size_t si
 	{
 		if (g_unlink(filename_temp) == -1)
 		{
-			purple_debug_error("util", "Error removing old file %s: %s\n",
-							 filename_temp, strerror(errno));
+			purple_debug_error("util", "Error removing old file "
+					   "%s: %s\n",
+					   filename_temp, strerror(errno));
 		}
 	}
 
@@ -2580,9 +2598,9 @@ purple_util_write_data_to_file(const char *filename, const char *data, size_t si
 	file = g_fopen(filename_temp, "wb");
 	if (file == NULL)
 	{
-		purple_debug_error("util", "Error opening file %s for writing: %s\n",
-						 filename_temp, strerror(errno));
-		g_free(filename_full);
+		purple_debug_error("util", "Error opening file %s for "
+				   "writing: %s\n",
+				   filename_temp, strerror(errno));
 		g_free(filename_temp);
 		return FALSE;
 	}
@@ -2595,8 +2613,7 @@ purple_util_write_data_to_file(const char *filename, const char *data, size_t si
 	if (fclose(file) != 0)
 	{
 		purple_debug_error("util", "Error closing file %s: %s\n",
-						 filename_temp, strerror(errno));
-		g_free(filename_full);
+				   filename_temp, strerror(errno));
 		g_free(filename_temp);
 		return FALSE;
 	}
@@ -2604,10 +2621,11 @@ purple_util_write_data_to_file(const char *filename, const char *data, size_t si
 	/* Ensure the file is the correct size */
 	if (byteswritten != real_size)
 	{
-		purple_debug_error("util", "Error writing to file %s: Wrote %" G_GSIZE_FORMAT " bytes "
-						 "but should have written %" G_GSIZE_FORMAT "; is your disk full?\n",
-						 filename_temp, byteswritten, real_size);
-		g_free(filename_full);
+		purple_debug_error("util", "Error writing to file %s: Wrote %"
+				   G_GSIZE_FORMAT " bytes "
+				   "but should have written %" G_GSIZE_FORMAT
+				   "; is your disk full?\n",
+				   filename_temp, byteswritten, real_size);
 		g_free(filename_temp);
 		return FALSE;
 	}
@@ -2615,9 +2633,9 @@ purple_util_write_data_to_file(const char *filename, const char *data, size_t si
 	if ((g_stat(filename_temp, &st) == -1) || (st.st_size != real_size))
 	{
 		purple_debug_error("util", "Error writing data to file %s: "
-						 "Incomplete file written; is your disk full?\n",
-						 filename_temp);
-		g_free(filename_full);
+				   "Incomplete file written; is your disk "
+				   "full?\n",
+				   filename_temp);
 		g_free(filename_temp);
 		return FALSE;
 	}
@@ -2635,10 +2653,10 @@ purple_util_write_data_to_file(const char *filename, const char *data, size_t si
 	if (g_rename(filename_temp, filename_full) == -1)
 	{
 		purple_debug_error("util", "Error renaming %s to %s: %s\n",
-						 filename_temp, filename_full, strerror(errno));
+				   filename_temp, filename_full,
+				   strerror(errno));
 	}
 
-	g_free(filename_full);
 	g_free(filename_temp);
 
 	return TRUE;
