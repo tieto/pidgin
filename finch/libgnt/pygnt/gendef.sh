@@ -31,7 +31,9 @@ FILES="
 rm -f gnt.def
 for file in $FILES
 do
+	echo -n "Generating definitions for ${file} ... "
 	python /usr/share/pygtk/2.0/codegen/h2def.py ../$file >> gnt.def
+	echo "Done"
 done
 
 # Remove the definitions about the enums
