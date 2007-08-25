@@ -69,7 +69,7 @@
 
 /* Use the attention API for zaps? */
 /* Can't have until >=2.2.0, since is a new API. */
-/*#define MSIM_USE_ATTENTION_API 	 */
+#define MSIM_USE_ATTENTION_API
 
 /* Constants */
 
@@ -258,7 +258,7 @@ gboolean msim_load(PurplePlugin *plugin);
 GList *msim_status_types(PurpleAccount *acct);
 
 GList *msim_attention_types(PurpleAccount *acct);
-gboolean msim_send_attention(PurpleConnection *gc, gchar *username, guint code);
+gboolean msim_send_attention(PurpleConnection *gc, const gchar *username, guint code);
 
 GList *msim_blist_node_menu(PurpleBlistNode *node);
 

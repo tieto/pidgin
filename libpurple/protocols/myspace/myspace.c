@@ -291,10 +291,10 @@ msim_attention_types(PurpleAccount *acct)
 	MsimAttentionType* attn;
 
 	if (!types) {
-#define _MSIM_ADD_NEW_ATTENTION(icn, des, incoming, outgoing)              \
-		attn = g_new0(MsimAttentionType, 1);                     \
-		attn->icon = icn;                                          \
-		attn->description = des;                                   \
+#define _MSIM_ADD_NEW_ATTENTION(icn, nme, incoming, outgoing)              \
+		attn = g_new0(MsimAttentionType, 1);                       \
+		attn->icon_name = icn;                                     \
+		attn->name = nme;                                          \
 		attn->incoming_description = incoming;                     \
 		attn->outgoing_description = outgoing;                     \
 		types = g_list_append(types, attn);
@@ -317,7 +317,7 @@ msim_attention_types(PurpleAccount *acct)
 
 /** Send a zap */
 gboolean
-msim_send_attention(PurpleConnection *gc, gchar *username, guint code)
+msim_send_attention(PurpleConnection *gc, const gchar *username, guint code)
 {
 	GList *types;
 	MsimSession *session;
@@ -453,7 +453,7 @@ msim_blist_node_menu(PurpleBlistNode *node)
 		MsimAttentionType *attn;
 
 		attn = (MsimAttentionType *)types->data;
-		zap_names[i] = attn->description;
+		zap_names[i] = attn->name;
 		++i;
 	} while ((types = g_list_next(types)));
 
@@ -1718,7 +1718,7 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 #ifdef MSIM_USE_ATTENTION_API
 	attn.incoming_description = zap_past_tense[zap];
 	attn.outgoing_description = NULL;
-	attn.icon = NULL;		/* TODO: icon */
+	attn.icon_name = NULL;		/* TODO: icon */
 
 	serv_got_attention(session->gc, username, &attn, TRUE);
 #else
