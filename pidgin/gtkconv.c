@@ -1299,6 +1299,14 @@ menu_add_remove_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+menu_hide_conv_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	PidginWindow *win = data;
+	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
+	purple_conversation_set_ui_ops(conv, NULL);
+}
+
+static void
 menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = data;
@@ -2842,6 +2850,8 @@ static GtkItemFactoryEntry menu_items[] =
 	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>", NULL },
 
 
+	{ N_("/Conversation/_Hide"), NULL, menu_hide_conv_cb, 0,
+			"<StockItem>", NULL},
 	{ N_("/Conversation/_Close"), NULL, menu_close_conv_cb, 0,
 			"<StockItem>", GTK_STOCK_CLOSE },
 
