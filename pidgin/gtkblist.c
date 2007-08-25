@@ -331,8 +331,10 @@ static void gtk_blist_join_chat(PurpleChat *chat)
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name,
 											   chat->account);
 
-	if (conv != NULL)
+	if (conv != NULL) {
+		pidgin_conv_attach_to_conversation(conv);
 		purple_conversation_present(conv);
+	}
 
 	serv_join_chat(chat->account->gc, chat->components);
 	g_free(chat_name);
