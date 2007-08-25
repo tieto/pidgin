@@ -842,9 +842,6 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 
 	ops = purple_conversation_get_ui_ops(conv);
 
-	if (ops == NULL || ops->write_conv == NULL)
-		return;
-
 	account = purple_conversation_get_account(conv);
 	type = purple_conversation_get_type(conv);
 
@@ -928,7 +925,8 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		}
 	}
 
-	ops->write_conv(conv, who, alias, displayed, flags, mtime);
+	if (ops && ops->write_conv)
+		ops->write_conv(conv, who, alias, displayed, flags, mtime);
 	add_message_to_history(conv, who, message, flags, mtime);
 
 	purple_signal_emit(purple_conversations_get_handle(),
