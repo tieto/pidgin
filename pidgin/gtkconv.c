@@ -5002,6 +5002,10 @@ pidgin_conv_destroy(PurpleConversation *conv)
 	g_list_foreach(gtkconv->send_history, (GFunc)g_free, NULL);
 	g_list_free(gtkconv->send_history);
 
+	if (gtkconv->attach.timer) {
+		g_source_remove(gtkconv->attach.timer);
+	}
+
 	if (tooltip.gtkconv == gtkconv)
 		reset_tooltip();
 
@@ -5217,6 +5221,15 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	g_return_if_fail(conv != NULL);
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	g_return_if_fail(gtkconv != NULL);
+
+	if (gtkconv->attach.timer) {
+		/* We are currently in the process of filling up the buffer with the message
+		 * history of the conversation. So we do not need to add the message here.
+		 * Instead, this message will be added to the message-list, which in turn will
+		 * be processed and displayed by the attach-callback.
+		 */
+		return;
+	}
 
 	if (conv != gtkconv->active_conv)
 	{
@@ -7141,22 +7154,45 @@ update_chat_topic(PurpleConversation *conv, const char *old, const char *new)
 	pidgin_conv_update_fields(conv, PIDGIN_CONV_TOPIC);
 }
 
+static gboolean
+add_message_history_to_gtkconv(gpointer data)
+{
+	PidginConversation *gtkconv = data;
+	int count = 0;
+	int timer = gtkconv->attach.timer;
+	gtkconv->attach.timer = 0;
+	while (gtkconv->attach.current && count < 100) {  /* XXX: 100 is a random value here */
+		PurpleConvMessage *msg = gtkconv->attach.current->data;
+		pidgin_conv_write_conv(gtkconv->active_conv, msg->who, msg->who, msg->what, msg->flags, msg->when);
+		gtkconv->attach.current = gtkconv->attach.current->prev;
+		count++;
+	}
+	gtkconv->attach.timer = timer;
+	if (gtkconv->attach.current)
+		return TRUE;
+
+	g_source_remove(gtkconv->attach.timer);
+	gtkconv->attach.timer = 0;
+	return FALSE;
+}
+
 gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 {
 	GList *list;
+	PidginConversation *gtkconv;
 
 	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 		return FALSE;
 
 	purple_conversation_set_ui_ops(conv, pidgin_conversations_get_conv_ui_ops());
 	private_gtkconv_new(conv, FALSE);
+	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	list = purple_conversation_get_message_history(conv);
-	list = g_list_last(list);
-	while (list) {
-		PurpleConvMessage *msg = list->data;
-		pidgin_conv_write_conv(conv, msg->who, msg->who, msg->what, msg->flags, msg->when);
-		list = list->prev;
+	if (list) {
+		list = g_list_last(list);
+		gtkconv->attach.current = list;
+		gtkconv->attach.timer = g_idle_add(add_message_history_to_gtkconv, gtkconv);
 	}
 
 	/* XXX: If this is a chat:

@@ -162,6 +162,13 @@ struct _PidginConversation
 	GtkWidget *infopane;
 	GtkListStore *infopane_model;
 	GtkTreeIter infopane_iter;
+
+	/* Used when attaching a PidginConversation to a PurpleConversation
+	 * with message history */
+	struct {
+		int timer;
+		GList *current;
+	} attach;
 };
 
 /*@}*/
