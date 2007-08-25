@@ -213,6 +213,7 @@ add_message_to_history(PurpleConversation *conv, const char *who, const char *me
 	PurpleConvMessage *msg;
 	
 	msg = g_new0(PurpleConvMessage, 1);
+	PURPLE_DBUS_REGISTER_POINTER(msg, PurpleConvMessage);
 	msg->who = g_strdup(who);
 	msg->flags = flags;
 	msg->what = g_strdup(message);
@@ -228,6 +229,7 @@ free_conv_message(PurpleConvMessage *msg)
 {
 	g_free(msg->who);
 	g_free(msg->what);
+	PURPLE_DBUS_UNREGISTER_POINTER(msg);
 	g_free(msg);
 }
 
