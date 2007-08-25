@@ -1,0 +1,5 @@
+debian/tmp/usr/bin/purple-remote
+debian/tmp/usr/bin/purple-send
+debian/tmp/usr/bin/purple-send-async
+debian/tmp/usr/bin/purple-url-handler
+debian/lintian-override/libpurple-bin usr/share/lintian/overrides

@@ -1,3 +1,21 @@
+pidgin (2.1.1-2) unstable; urgency=low
+
+  [ Laurent Bigonville ]
+  * Bump Standards-Version
+  * Split finch out of the pidgin package (Closes: #428678)
+  * Split libpurple out of the pidgin package (Closes: #421282)
+  * Add override file to quiet lintian a bit
+  * Remove symlinks for /usr/share/doc/pidgin{,-dev,-dbg} and really install
+    them instead
+
+  [ Ari Pollak ]
+  * Move gconf schema into pidgin, so only pidgin needs to depend on gconf
+  * Make dh_pidgin add a versioned misc:Conflict on the next major version
+    of pidgin, in preparation for getting rid of the pidgin (<< 3.0)
+    dependency, and adding dh_purple/dh_finch.
+
+ -- Ari Pollak <ari@debian.org>  Fri, 24 Aug 2007 22:04:23 -0400
+
 pidgin (2.1.1-1) unstable; urgency=low
 
   * New upstream version

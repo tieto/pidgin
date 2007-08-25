@@ -14,24 +14,18 @@ DEB_CONFIGURE_INVOKE = cd "$(DEB_BUILDDIR)"; $(DEB_CONFIGURE_SCRIPT_ENV) \
 LDFLAGS = -Wl,--as-needed
 
 DEB_CONFIGURE_EXTRA_FLAGS := --enable-perl --with-zephyr=/usr --enable-dbus --enable-gnutls=no --enable-nss=yes --enable-cyrus-sasl
-DEB_DH_MAKESHLIBS_ARGS_pidgin := -V -X/usr/lib/finch -X/usr/lib/purple-2 -X/usr/lib/pidgin
-DEB_DH_SHLIBDEPS_ARGS_pidgin := -X/usr/lib/purple-2/libgg.so -X/usr/lib/purple-2/libzephyr.so -X/usr/lib/purple-2/tcl.so -X/usr/lib/pidgin/gevolution.so -X/usr/lib/purple-2/libsametime.so -- -dSuggests debian/pidgin/usr/lib/purple-2/libgg.so debian/pidgin/usr/lib/purple-2/libzephyr.so debian/pidgin/usr/lib/purple-2/tcl.so debian/pidgin/usr/lib/purple-2/libsametime.so debian/pidgin/usr/lib/purple-2/libsilcpurple.so -dDepends
+DEB_DH_MAKESHLIBS_ARGS_pidgin := -V -X/usr/lib/pidgin
+DEB_DH_SHLIBDEPS_ARGS_pidgin := -X/usr/lib/pidgin/gevolution.so
 
-# documentation is in the pidgin-data package
-DEB_DH_LINK_pidgin := usr/share/doc/pidgin-data usr/share/doc/pidgin
-DEB_INSTALL_CHANGELOGS_pidgin:= --no-act
-DEB_INSTALL_DOCS_pidgin := --no-act
+# finch package
+DEB_DH_MAKESHLIBS_ARGS_finch := -V -X/usr/lib/finch
+
+# libpurple package
+DEB_DH_MAKESHLIBS_ARGS_libpurple0 := -V -X/usr/lib/purple-2
+DEB_DH_SHLIBDEPS_ARGS_libpurple0 := -X/usr/lib/purple-2/tcl.so -- -dSuggests debian/libpurple0/usr/lib/purple-2/tcl.so -dDepends
 
 # for pidgin-dev, extra documentation is installed manually below
-DEB_DH_LINK_pidgin-dev := usr/share/doc/pidgin-data usr/share/doc/pidgin-dev
-DEB_INSTALL_CHANGELOGS_pidgin-dev := --no-act
-DEB_INSTALL_DOCS_pidgin-dev := --no-act
 DEB_INSTALL_MANPAGES_pidgin-dev := debian/dh_pidgin.1
-DEB_DH_STRIP_ARGS_pidgin-dev := -X.html -X.png -X.gif
-
-DEB_DH_LINK_pidgin-dbg := usr/share/doc/pidgin-data usr/share/doc/pidgin-dbg
-DEB_INSTALL_CHANGELOGS_pidgin-dbg := --no-act
-DEB_INSTALL_DOCS_pidgin-dbg := --no-act
 
 clean::
 	rm -f debian/copyright
@@ -58,8 +52,6 @@ build/pidgin-dev::
 
 binary-install/pidgin-dev::
 	dh_installdocs -ppidgin-dev debian/README.Debian.dev
-	rm -f debian/pidgin-dev/usr/share/doc/pidgin-data/copyright
 
 cleanbuilddir/pidgin-dev::
 	rm -f debian/dh_pidgin.1
-

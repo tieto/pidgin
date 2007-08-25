@@ -1,0 +1,2 @@
+#installed by pidgin-data
+libpurple-bin: binary-without-manpage usr/bin/purple-remote

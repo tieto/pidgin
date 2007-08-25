@@ -10,67 +10,55 @@ Build-Depends: cdbs (>= 0.4.37), debhelper (>= 5.0.0),
  libstartup-notification0-dev, libzephyr-dev, libxml2-dev,
  libebook1.2-dev, libedata-book1.2-dev, libcamel1.2-dev,
  libdbus-glib-1-dev, dbus, python (>= 2.4), libavahi-client-dev,
- libxml-parser-perl, libncursesw5-dev, libsasl2-dev, doxygen,
+ libavahi-glib-dev, libxml-parser-perl, libncursesw5-dev, libsasl2-dev, doxygen,
  libsilc-1.1-2-dev | libsilc-dev (>= 1.1.1)
-Standards-Version: 3.6.1
+Standards-Version: 3.7.2
 XS-Vcs-Svn: svn://svn.debian.org/svn/collab-maint/deb-maint/pidgin/
 XS-Vcs-Browser: http://svn.debian.org/wsvn/collab-maint/deb-maint/pidgin/
 
 Package: pidgin
 Architecture: any
-Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, python, libsasl2-modules
-Conflicts: gaim (<< 1:2.0.0+beta6-3)
-Replaces: gaim (<< 1:2.0.0+beta6-3)
-Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good, python-dbus
+Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}
+Conflicts: gaim (<< 1:2.0.0+beta6-3), pidgin-data (<< 2.1.1-2)
+Replaces: gaim (<< 1:2.0.0+beta6-3), pidgin-data (<< 2.1.1-2)
+Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
 Suggests: gnome-panel (>= 2.1) | kicker (>= 3.1) | docker, evolution-data-server (>= 1.10.0), ${shlibs:Suggests}
-Description: multi-protocol instant messaging client
+Description: graphical multi-protocol instant messaging client for X
  Pidgin is a graphical, modular Instant Messaging client capable of using
  AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, Gadu-Gadu, Bonjour,
- Groupwise, Sametime, and SIMPLE all at once.
+ Groupwise, Sametime, SILC, and SIMPLE all at once.
  .
  Some extra packages are recommended to use the core functionality present
  in most pidgin installations:
- * gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
-   - Sound support.
- * python-dbus
-   - For the command-line helper utilities such as purple-remote and 
-     purple-url-handler.
+  * gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
+    - Sound support.
  .
  More extra packages are suggested to use increased functionality:
- * gnome-panel | kicker | docker:
-   - To use the system tray icon functionality (minimizing to an icon, having
-     the icon blink when there are new messages, etc.)
- * evolution-data-server:
-   - For interfacing with an Evolution address book
- * libgadu3:
-   - Support for Gadu-Gadu accounts
- * libmeanwhile1:
-   - Support for Lotus Sametime accounts
- * libzephyr3:
-   - Support for Zephyr accounts
- * tcl8.4, tk8.4:
-   - Support for Tcl/Tk plugins
+  * gnome-panel | kicker | docker:
+    - To use the system tray icon functionality (minimizing to an icon, having
+      the icon blink when there are new messages, etc.)
+  * evolution-data-server:
+    - For interfacing with an Evolution address book
 
 Package: pidgin-data
 Architecture: all
 Depends: ${misc:Depends}
-Recommends: pidgin
-Enhances: pidgin
+Enhances: libpurple0, finch, pidgin
 Description: multi-protocol instant messaging client - data files
  This package contains architecture-independent supporting data files
- required for use with pidgin, such as documentation, icons, translations &
- emoticons.
+ required for use with pidgin, such as documentation, icons, translations,
+ and sounds.
 
 Package: pidgin-dev
 Section: devel
 Architecture: all
-Depends: pidgin (>= ${source:Version}), pidgin-data (= ${source:Version}), pkg-config, libgtk2.0-dev
+Depends: pidgin (>= ${source:Version}), pkg-config, libgtk2.0-dev
 Conflicts: gaim-dev (<< 1:2.0.0+beta6-3)
 Replaces: gaim-dev (<< 1:2.0.0+beta6-3)
+Suggests: doc-base
 Description: multi-protocol instant messaging client - development files
  This package contains the headers and other development files not included in
- the main pidgin package. Install this if you wish to compile your own plugins,
- or would like to compile programs that use the purple-remote library.
+ the main pidgin package. Install this if you wish to compile your own plugins.
  .
  If you are creating a pidgin plugin package, please be sure to read
  /usr/share/doc/pidgin-dev/README.Debian.dev after installing pidgin-dev.
@@ -78,10 +66,76 @@ Description: multi-protocol instant messaging client - development files
 Package: pidgin-dbg
 Priority: extra
 Architecture: any
-Depends: pidgin (= ${binary:Version}), pidgin-data (= ${source:Version}), ${shlibs:Depends}
+Depends: pidgin (= ${binary:Version}) | finch (= ${binary:Version}) | libpurple0 (= ${binary:Version}), pidgin-data (= ${source:Version}), ${shlibs:Depends}
 Conflicts: gaim-dbg (<< 1:2.0.0+beta6-3)
 Replaces: gaim-dbg (<< 1:2.0.0+beta6-3)
 Description: Debugging symbols for Pidgin 
  This package includes the debugging symbols useful for debugging Pidgin
  and its plugins, contained in the pidgin package. The debugging symbols are
  used for execution tracing and core dump analysis.
+
+Package: finch
+Architecture: any
+Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}
+Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
+Replaces: pidgin (<< 2.1.1-2)
+Conflicts: pidgin (<< 2.1.1-2)
+Description: text-based multi-protocol instant messaging client
+ Finch is a text/console-based, modular instant messaging client capable of
+ using AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, Gadu-Gadu, Bonjour,
+ Groupwise, Sametime, SILC, and SIMPLE all at once.
+ .
+ Some extra packages are recommended to use the core functionality present
+ in most finch installations:
+  * gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
+    - Sound support.
+
+Package: finch-dev
+Section: devel
+Architecture: all
+Depends: finch (>= ${source:Version}), pkg-config, libglib2.0-dev, libncursesw5-dev
+Replaces: pidgin-dev (<< 2.1.1-2)
+Conflicts: pidgin-dev (<< 2.1.1-2)
+Description: text-based multi-protocol instant messaging client - development
+ This package contains the headers and other development files not included in
+ the main finch package. Install this if you wish to compile your own plugins,
+ or would like to compile programs that use the libgnt library.
+
+Package: libpurple0
+Architecture: any
+Depends: pidgin-data (>= ${source:Upstream-Version}), libpurple-bin, pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, libsasl2-modules
+Replaces: pidgin (<< 2.1.1-2)
+Conflicts: pidgin (<< 2.1.1-2)
+Suggests: ${shlibs:Suggests}
+Description: multi-protocol instant messaging library
+ libpurple is a library intended to be used by programmers seeking
+ to write an IM client that connects to many IM networks.
+ Currently supported are: AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr,
+ Gadu-Gadu, Bonjour, Groupwise, Sametime, SILC, and SIMPLE.
+ . 
+ Some extra packages are suggested to use increased functionality:
+  * tcl8.4, tk8.4:
+    - Support for writing plugins with Tcl/Tk
+
+Package: libpurple-dev
+Section: libdevel
+Architecture: all
+Depends: libpurple0 (>= ${source:Version}), pkg-config, libglib2.0-dev, libdbus-glib-1-dev, ${misc:Depends}
+Replaces: pidgin-dev (<< 2.1.1-2)
+Conflicts: pidgin-dev (<< 2.1.1-2)
+Description: multi-protocol instant messaging library - development files
+ This package contains the headers and other development files not included in
+ the main libpurple0 package. Install this if you wish to compile your own
+ client-agnostic plugins, or would like to compile programs that use
+ libpurple.
+
+Package: libpurple-bin
+Section: net
+Architecture: all
+Depends: libpurple0, ${shlibs:Depends}, ${misc:Depends}, python, python-dbus
+Replaces: pidgin (<< 2.1.1-2)
+Conflicts: pidgin (<< 2.1.1-2)
+Description: multi-protocol instant messaging library - extra utilities
+ This package contains the utilities not included in the main libpurple0
+ package. Currently included are: purple-remote, purple-send,
+ purple-send-async, and purple-url-handler,

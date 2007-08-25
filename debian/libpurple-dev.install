@@ -1,0 +1,4 @@
+debian/tmp/usr/lib/libpurple*.so
+debian/tmp/usr/include/libpurple
+debian/tmp/usr/lib/pkgconfig/purple.pc
+debian/tmp/usr/share/aclocal

@@ -50,8 +50,9 @@ $pidgin_version = $pidgin_epoch . $pidgin_major . "." .$pidgin_minor;
 
 foreach my $package (@{$dh{DOPACKAGES}}) {
 	my $tmp=tmpdir($package);
-        addsubstvar($package, "misc:Depends", "pidgin", ">= $pidgin_version");
-        addsubstvar($package, "misc:Depends", "pidgin", "<< $next_version");
+	addsubstvar($package, "misc:Depends", "pidgin", ">= $pidgin_version");
+	addsubstvar($package, "misc:Depends", "pidgin", "<< $next_version");
+	addsubstvar($package, "misc:Conflicts", "pidgin", ">= $next_version");
 }
 
 =head1 SEE ALSO

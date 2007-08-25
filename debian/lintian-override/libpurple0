@@ -1,0 +1,4 @@
+# Internal libraries
+libpurple0: binary-or-shlib-defines-rpath ./usr/lib/purple-2/libaim.so /usr/lib/purple-2
+libpurple0: binary-or-shlib-defines-rpath ./usr/lib/purple-2/libicq.so /usr/lib/purple-2
+libpurple0: binary-or-shlib-defines-rpath ./usr/lib/purple-2/libxmpp.so /usr/lib/purple-2

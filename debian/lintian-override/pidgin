@@ -1,0 +1,3 @@
+# installed by pidgin-data
+pidgin: menu-icon-missing /usr/share/pixmaps/pidgin-menu.xpm
+pidgin: binary-without-manpage usr/bin/pidgin

@@ -1,0 +1,5 @@
+debian/tmp/usr/bin/finch
+debian/tmp/usr/lib/finch
+debian/tmp/usr/lib/libgnt*.so.*
+debian/tmp/usr/lib/gnt
+debian/lintian-override/finch usr/share/lintian/overrides

@@ -18,7 +18,8 @@ introduced in a later version.
 Plugin packages should also use dh_pidgin to set the correct dependencies
 for the resulting package. dh_pidgin is included in the pidgin-dev package,
 and can be used by making sure the Depends: field in the plugin package's 
-debian/control file contains "${misc:Depends}", as well as calling dh_pidgin
-from debian/rules, normally in the install rule.
+debian/control file contains "${misc:Depends}", the Conflicts: field contains
+"${misc:Conflicts}", as well as calling dh_pidgin from debian/rules, normally
+in the install rule.
 
 -- Ari Pollak <ari@debian.org>  25 Sep 2006
