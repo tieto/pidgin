@@ -1191,8 +1191,11 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 			purple_blist_add_group(group,
 					purple_blist_get_last_sibling(purplebuddylist->root));
 		} else {
-			/* Fail if tried to add buddy to a group that isn't on the blist. #2752. */
-			g_return_if_fail(purple_find_group(group->name));
+			/* Add group to blist if isn't already on it. Fixes #2752. */
+			if (!purple_find_group(group->name)) {
+				purple_blist_add_group(group,
+						purple_blist_get_last_sibling(purplebuddylist->root));
+			}
 		}
 	} else {
 		group = (PurpleGroup*)node->parent;
@@ -1287,9 +1290,11 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		g = (PurpleGroup *)((PurpleBlistNode *)c)->parent;
 	} else {
 		if (group) {
-			/*  Fail if trying to add buddy to a group that is not on the buddy list. 
-			 *  Fix for #2752. */
-			g_return_if_fail(purple_find_group(group->name));
+			/* Add chat to blist if isn't already on it. Fixes #2752. */
+			if (!purple_find_group(group->name)) {
+				purple_blist_add_group(group,
+						purple_blist_get_last_sibling(purplebuddylist->root));
+			}
 
 			g = group;
 		} else {
