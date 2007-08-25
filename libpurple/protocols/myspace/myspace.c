@@ -1208,7 +1208,7 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 
 	/* Find and use canonical form of smiley symbol. */
 	for (i = 0; (emote = &msim_emoticons[i]) && emote->name != NULL; ++i) {
-		if (!strcmp(name, emote->name)) {
+		if (g_str_equal(name, emote->name)) {
 			*begin = g_strdup(emote->symbol);
 			*end = g_strdup("");
 			return;
@@ -1225,17 +1225,17 @@ static void
 msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin, 
 		gchar **end)
 {
-	if (!strcmp(root->name, "f")) {
+	if (g_str_equal(root->name, "f")) {
 		msim_markup_f_to_html(session, root, begin, end);
-	} else if (!strcmp(root->name, "a")) {
+	} else if (g_str_equal(root->name, "a")) {
 		msim_markup_a_to_html(session, root, begin, end);
-	} else if (!strcmp(root->name, "p")) {
+	} else if (g_str_equal(root->name, "p")) {
 		msim_markup_p_to_html(session, root, begin, end);
-	} else if (!strcmp(root->name, "c")) {
+	} else if (g_str_equal(root->name, "c")) {
 		msim_markup_c_to_html(session, root, begin, end);
-	} else if (!strcmp(root->name, "b")) {
+	} else if (g_str_equal(root->name, "b")) {
 		msim_markup_b_to_html(session, root, begin, end);
-	} else if (!strcmp(root->name, "i")) {
+	} else if (g_str_equal(root->name, "i")) {
 		msim_markup_i_to_html(session, root, begin, end);
 	} else {
 		purple_debug_info("msim", "msim_markup_tag_to_html: "
@@ -1279,7 +1279,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		link_text = xmlnode_get_data(root);
 
 		if (href) {
-			if (!strcmp(link_text, href)) {
+			if (g_str_equal(link_text, href)) {
 				/* Purple gives us: <a href="URL">URL</a>
 				 * Translate to <a h='URL' />
 				 * Displayed as text of URL with link to URL
@@ -1761,13 +1761,13 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	purple_debug_info("msim", "msim_incoming_action: action <%s> from <%d>\n", 
 			msg_text, username);
 
-	if (strcmp(msg_text, "%typing%") == 0) {
+	if (g_str_equal(msg_text, "%typing%")) {
 		/* TODO: find out if msim repeatedly sends typing messages, so we can 
 		 * give it a timeout. Right now, there does seem to be an inordinately 
 		 * amount of time between typing stopped-typing notifications. */
 		serv_got_typing(session->gc, username, 0, PURPLE_TYPING);
 		rc = TRUE;
-	} else if (strcmp(msg_text, "%stoptyping%") == 0) {
+	} else if (g_str_equal(msg_text, "%stoptyping%")) {
 		serv_got_typing_stopped(session->gc, username);
 		rc = TRUE;
 	} else if (strstr(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_")) {
@@ -2674,7 +2674,7 @@ msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
 static void 
 msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user)
 {
-	if (!strcmp(key_str, "UserID") || !strcmp(key_str, "ContactID")) {
+	if (g_str_equal(key_str, "UserID") || g_str_equal(key_str, "ContactID")) {
 		/* Save to buddy list, if it exists, for quick cached uid lookup with msim_uid2username_from_blist(). */
 		if (user->buddy)
 		{
@@ -2682,30 +2682,30 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 			purple_blist_node_set_int(&user->buddy->node, "UserID", atol(value_str));
 		}
 		/* Need to store in MsimUser, too? What if not on blist? */
-	} else if (!strcmp(key_str, "Age")) {
+	} else if (g_str_equal(key_str, "Age")) {
 		user->age = atol(value_str);
-	} else if (!strcmp(key_str, "Gender")) {
+	} else if (g_str_equal(key_str, "Gender")) {
 		user->gender = g_strdup(value_str);
-	} else if (!strcmp(key_str, "Location")) {
+	} else if (g_str_equal(key_str, "Location")) {
 		user->location = g_strdup(value_str);
-	} else if (!strcmp(key_str, "TotalFriends")) {
+	} else if (g_str_equal(key_str, "TotalFriends")) {
 		user->total_friends = atol(value_str);
-	} else if (!strcmp(key_str, "DisplayName")) {
+	} else if (g_str_equal(key_str, "DisplayName")) {
 		user->display_name = g_strdup(value_str);
-	} else if (!strcmp(key_str, "BandName")) {
+	} else if (g_str_equal(key_str, "BandName")) {
 		user->band_name = g_strdup(value_str);
-	} else if (!strcmp(key_str, "SongName")) {
+	} else if (g_str_equal(key_str, "SongName")) {
 		user->song_name = g_strdup(value_str);
-	} else if (!strcmp(key_str, "UserName") || !strcmp(key_str, "IMName") || !strcmp(key_str, "NickName")) {
+	} else if (g_str_equal(key_str, "UserName") || g_str_equal(key_str, "IMName") || g_str_equal(key_str, "NickName")) {
 		/* Ignore because PurpleBuddy knows this already */
 		;
-	} else if (!strcmp(key_str, "ImageURL") || !strcmp(key_str, "AvatarURL")) {
+	} else if (g_str_equal(key_str, "ImageURL") || g_str_equal(key_str, "AvatarURL")) {
 		const gchar *previous_url;
 
 		user->image_url = g_strdup(value_str);
 
 		/* Instead of showing 'no photo' picture, show nothing. */
-		if (!strcmp(user->image_url, "http://x.myspace.com/images/no_pic.gif"))
+		if (g_str_equal(user->image_url, "http://x.myspace.com/images/no_pic.gif"))
 		{
 			purple_buddy_icons_set_for_user(user->buddy->account,
 				user->buddy->name,
@@ -2716,13 +2716,13 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		previous_url = purple_buddy_icons_get_checksum_for_user(user->buddy);
 
 		/* Only download if URL changed */
-		if (!previous_url || strcmp(previous_url, user->image_url)) {
+		if (!previous_url || !g_str_equal(previous_url, user->image_url)) {
 			purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, msim_downloaded_buddy_icon, (gpointer)user);
 		}
-	} else if (!strcmp(key_str, "LastImageUpdated")) {
+	} else if (g_str_equal(key_str, "LastImageUpdated")) {
 		/* TODO: use somewhere */
 		user->last_image_updated = atol(value_str);
-	} else if (!strcmp(key_str, "Headline")) {
+	} else if (g_str_equal(key_str, "Headline")) {
 		user->headline = g_strdup(value_str);
 	} else {
 		/* TODO: other fields in MsimUser */
@@ -4033,7 +4033,7 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 
 		elem = (MsimMessageElement *)body_node->data;
 
-		if (!strcmp(elem->name, "ContactID"))
+		if (g_str_equal(elem->name, "ContactID"))
 		{
 			/* Will look for first contact in body_node */
 			if (msim_add_contact_from_server(session, body_node)) {
@@ -4065,7 +4065,7 @@ msim_import_friends_cb(MsimSession *session, MsimMessage *reply, gpointer user_d
 	completed = msim_msg_get_string(body, "Completed");
 	g_return_if_fail(body != NULL);
 	msim_msg_free(body);
-	if (strcmp(completed, "True"))
+	if (!g_str_equal(completed, "True"))
 	{
 		purple_debug_info("msim_import_friends_cb",
 				"failed to import friends: %s", completed);
@@ -4318,7 +4318,7 @@ msim_test_msg(void)
 	packed_expected = "\\bx\\WFhY\\k1\\v1\\k1\\42\\k1"
 		"\\v43\\k1\\v52/1xxx/2yyy\\k1\\v7\\final\\";
 
-	if (0 != strcmp(packed, packed_expected)) {
+	if (!g_str_equal(packed, packed_expected)) {
 		purple_debug_info("msim", "!!!(%d), msim_msg_pack not what expected: %s != %s\n",
 				++failures, packed, packed_expected);
 	}
@@ -4328,7 +4328,7 @@ msim_test_msg(void)
 	packed_cloned = msim_msg_pack(msg_cloned);
 
 	purple_debug_info("msim", "msg cloned=%s\n", packed_cloned);
-	if (0 != strcmp(packed, packed_cloned)) {
+	if (!g_str_equal(packed, packed_cloned)) {
 		purple_debug_info("msim", "!!!(%d), msim_msg_pack on cloned message not equal to original: %s != %s\n",
 				++failures, packed_cloned, packed);
 	}
@@ -4383,7 +4383,7 @@ msim_test_escaping(void)
 	escaped = msim_escape(raw);
 	purple_debug_info("msim", "msim_test_escaping: raw=%s, escaped=%s\n", raw, escaped);
 	expected = "hello/1world/2hello/1world";
-	if (0 != strcmp(escaped, expected)) {
+	if (!g_str_equal(escaped, expected)) {
 		purple_debug_info("msim", "!!!(%d), msim_escape failed: %s != %s\n",
 				++failures, escaped, expected);
 	}
@@ -4392,7 +4392,7 @@ msim_test_escaping(void)
 	unescaped = msim_unescape(escaped);
 	g_free(escaped);
 	purple_debug_info("msim", "msim_test_escaping: unescaped=%s\n", unescaped);
-	if (0 != strcmp(raw, unescaped)) {
+	if (!g_str_equal(raw, unescaped)) {
 		purple_debug_info("msim", "!!!(%d), msim_unescape failed: %s != %s\n",
 				++failures, raw, unescaped);
 	}
