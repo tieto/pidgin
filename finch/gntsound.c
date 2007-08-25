@@ -996,6 +996,8 @@ finch_sounds_show_all(void)
 
 	pref_dialog->volume = slider = gnt_slider_new(FALSE, 100, 0);
 	gnt_slider_set_step(GNT_SLIDER(slider), 5);
+	gnt_slider_set_small_step(GNT_SLIDER(slider), 1);
+	gnt_slider_set_large_step(GNT_SLIDER(slider), 20);
 	label = gnt_label_new("");
 	gnt_slider_reflect_label(GNT_SLIDER(slider), GNT_LABEL(label));
 	gnt_box_set_pad(GNT_BOX(tmpbox), 1);
