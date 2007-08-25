@@ -2690,6 +2690,7 @@ void
 pidgin_conv_present_conversation(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+	GdkModifierType state;
 
 	if(gtkconv->win==hidden_convwin) {
 		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
@@ -2697,7 +2698,10 @@ pidgin_conv_present_conversation(PurpleConversation *conv)
 	}
 
 	pidgin_conv_switch_active_conversation(conv);
-	pidgin_conv_window_switch_gtkconv(gtkconv->win, gtkconv);
+	/* Switch the tab only if the user initiated the event by pressing
+	 * a button or hitting a key. */
+	if (gtk_get_current_event_state(&state))
+		pidgin_conv_window_switch_gtkconv(gtkconv->win, gtkconv);
 	gtk_window_present(GTK_WINDOW(gtkconv->win->window));
 }
 
@@ -2723,7 +2727,7 @@ pidgin_conversations_find_unseen_list(PurpleConversationType type,
 		PurpleConversation *conv = (PurpleConversation*)l->data;
 		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 
-		if(gtkconv->active_conv != conv)
+		if(gtkconv == NULL || gtkconv->active_conv != conv)
 			continue;
 
 		if (gtkconv->unseen_state >= min_state
@@ -7135,6 +7139,32 @@ static void
 update_chat_topic(PurpleConversation *conv, const char *old, const char *new)
 {
 	pidgin_conv_update_fields(conv, PIDGIN_CONV_TOPIC);
+}
+
+gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
+{
+	GList *list;
+
+	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
+		return FALSE;
+
+	purple_conversation_set_ui_ops(conv, pidgin_conversations_get_conv_ui_ops());
+	private_gtkconv_new(conv, FALSE);
+
+	list = purple_conversation_get_message_history(conv);
+	list = g_list_last(list);
+	while (list) {
+		PurpleConvMessage *msg = list->data;
+		pidgin_conv_write_conv(conv, msg->who, msg->who, msg->what, msg->flags, msg->when);
+		list = list->prev;
+	}
+
+	/* XXX: If this is a chat:
+	 * 	- populate the userlist
+	 * 	- set the topic
+	 */
+
+	return TRUE;
 }
 
 void *

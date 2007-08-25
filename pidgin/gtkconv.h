@@ -238,6 +238,8 @@ pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs);
  */
 void pidgin_conv_present_conversation(PurpleConversation *conv);
 
+gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv);
+
 PidginWindow *pidgin_conv_get_window(PidginConversation *gtkconv);
 GdkPixbuf *pidgin_conv_get_tab_icon(PurpleConversation *conv, gboolean small_icon);
 void pidgin_conv_new(PurpleConversation *conv);
