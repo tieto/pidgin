@@ -55,6 +55,14 @@ void finch_sound_set_active_profile(const char *name);
 GList *finch_sound_get_profiles(void);
 
 /**
+ * Determine whether any sound will be played or not.
+ *
+ * @return Returns FALSE if preference is set to 'No sound', or if volume is
+ *         set to zero.
+ */
+gboolean finch_sound_is_enabled(void);
+
+/**
  * Gets GNT sound UI ops.
  *
  * @return The UI operations structure.

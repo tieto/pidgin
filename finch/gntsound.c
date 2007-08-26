@@ -40,6 +40,8 @@
 #include "sound.h"
 #include "util.h"
 
+#include "gntconv.h"
+
 #include "gntbox.h"
 #include "gntwindow.h"
 #include "gntcombobox.h"
@@ -173,7 +175,8 @@ play_conv_event(PurpleConversation *conv, PurpleSoundEventID event)
 
 		has_focus = purple_conversation_has_focus(conv);
 
-		if (has_focus && !purple_prefs_get_bool(make_pref("/conv_focus")))
+		if ((gntconv->flags & FINCH_CONV_NO_SOUND) ||
+			(has_focus && !purple_prefs_get_bool(make_pref("/conv_focus"))))
 		{
 			return;
 		}
@@ -1061,7 +1064,22 @@ finch_sounds_show_all(void)
 	load_pref_window(finch_sound_get_active_profile());
 
 	gnt_widget_show(win);
-}	
+}
+
+gboolean finch_sound_is_enabled(void)
+{
+	const char *pref = make_pref("/method");
+	const char *method = purple_prefs_get_string(pref);
+
+	if (!method)
+		return FALSE;
+	if (strcmp(method, "nosound") == 0)
+		return FALSE;
+	if (purple_prefs_get_int(make_pref("/volume")) <= 0)
+		return FALSE;
+
+	return TRUE;
+}
 
 static PurpleSoundUiOps sound_ui_ops =
 {
