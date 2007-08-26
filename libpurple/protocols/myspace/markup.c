@@ -19,6 +19,8 @@
 
 #include "myspace.h"
 
+typedef void (*MSIM_XMLNODE_CONVERT)(MsimSession *, xmlnode *, gchar **, gchar **);
+
 /* Internal functions */
 
 static guint msim_point_to_purple_size(MsimSession *session, guint point);
@@ -97,6 +99,21 @@ static gdouble _font_scale[] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736 };
 
 #define MAX_FONT_SIZE                   7       /* Purple maximum font size */
 #define POINTS_PER_INCH                 72      /* How many pt's in an inch */
+
+/* Text formatting bits for <f s=#> */
+#define MSIM_TEXT_BOLD                  1
+#define MSIM_TEXT_ITALIC                2   
+#define MSIM_TEXT_UNDERLINE             4
+
+/* Default baseline size of purple's fonts, in points. What is size 3 in points. 
+ * _font_scale specifies scaling factor relative to this point size. Note this 
+ * is only the default; it is configurable in account options. */
+#define MSIM_BASE_FONT_POINT_SIZE       8
+
+/* Default display's DPI. 96 is common but it can differ. Also configurable
+ * in account options. */
+#define MSIM_DEFAULT_DPI                96
+
 
 /* round is part of C99, but sometimes is unavailable before then.
  * Based on http://forums.belution.com/en/cpp/000/050/13.shtml

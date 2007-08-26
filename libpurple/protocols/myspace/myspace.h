@@ -48,10 +48,12 @@
 #include "xmlnode.h"
 
 /* MySpaceIM includes */
+#include "persist.h"
 #include "message.h"
 #include "session.h"
 #include "zap.h"
 #include "markup.h"
+#include "user.h"
 
 /* Conditional compilation options */
 /* Send third-party client version? (Recognized by us and Miranda's plugin) */
@@ -160,20 +162,6 @@
 #define MSIM_STATUS_CODE_IDLE                 2
 #define MSIM_STATUS_CODE_AWAY                 5
 
-/* Text formatting bits for <f s=#> */
-#define MSIM_TEXT_BOLD                  1
-#define MSIM_TEXT_ITALIC                2   
-#define MSIM_TEXT_UNDERLINE             4
-
-/* Default baseline size of purple's fonts, in points. What is size 3 in points. 
- * _font_scale specifies scaling factor relative to this point size. Note this 
- * is only the default; it is configurable in account options. */
-#define MSIM_BASE_FONT_POINT_SIZE       8
-
-/* Default display's DPI. 96 is common but it can differ. Also configurable
- * in account options. */
-#define MSIM_DEFAULT_DPI                96
-
 
 /* Inbox status bitfield values for MsimSession.inbox_status */
 #define MSIM_INBOX_MAIL                 (1 << 0)
@@ -181,27 +169,6 @@
 #define MSIM_INBOX_PROFILE_COMMENT      (1 << 2)
 #define MSIM_INBOX_FRIEND_REQUEST       (1 << 3)
 #define MSIM_INBOX_PICTURE_COMMENT      (1 << 4)
-
-/* Hold ephemeral information about buddies, for proto_data of PurpleBuddy. */
-/* GHashTable? */
-typedef struct _MsimUser
-{
-	PurpleBuddy *buddy;
-	guint client_cv;
-	gchar *client_info;
-	guint age;
-	gchar *gender;
-	gchar *location;
-	guint total_friends;
-	gchar *headline;
-	gchar *display_name;
-	/* Note: uid is in &buddy->node (set_blist_node_int), since it never changes */
-	gchar *username;
-	gchar *band_name, *song_name;
-	gchar *image_url;
-	guint last_image_updated;
-} MsimUser;
-
 
 #ifdef MSIM_USE_ATTENTION_API
 #define MsimAttentionType PurpleAttentionType
@@ -222,31 +189,17 @@ struct _MsimAttentionType {
 
 gchar *str_replace(const gchar *str, const gchar *old, const gchar *new);
 
-/* Callback function pointer type for when a user's information is received, 
- * initiated from a user lookup. */
-typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, MsimMessage *userinfo, gpointer data);
-
 /* Functions */
 gboolean msim_load(PurplePlugin *plugin);
 GList *msim_status_types(PurpleAccount *acct);
 
-GList *msim_attention_types(PurpleAccount *acct);
-gboolean msim_send_attention(PurpleConnection *gc, const gchar *username, guint code);
-
-GList *msim_blist_node_menu(PurpleBlistNode *node);
-
 const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy);
-
 gboolean msim_send_raw(MsimSession *session, const gchar *msg);
 
 void msim_login(PurpleAccount *acct);
-
-int msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, 
-PurpleMessageFlags flags);
-
-typedef void (*MSIM_XMLNODE_CONVERT)(MsimSession *, xmlnode *, gchar **, gchar **);
-
+int msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, PurpleMessageFlags flags);
 unsigned int msim_send_typing(PurpleConnection *gc, const gchar *name, PurpleTypingState state);
+
 void msim_get_info(PurpleConnection *gc, const gchar *name);
 
 void msim_set_status(PurpleAccount *account, PurpleStatus *status);
@@ -256,9 +209,6 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 
 gboolean msim_offline_message(const PurpleBuddy *buddy);
-
-MsimSession *msim_session_new(PurpleAccount *acct);
-void msim_session_destroy(MsimSession *session);
 
 void msim_close(PurpleConnection *gc);
 
@@ -273,6 +223,11 @@ int msim_test_escaping(void);
 #endif
 
 gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type);
+
+
+void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);
+guint msim_new_reply_callback(MsimSession *session, MSIM_USER_LOOKUP_CB cb, gpointer data);
+
 
 void init_plugin(PurplePlugin *plugin);
 

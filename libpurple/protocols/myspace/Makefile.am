@@ -11,7 +11,9 @@ SOURCES = myspace.c \
 	  session.c \
 	  session.h \
 	  markup.c \
-	  markup.h
+	  markup.h \
+	  user.c \
+	  user.h
 
 AM_CFLAGS = $(st)
 
