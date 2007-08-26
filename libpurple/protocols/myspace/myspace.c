@@ -93,6 +93,10 @@ static void msim_connect_cb(gpointer data, gint source, const gchar *error_messa
 
 static void msim_import_friends(PurplePluginAction *action);
 
+static gboolean msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params);
+static void msim_uri_handler_addContact_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+static void msim_uri_handler_sendIM_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+
 /** 
  * Load the plugin.
  */
@@ -1453,6 +1457,10 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 	 * which is weird, but happens because you login with your email
 	 * address and not username. Will be freed in msim_session_destroy(). */
 	session->username = msim_msg_get_string(msg, "uniquenick");
+
+	/* If a local alias wasn't set, set it to user's username. */
+	if (!session->account->alias || !strlen(session->account->alias))
+		session->account->alias = session->username;
 
 	/* The session is now set up, ready to be connected. This emits the
 	 * signedOn signal, so clients can now do anything with msimprpl, and
@@ -2988,6 +2996,7 @@ static gboolean
 msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 {
 	PurpleAccount *account;
+	MsimSession *session;
 	GList *l;
 	gchar *uid_str, *cid_str;
 	guint uid, cid;
@@ -3005,6 +3014,16 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 	/* Need a contact. */
 	g_return_val_if_fail(cid != 0, FALSE);
 
+	/* TODO: if auto=true, "Add all the people on this page to my IM List!", on
+	 * http://collect.myspace.com/index.cfm?fuseaction=im.friendslist. Don't need a cid. */
+
+	/* Convert numeric contact ID back to a string. Needed for looking up. Don't just
+	 * directly use cid directly from parameters, because it might not be numeric. 
+	 * It is trivial to change this to allow cID to be a username, but that's not how
+	 * the official MySpaceIM client works, so don't provide that functionality. */
+	cid_str = g_strdup_printf("%d", cid);
+
+
 	/* Find our account with specified user id, or use first connected account if uid=0. */
 	account = NULL;
 	l = purple_accounts_get_all();
@@ -3021,30 +3040,94 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 		purple_notify_error(NULL, _("myim URL handler"), 
 				_("No suitable MySpaceIM account could be found to open this myim URL."),
 				_("Enable the proper MySpaceIM account and try again."));
+		g_free(cid_str);
 		return FALSE;
 	}
 
-	/* TODO: msim_lookup_user() on cid, so can add by username? */
+	session = (MsimSession *)account->gc->proto_data;
+	g_return_val_if_fail(session != NULL, FALSE);
+
+	/* Lookup userid to username. TODO: push this down, to IM sending/contact 
+	 * adding functions. */
 
 	/* myim:sendIM?uID=USERID&cID=CONTACTID */
 	if (!g_ascii_strcasecmp(cmd, "sendIM")) {
-		PurpleConversation *conv;
-
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, cid_str, account);
-		if (!conv)  {
-			purple_debug_info("msim_uri_handler", "creating new conversation for %s\n", cid_str);
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, cid_str);
-		}
-
-		/* Just open the window so the user can send an IM. */
-		purple_conversation_present(conv);
+		msim_lookup_user(session, cid_str, (MSIM_USER_LOOKUP_CB)msim_uri_handler_sendIM_cb, NULL);
+		g_free(cid_str);
+		return TRUE;
 
 	/* myim:addContact?uID=USERID&cID=CONTACTID */
 	} else if (!g_ascii_strcasecmp(cmd, "addContact")) {
-		purple_blist_request_add_buddy(account, cid_str, _("Buddies"), NULL);
+		msim_lookup_user(session, cid_str, (MSIM_USER_LOOKUP_CB)msim_uri_handler_addContact_cb, NULL);
+		g_free(cid_str);
+		return TRUE;
 	}
 
 	return FALSE;
+}
+
+/* TODO: move uid->username resolving to IM sending and buddy adding functions,
+ * so that user can manually add or IM by userid and username automatically
+ * looked up if possible? */
+ 
+/** Handle a myim:sendIM URI command, after username has been looked up. */
+static void
+msim_uri_handler_sendIM_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
+{
+	PurpleConversation *conv;
+	MsimMessage *body;
+	gchar *username;
+
+	body = msim_msg_get_dictionary(userinfo, "body");
+	username = msim_msg_get_string(body, "UserName");
+	msim_msg_free(body);
+
+	if (!username) {
+		guint uid;
+
+		uid = msim_msg_get_integer(userinfo, "UserID");
+		g_return_if_fail(uid != 0);
+
+		username = g_strdup_printf("%d", uid);
+	}
+
+
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, username, session->account);
+	if (!conv)  {
+		purple_debug_info("msim_uri_handler", "creating new conversation for %s\n", username);
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, session->account, username);
+	}
+
+	/* Just open the window so the user can send an IM. */
+	purple_conversation_present(conv);
+
+	g_free(username);
+}
+
+/** Handle a myim:addContact command, after username has been looked up. */
+static void
+msim_uri_handler_addContact_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
+{
+	MsimMessage *body;
+	gchar *username;
+
+	body = msim_msg_get_dictionary(userinfo, "body");
+	username = msim_msg_get_string(body, "UserName");
+	msim_msg_free(body);
+
+	if (!username) {
+		guint uid;
+
+		uid = msim_msg_get_integer(userinfo, "UserID");
+		g_return_if_fail(uid != 0);
+
+		username = g_strdup_printf("%d", uid);
+	}
+
+
+	purple_blist_request_add_buddy(session->account, username, _("Buddies"), NULL);
+
+	g_free(username);
 }
 
 /** Initialize plugin. */
