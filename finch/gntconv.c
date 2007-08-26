@@ -37,6 +37,7 @@
 #include "gntdebug.h"
 #include "gntplugin.h"
 #include "gntprefs.h"
+#include "gntsound.h"
 #include "gntstatus.h"
 #include "gntpounce.h"
 
@@ -387,6 +388,13 @@ toggle_logging_cb(GntMenuItem *item, gpointer ggconv)
 }
 
 static void
+toggle_sound_cb(GntMenuItem *item, gpointer ggconv)
+{
+	FinchConv *fc = ggconv;
+	fc->flags ^= FINCH_CONV_NO_SOUND;
+}
+
+static void
 send_to_cb(GntMenuItem *m, gpointer n)
 {
 	PurpleAccount *account = g_object_get_data(G_OBJECT(m), "purple_account");
@@ -498,6 +506,12 @@ gg_create_menu(FinchConv *ggc)
 			purple_conversation_is_logging(ggc->active_conv));
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(item, toggle_logging_cb, ggc);
+
+	item = gnt_menuitem_check_new(_("Enable Sounds"));
+	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
+			!(ggc->flags & FINCH_CONV_NO_SOUND));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(item, toggle_sound_cb, ggc);
 }
 
 static void
@@ -637,6 +651,9 @@ finch_create_conversation(PurpleConversation *conv)
 	if (type == PURPLE_CONV_TYPE_IM) {
 		g_signal_connect(G_OBJECT(ggc->entry), "text_changed", G_CALLBACK(send_typing_notification), ggc);
 	}
+
+	if (!finch_sound_is_enabled())
+		ggc->flags |= FINCH_CONV_NO_SOUND;
 
 	gg_create_menu(ggc);
 

@@ -43,6 +43,11 @@ typedef struct _FinchConv FinchConv;
 typedef struct _FinchConvChat FinchConvChat;
 typedef struct _FinchConvIm FinchConvIm;
 
+typedef enum
+{
+	FINCH_CONV_NO_SOUND     = 1 << 0,
+} FinchConversationFlag;
+
 struct _FinchConv
 {
 	GList *list;
@@ -53,7 +58,7 @@ struct _FinchConv
 	GntWidget *tv;            /* text-view */
 	GntWidget *menu;
 	GntWidget *info;
-	void *pad;
+	FinchConversationFlag flags;
 
 	union
 	{
