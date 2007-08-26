@@ -238,14 +238,18 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case 8: /* how many online buddies we have */
 			break;
 		case 7: /* the current buddy */
-			if (name && f) /* update the previous buddy before changing the variables */
-				yahoo_update_status(gc, name, f);
-			name = pair->value;
-			if (name && g_utf8_validate(name, -1, NULL))
+			/* update the previous buddy before changing the variables */
+			if (f) {
+				if (message)
+					yahoo_friend_set_status_message(f, yahoo_string_decode(gc, message, unicode));
+				if (name)
+					yahoo_update_status(gc, name, f);
+			}
+			name = message = NULL;
+			f = NULL;
+			if (pair->value && g_utf8_validate(pair->value, -1, NULL)) {
+				name = pair->value;
 				f = yahoo_friend_find_or_new(gc, name);
-			else {
-				f = NULL;
-				name = NULL;
 			}
 			break;
 		case 10: /* state */
@@ -779,7 +783,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt)
 		purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
 		g_free(buf);
 	}
-    	
+
 }
 
 
