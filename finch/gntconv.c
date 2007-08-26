@@ -882,6 +882,23 @@ finch_chat_update_user(PurpleConversation *conv, const char *user)
 	gnt_tree_change_text(GNT_TREE(ggc->u.chat->userlist), (gpointer)user, 0, chat_flag_text(cb->flags));
 }
 
+static void
+finch_conv_present(PurpleConversation *conv)
+{
+	FinchConv *fc = FINCH_CONV(conv);
+	if (fc && fc->window)
+		return gnt_window_present(fc->window);
+}
+
+static gboolean
+finch_conv_has_focus(PurpleConversation *conv)
+{
+	FinchConv *fc = FINCH_CONV(conv);
+	if (fc && fc->window)
+		return gnt_widget_has_focus(fc->window);
+	return FALSE;
+}
+
 static PurpleConversationUiOps conv_ui_ops = 
 {
 	finch_create_conversation,
@@ -893,8 +910,8 @@ static PurpleConversationUiOps conv_ui_ops =
 	finch_chat_rename_user,
 	finch_chat_remove_users,
 	finch_chat_update_user,
-	NULL, /* present */
-	NULL, /* has_focus */
+	finch_conv_present, /* present */
+	finch_conv_has_focus, /* has_focus */
 	NULL, /* custom_smiley_add */
 	NULL, /* custom_smiley_write */
 	NULL, /* custom_smiley_close */
