@@ -7,7 +7,8 @@ SOURCES = myspace.c \
 	  message.c \
 	  message.h \
 	  zap.c \
-	  session.h
+	  session.c \
+	  session.h \
 
 AM_CFLAGS = $(st)
 

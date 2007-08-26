@@ -17,6 +17,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifndef _MYSPACE_SESSION_H
+#define _MYSPACE_SESSION_H
+
 /* Random number in every MsimSession, to ensure it is valid. */
 #define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
 
@@ -47,4 +50,4 @@ typedef struct _MsimSession
 /* Check if an MsimSession is valid */
 #define MSIM_SESSION_VALID(s) (session != NULL && session->magic == MSIM_SESSION_STRUCT_MAGIC)
 
-
+#endif /* !_MYSPACE_SESSION_H */
