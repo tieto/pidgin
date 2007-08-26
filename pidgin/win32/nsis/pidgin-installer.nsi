@@ -554,6 +554,10 @@ SectionGroup /e $(URI_HANDLERS_SECTION_TITLE) SecURIHandlers
     Push "msnim"
     Call RegisterURIHandler
   SectionEnd
+  Section /o "myim:" SecURI_MYIM
+    Push "myim"
+    Call RegisterURIHandler
+  SectionEnd
   Section /o "ymsgr:" SecURI_YMSGR
     Push "ymsgr"
     Call RegisterURIHandler
