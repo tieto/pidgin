@@ -1458,6 +1458,10 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 	 * address and not username. Will be freed in msim_session_destroy(). */
 	session->username = msim_msg_get_string(msg, "uniquenick");
 
+	/* If a local alias wasn't set, set it to user's username. */
+	if (!session->account->alias || !strlen(session->account->alias))
+		session->account->alias = session->username;
+
 	/* The session is now set up, ready to be connected. This emits the
 	 * signedOn signal, so clients can now do anything with msimprpl, and
 	 * we're ready for it (session key, userid, username all setup). */
@@ -3009,6 +3013,9 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 
 	/* Need a contact. */
 	g_return_val_if_fail(cid != 0, FALSE);
+
+	/* TODO: if auto=true, "Add all the people on this page to my IM List!", on
+	 * http://collect.myspace.com/index.cfm?fuseaction=im.friendslist. Don't need a cid. */
 
 	/* Convert numeric contact ID back to a string. Needed for looking up. Don't just
 	 * directly use cid directly from parameters, because it might not be numeric. 
