@@ -2712,7 +2712,8 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 				NULL, 0, NULL);
 			return;
 		}
-		
+	
+		/* TODO: use ETag for checksum */
 		previous_url = purple_buddy_icons_get_checksum_for_user(user->buddy);
 
 		/* Only download if URL changed */
@@ -3053,9 +3054,9 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 			break;
 
 		default:
-				purple_debug_info("msim", "msim_status for %s, unknown status code %d, treating as available\n",
+			purple_debug_info("msim", "msim_status for %s, unknown status code %d, treating as available\n",
 						username, status_code);
-				purple_status_code = PURPLE_STATUS_AVAILABLE;
+			purple_status_code = PURPLE_STATUS_AVAILABLE;
 	}
 
 	purple_prpl_got_user_status(session->account, username, purple_primitive_get_id_from_type(purple_status_code), NULL);
@@ -3074,6 +3075,14 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		msim_send_unofficial_client(session, username);
 	}
 #endif
+
+	if (status_code != MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN) {
+		/* Get information when they come online.
+		 * TODO: periodically refresh?
+		 */
+		purple_debug_info("msim_incoming_status", "%s came online, looking up\n", username);
+		msim_lookup_user(session, username, NULL, NULL);
+	}
 
 	g_free(username);
 	msim_msg_list_free(list);
@@ -3764,8 +3773,7 @@ msim_is_email(const gchar *user)
  */
 /* TODO: change to not use callbacks */
 static void 
-msim_lookup_user(MsimSession *session, const gchar *user, 
-		MSIM_USER_LOOKUP_CB cb, gpointer data)
+msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb, gpointer data)
 {
 	MsimMessage *body;
 	gchar *field_name;
@@ -3773,7 +3781,8 @@ msim_lookup_user(MsimSession *session, const gchar *user,
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 	g_return_if_fail(user != NULL);
-	g_return_if_fail(cb != NULL);
+	/* Callback can be null to not call anything, just lookup & store information. */
+	/*g_return_if_fail(cb != NULL);*/
 
 	purple_debug_info("msim", "msim_lookup_userid: "
 			"asynchronously looking up <%s>\n", user);
