@@ -1520,11 +1520,12 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 			(GSourceFunc)msim_check_alive, session);
 #endif
 
-	/* TODO: if (purple_account_get_check_mail(session->account)) */
-	purple_timeout_add(MSIM_MAIL_INTERVAL_CHECK, 
-			(GSourceFunc)msim_check_inbox, session);
+	if (purple_account_get_check_mail(session->account)) {
+		purple_timeout_add(MSIM_MAIL_INTERVAL_CHECK, 
+				(GSourceFunc)msim_check_inbox, session);
+		msim_check_inbox(session);
+	}
 
-	msim_check_inbox(session);
 
 	return TRUE;
 }
