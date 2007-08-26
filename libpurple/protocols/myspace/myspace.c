@@ -2995,11 +2995,15 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 	if (g_ascii_strcasecmp(proto, "myim"))
 		return FALSE;
 
-	uid_str = g_hash_table_lookup(params, "uID");
-	cid_str = g_hash_table_lookup(params, "cID");
+	/* Parameters are case-insensitive. */
+	uid_str = g_hash_table_lookup(params, "uid");
+	cid_str = g_hash_table_lookup(params, "cid");
 
 	uid = uid_str ? atol(uid_str) : 0;
 	cid = cid_str ? atol(cid_str) : 0;
+
+	/* Need a contact. */
+	g_return_val_if_fail(cid != 0, FALSE);
 
 	/* Find our account with specified user id, or use first connected account if uid=0. */
 	account = NULL;
@@ -3020,17 +3024,20 @@ msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
 		return FALSE;
 	}
 
+	/* TODO: msim_lookup_user() on cid, so can add by username? */
+
 	/* myim:sendIM?uID=USERID&cID=CONTACTID */
 	if (!g_ascii_strcasecmp(cmd, "sendIM")) {
 		PurpleConversation *conv;
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, cid_str, account);
-		if (!conv) 
+		if (!conv)  {
+			purple_debug_info("msim_uri_handler", "creating new conversation for %s\n", cid_str);
 			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, cid_str);
-		purple_conversation_present(conv);
+		}
 
-		/* TODO: where to get the message? or is there any? */
-		purple_conv_send_confirm(conv, "test");
+		/* Just open the window so the user can send an IM. */
+		purple_conversation_present(conv);
 
 	/* myim:addContact?uID=USERID&cID=CONTACTID */
 	} else if (!g_ascii_strcasecmp(cmd, "addContact")) {
