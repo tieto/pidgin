@@ -49,6 +49,8 @@
 
 /* MySpaceIM includes */
 #include "message.h"
+#include "session.h"
+#include "zap.h"
 
 /* Conditional compilation options */
 /* Send third-party client version? (Recognized by us and Miranda's plugin) */
@@ -172,42 +174,12 @@
 #define MSIM_DEFAULT_DPI                96
 
 
-/* Random number in every MsimSession, to ensure it is valid. */
-#define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
-
 /* Inbox status bitfield values for MsimSession.inbox_status */
 #define MSIM_INBOX_MAIL                 (1 << 0)
 #define MSIM_INBOX_BLOG_COMMENT         (1 << 1)
 #define MSIM_INBOX_PROFILE_COMMENT      (1 << 2)
 #define MSIM_INBOX_FRIEND_REQUEST       (1 << 3)
 #define MSIM_INBOX_PICTURE_COMMENT      (1 << 4)
-
-/* Everything needed to keep track of a session (proto_data field in PurpleConnection) */
-typedef struct _MsimSession
-{
-	guint magic;                        /**< MSIM_SESSION_STRUCT_MAGIC */
-	PurpleAccount *account;
-	PurpleConnection *gc;
-	guint sesskey;                      /**< Session key from server */
-	guint userid;                       /**< This user's numeric user ID */
-	gchar *username;                    /**< This user's unique username */
-	gint fd;                            /**< File descriptor to/from server */
-
-	/* TODO: Remove. */
-	GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */
-	GHashTable *user_lookup_cb_data;    /**< Username -> userid lookup callback data */
-
-	MsimMessage *server_info;           /**< Parameters from server */
-
-	gchar *rxbuf;                       /**< Receive buffer */
-	guint rxoff;                        /**< Receive buffer offset */
-	guint next_rid;                     /**< Next request/response ID */
-	time_t last_comm;                   /**< Time received last communication */
-	guint inbox_status;                 /**< Bit field of inbox notifications */
-} MsimSession;
-
-/* Check if an MsimSession is valid */
-#define MSIM_SESSION_VALID(s) (session != NULL && session->magic == MSIM_SESSION_STRUCT_MAGIC)
 
 /* Hold ephemeral information about buddies, for proto_data of PurpleBuddy. */
 /* GHashTable? */
@@ -298,6 +270,8 @@ void msim_test_all(void) __attribute__((__noreturn__));
 int msim_test_msg(void);
 int msim_test_escaping(void);
 #endif
+
+gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type);
 
 void init_plugin(PurplePlugin *plugin);
 
