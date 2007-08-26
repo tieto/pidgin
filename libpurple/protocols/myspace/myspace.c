@@ -2991,9 +2991,9 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 	 */
 	list = msim_msg_get_list(msg, "msg");
 
-	status_code = atoi(g_list_nth_data(list, MSIM_STATUS_ORDINAL_ONLINE));
+	status_code = msim_msg_get_integer_from_element(g_list_nth_data(list, MSIM_STATUS_ORDINAL_ONLINE));
 	purple_debug_info("msim", "msim_status: %s's status code = %d\n", username, status_code);
-	status_headline = g_list_nth_data(list, MSIM_STATUS_ORDINAL_HEADLINE);
+	status_headline = msim_msg_get_string_from_element(g_list_nth_data(list, MSIM_STATUS_ORDINAL_HEADLINE));
 
 	blist = purple_get_blist();
 
@@ -3017,7 +3017,8 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		purple_debug_info("msim", "msim_status: found buddy %s\n", username);
 	}
 
-	user->headline = g_strdup(status_headline);
+	/* don't copy; let the MsimUser own the headline, memory-wise */
+	user->headline = status_headline;
   
 	/* Set user status */
 	switch (status_code) {
