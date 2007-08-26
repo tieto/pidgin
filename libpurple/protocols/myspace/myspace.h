@@ -46,6 +46,7 @@
 #include "util.h"       /* for base64 */
 #include "debug.h"      /* for purple_debug_info */
 #include "xmlnode.h"
+#include "core.h"
 
 /* MySpaceIM includes */
 #include "persist.h"

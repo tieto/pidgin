@@ -1440,6 +1440,9 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 	 * some of the time, but can vary. This is our own user ID. */
 	session->userid = msim_msg_get_integer(msg, "userid");
 
+	/* Save uid to account so this account can be looked up by uid. */
+	purple_account_set_int(session->account, "uid", session->userid);
+
 	/* Not sure what profileid is used for. */
 	if (msim_msg_get_integer(msg, "profileid") != session->userid) {
 		msim_unrecognized(session, msg, 
@@ -1517,6 +1520,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 			(GSourceFunc)msim_check_alive, session);
 #endif
 
+	/* TODO: if (purple_account_get_check_mail(session->account)) */
 	purple_timeout_add(MSIM_MAIL_INTERVAL_CHECK, 
 			(GSourceFunc)msim_check_inbox, session);
 
@@ -2979,15 +2983,73 @@ msim_test_escaping(void)
 }
 #endif
 
+static gboolean
+msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
+{
+	PurpleAccount *account;
+	GList *l;
+	gchar *uid_str, *cid_str;
+	guint uid, cid;
+
+	if (g_ascii_strcasecmp(proto, "myim"))
+		return FALSE;
+
+	uid_str = g_hash_table_lookup(params, "uID");
+	cid_str = g_hash_table_lookup(params, "cID");
+
+	uid = uid_str ? atol(uid_str) : 0;
+	cid = cid_str ? atol(cid_str) : 0;
+
+	/* Find our account with specified user id, or use first connected account if uid=0. */
+	account = NULL;
+	l = purple_accounts_get_all();
+	while (l) {
+		if (purple_account_is_connected(l->data) &&
+			(uid == 0 || purple_account_get_int(l->data, "uid", 0) == uid)) {
+			account = l->data;
+			break;
+		}
+		l = l->next;
+	}
+
+	if (!account) {
+		purple_notify_error(NULL, _("myim URL handler"), 
+				_("No suitable MySpaceIM account could be found to open this myim URL."),
+				_("Enable the proper MySpaceIM account and try again."));
+		return FALSE;
+	}
+
+	/* myim:sendIM?uID=USERID&cID=CONTACTID */
+	if (!g_ascii_strcasecmp(cmd, "sendIM")) {
+		PurpleConversation *conv;
+
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, cid_str, account);
+		if (!conv) 
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, cid_str);
+		purple_conversation_present(conv);
+
+		/* TODO: where to get the message? or is there any? */
+		purple_conv_send_confirm(conv, "test");
+
+	/* myim:addContact?uID=USERID&cID=CONTACTID */
+	} else if (!g_ascii_strcasecmp(cmd, "addContact")) {
+		purple_blist_request_add_buddy(account, cid_str, _("Buddies"), NULL);
+	}
+
+	return FALSE;
+}
+
 /** Initialize plugin. */
 void 
 init_plugin(PurplePlugin *plugin) 
 {
-	PurpleAccountOption *option;
 #ifdef MSIM_SELF_TEST
 	msim_test_all();
 	exit(0);
 #endif /* MSIM_SELF_TEST */
+
+	PurpleAccountOption *option;
+	static gboolean initialized = FALSE;
 
 
 	/* TODO: default to automatically try different ports. Make the user be
@@ -3019,6 +3081,14 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #endif
 
+	/* Code below only runs once. Based on oscar.c's oscar_init(). */
+	if (initialized) 
+		return;
+
+	initialized = TRUE;
+
+	purple_signal_connect(purple_get_core(), "uri-handler", &initialized,
+			PURPLE_CALLBACK(msim_uri_handler), NULL);
 }
 
 PURPLE_INIT_PLUGIN(myspace, init_plugin, info);
