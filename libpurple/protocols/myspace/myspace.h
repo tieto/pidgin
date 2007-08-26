@@ -51,6 +51,7 @@
 #include "message.h"
 #include "session.h"
 #include "zap.h"
+#include "markup.h"
 
 /* Conditional compilation options */
 /* Send third-party client version? (Recognized by us and Miranda's plugin) */
