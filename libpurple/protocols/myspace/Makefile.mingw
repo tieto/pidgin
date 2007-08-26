@@ -37,7 +37,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##
 ##  SOURCES, OBJECTS
 ##
-C_SRC =			myspace.c message.c
+C_SRC =			myspace.c message.c zap.c session.c markup.c user.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 

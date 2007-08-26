@@ -242,6 +242,75 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 	}
 }
 
+/** Indicate that an attention message was sent or received. */
+void
+serv_got_attention(PurpleConnection *gc, const char *who, PurpleAttentionType *attn, gboolean incoming)
+{
+	PurpleConversation *conv;
+	PurpleMessageFlags flags;
+	gchar *description;
+	int plugin_return;
+
+
+	/* For incoming messages, block the attention message if requested (privacy) */
+	if (incoming) {
+		gchar *who_copy;
+
+		if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->set_permit_deny == NULL)
+			if (!purple_privacy_check(gc->account, who))
+				return;
+
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, gc->account);
+
+		who_copy = g_strdup(who);
+
+		plugin_return = GPOINTER_TO_INT(
+			purple_signal_emit_return_1(purple_conversations_get_handle(),
+									  "receiving-im-msg", gc->account,
+									  &who_copy, &attn, conv));
+
+		if (!attn || !who_copy || plugin_return) {
+			g_free(who_copy);
+			return;
+		}
+
+		purple_signal_emit(purple_conversations_get_handle(), "received-im-msg", gc->account,
+						 who, attn, conv);
+	}
+
+	/* The attention message was allowed. Create a string representing the message. */
+	flags = PURPLE_MESSAGE_SYSTEM;
+
+	/* TODO: if (attn->icon_name) is non-null, use it to lookup an emoticon and display
+	 * it next to the attention command. And if it is null, display a generic icon. */
+
+	if (incoming) {
+		if (attn->incoming_description) {
+			description = g_strdup_printf(_("Attention! You have been %s."), attn->incoming_description);
+		} else {
+			description = g_strdup(_("Attention!"));
+		}
+		flags |= PURPLE_MESSAGE_RECV;
+	} else {
+		if (attn->outgoing_description) {
+			description = g_strdup_printf(_("Attention! %s %s."), attn->outgoing_description, who);
+		} else {
+			description = g_strdup(_("Attention!"));
+		}
+		flags |= PURPLE_MESSAGE_SEND;
+	}
+
+	/* Display it in the conversation window to the user. */
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, gc->account);
+	if (!conv)
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, gc->account, who);
+
+	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, description, flags, time(NULL));
+
+	g_free(description);
+}
+
+
 /*
  * Move a buddy from one group to another on server.
  *

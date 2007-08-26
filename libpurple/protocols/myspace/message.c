@@ -250,13 +250,21 @@ msim_msg_list_copy(GList *old)
 	return new_list;
 }
 
-/** Free a GList * of gchar * strings. */
+/** Free a GList * of MsimMessageElement *'s. */
 void
 msim_msg_list_free(GList *l)
 {
 
 	for (; l != NULL; l = g_list_next(l)) {
-		g_free((gchar *)(l->data));
+		MsimMessageElement *elem;
+
+		elem = (MsimMessageElement *)l->data;
+
+		/* Note that name is almost never dynamically allocated elsewhere;
+		 * it is usually a static string, but not in lists. So cast it. */
+		g_free((gchar *)elem->name);
+		g_free(elem->data);
+		g_free(elem);
 	}
 	g_list_free(l);
 }
@@ -275,7 +283,19 @@ msim_msg_list_parse(const gchar *raw)
 	/* TODO: escape/unescape /3 <-> | within list elements */
 	
 	for (i = 0; array[i] != NULL; ++i) {
-		list = g_list_append(list, g_strdup(array[i]));
+		MsimMessageElement *elem;
+
+		/* Freed in msim_msg_list_free() */
+		elem = g_new0(MsimMessageElement, 1);
+
+		/* Give the element a name for debugging purposes.
+		 * Not supposed to be looked up by this name; instead,
+		 * lookup the elements by indexing the array. */
+		elem->name = g_strdup_printf("(list item #%d)", i);
+		elem->type = MSIM_TYPE_RAW;
+		elem->data = g_strdup(array[i]);
+
+		list = g_list_append(list, elem);
 	}
 
 	g_strfreev(array);

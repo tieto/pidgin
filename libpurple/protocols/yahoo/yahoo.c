@@ -238,14 +238,18 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case 8: /* how many online buddies we have */
 			break;
 		case 7: /* the current buddy */
-			if (name && f) /* update the previous buddy before changing the variables */
-				yahoo_update_status(gc, name, f);
-			name = pair->value;
-			if (name && g_utf8_validate(name, -1, NULL))
+			/* update the previous buddy before changing the variables */
+			if (f) {
+				if (message)
+					yahoo_friend_set_status_message(f, yahoo_string_decode(gc, message, unicode));
+				if (name)
+					yahoo_update_status(gc, name, f);
+			}
+			name = message = NULL;
+			f = NULL;
+			if (pair->value && g_utf8_validate(pair->value, -1, NULL)) {
+				name = pair->value;
 				f = yahoo_friend_find_or_new(gc, name);
-			else {
-				f = NULL;
-				name = NULL;
 			}
 			break;
 		case 10: /* state */
@@ -779,7 +783,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt)
 		purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
 		g_free(buf);
 	}
-    	
+
 }
 
 
@@ -2920,7 +2924,7 @@ static void yahoo_login(PurpleAccount *account) {
 	purple_connection_set_display_name(gc, purple_account_get_username(account));
 
 	yd->fd = -1;
-	yd->txhandler = -1;
+	yd->txhandler = 0;
 	/* TODO: Is there a good grow size for the buffer? */
 	yd->txbuf = purple_circ_buffer_new(0);
 	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);

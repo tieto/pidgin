@@ -1,5 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.1.2:
+	* New protocol plugin: MySpaceIM (Jeff Connelly, Google Summer of
+	  Code)
+
+	Finch:
+	* Per-conversation mute and logging options (accessible from the menu)
+
 version 2.1.1 (08/20/2007):
 	Yahoo:
 	* Added an account action to open your inbox in the yahoo prpl.

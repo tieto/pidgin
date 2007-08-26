@@ -200,7 +200,7 @@ update_location(GntFileSel *sel)
 	const char *tmp;
 	tmp = sel->suggest ? sel->suggest :
 		(const char*)gnt_tree_get_selection_data(sel->dirsonly ? GNT_TREE(sel->dirs) : GNT_TREE(sel->files));
-	old = g_strdup_printf("%s%s%s", sel->current, sel->current[1] ? G_DIR_SEPARATOR_S : "", tmp ? tmp : "");
+	old = g_strdup_printf("%s%s%s", SAFE(sel->current), SAFE(sel->current)[1] ? G_DIR_SEPARATOR_S : "", tmp ? tmp : "");
 	gnt_entry_set_text(GNT_ENTRY(sel->location), old);
 	g_free(old);
 }

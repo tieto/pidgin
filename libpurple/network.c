@@ -436,7 +436,7 @@ purple_network_get_port_from_fd(int fd)
 static gint
 wpurple_get_connected_network_count(void)
 {
-	guint net_cnt = 0;
+	gint net_cnt = 0;
 
 	WSAQUERYSET qs;
 	HANDLE h;
@@ -521,7 +521,7 @@ static gpointer wpurple_network_change_thread(gpointer data)
 		HANDLE hLookup, DWORD dwControlCode, LPVOID lpvInBuffer,
 		DWORD cbInBuffer, LPVOID lpvOutBuffer, DWORD cbOutBuffer,
 		LPDWORD lpcbBytesReturned, LPWSACOMPLETION lpCompletion) = NULL;
- 
+
 	if (!(MyWSANSPIoctl = (void*) wpurple_find_and_loadproc("ws2_32.dll", "WSANSPIoctl"))) {
 		g_thread_exit(NULL);
 		return NULL;
@@ -636,7 +636,7 @@ void *
 purple_network_get_handle(void)
 {
 	static int handle;
-	
+
 	return &handle;
 }
 
@@ -675,7 +675,7 @@ purple_network_init(void)
 
 	purple_signal_register(purple_network_get_handle(), "network-configuration-changed",
 						   purple_marshal_VOID, NULL, 0);
-	
+
 	purple_pmp_init();
 	purple_upnp_init();
 }

@@ -586,7 +586,7 @@ int purple_build_dir(const char *path, int mode);
  * @return TRUE if the file was written successfully.  FALSE otherwise.
  */
 gboolean purple_util_write_data_to_file(const char *filename, const char *data,
-									  size_t size);
+									  gssize size);
 
 /**
  * Read the contents of a given file and parse the results into an
@@ -1113,7 +1113,7 @@ void purple_print_utf8_to_console(FILE *filestream, char *message);
  * @return TRUE if it starts with "/me ", and it has been removed, otherwise
  *         FALSE
  */
-gboolean purple_message_meify(char *message, size_t len);
+gboolean purple_message_meify(char *message, gssize len);
 
 /**
  * Removes the underscore characters from a string used identify the mnemonic
