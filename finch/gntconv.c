@@ -347,6 +347,46 @@ toggle_timestamps_cb(GntMenuItem *item, gpointer ggconv)
 }
 
 static void
+toggle_logging_cb(GntMenuItem *item, gpointer ggconv)
+{
+	FinchConv *fc = ggconv;
+	PurpleConversation *conv = fc->active_conv;
+	gboolean logging = gnt_menuitem_check_get_checked(GNT_MENU_ITEM_CHECK(item));
+	GList *iter;
+
+	if (logging == purple_conversation_is_logging(conv))
+		return;
+
+	/* Xerox */
+	if (logging) {
+		/* Enable logging first so the message below can be logged. */
+		purple_conversation_set_logging(conv, TRUE);
+
+		purple_conversation_write(conv, NULL,
+				_("Logging started. Future messages in this conversation will be logged."),
+				conv->logs ? (PURPLE_MESSAGE_SYSTEM) :
+				(PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG),
+				time(NULL));
+	} else {
+		purple_conversation_write(conv, NULL,
+				_("Logging stopped. Future messages in this conversation will not be logged."),
+				conv->logs ? (PURPLE_MESSAGE_SYSTEM) :
+				(PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG),
+				time(NULL));
+
+		/* Disable the logging second, so that the above message can be logged. */
+		purple_conversation_set_logging(conv, FALSE);
+	}
+
+	/* Each conversation with the same person will have the same logging setting */
+	for (iter = fc->list; iter; iter = iter->next) {
+		if (iter->data == conv)
+			continue;
+		purple_conversation_set_logging(iter->data, logging);
+	}
+}
+
+static void
 send_to_cb(GntMenuItem *m, gpointer n)
 {
 	PurpleAccount *account = g_object_get_data(G_OBJECT(m), "purple_account");
@@ -452,6 +492,12 @@ gg_create_menu(FinchConv *ggc)
 
 		generate_send_to_menu(ggc);
 	}
+
+	item = gnt_menuitem_check_new(_("Enable Logging"));
+	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
+			purple_conversation_is_logging(ggc->active_conv));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(item, toggle_logging_cb, ggc);
 }
 
 static void
@@ -496,6 +542,12 @@ finch_create_conversation(PurpleConversation *conv)
 		ggc = cc->ui_data;
 	else
 		ggc = g_new0(FinchConv, 1);
+
+	/* Each conversation with the same person will have the same logging setting */
+	if (ggc->list) {
+		purple_conversation_set_logging(conv,
+				purple_conversation_is_logging(ggc->list->data));
+	}
 
 	ggc->list = g_list_prepend(ggc->list, conv);
 	ggc->active_conv = conv;
