@@ -2377,42 +2377,27 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 	guint i, n;
 	const gchar *froms[5], *tos[5], *urls[5], *subjects[5];
 
-	/* Three parallel arrays for each new inbox message type. */
-	static const gchar *inbox_keys[] = 
-	{ 
-		"Mail", 
-		"BlogComment", 
-		"ProfileComment", 
-		"FriendRequest", 
-		"PictureComment" 
-	};
-
-	static const guint inbox_bits[] = 
-	{ 
-		MSIM_INBOX_MAIL, 
-		MSIM_INBOX_BLOG_COMMENT,
-		MSIM_INBOX_PROFILE_COMMENT,
-		MSIM_INBOX_FRIEND_REQUEST,
-		MSIM_INBOX_PICTURE_COMMENT
-	};
-
-	static const gchar *inbox_urls[] =
+	/* Information for each new inbox message type. */
+	static struct 
 	{
-		"http://messaging.myspace.com/index.cfm?fuseaction=mail.inbox",
-		"http://blog.myspace.com/index.cfm?fuseaction=blog",
-		"http://home.myspace.com/index.cfm?fuseaction=user",
-		"http://messaging.myspace.com/index.cfm?fuseaction=mail.friendRequests",
-		"http://home.myspace.com/index.cfm?fuseaction=user"
+		const gchar *key;
+		guint bit;
+		const gchar *url;
+		const gchar *text;
+	} message_types[] = {
+		{ "Mail", MSIM_INBOX_MAIL, "http://messaging.myspace.com/index.cfm?fuseaction=mail.inbox", NULL },
+		{ "BlogComment", MSIM_INBOX_BLOG_COMMENT, "http://blog.myspace.com/index.cfm?fuseaction=blog", NULL },
+		{ "ProfileComment", MSIM_INBOX_PROFILE_COMMENT, "http://home.myspace.com/index.cfm?fuseaction=user", NULL },
+		{ "FriendRequest", MSIM_INBOX_FRIEND_REQUEST, "http://messaging.myspace.com/index.cfm?fuseaction=mail.friendRequests", NULL },
+		{ "PictureComment", MSIM_INBOX_PICTURE_COMMENT, "http://home.myspace.com/index.cfm?fuseaction=user", NULL }
 	};
-
-	static const gchar *inbox_text[5];
 
 	/* Can't write _()'d strings in array initializers. Workaround. */
-	inbox_text[0] = _("New mail messages");
-	inbox_text[1] = _("New blog comments");
-	inbox_text[2] = _("New profile comments");
-	inbox_text[3] = _("New friend requests!");
-	inbox_text[4] = _("New picture comments");
+	message_types[0].text = _("New mail messages");
+	message_types[1].text = _("New blog comments");
+	message_types[2].text = _("New profile comments");
+	message_types[3].text = _("New friend requests!");
+	message_types[4].text = _("New picture comments");
 
 	g_return_if_fail(reply != NULL);
 
@@ -2427,12 +2412,12 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 
 	n = 0;
 
-	for (i = 0; i < sizeof(inbox_keys) / sizeof(inbox_keys[0]); ++i) {
+	for (i = 0; i < sizeof(message_types) / sizeof(message_types[0]); ++i) {
 		const gchar *key;
 		guint bit;
 		
-		key = inbox_keys[i];
-		bit = inbox_bits[i];
+		key = message_types[i].key;
+		bit = message_types[i].bit;
 
 		if (msim_msg_get(body, key)) {
 			/* Notify only on when _changes_ from no mail -> has mail
@@ -2441,13 +2426,13 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 				purple_debug_info("msim", "msim_check_inbox_cb: got %s, at %d\n",
 						key ? key : "(NULL)", n);
 
-				subjects[n] = inbox_text[i];
+				subjects[n] = message_types[i].text;
 				froms[n] = _("MySpace");
 				tos[n] = session->username;
 				/* TODO: append token, web challenge, so automatically logs in.
 				 * Would also need to free strings because they won't be static
 				 */
-				urls[n] = inbox_urls[i];
+				urls[n] = message_types[i].url;
 
 				++n;
 			} else {
