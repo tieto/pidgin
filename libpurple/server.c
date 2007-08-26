@@ -266,16 +266,19 @@ serv_got_attention(PurpleConnection *gc, const char *who, PurpleAttentionType *a
 
 		plugin_return = GPOINTER_TO_INT(
 			purple_signal_emit_return_1(purple_conversations_get_handle(),
-									  "receiving-im-msg", gc->account,
-									  &who_copy, &attn, conv));
+									  "receiving-im-attention", gc->account,
+									  &who_copy, attn->icon_name, attn->name, 
+									  attn->incoming_description,
+									  attn->outgoing_description, conv));
 
 		if (!attn || !who_copy || plugin_return) {
 			g_free(who_copy);
 			return;
 		}
 
-		purple_signal_emit(purple_conversations_get_handle(), "received-im-msg", gc->account,
-						 who, attn, conv);
+		purple_signal_emit(purple_conversations_get_handle(), "received-im-attention", gc->account,
+						 who, attn->icon_name, attn->name,
+						 attn->incoming_description, attn->outgoing_description, conv);
 	}
 
 	/* The attention message was allowed. Create a string representing the message. */

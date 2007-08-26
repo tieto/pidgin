@@ -2123,6 +2123,33 @@ purple_conversations_init(void)
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_UINT));
 
+	purple_signal_register(handle, "receiving-im-attention",
+						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER,
+						 purple_value_new(PURPLE_TYPE_BOOLEAN), 7,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						 purple_value_new_outgoing(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CONVERSATION));
+
+	purple_signal_register(handle, "received-im-attention",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT,
+						 NULL, 7,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CONVERSATION));
+
+
 	purple_signal_register(handle, "writing-chat-msg",
 						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT,
 						 purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
