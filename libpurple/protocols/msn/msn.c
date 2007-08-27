@@ -100,25 +100,62 @@ msn_normalize(const PurpleAccount *account, const char *str)
 	return buf;
 }
 
-static PurpleCmdRet
-msn_cmd_nudge(PurpleConversation *conv, const gchar *cmd, gchar **args, gchar **error, void *data)
+static gboolean
+msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 {
-	PurpleAccount *account = purple_conversation_get_account(conv);
-	PurpleConnection *gc = purple_account_get_connection(account);
 	MsnMessage *msg;
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
 
 	msg = msn_message_new_nudge();
 	session = gc->proto_data;
-	swboard = msn_session_get_swboard(session, purple_conversation_get_name(conv), MSN_SB_FLAG_IM);
+	swboard = msn_session_get_swboard(session, username, MSN_SB_FLAG_IM);
 
 	if (swboard == NULL)
-		return PURPLE_CMD_RET_FAILED;
+		return FALSE;
 
 	msn_switchboard_send_msg(swboard, msg, TRUE);
 
+	return TRUE;
+}
+
+#ifdef MSN_USE_ATTENTION_API
+static GList *
+msn_attention_types(PurpleAccount *account)
+{
+	PurpleAttentionType *attn;
+	static GList *list = NULL;
+
+	if (!list) {
+		attn = g_new0(PurpleAttentionType, 1);
+		attn->name = _("nudge");
+		attn->incoming_description = _("nudged");
+		attn->outgoing_description = _("Nudging");
+		list = g_list_append(list, attn);
+	}
+
+	return list;
+}
+#endif
+
+
+static PurpleCmdRet
+msn_cmd_nudge(PurpleConversation *conv, const gchar *cmd, gchar **args, gchar **error, void *data)
+{
+	PurpleAccount *account = purple_conversation_get_account(conv);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	const gchar *username;
+
+	username = purple_conversation_get_name(conv);
+
+#ifdef MSN_USE_ATTENTION_API
+	serv_send_attention(gc, username, MSN_NUDGE);
+#else
+	if (!msn_send_attention(gc, username, MSN_NUDGE))
+		return PURPLE_CMD_RET_FAILED;
+
 	purple_conversation_write(conv, NULL, _("You have just sent a Nudge!"), PURPLE_MESSAGE_SYSTEM, time(NULL));
+#endif
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -2102,9 +2139,14 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* send_raw */
 	NULL,					/* roomlist_room_serialize */
 
+#ifdef MSN_USE_ATTENTION_API
+	msn_send_attention,                     /* send_attention */
+	msn_attention_types,                    /* attention_types */
+#else
 	/* padding */
 	NULL,
 	NULL,
+#endif
 	NULL,
 	NULL
 };
