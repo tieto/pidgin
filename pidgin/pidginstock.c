@@ -396,7 +396,7 @@ pidgin_stock_init(void)
 
 	/* register custom icon sizes */
 	
-	microscopic =  gtk_icon_size_register("pidgin-icon-size-tango-microscopic", 11, 11);
+	microscopic =  gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC, 11, 11);
 	extra_small =  gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL, 16, 16);
 	small =        gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_SMALL, 22, 22);
 	medium =       gtk_icon_size_register(PIDGIN_ICON_SIZE_TANGO_MEDIUM, 32, 32);

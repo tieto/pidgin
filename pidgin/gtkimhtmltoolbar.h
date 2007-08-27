@@ -74,6 +74,8 @@ struct _GtkIMHtmlToolbar {
 	GtkWidget *image_dialog;
 
 	char *sml;
+	GtkWidget *strikethrough;
+	GtkWidget *insert_hr;
 };
 
 struct _GtkIMHtmlToolbarClass {
