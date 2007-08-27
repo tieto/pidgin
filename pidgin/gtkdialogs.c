@@ -96,6 +96,7 @@ static struct developer developers[] = {
 static struct developer patch_writers[] = {
 	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
+        {"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{NULL, NULL, NULL}
 };
 
