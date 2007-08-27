@@ -1147,19 +1147,12 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 void
 pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
 {
-	AtkObject *acc, *label;
-	AtkObject *rel_obj[1];
-	AtkRelationSet *set;
-	AtkRelation *relation;
+	AtkObject *acc;
 	const gchar *label_text;
 	const gchar *existing_name;
 
 	acc = gtk_widget_get_accessible (w);
-	label = gtk_widget_get_accessible (l);
 
-	/* Make sure mnemonics work */
-        gtk_label_set_mnemonic_widget(GTK_LABEL(l), w);
-	
 	/* If this object has no name, set it's name with the label text */
 	existing_name = atk_object_get_name (acc);
 	if (!existing_name) {
@@ -1168,6 +1161,23 @@ pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
 			atk_object_set_name (acc, label_text);
 	}
 
+	pidgin_set_accessible_relations(w, l);
+}
+
+void
+pidgin_set_accessible_relations (GtkWidget *w, GtkWidget *l)
+{
+	AtkObject *acc, *label;
+	AtkObject *rel_obj[1];
+	AtkRelationSet *set;
+	AtkRelation *relation;
+
+	acc = gtk_widget_get_accessible (w);
+	label = gtk_widget_get_accessible (l);
+
+	/* Make sure mnemonics work */
+        gtk_label_set_mnemonic_widget(GTK_LABEL(l), w);
+	
 	/* Create the labeled-by relation */
 	set = atk_object_ref_relation_set (acc);
 	rel_obj[0] = label;

@@ -985,11 +985,7 @@ gnt_tree_class_init(GntTreeClass *klass)
 			g_param_spec_int("columns", "Columns",
 				"Number of columns in the tree.",
 				1, G_MAXINT, 1,
-#if GLIB_CHECK_VERSION(2,8,0)
 				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
-#else
-				G_PARAM_READWRITE|G_PARAM_PRIVATE
-#endif
 			)
 		);
 

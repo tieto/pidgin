@@ -1,6 +1,24 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-Version 2.1.1 (x/x/x):
+Version 2.2.0 (??/??/????):
+	Pidgin:
+		Added:
+		* pidgin_set_accessible_relations, sets up label-for and labelled-by
+		  ATK relations (broken out from pidgin_set_accessible_label)
+
+	Finch:
+		Added:
+		* finch_sound_is_enabled
+		* The reserved field in the FinchConv is now used to store information
+		  about the conversation (using FinchConversationFlag)
+
+		libgnt:
+		* gnt_slider_set_small_step, gnt_slider_set_large_step to allow more
+		  fine tuned updates of a GntSlider
+		* gnt_util_parse_xhtml_to_textview to parse XHTML strings in a
+		  GntTextView (this works only if libxml2 is available)
+
+Version 2.1.1 (08/20/2007):
 	libpurple:
 		Changed:
 		* PurpleAccountUiOps.request_authorize's authorize_cb and

@@ -44,6 +44,12 @@ def extendlist(list, length, fill):
     else:
         return list
 
+def convert(value):
+    try:
+        return int(value)
+    except:
+        return value
+
 def findaccount(protocolname, accountname=""):
     # prefer connected accounts
     account = cpurple.PurpleAccountsFindConnected(accountname, protocolname)
@@ -84,6 +90,32 @@ def addbuddy(account, screenname, group="", alias=""):
     cpurple.PurpleBlistRequestAddBuddy(account, screenname, group, alias)
 
 
+def aim(uri):
+    protocol = "prpl-aim"
+    match = re.match(r"^aim:([^?]*)(\?(.*))", uri)
+    if not match:
+        print "Invalid aim URI: %s" % uri
+        return
+
+    command = urllib.unquote_plus(match.group(1))
+    paramstring = match.group(3)
+    params = {}
+    if paramstring:
+        for param in paramstring.split("&"):
+            key, value = extendlist(param.split("=", 1), 2, "")
+            params[key] = urllib.unquote_plus(value)
+    accountname = params.get("account", "")
+    screenname = params.get("screenname", "")
+
+    account = findaccount(protocol, accountname)
+
+    if command.lower() == "goim":
+        goim(account, screenname, params.get("message"))
+    elif command.lower() == "gochat":
+        gochat(account, params)
+    elif command.lower() == "addbuddy":
+        addbuddy(account, screenname, params.get("group", ""))
+
 def gg(uri):
     protocol = "prpl-gg"
     match = re.match(r"^gg:(.*)", uri)
@@ -94,6 +126,32 @@ def gg(uri):
     screenname = urllib.unquote_plus(match.group(1))
     account = findaccount(protocol)
     goim(account, screenname)
+
+def icq(uri):
+    protocol = "prpl-icq"
+    match = re.match(r"^icq:([^?]*)(\?(.*))", uri)
+    if not match:
+        print "Invalid icq URI: %s" % uri
+        return
+
+    command = urllib.unquote_plus(match.group(1))
+    paramstring = match.group(3)
+    params = {}
+    if paramstring:
+        for param in paramstring.split("&"):
+            key, value = extendlist(param.split("=", 1), 2, "")
+            params[key] = urllib.unquote_plus(value)
+    accountname = params.get("account", "")
+    screenname = params.get("screenname", "")
+
+    account = findaccount(protocol, accountname)
+
+    if command.lower() == "goim":
+        goim(account, screenname, params.get("message"))
+    elif command.lower() == "gochat":
+        gochat(account, params)
+    elif command.lower() == "addbuddy":
+        addbuddy(account, screenname, params.get("group", ""))
 
 def irc(uri):
     protocol = "prpl-irc"
@@ -130,6 +188,34 @@ def irc(uri):
             if channel[0] != "#":
                 channel = "#" + channel
             gochat(account, {"server": server, "channel": channel, "password": params.get("key", "")}, params.get("msg"))
+
+def msnim(uri):
+    protocol = "prpl-msn"
+    match = re.match(r"^msnim:([^?]*)(\?(.*))", uri)
+    if not match:
+        print "Invalid msnim URI: %s" % uri
+        return
+
+    command = urllib.unquote_plus(match.group(1))
+    paramstring = match.group(3)
+    params = {}
+    if paramstring:
+        for param in paramstring.split("&"):
+            key, value = extendlist(param.split("=", 1), 2, "")
+            params[key] = urllib.unquote_plus(value)
+    screenname = params.get("contact", "")
+
+    account = findaccount(protocol)
+
+    if command.lower() == "chat":
+        goim(account, screenname)
+    elif command.lower() == "add":
+        addbuddy(account, screenname)
+
+def myim(uri):
+	protocol = "prpl-myspace"
+	print "TODO: send uri: ", uri
+	assert False, "Not implemented"
 
 def sip(uri):
     protocol = "prpl-simple"
@@ -182,6 +268,32 @@ def xmpp(uri):
     else:
         goim(account, screenname)
 
+def ymsgr(uri):
+    protocol = "prpl-yahoo"
+    match = re.match(r"^ymsgr:([^?]*)(\?([^&]*)(&(.*))?)", uri)
+    if not match:
+        print "Invalid ymsgr URI: %s" % uri
+        return
+
+    command = urllib.unquote_plus(match.group(1))
+    screenname = urllib.unquote_plus(match.group(3))
+    paramstring = match.group(5)
+    params = {}
+    if paramstring:
+        for param in paramstring.split("&"):
+            key, value = extendlist(param.split("=", 1), 2, "")
+            params[key] = urllib.unquote_plus(value)
+
+    account = findaccount(protocol)
+
+    if command.lower() == "sendim":
+        goim(account, screenname, params.get("m"))
+    elif command.lower() == "chat":
+        gochat(account, {"room": screenname})
+    elif command.lower() == "addfriend":
+        addbuddy(account, screenname)
+
+
 def main(argv=sys.argv):
     if len(argv) != 2:
         print "Usage: %s URI" % argv[0]
@@ -192,16 +304,26 @@ def main(argv=sys.argv):
     type = uri.split(":")[0]
 
     try:
-        if type == "gg":
+        if type == "aim":
+            aim(uri)
+        elif type == "gg":
             gg(uri)
+        elif type == "icq":
+            icq(uri)
         elif type == "irc":
             irc(uri)
+        elif type == "msnim":
+            msnim(uri)
+        elif type == "myim":
+            myim(uri)
         elif type == "sip":
             sip(uri)
         elif type == "xmpp":
             xmpp(uri)
+        elif type == "ymsgr":
+            ymsgr(uri)
         else:
-            cpurple.PurpleGotProtocolHandlerUri(uri)
+            print "Unknown protocol: %s" % type
     except dbus.dbus_bindings.DBusException:
         print "ERROR: Is there a libpurple-powered client (e.g. Pidgin or Finch) running?"
 

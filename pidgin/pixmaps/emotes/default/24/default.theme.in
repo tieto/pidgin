@@ -1,5 +1,5 @@
-Name=Default
-Description=Pidgin smileys
+_Name=Default
+_Description=Pidgin smileys
 Icon=wink.png
 Author=Hylke Bons
 
@@ -24,7 +24,7 @@ foot-in-mouth.png   :-!
 shout.png           >:o     >:O
 ! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)  :(|)
-
+! cyclops.png       O-) o-)
 
 # Following AIM 6.1
 [AIM]

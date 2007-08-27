@@ -193,6 +193,8 @@ finch_xfer_dialog_new(void)
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(finch_xfer_dialog_destroy), NULL);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 	gnt_box_set_title(GNT_BOX(window), _("File Transfers"));
+	gnt_box_set_fill(GNT_BOX(window), TRUE);
+	gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
 
 	xfer_dialog->tree = tree = gnt_tree_new_with_columns(NUM_COLUMNS);
 	gnt_tree_set_column_titles(GNT_TREE(tree), _("Progress"), _("Filename"), _("Size"), _("Speed"), _("Remaining"), _("Status"));
@@ -219,7 +221,7 @@ finch_xfer_dialog_new(void)
 					 G_CALLBACK(toggle_clear_finished_cb), NULL);
 	gnt_box_add_widget(GNT_BOX(window), checkbox);
 
-	bbox = gnt_hbox_new(TRUE);
+	bbox = gnt_hbox_new(FALSE);
 
 	xfer_dialog->remove_button = button = gnt_button_new(_("Remove"));
 	g_signal_connect(G_OBJECT(button), "activate",
@@ -425,8 +427,11 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	g_free(remaining_str);
 	g_free(kbsec);
 	if (purple_xfer_is_completed(xfer)) {
+		char *msg = g_strdup_printf(_("The file was saved as %s."), purple_xfer_get_local_filename(xfer));
 		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_STATUS, _("Finished"));
 		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_REMAINING, _("Finished"));
+		purple_xfer_conversation_write(xfer, msg, FALSE);
+		g_free(msg);
 	} else {
 		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_STATUS, _("Transferring"));
 	}

@@ -1,16 +1,31 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.1.1 (??/??/????):
+version 2.2.0:
+	Libpurple:
+	* New protocol plugin: MySpaceIM (Jeff Connelly, Google Summer of
+	  Code)
+
+	Pidgin:
+	* Insert Horizontal Rules and Strikethrough text from toolbar
+
+	Finch:
+	* Per-conversation mute and logging options (accessible from the menu)
+
+version 2.1.1 (08/20/2007):
 	Yahoo:
 	* Added an account action to open your inbox in the yahoo prpl.
 	* Added support for Unicode status messages in Yahoo.
 	* Server-stored aliases for Yahoo. (John Moody)
 	* Fixed support for Yahoo! doodling.
-	* Support for MSN Messenger contacts
+	* Limited support for MSN Messenger contacts
 	
 	Bonjour:
 	* Bonjour plugin uses native Avahi instead of Howl
 	* Bonjour plugin supports Buddy Icons
+
+	XMPP:
+	* Only report conversation close when 'send typing notifications'
+	  preference is turned on (Bob Rossi)
 
 	Pidgin:
 	* Show current outgoing conversation formatting on the font label on
@@ -22,6 +37,7 @@ version 2.1.1 (??/??/????):
 	* Moved "Reset Formatting" toolbar button to Font menu.
 	* Double click on the infopane to alias buddies and set topics
 	  on chats
+	* New smiley style
 
 	Finch:
 	* Sound support (Eric Polino)

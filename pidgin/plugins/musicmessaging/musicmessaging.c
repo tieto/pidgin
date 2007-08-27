@@ -71,10 +71,10 @@ static void session_end (MMConversation *mmconv);
 
 /* Globals */
 /* List of sessions */
-GList *conversations;
+static GList *conversations;
 
 /* Pointer to this plugin */
-PurplePlugin *plugin_pointer;
+static PurplePlugin *plugin_pointer;
 
 /* Define types needed for DBus */
 DBusGConnection *connection;
@@ -350,7 +350,16 @@ intercept_sent(PurpleAccount *account, const char *who, char **message, void* pD
 static gboolean
 intercept_received(PurpleAccount *account, char **sender, char **message, PurpleConversation *conv, int *flags)
 {
-	MMConversation *mmconv = mmconv_from_conv(conv);
+	MMConversation *mmconv;
+	
+	if (conv == NULL) {
+		/* XXX: This is just to avoid a crash (#2726).
+		 *      We may want to create the conversation instead of returning from here
+		 */
+		return FALSE;
+	}
+
+	mmconv = mmconv_from_conv(conv);
 	
 	purple_debug_misc("purple-musicmessaging", "Intercepted: %s\n", *message);
 	if (strstr(*message, MUSICMESSAGING_PREFIX))

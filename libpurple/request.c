@@ -1172,7 +1172,7 @@ purple_request_input(void *handle, const char *title, const char *primary,
 
 void *
 purple_request_choice(void *handle, const char *title, const char *primary,
-					const char *secondary, unsigned int default_value,
+					const char *secondary, int default_value,
 					const char *ok_text, GCallback ok_cb,
 					const char *cancel_text, GCallback cancel_cb,
 					PurpleAccount *account, const char *who, PurpleConversation *conv,
@@ -1197,7 +1197,7 @@ purple_request_choice(void *handle, const char *title, const char *primary,
 void *
 purple_request_choice_varg(void *handle, const char *title,
 			 const char *primary, const char *secondary,
-			 unsigned int default_value,
+			 int default_value,
 			 const char *ok_text, GCallback ok_cb,
 			 const char *cancel_text, GCallback cancel_cb,
 			 PurpleAccount *account, const char *who, PurpleConversation *conv,
@@ -1233,7 +1233,7 @@ purple_request_choice_varg(void *handle, const char *title,
 
 void *
 purple_request_action(void *handle, const char *title, const char *primary,
-					const char *secondary, unsigned int default_action,
+					const char *secondary, int default_action,
 					PurpleAccount *account, const char *who, PurpleConversation *conv,
 					void *user_data, size_t action_count, ...)
 {
@@ -1254,7 +1254,7 @@ purple_request_action(void *handle, const char *title, const char *primary,
 void *
 purple_request_action_varg(void *handle, const char *title,
 						 const char *primary, const char *secondary,
-						 unsigned int default_action,
+						 int default_action,
 						 PurpleAccount *account, const char *who, PurpleConversation *conv,
 						  void *user_data, size_t action_count, va_list actions)
 {

@@ -788,7 +788,8 @@ status_menu_refresh_iter(PidginStatusBox *status_box)
 	primitive = purple_savedstatus_get_type(saved_status);
 	if (!status_box->token_status_account && purple_savedstatus_is_transient(saved_status) &&
 		((primitive == PURPLE_STATUS_AVAILABLE) || (primitive == PURPLE_STATUS_AWAY) ||
-		 (primitive == PURPLE_STATUS_INVISIBLE) || (primitive == PURPLE_STATUS_OFFLINE)) &&
+		 (primitive == PURPLE_STATUS_INVISIBLE) || (primitive == PURPLE_STATUS_OFFLINE) ||
+		 (primitive == PURPLE_STATUS_UNAVAILABLE)) &&
 		(!purple_savedstatus_has_substatuses(saved_status)))
 	{
 		index = get_statusbox_index(status_box, saved_status);
@@ -1414,15 +1415,15 @@ pidgin_status_box_popdown(PidginStatusBox *box) {
 }
 
 
-static void
-toggled_cb(GtkWidget *widget, PidginStatusBox *box)
+static 
+gboolean
+toggled_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))  {
 		if (!box->popup_in_progress)
 			pidgin_status_box_popup (box);
-	}  else {
-		pidgin_status_box_popdown(box);
-	}
+		else
+			pidgin_status_box_popdown(box);
+return TRUE;
 }
 
 static void
@@ -1772,7 +1773,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-release-event",
 			 G_CALLBACK(button_released_cb), status_box);
 #endif
-	g_signal_connect(G_OBJECT(status_box->toggle_button), "toggled",
+	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-press-event",
 	                 G_CALLBACK(toggled_cb), status_box);
 	g_signal_connect(G_OBJECT(buffer), "changed", G_CALLBACK(imhtml_changed_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->imhtml), "format_function_toggle",
@@ -2562,24 +2563,23 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 static gint
 get_statusbox_index(PidginStatusBox *box, PurpleSavedStatus *saved_status)
 {
-	gint index;
+	gint index = -1;
 
 	switch (purple_savedstatus_get_type(saved_status))
 	{
-		case PURPLE_STATUS_AVAILABLE:
-			index = 0;
-			break;
-		case PURPLE_STATUS_AWAY:
-			index = 1;
-			break;
-		case PURPLE_STATUS_INVISIBLE:
-			index = 2;
-			break;
+		/* In reverse order */
 		case PURPLE_STATUS_OFFLINE:
-			index = 3;
+			index++;
+		case PURPLE_STATUS_INVISIBLE:
+			index++;
+		case PURPLE_STATUS_UNAVAILABLE:
+			index++;
+		case PURPLE_STATUS_AWAY:
+			index++;
+		case PURPLE_STATUS_AVAILABLE:
+			index++;
 			break;
 		default:
-			index = -1;
 			break;
 	}
 

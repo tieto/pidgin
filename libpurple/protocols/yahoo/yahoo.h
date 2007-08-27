@@ -67,6 +67,13 @@
 #define YAHOO_STATUS_TYPE_INVISIBLE "invisible"
 #define YAHOO_STATUS_TYPE_MOBILE "mobile"
 
+#define YAHOO_USE_ATTENTION_API
+
+#ifdef YAHOO_USE_ATTENTION_API
+/* Index into attention types list. */
+#define YAHOO_BUZZ 0
+#endif
+
 enum yahoo_status {
 	YAHOO_STATUS_AVAILABLE = 0,
 	YAHOO_STATUS_BRB,
@@ -212,5 +219,8 @@ void yahoo_get_info(PurpleConnection *gc, const char *name);
 */
 gboolean yahoo_privacy_check
 	(PurpleConnection *gc, const char *who);
+
+gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint type);
+GList *yahoo_attention_types(PurpleAccount *account);
 
 #endif /* _YAHOO_H_ */

@@ -40,6 +40,8 @@
 #include "sound.h"
 #include "util.h"
 
+#include "gntconv.h"
+
 #include "gntbox.h"
 #include "gntwindow.h"
 #include "gntcombobox.h"
@@ -173,7 +175,8 @@ play_conv_event(PurpleConversation *conv, PurpleSoundEventID event)
 
 		has_focus = purple_conversation_has_focus(conv);
 
-		if (has_focus && !purple_prefs_get_bool(make_pref("/conv_focus")))
+		if ((gntconv->flags & FINCH_CONV_NO_SOUND) ||
+			(has_focus && !purple_prefs_get_bool(make_pref("/conv_focus"))))
 		{
 			return;
 		}
@@ -300,15 +303,15 @@ initialize_profile(const char *name, PurplePrefType type, gconstpointer val, gpo
 	purple_prefs_add_none(make_pref(""));
 	purple_prefs_add_none(make_pref("/enabled"));
 	purple_prefs_add_none(make_pref("/file"));
-	purple_prefs_add_bool(make_pref("/enabled/login"), TRUE);
+	purple_prefs_add_bool(make_pref("/enabled/login"), FALSE);
 	purple_prefs_add_path(make_pref("/file/login"), "");
-	purple_prefs_add_bool(make_pref("/enabled/logout"), TRUE);
+	purple_prefs_add_bool(make_pref("/enabled/logout"), FALSE);
 	purple_prefs_add_path(make_pref("/file/logout"), "");
-	purple_prefs_add_bool(make_pref("/enabled/im_recv"), TRUE);
+	purple_prefs_add_bool(make_pref("/enabled/im_recv"), FALSE);
 	purple_prefs_add_path(make_pref("/file/im_recv"), "");
 	purple_prefs_add_bool(make_pref("/enabled/first_im_recv"), FALSE);
 	purple_prefs_add_path(make_pref("/file/first_im_recv"), "");
-	purple_prefs_add_bool(make_pref("/enabled/send_im"), TRUE);
+	purple_prefs_add_bool(make_pref("/enabled/send_im"), FALSE);
 	purple_prefs_add_path(make_pref("/file/send_im"), "");
 	purple_prefs_add_bool(make_pref("/enabled/join_chat"), FALSE);
 	purple_prefs_add_path(make_pref("/file/join_chat"), "");
@@ -320,9 +323,9 @@ initialize_profile(const char *name, PurplePrefType type, gconstpointer val, gpo
 	purple_prefs_add_path(make_pref("/file/chat_msg_recv"), "");
 	purple_prefs_add_bool(make_pref("/enabled/nick_said"), FALSE);
 	purple_prefs_add_path(make_pref("/file/nick_said"), "");
-	purple_prefs_add_bool(make_pref("/enabled/pounce_default"), TRUE);
+	purple_prefs_add_bool(make_pref("/enabled/pounce_default"), FALSE);
 	purple_prefs_add_path(make_pref("/file/pounce_default"), "");
-	purple_prefs_add_bool(make_pref("/conv_focus"), TRUE);
+	purple_prefs_add_bool(make_pref("/conv_focus"), FALSE);
 	purple_prefs_add_bool(make_pref("/mute"), FALSE);
 	purple_prefs_add_path(make_pref("/command"), "");
 	purple_prefs_add_string(make_pref("/method"), "automatic");
@@ -409,14 +412,14 @@ bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 	GError *err = NULL;
 
 	switch (GST_MESSAGE_TYPE (msg)) {
-	case GST_MESSAGE_EOS:
-		gst_element_set_state(play, GST_STATE_NULL);
-		gst_object_unref(GST_OBJECT(play));
-		break;
 	case GST_MESSAGE_ERROR:
 		gst_message_parse_error(msg, &err, NULL);
 		purple_debug_error("gstreamer", "%s\n", err->message);
 		g_error_free(err);
+		/* fall-through and clean up */
+	case GST_MESSAGE_EOS:
+		gst_element_set_state(play, GST_STATE_NULL);
+		gst_object_unref(GST_OBJECT(play));
 		break;
 	case GST_MESSAGE_WARNING:
 		gst_message_parse_warning(msg, &err, NULL);
@@ -446,7 +449,7 @@ finch_sound_play_file(const char *filename)
 
 	method = purple_prefs_get_string(make_pref("/method"));
 
-	if (!strcmp(method, "none")) {
+	if (!strcmp(method, "nosound")) {
 		return;
 	} else if (!strcmp(method, "beep")) {
 		beep();
@@ -670,28 +673,34 @@ test_cb(GntWidget *button, gpointer null)
 {
 	PurpleSoundEventID id = GPOINTER_TO_INT(gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events)));
 	FinchSoundEvent * event = &sounds[id];
-	char *enabled, *file, *tmpfile;
+	char *enabled, *file, *tmpfile, *volpref;
 	gboolean temp_value;
+	int volume;
 
 	enabled = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s/enabled/%s",
 			finch_sound_get_active_profile(), event->pref);
 	file = g_strdup_printf(FINCH_PREFS_ROOT "/sound/profiles/%s/file/%s",
 			finch_sound_get_active_profile(), event->pref);
+	volpref = g_strdup(make_pref("/volume"));
 
 	temp_value = purple_prefs_get_bool(enabled);
 	tmpfile = g_strdup(purple_prefs_get_string(file));
+	volume = purple_prefs_get_int(volpref);
 
 	purple_prefs_set_string(file, event->file);
 	if (!temp_value) purple_prefs_set_bool(enabled, TRUE);
+	purple_prefs_set_int(volpref, gnt_slider_get_value(GNT_SLIDER(pref_dialog->volume)));
 
 	purple_sound_play_event(id, NULL);
 
 	if (!temp_value) purple_prefs_set_bool(enabled, FALSE);
 	purple_prefs_set_string(file, tmpfile);
+	purple_prefs_set_int(volpref, volume);
 
 	g_free(enabled);
 	g_free(file);
 	g_free(tmpfile);
+	g_free(volpref);
 }
 
 static void
@@ -747,6 +756,7 @@ release_pref_dialog(GntBindable *data, gpointer null)
 	}
 	if (pref_dialog->selector)
 		gnt_widget_destroy(pref_dialog->selector);
+	g_free(pref_dialog->original_profile);
 	g_free(pref_dialog);
 	pref_dialog = NULL;
 }
@@ -989,6 +999,8 @@ finch_sounds_show_all(void)
 
 	pref_dialog->volume = slider = gnt_slider_new(FALSE, 100, 0);
 	gnt_slider_set_step(GNT_SLIDER(slider), 5);
+	gnt_slider_set_small_step(GNT_SLIDER(slider), 1);
+	gnt_slider_set_large_step(GNT_SLIDER(slider), 20);
 	label = gnt_label_new("");
 	gnt_slider_reflect_label(GNT_SLIDER(slider), GNT_LABEL(label));
 	gnt_box_set_pad(GNT_BOX(tmpbox), 1);
@@ -1052,7 +1064,22 @@ finch_sounds_show_all(void)
 	load_pref_window(finch_sound_get_active_profile());
 
 	gnt_widget_show(win);
-}	
+}
+
+gboolean finch_sound_is_enabled(void)
+{
+	const char *pref = make_pref("/method");
+	const char *method = purple_prefs_get_string(pref);
+
+	if (!method)
+		return FALSE;
+	if (strcmp(method, "nosound") == 0)
+		return FALSE;
+	if (purple_prefs_get_int(make_pref("/volume")) <= 0)
+		return FALSE;
+
+	return TRUE;
+}
 
 static PurpleSoundUiOps sound_ui_ops =
 {

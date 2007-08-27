@@ -145,6 +145,7 @@
 /**
  * For using icons that aren't one of the default GTK_ICON_SIZEs
  */
+#define PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC    "pidgin-icon-size-tango-microscopic"
 #define PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL    "pidgin-icon-size-tango-extra-small"
 #define PIDGIN_ICON_SIZE_TANGO_SMALL          "pidgin-icon-size-tango-small"
 #define PIDGIN_ICON_SIZE_TANGO_MEDIUM         "pidgin-icon-size-tango-medium"

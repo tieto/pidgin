@@ -86,6 +86,7 @@ static struct developer developers[] = {
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
 	{"Megan 'Cae' Schneider",       N_("support/QA"), NULL},
 	{"Evan Schoenberg",		N_("developer"), NULL},
+	{"Kevin 'SimGuy' Stange",	N_("developer & webmaster"),	NULL},
 	{"Stu 'nosnilmot' Tomlinson",	N_("developer"), NULL},
 	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
 	{NULL, NULL, NULL}
@@ -95,7 +96,7 @@ static struct developer developers[] = {
 static struct developer patch_writers[] = {
 	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
-	{"Kevin 'SimGuy' Stange",		NULL,	NULL},
+        {"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -152,6 +153,7 @@ static struct translator current_translators[] = {
 	{N_("British English"),     "en_GB", "Luke Ross", "lukeross@sys3175.co.uk"},
 	{N_("Esperanto"),           "eo", "Stéphane Fillod", "fillods@users.sourceforge.net"},
 	{N_("Spanish"),             "es", "Javier Fernández-Sanguino Peña", "jfs@debian.org"},
+	{N_("Estonian"),            "et", "Ivar Smolin", "okul@linux.ee"},
 	{N_("Euskera(Basque)"),     "eu", "Hizkuntza Politikarako Sailburuordetza", "hizkpol@ej-gv.es"},
 	{N_("Euskera(Basque)"),     "eu", "Iñaki Larrañaga Murgoitio", "dooteo@zundan.com"},
 	{N_("Persian"),             "fa", "Elnaz Sarbar", "elnaz@farsiweb.info"},
@@ -160,7 +162,7 @@ static struct translator current_translators[] = {
 	{N_("Finnish"),             "fi", "Timo Jyrinki", "timo.jyrinki@iki.fi"},
 	{N_("French"),              "fr", "Éric Boumaour", "zongo_fr@users.sourceforge.net"},
 	{N_("Galician"),            "gl", "Mar Castro", "mariamarcp@gmail.com"},
-	{N_("Galician"),            "gl", "Ignacio Casal Quinteiro", "nacho.resa@gmail.com"},
+	{N_("Galician"),            "gl", "Frco. Javier Rial", "fjrial@cesga.es"},
 	{N_("Gujarati"),            "gu", "Ankit Patel", "ankit_patel@users.sf.net"},
 	{N_("Gujarati"),            "gu", N_("Gujarati Language Team"), "indianoss-gujarati@lists.sourceforge.net"},
 	{N_("Hebrew"),              "he", "Shalom Craimer", "scraimer@gmail.com"},
@@ -181,7 +183,6 @@ static struct translator current_translators[] = {
 	{N_("Bokmål Norwegian"),    "nb", "Hallvard Glad", "hallvard.glad@gmail.com"},
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
-	{N_("Norwegian"),           "no", "Petter Johan Olsen", "petter.olsen@cc.uit.no"},
 	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "nynorsk@strilen.net"},
 	{N_("Polish"),              "pl", "Emil Nowak", "emil5@go2.pl"},
 	{N_("Polish"),              "pl", "Paweł Godlewski", "pawel@bajk.pl"},
@@ -197,7 +198,7 @@ static struct translator current_translators[] = {
 	{N_("Albanian"),            "sq", "Besnik Bleta", "besnik@programeshqip.org"},
 	{N_("Serbian"),             "sr", "Danilo Šegan", "dsegan@gmx.net"},
 	{N_("Serbian"),             "sr", "Aleksandar Urosevic", "urke@users.sourceforge.net"},
-	{N_("Swedish"),             "sv", "Tore Lundqvist", "tlt@mima.x.se"},
+	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
 	{N_("Tamil"),               "ta", "Viveka Nathan K", "vivekanathan@users.sourceforge.net"},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
 	{N_("Thai"),                "th", "Isriya Paireepairit", "markpeak@gmail.com"},
@@ -230,6 +231,7 @@ static struct translator past_translators[] = {
 	{N_("French"),              "fr", "Stéphane Pontier", NULL},
 	{N_("French"),              "fr", "Stéphane Wirtel", NULL},
 	{N_("French"),              "fr", "Loïc Jeannin", NULL},
+	{N_("Galician"),            "gl", "Ignacio Casal Quinteiro", NULL},
 	{N_("Hebrew"),              "he", "Pavel Bibergal", NULL},
 	{N_("Italian"),				"it", "Salvatore di Maggio", NULL},
 	{N_("Japanese"),            "ja", "Ryosuke Kutsuna", NULL},
@@ -237,19 +239,21 @@ static struct translator past_translators[] = {
 	{N_("Japanese"),            "ja", "Junichi Uekawa", NULL},
 	{N_("Georgian"),            "ka", "Temuri Doghonadze", NULL},
 	{N_("Korean"),              "ko", "Sang-hyun S, A Ho-seok Lee", NULL},
-	{N_("Korean"),              "ko", "Kyeong-uk Son", "hey@gnome.or.kr"},
+	{N_("Korean"),              "ko", "Kyeong-uk Son", NULL},
 	{N_("Lithuanian"),          "lt", "Andrius Štikonas", NULL},
 	{N_("Lithuanian"),          "lt", "Gediminas Čičinskas", NULL},
-	{N_("Macedonian"),          "mk", "Tomislav Markovski", "herrera@users.sf.net"},
+	{N_("Macedonian"),          "mk", "Tomislav Markovski", NULL},
+	{N_("Bokmål Norwegian"),   "nb", "Petter Johan Olsen", NULL},
 	{N_("Polish"),              "pl", "Przemysław Sułek", NULL},
 	{N_("Russian"),             "ru", "Alexandre Prokoudine", NULL},
 	{N_("Russian"),             "ru", "Sergey Volozhanin", NULL},
 	{N_("Slovak"),              "sk", "Daniel Režný", NULL},
-	{N_("Slovak"),              "sk", "helix84", "helix84@centrum.sk"},
-	{N_("Slovak"),              "sk", "Richard Golier", "golierr@gmail.com"},
+	{N_("Slovak"),              "sk", "helix84", NULL},
+	{N_("Slovak"),              "sk", "Richard Golier", NULL},
 	{N_("Slovenian"),           "sl", "Matjaz Horvat", NULL},
+	{N_("Swedish"),             "sv", "Tore Lundqvist", NULL},
 	{N_("Swedish"),             "sv", "Christian Rose", NULL},
-	{N_("Turkish"),             "tr", "Ahmet Alp BALKAN", "prf_q@users.sf.net"},
+	{N_("Turkish"),             "tr", "Ahmet Alp BALKAN", NULL},
 	{N_("Simplified Chinese"),  "zh_CN", "Hashao, Rocky S. Lee", NULL},
 	{N_("Traditional Chinese"), "zh_TW", "Hashao, Rocky S. Lee", NULL},
 	{NULL, NULL, NULL, NULL}
@@ -298,7 +302,7 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	context = gtk_widget_get_pango_context(widget);
 	layout = pango_layout_new(context);
 
-	markup = g_strdup_printf("<span foreground=\"#5c3566\">%s</span>", VERSION);
+	markup = g_strdup_printf("<span foreground=\"#FFFFFF\">%s</span>", VERSION);
 	pango_layout_set_font_description(layout, style->font_desc);
 	pango_layout_set_markup(layout, markup, strlen(markup));
 	g_free(markup);
@@ -378,7 +382,7 @@ void pidgin_dialogs_about()
 		  "libpurple which is capable of connecting to "
 		  "AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
 		  "Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, "
-		  "Gadu-Gadu, and QQ all at once.  "
+		  "MySpaceIM, Gadu-Gadu, and QQ all at once.  "
 		  "It is written using GTK+.<BR><BR>"
 		  "You may modify and redistribute the program under "
 		  "the terms of the GPL (version 2 or later).  A copy of the GPL is "

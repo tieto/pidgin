@@ -70,6 +70,14 @@ do_underline(GtkWidget *underline, GtkIMHtmlToolbar *toolbar)
 }
 
 static void
+do_strikethrough(GtkWidget *strikethrough, GtkIMHtmlToolbar *toolbar)
+{
+	g_return_if_fail(toolbar != NULL);
+	gtk_imhtml_toggle_strike(GTK_IMHTML(toolbar->imhtml));
+	gtk_widget_grab_focus(toolbar->imhtml);
+}
+
+static void
 do_small(GtkWidget *smalltb, GtkIMHtmlToolbar *toolbar)
 {
 	g_return_if_fail(toolbar != NULL);
@@ -433,6 +441,17 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
+static void insert_hr_cb(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
+{
+        GtkTextIter iter;
+        GtkTextMark *ins;
+	GtkIMHtmlScalable *hr;
+
+        ins = gtk_text_buffer_get_insert(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)));
+        gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)), &iter, ins);
+	hr = gtk_imhtml_hr_new();
+	gtk_imhtml_hr_add_to(hr, GTK_IMHTML(toolbar->imhtml), &iter);
+}
 
 static void
 do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
@@ -1027,6 +1046,13 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 			 G_CALLBACK(do_underline), toolbar);
 	toolbar->underline = button;
 
+
+	/* Strikethrough */
+	button = pidgin_pixbuf_toolbar_button_from_stock(GTK_STOCK_STRIKETHROUGH);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			G_CALLBACK(do_strikethrough), toolbar);
+	toolbar->strikethrough = button;
+
 	/* Increase font size */
 	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_TEXT_LARGER);
 	g_signal_connect(G_OBJECT(button), "clicked",
@@ -1124,6 +1150,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 		{_("<b>_Bold</b>"), &toolbar->bold, TRUE},
 		{_("<i>_Italic</i>"), &toolbar->italic, TRUE},
 		{_("<u>_Underline</u>"), &toolbar->underline, TRUE},
+		{_("<span strikethrough='true'>Strikethrough</span>"), &toolbar->strikethrough, TRUE},
 		{_("<span size='larger'>_Larger</span>"), &toolbar->larger_size, TRUE},
 #if 0
 		{_("_Normal"), &toolbar->normal_size, TRUE},
@@ -1229,6 +1256,11 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
 	g_signal_connect(G_OBJECT(toolbar->link), "notify::sensitive",
 			G_CALLBACK(button_sensitiveness_changed), menuitem);
+
+	menuitem = gtk_menu_item_new_with_mnemonic(_("_Horizontal rule"));
+	g_signal_connect(G_OBJECT(menuitem), "activate"	, G_CALLBACK(insert_hr_cb), toolbar);
+	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
+	toolbar->insert_hr = menuitem;	
 
 	g_signal_connect_swapped(G_OBJECT(insert_button), "button-press-event", G_CALLBACK(gtk_widget_activate), insert_button);
 	g_signal_connect(G_OBJECT(insert_button), "activate", G_CALLBACK(pidgin_menu_clicked), insert_menu);

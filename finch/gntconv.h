@@ -27,6 +27,7 @@
 
 #include <gnt.h>
 #include <gntwidget.h>
+#include <gntmenuitem.h>
 
 #include "conversation.h"
 
@@ -42,6 +43,11 @@ typedef struct _FinchConv FinchConv;
 typedef struct _FinchConvChat FinchConvChat;
 typedef struct _FinchConvIm FinchConvIm;
 
+typedef enum
+{
+	FINCH_CONV_NO_SOUND     = 1 << 0,
+} FinchConversationFlag;
+
 struct _FinchConv
 {
 	GList *list;
@@ -50,9 +56,9 @@ struct _FinchConv
 	GntWidget *window;        /* the container */
 	GntWidget *entry;         /* entry */
 	GntWidget *tv;            /* text-view */
-	GntWidget *menu;          /* future use */
+	GntWidget *menu;
 	GntWidget *info;
-	void *pad;
+	FinchConversationFlag flags;
 
 	union
 	{
@@ -70,7 +76,7 @@ struct _FinchConvChat
 
 struct _FinchConvIm
 {
-	void *nothing_for_now;
+	GntMenuItem *sendto;
 	void *something_for_later;
 };
 

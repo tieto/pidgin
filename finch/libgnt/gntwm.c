@@ -738,7 +738,7 @@ dump_screen(GntBindable *bindable, GList *null)
 			print = ch;
 #ifndef NO_WIDECHAR
 			if (wch.chars[0] > 255) {
-				snprintf(unicode, sizeof(unicode), "&#x%x;", wch.chars[0]);
+				snprintf(unicode, sizeof(unicode), "&#x%x;", (unsigned int)wch.chars[0]);
 				print = unicode;
 			}
 #endif

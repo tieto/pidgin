@@ -1,3 +1,6 @@
+version 2.1.1 (08/20/2007):
+        * No changes
+
 version 2.1.0 (7/28/2007):
 	* Updated launcher application (pidgin.exe) to support portable mode
 	  via `pidgin.exe --portable-mode` or by renaming the binary to

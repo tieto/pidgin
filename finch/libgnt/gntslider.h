@@ -56,6 +56,8 @@ struct _GntSlider
 	int min;        /* minimum value */
 	int step;       /* amount to change at each step */
 	int current;    /* current value */
+	int smallstep;
+	int largestep;
 };
 
 struct _GntSliderClass
@@ -103,9 +105,25 @@ void gnt_slider_set_range(GntSlider *slider, int max, int min);
  * Sets the amount of change at each step.
  * 
  * @param slider  The slider
- * @param step    The amount for each ste
+ * @param step    The amount for each step
  */
 void gnt_slider_set_step(GntSlider *slider, int step);
+
+/**
+ * Sets the amount of change a small step.
+ * 
+ * @param slider  The slider
+ * @param step    The amount for a small step (for the slider)
+ */
+void gnt_slider_set_small_step(GntSlider *slider, int step);
+
+/**
+ * Sets the amount of change a large step.
+ * 
+ * @param slider  The slider
+ * @param step    The amount for a large step (for the slider)
+ */
+void gnt_slider_set_large_step(GntSlider *slider, int step);
 
 /**
  * Advance the slider forward or backward.

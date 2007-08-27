@@ -238,14 +238,18 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case 8: /* how many online buddies we have */
 			break;
 		case 7: /* the current buddy */
-			if (name && f) /* update the previous buddy before changing the variables */
-				yahoo_update_status(gc, name, f);
-			name = pair->value;
-			if (name && g_utf8_validate(name, -1, NULL))
+			/* update the previous buddy before changing the variables */
+			if (f) {
+				if (message)
+					yahoo_friend_set_status_message(f, yahoo_string_decode(gc, message, unicode));
+				if (name)
+					yahoo_update_status(gc, name, f);
+			}
+			name = message = NULL;
+			f = NULL;
+			if (pair->value && g_utf8_validate(pair->value, -1, NULL)) {
+				name = pair->value;
 				f = yahoo_friend_find_or_new(gc, name);
-			else {
-				f = NULL;
-				name = NULL;
 			}
 			break;
 		case 10: /* state */
@@ -568,6 +572,11 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 				purple_debug_info("yahoo", "Setting protocol to %d\n", f->protocol);
 			}
 			break;
+		case 317: /* Stealth Setting */
+			if (f && (strtol(pair->value, NULL, 10) == 2)) {
+				f->presence = YAHOO_PRESENCE_PERM_OFFLINE;
+			}
+			break;
 		/* case 242: */ /* this seems related to 241 */
 			/* break; */
 		}
@@ -768,7 +777,13 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (bud)
 				yahoo_update_status(gc, from, f);
 		}
+	} else if (!g_ascii_strncasecmp(msg, "WEBCAMINVITE", strlen("WEBCAMINVITE"))) {
+                PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, gc->account);
+		char *buf = g_strdup_printf(_("%s has sent you a webcam invite, which is not yet supported."), from);
+		purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
+		g_free(buf);
 	}
+
 }
 
 
@@ -884,6 +899,8 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			PurpleConversation *c;
 			char *username, *str;
 
+			str = NULL;
+
 			account = purple_connection_get_account(gc);
 			c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
 
@@ -892,10 +909,13 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			else
 				username = g_markup_escape_text(im->from, -1);
 
+#ifdef YAHOO_USE_ATTENTION_API
+			serv_got_attention(gc, username, YAHOO_BUZZ);
+#else
 			str = g_strdup_printf(_("%s just sent you a Buzz!"), username);
 
 			purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, im->time);
-
+#endif
 			g_free(username);
 			g_free(str);
 			g_free(m);
@@ -950,11 +970,21 @@ struct yahoo_add_request {
 	char *id;
 	char *who;
 	char *msg;
+	int protocol;
 };
 
 static void
 yahoo_buddy_add_authorize_cb(gpointer data) {
 	struct yahoo_add_request *add_req = data;
+
+	struct yahoo_packet *pkt;
+	struct yahoo_data *yd = add_req->gc->proto_data;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, "ssiii", 1, add_req->id, 5, add_req->who, 241, add_req->protocol,
+	                  13, 1, 334, 0);
+	yahoo_packet_send_and_free(pkt, yd);
+
 	g_free(add_req->id);
 	g_free(add_req->who);
 	g_free(add_req->msg);
@@ -966,19 +996,20 @@ yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg) {
 	struct yahoo_packet *pkt;
 	char *encoded_msg = NULL;
 	struct yahoo_data *yd = add_req->gc->proto_data;
+	PurpleAccount *account = purple_connection_get_account(add_req->gc);
 
-	if (msg)
+	if (msg && *msg)
 		encoded_msg = yahoo_string_encode(add_req->gc, msg, NULL);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_REJECTCONTACT,
+	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15,
 			YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, "sss",
-			1, purple_normalize(add_req->gc->account,
-				purple_account_get_username(
-					purple_connection_get_account(
-						add_req->gc))),
-			7, add_req->who,
+	yahoo_packet_hash(pkt, "ssiiis",
+			1, purple_normalize(account, purple_account_get_username(account)),
+			5, add_req->who,
+			13, 2,
+			334, 0,
+			97, 1,
 			14, encoded_msg ? encoded_msg : "");
 
 	yahoo_packet_send_and_free(pkt, yd);
@@ -1006,6 +1037,132 @@ yahoo_buddy_add_deny_reason_cb(gpointer data) {
 			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb),
 			purple_connection_get_account(add_req->gc), add_req->who, NULL,
 			add_req);
+}
+
+static void yahoo_buddy_denied_our_add(PurpleConnection *gc, const char *who, const char *reason)
+{
+	char *notify_msg;
+	struct yahoo_data *yd = gc->proto_data;
+
+	if (who == NULL)
+		return;
+
+	if (reason != NULL) {
+		char *msg2 = yahoo_string_decode(gc, reason, FALSE);
+		notify_msg = g_strdup_printf(_("%s has (retroactively) denied your request to add them to your list for the following reason: %s."), who, msg2);
+		g_free(msg2);
+	} else
+		notify_msg = g_strdup_printf(_("%s has (retroactively) denied your request to add them to your list."), who);
+
+	purple_notify_info(gc, NULL, _("Add buddy rejected"), notify_msg);
+	g_free(notify_msg);
+
+	g_hash_table_remove(yd->friends, who);
+	purple_prpl_got_user_status(purple_connection_get_account(gc), who, "offline", NULL); /* FIXME: make this set not on list status instead */
+	/* TODO: Shouldn't we remove the buddy from our local list? */
+}
+
+static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *pkt) {
+	GSList *l = pkt->hash;
+	const char *msg = NULL;
+
+	/* Buddy authorized/declined our addition */
+	if (pkt->status == 1) {
+		const char *who = NULL;
+		int response = 0;
+
+		while (l) {
+			struct yahoo_pair *pair = l->data;
+
+			switch (pair->key) {
+			case 4:
+				who = pair->value;
+				break;
+			case 13:
+				response = strtol(pair->value, NULL, 10);
+				break;
+			case 14:
+				msg = pair->value;
+				break;
+			}
+			l = l->next;
+		}
+
+		if (response == 1) /* Authorized */
+			purple_debug_info("yahoo", "Received authorization from buddy '%s'.\n", who ? who : "(Unknown Buddy)");
+		else if (response == 2) { /* Declined */
+			purple_debug_info("yahoo", "Received authorization decline from buddy '%s'.\n", who ? who : "(Unknown Buddy)");
+			yahoo_buddy_denied_our_add(gc, who, msg);
+		} else
+			purple_debug_error("yahoo", "Received unknown authorization response of %d from buddy '%s'.\n", response, who ? who : "(Unknown Buddy)");
+
+	}
+	/* Buddy requested authorization to add us. */
+	else if (pkt->status == 3) {
+		struct yahoo_add_request *add_req;
+		const char *firstname = NULL, *lastname = NULL;
+
+		add_req = g_new0(struct yahoo_add_request, 1);
+		add_req->gc = gc;
+
+		while (l) {
+			struct yahoo_pair *pair = l->data;
+
+			switch (pair->key) {
+			case 4:
+				add_req->who = g_strdup(pair->value);
+				break;
+			case 5:
+				add_req->id = g_strdup(pair->value);
+				break;
+			case 14:
+				msg = pair->value;
+				break;
+			case 216:
+				firstname = pair->value;
+				break;
+			case 241:
+				add_req->protocol = strtol(pair->value, NULL, 10);
+				break;
+			case 254:
+				lastname = pair->value;
+				break;
+
+			}
+			l = l->next;
+		}
+
+		if (add_req->id) {
+			char *alias = NULL;
+			if (msg)
+				add_req->msg = yahoo_string_decode(gc, msg, FALSE);
+
+			if (firstname && lastname)
+				alias = g_strdup_printf("%s %s", firstname, lastname);
+			else if (firstname)
+				alias = g_strdup(firstname);
+			else if (lastname)
+				alias = g_strdup(lastname);
+
+
+			/* DONE! this is almost exactly the same as what MSN does,
+			 * this should probably be moved to the core.
+			 */
+			 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
+						    alias, add_req->msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
+						    yahoo_buddy_add_authorize_cb,
+						    yahoo_buddy_add_deny_reason_cb,
+						    add_req);
+			g_free(alias);
+		} else {
+			g_free(add_req->id);
+			g_free(add_req->who);
+			/*g_free(add_req->msg);*/
+			g_free(add_req);
+		}
+	} else {
+		purple_debug_error("yahoo", "Received authorization of unknown status (%d).\n", pkt->status);
+	}
 }
 
 static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt) {
@@ -1055,13 +1212,12 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
-static void yahoo_buddy_denied_our_add(PurpleConnection *gc, struct yahoo_packet *pkt)
+/* I have no idea if this every gets called in version 15 */
+static void yahoo_buddy_denied_our_add_old(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	char *who = NULL;
 	char *msg = NULL;
 	GSList *l = pkt->hash;
-	GString *buf = NULL;
-	struct yahoo_data *yd = gc->proto_data;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -1077,22 +1233,7 @@ static void yahoo_buddy_denied_our_add(PurpleConnection *gc, struct yahoo_packet
 		l = l->next;
 	}
 
-	if (who) {
-		char *msg2;
-		buf = g_string_sized_new(0);
-		if (!msg) {
-			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list."), who);
-		} else {
-			msg2 = yahoo_string_decode(gc, msg, FALSE);
-			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list for the following reason: %s."), who, msg2);
-			g_free(msg2);
-		}
-		purple_notify_info(gc, NULL, _("Add buddy rejected"), buf->str);
-		g_string_free(buf, TRUE);
-		g_hash_table_remove(yd->friends, who);
-		purple_prpl_got_user_status(purple_connection_get_account(gc), who, "offline", NULL); /* FIXME: make this set not on list status instead */
-		/* TODO: Shouldn't we remove the buddy from our local list? */
-	}
+	yahoo_buddy_denied_our_add(gc, who, msg);
 }
 
 static void yahoo_process_contact(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -1105,7 +1246,7 @@ static void yahoo_process_contact(PurpleConnection *gc, struct yahoo_packet *pkt
 		yahoo_buddy_added_us(gc, pkt);
 		break;
 	case 7:
-		yahoo_buddy_denied_our_add(gc, pkt);
+		yahoo_buddy_denied_our_add_old(gc, pkt);
 		break;
 	default:
 		break;
@@ -2205,6 +2346,9 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_AUTH:
 		yahoo_process_auth(gc, pkt);
 		break;
+	case YAHOO_SERVICE_AUTH_REQ_15:
+		yahoo_buddy_auth_req_15(gc, pkt);
+		break;
 	case YAHOO_SERVICE_ADDBUDDY:
 		yahoo_process_addbuddy(gc, pkt);
 		break;
@@ -2785,7 +2929,7 @@ static void yahoo_login(PurpleAccount *account) {
 	purple_connection_set_display_name(gc, purple_account_get_username(account));
 
 	yd->fd = -1;
-	yd->txhandler = -1;
+	yd->txhandler = 0;
 	/* TODO: Is there a good grow size for the buffer? */
 	yd->txbuf = purple_circ_buffer_new(0);
 	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);
@@ -3662,14 +3806,17 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
 	PurpleGroup *g;
-	char *group = NULL;
-	char *group2 = NULL;
+	const char *group = NULL;
+	char *group2;
+	YahooFriend *f;
 
 	if (!yd->logged_in)
 		return;
 
 	if (!yahoo_privacy_check(gc, purple_buddy_get_name(buddy)))
 		return;
+
+	f = yahoo_friend_find(gc, purple_buddy_get_name(buddy));
 
 	if (foo)
 		group = foo->name;
@@ -3695,6 +3842,8 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 	                  301, "319",
 	                  303, "319"
 	);
+	if (f && f->protocol)
+		yahoo_packet_hash_int(pkt, 241, f->protocol);
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(group2);
 }
@@ -3868,17 +4017,24 @@ static void yahoo_rename_group(PurpleConnection *gc, const char *old_name,
 
 static PurpleCmdRet
 yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gchar **error, void *data) {
-
 	PurpleAccount *account = purple_conversation_get_account(c);
+#ifndef YAHOO_USE_ATTENTION_API
 	const char *username = purple_account_get_username(account);
+#endif
 
 	if (*args && args[0])
 		return PURPLE_CMD_RET_FAILED;
+
+#ifdef YAHOO_USE_ATTENTION_API
+	serv_send_attention(account->gc, c->name, YAHOO_BUZZ);
+#else
 
 	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
 	           "Sending <ding> on account %s to buddy %s.\n", username, c->name);
 	purple_conv_im_send(PURPLE_CONV_IM(c), "<ding>");
 	purple_conversation_write(c, NULL, _("You have just sent a Buzz!"), PURPLE_MESSAGE_SYSTEM, time(NULL));
+#endif
+
 	return PURPLE_CMD_RET_OK;
 }
 
@@ -3927,6 +4083,42 @@ yahoopurple_cmd_chat_list(PurpleConversation *conv, const char *cmd,
 static gboolean yahoo_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
+}
+	
+gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint type)
+{
+	PurpleConversation *c;
+
+	c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, 
+			username, gc->account);
+
+	g_return_val_if_fail(c != NULL, FALSE);
+
+	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
+	           "Sending <ding> on account %s to buddy %s.\n", username, c->name);
+	/* TODO: find out how to send a <ding> without showing up as a blank line on
+	 * the conversation window. */
+	purple_conv_im_send(PURPLE_CONV_IM(c), "<ding>");
+
+	return TRUE;
+}
+
+GList *yahoo_attention_types(PurpleAccount *account)
+{
+	PurpleAttentionType *attn;
+	static GList *list = NULL;
+
+	if (!list) {
+		/* Yahoo only supports one attention command: the 'buzz'. */
+		/* This is index number YAHOO_BUZZ. */
+		attn = g_new0(PurpleAttentionType, 1);
+		attn->name = _("buzz");
+		attn->incoming_description = _("buzzed");
+		attn->outgoing_description = _("Buzzing");
+		list = g_list_append(list, attn);
+	} 
+
+	return list;
 }
 
 /************************** Plugin Initialization ****************************/
@@ -4137,9 +4329,15 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL, /* send_raw */
 	NULL, /* roomlist_room_serialize */
 
+#ifdef YAHOO_USE_ATTENTION_API
+	yahoo_send_attention,
+	yahoo_attention_types,
+#else
+	NULL,
+	NULL,
+#endif
+
 	/* padding */
-	NULL,
-	NULL,
 	NULL,
 	NULL
 };

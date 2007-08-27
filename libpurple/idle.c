@@ -163,8 +163,8 @@ check_idleness(void)
 		{
 			if (!no_away)
 			{
-				purple_savedstatus_set_idleaway(FALSE);
 				no_away = TRUE;
+				purple_savedstatus_set_idleaway(FALSE);
 			}
 			time_until_next_idle_event = 0;
 			return;
