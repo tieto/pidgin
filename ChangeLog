@@ -1,8 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.1.2:
+version 2.2.0:
+	Libpurple:
 	* New protocol plugin: MySpaceIM (Jeff Connelly, Google Summer of
 	  Code)
+
+	Pidgin:
+	* Insert Horizontal Rules and Strikethrough text from toolbar
 
 	Finch:
 	* Per-conversation mute and logging options (accessible from the menu)
