@@ -164,12 +164,17 @@
 #define MSIM_STATUS_CODE_AWAY                 5
 
 
-/* Inbox status bitfield values for MsimSession.inbox_status */
+/* Inbox status bitfield values for MsimSession.inbox_status. */
 #define MSIM_INBOX_MAIL                 (1 << 0)
 #define MSIM_INBOX_BLOG_COMMENT         (1 << 1)
 #define MSIM_INBOX_PROFILE_COMMENT      (1 << 2)
 #define MSIM_INBOX_FRIEND_REQUEST       (1 << 3)
 #define MSIM_INBOX_PICTURE_COMMENT      (1 << 4)
+
+/* Codes for msim_got_contact_list(), to tell what to do afterwards. */
+#define MSIM_CONTACT_LIST_INITIAL_FRIENDS	0
+#define MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS	1
+#define MSIM_CONTACT_LIST_IMPORT_TOP_FRIENDS	2
 
 #ifdef MSIM_USE_ATTENTION_API
 #define MsimAttentionType PurpleAttentionType

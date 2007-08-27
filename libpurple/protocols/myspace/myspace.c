@@ -92,6 +92,8 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
 static void msim_connect_cb(gpointer data, gint source, const gchar *error_message);
 
 static void msim_import_friends(PurplePluginAction *action);
+static void msim_import_friends_cb(MsimSession *session, MsimMessage *reply, gpointer user_data);
+static gboolean msim_get_contact_list(MsimSession *session, int what_to_do_after);
 
 static gboolean msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params);
 static void msim_uri_handler_addContact_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
@@ -1528,12 +1530,14 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 			(GSourceFunc)msim_check_alive, session);
 #endif
 
+	/* Check mail if they want to. */
 	if (purple_account_get_check_mail(session->account)) {
 		purple_timeout_add(MSIM_MAIL_INTERVAL_CHECK, 
 				(GSourceFunc)msim_check_inbox, session);
 		msim_check_inbox(session);
 	}
 
+	msim_get_contact_list(session, MSIM_CONTACT_LIST_INITIAL_FRIENDS);
 
 	return TRUE;
 }
@@ -2633,14 +2637,42 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 		}
 	}
 
-	msg = g_strdup_printf(_("%d buddies were added or updated"), buddy_count);
+	switch (GPOINTER_TO_UINT(user_data)) {
+		case MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS:
+			msg = g_strdup_printf(_("%d buddies were added or updated"), buddy_count);
+			purple_notify_info(session->account, _("Add contacts from server"), msg, NULL);
+			g_free(msg);
+			break;
 
-	purple_notify_info(session->account, _("Add contacts from server"), msg, NULL);
-
-	g_free(msg);
+		case MSIM_CONTACT_LIST_IMPORT_TOP_FRIENDS:
+			/* TODO */
+			break;
+		
+		case MSIM_CONTACT_LIST_INITIAL_FRIENDS:
+			/* Nothing */
+			break;
+	}
 
 	msim_msg_free(body);
 }
+
+/* Get contact list, calling msim_got_contact_list() with what_to_do_after as user_data gpointer. */
+static gboolean
+msim_get_contact_list(MsimSession *session, int what_to_do_after)
+{
+	return msim_send(session, 
+			"persist", MSIM_TYPE_INTEGER, 1,
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_GET,
+			"dsn", MSIM_TYPE_INTEGER, MG_LIST_ALL_CONTACTS_DSN,
+			"lid", MSIM_TYPE_INTEGER, MG_LIST_ALL_CONTACTS_LID,
+			"uid", MSIM_TYPE_INTEGER, session->userid,
+			"rid", MSIM_TYPE_INTEGER, 
+				msim_new_reply_callback(session, msim_got_contact_list, GUINT_TO_POINTER(what_to_do_after)), 
+			"body", MSIM_TYPE_STRING, g_strdup(""),
+			NULL);
+}
+
 
 /** Called when friends have been imported to buddy list on server. */
 static void 
@@ -2670,17 +2702,7 @@ msim_import_friends_cb(MsimSession *session, MsimMessage *reply, gpointer user_d
 	purple_debug_info("msim_import_friends_cb",
 			"added friends to server-side buddy list, requesting new contacts from server");
 
-	g_return_if_fail(msim_send(session, 
-			"persist", MSIM_TYPE_INTEGER, 1,
-			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_GET,
-			"dsn", MSIM_TYPE_INTEGER, MG_LIST_ALL_CONTACTS_DSN,
-			"lid", MSIM_TYPE_INTEGER, MG_LIST_ALL_CONTACTS_LID,
-			"uid", MSIM_TYPE_INTEGER, session->userid,
-			"rid", MSIM_TYPE_INTEGER, 
-				msim_new_reply_callback(session, msim_got_contact_list, NULL),
-			"body", MSIM_TYPE_STRING, g_strdup(""),
-			NULL));
+	msim_get_contact_list(session, MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS);
 
 	/* TODO: show, X friends have been added */
 }
