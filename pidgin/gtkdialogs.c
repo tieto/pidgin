@@ -97,6 +97,8 @@ static struct developer patch_writers[] = {
 	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
         {"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
+	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
+	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
 	{NULL, NULL, NULL}
 };
 
