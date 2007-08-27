@@ -645,7 +645,7 @@ msim_convert_smileys_to_markup(gchar *before)
 		purple_debug_info("msim", "msim_convert_smileys_to_markup: %s->%s\n",
 				symbol ? symbol : "(NULL)", 
 				replacement ? replacement : "(NULL)");
-		new = str_replace(old, symbol, replacement);
+		new = purple_strreplace(old, symbol, replacement);
 		
 		g_free(replacement);
 		g_free(old);

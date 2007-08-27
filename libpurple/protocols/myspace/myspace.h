@@ -193,8 +193,6 @@ struct _MsimAttentionType {
 };
 #endif
 
-gchar *str_replace(const gchar *str, const gchar *old, const gchar *new);
-
 /* Functions */
 gboolean msim_load(PurplePlugin *plugin);
 GList *msim_status_types(PurpleAccount *acct);

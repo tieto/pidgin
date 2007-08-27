@@ -178,32 +178,6 @@ msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 	return "myspace";
 }
 
-/**
- * Replace 'old' with 'new' in 'str'.
- *
- * @param str The original string.
- * @param old The substring of 'str' to replace.
- * @param new The replacement for 'old' within 'str'.
- *
- * @return A _new_ string, based on 'str', with 'old' replaced
- *         by 'new'. Must be g_free()'d by caller.
- *
- * This string replace method is based on
- * http://mail.gnome.org/archives/gtk-app-devel-list/2000-July/msg00201.html
- *
- */
-gchar *
-str_replace(const gchar *str, const gchar *old, const gchar *new)
-{
-	gchar **items;
-	gchar *ret;
-
-	items = g_strsplit(str, old, -1);
-	ret = g_strjoinv(new, items);
-	g_free(items);
-	return ret;
-}
-
 #ifdef MSIM_DEBUG_MSG
 static void 
 print_hash_item(gpointer key, gpointer value, gpointer user_data)
@@ -1955,7 +1929,7 @@ msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before,
 		fmt_string = msim_msg_pack_element_data(elem);
 
 		uid_str = g_strdup_printf("%d", uid);
-		new_str = str_replace(fmt_string, "<uid>", uid_str);
+		new_str = purple_strreplace(fmt_string, "<uid>", uid_str);
 		g_free(uid_str);
 		g_free(fmt_string);
 
