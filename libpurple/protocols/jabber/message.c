@@ -10,12 +10,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
  *
  */
 #include "internal.h"
@@ -30,6 +30,7 @@
 #include "google.h"
 #include "message.h"
 #include "xmlnode.h"
+#include "pep.h"
 
 void jabber_message_free(JabberMessage *jm)
 {
@@ -61,7 +62,7 @@ static void handle_chat(JabberMessage *jm)
 
 	if(jabber_find_unnormalized_conv(jm->from, jm->js->gc->account)) {
 		from = g_strdup(jm->from);
-	} else  if(jid->node) {
+	} else	if(jid->node) {
 		if(jid->resource) {
 			PurpleConversation *conv;
 
@@ -99,13 +100,13 @@ static void handle_chat(JabberMessage *jm)
 					escaped = g_markup_escape_text(who, -1);
 
 					g_snprintf(buf, sizeof(buf),
-					           _("%s has left the conversation."), escaped);
+							   _("%s has left the conversation."), escaped);
 
 					/* At some point when we restructure PurpleConversation,
 					 * this should be able to be implemented by removing the
 					 * user from the conversation like we do with chats now. */
 					purple_conversation_write(conv, "", buf,
-					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
+											PURPLE_MESSAGE_SYSTEM, time(NULL));
 				}
 			}
 			serv_got_typing_stopped(jm->js->gc, from);
@@ -147,9 +148,13 @@ static void handle_chat(JabberMessage *jm)
 static void handle_headline(JabberMessage *jm)
 {
 	char *title;
-	GString *body = g_string_new("");
+	GString *body;
 	GList *etc;
+	
+	if(!jm->xhtml && !jm->body)
+		return; /* ignore headlines without any content */
 
+	body = g_string_new("");
 	title = g_strdup_printf(_("Message from %s"), jm->from);
 
 	if(jm->xhtml)
@@ -273,6 +278,36 @@ static void handle_error(JabberMessage *jm)
 	g_free(buf);
 }
 
+static void handle_buzz(JabberMessage *jm) {
+	PurpleBuddy *buddy;
+	PurpleAccount *account;
+	PurpleConversation *c;
+	char *username, *str;
+	
+	/* Delayed buzz MUST NOT be accepted */
+	if(jm->delayed)
+		return;
+	
+	/* Reject buzz when it's not enabled */
+	if(!jm->js->allowBuzz)
+		return;
+	
+	account = purple_connection_get_account(jm->js->gc);
+	
+	if ((buddy = purple_find_buddy(account, jm->from)) != NULL)
+		username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
+	else
+		return; /* Do not accept buzzes from unknown people */
+
+	c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, jm->from);
+
+	str = g_strdup_printf(_("%s just sent you a Buzz!"), username);
+	
+	purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
+	g_free(username);
+	g_free(str);
+}
+
 void jabber_message_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberMessage *jm;
@@ -308,48 +343,58 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	jm->id = g_strdup(xmlnode_get_attrib(packet, "id"));
 
 	for(child = packet->child; child; child = child->next) {
+		const char *xmlns = xmlnode_get_namespace(child);
+		if(!xmlns)
+			xmlns = "";
 		if(child->type != XMLNODE_TYPE_TAG)
 			continue;
 
-		if(!strcmp(child->name, "subject")) {
+		if(!strcmp(child->name, "subject") && !strcmp(xmlns,"jabber:client")) {
 			if(!jm->subject)
 				jm->subject = xmlnode_get_data(child);
-		} else if(!strcmp(child->name, "thread")) {
+		} else if(!strcmp(child->name, "thread") && !strcmp(xmlns,"jabber:client")) {
 			if(!jm->thread_id)
 				jm->thread_id = xmlnode_get_data(child);
-		} else if(!strcmp(child->name, "body")) {
+		} else if(!strcmp(child->name, "body") && !strcmp(xmlns,"jabber:client")) {
 			if(!jm->body) {
 				char *msg = xmlnode_to_str(child, NULL);
 				jm->body = purple_strdup_withhtml(msg);
 				g_free(msg);
 			}
-		} else if(!strcmp(child->name, "html")) {
+		} else if(!strcmp(child->name, "html") && !strcmp(xmlns,"http://jabber.org/protocol/xhtml-im")) {
 			if(!jm->xhtml && xmlnode_get_child(child, "body")) {
 				char *c;
 				jm->xhtml = xmlnode_to_str(child, NULL);
-			        /* Convert all newlines to whitespace. Technically, even regular, non-XML HTML is supposed to ignore newlines, but Pidgin has, as convention
-			 	 * treated \n as a newline for compatibility with other protocols
+					/* Convert all newlines to whitespace. Technically, even regular, non-XML HTML is supposed to ignore newlines, but Pidgin has, as convention
+				 * treated \n as a newline for compatibility with other protocols
 				 */
 				for (c = jm->xhtml; *c != '\0'; c++) {
 					if (*c == '\n') 
 						*c = ' ';
 				}
 			}
-		} else if(!strcmp(child->name, "active")) {
+		} else if(!strcmp(child->name, "active") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_ACTIVE;
 			jm->typing_style |= JM_TS_JEP_0085;
-		} else if(!strcmp(child->name, "composing")) {
+		} else if(!strcmp(child->name, "composing") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_COMPOSING;
 			jm->typing_style |= JM_TS_JEP_0085;
-		} else if(!strcmp(child->name, "paused")) {
+		} else if(!strcmp(child->name, "paused") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_PAUSED;
 			jm->typing_style |= JM_TS_JEP_0085;
-		} else if(!strcmp(child->name, "inactive")) {
+		} else if(!strcmp(child->name, "inactive") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_INACTIVE;
 			jm->typing_style |= JM_TS_JEP_0085;
-		} else if(!strcmp(child->name, "gone")) {
+		} else if(!strcmp(child->name, "gone") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_GONE;
 			jm->typing_style |= JM_TS_JEP_0085;
+		} else if(!strcmp(child->name, "event") && !strcmp(xmlns,"http://jabber.org/protocol/pubsub#event")) {
+			xmlnode *items;
+			jm->type = JABBER_MESSAGE_EVENT;
+			for(items = xmlnode_get_child(child,"items"); items; items = items->next)
+				jm->eventitems = g_list_append(jm->eventitems, items);
+		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns,"http://www.xmpp.org/extensions/xep-0224.html#ns")) {
+			jm->hasBuzz = TRUE;
 		} else if(!strcmp(child->name, "error")) {
 			const char *code = xmlnode_get_attrib(child, "code");
 			char *code_txt = NULL;
@@ -364,8 +409,12 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 			g_free(code_txt);
 			g_free(text);
+		} else if(!strcmp(child->name, "delay") && xmlns && !strcmp(xmlns,"urn:xmpp:delay")) {
+			const char *timestamp = xmlnode_get_attrib(child, "stamp");
+			jm->delayed = TRUE;
+			if(timestamp)
+				jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
 		} else if(!strcmp(child->name, "x")) {
-			const char *xmlns = xmlnode_get_namespace(child);
 			if(xmlns && !strcmp(xmlns, "jabber:x:event")) {
 				if(xmlnode_get_child(child, "composing")) {
 					if(jm->chat_state == JM_STATE_ACTIVE)
@@ -410,6 +459,9 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			}
 		}
 	}
+	
+	if(jm->hasBuzz)
+		handle_buzz(jm);
 
 	switch(jm->type) {
 		case JABBER_MESSAGE_NORMAL:
@@ -424,6 +476,9 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			break;
 		case JABBER_MESSAGE_GROUPCHAT_INVITE:
 			handle_groupchat_invite(jm);
+			break;
+		case JABBER_MESSAGE_EVENT:
+			jabber_handle_event(jm);
 			break;
 		case JABBER_MESSAGE_ERROR:
 			handle_error(jm);
@@ -461,6 +516,7 @@ void jabber_message_send(JabberMessage *jm)
 			type = "error";
 			break;
 		case JABBER_MESSAGE_OTHER:
+		default:
 			type = NULL;
 			break;
 	}
@@ -689,3 +745,8 @@ void jabber_message_conv_closed(JabberStream *js, const char *who)
 	jabber_message_send(jm);
 	jabber_message_free(jm);
 }
+
+gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *shortname, const gchar *namespace) {
+	return js->allowBuzz;
+}
+

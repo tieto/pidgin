@@ -113,6 +113,16 @@ typedef enum
 #include "conversation.h"
 #include "value.h"
 
+#define PURPLE_TUNE_ARTIST	"tune_artist"
+#define PURPLE_TUNE_TITLE	"tune_title"
+#define PURPLE_TUNE_ALBUM	"tune_album"
+#define PURPLE_TUNE_GENRE	"tune_genre"
+#define PURPLE_TUNE_COMMENT	"tune_comment"
+#define PURPLE_TUNE_TRACK	"tune_track"
+#define PURPLE_TUNE_TIME	"tune_time"
+#define PURPLE_TUNE_YEAR	"tune_year"
+#define PURPLE_TUNE_URL	"tune_url"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

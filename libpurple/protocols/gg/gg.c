@@ -411,6 +411,8 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	purple_notify_info(NULL, _("New Gadu-Gadu Account Registered"),
 			 _("Registration completed successfully!"), NULL);
 
+	if(account->registration_cb)
+		(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
 	/* TODO: the currently open Accounts Window will not be updated withthe
 	 * new username and etc, we need to somehow have it refresh at this
 	 * point
@@ -420,6 +422,9 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	purple_connection_destroy(gc);
 
 exit_err:
+	if(account->registration_cb)
+		(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
+
 	gg_register_free(h);
 	g_free(email);
 	g_free(p1);
