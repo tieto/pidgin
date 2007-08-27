@@ -246,18 +246,18 @@ PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account,
 {
 	PurplePlugin *prpl;
 	PurpleAttentionType* attn;
-	GList *(*function)(PurpleAccount *);
+	GList *(*get_attention_types)(PurpleAccount *);
 
 	g_return_val_if_fail(account != NULL, NULL);
 
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 
 	/* Lookup the attention type in the protocol's attention_types list, if any. */
-	function = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->attention_types;
-	if (function) {
+	get_attention_types = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->attention_types;
+	if (get_attention_types) {
 		GList *attention_types;
 
-		attention_types = function(account);
+		attention_types = get_attention_types(account);
 		attn = (PurpleAttentionType *)g_list_nth_data(attention_types, type_code);
 	} else {
 		attn = NULL;
@@ -271,11 +271,18 @@ serv_send_attention(PurpleConnection *gc, const char *who, guint type_code)
 {
 	PurpleAttentionType *attn;
 	PurpleMessageFlags flags;
+	PurplePlugin *prpl;
+	gboolean (*send_attention)(PurpleConnection *, const char *, guint);
+	
 	gchar *description;
 	time_t mtime;
 
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
+
+	prpl = purple_find_prpl(purple_account_get_protocol_id(gc->account));
+	send_attention = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention;
+	g_return_if_fail(send_attention != NULL);
 
 	mtime = time(NULL);
 
@@ -289,8 +296,13 @@ serv_send_attention(PurpleConnection *gc, const char *who, guint type_code)
 	
 	flags = PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM;
 
-	/* TODO: icons, sound, shaking... same as serv_got_attention(). */
+	purple_debug_info("server", "serv_send_attention: sending '%s' to %s\n",
+			description, who);
 
+	if (!send_attention(gc, who, type_code))
+		return;
+
+	/* TODO: icons, sound, shaking... same as serv_got_attention(). */
 	serv_got_im(gc, who, description, flags, mtime);
 
 	g_free(description);
@@ -319,6 +331,9 @@ serv_got_attention(PurpleConnection *gc, const char *who, guint type_code)
 	} else {
 		description = g_strdup(_("Attention!"));
 	}
+
+	purple_debug_info("server", "serv_got_attention: got '%s' from %s\n",
+			description, who);
 
 	serv_got_im(gc, who, description, flags, mtime);
 	

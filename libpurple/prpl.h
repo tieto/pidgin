@@ -348,9 +348,9 @@ struct _PurplePluginProtocolInfo
 	char *(*roomlist_room_serialize)(PurpleRoomlistRoom *room);
 
 	/* Attention API for sending & receiving zaps/nudges/buzzes etc. */
-	gboolean (*send_attention)(PurpleConnection *gc, 
-			const char *username, guint type);
+	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
 	GList *(*attention_types)(PurpleAccount *acct);
+
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
 };

@@ -81,9 +81,7 @@ msim_send_attention(PurpleConnection *gc, const gchar *username, guint code)
 		return FALSE;
 	}
 
-	/* TODO: make use of the MsimAttentionType we found, instead of
-	 * doing it all over in msim_send_zap_from_menu. */
-	msim_send_zap_from_menu(&buddy->node, GUINT_TO_POINTER(code));
+	msim_send_zap(session, username, code);
 
 	return TRUE;
 }
@@ -105,7 +103,7 @@ msim_send_zap(MsimSession *session, const gchar *username, guint code)
 
 
 #ifdef MSIM_USE_ATTENTION_API
-	serv_send_attention(session->gc, username, code);
+	/* serv_send_attention(session->gc, username, code); */
 #else
 	types = msim_attention_types(session->account);
 
@@ -167,7 +165,11 @@ msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr)
 
 	zap = GPOINTER_TO_INT(zap_num_ptr);
 
+#ifdef MSIM_USE_ATTENTION_API
+	serv_send_attention(session->gc, buddy->name, zap);
+#else
 	g_return_if_fail(msim_send_zap(session, buddy->name, zap));
+#endif
 }
 
 /** Return menu, if any, for a buddy list node. */
