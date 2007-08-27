@@ -1,9 +1,9 @@
 /**
- * @file parser.h XML parser functions
+ * @file ping.h utility functions
  *
  * purple
  *
- * Copyright (C) 2003 Nathan Walp <faceprint@faceprint.com>
+ * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +19,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _PURPLE_JABBER_PARSER_H_
-#define _PURPLE_JABBER_PARSER_H_
+#ifndef _PURPLE_JABBER_PING_H_
+#define _PURPLE_JABBER_PING_H_
 
 #include "jabber.h"
+#include "conversation.h"
 
-void jabber_parser_setup(JabberStream *js);
-void jabber_parser_free(JabberStream *js);
-void jabber_parser_process(JabberStream *js, const char *buf, int len);
+void jabber_ping_parse(JabberStream *js,
+						xmlnode *packet);
 
-#endif /* _PURPLE_JABBER_PARSER_H_ */
+
+gboolean jabber_ping_jid(PurpleConversation *conv, const char *jid);
+
+
+#endif /* _PURPLE_JABBER_PING_H_ */

@@ -154,6 +154,7 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
 
 /**
  * Makes a SSL connection using an already open file descriptor.
+ * @deprecated Use purple_ssl_connect_fd_with_host instead.
  *
  * @param account    The account making the connection.
  * @param fd         The file descriptor.
@@ -166,7 +167,25 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
 PurpleSslConnection *purple_ssl_connect_fd(PurpleAccount *account, int fd,
 									   PurpleSslInputFunction func,
 									   PurpleSslErrorFunction error_func,
-									   void *data);
+ 									   void *data);
+
+/**
+  * Makes a SSL connection using an already open file descriptor.
+  *
+  * @param account    The account making the connection.
+  * @param fd         The file descriptor.
+  * @param func       The SSL input handler function.
+  * @param error_func The SSL error handler function.
+  * @param host       The hostname of the other peer (to verify the CN)
+  * @param data       User-defined data.
+  *
+  * @return The SSL connection handle.
+  */
+PurpleSslConnection *purple_ssl_connect_fd_with_host(PurpleAccount *account, int fd,
+                                           PurpleSslInputFunction func,
+                                           PurpleSslErrorFunction error_func,
+                                           const char *host,
+                                           void *data);
 
 /**
  * Adds an input watcher for the specified SSL connection.

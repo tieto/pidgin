@@ -53,6 +53,7 @@ C_SRC =			auth.c \
 			message.c \
 			oob.c \
 			parser.c \
+			ping.c \
 			presence.c \
 			roster.c \
 			si.c \
