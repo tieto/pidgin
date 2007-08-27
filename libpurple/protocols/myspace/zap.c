@@ -93,16 +93,20 @@ static gboolean
 msim_send_zap(MsimSession *session, const gchar *username, guint code)
 {
 	gchar *zap_string;
+	gboolean rc;
 #ifndef MSIM_USE_ATTENTION_API
-	gchar *zap_description;
-#endif
 	GList *types;
 	MsimAttentionType *attn;
-	gboolean rc;
+	gchar *zap_description;
+#endif
 
 	g_return_val_if_fail(session != NULL, FALSE);
 	g_return_val_if_fail(username != NULL, FALSE);
 
+
+#ifdef MSIM_USE_ATTENTION_API
+	serv_send_attention(session->gc, username, code);
+#else
 	types = msim_attention_types(session->account);
 
 	attn = g_list_nth_data(types, code);
@@ -111,9 +115,6 @@ msim_send_zap(MsimSession *session, const gchar *username, guint code)
 	}
 
 
-#ifdef MSIM_USE_ATTENTION_API
-	serv_got_attention(session->gc, username, attn, FALSE);
-#else
 	zap_description = g_strdup_printf("*** Attention: %s %s ***", attn->outgoing_description,
 			username);
 
@@ -218,12 +219,9 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 {
 	gchar *msg_text, *username;
 	gint zap;
+#ifndef MSIM_USE_ATTENTION_API
 	const gchar *zap_past_tense[10];
-#ifdef MSIM_USE_ATTENTION_API
-	MsimAttentionType attn;
-#else
 	gchar *zap_text;
-#endif
 
 	zap_past_tense[0] = _("zapped");
 	zap_past_tense[1] = _("whacked");
@@ -235,6 +233,7 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 	zap_past_tense[7] = _("hi-fived");
 	zap_past_tense[8] = _("punk'd");
 	zap_past_tense[9] = _("raspberried");
+#endif
 
 	msg_text = msim_msg_get_string(msg, "msg");
 	username = msim_msg_get_string(msg, "_username");
@@ -244,15 +243,10 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 
 	g_return_val_if_fail(sscanf(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", &zap) == 1, FALSE);
 
-	zap = CLAMP(zap, 0, sizeof(zap_past_tense) / sizeof(zap_past_tense[0]));
+	zap = CLAMP(zap, 0, 9);
 
-	/* TODO:ZAP: use msim_attention_types */
 #ifdef MSIM_USE_ATTENTION_API
-	attn.incoming_description = zap_past_tense[zap];
-	attn.outgoing_description = NULL;
-	attn.icon_name = NULL;		/* TODO: icon */
-
-	serv_got_attention(session->gc, username, &attn, TRUE);
+	serv_got_attention(session->gc, username, zap);
 #else
 	zap_text = g_strdup_printf(_("*** You have been %s! ***"), zap_past_tense[zap]);
 	serv_got_im(session->gc, username, zap_text, 

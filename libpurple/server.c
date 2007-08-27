@@ -242,73 +242,87 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 	}
 }
 
-/** Indicate that an attention message was sent or received. */
-void
-serv_got_attention(PurpleConnection *gc, const char *who, PurpleAttentionType *attn, gboolean incoming)
+PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account, guint type_code)
 {
-	PurpleConversation *conv;
-	PurpleMessageFlags flags;
-	gchar *description;
-	int plugin_return;
+	PurplePlugin *prpl;
+	PurpleAttentionType* attn;
+	GList *(*function)(PurpleAccount *);
 
+	g_return_val_if_fail(account != NULL, NULL);
 
-	/* For incoming messages, block the attention message if requested (privacy) */
-	if (incoming) {
-		gchar *who_copy;
+	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 
-		if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->set_permit_deny == NULL)
-			if (!purple_privacy_check(gc->account, who))
-				return;
+	/* Lookup the attention type in the protocol's attention_types list, if any. */
+	function = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->attention_types;
+	if (function) {
+		GList *attention_types;
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, gc->account);
-
-		who_copy = g_strdup(who);
-
-		plugin_return = GPOINTER_TO_INT(
-			purple_signal_emit_return_1(purple_conversations_get_handle(),
-									  "receiving-im-attention", gc->account,
-									  &who_copy, attn->icon_name, attn->name, 
-									  attn->incoming_description,
-									  attn->outgoing_description, conv));
-
-		if (!attn || !who_copy || plugin_return) {
-			g_free(who_copy);
-			return;
-		}
-
-		purple_signal_emit(purple_conversations_get_handle(), "received-im-attention", gc->account,
-						 who, attn->icon_name, attn->name,
-						 attn->incoming_description, attn->outgoing_description, conv);
+		attention_types = function(account);
+		attn = (PurpleAttentionType *)g_list_nth_data(attention_types, type_code);
+	} else {
+		attn = NULL;
 	}
 
-	/* The attention message was allowed. Create a string representing the message. */
-	flags = PURPLE_MESSAGE_SYSTEM;
+	return attn;
+}
+
+void
+serv_send_attention(PurpleConnection *gc, const char *who, guint type_code)
+{
+	PurpleAttentionType *attn;
+	PurpleMessageFlags flags;
+	gchar *description;
+	time_t mtime;
+
+	g_return_if_fail(gc != NULL);
+	g_return_if_fail(who != NULL);
+
+	mtime = time(NULL);
+
+	attn = purple_get_attention_type_from_code(gc->account, type_code);
+
+	if (attn && attn->outgoing_description) {
+		description = g_strdup_printf(_("Attention! %s %s."), attn->outgoing_description, who);
+	} else {
+		description = g_strdup(_("Attention!"));
+	}
+	
+	flags = PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM;
+
+	/* TODO: icons, sound, shaking... same as serv_got_attention(). */
+
+	serv_got_im(gc, who, description, flags, mtime);
+
+	g_free(description);
+}
+
+void
+serv_got_attention(PurpleConnection *gc, const char *who, guint type_code)
+{
+	PurpleMessageFlags flags;
+	PurpleAttentionType *attn;
+	gchar *description;
+	time_t mtime;
+
+	mtime = time(NULL);
+
+	attn = purple_get_attention_type_from_code(gc->account, type_code);
+
+	/* PURPLE_MESSAGE_NOTIFY is for attention messages. */
+	flags = PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_RECV;
 
 	/* TODO: if (attn->icon_name) is non-null, use it to lookup an emoticon and display
 	 * it next to the attention command. And if it is null, display a generic icon. */
 
-	if (incoming) {
-		if (attn->incoming_description) {
-			description = g_strdup_printf(_("Attention! You have been %s."), attn->incoming_description);
-		} else {
-			description = g_strdup(_("Attention!"));
-		}
-		flags |= PURPLE_MESSAGE_RECV;
+	if (attn && attn->incoming_description) {
+		description = g_strdup_printf(_("Attention! You have been %s."), attn->incoming_description);
 	} else {
-		if (attn->outgoing_description) {
-			description = g_strdup_printf(_("Attention! %s %s."), attn->outgoing_description, who);
-		} else {
-			description = g_strdup(_("Attention!"));
-		}
-		flags |= PURPLE_MESSAGE_SEND;
+		description = g_strdup(_("Attention!"));
 	}
 
-	/* Display it in the conversation window to the user. */
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, gc->account);
-	if (!conv)
-		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, gc->account, who);
-
-	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, description, flags, time(NULL));
+	serv_got_im(gc, who, description, flags, mtime);
+	
+	/* TODO: sounds (depending on PurpleAttentionType), shaking, etc. */
 
 	g_free(description);
 }

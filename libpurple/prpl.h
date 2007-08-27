@@ -94,10 +94,16 @@ struct proto_chat_entry {
 
 struct _PurpleAttentionType
 {
-	const char *icon_name;             /**< Icon to display (optional) */
 	const char *name;                  /**< Shown in GUI elements */
 	const char *incoming_description;  /**< Shown when sent */
 	const char *outgoing_description;  /**< Shown when receied */
+	const char *icon_name;             /**< Icon to display (optional) */
+
+	/* Reserved fields for future purposes */
+	gpointer _reserved1;
+	gpointer _reserved2;
+	gpointer _reserved3;
+	gpointer _reserved4;
 };
 
 /**
