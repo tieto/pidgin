@@ -2271,7 +2271,7 @@ pidgin_conv_get_tab_icon(PurpleConversation *conv, gboolean small_icon)
         const char *name = NULL;
         GdkPixbuf *status = NULL;
         PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	const char *icon_size = small_icon ? "pidgin-icon-size-tango-microscopic" : PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL;
+	const char *icon_size = small_icon ? PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC : PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL;
         g_return_val_if_fail(conv != NULL, NULL);
 
         account = purple_conversation_get_account(conv);
