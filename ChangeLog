@@ -9,6 +9,8 @@ version 2.2.0:
 	* Insert Horizontal Rules and Strikethrough text from toolbar
 	* Option to show protocol icons in the buddy list, from the
 	  Buddies > Show menu (Justin Heiner)
+	* Ability to build with native, non-X11 GTK+ on OSX (Anders
+   	  Hasselqvist)
 
 	Finch:
 	* Per-conversation mute and logging options (accessible from the menu)

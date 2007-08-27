@@ -4535,14 +4535,15 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "markup", CONV_TEXT_COLUMN, NULL);
 	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 
+#if GTK_CHECK_VERSION(2, 6, 0)
+	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif
+
+
 	rend = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "pixbuf", CONV_PROTOCOL_ICON_COLUMN, NULL);
 	g_object_set(rend, "xalign", 0.0, "xpad", 3, "ypad", 0, NULL);
-
-#if GTK_CHECK_VERSION(2, 6, 0)
-	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, FALSE);
