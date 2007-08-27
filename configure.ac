@@ -2141,6 +2141,7 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/status/Makefile
 		   pidgin/pixmaps/status/11/Makefile
 		   pidgin/pixmaps/status/11/scalable/Makefile
+		   pidgin/pixmaps/status/11/rtl/Makefile
 		   pidgin/pixmaps/status/16/Makefile
 		   pidgin/pixmaps/status/16/rtl/Makefile
 		   pidgin/pixmaps/status/16/scalable/Makefile
