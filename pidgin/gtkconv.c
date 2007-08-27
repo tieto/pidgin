@@ -86,6 +86,7 @@ enum {
 	CONV_ICON_COLUMN,
 	CONV_TEXT_COLUMN,
 	CONV_EMBLEM_COLUMN,
+	CONV_PROTOCOL_ICON_COLUMN,
 	CONV_NUM_COLUMNS
 } PidginInfopaneColumns;
 
@@ -2361,6 +2362,12 @@ update_tab_icon(PurpleConversation *conv)
 			&(gtkconv->infopane_iter),
 			CONV_EMBLEM_COLUMN, emblem, -1);
 
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons")) {
+		gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model),
+			&(gtkconv->infopane_iter),
+			CONV_PROTOCOL_ICON_COLUMN, pidgin_create_prpl_icon(gtkconv->active_conv->account, PIDGIN_PRPL_ICON_SMALL), -1);
+	}
+
 	/* XXX seanegan Why do I have to do this? */
 	gtk_widget_queue_draw(gtkconv->infopane);
 
@@ -4507,7 +4514,7 @@ setup_common_pane(PidginConversation *gtkconv)
 			G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 
 	gtkconv->infopane = gtk_cell_view_new();
-	gtkconv->infopane_model = gtk_list_store_new(CONV_NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, GDK_TYPE_PIXBUF);
+	gtkconv->infopane_model = gtk_list_store_new(CONV_NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, GDK_TYPE_PIXBUF, GDK_TYPE_PIXBUF);
 	gtk_cell_view_set_model(GTK_CELL_VIEW(gtkconv->infopane), 
 				GTK_TREE_MODEL(gtkconv->infopane_model));
 	gtk_list_store_append(gtkconv->infopane_model, &(gtkconv->infopane_iter));
@@ -4527,6 +4534,11 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, TRUE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "markup", CONV_TEXT_COLUMN, NULL);
 	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
+
+	rend = gtk_cell_renderer_pixbuf_new();
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, FALSE);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "pixbuf", CONV_PROTOCOL_ICON_COLUMN, NULL);
+	g_object_set(rend, "xalign", 0.0, "xpad", 3, "ypad", 0, NULL);
 
 #if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
@@ -6888,6 +6900,17 @@ show_buddy_icons_pref_cb(const char *name, PurplePrefType type,
 }
 
 static void
+show_protocol_icons_pref_cb(const char *name, PurplePrefType type,
+						gconstpointer value, gpointer data)
+{
+	GList *l;
+	for (l = purple_get_conversations(); l != NULL; l = l->next) {
+		PurpleConversation *conv = l->data;
+		update_tab_icon(conv);
+	}
+}
+
+static void
 conv_placement_usetabs_cb(const char *name, PurplePrefType type,
 						  gconstpointer value, gpointer data)
 {
@@ -7228,6 +7251,8 @@ pidgin_conversations_init(void)
 								animate_buddy_icons_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons",
 								show_buddy_icons_pref_cb, NULL);
+	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/show_protocol_icons",
+								show_protocol_icons_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
                                 hide_new_pref_cb, NULL);
 
