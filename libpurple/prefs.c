@@ -1446,6 +1446,9 @@ purple_prefs_init(void)
 	purple_prefs_remove("/purple/contact/offline_score");
 	purple_prefs_remove("/purple/contact/away_score");
 	purple_prefs_remove("/purple/contact/idle_score");
+
+	purple_prefs_load();
+	purple_prefs_update_old();
 }
 
 void
