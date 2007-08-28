@@ -25,6 +25,7 @@
 #ifndef _PURPLE_SSLCONN_H_
 #define _PURPLE_SSLCONN_H_
 
+#include "certificate.h"
 #include "proxy.h"
 
 #define PURPLE_SSL_DEFAULT_PORT 443
@@ -32,7 +33,8 @@
 typedef enum
 {
 	PURPLE_SSL_HANDSHAKE_FAILED = 1,
-	PURPLE_SSL_CONNECT_FAILED = 2
+	PURPLE_SSL_CONNECT_FAILED = 2,
+	PURPLE_SSL_CERTIFICATE_INVALID = 3
 } PurpleSslErrorType;
 
 typedef struct _PurpleSslConnection PurpleSslConnection;
@@ -69,6 +71,9 @@ struct _PurpleSslConnection
 
 	/** Internal connection data managed by the SSL backend (GnuTLS/LibNSS/whatever) */
 	void *private_data;
+
+	/** Verifier to use in authenticating the peer */
+	PurpleCertificateVerifier *verifier;
 };
 
 /**
@@ -107,8 +112,17 @@ typedef struct
 	* @return	The number of bytes written (may be less than len) or <0 on error
 	*/
 	size_t (*write)(PurpleSslConnection *gsc, const void *data, size_t len);
-
-	void (*_purple_reserved1)(void);
+	/** Obtains the certificate chain provided by the peer
+	 *
+	 * @param gsc   Connection context
+	 * @return      A newly allocated list containing the certificates
+	 *              the peer provided.
+	 * @see PurpleCertificate
+	 * @todo        Decide whether the ordering of certificates in this
+	 *              list can be guaranteed.
+	 */
+	GList * (* get_peer_certificates)(PurpleSslConnection * gsc);
+	
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
@@ -129,6 +143,14 @@ extern "C" {
  * @return TRUE if SSL is supported, or FALSE otherwise.
  */
 gboolean purple_ssl_is_supported(void);
+
+/**
+ * Returns a human-readable string for an SSL error
+ *
+ * @param error      Error code
+ * @return Human-readable error explanation
+ */
+const gchar * purple_ssl_strerror(PurpleSslErrorType error);
 
 /**
  * Makes a SSL connection to the specified host and port.  The caller
@@ -154,6 +176,7 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
 
 /**
  * Makes a SSL connection using an already open file descriptor.
+ * DEPRECATED. Use purple_ssl_connect_with_host_fd instead.
  *
  * @param account    The account making the connection.
  * @param fd         The file descriptor.
@@ -166,7 +189,25 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
 PurpleSslConnection *purple_ssl_connect_fd(PurpleAccount *account, int fd,
 									   PurpleSslInputFunction func,
 									   PurpleSslErrorFunction error_func,
-									   void *data);
+ 									   void *data);
+
+/**
+  * Makes a SSL connection using an already open file descriptor.
+  *
+  * @param account    The account making the connection.
+  * @param fd         The file descriptor.
+  * @param func       The SSL input handler function.
+  * @param error_func The SSL error handler function.
+  * @param host       The hostname of the other peer (to verify the CN)
+  * @param data       User-defined data.
+  *
+  * @return The SSL connection handle.
+  */
+PurpleSslConnection *purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
+                                           PurpleSslInputFunction func,
+                                           PurpleSslErrorFunction error_func,
+                                           const char *host,
+                                           void *data);
 
 /**
  * Adds an input watcher for the specified SSL connection.
@@ -207,6 +248,16 @@ size_t purple_ssl_read(PurpleSslConnection *gsc, void *buffer, size_t len);
  * @return The number of bytes written.
  */
 size_t purple_ssl_write(PurpleSslConnection *gsc, const void *buffer, size_t len);
+
+/**
+ * Obtains the peer's presented certificates
+ *
+ * @param gsc    The SSL connection handle
+ *
+ * @return The peer certificate chain, in the order of certificate, issuer,
+ *         issuer's issuer, etc. NULL if no certificates have been provided,
+ */
+GList * purple_ssl_get_peer_certificates(PurpleSslConnection *gsc);
 
 /*@}*/
 
