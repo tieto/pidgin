@@ -597,7 +597,7 @@ pidgin_certmgr_show(void)
 			for (l=idlist; l; l = l->next) {
 				purple_debug_info("gtkcertmgr",
 						  "- %s\n",
-						  (gchar *) l->data);
+						  l->data ? (gchar *) l->data : "(null)");
 			} /* idlist */
 			purple_certificate_pool_destroy_idlist(idlist);
 		} /* poollist */
