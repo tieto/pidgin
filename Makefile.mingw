@@ -51,6 +51,7 @@ EXTERNAL_DLLS = \
 	silc.dll \
 	silcclient.dll \
 	softokn3.dll \
+	smime3.dll \
 	ssl3.dll
 
 #build an expression for `find` to use to ignore the above files

@@ -136,9 +136,6 @@ typedef struct
 	GtkWidget *proxy_user_entry;
 	GtkWidget *proxy_pass_entry;
 
-	/* Are we registering? */
-	gboolean   registering;
-
 } AccountPrefsDialog;
 
 typedef struct
@@ -1147,7 +1144,7 @@ cancel_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	account_win_destroy_cb(NULL, NULL, dialog);
 }
 
-static PurpleAccount*
+static void
 ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
 	PurpleProxyInfo *proxy_info = NULL;
@@ -1155,22 +1152,58 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	const char *value;
 	char *username;
 	char *tmp;
-	gboolean new = FALSE, icon_change = FALSE;
+	gboolean new_acct = FALSE, icon_change = FALSE;
 	PurpleAccount *account;
 	PurplePluginProtocolInfo *prpl_info;
 
+	/* Build the username string. */
+	username = g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry)));
+
+	if (dialog->prpl_info != NULL)
+	{
+		for (l = dialog->prpl_info->user_splits,
+			 l2 = dialog->user_split_entries;
+			 l != NULL && l2 != NULL;
+			 l = l->next, l2 = l2->next)
+		{
+			PurpleAccountUserSplit *split = l->data;
+			GtkEntry *entry = l2->data;
+			char sep[2] = " ";
+
+			value = gtk_entry_get_text(entry);
+
+			*sep = purple_account_user_split_get_separator(split);
+
+			tmp = g_strconcat(username, sep,
+					(*value ? value :
+					 purple_account_user_split_get_default_value(split)),
+					NULL);
+
+			g_free(username);
+			username = tmp;
+		}
+	}
+
 	if (dialog->account == NULL)
 	{
-		const char *screenname;
+		if (purple_accounts_find(username, dialog->protocol_id) != NULL) {
+			purple_debug_warning("gtkaccount", "Trying to add a duplicate %s account (%s).\n",
+				dialog->protocol_id, username);
+
+			purple_notify_error(NULL, NULL, _("Unable to save new account"),
+				_("An account already exists with the specified criteria."));
+
+			g_free(username);
+			return;
+		}
 
 		if (purple_accounts_get_all() == NULL) {
 			/* We're adding our first account.  Be polite and show the buddy list */
 			purple_blist_set_visible(TRUE);
 		}
 
-		screenname = gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry));
-		account = purple_account_new(screenname, dialog->protocol_id);
-		new = TRUE;
+		account = purple_account_new(username, dialog->protocol_id);
+		new_acct = TRUE;
 	}
 	else
 	{
@@ -1194,7 +1227,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	{
 		const char *filename;
 
-		if (new || purple_account_get_bool(account, "use-global-buddyicon", TRUE) ==
+		if (new_acct || purple_account_get_bool(account, "use-global-buddyicon", TRUE) ==
 			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)))
 		{
 			icon_change = TRUE;
@@ -1247,39 +1280,10 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	 * the account editor (but has not checked the 'save' box), then we
 	 * don't want to prompt them.
 	 */
-	if ((purple_account_get_remember_password(account) || new) && (*value != '\0'))
+	if ((purple_account_get_remember_password(account) || new_acct) && (*value != '\0'))
 		purple_account_set_password(account, value);
 	else
 		purple_account_set_password(account, NULL);
-
-	/* Build the username string. */
-	username =
-		g_strdup(gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry)));
-
-	if (dialog->prpl_info != NULL)
-	{
-		for (l = dialog->prpl_info->user_splits,
-			 l2 = dialog->user_split_entries;
-			 l != NULL && l2 != NULL;
-			 l = l->next, l2 = l2->next)
-		{
-			PurpleAccountUserSplit *split = l->data;
-			GtkEntry *entry = l2->data;
-			char sep[2] = " ";
-
-			value = gtk_entry_get_text(entry);
-
-			*sep = purple_account_user_split_get_separator(split);
-
-			tmp = g_strconcat(username, sep,
-					(*value ? value :
-					 purple_account_user_split_get_default_value(split)),
-					NULL);
-
-			g_free(username);
-			username = tmp;
-		}
-	}
 
 	purple_account_set_username(account, username);
 	g_free(username);
@@ -1389,7 +1393,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	}
 
 	/* If this is a new account, add it to our list */
-	if (new)
+	if (new_acct)
 		purple_accounts_add(account);
 	else
 		purple_signal_emit(pidgin_account_get_handle(), "account-modified", account);
@@ -1397,7 +1401,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	/* If this is a new account, then sign on! */
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->register_button))) {
 		purple_account_register(account);
-	} else if (new) {
+	} else if (new_acct) {
 		const PurpleSavedStatus *saved_status;
 
 		saved_status = purple_savedstatus_get_current();
@@ -1410,7 +1414,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	/* We no longer need the data from the dialog window */
 	account_win_destroy_cb(NULL, NULL, dialog);
 
-	return account;
 }
 
 static const GtkTargetEntry dnd_targets[] = {

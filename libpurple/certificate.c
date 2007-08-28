@@ -28,9 +28,9 @@
 
 #include <glib.h>
 
+#include "internal.h"
 #include "certificate.h"
 #include "debug.h"
-#include "internal.h"
 #include "request.h"
 #include "signals.h"
 #include "util.h"
@@ -670,8 +670,13 @@ x509_ca_lazy_init(void)
 
 	/* Attempt to point at the appropriate system path */
 	if (NULL == x509_ca_syspath) {
+#ifdef _WIN32
+		x509_ca_syspath = g_build_filename(DATADIR,
+						   "ca-certs", NULL);
+#else
 		x509_ca_syspath = g_build_filename(DATADIR,
 						   "purple", "ca-certs", NULL);
+#endif
 	}
 
 	/* Populate the certificates pool from the system path */
@@ -1771,7 +1776,7 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	gchar *cn;
 	time_t activation, expiration;
 	/* Length of these buffers is dictated by 'man ctime_r' */
-	gchar activ_str[26], expir_str[26];
+	gchar *activ_str, *expir_str;
 	gchar *secondary;
 
 	/* Pull out the SHA1 checksum */
@@ -1788,27 +1793,29 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	/* TODO: Check the times against localtime */
 	/* TODO: errorcheck? */
 	g_assert(purple_certificate_get_times(crt, &activation, &expiration));
-	ctime_r(&activation, activ_str);
-	ctime_r(&expiration, expir_str);
-	
+	activ_str = g_strdup(ctime(&activation));
+	expir_str = g_strdup(ctime(&expiration));
+
 	/* Make messages */
 	secondary = g_strdup_printf(_("Common name: %s\n\n"
 				      "Fingerprint (SHA1): %s\n\n"
 				      "Activation date: %s\n"
 				      "Expiration date: %s\n"),
 				    cn, sha_asc, activ_str, expir_str);
-	
+
 	/* Make a semi-pretty display */
 	purple_notify_info(
 		NULL,         /* TODO: Find what the handle ought to be */
 		_("Certificate Information"),
 		"",
 		secondary);
-		
+
 	/* Cleanup */
 	g_free(cn);
 	g_free(secondary);
 	g_free(sha_asc);
+	g_free(activ_str);
+	g_free(expir_str);
 	g_byte_array_free(sha_bin, TRUE);
 }
 

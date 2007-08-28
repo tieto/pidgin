@@ -45,6 +45,7 @@
 #define PIDGIN_STOCK_FILE_CANCELED   "pidgin-file-canceled"
 #define PIDGIN_STOCK_FILE_DONE       "pidgin-file-done"
 #define PIDGIN_STOCK_IGNORE          "pidgin-ignore"
+#define PIDGIN_STOCK_INFO            "pidgin-info"
 #define PIDGIN_STOCK_INVITE          "pidgin-invite"
 #define PIDGIN_STOCK_MODIFY          "pidgin-modify"
 #define PIDGIN_STOCK_OPEN_MAIL       "pidgin-stock-open-mail"
