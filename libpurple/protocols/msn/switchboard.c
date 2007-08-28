@@ -951,6 +951,8 @@ nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	PurpleBuddy *buddy;
 	const char *user;
 
+	str = NULL;
+
 	swboard = cmdproc->data;
 	account = cmdproc->session->account;
 	user = msg->remote_user;
@@ -960,9 +962,13 @@ nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	else
 		username = g_markup_escape_text(user, -1);
 
+#ifdef MSN_USE_ATTENTION_API
+	serv_got_attention(account->gc, buddy->name, MSN_NUDGE);
+#else
 	str = g_strdup_printf(_("%s just sent you a Nudge!"), username);
-	g_free(username);
 	msn_switchboard_report_user(swboard, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, str);
+#endif
+	g_free(username);
 	g_free(str);
 }
 

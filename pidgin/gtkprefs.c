@@ -240,7 +240,7 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 
 	if (label != NULL) {
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), dropdown);
-		pidgin_set_accessible_label (dropdown, label);
+		pidgin_set_accessible_relations (dropdown, label);
 	}
 
 	if (type == PURPLE_PREF_INT)
@@ -1039,9 +1039,11 @@ conv_page()
 #endif
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
+	gtk_box_set_child_packing(GTK_BOX(vbox->parent), vbox, TRUE, TRUE, 0, GTK_PACK_START);
 
 	frame = pidgin_create_imhtml(TRUE, &imhtml, &toolbar, NULL);
 	gtk_widget_set_name(imhtml, "pidgin_prefs_font_imhtml");
+	gtk_widget_set_size_request(frame, 300, -1);
 	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml),
 									GTK_IMHTML_BOLD |

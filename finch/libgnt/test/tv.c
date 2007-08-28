@@ -5,6 +5,7 @@
 #include "gntbox.h"
 #include "gntentry.h"
 #include "gnttextview.h"
+#include "gntutils.h"
 
 static gboolean
 key_pressed(GntWidget *w, const char *key, GntWidget *view)
@@ -116,6 +117,8 @@ int main()
 
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "plugins: ", GNT_TEXT_FLAG_BOLD);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "this is the 4th line\n", GNT_TEXT_FLAG_NORMAL);
+
+	gnt_util_parse_xhtml_to_textview("<p><b>Ohoy hoy!!</b><br/><p>I think this is going to</p> <u> WORK!!! </u><a href='www.google.com'>check this out!!</a></p>", GNT_TEXT_VIEW(view));
 
 #ifdef STANDALONE
 	gnt_main();

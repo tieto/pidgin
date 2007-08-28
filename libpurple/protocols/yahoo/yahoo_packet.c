@@ -223,6 +223,11 @@ void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data)
 	GSList *l = pkt->hash;
 	int pos = 0;
 
+	/* This is only called from one place, and the list is
+	 * always backwards */
+
+	l = g_slist_reverse(l);
+
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 		gchar buf[100];
@@ -289,7 +294,7 @@ yahoo_packet_send_can_write(gpointer data, gint source, PurpleInputCondition con
 
 	if (writelen == 0) {
 		purple_input_remove(yd->txhandler);
-		yd->txhandler = -1;
+		yd->txhandler = 0;
 		return;
 	}
 
@@ -350,7 +355,7 @@ int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
 	len = yahoo_packet_build(pkt, 0, yd->wm, yd->jp, &data);
 
 	yahoo_packet_dump(data, len);
-	if (yd->txhandler == -1)
+	if (yd->txhandler == 0)
 		ret = write(yd->fd, data, len);
 	else {
 		ret = -1;
@@ -366,7 +371,7 @@ int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
 	}
 
 	if (ret < len) {
-		if (yd->txhandler == -1)
+		if (yd->txhandler == 0)
 			yd->txhandler = purple_input_add(yd->fd, PURPLE_INPUT_WRITE,
 				yahoo_packet_send_can_write, yd);
 		purple_circ_buffer_append(yd->txbuf, data + ret, len - ret);

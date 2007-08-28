@@ -376,6 +376,101 @@ void gnt_util_parse_widgets(const char *string, int num, ...)
 #endif
 }
 
+#ifndef NO_LIBXML
+static void
+util_parse_html_to_tv(xmlNode *node, GntTextView *tv, GntTextFormatFlags flag)
+{
+	const char *name;
+	char *content;
+	xmlNode *ch;
+	gboolean processed = FALSE;
+	char *url = NULL;
+	gboolean insert_nl_s = FALSE, insert_nl_e = FALSE;
+
+	if (node == NULL || node->name == NULL || node->type != XML_ELEMENT_NODE)
+		return;
+
+	name = (char*)node->name;
+	if (g_ascii_strcasecmp(name, "b") == 0 ||
+		g_ascii_strcasecmp(name, "strong") == 0 ||
+		g_ascii_strcasecmp(name, "i") == 0 ||
+		g_ascii_strcasecmp(name, "blockquote") == 0) {
+		flag |= GNT_TEXT_FLAG_BOLD;
+	} else if (g_ascii_strcasecmp(name, "u") == 0) {
+		flag |= GNT_TEXT_FLAG_UNDERLINE;
+	} else if (g_ascii_strcasecmp(name, "br") == 0) {
+		insert_nl_e = TRUE;
+	} else if (g_ascii_strcasecmp(name, "a") == 0) {
+		flag |= GNT_TEXT_FLAG_UNDERLINE;
+		url = (char *)xmlGetProp(node, (xmlChar*)"href");
+	} else if (g_ascii_strcasecmp(name, "h1") == 0 ||
+			g_ascii_strcasecmp(name, "h2") == 0 ||
+			g_ascii_strcasecmp(name, "h3") == 0 ||
+			g_ascii_strcasecmp(name, "h4") == 0 ||
+			g_ascii_strcasecmp(name, "h5") == 0 ||
+			g_ascii_strcasecmp(name, "h6") == 0) {
+		insert_nl_s = TRUE;
+		insert_nl_e = TRUE;
+	} else if (g_ascii_strcasecmp(name, "title") == 0) {
+		insert_nl_s = TRUE;
+		insert_nl_e = TRUE;
+		flag |= GNT_TEXT_FLAG_BOLD | GNT_TEXT_FLAG_UNDERLINE;
+	} else {
+		/* XXX: Process other possible tags */
+	}
+
+	if (insert_nl_s)
+		gnt_text_view_append_text_with_flags(tv, "\n", flag);
+
+	for (ch = node->children; ch; ch = ch->next) {
+		if (ch->type == XML_ELEMENT_NODE) {
+			processed = TRUE;
+			util_parse_html_to_tv(ch, tv, flag);
+		}
+	}
+
+	if (!processed) {
+		content = (char*)xmlNodeGetContent(node);
+		gnt_text_view_append_text_with_flags(tv, content, flag);
+		xmlFree(content);
+	}
+
+	if (url) {
+		char *href = g_strdup_printf(" (%s)", url);
+		gnt_text_view_append_text_with_flags(tv, href, flag);
+		g_free(href);
+		xmlFree(url);
+	}
+
+	if (insert_nl_e)
+		gnt_text_view_append_text_with_flags(tv, "\n", flag);
+}
+#endif
+
+gboolean gnt_util_parse_xhtml_to_textview(const char *string, GntTextView *tv)
+{
+#ifdef NO_LIBXML
+	return FALSE;
+#else
+	xmlParserCtxtPtr ctxt;
+	xmlDocPtr doc;
+	xmlNodePtr node;
+	GntTextFormatFlags flag = GNT_TEXT_FLAG_NORMAL;
+	gboolean ret = FALSE;
+
+	ctxt = xmlNewParserCtxt();
+	doc = xmlCtxtReadDoc(ctxt, (xmlChar*)string, NULL, NULL, XML_PARSE_NOBLANKS | XML_PARSE_RECOVER);
+	if (doc) {
+		node = xmlDocGetRootElement(doc);
+		util_parse_html_to_tv(node, tv, flag);
+		xmlFreeDoc(doc);
+		ret = TRUE;
+	}
+	xmlCleanupParser();
+	return ret;
+#endif
+}
+
 /* Setup trigger widget */
 typedef struct {
 	char *text;
@@ -408,4 +503,3 @@ void gnt_util_set_trigger_widget(GntWidget *wid, const char *text, GntWidget *bu
 	g_signal_connect(G_OBJECT(wid), "key_pressed", G_CALLBACK(key_pressed), tb);
 	g_signal_connect_swapped(G_OBJECT(button), "destroy", G_CALLBACK(free_trigger_button), tb);
 }
-

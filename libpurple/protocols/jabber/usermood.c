@@ -94,7 +94,7 @@ static const char *moodstrings[] = {
 static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
 	xmlnode *item = xmlnode_get_child(items, "item");
-	const char *newmood;
+	const char *newmood = NULL;
 	char *moodtext = NULL;
 	JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
 	xmlnode *moodinfo, *mood;

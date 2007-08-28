@@ -222,6 +222,11 @@ save_account_cb(AccountEditDialog *dialog)
 
 	/* XXX: Proxy options */
 
+	if (accounts.window && accounts.tree) {
+		gnt_tree_set_selected(GNT_TREE(accounts.tree), account);
+		gnt_box_give_focus_to_child(GNT_BOX(accounts.window), accounts.tree);
+	}
+
 	gnt_widget_destroy(dialog->window);
 }
 
@@ -912,9 +917,15 @@ deny_no_add_cb(auth_and_add *aa)
 }
 
 static void *
-finch_request_authorize(PurpleAccount *account, const char *remote_user,
-					const char *id, const char *alias, const char *message, gboolean on_list,
-					GCallback auth_cb, GCallback deny_cb, void *user_data)
+finch_request_authorize(PurpleAccount *account,
+                        const char *remote_user,
+                        const char *id,
+                        const char *alias,
+                        const char *message,
+                        gboolean on_list,
+                        PurpleAccountRequestAuthorizationCb auth_cb,
+                        PurpleAccountRequestAuthorizationCb deny_cb,
+                        void *user_data)
 {
 	char *buffer;
 	PurpleConnection *gc;
@@ -941,8 +952,8 @@ finch_request_authorize(PurpleAccount *account, const char *remote_user,
 		GList *iter;
 		auth_and_add *aa = g_new(auth_and_add, 1);
 
-		aa->auth_cb = (PurpleAccountRequestAuthorizationCb)auth_cb;
-		aa->deny_cb = (PurpleAccountRequestAuthorizationCb)deny_cb;
+		aa->auth_cb = auth_cb;
+		aa->deny_cb = deny_cb;
 		aa->data = user_data;
 		aa->username = g_strdup(remote_user);
 		aa->alias = g_strdup(alias);

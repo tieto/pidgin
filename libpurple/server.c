@@ -242,6 +242,107 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 	}
 }
 
+PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account, guint type_code)
+{
+	PurplePlugin *prpl;
+	PurpleAttentionType* attn;
+	GList *(*get_attention_types)(PurpleAccount *);
+
+	g_return_val_if_fail(account != NULL, NULL);
+
+	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+
+	/* Lookup the attention type in the protocol's attention_types list, if any. */
+	get_attention_types = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->attention_types;
+	if (get_attention_types) {
+		GList *attention_types;
+
+		attention_types = get_attention_types(account);
+		attn = (PurpleAttentionType *)g_list_nth_data(attention_types, type_code);
+	} else {
+		attn = NULL;
+	}
+
+	return attn;
+}
+
+void
+serv_send_attention(PurpleConnection *gc, const char *who, guint type_code)
+{
+	PurpleAttentionType *attn;
+	PurpleMessageFlags flags;
+	PurplePlugin *prpl;
+	gboolean (*send_attention)(PurpleConnection *, const char *, guint);
+	
+	gchar *description;
+	time_t mtime;
+
+	g_return_if_fail(gc != NULL);
+	g_return_if_fail(who != NULL);
+
+	prpl = purple_find_prpl(purple_account_get_protocol_id(gc->account));
+	send_attention = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->send_attention;
+	g_return_if_fail(send_attention != NULL);
+
+	mtime = time(NULL);
+
+	attn = purple_get_attention_type_from_code(gc->account, type_code);
+
+	if (attn && attn->outgoing_description) {
+		description = g_strdup_printf(_("Attention! %s %s."), attn->outgoing_description, who);
+	} else {
+		description = g_strdup(_("Attention!"));
+	}
+	
+	flags = PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM;
+
+	purple_debug_info("server", "serv_send_attention: sending '%s' to %s\n",
+			description, who);
+
+	if (!send_attention(gc, who, type_code))
+		return;
+
+	/* TODO: icons, sound, shaking... same as serv_got_attention(). */
+	serv_got_im(gc, who, description, flags, mtime);
+
+	g_free(description);
+}
+
+void
+serv_got_attention(PurpleConnection *gc, const char *who, guint type_code)
+{
+	PurpleMessageFlags flags;
+	PurpleAttentionType *attn;
+	gchar *description;
+	time_t mtime;
+
+	mtime = time(NULL);
+
+	attn = purple_get_attention_type_from_code(gc->account, type_code);
+
+	/* PURPLE_MESSAGE_NOTIFY is for attention messages. */
+	flags = PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_RECV;
+
+	/* TODO: if (attn->icon_name) is non-null, use it to lookup an emoticon and display
+	 * it next to the attention command. And if it is null, display a generic icon. */
+
+	if (attn && attn->incoming_description) {
+		description = g_strdup_printf(_("Attention! You have been %s."), attn->incoming_description);
+	} else {
+		description = g_strdup(_("Attention!"));
+	}
+
+	purple_debug_info("server", "serv_got_attention: got '%s' from %s\n",
+			description, who);
+
+	serv_got_im(gc, who, description, flags, mtime);
+	
+	/* TODO: sounds (depending on PurpleAttentionType), shaking, etc. */
+
+	g_free(description);
+}
+
+
 /*
  * Move a buddy from one group to another on server.
  *

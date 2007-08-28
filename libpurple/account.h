@@ -90,8 +90,8 @@ struct _PurpleAccountUiOps
 	                           const char *alias,
 	                           const char *message,
 	                           gboolean on_list,
-	                           GCallback authorize_cb,
-	                           GCallback deny_cb,
+	                           PurpleAccountRequestAuthorizationCb authorize_cb,
+	                           PurpleAccountRequestAuthorizationCb deny_cb,
 	                           void *user_data);
 
 	/** Close a pending request for authorization.  \a ui_handle is a handle
@@ -264,7 +264,7 @@ void purple_account_request_add(PurpleAccount *account, const char *remote_user,
  */
 void *purple_account_request_authorization(PurpleAccount *account, const char *remote_user,
 					const char *id, const char *alias, const char *message, gboolean on_list,
-					GCallback auth_cb, GCallback deny_cb, void *user_data);
+					PurpleAccountRequestAuthorizationCb auth_cb, PurpleAccountRequestAuthorizationCb deny_cb, void *user_data);
 
 /**
  * Close account requests registered for the given PurpleAccount

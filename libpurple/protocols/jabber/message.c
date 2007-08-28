@@ -731,7 +731,11 @@ unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTyp
 
 void jabber_message_conv_closed(JabberStream *js, const char *who)
 {
-	JabberMessage *jm = g_new0(JabberMessage, 1);
+	JabberMessage *jm;
+	if (!purple_prefs_get_bool("/purple/conversations/im/send_typing"))
+		return;
+
+	jm  = g_new0(JabberMessage, 1);
 	jm->js = js;
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->to = g_strdup(who);

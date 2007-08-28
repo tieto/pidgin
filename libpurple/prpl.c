@@ -200,6 +200,7 @@ void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *na
 			continue;
 
 		purple_status_set_active(status, FALSE);
+		purple_blist_update_buddy_status(buddy, status);
 	}
 
 	g_slist_free(list);

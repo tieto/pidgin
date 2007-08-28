@@ -1341,7 +1341,6 @@ purple_prefs_get_children_names(const char *name)
 		list = g_list_append(list, g_strdup_printf("%s%s%s", name, sep, child->name));
 	}
 	return list;
-
 }
 
 void

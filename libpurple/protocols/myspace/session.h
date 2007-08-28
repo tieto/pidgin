@@ -1,0 +1,57 @@
+/* MySpaceIM Protocol Plugin, session
+ *
+ * Copyright (C) 2007, Jeff Connelly <jeff2@soc.pidgin.im>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#ifndef _MYSPACE_SESSION_H
+#define _MYSPACE_SESSION_H
+
+/* Random number in every MsimSession, to ensure it is valid. */
+#define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
+
+/* Everything needed to keep track of a session (proto_data field in PurpleConnection) */
+typedef struct _MsimSession
+{
+	guint magic;                        /**< MSIM_SESSION_STRUCT_MAGIC */
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	guint sesskey;                      /**< Session key from server */
+	guint userid;                       /**< This user's numeric user ID */
+	gchar *username;                    /**< This user's unique username */
+	gint fd;                            /**< File descriptor to/from server */
+
+	/* TODO: Remove. */
+	GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */
+	GHashTable *user_lookup_cb_data;    /**< Username -> userid lookup callback data */
+
+	MsimMessage *server_info;           /**< Parameters from server */
+
+	gchar *rxbuf;                       /**< Receive buffer */
+	guint rxoff;                        /**< Receive buffer offset */
+	guint next_rid;                     /**< Next request/response ID */
+	time_t last_comm;                   /**< Time received last communication */
+	guint inbox_status;                 /**< Bit field of inbox notifications */
+} MsimSession;
+
+/* Check if an MsimSession is valid */
+#define MSIM_SESSION_VALID(s) (session != NULL && session->magic == MSIM_SESSION_STRUCT_MAGIC)
+
+
+MsimSession *msim_session_new(PurpleAccount *acct);
+void msim_session_destroy(MsimSession *session);
+
+#endif /* !_MYSPACE_SESSION_H */

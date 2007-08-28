@@ -39,6 +39,8 @@
 #include "gntmarshal.h"
 #include "gnt.h"
 #include "gntbox.h"
+#include "gntbutton.h"
+#include "gntentry.h"
 #include "gntlabel.h"
 #include "gntmenu.h"
 #include "gnttextview.h"
@@ -84,6 +86,7 @@ static int write_timeout;
 static time_t last_active_time;
 static gboolean idle_update;
 static GList *act = NULL; /* list of WS with unseen activitiy */
+static gboolean ignore_keys = FALSE;
 
 static GList *
 g_list_bring_to_front(GList *list, gpointer data)
@@ -485,35 +488,6 @@ window_close(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
-static gboolean
-help_for_widget(GntBindable *bindable, GList *null)
-{
-	GntWM *wm = GNT_WM(bindable);
-	GntWidget *widget, *tree, *win, *active;
-	char *title;
-
-	if (!wm->cws->ordered)
-		return TRUE;
-
-	widget = wm->cws->ordered->data;
-	if (!GNT_IS_BOX(widget))
-		return TRUE;
-	active = GNT_BOX(widget)->active;
-
-	tree = gnt_widget_bindings_view(active);
-	win = gnt_window_new();
-	title = g_strdup_printf("Bindings for %s", g_type_name(G_OBJECT_TYPE(active)));
-	gnt_box_set_title(GNT_BOX(win), title);
-	if (tree)
-		gnt_box_add_widget(GNT_BOX(win), tree);
-	else
-		gnt_box_add_widget(GNT_BOX(win), gnt_label_new("This widget has no customizable bindings."));
-
-	gnt_widget_show(win);
-
-	return TRUE;
-}
-
 static void
 destroy__list(GntWidget *widget, GntWM *wm)
 {
@@ -764,7 +738,7 @@ dump_screen(GntBindable *bindable, GList *null)
 			print = ch;
 #ifndef NO_WIDECHAR
 			if (wch.chars[0] > 255) {
-				snprintf(unicode, sizeof(unicode), "&#x%x;", wch.chars[0]);
+				snprintf(unicode, sizeof(unicode), "&#x%x;", (unsigned int)wch.chars[0]);
 				print = unicode;
 			}
 #endif
@@ -843,6 +817,7 @@ static gboolean
 shift_right(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
+	
 	if (wm->_list.window)
 		return TRUE;
 
@@ -1138,6 +1113,74 @@ workspace_new(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
+static gboolean
+ignore_keys_start(GntBindable *bindable, GList *n)
+{
+	GntWM *wm = GNT_WM(bindable);
+
+	if(!wm->menu && !wm->_list.window && wm->mode == GNT_KP_MODE_NORMAL){
+		ignore_keys = TRUE;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
+ignore_keys_end(GntBindable *bindable, GList *n)
+{
+	return ignore_keys ? !(ignore_keys = FALSE) : FALSE;
+}
+
+static gboolean
+help_for_bindable(GntWM *wm, GntBindable *bindable)
+{
+	gboolean ret = TRUE;
+	GntBindableClass *klass = GNT_BINDABLE_GET_CLASS(bindable);
+ 
+	if (klass->help_window) {
+		gnt_wm_raise_window(wm, GNT_WIDGET(klass->help_window));
+	} else {
+		ret =  gnt_bindable_build_help_window(bindable);
+	}
+	return ret;
+}
+
+static gboolean
+help_for_wm(GntBindable *bindable, GList *null)
+{
+	return help_for_bindable(GNT_WM(bindable),bindable);
+}
+
+static gboolean
+help_for_window(GntBindable *bindable, GList *null)
+{
+	GntWM *wm = GNT_WM(bindable);
+	GntWidget *widget;
+
+	if(!wm->cws->ordered)
+		return FALSE;
+
+	widget = wm->cws->ordered->data;
+
+	return help_for_bindable(wm,GNT_BINDABLE(widget));
+}
+
+static gboolean
+help_for_widget(GntBindable *bindable, GList *null)
+{
+	GntWM *wm = GNT_WM(bindable);
+	GntWidget *widget;
+
+	if (!wm->cws->ordered)
+		return TRUE;
+
+	widget = wm->cws->ordered->data;
+	if (!GNT_IS_BOX(widget))
+		return TRUE;
+
+	return help_for_bindable(wm, GNT_BINDABLE(GNT_BOX(widget)->active));
+}
+
 static void
 accumulate_windows(gpointer window, gpointer node, gpointer p)
 {
@@ -1321,8 +1364,16 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" "T", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "workspace-list", workspace_list,
 				"\033" "s", NULL);
-	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard",
-				toggle_clipboard, "\033" "C", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard", toggle_clipboard,
+				"\033" "C", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-wm", help_for_wm,
+				"\033" "\\", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-window", help_for_window,
+				"\033" "|", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-start", ignore_keys_start, 
+				GNT_KEY_CTRL_G, NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-end", ignore_keys_end, 
+				"\033" GNT_KEY_CTRL_G, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 
@@ -1709,6 +1760,14 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 	keys = gnt_bindable_remap_keys(GNT_BINDABLE(wm), keys);
 
 	idle_update = TRUE;
+	if(ignore_keys){
+		if(keys && !strcmp(keys, "\033" GNT_KEY_CTRL_G)){
+			if(gnt_bindable_perform_action_key(GNT_BINDABLE(wm), keys)){
+				return TRUE;
+			}
+		}
+		return wm->cws->ordered ? gnt_widget_key_pressed(GNT_WIDGET(wm->cws->ordered->data), keys) : FALSE;
+	}
 
 	if (gnt_bindable_perform_action_key(GNT_BINDABLE(wm), keys)) {
 		return TRUE;
@@ -1927,7 +1986,7 @@ gnt_wm_give_focus(GntWM *wm, GntWidget *widget)
 
 	if (!node)
 		return;
-	
+
 	if (widget != wm->_list.window && !GNT_IS_MENU(widget) &&
 				wm->cws->ordered->data != widget) {
 		GntWidget *w = wm->cws->ordered->data;
@@ -2007,4 +2066,5 @@ void gnt_wm_set_event_stack(GntWM *wm, gboolean set)
 {
 	wm->event_stack = set;
 }
+
 

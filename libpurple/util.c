@@ -1338,6 +1338,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 	GString *xhtml = NULL;
 	GString *plain = NULL;
 	GString *url = NULL;
+	GString *cdata = NULL;
 	GList *tags = NULL, *tag;
 	const char *c = html;
 
@@ -1367,7 +1368,13 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
 						if(plain && !strcmp(pt->src_tag, "a")) {
 							/* if this is a link, we have to add the url to the plaintext, too */
-							g_string_append_printf(plain, " <%s>", g_strstrip(url->str));
+							if (cdata && url && !g_string_equal(cdata, url))
+								g_string_append_printf(plain, " <%s>", g_strstrip(url->str));
+							if (cdata) {
+								g_string_free(cdata, TRUE);
+								cdata = NULL;
+							}
+
 						}
 						if(tags == tag)
 							break;
@@ -1418,7 +1425,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				ALLOW_TAG("strong");
 				ALLOW_TAG("ul");
 
-				
+
 				/* we skip <HR> because it's not legal in XHTML-IM.  However,
 				 * we still want to send something sensible, so we put a
 				 * linebreak in its place. <BR> also needs special handling
@@ -1537,6 +1544,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							const char *q = p + strlen("href=");
 							g_string_free(url, TRUE);
 							url = g_string_new("");
+							cdata = g_string_new("");
 							if(*q == '\'' || *q == '\"')
 								q++;
 							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
@@ -1725,6 +1733,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				xhtml = g_string_append_c(xhtml, *c);
 			if(plain)
 				plain = g_string_append_c(plain, *c);
+			if(cdata)
+				cdata = g_string_append_c(cdata, *c);
 			c++;
 		}
 	}
@@ -2529,7 +2539,7 @@ int purple_build_dir (const char *path, int mode)
  * people's settings if there is a problem writing the new values.
  */
 gboolean
-purple_util_write_data_to_file(const char *filename, const char *data, size_t size)
+purple_util_write_data_to_file(const char *filename, const char *data, gssize size)
 {
 	const char *user_dir = purple_user_dir();
 	gchar *filename_temp, *filename_full;
@@ -4295,7 +4305,7 @@ purple_print_utf8_to_console(FILE *filestream, char *message)
 	}
 }
 
-gboolean purple_message_meify(char *message, size_t len)
+gboolean purple_message_meify(char *message, gssize len)
 {
 	char *c;
 	gboolean inside_html = FALSE;

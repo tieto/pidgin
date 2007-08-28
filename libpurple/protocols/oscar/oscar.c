@@ -482,7 +482,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 
 	/* Attempt to send as ASCII */
 	if (oscar_charset_check(from) == AIM_CHARSET_ASCII) {
-		*msg = g_convert(from, strlen(from), "ASCII", "UTF-8", NULL, &msglen, NULL);
+		*msg = g_convert(from, -1, "ASCII", "UTF-8", NULL, &msglen, NULL);
 		*charset = AIM_CHARSET_ASCII;
 		*charsubset = 0x0000;
 		*msglen_int = msglen;
@@ -504,7 +504,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 		b = purple_find_buddy(account, destsn);
 		if ((b != NULL) && (PURPLE_BUDDY_IS_ONLINE(b)))
 		{
-			*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
+			*msg = g_convert(from, -1, "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 			if (*msg != NULL)
 			{
 				*charset = AIM_CHARSET_UNICODE;
@@ -527,7 +527,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	 * XXX - We need a way to only attempt to convert if we KNOW "from"
 	 * can be converted to "charsetstr"
 	 */
-	*msg = g_convert(from, strlen(from), charsetstr, "UTF-8", NULL, &msglen, NULL);
+	*msg = g_convert(from, -1, charsetstr, "UTF-8", NULL, &msglen, NULL);
 	if (*msg != NULL) {
 		*charset = AIM_CHARSET_CUSTOM;
 		*charsubset = 0x0000;
@@ -538,7 +538,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	/*
 	 * Nothing else worked, so send as UCS-2BE.
 	 */
-	*msg = g_convert(from, strlen(from), "UCS-2BE", "UTF-8", NULL, &msglen, &err);
+	*msg = g_convert(from, -1, "UCS-2BE", "UTF-8", NULL, &msglen, &err);
 	if (*msg != NULL) {
 		*charset = AIM_CHARSET_UNICODE;
 		*charsubset = 0x0000;
@@ -2261,8 +2261,9 @@ purple_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored)
 
 /* When other people ask you for authorization */
 static void
-purple_auth_grant(struct name_data *data)
+purple_auth_grant(gpointer cbdata)
 {
+	struct name_data *data = cbdata;
 	PurpleConnection *gc = data->gc;
 	OscarData *od = gc->proto_data;
 
@@ -2282,8 +2283,9 @@ purple_auth_dontgrant(struct name_data *data, char *msg)
 }
 
 static void
-purple_auth_dontgrant_msgprompt(struct name_data *data)
+purple_auth_dontgrant_msgprompt(gpointer cbdata)
 {
+	struct name_data *data = cbdata;
 	purple_request_input(data->gc, NULL, _("Authorization Denied Message:"),
 					   NULL, _("No reason given."), TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_auth_dontgrant),
@@ -2404,8 +2406,8 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 				purple_account_request_authorization(account, sn, NULL, NULL,
 						reason, purple_find_buddy(account, sn) != NULL,
-						G_CALLBACK(purple_auth_grant),
-						G_CALLBACK(purple_auth_dontgrant_msgprompt), data);
+						purple_auth_grant,
+						purple_auth_dontgrant_msgprompt, data);
 				g_free(reason);
 			}
 		} break;
@@ -3527,6 +3529,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	PurpleStatus *status;
+	PurplePresence *presence;
 	const char *message, *itmsurl;
 	char *tmp;
 	va_list ap;
@@ -3570,7 +3573,8 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	aim_srv_setextrainfo(od, FALSE, 0, TRUE, tmp, itmsurl);
 	g_free(tmp);
 
-	aim_srv_setidle(od, 0);
+	presence = purple_status_get_presence(status);
+	aim_srv_setidle(od, purple_presence_is_idle(presence) ? 0 : time(NULL) - purple_presence_get_idle_time(presence));
 
 	if (od->icq) {
 		aim_icq_reqofflinemsgs(od);
@@ -4346,10 +4350,10 @@ gchar *purple_prpl_oscar_convert_to_infotext(const gchar *str, gsize *ret_len, c
 
 	charset = oscar_charset_check(str);
 	if (charset == AIM_CHARSET_UNICODE) {
-		encoded = g_convert(str, strlen(str), "UCS-2BE", "UTF-8", NULL, ret_len, NULL);
+		encoded = g_convert(str, -1, "UCS-2BE", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "unicode-2-0";
 	} else if (charset == AIM_CHARSET_CUSTOM) {
-		encoded = g_convert(str, strlen(str), "ISO-8859-1", "UTF-8", NULL, ret_len, NULL);
+		encoded = g_convert(str, -1, "ISO-8859-1", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "iso-8859-1";
 	} else {
 		encoded = g_strdup(str);
@@ -5170,8 +5174,8 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 
 	purple_account_request_authorization(account, sn, NULL,
 			(buddy ? purple_buddy_get_alias_only(buddy) : NULL),
-			reason, buddy != NULL, G_CALLBACK(purple_auth_grant),
-			G_CALLBACK(purple_auth_dontgrant_msgprompt), data);
+			reason, buddy != NULL, purple_auth_grant,
+			purple_auth_dontgrant_msgprompt, data);
 	g_free(reason);
 
 	return 1;

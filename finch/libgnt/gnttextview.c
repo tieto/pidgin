@@ -549,7 +549,8 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 		if ((end = strchr(start, '\r')) != NULL ||
 			(end = strchr(start, '\n')) != NULL) {
 			len = gnt_util_onscreen_width(start, end - has_scroll);
-			if (len >= widget->priv.width - line->length - has_scroll) {
+			if (widget->priv.width > 0 &&
+					len >= widget->priv.width - line->length - has_scroll) {
 				end = NULL;
 			}
 		}

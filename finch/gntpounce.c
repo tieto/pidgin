@@ -452,7 +452,7 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 
 	gnt_box_add_widget(GNT_BOX(window), gnt_line_new(FALSE));
 	/* Now the button box! */
-	bbox = gnt_hbox_new(TRUE);
+	bbox = gnt_hbox_new(FALSE);
 
 	/* Cancel button */
 	button = gnt_button_new(_("Cancel"));
@@ -613,6 +613,12 @@ pounces_manager_destroy_cb(GntWidget *widget, gpointer user_data)
 static void
 pounces_manager_add_cb(GntButton *button, gpointer user_data)
 {
+	if (purple_accounts_get_all() == NULL) {
+		purple_notify_error(NULL, _("Cannot create pounce"),
+				_("You do not have any accounts."),
+				_("You must create an account first before you can create a pounce."));
+		return;
+	}
 	finch_pounce_editor_show(NULL, NULL, NULL);
 }
 
@@ -622,7 +628,8 @@ pounces_manager_modify_cb(GntButton *button, gpointer user_data)
 {
 	PouncesManager *dialog = user_data;
 	PurplePounce *pounce = gnt_tree_get_selection_data(GNT_TREE(dialog->tree));
-	finch_pounce_editor_show(NULL, NULL, pounce);
+	if (pounce)
+		finch_pounce_editor_show(NULL, NULL, pounce);
 }
 
 static void
@@ -645,6 +652,9 @@ pounces_manager_delete_cb(GntButton *button, gpointer user_data)
 	char *buf;
 
 	pounce = (PurplePounce *)gnt_tree_get_selection_data(GNT_TREE(dialog->tree));
+	if (pounce == NULL)
+		return;
+
 	account = purple_pounce_get_pouncer(pounce);
 	pouncer = purple_account_get_username(account);
 	pouncee = purple_pounce_get_pouncee(pounce);
@@ -696,7 +706,7 @@ finch_pounces_manager_show(void)
 	gnt_box_add_widget(GNT_BOX(win), tree);
 
 	/* Button box. */
-	bbox = gnt_hbox_new(TRUE);
+	bbox = gnt_hbox_new(FALSE);
 
 	/* Add button */
 	button = gnt_button_new(_("Add"));

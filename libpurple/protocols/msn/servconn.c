@@ -51,7 +51,7 @@ msn_servconn_new(MsnSession *session, MsnServConnType type)
 	servconn->num = session->servconns_count++;
 
 	servconn->tx_buf = purple_circ_buffer_new(MSN_BUF_LEN);
-	servconn->tx_handler = -1;
+	servconn->tx_handler = 0;
 
 	return servconn;
 }
@@ -303,7 +303,7 @@ servconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	if (writelen == 0) {
 		purple_input_remove(servconn->tx_handler);
-		servconn->tx_handler = -1;
+		servconn->tx_handler = 0;
 		return;
 	}
 
@@ -328,7 +328,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 
 	if (!servconn->session->http_method)
 	{
-		if (servconn->tx_handler == -1) {
+		if (servconn->tx_handler == 0) {
 			switch (servconn->type)
 			{
 				case MSN_SERVCONN_NS:
@@ -353,7 +353,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 		if (ret < 0 && errno == EAGAIN)
 			ret = 0;
 		if (ret >= 0 && ret < len) {
-			if (servconn->tx_handler == -1)
+			if (servconn->tx_handler == 0)
 				servconn->tx_handler = purple_input_add(
 					servconn->fd, PURPLE_INPUT_WRITE,
 					servconn_write_cb, servconn);

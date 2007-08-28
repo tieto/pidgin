@@ -442,7 +442,7 @@ pidgin_request_input(const char *title, const char *primary,
 
 static void *
 pidgin_request_choice(const char *title, const char *primary,
-			const char *secondary, unsigned int default_value,
+			const char *secondary, int default_value,
 			const char *ok_text, GCallback ok_cb,
 			const char *cancel_text, GCallback cancel_cb,
 			PurpleAccount *account, const char *who, PurpleConversation *conv,
@@ -548,7 +548,7 @@ pidgin_request_choice(const char *title, const char *primary,
 
 static void *
 pidgin_request_action(const char *title, const char *primary,
-						const char *secondary, unsigned int default_action,
+						const char *secondary, int default_action,
 					    PurpleAccount *account, const char *who, PurpleConversation *conv,
 						void *user_data, size_t action_count, va_list actions)
 {
@@ -1083,7 +1083,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	data->cbs[0] = ok_cb;
 	data->cbs[1] = cancel_cb;
 
-	
+
 #ifdef _WIN32
 	data->dialog = win = pidgin_create_window(PIDGIN_ALERT_TITLE, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
 #else /* !_WIN32 */
@@ -1107,7 +1107,7 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 	gtk_widget_show(vbox);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -1132,6 +1132,8 @@ pidgin_request_fields(const char *title, const char *primary,
 		total_fields += g_list_length(purple_request_field_group_get_fields(gl->data));
 
 	if(total_fields > 9) {
+		GtkWidget *hbox_for_spacing, *vbox_for_spacing;
+
 		sw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 				GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
@@ -1141,8 +1143,19 @@ pidgin_request_fields(const char *title, const char *primary,
 		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 		gtk_widget_show(sw);
 
+		hbox_for_spacing = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw),
+				hbox_for_spacing);
+		gtk_widget_show(hbox_for_spacing);
+
+		vbox_for_spacing = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+		gtk_box_pack_start(GTK_BOX(hbox_for_spacing),
+				vbox_for_spacing, TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
+		gtk_widget_show(vbox_for_spacing);
+
 		vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), vbox2);
+		gtk_box_pack_start(GTK_BOX(vbox_for_spacing),
+				vbox2, TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
 		gtk_widget_show(vbox2);
 	} else {
 		vbox2 = vbox;

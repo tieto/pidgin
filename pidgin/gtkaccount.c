@@ -272,7 +272,8 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 	add_user_options(dialog,     dialog->top_vbox);
 	add_protocol_options(dialog, dialog->bottom_vbox);
 
-	if (!dialog->prpl_info || !dialog->prpl_info->register_user) {
+	if (!dialog->prpl_info || !dialog->prpl_info->register_user || 
+	    g_object_get_data(G_OBJECT(item), "fake")) {
 		gtk_widget_hide(dialog->register_button);
 	} else {
 		if (dialog->prpl_info != NULL &&
@@ -1394,7 +1395,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		purple_signal_emit(pidgin_account_get_handle(), "account-modified", account);
 
 	/* If this is a new account, then sign on! */
-	if (new && !dialog->registering) {
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->register_button))) {
+		purple_account_register(account);
+	} else if (new) {
 		const PurpleSavedStatus *saved_status;
 
 		saved_status = purple_savedstatus_get_current();
@@ -1409,19 +1412,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	return account;
 }
-
-static void
-register_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
-{
-	PurpleAccount *account;
-
-	dialog->registering = TRUE;
-
-	account = ok_account_prefs_cb(NULL, dialog);
-
-	purple_account_register(account);
-}
-
 
 static const GtkTargetEntry dnd_targets[] = {
 	{"text/plain", 0, 0},
@@ -1501,6 +1491,18 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	add_login_options(dialog, vbox);
 	add_user_options(dialog, vbox);
 
+	button = gtk_check_button_new_with_label(_("Create this new account on the server"));
+	gtk_box_pack_start(GTK_BOX(main_vbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+	dialog->register_button = button;
+	if (dialog->account == NULL)
+		gtk_widget_set_sensitive(button, FALSE);
+
+	if (!dialog->prpl_info || !dialog->prpl_info->register_user)
+		gtk_widget_hide(button);
+
+
+
 	/* Setup the page with 'Advanced'. */
 	dialog->bottom_vbox = dbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(GTK_CONTAINER(dbox), PIDGIN_HIG_BORDER);
@@ -1518,22 +1520,6 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(main_vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);
-
-	/* Register button */
-	button = gtk_button_new_with_label(_("Register"));
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-			G_CALLBACK(register_account_prefs_cb), dialog);
-
-	dialog->register_button = button;
-
-	if (dialog->account == NULL)
-		gtk_widget_set_sensitive(button, FALSE);
-
-	if (!dialog->prpl_info || !dialog->prpl_info->register_user)
-		gtk_widget_hide(button);
 
 	/* Cancel button */
 	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
@@ -2546,9 +2532,15 @@ deny_no_add_cb(struct auth_and_add *aa)
 }
 
 static void *
-pidgin_accounts_request_authorization(PurpleAccount *account, const char *remote_user,
-					const char *id, const char *alias, const char *message, gboolean on_list,
-					GCallback auth_cb, GCallback deny_cb, void *user_data)
+pidgin_accounts_request_authorization(PurpleAccount *account,
+                                      const char *remote_user,
+                                      const char *id,
+                                      const char *alias,
+                                      const char *message,
+                                      gboolean on_list,
+                                      PurpleAccountRequestAuthorizationCb auth_cb,
+                                      PurpleAccountRequestAuthorizationCb deny_cb,
+                                      void *user_data)
 {
 	char *buffer;
 	PurpleConnection *gc;
@@ -2574,8 +2566,8 @@ pidgin_accounts_request_authorization(PurpleAccount *account, const char *remote
 
 	if (!on_list) {
 		struct auth_and_add *aa = g_new0(struct auth_and_add, 1);
-		aa->auth_cb = (PurpleAccountRequestAuthorizationCb)auth_cb;
-		aa->deny_cb = (PurpleAccountRequestAuthorizationCb)deny_cb;
+		aa->auth_cb = auth_cb;
+		aa->deny_cb = deny_cb;
 		aa->data = user_data;
 		aa->username = g_strdup(remote_user);
 		aa->alias = g_strdup(alias);

@@ -79,6 +79,10 @@
 	"Client-Name: Purple/" VERSION "\r\n" \
 	"Chat-Logging: Y\r\n"
 
+/* Index into attention_types */
+#define MSN_NUDGE 0
+
+#define MSN_USE_ATTENTION_API
 
 typedef enum
 {

@@ -125,9 +125,23 @@ static gboolean
 step_back(GntBindable *bindable, GList *null)
 {
 	GntSlider *slider = GNT_SLIDER(bindable);
-	if (slider->current <= slider->min)
-		return FALSE;
 	gnt_slider_advance_step(slider, -1);
+	return TRUE;
+}
+
+static gboolean
+small_step_back(GntBindable *bindable, GList *null)
+{
+	GntSlider *slider = GNT_SLIDER(bindable);
+	gnt_slider_set_value(slider, slider->current - slider->smallstep);
+	return TRUE;
+}
+
+static gboolean
+large_step_back(GntBindable *bindable, GList *null)
+{
+	GntSlider *slider = GNT_SLIDER(bindable);
+	gnt_slider_set_value(slider, slider->current - slider->largestep);
 	return TRUE;
 }
 
@@ -135,9 +149,39 @@ static gboolean
 step_forward(GntBindable *bindable, GList *list)
 {
 	GntSlider *slider = GNT_SLIDER(bindable);
-	if (slider->current >= slider->max)
-		return FALSE;
 	gnt_slider_advance_step(slider, 1);
+	return TRUE;
+}
+
+static gboolean
+small_step_forward(GntBindable *bindable, GList *null)
+{
+	GntSlider *slider = GNT_SLIDER(bindable);
+	gnt_slider_set_value(slider, slider->current + slider->smallstep);
+	return TRUE;
+}
+
+static gboolean
+large_step_forward(GntBindable *bindable, GList *null)
+{
+	GntSlider *slider = GNT_SLIDER(bindable);
+	gnt_slider_set_value(slider, slider->current + slider->largestep);
+	return TRUE;
+}
+
+static gboolean
+move_min_value(GntBindable *bindable, GList *null)
+{
+	GntSlider *slider = GNT_SLIDER(bindable);
+	gnt_slider_set_value(slider, slider->min);
+	return TRUE;
+}
+
+static gboolean
+move_max_value(GntBindable *bindable, GList *null)
+{
+	GntSlider *slider = GNT_SLIDER(bindable);
+	gnt_slider_set_value(slider, slider->max);
 	return TRUE;
 }
 
@@ -165,8 +209,14 @@ gnt_slider_class_init(GntSliderClass *klass)
 	gnt_bindable_register_binding(bindable, "step-backward", GNT_KEY_DOWN, NULL);
 	gnt_bindable_class_register_action(bindable, "step-forward", step_forward, GNT_KEY_RIGHT, NULL);
 	gnt_bindable_register_binding(bindable, "step-forward", GNT_KEY_UP, NULL);
-
-	/* XXX: how would home/end work? */
+	gnt_bindable_class_register_action(bindable, "small-step-backward", small_step_back, GNT_KEY_CTRL_LEFT, NULL);
+	gnt_bindable_register_binding(bindable, "small-step-backward", GNT_KEY_CTRL_DOWN, NULL);
+	gnt_bindable_class_register_action(bindable, "small-step-forward", small_step_forward, GNT_KEY_CTRL_RIGHT, NULL);
+	gnt_bindable_register_binding(bindable, "small-step-forward", GNT_KEY_CTRL_UP, NULL);
+	gnt_bindable_class_register_action(bindable, "large-step-backward", large_step_back, GNT_KEY_PGDOWN, NULL);
+	gnt_bindable_class_register_action(bindable, "large-step-forward", large_step_forward, GNT_KEY_PGUP, NULL);
+	gnt_bindable_class_register_action(bindable, "min-value", move_min_value, GNT_KEY_HOME, NULL);
+	gnt_bindable_class_register_action(bindable, "max-value", move_max_value, GNT_KEY_END, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 }
@@ -233,10 +283,14 @@ GntWidget *gnt_slider_new(gboolean vertical, int max, int min)
 
 void gnt_slider_set_value(GntSlider *slider, int value)
 {
+	int old;
 	if (slider->current == value)
 		return;
+	old = slider->current;
 	slider->current = value;
 	sanitize_value(slider);
+	if (old == slider->current)
+		return;
 	redraw_slider(slider);
 	slider_value_changed(slider);
 }
@@ -248,16 +302,23 @@ int gnt_slider_get_value(GntSlider *slider)
 
 int gnt_slider_advance_step(GntSlider *slider, int steps)
 {
-	slider->current += steps * slider->step;
-	sanitize_value(slider);
-	redraw_slider(slider);
-	slider_value_changed(slider);
+	gnt_slider_set_value(slider, slider->current + steps * slider->step);
 	return slider->current;
 }
 
 void gnt_slider_set_step(GntSlider *slider, int step)
 {
 	slider->step = step;
+}
+
+void gnt_slider_set_small_step(GntSlider *slider, int step)
+{
+	slider->smallstep = step;
+}
+
+void gnt_slider_set_large_step(GntSlider *slider, int step)
+{
+	slider->largestep = step;
 }
 
 void gnt_slider_set_range(GntSlider *slider, int max, int min)

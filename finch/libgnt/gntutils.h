@@ -27,6 +27,7 @@
 #include <glib.h>
 
 #include "gnt.h"
+#include "gnttextview.h"
 #include "gntwidget.h"
 
 typedef gpointer (*GDupFunc)(gconstpointer data);
@@ -40,6 +41,7 @@ typedef gpointer (*GDupFunc)(gconstpointer data);
  */
 void gnt_util_get_text_bound(const char *text, int *width, int *height);
 
+/* excluding *end */
 /**
  * Get the onscreen width of a string, or a substring.
  *
@@ -129,6 +131,16 @@ GntWidget * gnt_widget_bindings_view(GntWidget *widget);
  * @param num     The number of widgets to return, followed by 'num' GntWidget **
  */
 void gnt_util_parse_widgets(const char *string, int num, ...);
+
+/**
+ * Parse an XHTML string and add it in a GntTextView with
+ * appropriate text flags.
+ *
+ * @param string   The XHTML string
+ * @param tv       The GntTextView
+ * @return  @c TRUE if the string was added to the textview properly, @c FALSE otherwise.
+ */
+gboolean gnt_util_parse_xhtml_to_textview(const char *string, GntTextView *tv);
 
 /**
  * Make some keypress activate a button when some key is pressed with 'wid' in focus.

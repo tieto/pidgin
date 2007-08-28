@@ -2084,7 +2084,7 @@ static PurpleCmdRet jabber_cmd_chat_affiliate(PurpleConversation *conv,
 static PurpleCmdRet jabber_cmd_chat_role(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	JabberChat *chat;
+	JabberChat *chat = jabber_chat_find_by_conv(conv);
 
 	if (!chat || !args || !args[0] || !args[1])
 		return PURPLE_CMD_RET_FAILED;
@@ -2096,8 +2096,6 @@ static PurpleCmdRet jabber_cmd_chat_role(PurpleConversation *conv,
 		*error = g_strdup_printf(_("Unknown role: \"%s\""), args[1]);
 		return PURPLE_CMD_RET_FAILED;
 	}
-
-	chat = jabber_chat_find_by_conv(conv);
 
 	if (!jabber_chat_role_user(chat, args[0], args[1])) {
 		*error = g_strdup_printf(_("Unable to set role \"%s\" for user: %s"),

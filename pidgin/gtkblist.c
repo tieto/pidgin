@@ -2528,7 +2528,8 @@ static gboolean pidgin_blist_expand_timeout(GtkWidget *tv)
 	GValue val;
 	struct _pidgin_blist_node *gtknode;
 
-	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y, &path, NULL, NULL, NULL))
+	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y + (gtkblist->tip_rect.height/2), 
+		&path, NULL, NULL, NULL))
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
 	val.g_type = 0;
@@ -2585,7 +2586,8 @@ static gboolean pidgin_blist_tooltip_timeout(GtkWidget *tv)
 	PurpleBlistNode *node;
 	GValue val;
 
-	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y, &path, NULL, NULL, NULL))
+	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y + (gtkblist->tip_rect.height/2), 
+		&path, NULL, NULL, NULL))
 		return FALSE;
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
 	val.g_type = 0;
@@ -2608,6 +2610,7 @@ void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget)
 	gboolean tooltip_top = FALSE;
 	struct _pidgin_blist_node *gtknode;
 	GdkRectangle mon_size;
+	int sig;
 	
 	if (node == NULL)
 		return;
@@ -2617,7 +2620,6 @@ void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget)
 	 * this is never needed... but just in case.
 	 */
 	pidgin_blist_tooltip_destroy();
-
 
 	gtkblist->tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
 
@@ -2673,7 +2675,6 @@ void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget)
 			G_CALLBACK(pidgin_blist_paint_tip), NULL);
 	gtk_widget_ensure_style (gtkblist->tipwindow);
 
-
 #if GTK_CHECK_VERSION(2,2,0)
 	gdk_display_get_pointer(gdk_display_get_default(), &screen, &x, &y, NULL);
 	mon_num = gdk_screen_get_monitor_at_point(screen, x, y);
@@ -2721,6 +2722,10 @@ void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget)
 	gtk_widget_set_size_request(gtkblist->tipwindow, w, h);
 	gtk_window_move(GTK_WINDOW(gtkblist->tipwindow), x, y);
 	gtk_widget_show(gtkblist->tipwindow);
+
+	/* Hide the tooltip when the widget is destroyed */
+	sig = g_signal_connect(G_OBJECT(widget), "destroy", G_CALLBACK(pidgin_blist_tooltip_destroy), NULL);
+	g_signal_connect_swapped(G_OBJECT(gtkblist->tipwindow), "destroy", G_CALLBACK(g_source_remove), GINT_TO_POINTER(sig));
 
 	return;
 }
@@ -3321,18 +3326,14 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 	}
 
 	/* XXX Good luck cleaning up this crap */
-	if (aliased) {
-		contact = (PurpleContact*)((PurpleBlistNode*)b)->parent;
-		if(contact)
-			gtkcontactnode = ((PurpleBlistNode*)contact)->ui_data;
+	contact = (PurpleContact*)((PurpleBlistNode*)b)->parent;
+	if(contact)
+		gtkcontactnode = ((PurpleBlistNode*)contact)->ui_data;
 
-		if(gtkcontactnode && !gtkcontactnode->contact_expanded && contact->alias)
-			name = contact->alias;
-		else
-			name = purple_buddy_get_alias(b);
-	} else {
-		name = b->name;
-	}
+	if(gtkcontactnode && !gtkcontactnode->contact_expanded && contact->alias)
+		name = contact->alias;
+	else
+		name = purple_buddy_get_alias(b);
 	
 	esc = g_markup_escape_text(name, strlen(name));
 

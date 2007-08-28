@@ -474,3 +474,16 @@ not :)
 
 19:23 <-- elb has quit (K-lined)
 
+19:01 <user> whoa
+19:01 <user> okay
+19:01 <user> now when i try to go into the left over files after the 
+             uninstall
+19:01 <user> something is seriously wrong because it says "the files on the 
+             c drive are not formatted, would you like to format?"
+19:03 <user> manually deleting the folder from command gives me a "Data 
+             error (cyclic redundancy check)."
+19:03 <elb> remember, one line per thought
+19:03 <elb> and yes, you have something wrong with your computer, we've 
+            established that
+19:03 <user> its functioning just fine
+

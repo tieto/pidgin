@@ -43,20 +43,20 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [1])
+m4_define([purple_lt_current], [2])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [1])
-m4_define([purple_micro_version], [1])
+m4_define([purple_minor_version], [2])
+m4_define([purple_micro_version], [0])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [1])
+m4_define([gnt_lt_current], [2])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [0])
+m4_define([gnt_minor_version], [2])
 m4_define([gnt_micro_version], [0])
-m4_define([gnt_version_suffix], [])
+m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
@@ -858,7 +858,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="bonjour gg irc jabber msn novell oscar qq sametime silc simple yahoo zephyr"
+	STATIC_PRPLS="bonjour gg irc jabber msn myspace novell oscar qq sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
@@ -904,6 +904,7 @@ for i in $STATIC_PRPLS ; do
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
 		msn)		static_msn=yes ;;
+		myspace)	static_myspace=yes ;;
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
 		aim)		static_oscar=yes ;;
@@ -924,6 +925,7 @@ AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
 AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
 AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
+AM_CONDITIONAL(STATIC_MYSPACE, test "x$static_myspace" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_QQ, test "x$static_qq" = "xyes")
@@ -939,7 +941,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init
 
 AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="bonjour gg irc jabber msn novell oscar qq sametime silc simple yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour gg irc jabber msn myspace novell oscar qq sametime silc simple yahoo zephyr"
 fi
 if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
@@ -963,6 +965,7 @@ for i in $DYNAMIC_PRPLS ; do
 		irc)		dynamic_irc=yes ;;
 		jabber)		dynamic_jabber=yes ;;
 		msn)		dynamic_msn=yes ;;
+		myspace)	dynamic_myspace=yes ;;
 		novell)		dynamic_novell=yes ;;
 		oscar)		dynamic_oscar=yes ;;
 		aim)		dynamic_oscar=yes ;;
@@ -983,6 +986,7 @@ AM_CONDITIONAL(DYNAMIC_GG, test "x$dynamic_gg" = "xyes")
 AM_CONDITIONAL(DYNAMIC_IRC, test "x$dynamic_irc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
 AM_CONDITIONAL(DYNAMIC_MSN, test "x$dynamic_msn" = "xyes")
+AM_CONDITIONAL(DYNAMIC_MYSPACE, test "x$dynamic_myspace" = "xyes")
 AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
 AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
 AM_CONDITIONAL(DYNAMIC_QQ, test "x$dynamic_qq" = "xyes")
@@ -1089,7 +1093,7 @@ dnl # Check for D-Bus libraries
 dnl #######################################################################
 
 AC_ARG_ENABLE(dbus, [AC_HELP_STRING([--enable-dbus], [enable D-Bus support])], , enable_dbus=yes)
-AC_ARG_ENABLE(nm, [AC_HELP_STRING([--enable-nm], [enable NetworkManager support (buggy) (requires D-Bus)])], enable_libnm=yes, enable_libnm=no)
+AC_ARG_ENABLE(nm, [AC_HELP_STRING([--enable-nm], [enable NetworkManager support (buggy) (requires D-Bus)])], enable_libnm=$enableval, enable_libnm=no)
 
 if test "x$enable_dbus" = "xyes" ; then
 	AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
@@ -2086,6 +2090,8 @@ if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
 fi
 
+AM_CONDITIONAL(PURPLE_AVAILABLE, true)
+
 AC_OUTPUT([Makefile
 		   Doxyfile
 		   doc/Makefile
@@ -2111,8 +2117,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/emblems/16/scalable/Makefile
 		   pidgin/pixmaps/emotes/Makefile
 		   pidgin/pixmaps/emotes/default/Makefile
-		   pidgin/pixmaps/emotes/default/22/Makefile
-		   pidgin/pixmaps/emotes/default/22/scalable/Makefile
+		   pidgin/pixmaps/emotes/default/24/Makefile
+		   pidgin/pixmaps/emotes/default/24/scalable/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
 		   pidgin/pixmaps/icons/Makefile
 		   pidgin/pixmaps/icons/16/Makefile
@@ -2133,6 +2139,9 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/protocols/48/Makefile
 		   pidgin/pixmaps/protocols/48/scalable/Makefile
 		   pidgin/pixmaps/status/Makefile
+		   pidgin/pixmaps/status/11/Makefile
+		   pidgin/pixmaps/status/11/scalable/Makefile
+		   pidgin/pixmaps/status/11/rtl/Makefile
 		   pidgin/pixmaps/status/16/Makefile
 		   pidgin/pixmaps/status/16/rtl/Makefile
 		   pidgin/pixmaps/status/16/scalable/Makefile
@@ -2164,7 +2173,6 @@ AC_OUTPUT([Makefile
 		   pidgin/plugins/perl/Makefile
 		   pidgin/plugins/perl/common/Makefile.PL
 		   pidgin/plugins/ticker/Makefile
-		   pidgin/sounds/Makefile
 		   libpurple/example/Makefile
 		   libpurple/gconf/Makefile
 		   libpurple/purple.pc
@@ -2184,6 +2192,7 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/irc/Makefile
 		   libpurple/protocols/jabber/Makefile
 		   libpurple/protocols/msn/Makefile
+		   libpurple/protocols/myspace/Makefile
 		   libpurple/protocols/novell/Makefile
 		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile
@@ -2197,9 +2206,12 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
 		   libpurple/version.h
+		   share/Makefile
+		   share/sounds/Makefile
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc
+		   finch/libgnt/pygnt/Makefile
 		   finch/libgnt/wms/Makefile
 		   finch/plugins/Makefile
 		   po/Makefile.in

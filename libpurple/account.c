@@ -1150,8 +1150,8 @@ purple_account_request_close(void *ui_handle)
 
 void *
 purple_account_request_authorization(PurpleAccount *account, const char *remote_user,
-			           const char *id, const char *alias, const char *message, gboolean on_list,
-				   GCallback auth_cb, GCallback deny_cb, void *user_data)
+				     const char *id, const char *alias, const char *message, gboolean on_list,
+				     PurpleAccountRequestAuthorizationCb auth_cb, PurpleAccountRequestAuthorizationCb deny_cb, void *user_data)
 {
 	PurpleAccountUiOps *ui_ops;
 	PurpleAccountRequestInfo *info;
@@ -1166,8 +1166,8 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 		info->type      = PURPLE_ACCOUNT_REQUEST_AUTHORIZATION;
 		info->account   = account;
 		info->ui_handle = ui_ops->request_authorize(account, remote_user, id, alias, message,
-									on_list, auth_cb, deny_cb, user_data);
-		
+							    on_list, auth_cb, deny_cb, user_data);
+
 		handles = g_list_append(handles, info);
 		return info->ui_handle;
 	}

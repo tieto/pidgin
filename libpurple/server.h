@@ -53,6 +53,35 @@ unsigned int serv_send_typing(PurpleConnection *gc, const char *name, PurpleTypi
 
 void serv_move_buddy(PurpleBuddy *, PurpleGroup *, PurpleGroup *);
 int  serv_send_im(PurpleConnection *, const char *, const char *, PurpleMessageFlags flags);
+
+/** Get information about an account's attention commands, from the prpl. 
+ * 
+ * @return The attention command numbered 'code' from the prpl's attention_types, or NULL.
+ */
+PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account, guint type_code);
+
+/** Send an attention request message.
+ *
+ * @param gc The connection to send the message on.
+ * @param who Whose attention to request.
+ * @param type An index into the prpl's attention_types list determining the type
+ * 	of the attention request command to send. 0 if prpl only defines one
+ * 	(for example, Yahoo and MSN), but some protocols define more (MySpaceIM).
+ *
+ * Note that you can't send arbitrary PurpleAttentionType's, because there is
+ * only a fixed set of attention commands.
+ */
+void serv_send_attention(PurpleConnection *gc, const char *who, guint type_code);
+
+/** Process an incoming attention message. 
+ *
+ * @param gc The connection that received the attention message.
+ * @param who Who requested your attention.
+ * @param type An index into the prpl's attention_types list determining the type
+ * 	of the attention request command to send. 
+ */
+void serv_got_attention(PurpleConnection *gc, const char *who, guint type_code);
+
 void serv_get_info(PurpleConnection *, const char *);
 void serv_set_info(PurpleConnection *, const char *);
 
@@ -67,6 +96,7 @@ void serv_chat_whisper(PurpleConnection *, int, const char *, const char *);
 int  serv_chat_send(PurpleConnection *, int, const char *, PurpleMessageFlags flags);
 void serv_alias_buddy(PurpleBuddy *);
 void serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);
+
 
 /**
  * Receive a typing message from a remote user.  Either PURPLE_TYPING

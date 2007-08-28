@@ -73,6 +73,7 @@ class RssTree(gnt.Tree):
         if first:
             self.set_active(first)
             self.set_selected(first)
+        return True
 
     def __init__(self):
         self.active = None

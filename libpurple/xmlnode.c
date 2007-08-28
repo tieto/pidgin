@@ -272,6 +272,8 @@ xmlnode_free(xmlnode *node)
 	if(NULL != node->parent) {
 		if(node->parent->child == node) {
 			node->parent->child = node->next;
+			if (node->parent->lastchild == node)
+				node->parent->lastchild = node->next;
 		} else {
 			xmlnode *prev = node->parent->child;
 			while(prev && prev->next != node) {
@@ -279,6 +281,8 @@ xmlnode_free(xmlnode *node)
 			}
 			if(prev) {
 				prev->next = node->next;
+				if (node->parent->lastchild == node)
+					node->parent->lastchild = prev;
 			}
 		}
 	}
