@@ -613,6 +613,23 @@ if test "x$enable_gst" != "xno"; then
 fi
 
 dnl #######################################################################
+dnl # Check for Farsight
+dnl #######################################################################
+AC_ARG_ENABLE(farsight,
+	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
+	enable_farsight="$enableval", enable_farsight="yes")
+if test "x$enable_farsight" != "xno"; then
+	PKG_CHECK_MODULES(FARSIGHT, [farsight-0.1], [
+		AC_DEFINE(USE_FARSIGHT, 1, [Use Farsight for voice and video])
+		AC_SUBST(FARSIGHT_CFLAGS)
+		AC_SUBST(FARSIGHT_LIBS)
+	], [
+		AC_MSG_RESULT(no)
+		enable_farsight="no"
+	])
+fi
+
+dnl #######################################################################
 dnl # Check for Meanwhile headers (for Sametime)
 dnl #######################################################################
 PKG_CHECK_MODULES(MEANWHILE, [meanwhile >= 1.0.0 meanwhile < 2.0.0], [
@@ -2263,6 +2280,7 @@ echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo
 echo Build with GStreamer support.. : $enable_gst
+echo Build with voice and video.... : $enable_farsight
 echo Build with D-Bus support...... : $enable_dbus
 if test "x$enable_dbus" = "xyes" ; then
 	eval eval echo D-Bus services directory...... : $DBUS_SERVICES_DIR
