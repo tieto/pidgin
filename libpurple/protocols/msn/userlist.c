@@ -38,8 +38,9 @@ typedef struct
  * Callbacks
  **************************************************************************/
 static void
-msn_accept_add_cb(MsnPermitAdd *pa)
+msn_accept_add_cb(gpointer data)
 {
+	MsnPermitAdd *pa = data;
 	MsnSession *session = pa->gc->proto_data;
 	MsnUserList *userlist = session->userlist;
 	
@@ -52,8 +53,10 @@ msn_accept_add_cb(MsnPermitAdd *pa)
 }
 
 static void
-msn_cancel_add_cb(MsnPermitAdd *pa)
+msn_cancel_add_cb(gpointer data)
 {
+	MsnPermitAdd *pa = data;
+
 	if (g_list_find(purple_connections_get_all(), pa->gc) != NULL)
 	{
 		MsnSession *session = pa->gc->proto_data;
@@ -79,7 +82,7 @@ got_new_entry(PurpleConnection *gc, const char *passport, const char *friendly)
 	
 	purple_account_request_authorization(purple_connection_get_account(gc), passport, NULL, friendly, NULL,
 					   purple_find_buddy(purple_connection_get_account(gc), passport) != NULL,
-					   G_CALLBACK(msn_accept_add_cb), G_CALLBACK(msn_cancel_add_cb), pa);
+					   msn_accept_add_cb, msn_cancel_add_cb, pa);
 
 }
 
