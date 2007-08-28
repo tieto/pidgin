@@ -22,30 +22,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "msn.h"
+#include "msnutils.h"
 #include "slpcall.h"
 #include "slpsession.h"
 
 #include "slp.h"
 
 /* #define MSN_DEBUG_SLPCALL */
-
-/**************************************************************************
- * Util
- **************************************************************************/
-
-static char *
-rand_guid()
-{
-	return g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
-			rand() % 0xAAFF + 0x1111,
-			rand() % 0xAAFF + 0x1111,
-			rand() % 0xAAFF + 0x1111,
-			rand() % 0xAAFF + 0x1111,
-			rand() % 0xAAFF + 0x1111,
-			rand() % 0xAAFF + 0x1111,
-			rand() % 0xAAFF + 0x1111,
-			rand() % 0xAAFF + 0x1111);
-}
 
 /**************************************************************************
  * Main
