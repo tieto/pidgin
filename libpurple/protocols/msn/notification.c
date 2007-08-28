@@ -38,9 +38,10 @@ static MsnTable *cbs_table;
  * 	Local Function Prototype
  ****************************************************************************/
 
-static void msn_notification_fqy_yahoo(MsnSession *session, const char *passport);
 static void msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_len);
-static void msn_add_contact_xml(MsnSession *session, xmlnode *mlNode, const char *passport, int list_op, MsnUserType type);
+static void
+msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport,
+					 MsnListOp list_op, MsnUserType type);
 
 /**************************************************************************
  * Main
@@ -585,7 +586,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
  **************************************************************************/
 /* add contact to xmlnode */
 static void
-msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport,int list_op, MsnUserType type)
+msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, MsnListOp list_op, MsnUserType type)
 {
 	xmlnode *d_node,*c_node;
 	char **tokens;
@@ -593,7 +594,7 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport,in
 	char *list_op_str,*type_str;
 
 	purple_debug_info("::","msn_add_contact_xml()\n");
-	purple_debug_info("MSNP14","Passport: %s, type: %d\n",passport, type);
+	purple_debug_info("MSNP14","Passport: %s, type: %d\n", passport, type);
 	tokens = g_strsplit(passport, "@", 2);
 	email = tokens[0];
 	domain = tokens[1];
@@ -652,8 +653,8 @@ msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_
 {
 	MsnTransaction *trans;
 	purple_debug_info("::","msn_notification_post_adl()\n");
-	purple_debug_info("MSNP14","Sending ADL with payload: %s\n",payload);
-	trans = msn_transaction_new(cmdproc, "ADL","%d",strlen(payload));
+	purple_debug_info("MSNP14","Sending ADL with payload: %s\n", payload);
+	trans = msn_transaction_new(cmdproc, "ADL","%d", strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
@@ -676,8 +677,7 @@ msn_notification_dump_contact(MsnSession *session)
 	xmlnode_set_attrib(adl_node, "l", "1");
 
 
-	if ( session->userlist->users == NULL ) {
-		/* we have no users yet in our contact list */
+/*	if ( session->userlist->users == NULL ) {
 		payload = xmlnode_to_str(adl_node,&payload_len);
 
 		msn_notification_post_adl(session->notification->cmdproc,
@@ -686,7 +686,7 @@ msn_notification_dump_contact(MsnSession *session)
 		g_free(payload);
 		xmlnode_free(adl_node);
 	}
-	else {
+	else { */
 	/*get the userlist*/
 	for (l = session->userlist->users; l != NULL; l = l->next){
 		user = l->data;
@@ -715,6 +715,14 @@ msn_notification_dump_contact(MsnSession *session)
 			}
 		}
 	}
+
+	if (adl_count == 0) {
+		payload = xmlnode_to_str(adl_node,&payload_len);
+
+		msn_notification_post_adl(session->notification->cmdproc, payload, payload_len);
+
+		g_free(payload);
+		xmlnode_free(adl_node);
 	}
 
 	display_name = purple_connection_get_display_name(session->account->gc);
@@ -727,8 +735,8 @@ msn_notification_dump_contact(MsnSession *session)
 }
 
 /*Post FQY to NS,Inform add a Yahoo User*/
-static void
-msn_notification_fqy_yahoo(MsnSession *session, const char *passport)
+void
+msn_notification_send_fqy(MsnSession *session, const char *passport)
 {
 	MsnTransaction *trans;
 	MsnCmdProc *cmdproc;
@@ -741,8 +749,8 @@ msn_notification_fqy_yahoo(MsnSession *session, const char *passport)
 	email = tokens[0];
 	domain = tokens[1];
 
-	payload = g_strdup_printf("<ml><d n=\"%s\"><c n=\"%s\"/></d></ml>",domain,email);
-	trans = msn_transaction_new(cmdproc, "FQY","%d",strlen(payload));
+	payload = g_strdup_printf("<ml><d n=\"%s\"><c n=\"%s\"/></d></ml>", domain, email);
+	trans = msn_transaction_new(cmdproc, "FQY","%d", strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
 
@@ -753,14 +761,11 @@ msn_notification_fqy_yahoo(MsnSession *session, const char *passport)
 static void
 blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("MSNP14","Process BLP\n");
 }
 
 static void
 adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_info("MSNP14","Process ADL\n");
-
 	msn_session_finish_login(cmdproc->session);
 
 	return;
@@ -788,15 +793,18 @@ static void
 fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
-	purple_debug_info("MSNP14","FQY payload{%s}\n",payload);
-	msn_notification_post_adl(cmdproc,payload,len);
+	purple_debug_info("MSN Notification","FQY payload:\n%s\n", payload);
+	g_return_if_fail(cmdproc->session != NULL);
+	g_return_if_fail(cmdproc->session->contact != NULL);
+//	msn_notification_post_adl(cmdproc, payload, len);
+	msn_get_address_book(cmdproc->session->contact, MSN_AB_SAVE_CONTACT, NULL, NULL);
 }
 
 static void
 fqy_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_info("MSNP14","Process FQY\n");
-	cmdproc->last_cmd->payload_cb  = fqy_cmd_post;
+	cmdproc->last_cmd->payload_cb = fqy_cmd_post;
 }
 
 static void
@@ -913,22 +921,20 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_group_new(session->userlist, cmd->params[3], group_name);
 
-	/* There is a user that must me moved to this group */
+	/* There is a user that must be moved to this group */
 	if (cmd->trans->data)
 	{
 		/* msn_userlist_move_buddy(); */
 		MsnUserList *userlist = cmdproc->session->userlist;
-		MsnMoveBuddy *data = cmd->trans->data;
+		MsnCallbackState *data = cmd->trans->data;
 
 		if (data->old_group_name != NULL)
 		{
-			msn_userlist_rem_buddy(userlist, data->who, MSN_LIST_FL, data->old_group_name);
+			msn_userlist_move_buddy(userlist, data->who, data->old_group_name, group_name);
 			g_free(data->old_group_name);
+		} else {
+			// msn_add_contact_to_group(userlist, data, data->who, group_name);
 		}
-
-		msn_userlist_add_buddy(userlist, data->who, MSN_LIST_FL, group_name);
-		g_free(data->who);
-
 	}
 }
 
@@ -1146,8 +1152,6 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session = cmdproc->session;
 	const char *type, *value, *friendlyname;
-	gchar *soapname, *soapbody;
-	MsnSoapReq *soap_request;
 
 	purple_debug_info("MSN Notification", "prp_cmd()\n");
 
@@ -1177,24 +1181,9 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			type = cmd->params[1];
 			if (!strcmp(type, "MFN")) {
 				friendlyname = purple_url_decode(cmd->params[2]);
-				soapname = g_markup_escape_text(friendlyname,-1);
-				soapbody = g_strdup_printf(MSN_CONTACT_UPDATE_TEMPLATE, soapname);
+				
+				msn_update_contact(session->contact, friendlyname);
 
-				soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
-								    MSN_ADDRESS_BOOK_POST_URL,
-								    MSN_CONTACT_UPDATE_SOAP_ACTION,
-								    soapbody,
-								    NULL,
-								    NULL);
-
-				session->contact->soapconn->read_cb = NULL;
-
-				msn_soap_post(session->contact->soapconn,
-					      soap_request,
-					      msn_contact_connect_init);
-
-				g_free(soapbody);
-				g_free(soapname);
 				purple_connection_set_display_name(
 					purple_account_get_connection(session->account),
 					friendlyname);
@@ -1918,11 +1907,11 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 }
 
 void
-msn_notification_add_buddy(MsnNotification *notification, const char *list,
-						   const char *who, const char *store_name,
-						   const char *group_id)
+msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list_id,
+						   	  const char *who)
 {
 	MsnCmdProc *cmdproc;
+	MsnListOp list_op = 1 << list_id;
 	xmlnode *adl_node;
 	char *payload;
 	int payload_len;
@@ -1932,44 +1921,39 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
 
-	msn_add_contact_xml(notification->session,adl_node,who,1,MSN_USER_TYPE_PASSPORT);
+	msn_add_contact_xml(notification->session, adl_node, who, list_op, 
+						MSN_USER_TYPE_PASSPORT);
 
 	payload = xmlnode_to_str(adl_node,&payload_len);
 	xmlnode_free(adl_node);
-	if (msn_user_is_yahoo(notification->session->account,who))
-	{
-		msn_notification_fqy_yahoo(notification->session, who);
-	}
-	else
-	{
-		msn_notification_post_adl(notification->servconn->cmdproc,
-							payload,payload_len);
-	}
+	
+	msn_notification_post_adl(notification->servconn->cmdproc,
+						payload,payload_len);
 }
 
 void
-msn_notification_rem_buddy(MsnNotification *notification, const char *list,
-						   const char *who, const char *group_id)
+msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId list_id,
+						   const char *who)
 {
 	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;
+	MsnListOp list_op = 1 << list_id;
 	xmlnode *rml_node;
 	char *payload;
 	int payload_len;
 
-	purple_debug_info("::","msn_notification_rem_buddy()\n");
 	cmdproc = notification->servconn->cmdproc;
 
 	rml_node = xmlnode_new("ml");
 	rml_node->child = NULL;
 
-	msn_add_contact_xml(notification->session,rml_node,who,1,MSN_USER_TYPE_PASSPORT);
+	msn_add_contact_xml(notification->session, rml_node, who, list_op, MSN_USER_TYPE_PASSPORT);
 
-	payload = xmlnode_to_str(rml_node,&payload_len);
+	payload = xmlnode_to_str(rml_node, &payload_len);
 	xmlnode_free(rml_node);
 
-	purple_debug_info("MSNP14","Send RML with payload {%s}\n",payload);
-	trans = msn_transaction_new(cmdproc, "RML","%d",strlen(payload));
+	purple_debug_info("MSN Notification","Send RML with payload:\n%s\n", payload);
+	trans = msn_transaction_new(cmdproc, "RML","%d", strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
 }

@@ -277,10 +277,10 @@ msn_session_sync_users(MsnSession *session)
 		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		group_name = group->name;
-		if(!g_strcasecmp(group_name, MSN_INDIVIDUALS_GROUP_NAME)
-						||	!g_strcasecmp(group_name,MSN_NON_IM_GROUP_NAME)){
-			continue;
-		}
+//		if(!g_strcasecmp(group_name, MSN_INDIVIDUALS_GROUP_NAME)
+//						||	!g_strcasecmp(group_name,MSN_NON_IM_GROUP_NAME)){
+//			continue;
+//		}
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
 			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
@@ -303,7 +303,7 @@ msn_session_sync_users(MsnSession *session)
 						purple_debug_info("MSNP14","remote user:{%s}\n",b->name);
 						group_id = msn_userlist_find_group_id(remote_user->userlist,
 								group_name);
-						if(group_id == NULL){
+						if (group_id == NULL) {
 							continue;
 						}
 						purple_debug_info("MSNP14","group_id:{%s}\n",group_id);

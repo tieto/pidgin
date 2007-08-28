@@ -69,7 +69,7 @@ msn_add_cb(MsnAddRemData *data)
 		MsnSession *session = data->gc->proto_data;
 		MsnUserList *userlist = session->userlist;
 
-		msn_userlist_add_buddy(userlist, data->who, MSN_LIST_FL, data->group);
+		msn_userlist_add_buddy(userlist, data->who, data->group);
 	}
 
 	g_free(data->group);
@@ -87,10 +87,13 @@ msn_rem_cb(MsnAddRemData *data)
 		MsnSession *session = data->gc->proto_data;
 		MsnUserList *userlist = session->userlist;
 
-		msn_userlist_rem_buddy(userlist, data->who, MSN_LIST_FL, data->group);
+		if (data->group == NULL) {
+			msn_userlist_rem_buddy_from_list(userlist, data->who, MSN_LIST_FL);
+		} else {
+			g_free(data->group);
+		}
 	}
 
-	g_free(data->group);
 	g_free(data->who);
 	g_free(data);
 }
@@ -109,7 +112,7 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 
 	data        = g_new0(MsnAddRemData, 1);
 	data->who   = g_strdup(passport);
-	data->group = g_strdup(group_name);
+	data->group = group_name != NULL ? g_strdup(group_name) : NULL;
 	data->gc    = gc;
 
 	msg = g_strdup_printf(_("Buddy list synchronization issue in %s (%s)"),

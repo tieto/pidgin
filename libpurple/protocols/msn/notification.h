@@ -53,16 +53,17 @@ void uum_send_msg(MsnSession *session,MsnMessage *msg);
 void msn_notification_end(void);
 void msn_notification_init(void);
 
-void msn_notification_add_buddy(MsnNotification *notification,
-								const char *list, const char *who,
-								const char *store_name, const char *group_id);
-void msn_notification_rem_buddy(MsnNotification *notification,
-								const char *list, const char *who,
-								const char *group_id);
+void msn_notification_add_buddy_to_list(MsnNotification *notification,
+					MsnListId list_id, const char *who);
+void msn_notification_rem_buddy_from_list(MsnNotification *notification,
+					  MsnListId list_id, const char *who);
+
+void msn_notification_send_fqy(MsnSession *session, const char *passport);
+
 MsnNotification *msn_notification_new(MsnSession *session);
 void msn_notification_destroy(MsnNotification *notification);
 gboolean msn_notification_connect(MsnNotification *notification,
-							  const char *host, int port);
+				  const char *host, int port);
 void msn_notification_disconnect(MsnNotification *notification);
 void msn_notification_dump_contact(MsnSession *session);
 

@@ -486,6 +486,8 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 void 
 msn_soap_free_read_buf(MsnSoapConn *soapconn)
 {
+	g_return_if_fail(soapconn != NULL);
+	
 	if (soapconn->read_buf) {
 		g_free(soapconn->read_buf);
 	}
@@ -497,11 +499,21 @@ msn_soap_free_read_buf(MsnSoapConn *soapconn)
 void
 msn_soap_free_write_buf(MsnSoapConn *soapconn)
 {
-	if(soapconn->write_buf){
+	g_return_if_fail(soapconn != NULL);
+
+	if (soapconn->write_buf) {
 		g_free(soapconn->write_buf);
 	}
 	soapconn->write_buf = NULL;
 	soapconn->written_len = 0;
+}
+
+void
+msn_soap_free_data_cb(MsnSoapConn *soapconn)
+{
+	if (soapconn->data_cb) {
+		g_free(soapconn->data_cb);
+	}
 }
 
 /*Soap write process func*/
@@ -582,7 +594,7 @@ msn_soap_write(MsnSoapConn * soapconn, char *write_buf, PurpleInputFunction writ
 /* New a soap request*/
 MsnSoapReq *
 msn_soap_request_new(const char *host,const char *post_url,const char *soap_action,
-				const char *body,
+				const char *body, const gpointer data_cb,
 				PurpleInputFunction read_cb,PurpleInputFunction written_cb)
 {
 	MsnSoapReq *request;
@@ -594,6 +606,7 @@ msn_soap_request_new(const char *host,const char *post_url,const char *soap_acti
 	request->login_path = g_strdup(post_url);
 	request->soap_action		= g_strdup(soap_action);
 	request->body		= g_strdup(body);
+	request->data_cb 	= data_cb;
 	request->read_cb	= read_cb;
 	request->written_cb	= written_cb;
 
@@ -610,6 +623,7 @@ msn_soap_request_free(MsnSoapReq *request)
 	g_free(request->login_path);
 	g_free(request->soap_action);
 	g_free(request->body);
+	g_free(request->data_cb);
 	request->read_cb	= NULL;
 	request->written_cb	= NULL;
 
@@ -649,7 +663,7 @@ msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,
 		msn_soap_connect(soapconn);
 		return;
 	}
-	purple_debug_misc("MSN SOAP","Connected to SOAP server!\n");
+	purple_debug_misc("MSN SOAP","Connected to SOAP server\n");
 
 	/*if connected, what we only needed to do is to queue the request, 
 	 * when SOAP request in the queue processed done, will do this command.
@@ -710,8 +724,9 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 	
 	g_free(soap_head);
 	/*free read buffer*/
-	msn_soap_free_read_buf(soapconn);
+	// msn_soap_free_read_buf(soapconn);
 	/*post it to server*/
-	msn_soap_write(soapconn,request_str,request->written_cb);
+	soapconn->data_cb = request->data_cb;
+	msn_soap_write(soapconn, request_str, request->written_cb);
 }
 

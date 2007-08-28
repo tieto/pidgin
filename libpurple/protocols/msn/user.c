@@ -309,7 +309,7 @@ msn_user_add_group_id(MsnUser *user, const char* id)
 
 	group_name = msn_userlist_find_group_name(userlist, group_id);
 
-	purple_debug_info("User","group id:%s,name:%s,user:%s\n",group_id,group_name,passport);
+	purple_debug_info("User","group id:%s,name:%s,user:%s\n", group_id, group_name, passport);
 
 	g = purple_find_group(group_name);
 

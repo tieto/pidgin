@@ -310,8 +310,10 @@ msn_oim_send_msg(MsnOim *oim)
 					msg_body
 					);
 	soap_request = msn_soap_request_new(MSN_OIM_SEND_HOST,
-					MSN_OIM_SEND_URL,MSN_OIM_SEND_SOAP_ACTION,
+					MSN_OIM_SEND_URL,
+					MSN_OIM_SEND_SOAP_ACTION,
 					soap_body,
+					NULL,
 					msn_oim_send_read_cb,
 					msn_oim_send_written_cb);
 	g_free(mspauth);
@@ -368,8 +370,10 @@ msn_oim_post_delete_msg(MsnOim *oim,const char *msgid)
 					msgid
 					);
 	soap_request = msn_soap_request_new(MSN_OIM_RETRIEVE_HOST,
-					MSN_OIM_RETRIEVE_URL,MSN_OIM_DEL_SOAP_ACTION,
+					MSN_OIM_RETRIEVE_URL,
+					MSN_OIM_DEL_SOAP_ACTION,
 					soap_body,
+					NULL,
 					msn_oim_delete_read_cb,
 					msn_oim_delete_written_cb);
 	msn_soap_post(oim->retrieveconn,soap_request,msn_oim_retrieve_connect_init);
@@ -602,8 +606,10 @@ msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 					msgid
 					);
 	soap_request = msn_soap_request_new(MSN_OIM_RETRIEVE_HOST,
-					MSN_OIM_RETRIEVE_URL,MSN_OIM_GET_SOAP_ACTION,
+					MSN_OIM_RETRIEVE_URL,
+					MSN_OIM_GET_SOAP_ACTION,
 					soap_body,
+					NULL,
 					msn_oim_get_read_cb,
 					msn_oim_get_written_cb);
 	msn_soap_post(oim->retrieveconn,soap_request,msn_oim_retrieve_connect_init);

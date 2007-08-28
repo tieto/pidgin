@@ -49,6 +49,7 @@ typedef struct _MsnSoapConn MsnSoapConn;
 
 typedef void (*MsnSoapConnectInitFunction)(MsnSoapConn *);
 
+
 struct _MsnSoapReq{
 	/*request sequence*/
 	int	 id;
@@ -58,7 +59,8 @@ struct _MsnSoapReq{
 	char *soap_action;
 
 	char *body;
-
+	
+	gpointer data_cb;
 	PurpleInputFunction read_cb;
 	PurpleInputFunction written_cb;
 };
@@ -103,6 +105,8 @@ struct _MsnSoapConn{
 	gsize need_to_read;
 	PurpleInputFunction read_cb;
 
+	gpointer data_cb;
+
 	/*HTTP reply body part*/
 	char *body;
 	int body_len;
@@ -111,9 +115,10 @@ struct _MsnSoapConn{
 /*Function Prototype*/
 /*Soap Request Function */
 MsnSoapReq *msn_soap_request_new(const char *host, const char *post_url,
-								 const char *soap_action, const char *body,
-								 PurpleInputFunction read_cb,
-								 PurpleInputFunction written_cb);
+				 const char *soap_action, const char *body,
+				 const gpointer data_cb,
+				 PurpleInputFunction read_cb,
+				 PurpleInputFunction written_cb);
 
 void msn_soap_request_free(MsnSoapReq *request);
 void msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request);
@@ -134,7 +139,8 @@ void msn_soap_close(MsnSoapConn *soapconn);
 void msn_soap_write(MsnSoapConn * soapconn, char *write_buf, PurpleInputFunction written_cb);
 void msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,MsnSoapConnectInitFunction msn_soap_init_func);
 
-void  msn_soap_free_read_buf(MsnSoapConn *soapconn);
+void msn_soap_free_data_cb(MsnSoapConn *soapconn);
+void msn_soap_free_read_buf(MsnSoapConn *soapconn);
 void msn_soap_free_write_buf(MsnSoapConn *soapconn);
 void msn_soap_connect_cb(gpointer data, PurpleSslConnection *gsc, PurpleInputCondition cond);
 void msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond);

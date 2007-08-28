@@ -1061,7 +1061,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	userlist = session->userlist;
 	who = msn_normalize(gc->account, buddy->name);
 
-	purple_debug_info("MSNP14","add user:{%s} to group:{%s}\n",who,group->name);
+	purple_debug_info("MSN","Add user:%s to group:%s\n", who, group->name);
 	if (!session->logged_in)
 	{
 #if 0
@@ -1095,8 +1095,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	/* XXX - Would group ever be NULL here?  I don't think so...
 	 * shx: Yes it should; MSN handles non-grouped buddies, and this is only
 	 * internal. */
-	msn_userlist_add_buddy(userlist, who, MSN_LIST_FL,
-						   group ? group->name : NULL);
+	msn_userlist_add_buddy(userlist, who, group ? group->name : NULL);
 }
 
 static void
@@ -1112,7 +1111,7 @@ msn_rem_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		return;
 
 	/* XXX - Does buddy->name need to be msn_normalize'd here?  --KingAnt */
-	msn_userlist_rem_buddy(userlist, buddy->name, MSN_LIST_FL, group->name);
+	msn_userlist_rem_buddy(userlist, buddy->name);
 }
 
 static void
@@ -1130,9 +1129,9 @@ msn_add_permit(PurpleConnection *gc, const char *who)
 		return;
 
 	if (user != NULL && user->list_op & MSN_LIST_BL_OP)
-		msn_userlist_rem_buddy(userlist, who, MSN_LIST_BL, NULL);
+		msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_BL);
 
-	msn_userlist_add_buddy(userlist, who, MSN_LIST_AL, NULL);
+	msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_AL);
 }
 
 static void
@@ -1150,9 +1149,9 @@ msn_add_deny(PurpleConnection *gc, const char *who)
 		return;
 
 	if (user != NULL && user->list_op & MSN_LIST_AL_OP)
-		msn_userlist_rem_buddy(userlist, who, MSN_LIST_AL, NULL);
+		msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_AL);
 
-	msn_userlist_add_buddy(userlist, who, MSN_LIST_BL, NULL);
+	msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_BL);
 }
 
 static void
@@ -1170,10 +1169,10 @@ msn_rem_permit(PurpleConnection *gc, const char *who)
 
 	user = msn_userlist_find_user(userlist, who);
 
-	msn_userlist_rem_buddy(userlist, who, MSN_LIST_AL, NULL);
+	msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_AL);
 
 	if (user != NULL && user->list_op & MSN_LIST_RL_OP)
-		msn_userlist_add_buddy(userlist, who, MSN_LIST_BL, NULL);
+		msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_BL);
 }
 
 static void
@@ -1191,10 +1190,10 @@ msn_rem_deny(PurpleConnection *gc, const char *who)
 
 	user = msn_userlist_find_user(userlist, who);
 
-	msn_userlist_rem_buddy(userlist, who, MSN_LIST_BL, NULL);
+	msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_BL);
 
 	if (user != NULL && user->list_op & MSN_LIST_RL_OP)
-		msn_userlist_add_buddy(userlist, who, MSN_LIST_AL, NULL);
+		msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_AL);
 }
 
 static void
@@ -1337,27 +1336,20 @@ msn_rename_group(PurpleConnection *gc, const char *old_name,
 				 PurpleGroup *group, GList *moved_buddies)
 {
 	MsnSession *session;
-	MsnCmdProc *cmdproc;
-	const char *old_gid;
-	const char *enc_new_group_name;
 
 	session = gc->proto_data;
-	cmdproc = session->notification->cmdproc;
-	enc_new_group_name = purple_url_encode(group->name);
-
-	purple_debug_info("MSNP14","rename group:old{%s},new{%s}",old_name,enc_new_group_name);
-	old_gid = msn_userlist_find_group_id(session->userlist, old_name);
-
-	if (old_gid != NULL)
+	
+	g_return_if_fail(session != NULL);
+	g_return_if_fail(session->userlist != NULL);
+	
+	if (msn_userlist_find_group_with_name(session->userlist, old_name) != NULL)
 	{
-		/*find a Group*/
-		msn_cmdproc_send(cmdproc, "REG", "%d %s 0", old_gid,
-						 enc_new_group_name);
+		msn_contact_rename_group(session, old_name, group->name);
 	}
 	else
 	{
-		/*not found*/
-		msn_cmdproc_send(cmdproc, "ADG", "%s 0", enc_new_group_name);
+		/* not found */
+		msn_add_group(session, NULL, group->name);
 	}
 }
 
@@ -1417,22 +1409,18 @@ msn_remove_group(PurpleConnection *gc, PurpleGroup *group)
 {
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
-	const char *group_id;
 
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
 
 	/*we can't delete the default group*/
-	if(!strcmp(group->name,MSN_INDIVIDUALS_GROUP_NAME)||
-		!strcmp(group->name,MSN_NON_IM_GROUP_NAME))
+	if(!strcmp(group->name, MSN_INDIVIDUALS_GROUP_NAME)||
+		!strcmp(group->name, MSN_NON_IM_GROUP_NAME))
 	{
 		return ;
 	}
-	group_id = msn_userlist_find_group_id(session->userlist, group->name);
-	if (group_id != NULL)
-	{
-		msn_del_group(session,group_id);
-	}
+	
+	msn_del_group(session, group->name);
 }
 
 /**
