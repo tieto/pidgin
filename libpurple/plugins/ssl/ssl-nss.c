@@ -590,7 +590,9 @@ x509_check_name (PurpleCertificate *crt, const gchar *name)
 	}
 	
 	/* If we get here...bad things! */
-	g_assert(FALSE);
+	purple_debug_error("nss/x509",
+			   "x509_check_name fell through where it shouldn't "
+			   "have.\n");
 	return FALSE;
 }
 
