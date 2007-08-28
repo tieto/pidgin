@@ -586,7 +586,7 @@ int purple_build_dir(const char *path, int mode);
  * @return TRUE if the file was written successfully.  FALSE otherwise.
  */
 gboolean purple_util_write_data_to_file(const char *filename, const char *data,
-									  size_t size);
+									  gssize size);
 
 /**
  * Write data to a file using the absolute path.
