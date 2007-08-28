@@ -29,6 +29,7 @@
 #include "core.h"
 #include "internal.h"
 #include "pidgin.h"
+#include "pidginstock.h"
 
 #include "certificate.h"
 #include "debug.h"
@@ -506,7 +507,7 @@ tls_peers_mgmt_build(void)
 
 	/* Info button */
 	tpm_dat->infobutton = infobutton =
-		gtk_button_new_from_stock(GTK_STOCK_INFO);
+		gtk_button_new_from_stock(PIDGIN_STOCK_INFO);
 	gtk_box_pack_start(GTK_BOX(bbox), infobutton, FALSE, FALSE, 0);
 	gtk_widget_show(infobutton);
 	g_signal_connect(G_OBJECT(infobutton), "clicked",

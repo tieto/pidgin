@@ -74,6 +74,11 @@ static struct StockIcon
 	{ PIDGIN_STOCK_SIGN_OFF,        NULL,      GTK_STOCK_CLOSE            },
 	{ PIDGIN_STOCK_TYPED,           "pidgin",  "typed.png"                },
 	{ PIDGIN_STOCK_UPLOAD,          NULL,      GTK_STOCK_GO_UP            },
+#if GTK_CHECK_VERSION(2,8,0)
+	{ PIDGIN_STOCK_INFO,            NULL,      GTK_STOCK_INFO             },
+#else
+	{ PIDGIN_STOCK_INFO,            "buttons", "info.png"                 },
+#endif
 };
 
 static const GtkStockItem stock_items[] =
