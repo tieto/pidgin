@@ -1006,6 +1006,7 @@ clear_command_cb(PurpleConversation *conv,
 {
 	FinchConv *ggconv = conv->ui_data;
 	gnt_text_view_clear(GNT_TEXT_VIEW(ggconv->tv));
+	purple_conversation_clear_message_history(conv);
 	return PURPLE_CMD_STATUS_OK;
 }
 

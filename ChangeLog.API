@@ -1,6 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 Version 2.2.0 (??/??/????):
+	libpurple:
+		Added:
+		* PURPLE_MESSAGE_INVISIBLE flag, which can be used by
+		  purple_conv_im_send_with_flags to send a message, but not display it
+		  in the conversation
+
 	Pidgin:
 		Added:
 		* pidgin_set_accessible_relations, sets up label-for and labelled-by

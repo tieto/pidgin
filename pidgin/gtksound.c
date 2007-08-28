@@ -114,7 +114,7 @@ static void
 play_conv_event(PurpleConversation *conv, PurpleSoundEventID event)
 {
 	/* If we should not play the sound for some reason, then exit early */
-	if (conv != NULL)
+	if (conv != NULL && PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 	{
 		PidginConversation *gtkconv;
 		PidginWindow *win;

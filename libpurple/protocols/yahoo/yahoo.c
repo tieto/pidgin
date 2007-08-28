@@ -4096,9 +4096,7 @@ gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint 
 
 	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
 	           "Sending <ding> on account %s to buddy %s.\n", username, c->name);
-	/* TODO: find out how to send a <ding> without showing up as a blank line on
-	 * the conversation window. */
-	purple_conv_im_send(PURPLE_CONV_IM(c), "<ding>");
+	purple_conv_im_send_with_flags(PURPLE_CONV_IM(c), "<ding>", PURPLE_MESSAGE_INVISIBLE);
 
 	return TRUE;
 }
