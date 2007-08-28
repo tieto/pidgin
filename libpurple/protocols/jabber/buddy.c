@@ -129,7 +129,7 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 	jbr->state = state;
 	if(jbr->status)
 		g_free(jbr->status);
-        if (status)
+	if (status)
 		jbr->status = g_markup_escape_text(status, -1);
 	else
 		jbr->status = NULL;
@@ -2279,10 +2279,10 @@ static void user_search_cb(struct user_search_info *usi, PurpleRequestFields *fi
  * in purple-i18n@lists.sourceforge.net (March 2006)
  */
 static const char * jabber_user_dir_comments [] = {
-       /* current comment from Jabber User Directory users.jabber.org */
-       N_("Find a contact by entering the search criteria in the given fields. "
-          "Note: Each field supports wild card searches (%)"),
-       NULL
+	/* current comment from Jabber User Directory users.jabber.org */
+	N_("Find a contact by entering the search criteria in the given fields. "
+	   "Note: Each field supports wild card searches (%)"),
+	NULL
 };
 #endif
 

@@ -818,7 +818,7 @@ static void
 jabber_register_cancel_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 {
 	PurpleAccount *account = purple_connection_get_account(cbdata->js->gc);
-	if(cbdata->js->registration) {
+	if(account && cbdata->js->registration) {
 		if(account->registration_cb)
 			(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
 		jabber_connection_schedule_close(cbdata->js);

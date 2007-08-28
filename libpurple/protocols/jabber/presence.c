@@ -256,39 +256,39 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 	xmlnode_set_namespace(c, "http://jabber.org/protocol/caps");
 	xmlnode_set_attrib(c, "node", CAPS0115_NODE);
 	xmlnode_set_attrib(c, "ver", VERSION);
-    
-    if(js != NULL) {
-        /* add the extensions */
-        char extlist[1024];
-        unsigned remaining = 1023; /* one less for the \0 */
-        GList *feature;
-        
-        extlist[0] = '\0';
-        for(feature = jabber_features; feature && remaining > 0; feature = feature->next) {
-            JabberFeature *feat = (JabberFeature*)feature->data;
-            unsigned featlen;
-
+	
+	if(js != NULL) {
+		/* add the extensions */
+		char extlist[1024];
+		unsigned remaining = 1023; /* one less for the \0 */
+		GList *feature;
+		
+		extlist[0] = '\0';
+		for(feature = jabber_features; feature && remaining > 0; feature = feature->next) {
+			JabberFeature *feat = (JabberFeature*)feature->data;
+			unsigned featlen;
+			
 			if(feat->is_enabled != NULL && feat->is_enabled(js, feat->shortname, feat->namespace) == FALSE)
 				continue; /* skip this feature */
 			
 			featlen = strlen(feat->shortname);
-
-            /* cut off when we don't have any more space left in our buffer (too bad) */
-            if(featlen > remaining)
-                break;
-            
-            strncat(extlist,feat->shortname,remaining);
-            remaining -= featlen;
-            if(feature->next) { /* no space at the end */
-                strncat(extlist," ",remaining);
-                --remaining;
-            }
-        }
-        /* did we add anything? */
-        if(remaining < 1023)
-            xmlnode_set_attrib(c, "ext", extlist);
-    }
-
+			
+			/* cut off when we don't have any more space left in our buffer (too bad) */
+			if(featlen > remaining)
+				break;
+			
+			strncat(extlist,feat->shortname,remaining);
+			remaining -= featlen;
+			if(feature->next) { /* no space at the end */
+				strncat(extlist," ",remaining);
+				--remaining;
+			}
+		}
+		/* did we add anything? */
+		if(remaining < 1023)
+			xmlnode_set_attrib(c, "ext", extlist);
+	}
+	
 	return presence;
 }
 

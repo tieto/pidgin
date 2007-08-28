@@ -194,63 +194,63 @@ static PurplePluginInfo info =
 static void
 init_plugin(PurplePlugin *plugin)
 {
-        PurpleAccountUserSplit *split;
-        PurpleAccountOption *option;
-
+	PurpleAccountUserSplit *split;
+	PurpleAccountOption *option;
+	
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
-        split = purple_account_user_split_new(_("Domain"), NULL, '@');
-		purple_account_user_split_set_reverse(split, FALSE);
-        prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
-
-        split = purple_account_user_split_new(_("Resource"), "Home", '/');
-		purple_account_user_split_set_reverse(split, FALSE);
-        prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
-
-		option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", FALSE);
-		prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-												   option);
-
-		option = purple_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);
-        prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-                        option);
-
-        option = purple_account_option_bool_new(
-                        _("Allow plaintext auth over unencrypted streams"),
-                        "auth_plain_in_clear", FALSE);
-        prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-                        option);
-
-        option = purple_account_option_int_new(_("Connect port"), "port", 5222);
-        prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-                        option);
-
-        option = purple_account_option_string_new(_("Connect server"),
-                        "connect_server", NULL);
-        prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-                        option);
-
-
-        jabber_init_plugin(plugin);
-
-        purple_prefs_remove("/plugins/prpl/jabber");
-
-        /* XXX - If any other plugin wants SASL this won't be good ... */
+	split = purple_account_user_split_new(_("Domain"), NULL, '@');
+	purple_account_user_split_set_reverse(split, FALSE);
+	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
+	
+	split = purple_account_user_split_new(_("Resource"), "Home", '/');
+	purple_account_user_split_set_reverse(split, FALSE);
+	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
+	
+	option = purple_account_option_bool_new(_("Require SSL/TLS"), "require_tls", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+	
+	option = purple_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+	
+	option = purple_account_option_bool_new(
+											_("Allow plaintext auth over unencrypted streams"),
+											"auth_plain_in_clear", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+	
+	option = purple_account_option_int_new(_("Connect port"), "port", 5222);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+	
+	option = purple_account_option_string_new(_("Connect server"),
+											  "connect_server", NULL);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+	
+	
+	jabber_init_plugin(plugin);
+	
+	purple_prefs_remove("/plugins/prpl/jabber");
+	
+	/* XXX - If any other plugin wants SASL this won't be good ... */
 #ifdef HAVE_CYRUS_SASL
-        sasl_client_init(NULL);
+	sasl_client_init(NULL);
 #endif
-        jabber_register_commands();
+	jabber_register_commands();
+	
+	jabber_iq_init();
+	jabber_pep_init();
+	
+	jabber_tune_init();
+	jabber_caps_init();
 
-        jabber_iq_init();
-        jabber_pep_init();
-		
-		jabber_tune_init();
-		jabber_caps_init();
-
-		jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
-		jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
-		jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns", jabber_buzz_isenabled);
-		
-		jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
+	jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns", jabber_buzz_isenabled);
+	
+	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
 }
 
 

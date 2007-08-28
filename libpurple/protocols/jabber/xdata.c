@@ -367,9 +367,9 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 
 			g_free(value);
 		}
-        
-        if(field && xmlnode_get_child(fn, "required"))
-            purple_request_field_set_required(field,TRUE);
+
+		if(field && xmlnode_get_child(fn, "required"))
+			purple_request_field_set_required(field,TRUE);
 	}
 	
 	if(actions != NULL) {
