@@ -66,6 +66,7 @@ constlists = [
     "purple_savedstatuses_get_all",
     "purple_status_type_get_attrs",
     "purple_presence_get_statuses",
+    "purple_conversation_get_message_history",
 ]
 
 pointer = "#pointer#"

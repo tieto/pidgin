@@ -162,6 +162,13 @@ struct _PidginConversation
 	GtkWidget *infopane;
 	GtkListStore *infopane_model;
 	GtkTreeIter infopane_iter;
+
+	/* Used when attaching a PidginConversation to a PurpleConversation
+	 * with message history */
+	struct {
+		int timer;
+		GList *current;
+	} attach;
 };
 
 /*@}*/
@@ -237,6 +244,8 @@ pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs);
  * @param conv The conversation.
  */
 void pidgin_conv_present_conversation(PurpleConversation *conv);
+
+gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv);
 
 PidginWindow *pidgin_conv_get_window(PidginConversation *gtkconv);
 GdkPixbuf *pidgin_conv_get_tab_icon(PurpleConversation *conv, gboolean small_icon);

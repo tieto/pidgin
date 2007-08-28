@@ -13,7 +13,7 @@ import os
 import gnt
 import sys
 
-from time import strftime
+import time
 
 convwins = {}
 
@@ -27,18 +27,25 @@ def conv_closed(conv):
     # if a conv window is closed, then reopened, this thing crashes
     convwins[key] = None
 
-def wrote_msg(account, who, msg, conv, flags):
-    stuff = show_conversation(conv)
+def add_message(conv, who, msg, flags, timestamp):
+    stuff = show_conversation(conv, False)
     tv = stuff[1]
     tv.append_text_with_flags("\n", 0)
-    tv.append_text_with_flags(strftime("(%X) "), 8)
+    if timestamp:
+        tv.append_text_with_flags(time.strftime("(%X) ", time.localtime(timestamp)), 8)
+    else:
+        tv.append_text_with_flags(time.strftime("(%X) "), 8)
     if flags & 3:
         tv.append_text_with_flags(who + ": ", 1)
+        msg = purple.PurpleMarkupStripHtml(msg)
         tv.append_text_with_flags(msg, 0)
         stuff[0].set_urgent()
     else:
         tv.append_text_with_flags(msg, 8)
     tv.scroll(0)
+
+def wrote_msg(account, who, msg, conv, flags):
+    add_message(conv, who, msg, flags, None)
 
 bus = dbus.SessionBus()
 obj = bus.get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
@@ -79,7 +86,7 @@ def send_im_cb(entry, key, conv):
 def conv_window_destroyed(win, key):
     del convwins[key]
 
-def show_conversation(conv):
+def show_conversation(conv, history):
     key = get_dict_key(conv)
     if key in convwins:
         return convwins[key]
@@ -96,9 +103,21 @@ def show_conversation(conv):
     vbox.add_widget(entry)
     entry.connect("key_pressed", send_im_cb, conv)
     tv.clear()
+    tv.attach_scroll_widget(entry)
     win.show()
     convwins[key] = [win, tv, entry]
     win.connect("destroy", conv_window_destroyed, key)
+    
+    if history:
+        msgs = purple.PurpleConversationGetMessageHistory(conv)
+        msgs.reverse()
+        for msg in msgs:
+            who = purple.PurpleConversationMessageGetSender(msg)
+            what = purple.PurpleConversationMessageGetMessage(msg)
+            flags = purple.PurpleConversationMessageGetFlags(msg)
+            when = purple.PurpleConversationMessageGetTimestamp(msg)
+            add_message(conv, who, what, flags, when)
+
     return convwins[key]
 
 def show_buddylist():
@@ -127,7 +146,7 @@ gnt.gnt_init()
 
 convs = purple.PurpleGetConversations()
 for conv in convs:
-    show_conversation(conv)
+    show_conversation(conv, True)
 
 gnt.gnt_main()
 
