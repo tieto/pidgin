@@ -4328,6 +4328,7 @@ static PurplePluginProtocolInfo prpl_info =
 	&yahoo_whiteboard_prpl_ops,
 	NULL, /* send_raw */
 	NULL, /* roomlist_room_serialize */
+	NULL, /* unregister_user */
 
 #ifdef YAHOO_USE_ATTENTION_API
 	yahoo_send_attention,
@@ -4338,7 +4339,6 @@ static PurplePluginProtocolInfo prpl_info =
 #endif
 
 	/* padding */
-	NULL,
 	NULL
 };
 

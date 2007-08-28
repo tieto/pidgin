@@ -357,7 +357,7 @@ struct _PurplePluginProtocolInfo
 	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
 	GList *(*attention_types)(PurpleAccount *acct);
 
-	void (*_purple_reserved3)(void);
+	void (*_purple_reserved1)(void);
 };
 
 #define PURPLE_IS_PROTOCOL_PLUGIN(plugin) \
