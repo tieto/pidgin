@@ -112,17 +112,17 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 
 	/* Always linkfy the text for display, unless we're
 	 * explicitly asked to do otheriwse*/
-	if(msgflags & PURPLE_MESSAGE_NO_LINKIFY)
-		displayed = g_strdup(message);
-	else
-		displayed = purple_markup_linkify(message);
-
-	if ((conv->features & PURPLE_CONNECTION_HTML) &&
-		!(msgflags & PURPLE_MESSAGE_RAW))
-	{
-		sent = g_strdup(displayed);
+	if (!(msgflags & PURPLE_MESSAGE_INVISIBLE)) {
+		if(msgflags & PURPLE_MESSAGE_NO_LINKIFY)
+			displayed = g_strdup(message);
+		else
+			displayed = purple_markup_linkify(message);
 	}
-	else
+
+	if (displayed && (conv->features & PURPLE_CONNECTION_HTML) &&
+		!(msgflags & PURPLE_MESSAGE_RAW)) {
+		sent = g_strdup(displayed);
+	} else
 		sent = g_strdup(message);
 
 	msgflags |= PURPLE_MESSAGE_SEND;

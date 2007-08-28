@@ -118,9 +118,9 @@ typedef enum
 	                                        apply formatting         */
 	PURPLE_MESSAGE_IMAGES      = 0x1000, /**< Message contains images  */
 	PURPLE_MESSAGE_NOTIFY      = 0x2000, /**< Message is a notification */
-	PURPLE_MESSAGE_NO_LINKIFY  = 0x4000  /**< Message should not be auto-
+	PURPLE_MESSAGE_NO_LINKIFY  = 0x4000, /**< Message should not be auto-
 										   linkified */
-
+	PURPLE_MESSAGE_INVISIBLE   = 0x8000, /**< Message should not be displayed */
 } PurpleMessageFlags;
 
 /**
