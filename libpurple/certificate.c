@@ -30,6 +30,7 @@
 
 #include "internal.h"
 #include "certificate.h"
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "request.h"
 #include "signals.h"
@@ -1712,6 +1713,7 @@ purple_certificate_register_pool(PurpleCertificatePool *pool)
 
 		/* TODO: Emit a signal that the pool got registered */
 
+		PURPLE_DBUS_REGISTER_POINTER(pool, PurpleCertificatePool);
 		purple_signal_register(pool, /* Signals emitted from pool */
 				       "certificate-stored",
 				       purple_marshal_VOID__POINTER_POINTER,
@@ -1760,6 +1762,7 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool)
 	}
 
 	/* Uninit the pool if needed */
+	PURPLE_DBUS_UNREGISTER_POINTER(pool);
 	if (pool->uninit) {
 		pool->uninit();
 	}
@@ -1830,7 +1833,4 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	g_free(expir_str);
 	g_byte_array_free(sha_bin, TRUE);
 }
-
-
-
 
