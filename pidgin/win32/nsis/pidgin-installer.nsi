@@ -503,8 +503,8 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     ${If} ${IsNT}
     ${AndIf} ${IsWinNT4}
       Delete "$INSTDIR\plugins\libsilc.dll"
-      Delete "$INSTDIR\silcclient.dll"
-      Delete "$INSTDIR\silc.dll"
+      Delete "$INSTDIR\libsilcclient-1-1-2.dll"
+      Delete "$INSTDIR\libsilc-1-1-2.dll"
     ${EndIf}
 
     SetOutPath "$INSTDIR"
@@ -764,8 +764,8 @@ Section Uninstall
     Delete "$INSTDIR\pidgin.dll"
     Delete "$INSTDIR\plc4.dll"
     Delete "$INSTDIR\plds4.dll"
-    Delete "$INSTDIR\silc.dll"
-    Delete "$INSTDIR\silcclient.dll"
+    Delete "$INSTDIR\libsilc-1-1-2.dll"
+    Delete "$INSTDIR\libsilcclient-1-1-2.dll"
     Delete "$INSTDIR\smime3.dll"
     Delete "$INSTDIR\softokn3.dll"
     Delete "$INSTDIR\ssl3.dll"

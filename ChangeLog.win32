@@ -1,5 +1,8 @@
+version 2.2.0 (??/??/2007):
+	* Upgrade SILC to use the 1.1.2 toolkit
+
 version 2.1.1 (08/20/2007):
-        * No changes
+	* No changes
 
 version 2.1.0 (7/28/2007):
 	* Updated launcher application (pidgin.exe) to support portable mode
