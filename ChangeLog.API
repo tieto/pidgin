@@ -6,6 +6,9 @@ Version 2.2.0 (??/??/????):
 		* PURPLE_MESSAGE_INVISIBLE flag, which can be used by
 		  purple_conv_im_send_with_flags to send a message, but not display it
 		  in the conversation
+		Changed:
+		* purple_prefs_load is now called within purple_prefs_init.
+		  The UI no longer needs to call it.
 
 	Pidgin:
 		Added:
