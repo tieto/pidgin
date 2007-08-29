@@ -1164,8 +1164,8 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 		NULL,         /* No associated conversation */
 		x509_tls_cached_ua_ctx_new(vrq, reason),
 		3,            /* Number of actions */
-		_("Yes"), x509_tls_cached_user_auth_accept_cb,
-		_("No"),  x509_tls_cached_user_auth_reject_cb,
+		_("Accept"), x509_tls_cached_user_auth_accept_cb,
+		_("Reject"),  x509_tls_cached_user_auth_reject_cb,
 		_("_View Certificate..."), x509_tls_cached_show_cert);
 	
 	/* Cleanup */
