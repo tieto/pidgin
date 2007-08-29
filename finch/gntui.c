@@ -38,7 +38,6 @@
 #include "gntstatus.h"
 #include "gntsound.h"
 
-#include <dbus-server.h>
 #include <prefs.h>
 
 void gnt_ui_init()
@@ -90,7 +89,6 @@ void gnt_ui_init()
 	gnt_register_action(_("Sounds"), finch_sounds_show_all);
 	gnt_register_action(_("Preferences"), finch_prefs_show_all);
 	gnt_register_action(_("Statuses"), finch_savedstatus_show_all);
-	gnt_register_action("Disable Dbus", purple_dbus_uninit);
 
 #ifdef STANDALONE
 
