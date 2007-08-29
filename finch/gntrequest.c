@@ -198,7 +198,7 @@ request_choice_cb(GntWidget *button, GntComboBox *combo)
 
 static void *
 finch_request_choice(const char *title, const char *primary,
-		const char *secondary, unsigned int default_value,
+		const char *secondary, int default_value,
 		const char *ok_text, GCallback ok_cb,
 		const char *cancel_text, GCallback cancel_cb,
 		PurpleAccount *account, const char *who, PurpleConversation *conv,
@@ -244,7 +244,7 @@ request_action_cb(GntWidget *button, GntWidget *window)
 
 static void*
 finch_request_action(const char *title, const char *primary,
-		const char *secondary, unsigned int default_value,
+		const char *secondary, int default_value,
 		PurpleAccount *account, const char *who, PurpleConversation *conv,
 		void *user_data, size_t actioncount,
 		va_list actions)
