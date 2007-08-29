@@ -125,7 +125,7 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 static PidginBuddyList *gtkblist = NULL;
 
 static gboolean pidgin_blist_refresh_timer(PurpleBuddyList *list);
-static void pidgin_blist_update_buddy(PurpleBuddyList *list, PurpleBlistNode *node, gboolean statusChange);
+static void pidgin_blist_update_buddy(PurpleBuddyList *list, PurpleBlistNode *node, gboolean status_change);
 static void pidgin_blist_selection_changed(GtkTreeSelection *selection, gpointer data);
 static void pidgin_blist_update(PurpleBuddyList *list, PurpleBlistNode *node);
 static void pidgin_blist_update_group(PurpleBuddyList *list, PurpleBlistNode *node);
@@ -614,6 +614,8 @@ joinchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 static void
 pidgin_blist_update_privacy_cb(PurpleBuddy *buddy)
 {
+	if (buddy->node.ui_data == NULL || ((struct _pidgin_blist_node*)buddy->node.ui_data)->row == NULL)
+		return;
 	pidgin_blist_update_buddy(purple_get_blist(), (PurpleBlistNode*)(buddy), TRUE);
 }
 
@@ -5158,7 +5160,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 
 
 
-static void pidgin_blist_update_buddy(PurpleBuddyList *list, PurpleBlistNode *node, gboolean statusChange)
+static void pidgin_blist_update_buddy(PurpleBuddyList *list, PurpleBlistNode *node, gboolean status_change)
 {
 	PurpleBuddy *buddy;
 	struct _pidgin_blist_node *gtkparentnode;
