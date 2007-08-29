@@ -2405,13 +2405,6 @@ pidgin_accounts_window_hide(void)
 
 	g_free(accounts_window);
 	accounts_window = NULL;
-
-	/* See if we're the main window here. */
-	if (PIDGIN_BLIST(purple_get_blist())->window == NULL &&
-		purple_connections_get_all() == NULL) {
-
-		purple_core_quit();
-	}
 }
 
 static void

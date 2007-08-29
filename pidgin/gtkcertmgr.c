@@ -676,11 +676,4 @@ pidgin_certmgr_hide(void)
 	gtk_widget_destroy(certmgr_dialog->window);
 	g_free(certmgr_dialog);
 	certmgr_dialog = NULL;
-
-	/* If this was the only window left, quit */
-	if (PIDGIN_BLIST(purple_get_blist())->window == NULL &&
-		purple_connections_get_all() == NULL) {
-
-		purple_core_quit();
-	}
 }
