@@ -8880,9 +8880,8 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 	if (pidgin_conv_window_get_gtkconv_count(win) == 1) 
 		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook),
 					   purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/tabs") &&
-                                           (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons") ||  
-                                           purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_LEFT ||
-                                           purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_RIGHT));
+                                           (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons") ||
+                                           purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") != GTK_POS_TOP));
 
 	/* show the widgets */
 /*	gtk_widget_show(gtkconv->icon); */
