@@ -114,7 +114,7 @@ static void
 play_conv_event(PurpleConversation *conv, PurpleSoundEventID event)
 {
 	/* If we should not play the sound for some reason, then exit early */
-	if (conv != NULL)
+	if (conv != NULL && PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 	{
 		PidginConversation *gtkconv;
 		PidginWindow *win;
@@ -364,14 +364,14 @@ bus_call (GstBus     *bus,
 	GError *err = NULL;
 
 	switch (GST_MESSAGE_TYPE (msg)) {
-	case GST_MESSAGE_EOS:
-		gst_element_set_state(play, GST_STATE_NULL);
-		gst_object_unref(GST_OBJECT(play));
-		break;
 	case GST_MESSAGE_ERROR:
 		gst_message_parse_error(msg, &err, NULL);
 		purple_debug_error("gstreamer", "%s\n", err->message);
 		g_error_free(err);
+		/* fall-through and clean up */
+	case GST_MESSAGE_EOS:
+		gst_element_set_state(play, GST_STATE_NULL);
+		gst_object_unref(GST_OBJECT(play));
 		break;
 	case GST_MESSAGE_WARNING:
 		gst_message_parse_warning(msg, &err, NULL);

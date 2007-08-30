@@ -418,6 +418,14 @@ gboolean pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 void pidgin_set_accessible_label(GtkWidget *w, GtkWidget *l);
 
 /**
+ * Sets the labelled-by and label-for ATK relationships.
+ *
+ * @param w The widget that we want to label.
+ * @param l A GtkLabel that we want to use as the label for the widget.
+ */
+void pidgin_set_accessible_relations(GtkWidget *w, GtkWidget *l);
+
+/**
  * A helper function for GtkMenuPositionFuncs. This ensures the menu will
  * be kept on screen if possible.
  *

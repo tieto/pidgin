@@ -55,6 +55,8 @@ char *gnt_style_get_from_name(const char *group, const char *key)
 	if (!group)
 		group = "general";
 	return g_key_file_get_value(gkfile, group, key, NULL);
+#else
+	return NULL;
 #endif
 }
 
@@ -93,6 +95,7 @@ gboolean gnt_style_parse_bool(const char *str)
 	return def;
 }
 
+#if GLIB_CHECK_VERSION(2,6,0)
 static void
 refine(char *text)
 {
@@ -133,6 +136,7 @@ parse_key(const char *key)
 {
 	return (char *)gnt_key_translate(key);
 }
+#endif
 
 void gnt_style_read_workspaces(GntWM *wm)
 {

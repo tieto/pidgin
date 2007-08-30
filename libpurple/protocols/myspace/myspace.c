@@ -33,135 +33,37 @@
 
 #define PURPLE_PLUGIN
 
-#include "message.h"
-#include "persist.h"
 #include "myspace.h"
 
-/* Globals */
-
-/* The names in in emoticon_names (for <i n=whatever>) map to corresponding 
- * entries in emoticon_symbols (for the ASCII representation of the emoticon).
- *
- * Multiple emoticon symbols in Pidgin can map to one name. List the
- * canonical form, as inserted by the "Smile!" dialog, first. For example,
- * :) comes before :-), because although both are recognized as 'happy',
- * the first is inserted by the smiley button (first symbol in theme).
- *
- * Note that symbols are case-sensitive in Pidgin -- :-X is not :-x. */
-static struct MSIM_EMOTICON
-{
-	gchar *name;
-	gchar *symbol;
-} msim_emoticons[] = {
-	/* Unfortunately, this list duplicates much of the file
-	 * pidgin/pidgin/pixmaps/emotes/default/22/default.theme.in, because
-	 * that file is part of Pidgin, but we're part of libpurple.
-	 */
-	{ "bigsmile", ":D" },
-	{ "bigsmile", ":-D" },
-	{ "devil", "}:)" },
-	{ "frazzled", ":Z" },
-	{ "geek", "B)" },
-	{ "googles", "%)" },
-	{ "growl", ":E" },
-	{ "laugh", ":))" },		/* Must be before ':)' */
-	{ "happy", ":)" },
-	{ "happy", ":-)" },
-	{ "happi", ":)" },
-	{ "heart", ":X" },
-	{ "mohawk", "-:" },
-	{ "mad", "X(" },
-	{ "messed", "X)" },
-	{ "nerd", "Q)" },
-	{ "oops", ":G" },
-	{ "pirate", "P)" },
-	{ "scared", ":O" },
-	{ "sidefrown", ":{" },
-	{ "sinister", ":B" },
-	{ "smirk", ":," },
-	{ "straight", ":|" },
-	{ "tongue", ":P" },
-	{ "tongue", ":p" },
-	{ "tongy", ":P" },
-	{ "upset", "B|" },
-	{ "wink", ";-)" },
-	{ "wink", ";)" },
-	{ "winc", ";)" },
-	{ "worried", ":[" },
-	{ "kiss", ":x" },
-	{ NULL, NULL }
-};
-
 /* Internal functions */
-static gboolean msim_send_zap(MsimSession *session, const gchar *username, guint code);
-static void msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr);
 
 #ifdef MSIM_DEBUG_MSG
 static void print_hash_item(gpointer key, gpointer value, gpointer user_data);
 #endif
 
-static int msim_send_really_raw(PurpleConnection *gc, const char *buf,
-		int total_bytes);
+static int msim_send_really_raw(PurpleConnection *gc, const char *buf, int total_bytes);
 static gboolean msim_login_challenge(MsimSession *session, MsimMessage *msg);
-static const gchar *msim_compute_login_response(
-		const gchar nonce[2 * NONCE_SIZE], const gchar *email, 
-		const gchar *password, guint *response_len);
-static gboolean msim_send_bm(MsimSession *session, const gchar *who, 
-		const gchar *text, int type);
+static const gchar *msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE], const gchar *email, const gchar *password, guint *response_len);
 
-static guint msim_point_to_purple_size(MsimSession *session, guint point);
-static guint msim_purple_size_to_point(MsimSession *session, guint size);
-static guint msim_height_to_point(MsimSession *session, guint height);
-static guint msim_point_to_height(MsimSession *session, guint point);
-
-static void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);
-
-static void msim_markup_tag_to_html(MsimSession *, xmlnode *root, 
-		gchar **begin, gchar **end);
-static void html_tag_to_msim_markup(MsimSession *, xmlnode *root, 
-		gchar **begin, gchar **end);
-static gchar *msim_convert_xml(MsimSession *, const gchar *raw, 
-		MSIM_XMLNODE_CONVERT f);
-static gchar *msim_convert_smileys_to_markup(gchar *before);
-
-/* High-level msim markup <=> html conversion functions. */
-static gchar *msim_markup_to_html(MsimSession *, const gchar *raw);
-static gchar *html_to_msim_markup(MsimSession *, const gchar *raw);
-
-static MsimUser *msim_get_user_from_buddy(PurpleBuddy *buddy);
-static MsimUser *msim_find_user(MsimSession *session, const gchar *username);
-
-static gboolean msim_incoming_bm_record_cv(MsimSession *session, 
-		MsimMessage *msg);
+static gboolean msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg);
 static gboolean msim_incoming_bm(MsimSession *session, MsimMessage *msg);
 static gboolean msim_incoming_status(MsimSession *session, MsimMessage *msg);
 static gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg);
-static gboolean msim_incoming_zap(MsimSession *session, MsimMessage *msg);
+/* static gboolean msim_incoming_zap(MsimSession *session, MsimMessage *msg); - in zap.c */
 static gboolean msim_incoming_action(MsimSession *session, MsimMessage *msg);
 static gboolean msim_incoming_media(MsimSession *session, MsimMessage *msg);
 static gboolean msim_incoming_unofficial_client(MsimSession *session, 
 		MsimMessage *msg);
 
 #ifdef MSIM_SEND_CLIENT_VERSION
-static gboolean msim_send_unofficial_client(MsimSession *session, 
-		gchar *username);
+static gboolean msim_send_unofficial_client(MsimSession *session, gchar *username);
 #endif
 
 static void msim_get_info_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
-static gchar *msim_format_now_playing(gchar *band, gchar *song);
 
-static void msim_set_status_code(MsimSession *session, guint code, 
-		gchar *statstring);
+static void msim_set_status_code(MsimSession *session, guint code, gchar *statstring);
 
-static void msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, MsimUser *user, gboolean full);
-
-static void msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text,
-		gsize len, const gchar *error_message);
-
-static void msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user);
-static gboolean msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user);
-static gboolean msim_process_server_info(MsimSession *session, 
-		MsimMessage *msg);
+static gboolean msim_process_server_info(MsimSession *session, MsimMessage *msg);
 static gboolean msim_web_challenge(MsimSession *session, MsimMessage *msg); 
 static gboolean msim_process_reply(MsimSession *session, MsimMessage *msg);
 
@@ -175,50 +77,27 @@ static gboolean msim_we_are_logged_on(MsimSession *session, MsimMessage *msg);
 
 static gboolean msim_process(MsimSession *session, MsimMessage *msg);
 
-static MsimMessage *msim_do_postprocessing(MsimMessage *msg, 
-		const gchar *uid_field_name, const gchar *uid_before, guint uid);
-static void msim_postprocess_outgoing_cb(MsimSession *session, 
-		MsimMessage *userinfo, gpointer data);
-static gboolean msim_postprocess_outgoing(MsimSession *session, 
-		MsimMessage *msg, const gchar *username, const gchar *uid_field_name, 
-		const gchar *uid_before); 
+static MsimMessage *msim_do_postprocessing(MsimMessage *msg, const gchar *uid_field_name, const gchar *uid_before, guint uid);
+static void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+static gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, const gchar *username, const gchar *uid_field_name, const gchar *uid_before); 
 
 static gboolean msim_error(MsimSession *session, MsimMessage *msg);
 
-static void msim_check_inbox_cb(MsimSession *session, MsimMessage *userinfo, 
-		gpointer data);
+static void msim_check_inbox_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
 static gboolean msim_check_inbox(gpointer data);
 
-static void msim_input_cb(gpointer gc_uncasted, gint source, 
-		PurpleInputCondition cond);
+static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond);
 
-static guint msim_new_reply_callback(MsimSession *session, 
-		MSIM_USER_LOOKUP_CB cb, gpointer data);
 
-static void msim_connect_cb(gpointer data, gint source, 
-		const gchar *error_message);
-
-static gboolean msim_is_userid(const gchar *user);
-static gboolean msim_is_email(const gchar *user);
-
-static void msim_lookup_user(MsimSession *session, const gchar *user, 
-		MSIM_USER_LOOKUP_CB cb, gpointer data);
+static void msim_connect_cb(gpointer data, gint source, const gchar *error_message);
 
 static void msim_import_friends(PurplePluginAction *action);
+static void msim_import_friends_cb(MsimSession *session, MsimMessage *reply, gpointer user_data);
+static gboolean msim_get_contact_list(MsimSession *session, int what_to_do_after);
 
-double msim_round(double round);
-
-/* round is part of C99, but sometimes is unavailable before then.
- * Based on http://forums.belution.com/en/cpp/000/050/13.shtml
- */
-double msim_round(double value)
-{
-	if (value < 0) {
-		return -(floor(-value + 0.5));
-	} else {
-		return   floor( value + 0.5);
-	}
-}
+static gboolean msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params);
+static void msim_uri_handler_addContact_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+static void msim_uri_handler_sendIM_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
 
 /** 
  * Load the plugin.
@@ -283,195 +162,6 @@ msim_status_types(PurpleAccount *acct)
 	return types;
 }
 
-/** Get zap types. */
-GList *
-msim_attention_types(PurpleAccount *acct)
-{
-	static GList *types = NULL;
-	MsimAttentionType* attn;
-
-	if (!types) {
-#define _MSIM_ADD_NEW_ATTENTION(icn, des, incoming, outgoing)              \
-		attn = g_new0(MsimAttentionType, 1);                     \
-		attn->icon = icn;                                          \
-		attn->description = des;                                   \
-		attn->incoming_description = incoming;                     \
-		attn->outgoing_description = outgoing;                     \
-		types = g_list_append(types, attn);
-
-		/* TODO: icons for each zap */
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("zap"), _("zapped"), _("Zapping"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("whack"), _("whacked"), _("Whacking"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("torch"), _("torched"), _("Torching"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("smooch"), _("smooched"), _("Smooching"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("hug"), _("hugged"), _("Hugging"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("bslap"), _("bslapped"), _("Bslapping"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("goose"), _("goosed"), _("Goosing"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("hi-five"), _("hi-fived"), _("Hi-fiving"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("punk"), _("punk'd"), _("Punking"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("raspberry"), _("raspberried"), _("Raspberry'ing"));
-	}
-
-	return types;
-}
-
-/** Send a zap */
-gboolean
-msim_send_attention(PurpleConnection *gc, gchar *username, guint code)
-{
-	GList *types;
-	MsimSession *session;
-	MsimAttentionType *attn;
-	PurpleBuddy *buddy;
-
-	session = (MsimSession *)gc->proto_data;
-
-	/* Look for this attention type, by the code index given. */
-	types = msim_attention_types(gc->account);
-	attn = (MsimAttentionType *)g_list_nth_data(types, code);
-
-	if (!attn) {
-		purple_debug_info("msim_send_attention", "got invalid zap code %d\n", code);
-		return FALSE;
-	}
-
-	buddy = purple_find_buddy(session->account, username);
-	if (!buddy) {
-		return FALSE;
-	}
-
-	/* TODO: make use of the MsimAttentionType we found, instead of
-	 * doing it all over in msim_send_zap_from_menu. */
-	msim_send_zap_from_menu(&buddy->node, GUINT_TO_POINTER(code));
-
-	return TRUE;
-}
-
-/** Send a zap to a user. */
-static gboolean
-msim_send_zap(MsimSession *session, const gchar *username, guint code)
-{
-	gchar *zap_string;
-#ifndef MSIM_USE_ATTENTION_API
-	gchar *zap_description;
-#endif
-	GList *types;
-	MsimAttentionType *attn;
-	gboolean rc;
-
-	g_return_val_if_fail(session != NULL, FALSE);
-	g_return_val_if_fail(username != NULL, FALSE);
-
-	types = msim_attention_types(session->account);
-
-	attn = g_list_nth_data(types, code);
-	if (!attn) {
-		return FALSE;
-	}
-
-
-#ifdef MSIM_USE_ATTENTION_API
-	serv_got_attention(session->gc, username, attn, FALSE);
-#else
-	zap_description = g_strdup_printf("*** Attention: %s %s ***", attn->outgoing_description,
-			username);
-
-	serv_got_im(session->gc, username, zap_description,
-			PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_SYSTEM, time(NULL));
-
-	g_free(zap_description);
-#endif
-
-	/* Construct and send the actual zap command. */
-	zap_string = g_strdup_printf("!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", code);
-
-	if (!msim_send_bm(session, username, zap_string, MSIM_BM_ACTION)) {
-		purple_debug_info("msim_send_zap_from_menu", "msim_send_bm failed: zapping %s with %s",
-				username, zap_string);
-		rc = FALSE;
-	} else {
-		rc = TRUE;
-	}
-	
-	g_free(zap_string);
-
-	return rc;
-
-}
-
-/** Zap someone. Callback from msim_blist_node_menu zap menu. */
-static void
-msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr)
-{
-	PurpleBuddy *buddy;
-	PurpleAccount *account;
-	PurpleConnection *gc;
-	MsimSession *session;
-	guint zap;
-
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node)) {
-		/* Only know about buddies for now. */
-		return;
-	}
-
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
-
-	buddy = (PurpleBuddy *)node;
-
-	/* Find the session */
-	account = buddy->account;
-	gc = purple_account_get_connection(account);
-	session = (MsimSession *)gc->proto_data;
-
-	zap = GPOINTER_TO_INT(zap_num_ptr);
-
-	g_return_if_fail(msim_send_zap(session, buddy->name, zap));
-}
-
-
-/** Return menu, if any, for a buddy list node. */
-GList *
-msim_blist_node_menu(PurpleBlistNode *node)
-{
-	GList *menu, *zap_menu;
-	GList *types;
-	PurpleMenuAction *act;
-	/* Warning: hardcoded to match that in msim_attention_types. */
-	const gchar *zap_names[10];
-	guint i;
-
-	if (!PURPLE_BLIST_NODE_IS_BUDDY(node)) {
-		/* Only know about buddies for now. */
-		return NULL;
-	}
-
-	/* Names from official client. */
-	types = msim_attention_types(NULL);
-	i = 0;
-	do
-	{
-		MsimAttentionType *attn;
-
-		attn = (MsimAttentionType *)types->data;
-		zap_names[i] = attn->description;
-		++i;
-	} while ((types = g_list_next(types)));
-
-	menu = zap_menu = NULL;
-
-	/* TODO: get rid of once is accessible directly in GUI */
-	for (i = 0; i < sizeof(zap_names) / sizeof(zap_names[0]); ++i) {
-		act = purple_menu_action_new(zap_names[i], PURPLE_CALLBACK(msim_send_zap_from_menu),
-				GUINT_TO_POINTER(i), NULL);
-		zap_menu = g_list_append(zap_menu, act);
-	}
-
-	act = purple_menu_action_new(_("Zap"), NULL, NULL, zap_menu);
-	menu = g_list_append(menu, act);
-
-	return menu;
-}
-
 /**
  * Return the icon name for a buddy and account.
  *
@@ -486,32 +176,6 @@ msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 	/* Use a MySpace icon submitted by hbons at
 	 * http://developer.pidgin.im/wiki/MySpaceIM. */
 	return "myspace";
-}
-
-/**
- * Replace 'old' with 'new' in 'str'.
- *
- * @param str The original string.
- * @param old The substring of 'str' to replace.
- * @param new The replacement for 'old' within 'str'.
- *
- * @return A _new_ string, based on 'str', with 'old' replaced
- *         by 'new'. Must be g_free()'d by caller.
- *
- * This string replace method is based on
- * http://mail.gnome.org/archives/gtk-app-devel-list/2000-July/msg00201.html
- *
- */
-gchar *
-str_replace(const gchar *str, const gchar *old, const gchar *new)
-{
-	gchar **items;
-	gchar *ret;
-
-	items = g_strsplit(str, old, -1);
-	ret = g_strjoinv(new, items);
-	g_free(items);
-	return ret;
 }
 
 #ifdef MSIM_DEBUG_MSG
@@ -911,7 +575,7 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
  * Buddy messages ('bm') include instant messages, action messages, status messages, etc.
  *
  */
-static gboolean 
+gboolean 
 msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, 
 		int type)
 {
@@ -943,613 +607,6 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 	msim_msg_free(msg);
 
 	return rc;
-}
-
-/* Indexes of this array + 1 map HTML font size to scale of normal font size. *
- * Based on _point_sizes from libpurple/gtkimhtml.c 
- *                                 1    2  3    4     5      6       7 */
-static gdouble _font_scale[] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736 };
-
-#define MAX_FONT_SIZE                   7       /* Purple maximum font size */
-#define POINTS_PER_INCH                 72      /* How many pt's in an inch */
-
-/** Convert typographical font point size to HTML font size. 
- * Based on libpurple/gtkimhtml.c */
-static guint
-msim_point_to_purple_size(MsimSession *session, guint point)
-{
-	guint size, this_point, base;
-	gdouble scale;
-	
-	base = purple_account_get_int(session->account, "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
-   
-	for (size = 0; 
-			size < sizeof(_font_scale) / sizeof(_font_scale[0]);
-			++size) {
-		scale = _font_scale[CLAMP(size, 1, MAX_FONT_SIZE) - 1];
-		this_point = (guint)msim_round(scale * base);
-
-		if (this_point >= point) {
-			purple_debug_info("msim", "msim_point_to_purple_size: %d pt -> size=%d\n",
-					point, size);
-			return size;
-		}
-	}
-
-	/* No HTML font size was this big; return largest possible. */
-	return this_point;
-}
-
-/** Convert HTML font size to point size. */
-static guint
-msim_purple_size_to_point(MsimSession *session, guint size)
-{
-	gdouble scale;
-	guint point;
-	guint base;
-
-	scale = _font_scale[CLAMP(size, 1, MAX_FONT_SIZE) - 1];
-
-	base = purple_account_get_int(session->account, "base_font_size", MSIM_BASE_FONT_POINT_SIZE);
-
-	point = (guint)msim_round(scale * base);
-
-	purple_debug_info("msim", "msim_purple_size_to_point: size=%d -> %d pt\n",
-					size, point);
-
-	return point;
-}
-
-/** Convert a msim markup font pixel height to the more usual point size, for incoming messages. */
-static guint 
-msim_height_to_point(MsimSession *session, guint height)
-{
-	guint dpi;
-
-	dpi = purple_account_get_int(session->account, "port", MSIM_DEFAULT_DPI);
-
-	return (guint)msim_round((POINTS_PER_INCH * 1. / dpi) * height);
-
-	/* See also: libpurple/protocols/bonjour/jabber.c
-	 * _font_size_ichat_to_purple */
-}
-
-/** Convert point size to msim pixel height font size specification, for outgoing messages. */
-static guint
-msim_point_to_height(MsimSession *session, guint point)
-{
-	guint dpi;
-
-	dpi = purple_account_get_int(session->account, "port", MSIM_DEFAULT_DPI);
-
-	return (guint)msim_round((dpi * 1. / POINTS_PER_INCH) * point);
-}
-
-/** Convert the msim markup <f> (font) tag into HTML. */
-static void 
-msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
-{
-	const gchar *face, *height_str, *decor_str;
-	GString *gs_end, *gs_begin;
-	guint decor, height;
-
-	face = xmlnode_get_attrib(root, "f");
-	height_str = xmlnode_get_attrib(root, "h");
-	decor_str = xmlnode_get_attrib(root, "s");
-
-	if (height_str) {
-		height = atol(height_str);
-	} else {
-		height = 12;
-	}
-
-	if (decor_str) {
-		decor = atol(decor_str);
-	} else {
-		decor = 0;
-	}
-
-	gs_begin = g_string_new("");
-	/* TODO: get font size working */
-	if (height && !face) {
-		g_string_printf(gs_begin, "<font size='%d'>", 
-				msim_point_to_purple_size(session, msim_height_to_point(session, height)));
-	} else if (height && face) {
-		g_string_printf(gs_begin, "<font face='%s' size='%d'>", face,  
-				msim_point_to_purple_size(session, msim_height_to_point(session, height)));
-	} else {
-		g_string_printf(gs_begin, "<font>");
-	}
-
-	/* No support for font-size CSS? */
-	/* g_string_printf(gs_begin, "<span style='font-family: %s; font-size: %dpt'>", face, 
-			msim_height_to_point(height)); */
-
-	gs_end = g_string_new("</font>");
-
-	if (decor & MSIM_TEXT_BOLD) {
-		g_string_append(gs_begin, "<b>");
-		g_string_prepend(gs_end, "</b>");
-	}
-
-	if (decor & MSIM_TEXT_ITALIC) {
-		g_string_append(gs_begin, "<i>");
-		g_string_append(gs_end, "</i>");
-	}
-
-	if (decor & MSIM_TEXT_UNDERLINE) {
-		g_string_append(gs_begin, "<u>");
-		g_string_append(gs_end, "</u>");
-	}
-
-
-	*begin = gs_begin->str;
-	*end = gs_end->str;
-}
-
-/** Convert a msim markup color to a color suitable for libpurple.
-  *
-  * @param msim Either a color name, or an rgb(x,y,z) code.
-  *
-  * @return A new string, either a color name or #rrggbb code. Must g_free(). 
-  */
-static char *
-msim_color_to_purple(const char *msim)
-{
-	guint red, green, blue;
-
-	if (!msim) {
-		return g_strdup("black");
-	}
-
-	if (sscanf(msim, "rgb(%d,%d,%d)", &red, &green, &blue) != 3) {
-		/* Color name. */
-		return g_strdup(msim);
-	}
-	/* TODO: rgba (alpha). */
-
-	return g_strdup_printf("#%.2x%.2x%.2x", red, green, blue);
-}
-
-/** Convert the msim markup <a> (anchor) tag into HTML. */
-static void 
-msim_markup_a_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
-{
-	const gchar *href;
-
-	href = xmlnode_get_attrib(root, "h");
-	if (!href) {
-		href = "";
-	}
-
-	*begin = g_strdup_printf("<a href=\"%s\">%s", href, href);
-	*end = g_strdup("</a>");
-}
-
-/** Convert the msim markup <p> (paragraph) tag into HTML. */
-static void 
-msim_markup_p_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
-{
-	/* Just pass through unchanged. 
-	 *
-	 * Note: attributes currently aren't passed, if there are any. */
-	*begin = g_strdup("<p>");
-	*end = g_strdup("</p>");
-}
-
-/** Convert the msim markup <c> tag (text color) into HTML. TODO: Test */
-static void 
-msim_markup_c_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
-{
-	const gchar *color;
-	gchar *purple_color;
-
-	color = xmlnode_get_attrib(root, "v");
-	if (!color) {
-		purple_debug_info("msim", "msim_markup_c_to_html: <c> tag w/o v attr");
-		*begin = g_strdup("");
-		*end = g_strdup("");
-		/* TODO: log as unrecognized */
-		return;
-	}
-
-	purple_color = msim_color_to_purple(color);
-
-	*begin = g_strdup_printf("<font color='%s'>", purple_color); 
-
-	g_free(purple_color);
-
-	/* *begin = g_strdup_printf("<span style='color: %s'>", color); */
-	*end = g_strdup("</font>");
-}
-
-/** Convert the msim markup <b> tag (background color) into HTML. TODO: Test */
-static void 
-msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
-{
-	const gchar *color;
-	gchar *purple_color;
-
-	color = xmlnode_get_attrib(root, "v");
-	if (!color) {
-		*begin = g_strdup("");
-		*end = g_strdup("");
-		purple_debug_info("msim", "msim_markup_b_to_html: <b> w/o v attr");
-		/* TODO: log as unrecognized. */
-		return;
-	}
-
-	purple_color = msim_color_to_purple(color);
-
-	/* TODO: find out how to set background color. */
-	*begin = g_strdup_printf("<span style='background-color: %s'>", 
-			purple_color);
-	g_free(purple_color);
-
-	*end = g_strdup("</p>");
-}
-
-/** Convert the msim markup <i> tag (emoticon image) into HTML. */
-static void 
-msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar **end)
-{
-	const gchar *name;
-	guint i;
-	struct MSIM_EMOTICON *emote;
-
-	name = xmlnode_get_attrib(root, "n");
-	if (!name) {
-		purple_debug_info("msim", "msim_markup_i_to_html: <i> w/o n");
-		*begin = g_strdup("");
-		*end = g_strdup("");
-		/* TODO: log as unrecognized */
-		return;
-	}
-
-	/* Find and use canonical form of smiley symbol. */
-	for (i = 0; (emote = &msim_emoticons[i]) && emote->name != NULL; ++i) {
-		if (!strcmp(name, emote->name)) {
-			*begin = g_strdup(emote->symbol);
-			*end = g_strdup("");
-			return;
-		}
-	}
-
-	/* Couldn't find it, sorry. Try to degrade gracefully. */
-	*begin = g_strdup_printf("**%s**", name);
-	*end = g_strdup("");
-}
-
-/** Convert an individual msim markup tag to HTML. */
-static void 
-msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin, 
-		gchar **end)
-{
-	if (!strcmp(root->name, "f")) {
-		msim_markup_f_to_html(session, root, begin, end);
-	} else if (!strcmp(root->name, "a")) {
-		msim_markup_a_to_html(session, root, begin, end);
-	} else if (!strcmp(root->name, "p")) {
-		msim_markup_p_to_html(session, root, begin, end);
-	} else if (!strcmp(root->name, "c")) {
-		msim_markup_c_to_html(session, root, begin, end);
-	} else if (!strcmp(root->name, "b")) {
-		msim_markup_b_to_html(session, root, begin, end);
-	} else if (!strcmp(root->name, "i")) {
-		msim_markup_i_to_html(session, root, begin, end);
-	} else {
-		purple_debug_info("msim", "msim_markup_tag_to_html: "
-				"unknown tag name=%s, ignoring", 
-				(root && root->name) ? root->name : "(NULL)");
-		*begin = g_strdup("");
-		*end = g_strdup("");
-	}
-}
-
-/** Convert an individual HTML tag to msim markup. */
-static void 
-html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin, 
-		gchar **end)
-{
-	/* TODO: Coalesce nested tags into one <f> tag!
-	 * Currently, the 's' value will be overwritten when b/i/u is nested
-	 * within another one, and only the inner-most formatting will be 
-	 * applied to the text. */
-	if (!purple_utf8_strcasecmp(root->name, "root")) {
-		*begin = g_strdup("");
-		*end = g_strdup("");
-	} else if (!purple_utf8_strcasecmp(root->name, "b")) {
-		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_BOLD);
-		*end = g_strdup("</f>");
-	} else if (!purple_utf8_strcasecmp(root->name, "i")) {
-		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_ITALIC);
-		*end = g_strdup("</f>");
-	} else if (!purple_utf8_strcasecmp(root->name, "u")) {
-		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_UNDERLINE);
-		*end = g_strdup("</f>");
-	} else if (!purple_utf8_strcasecmp(root->name, "a")) {
-		const gchar *href, *link_text;
-
-		href = xmlnode_get_attrib(root, "href");
-
-		if (!href) {
-			href = xmlnode_get_attrib(root, "HREF");
-		}
-
-		link_text = xmlnode_get_data(root);
-
-		if (href) {
-			if (!strcmp(link_text, href)) {
-				/* Purple gives us: <a href="URL">URL</a>
-				 * Translate to <a h='URL' />
-				 * Displayed as text of URL with link to URL
-				 */
-				*begin = g_strdup_printf("<a h='%s' />", href);
-			} else {
-				/* But if we get: <a href="URL">text</a>
-				 * Translate to: text: <a h='URL' />
-				 *
-				 * Because official client only supports self-closed <a>
-				 * tags; you can't change the link text.
-				 */
-				*begin = g_strdup_printf("%s: <a h='%s' />", link_text, href);
-			}
-		} else {
-			*begin = g_strdup("<a />");
-		}
-
-		/* Sorry, kid. MySpace doesn't support you within <a> tags. */
-		xmlnode_free(root->child);
-		root->child = NULL;
-
-		*end = g_strdup("");
-	} else if (!purple_utf8_strcasecmp(root->name, "font")) {
-		const gchar *size;
-		const gchar *face;
-
-		size = xmlnode_get_attrib(root, "size");
-		face = xmlnode_get_attrib(root, "face");
-
-		if (face && size) {
-			*begin = g_strdup_printf("<f f='%s' h='%d'>", face, 
-					msim_point_to_height(session,
-						msim_purple_size_to_point(session, atoi(size))));
-		} else if (face) {
-			*begin = g_strdup_printf("<f f='%s'>", face);
-		} else if (size) {
-			*begin = g_strdup_printf("<f h='%d'>", 
-					 msim_point_to_height(session,
-						 msim_purple_size_to_point(session, atoi(size))));
-		} else {
-			*begin = g_strdup("<f>");
-		}
-
-		*end = g_strdup("</f>");
-
-		/* TODO: color (bg uses <body>), emoticons */
-	} else {
-		*begin = g_strdup_printf("[%s]", root->name);
-		*end = g_strdup_printf("[/%s]", root->name);
-	}
-}
-
-/** Convert an xmlnode of msim markup or HTML to an HTML string or msim markup.
- *
- * @param f Function to convert tags.
- *
- * @return An HTML string. Caller frees.
- */
-static gchar *
-msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f)
-{
-	xmlnode *node;
-	gchar *begin, *inner, *end;
-	GString *final;
-
-	if (!root || !root->name) {
-		return g_strdup("");
-	}
-
-	purple_debug_info("msim", "msim_convert_xmlnode: got root=%s\n",
-			root->name);
-
-	begin = inner = end = NULL;
-
-	final = g_string_new("");
-
-	f(session, root, &begin, &end);
-	
-	g_string_append(final, begin);
-
-	/* Loop over all child nodes. */
-	for (node = root->child; node != NULL; node = node->next) {
-		switch (node->type) {
-		case XMLNODE_TYPE_ATTRIB:
-			/* Attributes handled above. */
-			break;
-
-		case XMLNODE_TYPE_TAG:
-			/* A tag or tag with attributes. Recursively descend. */
-			inner = msim_convert_xmlnode(session, node, f);
-			g_return_val_if_fail(inner != NULL, NULL);
-
-			purple_debug_info("msim", " ** node name=%s\n", 
-					(node && node->name) ? node->name : "(NULL)");
-			break;
-	
-		case XMLNODE_TYPE_DATA:
-			/* Literal text. */
-			inner = g_new0(char, node->data_sz + 1);
-			strncpy(inner, node->data, node->data_sz);
-			inner[node->data_sz] = 0;
-
-			purple_debug_info("msim", " ** node data=%s\n", 
-					inner ? inner : "(NULL)");
-			break;
-			
-		default:
-			purple_debug_info("msim",
-					"msim_convert_xmlnode: strange node\n");
-			inner = g_strdup("");
-		}
-
-		if (inner) {
-			g_string_append(final, inner);
-		}
-	}
-
-	/* TODO: Note that msim counts each piece of text enclosed by <f> as
-	 * a paragraph and will display each on its own line. You actually have
-	 * to _nest_ <f> tags to intersperse different text in one paragraph!
-	 * Comment out this line below to see. */
-	g_string_append(final, end);
-
-	purple_debug_info("msim", "msim_markup_xmlnode_to_gtkhtml: RETURNING %s\n",
-			(final && final->str) ? final->str : "(NULL)");
-
-	return final->str;
-}
-
-/** Convert XML to something based on MSIM_XMLNODE_CONVERT. */
-static gchar *
-msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
-{
-	xmlnode *root;
-	gchar *str;
-	gchar *enclosed_raw;
-
-	g_return_val_if_fail(raw != NULL, NULL);
-
-	/* Enclose text in one root tag, to try to make it valid XML for parsing. */
-	enclosed_raw = g_strconcat("<root>", raw, "</root>", NULL);
-
-	root = xmlnode_from_str(enclosed_raw, -1);
-
-	if (!root) {
-		purple_debug_info("msim", "msim_markup_to_html: couldn't parse "
-				"%s as XML, returning raw: %s\n", enclosed_raw, raw);
-		/* TODO: msim_unrecognized */
-		g_free(enclosed_raw);
-		return g_strdup(raw);
-	}
-
-	g_free(enclosed_raw);
-
-	str = msim_convert_xmlnode(session, root, f);
-	g_return_val_if_fail(str != NULL, NULL);
-	purple_debug_info("msim", "msim_markup_to_html: returning %s\n", str);
-
-	xmlnode_free(root);
-
-	return str;
-}
-
-/** Convert plaintext smileys to <i> markup tags.
- *
- * @param before Original text with ASCII smileys. Will be freed.
- * @return A new string with <i> tags, if applicable. Must be g_free()'d.
- */
-static gchar *
-msim_convert_smileys_to_markup(gchar *before)
-{
-	gchar *old, *new, *replacement;
-	guint i;
-	struct MSIM_EMOTICON *emote;
-
-	old = before;
-	new = NULL;
-
-	for (i = 0; (emote = &msim_emoticons[i]) && emote->name != NULL; ++i) {
-		gchar *name, *symbol;
-
-		name = emote->name;
-		symbol = emote->symbol;
-
-		replacement = g_strdup_printf("<i n=\"%s\"/>", name);
-
-		purple_debug_info("msim", "msim_convert_smileys_to_markup: %s->%s\n",
-				symbol ? symbol : "(NULL)", 
-				replacement ? replacement : "(NULL)");
-		new = str_replace(old, symbol, replacement);
-		
-		g_free(replacement);
-		g_free(old);
-
-		old = new;
-	}
-
-	return new;
-}
-	
-
-/** High-level function to convert MySpaceIM markup to Purple (HTML) markup. 
- *
- * @return Purple markup string, must be g_free()'d. */
-static gchar *
-msim_markup_to_html(MsimSession *session, const gchar *raw)
-{
-	return msim_convert_xml(session, raw, 
-			(MSIM_XMLNODE_CONVERT)(msim_markup_tag_to_html));
-}
-
-/** High-level function to convert Purple (HTML) to MySpaceIM markup.
- *
- * @return HTML markup string, must be g_free()'d. */
-static gchar *
-html_to_msim_markup(MsimSession *session, const gchar *raw)
-{
-	gchar *markup;
-
-	markup = msim_convert_xml(session, raw,
-			(MSIM_XMLNODE_CONVERT)(html_tag_to_msim_markup));
-	
-	if (purple_account_get_bool(session->account, "emoticons", TRUE)) {
-		/* Frees markup and allocates a new one. */
-		markup = msim_convert_smileys_to_markup(markup);
-	}
-
-	return markup;
-}
-
-/** Get the MsimUser from a PurpleBuddy, creating it if needed. */
-static MsimUser *
-msim_get_user_from_buddy(PurpleBuddy *buddy)
-{
-	MsimUser *user;
-
-	if (!buddy) {
-		return NULL;
-	}
-
-	if (!buddy->proto_data) {
-		/* No MsimUser for this buddy; make one. */
-
-		/* TODO: where is this freed? */
-		user = g_new0(MsimUser, 1);
-		user->buddy = buddy;
-		buddy->proto_data = (gpointer)user;
-	} 
-
-	user = (MsimUser *)(buddy->proto_data);
-
-	return user;
-}
-
-/** Find and return an MsimUser * representing a user on the buddy list, or NULL. */
-static MsimUser *
-msim_find_user(MsimSession *session, const gchar *username)
-{
-	PurpleBuddy *buddy;
-	MsimUser *user;
-
-	buddy = purple_find_buddy(session->account, username);
-	if (!buddy) {
-		return NULL;
-	}
-
-	user = msim_get_user_from_buddy(buddy);
-
-	return user;
 }
 
 
@@ -1655,7 +712,7 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg)
  * @param msg An MsimMessage that was unrecognized, or NULL.
  * @param note Information on what was unrecognized, or NULL.
  */
-static void 
+void 
 msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
 {
 	/* TODO: Some more context, outwardly equivalent to a backtrace, 
@@ -1669,8 +726,8 @@ msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
 	 * by Alexandr Shutko, who maintains OSCAR protocol documentation). */
 
 	purple_debug_info("msim", "Unrecognized data on account for %s\n", 
-			session->account->username ? session->account->username
-			: "(NULL)");
+			(session && session->account && session->account->username) ? 
+			session->account->username : "(NULL)");
 	if (note) {
 		purple_debug_info("msim", "(Note: %s)\n", note);
 	}
@@ -1678,60 +735,6 @@ msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
 	if (msg) {
 		msim_msg_dump("Unrecognized message dump: %s\n", msg);
 	}
-}
-
-/** Process an incoming zap. */
-static gboolean
-msim_incoming_zap(MsimSession *session, MsimMessage *msg)
-{
-	gchar *msg_text, *username;
-	gint zap;
-	const gchar *zap_past_tense[10];
-#ifdef MSIM_USE_ATTENTION_API
-	MsimAttentionType attn;
-#else
-	gchar *zap_text;
-#endif
-
-	zap_past_tense[0] = _("zapped");
-	zap_past_tense[1] = _("whacked");
-	zap_past_tense[2] = _("torched");
-	zap_past_tense[3] = _("smooched");
-	zap_past_tense[4] = _("hugged");
-	zap_past_tense[5] = _("bslapped");
-	zap_past_tense[6] = _("goosed");
-	zap_past_tense[7] = _("hi-fived");
-	zap_past_tense[8] = _("punk'd");
-	zap_past_tense[9] = _("raspberried");
-
-	msg_text = msim_msg_get_string(msg, "msg");
-	username = msim_msg_get_string(msg, "_username");
-
-	g_return_val_if_fail(msg_text != NULL, FALSE);
-	g_return_val_if_fail(username != NULL, FALSE);
-
-	g_return_val_if_fail(sscanf(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", &zap) == 1, FALSE);
-
-	zap = CLAMP(zap, 0, sizeof(zap_past_tense) / sizeof(zap_past_tense[0]));
-
-	/* TODO:ZAP: use msim_attention_types */
-#ifdef MSIM_USE_ATTENTION_API
-	attn.incoming_description = zap_past_tense[zap];
-	attn.outgoing_description = NULL;
-	attn.icon = NULL;		/* TODO: icon */
-
-	serv_got_attention(session->gc, username, &attn, TRUE);
-#else
-	zap_text = g_strdup_printf(_("*** You have been %s! ***"), zap_past_tense[zap]);
-	serv_got_im(session->gc, username, zap_text, 
-			PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_SYSTEM, time(NULL));
-	g_free(zap_text);
-#endif
-
-	g_free(msg_text);
-	g_free(username);
-
-	return TRUE;
 }
 
 /**
@@ -1761,13 +764,13 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	purple_debug_info("msim", "msim_incoming_action: action <%s> from <%d>\n", 
 			msg_text, username);
 
-	if (strcmp(msg_text, "%typing%") == 0) {
+	if (g_str_equal(msg_text, "%typing%")) {
 		/* TODO: find out if msim repeatedly sends typing messages, so we can 
 		 * give it a timeout. Right now, there does seem to be an inordinately 
 		 * amount of time between typing stopped-typing notifications. */
 		serv_got_typing(session->gc, username, 0, PURPLE_TYPING);
 		rc = TRUE;
-	} else if (strcmp(msg_text, "%stoptyping%") == 0) {
+	} else if (g_str_equal(msg_text, "%stoptyping%")) {
 		serv_got_typing_stopped(session->gc, username);
 		rc = TRUE;
 	} else if (strstr(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_")) {
@@ -1784,7 +787,7 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	return rc;
 }
 
-/* Process an incoming media (buddy icon) message. */
+/* Process an incoming media (message background?) message. */
 static gboolean
 msim_incoming_media(MsimSession *session, MsimMessage *msg)
 {
@@ -1902,95 +905,7 @@ msim_send_typing(PurpleConnection *gc, const gchar *name,
 	return 0;
 }
 
-/** Format the "now playing" indicator, showing the artist and song.
- * @return Return a new string (must be g_free()'d), or NULL.
- */
-static gchar *
-msim_format_now_playing(gchar *band, gchar *song)
-{
-	if ((band && strlen(band)) || (song && strlen(song))) {
-		return g_strdup_printf("%s - %s",
-			(band && strlen(band)) ? band : "Unknown Artist",
-			(song && strlen(song)) ? song : "Unknown Song");
-	} else {
-		return NULL;
-	}
-}
 
-/** Append user information to a PurpleNotifyUserInfo, given an MsimUser. 
- * Used by msim_tooltip_text() and msim_get_info_cb() to show a user's profile.
- */
-static void
-msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, MsimUser *user, gboolean full)
-{
-	gchar *str;
-	guint uid;
-	guint cv;
-
-	/* Useful to identify the account the tooltip refers to. 
-	 *  Other prpls show this. */
-	if (user->username) {
-		purple_notify_user_info_add_pair(user_info, _("User"), user->username);
-	}
-
-	uid = purple_blist_node_get_int(&user->buddy->node, "UserID");
-
-	if (full) {
-		/* TODO: link to username, if available */
-		purple_notify_user_info_add_pair(user_info, _("Profile"),
-				g_strdup_printf("<a href=\"http://myspace.com/%d\">http://myspace.com/%d</a>",
-					uid, uid));
-	}
-
-
-	/* a/s/l...the vitals */
-	if (user->age) {
-		purple_notify_user_info_add_pair(user_info, _("Age"),
-				g_strdup_printf("%d", user->age));
-	}
-
-	if (user->gender && strlen(user->gender)) {
-		purple_notify_user_info_add_pair(user_info, _("Gender"), user->gender);
-	}
-
-	if (user->location && strlen(user->location)) {
-		purple_notify_user_info_add_pair(user_info, _("Location"), user->location);
-	}
-
-	/* Other information */
-	if (user->headline && strlen(user->headline)) {
-		purple_notify_user_info_add_pair(user_info, _("Headline"), user->headline);
-	}
-
-	str = msim_format_now_playing(user->band_name, user->song_name);
-	if (str && strlen(str)) {
-		purple_notify_user_info_add_pair(user_info, _("Song"), str);
-	}
-
-	/* Note: total friends only available if looked up by uid, not username. */
-	if (user->total_friends) {
-		purple_notify_user_info_add_pair(user_info, _("Total Friends"),
-			g_strdup_printf("%d", user->total_friends));
-	}
-
-	if (full) {
-		/* Client information */
-
-		str = user->client_info;
-		cv = user->client_cv;
-
-		if (str && cv != 0) {
-			purple_notify_user_info_add_pair(user_info, _("Client Version"),
-					g_strdup_printf("%s (build %d)", str, cv));
-		} else if (str) {
-			purple_notify_user_info_add_pair(user_info, _("Client Version"),
-					g_strdup(str));
-		} else if (cv) {
-			purple_notify_user_info_add_pair(user_info, _("Client Version"),
-					g_strdup_printf("Build %d", cv));
-		}
-	}
-}
 
 /** Callback for msim_get_info(), for when user info is received. */
 static void 
@@ -2377,42 +1292,27 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 	guint i, n;
 	const gchar *froms[5], *tos[5], *urls[5], *subjects[5];
 
-	/* Three parallel arrays for each new inbox message type. */
-	static const gchar *inbox_keys[] = 
-	{ 
-		"Mail", 
-		"BlogComment", 
-		"ProfileComment", 
-		"FriendRequest", 
-		"PictureComment" 
-	};
-
-	static const guint inbox_bits[] = 
-	{ 
-		MSIM_INBOX_MAIL, 
-		MSIM_INBOX_BLOG_COMMENT,
-		MSIM_INBOX_PROFILE_COMMENT,
-		MSIM_INBOX_FRIEND_REQUEST,
-		MSIM_INBOX_PICTURE_COMMENT
-	};
-
-	static const gchar *inbox_urls[] =
+	/* Information for each new inbox message type. */
+	static struct 
 	{
-		"http://messaging.myspace.com/index.cfm?fuseaction=mail.inbox",
-		"http://blog.myspace.com/index.cfm?fuseaction=blog",
-		"http://home.myspace.com/index.cfm?fuseaction=user",
-		"http://messaging.myspace.com/index.cfm?fuseaction=mail.friendRequests",
-		"http://home.myspace.com/index.cfm?fuseaction=user"
+		const gchar *key;
+		guint bit;
+		const gchar *url;
+		const gchar *text;
+	} message_types[] = {
+		{ "Mail", MSIM_INBOX_MAIL, "http://messaging.myspace.com/index.cfm?fuseaction=mail.inbox", NULL },
+		{ "BlogComment", MSIM_INBOX_BLOG_COMMENT, "http://blog.myspace.com/index.cfm?fuseaction=blog", NULL },
+		{ "ProfileComment", MSIM_INBOX_PROFILE_COMMENT, "http://home.myspace.com/index.cfm?fuseaction=user", NULL },
+		{ "FriendRequest", MSIM_INBOX_FRIEND_REQUEST, "http://messaging.myspace.com/index.cfm?fuseaction=mail.friendRequests", NULL },
+		{ "PictureComment", MSIM_INBOX_PICTURE_COMMENT, "http://home.myspace.com/index.cfm?fuseaction=user", NULL }
 	};
-
-	static const gchar *inbox_text[5];
 
 	/* Can't write _()'d strings in array initializers. Workaround. */
-	inbox_text[0] = _("New mail messages");
-	inbox_text[1] = _("New blog comments");
-	inbox_text[2] = _("New profile comments");
-	inbox_text[3] = _("New friend requests!");
-	inbox_text[4] = _("New picture comments");
+	message_types[0].text = _("New mail messages");
+	message_types[1].text = _("New blog comments");
+	message_types[2].text = _("New profile comments");
+	message_types[3].text = _("New friend requests!");
+	message_types[4].text = _("New picture comments");
 
 	g_return_if_fail(reply != NULL);
 
@@ -2427,12 +1327,12 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 
 	n = 0;
 
-	for (i = 0; i < sizeof(inbox_keys) / sizeof(inbox_keys[0]); ++i) {
+	for (i = 0; i < sizeof(message_types) / sizeof(message_types[0]); ++i) {
 		const gchar *key;
 		guint bit;
 		
-		key = inbox_keys[i];
-		bit = inbox_bits[i];
+		key = message_types[i].key;
+		bit = message_types[i].bit;
 
 		if (msim_msg_get(body, key)) {
 			/* Notify only on when _changes_ from no mail -> has mail
@@ -2441,13 +1341,13 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 				purple_debug_info("msim", "msim_check_inbox_cb: got %s, at %d\n",
 						key ? key : "(NULL)", n);
 
-				subjects[n] = inbox_text[i];
+				subjects[n] = message_types[i].text;
 				froms[n] = _("MySpace");
 				tos[n] = session->username;
 				/* TODO: append token, web challenge, so automatically logs in.
 				 * Would also need to free strings because they won't be static
 				 */
-				urls[n] = inbox_urls[i];
+				urls[n] = message_types[i].url;
 
 				++n;
 			} else {
@@ -2520,6 +1420,9 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 	 * some of the time, but can vary. This is our own user ID. */
 	session->userid = msim_msg_get_integer(msg, "userid");
 
+	/* Save uid to account so this account can be looked up by uid. */
+	purple_account_set_int(session->account, "uid", session->userid);
+
 	/* Not sure what profileid is used for. */
 	if (msim_msg_get_integer(msg, "profileid") != session->userid) {
 		msim_unrecognized(session, msg, 
@@ -2530,6 +1433,10 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 	 * which is weird, but happens because you login with your email
 	 * address and not username. Will be freed in msim_session_destroy(). */
 	session->username = msim_msg_get_string(msg, "uniquenick");
+
+	/* If a local alias wasn't set, set it to user's username. */
+	if (!session->account->alias || !strlen(session->account->alias))
+		session->account->alias = session->username;
 
 	/* The session is now set up, ready to be connected. This emits the
 	 * signedOn signal, so clients can now do anything with msimprpl, and
@@ -2597,10 +1504,14 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 			(GSourceFunc)msim_check_alive, session);
 #endif
 
-	purple_timeout_add(MSIM_MAIL_INTERVAL_CHECK, 
-			(GSourceFunc)msim_check_inbox, session);
+	/* Check mail if they want to. */
+	if (purple_account_get_check_mail(session->account)) {
+		purple_timeout_add(MSIM_MAIL_INTERVAL_CHECK, 
+				(GSourceFunc)msim_check_inbox, session);
+		msim_check_inbox(session);
+	}
 
-	msim_check_inbox(session);
+	msim_get_contact_list(session, MSIM_CONTACT_LIST_INITIAL_FRIENDS);
 
 	return TRUE;
 }
@@ -2639,166 +1550,6 @@ msim_process(MsimSession *session, MsimMessage *msg)
 		msim_unrecognized(session, msg, "in msim_process");
 		return FALSE;
 	}
-}
-
-/** Callback for when a buddy icon finished being downloaded. */
-static void
-msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
-		gpointer user_data,
-		const gchar *url_text,
-		gsize len,
-		const gchar *error_message)
-{
-	MsimUser *user;
-
-	user = (MsimUser *)user_data;
-
-	purple_debug_info("msim_downloaded_buddy_icon",
-			"Downloaded %d bytes\n", len);
-
-	purple_buddy_icons_set_for_user(user->buddy->account,
-			user->buddy->name,
-			(gchar *)url_text, len, 
-			/*  Use URL itself as buddy icon "checksum" */
-			user->image_url);
-}
-
-/** Store a field of information about a buddy. */
-static void 
-msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user)
-{
-	if (!strcmp(key_str, "UserID") || !strcmp(key_str, "ContactID")) {
-		/* Save to buddy list, if it exists, for quick cached uid lookup with msim_uid2username_from_blist(). */
-		if (user->buddy)
-		{
-			purple_debug_info("msim", "associating uid %s with username %s\n", key_str, user->buddy->name);
-			purple_blist_node_set_int(&user->buddy->node, "UserID", atol(value_str));
-		}
-		/* Need to store in MsimUser, too? What if not on blist? */
-	} else if (!strcmp(key_str, "Age")) {
-		user->age = atol(value_str);
-	} else if (!strcmp(key_str, "Gender")) {
-		user->gender = g_strdup(value_str);
-	} else if (!strcmp(key_str, "Location")) {
-		user->location = g_strdup(value_str);
-	} else if (!strcmp(key_str, "TotalFriends")) {
-		user->total_friends = atol(value_str);
-	} else if (!strcmp(key_str, "DisplayName")) {
-		user->display_name = g_strdup(value_str);
-	} else if (!strcmp(key_str, "BandName")) {
-		user->band_name = g_strdup(value_str);
-	} else if (!strcmp(key_str, "SongName")) {
-		user->song_name = g_strdup(value_str);
-	} else if (!strcmp(key_str, "UserName") || !strcmp(key_str, "IMName") || !strcmp(key_str, "NickName")) {
-		/* Ignore because PurpleBuddy knows this already */
-		;
-	} else if (!strcmp(key_str, "ImageURL") || !strcmp(key_str, "AvatarURL")) {
-		const gchar *previous_url;
-
-		user->image_url = g_strdup(value_str);
-		
-		previous_url = purple_buddy_icons_get_checksum_for_user(user->buddy);
-
-		/* Only download if URL changed */
-		if (!previous_url || strcmp(previous_url, user->image_url)) {
-			purple_util_fetch_url(user->image_url, TRUE, NULL, TRUE, msim_downloaded_buddy_icon, (gpointer)user);
-		}
-	} else if (!strcmp(key_str, "Headline")) {
-		user->headline = g_strdup(value_str);
-	} else {
-		/* TODO: other fields in MsimUser */
-		gchar *msg;
-
-		msg = g_strdup_printf("msim_store_user_info_each: unknown field %s=%s",
-				key_str, value_str);
-
-		msim_unrecognized(NULL, NULL, msg);
-
-		g_free(msg);
-	}
-}
-
-/** Save buddy information to the buddy list from a user info reply message.
- *
- * @param session
- * @param msg The user information reply, with any amount of information.
- * @param user The structure to save to, or NULL to save in PurpleBuddy->proto_data.
- *
- * Variable information is saved to the passed MsimUser structure. Permanent
- * information (UserID) is stored in the blist node of the buddy list (and
- * ends up in blist.xml, persisted to disk) if it exists.
- *
- * If the function has no buddy information, this function
- * is a no-op (and returns FALSE).
- *
- */
-static gboolean 
-msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
-{
-	gchar *username;
-	MsimMessage *body, *body_node;
-
-	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
-	g_return_val_if_fail(msg != NULL, FALSE);
-
-	body = msim_msg_get_dictionary(msg, "body");
-	if (!body) {
-		return FALSE;
-	}
-
-	username = msim_msg_get_string(body, "UserName");
-
-	if (!username) {
-		purple_debug_info("msim", 
-			"msim_process_reply: not caching body, no UserName\n");
-		msim_msg_free(body);
-		g_free(username);
-		return FALSE;
-	}
-	
-	/* Null user = find and store in PurpleBuddy's proto_data */
-	if (!user) {
-		user = msim_find_user(session, username);
-		if (!user) {
-			msim_msg_free(body);
-			g_free(username);
-			return FALSE;
-		}
-	}
-
-	/* TODO: make looping over MsimMessage's easier. */
-	for (body_node = body; 
-		body_node != NULL; 
-		body_node = msim_msg_get_next_element_node(body_node))
-	{
-		const gchar *key_str;
-		gchar *value_str;
-		MsimMessageElement *elem;
-
-		elem = (MsimMessageElement *)body_node->data;
-		key_str = elem->name;
-
-		value_str = msim_msg_get_string_from_element(elem);
-		msim_store_user_info_each(key_str, value_str, user);
-		g_free(value_str);
-	}
-
-	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
-		msim_msg_get_integer(msg, "lid") == MG_OWN_IM_INFO_LID) {
-		/* TODO: do something with our own IM info, if we need it for some
-		 * specific purpose. Otherwise it is available on the buddy list,
-		 * if the user has themselves as their own buddy. 
-		 *
-		 * However, much of the info is already available in MsimSession,
-		 * stored in msim_we_are_logged_on(). */
-	} else if (msim_msg_get_integer(msg, "dsn") == MG_OWN_MYSPACE_INFO_DSN &&
-			msim_msg_get_integer(msg, "lid") == MG_OWN_MYSPACE_INFO_LID) {
-		/* TODO: same as above, but for MySpace info. */
-	}
-
-	msim_msg_free(body);
-
-	return TRUE;
 }
 
 /** Process the initial server information from the server. */
@@ -2986,9 +1737,9 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 	 */
 	list = msim_msg_get_list(msg, "msg");
 
-	status_code = atoi(g_list_nth_data(list, MSIM_STATUS_ORDINAL_ONLINE));
+	status_code = msim_msg_get_integer_from_element(g_list_nth_data(list, MSIM_STATUS_ORDINAL_ONLINE));
 	purple_debug_info("msim", "msim_status: %s's status code = %d\n", username, status_code);
-	status_headline = g_list_nth_data(list, MSIM_STATUS_ORDINAL_HEADLINE);
+	status_headline = msim_msg_get_string_from_element(g_list_nth_data(list, MSIM_STATUS_ORDINAL_HEADLINE));
 
 	blist = purple_get_blist();
 
@@ -3012,7 +1763,8 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		purple_debug_info("msim", "msim_status: found buddy %s\n", username);
 	}
 
-	user->headline = g_strdup(status_headline);
+	/* don't copy; let the MsimUser own the headline, memory-wise */
+	user->headline = status_headline;
   
 	/* Set user status */
 	switch (status_code) {
@@ -3034,9 +1786,9 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 			break;
 
 		default:
-				purple_debug_info("msim", "msim_status for %s, unknown status code %d, treating as available\n",
+			purple_debug_info("msim", "msim_status for %s, unknown status code %d, treating as available\n",
 						username, status_code);
-				purple_status_code = PURPLE_STATUS_AVAILABLE;
+			purple_status_code = PURPLE_STATUS_AVAILABLE;
 	}
 
 	purple_prpl_got_user_status(session->account, username, purple_primitive_get_id_from_type(purple_status_code), NULL);
@@ -3055,6 +1807,14 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		msim_send_unofficial_client(session, username);
 	}
 #endif
+
+	if (status_code != MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN) {
+		/* Get information when they come online.
+		 * TODO: periodically refresh?
+		 */
+		purple_debug_info("msim_incoming_status", "%s came online, looking up\n", username);
+		msim_lookup_user(session, username, NULL, NULL);
+	}
 
 	g_free(username);
 	msim_msg_list_free(list);
@@ -3169,7 +1929,7 @@ msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before,
 		fmt_string = msim_msg_pack_element_data(elem);
 
 		uid_str = g_strdup_printf("%d", uid);
-		new_str = str_replace(fmt_string, "<uid>", uid_str);
+		new_str = purple_strreplace(fmt_string, "<uid>", uid_str);
 		g_free(uid_str);
 		g_free(fmt_string);
 
@@ -3207,7 +1967,7 @@ static void
 msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, 
 		gpointer data)
 {
-	gchar *uid_field_name, *uid_before;
+	gchar *uid_field_name, *uid_before, *username;
 	guint uid;
 	MsimMessage *msg, *body;
 
@@ -3221,6 +1981,19 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
 
 	uid = msim_msg_get_integer(body, "UserID");
 	msim_msg_free(body);
+
+	username = msim_msg_get_string(msg, "_username");
+
+	if (!uid) {
+		gchar *msg;
+
+		msg = g_strdup_printf(_("No such user: %s"), username);
+		purple_notify_error(NULL, NULL, _("User lookup"), msg);
+		g_free(msg);
+		g_free(username);
+		//msim_msg_free(msg);
+		return;
+	}
 
 	uid_field_name = msim_msg_get_string(msg, "_uid_field_name");
 	uid_before = msim_msg_get_string(msg, "_uid_before");
@@ -3238,6 +2011,7 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
 	 */
 	g_free(uid_field_name);
 	g_free(uid_before);
+	g_free(username);
 	//msim_msg_free(msg);
 }
 
@@ -3532,7 +2306,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
  * 1) MSIM_USER_LOOKUP_CB - make it for PERSIST_REPLY, not just user lookup
  * 2) data - make it an MsimMessage?
  */
-static guint 
+guint 
 msim_new_reply_callback(MsimSession *session, MSIM_USER_LOOKUP_CB cb, 
 		gpointer data)
 {
@@ -3580,79 +2354,7 @@ msim_connect_cb(gpointer data, gint source, const gchar *error_message)
 	gc->inpa = purple_input_add(source, PURPLE_INPUT_READ, msim_input_cb, gc);
 }
 
-/* Session methods */
-
-/**
- * Create a new MSIM session.
- *
- * @param acct The account to create the session from.
- *
- * @return Pointer to a new session. Free with msim_session_destroy.
- */
-MsimSession *
-msim_session_new(PurpleAccount *acct)
-{
-	MsimSession *session;
-
-	g_return_val_if_fail(acct != NULL, NULL);
-
-	session = g_new0(MsimSession, 1);
-
-	session->magic = MSIM_SESSION_STRUCT_MAGIC;
-	session->account = acct;
-	session->gc = purple_account_get_connection(acct);
-	session->sesskey = 0;
-	session->userid = 0;
-	session->username = NULL;
-	session->fd = -1;
-
-	/* TODO: Remove. */
-	session->user_lookup_cb = g_hash_table_new_full(g_direct_hash, 
-			g_direct_equal, NULL, NULL);  /* do NOT free function pointers! (values) */
-	session->user_lookup_cb_data = g_hash_table_new_full(g_direct_hash, 
-			g_direct_equal, NULL, NULL);/* TODO: we don't know what the values are,
-											 they could be integers inside gpointers
-											 or strings, so I don't freed them.
-											 Figure this out, once free cache. */
-
-	/* Created in msim_process_server_info() */
-	session->server_info = NULL;
-
-	session->rxoff = 0;
-	session->rxbuf = g_new0(gchar, MSIM_READ_BUF_SIZE);
-	session->next_rid = 1;
-	session->last_comm = time(NULL);
-	session->inbox_status = 0;
-	
-	return session;
-}
-
-/**
- * Free a session.
- *
- * @param session The session to destroy.
- */
-void 
-msim_session_destroy(MsimSession *session)
-{
-	g_return_if_fail(MSIM_SESSION_VALID(session));
-	
-	session->magic = -1;
-
-	g_free(session->rxbuf);
-	g_free(session->username);
-
-	/* TODO: Remove. */
-	g_hash_table_destroy(session->user_lookup_cb);
-	g_hash_table_destroy(session->user_lookup_cb_data);
-
-	if (session->server_info) {
-		msim_msg_free(session->server_info);
-	}
-	
-	g_free(session);
-}
-				 
+			 
 /** 
  * Close the connection.
  * 
@@ -3683,106 +2385,6 @@ msim_close(PurpleConnection *gc)
 
 	msim_session_destroy(session);
 }
-
-
-/**
- * Check if a string is a userid (all numeric).
- *
- * @param user The user id, email, or name.
- *
- * @return TRUE if is userid, FALSE if not.
- */
-static gboolean 
-msim_is_userid(const gchar *user)
-{
-	g_return_val_if_fail(user != NULL, FALSE);
-
-	return strspn(user, "0123456789") == strlen(user);
-}
-
-/**
- * Check if a string is an email address (contains an @).
- *
- * @param user The user id, email, or name.
- *
- * @return TRUE if is an email, FALSE if not.
- *
- * This function is not intended to be used as a generic
- * means of validating email addresses, but to distinguish
- * between a user represented by an email address from
- * other forms of identification.
- */ 
-static gboolean 
-msim_is_email(const gchar *user)
-{
-	g_return_val_if_fail(user != NULL, FALSE);
-
-	return strchr(user, '@') != NULL;
-}
-
-
-/**
- * Asynchronously lookup user information, calling callback when receive result.
- *
- * @param session
- * @param user The user id, email address, or username. Not freed.
- * @param cb Callback, called with user information when available.
- * @param data An arbitray data pointer passed to the callback.
- */
-/* TODO: change to not use callbacks */
-static void 
-msim_lookup_user(MsimSession *session, const gchar *user, 
-		MSIM_USER_LOOKUP_CB cb, gpointer data)
-{
-	MsimMessage *body;
-	gchar *field_name;
-	guint rid, cmd, dsn, lid;
-
-	g_return_if_fail(MSIM_SESSION_VALID(session));
-	g_return_if_fail(user != NULL);
-	g_return_if_fail(cb != NULL);
-
-	purple_debug_info("msim", "msim_lookup_userid: "
-			"asynchronously looking up <%s>\n", user);
-
-	msim_msg_dump("msim_lookup_user: data=%s\n", (MsimMessage *)data);
-
-	/* Setup callback. Response will be associated with request using 'rid'. */
-	rid = msim_new_reply_callback(session, cb, data);
-
-	/* Send request */
-
-	cmd = MSIM_CMD_GET;
-
-	if (msim_is_userid(user)) {
-		field_name = "UserID";
-		dsn = MG_MYSPACE_INFO_BY_ID_DSN; 
-		lid = MG_MYSPACE_INFO_BY_ID_LID; 
-	} else if (msim_is_email(user)) {
-		field_name = "Email";
-		dsn = MG_MYSPACE_INFO_BY_STRING_DSN;
-		lid = MG_MYSPACE_INFO_BY_STRING_LID;
-	} else {
-		field_name = "UserName";
-		dsn = MG_MYSPACE_INFO_BY_STRING_DSN;
-		lid = MG_MYSPACE_INFO_BY_STRING_LID;
-	}
-
-	body = msim_msg_new(
-			field_name, MSIM_TYPE_STRING, g_strdup(user),
-			NULL);
-
-	g_return_if_fail(msim_send(session,
-			"persist", MSIM_TYPE_INTEGER, 1,
-			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			"cmd", MSIM_TYPE_INTEGER, 1,
-			"dsn", MSIM_TYPE_INTEGER, dsn,
-			"uid", MSIM_TYPE_INTEGER, session->userid,
-			"lid", MSIM_TYPE_INTEGER, lid,
-			"rid", MSIM_TYPE_INTEGER, rid,
-			"body", MSIM_TYPE_DICTIONARY, body,
-			NULL));
-} 
 
 
 /**
@@ -3908,6 +2510,8 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	group_name = msim_msg_get_string(contact_info, "GroupName");
 	if (group_name) {
 		group = purple_group_new(group_name);
+		purple_debug_info("msim_add_contact_from_server_cb",
+				"adding to GroupName: %s\n", group_name);
 		g_free(group_name);
 	} else {
 		group = purple_group_new(_("IM Friends"));
@@ -3916,12 +2520,16 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	/* 2. Get or create buddy */
 	buddy = purple_find_buddy(session->account, username);
 	if (!buddy) {
+		purple_debug_info("msim_add_contact_from_server_cb",
+				"creating new buddy: %s\n", username);
 		buddy = purple_buddy_new(session->account, username, NULL);
 	}
 
+	/* Add group to beginning. See #2752. */
+	purple_blist_add_group(group, NULL);
+
 	/* TODO: use 'Position' in contact_info to take into account where buddy is */
 	purple_blist_add_buddy(buddy, NULL, group, NULL /* insertion point */);
-
 
 	/* 3. Update buddy information */
 	user = msim_get_user_from_buddy(buddy);
@@ -3943,14 +2551,14 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
  *
  * @return TRUE if added.
  * */
-static void 
+static gboolean
 msim_add_contact_from_server(MsimSession *session, MsimMessage *contact_info)
 {
 	guint uid;
 	const gchar *username;
 
 	uid = msim_msg_get_integer(contact_info, "ContactID");
-	g_return_if_fail(uid != 0);
+	g_return_val_if_fail(uid != 0, FALSE);
 
 	/* Lookup the username, since NickName and IMName is unreliable */
 	username = msim_uid2username_from_blist(session, uid);
@@ -3965,6 +2573,10 @@ msim_add_contact_from_server(MsimSession *session, MsimMessage *contact_info)
 	} else {
 		msim_add_contact_from_server_cb(session, NULL, (gpointer)msim_msg_clone(contact_info));
 	}
+
+	/* Say that the contact was added, even if we're still looking up
+	 * their username. */
+	return TRUE;
 }
 
 /** Called when contact list is received from server. */
@@ -3972,11 +2584,15 @@ static void
 msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_data)
 {
 	MsimMessage *body, *body_node;
+	gchar *msg;
+	guint buddy_count;
 
 	msim_msg_dump("msim_got_contact_list: reply=%s", reply);
 
 	body = msim_msg_get_dictionary(reply, "body");
 	g_return_if_fail(body != NULL);
+
+	buddy_count = 0;
 
 	for (body_node = body;
 		body_node != NULL;
@@ -3986,15 +2602,51 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 
 		elem = (MsimMessageElement *)body_node->data;
 
-		if (!strcmp(elem->name, "ContactID"))
+		if (g_str_equal(elem->name, "ContactID"))
 		{
 			/* Will look for first contact in body_node */
-			msim_add_contact_from_server(session, body_node);
+			if (msim_add_contact_from_server(session, body_node)) {
+				++buddy_count;
+			}
 		}
+	}
+
+	switch (GPOINTER_TO_UINT(user_data)) {
+		case MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS:
+			msg = g_strdup_printf(_("%d buddies were added or updated"), buddy_count);
+			purple_notify_info(session->account, _("Add contacts from server"), msg, NULL);
+			g_free(msg);
+			break;
+
+		case MSIM_CONTACT_LIST_IMPORT_TOP_FRIENDS:
+			/* TODO */
+			break;
+		
+		case MSIM_CONTACT_LIST_INITIAL_FRIENDS:
+			/* Nothing */
+			break;
 	}
 
 	msim_msg_free(body);
 }
+
+/* Get contact list, calling msim_got_contact_list() with what_to_do_after as user_data gpointer. */
+static gboolean
+msim_get_contact_list(MsimSession *session, int what_to_do_after)
+{
+	return msim_send(session, 
+			"persist", MSIM_TYPE_INTEGER, 1,
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_GET,
+			"dsn", MSIM_TYPE_INTEGER, MG_LIST_ALL_CONTACTS_DSN,
+			"lid", MSIM_TYPE_INTEGER, MG_LIST_ALL_CONTACTS_LID,
+			"uid", MSIM_TYPE_INTEGER, session->userid,
+			"rid", MSIM_TYPE_INTEGER, 
+				msim_new_reply_callback(session, msim_got_contact_list, GUINT_TO_POINTER(what_to_do_after)), 
+			"body", MSIM_TYPE_STRING, g_strdup(""),
+			NULL);
+}
+
 
 /** Called when friends have been imported to buddy list on server. */
 static void 
@@ -4010,7 +2662,7 @@ msim_import_friends_cb(MsimSession *session, MsimMessage *reply, gpointer user_d
 	completed = msim_msg_get_string(body, "Completed");
 	g_return_if_fail(body != NULL);
 	msim_msg_free(body);
-	if (strcmp(completed, "True"))
+	if (!g_str_equal(completed, "True"))
 	{
 		purple_debug_info("msim_import_friends_cb",
 				"failed to import friends: %s", completed);
@@ -4024,17 +2676,7 @@ msim_import_friends_cb(MsimSession *session, MsimMessage *reply, gpointer user_d
 	purple_debug_info("msim_import_friends_cb",
 			"added friends to server-side buddy list, requesting new contacts from server");
 
-	g_return_if_fail(msim_send(session, 
-			"persist", MSIM_TYPE_INTEGER, 1,
-			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_GET,
-			"dsn", MSIM_TYPE_INTEGER, MG_LIST_ALL_CONTACTS_DSN,
-			"lid", MSIM_TYPE_INTEGER, MG_LIST_ALL_CONTACTS_LID,
-			"uid", MSIM_TYPE_INTEGER, session->userid,
-			"rid", MSIM_TYPE_INTEGER, 
-				msim_new_reply_callback(session, msim_got_contact_list, NULL),
-			"body", MSIM_TYPE_STRING, g_strdup(""),
-			NULL));
+	msim_get_contact_list(session, MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS);
 
 	/* TODO: show, X friends have been added */
 }
@@ -4263,7 +2905,7 @@ msim_test_msg(void)
 	packed_expected = "\\bx\\WFhY\\k1\\v1\\k1\\42\\k1"
 		"\\v43\\k1\\v52/1xxx/2yyy\\k1\\v7\\final\\";
 
-	if (0 != strcmp(packed, packed_expected)) {
+	if (!g_str_equal(packed, packed_expected)) {
 		purple_debug_info("msim", "!!!(%d), msim_msg_pack not what expected: %s != %s\n",
 				++failures, packed, packed_expected);
 	}
@@ -4273,7 +2915,7 @@ msim_test_msg(void)
 	packed_cloned = msim_msg_pack(msg_cloned);
 
 	purple_debug_info("msim", "msg cloned=%s\n", packed_cloned);
-	if (0 != strcmp(packed, packed_cloned)) {
+	if (!g_str_equal(packed, packed_cloned)) {
 		purple_debug_info("msim", "!!!(%d), msim_msg_pack on cloned message not equal to original: %s != %s\n",
 				++failures, packed_cloned, packed);
 	}
@@ -4328,7 +2970,7 @@ msim_test_escaping(void)
 	escaped = msim_escape(raw);
 	purple_debug_info("msim", "msim_test_escaping: raw=%s, escaped=%s\n", raw, escaped);
 	expected = "hello/1world/2hello/1world";
-	if (0 != strcmp(escaped, expected)) {
+	if (!g_str_equal(escaped, expected)) {
 		purple_debug_info("msim", "!!!(%d), msim_escape failed: %s != %s\n",
 				++failures, escaped, expected);
 	}
@@ -4337,7 +2979,7 @@ msim_test_escaping(void)
 	unescaped = msim_unescape(escaped);
 	g_free(escaped);
 	purple_debug_info("msim", "msim_test_escaping: unescaped=%s\n", unescaped);
-	if (0 != strcmp(raw, unescaped)) {
+	if (!g_str_equal(raw, unescaped)) {
 		purple_debug_info("msim", "!!!(%d), msim_unescape failed: %s != %s\n",
 				++failures, raw, unescaped);
 	}
@@ -4346,15 +2988,155 @@ msim_test_escaping(void)
 }
 #endif
 
+static gboolean
+msim_uri_handler(const gchar *proto, const gchar *cmd, GHashTable *params)
+{
+	PurpleAccount *account;
+	MsimSession *session;
+	GList *l;
+	gchar *uid_str, *cid_str;
+	guint uid, cid;
+
+	if (g_ascii_strcasecmp(proto, "myim"))
+		return FALSE;
+
+	/* Parameters are case-insensitive. */
+	uid_str = g_hash_table_lookup(params, "uid");
+	cid_str = g_hash_table_lookup(params, "cid");
+
+	uid = uid_str ? atol(uid_str) : 0;
+	cid = cid_str ? atol(cid_str) : 0;
+
+	/* Need a contact. */
+	g_return_val_if_fail(cid != 0, FALSE);
+
+	/* TODO: if auto=true, "Add all the people on this page to my IM List!", on
+	 * http://collect.myspace.com/index.cfm?fuseaction=im.friendslist. Don't need a cid. */
+
+	/* Convert numeric contact ID back to a string. Needed for looking up. Don't just
+	 * directly use cid directly from parameters, because it might not be numeric. 
+	 * It is trivial to change this to allow cID to be a username, but that's not how
+	 * the official MySpaceIM client works, so don't provide that functionality. */
+	cid_str = g_strdup_printf("%d", cid);
+
+
+	/* Find our account with specified user id, or use first connected account if uid=0. */
+	account = NULL;
+	l = purple_accounts_get_all();
+	while (l) {
+		if (purple_account_is_connected(l->data) &&
+			(uid == 0 || purple_account_get_int(l->data, "uid", 0) == uid)) {
+			account = l->data;
+			break;
+		}
+		l = l->next;
+	}
+
+	if (!account) {
+		purple_notify_error(NULL, _("myim URL handler"), 
+				_("No suitable MySpaceIM account could be found to open this myim URL."),
+				_("Enable the proper MySpaceIM account and try again."));
+		g_free(cid_str);
+		return FALSE;
+	}
+
+	session = (MsimSession *)account->gc->proto_data;
+	g_return_val_if_fail(session != NULL, FALSE);
+
+	/* Lookup userid to username. TODO: push this down, to IM sending/contact 
+	 * adding functions. */
+
+	/* myim:sendIM?uID=USERID&cID=CONTACTID */
+	if (!g_ascii_strcasecmp(cmd, "sendIM")) {
+		msim_lookup_user(session, cid_str, (MSIM_USER_LOOKUP_CB)msim_uri_handler_sendIM_cb, NULL);
+		g_free(cid_str);
+		return TRUE;
+
+	/* myim:addContact?uID=USERID&cID=CONTACTID */
+	} else if (!g_ascii_strcasecmp(cmd, "addContact")) {
+		msim_lookup_user(session, cid_str, (MSIM_USER_LOOKUP_CB)msim_uri_handler_addContact_cb, NULL);
+		g_free(cid_str);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+/* TODO: move uid->username resolving to IM sending and buddy adding functions,
+ * so that user can manually add or IM by userid and username automatically
+ * looked up if possible? */
+ 
+/** Handle a myim:sendIM URI command, after username has been looked up. */
+static void
+msim_uri_handler_sendIM_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
+{
+	PurpleConversation *conv;
+	MsimMessage *body;
+	gchar *username;
+
+	body = msim_msg_get_dictionary(userinfo, "body");
+	username = msim_msg_get_string(body, "UserName");
+	msim_msg_free(body);
+
+	if (!username) {
+		guint uid;
+
+		uid = msim_msg_get_integer(userinfo, "UserID");
+		g_return_if_fail(uid != 0);
+
+		username = g_strdup_printf("%d", uid);
+	}
+
+
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, username, session->account);
+	if (!conv)  {
+		purple_debug_info("msim_uri_handler", "creating new conversation for %s\n", username);
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, session->account, username);
+	}
+
+	/* Just open the window so the user can send an IM. */
+	purple_conversation_present(conv);
+
+	g_free(username);
+}
+
+/** Handle a myim:addContact command, after username has been looked up. */
+static void
+msim_uri_handler_addContact_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
+{
+	MsimMessage *body;
+	gchar *username;
+
+	body = msim_msg_get_dictionary(userinfo, "body");
+	username = msim_msg_get_string(body, "UserName");
+	msim_msg_free(body);
+
+	if (!username) {
+		guint uid;
+
+		uid = msim_msg_get_integer(userinfo, "UserID");
+		g_return_if_fail(uid != 0);
+
+		username = g_strdup_printf("%d", uid);
+	}
+
+
+	purple_blist_request_add_buddy(session->account, username, _("Buddies"), NULL);
+
+	g_free(username);
+}
+
 /** Initialize plugin. */
 void 
 init_plugin(PurplePlugin *plugin) 
 {
-	PurpleAccountOption *option;
 #ifdef MSIM_SELF_TEST
 	msim_test_all();
 	exit(0);
 #endif /* MSIM_SELF_TEST */
+
+	PurpleAccountOption *option;
+	static gboolean initialized = FALSE;
 
 
 	/* TODO: default to automatically try different ports. Make the user be
@@ -4386,21 +3168,14 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #endif
 
-	/* TODO: /zap command. Problem with this is that there are different kinds of zaps,
-	 * and the selection is best made available in a drop-down menu, instead of forcing
-	 * the user to type the kind of zap and memorizing available zaps (or putting it in the
-	 * help menu). A new "attention" API, for zap/buzz/nudge (different protocols) will
-	 * solve this. */
-#if 0
-	purple_cmd_register("zap",                                        /* cmd */
-			"w",                                              /* args - accept a single word */
-			PURPLE_CMD_P_PRPL,                                /* priority */
-			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,   /* flags */
-			"prpl-myspace",                                   /* prpl_id */
-			msim_cmd_zap,                                     /* func */
-			_("zap: zap a user to get their attention"),      /* helpstr */
-			NULL);                                            /* data */
-#endif
+	/* Code below only runs once. Based on oscar.c's oscar_init(). */
+	if (initialized) 
+		return;
+
+	initialized = TRUE;
+
+	purple_signal_connect(purple_get_core(), "uri-handler", &initialized,
+			PURPLE_CALLBACK(msim_uri_handler), NULL);
 }
 
 PURPLE_INIT_PLUGIN(myspace, init_plugin, info);

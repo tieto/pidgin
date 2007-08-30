@@ -240,7 +240,7 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 
 	if (label != NULL) {
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), dropdown);
-		pidgin_set_accessible_label (dropdown, label);
+		pidgin_set_accessible_relations (dropdown, label);
 	}
 
 	if (type == PURPLE_PREF_INT)
@@ -887,7 +887,7 @@ interface_page()
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
-	
+
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = pidgin_make_frame(ret, _("System Tray Icon"));
@@ -899,7 +899,7 @@ interface_page()
 					NULL);
 	gtk_size_group_add_widget(sg, label);
         gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-	
+
 	vbox = pidgin_make_frame(ret, _("Conversation Window Hiding"));
 	label = pidgin_prefs_dropdown(vbox, _("_Hide new IM conversations:"),
 					PURPLE_PREF_STRING, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
@@ -909,11 +909,11 @@ interface_page()
 					NULL);
 	gtk_size_group_add_widget(sg, label);
         gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-			
+
 
 	/* All the tab options! */
 	vbox = pidgin_make_frame(ret, _("Tabs"));
-	
+
 	pidgin_prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
 							PIDGIN_PREFS_ROOT "/conversations/tabs", vbox);
 
@@ -944,12 +944,12 @@ interface_page()
 					NULL);
 	gtk_size_group_add_widget(sg, label);
         gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-		
+
 	names = pidgin_conv_placement_get_options();
 	label = pidgin_prefs_dropdown_from_list(vbox2, _("N_ew conversations:"),
 				PURPLE_PREF_STRING, PIDGIN_PREFS_ROOT "/conversations/placement", names);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
-			
+
 	gtk_size_group_add_widget(sg, label);
 
 	g_list_free(names);
@@ -1620,7 +1620,7 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 		filename = NULL;
 
 	purple_request_file(prefs, _("Sound Selection"), filename, FALSE,
-					  G_CALLBACK(sound_chosen_cb), NULL, 
+					  G_CALLBACK(sound_chosen_cb), NULL,
 					  NULL, NULL, NULL,
 					  GINT_TO_POINTER(sound_row_sel));
 }
@@ -2010,7 +2010,7 @@ away_page()
 	return ret;
 }
 
-static int 
+static int
 prefs_notebook_add_page(const char *text,
   		        GtkWidget *page,
 			int ind) {
@@ -2164,6 +2164,8 @@ pidgin_prefs_init(void)
 	/* Smiley Callbacks */
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
 								smiley_theme_pref_cb, NULL);
+
+	pidgin_prefs_update_old();
 }
 
 void pidgin_prefs_update_old()

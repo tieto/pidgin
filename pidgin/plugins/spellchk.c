@@ -667,7 +667,7 @@ spellchk_new_attach(PurpleConversation *conv)
 	return;
 }
 
-static int buf_get_line(char *ibuf, char **buf, int *position, int len)
+static int buf_get_line(char *ibuf, char **buf, int *position, gsize len)
 {
 	int pos = *position;
 	int spos = pos;

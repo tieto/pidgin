@@ -199,7 +199,10 @@ void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *na
 		if(NULL == status)
 			continue;
 
-		purple_status_set_active(status, FALSE);
+		if (purple_status_is_active(status)) {
+			purple_status_set_active(status, FALSE);
+			purple_blist_update_buddy_status(buddy, status);
+		}
 	}
 
 	g_slist_free(list);

@@ -3183,13 +3183,12 @@ static char *mw_prpl_status_text(PurpleBuddy *b) {
   PurpleConnection *gc;
   struct mwPurplePluginData *pd;
   struct mwAwareIdBlock t = { mwAware_USER, b->name, NULL };
-  const char *ret;
+  const char *ret = NULL;
 
-  gc = b->account->gc;
-  pd = gc->proto_data;
+  if ((gc = purple_account_get_connection(b->account))
+      && (pd = gc->proto_data))
+    ret = mwServiceAware_getText(pd->srvc_aware, &t);
 
-  ret = mwServiceAware_getText(pd->srvc_aware, &t);
-  
   return (ret && g_utf8_validate(ret, -1, NULL)) ? g_markup_escape_text(ret, -1): NULL;
 }
 
@@ -3242,17 +3241,17 @@ static char *user_supports_text(struct mwServiceAware *srvc, const char *who) {
 
 static void mw_prpl_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full) {
   PurpleConnection *gc;
-  struct mwPurplePluginData *pd;
+  struct mwPurplePluginData *pd = NULL;
   struct mwAwareIdBlock idb = { mwAware_USER, b->name, NULL };
 
-  const char *message;
+  const char *message = NULL;
   const char *status;
   char *tmp;
 
-  gc = b->account->gc;
-  pd = gc->proto_data;
+  if ((gc = purple_account_get_connection(b->account))
+      && (pd = gc->proto_data))
+     message = mwServiceAware_getText(pd->srvc_aware, &idb);
 
-  message = mwServiceAware_getText(pd->srvc_aware, &idb);
   status = status_text(b);
 
   if(message != NULL && g_utf8_validate(message, -1, NULL) && purple_utf8_strcasecmp(status, message)) {
@@ -3264,7 +3263,7 @@ static void mw_prpl_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info
 	purple_notify_user_info_add_pair(user_info, _("Status"), status);
   }
 
-  if(full) {
+  if(full && pd != NULL) {
     tmp = user_supports_text(pd->srvc_aware, b->name);
     if(tmp) {
 	  purple_notify_user_info_add_pair(user_info, _("Supports"), tmp);

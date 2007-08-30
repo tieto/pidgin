@@ -360,9 +360,7 @@ init_libpurple(int argc, char **argv)
 	purple_set_blist(purple_blist_new());
 	purple_blist_load();
 
-	/* TODO: Move prefs loading into purple_prefs_init() */
-	purple_prefs_load();
-	purple_prefs_update_old();
+	/* TODO: should this be moved into finch_prefs_init() ? */
 	finch_prefs_update_old();
 
 	/* load plugins we had when we quit */

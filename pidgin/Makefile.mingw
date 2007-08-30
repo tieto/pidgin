@@ -56,10 +56,11 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 PIDGIN_C_SRC =	\
 			gtkaccount.c \
 			gtkblist.c \
-			gtkconn.c \
-			gtkconv.c \
+			gtkcertmgr.c \
 			gtkcellrendererexpander.c \
 			gtkcellrendererprogress.c \
+			gtkconn.c \
+			gtkconv.c \
 			gtkdebug.c \
 			gtkdialogs.c \
 			gtkdnd-hints.c \

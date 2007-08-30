@@ -99,7 +99,7 @@ _mdns_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags flags,
 
 			/* We've got what we need; stop listening */
 			purple_input_remove(idata->null_query_handler);
-			idata->null_query_handler = -1;
+			idata->null_query_handler = 0;
 			DNSServiceRefDeallocate(idata->null_query);
 			idata->null_query = NULL;
 		}

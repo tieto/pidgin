@@ -26,7 +26,7 @@
 #ifndef _PIDGIN_H_
 #define _PIDGIN_H_
 
-#ifndef _WIN32
+#ifdef GDK_WINDOWING_X11
 # include <gdk/gdkx.h>
 #endif
 

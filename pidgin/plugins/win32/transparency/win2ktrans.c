@@ -400,7 +400,7 @@ conv_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type) {
 
 		g_object_get(G_OBJECT(window), "has-toplevel-focus", &has_focus, NULL);
 
-		if (!has_focus)
+		if (!has_focus || !purple_prefs_get_bool(OPT_WINTRANS_IM_ONFOCUS))
 			set_conv_window_trans(NULL, win);
 
 		if (g_signal_handler_find(G_OBJECT(window), G_SIGNAL_MATCH_FUNC,

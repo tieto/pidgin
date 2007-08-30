@@ -299,6 +299,7 @@ save_savedstatus_cb(GntWidget *button, EditStatus *edit)
 	{
 		purple_notify_error(edit, _("Error"), _("Invalid title"),
 				_("Please enter a non-empty title for the status."));
+		gnt_box_give_focus_to_child(GNT_BOX(edit->window), edit->title);
 		return;
 	}
 
@@ -307,6 +308,7 @@ save_savedstatus_cb(GntWidget *button, EditStatus *edit)
 	{
 		purple_notify_error(edit, _("Error"), _("Duplicate title"),
 				_("Please enter a different title for the status."));
+		gnt_box_give_focus_to_child(GNT_BOX(edit->window), edit->title);
 		return;
 	}
 	
@@ -447,6 +449,7 @@ popup_substatus(GntTree *tree, const char *key, EditStatus *edit)
 		sub->window = window = gnt_vbox_new(FALSE);
 		gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 		gnt_box_set_title(GNT_BOX(window), _("Substatus"));  /* XXX: a better title */
+		gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
 
 		box = gnt_hbox_new(FALSE);
 		gnt_box_add_widget(GNT_BOX(box), gnt_label_new(_("Account:")));
@@ -523,7 +526,7 @@ void finch_savedstatus_edit(PurpleSavedStatus *saved)
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 	gnt_box_set_title(GNT_BOX(window), _("Edit Status"));
 	gnt_box_set_fill(GNT_BOX(window), TRUE);
-	gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_LEFT);
+	gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
 	gnt_box_set_pad(GNT_BOX(window), 0);
 
 	edits = g_list_append(edits, edit);

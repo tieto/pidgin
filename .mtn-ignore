@@ -33,7 +33,7 @@ pidgin.spec$
 pidgin-.*.tar.gz
 pidgin-.*.tar.bz2
 pidgin/pidgin$
-pidgin/pixmaps/emotes/default/22/theme
+pidgin/pixmaps/emotes/default/24/theme
 pidgin/pixmaps/emotes/none/theme
 pidgin/plugins/musicmessaging/music-messaging-bindings.c
 pidgin/plugins/perl/common/Makefile.PL$

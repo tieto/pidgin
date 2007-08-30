@@ -586,7 +586,27 @@ int purple_build_dir(const char *path, int mode);
  * @return TRUE if the file was written successfully.  FALSE otherwise.
  */
 gboolean purple_util_write_data_to_file(const char *filename, const char *data,
-									  size_t size);
+									  gssize size);
+
+/**
+ * Write data to a file using the absolute path.
+ *
+ * This exists for Glib backwards compatibility reasons.
+ *
+ * @param filename_full Filename to write to
+ * @param data          A null-terminated string of data to write.
+ * @param size          The size of the data to save.  If data is
+ *                      null-terminated you can pass in -1.
+ *
+ * @return TRUE if the file was written successfully.  FALSE otherwise.
+ *
+ * @todo Remove this function (use g_file_set_contents instead) when 3.0.0
+ *       rolls around.
+ * @see purple_util_write_data_to_file()
+ *
+ */
+gboolean
+purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, size_t size);
 
 /**
  * Read the contents of a given file and parse the results into an
@@ -1113,7 +1133,7 @@ void purple_print_utf8_to_console(FILE *filestream, char *message);
  * @return TRUE if it starts with "/me ", and it has been removed, otherwise
  *         FALSE
  */
-gboolean purple_message_meify(char *message, size_t len);
+gboolean purple_message_meify(char *message, gssize len);
 
 /**
  * Removes the underscore characters from a string used identify the mnemonic

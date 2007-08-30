@@ -1450,7 +1450,9 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	GtkWidget *win;
 	GtkTreeIter iter;
 	GtkCellRenderer *rend;
-	const char *status_id = NULL;
+	char *status_id = NULL;
+	char *message = NULL;
+	gboolean parent_dialog_has_substatus = FALSE;
 	GList *list;
 	gboolean select = FALSE;
 
@@ -1553,25 +1555,29 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 					 G_CALLBACK(substatus_editor_ok_cb), dialog);
 
 	/* Seed the input widgets with the current values */
-	/* TODO: Get the current values from our parent's list store, not the saved_status! */
-	if (status_editor->original_title != NULL)
-	{
+
+	/* Only look at the saved status if we can't find it in the parent status dialog's substatuses model */
+	gtk_tree_model_get(GTK_TREE_MODEL(status_editor->model), &iter, 
+		STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS, &parent_dialog_has_substatus, -1);
+	if (parent_dialog_has_substatus) {
+		gtk_tree_model_get(GTK_TREE_MODEL(status_editor->model), &iter,
+			STATUS_EDITOR_COLUMN_STATUS_ID, &status_id,
+			STATUS_EDITOR_COLUMN_STATUS_MESSAGE, &message, -1);
+	} else if (status_editor->original_title != NULL) {
 		PurpleSavedStatus *saved_status = NULL;
 		PurpleSavedStatusSub *substatus = NULL;
 
-		saved_status = purple_savedstatus_find(status_editor->original_title);
-		if (saved_status != NULL)
-			substatus = purple_savedstatus_get_substatus(saved_status, account);
-
-		if (substatus != NULL)
-		{
-			gtk_imhtml_append_text(dialog->message,
-								   purple_savedstatus_substatus_get_message(substatus),
-								   0);
-			status_id = purple_status_type_get_id(purple_savedstatus_substatus_get_type(substatus));
+		if ((saved_status = purple_savedstatus_find(status_editor->original_title)) != NULL) {
+			if ((substatus = purple_savedstatus_get_substatus(saved_status, account)) != NULL) {
+				message = (char *)purple_savedstatus_substatus_get_message(substatus);
+				status_id = (char *)purple_status_type_get_id(purple_savedstatus_substatus_get_type(substatus));
+			}
 		}
-		/* TODO: Else get the generic status type from our parent */
 	}
+	/* TODO: Else get the generic status type from our parent */
+
+	if (message)
+		gtk_imhtml_append_text(dialog->message, message, 0);
 
 	for (list = purple_account_get_status_types(account); list; list = list->next)
 	{
@@ -1606,6 +1612,12 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 
 	if (!select)
 		gtk_combo_box_set_active(GTK_COMBO_BOX(combo), 0);
+
+	if (parent_dialog_has_substatus) {
+		/* These two were gotten from the parent tree model, so they need to be freed */
+		g_free(status_id);
+		g_free(message);
+	}
 
 	gtk_widget_show_all(win);
 }

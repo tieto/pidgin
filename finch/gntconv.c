@@ -37,6 +37,7 @@
 #include "gntdebug.h"
 #include "gntplugin.h"
 #include "gntprefs.h"
+#include "gntsound.h"
 #include "gntstatus.h"
 #include "gntpounce.h"
 
@@ -141,6 +142,11 @@ entry_key_pressed(GntWidget *w, const char *key, FinchConv *ggconv)
 					break;
 			}
 			g_free(error);
+		}
+		else if (!purple_account_is_connected(ggconv->active_conv->account))
+		{
+			purple_conversation_write(ggconv->active_conv, "", _("Message was not sent, because you are not signed on."),
+					PURPLE_MESSAGE_ERROR | PURPLE_MESSAGE_NO_LOG, time(NULL));
 		}
 		else
 		{
@@ -342,6 +348,53 @@ toggle_timestamps_cb(GntMenuItem *item, gpointer ggconv)
 }
 
 static void
+toggle_logging_cb(GntMenuItem *item, gpointer ggconv)
+{
+	FinchConv *fc = ggconv;
+	PurpleConversation *conv = fc->active_conv;
+	gboolean logging = gnt_menuitem_check_get_checked(GNT_MENU_ITEM_CHECK(item));
+	GList *iter;
+
+	if (logging == purple_conversation_is_logging(conv))
+		return;
+
+	/* Xerox */
+	if (logging) {
+		/* Enable logging first so the message below can be logged. */
+		purple_conversation_set_logging(conv, TRUE);
+
+		purple_conversation_write(conv, NULL,
+				_("Logging started. Future messages in this conversation will be logged."),
+				conv->logs ? (PURPLE_MESSAGE_SYSTEM) :
+				(PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG),
+				time(NULL));
+	} else {
+		purple_conversation_write(conv, NULL,
+				_("Logging stopped. Future messages in this conversation will not be logged."),
+				conv->logs ? (PURPLE_MESSAGE_SYSTEM) :
+				(PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG),
+				time(NULL));
+
+		/* Disable the logging second, so that the above message can be logged. */
+		purple_conversation_set_logging(conv, FALSE);
+	}
+
+	/* Each conversation with the same person will have the same logging setting */
+	for (iter = fc->list; iter; iter = iter->next) {
+		if (iter->data == conv)
+			continue;
+		purple_conversation_set_logging(iter->data, logging);
+	}
+}
+
+static void
+toggle_sound_cb(GntMenuItem *item, gpointer ggconv)
+{
+	FinchConv *fc = ggconv;
+	fc->flags ^= FINCH_CONV_NO_SOUND;
+}
+
+static void
 send_to_cb(GntMenuItem *m, gpointer n)
 {
 	PurpleAccount *account = g_object_get_data(G_OBJECT(m), "purple_account");
@@ -447,6 +500,18 @@ gg_create_menu(FinchConv *ggc)
 
 		generate_send_to_menu(ggc);
 	}
+
+	item = gnt_menuitem_check_new(_("Enable Logging"));
+	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
+			purple_conversation_is_logging(ggc->active_conv));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(item, toggle_logging_cb, ggc);
+
+	item = gnt_menuitem_check_new(_("Enable Sounds"));
+	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
+			!(ggc->flags & FINCH_CONV_NO_SOUND));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(item, toggle_sound_cb, ggc);
 }
 
 static void
@@ -491,6 +556,12 @@ finch_create_conversation(PurpleConversation *conv)
 		ggc = cc->ui_data;
 	else
 		ggc = g_new0(FinchConv, 1);
+
+	/* Each conversation with the same person will have the same logging setting */
+	if (ggc->list) {
+		purple_conversation_set_logging(conv,
+				purple_conversation_is_logging(ggc->list->data));
+	}
 
 	ggc->list = g_list_prepend(ggc->list, conv);
 	ggc->active_conv = conv;
@@ -580,6 +651,9 @@ finch_create_conversation(PurpleConversation *conv)
 	if (type == PURPLE_CONV_TYPE_IM) {
 		g_signal_connect(G_OBJECT(ggc->entry), "text_changed", G_CALLBACK(send_typing_notification), ggc);
 	}
+
+	if (!finch_sound_is_enabled())
+		ggc->flags |= FINCH_CONV_NO_SOUND;
 
 	gg_create_menu(ggc);
 
@@ -825,6 +899,23 @@ finch_chat_update_user(PurpleConversation *conv, const char *user)
 	gnt_tree_change_text(GNT_TREE(ggc->u.chat->userlist), (gpointer)user, 0, chat_flag_text(cb->flags));
 }
 
+static void
+finch_conv_present(PurpleConversation *conv)
+{
+	FinchConv *fc = FINCH_CONV(conv);
+	if (fc && fc->window)
+		return gnt_window_present(fc->window);
+}
+
+static gboolean
+finch_conv_has_focus(PurpleConversation *conv)
+{
+	FinchConv *fc = FINCH_CONV(conv);
+	if (fc && fc->window)
+		return gnt_widget_has_focus(fc->window);
+	return FALSE;
+}
+
 static PurpleConversationUiOps conv_ui_ops = 
 {
 	finch_create_conversation,
@@ -836,8 +927,8 @@ static PurpleConversationUiOps conv_ui_ops =
 	finch_chat_rename_user,
 	finch_chat_remove_users,
 	finch_chat_update_user,
-	NULL, /* present */
-	NULL, /* has_focus */
+	finch_conv_present, /* present */
+	finch_conv_has_focus, /* has_focus */
 	NULL, /* custom_smiley_add */
 	NULL, /* custom_smiley_write */
 	NULL, /* custom_smiley_close */
@@ -915,6 +1006,7 @@ clear_command_cb(PurpleConversation *conv,
 {
 	FinchConv *ggconv = conv->ui_data;
 	gnt_text_view_clear(GNT_TEXT_VIEW(ggconv->tv));
+	purple_conversation_clear_message_history(conv);
 	return PURPLE_CMD_STATUS_OK;
 }
 

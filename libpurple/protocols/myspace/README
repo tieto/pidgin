@@ -1,4 +1,4 @@
-MySpaceIM Protocol Plugin      by Jeff Connelly 20070807
+MySpaceIM Protocol Plugin for Libpurple     by Jeff Connelly 20070807
 
 
 Greetings. This package contains a plugin for libpurple (as used in
@@ -6,7 +6,7 @@ Pidgin, formerly Gaim) to connect to the new MySpaceIM instant messaging
 network and send/receive messages. Functionality is only basic as of yet, 
 and this code should be considered alpha quality.
 
-This code is being developed under Google Summer of Code 2007.
+This code was initially developed under Google Summer of Code 2007.
 
 For features and TODO, see http://developer.pidgin.im/wiki/MySpaceIM
 
@@ -28,7 +28,5 @@ Feedback welcome. You can IM my test account at "msimprpl" if you feel like it.
 
 Enjoy,
 -Jeff Connelly
-California Polytechnic State University at San Luis Obispo
-myspaceim@xyzzy.cjb.net
-jeff2@soc.pidgin.im
+msimprpl@xyzzy.cjb.net
 

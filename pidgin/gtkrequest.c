@@ -442,7 +442,7 @@ pidgin_request_input(const char *title, const char *primary,
 
 static void *
 pidgin_request_choice(const char *title, const char *primary,
-			const char *secondary, unsigned int default_value,
+			const char *secondary, int default_value,
 			const char *ok_text, GCallback ok_cb,
 			const char *cancel_text, GCallback cancel_cb,
 			PurpleAccount *account, const char *who, PurpleConversation *conv,
@@ -548,7 +548,7 @@ pidgin_request_choice(const char *title, const char *primary,
 
 static void *
 pidgin_request_action(const char *title, const char *primary,
-						const char *secondary, unsigned int default_action,
+						const char *secondary, int default_action,
 					    PurpleAccount *account, const char *who, PurpleConversation *conv,
 						void *user_data, size_t action_count, va_list actions)
 {
@@ -1083,7 +1083,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	data->cbs[0] = ok_cb;
 	data->cbs[1] = cancel_cb;
 
-	
+
 #ifdef _WIN32
 	data->dialog = win = pidgin_create_window(PIDGIN_ALERT_TITLE, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
 #else /* !_WIN32 */

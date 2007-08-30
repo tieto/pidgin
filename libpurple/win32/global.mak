@@ -11,7 +11,7 @@
 # Locations of our various dependencies
 WIN32_DEV_TOP ?= $(PIDGIN_TREE_TOP)/../win32-dev
 ASPELL_TOP ?= $(WIN32_DEV_TOP)/aspell-dev-0-50-3-3
-GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.6
+GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.11
 GTK_TOP ?= $(WIN32_DEV_TOP)/gtk_2_0
 GTK_BIN ?= $(GTK_TOP)/bin
 BONJOUR_TOP ?= $(WIN32_DEV_TOP)/Bonjour_SDK
@@ -20,7 +20,7 @@ MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0.2
 NSPR_TOP ?= $(WIN32_DEV_TOP)/nspr-4.6.4
 NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.11.4
 PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl58
-SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.0.2
+SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.2
 TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.4.5
 
 # Where we installing this stuff to?

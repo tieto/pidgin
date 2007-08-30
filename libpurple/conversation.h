@@ -37,6 +37,7 @@ typedef struct _PurpleConversation      PurpleConversation;
 typedef struct _PurpleConvIm            PurpleConvIm;
 typedef struct _PurpleConvChat          PurpleConvChat;
 typedef struct _PurpleConvChatBuddy     PurpleConvChatBuddy;
+typedef struct _PurpleConvMessage       PurpleConvMessage;
 
 /**
  * A type of conversation.
@@ -117,9 +118,9 @@ typedef enum
 	                                        apply formatting         */
 	PURPLE_MESSAGE_IMAGES      = 0x1000, /**< Message contains images  */
 	PURPLE_MESSAGE_NOTIFY      = 0x2000, /**< Message is a notification */
-	PURPLE_MESSAGE_NO_LINKIFY  = 0x4000  /**< Message should not be auto-
+	PURPLE_MESSAGE_NO_LINKIFY  = 0x4000, /**< Message should not be auto-
 										   linkified */
-
+	PURPLE_MESSAGE_INVISIBLE   = 0x8000, /**< Message should not be displayed */
 } PurpleMessageFlags;
 
 /**
@@ -280,6 +281,17 @@ struct _PurpleConvChatBuddy
 	char *alias_key;				 /**< The alias key					*/
 	gboolean buddy;					 /**< ChatBuddy is on the blist		*/
 	PurpleConvChatBuddyFlags flags;    /**< Flags (ops, voice etc.)       */
+};
+
+/**
+ * Description of a conversation message
+ */
+struct _PurpleConvMessage
+{
+	char *who;
+	char *what;
+	PurpleMessageFlags flags;
+	time_t when;
 };
 
 /**
@@ -649,6 +661,60 @@ void purple_conversation_update(PurpleConversation *conv, PurpleConvUpdateType t
  * @param func The function.
  */
 void purple_conversation_foreach(void (*func)(PurpleConversation *conv));
+
+/**
+ * Retrieve the message history of a conversation.
+ *
+ * @param conv   The conversation
+ *
+ * @return  A GList of PurpleConvMessage's. The must not modify the list or the data within.
+ *          The list contains the newest message at the beginning, and the oldest message at
+ *          the end.
+ */
+GList *purple_conversation_get_message_history(PurpleConversation *conv);
+
+/**
+ * Clear the message history of a conversation.
+ *
+ * @param conv  The conversation
+ */
+void purple_conversation_clear_message_history(PurpleConversation *conv);
+
+/**
+ * Get the sender from a PurpleConvMessage
+ *
+ * @param msg   A PurpleConvMessage
+ *
+ * @return   The name of the sender of the message
+ */
+const char *purple_conversation_message_get_sender(PurpleConvMessage *msg);
+
+/**
+ * Get the message from a PurpleConvMessage
+ *
+ * @param msg   A PurpleConvMessage
+ *
+ * @return   The name of the sender of the message
+ */
+const char *purple_conversation_message_get_message(PurpleConvMessage *msg);
+
+/**
+ * Get the message-flags of a PurpleConvMessage
+ *
+ * @param msg   A PurpleConvMessage
+ *
+ * @return   The name of the sender of the message
+ */
+PurpleMessageFlags purple_conversation_message_get_flags(PurpleConvMessage *msg);
+
+/**
+ * Get the timestamp of a PurpleConvMessage
+ *
+ * @param msg   A PurpleConvMessage
+ *
+ * @return   The name of the sender of the message
+ */
+time_t purple_conversation_message_get_timestamp(PurpleConvMessage *msg);
 
 /*@}*/
 

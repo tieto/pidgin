@@ -589,16 +589,16 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	char label_text[2048];
 	char *linked_text, *primary_esc, *secondary_esc;
 
-	window = pidgin_create_window(title, PIDGIN_HIG_BORDER, NULL, TRUE);
-	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
+	window = gtk_dialog_new();
+	gtk_window_set_title(GTK_WINDOW(window), title);
+	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
+	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(formatted_close_cb), NULL);
 
 	/* Setup the main vbox */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(window), vbox);
-	gtk_widget_show(vbox);
+	vbox = GTK_DIALOG(window)->vbox;
 
 	/* Setup the descriptive label */
 	primary_esc = g_markup_escape_text(primary, -1);
@@ -630,9 +630,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	gtk_widget_show(frame);
 
 	/* Add the Close button. */
-	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
+	button = gtk_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 	gtk_widget_grab_focus(button);
 
 	g_signal_connect_swapped(G_OBJECT(button), "clicked",
@@ -708,7 +706,6 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	guint i;
 
 	GtkWidget *vbox;
-	GtkWidget *button_area;
 	GtkWidget *label;
 	GtkWidget *sw;
 	PidginNotifySearchResultsData *data;
@@ -723,16 +720,16 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	data->results = results;
 
 	/* Create the window */
-	window = pidgin_create_window(title ? title :_("Search Results"), PIDGIN_HIG_BORDER, NULL, TRUE);
-	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
+	window = gtk_dialog_new();
+	gtk_window_set_title(GTK_WINDOW(window), title ? title :_("Search Results"));
+	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
+	gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 
 	g_signal_connect_swapped(G_OBJECT(window), "delete_event",
 							 G_CALLBACK(searchresults_close_cb), data);
 
 	/* Setup the main vbox */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(window), vbox);
-	gtk_widget_show(vbox);
+	vbox = GTK_DIALOG(window)->vbox;
 
 	/* Setup the descriptive label */
 	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
@@ -796,13 +793,6 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 				renderer, "text", i, NULL);
 	}
 
-	/* Setup the button area */
-	button_area = gtk_hbutton_box_new();
-	gtk_box_pack_start(GTK_BOX(vbox), button_area, FALSE, FALSE, 0);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_area), GTK_BUTTONBOX_END);
-	gtk_box_set_spacing(GTK_BOX(button_area), PIDGIN_HIG_BORDER);
-	gtk_widget_show(button_area);
-
 	for (i = 0; i < g_list_length(results->buttons); i++) {
 		PurpleNotifySearchButton *b = g_list_nth_data(results->buttons, i);
 		GtkWidget *button = NULL;
@@ -815,31 +805,28 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 				}
 				break;
 			case PURPLE_NOTIFY_BUTTON_CONTINUE:
-				button = gtk_button_new_from_stock(GTK_STOCK_GO_FORWARD);
+				button = gtk_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_GO_FORWARD, GTK_RESPONSE_NONE);
 				break;
 			case PURPLE_NOTIFY_BUTTON_ADD:
-				button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+				button = gtk_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_ADD, GTK_RESPONSE_NONE);
 				break;
 			case PURPLE_NOTIFY_BUTTON_INFO:
-				button = gtk_button_new_from_stock(PIDGIN_STOCK_TOOLBAR_USER_INFO);
+				button = gtk_dialog_add_button(GTK_DIALOG(window), PIDGIN_STOCK_TOOLBAR_USER_INFO, GTK_RESPONSE_NONE);
 				break;
 			case PURPLE_NOTIFY_BUTTON_IM:
-				button = gtk_button_new_from_stock(PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW);
+				button = gtk_dialog_add_button(GTK_DIALOG(window), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, GTK_RESPONSE_NONE);
 				break;
 			case PURPLE_NOTIFY_BUTTON_JOIN:
-				button = gtk_button_new_from_stock(PIDGIN_STOCK_CHAT);
+				button = gtk_dialog_add_button(GTK_DIALOG(window), PIDGIN_STOCK_CHAT, GTK_RESPONSE_NONE);
 				break;
 			case PURPLE_NOTIFY_BUTTON_INVITE:
-				button = gtk_button_new_from_stock(PIDGIN_STOCK_INVITE);
+				button = gtk_dialog_add_button(GTK_DIALOG(window), PIDGIN_STOCK_INVITE, GTK_RESPONSE_NONE);
 				break;
 			default:
 				purple_debug_warning("gtknotify", "Incorrect button type: %d\n", b->type);
 		}
 		if (button != NULL) {
 			PidginNotifySearchResultsButtonData *bd;
-
-			gtk_box_pack_start(GTK_BOX(button_area), button, FALSE, FALSE, 0);
-			gtk_widget_show(button);
 
 			bd = g_new0(PidginNotifySearchResultsButtonData, 1);
 			bd->button = b;
@@ -852,9 +839,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	}
 
 	/* Add the Close button */
-	close_button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_box_pack_start(GTK_BOX(button_area), close_button, FALSE, FALSE, 0);
-	gtk_widget_show(close_button);
+	close_button = gtk_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 
 	g_signal_connect_swapped(G_OBJECT(close_button), "clicked",
 	                         G_CALLBACK(searchresults_close_cb), data);

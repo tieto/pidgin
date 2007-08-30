@@ -768,21 +768,11 @@ int main(int argc, char *argv[])
 	purple_set_blist(purple_blist_new());
 	purple_blist_load();
 
-	/* TODO: Move prefs loading into purple_prefs_init() */
-	purple_prefs_load();
-	purple_prefs_update_old();
-	pidgin_prefs_update_old();
-
 	/* load plugins we had when we quit */
 	purple_plugins_load_saved(PIDGIN_PREFS_ROOT "/plugins/loaded");
 
 	/* TODO: Move pounces loading into purple_pounces_init() */
 	purple_pounces_load();
-
-	/* Call this early on to try to auto-detect our IP address and
-	 * hopefully save some time later.
-	 * TODO: move this (back) into purple_core_init() when purple_prefs_load() is in purple_prefs_init() */
-	 purple_network_get_my_ip(-1);
 
 	/* HACK BY SEANEGAN:
 	 * We've renamed prpl-oscar to prpl-aim and prpl-icq, accordingly.
@@ -837,10 +827,7 @@ int main(int argc, char *argv[])
 			g_free(opt_login_arg);
 			opt_login_arg = NULL;
 		}
-	}
-
-	if (opt_nologin && !opt_login)
-	{
+	} else if (opt_nologin)	{
 		/* Set all accounts to "offline" */
 		PurpleSavedStatus *saved_status;
 
@@ -854,9 +841,7 @@ int main(int argc, char *argv[])
 
 		/* Set the status for each account */
 		purple_savedstatus_activate(saved_status);
-	}
-	else if (!opt_login)
-	{
+	} else {
 		/* Everything is good to go--sign on already */
 		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
 			purple_savedstatus_activate(purple_savedstatus_get_startup());

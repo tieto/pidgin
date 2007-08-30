@@ -503,8 +503,8 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     ${If} ${IsNT}
     ${AndIf} ${IsWinNT4}
       Delete "$INSTDIR\plugins\libsilc.dll"
-      Delete "$INSTDIR\silcclient.dll"
-      Delete "$INSTDIR\silc.dll"
+      Delete "$INSTDIR\libsilcclient-1-1-2.dll"
+      Delete "$INSTDIR\libsilc-1-1-2.dll"
     ${EndIf}
 
     SetOutPath "$INSTDIR"
@@ -552,6 +552,10 @@ SectionGroup /e $(URI_HANDLERS_SECTION_TITLE) SecURIHandlers
   SectionEnd
   Section /o "msnim:" SecURI_MSNIM
     Push "msnim"
+    Call RegisterURIHandler
+  SectionEnd
+  Section /o "myim:" SecURI_MYIM
+    Push "myim"
     Call RegisterURIHandler
   SectionEnd
   Section /o "ymsgr:" SecURI_YMSGR
@@ -688,6 +692,9 @@ Section Uninstall
     DeleteRegValue HKLM "${STARTUP_RUN_KEY}" "Pidgin"
     ; Remove Language preference info (TODO: check if NSIS removes this)
 
+    Delete "$INSTDIR\ca-certs\Equifax_Secure_CA.pem"
+    Delete "$INSTDIR\ca-certs\Verisign_RSA_Secure_Server_CA.pem"
+    RMDir "$INSTDIR\ca-certs"
     RMDir /r "$INSTDIR\locale"
     RMDir /r "$INSTDIR\pixmaps"
     RMDir /r "$INSTDIR\perlmod"
@@ -706,6 +713,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libicq.dll"
     Delete "$INSTDIR\plugins\libirc.dll"
     Delete "$INSTDIR\plugins\libmsn.dll"
+    Delete "$INSTDIR\plugins\libmyspace.dll"
     Delete "$INSTDIR\plugins\libnapster.dll"
     Delete "$INSTDIR\plugins\libnovell.dll"
     Delete "$INSTDIR\plugins\libqq.dll"
@@ -756,8 +764,9 @@ Section Uninstall
     Delete "$INSTDIR\pidgin.dll"
     Delete "$INSTDIR\plc4.dll"
     Delete "$INSTDIR\plds4.dll"
-    Delete "$INSTDIR\silc.dll"
-    Delete "$INSTDIR\silcclient.dll"
+    Delete "$INSTDIR\libsilc-1-1-2.dll"
+    Delete "$INSTDIR\libsilcclient-1-1-2.dll"
+    Delete "$INSTDIR\smime3.dll"
     Delete "$INSTDIR\softokn3.dll"
     Delete "$INSTDIR\ssl3.dll"
     Delete "$INSTDIR\${PIDGIN_UNINST_EXE}"

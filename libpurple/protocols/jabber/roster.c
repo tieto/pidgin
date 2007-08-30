@@ -58,6 +58,7 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 {
 	GSList *buddies, *g2, *l;
 	gchar *my_bare_jid;
+	GList *pool = NULL;
 
 	buddies = purple_find_buddies(js->gc->account, jid);
 
@@ -89,13 +90,20 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 			g_free(l->data);
 			g2 = g_slist_delete_link(g2, l);
 		} else {
-			purple_blist_remove_buddy(b);
+			pool = g_list_prepend(pool, b);
 		}
 	}
 
 	while(g2) {
-		PurpleBuddy *b = purple_buddy_new(js->gc->account, jid, alias);
 		PurpleGroup *g = purple_find_group(g2->data);
+		PurpleBuddy *b = NULL;
+
+		if (pool) {
+			b = pool->data;
+			pool = g_list_delete_link(pool, pool);
+		} else {			
+			b = purple_buddy_new(js->gc->account, jid, alias);
+		}
 
 		if(!g) {
 			g = purple_group_new(g2->data);
@@ -119,6 +127,12 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 
 		g_free(g2->data);
 		g2 = g_slist_delete_link(g2, g2);
+	}
+
+	while (pool) {
+		PurpleBuddy *b = pool->data;
+		purple_blist_remove_buddy(b);
+		pool = g_list_delete_link(pool, pool);
 	}
 
 	g_free(my_bare_jid);

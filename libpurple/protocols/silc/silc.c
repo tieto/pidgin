@@ -1975,9 +1975,6 @@ silc_log_debug(TRUE);
 silc_log_set_debug_string("*client*");
 #endif
 
-#ifdef _WIN32
-	silc_net_win32_init();
-#endif
 }
 
 PURPLE_INIT_PLUGIN(silc, init_plugin, info);
