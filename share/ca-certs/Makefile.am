@@ -5,6 +5,7 @@ cacerts_DATA =	\
 		Verisign_RSA_Secure_Server_CA.pem \
 		Verisign_Class3_Primary_CA.pem
 
-EXTRA_DIST = \
-                $(cacerts_DATA)
+EXTRA_DIST =	\
+		Makefile.mingw \
+		$(cacerts_DATA)
 
