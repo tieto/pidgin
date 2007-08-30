@@ -3030,6 +3030,11 @@ static void yahoo_close(PurpleConnection *gc) {
 	if (yd->ycht)
 		ycht_connection_close(yd->ycht);
 
+	g_free(yd->pending_chat_room);
+	g_free(yd->pending_chat_id);
+	g_free(yd->pending_chat_topic);
+	g_free(yd->pending_chat_goto);
+
 	g_free(yd);
 	gc->proto_data = NULL;
 }

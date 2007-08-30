@@ -130,6 +130,10 @@ struct yahoo_data {
 	gboolean chat_online;
 	gboolean in_chat;
 	char *chat_name;
+	char *pending_chat_room;
+	char *pending_chat_id;
+	char *pending_chat_topic;
+	char *pending_chat_goto;
 	char *auth;
 	gsize auth_written;
 	char *cookie_y;
