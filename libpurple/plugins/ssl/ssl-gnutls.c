@@ -426,12 +426,14 @@ x509_crtdata_addref(x509_crtdata_t *cd)
 static void
 x509_crtdata_delref(x509_crtdata_t *cd)
 {
-	g_assert(cd->refcount > 0);
-
 	(cd->refcount)--;
 
+	if (cd->refcount <= 0)
+		g_critical("Refcount of x509_crtdata_t is %d, which is less "
+				"than zero!\n", cd->refcount);
+
 	/* If the refcount reaches zero, kill the structure */
-	if (cd->refcount == 0) {
+	if (cd->refcount <= 0) {
 		purple_debug_info("gnutls/x509",
 				  "Freeing unused cert data at %p\n",
 				  cd);
