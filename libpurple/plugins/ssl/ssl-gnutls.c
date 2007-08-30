@@ -130,9 +130,6 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 
 		purple_ssl_close(gsc);
 	} else {
-		purple_debug_info("gnutls", "Handshake complete\n");
-
-		/* TODO: Remove all this debugging babble */
 		/* Now we are cooking with gas! */
 		PurpleSslOps *ops = purple_ssl_get_ops();
 		GList * peers = ops->get_peer_certificates(gsc);
@@ -141,6 +138,10 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 			purple_certificate_find_scheme("x509");
 
 		GList * l;
+
+		/* TODO: Remove all this debugging babble */
+		purple_debug_info("gnutls", "Handshake complete\n");
+
 		for (l=peers; l; l = l->next) {
 			PurpleCertificate *crt = l->data;
 			GByteArray *z =
@@ -165,6 +166,7 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 		  const gnutls_datum_t *cert_list;
 		  unsigned int cert_list_size = 0;
 		  gnutls_session_t session=gnutls_data->session;
+		  int i;
 		  
 		  cert_list =
 		    gnutls_certificate_get_peers(session, &cert_list_size);
@@ -172,7 +174,6 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 		  purple_debug_info("gnutls",
 				    "Peer provided %d certs\n",
 				    cert_list_size);
-		  int i;
 		  for (i=0; i<cert_list_size; i++)
 		    {
 		      gchar fpr_bin[256];
@@ -191,7 +192,7 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 						      fpr_bin, &fpr_bin_sz);
 		      
 		      fpr_asc =
-			purple_base16_encode_chunked(fpr_bin,fpr_bin_sz);
+			purple_base16_encode_chunked((const guchar *)fpr_bin, fpr_bin_sz);
 		      
 		      purple_debug_info("gnutls", 
 					"Lvl %d SHA1 fingerprint: %s\n",
@@ -200,7 +201,7 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 		      tsz=sizeof(tbuf);
 		      gnutls_x509_crt_get_serial(cert,tbuf,&tsz);
 		      tasc=
-			purple_base16_encode_chunked(tbuf, tsz);
+			purple_base16_encode_chunked((const guchar *)tbuf, tsz);
 		      purple_debug_info("gnutls",
 					"Serial: %s\n",
 					tasc);
