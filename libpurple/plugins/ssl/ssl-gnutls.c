@@ -428,7 +428,7 @@ x509_crtdata_delref(x509_crtdata_t *cd)
 {
 	(cd->refcount)--;
 
-	if (cd->refcount <= 0)
+	if (cd->refcount < 0)
 		g_critical("Refcount of x509_crtdata_t is %d, which is less "
 				"than zero!\n", cd->refcount);
 
