@@ -5206,6 +5206,10 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		GdkPixbuf *emblem;
 		char *mark;
 		gboolean showicons = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
+		const char *name = purple_chat_get_name(chat);
+		PurpleConversation *conv =
+				purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name, chat->account);
+		gboolean hidden = (conv && !PIDGIN_CONVERSATION(conv));
 
 		if(!insert_node(list, node, &iter))
 			return;
@@ -5221,15 +5225,20 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 			avatar = NULL;
 
 		mark = g_markup_escape_text(purple_chat_get_name(chat), -1);
+		if (hidden) {
+			char *bold = g_strdup_printf("<b>%s</b>", mark);
+			g_free(mark);
+			mark = bold;
+		}
 
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				STATUS_ICON_COLUMN, status,
 				STATUS_ICON_VISIBLE_COLUMN, TRUE,
 				BUDDY_ICON_COLUMN, avatar ? avatar : gtkblist->empty_avatar,
 				BUDDY_ICON_VISIBLE_COLUMN,  purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons"),
-			        EMBLEM_COLUMN, emblem,
+				EMBLEM_COLUMN, emblem,
 				EMBLEM_VISIBLE_COLUMN, emblem != NULL,
-		 	        PROTOCOL_ICON_COLUMN, pidgin_create_prpl_icon(chat->account, PIDGIN_PRPL_ICON_SMALL),
+				PROTOCOL_ICON_COLUMN, pidgin_create_prpl_icon(chat->account, PIDGIN_PRPL_ICON_SMALL),
 				PROTOCOL_ICON_VISIBLE_COLUMN, purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"),
 				NAME_COLUMN, mark,
 				GROUP_EXPANDER_VISIBLE_COLUMN, FALSE,
