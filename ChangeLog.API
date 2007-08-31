@@ -14,6 +14,9 @@ Version 2.2.0 (??/??/????):
 		Added:
 		* pidgin_set_accessible_relations, sets up label-for and labelled-by
 		  ATK relations (broken out from pidgin_set_accessible_label)
+		* pidgin_conv_attach_to_conversation, to reattach the Pidgin UI to a
+		  conversation
+		* conversation-hiding and conversation-displayed signals.
 
 	Finch:
 		Added:
