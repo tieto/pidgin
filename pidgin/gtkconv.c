@@ -5625,6 +5625,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		account, name, displaying, conv, flags);
 	g_free(displaying);
 }
+
 static void
 pidgin_conv_chat_add_users(PurpleConversation *conv, GList *cbuddies, gboolean new_arrivals)
 {
@@ -7238,10 +7239,10 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 				"conversation-displayed", gtkconv);
 	}
 
-	/* XXX: If this is a chat:
-	 * 	- populate the userlist
-	 * 	- set the topic
-	 */
+	if (conv->type == PURPLE_CONV_TYPE_CHAT) {
+		pidgin_conv_update_fields(conv, PIDGIN_CONV_TOPIC);
+		pidgin_conv_chat_add_users(conv, PURPLE_CONV_CHAT(conv)->in_room, TRUE);
+	}
 
 	return TRUE;
 }
