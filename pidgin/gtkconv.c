@@ -1303,7 +1303,10 @@ static void
 menu_hide_conv_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = data;
+	PidginConversation *gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
+	purple_signal_emit(pidgin_conversations_get_handle(),
+			"conversation-hiding", gtkconv);
 	purple_conversation_set_ui_ops(conv, NULL);
 }
 
@@ -7206,6 +7209,8 @@ add_message_history_to_gtkconv(gpointer data)
 	if (gtkconv->attach.current)
 		return TRUE;
 
+	purple_signal_emit(pidgin_conversations_get_handle(),
+			"conversation-displayed", gtkconv);
 	g_source_remove(gtkconv->attach.timer);
 	gtkconv->attach.timer = 0;
 	return FALSE;
@@ -7228,6 +7233,9 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 		list = g_list_last(list);
 		gtkconv->attach.current = list;
 		gtkconv->attach.timer = g_idle_add(add_message_history_to_gtkconv, gtkconv);
+	} else {
+		purple_signal_emit(pidgin_conversations_get_handle(),
+				"conversation-displayed", gtkconv);
 	}
 
 	/* XXX: If this is a chat:
@@ -7414,6 +7422,16 @@ pidgin_conversations_init(void)
 						 purple_marshal_VOID__POINTER_POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION));
+
+	purple_signal_register(handle, "conversation-hiding",
+						 purple_marshal_VOID__POINTER_POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_BOXED,
+										"PidginConversation *"));
+
+	purple_signal_register(handle, "conversation-displayed",
+						 purple_marshal_VOID__POINTER_POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_BOXED,
+										"PidginConversation *"));
 
 	/**********************************************************************
 	 * Register commands
