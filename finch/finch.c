@@ -419,7 +419,8 @@ int main(int argc, char *argv[])
 
 	gnt_init();
 
-	gnt_start(&argc, &argv);
+	if (!gnt_start(&argc, &argv))
+		return 1;
 
 	gnt_main();
 

@@ -78,8 +78,8 @@ Package: finch
 Architecture: any
 Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}
 Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
-Replaces: pidgin (<< 2.1.1-2)
-Conflicts: pidgin (<< 2.1.1-2)
+Replaces: gaim (<< 1:2.0.0+beta6-3), pidgin (<< 2.1.1-2)
+Conflicts: gaim (<< 1:2.0.0+beta6-3), pidgin (<< 2.1.1-2)
 Description: text-based multi-protocol instant messaging client
  Finch is a text/console-based, modular instant messaging client capable of
  using AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, Gadu-Gadu, Bonjour,
@@ -94,8 +94,8 @@ Package: finch-dev
 Section: devel
 Architecture: all
 Depends: finch (>= ${source:Version}), pkg-config, libglib2.0-dev, libncursesw5-dev
-Replaces: pidgin-dev (<< 2.1.1-2)
-Conflicts: pidgin-dev (<< 2.1.1-2)
+Replaces: gaim (<< 1:2.0.0+beta6-3), pidgin-dev (<< 2.1.1-2)
+Conflicts: gaim (<< 1:2.0.0+beta6-3), pidgin-dev (<< 2.1.1-2)
 Description: text-based multi-protocol instant messaging client - development
  This package contains the headers and other development files not included in
  the main finch package. Install this if you wish to compile your own plugins,

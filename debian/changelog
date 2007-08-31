@@ -1,3 +1,9 @@
+pidgin (2.1.1-3) unstable; urgency=low
+
+  * Make finch conflict & replace old versions of gaim (closes: #440351)
+
+ -- Ari Pollak <ari@debian.org>  Fri, 31 Aug 2007 15:15:07 -0400
+
 pidgin (2.1.1-2) unstable; urgency=low
 
   [ Laurent Bigonville ]
