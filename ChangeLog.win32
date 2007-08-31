@@ -1,4 +1,5 @@
 version 2.2.0 (??/??/2007):
+	* Updated gtkspell to 2.0.11
 	* Upgrade SILC to use the 1.1.2 toolkit
 
 version 2.1.1 (08/20/2007):

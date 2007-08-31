@@ -1205,7 +1205,14 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 	/* Load up the cached certificate */
 	cached_crt = purple_certificate_pool_retrieve(
 		tls_peers, vrq->subject_name);
-	g_assert(cached_crt);
+	if ( !cached_crt ) {
+		purple_debug_error("certificate/x509/tls_cached",
+				   "Lookup failed on cached certificate!\n"
+				   "It was here just a second ago. Forwarding "
+				   "to cert_changed.\n");
+		/* vrq now becomes the problem of cert_changed */
+		x509_tls_cached_peer_cert_changed(vrq);
+	}
 
 	/* Now get SHA1 sums for both and compare them */
 	/* TODO: This is not an elegant way to compare certs */
@@ -1338,7 +1345,14 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 
 	ca_crt = purple_certificate_pool_retrieve(ca, ca_id);
 	g_free(ca_id);
-	g_assert(ca_crt);
+	if (!ca_crt) {
+		purple_debug_error("certificate/x509/tls_cached",
+				   "Certificate authority disappeared out "
+				   "underneath me!\n");
+		purple_certificate_verify_complete(vrq,
+						   PURPLE_CERTIFICATE_INVALID);
+		return;
+	}
 	
 	/* Check the signature */
 	if ( !purple_certificate_signed_by(end_crt, ca_crt) ) {
@@ -1375,9 +1389,11 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 						 "tls_peers");
 
 	if (tls_peers) {
-		g_assert(purple_certificate_pool_store(tls_peers,
-						       vrq->subject_name,
-						       peer_crt) );
+		if (!purple_certificate_pool_store(tls_peers,vrq->subject_name,
+						   peer_crt) ) {
+			purple_debug_error("certificate/x509/tls_cached",
+					   "FAILED to cache peer certificate\n");
+		}
 	} else {
 		purple_debug_error("certificate/x509/tls_cached",
 				   "Unable to locate tls_peers certificate "
@@ -1790,7 +1806,6 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	GByteArray *sha_bin;
 	gchar *cn;
 	time_t activation, expiration;
-	/* Length of these buffers is dictated by 'man ctime_r' */
 	gchar *activ_str, *expir_str;
 	gchar *secondary;
 
@@ -1807,7 +1822,11 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	/* Get the certificate times */
 	/* TODO: Check the times against localtime */
 	/* TODO: errorcheck? */
-	g_assert(purple_certificate_get_times(crt, &activation, &expiration));
+	if (!purple_certificate_get_times(crt, &activation, &expiration)) {
+		purple_debug_error("certificate",
+				   "Failed to get certificate times!\n");
+		activation = expiration = 0;
+	}
 	activ_str = g_strdup(ctime(&activation));
 	expir_str = g_strdup(ctime(&expiration));
 
