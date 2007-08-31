@@ -593,7 +593,6 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, M
 	char *email,*domain;
 	char *list_op_str,*type_str;
 
-	purple_debug_info("::","msn_add_contact_xml()\n");
 	purple_debug_info("MSNP14","Passport: %s, type: %d\n", passport, type);
 	tokens = g_strsplit(passport, "@", 2);
 	email = tokens[0];
@@ -652,8 +651,7 @@ static void
 msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_len)
 {
 	MsnTransaction *trans;
-	purple_debug_info("::","msn_notification_post_adl()\n");
-	purple_debug_info("MSNP14","Sending ADL with payload: %s\n", payload);
+	purple_debug_info("MSN Notification","Sending ADL with payload: %s\n", payload);
 	trans = msn_transaction_new(cmdproc, "ADL","%d", strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
@@ -676,17 +674,6 @@ msn_notification_dump_contact(MsnSession *session)
 	adl_node->child = NULL;
 	xmlnode_set_attrib(adl_node, "l", "1");
 
-
-/*	if ( session->userlist->users == NULL ) {
-		payload = xmlnode_to_str(adl_node,&payload_len);
-
-		msn_notification_post_adl(session->notification->cmdproc,
-			payload, payload_len);
-
-		g_free(payload);
-		xmlnode_free(adl_node);
-	}
-	else { */
 	/*get the userlist*/
 	for (l = session->userlist->users; l != NULL; l = l->next){
 		user = l->data;
@@ -764,9 +751,79 @@ blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+adl_cmd_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
+		                         size_t len)
+{
+	xmlnode *root, *domain_node;
+
+	purple_debug_misc("MSN Notification", "Parsing received ADL XML data\n");
+
+	g_return_if_fail(payload != NULL);
+	
+	root = xmlnode_from_str(payload, (gssize) len);
+	
+	if (root == NULL) {
+		purple_debug_info("MSN Notification", "Invalid XML!\n");
+		return;
+	}
+	for (domain_node = xmlnode_get_child(root, "d"); domain_node; domain_node = xmlnode_get_next_twin(domain_node)) {
+		const gchar * domain = NULL; 
+		xmlnode *contact_node = NULL;
+
+		domain = xmlnode_get_attrib(domain_node, "n");
+
+		for (contact_node = xmlnode_get_child(domain_node, "c"); contact_node; contact_node = xmlnode_get_next_twin(contact_node)) {
+//			gchar *name = NULL, *friendlyname = NULL, *passport= NULL;
+			const gchar *list;
+			gint list_op = 0;
+
+//			name = xmlnode_get_attrib(contact_node, "n");
+			list = xmlnode_get_attrib(contact_node, "l");
+			if (list != NULL) {
+				list_op = atoi(list);
+			}
+//			friendlyname = xmlnode_get_attrib(contact_node, "f");
+
+//			passport = g_strdup_printf("%s@%s", name, domain);
+
+//			if (friendlyname != NULL) {
+//				decoded_friendlyname = g_strdup(purple_url_decode(friendlyname));
+//			} else {
+//				decoded_friendlyname = g_strdup(passport);
+//			}
+
+			if (list_op & MSN_LIST_RL_OP) {
+				/* someone is adding us */
+//				got_new_entry(cmdproc->session->account->gc, passport, decoded_friendly_name);
+				msn_get_contact_list(cmdproc->session->contact, MSN_PS_PENDING_LIST, NULL);
+			}
+
+//			g_free(decoded_friendly_name);
+//			g_free(passport);
+		}
+	}
+
+	xmlnode_free(root);
+}
+
+static void
 adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	msn_session_finish_login(cmdproc->session);
+	MsnSession *session;
+
+	g_return_if_fail(cmdproc != NULL);
+	g_return_if_fail(cmdproc->session != NULL);
+	g_return_if_fail(cmdproc->last_cmd != NULL);
+	g_return_if_fail(cmd != NULL);
+
+	session = cmdproc->session;
+
+	if ( !strcmp(cmd->params[1], "OK")) {
+		/* ADL ack */
+		msn_session_finish_login(session);
+	} else {
+		cmdproc->last_cmd->payload_cb = adl_cmd_parse;
+	}
 
 	return;
 }
@@ -797,7 +854,7 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	g_return_if_fail(cmdproc->session != NULL);
 	g_return_if_fail(cmdproc->session->contact != NULL);
 //	msn_notification_post_adl(cmdproc, payload, len);
-	msn_get_address_book(cmdproc->session->contact, MSN_AB_SAVE_CONTACT, NULL, NULL);
+//	msn_get_address_book(cmdproc->session->contact, MSN_AB_SAVE_CONTACT, NULL, NULL);
 }
 
 static void
@@ -1663,10 +1720,10 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 #ifdef MSN_PARTIAL_LISTS
 	/* msn_userlist_load defeats all attempts at trying to detect blist sync issues */
 	msn_userlist_load(session);
-	msn_get_contact_list(session->contact, clLastChange);
+	msn_get_contact_list(session->contact, MSN_PS_INITIAL, clLastChange);
 #else
 	/* always get the full list? */
-	msn_get_contact_list(session->contact, NULL);
+	msn_get_contact_list(session->contact, MSN_PS_INITIAL, NULL);
 #endif
 #if 0
 	msn_contact_connect(session->contact);
@@ -1972,11 +2029,11 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, "CHG", "CHG", NULL);
 	msn_table_add_cmd(cbs_table, "CHG", "ILN", iln_cmd);
 	msn_table_add_cmd(cbs_table, "ADL", "ILN", iln_cmd);
-	msn_table_add_cmd(cbs_table, "REM", "REM", rem_cmd);
+//	msn_table_add_cmd(cbs_table, "REM", "REM", rem_cmd);	/* Removed as of MSNP13 */
 	msn_table_add_cmd(cbs_table, "USR", "USR", usr_cmd);
 	msn_table_add_cmd(cbs_table, "USR", "XFR", xfr_cmd);
 	msn_table_add_cmd(cbs_table, "USR", "GCF", gcf_cmd);
-	msn_table_add_cmd(cbs_table, "SYN", "SYN", syn_cmd);
+//	msn_table_add_cmd(cbs_table, "SYN", "SYN", syn_cmd);	/* Removed as of MSNP13 */
 	msn_table_add_cmd(cbs_table, "CVR", "CVR", cvr_cmd);
 	msn_table_add_cmd(cbs_table, "VER", "VER", ver_cmd);
 	msn_table_add_cmd(cbs_table, "REA", "REA", rea_cmd);

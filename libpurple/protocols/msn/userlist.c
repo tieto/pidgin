@@ -106,7 +106,7 @@ msn_userlist_user_is_in_group(MsnUser *user, const char * group_id)
 }
 
 static gboolean
-msn_userlist_user_is_in_list(MsnUser *user, int list_id)
+msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id)
 {
 	int list_op;
 
@@ -373,6 +373,11 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 		}
 	}
 
+	if (list_op & MSN_LIST_PL_OP)
+	{
+		got_new_entry(gc, passport, store);
+	}
+
 	user->list_op |= list_op;
 }
 
@@ -629,6 +634,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who,
 	
 	new_group_name = group_name == NULL ? MSN_INDIVIDUALS_GROUP_NAME : group_name;
 
+	
 	g_return_if_fail(userlist != NULL);
 	g_return_if_fail(userlist->session != NULL);
 
@@ -669,6 +675,9 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who,
 		msn_callback_state_set_guid(state, group_id);
 	}
 	
+	/* XXX: adding user here may not be correct (should add them in the
+ 	 * ACK to the ADL command), but for now we need to make sure they exist  
+	 * early enough that the ILN command doesn't screw us up */
 
 	user = msn_userlist_find_add_user(userlist, who, who);
 
@@ -787,12 +796,13 @@ msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 			const char *old_group_name, const char *new_group_name)
 {
 	const char *new_group_id;
-	MsnCallbackState *state = msn_callback_state_new();
+	MsnCallbackState *state;
 	
 	g_return_if_fail(userlist != NULL);
 	g_return_if_fail(userlist->session != NULL);
 	g_return_if_fail(userlist->session->contact != NULL);
-	
+
+	state = msn_callback_state_new();
 	msn_callback_state_set_who(state, who);
 	msn_callback_state_set_action(state, MSN_MOVE_BUDDY);
 	msn_callback_state_set_old_group_name(state, old_group_name);

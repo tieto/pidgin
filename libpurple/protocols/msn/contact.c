@@ -31,10 +31,11 @@
 #include "group.h"
 
 
-const char *MsnAddressBookActionText[] =
+const char *MsnSoapPartnerScenarioText[] =
 {
         "Initial",
-        "ContactSave"
+        "ContactSave",
+	"MessengerPendingList"
 };
 
 
@@ -175,7 +176,7 @@ msn_contact_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 	g_return_if_fail(session != NULL);
 
 	/*login ok!We can retrieve the contact list*/
-//	msn_get_contact_list(contact,NULL);
+//	msn_get_contact_list(contact, MSN_PS_INITIAL, NULL);
 }
 
 /*get MSN member role utility*/
@@ -223,7 +224,7 @@ msn_create_address_cb(gpointer data, gint source, PurpleInputCondition cond)
 	g_return_if_fail(contact != NULL);
 
 	purple_debug_info("MSN AddressBook", "Address Book successfully created!\n");
-	msn_get_address_book(contact, MSN_AB_INITIAL, NULL, NULL);
+	msn_get_address_book(contact, MSN_PS_INITIAL, NULL, NULL);
 
 //	msn_soap_free_read_buf(soapconn);
 	return;
@@ -332,7 +333,7 @@ msn_parse_contact_list(MsnContact * contact)
 			}
 		}
 		xmlnode_free(node);
-		msn_get_contact_list(contact, NULL);
+		msn_get_contact_list(contact, MSN_PS_INITIAL, NULL);
 		return;
 	}
 
@@ -345,7 +346,7 @@ msn_parse_contact_list(MsnContact * contact)
 		 * has too old a copy for us to do a delta sync</faultstring>
 		 */
 		xmlnode_free(node);
-		msn_get_contact_list(contact, NULL);
+		msn_get_contact_list(contact, MSN_PS_INITIAL, NULL);
 		return;
 	}
 	purple_debug_info("MSNCL","FindMembershipResponse @ %p: Name: '%s'\n",response,response->name);
@@ -496,9 +497,9 @@ msn_get_contact_list_cb(gpointer data, gint source, PurpleInputCondition cond)
 	/* XXX: this should be enabled when we can correctly do partial
 	   syncs with the server. Currently we need to retrieve the whole
 	   list to detect sync issues */
-	msn_get_address_book(contact, MSN_AB_INITIAL, abLastChange, dynamicItemLastChange);
+	msn_get_address_book(contact, MSN_PS_INITIAL, abLastChange, dynamicItemLastChange);
 #else
-	msn_get_address_book(contact, MSN_AB_INITIAL, NULL, NULL);
+	msn_get_address_book(contact, MSN_PS_INITIAL, NULL, NULL);
 #endif
 	msn_soap_free_read_buf(soapconn);
 }
@@ -515,7 +516,7 @@ msn_get_contact_written_cb(gpointer data, gint source, PurpleInputCondition cond
 
 /*SOAP  get contact list*/
 void
-msn_get_contact_list(MsnContact * contact, const char *update_time)
+msn_get_contact_list(MsnContact * contact, const MsnSoapPartnerScenario partner_scenario, const char *update_time)
 {
 	MsnSoapReq *soap_request;
 	char *body = NULL;
@@ -528,7 +529,7 @@ msn_get_contact_list(MsnContact * contact, const char *update_time)
 	} else {
 		update_str = g_strdup("");
 	}
-	body = g_strdup_printf(MSN_GET_CONTACT_TEMPLATE, update_str);
+	body = g_strdup_printf(MSN_GET_CONTACT_TEMPLATE, MsnSoapPartnerScenarioText[partner_scenario], update_str);
 	g_free(update_str);
 
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
@@ -836,7 +837,7 @@ msn_get_address_cb(gpointer data, gint source, PurpleInputCondition cond)
 	purple_debug_misc("MSN AddressBook", "Got the Address Book!\n");
 
 	if ( msn_parse_addressbook(contact) ) {
-		msn_soap_free_read_buf(soapconn);
+		//msn_soap_free_read_buf(soapconn);
 
 		if (!session->logged_in) {
 			msn_send_privacy(session->account->gc);
@@ -869,11 +870,11 @@ msn_address_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 /*get the address book*/
 void
-msn_get_address_book(MsnContact *contact, const MsnAddressBookAction abaction, const char *LastChanged, const char *dynamicItemLastChange)
+msn_get_address_book(MsnContact *contact, const MsnSoapPartnerScenario partner_scenario, const char *LastChanged, const char *dynamicItemLastChange)
 {
 	MsnSoapReq *soap_request;
 	char *body = NULL;
-	char *ab_update_str,*update_str, *partner_scenario;
+	char *ab_update_str,*update_str;
 
 	purple_debug_misc("MSN AddressBook","Getting Address Book\n");
 
@@ -891,13 +892,9 @@ msn_get_address_book(MsnContact *contact, const MsnAddressBookAction abaction, c
 	}
 	g_free(ab_update_str);
 	
-	partner_scenario = g_strdup(MsnAddressBookActionText[abaction]);
 
-	purple_debug_misc("MSN CL", "Get Address Book PartnerScenario parameter: %s\n", partner_scenario);
-
-	body = g_strdup_printf(MSN_GET_ADDRESS_TEMPLATE, partner_scenario, update_str);
+	body = g_strdup_printf(MSN_GET_ADDRESS_TEMPLATE, MsnSoapPartnerScenarioText[partner_scenario], update_str);
 	g_free(update_str);
-	g_free(partner_scenario);
 
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
 					MSN_ADDRESS_BOOK_POST_URL,MSN_GET_ADDRESS_SOAP_ACTION,
@@ -909,15 +906,13 @@ msn_get_address_book(MsnContact *contact, const MsnAddressBookAction abaction, c
 	g_free(body);
 }
 
-/* We don't need this as libpurple doesn't support ungroupped buddies, so we
- * can add buddies directly to a group with msn_add_contact_to_group() */
-#if 0	
 static void
 msn_add_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;
 	MsnCallbackState *state = NULL;
 	MsnUserList *userlist;
+	MsnUser *user;
 	
 	g_return_if_fail(soapconn->data_cb != NULL);
 	g_return_if_fail(soapconn->session != NULL);
@@ -939,17 +934,11 @@ msn_add_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	}
 	msn_notification_send_fqy(soapconn->session, state->who);
 	
+	user = msn_userlist_find_add_user(userlist, state->who, state->who);
+	msn_user_add_group_id(user, state->guid);
 
-	if (state->action & MSN_ADD_BUDDY_TO_GROUP) {
-		msn_add_contact_to_group(soapconn->session->contact,
-					 state,
-			       		 state->who,
-					 state->guid);
-	} else {
-		msn_callback_state_free(state);
-		msn_soap_free_read_buf(soapconn);
-	}
-	
+	msn_callback_state_free(state);
+	msn_soap_free_read_buf(soapconn);
 }
 
 static void
@@ -961,26 +950,29 @@ msn_add_contact_written_cb(gpointer data, gint source, PurpleInputCondition cond
 	soapconn->read_cb = msn_add_contact_read_cb;
 }
 
-/* add a Contact */
+/* add a Contact in MSN_INDIVIDUALS_GROUP */
 void
-msn_add_contact(MsnContact *contact, MsnCallbackState *state, const char *passport, const char *displayname)
+msn_add_contact(MsnContact *contact, MsnCallbackState *state, const char *passport)
 {
 	MsnSoapReq *soap_request;
 	gchar *body = NULL;
 	gchar *contact_xml = NULL;
 	gchar *soap_action;
-//	gchar *escaped_displayname;
+/*	gchar *escaped_displayname;
 
+
+	 if (displayname != NULL) {
+		escaped_displayname = g_markup_decode_text(displayname, -1);
+	 } else {
+		escaped_displayname = passport;
+	 }
+	contact_xml = g_strdup_printf(MSN_XML_ADD_CONTACT, escaped_displayname, passport);
+*/
 	purple_debug_info("MSNCL","Adding contact %s to contact list\n", passport);
 
-	// if (displayname != NULL) {
-	//	escaped_displayname = g_markup_decode_text(displayname, -1);
-	// } else {
-	//	escaped_displayname = passport;
-	// }
-	// contact_xml = g_strdup_printf(MSN_XML_ADD_CONTACT, escaped_displayname, passport);
-	
-	contact_xml = g_strdup_printf(MSN_CONTACT_XML, passport);
+//	if ( !strcmp(state->guid, MSN_INDIVIDUALS_GROUP_ID) ) {
+		contact_xml = g_strdup_printf(MSN_CONTACT_XML, passport);
+//	}
 	body = g_strdup_printf(MSN_ADD_CONTACT_TEMPLATE, contact_xml);
 
 	g_free(contact_xml);
@@ -1000,7 +992,6 @@ msn_add_contact(MsnContact *contact, MsnCallbackState *state, const char *passpo
 	g_free(soap_action);
 	g_free(body);
 }
-#endif
 
 static void
 msn_add_contact_to_group_read_cb(gpointer data, gint source, PurpleInputCondition cond)
@@ -1066,7 +1057,27 @@ msn_add_contact_to_group(MsnContact *contact, MsnCallbackState *state,
 	g_return_if_fail(contact->session->userlist != NULL);
 	
 	userlist = contact->session->userlist;
-	
+
+	if (!strcmp(groupId, MSN_INDIVIDUALS_GROUP_ID) || !strcmp(groupId, MSN_NON_IM_GROUP_ID)) {
+		
+		user = msn_userlist_find_add_user(userlist, passport, passport);
+
+		if (state->action & MSN_ADD_BUDDY) {
+			msn_add_contact(contact, state, passport);
+			return;
+		}
+
+		if (state->action & MSN_MOVE_BUDDY) {
+			msn_user_add_group_id(user, groupId);
+			msn_del_contact_from_group(contact, passport, state->old_group_name);
+		} else {
+			msn_callback_state_free(state);
+		}
+
+		return;
+	}
+
+
 	purple_debug_info("MSNCL", "Adding user %s to group %s\n", passport, 
 			  msn_userlist_find_group_name(userlist, groupId));
 
@@ -1209,7 +1220,12 @@ msn_del_contact_from_group(MsnContact *contact, const char *passport, const char
 		purple_debug_warning("MSN CL", "Unable to retrieve user from passport %s!\n", passport);
 		return;
 	}
-	
+
+	if ( !strcmp(groupId, MSN_INDIVIDUALS_GROUP_ID) || !strcmp(groupId, MSN_NON_IM_GROUP_ID)) {
+		msn_user_remove_group_id(user, groupId);
+		return;
+	}
+
 	state = msn_callback_state_new();
 	msn_callback_state_set_who(state, passport);
 	msn_callback_state_set_guid(state, groupId);
@@ -1296,13 +1312,13 @@ msn_block_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 /*block a Contact*/
 void
-msn_block_contact(MsnContact *contact,const char* membership_id)
+msn_block_contact(MsnContact *contact, const char* membership_id)
 {
 	MsnSoapReq *soap_request;
 	char *body = NULL;
 
 	purple_debug_info("MSNP14","msn block a contact...\n");
-	body = g_strdup_printf(MSN_CONTACT_DELECT_FROM_ALLOW_TEMPLATE,membership_id);
+	body = g_strdup_printf(MSN_CONTACT_DELECT_FROM_ALLOW_TEMPLATE, membership_id);
 	/*build SOAP and POST it*/
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
 					MSN_SHARE_POST_URL,
@@ -1534,6 +1550,12 @@ msn_del_group(MsnSession *session, const gchar *group_name)
 		purple_debug_info("MSN CL", "Group %s guid not found, returning.\n", group_name);
 		return;
 	}
+
+	if ( !strcmp(guid, MSN_INDIVIDUALS_GROUP_ID) || !strcmp(guid, MSN_NON_IM_GROUP_ID) ) {
+		// add back PurpleGroup since it isn't really removed in the server?
+		return;
+	}
+
 	state = msn_callback_state_new();
 	msn_callback_state_set_action(state, MSN_DEL_GROUP);
 	msn_callback_state_set_guid(state, guid);
@@ -1573,10 +1595,16 @@ msn_contact_rename_group(MsnSession *session, const char *old_group_name, const 
 	guid = msn_userlist_find_group_id(session->userlist, old_group_name);
 	if (guid == NULL)
 		return;
-	
-	msn_callback_state_set_action(state, MSN_RENAME_GROUP);
+
 	msn_callback_state_set_guid(state, guid);
 	msn_callback_state_set_new_group_name(state, new_group_name);
+
+	if ( !strcmp(guid, MSN_INDIVIDUALS_GROUP_ID) || !strcmp(guid, MSN_NON_IM_GROUP_ID) ) {
+		msn_add_group(session, state, new_group_name);
+		// XXX move every buddy there (we probably need to fix concurrent SOAP reqs first)
+	}
+
+	msn_callback_state_set_action(state, MSN_RENAME_GROUP);
 	
 	/* escape group name's html special chars so it can safely be sent
 	 * in a XML SOAP request

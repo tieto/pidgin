@@ -1450,10 +1450,12 @@ msn_remove_group(PurpleConnection *gc, PurpleGroup *group)
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
 
+	purple_debug_info("MSN", "Remove group %s\n", group->name);
 	/*we can't delete the default group*/
 	if(!strcmp(group->name, MSN_INDIVIDUALS_GROUP_NAME)||
 		!strcmp(group->name, MSN_NON_IM_GROUP_NAME))
 	{
+		purple_debug_info("MSN", "This group can't be removed, returning.\n");
 		return ;
 	}
 	

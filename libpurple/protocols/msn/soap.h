@@ -29,7 +29,7 @@
 #define MSN_SOAP_READ_BUFF_SIZE		8192
 
 /* define this to debug the communications with the SOAP server */
-#undef MSN_SOAP_DEBUG
+/* #define MSN_SOAP_DEBUG */
 
 
 typedef enum

@@ -40,22 +40,22 @@
 		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ApplicationId xmlns=\"http://www.msn.com/webservices/AddressBook\">09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
 			"<IsMigration xmlns=\"http://www.msn.com/webservices/AddressBook\">false</IsMigration>"\
-			"<PartnerScenario xmlns=\"http://www.msn.com/webservices/AddressBook\">Initial</PartnerScenario>"\
+			"<PartnerScenario xmlns=\"http://www.msn.com/webservices/AddressBook\">%s</PartnerScenario>"\
 		 "</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-		"<ManagedGroupRequest xmlns=\"http://www.msn.com/webservices/AddressBook\">false</ManagedGroupRequest>"\
+			"<ManagedGroupRequest xmlns=\"http://www.msn.com/webservices/AddressBook\">false</ManagedGroupRequest>"\
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 		"<FindMembership xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<serviceFilter xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-			"<Types xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-				"<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Messenger</ServiceType>"\
-				"<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Invitation</ServiceType>"\
-				"<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">SocialNetwork</ServiceType>"\
-				"<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Space</ServiceType>"\
-				"<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Profile</ServiceType>"\
-			"</Types>"\
+				"<Types xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+					"<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Messenger</ServiceType>"\
+					"<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Invitation</ServiceType>"\
+					"<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">SocialNetwork</ServiceType>"\
+					"<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Space</ServiceType>"\
+					"<ServiceType xmlns=\"http://www.msn.com/webservices/AddressBook\">Profile</ServiceType>"\
+				"</Types>"\
 			"</serviceFilter>"\
 			"%s"\
 		"</FindMembership>"\
@@ -127,32 +127,6 @@
 	"</soap:Body>"\
 "</soap:Envelope>"
 
-
-/*	Send this shit after adding a contact (with ABGroupContactAdd or something) damnit!	
-<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
-	<soap:Header>
-		<ABApplicationHeader xmlns="http://www.msn.com/webservices/AddressBook">
-			<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>
-			<IsMigration>false</IsMigration>
-			<PartnerScenario>ContactSave</PartnerScenario>
-		</ABApplicationHeader>
-		<ABAuthHeader xmlns="http://www.msn.com/webservices/AddressBook">
-			<ManagedGroupRequest>false</ManagedGroupRequest>
-		</ABAuthHeader>
-	</soap:Header>
-	<soap:Body>
-		<ABFindAll xmlns="http://www.msn.com/webservices/AddressBook">
-			<abId>00000000-0000-0000-0000-000000000000</abId>
-			<abView>Full</abView>
-			<deltasOnly>true</deltasOnly>
-			<lastChange>2007-08-22T06:19:36.84-07:00</lastChange>
-			<dynamicItemView>Gleam</dynamicItemView>
-			<dynamicItemLastChange>0001-01-01T00:00:00</dynamicItemLastChange>
-		</ABFindAll>
-	</soap:Body>
-</soap:Envelope>
-*/
 
 /*Gleams SOAP request template*/
 #define MSN_GET_GLEAMS_SOAP_ACTION "http://www.msn.com/webservices/AddressBook/ABFindAll"
@@ -342,9 +316,10 @@ struct _MsnCallbackState
 
 typedef enum 
 {
-	MSN_AB_INITIAL,
-	MSN_AB_SAVE_CONTACT
-} MsnAddressBookAction;
+	MSN_PS_INITIAL,
+	MSN_PS_SAVE_CONTACT,
+	MSN_PS_PENDING_LIST
+} MsnSoapPartnerScenario;
 
 
 /************************************************
@@ -366,15 +341,18 @@ void msn_callback_state_set_action(MsnCallbackState *state,
 				   MsnCallbackAction action);
 
 void msn_contact_connect(MsnContact *contact);
-void msn_get_contact_list(MsnContact * contact, const char *update);
-void msn_get_address_book(MsnContact *contact, MsnAddressBookAction abaction,
+void msn_get_contact_list(MsnContact * contact, 
+			  const MsnSoapPartnerScenario partner_scenario,
+			  const char *update);
+void msn_get_address_book(MsnContact *contact, 
+			  const MsnSoapPartnerScenario partner_scenario,
 			  const char * update, const char * gupdate);
 
 /*contact SOAP Operation*/
 void msn_update_contact(MsnContact *contact, const char* nickname);
 
 void msn_add_contact(MsnContact *contact, MsnCallbackState *state, 
-		     const char *passport, const char *displayname);
+		     const char *passport);
 void msn_delete_contact(MsnContact *contact, const char *contactId);
 
 void msn_add_contact_to_group(MsnContact *contact, MsnCallbackState *state, 
