@@ -2101,9 +2101,9 @@ gtk_imhtml_is_tag (const gchar *string,
 	}
 
 	*type = -1;
-	*len = close - string + 1;
-	*tag = g_strndup(string, *len - 1);
-	return TRUE;
+	*len = 0; //close - string + 1;
+	*tag = NULL; //g_strndup(string, *len - 1);
+	return FALSE;
 }
 
 static gchar*

@@ -49,6 +49,7 @@
 #define DBUS_API_SUBJECT_TO_CHANGE
 #include "dbus-maybe.h"
 #include "dbus-bindings.h"
+#include "dbus-purple.h"
 
 typedef struct {
 	char *text;

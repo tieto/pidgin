@@ -67,6 +67,8 @@ purple_input_remove(guint tag)
 {
 	PurpleEventLoopUiOps *ops = purple_eventloop_get_ui_ops();
 
+	g_printerr("XXX: removing %d\n", tag);
+
 	return ops->input_remove(tag);
 }
 

@@ -1,4 +1,5 @@
 EXTRA_DIST = \
+		example/ \
 		dbus-analyze-functions.py \
 		dbus-analyze-types.py \
 		purple-notifications-example \
@@ -29,7 +30,7 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = purple.pc
 
-SUBDIRS = $(GCONF_DIR) plugins protocols tests . example
+SUBDIRS = plugins protocols
 
 purple_coresources = \
 	account.c \

@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=`pkg-config --cflags gobject-2.0 gmodule-2.0` -g -I../ -DSTANDALONE
+CFLAGS=`pkg-config --cflags gobject-2.0 gmodule-2.0` -g -I../ -DSTANDALONE -I/usr/include/ncursesw/
 LDFLAGS=`pkg-config --libs gobject-2.0 gmodule-2.0 gnt` -pg
 
 EXAMPLES=combo focus tv multiwin keys menu parse

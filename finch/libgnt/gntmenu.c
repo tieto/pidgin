@@ -286,6 +286,7 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 				sub = sub->submenu;
 			}
 			gnt_widget_draw(widget);
+			gnt_widget_activate(GNT_WIDGET(menu));
 			return TRUE;
 		}
 	} else {

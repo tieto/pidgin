@@ -57,13 +57,21 @@ do
 	fi
 done
 
+echo "stage 1"
 libtoolize -c -f --automake
+echo "stage 2"
 glib-gettextize --force --copy
+echo "stage 3"
 intltoolize --force --copy
+echo "stage 4"
 aclocal $ACLOCAL_FLAGS || exit;
+echo "stage 5"
 autoheader || exit;
+echo "stage 6"
 automake --add-missing --copy;
+echo "stage 7"
 autoconf || exit;
+echo "stage 8"
 automake || exit;
 
 echo;

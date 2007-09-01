@@ -7,7 +7,8 @@ void
 pidgin_dialogs_destroy_all()
 
 void
-pidgin_dialogs_about()
+pidgin_dialogs_about(parent)
+	GtkWidget * parent
 
 void
 pidgin_dialogs_im()

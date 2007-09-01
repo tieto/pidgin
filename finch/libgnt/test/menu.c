@@ -24,9 +24,6 @@ int main()
 
 	gnt_menu_add_item(GNT_MENU(menu), GNT_MENU_ITEM(item));
 
-	item = gnt_menuitem_new("Edit");
-	gnt_menu_add_item(GNT_MENU(menu), GNT_MENU_ITEM(item));
-
 	item = gnt_menuitem_new("Help");
 	gnt_menu_add_item(GNT_MENU(menu), GNT_MENU_ITEM(item));
 
@@ -52,6 +49,14 @@ int main()
 	gnt_menuitem_set_trigger(GNT_MENU_ITEM(item), 'O');
 	gnt_menu_add_item(GNT_MENU(sub), GNT_MENU_ITEM(item));
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), dothis, NULL);
+
+	item = gnt_menuitem_new("asd");
+	gnt_menuitem_set_trigger(GNT_MENU_ITEM(item), 'k');
+	gnt_menu_add_item(GNT_MENU(sub), GNT_MENU_ITEM(item));
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), dothis, NULL);
+
+	item = gnt_menuitem_new("Edit");
+	gnt_menu_add_item(GNT_MENU(menu), GNT_MENU_ITEM(item));
 
 	gnt_screen_menu_show(menu);
 

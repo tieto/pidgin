@@ -667,7 +667,7 @@ void purple_conversation_foreach(void (*func)(PurpleConversation *conv));
  *
  * @param conv   The conversation
  *
- * @return  A GList of PurpleConvMessage's. The must not modify the list or the data within.
+ * @return  A GList of PurpleConvMessage's. Caller must not modify the list or the data within.
  *          The list contains the newest message at the beginning, and the oldest message at
  *          the end.
  */

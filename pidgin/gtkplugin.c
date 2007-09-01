@@ -600,6 +600,7 @@ void pidgin_plugin_dialog_show()
 	plugin_details = gtk_label_new(NULL);
 	gtk_label_set_line_wrap(GTK_LABEL(plugin_details), TRUE);
 	gtk_container_add(GTK_CONTAINER(expander), plugin_details);
+	gtk_expander_set_expanded(GTK_EXPANDER(expander), TRUE);
 	gtk_widget_set_sensitive(expander, FALSE);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(plugin_dialog)->vbox), expander, FALSE, FALSE, 0);
 
