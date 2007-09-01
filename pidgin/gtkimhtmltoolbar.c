@@ -786,6 +786,7 @@ static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIM
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->bold), buttons & GTK_IMHTML_BOLD);
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->italic), buttons & GTK_IMHTML_ITALIC);
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->underline), buttons & GTK_IMHTML_UNDERLINE);
+	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->strikethrough), buttons & GTK_IMHTML_STRIKE);
 
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->larger_size), buttons & GTK_IMHTML_GROW);
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->smaller_size), buttons & GTK_IMHTML_SHRINK);
@@ -798,6 +799,7 @@ static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIM
 							 (buttons & GTK_IMHTML_BOLD ||
 							  buttons & GTK_IMHTML_ITALIC ||
 							  buttons & GTK_IMHTML_UNDERLINE ||
+							  buttons & GTK_IMHTML_STRIKE ||
 							  buttons & GTK_IMHTML_GROW ||
 							  buttons & GTK_IMHTML_SHRINK ||
 							  buttons & GTK_IMHTML_FACE ||
@@ -831,7 +833,7 @@ static void toggle_button_set_active_block(GtkToggleButton *button,
 
 static void update_buttons(GtkIMHtmlToolbar *toolbar)
 {
-	gboolean bold, italic, underline;
+	gboolean bold, italic, underline, strike;
 	char *tmp;
 	char *tmp2;
 	GtkLabel *label = g_object_get_data(G_OBJECT(toolbar), "font_label");
@@ -840,6 +842,7 @@ static void update_buttons(GtkIMHtmlToolbar *toolbar)
 
 	gtk_imhtml_get_current_format(GTK_IMHTML(toolbar->imhtml),
 								  &bold, &italic, &underline);
+	strike = GTK_IMHTML(toolbar->imhtml)->edit.strike;
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->bold)) != bold)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bold), bold,
@@ -847,10 +850,12 @@ static void update_buttons(GtkIMHtmlToolbar *toolbar)
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->italic)) != italic)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->italic), italic,
 									   toolbar);
-
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->underline)) != underline)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
 									   underline, toolbar);
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->strikethrough)) != strike)
+		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->strikethrough),
+									   strike, toolbar);
 
 	/* These buttons aren't ever "active". */
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smaller_size), FALSE);
@@ -870,6 +875,12 @@ static void update_buttons(GtkIMHtmlToolbar *toolbar)
 	}
 	if (underline) {
 		gchar *markup = g_strdup_printf("<u>%s</u>",
+				gtk_label_get_label(label));
+		gtk_label_set_markup_with_mnemonic(label, markup);
+		g_free(markup);
+	}
+	if (strike) {
+		gchar *markup = g_strdup_printf("<s>%s</s>",
 				gtk_label_get_label(label));
 		gtk_label_set_markup_with_mnemonic(label, markup);
 		g_free(markup);

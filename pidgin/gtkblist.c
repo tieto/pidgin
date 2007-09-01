@@ -3209,6 +3209,7 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 {
 	GdkPixbuf *ret;
 	const char *protoname = NULL;
+	const char *icon = NULL;
 	struct _pidgin_blist_node *gtknode = node->ui_data;
 	struct _pidgin_blist_node *gtkbuddynode = NULL;
 	PurpleBuddy *buddy = NULL;
@@ -3257,62 +3258,54 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 									     purple_buddy_get_name(buddy),
 									     purple_buddy_get_account(buddy));
 		PurplePresence *p;
+		gboolean trans;
+
 		if(conv != NULL) {
 			PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-			if(gtkconv != NULL && pidgin_conv_is_hidden(gtkconv) && size == PIDGIN_STATUS_ICON_SMALL) {
+			if((gtkconv == NULL || pidgin_conv_is_hidden(gtkconv)) && size == PIDGIN_STATUS_ICON_SMALL) {
 				return gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_MESSAGE,
 							       icon_size, "GtkTreeView");
 			}
 		}
+
 		p = purple_buddy_get_presence(buddy);
+		trans = (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL);
 
 		if (PURPLE_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGIN,
-					icon_size, "GtkTreeView");
+			icon = PIDGIN_STOCK_STATUS_LOGIN;
 		else if (gtkbuddynode && gtkbuddynode->recent_signonoff)
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGOUT,
-					icon_size, "GtkTreeView");
+			icon = PIDGIN_STOCK_STATUS_LOGOUT;
 		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_UNAVAILABLE))
-			if (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
-				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY_I,
-						icon_size, "GtkTreeView");
+			if (trans)
+				icon = PIDGIN_STOCK_STATUS_BUSY_I;
 			else
-				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_BUSY,
-						icon_size, "GtkTreeView");
+				icon = PIDGIN_STOCK_STATUS_BUSY;
 		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_AWAY))
-		        if (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
-		                ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY_I,
-		                                icon_size, "GtkTreeView");
+			if (trans)
+				icon = PIDGIN_STOCK_STATUS_AWAY_I;
 		 	else
-				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AWAY,
-						icon_size, "GtkTreeView");
+				icon = PIDGIN_STOCK_STATUS_AWAY;
 		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_EXTENDED_AWAY))
-			if (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
-		        	ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA_I,
-						icon_size, "GtkTreeView");
+			if (trans)
+				icon = PIDGIN_STOCK_STATUS_XA_I;
 			else
-				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA,
-						icon_size, "GtkTreeView");
+				icon = PIDGIN_STOCK_STATUS_XA;
 		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_OFFLINE))
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_OFFLINE,
-					icon_size, "GtkTreeView");
-		else if (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE_I,
-					icon_size, "GtkTreeView");
+			icon = PIDGIN_STOCK_STATUS_OFFLINE;
+		else if (trans)
+			icon = PIDGIN_STOCK_STATUS_AVAILABLE_I;
 		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_INVISIBLE))
-			ret = gtk_widget_render_icon(GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_INVISIBLE,
-					icon_size, "GtkTreeView");
+			icon = PIDGIN_STOCK_STATUS_INVISIBLE;
 		else
-			ret = gtk_widget_render_icon(GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE,
-					icon_size, "GtkTreeView");
+			icon = PIDGIN_STOCK_STATUS_AVAILABLE;
 	} else if (chat) {
-		ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_CHAT,
-				icon_size, "GtkTreeView");
+		icon = PIDGIN_STOCK_STATUS_CHAT;
 	} else {
-		ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_PERSON,
-				icon_size, "GtkTreeView");
+		icon = PIDGIN_STOCK_STATUS_PERSON;
 	}
 
+	ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), icon,
+			icon_size, "GtkTreeView");
 	return ret;
 }
 
@@ -3335,7 +3328,7 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 
 	if(conv != NULL) {
 		gtkconv = PIDGIN_CONVERSATION(conv);
-		if(gtkconv != NULL && pidgin_conv_is_hidden(gtkconv)) {
+		if(gtkconv == NULL || pidgin_conv_is_hidden(gtkconv)) {
 			hidden_conv = TRUE;
 		}
 	}
@@ -5213,6 +5206,10 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		GdkPixbuf *emblem;
 		char *mark;
 		gboolean showicons = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
+		const char *name = purple_chat_get_name(chat);
+		PurpleConversation *conv =
+				purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name, chat->account);
+		gboolean hidden = (conv && !PIDGIN_CONVERSATION(conv));
 
 		if(!insert_node(list, node, &iter))
 			return;
@@ -5228,15 +5225,20 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 			avatar = NULL;
 
 		mark = g_markup_escape_text(purple_chat_get_name(chat), -1);
+		if (hidden) {
+			char *bold = g_strdup_printf("<b>%s</b>", mark);
+			g_free(mark);
+			mark = bold;
+		}
 
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				STATUS_ICON_COLUMN, status,
 				STATUS_ICON_VISIBLE_COLUMN, TRUE,
 				BUDDY_ICON_COLUMN, avatar ? avatar : gtkblist->empty_avatar,
 				BUDDY_ICON_VISIBLE_COLUMN,  purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons"),
-			        EMBLEM_COLUMN, emblem,
+				EMBLEM_COLUMN, emblem,
 				EMBLEM_VISIBLE_COLUMN, emblem != NULL,
-		 	        PROTOCOL_ICON_COLUMN, pidgin_create_prpl_icon(chat->account, PIDGIN_PRPL_ICON_SMALL),
+				PROTOCOL_ICON_COLUMN, pidgin_create_prpl_icon(chat->account, PIDGIN_PRPL_ICON_SMALL),
 				PROTOCOL_ICON_VISIBLE_COLUMN, purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"),
 				NAME_COLUMN, mark,
 				GROUP_EXPANDER_VISIBLE_COLUMN, FALSE,

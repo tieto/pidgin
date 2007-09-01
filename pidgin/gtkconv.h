@@ -245,6 +245,13 @@ pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs);
  */
 void pidgin_conv_present_conversation(PurpleConversation *conv);
 
+/**
+ * Reattach Pidgin UI to a conversation.
+ *
+ * @param conv  The conversation.
+ *
+ * @return  Wheter Pidgin UI was successfully attached.
+ */
 gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv);
 
 PidginWindow *pidgin_conv_get_window(PidginConversation *gtkconv);
