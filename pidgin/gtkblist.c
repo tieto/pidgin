@@ -2680,6 +2680,7 @@ void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget)
 	gtknode = node->ui_data;
 
 	gtk_widget_set_app_paintable(gtkblist->tipwindow, TRUE);
+	gtk_window_set_title(GTK_WINDOW(gtkblist->tipwindow), _("Buddy List"));
 	gtk_window_set_resizable(GTK_WINDOW(gtkblist->tipwindow), FALSE);
 	gtk_widget_set_name(gtkblist->tipwindow, "gtk-tooltips");
 	g_signal_connect(G_OBJECT(gtkblist->tipwindow), "expose_event",
