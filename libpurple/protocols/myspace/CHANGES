@@ -1,3 +1,13 @@
+2007-08-28 Jeff Connelly <pidgin@xyzzy.cjb.net> - 0.17
+* Get server-side contact list from server on sign-on (partly implements
+  server-side contacts, ticket #2658).
+* Set local alias to username on sign-on, if not already set. This fixes
+  #2793, though this may not be the best way, other fixes under consideration.
+* Support myim:sendIM and addContact URLs with cID and uID parameters.
+* Fix #2722, only check for mail if "New mail notifications" is enabled.
+* Modularize msimprpl.
+
+
 2007-08-23 Jeff Connelly <pidgin@xyzzy.cjb.net> - 0.16
 * Add option to add all friends from myspace.com to your buddy list (#2660)
 * If a user doesn't have a picture, don't display an icon (instead of
@@ -6,6 +16,7 @@
 * Fix #2752, which led to duplicate groups
 * Fix #2720, crash/disconnect when adding a buddy that doesn't exist
   (You'll now receive an error when looking up invalid usernames).
+* Source-code release only.
 
 2007-08-22 Jeff Connelly <pidgin@xyzzy.cjb.net> - 0.15
 * Incomplete implementation of adding friends from myspace.com.
