@@ -2622,6 +2622,7 @@ void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget)
 	struct _pidgin_blist_node *gtknode;
 	GdkRectangle mon_size;
 	int sig;
+	const char *name;
 	
 	if (node == NULL)
 		return;
@@ -2679,8 +2680,9 @@ void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget)
 
 	gtknode = node->ui_data;
 
+	name = gtk_window_get_title(GTK_WINDOW(gtk_widget_get_toplevel(widget)));
 	gtk_widget_set_app_paintable(gtkblist->tipwindow, TRUE);
-	gtk_window_set_title(GTK_WINDOW(gtkblist->tipwindow), _("Buddy List"));
+	gtk_window_set_title(GTK_WINDOW(gtkblist->tipwindow), name ? name : _("Buddy List"));
 	gtk_window_set_resizable(GTK_WINDOW(gtkblist->tipwindow), FALSE);
 	gtk_widget_set_name(gtkblist->tipwindow, "gtk-tooltips");
 	g_signal_connect(G_OBJECT(gtkblist->tipwindow), "expose_event",
