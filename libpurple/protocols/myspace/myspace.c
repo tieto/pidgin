@@ -683,6 +683,7 @@ static gboolean
 msim_incoming_im(MsimSession *session, MsimMessage *msg)
 {
 	gchar *username, *msg_msim_markup, *msg_purple_markup;
+	time_t time_received;
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
@@ -696,8 +697,12 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg)
 	msg_purple_markup = msim_markup_to_html(session, msg_msim_markup);
 	g_free(msg_msim_markup);
 
-	serv_got_im(session->gc, username, msg_purple_markup, 
-			PURPLE_MESSAGE_RECV, time(NULL));
+	time_received = msim_msg_get_integer(msg, "date");
+	if (!time_received) {
+		time_received = time(NULL);
+	}
+
+	serv_got_im(session->gc, username, msg_purple_markup, PURPLE_MESSAGE_RECV, time_received);
 
 	g_free(username);
 	g_free(msg_purple_markup);
