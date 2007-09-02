@@ -121,9 +121,8 @@ bonjour_buddy_check(BonjourBuddy *buddy)
  * the buddy.
  */
 void
-bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy)
+bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 {
-	PurpleBuddy *buddy;
 	PurpleGroup *group;
 	PurpleAccount *account = bonjour_buddy->account;
 	const char *status_id, *old_hash, *new_hash;
@@ -147,7 +146,8 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy)
 	}
 
 	/* Make sure the buddy exists in our buddy list */
-	buddy = purple_find_buddy(account, bonjour_buddy->name);
+	if (buddy == NULL)
+		buddy = purple_find_buddy(account, bonjour_buddy->name);
 
 	if (buddy == NULL) {
 		buddy = purple_buddy_new(account, bonjour_buddy->name, NULL);

@@ -235,6 +235,13 @@ bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
 	g_free(stripped);
 }
 
+static void bonjour_remove_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group) {
+	if (buddy->proto_data) {
+		bonjour_buddy_delete(buddy->proto_data);
+		buddy->proto_data = NULL;
+	}
+}
+
 static GList *
 bonjour_status_types(PurpleAccount *account)
 {
@@ -395,7 +402,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* change_passwd */
 	NULL,                                                    /* add_buddy */
 	NULL,                                                    /* add_buddies */
-	NULL,                                                    /* remove_buddy */
+	bonjour_remove_buddy,                                    /* remove_buddy */
 	NULL,                                                    /* remove_buddies */
 	NULL,                                                    /* add_permit */
 	NULL,                                                    /* add_deny */
