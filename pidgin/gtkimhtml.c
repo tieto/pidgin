@@ -4890,7 +4890,7 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		} else if (c == '"') {
 			str = g_string_append(str, "&quot;");
 		} else if (c == '\n') {
-			str = g_string_append(str, "<br>");
+			str = g_string_append(str, "<br>\n");
 		} else {
 			str = g_string_append_unichar(str, c);
 		}
