@@ -159,6 +159,8 @@ static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 static gboolean alias_double_click_cb(GtkWidget *widget, GdkEventButton *event, PidginConversation *gtkconv);
+static gboolean pidgin_userlist_motion_cb (GtkWidget *w, GdkEventMotion *event, PidginConversation *gtkconv);
+static void pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv);
 
 static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
 		int width, int height);
@@ -4436,6 +4438,10 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	g_signal_connect(G_OBJECT(list), "button_press_event",
 					 G_CALLBACK(right_click_chat_cb), gtkconv);
+	g_signal_connect(G_OBJECT(list), "motion-notify-event",
+					 G_CALLBACK(pidgin_userlist_motion_cb), gtkconv);
+	g_signal_connect(G_OBJECT(list), "leave-notify-event",
+					 G_CALLBACK(pidgin_userlist_motion_cb), gtkconv);
 	g_signal_connect(G_OBJECT(list), "popup-menu",
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), gtkconv);
 	g_signal_connect(G_OBJECT(lbox), "size-allocate", G_CALLBACK(lbox_size_allocate_cb), gtkconv);
@@ -4480,6 +4486,8 @@ static struct {
 	int timeout;
 	PidginConversation *gtkconv;   /* This is the Pidgin conversation that
 	                                  triggered the tooltip */
+	int userlistx;
+	int userlisty;
 } tooltip;
 
 static void
@@ -4536,6 +4544,72 @@ pidgin_conv_motion_cb (GtkWidget *infopane, GdkEventMotion *event, PidginConvers
 	return FALSE;
 }
 
+static gboolean
+pidgin_userlist_tooltip_timeout(PidginConversation *gtkconv)
+{
+	PurplePluginProtocolInfo *prpl_info;
+	PurpleConversation *conv = gtkconv->active_conv;
+	PidginChatPane *gtkchat;
+	PurpleConnection *gc;
+	PurpleBlistNode *node = NULL;
+	PurpleAccount *account;
+	GtkTreePath *path;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GtkTreeViewColumn *column;
+	gchar *who;
+	int x, y;
+
+	gtkchat = gtkconv->u.chat;
+	account = purple_conversation_get_account(conv);
+	gc = account->gc;
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
+
+	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(gtkchat->list),
+								  tooltip.userlistx, tooltip.userlisty, &path, &column, &x, &y);
+
+	if (path == NULL)
+		return FALSE;
+
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
+	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
+
+	node = (PurpleBlistNode*)(purple_find_buddy(conv->account, who));
+	if (node && prpl_info && (prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) 
+		pidgin_blist_draw_tooltip(node, gtkconv->infopane);
+
+	g_free(who);
+	gtk_tree_path_free(path);
+
+
+	return FALSE;
+}
+
+static gboolean 
+pidgin_userlist_motion_cb (GtkWidget *w, GdkEventMotion *event, PidginConversation *gtkconv)
+{
+	PurpleConversation *conv;
+	int delay = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay");
+	
+	pidgin_blist_tooltip_destroy();
+	if (delay == 0)
+		return FALSE;
+
+	if (tooltip.timeout != 0) 
+		g_source_remove(tooltip.timeout);
+	
+	conv = gtkconv->active_conv;
+
+	tooltip.timeout = g_timeout_add(delay, (GSourceFunc)pidgin_userlist_tooltip_timeout, gtkconv);
+	tooltip.gtkconv = gtkconv;
+	tooltip.userlistx = event->x;
+	tooltip.userlisty = event->y;
+
+	return FALSE;
+}
+ 
 static GtkWidget *
 setup_common_pane(PidginConversation *gtkconv)
 {
