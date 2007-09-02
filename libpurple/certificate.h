@@ -771,16 +771,6 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool);
 void
 purple_certificate_display_x509(PurpleCertificate *crt);
 
-/**
- * Initialize the certificate subsystem.
- */
-void purple_certificates_init(void);
-
-/**
- * Uninitialize the certificate subsystem.
- */
-void purple_certificates_uninit(void);
-
 
 #ifdef __cplusplus
 }

@@ -46,19 +46,10 @@ buddy_status_changed_cb(PurpleBuddy *buddy, PurpleStatus *old_status,
 	old_available = purple_status_is_available(old_status);
 
 	if (purple_prefs_get_bool("/plugins/core/statenotify/notify_away")) {
-		char *message = NULL;
-		const char *msgstatus = purple_status_get_attr_string(status, "message");
-		msgstatus = msgstatus ? msgstatus : "";
 		if (available && !old_available)
-			message = g_strdup_printf("%s%s%s", _("%s is no longer away"), msgstatus[0] ? ": " : ".", msgstatus);
+			write_status(buddy, _("%s is no longer away."));
 		else if (!available && old_available)
-			message = g_strdup_printf("%s%s%s", ("%s has gone away"), msgstatus[0] ? ": " : ".", msgstatus);
-		else if (msgstatus[0])
-			message = g_strdup_printf("%s %s", _("%s has changed status message to:"), msgstatus);
-		else
-			message = g_strdup(_("%s has removed his status message."));
-		write_status(buddy, message);
-		g_free(message);
+			write_status(buddy, _("%s has gone away."));
 	}
 }
 

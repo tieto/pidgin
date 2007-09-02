@@ -31,14 +31,6 @@
 #include "prefs.h"
 #include "util.h"
 
-#ifdef HAVE_DBUS
-#  define DBUS_API_SUBJECT_TO_CHANGE
-#  include <dbus/dbus.h>
-#  include "dbus-purple.h"
-#  include "dbus-server.h"
-#  include "dbus-bindings.h"
-#endif
-
 struct _PurpleUtilFetchUrlData
 {
 	PurpleUtilFetchUrlCallback callback;
@@ -2541,24 +2533,6 @@ int purple_build_dir (const char *path, int mode)
 #endif
 }
 
-static gboolean
-write_dbus_file(const char *filename, const char *data, size_t size)
-{
-	DBusConnection *dbus_connection = NULL;
-	DBusMessage *msg = NULL;
-	if ((dbus_connection = purple_dbus_get_connection()) == NULL)
-		return FALSE;
-	msg = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE,
-				DBUS_INTERFACE_PURPLE, "PurpleUtilWriteDataToFile");
-	if (msg == NULL)
-		return NULL;
-
-	dbus_message_append_args(msg, DBUS_TYPE_STRING, filename, DBUS_TYPE_STRING, data,
-			DBUS_TYPE_UINT32, size, DBUS_TYPE_INVALID);
-	dbus_connection_send(dbus_connection, msg, NULL);
-	return TRUE;
-}
-
 /*
  * This function is long and beautiful, like my--um, yeah.  Anyway,
  * it includes lots of error checking so as we don't overwrite
@@ -2572,12 +2546,7 @@ purple_util_write_data_to_file(const char *filename, const char *data, gssize si
 	gboolean ret = FALSE;
 
 	g_return_val_if_fail(user_dir != NULL, FALSE);
-#if 0
-	if (!purple_dbus_is_owner()) {
-		if (write_dbus_file(filename, data, size))
-			return TRUE;
-	}
-#endif
+
 	purple_debug_info("util", "Writing file %s to directory %s\n",
 					filename, user_dir);
 
@@ -2615,7 +2584,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	filename_temp = g_strdup_printf("%s.save", filename_full);
 
 	/* Remove an old temporary file, if one exists */
-	if (g_file_test(filename_temp, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR))
+	if (g_file_test(filename_temp, G_FILE_TEST_EXISTS))
 	{
 		if (g_unlink(filename_temp) == -1)
 		{

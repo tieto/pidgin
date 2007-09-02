@@ -106,12 +106,12 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 	node = node->parent;
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node));
 
+	pref = purple_prefs_get_string(PREF_PATH);
 	switch (purple_blist_node_get_int(node, "autoaccept"))
 	{
 		case FT_ASK:
 			break;
 		case FT_ACCEPT:
-			pref = purple_prefs_get_string(PREF_PATH);
 			if (ensure_path_exists(pref))
 			{
 				dirname = g_build_filename(pref, xfer->who, NULL);

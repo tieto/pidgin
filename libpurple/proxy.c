@@ -329,7 +329,6 @@ purple_proxy_connect_data_disconnect(PurpleProxyConnectData *connect_data, const
 
 	if (connect_data->fd >= 0)
 	{
-		g_printerr("XXX: closing %d\n", connect_data->fd);
 		close(connect_data->fd);
 		connect_data->fd = -1;
 	}

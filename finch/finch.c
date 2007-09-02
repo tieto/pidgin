@@ -171,20 +171,12 @@ static guint gnt_input_add(gint fd, PurpleInputCondition condition, PurpleInputF
 	return closure->result;
 }
 
-static gboolean
-gnt_input_remove(guint tag)
-{
-	if ((gint)tag <= 0)
-		return FALSE;
-	return g_source_remove(tag);
-}
-
 static PurpleEventLoopUiOps eventloop_ops =
 {
 	g_timeout_add,
 	g_source_remove,
 	gnt_input_add,
-	gnt_input_remove,
+	g_source_remove,
 	NULL, /* input_get_error */
 #if GLIB_CHECK_VERSION(2,14,0)
 	g_timeout_add_seconds,

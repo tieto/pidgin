@@ -21,6 +21,9 @@
  *
  */
 
+/* XXX: we probably shouldn't include internal.h in examples */
+#include "internal.h"
+
 #include "account.h"
 #include "conversation.h"
 #include "core.h"

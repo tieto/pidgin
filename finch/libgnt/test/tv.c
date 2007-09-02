@@ -7,28 +7,6 @@
 #include "gnttextview.h"
 #include "gntutils.h"
 
-static test()
-{
-    GntWidget *win;
-    GntWidget *tv;
-    GntWidget *entry;
-
-    win = gnt_window_box_new(FALSE, TRUE);
-    tv = gnt_text_view_new();
-    gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv), "line1\nline2\nline3\n", GNT_TEXT_FLAG_NORMAL);
-    gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(tv),"line4\n\nline5\n\nline6\n\n",
-GNT_TEXT_FLAG_NORMAL);
-
-    gnt_text_view_scroll(GNT_TEXT_VIEW(tv), 10);
-    gnt_box_add_widget(GNT_BOX(win), tv);
-
-    entry = gnt_entry_new("");
-    gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(tv),entry);
-    gnt_box_add_widget(GNT_BOX(win), entry);
-
-    gnt_widget_show(win);
-}
-
 static gboolean
 key_pressed(GntWidget *w, const char *key, GntWidget *view)
 {
@@ -140,38 +118,7 @@ int main()
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "plugins: ", GNT_TEXT_FLAG_BOLD);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "this is the 4th line\n", GNT_TEXT_FLAG_NORMAL);
 
-	gnt_util_parse_xhtml_to_textview("<p><b>Ohoy hoy!!</b><br/><p>I think this is going to</p> <u> WORK!!! </u><a href='www.google.com'><b>check this out!!</b></a></p>", GNT_TEXT_VIEW(view));
-
-	gnt_util_parse_xhtml_to_textview("<html>\
-  <head>\
-    <meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">\
-    <title>Conversation with user@gmail.com at Sun Jun  3 14:58:54 2007 on aluink@gmail.com/Gaim (jabber)</title>\
-  </head>\
-  <body>\
-    <h3>Conversation with user@gmail.com at Sun Jun  3 14:58:54 2007 on aluink@gmail.com/Gaim (jabber)</h3>\
-    <font color=\"#A82F2F\">\
-      <font size=\"2\">(14:58:54)</font>\
-      <b>user@gmail.com:</b>\
-    </font>\
-\
-\
-\
-    <html xmlns='http://jabber.org/protocol/xhtml-im'>\
-      <body xmlns='http://www.w3.org/1999/xhtml'>Some message from user\
-      </body>\
-    </html><br/>\
-\
-\
-\
-    <font color=\"#16569E\">\
-      <font size=\"2\">(15:03:19)</font> \
-      <b>aluink:</b>\
-    </font> Some more stuff from me<br/>                               \
-  </body>\
-</html>", GNT_TEXT_VIEW(view));
-
-
-test();
+	gnt_util_parse_xhtml_to_textview("<p><b>Ohoy hoy!!</b><br/><p>I think this is going to</p> <u> WORK!!! </u><a href='www.google.com'>check this out!!</a></p>", GNT_TEXT_VIEW(view));
 
 #ifdef STANDALONE
 	gnt_main();

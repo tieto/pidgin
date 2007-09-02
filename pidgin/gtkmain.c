@@ -877,11 +877,3 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-
-#undef g_file_test
-gboolean my_g_file_test(const char *file, int test)
-{
-	g_printerr("XXX: checking for %s (%d)\n", file, test);
-	return g_file_test(file, test);
-}
-
