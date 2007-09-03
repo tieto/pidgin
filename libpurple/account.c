@@ -1720,15 +1720,6 @@ const char *
 purple_account_get_protocol_id(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);
-	/*
-	 * HACK by Seanegan
-	 */
-	if (!strcmp(account->protocol_id, "prpl-oscar")) {
-		if (isdigit(account->username[0]))
-			return "prpl-icq";
-		else
-			return "prpl-aim";
-	}
 	return account->protocol_id;
 }
 
