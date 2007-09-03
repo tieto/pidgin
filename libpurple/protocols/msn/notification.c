@@ -669,7 +669,6 @@ msn_notification_dump_contact(MsnSession *session)
 	int adl_count = 0;
 	const char *display_name;
 
-	purple_debug_info("::","msn_notification_dump_contact()\n");
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
 	xmlnode_set_attrib(adl_node, "l", "1");
@@ -968,8 +967,6 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	gint group_id;
 	const char *group_name;
 
-	purple_debug_info("::","adg_cmd()\n");
-	
 	session = cmdproc->session;
 
 	group_id = atoi(cmd->params[3]);
@@ -1679,7 +1676,6 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	const char *value;
 	const char *clLastChange;
 
-	purple_debug_info("::","profile_msg()\n");
 	session = cmdproc->session;
 
 	if (strcmp(msg->remote_user, "Hotmail"))
@@ -1864,7 +1860,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 static void
 delete_oim_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
-	purple_debug_info("::","delete_oim_msg()\n");
+	purple_debug_misc("MSN Notification","Delete OIM message.\n");
 }
 
 static void
@@ -1976,7 +1972,7 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 	xmlnode *adl_node;
 	char *payload;
 	int payload_len;
-	purple_debug_info("::","msn_notification_add_buddy()\n");
+
 	cmdproc = notification->servconn->cmdproc;
 
 	adl_node = xmlnode_new("ml");

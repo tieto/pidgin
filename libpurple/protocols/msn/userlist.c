@@ -845,8 +845,6 @@ msn_userlist_load(MsnSession *session)
 	GSList *l;
 	MsnUser * user;
 
-	purple_debug_info("::","msn_userlist_load()\n");
-
 	g_return_if_fail(gc != NULL);
 
 	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next)

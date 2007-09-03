@@ -1162,8 +1162,6 @@ msn_add_permit(PurpleConnection *gc, const char *who)
 	userlist = session->userlist;
 	user = msn_userlist_find_user(userlist, who);
 
-	purple_debug_info("MSN", "msn_add_permit()\n");
-
 	if (!session->logged_in)
 		return;
 
@@ -1192,8 +1190,6 @@ msn_add_deny(PurpleConnection *gc, const char *who)
 	userlist = session->userlist;
 	user = msn_userlist_find_user(userlist, who);
 
-	purple_debug_info("MSN", "msn_add_deny()\n");
-	
 	if (!session->logged_in)
 		return;
 
@@ -1220,8 +1216,6 @@ msn_rem_permit(PurpleConnection *gc, const char *who)
 	session = gc->proto_data;
 	userlist = session->userlist;
 
-	purple_debug_info("MSN", "msn_rem_permit()\n");
-
 	if (!session->logged_in)
 		return;
 
@@ -1244,8 +1238,6 @@ msn_rem_deny(PurpleConnection *gc, const char *who)
 
 	session = gc->proto_data;
 	userlist = session->userlist;
-
-	purple_debug_info("MSN", "msn_rem_deny()\n");
 
 	if (!session->logged_in)
 		return;
