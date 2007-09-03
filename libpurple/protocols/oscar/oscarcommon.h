@@ -30,7 +30,7 @@
 #include "version.h"
 #include "notify.h"
 
-#define OSCAR_DEFAULT_LOGIN_SERVER "login.oscar.aol.com"
+#define OSCAR_DEFAULT_LOGIN_SERVER "login.messaging.aol.com"
 #define OSCAR_DEFAULT_LOGIN_PORT 5190
 #ifndef _WIN32
 #define OSCAR_DEFAULT_CUSTOM_ENCODING "ISO-8859-1"
