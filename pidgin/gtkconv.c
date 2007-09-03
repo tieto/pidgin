@@ -2560,7 +2560,6 @@ remove_icon(GtkWidget *widget, PidginConversation *gtkconv)
 	gtkconv->u.im->show_icon = FALSE;
 
 	gtkwin = gtkconv->win;
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.show_icon), FALSE);
 }
 
 static void
@@ -2952,31 +2951,6 @@ sound_method_pref_changed_cb(const char *name, PurplePrefType type,
 	}
 }
 
-static void
-show_buddy_icons_pref_changed_cb(const char *name, PurplePrefType type,
-								 gconstpointer value, gpointer data)
-{
-	PidginWindow *win = data;
-	gboolean show_icons = GPOINTER_TO_INT(value);
-
-	if (!show_icons)
-	{
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_icon),
-		                               FALSE);
-		gtk_widget_set_sensitive(win->menu.show_icon, FALSE);
-	}
-	else
-	{
-		PidginConversation *gtkconv = pidgin_conv_window_get_active_gtkconv(win);
-
-		if (gtkconv != NULL)
-			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_icon),
-			                               TRUE);
-		gtk_widget_set_sensitive(win->menu.show_icon, TRUE);
-
-	}
-}
-
 /* Returns TRUE if some items were added to the menu, FALSE otherwise */
 static gboolean
 populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolean all)
@@ -3273,17 +3247,7 @@ setup_menubar(PidginWindow *win)
 	win->menu.show_timestamps =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Options/Show Timestamps"));
-	win->menu.show_icon =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Options/Show Buddy Icon"));
-	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons"))
-	{
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_icon),
-		                               FALSE);
-		gtk_widget_set_sensitive(win->menu.show_icon, FALSE);
-	}
-	purple_prefs_connect_callback(win, PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons",
-				    show_buddy_icons_pref_changed_cb, win);
+	win->menu.show_icon = NULL;
 
 	win->menu.tray = pidgin_menu_tray_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(win->menu.menubar),
@@ -6241,7 +6205,6 @@ gray_stuff_out(PidginConversation *gtkconv)
 
 		gtk_widget_show(win->menu.insert_link);
 		gtk_widget_show(win->menu.insert_image);
-		gtk_widget_show(win->menu.show_icon);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		/* Show stuff that applies to Chats, hide stuff that applies to IMs */
 
@@ -6254,7 +6217,6 @@ gray_stuff_out(PidginConversation *gtkconv)
 		gtk_widget_show(win->menu.alias);
 		gtk_widget_hide(win->menu.block);
 		gtk_widget_hide(win->menu.unblock);
-		gtk_widget_hide(win->menu.show_icon);
 
 		if ((account == NULL) || purple_blist_find_chat(account, purple_conversation_get_name(conv)) == NULL) {
 			/* If the chat is NOT in the buddy list */
@@ -8545,13 +8507,6 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_timestamps),
 	                               purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps"));
-
-	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
-	    purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons"))
-	{
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_icon),
-		                               gtkconv->u.im->show_icon);
-	}
 
 	/*
 	 * We pause icons when they are not visible.  If this icon should
