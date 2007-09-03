@@ -373,17 +373,19 @@ void bonjour_jabber_stream_ended(PurpleBuddy *pb) {
 
 	g_return_if_fail(bb != NULL);
 
-	/* Close the socket, clear the watcher and free memory */
-	bonjour_jabber_close_conversation(bb->conversation);
-	bb->conversation = NULL;
-
 	/* Inform the user that the conversation has been closed */
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pb->name, pb->account);
-	if (conv != NULL) {
-		char *tmp = g_strdup_printf(_("%s has closed the conversation."), pb->name);
-		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
-		g_free(tmp);
+	if (bb->conversation != NULL) {
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pb->name, pb->account);
+		if (conv != NULL) {
+			char *tmp = g_strdup_printf(_("%s has closed the conversation."), pb->name);
+			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			g_free(tmp);
+		}
+		/* Close the socket, clear the watcher and free memory */
+		bonjour_jabber_close_conversation(bb->conversation);
+		bb->conversation = NULL;
 	}
+
 }
 
 void bonjour_jabber_stream_started(PurpleBuddy *pb) {

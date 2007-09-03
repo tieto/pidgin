@@ -79,23 +79,23 @@ _mdns_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags flags,
 	uint32_t ttl, void *context)
 {
 
-	if (kDNSServiceErr_NoError != errorCode)
+	if (kDNSServiceErr_NoError != errorCode) {
 		purple_debug_error("bonjour", "record query - callback error.\n");
-	else if (flags & kDNSServiceFlagsAdd)
-	{
+		/* TODO: Probably should remove the buddy when this happens */
+	} else if (flags & kDNSServiceFlagsAdd) {
 		if (rrtype == kDNSServiceType_TXT) {
 			/* New Buddy */
-			BonjourBuddy *buddy = (BonjourBuddy*) context;
-			_mdns_parse_text_record(buddy, rdata, rdlen);
-			bonjour_buddy_add_to_purple(buddy);
+			BonjourBuddy *bb = (BonjourBuddy*) context;
+			_mdns_parse_text_record(bb, rdata, rdlen);
+			bonjour_buddy_add_to_purple(bb, NULL);
 		} else if (rrtype == kDNSServiceType_NULL) {
 			/* Buddy Icon response */
-			BonjourBuddy *buddy = (BonjourBuddy*) context;
-			Win32BuddyImplData *idata = buddy->mdns_impl_data;
+			BonjourBuddy *bb = (BonjourBuddy*) context;
+			Win32BuddyImplData *idata = bb->mdns_impl_data;
 
 			g_return_if_fail(idata != NULL);
 
-			bonjour_buddy_got_buddy_icon(buddy, rdata, rdlen);
+			bonjour_buddy_got_buddy_icon(bb, rdata, rdlen);
 
 			/* We've got what we need; stop listening */
 			purple_input_remove(idata->null_query_handler);
@@ -110,32 +110,34 @@ static void
 _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_message)
 {
 	ResolveCallbackArgs* args = (ResolveCallbackArgs*)data;
+	BonjourBuddy* bb = args->buddy;
 
-	if (!hosts || !hosts->data)
+	if (!hosts || !hosts->data) {
 		purple_debug_error("bonjour", "host resolution - callback error.\n");
-	else {
+		bonjour_buddy_delete(bb);
+	} else {
 		struct sockaddr_in *addr = (struct sockaddr_in*)g_slist_nth_data(hosts, 1);
-		BonjourBuddy* buddy = args->buddy;
-		Win32BuddyImplData *idata = buddy->mdns_impl_data;
+		Win32BuddyImplData *idata = bb->mdns_impl_data;
 
 		g_return_if_fail(idata != NULL);
 
-		buddy->ip = g_strdup(inet_ntoa(addr->sin_addr));
+		g_free(bb->ip);
+		bb->ip = g_strdup(inet_ntoa(addr->sin_addr));
 
 		/* finally, set up the continuous txt record watcher, and add the buddy to purple */
 
 		if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&idata->txt_query, kDNSServiceFlagsLongLivedQuery,
 				kDNSServiceInterfaceIndexAny, args->full_service_name, kDNSServiceType_TXT,
-				kDNSServiceClass_IN, _mdns_record_query_callback, buddy)) {
+				kDNSServiceClass_IN, _mdns_record_query_callback, bb)) {
 
-			purple_debug_info("bonjour", "Found buddy %s at %s:%d\n", buddy->name, buddy->ip, buddy->port_p2pj);
+			purple_debug_info("bonjour", "Found buddy %s at %s:%d\n", bb->name, bb->ip, bb->port_p2pj);
 
 			idata->txt_query_handler = purple_input_add(DNSServiceRefSockFD(idata->txt_query),
 				PURPLE_INPUT_READ, _mdns_handle_event, idata->txt_query);
 
-			bonjour_buddy_add_to_purple(buddy);
+			bonjour_buddy_add_to_purple(bb, NULL);
 		} else
-			bonjour_buddy_delete(buddy);
+			bonjour_buddy_delete(bb);
 
 	}
 
@@ -202,18 +204,19 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
     DNSServiceErrorType errorCode, const char *serviceName, const char *regtype, const char *replyDomain, void *context)
 {
 	PurpleAccount *account = (PurpleAccount*)context;
-	PurpleBuddy *gb = NULL;
+	PurpleBuddy *pb = NULL;
 
 	if (kDNSServiceErr_NoError != errorCode)
 		purple_debug_error("bonjour", "service browser - callback error");
 	else if (flags & kDNSServiceFlagsAdd) {
 		/* A presence service instance has been discovered... check it isn't us! */
-		if (g_ascii_strcasecmp(serviceName, account->username) != 0) {
+		if (purple_utf8_strcasecmp(serviceName, account->username) != 0) {
 			/* OK, lets go ahead and resolve it to add to the buddy list */
 			ResolveCallbackArgs *args = g_new0(ResolveCallbackArgs, 1);
 			args->buddy = bonjour_buddy_new(serviceName, account);
 
-			if (kDNSServiceErr_NoError != DNSServiceResolve(&args->resolver, 0, 0, serviceName, regtype, replyDomain, _mdns_service_resolve_callback, args)) {
+			if (kDNSServiceErr_NoError != DNSServiceResolve(&args->resolver, 0, 0, serviceName, regtype,
+					replyDomain, _mdns_service_resolve_callback, args)) {
 				bonjour_buddy_delete(args->buddy);
 				g_free(args);
 				purple_debug_error("bonjour", "service browser - failed to resolve service.\n");
@@ -226,11 +229,9 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 	} else {
 		/* A peer has sent a goodbye packet, remove them from the buddy list */
 		purple_debug_info("bonjour", "service browser - remove notification\n");
-		gb = purple_find_buddy(account, serviceName);
-		if (gb != NULL) {
-			bonjour_buddy_delete(gb->proto_data);
-			purple_blist_remove_buddy(gb);
-		}
+		pb = purple_find_buddy(account, serviceName);
+		if (pb != NULL)
+			purple_blist_remove_buddy(pb);
 	}
 }
 

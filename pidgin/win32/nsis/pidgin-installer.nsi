@@ -693,6 +693,8 @@ Section Uninstall
     ; Remove Language preference info (TODO: check if NSIS removes this)
 
     Delete "$INSTDIR\ca-certs\Equifax_Secure_CA.pem"
+    Delete "$INSTDIR\ca-certs\GTE_CyberTrust_Global_Root.pem"
+    Delete "$INSTDIR\ca-certs\Verisign_Class3_Primary_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_RSA_Secure_Server_CA.pem"
     RMDir "$INSTDIR\ca-certs"
     RMDir /r "$INSTDIR\locale"
