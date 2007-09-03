@@ -3035,8 +3035,12 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 		node = (PurpleBlistNode *)buddy;
 
 	/* Now add the stuff */
-	if (all && buddy) {
-		pidgin_blist_make_buddy_menu(menu, buddy, TRUE);
+	if (all) {
+		if (buddy)
+			pidgin_blist_make_buddy_menu(menu, buddy, TRUE);
+		else if (chat) {
+			/* XXX: */
+		}
 	} else if (node) {
 		if (purple_account_is_connected(conv->account))
 			pidgin_append_blist_node_proto_menu(menu, conv->account->gc, node);
@@ -7017,7 +7021,8 @@ animate_buddy_icons_pref_cb(const char *name, PurplePrefType type,
 	for (l = purple_get_ims(); l != NULL; l = l->next) {
 		conv = (PurpleConversation *)l->data;
 		gtkconv = PIDGIN_CONVERSATION(conv);
-		gtkconv->u.im->animate = GPOINTER_TO_INT(value);
+		if (gtkconv)
+			gtkconv->u.im->animate = GPOINTER_TO_INT(value);
 	}
 
 	/* Now either stop or start animation for the active conversation in each window */
@@ -7036,6 +7041,8 @@ show_buddy_icons_pref_cb(const char *name, PurplePrefType type,
 
 	for (l = purple_get_conversations(); l != NULL; l = l->next) {
 		PurpleConversation *conv = l->data;
+		if (!PIDGIN_CONVERSATION(conv))
+			continue;
 		if (GPOINTER_TO_INT(value)) 
 			gtk_widget_show(PIDGIN_CONVERSATION(conv)->infopane_hbox);
 		else
@@ -7054,7 +7061,8 @@ show_protocol_icons_pref_cb(const char *name, PurplePrefType type,
 	GList *l;
 	for (l = purple_get_conversations(); l != NULL; l = l->next) {
 		PurpleConversation *conv = l->data;
-		update_tab_icon(conv);
+		if (PIDGIN_CONVERSATION(conv))
+			update_tab_icon(conv);
 	}
 }
 
