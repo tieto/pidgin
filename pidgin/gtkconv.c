@@ -8247,10 +8247,11 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 			gtk_window_get_size(GTK_WINDOW(dest_win->window),
 			                    &win_width, &win_height);
-
+#ifdef WIN32  /* only override window manager placement on Windows */
 			gtk_window_move(GTK_WINDOW(dest_win->window),
 			                e->x_root - (win_width  / 2),
 			                e->y_root - (win_height / 2));
+#endif
 
 			pidgin_conv_window_show(dest_win);
 		}
