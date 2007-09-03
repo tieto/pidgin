@@ -9,21 +9,25 @@ Version 2.2.0 (??/??/????):
 		* serv_send_attention(), serv_got_attention(), as well as send_attention 
 		  and attention_types in PurplePluginProtocolInfo. This new API is used
 		  for zapping in MySpaceIM, buzzing in Yahoo, and nudging in MSN.
+
 		Changed:
 		* purple_prefs_load is now called within purple_prefs_init.
 		  The UI no longer needs to call it.
+		* writing-im-msg now receives the conversation name as the who
+		  argument if the caller of purple_conversation_write didn't
+		  provide a value for who.
 
 	Pidgin:
-		Changed:
-		* pidgin_conversations_fill_menu now also adds a separator and a 'Show
-		  All' item if there are more than one conversations in the list.
-
 		Added:
 		* pidgin_set_accessible_relations, sets up label-for and labelled-by
 		  ATK relations (broken out from pidgin_set_accessible_label)
 		* pidgin_conv_attach_to_conversation, to reattach the Pidgin UI to a
 		  conversation
 		* conversation-hiding and conversation-displayed signals.
+
+		Changed:
+		* pidgin_conversations_fill_menu now also adds a separator and a 'Show
+		  All' item if there are more than one conversations in the list.
 
 	Finch:
 		Added:
