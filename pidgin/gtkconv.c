@@ -158,7 +158,6 @@ static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields
 static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
-static gboolean alias_double_click_cb(GtkWidget *widget, GdkEventButton *event, PidginConversation *gtkconv);
 static gboolean pidgin_userlist_motion_cb (GtkWidget *w, GdkEventMotion *event, PidginConversation *gtkconv);
 static void pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv);
 
@@ -2722,31 +2721,6 @@ icon_menu(GtkObject *obj, GdkEventButton *e, PidginConversation *gtkconv)
 	return TRUE;
 }
 
-static void
-menu_buddyicon_cb(gpointer data, guint action, GtkWidget *widget)
-{
-	PidginWindow *win = data;
-	PurpleConversation *conv;
-	PidginConversation *gtkconv;
-	gboolean active;
-
-	conv = pidgin_conv_window_get_active_conversation(win);
-
-	if (!conv)
-		return;
-
-	g_return_if_fail(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM);
-
-	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	active = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
-	gtkconv->u.im->show_icon = active;
-	if (active)
-		pidgin_conv_update_buddy_icon(conv);
-	else
-		remove_icon(NULL, gtkconv);
-}
-
 /**************************************************************************
  * End of the bunch of buddy icon functions
  **************************************************************************/
@@ -2939,7 +2913,6 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/_Options"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Options/Enable _Logging"), NULL, menu_logging_cb, 0, "<CheckItem>", NULL },
 	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>", NULL },
-	{ N_("/Options/Show Buddy _Icon"), NULL, menu_buddyicon_cb, 0, "<CheckItem>", NULL },
 	{ "/Options/sep0", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Options/Show Formatting _Toolbars"), NULL, menu_toolbar_cb, 0, "<CheckItem>", NULL },
 	{ N_("/Options/Show Ti_mestamps"), "F2", menu_timestamps_cb, 0, "<CheckItem>", NULL },
@@ -8513,19 +8486,6 @@ infopane_entry_activate(PidginConversation *gtkconv)
 	gtk_widget_grab_focus(entry);
 
 	return TRUE;
-}
-
-static gboolean
-alias_double_click_cb(GtkWidget *widget, GdkEventButton *event, PidginConversation *gtkconv)
-{
-	/* I'm keeping this around in case we decide to handle double-clicking tabs
-	 *  (or some other label) this way. */
-	if (event->button != 1 || event->type != GDK_2BUTTON_PRESS) {
-		return FALSE;
-	}
-	
-	infopane_entry_activate(gtkconv);
-	return FALSE;
 }
 
 static gboolean
