@@ -191,7 +191,7 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 						      fpr_bin, &fpr_bin_sz);
 		      
 		      fpr_asc =
-			purple_base16_encode_chunked(fpr_bin,fpr_bin_sz);
+			purple_base16_encode_chunked((guchar *)fpr_bin, fpr_bin_sz);
 		      
 		      purple_debug_info("gnutls", 
 					"Lvl %d SHA1 fingerprint: %s\n",
@@ -199,8 +199,7 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 		      
 		      tsz=sizeof(tbuf);
 		      gnutls_x509_crt_get_serial(cert,tbuf,&tsz);
-		      tasc=
-			purple_base16_encode_chunked(tbuf, tsz);
+		      tasc = purple_base16_encode_chunked((guchar *)tbuf, tsz);
 		      purple_debug_info("gnutls",
 					"Serial: %s\n",
 					tasc);
