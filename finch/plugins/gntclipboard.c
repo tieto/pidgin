@@ -38,10 +38,12 @@
 #include <plugin.h>
 #include <version.h>
 #include <debug.h>
+#include <notify.h>
 #include <gntwm.h>
 
 #include <gntplugin.h>
 
+#ifdef HAVE_X11
 static pid_t child = 0;
 
 static gulong sig_handle;
@@ -49,7 +51,6 @@ static gulong sig_handle;
 static void
 set_clip(gchar *string)
 {
-#ifdef HAVE_X11
 	Window w;
 	XEvent e, respond;
 	XSelectionRequestEvent *req;
@@ -89,14 +90,12 @@ set_clip(gchar *string)
 			return;
 		}
 	}
-#endif
 	return;
 }
 
 static void
 clipboard_changed(GntWM *wm, gchar *string)
 {
-#ifdef HAVE_X11
 	if (child) {
 		kill(child, SIGTERM);
 	}
@@ -104,8 +103,8 @@ clipboard_changed(GntWM *wm, gchar *string)
 		set_clip(string);
 		_exit(0);
 	}
-#endif
 }
+#endif
 
 static gboolean
 plugin_load(PurplePlugin *plugin)
@@ -113,25 +112,35 @@ plugin_load(PurplePlugin *plugin)
 #ifdef HAVE_X11
 	if (!XOpenDisplay(NULL)) {
 		purple_debug_warning("gntclipboard", "Couldn't find X display\n");
+		purple_notify_error(NULL, _("Error"), _("Error loading the plugin."),
+				_("Couldn't find X display"));
 		return FALSE;
 	}
-#endif
 	if (!getenv("WINDOWID")) {
 		purple_debug_warning("gntclipboard", "Couldn't find window\n");
+		purple_notify_error(NULL, _("Error"), _("Error loading the plugin."),
+				_("Couldn't find window"));
 		return FALSE;
 	}
 	sig_handle = g_signal_connect(G_OBJECT(gnt_get_clipboard()), "clipboard_changed", G_CALLBACK(clipboard_changed), NULL);
 	return TRUE;
+#else
+	purple_notify_error(NULL, _("Error"), _("Error loading the plugin."),
+			_("This plugin cannot be loaded because it was not built with X11 support."));
+	return FALSE;
+#endif
 }
 
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
+#ifdef HAVE_X11
 	if (child) {
 		kill(child, SIGTERM);
 		child = 0;
 	}
 	g_signal_handler_disconnect(G_OBJECT(gnt_get_clipboard()), sig_handle);
+#endif
 	return TRUE;
 }
 
