@@ -9116,7 +9116,7 @@ conv_placement_last_created_win(PidginConversation *conv)
 
 /* This one places conversations in the last made window of the same type. */
 static gboolean
-conv_placement_last_created_win_type_configured_cb(GtkWidget *w,
+conv_placement_new_window_by_type_configured_cb(GtkWidget *w,
 		GdkEventConfigure *event, PidginConversation *conv)
 {
 	int x, y;	
@@ -9163,6 +9163,34 @@ conv_placement_last_created_win_type_configured_cb(GtkWidget *w,
 }
 
 static void
+conv_placement_new_window_by_type(PidginConversation *conv)
+{
+	PidginWindow *win = pidgin_conv_window_new();
+
+	if (purple_conversation_get_type(conv->active_conv) ==
+			PURPLE_CONV_TYPE_IM ||
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/width") == 0) {
+		pidgin_conv_set_position_size(win,
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/x"),
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/y"),
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/width"),
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/height"));
+	} else if (PURPLE_CONV_TYPE_CHAT == purple_conversation_get_type(conv->active_conv)) {
+		pidgin_conv_set_position_size(win,
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/x"),
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/y"),
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/width"),
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/height"));
+	}
+				
+	pidgin_conv_window_add_gtkconv(win, conv);
+	pidgin_conv_window_show(win);
+
+	g_signal_connect(G_OBJECT(win->window), "configure_event", 
+			G_CALLBACK(conv_placement_new_window_by_type_configured_cb), conv);
+}
+
+static void
 conv_placement_last_created_win_type(PidginConversation *conv)
 {
 	PidginWindow *win;
@@ -9170,28 +9198,7 @@ conv_placement_last_created_win_type(PidginConversation *conv)
 	win = pidgin_conv_window_last_with_type(purple_conversation_get_type(conv->active_conv));
 
 	if (win == NULL) {
-		win = pidgin_conv_window_new();
-
-		if (PURPLE_CONV_TYPE_IM == purple_conversation_get_type(conv->active_conv) ||
-				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/width") == 0) {
-			pidgin_conv_set_position_size(win,
-				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/x"),
-				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/y"),
-				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/width"),
-				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/height"));
-		} else if (PURPLE_CONV_TYPE_CHAT == purple_conversation_get_type(conv->active_conv)) {
-			pidgin_conv_set_position_size(win,
-				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/x"),
-				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/y"),
-				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/width"),
-				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/height"));
-		}
-				
-		pidgin_conv_window_add_gtkconv(win, conv);
-		pidgin_conv_window_show(win);
-
-		g_signal_connect(G_OBJECT(win->window), "configure_event", 
-				G_CALLBACK(conv_placement_last_created_win_type_configured_cb), conv);
+		conv_placement_new_window_by_type(conv);
 	} else
 		pidgin_conv_window_add_gtkconv(win, conv);
 }
@@ -9355,7 +9362,7 @@ ensure_default_funcs(void)
 		add_conv_placement_fnc("im_chat", _("Separate IM and Chat windows"),
 		                       conv_placement_last_created_win_type);
 		add_conv_placement_fnc("new", _("New window"),
-		                       conv_placement_new_window);
+		                       conv_placement_new_window_by_type);
 		add_conv_placement_fnc("group", _("By group"),
 		                       conv_placement_by_group);
 		add_conv_placement_fnc("account", _("By account"),
@@ -9463,7 +9470,7 @@ pidgin_conv_placement_place(PidginConversation *gtkconv)
 	if (place_conv)
 		place_conv(gtkconv);
 	else
-		conv_placement_new_window(gtkconv);
+		conv_placement_new_window_by_type(gtkconv);
 }
 
 gboolean

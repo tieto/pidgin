@@ -86,6 +86,8 @@ static SnLauncheeContext *sn_context = NULL;
 static SnDisplay *sn_display = NULL;
 #endif
 
+#include "/home/khc/Code/scratch/memory_profile.c"
+
 #ifdef HAVE_SIGNAL_H
 
 /*
@@ -100,6 +102,7 @@ static int catch_sig_list[] = {
 	SIGQUIT,
 	SIGCHLD,
 	SIGALRM,
+	SIGUSR2,
 	-1
 };
 
@@ -214,6 +217,9 @@ sighandler(int sig)
 		break;
 	case SIGALRM:
 		clean_pid();
+		break;
+	case SIGUSR2:
+		mp_tally();
 		break;
 	default:
 		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
@@ -483,6 +489,9 @@ int main(int argc, char *argv[])
 		{"version",  no_argument,       NULL, 'v'},
 		{0, 0, 0, 0}
 	};
+
+	//g_mem_set_vtable(&memhook);
+	//mp_init();
 
 #ifdef DEBUG
 	debug_enabled = TRUE;
