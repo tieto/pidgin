@@ -14,6 +14,10 @@ Version 2.2.0 (??/??/????):
 		  The UI no longer needs to call it.
 
 	Pidgin:
+		Changed:
+		* pidgin_conversations_fill_menu now also adds a separator and a 'Show
+		  All' item if there are more than one conversations in the list.
+
 		Added:
 		* pidgin_set_accessible_relations, sets up label-for and labelled-by
 		  ATK relations (broken out from pidgin_set_accessible_label)
