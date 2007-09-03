@@ -634,6 +634,8 @@ msn_soap_request_free(MsnSoapReq *request)
 void
 msn_soap_post_head_request(MsnSoapConn *soapconn)
 {
+	purple_debug_info("MSN SOAP", "Posting new request from head of the queue\n");
+	
 	g_return_if_fail(soapconn->soap_queue != NULL);
 
 	if(!g_queue_is_empty(soapconn->soap_queue)){
@@ -641,8 +643,10 @@ msn_soap_post_head_request(MsnSoapConn *soapconn)
 		if((request = g_queue_pop_head(soapconn->soap_queue)) != NULL){
 			msn_soap_post_request(soapconn,request);
 		}
+	} else {
+		purple_debug_info("MSN SOAP", "No requests to process found.\n");
+		msn_soap_set_process_step(soapconn,MSN_SOAP_CONNECTED_IDLE);
 	}
-	msn_soap_set_process_step(soapconn,MSN_SOAP_CONNECTED_IDLE);
 }
 
 /*post the soap request ,
@@ -670,11 +674,9 @@ msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,
 	 * we just waiting...
 	 * If we send the request this time,error may occure
 	 */
-#if 0
-	if(soapconn->step == MSN_SOAP_CONNECTED_IDLE){
+	if (soapconn->step == MSN_SOAP_CONNECTED_IDLE){
 		msn_soap_post_head_request(soapconn);
 	}
-#endif
 }
 
 /*Post the soap request action*/
@@ -690,7 +692,7 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 	purple_debug_misc("MSN SOAP","msn_soap_post_request()\n");
 #endif
 
-	msn_soap_set_process_step(soapconn,MSN_SOAP_PROCESSING);
+	msn_soap_set_process_step(soapconn, MSN_SOAP_PROCESSING);
 	soap_head = g_strdup_printf(
 					"POST %s HTTP/1.1\r\n"
 					"SOAPAction: %s\r\n"
