@@ -6,7 +6,7 @@
 * Support myim:sendIM and addContact URLs with cID and uID parameters.
 * Fix #2722, only check for mail if "New mail notifications" is enabled.
 * Modularize msimprpl.
-
+* Pidgin 2.1.1 only.
 
 2007-08-23 Jeff Connelly <pidgin@xyzzy.cjb.net> - 0.16
 * Add option to add all friends from myspace.com to your buddy list (#2660)
