@@ -1444,7 +1444,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 
 	/* If a local alias wasn't set, set it to user's username. */
 	if (!session->account->alias || !strlen(session->account->alias))
-		session->account->alias = session->username;
+		purple_account_set_alias(session->account, session->username);
 
 	/* The session is now set up, ready to be connected. This emits the
 	 * signedOn signal, so clients can now do anything with msimprpl, and
