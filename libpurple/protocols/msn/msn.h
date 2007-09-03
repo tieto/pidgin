@@ -32,7 +32,7 @@
 /* #define MSN_DEBUG_SLP_VERBOSE 1 */
 /* #define MSN_DEBUG_SLP_FILES 1 */
 
-/* #define MSN_DEBUG_NS 1 */
+#define MSN_DEBUG_NS 1
 /* #define MSN_DEBUG_SB 1 */
 
 #include "internal.h"

@@ -43,9 +43,15 @@ msn_accept_add_cb(gpointer data)
 	MsnPermitAdd *pa = data;
 	MsnSession *session = pa->gc->proto_data;
 	MsnUserList *userlist = session->userlist;
+	MsnUser *user = msn_userlist_find_add_user(userlist, pa->who, pa->who);
 	
+	purple_debug_misc("MSN Userlist", "Accepted the new buddy: %s\n", pa->who);
+
 	msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_AL);
-	msn_userlist_add_buddy(userlist, pa->who, NULL);
+
+	if (msn_userlist_user_is_in_list(user, MSN_LIST_FL)) {
+		msn_del_contact_from_list(session->contact, NULL, pa->who, MSN_LIST_PL);
+	}
 
 	g_free(pa->who);
 	g_free(pa->friendly);
@@ -57,12 +63,18 @@ msn_cancel_add_cb(gpointer data)
 {
 	MsnPermitAdd *pa = data;
 
+	purple_debug_misc("MSN Userlist", "Deniedthe new buddy: %s\n", pa->who);
+
 	if (g_list_find(purple_connections_get_all(), pa->gc) != NULL)
 	{
 		MsnSession *session = pa->gc->proto_data;
 		MsnUserList *userlist = session->userlist;
+		MsnCallbackState *state = msn_callback_state_new();
+	
+		msn_callback_state_set_action(state, MSN_DENIED_BUDDY);
 
 		msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_BL);
+		msn_del_contact_from_list(session->contact, state, pa->who, MSN_LIST_PL);
 	}
 
 	g_free(pa->who);
@@ -90,7 +102,7 @@ got_new_entry(PurpleConnection *gc, const char *passport, const char *friendly)
  * Utility functions
  **************************************************************************/
 
-static gboolean
+gboolean
 msn_userlist_user_is_in_group(MsnUser *user, const char * group_id)
 {
 	if (user == NULL)
@@ -105,7 +117,7 @@ msn_userlist_user_is_in_group(MsnUser *user, const char * group_id)
 	return FALSE;
 }
 
-static gboolean
+gboolean
 msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id)
 {
 	int list_op;
@@ -327,6 +339,8 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 
 	passport = msn_user_get_passport(user);
 	store = msn_user_get_store_name(user);
+	
+	msn_user_set_op(user, list_op);
 
 	if (list_op & MSN_LIST_FL_OP)
 	{
@@ -377,8 +391,6 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	{
 		got_new_entry(gc, passport, store);
 	}
-
-	user->list_op |= list_op;
 }
 
 /**************************************************************************
@@ -609,7 +621,8 @@ msn_userlist_rem_buddy_from_list(MsnUserList *userlist, const char *who,
 {
 	MsnUser *user;
 	const gchar *list;
-	
+	MsnListOp list_op = 1 << list_id;
+
 	user = msn_userlist_find_user(userlist, who);
 	
 	g_return_if_fail(user != NULL);
@@ -619,14 +632,15 @@ msn_userlist_rem_buddy_from_list(MsnUserList *userlist, const char *who,
 		purple_debug_info("MSN Userlist", "User %s is not in list %s, not removing.\n", who, list);
 		return;
 	}
-	
+
+	msn_user_unset_op(user, list_op);
+
 	msn_notification_rem_buddy_from_list(userlist->session->notification, list_id, who);
 }
 
 /*add buddy*/
 void
-msn_userlist_add_buddy(MsnUserList *userlist, const char *who, 
-					      const char *group_name)
+msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group_name)
 {
 	MsnUser *user;
 	MsnCallbackState *state = NULL;

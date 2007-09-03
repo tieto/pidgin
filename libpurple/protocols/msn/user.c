@@ -218,6 +218,14 @@ msn_user_set_op(MsnUser *user, int list_op)
 }
 
 void
+msn_user_unset_op(MsnUser *user, int list_op)
+{
+	g_return_if_fail(user != NULL);
+	
+	user->list_op &= ~list_op;
+}
+
+void
 msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img)
 {
 	MsnObject *msnobj = msn_user_get_object(user);

@@ -40,6 +40,7 @@ typedef enum
 
 } MsnListId;
 
+
 struct _MsnUserList
 {
 	MsnSession *session;
@@ -58,6 +59,8 @@ struct _MsnUserList
 
 };
 
+gboolean msn_userlist_user_is_in_group(MsnUser *user, const char * group_id);
+gboolean msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id);
 MsnListId msn_get_list_id(const char *list);
 
 void msn_got_add_user(MsnSession *session, MsnUser *user,
@@ -89,7 +92,8 @@ void msn_userlist_rename_group_id(MsnUserList *userlist, const char *group_id,
 void msn_userlist_remove_group_id(MsnUserList *userlist, const char *group_id);
 
 void msn_userlist_rem_buddy(MsnUserList *userlist, const char *who);
-void msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group_name);
+void msn_userlist_add_buddy(MsnUserList *userlist, 
+			    const char *who, const char *group_name);
 void msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 						    const char *old_group_name,
 						    const char *new_group_name);

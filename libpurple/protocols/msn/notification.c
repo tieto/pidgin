@@ -1277,6 +1277,7 @@ reg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	g_strfreev(params);
 }
 
+#if 0
 static void
 rem_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -1302,6 +1303,7 @@ rem_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	msn_got_rem_user(session, user, list_id, group_id);
 	msn_user_update(user);
 }
+#endif
 
 static void
 rmg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
@@ -1330,6 +1332,7 @@ rmg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	g_strfreev(params);
 }
 
+#if 0
 static void
 syn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -1360,6 +1363,7 @@ syn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	session->sync = sync;
 	cmdproc->cbs_table = sync->cbs_table;
 }
+#endif
 
 /**************************************************************************
  * Misc commands

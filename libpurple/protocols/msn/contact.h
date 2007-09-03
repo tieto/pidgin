@@ -252,15 +252,90 @@
 
 /* block means delete from allow list and add contact to block list */
 #define MSN_SHARE_POST_URL		"/abservice/SharingService.asmx"
+
 #define MSN_CONTACT_BLOCK_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/AddMember"
+#define MSN_ADD_MEMBER_TO_LIST_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/AddMember"
+
+#define MSN_MEMBER_PASSPORT_XML	"<Member xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"PassportMember\">"\
+					"<Type>Passport</Type>"\
+					"<State>Accepted</State>"\
+					"<PassportName>%s</PassportName>"\
+				"</Member>"
+
+#define MSN_MEMBER_MEMBERSHIPID_XML	"<Member xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"PassportMember\">"\
+						"<Type>Passport</Type>"\
+						"<MembershipId>%u</MembershipId>"\
+						"<State>Accepted</State>"\
+					"</Member>"
 
 /* first delete contact from allow list */
-#define MSN_CONTACT_DELECT_FROM_ALLOW_TEMPLATE "<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>BlockUnblock</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest></ABAuthHeader></soap:Header><soap:Body><DeleteMember xmlns=\"http://www.msn.com/webservices/AddressBook\"><serviceHandle><Id>0</Id><Type>Messenger</Type><ForeignId></ForeignId></serviceHandle><memberships><Membership><MemberRole>Allow</MemberRole><Members><Member xsi:type=\"PassportMember\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Type>Passport</Type><MembershipId>%s</MembershipId><State>Accepted</State></Member></Members></Membership></memberships></DeleteMember></soap:Body></soap:Envelope>"
 
-#define MSN_CONTACT_ADD_TO_BLOCK_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>BlockUnblock</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest></ABAuthHeader></soap:Header><soap:Body><AddMember xmlns=\"http://www.msn.com/webservices/AddressBook\"><serviceHandle><Id>0</Id><Type>Messenger</Type><ForeignId></ForeignId></serviceHandle><memberships><Membership><MemberRole>Block</MemberRole><Members>%s</Members></Membership></memberships></AddMember></soap:Body></soap:Envelope>"
+#define MSN_CONTACT_DELECT_FROM_LIST_TEMPLATE "<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
+"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
+	"<soap:Header>"\
+		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<IsMigration>false</IsMigration>"\
+			"<PartnerScenario>%s</PartnerScenario>"\
+		"</ABApplicationHeader>"\
+		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
+		"</ABAuthHeader>"\
+	"</soap:Header>"\
+	"<soap:Body>"\
+		"<DeleteMember xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+			"<serviceHandle>"\
+				"<Id>0</Id>"\
+				"<Type>Messenger</Type>"\
+				"<ForeignId></ForeignId>"\
+			"</serviceHandle>"\
+			"<memberships>"\
+				"<Membership>"\
+					"<MemberRole>%s</MemberRole>"\
+					"<Members>"\
+						"%s"\
+					"</Members>"\
+				"</Membership>"\
+			"</memberships>"\
+		"</DeleteMember>"\
+	"</soap:Body>"\
+"</soap:Envelope>"
+
+#define MSN_CONTACT_ADD_TO_LIST_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
+"<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\">"\
+	"<soap:Header>"\
+		"<ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+			"<ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId>"\
+			"<IsMigration>false</IsMigration>"\
+			"<PartnerScenario>%s</PartnerScenario>"\
+		"</ABApplicationHeader>"\
+		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
+		"</ABAuthHeader>"\
+	"</soap:Header>"\
+	"<soap:Body>"\
+		"<AddMember xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
+			"<serviceHandle>"\
+				"<Id>0</Id>"\
+				"<Type>Messenger</Type>"\
+				"<ForeignId></ForeignId>"\
+			"</serviceHandle>"\
+			"<memberships>"\
+				"<Membership>"\
+					"<MemberRole>%s</MemberRole>"\
+					"<Members>"\
+						"%s"\
+					"</Members>"\
+				"</Membership>"\
+			"</memberships>"\
+		"</AddMember>"\
+	"</soap:Body>"\
+"</soap:Envelope>"
 
 /* unblock means delete contact from block list */
 #define MSN_CONTACT_UNBLOCK_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/DeleteMember"
+#define MSN_DELETE_MEMBER_FROM_LIST_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/DeleteMember"
+
 #define MSN_UNBLOCK_CONTACT_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>BlockUnblock</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest></ABAuthHeader></soap:Header><soap:Body><DeleteMember xmlns=\"http://www.msn.com/webservices/AddressBook\"><serviceHandle><Id>0</Id><Type>Messenger</Type><ForeignId></ForeignId></serviceHandle><memberships><Membership><MemberRole>Block</MemberRole><Members>%s</Members></Membership></memberships></DeleteMember></soap:Body></soap:Envelope>"
 
 
@@ -280,17 +355,15 @@
 #define MSN_GROUP_RENAME_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/ABGroupUpdate"
 #define MSN_GROUP_RENAME_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>Timer</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest></ABAuthHeader></soap:Header><soap:Body><ABGroupUpdate xmlns=\"http://www.msn.com/webservices/AddressBook\"><abId>00000000-0000-0000-0000-000000000000</abId><groups><Group><groupId>%s</groupId><groupInfo><name>%s</name></groupInfo><propertiesChanged>GroupName </propertiesChanged></Group></groups></ABGroupUpdate></soap:Body></soap:Envelope>"
 
-
 typedef enum 
 {
 	MSN_ADD_BUDDY			= 0x01,
-	MSN_ADD_BUDDY_TO_GROUP		= 0x02,
-	MSN_REMOVE_BUDDY		= 0x04,
-	MSN_REMOVE_BUDDY_FROM_GROUP	= 0x08,
-	MSN_MOVE_BUDDY			= 0x10,
-	MSN_ADD_GROUP			= 0x20,
-	MSN_DEL_GROUP			= 0x40,
-	MSN_RENAME_GROUP		= 0x80
+	MSN_MOVE_BUDDY			= 0x02,
+	MSN_ACCEPTED_BUDDY		= 0x04,
+	MSN_DENIED_BUDDY		= 0x08,
+	MSN_ADD_GROUP			= 0x10,
+	MSN_DEL_GROUP			= 0x20,
+	MSN_RENAME_GROUP		= 0x40,
 } MsnCallbackAction;
 
 typedef struct _MsnContact MsnContact;
@@ -318,9 +391,10 @@ typedef enum
 {
 	MSN_PS_INITIAL,
 	MSN_PS_SAVE_CONTACT,
-	MSN_PS_PENDING_LIST
+	MSN_PS_PENDING_LIST,
+	MSN_PS_CONTACT_API,
+	MSN_PS_BLOCK_UNBLOCK
 } MsnSoapPartnerScenario;
-
 
 /************************************************
  * function prototype
@@ -348,7 +422,7 @@ void msn_get_address_book(MsnContact *contact,
 			  const MsnSoapPartnerScenario partner_scenario,
 			  const char * update, const char * gupdate);
 
-/*contact SOAP Operation*/
+/* contact SOAP operations */
 void msn_update_contact(MsnContact *contact, const char* nickname);
 
 void msn_add_contact(MsnContact *contact, MsnCallbackState *state, 
@@ -359,17 +433,18 @@ void msn_add_contact_to_group(MsnContact *contact, MsnCallbackState *state,
 			      const char *passport, const char *groupId);
 void msn_del_contact_from_group(MsnContact *contact, const char *passport, 
 				const char *group_name);
-/*group operation*/
+/* group operations */
 void msn_add_group(MsnSession *session, MsnCallbackState *state, 
 					const char* group_name);
 void msn_del_group(MsnSession *session, const gchar *group_name);
 void msn_contact_rename_group(MsnSession *session, const char *old_group_name,
 						   const char *new_group_name);
 
-
-/*contact Block/unblock operation*/
-void msn_block_contact(MsnContact *contact,const char* membership_id);
-void msn_unblock_contact(MsnContact *contact,const char* passport);
+/* lists operations */
+void msn_add_contact_to_list(MsnContact *contact, MsnCallbackState *state,
+			     const gchar *passport, const MsnListId list);
+void msn_del_contact_from_list(MsnContact *contact, MsnCallbackState *state,
+			       const gchar *passport, const MsnListId list);
 
 void msn_contact_connect_init(MsnSoapConn *soapconn);
 

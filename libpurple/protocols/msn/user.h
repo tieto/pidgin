@@ -82,7 +82,11 @@ struct _MsnUser
 	GHashTable *clientcaps; /**< The client's capabilities.     */
 
 	MsnUserType type;       /**< The user type                  */
+
 	int list_op;            /**< Which lists the user is in     */
+
+	guint membership_id[5];	/**< The membershipId sent by the contacts server,
+				     indexed by the list it belongs to		*/
 };
 
 /**************************************************************************/
@@ -327,7 +331,8 @@ msn_user_is_online(PurpleAccount *account, const char *name);
 gboolean
 msn_user_is_yahoo(PurpleAccount *account ,const char *name);
 
-void msn_user_set_op(MsnUser *user,int list_op);
+void msn_user_set_op(MsnUser *user, int list_op);
+void msn_user_unset_op(MsnUser *user, int list_op);
 
 /*@}*/
 

@@ -1162,11 +1162,21 @@ msn_add_permit(PurpleConnection *gc, const char *who)
 	userlist = session->userlist;
 	user = msn_userlist_find_user(userlist, who);
 
+	purple_debug_info("MSN", "msn_add_permit()\n");
+
 	if (!session->logged_in)
 		return;
 
-	if (user != NULL && user->list_op & MSN_LIST_BL_OP)
+	if (user != NULL && user->list_op & MSN_LIST_BL_OP) {
 		msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_BL);
+
+		/* delete contact from Block list and add it to Allow in the callback */
+		msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_BL);
+	} else {
+		/* just add the contact to Allow list */
+		msn_add_contact_to_list(session->contact, NULL, who, MSN_LIST_AL);
+	}
+
 
 	msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_AL);
 }
@@ -1182,11 +1192,20 @@ msn_add_deny(PurpleConnection *gc, const char *who)
 	userlist = session->userlist;
 	user = msn_userlist_find_user(userlist, who);
 
+	purple_debug_info("MSN", "msn_add_deny()\n");
+	
 	if (!session->logged_in)
 		return;
 
-	if (user != NULL && user->list_op & MSN_LIST_AL_OP)
+	if (user != NULL && user->list_op & MSN_LIST_AL_OP) {
 		msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_AL);
+
+		/* delete contact from Allow list and add it to Block in the callback */
+		msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_AL);
+	} else {
+		/* just add the contact to Block list */
+		msn_add_contact_to_list(session->contact, NULL, who, MSN_LIST_BL);
+	}
 
 	msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_BL);
 }
@@ -1201,12 +1220,16 @@ msn_rem_permit(PurpleConnection *gc, const char *who)
 	session = gc->proto_data;
 	userlist = session->userlist;
 
+	purple_debug_info("MSN", "msn_rem_permit()\n");
+
 	if (!session->logged_in)
 		return;
 
 	user = msn_userlist_find_user(userlist, who);
 
 	msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_AL);
+
+	msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_AL);
 
 	if (user != NULL && user->list_op & MSN_LIST_RL_OP)
 		msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_BL);
@@ -1222,12 +1245,16 @@ msn_rem_deny(PurpleConnection *gc, const char *who)
 	session = gc->proto_data;
 	userlist = session->userlist;
 
+	purple_debug_info("MSN", "msn_rem_deny()\n");
+
 	if (!session->logged_in)
 		return;
 
 	user = msn_userlist_find_user(userlist, who);
 
 	msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_BL);
+
+	msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_BL);
 
 	if (user != NULL && user->list_op & MSN_LIST_RL_OP)
 		msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_AL);
