@@ -75,7 +75,7 @@
 
 /* Use the attention API for zaps? */
 /* Can't have until >=2.2.0, since is a new API. */
-/*#define MSIM_USE_ATTENTION_API*/
+#define MSIM_USE_ATTENTION_API
 
 /* Constants */
 
@@ -96,7 +96,7 @@
 #define MSIM_LANGUAGE_NAME_ENGLISH  "ENGLISH"
 
 /* msimprpl version string of this plugin */
-#define MSIM_PRPL_VERSION_STRING    "0.17"
+#define MSIM_PRPL_VERSION_STRING    "0.18"
 
 /* Default server */
 #define MSIM_SERVER                 "im.myspace.akadns.net"
