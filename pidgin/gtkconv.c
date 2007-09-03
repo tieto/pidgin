@@ -2904,7 +2904,7 @@ static GtkItemFactoryEntry menu_items[] =
 
 
 	{ N_("/Conversation/_Hide"), NULL, menu_hide_conv_cb, 0,
-			"<StockItem>", NULL},
+			"<Item>", NULL},
 	{ N_("/Conversation/_Close"), NULL, menu_close_conv_cb, 0,
 			"<StockItem>", GTK_STOCK_CLOSE },
 
