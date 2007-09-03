@@ -1066,8 +1066,11 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 	statstring = purple_status_get_attr_string(status, "message");
 
 	if (!statstring) {
-		statstring = g_strdup("");
+		statstring = "";
 	}
+
+	/* Status strings are plain text. */
+	statstring = purple_markup_strip_html(statstring);
 
 	msim_set_status_code(session, status_code, g_strdup(statstring));
 }
@@ -1441,7 +1444,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 
 	/* If a local alias wasn't set, set it to user's username. */
 	if (!session->account->alias || !strlen(session->account->alias))
-		session->account->alias = session->username;
+		purple_account_set_alias(session->account, session->username);
 
 	/* The session is now set up, ready to be connected. This emits the
 	 * signedOn signal, so clients can now do anything with msimprpl, and
@@ -1713,7 +1716,7 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 	PurpleBuddyList *blist;
 	MsimUser *user;
 	GList *list;
-	gchar *status_headline;
+	gchar *status_headline, *status_headline_escaped;
 	gint status_code, purple_status_code;
 	gchar *username;
 
@@ -1768,8 +1771,16 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		purple_debug_info("msim", "msim_status: found buddy %s\n", username);
 	}
 
+	/* The status headline is plaintext, but libpurple treats it as HTML,
+	 * so escape any HTML characters to their entity equivalents. */
+	status_headline_escaped = g_markup_escape_text(status_headline, strlen(status_headline));
+	g_free(status_headline);
+
+	if (user->headline) 
+		g_free(user->headline);
+
 	/* don't copy; let the MsimUser own the headline, memory-wise */
-	user->headline = status_headline;
+	user->headline = status_headline_escaped;
   
 	/* Set user status */
 	switch (status_code) {
@@ -2618,7 +2629,7 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 
 	switch (GPOINTER_TO_UINT(user_data)) {
 		case MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS:
-			msg = g_strdup_printf(_("%d buddies were added or updated"), buddy_count);
+			msg = g_strdup_printf(_("%d buddies were added or updated from the server (including buddies already on the server-side list)"), buddy_count);
 			purple_notify_info(session->account, _("Add contacts from server"), msg, NULL);
 			g_free(msg);
 			break;

@@ -774,21 +774,6 @@ int main(int argc, char *argv[])
 	/* TODO: Move pounces loading into purple_pounces_init() */
 	purple_pounces_load();
 
-	/* HACK BY SEANEGAN:
-	 * We've renamed prpl-oscar to prpl-aim and prpl-icq, accordingly.
-	 * Let's do that change right here... after everything's loaded, but
-	 * before anything has happened
-	 */
-	for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
-		PurpleAccount *account = accounts->data;
-		if (!strcmp(purple_account_get_protocol_id(account), "prpl-oscar")) {
-			if (isdigit(*purple_account_get_username(account)))
-				purple_account_set_protocol_id(account, "prpl-icq");
-			else
-				purple_account_set_protocol_id(account, "prpl-aim");
-		}
-	}
-
 	ui_main();
 
 #ifdef USE_SM

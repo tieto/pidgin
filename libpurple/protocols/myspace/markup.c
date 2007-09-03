@@ -669,6 +669,8 @@ msim_markup_to_html(MsimSession *session, const gchar *raw)
 
 /** High-level function to convert Purple (HTML) to MySpaceIM markup.
  *
+ * TODO: consider using purple_markup_html_to_xhtml() to make valid XML.
+ *
  * @return HTML markup string, must be g_free()'d. */
 gchar *
 html_to_msim_markup(MsimSession *session, const gchar *raw)

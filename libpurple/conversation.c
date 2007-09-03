@@ -869,6 +869,10 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 
 	displayed = g_strdup(message);
 
+	if (who == NULL || *who == '\0')
+		who = purple_conversation_get_name(conv);
+	alias = who;
+
 	plugin_return =
 		GPOINTER_TO_INT(purple_signal_emit_return_1(
 			purple_conversations_get_handle(),
@@ -882,11 +886,6 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		g_free(displayed);
 		return;
 	}
-
-	if (who == NULL || *who == '\0')
-		who = purple_conversation_get_name(conv);
-
-	alias = who;
 
 	if (account != NULL) {
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));

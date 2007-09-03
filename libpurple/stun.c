@@ -252,7 +252,7 @@ static void reply_cb(gpointer data, gint source, PurpleInputCondition cond) {
 				sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
 				if(sinptr->sin_addr.s_addr == in.s_addr) {
 					/* no NAT */
-					purple_debug_info("stun", "no nat");
+					purple_debug_info("stun", "no nat\n");
 					nattype.type = PURPLE_STUN_NAT_TYPE_PUBLIC_IP;
 				}
 			}

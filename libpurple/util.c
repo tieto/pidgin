@@ -4460,10 +4460,11 @@ purple_escape_filename(const char *str)
 const char *_purple_oscar_convert(const char *act, const char *protocol)
 {
 	if (protocol && act && strcmp(protocol, "prpl-oscar") == 0) {
-		if (isdigit(*act))
-			protocol = "prpl-icq";
-		else
-			protocol = "prpl-aim";
+		int i;
+		for (i = 0; act[i] != '\0'; i++)
+			if (!isdigit(act[i]))
+				return "prpl-aim";
+		return "prpl-icq";
 	}
 	return protocol;
 }
