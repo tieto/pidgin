@@ -2768,6 +2768,18 @@ unseen_conv_menu_cb(GtkMenuItem *item, PurpleConversation *conv)
 	pidgin_conv_present_conversation(conv);
 }
 
+static void
+unseen_all_conv_menu_cb(GtkMenuItem *item, GList *list)
+{
+	g_return_if_fail(list != NULL);
+	/* Do not free the list from here. It will be freed from the
+	 * 'destroy' callback on the menuitem. */
+	while (list) {
+		pidgin_conv_present_conversation(list->data);
+		list = list->next;
+	}
+}
+
 guint
 pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs)
 {
@@ -2797,6 +2809,19 @@ pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		g_free(text);
 		ret++;
+	}
+
+	if (convs->next) {
+		/* There are more than one conversation. Add an option to show all conversations. */
+		GtkWidget *item;
+		GList *list = g_list_copy(convs);
+
+		pidgin_separator(menu);
+
+		item = gtk_menu_item_new_with_label(_("Show All"));
+		g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(unseen_all_conv_menu_cb), list);
+		g_signal_connect_swapped(G_OBJECT(item), "destroy", G_CALLBACK(g_list_free), list);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	}
 
 	return ret;
