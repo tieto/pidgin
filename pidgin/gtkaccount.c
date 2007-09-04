@@ -652,8 +652,10 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		if (!(dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK))
 			gtk_widget_hide(dialog->new_mail_check);
 
-		if (dialog->prpl_info->icon_spec.format == NULL)
+		if (dialog->prpl_info->icon_spec.format == NULL) {
+			gtk_widget_hide(dialog->icon_check);
 			gtk_widget_hide(dialog->icon_hbox);
+		}
 	}
 
 	if (dialog->account != NULL) {

@@ -3574,7 +3574,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	g_free(tmp);
 
 	presence = purple_status_get_presence(status);
-	aim_srv_setidle(od, purple_presence_is_idle(presence) ? 0 : time(NULL) - purple_presence_get_idle_time(presence));
+	aim_srv_setidle(od, !purple_presence_is_idle(presence) ? 0 : time(NULL) - purple_presence_get_idle_time(presence));
 
 	if (od->icq) {
 		aim_icq_reqofflinemsgs(od);

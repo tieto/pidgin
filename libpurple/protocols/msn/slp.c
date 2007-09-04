@@ -343,7 +343,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		if (xfer)
 		{
 			bin = (char *)purple_base64_decode(context, &bin_len);
-			file_size = GUINT32_FROM_LE(*((gsize *)bin + 2));
+			file_size = GUINT32_FROM_LE(*(gsize *)(bin + 2));
 
 			uni_name = (gunichar2 *)(bin + 20);
 			while(*uni_name != 0 && ((char *)uni_name - (bin + 20)) < MAX_FILE_NAME_LEN) {

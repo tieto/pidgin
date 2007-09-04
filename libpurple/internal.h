@@ -29,6 +29,10 @@
 # include <config.h>
 #endif
 
+/* for SIOCGIFCONF  in SKYOS */
+#ifdef SKYOS
+#include <net/sockios.h>
+#endif
 /*
  * If we're using NLS, make sure gettext works.  If not, then define
  * dummy macros in place of the normal gettext macros.
