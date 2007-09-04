@@ -113,6 +113,10 @@ sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer
 	PurpleConversation *conv;
 	OfflineMessageSetting setting;
 
+	if (message == NULL || *message == NULL ||
+			**message == '\0')
+		return;
+
 	buddy = purple_find_buddy(account, who);
 	if (!buddy)
 		return;
@@ -167,8 +171,8 @@ sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	purple_signal_connect(purple_conversations_get_handle(), "sending-im-msg",
-					plugin, PURPLE_CALLBACK(sending_msg_cb), plugin);
+	purple_signal_connect_priority(purple_conversations_get_handle(), "sending-im-msg",
+					plugin, PURPLE_CALLBACK(sending_msg_cb), plugin, PURPLE_SIGNAL_PRIORITY_HIGHEST);
 	return TRUE;
 }
 
