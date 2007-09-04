@@ -1320,6 +1320,7 @@ int aim_icq_changepasswd(OscarData *od, const char *passwd);
 int aim_icq_getsimpleinfo(OscarData *od, const char *uin);
 int aim_icq_getalias(OscarData *od, const char *uin);
 int aim_icq_getallinfo(OscarData *od, const char *uin);
+int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char *alias);
 
 
 

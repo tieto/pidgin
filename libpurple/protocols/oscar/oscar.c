@@ -2486,8 +2486,48 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			}
 		} break;
 
-		case 0x1a: { /* Someone has sent you a greeting card or requested buddies? */
-			/* This is boring and silly. */
+		case 0x1a: { /* Handle SMS or someone has sent you a greeting card or requested buddies? */
+			ByteStream qbs;
+			int smstype, taglen, smslen;
+			char *tagstr = NULL, *smsmsg = NULL;
+			xmlnode *xmlroot = NULL, *xmltmp = NULL;
+			gchar *uin = NULL, *message = NULL;
+
+			/* From libicq2000-0.3.2/src/ICQ.cpp */
+			byte_stream_init(&qbs, (guint8 *)args->msg, args->msglen);
+			byte_stream_advance(&qbs, 21);
+			smstype = byte_stream_getle16(&qbs);
+			taglen = byte_stream_getle32(&qbs);
+			tagstr = byte_stream_getstr(&qbs, taglen);
+			byte_stream_advance(&qbs, 3);
+			byte_stream_advance(&qbs, 4);
+			smslen = byte_stream_getle32(&qbs);
+			smsmsg = byte_stream_getstr(&qbs, smslen);
+
+			/* Check if this is an SMS being sent from server */
+			if ((smstype == 0) && (!strcmp(tagstr, "ICQSMS")) && (smsmsg != NULL))
+			{
+				xmlroot = xmlnode_from_str(smsmsg, -1);
+				if (xmlroot != NULL)
+				{
+					xmltmp = xmlnode_get_child(xmlroot, "sender");
+					if (xmltmp != NULL)
+						uin = xmlnode_get_data(xmltmp);
+
+					xmltmp = xmlnode_get_child(xmlroot, "text");
+					if (xmltmp != NULL)
+						message = xmlnode_get_data(xmltmp);
+
+					if ((uin != NULL) && (message != NULL))
+							serv_got_im(gc, uin, message, 0, time(NULL));
+
+					g_free(uin);
+					g_free(message);
+					xmlnode_free(xmlroot);
+				}
+			}
+			g_free(tagstr);
+			g_free(smsmsg);
 		} break;
 
 		default: {
@@ -4153,6 +4193,17 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	od = (OscarData *)gc->proto_data;
 	account = purple_connection_get_account(gc);
 	ret = 0;
+
+	if (od->icq && aim_sn_is_sms(name)) {
+		/*
+		 * We're sending to a phone number and this is ICQ,
+		 * so send the message as an SMS using aim_icq_sendsms()
+		 */
+		int ret;
+		purple_debug_info("oscar", "Sending SMS to %s.\n", name);
+		ret = aim_icq_sendsms(od, name, message, purple_account_get_username(account));
+		return (ret >= 0 ? 1 : ret);
+	}
 
 	if (imflags & PURPLE_MESSAGE_AUTO_RESP)
 		tmp1 = purple_str_sub_away_formatters(message, name);
