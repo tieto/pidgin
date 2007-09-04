@@ -1775,14 +1775,19 @@ msim_error(MsimSession *session, MsimMessage *msg)
 	purple_debug_info("msim", "msim_error (sesskey=%d): %s\n", 
 			session->sesskey, full_errmsg);
 
-	purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
-			full_errmsg, NULL);
-
 	/* Destroy session if fatal. */
 	if (msim_msg_get(msg, "fatal")) {
 		purple_debug_info("msim", "fatal error, closing\n");
+		if (err == 260)
+			/* Incorrect password */
+			session->gc->wants_to_die = TRUE;
 		purple_connection_error(session->gc, full_errmsg);
+	} else {
+		purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
+				full_errmsg, NULL);
 	}
+
+	g_free(full_errmsg);
 
 	return TRUE;
 }
