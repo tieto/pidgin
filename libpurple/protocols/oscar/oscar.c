@@ -358,7 +358,7 @@ oscar_utf8_try_convert(PurpleAccount *account, const gchar *msg)
 	const char *charset = NULL;
 	char *ret = NULL;
 
-	if(aim_sn_is_icq(purple_account_get_username(account)))
+	if(aim_snvalid_icq(purple_account_get_username(account)))
 		charset = purple_account_get_string(account, "encoding", NULL);
 
 	if(charset && *charset)
@@ -424,7 +424,7 @@ purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcesn,
 		charsetstr1 = "UCS-2BE";
 		charsetstr2 = "UTF-8";
 	} else if (charset == AIM_CHARSET_CUSTOM) {
-		if ((sourcesn != NULL) && aim_sn_is_icq(sourcesn))
+		if ((sourcesn != NULL) && aim_snvalid_icq(sourcesn))
 			charsetstr1 = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 		else
 			charsetstr1 = "ISO-8859-1";
@@ -495,7 +495,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	 * capability, and they are online, then attempt to send
 	 * as UCS-2BE.
 	 */
-	if ((destsn != NULL) && aim_sn_is_icq(destsn))
+	if ((destsn != NULL) && aim_snvalid_icq(destsn))
 		userinfo = aim_locate_finduserinfo(od, destsn);
 
 	if ((userinfo != NULL) && (userinfo->capabilities & OSCAR_CAPABILITY_UNICODE))
@@ -520,7 +520,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	 * ICQ then attempt to send as the user specified character encoding.
 	 */
 	charsetstr = "ISO-8859-1";
-	if ((destsn != NULL) && aim_sn_is_icq(destsn))
+	if ((destsn != NULL) && aim_snvalid_icq(destsn))
 		charsetstr = purple_account_get_string(account, "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 
 	/*
@@ -815,7 +815,7 @@ static void oscar_string_append_info(PurpleConnection *gc, PurpleNotifyUserInfo 
 
 	if (b != NULL) {
 		if (purple_presence_is_online(presence)) {
-			if (aim_sn_is_icq(b->name)) {
+			if (aim_snvalid_icq(b->name)) {
 				PurpleStatus *status = purple_presence_get_active_status(presence);
 				oscar_user_info_add_pair(user_info, _("Status"),	purple_status_get_name(status));
 			}
@@ -1019,7 +1019,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 			PURPLE_INPUT_READ, flap_connection_recv_cb, conn);
 	if (conn->cookie == NULL)
 	{
-		if (!aim_sn_is_icq(purple_account_get_username(account)))
+		if (!aim_snvalid_icq(purple_account_get_username(account)))
 			/*
 			 * We don't send this when authenticating an ICQ account
 			 * because for some reason ICQ is still using the
@@ -1261,7 +1261,7 @@ oscar_login(PurpleAccount *account)
 		g_free(buf);
 	}
 
-	if (aim_sn_is_icq((purple_account_get_username(account)))) {
+	if (aim_snvalid_icq((purple_account_get_username(account)))) {
 		od->icq = TRUE;
 	} else {
 		gc->flags |= PURPLE_CONNECTION_HTML;
@@ -1752,7 +1752,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		}
 	}
 
-	if (aim_sn_is_icq(info->sn)) {
+	if (aim_snvalid_icq(info->sn)) {
 		if (type & AIM_ICQ_STATE_CHAT)
 			status_id = OSCAR_STATUS_ID_FREE4CHAT;
 		else if (type & AIM_ICQ_STATE_DND)
@@ -1987,7 +1987,7 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	 * Note: There *may* be some clients which send messages as HTML formatted -
 	 *       they need to be special-cased somehow.
 	 */
-	if (aim_sn_is_icq(purple_account_get_username(account)) && aim_sn_is_icq(userinfo->sn)) {
+	if (aim_snvalid_icq(purple_account_get_username(account)) && aim_snvalid_icq(userinfo->sn)) {
 		/* being recevied by ICQ from ICQ - escape HTML so it is displayed as sent */
 		gchar *tmp2 = g_markup_escape_text(tmp, -1);
 		g_free(tmp);
@@ -3003,7 +3003,7 @@ static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *
 	if (b == NULL)
 		return 1;
 
-	if (!aim_sn_is_icq(userinfo->sn))
+	if (!aim_snvalid_icq(userinfo->sn))
 	{
 		if (strcmp(purple_buddy_get_name(b), userinfo->sn))
 			serv_got_alias(gc, purple_buddy_get_name(b), userinfo->sn);
@@ -4194,7 +4194,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	account = purple_connection_get_account(gc);
 	ret = 0;
 
-	if (od->icq && aim_sn_is_sms(name)) {
+	if (od->icq && aim_snvalid_sms(name)) {
 		/*
 		 * We're sending to a phone number and this is ICQ,
 		 * so send the message as an SMS using aim_icq_sendsms()
@@ -4305,12 +4305,12 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		/*
 		 * If we're IMing an SMS user or an ICQ user from an ICQ account, then strip HTML.
 		 */
-		if (aim_sn_is_sms(name)) {
+		if (aim_snvalid_sms(name)) {
 			/* Messaging an SMS (mobile) user */
 			tmp2 = purple_markup_strip_html(tmp1);
 			is_html = FALSE;
-		} else if (aim_sn_is_icq(purple_account_get_username(account))) {
-			if (aim_sn_is_icq(name)) {
+		} else if (aim_snvalid_icq(purple_account_get_username(account))) {
+			if (aim_snvalid_icq(name)) {
 				/* From ICQ to ICQ */
 				tmp2 = purple_markup_strip_html(tmp1);
 				is_html = FALSE;
@@ -4372,7 +4372,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 void oscar_get_info(PurpleConnection *gc, const char *name) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
-	if (od->icq && aim_sn_is_icq(name))
+	if (od->icq && aim_snvalid_icq(name))
 		aim_icq_getallinfo(od, name);
 	else
 		aim_locate_getinfoshort(od, name, 0x00000003);
@@ -4617,7 +4617,7 @@ oscar_set_status(PurpleAccount *account, PurpleStatus *status)
 	oscar_set_info_and_status(account, FALSE, NULL, TRUE, status);
 
 	/* Set the ICQ status for ICQ accounts only */
-	if (aim_sn_is_icq(purple_account_get_username(account)))
+	if (aim_snvalid_icq(purple_account_get_username(account)))
 		oscar_set_status_icq(account, status);
 }
 
@@ -5456,30 +5456,30 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 
 const char *oscar_list_icon_icq(PurpleAccount *a, PurpleBuddy *b)
 {
-	if ((b == NULL) || (b->name == NULL) || aim_sn_is_sms(b->name))
+	if ((b == NULL) || (b->name == NULL) || aim_snvalid_sms(b->name))
 	{
-		if (a == NULL || aim_sn_is_icq(purple_account_get_username(a)))
+		if (a == NULL || aim_snvalid_icq(purple_account_get_username(a)))
 			return "icq";
 		else
 			return "aim";
 	}
 
-	if (aim_sn_is_icq(b->name))
+	if (aim_snvalid_icq(b->name))
 		return "icq";
 	return "aim";
 }
 
 const char *oscar_list_icon_aim(PurpleAccount *a, PurpleBuddy *b)
 {
-	if ((b == NULL) || (b->name == NULL) || aim_sn_is_sms(b->name))
+	if ((b == NULL) || (b->name == NULL) || aim_snvalid_sms(b->name))
 	{
-		if (a != NULL && aim_sn_is_icq(purple_account_get_username(a)))
+		if (a != NULL && aim_snvalid_icq(purple_account_get_username(a)))
 			return "icq";
 		else
 			return "aim";
 	}
 
-	if (aim_sn_is_icq(b->name))
+	if (aim_snvalid_icq(b->name))
 		return "icq";
 	return "aim";
 }
@@ -5763,7 +5763,7 @@ oscar_status_types(PurpleAccount *account)
 	g_return_val_if_fail(account != NULL, NULL);
 
 	/* Used to flag some statuses as "user settable" or not */
-	is_icq = aim_sn_is_icq(purple_account_get_username(account));
+	is_icq = aim_snvalid_icq(purple_account_get_username(account));
 
 	/* Common status types */
 	/* Really the available message should only be settable for AIM accounts */
@@ -5971,7 +5971,7 @@ oscar_buddy_menu(PurpleBuddy *buddy) {
 	userinfo = aim_locate_finduserinfo(od, buddy->name);
 	menu = NULL;
 
-	if (od->icq && aim_sn_is_icq(purple_buddy_get_name(buddy)))
+	if (od->icq && aim_snvalid_icq(purple_buddy_get_name(buddy)))
 	{
 		act = purple_menu_action_new(_("Get AIM Info"),
 								   PURPLE_CALLBACK(oscar_get_aim_info_cb),
@@ -6566,7 +6566,7 @@ oscar_offline_message(const PurpleBuddy *buddy)
 			od = (OscarData *)gc->proto_data;
 	}
 
-	return (od != NULL && od->icq && aim_sn_is_icq(purple_account_get_username(account)));
+	return (od != NULL && od->icq && aim_snvalid_icq(purple_account_get_username(account)));
 }
 
 /* TODO: Find somewhere to put this instead of including it in a bunch of places.

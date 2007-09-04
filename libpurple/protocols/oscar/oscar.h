@@ -1459,8 +1459,8 @@ int aimutil_itemcnt(char *toSearch, char dl);
 char *aimutil_itemindex(char *toSearch, int theindex, char dl);
 
 gboolean aim_snvalid(const char *sn);
-gboolean aim_sn_is_icq(const char *sn);
-gboolean aim_sn_is_sms(const char *sn);
+gboolean aim_snvalid_icq(const char *sn);
+gboolean aim_snvalid_sms(const char *sn);
 int aim_snlen(const char *sn);
 int aim_sncmp(const char *sn1, const char *sn2);
 
