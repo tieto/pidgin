@@ -1844,7 +1844,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	MsimSession *session;
 	MsimMessage *msg;
-	/* MsimMessage *msg_persist; */
+	MsimMessage *msg_persist;
 	MsimMessage *body;
 
 	session = (MsimSession *)gc->proto_data;
@@ -1879,12 +1879,12 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 
 	/* TODO: Update blocklist. */
 
-#if 0
 	msg_persist = msim_msg_new(
 		"persist", MSIM_TYPE_INTEGER, 1,
 		"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 		"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_PUT,
 		"dsn", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_DSN,
+		"uid", MSIM_TYPE_INTEGER, session->userid,
 		"lid", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_LID,
 		/* TODO: Use msim_new_reply_callback to get rid. */
 		"rid", MSIM_TYPE_INTEGER, session->next_rid++,
@@ -1898,7 +1898,6 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		return;
 	}
 	msim_msg_free(msg_persist);
-#endif
 
 }
 
