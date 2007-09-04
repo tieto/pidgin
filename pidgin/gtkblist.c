@@ -3101,7 +3101,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			purple_notify_user_info_add_pair(user_info, _("Status"), _("Offline"));
 		}
 
-		if (prpl_info && prpl_info->tooltip_text)
+		if (purple_account_is_connected(b->account) &&
+				prpl_info && prpl_info->tooltip_text)
 		{
 			/* Additional text from the PRPL */
 			prpl_info->tooltip_text(b, user_info, full);
