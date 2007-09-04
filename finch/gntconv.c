@@ -613,6 +613,7 @@ finch_create_conversation(PurpleConversation *conv)
 		gnt_tree_set_col_width(GNT_TREE(tree), 0, 1);   /* The flag column */
 		gnt_tree_set_compare_func(GNT_TREE(tree), (GCompareFunc)g_utf8_collate);
 		gnt_tree_set_hash_fns(GNT_TREE(tree), g_str_hash, g_str_equal, g_free);
+		gnt_tree_set_search_column(GNT_TREE(tree), 1);
 		GNT_WIDGET_SET_FLAGS(tree, GNT_WIDGET_NO_BORDER);
 		gnt_box_add_widget(GNT_BOX(hbox), ggc->tv);
 		gnt_box_add_widget(GNT_BOX(hbox), tree);
