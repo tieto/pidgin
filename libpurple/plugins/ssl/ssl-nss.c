@@ -522,6 +522,9 @@ x509_sha1sum(PurpleCertificate *crt)
 
 	/* Make a hash! */
 	sha1sum = g_byte_array_sized_new(hashlen);
+	/* glib leaves the size as 0 by default */
+	sha1sum->len = hashlen;
+	
 	st = PK11_HashBuf(SEC_OID_SHA1, sha1sum->data,
 			  derCert->data, derCert->len);
 
