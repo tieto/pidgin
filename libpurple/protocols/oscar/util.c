@@ -171,7 +171,7 @@ aim_snvalid_aim(const char *sn)
  *
  * @return TRUE if the screen name is valid, FALSE if not.
  */
-static gboolean
+gboolean
 aim_snvalid_icq(const char *sn)
 {
 	int i;
@@ -190,7 +190,7 @@ aim_snvalid_icq(const char *sn)
  *
  * @return TRUE if the screen name is valid, FALSE if not.
  */
-static gboolean
+gboolean
 aim_snvalid_sms(const char *sn)
 {
 	int i;
@@ -218,34 +218,6 @@ aim_snvalid(const char *sn)
 		return FALSE;
 
 	return aim_snvalid_icq(sn) || aim_snvalid_sms(sn) || aim_snvalid_aim(sn);
-}
-
-/**
- * Determine if a given screen name is an ICQ screen name
- * (i.e. it is composed of only numbers).
- *
- * @param sn A valid AIM or ICQ screen name.
- * @return TRUE if the screen name is an ICQ screen name.  Otherwise
- *         FALSE is returned.
- */
-gboolean
-aim_sn_is_icq(const char *sn)
-{
-	return aim_snvalid_icq(sn);
-}
-
-/**
- * Determine if a given screen name is an SMS number
- * (i.e. it begins with a +).
- *
- * @param sn A valid AIM or ICQ screen name.
- * @return TRUE if the screen name is an SMS number.  Otherwise
- *         FALSE is returned.
- */
-gboolean
-aim_sn_is_sms(const char *sn)
-{
-	return (sn[0] == '+');
 }
 
 /**

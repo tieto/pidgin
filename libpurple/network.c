@@ -351,6 +351,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	listen_data->retry = TRUE;
 	listen_data->cb = cb;
 	listen_data->cb_data = cb_data;
+	listen_data->socket_type = socket_type;
 
 	/* Attempt a NAT-PMP Mapping, which will return immediately */
 	if (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
