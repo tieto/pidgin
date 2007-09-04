@@ -3283,9 +3283,11 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 
 		if(conv != NULL) {
 			PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-			if((gtkconv == NULL || pidgin_conv_is_hidden(gtkconv)) && size == PIDGIN_STATUS_ICON_SMALL) {
-				return gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_MESSAGE,
-							       icon_size, "GtkTreeView");
+			if (gtkconv == NULL && size == PIDGIN_STATUS_ICON_SMALL) {
+				PidginBlistNode *ui = buddy->node.ui_data;
+				if (ui == NULL || (ui->conv.flags & PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE))
+					return gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview),
+							PIDGIN_STOCK_STATUS_MESSAGE, icon_size, "GtkTreeView");
 			}
 		}
 
