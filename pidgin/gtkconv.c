@@ -5042,26 +5042,23 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 				   PurpleConversation *conv, PurpleMessageFlags flags)
 {
 	PurpleConversationUiOps *ui_ops = pidgin_conversations_get_conv_ui_ops();
-	if (conv != NULL)
-		return;
 
+	/* XXX sadrul: set _ui_ops for the conversation to NULL, and get rid of the hidden convwindow */
 	/* create hidden conv if hide_new pref is always */
-	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always") == 0)
-	{
-		ui_ops->create_conversation = pidgin_conv_new_hidden;
-		purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
-		ui_ops->create_conversation = pidgin_conv_new;
-		return;
-	}
-
-	/* create hidden conv if hide_new pref is away and account is away */
-	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away") == 0 &&
-	    !purple_status_is_available(purple_account_get_active_status(account)))
-	{
-		ui_ops->create_conversation = pidgin_conv_new_hidden;
-		purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
-		ui_ops->create_conversation = pidgin_conv_new;
-		return;
+	/* or if hide_new pref is away and account is away */
+	if ((strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always") == 0) ||
+		(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away") == 0 &&
+		 !purple_status_is_available(purple_account_get_active_status(account)))) {
+		if (!conv) {
+			ui_ops->create_conversation = NULL;
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
+			purple_conversation_set_ui_ops(conv, NULL);
+			ui_ops->create_conversation = pidgin_conv_new;
+		}
+	} else {
+		/* new message for an IM */
+		if (conv && conv->type == PURPLE_CONV_TYPE_IM)
+			pidgin_conv_attach_to_conversation(conv);
 	}
 }
 
