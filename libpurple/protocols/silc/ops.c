@@ -868,7 +868,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				/* Find buddy by nickname */
 				b = purple_find_buddy(sg->account, client_entry->nickname);
 				if (!b) {
-					purple_debug_warning("silc", "WATCH for %s, unknown buddy",
+					purple_debug_warning("silc", "WATCH for %s, unknown buddy\n",
 						client_entry->nickname);
 					break;
 				}

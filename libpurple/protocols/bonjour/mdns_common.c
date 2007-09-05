@@ -207,7 +207,7 @@ gboolean bonjour_dns_sd_start(BonjourDnsSd *data) {
 
 	/* Advise the daemon that we are waiting for connections */
 	if (!_mdns_browse(data)) {
-		purple_debug_error("bonjour", "Unable to get service.");
+		purple_debug_error("bonjour", "Unable to get service.\n");
 		return FALSE;
 	}
 

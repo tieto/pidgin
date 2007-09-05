@@ -2021,7 +2021,7 @@ gchar *purple_cipher_http_digest_calculate_session_key(
 		if (client_nonce == NULL)
 		{
 			purple_cipher_context_destroy(context);
-			purple_debug_error("cipher", "Required client_nonce missing for MD5-sess digest calculation.");
+			purple_debug_error("cipher", "Required client_nonce missing for MD5-sess digest calculation.\n");
 			return NULL;
 		}
 
@@ -2091,7 +2091,7 @@ gchar *purple_cipher_http_digest_calculate_response(
 		if (entity == NULL)
 		{
 			purple_cipher_context_destroy(context);
-			purple_debug_error("cipher", "Required entity missing for auth-int digest calculation.");
+			purple_debug_error("cipher", "Required entity missing for auth-int digest calculation.\n");
 			return NULL;
 		}
 
@@ -2118,14 +2118,14 @@ gchar *purple_cipher_http_digest_calculate_response(
 		if (nonce_count == NULL)
 		{
 			purple_cipher_context_destroy(context);
-			purple_debug_error("cipher", "Required nonce_count missing for digest calculation.");
+			purple_debug_error("cipher", "Required nonce_count missing for digest calculation.\n");
 			return NULL;
 		}
 
 		if (client_nonce == NULL)
 		{
 			purple_cipher_context_destroy(context);
-			purple_debug_error("cipher", "Required client_nonce missing for digest calculation.");
+			purple_debug_error("cipher", "Required client_nonce missing for digest calculation.\n");
 			return NULL;
 		}
 

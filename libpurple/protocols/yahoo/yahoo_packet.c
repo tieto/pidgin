@@ -365,7 +365,7 @@ int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
 	if (ret < 0 && errno == EAGAIN)
 		ret = 0;
 	else if (ret <= 0) {
-		purple_debug_warning("yahoo", "Only wrote %d of %d bytes!", ret, len);
+		purple_debug_warning("yahoo", "Only wrote %d of %d bytes!\n", ret, len);
 		g_free(data);
 		return ret;
 	}

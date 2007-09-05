@@ -801,7 +801,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 				if(b->label) {
 					button = gtk_button_new_with_label(b->label);
 				} else {
-					purple_debug_warning("gtknotify", "Missing button label");
+					purple_debug_warning("gtknotify", "Missing button label\n");
 				}
 				break;
 			case PURPLE_NOTIFY_BUTTON_CONTINUE:

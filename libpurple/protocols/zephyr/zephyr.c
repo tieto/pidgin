@@ -1117,7 +1117,7 @@ static parse_tree  *read_from_tzc(zephyr_account* zephyr){
 		bufcur++;
 		if ((bufcur - buf) > (bufsize - 1)) {
 			if ((buf = realloc(buf, bufsize * 2)) == NULL) {
-				purple_debug_error("zephyr","Ran out of memory");
+				purple_debug_error("zephyr","Ran out of memory\n");
 				exit(-1);
 			} else {
 				bufcur = buf + bufsize;
@@ -2218,12 +2218,12 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 		notice.z_message_len = strlen(html_buf2) + strlen(sig) + 2;
 		notice.z_message = buf;
 		notice.z_opcode = g_strdup(opcode);
-		purple_debug_info("zephyr","About to send notice");
+		purple_debug_info("zephyr","About to send notice\n");
 		if (! ZSendNotice(&notice, ZAUTH) == ZERR_NONE) {
 			/* XXX handle errors here */
 			return 0;
 		}
-		purple_debug_info("zephyr","notice sent");
+		purple_debug_info("zephyr","notice sent\n");
 		g_free(buf);
 	}
 
@@ -2815,19 +2815,19 @@ static void zephyr_action_get_subs_from_server(PurplePluginAction *action)
 		title = g_strdup_printf("Server subscriptions for %s", zephyr->username);
 		
 		if (zephyr->port == 0) {
-			purple_debug_error("zephyr", "error while retrieving port");
+			purple_debug_error("zephyr", "error while retrieving port\n");
 			return;
 		} 
 		if ((retval = ZRetrieveSubscriptions(zephyr->port,&nsubs)) != ZERR_NONE) {
 			/* XXX better error handling */
-			purple_debug_error("zephyr", "error while retrieving subscriptions from server");
+			purple_debug_error("zephyr", "error while retrieving subscriptions from server\n");
 			return;
 		}
 		for(i=0;i<nsubs;i++) {
 			one = 1;
 			if ((retval = ZGetSubscriptions(&subs,&one)) != ZERR_NONE) {
 				/* XXX better error handling */
-				purple_debug_error("zephyr", "error while retrieving individual subscription");
+				purple_debug_error("zephyr", "error while retrieving individual subscription\n");
 				return;
 			}
 			g_string_append_printf(subout, "Class %s Instance %s Recipient %s<br>",

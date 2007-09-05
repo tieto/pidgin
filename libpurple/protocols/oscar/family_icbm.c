@@ -1461,7 +1461,7 @@ static int incomingim_ch1_parsemsgs(OscarData *od, aim_userinfo_t *userinfo, gui
 		msglen = byte_stream_get16(&mbs);
 		if (msglen > byte_stream_empty(&mbs))
 		{
-			purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.", userinfo->sn);
+			purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
 			break;
 		}
 

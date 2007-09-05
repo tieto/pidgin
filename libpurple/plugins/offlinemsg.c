@@ -126,7 +126,7 @@ sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer
 
 	if (purple_account_supports_offline_message(account, buddy))
 	{
-		purple_debug_info("offlinemsg", "Account \"%s\" supports offline message.",
+		purple_debug_info("offlinemsg", "Account \"%s\" supports offline messages.\n",
 					purple_account_get_username(account));
 		return;
 	}
