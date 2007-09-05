@@ -2138,6 +2138,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* whiteboard_prpl_ops */
 	NULL,					/* send_raw */
 	NULL,					/* roomlist_room_serialize */
+	NULL,					/* unregister_user */
 
 #ifdef MSN_USE_ATTENTION_API
 	msn_send_attention,                     /* send_attention */
@@ -2147,7 +2148,6 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 #endif
-	NULL,
 	NULL
 };
 
