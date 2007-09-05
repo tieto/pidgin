@@ -3752,14 +3752,10 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
 		tooltip_text = g_string_new("");
 		l = convs;
 		while (l != NULL) {
-			if (PIDGIN_IS_PIDGIN_CONVERSATION(l->data)) {
-				PidginConversation *gtkconv = PIDGIN_CONVERSATION((PurpleConversation *)l->data);
-
-				g_string_append_printf(tooltip_text,
-						ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
-						gtkconv->unseen_count,
-						gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
-			}
+			int count = GPOINTER_TO_INT(purple_conversation_get_data(l->data, "unseen-count")) + 1;
+			g_string_append_printf(tooltip_text,
+					ngettext("%d unread message from %s\n", "%d unread messages from %s\n", count),
+					count, purple_conversation_get_name(l->data));
 			l = l->next;
 		}
 		if(tooltip_text->len > 0) {
@@ -3807,6 +3803,8 @@ written_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *me
 	ui->conv.flags |= PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE;
 	ui->conv.last_message = time(NULL);    /* XXX: for lack of better data */
 	pidgin_blist_update(purple_get_blist(), node);
+	purple_conversation_set_data(conv, "unseen-count", 
+			GINT_TO_POINTER(GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")) + 1));
 }
 
 static void
@@ -3818,6 +3816,7 @@ displayed_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *
 		return;
 	ui->conv.flags &= ~PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE;
 	pidgin_blist_update(purple_get_blist(), node);
+	purple_conversation_set_data(conv, "unseen-count", 0);
 }
 
 static void
