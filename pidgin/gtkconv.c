@@ -122,7 +122,6 @@ typedef struct {
 static GtkWidget *invite_dialog = NULL;
 static GtkWidget *warn_close_dialog = NULL;
 
-static PidginWindow *hidden_convwin = NULL;
 static GList *window_list = NULL;
 
 /* Lists of status icons at all available sizes for use as window icons */
@@ -2729,9 +2728,9 @@ pidgin_conv_present_conversation(PurpleConversation *conv)
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 	GdkModifierType state;
 
-	if(gtkconv->win==hidden_convwin) {
-		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
-		pidgin_conv_placement_place(gtkconv);
+	if (gtkconv == NULL) {
+		pidgin_conv_attach_to_conversation(conv);
+		gtkconv = PIDGIN_CONVERSATION(conv);
 	}
 
 	pidgin_conv_switch_active_conversation(conv);
@@ -2764,15 +2763,18 @@ pidgin_conversations_find_unseen_list(PurpleConversationType type,
 		PurpleConversation *conv = (PurpleConversation*)l->data;
 		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 
-		if(gtkconv == NULL || gtkconv->active_conv != conv)
+		if (gtkconv != NULL && gtkconv->active_conv != conv)
 			continue;
-
-		if (gtkconv->unseen_state >= min_state
-			&& (!hidden_only ||
-				(hidden_only && gtkconv->win == hidden_convwin))) {
-
+		if (gtkconv == NULL) {
+			if (!hidden_only)
+				continue;
 			r = g_list_prepend(r, conv);
 			c++;
+		} else {
+			if (gtkconv->unseen_state >= min_state && !hidden_only) {
+				r = g_list_prepend(r, conv);
+				c++;
+			}
 		}
 	}
 
@@ -3076,7 +3078,7 @@ regenerate_plugins_items(PidginWindow *win)
 	PurpleConversation *conv;
 	GtkWidget *item;
 
-	if (win->window == NULL || win == hidden_convwin)
+	if (win->window == NULL)
 		return;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
@@ -4917,6 +4919,9 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
 
+	if (hidden)
+		return;
+
 	if (conv_type == PURPLE_CONV_TYPE_IM && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
 		conv->ui_data = gtkconv;
 		if (!g_list_find(gtkconv->convs, conv))
@@ -5014,10 +5019,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	                         G_CALLBACK(gtk_widget_grab_focus),
 	                         gtkconv->entry);
 
-	if (hidden)
-		pidgin_conv_window_add_gtkconv(hidden_convwin, gtkconv);
-	else
-		pidgin_conv_placement_place(gtkconv);
+	pidgin_conv_placement_place(gtkconv);
 
 	if (nick_colors == NULL) {
 		nbr_nick_colors = NUM_NICK_COLORS;
@@ -5025,11 +5027,13 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	}
 }
 
+#if 0
 static void
 pidgin_conv_new_hidden(PurpleConversation *conv)
 {
 	private_gtkconv_new(conv, TRUE);
 }
+#endif
 
 void
 pidgin_conv_new(PurpleConversation *conv)
@@ -7036,6 +7040,7 @@ static void
 account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
                           PurpleStatus *newstatus)
 {
+#if 0
 	GList *l;
 	PurpleConversation *conv = NULL;
 	PidginConversation *gtkconv;
@@ -7045,27 +7050,7 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
 
 	if(purple_status_is_available(oldstatus) || !purple_status_is_available(newstatus))
 		return;
-
-	while ((l = hidden_convwin->gtkconvs) != NULL)
-	{
-		gtkconv = l->data;
-
-		conv = gtkconv->active_conv;
-
-		while(l && !purple_status_is_available(
-					purple_account_get_active_status(
-					purple_conversation_get_account(conv))))
-			l = l->next;
-		if (!l)
-			break;
-
-		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
-		pidgin_conv_placement_place(gtkconv);
-
-		/* TODO: do we need to do anything for any other conversations that are in the same gtkconv here?
-		 * I'm a little concerned that not doing so will cause the "pending" indicator in the gtkblist not to be cleared. -DAA*/
-		purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
-	}
+#endif
 }
 
 static void
@@ -7073,12 +7058,7 @@ hide_new_pref_cb(const char *name, PurplePrefType type,
 				 gconstpointer value, gpointer data)
 {
 	GList *l;
-	PurpleConversation *conv = NULL;
-	PidginConversation *gtkconv;
 	gboolean when_away = FALSE;
-
-	if(!hidden_convwin)
-		return;
 
 	if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always")==0)
 		return;
@@ -7086,19 +7066,17 @@ hide_new_pref_cb(const char *name, PurplePrefType type,
 	if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away")==0)
 		when_away = TRUE;
 
-	while ((l = hidden_convwin->gtkconvs) != NULL)
+	for (l = purple_get_conversations(); l; l = l->next)
 	{
-		gtkconv = l->data;
-
-		conv = gtkconv->active_conv;
-
+		PurpleConversation *conv = l->data;
+		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+		if (gtkconv)
+			continue;
 		if(when_away && !purple_status_is_available(
 							purple_account_get_active_status(
 							purple_conversation_get_account(conv))))
 			continue;
-
-		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
-		pidgin_conv_placement_place(gtkconv);
+		pidgin_conv_attach_to_conversation(conv);
 	}
 }
 
@@ -7554,9 +7532,6 @@ pidgin_conversations_init(void)
 
 	purple_conversations_set_ui_ops(&conversation_ui_ops);
 
-	hidden_convwin = pidgin_conv_window_new();
-	window_list = g_list_remove(window_list, hidden_convwin);
-
 	purple_signal_connect(purple_accounts_get_handle(), "account-status-changed",
                         handle, PURPLE_CALLBACK(account_status_changed_cb), NULL);
 
@@ -7600,8 +7575,6 @@ pidgin_conversations_uninit(void)
 	purple_prefs_disconnect_by_handle(pidgin_conversations_get_handle());
 	purple_signals_disconnect_by_handle(pidgin_conversations_get_handle());
 	purple_signals_unregister_by_instance(pidgin_conversations_get_handle());
-	pidgin_conv_window_destroy(hidden_convwin);
-	hidden_convwin=NULL;
 }
 
 
@@ -9015,7 +8988,7 @@ pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 	if (win->gtkconvs && win->gtkconvs->next == NULL)
 		pidgin_conv_tab_pack(win, win->gtkconvs->data);
 
-	if (!win->gtkconvs && win != hidden_convwin)
+	if (!win->gtkconvs)
 		pidgin_conv_window_destroy(win);
 }
 
@@ -9554,9 +9527,7 @@ pidgin_conv_placement_place(PidginConversation *gtkconv)
 gboolean
 pidgin_conv_is_hidden(PidginConversation *gtkconv)
 {
-	g_return_val_if_fail(gtkconv != NULL, FALSE);
-
-	return (gtkconv->win == hidden_convwin);
+	return (gtkconv == NULL);
 }
 
 
