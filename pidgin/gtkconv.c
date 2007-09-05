@@ -45,6 +45,7 @@
 #include "idle.h"
 #include "imgstore.h"
 #include "log.h"
+#include "mediamanager.h"
 #include "notify.h"
 #include "prpl.h"
 #include "request.h"
@@ -7161,6 +7162,12 @@ update_chat_topic(PurpleConversation *conv, const char *old, const char *new)
 	pidgin_conv_update_fields(conv, PIDGIN_CONV_TOPIC);
 }
 
+static void
+pidgin_conv_new_media_cb(PurpleMedia *media, gpointer nul)
+{
+	purple_notify_info(pidgin_conversations_get_handle(), "Media!", "New Media!", "You got new media!\n");
+}
+
 void *
 pidgin_conversations_get_handle(void)
 {
@@ -7257,6 +7264,8 @@ pidgin_conversations_init(void)
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
                                 hide_new_pref_cb, NULL);
 
+	g_signal_connect(G_OBJECT(purple_media_manager_get()), "new-media",
+			 G_CALLBACK(pidgin_conv_new_media_cb), NULL);
 
 
 	/**********************************************************************

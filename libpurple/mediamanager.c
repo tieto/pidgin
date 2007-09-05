@@ -98,12 +98,14 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 		0, NULL, NULL,
 		g_cclosure_marshal_VOID__OBJECT,
 		G_TYPE_NONE, 1, PURPLE_TYPE_MEDIA);
+	g_type_class_add_private(klass, sizeof(PurpleMediaManagerPrivate));
 }
 
 static void
 purple_media_manager_init (PurpleMediaManager *media)
 {
 	media->priv = PURPLE_MEDIA_MANAGER_GET_PRIVATE(media);
+	media->priv->medias = NULL;
 }
 
 static void
@@ -128,10 +130,10 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 				  const char *screenname)
 {
 	PurpleMedia *media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
-					  PROP_NAME, screenname,	
-					  PROP_CONNECTION, gc, NULL));
+					  "screenname", screenname,
+					  "connection", gc, NULL));
 	manager->priv->medias = g_list_append(manager->priv->medias, media);
-	g_signal_emit(manager, purple_media_manager_signals[NEW_MEDIA], 1, media);
+	g_signal_emit(manager, purple_media_manager_signals[NEW_MEDIA], 0, media);
 	return media;
 }
 
