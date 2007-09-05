@@ -59,6 +59,7 @@ finch_LDADD = \
 	$(INTLLIBS) \
 	$(GLIB_LIBS) \
 	$(LIBXML_LIBS) \
+	$(FARSIGHT_LIBS) \
 	$(GNT_LIBS) \
 	$(GSTREAMER_LIBS) \
 	./libgnt/libgnt.la \
@@ -78,5 +79,6 @@ AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
+	$(FARSIGHT_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(GNT_CFLAGS)

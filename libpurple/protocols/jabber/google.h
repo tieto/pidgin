@@ -41,6 +41,7 @@ void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who);
 
 char *jabber_google_format_to_html(const char *text);
 
+void jabber_google_session_parse(JabberStream *js, xmlnode *node);
 
 
 #endif   /* _PURPLE_GOOGLE_H_ */

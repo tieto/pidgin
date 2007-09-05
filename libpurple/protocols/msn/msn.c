@@ -2148,7 +2148,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,
 #endif
 	NULL,
-	NULL
+        sizeof(PurplePluginProtocolInfo)
 };
 
 static PurplePluginInfo info =

@@ -4339,7 +4339,7 @@ static PurplePluginProtocolInfo prpl_info =
 
 	/* padding */
 	NULL,
-	NULL
+        sizeof(PurplePluginProtocolInfo)
 };
 
 static PurplePluginInfo info =

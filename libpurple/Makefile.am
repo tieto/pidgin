@@ -49,6 +49,8 @@ purple_coresources = \
 	idle.c \
 	imgstore.c \
 	log.c \
+	media.c \
+	mediamanager.c \
 	mime.c \
 	nat-pmp.c \
 	network.c \
@@ -100,6 +102,8 @@ purple_coreheaders = \
 	idle.h \
 	imgstore.h \
 	log.h \
+	media.h \
+	mediamanager.h \
 	mime.h \
 	nat-pmp.h \
 	network.h \
@@ -231,6 +235,7 @@ libpurple_la_LIBADD = \
 	$(LIBXML_LIBS) \
 	$(LIBNM_LIBS) \
 	$(INTLLIBS) \
+	$(FARSIGHT_LIBS) \
 	-lm
 
 AM_CPPFLAGS = \
@@ -243,4 +248,5 @@ AM_CPPFLAGS = \
 	$(DEBUG_CFLAGS) \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
+	$(FARSIGHT_CFLAGS) \
 	$(LIBNM_CFLAGS)

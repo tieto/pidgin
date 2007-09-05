@@ -183,6 +183,10 @@ xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int pri
 	xmlnode_set_namespace(c, "http://jabber.org/protocol/caps");
 	xmlnode_set_attrib(c, "node", CAPS0115_NODE);
 	xmlnode_set_attrib(c, "ver", VERSION);
+#ifdef USE_FARSIGHT
+	/* Make sure this is 'voice-v1', or you won't be able to talk to Google Talk */
+	xmlnode_set_attrib(c, "ext", "voice-v1");
+#endif
 
 	return presence;
 }

@@ -69,8 +69,8 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/libpurple \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS) \
-	$(LIBXML_CFLAGS)
-
+	$(LIBXML_CFLAGS) \
+	$(FARSIGHT_CFLAGS)
 if MDNS_AVAHI
   AM_CPPFLAGS += $(AVAHI_CFLAGS)
 else

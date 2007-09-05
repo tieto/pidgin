@@ -333,6 +333,11 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 			return;
 		}
 	}
+	
+	if (xmlnode_get_child_with_namespace(packet, "session", "http://www.google.com/session")) {
+		jabber_google_session_parse(js, packet);
+		return;
+	}
 
 	if(xmlnode_get_child_with_namespace(packet, "si", "http://jabber.org/protocol/si")) {
 		jabber_si_parse(js, packet);

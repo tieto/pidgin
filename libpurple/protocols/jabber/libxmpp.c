@@ -112,11 +112,10 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_prpl_send_raw,			/* send_raw */
 	jabber_roomlist_room_serialize, /* roomlist_room_serialize */
 
-	/* padding */
 	NULL,
 	NULL,
-	NULL,
-	NULL
+	jabber_media_initiate,          /* initiate_media */
+	sizeof(PurplePluginProtocolInfo)
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)

@@ -1892,7 +1892,7 @@ static PurplePluginInfo info =
 	NULL,
 	NULL,
 	NULL,
-	NULL
+        sizeof(PurpleProtocolPluginInfo)
 };
 
 static void

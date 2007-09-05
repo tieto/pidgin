@@ -22,6 +22,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+#include <notify.h>
+#include <request.h>
+
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -33,9 +37,6 @@
 #include <gntutils.h>
 
 #include "finch.h"
-
-#include <notify.h>
-#include <request.h>
 
 #include "gntstatus.h"
 

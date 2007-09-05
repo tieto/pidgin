@@ -2813,7 +2813,7 @@ PurplePluginProtocolInfo prpl_info = {
 	NULL,               /* _purple_reserved2 */
 #endif
 	NULL,               /* _purple_reserved3 */
-	NULL                /* _purple_reserved4 */
+        sizeof(PurplePluginProtocolInfo)
 };
 
 
