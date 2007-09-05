@@ -1543,6 +1543,12 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 
 	if (msim_msg_get_integer(msg, "uniquenick") == session->userid) {
 		purple_debug_info("msim_we_are_logged_on", "TODO: pick username");
+		/* No username is set. */
+		purple_notify_error(session->account, 
+				_("No username set"),
+				_("Please go to http://editprofile.myspace.com/index.cfm?fuseaction=profile.username and choose a username and try to login again."), NULL);
+		purple_connection_error(session->gc, _("No username set"));
+		return FALSE;
 	}
 
 	body = msim_msg_new(
