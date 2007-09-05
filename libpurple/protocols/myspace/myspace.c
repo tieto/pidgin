@@ -1856,9 +1856,14 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		purple_debug_info("msim", "msim_status: found buddy %s\n", username);
 	}
 
-	/* The status headline is plaintext, but libpurple treats it as HTML,
-	 * so escape any HTML characters to their entity equivalents. */
-	status_headline_escaped = g_markup_escape_text(status_headline, strlen(status_headline));
+	if (status_headline) {
+		/* The status headline is plaintext, but libpurple treats it as HTML,
+		 * so escape any HTML characters to their entity equivalents. */
+		status_headline_escaped = g_markup_escape_text(status_headline, strlen(status_headline));
+	} else {
+		status_headline_escaped = NULL;
+	}
+
 	g_free(status_headline);
 
 	if (user->headline) 
