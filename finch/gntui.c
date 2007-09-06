@@ -91,8 +91,6 @@ void gnt_ui_init()
 	gnt_register_action(_("Statuses"), finch_savedstatus_show_all);
 
 #ifdef STANDALONE
-
-	finch_plugins_save_loaded();
 }
 
 void gnt_ui_uninit()
