@@ -505,13 +505,13 @@ static int aim_ssi_sync(OscarData *od)
 	 * buddy ID#s, which makes things more efficient.  I think.
 	 */
 
-	/* Additions */
+	/* Deletions */
 	if (!od->ssi.pending) {
-		for (cur1=od->ssi.local; cur1 && (n < 15); cur1=cur1->next) {
-			if (!aim_ssi_itemlist_find(od->ssi.official, cur1->gid, cur1->bid)) {
+		for (cur1=od->ssi.official; cur1 && (n < 15); cur1=cur1->next) {
+			if (!aim_ssi_itemlist_find(od->ssi.local, cur1->gid, cur1->bid)) {
 				n++;
 				new = (struct aim_ssi_tmp *)g_malloc(sizeof(struct aim_ssi_tmp));
-				new->action = SNAC_SUBTYPE_FEEDBAG_ADD;
+				new->action = SNAC_SUBTYPE_FEEDBAG_DEL;
 				new->ack = 0xffff;
 				new->name = NULL;
 				new->item = cur1;
@@ -525,13 +525,13 @@ static int aim_ssi_sync(OscarData *od)
 		}
 	}
 
-	/* Deletions */
+	/* Additions */
 	if (!od->ssi.pending) {
-		for (cur1=od->ssi.official; cur1 && (n < 15); cur1=cur1->next) {
-			if (!aim_ssi_itemlist_find(od->ssi.local, cur1->gid, cur1->bid)) {
+		for (cur1=od->ssi.local; cur1 && (n < 15); cur1=cur1->next) {
+			if (!aim_ssi_itemlist_find(od->ssi.official, cur1->gid, cur1->bid)) {
 				n++;
 				new = (struct aim_ssi_tmp *)g_malloc(sizeof(struct aim_ssi_tmp));
-				new->action = SNAC_SUBTYPE_FEEDBAG_DEL;
+				new->action = SNAC_SUBTYPE_FEEDBAG_ADD;
 				new->ack = 0xffff;
 				new->name = NULL;
 				new->item = cur1;

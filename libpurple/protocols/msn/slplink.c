@@ -49,7 +49,7 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
 	tf = g_fopen(tmp, "wb");
 	if (tf == NULL)
 	{
-		purple_debug_error("msn", "could not open debug file");
+		purple_debug_error("msn", "could not open debug file\n");
 		return;
 	}
 	pload = msn_message_gen_payload(msg, &pload_size);

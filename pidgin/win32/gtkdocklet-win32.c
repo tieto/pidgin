@@ -450,7 +450,7 @@ static HICON load_hicon_from_stock(const char *stock) {
 		hicon = pixbuf_to_hicon(pixbuf);
 		g_object_unref(pixbuf);
 	} else
-		purple_debug_error("Unable to load pixbuf for %s.\n", stock);
+		purple_debug_error("docklet", "Unable to load pixbuf for %s.\n", stock);
 
 	return hicon;
 }

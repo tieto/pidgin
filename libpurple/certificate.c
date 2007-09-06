@@ -580,7 +580,12 @@ PurpleCertificateVerifier x509_singleuse = {
 	"x509",                         /* Scheme name */
 	"singleuse",                    /* Verifier name */
 	x509_singleuse_start_verify,    /* start_verification function */
-	x509_singleuse_destroy_request  /* Request cleanup operation */
+	x509_singleuse_destroy_request, /* Request cleanup operation */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 
@@ -872,7 +877,13 @@ static PurpleCertificatePool x509_ca = {
 	x509_ca_get_cert,             /* Cert retriever */
 	x509_ca_put_cert,             /* Cert writer */
 	x509_ca_delete_cert,          /* Cert remover */
-	x509_ca_get_idlist            /* idlist retriever */
+	x509_ca_get_idlist,           /* idlist retriever */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
+
 };
 
 
@@ -1034,7 +1045,12 @@ static PurpleCertificatePool x509_tls_peers = {
 	x509_tls_peers_get_cert,      /* Cert retriever */
 	x509_tls_peers_put_cert,      /* Cert writer */
 	x509_tls_peers_delete_cert,   /* Cert remover */
-	x509_tls_peers_get_idlist     /* idlist retriever */
+	x509_tls_peers_get_idlist,    /* idlist retriever */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 
@@ -1459,7 +1475,13 @@ static PurpleCertificateVerifier x509_tls_cached = {
 	"x509",                         /* Scheme name */
 	"tls_cached",                   /* Verifier name */
 	x509_tls_cached_start_verify,   /* Verification begin */
-	x509_tls_cached_destroy_request /* Request cleanup */
+	x509_tls_cached_destroy_request,/* Request cleanup */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
+
 };
 
 /****************************************************************************/

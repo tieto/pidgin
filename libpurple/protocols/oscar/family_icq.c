@@ -340,7 +340,6 @@ int aim_icq_sendxmlreq(OscarData *od, const char *xml)
 }
 #endif
 
-#if 0
 /*
  * Send an SMS message.  This is the non-US way.  The US-way is to IM
  * their cell phone number (+19195551234).
@@ -369,6 +368,7 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	const char *timestr;
 	time_t t;
 	struct tm *tm;
+	gchar *stripped;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
 		return -EINVAL;
@@ -380,22 +380,24 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	tm = gmtime(&t);
 	timestr = purple_utf8_strftime("%a, %d %b %Y %T %Z", tm);
 
+	stripped = purple_markup_strip_html(msg);
+
 	/* The length of xml included the null terminating character */
-	xmllen = 225 + strlen(name) + strlen(msg) + strlen(od->sn) + strlen(alias) + strlen(timestr) + 1;
+	xmllen = 209 + strlen(name) + strlen(stripped) + strlen(od->sn) + strlen(alias) + strlen(timestr) + 1;
 
 	xml = g_new(char, xmllen);
-	snprintf(xml, xmllen, "<icq_sms_message>\n"
-		"\t<destination>%s</destination>\n"
-		"\t<text>%s</text>\n"
-		"\t<codepage>1252</codepage>\n"
-		"\t<senders_UIN>%s</senders_UIN>\n"
-		"\t<senders_name>%s</senders_name>\n"
-		"\t<delivery_receipt>Yes</delivery_receipt>\n"
-		"\t<time>%s</time>\n"
-		"</icq_sms_message>\n",
-		name, msg, od->sn, alias, timestr);
+	snprintf(xml, xmllen, "<icq_sms_message>"
+		"<destination>%s</destination>"
+		"<text>%s</text>"
+		"<codepage>1252</codepage>"
+		"<senders_UIN>%s</senders_UIN>"
+		"<senders_name>%s</senders_name>"
+		"<delivery_receipt>Yes</delivery_receipt>"
+		"<time>%s</time>"
+		"</icq_sms_message>",
+		name, stripped, od->sn, alias, timestr);
 
-	bslen = 37 + xmllen;
+	bslen = 36 + xmllen;
 
 	frame = flap_frame_new(od, 0x02, 10 + 4 + bslen);
 
@@ -412,7 +414,7 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	byte_stream_putle16(&frame->data, snacid); /* eh. */
 
 	/* From libicq200-0.3.2/src/SNAC-SRV.cpp */
-	byte_stream_putle16(&frame->data, 0x8214);
+	byte_stream_putle16(&frame->data, 0x1482);
 	byte_stream_put16(&frame->data, 0x0001);
 	byte_stream_put16(&frame->data, 0x0016);
 	byte_stream_put32(&frame->data, 0x00000000);
@@ -423,14 +425,15 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	byte_stream_put16(&frame->data, 0x0000);
 	byte_stream_put16(&frame->data, xmllen);
 	byte_stream_putstr(&frame->data, xml);
+	byte_stream_put8(&frame->data, 0x00);
 
 	flap_connection_send(conn, frame);
 
 	g_free(xml);
+	g_free(stripped);
 
 	return 0;
 }
-#endif
 
 static void aim_icq_freeinfo(struct aim_icq_info *info) {
 	int i;

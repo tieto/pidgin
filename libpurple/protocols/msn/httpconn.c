@@ -181,7 +181,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		{
 			msn_session_set_error(httpconn->session,
 								  MSN_ERROR_HTTP_MALFORMED, NULL);
-			purple_debug_error("msn", "Malformed X-MSN-Messenger field.\n{%s}",
+			purple_debug_error("msn", "Malformed X-MSN-Messenger field.\n{%s}\n",
 							 buf);
 
 			g_free(body);
