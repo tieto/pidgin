@@ -943,7 +943,7 @@ savelog_writefile_cb(void *user_data, const char *filename)
 
 	lines = gtk_imhtml_get_markup_lines(
 		GTK_IMHTML(PIDGIN_CONVERSATION(conv)->imhtml));
-	text = g_strjoinv("\n", lines);
+	text = g_strjoinv("<br>\n", lines);
 	fprintf(fp, "%s", text);
 	g_free(text);
 	g_strfreev(lines);
