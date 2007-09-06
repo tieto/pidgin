@@ -10243,7 +10243,7 @@ msgid "Active which ID?"
 msgstr "Ŝaltu kiun ID?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3234
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Kiun kuniĝi en babilejo?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3244

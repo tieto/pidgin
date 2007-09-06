@@ -14520,7 +14520,7 @@ msgid "Active which ID?"
 msgstr "Активиране на коя идентификация?"
 
 #: ../libgaim/protocols/yahoo/yahoo.c:3214
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Присъединяване към кого в чата?"
 
 #: ../libgaim/protocols/yahoo/yahoo.c:3224

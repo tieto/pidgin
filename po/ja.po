@@ -11162,7 +11162,7 @@ msgid "Active which ID?"
 msgstr "どの ID を有効化しますか？"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3256
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "どのチャットへ参加しますか？"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3268

@@ -13683,7 +13683,7 @@ msgid "Active which ID?"
 msgstr "Welk ID activeren?"
 
 #: ../libgaim/protocols/yahoo/yahoo.c:3158
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Deelnemen aan wiens chat?"
 
 #: ../libgaim/protocols/yahoo/yahoo.c:3168

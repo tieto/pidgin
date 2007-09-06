@@ -3505,7 +3505,7 @@ static void yahoo_show_act_id(PurplePluginAction *action)
 static void yahoo_show_chat_goto(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input(gc, NULL, _("Join who in chat?"), NULL,
+	purple_request_input(gc, NULL, _("Join whom in chat?"), NULL,
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
 					   _("Cancel"), NULL,

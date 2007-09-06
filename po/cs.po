@@ -11905,7 +11905,7 @@ msgid "Active which ID?"
 msgstr "Které ID aktivovat?"
 
 #: ../src/protocols/yahoo/yahoo.c:3069
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Připojit koho k chatu?"
 
 #: ../src/protocols/yahoo/yahoo.c:3079

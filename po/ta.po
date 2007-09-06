@@ -11877,7 +11877,7 @@ msgid "Active which ID?"
 msgstr "எந்த முகப்பை செயல்படுத்த?"
 
 #: ../src/protocols/yahoo/yahoo.c:3070
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "எந்த அரட்டையில் இருப்பவருடன் சேர ?"
 
 #: ../src/protocols/yahoo/yahoo.c:3080

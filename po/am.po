@@ -10501,7 +10501,7 @@ msgstr ""
 
 #: src/protocols/yahoo/yahoo.c:2972
 #, fuzzy
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "ውሪን አገጣጥም"
 
 #: src/protocols/yahoo/yahoo.c:2982
