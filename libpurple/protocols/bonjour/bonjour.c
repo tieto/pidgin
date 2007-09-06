@@ -592,8 +592,8 @@ initialize_default_account_values()
 		fullname = info->pw_gecos;
 	else if ((info != NULL) && (info->pw_name != NULL) && (info->pw_name[0] != '\0'))
 		fullname = info->pw_name;
-	else if (((fullname = getlogin()) != NULL) && (fullname[0] != '\0'))
-		;
+	else if (((fullname = getlogin()) != NULL) && (fullname[0] == '\0'))
+		fullname = NULL;
 #else
 	/* The Win32 username lookup functions are synchronous so we do it in a thread */
 	g_thread_create(_win32_name_lookup_thread, NULL, FALSE, NULL);
