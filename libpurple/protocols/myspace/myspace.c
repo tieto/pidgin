@@ -1781,9 +1781,6 @@ msim_error(MsimSession *session, MsimMessage *msg)
 	purple_debug_info("msim", "msim_error (sesskey=%d): %s\n", 
 			session->sesskey, full_errmsg);
 
-	purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
-			full_errmsg, NULL);
-
 	/* Destroy session if fatal. */
 	if (msim_msg_get(msg, "fatal")) {
 		purple_debug_info("msim", "fatal error, closing\n");
