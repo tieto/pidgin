@@ -446,6 +446,8 @@ pidgin_sound_play_file(const char *filename)
 		g_free(command);
 		return;
 	}
+#endif /* _WIN32 */
+
 #ifdef USE_GSTREAMER
 	if (gst_init_failed)  /* Perhaps do gdk_beep instead? */
 		return;
@@ -460,7 +462,9 @@ pidgin_sound_play_file(const char *filename)
 			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 			return;
 		}
-	} else if (!strcmp(method, "esd")) {
+	}
+#ifndef _WIN32
+	else if (!strcmp(method, "esd")) {
 		sink = gst_element_factory_make("esdsink", "sink");
 		if (!sink) {
 			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
@@ -472,7 +476,9 @@ pidgin_sound_play_file(const char *filename)
 			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 			return;
 		}
-	} else {
+	}
+#endif
+	else {
 		purple_debug_error("sound", "Unknown sound method '%s'\n", method);
 		return;
 	}
@@ -498,9 +504,9 @@ pidgin_sound_play_file(const char *filename)
 	g_free(uri);
 
 #else /* USE_GSTREAMER */
+
+#ifndef _WIN32
 	gdk_beep();
-	return;
-#endif /* USE_GSTREAMER */
 #else /* _WIN32 */
 	purple_debug_info("sound", "Playing %s\n", filename);
 
@@ -518,6 +524,8 @@ pidgin_sound_play_file(const char *filename)
 		g_free(l_filename);
 	}
 #endif /* _WIN32 */
+
+#endif /* USE_GSTREAMER */
 }
 
 static void

@@ -1510,6 +1510,7 @@ sound_changed2_cb(const char *name, PurplePrefType type,
 
 	gtk_widget_set_sensitive(vbox, strcmp(method, "none"));
 }
+#endif /* !_WIN32 */
 
 #ifdef USE_GSTREAMER
 static void
@@ -1524,7 +1525,6 @@ sound_changed3_cb(const char *name, PurplePrefType type,
 			!strcmp(method, "esd"));
 }
 #endif /* USE_GSTREAMER */
-#endif /* !_WIN32 */
 
 
 static void
@@ -1693,9 +1693,11 @@ sound_page()
 	int j;
 	const char *file;
 	char *pref;
+#if !defined _WIN32 || defined USE_GSTREAMER
+	GtkWidget *label;
+#endif
 #ifndef _WIN32
 	GtkWidget *dd;
-	GtkWidget *label;
 	GtkWidget *entry;
 	const char *cmd;
 #endif
