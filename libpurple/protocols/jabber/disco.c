@@ -30,15 +30,19 @@
 #include "jabber.h"
 #include "presence.h"
 #include "roster.h"
+#include "pep.h"
+#include "adhoccommands.h"
+
 
 struct _jabber_disco_info_cb_data {
 	gpointer data;
 	JabberDiscoInfoCallback *callback;
 };
 
-#define SUPPORT_FEATURE(x) \
+#define SUPPORT_FEATURE(x) { \
 	feature = xmlnode_new_child(query, "feature"); \
-	xmlnode_set_attrib(feature, "var", x);
+	xmlnode_set_attrib(feature, "var", x); \
+}
 
 
 void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
@@ -72,7 +76,6 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			xmlnode_set_attrib(query, "node", node);
 
 		if(!node || !strcmp(node, CAPS0115_NODE "#" VERSION)) {
-
 			identity = xmlnode_new_child(query, "identity");
 			xmlnode_set_attrib(identity, "category", "client");
 			xmlnode_set_attrib(identity, "type", "pc"); /* XXX: bot, console,
@@ -98,18 +101,62 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://jabber.org/protocol/si/profile/file-transfer")
 			SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
 			SUPPORT_FEATURE("urn:xmpp:ping")
+			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0199.html#ns")
+			
+			if(!node) { /* non-caps disco#info, add all enabled extensions */
+				GList *features;
+				for(features = jabber_features; features; features = features->next) {
+					JabberFeature *feat = (JabberFeature*)features->data;
+					if(feat->is_enabled == NULL || feat->is_enabled(js, feat->shortname, feat->namespace) == TRUE)
+						SUPPORT_FEATURE(feat->namespace);
+				}
+			}
 		} else {
-			xmlnode *error, *inf;
-
-			/* XXX: gross hack, implement jabber_iq_set_type or something */
-			xmlnode_set_attrib(iq->node, "type", "error");
-			iq->type = JABBER_IQ_ERROR;
-
-			error = xmlnode_new_child(query, "error");
-			xmlnode_set_attrib(error, "code", "404");
-			xmlnode_set_attrib(error, "type", "cancel");
-			inf = xmlnode_new_child(error, "item-not-found");
-			xmlnode_set_namespace(inf, "urn:ietf:params:xml:ns:xmpp-stanzas");
+			const char *ext = NULL;
+			unsigned pos;
+			unsigned nodelen = strlen(node);
+			unsigned capslen = strlen(CAPS0115_NODE);
+			/* do a basic plausability check */
+			if(nodelen > capslen+1) {
+				/* verify that the string is CAPS0115#<ext> and get the pointer to the ext part */
+				for(pos = 0; pos < capslen+1; ++pos) {
+					if(pos == capslen) {
+						if(node[pos] == '#')
+							ext = &node[pos+1];
+						else
+							break;
+					} else if(node[pos] != CAPS0115_NODE[pos])
+					break;
+				}
+				
+				if(ext != NULL) {
+					/* look for that ext */
+					GList *features;
+					for(features = jabber_features; features; features = features->next) {
+						JabberFeature *feat = (JabberFeature*)features->data;
+						if(!strcmp(feat->shortname, ext)) {
+							SUPPORT_FEATURE(feat->namespace);
+							break;
+						}
+					}
+					if(features == NULL)
+						ext = NULL;
+				}
+			}
+			
+			if(ext == NULL) {
+				xmlnode *error, *inf;
+				
+				/* XXX: gross hack, implement jabber_iq_set_type or something */
+				xmlnode_set_attrib(iq->node, "type", "error");
+				iq->type = JABBER_IQ_ERROR;
+				
+				error = xmlnode_new_child(query, "error");
+				xmlnode_set_attrib(error, "code", "404");
+				xmlnode_set_attrib(error, "type", "cancel");
+				inf = xmlnode_new_child(error, "item-not-found");
+				xmlnode_set_namespace(inf, "urn:ietf:params:xml:ns:xmpp-stanzas");
+			}
 		}
 
 		jabber_iq_send(iq);
@@ -165,6 +212,11 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 					capabilities |= JABBER_CAP_IQ_SEARCH;
 				else if(!strcmp(var, "jabber:iq:register"))
 					capabilities |= JABBER_CAP_IQ_REGISTER;
+				else if(!strcmp(var, "http://www.xmpp.org/extensions/xep-0199.html#ns"))
+					capabilities |= JABBER_CAP_PING;
+				else if(!strcmp(var, "http://jabber.org/protocol/commands")) {
+					capabilities |= JABBER_CAP_ADHOC;
+				}
 			}
 		}
 
@@ -208,6 +260,17 @@ void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
 	if(type && !strcmp(type, "get")) {
 		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_RESULT,
 				"http://jabber.org/protocol/disco#items");
+		
+		/* preserve node */
+		xmlnode *iq_query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#items");
+		if(iq_query) {
+			xmlnode *query = xmlnode_get_child_with_namespace(packet,"query","http://jabber.org/protocol/disco#items");
+			if(query) {
+				const char *node = xmlnode_get_attrib(query,"node");
+				if(node)
+					xmlnode_set_attrib(iq_query,"node",node);
+			}
+		}
 
 		jabber_iq_set_id(iq, xmlnode_get_attrib(packet, "id"));
 
@@ -227,7 +290,13 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 		jabber_roster_request(js);
 	}
 
-	/* when we get the roster back, we'll send our initial presence */
+	/* Send initial presence; this will trigger receipt of presence for contacts on the roster */
+	jabber_presence_send(js->gc->account, NULL);
+	
+	if (js->server_caps & JABBER_CAP_ADHOC) {
+		/* The server supports ad-hoc commands, so let's request the list */
+		jabber_adhoc_server_get_list(js);
+	}
 }
 
 static void
@@ -260,9 +329,11 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 	     child = xmlnode_get_next_twin(child)) {
 		const char *category, *type, *name;
 		category = xmlnode_get_attrib(child, "category");
+		type = xmlnode_get_attrib(child, "type");
+		if(category && type && !strcmp(category, "pubsub") && !strcmp(type,"pep"))
+			js->pep = TRUE;
 		if (!category || strcmp(category, "server"))
 			continue;
-		type = xmlnode_get_attrib(child, "type");
 		if (!type || strcmp(type, "im"))
 			continue;
 
@@ -291,6 +362,8 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		} else if (!strcmp("google:roster", var)) {
 			js->server_caps |= JABBER_CAP_GOOGLE_ROSTER;
 			jabber_google_roster_init(js);
+		} else if (!strcmp("http://jabber.org/protocol/commands", var)) {
+			js->server_caps |= JABBER_CAP_ADHOC;
 		}
 	}
 

@@ -261,7 +261,7 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 
 	purple_status_to_jabber(status, &state, &msg, &priority);
 
-	presence = jabber_presence_create(state, msg, priority);
+	presence = jabber_presence_create_js(js, state, msg, priority);
 	full_jid = g_strdup_printf("%s/%s", room_jid, handle);
 	xmlnode_set_attrib(presence, "to", full_jid);
 	g_free(full_jid);
@@ -634,7 +634,7 @@ void jabber_chat_change_nick(JabberChat *chat, const char *nick)
 
 	purple_status_to_jabber(status, &state, &msg, &priority);
 
-	presence = jabber_presence_create(state, msg, priority);
+	presence = jabber_presence_create_js(chat->js, state, msg, priority);
 	full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server, nick);
 	xmlnode_set_attrib(presence, "to", full_jid);
 	g_free(full_jid);
