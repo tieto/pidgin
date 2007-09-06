@@ -929,6 +929,7 @@ savelog_writefile_cb(void *user_data, const char *filename)
 	PurpleConversation *conv = (PurpleConversation *)user_data;
 	FILE *fp;
 	const char *name;
+	char **lines;
 	gchar *text;
 
 	if ((fp = g_fopen(filename, "w+")) == NULL) {
@@ -940,10 +941,12 @@ savelog_writefile_cb(void *user_data, const char *filename)
 	fprintf(fp, "<html>\n<head><title>%s</title></head>\n<body>", name);
 	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
 
-	text = gtk_imhtml_get_markup(
+	lines = gtk_imhtml_get_markup_lines(
 		GTK_IMHTML(PIDGIN_CONVERSATION(conv)->imhtml));
+	text = g_strjoinv("\n", lines);
 	fprintf(fp, "%s", text);
 	g_free(text);
+	g_strfreev(lines);
 
 	fprintf(fp, "\n</body>\n</html>\n");
 	fclose(fp);
