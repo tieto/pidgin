@@ -454,6 +454,9 @@ tls_peers_mgmt_build(void)
 			"text", TPM_HOSTNAME_COLUMN,
 			NULL);
 		gtk_tree_view_append_column(GTK_TREE_VIEW(listview), column);
+
+		gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(store),
+				TPM_HOSTNAME_COLUMN, GTK_SORT_ASCENDING);
 	}
 	
 	/* Get the treeview selector into the struct */

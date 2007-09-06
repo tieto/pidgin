@@ -537,7 +537,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 
 	/* Look for the buddy that has opened the conversation and fill information */
 	address_text = inet_ntoa(their_addr.sin_addr);
-	purple_debug_info("bonjour", "Received incoming connection from %s\n.", address_text);
+	purple_debug_info("bonjour", "Received incoming connection from %s.\n", address_text);
 	cbba = g_new0(struct _check_buddy_by_address_t, 1);
 	cbba->address = address_text;
 	cbba->pb = &pb;

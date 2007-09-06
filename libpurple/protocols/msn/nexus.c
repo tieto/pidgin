@@ -188,7 +188,7 @@ nexus_login_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 	purple_ssl_close(nexus->gsc);
 	nexus->gsc = NULL;
 
-	purple_debug_misc("msn", "ssl buffer: {%s}", nexus->read_buf);
+	purple_debug_misc("msn", "ssl buffer: {%s}\n", nexus->read_buf);
 
 	if (strstr(nexus->read_buf, "HTTP/1.1 302") != NULL)
 	{

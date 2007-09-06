@@ -321,7 +321,7 @@ static GList *nullprpl_status_types(PurpleAccount *acct)
 }
 
 static void blist_example_menu_item(PurpleBlistNode *node, gpointer userdata) {
-  purple_debug_info("nullprpl", "example menu item clicked on user",
+  purple_debug_info("nullprpl", "example menu item clicked on user\n",
                     ((PurpleBuddy *)node)->name);
 
   purple_notify_info(NULL,  /* plugin handle or PurpleConnection */

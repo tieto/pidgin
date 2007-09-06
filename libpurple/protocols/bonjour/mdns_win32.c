@@ -207,7 +207,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 	PurpleBuddy *pb = NULL;
 
 	if (kDNSServiceErr_NoError != errorCode)
-		purple_debug_error("bonjour", "service browser - callback error");
+		purple_debug_error("bonjour", "service browser - callback error\n");
 	else if (flags & kDNSServiceFlagsAdd) {
 		/* A presence service instance has been discovered... check it isn't us! */
 		if (purple_utf8_strcasecmp(serviceName, account->username) != 0) {

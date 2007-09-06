@@ -932,7 +932,7 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 
 	username = msim_msg_get_string(msg, "user");
 	if (!username) {
-		purple_debug_info("msim", "msim_get_info_cb: no 'user' in msg");
+		purple_debug_info("msim", "msim_get_info_cb: no 'user' in msg\n");
 		return;
 	}
 
@@ -1120,7 +1120,7 @@ msim_set_status_code(MsimSession *session, guint status_code, gchar *statstring)
 			"locstring", MSIM_TYPE_STRING, g_strdup(""),
 			NULL))
 	{
-		purple_debug_info("msim", "msim_set_status: failed to set status");
+		purple_debug_info("msim", "msim_set_status: failed to set status\n");
 	}
 
 }
@@ -1182,7 +1182,7 @@ msim_uid2username_from_blist(MsimSession *session, guint wanted_uid)
 
 	if (!buddies)
 	{
-		purple_debug_info("msim", "msim_uid2username_from_blist: no buddies?");
+		purple_debug_info("msim", "msim_uid2username_from_blist: no buddies?\n");
 		return NULL;
 	}
 
@@ -1542,7 +1542,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 
 
 	if (msim_msg_get_integer(msg, "uniquenick") == session->userid) {
-		purple_debug_info("msim_we_are_logged_on", "TODO: pick username");
+		purple_debug_info("msim_we_are_logged_on", "TODO: pick username\n");
 		/* No username is set. */
 		purple_notify_error(session->account, 
 				_("No username set"),
@@ -1787,8 +1787,19 @@ msim_error(MsimSession *session, MsimMessage *msg)
 	/* Destroy session if fatal. */
 	if (msim_msg_get(msg, "fatal")) {
 		purple_debug_info("msim", "fatal error, closing\n");
+		if (err == 260) {
+			/* Incorrect password */
+			session->gc->wants_to_die = TRUE;
+			if (!purple_account_get_remember_password(session->account))
+				purple_account_set_password(session->account, NULL);
+		}
 		purple_connection_error(session->gc, full_errmsg);
+	} else {
+		purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
+				full_errmsg, NULL);
 	}
+
+	g_free(full_errmsg);
 
 	return TRUE;
 }
