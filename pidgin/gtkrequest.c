@@ -368,6 +368,8 @@ pidgin_request_input(const char *title, const char *primary,
 	data->u.input.multiline = multiline;
 	data->u.input.hint = g_strdup(hint);
 
+	gtk_widget_show_all(hbox);
+
 	if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html"))) {
 		GtkWidget *frame;
 
@@ -429,13 +431,14 @@ pidgin_request_input(const char *title, const char *primary,
 					gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
 			}
 		}
+		gtk_widget_show_all(vbox);
 	}
 
 	pidgin_set_accessible_label (entry, label);
 	data->u.input.entry = entry;
 
 	/* Show everything. */
-	gtk_widget_show_all(dialog);
+	gtk_widget_show(dialog);
 
 	return data;
 }

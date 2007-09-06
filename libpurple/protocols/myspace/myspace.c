@@ -932,7 +932,7 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 
 	username = msim_msg_get_string(msg, "user");
 	if (!username) {
-		purple_debug_info("msim", "msim_get_info_cb: no 'user' in msg");
+		purple_debug_info("msim", "msim_get_info_cb: no 'user' in msg\n");
 		return;
 	}
 
@@ -1066,8 +1066,11 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 	statstring = purple_status_get_attr_string(status, "message");
 
 	if (!statstring) {
-		statstring = g_strdup("");
+		statstring = "";
 	}
+
+	/* Status strings are plain text. */
+	statstring = purple_markup_strip_html(statstring);
 
 	msim_set_status_code(session, status_code, g_strdup(statstring));
 }
@@ -1117,7 +1120,7 @@ msim_set_status_code(MsimSession *session, guint status_code, gchar *statstring)
 			"locstring", MSIM_TYPE_STRING, g_strdup(""),
 			NULL))
 	{
-		purple_debug_info("msim", "msim_set_status: failed to set status");
+		purple_debug_info("msim", "msim_set_status: failed to set status\n");
 	}
 
 }
@@ -1179,7 +1182,7 @@ msim_uid2username_from_blist(MsimSession *session, guint wanted_uid)
 
 	if (!buddies)
 	{
-		purple_debug_info("msim", "msim_uid2username_from_blist: no buddies?");
+		purple_debug_info("msim", "msim_uid2username_from_blist: no buddies?\n");
 		return NULL;
 	}
 
@@ -1407,6 +1410,91 @@ msim_check_inbox(gpointer data)
 	return TRUE;
 }
 
+#ifdef MSIM_CHECK_NEWER_VERSION
+/** Callback for when a currentversion.txt has been downloaded. */
+static void
+msim_check_newer_version_cb(PurpleUtilFetchUrlData *url_data,
+		gpointer user_data,
+		const gchar *url_text,
+		gsize len,
+		const gchar *error_message)
+{
+	GKeyFile *keyfile;
+	GError *error;
+	GString *data;
+	gchar *newest_filever;
+
+	if (!url_text) {
+		purple_debug_info("msim_check_newer_version_cb",
+				"got error: %s\n", error_message);
+		return;
+	}
+
+	purple_debug_info("msim_check_newer_version_cb",
+			"url_text=%s\n", url_text ? url_text : "(NULL)");
+
+	/* Prepend [group] so that GKeyFile can parse it (requires a group). */
+	data = g_string_new(url_text);
+	purple_debug_info("msim", "data=%s\n", data->str
+			? data->str : "(NULL)");
+	data = g_string_prepend(data, "[group]\n");
+
+	purple_debug_info("msim", "data=%s\n", data->str
+			? data->str : "(NULL)");
+
+	/* url_text is variable=data\n... */
+
+	/* Check FILEVER, 1.0.716.0. 716 is build, MSIM_CLIENT_VERSION */
+	/* New (english) version can be downloaded from SETUPURL+SETUPFILE */
+
+	error = NULL;
+	keyfile = g_key_file_new();
+
+	/* Default list seperator is ;, but currentversion.txt doesn't have
+	 * these, so set to an unused character to avoid parsing problems. */
+	g_key_file_set_list_separator(keyfile, '\0');
+
+	g_key_file_load_from_data(keyfile, data->str, data->len,
+				G_KEY_FILE_NONE, &error);
+	g_string_free(data, TRUE);
+
+	if (error != NULL) {
+		purple_debug_info("msim_check_newer_version_cb",
+				"couldn't parse, error: %d %d %s\n",
+				error->domain, error->code, error->message);
+		g_error_free(error);
+		return;
+	}
+
+	gchar **ks;
+	guint n;
+	ks = g_key_file_get_keys(keyfile, "group", &n, NULL);
+	purple_debug_info("msim", "n=%d\n", n);
+	guint i;
+	for (i = 0; ks[i] != NULL; ++i)
+	{
+		purple_debug_info("msim", "%d=%s\n", i, ks[i]);
+	}
+
+	newest_filever = g_key_file_get_string(keyfile, "group", 
+			"FILEVER", &error);
+
+	purple_debug_info("msim_check_newer_version_cb",
+			"newest filever: %s\n", newest_filever ?
+			newest_filever : "(NULL)");
+	if (error != NULL) {
+		purple_debug_info("msim_check_newer_version_cb",
+				"error: %d %d %s\n",
+				error->domain, error->code, error->message);
+		g_error_free(error);
+	}
+
+	g_key_file_free(keyfile);			
+
+	exit(0);
+}
+#endif
+
 /** Called when the session key arrives. */
 static gboolean
 msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
@@ -1441,7 +1529,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 
 	/* If a local alias wasn't set, set it to user's username. */
 	if (!session->account->alias || !strlen(session->account->alias))
-		session->account->alias = session->username;
+		purple_account_set_alias(session->account, session->username);
 
 	/* The session is now set up, ready to be connected. This emits the
 	 * signedOn signal, so clients can now do anything with msimprpl, and
@@ -1454,7 +1542,13 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 
 
 	if (msim_msg_get_integer(msg, "uniquenick") == session->userid) {
-		purple_debug_info("msim_we_are_logged_on", "TODO: pick username");
+		purple_debug_info("msim_we_are_logged_on", "TODO: pick username\n");
+		/* No username is set. */
+		purple_notify_error(session->account, 
+				_("No username set"),
+				_("Please go to http://editprofile.myspace.com/index.cfm?fuseaction=profile.username and choose a username and try to login again."), NULL);
+		purple_connection_error(session->gc, _("No username set"));
+		return FALSE;
 	}
 
 	body = msim_msg_new(
@@ -1687,14 +1781,22 @@ msim_error(MsimSession *session, MsimMessage *msg)
 	purple_debug_info("msim", "msim_error (sesskey=%d): %s\n", 
 			session->sesskey, full_errmsg);
 
-	purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
-			full_errmsg, NULL);
-
 	/* Destroy session if fatal. */
 	if (msim_msg_get(msg, "fatal")) {
 		purple_debug_info("msim", "fatal error, closing\n");
+		if (err == 260) {
+			/* Incorrect password */
+			session->gc->wants_to_die = TRUE;
+			if (!purple_account_get_remember_password(session->account))
+				purple_account_set_password(session->account, NULL);
+		}
 		purple_connection_error(session->gc, full_errmsg);
+	} else {
+		purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
+				full_errmsg, NULL);
 	}
+
+	g_free(full_errmsg);
 
 	return TRUE;
 }
@@ -1713,7 +1815,7 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 	PurpleBuddyList *blist;
 	MsimUser *user;
 	GList *list;
-	gchar *status_headline;
+	gchar *status_headline, *status_headline_escaped;
 	gint status_code, purple_status_code;
 	gchar *username;
 
@@ -1768,8 +1870,21 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		purple_debug_info("msim", "msim_status: found buddy %s\n", username);
 	}
 
+	if (status_headline) {
+		/* The status headline is plaintext, but libpurple treats it as HTML,
+		 * so escape any HTML characters to their entity equivalents. */
+		status_headline_escaped = g_markup_escape_text(status_headline, strlen(status_headline));
+	} else {
+		status_headline_escaped = NULL;
+	}
+
+	g_free(status_headline);
+
+	if (user->headline) 
+		g_free(user->headline);
+
 	/* don't copy; let the MsimUser own the headline, memory-wise */
-	user->headline = status_headline;
+	user->headline = status_headline_escaped;
   
 	/* Set user status */
 	switch (status_code) {
@@ -1833,7 +1948,7 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	MsimSession *session;
 	MsimMessage *msg;
-	/* MsimMessage *msg_persist; */
+	MsimMessage *msg_persist;
 	MsimMessage *body;
 
 	session = (MsimSession *)gc->proto_data;
@@ -1868,12 +1983,12 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 
 	/* TODO: Update blocklist. */
 
-#if 0
 	msg_persist = msim_msg_new(
 		"persist", MSIM_TYPE_INTEGER, 1,
 		"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 		"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_PUT,
 		"dsn", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_DSN,
+		"uid", MSIM_TYPE_INTEGER, session->userid,
 		"lid", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_LID,
 		/* TODO: Use msim_new_reply_callback to get rid. */
 		"rid", MSIM_TYPE_INTEGER, session->next_rid++,
@@ -1887,7 +2002,6 @@ msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 		return;
 	}
 	msim_msg_free(msg_persist);
-#endif
 
 }
 
@@ -2618,7 +2732,7 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 
 	switch (GPOINTER_TO_UINT(user_data)) {
 		case MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS:
-			msg = g_strdup_printf(_("%d buddies were added or updated"), buddy_count);
+			msg = g_strdup_printf(_("%d buddies were added or updated from the server (including buddies already on the server-side list)"), buddy_count);
 			purple_notify_info(session->account, _("Add contacts from server"), msg, NULL);
 			g_free(msg);
 			break;
@@ -3143,6 +3257,16 @@ init_plugin(PurplePlugin *plugin)
 	PurpleAccountOption *option;
 	static gboolean initialized = FALSE;
 
+#ifdef MSIM_CHECK_NEWER_VERSION
+	/* PROBLEM: MySpace's servers always return Content-Location, and
+	 * libpurple redirects to it, infinitely, even though it is the same
+	 * location we requested! */
+	purple_util_fetch_url("http://im.myspace.com/nsis/currentversion.txt",
+			FALSE, /* not full URL */
+			"MSIMAutoUpdateAgent", /* user agent */
+			TRUE,  /* use HTTP/1.1 */
+			msim_check_newer_version_cb, NULL);
+#endif
 
 	/* TODO: default to automatically try different ports. Make the user be
 	 * able to set the first port to try (like LastConnectedPort in Windows client).  */

@@ -235,6 +235,13 @@ bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
 	g_free(stripped);
 }
 
+static void bonjour_remove_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group) {
+	if (buddy->proto_data) {
+		bonjour_buddy_delete(buddy->proto_data);
+		buddy->proto_data = NULL;
+	}
+}
+
 static GList *
 bonjour_status_types(PurpleAccount *account)
 {
@@ -395,7 +402,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* change_passwd */
 	NULL,                                                    /* add_buddy */
 	NULL,                                                    /* add_buddies */
-	NULL,                                                    /* remove_buddy */
+	bonjour_remove_buddy,                                    /* remove_buddy */
 	NULL,                                                    /* remove_buddies */
 	NULL,                                                    /* add_permit */
 	NULL,                                                    /* add_deny */
@@ -479,45 +486,50 @@ static PurplePluginInfo info =
 	NULL
 };
 
-static void
-initialize_default_account_values()
-{
-#ifdef _WIN32
-	char *fullname = NULL;
-#else
-	struct passwd *info;
-	const char *fullname = NULL;
-#endif
-	char *splitpoint = NULL;
-	char *tmp;
-	char hostname[255];
+#ifdef WIN32
+static gboolean _set_default_name_cb(gpointer data) {
+	gchar *fullname = data;
+	const char *splitpoint;
+	GList *tmp = prpl_info.protocol_options;
+	PurpleAccountOption *option;
 
-#ifndef _WIN32
-	/* Try to figure out the user's real name */
-	info = getpwuid(getuid());
-	if ((info != NULL) && (info->pw_gecos != NULL) && (info->pw_gecos[0] != '\0'))
-		fullname = info->pw_gecos;
-	else if ((info != NULL) && (info->pw_name != NULL) && (info->pw_name[0] != '\0'))
-		fullname = info->pw_name;
-	else if (((fullname = getlogin()) != NULL) && (fullname[0] != '\0'))
-		;
-	else
-		fullname = _("Purple Person");
-	/* Make sure fullname is valid UTF-8.  If not, try to convert it. */
-	if (!g_utf8_validate(fullname, -1, NULL))
-	{
-		gchar *tmp;
-		tmp = g_locale_to_utf8(fullname, -1, NULL, NULL, NULL);
-		if ((tmp == NULL) || (*tmp == '\0'))
-			fullname = _("Purple Person");
+	if (!fullname) {
+		purple_debug_info("bonjour", "Unable to look up First and Last name or Username from system; using defaults.\n");
+		return FALSE;
 	}
 
-#else
+	g_free(default_firstname);
+	g_free(default_lastname);
+
+	/* Split the real name into a first and last name */
+	splitpoint = strchr(fullname, ' ');
+	if (splitpoint != NULL) {
+		default_firstname = g_strndup(fullname, splitpoint - fullname);
+		default_lastname = g_strdup(&splitpoint[1]);
+	} else {
+		default_firstname = g_strdup(fullname);
+		default_lastname = g_strdup("");
+	}
+	g_free(fullname);
+
+
+	for(; tmp != NULL; tmp = tmp->next) {
+		option = tmp->data;
+		if (strcmp("first", purple_account_option_get_setting(option)) == 0)
+			purple_account_option_set_default_string(option, default_firstname);
+		else if (strcmp("last", purple_account_option_get_setting(option)) == 0)
+			purple_account_option_set_default_string(option, default_lastname);
+	}
+
+	return FALSE;
+}
+
+static gpointer _win32_name_lookup_thread(gpointer data) {
+	gchar *fullname = NULL;
 	wchar_t username[UNLEN + 1];
 	DWORD dwLenUsername = UNLEN + 1;
 
-	if (!GetUserNameW((LPWSTR) &username, &dwLenUsername))
-		purple_debug_warning("bonjour", "Unable to look up username\n");
+	GetUserNameW((LPWSTR) &username, &dwLenUsername);
 
 	if (username != NULL && *username != '\0') {
 		LPBYTE servername = NULL;
@@ -525,7 +537,7 @@ initialize_default_account_values()
 
 		NetGetDCName(NULL, NULL, &servername);
 
-		purple_debug_info("bonjour", "Looking up the full name from the %s.\n", (servername ? "domain controller" : "local machine"));
+		/* purple_debug_info("bonjour", "Looking up the full name from the %s.\n", (servername ? "domain controller" : "local machine")); */
 
 		if (NetUserGetInfo((LPCWSTR) servername, username, 10, &info) == NERR_Success
 				&& info != NULL && ((LPUSER_INFO_10) info)->usri10_full_name != NULL
@@ -536,7 +548,7 @@ initialize_default_account_values()
 		}
 		/* Fall back to the local machine if we didn't get the full name from the domain controller */
 		else if (servername != NULL) {
-			purple_debug_info("bonjour", "Looking up the full name from the local machine");
+			/* purple_debug_info("bonjour", "Looking up the full name from the local machine"); */
 
 			if (info != NULL) NetApiBufferFree(info);
 			info = NULL;
@@ -552,20 +564,54 @@ initialize_default_account_values()
 
 		if (info != NULL) NetApiBufferFree(info);
 		if (servername != NULL) NetApiBufferFree(servername);
+
+		if (!fullname)
+			fullname = g_utf16_to_utf8(username, -1, NULL, NULL, NULL);
 	}
 
-	if (!fullname) {
-		if (username != NULL && *username != '\0')
-			fullname = g_utf16_to_utf8(username, -1, NULL, NULL, NULL);
-		else
-			fullname = g_strdup(_("Purple Person"));
-	}
+	g_idle_add(_set_default_name_cb, fullname);
+
+	return NULL;
+}
 #endif
+
+static void
+initialize_default_account_values()
+{
+#ifndef _WIN32
+	struct passwd *info;
+#endif
+	const char *fullname = NULL, *splitpoint, *tmp;
+	char hostname[255];
+	gchar *conv = NULL;
+
+#ifndef _WIN32
+	/* Try to figure out the user's real name */
+	info = getpwuid(getuid());
+	if ((info != NULL) && (info->pw_gecos != NULL) && (info->pw_gecos[0] != '\0'))
+		fullname = info->pw_gecos;
+	else if ((info != NULL) && (info->pw_name != NULL) && (info->pw_name[0] != '\0'))
+		fullname = info->pw_name;
+	else if (((fullname = getlogin()) != NULL) && (fullname[0] != '\0'))
+		;
+#else
+	/* The Win32 username lookup functions are synchronous so we do it in a thread */
+	g_thread_create(_win32_name_lookup_thread, NULL, FALSE, NULL);
+#endif
+
+	/* Make sure fullname is valid UTF-8.  If not, try to convert it. */
+	if (fullname != NULL && !g_utf8_validate(fullname, -1, NULL)) {
+		fullname = conv = g_locale_to_utf8(fullname, -1, NULL, NULL, NULL);
+		if (conv == NULL || *conv == '\0')
+			fullname = NULL;
+	}
+
+	if (fullname == NULL)
+		fullname = _("Purple Person");
 
 	/* Split the real name into a first and last name */
 	splitpoint = strchr(fullname, ' ');
-	if (splitpoint != NULL)
-	{
+	if (splitpoint != NULL) {
 		default_firstname = g_strndup(fullname, splitpoint - fullname);
 		tmp = &splitpoint[1];
 
@@ -577,16 +623,12 @@ initialize_default_account_values()
 			default_lastname = g_strndup(tmp, splitpoint - tmp);
 		else
 			default_lastname = g_strdup(tmp);
-	}
-	else
-	{
+	} else {
 		default_firstname = g_strdup(fullname);
 		default_lastname = g_strdup("");
 	}
 
-#ifdef _WIN32
-	g_free(fullname);
-#endif
+	g_free(conv);
 
 	/* Try to figure out a good host name to use */
 	/* TODO: Avoid 'localhost,' if possible */

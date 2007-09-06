@@ -92,8 +92,9 @@ gboolean bonjour_buddy_check(BonjourBuddy *buddy);
 
 /**
  * If the buddy doesn't previoulsy exists, it is created. Else, its data is changed (???)
+ * purple_buddy is optional; it saves an additional lookup if we already have it
  */
-void bonjour_buddy_add_to_purple(BonjourBuddy *buddy);
+void bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *purple_buddy);
 
 /**
  * We got the buddy icon data; deal with it

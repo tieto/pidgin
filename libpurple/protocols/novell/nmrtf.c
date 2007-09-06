@@ -233,7 +233,7 @@ nm_rtf_strip_formatting(NMRtfContext *ctx, const char *input)
 	if (status == NMRTF_OK)
 		return g_strdup(ctx->output->str);
 
-	purple_debug_info("novell", "RTF parser failed with error code %d", status);
+	purple_debug_info("novell", "RTF parser failed with error code %d\n", status);
 	return NULL;
 }
 

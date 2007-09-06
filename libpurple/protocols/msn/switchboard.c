@@ -771,7 +771,8 @@ ack_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msg->ack_cb(msg, msg->ack_data);
 
 	swboard = cmdproc->data;
-	swboard->ack_list = g_list_remove(swboard->ack_list, msg);
+	if (swboard)
+		swboard->ack_list = g_list_remove(swboard->ack_list, msg);
 	msn_message_unref(msg);
 }
 

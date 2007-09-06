@@ -71,6 +71,7 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 	char value[SW_TEXT_RECORD_MAX_LEN];
 	sw_uint32 value_length;
 
+	/* TODO: We want to keep listening for updates*/
 	sw_discovery_cancel(discovery, oid);
 
 	/* create a buddy record */
@@ -100,7 +101,7 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 	}
 
 	/* Add or update the buddy in our buddy list */
-	bonjour_buddy_add_to_purple(buddy);
+	bonjour_buddy_add_to_purple(buddy, NULL);
 
 	return SW_OKAY;
 }
@@ -149,10 +150,7 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 			purple_debug_info("bonjour", "_browser_reply --> Remove service\n");
 			gb = purple_find_buddy(account, name);
 			if (gb != NULL)
-			{
-				bonjour_buddy_delete(gb->proto_data);
 				purple_blist_remove_buddy(gb);
-			}
 			break;
 		case SW_DISCOVERY_BROWSE_RESOLVED:
 			purple_debug_info("bonjour", "_browse_reply --> Resolved\n");

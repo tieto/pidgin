@@ -975,7 +975,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/play-sound"));
 	}
 
-	gtk_widget_show_all(vbox2);
+	gtk_widget_show(vbox2);
 	gtk_widget_show(window);
 }
 

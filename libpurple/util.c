@@ -673,7 +673,7 @@ purple_utf8_strftime(const char *format, const struct tm *tm)
 	locale = g_locale_from_utf8(format, -1, NULL, NULL, &err);
 	if (err != NULL)
 	{
-		purple_debug_error("util", "Format conversion failed in purple_utf8_strftime(): %s", err->message);
+		purple_debug_error("util", "Format conversion failed in purple_utf8_strftime(): %s\n", err->message);
 		g_error_free(err);
 		locale = g_strdup(format);
 	}
@@ -693,7 +693,7 @@ purple_utf8_strftime(const char *format, const struct tm *tm)
 	utf8 = g_locale_to_utf8(buf, len, NULL, NULL, &err);
 	if (err != NULL)
 	{
-		purple_debug_error("util", "Result conversion failed in purple_utf8_strftime(): %s", err->message);
+		purple_debug_error("util", "Result conversion failed in purple_utf8_strftime(): %s\n", err->message);
 		g_error_free(err);
 	}
 	else
@@ -4460,10 +4460,11 @@ purple_escape_filename(const char *str)
 const char *_purple_oscar_convert(const char *act, const char *protocol)
 {
 	if (protocol && act && strcmp(protocol, "prpl-oscar") == 0) {
-		if (isdigit(*act))
-			protocol = "prpl-icq";
-		else
-			protocol = "prpl-aim";
+		int i;
+		for (i = 0; act[i] != '\0'; i++)
+			if (!isdigit(act[i]))
+				return "prpl-aim";
+		return "prpl-icq";
 	}
 	return protocol;
 }
