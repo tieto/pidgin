@@ -38,8 +38,8 @@ static MsnOimSendReq *msn_oim_new_send_req(const char *from_member,
 static void msn_oim_retrieve_connect_init(MsnSoapConn *soapconn);
 static void msn_oim_send_connect_init(MsnSoapConn *soapconn);
 static void msn_oim_free_send_req(MsnOimSendReq *req);
-static void msn_oim_report_to_user(MsnOim *oim, char *msg_str);
-static void msn_oim_get_process(MsnOim *oim, char *oim_msg);
+static void msn_oim_report_to_user(MsnOim *oim, const char *msg_str);
+static void msn_oim_get_process(MsnOim *oim, const char *oim_msg);
 static char *msn_oim_msg_to_str(MsnOim *oim, const char *body);
 static void msn_oim_send_process(MsnOim *oim, const char *body, int len);
 
@@ -194,11 +194,12 @@ msn_oim_send_process(MsnOim *oim, const char *body, int len)
 	}
 	faultCodeStr = xmlnode_get_data(faultCodeNode);
 	purple_debug_info("MSNP14","fault code:{%s}\n",faultCodeStr);
-
+#if 0
 	if(!strcmp(faultCodeStr,"q0:AuthenticationFailed")){
 		/*other Fault Reason?*/
 		goto oim_send_process_fail;
 	}
+#endif
 
 	faultstringNode = xmlnode_get_child(faultNode,"faultstring");
 	faultstring = xmlnode_get_data(faultstringNode);
@@ -414,9 +415,56 @@ msn_oim_get_connect_cb(gpointer data, PurpleSslConnection *gsc,
 	purple_debug_info("MSNP14","oim get SOAP Server connected!\n");
 }
 
+/* like purple_str_to_time, but different. The format of the timestamp
+ * is like this: 5 Sep 2007 21:42:12 -0700 */
+static time_t
+msn_oim_parse_timestamp(const char *timestamp)
+{
+	char month_str[4], tz_str[6];
+	char *tz_ptr = tz_str;
+	static const char *months[] = {
+		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec", NULL
+	};
+	struct tm t;
+	memset(&t, 0, sizeof(t));
+
+	if (sscanf(timestamp, "%02d %03s %04d %02d:%02d:%02d %05s",
+					&t.tm_mday, month_str, &t.tm_year,
+					&t.tm_hour, &t.tm_min, &t.tm_sec, tz_str) == 7) {
+		gboolean offset_positive = TRUE;
+		int tzhrs;
+		int tzmins;
+		
+		for (t.tm_mon = 0;
+			 months[t.tm_mon] != NULL &&
+				 strcmp(months[t.tm_mon], month_str) != 0; t.tm_mon++);
+		if (months[t.tm_mon] != NULL) {
+			if (*tz_str == '-') {
+				offset_positive = FALSE;
+				tz_ptr++;
+			}
+
+			if (sscanf(tz_ptr, "%02d%02d", &tzhrs, &tzmins) == 2) {
+				t.tm_year -= 1900;
+#if HAVE_TIMEZONE
+				t.tm_gmtoff = tzhrs * 60 * 60 + tzmins * 60;
+				if (!offset_positive)
+					t.tm_gmtoff *= -1;
+#endif
+				t.tm_isdst = 0;
+				return mktime(&t);
+			}
+		}
+	}
+
+	purple_debug_info("MSNP14:OIM", "Can't parse timestamp %s\n", timestamp);
+	return time(NULL);
+}
+
 /*Post the Offline Instant Message to User Conversation*/
 static void
-msn_oim_report_to_user(MsnOim *oim, char *msg_str)
+msn_oim_report_to_user(MsnOim *oim, const char *msg_str)
 {
 	MsnMessage *message;
 	char *date,*from,*decode_msg;
@@ -457,7 +505,7 @@ msn_oim_report_to_user(MsnOim *oim, char *msg_str)
 	g_free(passport_str);
 	purple_debug_info("MSNP14","oim Date:{%s},passport{%s}\n",date,passport);
 
-	stamp = purple_str_to_time(date, TRUE, NULL, NULL, NULL);
+	stamp = msn_oim_parse_timestamp(date);
 
 	serv_got_im(oim->session->account->gc, passport, decode_msg, 0, stamp);
 
@@ -478,7 +526,7 @@ msn_oim_report_to_user(MsnOim *oim, char *msg_str)
  * prepare to report the OIM to user
  */
 static void
-msn_oim_get_process(MsnOim *oim, char *oim_msg)
+msn_oim_get_process(MsnOim *oim, const char *oim_msg)
 {
 	xmlnode *oimNode,*bodyNode,*responseNode,*msgNode;
 	char *msg_data,*msg_str;
@@ -527,11 +575,17 @@ msn_oim_get_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 void
 msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 {
-	xmlnode *node, *mdNode,*mNode,*ENode,*INode,*rtNode,*nNode;
+	xmlnode *node, *mNode,*ENode,*INode,*rtNode,*nNode;
 	char *passport,*msgid,*nickname, *unread, *rTime = NULL;
 	MsnSession *session = oim->session;
 
+	purple_debug_info("MSNP14:OIM", "%s", xmlmsg);
+
 	node = xmlnode_from_str(xmlmsg, strlen(xmlmsg));
+	if (strcmp(node->name, "MD") != 0) {
+		xmlnode_free(node);
+		return;
+	}
 
 	ENode = xmlnode_get_child(node, "E");
 	INode = xmlnode_get_child(ENode, "IU");
@@ -554,12 +608,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		}
 	}
 
-	mdNode = xmlnode_get_child(node, "MD");
-	if (mdNode == NULL) {
-		xmlnode_free(node);
-		return;
-	}
-	for(mNode = xmlnode_get_child(mdNode, "M"); mNode;
+	for(mNode = xmlnode_get_child(node, "M"); mNode;
 					mNode = xmlnode_get_next_twin(mNode)){
 		/*email Node*/
 		ENode = xmlnode_get_child(mNode,"E");
@@ -578,7 +627,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		}
 /*		purple_debug_info("MSNP14","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime); */
 
-		oim->oim_list = g_list_append(oim->oim_list,msgid);
+		oim->oim_list = g_list_append(oim->oim_list,strdup(msgid));
 		msn_oim_post_single_get_msg(oim,msgid);
 		g_free(passport);
 		g_free(msgid);

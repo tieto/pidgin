@@ -172,6 +172,7 @@ msn_soap_destroy(MsnSoapConn *soapconn)
 	/*remove the read handler*/
 	if (soapconn->input_handler > 0){
 		purple_input_remove(soapconn->input_handler);
+		soapconn->input_handler = -1;
 	}
 	msn_soap_free_read_buf(soapconn);
 	msn_soap_free_write_buf(soapconn);
