@@ -69,6 +69,8 @@
 
 #include "gtknickcolors.h"
 
+#define CLOSE_CONV_TIMEOUT_SECS  (10 * 60)
+
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
 typedef  enum
@@ -159,6 +161,7 @@ static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 static gboolean pidgin_userlist_motion_cb (GtkWidget *w, GdkEventMotion *event, PidginConversation *gtkconv);
 static void pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv);
+static void hide_conv(PidginConversation *gtkconv, gboolean closetimer);
 
 static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
 		int width, int height);
@@ -187,12 +190,49 @@ static GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
  **************************************************************************/
 
 static gboolean
-close_conv_cb(GtkWidget *w, GdkEventButton *event, PidginConversation *gtkconv)
+close_this_sucker(gpointer data)
 {
+	PidginConversation *gtkconv = data;
 	GList *list = g_list_copy(gtkconv->convs);
-
 	g_list_foreach(list, (GFunc)purple_conversation_destroy, NULL);
 	g_list_free(list);
+	return FALSE;
+}
+
+static gboolean
+close_conv_cb(GtkWidget *w, GdkEventButton *event, PidginConversation *gtkconv)
+{
+	/* We are going to destroy the conversations immediately only if the 'close immediately'
+	 * preference is selected. Otherwise, close the conversation after a reasonable timeout
+	 * (I am going to consider 10 minutes as a 'reasonable timeout' here.
+	 * For chats, close immediately if the chat is not in the buddylist, or if the chat is
+	 * not marked 'Persistent' */
+	PurpleConversation *conv = gtkconv->active_conv;
+	PurpleAccount *account = purple_conversation_get_account(conv);
+	const char *name = purple_conversation_get_name(conv);
+
+	switch (purple_conversation_get_type(conv)) {
+		case PURPLE_CONV_TYPE_IM:
+		{
+			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/close_immediately"))
+				close_this_sucker(gtkconv);
+			else
+				hide_conv(gtkconv, TRUE);
+			break;
+		}
+		case PURPLE_CONV_TYPE_CHAT:
+		{
+			PurpleChat *chat = purple_blist_find_chat(account, name);
+			if (!chat ||
+					!purple_blist_node_get_bool(&chat->node, "gtk-persistent"))
+				close_this_sucker(gtkconv);
+			else
+				hide_conv(gtkconv, FALSE);
+			break;
+		}
+		default:
+			;
+	}
 
 	return TRUE;
 }
@@ -1300,15 +1340,32 @@ menu_add_remove_cb(gpointer data, guint action, GtkWidget *widget)
 	add_remove_cb(NULL, PIDGIN_CONVERSATION(conv));
 }
 
-static void
-menu_hide_conv_cb(gpointer data, guint action, GtkWidget *widget)
+static gboolean
+close_already(gpointer data)
 {
-	PidginWindow *win = data;
-	PidginConversation *gtkconv = pidgin_conv_window_get_active_gtkconv(win);
-	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
+	purple_conversation_destroy(data);
+	return FALSE;
+}
+
+static void
+hide_conv(PidginConversation *gtkconv, gboolean closetimer)
+{
+	GList *list;
+
 	purple_signal_emit(pidgin_conversations_get_handle(),
 			"conversation-hiding", gtkconv);
-	purple_conversation_set_ui_ops(conv, NULL);
+
+	for (list = g_list_copy(gtkconv->convs); list; list = g_list_delete_link(list, list)) {
+		PurpleConversation *conv = list->data;
+		if (closetimer) {
+			guint timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
+			if (timer)
+				purple_timeout_remove(timer);
+			timer = purple_timeout_add_seconds(CLOSE_CONV_TIMEOUT_SECS, close_already, conv);
+			purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(timer));
+		}
+		purple_conversation_set_ui_ops(conv, NULL);
+	}
 }
 
 static void
@@ -2772,7 +2829,8 @@ pidgin_conversations_find_unseen_list(PurpleConversationType type,
 		if (gtkconv != NULL && gtkconv->active_conv != conv)
 			continue;
 		if (gtkconv == NULL) {
-			if (!hidden_only)
+			if (!hidden_only ||
+					!purple_conversation_get_data(conv, "unseen-count"))
 				continue;
 			r = g_list_prepend(r, conv);
 			c++;
@@ -2911,8 +2969,6 @@ static GtkItemFactoryEntry menu_items[] =
 	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>", NULL },
 
 
-	{ N_("/Conversation/_Hide"), NULL, menu_hide_conv_cb, 0,
-			"<Item>", NULL},
 	{ N_("/Conversation/_Close"), NULL, menu_close_conv_cb, 0,
 			"<StockItem>", GTK_STOCK_CLOSE },
 
@@ -6552,6 +6608,17 @@ pidgin_conv_updated(PurpleConversation *conv, PurpleConvUpdateType type)
 	pidgin_conv_update_fields(conv, flags);
 }
 
+static void
+wrote_msg_update_unseen_cb(PurpleAccount *account, const char *who, const char *message,
+		PurpleConversation *conv, PurpleMessageFlags flag, gpointer null)
+{
+	if (conv == NULL || PIDGIN_IS_PIDGIN_CONVERSATION(conv))
+		return;
+	purple_conversation_set_data(conv, "unseen-count",
+			GINT_TO_POINTER(GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")) + 1));
+	purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
+}
+
 static PurpleConversationUiOps conversation_ui_ops =
 {
 	pidgin_conv_new,
@@ -7290,10 +7357,12 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 {
 	GList *list;
 	PidginConversation *gtkconv;
+	int timer;
 
 	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 		return FALSE;
 
+	purple_conversation_set_data(conv, "unseen-count", NULL);
 	purple_conversation_set_ui_ops(conv, pidgin_conversations_get_conv_ui_ops());
 	private_gtkconv_new(conv, FALSE);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -7312,6 +7381,10 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 		pidgin_conv_update_fields(conv, PIDGIN_CONV_TOPIC);
 		pidgin_conv_chat_add_users(conv, PURPLE_CONV_CHAT(conv)->in_room, TRUE);
 	}
+
+	timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
+	if (timer)
+		purple_timeout_remove(timer);
 
 	return TRUE;
 }
@@ -7378,6 +7451,7 @@ pidgin_conversations_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", TRUE);
 
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new", "never");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/close_immediately", FALSE);
 
 #ifdef _WIN32
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/win32/minimize_new_convs", FALSE);
@@ -7576,6 +7650,10 @@ pidgin_conversations_init(void)
 	purple_signal_connect_priority(purple_conversations_get_handle(), "conversation-updated", handle,
 						PURPLE_CALLBACK(pidgin_conv_updated), NULL,
 						PURPLE_SIGNAL_PRIORITY_LOWEST);
+	purple_signal_connect(purple_conversations_get_handle(), "wrote-im-msg", handle,
+			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "wrote-chat-msg", handle,
+			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
 }
 
 void

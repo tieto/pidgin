@@ -319,6 +319,12 @@ static void gtk_blist_menu_autojoin_cb(GtkWidget *w, PurpleChat *chat)
 			gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 }
 
+static void gtk_blist_menu_persistent_cb(GtkWidget *w, PurpleChat *chat)
+{
+	purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-persistent",
+			gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
+}
+
 static PurpleConversation *
 find_conversation_with_buddy(PurpleBuddy *buddy)
 {
@@ -1274,16 +1280,19 @@ static GtkWidget *
 create_chat_menu(PurpleBlistNode *node, PurpleChat *c)
 {
 	GtkWidget *menu;
-	gboolean autojoin;
+	gboolean autojoin, persistent;
 
 	menu = gtk_menu_new();
 	autojoin = (purple_blist_node_get_bool(node, "gtk-autojoin") ||
 			(purple_blist_node_get_string(node, "gtk-autojoin") != NULL));
+	persistent = purple_blist_node_get_bool(node, "gtk-persistent");
 
 	pidgin_new_item_from_stock(menu, _("_Join"), PIDGIN_STOCK_CHAT,
 			G_CALLBACK(gtk_blist_menu_join_cb), node, 0, 0, NULL);
 	pidgin_new_check_item(menu, _("Auto-Join"),
 			G_CALLBACK(gtk_blist_menu_autojoin_cb), node, autojoin);
+	pidgin_new_check_item(menu, _("Persistent"),
+			G_CALLBACK(gtk_blist_menu_persistent_cb), node, persistent);
 	pidgin_new_item_from_stock(menu, _("View _Log"), NULL,
 			G_CALLBACK(gtk_blist_menu_showlog_cb), node, 0, 0, NULL);
 
@@ -3688,7 +3697,7 @@ unseen_conv_menu()
 		menu = NULL;
 	}
 
-	convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM, PIDGIN_UNSEEN_TEXT, TRUE, 0);
+	convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_ANY, PIDGIN_UNSEEN_TEXT, TRUE, 0);
 	if (!convs)
 		/* no conversations added, don't show the menu */
 		return;
@@ -3744,7 +3753,7 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
 		gtkblist->menutrayicon = NULL;
 	}
 
-	convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM, PIDGIN_UNSEEN_TEXT, TRUE, 0);
+	convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_ANY, PIDGIN_UNSEEN_TEXT, TRUE, 0);
 	if (convs) {
 		GtkWidget *img = NULL;
 		GString *tooltip_text = NULL;
@@ -3752,7 +3761,7 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
 		tooltip_text = g_string_new("");
 		l = convs;
 		while (l != NULL) {
-			int count = GPOINTER_TO_INT(purple_conversation_get_data(l->data, "unseen-count")) + 1;
+			int count = GPOINTER_TO_INT(purple_conversation_get_data(l->data, "unseen-count"));
 			g_string_append_printf(tooltip_text,
 					ngettext("%d unread message from %s\n", "%d unread messages from %s\n", count),
 					count, purple_conversation_get_name(l->data));
@@ -3803,8 +3812,6 @@ written_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *me
 	ui->conv.flags |= PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE;
 	ui->conv.last_message = time(NULL);    /* XXX: for lack of better data */
 	pidgin_blist_update(purple_get_blist(), node);
-	purple_conversation_set_data(conv, "unseen-count", 
-			GINT_TO_POINTER(GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")) + 1));
 }
 
 static void
@@ -3816,7 +3823,6 @@ displayed_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *
 		return;
 	ui->conv.flags &= ~PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE;
 	pidgin_blist_update(purple_get_blist(), node);
-	purple_conversation_set_data(conv, "unseen-count", 0);
 }
 
 static void

@@ -993,6 +993,8 @@ conv_page()
 
 	pidgin_prefs_checkbox(_("Show _formatting on incoming messages"),
 				PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting", vbox);
+	pidgin_prefs_checkbox(_("Close IMs immediately when the tab is closed"),
+				PIDGIN_PREFS_ROOT "/conversations/im/close_immediately", vbox);
 
 	iconpref1 = pidgin_prefs_checkbox(_("Show _detailed information"),
 			PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", vbox);
