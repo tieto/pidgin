@@ -6614,9 +6614,11 @@ wrote_msg_update_unseen_cb(PurpleAccount *account, const char *who, const char *
 {
 	if (conv == NULL || PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 		return;
-	purple_conversation_set_data(conv, "unseen-count",
-			GINT_TO_POINTER(GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")) + 1));
-	purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
+	if (flag & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)) {
+		purple_conversation_set_data(conv, "unseen-count",
+				GINT_TO_POINTER(GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")) + 1));
+		purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
+	}
 }
 
 static PurpleConversationUiOps conversation_ui_ops =
