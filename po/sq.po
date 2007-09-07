@@ -10811,7 +10811,7 @@ msgid "Active which ID?"
 msgstr "Veprues cili ID?"
 
 #: src/protocols/yahoo/yahoo.c:2972
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "T'i bashkohem kujt në fjalosje?"
 
 #: src/protocols/yahoo/yahoo.c:2982

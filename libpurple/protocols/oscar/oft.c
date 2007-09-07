@@ -266,7 +266,7 @@ peer_oft_send(PeerConnection *conn, OftFrame *frame)
 	size_t length;
 	ByteStream bs;
 
-	length = 192 + MAX(64, frame->name_length + 1);
+	length = 192 + frame->name_length;
 	byte_stream_new(&bs, length);
 	byte_stream_putraw(&bs, conn->magic, 4);
 	byte_stream_put16(&bs, length);
@@ -300,7 +300,7 @@ peer_oft_send(PeerConnection *conn, OftFrame *frame)
 	 * The name can be more than 64 characters, but if it is less than
 	 * 64 characters it is padded with NULLs.
 	 */
-	byte_stream_putraw(&bs, frame->name, MAX(64, frame->name_length + 1));
+	byte_stream_putraw(&bs, frame->name, frame->name_length);
 
 	peer_connection_send(conn, &bs);
 
@@ -340,8 +340,7 @@ static void
 peer_oft_send_done(PeerConnection *conn)
 {
 	conn->xferdata.type = PEER_TYPE_DONE;
-	conn->xferdata.filesleft = 0;
-	conn->xferdata.partsleft = 0;
+	conn->xferdata.rfrcsum = 0xffff0000;
 	conn->xferdata.nrecvd = purple_xfer_get_bytes_sent(conn->xfer);
 	peer_oft_send(conn, &conn->xferdata);
 }
@@ -677,12 +676,12 @@ peer_oft_sendcb_init(PurpleXfer *xfer)
 	conn->xferdata.rfrcsum = 0xffff0000;
 	conn->xferdata.rfcsum = 0xffff0000;
 	conn->xferdata.recvcsum = 0xffff0000;
-	strncpy((gchar *)conn->xferdata.idstring, "OFT_Windows ICBMFT V1.1 32", 31);
+	strncpy((gchar *)conn->xferdata.idstring, "Cool FileXfer", 31);
 	conn->xferdata.modtime = 0;
 	conn->xferdata.cretime = 0;
 	xfer->filename = g_path_get_basename(xfer->local_filename);
-	conn->xferdata.name = (guchar *)g_strdup(xfer->filename);
-	conn->xferdata.name_length = strlen(xfer->filename);
+	conn->xferdata.name_length = MAX(64, strlen(xfer->filename) + 1);
+	conn->xferdata.name = (guchar *)g_strndup(xfer->filename, conn->xferdata.name_length - 1);
 
 	peer_oft_checksum_file(conn, xfer,
 			peer_oft_checksum_calculated_cb, G_MAXUINT32);

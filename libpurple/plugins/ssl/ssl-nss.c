@@ -107,6 +107,20 @@ set_errno(int code)
 	}
 }
 
+static gchar *get_error_text()
+{
+	PRInt32 len = PR_GetErrorTextLength();
+	gchar *ret = NULL;
+
+	if (len > 0) {
+		ret = g_malloc(len + 1);
+		len = PR_GetErrorText(ret);
+		ret[len] = '\0';
+	}
+
+	return ret;
+}
+
 static void
 ssl_nss_init_nss(void)
 {
@@ -220,11 +234,14 @@ ssl_nss_handshake_cb(gpointer data, int fd, PurpleInputCondition cond)
 	 * It seems to work because it'll eventually use the cached value
 	 */
 	if(SSL_ForceHandshake(nss_data->in) != SECSuccess) {
+		gchar *error_txt;
 		set_errno(PR_GetError());
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 			return;
 
-		purple_debug_error("nss", "Handshake failed %d\n", PR_GetError());
+		error_txt = get_error_text();
+		purple_debug_error("nss", "Handshake failed %s (%d)\n", error_txt ? error_txt : "", PR_GetError());
+		g_free(error_txt);
 
 		if (gsc->error_cb != NULL)
 			gsc->error_cb(gsc, PURPLE_SSL_HANDSHAKE_FAILED, gsc->connect_cb_data);
@@ -265,8 +282,11 @@ ssl_nss_connect(PurpleSslConnection *gsc)
 	socket_opt.option = PR_SockOpt_Nonblocking;
 	socket_opt.value.non_blocking = PR_TRUE;
 
-	if (PR_SetSocketOption(nss_data->fd, &socket_opt) != PR_SUCCESS)
-		purple_debug_warning("nss", "unable to set socket into non-blocking mode: %d\n", PR_GetError());
+	if (PR_SetSocketOption(nss_data->fd, &socket_opt) != PR_SUCCESS) {
+		gchar *error_txt = get_error_text();
+		purple_debug_warning("nss", "unable to set socket into non-blocking mode: %s (%d)\n", error_txt ? error_txt : "", PR_GetError());
+		g_free(error_txt);
+	}
 
 	nss_data->in = SSL_ImportFD(NULL, nss_data->fd);
 
@@ -365,10 +385,12 @@ static GList *
 ssl_nss_peer_certs(PurpleSslConnection *gsc)
 {
 	PurpleSslNssData *nss_data = PURPLE_SSL_NSS_DATA(gsc);
-	GList *chain = NULL;
 	CERTCertificate *cert;
+/*
+	GList *chain = NULL;
 	void *pinArg;
 	SECStatus status;
+*/
 
 	/* TODO: this is a blind guess */
 	cert = SSL_PeerCertificate(nss_data->fd);
@@ -487,6 +509,7 @@ x509_destroy_certificate(PurpleCertificate * crt)
 	g_free(crt);
 }
 
+#if 0
 /** Determines whether one certificate has been issued and signed by another
  *
  * @param crt       Certificate to check the signature of
@@ -501,6 +524,7 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 {
 	return FALSE;
 }
+#endif
 
 static GByteArray *
 x509_sha1sum(PurpleCertificate *crt)

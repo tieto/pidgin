@@ -708,6 +708,10 @@ static void jabber_si_xfer_send_request(PurpleXfer *xfer)
 
 	jabber_iq_set_callback(iq, jabber_si_xfer_send_method_cb, xfer);
 
+	/* Store the IQ id so that we can cancel the callback */
+	g_free(jsx->iq_id);
+	jsx->iq_id = g_strdup(iq->id);
+
 	jabber_iq_send(iq);
 }
 
@@ -722,6 +726,8 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 		purple_proxy_connect_cancel(jsx->connect_data);
 	if (jsx->listen_data != NULL)
 		purple_network_listen_cancel(jsx->listen_data);
+	if (jsx->iq_id != NULL)
+		jabber_iq_remove_callback_by_id(js, jsx->iq_id);
 
 	g_free(jsx->stream_id);
 	g_free(jsx->iq_id);

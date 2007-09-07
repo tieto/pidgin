@@ -10730,8 +10730,8 @@ msgid "Active which ID?"
 msgstr "Active which ID?"
 
 #: src/protocols/yahoo/yahoo.c:2972
-msgid "Join who in chat?"
-msgstr "Join who in chat?"
+msgid "Join whom in chat?"
+msgstr "Join whom in chat?"
 
 #: src/protocols/yahoo/yahoo.c:2982
 msgid "Activate ID..."

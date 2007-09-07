@@ -1066,6 +1066,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	if(!pidf) {
 		purple_debug_info("simple", "process_incoming_notify: no parseable pidf\n");
 		g_free(from);
+		send_sip_response(sip->gc, msg, 200, "OK", NULL);
 		return;
 	}
 

@@ -11029,7 +11029,7 @@ msgid "Activate which ID?"
 msgstr "Milline ID aktiveerida?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3345
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Kellega ühineda jututoas?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3357

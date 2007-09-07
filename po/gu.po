@@ -10469,7 +10469,7 @@ msgid "Active which ID?"
 msgstr "કયું ID સક્રિય કરવું છે?"
 
 #: src/protocols/yahoo/yahoo.c:2972
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "જોડાવ કે કોણ સંવાદમાં છે?"
 
 #: src/protocols/yahoo/yahoo.c:2982

@@ -10839,7 +10839,7 @@ msgstr "啟動哪一個 ID？"
 # NOTE #gaim 的 Vann 及 LSchiere 解：如果選取了的好友目前處於一個聊天，便加入該個聊天
 # NOTE Yahoo 的「Chat」正式譯文為「聯誼園地」
 #: ../libpurple/protocols/yahoo/yahoo.c:3239
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "加入哪個好友目前所在的聊天室？"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3251
