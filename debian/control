@@ -52,7 +52,7 @@ Description: multi-protocol instant messaging client - data files
 Package: pidgin-dev
 Section: devel
 Architecture: all
-Depends: pidgin (>= ${source:Version}), pkg-config, libgtk2.0-dev
+Depends: pidgin (>= ${source:Version}), pkg-config, libpurple-dev, libgtk2.0-dev
 Conflicts: gaim-dev (<< 1:2.0.0+beta6-3)
 Replaces: gaim-dev (<< 1:2.0.0+beta6-3)
 Suggests: doc-base
@@ -93,7 +93,7 @@ Description: text-based multi-protocol instant messaging client
 Package: finch-dev
 Section: devel
 Architecture: all
-Depends: finch (>= ${source:Version}), pkg-config, libglib2.0-dev, libncursesw5-dev
+Depends: finch (>= ${source:Version}), pkg-config, libpurple-dev, libglib2.0-dev, libncursesw5-dev
 Replaces: gaim (<< 1:2.0.0+beta6-3), pidgin-dev (<< 2.1.1-2)
 Conflicts: gaim (<< 1:2.0.0+beta6-3), pidgin-dev (<< 2.1.1-2)
 Description: text-based multi-protocol instant messaging client - development
