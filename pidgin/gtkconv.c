@@ -7340,6 +7340,10 @@ add_message_history_to_gtkconv(gpointer data)
 	gtkconv->attach.timer = 0;
 	while (gtkconv->attach.current && count < 100) {  /* XXX: 100 is a random value here */
 		PurpleConvMessage *msg = gtkconv->attach.current->data;
+		if (gtkconv->attach.when && gtkconv->attach.when < msg->when) {
+			gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<HR>", 0);
+			gtkconv->attach.when = 0;
+		}
 		pidgin_conv_write_conv(gtkconv->active_conv, msg->who, msg->who, msg->what, msg->flags, msg->when);
 		gtkconv->attach.current = gtkconv->attach.current->prev;
 		count++;
@@ -7371,8 +7375,8 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 
 	list = purple_conversation_get_message_history(conv);
 	if (list) {
-		list = g_list_last(list);
-		gtkconv->attach.current = list;
+		gtkconv->attach.when = ((PurpleConvMessage*)(list->data))->when;
+		gtkconv->attach.current = g_list_last(list);
 		gtkconv->attach.timer = g_idle_add(add_message_history_to_gtkconv, gtkconv);
 	} else {
 		purple_signal_emit(pidgin_conversations_get_handle(),
