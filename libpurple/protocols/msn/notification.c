@@ -490,8 +490,8 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 							body_enc ? body_enc : "", post ? post : "");
 			g_free(pre);
 			g_free(post);
-			g_free(body_enc);
 		}
+		g_free(body_enc);
 		serv_got_im(gc, passport, body_final, 0, time(NULL));
 	}
 	if(!strcmp(content_type,"text/x-msmsgscontrol")){

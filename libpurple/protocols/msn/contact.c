@@ -809,11 +809,13 @@ msn_parse_addressbook(MsnContact * contact)
 						
 				if ( !strncmp(errorcodestring, "ABDoesNotExist", 14) ) {
 					g_free(errorcodestring);
+					xmlnode_free(node);
 					return TRUE;
 				}
 				g_free(errorcodestring);
 			}
 		}
+		xmlnode_free(node);
 		return FALSE;
 	}
 
@@ -821,6 +823,7 @@ msn_parse_addressbook(MsnContact * contact)
 	response = xmlnode_get_child(body,"ABFindAllResponse");
 
 	if (response == NULL) {
+		xmlnode_free(node);
 		return FALSE;
 	}
 
@@ -828,6 +831,7 @@ msn_parse_addressbook(MsnContact * contact)
 	result = xmlnode_get_child(response,"ABFindAllResult");
 	if(result == NULL){
 		purple_debug_misc("MSNAB","receive no address book update\n");
+		xmlnode_free(node);
 		return TRUE;
 	}
 	purple_debug_info("MSN SOAP","result{%p},name:%s\n",result,result->name);
