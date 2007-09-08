@@ -443,11 +443,13 @@ msn_oim_parse_timestamp(const char *timestamp)
 			if (*tz_str == '-') {
 				offset_positive = FALSE;
 				tz_ptr++;
+			} else if (*tz_str == '+') {
+				tz_ptr++;
 			}
 
 			if (sscanf(tz_ptr, "%02d%02d", &tzhrs, &tzmins) == 2) {
 				t.tm_year -= 1900;
-#if HAVE_TIMEZONE
+#if HAVE_TM_GMTOFF
 				t.tm_gmtoff = tzhrs * 60 * 60 + tzmins * 60;
 				if (!offset_positive)
 					t.tm_gmtoff *= -1;
