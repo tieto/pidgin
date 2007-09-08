@@ -258,8 +258,10 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		trans = msn_history_find(cmdproc->history, cmd->trId);
 
 	if (trans != NULL)
-		if (trans->timer)
+		if (trans->timer) {
 			purple_timeout_remove(trans->timer);
+			trans->timer = 0;
+		}
 
 	if (g_ascii_isdigit(cmd->command[0]))
 	{
