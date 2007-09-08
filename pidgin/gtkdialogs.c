@@ -396,6 +396,9 @@ void pidgin_dialogs_about()
 
 	g_string_append(str, "<FONT SIZE=\"4\">URL:</FONT> <A HREF=\""
 					PURPLE_WEBSITE "\">" PURPLE_WEBSITE "</A><BR/><BR/>");
+	g_string_append(str, "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\""
+			"http://developer.pidgin.im/wiki/FAQ\">"
+			"http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>");
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
 						   "#pidgin on irc.freenode.net<BR><BR>"));
 
