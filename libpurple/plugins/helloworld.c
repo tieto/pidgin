@@ -2,7 +2,7 @@
  * Hello World Plugin
  *
  * Copyright (C) 2004, Gary Kramlich <grim@guifications.org>,
- *               2007, John Bailey <rekkanoryo@pidgin.im>
+ *               2007, John Bailey <rekkanoryo@cpw.pidgin.im>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -109,7 +109,7 @@ static PurplePluginInfo info = {
 
 	"Hello World Plugin",
 	"Hello World Plugin",
-	"John Bailey <rekkanoryo@pidgin.im>", /* correct author */
+	"John Bailey <rekkanoryo@cpw.pidgin.im>", /* correct author */
 	"http://helloworld.tld",
 
 

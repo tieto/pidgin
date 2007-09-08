@@ -1,7 +1,7 @@
 /*
  * Debug Example Plugin
  *
- * Copyright (C) 2007, John Bailey <rekkanoryo@pidgin.im>
+ * Copyright (C) 2007, John Bailey <rekkanoryo@cpw.pidgin.im>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -48,7 +48,7 @@
 /* Common practice in third-party plugins is to define convenience macros for
  * many of the fields of the plugin info struct, so we'll do that for the
  * purposes of demonstration. */
-#define PLUGIN_AUTHOR "John Bailey <rekkanoryo@ipidgin.im>"
+#define PLUGIN_AUTHOR "John Bailey <rekkanoryo@cpw.pidgin.im>"
 
 /* As we've covered before, libpurple calls this function, if present, when it
  * loads the plugin.  Here we're using it to show off the capabilities of the
