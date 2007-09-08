@@ -78,6 +78,7 @@ msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr)
 	xmlnode_insert_child(dataNode,guidNode);
 
 	result = xmlnode_to_str(dataNode,&length);
+	xmlnode_free(dataNode);
 	return result;
 }
 
