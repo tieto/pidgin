@@ -50,8 +50,8 @@ msn_soap_new(MsnSession *session,gpointer data,int sslconn)
 	soapconn->ssl_conn = sslconn;
 
 	soapconn->gsc = NULL;
-	soapconn->input_handler = -1;
-	soapconn->output_handler = -1;
+	soapconn->input_handler = 0;
+	soapconn->output_handler = 0;
 
 	msn_soap_set_process_step(soapconn,MSN_SOAP_UNCONNECTED);
 	soapconn->soap_queue = g_queue_new();
@@ -168,11 +168,12 @@ msn_soap_destroy(MsnSoapConn *soapconn)
 	/*remove the write handler*/
 	if (soapconn->output_handler > 0){
 		purple_input_remove(soapconn->output_handler);
+		soapconn->output_handler = 0;
 	}
 	/*remove the read handler*/
 	if (soapconn->input_handler > 0){
 		purple_input_remove(soapconn->input_handler);
-		soapconn->input_handler = -1;
+		soapconn->input_handler = 0;
 	}
 	msn_soap_free_read_buf(soapconn);
 	msn_soap_free_write_buf(soapconn);
@@ -231,7 +232,7 @@ msn_soap_read(MsnSoapConn *soapconn)
 						"read len: %d, error = %s\n",
 						len, strerror(errno));
 				  purple_input_remove(soapconn->input_handler);
-				  soapconn->input_handler = -1;
+				  soapconn->input_handler = 0;
 				  g_free(soapconn->read_buf);
 				  soapconn->read_buf = NULL;
 				  soapconn->read_len = 0;
@@ -464,7 +465,7 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 			/*remove the read handler*/
 			purple_input_remove(soapconn->input_handler);
-			soapconn->input_handler = -1;
+			soapconn->input_handler = 0;
 			/*
 			 * close the soap connection,if more soap request came,
 			 * Just reconnect to do it,
@@ -568,7 +569,7 @@ msn_soap_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 		soapconn->written_cb(soapconn, source, 0);
 	}
 	/*maybe we need to read the input?*/
-	if ( soapconn->input_handler == -1 ) {
+	if (soapconn->input_handler == 0) {
 		soapconn->input_handler = purple_input_add(soapconn->gsc->fd,
 			PURPLE_INPUT_READ, msn_soap_read_cb, soapconn);
 	}
