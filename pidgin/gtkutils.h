@@ -311,7 +311,7 @@ void pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidge
  * The default filter function for screenname autocomplete.
  *
  * @param completion_entry The completion entry to filter.
- * @param online_accounts  If this is @c FALSE, only the autocompletion entries
+ * @param all_accounts  If this is @c FALSE, only the autocompletion entries
  *                         which belong to an online account will be filtered.
  * @return Returns @c TRUE if the autocompletion entry is filtered.
  */
@@ -435,7 +435,7 @@ void pidgin_set_accessible_relations(GtkWidget *w, GtkWidget *l);
  * @param y Address of the gint representing the vertical position
  *        where the menu shall be drawn. This is an output parameter.
  * @param push_in This is an output parameter?
- * @param user_data Not used by this particular position function.
+ * @param data Not used by this particular position function.
  */
 void pidgin_menu_position_func_helper(GtkMenu *menu, gint *x, gint *y,
 										gboolean *push_in, gpointer data);

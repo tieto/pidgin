@@ -378,7 +378,7 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *buddy, gboolean selected, gbool
  * This tooltip will be destroyed the next time this function is called, or when XXXX
  * is called
  *
- * @param buddy The buddy to show a tooltip for
+ * @param node The buddy list node to show a tooltip for
  * @param widget The widget to draw the tooltip on
  */
 void pidgin_blist_draw_tooltip(PurpleBlistNode *node, GtkWidget *widget);
