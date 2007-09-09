@@ -95,8 +95,7 @@ static struct developer developers[] = {
 /* Order: Alphabetical by Last Name */
 static struct developer patch_writers[] = {
 	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
-	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
-        {"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
+	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
 	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
 	{"Will 'resiak' Thompson",	NULL,	NULL},
@@ -122,6 +121,7 @@ static struct developer retired_developers[] = {
 static struct developer retired_patch_writers[] = {
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
+	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},
 	{"Benjamin Miller",				NULL,	NULL},
 	{NULL, NULL, NULL}
