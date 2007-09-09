@@ -671,6 +671,10 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 	account = purple_connection_get_account(gc);
 	conn->listenerfd = listenerfd;
 
+	/* Watch for new connections on our listener socket */
+	conn->watcher_incoming = purple_input_add(conn->listenerfd,
+			PURPLE_INPUT_READ, peer_connection_listen_cb, conn);
+
 	/* Send the "please connect to me!" ICBM */
 	bos_conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM);
 	if (bos_conn == NULL)
