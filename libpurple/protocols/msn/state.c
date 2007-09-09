@@ -156,7 +156,7 @@ char *
 msn_get_currentmedia(char *xml_str, gsize len)
 {
 	xmlnode *payloadNode, *currentmediaNode;
-	char *currentmedia_str, *currentmedia;
+	char *currentmedia;
 	
 	purple_debug_info("msn","msn get CurrentMedia\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
@@ -167,14 +167,12 @@ msn_get_currentmedia(char *xml_str, gsize len)
 	currentmediaNode = xmlnode_get_child(payloadNode, "CurrentMedia");
 	if (currentmediaNode == NULL){
 		purple_debug_info("msn","No CurrentMedia Node");
-		g_free(payloadNode);
+		xmlnode_free(payloadNode);
 		return NULL;
 	}
-	currentmedia_str = xmlnode_get_data(currentmediaNode);
-	currentmedia = g_strdup(currentmedia_str);
+	currentmedia = xmlnode_get_data(currentmediaNode);
 
-	g_free(currentmediaNode);
-	g_free(payloadNode);
+	xmlnode_free(payloadNode);
 
 	return currentmedia;
 }
@@ -184,7 +182,7 @@ char *
 msn_get_psm(char *xml_str, gsize len)
 {
 	xmlnode *payloadNode, *psmNode;
-	char *psm_str, *psm;
+	char *psm;
 	
 	purple_debug_info("MSNP14","msn get PSM\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
@@ -195,14 +193,12 @@ msn_get_psm(char *xml_str, gsize len)
 	psmNode = xmlnode_get_child(payloadNode, "PSM");
 	if (psmNode == NULL){
 		purple_debug_info("MSNP14","No PSM status Node");
-		g_free(payloadNode);
+		xmlnode_free(payloadNode);
 		return NULL;
 	}
-	psm_str = xmlnode_get_data(psmNode);
-	psm = g_strdup(psm_str);
+	psm = xmlnode_get_data(psmNode);
 
-	g_free(psmNode);
-	g_free(payloadNode);
+	xmlnode_free(payloadNode);
 
 	return psm;
 }

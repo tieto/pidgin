@@ -168,7 +168,7 @@ msn_oim_send_process(MsnOim *oim, const char *body, int len)
 	xmlnode *responseNode, *bodyNode;
 	xmlnode	*faultNode, *faultCodeNode, *faultstringNode;
 	xmlnode *detailNode, *challengeNode;
-	char *faultCodeStr, *faultstring;
+	char *faultCodeStr = NULL, *faultstring = NULL;
 
 	responseNode = xmlnode_from_str(body,len);
 	g_return_if_fail(responseNode != NULL);
@@ -226,6 +226,8 @@ msn_oim_send_process(MsnOim *oim, const char *body, int len)
 	msn_oim_send_msg(oim);
 
 oim_send_process_fail:
+	g_free(faultstring);
+	g_free(faultCodeStr);
 	xmlnode_free(responseNode);
 	return ;
 }
@@ -548,20 +550,19 @@ msn_oim_report_to_user(MsnOim *oim, const char *msg_str)
 static void
 msn_oim_get_process(MsnOim *oim, const char *oim_msg)
 {
-	xmlnode *oimNode,*bodyNode,*responseNode,*msgNode;
-	char *msg_data,*msg_str;
+	xmlnode *oim_node,*bodyNode,*responseNode,*msgNode;
+	char *msg_str;
 
-	oimNode = xmlnode_from_str(oim_msg, strlen(oim_msg));
-	bodyNode = xmlnode_get_child(oimNode,"Body");
+	oim_node = xmlnode_from_str(oim_msg, strlen(oim_msg));
+	bodyNode = xmlnode_get_child(oim_node,"Body");
 	responseNode = xmlnode_get_child(bodyNode,"GetMessageResponse");
 	msgNode = xmlnode_get_child(responseNode,"GetMessageResult");
-	msg_data = xmlnode_get_data(msgNode);
-	msg_str = g_strdup(msg_data);
-	g_free(msg_data);
+	msg_str = xmlnode_get_data(msgNode);
 	purple_debug_info("OIM","msg:{%s}\n",msg_str);
 	msn_oim_report_to_user(oim,msg_str);
 
 	g_free(msg_str);
+	xmlnode_free(oim_node);
 }
 
 static void
@@ -655,6 +656,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		rTime = NULL;
 		g_free(nickname);
 	}
+	g_free(unread);
 	xmlnode_free(node);
 }
 
