@@ -140,7 +140,6 @@ void msn_soap_close(MsnSoapConn *soapconn);
 void msn_soap_write(MsnSoapConn * soapconn, char *write_buf, PurpleInputFunction written_cb);
 void msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,MsnSoapConnectInitFunction msn_soap_init_func);
 
-void msn_soap_free_data_cb(MsnSoapConn *soapconn);
 void msn_soap_free_read_buf(MsnSoapConn *soapconn);
 void msn_soap_free_write_buf(MsnSoapConn *soapconn);
 void msn_soap_connect_cb(gpointer data, PurpleSslConnection *gsc, PurpleInputCondition cond);

@@ -239,6 +239,9 @@ msn_oim_send_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	MsnSession *session = soapconn->session;
 	MsnOim * oim;
 
+	if (soapconn->body == NULL)
+		return;
+
 	g_return_if_fail(session != NULL);
 	oim = soapconn->session->oim;
 	g_return_if_fail(oim != NULL);
@@ -338,6 +341,8 @@ msn_oim_delete_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;
 
+	if (soapconn->body == NULL)
+		return;
 	purple_debug_info("MSNP14","OIM delete read buffer:{%s}\n",soapconn->body);
 
 	msn_soap_free_read_buf(soapconn);
@@ -570,6 +575,9 @@ msn_oim_get_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;
 	MsnOim * oim = soapconn->session->oim;
+
+	if (soapconn->body == NULL)
+		return;
 
 	purple_debug_info("MSNP14","OIM get read buffer:{%s}\n",soapconn->body);
 

@@ -77,7 +77,8 @@ msn_callback_state_new(void)
 void
 msn_callback_state_free(MsnCallbackState *state)
 {
-	g_return_if_fail(state != NULL);
+	if (state == NULL)
+		return;
 	
 	if (state->who != NULL)
 		g_free(state->who);
@@ -247,6 +248,9 @@ msn_create_address_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn *soapconn = data;
 	MsnContact *contact;
+
+	if (soapconn->body == NULL)
+		return;
 
 	contact = soapconn->parent;
 	g_return_if_fail(contact != NULL);
@@ -532,6 +536,9 @@ msn_get_contact_list_cb(gpointer data, gint source, PurpleInputCondition cond)
 	const char *abLastChange;
 	const char *dynamicItemLastChange;
 	gchar *partner_scenario;
+
+	if (soapconn->body == NULL)
+		return;
 
 	purple_debug_misc("MSNCL","Got the contact list!\n");
 
@@ -902,6 +909,9 @@ msn_get_address_cb(gpointer data, gint source, PurpleInputCondition cond)
 	MsnContact *contact;
 	MsnSession *session;
 
+	if (soapconn->body == NULL)
+		return;
+
 	contact = soapconn->parent;
 	g_return_if_fail(contact != NULL);
 	session = soapconn->session;
@@ -990,10 +1000,15 @@ msn_add_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	g_return_if_fail(soapconn->data_cb != NULL);
 	g_return_if_fail(soapconn->session != NULL);
 	g_return_if_fail(soapconn->session->userlist != NULL);
+
+	state = (MsnCallbackState *) soapconn->data_cb;
+
+	if (soapconn->body == NULL) {
+		msn_callback_state_free(state);
+		return;
+	}
 	
 	userlist = soapconn->session->userlist;
-	
-	state = (MsnCallbackState *) soapconn->data_cb;
 	
 	purple_debug_info("MSNCL","Contact added successfully\n");
 
@@ -1078,14 +1093,19 @@ msn_add_contact_to_group_read_cb(gpointer data, gint source, PurpleInputConditio
 	MsnCallbackState *state; 
 	MsnUserList *userlist;
 
-        g_return_if_fail(soapconn->data_cb != NULL);
-        g_return_if_fail(soapconn->session != NULL);
-        g_return_if_fail(soapconn->session->userlist != NULL);
+	g_return_if_fail(soapconn->data_cb != NULL);
+	g_return_if_fail(soapconn->session != NULL);
+	g_return_if_fail(soapconn->session->userlist != NULL);
 
-        userlist = soapconn->session->userlist;
+	userlist = soapconn->session->userlist;
 
 	state = (MsnCallbackState *) soapconn->data_cb;
 
+	if (soapconn->body == NULL) {
+		msn_callback_state_free(state);
+		return;
+	}
+	
 	if (msn_userlist_add_buddy_to_group(userlist, state->who, state->new_group_name) == TRUE) {
 		purple_debug_info("MSNCL", "Contact %s added to group %s successfully!\n", state->who, state->new_group_name);
 	} else {
@@ -1204,6 +1224,9 @@ msn_delete_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond
 {
 	MsnSoapConn * soapconn = data;
 
+	if (soapconn->body == NULL)
+		return;
+
 	// we should probably delete it from the userlist aswell
 	purple_debug_info("MSNCL","Delete contact successful\n");
 	msn_soap_free_read_buf(soapconn);
@@ -1253,6 +1276,11 @@ msn_del_contact_from_group_read_cb(gpointer data, gint source, PurpleInputCondit
 {
 	MsnSoapConn * soapconn = data;
 	MsnCallbackState *state = (MsnCallbackState *) soapconn->data_cb;
+
+	if (soapconn->body == NULL) {
+		msn_callback_state_free(state);
+		return;
+	}
 	
 	if (msn_userlist_rem_buddy_from_group(soapconn->session->userlist, state->who, state->old_group_name)) {
 		purple_debug_info("MSN CL", "Contact %s deleted successfully from group %s\n", state->who, state->old_group_name);
@@ -1341,6 +1369,11 @@ msn_del_contact_from_group(MsnContact *contact, const char *passport, const char
 static void
 msn_update_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
+	MsnSoapConn *soapconn = data;
+
+	if (soapconn->body == NULL)
+		return;
+
 	purple_debug_info("MSN CL","Contact updated successfully\n");
 }
 
@@ -1394,6 +1427,11 @@ msn_del_contact_from_list_read_cb(gpointer data, gint source, PurpleInputConditi
 
 	state = (MsnCallbackState *) soapconn->data_cb;
 
+	if (soapconn->body == NULL) {
+		msn_callback_state_free(state);
+		return;
+	}
+	
 	purple_debug_info("MSN CL", "Contact %s deleted successfully from %s list on server!\n", state->who, MsnMemberRole[state->list_id]);
 
 	if (state->list_id == MSN_LIST_PL) {
@@ -1492,6 +1530,11 @@ msn_add_contact_to_list_read_cb(gpointer data, gint source, PurpleInputCondition
 	g_return_if_fail(soapconn->data_cb != NULL);
 
 	state = (MsnCallbackState *) soapconn->data_cb;
+	
+	if (soapconn->body == NULL) {
+		msn_callback_state_free(state);
+		return;
+	}
 	
 	purple_debug_info("MSN CL", "Contact %s added successfully to %s list on server!\n", state->who, MsnMemberRole[state->list_id]);
 
@@ -1621,9 +1664,15 @@ msn_group_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	g_return_if_fail(soapconn->session != NULL);
 	g_return_if_fail(soapconn->session->userlist != NULL);
 	g_return_if_fail(soapconn->session->contact != NULL);
+
+	state = (MsnCallbackState *) soapconn->data_cb;
 	
-	if (soapconn->data_cb != NULL) {
-		state = (MsnCallbackState *) soapconn->data_cb;
+	if (soapconn->body == NULL) {
+		msn_callback_state_free(state);
+		return;
+	}
+	
+	if (state) {
 		userlist = soapconn->session->userlist;
 		
 		if (state->action & MSN_RENAME_GROUP) {
