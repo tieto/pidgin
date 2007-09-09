@@ -448,14 +448,32 @@ msn_oim_parse_timestamp(const char *timestamp)
 			}
 
 			if (sscanf(tz_ptr, "%02d%02d", &tzhrs, &tzmins) == 2) {
-				t.tm_year -= 1900;
-#if HAVE_TM_GMTOFF
-				t.tm_gmtoff = tzhrs * 60 * 60 + tzmins * 60;
-				if (!offset_positive)
-					t.tm_gmtoff *= -1;
+				time_t tzoff = tzhrs * 60 * 60 + tzmins * 60;
+#ifdef _WIN32
+				long sys_tzoff;
 #endif
+
+				if (!offset_positive)
+					tzoff *= -1;
+
+				t.tm_year -= 1900;
 				t.tm_isdst = 0;
-				return mktime(&t);
+
+#ifdef _WIN32
+				if ((sys_tzoff = win32_get_tz_offset()) != -1)
+					tzoff += sys_tzoff;
+#else
+#ifdef HAVE_TM_GMTOFF
+				tzoff += t.tm_gmtoff;
+#else
+#	ifdef HAVE_TIMEZONE
+				tzset();    /* making sure */
+				tzoff -= timezone;
+#	endif
+#endif
+#endif /* _WIN32 */
+
+				return mktime(&t) + tzoff;
 			}
 		}
 	}
