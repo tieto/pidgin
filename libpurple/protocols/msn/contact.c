@@ -415,6 +415,7 @@ msn_parse_contact_list(MsnContact * contact)
 
 		if ( (typedata = xmlnode_get_data(handletype)) == NULL) {
 			purple_debug_error("MSNCL","Error retrieving data from 'Type' child node\n");
+			g_free(typedata);
 			continue;
 		}
 
@@ -655,9 +656,7 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 		xmlnode *groupIds;
 		MsnUser *user;
 		MsnUserType usertype;
-		char *passport,*Name,*uid,*type;
-
-		passport = NULL;
+		char *passport = NULL, *Name = NULL, *uid = NULL, *type = NULL;
 
 		contactId= xmlnode_get_child(contactNode,"contactId");
 		uid = xmlnode_get_data(contactId);
@@ -696,6 +695,8 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 					contactEmailNode = xmlnode_get_next_twin(contactEmailNode) ){
 				messengerEnabledNode = xmlnode_get_child(contactEmailNode,"isMessengerEnabled");
 				if(messengerEnabledNode == NULL){
+					g_free(uid);
+					g_free(type);
 					break;
 				}
 				msnEnabled = xmlnode_get_data(messengerEnabledNode);
@@ -705,6 +706,10 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 					passport = xmlnode_get_data(emailNode);
 					purple_debug_info("MsnAB","Yahoo User %s\n",passport);
 					usertype = MSN_USER_TYPE_YAHOO;
+					g_free(uid);
+					g_free(type);
+					g_free(passport);
+					g_free(msnEnabled);
 					break;
 				}else{
 					/*TODO maybe we can just ignore it in Purple?*/
@@ -728,7 +733,7 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 		if (displayName == NULL) {
 			Name = g_strdup(passport);
 		} else {
-			Name =xmlnode_get_data(displayName);
+			Name = xmlnode_get_data(displayName);
 		}
 
 		purple_debug_misc("MsnAB","passport:{%s} uid:{%s} display:{%s}\n",
