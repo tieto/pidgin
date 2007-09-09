@@ -305,14 +305,14 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	context = gtk_widget_get_pango_context(widget);
 	layout = pango_layout_new(context);
 
-	markup = g_strdup_printf("<span foreground=\"#FFFFFF\">%s</span>", VERSION);
+	markup = g_strdup_printf("<span foreground=\"#000000\">%s</span>", VERSION);
 	pango_layout_set_font_description(layout, style->font_desc);
 	pango_layout_set_markup(layout, markup, strlen(markup));
 	g_free(markup);
 
 	pango_layout_get_pixel_size(layout, &lwidth, &lheight);
 	gdk_draw_layout(GDK_DRAWABLE(pixmap), style->bg_gc[GTK_STATE_NORMAL],
-					width - (lwidth + 3), height - (lheight + 1), layout);
+					width - (lwidth + 3), 1, layout);
 	g_object_unref(G_OBJECT(layout));
 
 	*original = gdk_pixbuf_get_from_drawable(NULL, pixmap, NULL,
