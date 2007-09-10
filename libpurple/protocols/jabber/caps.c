@@ -474,13 +474,13 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, c
 	userdata->ver = g_strdup(ver);
 
 	if(originalext) {
-		gchar **tmp;
+		int i;
 		gchar **splat = g_strsplit(originalext, " ", 0);
-		for(tmp = splat; *tmp; tmp++) {
-			userdata->ext = g_list_append(userdata->ext, tmp);
+		for(i =0; splat[i]; i++) {
+			userdata->ext = g_list_append(userdata->ext, g_strdup(splat[i]));
 			++userdata->extOutstanding;
 		}
-		g_free(splat);
+		g_strfreev(splat);
 	}
 	g_free(originalext);
 	
