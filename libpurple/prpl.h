@@ -355,9 +355,9 @@ struct _PurplePluginProtocolInfo
 	
 	/* Attention API for sending & receiving zaps/nudges/buzzes etc. */
 	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
-	GList *(*attention_types)(PurpleAccount *acct);
+	GList *(*get_attention_types)(PurpleAccount *acct);
 
-	void (*_purple_reserved1)(void);
+	void (*_purple_reserved4)(void);
 };
 
 #define PURPLE_IS_PROTOCOL_PLUGIN(plugin) \
