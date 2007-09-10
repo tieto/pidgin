@@ -253,7 +253,7 @@ PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account,
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 
 	/* Lookup the attention type in the protocol's attention_types list, if any. */
-	get_attention_types = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->attention_types;
+	get_attention_types = PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->get_attention_types;
 	if (get_attention_types) {
 		GList *attention_types;
 
