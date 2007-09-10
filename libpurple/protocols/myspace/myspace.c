@@ -2933,7 +2933,7 @@ PurplePluginProtocolInfo prpl_info = {
 
 
 /** Based on MSN's plugin info comments. */
-PurplePluginInfo info = {
+static PurplePluginInfo info = {
 	PURPLE_PLUGIN_MAGIC,                                
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
