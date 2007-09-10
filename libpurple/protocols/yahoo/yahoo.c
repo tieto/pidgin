@@ -4130,8 +4130,8 @@ GList *yahoo_attention_types(PurpleAccount *account)
 		/* This is index number YAHOO_BUZZ. */
 		attn = g_new0(PurpleAttentionType, 1);
 		attn->name = _("buzz");
-		attn->incoming_description = _("buzzed");
-		attn->outgoing_description = _("Buzzing");
+		attn->incoming_description = _("%s has buzzed you!");
+		attn->outgoing_description = _("Buzzing %s...");
 		list = g_list_append(list, attn);
 	} 
 

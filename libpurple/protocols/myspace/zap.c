@@ -41,16 +41,16 @@ msim_attention_types(PurpleAccount *acct)
 		types = g_list_append(types, attn);
 
 		/* TODO: icons for each zap */
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("zap"), _("zapped"), _("Zapping"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("whack"), _("whacked"), _("Whacking"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("torch"), _("torched"), _("Torching"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("smooch"), _("smooched"), _("Smooching"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("hug"), _("hugged"), _("Hugging"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("bslap"), _("bslapped"), _("Bslapping"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("goose"), _("goosed"), _("Goosing"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("hi-five"), _("hi-fived"), _("Hi-fiving"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("punk"), _("punk'd"), _("Punking"));
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("raspberry"), _("raspberried"), _("Raspberry'ing"));
+		_MSIM_ADD_NEW_ATTENTION(NULL, _("Zap"), _("%s has zapped you!"), _("Zapping %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, _("Whack"), _("%s has whacked you!"), _("Whacking %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, _("Torch"), _("%s has torched you!"), _("Torching %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, _("Smooch"), _("%s has smooched you!"), _("Smooching %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, _("Hug"), _("%s has hugged you!"), _("Hugging %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, _("Slap"), _("%s has slapped you!"), _("Slapping %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, _("Goose"), _("%s has goosed you!"), _("Goosing %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, _("High-five"), _("%s has high-fived you!"), _("High-fiving %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, _("Punk"), _("%s has punk'd you!"), _("Punking %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, _("Raspberry"), _("%s has raspberried you!"), _("Raspberrying %s..."));
 	}
 
 	return types;

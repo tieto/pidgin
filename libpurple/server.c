@@ -290,9 +290,9 @@ serv_send_attention(PurpleConnection *gc, const char *who, guint type_code)
 	attn = purple_get_attention_type_from_code(gc->account, type_code);
 
 	if (attn && attn->outgoing_description) {
-		description = g_strdup_printf(_("Attention! %s %s."), attn->outgoing_description, who);
+		description = g_strdup_printf(attn->outgoing_description, who);
 	} else {
-		description = g_strdup(_("Attention!"));
+		description = g_strdup_printf(_("Requesting %s's attention..."), who);
 	}
 	
 	flags = PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM;
@@ -328,9 +328,9 @@ serv_got_attention(PurpleConnection *gc, const char *who, guint type_code)
 	 * it next to the attention command. And if it is null, display a generic icon. */
 
 	if (attn && attn->incoming_description) {
-		description = g_strdup_printf(_("Attention! You have been %s."), attn->incoming_description);
+		description = g_strdup_printf(attn->incoming_description, who);
 	} else {
-		description = g_strdup(_("Attention!"));
+		description = g_strdup(_("%s has requested your attention!"));
 	}
 
 	purple_debug_info("server", "serv_got_attention: got '%s' from %s\n",
