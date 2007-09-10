@@ -274,7 +274,8 @@ serv_send_attention(PurpleConnection *gc, const char *who, guint type_code)
 	PurplePlugin *prpl;
 	PurpleConversation *conv;
 	gboolean (*send_attention)(PurpleConnection *, const char *, guint);
-	
+	PurpleBuddy *buddy;
+	const char *alias;	
 	gchar *description;
 	time_t mtime;
 
@@ -289,10 +290,15 @@ serv_send_attention(PurpleConnection *gc, const char *who, guint type_code)
 
 	attn = purple_get_attention_type_from_code(gc->account, type_code);
 
+	if ((buddy = purple_find_buddy(purple_connection_get_account(gc), who)) != NULL)
+		alias = purple_buddy_get_contact_alias(buddy);
+	else
+		alias = who;
+
 	if (attn && attn->outgoing_description) {
-		description = g_strdup_printf(attn->outgoing_description, who);
+		description = g_strdup_printf(attn->outgoing_description, alias);
 	} else {
-		description = g_strdup_printf(_("Requesting %s's attention..."), who);
+		description = g_strdup_printf(_("Requesting %s's attention..."), alias);
 	}
 	
 	flags = PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_NOTIFY | PURPLE_MESSAGE_SYSTEM;
@@ -314,6 +320,8 @@ serv_got_attention(PurpleConnection *gc, const char *who, guint type_code)
 {
 	PurpleMessageFlags flags;
 	PurpleAttentionType *attn;
+	PurpleBuddy *buddy;
+	const char *alias;
 	gchar *description;
 	time_t mtime;
 
@@ -327,10 +335,15 @@ serv_got_attention(PurpleConnection *gc, const char *who, guint type_code)
 	/* TODO: if (attn->icon_name) is non-null, use it to lookup an emoticon and display
 	 * it next to the attention command. And if it is null, display a generic icon. */
 
+	if ((buddy = purple_find_buddy(purple_connection_get_account(gc), who)) != NULL)
+		alias = purple_buddy_get_contact_alias(buddy);
+	else
+		alias = who;
+
 	if (attn && attn->incoming_description) {
-		description = g_strdup_printf(attn->incoming_description, who);
+		description = g_strdup_printf(attn->incoming_description, alias);
 	} else {
-		description = g_strdup(_("%s has requested your attention!"));
+		description = g_strdup_printf(_("%s has requested your attention!"), alias);
 	}
 
 	purple_debug_info("server", "serv_got_attention: got '%s' from %s\n",
