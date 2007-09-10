@@ -61,9 +61,9 @@ libpurple/plugins/perl/perl.c
 libpurple/plugins/psychic.c
 libpurple/plugins/signals-test.c
 libpurple/plugins/simple.c
-libpurple/plugins/ssl/ssl.c
 libpurple/plugins/ssl/ssl-gnutls.c
 libpurple/plugins/ssl/ssl-nss.c
+libpurple/plugins/ssl/ssl.c
 libpurple/plugins/statenotify.c
 libpurple/plugins/tcl/tcl.c
 libpurple/protocols/bonjour/bonjour.c
@@ -145,11 +145,11 @@ libpurple/protocols/silc10/wb.c
 libpurple/protocols/simple/simple.c
 libpurple/protocols/toc/toc.c
 libpurple/protocols/yahoo/yahoo.c
-libpurple/protocols/yahoo/yahoochat.c
 libpurple/protocols/yahoo/yahoo_doodle.c
 libpurple/protocols/yahoo/yahoo_filexfer.c
 libpurple/protocols/yahoo/yahoo_packet.c
 libpurple/protocols/yahoo/yahoo_profile.c
+libpurple/protocols/yahoo/yahoochat.c
 libpurple/protocols/yahoo/ycht.c
 libpurple/protocols/zephyr/zephyr.c
 libpurple/proxy.c
@@ -186,8 +186,8 @@ pidgin/gtksound.c
 pidgin/gtkstatusbox.c
 pidgin/gtkutils.c
 pidgin/gtkwhiteboard.c
-pidgin/pidgincombobox.c
 pidgin/pidgin.h
+pidgin/pidgincombobox.c
 pidgin/pidginstock.c
 pidgin/pixmaps/emotes/default/24/default.theme.in
 pidgin/pixmaps/emotes/none/none.theme.in
@@ -199,11 +199,11 @@ pidgin/plugins/gestures/gestures.c
 pidgin/plugins/gevolution/add_buddy_dialog.c
 pidgin/plugins/gevolution/assoc-buddy.c
 pidgin/plugins/gevolution/eds-utils.c
-pidgin/plugins/gevolution/gevolution.c
 pidgin/plugins/gevolution/gevo-util.c
+pidgin/plugins/gevolution/gevolution.c
 pidgin/plugins/gevolution/new_person_dialog.c
-pidgin/plugins/gtkbuddynote.c
 pidgin/plugins/gtk-signals-test.c
+pidgin/plugins/gtkbuddynote.c
 pidgin/plugins/history.c
 pidgin/plugins/iconaway.c
 pidgin/plugins/mailchk.c
