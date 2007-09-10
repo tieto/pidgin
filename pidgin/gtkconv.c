@@ -9026,6 +9026,9 @@ pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 
 	win->gtkconvs = g_list_remove(win->gtkconvs, gtkconv);
 
+	g_signal_handlers_disconnect_matched(win->window, G_SIGNAL_MATCH_DATA,
+			0, 0, NULL, NULL, gtkconv);
+
 	if (win->gtkconvs && win->gtkconvs->next == NULL)
 		pidgin_conv_tab_pack(win, win->gtkconvs->data);
 
