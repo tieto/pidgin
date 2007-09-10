@@ -19,6 +19,8 @@
  *
  */
 
+#include "internal.h"
+
 #include "pep.h"
 #include "iq.h"
 #include <string.h>

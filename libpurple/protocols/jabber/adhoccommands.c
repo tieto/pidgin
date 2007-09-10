@@ -19,6 +19,8 @@
  *
  */
 
+#include "internal.h"
+
 #include "adhoccommands.h"
 #include <assert.h>
 #include <string.h>

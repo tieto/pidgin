@@ -42,8 +42,11 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 ##  SOURCES, OBJECTS
 ##
-C_SRC =			auth.c \
+C_SRC =	\
+			adhoccommands.c \
+			auth.c \
 			buddy.c \
+			caps.c \
 			chat.c \
 			disco.c \
 			google.c \
@@ -53,10 +56,14 @@ C_SRC =			auth.c \
 			message.c \
 			oob.c \
 			parser.c \
+			pep.c \
 			ping.c \
 			presence.c \
 			roster.c \
 			si.c \
+			usermood.c \
+			usernick.c \
+			usertune.c \
 			xdata.c \
 			win32/posix.uname.c
 

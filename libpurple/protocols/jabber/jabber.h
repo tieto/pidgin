@@ -34,7 +34,7 @@ typedef enum {
 	JABBER_CAP_IQ_SEARCH      = 1 << 7,
 	JABBER_CAP_IQ_REGISTER    = 1 << 8,
 
-	/* Google Talk extensions: 
+	/* Google Talk extensions:
 	 * http://code.google.com/apis/talk/jep_extensions/extensions.html
 	 */
 	JABBER_CAP_GMAIL_NOTIFY   = 1 << 9,

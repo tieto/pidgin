@@ -19,6 +19,8 @@
  *
  */
 
+#include "internal.h"
+
 #include "caps.h"
 #include <string.h>
 #include "internal.h"
@@ -464,19 +466,22 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, c
 	JabberCapsValue *client;
 	JabberCapsKey *key = g_new0(JabberCapsKey, 1);
 	char *originalext = g_strdup(ext);
-	char *oneext, *ctx;
 	jabber_caps_cbplususerdata *userdata = g_new0(jabber_caps_cbplususerdata, 1);
 	userdata->cb = cb;
 	userdata->user_data = user_data;
 	userdata->who = g_strdup(who);
 	userdata->node = g_strdup(node);
 	userdata->ver = g_strdup(ver);
-	
-	if(originalext)
-		for(oneext = strtok_r(originalext, " ", &ctx); oneext; oneext = strtok_r(NULL, " ", &ctx)) {
-			userdata->ext = g_list_append(userdata->ext,g_strdup(oneext));
+
+	if(originalext) {
+		gchar **tmp;
+		gchar **splat = g_strsplit(originalext, " ", 0);
+		for(tmp = splat; *tmp; tmp++) {
+			userdata->ext = g_list_append(userdata->ext, tmp);
 			++userdata->extOutstanding;
 		}
+		g_free(splat);
+	}
 	g_free(originalext);
 	
 	key->node = g_strdup(node);
