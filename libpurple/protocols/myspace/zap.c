@@ -96,23 +96,6 @@ msim_send_zap(MsimSession *session, const gchar *username, guint code)
 	g_return_val_if_fail(session != NULL, FALSE);
 	g_return_val_if_fail(username != NULL, FALSE);
 
-
-	types = msim_attention_types(session->account);
-
-	attn = g_list_nth_data(types, code);
-	if (!attn) {
-		return FALSE;
-	}
-
-
-	zap_description = g_strdup_printf("*** Attention: %s %s ***", attn->outgoing_description,
-			username);
-
-	serv_got_im(session->gc, username, zap_description,
-			PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_SYSTEM, time(NULL));
-
-	g_free(zap_description);
-
 	/* Construct and send the actual zap command. */
 	zap_string = g_strdup_printf("!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", code);
 
