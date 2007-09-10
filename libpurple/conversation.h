@@ -327,7 +327,7 @@ struct _PurpleConversation
 	GHashTable *data;                        /**< Plugin-specific data.   */
 
 	PurpleConnectionFlags features; /**< The supported features */
-
+	GList *message_history;         /**< Message history, as a GList of PurpleConvMessage's */
 };
 
 #ifdef __cplusplus
