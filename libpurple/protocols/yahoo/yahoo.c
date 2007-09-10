@@ -4113,7 +4113,7 @@ GList *yahoo_attention_types(PurpleAccount *account)
 		/* Yahoo only supports one attention command: the 'buzz'. */
 		/* This is index number YAHOO_BUZZ. */
 		attn = g_new0(PurpleAttentionType, 1);
-		attn->name = _("buzz");
+		attn->name = _("Buzz");
 		attn->incoming_description = _("%s has buzzed you!");
 		attn->outgoing_description = _("Buzzing %s...");
 		list = g_list_append(list, attn);

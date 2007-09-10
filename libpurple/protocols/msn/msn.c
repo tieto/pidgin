@@ -127,7 +127,7 @@ msn_attention_types(PurpleAccount *account)
 
 	if (!list) {
 		attn = g_new0(PurpleAttentionType, 1);
-		attn->name = _("nudge");
+		attn->name = _("Nudge");
 		attn->incoming_description = _("%s has nudged you!");
 		attn->outgoing_description = _("Nudging %s...");
 		list = g_list_append(list, attn);
