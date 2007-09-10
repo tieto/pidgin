@@ -149,8 +149,6 @@ msim_blist_node_menu(PurpleBlistNode *node)
 	GList *menu, *zap_menu;
 	GList *types;
 	PurpleMenuAction *act;
-	/* Warning: hardcoded to match that in msim_attention_types. */
-	const gchar *zap_names[10];
 	guint i;
 
 	if (!PURPLE_BLIST_NODE_IS_BUDDY(node)) {
@@ -158,7 +156,9 @@ msim_blist_node_menu(PurpleBlistNode *node)
 		return NULL;
 	}
 
-	/* Names from official client. */
+	zap_menu = NULL;
+
+	/* TODO: get rid of once is accessible directly in GUI */
 	types = msim_attention_types(NULL);
 	i = 0;
 	do
@@ -166,21 +166,16 @@ msim_blist_node_menu(PurpleBlistNode *node)
 		MsimAttentionType *attn;
 
 		attn = (MsimAttentionType *)types->data;
-		zap_names[i] = attn->name;
+
+		act = purple_menu_action_new(attn->name, PURPLE_CALLBACK(msim_send_zap_from_menu),
+				GUINT_TO_POINTER(i), NULL);
+		zap_menu = g_list_append(zap_menu, act);
+
 		++i;
 	} while ((types = g_list_next(types)));
 
-	menu = zap_menu = NULL;
-
-	/* TODO: get rid of once is accessible directly in GUI */
-	for (i = 0; i < sizeof(zap_names) / sizeof(zap_names[0]); ++i) {
-		act = purple_menu_action_new(zap_names[i], PURPLE_CALLBACK(msim_send_zap_from_menu),
-				GUINT_TO_POINTER(i), NULL);
-		zap_menu = g_list_append(zap_menu, act);
-	}
-
 	act = purple_menu_action_new(_("Zap"), NULL, NULL, zap_menu);
-	menu = g_list_append(menu, act);
+	menu = g_list_append(NULL, act);
 
 	return menu;
 }
