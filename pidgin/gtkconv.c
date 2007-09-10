@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -929,6 +929,7 @@ savelog_writefile_cb(void *user_data, const char *filename)
 	PurpleConversation *conv = (PurpleConversation *)user_data;
 	FILE *fp;
 	const char *name;
+	char **lines;
 	gchar *text;
 
 	if ((fp = g_fopen(filename, "w+")) == NULL) {
@@ -940,10 +941,12 @@ savelog_writefile_cb(void *user_data, const char *filename)
 	fprintf(fp, "<html>\n<head><title>%s</title></head>\n<body>", name);
 	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
 
-	text = gtk_imhtml_get_markup(
+	lines = gtk_imhtml_get_markup_lines(
 		GTK_IMHTML(PIDGIN_CONVERSATION(conv)->imhtml));
+	text = g_strjoinv("<br>\n", lines);
 	fprintf(fp, "%s", text);
 	g_free(text);
+	g_strfreev(lines);
 
 	fprintf(fp, "\n</body>\n</html>\n");
 	fclose(fp);
@@ -1301,6 +1304,7 @@ menu_add_remove_cb(gpointer data, guint action, GtkWidget *widget)
 	add_remove_cb(NULL, PIDGIN_CONVERSATION(conv));
 }
 
+#if 0
 static void
 menu_hide_conv_cb(gpointer data, guint action, GtkWidget *widget)
 {
@@ -1311,6 +1315,7 @@ menu_hide_conv_cb(gpointer data, guint action, GtkWidget *widget)
 			"conversation-hiding", gtkconv);
 	purple_conversation_set_ui_ops(conv, NULL);
 }
+#endif
 
 static void
 menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
@@ -2903,8 +2908,6 @@ static GtkItemFactoryEntry menu_items[] =
 	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>", NULL },
 
 
-	{ N_("/Conversation/_Hide"), NULL, menu_hide_conv_cb, 0,
-			"<Item>", NULL},
 	{ N_("/Conversation/_Close"), NULL, menu_close_conv_cb, 0,
 			"<StockItem>", GTK_STOCK_CLOSE },
 
@@ -7655,7 +7658,7 @@ pidgin_conversations_uninit(void)
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -9022,6 +9025,9 @@ pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 	gtk_notebook_remove_page(GTK_NOTEBOOK(win->notebook), index);
 
 	win->gtkconvs = g_list_remove(win->gtkconvs, gtkconv);
+
+	g_signal_handlers_disconnect_matched(win->window, G_SIGNAL_MATCH_DATA,
+			0, 0, NULL, NULL, gtkconv);
 
 	if (win->gtkconvs && win->gtkconvs->next == NULL)
 		pidgin_conv_tab_pack(win, win->gtkconvs->data);

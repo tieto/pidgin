@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -1510,6 +1510,7 @@ sound_changed2_cb(const char *name, PurplePrefType type,
 
 	gtk_widget_set_sensitive(vbox, strcmp(method, "none"));
 }
+#endif /* !_WIN32 */
 
 #ifdef USE_GSTREAMER
 static void
@@ -1524,7 +1525,6 @@ sound_changed3_cb(const char *name, PurplePrefType type,
 			!strcmp(method, "esd"));
 }
 #endif /* USE_GSTREAMER */
-#endif /* !_WIN32 */
 
 
 static void
@@ -1693,9 +1693,11 @@ sound_page()
 	int j;
 	const char *file;
 	char *pref;
+#if !defined _WIN32 || defined USE_GSTREAMER
+	GtkWidget *label;
+#endif
 #ifndef _WIN32
 	GtkWidget *dd;
-	GtkWidget *label;
 	GtkWidget *entry;
 	const char *cmd;
 #endif

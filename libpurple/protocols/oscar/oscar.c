@@ -22,7 +22,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 
@@ -2125,28 +2125,11 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		}
 		else if (args->status == AIM_RENDEZVOUS_CONNECTED)
 		{
-			/* Remote user has accepted our peer request */
-			PeerConnection *conn;
-
-			conn = peer_connection_find_by_cookie(od, userinfo->sn, args->cookie);
 			/*
-			 * If conn is NULL it means we haven't tried to create
-			 * a connection with that user.  They may be trying to
-			 * do something malicious.
+			 * Remote user has accepted our peer request.  If we
+			 * wanted to we could look up the PeerConnection using
+			 * args->cookie, but we don't need to do anything here.
 			 */
-			if (conn != NULL)
-			{
-				if (conn->listenerfd != -1)
-				{
-					/*
-					 * If they are connecting directly to us then
-					 * continue the peer negotiation by
-					 * accepting connections on our listener port.
-					 */
-					conn->watcher_incoming = purple_input_add(conn->listenerfd,
-							PURPLE_INPUT_READ, peer_connection_listen_cb, conn);
-				}
-			}
 		}
 	}
 

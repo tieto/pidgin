@@ -28,7 +28,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #define PURPLE_PLUGIN
@@ -1543,6 +1543,12 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 
 	if (msim_msg_get_integer(msg, "uniquenick") == session->userid) {
 		purple_debug_info("msim_we_are_logged_on", "TODO: pick username\n");
+		/* No username is set. */
+		purple_notify_error(session->account, 
+				_("No username set"),
+				_("Please go to http://editprofile.myspace.com/index.cfm?fuseaction=profile.username and choose a username and try to login again."), NULL);
+		purple_connection_error(session->gc, _("No username set"));
+		return FALSE;
 	}
 
 	body = msim_msg_new(
@@ -1864,9 +1870,14 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		purple_debug_info("msim", "msim_status: found buddy %s\n", username);
 	}
 
-	/* The status headline is plaintext, but libpurple treats it as HTML,
-	 * so escape any HTML characters to their entity equivalents. */
-	status_headline_escaped = g_markup_escape_text(status_headline, strlen(status_headline));
+	if (status_headline) {
+		/* The status headline is plaintext, but libpurple treats it as HTML,
+		 * so escape any HTML characters to their entity equivalents. */
+		status_headline_escaped = g_markup_escape_text(status_headline, strlen(status_headline));
+	} else {
+		status_headline_escaped = NULL;
+	}
+
 	g_free(status_headline);
 
 	if (user->headline) 

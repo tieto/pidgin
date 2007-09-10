@@ -11360,7 +11360,7 @@ msgid "Activate which ID?"
 msgstr "Aktivovať s ID?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3406
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "S kým sa spojiť v chate?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3418

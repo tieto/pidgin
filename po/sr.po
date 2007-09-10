@@ -10533,7 +10533,7 @@ msgid "Active which ID?"
 msgstr "Активирај ИД (који)?"
 
 #: src/protocols/yahoo/yahoo.c:2972
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Прикључи се коме разговору?"
 
 #: src/protocols/yahoo/yahoo.c:2982

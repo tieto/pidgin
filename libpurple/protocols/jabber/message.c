@@ -10,12 +10,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -62,7 +62,7 @@ static void handle_chat(JabberMessage *jm)
 
 	if(jabber_find_unnormalized_conv(jm->from, jm->js->gc->account)) {
 		from = g_strdup(jm->from);
-	} else	if(jid->node) {
+	} else  if(jid->node) {
 		if(jid->resource) {
 			PurpleConversation *conv;
 
@@ -100,13 +100,13 @@ static void handle_chat(JabberMessage *jm)
 					escaped = g_markup_escape_text(who, -1);
 
 					g_snprintf(buf, sizeof(buf),
-							   _("%s has left the conversation."), escaped);
+					           _("%s has left the conversation."), escaped);
 
 					/* At some point when we restructure PurpleConversation,
 					 * this should be able to be implemented by removing the
 					 * user from the conversation like we do with chats now. */
 					purple_conversation_write(conv, "", buf,
-											PURPLE_MESSAGE_SYSTEM, time(NULL));
+					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
 				}
 			}
 			serv_got_typing_stopped(jm->js->gc, from);
@@ -150,7 +150,7 @@ static void handle_headline(JabberMessage *jm)
 	char *title;
 	GString *body;
 	GList *etc;
-	
+
 	if(!jm->xhtml && !jm->body)
 		return; /* ignore headlines without any content */
 
@@ -365,8 +365,8 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			if(!jm->xhtml && xmlnode_get_child(child, "body")) {
 				char *c;
 				jm->xhtml = xmlnode_to_str(child, NULL);
-					/* Convert all newlines to whitespace. Technically, even regular, non-XML HTML is supposed to ignore newlines, but Pidgin has, as convention
-				 * treated \n as a newline for compatibility with other protocols
+			        /* Convert all newlines to whitespace. Technically, even regular, non-XML HTML is supposed to ignore newlines, but Pidgin has, as convention
+			 	 * treated \n as a newline for compatibility with other protocols
 				 */
 				for (c = jm->xhtml; *c != '\0'; c++) {
 					if (*c == '\n') 
@@ -459,7 +459,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			}
 		}
 	}
-	
+
 	if(jm->hasBuzz)
 		handle_buzz(jm);
 

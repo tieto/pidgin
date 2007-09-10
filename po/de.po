@@ -11443,7 +11443,7 @@ msgid "Activate which ID?"
 msgstr "Welche ID aktivieren?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3345
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Wen wollen Sie zum Chat einladen?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3357

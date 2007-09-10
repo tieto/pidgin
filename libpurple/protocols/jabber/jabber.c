@@ -10,12 +10,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -71,7 +71,7 @@ static void jabber_stream_init(JabberStream *js)
 	char *open_stream;
 
 	open_stream = g_strdup_printf("<stream:stream to='%s' "
-						  "xmlns='jabber:client' "
+				          "xmlns='jabber:client' "
 						  "xmlns:stream='http://etherx.jabber.org/streams' "
 						  "version='1.0'>",
 						  js->user->domain);
@@ -461,7 +461,7 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 	}	
 
 	js = gc->proto_data;
-	
+
 	if(js->state == JABBER_STREAM_CONNECTING)
 		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING);
@@ -630,7 +630,7 @@ conn_close_cb(gpointer data)
 {
 	JabberStream *js = data;
 	PurpleAccount *account = purple_connection_get_account(js->gc);
-	
+
 	jabber_parser_free(js);
 
 	purple_account_disconnect(account);
@@ -654,7 +654,7 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 
 	if(!strcmp(type, "result")) {
 		if(js->registration) {
-			buf = g_strdup_printf(_("Registration of %s@%s successful"),
+		buf = g_strdup_printf(_("Registration of %s@%s successful"),
 				js->user->node, js->user->domain);
 			if(account->registration_cb)
 				(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
@@ -679,7 +679,7 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	}
 	g_free(to);
 	if(js->registration)
-		jabber_connection_schedule_close(js);
+	jabber_connection_schedule_close(js);
 }
 
 static void
@@ -749,56 +749,56 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 					return;
 				}
 			} else {
-				const char *value = purple_request_field_string_get_value(field);
-				
-				if(!strcmp(id, "username")) {
-					y = xmlnode_new_child(query, "username");
-				} else if(!strcmp(id, "password")) {
-					y = xmlnode_new_child(query, "password");
-				} else if(!strcmp(id, "name")) {
-					y = xmlnode_new_child(query, "name");
-				} else if(!strcmp(id, "email")) {
-					y = xmlnode_new_child(query, "email");
-				} else if(!strcmp(id, "nick")) {
-					y = xmlnode_new_child(query, "nick");
-				} else if(!strcmp(id, "first")) {
-					y = xmlnode_new_child(query, "first");
-				} else if(!strcmp(id, "last")) {
-					y = xmlnode_new_child(query, "last");
-				} else if(!strcmp(id, "address")) {
-					y = xmlnode_new_child(query, "address");
-				} else if(!strcmp(id, "city")) {
-					y = xmlnode_new_child(query, "city");
-				} else if(!strcmp(id, "state")) {
-					y = xmlnode_new_child(query, "state");
-				} else if(!strcmp(id, "zip")) {
-					y = xmlnode_new_child(query, "zip");
-				} else if(!strcmp(id, "phone")) {
-					y = xmlnode_new_child(query, "phone");
-				} else if(!strcmp(id, "url")) {
-					y = xmlnode_new_child(query, "url");
-				} else if(!strcmp(id, "date")) {
-					y = xmlnode_new_child(query, "date");
-				} else {
-					continue;
-				}
-				xmlnode_insert_data(y, value, -1);
+			const char *value = purple_request_field_string_get_value(field);
+
+			if(!strcmp(id, "username")) {
+				y = xmlnode_new_child(query, "username");
+			} else if(!strcmp(id, "password")) {
+				y = xmlnode_new_child(query, "password");
+			} else if(!strcmp(id, "name")) {
+				y = xmlnode_new_child(query, "name");
+			} else if(!strcmp(id, "email")) {
+				y = xmlnode_new_child(query, "email");
+			} else if(!strcmp(id, "nick")) {
+				y = xmlnode_new_child(query, "nick");
+			} else if(!strcmp(id, "first")) {
+				y = xmlnode_new_child(query, "first");
+			} else if(!strcmp(id, "last")) {
+				y = xmlnode_new_child(query, "last");
+			} else if(!strcmp(id, "address")) {
+				y = xmlnode_new_child(query, "address");
+			} else if(!strcmp(id, "city")) {
+				y = xmlnode_new_child(query, "city");
+			} else if(!strcmp(id, "state")) {
+				y = xmlnode_new_child(query, "state");
+			} else if(!strcmp(id, "zip")) {
+				y = xmlnode_new_child(query, "zip");
+			} else if(!strcmp(id, "phone")) {
+				y = xmlnode_new_child(query, "phone");
+			} else if(!strcmp(id, "url")) {
+				y = xmlnode_new_child(query, "url");
+			} else if(!strcmp(id, "date")) {
+				y = xmlnode_new_child(query, "date");
+			} else {
+				continue;
+			}
+			xmlnode_insert_data(y, value, -1);
 				if(cbdata->js->registration && !strcmp(id, "username")) {
 					if(cbdata->js->user->node)
 						g_free(cbdata->js->user->node);
 					cbdata->js->user->node = g_strdup(value);
-				}
+			}
 				if(cbdata->js->registration && !strcmp(id, "password"))
 					purple_account_set_password(cbdata->js->gc->account, value);
-			}
 		}
+	}
 	}
 
 	if(cbdata->js->registration) {
 		username = g_strdup_printf("%s@%s/%s", cbdata->js->user->node, cbdata->js->user->domain,
 				cbdata->js->user->resource);
 		purple_account_set_username(cbdata->js->gc->account, username);
-		g_free(username);
+	g_free(username);
 	}
 
 	jabber_iq_set_callback(iq, jabber_registration_result_cb, cbdata->who);
@@ -815,7 +815,7 @@ jabber_register_cancel_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fie
 		if(account->registration_cb)
 			(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
 		jabber_connection_schedule_close(cbdata->js);
-	}
+}
 	g_free(cbdata->who);
 	g_free(cbdata);
 }
@@ -841,11 +841,11 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 	const char *type;
 	const char *from = xmlnode_get_attrib(packet, "from");
-	PurpleRequestFields *fields;
-	PurpleRequestFieldGroup *group;
-	PurpleRequestField *field;
-	xmlnode *query, *x, *y;
-	char *instructions;
+		PurpleRequestFields *fields;
+		PurpleRequestFieldGroup *group;
+		PurpleRequestField *field;
+		xmlnode *query, *x, *y;
+		char *instructions;
 	JabberRegisterCBData *cbdata;
 	gboolean registered = FALSE;
 
@@ -856,9 +856,9 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		/* get rid of the login thingy */
 		purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 
-	query = xmlnode_get_child(packet, "query");
+		query = xmlnode_get_child(packet, "query");
 
-	if(xmlnode_get_child(query, "registered")) {
+		if(xmlnode_get_child(query, "registered")) {
 		registered = TRUE;
 		
 		if(js->registration) {
@@ -871,35 +871,35 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
-	if((x = xmlnode_get_child_with_namespace(packet, "x",
-					"jabber:x:data"))) {
+		if((x = xmlnode_get_child_with_namespace(packet, "x",
+						"jabber:x:data"))) {
 		jabber_x_data_request(js, x, jabber_register_x_data_cb, g_strdup(from));
-		return;
-	} else if((x = xmlnode_get_child_with_namespace(packet, "x",
-					"jabber:x:oob"))) {
-		xmlnode *url;
+			return;
+		} else if((x = xmlnode_get_child_with_namespace(packet, "x",
+						"jabber:x:oob"))) {
+			xmlnode *url;
 
-		if((url = xmlnode_get_child(x, "url"))) {
-			char *href;
-			if((href = xmlnode_get_data(url))) {
-				purple_notify_uri(NULL, href);
-				g_free(href);
+			if((url = xmlnode_get_child(x, "url"))) {
+				char *href;
+				if((href = xmlnode_get_data(url))) {
+					purple_notify_uri(NULL, href);
+					g_free(href);
 				if(js->registration) {
 					js->gc->wants_to_die = TRUE;
 					if(account->registration_cb) /* succeeded, but we have no login info */
 						(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
 					jabber_connection_schedule_close(js);
 				}
-				return;
+					return;
+				}
 			}
 		}
-	}
 
-	/* as a last resort, use the old jabber:iq:register syntax */
+		/* as a last resort, use the old jabber:iq:register syntax */
 
-	fields = purple_request_fields_new();
-	group = purple_request_field_group_new(NULL);
-	purple_request_fields_add_group(fields, group);
+		fields = purple_request_fields_new();
+		group = purple_request_field_group_new(NULL);
+		purple_request_fields_add_group(fields, group);
 
 	if(js->registration)
 		field = purple_request_field_string_new("username", _("Username"),
@@ -908,7 +908,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		field = purple_request_field_string_new("username", _("Username"),
 				NULL, FALSE);
 
-	purple_request_field_group_add_field(group, field);
+		purple_request_field_group_add_field(group, field);
 
 	if(js->registration)
 		field = purple_request_field_string_new("password", _("Password"),
@@ -917,87 +917,87 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		field = purple_request_field_string_new("password", _("Password"),
 				NULL, FALSE);
 
-	purple_request_field_string_set_masked(field, TRUE);
-	purple_request_field_group_add_field(group, field);
+		purple_request_field_string_set_masked(field, TRUE);
+		purple_request_field_group_add_field(group, field);
 
-	if(xmlnode_get_child(query, "name")) {
+		if(xmlnode_get_child(query, "name")) {
 		if(js->registration)
 			field = purple_request_field_string_new("name", _("Name"),
 					purple_account_get_alias(js->gc->account), FALSE);
 		else
 			field = purple_request_field_string_new("name", _("Name"),
 					NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "email")) {
-		field = purple_request_field_string_new("email", _("E-mail"),
-				NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "nick")) {
-		field = purple_request_field_string_new("nick", _("Nickname"),
-				NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "first")) {
-		field = purple_request_field_string_new("first", _("First name"),
-				NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "last")) {
-		field = purple_request_field_string_new("last", _("Last name"),
-				NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "address")) {
-		field = purple_request_field_string_new("address", _("Address"),
-				NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "city")) {
-		field = purple_request_field_string_new("city", _("City"),
-				NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "state")) {
-		field = purple_request_field_string_new("state", _("State"),
-				NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "zip")) {
-		field = purple_request_field_string_new("zip", _("Postal code"),
-				NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "phone")) {
-		field = purple_request_field_string_new("phone", _("Phone"),
-				NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "url")) {
-		field = purple_request_field_string_new("url", _("URL"),
-				NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
-	if(xmlnode_get_child(query, "date")) {
-		field = purple_request_field_string_new("date", _("Date"),
-				NULL, FALSE);
-		purple_request_field_group_add_field(group, field);
-	}
+			purple_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "email")) {
+			field = purple_request_field_string_new("email", _("E-mail"),
+					NULL, FALSE);
+			purple_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "nick")) {
+			field = purple_request_field_string_new("nick", _("Nickname"),
+					NULL, FALSE);
+			purple_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "first")) {
+			field = purple_request_field_string_new("first", _("First name"),
+					NULL, FALSE);
+			purple_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "last")) {
+			field = purple_request_field_string_new("last", _("Last name"),
+					NULL, FALSE);
+			purple_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "address")) {
+			field = purple_request_field_string_new("address", _("Address"),
+					NULL, FALSE);
+			purple_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "city")) {
+			field = purple_request_field_string_new("city", _("City"),
+					NULL, FALSE);
+			purple_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "state")) {
+			field = purple_request_field_string_new("state", _("State"),
+					NULL, FALSE);
+			purple_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "zip")) {
+			field = purple_request_field_string_new("zip", _("Postal code"),
+					NULL, FALSE);
+			purple_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "phone")) {
+			field = purple_request_field_string_new("phone", _("Phone"),
+					NULL, FALSE);
+			purple_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "url")) {
+			field = purple_request_field_string_new("url", _("URL"),
+					NULL, FALSE);
+			purple_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "date")) {
+			field = purple_request_field_string_new("date", _("Date"),
+					NULL, FALSE);
+			purple_request_field_group_add_field(group, field);
+		}
 	if(registered) {
 		field = purple_request_field_bool_new("unregister", _("Unregister"), FALSE);
 		purple_request_field_group_add_field(group, field);
 	}
 
-	if((y = xmlnode_get_child(query, "instructions")))
-		instructions = xmlnode_get_data(y);
+		if((y = xmlnode_get_child(query, "instructions")))
+			instructions = xmlnode_get_data(y);
 	else if(registered)
 		instructions = g_strdup(_("Please fill out the information below "
 					"to change your account registration."));
-	else
-		instructions = g_strdup(_("Please fill out the information below "
-					"to register your new account."));
-	
+		else
+			instructions = g_strdup(_("Please fill out the information below "
+						"to register your new account."));
+
 	cbdata = g_new0(JabberRegisterCBData, 1);
 	cbdata->js = js;
 	cbdata->who = g_strdup(from);
@@ -1021,8 +1021,8 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		g_free(title);
 	}
 
-	g_free(instructions);
-}
+		g_free(instructions);
+	}
 
 void jabber_register_start(JabberStream *js)
 {
@@ -1100,14 +1100,14 @@ void jabber_register_account(PurpleAccount *account)
 	if(!js->gsc) {
 		if (connect_server[0]) {
 			jabber_login_connect(js, js->user->domain, server,
-								 purple_account_get_int(account,
-													  "port", 5222));
+			                     purple_account_get_int(account,
+			                                          "port", 5222));
 		} else {
 			js->srv_query_data = purple_srv_resolve("xmpp-client",
-												  "tcp",
-												  js->user->domain,
-												  srv_resolved_cb,
-												  js);
+			                                      "tcp",
+			                                      js->user->domain,
+			                                      srv_resolved_cb,
+			                                      js);
 		}
 	}
 }
@@ -1463,7 +1463,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 					g_free(moodplustext);
 				} else
 					purple_notify_user_info_add_pair(user_info, _("Mood"), mood);
-			}
+		}
 		}
 
 		for(l=jb->resources; l; l = l->next) {
@@ -1743,17 +1743,17 @@ GList *jabber_actions(PurplePlugin *plugin, gpointer context)
 	PurplePluginAction *act;
 
 	act = purple_plugin_action_new(_("Set User Info..."),
-								 jabber_setup_set_info);
+	                             jabber_setup_set_info);
 	m = g_list_append(m, act);
 
 	/* if (js->protocol_options & CHANGE_PASSWORD) { */
 		act = purple_plugin_action_new(_("Change Password..."),
-									 jabber_password_change);
+		                             jabber_password_change);
 		m = g_list_append(m, act);
 	/* } */
 
 	act = purple_plugin_action_new(_("Search for Users..."),
-								 jabber_user_search_begin);
+	                             jabber_user_search_begin);
 	m = g_list_append(m, act);
 
 	purple_debug_info("jabber", "jabber_actions: have pep: %s\n", js->pep?"YES":"NO");
@@ -2058,10 +2058,10 @@ static PurpleCmdRet jabber_cmd_chat_affiliate(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	if (strcmp(args[1], "owner") != 0 && 
-		strcmp(args[1], "admin") != 0 &&
-		strcmp(args[1], "member") != 0 &&
-		strcmp(args[1], "outcast") != 0 &&
-		strcmp(args[1], "none") != 0) {
+	    strcmp(args[1], "admin") != 0 &&
+	    strcmp(args[1], "member") != 0 &&
+	    strcmp(args[1], "outcast") != 0 &&
+	    strcmp(args[1], "none") != 0) {
 		*error = g_strdup_printf(_("Unknown affiliation: \"%s\""), args[1]);
 		return PURPLE_CMD_RET_FAILED;
 	}
@@ -2083,16 +2083,16 @@ static PurpleCmdRet jabber_cmd_chat_role(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	if (strcmp(args[1], "moderator") != 0 &&
-		strcmp(args[1], "participant") != 0 &&
-		strcmp(args[1], "visitor") != 0 &&
-		strcmp(args[1], "none") != 0) {
+	    strcmp(args[1], "participant") != 0 &&
+	    strcmp(args[1], "visitor") != 0 &&
+	    strcmp(args[1], "none") != 0) {
 		*error = g_strdup_printf(_("Unknown role: \"%s\""), args[1]);
 		return PURPLE_CMD_RET_FAILED;
 	}
 
 	if (!jabber_chat_role_user(chat, args[0], args[1])) {
 		*error = g_strdup_printf(_("Unable to set role \"%s\" for user: %s"),
-								 args[1], args[0]);
+		                         args[1], args[0]);
 		return PURPLE_CMD_RET_FAILED;
 	}
 
@@ -2241,75 +2241,75 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 void jabber_register_commands(void)
 {
 	purple_cmd_register("config", "", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
-					  "prpl-jabber", jabber_cmd_chat_config,
-					  _("config:  Configure a chat room."), NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-jabber", jabber_cmd_chat_config,
+	                  _("config:  Configure a chat room."), NULL);
 	purple_cmd_register("configure", "", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
-					  "prpl-jabber", jabber_cmd_chat_config,
-					  _("configure:	 Configure a chat room."), NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-jabber", jabber_cmd_chat_config,
+	                  _("configure:  Configure a chat room."), NULL);
 	purple_cmd_register("nick", "s", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
-					  "prpl-jabber", jabber_cmd_chat_nick,
-					  _("nick &lt;new nickname&gt;:	 Change your nickname."),
-					  NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-jabber", jabber_cmd_chat_nick,
+	                  _("nick &lt;new nickname&gt;:  Change your nickname."),
+	                  NULL);
 	purple_cmd_register("part", "s", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-					  jabber_cmd_chat_part, _("part [room]:	 Leave the room."),
-					  NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	                  jabber_cmd_chat_part, _("part [room]:  Leave the room."),
+	                  NULL);
 	purple_cmd_register("register", "", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
-					  "prpl-jabber", jabber_cmd_chat_register,
-					  _("register:	Register with a chat room."), NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-jabber", jabber_cmd_chat_register,
+	                  _("register:  Register with a chat room."), NULL);
 	/* XXX: there needs to be a core /topic cmd, methinks */
 	purple_cmd_register("topic", "s", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-					  jabber_cmd_chat_topic,
-					  _("topic [new topic]:	 View or change the topic."),
-					  NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	                  jabber_cmd_chat_topic,
+	                  _("topic [new topic]:  View or change the topic."),
+	                  NULL);
 	purple_cmd_register("ban", "ws", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-					  jabber_cmd_chat_ban,
-					  _("ban &lt;user&gt; [room]:  Ban a user from the room."),
-					  NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	                  jabber_cmd_chat_ban,
+	                  _("ban &lt;user&gt; [room]:  Ban a user from the room."),
+	                  NULL);
 	purple_cmd_register("affiliate", "ws", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-					  jabber_cmd_chat_affiliate,
-					  _("affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's affiliation with the room."),
-					  NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	                  jabber_cmd_chat_affiliate,
+	                  _("affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's affiliation with the room."),
+	                  NULL);
 	purple_cmd_register("role", "ws", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-					  jabber_cmd_chat_role,
-					  _("role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's role in the room."),
-					  NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	                  jabber_cmd_chat_role,
+	                  _("role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's role in the room."),
+	                  NULL);
 	purple_cmd_register("invite", "ws", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-					  jabber_cmd_chat_invite,
-					  _("invite &lt;user&gt; [message]:	 Invite a user to the room."),
-					  NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	                  jabber_cmd_chat_invite,
+	                  _("invite &lt;user&gt; [message]:  Invite a user to the room."),
+	                  NULL);
 	purple_cmd_register("join", "ws", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-					  jabber_cmd_chat_join,
-					  _("join: &lt;room&gt; [server]:  Join a chat on this server."),
-					  NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	                  jabber_cmd_chat_join,
+	                  _("join: &lt;room&gt; [server]:  Join a chat on this server."),
+	                  NULL);
 	purple_cmd_register("kick", "ws", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-					  jabber_cmd_chat_kick,
-					  _("kick &lt;user&gt; [room]:	Kick a user from the room."),
-					  NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	                  jabber_cmd_chat_kick,
+	                  _("kick &lt;user&gt; [room]:  Kick a user from the room."),
+	                  NULL);
 	purple_cmd_register("msg", "ws", PURPLE_CMD_P_PRPL,
-					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
-					  "prpl-jabber", jabber_cmd_chat_msg,
-					  _("msg &lt;user&gt; &lt;message&gt;:	Send a private message to another user."),
-					  NULL);
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-jabber", jabber_cmd_chat_msg,
+	                  _("msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."),
+	                  NULL);
 	purple_cmd_register("ping", "w", PURPLE_CMD_P_PRPL,
 					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
 					  PURPLE_CMD_FLAG_PRPL_ONLY,
@@ -2325,5 +2325,5 @@ void jabber_register_commands(void)
 void
 jabber_init_plugin(PurplePlugin *plugin)
 {
-	my_protocol = plugin;
+        my_protocol = plugin;
 }

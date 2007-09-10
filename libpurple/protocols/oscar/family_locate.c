@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
 */
 
 /*
@@ -636,13 +636,11 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 	 * Parse out the Type-Length-Value triples as they're found.
 	 */
 	for (curtlv = 0; curtlv < tlvcnt; curtlv++) {
-		guint16 type;
-		guint8 number, length;
+		guint16 type, length;
 		int endpos;
 
 		type = byte_stream_get16(bs);
-		number = byte_stream_get8(bs);
-		length = byte_stream_get8(bs);
+		length = byte_stream_get16(bs);
 
 		endpos = byte_stream_curpos(bs) + MIN(length, byte_stream_empty(bs));
 

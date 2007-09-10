@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include <glib.h>
 #ifndef _WIN32
@@ -592,8 +592,8 @@ initialize_default_account_values()
 		fullname = info->pw_gecos;
 	else if ((info != NULL) && (info->pw_name != NULL) && (info->pw_name[0] != '\0'))
 		fullname = info->pw_name;
-	else if (((fullname = getlogin()) != NULL) && (fullname[0] != '\0'))
-		;
+	else if (((fullname = getlogin()) != NULL) && (fullname[0] == '\0'))
+		fullname = NULL;
 #else
 	/* The Win32 username lookup functions are synchronous so we do it in a thread */
 	g_thread_create(_win32_name_lookup_thread, NULL, FALSE, NULL);

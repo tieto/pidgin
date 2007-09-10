@@ -10433,7 +10433,7 @@ msgid "Active which ID?"
 msgstr "Melyik azonosítót aktiválja?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3239
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Kihez csatlakozik a csevegésben?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3251

@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "pidgin.h"
@@ -95,8 +95,7 @@ static struct developer developers[] = {
 /* Order: Alphabetical by Last Name */
 static struct developer patch_writers[] = {
 	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
-	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
-        {"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
+	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
 	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
 	{"Will 'resiak' Thompson",	NULL,	NULL},
@@ -122,6 +121,7 @@ static struct developer retired_developers[] = {
 static struct developer retired_patch_writers[] = {
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
+	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},
 	{"Benjamin Miller",				NULL,	NULL},
 	{NULL, NULL, NULL}
@@ -305,14 +305,14 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	context = gtk_widget_get_pango_context(widget);
 	layout = pango_layout_new(context);
 
-	markup = g_strdup_printf("<span foreground=\"#FFFFFF\">%s</span>", VERSION);
+	markup = g_strdup_printf("<span foreground=\"#000000\">%s</span>", VERSION);
 	pango_layout_set_font_description(layout, style->font_desc);
 	pango_layout_set_markup(layout, markup, strlen(markup));
 	g_free(markup);
 
 	pango_layout_get_pixel_size(layout, &lwidth, &lheight);
 	gdk_draw_layout(GDK_DRAWABLE(pixmap), style->bg_gc[GTK_STATE_NORMAL],
-					width - (lwidth + 3), height - (lheight + 1), layout);
+					width - (lwidth + 3), 1, layout);
 	g_object_unref(G_OBJECT(layout));
 
 	*original = gdk_pixbuf_get_from_drawable(NULL, pixmap, NULL,
@@ -396,6 +396,9 @@ void pidgin_dialogs_about()
 
 	g_string_append(str, "<FONT SIZE=\"4\">URL:</FONT> <A HREF=\""
 					PURPLE_WEBSITE "\">" PURPLE_WEBSITE "</A><BR/><BR/>");
+	g_string_append(str, "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\""
+			"http://developer.pidgin.im/wiki/FAQ\">"
+			"http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>");
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
 						   "#pidgin on irc.freenode.net<BR><BR>"));
 

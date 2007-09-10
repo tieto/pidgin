@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  * @see @ref conversation-signals
  */
@@ -184,7 +184,7 @@ struct _PurpleConversationUiOps
 	                   time_t mtime);
 
 	/** Add @a cbuddies to a chat.
-	 *  @param cbuddies      A @C GList of #PurpleConvChatBuddy structs.
+	 *  @param cbuddies      A @c GList of #PurpleConvChatBuddy structs.
 	 *  @param new_arrivals  Whether join notices should be shown.
 	 *                       (Join notices are actually written to the
 	 *                       conversation by #purple_conv_chat_add_users().)
@@ -200,7 +200,7 @@ struct _PurpleConversationUiOps
 	void (*chat_rename_user)(PurpleConversation *conv, const char *old_name,
 	                         const char *new_name, const char *new_alias);
 	/** Remove @a users from a chat.
-	 *  @param users    A @C GList of <tt>const char *</tt>s.
+	 *  @param users    A @c GList of <tt>const char *</tt>s.
 	 *  @see purple_conv_chat_rename_user()
 	 */
 	void (*chat_remove_users)(PurpleConversation *conv, GList *users);
