@@ -301,7 +301,7 @@ static void handle_buzz(JabberMessage *jm) {
 
 	c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, jm->from);
 
-	str = g_strdup_printf(_("%s just sent you a Buzz!"), username);
+	str = g_strdup_printf(_("%s has buzzed you!"), username);
 	
 	purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
 	g_free(username);
