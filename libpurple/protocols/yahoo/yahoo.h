@@ -67,12 +67,8 @@
 #define YAHOO_STATUS_TYPE_INVISIBLE "invisible"
 #define YAHOO_STATUS_TYPE_MOBILE "mobile"
 
-#define YAHOO_USE_ATTENTION_API
-
-#ifdef YAHOO_USE_ATTENTION_API
 /* Index into attention types list. */
 #define YAHOO_BUZZ 0
-#endif
 
 enum yahoo_status {
 	YAHOO_STATUS_AVAILABLE = 0,

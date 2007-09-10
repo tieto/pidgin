@@ -82,8 +82,6 @@
 /* Index into attention_types */
 #define MSN_NUDGE 0
 
-#define MSN_USE_ATTENTION_API
-
 typedef enum
 {
 	MSN_LIST_FL_OP = 0x01,

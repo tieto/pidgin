@@ -2925,13 +2925,8 @@ PurplePluginProtocolInfo prpl_info = {
 	msim_send_really_raw,  /* send_raw */
 	NULL,                  /* roomlist_room_serialize */
 	NULL,                  /* unregister_user */
-#ifdef MSIM_USE_ATTENTION_API
 	msim_send_attention,   /* send_attention */
 	msim_attention_types,  /* attention_types */
-#else
-	NULL,               /* _purple_reserved2 */
-	NULL,               /* _purple_reserved3 */
-#endif
 	NULL                /* _purple_reserved4 */
 };
 

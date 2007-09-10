@@ -73,10 +73,6 @@
  * you want to actually use the plugin! */
 /*#define MSIM_SELF_TEST            */
 
-/* Use the attention API for zaps? */
-/* Can't have until >=2.2.0, since is a new API. */
-#define MSIM_USE_ATTENTION_API
-
 /* Constants */
 
 /* Maximum length of a password that is acceptable. This is the limit
@@ -180,22 +176,7 @@
 #define MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS	1
 #define MSIM_CONTACT_LIST_IMPORT_TOP_FRIENDS	2
 
-#ifdef MSIM_USE_ATTENTION_API
 #define MsimAttentionType PurpleAttentionType
-#else
-/* Different kinds of attention alerts. Not yet in libpurple, so define 
- * our own structure here. */
-typedef struct _MsimAttentionType MsimAttentionType;
-
-/** A type of "attention" message (zap, nudge, buzz, etc. depending on the
- * protocol) that can be sent and received. */
-struct _MsimAttentionType {
-	const gchar *name;	 	        /**< Shown before sending. */
-	const gchar *incoming_description;	/**< Shown when sent. */
-	const gchar *outgoing_description;	/**< Shown when received. */
-	const gchar *icon_name;
-};
-#endif
 
 /* Functions */
 gboolean msim_load(PurplePlugin *plugin);

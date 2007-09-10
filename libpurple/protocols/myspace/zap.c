@@ -92,19 +92,11 @@ msim_send_zap(MsimSession *session, const gchar *username, guint code)
 {
 	gchar *zap_string;
 	gboolean rc;
-#ifndef MSIM_USE_ATTENTION_API
-	GList *types;
-	MsimAttentionType *attn;
-	gchar *zap_description;
-#endif
 
 	g_return_val_if_fail(session != NULL, FALSE);
 	g_return_val_if_fail(username != NULL, FALSE);
 
 
-#ifdef MSIM_USE_ATTENTION_API
-	/* serv_send_attention(session->gc, username, code); */
-#else
 	types = msim_attention_types(session->account);
 
 	attn = g_list_nth_data(types, code);
@@ -120,7 +112,6 @@ msim_send_zap(MsimSession *session, const gchar *username, guint code)
 			PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_SYSTEM, time(NULL));
 
 	g_free(zap_description);
-#endif
 
 	/* Construct and send the actual zap command. */
 	zap_string = g_strdup_printf("!!!ZAP_SEND!!!=RTE_BTN_ZAPS_%d", code);
@@ -165,11 +156,7 @@ msim_send_zap_from_menu(PurpleBlistNode *node, gpointer zap_num_ptr)
 
 	zap = GPOINTER_TO_INT(zap_num_ptr);
 
-#ifdef MSIM_USE_ATTENTION_API
 	serv_send_attention(session->gc, buddy->name, zap);
-#else
-	g_return_if_fail(msim_send_zap(session, buddy->name, zap));
-#endif
 }
 
 /** Return menu, if any, for a buddy list node. */
@@ -221,21 +208,6 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 {
 	gchar *msg_text, *username;
 	gint zap;
-#ifndef MSIM_USE_ATTENTION_API
-	const gchar *zap_past_tense[10];
-	gchar *zap_text;
-
-	zap_past_tense[0] = _("zapped");
-	zap_past_tense[1] = _("whacked");
-	zap_past_tense[2] = _("torched");
-	zap_past_tense[3] = _("smooched");
-	zap_past_tense[4] = _("hugged");
-	zap_past_tense[5] = _("bslapped");
-	zap_past_tense[6] = _("goosed");
-	zap_past_tense[7] = _("hi-fived");
-	zap_past_tense[8] = _("punk'd");
-	zap_past_tense[9] = _("raspberried");
-#endif
 
 	msg_text = msim_msg_get_string(msg, "msg");
 	username = msim_msg_get_string(msg, "_username");
@@ -247,14 +219,7 @@ msim_incoming_zap(MsimSession *session, MsimMessage *msg)
 
 	zap = CLAMP(zap, 0, 9);
 
-#ifdef MSIM_USE_ATTENTION_API
 	serv_got_attention(session->gc, username, zap);
-#else
-	zap_text = g_strdup_printf(_("*** You have been %s! ***"), zap_past_tense[zap]);
-	serv_got_im(session->gc, username, zap_text, 
-			PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_SYSTEM, time(NULL));
-	g_free(zap_text);
-#endif
 
 	g_free(msg_text);
 	g_free(username);

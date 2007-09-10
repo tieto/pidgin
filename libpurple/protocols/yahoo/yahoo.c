@@ -909,13 +909,8 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			else
 				username = g_markup_escape_text(im->from, -1);
 
-#ifdef YAHOO_USE_ATTENTION_API
 			serv_got_attention(gc, username, YAHOO_BUZZ);
-#else
-			str = g_strdup_printf(_("%s just sent you a Buzz!"), username);
 
-			purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, im->time);
-#endif
 			g_free(username);
 			g_free(str);
 			g_free(m);
@@ -4037,22 +4032,11 @@ static void yahoo_rename_group(PurpleConnection *gc, const char *old_name,
 static PurpleCmdRet
 yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gchar **error, void *data) {
 	PurpleAccount *account = purple_conversation_get_account(c);
-#ifndef YAHOO_USE_ATTENTION_API
-	const char *username = purple_account_get_username(account);
-#endif
 
 	if (*args && args[0])
 		return PURPLE_CMD_RET_FAILED;
 
-#ifdef YAHOO_USE_ATTENTION_API
 	serv_send_attention(account->gc, c->name, YAHOO_BUZZ);
-#else
-
-	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
-	           "Sending <ding> on account %s to buddy %s.\n", username, c->name);
-	purple_conv_im_send(PURPLE_CONV_IM(c), "<ding>");
-	purple_conversation_write(c, NULL, _("You have just sent a Buzz!"), PURPLE_MESSAGE_SYSTEM, time(NULL));
-#endif
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -4347,13 +4331,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL, /* roomlist_room_serialize */
 	NULL, /* unregister_user */
 
-#ifdef YAHOO_USE_ATTENTION_API
 	yahoo_send_attention,
 	yahoo_attention_types,
-#else
-	NULL,
-	NULL,
-#endif
 
 	/* padding */
 	NULL
