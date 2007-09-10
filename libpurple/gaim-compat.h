@@ -1654,7 +1654,7 @@
 #define gaim_request_choice_varg        purple_request_choice_varg
 #define gaim_request_action             purple_request_action
 #define gaim_request_action_varg        purple_request_action_varg
-#define gaim_request_fields             purple_request_fields
+#define gaim_request_fields(handle, title, primary, secondary, fields, ok_text, ok_cb, cancel_text, cancel_cb, user_data)             purple_request_fields(handle, title, primary, secondary, fields, ok_text, ok_cb, cancel_text, cancel_cb, NULL, NULL, NULL, user_data)
 #define gaim_request_close              purple_request_close
 #define gaim_request_close_with_handle  purple_request_close_with_handle
 
