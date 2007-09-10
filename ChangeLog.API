@@ -9,6 +9,15 @@ Version 2.2.0 (??/??/????):
 		* serv_send_attention(), serv_got_attention(), as well as send_attention 
 		  and attention_types in PurplePluginProtocolInfo. This new API is used
 		  for zapping in MySpaceIM, buzzing in Yahoo, and nudging in MSN.
+		* PurpleConvMessage structure to represent a message in a
+		  conversation. purple_conversation_message_get_sender,
+		  purple_conversation_message_get_message,
+		  purple_conversation_message_get_flags and
+		  purple_conversation_message_get_timestamp to get information about a
+		  PurpleConvMessage.
+		* purple_conversation_get_message_history() to retrieve a list of
+		  PurpleConvMessage's in a conversation, and
+		  purple_conversation_clear_message_history to clear the history.
 
 		Changed:
 		* purple_prefs_load is now called within purple_prefs_init.
