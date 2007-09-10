@@ -109,21 +109,22 @@ void jabber_handle_event(JabberMessage *jm) {
 
 void jabber_pep_publish(JabberStream *js, xmlnode *publish) {
 	JabberIq *iq;
-	
+	xmlnode *pubsub;
+
 	if(js->pep != TRUE) {
 		/* ignore when there's no PEP support on the server */
 		xmlnode_free(publish);
 		return;
 	}
-	
+
 	iq = jabber_iq_new(js, JABBER_IQ_SET);
-	
-	xmlnode *pubsub = xmlnode_new("pubsub");
+
+	pubsub = xmlnode_new("pubsub");
 	xmlnode_set_namespace(pubsub, "http://jabber.org/protocol/pubsub");
-	
+
 	xmlnode_insert_child(pubsub, publish);
-	
+
 	xmlnode_insert_child(iq->node, pubsub);
-	
+
 	jabber_iq_send(iq);
 }
