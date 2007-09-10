@@ -209,9 +209,9 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 		js->old_length = length;
 		js->old_track = g_strdup(track);
 	}
-	
-#undef CHANGED(a,b)
-		
+
+#undef CHANGED
+
 	jabber_presence_fake_to_self(js, status);
 }
 

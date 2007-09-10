@@ -19,6 +19,8 @@
  *
  */
 
+#include "internal.h"
+
 #include "usertune.h"
 #include "pep.h"
 #include <assert.h>

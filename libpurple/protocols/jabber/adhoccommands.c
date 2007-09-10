@@ -19,6 +19,8 @@
  *
  */
 
+#include "internal.h"
+
 #include "adhoccommands.h"
 #include <assert.h>
 #include <string.h>
@@ -264,7 +266,7 @@ void jabber_adhoc_execute(JabberStream *js, JabberAdHocCommands *cmd) {
 	jabber_iq_send(iq);
 }
 
-void jabber_adhoc_server_execute(PurplePluginAction *action) {
+static void jabber_adhoc_server_execute(PurplePluginAction *action) {
 	JabberAdHocCommands *cmd = action->user_data;
 	if(cmd) {
 		PurpleConnection *gc = (PurpleConnection *) action->context;

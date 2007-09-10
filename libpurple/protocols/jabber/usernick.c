@@ -19,6 +19,8 @@
  *
  */
 
+#include "internal.h"
+
 #include "usernick.h"
 #include "pep.h"
 #include <assert.h>
