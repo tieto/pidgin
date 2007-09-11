@@ -16,6 +16,9 @@ class MyObject(gobject.GObject):
         self.__gobject_init__()
         self.set_property(type, value)
 
+    def __del__(self):
+        pass
+
     def do_set_property(self, pspec, value):
         if pspec.name == 'string':
             self.string = value

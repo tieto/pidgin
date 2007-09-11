@@ -61,6 +61,9 @@ class FeedItem(gobject.GObject):
         self.parent = parent
         self.unread = True
 
+    def __del__(self):
+        pass
+
     def remove(self):
         self.emit('delete', self.parent)
         if self.unread:
