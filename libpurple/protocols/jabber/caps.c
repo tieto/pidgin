@@ -191,17 +191,18 @@ static void jabber_caps_store_ext(gpointer key, gpointer value, gpointer user_da
 	xmlnode *root = user_data;
 	xmlnode *ext = xmlnode_new_child(root,"ext");
 	GList *iter;
-	
+
 	xmlnode_set_attrib(ext,"identifier",extname);
-	
+
 	for(iter = props->identities; iter; iter = g_list_next(iter)) {
 		JabberCapsIdentity *id = iter->data;
 		xmlnode *identity = xmlnode_new_child(ext, "identity");
 		xmlnode_set_attrib(identity, "category", id->category);
 		xmlnode_set_attrib(identity, "type", id->type);
-		xmlnode_set_attrib(identity, "name", id->name);
+		if (id->name)
+			xmlnode_set_attrib(identity, "name", id->name);
 	}
-	
+
 	for(iter = props->features; iter; iter = g_list_next(iter)) {
 		const char *feat = iter->data;
 		xmlnode *feature = xmlnode_new_child(ext, "feature");
