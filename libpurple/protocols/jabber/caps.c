@@ -334,6 +334,11 @@ typedef struct _jabber_caps_cbplususerdata {
 	unsigned extOutstanding;
 } jabber_caps_cbplususerdata;
 
+typedef struct jabber_ext_userdata {
+	jabber_caps_cbplususerdata *userdata;
+	char *node;
+} jabber_ext_userdata;
+
 static void jabber_caps_get_info_check_completion(jabber_caps_cbplususerdata *userdata) {
 	if(userdata->extOutstanding == 0) {
 		userdata->cb(jabber_caps_collect_info(userdata->node, userdata->ver, userdata->ext), userdata->user_data);
@@ -352,11 +357,12 @@ static void jabber_caps_ext_iqcb(JabberStream *js, xmlnode *packet, gpointer dat
 	/* collect data and fetch all exts */
 	xmlnode *query = xmlnode_get_child_with_namespace(packet,"query","http://jabber.org/protocol/disco#info");
 	xmlnode *child;
-	jabber_caps_cbplususerdata *userdata = data;
+	jabber_ext_userdata *extuserdata = data;
+	jabber_caps_cbplususerdata *userdata = extuserdata->userdata;
 	JabberCapsKey *clientkey = g_new0(JabberCapsKey, 1);
 	JabberCapsValue *client;
 	JabberCapsValueExt *value = g_new0(JabberCapsValueExt, 1);
-	const char *node = xmlnode_get_attrib(query, "node");
+	const char *node = extuserdata->node;
 	const char *key;
 	
 	--userdata->extOutstanding;
@@ -404,7 +410,8 @@ static void jabber_caps_ext_iqcb(JabberStream *js, xmlnode *packet, gpointer dat
 		
 		jabber_caps_store();
 	}
-	
+	g_free(extuserdata->node);
+	g_free(extuserdata);
 	jabber_caps_get_info_check_completion(userdata);
 }
 
@@ -449,11 +456,14 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 		JabberIq *iq = jabber_iq_new_query(js,JABBER_IQ_GET,"http://jabber.org/protocol/disco#info");
 		xmlnode *query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#info");
 		char *node = g_strdup_printf("%s#%s", userdata->node, (const char*)iter->data);
+		jabber_ext_userdata *ext_data = g_new0(jabber_ext_userdata, 1);	
+		ext_data->node = node;
+		ext_data->userdata = userdata;
+
 		xmlnode_set_attrib(query, "node", node);
-		g_free(node);
 		xmlnode_set_attrib(iq->node, "to", userdata->who);
 
-		jabber_iq_set_callback(iq,jabber_caps_ext_iqcb,userdata);
+		jabber_iq_set_callback(iq,jabber_caps_ext_iqcb,ext_data);
 		jabber_iq_send(iq);
 	}
 	
@@ -511,6 +521,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, c
 			JabberIq *iq;
 			xmlnode *query;
 			char *nodever;
+			jabber_ext_userdata *ext_data = g_new0(jabber_ext_userdata, 1);
 			
 			if(extvalue) {
 				/* we already have this ext, don't bother with it */
@@ -522,10 +533,12 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, c
 			query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#info");
 			nodever = g_strdup_printf("%s#%s", node, (const char*)iter->data);
 			xmlnode_set_attrib(query, "node", nodever);
-			g_free(nodever);
 			xmlnode_set_attrib(iq->node, "to", who);
 			
-			jabber_iq_set_callback(iq,jabber_caps_ext_iqcb,userdata);
+			ext_data->node = nodever;
+			ext_data->userdata = userdata;
+
+			jabber_iq_set_callback(iq, jabber_caps_ext_iqcb, ext_data);
 			jabber_iq_send(iq);
 		}
 		/* maybe we have all data available anyways? This is the ideal case where no network traffic is necessary */
