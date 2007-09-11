@@ -3280,7 +3280,7 @@ init_plugin(PurplePlugin *plugin)
 #endif
 
 #ifdef MSIM_USER_WANTS_TO_DISABLE_EMOTICONS
-	option = purple_account_option_bool_new(_("Send emoticons"), "emoticons", FALSE);
+	option = purple_account_option_bool_new(_("Send emoticons"), "emoticons", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #endif
 
