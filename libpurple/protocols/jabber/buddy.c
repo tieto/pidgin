@@ -799,6 +799,12 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				purple_notify_user_info_add_pair(user_info, _("Operating System"), jbr->client.os);
 			}
 		}
+#if 0 
+		/* #if 0 this for now; I think this would be far more useful if we limited this to a particular set of features
+ 		 * of particular interest (-vv jumps out as one). As it is now, I don't picture people getting all excited: "Oh sweet crap!
+ 		 * So-and-so supports 'jabber:x:data' AND 'Collaborative Data Objects'!"
+ 		 */
+
 		if(jbr && jbr->caps) {
 			GString *tmp = g_string_new("");
 			GList *iter;
@@ -907,15 +913,16 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 					feature = _("Hop Check");
 				else if(g_str_has_suffix(feature, "+notify"))
 					feature = NULL;
-				
 				if(feature)
-					g_string_append_printf(tmp, "%s\n", feature);
+					g_string_append_printf(tmp, "%s<br/>", feature);
 			}
+
 			if(strlen(tmp->str) > 0)
 				purple_notify_user_info_add_pair(user_info, _("Capabilities"), tmp->str);
 			
 			g_string_free(tmp, TRUE);
 		}
+#endif
 	} else {
 		for(resources = jbi->jb->resources; resources; resources = resources->next) {
 			char *purdy = NULL;
@@ -957,6 +964,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 					purple_notify_user_info_add_pair(user_info, _("Operating System"), jbr->client.os);
 				}
 			}
+#if 0
 			if(jbr && jbr->caps) {
 				GString *tmp = g_string_new("");
 				GList *iter;
@@ -1074,6 +1082,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				
 				g_string_free(tmp, TRUE);
 			}
+#endif
 		}
 	}
 
