@@ -168,6 +168,7 @@ struct _PidginConversation
 	struct {
 		int timer;
 		GList *current;
+		time_t when;
 	} attach;
 };
 
