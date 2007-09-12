@@ -1182,6 +1182,7 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 		NULL,         /* No account */
 		NULL,         /* No other user */
 		NULL,         /* No associated conversation */
+		"blist",
 		x509_tls_cached_ua_ctx_new(vrq, reason),
 		3,            /* Number of actions */
 		_("Accept"), x509_tls_cached_user_auth_accept_cb,
