@@ -28,6 +28,8 @@ autoaccept_la_LDFLAGS       = -module -avoid-version
 buddynote_la_LDFLAGS        = -module -avoid-version
 ciphertest_la_LDFLAGS		= -module -avoid-version
 codeinline_la_LDFLAGS		= -module -avoid-version
+debug_example_la_LDFLAGS    = -module -avoid-version
+helloworld_la_LDFLAGS       = -module -avoid-version
 idle_la_LDFLAGS             = -module -avoid-version
 joinpart_la_LDFLAGS         = -module -avoid-version
 log_reader_la_LDFLAGS       = -module -avoid-version
@@ -59,6 +61,8 @@ plugin_LTLIBRARIES = \
 noinst_LTLIBRARIES = \
 	ciphertest.la \
 	codeinline.la \
+	debug_example.la \
+	helloworld.la \
 	pluginpref_example.la \
 	signals_test.la \
 	simple.la
@@ -67,6 +71,8 @@ autoaccept_la_SOURCES       = autoaccept.c
 buddynote_la_SOURCES        = buddynote.c
 ciphertest_la_SOURCES		= ciphertest.c
 codeinline_la_SOURCES		= codeinline.c
+debug_example_la_SOURCES = debug_example.c
+helloworld_la_SOURCES       = helloworld.c
 idle_la_SOURCES             = idle.c
 joinpart_la_SOURCES         = joinpart.c
 log_reader_la_SOURCES       = log_reader.c
