@@ -43,6 +43,7 @@ Version 2.2.0 (??/??/????):
 		* finch_sound_is_enabled
 		* The reserved field in the FinchConv is now used to store information
 		  about the conversation (using FinchConversationFlag)
+		* finch_account_dialog_show
 
 		libgnt:
 		* gnt_slider_set_small_step, gnt_slider_set_large_step to allow more

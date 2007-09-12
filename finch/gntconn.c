@@ -30,6 +30,7 @@
 #include "debug.h"
 #include "request.h"
 
+#include "gntaccount.h"
 #include "gntconn.h"
 
 #define INITIAL_RECON_DELAY_MIN  8000
@@ -87,6 +88,18 @@ do_signon(gpointer data)
 }
 
 static void
+ce_modify_account_cb(PurpleAccount *account)
+{
+	finch_account_dialog_show(account);
+}
+
+static void
+ce_enable_account_cb(PurpleAccount *account)
+{
+	purple_account_set_enabled(account, FINCH_UI, TRUE);
+}
+
+static void
 finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 {
 	FinchAutoRecon *info;
@@ -114,7 +127,13 @@ finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 		secondary = g_strdup_printf(_("%s\n\n"
 				"Finch will not attempt to reconnect the account until you "
 				"correct the error and re-enable the account."), text);
-		purple_notify_error(NULL, NULL, primary, secondary);
+
+		purple_request_action(account, NULL, primary, secondary, 2,
+							account, NULL, NULL,
+							account, 3,
+							_("OK"), NULL,
+							_("Modify Account"), PURPLE_CALLBACK(ce_modify_account_cb),
+							_("Re-enable Account"), PURPLE_CALLBACK(ce_enable_account_cb));
 
 		g_free(act);
 		g_free(primary);

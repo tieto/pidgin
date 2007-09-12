@@ -715,6 +715,11 @@ void finch_accounts_show_all()
 	gnt_widget_show(accounts.window);
 }
 
+void finch_account_dialog_show(PurpleAccount *account)
+{
+	edit_account(account);
+}
+
 static gpointer
 finch_accounts_get_handle()
 {
