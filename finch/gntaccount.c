@@ -169,7 +169,7 @@ save_account_cb(AccountEditDialog *dialog)
 	purple_account_set_remember_password(account,
 			gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->remember)));
 	value = gnt_entry_get_text(GNT_ENTRY(dialog->password));
-	if (value && *value && purple_account_get_remember_password(account))
+	if (value && *value)
 		purple_account_set_password(account, value);
 	else
 		purple_account_set_password(account, NULL);

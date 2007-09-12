@@ -129,6 +129,9 @@ class Feed(gobject.GObject):
         self.pending = False
         self._refresh = {'time' : 30, 'id' : 0}
 
+    def __del__(self):
+        pass
+
     def do_set_property(self, property, value):
         if property.name == 'link':
             self.link = value

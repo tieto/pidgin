@@ -1527,9 +1527,8 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 	 * address and not username. Will be freed in msim_session_destroy(). */
 	session->username = msim_msg_get_string(msg, "uniquenick");
 
-	/* If a local alias wasn't set, set it to user's username. */
-	if (!session->account->alias || !strlen(session->account->alias))
-		purple_account_set_alias(session->account, session->username);
+	/* Set display name to username (otherwise will show email address) */
+	purple_connection_set_display_name(session->gc, session->username);
 
 	/* The session is now set up, ready to be connected. This emits the
 	 * signedOn signal, so clients can now do anything with msimprpl, and

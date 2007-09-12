@@ -2147,36 +2147,58 @@ static void user_search_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 	results = purple_notify_searchresults_new();
 	if((x = xmlnode_get_child_with_namespace(query, "x", "jabber:x:data"))) {
 		xmlnode *reported;
+		GSList *column_vars = NULL;
+
 		purple_debug_info("jabber", "new-skool\n");
+
 		if((reported = xmlnode_get_child(x, "reported"))) {
 			xmlnode *field = xmlnode_get_child(reported, "field");
 			while(field) {
-				/* XXX keep track of this order, use it below */
 				const char *var = xmlnode_get_attrib(field, "var");
 				const char *label = xmlnode_get_attrib(field, "label");
 				if(var) {
 					column = purple_notify_searchresults_column_new(label ? label : var);
 					purple_notify_searchresults_column_add(results, column);
+					column_vars = g_slist_append(column_vars, (char *)var);
 				}
 				field = xmlnode_get_next_twin(field);
 			}
 		}
+
 		item = xmlnode_get_child(x, "item");
 		while(item) {
 			GList *row = NULL;
-			field = xmlnode_get_child(item, "field");
-			while(field) {
-				xmlnode *valuenode = xmlnode_get_child(field, "value");
-				if(valuenode) {
-					char *value = xmlnode_get_data(valuenode);
-					row = g_list_append(row, value);
+			GSList *l;
+			xmlnode *valuenode;
+			const char *var;
+
+			for (l = column_vars; l != NULL; l = l->next) {
+				/*
+				 * Build a row containing the strings that correspond
+				 * to each column of the search results.
+				 */
+				for (field = xmlnode_get_child(item, "field");
+						field != NULL;
+						field = xmlnode_get_next_twin(field))
+				{
+					if ((var = xmlnode_get_attrib(field, "var")) &&
+							!strcmp(var, l->data) &&
+							(valuenode = xmlnode_get_child(field, "value")))
+					{
+						char *value = xmlnode_get_data(valuenode);
+						row = g_list_append(row, value);
+						break;
+					}
 				}
-				field = xmlnode_get_next_twin(field);
+				if (field == NULL)
+					/* No data for this column */
+					row = g_list_append(row, NULL);
 			}
 			purple_notify_searchresults_row_add(results, row);
-
 			item = xmlnode_get_next_twin(item);
 		}
+
+		g_slist_free(column_vars);
 	} else {
 		/* old skool */
 		purple_debug_info("jabber", "old-skool\n");
