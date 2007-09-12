@@ -1187,7 +1187,7 @@ if test "x$enable_dbus" = "xyes" ; then
 		AC_PATH_PROG([PYTHON], [python], [no])
 	fi
 
-	if test x"$python" = x"no" ; then
+	if test x"$PYTHON" = x"no" ; then
 		AC_MSG_WARN([python interpreter not found in your path])
 		enable_dbus=no
 	fi
