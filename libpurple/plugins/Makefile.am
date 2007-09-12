@@ -34,6 +34,7 @@ idle_la_LDFLAGS             = -module -avoid-version
 joinpart_la_LDFLAGS         = -module -avoid-version
 log_reader_la_LDFLAGS       = -module -avoid-version
 newline_la_LDFLAGS          = -module -avoid-version
+notify_example_la_LDFLAGS   = -module -avoid-version
 offlinemsg_la_LDFLAGS       = -module -avoid-version
 pluginpref_example_la_LDFLAGS = -module -avoid-version
 psychic_la_LDFLAGS          = -module -avoid-version
@@ -63,6 +64,7 @@ noinst_LTLIBRARIES = \
 	codeinline.la \
 	debug_example.la \
 	helloworld.la \
+	notify_example.la \
 	pluginpref_example.la \
 	signals_test.la \
 	simple.la
@@ -77,6 +79,7 @@ idle_la_SOURCES             = idle.c
 joinpart_la_SOURCES         = joinpart.c
 log_reader_la_SOURCES       = log_reader.c
 newline_la_SOURCES          = newline.c
+notify_example_la_SOURCES   = notify_example.c
 offlinemsg_la_SOURCES       = offlinemsg.c
 pluginpref_example_la_SOURCES = pluginpref_example.c
 psychic_la_SOURCES          = psychic.c
@@ -92,6 +95,7 @@ idle_la_LIBADD              = $(GLIB_LIBS)
 joinpart_la_LIBADD          = $(GLIB_LIBS)
 log_reader_la_LIBADD        = $(GLIB_LIBS)
 newline_la_LIBADD           = $(GLIB_LIBS)
+notify_example_la_LIBADD    = $(GLIB_LIBS)
 offlinemsg_la_LIBADD        = $(GLIB_LIBS)
 pluginpref_example_la_LIBADD = $(GLIB_LIBS)
 psychic_la_LIBADD           = $(GLIB_LIBS)
