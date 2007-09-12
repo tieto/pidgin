@@ -467,7 +467,7 @@ msn_oim_parse_timestamp(const char *timestamp)
 				t.tm_isdst = 0;
 
 #ifdef _WIN32
-				if ((sys_tzoff = win32_get_tz_offset()) != -1)
+				if ((sys_tzoff = wpurple_get_tz_offset()) != -1)
 					tzoff += sys_tzoff;
 #else
 #ifdef HAVE_TM_GMTOFF
