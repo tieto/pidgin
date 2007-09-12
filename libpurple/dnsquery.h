@@ -45,16 +45,21 @@ typedef void  (*PurpleDnsQueryResolvedCallback) (PurpleDnsQueryData *query_data,
 typedef void  (*PurpleDnsQueryFailedCallback) (PurpleDnsQueryData *query_data, const gchar *error_message);
 
 /**
- * DNS Request UI operations
+ * DNS Request UI operations;  UIs should implement this if they want to do DNS
+ * lookups themselves, rather than relying on the core.
+ *
+ * @see @ref ui-ops
  */
 typedef struct
 {
-	/* If implemented, the UI is responsible for DNS queries */
-	gboolean (*resolve_host)(PurpleDnsQueryData *query_data, PurpleDnsQueryResolvedCallback resolved_cb, PurpleDnsQueryFailedCallback failed_cb);
+	/** If implemented, the UI is responsible for DNS queries */
+	gboolean (*resolve_host)(PurpleDnsQueryData *query_data,
+	                         PurpleDnsQueryResolvedCallback resolved_cb,
+	                         PurpleDnsQueryFailedCallback failed_cb);
 
-	/* After destroy is called, query_data will be feed, so this must
-	 * cancel any further use of it the UI would do. Unneeded if 
-	 * resolve_host is not implemented.
+	/** Called just before @a query_data is freed; this should cancel any
+	 *  further use of @q query_data the UI would make. Unneeded if
+	 *  #resolve_host is not implemented.
 	 */
 	void (*destroy)(PurpleDnsQueryData *query_data);
 
