@@ -14633,6 +14633,10 @@ msgstr "Afrikaans"
 msgid "Arabic"
 msgstr "Arabisch"
 
+#: ../pidgin/gtkdialogs.c:134
+msgid "Belarusian Latin"
+msgstr "Weißrussisch (Latin)"
+
 #: ../pidgin/gtkdialogs.c:134 ../pidgin/gtkdialogs.c:135
 #: ../pidgin/gtkdialogs.c:222
 msgid "Bulgarian"
