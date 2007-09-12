@@ -54,7 +54,7 @@ class RssTree(gnt.Tree):
     }
 
     __gntbindings__ = {
-        'jump-next-unread' : ('jump_next_unread', 'J')
+        'jump-next-unread' : ('jump_next_unread', 'n')
     }
 
     def jump_next_unread(self, null):
