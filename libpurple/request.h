@@ -1186,6 +1186,7 @@ PurpleFilterAccountFunc purple_request_field_account_get_filter(
  * @param account		The PurpleAccount associated with this request, or NULL if none is
  * @param who			The username of the buddy assocaited with this request, or NULL if none is
  * @param conv			The PurpleConversation associated with this request, or NULL if none is
+ * @param ui_hint       UI hint
  * @param user_data     The data to pass to the callback.
  *
  * @return A UI-specific handle.
@@ -1197,7 +1198,7 @@ void *purple_request_input(void *handle, const char *title,
 						 const char *ok_text, GCallback ok_cb,
 						 const char *cancel_text, GCallback cancel_cb,
 						 PurpleAccount *account, const char *who, PurpleConversation *conv,
-						 void *user_data);
+						 const char *ui_hint, void *user_data);
 
 /**
  * Prompts the user for multiple-choice input.
