@@ -559,6 +559,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 		NULL,         /* No account */
 		NULL,         /* No other user */
 		NULL,         /* No associated conversation */
+		"blist",
 		vrq,
 		x509_singleuse_verify_cb,
 		x509_singleuse_verify_cb );
