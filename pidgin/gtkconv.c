@@ -1350,7 +1350,6 @@ close_already(gpointer data)
 	return FALSE;
 }
 
-#if 0
 static void
 hide_conv(PidginConversation *gtkconv, gboolean closetimer)
 {
@@ -1371,7 +1370,6 @@ hide_conv(PidginConversation *gtkconv, gboolean closetimer)
 		purple_conversation_set_ui_ops(conv, NULL);
 	}
 }
-#endif
 
 static void
 menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
