@@ -727,7 +727,7 @@ void jabber_setup_set_info(PurplePluginAction *action)
 						_("Save"), G_CALLBACK(jabber_format_info),
 						_("Cancel"), NULL,
 						purple_connection_get_account(gc), NULL, NULL,
-						gc);
+						"account", gc);
 }
 
 /*---------------------------------------*/
@@ -2410,7 +2410,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 				_("Search"), G_CALLBACK(user_search_cb),
 				_("Cancel"), G_CALLBACK(user_search_cancel_cb),
 				purple_connection_get_account(js->gc), NULL, NULL,
-				usi);
+				"account", usi);
 
 		g_free(instructions);
 	}
@@ -2446,7 +2446,7 @@ void jabber_user_search_begin(PurplePluginAction *action)
 			_("Search Directory"), PURPLE_CALLBACK(jabber_user_search),
 			_("Cancel"), NULL,
 			NULL, NULL, NULL,
-			js);
+			"account", js);
 }
 
 

@@ -1913,7 +1913,7 @@ _evt_conference_invite(NMUser * user, NMEvent * event)
 	purple_request_action(gc, title, primary, secondary,
 						PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), name, NULL,
-						parms, 2,
+						"chat", parms, 2,
 						_("Yes"), G_CALLBACK(_join_conference_cb),
 						_("No"), G_CALLBACK(_reject_conference_cb));
 

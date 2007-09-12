@@ -34,13 +34,13 @@
  * @param name       The optional name to pounce on.
  * @param cur_pounce The current buddy pounce, if editing an existing one.
  */
-void pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
+void pidgin_pounce_editor_show(GtkWindow *parent, PurpleAccount *account, const char *name,
 								PurplePounce *cur_pounce);
 
 /**
  * Shows the pounces manager window.
  */
-void pidgin_pounces_manager_show(void);
+void pidgin_pounces_manager_show(GtkWindow *parent);
 
 /**
  * Hides the pounces manager window.

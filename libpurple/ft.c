@@ -312,7 +312,7 @@ purple_xfer_choose_file(PurpleXfer *xfer)
 					  G_CALLBACK(purple_xfer_choose_file_ok_cb),
 					  G_CALLBACK(purple_xfer_choose_file_cancel_cb),
 					  purple_xfer_get_account(xfer), xfer->who, NULL,
-					  xfer);
+					  "xfer", xfer);
 
 	return 0;
 }
@@ -360,7 +360,7 @@ purple_xfer_ask_recv(PurpleXfer *xfer)
 		purple_request_accept_cancel(xfer, NULL, buf, NULL,
 								  PURPLE_DEFAULT_ACTION_NONE,
 								  xfer->account, xfer->who, NULL,
-								  xfer,
+								  "xfer", xfer,
 								  G_CALLBACK(purple_xfer_choose_file),
 								  G_CALLBACK(cancel_recv_cb));
 
@@ -403,7 +403,7 @@ purple_xfer_ask_accept(PurpleXfer *xfer)
 	purple_request_accept_cancel(xfer, NULL, buf, buf2,
 							   PURPLE_DEFAULT_ACTION_NONE,
 							   xfer->account, xfer->who, NULL,
-							   xfer,
+							   "xfer", xfer,
 							   G_CALLBACK(ask_accept_ok),
 							   G_CALLBACK(ask_accept_cancel));
 	g_free(buf);

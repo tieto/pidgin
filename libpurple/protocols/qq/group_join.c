@@ -139,7 +139,7 @@ static void _qq_group_join_auth(PurpleConnection *gc, qq_group *group)
 			   G_CALLBACK(_qq_group_join_auth_with_gc_and_id),
 			   _("Cancel"), G_CALLBACK(qq_do_nothing_with_gc_and_uid),
 			   purple_connection_get_account(gc), group->group_name_utf8, NULL,
-			   g);
+			   "chat", g);
 	g_free(msg);
 }
 
@@ -362,7 +362,7 @@ void qq_group_exit(PurpleConnection *gc, GHashTable *data)
 			    ("Note, if you are the creator, \nthis operation will eventually remove this Qun."),
 			    1,
 				purple_connection_get_account(gc), NULL, NULL,
-			    g, 2, _("Cancel"),
+			    "chat", g, 2, _("Cancel"),
 			    G_CALLBACK(qq_do_nothing_with_gc_and_uid),
 			    _("Continue"), G_CALLBACK(_qq_group_exit_with_gc_and_id));
 }

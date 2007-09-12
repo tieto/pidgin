@@ -31,7 +31,7 @@
 
 /* Functions in gtkdialogs.c (these should actually stay in this file) */
 void pidgin_dialogs_destroy_all(void);
-void pidgin_dialogs_about(void);
+void pidgin_dialogs_about(GtkWindow *parent);
 void pidgin_dialogs_im(void);
 void pidgin_dialogs_im_with_user(PurpleAccount *, const char *);
 void pidgin_dialogs_info(void);
