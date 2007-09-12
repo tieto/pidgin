@@ -285,7 +285,7 @@ static void _qq_s5_canwrite(gpointer data, gint source, PurpleInputCondition con
 	unsigned char buf[512];
 	int i;
 	struct PHB *phb = data;
-	unsigned int len;
+	socklen_t len;
 	int error = ETIMEDOUT;
 
 	purple_debug(PURPLE_DEBUG_INFO, "socks5 proxy", "Connected.\n");

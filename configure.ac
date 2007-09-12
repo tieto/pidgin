@@ -136,7 +136,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
+ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -1187,7 +1187,7 @@ if test "x$enable_dbus" = "xyes" ; then
 		AC_PATH_PROG([PYTHON], [python], [no])
 	fi
 
-	if test x"$python" = x"no" ; then
+	if test x"$PYTHON" = x"no" ; then
 		AC_MSG_WARN([python interpreter not found in your path])
 		enable_dbus=no
 	fi

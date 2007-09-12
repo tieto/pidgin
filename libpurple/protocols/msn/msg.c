@@ -400,7 +400,7 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 	GList *l;
 	char *n, *base, *end;
 	int len;
-	size_t body_len;
+	size_t body_len = 0;
 	const void *body;
 
 	g_return_val_if_fail(msg != NULL, NULL);
