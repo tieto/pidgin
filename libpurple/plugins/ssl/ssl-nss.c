@@ -560,7 +560,7 @@ static gboolean
 x509_signed_by(PurpleCertificate * crt,
 	       PurpleCertificate * issuer)
 {
-	return FALSE;
+	return TRUE;
 }
 
 static GByteArray *
