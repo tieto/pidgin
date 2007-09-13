@@ -668,11 +668,14 @@ x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 						&nss_activ, &nss_expir),
 		FALSE);
 
+	/* NSS's native PRTime type *almost* corresponds to time_t; however,
+	   it measures *microseconds* since the epoch, not seconds. Hence
+	   the funny conversion. */
 	if (activation) {
-		*activation = nss_activ;
+		*activation = nss_activ / 1000000;
 	}
 	if (expiration) {
-		*expiration = nss_expir;
+		*expiration = nss_expir / 1000000;
 	}
 	
 	return TRUE;
