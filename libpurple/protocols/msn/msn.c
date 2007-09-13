@@ -351,7 +351,7 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 						_("Do you want to allow or disallow people on "
 						  "your buddy list to send you MSN Mobile pages "
 						  "to your cell phone or other mobile device?"),
-						-1, 
+						-1,
 						purple_connection_get_account(gc), NULL, NULL,
 						gc, 3,
 						_("Allow"), G_CALLBACK(enable_msn_pages_cb),
@@ -537,13 +537,13 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 
 	user = buddy->proto_data;
 
-	
+
 	if (purple_presence_is_online(presence))
 	{
 		purple_notify_user_info_add_pair(user_info, _("Status"),
 									   (purple_presence_is_idle(presence) ? _("Idle") : purple_status_get_name(status)));
 	}
-	
+
 	if (full && user)
 	{
 		purple_notify_user_info_add_pair(user_info, _("Has you"),
@@ -598,11 +598,11 @@ msn_status_types(PurpleAccount *account)
 	status = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
 			NULL, NULL, FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
-	
+
 	status = purple_status_type_new_full(PURPLE_STATUS_MOBILE,
 			"mobile", NULL, FALSE, FALSE, TRUE);
 	types = g_list_append(types, status);
-	
+
 	return types;
 }
 
@@ -730,7 +730,10 @@ msn_login(PurpleAccount *account)
 
 	http_method = purple_account_get_bool(account, "http_method", FALSE);
 
-	host = purple_account_get_string(account, "server", MSN_SERVER);
+	if (http_method)
+		host = purple_account_get_string(account, "http_method_server", MSN_SERVER);
+	else
+		host = purple_account_get_string(account, "server", MSN_SERVER);
 	port = purple_account_get_int(account, "port", MSN_PORT);
 
 	session = msn_session_new(account);
@@ -1570,16 +1573,16 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	/* No we're not. */
 	s = g_string_sized_new(strlen(url_buffer));
 	s2 = g_string_sized_new(strlen(url_buffer));
-	
+
 	/* General section header */
 	if (has_tooltip_text)
 		purple_notify_user_info_add_section_break(user_info);
-	
+
 	purple_notify_user_info_add_section_header(user_info, _("General"));
-	
+
 	/* Extract their Name and put it in */
 	MSN_GOT_INFO_GET_FIELD("Name", _("Name"));
-	
+
 	/* General */
 	MSN_GOT_INFO_GET_FIELD("Nickname", _("Nickname"));
 	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Age", _("Age"));
@@ -1597,24 +1600,24 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		sect_info = TRUE;
 
 	MSN_GOT_INFO_GET_FIELD("More about me", _("A Little About Me"));
-	
+
 	if (sect_info)
 	{
 		has_info = TRUE;
 		sect_info = FALSE;
 	}
-    else 
+    else
     {
 		/* Remove the section header */
 		purple_notify_user_info_remove_last_item(user_info);
 		if (has_tooltip_text)
 			purple_notify_user_info_remove_last_item(user_info);
 	}
-											   
+
 	/* Social */
 	purple_notify_user_info_add_section_break(user_info);
 	purple_notify_user_info_add_section_header(user_info, _("Social"));
-										   
+
 	MSN_GOT_INFO_GET_FIELD("Marital status", _("Marital Status"));
 	MSN_GOT_INFO_GET_FIELD("Interested in", _("Interests"));
 	MSN_GOT_INFO_GET_FIELD("Pets", _("Pets"));
@@ -1630,7 +1633,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		has_info = TRUE;
 		sect_info = FALSE;
 	}
-    else 
+    else
     {
 		/* Remove the section header */
 		purple_notify_user_info_remove_last_item(user_info);
@@ -1662,7 +1665,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		sect_info = FALSE;
 		has_contact_info = TRUE;
 	}
-    else 
+    else
     {
 		/* Remove the section header */
 		purple_notify_user_info_remove_last_item(user_info);
@@ -1692,7 +1695,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		sect_info = FALSE;
 		has_contact_info = TRUE;
 	}
-    else 
+    else
     {
 		/* Remove the section header */
 		purple_notify_user_info_remove_last_item(user_info);
@@ -1867,7 +1870,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	tmp = g_strdup_printf("<a href=\"%s%s\">%s%s</a>",
 					PROFILE_URL, info_data->name, PROFILE_URL, info_data->name);
 	purple_notify_user_info_add_pair(user_info, _("Profile URL"), tmp);
-	g_free(tmp);									   
+	g_free(tmp);
 
 #if PHOTO_SUPPORT
 	/* Find the URL to the photo; must be before the marshalling [Bug 994207] */
@@ -2190,6 +2193,12 @@ init_plugin(PurplePlugin *plugin)
 
 	option = purple_account_option_bool_new(_("Use HTTP Method"),
 										  "http_method", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+											   option);
+
+	/* TODO: Mark translatable as soon as 2.2.0 is released and we're not string frozen */
+	option = purple_account_option_string_new("HTTP Method Server",
+										  "http_method_server", MSN_HTTPCONN_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

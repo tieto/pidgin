@@ -59,6 +59,7 @@
 
 #define USEROPT_MSNSERVER 3
 #define MSN_SERVER "messenger.hotmail.com"
+#define MSN_HTTPCONN_SERVER "gateway.messenger.hotmail.com"
 #define USEROPT_MSNPORT 4
 #define MSN_PORT 1863
 

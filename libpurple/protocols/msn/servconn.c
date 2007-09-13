@@ -223,7 +223,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 
 		if (!servconn->httpconn->connected)
 			if (!msn_httpconn_connect(servconn->httpconn, host, port))
-				return FALSE;;
+				return FALSE;
 
 		servconn->connected = TRUE;
 		servconn->httpconn->virgin = TRUE;

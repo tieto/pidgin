@@ -725,7 +725,7 @@ msn_httpconn_connect(MsnHttpConn *httpconn, const char *host, int port)
 		msn_httpconn_disconnect(httpconn);
 
 	httpconn->connect_data = purple_proxy_connect(NULL, httpconn->session->account,
-		"gateway.messenger.hotmail.com", 80, connect_cb, httpconn);
+		host, 80, connect_cb, httpconn);
 
 	if (httpconn->connect_data != NULL)
 	{
