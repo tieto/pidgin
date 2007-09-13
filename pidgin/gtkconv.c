@@ -183,6 +183,25 @@ static GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
 	return &col;
 }
 
+static PurpleBlistNode *
+get_conversation_blist_node(PurpleConversation *conv)
+{
+	PurpleBlistNode *node = NULL;
+
+	switch (purple_conversation_get_type(conv)) {
+		case PURPLE_CONV_TYPE_IM:
+			node = (PurpleBlistNode*)purple_find_buddy(conv->account, conv->name);
+			node = node ? node->parent : NULL;
+			break;
+		case PURPLE_CONV_TYPE_CHAT:
+			node = (PurpleBlistNode*)purple_blist_find_chat(conv->account, conv->name);
+			break;
+		default:
+			break;
+	}
+	return node;
+}
+
 /**************************************************************************
  * Callbacks
  **************************************************************************/
@@ -1379,6 +1398,7 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 	PidginWindow *win = data;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
+	PurpleBlistNode *node;
 
 	conv = pidgin_conv_window_get_active_conversation(win);
 
@@ -1389,6 +1409,9 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 
 	gtkconv->make_sound =
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
+	node = get_conversation_blist_node(conv);
+	if (node)
+		purple_blist_node_set_bool(node, "gtk-mute-sound", !gtkconv->make_sound);
 }
 
 static void
@@ -2948,7 +2971,7 @@ sound_method_pref_changed_cb(const char *name, PurplePrefType type,
 
 		if (gtkconv != NULL)
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
-			                               TRUE);
+			                               gtkconv->make_sound);
 		gtk_widget_set_sensitive(win->menu.sounds, TRUE);
 
 	}
@@ -4927,6 +4950,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	PurpleConversationType conv_type = purple_conversation_get_type(conv);
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
+	PurpleBlistNode *convnode;
 
 	if (conv_type == PURPLE_CONV_TYPE_IM && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
 		conv->ui_data = gtkconv;
@@ -5004,7 +5028,9 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtk_container_add(GTK_CONTAINER(tab_cont), pane);
 	gtk_widget_show(pane);
 
-	gtkconv->make_sound = TRUE;
+	convnode = get_conversation_blist_node(conv);
+	if (convnode == NULL || !purple_blist_node_get_bool(convnode, "gtk-mute-sound"))
+		gtkconv->make_sound = TRUE;
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar"))
 		gtk_widget_show(gtkconv->toolbar);

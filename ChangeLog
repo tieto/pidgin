@@ -10,7 +10,8 @@ version 2.2.0:
 	* Option to show protocol icons in the buddy list, from the
 	  Buddies > Show menu (Justin Heiner)
 	* Ability to build with native, non-X11 GTK+ on OSX (Anders
-   	  Hasselqvist)
+	  Hasselqvist)
+	* Remember the 'Enable Sounds' setting for a conversation
 
 	Finch:
 	* Per-conversation mute and logging options (accessible from the menu)
