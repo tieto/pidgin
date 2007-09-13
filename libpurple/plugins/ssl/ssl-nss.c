@@ -509,7 +509,6 @@ x509_destroy_certificate(PurpleCertificate * crt)
 	g_free(crt);
 }
 
-#if 0
 /** Determines whether one certificate has been issued and signed by another
  *
  * @param crt       Certificate to check the signature of
@@ -519,12 +518,11 @@ x509_destroy_certificate(PurpleCertificate * crt)
  * @TODO  Modify this function to return a reason for invalidity?
  */
 static gboolean
-x509_certificate_signed_by(PurpleCertificate * crt,
-			   PurpleCertificate * issuer)
+x509_signed_by(PurpleCertificate * crt,
+	       PurpleCertificate * issuer)
 {
 	return FALSE;
 }
-#endif
 
 static GByteArray *
 x509_sha1sum(PurpleCertificate *crt)
@@ -561,6 +559,34 @@ x509_sha1sum(PurpleCertificate *crt)
 	}
 
 	return sha1sum;
+}
+
+static gchar *
+x509_dn (PurpleCertificate *crt)
+{
+	CERTCertificate *crt_dat;
+	
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	return g_strdup(crt_dat->subjectName);
+}
+
+static gchar *
+x509_issuer_dn (PurpleCertificate *crt)
+{
+	CERTCertificate *crt_dat;
+	
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	return g_strdup(crt_dat->subjectName);
 }
 
 static gchar *
@@ -659,10 +685,10 @@ static PurpleCertificateScheme x509_nss = {
 	x509_export_certificate,         /* Certificate export function */
 	x509_copy_certificate,           /* Copy */
 	x509_destroy_certificate,        /* Destroy cert */
-	NULL,                            /* Signed-by */
+	x509_signed_by,                  /* Signed-by */
 	x509_sha1sum,                    /* SHA1 fingerprint */
-	NULL,                            /* Unique ID */
-	NULL,                            /* Issuer Unique ID */
+	x509_dn,                         /* Unique ID */
+	x509_issuer_dn,                  /* Issuer Unique ID */
 	x509_common_name,                /* Subject name */
 	x509_check_name,                 /* Check subject name */
 	x509_times,                      /* Activation/Expiration time */
