@@ -63,6 +63,25 @@ static void finch_write_common(PurpleConversation *conv, const char *who,
 		const char *message, PurpleMessageFlags flags, time_t mtime);
 static void generate_send_to_menu(FinchConv *ggc);
 
+static PurpleBlistNode *
+get_conversation_blist_node(PurpleConversation *conv)
+{
+	PurpleBlistNode *node = NULL;
+
+	switch (purple_conversation_get_type(conv)) {
+		case PURPLE_CONV_TYPE_IM:
+			node = (PurpleBlistNode*)purple_find_buddy(conv->account, conv->name);
+			node = node ? node->parent : NULL;
+			break;
+		case PURPLE_CONV_TYPE_CHAT:
+			node = (PurpleBlistNode*)purple_blist_find_chat(conv->account, conv->name);
+			break;
+		default:
+			break;
+	}
+	return node;
+}
+
 static void
 send_typing_notification(GntWidget *w, FinchConv *ggconv)
 {
@@ -391,7 +410,10 @@ static void
 toggle_sound_cb(GntMenuItem *item, gpointer ggconv)
 {
 	FinchConv *fc = ggconv;
+	PurpleBlistNode *node = get_conversation_blist_node(fc->active_conv);
 	fc->flags ^= FINCH_CONV_NO_SOUND;
+	if (node)
+		purple_blist_node_set_bool(node, "gnt-mute-sound", !!(fc->flags & FINCH_CONV_NO_SOUND));
 }
 
 static void
@@ -547,6 +569,7 @@ finch_create_conversation(PurpleConversation *conv)
 	PurpleConversationType type;
 	PurpleConversation *cc;
 	PurpleAccount *account;
+	PurpleBlistNode *convnode = NULL;
 
 	if (ggc)
 		return;
@@ -653,7 +676,9 @@ finch_create_conversation(PurpleConversation *conv)
 		g_signal_connect(G_OBJECT(ggc->entry), "text_changed", G_CALLBACK(send_typing_notification), ggc);
 	}
 
-	if (!finch_sound_is_enabled())
+	convnode = get_conversation_blist_node(conv);
+	if ((convnode && purple_blist_node_get_bool(convnode, "gnt-mute-sound")) ||
+			!finch_sound_is_enabled())
 		ggc->flags |= FINCH_CONV_NO_SOUND;
 
 	gg_create_menu(ggc);
