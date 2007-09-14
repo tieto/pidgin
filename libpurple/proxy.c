@@ -1994,11 +1994,11 @@ purple_proxy_init(void)
 		proxy_pref_cb, NULL);
 
 	/* Load the initial proxy settings */
-	proxy_pref_cb("/purple/proxy/type", PURPLE_PREF_STRING, purple_prefs_get_string("/purple/proxy/type"), NULL);
-	proxy_pref_cb("/purple/proxy/host", PURPLE_PREF_STRING, purple_prefs_get_string("/purple/proxy/host"), NULL);
-	proxy_pref_cb("/purple/proxy/port", PURPLE_PREF_STRING, GINT_TO_POINTER(purple_prefs_get_int("/purple/proxy/port")), NULL);
-	proxy_pref_cb("/purple/proxy/username", PURPLE_PREF_STRING, purple_prefs_get_string("/purple/proxy/username"), NULL);
-	proxy_pref_cb("/purple/proxy/password", PURPLE_PREF_STRING, purple_prefs_get_string("/purple/proxy/password"), NULL);
+	purple_prefs_trigger_callback("/purple/proxy/type");
+	purple_prefs_trigger_callback("/purple/proxy/host");
+	purple_prefs_trigger_callback("/purple/proxy/port");
+	purple_prefs_trigger_callback("/purple/proxy/username");
+	purple_prefs_trigger_callback("/purple/proxy/password");
 }
 
 void
