@@ -1987,6 +1987,7 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 	
 	msn_notification_post_adl(notification->servconn->cmdproc,
 						payload,payload_len);
+	g_free(payload);
 }
 
 void
@@ -2014,6 +2015,7 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 	trans = msn_transaction_new(cmdproc, "RML","%d", strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
+	g_free(payload);
 }
 
 /**************************************************************************
