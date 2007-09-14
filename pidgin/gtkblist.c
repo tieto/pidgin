@@ -2264,18 +2264,19 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 		if (prpl_info && prpl_info->icon_spec.scale_rules & PURPLE_ICON_SCALE_DISPLAY)
 			purple_buddy_icon_get_scale_size(&prpl_info->icon_spec, &scale_width, &scale_height);
 
-		if (scaled) {
+		if (scaled || scale_height > 200 || scale_width > 200) {
+			float scale_size = scaled ? 32.0 : 200.0;
 			if(scale_height > scale_width) {
-				scale_width = 32.0 * (double)scale_width / (double)scale_height;
-				scale_height = 32;
+				scale_width = scale_size * (double)scale_width / (double)scale_height;
+				scale_height = scale_size;
 			} else {
-				scale_height = 32.0 * (double)scale_height / (double)scale_width;
-				scale_width = 32;
+				scale_height = scale_size * (double)scale_height / (double)scale_width;
+				scale_width = scale_size;
 			}
 
-			ret = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
+			ret = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, scale_size, scale_size);
 			gdk_pixbuf_fill(ret, 0x00000000);
-			gdk_pixbuf_scale(buf, ret, (32-scale_width)/2, (32-scale_height)/2, scale_width, scale_height, (32-scale_width)/2, (32-scale_height)/2, (double)scale_width/(double)orig_width, (double)scale_height/(double)orig_height, GDK_INTERP_BILINEAR);
+			gdk_pixbuf_scale(buf, ret, (scale_size-scale_width)/2, (scale_size-scale_height)/2, scale_width, scale_height, (scale_size-scale_width)/2, (scale_size-scale_height)/2, (double)scale_width/(double)orig_width, (double)scale_height/(double)orig_height, GDK_INTERP_BILINEAR);
 			if (pidgin_gdk_pixbuf_is_opaque(ret))
 				pidgin_gdk_pixbuf_make_round(ret);
 		} else {
