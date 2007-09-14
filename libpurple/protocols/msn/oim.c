@@ -239,6 +239,9 @@ msn_oim_send_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	MsnSession *session = soapconn->session;
 	MsnOim * oim;
 
+	if (soapconn->body == NULL)
+		return;
+
 	g_return_if_fail(session != NULL);
 	oim = soapconn->session->oim;
 	g_return_if_fail(oim != NULL);
@@ -338,6 +341,8 @@ msn_oim_delete_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;
 
+	if (soapconn->body == NULL)
+		return;
 	purple_debug_info("MSNP14","OIM delete read buffer:{%s}\n",soapconn->body);
 
 	msn_soap_free_read_buf(soapconn);
@@ -450,14 +455,32 @@ msn_oim_parse_timestamp(const char *timestamp)
 			}
 
 			if (sscanf(tz_ptr, "%02d%02d", &tzhrs, &tzmins) == 2) {
-				t.tm_year -= 1900;
-#if HAVE_TM_GMTOFF
-				t.tm_gmtoff = tzhrs * 60 * 60 + tzmins * 60;
-				if (!offset_positive)
-					t.tm_gmtoff *= -1;
+				time_t tzoff = tzhrs * 60 * 60 + tzmins * 60;
+#ifdef _WIN32
+				long sys_tzoff;
 #endif
+
+				if (!offset_positive)
+					tzoff *= -1;
+
+				t.tm_year -= 1900;
 				t.tm_isdst = 0;
-				return mktime(&t);
+
+#ifdef _WIN32
+				if ((sys_tzoff = wpurple_get_tz_offset()) != -1)
+					tzoff += sys_tzoff;
+#else
+#ifdef HAVE_TM_GMTOFF
+				tzoff += t.tm_gmtoff;
+#else
+#	ifdef HAVE_TIMEZONE
+				tzset();    /* making sure */
+				tzoff -= timezone;
+#	endif
+#endif
+#endif /* _WIN32 */
+
+				return mktime(&t) + tzoff;
 			}
 		}
 	}
@@ -552,6 +575,9 @@ msn_oim_get_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;
 	MsnOim * oim = soapconn->session->oim;
+
+	if (soapconn->body == NULL)
+		return;
 
 	purple_debug_info("MSNP14","OIM get read buffer:{%s}\n",soapconn->body);
 

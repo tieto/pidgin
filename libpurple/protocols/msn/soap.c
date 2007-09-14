@@ -150,7 +150,12 @@ msn_soap_clean_unhandled_request(MsnSoapConn *soapconn)
 
 	g_return_if_fail(soapconn != NULL);
 
+	soapconn->body = NULL;
+
 	while ((request = g_queue_pop_head(soapconn->soap_queue)) != NULL){
+		if (soapconn->read_cb) {
+			soapconn->read_cb(soapconn, -1, 0);
+		}
 		msn_soap_request_free(request);
 	}
 }
@@ -510,14 +515,6 @@ msn_soap_free_write_buf(MsnSoapConn *soapconn)
 	soapconn->written_len = 0;
 }
 
-void
-msn_soap_free_data_cb(MsnSoapConn *soapconn)
-{
-	if (soapconn->data_cb) {
-		g_free(soapconn->data_cb);
-	}
-}
-
 /*Soap write process func*/
 static void
 msn_soap_write_cb(gpointer data, gint source, PurpleInputCondition cond)
@@ -625,7 +622,6 @@ msn_soap_request_free(MsnSoapReq *request)
 	g_free(request->login_path);
 	g_free(request->soap_action);
 	g_free(request->body);
-	g_free(request->data_cb);
 	request->read_cb	= NULL;
 	request->written_cb	= NULL;
 

@@ -582,13 +582,31 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	
 	if (purple_presence_is_online(presence))
 	{
-		const char *psm, *currentmedia;
+		const char *psm, *currentmedia, *name;
 		char *tmp;
 
 		psm = purple_status_get_attr_string(status, "message");
 		currentmedia = purple_status_get_attr_string(status, "currentmedia");
 
-		if (psm && *psm) {
+		if (!purple_presence_is_available(presence)) {
+			name = purple_status_get_name(status);
+		} else {
+			name = NULL;
+		}
+
+		if (name != NULL && *name) {
+			char *tmp2 = g_markup_escape_text(name, -1);
+
+			if (psm != NULL && *psm) {
+				tmp = g_markup_escape_text(psm, -1);
+				purple_notify_user_info_add_pair(user_info, tmp2, tmp);
+				g_free(tmp);
+			} else {
+				purple_notify_user_info_add_pair(user_info, _("Status"), tmp2);
+			}
+
+			g_free(tmp2);
+		} else {
 			tmp = g_markup_escape_text(psm, -1);
 			purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
 			g_free(tmp);
