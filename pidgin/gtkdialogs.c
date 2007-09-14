@@ -456,7 +456,7 @@ void pidgin_dialogs_about()
 		if (retired_patch_writers[i].email != NULL) {
 			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
 					retired_patch_writers[i].name,
-					retired_patch_writers[i].email, patch_writers[i].email);
+					retired_patch_writers[i].email, retired_patch_writers[i].email);
 		} else {
 			g_string_append_printf(str, "  %s<br/>",
 					retired_patch_writers[i].name);
