@@ -458,7 +458,7 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
 		purple_ssl_close(gsc);
 		return;
-	}	
+	}
 
 	js = gc->proto_data;
 
@@ -1731,7 +1731,7 @@ static void jabber_password_change(PurplePluginAction *action)
 			_("Change XMPP Password"), _("Please enter your new password"),
 			fields, _("OK"), G_CALLBACK(jabber_password_change_cb),
 			_("Cancel"), NULL,
-			purple_connection_get_account(gc), NULL, NULL,			  
+			purple_connection_get_account(gc), NULL, NULL,
 			js);
 }
 
@@ -1899,6 +1899,9 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 			text = _("Authorization mechanism too weak");
 		} else if(xmlnode_get_child(packet, "not-authorized")) {
 			js->gc->wants_to_die = TRUE;
+			/* Clear the pasword if it isn't being saved */
+			if (!purple_account_get_remember_password(js->gc->account))
+				purple_account_set_password(js->gc->account, NULL);
 			text = _("Not Authorized");
 		} else if(xmlnode_get_child(packet, "temporary-auth-failure")) {
 			text = _("Temporary Authentication Failure");

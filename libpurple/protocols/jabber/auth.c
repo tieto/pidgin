@@ -538,6 +538,9 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 					(err_code = xmlnode_get_attrib(error, "code")) &&
 					!strcmp(err_code, "401")) {
 			js->gc->wants_to_die = TRUE;
+			/* Clear the pasword if it isn't being saved */
+			if (!purple_account_get_remember_password(js->gc->account))
+				purple_account_set_password(js->gc->account, NULL);
 		}
 
 		purple_connection_error(js->gc, msg);
