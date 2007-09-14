@@ -739,11 +739,11 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		while (it != NULL)
 		{
 			it_tmp = it;
-			gtk_box_pack_start(GTK_BOX(line), it->button, TRUE, TRUE, 0);
+			gtk_box_pack_start(GTK_BOX(line), it->button, FALSE, FALSE, 0);
 			gtk_widget_show(it->button);
 			line_width += it->width;
 			if (line_width >= max_line_width) {
-				gtk_box_pack_start(GTK_BOX(smiley_table), line, FALSE, TRUE, 0);
+				gtk_box_pack_start(GTK_BOX(smiley_table), line, FALSE, FALSE, 0);
 				line = gtk_hbox_new(FALSE, 0);
 				line_width = 0;
 				col = 0;
