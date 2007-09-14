@@ -2244,7 +2244,6 @@ AC_OUTPUT([Makefile
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc
-		   finch/libgnt/pygnt/Makefile
 		   finch/libgnt/wms/Makefile
 		   finch/plugins/Makefile
 		   po/Makefile.in
