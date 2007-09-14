@@ -57,8 +57,6 @@
 #include "pep.h"
 #include "adhoccommands.h"
 
-#include <assert.h>
-
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
 static PurplePlugin *my_protocol = NULL;
@@ -1134,17 +1132,17 @@ static void jabber_unregister_account_iq_cb(JabberStream *js, xmlnode *packet, g
 static void jabber_unregister_account_cb(JabberStream *js) {
 	JabberIq *iq;
 	xmlnode *query;
-	assert(js->unregistration);
-	
-	iq = jabber_iq_new_query(js,JABBER_IQ_SET,"jabber:iq:register");
-	assert(iq);
-	query = xmlnode_get_child_with_namespace(iq->node,"query","jabber:iq:register");
-	assert(query);
-	xmlnode_new_child(query,"remove");
-	
-	xmlnode_set_attrib(iq->node,"to",js->user->domain);
-	jabber_iq_set_callback(iq,jabber_unregister_account_iq_cb,NULL);
-	
+
+	g_return_if_fail(js->unregistration);
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:register");
+
+	query = xmlnode_get_child_with_namespace(iq->node, "query", "jabber:iq:register");
+
+	xmlnode_new_child(query, "remove");
+	xmlnode_set_attrib(iq->node, "to", js->user->domain);
+
+	jabber_iq_set_callback(iq, jabber_unregister_account_iq_cb, NULL);
 	jabber_iq_send(iq);
 }
 
@@ -1163,11 +1161,16 @@ void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrati
 	}
 	
 	js = gc->proto_data;
-	assert(!js->unregistration); /* don't allow multiple calls */
+
+	if (js->unregistration) {
+		purple_debug_error("jabber", "Unregistration in process; ignoring duplicate request.\n");
+		return;
+	}
+
 	js->unregistration = TRUE;
 	js->unregistration_cb = cb;
 	js->unregistration_user_data = user_data;
-	
+
 	jabber_unregister_account_cb(js);
 }
 
@@ -1325,10 +1328,10 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 
 void jabber_add_feature(const char *shortname, const char *namespace, JabberFeatureEnabled cb) {
 	JabberFeature *feat;
-	
-	assert(shortname != NULL);
-	assert(namespace != NULL);
-	
+
+	g_return_if_fail(shortname != NULL);
+	g_return_if_fail(namespace != NULL);
+
 	feat = g_new0(JabberFeature,1);
 	feat->shortname = g_strdup(shortname);
 	feat->namespace = g_strdup(namespace);

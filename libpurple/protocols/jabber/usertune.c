@@ -23,7 +23,6 @@
 
 #include "usertune.h"
 #include "pep.h"
-#include <assert.h>
 #include <string.h>
 #include "internal.h"
 #include "request.h"
