@@ -42,6 +42,8 @@
 
 static PurplePlugin *notify_example = NULL;
 
+/* The next four functions and the calls within them should cause dialog boxes to appear
+ * when you select the plugin action from the Tools->Notify Example menu */
 static void
 notify_error_cb(PurplePluginAction *action)
 {
@@ -74,6 +76,7 @@ notify_format_cb(PurplePluginAction *action)
 static void
 notify_uri_cb(PurplePluginAction *action)
 {
+	/* This one should open your web browser of choice. */
 	purple_notify_uri(notify_example, "http://www.pidgin.im/");
 }
 
@@ -81,8 +84,8 @@ static GList *
 plugin_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *actions = NULL;
-	PurplePluginAction *action = NULL;
 
+	/* Here we take advantage of return values to avoid the need for a temp variable */
 	actions = g_list_prepend(actions,
 		purple_plugin_action_new("Show Error Notification", notify_error_cb));
 
@@ -104,6 +107,7 @@ plugin_actions(PurplePlugin *plugin, gpointer context)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
+	/* we need a handle for all the notify calls */
 	notify_example = plugin;
 
 	return TRUE;
