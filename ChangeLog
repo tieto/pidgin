@@ -16,6 +16,8 @@ version 2.2.0 (09/13/2007):
 	* Yahoo! Chat is fixed.
 	* Some AIM file transfer issues between Pidgin and other clients
 	  have been fixed. (Kyryll A Mirnenko)
+	* Properly restore idle status and time for AIM and ICQ accounts
+	  when they reconnect after being disconnected.
 
 	Pidgin:
 	* Insert Horizontal Rules and Strikethrough text from toolbar.
