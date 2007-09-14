@@ -658,10 +658,37 @@ const char *pidgin_get_dim_grey_string(GtkWidget *widget);
  * @param ...            list of integers terminated by -1
  *
  * @return               A newly created GtkTreePath.
- *
  */
 GtkTreePath *gtk_tree_path_new_from_indices (gint first_index, ...);
 #endif
+
+/**
+ * Create a simple text GtkComboBoxEntry equivalent
+ *
+ * @param default_item   Initial contents of GtkEntry
+ * @param items          GList containing strings to add to GtkComboBox
+ *
+ * @return               A newly created text GtkComboBox containing a GtkEntry
+ *                       child.
+ */
+GtkWidget *pidgin_text_combo_box_entry_new(const char *default_item, GList *items);
+
+/**
+ * Retrieve the text from the entry of the simple text GtkComboBoxEntry equivalent
+ *
+ * @param widget         The simple text GtkComboBoxEntry equivalent widget
+ *
+ * @return               The text in the widget's entry. It must not be freed
+ */
+const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget);
+
+/**
+ * Set the text in the entry of the simple text GtkComboBoxEntry equivalent
+ *
+ * @param widget         The simple text GtkComboBoxEntry equivalent widget
+ * @param text           The text to set
+ */
+void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
 
 #endif /* _PIDGINUTILS_H_ */
 
