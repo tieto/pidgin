@@ -74,19 +74,20 @@ am__libpurple_client_la_SOURCES_DIST = purple-client.c purple-client.h
 libpurple_client_la_OBJECTS = $(am_libpurple_client_la_OBJECTS)
 @ENABLE_DBUS_TRUE@am_libpurple_client_la_rpath = -rpath $(libdir)
 am__libpurple_la_SOURCES_DIST = account.c accountopt.c blist.c \
-	buddyicon.c cipher.c circbuffer.c cmds.c connection.c \
-	conversation.c core.c debug.c desktopitem.c eventloop.c ft.c \
-	idle.c imgstore.c log.c mime.c nat-pmp.c network.c ntlm.c \
-	notify.c plugin.c pluginpref.c pounce.c prefs.c privacy.c \
-	proxy.c prpl.c request.c roomlist.c savedstatuses.c server.c \
-	signals.c dnsquery.c dnssrv.c status.c stringref.c stun.c \
-	sound.c sslconn.c upnp.c util.c value.c version.c xmlnode.c \
-	whiteboard.c dbus-server.c dbus-useful.c
+	buddyicon.c certificate.c cipher.c circbuffer.c cmds.c \
+	connection.c conversation.c core.c debug.c desktopitem.c \
+	eventloop.c ft.c idle.c imgstore.c log.c mime.c nat-pmp.c \
+	network.c ntlm.c notify.c plugin.c pluginpref.c pounce.c \
+	prefs.c privacy.c proxy.c prpl.c request.c roomlist.c \
+	savedstatuses.c server.c signals.c dnsquery.c dnssrv.c \
+	status.c stringref.c stun.c sound.c sslconn.c upnp.c util.c \
+	value.c version.c xmlnode.c whiteboard.c dbus-server.c \
+	dbus-useful.c
 am__objects_1 = account.lo accountopt.lo blist.lo buddyicon.lo \
-	cipher.lo circbuffer.lo cmds.lo connection.lo conversation.lo \
-	core.lo debug.lo desktopitem.lo eventloop.lo ft.lo idle.lo \
-	imgstore.lo log.lo mime.lo nat-pmp.lo network.lo ntlm.lo \
-	notify.lo plugin.lo pluginpref.lo pounce.lo prefs.lo \
+	certificate.lo cipher.lo circbuffer.lo cmds.lo connection.lo \
+	conversation.lo core.lo debug.lo desktopitem.lo eventloop.lo \
+	ft.lo idle.lo imgstore.lo log.lo mime.lo nat-pmp.lo network.lo \
+	ntlm.lo notify.lo plugin.lo pluginpref.lo pounce.lo prefs.lo \
 	privacy.lo proxy.lo prpl.lo request.lo roomlist.lo \
 	savedstatuses.lo server.lo signals.lo dnsquery.lo dnssrv.lo \
 	status.lo stringref.lo stun.lo sound.lo sslconn.lo upnp.lo \
@@ -127,16 +128,16 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 pkgconfigDATA_INSTALL = $(INSTALL_DATA)
 DATA = $(pkgconfig_DATA)
 am__libpurpleinclude_HEADERS_DIST = account.h accountopt.h blist.h \
-	buddyicon.h cipher.h circbuffer.h cmds.h connection.h \
-	conversation.h core.h dbus-maybe.h debug.h desktopitem.h \
-	eventloop.h ft.h gaim-compat.h idle.h imgstore.h log.h mime.h \
-	nat-pmp.h network.h notify.h ntlm.h plugin.h pluginpref.h \
-	pounce.h prefs.h privacy.h proxy.h prpl.h request.h roomlist.h \
-	savedstatuses.h server.h signals.h dnsquery.h dnssrv.h \
-	status.h stringref.h stun.h sound.h sslconn.h upnp.h util.h \
-	value.h version.h xmlnode.h whiteboard.h dbus-bindings.h \
-	dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h \
-	dbus-types.h
+	buddyicon.h certificate.h cipher.h circbuffer.h cmds.h \
+	connection.h conversation.h core.h dbus-maybe.h debug.h \
+	desktopitem.h eventloop.h ft.h gaim-compat.h idle.h imgstore.h \
+	log.h mime.h nat-pmp.h network.h notify.h ntlm.h plugin.h \
+	pluginpref.h pounce.h prefs.h privacy.h proxy.h prpl.h \
+	request.h roomlist.h savedstatuses.h server.h signals.h \
+	dnsquery.h dnssrv.h status.h stringref.h stun.h sound.h \
+	sslconn.h upnp.h util.h value.h version.h xmlnode.h \
+	whiteboard.h dbus-bindings.h dbus-purple.h dbus-server.h \
+	dbus-useful.h dbus-define-api.h dbus-types.h
 libpurpleincludeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(libpurpleinclude_HEADERS) $(noinst_HEADERS)
 ETAGS = etags
@@ -193,6 +194,8 @@ DYNAMIC_JABBER_FALSE = @DYNAMIC_JABBER_FALSE@
 DYNAMIC_JABBER_TRUE = @DYNAMIC_JABBER_TRUE@
 DYNAMIC_MSN_FALSE = @DYNAMIC_MSN_FALSE@
 DYNAMIC_MSN_TRUE = @DYNAMIC_MSN_TRUE@
+DYNAMIC_MYSPACE_FALSE = @DYNAMIC_MYSPACE_FALSE@
+DYNAMIC_MYSPACE_TRUE = @DYNAMIC_MYSPACE_TRUE@
 DYNAMIC_NOVELL_FALSE = @DYNAMIC_NOVELL_FALSE@
 DYNAMIC_NOVELL_TRUE = @DYNAMIC_NOVELL_TRUE@
 DYNAMIC_OSCAR_FALSE = @DYNAMIC_OSCAR_FALSE@
@@ -221,6 +224,8 @@ ENABLE_CAP_FALSE = @ENABLE_CAP_FALSE@
 ENABLE_CAP_TRUE = @ENABLE_CAP_TRUE@
 ENABLE_DBUS_FALSE = @ENABLE_DBUS_FALSE@
 ENABLE_DBUS_TRUE = @ENABLE_DBUS_TRUE@
+ENABLE_GESTURES_FALSE = @ENABLE_GESTURES_FALSE@
+ENABLE_GESTURES_TRUE = @ENABLE_GESTURES_TRUE@
 ENABLE_GNT_FALSE = @ENABLE_GNT_FALSE@
 ENABLE_GNT_TRUE = @ENABLE_GNT_TRUE@
 ENABLE_GTK_FALSE = @ENABLE_GTK_FALSE@
@@ -276,14 +281,12 @@ INTLTOOL_CAVES_RULE = @INTLTOOL_CAVES_RULE@
 INTLTOOL_DESKTOP_RULE = @INTLTOOL_DESKTOP_RULE@
 INTLTOOL_DIRECTORY_RULE = @INTLTOOL_DIRECTORY_RULE@
 INTLTOOL_EXTRACT = @INTLTOOL_EXTRACT@
-INTLTOOL_ICONV = @INTLTOOL_ICONV@
 INTLTOOL_KBD_RULE = @INTLTOOL_KBD_RULE@
 INTLTOOL_KEYS_RULE = @INTLTOOL_KEYS_RULE@
 INTLTOOL_MERGE = @INTLTOOL_MERGE@
-INTLTOOL_MSGFMT = @INTLTOOL_MSGFMT@
-INTLTOOL_MSGMERGE = @INTLTOOL_MSGMERGE@
 INTLTOOL_OAF_RULE = @INTLTOOL_OAF_RULE@
 INTLTOOL_PERL = @INTLTOOL_PERL@
+INTLTOOL_POLICY_RULE = @INTLTOOL_POLICY_RULE@
 INTLTOOL_PONG_RULE = @INTLTOOL_PONG_RULE@
 INTLTOOL_PROP_RULE = @INTLTOOL_PROP_RULE@
 INTLTOOL_SCHEMAS_RULE = @INTLTOOL_SCHEMAS_RULE@
@@ -295,7 +298,6 @@ INTLTOOL_THEME_RULE = @INTLTOOL_THEME_RULE@
 INTLTOOL_UI_RULE = @INTLTOOL_UI_RULE@
 INTLTOOL_UPDATE = @INTLTOOL_UPDATE@
 INTLTOOL_XAM_RULE = @INTLTOOL_XAM_RULE@
-INTLTOOL_XGETTEXT = @INTLTOOL_XGETTEXT@
 INTLTOOL_XML_NOMERGE_RULE = @INTLTOOL_XML_NOMERGE_RULE@
 INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 KRB4_CFLAGS = @KRB4_CFLAGS@
@@ -356,6 +358,7 @@ PURPLE_VERSION = @PURPLE_VERSION@
 PYTHON = @PYTHON@
 RANLIB = @RANLIB@
 SASL_LIBS = @SASL_LIBS@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SILC_CFLAGS = @SILC_CFLAGS@
@@ -376,6 +379,8 @@ STATIC_JABBER_TRUE = @STATIC_JABBER_TRUE@
 STATIC_LINK_LIBS = @STATIC_LINK_LIBS@
 STATIC_MSN_FALSE = @STATIC_MSN_FALSE@
 STATIC_MSN_TRUE = @STATIC_MSN_TRUE@
+STATIC_MYSPACE_FALSE = @STATIC_MYSPACE_FALSE@
+STATIC_MYSPACE_TRUE = @STATIC_MYSPACE_TRUE@
 STATIC_NOVELL_FALSE = @STATIC_NOVELL_FALSE@
 STATIC_NOVELL_TRUE = @STATIC_NOVELL_TRUE@
 STATIC_OSCAR_FALSE = @STATIC_OSCAR_FALSE@
@@ -521,6 +526,7 @@ purple_coresources = \
 	accountopt.c \
 	blist.c \
 	buddyicon.c \
+	certificate.c \
 	cipher.c \
 	circbuffer.c \
 	cmds.c \
@@ -570,6 +576,7 @@ purple_coreheaders = \
 	accountopt.h \
 	blist.h \
 	buddyicon.h \
+	certificate.h \
 	cipher.h \
 	circbuffer.h \
 	cmds.h \
@@ -823,6 +830,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/accountopt.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/blist.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddyicon.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/certificate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cipher.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/circbuffer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cmds.Plo@am__quote@

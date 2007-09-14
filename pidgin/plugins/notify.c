@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 
@@ -167,7 +167,7 @@ notify(PurpleConversation *conv, gboolean increment)
 	gboolean has_focus;
 	PidginWindow *purplewin = NULL;
 
-	if (conv == NULL)
+	if (conv == NULL || PIDGIN_CONVERSATION(conv) == NULL)
 		return 0;
 
 	/* We want to remove the notifications, but not reset the counter */
@@ -224,6 +224,8 @@ unnotify(PurpleConversation *conv, gboolean reset)
 	PidginWindow *purplewin = NULL;
 
 	g_return_if_fail(conv != NULL);
+	if (PIDGIN_CONVERSATION(conv) == NULL)
+		return;
 
 	purplewin = PIDGIN_CONVERSATION(conv)->win;
 	active_conv = pidgin_conv_window_get_active_conversation(purplewin);
@@ -417,10 +419,14 @@ static void
 deleting_conv(PurpleConversation *conv)
 {
 	PidginWindow *purplewin = NULL;
+	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+
+	if (gtkconv == NULL)
+		return;
 
 	detach_signals(conv);
 
-	purplewin = PIDGIN_CONVERSATION(conv)->win;
+	purplewin = gtkconv->win;
 
 	handle_urgent(purplewin, FALSE);
 	purple_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));

@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _PURPLE_VALUE_H_
 #define _PURPLE_VALUE_H_
@@ -77,7 +77,8 @@ typedef enum
 	PURPLE_SUBTYPE_SAVEDSTATUS,
 	PURPLE_SUBTYPE_XMLNODE,
 	PURPLE_SUBTYPE_USERINFO,
-	PURPLE_SUBTYPE_STORED_IMAGE
+	PURPLE_SUBTYPE_STORED_IMAGE,
+	PURPLE_SUBTYPE_CERTIFICATEPOOL
 } PurpleSubType;
 
 /**

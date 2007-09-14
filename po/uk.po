@@ -10786,7 +10786,7 @@ msgid "Active which ID?"
 msgstr "Активувати який ID?"
 
 #: src/protocols/yahoo/yahoo.c:2972
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "До кого приєднатись у розмові?"
 
 #: src/protocols/yahoo/yahoo.c:2982

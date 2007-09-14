@@ -19,8 +19,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, 
- * Boston, MA 02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ * Boston, MA 02111-1301, USA.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -677,8 +677,6 @@ gtk_source_undo_manager_insert_text_handler (GtkTextBuffer 		*buffer,
 	if (um->priv->running_not_undoable_actions > 0)
 		return;
 
-	g_return_if_fail (strlen (text) >= (guint)length);
-	
 	undo_action.action_type = GTK_SOURCE_UNDO_ACTION_INSERT;
 
 	undo_action.action.insert.pos    = gtk_text_iter_get_offset (pos);
@@ -774,7 +772,7 @@ gtk_source_undo_manager_add_action (GtkSourceUndoManager 	*um,
 		*action = *undo_action;
 
 		if (action->action_type == GTK_SOURCE_UNDO_ACTION_INSERT)
-			action->action.insert.text = g_strdup (undo_action->action.insert.text);
+			action->action.insert.text = g_strndup (undo_action->action.insert.text, undo_action->action.insert.length);
 		else if (action->action_type == GTK_SOURCE_UNDO_ACTION_DELETE)
 			action->action.delete.text = g_strdup (undo_action->action.delete.text); 
 		else

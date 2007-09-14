@@ -27,6 +27,8 @@ JABBERSOURCES = auth.c \
 			  oob.h \
 			  parser.c \
 			  parser.h \
+			  ping.c \
+			  ping.h \
 			  presence.c \
 			  presence.h \
 			  roster.c \
@@ -34,7 +36,19 @@ JABBERSOURCES = auth.c \
 			  si.c \
 			  si.h \
 			  xdata.c \
-			  xdata.h
+			  xdata.h \
+			  caps.c \
+			  caps.h \
+			  adhoccommands.c \
+			  adhoccommands.h \
+			  pep.c \
+			  pep.h \
+			  usermood.c \
+			  usermood.h \
+			  usernick.c \
+			  usernick.h \
+			  usertune.c \
+			  usertune.h
 
 AM_CFLAGS = $(st)
 

@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _PIDGINUTILS_H_
 #define _PIDGINUTILS_H_
@@ -311,7 +311,7 @@ void pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidge
  * The default filter function for screenname autocomplete.
  *
  * @param completion_entry The completion entry to filter.
- * @param online_accounts  If this is @c FALSE, only the autocompletion entries
+ * @param all_accounts  If this is @c FALSE, only the autocompletion entries
  *                         which belong to an online account will be filtered.
  * @return Returns @c TRUE if the autocompletion entry is filtered.
  */
@@ -418,6 +418,14 @@ gboolean pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 void pidgin_set_accessible_label(GtkWidget *w, GtkWidget *l);
 
 /**
+ * Sets the labelled-by and label-for ATK relationships.
+ *
+ * @param w The widget that we want to label.
+ * @param l A GtkLabel that we want to use as the label for the widget.
+ */
+void pidgin_set_accessible_relations(GtkWidget *w, GtkWidget *l);
+
+/**
  * A helper function for GtkMenuPositionFuncs. This ensures the menu will
  * be kept on screen if possible.
  *
@@ -427,7 +435,7 @@ void pidgin_set_accessible_label(GtkWidget *w, GtkWidget *l);
  * @param y Address of the gint representing the vertical position
  *        where the menu shall be drawn. This is an output parameter.
  * @param push_in This is an output parameter?
- * @param user_data Not used by this particular position function.
+ * @param data Not used by this particular position function.
  */
 void pidgin_menu_position_func_helper(GtkMenu *menu, gint *x, gint *y,
 										gboolean *push_in, gpointer data);
@@ -650,10 +658,37 @@ const char *pidgin_get_dim_grey_string(GtkWidget *widget);
  * @param ...            list of integers terminated by -1
  *
  * @return               A newly created GtkTreePath.
- *
  */
 GtkTreePath *gtk_tree_path_new_from_indices (gint first_index, ...);
 #endif
+
+/**
+ * Create a simple text GtkComboBoxEntry equivalent
+ *
+ * @param default_item   Initial contents of GtkEntry
+ * @param items          GList containing strings to add to GtkComboBox
+ *
+ * @return               A newly created text GtkComboBox containing a GtkEntry
+ *                       child.
+ */
+GtkWidget *pidgin_text_combo_box_entry_new(const char *default_item, GList *items);
+
+/**
+ * Retrieve the text from the entry of the simple text GtkComboBoxEntry equivalent
+ *
+ * @param widget         The simple text GtkComboBoxEntry equivalent widget
+ *
+ * @return               The text in the widget's entry. It must not be freed
+ */
+const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget);
+
+/**
+ * Set the text in the entry of the simple text GtkComboBoxEntry equivalent
+ *
+ * @param widget         The simple text GtkComboBoxEntry equivalent widget
+ * @param text           The text to set
+ */
+void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
 
 #endif /* _PIDGINUTILS_H_ */
 

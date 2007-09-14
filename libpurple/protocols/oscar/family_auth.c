@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
 */
 
 /*
@@ -211,7 +211,7 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 
 #ifdef USE_XOR_FOR_ICQ
 	/* If we're signing on an ICQ account then use the older, XOR login method */
-	if (aim_sn_is_icq(sn))
+	if (aim_snvalid_icq(sn))
 		return goddamnicq2(od, conn, sn, password, ci);
 #endif
 
@@ -224,7 +224,7 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 
 	/* Truncate ICQ and AOL passwords, if necessary */
 	password_len = strlen(password);
-	if (aim_sn_is_icq(sn) && (password_len > MAXICQPASSLEN))
+	if (aim_snvalid_icq(sn) && (password_len > MAXICQPASSLEN))
 		password_len = MAXICQPASSLEN;
 	else if (truncate_pass && password_len > 8)
 		password_len = 8;
@@ -477,7 +477,7 @@ aim_request_login(OscarData *od, FlapConnection *conn, const char *sn)
 		return -EINVAL;
 
 #ifdef USE_XOR_FOR_ICQ
-	if (aim_sn_is_icq(sn))
+	if (aim_snvalid_icq(sn))
 		return goddamnicq(od, conn, sn);
 #endif
 

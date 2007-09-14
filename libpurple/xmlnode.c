@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 /* A lot of this code at least resembles the code in libxode, but since
@@ -272,6 +272,8 @@ xmlnode_free(xmlnode *node)
 	if(NULL != node->parent) {
 		if(node->parent->child == node) {
 			node->parent->child = node->next;
+			if (node->parent->lastchild == node)
+				node->parent->lastchild = node->next;
 		} else {
 			xmlnode *prev = node->parent->child;
 			while(prev && prev->next != node) {
@@ -279,6 +281,8 @@ xmlnode_free(xmlnode *node)
 			}
 			if(prev) {
 				prev->next = node->next;
+				if (node->parent->lastchild == node)
+					node->parent->lastchild = prev;
 			}
 		}
 	}
@@ -545,7 +549,16 @@ static void
 xmlnode_parser_error_libxml(void *user_data, const char *msg, ...)
 {
 	struct _xmlnode_parser_data *xpd = user_data;
+	char errmsg[2048];
+	va_list args;
+
 	xpd->error = TRUE;
+
+	va_start(args, msg);
+	vsnprintf(errmsg, sizeof(errmsg), msg, args);
+	va_end(args);
+
+	purple_debug_error("xmlnode", "Error parsing xml file: %s\n", errmsg);
 }
 
 static xmlSAXHandler xmlnode_parser_libxml = {
@@ -623,6 +636,7 @@ xmlnode_copy(const xmlnode *src)
 	g_return_val_if_fail(src != NULL, NULL);
 
 	ret = new_node(src->name, src->type);
+	ret->xmlns = g_strdup(src->xmlns);
 	if(src->data) {
 		if(src->data_sz) {
 			ret->data = g_memdup(src->data, src->data_sz);

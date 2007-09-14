@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "internal.h"
@@ -1380,7 +1380,7 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 				written += fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 		} else {
-			purple_debug_error("log", "Unhandled message type.");
+			purple_debug_error("log", "Unhandled message type.\n");
 			written += fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 		}

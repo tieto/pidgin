@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _PURPLE_JABBER_PRESENCE_H_
 #define _PURPLE_JABBER_PRESENCE_H_
@@ -27,7 +27,8 @@
 #include "xmlnode.h"
 
 void jabber_presence_send(PurpleAccount *account, PurpleStatus *status);
-xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int priority);
+xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int priority); /* DEPRECATED */
+xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, const char *msg, int priority);
 void jabber_presence_parse(JabberStream *js, xmlnode *packet);
 void jabber_presence_subscription_set(JabberStream *js, const char *who,
 		const char *type);

@@ -316,7 +316,7 @@
 #undef HAVE_VPRINTF
 
 /* Define to 1 if you have X11 */
-#undef HAVE_X11
+#undef HAVE_X
 
 /* Define to 1 if you have the <X11/SM/SMlib.h> header file. */
 #undef HAVE_X11_SM_SMLIB_H

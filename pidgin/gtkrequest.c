@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "pidgin.h"
@@ -368,6 +368,8 @@ pidgin_request_input(const char *title, const char *primary,
 	data->u.input.multiline = multiline;
 	data->u.input.hint = g_strdup(hint);
 
+	gtk_widget_show_all(hbox);
+
 	if ((data->u.input.hint != NULL) && (!strcmp(data->u.input.hint, "html"))) {
 		GtkWidget *frame;
 
@@ -429,20 +431,21 @@ pidgin_request_input(const char *title, const char *primary,
 					gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
 			}
 		}
+		gtk_widget_show_all(vbox);
 	}
 
 	pidgin_set_accessible_label (entry, label);
 	data->u.input.entry = entry;
 
 	/* Show everything. */
-	gtk_widget_show_all(dialog);
+	gtk_widget_show(dialog);
 
 	return data;
 }
 
 static void *
 pidgin_request_choice(const char *title, const char *primary,
-			const char *secondary, unsigned int default_value,
+			const char *secondary, int default_value,
 			const char *ok_text, GCallback ok_cb,
 			const char *cancel_text, GCallback cancel_cb,
 			PurpleAccount *account, const char *who, PurpleConversation *conv,
@@ -548,7 +551,7 @@ pidgin_request_choice(const char *title, const char *primary,
 
 static void *
 pidgin_request_action(const char *title, const char *primary,
-						const char *secondary, unsigned int default_action,
+						const char *secondary, int default_action,
 					    PurpleAccount *account, const char *who, PurpleConversation *conv,
 						void *user_data, size_t action_count, va_list actions)
 {
@@ -1083,7 +1086,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	data->cbs[0] = ok_cb;
 	data->cbs[1] = cancel_cb;
 
-	
+
 #ifdef _WIN32
 	data->dialog = win = pidgin_create_window(PIDGIN_ALERT_TITLE, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
 #else /* !_WIN32 */

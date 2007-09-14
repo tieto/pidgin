@@ -10824,7 +10824,7 @@ msgid "Active which ID?"
 msgstr "Kích hoạt ID nào ?"
 
 #: src/protocols/yahoo/yahoo.c:2972
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Tham gia với ai trong Chat?"
 
 #: src/protocols/yahoo/yahoo.c:2982

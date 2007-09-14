@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "gntbutton.h"
@@ -200,7 +200,7 @@ update_location(GntFileSel *sel)
 	const char *tmp;
 	tmp = sel->suggest ? sel->suggest :
 		(const char*)gnt_tree_get_selection_data(sel->dirsonly ? GNT_TREE(sel->dirs) : GNT_TREE(sel->files));
-	old = g_strdup_printf("%s%s%s", sel->current, sel->current[1] ? G_DIR_SEPARATOR_S : "", tmp ? tmp : "");
+	old = g_strdup_printf("%s%s%s", SAFE(sel->current), SAFE(sel->current)[1] ? G_DIR_SEPARATOR_S : "", tmp ? tmp : "");
 	gnt_entry_set_text(GNT_ENTRY(sel->location), old);
 	g_free(old);
 }

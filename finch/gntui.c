@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 
@@ -25,6 +25,7 @@
 
 #include "gntaccount.h"
 #include "gntblist.h"
+#include "gntcertmgr.h"
 #include "gntconn.h"
 #include "gntconv.h"
 #include "gntdebug.h"
@@ -81,6 +82,7 @@ void gnt_ui_init()
 	gnt_register_action(_("Accounts"), finch_accounts_show_all);
 	gnt_register_action(_("Buddy List"), finch_blist_show);
 	gnt_register_action(_("Buddy Pounces"), finch_pounces_manager_show);
+	gnt_register_action(_("Certificates"), finch_certmgr_show);
 	gnt_register_action(_("Debug Window"), finch_debug_window_show);
 	gnt_register_action(_("File Transfers"), finch_xfer_dialog_show);
 	gnt_register_action(_("Plugins"), finch_plugins_show_all);
@@ -89,8 +91,6 @@ void gnt_ui_init()
 	gnt_register_action(_("Statuses"), finch_savedstatus_show_all);
 
 #ifdef STANDALONE
-
-	finch_plugins_save_loaded();
 }
 
 void gnt_ui_uninit()

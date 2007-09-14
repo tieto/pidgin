@@ -18,8 +18,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02111-1301, USA.
  */
 
 #include <windows.h>
@@ -450,7 +450,7 @@ static HICON load_hicon_from_stock(const char *stock) {
 		hicon = pixbuf_to_hicon(pixbuf);
 		g_object_unref(pixbuf);
 	} else
-		purple_debug_error("Unable to load pixbuf for %s.\n", stock);
+		purple_debug_error("docklet", "Unable to load pixbuf for %s.\n", stock);
 
 	return hicon;
 }

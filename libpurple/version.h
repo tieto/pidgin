@@ -19,14 +19,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _PURPLE_VERSION_H_
 #define _PURPLE_VERSION_H_
 
 #define PURPLE_MAJOR_VERSION (2)
-#define PURPLE_MINOR_VERSION (1)
-#define PURPLE_MICRO_VERSION (1)
+#define PURPLE_MINOR_VERSION (2)
+#define PURPLE_MICRO_VERSION (0)
 
 #define PURPLE_VERSION_CHECK(x,y,z) ((x) == PURPLE_MAJOR_VERSION && \
 									 ((y) < PURPLE_MINOR_VERSION || \

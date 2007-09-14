@@ -1,0 +1,39 @@
+
+2007-04-29 Jeff Connelly <jeff2@soc.pidgin.com> 
+
+* NOTE: This code is now being developed under Monotone, in the
+  im.pidgin.soc.2007.msimprpl branch on my local computer, which
+  is periodically sync'd with pidgin.im's Monotone database.
+
+  Changes will be logged to Monotone.
+
+2007-04-15 Jeff Connelly <myspaceim@xyzzy.cjb.net> - 0.4
+
+* Gracefully handle a full receive buffer
+* Handle fatal errors
+
+2007-04-14 Jeff Connelly <myspaceim@xyzzy.cjb.net> - 0.3
+
+* Win32 support
+* Add a large number of precondition checks and a handful of assertions
+* Add documentation to each function, for doxygen.
+
+2007-04-10 Jeff Connelly <myspaceim@xyzzy.cjb.net> - 0.2
+
+* Add ability to IM by email address.
+* Show usernames on buddy list instead of userids.
+* Show incoming messages as coming from username, instead of userid.
+* Add status messages and tooltip text.
+
+2007-04-09 Jeff Connelly <myspaceim@xyzzy.cjb.net> - 0.1
+
+* Parsing most of the protocol.
+* Logging in using RC4/SHA1-based authentication.
+* Sending messages, by numeric userid or username.
+* Receiving messages, currently only by numeric userid.
+* Some buddy list support (show all users on buddy list as online, by uid).
+
+2007-04-07 Jeff Connelly <myspaceim@xyzzy.cjb.net> - 0.0
+
+* Initial version. Login only. Not publicly released.
+

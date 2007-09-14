@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "debug.h"
@@ -166,7 +166,7 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 		message = g_strdup_printf(_("You have been added by %s"), from);
 		_qq_sys_msg_log_write(gc, message, from);
 		purple_request_action(gc, NULL, message,
-				    _("Would like to add him?"), 2,
+				    _("Would you like to add him?"), 2,
 					purple_connection_get_account(gc), name, NULL,
 					g, 3,
 				    _("Cancel"), NULL,

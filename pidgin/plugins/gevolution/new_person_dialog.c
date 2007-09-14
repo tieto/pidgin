@@ -15,8 +15,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
- * 02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02111-1301, USA.
  */
 #include "internal.h"
 #include "pidgin.h"
@@ -195,10 +195,9 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 
 	if (!dialog->person_only)
 	{
-		GtkWidget *entry = GTK_COMBO(dialog->group_combo)->entry;
 		const char *group_name;
 
-		group_name = gtk_entry_get_text(GTK_ENTRY(entry));
+		group_name = pidgin_text_combo_box_entry_get_text(dialog->group_combo);
 
 		gevo_add_buddy(dialog->account, group_name, screenname, full_name);
 	}
@@ -297,9 +296,8 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 						 G_CALLBACK(screenname_changed_cb), dialog);
 
 		/* Group */
-		dialog->group_combo = gtk_combo_new();
-		gtk_combo_set_popdown_strings(GTK_COMBO(dialog->group_combo),
-									  gevo_get_groups());
+		dialog->group_combo = pidgin_text_combo_box_entry_new(NULL,
+			gevo_get_groups());
 		add_pref_box(sg, vbox, _("Group:"), dialog->group_combo);
 
 		/* Separator */

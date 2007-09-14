@@ -10,6 +10,7 @@ EXTRA_DIST =	aim.png \
 		jabber.png \
 		meanwhile.png \
 		msn.png \
+		myspace.png \
 		qq.png \
 		silc.png \
 		simple.png \

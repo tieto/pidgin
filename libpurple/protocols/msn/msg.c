@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "msn.h"
 #include "msg.h"
@@ -400,7 +400,7 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 	GList *l;
 	char *n, *base, *end;
 	int len;
-	size_t body_len;
+	size_t body_len = 0;
 	const void *body;
 
 	g_return_val_if_fail(msg != NULL, NULL);

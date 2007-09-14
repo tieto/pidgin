@@ -3,19 +3,22 @@
 # This file is distributed under the same license as the Pidgin package.
 # loptosko <loptosko@gmail.com>, 2007.
 # Jozef Káčer <quickparser@gmail.com>, 2007.
+# Ivan Masár <helix84@centrum.sk>, 2007.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pidgin-1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-19 03:21-0400\n"
-"PO-Revision-Date: 2007-07-18 19:59+0100\n"
-"Last-Translator: loptosko <loptosko@gmail.com>\n"
+"POT-Creation-Date: 2007-08-30 00:02+0000\n"
+"PO-Revision-Date: 2007-09-10 17:31+0000\n"
+"Last-Translator: helix84 <helix84@centrum.sk>\n"
 "Language-Team: Slovak <kde-sk@linux.sk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms:  nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Rosetta-Export-Date: 2007-09-10 18:08:25+0000\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -27,7 +30,7 @@ msgstr "Finch"
 #: ../finch/finch.c:206
 #, c-format
 msgid "%s. Try `%s -h' for more information.\n"
-msgstr "%s. Príkaz `%s -h' zobrazí viac informácií.\n"
+msgstr "%s. Príkaz „%s -h“ zobrazí viac informácií.\n"
 
 #: ../finch/finch.c:208
 #, c-format
@@ -50,7 +53,7 @@ msgstr ""
 "  -n, --nologin       neprihlasovať automaticky\n"
 "  -v, --version       zobrazí verziu programu a skončí\n"
 
-#: ../finch/finch.c:327 ../pidgin/gtkmain.c:711
+#: ../finch/finch.c:327 ../pidgin/gtkmain.c:710
 #, c-format
 msgid ""
 "%s encountered errors migrating your settings from %s to %s. Please "
@@ -97,10 +100,10 @@ msgstr "Nie sú nainštalované žiadne moduly protokolov."
 
 #: ../finch/gntaccount.c:480
 msgid "(You probably forgot to 'make install'.)"
-msgstr "(Pravdepodobne ste zabudli na 'make install'.)"
+msgstr "(Pravdepodobne ste zabudli na „make install“.)"
 
 #: ../finch/gntaccount.c:490 ../pidgin/gtkaccount.c:1478
-#: ../pidgin/gtkblist.c:4023
+#: ../pidgin/gtkblist.c:4025
 msgid "Modify Account"
 msgstr "Upraviť účet"
 
@@ -187,7 +190,7 @@ msgstr "Prezývka:"
 #: ../libpurple/protocols/yahoo/yahoo.c:1016
 #: ../libpurple/protocols/yahoo/yahoo.c:3398
 #: ../libpurple/protocols/yahoo/yahoo.c:3409 ../pidgin/gtkaccount.c:1917
-#: ../pidgin/gtkaccount.c:2511 ../pidgin/gtkblist.c:5925
+#: ../pidgin/gtkaccount.c:2511 ../pidgin/gtkblist.c:5929
 #: ../pidgin/gtkdialogs.c:750 ../pidgin/gtkdialogs.c:888
 #: ../pidgin/gtkdialogs.c:980 ../pidgin/gtkdialogs.c:1000
 #: ../pidgin/gtkdialogs.c:1024 ../pidgin/gtkdialogs.c:1046
@@ -251,7 +254,7 @@ msgstr "V nasledujúcom zozname je možné povoliť a zakázať účty."
 #: ../libpurple/protocols/sametime/sametime.c:5487
 #: ../libpurple/protocols/silc/chat.c:615
 #: ../libpurple/protocols/silc10/chat.c:599 ../pidgin/gtkaccount.c:2510
-#: ../pidgin/gtkblist.c:5924 ../pidgin/gtkconv.c:1654
+#: ../pidgin/gtkblist.c:5928 ../pidgin/gtkconv.c:1654
 #: ../pidgin/gtkrequest.c:274
 msgid "Add"
 msgstr "Pridať"
@@ -274,8 +277,8 @@ msgstr "Pridať priateľa do vášho zoznamu?"
 #, c-format
 msgid "%s%s%s%s wants to add %s to his or her buddy list%s%s"
 msgstr ""
-"%s%s%sPoužívateľ %s si chce pridať používateľa %s do svojho zoznamu priateľov"
-"%s%s"
+"%s%s%sPoužívateľ %s si chce pridať používateľa %s do svojho zoznamu "
+"priateľov%s%s"
 
 #: ../finch/gntaccount.c:958 ../finch/gntaccount.c:961
 #: ../finch/gntaccount.c:988 ../pidgin/gtkaccount.c:2590
@@ -337,7 +340,7 @@ msgstr "Skupina"
 #: ../finch/gntblist.c:334 ../finch/gntblist.c:400 ../finch/gntblist.c:1304
 #: ../finch/gntnotify.c:173 ../finch/gntstatus.c:572
 #: ../libpurple/plugins/idle.c:153 ../libpurple/plugins/idle.c:190
-#: ../pidgin/gtkblist.c:2986 ../pidgin/gtknotify.c:488
+#: ../pidgin/gtkblist.c:2988 ../pidgin/gtknotify.c:488
 #: ../pidgin/gtkpounce.c:1282 ../pidgin/plugins/gevolution/gevolution.c:445
 msgid "Account"
 msgstr "Účet"
@@ -351,7 +354,7 @@ msgstr "Účet"
 #: ../libpurple/protocols/silc10/buddy.c:1033
 #: ../libpurple/protocols/silc10/buddy.c:1080
 #: ../libpurple/protocols/silc10/buddy.c:1180
-#: ../libpurple/protocols/yahoo/yahoo.c:3243 ../pidgin/gtkblist.c:5431
+#: ../libpurple/protocols/yahoo/yahoo.c:3243 ../pidgin/gtkblist.c:5435
 #: ../pidgin/plugins/gevolution/add_buddy_dialog.c:445
 msgid "Add Buddy"
 msgstr "Pridať priateľa"
@@ -379,7 +382,7 @@ msgstr "Meno"
 msgid "Auto-join"
 msgstr "Prihlásiť automaticky"
 
-#: ../finch/gntblist.c:418 ../finch/gntblist.c:853 ../pidgin/gtkblist.c:5810
+#: ../finch/gntblist.c:418 ../finch/gntblist.c:853 ../pidgin/gtkblist.c:5814
 msgid "Add Chat"
 msgstr "Pridať chat"
 
@@ -401,7 +404,7 @@ msgstr "Skupina s týmto názvom už existuje."
 
 #: ../finch/gntblist.c:453 ../finch/gntblist.c:855
 #: ../libpurple/protocols/sametime/sametime.c:5397
-#: ../libpurple/protocols/sametime/sametime.c:5485 ../pidgin/gtkblist.c:5921
+#: ../libpurple/protocols/sametime/sametime.c:5485 ../pidgin/gtkblist.c:5925
 msgid "Add Group"
 msgstr "Pridať skupinu"
 
@@ -425,11 +428,11 @@ msgstr "Upraviť"
 msgid "Edit Settings"
 msgstr "Upraviť nastavenia"
 
-#: ../finch/gntblist.c:863 ../pidgin/gtkutils.c:930
+#: ../finch/gntblist.c:863 ../pidgin/gtkutils.c:941
 msgid "Information"
 msgstr "Informácie"
 
-#: ../finch/gntblist.c:863 ../pidgin/gtkutils.c:930
+#: ../finch/gntblist.c:863 ../pidgin/gtkutils.c:941
 msgid "Retrieving..."
 msgstr "Prijíma sa..."
 
@@ -500,7 +503,7 @@ msgstr "Odstrániť"
 
 #. Buddy List
 #: ../finch/gntblist.c:1225 ../finch/gntblist.c:2297 ../finch/gntprefs.c:257
-#: ../finch/gntui.c:82 ../pidgin/gtkblist.c:4267
+#: ../finch/gntui.c:82 ../pidgin/gtkblist.c:4269
 #: ../pidgin/plugins/win32/winprefs/winprefs.c:326
 msgid "Buddy List"
 msgstr "Zoznam priateľov"
@@ -532,7 +535,7 @@ msgstr "Prepnúť značku"
 #: ../libpurple/protocols/silc10/ops.c:1036
 #: ../libpurple/protocols/silc10/ops.c:1179
 #: ../libpurple/protocols/silc10/ops.c:1328
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1066 ../pidgin/gtkblist.c:3010
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1061 ../pidgin/gtkblist.c:3012
 msgid "Nickname"
 msgstr "Prezývka"
 
@@ -545,8 +548,8 @@ msgstr "Prezývka"
 #: ../libpurple/protocols/novell/novell.c:2825
 #: ../libpurple/protocols/oscar/oscar.c:2882
 #: ../libpurple/protocols/yahoo/yahoo.c:2997
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:710 ../pidgin/gtkblist.c:3038
-#: ../pidgin/gtkblist.c:3443 ../pidgin/gtkprefs.c:1920
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:710 ../pidgin/gtkblist.c:3040
+#: ../pidgin/gtkblist.c:3445 ../pidgin/gtkprefs.c:1920
 msgid "Idle"
 msgstr "Nečinný"
 
@@ -639,7 +642,7 @@ msgstr ""
 #: ../libpurple/protocols/silc10/silc.c:735
 #: ../libpurple/protocols/yahoo/yahoo.c:1015
 #: ../libpurple/protocols/yahoo/yahoo.c:3397
-#: ../libpurple/protocols/yahoo/yahoo.c:3408 ../pidgin/gtkblist.c:4022
+#: ../libpurple/protocols/yahoo/yahoo.c:3408 ../pidgin/gtkblist.c:4024
 #: ../pidgin/gtkdialogs.c:749 ../pidgin/gtkdialogs.c:887
 #: ../pidgin/gtkdialogs.c:979 ../pidgin/gtkrequest.c:269
 msgid "OK"
@@ -702,7 +705,8 @@ msgid "No such command."
 msgstr "Tento príkaz neexistuje."
 
 #: ../finch/gntconv.c:122 ../pidgin/gtkconv.c:495
-msgid "Syntax Error:  You typed the wrong number of arguments to that command."
+msgid ""
+"Syntax Error:  You typed the wrong number of arguments to that command."
 msgstr "Chyba syntaxi: V príkaze ste zadali nesprávny počet argumentov."
 
 #: ../finch/gntconv.c:127 ../pidgin/gtkconv.c:501
@@ -786,18 +790,20 @@ msgid ""
 "Use \"/help &lt;command&gt;\" for help on a specific command.\n"
 "The following commands are available in this context:\n"
 msgstr ""
-"Pomocníka ku zadanému príkazu zobrazíte zadaním \"/help &lt;príkaz&gt;\".\n"
+"Pomocníka ku zadanému príkazu zobrazíte zadaním „/help &lt;príkaz&gt;“.\n"
 "V tomto kontexte sú dostupné nasledujúce príkazy:\n"
 
 #: ../finch/gntconv.c:1001 ../pidgin/gtkconv.c:7350
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
-msgstr "say &lt;správa&gt;:  Odošle správu rovnako, ako bez použitia príkazu."
+msgstr ""
+"say &lt;správa&gt;:  Odošle správu rovnako, ako bez použitia príkazu."
 
 #: ../finch/gntconv.c:1004 ../pidgin/gtkconv.c:7353
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
-msgstr "me &lt;akcia&gt;:  Odošle priateľovi alebo na chat akciu v štýle IRC."
+msgstr ""
+"me &lt;akcia&gt;:  Odošle priateľovi alebo na chat akciu v štýle IRC."
 
 #: ../finch/gntconv.c:1007 ../pidgin/gtkconv.c:7356
 msgid ""
@@ -824,23 +830,23 @@ msgstr "plugins: Zobrazí okno modulov."
 
 #: ../finch/gntconv.c:1024
 msgid "buddylist: Show the buddylist."
-msgstr "buddylist: Zobrazí zoznam priateľov."
+msgstr "zoznam kamarátov: Zobraziť zoznam."
 
 #: ../finch/gntconv.c:1027
 msgid "accounts: Show the accounts window."
-msgstr "accounts: Zobrazí okno účtov."
+msgstr "účty: Zobraziť okno s účtami."
 
 #: ../finch/gntconv.c:1030
 msgid "debugwin: Show the debug window."
-msgstr "debugwin: Zobrazí ladiace okno."
+msgstr "ladiace okno: Zobraziť ladiace okno"
 
 #: ../finch/gntconv.c:1033
 msgid "prefs: Show the preference window."
-msgstr "prefs: Zobrazí okno nastavení."
+msgstr "vlastnosti: Zobraziť okno vlastností"
 
 #: ../finch/gntconv.c:1036
 msgid "statuses: Show the savedstatuses window."
-msgstr "statuses: Zobrazí okno uložených stavov."
+msgstr "stavy: Zobraziť okno stavov."
 
 #: ../finch/gntdebug.c:234 ../finch/gntui.c:84 ../pidgin/gtkdebug.c:694
 msgid "Debug Window"
@@ -849,14 +855,14 @@ msgstr "Ladiace okno"
 #. XXX: Setting the GROW_Y for the following widgets don't make sense. But right now
 #. * it's necessary to make the width of the debug window resizable ... like I said,
 #. * it doesn't make sense. The bug is likely in the packing in gntbox.c.
-#.
+#. 
 #: ../finch/gntdebug.c:255 ../pidgin/gtkdebug.c:753
 msgid "Clear"
 msgstr "Vyčistiť"
 
 #: ../finch/gntdebug.c:261
 msgid "Filter: "
-msgstr "Filter:"
+msgstr "Filter: "
 
 #: ../finch/gntdebug.c:265 ../pidgin/gtkdebug.c:762
 msgid "Pause"
@@ -911,8 +917,8 @@ msgstr "Zostáva"
 #: ../libpurple/protocols/oscar/oscar.c:3748
 #: ../libpurple/protocols/sametime/sametime.c:3264
 #: ../libpurple/protocols/sametime/sametime.c:4151
-#: ../libpurple/protocols/yahoo/yahoo.c:3148 ../pidgin/gtkblist.c:3082
-#: ../pidgin/gtkblist.c:3095 ../pidgin/gtkblist.c:3097
+#: ../libpurple/protocols/yahoo/yahoo.c:3148 ../pidgin/gtkblist.c:3084
+#: ../pidgin/gtkblist.c:3097 ../pidgin/gtkblist.c:3099
 #: ../pidgin/gtksavedstatuses.c:998 ../pidgin/gtksavedstatuses.c:1143
 msgid "Status"
 msgstr "Stav"
@@ -923,7 +929,7 @@ msgstr "Zatvoriť toto okno po dokončení všetkých prenosov"
 
 #: ../finch/gntft.c:215
 msgid "Clear finished transfers"
-msgstr "Vymazať dokončené prenosy"
+msgstr "Odstrániť dokončené prenosy"
 
 #: ../finch/gntft.c:229
 msgid "Stop"
@@ -1245,6 +1251,7 @@ msgid "%s has sent you a message. (%s)"
 msgstr "používateľ %s vám poslal správu. (%s)"
 
 #: ../finch/gntpounce.c:818 ../pidgin/gtkpounce.c:1485
+#, c-format
 msgid "Unknown pounce event. Please report this!"
 msgstr "Neznáma udalosť sledovania. Oznámte to, prosím!"
 
@@ -1284,11 +1291,11 @@ msgstr "Zaznamenávať správy"
 
 #: ../finch/gntprefs.c:199
 msgid "Log chats"
-msgstr "Zaznamenávať chaty"
+msgstr "Ukladať rozhovory"
 
 #: ../finch/gntprefs.c:200
 msgid "Log status change events"
-msgstr "Zaznamenávať zmeny stavu"
+msgstr "Ukladať zmenu stavu"
 
 #: ../finch/gntprefs.c:206
 msgid "Report Idle time"
@@ -1332,15 +1339,15 @@ msgstr "Otvoriť súbor..."
 
 #: ../finch/gntsound.c:94 ../pidgin/gtksound.c:63
 msgid "Buddy logs in"
-msgstr "Priateľ sa prihlási"
+msgstr "Priateľ sa prihlásil"
 
 #: ../finch/gntsound.c:95 ../pidgin/gtksound.c:64
 msgid "Buddy logs out"
-msgstr "Priateľ sa odhlási"
+msgstr "Priateľ sa odhlásil"
 
 #: ../finch/gntsound.c:96 ../pidgin/gtksound.c:65
 msgid "Message received"
-msgstr "Prijatie správy"
+msgstr "Prijatá správa"
 
 #: ../finch/gntsound.c:97 ../pidgin/gtksound.c:66
 msgid "Message received begins conversation"
@@ -1348,7 +1355,7 @@ msgstr "Prijatá správa začína rozhovor"
 
 #: ../finch/gntsound.c:98 ../pidgin/gtksound.c:67
 msgid "Message sent"
-msgstr "Odoslanie správy"
+msgstr "Správa odoslaná"
 
 #: ../finch/gntsound.c:99 ../pidgin/gtksound.c:68
 msgid "Person enters chat"
@@ -1413,11 +1420,11 @@ msgstr "Žiadne zvuky"
 
 #: ../finch/gntsound.c:951 ../pidgin/gtkprefs.c:1707
 msgid "Sound Method"
-msgstr "Spôsob prehrávania zvukov"
+msgstr "Metóda zvukov"
 
 #: ../finch/gntsound.c:956
 msgid "Method: "
-msgstr "Spôsob:"
+msgstr "Spôsob: "
 
 #: ../finch/gntsound.c:963
 #, c-format
@@ -1484,7 +1491,7 @@ msgstr "Vybrať..."
 #: ../finch/gntstatus.c:137
 #, c-format
 msgid "Are you sure you want to delete \"%s\""
-msgstr "Naozaj chcete odstrániť \"%s\""
+msgstr "Naozaj chcete odstrániť „%s“"
 
 #: ../finch/gntstatus.c:140
 msgid "Delete Status"
@@ -1500,7 +1507,7 @@ msgstr "Uložené stavy"
 #: ../libpurple/protocols/novell/novell.c:1484
 #: ../pidgin/gtksavedstatuses.c:499
 msgid "Title"
-msgstr "Titulok"
+msgstr "Nadpis"
 
 #: ../finch/gntstatus.c:182 ../pidgin/gtksavedstatuses.c:514
 msgid "Type"
@@ -1749,13 +1756,13 @@ msgstr "Zadajte heslo"
 msgid "Save password"
 msgstr "Uložiť heslo"
 
-#: ../libpurple/account.c:1010 ../libpurple/connection.c:104
+#: ../libpurple/account.c:1010 ../libpurple/connection.c:108
 #, c-format
 msgid "Missing protocol plugin for %s"
 msgstr "Chýba modul protokolu pre protokol %s"
 
-#: ../libpurple/account.c:1012 ../libpurple/connection.c:107
-#: ../pidgin/gtkblist.c:4019
+#: ../libpurple/account.c:1012 ../libpurple/connection.c:111
+#: ../pidgin/gtkblist.c:4021
 msgid "Connection Error"
 msgstr "Chyba pripojenia"
 
@@ -1809,7 +1816,7 @@ msgstr "Neznáma"
 
 #: ../libpurple/blist.c:521 ../libpurple/blist.c:1289
 #: ../libpurple/blist.c:1518 ../libpurple/protocols/jabber/roster.c:68
-#: ../pidgin/gtkblist.c:5321 ../pidgin/plugins/gevolution/gevolution.c:96
+#: ../pidgin/gtkblist.c:5325 ../pidgin/plugins/gevolution/gevolution.c:96
 #: ../pidgin/plugins/gevolution/gevo-util.c:64
 msgid "Buddies"
 msgstr "Priatelia"
@@ -1818,21 +1825,21 @@ msgstr "Priatelia"
 msgid "buddy list"
 msgstr "zoznam priateľov"
 
-#: ../libpurple/connection.c:106
+#: ../libpurple/connection.c:110
 msgid "Registration Error"
 msgstr "Chyba pri registrácii"
 
-#: ../libpurple/connection.c:293
+#: ../libpurple/connection.c:300
 #, c-format
 msgid "+++ %s signed on"
 msgstr "+++ používateľ %s sa prihlásil"
 
-#: ../libpurple/connection.c:323
+#: ../libpurple/connection.c:330
 #, c-format
 msgid "+++ %s signed off"
 msgstr "+++ používateľ %s sa odhlásil"
 
-#: ../libpurple/connection.c:440 ../libpurple/plugin.c:282
+#: ../libpurple/connection.c:447 ../libpurple/plugin.c:282
 #: ../libpurple/protocols/jabber/buddy.c:1750
 #: ../libpurple/protocols/msn/servconn.c:139
 #: ../libpurple/protocols/msn/session.c:322
@@ -1912,7 +1919,8 @@ msgstr "Nepodarilo sa získať serv názov: %s"
 
 #: ../libpurple/dbus-server.h:84
 msgid "Purple's D-BUS server is not running for the reason listed below"
-msgstr "D-BUS server knižnice Purple nie je spustený z nižšie uvedeného dôvodu"
+msgstr ""
+"D-BUS server knižnice Purple nie je spustený z nižšie uvedeného dôvodu"
 
 #: ../libpurple/desktopitem.c:286 ../libpurple/desktopitem.c:877
 msgid "No name"
@@ -1951,6 +1959,7 @@ msgstr ""
 "%s"
 
 #: ../libpurple/dnsquery.c:577
+#, c-format
 msgid "EOF while reading from resolver process"
 msgstr "Počas čítania z procesu resolveru sa vyskytlo EOF"
 
@@ -1996,7 +2005,7 @@ msgstr "Do priečinku nie je možné zapisovať."
 
 #: ../libpurple/ft.c:266
 msgid "Cannot send a file of 0 bytes."
-msgstr "Posielanie súborov o veľkosti 0 bajtov nie je možné."
+msgstr "Posielanie súborov s veľkosťou 0 bajtov nie je možné."
 
 #: ../libpurple/ft.c:276
 msgid "Cannot send a directory."
@@ -2029,24 +2038,24 @@ msgid ""
 "Remote host: %s\n"
 "Remote port: %d"
 msgstr ""
-"Súbor je k dispozícií na stiahnute z:\n"
-"Vzdialený hostiteľ: %s\n"
+"Súbor je k dispozícii na stiahnutie z:\n"
+"Vzdialený počítač: %s\n"
 "Vzdialený port: %d"
 
 #: ../libpurple/ft.c:434
 #, c-format
 msgid "%s is offering to send file %s"
-msgstr "Používateľ %s ponúka na odoslanie súbor %s"
+msgstr "Používateľ %s vám ponúka súbor %s"
 
 #: ../libpurple/ft.c:486
 #, c-format
 msgid "%s is not a valid filename.\n"
-msgstr "Názov súboru %s nie je platný.\n"
+msgstr "%s nie je platný názov súboru.\n"
 
 #: ../libpurple/ft.c:507
 #, c-format
 msgid "Offering to send %s to %s"
-msgstr "Ponúka sa odoslanie súboru %s používateľovi %s"
+msgstr "Ponúkam poslať %2$s %1$s"
 
 #: ../libpurple/ft.c:519
 #, c-format
@@ -2059,6 +2068,7 @@ msgid "Transfer of file %s complete"
 msgstr "Prenos súboru %s bol dokončený"
 
 #: ../libpurple/ft.c:683
+#, c-format
 msgid "File transfer complete"
 msgstr "Prenos súboru je dokončený"
 
@@ -2068,6 +2078,7 @@ msgid "You canceled the transfer of %s"
 msgstr "Zrušili ste prenos %s"
 
 #: ../libpurple/ft.c:1106
+#, c-format
 msgid "File transfer cancelled"
 msgstr "Prenos súboru zrušený"
 
@@ -2097,175 +2108,167 @@ msgstr "Spustiť príkaz v termináli"
 
 #: ../libpurple/gconf/purple.schemas.in.h:2
 msgid "The command used to handle \"aim\" URLs, if enabled."
-msgstr "Príkaz na ovládanie adries typu \"aim\", ak je povolené."
+msgstr "Príkaz na obsluhu adries typu „aim“, ak je povolené."
 
 #: ../libpurple/gconf/purple.schemas.in.h:3
 msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr "Príkaz na ovládanie adries typu \"gg\", ak je povolené."
+msgstr "Príkaz na obsluhu adries typu „gg“, ak je povolené."
 
 #: ../libpurple/gconf/purple.schemas.in.h:4
 msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr "Príkaz na ovládanie adries typu \"icq\", ak je povolené."
+msgstr "Príkaz na obsluhu adries typu „icq“, ak je povolené."
 
 #: ../libpurple/gconf/purple.schemas.in.h:5
 msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr "Príkaz na ovládanie adries typu \"irc\", ak je povolené."
+msgstr "Príkaz na obsluhu adries typu „irc“, ak je povolené."
 
 #: ../libpurple/gconf/purple.schemas.in.h:6
 msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr "Príkaz na ovládanie adries typu \"msnim\", ak je povolené."
+msgstr "Príkaz na obsluhu adries typu „msnim“, ak je povolené."
 
 #: ../libpurple/gconf/purple.schemas.in.h:7
 msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr "Príkaz na ovládanie adries typu \"sip\", ak je povolené."
+msgstr "Príkaz na obsluhu adries typu „sip“, ak je povolené."
 
 #: ../libpurple/gconf/purple.schemas.in.h:8
 msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr "Príkaz na ovládanie adries typu \"xmpp\", ak je povolené."
+msgstr "Príkaz na obsluhu adries typu „xmpp“, ak je povolené."
 
 #: ../libpurple/gconf/purple.schemas.in.h:9
 msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr "Príkaz na ovládanie adries typu \"ymsgr\", ak je povolené."
+msgstr "Príkaz na obsluhu adries typu „ymsgr“, ak je povolené."
 
 #: ../libpurple/gconf/purple.schemas.in.h:10
 msgid "The handler for \"aim\" URLs"
-msgstr "Príkaz pre adresy \"aim\""
+msgstr "Príkaz pre adresy „aim“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:11
 msgid "The handler for \"gg\" URLs"
-msgstr "Príkaz pre adresy \"gg\""
+msgstr "Príkaz pre adresy „gg“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:12
 msgid "The handler for \"icq\" URLs"
-msgstr "Príkaz pre adresy \"icq\""
+msgstr "Príkaz pre adresy „icq“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:13
 msgid "The handler for \"irc\" URLs"
-msgstr "Príkaz pre adresy \"irc\""
+msgstr "Príkaz pre adresy „irc“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:14
 msgid "The handler for \"msnim\" URLs"
-msgstr "Príkaz pre adresy \"msnim\""
+msgstr "Príkaz pre adresy „msnim“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:15
 msgid "The handler for \"sip\" URLs"
-msgstr "Príkaz pre adresy \"sip\""
+msgstr "Príkaz pre adresy „sip“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:16
 msgid "The handler for \"xmpp\" URLs"
-msgstr "Príkaz pre adresy \"xmpp\""
+msgstr "Príkaz pre adresy „xmpp“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:17
 msgid "The handler for \"ymsgr\" URLs"
-msgstr "Príkaz pre adresy \"ymsgr\""
+msgstr "Príkaz pre adresy „ymsgr“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:18
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
 "URLs."
 msgstr ""
-"Pravda, ak príkaz zadaný v kľúči \"command\" má spracovávať URL adresy \"aim"
-"\"."
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „aim“."
 
 #: ../libpurple/gconf/purple.schemas.in.h:19
 msgid ""
 "True if the command specified in the \"command\" key should handle \"gg\" "
 "URLs."
 msgstr ""
-"Pravda, ak príkaz zadaný v kľúči \"command\" má spracovávať URL adresy \"aim"
-"\"."
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „aim“."
 
 #: ../libpurple/gconf/purple.schemas.in.h:20
 msgid ""
 "True if the command specified in the \"command\" key should handle \"icq\" "
 "URLs."
 msgstr ""
-"Pravda, ak príkaz zadaný v kľúči \"command\" má spracovávať URL adresy \"icq"
-"\"."
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „icq“."
 
 #: ../libpurple/gconf/purple.schemas.in.h:21
 msgid ""
 "True if the command specified in the \"command\" key should handle \"irc\" "
 "URLs."
 msgstr ""
-"Pravda, ak príkaz zadaný v kľúči \"command\" má spracovávať URL adresy \"irc"
-"\"."
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „irc“."
 
 #: ../libpurple/gconf/purple.schemas.in.h:22
 msgid ""
 "True if the command specified in the \"command\" key should handle \"msnim\" "
 "URLs."
 msgstr ""
-"Pravda, ak príkaz zadaný v kľúči \"command\" má spracovávať URL adresy "
-"\"msnim\"."
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „msnim“."
 
 #: ../libpurple/gconf/purple.schemas.in.h:23
 msgid ""
 "True if the command specified in the \"command\" key should handle \"sip\" "
 "URLs."
 msgstr ""
-"Pravda, ak príkaz zadaný v kľúči \"command\" má spracovávať URL adresy \"sip"
-"\"."
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „sip“."
 
 #: ../libpurple/gconf/purple.schemas.in.h:24
 msgid ""
 "True if the command specified in the \"command\" key should handle \"xmpp\" "
 "URLs."
 msgstr ""
-"Pravda, ak príkaz zadaný v kľúči \"command\" má spracovávať URL adresy \"xmpp"
-"\"."
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „xmpp“."
 
 #: ../libpurple/gconf/purple.schemas.in.h:25
 msgid ""
 "True if the command specified in the \"command\" key should handle \"ymsgr\" "
 "URLs."
 msgstr ""
-"Pravda, ak príkaz zadaný v kľúči \"command\" má spracovávať URL adresy "
-"\"ymsgr\"."
+"Pravda, ak príkaz zadaný v kľúči „command“ má spracovávať URL adresy „ymsgr“."
 
 #: ../libpurple/gconf/purple.schemas.in.h:26
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
 "terminal."
 msgstr ""
-"Pravda, ak bude príkaz používaný na spracovanie tohto druhu adresies "
-"spustený v termináli."
+"Pravda, ak bude príkaz používaný na spracovanie tohto druhu adries spustený "
+"v termináli."
 
 #: ../libpurple/gconf/purple.schemas.in.h:27
 msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Či má zadaný príkaz ovládať adresy \"aim\""
+msgstr "Či má zadaný príkaz obsluhovať adresy „aim“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:28
 msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Či má zadaný príkaz ovládať adresy \"gg\""
+msgstr "Či má zadaný príkaz obsluhovať adresy „gg“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:29
 msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Či má zadaný príkaz ovládať adresy \"icq\""
+msgstr "Či má zadaný príkaz obsluhovať adresy „icq“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:30
 msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Či má zadaný príkaz ovládať adresy \"irc\""
+msgstr "Či má zadaný príkaz obsluhovať adresy „irc“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:31
 msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Či má zadaný príkaz ovládať adresy \"msnim\""
+msgstr "Či má zadaný príkaz obsluhovať adresy „msnim“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:32
 msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Či má zadaný príkaz ovládať adresy \"sip\""
+msgstr "Či má zadaný príkaz obsluhovať adresy „sip“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:33
 msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Či má zadaný príkaz ovládať adresy \"xmpp\""
+msgstr "Či má zadaný príkaz obsluhovať adresy „xmpp“"
 
 #: ../libpurple/gconf/purple.schemas.in.h:34
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Či má zadaný príkaz ovládať adresy \"ymsgr\""
+msgstr "Či má zadaný príkaz obsluhovať adresy „ymsgr“"
 
 #: ../libpurple/log.c:182
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
-msgstr "<b><font color=\"red\">Zaznamenávač nepodporuje čítanie</font></b>"
+msgstr "<b><font color=\"red\">Záznamník nepodporuje čítanie</font></b>"
 
 #: ../libpurple/log.c:597
 msgid "HTML"
@@ -2307,7 +2310,8 @@ msgstr ""
 
 #: ../libpurple/log.c:1425 ../libpurple/log.c:1558
 msgid "<font color=\"red\"><b>Unable to find log path!</b></font>"
-msgstr "<font color=\"red\"><b>Nepodarilo sa nájsť cestu k záznamu!</b></font>"
+msgstr ""
+"<font color=\"red\"><b>Nepodarilo sa nájsť cestu k záznamu!</b></font>"
 
 #: ../libpurple/log.c:1437 ../libpurple/log.c:1567
 #, c-format
@@ -2325,6 +2329,7 @@ msgid "You are using %s, but this plugin requires %s."
 msgstr "Používate %s, ale tento modul vyžaduje %s."
 
 #: ../libpurple/plugin.c:380
+#, c-format
 msgid "This plugin has not defined an ID."
 msgstr "Tento modul nemá definované ID."
 
@@ -2386,8 +2391,7 @@ msgstr ""
 #, c-format
 msgid "Autoaccepted file transfer of \"%s\" from \"%s\" completed."
 msgstr ""
-"Automaticky potvrdený prenos súboru \"%s\" od používateľa \"%s\" je "
-"dokončený."
+"Automaticky potvrdený prenos súboru „%s“ od používateľa „%s“ je dokončený."
 
 #: ../libpurple/plugins/autoaccept.c:82
 msgid "Autoaccept complete"
@@ -2607,7 +2611,7 @@ msgstr "Testovací klient IPC"
 #. *  summary
 #: ../libpurple/plugins/ipc-test-client.c:90
 msgid "Test plugin IPC support, as a client."
-msgstr "Test podpory IPC modulov ako klient"
+msgstr "Test podpory IPC modulov ako klient."
 
 #. *  description
 #: ../libpurple/plugins/ipc-test-client.c:92
@@ -2615,8 +2619,8 @@ msgid ""
 "Test plugin IPC support, as a client. This locates the server plugin and "
 "calls the commands registered."
 msgstr ""
-"Test podpory IPC modulov ako klient. Nájde modul serveru a spustí "
-"zaregistrované príkazy"
+"Test podpory IPC modulov ako klient. Nájde modul servera a spustí "
+"zaregistrované príkazy."
 
 #. *< type
 #. *< ui_requirement
@@ -2637,7 +2641,8 @@ msgstr "Test podpory IPC modulov ako server."
 
 #. *  description
 #: ../libpurple/plugins/ipc-test-server.c:79
-msgid "Test plugin IPC support, as a server. This registers the IPC commands."
+msgid ""
+"Test plugin IPC support, as a server. This registers the IPC commands."
 msgstr "Test podpory IPC modulov ako server. Zaregistruje príkazy IPC."
 
 #: ../libpurple/plugins/joinpart.c:229
@@ -2858,7 +2863,9 @@ msgstr "Pridať nový riadok pred zobrazenú správu."
 msgid ""
 "Prepends a newline to messages so that the rest of the message appears below "
 "the screen name in the conversation window."
-msgstr "Pridáva entery pred správy, čo spôsobí že správy sa zobrazujú pod používateľským menom priateľa"
+msgstr ""
+"Pridáva entery pred správy, čo spôsobí že správy sa zobrazujú pod "
+"používateľským menom priateľa"
 
 #: ../libpurple/plugins/offlinemsg.c:23
 msgid "Offline Message Emulation"
@@ -2866,14 +2873,16 @@ msgstr "Emulácia offline správ"
 
 #: ../libpurple/plugins/offlinemsg.c:25 ../libpurple/plugins/offlinemsg.c:26
 msgid "Save messages sent to an offline user as pounce."
-msgstr "Ukladať správy ktoré boli odoslané odhláseným používateľom ako výzvu."
+msgstr ""
+"Ukladať správy ktoré boli odoslané odhláseným používateľom ako výzvu."
 
 #: ../libpurple/plugins/offlinemsg.c:95
 msgid ""
 "The rest of the messages will be saved as pounce. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
 msgstr ""
-"Zostatok správ bude uložený ako sledovanie. Sledovanie môžete pridať/odstrániť v dialógu `Sledovanie priateľov'."
+"Zostatok správ bude uložený ako sledovanie. Sledovanie môžete "
+"pridať/odstrániť v dialógu „Sledovanie priateľov“."
 
 #: ../libpurple/plugins/offlinemsg.c:152
 #, c-format
@@ -2881,8 +2890,8 @@ msgid ""
 "\"%s\" is currently offline. Do you want to save the rest of the messages in "
 "a pounce and automatically send them when \"%s\" logs back in?"
 msgstr ""
-"Používateľ \"%s\" je momentálne odhlásený. Chcete uložiť zvyšok správ do sledovania, a "
-"automaticky ich odoslať hneď, keď sa \"%s\" prihlási?"
+"Používateľ „%s“ je momentálne odhlásený. Chcete uložiť zvyšok správ do "
+"sledovania, a automaticky ich odoslať hneď, keď sa „%s“ prihlási?"
 
 #: ../libpurple/plugins/offlinemsg.c:156
 msgid "Offline Message"
@@ -2890,7 +2899,7 @@ msgstr "Offline správa"
 
 #: ../libpurple/plugins/offlinemsg.c:157
 msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
-msgstr "Sledovanie môžete pridať/odstrániť v dialógu `Sledovanie priateľov'"
+msgstr "Sledovanie môžete pridať/odstrániť v dialógu „Sledovanie priateľov“"
 
 #: ../libpurple/plugins/offlinemsg.c:161
 #: ../libpurple/protocols/msn/dialog.c:133
@@ -3159,7 +3168,8 @@ msgstr "Nepodarilo sa spustiť čakanie na prichádzajúce spojenia\n"
 #: ../libpurple/protocols/bonjour/bonjour.c:137
 msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
-msgstr "Nepodarilo sa založiť spojenie s miestnym mDNS serverom.  Je spustený?"
+msgstr ""
+"Nepodarilo sa založiť spojenie s miestnym mDNS serverom.  Je spustený?"
 
 #. Creating the options for the protocol
 #: ../libpurple/protocols/bonjour/bonjour.c:344
@@ -3185,7 +3195,7 @@ msgstr "Priezvisko"
 #: ../libpurple/protocols/silc/util.c:555
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1056
 msgid "E-Mail"
 msgstr "E-mail"
 
@@ -3218,7 +3228,7 @@ msgstr "Modul protokolu Bonjour"
 #: ../libpurple/protocols/bonjour/bonjour.c:512
 #: ../libpurple/protocols/bonjour/bonjour.c:561
 msgid "Purple Person"
-msgstr "Purple Osoba"
+msgstr "Fialová osoba"
 
 #. Creating the user splits
 #: ../libpurple/protocols/bonjour/bonjour.c:610
@@ -3384,7 +3394,7 @@ msgstr "Rok narodenia"
 #: ../libpurple/protocols/qq/buddy_info.c:46
 #: ../libpurple/protocols/qq/qq.c:226 ../libpurple/protocols/qq/qq.c:229
 #: ../libpurple/protocols/qq/qq.c:232 ../libpurple/protocols/qq/qq.c:236
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1091
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1086
 msgid "Gender"
 msgstr "Pohlavie"
 
@@ -3467,7 +3477,7 @@ msgstr "Pridať na chat..."
 #: ../libpurple/protocols/qq/qq.c:170 ../libpurple/protocols/qq/qq.c:177
 #: ../libpurple/protocols/qq/qq.c:292
 #: ../libpurple/protocols/yahoo/yahoo.c:2999 ../libpurple/status.c:153
-#: ../pidgin/gtkblist.c:3082 ../pidgin/gtkblist.c:3419
+#: ../pidgin/gtkblist.c:3084 ../pidgin/gtkblist.c:3421
 #: ../pidgin/gtkdocklet.c:450 ../pidgin/gtkstatusbox.c:1060
 msgid "Offline"
 msgstr "Odpojený"
@@ -3500,6 +3510,7 @@ msgstr "Pripojený"
 #: ../libpurple/protocols/yahoo/yahoo.c:3627 ../libpurple/status.c:157
 #: ../pidgin/gtkdocklet.c:442 ../pidgin/gtkprefs.c:1934
 #: ../pidgin/gtkstatusbox.c:1057
+#, c-format
 msgid "Away"
 msgstr "Neprítomný"
 
@@ -3541,7 +3552,8 @@ msgstr "Neboli nájdení žiadni zodpovedajúci používatelia"
 
 #: ../libpurple/protocols/gg/gg.c:1211
 msgid "There are no users matching your search criteria."
-msgstr "Používatelia, ktorí vyhovujú vaším kritériám vyhľadávania neexistujú."
+msgstr ""
+"Používatelia, ktorí vyhovujú vaším kritériám vyhľadávania neexistujú."
 
 #: ../libpurple/protocols/gg/gg.c:1305 ../libpurple/protocols/gg/gg.c:1458
 msgid "Unable to read socket"
@@ -3553,7 +3565,7 @@ msgstr "Zoznam priateľov bol stiahnutý"
 
 #: ../libpurple/protocols/gg/gg.c:1391
 msgid "Your buddy list was downloaded from the server."
-msgstr "Váš zoznam priateľov bol stiahnutý zo serveru."
+msgstr "Váš zoznam priateľov bol stiahnutý zo servera."
 
 #: ../libpurple/protocols/gg/gg.c:1398
 msgid "Buddy list uploaded"
@@ -3613,11 +3625,11 @@ msgstr "Nahrať zoznam priateľov na server"
 
 #: ../libpurple/protocols/gg/gg.c:2032
 msgid "Download buddylist from Server"
-msgstr "Stiahnuť zoznam priateľov zo serveru"
+msgstr "Stiahnuť zoznam priateľov zo servera"
 
 #: ../libpurple/protocols/gg/gg.c:2036
 msgid "Delete buddylist from Server"
-msgstr "Odstrániť zoznam priateľov zo serveru"
+msgstr "Odstrániť zoznam priateľov zo servera"
 
 #: ../libpurple/protocols/gg/gg.c:2040
 msgid "Save buddylist to file..."
@@ -3692,16 +3704,16 @@ msgstr "Chyba pri zobrazovaní MOTD"
 
 #: ../libpurple/protocols/irc/irc.c:79
 msgid "No MOTD available"
-msgstr "Žiadne MOTD nie je dostupné"
+msgstr "Žiadna správa dňa nie je dostupná"
 
 #: ../libpurple/protocols/irc/irc.c:80
 msgid "There is no MOTD associated with this connection."
-msgstr "S týmto pripojením nie je asociované žiadne MOTD"
+msgstr "S týmto pripojením nie je asociovaná žiadna správa dňa"
 
 #: ../libpurple/protocols/irc/irc.c:83
 #, c-format
 msgid "MOTD for %s"
-msgstr "MOTD pre %s"
+msgstr "Správa dňa pre %s"
 
 #: ../libpurple/protocols/irc/irc.c:127 ../libpurple/protocols/irc/irc.c:165
 #: ../libpurple/protocols/irc/irc.c:614 ../libpurple/protocols/irc/irc.c:639
@@ -3710,7 +3722,7 @@ msgstr "Server bol odpojený"
 
 #: ../libpurple/protocols/irc/irc.c:249
 msgid "View MOTD"
-msgstr "Zobraziť MOTD"
+msgstr "Zobraziť správu dňa"
 
 #: ../libpurple/protocols/irc/irc.c:261 ../libpurple/protocols/silc/chat.c:33
 #: ../libpurple/protocols/silc10/chat.c:33
@@ -3750,7 +3762,7 @@ msgstr "Podpora SSL je nedostupná"
 #: ../libpurple/protocols/simple/simple.c:464
 #: ../libpurple/protocols/simple/simple.c:1591
 msgid "Couldn't create socket"
-msgstr "Nepodarilo sa vytvoriť soket"
+msgstr "Nepodarilo sa vytvoriť socket"
 
 #: ../libpurple/protocols/irc/irc.c:416
 #: ../libpurple/protocols/oscar/oscar.c:1281
@@ -3776,7 +3788,7 @@ msgstr "Chyba čítania"
 #: ../libpurple/protocols/silc10/chat.c:1426
 #: ../libpurple/protocols/yahoo/yahoochat.c:1401
 msgid "Users"
-msgstr "Užívatelia"
+msgstr "Používatelia"
 
 #: ../libpurple/protocols/irc/irc.c:778
 #: ../libpurple/protocols/sametime/sametime.c:3375
@@ -3798,7 +3810,7 @@ msgstr "Téma"
 #. *< version
 #: ../libpurple/protocols/irc/irc.c:916
 msgid "IRC Protocol Plugin"
-msgstr "Modul protokolu IRC"
+msgstr "Plugin IRC protokolu"
 
 #. *  summary
 #: ../libpurple/protocols/irc/irc.c:917
@@ -3858,10 +3870,10 @@ msgstr "Prihlasovacie meno"
 msgid "Real name"
 msgstr "Skutočné meno"
 
-#.
+#. 
 #. option = purple_account_option_string_new(_("Quit message"), "quitmsg", IRC_DEFAULT_QUIT);
 #. prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-#.
+#. 
 #: ../libpurple/protocols/irc/irc.c:962
 msgid "Use SSL"
 msgstr "Používať SSL"
@@ -3939,7 +3951,7 @@ msgstr "Téma pre %s je: %s"
 #: ../libpurple/protocols/irc/msgs.c:448
 #, c-format
 msgid "Unknown message '%s'"
-msgstr "Neznáma správa '%s'"
+msgstr "Neznáma správa „%s“"
 
 #: ../libpurple/protocols/irc/msgs.c:449
 msgid "Unknown message"
@@ -3960,7 +3972,7 @@ msgstr "Časová odozva"
 
 #: ../libpurple/protocols/irc/msgs.c:576
 msgid "The IRC server's local time is:"
-msgstr "Miestny čas IRC serveru je:"
+msgstr "Miestny čas IRC servera je:"
 
 #: ../libpurple/protocols/irc/msgs.c:587
 msgid "No such channel"
@@ -3977,7 +3989,7 @@ msgstr "Používateľ nie je prihlásený"
 
 #: ../libpurple/protocols/irc/msgs.c:606
 msgid "No such nick or channel"
-msgstr "Takáto prezývka alebo kanál neexistuje "
+msgstr "Takáto prezývka alebo kanál neexistuje"
 
 #: ../libpurple/protocols/irc/msgs.c:626
 msgid "Could not send"
@@ -4042,7 +4054,7 @@ msgstr "Opustili ste kanál %s%s"
 
 #: ../libpurple/protocols/irc/msgs.c:1017
 msgid "Error: invalid PONG from server"
-msgstr "Chyba: neplatný PONG od servra"
+msgstr "Chyba: neplatný PONG od servera"
 
 #: ../libpurple/protocols/irc/msgs.c:1019
 #, c-format
@@ -4229,7 +4241,8 @@ msgstr ""
 "(bez ohľadu na kanál)."
 
 #: ../libpurple/protocols/irc/parse.c:145
-msgid "quit [message]:  Disconnect from the server, with an optional message."
+msgid ""
+"quit [message]:  Disconnect from the server, with an optional message."
 msgstr "quit [message]:  Odpojí zo servera s nepovinnou správou."
 
 #: ../libpurple/protocols/irc/parse.c:146
@@ -4350,7 +4363,7 @@ msgstr "Server nepoužíva žiadny z podporovaných spôsobov autentifikácie"
 #: ../libpurple/protocols/jabber/auth.c:933
 #: ../libpurple/protocols/jabber/jabber.c:115
 msgid "Invalid response from server."
-msgstr "Chybná odpoveď zo serveru."
+msgstr "Chybná odpoveď zo servera."
 
 #: ../libpurple/protocols/jabber/auth.c:572
 msgid ""
@@ -4363,7 +4376,7 @@ msgstr ""
 #: ../libpurple/protocols/jabber/auth.c:769
 #: ../libpurple/protocols/jabber/auth.c:792
 msgid "Invalid challenge from server"
-msgstr "Chybná výzva zo serveru."
+msgstr "Chybná výzva zo servera."
 
 #: ../libpurple/protocols/jabber/auth.c:864
 msgid "SASL error"
@@ -4397,7 +4410,7 @@ msgstr "URL"
 #: ../libpurple/protocols/jabber/buddy.c:276
 #: ../libpurple/protocols/jabber/buddy.c:894
 msgid "Street Address"
-msgstr "Adresa ulice"
+msgstr "Ulica"
 
 #: ../libpurple/protocols/jabber/buddy.c:277
 #: ../libpurple/protocols/jabber/buddy.c:890
@@ -4452,11 +4465,11 @@ msgstr "Postavenie"
 #: ../libpurple/protocols/msn/msn.c:1627
 #: ../libpurple/protocols/oscar/oscar.c:3717
 msgid "Birthday"
-msgstr "Narodeniny"
+msgstr "Dátum narodenia"
 
 #: ../libpurple/protocols/jabber/buddy.c:289
 #: ../libpurple/protocols/jabber/buddy.c:979
-#: ../libpurple/protocols/jabber/chat.c:775 ../pidgin/gtkblist.c:3093
+#: ../libpurple/protocols/jabber/chat.c:775 ../pidgin/gtkblist.c:3095
 #: ../pidgin/gtkprefs.c:738
 msgid "Description"
 msgstr "Popis"
@@ -4549,7 +4562,7 @@ msgstr "Znovu požiadať o autorizáciu"
 #. removed?
 #: ../libpurple/protocols/jabber/buddy.c:1437
 msgid "Unsubscribe"
-msgstr "Odpísať sa"
+msgstr "Odhlásiť sa"
 
 #: ../libpurple/protocols/jabber/buddy.c:1470
 #: ../libpurple/protocols/jabber/jabber.c:1252
@@ -4565,6 +4578,7 @@ msgstr "Dlhšie neprítomný"
 #: ../libpurple/protocols/oscar/oscar.c:726
 #: ../libpurple/protocols/oscar/oscar.c:5756
 #: ../libpurple/protocols/sametime/sametime.c:3298
+#, c-format
 msgid "Do Not Disturb"
 msgstr "Nerušiť"
 
@@ -4604,7 +4618,7 @@ msgstr "Nedá sa poslať požiadavka na priečinkový server."
 #: ../libpurple/protocols/jabber/buddy.c:1787
 #, c-format
 msgid "Server Instructions: %s"
-msgstr "Inštrukcie serveru: %s"
+msgstr "Inštrukcie servera: %s"
 
 #: ../libpurple/protocols/jabber/buddy.c:1794
 msgid "Fill in one or more fields to search for any matching XMPP users."
@@ -4656,7 +4670,7 @@ msgstr "Prehľadávať priečinok"
 #: ../libpurple/protocols/oscar/oscar.c:5242
 #: ../libpurple/protocols/yahoo/yahoochat.c:962
 msgid "_Room:"
-msgstr "Miestnosť:"
+msgstr "_Miestnosť:"
 
 #: ../libpurple/protocols/jabber/chat.c:47
 msgid "_Server:"
@@ -4678,12 +4692,12 @@ msgstr "Chybný názov miestnosti"
 #: ../libpurple/protocols/jabber/chat.c:229
 #, c-format
 msgid "%s is not a valid server name"
-msgstr "%s nie je správny názov serveru"
+msgstr "%s nie je správny názov servera"
 
 #: ../libpurple/protocols/jabber/chat.c:230
 #: ../libpurple/protocols/jabber/chat.c:231
 msgid "Invalid Server Name"
-msgstr "Chybný názov serveru"
+msgstr "Chybný názov servera"
 
 #: ../libpurple/protocols/jabber/chat.c:235
 #, c-format
@@ -4720,7 +4734,7 @@ msgstr "Chyba počas registrácie"
 #: ../libpurple/protocols/jabber/chat.c:627
 msgid "Nick changing not supported in non-MUC chatrooms"
 msgstr ""
-"V miestnostiach, ktoré nie sú typu \"MUC\", nie je možné zmeniť prezývku."
+"V miestnostiach, ktoré nie sú typu „MUC“, nie je možné zmeniť prezývku."
 
 #: ../libpurple/protocols/jabber/chat.c:678
 #: ../libpurple/protocols/jabber/chat.c:689
@@ -4747,7 +4761,7 @@ msgstr "Hľadať miestnosti"
 
 #: ../libpurple/protocols/jabber/jabber.c:84
 msgid "Error initializing session"
-msgstr "Chyba počas zakladania sedenia"
+msgstr "Chyba počas zakladania relácie"
 
 #: ../libpurple/protocols/jabber/jabber.c:247
 #: ../libpurple/protocols/jabber/jabber.c:300
@@ -4793,7 +4807,7 @@ msgstr "Registrácia %s@%s bola úspešná"
 #: ../libpurple/protocols/jabber/jabber.c:646
 #: ../libpurple/protocols/jabber/jabber.c:647
 msgid "Registration Successful"
-msgstr "Registrácia bola úspešná"
+msgstr "Registrácia úspešná"
 
 #: ../libpurple/protocols/jabber/jabber.c:653
 #: ../libpurple/protocols/jabber/jabber.c:1524
@@ -4808,7 +4822,7 @@ msgstr "Registrácia zlyhala"
 #: ../libpurple/protocols/jabber/jabber.c:771
 #: ../libpurple/protocols/jabber/jabber.c:772
 msgid "Already Registered"
-msgstr "Už registrovaný"
+msgstr "Už zaregistrovaný"
 
 #: ../libpurple/protocols/jabber/jabber.c:848
 #: ../libpurple/protocols/oscar/oscar.c:3758
@@ -4837,8 +4851,8 @@ msgstr "Dátum"
 #: ../libpurple/protocols/jabber/jabber.c:876
 msgid "Please fill out the information below to register your new account."
 msgstr ""
-"Ak si chcete zaregistrovať nový účet, vyplňte, prosím, nižšie uvedené "
-"informácie"
+"Pre zaregistrovanie vášho nového konta, vyplňte prosím nižšie uvedené "
+"informácie."
 
 #: ../libpurple/protocols/jabber/jabber.c:879
 #: ../libpurple/protocols/jabber/jabber.c:880
@@ -4848,7 +4862,7 @@ msgstr "Registrovať nový XMPP účet"
 #. Register button
 #: ../libpurple/protocols/jabber/jabber.c:881 ../pidgin/gtkaccount.c:1523
 msgid "Register"
-msgstr "Register"
+msgstr "Registrovať"
 
 #: ../libpurple/protocols/jabber/jabber.c:1050
 msgid "Initializing Stream"
@@ -4857,7 +4871,7 @@ msgstr "Spúšťa sa dátový prúd"
 #: ../libpurple/protocols/jabber/jabber.c:1055
 #: ../libpurple/protocols/msn/session.c:351
 msgid "Authenticating"
-msgstr "Overuje sa"
+msgstr "Autentifikácia"
 
 #: ../libpurple/protocols/jabber/jabber.c:1064
 msgid "Re-initializing Stream"
@@ -4900,7 +4914,7 @@ msgstr "Žiadne"
 
 #: ../libpurple/protocols/jabber/jabber.c:1182
 msgid "Subscription"
-msgstr "Zapísanie"
+msgstr "Prihlásenie"
 
 #: ../libpurple/protocols/jabber/jabber.c:1312
 msgid "Password Changed"
@@ -4971,7 +4985,7 @@ msgstr "Preč"
 #: ../libpurple/protocols/jabber/jabber.c:1492
 #: ../libpurple/protocols/jabber/jabber.c:1569
 msgid "Internal Server Error"
-msgstr "Vnútorná chyba serveru"
+msgstr "Vnútorná chyba servera"
 
 #: ../libpurple/protocols/jabber/jabber.c:1494
 msgid "Item Not Found"
@@ -4979,7 +4993,7 @@ msgstr "Položka nenájdená"
 
 #: ../libpurple/protocols/jabber/jabber.c:1496
 msgid "Malformed XMPP ID"
-msgstr "Chybné XMPP ID"
+msgstr "Chybný XMPP ID"
 
 #: ../libpurple/protocols/jabber/jabber.c:1498
 msgid "Not Acceptable"
@@ -5155,22 +5169,22 @@ msgstr "Nedá sa udeliť zákaz pre používateľa %s"
 #: ../libpurple/protocols/jabber/jabber.c:1706
 #, c-format
 msgid "Unknown affiliation: \"%s\""
-msgstr "Neznáme pričlenenie: \"%s\""
+msgstr "Neznámy vzťah: „%s“"
 
 #: ../libpurple/protocols/jabber/jabber.c:1711
 #, c-format
 msgid "Unable to affiliate user %s as \"%s\""
-msgstr "Používateľ %s sa nedá pričleniť ako \"%s\""
+msgstr "Používateľ %s sa nedá pričleniť ako „%s“"
 
 #: ../libpurple/protocols/jabber/jabber.c:1730
 #, c-format
 msgid "Unknown role: \"%s\""
-msgstr "Neznáma úloha: \"%s\""
+msgstr "Neznáma úloha: „%s“"
 
 #: ../libpurple/protocols/jabber/jabber.c:1735
 #, c-format
 msgid "Unable to set role \"%s\" for user: %s"
-msgstr "Nepodarilo sa nastaviť úlohu \"%s\" pre používateľa: %s"
+msgstr "Nepodarilo sa nastaviť úlohu „%s“ pre používateľa: %s"
 
 #: ../libpurple/protocols/jabber/jabber.c:1788
 #, c-format
@@ -5199,7 +5213,8 @@ msgstr "topic [nová téma]:  Zobrazí alebo zmení tému."
 
 #: ../libpurple/protocols/jabber/jabber.c:1852
 msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
-msgstr "ban &lt;používateľ&gt; [miestnosť]:  Vykázať používateľa z miestnosti."
+msgstr ""
+"ban &lt;používateľ&gt; [miestnosť]:  Vykázať používateľa z miestnosti."
 
 #: ../libpurple/protocols/jabber/jabber.c:1858
 msgid ""
@@ -5398,7 +5413,7 @@ msgid ""
 "%s on the local list is inside the group \"%s\" but not on the server list. "
 "Do you want this buddy to be added?"
 msgstr ""
-"%s v miestnom zozname je v skupine \"%s\", ale nie je v zozname servera. "
+"%s v miestnom zozname je v skupine „%s“, ale nie je v zozname servera. "
 "Chcete tohto kamaráta pridať?"
 
 #: ../libpurple/protocols/msn/dialog.c:124
@@ -5411,194 +5426,241 @@ msgstr ""
 "kamaráta pridať?"
 
 #: ../libpurple/protocols/msn/error.c:36
+#, c-format
 msgid "Unable to parse message"
 msgstr "Správa sa nedá spracovať"
 
 #: ../libpurple/protocols/msn/error.c:41
+#, c-format
 msgid "Syntax Error (probably a client bug)"
 msgstr "Chyba syntaxe (pravdepodobne chyba v klientovi)"
 
 #: ../libpurple/protocols/msn/error.c:46
+#, c-format
 msgid "Invalid e-mail address"
 msgstr "Chybná e-mailová adresa"
 
 #: ../libpurple/protocols/msn/error.c:49
+#, c-format
 msgid "User does not exist"
 msgstr "Používateľ neexistuje"
 
 #: ../libpurple/protocols/msn/error.c:53
+#, c-format
 msgid "Fully qualified domain name missing"
 msgstr "Chýba plne kvalifikované doménové meno"
 
 #: ../libpurple/protocols/msn/error.c:56
+#, c-format
 msgid "Already logged in"
 msgstr "Už je prihlásený"
 
 #: ../libpurple/protocols/msn/error.c:59
+#, c-format
 msgid "Invalid screen name"
 msgstr "Používateľské meno je chybné"
 
 #: ../libpurple/protocols/msn/error.c:62
+#, c-format
 msgid "Invalid friendly name"
 msgstr "Priateľské meno je chybné"
 
 #: ../libpurple/protocols/msn/error.c:65
+#, c-format
 msgid "List full"
 msgstr "Zoznam je plný"
 
 #: ../libpurple/protocols/msn/error.c:68
+#, c-format
 msgid "Already there"
 msgstr "Už sa tam nachádza"
 
 #: ../libpurple/protocols/msn/error.c:72
+#, c-format
 msgid "Not on list"
-msgstr "Nie je na zozname"
+msgstr "Nie je v zozname"
 
 #: ../libpurple/protocols/msn/error.c:75
 #: ../libpurple/protocols/zephyr/zephyr.c:756
+#, c-format
 msgid "User is offline"
 msgstr "Používateľ je odpojený"
 
 #: ../libpurple/protocols/msn/error.c:78
+#, c-format
 msgid "Already in the mode"
 msgstr "Už v režime"
 
 #: ../libpurple/protocols/msn/error.c:82
+#, c-format
 msgid "Already in opposite list"
 msgstr "Už v opačnom zozname"
 
 #: ../libpurple/protocols/msn/error.c:86
+#, c-format
 msgid "Too many groups"
 msgstr "Príliš veľa skupín"
 
 #: ../libpurple/protocols/msn/error.c:89
+#, c-format
 msgid "Invalid group"
 msgstr "Chybná skupina"
 
 #: ../libpurple/protocols/msn/error.c:92
+#, c-format
 msgid "User not in group"
 msgstr "Používateľ nie je v skupine"
 
 #: ../libpurple/protocols/msn/error.c:95
+#, c-format
 msgid "Group name too long"
 msgstr "Názov skupiny príliš dlhý"
 
 #: ../libpurple/protocols/msn/error.c:98
+#, c-format
 msgid "Cannot remove group zero"
 msgstr "Nie je možné odstrániť nultú skupinu"
 
 #: ../libpurple/protocols/msn/error.c:103
+#, c-format
 msgid "Tried to add a user to a group that doesn't exist"
 msgstr "Pokúšate sa pridať používateľa do skupiny, ktorá neexistuje"
 
 #: ../libpurple/protocols/msn/error.c:107
+#, c-format
 msgid "Switchboard failed"
 msgstr "Prepojenie zlyhalo"
 
 #: ../libpurple/protocols/msn/error.c:111
+#, c-format
 msgid "Notify transfer failed"
 msgstr "Upozornenie prenosu zlyhalo"
 
 #: ../libpurple/protocols/msn/error.c:116
+#, c-format
 msgid "Required fields missing"
 msgstr "Chýbajú požadované polia"
 
 #: ../libpurple/protocols/msn/error.c:120
+#, c-format
 msgid "Too many hits to a FND"
 msgstr "Priveľa úderov pre FND"
 
 #: ../libpurple/protocols/msn/error.c:124
 #: ../libpurple/protocols/oscar/oscar.c:119
+#, c-format
 msgid "Not logged in"
 msgstr "Neprihlásený"
 
 #: ../libpurple/protocols/msn/error.c:128
+#, c-format
 msgid "Service temporarily unavailable"
 msgstr "Služba je dočasne nedostupná"
 
 #: ../libpurple/protocols/msn/error.c:131
+#, c-format
 msgid "Database server error"
-msgstr "Chyba databázového serveru"
+msgstr "Chyba databázového servera"
 
 #: ../libpurple/protocols/msn/error.c:135
+#, c-format
 msgid "Command disabled"
 msgstr "Príkaz vypnutý"
 
 #: ../libpurple/protocols/msn/error.c:139
+#, c-format
 msgid "File operation error"
 msgstr "Chyba súborového operátora"
 
 #: ../libpurple/protocols/msn/error.c:143
+#, c-format
 msgid "Memory allocation error"
 msgstr "Chyba vyhradenie pamäte"
 
 #: ../libpurple/protocols/msn/error.c:147
+#, c-format
 msgid "Wrong CHL value sent to server"
-msgstr "Nesprávna CHL hodnota zaslaná serveru"
+msgstr "Nesprávna CHL hodnota zaslaná servera"
 
 #: ../libpurple/protocols/msn/error.c:152
+#, c-format
 msgid "Server busy"
 msgstr "Server zaneprázdnený"
 
 #: ../libpurple/protocols/msn/error.c:155
 #: ../libpurple/protocols/msn/error.c:170
 #: ../libpurple/protocols/msn/error.c:230
+#, c-format
 msgid "Server unavailable"
 msgstr "Server je nedostupný"
 
 #: ../libpurple/protocols/msn/error.c:158
+#, c-format
 msgid "Peer notification server down"
 msgstr "Server upozornenia na partnera je vypnutý"
 
 #: ../libpurple/protocols/msn/error.c:162
+#, c-format
 msgid "Database connect error"
-msgstr "Chyba pripojenia ku databáze"
+msgstr "Chyba pripojenia k databáze"
 
 #: ../libpurple/protocols/msn/error.c:167
+#, c-format
 msgid "Server is going down (abandon ship)"
 msgstr "Server sa vypína (opustite ľoď)"
 
 #: ../libpurple/protocols/msn/error.c:174
+#, c-format
 msgid "Error creating connection"
 msgstr "Chyba pri vytváraní spojenia"
 
 #: ../libpurple/protocols/msn/error.c:179
+#, c-format
 msgid "CVR parameters are either unknown or not allowed"
 msgstr "CVR parametre sú buď neznáme alebo nedovolené"
 
 #: ../libpurple/protocols/msn/error.c:183
+#, c-format
 msgid "Unable to write"
 msgstr "Nepodarilo sa zapisovať"
 
 #: ../libpurple/protocols/msn/error.c:186
+#, c-format
 msgid "Session overload"
-msgstr "Sedenie preťažené"
+msgstr "Relácia preťažená"
 
 #: ../libpurple/protocols/msn/error.c:190
+#, c-format
 msgid "User is too active"
 msgstr "Používateľ je príliš aktívny"
 
 #: ../libpurple/protocols/msn/error.c:193
+#, c-format
 msgid "Too many sessions"
-msgstr "Príliš veľa sedení"
+msgstr "Príliš veľa relácií"
 
 #: ../libpurple/protocols/msn/error.c:196
+#, c-format
 msgid "Passport not verified"
 msgstr "Heslo nebolo overené"
 
 #: ../libpurple/protocols/msn/error.c:199
+#, c-format
 msgid "Bad friend file"
 msgstr "Nesprávny súbor priateľa"
 
 #: ../libpurple/protocols/msn/error.c:203
+#, c-format
 msgid "Not expected"
 msgstr "Neočakávané"
 
 #: ../libpurple/protocols/msn/error.c:209
+#, c-format
 msgid "Friendly name changes too rapidly"
 msgstr "Priateľské meno sa mení príliš rýchlo"
 
 #: ../libpurple/protocols/msn/error.c:218
+#, c-format
 msgid "Server too busy"
 msgstr "Server je príliš zaneprázdnený"
 
@@ -5607,26 +5669,32 @@ msgstr "Server je príliš zaneprázdnený"
 #: ../libpurple/protocols/silc/silc.c:233
 #: ../libpurple/protocols/silc10/ops.c:1709
 #: ../libpurple/protocols/toc/toc.c:728 ../libpurple/proxy.c:1363
+#, c-format
 msgid "Authentication failed"
 msgstr "Autentifikácia zlyhala"
 
 #: ../libpurple/protocols/msn/error.c:225
+#, c-format
 msgid "Not allowed when offline"
 msgstr "Nepovolené v odpojenom stave"
 
 #: ../libpurple/protocols/msn/error.c:233
+#, c-format
 msgid "Not accepting new users"
 msgstr "Neprijímame nových používateľov"
 
 #: ../libpurple/protocols/msn/error.c:237
+#, c-format
 msgid "Kids Passport without parental consent"
 msgstr "Detský pas bez súhlasu rodičov"
 
 #: ../libpurple/protocols/msn/error.c:241
+#, c-format
 msgid "Passport account not yet verified"
 msgstr "Účet pasu nebol ešte overený"
 
 #: ../libpurple/protocols/msn/error.c:244
+#, c-format
 msgid "Bad ticket"
 msgstr "Nesprávny lístok"
 
@@ -5769,10 +5837,11 @@ msgstr "Odoslať na mobil"
 #: ../libpurple/protocols/msn/msn.c:660
 #: ../libpurple/protocols/novell/novell.c:3408
 msgid "Initiate _Chat"
-msgstr "Zahájiť _chat"
+msgstr "Začať _chat"
 
 #: ../libpurple/protocols/msn/msn.c:698
-msgid "SSL support is needed for MSN. Please install a supported SSL library."
+msgid ""
+"SSL support is needed for MSN. Please install a supported SSL library."
 msgstr ""
 "Pre MSN je potrebná podpora SSL. Nainštalujte, prosím, podporovanú SSL "
 "knižnicu."
@@ -5795,19 +5864,19 @@ msgstr "Všeobecné"
 #: ../libpurple/protocols/oscar/oscar.c:3723
 #: ../libpurple/protocols/qq/buddy_info.c:45
 #: ../libpurple/protocols/qq/qq.c:221
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1081
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1076
 msgid "Age"
 msgstr "Vek"
 
 #: ../libpurple/protocols/msn/msn.c:1559
 #: ../libpurple/protocols/qq/buddy_info.c:51
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1096
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1091
 msgid "Occupation"
-msgstr "Zamestnanie"
+msgstr "Povolanie"
 
 #: ../libpurple/protocols/msn/msn.c:1560
 #: ../libpurple/protocols/novell/novell.c:1478
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1076
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1071
 #: ../libpurple/protocols/zephyr/zephyr.c:798
 #: ../libpurple/protocols/zephyr/zephyr.c:1215
 msgid "Location"
@@ -5829,7 +5898,7 @@ msgid "Social"
 msgstr "Sociálne"
 
 #: ../libpurple/protocols/msn/msn.c:1590
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1086
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1081
 msgid "Marital Status"
 msgstr "Manželský stav"
 
@@ -5863,7 +5932,7 @@ msgstr "Hudba"
 
 #: ../libpurple/protocols/msn/msn.c:1598 ../libpurple/protocols/msn/msn.c:1779
 #: ../libpurple/protocols/msn/msn.c:1785
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1138
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1133
 msgid "Favorite Quote"
 msgstr "Obľúbený citát"
 
@@ -6001,7 +6070,7 @@ msgid ""
 "public profile."
 msgstr ""
 "MSN ohlásilo, že nie je schopné nájsť používateľov profil. To znamená, že "
-"buď užívateľ neexistuje alebo existuje, ale nemá vytvorený verejný profil."
+"používateľ buď neexistuje alebo existuje, ale nemá vytvorený verejný profil."
 
 #: ../libpurple/protocols/msn/msn.c:1833
 msgid ""
@@ -6012,7 +6081,7 @@ msgstr ""
 "pravdepodobne neexistuje."
 
 #: ../libpurple/protocols/msn/msn.c:1841
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1240
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1235
 msgid "Profile URL"
 msgstr "Adresa profilu"
 
@@ -6161,7 +6230,7 @@ msgid ""
 "Connection error from %s server:\n"
 "%s"
 msgstr ""
-"Chyba pripojenia %s serveru:\n"
+"Chyba pripojenia %s servera:\n"
 "%s"
 
 #: ../libpurple/protocols/msn/session.c:299
@@ -6179,7 +6248,8 @@ msgid "You have signed on from another location."
 msgstr "Prihlásili ste sa z iného miesta."
 
 #: ../libpurple/protocols/msn/session.c:310
-msgid "The MSN servers are temporarily unavailable. Please wait and try again."
+msgid ""
+"The MSN servers are temporarily unavailable. Please wait and try again."
 msgstr ""
 "MSN servery sú dočasne nedostupné. Počkajte, prosím, a skúste to znovu."
 
@@ -6225,7 +6295,7 @@ msgstr "Preč od počítača"
 
 #: ../libpurple/protocols/msn/state.c:35
 msgid "On The Phone"
-msgstr "Na telefóne"
+msgstr "Telefonujem"
 
 #: ../libpurple/protocols/msn/state.c:36
 msgid "Out To Lunch"
@@ -6256,13 +6326,14 @@ msgid ""
 "Message could not be sent because we were unable to establish a session with "
 "the server. This is likely a server problem, try again in a few minutes:"
 msgstr ""
-"Správu sa nepodarilo odoslať, pretože nebolo možné založiť sedenie na serveri. "
-"Toto je pravdepodobne problém serveru, skúste to znovu o pár minút:"
+"Správu sa nepodarilo odoslať, pretože nebolo možné založiť reláciu na "
+"serveri. Toto je pravdepodobne problém servera, skúste to znovu o pár minút:"
 
 #: ../libpurple/protocols/msn/switchboard.c:431
 msgid ""
 "Message could not be sent because an error with the switchboard occurred:"
-msgstr "Správu sa nepodarilo odoslať, pretože sa vyskytla chyba s prepínačom:"
+msgstr ""
+"Správu sa nepodarilo odoslať, pretože sa vyskytla chyba s prepínačom:"
 
 #: ../libpurple/protocols/msn/switchboard.c:439
 msgid "Message may have not been sent because an unknown error occurred:"
@@ -6286,7 +6357,7 @@ msgstr "Používateľ %s vás odstránil zo svojho zoznamu priateľov."
 #: ../libpurple/protocols/msn/userlist.c:643
 #, c-format
 msgid "Unable to add \"%s\"."
-msgstr "Nepodarilo sa pridať \"%s\"."
+msgstr "Nepodarilo sa pridať „%s“."
 
 #: ../libpurple/protocols/msn/userlist.c:645
 msgid "The screen name specified is invalid."
@@ -6458,7 +6529,8 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:537
 #, c-format
 msgid "Unable to send message. Could not create the conference (%s)."
-msgstr "Nepodarilo sa odoslať správu. Nepodarilo sa vytvoriť konferenciu (%s)."
+msgstr ""
+"Nepodarilo sa odoslať správu. Nepodarilo sa vytvoriť konferenciu (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:584
 #, c-format
@@ -6535,14 +6607,14 @@ msgstr "Pošta"
 #: ../libpurple/protocols/novell/novell.c:1502
 #: ../libpurple/protocols/sametime/sametime.c:4123
 msgid "User ID"
-msgstr "Používateľské ID"
+msgstr "ID používateľa"
 
 #. tag = _("DN");
 #. value = nm_user_record_get_dn(user_record);
 #. if (value) {
 #. purple_notify_user_info_add_pair(user_info, tag, value);
 #. }
-#.
+#. 
 #: ../libpurple/protocols/novell/novell.c:1515
 msgid "Full name"
 msgstr "Celé meno"
@@ -6594,7 +6666,8 @@ msgstr "Chcete sa pripojiť do tejto konverzácie?"
 
 #. we don't want to reconnect in this case
 #: ../libpurple/protocols/novell/novell.c:2012
-msgid "You have been logged out because you logged in at another workstation."
+msgid ""
+"You have been logged out because you logged in at another workstation."
 msgstr ""
 "Boli ste odhlásený, pretože ste sa prihlásili na inej pracovnej stanici."
 
@@ -6607,7 +6680,7 @@ msgstr ""
 
 #. TODO: Would be nice to prompt if not set!
 #. *  purple_request_fields(gc, _("Server Address"),...);
-#.
+#. 
 #. ...but for now just error out with a nice message.
 #: ../libpurple/protocols/novell/novell.c:2167
 msgid ""
@@ -6622,6 +6695,7 @@ msgid "Error. SSL support is not installed."
 msgstr "Chyba. SSL podpora nie je nainštalovaná."
 
 #: ../libpurple/protocols/novell/novell.c:2504
+#, c-format
 msgid "This conference has been closed. No more messages can be sent."
 msgstr ""
 "Táto konferencia bola uzavretá. Nie je možné do nej odosielať ďalšie správy."
@@ -6643,11 +6717,11 @@ msgstr "Modul protokolu Novell GroupWise Messenger"
 
 #: ../libpurple/protocols/novell/novell.c:3545
 msgid "Server address"
-msgstr "Adresa serveru"
+msgstr "Adresa servera"
 
 #: ../libpurple/protocols/novell/novell.c:3549
 msgid "Server port"
-msgstr "Port serveru"
+msgstr "Port servera"
 
 #: ../libpurple/protocols/oscar/flap_connection.c:387
 #: ../libpurple/protocols/yahoo/yahoo.c:2374
@@ -6668,7 +6742,7 @@ msgid ""
 "Lost connection with server:\n"
 "%s"
 msgstr ""
-"Pripojenie k serveru bolo prerušené:\n"
+"Pripojenie k servera bolo prerušené:\n"
 "%s"
 
 #: ../libpurple/protocols/oscar/flap_connection.c:392
@@ -6782,7 +6856,7 @@ msgstr "Nepodporované klientom"
 
 #: ../libpurple/protocols/oscar/oscar.c:125
 msgid "Refused by client"
-msgstr "Bolo zamietnuté klientom"
+msgstr "Odmietnuté klientom"
 
 #: ../libpurple/protocols/oscar/oscar.c:126
 msgid "Reply too big"
@@ -6818,7 +6892,7 @@ msgstr "Príliš zlý (príjemca)"
 
 #: ../libpurple/protocols/oscar/oscar.c:134
 msgid "User temporarily unavailable"
-msgstr "Používateľ dočasne nedostupný"
+msgstr "Používateľ je dočasne nedostupný"
 
 #: ../libpurple/protocols/oscar/oscar.c:135
 msgid "No match"
@@ -6861,8 +6935,8 @@ msgstr ""
 "kódovanie ako %s, alebo má %s chybný klient.)"
 
 #. Label
-#: ../libpurple/protocols/oscar/oscar.c:638 ../pidgin/gtkutils.c:2376
-#: ../pidgin/gtkutils.c:2406
+#: ../libpurple/protocols/oscar/oscar.c:638 ../pidgin/gtkutils.c:2387
+#: ../pidgin/gtkutils.c:2417
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:334
 msgid "Buddy Icon"
 msgstr "Ikona priateľa"
@@ -6958,20 +7032,24 @@ msgstr "Kamera"
 
 #: ../libpurple/protocols/oscar/oscar.c:724
 #: ../libpurple/protocols/oscar/oscar.c:5728
+#, c-format
 msgid "Free For Chat"
 msgstr "Voľný pre rozhovor"
 
 #: ../libpurple/protocols/oscar/oscar.c:728
 #: ../libpurple/protocols/oscar/oscar.c:5763
+#, c-format
 msgid "Not Available"
 msgstr "Nedostupný"
 
 #: ../libpurple/protocols/oscar/oscar.c:730
 #: ../libpurple/protocols/oscar/oscar.c:5749
+#, c-format
 msgid "Occupied"
 msgstr "Zaneprázdnený"
 
 #: ../libpurple/protocols/oscar/oscar.c:734
+#, c-format
 msgid "Web Aware"
 msgstr "Web aware"
 
@@ -6979,10 +7057,12 @@ msgstr "Web aware"
 #: ../libpurple/protocols/qq/qq.c:288
 #: ../libpurple/protocols/yahoo/yahoo.c:2995 ../libpurple/status.c:156
 #: ../pidgin/gtkdocklet.c:446 ../pidgin/gtkstatusbox.c:1059
+#, c-format
 msgid "Invisible"
 msgstr "Neviditeľný"
 
 #: ../libpurple/protocols/oscar/oscar.c:738
+#, c-format
 msgid "Online"
 msgstr "Pripojený"
 
@@ -7035,9 +7115,9 @@ msgstr "Dokončuje sa pripojenie"
 #: ../libpurple/protocols/oscar/oscar.c:1258
 #, c-format
 msgid ""
-"Unable to login: Could not sign on as %s because the screen name is "
-"invalid.  Screen names must be a valid email address, or start with a letter "
-"and contain only letters, numbers and spaces, or contain only numbers."
+"Unable to login: Could not sign on as %s because the screen name is invalid. "
+" Screen names must be a valid email address, or start with a letter and "
+"contain only letters, numbers and spaces, or contain only numbers."
 msgstr ""
 "Nepodarilo sa prihlásiť: Nepodarilo sa prihlásiť ako %s, pretože "
 "používateľské meno je chybné.  Používateľské mená musia byť v tvare e-"
@@ -7103,7 +7183,7 @@ msgstr "Zadajte 6-ciferné číslo z digitálneho displeja."
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#.
+#. 
 #: ../libpurple/protocols/oscar/oscar.c:1450
 #: ../libpurple/protocols/oscar/oscar.c:2242
 #: ../libpurple/protocols/oscar/oscar.c:2291
@@ -7260,12 +7340,9 @@ msgstr[2] "Prišli ste o %hu správy od používateľa %s, pretože boli chybné
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
-msgstr[0] ""
-"Prišli ste o %hu správ od používateľa %s, pretože boli príliš veľké."
-msgstr[1] ""
-"Prišli ste o %hu správu od používateľa %s, pretože bola príliš veľká."
-msgstr[2] ""
-"Prišli ste o %hu správy od používateľa %s, pretože boli príliš veľké."
+msgstr[0] "%hu správa od %s nebola prijatá, pretože bola príliš veľká."
+msgstr[1] "%hu správy od %s neboli prijaté, pretože boli príliš veľké."
+msgstr[2] "%hu správ od %s nebolo prijatých, pretože boli príliš veľké."
 
 #: ../libpurple/protocols/oscar/oscar.c:2584
 #, c-format
@@ -7296,8 +7373,10 @@ msgstr[2] "Prišli ste o %hu správy od používateľa %s, pretože je príliš 
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
 msgstr[0] "Prišli ste o %hu správ od používateľa %s, pretože ste príliš zlý."
-msgstr[1] "Prišli ste o %hu správu od používateľa %s, pretože ste príliš zlý."
-msgstr[2] "Prišli ste o %hu správy od používateľa %s, pretože ste príliš zlý."
+msgstr[1] ""
+"Prišli ste o %hu správu od používateľa %s, pretože ste príliš zlý."
+msgstr[2] ""
+"Prišli ste o %hu správy od používateľa %s, pretože ste príliš zlý."
 
 #: ../libpurple/protocols/oscar/oscar.c:2611
 #, c-format
@@ -7311,7 +7390,7 @@ msgstr[2] "Z neznámeho dôvodu ste prišli o %hu správy od používateľa %s."
 #: ../libpurple/protocols/oscar/oscar.c:2766
 #, c-format
 msgid "Unable to send message: %s"
-msgstr "Nepodarilo sa odoslať správu: %s"
+msgstr "Nemôžem odoslať správu: %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:2766
 #: ../libpurple/protocols/oscar/oscar.c:2771
@@ -7323,21 +7402,21 @@ msgstr "Neznámy dôvod."
 #: ../libpurple/protocols/sametime/sametime.c:2409
 #, c-format
 msgid "Unable to send message to %s:"
-msgstr "Nepodarilo sa odoslať správu používateľovi %s:"
+msgstr "Nemôžem poslať správu k %s:"
 
 #: ../libpurple/protocols/oscar/oscar.c:2835
 #, c-format
 msgid "User information not available: %s"
-msgstr "Podrobnosti o používateľovi nie sú dostupné: %s"
+msgstr "Informácie o používateľovi sú nedostupné: %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:2866
 msgid "Online Since"
 msgstr "Pripojený od"
 
 #: ../libpurple/protocols/oscar/oscar.c:2871
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1185
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1180
 msgid "Member Since"
-msgstr "Členom od"
+msgstr "Člen od"
 
 #: ../libpurple/protocols/oscar/oscar.c:2876
 msgid "Capabilities"
@@ -7353,7 +7432,7 @@ msgstr "Profil"
 
 #: ../libpurple/protocols/oscar/oscar.c:3014
 msgid "Your AIM connection may be lost."
-msgstr "Vaše AIM pripojenie môže byť stratené."
+msgstr "Vaše AIM spojenie je zrejme prerušené."
 
 #. The conversion failed!
 #: ../libpurple/protocols/oscar/oscar.c:3202
@@ -7386,17 +7465,17 @@ msgstr "Mobilný telefón"
 
 #: ../libpurple/protocols/oscar/oscar.c:3727
 msgid "Personal Web Page"
-msgstr "Osobná web stránka"
+msgstr "Osobná webová stránka"
 
 #: ../libpurple/protocols/oscar/oscar.c:3751
 #: ../libpurple/protocols/qq/buddy_info.c:40
 msgid "Additional Information"
-msgstr "Rozširujúce informácie"
+msgstr "Ďoplňujúce informácie"
 
 #: ../libpurple/protocols/oscar/oscar.c:3759
 #: ../libpurple/protocols/oscar/oscar.c:3772
 msgid "Zip Code"
-msgstr "Zip kód"
+msgstr "PSČ"
 
 #: ../libpurple/protocols/oscar/oscar.c:3783
 msgid "Division"
@@ -7445,6 +7524,7 @@ msgid "Account Confirmation Requested"
 msgstr "Podvrdenie účtu bolo vyžiadané"
 
 #: ../libpurple/protocols/oscar/oscar.c:3970
+#, c-format
 msgid "Error Changing Account Info"
 msgstr "Chyba pri zmene podrobností účtu"
 
@@ -7645,7 +7725,7 @@ msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:5134
 msgid "Authorization Given"
-msgstr "Udelená autorizácia"
+msgstr "Autorizácia udelená"
 
 #. Granted
 #: ../libpurple/protocols/oscar/oscar.c:5207
@@ -7741,7 +7821,7 @@ msgstr "Získať správu o stave"
 
 #: ../libpurple/protocols/oscar/oscar.c:5950
 msgid "Direct IM"
-msgstr "Priame IM"
+msgstr "Priama rýchla správa"
 
 #: ../libpurple/protocols/oscar/oscar.c:5972
 msgid "Re-request Authorization"
@@ -7753,7 +7833,8 @@ msgstr "Vyžadovať autorizáciu"
 
 #: ../libpurple/protocols/oscar/oscar.c:6034
 msgid "Web aware (enabling this will cause you to receive SPAM!)"
-msgstr "Web aware (zapnutie tejto možnosti spôsobí, že budete dostávať SPAM!)"
+msgstr ""
+"Web aware (zapnutie tejto možnosti spôsobí, že budete dostávať SPAM!)"
 
 #: ../libpurple/protocols/oscar/oscar.c:6039
 msgid "ICQ Privacy Options"
@@ -7786,7 +7867,7 @@ msgid ""
 "them and selecting \"Re-request Authorization.\""
 msgstr ""
 "Týchto priateľov môžete znovu požiadať o autorizáciu, keď na nich kliknete "
-"pravým tlačidlom a vyberiete možnosť \"Znovu požiadať o autorizáciu.\""
+"pravým tlačidlom a vyberiete možnosť „Znovu požiadať o autorizáciu“."
 
 #: ../libpurple/protocols/oscar/oscar.c:6179
 msgid "Find Buddy by E-Mail"
@@ -7873,6 +7954,7 @@ msgid "Attempting to connect to %s:%hu."
 msgstr "Pokúšame sa pripojiť ku %s:%hu."
 
 #: ../libpurple/protocols/oscar/peer.c:833
+#, c-format
 msgid "Attempting to connect via proxy server."
 msgstr "Pokúšame sa pripojiť cez proxy server."
 
@@ -8151,7 +8233,7 @@ msgstr "Nesprávne QQid"
 
 #: ../libpurple/protocols/qq/group.c:65
 msgid "ID: "
-msgstr "ID:"
+msgstr "ID: "
 
 #: ../libpurple/protocols/qq/group.c:98
 msgid "Group ID"
@@ -8217,8 +8299,7 @@ msgstr "Potvrdiť"
 #, c-format
 msgid "Your request to join group %d has been rejected by admin %d"
 msgstr ""
-"Vaša požiadavka pre vstup do skupiny %d bola odmietnutá administrátorom %"
-"d"
+"Vaša požiadavka pre vstup do skupiny %d bola odmietnutá administrátorom %d"
 
 #: ../libpurple/protocols/qq/group_im.c:221
 #, c-format
@@ -8229,12 +8310,12 @@ msgstr ""
 #: ../libpurple/protocols/qq/group_im.c:257
 #, c-format
 msgid "You [%d] have left group \"%d\""
-msgstr "[%d] Opustili ste skupinu \"%d\""
+msgstr "[%d] Opustili ste skupinu „%d“"
 
 #: ../libpurple/protocols/qq/group_im.c:291
 #, c-format
 msgid "You [%d] have been added to group \"%d\""
-msgstr "[%d] Boli ste pridaný do skupiny \"%d\""
+msgstr "[%d] Boli ste pridaný do skupiny „%d“"
 
 #: ../libpurple/protocols/qq/group_im.c:292
 msgid "This group has been added to your buddy list"
@@ -8398,7 +8479,7 @@ msgstr "<b>Režim pripojenia</b>: %s<br>\n"
 #: ../libpurple/protocols/qq/qq.c:445
 #, c-format
 msgid "<b>Server IP</b>: %s: %d<br>\n"
-msgstr "<b>IP serveru</b>: %s: %d<br>\n"
+msgstr "<b>IP servera</b>: %s: %d<br>\n"
 
 #: ../libpurple/protocols/qq/qq.c:446
 #, c-format
@@ -8719,7 +8800,7 @@ msgid ""
 "this user to."
 msgstr ""
 "Vyberte konferenciu zo zoznamu nižšie pre odoslanie pozvánky pre používateľa "
-"%s. Vyberte \"Vytvoriť novú konferenciu\", ak chcete vytvoriť novú "
+"%s. Vyberte „Vytvoriť novú konferenciu“, ak chcete vytvoriť novú "
 "konferenciu, kam chcete pozvať tohto používateľa."
 
 #: ../libpurple/protocols/sametime/sametime.c:3472
@@ -8759,7 +8840,7 @@ msgstr "Nastavenie spojenia Meanwhile"
 msgid "No Sametime Community Server Specified"
 msgstr "Nebol určený žiadny server komunity rovnakého času"
 
-#: ../libpurple/protocols/sametime/sametime.c:3645 ../pidgin/gtkblist.c:4024
+#: ../libpurple/protocols/sametime/sametime.c:3645 ../pidgin/gtkblist.c:4026
 msgid "Connect"
 msgstr "Pripojiť"
 
@@ -8792,7 +8873,7 @@ msgid ""
 "The identifier '%s' may possibly refer to any of the following users. Please "
 "select the correct user from the list below to add them to your buddy list."
 msgstr ""
-"Identifikátor '%s' môže odkazovať na ktoréhokoľvek z nasledujúcich "
+"Identifikátor „%s“ môže odkazovať na ktoréhokoľvek z nasledujúcich "
 "používateľov. Vyberte, prosím, správneho používateľa zo zoznamu nižšie a "
 "pridajte ho do svojho zoznamu kamarátov."
 
@@ -8810,7 +8891,7 @@ msgid ""
 "The identifier '%s' did not match any users in your Sametime community. This "
 "entry has been removed from your buddy list."
 msgstr ""
-"Identifikátoru '%s' nevyhovujú žiadni používatelia vo vašej Sametime "
+"Identifikátoru „%s“ nevyhovujú žiadni používatelia vo vašej Sametime "
 "komunite. Tento záznam bol odstránený z vášho zoznamu priateľov."
 
 #: ../libpurple/protocols/sametime/sametime.c:4426
@@ -8867,7 +8948,7 @@ msgstr "Nepodarilo sa pridať skupinu: skupina existuje"
 #: ../libpurple/protocols/sametime/sametime.c:5311
 #, c-format
 msgid "A group named '%s' already exists in your buddy list."
-msgstr "Skupina pomenovaná '%s' sa už nachádza vo vašom zozname priateľov."
+msgstr "Skupina s názvom „%s“ sa už nachádza vo vašom zozname priateľov."
 
 #: ../libpurple/protocols/sametime/sametime.c:5314
 #: ../libpurple/protocols/sametime/sametime.c:5444
@@ -8889,7 +8970,7 @@ msgid ""
 "Book groups. Please select the correct group from the list below to add it "
 "to your buddy list."
 msgstr ""
-"Identifikátor '%s' môže odkazovať na ktoréhokoľvek z nasledujúcich skupín "
+"Identifikátor „%s“ môže odkazovať na ktoréhokoľvek z nasledujúcich skupín "
 "Notes zoznamu adries. Vyberte, prosím, správneho používateľa zo zoznamu "
 "nižšie a pridajte ho do svojho zoznamu kamarátov."
 
@@ -8907,8 +8988,8 @@ msgid ""
 "The identifier '%s' did not match any Notes Address Book groups in your "
 "Sametime community."
 msgstr ""
-"Identifikátoru '%s' nevyhovujú žiadne skupiny Notes zoznamu adries vo vašej "
-"Sametime komunite. "
+"Identifikátoru „%s“ nevyhovujú žiadne skupiny Notes zoznamu adries vo vašej "
+"Sametime komunite."
 
 #: ../libpurple/protocols/sametime/sametime.c:5481
 msgid "Notes Address Book Group"
@@ -8925,7 +9006,7 @@ msgstr ""
 #: ../libpurple/protocols/sametime/sametime.c:5531
 #, c-format
 msgid "Search results for '%s'"
-msgstr "Výsledky vyhľadávania '%s'"
+msgstr "Výsledky vyhľadávania „%s“"
 
 #: ../libpurple/protocols/sametime/sametime.c:5532
 #, c-format
@@ -8934,9 +9015,9 @@ msgid ""
 "may add these users to your buddy list or send them messages with the action "
 "buttons below."
 msgstr ""
-"Identifikátoru '%s' môže vyhovovať niektorý z týchto používateľov. Môžete si "
+"Identifikátoru „%s“ môže vyhovovať niektorý z týchto používateľov. Môžete si "
 "ho pridať do vášho zoznamu priateľov, alebo mu odoslať správu pomocou "
-"tlačidiel, ktoré sú nižšie. "
+"tlačidiel, ktoré sú nižšie."
 
 #. Create the window
 #: ../libpurple/protocols/sametime/sametime.c:5539 ../pidgin/gtknotify.c:726
@@ -8949,10 +9030,11 @@ msgstr "Žiadne výskyty"
 
 #: ../libpurple/protocols/sametime/sametime.c:5565
 #, c-format
-msgid "The identifier '%s' did not match any users in your Sametime community."
+msgid ""
+"The identifier '%s' did not match any users in your Sametime community."
 msgstr ""
-"Identifikátoru '%s' nevyhovujú žiadni používatelia vo vašej Sametime "
-"komunite. "
+"Identifikátoru „%s“ nevyhovujú žiadni používatelia vo vašej Sametime "
+"komunite."
 
 #: ../libpurple/protocols/sametime/sametime.c:5569
 msgid "No Matches"
@@ -9197,7 +9279,7 @@ msgid ""
 "You can use the Get Public Key command to get the public key."
 msgstr ""
 "Nemôžete prijímať upozornenia na priateľa, dokým si neimportujete jeho "
-"verejný kľúč. Kľúč je možné importovať možnosťou \"Získať verejný kľúč\"."
+"verejný kľúč. Kľúč je možné importovať možnosťou „Získať verejný kľúč“."
 
 #. Open file selector to select the public key.
 #: ../libpurple/protocols/silc/buddy.c:1059
@@ -9464,7 +9546,7 @@ msgstr "Kresliť na tabuľu"
 #: ../libpurple/protocols/silc/chat.c:39
 #: ../libpurple/protocols/silc10/chat.c:39
 msgid "_Passphrase:"
-msgstr "Heslo:"
+msgstr "_Heslo:"
 
 #: ../libpurple/protocols/silc/chat.c:80
 #: ../libpurple/protocols/silc10/chat.c:80
@@ -9523,6 +9605,7 @@ msgstr "<br><b>Téma kanálu:</b><br>%s"
 
 #: ../libpurple/protocols/silc/chat.c:153
 #: ../libpurple/protocols/silc10/chat.c:152
+#, c-format
 msgid "<br><b>Channel Modes:</b> "
 msgstr "<br><b>Režimy kanála:</b> "
 
@@ -9552,7 +9635,7 @@ msgstr "Otvoriť verejný kľúč..."
 #: ../libpurple/protocols/silc/chat.c:423
 #: ../libpurple/protocols/silc10/chat.c:401
 msgid "Channel Passphrase"
-msgstr "Heslo kanálu"
+msgstr "Heslo kanála"
 
 #: ../libpurple/protocols/silc/chat.c:430
 #: ../libpurple/protocols/silc10/chat.c:408
@@ -9561,6 +9644,7 @@ msgstr "Zoznam verejných kľúčov kanálu"
 
 #: ../libpurple/protocols/silc/chat.c:435
 #: ../libpurple/protocols/silc10/chat.c:413
+#, c-format
 msgid ""
 "Channel authentication is used to secure the channel from unauthorized "
 "access. The authentication may be based on passphrase and digital "
@@ -9700,12 +9784,12 @@ msgstr "Pred pripojením do súkromnej skupiny sa musíte pripojiť na kanál %s
 #: ../libpurple/protocols/silc/chat.c:1047
 #: ../libpurple/protocols/silc10/chat.c:1104
 msgid "Join Private Group"
-msgstr "Pripojiť sa do súktormej skupiny"
+msgstr "Pripojiť sa k súkromnej skupine"
 
 #: ../libpurple/protocols/silc/chat.c:1048
 #: ../libpurple/protocols/silc10/chat.c:1105
 msgid "Cannot join private group"
-msgstr "Nepodarilo sa pripojiť do súkromnej skupiny"
+msgstr "Nepodarilo sa pripojiť k súkromnej skupine"
 
 #: ../libpurple/protocols/silc/chat.c:1260
 #: ../libpurple/protocols/silc/silc.c:1217
@@ -9778,11 +9862,11 @@ msgstr "Vyvtorenie pripojenia zlyhalo"
 
 #: ../libpurple/protocols/silc/ft.c:122 ../libpurple/protocols/silc10/ft.c:102
 msgid "File transfer session does not exist"
-msgstr "Sedenie prenosu súborov neexistuje"
+msgstr "Relácia prenosu súborov neexistuje"
 
 #: ../libpurple/protocols/silc/ft.c:273 ../libpurple/protocols/silc10/ft.c:206
 msgid "No file transfer session active"
-msgstr "Nie je aktívne žiadne sedenie pre prenos súborov"
+msgstr "Nie je aktívna žiadna relácia prenosu súborov"
 
 #: ../libpurple/protocols/silc/ft.c:278 ../libpurple/protocols/silc10/ft.c:211
 msgid "File transfer already started"
@@ -9812,7 +9896,7 @@ msgstr "Vyskytla sa chyba"
 #: ../libpurple/protocols/silc10/ops.c:572
 #, c-format
 msgid "%s has changed the topic of <I>%s</I> to: %s"
-msgstr "používateľ %s zmeníl tému <I>%s</I> na: %s"
+msgstr "%s zmenil tému <I>%s</I> na: %s"
 
 #: ../libpurple/protocols/silc/ops.c:617
 #: ../libpurple/protocols/silc10/ops.c:638
@@ -9865,7 +9949,7 @@ msgstr "Zabitý používateľom %s (%s)"
 #: ../libpurple/protocols/silc/ops.c:796
 #: ../libpurple/protocols/silc10/ops.c:829
 msgid "Server signoff"
-msgstr "Odhlásenie zo serveru"
+msgstr "Odhlásenie zo servera"
 
 #: ../libpurple/protocols/silc/ops.c:983
 #: ../libpurple/protocols/silc10/ops.c:1017
@@ -9902,7 +9986,7 @@ msgstr "Poznámka"
 #: ../libpurple/protocols/silc/ops.c:1093
 #: ../libpurple/protocols/silc10/ops.c:1128
 msgid "Join Chat"
-msgstr "Pripojiť sa na chat"
+msgstr "Pripojiť sa k rozhovoru"
 
 #: ../libpurple/protocols/silc/ops.c:1127
 #: ../libpurple/protocols/silc10/chat.c:1039
@@ -9920,7 +10004,7 @@ msgstr "Zakladateľ kanálu na <I>%s</I> je <I>%s</I>"
 #: ../libpurple/protocols/silc/ops.c:1326
 #: ../libpurple/protocols/silc10/ops.c:1183
 #: ../libpurple/protocols/silc10/ops.c:1332
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1071
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1066
 msgid "Real Name"
 msgstr "Skutočné meno"
 
@@ -9953,7 +10037,7 @@ msgstr "Viac..."
 #: ../libpurple/protocols/silc10/ops.c:1371
 #: ../libpurple/protocols/silc10/silc.c:988
 msgid "Detach From Server"
-msgstr "Odpojiť zo serveru"
+msgstr "Odpojiť zo servera"
 
 #: ../libpurple/protocols/silc/ops.c:1369
 #: ../libpurple/protocols/silc10/ops.c:1371
@@ -10005,12 +10089,12 @@ msgstr "Nepodarilo sa zobraziť podrobnosti o serveri"
 #: ../libpurple/protocols/silc10/ops.c:1549
 #: ../libpurple/protocols/silc10/ops.c:1558
 msgid "Server Statistics"
-msgstr "Štatistiky serveru"
+msgstr "Štatistiky servera"
 
 #: ../libpurple/protocols/silc/ops.c:1549
 #: ../libpurple/protocols/silc10/ops.c:1550
 msgid "Cannot get server statistics"
-msgstr "Nepodarilo sa zobraziť štatistiky serveru"
+msgstr "Nepodarilo sa zobraziť štatistiky servera"
 
 #: ../libpurple/protocols/silc/ops.c:1556
 #: ../libpurple/protocols/silc10/ops.c:1581
@@ -10033,10 +10117,10 @@ msgid ""
 "Total router operators: %d\n"
 msgstr ""
 "Čas spustenia lokálneho serveri: %s\n"
-"Dĺžka behu lokálneho serveru: %s\n"
-"Klienti lokálneho serveru: %d\n"
-"Kanály lokálneho serveru: %d\n"
-"Operátori lokálneho serveru: %d\n"
+"Dĺžka behu lokálneho servera: %s\n"
+"Klienti lokálneho servera: %d\n"
+"Kanály lokálneho servera: %d\n"
+"Operátori lokálneho servera: %d\n"
 "Operátori lokálneho routeru: %d\n"
 "Lokálni cell klienti: %d\n"
 "Lokálne cell kanály: %d\n"
@@ -10045,7 +10129,7 @@ msgstr ""
 "Celkom kanálov: %d\n"
 "Celkom serverov: %d\n"
 "Celkom routerov: %d\n"
-"Celkom operátorov serveru: %d\n"
+"Celkom operátorov servera: %d\n"
 "Celkom operátorov routeru: %d\n"
 
 #: ../libpurple/protocols/silc/ops.c:1588
@@ -10068,7 +10152,7 @@ msgstr "Ping zlyhal"
 #: ../libpurple/protocols/silc/ops.c:1601
 #: ../libpurple/protocols/silc10/ops.c:1617
 msgid "Ping reply received from server"
-msgstr "Bola prijatá odpoveď na ping zo serveru"
+msgstr "Bola prijatá odpoveď na ping zo servera"
 
 #: ../libpurple/protocols/silc/ops.c:1609
 #: ../libpurple/protocols/silc10/ops.c:1625
@@ -10090,7 +10174,7 @@ msgstr "Nie je možné sledovať použivateľa"
 #: ../libpurple/protocols/silc10/ops.c:1858
 #: ../libpurple/protocols/silc10/silc.c:190
 msgid "Resuming session"
-msgstr "Obnovuje sa sedenie"
+msgstr "Obnovuje sa relácia"
 
 #: ../libpurple/protocols/silc/ops.c:1726
 #: ../libpurple/protocols/silc10/ops.c:1813
@@ -10100,7 +10184,7 @@ msgstr "Auntentifikácia spojenia"
 #: ../libpurple/protocols/silc/ops.c:1777
 #: ../libpurple/protocols/silc10/ops.c:1860
 msgid "Verifying server public key"
-msgstr "Overuje sa verejný kľúč serveru"
+msgstr "Overuje sa verejný kľúč servera"
 
 #: ../libpurple/protocols/silc/ops.c:1814
 #: ../libpurple/protocols/silc10/ops.c:1902
@@ -10168,7 +10252,7 @@ msgstr "Výmena kľúčov zlyhala"
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr ""
-"Pokračovanie v odpojenom sedení zlyhalo. Kliknutím na Znovu pripojiť "
+"Obnovenie prerušenej relácie zlyhalo. Kliknutím na „Znovu pripojiť“ "
 "vytvoríte nové pripojenie."
 
 #: ../libpurple/protocols/silc/silc.c:265
@@ -10189,8 +10273,9 @@ msgid "Connecting to SILC Server"
 msgstr "Pripája sa na SILC server"
 
 #: ../libpurple/protocols/silc/silc.c:352
+#, c-format
 msgid "Could not load SILC key pair"
-msgstr "Nedá sa načínať pár kľúčov SILC"
+msgstr "Nedá sa načítať pár kľúčov SILC"
 
 #: ../libpurple/protocols/silc/silc.c:366
 #: ../libpurple/protocols/silc10/silc.c:355
@@ -10200,7 +10285,7 @@ msgstr "Nedá sa vytvoriť spojenie"
 #: ../libpurple/protocols/silc/silc.c:395
 #: ../libpurple/protocols/silc10/silc.c:267
 msgid "Out of memory"
-msgstr "Mimo pamäte"
+msgstr "Nedostatok pamäte"
 
 #: ../libpurple/protocols/silc/silc.c:438
 #: ../libpurple/protocols/silc10/silc.c:313
@@ -10218,6 +10303,7 @@ msgstr "Vaša aktuálna nálada"
 
 #: ../libpurple/protocols/silc/silc.c:741
 #: ../libpurple/protocols/silc10/silc.c:652 ../pidgin/gtkprefs.c:1638
+#, c-format
 msgid "Normal"
 msgstr "Normálna"
 
@@ -10299,7 +10385,7 @@ msgid ""
 msgstr ""
 "Ak chcete, môžete ostatným používateľom umožniť, aby videli, či ste "
 "pripojení, a poznalii vaše osobné informácie. Vyplňte, prosím, len tie "
-"informácie, ktoré chcete, aby ich ostatní používatelia o vás videli. "
+"informácie, ktoré chcete, aby ich ostatní používatelia o vás videli."
 
 #: ../libpurple/protocols/silc/silc.c:859
 #: ../libpurple/protocols/silc/silc.c:865
@@ -10397,7 +10483,7 @@ msgstr "Téma je príliš dlhá"
 #: ../libpurple/protocols/silc/silc.c:1438
 #: ../libpurple/protocols/silc10/silc.c:1367
 msgid "You must specify a nick"
-msgstr "Je potrebné zadať prezývku"
+msgstr "Musíte zadať prezývku"
 
 #: ../libpurple/protocols/silc/silc.c:1540
 #: ../libpurple/protocols/silc10/silc.c:1469
@@ -10468,7 +10554,8 @@ msgstr ""
 
 #: ../libpurple/protocols/silc/silc.c:1682
 #: ../libpurple/protocols/silc10/silc.c:1611
-msgid "query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
+msgid ""
+"query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
 msgstr ""
 "query &lt;prezývka&gt; [&lt;správa&gt;]:  Odoslať súkromnú správu "
 "používateľovi"
@@ -10476,12 +10563,12 @@ msgstr ""
 #: ../libpurple/protocols/silc/silc.c:1686
 #: ../libpurple/protocols/silc10/silc.c:1615
 msgid "motd:  View the server's Message Of The Day"
-msgstr "motd:  Zobraziť \"správu dňa\" serveru"
+msgstr "motd:  Zobraziť „správu dňa“ servera"
 
 #: ../libpurple/protocols/silc/silc.c:1690
 #: ../libpurple/protocols/silc10/silc.c:1619
 msgid "detach:  Detach this session"
-msgstr "detach:  Odpojiť toto sedenie"
+msgstr "detach:  Odpojiť túto reláciu"
 
 #: ../libpurple/protocols/silc/silc.c:1694
 #: ../libpurple/protocols/silc10/silc.c:1623
@@ -10534,7 +10621,7 @@ msgstr "umode &lt;režimy používateľa&gt;:  Nataviť vaše režimy na sieti"
 #: ../libpurple/protocols/silc/silc.c:1728
 #: ../libpurple/protocols/silc10/silc.c:1657
 msgid "oper &lt;nick&gt; [-pubkey]:  Get server operator privileges"
-msgstr "oper &lt;prezývka&gt; [-pubkey]:  Získať práva operátora serveru"
+msgstr "oper &lt;prezývka&gt; [-pubkey]:  Získať práva operátora servera"
 
 #: ../libpurple/protocols/silc/silc.c:1732
 #: ../libpurple/protocols/silc10/silc.c:1661
@@ -10542,19 +10629,20 @@ msgid ""
 "invite &lt;channel&gt; [-|+]&lt;nick&gt;:  invite nick or add/remove from "
 "channel invite list"
 msgstr ""
-"invite &lt;channel&gt; [-|+]&lt;nick&gt;:  pozvať priateľa, alebo pridať/"
-"odstrániť zo zoznamu pozvaných na kanál"
+"invite &lt;channel&gt; [-|+]&lt;nick&gt;:  pozvať priateľa, alebo "
+"pridať/odstrániť zo zoznamu pozvaných na kanál"
 
 #: ../libpurple/protocols/silc/silc.c:1736
 #: ../libpurple/protocols/silc10/silc.c:1665
-msgid "kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"
+msgid ""
+"kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"
 msgstr ""
 "kick &lt;kanál&gt; &lt;prezývka&gt; [komentár]:  Vyhodiť klienta z kanála"
 
 #: ../libpurple/protocols/silc/silc.c:1740
 #: ../libpurple/protocols/silc10/silc.c:1669
 msgid "info [server]:  View server administrative details"
-msgstr "info [server]:  Zobraziť administratívne detaily serveru"
+msgstr "info [server]:  Zobraziť administratívne detaily servera"
 
 #: ../libpurple/protocols/silc/silc.c:1744
 #: ../libpurple/protocols/silc10/silc.c:1673
@@ -10570,7 +10658,7 @@ msgstr ""
 #: ../libpurple/protocols/silc/silc.c:1752
 #: ../libpurple/protocols/silc10/silc.c:1681
 msgid "stats:  View server and network statistics"
-msgstr "stats:  Zobrazí štatistiky serveru a siete"
+msgstr "stats:  Zobrazí štatistiky servera a siete"
 
 #: ../libpurple/protocols/silc/silc.c:1756
 #: ../libpurple/protocols/silc10/silc.c:1685
@@ -10790,7 +10878,7 @@ msgstr "Terminál"
 #: ../libpurple/protocols/silc/wb.c:284 ../libpurple/protocols/silc10/wb.c:284
 #, c-format
 msgid "%s sent message to whiteboard. Would you like to open the whiteboard?"
-msgstr "Používateľ %s odoslal správu na tabuľu. Prajete si otvoriť tabuľu"
+msgstr "Používateľ %s odoslal správu na tabuľu. Želáte si otvoriť tabuľu?"
 
 #: ../libpurple/protocols/silc/wb.c:288 ../libpurple/protocols/silc10/wb.c:288
 #, c-format
@@ -10798,7 +10886,7 @@ msgid ""
 "%s sent message to whiteboard on %s channel. Would you like to open the "
 "whiteboard?"
 msgstr ""
-"Používateľ %s odoslal správu na tabuľu na kanáli %s. Prajete si otvoriť "
+"Používateľ %s odoslal správu na tabuľu na kanáli %s. Želáte si otvoriť "
 "tabuľu?"
 
 #: ../libpurple/protocols/silc/wb.c:302 ../libpurple/protocols/silc10/wb.c:302
@@ -10810,43 +10898,53 @@ msgid "No server statistics available"
 msgstr "Nie sú dostupné žiadne štatistiky"
 
 #: ../libpurple/protocols/silc10/ops.c:1931
+#, c-format
 msgid "Failure: Version mismatch, upgrade your client"
 msgstr "Zlyhanie: Nezhoda verzií, aktualizujte vášho klienta"
 
 #: ../libpurple/protocols/silc10/ops.c:1934
+#, c-format
 msgid "Failure: Remote does not trust/support your public key"
 msgstr ""
 "Zlyhanie: Druhá strana nepodroruje alebo nedôveruje vášmu verejnému kľúču"
 
 #: ../libpurple/protocols/silc10/ops.c:1937
+#, c-format
 msgid "Failure: Remote does not support proposed KE group"
 msgstr "Zlyhanie: Druhá strana nepodroruje vyžiadanú KE skupinu"
 
 #: ../libpurple/protocols/silc10/ops.c:1940
+#, c-format
 msgid "Failure: Remote does not support proposed cipher"
 msgstr "Zlyhanie: Druhá strana nepodroruje vyžiadanú šifru"
 
 #: ../libpurple/protocols/silc10/ops.c:1943
+#, c-format
 msgid "Failure: Remote does not support proposed PKCS"
 msgstr "Zlyhanie: Druhá strana nepodroruje vyžiadané PKCS"
 
 #: ../libpurple/protocols/silc10/ops.c:1946
+#, c-format
 msgid "Failure: Remote does not support proposed hash function"
-msgstr "Chyba: Vzdialený nepodporuje ponúknutú hash funkciu"
+msgstr "Chyba: Vzdialený nepodporuje ponúknutú hašovaciu funkciu"
 
 #: ../libpurple/protocols/silc10/ops.c:1949
+#, c-format
 msgid "Failure: Remote does not support proposed HMAC"
 msgstr "Chyba: Vzdialený nepodporuje ponúknutú HMAC"
 
 #: ../libpurple/protocols/silc10/ops.c:1951
+#, c-format
 msgid "Failure: Incorrect signature"
 msgstr "Chyba: Nesprávny podpis"
 
 #: ../libpurple/protocols/silc10/ops.c:1953
+#, c-format
 msgid "Failure: Invalid cookie"
-msgstr "Chyba: Neplatné cookie"
+msgstr "Chyba: Neplatný koláčik (cookie)"
 
 #: ../libpurple/protocols/silc10/ops.c:1964
+#, c-format
 msgid "Failure: Authentication failed"
 msgstr "Chyba: Zlyhala antentifikácia"
 
@@ -10955,12 +11053,12 @@ msgstr "Odhlásenie: %s"
 #: ../libpurple/protocols/toc/toc.c:488
 #, c-format
 msgid "Unable to write file %s."
-msgstr "Nepodarilo sa čítať zo súboru %s."
+msgstr "Nepodarilo sa zapísať do súboru %s."
 
 #: ../libpurple/protocols/toc/toc.c:491
 #, c-format
 msgid "Unable to read file %s."
-msgstr "Nepodarilo sa zapisovať do súboru %s."
+msgstr "Nepodarilo sa čítať zo súboru %s."
 
 #: ../libpurple/protocols/toc/toc.c:494
 #, c-format
@@ -10978,8 +11076,9 @@ msgid "Warning of %s not allowed."
 msgstr "Varovanie na %s nie je dovolené."
 
 #: ../libpurple/protocols/toc/toc.c:503
+#, c-format
 msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "Správa bola zrušená, prekračujete rýchlostný limit serveru"
+msgstr "Správa bola zrušená, prekračujete rýchlostný limit servera"
 
 #: ../libpurple/protocols/toc/toc.c:506
 #, c-format
@@ -11003,38 +11102,47 @@ msgstr ""
 "Prišli ste o správu od používateľa %s, pretože bola odoslaná príliš rýchlo."
 
 #: ../libpurple/protocols/toc/toc.c:518
+#, c-format
 msgid "Failure."
 msgstr "Zlyhanie."
 
 #: ../libpurple/protocols/toc/toc.c:521
+#, c-format
 msgid "Too many matches."
 msgstr "Príliš veľa výskytov."
 
 #: ../libpurple/protocols/toc/toc.c:524
+#, c-format
 msgid "Need more qualifiers."
 msgstr "Vyžaduje viac parametrov."
 
 #: ../libpurple/protocols/toc/toc.c:527
+#, c-format
 msgid "Dir service temporarily unavailable."
 msgstr "Služba dir je dočasne nedostupná"
 
 #: ../libpurple/protocols/toc/toc.c:530
+#, c-format
 msgid "E-mail lookup restricted."
 msgstr "Vyhľadávanie e-mailu obmedzené."
 
 #: ../libpurple/protocols/toc/toc.c:533
+#, c-format
 msgid "Keyword ignored."
 msgstr "Kľúčové slovo bolo ignorované."
 
 #: ../libpurple/protocols/toc/toc.c:536
+#, c-format
 msgid "No keywords."
 msgstr "Žiadne kľúče."
 
 #: ../libpurple/protocols/toc/toc.c:539
+#, c-format
 msgid "User has no directory information."
 msgstr "Používateľ nemá žiadne podrobnosti v adresári."
 
 #: ../libpurple/protocols/toc/toc.c:543
+#, c-format
 msgid "Country not supported."
 msgstr "Krajina nie je podporovaná."
 
@@ -11044,20 +11152,24 @@ msgid "Failure unknown: %s."
 msgstr "Neznáme zlyhanie: %s."
 
 #: ../libpurple/protocols/toc/toc.c:549
+#, c-format
 msgid "Incorrect screen name or password."
 msgstr "Nesprávne používateľské meno alebo heslo."
 
 #: ../libpurple/protocols/toc/toc.c:552
+#, c-format
 msgid "The service is temporarily unavailable."
 msgstr "Služba je dočasne nedostupná."
 
 #: ../libpurple/protocols/toc/toc.c:555
+#, c-format
 msgid "Your warning level is currently too high to log in."
 msgstr ""
 "Vaša úroveň upozornenia je momentálne príliš vysoká na to, aby ste sa mohli "
 "prihlásiť."
 
 #: ../libpurple/protocols/toc/toc.c:558
+#, c-format
 msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
@@ -11081,7 +11193,7 @@ msgstr "Chybný názov skupiny"
 
 #: ../libpurple/protocols/toc/toc.c:674
 msgid "Connection Closed"
-msgstr "Pripojenie uzavreté"
+msgstr "Spojenie ukončené"
 
 #: ../libpurple/protocols/toc/toc.c:714
 msgid "Waiting for reply..."
@@ -11095,10 +11207,10 @@ msgstr "TOC sa vrátil z prestávky. Môžete znovu posielať správy."
 msgid "Password Change Successful"
 msgstr "Heslo bolo úspešne zmenené"
 
-#: ../libpurple/protocols/toc/toc.c:1366 ../pidgin/gtkblist.c:5530
-#: ../pidgin/gtkblist.c:5883
+#: ../libpurple/protocols/toc/toc.c:1366 ../pidgin/gtkblist.c:5534
+#: ../pidgin/gtkblist.c:5887
 msgid "_Group:"
-msgstr "Skupina:"
+msgstr "_Skupina:"
 
 #: ../libpurple/protocols/toc/toc.c:1535
 msgid "Get Dir Info"
@@ -11135,14 +11247,14 @@ msgstr "Uložiť ako..."
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
 msgstr[0] ""
-"Používateľ %s vyžaduje od používateľa %s potvrdenie %d súborov: %s (%.2f %s)%"
-"s%s"
+"Používateľ %s vyžaduje od používateľa %s potvrdenie %d súborov: %s (%.2f "
+"%s)%s%s"
 msgstr[1] ""
-"Používateľ %s vyžaduje od používateľa %s potvrdenie %d súboru: %s (%.2f %s)%s"
-"%s"
+"Používateľ %s vyžaduje od používateľa %s potvrdenie %d súboru: %s (%.2f "
+"%s)%s%s"
 msgstr[2] ""
-"Používateľ %s vyžaduje od používateľa %s potvrdenie %d súborov: %s (%.2f %s)%"
-"s%s"
+"Používateľ %s vyžaduje od používateľa %s potvrdenie %d súborov: %s (%.2f "
+"%s)%s%s"
 
 #: ../libpurple/protocols/toc/toc.c:2216
 #, c-format
@@ -11165,7 +11277,7 @@ msgstr "Modul protokolu TOC"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:823
 msgid "Your Yahoo! message did not get sent."
-msgstr "Vaša Yahoo! správa sa neodoslala."
+msgstr "Vaša Yahoo! správa nebola odoslaná."
 
 #: ../libpurple/protocols/yahoo/yahoo.c:895
 #, c-format
@@ -11199,7 +11311,7 @@ msgstr ""
 
 #: ../libpurple/protocols/yahoo/yahoo.c:1148
 msgid "Add buddy rejected"
-msgstr "Pridanie kamaráta odmietnuté"
+msgstr "Pridanie kamaráta bolo odmietnuté"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:1899
 #, c-format
@@ -11222,7 +11334,7 @@ msgid ""
 "\"Yes\" will remove and ignore the buddy."
 msgstr ""
 "Pokúsili ste sa ignorovať používateľa %s, ale používateľ sa nachádza na "
-"vašom zozname priateľov. Kliknutím \"Áno\" odstránite používateľa zo zoznamu "
+"vašom zozname priateľov. Kliknutím „Áno“ odstránite používateľa zo zoznamu "
 "priateľov a ignorujete ho."
 
 #: ../libpurple/protocols/yahoo/yahoo.c:1971
@@ -11235,7 +11347,8 @@ msgstr "Váš účet je uzamknutý, prihláste sa, prosím, na webstránke Yahoo
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2037
 #, c-format
-msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
+msgid ""
+"Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr ""
 "Neznáme číslo chyby %d. Prihlásenie sa na stránke Yahoo! to môže napraviť."
 
@@ -11257,7 +11370,7 @@ msgstr "[ Počúvateľné %s/%s/%s.swf ] %s"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2556
 msgid "Received unexpected HTTP response from server."
-msgstr "Zo serveru bola prijatá neočakávaná HTTP odpoveď."
+msgstr "Zo servera bola prijatá neočakávaná HTTP odpoveď."
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2580
 #: ../libpurple/protocols/yahoo/yahoo.c:2766
@@ -11267,7 +11380,7 @@ msgstr "Zo serveru bola prijatá neočakávaná HTTP odpoveď."
 #: ../libpurple/protocols/yahoo/yahoochat.c:1488
 #: ../libpurple/protocols/yahoo/ycht.c:585
 msgid "Connection problem"
-msgstr "Problém pripojenia"
+msgstr "Problém s pripojením"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2606
 #, c-format
@@ -11284,7 +11397,7 @@ msgid ""
 "Could not establish a connection with %s:\n"
 "%s"
 msgstr ""
-"Nebolo možné založiť spojenie s %s:\n"
+"Nebolo možné nadviazať spojenie s %s:\n"
 "%s"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2981
@@ -11333,15 +11446,15 @@ msgstr "Prítomnosť"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3197
 msgid "Appear Offline"
-msgstr "Javí sa odpojený"
+msgstr "Vyzerať odpojený"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3206
 msgid "Don't Appear Permanently Offline"
-msgstr "Nejaví sa trvale odpojený"
+msgstr "Nevyzerať sa trvale odpojený"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3254
 msgid "Join in Chat"
-msgstr "Spojiť sa v chate"
+msgstr "Pripojiť sa k rozhovoru"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3260
 msgid "Initiate Conference"
@@ -11353,7 +11466,7 @@ msgstr "Nastavenie prítomnosti"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3294
 msgid "Start Doodling"
-msgstr "Začať \"Doodlovať\""
+msgstr "Začať Čmárať"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3395
 msgid "Activate which ID?"
@@ -11390,11 +11503,11 @@ msgstr "list: Vypísať zoznam miestností na sieti Yahoo"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:4015
 msgid "buzz: Buzz a user to get their attention"
-msgstr "buzz: Pošlite používateľovi \"bzzz\" a tým si získajte jeho pozornosť"
+msgstr "buzz: Pošlite používateľovi „bzzz“ a tým si získajte jeho pozornosť"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:4019
 msgid "doodle: Request user to start a Doodle session"
-msgstr "doodle: Požiadať používateľa o sedenie Doodle"
+msgstr "Čmáranie: Požiadať používateľa o reláciu Čmáranie"
 
 #. *< type
 #. *< ui_requirement
@@ -11417,15 +11530,15 @@ msgstr "Yahoo Japonsko"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:4255
 msgid "Pager server"
-msgstr "Server pageru"
+msgstr "Pager server"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:4258
 msgid "Japan Pager server"
-msgstr "Server pageru pre Japonsko"
+msgstr "Pager server pre Japonsko"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:4261
 msgid "Pager port"
-msgstr "Port pageru"
+msgstr "Port pagera"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:4264
 msgid "File transfer server"
@@ -11463,8 +11576,7 @@ msgstr "Port Yahoo chatu"
 #, c-format
 msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
 msgstr ""
-"%s odmietol vaše pozvanie na konferenciu do miestnosti \"%s\", pretože \"%s"
-"\"."
+"%s odmietol vaše pozvanie na konferenciu do miestnosti „%s“, pretože „%s“."
 
 #: ../libpurple/protocols/yahoo/yahoochat.c:206
 msgid "Invitation Rejected"
@@ -11534,16 +11646,16 @@ msgstr "Používateľské miestnosti"
 
 #. Write a local message to this conversation showing that a request for a
 #. * Doodle session has been made
-#.
+#. 
 #: ../libpurple/protocols/yahoo/yahoo_doodle.c:98
 msgid "Sent Doodle request."
-msgstr "Odoslať požiadavku Doodle."
+msgstr "Odoslať žiadosť na začatie Čmárania."
 
 #: ../libpurple/protocols/yahoo/yahoo_filexfer.c:270
 #: ../libpurple/protocols/yahoo/yahoo_filexfer.c:279
 #: ../libpurple/protocols/yahoo/yahoo_filexfer.c:292
 msgid "Unable to establish file descriptor."
-msgstr "Nepodarilo sa založiť deskriptor súboru."
+msgstr "Nepodarilo sa založiť popisovač súboru."
 
 #. TODO: what to do here - do we really have to disconnect?
 #: ../libpurple/protocols/yahoo/yahoo_packet.c:307
@@ -11571,50 +11683,50 @@ msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser:"
 msgstr ""
-"Ak si chcete prezrieť tento profil, musíte navštívíť tento odkaz vo vašom "
-"internetovom prehliadači:"
+"Ak si želáte vidieť tento profil, budete musieť navštíviť tento odkaz vo "
+"vašom webovom prehliadači."
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1034
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1029
 msgid "Yahoo! ID"
 msgstr "Yahoo! ID"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1109
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1113
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1117
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1104
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1108
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1112
 msgid "Hobbies"
 msgstr "Koníčky"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1127
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1131
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1122
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1126
 msgid "Latest News"
 msgstr "Aktuálne novinky"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1152
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1147
 msgid "Home Page"
 msgstr "Domovská stránka"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1167
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1162
 msgid "Cool Link 1"
 msgstr "Super odkaz 1"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1172
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1167
 msgid "Cool Link 2"
 msgstr "Super odkaz 2"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1176
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1171
 msgid "Cool Link 3"
 msgstr "Super odkaz 3"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1190
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1185
 msgid "Last Update"
 msgstr "Posledná aktualizácia"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1199
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1194
 #, c-format
 msgid "User information for %s unavailable"
 msgstr "Podrobnosti o používateľovi %s nie sú dostupné"
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1205
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1200
 msgid ""
 "Sorry, this profile seems to be in a language or format that is not "
 "supported at this time."
@@ -11622,15 +11734,15 @@ msgstr ""
 "Prepáčte, ale tento profil je v jazyku alebo formáte, ktorý momentálne nie "
 "je podporovaný."
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1221
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1216
 msgid ""
 "Could not retrieve the user's profile. This most likely is a temporary "
 "server-side problem. Please try again later."
 msgstr ""
 "Nepodarilo sa stiahnuť profil používateľa. Toto je zrejme krádkodobý problém "
-"na strane serveru. Skúste to, prosím, neskôr."
+"na strane servera. Skúste to, prosím, neskôr."
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1224
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1219
 msgid ""
 "Could not retrieve the user's profile. This most likely means that the user "
 "does not exist; however, Yahoo! sometimes does fail to find a user's "
@@ -11641,7 +11753,7 @@ msgstr ""
 "používateľa. Ak ste si istý, že tento používateľ existuje, skúste to znovu "
 "neskôr."
 
-#: ../libpurple/protocols/yahoo/yahoo_profile.c:1231
+#: ../libpurple/protocols/yahoo/yahoo_profile.c:1226
 msgid "The user's profile is empty."
 msgstr "Profil používateľa je prázdny."
 
@@ -11664,7 +11776,7 @@ msgid ""
 "in the Account Editor)"
 msgstr ""
 "(Počas prevodu tejto správy sa vyskytla chyba.\t Skontrolujte možnosť "
-"'kódovanie' v editore účtu)"
+"„kódovanie“ v editore účtu)"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:752
 #, c-format
@@ -11694,7 +11806,7 @@ msgstr "Ktokoľvek"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2354
 msgid "_Class:"
-msgstr "Trieda:"
+msgstr "_Trieda:"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2360
 msgid "_Instance:"
@@ -11742,31 +11854,32 @@ msgstr ""
 #: ../libpurple/protocols/zephyr/zephyr.c:2721
 msgid ""
 "zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"
-msgstr "zi &lt;inštancia&gt;: Poslať správu &lt;správa,<i>inštancia</i>,*&gt;"
+msgstr ""
+"zi &lt;inštancia&gt;: Poslať správu &lt;správa,<i>inštancia</i>,*&gt;"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2727
 msgid ""
-"zci &lt;class&gt; &lt;instance&gt;: Send a message to &lt;<i>class</i>,"
-"<i>instance</i>,*&gt;"
+"zci &lt;class&gt; &lt;instance&gt;: Send a message to "
+"&lt;<i>class</i>,<i>instance</i>,*&gt;"
 msgstr ""
-"zci &lt;trieda&gt; &lt;inštancia&gt;: Poslať správu &lt;<i>trieda</i>,"
-"<i>inštancia</i>,*&gt;"
+"zci &lt;trieda&gt; &lt;inštancia&gt;: Poslať správu "
+"&lt;<i>trieda</i>,<i>inštancia</i>,*&gt;"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2733
 msgid ""
-"zcir &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;"
-"<i>class</i>,<i>instance</i>,<i>recipient</i>&gt;"
+"zcir &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Send a message to "
+"&lt;<i>class</i>,<i>instance</i>,<i>recipient</i>&gt;"
 msgstr ""
-"zcir &lt;trieda&gt; &lt;inštancia&gt; &lt;príjemca&gt;: Poslať správu &lt;"
-"<i>trieda</i>,<i>inštancia</i>,<i>príjemca</i>&gt;"
+"zcir &lt;trieda&gt; &lt;inštancia&gt; &lt;príjemca&gt;: Poslať správu "
+"&lt;<i>trieda</i>,<i>inštancia</i>,<i>príjemca</i>&gt;"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2739
 msgid ""
-"zir &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;MESSAGE,"
-"<i>instance</i>,<i>recipient</i>&gt;"
+"zir &lt;instance&gt; &lt;recipient&gt;: Send a message to "
+"&lt;MESSAGE,<i>instance</i>,<i>recipient</i>&gt;"
 msgstr ""
-"zir &lt;inštancia&gt; &lt;príjemca&gt;: Poslať správu &lt;SPRÁVA,"
-"<i>inštancia</i>,<i>príjemca</i>&gt;"
+"zir &lt;inštancia&gt; &lt;príjemca&gt;: Poslať správu "
+"&lt;SPRÁVA,<i>inštancia</i>,<i>príjemca</i>&gt;"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2744
 msgid "zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"
@@ -11778,7 +11891,7 @@ msgstr "Znovu zapísať"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2853
 msgid "Retrieve subscriptions from server"
-msgstr "Získať zápisy zo serveru"
+msgstr "Získať zápisy zo servera"
 
 #. *< type
 #. *< ui_requirement
@@ -11851,7 +11964,8 @@ msgstr "Chyba pripojenia HTTP proxy %d"
 #: ../libpurple/proxy.c:778
 #, c-format
 msgid "Access denied: HTTP proxy server forbids port %d tunneling."
-msgstr "Prístup zamietnutý: HTTP proxy server neumožňuje tunelovanie portu %d."
+msgstr ""
+"Prístup zamietnutý: HTTP proxy server neumožňuje tunelovanie portu %d."
 
 #: ../libpurple/proxy.c:995
 #, c-format
@@ -11864,7 +11978,7 @@ msgstr "Nepodarilo sa previesť názov hostiteľa"
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
-#.
+#. 
 #: ../libpurple/request.h:1377
 msgid "_Yes"
 msgstr "Án_o"
@@ -11875,14 +11989,14 @@ msgstr "_Nie"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
-#.
+#. 
 #: ../libpurple/request.h:1397
 msgid "_Accept"
 msgstr "Použiť"
 
 #. *
 #. * The default message to use when the user becomes auto-away.
-#.
+#. 
 #: ../libpurple/savedstatuses.c:47
 msgid "I'm not here right now"
 msgstr "Momentálne nie som prítomný"
@@ -12246,11 +12360,11 @@ msgstr ""
 "toto okno otvoríte v ponuke <b>Účty->Pridať/Upraviťt</b> v okne Zoznam "
 "priateľov"
 
-#: ../pidgin/gtkblist.c:760
+#: ../pidgin/gtkblist.c:762
 msgid "Join a Chat"
 msgstr "Pripojiť sa k chatu"
 
-#: ../pidgin/gtkblist.c:781
+#: ../pidgin/gtkblist.c:783
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
@@ -12259,92 +12373,92 @@ msgstr ""
 "pripojiť.\n"
 
 #. Set up stuff for the account box
-#: ../pidgin/gtkblist.c:792 ../pidgin/gtkblist.c:5478
-#: ../pidgin/gtkblist.c:5844 ../pidgin/gtkpounce.c:540
+#: ../pidgin/gtkblist.c:794 ../pidgin/gtkblist.c:5482
+#: ../pidgin/gtkblist.c:5848 ../pidgin/gtkpounce.c:540
 #: ../pidgin/gtkroomlist.c:395
 msgid "_Account:"
 msgstr "_Účet:"
 
-#: ../pidgin/gtkblist.c:1081 ../pidgin/gtkprivacy.c:602
+#: ../pidgin/gtkblist.c:1083 ../pidgin/gtkprivacy.c:602
 #: ../pidgin/gtkprivacy.c:616
 msgid "_Block"
 msgstr "_Blokovať"
 
-#: ../pidgin/gtkblist.c:1081
+#: ../pidgin/gtkblist.c:1083
 msgid "Un_block"
 msgstr "Od_blokovať"
 
-#: ../pidgin/gtkblist.c:1132
+#: ../pidgin/gtkblist.c:1134
 msgid "Get _Info"
 msgstr "Zobraziťo podrobnosti"
 
-#: ../pidgin/gtkblist.c:1135 ../pidgin/pidginstock.c:84
+#: ../pidgin/gtkblist.c:1137 ../pidgin/pidginstock.c:84
 msgid "I_M"
 msgstr "I_M"
 
-#: ../pidgin/gtkblist.c:1141
+#: ../pidgin/gtkblist.c:1143
 msgid "_Send File"
 msgstr "Odoslať _súbor"
 
-#: ../pidgin/gtkblist.c:1148
+#: ../pidgin/gtkblist.c:1150
 msgid "Add Buddy _Pounce"
 msgstr "Pridať _sledovanie priatela"
 
-#: ../pidgin/gtkblist.c:1153 ../pidgin/gtkblist.c:1157
-#: ../pidgin/gtkblist.c:1262 ../pidgin/gtkblist.c:1285
+#: ../pidgin/gtkblist.c:1155 ../pidgin/gtkblist.c:1159
+#: ../pidgin/gtkblist.c:1264 ../pidgin/gtkblist.c:1287
 msgid "View _Log"
 msgstr "Zobraziť _záznam"
 
-#: ../pidgin/gtkblist.c:1170 ../pidgin/gtkblist.c:1179
-#: ../pidgin/gtkblist.c:1270 ../pidgin/gtkblist.c:1291
+#: ../pidgin/gtkblist.c:1172 ../pidgin/gtkblist.c:1181
+#: ../pidgin/gtkblist.c:1272 ../pidgin/gtkblist.c:1293
 msgid "_Alias..."
 msgstr "_Prezývka..."
 
-#: ../pidgin/gtkblist.c:1173 ../pidgin/gtkblist.c:1181
-#: ../pidgin/gtkblist.c:1272 ../pidgin/gtkblist.c:1293
+#: ../pidgin/gtkblist.c:1175 ../pidgin/gtkblist.c:1183
+#: ../pidgin/gtkblist.c:1274 ../pidgin/gtkblist.c:1295
 msgid "_Remove"
 msgstr "Odst_rániť"
 
-#: ../pidgin/gtkblist.c:1231
+#: ../pidgin/gtkblist.c:1233
 msgid "Add a _Buddy"
 msgstr "Pridať priateľa"
 
-#: ../pidgin/gtkblist.c:1234
+#: ../pidgin/gtkblist.c:1236
 msgid "Add a C_hat"
 msgstr "Pridať chat"
 
-#: ../pidgin/gtkblist.c:1237
+#: ../pidgin/gtkblist.c:1239
 msgid "_Delete Group"
 msgstr "Odstrániť skupinu"
 
-#: ../pidgin/gtkblist.c:1239
+#: ../pidgin/gtkblist.c:1241
 msgid "_Rename"
 msgstr "Premenovať"
 
 #. join button
-#: ../pidgin/gtkblist.c:1258 ../pidgin/gtkroomlist.c:306
+#: ../pidgin/gtkblist.c:1260 ../pidgin/gtkroomlist.c:306
 #: ../pidgin/gtkroomlist.c:459 ../pidgin/pidginstock.c:82
 msgid "_Join"
-msgstr "Vstúpiť"
+msgstr "Pripo_jiť"
 
-#: ../pidgin/gtkblist.c:1260
+#: ../pidgin/gtkblist.c:1262
 msgid "Auto-Join"
 msgstr "Automatické prihlasovanie"
 
-#: ../pidgin/gtkblist.c:1298 ../pidgin/gtkblist.c:1322
+#: ../pidgin/gtkblist.c:1300 ../pidgin/gtkblist.c:1324
 msgid "_Collapse"
-msgstr "_Zabaliť"
+msgstr "_Zbaliť"
 
-#: ../pidgin/gtkblist.c:1327
+#: ../pidgin/gtkblist.c:1329
 msgid "_Expand"
 msgstr "_Rozbaliť"
 
-#: ../pidgin/gtkblist.c:1572 ../pidgin/gtkblist.c:1584
-#: ../pidgin/gtkblist.c:4572 ../pidgin/gtkblist.c:4582
+#: ../pidgin/gtkblist.c:1574 ../pidgin/gtkblist.c:1586
+#: ../pidgin/gtkblist.c:4576 ../pidgin/gtkblist.c:4586
 msgid "/Tools/Mute Sounds"
 msgstr "/Nástroje/Vypnúť zvuky"
 
-#: ../pidgin/gtkblist.c:2044 ../pidgin/gtkconv.c:4731
+#: ../pidgin/gtkblist.c:2046 ../pidgin/gtkconv.c:4731
 #: ../pidgin/gtkpounce.c:429
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
@@ -12353,126 +12467,126 @@ msgstr ""
 "priateľa."
 
 #. Buddies menu
-#: ../pidgin/gtkblist.c:2850
+#: ../pidgin/gtkblist.c:2852
 msgid "/_Buddies"
 msgstr "/_Priatelia"
 
-#: ../pidgin/gtkblist.c:2851
+#: ../pidgin/gtkblist.c:2853
 msgid "/Buddies/New Instant _Message..."
 msgstr "/Priatelia/Nová _správa..."
 
-#: ../pidgin/gtkblist.c:2852
+#: ../pidgin/gtkblist.c:2854
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Priatelia/Pripojiť sa k _chatu..."
 
-#: ../pidgin/gtkblist.c:2853
+#: ../pidgin/gtkblist.c:2855
 msgid "/Buddies/Get User _Info..."
 msgstr "/Priatelia/_Podrobnosti o používateľovi..."
 
-#: ../pidgin/gtkblist.c:2854
+#: ../pidgin/gtkblist.c:2856
 msgid "/Buddies/View User _Log..."
 msgstr "/Priatelia/_Záznam používateľa..."
 
-#: ../pidgin/gtkblist.c:2856
+#: ../pidgin/gtkblist.c:2858
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Priatelia/Zobraziť _nepripojených priateľov"
 
-#: ../pidgin/gtkblist.c:2857
+#: ../pidgin/gtkblist.c:2859
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Priateliai/Zobraziť prázdne s_kupiny"
 
-#: ../pidgin/gtkblist.c:2858
+#: ../pidgin/gtkblist.c:2860
 msgid "/Buddies/Show Buddy _Details"
 msgstr "/Priatelia/Zobraziť _detaily priateľov"
 
-#: ../pidgin/gtkblist.c:2859
+#: ../pidgin/gtkblist.c:2861
 msgid "/Buddies/Show Idle _Times"
 msgstr "/Priatelia/Zobraziť č_asy nečinnosti"
 
-#: ../pidgin/gtkblist.c:2860
+#: ../pidgin/gtkblist.c:2862
 msgid "/Buddies/_Sort Buddies"
 msgstr "/Priatelia/Zo_radiť priateľov"
 
-#: ../pidgin/gtkblist.c:2862
+#: ../pidgin/gtkblist.c:2864
 msgid "/Buddies/_Add Buddy..."
 msgstr "/Priatelia/Pridať priat_eľa..."
 
-#: ../pidgin/gtkblist.c:2863
+#: ../pidgin/gtkblist.c:2865
 msgid "/Buddies/Add C_hat..."
 msgstr "/Priatelia/Pridať cha_t..."
 
-#: ../pidgin/gtkblist.c:2864
+#: ../pidgin/gtkblist.c:2866
 msgid "/Buddies/Add _Group..."
 msgstr "/Priatelia/Pridať sk_upinu..."
 
-#: ../pidgin/gtkblist.c:2866
+#: ../pidgin/gtkblist.c:2868
 msgid "/Buddies/_Quit"
 msgstr "/Priatelia/_Ukončiť"
 
 #. Accounts menu
-#: ../pidgin/gtkblist.c:2869
+#: ../pidgin/gtkblist.c:2871
 msgid "/_Accounts"
 msgstr "/Úč_ty"
 
-#: ../pidgin/gtkblist.c:2870 ../pidgin/gtkblist.c:6542
+#: ../pidgin/gtkblist.c:2872 ../pidgin/gtkblist.c:6546
 msgid "/Accounts/Add\\/Edit"
 msgstr "/Účty/Pri_dať a upraviť"
 
 #. Tools
-#: ../pidgin/gtkblist.c:2873
+#: ../pidgin/gtkblist.c:2875
 msgid "/_Tools"
 msgstr "/_Nástroje"
 
-#: ../pidgin/gtkblist.c:2874
+#: ../pidgin/gtkblist.c:2876
 msgid "/Tools/Buddy _Pounces"
 msgstr "/Nástroje/_Sledovanie priateľov"
 
-#: ../pidgin/gtkblist.c:2875
+#: ../pidgin/gtkblist.c:2877
 msgid "/Tools/Plu_gins"
 msgstr "/Nástroje/_Moduly"
 
-#: ../pidgin/gtkblist.c:2876
+#: ../pidgin/gtkblist.c:2878
 msgid "/Tools/Pr_eferences"
 msgstr "/Nástroje/_Nastavenia"
 
-#: ../pidgin/gtkblist.c:2877
+#: ../pidgin/gtkblist.c:2879
 msgid "/Tools/Pr_ivacy"
 msgstr "/Nástroje/_Súkromie"
 
-#: ../pidgin/gtkblist.c:2879
+#: ../pidgin/gtkblist.c:2881
 msgid "/Tools/_File Transfers"
 msgstr "/Nástroje/_Prenosy súborov"
 
-#: ../pidgin/gtkblist.c:2880
+#: ../pidgin/gtkblist.c:2882
 msgid "/Tools/R_oom List"
 msgstr "/Nástroje/Zoznam _miestností"
 
-#: ../pidgin/gtkblist.c:2881
+#: ../pidgin/gtkblist.c:2883
 msgid "/Tools/System _Log"
 msgstr "/Nástroje/Systémový _záznam"
 
-#: ../pidgin/gtkblist.c:2883
+#: ../pidgin/gtkblist.c:2885
 msgid "/Tools/Mute _Sounds"
 msgstr "/Nástroje/Vypnúť _zvuky"
 
 #. Help
-#: ../pidgin/gtkblist.c:2885
+#: ../pidgin/gtkblist.c:2887
 msgid "/_Help"
 msgstr "/_Pomocník"
 
-#: ../pidgin/gtkblist.c:2886
+#: ../pidgin/gtkblist.c:2888
 msgid "/Help/Online _Help"
 msgstr "/Pomoc/Online _pomocník"
 
-#: ../pidgin/gtkblist.c:2887
+#: ../pidgin/gtkblist.c:2889
 msgid "/Help/_Debug Window"
 msgstr "/Pomoc/_Ladiace okno"
 
-#: ../pidgin/gtkblist.c:2889 ../pidgin/gtkblist.c:2891
+#: ../pidgin/gtkblist.c:2891 ../pidgin/gtkblist.c:2893
 msgid "/Help/_About"
 msgstr "/Pomoc/O _programe"
 
-#: ../pidgin/gtkblist.c:2920
+#: ../pidgin/gtkblist.c:2922
 #, c-format
 msgid ""
 "\n"
@@ -12481,78 +12595,78 @@ msgstr ""
 "\n"
 "<b>Účet:</b> %s"
 
-#: ../pidgin/gtkblist.c:2998
+#: ../pidgin/gtkblist.c:3000
 msgid "Buddy Alias"
 msgstr "Prezývka priateľa"
 
-#: ../pidgin/gtkblist.c:3027
+#: ../pidgin/gtkblist.c:3029
 msgid "Logged In"
 msgstr "Prihlásený"
 
-#: ../pidgin/gtkblist.c:3073
+#: ../pidgin/gtkblist.c:3075
 msgid "Last Seen"
-msgstr "Naposledy tu"
+msgstr "Naposledy videný"
 
-#: ../pidgin/gtkblist.c:3093
+#: ../pidgin/gtkblist.c:3095
 msgid "Spooky"
 msgstr "Strašidelné"
 
-#: ../pidgin/gtkblist.c:3095
+#: ../pidgin/gtkblist.c:3097
 msgid "Awesome"
 msgstr "Hrozné"
 
-#: ../pidgin/gtkblist.c:3097
+#: ../pidgin/gtkblist.c:3099
 msgid "Rockin'"
 msgstr "Super"
 
-#: ../pidgin/gtkblist.c:3436
+#: ../pidgin/gtkblist.c:3438
 #, c-format
 msgid "Idle %dd %dh %02dm"
 msgstr "Nečinný %dd %dh %02dm"
 
-#: ../pidgin/gtkblist.c:3438
+#: ../pidgin/gtkblist.c:3440
 #, c-format
 msgid "Idle %dh %02dm"
 msgstr "Nečinný %dh %02dm"
 
-#: ../pidgin/gtkblist.c:3440
+#: ../pidgin/gtkblist.c:3442
 #, c-format
 msgid "Idle %dm"
 msgstr "Nečinný %dm"
 
-#: ../pidgin/gtkblist.c:3585
+#: ../pidgin/gtkblist.c:3587
 msgid "/Buddies/New Instant Message..."
 msgstr "/Priatelia/Nová _správa..."
 
-#: ../pidgin/gtkblist.c:3586 ../pidgin/gtkblist.c:3619
+#: ../pidgin/gtkblist.c:3588 ../pidgin/gtkblist.c:3621
 msgid "/Buddies/Join a Chat..."
 msgstr "/Priatelia/Pripojiť sa k _chatu..."
 
-#: ../pidgin/gtkblist.c:3587
+#: ../pidgin/gtkblist.c:3589
 msgid "/Buddies/Get User Info..."
 msgstr "/Priatelia/Zobraziť podrobnosti..."
 
-#: ../pidgin/gtkblist.c:3588
+#: ../pidgin/gtkblist.c:3590
 msgid "/Buddies/Add Buddy..."
 msgstr "/Priatelia/Pridať priateľa..."
 
-#: ../pidgin/gtkblist.c:3589 ../pidgin/gtkblist.c:3622
+#: ../pidgin/gtkblist.c:3591 ../pidgin/gtkblist.c:3624
 msgid "/Buddies/Add Chat..."
 msgstr "/Priatelia/Pridať chat..."
 
-#: ../pidgin/gtkblist.c:3590
+#: ../pidgin/gtkblist.c:3592
 msgid "/Buddies/Add Group..."
 msgstr "/Priatelia/Pridať skupinu..."
 
-#: ../pidgin/gtkblist.c:3625
+#: ../pidgin/gtkblist.c:3627
 msgid "/Tools/Privacy"
 msgstr "/Nástroje/_Súkromie"
 
-#: ../pidgin/gtkblist.c:3628
+#: ../pidgin/gtkblist.c:3630
 msgid "/Tools/Room List"
 msgstr "/Nástroje/Zoznam _miestností"
 
-#: ../pidgin/gtkblist.c:3725 ../pidgin/gtkdocklet.c:153
+#: ../pidgin/gtkblist.c:3727 ../pidgin/gtkdocklet.c:153
 #, c-format
 msgid "%d unread message from %s\n"
 msgid_plural "%d unread messages from %s\n"
@@ -12560,61 +12674,66 @@ msgstr[0] "%d neprečítaných správ od používateľa %s\n"
 msgstr[1] "%d neprečítaná správa od používateľa %s\n"
 msgstr[2] "%d neprečítané správy od používateľa %s\n"
 
-#: ../pidgin/gtkblist.c:3805
+#: ../pidgin/gtkblist.c:3807
 msgid "Manually"
 msgstr "Ručne"
 
-#: ../pidgin/gtkblist.c:3807
+#: ../pidgin/gtkblist.c:3809
 msgid "Alphabetically"
 msgstr "Podľa abecedy"
 
-#: ../pidgin/gtkblist.c:3808
+#: ../pidgin/gtkblist.c:3810
 msgid "By status"
 msgstr "Podľa stavu"
 
-#: ../pidgin/gtkblist.c:3809
+#: ../pidgin/gtkblist.c:3811
 msgid "By log size"
 msgstr "Podľa veľkosti záznamu"
 
-#: ../pidgin/gtkblist.c:4014 ../pidgin/gtkconn.c:178
+#: ../pidgin/gtkblist.c:4016 ../pidgin/gtkconn.c:178
 #, c-format
 msgid "%s disconnected"
 msgstr "%s bol odpojený"
 
-#: ../pidgin/gtkblist.c:4024
+#: ../pidgin/gtkblist.c:4026
 msgid "Re-enable Account"
 msgstr "Znovu povoliť účet"
 
-#: ../pidgin/gtkblist.c:4050
+#: ../pidgin/gtkblist.c:4052
 #, c-format
 msgid "<span color=\"red\">%s disconnected: %s</span>"
 msgstr "<span color=\"red\">%s bol odpojený: %s</span>"
 
-#: ../pidgin/gtkblist.c:4202
+#: ../pidgin/gtkblist.c:4204
 msgid "<b>Username:</b>"
 msgstr "<b>Prihlasovacie meno:</b>"
 
-#: ../pidgin/gtkblist.c:4209
+#: ../pidgin/gtkblist.c:4211
 msgid "<b>Password:</b>"
 msgstr "<b>Heslo:</b>"
 
-#: ../pidgin/gtkblist.c:4220
+#: ../pidgin/gtkblist.c:4222
 msgid "_Login"
 msgstr "Prihlásiť"
 
-#: ../pidgin/gtkblist.c:4303
+#: ../pidgin/gtkblist.c:4295
+msgid "/Help"
+msgstr "/_Pomocník"
+
+#: ../pidgin/gtkblist.c:4307
 msgid "/Accounts"
 msgstr "/Účty"
 
 #. Translators: Please maintain the use of -> and <- to refer to menu heirarchy
-#: ../pidgin/gtkblist.c:4317
+#: ../pidgin/gtkblist.c:4321
 #, c-format
 msgid ""
 "<span weight='bold' size='larger'>Welcome to %s!</span>\n"
 "\n"
-"You have no accounts enabled. Enable your IM accounts from the <b>Accounts</"
-"b> window at <b>Accounts->Add/Edit</b>. Once you enable accounts, you'll be "
-"able to sign on, set your status, and talk to your friends."
+"You have no accounts enabled. Enable your IM accounts from the "
+"<b>Accounts</b> window at <b>Accounts->Add/Edit</b>. Once you enable "
+"accounts, you'll be able to sign on, set your status, and talk to your "
+"friends."
 msgstr ""
 "<span weight='bold' size='larger'>Vitajte v programe %s!</span>\n"
 "\n"
@@ -12625,24 +12744,24 @@ msgstr ""
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
-#.
-#: ../pidgin/gtkblist.c:4566
+#. 
+#: ../pidgin/gtkblist.c:4570
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Priatelia/Zobraziť _nepripojených priateľov"
 
-#: ../pidgin/gtkblist.c:4569
+#: ../pidgin/gtkblist.c:4573
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Priatelia/Zobraziť prázdne s_kupiny"
 
-#: ../pidgin/gtkblist.c:4575
+#: ../pidgin/gtkblist.c:4579
 msgid "/Buddies/Show Buddy Details"
 msgstr "/Nástroje/Zobraziť _detaily priateľov"
 
-#: ../pidgin/gtkblist.c:4578
+#: ../pidgin/gtkblist.c:4582
 msgid "/Buddies/Show Idle Times"
 msgstr "/Priatelia/Zobraziť č_asy nečinnosti"
 
-#: ../pidgin/gtkblist.c:5455
+#: ../pidgin/gtkblist.c:5459
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -12653,25 +12772,25 @@ msgstr ""
 "v zozname priateľov namiesto mena používateľa vždy, keď to bude možné.\n"
 
 #. End of account box
-#: ../pidgin/gtkblist.c:5490
+#: ../pidgin/gtkblist.c:5494
 msgid "_Screen name:"
 msgstr "_Používateľské meno:"
 
-#: ../pidgin/gtkblist.c:5512 ../pidgin/gtkblist.c:5865
+#: ../pidgin/gtkblist.c:5516 ../pidgin/gtkblist.c:5869
 msgid "A_lias:"
 msgstr "P_rezývka:"
 
-#: ../pidgin/gtkblist.c:5777
+#: ../pidgin/gtkblist.c:5781
 msgid "This protocol does not support chat rooms."
 msgstr "Tento protokol nepodporuje miestnosti chatu."
 
-#: ../pidgin/gtkblist.c:5793
+#: ../pidgin/gtkblist.c:5797
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr "Momentálne nie ste pripojený na protokole, ktorý by podporoval chat."
 
-#: ../pidgin/gtkblist.c:5834
+#: ../pidgin/gtkblist.c:5838
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
@@ -12679,39 +12798,39 @@ msgstr ""
 "Prosím, zadajte prezývku a príslušné informácie o chate, ktorý chcete pridať "
 "do vášho zoznamu priateľov.\n"
 
-#: ../pidgin/gtkblist.c:5922
+#: ../pidgin/gtkblist.c:5926
 msgid "Please enter the name of the group to be added."
 msgstr "Prosím, zadajte názov skupiny ktorú chcete pridať."
 
-#: ../pidgin/gtkblist.c:6562
+#: ../pidgin/gtkblist.c:6566
 msgid "<PurpleMain>/Accounts/"
 msgstr "<PurpleMain>/Účty/"
 
-#: ../pidgin/gtkblist.c:6586
+#: ../pidgin/gtkblist.c:6590
 msgid "_Edit Account"
 msgstr "_Upraviť účet"
 
-#: ../pidgin/gtkblist.c:6599 ../pidgin/gtkconv.c:3037
+#: ../pidgin/gtkblist.c:6603 ../pidgin/gtkconv.c:3037
 msgid "No actions available"
 msgstr "Nie sú dostupné žiadne akcie"
 
-#: ../pidgin/gtkblist.c:6607
+#: ../pidgin/gtkblist.c:6611
 msgid "_Disable"
 msgstr "_Vypnúť"
 
-#: ../pidgin/gtkblist.c:6619
+#: ../pidgin/gtkblist.c:6623
 msgid "Enable Account"
 msgstr "Povoliť účet"
 
-#: ../pidgin/gtkblist.c:6625
+#: ../pidgin/gtkblist.c:6629
 msgid "<PurpleMain>/Accounts/Enable Account"
 msgstr "<PurpleMain>/Účty/Povoliť účet"
 
-#: ../pidgin/gtkblist.c:6674
+#: ../pidgin/gtkblist.c:6678
 msgid "/Tools"
 msgstr "/Nástroje"
 
-#: ../pidgin/gtkblist.c:6744
+#: ../pidgin/gtkblist.c:6748
 msgid "/Buddies/Sort Buddies"
 msgstr "/Priatelia/Zoradiť priateľov"
 
@@ -13000,7 +13119,7 @@ msgstr "/Rozhovor/_Pridať..."
 
 #: ../pidgin/gtkconv.c:3198
 msgid "/Conversation/Remove..."
-msgstr "/Conversation/Remove..."
+msgstr "/Rozhovor/Odstrániť..."
 
 #: ../pidgin/gtkconv.c:3204
 msgid "/Conversation/Insert Link..."
@@ -13118,11 +13237,11 @@ msgstr "Naposledy otvorené okno"
 
 #: ../pidgin/gtkconv.c:9263
 msgid "Separate IM and Chat windows"
-msgstr "Oddeľovať okná pre IM a Chat"
+msgstr "Oddeľovať okná správ a chatov"
 
 #: ../pidgin/gtkconv.c:9265 ../pidgin/gtkprefs.c:1412
 msgid "New window"
-msgstr "Nové okno"
+msgstr "V novom okne"
 
 #: ../pidgin/gtkconv.c:9267
 msgid "By group"
@@ -13134,7 +13253,7 @@ msgstr "Podľa účtu"
 
 #: ../pidgin/gtkdebug.c:233
 msgid "Save Debug Log"
-msgstr "Uložiť ladiaci denník"
+msgstr "Uložiť ladiaci záznam"
 
 #: ../pidgin/gtkdebug.c:581
 msgid "Invert"
@@ -13142,19 +13261,19 @@ msgstr "Prevrátiť"
 
 #: ../pidgin/gtkdebug.c:584
 msgid "Highlight matches"
-msgstr "Zvýrazniť výskyty"
+msgstr "Zvýraznenie súhlasí"
 
 #: ../pidgin/gtkdebug.c:651
 msgid "_Icon Only"
-msgstr "Iba _ikona"
+msgstr "Len _ikony"
 
 #: ../pidgin/gtkdebug.c:652
 msgid "_Text Only"
-msgstr "Iba _text"
+msgstr "Len _text"
 
 #: ../pidgin/gtkdebug.c:653
 msgid "_Both Icon & Text"
-msgstr "Ikona _aj text"
+msgstr "O_boje, ikony aj text"
 
 #: ../pidgin/gtkdebug.c:774
 msgid "Filter"
@@ -13162,7 +13281,7 @@ msgstr "Filter"
 
 #: ../pidgin/gtkdebug.c:793
 msgid "Right click for more options."
-msgstr "Možnosti zobratíte kliknutím pravým tlačidlom myši."
+msgstr "Pravý klik pre viac možností."
 
 #: ../pidgin/gtkdebug.c:823
 msgid "Level "
@@ -13186,7 +13305,7 @@ msgstr "Upozornenie"
 
 #: ../pidgin/gtkdebug.c:836
 msgid "Error "
-msgstr "Chyba"
+msgstr "Chyba "
 
 #: ../pidgin/gtkdebug.c:837
 msgid "Fatal Error"
@@ -13230,7 +13349,7 @@ msgstr "správca libfaim"
 
 #: ../pidgin/gtkdialogs.c:108
 msgid "developer & webmaster"
-msgstr "vývojár & webmaster"
+msgstr "vývojár a webmaster"
 
 #. If "lazy bum" translates literally into a serious insult, use something else or omit it.
 #: ../pidgin/gtkdialogs.c:110
@@ -13247,283 +13366,283 @@ msgstr "pôvodný autor"
 
 #: ../pidgin/gtkdialogs.c:128
 msgid "Afrikaans"
-msgstr "Afrikánsky"
+msgstr "afrikánčina"
 
 #: ../pidgin/gtkdialogs.c:129
 msgid "Arabic"
-msgstr "Arabsky"
+msgstr "arabčina"
 
 #: ../pidgin/gtkdialogs.c:130 ../pidgin/gtkdialogs.c:131
 #: ../pidgin/gtkdialogs.c:218
 msgid "Bulgarian"
-msgstr "Bulharsky"
+msgstr "bulharčina"
 
 #: ../pidgin/gtkdialogs.c:132 ../pidgin/gtkdialogs.c:133
 #: ../pidgin/gtkdialogs.c:134 ../pidgin/gtkdialogs.c:135
 msgid "Bengali"
-msgstr "Bengálsky"
+msgstr "bengálčina"
 
 #: ../pidgin/gtkdialogs.c:136
 msgid "Bosnian"
-msgstr "Bosniansky"
+msgstr "bosniačtina"
 
 #: ../pidgin/gtkdialogs.c:137 ../pidgin/gtkdialogs.c:219
 #: ../pidgin/gtkdialogs.c:220
 msgid "Catalan"
-msgstr "Katalánsky"
+msgstr "katalánčina"
 
 #: ../pidgin/gtkdialogs.c:138 ../pidgin/gtkdialogs.c:139
 msgid "Valencian-Catalan"
-msgstr "Valencijsky-Katalánsky"
+msgstr "katalánčina (Valencia)"
 
 #: ../pidgin/gtkdialogs.c:140 ../pidgin/gtkdialogs.c:221
 msgid "Czech"
-msgstr "Česky"
+msgstr "čeština"
 
 #: ../pidgin/gtkdialogs.c:141 ../pidgin/gtkdialogs.c:142
 msgid "Danish"
-msgstr "Dánsky"
+msgstr "dánčina"
 
 #: ../pidgin/gtkdialogs.c:143 ../pidgin/gtkdialogs.c:144
 #: ../pidgin/gtkdialogs.c:222
 msgid "German"
-msgstr "Nemecky"
+msgstr "nemčina"
 
 #: ../pidgin/gtkdialogs.c:145 ../pidgin/gtkdialogs.c:146
 #: ../pidgin/gtkdialogs.c:147
 msgid "Dzongkha"
-msgstr "Jazyk Dzonka"
+msgstr "dzongkä"
 
 #: ../pidgin/gtkdialogs.c:148 ../pidgin/gtkdialogs.c:149
 msgid "Greek"
-msgstr "Grécky"
+msgstr "gréčtina"
 
 #: ../pidgin/gtkdialogs.c:150
 msgid "Australian English"
-msgstr "Austrálska angličtina"
+msgstr "austrálska angličtina"
 
 #: ../pidgin/gtkdialogs.c:151
 msgid "Canadian English"
-msgstr "Kanadská angličtina"
+msgstr "kanadská angličtina"
 
 #: ../pidgin/gtkdialogs.c:152
 msgid "British English"
-msgstr "Britská angličtina"
+msgstr "britská angličtina"
 
 #: ../pidgin/gtkdialogs.c:153
 msgid "Esperanto"
-msgstr "Esperanto"
+msgstr "esperanto"
 
 #: ../pidgin/gtkdialogs.c:154 ../pidgin/gtkdialogs.c:223
 #: ../pidgin/gtkdialogs.c:224 ../pidgin/gtkdialogs.c:225
 #: ../pidgin/gtkdialogs.c:226
 msgid "Spanish"
-msgstr "Španielsky"
+msgstr "španielčina"
 
 #: ../pidgin/gtkdialogs.c:155
 msgid "Estonian"
-msgstr "Estónsky"
+msgstr "estónčina"
 
 #: ../pidgin/gtkdialogs.c:156 ../pidgin/gtkdialogs.c:157
 msgid "Euskera(Basque)"
-msgstr "Euskera(Baskitsky)"
+msgstr "euskera (baskičtina)"
 
 #: ../pidgin/gtkdialogs.c:158 ../pidgin/gtkdialogs.c:159
 #: ../pidgin/gtkdialogs.c:160
 msgid "Persian"
-msgstr "Perzsky"
+msgstr "perzština"
 
 #: ../pidgin/gtkdialogs.c:161 ../pidgin/gtkdialogs.c:227
 #: ../pidgin/gtkdialogs.c:228
 msgid "Finnish"
-msgstr "Fínsky"
+msgstr "fínčina"
 
 #: ../pidgin/gtkdialogs.c:162 ../pidgin/gtkdialogs.c:229
 #: ../pidgin/gtkdialogs.c:230 ../pidgin/gtkdialogs.c:231
 #: ../pidgin/gtkdialogs.c:232
 msgid "French"
-msgstr "Francúzsky"
+msgstr "francúzština"
 
 #: ../pidgin/gtkdialogs.c:163 ../pidgin/gtkdialogs.c:164
 #: ../pidgin/gtkdialogs.c:233
 msgid "Galician"
-msgstr "Galícijsky"
+msgstr "Galícky"
 
 #: ../pidgin/gtkdialogs.c:165 ../pidgin/gtkdialogs.c:166
 msgid "Gujarati"
-msgstr "Guraratsky"
+msgstr "Gudžarati"
 
 #: ../pidgin/gtkdialogs.c:166
 msgid "Gujarati Language Team"
-msgstr "Jazykový tým Gujarati"
+msgstr "gudžarátsky jazykový tím"
 
 #: ../pidgin/gtkdialogs.c:167 ../pidgin/gtkdialogs.c:234
 msgid "Hebrew"
-msgstr "Hebrejsky"
+msgstr "hebrejčina"
 
 #: ../pidgin/gtkdialogs.c:168
 msgid "Hindi"
-msgstr "Hindsky"
+msgstr "hindčina"
 
 #: ../pidgin/gtkdialogs.c:169
 msgid "Hungarian"
-msgstr "Maďarsky"
+msgstr "Maďarčina"
 
 #: ../pidgin/gtkdialogs.c:170
 msgid "Indonesian"
-msgstr "Indonézsky"
+msgstr "indonézština"
 
 #: ../pidgin/gtkdialogs.c:171 ../pidgin/gtkdialogs.c:235
 msgid "Italian"
-msgstr "Taliansky"
+msgstr "taliančina"
 
 #: ../pidgin/gtkdialogs.c:172 ../pidgin/gtkdialogs.c:236
 #: ../pidgin/gtkdialogs.c:237 ../pidgin/gtkdialogs.c:238
 msgid "Japanese"
-msgstr "Japonsky"
+msgstr "japončina"
 
 #: ../pidgin/gtkdialogs.c:173 ../pidgin/gtkdialogs.c:239
 msgid "Georgian"
-msgstr "Gruzínsky"
+msgstr "gruzínčina"
 
 #: ../pidgin/gtkdialogs.c:173
 msgid "Ubuntu Georgian Translators"
-msgstr "Ubuntu Gruzínsky prekladatelia"
+msgstr "Ubuntu gruzínsky prekladatelia"
 
 #: ../pidgin/gtkdialogs.c:174
 msgid "Kannada"
-msgstr "Kanada"
+msgstr "kannadčina"
 
 #: ../pidgin/gtkdialogs.c:174
 msgid "Kannada Translation team"
-msgstr "Kanadský prekladateľský tým"
+msgstr "kanaadsky prekladateľký tím"
 
 #: ../pidgin/gtkdialogs.c:175 ../pidgin/gtkdialogs.c:240
 #: ../pidgin/gtkdialogs.c:241
 msgid "Korean"
-msgstr "Kórejsky"
+msgstr "kórejčina"
 
 #: ../pidgin/gtkdialogs.c:176 ../pidgin/gtkdialogs.c:177
 #: ../pidgin/gtkdialogs.c:178
 msgid "Kurdish"
-msgstr "Kurdsky"
+msgstr "kurdčina"
 
 #: ../pidgin/gtkdialogs.c:179 ../pidgin/gtkdialogs.c:242
 #: ../pidgin/gtkdialogs.c:243
 msgid "Lithuanian"
-msgstr "Litovsky"
+msgstr "litovčina"
 
 #: ../pidgin/gtkdialogs.c:180 ../pidgin/gtkdialogs.c:181
 #: ../pidgin/gtkdialogs.c:244
 msgid "Macedonian"
-msgstr "Macedónsky"
+msgstr "macedónčina"
 
 #: ../pidgin/gtkdialogs.c:182 ../pidgin/gtkdialogs.c:245
 msgid "Bokmål Norwegian"
-msgstr "Nórsky"
+msgstr "nórsky bokmål"
 
 #: ../pidgin/gtkdialogs.c:183
 msgid "Nepali"
-msgstr "Nepálsky"
+msgstr "nepálčina"
 
 #: ../pidgin/gtkdialogs.c:184
 msgid "Dutch, Flemish"
-msgstr "Holandsky, Flámsky"
+msgstr "holandšina, flámska"
 
 #: ../pidgin/gtkdialogs.c:185
 msgid "Norwegian Nynorsk"
-msgstr "Nórsky"
+msgstr "nórsky nynorsk"
 
 #: ../pidgin/gtkdialogs.c:186 ../pidgin/gtkdialogs.c:187
 #: ../pidgin/gtkdialogs.c:188 ../pidgin/gtkdialogs.c:246
 msgid "Polish"
-msgstr "Poľsky"
+msgstr "poľština"
 
 #: ../pidgin/gtkdialogs.c:189
 msgid "Portuguese"
-msgstr "Portugalsky"
+msgstr "portugalčina"
 
 #: ../pidgin/gtkdialogs.c:190
 msgid "Portuguese-Brazil"
-msgstr "Portugalsky-Brazília"
+msgstr "portugalčina (Brazília)"
 
 #: ../pidgin/gtkdialogs.c:191
 msgid "Pashto"
-msgstr "Pashto"
+msgstr "paštčina"
 
 #: ../pidgin/gtkdialogs.c:192
 msgid "Romanian"
-msgstr "Rumunsky"
+msgstr "rumunčina"
 
 #: ../pidgin/gtkdialogs.c:193 ../pidgin/gtkdialogs.c:247
 #: ../pidgin/gtkdialogs.c:248
 msgid "Russian"
-msgstr "Rusky"
+msgstr "ruština"
 
 #: ../pidgin/gtkdialogs.c:194 ../pidgin/gtkdialogs.c:195
 #: ../pidgin/gtkdialogs.c:249 ../pidgin/gtkdialogs.c:250
 #: ../pidgin/gtkdialogs.c:251
 msgid "Slovak"
-msgstr "Slovensky"
+msgstr "slovenčina"
 
 #: ../pidgin/gtkdialogs.c:196 ../pidgin/gtkdialogs.c:252
 msgid "Slovenian"
-msgstr "Slovinsky"
+msgstr "slovinčina"
 
 #: ../pidgin/gtkdialogs.c:197
 msgid "Albanian"
-msgstr "Albánsky"
+msgstr "albánčina"
 
 #: ../pidgin/gtkdialogs.c:198 ../pidgin/gtkdialogs.c:199
 msgid "Serbian"
-msgstr "Srbsky"
+msgstr "srbčina"
 
 #: ../pidgin/gtkdialogs.c:200 ../pidgin/gtkdialogs.c:253
 #: ../pidgin/gtkdialogs.c:254
 msgid "Swedish"
-msgstr "Švédsky"
+msgstr "švédčina"
 
 #: ../pidgin/gtkdialogs.c:201
 msgid "Tamil"
-msgstr "Tamilsky"
+msgstr "tamilčina"
 
 #: ../pidgin/gtkdialogs.c:202
 msgid "Telugu"
-msgstr "Telugština"
+msgstr "telugčina"
 
 #: ../pidgin/gtkdialogs.c:203
 msgid "Thai"
-msgstr "Thajština"
+msgstr "thajčina"
 
 #: ../pidgin/gtkdialogs.c:204 ../pidgin/gtkdialogs.c:255
 msgid "Turkish"
-msgstr "Turecký"
+msgstr "turečtina"
 
 #: ../pidgin/gtkdialogs.c:205
 msgid "Vietnamese"
-msgstr "Vietnamský"
+msgstr "vietnamčina"
 
 #: ../pidgin/gtkdialogs.c:205
 msgid "T.M.Thanh and the Gnome-Vi Team"
-msgstr "T.M.Thanh a Gnome-Vi tým"
+msgstr "T.M.Thanh a Gnome-Vi tím"
 
 #: ../pidgin/gtkdialogs.c:206 ../pidgin/gtkdialogs.c:256
 msgid "Simplified Chinese"
-msgstr "Zjednodušená Čínština"
+msgstr "zjednodušená čínština"
 
 #: ../pidgin/gtkdialogs.c:207 ../pidgin/gtkdialogs.c:208
 #: ../pidgin/gtkdialogs.c:209
 msgid "Hong Kong Chinese"
-msgstr "Hongkongská Čínština"
+msgstr "hongkongská čínština"
 
 #: ../pidgin/gtkdialogs.c:210 ../pidgin/gtkdialogs.c:211
 #: ../pidgin/gtkdialogs.c:257
 msgid "Traditional Chinese"
-msgstr "Tradičná Čínština"
+msgstr "tradičná čínština"
 
 #: ../pidgin/gtkdialogs.c:217
 msgid "Amharic"
-msgstr "Amharsky"
+msgstr "amharčina"
 
 #: ../pidgin/gtkdialogs.c:342
 #, c-format
@@ -13553,6 +13672,7 @@ msgstr ""
 "program vám neposkytujeme žiadnu záruku.<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:395
+#, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin na irc.freenode.net<BR><BR>"
 
@@ -13562,7 +13682,7 @@ msgstr "Aktívni vývojári"
 
 #: ../pidgin/gtkdialogs.c:415
 msgid "Crazy Patch Writers"
-msgstr "Blázniví autori patchov"
+msgstr "Blázniví autori záplat"
 
 #: ../pidgin/gtkdialogs.c:430
 msgid "Retired Developers"
@@ -13904,7 +14024,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"<span size='larger' weight='bold'>Chyba počas ukladania obrázku</span>\n"
+"<span size='larger' weight='bold'>Chyba počas ukladania obrázka</span>\n"
 "\n"
 "%s"
 
@@ -13915,7 +14035,7 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"Chyba počas ukladania obrázku\n"
+"Chyba počas ukladania obrázka\n"
 "\n"
 "%s"
 
@@ -13924,6 +14044,7 @@ msgid "Save Image"
 msgstr "Uložiť obrázok"
 
 #: ../pidgin/gtkimhtml.c:3518
+#, c-format
 msgid "_Save Image..."
 msgstr "_Uložiť obrázok..."
 
@@ -14016,7 +14137,7 @@ msgstr "<span size='smaller'>_Menšie</span>"
 #. * no updating nor nothin'
 #: ../pidgin/gtkimhtmltoolbar.c:1135
 msgid "_Font face"
-msgstr "Rez písma"
+msgstr "_Rez písma"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1136
 msgid "Foreground _color"
@@ -14032,11 +14153,11 @@ msgstr "_Smajlík"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1221
 msgid "_Image"
-msgstr "Obrázok"
+msgstr "O_brázok"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1227
 msgid "_Link"
-msgstr "Odkaz"
+msgstr "_Odkaz"
 
 #: ../pidgin/gtklog.c:292
 #, c-format
@@ -14050,16 +14171,16 @@ msgstr ""
 #: ../pidgin/gtklog.c:303
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the log of the conversation in %"
-"s which started at %s?"
+"Are you sure you want to permanently delete the log of the conversation in "
+"%s which started at %s?"
 msgstr ""
 "Naozaj chcete natrvalo odstrániť záznam konverzácie na %s, ktorá začala %s?"
 
 #: ../pidgin/gtklog.c:308
 #, c-format
 msgid ""
-"Are you sure you want to permanently delete the system log which started at %"
-"s?"
+"Are you sure you want to permanently delete the system log which started at "
+"%s?"
 msgstr "Naozaj chcete natrvalo odstrániť systémový záznam, ktorý začal %s?"
 
 #: ../pidgin/gtklog.c:452
@@ -14082,7 +14203,7 @@ msgid ""
 "log\" preference is enabled."
 msgstr ""
 "Systémové udalosti sa budú zaznamenávať iba v prípade, že v nastaveniach "
-"zapnete voľbu \"Zaznamenávať všetky zmeny stavu do systémového záznamu\"."
+"zapnete voľbu „Zaznamenávať všetky zmeny stavu do systémového záznamu“."
 
 #: ../pidgin/gtklog.c:553
 msgid ""
@@ -14090,14 +14211,14 @@ msgid ""
 "preference is enabled."
 msgstr ""
 "Správy sa budú zaznamenávať iba v prípade, že v nastaveniach zapnete voľbu "
-"\"Zaznamenávať všetky správy\"."
+"„Zaznamenávať všetky správy“."
 
 #: ../pidgin/gtklog.c:556
 msgid ""
 "Chats will only be logged if the \"Log all chats\" preference is enabled."
 msgstr ""
 "Chaty sa budú zaznamenávať iba v prípade, že v nastaveniach zapnete voľbu "
-"\"Zaznamenávať všetky chaty\"."
+"„Zaznamenávať všetky chaty“."
 
 #: ../pidgin/gtklog.c:560
 msgid "No logs were found"
@@ -14126,12 +14247,12 @@ msgstr "Rozhovory s %s"
 msgid "System Log"
 msgstr "Systémový záznam"
 
-#: ../pidgin/gtkmain.c:386
+#: ../pidgin/gtkmain.c:385
 #, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
-msgstr "%s %s. `%s -h' zobrazí viac informácií.\n"
+msgstr "%s %s. „%s -h“ zobrazí viac informácií.\n"
 
-#: ../pidgin/gtkmain.c:388
+#: ../pidgin/gtkmain.c:387
 #, c-format
 msgid ""
 "%s %s\n"
@@ -14158,7 +14279,7 @@ msgstr ""
 "                      účty oddeľované čiarkami)\n"
 "  -v, --version       zobrazí verziu programu a skončí\n"
 
-#: ../pidgin/gtkmain.c:512
+#: ../pidgin/gtkmain.c:511
 #, c-format
 msgid ""
 "%s has segfaulted and attempted to dump a core file.\n"
@@ -14198,7 +14319,7 @@ msgstr ""
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
-#: ../pidgin/gtkmain.c:699 ../pidgin/pidgin.h:50
+#: ../pidgin/gtkmain.c:698 ../pidgin/pidgin.h:50
 msgid "Pidgin"
 msgstr "Pidgin"
 
@@ -14229,7 +14350,7 @@ msgstr[2] "<b>Máte %d nové e-maily.</b>"
 #: ../pidgin/gtknotify.c:972
 #, c-format
 msgid "The browser command \"%s\" is invalid."
-msgstr "Príkaz prehliadača \"%s\" je chybný."
+msgstr "Príkaz prehliadača „%s“ je chybný."
 
 #: ../pidgin/gtknotify.c:974 ../pidgin/gtknotify.c:986
 #: ../pidgin/gtknotify.c:999 ../pidgin/gtknotify.c:1127
@@ -14239,12 +14360,12 @@ msgstr "Nepodarilo sa otvoriť URL"
 #: ../pidgin/gtknotify.c:984 ../pidgin/gtknotify.c:997
 #, c-format
 msgid "Error launching \"%s\": %s"
-msgstr "Chyba počas spúšťania \"%s\": %s"
+msgstr "Chyba počas spúšťania „%s“: %s"
 
 #: ../pidgin/gtknotify.c:1128
 msgid ""
 "The 'Manual' browser command has been chosen, but no command has been set."
-msgstr "Vybrali ste možnosť 'Ručne', ale nenastavili ste príkaz prehliadača."
+msgstr "Vybrali ste možnosť „Ručne“, ale nenastavili ste príkaz prehliadača."
 
 #: ../pidgin/gtkplugin.c:264
 msgid "The following plugins will be unloaded."
@@ -14404,8 +14525,8 @@ msgid ""
 "themes can be installed by dragging and dropping them onto the theme list."
 msgstr ""
 "Z nasledujúceho zoznamu vyberte tému smajlíkov, ktorú chcete používať. Nové "
-"témy je možné nainštalovať pridaním témy do tohto zoznamu metódou \"ťahaj a "
-"pusti\"."
+"témy je možné nainštalovať pridaním témy do tohto zoznamu metódou „ťahaj a "
+"pusti“."
 
 #: ../pidgin/gtkprefs.c:731
 msgid "Icon"
@@ -14566,15 +14687,15 @@ msgstr "_Ručne určiť rozsah portov, na ktorých počúvať"
 
 #: ../pidgin/gtkprefs.c:1185
 msgid "_Start port:"
-msgstr "_Prvý port:"
+msgstr "_Počiatočný port:"
 
 #: ../pidgin/gtkprefs.c:1192
 msgid "_End port:"
-msgstr "Po_sledný port:"
+msgstr "_Konečný port:"
 
 #: ../pidgin/gtkprefs.c:1200
 msgid "Proxy Server"
-msgstr "Proxy Server"
+msgstr "Proxy server"
 
 #: ../pidgin/gtkprefs.c:1204
 msgid "No proxy"
@@ -14606,7 +14727,7 @@ msgstr "Konqueror"
 
 #: ../pidgin/gtkprefs.c:1330
 msgid "GNOME Default"
-msgstr "GNOME Default"
+msgstr "GNOME štandard"
 
 #: ../pidgin/gtkprefs.c:1331
 msgid "Galeon"
@@ -14626,7 +14747,7 @@ msgstr "Epiphany"
 
 #: ../pidgin/gtkprefs.c:1343
 msgid "Manual"
-msgstr "Manual"
+msgstr "Ručné"
 
 #: ../pidgin/gtkprefs.c:1396
 msgid "Browser Selection"
@@ -14682,26 +14803,32 @@ msgid "Sound Selection"
 msgstr "Výber zvuku"
 
 #: ../pidgin/gtkprefs.c:1632
+#, c-format
 msgid "Quietest"
 msgstr "Najtichšia"
 
 #: ../pidgin/gtkprefs.c:1634
+#, c-format
 msgid "Quieter"
 msgstr "Tichšia"
 
 #: ../pidgin/gtkprefs.c:1636
+#, c-format
 msgid "Quiet"
 msgstr "Tichá"
 
 #: ../pidgin/gtkprefs.c:1640
+#, c-format
 msgid "Loud"
 msgstr "Hlasná"
 
 #: ../pidgin/gtkprefs.c:1642
+#, c-format
 msgid "Louder"
 msgstr "Hlasnejšia"
 
 #: ../pidgin/gtkprefs.c:1644
+#, c-format
 msgid "Loudest"
 msgstr "Najhlasnejšia"
 
@@ -14918,7 +15045,7 @@ msgstr "Zoznam miestností"
 #. list button
 #: ../pidgin/gtkroomlist.c:442
 msgid "_Get List"
-msgstr "Získať zoznam"
+msgstr "_Získať zoznam"
 
 #. add button
 #: ../pidgin/gtkroomlist.c:450
@@ -14932,7 +15059,7 @@ msgstr "Naozaj chcete odstrániť tieto uložené stavy?"
 #. Use button
 #: ../pidgin/gtksavedstatuses.c:619 ../pidgin/gtksavedstatuses.c:1265
 msgid "_Use"
-msgstr "Použiť"
+msgstr "_Použiť"
 
 #: ../pidgin/gtksavedstatuses.c:779
 msgid "Title already in use.  You must choose a unique title."
@@ -14958,7 +15085,7 @@ msgstr "Pre niektoré účty používať odlišný stav"
 #. Save & Use button
 #: ../pidgin/gtksavedstatuses.c:1273
 msgid "Sa_ve & Use"
-msgstr "Uložiť a použiť"
+msgstr "Ul_ožiť a Použiť"
 
 #: ../pidgin/gtksavedstatuses.c:1477
 #, c-format
@@ -14973,35 +15100,35 @@ msgstr "Čaká sa na sieťové pripojenie"
 msgid "Google Talk"
 msgstr "Google Talk"
 
-#: ../pidgin/gtkutils.c:1388 ../pidgin/gtkutils.c:1411
+#: ../pidgin/gtkutils.c:1399 ../pidgin/gtkutils.c:1422
 #, c-format
 msgid "The following error has occurred loading %s: %s"
 msgstr "Počas načítavania %s sa vyskytla nasledujúca chyba: %s"
 
-#: ../pidgin/gtkutils.c:1391 ../pidgin/gtkutils.c:1413
+#: ../pidgin/gtkutils.c:1402 ../pidgin/gtkutils.c:1424
 msgid "Failed to load image"
 msgstr "Nepodarilo sa načítať obrázok"
 
-#: ../pidgin/gtkutils.c:1487
+#: ../pidgin/gtkutils.c:1498
 #, c-format
 msgid "Cannot send folder %s."
 msgstr "Nepodarilo sa odoslať priečinok %s."
 
-#: ../pidgin/gtkutils.c:1488
+#: ../pidgin/gtkutils.c:1499
 #, c-format
 msgid ""
 "%s cannot transfer a folder. You will need to send the files within "
 "individually."
 msgstr ""
 "Program %s nedokáže odoslať priečinok. Skúste posielať súbory v priečinku po "
-"jednom. "
+"jednom."
 
-#: ../pidgin/gtkutils.c:1520 ../pidgin/gtkutils.c:1532
-#: ../pidgin/gtkutils.c:1539
+#: ../pidgin/gtkutils.c:1531 ../pidgin/gtkutils.c:1543
+#: ../pidgin/gtkutils.c:1550
 msgid "You have dragged an image"
 msgstr "Vložili ste obrázok"
 
-#: ../pidgin/gtkutils.c:1521
+#: ../pidgin/gtkutils.c:1532
 msgid ""
 "You can send this image as a file transfer, embed it into this message, or "
 "use it as the buddy icon for this user."
@@ -15009,23 +15136,23 @@ msgstr ""
 "Tento obrázok môžete odoslať cez prenos súborov, vložiť ho do správy alebo "
 "použiť ako ikonu priateľa pre tohto používateľa."
 
-#: ../pidgin/gtkutils.c:1527 ../pidgin/gtkutils.c:1547
+#: ../pidgin/gtkutils.c:1538 ../pidgin/gtkutils.c:1558
 msgid "Set as buddy icon"
 msgstr "Nastaviť ako ikonu priateľa"
 
-#: ../pidgin/gtkutils.c:1528 ../pidgin/gtkutils.c:1548
+#: ../pidgin/gtkutils.c:1539 ../pidgin/gtkutils.c:1559
 msgid "Send image file"
 msgstr "Odoslať obrázok ako súbor"
 
-#: ../pidgin/gtkutils.c:1529 ../pidgin/gtkutils.c:1548
+#: ../pidgin/gtkutils.c:1540 ../pidgin/gtkutils.c:1559
 msgid "Insert in message"
 msgstr "Vložiť do správy"
 
-#: ../pidgin/gtkutils.c:1533
+#: ../pidgin/gtkutils.c:1544
 msgid "Would you like to set it as the buddy icon for this user?"
 msgstr "Chcete nastaviť obrázok ako ikonu priateľa?"
 
-#: ../pidgin/gtkutils.c:1540
+#: ../pidgin/gtkutils.c:1551
 msgid ""
 "You can send this image as a file transfer, or use it as the buddy icon for "
 "this user."
@@ -15033,7 +15160,7 @@ msgstr ""
 "Tento obrázok môžete odoslať cez prenos súborov alebo ho použiť ako ikonu "
 "pre tohto priateľa."
 
-#: ../pidgin/gtkutils.c:1541
+#: ../pidgin/gtkutils.c:1552
 msgid ""
 "You can insert this image into this message, or use it as the buddy icon for "
 "this user"
@@ -15046,11 +15173,11 @@ msgstr ""
 #. * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
 #. * Probably not.  I'll just give an error and return.
 #. The original patch sent the icon used by the launcher.  That's probably wrong
-#: ../pidgin/gtkutils.c:1599
+#: ../pidgin/gtkutils.c:1610
 msgid "Cannot send launcher"
 msgstr "Nepodarilo sa odoslať spúšťač"
 
-#: ../pidgin/gtkutils.c:1599
+#: ../pidgin/gtkutils.c:1610
 msgid ""
 "You dragged a desktop launcher. Most likely you wanted to send whatever this "
 "launcher points to instead of this launcher itself."
@@ -15058,7 +15185,7 @@ msgstr ""
 "Vložili ste spúšťač. Pravdepodobne ste chceli odoslať súbor, na ktorý tento "
 "spúšťač odkazuje, namiesto samotného spúšťača."
 
-#: ../pidgin/gtkutils.c:2334
+#: ../pidgin/gtkutils.c:2345
 #, c-format
 msgid ""
 "<b>File:</b> %s\n"
@@ -15067,32 +15194,32 @@ msgid ""
 msgstr ""
 "<b>Súbor:</b> %s\n"
 "<b>Veľkosť súboru:</b> %s\n"
-"<b>Veľkosť obrázku:</b> %dx%d"
+"<b>Veľkosť obrázka:</b> %dx%d"
 
-#: ../pidgin/gtkutils.c:2630
+#: ../pidgin/gtkutils.c:2641
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
-msgstr "Súbor '%s' je príliš veľký na %s.  Prosím, skúste menší obrázok.\n"
+msgstr "Súbor „%s“ je príliš veľký na %s. Prosím, skúste menší obrázok.\n"
 
-#: ../pidgin/gtkutils.c:2632
+#: ../pidgin/gtkutils.c:2643
 msgid "Icon Error"
 msgstr "Chyba ikony"
 
-#: ../pidgin/gtkutils.c:2633
+#: ../pidgin/gtkutils.c:2644
 msgid "Could not set icon"
 msgstr "Nepodarilo sa odoslať ikonu"
 
-#: ../pidgin/gtkutils.c:2733
+#: ../pidgin/gtkutils.c:2744
 #, c-format
 msgid "Failed to open file '%s': %s"
-msgstr "Nepodarilo sa otvoriť súbor '%s': %s"
+msgstr "Nepodarilo sa otvoriť súbor „%s“: %s"
 
-#: ../pidgin/gtkutils.c:2782
+#: ../pidgin/gtkutils.c:2793
 #, c-format
 msgid ""
 "Failed to load image '%s': reason not known, probably a corrupt image file"
 msgstr ""
-"Nepodarilo sa načítať obrázok '%s': dôvod je neznámy, pravdepodobne je "
+"Nepodarilo sa načítať obrázok „%s“: dôvod je neznámy, pravdepodobne je "
 "poškodený súbor"
 
 #: ../pidgin/gtkwhiteboard.c:754 ../pidgin/gtkwhiteboard.c:773
@@ -15113,15 +15240,15 @@ msgstr "Zavrieť _karty"
 
 #: ../pidgin/pidginstock.c:85
 msgid "_Get Info"
-msgstr "Zobraziť podrobnosti"
+msgstr "_Získať informácie"
 
 #: ../pidgin/pidginstock.c:86
 msgid "_Invite"
-msgstr "Pozvať"
+msgstr "_Pozvať"
 
 #: ../pidgin/pidginstock.c:87
 msgid "_Modify"
-msgstr "Upraviť"
+msgstr "_Upraviť"
 
 #: ../pidgin/pidginstock.c:88
 msgid "_Open Mail"
@@ -15210,7 +15337,7 @@ msgstr "Priateľ je neprítomný"
 
 #: ../pidgin/plugins/contact_priority.c:63
 msgid "Buddy is \"extended\" away"
-msgstr "Priateľ je dlhodobo neprítomný"
+msgstr "Priateľ je nedostupný"
 
 #. Not used yet.
 #: ../pidgin/plugins/contact_priority.c:66
@@ -15219,17 +15346,19 @@ msgstr "Priateľ je mobilný"
 
 #: ../pidgin/plugins/contact_priority.c:68
 msgid "Buddy is offline"
-msgstr "Priateľ je odpojený"
+msgstr "Priateľ je odhlásený"
 
 #: ../pidgin/plugins/contact_priority.c:90
 msgid "Point values to use when..."
-msgstr "Hodnoty bodov, ktoré používať, keď..."
+msgstr "Používať hodnoty bodov v prípade..."
 
 #: ../pidgin/plugins/contact_priority.c:118
 msgid ""
 "The buddy with the <i>largest score</i> is the buddy who will have priority "
 "in the contact.\n"
-msgstr "Priateľ s <i>najvyšším hodnotením</i> bude mať v kontakte prioritu.\n"
+msgstr ""
+"Priateľ s <i>najväčším skóre</i> je taký, čo bude mať prioritu pri "
+"kontakte.\n"
 
 #: ../pidgin/plugins/contact_priority.c:125
 msgid "Use last buddy when scores are equal"
@@ -15255,8 +15384,7 @@ msgstr "Priorita kontaktu"
 #: ../pidgin/plugins/contact_priority.c:190
 msgid ""
 "Allows for controlling the values associated with different buddy states."
-msgstr ""
-"Umožňuje ovládanie hodnôt, ktoré sú priradené ku jednotlivým stavom priateľa."
+msgstr "Umožnuje kontrolu hodnôt spojených s rôznymi stavmi kamarátov."
 
 #. *< description
 #: ../pidgin/plugins/contact_priority.c:192
@@ -15264,7 +15392,8 @@ msgid ""
 "Allows for changing the point values of idle/away/offline states for buddies "
 "in contact priority computations."
 msgstr ""
-"Umožňuje ovládanie hodnôt, ktoré sú priradené ku jednotlivým stavom priateľa."
+"Povoľuje zmeny stavov, nečinný/preč/odpojený, podľa dôležitosti kamarátov v "
+"zozname."
 
 #: ../pidgin/plugins/convcolors.c:23
 msgid "Conversation Colors"
@@ -15272,7 +15401,7 @@ msgstr "Farby konverzácie"
 
 #: ../pidgin/plugins/convcolors.c:25 ../pidgin/plugins/convcolors.c:26
 msgid "Customize colors in the conversation window"
-msgstr "Prispôsobiť farby v konverzačnom okne"
+msgstr "Prispôsobiť farby v okne konverzácie"
 
 #: ../pidgin/plugins/convcolors.c:82
 msgid "Error Messages"
@@ -15337,7 +15466,8 @@ msgid ""
 "Note: The preference for \"New conversations\" must be set to \"By "
 "conversation count\"."
 msgstr ""
-"Poznámka: Možnosť \"New conversations\" musí byť nastavená na \"Podľa počtu konverzácií\"."
+"Poznámka: Možnosť „Nové konverzácie“ musí byť nastavená na „Podľa počtu "
+"konverzácií“."
 
 #: ../pidgin/plugins/extplacement.c:111
 msgid "Number of conversations per window"
@@ -15431,7 +15561,7 @@ msgstr "Instant Messaging"
 #. Add the label.
 #: ../pidgin/plugins/gevolution/add_buddy_dialog.c:457
 msgid "Select a person from your address book below, or add a new person."
-msgstr "Vyberte osobu z vášho adresára, alebo pridajte novú osobu."
+msgstr "Vyberte osobu z vášho adresára nižšie alebo pridajte novú osobu."
 
 #: ../pidgin/plugins/gevolution/add_buddy_dialog.c:551
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:303
@@ -15498,7 +15628,8 @@ msgstr "Nastavenie integrácie s Evoulution"
 #. Label
 #: ../pidgin/plugins/gevolution/gevolution.c:415
 msgid "Select all accounts that buddies should be auto-added to."
-msgstr "Vyberte všetky účty, ku ktorým sa majú automaticky pridávať priatelia."
+msgstr ""
+"Vyberte všetky účty, ku ktorým sa majú automaticky pridávať priatelia."
 
 #. *< type
 #. *< ui_requirement
@@ -15534,11 +15665,11 @@ msgstr "Typ účtu:"
 #. Optional Information section
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:311
 msgid "Optional information:"
-msgstr "Voliteľné informácie:"
+msgstr "Nepovinné informácie:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:346
 msgid "First name:"
-msgstr "Krstné meno:"
+msgstr "Krstné meno"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:358
 msgid "Last name:"
@@ -15565,7 +15696,7 @@ msgstr ""
 #. *< id
 #: ../pidgin/plugins/gtk-signals-test.c:160
 msgid "GTK Signals Test"
-msgstr "Test signálov GTK"
+msgstr "Test GTK signálov"
 
 #. *< name
 #. *< version
@@ -15574,7 +15705,9 @@ msgstr "Test signálov GTK"
 #: ../pidgin/plugins/gtk-signals-test.c:163
 #: ../pidgin/plugins/gtk-signals-test.c:165
 msgid "Test to see that all ui signals are working properly."
-msgstr "Test pre zistenie, či všetky \"ui\" signály fungujú správne."
+msgstr ""
+"Test pre zistenie, či všetky signály používateľského rozhrania fungujú "
+"správne."
 
 #: ../pidgin/plugins/history.c:188
 msgid "History"
@@ -15627,7 +15760,7 @@ msgstr "Vykreslovať oddeľovaciu čiaru "
 
 #: ../pidgin/plugins/markerline.c:250 ../pidgin/plugins/notify.c:676
 msgid "_IM windows"
-msgstr "Okná správ"
+msgstr "Okná _správ"
 
 #: ../pidgin/plugins/markerline.c:254 ../pidgin/plugins/notify.c:683
 msgid "C_hat windows"
@@ -15638,12 +15771,12 @@ msgid ""
 "A music messaging session has been requested. Please click the MM icon to "
 "accept."
 msgstr ""
-"Boli ste požiadaní o sedenie Music Messaging. Ak súhlasíte, kliknite na "
+"Boli ste požiadaní o reláciu Music Messaging. Ak súhlasíte, kliknite na "
 "ikonu MM."
 
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:45
 msgid "Music messaging session confirmed."
-msgstr "Sedenie Music Messaging bolo potvrdené."
+msgstr "Relácia Music Messaging bolo potvrdené."
 
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:419
 msgid "Music Messaging"
@@ -15655,7 +15788,7 @@ msgstr "Pri spúšťaní príkazu nastal konflikt:"
 
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:528
 msgid "Error Running Editor"
-msgstr "Chyba pri spúšťaní editoru"
+msgstr "Chyba pri spúšťaní editora"
 
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:529
 msgid "The following error has occurred:"
@@ -15668,7 +15801,7 @@ msgstr "Nastavenie Music Messagingu"
 
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:632
 msgid "Score Editor Path"
-msgstr "Umiestnenie editoru hodnotenia"
+msgstr "Umiestnenie editora hodnotenia"
 
 #: ../pidgin/plugins/musicmessaging/musicmessaging.c:633
 msgid "_Apply"
@@ -15730,7 +15863,7 @@ msgstr "Vložiť počet nových správ do vlastnosti _X"
 #. Urgent method button
 #: ../pidgin/plugins/notify.c:752
 msgid "Set window manager \"_URGENT\" hint"
-msgstr "Nastavať správcovi okien príznak \"_URGENT\""
+msgstr "Nastavať správcovi okien príznak „_URGENT“"
 
 #. Raise window method button
 #: ../pidgin/plugins/notify.c:761
@@ -15856,6 +15989,7 @@ msgid "Select Color"
 msgstr "Vyberte farbu"
 
 #: ../pidgin/plugins/pidginrc.c:300
+#, c-format
 msgid "Select Interface Font"
 msgstr "Vyberte písmo rozhrania"
 
@@ -15872,15 +16006,15 @@ msgstr "Písmo rozhrania GTK+"
 msgid "GTK+ Text Shortcut Theme"
 msgstr "Textová téma odkazov GTK+"
 
-#.
+#. 
 #. for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
 #. hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 #. gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
-#.
+#. 
 #. check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
 #. widget_bool_prefs_set[i], hbox);
 #. gtk_size_group_add_widget(labelsg, check);
-#.
+#. 
 #. widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
 #. *
 #. gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
@@ -15891,14 +16025,14 @@ msgstr "Textová téma odkazov GTK+"
 #. G_CALLBACK(pidgin_toggle_sensitive),
 #. widget_bool_widgets[i]);
 #. }
-#.
+#. 
 #: ../pidgin/plugins/pidginrc.c:428
 msgid "Interface colors"
 msgstr "Farby rozhrania"
 
 #: ../pidgin/plugins/pidginrc.c:452
 msgid "Widget Sizes"
-msgstr "Veľkosti widgetov"
+msgstr "Veľkosti ovládacích prvkov"
 
 #: ../pidgin/plugins/pidginrc.c:473
 msgid "Fonts"
@@ -15939,7 +16073,7 @@ msgid ""
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Umožní vám odoslať priamy vstup v textovo-založených protokoloch (Jabber, "
-"MSN, IRC, TOC). Pre odoslanie stlačte Enter vo vstupnom poli. Sledujte "
+"MSN, IRC, TOC). Pre odoslanie stlačte „Enter“ vo vstupnom poli. Sledujte "
 "ladiace okno."
 
 #: ../pidgin/plugins/relnot.c:71
@@ -16016,7 +16150,7 @@ msgstr "Rozlišovať malé a veľké písmená"
 
 #: ../pidgin/plugins/spellchk.c:2266
 msgid "Add a new text replacement"
-msgstr "Pridanie novej náhrady"
+msgstr "Pridať novú náhradu textu"
 
 #: ../pidgin/plugins/spellchk.c:2282
 msgid "You _type:"
@@ -16103,6 +16237,7 @@ msgid "Timestamp Format Options"
 msgstr "Voľby formátu časovej značky"
 
 #: ../pidgin/plugins/timestamp_format.c:26
+#, c-format
 msgid "_Force 24-hour time format"
 msgstr "_Vynútiť 24-hodinový formát času"
 
@@ -16167,7 +16302,7 @@ msgstr "Okná rozhovoru"
 
 #: ../pidgin/plugins/win32/transparency/win2ktrans.c:558
 msgid "_IM window transparency"
-msgstr "Priehľadnosť okna správ"
+msgstr "Priesvitnosť okna správ"
 
 #: ../pidgin/plugins/win32/transparency/win2ktrans.c:572
 msgid "_Show slider bar in IM window"
@@ -16175,7 +16310,7 @@ msgstr "_Zobrazovať posuvný pruh v okne správ"
 
 #: ../pidgin/plugins/win32/transparency/win2ktrans.c:579
 msgid "Remove IM window transparency on focus"
-msgstr "Odstrániť priehľadnosť okna správ pri fokuse"
+msgstr "Odstrániť priesvitnosť okna správ pri aktivácii"
 
 #: ../pidgin/plugins/win32/transparency/win2ktrans.c:582
 #: ../pidgin/plugins/win32/transparency/win2ktrans.c:630
@@ -16189,7 +16324,7 @@ msgstr "Okno zoznamu priateľov"
 
 #: ../pidgin/plugins/win32/transparency/win2ktrans.c:615
 msgid "_Buddy List window transparency"
-msgstr "Priehľadnosť okna _zoznamu priateľov"
+msgstr "Priesvitnosť okna _zoznamu priateľov"
 
 #: ../pidgin/plugins/win32/transparency/win2ktrans.c:628
 msgid "Remove Buddy List window transparency on focus"
@@ -16210,7 +16345,7 @@ msgstr "Priehľadnosť"
 #. *  summary
 #: ../pidgin/plugins/win32/transparency/win2ktrans.c:691
 msgid "Variable Transparency for the buddy list and conversations."
-msgstr "Premenlivá priehľadnosť zoznamu priateľov a konverzácií."
+msgstr "Premenlivá priesvitnosť zoznamu priateľov a konverzácií."
 
 #. *  description
 #: ../pidgin/plugins/win32/transparency/win2ktrans.c:693
@@ -16223,7 +16358,7 @@ msgstr ""
 "Tento modul povoľuje premenlivú priesvitnosť okien konverzácie a zoznamu "
 "priateľov.\n"
 "\n"
-"* Poznámka: Tento plugin vyžaduje Win2000 alebo novší."
+"* Poznámka: Tento modul vyžaduje Win2000 alebo novší."
 
 #: ../pidgin/plugins/win32/winprefs/winprefs.c:303
 msgid "GTK+ Runtime Version"
@@ -16312,480 +16447,288 @@ msgstr "Vložiť <message/> stanza."
 #. *  summary
 #: ../pidgin/plugins/xmppconsole.c:863
 msgid "Send and receive raw XMPP stanzas."
-msgstr "Prijímať a odosielať raw XMPP stanzy"
+msgstr "Odosielať a prijímať nespracované XMPP stanzy."
 
 #. *  description
 #: ../pidgin/plugins/xmppconsole.c:865
 msgid "This plugin is useful for debbuging XMPP servers or clients."
-msgstr "Tento modul sa hodí na odlaďovanie XMPP serverov alebo klientov."
+msgstr "Tento plugin je vhodný pre ladenie XMPP serverov alebo klientov."
 
-#~ msgid "You have been signed off for an unknown reason."
-#~ msgstr "Z neznámeho dôvodu ste boli odhlásení."
+#~ msgid "Message was not sent, because you are not signed on."
+#~ msgstr "Správu sa nepodarilo odoslať, pretože nie ste prihlásený."
 
-#~ msgid "Are you sure to exit this Qun?"
-#~ msgstr "Naozaj chcete opustiť toto Qun?"
+#~ msgid "Enable Logging"
+#~ msgstr "Zapnúť zaznamenávanie"
 
-#~ msgid "Go ahead"
-#~ msgstr "Pokračovať"
+#~ msgid "Enable Sounds"
+#~ msgstr "Zapnúť zvuky"
 
-#~ msgid "Server ACK"
-#~ msgstr "Server ACK"
+#~ msgid "The file was saved as %s."
+#~ msgstr "Súbor bol uložený ako %s."
 
-#~ msgid "Keep alive error, seems connection lost!"
-#~ msgstr "Chyba spojenia, asi padlo spojenie!"
+#~ msgid "Cannot create pounce"
+#~ msgstr "Nebolo možné vytvoriť sledovanie"
 
-#~ msgid "Request login token error!"
-#~ msgstr "Vyžiadaná chyba pri prihlasovaní do tokenu!"
+#~ msgid "You do not have any accounts."
+#~ msgstr "Nemáte žiadne účty."
 
-#~ msgid "%s Address"
-#~ msgstr "%s Adresa"
+#~ msgid "You must create an account first before you can create a pounce."
+#~ msgstr "Pred tým než spustíte sledovanie si musíte pridať účet."
 
-#~ msgid "QQ: Available"
-#~ msgstr "QQ: Prítomný"
+#~ msgid "Certificates"
+#~ msgstr "Certifikáty"
 
-#~ msgid "QQ: Away"
-#~ msgstr "QQ: Neprítomný"
+#~ msgid "X.509 Certificates"
+#~ msgstr "X.509 certifikáty"
 
-#~ msgid "QQ: Invisible"
-#~ msgstr "QQ: Neviditeľný"
+#~ msgid "nudge"
+#~ msgstr "štuchanec"
 
-#~ msgid "QQ: Offline"
-#~ msgstr "QQ: Odpojený"
+#~ msgid "nudged"
+#~ msgstr "štuchnutý"
 
-#~ msgid "Modify My Information"
-#~ msgstr "Upraviť moje podrobnosti"
+#~ msgid "Nudging"
+#~ msgstr "Štuchanec"
 
-#~ msgid "Login in TCP"
-#~ msgstr "Prihlásenie v TCP"
+#~ msgid "Missing Cipher"
+#~ msgstr "Chýba šifra"
 
-#~ msgid "Login Hidden"
-#~ msgstr "Prihlasenie skryté"
+#~ msgid "The RC4 cipher could not be found"
+#~ msgstr "RC4 šifra nebola nájdená"
 
-#~ msgid "Socket send error"
-#~ msgstr "Chyba odoslania soketu"
+#~ msgid ""
+#~ "Upgrade to a libpurple with RC4 support (>= 2.0.1). MySpaceIM plugin will "
+#~ "not be loaded."
+#~ msgstr ""
+#~ "Aktualizujte na libpurple s podporou RC4 (>= 2.0.1). Modul MySpaceIM nebude "
+#~ "načítaný."
 
-#~ msgid "Connection refused"
-#~ msgstr "Spojenie odmietnuté"
+#~ msgid ""
+#~ "Sorry, passwords over %d characters in length (yours is %d) are not "
+#~ "supported by MySpace."
+#~ msgstr ""
+#~ "Prepáčte, ale heslá ktoré sú dlhšie ako %d znakov (vaše má %d znakov) nie sú "
+#~ "podporované na MySpace."
 
-#~ msgid "%s has added you [%s]"
-#~ msgstr "%s vás pridal [%s]"
+#~ msgid "MySpaceIM Error"
+#~ msgstr "Chyba MySpaceIM"
+
+#~ msgid "Reading challenge"
+#~ msgstr "Číta sa výzva"
+
+#~ msgid "Unexpected challenge length from server"
+#~ msgstr "Neočakávaná dĺžka výzvy zo servera"
+
+#~ msgid "Logging in"
+#~ msgstr "Prihlasuje sa"
+
+#~ msgid "Connection to server lost (no data received within %d seconds)"
+#~ msgstr ""
+#~ "Pripojenie ku serveru prerušené (neboli prijaté žiadné údaje počas %d sekúnd)"
+
+#~ msgid "New mail messages"
+#~ msgstr "Nové poštové správy"
+
+#~ msgid "New blog comments"
+#~ msgstr "Nové komentáre na blogu"
+
+#~ msgid "New profile comments"
+#~ msgstr "Nové komentáre v profile"
+
+#~ msgid "New friend requests!"
+#~ msgstr "Nové pozvánky priateľov!"
+
+#~ msgid "New picture comments"
+#~ msgstr "Nové komentáre ku obrázkom"
+
+#~ msgid "MySpace"
+#~ msgstr "MySpace"
+
+#~ msgid "Protocol error, code %d: %s"
+#~ msgstr "Chyba protokolu, kód %d: %s"
+
+#~ msgid "Failed to add buddy"
+#~ msgstr "Nebolo možné pridať priateľa."
+
+#~ msgid "'addbuddy' command failed."
+#~ msgstr "príkaz 'addbuddy' zlyhal."
+
+#~ msgid "persist command failed"
+#~ msgstr "príkaz persist zlyhal"
+
+#~ msgid "No such user: %s"
+#~ msgstr "Neexistujúci používateľ: %s"
+
+#~ msgid "User lookup"
+#~ msgstr "Vyhľadanie používateľov"
+
+#~ msgid "Failed to remove buddy"
+#~ msgstr "Odstránenie priateľa zlyhalo"
+
+#~ msgid "'delbuddy' command failed"
+#~ msgstr "príkaz 'delbuddy' zlyhal"
+
+#~ msgid "blocklist command failed"
+#~ msgstr "príkaz blocklist zlyhal"
+
+#~ msgid "Invalid input condition"
+#~ msgstr "Chybná podmienka vstupu"
+
+#~ msgid "Read buffer full"
+#~ msgstr "Zásobník čítania plný"
+
+#~ msgid "Unparseable message"
+#~ msgstr "Nespracovateľná správa"
+
+#~ msgid "Couldn't connect to host: %s (%d)"
+#~ msgstr "Nebolo možné sa pripojiť ku hostiteľovi: %s (%d)"
+
+#~ msgid "IM Friends"
+#~ msgstr "IM Priateľov"
+
+#~ msgid "%d buddies were added or updated"
+#~ msgstr "%d priatelia boli pridaní alebo aktualizovaní"
+
+#~ msgid "Add contacts from server"
+#~ msgstr "Pridať kontakty zo serveru"
+
+#~ msgid "Add friends from MySpace.com"
+#~ msgstr "Pridať priateľov z MySpace.com"
+
+#~ msgid "Importing friends failed"
+#~ msgstr "Importovanie priateľov zlyhalo"
+
+#~ msgid "Find people..."
+#~ msgstr "Hľadať ľudí..."
+
+#~ msgid "Change IM name..."
+#~ msgstr "Zmeniť IM meno..."
+
+#~ msgid "myim URL handler"
+#~ msgstr "myim URL handler"
+
+#~ msgid "No suitable MySpaceIM account could be found to open this myim URL."
+#~ msgstr ""
+#~ "Nebol nájdený žiadny vyhovujúci MySpaceIM účet na otvorenie tejto myim "
+#~ "adresy."
+
+#~ msgid "Enable the proper MySpaceIM account and try again."
+#~ msgstr "Povoľte správny MySpaceIM účet a skúste znovu."
+
+#~ msgid "Show display name in status text"
+#~ msgstr "Zobraziť používateľské meno v texte stavu"
+
+#~ msgid "Show headline in status text"
+#~ msgstr "Zobraziť nadpis v texte stavu"
+
+#~ msgid "Send emoticons"
+#~ msgstr "Poslať emotikony"
+
+#~ msgid "Screen resolution (dots per inch)"
+#~ msgstr "Rozlíšenie obrazovky (bodov na palec)"
+
+#~ msgid "Base font size (points)"
+#~ msgstr "Základná veľkosť písma (body)"
+
+#~ msgid "%s has sent you a webcam invite, which is not yet supported."
+#~ msgstr ""
+#~ "%s vám poslal pozvánku na webkameru, ktorá zatiaľ nie je podporovaná."
+
+#~ msgid "buzz"
+#~ msgstr "bzzz"
+
+#~ msgid "buzzed"
+#~ msgstr "vyrušený"
+
+#~ msgid "Buzzing"
+#~ msgstr "Poslané bzzz"
+
+#~ msgid "Attention! %s %s."
+#~ msgstr "Pozor! %s %s."
+
+#~ msgid "Attention!"
+#~ msgstr "Pozor!"
+
+#~ msgid "Attention! You have been %s."
+#~ msgstr "Pozor! Boli ste %s"
+
+#~ msgid "Unable to save new account"
+#~ msgstr "Nebolo možné uložiť nový účet"
+
+#~ msgid "An account already exists with the specified criteria."
+#~ msgstr "Už existuje účet so zadanými kritériami."
+
+#~ msgid "Create this new account on the server"
+#~ msgstr "Vytvoriť takýto účet na serveri"
+
+#~ msgid "/Buddies/Show"
+#~ msgstr "/Priatelia/Zobraziť"
+
+#~ msgid "/Buddies/Show/Show _Offline Buddies"
+#~ msgstr "/Priatelia/Zobraziť/_Nepripojených priateľov"
+
+#~ msgid "/Buddies/Show/Show _Empty Groups"
+#~ msgstr "/Priatelia/Zobraziť/Prázdne s_kupiny"
+
+#~ msgid "/Buddies/Show/Show Buddy _Details"
+#~ msgstr "/Priatelia/Zobraziť/_Detaily priateľov"
+
+#~ msgid "/Buddies/Show/Show Idle _Times"
+#~ msgstr "/Priatelia/Zobraziť/Č_asy nečinnosti"
+
+#~ msgid "/Buddies/Show/Show _Protocol Icons"
+#~ msgstr "/Priatelia/Zobraziť/_Ikony protokolov"
+
+#~ msgid "/Tools/_Certificates"
+#~ msgstr "/Nástroje/_Certifikáty"
+
+#~ msgid "/Buddies/Show/Show Offline Buddies"
+#~ msgstr "/Priatelia/Zobraziť/Nepripojených priateľov"
+
+#~ msgid "/Buddies/Show/Show Empty Groups"
+#~ msgstr "/Priatelia/Zobraziť/Prázdne skupiny"
+
+#~ msgid "/Buddies/Show/Show Buddy Details"
+#~ msgstr "/Priatelia/Zobraziť/Detaily priateľov"
+
+#~ msgid "/Buddies/Show/Show Idle Times"
+#~ msgstr "/Priatelia/Zobraziť/Časy nečinnosti"
+
+#~ msgid "/Buddies/Show/Show Protocol Icons"
+#~ msgstr "/Priatelia/Zobraziť/Ikony protokolov"
+
+#~ msgid "/Conversation/_Hide"
+#~ msgstr "/Rozhovor/_Skryť"
+
+#~ msgid "Senior Contributor/QA"
+#~ msgstr "Bývalý prispievateľ/QA"
+
+#~ msgid ""
+#~ "%s is a graphical modular messaging client based on libpurple which is "
+#~ "capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
+#~ "Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and "
+#~ "QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
+#~ "redistribute the program under the terms of the GPL (version 2 or later).  A "
+#~ "copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s "
+#~ "is copyrighted by its contributors.  See the 'COPYRIGHT' file for the "
+#~ "complete list of contributors.  We provide no warranty for this "
+#~ "program.<BR><BR>"
+#~ msgstr ""
+#~ "%s je modulárny IM klient založený na knižnici libpurple, ktorý podporuje "
+#~ "protokoly AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell "
+#~ "GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, a QQ.  Je "
+#~ "vytvorený pomocou knižnice GTK+.<BR><BR>Tento program môžete upravovať a "
+#~ "distribuovať podľa podmienok licencie GPL (vo verzii 2 alebo novšej).  Kópia "
+#~ "licencie GPL sa nachádza v súbore „COPYING“, ktorý je dodávaný spolu s "
+#~ "programom %s.  Vlastníkmi autorských práv programu %s sú jeho "
+#~ "prispievatelia. Kompletný zoznam prispievateľov si môžete pozrieť v súbore "
+#~ "„COPYRIGHT“. Na tento program vám neposkytujeme žiadnu záruku.<BR><BR>"
+
+#~ msgid "<span strikethrough='true'>Strikethrough</span>"
+#~ msgstr "<span size='larger'>Preškrtnuté</span>"
+
+#~ msgid "_Horizontal rule"
+#~ msgstr "_Vodorovná čiara"
 
 #~ msgid "Norwegian"
-#~ msgstr "Nórsky"
-
-#~ msgid "_Bold"
-#~ msgstr "_Tučné"
-
-#~ msgid "_Larger"
-#~ msgstr "_Väčšie"
-
-#~ msgid "_Smaller"
-#~ msgstr "_Menšie"
-
-#~ msgid "_Reset font"
-#~ msgstr "Vymazať formátovanie"
-
-#~ msgid "Show buddy _icons"
-#~ msgstr "Zobrazovať _ikony priateľov"
-
-#~ msgid "Gaim Internet Messenger"
-#~ msgstr "Gaim, IM klient"
-
-#~ msgid "Nickname: %s\n"
-#~ msgstr "Prezývka: %s\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Idle: %s"
-#~ msgstr ""
-#~ "\n"
-#~ "Nečinný: %s"
-
-#~ msgid "Toggle offline buddies"
-#~ msgstr "Zobraziť odpojených kamarátov"
-
-#~ msgid ""
-#~ "%s was disconnected due to the following error:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Používateľ %s bol odpojený, pretože sa vyskytla chyba:\n"
-#~ "%s"
-
-#~ msgid "Commands are not supported yet. Message was NOT sent."
-#~ msgstr "Príkazy momentálne nie sú podporované. Správa NEBOLA odoslaná."
-
-#~ msgid "Timestamps"
-#~ msgstr "Časové značky"
-
-#~ msgid "..."
-#~ msgstr "..."
-
-#~ msgid "Still need to do something about this."
-#~ msgstr "Stále tu treba niečo urobiť."
-
-#~ msgid "Alias..."
-#~ msgstr "Prezývka..."
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Nickname:</b> %s"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Prezývka:</b> %s"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Logged In:</b> %s"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Prihlásený:</b> %s"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Idle:</b> %s"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Nečinný:</b> %s"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Last Seen:</b> %s ago"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Naposledy pripojený pred:</b> %s"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Status:</b> Offline"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Stav:</b> Odpojený"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Description:</b> Spooky"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Popis:</b> Vystrašený"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Status:</b> Awesome"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Stav:</b> Skvelý"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Status:</b> Rockin'"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Stav:</b> Žúžo"
-
-#~ msgid "/Tools/Buddy Pounces"
-#~ msgstr "/Nástroje/Sledovanie priateľov"
-
-#~ msgid "Jabber developer"
-#~ msgstr "Jabber vývojár"
-
-#~ msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
-#~ msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim na irc.freenode.net<BR><BR>"
-
-#~ msgid "Larger font size"
-#~ msgstr "Väčšia veľkosť písma"
-
-#~ msgid "Smaller font size"
-#~ msgstr "Menšia veľkosť písma"
-
-#~ msgid "Reset formatting"
-#~ msgstr "Vymazať formátovanie"
-
-#~ msgid "Insert link"
-#~ msgstr "Vložiť odkaz"
-
-#~ msgid "Insert image"
-#~ msgstr "Vložiť obrázok"
-
-#~ msgid "Insert smiley"
-#~ msgstr "Vložiť smajlík"
-
-#~ msgid "Gaim %s. Try `%s -h' for more information.\n"
-#~ msgstr "Gaim %s. Pre viac informacií skúste `%s -h'.\n"
-
-#~ msgid ""
-#~ "<span weight=\"bold\" size=\"larger\">You have mail!</span>\n"
-#~ "\n"
-#~ "%s"
-#~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">Máte poštu!</span>\n"
-#~ "\n"
-#~ "%s"
-
-#~ msgid ""
-#~ "You can send this image as a file transfer or embed it into this message, "
-#~ "or use it as the buddy icon for this user."
-#~ msgstr ""
-#~ "Tento obrázok môžete odoslať cez prenos súborov, vložiť ho do správy "
-#~ "alebo použiť ako ikonu priateľa pre tohto používateľa."
-
-#~ msgid "GtkTreeView Expander Size"
-#~ msgstr "Veľkosť rozbalovača GtkTreeView"
-
-#~ msgid "GtkTreeView Indent Expanders"
-#~ msgstr "Osadenie rozbaľovačov GtkTreeView"
-
-#~ msgid "Tools"
-#~ msgstr "Nástroje"
-
-#~ msgid ""
-#~ "You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
-#~ msgstr ""
-#~ "Verziu %s môžete ziskať z: <br><a href=\"http://gaim.sourceforge.net/"
-#~ "\">http://gaim.sourceforge.net</a>."
-
-#~ msgid "Delay"
-#~ msgstr "Oneskorenie"
-
-#~ msgid "minutes."
-#~ msgstr "minút."
-
-#~ msgid "WinGaim Options"
-#~ msgstr "Možosti WinGaim"
-
-#~ msgid ""
-#~ "%d buddy from group %s was not removed because it belongs to an account "
-#~ "which is disabled or offline.  This buddy and the group were not "
-#~ "removed.\n"
-#~ msgid_plural ""
-#~ "%d buddies from group %s were not removed because they belong to accounts "
-#~ "which are currently disabled or offline.  These buddies and the group "
-#~ "were not removed.\n"
-#~ msgstr[0] ""
-#~ "%d priateľov zo skupiny %s nebolo odstránených, pretože sú priradení ku "
-#~ "vypnutým alebo nepripojeným účtom.  Títo priatelia a skupina neboli "
-#~ "odstránení.\n"
-#~ msgstr[1] ""
-#~ "%d priateľ zo skupiny %s nebol odstránený, pretože je priradený ku "
-#~ "vypnutému alebo nepripojenému účtu.  Tento priateľ a skupina neboli "
-#~ "odstránení.\n"
-#~ msgstr[2] ""
-#~ "%d priatelia zo skupiny %s neboli odstránení, pretože sú priradení ku "
-#~ "vypnutým alebo nepripojeným účtom.  Títo priatelia a skupina neboli "
-#~ "odstránení.\n"
-
-#~ msgid "Group not removed"
-#~ msgstr "Skupina nebola odstránená"
-
-#~ msgid "Old Gaim"
-#~ msgstr "Starý Gaim"
-
-#~ msgid "Gaim encountered errors loading the plugin."
-#~ msgstr "Pri načítavaní modulu program Gaim narazil na chybu."
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Status:</b> %s"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Stav:</b> %s"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Message:</b> %s"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Správa:</b> %s"
-
-#~ msgid "Gaim User"
-#~ msgstr "Používateľ programu Gaim"
-
-#~ msgid "HostnameČi má zadaný príkaz ovládať adresy \"aim\""
-#~ msgstr "Meno hostiteľa"
-
-#~ msgid "Jabber Account"
-#~ msgstr "Jabber účet"
-
-#~ msgid "<b>%s:</b> %s"
-#~ msgstr "<b>%s:</b> %s"
-
-#~ msgid "<b>%s:</b> %s<br>"
-#~ msgstr "<b>%s:</b> %s<br>"
-
-#~ msgid "<b>Idle for:</b> %s<br>"
-#~ msgstr "<b>Nečinný:</b> %s<br>"
-
-#~ msgid "Cannot join %s:"
-#~ msgstr "Nepodarilo sa pripojiť na %s:"
-
-#~ msgid "Server couldn't authenticate you without a password"
-#~ msgstr "Server vás nedokáže overiť bez zadania hesla"
-
-#~ msgid "Client:"
-#~ msgstr "Klient:"
-
-#~ msgid "Search for Jabber users"
-#~ msgstr "Vyhľadávať používateľov Jabber"
-
-#~ msgid "Invalid Jabber ID"
-#~ msgstr "Nesprávne Jabber ID"
-
-#~ msgid "Change Jabber Password"
-#~ msgstr "Zmeniť Jabber heslo"
-
-#~ msgid "Jabber Protocol Plugin"
-#~ msgstr "Modul protokolu Jabber"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>%s:</b> %s"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>%s:</b> %s"
-
-#~ msgid "<b>Alias:</b> %s<br>"
-#~ msgstr "<b>Prezývka:</b> %s<br>"
-
-#~ msgid "<b>%s:</b> "
-#~ msgstr "<b>%s:</b> "
-
-#~ msgid "%s<b>General</b><br>%s"
-#~ msgstr "%s<b>Všeobecné</b><br>%s"
-
-#~ msgid "%s<b>Social</b><br>%s"
-#~ msgstr "%s<b>Sociálne</b><br>%s"
-
-#~ msgid "<br><b>Personal</b><br>%s"
-#~ msgstr "<br><b>Osobné</b><br>%s"
-
-#~ msgid "<br><b>Business</b><br>%s"
-#~ msgstr "<br><b>Obchod</b><br>%s"
-
-#~ msgid "<hr><b>Contact Info</b>%s%s"
-#~ msgstr "<hr><b>Kontaktné informácie</b>%s%s"
-
-#~ msgid "<hr><b>%s:</b> "
-#~ msgstr "<hr><b>%s:</b> "
-
-#~ msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
-#~ msgstr "<B>UIN:</B> %s<BR><B>Stav:</B> %s<HR>%s"
-
-#~ msgid "SNAC threw error: %s\n"
-#~ msgstr "Chyba SNAC threw: %s\n"
-
-#~ msgid "User information for %s unavailable:"
-#~ msgstr "Podrobnosti o používateľovi %s sú nedostupné:"
-
-#~ msgid "Rate limiting error."
-#~ msgstr "Chyba limitu hodnotenia."
-
-#~ msgid ""
-#~ "Your screen name is currently formatted as follows:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Vaše používateľské meno je momentálne formátované takto:\n"
-#~ "%s"
-
-#~ msgid ""
-#~ "Could not add the buddy %s for an unknown reason.  The most common reason "
-#~ "for this is that you have the maximum number of allowed buddies in your "
-#~ "buddy list."
-#~ msgstr ""
-#~ "Nebolo možné pridať kamarát %s z neznámeho dôvodu.  Možný dôvod je ten, "
-#~ "že vo vašom zozname kamarátov máte maximálny počet kamarátov."
-
-#~ msgid "_Connect"
-#~ msgstr "Pripojiť"
-
-#~ msgid "New screen name formatting:"
-#~ msgstr "Nové formátovanie používateľského mena:"
-
-#~ msgid "Format Screen Name..."
-#~ msgstr "Formátovať používateľské meno..."
-
-#~ msgid "Invalid QQ Facea"
-#~ msgstr "Neplatný QQ obrázok"
-
-#~ msgid "Send IM fail\n"
-#~ msgstr "Poslanie správy IM zlyhalo\n"
-
-#~ msgid "User info is not updated"
-#~ msgstr "Informácie o používateľovi nie sú aktualizované"
-
-#~ msgid "Send packet"
-#~ msgstr "Odoslať paket"
-
-#~ msgid "Packets lost, send again?"
-#~ msgstr "Pakety sa stratili, odoslať znovu?"
-
-#~ msgid ""
-#~ "\n"
-#~ "<b>Supports:</b> %s"
-#~ msgstr ""
-#~ "\n"
-#~ "<b>Podporuje:</b> %s"
-
-#~ msgid "<b>External User</b><br>"
-#~ msgstr "<b>Externý používateľ</b><br>"
-
-#~ msgid "<b>User ID:</b> %s<br>"
-#~ msgstr "<b>Používateľské ID:</b> %s<br>"
-
-#~ msgid "<b>Full Name:</b> %s<br>"
-#~ msgstr "<b>Celé meno:</b> %s<br>"
-
-#~ msgid "<b>Supports:</b> %s<br>"
-#~ msgstr "<b>Podporuje:</b> %s<br>"
-
-#~ msgid "<b>Status:</b> %s"
-#~ msgstr "<b>Stav:</b> %s"
-
-#~ msgid "Reject watching by other users"
-#~ msgstr "Neumožnoiť ostatným používateľom sledovať vás"
-
-#~ msgid "Block invites"
-#~ msgstr "Blokovať pozvánky"
-
-#~ msgid "Reject online status attribute requests"
-#~ msgstr "Zamietnuť požidavky o atribút stavu pripojenia"
-
-#~ msgid "TOC has sent a PAUSE command."
-#~ msgstr "TOC poslal príkaz PAUSE."
-
-#~ msgid ""
-#~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Gaim will prevent anything from going through. "
-#~ "This is only temporary, please be patient."
-#~ msgstr ""
-#~ "Keď sa toto stane, TOC ignoruje všetky správy ktoré prijme, a môže vás "
-#~ "vykopnúť ak odošlete správu. Program Gaim napriek tomu zabráni prechodu. "
-#~ "Je to iba dočasné, prosím, buďte trpezliví. "
-
-#~ msgid "Gaim - Save As..."
-#~ msgstr "Gaim - Uložiť ako..."
-
-#~ msgid "Buzz!!"
-#~ msgstr "Bzzz!"
-
-#~ msgid "Normal authentication failed!"
-#~ msgstr "Normálna autentifikácia zlyhala!"
-
-#~ msgid ""
-#~ "The normal authentication method has failed. This means either your "
-#~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Gaim will now attempt to log in using Web Messenger authentication, which "
-#~ "will result in reduced functionality and features."
-#~ msgstr ""
-#~ "Štandardný spôsob autentifikácie zlyhal. To znamená, že je heslo "
-#~ "nesprávne, alebo sa zmenila schéma autentifikácie na Yahoo!. Program Gaim "
-#~ "sa teraz pokúsi prihlásiť pomocou autentifikácie Web Messenger, ktorá "
-#~ "zapríčiní menší počet funkcií v programe."
-
-#~ msgid "<b>IP Address:</b> %s<br>"
-#~ msgstr "<b>IP adresa:</b> %s<br>"
-
-#~ msgid "<b>User:</b> %s<br>"
-#~ msgstr "<b>Používateľ:</b> %s<br>"
-
-#~ msgid "Unavailable"
-#~ msgstr "Nedostupný"
+#~ msgstr "nórčina"

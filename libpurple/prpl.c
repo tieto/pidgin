@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -199,7 +199,10 @@ void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *na
 		if(NULL == status)
 			continue;
 
-		purple_status_set_active(status, FALSE);
+		if (purple_status_is_active(status)) {
+			purple_status_set_active(status, FALSE);
+			purple_blist_update_buddy_status(buddy, status);
+		}
 	}
 
 	g_slist_free(list);

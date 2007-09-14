@@ -11,7 +11,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301, USA.
  */
 
 #include <glib.h>
@@ -121,9 +121,8 @@ bonjour_buddy_check(BonjourBuddy *buddy)
  * the buddy.
  */
 void
-bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy)
+bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *buddy)
 {
-	PurpleBuddy *buddy;
 	PurpleGroup *group;
 	PurpleAccount *account = bonjour_buddy->account;
 	const char *status_id, *old_hash, *new_hash;
@@ -147,7 +146,8 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy)
 	}
 
 	/* Make sure the buddy exists in our buddy list */
-	buddy = purple_find_buddy(account, bonjour_buddy->name);
+	if (buddy == NULL)
+		buddy = purple_find_buddy(account, bonjour_buddy->name);
 
 	if (buddy == NULL) {
 		buddy = purple_buddy_new(account, bonjour_buddy->name, NULL);

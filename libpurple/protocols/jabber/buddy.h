@@ -17,12 +17,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _PURPLE_JABBER_BUDDY_H_
 #define _PURPLE_JABBER_BUDDY_H_
-
-#include "jabber.h"
 
 typedef enum {
 	JABBER_BUDDY_STATE_UNKNOWN = -2,
@@ -34,6 +32,12 @@ typedef enum {
 	JABBER_BUDDY_STATE_XA,
 	JABBER_BUDDY_STATE_DND
 } JabberBuddyState;
+
+#include "jabber.h"
+#include "caps.h"
+
+#define AVATARNAMESPACEDATA "http://www.xmpp.org/extensions/xep-0084.html#ns-data"
+#define AVATARNAMESPACEMETA "http://www.xmpp.org/extensions/xep-0084.html#ns-metadata"
 
 typedef struct _JabberBuddy {
 	GList *resources;
@@ -53,6 +57,12 @@ typedef struct _JabberBuddy {
 	} subscription;
 } JabberBuddy;
 
+typedef struct _JabberAdHocCommands {
+	char *jid;
+	char *node;
+	char *name;
+} JabberAdHocCommands;
+
 typedef struct _JabberBuddyResource {
 	JabberBuddy *jb;
 	char *name;
@@ -71,6 +81,8 @@ typedef struct _JabberBuddyResource {
 		char *name;
 		char *os;
 	} client;
+	JabberCapsClientInfo *caps;
+	GList *commands;
 } JabberBuddyResource;
 
 void jabber_buddy_free(JabberBuddy *jb);
@@ -92,6 +104,7 @@ GList *jabber_blist_node_menu(PurpleBlistNode *node);
 void jabber_set_info(PurpleConnection *gc, const char *info);
 void jabber_setup_set_info(PurplePluginAction *action);
 void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img);
+void jabber_buddy_avatar_update_metadata(JabberStream *js, const char *from, xmlnode *items);
 
 const char *jabber_buddy_state_get_name(JabberBuddyState state);
 const char *jabber_buddy_state_get_status_id(JabberBuddyState state);
@@ -99,6 +112,7 @@ const char *jabber_buddy_state_get_show(JabberBuddyState state);
 JabberBuddyState jabber_buddy_status_id_get_state(const char *id);
 JabberBuddyState jabber_buddy_show_get_state(const char *id);
 
+void jabber_user_search(JabberStream *js, const char *directory);
 void jabber_user_search_begin(PurplePluginAction *);
 
 void jabber_buddy_remove_all_pending_buddy_info_requests(JabberStream *js);

@@ -27,7 +27,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include <glib.h>
@@ -35,6 +35,15 @@
 #include "gntclipboard.h"
 #include "gntcolors.h"
 #include "gntkeys.h"
+
+/**
+ * Get things to compile in Glib < 2.8
+ */
+#if !GLIB_CHECK_VERSION(2,8,0)
+	#define G_PARAM_STATIC_NAME  G_PARAM_PRIVATE
+	#define G_PARAM_STATIC_NICK  G_PARAM_PRIVATE
+	#define G_PARAM_STATIC_BLURB  G_PARAM_PRIVATE
+#endif
 
 /**
  * 

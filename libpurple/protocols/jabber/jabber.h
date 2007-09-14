@@ -17,27 +17,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _PURPLE_JABBER_H_
 #define _PURPLE_JABBER_H_
-
-#include <libxml/parser.h>
-#include <glib.h>
-#include "circbuffer.h"
-#include "connection.h"
-#include "dnssrv.h"
-#include "roomlist.h"
-#include "sslconn.h"
-
-#include "jutil.h"
-#include "xmlnode.h"
-
-#ifdef HAVE_CYRUS_SASL
-#include <sasl/sasl.h>
-#endif
-
-#define CAPS0115_NODE "http://pidgin.im/caps"
 
 typedef enum {
 	JABBER_CAP_NONE           = 0,
@@ -51,25 +34,49 @@ typedef enum {
 	JABBER_CAP_IQ_SEARCH      = 1 << 7,
 	JABBER_CAP_IQ_REGISTER    = 1 << 8,
 
-	/* Google Talk extensions: 
+	/* Google Talk extensions:
 	 * http://code.google.com/apis/talk/jep_extensions/extensions.html
 	 */
 	JABBER_CAP_GMAIL_NOTIFY   = 1 << 9,
 	JABBER_CAP_GOOGLE_ROSTER  = 1 << 10,
 
+	JABBER_CAP_PING			  = 1 << 11,
+	JABBER_CAP_ADHOC		  = 1 << 12,
+	
 	JABBER_CAP_RETRIEVED      = 1 << 31
 } JabberCapabilities;
+
+typedef struct _JabberStream JabberStream;
+
+#include <libxml/parser.h>
+#include <glib.h>
+#include "circbuffer.h"
+#include "connection.h"
+#include "dnssrv.h"
+#include "roomlist.h"
+#include "sslconn.h"
+
+#include "jutil.h"
+#include "xmlnode.h"
+#include "buddy.h"
+
+#ifdef HAVE_CYRUS_SASL
+#include <sasl/sasl.h>
+#endif
+
+#define CAPS0115_NODE "http://pidgin.im/caps"
 
 typedef enum {
 	JABBER_STREAM_OFFLINE,
 	JABBER_STREAM_CONNECTING,
 	JABBER_STREAM_INITIALIZING,
+	JABBER_STREAM_INITIALIZING_ENCRYPTION,
 	JABBER_STREAM_AUTHENTICATING,
 	JABBER_STREAM_REINITIALIZING,
 	JABBER_STREAM_CONNECTED
 } JabberStreamState;
 
-typedef struct _JabberStream
+struct _JabberStream
 {
 	int fd;
 
@@ -136,6 +143,8 @@ typedef struct _JabberStream
 	char *gmail_last_time;
 	char *gmail_last_tid;
 
+    char *serverFQDN;
+
 	/* OK, this stays at the end of the struct, so plugins can depend
 	 * on the rest of the stuff being in the right place
 	 */
@@ -150,13 +159,50 @@ typedef struct _JabberStream
 	int sasl_state;
 	int sasl_maxbuf;
 	GString *sasl_mechs;
-	char *serverFQDN;
 
+	gboolean unregistration;
+	PurpleAccountUnregistrationCb unregistration_cb;
+	void *unregistration_user_data;
+	
 	gboolean vcard_fetched;
 
-} JabberStream;
+	/* does the local server support PEP? */
+	gboolean pep;
 
-void jabber_process_packet(JabberStream *js, xmlnode *packet);
+	/* Is Buzz enabled? */
+	gboolean allowBuzz;
+	
+	/* A list of JabberAdHocCommands supported by the server */
+	GList *commands;
+	
+	/* last presence update to check for differences */
+	JabberBuddyState old_state;
+	char *old_msg;
+	int old_priority;
+	char *old_avatarhash;
+	
+	/* same for user tune */
+	char *old_artist;
+	char *old_title;
+	char *old_source;
+	char *old_uri;
+	int old_length;
+	char *old_track;
+};
+
+typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *shortname, const gchar *namespace);
+
+typedef struct _JabberFeature
+{
+	gchar *shortname;
+	gchar *namespace;
+	JabberFeatureEnabled *is_enabled;
+} JabberFeature;
+
+/* what kind of additional features as returned from disco#info are supported? */
+extern GList *jabber_features;
+
+void jabber_process_packet(JabberStream *js, xmlnode **packet);
 void jabber_send(JabberStream *js, xmlnode *data);
 void jabber_send_raw(JabberStream *js, const char *data, int len);
 
@@ -169,6 +215,9 @@ char *jabber_get_next_id(JabberStream *js);
 
 char *jabber_parse_error(JabberStream *js, xmlnode *packet);
 
+void jabber_add_feature(const gchar *shortname, const gchar *namespace, JabberFeatureEnabled cb); /* cb may be NULL */
+void jabber_remove_feature(const gchar *shortname);
+
 /** PRPL functions */
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);
 const char* jabber_list_emblem(PurpleBuddy *b);
@@ -179,7 +228,9 @@ void jabber_login(PurpleAccount *account);
 void jabber_close(PurpleConnection *gc);
 void jabber_idle_set(PurpleConnection *gc, int idle);
 void jabber_keepalive(PurpleConnection *gc);
+void jabber_register_gateway(JabberStream *js, const char *gateway);
 void jabber_register_account(PurpleAccount *account);
+void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data);
 void jabber_convo_closed(PurpleConnection *gc, const char *who);
 PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name);
 gboolean jabber_offline_message(const PurpleBuddy *buddy);

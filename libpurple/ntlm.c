@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include <glib.h>
@@ -131,7 +131,7 @@ purple_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 	tmsg->protocol[6] = 'P';
 	tmsg->protocol[7] = '\0';
 	tmsg->type      = 0x00000001;
-	tmsg->flags     = 0x0000b202;
+	tmsg->flags     = 0x0000b203;
 	tmsg->dom_len1  = tmsg->dom_len2 = domainlen;
 	tmsg->dom_off   = sizeof(struct type1_message) + hostnamelen;
 	tmsg->host_len1 = tmsg->host_len2 = hostnamelen;
@@ -286,7 +286,7 @@ purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *ho
 		tmsg->sess_len1 = tmsg->sess_len2 = 0x0010;
 	}
 
-	tmsg->flags = 0x00008200;
+	tmsg->flags = 0x00008201;
 
 	tmp = (char *)tmsg + sizeof(struct type3_message);
 

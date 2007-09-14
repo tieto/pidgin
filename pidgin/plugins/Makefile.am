@@ -16,9 +16,13 @@ if USE_PERL
 PERL_DIR = perl
 endif
 
+if ENABLE_GESTURES
+GESTURE_DIR = gestures
+endif
+
 SUBDIRS = \
 	$(CAP_DIR) \
-	gestures \
+	$(GESTURE_DIR) \
 	$(GEVOLUTION_DIR) \
 	$(MUSICMESSAGING_DIR) \
 	$(PERL_DIR) \

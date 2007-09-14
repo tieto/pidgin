@@ -8,6 +8,8 @@
   @signal displaying-chat-msg
   @signal displayed-chat-msg
   @signal conversation-switched
+  @signal conversation-hiding
+  @signal conversation-displayed
  @endsignals
 
  <hr>
@@ -114,6 +116,24 @@ void (*conversation_switched)(PurpleConversation *conv);
   @signaldesc
    Emitted when a window switched from one conversation to another.
   @param new_conv The now active conversation.
+ @endsignaldef
+
+ @signaldef conversation-hiding
+  @signalproto
+void (*conversation_hiding)(PidginConversation *gtkconv);
+  @endsignalproto
+  @signaldesc
+   Emitted immediately before an existing conversation is hidden.
+  @param gtkconv  The PidginConversation
+ @endsignaldef
+
+ @signaldef conversation-displayed
+  @signalproto
+void (*conversation_displayed)(PidginConversation *gtkconv);
+  @endsignalproto
+  @signaldesc
+   Emitted right after the Pidgin UI is reattached to a conversation.
+  @param gtkconv  The PidginConversation
  @endsignaldef
 
 */

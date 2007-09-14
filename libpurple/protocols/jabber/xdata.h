@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _PURPLE_JABBER_XDATA_H_
 #define _PURPLE_JABBER_XDATA_H_
@@ -25,7 +25,14 @@
 #include "jabber.h"
 #include "xmlnode.h"
 
+typedef struct _JabberXDataAction {
+	char *name;
+	char *handle;
+} JabberXDataAction;
+
 typedef void (*jabber_x_data_cb)(JabberStream *js, xmlnode *result, gpointer user_data);
+typedef void (*jabber_x_data_action_cb)(JabberStream *js, xmlnode *result, const char *actionhandle, gpointer user_data);
 void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb cb, gpointer user_data);
+void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GList *actions, int defaultaction, jabber_x_data_action_cb cb, gpointer user_data);
 
 #endif /* _PURPLE_JABBER_XDATA_H_ */

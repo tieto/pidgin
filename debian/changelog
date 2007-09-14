@@ -1,3 +1,13 @@
+pidgin (2.2.0-1) unstable; urgency=low
+
+  * New upstream version
+    - Fixes tabbed window preference (Closes: #440260)
+    - Fixes crash in music messaging plugin when sending message to offline
+      buddy (Closes: #441852)
+    - Adds option to show protocol icons in buddy list (Closes: #432077)
+
+ -- Ari Pollak <ari@debian.org>  Fri, 14 Sep 2007 10:43:21 -0400
+
 pidgin (2.1.1-4) unstable; urgency=low
 
   * pidgin-dev and finch-dev should depend on libpurple-dev (Closes: #441191)

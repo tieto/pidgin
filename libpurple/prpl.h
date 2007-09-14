@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 /* this file should be all that prpls need to include. therefore, by including
@@ -30,6 +30,7 @@
 #define _PURPLE_PRPL_H_
 
 typedef struct _PurplePluginProtocolInfo PurplePluginProtocolInfo;
+typedef struct _PurpleAttentionType PurpleAttentionType;
 
 /**************************************************************************/
 /** @name Basic Protocol Information                                      */
@@ -89,6 +90,20 @@ struct proto_chat_entry {
 	int min;
 	int max;
 	gboolean secret;
+};
+
+struct _PurpleAttentionType
+{
+	const char *name;                  /**< Shown in GUI elements */
+	const char *incoming_description;  /**< Shown when sent */
+	const char *outgoing_description;  /**< Shown when receied */
+	const char *icon_name;             /**< Icon to display (optional) */
+
+	/* Reserved fields for future purposes */
+	gpointer _reserved1;
+	gpointer _reserved2;
+	gpointer _reserved3;
+	gpointer _reserved4;
 };
 
 /**
@@ -332,9 +347,16 @@ struct _PurplePluginProtocolInfo
 	/* room list serialize */
 	char *(*roomlist_room_serialize)(PurpleRoomlistRoom *room);
 
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
-	void (*_purple_reserved3)(void);
+	/* Remove the user from the server. (This is only at the bottom to keep binary compatibility.)
+	 * The account can either be connected or disconnected. After the removal is finished,
+	 * the connection will stay open and has to be closed!
+	 */
+	void (*unregister_user)(PurpleAccount *, PurpleAccountUnregistrationCb cb, void *user_data);
+	
+	/* Attention API for sending & receiving zaps/nudges/buzzes etc. */
+	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
+	GList *(*get_attention_types)(PurpleAccount *acct);
+
 	void (*_purple_reserved4)(void);
 };
 

@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "internal.h"
@@ -347,6 +347,7 @@ static gboolean do_login(PurpleConnection *gc) {
 	const char *username, *realname;
 	struct irc_conn *irc = gc->proto_data;
 	const char *pass = purple_connection_get_password(gc);
+	int ret;
 
 	if (pass && *pass) {
 		buf = irc_format(irc, "vv", "PASS", pass);
@@ -359,8 +360,12 @@ static gboolean do_login(PurpleConnection *gc) {
 	}
 
 
-	gethostname(hostname, sizeof(hostname));
+	ret = gethostname(hostname, sizeof(hostname));
 	hostname[sizeof(hostname) - 1] = '\0';
+	if (ret < 0 || hostname[0] == '\0') {
+		purple_debug_warning("irc", "gethostname() failed -- is your hostname set?");
+		strcpy(hostname, "localhost");
+	}
 	realname = purple_account_get_string(irc->account, "realname", "");
 	username = purple_account_get_string(irc->account, "username", "");
 
@@ -433,14 +438,7 @@ irc_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 
 	irc->gsc = NULL;
 
-	switch(error) {
-		case PURPLE_SSL_CONNECT_FAILED:
-			purple_connection_error(gc, _("Connection Failed"));
-			break;
-		case PURPLE_SSL_HANDSHAKE_FAILED:
-			purple_connection_error(gc, _("SSL Handshake Failed"));
-			break;
-	}
+	purple_connection_error(gc, purple_ssl_strerror(error));
 }
 
 static void irc_close(PurpleConnection *gc)

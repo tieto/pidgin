@@ -55,16 +55,22 @@ libjabber_a_LIBADD =
 am__libjabber_a_SOURCES_DIST = auth.c auth.h buddy.c buddy.h chat.c \
 	chat.h disco.c disco.h google.c google.h iq.c iq.h jabber.c \
 	jabber.h jutil.c jutil.h message.c message.h oob.c oob.h \
-	parser.c parser.h presence.c presence.h roster.c roster.h si.c \
-	si.h xdata.c xdata.h libxmpp.c
+	parser.c parser.h ping.c ping.h presence.c presence.h roster.c \
+	roster.h si.c si.h xdata.c xdata.h caps.c caps.h \
+	adhoccommands.c adhoccommands.h pep.c pep.h usermood.c \
+	usermood.h usernick.c usernick.h usertune.c usertune.h \
+	libxmpp.c
 am__objects_1 = libjabber_a-auth.$(OBJEXT) libjabber_a-buddy.$(OBJEXT) \
 	libjabber_a-chat.$(OBJEXT) libjabber_a-disco.$(OBJEXT) \
 	libjabber_a-google.$(OBJEXT) libjabber_a-iq.$(OBJEXT) \
 	libjabber_a-jabber.$(OBJEXT) libjabber_a-jutil.$(OBJEXT) \
 	libjabber_a-message.$(OBJEXT) libjabber_a-oob.$(OBJEXT) \
-	libjabber_a-parser.$(OBJEXT) libjabber_a-presence.$(OBJEXT) \
-	libjabber_a-roster.$(OBJEXT) libjabber_a-si.$(OBJEXT) \
-	libjabber_a-xdata.$(OBJEXT)
+	libjabber_a-parser.$(OBJEXT) libjabber_a-ping.$(OBJEXT) \
+	libjabber_a-presence.$(OBJEXT) libjabber_a-roster.$(OBJEXT) \
+	libjabber_a-si.$(OBJEXT) libjabber_a-xdata.$(OBJEXT) \
+	libjabber_a-caps.$(OBJEXT) libjabber_a-adhoccommands.$(OBJEXT) \
+	libjabber_a-pep.$(OBJEXT) libjabber_a-usermood.$(OBJEXT) \
+	libjabber_a-usernick.$(OBJEXT) libjabber_a-usertune.$(OBJEXT)
 @STATIC_JABBER_TRUE@am_libjabber_a_OBJECTS = $(am__objects_1) \
 @STATIC_JABBER_TRUE@	libjabber_a-libxmpp.$(OBJEXT)
 libjabber_a_OBJECTS = $(am_libjabber_a_OBJECTS)
@@ -85,11 +91,14 @@ am__DEPENDENCIES_1 =
 am__libjabber_la_SOURCES_DIST = auth.c auth.h buddy.c buddy.h chat.c \
 	chat.h disco.c disco.h google.c google.h iq.c iq.h jabber.c \
 	jabber.h jutil.c jutil.h message.c message.h oob.c oob.h \
-	parser.c parser.h presence.c presence.h roster.c roster.h si.c \
-	si.h xdata.c xdata.h
+	parser.c parser.h ping.c ping.h presence.c presence.h roster.c \
+	roster.h si.c si.h xdata.c xdata.h caps.c caps.h \
+	adhoccommands.c adhoccommands.h pep.c pep.h usermood.c \
+	usermood.h usernick.c usernick.h usertune.c usertune.h
 am__objects_2 = auth.lo buddy.lo chat.lo disco.lo google.lo iq.lo \
-	jabber.lo jutil.lo message.lo oob.lo parser.lo presence.lo \
-	roster.lo si.lo xdata.lo
+	jabber.lo jutil.lo message.lo oob.lo parser.lo ping.lo \
+	presence.lo roster.lo si.lo xdata.lo caps.lo adhoccommands.lo \
+	pep.lo usermood.lo usernick.lo usertune.lo
 @STATIC_JABBER_FALSE@am_libjabber_la_OBJECTS = $(am__objects_2)
 libjabber_la_OBJECTS = $(am_libjabber_la_OBJECTS)
 @STATIC_JABBER_FALSE@am_libjabber_la_rpath = -rpath $(pkgdir)
@@ -167,6 +176,8 @@ DYNAMIC_JABBER_FALSE = @DYNAMIC_JABBER_FALSE@
 DYNAMIC_JABBER_TRUE = @DYNAMIC_JABBER_TRUE@
 DYNAMIC_MSN_FALSE = @DYNAMIC_MSN_FALSE@
 DYNAMIC_MSN_TRUE = @DYNAMIC_MSN_TRUE@
+DYNAMIC_MYSPACE_FALSE = @DYNAMIC_MYSPACE_FALSE@
+DYNAMIC_MYSPACE_TRUE = @DYNAMIC_MYSPACE_TRUE@
 DYNAMIC_NOVELL_FALSE = @DYNAMIC_NOVELL_FALSE@
 DYNAMIC_NOVELL_TRUE = @DYNAMIC_NOVELL_TRUE@
 DYNAMIC_OSCAR_FALSE = @DYNAMIC_OSCAR_FALSE@
@@ -195,6 +206,8 @@ ENABLE_CAP_FALSE = @ENABLE_CAP_FALSE@
 ENABLE_CAP_TRUE = @ENABLE_CAP_TRUE@
 ENABLE_DBUS_FALSE = @ENABLE_DBUS_FALSE@
 ENABLE_DBUS_TRUE = @ENABLE_DBUS_TRUE@
+ENABLE_GESTURES_FALSE = @ENABLE_GESTURES_FALSE@
+ENABLE_GESTURES_TRUE = @ENABLE_GESTURES_TRUE@
 ENABLE_GNT_FALSE = @ENABLE_GNT_FALSE@
 ENABLE_GNT_TRUE = @ENABLE_GNT_TRUE@
 ENABLE_GTK_FALSE = @ENABLE_GTK_FALSE@
@@ -250,14 +263,12 @@ INTLTOOL_CAVES_RULE = @INTLTOOL_CAVES_RULE@
 INTLTOOL_DESKTOP_RULE = @INTLTOOL_DESKTOP_RULE@
 INTLTOOL_DIRECTORY_RULE = @INTLTOOL_DIRECTORY_RULE@
 INTLTOOL_EXTRACT = @INTLTOOL_EXTRACT@
-INTLTOOL_ICONV = @INTLTOOL_ICONV@
 INTLTOOL_KBD_RULE = @INTLTOOL_KBD_RULE@
 INTLTOOL_KEYS_RULE = @INTLTOOL_KEYS_RULE@
 INTLTOOL_MERGE = @INTLTOOL_MERGE@
-INTLTOOL_MSGFMT = @INTLTOOL_MSGFMT@
-INTLTOOL_MSGMERGE = @INTLTOOL_MSGMERGE@
 INTLTOOL_OAF_RULE = @INTLTOOL_OAF_RULE@
 INTLTOOL_PERL = @INTLTOOL_PERL@
+INTLTOOL_POLICY_RULE = @INTLTOOL_POLICY_RULE@
 INTLTOOL_PONG_RULE = @INTLTOOL_PONG_RULE@
 INTLTOOL_PROP_RULE = @INTLTOOL_PROP_RULE@
 INTLTOOL_SCHEMAS_RULE = @INTLTOOL_SCHEMAS_RULE@
@@ -269,7 +280,6 @@ INTLTOOL_THEME_RULE = @INTLTOOL_THEME_RULE@
 INTLTOOL_UI_RULE = @INTLTOOL_UI_RULE@
 INTLTOOL_UPDATE = @INTLTOOL_UPDATE@
 INTLTOOL_XAM_RULE = @INTLTOOL_XAM_RULE@
-INTLTOOL_XGETTEXT = @INTLTOOL_XGETTEXT@
 INTLTOOL_XML_NOMERGE_RULE = @INTLTOOL_XML_NOMERGE_RULE@
 INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 KRB4_CFLAGS = @KRB4_CFLAGS@
@@ -330,6 +340,7 @@ PURPLE_VERSION = @PURPLE_VERSION@
 PYTHON = @PYTHON@
 RANLIB = @RANLIB@
 SASL_LIBS = @SASL_LIBS@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 SILC_CFLAGS = @SILC_CFLAGS@
@@ -350,6 +361,8 @@ STATIC_JABBER_TRUE = @STATIC_JABBER_TRUE@
 STATIC_LINK_LIBS = @STATIC_LINK_LIBS@
 STATIC_MSN_FALSE = @STATIC_MSN_FALSE@
 STATIC_MSN_TRUE = @STATIC_MSN_TRUE@
+STATIC_MYSPACE_FALSE = @STATIC_MYSPACE_FALSE@
+STATIC_MYSPACE_TRUE = @STATIC_MYSPACE_TRUE@
 STATIC_NOVELL_FALSE = @STATIC_NOVELL_FALSE@
 STATIC_NOVELL_TRUE = @STATIC_NOVELL_TRUE@
 STATIC_OSCAR_FALSE = @STATIC_OSCAR_FALSE@
@@ -490,6 +503,8 @@ JABBERSOURCES = auth.c \
 			  oob.h \
 			  parser.c \
 			  parser.h \
+			  ping.c \
+			  ping.h \
 			  presence.c \
 			  presence.h \
 			  roster.c \
@@ -497,7 +512,19 @@ JABBERSOURCES = auth.c \
 			  si.c \
 			  si.h \
 			  xdata.c \
-			  xdata.h
+			  xdata.h \
+			  caps.c \
+			  caps.h \
+			  adhoccommands.c \
+			  adhoccommands.h \
+			  pep.c \
+			  pep.h \
+			  usermood.c \
+			  usermood.h \
+			  usernick.c \
+			  usernick.h \
+			  usertune.c \
+			  usertune.h
 
 AM_CFLAGS = $(st)
 libxmpp_la_LDFLAGS = -module -avoid-version
@@ -598,16 +625,20 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adhoccommands.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/auth.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/buddy.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/caps.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chat.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/disco.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/google.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iq.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jabber.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-adhoccommands.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-auth.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-buddy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-caps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-chat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-disco.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-google.Po@am__quote@
@@ -618,17 +649,27 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-message.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-oob.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-parser.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-pep.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-ping.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-presence.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-roster.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-si.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-usermood.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-usernick.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-usertune.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libjabber_a-xdata.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libxmpp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/message.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/oob.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parser.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pep.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ping.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/presence.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/roster.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/si.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/usermood.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/usernick.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/usertune.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdata.Plo@am__quote@
 
 .c.o:
@@ -806,6 +847,20 @@ libjabber_a-parser.obj: parser.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-parser.obj `if test -f 'parser.c'; then $(CYGPATH_W) 'parser.c'; else $(CYGPATH_W) '$(srcdir)/parser.c'; fi`
 
+libjabber_a-ping.o: ping.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-ping.o -MD -MP -MF "$(DEPDIR)/libjabber_a-ping.Tpo" -c -o libjabber_a-ping.o `test -f 'ping.c' || echo '$(srcdir)/'`ping.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-ping.Tpo" "$(DEPDIR)/libjabber_a-ping.Po"; else rm -f "$(DEPDIR)/libjabber_a-ping.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ping.c' object='libjabber_a-ping.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-ping.o `test -f 'ping.c' || echo '$(srcdir)/'`ping.c
+
+libjabber_a-ping.obj: ping.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-ping.obj -MD -MP -MF "$(DEPDIR)/libjabber_a-ping.Tpo" -c -o libjabber_a-ping.obj `if test -f 'ping.c'; then $(CYGPATH_W) 'ping.c'; else $(CYGPATH_W) '$(srcdir)/ping.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-ping.Tpo" "$(DEPDIR)/libjabber_a-ping.Po"; else rm -f "$(DEPDIR)/libjabber_a-ping.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='ping.c' object='libjabber_a-ping.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-ping.obj `if test -f 'ping.c'; then $(CYGPATH_W) 'ping.c'; else $(CYGPATH_W) '$(srcdir)/ping.c'; fi`
+
 libjabber_a-presence.o: presence.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-presence.o -MD -MP -MF "$(DEPDIR)/libjabber_a-presence.Tpo" -c -o libjabber_a-presence.o `test -f 'presence.c' || echo '$(srcdir)/'`presence.c; \
 @am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-presence.Tpo" "$(DEPDIR)/libjabber_a-presence.Po"; else rm -f "$(DEPDIR)/libjabber_a-presence.Tpo"; exit 1; fi
@@ -861,6 +916,90 @@ libjabber_a-xdata.obj: xdata.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='xdata.c' object='libjabber_a-xdata.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-xdata.obj `if test -f 'xdata.c'; then $(CYGPATH_W) 'xdata.c'; else $(CYGPATH_W) '$(srcdir)/xdata.c'; fi`
+
+libjabber_a-caps.o: caps.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-caps.o -MD -MP -MF "$(DEPDIR)/libjabber_a-caps.Tpo" -c -o libjabber_a-caps.o `test -f 'caps.c' || echo '$(srcdir)/'`caps.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-caps.Tpo" "$(DEPDIR)/libjabber_a-caps.Po"; else rm -f "$(DEPDIR)/libjabber_a-caps.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='caps.c' object='libjabber_a-caps.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-caps.o `test -f 'caps.c' || echo '$(srcdir)/'`caps.c
+
+libjabber_a-caps.obj: caps.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-caps.obj -MD -MP -MF "$(DEPDIR)/libjabber_a-caps.Tpo" -c -o libjabber_a-caps.obj `if test -f 'caps.c'; then $(CYGPATH_W) 'caps.c'; else $(CYGPATH_W) '$(srcdir)/caps.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-caps.Tpo" "$(DEPDIR)/libjabber_a-caps.Po"; else rm -f "$(DEPDIR)/libjabber_a-caps.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='caps.c' object='libjabber_a-caps.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-caps.obj `if test -f 'caps.c'; then $(CYGPATH_W) 'caps.c'; else $(CYGPATH_W) '$(srcdir)/caps.c'; fi`
+
+libjabber_a-adhoccommands.o: adhoccommands.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-adhoccommands.o -MD -MP -MF "$(DEPDIR)/libjabber_a-adhoccommands.Tpo" -c -o libjabber_a-adhoccommands.o `test -f 'adhoccommands.c' || echo '$(srcdir)/'`adhoccommands.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-adhoccommands.Tpo" "$(DEPDIR)/libjabber_a-adhoccommands.Po"; else rm -f "$(DEPDIR)/libjabber_a-adhoccommands.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='adhoccommands.c' object='libjabber_a-adhoccommands.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-adhoccommands.o `test -f 'adhoccommands.c' || echo '$(srcdir)/'`adhoccommands.c
+
+libjabber_a-adhoccommands.obj: adhoccommands.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-adhoccommands.obj -MD -MP -MF "$(DEPDIR)/libjabber_a-adhoccommands.Tpo" -c -o libjabber_a-adhoccommands.obj `if test -f 'adhoccommands.c'; then $(CYGPATH_W) 'adhoccommands.c'; else $(CYGPATH_W) '$(srcdir)/adhoccommands.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-adhoccommands.Tpo" "$(DEPDIR)/libjabber_a-adhoccommands.Po"; else rm -f "$(DEPDIR)/libjabber_a-adhoccommands.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='adhoccommands.c' object='libjabber_a-adhoccommands.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-adhoccommands.obj `if test -f 'adhoccommands.c'; then $(CYGPATH_W) 'adhoccommands.c'; else $(CYGPATH_W) '$(srcdir)/adhoccommands.c'; fi`
+
+libjabber_a-pep.o: pep.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-pep.o -MD -MP -MF "$(DEPDIR)/libjabber_a-pep.Tpo" -c -o libjabber_a-pep.o `test -f 'pep.c' || echo '$(srcdir)/'`pep.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-pep.Tpo" "$(DEPDIR)/libjabber_a-pep.Po"; else rm -f "$(DEPDIR)/libjabber_a-pep.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pep.c' object='libjabber_a-pep.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-pep.o `test -f 'pep.c' || echo '$(srcdir)/'`pep.c
+
+libjabber_a-pep.obj: pep.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-pep.obj -MD -MP -MF "$(DEPDIR)/libjabber_a-pep.Tpo" -c -o libjabber_a-pep.obj `if test -f 'pep.c'; then $(CYGPATH_W) 'pep.c'; else $(CYGPATH_W) '$(srcdir)/pep.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-pep.Tpo" "$(DEPDIR)/libjabber_a-pep.Po"; else rm -f "$(DEPDIR)/libjabber_a-pep.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='pep.c' object='libjabber_a-pep.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-pep.obj `if test -f 'pep.c'; then $(CYGPATH_W) 'pep.c'; else $(CYGPATH_W) '$(srcdir)/pep.c'; fi`
+
+libjabber_a-usermood.o: usermood.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-usermood.o -MD -MP -MF "$(DEPDIR)/libjabber_a-usermood.Tpo" -c -o libjabber_a-usermood.o `test -f 'usermood.c' || echo '$(srcdir)/'`usermood.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-usermood.Tpo" "$(DEPDIR)/libjabber_a-usermood.Po"; else rm -f "$(DEPDIR)/libjabber_a-usermood.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usermood.c' object='libjabber_a-usermood.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-usermood.o `test -f 'usermood.c' || echo '$(srcdir)/'`usermood.c
+
+libjabber_a-usermood.obj: usermood.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-usermood.obj -MD -MP -MF "$(DEPDIR)/libjabber_a-usermood.Tpo" -c -o libjabber_a-usermood.obj `if test -f 'usermood.c'; then $(CYGPATH_W) 'usermood.c'; else $(CYGPATH_W) '$(srcdir)/usermood.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-usermood.Tpo" "$(DEPDIR)/libjabber_a-usermood.Po"; else rm -f "$(DEPDIR)/libjabber_a-usermood.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usermood.c' object='libjabber_a-usermood.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-usermood.obj `if test -f 'usermood.c'; then $(CYGPATH_W) 'usermood.c'; else $(CYGPATH_W) '$(srcdir)/usermood.c'; fi`
+
+libjabber_a-usernick.o: usernick.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-usernick.o -MD -MP -MF "$(DEPDIR)/libjabber_a-usernick.Tpo" -c -o libjabber_a-usernick.o `test -f 'usernick.c' || echo '$(srcdir)/'`usernick.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-usernick.Tpo" "$(DEPDIR)/libjabber_a-usernick.Po"; else rm -f "$(DEPDIR)/libjabber_a-usernick.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usernick.c' object='libjabber_a-usernick.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-usernick.o `test -f 'usernick.c' || echo '$(srcdir)/'`usernick.c
+
+libjabber_a-usernick.obj: usernick.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-usernick.obj -MD -MP -MF "$(DEPDIR)/libjabber_a-usernick.Tpo" -c -o libjabber_a-usernick.obj `if test -f 'usernick.c'; then $(CYGPATH_W) 'usernick.c'; else $(CYGPATH_W) '$(srcdir)/usernick.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-usernick.Tpo" "$(DEPDIR)/libjabber_a-usernick.Po"; else rm -f "$(DEPDIR)/libjabber_a-usernick.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usernick.c' object='libjabber_a-usernick.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-usernick.obj `if test -f 'usernick.c'; then $(CYGPATH_W) 'usernick.c'; else $(CYGPATH_W) '$(srcdir)/usernick.c'; fi`
+
+libjabber_a-usertune.o: usertune.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-usertune.o -MD -MP -MF "$(DEPDIR)/libjabber_a-usertune.Tpo" -c -o libjabber_a-usertune.o `test -f 'usertune.c' || echo '$(srcdir)/'`usertune.c; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-usertune.Tpo" "$(DEPDIR)/libjabber_a-usertune.Po"; else rm -f "$(DEPDIR)/libjabber_a-usertune.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usertune.c' object='libjabber_a-usertune.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-usertune.o `test -f 'usertune.c' || echo '$(srcdir)/'`usertune.c
+
+libjabber_a-usertune.obj: usertune.c
+@am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-usertune.obj -MD -MP -MF "$(DEPDIR)/libjabber_a-usertune.Tpo" -c -o libjabber_a-usertune.obj `if test -f 'usertune.c'; then $(CYGPATH_W) 'usertune.c'; else $(CYGPATH_W) '$(srcdir)/usertune.c'; fi`; \
+@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/libjabber_a-usertune.Tpo" "$(DEPDIR)/libjabber_a-usertune.Po"; else rm -f "$(DEPDIR)/libjabber_a-usertune.Tpo"; exit 1; fi
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usertune.c' object='libjabber_a-usertune.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -c -o libjabber_a-usertune.obj `if test -f 'usertune.c'; then $(CYGPATH_W) 'usertune.c'; else $(CYGPATH_W) '$(srcdir)/usertune.c'; fi`
 
 libjabber_a-libxmpp.o: libxmpp.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libjabber_a_CFLAGS) $(CFLAGS) -MT libjabber_a-libxmpp.o -MD -MP -MF "$(DEPDIR)/libjabber_a-libxmpp.Tpo" -c -o libjabber_a-libxmpp.o `test -f 'libxmpp.c' || echo '$(srcdir)/'`libxmpp.c; \

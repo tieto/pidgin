@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "config.h"
@@ -133,6 +133,7 @@ gnt_uninit_colors()
 		restore_colors();
 }
 
+#if GLIB_CHECK_VERSION(2,6,0)
 static int
 get_color(char *key)
 {
@@ -164,7 +165,6 @@ get_color(char *key)
 	return color;
 }
 
-#if GLIB_CHECK_VERSION(2,6,0)
 void gnt_colors_parse(GKeyFile *kfile)
 {
 	GError *error = NULL;

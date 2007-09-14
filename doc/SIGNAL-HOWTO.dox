@@ -1,0 +1,137 @@
+/** @page signal-howto Signals HOWTO
+
+ @section Introduction
+  The libpurple signals interface is used for general event notification, such
+  as plugins being loaded or unloaded, allowing the GUI frontend to respond
+  appropriately to changing internal data. Unfortunately, its use is not at all
+  obvious from the information in the header files. This document uses code
+  snippets from the Pidgin/libpurple plugin systems to illustrate the proper
+  use of signals.
+
+ @section overview Overview of Signals
+  Signals in libpurple are very similar to those in GTK+. When certain events
+  happen, a named signal is "emitted" from a certain object. Emitting the
+  signal triggers a series of callbacks that have been "connected" to that
+  signal for that object. These callbacks take appropriate action in response
+  to the signal.
+
+ @section registering_signal Registering a Signal
+  The first step of using a signal is registering it with libpurple so that
+  callbacks may be connected to it. This is done using purple_signal_register()
+  Here is a slightly modified example from @c purple_plugins_init in 
+  @c libpurple/plugin.c :
+
+  @code
+	purple_signal_register( purple_plugins_get_handle(), /* Instance */
+				"plugin-load",               /* Signal name */
+				purple_marshal_VOID__POINTER,/* Marshal function */
+				NULL,                        /* Callback return value type */
+				1,                           /* Number of callback arguments (not including void *data) */
+				purple_value_new(PURPLE_TYPE_SUBTYPE,PURPLE_SUBTYPE_PLUGIN) /* Type of first callback argument */
+				);
+  @endcode
+
+  @subsection Instance
+  A reference to the object from which this signal is emitted, and to which
+  potential callbacks should be connected. In this case, it will be the entire
+  plugin module emitting the signal.
+  
+  @subsection signalname Signal Name
+  Unique identifier for the signal itself.
+
+  @subsection therest Callback function definition
+  The rest of the arguments specify the form of the callback function.
+
+  @subsubsection marshalfunc Marshal Function
+  @c purple_marshal_VOID__POINTER represents the callback function prototype,
+  not including a "data" argument, explained later. The form is 
+  @c purple_marshal_RETURNVALUETYPE__ARG1TYPE_ARG2TYPE_ETC. See signals.h for
+  more possible types.
+
+  In this case, the callback will have the form
+  @code
+	void cb(void *arg1, void *data)
+  @endcode
+
+  If @c purple_marshal_BOOLEAN__POINTER_POINTER_POINTER were specified, it
+  would be:
+  @code
+	gboolean cb(void *arg1, void *arg2, void *arg3, void *data)
+  @endcode
+
+  The @c void @c *data argument at the end of each callback function
+  provides the data argument given to purple_signal_connect() .
+
+  @subsubsection cb_ret_type Callback return value type
+  In our case, this is NULL, meaning "returns void".
+  @todo This could be described better.
+
+  @subsubsection num_args Number of arguments
+  The number of arguments (not including @c data ) that the callback function
+  will take.
+
+  @subsubsection type_arg Type of argument
+  @c purple_value_new(PURPLE_TYPE_SUBTYPE,PURPLE_SUBTYPE_PLUGIN) specifies that
+  the first argument given to the callback will be a @c PurplePlugin* . You
+  will need as many "type of argument" arguments to purple_signal_register() as
+  you specified in "Number of arguments" above.
+
+  @todo Describe this more.
+
+  @see value.h
+
+  @section connect Connecting to the signal
+  Once the signal is registered, you can connect callbacks to it. First, you
+  must define a callback function, such as this one from gtkplugin.c :
+  @code
+static void plugin_load_cb(PurplePlugin *plugin, gpointer data)
+{
+	GtkTreeView *view = (GtkTreeView *)data;
+	plugin_loading_common(plugin, view, TRUE);
+}
+  @endcode
+  Note that the callback function prototype matches that specified in the call
+  to purple_signal_register() above.
+
+  Once the callback function is defined, you can connect it to the signal.
+  Again from gtkplugin.c , in @c pidgin_plugin_dialog_show() :
+  @code
+	purple_signal_connect(purple_plugins_get_handle(), "plugin-load", /* What to connect to */
+		plugin_dialog, /* Object receiving the signal */
+		PURPLE_CALLBACK(plugin_load_cb), /* Callback function */
+		event_view, /* Data to pass to the callback function
+		);
+  @endcode
+
+  The first two arguments ("What to connect to") specify the object emitting
+  the signal (the plugin module) and what signal to listen for ("plugin-load").
+
+  The object receiving the signal is @c plugin_dialog , the Pidgin plugins
+  dialog. When @c plugin_dialog is deleted, then 
+  @c purple_signals_disconnect_by_handle(plugin_dialog) should be called to
+  remove all signal connections it is associated with.
+
+  The callback function is given using a helper macro, and finally the
+  @c data argument to be passed to @c plugin_load_cb is given as @c event_view,
+  a pointer to the GTK widget that @c plugin_load_cb needs to update.
+
+  @section emit-signal Emitting a signal
+  Connecting callbacks to signals is all well and good, but how do you "fire"
+  the signal and trigger the callback? At some point, you must "emit" the
+  signal, which immediately calls all connected callbacks.
+
+  As seen in @c purple_plugin_load() in plugin.c :
+  @code
+	purple_signal_emit(purple_plugins_get_handle(), "plugin-load", plugin);
+  @endcode
+  This causes the signal "plugin-load" to be emitted from the plugin module
+  (given by @c purple_plugins_get_handle() ), with the newly loaded plugin as
+  the argument to pass to any registered callback functions.
+
+  In our example, @c plugin_load_cb is called immediately as
+  @code
+	plugin_load_cb(plugin, event_view);
+  @endcode
+  and does whatever it does.
+  
+ */

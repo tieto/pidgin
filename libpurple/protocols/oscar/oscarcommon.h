@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 
@@ -30,7 +30,7 @@
 #include "version.h"
 #include "notify.h"
 
-#define OSCAR_DEFAULT_LOGIN_SERVER "login.oscar.aol.com"
+#define OSCAR_DEFAULT_LOGIN_SERVER "login.messaging.aol.com"
 #define OSCAR_DEFAULT_LOGIN_PORT 5190
 #ifndef _WIN32
 #define OSCAR_DEFAULT_CUSTOM_ENCODING "ISO-8859-1"

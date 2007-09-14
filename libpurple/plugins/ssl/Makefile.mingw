@@ -18,6 +18,7 @@ NEEDED_DLLS = \
 			$(NSS_TOP)/lib/nss3.dll \
 			$(NSS_TOP)/lib/nssckbi.dll \
 			$(NSS_TOP)/lib/softokn3.dll \
+			$(NSS_TOP)/lib/smime3.dll \
 			$(NSS_TOP)/lib/ssl3.dll \
 			$(NSPR_TOP)/lib/nspr4.dll \
 			$(NSPR_TOP)/lib/plc4.dll \
@@ -59,7 +60,8 @@ LIBS =	\
 			-lpurple \
 			-lnss3 \
 			-lnspr4 \
-			-lssl3
+			-lssl3 \
+			-lsmime3
 
 include $(PIDGIN_COMMON_RULES)
 

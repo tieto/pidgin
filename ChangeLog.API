@@ -1,5 +1,62 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+Version 2.2.0 (09/13/2007):
+	libpurple:
+		Added:
+		* PURPLE_MESSAGE_INVISIBLE flag, which can be used by
+		  purple_conv_im_send_with_flags to send a message, but not display it
+		  in the conversation
+		* serv_send_attention(), serv_got_attention(), as well as send_attention 
+		  and attention_types in PurplePluginProtocolInfo. This new API is used
+		  for zapping in MySpaceIM, buzzing in Yahoo, and nudging in MSN.
+		* PurpleConvMessage structure to represent a message in a
+		  conversation. purple_conversation_message_get_sender,
+		  purple_conversation_message_get_message,
+		  purple_conversation_message_get_flags and
+		  purple_conversation_message_get_timestamp to get information about a
+		  PurpleConvMessage.
+		* purple_conversation_get_message_history() to retrieve a list of
+		  PurpleConvMessage's in a conversation, and
+		  purple_conversation_clear_message_history to clear the history.
+		* purple_certificate_* functions in libpurple/certificate.h - "A public-key certificate API"
+		* purple_ssl_get_peer_certificates() and associated field in PurpleSslOps to retrieve a server's presented SSL certificate chain.
+		* PurpleSslConnection::verifier to provide a "how to verify the peer's certificates" callback to the SSL handlers. See certificate.h for more on this.
+		* purple_ssl_connect_with_host_fd() to create an SSL connection from a file descriptor and provide a hostname with it to authenticate the peer against.
+
+		Changed:
+		* purple_prefs_load is now called within purple_prefs_init.
+		  The UI no longer needs to call it.
+		* writing-im-msg now receives the conversation name as the who
+		  argument if the caller of purple_conversation_write didn't
+		  provide a value for who.
+
+	Pidgin:
+		Added:
+		* pidgin_set_accessible_relations, sets up label-for and labelled-by
+		  ATK relations (broken out from pidgin_set_accessible_label)
+		* pidgin_conv_attach_to_conversation, to reattach the Pidgin UI to a
+		  conversation
+		* conversation-hiding and conversation-displayed signals.
+		* pidgin_text_combo_box_entry_new, pidgin_text_combo_box_entry_get_text
+		  and pidgin_text_combo_box_entry_set_text
+
+		Changed:
+		* pidgin_conversations_fill_menu now also adds a separator and a 'Show
+		  All' item if there are more than one conversations in the list.
+
+	Finch:
+		Added:
+		* finch_sound_is_enabled
+		* The reserved field in the FinchConv is now used to store information
+		  about the conversation (using FinchConversationFlag)
+		* finch_account_dialog_show
+
+		libgnt:
+		* gnt_slider_set_small_step, gnt_slider_set_large_step to allow more
+		  fine tuned updates of a GntSlider
+		* gnt_util_parse_xhtml_to_textview to parse XHTML strings in a
+		  GntTextView (this works only if libxml2 is available)
+
 Version 2.1.1 (08/20/2007):
 	libpurple:
 		Changed:

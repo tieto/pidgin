@@ -33,6 +33,7 @@ C_SRC =	\
 			accountopt.c \
 			blist.c \
 			buddyicon.c \
+			certificate.c \
 			cipher.c \
 			cmds.c \
 			connection.c \

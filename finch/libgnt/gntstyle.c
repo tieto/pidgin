@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "gntstyle.h"
@@ -55,6 +55,8 @@ char *gnt_style_get_from_name(const char *group, const char *key)
 	if (!group)
 		group = "general";
 	return g_key_file_get_value(gkfile, group, key, NULL);
+#else
+	return NULL;
 #endif
 }
 
@@ -93,6 +95,7 @@ gboolean gnt_style_parse_bool(const char *str)
 	return def;
 }
 
+#if GLIB_CHECK_VERSION(2,6,0)
 static void
 refine(char *text)
 {
@@ -133,6 +136,7 @@ parse_key(const char *key)
 {
 	return (char *)gnt_key_translate(key);
 }
+#endif
 
 void gnt_style_read_workspaces(GntWM *wm)
 {

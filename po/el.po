@@ -10628,7 +10628,7 @@ msgid "Active which ID?"
 msgstr "Ενεργοποίηση ποιανού ID;"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3239
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Ποιανού συμμετοχή στη συζήτηση;"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3251

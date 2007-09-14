@@ -1,4 +1,4 @@
-EXTRA_DIST=genmarshal
+EXTRA_DIST=genmarshal pygnt
 
 SUBDIRS = . wms
 pkgconfigdir = $(libdir)/pkgconfig

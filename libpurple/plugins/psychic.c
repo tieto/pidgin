@@ -49,7 +49,7 @@ buddy_typing_cb(PurpleAccount *acct, const char *name, void *data) {
   }
 
   if(FALSE == purple_privacy_check(acct, name)) {
-    purple_debug_info("psychic", "user %s is blocked", name);
+    purple_debug_info("psychic", "user %s is blocked\n", name);
     return;
   }
 

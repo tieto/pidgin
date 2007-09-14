@@ -21,12 +21,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include <glib.h>
 
 #include "gnt.h"
+#include "gnttextview.h"
 #include "gntwidget.h"
 
 typedef gpointer (*GDupFunc)(gconstpointer data);
@@ -130,6 +131,16 @@ GntWidget * gnt_widget_bindings_view(GntWidget *widget);
  * @param num     The number of widgets to return, followed by 'num' GntWidget **
  */
 void gnt_util_parse_widgets(const char *string, int num, ...);
+
+/**
+ * Parse an XHTML string and add it in a GntTextView with
+ * appropriate text flags.
+ *
+ * @param string   The XHTML string
+ * @param tv       The GntTextView
+ * @return  @c TRUE if the string was added to the textview properly, @c FALSE otherwise.
+ */
+gboolean gnt_util_parse_xhtml_to_textview(const char *string, GntTextView *tv);
 
 /**
  * Make some keypress activate a button when some key is pressed with 'wid' in focus.

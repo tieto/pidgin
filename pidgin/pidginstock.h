@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include <gtk/gtkstock.h>
 
@@ -45,6 +45,7 @@
 #define PIDGIN_STOCK_FILE_CANCELED   "pidgin-file-canceled"
 #define PIDGIN_STOCK_FILE_DONE       "pidgin-file-done"
 #define PIDGIN_STOCK_IGNORE          "pidgin-ignore"
+#define PIDGIN_STOCK_INFO            "pidgin-info"
 #define PIDGIN_STOCK_INVITE          "pidgin-invite"
 #define PIDGIN_STOCK_MODIFY          "pidgin-modify"
 #define PIDGIN_STOCK_OPEN_MAIL       "pidgin-stock-open-mail"
@@ -145,6 +146,7 @@
 /**
  * For using icons that aren't one of the default GTK_ICON_SIZEs
  */
+#define PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC    "pidgin-icon-size-tango-microscopic"
 #define PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL    "pidgin-icon-size-tango-extra-small"
 #define PIDGIN_ICON_SIZE_TANGO_SMALL          "pidgin-icon-size-tango-small"
 #define PIDGIN_ICON_SIZE_TANGO_MEDIUM         "pidgin-icon-size-tango-medium"

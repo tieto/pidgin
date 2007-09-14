@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -114,7 +114,7 @@ static void
 play_conv_event(PurpleConversation *conv, PurpleSoundEventID event)
 {
 	/* If we should not play the sound for some reason, then exit early */
-	if (conv != NULL)
+	if (conv != NULL && PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 	{
 		PidginConversation *gtkconv;
 		PidginWindow *win;
@@ -364,14 +364,14 @@ bus_call (GstBus     *bus,
 	GError *err = NULL;
 
 	switch (GST_MESSAGE_TYPE (msg)) {
-	case GST_MESSAGE_EOS:
-		gst_element_set_state(play, GST_STATE_NULL);
-		gst_object_unref(GST_OBJECT(play));
-		break;
 	case GST_MESSAGE_ERROR:
 		gst_message_parse_error(msg, &err, NULL);
 		purple_debug_error("gstreamer", "%s\n", err->message);
 		g_error_free(err);
+		/* fall-through and clean up */
+	case GST_MESSAGE_EOS:
+		gst_element_set_state(play, GST_STATE_NULL);
+		gst_object_unref(GST_OBJECT(play));
 		break;
 	case GST_MESSAGE_WARNING:
 		gst_message_parse_warning(msg, &err, NULL);
@@ -446,6 +446,8 @@ pidgin_sound_play_file(const char *filename)
 		g_free(command);
 		return;
 	}
+#endif /* _WIN32 */
+
 #ifdef USE_GSTREAMER
 	if (gst_init_failed)  /* Perhaps do gdk_beep instead? */
 		return;
@@ -460,7 +462,9 @@ pidgin_sound_play_file(const char *filename)
 			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 			return;
 		}
-	} else if (!strcmp(method, "esd")) {
+	}
+#ifndef _WIN32
+	else if (!strcmp(method, "esd")) {
 		sink = gst_element_factory_make("esdsink", "sink");
 		if (!sink) {
 			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
@@ -472,7 +476,9 @@ pidgin_sound_play_file(const char *filename)
 			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 			return;
 		}
-	} else {
+	}
+#endif
+	else {
 		purple_debug_error("sound", "Unknown sound method '%s'\n", method);
 		return;
 	}
@@ -498,9 +504,9 @@ pidgin_sound_play_file(const char *filename)
 	g_free(uri);
 
 #else /* USE_GSTREAMER */
+
+#ifndef _WIN32
 	gdk_beep();
-	return;
-#endif /* USE_GSTREAMER */
 #else /* _WIN32 */
 	purple_debug_info("sound", "Playing %s\n", filename);
 
@@ -518,6 +524,8 @@ pidgin_sound_play_file(const char *filename)
 		g_free(l_filename);
 	}
 #endif /* _WIN32 */
+
+#endif /* USE_GSTREAMER */
 }
 
 static void

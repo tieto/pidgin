@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "gntstyle.h"
@@ -549,7 +549,8 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 		if ((end = strchr(start, '\r')) != NULL ||
 			(end = strchr(start, '\n')) != NULL) {
 			len = gnt_util_onscreen_width(start, end - has_scroll);
-			if (len >= widget->priv.width - line->length - has_scroll) {
+			if (widget->priv.width > 0 &&
+					len >= widget->priv.width - line->length - has_scroll) {
 				end = NULL;
 			}
 		}

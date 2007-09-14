@@ -14318,7 +14318,7 @@ msgid "Active which ID?"
 msgstr "Aktivér hvilket ID?"
 
 #: ../libgaim/protocols/yahoo/yahoo.c:3214
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Deltag med hvem i chat?"
 
 #: ../libgaim/protocols/yahoo/yahoo.c:3224
