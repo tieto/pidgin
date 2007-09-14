@@ -707,7 +707,7 @@ do_invite(GtkWidget *w, int resp, InviteBuddyInfo *info)
 	gtkconv = PIDGIN_CONVERSATION(info->conv);
 
 	if (resp == GTK_RESPONSE_OK) {
-		buddy   = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(info->entry)->entry));
+		buddy   = pidgin_text_combo_box_entry_get_text(info->entry);
 		message = gtk_entry_get_text(GTK_ENTRY(info->message));
 
 		if (!g_ascii_strcasecmp(buddy, ""))
@@ -754,7 +754,7 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 								"chat."), NULL);
 		}
 		else
-			gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(info->entry)->entry), buddy->name);
+			pidgin_text_combo_box_entry_set_text(info->entry, buddy->name);
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
@@ -781,7 +781,7 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			}
 			else
 			{
-				gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(info->entry)->entry), username);
+				pidgin_text_combo_box_entry_set_text(info->entry, username);
 			}
 		}
 
@@ -879,18 +879,9 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 
 		/* Now the Buddy drop-down entry field. */
-		info->entry = gtk_combo_new();
-		gtk_combo_set_case_sensitive(GTK_COMBO(info->entry), FALSE);
-		gtk_entry_set_activates_default(
-				GTK_ENTRY(GTK_COMBO(info->entry)->entry), TRUE);
-
+		info->entry = pidgin_text_combo_box_entry_new(NULL, generate_invite_user_names(gc));
 		gtk_table_attach_defaults(GTK_TABLE(table), info->entry, 1, 2, 0, 1);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->entry);
-
-		/* Fill in the names. */
-		gtk_combo_set_popdown_strings(GTK_COMBO(info->entry),
-									  generate_invite_user_names(gc));
-
 
 		/* Now the label for "Message" */
 		label = gtk_label_new(NULL);
@@ -933,7 +924,7 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	gtk_widget_show_all(invite_dialog);
 
 	if (info != NULL)
-		gtk_widget_grab_focus(GTK_COMBO(info->entry)->entry);
+		gtk_widget_grab_focus(GTK_BIN(info->entry)->child);
 }
 
 static void
@@ -3653,8 +3644,7 @@ generate_invite_user_names(PurpleConnection *gc)
 	static GList *tmp = NULL;
 
 	g_list_free(tmp);
-
-	tmp = g_list_append(NULL, "");
+	tmp = NULL;
 
 	if (gc != NULL) {
 		for(gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {

@@ -124,6 +124,7 @@ static void sort_method_log(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTr
 #endif
 static PidginBuddyList *gtkblist = NULL;
 
+static GList *groups_tree(void);
 static gboolean pidgin_blist_refresh_timer(PurpleBuddyList *list);
 static void pidgin_blist_update_buddy(PurpleBuddyList *list, PurpleBlistNode *node, gboolean status_change);
 static void pidgin_blist_selection_changed(GtkTreeSelection *selection, gpointer data);
@@ -5357,15 +5358,17 @@ static void pidgin_blist_set_visible(PurpleBuddyList *list, gboolean show)
 static GList *
 groups_tree(void)
 {
-	GList *tmp = NULL;
+	static GList *list = NULL;
 	char *tmp2;
 	PurpleGroup *g;
 	PurpleBlistNode *gnode;
 
+	g_list_free(list);
+	list = NULL;
+
 	if (purple_get_blist()->root == NULL)
 	{
-		tmp2 = g_strdup(_("Buddies"));
-		tmp  = g_list_append(tmp, tmp2);
+		list  = g_list_append(list, (gpointer)_("Buddies"));
 	}
 	else
 	{
@@ -5377,12 +5380,12 @@ groups_tree(void)
 			{
 				g    = (PurpleGroup *)gnode;
 				tmp2 = g->name;
-				tmp  = g_list_append(tmp, tmp2);
+				list  = g_list_append(list, tmp2);
 			}
 		}
 	}
 
-	return tmp;
+	return list;
 }
 
 static void
@@ -5411,7 +5414,7 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 	if (resp == GTK_RESPONSE_OK)
 	{
 		who = gtk_entry_get_text(GTK_ENTRY(data->entry));
-		grp = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(data->combo)->entry));
+		grp = pidgin_text_combo_box_entry_get_text(data->combo);
 		whoalias = gtk_entry_get_text(GTK_ENTRY(data->entry_for_alias));
 		if (*whoalias == '\0')
 			whoalias = NULL;
@@ -5577,19 +5580,15 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 3, 4);
 
-	data->combo = gtk_combo_new();
-	gtk_combo_set_popdown_strings(GTK_COMBO(data->combo), groups_tree());
+	data->combo = pidgin_text_combo_box_entry_new(group, groups_tree());
 	gtk_table_attach_defaults(GTK_TABLE(table), data->combo, 1, 2, 3, 4);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_COMBO(data->combo)->entry);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_BIN(data->combo)->child);
 	pidgin_set_accessible_label (data->combo, label);
 
 	g_signal_connect(G_OBJECT(data->window), "response",
 					 G_CALLBACK(add_buddy_cb), data);
 
 	gtk_widget_show_all(data->window);
-
-	if (group != NULL)
-		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(data->combo)->entry), group);
 }
 
 static void
@@ -5628,7 +5627,7 @@ add_chat_cb(GtkWidget *w, PidginAddChatData *data)
 							   gtk_entry_get_text(GTK_ENTRY(data->alias_entry)),
 							   components);
 
-	group_name = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(data->group_combo)->entry));
+	group_name = pidgin_text_combo_box_entry_get_text(data->group_combo);
 
 	if ((group = purple_find_group(group_name)) == NULL)
 	{
@@ -5931,17 +5930,10 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	gtk_size_group_add_widget(data->sg, label);
 	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
 
-	data->group_combo = gtk_combo_new();
-	gtk_combo_set_popdown_strings(GTK_COMBO(data->group_combo), groups_tree());
-	gtk_box_pack_end(GTK_BOX(rowbox), data->group_combo, TRUE, TRUE, 0);
-
-	if (group)
-	{
-		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(data->group_combo)->entry),
-						   group->name);
-	}
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_COMBO(data->group_combo)->entry);
+	data->group_combo = pidgin_text_combo_box_entry_new(group ? group->name : NULL, groups_tree());
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_BIN(data->group_combo)->child);
 	pidgin_set_accessible_label (data->group_combo, label);
+	gtk_box_pack_end(GTK_BOX(rowbox), data->group_combo, TRUE, TRUE, 0);
 
 	g_signal_connect(G_OBJECT(data->window), "response",
 					 G_CALLBACK(add_chat_resp_cb), data);
