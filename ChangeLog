@@ -11,6 +11,7 @@ version 2.2.0 (09/13/2007):
 	  SSL-encrypted protocols (William Ehlhardt, Google Summer of Code)
 	* Some adjustments were made to fix sending messages when using
 	  the MSN HTTP method.
+	* Yahoo! Chat is fixed.
 
 	Pidgin:
 	* Insert Horizontal Rules and Strikethrough text from toolbar.
