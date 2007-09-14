@@ -452,7 +452,7 @@ msn_userlist_destroy(MsnUserList *userlist)
 void
 msn_userlist_add_user(MsnUserList *userlist, MsnUser *user)
 {
-	userlist->users = g_list_append(userlist->users, user);
+	userlist->users = g_list_prepend(userlist->users, user);
 }
 
 void
