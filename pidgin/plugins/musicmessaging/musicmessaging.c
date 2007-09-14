@@ -311,7 +311,9 @@ plugin_unload(PurplePlugin *plugin) {
 static gboolean
 intercept_sent(PurpleAccount *account, const char *who, char **message, void* pData)
 {
-	
+	if (message == NULL || *message == NULL || **message == '\0')
+		return FALSE;
+
 	if (0 == strncmp(*message, MUSICMESSAGING_PREFIX, strlen(MUSICMESSAGING_PREFIX)))
 	{
 		purple_debug_misc("purple-musicmessaging", "Sent MM Message: %s\n", *message);

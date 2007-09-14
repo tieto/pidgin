@@ -312,10 +312,6 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 	GtkTreeModel *model;
 	gchar *id;
 	PurpleCertificate *crt;
-	gchar *subject;
-	GByteArray *fpr_sha1;
-	gchar *fpr_sha1_asc;
-	gchar *primary, *secondary;
 
 	/* See if things are selected */
 	if (!gtk_tree_selection_get_selected(select, &model, &iter)) {
@@ -331,25 +327,9 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 	crt = purple_certificate_pool_retrieve(tpm_dat->tls_peers, id);
 	g_return_if_fail(crt);
 	
-	/* Build a notification thing */
-	/* TODO: This needs a better GUI, but a notification will do for now */
-	primary = g_strdup_printf(_("Certificate for %s"), id);
-
-	fpr_sha1 = purple_certificate_get_fingerprint_sha1(crt);
-	fpr_sha1_asc = purple_base16_encode_chunked(fpr_sha1->data,
-						    fpr_sha1->len);
-	subject = purple_certificate_get_subject_name(crt);
-
-	secondary = g_strdup_printf(_("Common name: %s\n\nSHA1 fingerprint:\n%s"), subject, fpr_sha1_asc);
+	/* Fire the notification */
+	purple_certificate_display_x509(crt);
 	
-	purple_notify_info(tpm_dat,
-			   _("SSL Host Certificate"),  primary, secondary );
-
-	g_free(primary);
-	g_free(secondary);
-	g_byte_array_free(fpr_sha1, TRUE);
-	g_free(fpr_sha1_asc);
-	g_free(subject);
 	g_free(id);
 	purple_certificate_destroy(crt);
 }

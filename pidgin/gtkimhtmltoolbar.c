@@ -1298,6 +1298,10 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 			imhtmltoolbar_view_pref_changed, toolbar);
 	purple_prefs_trigger_callback(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide");
 
+#if GTK_CHECK_VERSION(2,4,0)
+	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);
+#endif
+
 	gtk_widget_add_events(event, GDK_BUTTON_PRESS_MASK);
 	gtk_box_pack_start(GTK_BOX(hbox), event, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(event), "button-press-event", G_CALLBACK(gtk_imhtmltoolbar_popup_menu), toolbar);

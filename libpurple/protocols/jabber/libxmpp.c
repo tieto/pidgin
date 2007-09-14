@@ -28,6 +28,7 @@
 #include "internal.h"
 
 #include "accountopt.h"
+#include "debug.h"
 #include "version.h"
 
 #include "iq.h"
@@ -45,14 +46,11 @@
 
 static PurplePluginProtocolInfo prpl_info =
 {
-#ifdef HAVE_CYRUS_SASL
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_PASSWORD_OPTIONAL |
-	OPT_PROTO_SLASH_COMMANDS_NATIVE,
-#else
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK |
-	OPT_PROTO_SLASH_COMMANDS_NATIVE,
+#ifdef HAVE_CYRUS_SASL
+	OPT_PROTO_PASSWORD_OPTIONAL |
 #endif
+	OPT_PROTO_SLASH_COMMANDS_NATIVE,
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
 	{"png", 32, 32, 96, 96, 8191, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
@@ -194,6 +192,9 @@ static PurplePluginInfo info =
 static void
 init_plugin(PurplePlugin *plugin)
 {
+#ifdef HAVE_CYRUS_SASL
+	int ret;
+#endif
 	PurpleAccountUserSplit *split;
 	PurpleAccountOption *option;
 	
@@ -236,7 +237,9 @@ init_plugin(PurplePlugin *plugin)
 	
 	/* XXX - If any other plugin wants SASL this won't be good ... */
 #ifdef HAVE_CYRUS_SASL
-	sasl_client_init(NULL);
+	if ((ret = sasl_client_init(NULL)) != SASL_OK) {
+		purple_debug_error("xmpp", "Error (%d) initializing SASL.\n", ret);
+	}
 #endif
 	jabber_register_commands();
 	

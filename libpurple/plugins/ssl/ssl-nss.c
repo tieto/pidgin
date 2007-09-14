@@ -24,6 +24,7 @@
 #include "certificate.h"
 #include "plugin.h"
 #include "sslconn.h"
+#include "util.h"
 #include "version.h"
 
 #define SSL_NSS_PLUGIN_ID "ssl-nss"
@@ -34,6 +35,7 @@
 
 #include <nspr.h>
 #include <nss.h>
+#include <nssb64.h>
 #include <pk11func.h>
 #include <prio.h>
 #include <secerr.h>
@@ -454,11 +456,48 @@ x509_import_from_file(const gchar *filename)
  *
  * @return TRUE if success, otherwise FALSE
  */
+/* This function should not be so complicated, but NSS doesn't seem to have a
+   "convert yon certificate to PEM format" function. */
 static gboolean
 x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
 {
-	/* TODO: WRITEME */
-	return FALSE;
+	CERTCertificate *crt_dat;
+	SECItem *dercrt;
+	gchar *b64crt;
+	gchar *pemcrt;
+	gboolean ret = FALSE;
+
+	g_return_val_if_fail(filename, FALSE);
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_nss, FALSE);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, FALSE);
+
+	purple_debug_info("nss/x509",
+			  "Exporting certificate to %s\n", filename);
+	
+	/* First, use NSS voodoo to create a DER-formatted certificate */
+	dercrt = SEC_ASN1EncodeItem(NULL, NULL, crt_dat,
+				    SEC_ASN1_GET(SEC_SignedCertificateTemplate));
+	g_return_val_if_fail(dercrt != NULL, FALSE);
+
+	/* Now encode it to b64 */
+	b64crt = NSSBase64_EncodeItem(NULL, NULL, 0, dercrt);
+	SECITEM_FreeItem(dercrt, PR_TRUE);
+	g_return_val_if_fail(b64crt, FALSE);
+
+	/* Wrap it in nice PEM header things */
+	pemcrt = g_strdup_printf("-----BEGIN CERTIFICATE-----\n%s\n-----END CERTIFICATE-----\n", b64crt);
+	PORT_Free(b64crt); /* Notice that b64crt was allocated by an NSS
+			      function; hence, we'll let NSPR free it. */
+
+	/* Finally, dump the silly thing to a file. */
+	ret =  purple_util_write_data_to_file_absolute(filename, pemcrt, -1);
+
+	g_free(pemcrt);
+	
+	return ret;
 }
 
 static PurpleCertificate *
@@ -509,7 +548,6 @@ x509_destroy_certificate(PurpleCertificate * crt)
 	g_free(crt);
 }
 
-#if 0
 /** Determines whether one certificate has been issued and signed by another
  *
  * @param crt       Certificate to check the signature of
@@ -519,12 +557,11 @@ x509_destroy_certificate(PurpleCertificate * crt)
  * @TODO  Modify this function to return a reason for invalidity?
  */
 static gboolean
-x509_certificate_signed_by(PurpleCertificate * crt,
-			   PurpleCertificate * issuer)
+x509_signed_by(PurpleCertificate * crt,
+	       PurpleCertificate * issuer)
 {
-	return FALSE;
+	return TRUE;
 }
-#endif
 
 static GByteArray *
 x509_sha1sum(PurpleCertificate *crt)
@@ -561,6 +598,34 @@ x509_sha1sum(PurpleCertificate *crt)
 	}
 
 	return sha1sum;
+}
+
+static gchar *
+x509_dn (PurpleCertificate *crt)
+{
+	CERTCertificate *crt_dat;
+	
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	return g_strdup(crt_dat->subjectName);
+}
+
+static gchar *
+x509_issuer_dn (PurpleCertificate *crt)
+{
+	CERTCertificate *crt_dat;
+	
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_nss, NULL);
+
+	crt_dat = X509_NSS_DATA(crt);
+	g_return_val_if_fail(crt_dat, NULL);
+
+	return g_strdup(crt_dat->subjectName);
 }
 
 static gchar *
@@ -642,11 +707,14 @@ x509_times (PurpleCertificate *crt, time_t *activation, time_t *expiration)
 						&nss_activ, &nss_expir),
 		FALSE);
 
+	/* NSS's native PRTime type *almost* corresponds to time_t; however,
+	   it measures *microseconds* since the epoch, not seconds. Hence
+	   the funny conversion. */
 	if (activation) {
-		*activation = nss_activ;
+		*activation = nss_activ / 1000000;
 	}
 	if (expiration) {
-		*expiration = nss_expir;
+		*expiration = nss_expir / 1000000;
 	}
 	
 	return TRUE;
@@ -659,10 +727,10 @@ static PurpleCertificateScheme x509_nss = {
 	x509_export_certificate,         /* Certificate export function */
 	x509_copy_certificate,           /* Copy */
 	x509_destroy_certificate,        /* Destroy cert */
-	NULL,                            /* Signed-by */
+	x509_signed_by,                  /* Signed-by */
 	x509_sha1sum,                    /* SHA1 fingerprint */
-	NULL,                            /* Unique ID */
-	NULL,                            /* Issuer Unique ID */
+	x509_dn,                         /* Unique ID */
+	x509_issuer_dn,                  /* Issuer Unique ID */
 	x509_common_name,                /* Subject name */
 	x509_check_name,                 /* Check subject name */
 	x509_times,                      /* Activation/Expiration time */

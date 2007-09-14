@@ -22,7 +22,6 @@
 #include "internal.h"
 
 #include "adhoccommands.h"
-#include <assert.h>
 #include <string.h>
 #include "internal.h"
 #include "xdata.h"
