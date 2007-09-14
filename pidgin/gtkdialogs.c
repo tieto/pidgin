@@ -365,7 +365,7 @@ void pidgin_dialogs_about()
 	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "logo.png", NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
-#ifdef 0  /* Don't versionize the logo when the logo has the version in it */
+#if 0  /* Don't versionize the logo when the logo has the version in it */
 	pidgin_logo_versionize(&pixbuf, logo);
 #endif
 	gtk_widget_destroy(logo);
