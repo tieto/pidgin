@@ -137,6 +137,7 @@ static gboolean get_iter_from_node(PurpleBlistNode *node, GtkTreeIter *iter);
 static void redo_buddy_list(PurpleBuddyList *list, gboolean remove, gboolean rerender);
 static void pidgin_blist_collapse_contact_cb(GtkWidget *w, PurpleBlistNode *node);
 static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded);
+static void pidgin_blist_expand_contact_cb(GtkWidget *w, PurpleBlistNode *node);
 
 struct _pidgin_blist_node {
 	GtkTreeRowReference *row;
@@ -394,6 +395,102 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 }
 #endif
 
+static void
+gtk_blist_do_personize(GList *merges)
+{
+	PurpleBlistNode *contact = NULL;
+	int max = 0;
+	GList *tmp;
+
+	/* First, we find the contact to merge the rest of the buddies into.
+ 	 * This will be the contact with the most buddies in it; ties are broken
+ 	 * by which contact is higher in the list
+ 	 */
+	for (tmp = merges; tmp; tmp = tmp->next) {
+		PurpleBlistNode *node = tmp->data;
+		PurpleBlistNode *b;
+		int i = 0;
+
+		if (node->type == PURPLE_BLIST_BUDDY_NODE)
+			node = node->parent;
+
+		if (node->type != PURPLE_BLIST_CONTACT_NODE)
+			continue;
+		
+
+		for (b = node->child; b; b = b->next)
+			i++;
+		if (i > max) {
+			contact = node;
+			max = i;
+		}
+	}
+
+	if (contact == NULL)
+		return;
+
+	/* Merge all those buddies into this contact */
+	for (tmp = merges; tmp; tmp = tmp->next) {
+		PurpleBlistNode *node = tmp->data;
+		if (node->type == PURPLE_BLIST_BUDDY_NODE)
+			node = node->parent;
+
+		if (node == contact)
+			continue;
+
+		purple_blist_merge_contact(node, contact);
+	}
+	
+	/* And show the expanded contact, so the people know what's going on */
+	pidgin_blist_expand_contact_cb(NULL, contact);
+	g_list_free(merges);
+}
+
+static void
+gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
+{
+	PurpleBlistNode *contact;
+	PurpleBlistNode *buddy;
+	GList *merges = NULL;
+	int i = 0;
+	char *a = g_utf8_casefold(alias, -1);
+	char *msg;
+
+	for (contact = group->child; contact; contact = contact->next) {
+		char *node_alias;
+		if (contact->type != PURPLE_BLIST_CONTACT_NODE)
+			continue;
+		
+		node_alias = g_utf8_casefold(purple_contact_get_alias(contact), -1);
+		if (node_alias && !g_utf8_collate(node_alias, a)) {
+			merges = g_list_append(merges, contact);
+			i++;
+			g_free(node_alias);
+			continue;
+		}
+		g_free(node_alias);
+
+		for (buddy = contact->child; buddy; buddy = buddy->next) {
+			if (buddy->type != PURPLE_BLIST_BUDDY_NODE)
+				continue;
+	
+			node_alias = g_utf8_casefold(purple_buddy_get_alias(buddy), -1);
+			if (node_alias && !g_utf8_collate(node_alias, a)) {
+				merges = g_list_append(merges, buddy);
+				i++;
+			}
+			g_free(node_alias);
+		}
+	}
+	g_free(a);
+	
+	msg = g_strdup_printf(ngettext("You can't merge one contact. That doesn't make any sense. You should never see this message ever", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
+	if (i > 1)
+		purple_request_action(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
+							 "You can separate them again by choosing 'Expand' from the contact's context menu"), 0, NULL, NULL, NULL,
+				      merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
+}
+
 static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *arg1,
 					 char *arg2, PurpleBuddyList *list)
 {
@@ -420,13 +517,14 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 				PurpleContact *contact = (PurpleContact *)node;
 				struct _pidgin_blist_node *gtknode = (struct _pidgin_blist_node *)node->ui_data;
 
-				if (contact->alias || gtknode->contact_expanded)
+				if (contact->alias || gtknode->contact_expanded) {
 					purple_blist_alias_contact(contact, arg2);
-				else
-				{
+					gtk_blist_auto_personize(node->parent, arg2);
+				} else {
 					PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
 					purple_blist_alias_buddy(buddy, arg2);
 					serv_alias_buddy(buddy);
+					gtk_blist_auto_personize(node->parent, arg2);
 				}
 			}
 			break;
@@ -434,6 +532,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 		case PURPLE_BLIST_BUDDY_NODE:
 			purple_blist_alias_buddy((PurpleBuddy*)node, arg2);
 			serv_alias_buddy((PurpleBuddy *)node);
+			gtk_blist_auto_personize(node->parent->parent, arg2);
 			break;
 		case PURPLE_BLIST_GROUP_NODE:
 			dest = purple_find_group(arg2);
