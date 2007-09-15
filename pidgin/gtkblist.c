@@ -3272,8 +3272,6 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	GdkPixbuf *ret;
 	PurplePresence *p;
 
-
-
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
 			buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
@@ -3310,6 +3308,13 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	p = purple_buddy_get_presence(buddy);
 	if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "mobile.png", NULL);
+		ret = gdk_pixbuf_new_from_file(path, NULL);
+		g_free(path);
+		return ret;
+	}
+
+	if (purple_status_get_attr_string(purple_presence_get_active_status(p), PURPLE_TUNE_TITLE)) {
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "music.png", NULL);
 		ret = gdk_pixbuf_new_from_file(path, NULL);
 		g_free(path);
 		return ret;
