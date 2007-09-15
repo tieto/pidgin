@@ -5088,7 +5088,7 @@ static void pidgin_blist_update_group(PurpleBuddyList *list, PurpleBlistNode *no
 				   STATUS_ICON_COLUMN, NULL,
 				   NAME_COLUMN, title,
 				   NODE_COLUMN, gnode,
-				   BGCOLOR_COLUMN, &bgcolor,
+	/* 			   BGCOLOR_COLUMN, &bgcolor,     */
 				   GROUP_EXPANDER_COLUMN, TRUE,
 				   GROUP_EXPANDER_VISIBLE_COLUMN, TRUE,
 				   CONTACT_EXPANDER_VISIBLE_COLUMN, FALSE,
