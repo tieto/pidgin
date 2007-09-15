@@ -219,7 +219,7 @@ close_this_sucker(gpointer data)
 }
 
 static gboolean
-close_conv_cb(GtkWidget *w, GdkEventButton *event, PidginConversation *gtkconv)
+close_conv_cb(GtkWidget *w, GdkEventButton *dontuse, PidginConversation *gtkconv)
 {
 	/* We are going to destroy the conversations immediately only if the 'close immediately'
 	 * preference is selected. Otherwise, close the conversation after a reasonable timeout
@@ -8833,15 +8833,10 @@ pidgin_conv_window_destroy(PidginWindow *win)
 
 	if (win->gtkconvs) {
 		while (win->gtkconvs) {
-			GList *nextgtk = win->gtkconvs->next;
-			PidginConversation *gtkconv = win->gtkconvs->data;
-			GList *nextcore = gtkconv->convs->next;
-			PurpleConversation *conv = gtkconv->convs->data;
-			purple_conversation_destroy(conv);
-			if (!nextgtk && !nextcore)
-			/* we'll end up invoking ourselves when we destroy our last child */
-			/* so don't destroy ourselves right now */
-				return;
+			gboolean last = (win->gtkconvs->next == NULL);
+			close_conv_cb(NULL, NULL, win->gtkconvs->data);
+			if (last)
+				break;
 		}
 		return;
 	}
