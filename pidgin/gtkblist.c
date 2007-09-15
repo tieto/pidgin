@@ -3909,7 +3909,8 @@ written_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *me
 		PurpleConversation *conv, PurpleMessageFlags flag, PurpleBlistNode *node)
 {
 	PidginBlistNode *ui = node->ui_data;
-	if (ui->conv.conv != conv || PIDGIN_CONVERSATION(conv))
+	if (ui->conv.conv != conv || PIDGIN_CONVERSATION(conv) ||
+			!(flag & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)))
 		return;
 	ui->conv.flags |= PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE;
 	ui->conv.last_message = time(NULL);    /* XXX: for lack of better data */

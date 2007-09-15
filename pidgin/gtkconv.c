@@ -5135,8 +5135,6 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 				   PurpleConversation *conv, PurpleMessageFlags flags)
 {
 	PurpleConversationUiOps *ui_ops = pidgin_conversations_get_conv_ui_ops();
-	if (conv != NULL)
-		return;
 
 	/* create hidden conv if hide_new pref is always */
 	/* or if hide_new pref is away and account is away */
