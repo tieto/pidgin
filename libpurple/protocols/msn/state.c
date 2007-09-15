@@ -88,7 +88,7 @@ msn_parse_currentmedia(const char *cmedia)
 {
 	char **cmedia_array;
 	char *inptr, *tmpptr;
-	GString *buffer;
+	GString *buffer = NULL;
 	int strings, tmp;
 
 	if ((cmedia == NULL) || (*cmedia == '\0')) {
@@ -103,9 +103,8 @@ msn_parse_currentmedia(const char *cmedia)
 	strings = 0;
 	while (strcmp(cmedia_array[++strings], ""));   /* Yes, we want to skip the first empty string, apparently */
 
-	buffer = g_string_new(NULL);
-
 	if ((strings > 3) && (!strcmp(cmedia_array[2], "1"))) { /* Check if enabled */
+		buffer = g_string_new(NULL);
 		inptr = cmedia_array[3];
 
 #if 0
@@ -138,7 +137,7 @@ msn_parse_currentmedia(const char *cmedia)
 	}
 
 	g_strfreev(cmedia_array);
-	return g_string_free(buffer, FALSE);
+	return buffer ? g_string_free(buffer, FALSE) : NULL;
 }
 
 /* get the CurrentMedia info from the XML string */
