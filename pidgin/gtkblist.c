@@ -487,7 +487,6 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 	GList *merges = NULL;
 	int i = 0;
 	char *a = g_utf8_casefold(alias, -1);
-	char *msg;
 
 	for (contact = group->child; contact; contact = contact->next) {
 		char *node_alias;
@@ -517,11 +516,14 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 	}
 	g_free(a);
 	
-	msg = g_strdup_printf(ngettext("You can't merge one contact. That doesn't make any sense. You should never see this message ever", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
 	if (i > 1)
+	{
+		char *msg = g_strdup_printf(ngettext("You currently have %d contact named %s. Would you like to merge them?", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
 		purple_request_action(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
 							 "You can separate them again by choosing 'Expand' from the contact's context menu"), 0, NULL, NULL, NULL,
 				      merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
+		g_free(msg);
+	}
 }
 
 static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *arg1,
