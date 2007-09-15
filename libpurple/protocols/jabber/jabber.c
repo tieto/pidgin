@@ -813,7 +813,7 @@ jabber_register_cancel_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fie
 		if(account->registration_cb)
 			(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
 		jabber_connection_schedule_close(cbdata->js);
-}
+	}
 	g_free(cbdata->who);
 	g_free(cbdata);
 }
@@ -882,12 +882,12 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 				if((href = xmlnode_get_data(url))) {
 					purple_notify_uri(NULL, href);
 					g_free(href);
-				if(js->registration) {
-					js->gc->wants_to_die = TRUE;
-					if(account->registration_cb) /* succeeded, but we have no login info */
-						(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
-					jabber_connection_schedule_close(js);
-				}
+					if(js->registration) {
+						js->gc->wants_to_die = TRUE;
+						if(account->registration_cb) /* succeeded, but we have no login info */
+							(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
+						jabber_connection_schedule_close(js);
+					}
 					return;
 				}
 			}
@@ -987,14 +987,14 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		purple_request_field_group_add_field(group, field);
 	}
 
-		if((y = xmlnode_get_child(query, "instructions")))
-			instructions = xmlnode_get_data(y);
+	if((y = xmlnode_get_child(query, "instructions")))
+		instructions = xmlnode_get_data(y);
 	else if(registered)
 		instructions = g_strdup(_("Please fill out the information below "
 					"to change your account registration."));
-		else
-			instructions = g_strdup(_("Please fill out the information below "
-						"to register your new account."));
+	else
+		instructions = g_strdup(_("Please fill out the information below "
+					"to register your new account."));
 
 	cbdata = g_new0(JabberRegisterCBData, 1);
 	cbdata->js = js;
@@ -1019,8 +1019,8 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		g_free(title);
 	}
 
-		g_free(instructions);
-	}
+	g_free(instructions);
+}
 
 void jabber_register_start(JabberStream *js)
 {
