@@ -6,6 +6,7 @@ Version 2.2.1:
 	Pidgin:
 	* When aliasing someone to an alias that already exists in the
 	  same group, offer to merge the buddies into the same contact
+	* 'Move to' submenu in Buddy List context menu
 
 Version 2.2.0 (09/13/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
