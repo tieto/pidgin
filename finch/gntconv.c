@@ -310,13 +310,41 @@ buddy_signed_on_off(PurpleBuddy *buddy, gpointer null)
 static void
 account_signed_on_off(PurpleConnection *gc, gpointer null)
 {
-	GList *ims = purple_get_ims();
-	while (ims) {
-		PurpleConversation *conv = ims->data;
+	GList *list = purple_get_ims();
+	while (list) {
+		PurpleConversation *conv = list->data;
 		PurpleConversation *cc = find_conv_with_contact(conv->account, conv->name);
 		if (cc)
 			generate_send_to_menu(cc->ui_data);
-		ims = ims->next;
+		list = list->next;
+	}
+
+	if (PURPLE_CONNECTION_IS_CONNECTED(gc)) {
+		/* We just signed on. Let's see if there's any chat that we have open,
+		 * and hadn't left before the disconnect. */
+		list = purple_get_chats();
+		while (list) {
+			PurpleConversation *conv = list->data;
+			gboolean del = FALSE;
+			PurpleChat *chat;
+
+			list = list->next;
+			if (conv->account != gc->account ||
+					!purple_conversation_get_data(conv, "want-to-rejoin"))
+				continue;
+
+			chat = purple_blist_find_chat(conv->account, conv->name);
+			if (chat == NULL) {
+				GHashTable *hash = NULL;
+				if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
+					hash = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, conv->name);
+				chat = purple_chat_new(gc->account, conv->name, hash);
+				del = TRUE;
+			}
+			serv_join_chat(gc, chat->components);
+			if (del)
+				purple_blist_remove_chat(chat);
+		}
 	}
 }
 

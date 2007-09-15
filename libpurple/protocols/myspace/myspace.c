@@ -2856,7 +2856,7 @@ msim_actions(PurplePlugin *plugin, gpointer context)
 }
 
 /** Callbacks called by Purple, to access this plugin. */
-PurplePluginProtocolInfo prpl_info = {
+static PurplePluginProtocolInfo prpl_info = {
 	/* options */
 	  OPT_PROTO_USE_POINTSIZE        /* specify font size in sane point size */
 	| OPT_PROTO_MAIL_CHECK,

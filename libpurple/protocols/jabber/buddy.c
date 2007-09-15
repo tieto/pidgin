@@ -1455,10 +1455,13 @@ static void do_buddy_avatar_update_data(JabberStream *js, const char *from, xmln
 		return;
 	
 	img = purple_base64_decode(b64data, &size);
-	if(!img)
+	if(!img) {
+		g_free(b64data);
 		return;
+	}
 	
 	purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, img, size, checksum);
+	g_free(b64data);
 }
 
 void jabber_buddy_avatar_update_metadata(JabberStream *js, const char *from, xmlnode *items) {
