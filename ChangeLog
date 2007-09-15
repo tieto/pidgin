@@ -10,6 +10,8 @@ Version 2.2.1:
 	  the conversation window/tab.
 	* A music emblem is displayed in the buddy list for a buddy if we know she
 	  is listening to some soothing music.
+	* 'Move to' menu in buddy list context menu for moving buddies to
+  	   other groups
 
 Version 2.2.0 (09/13/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
