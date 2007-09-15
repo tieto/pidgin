@@ -315,6 +315,13 @@ static void gtk_blist_menu_send_file_cb(GtkWidget *w, PurpleBuddy *b)
 	serv_send_file(b->account->gc, b->name, NULL);
 }
 
+static void gtk_blist_menu_move_to_cb(GtkWidget *w, PurpleBlistNode *node)
+{
+	PurpleBlistNode *group = g_object_get_data(w, "groupnode");
+	purple_blist_add_contact(node, group, NULL);
+
+}
+
 static void gtk_blist_menu_autojoin_cb(GtkWidget *w, PurpleChat *chat)
 {
 	purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-autojoin",
@@ -1243,6 +1250,34 @@ pidgin_append_blist_node_extended_menu(GtkWidget *menu, PurpleBlistNode *node)
 	g_list_free(ll);
 }
 
+
+
+static void
+pidgin_append_blist_node_move_to_menu(GtkWidget *menu, PurpleBlistNode *node)
+{
+	GtkWidget *submenu;
+	GtkWidget *menuitem;
+	PurpleBlistNode *group;
+
+	menuitem = gtk_menu_item_new_with_label(_("Move to"));
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	gtk_widget_show(menuitem);
+
+	submenu = gtk_menu_new();
+	gtk_menu_item_set_submenu(menuitem, submenu);
+
+	for (group = purple_blist_get_root(); group; group = group->next) {
+		if (group->type != PURPLE_BLIST_GROUP_NODE)
+			continue;
+		if (group == node->parent)
+			continue;
+		menuitem = pidgin_new_item_from_stock(submenu, purple_group_get_name(group), NULL,
+						      G_CALLBACK(gtk_blist_menu_move_to_cb), node, 0, 0, NULL);
+		g_object_set_data(G_OBJECT(menuitem), "groupnode", group);
+	}
+	gtk_widget_show_all(submenu);
+}
+
 void
 pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) {
 	PurplePluginProtocolInfo *prpl_info;
@@ -1293,6 +1328,9 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	pidgin_append_blist_node_proto_menu(menu, buddy->account->gc,
 										  (PurpleBlistNode *)buddy);
 	pidgin_append_blist_node_extended_menu(menu, (PurpleBlistNode *)buddy);
+
+	if (!contact_expanded)
+		pidgin_append_blist_node_move_to_menu(menu, contact);
 
 	if (((PurpleBlistNode*)buddy)->parent && ((PurpleBlistNode*)buddy)->parent->child->next && 
               !sub && !contact_expanded) {
@@ -1434,7 +1472,6 @@ create_contact_menu (PurpleBlistNode *node)
 				 node, 0, 0, NULL);
 
 	pidgin_append_blist_node_extended_menu(menu, node);
-
 	return menu;
 }
 
@@ -5168,7 +5205,7 @@ static void pidgin_blist_update_group(PurpleBuddyList *list, PurpleBlistNode *no
 				   STATUS_ICON_COLUMN, NULL,
 				   NAME_COLUMN, title,
 				   NODE_COLUMN, gnode,
-				   BGCOLOR_COLUMN, &bgcolor,
+	/* 			   BGCOLOR_COLUMN, &bgcolor,     */
 				   GROUP_EXPANDER_COLUMN, TRUE,
 				   GROUP_EXPANDER_VISIBLE_COLUMN, TRUE,
 				   CONTACT_EXPANDER_VISIBLE_COLUMN, FALSE,
