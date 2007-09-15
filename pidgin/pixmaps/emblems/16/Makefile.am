@@ -12,6 +12,7 @@ EXTRA_DIST = 	aol-client.png \
 		hiptop.png \
 		male.png \
 		mobile.png \
+		music.png \
 		not-authorized.png \
 		operator.png \
 		qq-member.png \
