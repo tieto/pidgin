@@ -54,6 +54,51 @@ typedef enum
 
 } PurpleConnectionState;
 
+typedef enum
+{
+	/** There is no reason set for this state change. */
+	PURPLE_REASON_NONE_SPECIFIED = 0,
+	/** The change is in response to a user request. */
+	PURPLE_REASON_REQUESTED = 1,
+
+	/** There was an error sending or receiving on the network socket. */
+	PURPLE_REASON_NETWORK_ERROR = 2,
+	/** The username or password was invalid. */
+	PURPLE_REASON_AUTHENTICATION_FAILED = 3,
+	/** There was an error negotiating SSL on this connection, or encryption
+	 *  was unavailable and an account option was set to require it.
+	 */
+	PURPLE_REASON_ENCRYPTION_ERROR = 4,
+	/** Someone is already connected to the server using the name you are
+	 *  trying to connect with.
+	 */
+	PURPLE_REASON_NAME_IN_USE = 5,
+
+	/** The server did not provide a SSL certificate. */
+	PURPLE_REASON_CERT_NOT_PROVIDED = 6,
+	/** The server's SSL certificate could not be trusted. */
+	PURPLE_REASON_CERT_UNTRUSTED = 7,
+	/** The server's SSL certificate has expired. */
+	PURPLE_REASON_CERT_EXPIRED = 8,
+	/** The server's SSL certificate is not yet valid. */
+	PURPLE_REASON_CERT_NOT_ACTIVATED = 9,
+	/** The server's SSL certificate did not match its hostname. */
+	PURPLE_REASON_CERT_HOSTNAME_MISMATCH = 10,
+	/** The server's SSL certificate does not have the expected
+	 *  fingerprint.
+	 */
+	PURPLE_REASON_CERT_FINGERPRINT_MISMATCH = 11,
+	/** The server's SSL certificate is self-signed.  */
+	PURPLE_REASON_CERT_SELF_SIGNED = 12,
+	/** There was some other error validating the server's SSL certificate.
+	 */
+	PURPLE_REASON_CERT_OTHER_ERROR = 13,
+
+	/** The number of PurpleDisconnectReason elements; not a valid reason.
+	 */
+	PURPLE_NUM_REASONS
+} PurpleDisconnectReason;
+
 #include <time.h>
 
 #include "account.h"
