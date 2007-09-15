@@ -7363,12 +7363,14 @@ add_message_history_to_gtkconv(gpointer data)
 	PidginConversation *gtkconv = data;
 	int count = 0;
 	int timer = gtkconv->attach.timer;
+	time_t when = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(gtkconv->entry), "attach-start-time"));
+
 	gtkconv->attach.timer = 0;
 	while (gtkconv->attach.current && count < 100) {  /* XXX: 100 is a random value here */
 		PurpleConvMessage *msg = gtkconv->attach.current->data;
-		if (gtkconv->attach.when && gtkconv->attach.when < msg->when) {
-			gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<HR>", 0);
-			gtkconv->attach.when = 0;
+		if (when && when < msg->when) {
+			gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR><HR>", 0);
+			g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 		}
 		pidgin_conv_write_conv(gtkconv->active_conv, msg->who, msg->who, msg->what, msg->flags, msg->when);
 		gtkconv->attach.current = gtkconv->attach.current->prev;
@@ -7401,7 +7403,8 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 
 	list = purple_conversation_get_message_history(conv);
 	if (list) {
-		gtkconv->attach.when = ((PurpleConvMessage*)(list->data))->when;
+		g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time",
+				GINT_TO_POINTER(((PurpleConvMessage*)(list->data))->when));
 		gtkconv->attach.current = g_list_last(list);
 		gtkconv->attach.timer = g_idle_add(add_message_history_to_gtkconv, gtkconv);
 	} else {
