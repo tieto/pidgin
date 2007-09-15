@@ -87,60 +87,50 @@ char *
 msn_parse_currentmedia(const char *cmedia)
 {
 	char **cmedia_array;
-	char *buffer=NULL, *inptr, *outptr, *tmpptr;
-	int length, strings, tmp;
+	char *inptr, *tmpptr;
+	GString *buffer;
+	int strings, tmp;
 
-	if((cmedia == NULL) || (*cmedia == '\0')) {
+	if ((cmedia == NULL) || (*cmedia == '\0')) {
 		purple_debug_info("msn", "No currentmedia string\n");
 		return NULL;
 	}
 
 	purple_debug_info("msn", "Parsing currentmedia string: \"%s\"\n", cmedia);
 
-	cmedia_array=g_strsplit(cmedia, "\\0", 0);
+	cmedia_array = g_strsplit(cmedia, "\\0", 0);
 
-	strings=1;	/* Skip first empty string */
-	length=5;	/* Space for '\0' (1 byte) and prefix (4 bytes) */
-	while(strcmp(cmedia_array[strings], "")) {
-		length+= strlen(cmedia_array[strings]);
-		strings++;
-	}
+	strings = 0;
+	while (strcmp(cmedia_array[++strings], ""));   /* Yes, we want to skip the first empty string, apparently */
 
-	if((strings>3) && (!strcmp(cmedia_array[2], "1"))) { /* Check if enabled */
+	buffer = g_string_new(NULL);
 
-		buffer=g_malloc(length);
+	if ((strings > 3) && (!strcmp(cmedia_array[2], "1"))) { /* Check if enabled */
+		inptr = cmedia_array[3];
 
-		inptr=cmedia_array[3];
-		outptr=buffer;
-
+#if 0
 		if(!strcmp(cmedia_array[1], "Music")) {
-			strcpy(outptr, "np. ");
-			outptr+=4;
-		}/* else if(!strcmp(cmedia_array[1], "Games")) {
+			/* The music string seems to be of 'Title - Artist' form. */
+		} else if(!strcmp(cmedia_array[1], "Games")) {
 		} else if(!strcmp(cmedia_array[1], "Office")) {
-		}*/
+		}
+#endif
 
-		while(*inptr!='\0') {
-			if((*inptr == '{') && (strlen(inptr) > 2) && (*(inptr+2) == '}') ) {
+		while (*inptr!='\0') {
+			if ((*inptr == '{') && (strlen(inptr) > 2) && (*(inptr+2) == '}')) {
 				errno = 0;
 				tmp = strtol(inptr+1,&tmpptr,10);
-				if( (errno!=0) || (tmpptr == (inptr+1)) ||
-				                  ((tmp+5)>(strings)) ) {
-					*outptr = *inptr;	/* Conversion not successful */
-					outptr++;
-				} else {
-					/* Replace {?} tag with appropriate text */
-					strcpy(outptr, cmedia_array[tmp+4]);
-					outptr+=strlen(cmedia_array[tmp+4]);
-					inptr+=2;
+				if(errno == 0 && tmpptr != inptr + 1 &&
+				                  tmp + 4 < strings) {
+					/* Replace {?} tag with appropriate text only when successful.
+					 * Skip otherwise. */
+					buffer = g_string_append(buffer, cmedia_array[tmp + 4]);
 				}
+				inptr += 3; /* Skip to the next char after '}' */
 			} else {
-				*outptr = *inptr;
-				outptr++;
+				buffer = g_string_append_c(buffer, *inptr++);
 			}
-			inptr++;
 		}
-		*outptr='\0';
 		purple_debug_info("msn", "Parsed currentmedia string, result: \"%s\"\n",
 		                buffer);
 	} else {
@@ -148,7 +138,7 @@ msn_parse_currentmedia(const char *cmedia)
 	}
 
 	g_strfreev(cmedia_array);
-	return buffer;
+	return g_string_free(buffer, FALSE);
 }
 
 /* get the CurrentMedia info from the XML string */
