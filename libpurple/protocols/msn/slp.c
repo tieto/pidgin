@@ -33,6 +33,8 @@
 
 /* ms to delay between sending buddy icon requests to the server. */
 #define BUDDY_ICON_DELAY 20000
+/*debug SLP*/
+#define MSN_DEBUG_UD
 
 static void send_ok(MsnSlpCall *slpcall, const char *branch,
 					const char *type, const char *content);
@@ -777,11 +779,11 @@ got_emoticon(MsnSlpCall *slpcall,
 	if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, gc->account))) {
 
 		/* FIXME: it would be better if we wrote the data as we received it
-		          instead of all at once, calling write multiple times and
-		          close once at the very end
-		*/
+		   instead of all at once, calling write multiple times and
+		   close once at the very end
+		 */
 		purple_conv_custom_smiley_write(conv, slpcall->data_info, data, size);
-		purple_conv_custom_smiley_close(conv, slpcall->data_info);
+		purple_conv_custom_smiley_close(conv, slpcall->data_info );
 	}
 #ifdef MSN_DEBUG_UD
 	purple_debug_info("msn", "Got smiley: %s\n", slpcall->data_info);
