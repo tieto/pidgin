@@ -420,7 +420,7 @@ socket_ready_cb(gpointer data, gint source, PurpleInputCondition cond)
 	if (ret == 0 && error == EINPROGRESS) {
 		/* No worries - we'll be called again later */
 		/* TODO: Does this ever happen? */
-		purple_debug_info("proxy", "(ret == 0 && error == EINPROGRESS)");
+		purple_debug_info("proxy", "(ret == 0 && error == EINPROGRESS)\n");
 		return;
 	}
 

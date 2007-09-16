@@ -357,7 +357,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	if (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
 							  actual_port, actual_port, PURPLE_PMP_LIFETIME))
 	{
-		purple_debug_info("network", "Created NAT-PMP mapping on port %i",actual_port);
+		purple_debug_info("network", "Created NAT-PMP mapping on port %i\n",actual_port);
 		/* We want to return listen_data now, and on the next run loop trigger the cb and destroy listen_data */
 		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}

@@ -3446,7 +3446,7 @@ yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	if (!set_cookie) {
 		struct yahoo_data *yd = gc->proto_data;
-		purple_debug_error("yahoo", "No mail login token; forwarding to login screen.");
+		purple_debug_error("yahoo", "No mail login token; forwarding to login screen.\n");
 		url = g_strdup(yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
 	}
 

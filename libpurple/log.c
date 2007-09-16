@@ -1380,7 +1380,7 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 				written += fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 		} else {
-			purple_debug_error("log", "Unhandled message type.");
+			purple_debug_error("log", "Unhandled message type.\n");
 			written += fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 		}

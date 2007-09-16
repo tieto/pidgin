@@ -188,7 +188,7 @@ _buddy_icon_group_cb(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userd
 			purple_debug_error("bonjour", "Collision registering buddy icon data.\n");
 			break;
 		case AVAHI_ENTRY_GROUP_FAILURE:
-			purple_debug_error("bonjour", "Error registering buddy icon data: %s\n.",
+			purple_debug_error("bonjour", "Error registering buddy icon data: %s.\n",
 				avahi_strerror(avahi_client_errno(avahi_entry_group_get_client(g))));
 			break;
 		case AVAHI_ENTRY_GROUP_UNCOMMITED:
@@ -271,7 +271,7 @@ gboolean _mdns_init_session(BonjourDnsSd *data) {
 	idata->client = avahi_client_new(poll_api, 0, NULL, data, &error);
 
 	if (idata->client == NULL) {
-		purple_debug_error("bonjour", "Error initializing Avahi: %s", avahi_strerror(error));
+		purple_debug_error("bonjour", "Error initializing Avahi: %s\n", avahi_strerror(error));
 		avahi_glib_poll_free(idata->glib_poll);
 		g_free(idata);
 		return FALSE;
@@ -354,7 +354,7 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 	if (!idata->sb) {
 
 		purple_debug_error("bonjour",
-			"Unable to initialize service browser.  Error: %s\n.",
+			"Unable to initialize service browser.  Error: %s.\n",
 			avahi_strerror(avahi_client_errno(idata->client)));
 		return FALSE;
 	}
@@ -488,7 +488,7 @@ void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
 
 	if (!idata->buddy_icon_rec_browser) {
 		purple_debug_error("bonjour",
-			"Unable to initialize buddy icon record browser.  Error: %s\n.",
+			"Unable to initialize buddy icon record browser.  Error: %s.\n",
 			avahi_strerror(avahi_client_errno(session_idata->client)));
 	}
 

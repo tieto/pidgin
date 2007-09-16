@@ -113,7 +113,7 @@ void music_messaging_change_request(const int session, const char *command, cons
 			
 			purple_conv_im_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
 			
-			purple_debug_misc("Sent request: %s\n", to_send->str);
+			purple_debug_misc("musicmessaging", "Sent request: %s\n", to_send->str);
 		}
 	}
 			

@@ -1001,7 +1001,7 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 		found = TRUE;
 	}
 	if(!found) {
-		purple_debug_info("simple", "got unknown mime-type");
+		purple_debug_info("simple", "got unknown mime-type\n");
 		send_sip_response(sip->gc, msg, 415, "Unsupported media type", NULL);
 	}
 	g_free(from);

@@ -4346,7 +4346,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 
 			purple_plugin_oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
 
-			purple_debug_info("oscar", "Sending %s as %s because the original was too long.",
+			purple_debug_info("oscar", "Sending %s as %s because the original was too long.\n",
 								  message, (char *)args.msg);
 		}
 
@@ -4827,7 +4827,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			   "ssi: syncing local list and server list\n");
 
 	if ((timestamp == 0) || (numitems == 0)) {
-		purple_debug_info("oscar", "Got AIM SSI with a 0 timestamp or 0 numitems--not syncing.  This probably means your buddy list is empty.", NULL);
+		purple_debug_info("oscar", "Got AIM SSI with a 0 timestamp or 0 numitems--not syncing.  This probably means your buddy list is empty.\n");
 		return 1;
 	}
 
@@ -5430,14 +5430,14 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 		purple_plugin_oscar_convert_to_best_encoding(gc, NULL, buf, &buf2, &len, &charset, &charsubset);
 
 		if ((len > c->maxlen) || (len > c->maxvis)) {
-			purple_debug_warning("oscar", "Could not send %s because (%i > maxlen %i) or (%i > maxvis %i)",
+			purple_debug_warning("oscar", "Could not send %s because (%i > maxlen %i) or (%i > maxvis %i)\n",
 					buf2, len, c->maxlen, len, c->maxvis);
 			g_free(buf);
 			g_free(buf2);
 			return -E2BIG;
 		}
 
-		purple_debug_info("oscar", "Sending %s as %s because the original was too long.",
+		purple_debug_info("oscar", "Sending %s as %s because the original was too long.\n",
 				message, buf2);
 	}
 
