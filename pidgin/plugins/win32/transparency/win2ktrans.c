@@ -17,7 +17,7 @@
  *
  * you should have received a copy of the gnu general public license
  * along with this program; if not, write to the free software
- * foundation, inc., 59 temple place, suite 330, boston, ma  02111-1307  usa
+ * foundation, inc., 59 temple place, suite 330, boston, ma  02111-1301  usa
  *
  */
 #ifndef _WIN32_WINNT
