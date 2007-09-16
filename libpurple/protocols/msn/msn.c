@@ -626,10 +626,7 @@ msn_status_types(PurpleAccount *account)
 {
 	PurpleStatusType *status;
 	GList *types = NULL;
-#if 0
-	status = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE,
-			NULL, NULL, FALSE, TRUE, FALSE);
-#endif
+
 	status = purple_status_type_new_with_attrs(
 				PURPLE_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
 				"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
