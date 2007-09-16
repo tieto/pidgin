@@ -101,7 +101,7 @@ msn_parse_currentmedia(const char *cmedia)
 
 	strings = 0;
 	/* Yes, we want to skip the first element here, as it is empty due to
-	 * the cmedia string starting with \0 -- see the examples below.
+	 * the cmedia string starting with \0 -- see the examples below. */
 	while (cmedia_array[++strings] != NULL);
 
 	/* The cmedia_array[2] field contains a 1 if enabled. */
@@ -111,7 +111,7 @@ msn_parse_currentmedia(const char *cmedia)
 		buffer = g_string_new(NULL);
 
 		while (*inptr != '\0') {
-			if ((*inptr == '{') && ((*(inptr + 1) != '\0') && (*(inptr+2) == '}')) {
+			if ((*inptr == '{') && ((*(inptr + 1) != '\0') && (*(inptr+2) == '}'))) {
 				char *tmpptr;
 				int tmp;
 
