@@ -731,7 +731,7 @@ msn_login(PurpleAccount *account)
 	http_method = purple_account_get_bool(account, "http_method", FALSE);
 
 	if (http_method)
-		host = purple_account_get_string(account, "http_method_server", MSN_SERVER);
+		host = purple_account_get_string(account, "http_method_server", MSN_HTTPCONN_SERVER);
 	else
 		host = purple_account_get_string(account, "server", MSN_SERVER);
 	port = purple_account_get_int(account, "port", MSN_PORT);
