@@ -88,6 +88,8 @@ typedef struct
 	GtkWidget *group_combo;
 	GtkWidget *entries_box;
 	GtkSizeGroup *sg;
+	GtkWidget *autojoin;
+	GtkWidget *persistent;
 
 	GList *entries;
 
@@ -5900,6 +5902,12 @@ add_chat_cb(GtkWidget *w, PidginAddChatData *data)
 		purple_blist_add_chat(chat, group, NULL);
 	}
 
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->autojoin)))
+		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-autojoin", TRUE);
+
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->persistent)))
+		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-persistent", TRUE);
+
 	gtk_widget_destroy(data->window);
 	g_free(data->default_chat_name);
 	g_list_free(data->entries);
@@ -6194,6 +6202,11 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_BIN(data->group_combo)->child);
 	pidgin_set_accessible_label (data->group_combo, label);
 	gtk_box_pack_end(GTK_BOX(rowbox), data->group_combo, TRUE, TRUE, 0);
+	
+	data->autojoin = gtk_check_button_new_with_mnemonic(_("Autojoin when account becomes online."));
+	data->persistent = gtk_check_button_new_with_mnemonic(_("Hide chat when the window is closed."));
+	gtk_box_pack_start(GTK_BOX(vbox), data->autojoin, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), data->persistent, FALSE, FALSE, 0);
 
 	g_signal_connect(G_OBJECT(data->window), "response",
 					 G_CALLBACK(add_chat_resp_cb), data);
