@@ -67,7 +67,7 @@ msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr)
 
 	mediaNode = xmlnode_new("CurrentMedia");
 	if(mediastr != NULL){
-		xmlnode_insert_data(psmNode,mediastr,strlen(mediastr));
+		xmlnode_insert_data(mediaNode,mediastr,strlen(mediastr));
 	}
 	xmlnode_insert_child(dataNode,mediaNode);
 
