@@ -46,7 +46,7 @@ static char *msn_build_psm(const char *psmstr,const char *mediastr,
  * WLM media PSM info build prcedure
  *
  * Result can like:
- *	<CurrentMedia>\0Music\01\0{0} - {1}\0 Song Title\0Song Artist\0Song Album\0\0</CurrentMedia>\
+ *	<CurrentMedia>\0Music\01\0{0} - {1}\0Song Title\0Song Artist\0Song Album\0\0</CurrentMedia>\
  *	<CurrentMedia>\0Games\01\0Playing {0}\0Game Name\0</CurrentMedia>\
  *	<CurrentMedia>\0Office\01\0Office Message\0Office App Name\0</CurrentMedia>"
  */
@@ -87,9 +87,8 @@ char *
 msn_parse_currentmedia(const char *cmedia)
 {
 	char **cmedia_array;
-	char *inptr, *tmpptr;
 	GString *buffer = NULL;
-	int strings, tmp;
+	int strings;
 
 	if ((cmedia == NULL) || (*cmedia == '\0')) {
 		purple_debug_info("msn", "No currentmedia string\n");
@@ -101,26 +100,26 @@ msn_parse_currentmedia(const char *cmedia)
 	cmedia_array = g_strsplit(cmedia, "\\0", 0);
 
 	strings = 0;
-	while (strcmp(cmedia_array[++strings], ""));   /* Yes, we want to skip the first empty string, apparently */
+	/* Yes, we want to skip the first element here, as it is empty due to
+	 * the cmedia string starting with \0 -- see the examples below.
+	while (cmedia_array[++strings] != NULL);
 
-	if ((strings > 3) && (!strcmp(cmedia_array[2], "1"))) { /* Check if enabled */
+	/* The cmedia_array[2] field contains a 1 if enabled. */
+	if ((strings > 3) && (!strcmp(cmedia_array[2], "1"))) {
+		char *inptr = cmedia_array[3];
+
 		buffer = g_string_new(NULL);
-		inptr = cmedia_array[3];
 
-#if 0
-		if(!strcmp(cmedia_array[1], "Music")) {
-			/* The music string seems to be of 'Title - Artist' form. */
-		} else if(!strcmp(cmedia_array[1], "Games")) {
-		} else if(!strcmp(cmedia_array[1], "Office")) {
-		}
-#endif
+		while (*inptr != '\0') {
+			if ((*inptr == '{') && ((*(inptr + 1) != '\0') && (*(inptr+2) == '}')) {
+				char *tmpptr;
+				int tmp;
 
-		while (*inptr!='\0') {
-			if ((*inptr == '{') && (strlen(inptr) > 2) && (*(inptr+2) == '}')) {
 				errno = 0;
-				tmp = strtol(inptr+1,&tmpptr,10);
-				if(errno == 0 && tmpptr != inptr + 1 &&
-				                  tmp + 4 < strings) {
+				tmp = strtol(inptr + 1, &tmpptr, 10);
+
+				if (errno == 0 && tmpptr != inptr + 1 &&
+				    tmp + 4 < strings) {
 					/* Replace {?} tag with appropriate text only when successful.
 					 * Skip otherwise. */
 					buffer = g_string_append(buffer, cmedia_array[tmp + 4]);
@@ -131,9 +130,9 @@ msn_parse_currentmedia(const char *cmedia)
 			}
 		}
 		purple_debug_info("msn", "Parsed currentmedia string, result: \"%s\"\n",
-		                buffer);
+		                  buffer->str);
 	} else {
-		purple_debug_info("msn", "Current media marked disabled, not parsing\n");
+		purple_debug_info("msn", "Current media marked disabled, not parsing.\n");
 	}
 
 	g_strfreev(cmedia_array);
