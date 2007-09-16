@@ -31,6 +31,8 @@
 #include "oob.h"
 #include "roster.h"
 #include "si.h"
+#include "ping.h"
+#include "adhoccommands.h"
 
 #ifdef _WIN32
 #include "utsname.h"
@@ -341,6 +343,13 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 	if(xmlnode_get_child_with_namespace(packet, "new-mail", "google:mail:notify")) {
 		jabber_gmail_poke(js, packet);
+		return;
+	}
+	
+	purple_debug_info("jabber", "jabber_iq_parse\n");
+
+	if(xmlnode_get_child_with_namespace(packet, "ping", "urn:xmpp:ping")) {
+		jabber_ping_parse(js, packet);
 		return;
 	}
 

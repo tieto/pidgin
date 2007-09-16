@@ -35,10 +35,12 @@ typedef struct _JabberMessage {
 		JABBER_MESSAGE_HEADLINE,
 		JABBER_MESSAGE_ERROR,
 		JABBER_MESSAGE_GROUPCHAT_INVITE,
+		JABBER_MESSAGE_EVENT,
 		JABBER_MESSAGE_OTHER
 	} type;
 	time_t sent;
 	gboolean delayed;
+	gboolean hasBuzz;
 	char *id;
 	char *from;
 	char *to;
@@ -61,6 +63,7 @@ typedef struct _JabberMessage {
 		JM_STATE_GONE
 	} chat_state;
 	GList *etc;
+	GList *eventitems;
 } JabberMessage;
 
 void jabber_message_free(JabberMessage *jm);
@@ -74,5 +77,7 @@ int jabber_message_send_chat(PurpleConnection *gc, int id, const char *message, 
 
 unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state);
 void jabber_message_conv_closed(JabberStream *js, const char *who);
+
+gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *shortname, const gchar *namespace);
 
 #endif /* _PURPLE_JABBER_MESSAGE_H_ */

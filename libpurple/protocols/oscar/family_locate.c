@@ -636,13 +636,11 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 	 * Parse out the Type-Length-Value triples as they're found.
 	 */
 	for (curtlv = 0; curtlv < tlvcnt; curtlv++) {
-		guint16 type;
-		guint8 number, length;
+		guint16 type, length;
 		int endpos;
 
 		type = byte_stream_get16(bs);
-		number = byte_stream_get8(bs);
-		length = byte_stream_get8(bs);
+		length = byte_stream_get16(bs);
 
 		endpos = byte_stream_curpos(bs) + MIN(length, byte_stream_empty(bs));
 

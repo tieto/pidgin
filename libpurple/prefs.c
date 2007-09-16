@@ -329,9 +329,13 @@ prefs_start_element_handler (GMarkupParseContext *context,
 				purple_prefs_set_string_list(pref_name_full->str, NULL);
 				break;
 			case PURPLE_PREF_PATH:
-				decoded = g_filename_from_utf8(pref_value, -1, NULL, NULL, NULL);
-				purple_prefs_set_path(pref_name_full->str, decoded);
-				g_free(decoded);
+				if (pref_value) {
+					decoded = g_filename_from_utf8(pref_value, -1, NULL, NULL, NULL);
+					purple_prefs_set_path(pref_name_full->str, decoded);
+					g_free(decoded);
+				} else {
+					purple_prefs_set_path(pref_name_full->str, NULL);
+				}
 				break;
 			case PURPLE_PREF_PATH_LIST:
 				purple_prefs_set_path_list(pref_name_full->str, NULL);

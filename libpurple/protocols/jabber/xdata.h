@@ -25,7 +25,14 @@
 #include "jabber.h"
 #include "xmlnode.h"
 
+typedef struct _JabberXDataAction {
+	char *name;
+	char *handle;
+} JabberXDataAction;
+
 typedef void (*jabber_x_data_cb)(JabberStream *js, xmlnode *result, gpointer user_data);
+typedef void (*jabber_x_data_action_cb)(JabberStream *js, xmlnode *result, const char *actionhandle, gpointer user_data);
 void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb cb, gpointer user_data);
+void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GList *actions, int defaultaction, jabber_x_data_action_cb cb, gpointer user_data);
 
 #endif /* _PURPLE_JABBER_XDATA_H_ */

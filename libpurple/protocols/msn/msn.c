@@ -129,8 +129,8 @@ msn_attention_types(PurpleAccount *account)
 	if (!list) {
 		attn = g_new0(PurpleAttentionType, 1);
 		attn->name = _("nudge");
-		attn->incoming_description = _("nudged");
-		attn->outgoing_description = _("Nudging");
+		attn->incoming_description = _("%s has nudged you!");
+		attn->outgoing_description = _("Nudging %s...");
 		list = g_list_append(list, attn);
 	}
 
@@ -2257,6 +2257,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* whiteboard_prpl_ops */
 	NULL,					/* send_raw */
 	NULL,					/* roomlist_room_serialize */
+	NULL,					/* unregister_user */
 
 #ifdef MSN_USE_ATTENTION_API
 	msn_send_attention,                     /* send_attention */
@@ -2266,7 +2267,6 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 #endif
-	NULL,
 	NULL
 };
 

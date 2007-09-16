@@ -4130,8 +4130,8 @@ GList *yahoo_attention_types(PurpleAccount *account)
 		/* This is index number YAHOO_BUZZ. */
 		attn = g_new0(PurpleAttentionType, 1);
 		attn->name = _("buzz");
-		attn->incoming_description = _("buzzed");
-		attn->outgoing_description = _("Buzzing");
+		attn->incoming_description = _("%s has buzzed you!");
+		attn->outgoing_description = _("Buzzing %s...");
 		list = g_list_append(list, attn);
 	} 
 
@@ -4345,6 +4345,7 @@ static PurplePluginProtocolInfo prpl_info =
 	&yahoo_whiteboard_prpl_ops,
 	NULL, /* send_raw */
 	NULL, /* roomlist_room_serialize */
+	NULL, /* unregister_user */
 
 #ifdef YAHOO_USE_ATTENTION_API
 	yahoo_send_attention,
@@ -4355,7 +4356,6 @@ static PurplePluginProtocolInfo prpl_info =
 #endif
 
 	/* padding */
-	NULL,
 	NULL
 };
 

@@ -184,7 +184,7 @@ struct _PurpleConversationUiOps
 	                   time_t mtime);
 
 	/** Add @a cbuddies to a chat.
-	 *  @param cbuddies      A @C GList of #PurpleConvChatBuddy structs.
+	 *  @param cbuddies      A @c GList of #PurpleConvChatBuddy structs.
 	 *  @param new_arrivals  Whether join notices should be shown.
 	 *                       (Join notices are actually written to the
 	 *                       conversation by #purple_conv_chat_add_users().)
@@ -200,7 +200,7 @@ struct _PurpleConversationUiOps
 	void (*chat_rename_user)(PurpleConversation *conv, const char *old_name,
 	                         const char *new_name, const char *new_alias);
 	/** Remove @a users from a chat.
-	 *  @param users    A @C GList of <tt>const char *</tt>s.
+	 *  @param users    A @c GList of <tt>const char *</tt>s.
 	 *  @see purple_conv_chat_rename_user()
 	 */
 	void (*chat_remove_users)(PurpleConversation *conv, GList *users);

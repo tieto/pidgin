@@ -213,6 +213,11 @@ void *purple_notify_searchresults(PurpleConnection *gc, const char *title,
 								PurpleNotifySearchResults *results, PurpleNotifyCloseCallback cb,
 								gpointer user_data);
 
+/**
+ * Frees a PurpleNotifySearchResults object.
+ *
+ * @param results The PurpleNotifySearchResults to free.
+ */
 void purple_notify_searchresults_free(PurpleNotifySearchResults *results);
 
 /**
