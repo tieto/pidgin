@@ -1083,10 +1083,13 @@ static void
 x509_tls_cached_show_cert(x509_tls_cached_ua_ctx *c, gint id)
 {
 	PurpleCertificate *disp_crt = c->vrq->cert_chain->data;
-	purple_certificate_display_x509(disp_crt);
 
 	/* Since clicking a button closes the request, show it again */
 	x509_tls_cached_user_auth(c->vrq, c->reason);
+
+	/* Show the certificate AFTER re-opening the dialog so that this
+	   appears above the other */
+	purple_certificate_display_x509(disp_crt);
 
 	x509_tls_cached_ua_ctx_free(c);
 }
