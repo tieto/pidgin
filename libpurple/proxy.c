@@ -1,8 +1,9 @@
 /**
  * @file proxy.c Proxy API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -400,7 +401,7 @@ socket_ready_cb(gpointer data, gint source, PurpleInputCondition cond)
  	 */
 	if (!PURPLE_PROXY_CONNECT_DATA_IS_VALID(connect_data))
 		return;
-	
+
 	purple_debug_info("proxy", "Connected to %s:%d.\n",
 					connect_data->host, connect_data->port);
 
@@ -1992,6 +1993,13 @@ purple_proxy_init(void)
 		proxy_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, "/purple/proxy/password",
 		proxy_pref_cb, NULL);
+
+	/* Load the initial proxy settings */
+	purple_prefs_trigger_callback("/purple/proxy/type");
+	purple_prefs_trigger_callback("/purple/proxy/host");
+	purple_prefs_trigger_callback("/purple/proxy/port");
+	purple_prefs_trigger_callback("/purple/proxy/username");
+	purple_prefs_trigger_callback("/purple/proxy/password");
 }
 
 void

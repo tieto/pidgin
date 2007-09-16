@@ -23,7 +23,6 @@
 
 #include "usermood.h"
 #include "pep.h"
-#include <assert.h>
 #include <string.h>
 #include "internal.h"
 #include "request.h"
@@ -195,9 +194,9 @@ void jabber_mood_init_action(GList **m) {
 
 void jabber_mood_set(JabberStream *js, const char *mood, const char *text) {
 	xmlnode *publish, *moodnode;
-	
-	assert(mood != NULL);
-	
+
+	g_return_if_fail(mood != NULL);
+
 	publish = xmlnode_new("publish");
 	xmlnode_set_attrib(publish,"node","http://jabber.org/protocol/mood");
 	moodnode = xmlnode_new_child(xmlnode_new_child(publish, "item"), "mood");

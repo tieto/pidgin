@@ -461,7 +461,7 @@ msn_userlist_find_add_user(MsnUserList *userlist,const char *passport,const char
 void
 msn_userlist_add_user(MsnUserList *userlist, MsnUser *user)
 {
-	userlist->users = g_list_append(userlist->users, user);
+	userlist->users = g_list_prepend(userlist->users, user);
 }
 
 void

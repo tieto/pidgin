@@ -1,8 +1,9 @@
 /**
  * @file gtkutils.c GTK+ utility functions
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -3214,4 +3215,57 @@ gtk_tree_path_new_from_indices (gint first_index, ...)
 	return path;
 }
 #endif
+
+static void
+combo_box_changed_cb(GtkComboBox *combo_box, GtkEntry *entry)
+{
+	char *text = gtk_combo_box_get_active_text(combo_box);
+	gtk_entry_set_text(entry, text ? text : "");
+	g_free(text);
+}
+
+static gboolean
+entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *key, GtkComboBox *combo)
+{
+	if (key->keyval == GDK_Down || key->keyval == GDK_Up) {
+		gtk_combo_box_popup(combo);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+GtkWidget *
+pidgin_text_combo_box_entry_new(const char *default_item, GList *items)
+{
+	GtkComboBox *ret = NULL;
+	GtkWidget *the_entry = NULL;
+
+	ret = GTK_COMBO_BOX(gtk_combo_box_new_text());
+	the_entry = gtk_entry_new();
+	gtk_container_add(GTK_CONTAINER(ret), the_entry);
+
+	if (default_item)
+		gtk_entry_set_text(GTK_ENTRY(the_entry), default_item);
+
+	for (; items != NULL ; items = items->next) {
+		char *text = items->data;
+		if (text && *text)
+			gtk_combo_box_append_text(ret, text);
+	}
+
+	g_signal_connect(G_OBJECT(ret), "changed", (GCallback)combo_box_changed_cb, the_entry);
+	g_signal_connect_after(G_OBJECT(the_entry), "key-press-event", G_CALLBACK(entry_key_pressed_cb), ret);
+
+	return GTK_WIDGET(ret);
+}
+
+const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget)
+{
+	return gtk_entry_get_text(GTK_ENTRY(GTK_BIN((widget))->child));
+}
+
+void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text)
+{
+	gtk_entry_set_text(GTK_ENTRY(GTK_BIN((widget))->child), (text));
+}
 

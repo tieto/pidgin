@@ -55,9 +55,12 @@ gevo_add_buddy(PurpleAccount *account, const char *group_name,
 GList *
 gevo_get_groups(void)
 {
-	GList *list = NULL;
+	static GList *list = NULL;
 	PurpleGroup *g;
 	PurpleBlistNode *gnode;
+
+	g_list_free(list);
+	list = NULL;
 
 	if (purple_get_blist()->root == NULL)
 	{

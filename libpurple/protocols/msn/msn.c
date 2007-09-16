@@ -2316,8 +2316,7 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	/* TODO: Mark translatable as soon as 2.2.0 is released and we're not string frozen */
-	option = purple_account_option_string_new("HTTP Method Server",
+	option = purple_account_option_string_new(_("HTTP Method Server"),
 										  "http_method_server", MSN_HTTPCONN_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);

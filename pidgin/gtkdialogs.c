@@ -1,8 +1,9 @@
 /*
  * @file gtkdialogs.c GTK+ Dialogs
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -365,7 +366,9 @@ void pidgin_dialogs_about()
 	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "logo.png", NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
+#if 0  /* Don't versionize the logo when the logo has the version in it */
 	pidgin_logo_versionize(&pixbuf, logo);
+#endif
 	gtk_widget_destroy(logo);
 	logo = gtk_image_new_from_pixbuf(pixbuf);
 	gdk_pixbuf_unref(pixbuf);
@@ -456,7 +459,7 @@ void pidgin_dialogs_about()
 		if (retired_patch_writers[i].email != NULL) {
 			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
 					retired_patch_writers[i].name,
-					retired_patch_writers[i].email, patch_writers[i].email);
+					retired_patch_writers[i].email, retired_patch_writers[i].email);
 		} else {
 			g_string_append_printf(str, "  %s<br/>",
 					retired_patch_writers[i].name);

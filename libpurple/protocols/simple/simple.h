@@ -37,6 +37,11 @@
 #include "sipmsg.h"
 
 #define SIMPLE_BUF_INC 1024
+#define SIMPLE_REGISTER_RETRY_MAX 2
+
+#define SIMPLE_REGISTER_SENT 1
+#define SIMPLE_REGISTER_RETRY 2
+#define SIMPLE_REGISTER_COMPLETE 3
 
 struct sip_dialog {
 	gchar *ourtag;
