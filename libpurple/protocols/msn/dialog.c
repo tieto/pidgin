@@ -36,6 +36,7 @@ typedef struct
 
 /* Remove the buddy referenced by the MsnAddRemData before the serverside list is changed.
  * If the buddy will be added, he'll be added back; if he will be removed, he won't be. */
+/* Actually with our MSNP14 code that isn't true yet, he won't be added back :( */
 static void
 msn_complete_sync_issue(MsnAddRemData *data)
 {
@@ -44,28 +45,32 @@ msn_complete_sync_issue(MsnAddRemData *data)
 
 	if (data->group != NULL)
 		group = purple_find_group(data->group);
-	
+
 	if (group != NULL)
 		buddy = purple_find_buddy_in_group(purple_connection_get_account(data->gc), data->who, group);
 	else
 		buddy = purple_find_buddy(purple_connection_get_account(data->gc), data->who);
-	
+
 	if (buddy != NULL)
 		purple_blist_remove_buddy(buddy);
 }
 
+
 static void
 msn_add_cb(MsnAddRemData *data)
 {
-	MsnSession *session;
-	MsnUserList *userlist;
-
+#if 0
+	/* this *should* be necessary !! */
 	msn_complete_sync_issue(data);
+#endif
 
-	session = data->gc->proto_data;
-	userlist = session->userlist;
+	if (g_list_find(purple_connections_get_all(), data->gc) != NULL)
+	{
+		MsnSession *session = data->gc->proto_data;
+		MsnUserList *userlist = session->userlist;
 
-	msn_userlist_add_buddy(userlist, data->who, MSN_LIST_FL, data->group);
+		msn_userlist_add_buddy(userlist, data->who, data->group);
+	}
 
 	g_free(data->group);
 	g_free(data->who);
@@ -75,17 +80,20 @@ msn_add_cb(MsnAddRemData *data)
 static void
 msn_rem_cb(MsnAddRemData *data)
 {
-	MsnSession *session;
-	MsnUserList *userlist;
-
 	msn_complete_sync_issue(data);
 
-	session = data->gc->proto_data;
-	userlist = session->userlist;
+	if (g_list_find(purple_connections_get_all(), data->gc) != NULL)
+	{
+		MsnSession *session = data->gc->proto_data;
+		MsnUserList *userlist = session->userlist;
 
-	msn_userlist_rem_buddy(userlist, data->who, MSN_LIST_FL, data->group);
+		if (data->group == NULL) {
+			msn_userlist_rem_buddy_from_list(userlist, data->who, MSN_LIST_FL);
+		} else {
+			g_free(data->group);
+		}
+	}
 
-	g_free(data->group);
 	g_free(data->who);
 	g_free(data);
 }
@@ -104,7 +112,7 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 
 	data        = g_new0(MsnAddRemData, 1);
 	data->who   = g_strdup(passport);
-	data->group = g_strdup(group_name);
+	data->group = group_name != NULL ? g_strdup(group_name) : NULL;
 	data->gc    = gc;
 
 	msg = g_strdup_printf(_("Buddy list synchronization issue in %s (%s)"),
