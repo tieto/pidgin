@@ -36,6 +36,50 @@ is_num(char *str)
 	return TRUE;
 }
 
+/*
+ * check the command is the command with payload content
+ *  if it is	return TRUE
+ *  else 		return FALSE
+ */
+static gboolean
+msn_check_payload_cmd(char *str)
+{
+	if( (!strcmp(str,"ADL")) ||
+		(!strcmp(str,"GCF")) ||
+		(!strcmp(str,"SG")) ||
+		(!strcmp(str,"MSG")) ||
+		(!strcmp(str,"RML")) ||
+		(!strcmp(str,"UBX")) ||
+		(!strcmp(str,"UBN")) ||
+		(!strcmp(str,"UUM")) ||
+		(!strcmp(str,"UBM")) ||
+		(!strcmp(str,"FQY")) ||
+		(!strcmp(str,"UUN")) ||
+		(!strcmp(str,"UUX")) ||
+		(is_num(str))){
+			return TRUE;
+		}
+
+	return FALSE;
+}
+
+/*
+ * set command Payload length
+ */
+static void
+msn_set_payload_len(MsnCommand *cmd)
+{
+	char *param;
+	int len = 0;
+
+	if (msn_check_payload_cmd(cmd->command) && (cmd->param_count > 0)){
+		param = cmd->params[cmd->param_count - 1];
+		len = is_num(param) ? atoi(param) : 0;
+	}
+
+	cmd->payload_len = len;
+}
+
 MsnCommand *
 msn_command_from_string(const char *string)
 {
@@ -70,7 +114,13 @@ msn_command_from_string(const char *string)
 		cmd->trId = is_num(param) ? atoi(param) : 0;
 	}
 	else
+	{
 		cmd->trId = 0;
+	}
+
+	/*add payload Length checking*/
+	msn_set_payload_len(cmd);
+	purple_debug_info("MSNP14","get payload len:%d\n",cmd->payload_len);
 
 	msn_command_ref(cmd);
 
