@@ -515,23 +515,6 @@ purple_mime_decode_field(const char *str)
  * Date/Time Functions
  **************************************************************************/
 
-#ifdef _WIN32
-static long win32_get_tz_offset() {
-	TIME_ZONE_INFORMATION tzi;
-	DWORD ret;
-	long off = -1;
-
-	if ((ret = GetTimeZoneInformation(&tzi)) != TIME_ZONE_ID_INVALID)
-	{
-		off = -(tzi.Bias * 60);
-		if (ret == TIME_ZONE_ID_DAYLIGHT)
-			off -= tzi.DaylightBias * 60;
-	}
-
-	return off;
-}
-#endif
-
 const char *purple_get_tzoff_str(const struct tm *tm, gboolean iso)
 {
 	static char buf[7];
@@ -546,7 +529,7 @@ const char *purple_get_tzoff_str(const struct tm *tm, gboolean iso)
 		g_return_val_if_reached("");
 
 #ifdef _WIN32
-	if ((off = win32_get_tz_offset()) == -1)
+	if ((off = wpurple_get_tz_offset()) == -1)
 		return "";
 #else
 # ifdef HAVE_TM_GMTOFF
@@ -854,7 +837,7 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 #endif
 
 #ifdef _WIN32
-				if ((sys_tzoff = win32_get_tz_offset()) == -1)
+				if ((sys_tzoff = wpurple_get_tz_offset()) == -1)
 					tzoff = PURPLE_NO_TZ_OFF;
 				else
 					tzoff += sys_tzoff;
