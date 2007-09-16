@@ -610,12 +610,6 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		}
 	}
 
-	if (full && user)
-	{
-		purple_notify_user_info_add_pair(user_info, _("Has you"),
-									   ((user->list_op & (1 << MSN_LIST_RL)) ? _("Yes") : _("No")));
-	}
-
 	/* XXX: This is being shown in non-full tooltips because the
 	 * XXX: blocked icon overlay isn't always accurate for MSN.
 	 * XXX: This can die as soon as purple_privacy_check() knows that
