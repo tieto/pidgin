@@ -320,8 +320,8 @@ static void gtk_blist_menu_send_file_cb(GtkWidget *w, PurpleBuddy *b)
 
 static void gtk_blist_menu_move_to_cb(GtkWidget *w, PurpleBlistNode *node)
 {
-	PurpleBlistNode *group = g_object_get_data(w, "groupnode");
-	purple_blist_add_contact(node, group, NULL);
+	PurpleGroup *group = g_object_get_data(G_OBJECT(w), "groupnode");
+	purple_blist_add_contact((PurpleContact *)node, group, NULL);
 
 }
 
@@ -474,9 +474,9 @@ gtk_blist_do_personize(GList *merges)
 		if (node == contact)
 			continue;
 
-		purple_blist_merge_contact(node, contact);
+		purple_blist_merge_contact((PurpleContact *)node, contact);
 	}
-	
+
 	/* And show the expanded contact, so the people know what's going on */
 	pidgin_blist_expand_contact_cb(NULL, contact);
 	g_list_free(merges);
@@ -495,8 +495,8 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 		char *node_alias;
 		if (contact->type != PURPLE_BLIST_CONTACT_NODE)
 			continue;
-		
-		node_alias = g_utf8_casefold(purple_contact_get_alias(contact), -1);
+
+		node_alias = g_utf8_casefold(purple_contact_get_alias((PurpleContact *)contact), -1);
 		if (node_alias && !g_utf8_collate(node_alias, a)) {
 			merges = g_list_append(merges, contact);
 			i++;
@@ -508,8 +508,8 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 		for (buddy = contact->child; buddy; buddy = buddy->next) {
 			if (buddy->type != PURPLE_BLIST_BUDDY_NODE)
 				continue;
-	
-			node_alias = g_utf8_casefold(purple_buddy_get_alias(buddy), -1);
+
+			node_alias = g_utf8_casefold(purple_buddy_get_alias((PurpleBuddy *)buddy), -1);
 			if (node_alias && !g_utf8_collate(node_alias, a)) {
 				merges = g_list_append(merges, buddy);
 				i++;
@@ -526,7 +526,8 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 							 "You can separate them again by choosing 'Expand' from the contact's context menu"), 0, NULL, NULL, NULL,
 				      merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
 		g_free(msg);
-	}
+	} else
+		g_list_free(merges);
 }
 
 static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *arg1,
@@ -1269,14 +1270,14 @@ pidgin_append_blist_node_move_to_menu(GtkWidget *menu, PurpleBlistNode *node)
 	gtk_widget_show(menuitem);
 
 	submenu = gtk_menu_new();
-	gtk_menu_item_set_submenu(menuitem, submenu);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
 	for (group = purple_blist_get_root(); group; group = group->next) {
 		if (group->type != PURPLE_BLIST_GROUP_NODE)
 			continue;
 		if (group == node->parent)
 			continue;
-		menuitem = pidgin_new_item_from_stock(submenu, purple_group_get_name(group), NULL,
+		menuitem = pidgin_new_item_from_stock(submenu, purple_group_get_name((PurpleGroup *)group), NULL,
 						      G_CALLBACK(gtk_blist_menu_move_to_cb), node, 0, 0, NULL);
 		g_object_set_data(G_OBJECT(menuitem), "groupnode", group);
 	}
@@ -1335,7 +1336,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	pidgin_append_blist_node_extended_menu(menu, (PurpleBlistNode *)buddy);
 
 	if (!contact_expanded)
-		pidgin_append_blist_node_move_to_menu(menu, contact);
+		pidgin_append_blist_node_move_to_menu(menu, (PurpleBlistNode *)contact);
 
 	if (((PurpleBlistNode*)buddy)->parent && ((PurpleBlistNode*)buddy)->parent->child->next && 
               !sub && !contact_expanded) {
