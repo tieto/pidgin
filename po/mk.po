@@ -1,4 +1,4 @@
-# translation of mk1.po to Macedonian
+# translation of mk.po to Macedonian
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 #
@@ -8,10 +8,10 @@
 # Arangel Angov <arangel@linux.net.mk>, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: mk1\n"
+"Project-Id-Version: mk\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-08-13 03:22-0400\n"
-"PO-Revision-Date: 2007-08-13 10:26+0200\n"
+"PO-Revision-Date: 2007-09-09 21:21+0200\n"
 "Last-Translator: Arangel Angov <arangel@linux.net.mk>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
 "MIME-Version: 1.0\n"
@@ -434,7 +434,7 @@ msgstr "Информации"
 
 #: ../finch/gntblist.c:863 ../pidgin/gtkutils.c:930
 msgid "Retrieving..."
-msgstr "Добивам..."
+msgstr "Земам..."
 
 #: ../finch/gntblist.c:903 ../finch/gntconv.c:407
 #: ../libpurple/protocols/silc/chat.c:899
@@ -1717,7 +1717,7 @@ msgid ""
 "When a new conversation is opened this plugin will insert the last "
 "conversation into the current conversation."
 msgstr ""
-"Кога се отвора нов разговор, овој приклучок ќе го вметни последниот во "
+"Кога се отвора нов разговор, овој приклучок ќе го вметнe последниот во "
 "тековниот разговор."
 
 #: ../finch/plugins/lastlog.c:69
@@ -7076,7 +7076,7 @@ msgid ""
 "and try again. If you continue to try, you will need to wait even longer."
 msgstr ""
 "Се поврзувате и исклучувате пречесто. Почекајте десет минути и обидете се "
-"повторно. Ако продолжите со обидите, ќе треба да чекате уште повеќе."
+"повторно. Ако продолжите со обидeте, ќе треба да чекате уште повеќе."
 
 #: ../libpurple/protocols/oscar/oscar.c:1369
 #, c-format
@@ -11054,7 +11054,7 @@ msgid ""
 "and try again.  If you continue to try, you will need to wait even longer."
 msgstr ""
 "Се поврзувавте и се исклучувавте пречесто.  Почекајте десет минути и "
-"пробајте повторно.  Ако продолжете со обидите сега, ќе треба да чекате уште "
+"пробајте повторно.  Ако продолжете со обидeте сега, ќе треба да чекате уште "
 "подолго."
 
 #: ../libpurple/protocols/toc/toc.c:560
@@ -12221,7 +12221,7 @@ msgstr ""
 "повторно за да ги конфигурирате сите.\n"
 "\n"
 "Можете да се вратите на овој прозорец за да додавете, уредувате или пак да "
-"отстранувате сметки преку избирање на<b>Смети->Додај/Уреди</b> од прозорецот "
+"отстранувате сметки преку избирање на <b>Сметки->Додај/Уреди</b> од прозорецот "
 "со листата на пријатели."
 
 #: ../pidgin/gtkblist.c:760
@@ -12593,7 +12593,7 @@ msgid ""
 msgstr ""
 "<span weight='bold' size='larger'>Добредојдовте во %s!</span>\n"
 "\n"
-"Немате вклучено сметки. Вклучете ги Вашите сметки преку прозорецот<b>Сметки</"
+"Немате вклучено сметки. Вклучете ги Вашите сметки преку прозорецот <b>Сметки</"
 "b> кој што се отвора преку <b>Сметки ->Додај/Уреди</b>. Откако ќе ги "
 "вклучите сметките ќе можете да се најавите, да го менувате Вашиот статус и "
 "да разговарате со Вашите пријатели."

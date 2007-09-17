@@ -78,7 +78,7 @@
 
   @todo Describe this more.
 
-  @See value.h
+  @see value.h
 
   @section connect Connecting to the signal
   Once the signal is registered, you can connect callbacks to it. First, you

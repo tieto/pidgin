@@ -1,8 +1,9 @@
 /**
  * @file gtkprefs.c GTK+ Preferences
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -993,6 +994,8 @@ conv_page()
 
 	pidgin_prefs_checkbox(_("Show _formatting on incoming messages"),
 				PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting", vbox);
+	pidgin_prefs_checkbox(_("Close IMs immediately when the tab is closed"),
+				PIDGIN_PREFS_ROOT "/conversations/im/close_immediately", vbox);
 
 	iconpref1 = pidgin_prefs_checkbox(_("Show _detailed information"),
 			PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", vbox);
@@ -1093,7 +1096,7 @@ proxy_changed_cb(const char *name, PurplePrefType type,
 	const char *proxy = value;
 
 	if (strcmp(proxy, "none") && strcmp(proxy, "envvar"))
-	        gtk_widget_show_all(frame);
+		gtk_widget_show_all(frame);
 	else
 		gtk_widget_hide(frame);
 }
@@ -1510,6 +1513,7 @@ sound_changed2_cb(const char *name, PurplePrefType type,
 
 	gtk_widget_set_sensitive(vbox, strcmp(method, "none"));
 }
+#endif /* !_WIN32 */
 
 #ifdef USE_GSTREAMER
 static void
@@ -1524,7 +1528,6 @@ sound_changed3_cb(const char *name, PurplePrefType type,
 			!strcmp(method, "esd"));
 }
 #endif /* USE_GSTREAMER */
-#endif /* !_WIN32 */
 
 
 static void
@@ -1693,9 +1696,11 @@ sound_page()
 	int j;
 	const char *file;
 	char *pref;
+#if !defined _WIN32 || defined USE_GSTREAMER
+	GtkWidget *label;
+#endif
 #ifndef _WIN32
 	GtkWidget *dd;
-	GtkWidget *label;
 	GtkWidget *entry;
 	const char *cmd;
 #endif

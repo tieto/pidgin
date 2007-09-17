@@ -1,8 +1,9 @@
 /**
  * @file gtknotify.c GTK+ Notification API
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "pidgin.h"
@@ -801,7 +802,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 				if(b->label) {
 					button = gtk_button_new_with_label(b->label);
 				} else {
-					purple_debug_warning("gtknotify", "Missing button label");
+					purple_debug_warning("gtknotify", "Missing button label\n");
 				}
 				break;
 			case PURPLE_NOTIFY_BUTTON_CONTINUE:

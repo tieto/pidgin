@@ -10385,7 +10385,7 @@ msgid "Active which ID?"
 msgstr "ਕਿਹੜਾ ID ਸਰਗਰਮ ਕਰਨਾ ਹੈ?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3239
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "ਗੱਲਬਾਤ ਵਿੱਚ ਕੌਣ ਸ਼ਾਮਿਲ ?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3251

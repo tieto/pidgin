@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #ifndef _YAHOO_H_
@@ -67,12 +67,8 @@
 #define YAHOO_STATUS_TYPE_INVISIBLE "invisible"
 #define YAHOO_STATUS_TYPE_MOBILE "mobile"
 
-#define YAHOO_USE_ATTENTION_API
-
-#ifdef YAHOO_USE_ATTENTION_API
 /* Index into attention types list. */
 #define YAHOO_BUZZ 0
-#endif
 
 enum yahoo_status {
 	YAHOO_STATUS_AVAILABLE = 0,

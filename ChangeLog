@@ -1,19 +1,56 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.2.0:
+Version 2.2.1:
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
+	
+	Pidgin:
+	* When aliasing someone to an alias that already exists in the
+	  same group, offer to merge the buddies into the same contact
+	* It's possible to keep a conversation (chat/IM) open even after closing
+	  the conversation window/tab.
+	* A music emblem is displayed in the buddy list for a buddy if we know she
+	  is listening to some soothing music.
+	* 'Move to' menu in buddy list context menu for moving buddies to
+  	   other groups
+	* Move "Smiley" to the top-level of the toolbar
+	* Save Pidgin's display in the command line for session
+	  restoration.  (David Mohr)
+
+Version 2.2.0 (09/13/2007):
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
+
 	Libpurple:
 	* New protocol plugin: MySpaceIM (Jeff Connelly, Google Summer of
 	  Code)
+	* XMPP enhancements. See
+ 	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas 
+	  Monitzer, Google Summer of Code for Adium)
+	* Certificate management. Libpurple will validate certificates on
+	  SSL-encrypted protocols (William Ehlhardt, Google Summer of Code)
+	* Some adjustments were made to fix sending messages when using
+	  the MSN HTTP method. (Laszlo Pandy)
+	* Yahoo! Chat is fixed.
+	* Some AIM file transfer issues between Pidgin and other clients
+	  have been fixed. (Kyryll A Mirnenko)
+	* Properly restore idle status and time for AIM and ICQ accounts
+	  when they reconnect after being disconnected.
 
 	Pidgin:
-	* Insert Horizontal Rules and Strikethrough text from toolbar
+	* Insert Horizontal Rules and Strikethrough text from toolbar.
 	* Option to show protocol icons in the buddy list, from the
-	  Buddies > Show menu (Justin Heiner)
-	* Ability to build with native, non-X11 GTK+ on OSX (Anders
-   	  Hasselqvist)
+	  Buddies > Show menu. (Justin Heiner)
+	* Ability to build with native, non-X11 GTK+ on OSX. (Anders
+	  Hasselqvist)
+	* Remember the 'Enable Sounds' setting for a conversation.
+	* Right-clicking the empty space in the formatting toolbar
+	  allows you to toggle back to the old "ungrouped" version.
+	* Protocols supporting account registration via Pidgin now show
+	  a descriptive checkbox instead of a vague "Register" button.
+	* Fixed a bug where a tab would be shown on single conversations
+	  when tabs were disabled.
 
 	Finch:
-	* Per-conversation mute and logging options (accessible from the menu)
+	* Per-conversation mute and logging options (accessible from the menu).
 
 version 2.1.1 (08/20/2007):
 	Yahoo:

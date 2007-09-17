@@ -21,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "internal.h"
@@ -693,19 +693,24 @@ static char *get_contact(struct simple_account_data  *sip) {
 }
 
 static void do_register_exp(struct simple_account_data *sip, int expire) {
-	char *uri = g_strdup_printf("sip:%s", sip->servername);
-	char *to = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
-	char *contact = get_contact(sip);
-	char *hdr = g_strdup_printf("Contact: %s\r\nExpires: %d\r\n", contact, expire);
+	char *uri, *to, *contact, *hdr;
+
+	/* Set our default expiration to 900, 
+	 * as done in the initialization of the simple_account_data
+	 * structure.
+	 */
+	if (!expire)
+		expire = 900;
+
+	sip->reregister = time(NULL) + expire - 50;
+
+	uri = g_strdup_printf("sip:%s", sip->servername);
+	to = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
+	contact = get_contact(sip);
+	hdr = g_strdup_printf("Contact: %s\r\nExpires: %d\r\n", contact, expire);
 	g_free(contact);
 
-	sip->registerstatus = 1;
-
-	if(expire) {
-		sip->reregister = time(NULL) + expire - 50;
-	} else {
-		sip->reregister = time(NULL) + 600;
-	}
+	sip->registerstatus = SIMPLE_REGISTER_SENT;
 
 	send_sip_request(sip->gc, "REGISTER", uri, to, hdr, "", NULL,
 		process_register_response);
@@ -1001,7 +1006,7 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 		found = TRUE;
 	}
 	if(!found) {
-		purple_debug_info("simple", "got unknown mime-type");
+		purple_debug_info("simple", "got unknown mime-type\n");
 		send_sip_response(sip->gc, msg, 415, "Unsupported media type", NULL);
 	}
 	g_free(from);
@@ -1013,12 +1018,12 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 	purple_debug(PURPLE_DEBUG_MISC, "simple", "in process register response response: %d\n", msg->response);
 	switch (msg->response) {
 		case 200:
-			if(sip->registerstatus < 3) { /* registered */
+			if(sip->registerstatus < SIMPLE_REGISTER_COMPLETE) { /* registered */
 				if(purple_account_get_bool(sip->account, "dopublish", TRUE)) {
 					send_publish(sip);
 				}
 			}
-			sip->registerstatus = 3;
+			sip->registerstatus = SIMPLE_REGISTER_COMPLETE;
 			purple_connection_set_state(sip->gc, PURPLE_CONNECTED);
 
 			/* get buddies from blist */
@@ -1032,16 +1037,29 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 
 			break;
 		case 401:
-			if(sip->registerstatus != 2) {
+			if(sip->registerstatus != SIMPLE_REGISTER_RETRY) {
 				purple_debug_info("simple", "REGISTER retries %d\n", sip->registrar.retries);
-				if(sip->registrar.retries > 3) {
+				if(sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) {
+					purple_debug_info("simple", "Setting wants_to_die to true.\n");
 					sip->gc->wants_to_die = TRUE;
 					purple_connection_error(sip->gc, _("Incorrect password."));
 					return TRUE;
 				}
 				tmp = sipmsg_find_header(msg, "WWW-Authenticate");
 				fill_auth(sip, tmp, &sip->registrar);
-				sip->registerstatus = 2;
+				sip->registerstatus = SIMPLE_REGISTER_RETRY;
+				do_register(sip);
+			}
+			break;
+		default:
+			if (sip->registerstatus != SIMPLE_REGISTER_RETRY) {
+				purple_debug_info("simple", "Unrecognized return code for REGISTER.\n");
+				if (sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) {
+					sip->gc->wants_to_die = TRUE;
+					purple_connection_error(sip->gc, _("Unknown server response."));
+					return TRUE;
+				}
+				sip->registerstatus = SIMPLE_REGISTER_RETRY;
 				do_register(sip);
 			}
 			break;
@@ -1066,6 +1084,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	if(!pidf) {
 		purple_debug_info("simple", "process_incoming_notify: no parseable pidf\n");
 		g_free(from);
+		send_sip_response(sip->gc, msg, 200, "OK", NULL);
 		return;
 	}
 
@@ -1326,13 +1345,29 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 				} else {
 					sip->proxy.retries = 0;
 					if(!strcmp(trans->msg->method, "REGISTER")) {
-						if(msg->response == 401) sip->registrar.retries++;
-						else sip->registrar.retries = 0;
+
+						/* This is encountered when a REGISTER request was ...
+						 */
+						if(msg->response == 401) {
+							/* denied until further authentication was provided. */
+							sip->registrar.retries++;
+						}
+						else if (msg->response != 200) {
+							/* denied for some other reason! */
+							sip->registrar.retries++;
+						}
+						else {
+							/* accepted! */
+							sip->registrar.retries = 0;
+						}
 					} else {
 						if(msg->response == 401) {
+							/* This is encountered when a generic (MESSAGE, NOTIFY, etc)
+							 * was denied until further authorization is provided.
+							 */
 							gchar *resend, *auth, *ptmp;
 
-							if(sip->registrar.retries > 4) return;
+							if(sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) return;
 							sip->registrar.retries++;
 
 							ptmp = sipmsg_find_header(msg, "WWW-Authenticate");
@@ -1346,6 +1381,11 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 							/* resend request */
 							sendout_pkt(sip->gc, resend);
 							g_free(resend);
+						} else {
+							/* Reset any count of retries that may have
+							 * accumulated in the above branch.
+							 */
+							sip->registrar.retries = 0;
 						}
 					}
 					if(trans->callback) {
@@ -1695,7 +1735,8 @@ static void simple_close(PurpleConnection *gc)
 
 	if(sip) {
 		/* unregister */
-		do_register_exp(sip, 0);
+		if (sip->registerstatus == SIMPLE_REGISTER_COMPLETE)
+			do_register_exp(sip, 0);
 		connection_free_all(sip);
 
 		if (sip->query_data != NULL)

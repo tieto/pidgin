@@ -1,8 +1,9 @@
 /**
  * @file gntsound.c GNT Sound API
  * @ingroup finch
- *
- * finch
+ */
+
+/* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "finch.h"
@@ -684,17 +685,17 @@ test_cb(GntWidget *button, gpointer null)
 	volpref = g_strdup(make_pref("/volume"));
 
 	temp_value = purple_prefs_get_bool(enabled);
-	tmpfile = g_strdup(purple_prefs_get_string(file));
+	tmpfile = g_strdup(purple_prefs_get_path(file));
 	volume = purple_prefs_get_int(volpref);
 
-	purple_prefs_set_string(file, event->file);
+	purple_prefs_set_path(file, event->file);
 	if (!temp_value) purple_prefs_set_bool(enabled, TRUE);
 	purple_prefs_set_int(volpref, gnt_slider_get_value(GNT_SLIDER(pref_dialog->volume)));
 
 	purple_sound_play_event(id, NULL);
 
 	if (!temp_value) purple_prefs_set_bool(enabled, FALSE);
-	purple_prefs_set_string(file, tmpfile);
+	purple_prefs_set_path(file, tmpfile);
 	purple_prefs_set_int(volpref, volume);
 
 	g_free(enabled);

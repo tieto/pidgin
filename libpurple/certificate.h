@@ -23,7 +23,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #ifndef _PURPLE_CERTIFICATE_H
@@ -123,6 +123,11 @@ struct _PurpleCertificatePool
 
 	/** Returns a list of IDs stored in the pool */
 	GList * (* get_idlist)(void);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 /** A certificate type
@@ -241,7 +246,10 @@ struct _PurpleCertificateScheme
 	/** Retrieve the certificate activation/expiration times */
 	gboolean (* get_times)(PurpleCertificate *crt, time_t *activation, time_t *expiration);
 	
-	/* TODO: Fill out this structure */
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 /** A set of operations used to provide logic for verifying a Certificate's
@@ -286,6 +294,11 @@ struct _PurpleCertificateVerifier
 	 * @param vrq       Request to destroy
 	 */
 	void (* destroy_request)(PurpleCertificateVerificationRequest *vrq);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 /** Structure for a single certificate request

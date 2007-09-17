@@ -17,7 +17,7 @@ Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public
 License along with this application; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301
 USA
 """
 
@@ -54,7 +54,7 @@ class RssTree(gnt.Tree):
     }
 
     __gntbindings__ = {
-        'jump-next-unread' : ('jump_next_unread', 'J')
+        'jump-next-unread' : ('jump_next_unread', 'n')
     }
 
     def jump_next_unread(self, null):

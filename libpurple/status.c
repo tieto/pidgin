@@ -1,8 +1,9 @@
 /**
  * @file status.c Status API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 
@@ -1668,6 +1669,14 @@ purple_status_init(void)
 	purple_prefs_connect_callback(handle, "/purple/status/scores/offline_msg",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(SCORE_OFFLINE_MESSAGE));
+
+	purple_prefs_trigger_callback("/purple/status/scores/offline");
+	purple_prefs_trigger_callback("/purple/status/scores/available");
+	purple_prefs_trigger_callback("/purple/status/scores/invisible");
+	purple_prefs_trigger_callback("/purple/status/scores/away");
+	purple_prefs_trigger_callback("/purple/status/scores/extended_away");
+	purple_prefs_trigger_callback("/purple/status/scores/idle");
+	purple_prefs_trigger_callback("/purple/status/scores/offline_msg");
 }
 
 void

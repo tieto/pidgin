@@ -1,8 +1,9 @@
 /**
  * @file prpl.h Protocol Plugin functions
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 /* this file should be all that prpls need to include. therefore, by including
@@ -347,11 +348,16 @@ struct _PurplePluginProtocolInfo
 	/* room list serialize */
 	char *(*roomlist_room_serialize)(PurpleRoomlistRoom *room);
 
+	/* Remove the user from the server. (This is only at the bottom to keep binary compatibility.)
+	 * The account can either be connected or disconnected. After the removal is finished,
+	 * the connection will stay open and has to be closed!
+	 */
+	void (*unregister_user)(PurpleAccount *, PurpleAccountUnregistrationCb cb, void *user_data);
+	
 	/* Attention API for sending & receiving zaps/nudges/buzzes etc. */
 	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
-	GList *(*attention_types)(PurpleAccount *acct);
+	GList *(*get_attention_types)(PurpleAccount *acct);
 
-	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
 };
 

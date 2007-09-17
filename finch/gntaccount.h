@@ -1,8 +1,9 @@
 /**
  * @file gntaccount.h GNT Account API
  * @ingroup finch
- *
- * finch
+ */
+
+/* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _GNT_ACCOUNT_H
 #define _GNT_ACCOUNT_H
@@ -53,6 +54,13 @@ void finch_accounts_uninit(void);
  * Show the account-manager dialog.
  */
 void finch_accounts_show_all(void);
+
+/**
+ * Show the edit dialog for an account.
+ *
+ * @param account  The account to edit, or @c NULL to create a new account.
+ */
+void finch_account_dialog_show(PurpleAccount *account);
 
 /*@}*/
 

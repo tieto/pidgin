@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
 */
 
 /*
@@ -1461,7 +1461,7 @@ static int incomingim_ch1_parsemsgs(OscarData *od, aim_userinfo_t *userinfo, gui
 		msglen = byte_stream_get16(&mbs);
 		if (msglen > byte_stream_empty(&mbs))
 		{
-			purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.", userinfo->sn);
+			purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
 			break;
 		}
 
@@ -2101,7 +2101,11 @@ static int incomingim_ch4(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	args.uin = byte_stream_getle32(&meat);
 	args.type = byte_stream_getle8(&meat);
 	args.flags = byte_stream_getle8(&meat);
-	args.msglen = byte_stream_getle16(&meat);
+	if (args.type == 0x1a)
+		/* There seems to be a problem with the length in SMS msgs from server, this fixed it */
+		args.msglen = block->length - 6;
+	else
+		args.msglen = byte_stream_getle16(&meat);
 	args.msg = (gchar *)byte_stream_getraw(&meat, args.msglen);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))

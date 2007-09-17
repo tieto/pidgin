@@ -1,8 +1,9 @@
 /**
  * @file network.c Network Implementation
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "internal.h"
@@ -351,12 +352,13 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	listen_data->retry = TRUE;
 	listen_data->cb = cb;
 	listen_data->cb_data = cb_data;
+	listen_data->socket_type = socket_type;
 
 	/* Attempt a NAT-PMP Mapping, which will return immediately */
 	if (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
 							  actual_port, actual_port, PURPLE_PMP_LIFETIME))
 	{
-		purple_debug_info("network", "Created NAT-PMP mapping on port %i",actual_port);
+		purple_debug_info("network", "Created NAT-PMP mapping on port %i\n",actual_port);
 		/* We want to return listen_data now, and on the next run loop trigger the cb and destroy listen_data */
 		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}

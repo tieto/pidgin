@@ -48,7 +48,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include <glib.h>
 #include <string.h>
@@ -2021,7 +2021,7 @@ gchar *purple_cipher_http_digest_calculate_session_key(
 		if (client_nonce == NULL)
 		{
 			purple_cipher_context_destroy(context);
-			purple_debug_error("cipher", "Required client_nonce missing for MD5-sess digest calculation.");
+			purple_debug_error("cipher", "Required client_nonce missing for MD5-sess digest calculation.\n");
 			return NULL;
 		}
 
@@ -2091,7 +2091,7 @@ gchar *purple_cipher_http_digest_calculate_response(
 		if (entity == NULL)
 		{
 			purple_cipher_context_destroy(context);
-			purple_debug_error("cipher", "Required entity missing for auth-int digest calculation.");
+			purple_debug_error("cipher", "Required entity missing for auth-int digest calculation.\n");
 			return NULL;
 		}
 
@@ -2118,14 +2118,14 @@ gchar *purple_cipher_http_digest_calculate_response(
 		if (nonce_count == NULL)
 		{
 			purple_cipher_context_destroy(context);
-			purple_debug_error("cipher", "Required nonce_count missing for digest calculation.");
+			purple_debug_error("cipher", "Required nonce_count missing for digest calculation.\n");
 			return NULL;
 		}
 
 		if (client_nonce == NULL)
 		{
 			purple_cipher_context_destroy(context);
-			purple_debug_error("cipher", "Required client_nonce missing for digest calculation.");
+			purple_debug_error("cipher", "Required client_nonce missing for digest calculation.\n");
 			return NULL;
 		}
 

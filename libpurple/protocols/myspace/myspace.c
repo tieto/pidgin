@@ -28,7 +28,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #define PURPLE_PLUGIN
@@ -932,7 +932,7 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 
 	username = msim_msg_get_string(msg, "user");
 	if (!username) {
-		purple_debug_info("msim", "msim_get_info_cb: no 'user' in msg");
+		purple_debug_info("msim", "msim_get_info_cb: no 'user' in msg\n");
 		return;
 	}
 
@@ -1120,7 +1120,7 @@ msim_set_status_code(MsimSession *session, guint status_code, gchar *statstring)
 			"locstring", MSIM_TYPE_STRING, g_strdup(""),
 			NULL))
 	{
-		purple_debug_info("msim", "msim_set_status: failed to set status");
+		purple_debug_info("msim", "msim_set_status: failed to set status\n");
 	}
 
 }
@@ -1182,7 +1182,7 @@ msim_uid2username_from_blist(MsimSession *session, guint wanted_uid)
 
 	if (!buddies)
 	{
-		purple_debug_info("msim", "msim_uid2username_from_blist: no buddies?");
+		purple_debug_info("msim", "msim_uid2username_from_blist: no buddies?\n");
 		return NULL;
 	}
 
@@ -1541,7 +1541,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 
 
 	if (msim_msg_get_integer(msg, "uniquenick") == session->userid) {
-		purple_debug_info("msim_we_are_logged_on", "TODO: pick username");
+		purple_debug_info("msim_we_are_logged_on", "TODO: pick username\n");
 		/* No username is set. */
 		purple_notify_error(session->account, 
 				_("No username set"),
@@ -1780,14 +1780,22 @@ msim_error(MsimSession *session, MsimMessage *msg)
 	purple_debug_info("msim", "msim_error (sesskey=%d): %s\n", 
 			session->sesskey, full_errmsg);
 
-	purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
-			full_errmsg, NULL);
-
 	/* Destroy session if fatal. */
 	if (msim_msg_get(msg, "fatal")) {
 		purple_debug_info("msim", "fatal error, closing\n");
+		if (err == 260) {
+			/* Incorrect password */
+			session->gc->wants_to_die = TRUE;
+			if (!purple_account_get_remember_password(session->account))
+				purple_account_set_password(session->account, NULL);
+		}
 		purple_connection_error(session->gc, full_errmsg);
+	} else {
+		purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
+				full_errmsg, NULL);
 	}
+
+	g_free(full_errmsg);
 
 	return TRUE;
 }
@@ -2848,7 +2856,7 @@ msim_actions(PurplePlugin *plugin, gpointer context)
 }
 
 /** Callbacks called by Purple, to access this plugin. */
-PurplePluginProtocolInfo prpl_info = {
+static PurplePluginProtocolInfo prpl_info = {
 	/* options */
 	  OPT_PROTO_USE_POINTSIZE        /* specify font size in sane point size */
 	| OPT_PROTO_MAIL_CHECK,
@@ -2915,21 +2923,16 @@ PurplePluginProtocolInfo prpl_info = {
 	NULL,              /* whiteboard_prpl_ops */
 	msim_send_really_raw,  /* send_raw */
 	NULL,                  /* roomlist_room_serialize */
-#ifdef MSIM_USE_ATTENTION_API
+	NULL,                  /* unregister_user */
 	msim_send_attention,   /* send_attention */
 	msim_attention_types,  /* attention_types */
-#else
-	NULL,               /* _purple_reserved1 */
-	NULL,               /* _purple_reserved2 */
-#endif
-	NULL,               /* _purple_reserved3 */
 	NULL                /* _purple_reserved4 */
 };
 
 
 
 /** Based on MSN's plugin info comments. */
-PurplePluginInfo info = {
+static PurplePluginInfo info = {
 	PURPLE_PLUGIN_MAGIC,                                
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
@@ -3276,7 +3279,7 @@ init_plugin(PurplePlugin *plugin)
 #endif
 
 #ifdef MSIM_USER_WANTS_TO_DISABLE_EMOTICONS
-	option = purple_account_option_bool_new(_("Send emoticons"), "emoticons", FALSE);
+	option = purple_account_option_bool_new(_("Send emoticons"), "emoticons", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #endif
 

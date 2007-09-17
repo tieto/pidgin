@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -203,8 +203,15 @@ static gboolean auth_pass_generic(JabberStream *js, PurpleRequestFields *fields)
 	return TRUE;
 }
 	
-static void auth_pass_cb(JabberStream *js, PurpleRequestFields *fields)
+static void auth_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 {
+	JabberStream *js;
+
+	/* The password prompt dialog doesn't get disposed if the account disconnects */
+	if (!PURPLE_CONNECTION_IS_VALID(conn))
+		return;
+
+	js = conn->proto_data;
 
 	if (!auth_pass_generic(js, fields))
 		return;
@@ -217,8 +224,16 @@ static void auth_pass_cb(JabberStream *js, PurpleRequestFields *fields)
 }
 
 static void
-auth_old_pass_cb(JabberStream *js, PurpleRequestFields *fields)
+auth_old_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 {
+	JabberStream *js;
+
+	/* The password prompt dialog doesn't get disposed if the account disconnects */
+	if (!PURPLE_CONNECTION_IS_VALID(conn))
+		return;
+
+	js = conn->proto_data;
+
 	if (!auth_pass_generic(js, fields))
 		return;
 	
@@ -228,9 +243,17 @@ auth_old_pass_cb(JabberStream *js, PurpleRequestFields *fields)
 
 
 static void
-auth_no_pass_cb(JabberStream *js, PurpleRequestFields *fields)
+auth_no_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 {
-	purple_connection_error(js->gc, _("Password is required to sign on."));
+	JabberStream *js;
+
+	/* The password prompt dialog doesn't get disposed if the account disconnects */
+	if (!PURPLE_CONNECTION_IS_VALID(conn))
+		return;
+
+	js = conn->proto_data;
+
+	purple_connection_error(conn, _("Password is required to sign on."));
 }
 
 static void jabber_auth_start_cyrus(JabberStream *js)
@@ -283,7 +306,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 */
 
 				if (!purple_account_get_password(js->gc->account)) {
-					purple_account_request_password(js->gc->account, G_CALLBACK(auth_pass_cb), G_CALLBACK(auth_no_pass_cb), js);
+					purple_account_request_password(js->gc->account, G_CALLBACK(auth_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
 					return;
 
 				/* If we've got a password, but aren't sending
@@ -515,6 +538,9 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 					(err_code = xmlnode_get_attrib(error, "code")) &&
 					!strcmp(err_code, "401")) {
 			js->gc->wants_to_die = TRUE;
+			/* Clear the pasword if it isn't being saved */
+			if (!purple_account_get_remember_password(js->gc->account))
+				purple_account_set_password(js->gc->account, NULL);
 		}
 
 		purple_connection_error(js->gc, msg);
@@ -597,7 +623,7 @@ void jabber_auth_start_old(JabberStream *js)
 	 */
 	
 	if (!purple_account_get_password(js->gc->account)) {
-		purple_account_request_password(js->gc->account, G_CALLBACK(auth_old_pass_cb), G_CALLBACK(auth_no_pass_cb), js);
+		purple_account_request_password(js->gc->account, G_CALLBACK(auth_old_pass_cb), G_CALLBACK(auth_no_pass_cb), js->gc);
 		return;
 	}
 #endif

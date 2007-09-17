@@ -14341,7 +14341,7 @@ msgid "Active which ID?"
 msgstr "어느 ID 를 활성화 하시겠습니까?"
 
 #: ../libgaim/protocols/yahoo/yahoo.c:3214
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "어느 대화에 참가하시겠습니까?"
 
 #: ../libgaim/protocols/yahoo/yahoo.c:3224

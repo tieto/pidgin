@@ -1,8 +1,9 @@
 /*
  * @file util.h Utility Functions
  * @ingroup core
- *
- * Purple is the legal property of its developers, whose names are too numerous
+ */
+
+/* Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -18,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 
@@ -67,7 +68,7 @@ struct _PurpleUtilFetchUrlData
 };
 
 static char *custom_user_dir = NULL;
-static char *home_dir = NULL;
+static char *user_dir = NULL;
 
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
@@ -673,7 +674,7 @@ purple_utf8_strftime(const char *format, const struct tm *tm)
 	locale = g_locale_from_utf8(format, -1, NULL, NULL, &err);
 	if (err != NULL)
 	{
-		purple_debug_error("util", "Format conversion failed in purple_utf8_strftime(): %s", err->message);
+		purple_debug_error("util", "Format conversion failed in purple_utf8_strftime(): %s\n", err->message);
 		g_error_free(err);
 		locale = g_strdup(format);
 	}
@@ -693,7 +694,7 @@ purple_utf8_strftime(const char *format, const struct tm *tm)
 	utf8 = g_locale_to_utf8(buf, len, NULL, NULL, &err);
 	if (err != NULL)
 	{
-		purple_debug_error("util", "Result conversion failed in purple_utf8_strftime(): %s", err->message);
+		purple_debug_error("util", "Result conversion failed in purple_utf8_strftime(): %s\n", err->message);
 		g_error_free(err);
 	}
 	else
@@ -2463,10 +2464,10 @@ purple_user_dir(void)
 {
 	if (custom_user_dir != NULL)
 		return custom_user_dir;
-	else if (!home_dir)
-		home_dir = g_build_filename(purple_home_dir(), ".purple", NULL);
+	else if (!user_dir)
+		user_dir = g_build_filename(purple_home_dir(), ".purple", NULL);
 
-	return home_dir;
+	return user_dir;
 }
 
 void purple_util_set_user_dir(const char *dir)

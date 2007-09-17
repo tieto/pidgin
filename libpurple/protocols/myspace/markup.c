@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "myspace.h"
@@ -321,7 +321,7 @@ msim_markup_c_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 
 	color = xmlnode_get_attrib(root, "v");
 	if (!color) {
-		purple_debug_info("msim", "msim_markup_c_to_html: <c> tag w/o v attr");
+		purple_debug_info("msim", "msim_markup_c_to_html: <c> tag w/o v attr\n");
 		*begin = g_strdup("");
 		*end = g_strdup("");
 		/* TODO: log as unrecognized */
@@ -349,7 +349,7 @@ msim_markup_b_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	if (!color) {
 		*begin = g_strdup("");
 		*end = g_strdup("");
-		purple_debug_info("msim", "msim_markup_b_to_html: <b> w/o v attr");
+		purple_debug_info("msim", "msim_markup_b_to_html: <b> w/o v attr\n");
 		/* TODO: log as unrecognized. */
 		return;
 	}
@@ -374,7 +374,7 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 
 	name = xmlnode_get_attrib(root, "n");
 	if (!name) {
-		purple_debug_info("msim", "msim_markup_i_to_html: <i> w/o n");
+		purple_debug_info("msim", "msim_markup_i_to_html: <i> w/o n\n");
 		*begin = g_strdup("");
 		*end = g_strdup("");
 		/* TODO: log as unrecognized */

@@ -1,8 +1,9 @@
 /**
  * @file gntconv.c GNT Conversation API
  * @ingroup finch
- *
- * finch
+ */
+
+/* finch
  *
  * Finch is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include <string.h>
 
@@ -62,6 +63,25 @@
 static void finch_write_common(PurpleConversation *conv, const char *who,
 		const char *message, PurpleMessageFlags flags, time_t mtime);
 static void generate_send_to_menu(FinchConv *ggc);
+
+static PurpleBlistNode *
+get_conversation_blist_node(PurpleConversation *conv)
+{
+	PurpleBlistNode *node = NULL;
+
+	switch (purple_conversation_get_type(conv)) {
+		case PURPLE_CONV_TYPE_IM:
+			node = (PurpleBlistNode*)purple_find_buddy(conv->account, conv->name);
+			node = node ? node->parent : NULL;
+			break;
+		case PURPLE_CONV_TYPE_CHAT:
+			node = (PurpleBlistNode*)purple_blist_find_chat(conv->account, conv->name);
+			break;
+		default:
+			break;
+	}
+	return node;
+}
 
 static void
 send_typing_notification(GntWidget *w, FinchConv *ggconv)
@@ -291,13 +311,41 @@ buddy_signed_on_off(PurpleBuddy *buddy, gpointer null)
 static void
 account_signed_on_off(PurpleConnection *gc, gpointer null)
 {
-	GList *ims = purple_get_ims();
-	while (ims) {
-		PurpleConversation *conv = ims->data;
+	GList *list = purple_get_ims();
+	while (list) {
+		PurpleConversation *conv = list->data;
 		PurpleConversation *cc = find_conv_with_contact(conv->account, conv->name);
 		if (cc)
 			generate_send_to_menu(cc->ui_data);
-		ims = ims->next;
+		list = list->next;
+	}
+
+	if (PURPLE_CONNECTION_IS_CONNECTED(gc)) {
+		/* We just signed on. Let's see if there's any chat that we have open,
+		 * and hadn't left before the disconnect. */
+		list = purple_get_chats();
+		while (list) {
+			PurpleConversation *conv = list->data;
+			gboolean del = FALSE;
+			PurpleChat *chat;
+
+			list = list->next;
+			if (conv->account != gc->account ||
+					!purple_conversation_get_data(conv, "want-to-rejoin"))
+				continue;
+
+			chat = purple_blist_find_chat(conv->account, conv->name);
+			if (chat == NULL) {
+				GHashTable *hash = NULL;
+				if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
+					hash = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, conv->name);
+				chat = purple_chat_new(gc->account, conv->name, hash);
+				del = TRUE;
+			}
+			serv_join_chat(gc, chat->components);
+			if (del)
+				purple_blist_remove_chat(chat);
+		}
 	}
 }
 
@@ -391,7 +439,10 @@ static void
 toggle_sound_cb(GntMenuItem *item, gpointer ggconv)
 {
 	FinchConv *fc = ggconv;
+	PurpleBlistNode *node = get_conversation_blist_node(fc->active_conv);
 	fc->flags ^= FINCH_CONV_NO_SOUND;
+	if (node)
+		purple_blist_node_set_bool(node, "gnt-mute-sound", !!(fc->flags & FINCH_CONV_NO_SOUND));
 }
 
 static void
@@ -547,6 +598,7 @@ finch_create_conversation(PurpleConversation *conv)
 	PurpleConversationType type;
 	PurpleConversation *cc;
 	PurpleAccount *account;
+	PurpleBlistNode *convnode = NULL;
 
 	if (ggc)
 		return;
@@ -613,6 +665,7 @@ finch_create_conversation(PurpleConversation *conv)
 		gnt_tree_set_col_width(GNT_TREE(tree), 0, 1);   /* The flag column */
 		gnt_tree_set_compare_func(GNT_TREE(tree), (GCompareFunc)g_utf8_collate);
 		gnt_tree_set_hash_fns(GNT_TREE(tree), g_str_hash, g_str_equal, g_free);
+		gnt_tree_set_search_column(GNT_TREE(tree), 1);
 		GNT_WIDGET_SET_FLAGS(tree, GNT_WIDGET_NO_BORDER);
 		gnt_box_add_widget(GNT_BOX(hbox), ggc->tv);
 		gnt_box_add_widget(GNT_BOX(hbox), tree);
@@ -652,7 +705,9 @@ finch_create_conversation(PurpleConversation *conv)
 		g_signal_connect(G_OBJECT(ggc->entry), "text_changed", G_CALLBACK(send_typing_notification), ggc);
 	}
 
-	if (!finch_sound_is_enabled())
+	convnode = get_conversation_blist_node(conv);
+	if ((convnode && purple_blist_node_get_bool(convnode, "gnt-mute-sound")) ||
+			!finch_sound_is_enabled())
 		ggc->flags |= FINCH_CONV_NO_SOUND;
 
 	gg_create_menu(ggc);

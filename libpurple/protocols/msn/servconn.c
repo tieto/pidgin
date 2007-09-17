@@ -19,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "msn.h"
 #include "servconn.h"
@@ -223,7 +223,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 
 		if (!servconn->httpconn->connected)
 			if (!msn_httpconn_connect(servconn->httpconn, host, port))
-				return FALSE;;
+				return FALSE;
 
 		servconn->connected = TRUE;
 		servconn->httpconn->virgin = TRUE;

@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 #include "internal.h"
@@ -261,7 +261,7 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 
 	purple_status_to_jabber(status, &state, &msg, &priority);
 
-	presence = jabber_presence_create(state, msg, priority);
+	presence = jabber_presence_create_js(js, state, msg, priority);
 	full_jid = g_strdup_printf("%s/%s", room_jid, handle);
 	xmlnode_set_attrib(presence, "to", full_jid);
 	g_free(full_jid);
@@ -634,7 +634,7 @@ void jabber_chat_change_nick(JabberChat *chat, const char *nick)
 
 	purple_status_to_jabber(status, &state, &msg, &priority);
 
-	presence = jabber_presence_create(state, msg, priority);
+	presence = jabber_presence_create_js(chat->js, state, msg, priority);
 	full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server, nick);
 	xmlnode_set_attrib(presence, "to", full_jid);
 	g_free(full_jid);
@@ -833,12 +833,18 @@ void jabber_chat_remove_handle(JabberChat *chat, const char *handle)
 
 gboolean jabber_chat_ban_user(JabberChat *chat, const char *who, const char *why)
 {
-	JabberIq *iq;
-	JabberChatMember *jcm = g_hash_table_lookup(chat->members, who);
+	JabberChatMember *jcm;
+	const char *jid;
 	char *to;
+	JabberIq *iq;
 	xmlnode *query, *item, *reason;
 
-	if(!jcm || !jcm->jid)
+	jcm = g_hash_table_lookup(chat->members, who);
+	if (jcm && jcm->jid)
+		jid = jcm->jid;
+	else if (g_utf8_strchr(who, -1, '@') != NULL)
+		jid = who;
+	else
 		return FALSE;
 
 	iq = jabber_iq_new_query(chat->js, JABBER_IQ_SET,
@@ -850,7 +856,7 @@ gboolean jabber_chat_ban_user(JabberChat *chat, const char *who, const char *why
 
 	query = xmlnode_get_child(iq->node, "query");
 	item = xmlnode_new_child(query, "item");
-	xmlnode_set_attrib(item, "jid", jcm->jid);
+	xmlnode_set_attrib(item, "jid", jid);
 	xmlnode_set_attrib(item, "affiliation", "outcast");
 	if(why) {
 		reason = xmlnode_new_child(item, "reason");
@@ -864,14 +870,18 @@ gboolean jabber_chat_ban_user(JabberChat *chat, const char *who, const char *why
 
 gboolean jabber_chat_affiliate_user(JabberChat *chat, const char *who, const char *affiliation)
 {
+	JabberChatMember *jcm;
+	const char *jid;
 	char *to;
 	JabberIq *iq;
 	xmlnode *query, *item;
-	JabberChatMember *jcm;
 
 	jcm = g_hash_table_lookup(chat->members, who);
-
-	if (!jcm || !jcm->jid)
+	if (jcm && jcm->jid)
+		jid = jcm->jid;
+	else if (g_utf8_strchr(who, -1, '@') != NULL)
+		jid = who;
+	else
 		return FALSE;
 
 	iq = jabber_iq_new_query(chat->js, JABBER_IQ_SET,
@@ -883,7 +893,7 @@ gboolean jabber_chat_affiliate_user(JabberChat *chat, const char *who, const cha
 
 	query = xmlnode_get_child(iq->node, "query");
 	item = xmlnode_new_child(query, "item");
-	xmlnode_set_attrib(item, "jid", jcm->jid);
+	xmlnode_set_attrib(item, "jid", jid);
 	xmlnode_set_attrib(item, "affiliation", affiliation);
 
 	jabber_iq_send(iq);

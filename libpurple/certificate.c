@@ -23,7 +23,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include <glib.h>
@@ -580,7 +580,12 @@ PurpleCertificateVerifier x509_singleuse = {
 	"x509",                         /* Scheme name */
 	"singleuse",                    /* Verifier name */
 	x509_singleuse_start_verify,    /* start_verification function */
-	x509_singleuse_destroy_request  /* Request cleanup operation */
+	x509_singleuse_destroy_request, /* Request cleanup operation */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 
@@ -872,7 +877,13 @@ static PurpleCertificatePool x509_ca = {
 	x509_ca_get_cert,             /* Cert retriever */
 	x509_ca_put_cert,             /* Cert writer */
 	x509_ca_delete_cert,          /* Cert remover */
-	x509_ca_get_idlist            /* idlist retriever */
+	x509_ca_get_idlist,           /* idlist retriever */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
+
 };
 
 
@@ -1034,7 +1045,12 @@ static PurpleCertificatePool x509_tls_peers = {
 	x509_tls_peers_get_cert,      /* Cert retriever */
 	x509_tls_peers_put_cert,      /* Cert writer */
 	x509_tls_peers_delete_cert,   /* Cert remover */
-	x509_tls_peers_get_idlist     /* idlist retriever */
+	x509_tls_peers_get_idlist,    /* idlist retriever */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 
@@ -1240,6 +1256,9 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 }
 
 /* For when we've never communicated with this party before */
+/* TODO: Need ways to specify possibly multiple problems with a cert, or at
+   least  reprioritize them. For example, maybe the signature ought to be
+   checked BEFORE the hostname checking? */
 static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 {
@@ -1280,7 +1299,27 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		return;
 	} /* if (name mismatch) */
 
-			
+	/* TODO: Figure out a way to check for a bad signature, as opposed to
+	   "not self-signed" */
+	if ( purple_certificate_signed_by(peer_crt, peer_crt) ) {
+		gchar *msg;
+		
+		purple_debug_info("certificate/x509/tls_cached",
+				  "Certificate for %s is self-signed.\n",
+				  vrq->subject_name);
+
+		/* Prompt the user to authenticate the certificate */
+		/* vrq will be completed by user_auth */
+		msg = g_strdup_printf(_("The certificate presented by \"%s\" "
+					"is self-signed. It cannot be "
+					"automatically checked."),
+				      vrq->subject_name);
+				      
+		x509_tls_cached_user_auth(vrq,msg);
+
+		g_free(msg);
+		return;
+	} /* if (name mismatch) */
 	
 	/* Next, check that the certificate chain is valid */
 	if ( ! purple_certificate_check_signature_chain(chain) ) {
@@ -1459,7 +1498,13 @@ static PurpleCertificateVerifier x509_tls_cached = {
 	"x509",                         /* Scheme name */
 	"tls_cached",                   /* Verifier name */
 	x509_tls_cached_start_verify,   /* Verification begin */
-	x509_tls_cached_destroy_request /* Request cleanup */
+	x509_tls_cached_destroy_request,/* Request cleanup */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
+
 };
 
 /****************************************************************************/

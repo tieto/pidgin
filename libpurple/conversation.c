@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "blist.h"
@@ -39,7 +39,6 @@ static GList *conversations = NULL;
 static GList *ims = NULL;
 static GList *chats = NULL;
 static PurpleConversationUiOps *default_ops = NULL;
-static GHashTable *histories = NULL;
 
 void
 purple_conversations_set_ui_ops(PurpleConversationUiOps *ops)
@@ -209,7 +208,6 @@ static void
 add_message_to_history(PurpleConversation *conv, const char *who, const char *message,
 		PurpleMessageFlags flags, time_t when)
 {
-	GList *list;
 	PurpleConvMessage *msg;
 
 	if (flags & PURPLE_MESSAGE_SEND) {
@@ -228,9 +226,7 @@ add_message_to_history(PurpleConversation *conv, const char *who, const char *me
 	msg->what = g_strdup(message);
 	msg->when = when;
 
-	list = g_hash_table_lookup(histories, conv);
-	list = g_list_prepend(list, msg);
-	g_hash_table_insert(histories, conv, list);
+	conv->message_history = g_list_prepend(conv->message_history, msg);
 }
 
 static void
@@ -2068,14 +2064,14 @@ purple_conversation_get_extended_menu(PurpleConversation *conv)
 
 void purple_conversation_clear_message_history(PurpleConversation *conv)
 {
-	GList *list = g_hash_table_lookup(histories, conv);
+	GList *list = conv->message_history;
 	message_history_free(list);
-	g_hash_table_remove(histories, conv);
+	conv->message_history = NULL;
 }
 
 GList *purple_conversation_get_message_history(PurpleConversation *conv)
 {
-	return g_hash_table_lookup(histories, conv);
+	return conv->message_history;
 }
 
 const char *purple_conversation_message_get_sender(PurpleConvMessage *msg)
@@ -2382,9 +2378,6 @@ purple_conversations_init(void)
 			     purple_value_new(PURPLE_TYPE_SUBTYPE,
 					    PURPLE_SUBTYPE_CONVERSATION),
 			     purple_value_new(PURPLE_TYPE_BOXED, "GList **"));
-
-	/* Initialize the history */
-	histories = g_hash_table_new(g_direct_hash, g_direct_equal);
 }
 
 void
@@ -2393,6 +2386,5 @@ purple_conversations_uninit(void)
 	while (conversations)
 		purple_conversation_destroy((PurpleConversation*)conversations->data);
 	purple_signals_unregister_by_instance(purple_conversations_get_handle());
-	g_hash_table_destroy(histories);
-	histories = NULL;
 }
+

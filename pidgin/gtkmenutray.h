@@ -1,8 +1,9 @@
 /**
  * @file gtkmenutray.h GTK+ Tray menu item
  * @ingroup pidgin
- *
- * Pidgin is the legal property of its developers, whose names are too numerous
+ */
+
+/* Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -18,7 +19,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef PIDGIN_MENU_TRAY_H
 #define PIDGIN_MENU_TRAY_H

@@ -1,8 +1,9 @@
 /*
  * @file gtkdialogs.c GTK+ Dialogs
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "pidgin.h"
@@ -95,8 +96,7 @@ static struct developer developers[] = {
 /* Order: Alphabetical by Last Name */
 static struct developer patch_writers[] = {
 	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
-	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
-        {"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
+	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
 	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
 	{"Will 'resiak' Thompson",	NULL,	NULL},
@@ -122,6 +122,7 @@ static struct developer retired_developers[] = {
 static struct developer retired_patch_writers[] = {
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
+	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},
 	{"Benjamin Miller",				NULL,	NULL},
 	{NULL, NULL, NULL}
@@ -131,6 +132,7 @@ static struct developer retired_patch_writers[] = {
 static struct translator current_translators[] = {
 	{N_("Afrikaans"),           "af", "Friedel Wolff", "friedel@translate.org.za"},
 	{N_("Arabic"),              "ar", "Mohamed Magdy", "alnokta@yahoo.com"},
+	{N_("Belarusian Latin"),    "be@latin", "Ihar Hrachyshka", "ihar.hrachyshka@gmail.com"},
 	{N_("Bulgarian"),           "bg", "Vladimira Girginova", "missing@here.is"},
 	{N_("Bulgarian"),           "bg", "Vladimir (Kaladan) Petkov", "vpetkov@i-space.org"},
 	{N_("Bengali"),             "bn", "INDRANIL DAS GUPTA", "indradg@l2c2.org"},
@@ -170,7 +172,7 @@ static struct translator current_translators[] = {
 	{N_("Gujarati"),            "gu", N_("Gujarati Language Team"), "indianoss-gujarati@lists.sourceforge.net"},
 	{N_("Hebrew"),              "he", "Shalom Craimer", "scraimer@gmail.com"},
 	{N_("Hindi"),               "hi", "Ravishankar Shrivastava", "raviratlami@yahoo.com"},
-	{N_("Hungarian"),           "hu", "Zoltan Sutto", "sutto.zoltan@rutinsoft.hu"},
+	{N_("Hungarian"),           "hu", "Kelemen Gábor", "kelemeng@gnome.hu"},
 	{N_("Indonesian"),          "id", "Rai S. Regawa", "raireg@yahoo.com"},
 	{N_("Italian"),             "it", "Claudio Satriano", "satriano@na.infn.it"},
 	{N_("Japanese"),            "ja", "Takashi Aihana", "aihana@gnome.gr.jp"},
@@ -227,7 +229,7 @@ static struct translator past_translators[] = {
 	{N_("Spanish"),             "es", "JM Pérez Cáncer", NULL},
 	{N_("Spanish"),             "es", "Nicolás Lichtmaier", NULL},
 	{N_("Spanish"),             "es", "Amaya Rodrigo", NULL},
-	{N_("Spanish"),				"es", "Alejandro G Villar", NULL},
+	{N_("Spanish"),             "es", "Alejandro G Villar", NULL},
 	{N_("Finnish"),             "fi", "Arto Alakulju", NULL},
 	{N_("Finnish"),             "fi", "Tero Kuusela", NULL},
 	{N_("French"),              "fr", "Sébastien François", NULL},
@@ -236,7 +238,8 @@ static struct translator past_translators[] = {
 	{N_("French"),              "fr", "Loïc Jeannin", NULL},
 	{N_("Galician"),            "gl", "Ignacio Casal Quinteiro", NULL},
 	{N_("Hebrew"),              "he", "Pavel Bibergal", NULL},
-	{N_("Italian"),				"it", "Salvatore di Maggio", NULL},
+	{N_("Hungarian"),           "hu", "Zoltan Sutto", NULL},
+	{N_("Italian"),             "it", "Salvatore di Maggio", NULL},
 	{N_("Japanese"),            "ja", "Ryosuke Kutsuna", NULL},
 	{N_("Japanese"),            "ja", "Taku Yasui", NULL},
 	{N_("Japanese"),            "ja", "Junichi Uekawa", NULL},
@@ -305,14 +308,14 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	context = gtk_widget_get_pango_context(widget);
 	layout = pango_layout_new(context);
 
-	markup = g_strdup_printf("<span foreground=\"#FFFFFF\">%s</span>", VERSION);
+	markup = g_strdup_printf("<span foreground=\"#000000\">%s</span>", VERSION);
 	pango_layout_set_font_description(layout, style->font_desc);
 	pango_layout_set_markup(layout, markup, strlen(markup));
 	g_free(markup);
 
 	pango_layout_get_pixel_size(layout, &lwidth, &lheight);
 	gdk_draw_layout(GDK_DRAWABLE(pixmap), style->bg_gc[GTK_STATE_NORMAL],
-					width - (lwidth + 3), height - (lheight + 1), layout);
+					width - (lwidth + 3), 1, layout);
 	g_object_unref(G_OBJECT(layout));
 
 	*original = gdk_pixbuf_get_from_drawable(NULL, pixmap, NULL,
@@ -363,7 +366,9 @@ void pidgin_dialogs_about()
 	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "logo.png", NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
+#if 0  /* Don't versionize the logo when the logo has the version in it */
 	pidgin_logo_versionize(&pixbuf, logo);
+#endif
 	gtk_widget_destroy(logo);
 	logo = gtk_image_new_from_pixbuf(pixbuf);
 	gdk_pixbuf_unref(pixbuf);
@@ -396,6 +401,9 @@ void pidgin_dialogs_about()
 
 	g_string_append(str, "<FONT SIZE=\"4\">URL:</FONT> <A HREF=\""
 					PURPLE_WEBSITE "\">" PURPLE_WEBSITE "</A><BR/><BR/>");
+	g_string_append(str, "<FONT SIZE=\"4\">FAQ:</FONT> <A HREF=\""
+			"http://developer.pidgin.im/wiki/FAQ\">"
+			"http://developer.pidgin.im/wiki/FAQ</A><BR/><BR/>");
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
 						   "#pidgin on irc.freenode.net<BR><BR>"));
 
@@ -451,7 +459,7 @@ void pidgin_dialogs_about()
 		if (retired_patch_writers[i].email != NULL) {
 			g_string_append_printf(str, "  %s &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
 					retired_patch_writers[i].name,
-					retired_patch_writers[i].email, patch_writers[i].email);
+					retired_patch_writers[i].email, retired_patch_writers[i].email);
 		} else {
 			g_string_append_printf(str, "  %s<br/>",
 					retired_patch_writers[i].name);

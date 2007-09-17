@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 
@@ -394,6 +394,9 @@ show_usage(const char *name, gboolean terse)
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use, separated by commas)\n"
+#ifndef WIN32
+		       "  --display=DISPLAY   X display to use\n"
+#endif
 		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, VERSION, name);
 	}
 
@@ -481,6 +484,7 @@ int main(int argc, char *argv[])
 		{"nologin",  no_argument,       NULL, 'n'},
 		{"session",  required_argument, NULL, 's'},
 		{"version",  no_argument,       NULL, 'v'},
+		{"display",  required_argument, NULL, 'D'},
 		{0, 0, 0, 0}
 	};
 
@@ -625,6 +629,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'm':   /* do not ensure single instance. */
 			opt_si = FALSE;
+			break;
+		case 'D':   /* --display */
+			/* handled by gtk_init_check below */
 			break;
 		case '?':	/* show terse help */
 		default:

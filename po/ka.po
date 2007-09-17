@@ -11603,7 +11603,7 @@ msgid "Active which ID?"
 msgstr ""
 
 #: ../src/protocols/yahoo/yahoo.c:3017
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr ""
 
 #: ../src/protocols/yahoo/yahoo.c:3027

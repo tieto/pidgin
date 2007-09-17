@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "internal.h"
@@ -57,22 +57,16 @@ static GtkWidget *widget_size_widgets[G_N_ELEMENTS(widget_size_prefs)];
 
 static const gchar *font_prefs[] = {
 	"/plugins/gtk/purplerc/font/*pidgin_conv_entry",
-	"/plugins/gtk/purplerc/font/*pidgin_conv_imhtml",
-	"/plugins/gtk/purplerc/font/*pidgin_log_imhtml",
 	"/plugins/gtk/purplerc/font/*pidgin_request_imhtml",
 	"/plugins/gtk/purplerc/font/*pidgin_notify_imhtml",
 };
 static const gchar *font_prefs_set[] = {
 	"/plugins/gtk/purplerc/set/font/*pidgin_conv_entry",
-	"/plugins/gtk/purplerc/set/font/*pidgin_conv_imhtml",
-	"/plugins/gtk/purplerc/set/font/*pidgin_log_imhtml",
 	"/plugins/gtk/purplerc/set/font/*pidgin_request_imhtml",
 	"/plugins/gtk/purplerc/set/font/*pidgin_notify_imhtml",
 };
 static const gchar *font_names[] = {
 	N_("Conversation Entry"),
-	N_("Conversation History"),
-	N_("Log Viewer"),
 	N_("Request Dialog"),
 	N_("Notify Dialog")
 };

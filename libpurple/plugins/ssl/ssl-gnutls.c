@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "internal.h"
 #include "debug.h"
@@ -911,7 +911,13 @@ static PurpleCertificateScheme x509_gnutls = {
 	x509_issuer_dn,                  /* Issuer Unique ID */
 	x509_common_name,                /* Subject name */
 	x509_check_name,                 /* Check subject name */
-	x509_times                       /* Activation/Expiration time */
+	x509_times,                      /* Activation/Expiration time */
+
+	NULL,
+	NULL,
+	NULL,
+	NULL
+
 };
 
 static PurpleSslOps ssl_ops =

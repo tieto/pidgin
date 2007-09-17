@@ -1,8 +1,9 @@
 /**
  * @file server.h Server API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _PURPLE_SERVER_H_
 #define _PURPLE_SERVER_H_
@@ -64,7 +65,7 @@ PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account,
  *
  * @param gc The connection to send the message on.
  * @param who Whose attention to request.
- * @param type An index into the prpl's attention_types list determining the type
+ * @param type_code An index into the prpl's attention_types list determining the type
  * 	of the attention request command to send. 0 if prpl only defines one
  * 	(for example, Yahoo and MSN), but some protocols define more (MySpaceIM).
  *
@@ -77,7 +78,7 @@ void serv_send_attention(PurpleConnection *gc, const char *who, guint type_code)
  *
  * @param gc The connection that received the attention message.
  * @param who Who requested your attention.
- * @param type An index into the prpl's attention_types list determining the type
+ * @param type_code An index into the prpl's attention_types list determining the type
  * 	of the attention request command to send. 
  */
 void serv_got_attention(PurpleConnection *gc, const char *who, guint type_code);

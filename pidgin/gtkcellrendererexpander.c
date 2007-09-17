@@ -1,8 +1,9 @@
 /*
  * @file gtkcellrendererexpander.c GTK+ Cell Renderer Expander
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,7 +21,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 
@@ -269,6 +270,9 @@ static void pidgin_cell_renderer_expander_render (GtkCellRenderer *cell,
 			    cell_area->x + cell->xpad + (width / 2),
 			    cell_area->y + cell->ypad + (height / 2),
 			    cell->is_expanded ? GTK_EXPANDER_EXPANDED : GTK_EXPANDER_COLLAPSED);
+	if (cell->is_expanded)
+		gtk_paint_hline (widget->style, window, state, NULL, widget, NULL, 0, 
+				 widget->allocation.width, cell_area->y + cell_area->height);
 }
 
 static gboolean pidgin_cell_renderer_expander_activate(GtkCellRenderer *r,

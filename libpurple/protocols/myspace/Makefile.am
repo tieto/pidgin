@@ -2,18 +2,19 @@ EXTRA_DIST = Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
-SOURCES = myspace.c \
-	  myspace.h \
-	  persist.h \
+MSIMSOURCES = markup.c \
+	  markup.h \
 	  message.c \
 	  message.h \
-	  zap.c \
+	  myspace.c \
+	  myspace.h \
+	  persist.h \
 	  session.c \
 	  session.h \
-	  markup.c \
-	  markup.h \
 	  user.c \
-	  user.h
+	  user.h \
+	  zap.c \
+	  zap.h
 
 AM_CFLAGS = $(st)
 
@@ -23,14 +24,14 @@ if STATIC_MYSPACE
 
 st = -DPURPLE_STATIC_PRPL
 noinst_LIBRARIES     = libmyspace.a
-libmyspace_a_SOURCES = $(SOURCES)
+libmyspace_a_SOURCES = $(MSIMSOURCES)
 libmyspace_a_CFLAGS  = $(AM_CFLAGS)
 
 else
 
 st =
 pkg_LTLIBRARIES       = libmyspace.la
-libmyspace_la_SOURCES = $(SOURCES)
+libmyspace_la_SOURCES = $(MSIMSOURCES)
 libmyspace_la_LIBADD  = $(GLIB_LIBS)
 
 endif

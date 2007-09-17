@@ -1,8 +1,9 @@
 /**
  * @file proxy.c Proxy API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -20,7 +21,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  *
  */
 
@@ -400,7 +401,7 @@ socket_ready_cb(gpointer data, gint source, PurpleInputCondition cond)
  	 */
 	if (!PURPLE_PROXY_CONNECT_DATA_IS_VALID(connect_data))
 		return;
-	
+
 	purple_debug_info("proxy", "Connected to %s:%d.\n",
 					connect_data->host, connect_data->port);
 
@@ -420,7 +421,7 @@ socket_ready_cb(gpointer data, gint source, PurpleInputCondition cond)
 	if (ret == 0 && error == EINPROGRESS) {
 		/* No worries - we'll be called again later */
 		/* TODO: Does this ever happen? */
-		purple_debug_info("proxy", "(ret == 0 && error == EINPROGRESS)");
+		purple_debug_info("proxy", "(ret == 0 && error == EINPROGRESS)\n");
 		return;
 	}
 
@@ -668,6 +669,16 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 		if (status == 407 /* Proxy Auth */)
 		{
 			gchar *ntlm;
+			char hostname[256];
+			int ret;
+
+			ret = gethostname(hostname, sizeof(hostname));
+			hostname[sizeof(hostname) - 1] = '\0';
+			if (ret < 0 || hostname[0] == '\0') {
+				purple_debug_warning("proxy", "gethostname() failed -- is your hostname set?");
+				strcpy(hostname, "localhost");
+			}
+
 			ntlm = g_strrstr((const gchar *)connect_data->read_buffer,
 					"Proxy-Authenticate: NTLM ");
 			if (ntlm != NULL)
@@ -679,6 +690,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 				gchar *username;
 				gchar *request;
 				gchar *response;
+
 				username = strchr(domain, '\\');
 				if (username == NULL)
 				{
@@ -694,7 +706,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 				nonce = purple_ntlm_parse_type2(ntlm, NULL);
 				response = purple_ntlm_gen_type3(username,
 					(gchar*) purple_proxy_info_get_password(connect_data->gpi),
-					(gchar*) purple_proxy_info_get_host(connect_data->gpi),
+					hostname,
 					domain, nonce, NULL);
 				username--;
 				*username = '\\';
@@ -745,9 +757,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 					sizeof(request) - request_len,
 					"Proxy-Authorization: NTLM %s\r\n"
 					"Proxy-Connection: Keep-Alive\r\n\r\n",
-					purple_ntlm_gen_type1(
-						(gchar*) purple_proxy_info_get_host(connect_data->gpi),
-						domain));
+					purple_ntlm_gen_type1(hostname, domain));
 				*username = '\\';
 
 				purple_input_remove(connect_data->inpa);
@@ -832,6 +842,14 @@ http_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 	if (purple_proxy_info_get_username(connect_data->gpi) != NULL)
 	{
 		char *t1, *t2;
+		char hostname[256];
+
+		ret = gethostname(hostname, sizeof(hostname));
+		hostname[sizeof(hostname) - 1] = '\0';
+		if (ret < 0 || hostname[0] == '\0') {
+			purple_debug_warning("proxy", "gethostname() failed -- is your hostname set?");
+			strcpy(hostname, "localhost");
+		}
 
 		t1 = g_strdup_printf("%s:%s",
 			purple_proxy_info_get_username(connect_data->gpi),
@@ -844,8 +862,7 @@ http_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 			"Proxy-Authorization: Basic %s\r\n"
 			"Proxy-Authorization: NTLM %s\r\n"
 			"Proxy-Connection: Keep-Alive\r\n",
-			t2, purple_ntlm_gen_type1(
-					purple_proxy_info_get_host(connect_data->gpi), ""));
+			t2, purple_ntlm_gen_type1(hostname, ""));
 		g_free(t2);
 	}
 
@@ -1976,6 +1993,13 @@ purple_proxy_init(void)
 		proxy_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, "/purple/proxy/password",
 		proxy_pref_cb, NULL);
+
+	/* Load the initial proxy settings */
+	purple_prefs_trigger_callback("/purple/proxy/type");
+	purple_prefs_trigger_callback("/purple/proxy/host");
+	purple_prefs_trigger_callback("/purple/proxy/port");
+	purple_prefs_trigger_callback("/purple/proxy/username");
+	purple_prefs_trigger_callback("/purple/proxy/password");
 }
 
 void

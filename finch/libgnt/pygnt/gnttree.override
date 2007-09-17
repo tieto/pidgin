@@ -16,7 +16,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02111-1301
  * USA
  */
 %%
@@ -51,7 +51,6 @@ _wrap_gnt_tree_get_rows(PyGObject *self)
 	while (list) {
 		PyObject *obj = list->data;
 		PyList_Append(py_list, obj);
-		Py_DECREF(obj);
 		list = list->next;
 	}
 	return py_list;
@@ -88,6 +87,11 @@ _wrap_gnt_tree_add_row_after(PyGObject *self, PyObject *args)
 		list = g_list_prepend(list, PyString_AsString(item));
 		Py_DECREF(item);
 	}
+
+	if (parent == Py_None)
+		parent = NULL;
+	if (bigbro == Py_None)
+		bigbro = NULL;
 
 	list = g_list_reverse(list);
 	row = gnt_tree_create_row_from_list(GNT_TREE(self->obj), list);

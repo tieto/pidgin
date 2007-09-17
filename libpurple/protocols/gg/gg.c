@@ -22,7 +22,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
 #include "internal.h"
@@ -411,6 +411,8 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	purple_notify_info(NULL, _("New Gadu-Gadu Account Registered"),
 			 _("Registration completed successfully!"), NULL);
 
+	if(account->registration_cb)
+		(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
 	/* TODO: the currently open Accounts Window will not be updated withthe
 	 * new username and etc, we need to somehow have it refresh at this
 	 * point
@@ -420,6 +422,9 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 	purple_connection_destroy(gc);
 
 exit_err:
+	if(account->registration_cb)
+		(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
+
 	gg_register_free(h);
 	g_free(email);
 	g_free(p1);
