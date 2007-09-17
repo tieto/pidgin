@@ -119,11 +119,13 @@ typedef struct
 	 *  the UI of what is happening, as well as which @a step out of @a
 	 *  step_count has been reached (which might be displayed as a progress
 	 *  bar).
+	 *  @see #purple_connection_update_progress
 	 */
 	void (*connect_progress)(PurpleConnection *gc,
 	                         const char *text,
 	                         size_t step,
 	                         size_t step_count);
+
 	/** Called when a connection is established (just before the
 	 *  @ref signed-on signal).
 	 */
@@ -132,17 +134,23 @@ typedef struct
 	 *  and @ref signed-off signals).
 	 */
 	void (*disconnected)(PurpleConnection *gc);
+
 	/** Used to display connection-specific notices.  (Pidgin's Gtk user
 	 *  interface implements this as a no-op; #purple_connection_notice(),
 	 *  which uses this operation, is not used by any of the protocols
 	 *  shipped with libpurple.)
 	 */
 	void (*notice)(PurpleConnection *gc, const char *text);
+
 	/** Called when an error causes a connection to be disconnected.
 	 *  Called before #disconnected.
 	 *  @param text  a localized error message.
+	 *  @see #purple_connection_error
+	 *  @deprecated in favour of
+	 *              #PurpleConnectionUiOps.report_disconnect_reason.
 	 */
 	void (*report_disconnect)(PurpleConnection *gc, const char *text);
+
 	/** Called when libpurple discovers that the computer's network
 	 *  connection is active.  On Linux, this uses Network Manager if
 	 *  available; on Windows, it uses Win32's network change notification
@@ -154,10 +162,21 @@ typedef struct
 	 */
 	void (*network_disconnected)();
 
+	/** Called when a connection is disconnected, whether due to an
+	 *  error or to user request.  Called before #disconnected.
+	 *  @param reason  why the connection ended, if known, or
+	 *                 PURPLE_REASON_OTHER_ERROR, if not.
+	 *  @param text  a localized message describing the disconnection
+	 *               in more detail to the user.
+	 *  @see #purple_connection_error_reason
+	 */
+	void (*report_disconnect_reason)(PurpleConnection *gc,
+	                                 PurpleDisconnectReason reason,
+	                                 const char *text);
+
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
 } PurpleConnectionUiOps;
 
 struct _PurpleConnection
@@ -335,8 +354,23 @@ void purple_connection_notice(PurpleConnection *gc, const char *text);
  *
  * @param gc     The connection.
  * @param reason The error text.
+ * @deprecated in favour of #purple_connection_error_reason.  Calling
+ *  @c purple_connection_error(gc, text) is equivalent to calling
+ *  @c purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR, text).
  */
 void purple_connection_error(PurpleConnection *gc, const char *reason);
+
+/**
+ * Closes a connection with an error and an optional description of the
+ * error.
+ *
+ * @param reason      why the connection is closing.
+ * @param description a localized description of the error.
+ */
+void
+purple_connection_error_reason (PurpleConnection *gc,
+                                PurpleDisconnectReason reason,
+                                const char *description);
 
 /*@}*/
 

@@ -487,14 +487,24 @@ purple_connection_disconnect_cb(gpointer data)
 void
 purple_connection_error(PurpleConnection *gc, const char *text)
 {
+	purple_connection_error_reason (gc, PURPLE_REASON_OTHER_ERROR, text);
+}
+
+void
+purple_connection_error_reason (PurpleConnection *gc,
+                                PurpleDisconnectReason reason,
+                                const char *description)
+{
 	PurpleConnectionUiOps *ops;
 
 	g_return_if_fail(gc   != NULL);
 
-	if (text == NULL) {
-		purple_debug_error("connection", "purple_connection_error: check `text != NULL' failed\n");
-		text = _("Unknown error");
+	if (description == NULL) {
+		purple_debug_error("connection", "purple_connection_error_reason: check `description != NULL' failed\n");
+		description = _("Unknown error");
 	}
+
+	g_assert (reason >= 0 && reason < PURPLE_NUM_REASONS);
 
 	/* If we've already got one error, we don't need any more */
 	if (gc->disconnect_timeout)
@@ -502,8 +512,13 @@ purple_connection_error(PurpleConnection *gc, const char *text)
 
 	ops = purple_connections_get_ui_ops();
 
-	if (ops != NULL && ops->report_disconnect != NULL)
-		ops->report_disconnect(gc, text);
+	if (ops != NULL)
+	{
+		if (ops->report_disconnect_reason != NULL)
+			ops->report_disconnect_reason (gc, reason, description);
+		if (ops->report_disconnect != NULL)
+			ops->report_disconnect (gc, description);
+	}
 
 	gc->disconnect_timeout = purple_timeout_add(0, purple_connection_disconnect_cb,
 			purple_connection_get_account(gc));
