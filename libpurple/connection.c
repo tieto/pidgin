@@ -524,6 +524,34 @@ purple_connection_error_reason (PurpleConnection *gc,
 			purple_connection_get_account(gc));
 }
 
+gboolean
+purple_connection_reason_is_fatal (PurpleDisconnectReason reason)
+{
+	switch (reason)
+	{
+		case PURPLE_REASON_NONE_SPECIFIED:
+		case PURPLE_REASON_NETWORK_ERROR:
+			return FALSE;
+		case PURPLE_REASON_REQUESTED:
+		case PURPLE_REASON_AUTHENTICATION_FAILED:
+		case PURPLE_REASON_ENCRYPTION_ERROR:
+		case PURPLE_REASON_NAME_IN_USE:
+		case PURPLE_REASON_CERT_NOT_PROVIDED:
+		case PURPLE_REASON_CERT_UNTRUSTED:
+		case PURPLE_REASON_CERT_EXPIRED:
+		case PURPLE_REASON_CERT_NOT_ACTIVATED:
+		case PURPLE_REASON_CERT_HOSTNAME_MISMATCH:
+		case PURPLE_REASON_CERT_FINGERPRINT_MISMATCH:
+		case PURPLE_REASON_CERT_SELF_SIGNED:
+		case PURPLE_REASON_CERT_OTHER_ERROR:
+		case PURPLE_REASON_OTHER_ERROR:
+			return TRUE;
+		default:
+			g_assert_not_reached ();
+			return TRUE;
+	}
+}
+
 void
 purple_connections_disconnect_all(void)
 {

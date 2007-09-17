@@ -372,6 +372,26 @@ purple_connection_error_reason (PurpleConnection *gc,
                                 PurpleDisconnectReason reason,
                                 const char *description);
 
+/**
+ * Reports whether a disconnection reason is fatal (in which case the account
+ * should probably not be automatically reconnected) or transient (so
+ * auto-reconnection is a good idea.
+ * For instance, #PURPLE_REASON_NETWORK_ERROR is a temporary
+ * error, which might be caused by losing the network connection, so
+ * @a purple_connection_reason_is_fatal(PURPLE_REASON_NETWORK_ERROR) is
+ * @a FALSE.  On the other hand, #PURPLE_REASON_AUTHENTICATION_FAILED probably
+ * indicates a misconfiguration of the account which needs the user to go fix
+ * it up, so @a
+ * purple_connection_reason_is_fatal(PURPLE_REASON_AUTHENTICATION_FAILED)
+ * is @a TRUE.
+ *
+ * (This function is meant to replace checking PurpleConnection.wants_to_die.)
+ *
+ * @return @a TRUE iff automatic reconnection is a bad idea.
+ */
+gboolean
+purple_connection_reason_is_fatal (PurpleDisconnectReason reason);
+
 /*@}*/
 
 /**************************************************************************/
