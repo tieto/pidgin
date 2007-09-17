@@ -67,6 +67,9 @@
 /*#define MSIM_DEBUG_LOGIN_CHALLENGE*/
 /*#define MSIM_DEBUG_RXBUF            */
 
+/* Encode unknown HTML tags in messages in [], instead of ignoring */
+#define MSIM_MARKUP_SHOW_UNKNOWN_TAGS 
+
 /* Define to cause init_plugin() to run some tests and print
  * the results to the Purple debug log, then exit. Useful to 
  * run with 'pidgin -d' to see the output. Don't define if

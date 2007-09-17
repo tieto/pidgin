@@ -68,7 +68,7 @@ struct _PurpleUtilFetchUrlData
 };
 
 static char *custom_user_dir = NULL;
-static char *home_dir = NULL;
+static char *user_dir = NULL;
 
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
@@ -2464,10 +2464,10 @@ purple_user_dir(void)
 {
 	if (custom_user_dir != NULL)
 		return custom_user_dir;
-	else if (!home_dir)
-		home_dir = g_build_filename(purple_home_dir(), ".purple", NULL);
+	else if (!user_dir)
+		user_dir = g_build_filename(purple_home_dir(), ".purple", NULL);
 
-	return home_dir;
+	return user_dir;
 }
 
 void purple_util_set_user_dir(const char *dir)
