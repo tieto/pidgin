@@ -504,7 +504,7 @@ purple_connection_error_reason (PurpleConnection *gc,
 		description = _("Unknown error");
 	}
 
-	g_assert (reason >= 0 && reason < PURPLE_NUM_REASONS);
+	g_assert (reason < PURPLE_NUM_REASONS);
 
 	/* If we've already got one error, we don't need any more */
 	if (gc->disconnect_timeout)
@@ -529,10 +529,8 @@ purple_connection_reason_is_fatal (PurpleDisconnectReason reason)
 {
 	switch (reason)
 	{
-		case PURPLE_REASON_NONE_SPECIFIED:
 		case PURPLE_REASON_NETWORK_ERROR:
 			return FALSE;
-		case PURPLE_REASON_REQUESTED:
 		case PURPLE_REASON_AUTHENTICATION_FAILED:
 		case PURPLE_REASON_ENCRYPTION_ERROR:
 		case PURPLE_REASON_NAME_IN_USE:
