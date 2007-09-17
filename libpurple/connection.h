@@ -54,45 +54,46 @@ typedef enum
 
 } PurpleConnectionState;
 
+/** Possible errors that can cause a connection to be closed. */
 typedef enum
 {
-	/** There is no reason set for this state change. */
-	PURPLE_REASON_NONE_SPECIFIED = 0,
-	/** The change is in response to a user request. */
-	PURPLE_REASON_REQUESTED = 1,
-
 	/** There was an error sending or receiving on the network socket. */
-	PURPLE_REASON_NETWORK_ERROR = 2,
+	PURPLE_REASON_NETWORK_ERROR = 0,
 	/** The username or password was invalid. */
-	PURPLE_REASON_AUTHENTICATION_FAILED = 3,
+	PURPLE_REASON_AUTHENTICATION_FAILED,
 	/** There was an error negotiating SSL on this connection, or encryption
 	 *  was unavailable and an account option was set to require it.
 	 */
-	PURPLE_REASON_ENCRYPTION_ERROR = 4,
+	PURPLE_REASON_ENCRYPTION_ERROR,
 	/** Someone is already connected to the server using the name you are
 	 *  trying to connect with.
 	 */
-	PURPLE_REASON_NAME_IN_USE = 5,
+	PURPLE_REASON_NAME_IN_USE,
 
 	/** The server did not provide a SSL certificate. */
-	PURPLE_REASON_CERT_NOT_PROVIDED = 6,
+	PURPLE_REASON_CERT_NOT_PROVIDED,
 	/** The server's SSL certificate could not be trusted. */
-	PURPLE_REASON_CERT_UNTRUSTED = 7,
+	PURPLE_REASON_CERT_UNTRUSTED,
 	/** The server's SSL certificate has expired. */
-	PURPLE_REASON_CERT_EXPIRED = 8,
+	PURPLE_REASON_CERT_EXPIRED,
 	/** The server's SSL certificate is not yet valid. */
-	PURPLE_REASON_CERT_NOT_ACTIVATED = 9,
+	PURPLE_REASON_CERT_NOT_ACTIVATED,
 	/** The server's SSL certificate did not match its hostname. */
-	PURPLE_REASON_CERT_HOSTNAME_MISMATCH = 10,
+	PURPLE_REASON_CERT_HOSTNAME_MISMATCH,
 	/** The server's SSL certificate does not have the expected
 	 *  fingerprint.
 	 */
-	PURPLE_REASON_CERT_FINGERPRINT_MISMATCH = 11,
+	PURPLE_REASON_CERT_FINGERPRINT_MISMATCH,
 	/** The server's SSL certificate is self-signed.  */
-	PURPLE_REASON_CERT_SELF_SIGNED = 12,
+	PURPLE_REASON_CERT_SELF_SIGNED,
 	/** There was some other error validating the server's SSL certificate.
 	 */
-	PURPLE_REASON_CERT_OTHER_ERROR = 13,
+	PURPLE_REASON_CERT_OTHER_ERROR,
+
+	/** Some other error occured which fits into none of the other
+	 *  categories.
+	 */
+	PURPLE_REASON_OTHER_ERROR,
 
 	/** The number of PurpleDisconnectReason elements; not a valid reason.
 	 */
