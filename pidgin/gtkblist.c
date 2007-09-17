@@ -3451,7 +3451,7 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 		}
 
 		p = purple_buddy_get_presence(buddy);
-		trans = (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL);
+		trans = purple_presence_is_idle(p);
 
 		if (PURPLE_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
 			icon = PIDGIN_STOCK_STATUS_LOGIN;
