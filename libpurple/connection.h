@@ -71,6 +71,13 @@ typedef enum
 	 */
 	PURPLE_REASON_NAME_IN_USE,
 
+	/** The username for the account isn't valid.
+	 *  @todo This reason really shouldn't be necessary.  Usernames and
+	 *        other account preferences should be validated when the
+	 *        account is created.
+	 */
+	PURPLE_REASON_INVALID_USERNAME,
+
 	/** The server did not provide a SSL certificate. */
 	PURPLE_REASON_CERT_NOT_PROVIDED,
 	/** The server's SSL certificate could not be trusted. */
