@@ -357,7 +357,6 @@ static gboolean do_login(PurpleConnection *gc) {
 	if (pass && *pass) {
 		buf = irc_format(irc, "vv", "PASS", pass);
 		if (irc_send(irc, buf) < 0) {
-/*			purple_connection_error(gc, "Error sending password"); */
 			g_free(buf);
 			return FALSE;
 		}
@@ -389,14 +388,12 @@ static gboolean do_login(PurpleConnection *gc) {
 			      strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
 	g_free(tmp);
 	if (irc_send(irc, buf) < 0) {
-/*		purple_connection_error(gc, "Error registering with server");*/
 		g_free(buf);
 		return FALSE;
 	}
 	g_free(buf);
 	buf = irc_format(irc, "vn", "NICK", purple_connection_get_display_name(gc));
 	if (irc_send(irc, buf) < 0) {
-/*		purple_connection_error(gc, "Error sending nickname");*/
 		g_free(buf);
 		return FALSE;
 	}
