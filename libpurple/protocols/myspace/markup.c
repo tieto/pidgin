@@ -504,6 +504,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 
 		/* TODO: color (bg uses <body>), emoticons */
 	} else {
+		gchar *err;
 
 #ifdef MSIM_MARKUP_SHOW_UNKNOWN_TAGS
 		*begin = g_strdup_printf("[%s]", root->name);
@@ -512,6 +513,11 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		*begin = g_strdup("");
 		*end = g_strdup("");
 #endif
+
+		err = g_strdup_printf("html_tag_to_msim_markup: unrecognized "
+			"HTML tag %s was sent by the IM client; ignoring");
+		msim_unrecognized(NULL, NULL, err);
+		g_free(err);
 	}
 }
 
