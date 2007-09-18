@@ -109,7 +109,8 @@ bonjour_login(PurpleAccount *account)
 
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
 		/* Send a message about the connection error */
-		purple_connection_error(gc, _("Unable to listen for incoming IM connections\n"));
+		purple_connection_error_reason (gc, PURPLE_REASON_NETWORK_ERROR,
+			_("Unable to listen for incoming IM connections\n"));
 		return;
 	}
 
@@ -134,7 +135,8 @@ bonjour_login(PurpleAccount *account)
 	bd->dns_sd_data->account = account;
 	if (!bonjour_dns_sd_start(bd->dns_sd_data))
 	{
-		purple_connection_error(gc, _("Unable to establish connection with the local mDNS server.  Is it running?"));
+		purple_connection_error_reason (gc, PURPLE_REASON_NETWORK_ERROR,
+			_("Unable to establish connection with the local mDNS server.  Is it running?"));
 		return;
 	}
 
