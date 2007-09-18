@@ -4490,7 +4490,7 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	g_signal_connect(G_OBJECT(list), "motion-notify-event",
 					 G_CALLBACK(pidgin_userlist_motion_cb), gtkconv);
 	g_signal_connect(G_OBJECT(list), "leave-notify-event",
-					 G_CALLBACK(pidgin_userlist_motion_cb), gtkconv);
+					 G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 	g_signal_connect(G_OBJECT(list), "popup-menu",
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), gtkconv);
 	g_signal_connect(G_OBJECT(lbox), "size-allocate", G_CALLBACK(lbox_size_allocate_cb), gtkconv);
@@ -4618,10 +4618,8 @@ pidgin_userlist_tooltip_timeout(PidginConversation *gtkconv)
 
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
 
-	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(gtkchat->list),
-								  tooltip.userlistx, tooltip.userlisty, &path, &column, &x, &y);
-
-	if (path == NULL)
+	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(gtkchat->list),
+								  tooltip.userlistx, tooltip.userlisty, &path, &column, &x, &y))
 		return FALSE;
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
