@@ -141,6 +141,7 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		if(jabber_process_starttls(js, packet))
 			return;
 	} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE) && !js->gsc) {
+		js->gc->wants_to_die = TRUE;
 		purple_connection_error(js->gc, _("You require encryption, but it is not available on this server."));
 		return;
 	}

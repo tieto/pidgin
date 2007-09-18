@@ -1,8 +1,9 @@
 /**
  * @file gtkconv.c GTK+ Conversation API
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -219,7 +220,7 @@ close_this_sucker(gpointer data)
 }
 
 static gboolean
-close_conv_cb(GtkWidget *w, GdkEventButton *event, PidginConversation *gtkconv)
+close_conv_cb(GtkWidget *w, GdkEventButton *dontuse, PidginConversation *gtkconv)
 {
 	/* We are going to destroy the conversations immediately only if the 'close immediately'
 	 * preference is selected. Otherwise, close the conversation after a reasonable timeout
@@ -1912,6 +1913,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 				gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook),
 						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), curconv),
 						curconv - 1);
+				return TRUE;
 				break;
 
 			case GDK_period:
@@ -1922,6 +1924,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 #else
 						(curconv + 1) % g_list_length(GTK_NOTEBOOK(win->notebook)->children));
 #endif
+				return TRUE;
 				break;
 
 		} /* End of switch */
@@ -8833,15 +8836,10 @@ pidgin_conv_window_destroy(PidginWindow *win)
 
 	if (win->gtkconvs) {
 		while (win->gtkconvs) {
-			GList *nextgtk = win->gtkconvs->next;
-			PidginConversation *gtkconv = win->gtkconvs->data;
-			GList *nextcore = gtkconv->convs->next;
-			PurpleConversation *conv = gtkconv->convs->data;
-			purple_conversation_destroy(conv);
-			if (!nextgtk && !nextcore)
-			/* we'll end up invoking ourselves when we destroy our last child */
-			/* so don't destroy ourselves right now */
-				return;
+			gboolean last = (win->gtkconvs->next == NULL);
+			close_conv_cb(NULL, NULL, win->gtkconvs->data);
+			if (last)
+				break;
 		}
 		return;
 	}

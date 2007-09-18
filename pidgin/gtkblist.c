@@ -1,8 +1,9 @@
 /*
  * @file gtkblist.c GTK+ BuddyList API
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -87,6 +88,8 @@ typedef struct
 	GtkWidget *group_combo;
 	GtkWidget *entries_box;
 	GtkSizeGroup *sg;
+	GtkWidget *autojoin;
+	GtkWidget *persistent;
 
 	GList *entries;
 
@@ -317,8 +320,8 @@ static void gtk_blist_menu_send_file_cb(GtkWidget *w, PurpleBuddy *b)
 
 static void gtk_blist_menu_move_to_cb(GtkWidget *w, PurpleBlistNode *node)
 {
-	PurpleBlistNode *group = g_object_get_data(w, "groupnode");
-	purple_blist_add_contact(node, group, NULL);
+	PurpleGroup *group = g_object_get_data(G_OBJECT(w), "groupnode");
+	purple_blist_add_contact((PurpleContact *)node, group, NULL);
 
 }
 
@@ -471,9 +474,9 @@ gtk_blist_do_personize(GList *merges)
 		if (node == contact)
 			continue;
 
-		purple_blist_merge_contact(node, contact);
+		purple_blist_merge_contact((PurpleContact *)node, contact);
 	}
-	
+
 	/* And show the expanded contact, so the people know what's going on */
 	pidgin_blist_expand_contact_cb(NULL, contact);
 	g_list_free(merges);
@@ -487,14 +490,13 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 	GList *merges = NULL;
 	int i = 0;
 	char *a = g_utf8_casefold(alias, -1);
-	char *msg;
 
 	for (contact = group->child; contact; contact = contact->next) {
 		char *node_alias;
 		if (contact->type != PURPLE_BLIST_CONTACT_NODE)
 			continue;
-		
-		node_alias = g_utf8_casefold(purple_contact_get_alias(contact), -1);
+
+		node_alias = g_utf8_casefold(purple_contact_get_alias((PurpleContact *)contact), -1);
 		if (node_alias && !g_utf8_collate(node_alias, a)) {
 			merges = g_list_append(merges, contact);
 			i++;
@@ -506,8 +508,8 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 		for (buddy = contact->child; buddy; buddy = buddy->next) {
 			if (buddy->type != PURPLE_BLIST_BUDDY_NODE)
 				continue;
-	
-			node_alias = g_utf8_casefold(purple_buddy_get_alias(buddy), -1);
+
+			node_alias = g_utf8_casefold(purple_buddy_get_alias((PurpleBuddy *)buddy), -1);
 			if (node_alias && !g_utf8_collate(node_alias, a)) {
 				merges = g_list_append(merges, buddy);
 				i++;
@@ -517,11 +519,15 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 	}
 	g_free(a);
 	
-	msg = g_strdup_printf(ngettext("You can't merge one contact. That doesn't make any sense. You should never see this message ever", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
 	if (i > 1)
+	{
+		char *msg = g_strdup_printf(ngettext("You currently have %d contact named %s. Would you like to merge them?", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
 		purple_request_action(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
 							 "You can separate them again by choosing 'Expand' from the contact's context menu"), 0, NULL, NULL, NULL,
 				      merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
+		g_free(msg);
+	} else
+		g_list_free(merges);
 }
 
 static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *arg1,
@@ -1264,14 +1270,14 @@ pidgin_append_blist_node_move_to_menu(GtkWidget *menu, PurpleBlistNode *node)
 	gtk_widget_show(menuitem);
 
 	submenu = gtk_menu_new();
-	gtk_menu_item_set_submenu(menuitem, submenu);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
 	for (group = purple_blist_get_root(); group; group = group->next) {
 		if (group->type != PURPLE_BLIST_GROUP_NODE)
 			continue;
 		if (group == node->parent)
 			continue;
-		menuitem = pidgin_new_item_from_stock(submenu, purple_group_get_name(group), NULL,
+		menuitem = pidgin_new_item_from_stock(submenu, purple_group_get_name((PurpleGroup *)group), NULL,
 						      G_CALLBACK(gtk_blist_menu_move_to_cb), node, 0, 0, NULL);
 		g_object_set_data(G_OBJECT(menuitem), "groupnode", group);
 	}
@@ -1330,7 +1336,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	pidgin_append_blist_node_extended_menu(menu, (PurpleBlistNode *)buddy);
 
 	if (!contact_expanded)
-		pidgin_append_blist_node_move_to_menu(menu, contact);
+		pidgin_append_blist_node_move_to_menu(menu, (PurpleBlistNode *)contact);
 
 	if (((PurpleBlistNode*)buddy)->parent && ((PurpleBlistNode*)buddy)->parent->child->next && 
               !sub && !contact_expanded) {
@@ -5897,6 +5903,12 @@ add_chat_cb(GtkWidget *w, PidginAddChatData *data)
 		purple_blist_add_chat(chat, group, NULL);
 	}
 
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->autojoin)))
+		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-autojoin", TRUE);
+
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(data->persistent)))
+		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gtk-persistent", TRUE);
+
 	gtk_widget_destroy(data->window);
 	g_free(data->default_chat_name);
 	g_list_free(data->entries);
@@ -6191,6 +6203,11 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_BIN(data->group_combo)->child);
 	pidgin_set_accessible_label (data->group_combo, label);
 	gtk_box_pack_end(GTK_BOX(rowbox), data->group_combo, TRUE, TRUE, 0);
+	
+	data->autojoin = gtk_check_button_new_with_mnemonic(_("Autojoin when account becomes online."));
+	data->persistent = gtk_check_button_new_with_mnemonic(_("Hide chat when the window is closed."));
+	gtk_box_pack_start(GTK_BOX(vbox), data->autojoin, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), data->persistent, FALSE, FALSE, 0);
 
 	g_signal_connect(G_OBJECT(data->window), "response",
 					 G_CALLBACK(add_chat_resp_cb), data);
