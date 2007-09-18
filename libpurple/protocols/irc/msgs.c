@@ -911,8 +911,8 @@ void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, c
 
 	} else {
 		gc->wants_to_die = TRUE;
-		purple_connection_error(purple_account_get_connection(irc->account),
-				      _("Your selected account name was rejected by the server.  It probably contains invalid characters."));
+		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_USERNAME,
+				  _("Your selected account name was rejected by the server.  It probably contains invalid characters."));
 	}
 }
 
