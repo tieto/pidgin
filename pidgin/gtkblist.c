@@ -521,7 +521,7 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 	
 	if (i > 1)
 	{
-		char *msg = g_strdup_printf(ngettext("You currently have %d contact named %s. Would you like to merge them?", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
+		char *msg = g_strdup_printf(ngettext("You have %d contact named %s. Would you like to merge them?", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
 		purple_request_action(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
 							 "You can separate them again by choosing 'Expand' from the contact's context menu"), 0, NULL, NULL, NULL,
 				      merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
@@ -3451,7 +3451,7 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 		}
 
 		p = purple_buddy_get_presence(buddy);
-		trans = (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL);
+		trans = purple_presence_is_idle(p);
 
 		if (PURPLE_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
 			icon = PIDGIN_STOCK_STATUS_LOGIN;
@@ -5682,7 +5682,8 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 		if (*whoalias == '\0')
 			whoalias = NULL;
 
-		if ((g = purple_find_group(grp)) == NULL)
+		g = NULL;
+		if ((grp != NULL) && (*grp != '\0') && ((g = purple_find_group(grp)) == NULL))
 		{
 			g = purple_group_new(grp);
 			purple_blist_add_group(g, NULL);
@@ -5892,7 +5893,8 @@ add_chat_cb(GtkWidget *w, PidginAddChatData *data)
 
 	group_name = pidgin_text_combo_box_entry_get_text(data->group_combo);
 
-	if ((group = purple_find_group(group_name)) == NULL)
+	group = NULL;
+	if ((group_name != NULL) && (*group_name != '\0') && ((group = purple_find_group(group_name)) == NULL))
 	{
 		group = purple_group_new(group_name);
 		purple_blist_add_group(group, NULL);
