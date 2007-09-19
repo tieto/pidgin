@@ -25,7 +25,7 @@
 #ifndef _MSN_CONTACT_H_
 #define _MSN_CONTACT_H_
 
-#define MSN_CONTACT_SERVER	"omega.contacts.msn.com"
+#define MSN_CONTACT_SERVER	"contacts.msn.com"
 
 /* Get Contact List */
 
