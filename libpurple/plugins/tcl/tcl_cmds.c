@@ -207,7 +207,9 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_accounts_get_handle());
+		Tcl_SetObjResult(interp, 
+				 purple_tcl_ref_new(PurpleTclRefHandle,
+						    purple_accounts_get_handle()));
 		break;
 	case CMD_ACCOUNT_ISCONNECTED:
 		if (objc != 3) {
@@ -443,7 +445,9 @@ int tcl_cmd_buddy(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_blist_get_handle());
+		Tcl_SetObjResult(interp,
+				 purple_tcl_ref_new(PurpleTclRefHandle,
+						    purple_blist_get_handle()));
 		break;
 	case CMD_BUDDY_INFO:
 		if (objc != 3 && objc != 4) {
@@ -704,7 +708,8 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_connections_get_handle());
+		Tcl_SetObjResult(interp, purple_tcl_ref_new(PurpleTclRefHandle,
+							    purple_connections_get_handle()));
 		break;
 	case CMD_CONN_LIST:
 		if (objc != 2) {
@@ -766,7 +771,9 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_conversations_get_handle());
+		Tcl_SetObjResult(interp,
+		                 purple_tcl_ref_new(PurpleTclRefHandle,
+						    purple_conversations_get_handle()));
 		break;
 	case CMD_CONV_LIST:
 		list = Tcl_NewListObj(0, NULL);
@@ -879,7 +886,6 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 
 int tcl_cmd_core(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	const char *cmds[] = { "handle", "quit", NULL };
 	enum { CMD_CORE_HANDLE, CMD_CORE_QUIT } cmd;
 	int error;
@@ -898,7 +904,9 @@ int tcl_cmd_core(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_get_core());
+		Tcl_SetObjResult(interp,
+                                 purple_tcl_ref_new(PurpleTclRefHandle,
+						    purple_get_core()));
 		break;
 	case CMD_CORE_QUIT:
 		if (objc != 2) {
@@ -970,7 +978,6 @@ int tcl_cmd_notify(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 
 int tcl_cmd_plugins(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
-	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	const char *cmds[] = { "handle", NULL };
 	enum { CMD_PLUGINS_HANDLE } cmd;
 	int error;
@@ -989,7 +996,9 @@ int tcl_cmd_plugins(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_plugins_get_handle());
+		Tcl_SetObjResult(interp,
+				purple_tcl_ref_new(PurpleTclRefHandle,
+						   purple_plugins_get_handle()));
 		break;
 	}
 
@@ -1363,7 +1372,9 @@ int tcl_cmd_savedstatus(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 			Tcl_WrongNumArgs(interp, 2, objv, "");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)purple_savedstatuses_get_handle());
+		Tcl_SetObjResult(interp, 
+				 purple_tcl_ref_new(PurpleTclRefHandle,
+						    purple_savedstatuses_get_handle()));
 		break;
 	}
 
@@ -1415,7 +1426,7 @@ int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 			return TCL_ERROR;
 		}
 		handler = g_new0(struct tcl_signal_handler, 1);
-		if ((error = Tcl_GetIntFromObj(interp, objv[2], (int *)&handler->instance)) != TCL_OK) {
+		if ((handler->instance = purple_tcl_ref_get(interp, objv[2],PurpleTclRefHandle)) == NULL) {
 			g_free(handler);
 			return error;
 		}
@@ -1436,7 +1447,7 @@ int tcl_cmd_signal(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 			Tcl_WrongNumArgs(interp, 2, objv, "instance signal");
 			return TCL_ERROR;
 		}
-		if ((error = Tcl_GetIntFromObj(interp, objv[2], (int *)&instance)) != TCL_OK)
+		if ((instance = purple_tcl_ref_get(interp, objv[2],PurpleTclRefHandle)) == NULL)
 			return error;
 		tcl_signal_disconnect(instance, Tcl_GetString(objv[3]), interp);
 		break;
