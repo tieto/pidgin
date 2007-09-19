@@ -1573,7 +1573,7 @@ static char *
 msn_info_strip_search_link(const char *field, size_t len)
 {
 	const char *c;
-	if ((c = strstr(field, " (http://")) == NULL))
+	if ((c = strstr(field, " (http://")) == NULL)
 		return g_strndup(field, len);
 	return g_strndup(field, c - field);
 }
