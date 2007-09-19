@@ -1442,29 +1442,7 @@ PurpleContact *purple_contact_new()
 
 void purple_contact_set_alias(PurpleContact *contact, const char *alias)
 {
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	char *old_alias;
-
-	g_return_if_fail(contact != NULL);
-
-	if (!purple_strings_are_different(contact->alias, alias))
-		return;
-
-	old_alias = contact->alias;
-
-	if ((alias != NULL) && (*alias != '\0'))
-		contact->alias = g_strdup(alias);
-	else
-		contact->alias = NULL;
-
-	purple_blist_schedule_save();
-
-	if (ops && ops->update)
-		ops->update(purplebuddylist, (PurpleBlistNode*)contact);
-
-	purple_signal_emit(purple_blist_get_handle(), "blist-node-aliased",
-					 contact, old_alias);
-	g_free(old_alias);
+	purple_blist_alias_contact(contact,alias);
 }
 
 const char *purple_contact_get_alias(PurpleContact* contact)
