@@ -58,10 +58,18 @@ typedef enum
 /** Possible errors that can cause a connection to be closed. */
 typedef enum
 {
-	/** There was an error sending or receiving on the network socket. */
+	/** There was an error sending or receiving on the network socket, or
+	 *  there was some protocol error (such as the server sending malformed
+	 *  data).
+	 */
 	PURPLE_REASON_NETWORK_ERROR = 0,
-	/** The username or password was invalid. */
+	/** The username or password (or some other credential) was incorrect.
+	 */
 	PURPLE_REASON_AUTHENTICATION_FAILED,
+	/** libpurple doesn't speak any of the authentication methods the
+	 *  server offered.
+	 */
+	PURPLE_REASON_AUTHENTICATION_IMPOSSIBLE,
 	/** There was an error negotiating SSL on this connection, or encryption
 	 *  was unavailable and an account option was set to require it.
 	 */

@@ -531,6 +531,7 @@ purple_connection_reason_is_fatal (PurpleDisconnectReason reason)
 	switch (reason)
 	{
 		case PURPLE_REASON_NETWORK_ERROR:
+		case PURPLE_REASON_AUTHENTICATION_IMPOSSIBLE:
 			return FALSE;
 		case PURPLE_REASON_AUTHENTICATION_FAILED:
 		case PURPLE_REASON_ENCRYPTION_ERROR:
