@@ -525,6 +525,29 @@ purple_connection_error_reason (PurpleConnection *gc,
 			purple_connection_get_account(gc));
 }
 
+void
+purple_connection_ssl_error (PurpleConnection *gc,
+                             PurpleSslErrorType ssl_error)
+{
+	PurpleDisconnectReason reason;
+
+	switch (ssl_error) {
+		case PURPLE_SSL_HANDSHAKE_FAILED:
+		case PURPLE_SSL_CONNECT_FAILED:
+			reason = PURPLE_REASON_ENCRYPTION_ERROR;
+			break;
+		case PURPLE_SSL_CERTIFICATE_INVALID:
+			/* TODO: maybe PURPLE_SSL_* should be more specific? */
+			reason = PURPLE_REASON_CERT_OTHER_ERROR;
+			break;
+		default:
+			g_assert_not_reached ();
+			reason = PURPLE_REASON_ENCRYPTION_ERROR;
+	}
+
+	purple_connection_error_reason (gc, reason, purple_ssl_strerror(ssl_error));
+}
+
 gboolean
 purple_connection_reason_is_fatal (PurpleDisconnectReason reason)
 {

@@ -26,17 +26,17 @@
 #ifndef _PURPLE_SSLCONN_H_
 #define _PURPLE_SSLCONN_H_
 
-#include "certificate.h"
-#include "proxy.h"
-
-#define PURPLE_SSL_DEFAULT_PORT 443
-
 typedef enum
 {
 	PURPLE_SSL_HANDSHAKE_FAILED = 1,
 	PURPLE_SSL_CONNECT_FAILED = 2,
 	PURPLE_SSL_CERTIFICATE_INVALID = 3
 } PurpleSslErrorType;
+
+#include "certificate.h"
+#include "proxy.h"
+
+#define PURPLE_SSL_DEFAULT_PORT 443
 
 typedef struct _PurpleSslConnection PurpleSslConnection;
 

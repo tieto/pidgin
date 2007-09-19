@@ -121,6 +121,7 @@ typedef enum
 #include "account.h"
 #include "plugin.h"
 #include "status.h"
+#include "sslconn.h"
 
 /** Connection UI operations.  Used to notify the user of changes to
  *  connections, such as being disconnected, and to respond to the
@@ -387,6 +388,15 @@ void
 purple_connection_error_reason (PurpleConnection *gc,
                                 PurpleDisconnectReason reason,
                                 const char *description);
+
+/**
+ * Closes a connection due to an SSL error; this is basically a shortcut to
+ * turning the #PurpleSslErrorType into a #PurpleDisconnectReason and a
+ * human-readable string and then calling purple_connection_error_reason().
+ */
+void
+purple_connection_ssl_error (PurpleConnection *gc,
+                             PurpleSslErrorType ssl_error);
 
 /**
  * Reports whether a disconnection reason is fatal (in which case the account
