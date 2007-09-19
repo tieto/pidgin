@@ -376,10 +376,13 @@ debug_command_cb(PurpleConversation *conv,
 static void clear_conversation_scrollback(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = NULL;
+	GList *iter;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
+	for (iter = gtkconv->convs; iter; iter = iter->next)
+		purple_conversation_clear_message_history(iter->data);
 }
 
 static PurpleCmdRet
@@ -387,7 +390,6 @@ clear_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
 	clear_conversation_scrollback(conv);
-	purple_conversation_clear_message_history(conv);
 	return PURPLE_CMD_STATUS_OK;
 }
 
@@ -1099,12 +1101,9 @@ menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
-	PidginConversation *gtkconv;
 
 	conv = pidgin_conv_window_get_active_conversation(win);
-	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
+	clear_conversation_scrollback(conv);
 }
 
 struct _search {
