@@ -3634,7 +3634,7 @@ generate_send_to_items(PidginWindow *win)
 		gtk_widget_destroy(win->menu.send_to);
 
 	/* Build the Send To menu */
-	win->menu.send_to = gtk_menu_item_new_with_mnemonic(_("_Send To"));
+	win->menu.send_to = gtk_menu_item_new_with_mnemonic(_("S_end To"));
 	gtk_widget_show(win->menu.send_to);
 
 	menu = gtk_menu_new();
@@ -7241,6 +7241,23 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 		/* if (purple_conversation_get_account(conv) == account) */
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON |
 							PIDGIN_CONV_MENU | PIDGIN_CONV_COLORIZE_TITLE);
+
+		if (PURPLE_CONNECTION_IS_CONNECTED(gc) &&
+				conv->type == PURPLE_CONV_TYPE_CHAT &&
+				conv->account == gc->account &&
+				purple_conversation_get_data(conv, "want-to-rejoin")) {
+			GHashTable *comps = NULL;
+			PurpleChat *chat = purple_blist_find_chat(conv->account, conv->name);
+			if (chat == NULL) {
+				if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
+					comps = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, conv->name);
+			} else {
+				comps = chat->components;
+			}
+			serv_join_chat(gc, comps);
+			if (chat == NULL && comps != NULL)
+				g_hash_table_destroy(comps);
+		}
 	}
 }
 
@@ -8148,7 +8165,7 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 		sub = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
 
 		if (sub && GTK_WIDGET_IS_SENSITIVE(gtkconv->win->menu.send_to)) {
-			GtkWidget *item = gtk_menu_item_new_with_mnemonic(_("_Send To"));
+			GtkWidget *item = gtk_menu_item_new_with_mnemonic(_("S_end To"));
 			if (populated)
 				pidgin_separator(menu);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
@@ -9818,4 +9835,5 @@ generate_nick_colors(guint *color_count, GdkColor background)
 
 	return colors;
 }
+
 

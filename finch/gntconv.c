@@ -326,8 +326,8 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 		list = purple_get_chats();
 		while (list) {
 			PurpleConversation *conv = list->data;
-			gboolean del = FALSE;
 			PurpleChat *chat;
+			GHashTable *comps = NULL;
 
 			list = list->next;
 			if (conv->account != gc->account ||
@@ -336,15 +336,14 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 
 			chat = purple_blist_find_chat(conv->account, conv->name);
 			if (chat == NULL) {
-				GHashTable *hash = NULL;
 				if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
-					hash = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, conv->name);
-				chat = purple_chat_new(gc->account, conv->name, hash);
-				del = TRUE;
+					comps = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, conv->name);
+			} else {
+				comps = chat->components;
 			}
-			serv_join_chat(gc, chat->components);
-			if (del)
-				purple_blist_remove_chat(chat);
+			serv_join_chat(gc, comps);
+			if (chat == NULL && comps != NULL)
+				g_hash_table_destroy(comps);
 		}
 	}
 }
