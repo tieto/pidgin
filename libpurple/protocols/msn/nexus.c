@@ -29,7 +29,7 @@
 #undef NEXUS_LOGIN_TWN
 
 /*Local Function Prototype*/
-static void nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,PurpleInputCondition cond);
+static gboolean nexus_login_connect_cb(MsnSoapConn *soapconn, PurpleSslConnection *gsc);
 
 /**************************************************************************
  * Main
@@ -125,9 +125,8 @@ nexus_write_cb(gpointer data, gint source, PurpleInputCondition cond)
  * Login
  **************************************************************************/
 static void
-nexus_login_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data)
+nexus_login_error_cb(MsnSoapConn *soapconn, PurpleSslConnection *gsc, PurpleSslErrorType error)
 {
-	MsnSoapConn * soapconn = data;
 	MsnSession *session;
 
 	session = soapconn->session;
@@ -141,10 +140,9 @@ nexus_login_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *d
 }
 
 /*process the SOAP reply, get the Authentication Info*/
-static void
-nexus_login_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+nexus_login_read_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;	
 	MsnNexus *nexus;
 	MsnSession *session;
 
@@ -155,9 +153,9 @@ nexus_login_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	char * cert_str;
 
 	nexus = soapconn->parent;
-	g_return_if_fail(nexus != NULL);
+	g_return_val_if_fail(nexus != NULL, TRUE);
 	session = nexus->session;
-	g_return_if_fail(session != NULL);
+	g_return_val_if_fail(session != NULL, FALSE);
 
 	/*reply OK, we should process the SOAP body*/
 	purple_debug_info("MSN Nexus","TWN Server Windows Live ID Reply OK!\n");
@@ -210,25 +208,21 @@ nexus_login_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	msn_nexus_destroy(nexus);
 	session->nexus = NULL;
 
-	return;
+	return FALSE;
 }
 
 static void
-nexus_login_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+nexus_login_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;	
-
 	soapconn->read_cb = nexus_login_read_cb;
 //	msn_soap_read_cb(data,source,cond);
 }
 
 
 /*when connect, do the SOAP Style windows Live ID authentication */
-void
-nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
-				 PurpleInputCondition cond)
+gboolean
+nexus_login_connect_cb(MsnSoapConn *soapconn, PurpleSslConnection *gsc)
 {
-	MsnSoapConn *soapconn;
 	MsnNexus * nexus;
 	MsnSession *session;
 	char *ru,*lc,*id,*tw,*ct,*kpp,*kv,*ver,*rn,*tpf;
@@ -240,17 +234,18 @@ nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 #else
 	char *rst1_str,*rst2_str,*rst3_str;
 #endif
-
+	
 	purple_debug_info("MSN Nexus","Starting Windows Live ID authentication\n");
 
-	soapconn = data;
-	g_return_if_fail(soapconn != NULL);
+	g_return_val_if_fail(soapconn != NULL, FALSE);
 
 	nexus = soapconn->parent;
-	g_return_if_fail(nexus != NULL);
+	g_return_val_if_fail(nexus != NULL, TRUE);
 
 	session = soapconn->session;
-	g_return_if_fail(session != NULL);
+	g_return_val_if_fail(session != NULL, FALSE);
+
+	msn_soap_set_process_step(soapconn, MSN_SOAP_PROCESSING);
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
@@ -283,7 +278,7 @@ nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 		purple_ssl_close(gsc);
 		msn_nexus_destroy(nexus);
 		session->nexus = NULL;
-		return;
+		return FALSE;
 	}
 
 	/*
@@ -328,10 +323,10 @@ nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 					"Accept: text/*\r\n"
 					"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
 					"Host: %s\r\n"
-					"Content-Length: %d\r\n"
+					"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 					"Connection: Keep-Alive\r\n"
 					"Cache-Control: no-cache\r\n\r\n",
-					soapconn->login_path,soapconn->login_host,(int)strlen(tail));
+					soapconn->login_path, soapconn->login_host, strlen(tail));
 
 	request_str = g_strdup_printf("%s%s", head,tail);
 
@@ -344,9 +339,9 @@ nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 	g_free(password);
 
 	/*prepare to send the SOAP request*/
-	msn_soap_write(soapconn,request_str,nexus_login_written_cb);
+	msn_soap_write(soapconn, request_str, nexus_login_written_cb);
 
-	return;
+	return TRUE;
 }
 
 #if 0 /* khc */
@@ -468,7 +463,6 @@ void
 msn_nexus_connect(MsnNexus *nexus)
 {
 	/*  Authenticate via Windows Live ID. */
-	purple_debug_info("MSN Nexus","msn_nexus_connect()\n");
-	msn_soap_init(nexus->soapconn,MSN_TWN_SERVER,1,nexus_login_connect_cb,nexus_login_error_cb);
+	msn_soap_init(nexus->soapconn, MSN_TWN_SERVER, 1, nexus_login_connect_cb, nexus_login_error_cb);
 	msn_soap_connect(nexus->soapconn);
 }

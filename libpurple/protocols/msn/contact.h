@@ -374,6 +374,7 @@ typedef struct _MsnCallbackState MsnCallbackState;
 struct _MsnCallbackState
 {
 	gchar * who;
+	gchar * uid;
 	gchar * old_group_name;
 	gchar * new_group_name;
 	gchar * guid;
@@ -399,6 +400,7 @@ void msn_contact_destroy(MsnContact *contact);
 MsnCallbackState * msn_callback_state_new(void);
 void msn_callback_state_free(MsnCallbackState *state);
 void msn_callback_state_set_who(MsnCallbackState *state, const gchar *who);
+void msn_callback_state_set_uid(MsnCallbackState *state, const gchar *uid);
 void msn_callback_state_set_old_group_name(MsnCallbackState *state,
 					   const gchar *old_group_name);
 void msn_callback_state_set_new_group_name(MsnCallbackState *state, 

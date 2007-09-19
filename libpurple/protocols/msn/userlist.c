@@ -493,6 +493,29 @@ msn_userlist_find_user(MsnUserList *userlist, const char *passport)
 	return NULL;
 }
 
+MsnUser *
+msn_userlist_find_user_with_id(MsnUserList *userlist, const char *uid)
+{
+ 	GList *l;
+
+        g_return_val_if_fail(uid != NULL, NULL);
+
+        for (l = userlist->users; l != NULL; l = l->next)
+        {
+                MsnUser *user = (MsnUser *)l->data;
+
+		if (user->uid == NULL) {
+			continue;
+		}
+
+		if ( !g_strcasecmp(uid, user->uid) ) {
+			return user;
+		}
+	}
+
+	return NULL;
+}
+
 void
 msn_userlist_add_group(MsnUserList *userlist, MsnGroup *group)
 {

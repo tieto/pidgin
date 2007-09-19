@@ -31,10 +31,10 @@
 /*Local Function Prototype*/
 static void msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid);
 static MsnOimSendReq *msn_oim_new_send_req(const char *from_member,
-										   const char *friendname,
-										   const char* to_member,
-										   gint send_seq,
-										   const char *msg);
+					   const char *friendname,
+					   const char* to_member,
+					   gint send_seq,
+					   const char *msg);
 static void msn_oim_retrieve_connect_init(MsnSoapConn *soapconn);
 static void msn_oim_send_connect_init(MsnSoapConn *soapconn);
 static void msn_oim_free_send_req(MsnOimSendReq *req);
@@ -120,9 +120,9 @@ msn_oim_msg_to_str(MsnOim *oim, const char *body)
 {
 	char *oim_body,*oim_base64;
 	
-	purple_debug_info("MSNP14","encode OIM Message...\n");	
+	purple_debug_info("MSN OIM","encode OIM Message...\n");	
 	oim_base64 = purple_base64_encode((const guchar *)body, strlen(body));
-	purple_debug_info("MSNP14","encoded base64 body:{%s}\n",oim_base64);	
+	purple_debug_info("MSN OIM","encoded base64 body:{%s}\n",oim_base64);	
 	oim_body = g_strdup_printf(MSN_OIM_MSG_TEMPLATE,
 				oim->run_id,oim->send_seq,oim_base64);
 
@@ -131,9 +131,8 @@ msn_oim_msg_to_str(MsnOim *oim, const char *body)
 
 /*oim SOAP server login error*/
 static void
-msn_oim_send_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data)
+msn_oim_send_error_cb(MsnSoapConn *soapconn, PurpleSslConnection *gsc, PurpleSslErrorType error)
 {
-	MsnSoapConn *soapconn = data;
 	MsnSession *session;
 
 	session = soapconn->session;
@@ -143,19 +142,19 @@ msn_oim_send_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *
 }
 
 /*msn oim SOAP server connect process*/
-static void
-msn_oim_send_connect_cb(gpointer data, PurpleSslConnection *gsc,
-				 PurpleInputCondition cond)
+static gboolean
+msn_oim_send_connect_cb(MsnSoapConn *soapconn, PurpleSslConnection *gsc)
 {
-	MsnSoapConn *soapconn = data;
 	MsnSession * session;
 	MsnOim *oim;
 
 	oim = soapconn->parent;
-	g_return_if_fail(oim != NULL);
+	g_return_val_if_fail(oim != NULL, TRUE);
 
 	session = oim->session;
-	g_return_if_fail(session != NULL);
+	g_return_val_if_fail(session != NULL, FALSE);
+
+	return TRUE;
 }
 
 /*
@@ -178,22 +177,22 @@ msn_oim_send_process(MsnOim *oim, const char *body, int len)
 		/*Send OK! return*/
 		MsnOimSendReq *request;
 		
-		purple_debug_info("MSNP14","send OIM OK!");
+		purple_debug_info("MSN OIM","send OIM OK!");
 		xmlnode_free(responseNode);
 		request = g_queue_pop_head(oim->send_queue);
 		msn_oim_free_send_req(request);
 		/*send next buffered Offline Message*/
-		msn_soap_post(oim->sendconn,NULL,msn_oim_send_connect_init);
+		msn_soap_post(oim->sendconn, NULL);
 		return;
 	}
 	/*get the challenge,and repost it*/
 	faultCodeNode = xmlnode_get_child(faultNode,"faultcode");
 	if(faultCodeNode == NULL){
-		purple_debug_info("MSNP14","faultcode Node is NULL\n");
+		purple_debug_info("MSN OIM","faultcode Node is NULL\n");
 		goto oim_send_process_fail;
 	}
 	faultCodeStr = xmlnode_get_data(faultCodeNode);
-	purple_debug_info("MSNP14","fault code:{%s}\n",faultCodeStr);
+	purple_debug_info("MSN OIM","fault code:{%s}\n",faultCodeStr);
 #if 0
 	if(!strcmp(faultCodeStr,"q0:AuthenticationFailed")){
 		/*other Fault Reason?*/
@@ -203,7 +202,7 @@ msn_oim_send_process(MsnOim *oim, const char *body, int len)
 
 	faultstringNode = xmlnode_get_child(faultNode,"faultstring");
 	faultstring = xmlnode_get_data(faultstringNode);
-	purple_debug_info("MSNP14","fault string :{%s}\n",faultstring);
+	purple_debug_info("MSN OIM","fault string :{%s}\n",faultstring);
 
 	/* lock key fault reason,
 	 * compute the challenge and resend it
@@ -219,10 +218,10 @@ msn_oim_send_process(MsnOim *oim, const char *body, int len)
 
 	g_free(oim->challenge);
 	oim->challenge = xmlnode_get_data(challengeNode);
-	purple_debug_info("MSNP14","lockkey:{%s}\n",oim->challenge);
+	purple_debug_info("MSN OIM","lockkey:{%s}\n",oim->challenge);
 
 	/*repost the send*/
-	purple_debug_info("MSNP14","prepare to repost the send...\n");
+	purple_debug_info("MSN OIM","prepare to repost the send...\n");
 	msn_oim_send_msg(oim);
 
 oim_send_process_fail:
@@ -232,29 +231,28 @@ oim_send_process_fail:
 	return ;
 }
 
-static void
-msn_oim_send_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_oim_send_read_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
 	MsnSession *session = soapconn->session;
 	MsnOim * oim;
 
 	if (soapconn->body == NULL)
-		return;
+		return TRUE;
 
-	g_return_if_fail(session != NULL);
+	g_return_val_if_fail(session != NULL, FALSE);
 	oim = soapconn->session->oim;
-	g_return_if_fail(oim != NULL);
+	g_return_val_if_fail(oim != NULL, TRUE);
 
-	purple_debug_info("MSNP14","read buffer:{%s}\n",soapconn->body);
+	purple_debug_info("MSN OIM","read buffer:{%s}\n", soapconn->body);
 	msn_oim_send_process(oim,soapconn->body,soapconn->body_len);
+
+	return TRUE;
 }
 
 static void
-msn_oim_send_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_oim_send_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;	
-
 	soapconn->read_cb = msn_oim_send_read_cb;
 //	msn_soap_read_cb(data,source,cond);
 }
@@ -286,7 +284,7 @@ msn_oim_send_msg(MsnOim *oim)
 	oim_request = g_queue_pop_head(oim->send_queue);
 	g_return_if_fail(oim_request != NULL);
 
-	purple_debug_info("MSNP14","send single OIM Message\n");
+	purple_debug_info("MSN OIM","send single OIM Message\n");
 	mspauth = g_strdup_printf("t=%s&amp;p=%s",
 		oim->session->passport_info.t,
 		oim->session->passport_info.p
@@ -299,10 +297,10 @@ msn_oim_send_msg(MsnOim *oim)
 	if(oim->challenge != NULL){
 		msn_handle_chl(oim->challenge, buf);
 	}else{
-		purple_debug_info("MSNP14","no lock key challenge,wait for SOAP Fault and Resend\n");
+		purple_debug_info("MSN OIM","no lock key challenge,wait for SOAP Fault and Resend\n");
 		buf[0]='\0';
 	}
-	purple_debug_info("MSNP14","get the lock key challenge {%s}\n",buf);	
+	purple_debug_info("MSN OIM","get the lock key challenge {%s}\n",buf);	
 
 	msg_body = msn_oim_msg_to_str(oim, oim_request->oim_msg);
 	soap_body = g_strdup_printf(MSN_OIM_SEND_TEMPLATE,
@@ -321,7 +319,8 @@ msn_oim_send_msg(MsnOim *oim)
 					soap_body,
 					NULL,
 					msn_oim_send_read_cb,
-					msn_oim_send_written_cb);
+					msn_oim_send_written_cb,
+					msn_oim_send_connect_init);
 	g_free(mspauth);
 	g_free(msg_body);
 	g_free(soap_body);
@@ -330,31 +329,28 @@ msn_oim_send_msg(MsnOim *oim)
 	if(oim->challenge != NULL){
 		oim->send_seq++;
 	}
-	msn_soap_post(oim->sendconn,soap_request,msn_oim_send_connect_init);
+	msn_soap_post(oim->sendconn,soap_request);
 }
 
 /****************************************
  * OIM delete SOAP request
  * **************************************/
-static void
-msn_oim_delete_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_oim_delete_read_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
-
 	if (soapconn->body == NULL)
-		return;
-	purple_debug_info("MSNP14","OIM delete read buffer:{%s}\n",soapconn->body);
+		return TRUE;
+	purple_debug_info("MSN OIM","OIM delete read buffer:{%s}\n",soapconn->body);
 
 	msn_soap_free_read_buf(soapconn);
 	/*get next single Offline Message*/
-	msn_soap_post(soapconn,NULL,msn_oim_retrieve_connect_init);
+//	msn_soap_post(soapconn,NULL);	/* we already do this in soap.c */
+	return TRUE;
 }
 
 static void
-msn_oim_delete_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_oim_delete_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
-
 	soapconn->read_cb = msn_oim_delete_read_cb;
 }
 
@@ -368,7 +364,7 @@ msn_oim_post_delete_msg(MsnOim *oim,const char *msgid)
 	g_return_if_fail(oim != NULL);
 	g_return_if_fail(msgid != NULL);
 
-	purple_debug_info("MSNP14","Delete single OIM Message {%s}\n",msgid);
+	purple_debug_info("MSN OIM","Delete single OIM Message {%s}\n",msgid);
 	t = oim->session->passport_info.t;
 	p = oim->session->passport_info.p;
 
@@ -383,8 +379,9 @@ msn_oim_post_delete_msg(MsnOim *oim,const char *msgid)
 					soap_body,
 					NULL,
 					msn_oim_delete_read_cb,
-					msn_oim_delete_written_cb);
-	msn_soap_post(oim->retrieveconn,soap_request,msn_oim_retrieve_connect_init);
+					msn_oim_delete_written_cb,
+					msn_oim_retrieve_connect_init);
+	msn_soap_post(oim->retrieveconn,soap_request);
 }
 
 /****************************************
@@ -392,34 +389,33 @@ msn_oim_post_delete_msg(MsnOim *oim,const char *msgid)
  * **************************************/
 /*oim SOAP server login error*/
 static void
-msn_oim_get_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data)
+msn_oim_get_error_cb(MsnSoapConn *soapconn, PurpleSslConnection *gsc, PurpleSslErrorType error)
 {
-	MsnSoapConn *soapconn = data;
 	MsnSession *session;
 
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
-	msn_soap_clean_unhandled_request(soapconn);
+	msn_soap_clean_unhandled_requests(soapconn);
 
 //	msn_session_set_error(session, MSN_ERROR_SERV_DOWN, _("Unable to connect to OIM server"));
 }
 
 /*msn oim SOAP server connect process*/
-static void
-msn_oim_get_connect_cb(gpointer data, PurpleSslConnection *gsc,
-				 PurpleInputCondition cond)
+static gboolean
+msn_oim_get_connect_cb(MsnSoapConn *soapconn, PurpleSslConnection *gsc)
 {
-	MsnSoapConn *soapconn = data;
 	MsnSession * session;
 	MsnOim *oim;
 
 	oim = soapconn->parent;
-	g_return_if_fail(oim != NULL);
+	g_return_val_if_fail(oim != NULL, TRUE);
 
 	session = oim->session;
-	g_return_if_fail(session != NULL);
+	g_return_val_if_fail(session != NULL, FALSE);
 
-	purple_debug_info("MSNP14","oim get SOAP Server connected!\n");
+	purple_debug_info("MSN OIM","Connected and ready to get OIM!\n");
+
+	return TRUE;
 }
 
 /* like purple_str_to_time, but different. The format of the timestamp
@@ -485,7 +481,7 @@ msn_oim_parse_timestamp(const char *timestamp)
 		}
 	}
 
-	purple_debug_info("MSNP14:OIM", "Can't parse timestamp %s\n", timestamp);
+	purple_debug_info("MSN OIM:OIM", "Can't parse timestamp %s\n", timestamp);
 	return time(NULL);
 }
 
@@ -507,7 +503,7 @@ msn_oim_report_to_user(MsnOim *oim, const char *msg_str)
 
 	msn_message_parse_payload(message, msg_str, strlen(msg_str),
 							  MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
-	purple_debug_info("MSNP14","oim body:{%s}\n",message->body);
+	purple_debug_info("MSN OIM","oim body:{%s}\n",message->body);
 	decode_msg = (char *)purple_base64_decode(message->body,&body_len);
 	date =	(char *)g_hash_table_lookup(message->attr_table, "Date");
 	from =	(char *)g_hash_table_lookup(message->attr_table, "From");
@@ -517,12 +513,12 @@ msn_oim_report_to_user(MsnOim *oim, const char *msg_str)
 	if(has_nick){
 		tokens = g_strsplit(from , " " , 2);
 		passport_str = g_strdup(tokens[1]);
-		purple_debug_info("MSNP14","oim Date:{%s},nickname:{%s},tokens[1]:{%s} passport{%s}\n",
+		purple_debug_info("MSN OIM","oim Date:{%s},nickname:{%s},tokens[1]:{%s} passport{%s}\n",
 							date,tokens[0],tokens[1],passport_str);
 		g_strfreev(tokens);
 	}else{
 		passport_str = g_strdup(from);
-		purple_debug_info("MSNP14","oim Date:{%s},passport{%s}\n",
+		purple_debug_info("MSN OIM","oim Date:{%s},passport{%s}\n",
 					date,passport_str);
 	}
 	start = strstr(passport_str,"<");
@@ -530,7 +526,7 @@ msn_oim_report_to_user(MsnOim *oim, const char *msg_str)
 	end = strstr(passport_str,">");
 	passport = g_strndup(start,end - start);
 	g_free(passport_str);
-	purple_debug_info("MSNP14","oim Date:{%s},passport{%s}\n",date,passport);
+	purple_debug_info("MSN OIM","oim Date:{%s},passport{%s}\n",date,passport);
 
 	stamp = msn_oim_parse_timestamp(date);
 
@@ -570,30 +566,28 @@ msn_oim_get_process(MsnOim *oim, const char *oim_msg)
 	xmlnode_free(oim_node);
 }
 
-static void
-msn_oim_get_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_oim_get_read_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
 	MsnOim * oim = soapconn->session->oim;
 
 	if (soapconn->body == NULL)
-		return;
+		return TRUE;
 
-	purple_debug_info("MSNP14","OIM get read buffer:{%s}\n",soapconn->body);
+	purple_debug_info("MSN OIM","OIM get read buffer:{%s}\n",soapconn->body);
 
 	/*we need to process the read message!*/
 	msn_oim_get_process(oim,soapconn->body);
 	msn_soap_free_read_buf(soapconn);
 
 	/*get next single Offline Message*/
-	msn_soap_post(soapconn,NULL,msn_oim_retrieve_connect_init);
+//	msn_soap_post(soapconn,NULL); /* we already do this in soap.c */
+	return TRUE;
 }
 
 static void
-msn_oim_get_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_oim_get_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
-
 	soapconn->read_cb = msn_oim_get_read_cb;
 //	msn_soap_read_cb(data,source,cond);
 }
@@ -608,7 +602,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 	char *passport,*msgid,*nickname, *unread, *rTime = NULL;
 	MsnSession *session = oim->session;
 
-	purple_debug_info("MSNP14:OIM", "%s", xmlmsg);
+	purple_debug_info("MSN OIM:OIM", "%s", xmlmsg);
 
 	node = xmlnode_from_str(xmlmsg, strlen(xmlmsg));
 	if (strcmp(node->name, "MD") != 0) {
@@ -654,7 +648,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 			rTime = xmlnode_get_data(rtNode);
 			rtNode = NULL;
 		}
-/*		purple_debug_info("MSNP14","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime); */
+/*		purple_debug_info("MSN OIM","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime); */
 
 		oim->oim_list = g_list_append(oim->oim_list,strdup(msgid));
 		msn_oim_post_single_get_msg(oim,msgid);
@@ -675,7 +669,7 @@ msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 	MsnSoapReq *soap_request;
 	const char *soap_body,*t,*p;
 
-	purple_debug_info("MSNP14","Get single OIM Message\n");
+	purple_debug_info("MSN OIM","Get single OIM Message\n");
 	t = oim->session->passport_info.t;
 	p = oim->session->passport_info.p;
 
@@ -690,28 +684,29 @@ msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 					soap_body,
 					NULL,
 					msn_oim_get_read_cb,
-					msn_oim_get_written_cb);
-	msn_soap_post(oim->retrieveconn,soap_request,msn_oim_retrieve_connect_init);
+					msn_oim_get_written_cb,
+					msn_oim_retrieve_connect_init);
+	msn_soap_post(oim->retrieveconn,soap_request);
 }
 
 /*msn oim retrieve server connect init */
 static void
 msn_oim_retrieve_connect_init(MsnSoapConn *soapconn)
 {
-	purple_debug_info("MSNP14","msn_oim_connect...\n");
-	msn_soap_init(soapconn,MSN_OIM_RETRIEVE_HOST,1,
-					msn_oim_get_connect_cb,
-					msn_oim_get_error_cb);
+	purple_debug_info("MSN OIM","Initializing OIM retrieve connection\n");
+	msn_soap_init(soapconn, MSN_OIM_RETRIEVE_HOST, 1,
+		      msn_oim_get_connect_cb,
+		      msn_oim_get_error_cb);
 }
 
 /*Msn OIM Send Server Connect Init Function*/
 static void
 msn_oim_send_connect_init(MsnSoapConn *sendconn)
 {
-	purple_debug_info("MSNP14","msn oim send connect init...\n");
-	msn_soap_init(sendconn,MSN_OIM_SEND_HOST,1,
-					msn_oim_send_connect_cb,
-					msn_oim_send_error_cb);
+	purple_debug_info("MSN OIM","Initializing OIM send connection\n");
+	msn_soap_init(sendconn, MSN_OIM_SEND_HOST, 1,
+		      msn_oim_send_connect_cb,
+		      msn_oim_send_error_cb);
 }
 
-/*endof oim.c*/
+/* EOF oim.c*/
