@@ -513,7 +513,7 @@ int main(int argc, char *argv[])
 #ifndef DEBUG
 		/* We translate this here in case the crash breaks gettext. */
 		segfault_message_tmp = g_strdup_printf(_(
-			"%s has segfaulted and attempted to dump a core file.\n"
+			"%s %s has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
 			"If you can reproduce the crash, please notify the developers\n"
@@ -527,7 +527,7 @@ int main(int argc, char *argv[])
 			"LSchiere (via AIM).  Contact information for Sean and Luke \n"
 			"on other protocols is at\n"
 			"%swiki/DeveloperPages\n"),
-			PIDGIN_NAME, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE
+			PIDGIN_NAME, VERSION, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE
 		);
 
 		/* we have to convert the message (UTF-8 to console
