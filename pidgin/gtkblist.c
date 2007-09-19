@@ -664,21 +664,21 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 
 static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
 {
-    if (PURPLE_BLIST_NODE_IS_BUDDY(node))
-    {
-        purple_blist_node_set_bool(node, "show_offline",
-                                 !purple_blist_node_get_bool(node, "show_offline"));
-    }
-    else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
-    {
-        PurpleBlistNode *bnode;
-        gboolean setting = !purple_blist_node_get_bool(node, "show_offline");
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+	{
+		purple_blist_node_set_bool(node, "show_offline",
+		                           !purple_blist_node_get_bool(node, "show_offline"));
+	}
+	else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+	{
+		PurpleBlistNode *bnode;
+		gboolean setting = !purple_blist_node_get_bool(node, "show_offline");
 
-        purple_blist_node_set_bool(node, "show_offline", setting);
-        for (bnode = node->child; bnode != NULL; bnode = bnode->next) {
-            purple_blist_node_set_bool(bnode, "show_offline", setting);
-        }
-    }
+		purple_blist_node_set_bool(node, "show_offline", setting);
+		for (bnode = node->child; bnode != NULL; bnode = bnode->next) {
+			purple_blist_node_set_bool(bnode, "show_offline", setting);
+		}
+	}
 	pidgin_blist_update(purple_get_blist(), node);
 }
 
