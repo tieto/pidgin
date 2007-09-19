@@ -5816,7 +5816,7 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 	gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
 	/* Set up stuff for the account box */
-	label = gtk_label_new_with_mnemonic(_("_Account:"));
+	label = gtk_label_new_with_mnemonic(_("A_ccount:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 
