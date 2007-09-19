@@ -4616,7 +4616,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	tmp = g_strdup_printf(_("<span weight='bold' size='larger'>Welcome to %s!</span>\n\n"
 
 					       "You have no accounts enabled. Enable your IM accounts from the "
-					       "<b>Accounts</b> window at <b>Accounts->Add/Edit</b>. Once you "
+					       "<b>Accounts</b> window at <b>Accounts->Manage</b>. Once you "
 					       "enable accounts, you'll be able to sign on, set your status, "
 					       "and talk to your friends."), PIDGIN_NAME);
 	pretty = pidgin_make_pretty_arrows(tmp);
@@ -6882,7 +6882,7 @@ pidgin_blist_update_accounts_menu(void)
 	for (l = gtk_container_get_children(GTK_CONTAINER(accountmenu)); l; l = g_list_delete_link(l, l)) {
 		menuitem = l->data;
 
-		if (menuitem != gtk_item_factory_get_widget(gtkblist->ift, N_("/Accounts/Add\\/Edit")))
+		if (menuitem != gtk_item_factory_get_widget(gtkblist->ift, N_("/Accounts/Manage")))
 			gtk_widget_destroy(menuitem);
 	}
 
