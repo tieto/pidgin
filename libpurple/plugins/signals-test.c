@@ -76,6 +76,28 @@ account_alias_changed(PurpleAccount *account, const char *old, gpointer data)
 					old, purple_account_get_alias(account));
 }
 
+static int
+account_authorization_requested_cb(PurpleAccount *account, const char *user, gpointer data)
+{
+	purple_debug_misc("signals test", "account-authorization-requested (%s, %s)\n",
+			purple_account_get_username(account), user);
+	return 0;
+}
+
+static void
+account_authorization_granted_cb(PurpleAccount *account, const char *user, gpointer data)
+{
+	purple_debug_misc("signals test", "account-authorization-granted (%s, %s)\n",
+			purple_account_get_username(account), user);
+}
+
+static void
+account_authorization_denied_cb(PurpleAccount *account, const char *user, gpointer data)
+{
+	purple_debug_misc("signals test", "account-authorization-denied (%s, %s)\n",
+			purple_account_get_username(account), user);
+}
+
 /**************************************************************************
  * Buddy Icons signal callbacks
  **************************************************************************/
@@ -568,6 +590,12 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(account_status_changed), NULL);
 	purple_signal_connect(accounts_handle, "account-alias-changed",
 						plugin, PURPLE_CALLBACK(account_alias_changed), NULL);
+	purple_signal_connect(accounts_handle, "account-authorization-requested",
+						plugin, PURPLE_CALLBACK(account_authorization_requested_cb), NULL);
+	purple_signal_connect(accounts_handle, "account-authorization-denied",
+						plugin, PURPLE_CALLBACK(account_authorization_denied_cb), NULL);
+	purple_signal_connect(accounts_handle, "account-authorization-granted",
+						plugin, PURPLE_CALLBACK(account_authorization_granted_cb), NULL);
 
 	/* Buddy List subsystem signals */
 	purple_signal_connect(blist_handle, "buddy-status-changed",
