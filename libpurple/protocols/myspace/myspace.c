@@ -291,6 +291,7 @@ msim_login(PurpleAccount *acct)
 		/* Notify an error message also, because this is important! */
 		purple_notify_error(acct, g_strdup(_("MySpaceIM Error")), str, NULL);
 
+		gc->wants_to_die = TRUE;
 		purple_connection_error(gc, str);
 		g_free(str);
 		return;
