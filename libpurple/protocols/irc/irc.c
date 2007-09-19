@@ -438,7 +438,6 @@ irc_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 {
 	PurpleConnection *gc = data;
 	struct irc_conn *irc = gc->proto_data;
-	PurpleDisconnectReason reason;
 
 	irc->gsc = NULL;
 
