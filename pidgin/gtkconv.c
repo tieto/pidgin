@@ -7241,6 +7241,23 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 		/* if (purple_conversation_get_account(conv) == account) */
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON |
 							PIDGIN_CONV_MENU | PIDGIN_CONV_COLORIZE_TITLE);
+
+		if (PURPLE_CONNECTION_IS_CONNECTED(gc) &&
+				conv->type == PURPLE_CONV_TYPE_CHAT &&
+				conv->account == gc->account &&
+				purple_conversation_get_data(conv, "want-to-rejoin")) {
+			GHashTable *comps = NULL;
+			PurpleChat *chat = purple_blist_find_chat(conv->account, conv->name);
+			if (chat == NULL) {
+				if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
+					comps = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, conv->name);
+			} else {
+				comps = chat->components;
+			}
+			serv_join_chat(gc, comps);
+			if (chat == NULL && comps != NULL)
+				g_hash_table_destroy(comps);
+		}
 	}
 }
 
@@ -7385,6 +7402,7 @@ add_message_history_to_gtkconv(gpointer data)
 	if (gtkconv->attach.current)
 		return TRUE;
 
+	g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 	purple_signal_emit(pidgin_conversations_get_handle(),
 			"conversation-displayed", gtkconv);
 	g_source_remove(gtkconv->attach.timer);
@@ -7425,7 +7443,6 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 	timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
 	if (timer)
 		purple_timeout_remove(timer);
-
 	return TRUE;
 }
 
