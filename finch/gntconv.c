@@ -765,7 +765,8 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 					_("<AUTO-REPLY> "), GNT_TEXT_FLAG_BOLD);
 
-	if (who && *who && (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)))
+	if (who && *who && (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)) &&
+			!(flags & PURPLE_MESSAGE_NOTIFY))
 	{
 		char * name = NULL;
 
