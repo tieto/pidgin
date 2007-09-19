@@ -3634,7 +3634,7 @@ generate_send_to_items(PidginWindow *win)
 		gtk_widget_destroy(win->menu.send_to);
 
 	/* Build the Send To menu */
-	win->menu.send_to = gtk_menu_item_new_with_mnemonic(_("_Send To"));
+	win->menu.send_to = gtk_menu_item_new_with_mnemonic(_("S_end To"));
 	gtk_widget_show(win->menu.send_to);
 
 	menu = gtk_menu_new();
@@ -8083,7 +8083,7 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 		sub = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
 
 		if (sub && GTK_WIDGET_IS_SENSITIVE(gtkconv->win->menu.send_to)) {
-			GtkWidget *item = gtk_menu_item_new_with_mnemonic(_("_Send To"));
+			GtkWidget *item = gtk_menu_item_new_with_mnemonic(_("S_end To"));
 			if (populated)
 				pidgin_separator(menu);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
