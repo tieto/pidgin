@@ -497,6 +497,7 @@ purple_connection_error_reason (PurpleConnection *gc,
                                 const char *description)
 {
 	PurpleConnectionUiOps *ops;
+	gboolean fatal;
 
 	g_return_if_fail(gc   != NULL);
 
@@ -506,6 +507,13 @@ purple_connection_error_reason (PurpleConnection *gc,
 	}
 
 	g_assert (reason < PURPLE_NUM_REASONS);
+
+	/* This should probably be removed at some point */
+	fatal = purple_connection_reason_is_fatal (reason);
+	if (fatal != gc->wants_to_die)
+		purple_debug_warning ("connection",
+			"reason %u is %sfatal but wants_to_die is %u",
+			reason, (fatal ? "" : "not "), gc->wants_to_die);
 
 	/* If we've already got one error, we don't need any more */
 	if (gc->disconnect_timeout)
