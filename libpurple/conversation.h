@@ -293,6 +293,7 @@ struct _PurpleConvMessage
 	char *what;
 	PurpleMessageFlags flags;
 	time_t when;
+	PurpleConversation *conv;
 };
 
 /**
