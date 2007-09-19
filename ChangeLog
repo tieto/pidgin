@@ -9,6 +9,7 @@ Version 2.2.1:
 	  it in an ambiguous state.  (It will be disabled.)
 	* Fixed an erroneous size display for MSN file transfers. (galt)
 	* Real usernames are now shown in the system log.
+	* Gmail notifications are better tracked
 
 	Pidgin:
 	* If you alias a buddy to an alias that is already present within
