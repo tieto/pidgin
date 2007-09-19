@@ -1573,8 +1573,7 @@ static char *
 msn_info_strip_search_link(const char *field, size_t len)
 {
 	const char *c;
-	if ((c = strstr(field, " (http://spaces.live.com/default.aspx?page=searchresults")) == NULL &&
-		(c = strstr(field, " (http://spaces.msn.com/default.aspx?page=searchresults")) == NULL)
+	if ((c = strstr(field, " (http://")) == NULL))
 		return g_strndup(field, len);
 	return g_strndup(field, c - field);
 }
