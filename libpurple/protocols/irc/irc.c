@@ -442,21 +442,7 @@ irc_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 
 	irc->gsc = NULL;
 
-	switch (error) {
-		case PURPLE_SSL_HANDSHAKE_FAILED:
-		case PURPLE_SSL_CONNECT_FAILED:
-			reason = PURPLE_REASON_ENCRYPTION_ERROR;
-			break;
-		case PURPLE_SSL_CERTIFICATE_INVALID:
-			/* TODO: maybe PURPLE_SSL_* should be more specific? */
-			reason = PURPLE_REASON_CERT_OTHER_ERROR;
-			break;
-		default:
-			g_assert_not_reached ();
-			reason = PURPLE_REASON_ENCRYPTION_ERROR;
-	}
-
-	purple_connection_error_reason (gc, reason, purple_ssl_strerror(error));
+	purple_connection_ssl_error (gc, error);
 }
 
 static void irc_close(PurpleConnection *gc)
