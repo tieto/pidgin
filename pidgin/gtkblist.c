@@ -1334,14 +1334,14 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 		if (!prpl_info->can_receive_file ||
 			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
 		{
-			pidgin_new_item_from_stock(menu, _("_Send File"),
+			pidgin_new_item_from_stock(menu, _("_Send File..."),
 									 PIDGIN_STOCK_TOOLBAR_SEND_FILE,
 									 G_CALLBACK(gtk_blist_menu_send_file_cb),
 									 buddy, 0, 0, NULL);
 		}
 	}
 
-	pidgin_new_item_from_stock(menu, _("Add Buddy _Pounce"), NULL,
+	pidgin_new_item_from_stock(menu, _("Add Buddy _Pounce..."), NULL,
 			G_CALLBACK(gtk_blist_menu_bp_cb), buddy, 0, 0, NULL);
 
 	if (node->parent && node->parent->child->next && 
@@ -1431,10 +1431,10 @@ create_group_menu (PurpleBlistNode *node, PurpleGroup *g)
 	GtkWidget *item;
 
 	menu = gtk_menu_new();
-	item = pidgin_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD,
+	item = pidgin_new_item_from_stock(menu, _("Add _Buddy..."), GTK_STOCK_ADD,
 				 G_CALLBACK(pidgin_blist_add_buddy_cb), node, 0, 0, NULL);
 	gtk_widget_set_sensitive(item, purple_connections_get_all() != NULL);
-	item = pidgin_new_item_from_stock(menu, _("Add a C_hat"), GTK_STOCK_ADD,
+	item = pidgin_new_item_from_stock(menu, _("Add C_hat..."), GTK_STOCK_ADD,
 				 G_CALLBACK(pidgin_blist_add_chat_cb), node, 0, 0, NULL);
 	gtk_widget_set_sensitive(item, pidgin_blist_joinchat_is_showable());
 	pidgin_new_item_from_stock(menu, _("_Delete Group"), GTK_STOCK_REMOVE,
@@ -3086,7 +3086,7 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Accounts menu */
 	{ N_("/_Accounts"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Accounts/Add\\/Edit"), "<CTL>A", pidgin_accounts_window_show, 0, "<Item>", NULL },
+	{ N_("/Accounts/Manage"), "<CTL>A", pidgin_accounts_window_show, 0, "<Item>", NULL },
 
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>", NULL },
@@ -4616,7 +4616,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	tmp = g_strdup_printf(_("<span weight='bold' size='larger'>Welcome to %s!</span>\n\n"
 
 					       "You have no accounts enabled. Enable your IM accounts from the "
-					       "<b>Accounts</b> window at <b>Accounts->Add/Edit</b>. Once you "
+					       "<b>Accounts</b> window at <b>Accounts->Manage</b>. Once you "
 					       "enable accounts, you'll be able to sign on, set your status, "
 					       "and talk to your friends."), PIDGIN_NAME);
 	pretty = pidgin_make_pretty_arrows(tmp);
@@ -5816,7 +5816,7 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 	gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
 	/* Set up stuff for the account box */
-	label = gtk_label_new_with_mnemonic(_("_Account:"));
+	label = gtk_label_new_with_mnemonic(_("A_ccount:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 
@@ -6882,7 +6882,7 @@ pidgin_blist_update_accounts_menu(void)
 	for (l = gtk_container_get_children(GTK_CONTAINER(accountmenu)); l; l = g_list_delete_link(l, l)) {
 		menuitem = l->data;
 
-		if (menuitem != gtk_item_factory_get_widget(gtkblist->ift, N_("/Accounts/Add\\/Edit")))
+		if (menuitem != gtk_item_factory_get_widget(gtkblist->ift, N_("/Accounts/Manage")))
 			gtk_widget_destroy(menuitem);
 	}
 
