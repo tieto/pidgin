@@ -269,7 +269,7 @@ msn_soap_read(MsnSoapConn *soapconn)
 }
 
 /*read the whole SOAP server response*/
-void 
+static void 
 msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn *soapconn = data;
