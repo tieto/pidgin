@@ -23,6 +23,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <string.h>
+
 #include "connection.h"
 #include "media.h"
 
@@ -36,6 +38,13 @@ struct _PurpleMediaPrivate
 
 	char *name;
 	PurpleConnection *connection;
+	GstElement *audio_src;
+	GstElement *audio_sink;
+	GstElement *video_src;
+	GstElement *video_sink;
+
+	FarsightStream *audio_stream;
+	FarsightStream *video_stream;
 };
 
 #define PURPLE_MEDIA_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MEDIA, PurpleMediaPrivate))
@@ -51,7 +60,11 @@ static GObjectClass *parent_class = NULL;
 
 
 enum {
-	STATE_CHANGE,
+	READY,
+	ACCEPTED,
+	HANGUP,
+	REJECT,
+	GOT_HANGUP,
 	LAST_SIGNAL
 };
 static guint purple_media_signals[LAST_SIGNAL] = {0};
@@ -61,8 +74,12 @@ enum {
 	PROP_FARSIGHT_SESSION,
 	PROP_NAME,
 	PROP_CONNECTION,
-	PROP_MIC_ELEMENT,
-	PROP_SPEAKER_ELEMENT,
+	PROP_AUDIO_SRC,
+	PROP_AUDIO_SINK,
+	PROP_VIDEO_SRC,
+	PROP_VIDEO_SINK,
+	PROP_VIDEO_STREAM,
+	PROP_AUDIO_STREAM
 };
 
 GType
@@ -103,26 +120,93 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"Farsight session",
 			"The FarsightSession associated with this media.",
 			FARSIGHT_TYPE_SESSION,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READABLE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	g_object_class_install_property(gobject_class, PROP_NAME,
 			g_param_spec_string("screenname",
 			"Screenname",
 			"The screenname of the remote user",
 			NULL,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READABLE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
 	g_object_class_install_property(gobject_class, PROP_CONNECTION,
 			g_param_spec_pointer("connection",
 			"Connection",
 			"The PurpleConnection associated with this session",
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READABLE));
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+
+	g_object_class_install_property(gobject_class, PROP_AUDIO_SRC,
+			g_param_spec_object("audio-src",
+			"Audio source",
+			"The GstElement used to source audio",
+			GST_TYPE_ELEMENT,
+			G_PARAM_READWRITE));
+
+	g_object_class_install_property(gobject_class, PROP_AUDIO_SINK,
+			g_param_spec_object("audio-sink",
+			"Audio sink",
+			"The GstElement used to sink audio",
+			GST_TYPE_ELEMENT,
+			G_PARAM_READWRITE));
+
+	g_object_class_install_property(gobject_class, PROP_VIDEO_SRC,
+			g_param_spec_object("video-src",
+			"Video source",
+			"The GstElement used to source video",
+			GST_TYPE_ELEMENT,
+			G_PARAM_READWRITE));
+
+	g_object_class_install_property(gobject_class, PROP_VIDEO_SINK,
+			g_param_spec_object("video-sink",
+			"Audio source",
+			"The GstElement used to sink video",
+			GST_TYPE_ELEMENT,
+			G_PARAM_READWRITE));
+
+	g_object_class_install_property(gobject_class, PROP_VIDEO_STREAM,
+			g_param_spec_object("video-stream",
+			"Video stream",
+			"The FarsightStream used for video",
+			FARSIGHT_TYPE_STREAM,
+			G_PARAM_READWRITE));
+
+	g_object_class_install_property(gobject_class, PROP_AUDIO_STREAM,
+			g_param_spec_object("audio-stream",
+			"Audio stream",
+			"The FarsightStream used for audio",
+			FARSIGHT_TYPE_STREAM,
+			G_PARAM_READWRITE));
+
+	purple_media_signals[READY] = g_signal_new("ready", G_TYPE_FROM_CLASS(klass),
+				 	 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
+	purple_media_signals[ACCEPTED] = g_signal_new("accepted", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
+	purple_media_signals[HANGUP] = g_signal_new("hangup", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
+	purple_media_signals[REJECT] = g_signal_new("reject", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
+	purple_media_signals[GOT_HANGUP] = g_signal_new("got-hangup", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
+
+	g_type_class_add_private(klass, sizeof(PurpleMediaPrivate));
 }
+
 
 static void
 purple_media_init (PurpleMedia *media)
 {
 	media->priv = PURPLE_MEDIA_GET_PRIVATE(media);
+	memset(media->priv, 0, sizeof(media->priv));	
 }
 
 static void
@@ -141,14 +225,55 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 
 	switch (prop_id) {
 		case PROP_FARSIGHT_SESSION:
+			if (media->priv->farsight_session)
+				g_object_unref(media->priv->farsight_session);
 			media->priv->farsight_session = g_value_get_object(value);
+			g_object_ref(media->priv->farsight_session);
 			break;
 		case PROP_NAME:
-			media->priv->name = g_value_get_string(value);
+			g_free(media->priv->name);
+			media->priv->name = g_value_dup_string(value);
 			break;
 		case PROP_CONNECTION:
 			media->priv->connection = g_value_get_pointer(value);
 			break;
+		case PROP_AUDIO_SRC:
+			if (media->priv->audio_src)
+				gst_object_unref(media->priv->audio_src);
+			media->priv->audio_src = g_value_get_object(value);
+			gst_object_ref(media->priv->audio_src);
+			break;
+		case PROP_AUDIO_SINK:
+			if (media->priv->audio_sink)
+				gst_object_unref(media->priv->audio_sink);
+			media->priv->audio_sink = g_value_get_object(value);
+			gst_object_ref(media->priv->audio_sink);
+			break;
+		case PROP_VIDEO_SRC:
+			if (media->priv->video_src)
+				gst_object_unref(media->priv->video_src);
+			media->priv->video_src = g_value_get_object(value);
+			gst_object_ref(media->priv->video_src);
+			break;
+		case PROP_VIDEO_SINK:
+			if (media->priv->video_sink)
+				gst_object_unref(media->priv->video_sink);
+			media->priv->video_sink = g_value_get_object(value);
+			gst_object_ref(media->priv->video_sink);
+			break;
+		case PROP_VIDEO_STREAM:
+			if (media->priv->video_stream)
+				g_object_unref(media->priv->video_stream);
+			media->priv->video_stream = g_value_get_object(value);
+			gst_object_ref(media->priv->video_stream);
+			break;
+		case PROP_AUDIO_STREAM:
+			if (media->priv->audio_stream)
+				g_object_unref(media->priv->audio_stream);
+			media->priv->audio_stream = g_value_get_object(value);
+			gst_object_ref(media->priv->audio_stream);
+			break;
+
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
@@ -173,11 +298,158 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 		case PROP_CONNECTION:
 			g_value_set_pointer(value, media->priv->connection);
 			break;
+		case PROP_AUDIO_SRC:
+			g_value_set_object(value, media->priv->audio_src);
+			break;
+		case PROP_AUDIO_SINK:
+			g_value_set_object(value, media->priv->audio_sink);
+			break;
+		case PROP_VIDEO_SRC:
+			g_value_set_object(value, media->priv->video_src);
+			break;
+		case PROP_VIDEO_SINK:
+			g_value_set_object(value, media->priv->video_sink);
+			break;
+		case PROP_VIDEO_STREAM:
+			g_value_set_object(value, media->priv->video_stream);
+			break;
+		case PROP_AUDIO_STREAM:
+			g_value_set_object(value, media->priv->audio_stream);
+			break;
+
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
 			break;
 	}
 
+}
+
+void 
+purple_media_get_elements(PurpleMedia *media, GstElement **audio_src, GstElement **audio_sink,
+                                                  GstElement **video_src, GstElement **video_sink)
+{
+	 if (audio_src) 
+		g_object_get(G_OBJECT(media), "audio-src", *audio_src, NULL);
+	 if (audio_sink) 
+		g_object_get(G_OBJECT(media), "audio-sink", *audio_sink, NULL);
+	 if (video_src) 
+		g_object_get(G_OBJECT(media), "video-src", *video_src, NULL);
+	 if (video_sink) 
+		g_object_get(G_OBJECT(media), "video-sink", *video_sink, NULL);
+
+}
+
+void 
+purple_media_set_audio_src(PurpleMedia *media, GstElement *audio_src)
+{
+	g_object_set(G_OBJECT(media), "audio-src", audio_src, NULL);
+}
+
+void 
+purple_media_set_audio_sink(PurpleMedia *media, GstElement *audio_sink)
+{
+	g_object_set(G_OBJECT(media), "audio-sink", audio_sink, NULL);
+}
+
+void 
+purple_media_set_video_src(PurpleMedia *media, GstElement *video_src)
+{
+	g_object_set(G_OBJECT(media), "video-src", video_src, NULL);
+}
+
+void 
+purple_media_set_video_sink(PurpleMedia *media, GstElement *video_sink)
+{
+	g_object_set(G_OBJECT(media), "video-sink", video_sink, NULL);
+}
+
+GstElement *
+purple_media_get_audio_src(PurpleMedia *media)
+{
+	GstElement *ret;
+	g_object_get(G_OBJECT(media), "audio-src", &ret, NULL);
+	return ret;
+}
+
+GstElement *
+purple_media_get_audio_sink(PurpleMedia *media)
+{
+	GstElement *ret;
+	g_object_get(G_OBJECT(media), "audio-sink", &ret, NULL);
+	return ret;
+}
+
+GstElement *
+purple_media_get_video_src(PurpleMedia *media)
+{
+	GstElement *ret;
+	g_object_get(G_OBJECT(media), "video-src", &ret, NULL);
+	return ret;
+}
+
+GstElement *
+purple_media_get_video_sink(PurpleMedia *media)
+{
+	GstElement *ret;
+	g_object_get(G_OBJECT(media), "video-sink", &ret, NULL);
+	return ret;
+}
+
+GstElement *
+purple_media_get_audio_pipeline(PurpleMedia *media)
+{
+	FarsightStream *stream;
+	g_object_get(G_OBJECT(media), "audio-stream", &stream, NULL);
+printf("stream: %d\n\n\n", stream);
+GstElement *l = farsight_stream_get_pipeline(stream);
+printf("Element: %d\n", l);
+	return farsight_stream_get_pipeline(stream);
+}
+
+PurpleConnection *
+purple_media_get_connection(PurpleMedia *media)
+{
+	PurpleConnection *gc;
+	g_object_get(G_OBJECT(media), "connection", &gc, NULL);
+	return gc;
+}
+
+const char *
+purple_media_get_screenname(PurpleMedia *media)
+{
+	const char *ret;
+	g_object_get(G_OBJECT(media), "screenname", &ret, NULL);
+	return ret;
+}
+
+void
+purple_media_ready(PurpleMedia *media)
+{
+	g_signal_emit(media, purple_media_signals[READY], 0);
+}
+
+void
+purple_media_accept(PurpleMedia *media)
+{
+	g_signal_emit(media, purple_media_signals[ACCEPTED], 0);
+}
+
+void
+purple_media_hangup(PurpleMedia *media)
+{
+	g_signal_emit(media, purple_media_signals[HANGUP], 0);
+}
+
+void
+purple_media_reject(PurpleMedia *media)
+{
+	g_signal_emit(media, purple_media_signals[REJECT], 0);
+}
+
+void
+purple_media_got_hangup(PurpleMedia *media)
+{
+	g_signal_emit(media, purple_media_signals[GOT_HANGUP], 0);
 }
 
 #endif  /* USE_FARSIGHT */

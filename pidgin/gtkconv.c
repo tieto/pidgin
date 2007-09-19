@@ -60,6 +60,7 @@
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
+#include "gtkmedia.h"
 #include "gtkmenutray.h"
 #include "gtkpounce.h"
 #include "gtkprefs.h"
@@ -4490,7 +4491,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_widget_show(paned);
 
 	/* Setup the top part of the pane */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtkconv->topvbox = vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_paned_pack1(GTK_PANED(paned), vbox, TRUE, TRUE);
 	gtk_widget_show(vbox);
 
@@ -7163,9 +7164,55 @@ update_chat_topic(PurpleConversation *conv, const char *old, const char *new)
 }
 
 static void
-pidgin_conv_new_media_cb(PurpleMedia *media, gpointer nul)
+pidgin_gtkmedia_message_cb(PidginMedia *media, const char *msg, PurpleConversation *conv)
 {
-	purple_notify_info(pidgin_conversations_get_handle(), "Media!", "New Media!", "You got new media!\n");
+	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+}
+
+static void
+pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpointer nul)
+{	
+	GstElement *sendbin, *src, *sendlevel;
+	GstElement *recvbin, *sink, *recvlevel;
+	GstPad *pad, *ghost;
+
+	GtkWidget *gtkmedia;
+	PurpleConversation *conv;
+	PidginConversation *gtkconv;
+
+	sendbin = gst_bin_new("sendbin");
+	src = gst_element_factory_make("alsasrc", "asrc");
+	sendlevel = gst_element_factory_make("level", "sendlevel");
+	gst_bin_add_many(GST_BIN(sendbin), src, sendlevel, NULL);
+	gst_element_link(src, sendlevel); //, gst_caps_new_simple("audio/x-raw-int", "rate", G_TYPE_INT, 8000, NULL));
+	pad = gst_element_get_pad(sendlevel, "src");
+	ghost = gst_ghost_pad_new("ghostsrc", pad);
+	gst_element_add_pad(sendbin, ghost);
+	g_object_set(G_OBJECT(sendlevel), "message", TRUE, NULL);
+
+	recvbin = gst_bin_new("pidginrecvbin");
+	sink = gst_element_factory_make("alsasink", "asink");
+	g_object_set(G_OBJECT(sink), "sync", FALSE, NULL);
+	recvlevel = gst_element_factory_make("level", "recvlevel");
+	gst_bin_add_many(GST_BIN(recvbin), sink, recvlevel, NULL);
+	gst_element_link(recvlevel, sink);
+	pad = gst_element_get_pad(recvlevel, "sink");
+	ghost = gst_ghost_pad_new("ghostsink", pad);
+	gst_element_add_pad(recvbin, ghost);
+	g_object_set(G_OBJECT(recvlevel), "message", TRUE, NULL);
+
+	purple_media_set_audio_src(media, sendbin);
+	purple_media_set_audio_sink(media, recvbin);
+
+	gtkmedia = pidgin_media_new(media, sendlevel, recvlevel);
+	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, 
+				       purple_connection_get_account(purple_media_get_connection(media)), 
+				       purple_media_get_screenname(media));
+	gtkconv = PIDGIN_CONVERSATION(conv);
+	gtk_box_pack_start(GTK_BOX(gtkconv->topvbox), gtkmedia, FALSE, FALSE, 0);
+	gtk_widget_show(gtkmedia);
+	g_signal_connect_swapped(G_OBJECT(media), "got-hangup", G_CALLBACK(gtk_widget_destroy), gtkmedia);
+	g_signal_connect(G_OBJECT(gtkmedia), "message", G_CALLBACK(pidgin_gtkmedia_message_cb), conv);
 }
 
 void *
@@ -7264,7 +7311,7 @@ pidgin_conversations_init(void)
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
                                 hide_new_pref_cb, NULL);
 
-	g_signal_connect(G_OBJECT(purple_media_manager_get()), "new-media",
+	g_signal_connect(G_OBJECT(purple_media_manager_get()), "init-media",
 			 G_CALLBACK(pidgin_conv_new_media_cb), NULL);
 
 

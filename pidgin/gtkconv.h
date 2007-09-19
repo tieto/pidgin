@@ -162,6 +162,7 @@ struct _PidginConversation
 	GtkWidget *infopane;
 	GtkListStore *infopane_model;
 	GtkTreeIter infopane_iter;
+	GtkWidget *topvbox;
 };
 
 /*@}*/

@@ -47,7 +47,7 @@ static GObjectClass *parent_class = NULL;
 
 
 enum {
-	NEW_MEDIA,
+	INIT_MEDIA,
 	LAST_SIGNAL
 };
 static guint purple_media_manager_signals[LAST_SIGNAL] = {0};
@@ -92,7 +92,7 @@ purple_media_manager_class_init (PurpleMediaManagerClass *klass)
 	
 	gobject_class->finalize = purple_media_manager_finalize;
 
-	purple_media_manager_signals[NEW_MEDIA] = g_signal_new ("new-media",
+	purple_media_manager_signals[INIT_MEDIA] = g_signal_new ("init-media",
 		G_TYPE_FROM_CLASS (klass),
 		G_SIGNAL_RUN_LAST,
 		0, NULL, NULL,
@@ -127,13 +127,17 @@ purple_media_manager_get()
 PurpleMedia*
 purple_media_manager_create_media(PurpleMediaManager *manager, 
 				  PurpleConnection *gc,
-				  const char *screenname)
+				  const char *screenname,
+				  FarsightStream *audio_stream,
+				  FarsightStream *video_stream)
 {
 	PurpleMedia *media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
 					  "screenname", screenname,
-					  "connection", gc, NULL));
+					  "connection", gc, 
+					  "audio-stream", audio_stream,
+					  "video-stream", video_stream, NULL));
 	manager->priv->medias = g_list_append(manager->priv->medias, media);
-	g_signal_emit(manager, purple_media_manager_signals[NEW_MEDIA], 0, media);
+	g_signal_emit(manager, purple_media_manager_signals[INIT_MEDIA], 0, media);
 	return media;
 }
 

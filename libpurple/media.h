@@ -71,6 +71,28 @@ struct _PurpleMedia
 
 GType purple_media_get_type();
 
+void purple_media_get_elements(PurpleMedia *media, GstElement **audio_src, GstElement **audio_sink,
+						  GstElement **video_src, GstElement **video_sink);
+
+void purple_media_set_audio_src(PurpleMedia *media, GstElement *video_src);
+void purple_media_set_audio_sink(PurpleMedia *media, GstElement *video_src);
+void purple_media_set_video_src(PurpleMedia *media, GstElement *video_src);
+void purple_media_set_video_sink(PurpleMedia *media, GstElement *video_src);
+
+GstElement *purple_media_get_audio_src(PurpleMedia *media);
+GstElement *purple_media_get_audio_sink(PurpleMedia *media);
+GstElement *purple_media_get_video_src(PurpleMedia *media);
+GstElement *purple_media_get_video_sink(PurpleMedia *media);
+
+GstElement *purple_media_get_audio_pipeline(PurpleMedia *media);
+
+PurpleConnection *purple_media_get_connection(PurpleMedia *media);
+const char *purple_media_get_screenname(media);
+void purple_media_ready(PurpleMedia *media);
+void purple_media_accept(PurpleMedia *media);
+void purple_media_reject(PurpleMedia *media);
+void purple_media_hangup(PurpleMedia *media);
+void purple_media_got_hangup(PurpleMedia *media);
 G_END_DECLS
 
 #endif  /* USE_FARSIGHT */

@@ -54,6 +54,7 @@ typedef struct {
 	char *remote_jid;
 } GoogleSession;
 
+GHashTable *sessions = NULL;
 
 static guint 
 google_session_id_hash(gconstpointer key) 
@@ -75,7 +76,17 @@ google_session_id_equal(gconstpointer a, gconstpointer b)
 	return !strcmp(c->id, d->id) && !strcmp(c->initiator, d->initiator);
 }
 
-GHashTable *sessions = NULL;
+static void
+google_session_destroy(GoogleSession *session)
+{
+	g_hash_table_remove(sessions, &(session->id));
+	g_free(session->id.id);
+	g_free(session->id.initiator);
+	g_free(session->remote_jid);
+	g_object_unref(session->media);
+	g_object_unref(session->stream);
+	g_free(session);
+}
 
 static xmlnode *
 google_session_create_xmlnode(GoogleSession *session, const char *type)
@@ -115,6 +126,39 @@ google_session_send_accept(GoogleSession *session)
 	jabber_iq_send(iq);
 	farsight_stream_start(session->stream);
 }
+
+static void
+google_session_send_terminate(GoogleSession *session)
+{
+	xmlnode *sess;
+	GList *codecs = farsight_stream_get_codec_intersection(session->stream);
+	JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
+
+	xmlnode_set_attrib(iq->node, "to", session->remote_jid);
+	sess = google_session_create_xmlnode(session, "terminate");
+	xmlnode_insert_child(iq->node, sess);
+	
+	jabber_iq_send(iq);
+	farsight_stream_stop(session->stream);
+	google_session_destroy(session);
+}
+
+static void
+google_session_send_reject(GoogleSession *session)
+{
+	xmlnode *sess;
+	GList *codecs = farsight_stream_get_codec_intersection(session->stream);
+	JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
+
+	xmlnode_set_attrib(iq->node, "to", session->remote_jid);
+	sess = google_session_create_xmlnode(session, "reject");
+	xmlnode_insert_child(iq->node, sess);
+	
+	jabber_iq_send(iq);
+	farsight_stream_stop(session->stream);
+	google_session_destroy(session);
+}
+
 
 static void 
 google_session_candidates_prepared (FarsightStream *stream, gchar *candidate_id, GoogleSession *session)
@@ -159,10 +203,11 @@ google_session_candidates_prepared (FarsightStream *stream, gchar *candidate_id,
 	jabber_iq_send(iq);
 }
 
-static gboolean
-google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode *packet)
+static void
+google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
 {
 	PurpleMedia *media;
+	JabberIq *result;
 	FarsightSession *fs;
 	GList *codecs = NULL;
 	xmlnode *desc_element, *codec_element;
@@ -185,7 +230,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 
 	g_object_set(G_OBJECT(session->stream), "transmitter", "libjingle", NULL);
 	
-	desc_element = xmlnode_get_child(packet, "description");
+	desc_element = xmlnode_get_child(sess, "description");
 	
 	for (codec_element = xmlnode_get_child(desc_element, "payload-type"); 
 	     codec_element; 
@@ -198,30 +243,37 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 		farsight_codec_init(codec, atoi(id), encoding_name, FARSIGHT_MEDIA_TYPE_AUDIO, clock_rate ? atoi(clock_rate) : 0);
 		codecs = g_list_append(codecs, codec);
 	}
-	GstElement *e = gst_element_factory_make("alsasrc", "source");
-	farsight_stream_set_source(session->stream, e);
-	farsight_stream_set_source_filter(session->stream, gst_caps_new_simple("audio/x-raw-int", "rate",G_TYPE_INT,8000, NULL));
-	gst_object_unref(e);
 
-	e = gst_element_factory_make("alsasink", "fakes");
-	g_object_set(e, "sync", FALSE, NULL);
+	session->media = media = purple_media_manager_create_media(purple_media_manager_get(), js->gc, session->remote_jid, session->stream, NULL);
+
+	g_signal_connect_swapped(G_OBJECT(media), "accepted", G_CALLBACK(google_session_send_accept), session);
+	g_signal_connect_swapped(G_OBJECT(media), "reject", G_CALLBACK(google_session_send_reject), session);
+	g_signal_connect_swapped(G_OBJECT(media), "hangup", G_CALLBACK(google_session_send_terminate), session);
+
+	
+	GstElement *e = purple_media_get_audio_src(media);
+	farsight_stream_set_source(session->stream, e);	
+	
+	e = purple_media_get_audio_sink(media);
 	farsight_stream_set_sink(session->stream, e);
-	gst_object_unref(e);
-
+	
 	farsight_stream_prepare_transports(session->stream);
 	res = farsight_stream_set_remote_codecs(session->stream, codecs);
-
+	
+	purple_media_ready(media);
 
 	farsight_codec_list_destroy(codecs);
 	g_signal_connect(G_OBJECT(session->stream), "new-native-candidate", G_CALLBACK(google_session_candidates_prepared), session);
-google_session_send_accept(session);
-	media = purple_media_manager_create_media(purple_media_manager_get(), js->gc, session->remote_jid);
-	return res;	
+	result = jabber_iq_new(js, JABBER_IQ_RESULT);
+	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
+	xmlnode_set_attrib(result->node, "to", session->remote_jid);
+	jabber_iq_send(result);
 }
 
-static gboolean
-google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmlnode *sess)
+static void 
+google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
 {
+	JabberIq *result;
 	GList *list = NULL;
 	xmlnode *cand;
 	static int name = 0;
@@ -246,31 +298,46 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 	farsight_stream_add_remote_candidate(session->stream, list);
 	g_list_foreach(list, g_free, NULL);
 	g_list_free(list);
-	return TRUE;
+
+	result = jabber_iq_new(js, JABBER_IQ_RESULT);
+	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
+	xmlnode_set_attrib(result->node, "to", session->remote_jid);
+	jabber_iq_send(result);
+}
+
+static void
+google_session_handle_reject(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
+{
+	farsight_stream_stop(session->stream);
+	purple_media_got_hangup(session->media);
+	
+	google_session_destroy(session);
+}
+
+static void
+google_session_handle_terminate(JabberStream *js, GoogleSession *session, xmlnode *packet, xmlnode *sess)
+{
+	farsight_stream_stop(session->stream);
+	purple_media_got_hangup(session->media);
+
+	google_session_destroy(session);
 }
 
 static void
 google_session_parse_iq(JabberStream *js, GoogleSession *session, xmlnode *packet)
 {
-	JabberIq *result;
-	gboolean valid = TRUE;
 	xmlnode *sess = xmlnode_get_child(packet, "session");	
 	const char *type = xmlnode_get_attrib(sess, "type");
 
 	if (!strcmp(type, "initiate")) {
-		valid  = google_session_handle_initiate(js, session, sess);
+		google_session_handle_initiate(js, session, packet, sess);
 	} else if (!strcmp(type, "accept")) {
 	} else if (!strcmp(type, "reject")) {
+		google_session_handle_reject(js, session, packet, sess);
 	} else if (!strcmp(type, "terminate")) {
+		google_session_handle_terminate(js, session, packet, sess);
 	} else if (!strcmp(type, "candidates")) {
-		valid = google_session_handle_candidates(js, session, sess);
-	}
-	
-	if (valid) {
-		result = jabber_iq_new(js, JABBER_IQ_RESULT);
-		jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
-		xmlnode_set_attrib(result->node, "to", session->remote_jid);
-		jabber_iq_send(result);
+		google_session_handle_candidates(js, session, packet, sess);
 	}
 }
 

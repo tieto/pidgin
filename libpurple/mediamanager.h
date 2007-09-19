@@ -68,7 +68,9 @@ PurpleMediaManager *purple_media_manager_get();
 
 PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
 					       PurpleConnection *gc,
-					       const char *screenname);
+					       const char *screenname,
+					       FarsightStream *audio_stream,
+					       FarsightStream *video_stream);
 
 G_END_DECLS
 
