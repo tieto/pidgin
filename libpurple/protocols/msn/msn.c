@@ -539,25 +539,36 @@ msn_list_icon(PurpleAccount *a, PurpleBuddy *b)
 
 /*
  * Set the User status text
- * Add the PSM String Using "Name - PSM String" format
  */
 static char *
 msn_status_text(PurpleBuddy *buddy)
 {
 	PurplePresence *presence;
 	PurpleStatus *status;
-	const char *msg, *cmedia;
+	const char *msg;
 
 	presence = purple_buddy_get_presence(buddy);
 	status = purple_presence_get_active_status(presence);
 
+	/* I think status message should take precedence over media */
 	msg = purple_status_get_attr_string(status, "message");
-	cmedia = purple_status_get_attr_string(status, "currentmedia");
-
-	if (cmedia)
-		return g_markup_escape_text(cmedia, -1);
-	else if (msg)
+	if (msg && *msg)
 		return g_markup_escape_text(msg, -1);
+
+	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
+		const char *title, *artist;
+		char *media, *esc;
+		status = purple_presence_get_status(presence, "tune");
+		title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
+		artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+
+		media = g_strdup_printf("%s%s%s", title, artist ? " - " : "",
+				artist ? artist : "");
+		esc = g_markup_escape_text(media, -1);
+		g_free(media);
+		return esc;
+	}
+
 	return NULL;
 }
 
@@ -570,14 +581,21 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 
 	user = buddy->proto_data;
 
-
 	if (purple_presence_is_online(presence))
 	{
-		const char *psm, *currentmedia, *name;
+		const char *psm, *name;
+		char *currentmedia = NULL;
 		char *tmp;
 
 		psm = purple_status_get_attr_string(status, "message");
-		currentmedia = purple_status_get_attr_string(status, "currentmedia");
+		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
+			PurpleStatus *tune = purple_presence_get_status(presence, "tune");
+			const char *title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
+			const char *artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
+			currentmedia = g_strdup_printf("%s%s%s", title, artist ? " - " : "",
+					artist ? artist : "");
+			/* We could probably just use user->media.title etc. here */
+		}
 
 		if (!purple_presence_is_available(presence)) {
 			name = purple_status_get_name(status);
@@ -609,6 +627,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 			tmp = g_markup_escape_text(currentmedia, -1);
 			purple_notify_user_info_add_pair(user_info, _("Current media"), tmp);
 			g_free(tmp);
+			g_free(currentmedia);
 		}
 	}
 
@@ -632,40 +651,34 @@ msn_status_types(PurpleAccount *account)
 	status = purple_status_type_new_with_attrs(
 				PURPLE_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
 				"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-				"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 				NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, "brb", _("Be Right Back"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_UNAVAILABLE, "busy", _("Busy"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_UNAVAILABLE, "phone", _("On the Phone"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, "lunch", _("Out to Lunch"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
@@ -679,6 +692,14 @@ msn_status_types(PurpleAccount *account)
 
 	status = purple_status_type_new_full(PURPLE_STATUS_MOBILE,
 			"mobile", NULL, FALSE, FALSE, TRUE);
+	types = g_list_append(types, status);
+
+	status = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
+			"tune", NULL, FALSE, FALSE, TRUE,
+			PURPLE_TUNE_ARTIST, _("Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ALBUM, _("Album"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Title"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, status);
 
 	return types;

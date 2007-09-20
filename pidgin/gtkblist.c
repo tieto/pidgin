@@ -3384,7 +3384,7 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 		return ret;
 	}
 
-	if (purple_status_get_attr_string(purple_presence_get_active_status(p), PURPLE_TUNE_TITLE)) {
+	if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_TUNE)) {
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "music.png", NULL);
 		ret = gdk_pixbuf_new_from_file(path, NULL);
 		g_free(path);

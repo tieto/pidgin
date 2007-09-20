@@ -1625,10 +1625,8 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	PurpleConnection *gc;
 	MsnUser *user;
 	const char *passport;
-	char *psm_str, *currentmedia_str, *str;
-
-	/*get the payload content*/
-//	purple_debug_info("MSNP14","UBX {%s} payload{%s}\n",cmd->params[0], cmd->payload);
+	char *psm_str, *str;
+	CurrentMedia media = {NULL, NULL, NULL};
 
 	session = cmdproc->session;
 	account = session->account;
@@ -1638,16 +1636,17 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	user = msn_userlist_find_user(session->userlist, passport);
 	
 	psm_str = msn_get_psm(cmd->payload,len);
-	currentmedia_str = msn_parse_currentmedia(
-	                                 str = msn_get_currentmedia(cmd->payload, len));
+	msn_user_set_statusline(user, psm_str);
+	g_free(psm_str);
+
+	str = msn_get_currentmedia(cmd->payload, len);
+	if (msn_parse_currentmedia(str, &media))
+		msn_user_set_currentmedia(user, &media);
+	else
+		msn_user_set_currentmedia(user, NULL);
 	g_free(str);
 
-	msn_user_set_statusline(user, psm_str);
-	msn_user_set_currentmedia(user, currentmedia_str);
 	msn_user_update(user);
-
-	g_free(psm_str);
-	g_free(currentmedia_str);
 }
 
 static void

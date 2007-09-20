@@ -903,6 +903,8 @@ purple_status_set_attr_string(PurpleStatus *status, const char *id,
 	}
 	g_return_if_fail(purple_value_get_type(attr_value) == PURPLE_TYPE_STRING);
 
+	/* XXX: Check if the value has actually changed. If it has, and the status
+	 * is active, should this trigger 'status_has_changed'? */
 	purple_value_set_string(attr_value, value);
 }
 

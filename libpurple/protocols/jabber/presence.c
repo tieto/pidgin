@@ -104,9 +104,10 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	char *stripped = NULL;
 	JabberBuddyState state;
 	int priority;
-	const char *artist, *title, *source, *uri, *track;
-	int length;
+	const char *artist = NULL, *title = NULL, *source = NULL, *uri = NULL, *track = NULL;
+	int length = -1;
 	gboolean allowBuzz;
+	PurpleStatus *tune;
 
 	if(NULL == status) {
 		PurplePresence *gpresence = purple_account_get_presence(account);
@@ -172,12 +173,16 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	}
 					  	
 	/* next, check if there are any changes to the tune values */
-	artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
-	title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
-	source = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
-	uri = purple_status_get_attr_string(status, PURPLE_TUNE_URL);
-	track = purple_status_get_attr_string(status, PURPLE_TUNE_TRACK);
-	length = (!purple_status_get_attr_value(status, PURPLE_TUNE_TIME))?-1:purple_status_get_attr_int(status, PURPLE_TUNE_TIME);
+	tune = purple_presence_get_status(purple_status_get_presence(status), "tune");
+	if (tune && purple_status_is_active(tune)) {
+		artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
+		title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
+		source = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
+		uri = purple_status_get_attr_string(tune, PURPLE_TUNE_URL);
+		track = purple_status_get_attr_string(tune, PURPLE_TUNE_TRACK);
+		length = (!purple_status_get_attr_value(tune, PURPLE_TUNE_TIME)) ? -1 :
+				purple_status_get_attr_int(tune, PURPLE_TUNE_TIME);
+	}
 	
 	if(CHANGED(artist, js->old_artist) || CHANGED(title, js->old_title) || CHANGED(source, js->old_source) ||
 	   CHANGED(uri, js->old_uri) || CHANGED(track, js->old_track) || (length != js->old_length)) {
