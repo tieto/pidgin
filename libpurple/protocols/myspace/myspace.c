@@ -1789,6 +1789,9 @@ msim_error(MsimSession *session, MsimMessage *msg)
 			session->gc->wants_to_die = TRUE;
 			if (!purple_account_get_remember_password(session->account))
 				purple_account_set_password(session->account, NULL);
+		} if (err == 6) {
+			/* Logged in elsewhere */
+			session->gc->wants_to_die = TRUE;
 		}
 		purple_connection_error(session->gc, full_errmsg);
 	} else {
