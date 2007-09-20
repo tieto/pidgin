@@ -98,9 +98,17 @@ msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
 
 	cmedia_array = g_strsplit(cmedia, "\\0", 0);
 
+	/*
+	 * 0: Media Player
+	 * 1: 'Music'
+	 * 2: '1' if enabled, '0' if not
+	 * 3: Format (eg. {0} by {1})
+	 * 4: Title
+	 * 5: Artist
+	 * 6: Album
+	 * 7: ?
+	 */
 	strings = 0;
-	/* Yes, we want to skip the first element here, as it is empty due to
-	 * the cmedia string starting with \0 -- see the examples below. */
 	while (cmedia_array[++strings] != NULL);
 
 	if (strings < 4)
@@ -125,42 +133,6 @@ msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
 		media->album = NULL;
 
 	return TRUE;
-
-#if 0
-	/* The cmedia_array[2] field contains a 1 if enabled. */
-	if ((strings > 3) && (!strcmp(cmedia_array[2], "1"))) {
-		char *inptr = cmedia_array[3];
-
-		buffer = g_string_new(NULL);
-
-		while (*inptr != '\0') {
-			if ((*inptr == '{') && ((*(inptr + 1) != '\0') && (*(inptr+2) == '}'))) {
-				char *tmpptr;
-				int tmp;
-
-				errno = 0;
-				tmp = strtol(inptr + 1, &tmpptr, 10);
-
-				if (errno == 0 && tmpptr != inptr + 1 &&
-				    tmp + 4 < strings) {
-					/* Replace {?} tag with appropriate text only when successful.
-					 * Skip otherwise. */
-					buffer = g_string_append(buffer, cmedia_array[tmp + 4]);
-				}
-				inptr += 3; /* Skip to the next char after '}' */
-			} else {
-				buffer = g_string_append_c(buffer, *inptr++);
-			}
-		}
-		purple_debug_info("msn", "Parsed currentmedia string, result: \"%s\"\n",
-		                  buffer->str);
-	} else {
-		purple_debug_info("msn", "Current media marked disabled, not parsing.\n");
-	}
-
-	g_strfreev(cmedia_array);
-	return buffer ? g_string_free(buffer, FALSE) : NULL;
-#endif
 }
 
 /* get the CurrentMedia info from the XML string */
