@@ -1400,10 +1400,11 @@ char *jabber_status_text(PurpleBuddy *b)
 		char *stripped;
 
 		if(!(stripped = purple_markup_strip_html(jabber_buddy_get_status_msg(jb)))) {
-			PurpleStatus *status = purple_presence_get_active_status(purple_buddy_get_presence(b));
-
-			if(!purple_status_is_available(status))
-				stripped = g_strdup(purple_status_get_name(status));
+			PurplePresence *presence = purple_buddy_get_presence(b);
+			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
+				PurpleStatus *status = purple_presence_get_status(presence, "tune");
+				stripped = g_strdup(purple_status_get_attr_string(status, PURPLE_TUNE_TITLE));
+			}
 		}
 
 		if(stripped) {
@@ -1429,6 +1430,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 
 	if(jb) {
 		JabberBuddyResource *jbr = NULL;
+		PurplePresence *presence = purple_buddy_get_presence(b);
 		const char *sub;
 		GList *l;
 		const char *mood;
@@ -1455,7 +1457,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 			
 			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
 			
-			status = purple_presence_get_active_status(purple_buddy_get_presence(b));
+			status = purple_presence_get_active_status(presence);
 			value = purple_status_get_attr_value(status, "mood");
 			if (value && purple_value_get_type(value) == PURPLE_TYPE_STRING && (mood = purple_value_get_string(value))) {
 				
@@ -1467,7 +1469,12 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 					g_free(moodplustext);
 				} else
 					purple_notify_user_info_add_pair(user_info, _("Mood"), mood);
-		}
+			}
+			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {	
+				PurpleStatus *tune = purple_presence_get_status(presence, "tune");
+				const char *title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
+				purple_notify_user_info_add_pair(user_info, _("Current media"), title);
+			}
 		}
 
 		for(l=jb->resources; l; l = l->next) {

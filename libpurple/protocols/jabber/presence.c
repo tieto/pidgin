@@ -33,6 +33,7 @@
 
 #include "buddy.h"
 #include "chat.h"
+#include "google.h"
 #include "presence.h"
 #include "iq.h"
 #include "jutil.h"
@@ -107,6 +108,7 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	const char *artist = NULL, *title = NULL, *source = NULL, *uri = NULL, *track = NULL;
 	int length = -1;
 	gboolean allowBuzz;
+	PurplePresence *p = purple_account_get_presence(account);
 	PurpleStatus *tune;
 
 	if(NULL == status) {
@@ -145,6 +147,12 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	if (allowBuzz != js->allowBuzz || js->old_state != state || CHANGED(js->old_msg, stripped) ||
 		js->old_priority != priority || CHANGED(js->old_avatarhash, js->avatar_hash)) {
 		js->allowBuzz = allowBuzz;
+
+		if (js->googletalk && stripped == NULL && purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
+			tune = purple_presence_get_status(presence, "tune");
+			stripped = jabber_google_presence_outgoing(tune);
+		}
+
 		presence = jabber_presence_create_js(js, state, stripped, priority);
 
 		if(js->avatar_hash) {
@@ -735,7 +743,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
-			purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, found_jbr->status ? "message" : NULL, found_jbr->status, NULL);
+			const char *message;
+			jabber_google_presence_incoming(js, buddy_name, found_jbr);
+			purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, "message", found_jbr->status, NULL);
 		} else {
 			purple_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
 		}
