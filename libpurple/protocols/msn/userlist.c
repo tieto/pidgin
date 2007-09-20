@@ -133,6 +133,7 @@ msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id)
 		return FALSE;
 }
 
+#if 0
 static const char*
 get_store_name(MsnUser *user)
 {
@@ -160,6 +161,7 @@ get_store_name(MsnUser *user)
 
 	return store_name;
 }
+#endif
 
 /**************************************************************************
  * Server functions
