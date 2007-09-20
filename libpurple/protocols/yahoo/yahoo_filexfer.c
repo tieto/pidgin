@@ -281,13 +281,9 @@ static void yahoo_xfer_init(PurpleXfer *xfer)
 			}
 		}
 	} else {
-		/* TODO: Using xfer->fd like this is probably a bad thing... */
+		xfer->fd = -1;
 		if (purple_proxy_connect(NULL, account, xfer_data->host, xfer_data->port,
-		                              yahoo_receivefile_connected, xfer) == NULL)
-			xfer->fd = -1;
-		else
-			xfer->fd = 0;
-		if (xfer->fd == -1) {
+		                              yahoo_receivefile_connected, xfer) == NULL) {
 			purple_notify_error(gc, NULL, _("File Transfer Failed"),
 			             _("Unable to establish file descriptor."));
 			purple_xfer_cancel_remote(xfer);
