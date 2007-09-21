@@ -111,9 +111,8 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	PurplePresence *p = purple_account_get_presence(account);
 	PurpleStatus *tune;
 
-	if(NULL == status) {
-		PurplePresence *gpresence = purple_account_get_presence(account);
-		status = purple_presence_get_active_status(gpresence);
+	if (NULL == status) {
+		status = purple_presence_get_active_status(p);
 	}
 
 	if(!purple_status_is_active(status))
@@ -148,8 +147,8 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 		js->old_priority != priority || CHANGED(js->old_avatarhash, js->avatar_hash)) {
 		js->allowBuzz = allowBuzz;
 
-		if (js->googletalk && stripped == NULL && purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
-			tune = purple_presence_get_status(presence, "tune");
+		if (js->googletalk && stripped == NULL && purple_presence_is_status_primitive_active(p, PURPLE_STATUS_TUNE)) {
+			tune = purple_presence_get_status(p, "tune");
 			stripped = jabber_google_presence_outgoing(tune);
 		}
 
@@ -181,7 +180,7 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	}
 					  	
 	/* next, check if there are any changes to the tune values */
-	tune = purple_presence_get_status(purple_status_get_presence(status), "tune");
+	tune = purple_presence_get_status(p, "tune");
 	if (tune && purple_status_is_active(tune)) {
 		artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
 		title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
@@ -743,7 +742,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
-			const char *message;
 			jabber_google_presence_incoming(js, buddy_name, found_jbr);
 			purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, "message", found_jbr->status, NULL);
 		} else {
