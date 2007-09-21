@@ -34,20 +34,37 @@
 
 typedef struct _MsnSoapMessage MsnSoapMessage;
 typedef struct _MsnSoapConnection2 MsnSoapConnection2;
+typedef struct _MsnSoapRequest MsnSoapRequest;
+typedef struct _MsnSoapResponse MsnSoapResponse;
 
 typedef void (*MsnSoapCallback)(MsnSoapConnection2 *conn,
-		MsnSoapMessage *req, MsnSoapMessage *resp, gpointer cb_data);
+		MsnSoapRequest *req, MsnSoapResponse *resp, gpointer cb_data);
 
 struct _MsnSoapMessage {
-	char *action;
-	xmlnode *message;
+	xmlnode *xml;
 	GSList *headers;
+
+	char *buf;
+	gsize buf_len;
+	gsize buf_count;
+};
+
+struct _MsnSoapRequest {
+	MsnSoapMessage *message;
+	char *action;
 
 	MsnSoapCallback cb;
 	gpointer data;
 
 	char *host;
 	char *path;
+};
+
+struct _MsnSoapResponse {
+	MsnSoapMessage *message;
+	int code;
+	gboolean seen_newline;
+	int body_len;
 };
 
 struct _MsnSoapConnection2 {
@@ -62,25 +79,31 @@ struct _MsnSoapConnection2 {
 	guint io_handle;
 	GQueue *queue;
 
-	MsnSoapMessage *current;
-	MsnSoapMessage *response;
-	char *buf;
-	gsize buf_len;
-	gsize buf_count;
+	MsnSoapRequest *request;
+	MsnSoapResponse *response;
 };
 
 MsnSoapConnection2 *msn_soap_connection2_new(MsnSession *session);
 
-void msn_soap_connection2_post(MsnSoapConnection2 *conn, MsnSoapMessage *req,
-		const char *host, const char *path, MsnSoapCallback cb, gpointer data);
+void msn_soap_connection2_post(MsnSoapConnection2 *conn, MsnSoapRequest *req,
+		MsnSoapCallback cb, gpointer data);
 
 void msn_soap_connection2_destroy(MsnSoapConnection2 *conn);
 
-MsnSoapMessage *msn_soap_message_new(const char *action, xmlnode *message);
+MsnSoapMessage *msn_soap_message_new(void);
 
 void msn_soap_message_destroy(MsnSoapMessage *req);
 
 void msn_soap_message_add_header(MsnSoapMessage *req,
 	const char *name, const char *value);
+
+MsnSoapRequest *msn_soap_request2_new(const char *host, const char *path,
+		const char *action);
+
+void msn_soap_request2_destroy(MsnSoapRequest *req);
+
+MsnSoapResponse *msn_soap_response_new(void);
+
+void msn_soap_response_destroy(MsnSoapResponse *resp);
 
 #endif
