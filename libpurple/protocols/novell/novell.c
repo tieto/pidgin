@@ -130,6 +130,8 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 		if (ret_code == NMERR_AUTHENTICATION_FAILED ||
 			ret_code == NMERR_CREDENTIALS_MISSING ||
 			ret_code == NMERR_PASSWORD_INVALID) {
+			if (!purple_account_get_remember_password(gc->account))
+				purple_account_set_password(gc->account, NULL);
 			gc->wants_to_die = TRUE;
 		}
 		purple_connection_error(gc, err);
@@ -2004,11 +2006,14 @@ static void
 _evt_user_disconnect(NMUser * user, NMEvent * event)
 {
 	PurpleConnection *gc;
+	PurpleAccount *account = user->client_data;
 
-	gc = purple_account_get_connection((PurpleAccount *) user->client_data);
+	gc = purple_account_get_connection(account);
 	if (gc)
 	{
 		gc->wants_to_die = TRUE; /* we don't want to reconnect in this case */
+		if (!purple_account_get_remember_password(account))
+			purple_account_set_password(account, NULL);
 		purple_connection_error(gc, _("You have been logged out because you"
 									" logged in at another workstation."));
 	}
@@ -2799,7 +2804,7 @@ novell_tooltip_text(PurpleBuddy * buddy, PurpleNotifyUserInfo * user_info, gbool
 	const char *text = NULL;
 
 	if (buddy == NULL)
-		return; 
+		return;
 
 	gc = purple_account_get_connection(buddy->account);
 	if (gc == NULL || (user = gc->proto_data) == NULL)
