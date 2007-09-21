@@ -53,7 +53,7 @@ msn_servconn_new(MsnSession *session, MsnServConnType type)
 	servconn->tx_buf = purple_circ_buffer_new(MSN_BUF_LEN);
 	servconn->tx_handler = 0;
 
-	serconn->fd = -1;
+	servconn->fd = -1;
 
 	return servconn;
 }
