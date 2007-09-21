@@ -3854,6 +3854,7 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 	gfud->full = full;
 	gfud->request = g_strdup(request);
 	gfud->include_headers = include_headers;
+	gfud->fd = -1;
 
 	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
