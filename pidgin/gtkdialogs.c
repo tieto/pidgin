@@ -286,6 +286,7 @@ static void destroy_about()
 	about = NULL;
 }
 
+#if 0
 /* This function puts the version number onto the pixmap we use in the 'about' 
  * screen in Pidgin. */
 static void
@@ -323,6 +324,7 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 											 width, height);
 	g_object_unref(G_OBJECT(pixmap));
 }
+#endif
 
 void pidgin_dialogs_about()
 {
@@ -384,6 +386,9 @@ void pidgin_dialogs_about()
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
 	str = g_string_sized_new(4096);
+
+	g_string_append_printf(str,
+		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR><BR>", PIDGIN_NAME, VERSION);
 
 	g_string_append_printf(str,
 		_("%s is a graphical modular messaging client based on "
