@@ -1656,8 +1656,10 @@ static gboolean _client_is_blacklisted(JabberBuddyResource *jbr, const char *ns)
 
 	if(!strcmp(ns, "jabber:iq:last")) {
 		if(!strcmp(jbr->client.name, "Trillian")) {
-			if(!strcmp(jbr->client.version, "3.1.0.121")) {
-				/* verified by nwalp 2007/05/09 */
+			/* verified by nwalp 2007/05/09 */
+			if(!strcmp(jbr->client.version, "3.1.0.121") ||
+					/* verified by nwalp 2007/09/19 */
+					!strcmp(jbr->client.version, "3.1.7.0")) {
 				return TRUE;
 			}
 		}
