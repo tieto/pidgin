@@ -1784,14 +1784,13 @@ msim_error(MsimSession *session, MsimMessage *msg)
 	/* Destroy session if fatal. */
 	if (msim_msg_get(msg, "fatal")) {
 		purple_debug_info("msim", "fatal error, closing\n");
-		if (err == 260) {
-			/* Incorrect password */
-			session->gc->wants_to_die = TRUE;
-			if (!purple_account_get_remember_password(session->account))
-				purple_account_set_password(session->account, NULL);
-		} if (err == 6) {
-			/* Logged in elsewhere */
-			session->gc->wants_to_die = TRUE;
+		switch (err) {
+			case 260: /* Incorrect password */
+			case 6: /* Logged in elsewhere */
+				session->gc->wants_to_die = TRUE;
+				if (!purple_account_get_remember_password(session->account))
+					purple_account_set_password(session->account, NULL);
+				break;
 		}
 		purple_connection_error(session->gc, full_errmsg);
 	} else {
