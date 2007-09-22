@@ -15,7 +15,7 @@ void
 pidgin_dialogs_about_with_parent(parent)
 	void * parent
 CODE:
-	pidgin_dialogs_about(parent);
+	pidgin_dialogs_about_with_parent(parent);
 
 void
 pidgin_dialogs_im()
