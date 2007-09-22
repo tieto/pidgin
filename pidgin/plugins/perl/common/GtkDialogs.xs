@@ -9,7 +9,13 @@ pidgin_dialogs_destroy_all()
 void
 pidgin_dialogs_about()
 CODE:
-	pidgin_dialogs_about(NULL);
+	pidgin_dialogs_about_with_parent(NULL);
+
+void
+pidgin_dialogs_about_with_parent(parent)
+	GtkWindow * parent
+CODE:
+	pidgin_dialogs_about(parent);
 
 void
 pidgin_dialogs_im()

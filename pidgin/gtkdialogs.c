@@ -326,7 +326,14 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 }
 #endif
 
-void pidgin_dialogs_about(GtkWindow *parent)
+void pidgin_dialogs_about(void)
+{
+	PidginBuddyList *blist = pidgin_blist_get_default_gtk_blist();
+
+	pidgin_dialogs_about_with_parent(blist ? GTK_WINDOW(blist->window) : NULL);
+}
+
+void pidgin_dialogs_about_with_parent(GtkWindow *parent)
 {
 	GtkWidget *hbox;
 	GtkWidget *vbox;
