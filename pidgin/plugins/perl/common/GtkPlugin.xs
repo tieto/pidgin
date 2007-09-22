@@ -11,5 +11,7 @@ PROTOTYPES: ENABLE
 
 void
 pidgin_plugin_dialog_show()
-CODE:
-	pidgin_plugin_dialog_show(NULL);
+
+void
+pidgin_plugin_dialog_show_with_parent(parent)
+	void * parent

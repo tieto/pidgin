@@ -514,7 +514,12 @@ show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *co
 	plugin_dialog_response_cb(dialog, PIDGIN_RESPONSE_CONFIGURE, sel);
 }
 
-void pidgin_plugin_dialog_show(GtkWindow *parent)
+void pidgin_plugin_dialog_show()
+{
+	pidgin_plugin_dialog_show_with_parent(NULL);
+}
+
+void pidgin_plugin_dialog_show_with_parent(GtkWindow *parent)
 {
 	GtkWidget *sw;
 	GtkWidget *event_view;
