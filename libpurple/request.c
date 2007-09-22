@@ -1417,7 +1417,7 @@ purple_request_fields_with_hint(void *handle, const char *title, const char *pri
 }
 
 void *
-purple_request_file_with_hint(void *handle, const char *title, const char *filename,
+purple_request_file(void *handle, const char *title, const char *filename,
 				  gboolean savedialog,
 				  GCallback ok_cb, GCallback cancel_cb,
 				  PurpleAccount *account, const char *who, PurpleConversation *conv,
