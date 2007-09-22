@@ -1296,7 +1296,7 @@ purple_request_action(void *handle, const char *title, const char *primary,
 	g_return_val_if_fail(action_count > 0, NULL);
 
 	va_start(args, action_count);
-	ui_handle = purple_request_action_with_hint_varg(handle, title, primary, secondary,
+	ui_handle = purple_request_action_varg_with_hint(handle, title, primary, secondary,
 										 default_action, account, who, conv,
 										 "blist", user_data, action_count, args);
 	va_end(args);
@@ -1316,7 +1316,7 @@ purple_request_action_with_hint(void *handle, const char *title, const char *pri
 	g_return_val_if_fail(action_count > 0, NULL);
 
 	va_start(args, action_count);
-	ui_handle = purple_request_action_with_hint_varg(handle, title, primary, secondary,
+	ui_handle = purple_request_action_varg_with_hint(handle, title, primary, secondary,
 										 default_action, account, who, conv,
 										 ui_hint, user_data, action_count, args);
 	va_end(args);
@@ -1331,13 +1331,13 @@ purple_request_action_varg(void *handle, const char *title,
 						 PurpleAccount *account, const char *who, PurpleConversation *conv,
 						 void *user_data, size_t action_count, va_list actions)
 {
-	return purple_request_action_with_hint_varg(
+	return purple_request_action_varg_with_hint(
 		handle, title, primary, secondary, default_action, account, who, conv,
 		"blist", user_data, action_count, actions);
 }
 
 void *
-purple_request_action_with_hint_varg(void *handle, const char *title,
+purple_request_action_varg_with_hint(void *handle, const char *title,
 						 const char *primary, const char *secondary,
 						 int default_action,
 						 PurpleAccount *account, const char *who, PurpleConversation *conv,
