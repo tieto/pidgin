@@ -2,13 +2,12 @@
 
 /* This breaks on faceprint's amd64 box
 void *
-purple_request_action_varg(handle, title, primary, secondary, default_action, ui_hint, user_data, action_count, actions)
+purple_request_action_varg(handle, title, primary, secondary, default_action, user_data, action_count, actions)
 	void * handle
 	const char *title
 	const char *primary
 	const char *secondary
 	unsigned int default_action
-	const char * ui_hint
 	void *user_data
 	size_t action_count
 	va_list actions
@@ -117,7 +116,37 @@ BOOT:
 }
 
 void *
-purple_request_input(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, ok_cb, cancel_text, cancel_cb, ui_hint)
+purple_request_input(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, ok_cb, cancel_text, cancel_cb)
+	Purple::Plugin handle
+	const char * title
+	const char * primary
+	const char * secondary
+	const char * default_value
+	gboolean multiline
+	gboolean masked
+	gchar * hint
+	const char * ok_text
+	SV * ok_cb
+	const char * cancel_text
+	SV * cancel_cb
+CODE:
+	PurplePerlRequestData *gpr;
+	STRLEN len;
+	char *basename;
+
+	basename = g_path_get_basename(handle->path);
+	purple_perl_normalize_script_name(basename);
+	gpr = g_new(PurplePerlRequestData, 1);
+	gpr->ok_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(ok_cb, len));
+	gpr->cancel_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cancel_cb, len));
+	g_free(basename);
+
+	RETVAL = purple_request_input_with_hint(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, G_CALLBACK(purple_perl_request_ok_cb), cancel_text, G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, "blist", gpr);
+OUTPUT:
+	RETVAL
+
+void *
+purple_request_input_with_hint(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, ok_cb, cancel_text, cancel_cb, ui_hint)
 	Purple::Plugin handle
 	const char * title
 	const char * primary
@@ -143,12 +172,37 @@ CODE:
 	gpr->cancel_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cancel_cb, len));
 	g_free(basename);
 
-	RETVAL = purple_request_input(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, G_CALLBACK(purple_perl_request_ok_cb), cancel_text, G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, ui_hint, gpr);
+	RETVAL = purple_request_input_with_hint(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, G_CALLBACK(purple_perl_request_ok_cb), cancel_text, G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, ui_hint, gpr);
 OUTPUT:
 	RETVAL
 
 void *
-purple_request_file(handle, title, filename, savedialog, ok_cb, cancel_cb, ui_hint)
+purple_request_file(handle, title, filename, savedialog, ok_cb, cancel_cb)
+	Purple::Plugin handle
+	const char * title
+	const char * filename
+	gboolean savedialog
+	SV * ok_cb
+	SV * cancel_cb
+	const char * ui_hint
+CODE:
+	PurplePerlRequestData *gpr;
+	STRLEN len;
+	char *basename;
+
+	basename = g_path_get_basename(handle->path);
+	purple_perl_normalize_script_name(basename);
+	gpr = g_new(PurplePerlRequestData, 1);
+	gpr->ok_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(ok_cb, len));
+	gpr->cancel_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cancel_cb, len));
+	g_free(basename);
+
+	RETVAL = purple_request_file_with_hint(handle, title, filename, savedialog, G_CALLBACK(purple_perl_request_ok_cb), G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, "blist", gpr);
+OUTPUT:
+	RETVAL
+
+void *
+purple_request_file_with_hint(handle, title, filename, savedialog, ok_cb, cancel_cb, ui_hint)
 	Purple::Plugin handle
 	const char * title
 	const char * filename
@@ -173,7 +227,35 @@ OUTPUT:
 	RETVAL
 
 void *
-purple_request_fields(handle, title, primary, secondary, fields, ok_text, ok_cb, cancel_text, cancel_cb, ui_hint)
+purple_request_fields(handle, title, primary, secondary, fields, ok_text, ok_cb, cancel_text, cancel_cb)
+	Purple::Plugin handle
+	const char * title
+	const char * primary
+	const char * secondary
+	Purple::Request::Fields fields
+	const char * ok_text
+	SV * ok_cb
+	const char * cancel_text
+	SV * cancel_cb
+	const char *ui_hint
+CODE:
+	PurplePerlRequestData *gpr;
+	STRLEN len;
+	char *basename;
+
+	basename = g_path_get_basename(handle->path);
+	purple_perl_normalize_script_name(basename);
+	gpr = g_new(PurplePerlRequestData, 1);
+	gpr->ok_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(ok_cb, len));
+	gpr->cancel_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cancel_cb, len));
+	g_free(basename);
+
+	RETVAL = purple_request_fields(handle, title, primary, secondary, fields, ok_text, G_CALLBACK(purple_perl_request_ok_cb), cancel_text, G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, "blist", gpr);
+OUTPUT:
+	RETVAL
+
+void *
+purple_request_fields_with_hint(handle, title, primary, secondary, fields, ok_text, ok_cb, cancel_text, cancel_cb, ui_hint)
 	Purple::Plugin handle
 	const char * title
 	const char * primary
