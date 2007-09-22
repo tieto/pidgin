@@ -1242,7 +1242,7 @@ purple_request_choice_varg(void *handle, const char *title,
 			 PurpleAccount *account, const char *who, PurpleConversation *conv,
 			 const char *ui_hint, void *user_data, va_list choices)
 {
-	return purple_choice_varg_with_hint(
+	return purple_request_choice_varg_with_hint(
 		handle, title, primary, secondary, default_value, ok_text, ok_cb,
 		cancel_text, cancel_cb, account, who, conv, "blist", user_data, choices);
 }
