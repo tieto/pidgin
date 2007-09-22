@@ -1240,7 +1240,7 @@ purple_request_choice_varg(void *handle, const char *title,
 			 const char *ok_text, GCallback ok_cb,
 			 const char *cancel_text, GCallback cancel_cb,
 			 PurpleAccount *account, const char *who, PurpleConversation *conv,
-			 const char *ui_hint, void *user_data, va_list choices)
+			 void *user_data, va_list choices)
 {
 	return purple_request_choice_varg_with_hint(
 		handle, title, primary, secondary, default_value, ok_text, ok_cb,
@@ -1373,7 +1373,7 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 					const char *ok_text, GCallback ok_cb,
 					const char *cancel_text, GCallback cancel_cb,
 					PurpleAccount *account, const char *who, PurpleConversation *conv,
-					const char *ui_hint, void *user_data)
+					void *user_data)
 {
 	return purple_request_fields_with_hint(
 		handle, title, primary, secondary, fields, ok_text, ok_cb,
