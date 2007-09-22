@@ -345,7 +345,7 @@ PROTOTYPES: ENABLE
 
 Purple::Request::Field
 purple_request_field_bool_new(id, text, default_value = TRUE)
-	id
+	const char *id
 	const char *text
 	gboolean default_value
 
