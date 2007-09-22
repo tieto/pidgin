@@ -184,7 +184,6 @@ purple_request_file(handle, title, filename, savedialog, ok_cb, cancel_cb)
 	gboolean savedialog
 	SV * ok_cb
 	SV * cancel_cb
-	const char * ui_hint
 CODE:
 	PurplePerlRequestData *gpr;
 	STRLEN len;
@@ -237,7 +236,6 @@ purple_request_fields(handle, title, primary, secondary, fields, ok_text, ok_cb,
 	SV * ok_cb
 	const char * cancel_text
 	SV * cancel_cb
-	const char *ui_hint
 CODE:
 	PurplePerlRequestData *gpr;
 	STRLEN len;
@@ -347,7 +345,7 @@ PROTOTYPES: ENABLE
 
 Purple::Request::Field
 purple_request_field_bool_new(id, text, default_value = TRUE)
-	const char *id
+	id
 	const char *text
 	gboolean default_value
 
