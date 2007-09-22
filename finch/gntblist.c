@@ -2290,14 +2290,6 @@ create_menu()
 
 	item = gnt_menuitem_new(_("By Status"));
 	gnt_menu_add_item(GNT_MENU(subsub), item);
-	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), sort_blist_change_cb, "status");
-
-	item = gnt_menuitem_new(_("Alphabetically"));
-	gnt_menu_add_item(GNT_MENU(subsub), item);
-	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), sort_blist_change_cb, "text");
-
-	item = gnt_menuitem_new(_("By Log Size"));
-	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), sort_blist_change_cb, "log");
 
 	item = gnt_menuitem_new(_("Add"));
