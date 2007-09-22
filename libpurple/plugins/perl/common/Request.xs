@@ -222,7 +222,7 @@ CODE:
 	gpr->cancel_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cancel_cb, len));
 	g_free(basename);
 
-	RETVAL = purple_request_file(handle, title, filename, savedialog, G_CALLBACK(purple_perl_request_ok_cb), G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, ui_hint, gpr);
+	RETVAL = purple_request_file_with_hint(handle, title, filename, savedialog, G_CALLBACK(purple_perl_request_ok_cb), G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, ui_hint, gpr);
 OUTPUT:
 	RETVAL
 
@@ -250,7 +250,7 @@ CODE:
 	gpr->cancel_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cancel_cb, len));
 	g_free(basename);
 
-	RETVAL = purple_request_fields(handle, title, primary, secondary, fields, ok_text, G_CALLBACK(purple_perl_request_ok_cb), cancel_text, G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, "blist", gpr);
+	RETVAL = purple_request_fields_with_hint(handle, title, primary, secondary, fields, ok_text, G_CALLBACK(purple_perl_request_ok_cb), cancel_text, G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, "blist", gpr);
 OUTPUT:
 	RETVAL
 
@@ -278,7 +278,7 @@ CODE:
 	gpr->cancel_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cancel_cb, len));
 	g_free(basename);
 
-	RETVAL = purple_request_fields(handle, title, primary, secondary, fields, ok_text, G_CALLBACK(purple_perl_request_ok_cb), cancel_text, G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, ui_hint, gpr);
+	RETVAL = purple_request_fields_with_hint(handle, title, primary, secondary, fields, ok_text, G_CALLBACK(purple_perl_request_ok_cb), cancel_text, G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, ui_hint, gpr);
 OUTPUT:
 	RETVAL
 
