@@ -1424,7 +1424,7 @@ purple_request_file(void *handle, const char *title, const char *filename,
 				  void *user_data)
 {
 	return purple_request_file_with_hint(
-		handle, title, filename, savedialog ok_cb, cancel_cb, account, who, conv, "blist", user_data);
+		handle, title, filename, savedialog, ok_cb, cancel_cb, account, who, conv, "blist", user_data);
 }
 
 void *
