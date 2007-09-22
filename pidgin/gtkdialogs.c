@@ -326,7 +326,7 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 }
 #endif
 
-void pidgin_dialogs_about(void)
+void pidgin_dialogs_about()
 {
 	PidginBuddyList *blist = pidgin_blist_get_default_gtk_blist();
 
