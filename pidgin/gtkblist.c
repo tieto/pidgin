@@ -643,7 +643,7 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 			name = prpl_info->get_chat_name(c->components);
 		}
 	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		pidgin_log_show_contact(GTK_WINDOW(gtkblist->window), (PurpleContact *)node);
+		pidgin_log_show_contact_with_parent(GTK_WINDOW(gtkblist->window), (PurpleContact *)node);
 		pidgin_clear_cursor(gtkblist->window);
 		return;
 	} else {
@@ -655,7 +655,7 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 	}
 
 	if (name && account) {
-		pidgin_log_show(GTK_WINDOW(gtkblist->window), type, name, account);
+		pidgin_log_show_with_parent(GTK_WINDOW(gtkblist->window), type, name, account);
 		g_free(name);
 
 		pidgin_clear_cursor(gtkblist->window);
@@ -3098,7 +3098,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
-	{ N_("/Tools/System _Log"), NULL, pidgin_blist_show_with_parent, (int)pidgin_syslog_show, "<Item>", NULL },
+	{ N_("/Tools/System _Log"), NULL, pidgin_blist_show_with_parent, (int)pidgin_syslog_show_with_parent, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 	/* Help */

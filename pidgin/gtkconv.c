@@ -1081,7 +1081,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 		PurpleBlistNode *node = cur->data;
 		if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
 		{
-			pidgin_log_show_contact(GTK_WINDOW(win->window), (PurpleContact *)node->parent);
+			pidgin_log_show_contact_with_parent(GTK_WINDOW(win->window), (PurpleContact *)node->parent);
 			g_slist_free(buddies);
 			gdk_window_set_cursor(gtkblist->window->window, NULL);
 			gdk_window_set_cursor(win->window->window, NULL);
@@ -1090,7 +1090,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	}
 	g_slist_free(buddies);
 
-	pidgin_log_show(GTK_WINDOW(win->window), type, name, account);
+	pidgin_log_show_with_parent(GTK_WINDOW(win->window), type, name, account);
 
 	gdk_window_set_cursor(gtkblist->window->window, NULL);
 	gdk_window_set_cursor(win->window->window, NULL);

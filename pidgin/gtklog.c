@@ -675,7 +675,11 @@ static PidginLogViewer *display_log_viewer(GtkWindow *parent, struct log_viewer_
 	return lv;
 }
 
-void pidgin_log_show(GtkWindow *parent, PurpleLogType type, const char *screenname, PurpleAccount *account) {
+void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account) {
+	pidgin_log_show_with_parent(NULL, type, screenname, account);
+}
+
+void pidgin_log_show_with_parent(GtkWindow *parent, PurpleLogType type, const char *screenname, PurpleAccount *account) {
 	struct log_viewer_hash_t *ht;
 	PidginLogViewer *lv = NULL;
 	const char *name = screenname;
@@ -723,7 +727,11 @@ void pidgin_log_show(GtkWindow *parent, PurpleLogType type, const char *screenna
 	g_free(title);
 }
 
-void pidgin_log_show_contact(GtkWindow *parent, PurpleContact *contact) {
+void pidgin_log_show_contact(PurpleContact *contact) {
+	pidgin_log_show_contact_with_parent(NULL, contact);
+}
+
+void pidgin_log_show_contact_with_parent(GtkWindow *parent, PurpleContact *contact) {
 	struct log_viewer_hash_t *ht = g_new0(struct log_viewer_hash_t, 1);
 	PurpleBlistNode *child;
 	PidginLogViewer *lv = NULL;
@@ -781,7 +789,12 @@ void pidgin_log_show_contact(GtkWindow *parent, PurpleContact *contact) {
 	g_free(title);
 }
 
-void pidgin_syslog_show(GtkWindow *parent)
+void pidgin_syslog_show(void)
+{
+	pidgin_syslog_show_with_parent(NULL);
+}
+
+void pidgin_syslog_show_with_parent(GtkWindow *parent)
 {
 	GList *accounts = NULL;
 	GList *logs = NULL;
