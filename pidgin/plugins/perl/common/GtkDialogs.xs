@@ -13,7 +13,7 @@ CODE:
 
 void
 pidgin_dialogs_about_with_parent(parent)
-	GtkWindow * parent
+	void * parent
 CODE:
 	pidgin_dialogs_about(parent);
 
