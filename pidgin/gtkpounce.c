@@ -462,7 +462,14 @@ reset_send_msg_entry(PidginPounceDialog *dialog, GtkWidget *dontcare)
 }
 
 void
-pidgin_pounce_editor_show(GtkWindow *parent, PurpleAccount *account, const char *name,
+pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
+							PurplePounce *cur_pounce)
+{
+	pidgin_pounce_editor_show_with_parent(NULL, account, name, cur_pounce);
+}
+
+void
+pidgin_pounce_editor_show_with_parent(GtkWindow *parent, PurpleAccount *account, const char *name,
 							PurplePounce *cur_pounce)
 {
 	PidginPounceDialog *dialog;
@@ -1043,7 +1050,7 @@ pounces_manager_connection_cb(PurpleConnection *gc, GtkWidget *add_button)
 static void
 pounces_manager_add_cb(GtkButton *button, gpointer user_data)
 {
-	pidgin_pounce_editor_show(GTK_WINDOW(pounces_manager->window), NULL, NULL, NULL);
+	pidgin_pounce_editor_show_with_parent(GTK_WINDOW(pounces_manager->window), NULL, NULL, NULL);
 }
 
 static void
@@ -1053,7 +1060,7 @@ pounces_manager_modify_foreach(GtkTreeModel *model, GtkTreePath *path,
 	PurplePounce *pounce;
 
 	gtk_tree_model_get(model, iter, POUNCES_MANAGER_COLUMN_POUNCE, &pounce, -1);
-	pidgin_pounce_editor_show(GTK_WINDOW(pounces_manager->window), NULL, NULL, pounce);
+	pidgin_pounce_editor_show_with_parent(GTK_WINDOW(pounces_manager->window), NULL, NULL, pounce);
 }
 
 static void
@@ -1153,7 +1160,7 @@ pounce_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, gpointer us
 	if ((pounce != NULL) && (event->button == 1) &&
 		(event->type == GDK_2BUTTON_PRESS))
 	{
-		pidgin_pounce_editor_show(GTK_WINDOW(pounces_manager->window), NULL, NULL, pounce);
+		pidgin_pounce_editor_show_with_parent(GTK_WINDOW(pounces_manager->window), NULL, NULL, pounce);
 		return TRUE;
 	}
 
@@ -1302,7 +1309,13 @@ create_pounces_list(PouncesManager *dialog)
 }
 
 void
-pidgin_pounces_manager_show(GtkWindow *parent)
+pidgin_pounces_manager_show()
+{
+	pidgin_pounces_manager_show_with_parent(NULL);
+}
+
+void
+pidgin_pounces_manager_show_with_parent(GtkWindow *parent)
 {
 	PouncesManager *dialog;
 	GtkWidget *bbox;

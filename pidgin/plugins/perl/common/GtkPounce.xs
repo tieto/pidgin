@@ -8,8 +8,13 @@ pidgin_pounce_editor_show(account, name, cur_pounce)
 	Purple::Account account
 	const char * name
 	Purple::Pounce cur_pounce
-CODE:
-	pidgin_pounce_editor_show(NULL, account, name, cur_pounce);
+
+void
+pidgin_pounce_editor_show_with_parent(parent, account, name, cur_pounce)
+	void * parent
+	Purple::Account account
+	const char * name
+	Purple::Pounce cur_pounce
 
 MODULE = Pidgin::Pounce  PACKAGE = Pidgin::Pounces  PREFIX = pidgin_pounces_
 PROTOTYPES: ENABLE
@@ -22,8 +27,10 @@ PROTOTYPES: ENABLE
 
 void
 pidgin_pounces_manager_show()
-CODE:
-	pidgin_pounces_manager_show(NULL);
+
+void
+pidgin_pounces_manager_show_with_parent(parent)
+	void * parent
 
 void
 pidgin_pounces_manager_hide()

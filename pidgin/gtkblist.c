@@ -617,7 +617,7 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
 
 static void gtk_blist_menu_bp_cb(GtkWidget *w, PurpleBuddy *b)
 {
-	pidgin_pounce_editor_show(GTK_WINDOW(gtkblist->window), b->account, b->name, NULL);
+	pidgin_pounce_editor_show_with_parent(GTK_WINDOW(gtkblist->window), b->account, b->name, NULL);
 }
 
 static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
@@ -3090,7 +3090,7 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_pounces_manager_show, 0, "<Item>", NULL },
+	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_blist_show_with_parent, (int)pidgin_pounces_manager_show_with_parent, "<Item>", NULL },
 	{ N_("/Tools/_Certificates"), NULL, pidgin_certmgr_show, 0, "<Item>", NULL },
 	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_blist_show_with_parent, (int)pidgin_plugin_dialog_show_with_parent, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
