@@ -8,14 +8,10 @@ pidgin_dialogs_destroy_all()
 
 void
 pidgin_dialogs_about()
-CODE:
-	pidgin_dialogs_about_with_parent(NULL);
 
 void
 pidgin_dialogs_about_with_parent(parent)
 	void * parent
-CODE:
-	pidgin_dialogs_about_with_parent(parent);
 
 void
 pidgin_dialogs_im()
