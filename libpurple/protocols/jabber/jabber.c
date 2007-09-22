@@ -1007,7 +1007,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 				_("Register"), G_CALLBACK(jabber_register_cb),
 				_("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
 				purple_connection_get_account(js->gc), NULL, NULL,
-				cbdata);
+				"register-account", cbdata);
 	else {
 		char *title = registered?g_strdup_printf(_("Change Account Registration at %s"), from)
 								:g_strdup_printf(_("Register New Account at %s"), from);
@@ -1736,7 +1736,7 @@ static void jabber_password_change(PurplePluginAction *action)
 			fields, _("OK"), G_CALLBACK(jabber_password_change_cb),
 			_("Cancel"), NULL,
 			purple_connection_get_account(gc), NULL, NULL,
-			js);
+			"account", js);
 }
 
 GList *jabber_actions(PurplePlugin *plugin, gpointer context)

@@ -8,6 +8,8 @@ pidgin_dialogs_destroy_all()
 
 void
 pidgin_dialogs_about()
+CODE:
+	pidgin_dialogs_about(NULL);
 
 void
 pidgin_dialogs_im()

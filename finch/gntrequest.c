@@ -146,7 +146,7 @@ finch_request_input(const char *title, const char *primary,
 		const char *ok_text, GCallback ok_cb,
 		const char *cancel_text, GCallback cancel_cb,
 		PurpleAccount *account, const char *who, PurpleConversation *conv,
-		void *user_data)
+		const char *ui_hint, void *user_data)
 {
 	GntWidget *window, *box, *entry;
 
@@ -203,7 +203,7 @@ finch_request_choice(const char *title, const char *primary,
 		const char *ok_text, GCallback ok_cb,
 		const char *cancel_text, GCallback cancel_cb,
 		PurpleAccount *account, const char *who, PurpleConversation *conv,
-		void *user_data, va_list choices)
+		const char *ui_hint, void *user_data, va_list choices)
 {
 	GntWidget *window, *combo, *box;
 	const char *text;
@@ -247,7 +247,7 @@ static void*
 finch_request_action(const char *title, const char *primary,
 		const char *secondary, int default_value,
 		PurpleAccount *account, const char *who, PurpleConversation *conv,
-		void *user_data, size_t actioncount,
+		const char *ui_hint, void *user_data, size_t actioncount,
 		va_list actions)
 {
 	GntWidget *window, *box, *button;
@@ -391,7 +391,7 @@ finch_request_fields(const char *title, const char *primary,
 		const char *ok, GCallback ok_cb,
 		const char *cancel, GCallback cancel_cb,
 		PurpleAccount *account, const char *who, PurpleConversation *conv,
-		void *userdata)
+		const char *ui_hint, void *userdata)
 {
 	GntWidget *window, *box;
 	GList *grlist;
@@ -643,7 +643,7 @@ finch_request_file(const char *title, const char *filename,
 				gboolean savedialog,
 				GCallback ok_cb, GCallback cancel_cb,
 				PurpleAccount *account, const char *who, PurpleConversation *conv,
-				void *user_data)
+				const char *ui_hint, void *user_data)
 {
 	GntWidget *window = gnt_file_sel_new();
 	GntFileSel *sel = GNT_FILE_SEL(window);
