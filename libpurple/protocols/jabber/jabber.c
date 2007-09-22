@@ -1002,7 +1002,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 	cbdata->who = g_strdup(from);
 
 	if(js->registration)
-		purple_request_fields(js->gc, _("Register New XMPP Account"),
+		purple_request_fields_with_hint(js->gc, _("Register New XMPP Account"),
 				_("Register New XMPP Account"), instructions, fields,
 				_("Register"), G_CALLBACK(jabber_register_cb),
 				_("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
@@ -1011,12 +1011,12 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 	else {
 		char *title = registered?g_strdup_printf(_("Change Account Registration at %s"), from)
 								:g_strdup_printf(_("Register New Account at %s"), from);
-		purple_request_fields(js->gc, title,
+		purple_request_fields_with_hint(js->gc, title,
 			  title, instructions, fields,
 			  registered?_("Change Registration"):_("Register"), G_CALLBACK(jabber_register_cb),
 			  _("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
 			  purple_connection_get_account(js->gc), NULL, NULL,
-			  cbdata);
+			  "register-account", cbdata);
 		g_free(title);
 	}
 
@@ -1731,7 +1731,7 @@ static void jabber_password_change(PurplePluginAction *action)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(js->gc, _("Change XMPP Password"),
+	purple_request_fields_with_hint(js->gc, _("Change XMPP Password"),
 			_("Change XMPP Password"), _("Please enter your new password"),
 			fields, _("OK"), G_CALLBACK(jabber_password_change_cb),
 			_("Cancel"), NULL,

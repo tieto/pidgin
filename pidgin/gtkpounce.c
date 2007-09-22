@@ -154,7 +154,7 @@ filesel(GtkWidget *widget, gpointer data)
 	entry = (GtkWidget *)data;
 	name = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	purple_request_file(entry, _("Select a file"), name, FALSE,
+	purple_request_file_with_hint(entry, _("Select a file"), name, FALSE,
 					  G_CALLBACK(pounce_update_entry_fields), NULL,
 					  NULL, NULL, NULL,
 					  "buddy_pounce", entry);
@@ -1094,7 +1094,7 @@ pounces_manager_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 	pouncee = purple_pounce_get_pouncee(pounce);
 
 	buf = g_strdup_printf(_("Are you sure you want to delete the pounce on %s for %s?"), pouncee, pouncer);
-	purple_request_action(pounce, NULL, buf, NULL, 0,
+	purple_request_action_with_hint(pounce, NULL, buf, NULL, 0,
 						account, pouncee, NULL,
 						"pounces", pounce, 2,
 						_("Delete"), pounces_manager_delete_confirm_cb,

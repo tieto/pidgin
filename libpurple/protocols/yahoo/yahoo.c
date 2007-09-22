@@ -1025,7 +1025,7 @@ yahoo_buddy_add_deny_noreason_cb(struct yahoo_add_request *add_req, const char*m
 static void
 yahoo_buddy_add_deny_reason_cb(gpointer data) {
 	struct yahoo_add_request *add_req = data;
-	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
+	purple_request_input_with_hint(add_req->gc, NULL, _("Authorization denied message:"),
 			NULL, _("No reason given."), TRUE, FALSE, NULL,
 			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
 			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb),
@@ -2062,7 +2062,7 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 		g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
 					"user is on your buddy list.  Clicking \"Yes\" "
 					"will remove and ignore the buddy."), who);
-		purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
+		purple_request_yes_no_with_hint(gc, NULL, _("Ignore buddy?"), buf, 0,
 						gc->account, who, NULL,
 						"blist", b,
 						G_CALLBACK(ignore_buddy),
@@ -3491,7 +3491,7 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 static void yahoo_show_act_id(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input(gc, NULL, _("Activate which ID?"), NULL,
+	purple_request_input_with_hint(gc, NULL, _("Activate which ID?"), NULL,
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
 					   _("Cancel"), NULL,
@@ -3502,7 +3502,7 @@ static void yahoo_show_act_id(PurplePluginAction *action)
 static void yahoo_show_chat_goto(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input(gc, NULL, _("Join who in chat?"), NULL,
+	purple_request_input_with_hint(gc, NULL, _("Join who in chat?"), NULL,
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
 					   _("Cancel"), NULL,

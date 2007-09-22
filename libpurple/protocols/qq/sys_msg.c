@@ -165,7 +165,7 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 		g->uid = uid;	/* only need to get value */
 		message = g_strdup_printf(_("You have been added by %s"), from);
 		_qq_sys_msg_log_write(gc, message, from);
-		purple_request_action(gc, NULL, message,
+		purple_request_action_with_hint(gc, NULL, message,
 				    _("Would you like to add him?"), 2,
 					purple_connection_get_account(gc), name, NULL,
 					"buddy", g, 3,
@@ -259,7 +259,7 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 		g2->gc = gc;
 		g2->uid = strtol(from, NULL, 10);
 		message = g_strdup_printf(_("%s is not in your buddy list"), from);
-		purple_request_action(gc, NULL, message,
+		purple_request_action_with_hint(gc, NULL, message,
 				    _("Would you like to add him?"), 2,
 					purple_connection_get_account(gc), name, NULL,
 					"blist", g2, 3,

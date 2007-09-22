@@ -1029,7 +1029,7 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 		if (*c == '/' || *c == '\\')
 			*c = ' ';
 	}
-	purple_request_file(PIDGIN_CONVERSATION(conv), _("Save Conversation"),
+	purple_request_file_with_hint(PIDGIN_CONVERSATION(conv), _("Save Conversation"),
 					  buf,
 					  TRUE, G_CALLBACK(savelog_writefile_cb), NULL,
 					  NULL, NULL, conv,
@@ -2713,7 +2713,7 @@ icon_menu_save_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	buf = g_strdup_printf("%s.%s", purple_normalize(conv->account, conv->name), ext);
 
-	purple_request_file(gtkconv, _("Save Icon"), buf, TRUE,
+	purple_request_file_with_hint(gtkconv, _("Save Icon"), buf, TRUE,
 					 G_CALLBACK(saveicon_writefile_cb), NULL,
 					conv->account, NULL, conv,
 					"conversation", gtkconv);

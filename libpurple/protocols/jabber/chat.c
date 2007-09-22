@@ -778,7 +778,7 @@ PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc)
 	purple_roomlist_set_fields(js->roomlist, fields);
 
 
-	purple_request_input(gc, _("Enter a Conference Server"), _("Enter a Conference Server"),
+	purple_request_input_with_hint(gc, _("Enter a Conference Server"), _("Enter a Conference Server"),
 			_("Select a conference server to query"),
 			js->chat_servers ? js->chat_servers->data : NULL,
 			FALSE, FALSE, NULL,

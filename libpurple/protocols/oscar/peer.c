@@ -1033,7 +1033,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 		buf = g_strdup_printf(_("%s has just asked to directly connect to %s"),
 				sn, purple_account_get_username(account));
 
-		purple_request_action(conn, NULL, buf,
+		purple_request_action_with_hint(conn, NULL, buf,
 						_("This requires a direct connection between "
 						  "the two computers and is necessary for IM "
 						  "Images.  Because your IP address will be "

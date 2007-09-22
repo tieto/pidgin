@@ -762,7 +762,7 @@ pidgin_dialogs_im(void)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(purple_get_blist(), _("New Instant Message"),
+	purple_request_fields_with_hint(purple_get_blist(), _("New Instant Message"),
 						NULL,
 						_("Please enter the screen name or alias of the person "
 						  "you would like to IM."),
@@ -901,7 +901,7 @@ pidgin_dialogs_info(void)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(purple_get_blist(), _("Get User Info"),
+	purple_request_fields_with_hint(purple_get_blist(), _("Get User Info"),
 						NULL,
 						_("Please enter the screen name or alias of the person "
 						  "whose info you would like to view."),
@@ -993,7 +993,7 @@ pidgin_dialogs_log(void)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(purple_get_blist(), _("View User Log"),
+	purple_request_fields_with_hint(purple_get_blist(), _("View User Log"),
 						NULL,
 						_("Please enter the screen name or alias of the person "
 						  "whose log you would like to view."),
@@ -1015,7 +1015,7 @@ pidgin_dialogs_alias_contact(PurpleContact *contact)
 {
 	g_return_if_fail(contact != NULL);
 
-	purple_request_input(NULL, _("Alias Contact"), NULL,
+	purple_request_input_with_hint(NULL, _("Alias Contact"), NULL,
 					   _("Enter an alias for this contact."),
 					   contact->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_contact_cb),
@@ -1040,7 +1040,7 @@ pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 
 	secondary = g_strdup_printf(_("Enter an alias for %s."), buddy->name);
 
-	purple_request_input(NULL, _("Alias Buddy"), NULL,
+	purple_request_input_with_hint(NULL, _("Alias Buddy"), NULL,
 					   secondary, buddy->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_buddy_cb),
 					   _("Cancel"), NULL,
@@ -1061,7 +1061,7 @@ pidgin_dialogs_alias_chat(PurpleChat *chat)
 {
 	g_return_if_fail(chat != NULL);
 
-	purple_request_input(NULL, _("Alias Chat"), NULL,
+	purple_request_input_with_hint(NULL, _("Alias Chat"), NULL,
 					   _("Enter an alias for this chat."),
 					   chat->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_chat_cb),
@@ -1109,7 +1109,7 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 						"want to continue?", contact->totalsize - 1),
 					buddy->name, contact->totalsize - 1);
 
-		purple_request_action(contact, NULL, _("Remove Contact"), text, 0,
+		purple_request_action_with_hint(contact, NULL, _("Remove Contact"), text, 0,
 				NULL, purple_contact_get_alias(contact), NULL,
 				"blist", contact, 2,
 				_("_Remove Contact"), G_CALLBACK(pidgin_dialogs_remove_contact_cb),
@@ -1150,7 +1150,7 @@ pidgin_dialogs_merge_groups(PurpleGroup *source, const char *new_name)
 	ggp->parent = source;
 	ggp->new_name = g_strdup(new_name);
 	
-	purple_request_action(source, NULL, _("Merge Groups"), text, 0,
+	purple_request_action_with_hint(source, NULL, _("Merge Groups"), text, 0,
 			NULL, NULL, NULL,
 			"blist", ggp, 2,
 			_("_Merge Groups"), G_CALLBACK(pidgin_dialogs_merge_groups_cb),
@@ -1206,7 +1206,7 @@ pidgin_dialogs_remove_group(PurpleGroup *group)
 	text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"),
 						   group->name);
 
-	purple_request_action(group, NULL, _("Remove Group"), text, 0,
+	purple_request_action_with_hint(group, NULL, _("Remove Group"), text, 0,
 						NULL, NULL, NULL,
 						"blist", group, 2,
 						_("_Remove Group"), G_CALLBACK(pidgin_dialogs_remove_group_cb),
@@ -1245,7 +1245,7 @@ pidgin_dialogs_remove_buddy(PurpleBuddy *buddy)
 	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"),
 						   buddy->name);
 
-	purple_request_action(buddy, NULL, _("Remove Buddy"), text, 0,
+	purple_request_action_with_hint(buddy, NULL, _("Remove Buddy"), text, 0,
 						purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,
 						"blist", buddy, 2,
 						_("_Remove Buddy"), G_CALLBACK(pidgin_dialogs_remove_buddy_cb),
@@ -1272,7 +1272,7 @@ pidgin_dialogs_remove_chat(PurpleChat *chat)
 	text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"),
 			name ? name : "");
 
-	purple_request_action(chat, NULL, _("Remove Chat"), text, 0,
+	purple_request_action_with_hint(chat, NULL, _("Remove Chat"), text, 0,
 						chat->account, NULL, NULL,
 						"blist", chat, 2,
 						_("_Remove Chat"), G_CALLBACK(pidgin_dialogs_remove_chat_cb),

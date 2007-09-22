@@ -157,7 +157,7 @@ sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer
 						"rest of the messages in a pounce and automatically send them "
 						"when \"%s\" logs back in?"), who, who);
 	
-		purple_request_action(handle, _("Offline Message"), ask,
+		purple_request_action_with_hint(handle, _("Offline Message"), ask,
 					_("You can edit/delete the pounce from the `Buddy Pounces' dialog"),
 					1,
 					offline->account, offline->who, offline->conv,

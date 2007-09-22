@@ -499,7 +499,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
 							chat->config_dialog_type = PURPLE_REQUEST_ACTION;
 							chat->config_dialog_handle =
-								purple_request_action(js->gc,
+								purple_request_action_with_hint(js->gc,
 										_("Create New Room"),
 										_("Create New Room"),
 										_("You are creating a new room.  Would"

@@ -132,7 +132,7 @@ static void _qq_group_join_auth(PurpleConnection *gc, qq_group *group)
 	g = g_new0(gc_and_uid, 1);
 	g->gc = gc;
 	g->uid = group->internal_group_id;
-	purple_request_input(gc, NULL, msg,
+	purple_request_input_with_hint(gc, NULL, msg,
 			   _("Input request here"),
 			   _("Would you be my friend?"), TRUE, FALSE, NULL,
 			   _("Send"),
@@ -356,7 +356,7 @@ void qq_group_exit(PurpleConnection *gc, GHashTable *data)
 	g->gc = gc;
 	g->uid = internal_group_id;
 
-	purple_request_action(gc, _("QQ Qun Operation"),
+	purple_request_action_with_hint(gc, _("QQ Qun Operation"),
 			    _("Are you sure you want to leave this Qun?"),
 			    _
 			    ("Note, if you are the creator, \nthis operation will eventually remove this Qun."),

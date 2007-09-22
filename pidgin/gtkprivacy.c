@@ -554,7 +554,7 @@ pidgin_request_add_permit(PurpleAccount *account, const char *name)
 	data->block   = FALSE;
 
 	if (name == NULL) {
-		purple_request_input(account, _("Permit User"),
+		purple_request_input_with_hint(account, _("Permit User"),
 			_("Type a user you permit to contact you."),
 			_("Please enter the name of the user you wish to be "
 			  "able to contact you."),
@@ -571,7 +571,7 @@ pidgin_request_add_permit(PurpleAccount *account, const char *name)
 							  "%s to contact you?"), name);
 
 
-		purple_request_action(account, _("Permit User"), primary, secondary,
+		purple_request_action_with_hint(account, _("Permit User"), primary, secondary,
 							0,
 							account, name, NULL,
 							"privacy", data, 2,
@@ -596,7 +596,7 @@ pidgin_request_add_block(PurpleAccount *account, const char *name)
 	data->block   = TRUE;
 
 	if (name == NULL) {
-		purple_request_input(account, _("Block User"),
+		purple_request_input_with_hint(account, _("Block User"),
 			_("Type a user to block."),
 			_("Please enter the name of the user you wish to block."),
 			NULL, FALSE, FALSE, NULL,
@@ -610,7 +610,7 @@ pidgin_request_add_block(PurpleAccount *account, const char *name)
 		char *secondary =
 			g_strdup_printf(_("Are you sure you want to block %s?"), name);
 
-		purple_request_action(account, _("Block User"), primary, secondary,
+		purple_request_action_with_hint(account, _("Block User"), primary, secondary,
 							0,
 							account, name, NULL,
 							"privacy", data, 2,

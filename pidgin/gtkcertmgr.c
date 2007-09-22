@@ -184,7 +184,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 		   if the window gets closed unusually, such as by handle
 		   deletion */
 		/* TODO: Display some more information on the certificate? */
-		purple_request_input(tpm_dat,
+		purple_request_input_with_hint(tpm_dat,
 				     _("Certificate Import"),
 				     _("Specify a hostname"),
 				     _("Type the host name this certificate is for."),
@@ -220,7 +220,7 @@ static void
 tls_peers_mgmt_import_cb(GtkWidget *button, gpointer data)
 {
 	/* TODO: need to tell the user that we want a .PEM file! */
-	purple_request_file(tpm_dat,
+	purple_request_file_with_hint(tpm_dat,
 			    _("Select a PEM certificate"),
 			    "certificate.pem",
 			    FALSE, /* Not a save dialog */
@@ -295,7 +295,7 @@ tls_peers_mgmt_export_cb(GtkWidget *button, gpointer data)
 
 	
 	/* TODO: inform user that it will be a PEM? */
-	purple_request_file(tpm_dat,
+	purple_request_file_with_hint(tpm_dat,
 			    _("PEM X.509 Certificate Export"),
 			    "certificate.pem",
 			    TRUE, /* Is a save dialog */
@@ -371,7 +371,7 @@ tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
 		primary = g_strdup_printf(
 			_("Really delete certificate for %s?"), id );
 		
-		purple_request_yes_no(tpm_dat, _("Confirm certificate delete"),
+		purple_request_yes_no_with_hint(tpm_dat, _("Confirm certificate delete"),
 				      primary, NULL, /* Can this be NULL? */
 				      2, /* NO is default action */
 				      NULL, NULL, NULL,

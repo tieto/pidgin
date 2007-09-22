@@ -43,7 +43,7 @@ buddynote_edit_cb(PurpleBlistNode *node, gpointer data)
 
 	note = purple_blist_node_get_string(node, "notes");
 
-	purple_request_input(node, _("Notes"),
+	purple_request_input_with_hint(node, _("Notes"),
 					   _("Enter your notes below..."),
 					   NULL,
 					   note, TRUE, FALSE, "html",

@@ -1140,6 +1140,20 @@ purple_request_input(void *handle, const char *title, const char *primary,
 				   const char *ok_text, GCallback ok_cb,
 				   const char *cancel_text, GCallback cancel_cb,
 				   PurpleAccount *account, const char *who, PurpleConversation *conv,
+				   void *user_data)
+{
+	return purple_request_input_with_hint(
+		handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, ok_cb,
+		cancel_text, cancel_cb, account, who, conv, "blist", user_data);
+}
+
+void *
+purple_request_input_with_hint(void *handle, const char *title, const char *primary,
+				   const char *secondary, const char *default_value,
+				   gboolean multiline, gboolean masked, gchar *hint,
+				   const char *ok_text, GCallback ok_cb,
+				   const char *cancel_text, GCallback cancel_cb,
+				   PurpleAccount *account, const char *who, PurpleConversation *conv,
 				   const char *ui_hint, void *user_data)
 {
 	PurpleRequestUiOps *ops;
@@ -1177,6 +1191,30 @@ purple_request_choice(void *handle, const char *title, const char *primary,
 					const char *ok_text, GCallback ok_cb,
 					const char *cancel_text, GCallback cancel_cb,
 					PurpleAccount *account, const char *who, PurpleConversation *conv,
+					void *user_data, ...)
+{
+	void *ui_handle;
+	va_list args;
+
+	g_return_val_if_fail(ok_text != NULL,  NULL);
+	g_return_val_if_fail(ok_cb   != NULL,  NULL);
+
+	va_start(args, user_data);
+	ui_handle = purple_request_choice_varg_with_hint(handle, title, primary, secondary,
+					     default_value, ok_text, ok_cb,
+					     cancel_text, cancel_cb,
+					     account, who, conv, "blist", user_data, args);
+	va_end(args);
+
+	return ui_handle;
+}
+
+void *
+purple_request_choice_with_hint(void *handle, const char *title, const char *primary,
+					const char *secondary, int default_value,
+					const char *ok_text, GCallback ok_cb,
+					const char *cancel_text, GCallback cancel_cb,
+					PurpleAccount *account, const char *who, PurpleConversation *conv,
 					const char *ui_hint, void *user_data, ...)
 {
 	void *ui_handle;
@@ -1186,7 +1224,7 @@ purple_request_choice(void *handle, const char *title, const char *primary,
 	g_return_val_if_fail(ok_cb   != NULL,  NULL);
 
 	va_start(args, user_data);
-	ui_handle = purple_request_choice_varg(handle, title, primary, secondary,
+	ui_handle = purple_request_choice_varg_with_hint(handle, title, primary, secondary,
 					     default_value, ok_text, ok_cb,
 					     cancel_text, cancel_cb,
 					     account, who, conv, ui_hint, user_data, args);
@@ -1197,6 +1235,20 @@ purple_request_choice(void *handle, const char *title, const char *primary,
 
 void *
 purple_request_choice_varg(void *handle, const char *title,
+			 const char *primary, const char *secondary,
+			 int default_value,
+			 const char *ok_text, GCallback ok_cb,
+			 const char *cancel_text, GCallback cancel_cb,
+			 PurpleAccount *account, const char *who, PurpleConversation *conv,
+			 const char *ui_hint, void *user_data, va_list choices)
+{
+	return purple_choice_varg_with_hint(
+		handle, title, primary, secondary, default_value, ok_text, ok_cb,
+		cancel_text, cancel_cb, account, who, conv, "blist", user_data, choices);
+}
+
+void *
+purple_request_choice_varg_with_hint(void *handle, const char *title,
 			 const char *primary, const char *secondary,
 			 int default_value,
 			 const char *ok_text, GCallback ok_cb,
@@ -1236,6 +1288,26 @@ void *
 purple_request_action(void *handle, const char *title, const char *primary,
 					const char *secondary, int default_action,
 					PurpleAccount *account, const char *who, PurpleConversation *conv,
+					void *user_data, size_t action_count, ...)
+{
+	void *ui_handle;
+	va_list args;
+
+	g_return_val_if_fail(action_count > 0, NULL);
+
+	va_start(args, action_count);
+	ui_handle = purple_request_action_with_hint_varg(handle, title, primary, secondary,
+										 default_action, account, who, conv,
+										 "blist", user_data, action_count, args);
+	va_end(args);
+
+	return ui_handle;
+}
+
+void *
+purple_request_action_with_hint(void *handle, const char *title, const char *primary,
+					const char *secondary, int default_action,
+					PurpleAccount *account, const char *who, PurpleConversation *conv,
 					const char *ui_hint, void *user_data, size_t action_count, ...)
 {
 	void *ui_handle;
@@ -1244,7 +1316,7 @@ purple_request_action(void *handle, const char *title, const char *primary,
 	g_return_val_if_fail(action_count > 0, NULL);
 
 	va_start(args, action_count);
-	ui_handle = purple_request_action_varg(handle, title, primary, secondary,
+	ui_handle = purple_request_action_with_hint_varg(handle, title, primary, secondary,
 										 default_action, account, who, conv,
 										 ui_hint, user_data, action_count, args);
 	va_end(args);
@@ -1254,6 +1326,18 @@ purple_request_action(void *handle, const char *title, const char *primary,
 
 void *
 purple_request_action_varg(void *handle, const char *title,
+						 const char *primary, const char *secondary,
+						 int default_action,
+						 PurpleAccount *account, const char *who, PurpleConversation *conv,
+						 void *user_data, size_t action_count, va_list actions)
+{
+	return purple_request_action_with_hint_varg(
+		handle, title, primary, secondary, default_action, account, who, conv,
+		"blist", user_data, action_count, actions);
+}
+
+void *
+purple_request_action_with_hint_varg(void *handle, const char *title,
 						 const char *primary, const char *secondary,
 						 int default_action,
 						 PurpleAccount *account, const char *who, PurpleConversation *conv,
@@ -1291,6 +1375,19 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 					PurpleAccount *account, const char *who, PurpleConversation *conv,
 					const char *ui_hint, void *user_data)
 {
+	return purple_request_fields_with_hint(
+		handle, title, primary, secondary, fields, ok_text, ok_cb,
+		cancel_text, cancel_cb, account, who, conv, "blist", user_data);
+}
+
+void *
+purple_request_fields_with_hint(void *handle, const char *title, const char *primary,
+					const char *secondary, PurpleRequestFields *fields,
+					const char *ok_text, GCallback ok_cb,
+					const char *cancel_text, GCallback cancel_cb,
+					PurpleAccount *account, const char *who, PurpleConversation *conv,
+					const char *ui_hint, void *user_data)
+{
 	PurpleRequestUiOps *ops;
 
 	g_return_val_if_fail(fields  != NULL, NULL);
@@ -1320,7 +1417,18 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 }
 
 void *
-purple_request_file(void *handle, const char *title, const char *filename,
+purple_request_file_with_hint(void *handle, const char *title, const char *filename,
+				  gboolean savedialog,
+				  GCallback ok_cb, GCallback cancel_cb,
+				  PurpleAccount *account, const char *who, PurpleConversation *conv,
+				  void *user_data)
+{
+	return purple_request_file_with_hint(
+		handle, title, filename, savedialog ok_cb, cancel_cb, account, who, conv, "blist", user_data);
+}
+
+void *
+purple_request_file_with_hint(void *handle, const char *title, const char *filename,
 				  gboolean savedialog,
 				  GCallback ok_cb, GCallback cancel_cb,
 				  PurpleAccount *account, const char *who, PurpleConversation *conv,
@@ -1348,6 +1456,16 @@ purple_request_file(void *handle, const char *title, const char *filename,
 
 void *
 purple_request_folder(void *handle, const char *title, const char *dirname,
+				  GCallback ok_cb, GCallback cancel_cb,
+				  PurpleAccount *account, const char *who, PurpleConversation *conv,
+				  void *user_data)
+{
+	return purple_request_folder_with_hint(
+		handle, title, dirname, ok_cb, cancel_cb, account, who, conv, "blist", user_data);
+}
+
+void *
+purple_request_folder_with_hint(void *handle, const char *title, const char *dirname,
 				  GCallback ok_cb, GCallback cancel_cb,
 				  PurpleAccount *account, const char *who, PurpleConversation *conv,
 				  const char *ui_hint, void *user_data)

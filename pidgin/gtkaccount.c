@@ -1901,7 +1901,7 @@ ask_delete_account_sel(GtkTreeModel *model, GtkTreePath *path,
 							  purple_account_get_username(account));
 
 		purple_request_close_with_handle(account);
-		purple_request_action(account, NULL, buf, NULL, 0,
+		purple_request_action_with_hint(account, NULL, buf, NULL, 0,
 							account, NULL, NULL,
 							"accounts", account, 2,
 							_("Delete"), delete_account_cb,

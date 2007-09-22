@@ -550,7 +550,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 	secondary = g_strdup_printf(_("Common name: %s %s\nFingerprint (SHA1): %s"), cn, cn_match, sha_asc);
 	
 	/* Make a semi-pretty display */
-	purple_request_accept_cancel(
+	purple_request_accept_cancel_with_hint(
 		vrq->cb_data, /* TODO: Find what the handle ought to be */
 		_("Single-use Certificate Verification"),
 		primary,
@@ -1173,7 +1173,7 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 				  vrq->subject_name);
 		
 	/* Make a semi-pretty display */
-	purple_request_action(
+	purple_request_action_with_hint(
 		vrq->cb_data, /* TODO: Find what the handle ought to be */
 		_("SSL Certificate Verification"),
 		primary,

@@ -1560,7 +1560,7 @@ file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 
 	if ((data->u.file.savedialog == TRUE) &&
 		(g_file_test(data->u.file.name, G_FILE_TEST_EXISTS))) {
-		purple_request_action(data, NULL, _("That file already exists"),
+		purple_request_action_with_hint(data, NULL, _("That file already exists"),
 							_("Would you like to overwrite it?"), 0,
 							NULL, NULL, NULL,
 							"pidgin-request-file", data, 2,

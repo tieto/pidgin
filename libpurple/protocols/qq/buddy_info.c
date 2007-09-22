@@ -478,7 +478,7 @@ static void create_modify_info_dialogue(PurpleConnection *gc, const contact_info
 		mid->info->qq_show = g_strdup(info->qq_show);
 		mid->info->unknown6 = g_strdup(info->unknown6);
 
-		purple_request_fields(gc, _("Modify my information"),
+		purple_request_fields_with_hint(gc, _("Modify my information"),
 			_("Modify my information"), NULL, fields,
 			_("Update my information"), G_CALLBACK(modify_info_ok_cb),
 			_("Cancel"), G_CALLBACK(modify_info_cancel_cb),

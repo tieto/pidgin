@@ -1004,7 +1004,7 @@ purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
 	field = purple_request_field_bool_new("remember", _("Save password"), FALSE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(account,
+	purple_request_fields_with_hint(account,
                         NULL,
                         primary,
                         NULL,
@@ -1253,7 +1253,7 @@ purple_account_request_change_password(PurpleAccount *account)
 
 	/* I'm sticking this somewhere in the code: bologna */
 
-	purple_request_fields(purple_account_get_connection(account),
+	purple_request_fields_with_hint(purple_account_get_connection(account),
 						NULL,
 						primary,
 						_("Please enter your current password and your "
@@ -1290,7 +1290,7 @@ purple_account_request_change_user_info(PurpleAccount *account)
 			   _("Change user information for %s"),
 			   purple_account_get_username(account));
 
-	purple_request_input(gc, _("Set User Info"), primary, NULL,
+	purple_request_input_with_hint(gc, _("Set User Info"), primary, NULL,
 					   purple_account_get_user_info(account),
 					   TRUE, FALSE, ((gc != NULL) &&
 					   (gc->flags & PURPLE_CONNECTION_HTML) ? "html" : NULL),

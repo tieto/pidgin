@@ -282,7 +282,7 @@ msn_show_set_friendly_name(PurplePluginAction *action)
 
 	gc = (PurpleConnection *) action->context;
 
-	purple_request_input(gc, NULL, _("Set your friendly name."),
+	purple_request_input_with_hint(gc, NULL, _("Set your friendly name."),
 					   _("This is the name that other MSN buddies will "
 						 "see you as."),
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
@@ -301,7 +301,7 @@ msn_show_set_home_phone(PurplePluginAction *action)
 	gc = (PurpleConnection *) action->context;
 	session = gc->proto_data;
 
-	purple_request_input(gc, NULL, _("Set your home phone number."), NULL,
+	purple_request_input_with_hint(gc, NULL, _("Set your home phone number."), NULL,
 					   msn_user_get_home_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_home_phone_cb),
 					   _("Cancel"), NULL,
@@ -318,7 +318,7 @@ msn_show_set_work_phone(PurplePluginAction *action)
 	gc = (PurpleConnection *) action->context;
 	session = gc->proto_data;
 
-	purple_request_input(gc, NULL, _("Set your work phone number."), NULL,
+	purple_request_input_with_hint(gc, NULL, _("Set your work phone number."), NULL,
 					   msn_user_get_work_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_work_phone_cb),
 					   _("Cancel"), NULL,
@@ -335,7 +335,7 @@ msn_show_set_mobile_phone(PurplePluginAction *action)
 	gc = (PurpleConnection *) action->context;
 	session = gc->proto_data;
 
-	purple_request_input(gc, NULL, _("Set your mobile phone number."), NULL,
+	purple_request_input_with_hint(gc, NULL, _("Set your mobile phone number."), NULL,
 					   msn_user_get_mobile_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_mobile_phone_cb),
 					   _("Cancel"), NULL,
@@ -350,7 +350,7 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 
 	gc = (PurpleConnection *) action->context;
 
-	purple_request_action(gc, NULL, _("Allow MSN Mobile pages?"),
+	purple_request_action_with_hint(gc, NULL, _("Allow MSN Mobile pages?"),
 						_("Do you want to allow or disallow people on "
 						  "your buddy list to send you MSN Mobile pages "
 						  "to your cell phone or other mobile device?"),
@@ -400,7 +400,7 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 	data->gc = gc;
 	data->passport = buddy->name;
 
-	purple_request_input(gc, NULL, _("Send a mobile message."), NULL,
+	purple_request_input_with_hint(gc, NULL, _("Send a mobile message."), NULL,
 					   NULL, TRUE, FALSE, NULL,
 					   _("Page"), G_CALLBACK(send_to_mobile_cb),
 					   _("Close"), G_CALLBACK(close_mobile_page_cb),
