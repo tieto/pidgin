@@ -1229,7 +1229,7 @@ void *purple_request_input(void *handle, const char *title,
  * @param cancel_cb     The callback for the @c Cancel button.
  * @param account		The PurpleAccount associated with this request, or NULL if none is
  * @param who			The username of the buddy assocaited with this request, or NULL if none is
- * @param conv			The PurpleConversation associated with this request, or NULL if none is 
+ * @param conv			The PurpleConversation associated with this request, or NULL if none is
  * @param ui_hint       UI hint
  * @param user_data     The data to pass to the callback.
  * @param ...           The choices.  This argument list should be
@@ -1272,7 +1272,7 @@ void *purple_request_choice(void *handle, const char *title,
  * @param cancel_cb     The callback for the @c Cancel button.
  * @param account		The PurpleAccount associated with this request, or NULL if none is
  * @param who			The username of the buddy assocaited with this request, or NULL if none is
- * @param conv			The PurpleConversation associated with this request, or NULL if none is 
+ * @param conv			The PurpleConversation associated with this request, or NULL if none is
  * @param ui_hint       UI hint
  * @param user_data     The data to pass to the callback.
  * @param choices       The choices.  This argument list should be
@@ -1313,7 +1313,7 @@ void *purple_request_choice_varg(void *handle, const char *title,
  * @param default_action The default value.
  * @param account		 The PurpleAccount associated with this request, or NULL if none is
  * @param who			 The username of the buddy assocaited with this request, or NULL if none is
- * @param conv			 The PurpleConversation associated with this request, or NULL if none is 
+ * @param conv			 The PurpleConversation associated with this request, or NULL if none is
  * @param ui_hint        UI hint
  * @param user_data      The data to pass to the callback.
  * @param action_count   The number of actions.
@@ -1356,7 +1356,7 @@ void *purple_request_action(void *handle, const char *title,
  * @param default_action The default value.
  * @param account		 The PurpleAccount associated with this request, or NULL if none is
  * @param who			 The username of the buddy assocaited with this request, or NULL if none is
- * @param conv			 The PurpleConversation associated with this request, or NULL if none is 
+ * @param conv			 The PurpleConversation associated with this request, or NULL if none is
  * @param ui_hint        UI hint
  * @param user_data      The data to pass to the callback.
  * @param action_count   The number of actions.
@@ -1397,7 +1397,7 @@ void *purple_request_action_varg(void *handle, const char *title,
  * @param cancel_cb   The callback for the @c Cancel button.
  * @param account	  The PurpleAccount associated with this request, or NULL if none is
  * @param who		  The username of the buddy associated with this request, or NULL if none is
- * @param conv		  The PurpleConversation associated with this request, or NULL if none is 
+ * @param conv		  The PurpleConversation associated with this request, or NULL if none is
  * @param ui_hint     UI hint
  * @param user_data   The data to pass to the callback.
  *
@@ -1512,7 +1512,7 @@ void purple_request_close_with_handle(void *handle);
  * @param cancel_cb   The callback for the @c Cancel button.
  * @param account	  The PurpleAccount associated with this request, or NULL if none is
  * @param who		  The username of the buddy assocaited with this request, or NULL if none is
- * @param conv		  The PurpleConversation associated with this request, or NULL if none is 
+ * @param conv		  The PurpleConversation associated with this request, or NULL if none is
  * @param ui_hint     UI hint
  * @param user_data   The data to pass to the callback.
  *
@@ -1546,7 +1546,7 @@ void *purple_request_file(void *handle, const char *title, const char *filename,
  * @param cancel_cb   The callback for the @c Cancel button.
  * @param account	  The PurpleAccount associated with this request, or NULL if none is
  * @param who		  The username of the buddy assocaited with this request, or NULL if none is
- * @param conv		  The PurpleConversation associated with this request, or NULL if none is 
+ * @param conv		  The PurpleConversation associated with this request, or NULL if none is
  * @param ui_hint     UI hint
  * @param user_data   The data to pass to the callback.
  *
