@@ -58,7 +58,7 @@ do
 done
 
 libtoolize -c -f --automake
-glib-gettextize --force --copy --previous
+glib-gettextize --force --copy
 intltoolize --force --copy
 aclocal $ACLOCAL_FLAGS || exit;
 autoheader || exit;
