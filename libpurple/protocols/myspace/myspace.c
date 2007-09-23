@@ -454,6 +454,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	purple_cipher_context_append(key_context, hash_pw, HASH_SIZE);
 	purple_cipher_context_append(key_context, (guchar *)(nonce + NONCE_SIZE), NONCE_SIZE);
 	purple_cipher_context_digest(key_context, sizeof(key), key, NULL);
+	purple_cipher_context_destroy(key_context);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
 	purple_debug_info("msim", "key = ");
@@ -1030,7 +1031,7 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 	PurpleStatusType *type;
 	MsimSession *session;
 	guint status_code;
-	const gchar *statstring;
+	gchar *statstring;
 
 	session = (MsimSession *)account->gc->proto_data;
 
@@ -1064,7 +1065,7 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 			break;
 	}
 
-	statstring = purple_status_get_attr_string(status, "message");
+	statstring = (gchar *)purple_status_get_attr_string(status, "message");
 
 	if (!statstring) {
 		statstring = "";
@@ -1073,7 +1074,7 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 	/* Status strings are plain text. */
 	statstring = purple_markup_strip_html(statstring);
 
-	msim_set_status_code(session, status_code, g_strdup(statstring));
+	msim_set_status_code(session, status_code, statstring);
 }
 
 /** Go idle. */
@@ -1204,7 +1205,7 @@ msim_uid2username_from_blist(MsimSession *session, guint wanted_uid)
 		if (uid == wanted_uid)
 		{
 			ret = g_strdup(name);
-            break;
+			break;
 		}
 	}
 
@@ -1863,6 +1864,7 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		purple_blist_add_buddy(buddy, NULL, NULL, NULL);
 
 		user = msim_get_user_from_buddy(buddy);
+		/* TODO: free user. memory leak? */
 
 		/* All buddies on list should have 'uid' integer associated with them. */
 		purple_blist_node_set_int(&buddy->node, "UserID", msim_msg_get_integer(msg, "f"));
