@@ -11,7 +11,7 @@ pidgin_pounce_editor_show(account, name, cur_pounce)
 
 void
 pidgin_pounce_editor_show_with_parent(parent, account, name, cur_pounce)
-	Gtk::Window parent
+	void * parent
 	Purple::Account account
 	const char * name
 	Purple::Pounce cur_pounce
@@ -30,7 +30,7 @@ pidgin_pounces_manager_show()
 
 void
 pidgin_pounces_manager_show_with_parent(parent)
-	Gtk::Window parent
+	void * parent
 
 void
 pidgin_pounces_manager_hide()
