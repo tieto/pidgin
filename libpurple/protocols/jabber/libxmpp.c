@@ -113,8 +113,8 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_prpl_send_raw,			/* send_raw */
 	jabber_roomlist_room_serialize, /* roomlist_room_serialize */
 	jabber_unregister_account,		/* unregister_user */
-	jabber_attention_types,                 /* attention_types */
-	jabber_send_attention,                  /* send_attention */
+	jabber_send_attention,			/* send_attention */
+	jabber_attention_types,			/* attention_types */
 
 	/* padding */
 	NULL
