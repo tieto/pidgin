@@ -126,6 +126,8 @@ struct _MsnSession
 		char *client_ip;
 		int client_port;
 	} passport_info;
+
+	GHashTable *soap_table;
 };
 
 /**
