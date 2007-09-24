@@ -365,25 +365,30 @@ msn_soap_connection_run(gpointer data)
 			int len = -1;
 			char *body = xmlnode_to_str(req->message->xml, &len);
 			GSList *iter;
+			char *authstr = NULL;
 
 			g_queue_pop_head(conn->queue);
 
 			conn->buf = g_string_new("");
 
+			if (conn->session->passport_info.mspauth)
+				authstr = g_strdup_printf("Cookie: MSPAuth=%s\r\n",
+					conn->session->passport_info.mspauth);
+
+
 			g_string_append_printf(conn->buf,
 				"POST %s HTTP/1.1\r\n"
 				"SOAPAction: %s\r\n"
 				"Content-Type:text/xml; charset=utf-8\r\n"
-				"Cookie: MSPAuth=%s\r\n"
+				"%s"
 				"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
 				"Accept: */*\r\n"
 				"Host: %s\r\n"
 				"Content-Length: %d\r\n"
 				"Connection: Keep-Alive\r\n"
 				"Cache-Control: no-cache\r\n",
-				req->path, req->message->action,
-				conn->session->passport_info.mspauth,
-				conn->host, len);
+				req->path, req->message->action ? req->message->action : "",
+				authstr ? authstr : "",	conn->host, len);
 
 			for (iter = req->message->headers; iter; iter = iter->next) {
 				g_string_append(conn->buf, (char *)iter->data);
@@ -399,6 +404,8 @@ msn_soap_connection_run(gpointer data)
 			conn->event_handle = purple_input_add(conn->ssl->fd,
 				PURPLE_INPUT_WRITE, msn_soap_write_cb, conn);
 			msn_soap_write_cb(conn, conn->ssl->fd, PURPLE_INPUT_WRITE);
+
+			g_free(authstr);
 		}		
 	}
 
