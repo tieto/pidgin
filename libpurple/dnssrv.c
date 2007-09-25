@@ -408,7 +408,6 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 void
 purple_srv_cancel(PurpleSrvQueryData *query_data)
 {
-printf("purple_srv_cancel(%p)\n", query_data);
 	if (query_data->handle > 0)
 		purple_input_remove(query_data->handle);
 #ifdef _WIN32
