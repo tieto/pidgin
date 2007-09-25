@@ -2216,6 +2216,44 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 	return PURPLE_CMD_RET_FAILED;
 }
 
+GList *jabber_attention_types(PurpleAccount *account)
+{
+	static GList *types = NULL;
+	PurpleAttentionType *attn;
+
+	if (!types) {
+		attn = g_new0(PurpleAttentionType, 1);
+		attn->name = _("Buzz");
+		attn->incoming_description = _("%s has buzzed you!");
+		attn->outgoing_description = _("Buzzing %s...");
+		types = g_list_append(types, attn);
+	}
+
+	return types;
+}
+
+gboolean jabber_send_attention(PurpleConnection *gc, const char *username, guint code)
+{
+	PurpleConversation *conv;
+	char *error;
+	char *args[1];
+	PurpleCmdRet ret;
+
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, username, gc->account);
+
+	args[0] = (char *)username;
+
+	ret = jabber_cmd_buzz(conv, "buzz", args, &error, NULL);
+
+	if (ret == PURPLE_CMD_RET_FAILED) {
+		purple_debug_error("jabber", "jabber_send_attention: jabber_cmd_buzz failed with error: %s\n", error ? error : "(NULL)");
+		return FALSE;
+	} else {
+		return TRUE;
+	}
+}
+
+
 gboolean jabber_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
