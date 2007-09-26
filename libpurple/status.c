@@ -157,7 +157,8 @@ static struct PurpleStatusPrimitiveMap
 	{ PURPLE_STATUS_INVISIBLE,       "invisible",       N_("Invisible")       },
 	{ PURPLE_STATUS_AWAY,            "away",            N_("Away")            },
 	{ PURPLE_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended away")   },
-	{ PURPLE_STATUS_MOBILE,          "mobile",          N_("Mobile")          }
+	{ PURPLE_STATUS_MOBILE,          "mobile",          N_("Mobile")          },
+	{ PURPLE_STATUS_TUNE,            "tune",            N_("Listening to music") }
 };
 
 const char *

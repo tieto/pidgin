@@ -94,6 +94,10 @@ typedef enum
 /**
  * A primitive defining the basic structure of a status type.
  */
+/*
+ * If you add a value to this enum, make sure you update
+ * the status_primitive_map array in status.c.
+ */
 typedef enum
 {
 	PURPLE_STATUS_UNSET = 0,
