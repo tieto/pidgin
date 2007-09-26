@@ -28,6 +28,8 @@
 
 #ifndef _WIN32
 # include <X11/Xlib.h>
+# include <X11/Xutil.h> /* for XWMHints */
+# include <gdk/gdkx.h> /* for GDK_WINDOW_X{DISPLAY,WINDOW} */
 #else
 # ifdef small
 #  undef small
