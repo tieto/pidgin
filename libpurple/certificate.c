@@ -1460,8 +1460,6 @@ x509_tls_cached_start_verify(PurpleCertificateVerificationRequest *vrq)
 	
 	tls_peers = purple_certificate_find_pool(x509_tls_cached.scheme_name,tls_peers_name);
 
-	/* TODO: This should probably just prompt the user instead of throwing
-	   an angry fit */
 	if (!tls_peers) {
 		purple_debug_error("certificate/x509/tls_cached",
 				   "Couldn't find local peers cache %s\nPrompting the user\n",
