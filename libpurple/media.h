@@ -1,5 +1,5 @@
 /**
- * @file media.h Account API
+ * @file media.h Media API
  * @ingroup core
  *
  * purple

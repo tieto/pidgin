@@ -1,5 +1,5 @@
 /**
- * @file media.c Account API
+ * @file media.c Media API
  * @ingroup core
  *
  * purple
@@ -24,6 +24,8 @@
  */
 
 #include <string.h>
+
+#include "internal.h"
 
 #include "connection.h"
 #include "media.h"

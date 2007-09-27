@@ -1,5 +1,5 @@
 /**
- * @file media.h Account API
+ * @file mediamanager.h Media Manager API
  * @ingroup core
  *
  * purple
@@ -63,8 +63,8 @@ struct _PurpleMediaManager
 	PurpleMediaManagerPrivate *priv;
 };
 
-GType purple_media_manager_get_type();
-PurpleMediaManager *purple_media_manager_get();
+GType purple_media_manager_get_type(void);
+PurpleMediaManager *purple_media_manager_get(void);
 
 PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
 					       PurpleConnection *gc,

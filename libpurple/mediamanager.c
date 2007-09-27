@@ -1,5 +1,5 @@
 /**
- * @file media.c Account API
+ * @file mediamanager.c Media Manager API
  * @ingroup core
  *
  * purple
@@ -22,6 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+
+#include "internal.h"
 
 #include "connection.h"
 #include "mediamanager.h"
