@@ -1,6 +1,7 @@
 SUBDIRS = scalable
 
 EXTRA_DIST = 	aol-client.png \
+		birthday.png \
 		blocked.png \
 		bot.png \
 		external.png \
@@ -12,6 +13,7 @@ EXTRA_DIST = 	aol-client.png \
 		hiptop.png \
 		male.png \
 		mobile.png \
+		music.png \
 		not-authorized.png \
 		operator.png \
 		qq-member.png \

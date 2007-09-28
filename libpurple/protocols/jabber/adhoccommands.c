@@ -151,8 +151,11 @@ static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data)
 		/* display result */
 		xmlnode *note = xmlnode_get_child(command,"note");
 		
-		if(note)
-			purple_notify_info(NULL, xmlnode_get_attrib(packet, "from"), xmlnode_get_data(note), NULL);
+		if(note) {
+			char *data = xmlnode_get_data(note);
+			purple_notify_info(NULL, xmlnode_get_attrib(packet, "from"), data, NULL);
+			g_free(data);
+		}
 		
 		if(xdata)
 			jabber_x_data_request(js, xdata, (jabber_x_data_cb)do_adhoc_ignoreme, NULL);
