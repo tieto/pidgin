@@ -1,5 +1,45 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+Version 2.2.1:
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
+	
+	libpurple:
+	* A few build issues on Solaris were fixed.
+	* Cancelling the password prompt for an account will no longer leave
+	  it in an ambiguous state.  (It will be disabled.)
+	* Fixed an erroneous size display for MSN file transfers. (galt)
+	* Real usernames are now shown in the system log.
+	* Gmail notifications are better tracked
+
+	Pidgin:
+	* If you alias a buddy to an alias that is already present within
+	  a particular group, we now offer to merge the buddies into the
+	  same contact.
+	* A music emblem is now displayed in the buddy list for a buddy if we
+	  know she is listening to some soothing music.
+	* Added a 'Move to' menu in buddy list context menu for moving buddies
+	  to other groups as an alternative to dragging.
+	* Group headings are now marked via an underline instead of a
+	  different color background.
+	* It is now possible to mark a chat on your buddy list as "Persistent"
+	  so you do not leave the chat when the window or tab is closed.
+	* The auto-join option for chats is now listed in the "Add Chat"
+	  dialog along with the new persistence option.
+	* Closing an IM no longer immediately closes your conversation.  It
+	  will now remain active for a short time so that if the conversation
+	  resumes, the history will be retained.  A preference has been added
+	  to toggle this behavior.
+	* The "Smiley" menu has been moved to the top-level of the toolbar.
+	* Fixed keyboard tab reordering to move tabs one step instead of two.
+	* Pidgin's display is now saved with the command line for session
+	  restoration.  (David Mohr)
+	* You should no longer lose proxy settings when Pidgin is restarted.
+	* ICQ Birthday notifications are shown as buddy list emblems
+
+	Finch:
+	* Pressing 'Insert' in the buddylist will bring up the 'Add Buddy'
+	  dialog.
+
 Version 2.2.0 (09/13/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
 
