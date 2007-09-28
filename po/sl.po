@@ -6693,7 +6693,7 @@ msgstr "Stran/Poziv"
 
 #: ../libpurple/protocols/msn/msn.c:549
 msgid "Has you"
-msgstr ""
+msgstr "Vas ima med prijatelji"
 
 #: ../libpurple/protocols/msn/msn.c:579 ../libpurple/protocols/msn/state.c:33
 #: ../libpurple/protocols/yahoo/yahoo.c:3077
