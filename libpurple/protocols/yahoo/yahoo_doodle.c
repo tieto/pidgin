@@ -118,19 +118,19 @@ void yahoo_doodle_initiate(PurpleConnection *gc, const char *name)
 		/* Insert this 'session' in the list.  At this point, it's only a
 		 * requested session.
 		 */
-		purple_whiteboard_create(account, to, DOODLE_STATE_REQUESTING);
+		wb = purple_whiteboard_create(account, to, DOODLE_STATE_REQUESTING);
 	}
 
 	/* NOTE Perhaps some careful handling of remote assumed established
 	 * sessions
 	 */
 
-	yahoo_doodle_command_send_ready(gc, to);
-	yahoo_doodle_command_send_request(gc, to);
+	yahoo_doodle_command_send_ready(gc, to, DOODLE_IMV_KEY);
+	yahoo_doodle_command_send_request(gc, to, DOODLE_IMV_KEY);
 
 }
 
-static void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *from)
+static void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *from, const char *imv_key)
 {
 	PurpleAccount *account;
 	PurpleWhiteboard *wb;
@@ -147,6 +147,7 @@ static void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *f
 	/* If a session with the remote user doesn't exist */
 	if(wb == NULL)
 	{
+		doodle_session *ds;
 		/* Ask user if they wish to accept the request for a doodle session */
 		/* TODO Ask local user to start Doodle session with remote user */
 		/* NOTE This if/else statement won't work right--must use dialog
@@ -160,9 +161,11 @@ static void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *f
 		dialog_message, NULL, NULL, NULL);
 		*/
 
-		purple_whiteboard_create(account, from, DOODLE_STATE_REQUESTED);
+		wb = purple_whiteboard_create(account, from, DOODLE_STATE_REQUESTED);
+		ds = wb->proto_data;
+		ds->imv_key = g_strdup(imv_key);
 
-		yahoo_doodle_command_send_ready(gc, from);
+		yahoo_doodle_command_send_ready(gc, from, imv_key);
 	}
 
 	/* TODO Might be required to clear the canvas of an existing doodle
@@ -170,7 +173,7 @@ static void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *f
 	 */
 }
 
-static void yahoo_doodle_command_got_ready(PurpleConnection *gc, const char *from)
+static void yahoo_doodle_command_got_ready(PurpleConnection *gc, const char *from, const char *imv_key)
 {
 	PurpleAccount *account;
 	PurpleWhiteboard *wb;
@@ -189,11 +192,15 @@ static void yahoo_doodle_command_got_ready(PurpleConnection *gc, const char *fro
 
 	if(wb->state == DOODLE_STATE_REQUESTING)
 	{
+		doodle_session *ds = wb->proto_data;
 		purple_whiteboard_start(wb);
 
 		wb->state = DOODLE_STATE_ESTABLISHED;
 
-		yahoo_doodle_command_send_confirm(gc, from);
+		yahoo_doodle_command_send_confirm(gc, from, imv_key);
+		/* Let's steal the imv_key and reuse it */
+		g_free(ds->imv_key);
+		ds->imv_key = g_strdup(imv_key);
 	}
 	else if(wb->state == DOODLE_STATE_ESTABLISHED)
 	{
@@ -208,7 +215,7 @@ static void yahoo_doodle_command_got_ready(PurpleConnection *gc, const char *fro
 	else if(wb->state == DOODLE_STATE_REQUESTED)
 	{
 		/* purple_whiteboard_start(wb); */
-		yahoo_doodle_command_send_ready(gc, from);
+		yahoo_doodle_command_send_ready(gc, from, imv_key);
 	}
 }
 
@@ -296,14 +303,14 @@ static void yahoo_doodle_command_got_clear(PurpleConnection *gc, const char *fro
 
 
 static void
-yahoo_doodle_command_got_extra(PurpleConnection *gc, const char *from, const char *message)
+yahoo_doodle_command_got_extra(PurpleConnection *gc, const char *from, const char *message, const char *imv_key)
 {
 	purple_debug_info("yahoo", "doodle: Got Extra (%s)\n", from);
 
 	/* I do not like these 'extra' features, so I'll only handle them in one
 	 * way, which is returning them with the command/packet to turn them off
 	 */
-	yahoo_doodle_command_send_extra(gc, from, DOODLE_EXTRA_NONE);
+	yahoo_doodle_command_send_extra(gc, from, DOODLE_EXTRA_NONE, imv_key);
 }
 
 static void yahoo_doodle_command_got_confirm(PurpleConnection *gc, const char *from)
@@ -399,34 +406,34 @@ static void yahoo_doodle_command_send_generic(const char *type,
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
-void yahoo_doodle_command_send_ready(PurpleConnection *gc, const char *to)
+void yahoo_doodle_command_send_ready(PurpleConnection *gc, const char *to, const char *imv_key)
 {
-	yahoo_doodle_command_send_generic("Ready", gc, to, "1", DOODLE_CMD_READY, NULL, "1");
+	yahoo_doodle_command_send_generic("Ready", gc, to, "1", DOODLE_CMD_READY, imv_key, "1");
 }
 
-void yahoo_doodle_command_send_request(PurpleConnection *gc, const char *to)
+void yahoo_doodle_command_send_request(PurpleConnection *gc, const char *to, const char *imv_key)
 {
-	yahoo_doodle_command_send_generic("Request", gc, to, "", DOODLE_CMD_REQUEST, NULL, "0");
+	yahoo_doodle_command_send_generic("Request", gc, to, "", DOODLE_CMD_REQUEST, imv_key, "0");
 }
 
-void yahoo_doodle_command_send_draw(PurpleConnection *gc, const char *to, const char *message)
+void yahoo_doodle_command_send_draw(PurpleConnection *gc, const char *to, const char *message, const char *imv_key)
 {
-	yahoo_doodle_command_send_generic("Draw", gc, to, message, DOODLE_CMD_DRAW, NULL, "1");
+	yahoo_doodle_command_send_generic("Draw", gc, to, message, DOODLE_CMD_DRAW, imv_key, "1");
 }
 
-void yahoo_doodle_command_send_clear(PurpleConnection *gc, const char *to)
+void yahoo_doodle_command_send_clear(PurpleConnection *gc, const char *to, const char *imv_key)
 {
-	yahoo_doodle_command_send_generic("Clear", gc, to, " ", DOODLE_CMD_CLEAR, NULL, "1");
+	yahoo_doodle_command_send_generic("Clear", gc, to, " ", DOODLE_CMD_CLEAR, imv_key, "1");
 }
 
-void yahoo_doodle_command_send_extra(PurpleConnection *gc, const char *to, const char *message)
+void yahoo_doodle_command_send_extra(PurpleConnection *gc, const char *to, const char *message, const char *imv_key)
 {
-	yahoo_doodle_command_send_generic("Extra", gc, to, message, DOODLE_CMD_EXTRA, NULL, "1");
+	yahoo_doodle_command_send_generic("Extra", gc, to, message, DOODLE_CMD_EXTRA, imv_key, "1");
 }
 
-void yahoo_doodle_command_send_confirm(PurpleConnection *gc, const char *to)
+void yahoo_doodle_command_send_confirm(PurpleConnection *gc, const char *to, const char *imv_key)
 {
-	yahoo_doodle_command_send_generic("Confirm", gc, to, "1", DOODLE_CMD_CONFIRM, NULL, "1");
+	yahoo_doodle_command_send_generic("Confirm", gc, to, "1", DOODLE_CMD_CONFIRM, imv_key, "1");
 }
 
 void yahoo_doodle_command_send_shutdown(PurpleConnection *gc, const char *to)
@@ -450,12 +457,14 @@ void yahoo_doodle_start(PurpleWhiteboard *wb)
 void yahoo_doodle_end(PurpleWhiteboard *wb)
 {
 	PurpleConnection *gc = purple_account_get_connection(wb->account);
+	doodle_session *ds = wb->proto_data;
 
 	/* g_debug_debug("yahoo", "doodle: yahoo_doodle_end()\n"); */
 
 	if (gc && wb->state != DOODLE_STATE_CANCELED)
 		yahoo_doodle_command_send_shutdown(gc, wb->who);
 
+	g_free(ds->imv_key);
 	g_free(wb->proto_data);
 }
 
@@ -492,13 +501,14 @@ void yahoo_doodle_send_draw_list(PurpleWhiteboard *wb, GList *draw_list)
 	g_return_if_fail(draw_list != NULL);
 
 	message = yahoo_doodle_build_draw_string(ds, draw_list);
-	yahoo_doodle_command_send_draw(wb->account->gc, wb->who, message);
+	yahoo_doodle_command_send_draw(wb->account->gc, wb->who, message, ds->imv_key);
 	g_free(message);
 }
 
 void yahoo_doodle_clear(PurpleWhiteboard *wb)
 {
-	yahoo_doodle_command_send_clear(wb->account->gc, wb->who);
+	doodle_session *ds = wb->proto_data;
+	yahoo_doodle_command_send_clear(wb->account->gc, wb->who, ds->imv_key);
 }
 
 
@@ -551,14 +561,14 @@ void yahoo_doodle_draw_stroke(PurpleWhiteboard *wb, GList *draw_list)
 
 void yahoo_doodle_get_brush(const PurpleWhiteboard *wb, int *size, int *color)
 {
-	doodle_session *ds = (doodle_session *)wb->proto_data;
+	doodle_session *ds = wb->proto_data;
 	*size = ds->brush_size;
 	*color = ds->brush_color;
 }
 
 void yahoo_doodle_set_brush(PurpleWhiteboard *wb, int size, int color)
 {
-	doodle_session *ds = (doodle_session *)wb->proto_data;
+	doodle_session *ds = wb->proto_data;
 	ds->brush_size = size;
 	ds->brush_color = color;
 
@@ -567,7 +577,7 @@ void yahoo_doodle_set_brush(PurpleWhiteboard *wb, int size, int color)
 }
 
 void yahoo_doodle_process(PurpleConnection *gc, const char *me, const char *from,
-						  const char *command, const char *message)
+						  const char *command, const char *message, const char *imv_key)
 {
 	if(!command)
 		return;
@@ -576,11 +586,11 @@ void yahoo_doodle_process(PurpleConnection *gc, const char *me, const char *from
 	switch(atoi(command))
 	{
 		case DOODLE_CMD_REQUEST:
-			yahoo_doodle_command_got_request(gc, from);
+			yahoo_doodle_command_got_request(gc, from, imv_key);
 			break;
 
 		case DOODLE_CMD_READY:
-			yahoo_doodle_command_got_ready(gc, from);
+			yahoo_doodle_command_got_ready(gc, from, imv_key);
 			break;
 
 		case DOODLE_CMD_CLEAR:
@@ -592,7 +602,7 @@ void yahoo_doodle_process(PurpleConnection *gc, const char *me, const char *from
 			break;
 
 		case DOODLE_CMD_EXTRA:
-			yahoo_doodle_command_got_extra(gc, from, message);
+			yahoo_doodle_command_got_extra(gc, from, message, imv_key);
 			break;
 
 		case DOODLE_CMD_CONFIRM:
