@@ -5,12 +5,11 @@
 #
 # This file is distributed under the same license as the Pidgin package.
 #
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2007-08-15 00:26+0100\n"
 "Last-Translator: Peter Hjalmarsson <xake@telia.com>\n"
 "Language-Team: \n"

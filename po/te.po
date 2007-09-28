@@ -1,9 +1,8 @@
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: GAIM Telugu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2005-09-07 14:57+0530\n"
 "Last-Translator: Mr. Subbaramaih <info.gist@cdac.in>\n"
 "Language-Team: GIST CDAC Pune <info.gist@cdac.in>\n"

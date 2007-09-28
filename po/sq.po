@@ -3,12 +3,11 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Besnik Bleta <besnik@programeshqip.org>, 2004, 2005.
 #
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim_sq\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2006-10-29 14:30+0200\n"
 "Last-Translator: Besnik Bleta <besnik@programeshqip>\n"
 "Language-Team: Albanian <translation-team-sq@lists.sourceforge.net>\n"

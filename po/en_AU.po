@@ -4,12 +4,11 @@
 # Bleeter Yaluser <trans@six-by-nine.com.au>, 2004.
 # 
 # 
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2005-01-19 07:55+1100\n"
 "Last-Translator: Peter (Bleeter) Lawler <trans@six-by-nine.com.au>\n"
 "Language-Team: English/AU <trans@six-by-nine.com.au>\n"

@@ -5,12 +5,11 @@
 # Tisa Nafisa <tisa_nafisa@yahoo.com>, 2007.
 # Jamil Ahmed <jamil@bengalinux.org>, 2007.
 #
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: GAIM VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2007-03-10 01:34+0600\n"
 "Last-Translator: Jamil Ahmed <jamil@bengalinux.org>\n"
 "Language-Team: Bengali <core@bengalinux.org>\n"

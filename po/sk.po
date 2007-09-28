@@ -5,12 +5,11 @@
 # Jozef Káčer <quickparser@gmail.com>, 2007.
 # Ivan Masár <helix84@centrum.sk>, 2007.
 #
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: pidgin-1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2007-09-10 17:31+0000\n"
 "Last-Translator: helix84 <helix84@centrum.sk>\n"
 "Language-Team: Slovak <kde-sk@linux.sk>\n"

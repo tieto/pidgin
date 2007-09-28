@@ -3,12 +3,11 @@
 # This file is distributed under the same license as the pidgin package.
 # Friedel Wolff <friedel BY translate.org.za>, 2006-2007.
 # Samuel Murray <leuce.com BY gmail.com>, 2007
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: 2.1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2007-08-17 10:10+0200\n"
 "Last-Translator: Samuel Murray <leuce.com BY gmail.com>\n"
 "Language-Team: <translate-discuss-af@lists.sourceforge.net>\n"
