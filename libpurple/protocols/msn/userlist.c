@@ -121,7 +121,6 @@ user_is_there(MsnUser *user, int list_id, int group_id)
 	return TRUE;
 }
 
-#if 0
 static const char*
 get_store_name(MsnUser *user)
 {
@@ -174,7 +173,6 @@ msn_request_add_group(MsnUserList *userlist, const char *who,
 
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
-#endif
 
 /**************************************************************************
  * Server functions
