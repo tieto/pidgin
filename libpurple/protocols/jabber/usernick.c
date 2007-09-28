@@ -33,7 +33,7 @@ static void jabber_nick_cb(JabberStream *js, const char *from, xmlnode *items) {
 	xmlnode *item = xmlnode_get_child(items, "item");
 	JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
 	xmlnode *nick;
-	const char *nickname = NULL;
+	char *nickname = NULL;
 	
 	/* ignore the tune of people not on our buddy list */
 	if (!buddy || !item)
@@ -43,8 +43,8 @@ static void jabber_nick_cb(JabberStream *js, const char *from, xmlnode *items) {
 	if (!nick)
 		return;
 	nickname = xmlnode_get_data(nick);
-
 	serv_got_alias(js->gc, from, nickname);
+	g_free(nickname);
 }
 
 static void do_nick_set(JabberStream *js, const char *nick) {
@@ -64,7 +64,7 @@ static void do_nick_set(JabberStream *js, const char *nick) {
 }
 
 static void do_nick_got_own_nick_cb(JabberStream *js, const char *from, xmlnode *items) {
-	const char *oldnickname = NULL;
+	char *oldnickname = NULL;
 	xmlnode *item = xmlnode_get_child(items,"item");
 	
 	if(item) {
@@ -77,6 +77,7 @@ static void do_nick_got_own_nick_cb(JabberStream *js, const char *from, xmlnode 
 		_("This information is visible to all contacts on your contact list, so choose something appropriate."),
 		oldnickname, FALSE, FALSE, NULL, _("Set"), PURPLE_CALLBACK(do_nick_set), _("Cancel"), NULL,
 		purple_connection_get_account(js->gc), NULL, NULL, js);
+	g_free(oldnickname);
 }
 
 static void do_nick_set_nick(PurplePluginAction *action) {

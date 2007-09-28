@@ -426,13 +426,14 @@ static void
 html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin, 
 		gchar **end)
 {
+	if (!purple_utf8_strcasecmp(root->name, "root") ||
+	    !purple_utf8_strcasecmp(root->name, "html")) {
+		*begin = g_strdup("");
+		*end = g_strdup("");
 	/* TODO: Coalesce nested tags into one <f> tag!
 	 * Currently, the 's' value will be overwritten when b/i/u is nested
 	 * within another one, and only the inner-most formatting will be 
 	 * applied to the text. */
-	if (!purple_utf8_strcasecmp(root->name, "root")) {
-		*begin = g_strdup("");
-		*end = g_strdup("");
 	} else if (!purple_utf8_strcasecmp(root->name, "b")) {
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_BOLD);
 		*end = g_strdup("</f>");
@@ -503,8 +504,21 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 
 		/* TODO: color (bg uses <body>), emoticons */
 	} else {
+		gchar *err;
+
+#ifdef MSIM_MARKUP_SHOW_UNKNOWN_TAGS
 		*begin = g_strdup_printf("[%s]", root->name);
 		*end = g_strdup_printf("[/%s]", root->name);
+#else
+		*begin = g_strdup("");
+		*end = g_strdup("");
+#endif
+
+		err = g_strdup_printf("html_tag_to_msim_markup: unrecognized "
+			"HTML tag %s was sent by the IM client; ignoring", 
+			root->name ? root->name : "(NULL)");
+		msim_unrecognized(NULL, NULL, err);
+		g_free(err);
 	}
 }
 
