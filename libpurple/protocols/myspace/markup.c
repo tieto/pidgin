@@ -258,8 +258,8 @@ msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	}
 
 
-	*begin = gs_begin->str;
-	*end = gs_end->str;
+	*begin = g_string_free(gs_begin, FALSE);
+	*end = g_string_free(gs_end, FALSE);
 }
 
 /** Convert a msim markup color to a color suitable for libpurple.
@@ -582,7 +582,7 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 	purple_debug_info("msim", "msim_markup_xmlnode_to_gtkhtml: RETURNING %s\n",
 			(final && final->str) ? final->str : "(NULL)");
 
-	return final->str;
+	return g_string_free(final, FALSE);
 }
 
 /** Convert XML to something based on MSIM_XMLNODE_CONVERT. */
