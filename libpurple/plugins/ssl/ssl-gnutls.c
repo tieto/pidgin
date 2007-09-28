@@ -111,7 +111,7 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
 	ssize_t ret;
 
-	purple_debug_info("gnutls", "Handshaking with %s\n", gsc->host);
+	/*purple_debug_info("gnutls", "Handshaking with %s\n", gsc->host);*/
 	ret = gnutls_handshake(gnutls_data->session);
 
 	if(ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED)
@@ -270,6 +270,8 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 
 	gnutls_data->handshake_handler = purple_input_add(gsc->fd,
 		PURPLE_INPUT_READ, ssl_gnutls_handshake_cb, gsc);
+
+	purple_debug_info("gnutls", "Starting handshake with %s\n", gsc->host);
 
 	/* Orborde asks: Why are we configuring a callback, then
 	   immediately calling it?
@@ -434,9 +436,6 @@ x509_crtdata_delref(x509_crtdata_t *cd)
 
 	/* If the refcount reaches zero, kill the structure */
 	if (cd->refcount <= 0) {
-		purple_debug_info("gnutls/x509",
-				  "Freeing unused cert data at %p\n",
-				  cd);
 		/* Kill the internal data */
 		gnutls_x509_crt_deinit( cd->crt );
 		/* And kill the struct */
