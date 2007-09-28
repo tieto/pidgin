@@ -4,12 +4,11 @@
 # Adam Weinberger <adamw@gnome.org>, 2004, 2005.
 #
 #
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2005-03-17 19:45-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"

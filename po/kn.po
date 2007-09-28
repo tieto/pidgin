@@ -3,12 +3,11 @@
 # Gaim Kannada Translation
 # Copyright (C) 2007 Translation Team <translation@sampada.info>
 # This file is distributed under the same license as the Gaim package.
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: kn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2007-01-28 17:51+0530\n"
 "Last-Translator: Kannada Localization Team <translation@sampada.info>\n"
 "Language-Team: Kannada <translation@sampada.info>\n"

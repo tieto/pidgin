@@ -3,12 +3,11 @@
 #
 # This file is distributed under the same license as the Gaim package.
 #
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2005-03-14 17:23+0000\n"
 "Last-Translator: Duarte Henriques <duarte.henriques@gmail.com>\n"
 "Language-Team: \n"

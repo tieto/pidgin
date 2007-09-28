@@ -4,12 +4,11 @@
 # Elnaz Sarbar <elnaz@farsiwevb.info>, 2005, 2006, 2007.
 # Meelad Zakaria <meelad@farsiweb.info>, 2006.
 # Roozbeh Pournader <roozbeh@farsiweb.info>, 2006.
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim 1.5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2007-04-10 20:37+0330\n"
 "Last-Translator: Elnaz Sarbar <elnaz@farsiweb.info>\n"
 "Language-Team: Persian\n"

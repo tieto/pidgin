@@ -5,12 +5,11 @@
 # Amanpreet Singh Alam[ਆਲਮ] <aalam@redhat.com>, 2005.
 # A S Alam <apbrar@gmail.com>, 2006.
 # A S Alam <aalam@users.sf.net>, 2007.
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin-pa\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2007-05-24 10:31+0530\n"
 "Last-Translator: A S Alam <aalam@users.sf.net>\n"
 "Language-Team: Punjabi <punjabi-l10n@lists.sf.net>\n"

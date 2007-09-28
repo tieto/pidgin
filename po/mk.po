@@ -6,12 +6,11 @@
 # Arangel Angov <ufo@linux.net.mk>, 2006, 2007.
 # Jovan Naumovski <jovan@lugola.net>, 2006, 2007.
 # Arangel Angov <arangel@linux.net.mk>, 2007.
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: mk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2007-09-09 21:21+0200\n"
 "Last-Translator: Arangel Angov <arangel@linux.net.mk>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"

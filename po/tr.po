@@ -10,12 +10,11 @@
 # Ahmet Alp Balkan ahmet4@gmail.com, 2006.
 # Onur Küçüktunç onurcc@gmail.com, 2004.
 # Serdar Soytetir <tulliana@gmail.com>, 2007.
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: pigdin-new-tr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2007-09-11 01:37+0300\n"
 "Last-Translator: Serdar Soytetir <tulliana@gmail.com>\n"
 "Language-Team: Turkish <yerellestirme@kde.org.tr>\n"

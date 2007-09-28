@@ -46,12 +46,11 @@
 # NOTE 所有語文名稱（除「世界語」外）一概譯成「XX文」，不譯「XX語」，因為寫下的是文，不是語
 # ----------------------------------------------------------
 #
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2007-05-24 06:43+0800\n"
 "Last-Translator: Ambrose Li <acli@ada.dhs.org>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"

@@ -6,12 +6,11 @@
 # Copyright (C) Panayotis Katsaloulis <panayotis@panayotis.com>, 2005.
 # Copyright (C) Ubuntu Greek Translators <ubuntu-gr@lists.ubuntu.com.>, 2005.
 #
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2007-05-23 15:07+0300\n"
 "Last-Translator: Bouklis Panos <panos@echidna-band.com>\n"
 "Language-Team: Greek <i18ngr@lists.hellug.gr>\n"

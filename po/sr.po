@@ -9,12 +9,11 @@
 #   Nikola Kotur <kotnik@ns-linux.org>, 2006.
 #   Милош Поповић <gpopac@gmail.com>, 2007.
 # This file is distributed under the same license as the Gaim package.
-#: ../libpurple/certificate.c:543
 msgid ""
 msgstr ""
 "Project-Id-Version: Голуб\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 14:39-0500\n"
+"POT-Creation-Date: 2007-09-28 15:32-0500\n"
 "PO-Revision-Date: 2007-09-09 11:54+0100\n"
 "Last-Translator: Милош Поповић <gpopac@gmail.com>\n"
 "Language-Team: Serbian <gnome@prevod.org>\n"
