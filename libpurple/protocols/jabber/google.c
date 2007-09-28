@@ -39,6 +39,8 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	char *subject;
 	const char *in_str;
 	char *to_name;
+	char *default_tos[1];
+
 	int i, count = 1, returned_count;
 
 	const char **tos, **froms, **urls;
@@ -55,15 +57,25 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	if (in_str && *in_str)
 		count = atoi(in_str);
 
-	if (count == 0)
+	/* If Gmail doesn't tell us who the mail is to, let's use our JID */
+	to = xmlnode_get_attrib(packet, "to");
+	default_tos[0] = jabber_get_bare_jid(to);
+
+	if (count == 0) {
+		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, default_tos, NULL, NULL, NULL);
+		g_free(default_tos[0]);
 		return;
+	}
 
 	message = xmlnode_get_child(child, "mail-thread-info");
+	if (!message) {
+		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, default_tos, NULL, NULL, NULL);
+		g_free(default_tos[0]);
+		return;
+	}
 
 	/* Loop once to see how many messages were returned so we can allocate arrays
 	 * accordingly */
-	if (!message)
-		return;
 	for (returned_count = 0; message; returned_count++, message=xmlnode_get_next_twin(message));
 
 	froms    = g_new0(const char* , returned_count);
@@ -115,9 +127,13 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	if (i>0)
 		purple_notify_emails(js->gc, count, count == i, (const char**) subjects, froms, tos,
 				urls, NULL, NULL);
+	else 
+		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, default_tos, NULL, NULL, NULL);
+
 
 	g_free(to_name);
 	g_free(tos);
+	g_free(default_tos[0]);
 	g_free(froms);
 	for (; i > 0; i--)
 		g_free(subjects[i - 1]);
