@@ -1166,6 +1166,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *label;
 	GtkWidget *insert_button;
 	GtkWidget *font_button;
+	GtkWidget *smiley_button;
 	GtkWidget *font_menu;
 	GtkWidget *insert_menu;
 	GtkWidget *menuitem;
@@ -1267,12 +1268,6 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	insert_menu = gtk_menu_new();
 	g_object_set_data(G_OBJECT(toolbar), "insert_menu", insert_menu);
 
-	menuitem = gtk_menu_item_new_with_mnemonic(_("_Smiley"));
-	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
-	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
-	g_signal_connect(G_OBJECT(toolbar->smiley), "notify::sensitive",
-			G_CALLBACK(button_sensitiveness_changed), menuitem);
-
 	menuitem = gtk_menu_item_new_with_mnemonic(_("_Image"));
 	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
@@ -1294,6 +1289,24 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	g_signal_connect(G_OBJECT(insert_button), "activate", G_CALLBACK(pidgin_menu_clicked), insert_menu);
 	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);
 	toolbar->sml = NULL;
+	
+	/* Sep */
+	sep = gtk_vseparator_new();
+	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);
+	gtk_widget_show_all(sep);
+
+	/* Smiley */
+	smiley_button = gtk_button_new();
+	gtk_button_set_relief(GTK_BUTTON(smiley_button), GTK_RELIEF_NONE);
+	bbox = gtk_hbox_new(FALSE, 3);
+	gtk_container_add(GTK_CONTAINER(smiley_button), bbox);
+	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SMILEY, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
+	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
+	label = gtk_label_new_with_mnemonic(_("_Smile!"));
+	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), smiley_button, FALSE, FALSE, 0);
+	g_signal_connect_swapped(G_OBJECT(smiley_button), "clicked", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
+	gtk_widget_show_all(smiley_button);
 
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
