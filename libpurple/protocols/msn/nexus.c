@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "msn.h"
-#include "soap.h"
+#include "soap2.h"
 #include "nexus.h"
 #include "notification.h"
 
@@ -43,7 +43,7 @@ msn_nexus_new(MsnSession *session)
 	nexus = g_new0(MsnNexus, 1);
 	nexus->session = session;
 	/*we must use SSL connection to do Windows Live ID authentication*/
-	nexus->soapconn = msn_soap_new(session,nexus,1);
+	//nexus->soapconn = msn_soap_new(session,nexus,1);
 
 	nexus->challenge_data = g_hash_table_new_full(g_str_hash,
 		g_str_equal, g_free, g_free);
@@ -57,7 +57,7 @@ msn_nexus_destroy(MsnNexus *nexus)
 	if (nexus->challenge_data != NULL)
 		g_hash_table_destroy(nexus->challenge_data);
 
-	msn_soap_destroy(nexus->soapconn);
+	//msn_soap_destroy(nexus->soapconn);
 	g_free(nexus);
 }
 
@@ -140,6 +140,66 @@ nexus_login_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *d
 	 * to destroy it here, or we'd crash */
 }
 
+static void
+nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
+{
+	MsnNexus *nexus = data;
+	MsnSession *session = nexus->session;
+	xmlnode *node;
+
+	if (resp == NULL) {
+		msn_session_set_error(session, MSN_ERROR_AUTH, _("Windows Live ID authentication:Unable to connect"));
+		return;
+	}
+
+	node = msn_soap_xml_get(resp->xml,	"Body/"
+		"RequestSecurityTokenResponseCollection/RequestSecurityTokenResponse");
+
+	for (; node; node = node->next) {
+		xmlnode *token = msn_soap_xml_get(node,
+			"RequestedSecurityToken/BinarySecurityToken");
+
+		if (token) {
+			char **elems, **cur, **tokens;
+			char *msn_twn_t, *msn_twn_p, *cert_str;
+
+			elems = g_strsplit(token->data, "&amp;", 0);
+
+			for (cur = elems; *cur != NULL; cur++){
+				tokens = g_strsplit(*cur, "=", 2);
+				g_hash_table_insert(nexus->challenge_data, tokens[0], tokens[1]);
+				/* Don't free each of the tokens, only the array. */
+				g_free(tokens);
+			}
+
+			g_strfreev(elems);
+
+			msn_twn_t = g_hash_table_lookup(nexus->challenge_data, "t");
+			msn_twn_p = g_hash_table_lookup(nexus->challenge_data, "p");
+
+			/*setup the t and p parameter for session*/
+			if (session->passport_info.t != NULL){
+				g_free(session->passport_info.t);
+			}
+			session->passport_info.t = g_strdup(msn_twn_t);
+
+			if (session->passport_info.p != NULL)
+				g_free(session->passport_info.p);
+			session->passport_info.p = g_strdup(msn_twn_p);
+
+			cert_str = g_strdup_printf("t=%s&p=%s",msn_twn_t,msn_twn_p);
+			msn_got_login_params(session, cert_str);
+
+			purple_debug_info("MSN Nexus","Close nexus connection!\n");
+			g_free(cert_str);
+			msn_nexus_destroy(nexus);
+			session->nexus = NULL;
+
+			return;
+		}
+	}
+}
+#if 0
 /*process the SOAP reply, get the Authentication Info*/
 static void
 nexus_login_read_cb(gpointer data, gint source, PurpleInputCondition cond)
@@ -221,16 +281,16 @@ nexus_login_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 	soapconn->read_cb = nexus_login_read_cb;
 //	msn_soap_read_cb(data,source,cond);
 }
-
+#endif
 
 /*when connect, do the SOAP Style windows Live ID authentication */
 void
 nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 				 PurpleInputCondition cond)
 {
-	MsnSoapConn *soapconn;
-	MsnNexus * nexus;
-	MsnSession *session;
+	//MsnSoapConn *soapconn;
+	MsnNexus *nexus = data;
+	MsnSession *session = nexus->session;
 	char *ru,*lc,*id,*tw,*ct,*kpp,*kv,*ver,*rn,*tpf;
 	char *fs0,*fs;
 	char *username, *password;
@@ -241,8 +301,10 @@ nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 	char *rst1_str,*rst2_str,*rst3_str;
 #endif
 
-	purple_debug_info("MSN Nexus","Starting Windows Live ID authentication\n");
+	MsnSoapMessage *soap;
 
+	purple_debug_info("MSN Nexus","Starting Windows Live ID authentication\n");
+/*
 	soapconn = data;
 	g_return_if_fail(soapconn != NULL);
 
@@ -251,6 +313,7 @@ nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
+*/
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
@@ -322,6 +385,11 @@ nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 #endif
 	g_free(fs);
 
+	soap = msn_soap_message_new(NULL, xmlnode_from_str(tail, -1));
+	msn_soap_message_send(nexus->session, soap, MSN_TWN_SERVER, TWN_POST_URL,
+		nexus_got_response_cb, nexus);
+
+#if 0
 	soapconn->login_path = g_strdup(TWN_POST_URL);
 	head = g_strdup_printf(
 					"POST %s HTTP/1.1\r\n"
@@ -345,7 +413,7 @@ nexus_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 
 	/*prepare to send the SOAP request*/
 	msn_soap_write(soapconn,request_str,nexus_login_written_cb);
-
+#endif
 	return;
 }
 
@@ -467,8 +535,11 @@ nexus_connect_cb(gpointer data, PurpleSslConnection *gsc,
 void
 msn_nexus_connect(MsnNexus *nexus)
 {
+#if 0
 	/*  Authenticate via Windows Live ID. */
 	purple_debug_info("MSN Nexus","msn_nexus_connect()\n");
 	msn_soap_init(nexus->soapconn,MSN_TWN_SERVER,1,nexus_login_connect_cb,nexus_login_error_cb);
 	msn_soap_connect(nexus->soapconn);
+#endif
+	nexus_login_connect_cb(nexus, NULL, 0);
 }

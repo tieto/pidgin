@@ -142,11 +142,6 @@ msn_session_disconnect(MsnSession *session)
 
 	if (session->notification != NULL)
 		msn_notification_close(session->notification);
-
-	if (session->soap_table) {
-		g_hash_table_destroy(session->soap_table);
-		session->soap_table = NULL;
-	}
 }
 
 /* TODO: This must go away when conversation is redesigned */
