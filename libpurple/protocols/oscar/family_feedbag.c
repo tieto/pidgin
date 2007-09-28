@@ -1424,7 +1424,7 @@ static int parseadd(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 		aim_tlvlist_free(data);
 
 		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-			ret = userfunc(od, conn, frame, type, name);
+			ret = userfunc(od, conn, frame, snac->subtype, type, name);
 
 		g_free(name);
 	}
@@ -1434,8 +1434,6 @@ static int parseadd(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 
 /*
  * Subtype 0x0009 - Incoming SSI mod.
- *
- * XXX - It would probably be good for the client to actually do something when it gets this.
  */
 static int parsemod(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
@@ -1485,7 +1483,7 @@ static int parsemod(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 		}
 
 		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-			ret = userfunc(od, conn, frame);
+			ret = userfunc(od, conn, frame, snac->subtype, type, name);
 
 		g_free(name);
 		aim_tlvlist_free(data);

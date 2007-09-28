@@ -189,7 +189,7 @@ static int purple_ssi_parseerr     (OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_ssi_parserights  (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_ssi_parselist    (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_ssi_parseack     (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_ssi_parseadd     (OscarData *, FlapConnection *, FlapFrame *, ...);
+static int purple_ssi_parseaddmod  (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_ssi_authgiven    (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_ssi_authrequest  (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_ssi_authreply    (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -1220,7 +1220,7 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_RIGHTSINFO, purple_ssi_parserights, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_LIST, purple_ssi_parselist, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SRVACK, purple_ssi_parseack, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_ADD, purple_ssi_parseadd, 0);
+	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_ADD, purple_ssi_parseaddmod, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_RECVAUTH, purple_ssi_authgiven, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_RECVAUTHREQ, purple_ssi_authrequest, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_RECVAUTHREP, purple_ssi_authreply, 0);
@@ -4934,10 +4934,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					b = purple_find_buddy_in_group(gc->account, curitem->name, g);
 					if (b) {
 						/* Get server stored alias */
-						if (alias_utf8) {
-							g_free(b->alias);
-							b->alias = g_strdup(alias_utf8);
-						}
+						purple_blist_alias_buddy(b, alias_utf8);
 					} else {
 						b = purple_buddy_new(gc->account, curitem->name, alias_utf8);
 
@@ -5081,16 +5078,23 @@ static int purple_ssi_parseack(OscarData *od, FlapConnection *conn, FlapFrame *f
 	return 1;
 }
 
-static int purple_ssi_parseadd(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	PurpleConnection *gc = od->gc;
+static int
+purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
+{
+	PurpleConnection *gc;
+	PurpleAccount *account;
 	char *gname, *gname_utf8, *alias, *alias_utf8;
 	PurpleBuddy *b;
 	PurpleGroup *g;
 	va_list ap;
-	guint16 type;
+	guint16 snac_subtype, type;
 	const char *name;
 
+	gc = od->gc;
+	account = purple_connection_get_account(gc);
+
 	va_start(ap, fr);
+	snac_subtype = (guint16)va_arg(ap, int);
 	type = (guint16)va_arg(ap, int);
 	name = va_arg(ap, char *);
 	va_end(ap);
@@ -5099,7 +5103,7 @@ static int purple_ssi_parseadd(OscarData *od, FlapConnection *conn, FlapFrame *f
 		return 1;
 
 	gname = aim_ssi_itemlist_findparentname(od->ssi.local, name);
-	gname_utf8 = gname ? oscar_utf8_try_convert(gc->account, gname) : NULL;
+	gname_utf8 = gname ? oscar_utf8_try_convert(account, gname) : NULL;
 
 	alias = aim_ssi_getalias(od->ssi.local, gname, name);
 	if (alias != NULL)
@@ -5107,22 +5111,26 @@ static int purple_ssi_parseadd(OscarData *od, FlapConnection *conn, FlapFrame *f
 		if (g_utf8_validate(alias, -1, NULL))
 			alias_utf8 = g_strdup(alias);
 		else
-			alias_utf8 = oscar_utf8_try_convert(purple_connection_get_account(gc), alias);
+			alias_utf8 = oscar_utf8_try_convert(account, alias);
 	}
 	else
 		alias_utf8 = NULL;
-
-	b = purple_find_buddy(gc->account, name);
 	g_free(alias);
 
+	b = purple_find_buddy(account, name);
 	if (b) {
-		/* Get server stored alias */
-		if (alias_utf8) {
-			g_free(b->alias);
-			b->alias = g_strdup(alias_utf8);
-		}
-	} else {
-		b = purple_buddy_new(gc->account, name, alias_utf8);
+		/*
+		 * You're logged in somewhere else and you aliased one
+		 * of your buddies, so update our local buddy list with
+		 * the person's new alias.
+		 */
+		purple_blist_alias_buddy(b, alias_utf8);
+	} else if (snac_subtype == 0x0008) {
+		/*
+		 * You're logged in somewhere else and you added a buddy to
+		 * your server list, so add them to your local buddy list.
+		 */
+		b = purple_buddy_new(account, name, alias_utf8);
 
 		if (!(g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans")))) {
 			g = purple_group_new(gname_utf8 ? gname_utf8 : _("Orphans"));
@@ -5133,6 +5141,7 @@ static int purple_ssi_parseadd(OscarData *od, FlapConnection *conn, FlapFrame *f
 				   "ssi: adding buddy %s to group %s to local list\n", name, gname_utf8 ? gname_utf8 : _("Orphans"));
 		purple_blist_add_buddy(b, NULL, g, NULL);
 	}
+
 	g_free(gname_utf8);
 	g_free(alias_utf8);
 
