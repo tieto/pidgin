@@ -1,15 +1,13 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-Version 2.2.1:
-	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
-	
+Version 2.2.2:
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
+		NOTE: Due to the backporting that happened for the 2.2.1
+		      release, it is possible bugs this release fixes bugs
+		      that were marked as fixed in 2.2.1.
+
 	libpurple:
-	* A few build issues on Solaris were fixed.
-	* Cancelling the password prompt for an account will no longer leave
-	  it in an ambiguous state.  (It will be disabled.)
-	* Fixed an erroneous size display for MSN file transfers. (galt)
 	* Real usernames are now shown in the system log.
-	* Gmail notifications are better tracked
 
 	Pidgin:
 	* If you alias a buddy to an alias that is already present within
@@ -30,11 +28,26 @@ Version 2.2.1:
 	  resumes, the history will be retained.  A preference has been added
 	  to toggle this behavior.
 	* The "Smiley" menu has been moved to the top-level of the toolbar.
-	* Fixed keyboard tab reordering to move tabs one step instead of two.
 	* Pidgin's display is now saved with the command line for session
 	  restoration.  (David Mohr)
-	* You should no longer lose proxy settings when Pidgin is restarted.
 	* ICQ Birthday notifications are shown as buddy list emblems
+
+Version 2.2.1:
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
+		NOTE: Due to the backporting that happened for the actual
+		      release, it is possible bugs marked as fixed in 2.2.1
+		      will not be fixed until 2.2.2.
+
+	libpurple:
+	* A few build issues on Solaris were fixed.
+	* Cancelling the password prompt for an account will no longer leave
+	  it in an ambiguous state.  (It will be disabled.)
+	* Fixed an erroneous size display for MSN file transfers. (galt)
+	* Gmail notifications are better tracked
+
+	Pidgin:
+	* Fixed keyboard tab reordering to move tabs one step instead of two.
+	* You should no longer lose proxy settings when Pidgin is restarted.
 
 	Finch:
 	* Pressing 'Insert' in the buddylist will bring up the 'Add Buddy'
