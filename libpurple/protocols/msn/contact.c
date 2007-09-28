@@ -474,10 +474,10 @@ msn_parse_contact_list(MsnContact * contact)
 					gchar *type, *membershipId = NULL;
 					const char *member_type = xmlnode_get_attrib(member, "type");
 
-					purple_debug_info("MSNCL","Member type: %s\n", member_type ? member_type : "(null)");
-
-					if (!member_type)
+					if (!member_type) {
+						purple_debug_error("msn", "No Member Type specified for Member.\n");
 						continue;
+					}
 
 					if(!g_strcasecmp(member_type, "PassportMember") ) {
 						passport = type = NULL;
@@ -504,6 +504,7 @@ msn_parse_contact_list(MsnContact * contact)
 						msn_got_lst_user(session, user, list_op, NULL);
 					}
 					else if (!g_strcasecmp(member_type, "PhoneMember")) {
+						purple_debug_info("msn", "Recieved Phone Member; ignoring.\n");
 					}
 					else if (!g_strcasecmp(member_type, "EmailMember")) {
 						xmlnode *emailNode;
@@ -526,6 +527,8 @@ msn_parse_contact_list(MsnContact * contact)
 						}
 
 						msn_got_lst_user(session, user, list_op, NULL);
+					} else {
+						purple_debug_info("msn", "Unknown Member type: %s\n", member_type);
 					}
 				}
 			}
@@ -594,8 +597,8 @@ void
 msn_get_contact_list(MsnContact * contact, const MsnSoapPartnerScenario partner_scenario, const char *update_time)
 {
 	MsnSoapReq *soap_request;
-	gchar *body = NULL;
-	gchar * update_str;
+	gchar *body;
+	gchar *update_str = NULL;
 	const gchar *partner_scenario_str = MsnSoapPartnerScenarioText[partner_scenario];
 
 	purple_debug_misc("MSNCL","Getting Contact List.\n");
@@ -603,11 +606,9 @@ msn_get_contact_list(MsnContact * contact, const MsnSoapPartnerScenario partner_
 	if ( update_time != NULL ) {
 		purple_debug_info("MSNCL","Last update time: %s\n",update_time);
 		update_str = g_strdup_printf(MSN_GET_CONTACT_UPDATE_XML,update_time);
-	} else {
-		update_str = g_strdup("");
 	}
 
-	body = g_strdup_printf(MSN_GET_CONTACT_TEMPLATE, partner_scenario_str, update_str);
+	body = g_strdup_printf(MSN_GET_CONTACT_TEMPLATE, partner_scenario_str, update_str ? update_str : "");
 	g_free(update_str);
 
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
@@ -633,13 +634,12 @@ msn_parse_addressbook_groups(MsnContact *contact, xmlnode *node)
 	for(group = xmlnode_get_child(node, "Group"); group;
 					group = xmlnode_get_next_twin(group)){
 		xmlnode *groupId, *groupInfo, *groupname;
-		char *group_id, *group_name;
+		char *group_id = NULL, *group_name = NULL;
 
-		groupId = xmlnode_get_child(group,"groupId");
-		group_id = xmlnode_get_data(groupId);
-		groupInfo = xmlnode_get_child(group,"groupInfo");
-		groupname = xmlnode_get_child(groupInfo,"name");
-		group_name = xmlnode_get_data(groupname);
+		if ((groupId = xmlnode_get_child(group, "groupId")))
+			group_id = xmlnode_get_data(groupId);
+		if ((groupInfo = xmlnode_get_child(group, "groupInfo")) && (groupname = xmlnode_get_child(groupInfo, "name")))
+			group_name = xmlnode_get_data(groupname);
 
 		msn_group_new(session->userlist, group_id, group_name);
 
@@ -649,7 +649,7 @@ msn_parse_addressbook_groups(MsnContact *contact, xmlnode *node)
 			continue;
 		}
 
-		purple_debug_info("MsnAB","group_id: %s, name: %s\n",group_id,group_name);
+		purple_debug_info("MsnAB","group_id: %s, name: %s\n", group_id, group_name ? group_name : "(null)");
 		if ((purple_find_group(group_name)) == NULL){
 			PurpleGroup *g = purple_group_new(group_name);
 			purple_blist_add_group(g, NULL);
@@ -756,7 +756,6 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 		msn_user_set_uid(user, uid);
 		msn_user_set_type(user, usertype);
 
-		purple_debug_misc("MsnAB","parse guid...\n");
 		groupIds = xmlnode_get_child(contactInfo, "groupIds");
 		if (groupIds) {
 			for (guid = xmlnode_get_child(groupIds, "guid"); guid;
@@ -767,6 +766,7 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 				g_free(group_id);
 			}
 		} else {
+			purple_debug_info("msn", "User not in any groups, adding to default group.\n");
 			/*not in any group,Then set default group*/
 			msn_user_add_group_id(user, MSN_INDIVIDUALS_GROUP_ID);
 		}
@@ -783,16 +783,14 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 static gboolean
 msn_parse_addressbook(MsnContact * contact)
 {
-	MsnSession * session;
+	MsnSession *session;
 	xmlnode * node,*body,*response,*result;
 	xmlnode *groups;
-	xmlnode	*contacts;
+	xmlnode *contacts;
 	xmlnode *abNode;
 	xmlnode *fault, *faultstringnode, *faultdetail, *errorcode;
 
 	session = contact->session;
-
-	
 
 	node = xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
 	if ( node == NULL ) {
@@ -802,8 +800,11 @@ msn_parse_addressbook(MsnContact * contact)
 
 	purple_debug_misc("MSN AddressBook", "Parsing Address Book with size %d\n", contact->soapconn->body_len);
 
-	purple_debug_misc("MSN AddressBook","node{%p},name:%s,child:%s,last:%s\n",node,node->name,node->child->name,node->lastchild->name);
-	
+	purple_debug_misc("MSN AddressBook","node{%p},name:%s,child:%s,last:%s\n", node,
+		node->name ? node->name : "(null)",
+		(node->child && node->child->name) ? node->child->name : "(null)",
+		(node->lastchild && node->lastchild->name) ? node->lastchild->name : "(null)");
+
 	body = xmlnode_get_child(node,"Body");
 	purple_debug_misc("MSN AddressBook","body{%p},name:%s\n",body,body->name);
 
@@ -1401,14 +1402,17 @@ void
 msn_update_contact(MsnContact *contact, const char* nickname)
 {
 	MsnSoapReq *soap_request;
-	gchar *body = NULL, *escaped_nickname;
+	gchar *body, *escaped_nickname;
+
+	/* I'm not sure this is right, but if it isn't, the rest of this function will need to be fixed */
+	g_return_if_fail(nickname != NULL);
 
 	purple_debug_info("MSN CL","Update contact information with new friendly name: %s\n", nickname);
-	
+
 	escaped_nickname = g_markup_escape_text(nickname, -1);
 
 	body = g_strdup_printf(MSN_CONTACT_UPDATE_TEMPLATE, escaped_nickname);
-	
+
 	g_free(escaped_nickname);
 	/*build SOAP and POST it*/
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
