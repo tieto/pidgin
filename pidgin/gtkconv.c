@@ -6349,8 +6349,13 @@ gray_stuff_out(PidginConversation *gtkconv)
 		if ((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) &&
 				(gtkconv->u.im->anim))
 		{
+			PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
 			window_icon =
 				gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+		
+			if (buddy &&  !PURPLE_BUDDY_IS_ONLINE(buddy))
+				gdk_pixbuf_saturate_and_pixelate(window_icon, window_icon, 0.0, FALSE);
+			
 			g_object_ref(window_icon);
 			l = g_list_append(l, window_icon);
 		} else {
