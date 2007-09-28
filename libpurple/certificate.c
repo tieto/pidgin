@@ -540,7 +540,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 
 	/* Determine whether the name matches */
 	if (purple_certificate_check_subject_name(crt, vrq->subject_name)) {
-		cn_match = _("");
+		cn_match = "";
 	} else {
 		cn_match = _("(DOES NOT MATCH)");
 	}
