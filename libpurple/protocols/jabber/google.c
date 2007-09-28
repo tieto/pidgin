@@ -61,14 +61,9 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	to = xmlnode_get_attrib(packet, "to");
 	default_tos[0] = jabber_get_bare_jid(to);
 
-	if (count == 0) {
-		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
-		g_free(default_tos[0]);
-		return;
-	}
-
 	message = xmlnode_get_child(child, "mail-thread-info");
-	if (!message) {
+
+	if (count == 0 || !message) {
 		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
 		g_free(default_tos[0]);
 		return;
@@ -127,7 +122,7 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	if (i>0)
 		purple_notify_emails(js->gc, count, count == i, (const char**) subjects, froms, tos,
 				urls, NULL, NULL);
-	else 
+	else
 		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
 
 
@@ -257,7 +252,8 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 
 	if (grt && (*grt == 'H' || *grt == 'h')) {
 		PurpleBuddy *buddy = purple_find_buddy(account, jid_norm);
-		purple_blist_remove_buddy(buddy);
+		if (buddy)
+			purple_blist_remove_buddy(buddy);
 		g_free(jid_norm);
 		return FALSE;
 	}

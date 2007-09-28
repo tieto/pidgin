@@ -1542,7 +1542,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					while(*p && *p != '>') {
 						if(!g_ascii_strncasecmp(p, "href=", strlen("href="))) {
 							const char *q = p + strlen("href=");
-							g_string_free(url, TRUE);
+							if (url)
+								g_string_free(url, TRUE);
 							url = g_string_new("");
 							cdata = g_string_new("");
 							if(*q == '\'' || *q == '\"')
