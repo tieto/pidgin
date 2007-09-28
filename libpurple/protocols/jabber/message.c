@@ -41,7 +41,10 @@ void jabber_message_free(JabberMessage *jm)
 	g_free(jm->body);
 	g_free(jm->xhtml);
 	g_free(jm->password);
+	g_free(jm->error);
+	g_free(jm->thread_id);
 	g_list_free(jm->etc);
+	g_list_free(jm->eventitems);
 
 	g_free(jm);
 }
