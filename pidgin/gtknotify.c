@@ -420,8 +420,6 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 	GdkPixbuf *icon;
 	gboolean new_n = TRUE;
 
-	icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
-
 	if (count > 0 || clear) {
 		/* Allow only one non-detailed email notification for each account */
 		if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(treemodel), &iter)) {
@@ -448,6 +446,11 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 			} while (advanced || gtk_tree_model_iter_next(GTK_TREE_MODEL(treemodel), &iter));
 		}
 	}
+
+	if (clear)
+		return NULL;
+
+	icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
 	if (new_n) {
 		data = g_new0(PidginNotifyMailData, 1);
@@ -550,9 +553,8 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 				/* There is no API to clear the headline specifically */
 				/* This will trigger reset_mail_dialog() */
 				pidgin_blist_set_headline(NULL, NULL, NULL, NULL, NULL);
+				return NULL;
 			}
-
-			return NULL;
 		}
 	}
 
