@@ -1858,6 +1858,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 				gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook),
 						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), curconv),
 						curconv - 1);
+				return TRUE;
 				break;
 
 			case GDK_period:
@@ -1868,6 +1869,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 #else
 						(curconv + 1) % g_list_length(GTK_NOTEBOOK(win->notebook)->children));
 #endif
+				return TRUE;
 				break;
 
 		} /* End of switch */
