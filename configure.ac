@@ -352,13 +352,19 @@ If you only want to build Finch then specify --disable-gtkui when running config
 	dnl #######################################################################
 	if test "x$with_x" = "xyes" ; then
 		PKG_CHECK_MODULES(X11, x11,
-			[AC_DEFINE(HAVE_X, 1, [Define to 1 if you have X11])],
+			[AC_DEFINE(HAVE_X11, 1, [Define to 1 if you have X11])],
 			[AC_MSG_RESULT(no)
-			with_x=no])
+				if test "x$x_incpath_add" != "x" -a "x$x_libpath_add" != "x"; then
+					X11_LIBS="$x_libpath_add"
+					X11_CFLAGS="$x_incpath_add"
+				else
+					with_x=no
+				fi
+			])
 		AC_SUBST(X11_LIBS)
 		AC_SUBST(X11_CFLAGS)
 	fi
-	
+
 	dnl #######################################################################
 	dnl # Check for XScreenSaver
 	dnl #######################################################################
