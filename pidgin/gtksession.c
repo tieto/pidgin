@@ -36,6 +36,7 @@
 #include <gdk/gdkx.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <gdk/gdk.h>
 
 #define ERROR_LENGTH 512
 
@@ -141,7 +142,7 @@ static void ice_init() {
 /* my magic utility function */
 
 static gchar **session_make_command(gchar *client_id, gchar *config_dir) {
-	gint i = 2;
+	gint i = 4;
 	gint j = 0;
 	gchar **ret;
 
@@ -160,6 +161,9 @@ static gchar **session_make_command(gchar *client_id, gchar *config_dir) {
 		ret[j++] = g_strdup("--config");
 		ret[j++] = g_strdup(config_dir);
 	}
+
+	ret[j++] = g_strdup("--display");
+	ret[j++] = g_strdup((gchar *)gdk_display_get_name(gdk_display_get_default()));
 
 	ret[j++] = NULL;
 

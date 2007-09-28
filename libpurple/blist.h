@@ -65,11 +65,11 @@ typedef enum
 
 typedef enum
 {
-	PURPLE_BLIST_NODE_FLAG_NO_SAVE = 1 /**< node should not be saved with the buddy list */
+	PURPLE_BLIST_NODE_FLAG_NO_SAVE      = 1 << 0, /**< node should not be saved with the buddy list */
 
 } PurpleBlistNodeFlags;
 
-#define PURPLE_BLIST_NODE_HAS_FLAG(b, f) ((b)->flags & (f))
+#define PURPLE_BLIST_NODE_HAS_FLAG(b, f) (((PurpleBlistNode*)(b))->flags & (f))
 #define PURPLE_BLIST_NODE_SHOULD_SAVE(b) (! PURPLE_BLIST_NODE_HAS_FLAG(b, PURPLE_BLIST_NODE_FLAG_NO_SAVE))
 
 #define PURPLE_BLIST_NODE_NAME(n) ((n)->type == PURPLE_BLIST_CHAT_NODE  ? purple_chat_get_name((PurpleChat*)n) :        \
@@ -488,6 +488,8 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
  *
  * @param contact  The contact
  * @param alias    The alias to set, or NULL to unset
+ *
+ * @deprecated Use purple_blist_alias_contact() instead.
  */
 void purple_contact_set_alias(PurpleContact *contact, const char *alias);
 
