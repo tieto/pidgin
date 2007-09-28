@@ -776,6 +776,9 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	/* show everything */
 	gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
 	gtk_widget_show_all(dialog);
+#ifdef _WIN32
+	winpidgin_ensure_onscreen(dialog);
+#endif
 
 	toolbar->smiley_dialog = dialog;
 
