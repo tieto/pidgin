@@ -492,9 +492,13 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	purple_cipher_context_encrypt(rc4, (const guchar *)data, 
 			data_len, data_out, &data_out_len);
 	purple_cipher_context_destroy(rc4);
+	g_free(data);
 
-	/* TODO: Never assert in a protocol plugin! */
-	g_assert(data_out_len == data_len);
+	if (data_out_len != data_len) {
+		purple_debug_info("msim", "msim_compute_login_response: "
+				"data length mismatch: %d != %d\n",
+				data_out_len, data_len);
+	}
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
 	purple_debug_info("msim", "response=<%s>\n", data_out);
