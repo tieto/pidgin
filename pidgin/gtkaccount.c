@@ -249,9 +249,6 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 
 	new_plugin = purple_find_prpl(id);
 
-	if (new_plugin == dialog->plugin)
-		return;
-
 	dialog->plugin = new_plugin;
 
 	if (dialog->plugin != NULL)
