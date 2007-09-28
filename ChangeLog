@@ -1,5 +1,26 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+Version 2.2.1:
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
+		NOTE: Due to the backporting that happened for the actual
+		      release, it is possible bugs marked as fixed in 2.2.1
+		      will not be fixed until 2.2.2.
+
+	libpurple:
+	* A few build issues on Solaris were fixed.
+	* Cancelling the password prompt for an account will no longer leave
+	  it in an ambiguous state.  (It will be disabled.)
+	* Fixed an erroneous size display for MSN file transfers. (galt)
+	* Gmail notifications are better tracked
+
+	Pidgin:
+	* Fixed keyboard tab reordering to move tabs one step instead of two.
+	* You should no longer lose proxy settings when Pidgin is restarted.
+
+	Finch:
+	* Pressing 'Insert' in the buddylist will bring up the 'Add Buddy'
+	  dialog.
+
 Version 2.2.0 (09/13/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
 
