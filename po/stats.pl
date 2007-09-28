@@ -63,6 +63,10 @@ foreach $index (0 .. $#pos) {
 	$po = $pos[$index];
 	print STDERR "$po..." if($ARGV[0] eq '-v');
 	system("msgmerge $po.po $PACKAGE.pot -o $po.new 2>/dev/null");
+	if (($? & 127) == 2) {
+		printf STDERR "Caught keyboard interrupt--exiting\n";
+		exit
+	}
 	$_ = `msgfmt --statistics $po.new -o /dev/null 2>&1`;
 	chomp;
 	if(/(\d+) translated message/) { $trans = $1; }
