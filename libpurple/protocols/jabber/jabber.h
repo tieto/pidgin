@@ -66,6 +66,9 @@ typedef struct _JabberStream JabberStream;
 
 #define CAPS0115_NODE "http://pidgin.im/caps"
 
+/* Index into attention_types list */
+#define JABBER_BUZZ 0
+
 typedef enum {
 	JABBER_STREAM_OFFLINE,
 	JABBER_STREAM_CONNECTING,
@@ -231,6 +234,8 @@ void jabber_keepalive(PurpleConnection *gc);
 void jabber_register_gateway(JabberStream *js, const char *gateway);
 void jabber_register_account(PurpleAccount *account);
 void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data);
+gboolean jabber_send_attention(PurpleConnection *gc, const char *username, guint code);
+GList *jabber_attention_types(PurpleAccount *account);
 void jabber_convo_closed(PurpleConnection *gc, const char *who);
 PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name);
 gboolean jabber_offline_message(const PurpleBuddy *buddy);

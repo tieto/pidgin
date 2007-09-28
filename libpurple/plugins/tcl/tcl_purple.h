@@ -76,6 +76,7 @@ extern PurpleStringref *PurpleTclRefStatus;
 extern PurpleStringref *PurpleTclRefStatusAttr;
 extern PurpleStringref *PurpleTclRefStatusType;
 extern PurpleStringref *PurpleTclRefXfer;
+extern PurpleStringref *PurpleTclRefHandle;
 
 PurplePlugin *tcl_interp_get_plugin(Tcl_Interp *interp);
 

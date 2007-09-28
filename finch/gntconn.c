@@ -105,10 +105,11 @@ finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 {
 	FinchAutoRecon *info;
 	PurpleAccount *account = purple_connection_get_account(gc);
-
-	info = g_hash_table_lookup(hash, account);
+	GList *list;
 
 	if (!gc->wants_to_die) {
+		info = g_hash_table_lookup(hash, account);
+
 		if (info == NULL) {
 			info = g_new0(FinchAutoRecon, 1);
 			g_hash_table_insert(hash, account, info);
@@ -140,6 +141,17 @@ finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 		g_free(primary);
 		g_free(secondary);
 		purple_account_set_enabled(account, FINCH_UI, FALSE);
+	}
+
+	/* If we have any open chats, we probably want to rejoin when we get back online. */
+	list = purple_get_chats();
+	while (list) {
+		PurpleConversation *conv = list->data;
+		list = list->next;
+		if (conv->account != account ||
+				purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
+			continue;
+		purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
 	}
 }
 

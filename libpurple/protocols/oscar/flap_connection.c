@@ -382,6 +382,8 @@ flap_connection_destroy_cb(gpointer data)
 		gchar *tmp;
 		if (conn->disconnect_code == 0x0001) {
 			tmp = g_strdup(_("You have signed on from another location."));
+			if (!purple_account_get_remember_password(account))
+				purple_account_set_password(account, NULL);
 			od->gc->wants_to_die = TRUE;
 		} else if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
 			tmp = g_strdup(_("Server closed the connection."));
