@@ -62,14 +62,14 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	default_tos[0] = jabber_get_bare_jid(to);
 
 	if (count == 0) {
-		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, default_tos, NULL, NULL, NULL);
+		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
 		g_free(default_tos[0]);
 		return;
 	}
 
 	message = xmlnode_get_child(child, "mail-thread-info");
 	if (!message) {
-		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, default_tos, NULL, NULL, NULL);
+		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
 		g_free(default_tos[0]);
 		return;
 	}
@@ -128,7 +128,7 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 		purple_notify_emails(js->gc, count, count == i, (const char**) subjects, froms, tos,
 				urls, NULL, NULL);
 	else 
-		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, default_tos, NULL, NULL, NULL);
+		purple_notify_emails(js->gc, count, FALSE, NULL, NULL, (const char**) default_tos, NULL, NULL, NULL);
 
 
 	g_free(to_name);
