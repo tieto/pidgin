@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 13:16-0500\n"
+"POT-Creation-Date: 2007-09-28 14:39-0500\n"
 "PO-Revision-Date: 2007-06-28 10:48+0900\n"
 "Last-Translator: sushizang <sushizang@empal.com>\n"
 "Language-Team: GTP Korean <gnome-kr-translation@gnome.or.kr>\n"
@@ -195,12 +195,12 @@ msgstr "별칭:"
 #: ../libpurple/protocols/yahoo/yahoo.c:3498
 #: ../libpurple/protocols/yahoo/yahoo.c:3509 ../pidgin/gtkaccount.c:1908
 #: ../pidgin/gtkaccount.c:2495 ../pidgin/gtkblist.c:5967
-#: ../pidgin/gtkcertmgr.c:197 ../pidgin/gtkdialogs.c:769
-#: ../pidgin/gtkdialogs.c:908 ../pidgin/gtkdialogs.c:1000
-#: ../pidgin/gtkdialogs.c:1020 ../pidgin/gtkdialogs.c:1044
-#: ../pidgin/gtkdialogs.c:1066 ../pidgin/gtkdialogs.c:1114
-#: ../pidgin/gtkdialogs.c:1155 ../pidgin/gtkdialogs.c:1211
-#: ../pidgin/gtkdialogs.c:1250 ../pidgin/gtkdialogs.c:1277
+#: ../pidgin/gtkcertmgr.c:197 ../pidgin/gtkdialogs.c:773
+#: ../pidgin/gtkdialogs.c:912 ../pidgin/gtkdialogs.c:1004
+#: ../pidgin/gtkdialogs.c:1024 ../pidgin/gtkdialogs.c:1048
+#: ../pidgin/gtkdialogs.c:1070 ../pidgin/gtkdialogs.c:1118
+#: ../pidgin/gtkdialogs.c:1159 ../pidgin/gtkdialogs.c:1215
+#: ../pidgin/gtkdialogs.c:1254 ../pidgin/gtkdialogs.c:1281
 #: ../pidgin/gtkimhtmltoolbar.c:435 ../pidgin/gtklog.c:328
 #: ../pidgin/gtkplugin.c:289 ../pidgin/gtkpounce.c:1101
 #: ../pidgin/gtkprivacy.c:563 ../pidgin/gtkprivacy.c:579
@@ -331,8 +331,8 @@ msgstr "아이디"
 #: ../libpurple/protocols/silc10/chat.c:590
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:704
 #: ../libpurple/protocols/zephyr/zephyr.c:788
-#: ../libpurple/protocols/zephyr/zephyr.c:1207 ../pidgin/gtkdialogs.c:1019
-#: ../pidgin/gtkdialogs.c:1043 ../pidgin/gtkdialogs.c:1065
+#: ../libpurple/protocols/zephyr/zephyr.c:1207 ../pidgin/gtkdialogs.c:1023
+#: ../pidgin/gtkdialogs.c:1047 ../pidgin/gtkdialogs.c:1069
 #: ../pidgin/gtkrequest.c:278
 msgid "Alias"
 msgstr "별칭"
@@ -607,21 +607,21 @@ msgstr "다른 상태..."
 msgid "Plugins"
 msgstr "플러그인"
 
-#: ../finch/gntblist.c:2203 ../pidgin/gtkdialogs.c:750
-#: ../pidgin/gtkdialogs.c:889 ../pidgin/gtkdialogs.c:970
+#: ../finch/gntblist.c:2203 ../pidgin/gtkdialogs.c:754
+#: ../pidgin/gtkdialogs.c:893 ../pidgin/gtkdialogs.c:974
 msgid "_Name"
 msgstr "이름(_N)"
 
-#: ../finch/gntblist.c:2208 ../pidgin/gtkdialogs.c:755
-#: ../pidgin/gtkdialogs.c:894 ../pidgin/gtkdialogs.c:975
+#: ../finch/gntblist.c:2208 ../pidgin/gtkdialogs.c:759
+#: ../pidgin/gtkdialogs.c:898 ../pidgin/gtkdialogs.c:979
 msgid "_Account"
 msgstr "계정(_A)"
 
-#: ../finch/gntblist.c:2216 ../pidgin/gtkdialogs.c:763
+#: ../finch/gntblist.c:2216 ../pidgin/gtkdialogs.c:767
 msgid "New Instant Message"
 msgstr "새 인스턴트 메시지"
 
-#: ../finch/gntblist.c:2218 ../pidgin/gtkdialogs.c:765
+#: ../finch/gntblist.c:2218 ../pidgin/gtkdialogs.c:769
 msgid ""
 "Please enter the screen name or alias of the person you would like to IM."
 msgstr "메시지로 대화할 상대의 아이디 또는 별칭을 입력해 주십시오."
@@ -657,8 +657,8 @@ msgstr "메시지로 대화할 상대의 아이디 또는 별칭을 입력해 �
 #: ../libpurple/protocols/yahoo/yahoo.c:1031
 #: ../libpurple/protocols/yahoo/yahoo.c:3497
 #: ../libpurple/protocols/yahoo/yahoo.c:3508 ../pidgin/gtkblist.c:4039
-#: ../pidgin/gtkcertmgr.c:195 ../pidgin/gtkdialogs.c:768
-#: ../pidgin/gtkdialogs.c:907 ../pidgin/gtkdialogs.c:999
+#: ../pidgin/gtkcertmgr.c:195 ../pidgin/gtkdialogs.c:772
+#: ../pidgin/gtkdialogs.c:911 ../pidgin/gtkdialogs.c:1003
 #: ../pidgin/gtkrequest.c:270
 msgid "OK"
 msgstr "확인"
@@ -14739,7 +14739,7 @@ msgstr "초기 제작자"
 msgid "Afrikaans"
 msgstr ""
 
-#: ../pidgin/gtkdialogs.c:134
+#: ../pidgin/gtkdialogs.c:134 ../pidgin/gtkdialogs.c:226
 msgid "Arabic"
 msgstr "아라비아어"
 
@@ -14748,7 +14748,7 @@ msgid "Belarusian Latin"
 msgstr ""
 
 #: ../pidgin/gtkdialogs.c:136 ../pidgin/gtkdialogs.c:137
-#: ../pidgin/gtkdialogs.c:224
+#: ../pidgin/gtkdialogs.c:227
 msgid "Bulgarian"
 msgstr "불가리아어"
 
@@ -14761,8 +14761,8 @@ msgstr "벵갈어"
 msgid "Bosnian"
 msgstr "보스니아어"
 
-#: ../pidgin/gtkdialogs.c:143 ../pidgin/gtkdialogs.c:225
-#: ../pidgin/gtkdialogs.c:226
+#: ../pidgin/gtkdialogs.c:143 ../pidgin/gtkdialogs.c:228
+#: ../pidgin/gtkdialogs.c:229
 msgid "Catalan"
 msgstr "카타로니아어"
 
@@ -14770,7 +14770,7 @@ msgstr "카타로니아어"
 msgid "Valencian-Catalan"
 msgstr "발렌시아-카타로니아어"
 
-#: ../pidgin/gtkdialogs.c:146 ../pidgin/gtkdialogs.c:227
+#: ../pidgin/gtkdialogs.c:146 ../pidgin/gtkdialogs.c:230
 msgid "Czech"
 msgstr "체코어"
 
@@ -14779,7 +14779,7 @@ msgid "Danish"
 msgstr "덴마크어"
 
 #: ../pidgin/gtkdialogs.c:149 ../pidgin/gtkdialogs.c:150
-#: ../pidgin/gtkdialogs.c:228
+#: ../pidgin/gtkdialogs.c:231
 msgid "German"
 msgstr "독일어"
 
@@ -14808,9 +14808,9 @@ msgstr "영어 (영국)"
 msgid "Esperanto"
 msgstr "에스페란토어"
 
-#: ../pidgin/gtkdialogs.c:160 ../pidgin/gtkdialogs.c:229
-#: ../pidgin/gtkdialogs.c:230 ../pidgin/gtkdialogs.c:231
-#: ../pidgin/gtkdialogs.c:232
+#: ../pidgin/gtkdialogs.c:160 ../pidgin/gtkdialogs.c:232
+#: ../pidgin/gtkdialogs.c:233 ../pidgin/gtkdialogs.c:234
+#: ../pidgin/gtkdialogs.c:235
 msgid "Spanish"
 msgstr "스페인어"
 
@@ -14828,19 +14828,19 @@ msgstr "유케라 (바스크어)"
 msgid "Persian"
 msgstr "페르시아어"
 
-#: ../pidgin/gtkdialogs.c:167 ../pidgin/gtkdialogs.c:233
-#: ../pidgin/gtkdialogs.c:234
+#: ../pidgin/gtkdialogs.c:167 ../pidgin/gtkdialogs.c:236
+#: ../pidgin/gtkdialogs.c:237
 msgid "Finnish"
 msgstr "핀란드어"
 
-#: ../pidgin/gtkdialogs.c:168 ../pidgin/gtkdialogs.c:235
-#: ../pidgin/gtkdialogs.c:236 ../pidgin/gtkdialogs.c:237
-#: ../pidgin/gtkdialogs.c:238
+#: ../pidgin/gtkdialogs.c:168 ../pidgin/gtkdialogs.c:238
+#: ../pidgin/gtkdialogs.c:239 ../pidgin/gtkdialogs.c:240
+#: ../pidgin/gtkdialogs.c:241
 msgid "French"
 msgstr "프랑스어"
 
 #: ../pidgin/gtkdialogs.c:169 ../pidgin/gtkdialogs.c:170
-#: ../pidgin/gtkdialogs.c:239
+#: ../pidgin/gtkdialogs.c:242
 msgid "Galician"
 msgstr "갈리시아어"
 
@@ -14852,7 +14852,7 @@ msgstr "구자라티어"
 msgid "Gujarati Language Team"
 msgstr ""
 
-#: ../pidgin/gtkdialogs.c:173 ../pidgin/gtkdialogs.c:240
+#: ../pidgin/gtkdialogs.c:173 ../pidgin/gtkdialogs.c:243
 msgid "Hebrew"
 msgstr "히브리어"
 
@@ -14860,7 +14860,7 @@ msgstr "히브리어"
 msgid "Hindi"
 msgstr "힌디어"
 
-#: ../pidgin/gtkdialogs.c:175 ../pidgin/gtkdialogs.c:241
+#: ../pidgin/gtkdialogs.c:175 ../pidgin/gtkdialogs.c:244
 msgid "Hungarian"
 msgstr "헝가리어"
 
@@ -14869,16 +14869,16 @@ msgstr "헝가리어"
 msgid "Indonesian"
 msgstr "마케도니아어"
 
-#: ../pidgin/gtkdialogs.c:177 ../pidgin/gtkdialogs.c:242
+#: ../pidgin/gtkdialogs.c:177 ../pidgin/gtkdialogs.c:245
 msgid "Italian"
 msgstr "이태리어"
 
-#: ../pidgin/gtkdialogs.c:178 ../pidgin/gtkdialogs.c:243
-#: ../pidgin/gtkdialogs.c:244 ../pidgin/gtkdialogs.c:245
+#: ../pidgin/gtkdialogs.c:178 ../pidgin/gtkdialogs.c:246
+#: ../pidgin/gtkdialogs.c:247 ../pidgin/gtkdialogs.c:248
 msgid "Japanese"
 msgstr "일본어"
 
-#: ../pidgin/gtkdialogs.c:179 ../pidgin/gtkdialogs.c:246
+#: ../pidgin/gtkdialogs.c:179 ../pidgin/gtkdialogs.c:249
 msgid "Georgian"
 msgstr "그루지아어"
 
@@ -14896,8 +14896,8 @@ msgstr "차단되었습니다."
 msgid "Kannada Translation team"
 msgstr ""
 
-#: ../pidgin/gtkdialogs.c:181 ../pidgin/gtkdialogs.c:247
-#: ../pidgin/gtkdialogs.c:248
+#: ../pidgin/gtkdialogs.c:181 ../pidgin/gtkdialogs.c:250
+#: ../pidgin/gtkdialogs.c:251
 msgid "Korean"
 msgstr "한국어"
 
@@ -14906,133 +14906,139 @@ msgstr "한국어"
 msgid "Kurdish"
 msgstr "쿠르드어"
 
-#: ../pidgin/gtkdialogs.c:185 ../pidgin/gtkdialogs.c:249
-#: ../pidgin/gtkdialogs.c:250
+#: ../pidgin/gtkdialogs.c:185
+#, fuzzy
+msgid "Lao"
+msgstr "사자자리"
+
+#: ../pidgin/gtkdialogs.c:186 ../pidgin/gtkdialogs.c:252
+#: ../pidgin/gtkdialogs.c:253
 msgid "Lithuanian"
 msgstr "리투아니아어"
 
-#: ../pidgin/gtkdialogs.c:186 ../pidgin/gtkdialogs.c:187
-#: ../pidgin/gtkdialogs.c:251
+#: ../pidgin/gtkdialogs.c:187 ../pidgin/gtkdialogs.c:188
+#: ../pidgin/gtkdialogs.c:189 ../pidgin/gtkdialogs.c:254
 msgid "Macedonian"
 msgstr "마케도니아어"
 
-#: ../pidgin/gtkdialogs.c:188 ../pidgin/gtkdialogs.c:252
+#: ../pidgin/gtkdialogs.c:190 ../pidgin/gtkdialogs.c:255
+#: ../pidgin/gtkdialogs.c:256
 #, fuzzy
 msgid "Bokmål Norwegian"
 msgstr "노르웨이어"
 
-#: ../pidgin/gtkdialogs.c:189
+#: ../pidgin/gtkdialogs.c:191
 msgid "Nepali"
 msgstr "네팔어"
 
-#: ../pidgin/gtkdialogs.c:190
+#: ../pidgin/gtkdialogs.c:192
 msgid "Dutch, Flemish"
 msgstr "네덜란드, 프란다스어"
 
-#: ../pidgin/gtkdialogs.c:191
+#: ../pidgin/gtkdialogs.c:193
 #, fuzzy
 msgid "Norwegian Nynorsk"
 msgstr "노르웨이어"
 
-#: ../pidgin/gtkdialogs.c:192 ../pidgin/gtkdialogs.c:193
-#: ../pidgin/gtkdialogs.c:194 ../pidgin/gtkdialogs.c:253
+#: ../pidgin/gtkdialogs.c:194 ../pidgin/gtkdialogs.c:195
+#: ../pidgin/gtkdialogs.c:196 ../pidgin/gtkdialogs.c:257
 msgid "Polish"
 msgstr "폴란드어"
 
-#: ../pidgin/gtkdialogs.c:195
+#: ../pidgin/gtkdialogs.c:197
 msgid "Portuguese"
 msgstr "포르투갈어"
 
-#: ../pidgin/gtkdialogs.c:196
+#: ../pidgin/gtkdialogs.c:198
 msgid "Portuguese-Brazil"
 msgstr "포르투갈-브라질어"
 
-#: ../pidgin/gtkdialogs.c:197
+#: ../pidgin/gtkdialogs.c:199
 #, fuzzy
 msgid "Pashto"
 msgstr "사진"
 
-#: ../pidgin/gtkdialogs.c:198
+#: ../pidgin/gtkdialogs.c:200
 msgid "Romanian"
 msgstr "루마니아어"
 
-#: ../pidgin/gtkdialogs.c:199 ../pidgin/gtkdialogs.c:254
-#: ../pidgin/gtkdialogs.c:255
+#: ../pidgin/gtkdialogs.c:201 ../pidgin/gtkdialogs.c:258
+#: ../pidgin/gtkdialogs.c:259
 msgid "Russian"
 msgstr "러시아어"
 
-#: ../pidgin/gtkdialogs.c:200 ../pidgin/gtkdialogs.c:201
-#: ../pidgin/gtkdialogs.c:256 ../pidgin/gtkdialogs.c:257
-#: ../pidgin/gtkdialogs.c:258
+#: ../pidgin/gtkdialogs.c:202 ../pidgin/gtkdialogs.c:203
+#: ../pidgin/gtkdialogs.c:260 ../pidgin/gtkdialogs.c:261
+#: ../pidgin/gtkdialogs.c:262
 msgid "Slovak"
 msgstr "슬로바키아어"
 
-#: ../pidgin/gtkdialogs.c:202 ../pidgin/gtkdialogs.c:259
+#: ../pidgin/gtkdialogs.c:204 ../pidgin/gtkdialogs.c:263
 msgid "Slovenian"
 msgstr "슬로베니아어"
 
-#: ../pidgin/gtkdialogs.c:203
+#: ../pidgin/gtkdialogs.c:205
 msgid "Albanian"
 msgstr "알바니아어"
 
-#: ../pidgin/gtkdialogs.c:204 ../pidgin/gtkdialogs.c:205
-#: ../pidgin/gtkdialogs.c:260 ../pidgin/gtkdialogs.c:261
+#: ../pidgin/gtkdialogs.c:206 ../pidgin/gtkdialogs.c:207
+#: ../pidgin/gtkdialogs.c:264 ../pidgin/gtkdialogs.c:265
 msgid "Serbian"
 msgstr "세르비아어"
 
-#: ../pidgin/gtkdialogs.c:206 ../pidgin/gtkdialogs.c:262
-#: ../pidgin/gtkdialogs.c:263
+#: ../pidgin/gtkdialogs.c:208 ../pidgin/gtkdialogs.c:266
+#: ../pidgin/gtkdialogs.c:267
 msgid "Swedish"
 msgstr "스웨덴어"
 
-#: ../pidgin/gtkdialogs.c:207
+#: ../pidgin/gtkdialogs.c:209
 msgid "Tamil"
 msgstr "타밀어"
 
-#: ../pidgin/gtkdialogs.c:208
+#: ../pidgin/gtkdialogs.c:210
 msgid "Telugu"
 msgstr "텔루구어"
 
-#: ../pidgin/gtkdialogs.c:209
+#: ../pidgin/gtkdialogs.c:211
 msgid "Thai"
 msgstr "타이어"
 
-#: ../pidgin/gtkdialogs.c:210 ../pidgin/gtkdialogs.c:264
+#: ../pidgin/gtkdialogs.c:212 ../pidgin/gtkdialogs.c:268
 msgid "Turkish"
 msgstr "터키어"
 
-#: ../pidgin/gtkdialogs.c:211
+#: ../pidgin/gtkdialogs.c:213
 msgid "Vietnamese"
 msgstr "베트남어"
 
-#: ../pidgin/gtkdialogs.c:211
+#: ../pidgin/gtkdialogs.c:213
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh 및 Gnome-Vi 팀"
 
-#: ../pidgin/gtkdialogs.c:212 ../pidgin/gtkdialogs.c:265
+#: ../pidgin/gtkdialogs.c:214 ../pidgin/gtkdialogs.c:269
 msgid "Simplified Chinese"
 msgstr "중국어 (간체)"
 
-#: ../pidgin/gtkdialogs.c:213 ../pidgin/gtkdialogs.c:214
-#: ../pidgin/gtkdialogs.c:215
+#: ../pidgin/gtkdialogs.c:215 ../pidgin/gtkdialogs.c:216
+#: ../pidgin/gtkdialogs.c:217
 msgid "Hong Kong Chinese"
 msgstr ""
 
-#: ../pidgin/gtkdialogs.c:216 ../pidgin/gtkdialogs.c:217
-#: ../pidgin/gtkdialogs.c:266
+#: ../pidgin/gtkdialogs.c:218 ../pidgin/gtkdialogs.c:219
+#: ../pidgin/gtkdialogs.c:270
 msgid "Traditional Chinese"
 msgstr "중국어 (번체)"
 
-#: ../pidgin/gtkdialogs.c:223
+#: ../pidgin/gtkdialogs.c:225
 msgid "Amharic"
 msgstr "아무하라어"
 
-#: ../pidgin/gtkdialogs.c:353
+#: ../pidgin/gtkdialogs.c:357
 #, fuzzy, c-format
 msgid "About %s"
 msgstr "Pidgin 정보"
 
-#: ../pidgin/gtkdialogs.c:396
+#: ../pidgin/gtkdialogs.c:400
 #, fuzzy, c-format
 msgid ""
 "%s is a graphical modular messaging client based on libpurple which is "
@@ -15054,91 +15060,91 @@ msgstr ""
 "목록에 대해서는 'COPYRIGHT' 를 참조해 주십시오. 본 프로그램은 완전 무보증입니"
 "다.<BR><BR>"
 
-#: ../pidgin/gtkdialogs.c:414
+#: ../pidgin/gtkdialogs.c:418
 #, fuzzy, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net の #gaim 채널<BR><BR>"
 
-#: ../pidgin/gtkdialogs.c:419
+#: ../pidgin/gtkdialogs.c:423
 msgid "Current Developers"
 msgstr "현재 개발자"
 
-#: ../pidgin/gtkdialogs.c:434
+#: ../pidgin/gtkdialogs.c:438
 msgid "Crazy Patch Writers"
 msgstr "Crazy Patch 제작자"
 
-#: ../pidgin/gtkdialogs.c:449
+#: ../pidgin/gtkdialogs.c:453
 msgid "Retired Developers"
 msgstr "이전 개발자"
 
-#: ../pidgin/gtkdialogs.c:464
+#: ../pidgin/gtkdialogs.c:468
 #, fuzzy
 msgid "Retired Crazy Patch Writers"
 msgstr "Crazy Patch 제작자"
 
-#: ../pidgin/gtkdialogs.c:479
+#: ../pidgin/gtkdialogs.c:483
 #, fuzzy
 msgid "Artists"
 msgstr "양치기자리"
 
-#: ../pidgin/gtkdialogs.c:494
+#: ../pidgin/gtkdialogs.c:498
 msgid "Current Translators"
 msgstr "현재 번역자"
 
-#: ../pidgin/gtkdialogs.c:514
+#: ../pidgin/gtkdialogs.c:518
 msgid "Past Translators"
 msgstr "이전 번역자"
 
-#: ../pidgin/gtkdialogs.c:532
+#: ../pidgin/gtkdialogs.c:536
 msgid "Debugging Information"
 msgstr "디버깅 정보"
 
-#: ../pidgin/gtkdialogs.c:902
+#: ../pidgin/gtkdialogs.c:906
 msgid "Get User Info"
 msgstr "사용자 정보 가져오기"
 
-#: ../pidgin/gtkdialogs.c:904
+#: ../pidgin/gtkdialogs.c:908
 msgid ""
 "Please enter the screen name or alias of the person whose info you would "
 "like to view."
 msgstr "정보를 표시할 상대의 아이디 또는 별칭을 입력해 주십시오."
 
-#: ../pidgin/gtkdialogs.c:994
+#: ../pidgin/gtkdialogs.c:998
 msgid "View User Log"
 msgstr "사용자 로그 보기"
 
-#: ../pidgin/gtkdialogs.c:996
+#: ../pidgin/gtkdialogs.c:1000
 msgid ""
 "Please enter the screen name or alias of the person whose log you would like "
 "to view."
 msgstr "로그를 표시할 상대의 아이디 또는 별칭을 입력해 주십시오."
 
-#: ../pidgin/gtkdialogs.c:1016
+#: ../pidgin/gtkdialogs.c:1020
 msgid "Alias Contact"
 msgstr "연락처 별칭"
 
-#: ../pidgin/gtkdialogs.c:1017
+#: ../pidgin/gtkdialogs.c:1021
 msgid "Enter an alias for this contact."
 msgstr "이 연락처의 별칭을 입력해 주십시오."
 
-#: ../pidgin/gtkdialogs.c:1039
+#: ../pidgin/gtkdialogs.c:1043
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "%s 의 별칭을 입력해 주십시오."
 
-#: ../pidgin/gtkdialogs.c:1041
+#: ../pidgin/gtkdialogs.c:1045
 msgid "Alias Buddy"
 msgstr "친구 별칭"
 
-#: ../pidgin/gtkdialogs.c:1062
+#: ../pidgin/gtkdialogs.c:1066
 msgid "Alias Chat"
 msgstr "대화 별칭"
 
-#: ../pidgin/gtkdialogs.c:1063
+#: ../pidgin/gtkdialogs.c:1067
 msgid "Enter an alias for this chat."
 msgstr "이 대화의 별칭을 입력해 주십시오."
 
-#: ../pidgin/gtkdialogs.c:1102
+#: ../pidgin/gtkdialogs.c:1106
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddy from "
@@ -15153,30 +15159,30 @@ msgstr[1] ""
 "친구 목록에서 %s 님을 포함한 %d 명의 친구의 삭제하려고 합니다. 계속 하시겠습"
 "니까?"
 
-#: ../pidgin/gtkdialogs.c:1110
+#: ../pidgin/gtkdialogs.c:1114
 msgid "Remove Contact"
 msgstr "연락처 삭제"
 
-#: ../pidgin/gtkdialogs.c:1113
+#: ../pidgin/gtkdialogs.c:1117
 msgid "_Remove Contact"
 msgstr "삭제(_R)"
 
-#: ../pidgin/gtkdialogs.c:1144
+#: ../pidgin/gtkdialogs.c:1148
 #, c-format
 msgid ""
 "You are about to merge the group called %s into the group called %s. Do you "
 "want to continue?"
 msgstr "%s 그룹과 %s 그룹을 하나로 통합하려고 합니다. 계속 하시겠습니까?"
 
-#: ../pidgin/gtkdialogs.c:1151
+#: ../pidgin/gtkdialogs.c:1155
 msgid "Merge Groups"
 msgstr "그룹 통합"
 
-#: ../pidgin/gtkdialogs.c:1154
+#: ../pidgin/gtkdialogs.c:1158
 msgid "_Merge Groups"
 msgstr "그룹 통합(_M)"
 
-#: ../pidgin/gtkdialogs.c:1204
+#: ../pidgin/gtkdialogs.c:1208
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -15185,40 +15191,40 @@ msgstr ""
 "친구 목록에서 %s 그룹과 그 구성원을 모두 삭제하려고 합니다. 계속 하시겠습니"
 "까?"
 
-#: ../pidgin/gtkdialogs.c:1207
+#: ../pidgin/gtkdialogs.c:1211
 msgid "Remove Group"
 msgstr "그룹 삭제"
 
-#: ../pidgin/gtkdialogs.c:1210
+#: ../pidgin/gtkdialogs.c:1214
 msgid "_Remove Group"
 msgstr "삭제(_R)"
 
-#: ../pidgin/gtkdialogs.c:1243
+#: ../pidgin/gtkdialogs.c:1247
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "친구 목록에서 %s 을(를) 삭제하려고 합니다. 계속 하시겠습니까?"
 
-#: ../pidgin/gtkdialogs.c:1246
+#: ../pidgin/gtkdialogs.c:1250
 msgid "Remove Buddy"
 msgstr "친구 삭제"
 
-#: ../pidgin/gtkdialogs.c:1249
+#: ../pidgin/gtkdialogs.c:1253
 msgid "_Remove Buddy"
 msgstr "삭제(_R)"
 
-#: ../pidgin/gtkdialogs.c:1270
+#: ../pidgin/gtkdialogs.c:1274
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 msgstr "친구 목록에서 %s 대화를 삭제하려고 합니다. 계속 하시겠습니까?"
 
-#: ../pidgin/gtkdialogs.c:1273
+#: ../pidgin/gtkdialogs.c:1277
 msgid "Remove Chat"
 msgstr "대화 삭제"
 
-#: ../pidgin/gtkdialogs.c:1276
+#: ../pidgin/gtkdialogs.c:1280
 msgid "_Remove Chat"
 msgstr "삭제(_R)"
 

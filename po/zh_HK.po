@@ -51,7 +51,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin 2.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-28 13:16-0500\n"
+"POT-Creation-Date: 2007-09-28 14:39-0500\n"
 "PO-Revision-Date: 2007-05-24 06:43+0800\n"
 "Last-Translator: Ambrose Li <acli@ada.dhs.org>\n"
 "Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
@@ -238,12 +238,12 @@ msgstr "別名："
 #: ../libpurple/protocols/yahoo/yahoo.c:3498
 #: ../libpurple/protocols/yahoo/yahoo.c:3509 ../pidgin/gtkaccount.c:1908
 #: ../pidgin/gtkaccount.c:2495 ../pidgin/gtkblist.c:5967
-#: ../pidgin/gtkcertmgr.c:197 ../pidgin/gtkdialogs.c:769
-#: ../pidgin/gtkdialogs.c:908 ../pidgin/gtkdialogs.c:1000
-#: ../pidgin/gtkdialogs.c:1020 ../pidgin/gtkdialogs.c:1044
-#: ../pidgin/gtkdialogs.c:1066 ../pidgin/gtkdialogs.c:1114
-#: ../pidgin/gtkdialogs.c:1155 ../pidgin/gtkdialogs.c:1211
-#: ../pidgin/gtkdialogs.c:1250 ../pidgin/gtkdialogs.c:1277
+#: ../pidgin/gtkcertmgr.c:197 ../pidgin/gtkdialogs.c:773
+#: ../pidgin/gtkdialogs.c:912 ../pidgin/gtkdialogs.c:1004
+#: ../pidgin/gtkdialogs.c:1024 ../pidgin/gtkdialogs.c:1048
+#: ../pidgin/gtkdialogs.c:1070 ../pidgin/gtkdialogs.c:1118
+#: ../pidgin/gtkdialogs.c:1159 ../pidgin/gtkdialogs.c:1215
+#: ../pidgin/gtkdialogs.c:1254 ../pidgin/gtkdialogs.c:1281
 #: ../pidgin/gtkimhtmltoolbar.c:435 ../pidgin/gtklog.c:328
 #: ../pidgin/gtkplugin.c:289 ../pidgin/gtkpounce.c:1101
 #: ../pidgin/gtkprivacy.c:563 ../pidgin/gtkprivacy.c:579
@@ -376,8 +376,8 @@ msgstr "帳號"
 #: ../libpurple/protocols/silc10/chat.c:590
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:704
 #: ../libpurple/protocols/zephyr/zephyr.c:788
-#: ../libpurple/protocols/zephyr/zephyr.c:1207 ../pidgin/gtkdialogs.c:1019
-#: ../pidgin/gtkdialogs.c:1043 ../pidgin/gtkdialogs.c:1065
+#: ../libpurple/protocols/zephyr/zephyr.c:1207 ../pidgin/gtkdialogs.c:1023
+#: ../pidgin/gtkdialogs.c:1047 ../pidgin/gtkdialogs.c:1069
 #: ../pidgin/gtkrequest.c:278
 msgid "Alias"
 msgstr "別名"
@@ -664,21 +664,21 @@ msgid "Plugins"
 msgstr "模組清單"
 
 # NOTE 只能譯「名稱」，因為同時解作「人名」及「模組名稱」
-#: ../finch/gntblist.c:2203 ../pidgin/gtkdialogs.c:750
-#: ../pidgin/gtkdialogs.c:889 ../pidgin/gtkdialogs.c:970
+#: ../finch/gntblist.c:2203 ../pidgin/gtkdialogs.c:754
+#: ../pidgin/gtkdialogs.c:893 ../pidgin/gtkdialogs.c:974
 msgid "_Name"
 msgstr "名稱(_N)"
 
-#: ../finch/gntblist.c:2208 ../pidgin/gtkdialogs.c:755
-#: ../pidgin/gtkdialogs.c:894 ../pidgin/gtkdialogs.c:975
+#: ../finch/gntblist.c:2208 ../pidgin/gtkdialogs.c:759
+#: ../pidgin/gtkdialogs.c:898 ../pidgin/gtkdialogs.c:979
 msgid "_Account"
 msgstr "帳號(_A)"
 
-#: ../finch/gntblist.c:2216 ../pidgin/gtkdialogs.c:763
+#: ../finch/gntblist.c:2216 ../pidgin/gtkdialogs.c:767
 msgid "New Instant Message"
 msgstr "新即時訊息"
 
-#: ../finch/gntblist.c:2218 ../pidgin/gtkdialogs.c:765
+#: ../finch/gntblist.c:2218 ../pidgin/gtkdialogs.c:769
 msgid ""
 "Please enter the screen name or alias of the person you would like to IM."
 msgstr "請輸入你所想要發送即時訊息對象的帳號。"
@@ -714,8 +714,8 @@ msgstr "請輸入你所想要發送即時訊息對象的帳號。"
 #: ../libpurple/protocols/yahoo/yahoo.c:1031
 #: ../libpurple/protocols/yahoo/yahoo.c:3497
 #: ../libpurple/protocols/yahoo/yahoo.c:3508 ../pidgin/gtkblist.c:4039
-#: ../pidgin/gtkcertmgr.c:195 ../pidgin/gtkdialogs.c:768
-#: ../pidgin/gtkdialogs.c:907 ../pidgin/gtkdialogs.c:999
+#: ../pidgin/gtkcertmgr.c:195 ../pidgin/gtkdialogs.c:772
+#: ../pidgin/gtkdialogs.c:911 ../pidgin/gtkdialogs.c:1003
 #: ../pidgin/gtkrequest.c:270
 msgid "OK"
 msgstr "確定"
@@ -15008,7 +15008,7 @@ msgstr "原作者"
 msgid "Afrikaans"
 msgstr "南非荷蘭文"
 
-#: ../pidgin/gtkdialogs.c:134
+#: ../pidgin/gtkdialogs.c:134 ../pidgin/gtkdialogs.c:226
 msgid "Arabic"
 msgstr "阿拉伯文"
 
@@ -15017,7 +15017,7 @@ msgid "Belarusian Latin"
 msgstr ""
 
 #: ../pidgin/gtkdialogs.c:136 ../pidgin/gtkdialogs.c:137
-#: ../pidgin/gtkdialogs.c:224
+#: ../pidgin/gtkdialogs.c:227
 msgid "Bulgarian"
 msgstr "保加利亞文"
 
@@ -15033,8 +15033,8 @@ msgid "Bosnian"
 msgstr "波希尼亞文"
 
 #  NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=C
-#: ../pidgin/gtkdialogs.c:143 ../pidgin/gtkdialogs.c:225
-#: ../pidgin/gtkdialogs.c:226
+#: ../pidgin/gtkdialogs.c:143 ../pidgin/gtkdialogs.c:228
+#: ../pidgin/gtkdialogs.c:229
 msgid "Catalan"
 msgstr "加泰隆文"
 
@@ -15043,7 +15043,7 @@ msgstr "加泰隆文"
 msgid "Valencian-Catalan"
 msgstr "瓦倫西亞文"
 
-#: ../pidgin/gtkdialogs.c:146 ../pidgin/gtkdialogs.c:227
+#: ../pidgin/gtkdialogs.c:146 ../pidgin/gtkdialogs.c:230
 msgid "Czech"
 msgstr "捷克文"
 
@@ -15052,7 +15052,7 @@ msgid "Danish"
 msgstr "丹麥文"
 
 #: ../pidgin/gtkdialogs.c:149 ../pidgin/gtkdialogs.c:150
-#: ../pidgin/gtkdialogs.c:228
+#: ../pidgin/gtkdialogs.c:231
 msgid "German"
 msgstr "德文"
 
@@ -15084,9 +15084,9 @@ msgstr "英式英文"
 msgid "Esperanto"
 msgstr "世界語"
 
-#: ../pidgin/gtkdialogs.c:160 ../pidgin/gtkdialogs.c:229
-#: ../pidgin/gtkdialogs.c:230 ../pidgin/gtkdialogs.c:231
-#: ../pidgin/gtkdialogs.c:232
+#: ../pidgin/gtkdialogs.c:160 ../pidgin/gtkdialogs.c:232
+#: ../pidgin/gtkdialogs.c:233 ../pidgin/gtkdialogs.c:234
+#: ../pidgin/gtkdialogs.c:235
 msgid "Spanish"
 msgstr "西班牙文"
 
@@ -15106,20 +15106,20 @@ msgstr "巴斯克文"
 msgid "Persian"
 msgstr "波斯文"
 
-#: ../pidgin/gtkdialogs.c:167 ../pidgin/gtkdialogs.c:233
-#: ../pidgin/gtkdialogs.c:234
+#: ../pidgin/gtkdialogs.c:167 ../pidgin/gtkdialogs.c:236
+#: ../pidgin/gtkdialogs.c:237
 msgid "Finnish"
 msgstr "芬蘭文"
 
-#: ../pidgin/gtkdialogs.c:168 ../pidgin/gtkdialogs.c:235
-#: ../pidgin/gtkdialogs.c:236 ../pidgin/gtkdialogs.c:237
-#: ../pidgin/gtkdialogs.c:238
+#: ../pidgin/gtkdialogs.c:168 ../pidgin/gtkdialogs.c:238
+#: ../pidgin/gtkdialogs.c:239 ../pidgin/gtkdialogs.c:240
+#: ../pidgin/gtkdialogs.c:241
 msgid "French"
 msgstr "法文"
 
 #  NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=G&page=1
 #: ../pidgin/gtkdialogs.c:169 ../pidgin/gtkdialogs.c:170
-#: ../pidgin/gtkdialogs.c:239
+#: ../pidgin/gtkdialogs.c:242
 msgid "Galician"
 msgstr "加里西亞文"
 
@@ -15132,7 +15132,7 @@ msgstr "古吉拉特文"
 msgid "Gujarati Language Team"
 msgstr "古吉拉特文翻譯小組"
 
-#: ../pidgin/gtkdialogs.c:173 ../pidgin/gtkdialogs.c:240
+#: ../pidgin/gtkdialogs.c:173 ../pidgin/gtkdialogs.c:243
 msgid "Hebrew"
 msgstr "希伯來文"
 
@@ -15141,7 +15141,7 @@ msgstr "希伯來文"
 msgid "Hindi"
 msgstr "印度文"
 
-#: ../pidgin/gtkdialogs.c:175 ../pidgin/gtkdialogs.c:241
+#: ../pidgin/gtkdialogs.c:175 ../pidgin/gtkdialogs.c:244
 msgid "Hungarian"
 msgstr "匈牙利文"
 
@@ -15154,16 +15154,16 @@ msgstr "印尼文"
 #  NOTE 臺灣的中國圖書分類法亦有「意大利」條，譯「意大利」應該比較好。
 #  NOTE【參見「Slovenian」】
 #  NOTE 註：因 zh_TW 和 zh_HK 正式分家，還原成台式譯法「義大利」
-#: ../pidgin/gtkdialogs.c:177 ../pidgin/gtkdialogs.c:242
+#: ../pidgin/gtkdialogs.c:177 ../pidgin/gtkdialogs.c:245
 msgid "Italian"
 msgstr "意大利文"
 
-#: ../pidgin/gtkdialogs.c:178 ../pidgin/gtkdialogs.c:243
-#: ../pidgin/gtkdialogs.c:244 ../pidgin/gtkdialogs.c:245
+#: ../pidgin/gtkdialogs.c:178 ../pidgin/gtkdialogs.c:246
+#: ../pidgin/gtkdialogs.c:247 ../pidgin/gtkdialogs.c:248
 msgid "Japanese"
 msgstr "日文"
 
-#: ../pidgin/gtkdialogs.c:179 ../pidgin/gtkdialogs.c:246
+#: ../pidgin/gtkdialogs.c:179 ../pidgin/gtkdialogs.c:249
 msgid "Georgian"
 msgstr "格魯吉亞文"
 
@@ -15182,8 +15182,8 @@ msgstr "康納達文"
 msgid "Kannada Translation team"
 msgstr "康納達文翻譯小組"
 
-#: ../pidgin/gtkdialogs.c:181 ../pidgin/gtkdialogs.c:247
-#: ../pidgin/gtkdialogs.c:248
+#: ../pidgin/gtkdialogs.c:181 ../pidgin/gtkdialogs.c:250
+#: ../pidgin/gtkdialogs.c:251
 msgid "Korean"
 msgstr "韓文"
 
@@ -15194,14 +15194,19 @@ msgstr "韓文"
 msgid "Kurdish"
 msgstr "庫德文"
 
-#: ../pidgin/gtkdialogs.c:185 ../pidgin/gtkdialogs.c:249
-#: ../pidgin/gtkdialogs.c:250
+#: ../pidgin/gtkdialogs.c:185
+#, fuzzy
+msgid "Lao"
+msgstr "獅子座"
+
+#: ../pidgin/gtkdialogs.c:186 ../pidgin/gtkdialogs.c:252
+#: ../pidgin/gtkdialogs.c:253
 msgid "Lithuanian"
 msgstr "立陶宛文"
 
 #  NOTE「馬其頓文」是一種東歐語文，跟希臘的馬其頓並無關係
-#: ../pidgin/gtkdialogs.c:186 ../pidgin/gtkdialogs.c:187
-#: ../pidgin/gtkdialogs.c:251
+#: ../pidgin/gtkdialogs.c:187 ../pidgin/gtkdialogs.c:188
+#: ../pidgin/gtkdialogs.c:189 ../pidgin/gtkdialogs.c:254
 msgid "Macedonian"
 msgstr "馬其頓文"
 
@@ -15210,57 +15215,58 @@ msgstr "馬其頓文"
 #  NOTE 其他譯法包括：丹麥－挪威文（大英百科）、丹麥式挪威文（維基百科）、東挪威文、標準挪威文（國內不是標準，國外是 :P）
 #  NOTE 譯音一般放在「挪威文」後的括弧內，也有不用括弧把譯音放在「挪威」和「文」之間
 #  NOTE 採用「標準」一詞，參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=N&page=2
-#: ../pidgin/gtkdialogs.c:188 ../pidgin/gtkdialogs.c:252
+#: ../pidgin/gtkdialogs.c:190 ../pidgin/gtkdialogs.c:255
+#: ../pidgin/gtkdialogs.c:256
 msgid "Bokmål Norwegian"
 msgstr "標準挪威文"
 
-#: ../pidgin/gtkdialogs.c:189
+#: ../pidgin/gtkdialogs.c:191
 msgid "Nepali"
 msgstr "尼泊爾文"
 
 # NOTE Flemish 譯法是跟了http://www.ee.tku.edu.tw/~rexchen/cdict/
 # XXX Dutch 和 Flemish 是同一種語言，是否應該只寫「荷蘭文」，刪去「法蘭德斯文」？
-#: ../pidgin/gtkdialogs.c:190
+#: ../pidgin/gtkdialogs.c:192
 msgid "Dutch, Flemish"
 msgstr "荷蘭文／法蘭德斯文"
 
 #  NOTE 這是「nn」碼，即「Nynorsk Norwegian」，所以直譯「挪威文」並不恰當
-#: ../pidgin/gtkdialogs.c:191
+#: ../pidgin/gtkdialogs.c:193
 #, fuzzy
 msgid "Norwegian Nynorsk"
 msgstr "新挪威文"
 
-#: ../pidgin/gtkdialogs.c:192 ../pidgin/gtkdialogs.c:193
-#: ../pidgin/gtkdialogs.c:194 ../pidgin/gtkdialogs.c:253
+#: ../pidgin/gtkdialogs.c:194 ../pidgin/gtkdialogs.c:195
+#: ../pidgin/gtkdialogs.c:196 ../pidgin/gtkdialogs.c:257
 msgid "Polish"
 msgstr "波蘭文"
 
-#: ../pidgin/gtkdialogs.c:195
+#: ../pidgin/gtkdialogs.c:197
 msgid "Portuguese"
 msgstr "標準萄文"
 
-#: ../pidgin/gtkdialogs.c:196
+#: ../pidgin/gtkdialogs.c:198
 msgid "Portuguese-Brazil"
 msgstr "巴西萄文"
 
 #  NOTE「普什圖」在三地都看來是較正常的譯法
 #  NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=P&page=2
-#: ../pidgin/gtkdialogs.c:197
+#: ../pidgin/gtkdialogs.c:199
 msgid "Pashto"
 msgstr "普什圖文"
 
-#: ../pidgin/gtkdialogs.c:198
+#: ../pidgin/gtkdialogs.c:200
 msgid "Romanian"
 msgstr "羅馬尼亞文"
 
-#: ../pidgin/gtkdialogs.c:199 ../pidgin/gtkdialogs.c:254
-#: ../pidgin/gtkdialogs.c:255
+#: ../pidgin/gtkdialogs.c:201 ../pidgin/gtkdialogs.c:258
+#: ../pidgin/gtkdialogs.c:259
 msgid "Russian"
 msgstr "俄文"
 
-#: ../pidgin/gtkdialogs.c:200 ../pidgin/gtkdialogs.c:201
-#: ../pidgin/gtkdialogs.c:256 ../pidgin/gtkdialogs.c:257
-#: ../pidgin/gtkdialogs.c:258
+#: ../pidgin/gtkdialogs.c:202 ../pidgin/gtkdialogs.c:203
+#: ../pidgin/gtkdialogs.c:260 ../pidgin/gtkdialogs.c:261
+#: ../pidgin/gtkdialogs.c:262
 msgid "Slovak"
 msgstr "斯洛伐克文"
 
@@ -15268,76 +15274,76 @@ msgstr "斯洛伐克文"
 #  NOTE 以粵語發音，跟臺譯反而發音較準；況且，這至少名義上也是zh_TW；
 #  NOTE 所以不跟港譯（其實是大陸譯法），跟臺譯。
 #  NOTE【參見「Italian」】
-#: ../pidgin/gtkdialogs.c:202 ../pidgin/gtkdialogs.c:259
+#: ../pidgin/gtkdialogs.c:204 ../pidgin/gtkdialogs.c:263
 msgid "Slovenian"
 msgstr "斯洛文尼亞文"
 
-#: ../pidgin/gtkdialogs.c:203
+#: ../pidgin/gtkdialogs.c:205
 msgid "Albanian"
 msgstr "阿爾巴尼亞文"
 
-#: ../pidgin/gtkdialogs.c:204 ../pidgin/gtkdialogs.c:205
-#: ../pidgin/gtkdialogs.c:260 ../pidgin/gtkdialogs.c:261
+#: ../pidgin/gtkdialogs.c:206 ../pidgin/gtkdialogs.c:207
+#: ../pidgin/gtkdialogs.c:264 ../pidgin/gtkdialogs.c:265
 msgid "Serbian"
 msgstr "塞爾維亞文"
 
-#: ../pidgin/gtkdialogs.c:206 ../pidgin/gtkdialogs.c:262
-#: ../pidgin/gtkdialogs.c:263
+#: ../pidgin/gtkdialogs.c:208 ../pidgin/gtkdialogs.c:266
+#: ../pidgin/gtkdialogs.c:267
 msgid "Swedish"
 msgstr "瑞典文"
 
 # NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=T
 # NOTE 港一般譯「泰米爾」，台一般譯「塔米爾」（看來較常見）或「泰米爾」
-#: ../pidgin/gtkdialogs.c:207
+#: ../pidgin/gtkdialogs.c:209
 msgid "Tamil"
 msgstr "泰米爾文"
 
 # NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=T
-#: ../pidgin/gtkdialogs.c:208
+#: ../pidgin/gtkdialogs.c:210
 msgid "Telugu"
 msgstr "德拉威文"
 
-#: ../pidgin/gtkdialogs.c:209
+#: ../pidgin/gtkdialogs.c:211
 msgid "Thai"
 msgstr "泰文"
 
-#: ../pidgin/gtkdialogs.c:210 ../pidgin/gtkdialogs.c:264
+#: ../pidgin/gtkdialogs.c:212 ../pidgin/gtkdialogs.c:268
 msgid "Turkish"
 msgstr "土耳其文"
 
-#: ../pidgin/gtkdialogs.c:211
+#: ../pidgin/gtkdialogs.c:213
 msgid "Vietnamese"
 msgstr "越南文"
 
-#: ../pidgin/gtkdialogs.c:211
+#: ../pidgin/gtkdialogs.c:213
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M.Thanh 及 Gnome 越南文翻譯小組之其他組員"
 
-#: ../pidgin/gtkdialogs.c:212 ../pidgin/gtkdialogs.c:265
+#: ../pidgin/gtkdialogs.c:214 ../pidgin/gtkdialogs.c:269
 msgid "Simplified Chinese"
 msgstr "簡體中文"
 
-#: ../pidgin/gtkdialogs.c:213 ../pidgin/gtkdialogs.c:214
-#: ../pidgin/gtkdialogs.c:215
+#: ../pidgin/gtkdialogs.c:215 ../pidgin/gtkdialogs.c:216
+#: ../pidgin/gtkdialogs.c:217
 msgid "Hong Kong Chinese"
 msgstr "港式中文"
 
-#: ../pidgin/gtkdialogs.c:216 ../pidgin/gtkdialogs.c:217
-#: ../pidgin/gtkdialogs.c:266
+#: ../pidgin/gtkdialogs.c:218 ../pidgin/gtkdialogs.c:219
+#: ../pidgin/gtkdialogs.c:270
 msgid "Traditional Chinese"
 msgstr "繁體中文"
 
 # NOTE 參見 http://www.cnscode.org.tw/cnscode/lang.jsp?qrytype=char&keyword=A
-#: ../pidgin/gtkdialogs.c:223
+#: ../pidgin/gtkdialogs.c:225
 msgid "Amharic"
 msgstr "阿姆哈拉文"
 
-#: ../pidgin/gtkdialogs.c:353
+#: ../pidgin/gtkdialogs.c:357
 #, c-format
 msgid "About %s"
 msgstr "關於 %s"
 
-#: ../pidgin/gtkdialogs.c:396
+#: ../pidgin/gtkdialogs.c:400
 #, fuzzy, c-format
 msgid ""
 "%s is a graphical modular messaging client based on libpurple which is "
@@ -15358,13 +15364,13 @@ msgstr ""
 "部貢獻者共同所有，貢獻者芳名詳列在名為「COPYRIGHT」的檔案內。本程式恕不提供任"
 "何保用。<BR><BR>"
 
-#: ../pidgin/gtkdialogs.c:414
+#: ../pidgin/gtkdialogs.c:418
 #, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
 msgstr ""
 "<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net 上的 #pidgin 頻道<BR><BR>"
 
-#: ../pidgin/gtkdialogs.c:419
+#: ../pidgin/gtkdialogs.c:423
 msgid "Current Developers"
 msgstr "現任開發者"
 
@@ -15372,11 +15378,11 @@ msgstr "現任開發者"
 # NOTE Luke Schierer 說:「這些人一個是瘋了，否則不會為 gaim 賣力」
 # NOTE 所以正確的譯文應是「瘋癲的模組作者」或者「模組的瘋癲作者」之類……
 # NOTE 不過這樣好像有點過份，所以翻成「狂熱的模組作者」會比較好 :P
-#: ../pidgin/gtkdialogs.c:434
+#: ../pidgin/gtkdialogs.c:438
 msgid "Crazy Patch Writers"
 msgstr "狂熱的模組作者"
 
-#: ../pidgin/gtkdialogs.c:449
+#: ../pidgin/gtkdialogs.c:453
 msgid "Retired Developers"
 msgstr "前任開發者"
 
@@ -15384,77 +15390,77 @@ msgstr "前任開發者"
 # NOTE Luke Schierer 說:「這些人一個是瘋了，否則不會為 gaim 賣力」
 # NOTE 所以正確的譯文應是「瘋癲的模組作者」或者「模組的瘋癲作者」之類……
 # NOTE 不過這樣好像有點過份，所以翻成「狂熱的模組作者」會比較好 :P
-#: ../pidgin/gtkdialogs.c:464
+#: ../pidgin/gtkdialogs.c:468
 #, fuzzy
 msgid "Retired Crazy Patch Writers"
 msgstr "狂熱的模組作者"
 
 #  NOTE 可譯「美工人員」，但那是很保守的譯法；Pidgin 的 Artist 是做設計圖示、重新整理介面等等這些很難做的工作的人，所以很明顯是「設計員」
-#: ../pidgin/gtkdialogs.c:479
+#: ../pidgin/gtkdialogs.c:483
 msgid "Artists"
 msgstr "平面設計"
 
-#: ../pidgin/gtkdialogs.c:494
+#: ../pidgin/gtkdialogs.c:498
 msgid "Current Translators"
 msgstr "現任譯者"
 
-#: ../pidgin/gtkdialogs.c:514
+#: ../pidgin/gtkdialogs.c:518
 msgid "Past Translators"
 msgstr "前任譯者"
 
 # NOTE 這是「關於 Pidgin」視窗中，最後出現，用來作除錯用的各種資訊，不能譯成「訊息」
-#: ../pidgin/gtkdialogs.c:532
+#: ../pidgin/gtkdialogs.c:536
 msgid "Debugging Information"
 msgstr "除錯專用資訊"
 
-#: ../pidgin/gtkdialogs.c:902
+#: ../pidgin/gtkdialogs.c:906
 msgid "Get User Info"
 msgstr "取得使用者資訊"
 
-#: ../pidgin/gtkdialogs.c:904
+#: ../pidgin/gtkdialogs.c:908
 msgid ""
 "Please enter the screen name or alias of the person whose info you would "
 "like to view."
 msgstr "請輸入你所想要查詢對象的帳號。"
 
-#: ../pidgin/gtkdialogs.c:994
+#: ../pidgin/gtkdialogs.c:998
 msgid "View User Log"
 msgstr "觀看使用者日誌"
 
-#: ../pidgin/gtkdialogs.c:996
+#: ../pidgin/gtkdialogs.c:1000
 msgid ""
 "Please enter the screen name or alias of the person whose log you would like "
 "to view."
 msgstr "請輸入你所想要讀取日誌的使用者的帳號或別名。"
 
 # XXX 中文譯文無法分別出「Alias Buddy」和「Alias Contact」
-#: ../pidgin/gtkdialogs.c:1016
+#: ../pidgin/gtkdialogs.c:1020
 msgid "Alias Contact"
 msgstr "為這組好友加上別名"
 
 # XXX 中文譯文無法分別出「Alias Buddy」和「Alias Contact」
-#: ../pidgin/gtkdialogs.c:1017
+#: ../pidgin/gtkdialogs.c:1021
 msgid "Enter an alias for this contact."
 msgstr "請為這組好友輸入一個別名。"
 
-#: ../pidgin/gtkdialogs.c:1039
+#: ../pidgin/gtkdialogs.c:1043
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "請為 %s 輸入一個別名"
 
-#: ../pidgin/gtkdialogs.c:1041
+#: ../pidgin/gtkdialogs.c:1045
 msgid "Alias Buddy"
 msgstr "為這個好友加上別名"
 
-#: ../pidgin/gtkdialogs.c:1062
+#: ../pidgin/gtkdialogs.c:1066
 msgid "Alias Chat"
 msgstr "給聊天室改別名"
 
-#: ../pidgin/gtkdialogs.c:1063
+#: ../pidgin/gtkdialogs.c:1067
 msgid "Enter an alias for this chat."
 msgstr "請為這個聊天室輸入一個別名。"
 
-#: ../pidgin/gtkdialogs.c:1102
+#: ../pidgin/gtkdialogs.c:1106
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddy from "
@@ -15470,32 +15476,32 @@ msgstr[1] ""
 "作嗎？"
 
 # XXX「Remove Buddy」和「Remove Contact」在中文版Pidgin無法析別；可能有改進的空間
-#: ../pidgin/gtkdialogs.c:1110
+#: ../pidgin/gtkdialogs.c:1114
 msgid "Remove Contact"
 msgstr "移除這組好友"
 
 # XXX「Remove Buddy」和「Remove Contact」在中文版Pidgin無法析別；可能有改進的空間
-#: ../pidgin/gtkdialogs.c:1113
+#: ../pidgin/gtkdialogs.c:1117
 msgid "_Remove Contact"
 msgstr "移除聯絡人(_R)"
 
 # TODO 譯文有待改進 - 20061025
-#: ../pidgin/gtkdialogs.c:1144
+#: ../pidgin/gtkdialogs.c:1148
 #, c-format
 msgid ""
 "You are about to merge the group called %s into the group called %s. Do you "
 "want to continue?"
 msgstr "你正嘗試將羣組 %s 與 %s 合併，新羣組以後者命名。你要繼續這個動作嗎？"
 
-#: ../pidgin/gtkdialogs.c:1151
+#: ../pidgin/gtkdialogs.c:1155
 msgid "Merge Groups"
 msgstr "合併羣組"
 
-#: ../pidgin/gtkdialogs.c:1154
+#: ../pidgin/gtkdialogs.c:1158
 msgid "_Merge Groups"
 msgstr "合併羣組(_M)"
 
-#: ../pidgin/gtkdialogs.c:1204
+#: ../pidgin/gtkdialogs.c:1208
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -15503,42 +15509,42 @@ msgid ""
 msgstr ""
 "你正嘗試將羣組 %s 及相關的成員從你的好友清單中移除。你要繼續這個動作嗎？"
 
-#: ../pidgin/gtkdialogs.c:1207
+#: ../pidgin/gtkdialogs.c:1211
 msgid "Remove Group"
 msgstr "移除羣組"
 
-#: ../pidgin/gtkdialogs.c:1210
+#: ../pidgin/gtkdialogs.c:1214
 msgid "_Remove Group"
 msgstr "移除羣組(_R)"
 
-#: ../pidgin/gtkdialogs.c:1243
+#: ../pidgin/gtkdialogs.c:1247
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "你正嘗試將 %s  從你的好友清單中移除。你要繼續這個動作嗎？"
 
 # XXX「Remove Buddy」和「Remove Contact」在中文版Pidgin無法析別；可能有改進的空間
-#: ../pidgin/gtkdialogs.c:1246
+#: ../pidgin/gtkdialogs.c:1250
 msgid "Remove Buddy"
 msgstr "移除這個好友"
 
 # XXX「Remove Buddy」和「Remove Contact」在中文版Pidgin無法析別；可能有改進的空間
-#: ../pidgin/gtkdialogs.c:1249
+#: ../pidgin/gtkdialogs.c:1253
 msgid "_Remove Buddy"
 msgstr "移除這個好友(_R)"
 
-#: ../pidgin/gtkdialogs.c:1270
+#: ../pidgin/gtkdialogs.c:1274
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 msgstr "你正嘗試將 %s 從你的好友清單中移除。你要繼續這個動作嗎？"
 
-#: ../pidgin/gtkdialogs.c:1273
+#: ../pidgin/gtkdialogs.c:1277
 msgid "Remove Chat"
 msgstr "移除聊天室"
 
-#: ../pidgin/gtkdialogs.c:1276
+#: ../pidgin/gtkdialogs.c:1280
 msgid "_Remove Chat"
 msgstr "移除聊天室(_R)"
 
