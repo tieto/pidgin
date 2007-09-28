@@ -860,10 +860,13 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			/* If a Doodle session doesn't exist between this user */
 			if(wb == NULL)
 			{
+				doodle_session *ds;
 				wb = purple_whiteboard_create(gc->account, im->from, DOODLE_STATE_REQUESTED);
+				ds = wb->proto_data;
+				ds->imv_key = g_strdup(imv);
 
-				yahoo_doodle_command_send_request(gc, im->from);
-				yahoo_doodle_command_send_ready(gc, im->from);
+				yahoo_doodle_command_send_request(gc, im->from, imv);
+				yahoo_doodle_command_send_ready(gc, im->from, imv);
 			}
 		}
 	}
