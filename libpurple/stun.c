@@ -1,8 +1,9 @@
 /**
  * @file stun.c STUN (RFC3489) Implementation
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * STUN implementation inspired by jstun [http://jstun.javawi.de/]
  *
