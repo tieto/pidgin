@@ -1873,6 +1873,10 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			saved_b16 = purple_buddy_icons_get_checksum_for_user(b);
 
 		if (!b16 || !saved_b16 || strcmp(b16, saved_b16)) {
+			/* Invalidate the old icon for this user */
+			purple_buddy_icons_set_for_user(account, info->sn, NULL, 0, NULL);
+
+			/* Fetch the new icon (if we're not already doing so) */
 			if (g_slist_find_custom(od->requesticon, info->sn,
 					(GCompareFunc)aim_sncmp) == NULL)
 			{
