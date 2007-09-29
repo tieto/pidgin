@@ -6758,7 +6758,9 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	event = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(gtkconv->u.im->icon_container), event);
+#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);
+#endif
 	gtk_widget_add_events(event,
                               GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
@@ -8864,7 +8866,9 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 	/* Close button. */
 	gtkconv->close = gtk_event_box_new();
+#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(gtkconv->close), FALSE);
+#endif
 	gtk_widget_set_events(gtkconv->close, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
 	close_image = gtk_label_new("×");
 	g_signal_connect(G_OBJECT(gtkconv->close), "enter-notify-event", G_CALLBACK(close_button_entered_cb), close_image);
