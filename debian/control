@@ -103,7 +103,8 @@ Description: text-based multi-protocol instant messaging client - development
 
 Package: libpurple0
 Architecture: any
-Depends: pidgin-data (>= ${source:Upstream-Version}), libpurple-bin, pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, libsasl2-modules
+Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, libsasl2-modules
+Recommends: libpurple-bin
 Replaces: pidgin (<< 2.1.1-2)
 Conflicts: pidgin (<< 2.1.1-2)
 Suggests: ${shlibs:Suggests}

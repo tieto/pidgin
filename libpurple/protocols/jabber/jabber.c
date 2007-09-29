@@ -141,6 +141,7 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		if(jabber_process_starttls(js, packet))
 			return;
 	} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE) && !js->gsc) {
+		js->gc->wants_to_die = TRUE;
 		purple_connection_error(js->gc, _("You require encryption, but it is not available on this server."));
 		return;
 	}
@@ -813,7 +814,7 @@ jabber_register_cancel_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fie
 		if(account->registration_cb)
 			(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
 		jabber_connection_schedule_close(cbdata->js);
-}
+	}
 	g_free(cbdata->who);
 	g_free(cbdata);
 }
@@ -882,12 +883,12 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 				if((href = xmlnode_get_data(url))) {
 					purple_notify_uri(NULL, href);
 					g_free(href);
-				if(js->registration) {
-					js->gc->wants_to_die = TRUE;
-					if(account->registration_cb) /* succeeded, but we have no login info */
-						(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
-					jabber_connection_schedule_close(js);
-				}
+					if(js->registration) {
+						js->gc->wants_to_die = TRUE;
+						if(account->registration_cb) /* succeeded, but we have no login info */
+							(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
+						jabber_connection_schedule_close(js);
+					}
 					return;
 				}
 			}
@@ -987,14 +988,14 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		purple_request_field_group_add_field(group, field);
 	}
 
-		if((y = xmlnode_get_child(query, "instructions")))
-			instructions = xmlnode_get_data(y);
+	if((y = xmlnode_get_child(query, "instructions")))
+		instructions = xmlnode_get_data(y);
 	else if(registered)
 		instructions = g_strdup(_("Please fill out the information below "
 					"to change your account registration."));
-		else
-			instructions = g_strdup(_("Please fill out the information below "
-						"to register your new account."));
+	else
+		instructions = g_strdup(_("Please fill out the information below "
+					"to register your new account."));
 
 	cbdata = g_new0(JabberRegisterCBData, 1);
 	cbdata->js = js;
@@ -1019,8 +1020,8 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		g_free(title);
 	}
 
-		g_free(instructions);
-	}
+	g_free(instructions);
+}
 
 void jabber_register_start(JabberStream *js)
 {
@@ -1531,15 +1532,15 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_artist", _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_title", _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_album", _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_genre", _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_comment", _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_track", _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_time", _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
-			"tune_year", _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
-			"tune_url", _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
+			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
+			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
 			NULL);
@@ -1554,15 +1555,15 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_artist", _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_title", _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_album", _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_genre", _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_comment", _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_track", _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_time", _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
-			"tune_year", _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
-			"tune_url", _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
+			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
+			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
 			NULL);
@@ -1577,15 +1578,15 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_artist", _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_title", _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_album", _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_genre", _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_comment", _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_track", _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_time", _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
-			"tune_year", _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
-			"tune_url", _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
+			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
+			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
 			NULL);
@@ -1600,15 +1601,15 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_artist", _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_title", _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_album", _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_genre", _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_comment", _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_track", _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_time", _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
-			"tune_year", _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
-			"tune_url", _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
+			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
+			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
 			NULL);
@@ -1623,15 +1624,15 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_artist", _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_title", _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_album", _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_genre", _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_comment", _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_track", _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
-			"tune_time", _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
-			"tune_year", _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
-			"tune_url", _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
+			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
+			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
 			NULL);

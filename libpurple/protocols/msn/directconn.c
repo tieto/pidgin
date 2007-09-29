@@ -405,6 +405,15 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 	}
 }
 
+static void
+directconn_connect_cb(gpointer data, gint source, const gchar *error_message)
+{
+	if (error_message)
+		purple_debug_error("msn", "Error making direct connection: %s\n", error_message);
+
+	connect_cb(data, source, PURPLE_INPUT_READ);
+}
+
 gboolean
 msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 {
@@ -424,14 +433,9 @@ msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 #endif
 
 	directconn->connect_data = purple_proxy_connect(NULL, session->account,
-			host, port, connect_cb, directconn);
+			host, port, directconn_connect_cb, directconn);
 
-	if (directconn->connect_data != NULL)
-	{
-		return TRUE;
-	}
-	else
-		return FALSE;
+	return (directconn->connect_data != NULL);
 }
 
 #if 0

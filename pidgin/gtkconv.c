@@ -1,8 +1,9 @@
 /**
  * @file gtkconv.c GTK+ Conversation API
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -1858,6 +1859,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 				gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook),
 						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), curconv),
 						curconv - 1);
+				return TRUE;
 				break;
 
 			case GDK_period:
@@ -1868,6 +1870,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 #else
 						(curconv + 1) % g_list_length(GTK_NOTEBOOK(win->notebook)->children));
 #endif
+				return TRUE;
 				break;
 
 		} /* End of switch */
@@ -4423,7 +4426,7 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	g_signal_connect(G_OBJECT(list), "motion-notify-event",
 					 G_CALLBACK(pidgin_userlist_motion_cb), gtkconv);
 	g_signal_connect(G_OBJECT(list), "leave-notify-event",
-					 G_CALLBACK(pidgin_userlist_motion_cb), gtkconv);
+					 G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 	g_signal_connect(G_OBJECT(list), "popup-menu",
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), gtkconv);
 	g_signal_connect(G_OBJECT(lbox), "size-allocate", G_CALLBACK(lbox_size_allocate_cb), gtkconv);
@@ -4551,10 +4554,8 @@ pidgin_userlist_tooltip_timeout(PidginConversation *gtkconv)
 
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
 
-	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(gtkchat->list),
-								  tooltip.userlistx, tooltip.userlisty, &path, &column, &x, &y);
-
-	if (path == NULL)
+	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(gtkchat->list),
+								  tooltip.userlistx, tooltip.userlisty, &path, &column, &x, &y))
 		return FALSE;
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
@@ -6349,8 +6350,13 @@ gray_stuff_out(PidginConversation *gtkconv)
 		if ((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) &&
 				(gtkconv->u.im->anim))
 		{
+			PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
 			window_icon =
 				gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+		
+			if (buddy &&  !PURPLE_BUDDY_IS_ONLINE(buddy))
+				gdk_pixbuf_saturate_and_pixelate(window_icon, window_icon, 0.0, FALSE);
+			
 			g_object_ref(window_icon);
 			l = g_list_append(l, window_icon);
 		} else {
@@ -6752,7 +6758,9 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	event = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(gtkconv->u.im->icon_container), event);
+#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);
+#endif
 	gtk_widget_add_events(event,
                               GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
@@ -8858,7 +8866,9 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 	/* Close button. */
 	gtkconv->close = gtk_event_box_new();
+#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(gtkconv->close), FALSE);
+#endif
 	gtk_widget_set_events(gtkconv->close, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
 	close_image = gtk_label_new("×");
 	g_signal_connect(G_OBJECT(gtkconv->close), "enter-notify-event", G_CALLBACK(close_button_entered_cb), close_image);

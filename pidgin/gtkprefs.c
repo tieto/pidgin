@@ -1,8 +1,9 @@
 /**
  * @file gtkprefs.c GTK+ Preferences
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -1093,7 +1094,7 @@ proxy_changed_cb(const char *name, PurplePrefType type,
 	const char *proxy = value;
 
 	if (strcmp(proxy, "none") && strcmp(proxy, "envvar"))
-	        gtk_widget_show_all(frame);
+		gtk_widget_show_all(frame);
 	else
 		gtk_widget_hide(frame);
 }

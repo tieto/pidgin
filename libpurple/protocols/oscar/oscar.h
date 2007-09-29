@@ -3,6 +3,8 @@
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
+ * Some code copyright (C) 2007, ComBOTS Product GmbH (htfv) <foss@combots.com>
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -270,6 +272,15 @@ struct _ClientInfo
 	"us", "en", \
 }
 
+#define CLIENTINFO_ICQBASIC_14_34_3000 { \
+	"ICQBasic", \
+	0x010a, \
+	0x0014, 0x0034, \
+	0x0000, 0x0bb8, \
+	0x0000043d, \
+	"us", "en", \
+}
+
 #define CLIENTINFO_NETSCAPE_7_0_1 { \
 	"Netscape 2000 an approved user of AOL Instant Messenger (SM)", \
 	0x1d0d, \
@@ -280,15 +291,25 @@ struct _ClientInfo
 }
 
 /*
- * TODO: Use PURPLE_MAJOR_VERSION, PURPLE_MINOR_VERSION, and
- *       PURPLE_MICRO_VERSION?  Or did that break things?
+ * We need to use the major-minor-micro versions from the official
+ * AIM and ICQ programs here or AOL won't let us use certain features.
  */
-#define CLIENTINFO_PURPLE { \
+
+#define CLIENTINFO_PURPLE_AIM { \
 	"Purple/" VERSION, \
 	0x0109, \
 	0x0005, 0x0001, \
 	0x0000, 0x0bdc, \
 	0x000000d2, \
+	"us", "en", \
+}
+
+#define CLIENTINFO_PURPLE_ICQ { \
+	"Purple/" VERSION, \
+	0x010a, \
+	0x0014, 0x0034, \
+	0x0000, 0x0bb8, \
+	0x0000043d, \
 	"us", "en", \
 }
 

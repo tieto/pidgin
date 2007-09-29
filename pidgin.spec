@@ -9,9 +9,9 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.2.0"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.2.1"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.2.0
+%define pidginver 2.2.1
 %endif
 
 Summary:    A GTK+ based multiprotocol instant messaging client
@@ -21,7 +21,7 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.2.0.tar.bz2
+Source:     %{name}-2.2.1.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
@@ -44,9 +44,15 @@ BuildRequires: gtk2-devel
 BuildRequires: gnutls-devel
 %{?_with_dbus:BuildRequires: dbus-1-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer010-devel >= 0.10}
+Requires(pre): gconf2
+Requires(post): gconf2
+Requires(preun): gconf2
 %else
 %{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
 %{!?_without_gstreamer:BuildRequires: gstreamer-devel >= 0.10}
+Requires(pre): GConf2
+Requires(post): GConf2
+Requires(preun): GConf2
 %endif
 
 # Mandrake 10.1 and lower || Mandrake 10.2 (and higher?)
@@ -72,9 +78,7 @@ BuildRequires: mozilla-nss-devel
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
 
-Requires(pre): GConf2
-Requires(post): GConf2
-Requires(preun): GConf2
+Requires: libpurple = %{version}
 
 Obsoletes: gaim
 Provides: gaim
@@ -207,7 +211,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.2.0
+%setup -q -n %{name}-2.2.1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -363,8 +367,6 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %{_bindir}/pidgin
 %{_datadir}/pixmaps/pidgin
 %{_datadir}/icons/hicolor/*/apps/pidgin.*
-%dir %{_datadir}/sounds/pidgin
-%{_datadir}/sounds/pidgin/*
 %{_datadir}/applications/*
 %{_sysconfdir}/gconf/schemas/purple.schemas
 
@@ -374,6 +376,8 @@ touch --no-create %{_datadir}/icons/hicolor || :
 
 %{_libdir}/libpurple.so.*
 %dir %{_libdir}/purple-2
+%{_datadir}/purple
+%{_datadir}/sounds/purple
 %attr(755, root, root) %{perl_vendorarch}/Purple.pm
 %attr(755, root, root) %{perl_vendorarch}/auto/Purple
 
@@ -427,7 +431,7 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 %if 0%{?_with_mono:1}
-%files libpurple-mono
+%files -n libpurple-mono
 %defattr(-, root, root)
 
 %{_libdir}/purple-2/mono.so
@@ -457,6 +461,13 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 %changelog
+* Mon Sep 17 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Add version dependency on libpurple for pidgin
+- Support for OpenSuse lowercase package name for GConf2
+
+* Fri Sep 14 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Fix spec file for moved sounds & new CA certificates
+
 * Thu Jul 12 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Don't hardcode silc header locations, rely on pkg-config for those,
   because I think I broke non-pkg-config detection of older silc

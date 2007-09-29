@@ -43,7 +43,7 @@ static void print_hash_item(gpointer key, gpointer value, gpointer user_data);
 
 static int msim_send_really_raw(PurpleConnection *gc, const char *buf, int total_bytes);
 static gboolean msim_login_challenge(MsimSession *session, MsimMessage *msg);
-static const gchar *msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE], const gchar *email, const gchar *password, guint *response_len);
+static gchar *msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE], const gchar *email, const gchar *password, guint *response_len);
 
 static gboolean msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg);
 static gboolean msim_incoming_bm(MsimSession *session, MsimMessage *msg);
@@ -331,10 +331,11 @@ static gboolean
 msim_login_challenge(MsimSession *session, MsimMessage *msg) 
 {
 	PurpleAccount *account;
-	const gchar *response;
+	gchar *response;
 	guint response_len;
 	gchar *nc;
 	gsize nc_len;
+	gboolean ret;
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
@@ -362,11 +363,11 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 
 	g_free(nc);
 
-	return msim_send(session, 
+	ret = msim_send(session,
 			"login2", MSIM_TYPE_INTEGER, MSIM_AUTH_ALGORITHM,
 			/* This is actually user's email address. */
 			"username", MSIM_TYPE_STRING, g_strdup(account->username),
-			/* GString and gchar * response will be freed in msim_msg_free() in msim_send(). */
+			/* GString will be freed in msim_msg_free() in msim_send(). */
 			"response", MSIM_TYPE_BINARY, g_string_new_len(response, response_len),
 			"clientver", MSIM_TYPE_INTEGER, MSIM_CLIENT_VERSION,
 			"langid", MSIM_TYPE_INTEGER, MSIM_LANGUAGE_ID_ENGLISH,
@@ -375,6 +376,10 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 			"status", MSIM_TYPE_INTEGER, 100,
 			"id", MSIM_TYPE_INTEGER, 1,
 			NULL);
+
+	g_free(response);
+
+	return ret;
 }
 
 /**
@@ -388,7 +393,7 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
  * @return Binary login challenge response, ready to send to the server. 
  * Must be g_free()'d when finished. NULL if error.
  */
-static const gchar *
+static gchar *
 msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE], 
 		const gchar *email, const gchar *password, guint *response_len)
 {
@@ -485,8 +490,13 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	purple_cipher_context_encrypt(rc4, (const guchar *)data, 
 			data_len, data_out, &data_out_len);
 	purple_cipher_context_destroy(rc4);
+	g_free(data);
 
-	g_assert(data_out_len == data_len);
+	if (data_out_len != data_len) {
+		purple_debug_info("msim", "msim_compute_login_response: "
+				"data length mismatch: %d != %d\n",
+				data_out_len, data_len);
+	}
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
 	purple_debug_info("msim", "response=<%s>\n", data_out);
@@ -494,7 +504,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
 	*response_len = data_out_len;
 
-	return (const gchar *)data_out;
+	return (gchar *)data_out;
 }
 
 /**
@@ -1295,7 +1305,6 @@ static void
 msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 {
 	MsimMessage *body;
-	GString *notification;
 	guint old_inbox_status;
 	guint i, n;
 	const gchar *froms[5], *tos[5], *urls[5], *subjects[5];
@@ -1328,8 +1337,6 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 
 	body = msim_msg_get_dictionary(reply, "body");
 	g_return_if_fail(body != NULL);
-
-	notification = g_string_new("");
 
 	old_inbox_status = session->inbox_status;
 
@@ -3004,7 +3011,7 @@ msim_test_msg(void)
 	msg = msim_msg_new(NULL);      /* Create a new, empty message. */
 
 	/* Append some new elements. */
-	msg = msim_msg_append(msg, "bx", MSIM_TYPE_BINARY, g_string_new_len(g_strdup("XXX"), 3));
+	msg = msim_msg_append(msg, "bx", MSIM_TYPE_BINARY, g_string_new_len("XXX", 3));
 	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v1"));
 	msg = msim_msg_append(msg, "k1", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(42));
 	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v43"));

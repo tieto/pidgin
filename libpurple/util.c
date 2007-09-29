@@ -1,8 +1,9 @@
 /*
  * @file util.h Utility Functions
  * @ingroup core
- *
- * Purple is the legal property of its developers, whose names are too numerous
+ */
+
+/* Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -1542,7 +1543,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					while(*p && *p != '>') {
 						if(!g_ascii_strncasecmp(p, "href=", strlen("href="))) {
 							const char *q = p + strlen("href=");
-							g_string_free(url, TRUE);
+							if (url)
+								g_string_free(url, TRUE);
 							url = g_string_new("");
 							cdata = g_string_new("");
 							if(*q == '\'' || *q == '\"')
@@ -3869,6 +3871,7 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 	gfud->full = full;
 	gfud->request = g_strdup(request);
 	gfud->include_headers = include_headers;
+	gfud->fd = -1;
 
 	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);

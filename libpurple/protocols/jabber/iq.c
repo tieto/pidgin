@@ -255,7 +255,7 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 	if(type && !strcmp(type, "get")) {
 		GHashTable *ui_info;
 		const char *ui_name = NULL, *ui_version = NULL;
-
+#if 0
 		if(!purple_prefs_get_bool("/plugins/prpl/jabber/hide_os")) {
 			struct utsname osinfo;
 
@@ -263,7 +263,7 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 			os = g_strdup_printf("%s %s %s", osinfo.sysname, osinfo.release,
 					osinfo.machine);
 		}
-
+#endif
 		from = xmlnode_get_attrib(packet, "from");
 		id = xmlnode_get_attrib(packet, "id");
 

@@ -731,7 +731,7 @@ msn_login(PurpleAccount *account)
 	http_method = purple_account_get_bool(account, "http_method", FALSE);
 
 	if (http_method)
-		host = purple_account_get_string(account, "http_method_server", MSN_SERVER);
+		host = purple_account_get_string(account, "http_method_server", MSN_HTTPCONN_SERVER);
 	else
 		host = purple_account_get_string(account, "server", MSN_SERVER);
 	port = purple_account_get_int(account, "port", MSN_PORT);
@@ -2196,8 +2196,7 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	/* TODO: Mark translatable as soon as 2.2.0 is released and we're not string frozen */
-	option = purple_account_option_string_new("HTTP Method Server",
+	option = purple_account_option_string_new(_("HTTP Method Server"),
 										  "http_method_server", MSN_HTTPCONN_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);

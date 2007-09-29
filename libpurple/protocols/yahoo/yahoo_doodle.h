@@ -31,7 +31,7 @@
 #include "whiteboard.h"
 #include "cmds.h"
 
-#define DOODLE_IMV_KEY "doodle;103"
+#define DOODLE_IMV_KEY "doodle;106"
 
 /******************************************************************************
  * Defines
@@ -94,6 +94,7 @@ typedef struct _doodle_session
 {
 	int brush_size;  /* Size of drawing brush */
 	int brush_color; /* Color of drawing brush */
+	gchar *imv_key;
 } doodle_session;
 
 /******************************************************************************
@@ -104,17 +105,17 @@ PurpleCmdRet yahoo_doodle_purple_cmd_start(PurpleConversation *conv, const char 
 									   char **error, void *data);
 
 void yahoo_doodle_process(PurpleConnection *gc, const char *me, const char *from,
-						  const char *command, const char *message);
+						  const char *command, const char *message, const char *imv_key);
 void yahoo_doodle_initiate(PurpleConnection *gc, const char *to);
 
 void yahoo_doodle_command_got_shutdown(PurpleConnection *gc, const char *from);
 
-void yahoo_doodle_command_send_request(PurpleConnection *gc, const char *to);
-void yahoo_doodle_command_send_ready(PurpleConnection *gc, const char *to);
-void yahoo_doodle_command_send_draw(PurpleConnection *gc, const char *to, const char *message);
-void yahoo_doodle_command_send_clear(PurpleConnection *gc, const char *to);
-void yahoo_doodle_command_send_extra(PurpleConnection *gc, const char *to, const char *message);
-void yahoo_doodle_command_send_confirm(PurpleConnection *gc, const char *to);
+void yahoo_doodle_command_send_request(PurpleConnection *gc, const char *to, const char *imv_key);
+void yahoo_doodle_command_send_ready(PurpleConnection *gc, const char *to, const char *imv_key);
+void yahoo_doodle_command_send_draw(PurpleConnection *gc, const char *to, const char *message, const char *imv_key);
+void yahoo_doodle_command_send_clear(PurpleConnection *gc, const char *to, const char *imv_key);
+void yahoo_doodle_command_send_extra(PurpleConnection *gc, const char *to, const char *message, const char *imv_key);
+void yahoo_doodle_command_send_confirm(PurpleConnection *gc, const char *to, const char *imv_key);
 void yahoo_doodle_command_send_shutdown(PurpleConnection *gc, const char *to);
 
 void yahoo_doodle_start(PurpleWhiteboard *wb);

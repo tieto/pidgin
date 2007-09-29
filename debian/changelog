@@ -1,3 +1,12 @@
+pidgin (2.2.1-1) unstable; urgency=high
+
+  * New upstream release
+    - Fixes remote DoS (crash) in the MSN protocol (CVE-2007-4996)
+    - Fixes wrong file transfer size shown on MSN (Closes: #443447)
+  * Remove circular dependencies on libpurple0/-bin (Closes: #444148)
+
+ -- Ari Pollak <ari@debian.org>  Sat, 29 Sep 2007 19:23:43 -0400
+
 pidgin (2.2.0-1) unstable; urgency=low
 
   * New upstream version

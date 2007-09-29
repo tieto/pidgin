@@ -29,6 +29,7 @@ EXTRA_DIST = \
 		win32/nsis/langmacros.nsh \
 		win32/nsis/translations/afrikaans.nsh \
 		win32/nsis/translations/albanian.nsh \
+		win32/nsis/translations/arabic.nsh \
 		win32/nsis/translations/basque.nsh \
 		win32/nsis/translations/bulgarian.nsh \
 		win32/nsis/translations/catalan.nsh \

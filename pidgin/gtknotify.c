@@ -1,8 +1,9 @@
 /**
  * @file gtknotify.c GTK+ Notification API
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -412,31 +413,49 @@ pidgin_get_mail_dialog()
  * count > 0 mean non-detailed.
  */
 static void *
-pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *notification, const char *url, int count)
+pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *notification, const char *url, int count, gboolean clear)
 {
 	PidginNotifyMailData *data = NULL;
 	GtkTreeIter iter;
 	GdkPixbuf *icon;
 	gboolean new_n = TRUE;
 
-	icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
-
-	if (count > 0) {
+	if (count > 0 || clear) {
 		/* Allow only one non-detailed email notification for each account */
 		if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(treemodel), &iter)) {
+			gboolean advanced;
 			do {
+				advanced = FALSE;
 				gtk_tree_model_get(GTK_TREE_MODEL(treemodel), &iter,
 						PIDGIN_MAIL_DATA, &data, -1);
-				if (data->account == account && data->count > 0) {
-					new_n = FALSE;
-					g_free(data->url);
-					data->url = NULL;
-					mail_dialog->total_count -= data->count;
-					break;
+				if (data->account == account) {
+					if (clear) {
+#if GTK_CHECK_VERSION(2,2,0)
+						advanced = gtk_tree_store_remove(treemodel, &iter);
+#else
+						gtk_tree_store_remove(treemodel, &iter);
+						advanced = (iter.stamp == 0) ? FALSE : TRUE;
+#endif
+						purple_notify_close(PURPLE_NOTIFY_EMAILS, data);
+						/* We're completely done if we've processed all entries */
+						if (!advanced)
+							return NULL;
+					} else if (data->count > 0) {
+						new_n = FALSE;
+						g_free(data->url);
+						data->url = NULL;
+						mail_dialog->total_count -= data->count;
+						break;
+					}
 				}
-			} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(treemodel), &iter));
+			} while (advanced || gtk_tree_model_iter_next(GTK_TREE_MODEL(treemodel), &iter));
 		}
 	}
+
+	if (clear)
+		return NULL;
+
+	icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
 	if (new_n) {
 		data = g_new0(PidginNotifyMailData, 1);
@@ -471,9 +490,13 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 	PurpleAccount *account;
 	PidginNotifyMailData *data = NULL;
 
+	/* Don't bother updating if there aren't new emails and we don't have any displayed currently */
+	if (count == 0 && mail_dialog == NULL)
+		return NULL;
+
 	account = purple_connection_get_account(gc);
 	dialog = pidgin_get_mail_dialog();  /* This creates mail_dialog if necessary */
- 
+
 	mail_dialog->total_count += count;
 	if (detailed) {
 		while (count--) {
@@ -511,19 +534,33 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 			g_free(from_text);
 			g_free(subject_text);
 
-			data = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, 0);
+			data = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, 0, FALSE);
 			g_free(notification);
 
 			if (urls != NULL)
 				urls++;
 		}
 	} else {
-		notification = g_strdup_printf(ngettext("%s has %d new message.",
-						   "%s has %d new messages.",
-						   (int)count),
-						   *tos, (int)count);
-		data = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, count);
-		g_free(notification);
+		if (count > 0) {
+			notification = g_strdup_printf(ngettext("%s has %d new message.",
+							   "%s has %d new messages.",
+							   (int)count),
+							   *tos, (int)count);
+			data = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, count, FALSE);
+			g_free(notification);
+		} else {
+			GtkTreeIter iter;
+
+			/* Clear out all mails for the account */
+			pidgin_notify_add_mail(mail_dialog->treemodel, account, NULL, NULL, 0, TRUE);
+
+			if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mail_dialog->treemodel), &iter)) {
+				/* There is no API to clear the headline specifically */
+				/* This will trigger reset_mail_dialog() */
+				pidgin_blist_set_headline(NULL, NULL, NULL, NULL, NULL);
+				return NULL;
+			}
+		}
 	}
 
 	if (!GTK_WIDGET_VISIBLE(dialog)) {
@@ -535,7 +572,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 		mail_dialog->in_use = TRUE;     /* So that _set_headline doesn't accidentally
 										   remove the notifications when replacing an
 										   old notification. */
-		pidgin_blist_set_headline(label_text, 
+		pidgin_blist_set_headline(label_text,
 					    pixbuf, G_CALLBACK(gtk_widget_show_all), dialog,
 					    (GDestroyNotify)reset_mail_dialog);
 		mail_dialog->in_use = FALSE;

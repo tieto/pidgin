@@ -663,6 +663,8 @@ msn_httpconn_new(MsnServConn *servconn)
 	httpconn->tx_buf = purple_circ_buffer_new(MSN_BUF_LEN);
 	httpconn->tx_handler = 0;
 
+	httpconn->fd = -1;
+
 	return httpconn;
 }
 
