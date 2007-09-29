@@ -674,7 +674,9 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 					  "Certificate for %s claims to be "
 					  "issued by %s, but the certificate "
 					  "for %s does not match.\n",
-					  crt_id, crt_issuer_id, issuer_id);
+					  crt_id ? crt_id : "(null)",
+					  crt_issuer_id ? crt_issuer_id : "(null)",
+					  issuer_id ? issuer_id : "(null)");
 			g_free(crt_id);
 			g_free(issuer_id);
 			g_free(crt_issuer_id);
