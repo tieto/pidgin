@@ -769,7 +769,10 @@ x509_cert_dn (PurpleCertificate *crt)
 	gnutls_x509_crt_get_dn(cert_dat, dn, &dn_size);
 
 	/* Now allocate and get the Distinguished Name */
-	dn = g_new0(gchar, dn_size);
+	/* Old versions of GnuTLS have an off-by-one error in reporting
+	   the size of the needed buffer in some functions, so allocate
+	   an extra byte */
+	dn = g_new0(gchar, ++dn_size);
 	if (0 != gnutls_x509_crt_get_dn(cert_dat, dn, &dn_size)) {
 		purple_debug_error("gnutls/x509",
 				   "Failed to get Distinguished Name\n");
@@ -799,7 +802,10 @@ x509_issuer_dn (PurpleCertificate *crt)
 	gnutls_x509_crt_get_issuer_dn(cert_dat, dn, &dn_size);
 
 	/* Now allocate and get the Distinguished Name */
-	dn = g_new0(gchar, dn_size);
+	/* Old versions of GnuTLS have an off-by-one error in reporting
+	   the size of the needed buffer in some functions, so allocate
+	   an extra byte */
+	dn = g_new0(gchar, ++dn_size);
 	if (0 != gnutls_x509_crt_get_issuer_dn(cert_dat, dn, &dn_size)) {
 		purple_debug_error("gnutls/x509",
 				   "Failed to get issuer's Distinguished "
@@ -835,7 +841,10 @@ x509_common_name (PurpleCertificate *crt)
 				      cn, &cn_size);
 
 	/* Now allocate and get the Common Name */
-	cn = g_new0(gchar, cn_size);
+	/* Old versions of GnuTLS have an off-by-one error in reporting
+	   the size of the needed buffer in some functions, so allocate
+	   an extra byte */
+	cn = g_new0(gchar, ++cn_size);
 	ret = gnutls_x509_crt_get_dn_by_oid(cert_dat,
 					    GNUTLS_OID_X520_COMMON_NAME,
 					    0, /* First CN found, please */
