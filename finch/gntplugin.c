@@ -127,8 +127,8 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 	/* XXX: Use formatting and stuff */
 	gnt_text_view_clear(GNT_TEXT_VIEW(plugins.aboot));
 	text = g_strdup_printf(_("Name: %s\nVersion: %s\nDescription: %s\nAuthor: %s\nWebsite: %s\nFilename: %s\n"),
-			SAFE(plugin->info->name), SAFE(plugin->info->version), SAFE(plugin->info->description),
-			SAFE(plugin->info->author), SAFE(plugin->info->homepage), SAFE(plugin->path));
+			SAFE(_(plugin->info->name)), SAFE(_(plugin->info->version)), SAFE(_(plugin->info->description)),
+			SAFE(_(plugin->info->author)), SAFE(_(plugin->info->homepage)), SAFE(plugin->path));
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(plugins.aboot),
 			text, GNT_TEXT_FLAG_NORMAL);
 	gnt_text_view_scroll(GNT_TEXT_VIEW(plugins.aboot), 0);
@@ -272,6 +272,7 @@ void finch_plugins_show_all()
 	gnt_box_add_widget(GNT_BOX(box), gnt_vline_new());
 
 	plugins.aboot = aboot = gnt_text_view_new();
+	gnt_text_view_set_flag(GNT_TEXT_VIEW(aboot), GNT_TEXT_VIEW_TOP_ALIGN);
 	gnt_widget_set_size(aboot, 40, 20);
 	gnt_box_add_widget(GNT_BOX(box), aboot);
 
