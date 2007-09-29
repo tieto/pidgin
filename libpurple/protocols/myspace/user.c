@@ -154,7 +154,13 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 	}
 }
 
-/** Store a field of information about a buddy. */
+/** Store a field of information about a buddy. 
+ *
+ * @param key_str Key to store.
+ * @param value_str Value string, either user takes ownership of this string
+ *                  or it is freed if MsimUser doesn't store the string.
+ * @param user User to store data in. Existing data will be replaced.
+ * */
 void 
 msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user)
 {
@@ -168,25 +174,33 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		/* Need to store in MsimUser, too? What if not on blist? */
 	} else if (g_str_equal(key_str, "Age")) {
 		user->age = atol(value_str);
+		g_free(value_str);
 	} else if (g_str_equal(key_str, "Gender")) {
-		user->gender = g_strdup(value_str);
+		g_free(user->gender);
+		user->gender = value_str;
 	} else if (g_str_equal(key_str, "Location")) {
-		user->location = g_strdup(value_str);
+		g_free(user->location);
+		user->location = value_str;
 	} else if (g_str_equal(key_str, "TotalFriends")) {
 		user->total_friends = atol(value_str);
 	} else if (g_str_equal(key_str, "DisplayName")) {
-		user->display_name = g_strdup(value_str);
+		g_free(user->display_name);
+		user->display_name = value_str;
 	} else if (g_str_equal(key_str, "BandName")) {
-		user->band_name = g_strdup(value_str);
+		g_free(user->band_name);
+		user->band_name = value_str;
 	} else if (g_str_equal(key_str, "SongName")) {
-		user->song_name = g_strdup(value_str);
+		g_free(user->song_name);
+		user->song_name = value_str;
 	} else if (g_str_equal(key_str, "UserName") || g_str_equal(key_str, "IMName") || g_str_equal(key_str, "NickName")) {
 		/* Ignore because PurpleBuddy knows this already */
-		;
+		g_free(value_str);
 	} else if (g_str_equal(key_str, "ImageURL") || g_str_equal(key_str, "AvatarURL")) {
 		const gchar *previous_url;
 
-		user->image_url = g_strdup(value_str);
+		g_free(user->image_url);
+
+		user->image_url = value_str;
 
 		/* Instead of showing 'no photo' picture, show nothing. */
 		if (g_str_equal(user->image_url, "http://x.myspace.com/images/no_pic.gif"))
@@ -207,14 +221,17 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 	} else if (g_str_equal(key_str, "LastImageUpdated")) {
 		/* TODO: use somewhere */
 		user->last_image_updated = atol(value_str);
+		g_free(value_str);
 	} else if (g_str_equal(key_str, "Headline")) {
-		user->headline = g_strdup(value_str);
+		g_free(user->headline);
+		user->headline = value_str;
 	} else {
 		/* TODO: other fields in MsimUser */
 		gchar *msg;
 
 		msg = g_strdup_printf("msim_store_user_info_each: unknown field %s=%s",
 				key_str, value_str);
+		g_free(value_str);
 
 		msim_unrecognized(NULL, NULL, msg);
 
@@ -284,7 +301,6 @@ msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
 
 		value_str = msim_msg_get_string_from_element(elem);
 		msim_store_user_info_each(key_str, value_str, user);
-		g_free(value_str);
 	}
 
 	if (msim_msg_get_integer(msg, "dsn") == MG_OWN_IM_INFO_DSN &&
@@ -301,6 +317,7 @@ msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *user)
 	}
 
 	msim_msg_free(body);
+	g_free(username);
 
 	return TRUE;
 }

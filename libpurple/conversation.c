@@ -2348,7 +2348,7 @@ purple_conversations_init(void)
 
 	purple_signal_register(handle, "chat-invited",
 						 purple_marshal_INT__POINTER_POINTER_POINTER_POINTER_POINTER,
-						 NULL, 5,
+						 purple_value_new(PURPLE_TYPE_INT), 5,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_ACCOUNT),
 						 purple_value_new(PURPLE_TYPE_STRING),
