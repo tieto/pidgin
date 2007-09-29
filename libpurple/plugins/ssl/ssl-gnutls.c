@@ -673,10 +673,8 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 			purple_debug_info("gnutls/x509",
 					  "Certificate for %s claims to be "
 					  "issued by %s, but the certificate "
-					  "for %s does not match. A strcmp "
-					  "says %d\n",
-					  crt_id, crt_issuer_id, issuer_id,
-					  strcmp(crt_issuer_id, issuer_id));
+					  "for %s does not match.\n",
+					  crt_id, crt_issuer_id, issuer_id);
 			g_free(crt_id);
 			g_free(issuer_id);
 			g_free(crt_issuer_id);
