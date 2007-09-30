@@ -1460,7 +1460,7 @@ AC_ARG_ENABLE(nss,
 	[enable_nss="$enableval"],
 	[enable_nss="yes"])
 
-msg_ssl="None (MSN and Google Talk will not work without SSL!)"
+msg_ssl="None. MSN, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
 
 dnl #
 dnl # Check for GnuTLS if it's specified.
