@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-Version 2.2.2:
+version 2.2.2:
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
 		NOTE: Due to the backporting that happened for the 2.2.1
 		      release, it is possible bugs this release fixes bugs
@@ -32,7 +32,7 @@ Version 2.2.2:
 	  restoration.  (David Mohr)
 	* ICQ Birthday notifications are shown as buddy list emblems.
 
-Version 2.2.1 (09/29/2007):
+version 2.2.1 (09/29/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
 		NOTE: Due to the backporting that happened for the actual
 		      release, it is possible bugs marked as fixed in 2.2.1
@@ -57,7 +57,7 @@ Version 2.2.1 (09/29/2007):
 	* Pressing 'Insert' in the buddylist will bring up the 'Add Buddy'
 	  dialog.
 
-Version 2.2.0 (09/13/2007):
+version 2.2.0 (09/13/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
 
 	Libpurple:
