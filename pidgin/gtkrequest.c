@@ -1,8 +1,9 @@
 /**
  * @file gtkrequest.c GTK+ Request API
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -998,7 +999,6 @@ create_list_field(PurpleRequestField *field)
 
 	/* Create the tree view */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
 
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));

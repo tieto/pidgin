@@ -428,43 +428,81 @@ get_WorkingAreaRectForWindow(HWND hwnd, RECT *workingAreaRc) {
 }
 
 void winpidgin_ensure_onscreen(GtkWidget *win) {
-	RECT windowRect, workingAreaRect, intersectionRect;
+	RECT winR, wAR, intR;
 	HWND hwnd = GDK_WINDOW_HWND(win->window);
 
 	g_return_if_fail(hwnd != NULL);
-	GetWindowRect(hwnd, &windowRect);
+	GetWindowRect(hwnd, &winR);
 
 	purple_debug_info("win32placement",
 			"Window RECT: L:%ld R:%ld T:%ld B:%ld\n",
-			windowRect.left, windowRect.right,
-			windowRect.top, windowRect.bottom);
+			winR.left, winR.right,
+			winR.top, winR.bottom);
 
-	if(!get_WorkingAreaRectForWindow(hwnd, &workingAreaRect)) {
+	if(!get_WorkingAreaRectForWindow(hwnd, &wAR)) {
 		purple_debug_info("win32placement",
 				"Couldn't get multimonitor working area\n");
-		if(!SystemParametersInfo(SPI_GETWORKAREA, 0, &workingAreaRect, FALSE)) {
+		if(!SystemParametersInfo(SPI_GETWORKAREA, 0, &wAR, FALSE)) {
 			/* I don't think this will ever happen */
-			workingAreaRect.left = 0;
-			workingAreaRect.top = 0;
-			workingAreaRect.bottom = GetSystemMetrics(SM_CYSCREEN);
-			workingAreaRect.right = GetSystemMetrics(SM_CXSCREEN);
+			wAR.left = 0;
+			wAR.top = 0;
+			wAR.bottom = GetSystemMetrics(SM_CYSCREEN);
+			wAR.right = GetSystemMetrics(SM_CXSCREEN);
 		}
 	}
 
 	purple_debug_info("win32placement",
 			"Working Area RECT: L:%ld R:%ld T:%ld B:%ld\n",
-			workingAreaRect.left, workingAreaRect.right,
-			workingAreaRect.top, workingAreaRect.bottom);
+			wAR.left, wAR.right,
+			wAR.top, wAR.bottom);
 
-	/** If the conversation window doesn't intersect perfectly with the working area,
-	 *  move it to the top left corner of the working area */
-	if(!(IntersectRect(&intersectionRect, &windowRect, &workingAreaRect)
-				&& EqualRect(&intersectionRect, &windowRect))) {
+	/** If the conversation window doesn't intersect perfectly, move it to do so */
+	if(!(IntersectRect(&intR, &winR, &wAR)
+				&& EqualRect(&intR, &winR))) {
 		purple_debug_info("win32placement",
 				"conversation window out of working area, relocating\n");
-		MoveWindow(hwnd, workingAreaRect.left, workingAreaRect.top,
-				(windowRect.right - windowRect.left),
-				(windowRect.bottom - windowRect.top), TRUE);
+
+		/* Make sure the working area is big enough. */
+		if ((winR.right - winR.left) <= (wAR.right - wAR.left)
+				&& (winR.bottom - winR.top) <= (wAR.bottom - wAR.top)) {
+			/* Is it off the bottom? */
+			if (winR.bottom > wAR.bottom) {
+				winR.top = wAR.bottom - (winR.bottom - winR.top);
+				winR.bottom = wAR.bottom;
+			}
+			/* Is it off the top? */
+			else if (winR.top < wAR.top) {
+				winR.bottom = wAR.top + (winR.bottom - winR.top);
+				winR.top = wAR.top;
+			}
+
+			/* Is it off the left? */
+			if (winR.left < wAR.left) {
+				winR.right = wAR.left + (winR.right - winR.left);
+				winR.left = wAR.left;
+			}
+			/* Is it off the right? */
+			else  if (winR.right > wAR.right) {
+				winR.left = wAR.right - (winR.right - winR.left);
+				winR.right = wAR.right;
+			}
+
+		} else {
+ 			/* We couldn't salvage it; move it to the top left corner of the working area */
+ 			winR.right = wAR.left + (winR.right - winR.left);
+ 			winR.bottom = wAR.top + (winR.bottom - winR.top);
+ 			winR.left = wAR.left;
+ 			winR.top = wAR.top;
+		}
+
+		purple_debug_info("win32placement",
+			"Relocation RECT: L:%ld R:%ld T:%ld B:%ld\n",
+			winR.left, winR.right,
+			winR.top, winR.bottom);
+
+		MoveWindow(hwnd, winR.left, winR.top,
+				   (winR.right - winR.left),
+				   (winR.bottom - winR.top), TRUE);
 	}
 }
 

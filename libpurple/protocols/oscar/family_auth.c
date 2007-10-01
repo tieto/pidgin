@@ -438,10 +438,6 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
  * login request instead of the normal SNAC one.
  *
  * As soon as AOL makes ICQ log in the same way as AIM, this is /gone/.
- *
- * XXX This may cause problems if the client relies on callbacks only
- * being called from the context of aim_rxdispatch()...
- *
  */
 static int
 goddamnicq(OscarData *od, FlapConnection *conn, const char *sn)

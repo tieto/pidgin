@@ -48,7 +48,15 @@ static HWND systray_hwnd = NULL;
 /* additional two cached_icons entries for pending and connecting icons */
 static HICON cached_icons[PURPLE_STATUS_NUM_PRIMITIVES + 2];
 static GtkWidget *image = NULL;
+/* This is used to trigger click events on so they appear to GTK+ as if they are triggered by input */
+static GtkWidget *dummy_button = NULL;
+static GtkWidget *dummy_window = NULL;
 static NOTIFYICONDATA _nicon_data;
+
+static gboolean dummy_button_cb(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
+	pidgin_docklet_clicked(event->button);
+	return TRUE;
+}
 
 static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	static UINT taskbarRestartMsg; /* static here means value is kept across multiple calls to this func */
@@ -70,6 +78,8 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 	case WM_TRAYMESSAGE:
 	{
 		int type = 0;
+		GdkEvent *event;
+		GdkEventButton *event_btn;
 
 		/* We'll use Double Click - Single click over on linux */
 		if(lparam == WM_LBUTTONDBLCLK)
@@ -81,7 +91,23 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 		else
 			break;
 
-		pidgin_docklet_clicked(type);
+		gtk_widget_show_all(dummy_window);
+		event = gdk_event_new(GDK_BUTTON_PRESS);
+		event_btn = (GdkEventButton *) event;
+		event_btn->window = g_object_ref (gdk_get_default_root_window());
+		event_btn->send_event = TRUE;
+		event_btn->time = GetTickCount();
+ 		event_btn->axes = NULL;
+		event_btn->state = 0;
+		event_btn->button = type;
+		event_btn->device = gdk_display_get_default ()->core_pointer;
+		event->any.window = g_object_ref(dummy_window->window);
+		gdk_window_set_user_data(event->any.window, dummy_button);
+
+		gtk_main_do_event((GdkEvent *)event);
+		gtk_widget_hide(dummy_window);
+		gdk_event_free((GdkEvent *)event);
+
 		break;
 	}
 	default:
@@ -550,6 +576,14 @@ static void winpidgin_tray_create() {
 	/* dummy window to process systray messages */
 	systray_hwnd = systray_create_hiddenwin();
 
+	dummy_window = gtk_window_new(GTK_WINDOW_POPUP);
+	dummy_button = gtk_button_new();
+	gtk_container_add(GTK_CONTAINER(dummy_window), dummy_button);
+
+	/* We trigger the click event indirectly so that gtk_get_current_event_state() is TRUE when the event is handled */
+	g_signal_connect(G_OBJECT(dummy_button), "button-press-event",
+			 G_CALLBACK(dummy_button_cb), NULL);
+
 	image = gtk_image_new();
 #if GLIB_CHECK_VERSION(2,10,0)
 	g_object_ref_sink(image);
@@ -611,6 +645,10 @@ static void winpidgin_tray_destroy() {
 
 	g_object_unref(image);
 	image = NULL;
+
+	gtk_widget_destroy(dummy_window);
+	dummy_button = NULL;
+	dummy_window = NULL;
 }
 
 static struct docklet_ui_ops winpidgin_tray_ops =

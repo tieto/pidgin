@@ -43,7 +43,6 @@
 /*
  *  DEFINES & MACROS
  */
-#define WIN32_PROXY_REGKEY "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings"
 
 /* For shfolder.dll */
 typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHA)(HWND, int, HANDLE, DWORD, LPSTR);
@@ -56,9 +55,6 @@ static char *app_data_dir = NULL, *install_dir = NULL,
 	*lib_dir = NULL, *locale_dir = NULL;
 
 static HINSTANCE libpurpledll_hInstance = 0;
-
-static HANDLE proxy_change_event = NULL;
-static HKEY proxy_regkey = NULL;
 
 /*
  *  PUBLIC CODE
@@ -431,86 +427,93 @@ char *wpurple_read_reg_string(HKEY rootkey, const char *subkey, const char *valn
 	return result;
 }
 
-static void wpurple_refresh_proxy(void) {
-	gboolean set_proxy = FALSE;
-	DWORD enabled = 0;
+/* the winapi headers don't yet have winhttp.h, so we use the struct from msdn directly */
+typedef struct {
+  BOOL fAutoDetect;
+  LPWSTR lpszAutoConfigUrl;
+  LPWSTR lpszProxy;
+  LPWSTR lpszProxyBypass;
+} WINHTTP_CURRENT_USER_IE_PROXY_CONFIG;
 
-	wpurple_read_reg_dword(HKEY_CURRENT_USER, WIN32_PROXY_REGKEY,
-				"ProxyEnable", &enabled);
-
-	if (enabled & 1) {
-		char *c = NULL;
-		char *tmp = wpurple_read_reg_string(HKEY_CURRENT_USER, WIN32_PROXY_REGKEY,
-				"ProxyServer");
-
-		/* There are proxy settings for several protocols */
-		if (tmp && (c = g_strstr_len(tmp, strlen(tmp), "http="))) {
-			char *d;
-			c += strlen("http=");
-			d = strchr(c, ';');
-			if (d)
-				*d = '\0';
-			/* c now points the proxy server (and port) */
-
-		/* There is only a global proxy */
-		} else if (tmp && strlen(tmp) > 0 && !strchr(tmp, ';')) {
-			c = tmp;
-		}
-
-		if (c) {
-			purple_debug_info("wpurple", "Setting HTTP Proxy: 'http://%s'\n", c);
-			g_setenv("HTTP_PROXY", c, TRUE);
-			set_proxy = TRUE;
-		}
-		g_free(tmp);
-	}
-
-	/* If there previously was a proxy set and there isn't one now, clear it */
-	if (getenv("HTTP_PROXY") && !set_proxy) {
-		purple_debug_info("wpurple", "Clearing HTTP Proxy\n");
-		g_unsetenv("HTTP_PROXY");
-	}
-}
-
-static void watch_for_proxy_changes(void) {
-	LONG rv;
-	DWORD filter = REG_NOTIFY_CHANGE_NAME |
-			REG_NOTIFY_CHANGE_LAST_SET;
-
-	if (!proxy_regkey &&
-			!(proxy_regkey = _reg_open_key(HKEY_CURRENT_USER,
-				WIN32_PROXY_REGKEY, KEY_NOTIFY))) {
-		return;
-	}
-
-	if (!(proxy_change_event = CreateEvent(NULL, TRUE, FALSE, NULL))) {
-		char *errmsg = g_win32_error_message(GetLastError());
-		purple_debug_error("wpurple", "Unable to watch for proxy changes: %s\n", errmsg);
-		g_free(errmsg);
-		return;
-	}
-
-	rv = RegNotifyChangeKeyValue(proxy_regkey, TRUE, filter, proxy_change_event, TRUE);
-	if (rv != ERROR_SUCCESS) {
-		char *errmsg = g_win32_error_message(rv);
-		purple_debug_error("wpurple", "Unable to watch for proxy changes: %s\n", errmsg);
-		g_free(errmsg);
-		CloseHandle(proxy_change_event);
-		proxy_change_event = NULL;
-	}
-
-}
+typedef BOOL (CALLBACK* LPFNWINHTTPGETIEPROXYCONFIG)(/*IN OUT*/ WINHTTP_CURRENT_USER_IE_PROXY_CONFIG* pProxyConfig);
 
 gboolean wpurple_check_for_proxy_changes(void) {
+	static gboolean loaded = FALSE;
+	static LPFNWINHTTPGETIEPROXYCONFIG MyWinHttpGetIEProxyConfig = NULL;
+
+	WINHTTP_CURRENT_USER_IE_PROXY_CONFIG ie_proxy_config;
+	char *tmp = NULL, *c = NULL;
 	gboolean changed = FALSE;
 
-	if (proxy_change_event && WaitForSingleObject(proxy_change_event, 0) == WAIT_OBJECT_0) {
-		CloseHandle(proxy_change_event);
-		proxy_change_event = NULL;
-		changed = TRUE;
-		wpurple_refresh_proxy();
-		watch_for_proxy_changes();
+	if (!loaded) {
+		loaded = TRUE;
+
+		if (getenv("HTTP_PROXY") || getenv("http_proxy") || getenv("HTTPPROXY")) {
+			purple_debug_info("wpurple", "HTTP_PROXY env. var already set.  Ignoring win32 Internet Settings.\n");
+			return FALSE;
+		}
+
+		MyWinHttpGetIEProxyConfig = (LPFNWINHTTPGETIEPROXYCONFIG)
+			wpurple_find_and_loadproc("winhttp.dll", "WinHttpGetIEProxyConfigForCurrentUser");
+		if (!MyWinHttpGetIEProxyConfig)
+			purple_debug_info("wpurple", "Unable to read Windows Proxy Settings.\n");
 	}
+
+	if (!MyWinHttpGetIEProxyConfig)
+		return FALSE;
+
+	ZeroMemory(&ie_proxy_config, sizeof(ie_proxy_config));
+	if (!MyWinHttpGetIEProxyConfig(&ie_proxy_config)) {
+		purple_debug_error("wpurple", "Error reading Windows Proxy Settings(%u).\n", GetLastError());
+		return FALSE;
+	}
+
+	/* We can't do much if it is autodetect*/
+	if (ie_proxy_config.fAutoDetect)
+		purple_debug_error("wpurple", "Windows Proxy Settings set to autodetect (not supported).\n");
+	else if (ie_proxy_config.lpszProxy) {
+		tmp = g_utf16_to_utf8(ie_proxy_config.lpszProxy, -1,
+						NULL, NULL, NULL);
+		/* We can't do anything about the bypass list, as we don't have the url */
+	} else
+		purple_debug_info("wpurple", "No Windows Proxy Set.\n");
+
+	if (ie_proxy_config.lpszAutoConfigUrl)
+		GlobalFree(ie_proxy_config.lpszAutoConfigUrl);
+	if (ie_proxy_config.lpszProxy)
+		GlobalFree(ie_proxy_config.lpszProxy);
+	if (ie_proxy_config.lpszProxyBypass)
+		GlobalFree(ie_proxy_config.lpszProxyBypass);
+
+	/* There are proxy settings for several protocols */
+	if (tmp && (c = g_strstr_len(tmp, strlen(tmp), "http="))) {
+		char *d;
+		c += strlen("http=");
+		d = strchr(c, ';');
+		if (d)
+			*d = '\0';
+		/* c now points the proxy server (and port) */
+	/* There is only a global proxy */
+	} else if (tmp && strlen(tmp) > 0 && !strchr(tmp, ';')) {
+		c = tmp;
+	}
+
+	if (c && *c) {
+		const char *current = g_getenv("HTTP_PROXY");
+		if (!current || strcmp(current, c)) {
+			purple_debug_info("wpurple", "Setting HTTP Proxy: 'http://%s'\n", c);
+			g_setenv("HTTP_PROXY", c, TRUE);
+			changed = TRUE;
+		}
+	}
+	/* If there previously was a proxy set and there isn't one now, clear it */
+	else if (getenv("HTTP_PROXY")) {
+		purple_debug_info("wpurple", "Clearing HTTP Proxy\n");
+		g_unsetenv("HTTP_PROXY");
+		changed = TRUE;
+	}
+
+	g_free(tmp);
 
 	return changed;
 }
@@ -555,15 +558,6 @@ void wpurple_init(void) {
 	if (!g_thread_supported())
 		g_thread_init(NULL);
 
-	/* If the proxy server environment variables are already set,
-	 * we shouldn't override them */
-	if (!getenv("HTTP_PROXY") && !getenv("http_proxy") && !getenv("HTTPPROXY")) {
-		wpurple_refresh_proxy();
-		watch_for_proxy_changes();
-	} else {
-		purple_debug_info("wpurple", "HTTP_PROXY env. var already set.  Ignoring win32 Internet Settings.\n");
-	}
-
 	purple_debug_info("wpurple", "wpurple_init end\n");
 }
 
@@ -577,11 +571,6 @@ void wpurple_cleanup(void) {
 
 	g_free(app_data_dir);
 	app_data_dir = NULL;
-
-	if (proxy_regkey) {
-		RegCloseKey(proxy_regkey);
-		proxy_regkey = NULL;
-	}
 
 	libpurpledll_hInstance = NULL;
 }
