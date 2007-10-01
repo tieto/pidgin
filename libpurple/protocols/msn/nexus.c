@@ -57,7 +57,6 @@ msn_nexus_destroy(MsnNexus *nexus)
 	if (nexus->challenge_data != NULL)
 		g_hash_table_destroy(nexus->challenge_data);
 
-	//msn_soap_destroy(nexus->soapconn);
 	g_free(nexus);
 }
 
@@ -160,10 +159,13 @@ nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 			"RequestedSecurityToken/BinarySecurityToken");
 
 		if (token) {
+			char *token_str = xmlnode_get_data(token);
 			char **elems, **cur, **tokens;
 			char *msn_twn_t, *msn_twn_p, *cert_str;
 
-			elems = g_strsplit(token->data, "&amp;", 0);
+			if (token_str == NULL) continue;
+
+			elems = g_strsplit(token_str, "&", 0);
 
 			for (cur = elems; *cur != NULL; cur++){
 				tokens = g_strsplit(*cur, "=", 2);
@@ -172,6 +174,7 @@ nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 				g_free(tokens);
 			}
 
+			g_free(token_str);
 			g_strfreev(elems);
 
 			msn_twn_t = g_hash_table_lookup(nexus->challenge_data, "t");
@@ -198,6 +201,10 @@ nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 			return;
 		}
 	}
+
+	/* we must have failed! */
+	msn_session_set_error(session, MSN_ERROR_AUTH, _("Windows Live ID authentication: cannot find authenticate token in server response"));
+
 }
 #if 0
 /*process the SOAP reply, get the Authentication Info*/
