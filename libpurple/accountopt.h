@@ -1,8 +1,9 @@
 /**
  * @file accountopt.h Account Options API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -49,8 +50,10 @@ typedef struct
 
 	} default_value;
 
-	gboolean masked;
-
+	gboolean masked;        /**< Whether the value entered should be
+	                         *   obscured from view (for passwords and
+	                         *   similar options)
+	                         */
 } PurpleAccountOption;
 
 /**
@@ -184,10 +187,12 @@ void purple_account_option_set_default_string(PurpleAccountOption *option,
 											const char *value);
 
 /**
- * Sets the masking for an account option.
+ * Sets the masking for an account option. Setting this to %TRUE acts
+ * as a hint to the UI that the option's value should be obscured from
+ * view, like a password.
  *
  * @param option The account option.
- * @param masked  The masking.
+ * @param masked The masking.
  */
 void
 purple_account_option_set_masked(PurpleAccountOption *option, gboolean masked);
@@ -282,11 +287,13 @@ const char *purple_account_option_get_default_list_value(
 	const PurpleAccountOption *option);
 
 /**
- * Returns the masking for an account option.
+ * Returns whether an option's value should be masked from view, like a
+ * password.  If so, the UI might display each character of the option
+ * as a '*' (for example).
  *
  * @param option The account option.
  *
- * @return The masking.
+ * @return %TRUE if the option's value should be obscured.
  */
 gboolean
 purple_account_option_get_masked(const PurpleAccountOption *option);

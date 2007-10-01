@@ -1,8 +1,9 @@
 /**
  * @file desktopitem.h Functions for managing .desktop files
  * @ingroup core
- *
- * Purple is the legal property of its developers, whose names are too numerous
+ */
+
+/* Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
