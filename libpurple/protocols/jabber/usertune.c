@@ -41,48 +41,61 @@ static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 	if (!buddy || !item)
 		return;
 	
-	tuneinfodata.artist = "";
-	tuneinfodata.title = "";
-	tuneinfodata.album = "";
-	tuneinfodata.track = "";
+	tuneinfodata.artist = NULL;
+	tuneinfodata.title = NULL;
+	tuneinfodata.album = NULL;
+	tuneinfodata.track = NULL;
 	tuneinfodata.time = -1;
-	tuneinfodata.url = "";
-	
+	tuneinfodata.url = NULL;
+
 	tune = xmlnode_get_child_with_namespace(item, "tune", "http://jabber.org/protocol/tune");
 	if (!tune)
 		return;
+	resource = jabber_buddy_find_resource(buddy, NULL);
+	if(!resource)
+		return; /* huh? */
 	for (tuneinfo = tune->child; tuneinfo; tuneinfo = tuneinfo->next) {
 		if (tuneinfo->type == XMLNODE_TYPE_TAG) {
 			if (!strcmp(tuneinfo->name, "artist")) {
-				if (tuneinfodata.artist[0] == '\0') /* only pick the first one */
+				if (tuneinfodata.artist == NULL) /* only pick the first one */
 					tuneinfodata.artist = xmlnode_get_data(tuneinfo);
 			} else if (!strcmp(tuneinfo->name, "length")) {
 				if (tuneinfodata.time == -1) {
 					char *length = xmlnode_get_data(tuneinfo);
 					if (length)
 						tuneinfodata.time = strtol(length, NULL, 10);
+					g_free(length);
 				}
 			} else if (!strcmp(tuneinfo->name, "source")) {
-				if (tuneinfodata.album[0] == '\0') /* only pick the first one */
+				if (tuneinfodata.album == NULL) /* only pick the first one */
 					tuneinfodata.album = xmlnode_get_data(tuneinfo);
 			} else if (!strcmp(tuneinfo->name, "title")) {
-				if (tuneinfodata.title[0] == '\0') /* only pick the first one */
+				if (tuneinfodata.title == NULL) /* only pick the first one */
 					tuneinfodata.title = xmlnode_get_data(tuneinfo);
 			} else if (!strcmp(tuneinfo->name, "track")) {
-				if (tuneinfodata.track[0] == '\0') /* only pick the first one */
+				if (tuneinfodata.track == NULL) /* only pick the first one */
 					tuneinfodata.track = xmlnode_get_data(tuneinfo);
 			} else if (!strcmp(tuneinfo->name, "uri")) {
-				if (tuneinfodata.url[0] == '\0') /* only pick the first one */
+				if (tuneinfodata.url == NULL) /* only pick the first one */
 					tuneinfodata.url = xmlnode_get_data(tuneinfo);
 			}
 		}
 	}
-	resource = jabber_buddy_find_resource(buddy, NULL);
-	if(!resource)
-		return; /* huh? */
 	status_id = jabber_buddy_state_get_status_id(resource->state);
 
-	purple_prpl_got_user_status(js->gc->account, from, status_id, PURPLE_TUNE_ARTIST, tuneinfodata.artist, PURPLE_TUNE_TITLE, tuneinfodata.title, PURPLE_TUNE_ALBUM, tuneinfodata.album, PURPLE_TUNE_TRACK, tuneinfodata.track, PURPLE_TUNE_TIME, tuneinfodata.time, PURPLE_TUNE_URL, tuneinfodata.url, NULL);
+	purple_prpl_got_user_status(js->gc->account, from, status_id,
+			PURPLE_TUNE_ARTIST, tuneinfodata.artist,
+			PURPLE_TUNE_TITLE, tuneinfodata.title,
+			PURPLE_TUNE_ALBUM, tuneinfodata.album,
+			PURPLE_TUNE_TRACK, tuneinfodata.track,
+			PURPLE_TUNE_TIME, tuneinfodata.time,
+			PURPLE_TUNE_URL, tuneinfodata.url, NULL);
+
+	g_free(tuneinfodata.artist);
+	g_free(tuneinfodata.title);
+	g_free(tuneinfodata.album);
+	g_free(tuneinfodata.track);
+	g_free(tuneinfodata.url);
 }
 
 void jabber_tune_init(void) {
