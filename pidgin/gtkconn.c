@@ -53,7 +53,7 @@ typedef struct {
  * The key is a pointer to the PurpleAccount and the
  * value is a pointer to a PidginAutoRecon.
  */
-static GHashTable *hash = NULL;
+static GHashTable *auto_reconns = NULL;
 
 static void
 pidgin_connection_connect_progress(PurpleConnection *gc,
@@ -80,7 +80,7 @@ pidgin_connection_connected(PurpleConnection *gc)
 		pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
 					   (purple_connections_get_connecting() != NULL));
 
-	g_hash_table_remove(hash, account);
+	g_hash_table_remove(auto_reconns, account);
 
 	pidgin_blist_update_account_error_state(account, NULL);
 }
@@ -120,7 +120,7 @@ do_signon(gpointer data)
 
 	purple_debug_info("autorecon", "do_signon called\n");
 	g_return_val_if_fail(account != NULL, FALSE);
-	info = g_hash_table_lookup(hash, account);
+	info = g_hash_table_lookup(auto_reconns, account);
 
 	if (info)
 		info->timeout = 0;
@@ -143,13 +143,13 @@ pidgin_connection_report_disconnect(PurpleConnection *gc, const char *text)
 	PidginAutoRecon *info;
 
 	account = purple_connection_get_account(gc);
-	info = g_hash_table_lookup(hash, account);
+	info = g_hash_table_lookup(auto_reconns, account);
 
 	pidgin_blist_update_account_error_state(account, text);
 	if (!gc->wants_to_die) {
 		if (info == NULL) {
 			info = g_new0(PidginAutoRecon, 1);
-			g_hash_table_insert(hash, account, info);
+			g_hash_table_insert(auto_reconns, account, info);
 			info->delay = g_random_int_range(INITIAL_RECON_DELAY_MIN, INITIAL_RECON_DELAY_MAX);
 		} else {
 			info->delay = MIN(2 * info->delay, MAX_RECON_DELAY);
@@ -160,7 +160,7 @@ pidgin_connection_report_disconnect(PurpleConnection *gc, const char *text)
 	} else {
 		char *p, *s, *n=NULL ;
 		if (info != NULL)
-			g_hash_table_remove(hash, account);
+			g_hash_table_remove(auto_reconns, account);
 
 		if (purple_account_get_alias(account))
 		{
@@ -204,7 +204,7 @@ static void pidgin_connection_network_connected ()
 
 	while (list) {
 		PurpleAccount *account = (PurpleAccount*)list->data;
-		g_hash_table_remove(hash, account);
+		g_hash_table_remove(auto_reconns, account);
 		if (purple_account_is_disconnected(account))
 			do_signon(account);
 		list = list->next;
@@ -265,7 +265,7 @@ pidgin_connections_get_ui_ops(void)
 static void
 account_removed_cb(PurpleAccount *account, gpointer user_data)
 {
-	g_hash_table_remove(hash, account);
+	g_hash_table_remove(auto_reconns, account);
 
 	pidgin_blist_update_account_error_state(account, NULL);
 }
@@ -286,7 +286,7 @@ pidgin_connection_get_handle(void)
 void
 pidgin_connection_init(void)
 {
-	hash = g_hash_table_new_full(
+	auto_reconns = g_hash_table_new_full(
 							g_direct_hash, g_direct_equal,
 							NULL, free_auto_recon);
 
@@ -300,5 +300,5 @@ pidgin_connection_uninit(void)
 {
 	purple_signals_disconnect_by_handle(pidgin_connection_get_handle());
 
-	g_hash_table_destroy(hash);
+	g_hash_table_destroy(auto_reconns);
 }

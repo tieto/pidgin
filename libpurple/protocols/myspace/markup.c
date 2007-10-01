@@ -258,7 +258,7 @@ msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	}
 
 
-	*begin = g_string_free(gs_begin, FALSE);
+	*begin = g_string_free(gs_begin,FALSE);
 	*end = g_string_free(gs_end, FALSE);
 }
 
@@ -426,14 +426,14 @@ static void
 html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin, 
 		gchar **end)
 {
-	if (!purple_utf8_strcasecmp(root->name, "root") ||
-	    !purple_utf8_strcasecmp(root->name, "html")) {
-		*begin = g_strdup("");
-		*end = g_strdup("");
-	/* TODO: Coalesce nested tags into one <f> tag!
-	 * Currently, the 's' value will be overwritten when b/i/u is nested
-	 * within another one, and only the inner-most formatting will be 
-	 * applied to the text. */
+    if (!purple_utf8_strcasecmp(root->name, "root") ||
+        !purple_utf8_strcasecmp(root->name, "html")) {
+        *begin = g_strdup("");
+        *end = g_strdup("");
+    /* TODO: Coalesce nested tags into one <f> tag!
+     * Currently, the 's' value will be overwritten when b/i/u is nested
+     * within another one, and only the inner-most formatting will be 
+     * applied to the text. */
 	} else if (!purple_utf8_strcasecmp(root->name, "b")) {
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_BOLD);
 		*end = g_strdup("</f>");
@@ -504,20 +504,20 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 
 		/* TODO: color (bg uses <body>), emoticons */
 	} else {
-		gchar *err;
+        gchar *err;
 
 #ifdef MSIM_MARKUP_SHOW_UNKNOWN_TAGS
-		*begin = g_strdup_printf("[%s]", root->name);
-		*end = g_strdup_printf("[/%s]", root->name);
+        *begin = g_strdup_printf("[%s]", root->name);
+        *end = g_strdup_printf("[/%s]", root->name);
 #else
-		*begin = g_strdup("");
-		*end = g_strdup("");
+        *begin = g_strdup("");
+        *end = g_strdup("");
 #endif
 
-		err = g_strdup_printf("html_tag_to_msim_markup: unrecognized "
-				"HTML tag %s was sent by the IM client; ignoring", (root->name ? root->name : "(NULL)"));
-		msim_unrecognized(NULL, NULL, err);
-		g_free(err);
+        err = g_strdup_printf("html_tag_to_msim_markup: unrecognized "
+                "HTML tag %s was sent by the IM client; ignoring", (root->name ? root->name : "(NULL)"));
+        msim_unrecognized(NULL, NULL, err);
+        g_free(err);
 	}
 }
 
@@ -595,7 +595,7 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 	purple_debug_info("msim", "msim_markup_xmlnode_to_gtkhtml: RETURNING %s\n",
 			(final && final->str) ? final->str : "(NULL)");
 
-	return g_string_free(final, FALSE);
+	return g_string_free(final, FALSE); 
 }
 
 /** Convert XML to something based on MSIM_XMLNODE_CONVERT. */

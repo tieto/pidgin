@@ -697,30 +697,30 @@ pidgin_notify_searchresults_new_rows(PurpleConnection *gc, PurpleNotifySearchRes
 	GtkTreeIter iter;
 	GdkPixbuf *pixbuf;
 	guint col_num;
-	guint i;
-	guint j;
+	GList *row, *column;
+	guint n;
 
 	gtk_list_store_clear(data->model);
 
 	pixbuf = pidgin_create_prpl_icon(purple_connection_get_account(gc), 0.5);
 
 	/* +1 is for the automagically created Status column. */
-	col_num = purple_notify_searchresults_get_columns_count(results) + 1;
+	col_num = g_list_length(results->columns) + 1;
 
-	for (i = 0; i < purple_notify_searchresults_get_rows_count(results); i++) {
-		GList *row = purple_notify_searchresults_row_get(results, i);
+	for (row = results->rows; row != NULL; row = row->next) {
 
 		gtk_list_store_append(model, &iter);
 		gtk_list_store_set(model, &iter, 0, pixbuf, -1);
 
-		for (j = 1; j < col_num; j++) {
+		n = 1;
+		for (column = row->data; column != NULL; column = column->next) {
 			GValue v;
-			char *data = g_list_nth_data(row, j - 1);
 
 			v.g_type = 0;
 			g_value_init(&v, G_TYPE_STRING);
-			g_value_set_string(&v, data);
-			gtk_list_store_set_value(model, &iter, j, &v);
+			g_value_set_string(&v, column->data);
+			gtk_list_store_set_value(model, &iter, n, &v);
+			n++;
 		}
 	}
 
@@ -740,6 +740,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	GtkListStore *model;
 	GtkCellRenderer *renderer;
 	guint col_num;
+	GList *column;
 	guint i;
 
 	GtkWidget *vbox;
@@ -787,7 +788,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	g_free(label_text);
 
 	/* +1 is for the automagically created Status column. */
-	col_num = purple_notify_searchresults_get_columns_count(results) + 1;
+	col_num = g_list_length(results->columns) + 1;
 
 	/* Setup the list model */
 	col_types = g_new0(GType, col_num);
@@ -822,12 +823,13 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
 					-1, "", renderer, "pixbuf", 0, NULL);
 
-	for (i = 1; i < col_num; i++) {
+	i = 1;
+	for (column = results->columns; column != NULL; column = column->next) {
 		renderer = gtk_cell_renderer_text_new();
 
 		gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1,
-				purple_notify_searchresults_column_get_title(results, i-1),
-				renderer, "text", i, NULL);
+				column->data, renderer, "text", i, NULL);
+		i++;
 	}
 
 	for (i = 0; i < g_list_length(results->buttons); i++) {
