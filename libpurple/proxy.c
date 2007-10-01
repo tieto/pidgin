@@ -400,7 +400,7 @@ socket_ready_cb(gpointer data, gint source, PurpleInputCondition cond)
  	 */
 	if (!PURPLE_PROXY_CONNECT_DATA_IS_VALID(connect_data))
 		return;
-
+	
 	purple_debug_info("proxy", "Connected to %s:%d.\n",
 					connect_data->host, connect_data->port);
 
@@ -1992,13 +1992,6 @@ purple_proxy_init(void)
 		proxy_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, "/purple/proxy/password",
 		proxy_pref_cb, NULL);
-
-	/* Load the initial proxy settings */
-	proxy_pref_cb("/purple/proxy/type", PURPLE_PREF_STRING, purple_prefs_get_string("/purple/proxy/type"), NULL);
-	proxy_pref_cb("/purple/proxy/host", PURPLE_PREF_STRING, purple_prefs_get_string("/purple/proxy/host"), NULL);
-	proxy_pref_cb("/purple/proxy/port", PURPLE_PREF_STRING, GINT_TO_POINTER(purple_prefs_get_int("/purple/proxy/port")), NULL);
-	proxy_pref_cb("/purple/proxy/username", PURPLE_PREF_STRING, purple_prefs_get_string("/purple/proxy/username"), NULL);
-	proxy_pref_cb("/purple/proxy/password", PURPLE_PREF_STRING, purple_prefs_get_string("/purple/proxy/password"), NULL);
 }
 
 void
