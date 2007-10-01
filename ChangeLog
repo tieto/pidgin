@@ -2,9 +2,9 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.2.2:
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
-		NOTE: Due to the backporting that happened for the 2.2.1
-		      release, it is possible bugs this release fixes bugs
-		      that were marked as fixed in 2.2.1.
+		NOTE: Due to 2.2.1 being a security fix release, some bugs
+		      marked fixed in 2.2.1 may not have been fixed until
+		      this release (2.2.2).
 
 	libpurple:
 	* Real usernames are now shown in the system log.
