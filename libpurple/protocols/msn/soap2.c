@@ -33,9 +33,7 @@
 #include <glib.h>
 #include <error.h>
 
-#define SOAP_TIMEOUT 10
-
-static GHashTable *conn_table = NULL;
+#define SOAP_TIMEOUT (5 * 60)
 
 typedef struct _MsnSoapRequest {
 	char *path;
@@ -122,7 +120,7 @@ msn_soap_get_connection(MsnSession *session, const char *host)
 	MsnSoapConnection *conn = NULL;
 
 	if (session->soap_table) {
-		conn = g_hash_table_lookup(conn_table, host);
+		conn = g_hash_table_lookup(session->soap_table, host);
 	} else {
 		session->soap_table = g_hash_table_new_full(g_str_hash, g_str_equal,
 			NULL, (GDestroyNotify)msn_soap_connection_destroy);
@@ -207,12 +205,9 @@ msn_soap_handle_redirect(MsnSoapConnection *conn, const char *url)
 static gboolean
 msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 {
-	xmlnode *node = response->xml;
+	xmlnode *body = xmlnode_get_child(response->xml, "Body");
 
-	if (strcmp(node->name, "Envelope") == 0 &&
-		node->child && strcmp(node->child->name, "Header") == 0 &&
-		node->child->next) {
-		xmlnode *body = node->child->next;
+	if (body) {
 		MsnSoapRequest *request;
 
 		if (strcmp(body->name, "Fault") == 0) {
@@ -297,7 +292,82 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 
 	cursor = conn->buf->str + conn->handled_len;
 
-	if (conn->headers_done) {
+	if (!conn->headers_done) {
+		while ((linebreak = strstr(cursor, "\r\n"))	!= NULL) {
+			conn->handled_len = linebreak - conn->buf->str + 2;
+
+			if (conn->response_code == 0) {
+				if (sscanf(cursor, "HTTP/1.1 %d", &conn->response_code) != 1) {
+					/* something horribly wrong */
+					purple_ssl_close(conn->ssl);
+					conn->ssl = NULL;
+					msn_soap_connection_handle_next(conn);
+					handled = TRUE;
+					break;
+				} else if (conn->response_code == 503) {
+					msn_soap_connection_sanitize(conn, TRUE);
+					msn_session_set_error(conn->session, MSN_ERROR_SERV_UNAVAILABLE, NULL);
+					return;
+				}
+			} else if (cursor == linebreak) {
+				/* blank line */
+				conn->headers_done = TRUE;
+				cursor = conn->buf->str + conn->handled_len;
+				break;
+			} else {
+				char *line = g_strndup(cursor, linebreak - cursor);
+				char *sep = strstr(line, ": ");
+				char *key = line;
+				char *value;
+
+				if (sep == NULL) {
+					purple_debug_info("soap", "ignoring malformed line: %s\n", line);
+					g_free(line);
+					goto loop_end;
+				}
+
+				value = sep + 2;
+				*sep = '\0';
+				msn_soap_message_add_header(conn->message, key, value);
+				purple_debug_info("soap", "header %s: %s\n", key, value);
+
+				if ((conn->response_code == 301 || conn->response_code == 300)
+					&& strcmp(key, "Location") == 0) {
+
+					msn_soap_handle_redirect(conn, value);
+
+					handled = TRUE;
+					g_free(line);
+					break;
+				} else if (conn->response_code == 401 &&
+					strcmp(key, "WWW-Authenticate") == 0) {
+					char *error = strstr(value, "cbtxt=");
+
+					if (error) {
+						error += strlen("cbtxt=");
+					}
+
+					msn_soap_connection_sanitize(conn, TRUE);
+					msn_session_set_error(conn->session, MSN_ERROR_AUTH,
+						error ? purple_url_decode(error) : NULL);
+
+					g_free(line);
+					return;
+				} else if (strcmp(key, "Content-Length") == 0) {
+					conn->body_len = atoi(value);
+				} else if (strcmp(key, "Connection") == 0) {
+					if (strcmp(value, "close") == 0) {
+						conn->close_when_done = TRUE;
+					}
+				}
+			}
+
+		loop_end:
+			cursor = conn->buf->str + conn->handled_len;
+		}
+	}
+
+	if (!handled && conn->headers_done) {
 		if (conn->buf->len - conn->handled_len >= 
 			conn->body_len) {
 			xmlnode *node = xmlnode_from_str(cursor, conn->body_len);
@@ -318,77 +388,6 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 		}
 
 		return;
-	}
-
-	while ((linebreak = strstr(cursor, "\r\n"))	!= NULL) {
-		conn->handled_len = linebreak - conn->buf->str + 2;
-
-		if (conn->response_code == 0) {
-			if (sscanf(cursor, "HTTP/1.1 %d", &conn->response_code) != 1) {
-				/* something horribly wrong */
-				purple_ssl_close(conn->ssl);
-				conn->ssl = NULL;
-				msn_soap_connection_handle_next(conn);
-				handled = TRUE;
-				break;
-			} else if (conn->response_code == 503) {
-				msn_soap_connection_sanitize(conn, TRUE);
-				msn_session_set_error(conn->session, MSN_ERROR_SERV_UNAVAILABLE, NULL);
-				return;
-			}
-		} else if (cursor == linebreak) {
-			/* blank line */
-			conn->headers_done = TRUE;
-		} else {
-			char *line = g_strndup(cursor, linebreak - cursor);
-			char *sep = strstr(line, ": ");
-			char *key = line;
-			char *value;
-
-			if (sep == NULL) {
-				purple_debug_info("soap", "ignoring malformed line: %s\n", line);
-				g_free(line);
-				goto loop_end;
-			}
-
-			value = sep + 2;
-			*sep = '\0';
-			msn_soap_message_add_header(conn->message, key, value);
-			purple_debug_info("soap", "header %s: %s\n", key, value);
-
-			if ((conn->response_code == 301 || conn->response_code == 300)
-				&& strcmp(key, "Location") == 0) {
-
-				msn_soap_handle_redirect(conn, value);
-
-				handled = TRUE;
-				g_free(line);
-				break;
-			} else if (conn->response_code == 401 &&
-				strcmp(key, "WWW-Authenticate") == 0) {
-				char *error = strstr(value, "cbtxt=");
-
-				if (error) {
-					error += strlen("cbtxt=");
-				}
-
-				msn_soap_connection_sanitize(conn, TRUE);
-				msn_session_set_error(conn->session, MSN_ERROR_AUTH,
-					error ? purple_url_decode(error) : NULL);
-
-				g_free(line);
-				return;
-			} else if (strcmp(key, "Content-Length") == 0) {
-				conn->body_len = atoi(value);
-			} else if (strcmp(key, "Connection") == 0) {
-				if (strcmp(value, "close") == 0) {
-					conn->close_when_done = TRUE;
-				}
-			}
-		}
-
-	loop_end:
-		cursor = conn->buf->str + conn->handled_len;
 	}
 
 	if (handled) {

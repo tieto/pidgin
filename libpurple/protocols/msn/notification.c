@@ -421,6 +421,7 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
+		purple_debug_info("valgrind", "MSG len: %d [%c] [%c]\n", cmd->payload_len, cmd->payload[cmd->payload_len - 2], cmd->payload[cmd->payload_len - 1]);
 		purple_debug_info("MSNP14","MSG payload:{%s}\n",cmd->payload);
 		cmd->payload_cb(cmdproc, cmd, cmd->payload, cmd->payload_len);
 	}
@@ -1801,7 +1802,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		return;
 
 	/*new a oim session*/
-	session->oim = msn_oim_new(session);
+//	session->oim = msn_oim_new(session);
 //	msn_oim_connect(session->oim);
 
 	table = msn_message_get_hashtable_from_body(msg);

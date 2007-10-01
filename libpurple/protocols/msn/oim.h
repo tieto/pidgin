@@ -95,17 +95,6 @@
 	"</soap:Body>"\
 "</soap:Envelope>"
 
-typedef struct _MsnOimSendReq MsnOimSendReq;
-
-struct _MsnOimSendReq
-{
-	char *from_member;
-	char *friendname;
-	char *to_member;
-	char *oim_msg;
-	gint send_seq;
-};
-
 typedef struct _MsnOim MsnOim;
 
 struct _MsnOim
@@ -127,7 +116,6 @@ struct _MsnOim
  * **************************************************/
 MsnOim * msn_oim_new(MsnSession *session);
 void msn_oim_destroy(MsnOim *oim);
-void msn_oim_connect(MsnOim *oim);
 
 void msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg);
 
@@ -137,12 +125,6 @@ void msn_oim_prep_send_msg_info(MsnOim *oim, const char *membername,
 								const char * msg);
 
 void msn_oim_send_msg(MsnOim *oim);
-
-/*get the OIM message*/
-void msn_oim_get_msg(MsnOim *oim);
-
-/*report the oim message to the conversation*/
-void msn_oim_report_user(MsnOim *oim,const char *passport,char *msg);
 
 #endif/* _MSN_OIM_H_*/
 /*endof oim.h*/
