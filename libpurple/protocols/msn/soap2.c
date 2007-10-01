@@ -33,6 +33,8 @@
 #include <glib.h>
 #include <error.h>
 
+#define SOAP_TIMEOUT 10
+
 static GHashTable *conn_table = NULL;
 
 typedef struct _MsnSoapRequest {
@@ -46,6 +48,7 @@ typedef struct _MsnSoapConnection {
 	MsnSession *session;
 	char *host;
 
+	time_t last_used;
 	PurpleSslConnection *ssl;
 	gboolean connected;
 
@@ -78,6 +81,40 @@ static void msn_soap_message_send_internal(MsnSession *session,
 static void msn_soap_request_destroy(MsnSoapRequest *req);
 static void msn_soap_connection_sanitize(MsnSoapConnection *conn, gboolean disconnect);
 
+static gboolean
+msn_soap_cleanup_each(gpointer key, gpointer value, gpointer data)
+{
+	MsnSoapConnection *conn = value;
+	time_t *t = data;
+
+	if ((*t - conn->last_used) > SOAP_TIMEOUT * 2) {
+		purple_debug_info("soap", "cleaning up soap conn %p\n", conn);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static gboolean
+msn_soap_cleanup_for_session(gpointer data)
+{
+	MsnSession *sess = data;
+	time_t t = time(NULL);
+
+	purple_debug_info("soap", "session cleanup timeout\n");
+
+	if (sess->soap_table) {
+		g_hash_table_foreach_remove(sess->soap_table, msn_soap_cleanup_each,
+			&t);
+
+		if (g_hash_table_size(sess->soap_table) == 0) {
+			purple_timeout_remove(sess->soap_cleanup_handle);
+			sess->soap_cleanup_handle = 0;
+		}
+	}
+
+	return TRUE;
+}
 
 static MsnSoapConnection *
 msn_soap_get_connection(MsnSession *session, const char *host)
@@ -91,10 +128,16 @@ msn_soap_get_connection(MsnSession *session, const char *host)
 			NULL, (GDestroyNotify)msn_soap_connection_destroy);
 	}
 
+	if (session->soap_cleanup_handle == 0)
+		session->soap_cleanup_handle = purple_timeout_add(SOAP_TIMEOUT * 1000,
+			msn_soap_cleanup_for_session, session);
+
 	if (conn == NULL) {
 		conn = msn_soap_connection_new(session, host);
 		g_hash_table_insert(session->soap_table, conn->host, conn);
 	}
+
+	conn->last_used = time(NULL);
 
 	return conn;
 }

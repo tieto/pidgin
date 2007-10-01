@@ -102,6 +102,9 @@ msn_session_destroy(MsnSession *session)
 	if (session->soap_table)
 		g_hash_table_destroy(session->soap_table);
 
+	if (session->soap_cleanup_handle)
+		purple_timeout_remove(session->soap_cleanup_handle);
+
 	g_free(session);
 }
 
