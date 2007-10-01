@@ -363,6 +363,8 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %{_bindir}/pidgin
 %{_datadir}/pixmaps/pidgin
 %{_datadir}/icons/hicolor/*/apps/pidgin.*
+%dir %{_datadir}/sounds/pidgin
+%{_datadir}/sounds/pidgin/*
 %{_datadir}/applications/*
 %{_sysconfdir}/gconf/schemas/purple.schemas
 
@@ -372,8 +374,6 @@ touch --no-create %{_datadir}/icons/hicolor || :
 
 %{_libdir}/libpurple.so.*
 %dir %{_libdir}/purple-2
-%{_datadir}/purple
-%{_datadir}/sounds/purple
 %attr(755, root, root) %{perl_vendorarch}/Purple.pm
 %attr(755, root, root) %{perl_vendorarch}/auto/Purple
 
@@ -427,7 +427,7 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 %if 0%{?_with_mono:1}
-%files -n libpurple-mono
+%files libpurple-mono
 %defattr(-, root, root)
 
 %{_libdir}/purple-2/mono.so
@@ -457,9 +457,6 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 %changelog
-* Fri Sep 14 2007 Stu Tomlinson <stu@nosnilmot.com>
-- Fix spec file for moved sounds & new CA certificates
-
 * Thu Jul 12 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Don't hardcode silc header locations, rely on pkg-config for those,
   because I think I broke non-pkg-config detection of older silc
