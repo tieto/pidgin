@@ -2,64 +2,59 @@
 ;;  Arabic.nsh
 ;;
 ;;  Arabic language translated strings for the Windows Pidgin NSIS installer.
-;;  Windows Code page: 1252
+;;  Windows Code page: 1256
 ;;
 ;;  Version 3
-;;  Note: If translating this file, replace '!insertmacro PIDGIN_MACRO_DEFAULT_STRING'
-;;  with '!define'.
-
-; Make sure to update the PIDGIN_MACRO_LANGUAGEFILE_END macro in
-; langmacros.nsh when updating this file
 
 ; Startup Checks
-!define INSTALLER_IS_RUNNING			"╪з┘Д┘Е╪л╪и┘С┘Р╪к ┘К╪╣┘Е┘Д ╪и╪з┘Д┘Б╪╣┘Д."
-!define PIDGIN_IS_RUNNING			"╪и┘Р╪п┘Т╪м┘Р┘Ж ┘К╪╣┘Е┘Д ╪н╪з┘Д┘К╪з.  ┘Е┘Ж ┘Б╪╢┘Д┘Г ╪г╪║┘Д┘В ╪и┘Р╪п┘Т╪м┘Ж ╪л┘Е ╪г╪╣╪п ╪з┘Д┘Е╪н╪з┘И┘Д╪й."
-!define GTK_INSTALLER_NEEDED			"╪и┘К╪ж╪й ╪м╪к┘Г+ (GTK+) ┘Е┘Б┘В┘И╪п╪й ╪г┘И ╪к╪н╪к╪з╪м ┘Д┘Д╪к╪н╪п┘К╪л.$\r┘Е┘Ж ┘Б╪╢┘Д┘Г ╪л╪и┘С┘Р╪к v${GTK_MIN_VERSION} ╪г┘И ╪г╪н╪п╪л ┘Е┘Ж ╪и┘К╪ж╪й ╪м╪к┘Г+"
+!define INSTALLER_IS_RUNNING			"╟су╦╚°Ў╩ э┌ус ╚╟с▌┌с."
+!define PIDGIN_IS_RUNNING			"╚Ў╧·╠Ўф э┌ус ═╟сэ╟.  уф ▌╓с▀ ├█с▐ ╚Ў╧·╠ф ╦у ├┌╧ ╟су═╟цс╔."
+!define GTK_INSTALLER_NEEDED			"╚э╞╔ ╠╩▀+ (GTK+) у▌▐ц╧╔ ├ц ╩═╩╟╠ сс╩═╧э╦.$\rуф ▌╓с▀ ╦╚°Ў╩ v${GTK_MIN_VERSION} ├ц ├═╧╦ уф ╚э╞╔ ╠╩▀+"
 
 ; License Page
-!define PIDGIN_LICENSE_BUTTON			"╪з┘Д╪к╪з┘Д┘К >"
-!define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) ┘К╪о╪╢╪╣ ┘Д╪▒╪о╪╡╪й ╪м┘Ж┘И ╪з┘Д╪╣┘Е┘И┘Е┘К┘С╪й ╪з┘Д╪╣╪з┘Е╪й (GPL). ╪з┘Д╪▒╪о╪╡╪й ╪з┘Д┘Е╪╣╪╖╪з╪й ┘З┘Ж╪з ┘Д╪║╪▒╪╢ ╪з┘Д╪е╪╣┘Д╪з┘Е ┘Б┘В╪╖. $_CLICK"
+!define PIDGIN_LICENSE_BUTTON			"╟с╩╟сэ >"
+!define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) э╬╓┌ с╤╬╒╔ ╠фц ╟с┌уцуэ°╔ ╟с┌╟у╔ (GPL). ╟с╤╬╒╔ ╟су┌╪╟╔ хф╟ с█╤╓ ╟с┼┌с╟у ▌▐╪. $_CLICK"
 
 ; Components Page
-!define PIDGIN_SECTION_TITLE			"╪╣┘Е┘К┘Д ╪з┘Д╪к╪▒╪з╪│┘Д ╪з┘Д┘Б┘И╪▒┘К ╪и┘Р╪п┘Т╪м┘Р┘Ж (┘Е╪╖┘Д┘И╪и)"
-!define GTK_SECTION_TITLE			"╪и┘К╪ж╪й ╪м╪к┘Г+ (┘Е╪╖┘Д┘И╪и╪й ╪е┘Ж ┘Д┘Е ╪к┘Г┘Ж ┘Е┘И╪м┘И╪п╪й)"
-!define PIDGIN_SHORTCUTS_SECTION_TITLE		"╪з┘Д╪з╪о╪к╪╡╪з╪▒╪з╪к"
-!define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"╪│╪╖╪н ╪з┘Д┘Е┘Г╪к╪и"
-!define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"┘В╪з╪ж┘Е╪й ╪з╪и╪п╪г"
-!define PIDGIN_SECTION_DESCRIPTION		" ┘И ┘Е┘Д┘Б╪з╪к ┘Д┘П╪и ╪и┘Р╪п┘Т╪м┘Р┘Ж dll"
-!define GTK_SECTION_DESCRIPTION		"╪╣╪п┘С╪й ┘И╪з╪м┘З╪й ╪▒╪│┘И┘Е┘К┘С╪й ┘Е╪к╪╣╪п╪п╪й ╪з┘Д┘Е┘Ж╪╡╪з╪к╪М ┘К╪│╪к╪о╪п┘Е┘З╪з ╪и┘Р╪п┘Т╪м┘Р┘Ж."
+!define PIDGIN_SECTION_TITLE			"┌уэс ╟с╩╤╟╙с ╟с▌ц╤э ╚Ў╧·╠Ўф (у╪сц╚)"
+!define GTK_SECTION_TITLE			"╚э╞╔ ╠╩▀+ (у╪сц╚╔ ┼ф су ╩▀ф уц╠ц╧╔)"
+!define PIDGIN_SHORTCUTS_SECTION_TITLE		"╟с╟╬╩╒╟╤╟╩"
+!define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"╙╪═ ╟су▀╩╚"
+!define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"▐╟╞у╔ ╟╚╧├"
+!define PIDGIN_SECTION_DESCRIPTION		" ц ус▌╟╩ сї╚ ╚Ў╧·╠Ўф dll"
+!define GTK_SECTION_DESCRIPTION		"┌╧°╔ ц╟╠х╔ ╤╙цуэ°╔ у╩┌╧╧╔ ╟суф╒╟╩б э╙╩╬╧ух╟ ╚Ў╧·╠Ўф."
 
-!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"╪з╪о╪к╪╡╪з╪▒╪з╪к ┘Д╪и╪п╪г ╪и┘Р╪п┘Т╪м┘Р┘Ж"
-!define PIDGIN_DESKTOP_SHORTCUT_DESC		"╪г┘Ж╪┤╪ж ╪з╪о╪к╪╡╪з╪▒╪з ┘Д╪и┘Р╪п┘Т╪м┘Р┘Ж ╪╣┘Д┘Й ╪│╪╖╪н ╪з┘Д┘Е┘Г╪к╪и"
-!define PIDGIN_STARTMENU_SHORTCUT_DESC		"╪г┘Ж╪┤╪ж ┘Е┘П╪п╪о┘Д╪й ┘Д╪и╪п╪м┘Ж ┘Б┘К ┘В╪з╪ж┘Е╪й ╪з╪и╪п╪г"
+!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"╟╬╩╒╟╤╟╩ с╚╧├ ╚Ў╧·╠Ўф"
+!define PIDGIN_DESKTOP_SHORTCUT_DESC		"├ф╘╞ ╟╬╩╒╟╤╟ с╚Ў╧·╠Ўф ┌сь ╙╪═ ╟су▀╩╚"
+!define PIDGIN_STARTMENU_SHORTCUT_DESC		"├ф╘╞ уї╧╬с╔ с╚╧╠ф ▌э ▐╟╞у╔ ╟╚╧├"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"┘И┘П╪м┘Р╪п╪к ┘Ж╪│╪о╪й ┘В╪п┘К┘Е╪й ┘Е┘Ж ╪и┘К╪ж╪й ╪м╪к┘Г+. ╪г╪к╪▒┘К╪п ╪з┘Д╪к╪н╪п┘К╪л╪Я$\r┘Д╪з╪н╪╕: ┘В╪п ┘Д╪з ┘К╪╣┘Е┘Д $(^Name) ┘Е╪з┘Д┘Е ╪к┘Б╪╣┘Д ┘З╪░╪з."
-!define GTK_WINDOWS_INCOMPATIBLE		"┘Д╪з ┘К╪к┘И╪з┘Б┘В ┘И┘К┘Ж╪п┘И╪▓ 95/98/Me ┘Е╪╣ ╪м╪к┘Г+ 2.8.0 ╪г┘И ╪г╪н╪п╪л.  ╪м╪к┘Г+ ${GTK_INSTALL_VERSION} ┘Д┘Ж ╪к┘П╪л╪и┘С╪к.$\r╪е╪░╪з ┘Д┘Е ┘К┘Г┘Ж ┘Д╪п┘К┘Г ╪м╪к┘Г+ ${GTK_MIN_VERSION} ╪г┘И ╪г╪н╪п╪л ┘Е╪л╪и╪к╪й ╪и╪з┘Д┘Б╪╣┘Д╪М ╪│┘К┘П╪н╪и╪╖ ╪з┘Д╪к╪л╪и┘К╪к."
+!define GTK_UPGRADE_PROMPT			"цї╠Ў╧╩ ф╙╬╔ ▐╧эу╔ уф ╚э╞╔ ╠╩▀+. ├╩╤э╧ ╟с╩═╧э╦┐$\rс╟═┘: ▐╧ с╟ э┌ус $(^Name) у╟су ╩▌┌с х╨╟."
+!define GTK_WINDOWS_INCOMPATIBLE		"с╟ э╩ц╟▌▐ цэф╧ц╥ 95/98/Me у┌ ╠╩▀+ 2.8.0 ├ц ├═╧╦.  ╠╩▀+ ${GTK_INSTALL_VERSION} сф ╩ї╦╚°╩.$\r┼╨╟ су э▀ф с╧э▀ ╠╩▀+ ${GTK_MIN_VERSION} ├ц ├═╧╦ у╦╚╩╔ ╚╟с▌┌сб ╙эї═╚╪ ╟с╩╦╚э╩."
 
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE		"┘В┘Е ╪и╪▓┘К╪з╪▒╪й ╪╡┘Б╪н╪й ╪и╪п╪м┘Ж ╪╣┘Д┘Й ╪з┘Д┘И┘Р╪и"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"▐у ╚╥э╟╤╔ ╒▌═╔ ╚╧╠ф ┌сь ╟сцЎ╚"
 
 ; Pidgin Section Prompts and Texts
-!define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"╪к╪╣╪░┘С╪▒ ╪е╪▓╪з┘Д╪й ┘Ж╪│╪о╪й ╪и╪п╪м┘Ж ╪з┘Д┘Е╪л╪и┘С╪к╪й. ╪л╪к┘П╪л╪и┘С╪к ╪з┘Д┘Ж╪│╪о╪й ╪з┘Д╪н╪п┘К╪л╪й ╪и╪п┘И┘Ж ╪е╪▓╪з┘Д╪й ╪з┘Д┘Ж╪│╪о╪й ╪з┘Д┘Е╪л╪и┘С╪к╪й ┘Е╪│╪и┘В╪з."
+!define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"╩┌╨°╤ ┼╥╟с╔ ф╙╬╔ ╚╧╠ф ╟су╦╚°╩╔. ╦╩ї╦╚°╩ ╟сф╙╬╔ ╟с═╧э╦╔ ╚╧цф ┼╥╟с╔ ╟сф╙╬╔ ╟су╦╚°╩╔ у╙╚▐╟."
 
 ; GTK+ Section Prompts
-!define GTK_INSTALL_ERROR			"╪о╪╖╪г ╪г╪л┘Ж╪з╪б ╪к╪л╪и┘К╪к ╪и┘К╪ж╪й ╪м╪к┘Г+."
-!define GTK_BAD_INSTALL_PATH			"┘Д╪з ┘К┘Е┘Г┘Ж ╪з┘Д┘И╪╡┘И┘Д ╪г┘И ╪е┘Ж╪┤╪з╪б ╪з┘Д┘Е╪│╪з╪▒ ╪з┘Д╪░┘К ╪н╪п╪п╪к┘З."
+!define GTK_INSTALL_ERROR			"╬╪├ ├╦ф╟┴ ╩╦╚э╩ ╚э╞╔ ╠╩▀+."
+!define GTK_BAD_INSTALL_PATH			"с╟ эу▀ф ╟сц╒цс ├ц ┼ф╘╟┴ ╟су╙╟╤ ╟с╨э ═╧╧╩х."
 
 ; URL Handler section
-!define URI_HANDLERS_SECTION_TITLE		"┘Е╪к╪╣╪з┘Е┘Д╪з╪к ╪з┘Д┘Е╪│╪з╪▒╪з╪к"
+!define URI_HANDLERS_SECTION_TITLE		"у╩┌╟ус╟╩ ╟су╙╟╤╟╩"
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1		"┘Д┘Е ┘К┘П╪╣╪л╪▒ ╪з┘Д┘Е╪л╪и╪к ╪╣┘Д┘Й ╪о╪з┘Ж╪з╪к ╪з┘Д╪│╪м┘Д ╪з┘Д╪о╪з╪╡╪й ╪и╪и╪п╪м┘Ж.$\r╪║╪з┘Д╪и╪з ╪л╪и╪к ┘З╪░╪з ╪з┘Д╪и╪▒┘Ж╪з┘Е╪м ┘Е╪│╪к╪о╪п┘Е ╪в╪о╪▒."
-!define un.PIDGIN_UNINSTALL_ERROR_2		"┘Д╪з ╪к┘Е┘Д┘Г ╪з┘Д╪╡┘Д╪з╪н┘К╪з╪к ┘Д╪к╪л╪и┘К╪к ┘З╪░╪з ╪з┘Д╪к╪╖╪и┘К┘В."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"су эї┌╦╤ ╟су╦╚╩ ┌сь ╬╟ф╟╩ ╟с╙╠с ╟с╬╟╒╔ ╚╚╧╠ф.$\r█╟с╚╟ ╦╚╩ х╨╟ ╟с╚╤ф╟у╠ у╙╩╬╧у ┬╬╤."
+!define un.PIDGIN_UNINSTALL_ERROR_2		"с╟ ╩ус▀ ╟с╒с╟═э╟╩ с╩╦╚э╩ х╨╟ ╟с╩╪╚э▐."
 
 ; Spellcheck Section Prompts
-!define PIDGIN_SPELLCHECK_SECTION_TITLE	"╪п╪╣┘Е ╪з┘Д╪к╪п┘В┘К┘В ╪з┘Д╪е┘Е┘Д╪з╪ж┘К"
-!define PIDGIN_SPELLCHECK_ERROR		"╪о╪╖╪г ╪г╪л┘Ж╪з╪б ╪к╪л╪и┘К╪к ╪з┘Д╪к╪п┘В┘К┘В ╪з┘Д╪е┘Е┘Д╪з╪ж┘К"
-!define PIDGIN_SPELLCHECK_DICT_ERROR		"╪о╪╖╪г ╪г╪л┘Ж╪з╪б ╪к╪л╪и┘К╪к ┘В╪з┘Е┘И╪│ ╪з┘Д╪к╪п┘В┘К┘В ╪з┘Д╪е┘Е┘Д╪з╪ж┘К"
-!define PIDGIN_SPELLCHECK_SECTION_DESCRIPTION	"╪п╪╣┘Е ╪з┘Д╪к╪п┘В┘К┘В ╪з┘Д╪е┘Е┘Д╪з╪ж┘К.  (┘Е╪╖┘Д┘И╪и ╪з╪к╪╡╪з┘Д ╪и╪з┘Д╪е┘Ж╪к╪▒┘Ж╪к ┘Д┘Д╪к╪л╪и┘К╪к)"
-!define ASPELL_INSTALL_FAILED			"┘Б╪┤┘Д ╪з┘Д╪к╪л╪и┘К╪к"
+!define PIDGIN_SPELLCHECK_SECTION_TITLE	"╧┌у ╟с╩╧▐э▐ ╟с┼ус╟╞э"
+!define PIDGIN_SPELLCHECK_ERROR		"╬╪├ ├╦ф╟┴ ╩╦╚э╩ ╟с╩╧▐э▐ ╟с┼ус╟╞э"
+!define PIDGIN_SPELLCHECK_DICT_ERROR		"╬╪├ ├╦ф╟┴ ╩╦╚э╩ ▐╟уц╙ ╟с╩╧▐э▐ ╟с┼ус╟╞э"
+!define PIDGIN_SPELLCHECK_SECTION_DESCRIPTION	"╧┌у ╟с╩╧▐э▐ ╟с┼ус╟╞э.  (у╪сц╚ ╟╩╒╟с ╚╟с┼ф╩╤ф╩ сс╩╦╚э╩)"
+!define ASPELL_INSTALL_FAILED			"▌╘с ╟с╩╦╚э╩"
 !define PIDGIN_SPELLCHECK_BRETON		"Breton"
 !define PIDGIN_SPELLCHECK_CATALAN		"Catalan"
 !define PIDGIN_SPELLCHECK_CZECH		"Czech"
