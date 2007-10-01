@@ -68,7 +68,6 @@ struct _PurpleSrvQueryData {
 	char *error_message;
 	GSList *results;
 #else
-	int fd_in, fd_out;
 	pid_t pid;
 #endif
 };
@@ -112,11 +111,8 @@ resolve(int in, int out)
 	purple_restore_default_signal_handlers();
 #endif
 
-	if (read(in, query, 256) <= 0) {
-		close(out);
-		close(in);
+	if (read(in, query, 256) <= 0)
 		_exit(0);
-	}
 
 	size = res_query( query, C_IN, T_SRV, (u_char*)&answer, sizeof( answer));
 
@@ -181,9 +177,6 @@ end:
 		g_free(ret->data);
 		ret = g_list_remove(ret, ret->data);
 	}
-
-	close(out);
-	close(in);
 
 	_exit(0);
 }
@@ -364,8 +357,6 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	query_data->cb = cb;
 	query_data->extradata = extradata;
 	query_data->pid = pid;
-	query_data->fd_out = out[0];
-	query_data->fd_in = in[1];
 	query_data->handle = purple_input_add(out[0], PURPLE_INPUT_READ, resolved, query_data);
 
 	g_free(query);
@@ -422,9 +413,6 @@ purple_srv_cancel(PurpleSrvQueryData *query_data)
 	}
 	g_free(query_data->query);
 	g_free(query_data->error_message);
-#else
-	close(query_data->fd_out);
-	close(query_data->fd_in);
 #endif
 	g_free(query_data);
 }
