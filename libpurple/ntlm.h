@@ -1,7 +1,8 @@
 /**
  * @file ntlm.h
- *
- * purple
+ */
+
+/* purple
  *
  * Copyright (C) 2005, Thomas Butter <butter@uni-mannheim.de>
  *

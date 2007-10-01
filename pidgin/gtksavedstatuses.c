@@ -1,8 +1,9 @@
 /**
  * @file gtksavedstatus.c GTK+ Saved Status Editor UI
  * @ingroup pidgin
- *
- * pidgin
+ */
+
+/* pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -1410,7 +1411,7 @@ substatus_editor_ok_cb(GtkButton *button, gpointer user_data)
 					   -1);
 	type = purple_account_get_status_type(dialog->account, id);
 	if (purple_status_type_get_attr(type, "message") != NULL)
-		message = gtk_imhtml_get_text(GTK_IMHTML(dialog->message), NULL, NULL);
+		message = gtk_imhtml_get_markup(GTK_IMHTML(dialog->message));
 	name = purple_status_type_get_name(type);
 
 	status_editor = dialog->status_editor;

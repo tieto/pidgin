@@ -1,8 +1,9 @@
 /**
  * @file notify.h Notification API
  * @ingroup core
- *
- * purple
+ */
+
+/* purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -292,7 +293,17 @@ void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
 
 /**
  * Returns a number of the rows in the search results object.
- * 
+ *
+ * @deprecated This function will be removed in Pidgin 3.0.0 unless
+ *             there is sufficient demand to keep it.  Using this
+ *             function encourages looping through the results
+ *             inefficiently.  Instead of using this function you
+ *             should iterate through the results using a loop
+ *             similar to this:
+ *                for (l = results->rows; l != NULL; l = l->next)
+ *             If you really need to get the number of rows you
+ *             can use g_list_length(results->rows).
+ *
  * @param results The search results object.
  *
  * @return Number of the result rows.
@@ -302,6 +313,16 @@ guint purple_notify_searchresults_get_rows_count(PurpleNotifySearchResults *resu
 /**
  * Returns a number of the columns in the search results object.
  *
+ * @deprecated This function will be removed in Pidgin 3.0.0 unless
+ *             there is sufficient demand to keep it.  Using this
+ *             function encourages looping through the columns
+ *             inefficiently.  Instead of using this function you
+ *             should iterate through the columns using a loop
+ *             similar to this:
+ *                for (l = results->columns; l != NULL; l = l->next)
+ *             If you really need to get the number of columns you
+ *             can use g_list_length(results->columns).
+ *
  * @param results The search results object.
  *
  * @return Number of the columns.
@@ -310,6 +331,16 @@ guint purple_notify_searchresults_get_columns_count(PurpleNotifySearchResults *r
 
 /**
  * Returns a row of the results from the search results object.
+ *
+ * @deprecated This function will be removed in Pidgin 3.0.0 unless
+ *             there is sufficient demand to keep it.  Using this
+ *             function encourages looping through the results
+ *             inefficiently.  Instead of using this function you
+ *             should iterate through the results using a loop
+ *             similar to this:
+ *                for (l = results->rows; l != NULL; l = l->next)
+ *             If you really need to get the data for a particular
+ *             row you can use g_list_nth_data(results->rows, row_id).
  *
  * @param results The search results object.
  * @param row_id  Index of the row to be returned.
@@ -321,7 +352,15 @@ GList *purple_notify_searchresults_row_get(PurpleNotifySearchResults *results,
 
 /**
  * Returns a title of the search results object's column.
- * 
+ *
+ * @deprecated This function will be removed in Pidgin 3.0.0 unless
+ *             there is sufficient demand to keep it.  Using this
+ *             function encourages looping through the columns
+ *             inefficiently.  Instead of using this function you
+ *             should iterate through the name of a particular
+ *             column you can use
+ *             g_list_nth_data(results->columns, row_id).
+ *
  * @param results   The search results object.
  * @param column_id Index of the column.
  *

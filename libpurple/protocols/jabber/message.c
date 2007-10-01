@@ -324,7 +324,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	if(type) {
 		if(!strcmp(type, "normal"))
 			jm->type = JABBER_MESSAGE_NORMAL;
-	else if(!strcmp(type, "chat"))
+		else if(!strcmp(type, "chat"))
 			jm->type = JABBER_MESSAGE_CHAT;
 		else if(!strcmp(type, "groupchat"))
 			jm->type = JABBER_MESSAGE_GROUPCHAT;
