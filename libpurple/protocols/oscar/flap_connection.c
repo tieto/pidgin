@@ -380,7 +380,10 @@ flap_connection_destroy_cb(gpointer data)
 	{
 		/* No more FLAP connections!  Sign off this PurpleConnection! */
 		gchar *tmp;
+		PurpleDisconnectReason reason = PURPLE_REASON_NETWORK_ERROR;
+
 		if (conn->disconnect_code == 0x0001) {
+			reason = PURPLE_REASON_NAME_IN_USE;
 			tmp = g_strdup(_("You have signed on from another location."));
 			od->gc->wants_to_die = TRUE;
 		} else if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
@@ -402,7 +405,7 @@ flap_connection_destroy_cb(gpointer data)
 
 		if (tmp != NULL)
 		{
-			purple_connection_error(od->gc, tmp);
+			purple_connection_error_reason(od->gc, reason, tmp);
 			g_free(tmp);
 		}
 	}
