@@ -409,7 +409,8 @@ sighandler(int sig)
 	case SIGWINCH:
 		erase();
 		g_idle_add(refresh_screen, NULL);
-		org_winch_handler(sig);
+		if (org_winch_handler)
+			org_winch_handler(sig);
 		signal(SIGWINCH, sighandler);
 		break;
 #endif
