@@ -1372,7 +1372,8 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	purple_debug_info("certificate/x509/tls_cached",
 			  "Checking for a CA with DN=%s\n",
 			  ca_id);
-	if ( !purple_certificate_pool_contains(ca, ca_id) ) {
+	ca_crt = purple_certificate_pool_retrieve(ca, ca_id);
+	if ( NULL == ca_crt ) {
 		purple_debug_info("certificate/x509/tls_cached",
 				  "Certificate Authority with DN='%s' not "
 				  "found. I'll prompt the user, I guess.\n",
@@ -1385,16 +1386,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		return;
 	}
 
-	ca_crt = purple_certificate_pool_retrieve(ca, ca_id);
 	g_free(ca_id);
-	if (!ca_crt) {
-		purple_debug_error("certificate/x509/tls_cached",
-				   "Certificate authority disappeared out "
-				   "underneath me!\n");
-		purple_certificate_verify_complete(vrq,
-						   PURPLE_CERTIFICATE_INVALID);
-		return;
-	}
 	
 	/* Check the signature */
 	if ( !purple_certificate_signed_by(end_crt, ca_crt) ) {
