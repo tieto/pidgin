@@ -444,7 +444,8 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_UNDERLINE);
 		*end = g_strdup("</f>");
 	} else if (!purple_utf8_strcasecmp(root->name, "a")) {
-		const gchar *href, *link_text;
+		const gchar *href;
+		gchar *link_text;
 
 		href = xmlnode_get_attrib(root, "href");
 
@@ -476,6 +477,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 
 		/* Sorry, kid. MySpace doesn't support you within <a> tags. */
 		xmlnode_free(root->child);
+		g_free(link_text);
 		root->child = NULL;
 
 		*end = g_strdup("");
