@@ -289,7 +289,7 @@ msim_login(PurpleAccount *acct)
 				(int)strlen(acct->password));
 
 		/* Notify an error message also, because this is important! */
-		purple_notify_error(acct, g_strdup(_("MySpaceIM Error")), str, NULL);
+		purple_notify_error(acct, _("MySpaceIM Error"), str, NULL);
 
 		gc->wants_to_die = TRUE;
 		purple_connection_error(gc, str);
@@ -636,6 +636,7 @@ msim_incoming_bm_record_cv(MsimSession *session, MsimMessage *msg)
 	g_return_val_if_fail(username != NULL, FALSE);
 	if (!cv) {
 		/* No client version to record, don't worry about it. */
+		g_free(username);
 		return FALSE;
 	}
 
@@ -825,6 +826,7 @@ msim_incoming_media(MsimSession *session, MsimMessage *msg)
 	serv_got_typing_stopped(session->gc, username);
 
 	g_free(username);
+	g_free(text);
 
 	return TRUE;
 }
@@ -973,7 +975,6 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 	purple_debug_info("msim", "msim_get_info_cb: username=%s\n", username);
 
 	purple_notify_user_info_destroy(user_info);
-	/* TODO: do not free username, since it will be used by user_info? */
 
 	if (temporary_user) {
 		g_free(user->client_info);
@@ -987,7 +988,7 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 		g_free(user->image_url);
 		g_free(user);
 	}
-
+	g_free(username);
 }
 
 /** Retrieve a user's profile. 
@@ -1166,7 +1167,7 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
 	/* TODO: more elegant solution than below. attach whole message? */
 	/* Special elements name beginning with '_', we'll use internally within the
 	 * program (did not come directly from the wire). */
-	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, username);
+	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, username); /* This makes 'msg' the owner of 'username' */
   
 	/* TODO: attach more useful information, like ImageURL */
 
@@ -1802,8 +1803,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 		}
 		purple_connection_error(session->gc, full_errmsg);
 	} else {
-		purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
-				full_errmsg, NULL);
+		purple_notify_error(session->account, _("MySpaceIM Error"), full_errmsg, NULL);
 	}
 
 	g_free(full_errmsg);
@@ -2674,6 +2674,7 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	/* TODO: other fields, store in 'user' */
 
 	msim_msg_free(contact_info);
+	g_free(username);
 }
 
 /** Add first ContactID in contact_info to buddy's list. Used to add
