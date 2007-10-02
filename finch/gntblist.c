@@ -2202,12 +2202,12 @@ send_im_select(GntMenuItem *item, gpointer n)
 	group = purple_request_field_group_new(NULL);
 	purple_request_fields_add_group(fields, group);
 
-	field = purple_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
+	field = purple_request_field_string_new("screenname", _("Name"), NULL, FALSE);
 	purple_request_field_set_type_hint(field, "screenname");
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	field = purple_request_field_account_new("account", _("_Account"), NULL);
+	field = purple_request_field_account_new("account", _("Account"), NULL);
 	purple_request_field_set_type_hint(field, "account");
 	purple_request_field_set_visible(field,
 		(purple_connections_get_all() != NULL &&
@@ -2221,6 +2221,69 @@ send_im_select(GntMenuItem *item, gpointer n)
 						  "you would like to IM."),
 						fields,
 						_("OK"), G_CALLBACK(send_im_select_cb),
+						_("Cancel"), NULL,
+						NULL, NULL, NULL,
+						NULL);
+}
+
+static void
+join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
+{
+	PurpleAccount *account;
+	const char *name;
+	PurpleConnection *gc;
+	PurpleChat *chat;
+	GHashTable *hash = NULL;
+
+	account = purple_request_fields_get_account(fields, "account");
+	name = purple_request_fields_get_string(fields,  "chat");
+
+	if (!purple_account_is_connected(account))
+		return;
+
+	gc = purple_account_get_connection(account);	
+	purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
+	chat = purple_blist_find_chat(account, name);
+	if (chat == NULL) {
+		if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
+			hash = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, name);
+	} else {
+		hash = chat->components;
+	}
+	serv_join_chat(gc, hash);
+	if (chat == NULL && hash != NULL)
+		g_hash_table_destroy(hash);
+}
+
+static void
+join_chat_select(GntMenuItem *item, gpointer n)
+{
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+
+	fields = purple_request_fields_new();
+
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_string_new("chat", _("Channel"), NULL, FALSE);
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+
+	field = purple_request_field_account_new("account", _("Account"), NULL);
+	purple_request_field_set_type_hint(field, "account");
+	purple_request_field_set_visible(field,
+		(purple_connections_get_all() != NULL &&
+		 purple_connections_get_all()->next != NULL));
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+
+	purple_request_fields(purple_get_blist(), _("Join a Chat"),
+						NULL,
+						_("Please enter the name of the chat you want to join."),
+						fields,
+						_("Join"), G_CALLBACK(join_chat_select_cb),
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
 						NULL);
@@ -2267,6 +2330,10 @@ create_menu()
 	item = gnt_menuitem_new(_("Send IM..."));
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), send_im_select, NULL);
+
+	item = gnt_menuitem_new(_("Join Chat..."));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), join_chat_select, NULL);
 
 	item = gnt_menuitem_new(_("Show"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
