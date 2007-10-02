@@ -29,6 +29,9 @@
 
 #include <glib.h>
 
+/**
+ * Different classes of colors.
+ */
 typedef enum
 {
 	GNT_COLOR_NORMAL = 1,
@@ -58,27 +61,28 @@ enum
 	GNT_TOTAL_COLORS
 };
 
-/* populate some default colors */
 /**
- * 
+ * Initialize the colors.
  */
 void gnt_init_colors(void);
 
 /**
- * 
+ * Uninitialize the colors.
  */
 void gnt_uninit_colors(void);
 
 #if GLIB_CHECK_VERSION(2,6,0)
 /**
- * 
- * @param kfile
+ * Parse color information from a file.
+ *
+ * @param kfile  The file containing color information.
  */
 void gnt_colors_parse(GKeyFile *kfile);
 
 /**
- * 
- * @param kfile
+ * Parse color-pair information from a file.
+ *
+ * @param kfile The file containing the color-pair information.
  */
 void gnt_color_pairs_parse(GKeyFile *kfile);
 
