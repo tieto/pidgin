@@ -297,7 +297,7 @@ static void irc_login(PurpleAccount *account)
 	gc->flags |= PURPLE_CONNECTION_NO_NEWLINES;
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
-		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_USERNAME,
+		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
 			_("IRC nicks may not contain whitespace"));
 		return;
 	}

@@ -79,12 +79,16 @@ typedef enum
 	 */
 	PURPLE_REASON_NAME_IN_USE,
 
-	/** The username for the account isn't valid.
+	/** The username/server/other preference for the account isn't valid.
+	 *  For instance, on IRC the screen name cannot contain white space.
+	 *  This reason should not be used for incorrect passwords etc: use
+	 *  #PURPLE_REASON_AUTHENTICATION_FAILED for that.
+	 *
 	 *  @todo This reason really shouldn't be necessary.  Usernames and
 	 *        other account preferences should be validated when the
 	 *        account is created.
 	 */
-	PURPLE_REASON_INVALID_USERNAME,
+	PURPLE_REASON_INVALID_SETTINGS,
 
 	/** The server did not provide a SSL certificate. */
 	PURPLE_REASON_CERT_NOT_PROVIDED,

@@ -588,13 +588,13 @@ jabber_login(PurpleAccount *account)
 	js->old_length = -1;
 
 	if(!js->user) {
-		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_USERNAME,
+		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
 		return;
 	}
 	
 	if (!js->user->domain || *(js->user->domain) == '\0') {
-		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_USERNAME,
+		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
 		return;
 	}
@@ -1079,7 +1079,7 @@ void jabber_register_account(PurpleAccount *account)
 	js->old_length = -1;
 
 	if(!js->user) {
-		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_USERNAME,
+		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
 		return;
 	}

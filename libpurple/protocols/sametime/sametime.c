@@ -3646,7 +3646,7 @@ static void mw_prpl_login(PurpleAccount *acct);
 
 static void prompt_host_cancel_cb(PurpleConnection *gc) {
   const char *msg = _("No Sametime Community Server specified");
-  purple_connection_error_reason(gc, PURPLE_REASON_INVALID_USERNAME, msg);
+  purple_connection_error_reason(gc, PURPLE_REASON_INVALID_SETTINGS, msg);
 }
 
 
