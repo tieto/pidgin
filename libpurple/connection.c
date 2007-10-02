@@ -575,7 +575,7 @@ purple_connection_reason_is_fatal (PurpleDisconnectReason reason)
 		case PURPLE_REASON_AUTHENTICATION_FAILED:
 		case PURPLE_REASON_ENCRYPTION_ERROR:
 		case PURPLE_REASON_NAME_IN_USE:
-		case PURPLE_REASON_INVALID_USERNAME:
+		case PURPLE_REASON_INVALID_SETTINGS:
 		case PURPLE_REASON_OTHER_ERROR:
 			return TRUE;
 		default:
