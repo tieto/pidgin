@@ -88,6 +88,19 @@ purple_certificate_verify_complete(PurpleCertificateVerificationRequest *vrq,
 
 	g_return_if_fail(vrq);
 
+	if (st == PURPLE_CERTIFICATE_VALID) {
+		purple_debug_info("certificate",
+				  "Successfully verified certificate for %s\n",
+				  vrq->subject_name);
+	} else {
+		purple_debug_info("certificate",
+				  "Failed to verify certificate for %s\n",
+				  vrq->subject_name);
+	}
+		
+		
+		
+	
 	/* Pass the results on to the request's callback */
 	(vrq->cb)(st, vrq->cb_data);
 
