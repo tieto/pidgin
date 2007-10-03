@@ -479,6 +479,7 @@ GntMenuItem *gnt_menu_get_item(GntMenu *menu, const char *id)
 			const char *itid = gnt_menuitem_get_id(item);
 			if (itid && strcmp(itid, id) == 0)
 				break;
+			/* XXX: Perhaps look at the menu-label as well? */
 		}
 		item = NULL;
 	}
