@@ -360,6 +360,7 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 						conn->close_when_done = TRUE;
 					}
 				}
+				g_free(line);
 			}
 
 		loop_end:
@@ -493,6 +494,7 @@ msn_soap_connection_run(gpointer data)
 			msn_soap_write_cb(conn, conn->ssl->fd, PURPLE_INPUT_WRITE);
 
 			g_free(authstr);
+			g_free(body);
 		}		
 	}
 
