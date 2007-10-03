@@ -292,8 +292,12 @@ msn_oim_parse_timestamp(const char *timestamp)
 		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
 		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec", NULL
 	};
+	time_t tval = 0;
 	struct tm t;
 	memset(&t, 0, sizeof(t));
+
+	time(&tval);
+	localtime_r(&tval, &t);
 
 	if (sscanf(timestamp, "%02d %03s %04d %02d:%02d:%02d %05s",
 					&t.tm_mday, month_str, &t.tm_year,
@@ -323,14 +327,13 @@ msn_oim_parse_timestamp(const char *timestamp)
 					tzoff *= -1;
 
 				t.tm_year -= 1900;
-				t.tm_isdst = 0;
 
 #ifdef _WIN32
 				if ((sys_tzoff = wpurple_get_tz_offset()) != -1)
 					tzoff += sys_tzoff;
 #else
 #ifdef HAVE_TM_GMTOFF
-				tzoff += t.tm_gmtoff;
+				tzoff -= t.tm_gmtoff;
 #else
 #	ifdef HAVE_TIMEZONE
 				tzset();    /* making sure */
@@ -345,7 +348,7 @@ msn_oim_parse_timestamp(const char *timestamp)
 	}
 
 	purple_debug_info("MSNP14:OIM", "Can't parse timestamp %s\n", timestamp);
-	return time(NULL);
+	return tval;
 }
 
 /*Post the Offline Instant Message to User Conversation*/
@@ -486,9 +489,11 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		}
 /*		purple_debug_info("msnoim","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime); */
 
-		oim->oim_list = g_list_append(oim->oim_list, msgid);
-		msn_oim_post_single_get_msg(oim, msgid);
-		msgid = NULL;
+		if (!g_list_find_custom(oim->oim_list, msgid, g_str_equal)) {
+			oim->oim_list = g_list_append(oim->oim_list, msgid);
+			msn_oim_post_single_get_msg(oim, msgid);
+			msgid = NULL;
+		}
 
 		g_free(passport);
 		g_free(msgid);
