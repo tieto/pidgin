@@ -1853,8 +1853,17 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 		ret = gnt_widget_key_pressed(GNT_WIDGET(wm->menu), keys);
 	else if (wm->_list.window)
 		ret = gnt_widget_key_pressed(wm->_list.window, keys);
-	else if (wm->cws->ordered)
-		ret = gnt_widget_key_pressed(GNT_WIDGET(wm->cws->ordered->data), keys);
+	else if (wm->cws->ordered) {
+		GntWidget *win = wm->cws->ordered->data;
+		GntMenu *menu = GNT_WINDOW(win)->menu;
+		if (menu) {
+			const char *id = gnt_window_get_accel_item(GNT_WINDOW(win), keys);
+			if (id)
+				ret = (gnt_menu_get_item(menu, id) != NULL);
+		}
+		if (!ret)
+			ret = gnt_widget_key_pressed(win, keys);
+	}
 	return ret;
 }
 

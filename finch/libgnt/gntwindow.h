@@ -52,6 +52,7 @@ struct _GntWindow
 {
 	GntBox parent;
 	GntMenu *menu;
+	GntWindowPriv *priv;
 };
 
 struct _GntWindowClass
@@ -98,6 +99,8 @@ GntWidget * gnt_window_box_new(gboolean homo, gboolean vert);
  * @param menu
  */
 void gnt_window_set_menu(GntWindow *window, GntMenu *menu);
+
+const char * gnt_window_get_accel_item(GntWindow *window, const char *key);
 
 void gnt_window_workspace_hiding(GntWindow *);
 void gnt_window_workspace_showing(GntWindow *);
