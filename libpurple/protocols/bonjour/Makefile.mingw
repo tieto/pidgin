@@ -45,6 +45,7 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 C_SRC =			bonjour.c \
 			buddy.c \
+			dns_sd_proxy.c \
 			mdns_common.c \
 			mdns_win32.c \
 			parser.c \
@@ -59,10 +60,14 @@ LIBS =	\
 			-lglib-2.0 \
 			-lws2_32 \
 			-lintl \
-			-ldnssd \
 			-lnetapi32 \
 			-lxml2 \
 			-lpurple
+
+ifeq ($(LINK_DNS_SD_DIRECTLY), 1)
+	CFLAGS += -DLINK_DNS_SD_DIRECTLY
+	LIBS += -ldnssd
+endif
 
 include $(PIDGIN_COMMON_RULES)
 
