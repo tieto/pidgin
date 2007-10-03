@@ -40,7 +40,8 @@ The simplest way to compile this package is:
      the package.
 
   4. Type `make install' to install the programs and any data files and
-     documentation.
+     documentation.  You must have write access to the prefix you are
+	 installing to.  See below for more details on the prefix.
 
   5. You can remove the program binaries and object files from the
      source code directory by typing `make clean'.  To also remove the
