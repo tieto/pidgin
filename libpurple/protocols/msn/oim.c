@@ -28,24 +28,26 @@
 #include "oim.h"
 #include "msnutils.h"
 
-typedef struct _MsnOimSendReq MsnOimSendReq;
-
-struct _MsnOimSendReq
-{
+typedef struct _MsnOimSendReq {
 	char *from_member;
 	char *friendname;
 	char *to_member;
 	char *oim_msg;
-};
+} MsnOimSendReq;
+
+typedef struct {
+	MsnOim *oim;
+	char *msg_id;
+} MsnOimRecvData;
 
 /*Local Function Prototype*/
-static void msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid);
+static void msn_oim_post_single_get_msg(MsnOim *oim, char *msgid);
 static MsnOimSendReq *msn_oim_new_send_req(const char *from_member,
 										   const char *friendname,
 										   const char* to_member,
 										   const char *msg);
 static void msn_oim_free_send_req(MsnOimSendReq *req);
-static void msn_oim_report_to_user(MsnOim *oim, const char *msg_str);
+static void msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str);
 static char *msn_oim_msg_to_str(MsnOim *oim, const char *body);
 
 /*new a OIM object*/
@@ -248,21 +250,27 @@ static void
 msn_oim_delete_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	gpointer data)
 {
-	if (response) {
+	MsnOimRecvData *rdata = data;
+
+	if (response && msn_soap_xml_get(response->xml, "Body/Fault") == NULL) {
 		purple_debug_info("msnoim", "delete OIM success\n");
+		rdata->oim->oim_list = g_list_remove(rdata->oim->oim_list,
+			rdata->msg_id);
+		g_free(rdata->msg_id);
 	} else {
 		purple_debug_info("msnoim", "delete OIM failed\n");
 	}
+
+	g_free(rdata);
 }
 
 /*Post to get the Offline Instant Message*/
 static void
-msn_oim_post_delete_msg(MsnOim *oim,const char *msgid)
+msn_oim_post_delete_msg(MsnOimRecvData *rdata)
 {
+	MsnOim *oim = rdata->oim;
+	char *msgid = rdata->msg_id;
 	char *soap_body;
-
-	g_return_if_fail(oim != NULL);
-	g_return_if_fail(msgid != NULL);
 
 	purple_debug_info("MSNP14","Delete single OIM Message {%s}\n",msgid);
 
@@ -273,7 +281,7 @@ msn_oim_post_delete_msg(MsnOim *oim,const char *msgid)
 		msn_soap_message_new(MSN_OIM_DEL_SOAP_ACTION,
 			xmlnode_from_str(soap_body, -1)),
 		MSN_OIM_RETRIEVE_HOST, MSN_OIM_RETRIEVE_URL,
-		msn_oim_delete_read_cb, NULL);
+		msn_oim_delete_read_cb, rdata);
 
 	g_free(soap_body);
 }
@@ -353,7 +361,7 @@ msn_oim_parse_timestamp(const char *timestamp)
 
 /*Post the Offline Instant Message to User Conversation*/
 static void
-msn_oim_report_to_user(MsnOim *oim, const char *msg_str)
+msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 {
 	MsnMessage *message;
 	char *date,*from,*decode_msg;
@@ -362,7 +370,6 @@ msn_oim_report_to_user(MsnOim *oim, const char *msg_str)
 	char *start,*end;
 	int has_nick = 0;
 	char *passport_str, *passport;
-	char *msg_id;
 	time_t stamp;
 
 	message = msn_message_new(MSN_MSG_UNKNOWN);
@@ -396,26 +403,23 @@ msn_oim_report_to_user(MsnOim *oim, const char *msg_str)
 
 	stamp = msn_oim_parse_timestamp(date);
 
-	serv_got_im(oim->session->account->gc, passport, decode_msg, 0, stamp);
+	serv_got_im(rdata->oim->session->account->gc, passport, decode_msg, 0,
+		stamp);
 
 	/*Now get the oim message ID from the oim_list.
 	 * and append to read list to prepare for deleting the Offline Message when sign out
 	 */
-	if(oim->oim_list != NULL){
-		msg_id = oim->oim_list->data;
-		msn_oim_post_delete_msg(oim,msg_id);
-		oim->oim_list = g_list_remove(oim->oim_list, oim->oim_list->data);
-		g_free(msg_id);
-	}
+	msn_oim_post_delete_msg(rdata);
 
 	g_free(passport);
+	g_free(decode_msg);
 }
 
 static void
 msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	gpointer data)
 {
-	MsnOim *oim = data;
+	MsnOimRecvData *rdata = data;
 
 	if (response != NULL) {
 		xmlnode *msg_node = msn_soap_xml_get(response->xml,
@@ -423,9 +427,8 @@ msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 
 		if (msg_node) {
 			char *msg_str = xmlnode_get_data(msg_node);
-			msn_oim_report_to_user(oim, msg_str);
+			msn_oim_report_to_user(rdata, msg_str);
 			g_free(msg_str);
-			return;
 		} else {
 			char *str = xmlnode_to_str(response->xml, NULL);
 			purple_debug_info("msnoim", "Unknown response: %s\n", str);
@@ -489,7 +492,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		}
 /*		purple_debug_info("msnoim","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime); */
 
-		if (!g_list_find_custom(oim->oim_list, msgid, g_str_equal)) {
+		if (!g_list_find_custom(oim->oim_list, msgid, (GCompareFunc)strcmp)) {
 			oim->oim_list = g_list_append(oim->oim_list, msgid);
 			msn_oim_post_single_get_msg(oim, msgid);
 			msgid = NULL;
@@ -506,11 +509,15 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 
 /*Post to get the Offline Instant Message*/
 static void
-msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
+msn_oim_post_single_get_msg(MsnOim *oim, char *msgid)
 {
 	char *soap_body;
+	MsnOimRecvData *data = g_new0(MsnOimRecvData, 1);
 
 	purple_debug_info("MSNP14","Get single OIM Message\n");
+
+	data->oim = oim;
+	data->msg_id = msgid;
 
 	soap_body = g_strdup_printf(MSN_OIM_GET_TEMPLATE,
 		oim->session->passport_info.t, oim->session->passport_info.p, msgid);
@@ -519,7 +526,7 @@ msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 		msn_soap_message_new(MSN_OIM_GET_SOAP_ACTION,
 			xmlnode_from_str(soap_body, -1)),
 		MSN_OIM_RETRIEVE_HOST, MSN_OIM_RETRIEVE_URL,
-		msn_oim_get_read_cb, oim);
+		msn_oim_get_read_cb, data);
 
 	g_free(soap_body);
 }
