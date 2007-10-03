@@ -1,5 +1,6 @@
 EXTRA_DIST = \
 	mdns_win32.c \
+	dns_sd_proxy.c \
 	dns_sd_proxy.h \
 	Makefile.mingw
 
