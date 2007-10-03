@@ -26,7 +26,7 @@
 #include "msn.h"
 #include "soap.h"
 
-
+#define MSN_SOAP_DEBUG
 /*local function prototype*/
 void msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step);
 
