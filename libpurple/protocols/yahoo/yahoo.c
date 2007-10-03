@@ -202,6 +202,8 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
 		gc->wants_to_die = TRUE;
+		if (!purple_account_get_remember_password(account))
+			purple_account_set_password(account, NULL);
 		purple_connection_error(gc, _("You have signed on from another location."));
 		return;
 	}
@@ -860,10 +862,13 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			/* If a Doodle session doesn't exist between this user */
 			if(wb == NULL)
 			{
+				doodle_session *ds;
 				wb = purple_whiteboard_create(gc->account, im->from, DOODLE_STATE_REQUESTED);
+				ds = wb->proto_data;
+				ds->imv_key = g_strdup(imv);
 
-				yahoo_doodle_command_send_request(gc, im->from);
-				yahoo_doodle_command_send_ready(gc, im->from);
+				yahoo_doodle_command_send_request(gc, im->from, imv);
+				yahoo_doodle_command_send_ready(gc, im->from, imv);
 			}
 		}
 	}
@@ -4087,12 +4092,12 @@ static gboolean yahoo_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
 }
-	
+
 gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint type)
 {
 	PurpleConversation *c;
 
-	c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, 
+	c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 			username, gc->account);
 
 	g_return_val_if_fail(c != NULL, FALSE);
@@ -4117,7 +4122,7 @@ GList *yahoo_attention_types(PurpleAccount *account)
 		attn->incoming_description = _("%s has buzzed you!");
 		attn->outgoing_description = _("Buzzing %s...");
 		list = g_list_append(list, attn);
-	} 
+	}
 
 	return list;
 }

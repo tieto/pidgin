@@ -41,16 +41,20 @@ static void
 msn_accept_add_cb(gpointer data)
 {
 	MsnPermitAdd *pa = data;
-	MsnSession *session = pa->gc->proto_data;
-	MsnUserList *userlist = session->userlist;
-	MsnUser *user = msn_userlist_find_add_user(userlist, pa->who, pa->who);
-	
+
 	purple_debug_misc("MSN Userlist", "Accepted the new buddy: %s\n", pa->who);
 
-	msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_AL);
+	if (PURPLE_CONNECTION_IS_VALID(pa->gc))
+	{
+		MsnSession *session = pa->gc->proto_data;
+		MsnUserList *userlist = session->userlist;
+		MsnUser *user = msn_userlist_find_add_user(userlist, pa->who, pa->who);
 
-	if (msn_userlist_user_is_in_list(user, MSN_LIST_FL)) {
-		msn_del_contact_from_list(session->contact, NULL, pa->who, MSN_LIST_PL);
+
+		msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_AL);
+
+		if (msn_userlist_user_is_in_list(user, MSN_LIST_FL))
+			msn_del_contact_from_list(session->contact, NULL, pa->who, MSN_LIST_PL);
 	}
 
 	g_free(pa->who);
@@ -63,14 +67,14 @@ msn_cancel_add_cb(gpointer data)
 {
 	MsnPermitAdd *pa = data;
 
-	purple_debug_misc("MSN Userlist", "Deniedthe new buddy: %s\n", pa->who);
+	purple_debug_misc("MSN Userlist", "Denied the new buddy: %s\n", pa->who);
 
-	if (g_list_find(purple_connections_get_all(), pa->gc) != NULL)
+	if (PURPLE_CONNECTION_IS_VALID(pa->gc))
 	{
 		MsnSession *session = pa->gc->proto_data;
 		MsnUserList *userlist = session->userlist;
 		MsnCallbackState *state = msn_callback_state_new();
-	
+
 		msn_callback_state_set_action(state, MSN_DENIED_BUDDY);
 
 		msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_BL);
@@ -85,16 +89,18 @@ msn_cancel_add_cb(gpointer data)
 static void
 got_new_entry(PurpleConnection *gc, const char *passport, const char *friendly)
 {
+	PurpleAccount *acct;
 	MsnPermitAdd *pa;
 
 	pa = g_new0(MsnPermitAdd, 1);
 	pa->who = g_strdup(passport);
 	pa->friendly = g_strdup(friendly);
 	pa->gc = gc;
-	
-	purple_account_request_authorization(purple_connection_get_account(gc), passport, NULL, friendly, NULL,
-					   purple_find_buddy(purple_connection_get_account(gc), passport) != NULL,
-					   msn_accept_add_cb, msn_cancel_add_cb, pa);
+
+	acct = purple_connection_get_account(gc);
+	purple_account_request_authorization(acct, passport, NULL, friendly, NULL,
+										 purple_find_buddy(acct, passport) != NULL,
+										 msn_accept_add_cb, msn_cancel_add_cb, pa);
 
 }
 
@@ -133,6 +139,7 @@ msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id)
 		return FALSE;
 }
 
+#if 0
 static const char*
 get_store_name(MsnUser *user)
 {
@@ -160,6 +167,7 @@ get_store_name(MsnUser *user)
 
 	return store_name;
 }
+#endif
 
 /**************************************************************************
  * Server functions

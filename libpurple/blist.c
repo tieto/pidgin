@@ -632,12 +632,13 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 			continue;
 
 		buddy = (PurpleBuddy*)bnode;
-
-		if (!purple_account_is_connected(buddy->account))
-			continue;
 		if (new_priority == NULL)
+		{
 			new_priority = buddy;
-		else
+			continue;
+		}
+
+		if (purple_account_is_connected(buddy->account))
 		{
 			int cmp;
 

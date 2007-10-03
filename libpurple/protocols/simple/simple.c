@@ -695,7 +695,7 @@ static char *get_contact(struct simple_account_data  *sip) {
 static void do_register_exp(struct simple_account_data *sip, int expire) {
 	char *uri, *to, *contact, *hdr;
 
-	/* Set our default expiration to 900, 
+	/* Set our default expiration to 900,
 	 * as done in the initialization of the simple_account_data
 	 * structure.
 	 */
@@ -1042,6 +1042,8 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 				if(sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) {
 					purple_debug_info("simple", "Setting wants_to_die to true.\n");
 					sip->gc->wants_to_die = TRUE;
+					if (!purple_account_get_remember_password(sip->gc->account))
+						purple_account_set_password(sip->gc->account, NULL);
 					purple_connection_error(sip->gc, _("Incorrect password."));
 					return TRUE;
 				}

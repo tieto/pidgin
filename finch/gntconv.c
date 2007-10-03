@@ -765,7 +765,8 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 					_("<AUTO-REPLY> "), GNT_TEXT_FLAG_BOLD);
 
-	if (who && *who && (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)))
+	if (who && *who && (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)) &&
+			!(flags & PURPLE_MESSAGE_NOTIFY))
 	{
 		char * name = NULL;
 
@@ -958,7 +959,7 @@ finch_conv_present(PurpleConversation *conv)
 {
 	FinchConv *fc = FINCH_CONV(conv);
 	if (fc && fc->window)
-		return gnt_window_present(fc->window);
+		gnt_window_present(fc->window);
 }
 
 static gboolean
