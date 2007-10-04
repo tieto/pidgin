@@ -765,7 +765,7 @@ msn_soap_post_head_request(MsnSoapConn *soapconn)
  * if not connected, Connected first.
  */
 void
-msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request)
+msn_soap_post(MsnSoapConn *soapconn, MsnSoapReq *request)
 {
 	MsnSoapReq *head_request;
 
@@ -809,10 +809,15 @@ msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request)
 			return;
 		}
 
+#ifdef MSN_SOAP_DEBUG
 		purple_debug_info("MSN SOAP", "Currently processing another SOAP request\n");
 	} else {
 		purple_debug_info("MSN SOAP", "No requests left to dispatch\n");
 	}
+#else
+      }
+#endif
+
 }
 
 /*Post the soap request action*/
