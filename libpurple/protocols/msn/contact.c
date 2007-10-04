@@ -1024,12 +1024,7 @@ msn_add_contact_read_cb(MsnSoapConn *soapconn)
 	user = msn_userlist_find_add_user(userlist, state->who, state->who);
 	msn_user_add_group_id(user, state->guid);
 
-	if (msn_userlist_user_is_in_list(user, MSN_LIST_PL)) {
-		msn_del_contact_from_list(soapconn->session->contact, NULL, state->who, MSN_LIST_PL);
-	} else {
-		msn_soap_free_read_buf(soapconn);
-	}
-	
+	msn_soap_free_read_buf(soapconn);
 	msn_callback_state_free(state);
 
 	return TRUE;
@@ -1119,12 +1114,6 @@ msn_add_contact_to_group_read_cb(MsnSoapConn *soapconn)
 		                msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
 	        }
 	        msn_notification_send_fqy(soapconn->session, state->who);
-
-		if (msn_userlist_user_is_in_list(user, MSN_LIST_PL)) {
-			msn_del_contact_from_list(soapconn->session->contact, NULL, state->who, MSN_LIST_PL);
-			msn_callback_state_free(state);
-			return TRUE;
-		}
 	}
 
 	if (state->action & MSN_MOVE_BUDDY) {
