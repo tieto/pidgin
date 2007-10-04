@@ -1985,7 +1985,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 #if PHOTO_SUPPORT
 	/* Find the URL to the photo; must be before the marshalling [Bug 994207] */
 	photo_url_text = msn_get_photo_url(url_text);
-	purple_debug_info("MSNP14","photo url:{%s}\n",photo_url_text);
+	purple_debug_info("MSNP14","photo url:{%s}\n", photo_url_text ? photo_url_text : "(null)");
 
 	/* Marshall the existing state */
 	info2_data = g_malloc0(sizeof(MsnGetInfoStepTwoData));
