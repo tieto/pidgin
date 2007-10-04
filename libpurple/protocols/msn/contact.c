@@ -31,8 +31,8 @@
 
 const char *MsnSoapPartnerScenarioText[] =
 {
-        "Initial",
-        "ContactSave",
+	"Initial",
+	"ContactSave",
 	"MessengerPendingList",
 	"ContactMsgrAPI",
 	"BlockUnblock"
@@ -72,29 +72,23 @@ MsnCallbackState *
 msn_callback_state_new(void)
 {
 	return g_new0(MsnCallbackState, 1);
-}	
+}
 
 void
 msn_callback_state_free(MsnCallbackState *state)
 {
 	if (state == NULL)
 		return;
-	
-	if (state->who != NULL)
-		g_free(state->who);
-	
-	if (state->old_group_name != NULL)
-		g_free(state->old_group_name);
-	
-	if (state->new_group_name != NULL)
-		g_free(state->new_group_name);
-	
-	if (state->guid != NULL)
-		g_free(state->guid);
-	
+
+	g_free(state->who);
+	g_free(state->uid);
+	g_free(state->old_group_name);
+	g_free(state->new_group_name);
+	g_free(state->guid);
+
 	g_free(state);
 }
-	
+
 void
 msn_callback_state_set_who(MsnCallbackState *state, const gchar *who)
 {
@@ -104,11 +98,23 @@ msn_callback_state_set_who(MsnCallbackState *state, const gchar *who)
 
 	if (who != NULL)
 		new_str = g_strdup(who);
-	
-	if (state->who != NULL)
-		g_free(state->who);
-	
+
+	g_free(state->who);
 	state->who = new_str;
+}
+
+void
+msn_callback_state_set_uid(MsnCallbackState *state, const gchar *uid)
+{
+	gchar *new_str = NULL;
+
+	g_return_if_fail(state != NULL);
+
+	if (uid != NULL)
+		new_str = g_strdup(uid);
+
+	g_free(state->uid);
+	state->uid = new_str;
 }
 
 void
@@ -121,9 +127,7 @@ msn_callback_state_set_old_group_name(MsnCallbackState *state, const gchar *old_
 	if (old_group_name != NULL)
 		new_str = g_strdup(old_group_name);
 
-	if (state->old_group_name != NULL)
-		g_free(state->old_group_name);
-	
+	g_free(state->old_group_name);
 	state->old_group_name = new_str;
 }
 
@@ -137,9 +141,7 @@ msn_callback_state_set_new_group_name(MsnCallbackState *state, const gchar *new_
 	if (new_group_name != NULL)
 		new_str = g_strdup(new_group_name);
 
-	if (state->new_group_name != NULL)
-		g_free(state->new_group_name);
-	
+	g_free(state->new_group_name);
 	state->new_group_name = new_str;
 }
 
@@ -152,10 +154,8 @@ msn_callback_state_set_guid(MsnCallbackState *state, const gchar *guid)
 
 	if (guid != NULL)
 		new_str = g_strdup(guid);
-	
-	if (state->guid != NULL)
-		g_free(state->guid);
-	
+
+	g_free(state->guid);
 	state->guid = new_str;
 }
 
@@ -164,7 +164,7 @@ void
 msn_callback_state_set_list_id(MsnCallbackState *state, MsnListId list_id)
 {
 	g_return_if_fail(state != NULL);
-	
+
 	state->list_id = list_id;
 }
 
@@ -172,15 +172,14 @@ void
 msn_callback_state_set_action(MsnCallbackState *state, MsnCallbackAction action)
 {
 	g_return_if_fail(state != NULL);
-	
+
 	state->action |= action;
 }
-		       
+
 /*contact SOAP server login error*/
 static void
-msn_contact_login_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data)
+msn_contact_login_error_cb(MsnSoapConn *soapconn, PurpleSslConnection *gsc, PurpleSslErrorType error)
 {
-	MsnSoapConn *soapconn = data;
 	MsnSession *session;
 
 	session = soapconn->session;
@@ -190,29 +189,29 @@ msn_contact_login_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, v
 }
 
 /*msn contact SOAP server connect process*/
-static void
-msn_contact_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
-				 PurpleInputCondition cond)
+static gboolean
+msn_contact_login_connect_cb(MsnSoapConn *soapconn, PurpleSslConnection *gsc)
 {
-	MsnSoapConn *soapconn = data;
 	MsnSession * session;
 	MsnContact *contact;
 
 	contact = soapconn->parent;
-	g_return_if_fail(contact != NULL);
+	g_return_val_if_fail(contact != NULL, TRUE);
 
 	session = contact->session;
-	g_return_if_fail(session != NULL);
+	g_return_val_if_fail(session != NULL, FALSE);
 
 	/*login ok!We can retrieve the contact list*/
 //	msn_get_contact_list(contact, MSN_PS_INITIAL, NULL);
+	return TRUE;
 }
 
 /*get MSN member role utility*/
 static MsnListId
-msn_get_memberrole(char * role)
+msn_get_memberrole(char *role)
 {
-	
+	g_return_val_if_fail(role != NULL, 0);
+
 	if (!strcmp(role,"Allow")) {
 		return MSN_LIST_AL;
 	} else if (!strcmp(role,"Block")) {
@@ -226,9 +225,11 @@ msn_get_memberrole(char * role)
 }
 
 /*get User Type*/
-static int 
-msn_get_user_type(char * type)
+static int
+msn_get_user_type(char *type)
 {
+	g_return_val_if_fail(type != NULL, 0);
+
 	if (!strcmp(type,"Regular")) {
 		return MSN_USER_TYPE_PASSPORT;
 	}
@@ -243,30 +244,27 @@ msn_get_user_type(char * type)
 }
 
 /* Create the AddressBook in the server, if we don't have one */
-static void
-msn_create_address_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_create_address_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn *soapconn = data;
 	MsnContact *contact;
 
 	if (soapconn->body == NULL)
-		return;
+		return TRUE;
 
 	contact = soapconn->parent;
-	g_return_if_fail(contact != NULL);
+	g_return_val_if_fail(contact != NULL, TRUE);
 
 	purple_debug_info("MSN AddressBook", "Address Book successfully created!\n");
 	msn_get_address_book(contact, MSN_PS_INITIAL, NULL, NULL);
 
 //	msn_soap_free_read_buf(soapconn);
-	return;
+	return TRUE;
 }
 
 static void
-msn_create_address_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_create_address_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
-
 	purple_debug_info("MSN AddressBook","AddressBookAdd written\n");
 	soapconn->read_cb = msn_create_address_cb;
 
@@ -293,8 +291,9 @@ msn_create_address_book(MsnContact * contact)
 					body,
 					NULL,
 					msn_create_address_cb,
-					msn_create_address_written_cb);
-	msn_soap_post(contact->soapconn, soap_request, msn_contact_connect_init);
+					msn_create_address_written_cb,
+					msn_contact_connect_init);
+	msn_soap_post(contact->soapconn, soap_request);
 
 	g_free(body);
 	
@@ -312,9 +311,7 @@ msn_parse_contact_list(MsnContact * contact)
 	xmlnode *fault, *faultstringnode, *faultdetail, *errorcode;
 	xmlnode *node, *body, *response, *result, *services;
 	xmlnode *service, *memberships, *info, *handle, *handletype;
-	xmlnode *LastChangeNode;
 	xmlnode *membershipnode, *members, *member, *passportNode;
-	char *LastChangeStr;
 
 	session = contact->session;
 	node = xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
@@ -326,8 +323,12 @@ msn_parse_contact_list(MsnContact * contact)
 
 	purple_debug_misc("MSNCL","Parsing contact list with size %d\n", contact->soapconn->body_len);
 
-	purple_debug_misc("MSNCL","Root node @ %p: Name: '%s', child: '%s', lastchild: '%s'\n",node,node->name,node->child->name,node->lastchild->name);
-	body = xmlnode_get_child(node,"Body");
+	purple_debug_misc("MSNCL","Root node @ %p: Name: '%s', child: '%s', lastchild: '%s'\n", node,
+		node->name ? node->name : "(null)",
+		(node->child && node->child->name) ? node->child->name : "(null)",
+		(node->lastchild && node->lastchild->name) ? node->lastchild->name : "(null)");
+
+	body = xmlnode_get_child(node, "Body");
 
 	if (body == NULL) {
 		purple_debug_warning("MSNCL", "Failed to parse contact list Body node\n");
@@ -342,20 +343,20 @@ msn_parse_contact_list(MsnContact * contact)
 
 		if ( (faultstringnode = xmlnode_get_child(fault, "faultstring")) != NULL ) {
 			gchar * faultstring = xmlnode_get_data(faultstringnode);
-			purple_debug_info("MSNCL","Faultstring: %s\n", faultstring);
+			purple_debug_info("MSNCL", "Faultstring: %s\n", faultstring ? faultstring : "(null)");
 			g_free(faultstring);
 		}
 		if ( (faultdetail = xmlnode_get_child(fault, "detail")) != NULL ) {
 			purple_debug_info("MSNCL","detail @ %p, name: %s\n",faultdetail, faultdetail->name);
 
 			if ( (errorcode = xmlnode_get_child(faultdetail, "errorcode")) != NULL ) {
-				purple_debug_info("MSNCL","errorcode @ %p, name: %s\n",errorcode, errorcode->name);
+				purple_debug_info("MSNCL","errorcode @ %p, name: %s\n", errorcode, errorcode->name);
 
 				if (errorcode->child != NULL) {
 					gchar *errorcodestring = xmlnode_get_data(errorcode);
-					purple_debug_info("MSNCL", "Error Code: %s\n", errorcodestring);
+					purple_debug_info("MSNCL", "Error Code: %s\n", errorcodestring ? errorcodestring : "(null)");
 
-					if ( !strncmp(errorcodestring, "ABDoesNotExist", 14) ) {
+					if (errorcodestring && !strncmp(errorcodestring, "ABDoesNotExist", 14) ) {
 						xmlnode_free(node);
 						g_free(errorcodestring);
 						msn_create_address_book(contact);
@@ -403,7 +404,7 @@ msn_parse_contact_list(MsnContact * contact)
 	for (service = xmlnode_get_child(services, "Service"); service;
 	                                service = xmlnode_get_next_twin(service)) {
 		purple_debug_info("MSNCL","Service @ %p\n",service);
-	
+
 		if ( (info = xmlnode_get_child(service,"Info")) == NULL ) {
 			purple_debug_error("MSNCL","Error getting 'Info' child node\n");
 			continue;
@@ -419,7 +420,6 @@ msn_parse_contact_list(MsnContact * contact)
 
 		if ( (typedata = xmlnode_get_data(handletype)) == NULL) {
 			purple_debug_error("MSNCL","Error retrieving data from 'Type' child node\n");
-			g_free(typedata);
 			continue;
 		}
 
@@ -432,11 +432,13 @@ msn_parse_contact_list(MsnContact * contact)
 		}
 
 		if ( !g_strcasecmp(typedata, "Messenger") ) {
+			char *LastChangeStr = NULL;
+			xmlnode *LastChangeNode;
 
 			/*Last Change Node*/
-			LastChangeNode = xmlnode_get_child(service, "LastChange");
-			LastChangeStr = xmlnode_get_data(LastChangeNode);
-			purple_debug_info("MSNCL","LastChangeNode: '%s'\n",LastChangeStr);	
+			if ((LastChangeNode = xmlnode_get_child(service, "LastChange")))
+				LastChangeStr = xmlnode_get_data(LastChangeNode);
+			purple_debug_info("MSNCL","LastChangeNode: '%s'\n",LastChangeStr ? LastChangeStr : "(null)");
 			purple_account_set_string(session->account, "CLLastChange", LastChangeStr);
 			g_free(LastChangeStr);
 
@@ -451,35 +453,44 @@ msn_parse_contact_list(MsnContact * contact)
 			for (membershipnode = xmlnode_get_child(memberships, "Membership"); membershipnode;
 							membershipnode = xmlnode_get_next_twin(membershipnode)){
 				xmlnode *roleNode;
-				char *role;
+				char *role = NULL;
+				list = 0;
 
-				roleNode = xmlnode_get_child(membershipnode,"MemberRole");
-				role = xmlnode_get_data(roleNode);
-				list = msn_get_memberrole(role);
+				if ((roleNode = xmlnode_get_child(membershipnode,"MemberRole"))) {
+					role = xmlnode_get_data(roleNode);
+					list = msn_get_memberrole(role);
+				}
 				list_op = 1 << list;
 
-				purple_debug_info("MSNCL","MemberRole role: %s, list_op: %d\n",role,list_op);
-				
+				purple_debug_info("MSNCL","MemberRole role: %s, list_op: %d\n", role ? role : "(null)", list_op);
+
 				g_free(role);
-				
-				members = xmlnode_get_child(membershipnode,"Members");
+
+				members = xmlnode_get_child(membershipnode, "Members");
 				for (member = xmlnode_get_child(members, "Member"); member;
 						member = xmlnode_get_next_twin(member)){
 					MsnUser *user = NULL;
-					xmlnode *typeNode, *membershipIdNode=NULL;
+					xmlnode *typeNode, *membershipIdNode = NULL;
 					gchar *type, *membershipId = NULL;
+					const char *member_type = xmlnode_get_attrib(member, "type");
 
-					purple_debug_info("MSNCL","Member type: %s\n", xmlnode_get_attrib(member,"type"));
-					
-					if( !g_strcasecmp(xmlnode_get_attrib(member,"type"), "PassportMember") ) {
-						passportNode = xmlnode_get_child(member,"PassportName");
-						passport = xmlnode_get_data(passportNode);
-						typeNode = xmlnode_get_child(member,"Type");
-						type = xmlnode_get_data(typeNode);
-						purple_debug_info("MSNCL","Passport name: '%s', Type: %s\n",passport,type);
+					if (!member_type) {
+						purple_debug_error("msn", "No Member Type specified for Member.\n");
+						continue;
+					}
+
+					if(!g_strcasecmp(member_type, "PassportMember") ) {
+						passport = type = NULL;
+						if ((passportNode = xmlnode_get_child(member, "PassportName")))
+							passport = xmlnode_get_data(passportNode);
+						if ((typeNode = xmlnode_get_child(member, "Type")))
+							type = xmlnode_get_data(typeNode);
+						purple_debug_info("MSNCL","Passport name: '%s', Type: %s\n", passport ? passport : "(null)", type ? type : "(null)");
+						/* Why do we even bother parsing it just to free it??? */
 						g_free(type);
 
 						user = msn_userlist_find_add_user(session->userlist,passport,NULL);
+						g_free(passport);
 
 						membershipIdNode = xmlnode_get_child(member,"MembershipId");
 						if (membershipIdNode != NULL) {
@@ -489,23 +500,23 @@ msn_parse_contact_list(MsnContact * contact)
 								g_free(membershipId);
 							}
 						}
-							
-						msn_got_lst_user(session, user, list_op, NULL);
 
-						g_free(passport);
+						msn_got_lst_user(session, user, list_op, NULL);
 					}
-					
-					if (!g_strcasecmp(xmlnode_get_attrib(member,"type"),"PhoneMember")) {
+					else if (!g_strcasecmp(member_type, "PhoneMember")) {
+						purple_debug_info("msn", "Recieved Phone Member; ignoring.\n");
 					}
-					
-					if (!g_strcasecmp(xmlnode_get_attrib(member,"type"),"EmailMember")) {
+					else if (!g_strcasecmp(member_type, "EmailMember")) {
 						xmlnode *emailNode;
+						passport = NULL;
 
-						emailNode = xmlnode_get_child(member,"Email");
-						passport = xmlnode_get_data(emailNode);
-						purple_debug_info("MSNCL","Email Member: Name: '%s', list_op: %d\n", passport, list_op);
+						if ((emailNode = xmlnode_get_child(member, "Email")))
+							passport = xmlnode_get_data(emailNode);
+						purple_debug_info("MSNCL","Email Member: Name: '%s', list_op: %d\n", passport ? passport : "(null)", list_op);
+
 						user = msn_userlist_find_add_user(session->userlist, passport, NULL);
-						
+						g_free(passport);
+
 						membershipIdNode = xmlnode_get_child(member,"MembershipId");
 						if (membershipIdNode != NULL) {
 							membershipId = xmlnode_get_data(membershipIdNode);
@@ -514,9 +525,10 @@ msn_parse_contact_list(MsnContact * contact)
 								g_free(membershipId);
 							}
 						}
-						
+
 						msn_got_lst_user(session, user, list_op, NULL);
-						g_free(passport);
+					} else {
+						purple_debug_info("msn", "Unknown Member type: %s\n", member_type);
 					}
 				}
 			}
@@ -527,10 +539,9 @@ msn_parse_contact_list(MsnContact * contact)
 	xmlnode_free(node);	/* Free the whole XML tree */
 }
 
-static void
-msn_get_contact_list_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_get_contact_list_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn *soapconn = data;
 	MsnContact *contact;
 	MsnSession *session;
 	const char *abLastChange;
@@ -538,15 +549,15 @@ msn_get_contact_list_cb(gpointer data, gint source, PurpleInputCondition cond)
 	gchar *partner_scenario;
 
 	if (soapconn->body == NULL)
-		return;
+		return TRUE;
 
 	purple_debug_misc("MSNCL","Got the contact list!\n");
 
 	contact = soapconn->parent;
-	g_return_if_fail(contact != NULL);
+	g_return_val_if_fail(contact != NULL, TRUE);
 	session = soapconn->session;
-	g_return_if_fail(session != NULL);
-	g_return_if_fail(soapconn->data_cb != NULL);
+	g_return_val_if_fail(session != NULL, FALSE);
+	g_return_val_if_fail(soapconn->data_cb != NULL, TRUE);
 
 	partner_scenario = soapconn->data_cb;
 
@@ -570,25 +581,24 @@ msn_get_contact_list_cb(gpointer data, gint source, PurpleInputCondition cond)
 	} else {
 		msn_soap_free_read_buf(soapconn);
 	}
+
+	return TRUE;
 }
 
 static void
-msn_get_contact_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_get_contact_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;	
-
 	purple_debug_misc("MSNCL","Sent SOAP request for the contact list.\n");
 	soapconn->read_cb = msn_get_contact_list_cb;
-//	msn_soap_read_cb(data,source,cond);
 }
 
-/*SOAP  get contact list*/
+/* SOAP  get contact list*/
 void
 msn_get_contact_list(MsnContact * contact, const MsnSoapPartnerScenario partner_scenario, const char *update_time)
 {
 	MsnSoapReq *soap_request;
-	gchar *body = NULL;
-	gchar * update_str;
+	gchar *body;
+	gchar *update_str = NULL;
 	const gchar *partner_scenario_str = MsnSoapPartnerScenarioText[partner_scenario];
 
 	purple_debug_misc("MSNCL","Getting Contact List.\n");
@@ -596,11 +606,9 @@ msn_get_contact_list(MsnContact * contact, const MsnSoapPartnerScenario partner_
 	if ( update_time != NULL ) {
 		purple_debug_info("MSNCL","Last update time: %s\n",update_time);
 		update_str = g_strdup_printf(MSN_GET_CONTACT_UPDATE_XML,update_time);
-	} else {
-		update_str = g_strdup("");
 	}
 
-	body = g_strdup_printf(MSN_GET_CONTACT_TEMPLATE, partner_scenario_str, update_str);
+	body = g_strdup_printf(MSN_GET_CONTACT_TEMPLATE, partner_scenario_str, update_str ? update_str : "");
 	g_free(update_str);
 
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
@@ -609,8 +617,9 @@ msn_get_contact_list(MsnContact * contact, const MsnSoapPartnerScenario partner_
 					body,
 					(gpointer) partner_scenario_str,
 					msn_get_contact_list_cb,
-					msn_get_contact_written_cb);
-	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
+					msn_get_contact_written_cb,
+					msn_contact_connect_init);
+	msn_soap_post(contact->soapconn,soap_request);
 	g_free(body);
 }
 
@@ -625,13 +634,12 @@ msn_parse_addressbook_groups(MsnContact *contact, xmlnode *node)
 	for(group = xmlnode_get_child(node, "Group"); group;
 					group = xmlnode_get_next_twin(group)){
 		xmlnode *groupId, *groupInfo, *groupname;
-		char *group_id, *group_name;
+		char *group_id = NULL, *group_name = NULL;
 
-		groupId = xmlnode_get_child(group,"groupId");
-		group_id = xmlnode_get_data(groupId);
-		groupInfo = xmlnode_get_child(group,"groupInfo");
-		groupname = xmlnode_get_child(groupInfo,"name");
-		group_name = xmlnode_get_data(groupname);
+		if ((groupId = xmlnode_get_child(group, "groupId")))
+			group_id = xmlnode_get_data(groupId);
+		if ((groupInfo = xmlnode_get_child(group, "groupInfo")) && (groupname = xmlnode_get_child(groupInfo, "name")))
+			group_name = xmlnode_get_data(groupname);
 
 		msn_group_new(session->userlist, group_id, group_name);
 
@@ -641,7 +649,7 @@ msn_parse_addressbook_groups(MsnContact *contact, xmlnode *node)
 			continue;
 		}
 
-		purple_debug_info("MsnAB","group_id: %s, name: %s\n",group_id,group_name);
+		purple_debug_info("MsnAB","group_id: %s, name: %s\n", group_id, group_name ? group_name : "(null)");
 		if ((purple_find_group(group_name)) == NULL){
 			PurpleGroup *g = purple_group_new(group_name);
 			purple_blist_add_group(g, NULL);
@@ -656,34 +664,40 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 {
 	MsnSession *session = contact->session;
 	xmlnode *contactNode;
+	char *passport = NULL, *Name = NULL, *uid = NULL, *type = NULL;
 
 	for(contactNode = xmlnode_get_child(node, "Contact"); contactNode;
-				contactNode = xmlnode_get_next_twin(contactNode)){
-		xmlnode *contactId,*contactInfo,*contactType,*passportName,*displayName,*guid;
-		xmlnode *groupIds;
+				contactNode = xmlnode_get_next_twin(contactNode)) {
+		xmlnode *contactId, *contactInfo, *contactType, *passportName, *displayName, *guid, *groupIds;
 		MsnUser *user;
 		MsnUserType usertype;
-		char *passport = NULL, *Name = NULL, *uid = NULL, *type = NULL;
 
-		contactId= xmlnode_get_child(contactNode,"contactId");
+		if (!(contactId = xmlnode_get_child(contactNode,"contactId"))
+				|| !(contactInfo = xmlnode_get_child(contactNode, "contactInfo"))
+				|| !(contactType = xmlnode_get_child(contactInfo, "contactType")))
+			continue;
+
+		g_free(passport);
+		g_free(Name);
+		g_free(uid);
+		g_free(type);
+		passport = Name = uid = type = NULL;
+
 		uid = xmlnode_get_data(contactId);
-
-		contactInfo = xmlnode_get_child(contactNode,"contactInfo");
-		contactType = xmlnode_get_child(contactInfo,"contactType");
 		type = xmlnode_get_data(contactType);
 
 		/*setup the Display Name*/
-		if (!strcmp(type, "Me")){
-			char *friendly;
-			friendly = xmlnode_get_data(xmlnode_get_child(contactInfo, "displayName"));
-			purple_connection_set_display_name(session->account->gc, purple_url_decode(friendly));
+		if (type && !strcmp(type, "Me")){
+			char *friendly = NULL;
+			if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
+				friendly = xmlnode_get_data(displayName);
+			purple_connection_set_display_name(session->account->gc, friendly ? purple_url_decode(friendly) : NULL);
 			g_free(friendly);
-			g_free(uid);
-			g_free(type);
 			continue; /* Not adding own account as buddy to buddylist */
 		}
+
 		usertype = msn_get_user_type(type);
-		passportName = xmlnode_get_child(contactInfo,"passportName");
+		passportName = xmlnode_get_child(contactInfo, "passportName");
 		if (passportName == NULL) {
 			xmlnode *emailsNode, *contactEmailNode, *emailNode;
 			xmlnode *messengerEnabledNode;
@@ -691,102 +705,92 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 
 			/*TODO: add it to the none-instant Messenger group and recognize as email Membership*/
 			/*Yahoo User?*/
-			emailsNode = xmlnode_get_child(contactInfo,"emails");
+			emailsNode = xmlnode_get_child(contactInfo, "emails");
 			if (emailsNode == NULL) {
 				/*TODO:  need to support the Mobile type*/
-				g_free(uid);
-				g_free(type);
 				continue;
 			}
-			for(contactEmailNode = xmlnode_get_child(emailsNode,"ContactEmail");contactEmailNode;
+			for(contactEmailNode = xmlnode_get_child(emailsNode, "ContactEmail"); contactEmailNode;
 					contactEmailNode = xmlnode_get_next_twin(contactEmailNode) ){
-				messengerEnabledNode = xmlnode_get_child(contactEmailNode,"isMessengerEnabled");
-				if(messengerEnabledNode == NULL){
-					g_free(uid);
-					g_free(type);
+				if (!(messengerEnabledNode = xmlnode_get_child(contactEmailNode, "isMessengerEnabled"))) {
+					/* XXX: Should this be a continue instead of a break? It seems like it'd cause unpredictable results otherwise. */
 					break;
 				}
+
 				msnEnabled = xmlnode_get_data(messengerEnabledNode);
-				if(!strcmp(msnEnabled,"true")){
-					/*Messenger enabled, Get the Passport*/
-					emailNode = xmlnode_get_child(contactEmailNode,"email");
-					passport = xmlnode_get_data(emailNode);
-					purple_debug_info("MsnAB","Yahoo User %s\n",passport);
-					usertype = MSN_USER_TYPE_YAHOO;
-					g_free(uid);
-					g_free(type);
+
+				if ((emailNode = xmlnode_get_child(contactEmailNode, "email"))) {
 					g_free(passport);
+					passport = xmlnode_get_data(emailNode);
+				}
+
+				if(msnEnabled && !strcmp(msnEnabled, "true")) {
+					/*Messenger enabled, Get the Passport*/
+					purple_debug_info("MsnAB", "Yahoo User %s\n", passport ? passport : "(null)");
+					usertype = MSN_USER_TYPE_YAHOO;
 					g_free(msnEnabled);
 					break;
-				}else{
+				} else {
 					/*TODO maybe we can just ignore it in Purple?*/
-					emailNode = xmlnode_get_child(contactEmailNode,"email");
-					passport = xmlnode_get_data(emailNode);
-					purple_debug_info("MSNAB","Other type user\n");
+					purple_debug_info("MSNAB", "Other type user\n");
 				}
+
 				g_free(msnEnabled);
 			}
 		} else {
 			passport = xmlnode_get_data(passportName);
 		}
 
-		if (passport == NULL) {
-			g_free(uid);
-			g_free(type);
+		if (passport == NULL)
 			continue;
-		}
 
-		displayName = xmlnode_get_child(contactInfo,"displayName");
-		if (displayName == NULL) {
-			Name = g_strdup(passport);
-		} else {
+		if ((displayName = xmlnode_get_child(contactInfo, "displayName")))
 			Name = xmlnode_get_data(displayName);
-		}
+		else
+			Name = g_strdup(passport);
 
 		purple_debug_misc("MsnAB","passport:{%s} uid:{%s} display:{%s}\n",
-						passport,uid,Name);
+						passport, uid ? uid : "(null)", Name ? Name : "(null)");
 
-		user = msn_userlist_find_add_user(session->userlist, passport,Name);
-		msn_user_set_uid(user,uid);
+		user = msn_userlist_find_add_user(session->userlist, passport, Name);
+		msn_user_set_uid(user, uid);
 		msn_user_set_type(user, usertype);
-		g_free(Name);
-		g_free(passport);
-		g_free(uid);
-		g_free(type);
 
-		purple_debug_misc("MsnAB","parse guid...\n");
-		groupIds = xmlnode_get_child(contactInfo,"groupIds");
+		groupIds = xmlnode_get_child(contactInfo, "groupIds");
 		if (groupIds) {
-			for (guid = xmlnode_get_child(groupIds, "guid");guid;
+			for (guid = xmlnode_get_child(groupIds, "guid"); guid;
 							guid = xmlnode_get_next_twin(guid)){
-				char *group_id;
-				group_id = xmlnode_get_data(guid);
-				msn_user_add_group_id(user,group_id);
-				purple_debug_misc("MsnAB","guid:%s\n",group_id);
+				char *group_id = xmlnode_get_data(guid);
+				msn_user_add_group_id(user, group_id);
+				purple_debug_misc("MsnAB", "guid:%s\n", group_id ? group_id : "(null)");
 				g_free(group_id);
 			}
 		} else {
+			purple_debug_info("msn", "User not in any groups, adding to default group.\n");
 			/*not in any group,Then set default group*/
 			msn_user_add_group_id(user, MSN_INDIVIDUALS_GROUP_ID);
 		}
 
 		msn_got_lst_user(session, user, MSN_LIST_FL_OP, NULL);
 	}
+
+	g_free(passport);
+	g_free(Name);
+	g_free(uid);
+	g_free(type);
 }
 
 static gboolean
 msn_parse_addressbook(MsnContact * contact)
 {
-	MsnSession * session;
+	MsnSession *session;
 	xmlnode * node,*body,*response,*result;
 	xmlnode *groups;
-	xmlnode	*contacts;
+	xmlnode *contacts;
 	xmlnode *abNode;
 	xmlnode *fault, *faultstringnode, *faultdetail, *errorcode;
 
 	session = contact->session;
-
-	
 
 	node = xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
 	if ( node == NULL ) {
@@ -796,17 +800,21 @@ msn_parse_addressbook(MsnContact * contact)
 
 	purple_debug_misc("MSN AddressBook", "Parsing Address Book with size %d\n", contact->soapconn->body_len);
 
-	purple_debug_misc("MSN AddressBook","node{%p},name:%s,child:%s,last:%s\n",node,node->name,node->child->name,node->lastchild->name);
-	
+	purple_debug_misc("MSN AddressBook","node{%p},name:%s,child:%s,last:%s\n", node,
+		node->name ? node->name : "(null)",
+		(node->child && node->child->name) ? node->child->name : "(null)",
+		(node->lastchild && node->lastchild->name) ? node->lastchild->name : "(null)");
+
 	body = xmlnode_get_child(node,"Body");
 	purple_debug_misc("MSN AddressBook","body{%p},name:%s\n",body,body->name);
-	
+
+	/* TODO: This appears to be used in a number of places and should be de-duplicated */
 	if ( (fault = xmlnode_get_child(body, "Fault")) != NULL) {
 		purple_debug_info("MSN AddressBook","Fault received from SOAP server!\n");
 		
 		if ( (faultstringnode = xmlnode_get_child(fault, "faultstring")) != NULL ) {
 			gchar *faultstring = xmlnode_get_data(faultstringnode);
-			purple_debug_info("MSN AddressBook","Faultstring: %s\n", faultstring);
+			purple_debug_info("MSN AddressBook","Faultstring: %s\n", faultstring ? faultstring : "(null)");
 			g_free(faultstring);
 		}
 		if ( (faultdetail = xmlnode_get_child(fault, "detail")) != NULL ) {
@@ -817,9 +825,9 @@ msn_parse_addressbook(MsnContact * contact)
 				purple_debug_info("MSN AddressBook","errorcode @ %p, name: %s\n",errorcode, errorcode->name);
 
 				errorcodestring = xmlnode_get_data(errorcode);
-				purple_debug_info("MSN AddressBook", "Error Code: %s\n", errorcodestring);
+				purple_debug_info("MSN AddressBook", "Error Code: %s\n", errorcodestring ? errorcodestring : "(null)");
 						
-				if ( !strncmp(errorcodestring, "ABDoesNotExist", 14) ) {
+				if (errorcodestring && !strncmp(errorcodestring, "ABDoesNotExist", 14) ) {
 					g_free(errorcodestring);
 					xmlnode_free(node);
 					return TRUE;
@@ -881,20 +889,20 @@ msn_parse_addressbook(MsnContact * contact)
 
 	abNode =xmlnode_get_child(result,"ab");
 	if(abNode != NULL){
-		xmlnode *LastChangeNode, *DynamicItemLastChangedNode;
-		char *lastchange, *dynamicChange;
+		xmlnode *node2;
+		char *tmp = NULL;
 
-		LastChangeNode = xmlnode_get_child(abNode,"lastChange");
-		lastchange = xmlnode_get_data(LastChangeNode);
-		purple_debug_info("MsnAB"," lastchanged Time:{%s}\n",lastchange);
-		purple_account_set_string(session->account, "ablastChange", lastchange);
+		if ((node2 = xmlnode_get_child(abNode, "lastChange")))
+			tmp = xmlnode_get_data(node2);
+		purple_debug_info("MsnAB"," lastchanged Time:{%s}\n", tmp ? tmp : "(null)");
+		purple_account_set_string(session->account, "ablastChange", tmp);
 
-		DynamicItemLastChangedNode = xmlnode_get_child(abNode,"DynamicItemLastChanged");
-		dynamicChange = xmlnode_get_data(DynamicItemLastChangedNode);
-		purple_debug_info("MsnAB"," DynamicItemLastChanged :{%s}\n",dynamicChange);
-		purple_account_set_string(session->account, "DynamicItemLastChanged", lastchange);
-		g_free(dynamicChange);
-		g_free(lastchange);
+		g_free(tmp); tmp = NULL;
+		if ((node2 = xmlnode_get_child(abNode, "DynamicItemLastChanged")))
+			tmp = xmlnode_get_data(node2);
+		purple_debug_info("MsnAB"," DynamicItemLastChanged :{%s}\n", tmp ? tmp : "(null)");
+		purple_account_set_string(session->account, "DynamicItemLastChanged", tmp);
+		g_free(tmp);
 	}
 
 	xmlnode_free(node);
@@ -902,20 +910,19 @@ msn_parse_addressbook(MsnContact * contact)
 	return TRUE;
 }
 
-static void
-msn_get_address_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_get_address_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;	
 	MsnContact *contact;
 	MsnSession *session;
 
 	if (soapconn->body == NULL)
-		return;
+		return TRUE;
 
 	contact = soapconn->parent;
-	g_return_if_fail(contact != NULL);
+	g_return_val_if_fail(contact != NULL, TRUE);
 	session = soapconn->session;
-	g_return_if_fail(session != NULL);
+	g_return_val_if_fail(session != NULL, FALSE);
 
 	purple_debug_misc("MSN AddressBook", "Got the Address Book!\n");
 
@@ -926,6 +933,10 @@ msn_get_address_cb(gpointer data, gint source, PurpleInputCondition cond)
 			msn_send_privacy(session->account->gc);
 			msn_notification_dump_contact(session);
 		}
+
+		/*free the read buffer*/
+		msn_soap_free_read_buf(soapconn);
+		return TRUE;
 	} else {
 		/* This is making us loop infinitely when we fail to parse the address book,
 		  disable for now (we should re-enable when we send timestamps)
@@ -935,18 +946,14 @@ msn_get_address_cb(gpointer data, gint source, PurpleInputCondition cond)
 		*/
 		msn_session_disconnect(session);
 		purple_connection_error(session->account->gc, _("Unable to retrieve MSN Address Book"));
+		return FALSE;
 	}
-
-	/*free the read buffer*/
-	msn_soap_free_read_buf(soapconn);
 }
 
 /**/
 static void
-msn_address_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_address_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;	
-
 	purple_debug_misc("MSN AddressBook","Sent SOAP request for the Address Book.\n");
 	soapconn->read_cb = msn_get_address_cb;
 }
@@ -956,27 +963,19 @@ void
 msn_get_address_book(MsnContact *contact, const MsnSoapPartnerScenario partner_scenario, const char *LastChanged, const char *dynamicItemLastChange)
 {
 	MsnSoapReq *soap_request;
-	char *body = NULL;
-	char *ab_update_str,*update_str;
+	char *body;
+	char *update_str = NULL;
 
 	purple_debug_misc("MSN AddressBook","Getting Address Book\n");
 
 	/*build SOAP and POST it*/
-	if ( LastChanged != NULL ) {
-		ab_update_str = g_strdup_printf(MSN_GET_ADDRESS_UPDATE_XML,LastChanged);
-	} else {
-		ab_update_str = g_strdup("");
-	}
-	if ( dynamicItemLastChange != NULL ) {
-		update_str = g_strdup_printf(MSN_GET_ADDRESS_UPDATE_XML,
-									 dynamicItemLastChange);
-	} else {
-		update_str = g_strdup(ab_update_str);
-	}
-	g_free(ab_update_str);
-	
+	if (dynamicItemLastChange != NULL)
+		update_str = g_strdup_printf(MSN_GET_ADDRESS_UPDATE_XML, dynamicItemLastChange);
+	else if (LastChanged != NULL)
+		update_str = g_strdup_printf(MSN_GET_ADDRESS_UPDATE_XML, LastChanged);
 
-	body = g_strdup_printf(MSN_GET_ADDRESS_TEMPLATE, MsnSoapPartnerScenarioText[partner_scenario], update_str);
+
+	body = g_strdup_printf(MSN_GET_ADDRESS_TEMPLATE, MsnSoapPartnerScenarioText[partner_scenario], update_str ? update_str : "");
 	g_free(update_str);
 
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
@@ -984,28 +983,28 @@ msn_get_address_book(MsnContact *contact, const MsnSoapPartnerScenario partner_s
 					body,
 					NULL,
 					msn_get_address_cb,
-					msn_address_written_cb);
-	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
+					msn_address_written_cb,
+					msn_contact_connect_init);
+	msn_soap_post(contact->soapconn,soap_request);
 	g_free(body);
 }
 
-static void
-msn_add_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_add_contact_read_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
 	MsnCallbackState *state = NULL;
 	MsnUserList *userlist;
 	MsnUser *user;
 	
-	g_return_if_fail(soapconn->data_cb != NULL);
-	g_return_if_fail(soapconn->session != NULL);
-	g_return_if_fail(soapconn->session->userlist != NULL);
+	g_return_val_if_fail(soapconn->data_cb != NULL, TRUE);
+	g_return_val_if_fail(soapconn->session != NULL, FALSE);
+	g_return_val_if_fail(soapconn->session->userlist != NULL, TRUE);
 
 	state = (MsnCallbackState *) soapconn->data_cb;
 
 	if (soapconn->body == NULL) {
 		msn_callback_state_free(state);
-		return;
+		return TRUE;
 	}
 	
 	userlist = soapconn->session->userlist;
@@ -1025,20 +1024,15 @@ msn_add_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	user = msn_userlist_find_add_user(userlist, state->who, state->who);
 	msn_user_add_group_id(user, state->guid);
 
-	if (msn_userlist_user_is_in_list(user, MSN_LIST_PL)) {
-		msn_del_contact_from_list(soapconn->session->contact, NULL, state->who, MSN_LIST_PL);
-	} else {
-		msn_soap_free_read_buf(soapconn);
-	}
-	
+	msn_soap_free_read_buf(soapconn);
 	msn_callback_state_free(state);
+
+	return TRUE;
 }
 
 static void
-msn_add_contact_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_add_contact_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;	
-
 	purple_debug_info("MSNCL","Add contact request written\n");
 	soapconn->read_cb = msn_add_contact_read_cb;
 }
@@ -1050,7 +1044,8 @@ msn_add_contact(MsnContact *contact, MsnCallbackState *state, const char *passpo
 	MsnSoapReq *soap_request;
 	gchar *body = NULL;
 	gchar *contact_xml = NULL;
-	gchar *soap_action;
+
+	g_return_if_fail(passport != NULL);
 /*	gchar *escaped_displayname;
 
 
@@ -1071,31 +1066,29 @@ msn_add_contact(MsnContact *contact, MsnCallbackState *state, const char *passpo
 	g_free(contact_xml);
 
 	/*build SOAP and POST it*/
-	soap_action = g_strdup(MSN_CONTACT_ADD_SOAP_ACTION);
 
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
 					MSN_ADDRESS_BOOK_POST_URL,
-					soap_action,
+					MSN_CONTACT_ADD_SOAP_ACTION,
 					body,
 					state,
 					msn_add_contact_read_cb,
-					msn_add_contact_written_cb);
-	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
+					msn_add_contact_written_cb,
+					msn_contact_connect_init);
+	msn_soap_post(contact->soapconn,soap_request);
 
-	g_free(soap_action);
 	g_free(body);
 }
 
-static void
-msn_add_contact_to_group_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_add_contact_to_group_read_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
 	MsnCallbackState *state; 
 	MsnUserList *userlist;
 
-	g_return_if_fail(soapconn->data_cb != NULL);
-	g_return_if_fail(soapconn->session != NULL);
-	g_return_if_fail(soapconn->session->userlist != NULL);
+	g_return_val_if_fail(soapconn->data_cb != NULL, TRUE);
+	g_return_val_if_fail(soapconn->session != NULL, FALSE);
+	g_return_val_if_fail(soapconn->session->userlist != NULL, TRUE);
 
 	userlist = soapconn->session->userlist;
 
@@ -1103,7 +1096,7 @@ msn_add_contact_to_group_read_cb(gpointer data, gint source, PurpleInputConditio
 
 	if (soapconn->body == NULL) {
 		msn_callback_state_free(state);
-		return;
+		return TRUE;
 	}
 	
 	if (msn_userlist_add_buddy_to_group(userlist, state->who, state->new_group_name) == TRUE) {
@@ -1113,7 +1106,6 @@ msn_add_contact_to_group_read_cb(gpointer data, gint source, PurpleInputConditio
 	}
 
 	if (state->action & MSN_ADD_BUDDY) {
-		MsnUser *user = msn_userlist_find_user(userlist, state->who);
 
         	if ( !msn_user_is_yahoo(soapconn->session->account, state->who) ) {
 
@@ -1121,12 +1113,6 @@ msn_add_contact_to_group_read_cb(gpointer data, gint source, PurpleInputConditio
 		                msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
 	        }
 	        msn_notification_send_fqy(soapconn->session, state->who);
-
-		if (msn_userlist_user_is_in_list(user, MSN_LIST_PL)) {
-			msn_del_contact_from_list(soapconn->session->contact, NULL, state->who, MSN_LIST_PL);
-			msn_callback_state_free(state);
-			return;
-		}
 	}
 
 	if (state->action & MSN_MOVE_BUDDY) {
@@ -1135,13 +1121,12 @@ msn_add_contact_to_group_read_cb(gpointer data, gint source, PurpleInputConditio
 		msn_callback_state_free(state);
 		msn_soap_free_read_buf(soapconn);
 	}
+	return TRUE;
 }
 
 static void
-msn_add_contact_to_group_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_add_contact_to_group_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;	
-
 	purple_debug_info("MSNCL","Add contact to group request sent!\n");
 	soapconn->read_cb = msn_add_contact_to_group_read_cb;
 }
@@ -1153,7 +1138,7 @@ msn_add_contact_to_group(MsnContact *contact, MsnCallbackState *state,
 	MsnSoapReq *soap_request;
 	MsnUserList *userlist;
 	MsnUser *user;
-	gchar *body = NULL, *soap_action, *contact_xml;
+	gchar *body = NULL, *contact_xml;
 
 	g_return_if_fail(passport != NULL);
 	g_return_if_fail(groupId != NULL);
@@ -1202,41 +1187,55 @@ msn_add_contact_to_group(MsnContact *contact, MsnCallbackState *state,
 	g_free(contact_xml);
 
 	/*build SOAP and POST it*/
-	soap_action = g_strdup(MSN_ADD_CONTACT_GROUP_SOAP_ACTION);
 
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
 					MSN_ADDRESS_BOOK_POST_URL,
-					soap_action,
+					MSN_ADD_CONTACT_GROUP_SOAP_ACTION,
 					body,
 					state,
 					msn_add_contact_to_group_read_cb,
-					msn_add_contact_to_group_written_cb);
-	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
+					msn_add_contact_to_group_written_cb,
+					msn_contact_connect_init);
+	msn_soap_post(contact->soapconn,soap_request);
 
-	g_free(soap_action);
 	g_free(body);
 }
 
 
 
-static void
-msn_delete_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_delete_contact_read_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
+	MsnUser *user;
+	MsnCallbackState *state = (MsnCallbackState *) soapconn->data_cb;
+	MsnUserList *userlist; 
 
-	if (soapconn->body == NULL)
-		return;
+	g_return_val_if_fail(soapconn->session != NULL, FALSE);
+	g_return_val_if_fail(soapconn->session->userlist != NULL, TRUE);
 
-	// we should probably delete it from the userlist aswell
+	userlist = soapconn->session->userlist;
+
+        if (soapconn->body == NULL) {
+                msn_callback_state_free(state);
+                return TRUE;
+        }
+
 	purple_debug_info("MSNCL","Delete contact successful\n");
+
+	user = msn_userlist_find_user_with_id(userlist, state->uid);
+	if (user != NULL) {
+		msn_userlist_remove_user(userlist, user);
+	}
+
+	msn_callback_state_free(state);
 	msn_soap_free_read_buf(soapconn);
+
+	return TRUE;
 }
 
 static void
-msn_delete_contact_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_delete_contact_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;	
-
 	purple_debug_info("MSNCL","Delete contact request written\n");
 	soapconn->read_cb = msn_delete_contact_read_cb;
 }
@@ -1248,9 +1247,13 @@ msn_delete_contact(MsnContact *contact, const char *contactId)
 	gchar *body = NULL;
 	gchar *contact_id_xml = NULL ;
 	MsnSoapReq *soap_request;
+	MsnCallbackState *state;
 
 	g_return_if_fail(contactId != NULL);
 	contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, contactId);
+
+	state = msn_callback_state_new();
+	msn_callback_state_set_uid(state, contactId);
 
 	/* build SOAP request */
 	purple_debug_info("MSNCL","Deleting contact with contactId: %s\n", contactId);
@@ -1259,27 +1262,27 @@ msn_delete_contact(MsnContact *contact, const char *contactId)
 					MSN_ADDRESS_BOOK_POST_URL,
 					MSN_CONTACT_DEL_SOAP_ACTION,
 					body,
-					NULL,
+					state,
 					msn_delete_contact_read_cb,
-					msn_delete_contact_written_cb);
+					msn_delete_contact_written_cb,
+					msn_contact_connect_init);
 
 	g_free(contact_id_xml);
 
 	/* POST the SOAP request */
-	msn_soap_post(contact->soapconn, soap_request, msn_contact_connect_init);
+	msn_soap_post(contact->soapconn, soap_request);
 
 	g_free(body);
 }
 
-static void
-msn_del_contact_from_group_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_del_contact_from_group_read_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
 	MsnCallbackState *state = (MsnCallbackState *) soapconn->data_cb;
 
 	if (soapconn->body == NULL) {
 		msn_callback_state_free(state);
-		return;
+		return TRUE;
 	}
 	
 	if (msn_userlist_rem_buddy_from_group(soapconn->session->userlist, state->who, state->old_group_name)) {
@@ -1290,14 +1293,13 @@ msn_del_contact_from_group_read_cb(gpointer data, gint source, PurpleInputCondit
 	
 	msn_callback_state_free(state);
 	msn_soap_free_read_buf(soapconn);
-	return;
+
+	return TRUE;
 }
 
 static void
-msn_del_contact_from_group_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_del_contact_from_group_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;	
-	
 	purple_debug_info("MSN CL","Del contact from group request sent!\n");
 	soapconn->read_cb = msn_del_contact_from_group_read_cb;
 }
@@ -1309,7 +1311,7 @@ msn_del_contact_from_group(MsnContact *contact, const char *passport, const char
 	MsnUserList * userlist;
 	MsnUser *user;
 	MsnCallbackState *state;
-	gchar *body = NULL, *soap_action, *contact_id_xml;
+	gchar *body = NULL, *contact_id_xml;
 	const gchar *groupId;
 	
 	g_return_if_fail(passport != NULL);
@@ -1344,44 +1346,40 @@ msn_del_contact_from_group(MsnContact *contact, const char *passport, const char
 	msn_callback_state_set_who(state, passport);
 	msn_callback_state_set_guid(state, groupId);
 	msn_callback_state_set_old_group_name(state, group_name);
-		
+
 	contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, user->uid);
 	body = g_strdup_printf(MSN_CONTACT_DEL_GROUP_TEMPLATE, contact_id_xml, groupId);
 	g_free(contact_id_xml);
-	
+
 	/*build SOAP and POST it*/
-	soap_action = g_strdup(MSN_CONTACT_DEL_GROUP_SOAP_ACTION);
-	
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
 					    MSN_ADDRESS_BOOK_POST_URL,
-					    soap_action,
+					    MSN_CONTACT_DEL_GROUP_SOAP_ACTION,
 					    body,
 					    state,
 					    msn_del_contact_from_group_read_cb,
-					    msn_del_contact_from_group_written_cb);
-	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
-	
-	g_free(soap_action);
+					    msn_del_contact_from_group_written_cb,
+					    msn_contact_connect_init);
+	msn_soap_post(contact->soapconn,soap_request);
+
 	g_free(body);
 }
 
 
-static void
-msn_update_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_update_contact_read_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn *soapconn = data;
-
 	if (soapconn->body == NULL)
-		return;
+		return TRUE;
 
 	purple_debug_info("MSN CL","Contact updated successfully\n");
+
+	return TRUE;
 }
 
 static void
-msn_update_contact_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_update_contact_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;	
-
 	purple_debug_info("MSN CL","Update contact information request sent\n");
 	soapconn->read_cb = msn_update_contact_read_cb;
 }
@@ -1392,14 +1390,17 @@ void
 msn_update_contact(MsnContact *contact, const char* nickname)
 {
 	MsnSoapReq *soap_request;
-	gchar *body = NULL, *escaped_nickname;
+	gchar *body, *escaped_nickname;
+
+	/* I'm not sure this is right, but if it isn't, the rest of this function will need to be fixed */
+	g_return_if_fail(nickname != NULL);
 
 	purple_debug_info("MSN CL","Update contact information with new friendly name: %s\n", nickname);
-	
+
 	escaped_nickname = g_markup_escape_text(nickname, -1);
 
 	body = g_strdup_printf(MSN_CONTACT_UPDATE_TEMPLATE, escaped_nickname);
-	
+
 	g_free(escaped_nickname);
 	/*build SOAP and POST it*/
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
@@ -1408,60 +1409,66 @@ msn_update_contact(MsnContact *contact, const char* nickname)
 					body,
 					NULL,
 					msn_update_contact_read_cb,
-					msn_update_contact_written_cb);
-	msn_soap_post(contact->soapconn, soap_request, msn_contact_connect_init);
+					msn_update_contact_written_cb,
+					msn_contact_connect_init);
+	msn_soap_post(contact->soapconn, soap_request);
 
 	g_free(body);
 }
 
 
-static void
-msn_del_contact_from_list_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_del_contact_from_list_read_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
 	MsnCallbackState *state = NULL;
 
-	g_return_if_fail(soapconn->data_cb != NULL);
-	g_return_if_fail(soapconn->session != NULL);
-	g_return_if_fail(soapconn->session->contact != NULL);
+	g_return_val_if_fail(soapconn->data_cb != NULL, TRUE);
+	g_return_val_if_fail(soapconn->session != NULL, FALSE);
+	g_return_val_if_fail(soapconn->session->contact != NULL, FALSE);
+	g_return_val_if_fail(soapconn->session->userlist != NULL, FALSE);
 
 	state = (MsnCallbackState *) soapconn->data_cb;
 
 	if (soapconn->body == NULL) {
 		msn_callback_state_free(state);
-		return;
+		return TRUE;
 	}
 	
 	purple_debug_info("MSN CL", "Contact %s deleted successfully from %s list on server!\n", state->who, MsnMemberRole[state->list_id]);
 
 	if (state->list_id == MSN_LIST_PL) {
+		MsnUser *user = msn_userlist_find_user(soapconn->session->userlist, state->who);
+		
+		if (user != NULL)
+			msn_user_unset_op(user, MSN_LIST_PL_OP);
+
 		msn_add_contact_to_list(soapconn->session->contact, state, state->who, MSN_LIST_RL);
-		return;
+		return TRUE;
 	}
 
 	if (state->list_id == MSN_LIST_AL) {
 		purple_privacy_permit_remove(soapconn->session->account, state->who, TRUE);
 		msn_add_contact_to_list(soapconn->session->contact, NULL, state->who, MSN_LIST_BL);
 		msn_callback_state_free(state);
-		return;
+		return TRUE;
 	}
 
 	if (state->list_id == MSN_LIST_BL) {
 		purple_privacy_deny_remove(soapconn->session->account, state->who, TRUE);
 		msn_add_contact_to_list(soapconn->session->contact, NULL, state->who, MSN_LIST_AL);
 		msn_callback_state_free(state);
-		return;
+		return TRUE;
 	}
 
 	msn_callback_state_free(state);
 	msn_soap_free_read_buf(soapconn);
+
+	return TRUE;
 }
 
 static void
-msn_del_contact_from_list_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_del_contact_from_list_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
-
 	purple_debug_info("MSN CL","Delete contact from list SOAP request sent!\n");
 	soapconn->read_cb = msn_del_contact_from_list_read_cb;
 }
@@ -1514,36 +1521,45 @@ msn_del_contact_from_list(MsnContact *contact, MsnCallbackState *state,
 					     body,
 					     state,
 					     msn_del_contact_from_list_read_cb,
-					     msn_del_contact_from_list_written_cb);
+					     msn_del_contact_from_list_written_cb,
+					     msn_contact_connect_init);
 
-	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
+	msn_soap_post(contact->soapconn,soap_request);
 	
 	g_free(body);
 }
 
-static void
-msn_add_contact_to_list_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_add_contact_to_list_read_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
 	MsnCallbackState *state = NULL;
 
-	g_return_if_fail(soapconn->data_cb != NULL);
+	g_return_val_if_fail(soapconn->data_cb != NULL, TRUE);
+	g_return_val_if_fail(soapconn->session != NULL, FALSE);
+	g_return_val_if_fail(soapconn->session->userlist != NULL, FALSE);
 
 	state = (MsnCallbackState *) soapconn->data_cb;
 	
 	if (soapconn->body == NULL) {
 		msn_callback_state_free(state);
-		return;
+		return TRUE;
 	}
 	
 	purple_debug_info("MSN CL", "Contact %s added successfully to %s list on server!\n", state->who, MsnMemberRole[state->list_id]);
 
-	if (state->list_id == MSN_LIST_RL && (state->action & MSN_DENIED_BUDDY) ) {
-		g_return_if_fail(soapconn->session != NULL);
-		g_return_if_fail(soapconn->session->contact != NULL);
+	if (state->list_id == MSN_LIST_RL) {
+		MsnUser *user = msn_userlist_find_user(soapconn->session->userlist, state->who);
+		
+		if (user != NULL) {
+			msn_user_set_op(user, MSN_LIST_RL_OP);
+		}
 
-		msn_add_contact_to_list(soapconn->session->contact, NULL, state->who, MSN_LIST_BL);
-		return;
+		if (state->action & MSN_DENIED_BUDDY) {
+			g_return_val_if_fail(soapconn->session->contact != NULL, FALSE);
+
+			msn_add_contact_to_list(soapconn->session->contact, NULL, state->who, MSN_LIST_BL);
+			return TRUE;
+		}
 	}
 
 	if (state->list_id == MSN_LIST_AL) {
@@ -1554,14 +1570,13 @@ msn_add_contact_to_list_read_cb(gpointer data, gint source, PurpleInputCondition
 
 	msn_callback_state_free(state);
 	msn_soap_free_read_buf(soapconn);
+	return TRUE;
 }
 
 
 static void
-msn_add_contact_to_list_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_add_contact_to_list_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
-
 	purple_debug_info("MSN CL","Add contact to list SOAP request sent!\n");
 	soapconn->read_cb = msn_add_contact_to_list_read_cb;
 }
@@ -1603,26 +1618,26 @@ msn_add_contact_to_list(MsnContact *contact, MsnCallbackState *state,
 					     body,
 					     state,
 					     msn_add_contact_to_list_read_cb,
-					     msn_add_contact_to_list_written_cb);
+					     msn_add_contact_to_list_written_cb,
+					     msn_contact_connect_init);
 
-	msn_soap_post(contact->soapconn, soap_request, msn_contact_connect_init);
+	msn_soap_post(contact->soapconn, soap_request);
 
 	g_free(body);
 }
 
 
 #if 0
-static void
-msn_gleams_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_gleams_read_cb(MsnSoapConn * soapconn)
 {
-	purple_debug_info("MSNP14","Gleams read done\n");
+	purple_debug_info("MSN CL","Gleams read done\n");
+	return TRUE;
 }
 
 static void
-msn_gleams_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_gleams_written_cb(MsnSoapConn * soapconn)
 {
-	MsnSoapConn * soapconn = data;	
-
 	purple_debug_info("MSNP14","finish Group written\n");
 	soapconn->read_cb = msn_gleams_read_cb;
 //	msn_soap_read_cb(data,source,cond);
@@ -1642,8 +1657,9 @@ msn_get_gleams(MsnContact *contact)
 					MSN_GLEAMS_TEMPLATE,
 					NULL,
 					msn_gleams_read_cb,
-					msn_gleams_written_cb);
-	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
+					msn_gleams_written_cb,
+					msn_contact_connect_init);
+	msn_soap_post(contact->soapconn,soap_request);
 }
 #endif
 
@@ -1652,24 +1668,23 @@ msn_get_gleams(MsnContact *contact)
  * Group Operations
  ***************************************************************/
 
-static void
-msn_group_read_cb(gpointer data, gint source, PurpleInputCondition cond)
+static gboolean
+msn_group_read_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;
 	MsnUserList *userlist;
 	MsnCallbackState *state = NULL;
 	
 	purple_debug_info("MSN CL", "Group request successful.\n");
 	
-	g_return_if_fail(soapconn->session != NULL);
-	g_return_if_fail(soapconn->session->userlist != NULL);
-	g_return_if_fail(soapconn->session->contact != NULL);
+	g_return_val_if_fail(soapconn->session != NULL, FALSE);
+	g_return_val_if_fail(soapconn->session->userlist != NULL, TRUE);
+	g_return_val_if_fail(soapconn->session->contact != NULL, FALSE);
 
 	state = (MsnCallbackState *) soapconn->data_cb;
 	
 	if (soapconn->body == NULL) {
 		msn_callback_state_free(state);
-		return;
+		return TRUE;
 	}
 	
 	if (state) {
@@ -1697,12 +1712,12 @@ msn_group_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 						       state->who,
 						       state->new_group_name);
 				msn_callback_state_free(state);
-				return;
+				return TRUE;
 			}
 			
 			if (state->action & MSN_MOVE_BUDDY) {
 				msn_add_contact_to_group(soapconn->session->contact, state, state->who, guid); 
-				return;
+				return TRUE;
 			}
 		}
 		
@@ -1720,13 +1735,12 @@ msn_group_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	}
 	
 	msn_soap_free_read_buf(soapconn);
+	return TRUE;
 }
 
 static void
-msn_group_written_cb(gpointer data, gint source, PurpleInputCondition cond)
+msn_group_written_cb(MsnSoapConn *soapconn)
 {
-	MsnSoapConn * soapconn = data;	
-
 	purple_debug_info("MSN CL","Sent group request.\n");
 	soapconn->read_cb = msn_group_read_cb;
 }
@@ -1767,8 +1781,9 @@ msn_add_group(MsnSession *session, MsnCallbackState *state, const char* group_na
 					body,
 					state,
 					msn_group_read_cb,
-					msn_group_written_cb);
-	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
+					msn_group_written_cb,
+					msn_contact_connect_init);
+	msn_soap_post(contact->soapconn,soap_request);
 	
 	g_free(body);
 }
@@ -1816,8 +1831,9 @@ msn_del_group(MsnSession *session, const gchar *group_name)
 					    body,
 					    state,
 					    msn_group_read_cb,
-					    msn_group_written_cb);
-	msn_soap_post(contact->soapconn, soap_request, msn_contact_connect_init);
+					    msn_group_written_cb,
+					    msn_contact_connect_init);
+	msn_soap_post(contact->soapconn, soap_request);
 
 	g_free(body);
 }
@@ -1867,8 +1883,9 @@ msn_contact_rename_group(MsnSession *session, const char *old_group_name, const 
 					    body,
 					    state,
 					    msn_group_read_cb,
-					    msn_group_written_cb);
-	msn_soap_post(contact->soapconn, soap_request, msn_contact_connect_init);
+					    msn_group_written_cb,
+					    msn_contact_connect_init);
+	msn_soap_post(contact->soapconn, soap_request);
 	
 	g_free(escaped_group_name);
 	g_free(body);
@@ -1877,7 +1894,7 @@ msn_contact_rename_group(MsnSession *session, const char *old_group_name, const 
 void
 msn_contact_connect_init(MsnSoapConn *soapconn)
 {
-	msn_soap_init(soapconn, MSN_CONTACT_SERVER, 1,
-					msn_contact_login_connect_cb,
-					msn_contact_login_error_cb);
+	msn_soap_init(soapconn, MSN_CONTACT_SERVER, TRUE,
+		      msn_contact_login_connect_cb,
+		      msn_contact_login_error_cb);
 }

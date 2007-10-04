@@ -553,7 +553,7 @@ purple_upnp_discover_udp_read(gpointer data, gint sock, PurpleInputCondition con
 	dd->inpa = 0;
 
 	close(dd->fd);
-	dd->fd = 0;
+	dd->fd = -1;
 
 	/* parse the response, and see if it was a success */
 	purple_upnp_parse_discover_response(buf, len, dd);

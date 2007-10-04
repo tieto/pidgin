@@ -138,7 +138,9 @@ void
 msn_session_disconnect(MsnSession *session)
 {
 	g_return_if_fail(session != NULL);
-	g_return_if_fail(session->connected);
+
+	if (!session->connected)
+		return;
 
 	session->connected = FALSE;
 
@@ -277,7 +279,7 @@ msn_session_sync_users(MsnSession *session)
 
 	/* The core used to use msn_add_buddy to add all buddies before
 	 * being logged in. This no longer happens, so we manually iterate
-	 * over the whole buddy list to identify sync issues. 
+	 * over the whole buddy list to identify sync issues.
 	 */
 	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
 		PurpleGroup *group = (PurpleGroup *)gnode;
@@ -350,6 +352,8 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 		case MSN_ERROR_SIGN_OTHER:
 			gc->wants_to_die = TRUE;
 			msg = g_strdup(_("You have signed on from another location."));
+			if (!purple_account_get_remember_password(session->account))
+				purple_account_set_password(session->account, NULL);
 			break;
 		case MSN_ERROR_SERV_UNAVAILABLE:
 			msg = g_strdup(_("The MSN servers are temporarily "

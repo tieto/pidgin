@@ -13,13 +13,15 @@
    height="16"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.44.1"
+   inkscape:version="0.45"
    version="1.0"
    inkscape:export-filename="/home/hbons/GUI/Tango/Gaim Refresh/status/16/available.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
-   sodipodi:docbase="/home/hbons/Desktop/experiment/status/16/scalable"
-   sodipodi:docname="available.svg">
+   sodipodi:docbase="/home/hbons/Desktop/2.1.1/status/16/scalable"
+   sodipodi:docname="available.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   sodipodi:modified="true">
   <defs
      id="defs4">
     <linearGradient
@@ -246,7 +248,7 @@
      inkscape:window-width="1274"
      inkscape:window-height="844"
      inkscape:window-x="3"
-     inkscape:window-y="0" />
+     inkscape:window-y="25" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -262,16 +264,6 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <path
-       d="M 39.774755 19.008621 A 8.6620579 8.6620579 0 1 1  22.45064,19.008621 A 8.6620579 8.6620579 0 1 1  39.774755 19.008621 z"
-       sodipodi:ry="8.6620579"
-       sodipodi:rx="8.6620579"
-       sodipodi:cy="19.008621"
-       sodipodi:cx="31.112698"
-       id="path2969"
-       style="color:black;fill:url(#radialGradient3025);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible"
-       sodipodi:type="arc"
-       transform="matrix(0.923568,0,0,0.173169,-20.73469,11.2083)" />
     <path
        transform="matrix(0.538297,0,0,0.538297,-1.630177,-1.459246)"
        style="fill:url(#linearGradient4738);fill-opacity:1;fill-rule:evenodd;stroke:#306300;stroke-width:1.85770929;stroke-miterlimit:4;stroke-opacity:1"

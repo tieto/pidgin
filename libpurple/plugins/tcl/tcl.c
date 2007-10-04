@@ -60,6 +60,7 @@ PurpleStringref *PurpleTclRefStatus;
 PurpleStringref *PurpleTclRefStatusAttr;
 PurpleStringref *PurpleTclRefStatusType;
 PurpleStringref *PurpleTclRefXfer;
+PurpleStringref *PurpleTclRefHandle;
 
 static GHashTable *tcl_plugins = NULL;
 
@@ -363,6 +364,7 @@ static gboolean tcl_load(PurplePlugin *plugin)
 	PurpleTclRefStatusAttr = purple_stringref_new("StatusAttr");
 	PurpleTclRefStatusType = purple_stringref_new("StatusType");
 	PurpleTclRefXfer = purple_stringref_new("Xfer");
+	PurpleTclRefHandle = purple_stringref_new("Handle");
 
 	tcl_plugins = g_hash_table_new(g_direct_hash, g_direct_equal);
 

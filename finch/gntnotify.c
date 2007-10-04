@@ -352,14 +352,17 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 		gnt_box_add_widget(GNT_BOX(window),
 			gnt_label_new_with_format(secondary, GNT_TEXT_FLAG_NORMAL));
 
-	columns = purple_notify_searchresults_get_columns_count(results);
+	columns = g_list_length(results->columns);
 	tree = gnt_tree_new_with_columns(columns);
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
 	gnt_box_add_widget(GNT_BOX(window), tree);
 
-	for (i = 0; i < columns; i++)
-		gnt_tree_set_column_title(GNT_TREE(tree), i, 
-				purple_notify_searchresults_column_get_title(results, i));
+	i = 0;
+	for (iter = results->columns; iter; iter = iter->next)
+	{
+		gnt_tree_set_column_title(GNT_TREE(tree), i, iter->data);
+		i++;
+	}
 
 	box = gnt_hbox_new(TRUE);
 

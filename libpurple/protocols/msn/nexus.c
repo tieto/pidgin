@@ -174,7 +174,7 @@ msn_nexus_connect(MsnNexus *nexus)
 		g_free(password);
 		msn_nexus_destroy(nexus);
 		session->nexus = NULL;
-		return;
+		return FALSE;
 	}
 
 	/*
@@ -217,6 +217,6 @@ msn_nexus_connect(MsnNexus *nexus)
 	msn_soap_message_send(nexus->session, soap, MSN_TWN_SERVER, TWN_POST_URL,
 		nexus_got_response_cb, nexus);
 
-	return;
+	return TRUE;
 }
 

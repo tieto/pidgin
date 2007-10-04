@@ -632,12 +632,13 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 			continue;
 
 		buddy = (PurpleBuddy*)bnode;
-
-		if (!purple_account_is_connected(buddy->account))
-			continue;
 		if (new_priority == NULL)
+		{
 			new_priority = buddy;
-		else
+			continue;
+		}
+
+		if (purple_account_is_connected(buddy->account))
 		{
 			int cmp;
 
@@ -843,6 +844,13 @@ void purple_blist_rename_buddy(PurpleBuddy *buddy, const char *name)
 		ops->update(purplebuddylist, (PurpleBlistNode *)buddy);
 }
 
+static gboolean
+purple_strings_are_different(const char *one, const char *two)
+{
+	return !((one && two && g_utf8_collate(one, two) == 0) ||
+			((one == NULL || *one == '\0') && (two == NULL || *two == '\0')));
+}
+
 void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
@@ -851,6 +859,9 @@ void purple_blist_alias_contact(PurpleContact *contact, const char *alias)
 	char *old_alias;
 
 	g_return_if_fail(contact != NULL);
+
+	if (!purple_strings_are_different(contact->alias, alias))
+		return;
 
 	old_alias = contact->alias;
 
@@ -886,6 +897,9 @@ void purple_blist_alias_chat(PurpleChat *chat, const char *alias)
 
 	g_return_if_fail(chat != NULL);
 
+	if (!purple_strings_are_different(chat->alias, alias))
+		return;
+
 	old_alias = chat->alias;
 
 	if ((alias != NULL) && (*alias != '\0'))
@@ -910,6 +924,9 @@ void purple_blist_alias_buddy(PurpleBuddy *buddy, const char *alias)
 	char *old_alias;
 
 	g_return_if_fail(buddy != NULL);
+
+	if (!purple_strings_are_different(buddy->alias, alias))
+		return;
 
 	old_alias = buddy->alias;
 
@@ -940,6 +957,9 @@ void purple_blist_server_alias_buddy(PurpleBuddy *buddy, const char *alias)
 	char *old_alias;
 
 	g_return_if_fail(buddy != NULL);
+
+	if (!purple_strings_are_different(buddy->server_alias, alias))
+		return;
 
 	old_alias = buddy->server_alias;
 
@@ -1423,26 +1443,7 @@ PurpleContact *purple_contact_new()
 
 void purple_contact_set_alias(PurpleContact *contact, const char *alias)
 {
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-	char *old_alias;
-
-	g_return_if_fail(contact != NULL);
-
-	old_alias = contact->alias;
-
-	if ((alias != NULL) && (*alias != '\0'))
-		contact->alias = g_strdup(alias);
-	else
-		contact->alias = NULL;
-
-	purple_blist_schedule_save();
-
-	if (ops && ops->update)
-		ops->update(purplebuddylist, (PurpleBlistNode*)contact);
-
-	purple_signal_emit(purple_blist_get_handle(), "blist-node-aliased",
-					 contact, old_alias);
-	g_free(old_alias);
+	purple_blist_alias_contact(contact,alias);
 }
 
 const char *purple_contact_get_alias(PurpleContact* contact)

@@ -598,9 +598,11 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 
 			g_free(tmp2);
 		} else {
-			tmp = g_markup_escape_text(psm, -1);
-			purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
-			g_free(tmp);
+			if (psm != NULL && *psm) {
+				tmp = g_markup_escape_text(psm, -1);
+				purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
+				g_free(tmp);
+			}
 		}
 
 		if (currentmedia) {
@@ -1570,8 +1572,7 @@ static char *
 msn_info_strip_search_link(const char *field, size_t len)
 {
 	const char *c;
-	if ((c = strstr(field, " (http://spaces.live.com/default.aspx?page=searchresults")) == NULL &&
-		(c = strstr(field, " (http://spaces.msn.com/default.aspx?page=searchresults")) == NULL)
+	if ((c = strstr(field, " (http://")) == NULL)
 		return g_strndup(field, len);
 	return g_strndup(field, c - field);
 }

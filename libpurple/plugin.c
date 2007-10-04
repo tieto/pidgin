@@ -1275,13 +1275,9 @@ purple_plugins_load_saved(const char *key)
 		if (basename)
 			basename = purple_plugin_get_basename(filename);
 
-		if ((plugin = purple_plugins_find_with_filename(filename)) != NULL)
-		{
-			purple_debug_info("plugins", "Loading saved plugin %s\n",
-							plugin->path);
-			purple_plugin_load(plugin);
-		}
-		else if (basename && (plugin = purple_plugins_find_with_basename(basename)) != NULL)
+		if (((plugin = purple_plugins_find_with_filename(filename)) != NULL) ||
+				(basename && (plugin = purple_plugins_find_with_basename(basename)) != NULL) ||
+				((plugin = purple_plugin_probe(filename)) != NULL))
 		{
 			purple_debug_info("plugins", "Loading saved plugin %s\n",
 							plugin->path);

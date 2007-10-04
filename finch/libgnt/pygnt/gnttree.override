@@ -62,13 +62,14 @@ _wrap_gnt_tree_add_row_after(PyGObject *self, PyObject *args)
 {
 	static char *kwlist[] = {"key", "row", "parent", "bigbro", NULL};
 	PyObject *py_list;
-	gpointer key, parent, bigbro;
+	gpointer key, parent, bigbro = NULL;
 	int len, i;
 	GList *list = NULL;
 	GntTreeRow *row;
+	gboolean insert_last = FALSE;
 
 	if (!PyArg_ParseTuple(args,
-				"OOOO:GntTree.add_row_after",
+				"OOO|O:GntTree.add_row_after",
 				&key,
 				&py_list,
 				&parent,
@@ -92,13 +93,20 @@ _wrap_gnt_tree_add_row_after(PyGObject *self, PyObject *args)
 		parent = NULL;
 	if (bigbro == Py_None)
 		bigbro = NULL;
+	else if (bigbro == NULL)
+		insert_last = TRUE;
+
+	Py_INCREF((PyObject*)key);
 
 	list = g_list_reverse(list);
 	row = gnt_tree_create_row_from_list(GNT_TREE(self->obj), list);
-	gnt_tree_add_row_after(GNT_TREE(self->obj),
-			key,
-			row,
-			parent, bigbro);
+	if (insert_last)
+		gnt_tree_add_row_last(GNT_TREE(self->obj),
+				key, row, parent);
+	else
+		gnt_tree_add_row_after(GNT_TREE(self->obj),
+				key, row,
+				parent, bigbro);
 	g_list_free(list);
 
 	Py_INCREF(Py_None);
@@ -176,6 +184,29 @@ _wrap_gnt_tree_set_selected(PyGObject *self, PyObject *args)
 		return NULL;
 	}
 	gnt_tree_set_selected(GNT_TREE(self->obj), key);
+	Py_INCREF(Py_None);
+	return Py_None;
+}
+%%
+override gnt_tree_set_compare_func
+static PyObject *
+_wrap_gnt_tree_set_compare_func(PyGObject *self, PyObject *args)
+{
+	static char *kwlist[] = {"compare_func", NULL};
+	PyGObject *compare;
+
+	if (!PyArg_ParseTuple(args, "O:GntTree.set_compare_func", &compare)) {
+		return NULL;
+	}
+
+	if (!PyCallable_Check(compare)) {
+		PyErr_SetString(PyExc_TypeError, "the callback must be callable ... doh!");
+		return NULL;
+	}
+
+	Py_INCREF(compare);
+	gnt_tree_set_compare_func(GNT_TREE(self->obj), (GCompareFunc)compare->obj);
+
 	Py_INCREF(Py_None);
 	return Py_None;
 }

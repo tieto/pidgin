@@ -25,9 +25,9 @@
 #include "command.h"
 
 static gboolean
-is_num(char *str)
+is_num(const char *str)
 {
-	char *c;
+	const char *c;
 	for (c = str; *c; c++) {
 		if (!(g_ascii_isdigit(*c)))
 			return FALSE;
@@ -42,9 +42,11 @@ is_num(char *str)
  *  else 		return FALSE
  */
 static gboolean
-msn_check_payload_cmd(char *str)
+msn_check_payload_cmd(const char *str)
 {
-	if( (!strcmp(str,"ADL")) ||
+	g_return_val_if_fail(str != NULL, FALSE);
+
+	if((!strcmp(str,"ADL")) ||
 		(!strcmp(str,"GCF")) ||
 		(!strcmp(str,"SG")) ||
 		(!strcmp(str,"MSG")) ||
@@ -84,16 +86,13 @@ MsnCommand *
 msn_command_from_string(const char *string)
 {
 	MsnCommand *cmd;
-	char *tmp;
 	char *param_start;
 
 	g_return_val_if_fail(string != NULL, NULL);
 
-	tmp = g_strdup(string);
-	param_start = strchr(tmp, ' ');
-
 	cmd = g_new0(MsnCommand, 1);
-	cmd->command = tmp;
+	cmd->command = g_strdup(string);
+	param_start = strchr(cmd->command, ' ');
 
 	if (param_start)
 	{

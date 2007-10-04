@@ -376,10 +376,13 @@ debug_command_cb(PurpleConversation *conv,
 static void clear_conversation_scrollback(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = NULL;
+	GList *iter;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
+	for (iter = gtkconv->convs; iter; iter = iter->next)
+		purple_conversation_clear_message_history(iter->data);
 }
 
 static PurpleCmdRet
@@ -387,7 +390,6 @@ clear_command_cb(PurpleConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
 	clear_conversation_scrollback(conv);
-	purple_conversation_clear_message_history(conv);
 	return PURPLE_CMD_STATUS_OK;
 }
 
@@ -1099,12 +1101,9 @@ menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv;
-	PidginConversation *gtkconv;
 
 	conv = pidgin_conv_window_get_active_conversation(win);
-	gtkconv = PIDGIN_CONVERSATION(conv);
-
-	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
+	clear_conversation_scrollback(conv);
 }
 
 struct _search {
@@ -1913,6 +1912,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 				gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook),
 						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), curconv),
 						curconv - 1);
+				return TRUE;
 				break;
 
 			case GDK_period:
@@ -1923,6 +1923,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 #else
 						(curconv + 1) % g_list_length(GTK_NOTEBOOK(win->notebook)->children));
 #endif
+				return TRUE;
 				break;
 
 		} /* End of switch */
@@ -3633,7 +3634,7 @@ generate_send_to_items(PidginWindow *win)
 		gtk_widget_destroy(win->menu.send_to);
 
 	/* Build the Send To menu */
-	win->menu.send_to = gtk_menu_item_new_with_mnemonic(_("_Send To"));
+	win->menu.send_to = gtk_menu_item_new_with_mnemonic(_("S_end To"));
 	gtk_widget_show(win->menu.send_to);
 
 	menu = gtk_menu_new();
@@ -4488,7 +4489,7 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	g_signal_connect(G_OBJECT(list), "motion-notify-event",
 					 G_CALLBACK(pidgin_userlist_motion_cb), gtkconv);
 	g_signal_connect(G_OBJECT(list), "leave-notify-event",
-					 G_CALLBACK(pidgin_userlist_motion_cb), gtkconv);
+					 G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 	g_signal_connect(G_OBJECT(list), "popup-menu",
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), gtkconv);
 	g_signal_connect(G_OBJECT(lbox), "size-allocate", G_CALLBACK(lbox_size_allocate_cb), gtkconv);
@@ -4616,10 +4617,8 @@ pidgin_userlist_tooltip_timeout(PidginConversation *gtkconv)
 
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
 
-	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(gtkchat->list),
-								  tooltip.userlistx, tooltip.userlisty, &path, &column, &x, &y);
-
-	if (path == NULL)
+	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(gtkchat->list),
+								  tooltip.userlistx, tooltip.userlisty, &path, &column, &x, &y))
 		return FALSE;
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
@@ -6836,7 +6835,9 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	event = gtk_event_box_new();
 	gtk_container_add(GTK_CONTAINER(gtkconv->u.im->icon_container), event);
+#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);
+#endif
 	gtk_widget_add_events(event,
                               GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
@@ -7242,6 +7243,23 @@ account_signed_off_cb(PurpleConnection *gc, gpointer event)
 		/* if (purple_conversation_get_account(conv) == account) */
 			pidgin_conv_update_fields(conv, PIDGIN_CONV_TAB_ICON |
 							PIDGIN_CONV_MENU | PIDGIN_CONV_COLORIZE_TITLE);
+
+		if (PURPLE_CONNECTION_IS_CONNECTED(gc) &&
+				conv->type == PURPLE_CONV_TYPE_CHAT &&
+				conv->account == gc->account &&
+				purple_conversation_get_data(conv, "want-to-rejoin")) {
+			GHashTable *comps = NULL;
+			PurpleChat *chat = purple_blist_find_chat(conv->account, conv->name);
+			if (chat == NULL) {
+				if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
+					comps = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, conv->name);
+			} else {
+				comps = chat->components;
+			}
+			serv_join_chat(gc, comps);
+			if (chat == NULL && comps != NULL)
+				g_hash_table_destroy(comps);
+		}
 	}
 }
 
@@ -7386,6 +7404,7 @@ add_message_history_to_gtkconv(gpointer data)
 	if (gtkconv->attach.current)
 		return TRUE;
 
+	g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 	purple_signal_emit(pidgin_conversations_get_handle(),
 			"conversation-displayed", gtkconv);
 	g_source_remove(gtkconv->attach.timer);
@@ -7426,7 +7445,6 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 	timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
 	if (timer)
 		purple_timeout_remove(timer);
-
 	return TRUE;
 }
 
@@ -8084,7 +8102,7 @@ infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkc
 		sub = gtk_menu_item_get_submenu(GTK_MENU_ITEM(gtkconv->win->menu.send_to));
 
 		if (sub && GTK_WIDGET_IS_SENSITIVE(gtkconv->win->menu.send_to)) {
-			GtkWidget *item = gtk_menu_item_new_with_mnemonic(_("_Send To"));
+			GtkWidget *item = gtk_menu_item_new_with_mnemonic(_("S_end To"));
 			if (populated)
 				pidgin_separator(menu);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
@@ -8924,7 +8942,9 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 	/* Close button. */
 	gtkconv->close = gtk_event_box_new();
+#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(gtkconv->close), FALSE);
+#endif
 	gtk_widget_set_events(gtkconv->close, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
 	close_image = gtk_label_new("×");
 	g_signal_connect(G_OBJECT(gtkconv->close), "enter-notify-event", G_CALLBACK(close_button_entered_cb), close_image);

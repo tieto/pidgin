@@ -68,7 +68,7 @@ struct _PurpleUtilFetchUrlData
 };
 
 static char *custom_user_dir = NULL;
-static char *home_dir = NULL;
+static char *user_dir = NULL;
 
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
@@ -1526,7 +1526,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					while(*p && *p != '>') {
 						if(!g_ascii_strncasecmp(p, "href=", strlen("href="))) {
 							const char *q = p + strlen("href=");
-							g_string_free(url, TRUE);
+							if (url)
+								g_string_free(url, TRUE);
 							url = g_string_new("");
 							cdata = g_string_new("");
 							if(*q == '\'' || *q == '\"')
@@ -2447,10 +2448,10 @@ purple_user_dir(void)
 {
 	if (custom_user_dir != NULL)
 		return custom_user_dir;
-	else if (!home_dir)
-		home_dir = g_build_filename(purple_home_dir(), ".purple", NULL);
+	else if (!user_dir)
+		user_dir = g_build_filename(purple_home_dir(), ".purple", NULL);
 
-	return home_dir;
+	return user_dir;
 }
 
 void purple_util_set_user_dir(const char *dir)
@@ -3853,6 +3854,7 @@ purple_util_fetch_url_request(const char *url, gboolean full,
 	gfud->full = full;
 	gfud->request = g_strdup(request);
 	gfud->include_headers = include_headers;
+	gfud->fd = -1;
 
 	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);

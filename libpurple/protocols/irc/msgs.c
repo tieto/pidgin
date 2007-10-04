@@ -751,7 +751,10 @@ void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char
 		}
 		purple_conversation_set_data(convo, IRC_NAMES_FLAG,
 					   GINT_TO_POINTER(FALSE));
-		purple_conversation_present(convo);
+		/* Until purple_conversation_present does something that
+                 * one would expect in Pidgin, this call produces buggy
+                 * behavior both for the /join and auto-join cases. */
+		/* purple_conversation_present(convo); */
 		return;
 	}
 
