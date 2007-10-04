@@ -48,13 +48,10 @@ msn_accept_add_cb(gpointer data)
 	{
 		MsnSession *session = pa->gc->proto_data;
 		MsnUserList *userlist = session->userlist;
-		MsnUser *user = msn_userlist_find_add_user(userlist, pa->who, pa->who);
-
-
+		
 		msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_AL);
 
-		if (msn_userlist_user_is_in_list(user, MSN_LIST_FL))
-			msn_del_contact_from_list(session->contact, NULL, pa->who, MSN_LIST_PL);
+		msn_del_contact_from_list(session->contact, NULL, pa->who, MSN_LIST_PL);
 	}
 
 	g_free(pa->who);

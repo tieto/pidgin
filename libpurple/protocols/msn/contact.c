@@ -1024,12 +1024,7 @@ msn_add_contact_read_cb(MsnSoapConn *soapconn)
 	user = msn_userlist_find_add_user(userlist, state->who, state->who);
 	msn_user_add_group_id(user, state->guid);
 
-	if (msn_userlist_user_is_in_list(user, MSN_LIST_PL)) {
-		msn_del_contact_from_list(soapconn->session->contact, NULL, state->who, MSN_LIST_PL);
-	} else {
-		msn_soap_free_read_buf(soapconn);
-	}
-	
+	msn_soap_free_read_buf(soapconn);
 	msn_callback_state_free(state);
 
 	return TRUE;
@@ -1111,7 +1106,6 @@ msn_add_contact_to_group_read_cb(MsnSoapConn *soapconn)
 	}
 
 	if (state->action & MSN_ADD_BUDDY) {
-		MsnUser *user = msn_userlist_find_user(userlist, state->who);
 
         	if ( !msn_user_is_yahoo(soapconn->session->account, state->who) ) {
 
@@ -1119,12 +1113,6 @@ msn_add_contact_to_group_read_cb(MsnSoapConn *soapconn)
 		                msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
 	        }
 	        msn_notification_send_fqy(soapconn->session, state->who);
-
-		if (msn_userlist_user_is_in_list(user, MSN_LIST_PL)) {
-			msn_del_contact_from_list(soapconn->session->contact, NULL, state->who, MSN_LIST_PL);
-			msn_callback_state_free(state);
-			return TRUE;
-		}
 	}
 
 	if (state->action & MSN_MOVE_BUDDY) {
@@ -1437,6 +1425,7 @@ msn_del_contact_from_list_read_cb(MsnSoapConn *soapconn)
 	g_return_val_if_fail(soapconn->data_cb != NULL, TRUE);
 	g_return_val_if_fail(soapconn->session != NULL, FALSE);
 	g_return_val_if_fail(soapconn->session->contact != NULL, FALSE);
+	g_return_val_if_fail(soapconn->session->userlist != NULL, FALSE);
 
 	state = (MsnCallbackState *) soapconn->data_cb;
 
@@ -1448,6 +1437,11 @@ msn_del_contact_from_list_read_cb(MsnSoapConn *soapconn)
 	purple_debug_info("MSN CL", "Contact %s deleted successfully from %s list on server!\n", state->who, MsnMemberRole[state->list_id]);
 
 	if (state->list_id == MSN_LIST_PL) {
+		MsnUser *user = msn_userlist_find_user(soapconn->session->userlist, state->who);
+		
+		if (user != NULL)
+			msn_user_unset_op(user, MSN_LIST_PL_OP);
+
 		msn_add_contact_to_list(soapconn->session->contact, state, state->who, MSN_LIST_RL);
 		return TRUE;
 	}
@@ -1541,6 +1535,8 @@ msn_add_contact_to_list_read_cb(MsnSoapConn *soapconn)
 	MsnCallbackState *state = NULL;
 
 	g_return_val_if_fail(soapconn->data_cb != NULL, TRUE);
+	g_return_val_if_fail(soapconn->session != NULL, FALSE);
+	g_return_val_if_fail(soapconn->session->userlist != NULL, FALSE);
 
 	state = (MsnCallbackState *) soapconn->data_cb;
 	
@@ -1551,12 +1547,19 @@ msn_add_contact_to_list_read_cb(MsnSoapConn *soapconn)
 	
 	purple_debug_info("MSN CL", "Contact %s added successfully to %s list on server!\n", state->who, MsnMemberRole[state->list_id]);
 
-	if (state->list_id == MSN_LIST_RL && (state->action & MSN_DENIED_BUDDY) ) {
-		g_return_val_if_fail(soapconn->session != NULL, FALSE);
-		g_return_val_if_fail(soapconn->session->contact != NULL, FALSE);
+	if (state->list_id == MSN_LIST_RL) {
+		MsnUser *user = msn_userlist_find_user(soapconn->session->userlist, state->who);
+		
+		if (user != NULL) {
+			msn_user_set_op(user, MSN_LIST_RL_OP);
+		}
 
-		msn_add_contact_to_list(soapconn->session->contact, NULL, state->who, MSN_LIST_BL);
-		return TRUE;
+		if (state->action & MSN_DENIED_BUDDY) {
+			g_return_val_if_fail(soapconn->session->contact != NULL, FALSE);
+
+			msn_add_contact_to_list(soapconn->session->contact, NULL, state->who, MSN_LIST_BL);
+			return TRUE;
+		}
 	}
 
 	if (state->list_id == MSN_LIST_AL) {

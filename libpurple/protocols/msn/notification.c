@@ -1203,8 +1203,6 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnSession *session = cmdproc->session;
 	const char *type, *value, *friendlyname;
 
-	purple_debug_info("MSN Notification", "prp_cmd()\n");
-
 	g_return_if_fail(cmd->param_count >= 3);
 
 	type  = cmd->params[2];
