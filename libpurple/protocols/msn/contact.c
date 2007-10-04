@@ -1891,7 +1891,7 @@ msn_contact_rename_group(MsnSession *session, const char *old_group_name, const 
 void
 msn_contact_connect_init(MsnSoapConn *soapconn)
 {
-	msn_soap_init(soapconn, MSN_CONTACT_SERVER, 1,
+	msn_soap_init(soapconn, MSN_CONTACT_SERVER, TRUE,
 		      msn_contact_login_connect_cb,
 		      msn_contact_login_error_cb);
 }

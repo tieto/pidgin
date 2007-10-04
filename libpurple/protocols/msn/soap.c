@@ -49,17 +49,16 @@ msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step)
 	soapconn->step = step;
 }
 
-//msn_soap_new(MsnSession *session,gpointer data,int sslconn)
 /*new a soap connection*/
 MsnSoapConn *
-msn_soap_new(MsnSession *session,gpointer data,int sslconn)
+msn_soap_new(MsnSession *session,gpointer data, gboolean ssl)
 {
 	MsnSoapConn *soapconn;
 
 	soapconn = g_new0(MsnSoapConn, 1);
 	soapconn->session = session;
 	soapconn->parent = data;
-	soapconn->ssl_conn = sslconn;
+	soapconn->ssl_conn = ssl;
 
 	soapconn->gsc = NULL;
 	soapconn->input_handler = 0;
@@ -127,7 +126,7 @@ msn_soap_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data
 
 /*init the soap connection*/
 void
-msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,
+msn_soap_init(MsnSoapConn *soapconn,char * host, gboolean ssl,
 				MsnSoapSslConnectCbFunction connect_cb,
 				MsnSoapSslErrorCbFunction error_cb)
 {
