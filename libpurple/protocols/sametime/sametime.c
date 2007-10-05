@@ -1563,12 +1563,14 @@ static void mw_session_stateChange(struct mwSession *session,
       case INCORRECT_LOGIN:
       case USER_UNREGISTERED:
       case GUEST_IN_USE:
+        gc->wants_to_die = TRUE;
         reason = PURPLE_REASON_AUTHENTICATION_FAILED;
         break;
 
       case ENCRYPT_MISMATCH:
       case ERR_ENCRYPT_NO_SUPPORT:
       case ERR_NO_COMMON_ENCRYPT:
+        gc->wants_to_die = TRUE;
         reason = PURPLE_REASON_ENCRYPTION_ERROR;
         break;
 
@@ -1578,6 +1580,7 @@ static void mw_session_stateChange(struct mwSession *session,
 
       case MULTI_SERVER_LOGIN:
       case MULTI_SERVER_LOGIN2:
+        gc->wants_to_die = TRUE;
         reason = PURPLE_REASON_NAME_IN_USE;
         break;
 
@@ -3646,6 +3649,7 @@ static void mw_prpl_login(PurpleAccount *acct);
 
 static void prompt_host_cancel_cb(PurpleConnection *gc) {
   const char *msg = _("No Sametime Community Server specified");
+  gc->wants_to_die = TRUE;
   purple_connection_error_reason(gc, PURPLE_REASON_INVALID_SETTINGS, msg);
 }
 

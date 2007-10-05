@@ -50,6 +50,7 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
 			return TRUE;
 		} else if(xmlnode_get_child(starttls, "required")) {
+			js->gc->wants_to_die = TRUE;
 			purple_connection_error_reason (js->gc, PURPLE_REASON_ENCRYPTION_ERROR,
 				_("Server requires TLS/SSL for login.  No TLS/SSL support found."));
 			return TRUE;
@@ -114,6 +115,7 @@ static void allow_plaintext_auth(PurpleAccount *account)
 
 static void disallow_plaintext_auth(PurpleAccount *account)
 {
+	account->gc->wants_to_die = TRUE;
 	purple_connection_error_reason (account->gc, PURPLE_REASON_ENCRYPTION_ERROR,
 		_("Server requires plaintext authentication over an unencrypted stream"));
 }
@@ -542,17 +544,19 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		char *msg = jabber_parse_error(js, packet);
 		xmlnode *error;
 		const char *err_code;
+		PurpleDisconnectReason reason = PURPLE_REASON_NETWORK_ERROR;
 
 		if((error = xmlnode_get_child(packet, "error")) &&
 					(err_code = xmlnode_get_attrib(error, "code")) &&
 					!strcmp(err_code, "401")) {
 			js->gc->wants_to_die = TRUE;
+			reason = PURPLE_REASON_AUTHENTICATION_FAILED;
 			/* Clear the pasword if it isn't being saved */
 			if (!purple_account_get_remember_password(js->gc->account))
 				purple_account_set_password(js->gc->account, NULL);
 		}
 
-		purple_connection_error_reason (js->gc, PURPLE_REASON_OTHER_ERROR, msg);
+		purple_connection_error_reason (js->gc, reason, msg);
 		g_free(msg);
 	}
 }
@@ -570,7 +574,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		return;
 	} else if(!strcmp(type, "error")) {
 		char *msg = jabber_parse_error(js, packet);
-		purple_connection_error_reason (js->gc, PURPLE_REASON_AUTHENTICATION_FAILED,
+		purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR,
 			msg);
 		g_free(msg);
 	} else if(!strcmp(type, "result")) {
@@ -977,7 +981,7 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 		purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR,
 			_("Invalid response from server."));
 	} else {
-		purple_connection_error_reason (js->gc, PURPLE_REASON_AUTHENTICATION_FAILED,
+		purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR,
 			msg);
 		g_free(msg);
 	}

@@ -1259,7 +1259,7 @@ oscar_login(PurpleAccount *account)
 		gchar *buf;
 		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
 		gc->wants_to_die = TRUE;
-		purple_connection_error_reason(gc, PURPLE_REASON_AUTHENTICATION_FAILED, buf);
+		purple_connection_error_reason(gc, PURPLE_REASON_INVALID_SETTINGS, buf);
 		g_free(buf);
 	}
 
@@ -1378,7 +1378,8 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
 			break;
 		default:
-			purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR, _("Authentication failed"));
+			gc->wants_to_die = TRUE;
+			purple_connection_error_reason(gc, PURPLE_REASON_AUTHENTICATION_FAILED, _("Authentication failed"));
 			break;
 		}
 		purple_debug_info("oscar", "Login Error Code 0x%04hx\n", info->errorcode);

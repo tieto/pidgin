@@ -229,16 +229,19 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_KE:
+		gc->wants_to_die = TRUE;
 		purple_connection_error_reason(gc, PURPLE_REASON_ENCRYPTION_ERROR,
 		                             _("Key Exchange failed"));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_AUTH:
+		gc->wants_to_die = TRUE;
 		purple_connection_error_reason(gc, PURPLE_REASON_AUTHENTICATION_FAILED,
 		                             _("Authentication failed"));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_RESUME:
+		gc->wants_to_die = TRUE;
 		purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR,
 		                             _("Resuming detached session failed. "
 		                               "Press Reconnect to create new connection."));
@@ -357,6 +360,7 @@ static void silcpurple_running(SilcClient client, void *context)
 				(char *)purple_account_get_string(account, "private-key", prd),
 				(gc->password == NULL) ? "" : gc->password,
 				&sg->public_key, &sg->private_key)) {
+		gc->wants_to_die = TRUE;
 		purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR,
 		                             _("Could not load SILC key pair"));
 		gc->proto_data = NULL;

@@ -193,7 +193,7 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 		js->context = xmlCreatePushParserCtxt(&jabber_parser_libxml, js, buf, len, NULL);
 		xmlParseChunk(js->context, "", 0, 0);
 	} else if (xmlParseChunk(js->context, buf, len, 0) < 0) {
-		purple_connection_error_reason (js->gc, PURPLE_REASON_OTHER_ERROR,
+		purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR,
 			_("XML Parse error"));
 	}
 }

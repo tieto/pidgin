@@ -2178,7 +2178,8 @@ novell_login(PurpleAccount * account)
 		 */
 
 		/* ...but for now just error out with a nice message. */
-		purple_connection_error_reason (gc, PURPLE_REASON_OTHER_ERROR,
+		gc->wants_to_die = TRUE;
+		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
 			_("Unable to connect to server. Please enter the "
 			  "address of the server you wish to connect to."));
 		return;
@@ -2206,6 +2207,7 @@ novell_login(PurpleAccount * account)
 													  user->conn->addr, user->conn->port,
 													  novell_ssl_connected_cb, novell_ssl_connect_error, gc);
 		if (user->conn->ssl_conn->data == NULL) {
+			gc->wants_to_die = TRUE;
 			purple_connection_error_reason (gc,
 				PURPLE_REASON_ENCRYPTION_ERROR,
 				_("Error. SSL support is not installed."));
