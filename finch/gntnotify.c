@@ -84,8 +84,8 @@ finch_notify_message(PurpleNotifyMsgType type, const char *title,
 		if (type == PURPLE_NOTIFY_FORMATTED) {
 			int width = -1, height = -1;
 			msg = gnt_text_view_new();
+			gnt_text_view_set_flag(GNT_TEXT_VIEW(msg), GNT_TEXT_VIEW_TOP_ALIGN);
 			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(msg), secondary, sf);
-			gnt_text_view_scroll(GNT_TEXT_VIEW(msg), 0);
 			gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(msg), button);
 			gnt_util_get_text_bound(secondary, &width, &height);
 			gnt_widget_set_size(msg, width + 3, height + 1);
