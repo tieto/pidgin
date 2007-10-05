@@ -2271,6 +2271,7 @@ init_plugin(PurplePlugin *plugin)
 			                   "Error reading talk.ini\n");
 			if (error)
 				g_error_free(error);
+			g_free(path);
 		} else {
 			char *line = contents;
 			while (*contents) {
@@ -2317,6 +2318,9 @@ init_plugin(PurplePlugin *plugin)
 	                        "Program Files", "Trillian", "users",
 	                        "default", "logs", NULL);
 #endif
+
+	/*XXX: Why do we even bother allocating it ? */
+	g_free(path);
 
 
 	/* Add QIP log directory preference. */
