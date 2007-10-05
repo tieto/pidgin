@@ -208,7 +208,7 @@ msn_contact_login_connect_cb(MsnSoapConn *soapconn, PurpleSslConnection *gsc)
 
 /*get MSN member role utility*/
 static MsnListId
-msn_get_memberrole(char *role)
+msn_get_memberrole(const char *role)
 {
 	g_return_val_if_fail(role != NULL, 0);
 
@@ -532,8 +532,8 @@ msn_parse_contact_list(MsnContact * contact)
 					}
 				}
 			}
-			g_free(typedata);	/* Free 'Type' node data after processing 'Messenger' Service */
 		}
+		g_free(typedata);
 	}
 
 	xmlnode_free(node);	/* Free the whole XML tree */
