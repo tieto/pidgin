@@ -413,7 +413,8 @@ static void simple_canwrite_cb(gpointer data, gint source, PurpleInputCondition 
 		written = 0;
 	else if(written <= 0) {
 		/*TODO: do we really want to disconnect on a failure to write?*/
-		purple_connection_error(gc, _("Could not write"));
+		purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR,
+			_("Could not write"));
 		return;
 	}
 
@@ -435,7 +436,8 @@ static void send_later_cb(gpointer data, gint source, const gchar *error) {
 	}
 
 	if(source < 0) {
-		purple_connection_error(gc, _("Could not connect"));
+		purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR,
+			_("Could not connect"));
 		return;
 	}
 
@@ -461,7 +463,7 @@ static void sendlater(PurpleConnection *gc, const char *buf) {
 	if(!sip->connecting) {
 		purple_debug_info("simple", "connecting to %s port %d\n", sip->realhostname ? sip->realhostname : "{NULL}", sip->realport);
 		if (purple_proxy_connect(gc, sip->account, sip->realhostname, sip->realport, send_later_cb, gc) == NULL) {
-			purple_connection_error(gc, _("Couldn't create socket"));
+			purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR, _("Couldn't create socket"));
 		}
 		sip->connecting = TRUE;
 	}
@@ -1044,7 +1046,9 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 					sip->gc->wants_to_die = TRUE;
 					if (!purple_account_get_remember_password(sip->gc->account))
 						purple_account_set_password(sip->gc->account, NULL);
-					purple_connection_error(sip->gc, _("Incorrect password."));
+					purple_connection_error_reason(sip->gc,
+						PURPLE_REASON_AUTHENTICATION_FAILED,
+						_("Incorrect password."));
 					return TRUE;
 				}
 				tmp = sipmsg_find_header(msg, "WWW-Authenticate");
@@ -1058,7 +1062,8 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 				purple_debug_info("simple", "Unrecognized return code for REGISTER.\n");
 				if (sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) {
 					sip->gc->wants_to_die = TRUE;
-					purple_connection_error(sip->gc, _("Unknown server response."));
+					purple_connection_error_reason(sip->gc, PURPLE_REASON_OTHER_ERROR,
+						_("Unknown server response."));
 					return TRUE;
 				}
 				sip->registerstatus = SIMPLE_REGISTER_RETRY;
@@ -1528,7 +1533,8 @@ static void login_cb(gpointer data, gint source, const gchar *error_message) {
 	}
 
 	if(source < 0) {
-		purple_connection_error(gc, _("Could not connect"));
+		purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR,
+			_("Could not connect"));
 		return;
 	}
 
@@ -1562,7 +1568,8 @@ static void simple_udp_host_resolved_listen_cb(int listenfd, gpointer data) {
 	sip->listen_data = NULL;
 
 	if(listenfd == -1) {
-		purple_connection_error(sip->gc, _("Could not create listen socket"));
+		purple_connection_error_reason(sip->gc, PURPLE_REASON_NETWORK_ERROR,
+			_("Could not create listen socket"));
 		return;
 	}
 
@@ -1585,7 +1592,9 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 	sip->query_data = NULL;
 
 	if (!hosts || !hosts->data) {
-		purple_connection_error(sip->gc, _("Couldn't resolve host"));
+		purple_connection_error_reason(sip->gc,
+			PURPLE_REASON_NETWORK_ERROR,
+			_("Couldn't resolve host"));
 		return;
 	}
 
@@ -1604,7 +1613,9 @@ static void simple_udp_host_resolved(GSList *hosts, gpointer data, const char *e
 	sip->listen_data = purple_network_listen_range(5060, 5160, SOCK_DGRAM,
 				simple_udp_host_resolved_listen_cb, sip);
 	if (sip->listen_data == NULL) {
-		purple_connection_error(sip->gc, _("Could not create listen socket"));
+		purple_connection_error_reason(sip->gc,
+			PURPLE_REASON_NETWORK_ERROR,
+			_("Could not create listen socket"));
 		return;
 	}
 }
@@ -1617,7 +1628,9 @@ simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 
 	sip->listenfd = listenfd;
 	if(sip->listenfd == -1) {
-		purple_connection_error(sip->gc, _("Could not create listen socket"));
+		purple_connection_error_reason(sip->gc,
+			PURPLE_REASON_NETWORK_ERROR,
+			_("Could not create listen socket"));
 		return;
 	}
 
@@ -1630,7 +1643,9 @@ simple_tcp_connect_listen_cb(int listenfd, gpointer data) {
 	/* open tcp connection to the server */
 	if (purple_proxy_connect(sip->gc, sip->account, sip->realhostname,
 			sip->realport, login_cb, sip->gc) == NULL) {
-		purple_connection_error(sip->gc, _("Couldn't create socket"));
+		purple_connection_error_reason(sip->gc,
+			PURPLE_REASON_NETWORK_ERROR,
+			_("Couldn't create socket"));
 	}
 }
 
@@ -1668,7 +1683,8 @@ static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
 		sip->listen_data = purple_network_listen_range(5060, 5160, SOCK_STREAM,
 					simple_tcp_connect_listen_cb, sip);
 		if (sip->listen_data == NULL) {
-			purple_connection_error(sip->gc, _("Could not create listen socket"));
+			purple_connection_error_reason(sip->gc, PURPLE_REASON_NETWORK_ERROR,
+				_("Could not create listen socket"));
 			return;
 		}
 	} else { /* UDP */
@@ -1676,7 +1692,8 @@ static void srvresolved(PurpleSrvResponse *resp, int results, gpointer data) {
 
 		sip->query_data = purple_dnsquery_a(hostname, port, simple_udp_host_resolved, sip);
 		if (sip->query_data == NULL) {
-			purple_connection_error(sip->gc, _("Could not resolve hostname"));
+			purple_connection_error_reason(sip->gc, PURPLE_REASON_NETWORK_ERROR,
+				_("Could not resolve hostname"));
 		}
 	}
 }
@@ -1693,7 +1710,8 @@ static void simple_login(PurpleAccount *account)
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
 		gc->wants_to_die = TRUE;
-		purple_connection_error(gc, _("SIP screen names may not contain whitespaces or @ symbols"));
+		purple_connection_error_reason(gc, PURPLE_REASON_INVALID_SETTINGS,
+			_("SIP screen names may not contain whitespaces or @ symbols"));
 		return;
 	}
 
