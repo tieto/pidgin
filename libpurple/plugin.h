@@ -526,6 +526,7 @@ void purple_plugins_probe(const char *ext);
  */
 gboolean purple_plugins_enabled(void);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Registers a function that will be called when probing is finished.
  *
@@ -534,7 +535,9 @@ gboolean purple_plugins_enabled(void);
  * @deprecated If you need this, ask for a plugin-probe signal to be added.
  */
 void purple_plugins_register_probe_notify_cb(void (*func)(void *), void *data);
+#endif
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Unregisters a function that would be called when probing is finished.
  *
@@ -542,7 +545,9 @@ void purple_plugins_register_probe_notify_cb(void (*func)(void *), void *data);
  * @deprecated If you need this, ask for a plugin-probe signal to be added.
  */
 void purple_plugins_unregister_probe_notify_cb(void (*func)(void *));
+#endif
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Registers a function that will be called when a plugin is loaded.
  *
@@ -552,7 +557,9 @@ void purple_plugins_unregister_probe_notify_cb(void (*func)(void *));
  */
 void purple_plugins_register_load_notify_cb(void (*func)(PurplePlugin *, void *),
 										  void *data);
+#endif
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Unregisters a function that would be called when a plugin is loaded.
  *
@@ -560,7 +567,9 @@ void purple_plugins_register_load_notify_cb(void (*func)(PurplePlugin *, void *)
  * @deprecated Use the plugin-load signal instead.
  */
 void purple_plugins_unregister_load_notify_cb(void (*func)(PurplePlugin *, void *));
+#endif
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Registers a function that will be called when a plugin is unloaded.
  *
@@ -570,7 +579,9 @@ void purple_plugins_unregister_load_notify_cb(void (*func)(PurplePlugin *, void 
  */
 void purple_plugins_register_unload_notify_cb(void (*func)(PurplePlugin *, void *),
 											void *data);
+#endif
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Unregisters a function that would be called when a plugin is unloaded.
  *
@@ -579,6 +590,7 @@ void purple_plugins_register_unload_notify_cb(void (*func)(PurplePlugin *, void 
  */
 void purple_plugins_unregister_unload_notify_cb(void (*func)(PurplePlugin *,
 														   void *));
+#endif
 
 /**
  * Finds a plugin with the specified name.
