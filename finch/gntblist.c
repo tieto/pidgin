@@ -2223,7 +2223,7 @@ send_im_select(GntMenuItem *item, gpointer n)
 						_("OK"), G_CALLBACK(send_im_select_cb),
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
-						NULL);
+						"blist", NULL);
 }
 
 static void
