@@ -8,6 +8,8 @@ version 2.2.2:
 
 	libpurple:
 	* Real usernames are now shown in the system log.
+	* We now honor a PURPLE_DISABLE_DEPRECATED define to allow plugins to
+	  catch deprecated functions earlier rather than later.
 
 	Pidgin:
 	* If you alias a buddy to an alias that is already present within
