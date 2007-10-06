@@ -644,7 +644,7 @@ purple_plugin_unload(PurplePlugin *plugin)
 	purple_debug_info("plugins", "Unloading plugin %s\n", plugin->info->name);
 
 	/* Unload all plugins that depend on this plugin. */
-	for (l = plugin->dependent_plugins, l != NULL, l = ll) {
+	for (l = plugin->dependent_plugins; l != NULL; l = ll) {
 		const char * dep_name = (const char *)l->data;
 		PurplePlugin *dep_plugin;
 
