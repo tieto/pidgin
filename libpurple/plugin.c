@@ -643,28 +643,21 @@ purple_plugin_unload(PurplePlugin *plugin)
 {
 #ifdef PURPLE_PLUGINS
 	GList *l;
+	GList *ll;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
-
-	loaded_plugins = g_list_remove(loaded_plugins, plugin);
-	if ((plugin->info != NULL) && PURPLE_IS_PROTOCOL_PLUGIN(plugin))
-		protocol_plugins = g_list_remove(protocol_plugins, plugin);
-
 	g_return_val_if_fail(purple_plugin_is_loaded(plugin), FALSE);
 
 	purple_debug_info("plugins", "Unloading plugin %s\n", plugin->info->name);
 
-	/* cancel any pending dialogs the plugin has */
-	purple_request_close_with_handle(plugin);
-	purple_notify_close_with_handle(plugin);
-
-	plugin->loaded = FALSE;
-
 	/* Unload all plugins that depend on this plugin. */
-	while ((l = plugin->dependent_plugins) != NULL)
-	{
+	for (l = plugin->dependent_plugins, l != NULL, l = ll) {
 		const char * dep_name = (const char *)l->data;
 		PurplePlugin *dep_plugin;
+
+		/* Store a pointer to the next element in the list.
+		 * This is because we'll be modifying this list in the loop. */
+		ll = l->next;
 
 		dep_plugin = purple_plugins_find_with_id(dep_name);
 
@@ -678,29 +671,22 @@ purple_plugin_unload(PurplePlugin *plugin)
 				                      _(dep_plugin->info->name));
 
 				purple_notify_error(NULL, NULL,
-				                  _("There were errors unloading the plugin."), tmp);
+				                    _("There were errors unloading the plugin."), tmp);
 				g_free(tmp);
+
+				return FALSE;
+			}
+			else
+			{
+				plugin->dependent_plugins = g_list_remove(plugin->dependent_plugins, dep_name);
 			}
 		}
 	}
 
-	/* Remove this plugin from each dependency's dependent_plugins list. */
-	for (l = plugin->info->dependencies; l != NULL; l = l->next)
-	{
-		const char *dep_name = (const char *)l->data;
-		PurplePlugin *dependency;
-
-		dependency = purple_plugins_find_with_id(dep_name);
-
-		if (dependency != NULL)
-			dependency->dependent_plugins = g_list_remove(dependency->dependent_plugins, plugin->info->id);
-		else
-			purple_debug_error("plugins", "Unable to remove from dependency list for %s\n", dep_name);
-	}
-
 	if (plugin->native_plugin) {
 		if (plugin->info->unload != NULL)
-			plugin->info->unload(plugin);
+			if (!plugin->info->unload(plugin))
+				return FALSE;
 
 		if (plugin->info->type == PURPLE_PLUGIN_PROTOCOL) {
 			PurplePluginProtocolInfo *prpl_info;
@@ -724,8 +710,7 @@ purple_plugin_unload(PurplePlugin *plugin)
 				prpl_info->protocol_options = NULL;
 			}
 		}
-	}
-	else {
+	} else {
 		PurplePlugin *loader;
 		PurplePluginLoaderInfo *loader_info;
 
@@ -737,11 +722,21 @@ purple_plugin_unload(PurplePlugin *plugin)
 		loader_info = PURPLE_PLUGIN_LOADER_INFO(loader);
 
 		if (loader_info->unload != NULL)
-			loader_info->unload(plugin);
+			if (!loader_info->unload(plugin))
+				return FALSE;
 	}
+
+	/* cancel any pending dialogs the plugin has */
+	purple_request_close_with_handle(plugin);
+	purple_notify_close_with_handle(plugin);
 
 	purple_signals_disconnect_by_handle(plugin);
 	purple_plugin_ipc_unregister_all(plugin);
+
+	loaded_plugins = g_list_remove(loaded_plugins, plugin);
+	if ((plugin->info != NULL) && PURPLE_IS_PROTOCOL_PLUGIN(plugin))
+		protocol_plugins = g_list_remove(protocol_plugins, plugin);
+	plugin->loaded = FALSE;
 
 	/* TODO */
 	if (unload_cb != NULL)
@@ -1391,6 +1386,7 @@ purple_plugins_probe(const char *ext)
 
 	if (probe_cb != NULL)
 		probe_cb(probe_cb_data);
+
 #endif /* PURPLE_PLUGINS */
 }
 
