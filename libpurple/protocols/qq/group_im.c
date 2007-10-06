@@ -133,11 +133,11 @@ void qq_process_recv_group_im_apply_join
 
 	nombre = uid_to_purple_name(user_uid);
 
-	purple_request_action(gc, _("QQ Qun Operation"),
+	purple_request_action_with_hint(gc, _("QQ Qun Operation"),
 			    msg, reason,
 			    2,
 				purple_connection_get_account(gc), nombre, NULL,
-				g, 3,
+				"chat", g, 3,
 			    _("Approve"),
 			    G_CALLBACK
 			    (qq_group_approve_application_with_struct),

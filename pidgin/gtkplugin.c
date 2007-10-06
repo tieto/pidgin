@@ -280,11 +280,11 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 			cb_data[1] = model;
 			cb_data[2] = iter;
 
-			purple_request_action(plugin_dialog, NULL,
+			purple_request_action_with_hint(plugin_dialog, NULL,
 			                    _("Multiple plugins will be unloaded."),
 			                    tmp->str, 0,
-								NULL, NULL, NULL,
-								cb_data, 2,
+			                    NULL, NULL, NULL,
+			                    "plugins", cb_data, 2,
 			                    _("Unload Plugins"), G_CALLBACK(plugin_unload_confirm_cb),
 			                    _("Cancel"), g_free);
 			g_string_free(tmp, TRUE);
@@ -516,6 +516,11 @@ show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *co
 
 void pidgin_plugin_dialog_show()
 {
+	pidgin_plugin_dialog_show_with_parent(NULL);
+}
+
+void pidgin_plugin_dialog_show_with_parent(GtkWindow *parent)
+{
 	GtkWidget *sw;
 	GtkWidget *event_view;
 	GtkListStore *ls;
@@ -524,6 +529,8 @@ void pidgin_plugin_dialog_show()
 	GtkTreeSelection *sel;
 
 	if (plugin_dialog != NULL) {
+		if (parent)
+			gtk_window_set_transient_for(GTK_WINDOW(plugin_dialog), parent);
 		gtk_window_present(GTK_WINDOW(plugin_dialog));
 		return;
 	}
@@ -532,6 +539,8 @@ void pidgin_plugin_dialog_show()
 						    NULL,
 						    GTK_DIALOG_NO_SEPARATOR,
 						    NULL);
+	if (parent)
+		gtk_window_set_transient_for(GTK_WINDOW(plugin_dialog), parent);
 	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
 						_("Configure Pl_ugin"), PIDGIN_RESPONSE_CONFIGURE);
 	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),

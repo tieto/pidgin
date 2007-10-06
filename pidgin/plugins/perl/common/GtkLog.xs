@@ -13,7 +13,19 @@ pidgin_log_show(type, screenname, account)
 	Purple::Account account
 
 void
+pidgin_log_show_with_parent(parent, type, screenname, account)
+	void * parent
+	Purple::LogType type
+	const char * screenname
+	Purple::Account account
+
+void
 pidgin_log_show_contact(contact)
+	Purple::BuddyList::Contact contact
+
+void
+pidgin_log_show_contact_with_parent(parent, contact)
+	void * parent
 	Purple::BuddyList::Contact contact
 
 MODULE = Pidgin::Log  PACKAGE = Pidgin::SysLog  PREFIX = pidgin_syslog_
@@ -21,3 +33,7 @@ PROTOTYPES: ENABLE
 
 void
 pidgin_syslog_show()
+
+void
+pidgin_syslog_show_with_parent(parent)
+	void * parent
