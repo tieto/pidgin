@@ -12,6 +12,8 @@
   @signal conversation-displayed
  @endsignals
 
+ @see gtkconv.h
+
  <hr>
 
  @signaldef conversation-dragging
