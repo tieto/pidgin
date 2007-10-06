@@ -531,6 +531,7 @@ gboolean purple_plugins_enabled(void);
  *
  * @param func The callback function.
  * @param data Data to pass to the callback.
+ * @deprecated If you need this, ask for a plugin-probe signal to be added.
  */
 void purple_plugins_register_probe_notify_cb(void (*func)(void *), void *data);
 
@@ -538,6 +539,7 @@ void purple_plugins_register_probe_notify_cb(void (*func)(void *), void *data);
  * Unregisters a function that would be called when probing is finished.
  *
  * @param func The callback function.
+ * @deprecated If you need this, ask for a plugin-probe signal to be added.
  */
 void purple_plugins_unregister_probe_notify_cb(void (*func)(void *));
 
@@ -546,6 +548,7 @@ void purple_plugins_unregister_probe_notify_cb(void (*func)(void *));
  *
  * @param func The callback function.
  * @param data Data to pass to the callback.
+ * @deprecated Use the plugin-load signal instead.
  */
 void purple_plugins_register_load_notify_cb(void (*func)(PurplePlugin *, void *),
 										  void *data);
@@ -554,6 +557,7 @@ void purple_plugins_register_load_notify_cb(void (*func)(PurplePlugin *, void *)
  * Unregisters a function that would be called when a plugin is loaded.
  *
  * @param func The callback function.
+ * @deprecated Use the plugin-load signal instead.
  */
 void purple_plugins_unregister_load_notify_cb(void (*func)(PurplePlugin *, void *));
 
@@ -562,6 +566,7 @@ void purple_plugins_unregister_load_notify_cb(void (*func)(PurplePlugin *, void 
  *
  * @param func The callback function.
  * @param data Data to pass to the callback.
+ * @deprecated Use the plugin-unload signal instead.
  */
 void purple_plugins_register_unload_notify_cb(void (*func)(PurplePlugin *, void *),
 											void *data);
@@ -570,6 +575,7 @@ void purple_plugins_register_unload_notify_cb(void (*func)(PurplePlugin *, void 
  * Unregisters a function that would be called when a plugin is unloaded.
  *
  * @param func The callback function.
+ * @deprecated Use the plugin-unload signal instead.
  */
 void purple_plugins_unregister_unload_notify_cb(void (*func)(PurplePlugin *,
 														   void *));
