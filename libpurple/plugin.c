@@ -60,11 +60,6 @@ static GList *load_queue       = NULL;
 static GList *plugin_loaders   = NULL;
 #endif
 
-/*
- * TODO: I think the intention was to allow multiple load and unload
- *       callback functions.  Perhaps using a GList instead of a
- *       pointer to a single function.
- */
 static void (*probe_cb)(void *) = NULL;
 static void *probe_cb_data = NULL;
 static void (*load_cb)(PurplePlugin *, void *) = NULL;
@@ -254,7 +249,6 @@ purple_plugin_probe(const char *filename)
 		 * plugins being added to the global name space.
 		 *
 		 * G_MODULE_BIND_LOCAL was added in glib 2.3.3.
-		 * TODO: I guess there's nothing we can do about that?
 		 */
 #if GLIB_CHECK_VERSION(2,3,3)
 		plugin->handle = g_module_open(filename, G_MODULE_BIND_LOCAL);
@@ -625,7 +619,6 @@ purple_plugin_load(PurplePlugin *plugin)
 
 	plugin->loaded = TRUE;
 
-	/* TODO */
 	if (load_cb != NULL)
 		load_cb(plugin, load_cb_data);
 
@@ -738,7 +731,6 @@ purple_plugin_unload(PurplePlugin *plugin)
 		protocol_plugins = g_list_remove(protocol_plugins, plugin);
 	plugin->loaded = FALSE;
 
-	/* TODO */
 	if (unload_cb != NULL)
 		unload_cb(plugin, unload_cb_data);
 
@@ -1460,7 +1452,6 @@ purple_plugins_enabled(void)
 void
 purple_plugins_register_probe_notify_cb(void (*func)(void *), void *data)
 {
-	/* TODO */
 	probe_cb = func;
 	probe_cb_data = data;
 }
@@ -1468,7 +1459,6 @@ purple_plugins_register_probe_notify_cb(void (*func)(void *), void *data)
 void
 purple_plugins_unregister_probe_notify_cb(void (*func)(void *))
 {
-	/* TODO */
 	probe_cb = NULL;
 	probe_cb_data = NULL;
 }
@@ -1477,7 +1467,6 @@ void
 purple_plugins_register_load_notify_cb(void (*func)(PurplePlugin *, void *),
 									 void *data)
 {
-	/* TODO */
 	load_cb = func;
 	load_cb_data = data;
 }
@@ -1485,7 +1474,6 @@ purple_plugins_register_load_notify_cb(void (*func)(PurplePlugin *, void *),
 void
 purple_plugins_unregister_load_notify_cb(void (*func)(PurplePlugin *, void *))
 {
-	/* TODO */
 	load_cb = NULL;
 	load_cb_data = NULL;
 }
@@ -1494,7 +1482,6 @@ void
 purple_plugins_register_unload_notify_cb(void (*func)(PurplePlugin *, void *),
 									   void *data)
 {
-	/* TODO */
 	unload_cb = func;
 	unload_cb_data = data;
 }
@@ -1502,7 +1489,6 @@ purple_plugins_register_unload_notify_cb(void (*func)(PurplePlugin *, void *),
 void
 purple_plugins_unregister_unload_notify_cb(void (*func)(PurplePlugin *, void *))
 {
-	/* TODO */
 	unload_cb = NULL;
 	unload_cb_data = NULL;
 }
