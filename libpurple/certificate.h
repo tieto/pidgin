@@ -1,6 +1,7 @@
 /**
  * @file certificate.h Public-Key Certificate API
  * @ingroup core
+ * @see @ref certificate-signals
  */
 
 /*

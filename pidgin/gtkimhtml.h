@@ -1,6 +1,7 @@
 /**
  * @file gtkimhtml.h GTK+ IM/HTML rendering component
  * @ingroup pidgin
+ * @see @ref gtkimhtml-signals
  */
 
 /* Pidgin is the legal property of its developers, whose names are too numerous

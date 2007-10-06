@@ -1,6 +1,7 @@
 /**
  * @file gtkconv.h GTK+ Conversation API
  * @ingroup pidgin
+ * @see @ref gtkconv-signals
  */
 
 /* pidgin

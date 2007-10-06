@@ -1,6 +1,7 @@
 /**
  * @file gtklog.h GTK+ Log viewer
  * @ingroup pidgin
+ * @see @ref gtklog-signals
  */
 
 /* pidgin
