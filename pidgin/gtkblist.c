@@ -3070,7 +3070,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/Get User _Info..."), "<CTL>I", pidgin_dialogs_info, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_USER_INFO },
 	{ N_("/Buddies/View User _Log..."), "<CTL>L", pidgin_dialogs_log, 0, "<Item>", NULL },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Buddies/Show"), NULL, NULL, 0, "<Branch>", NULL},
+	{ N_("/Buddies/Sh_ow"), NULL, NULL, 0, "<Branch>", NULL},
 	{ N_("/Buddies/Show/_Offline Buddies"), NULL, pidgin_blist_edit_mode_cb, 1, "<CheckItem>", NULL },
 	{ N_("/Buddies/Show/_Empty Groups"), NULL, pidgin_blist_show_empty_groups_cb, 1, "<CheckItem>", NULL },
 	{ N_("/Buddies/Show/Buddy _Details"), NULL, pidgin_blist_buddy_details_cb, 1, "<CheckItem>", NULL },

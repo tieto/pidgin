@@ -134,7 +134,7 @@ void (*conversation_hiding)(PidginConversation *gtkconv);
 void (*conversation_displayed)(PidginConversation *gtkconv);
   @endsignalproto
   @signaldesc
-   Emitted right after the Pidgin UI is reattached to a conversation.
+   Emitted right after the Pidgin UI is attached to a new or a hidden conversation.
   @param gtkconv  The PidginConversation
  @endsignaldef
 
