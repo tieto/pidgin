@@ -329,7 +329,7 @@ static void irc_login(PurpleAccount *account)
 					irc_login_cb_ssl, irc_ssl_connect_failure, gc);
 		} else {
 			gc->wants_to_die = TRUE;
-			purple_connection_error_reason (gc, PURPLE_REASON_ENCRYPTION_ERROR,
+			purple_connection_error_reason (gc, PURPLE_REASON_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 			return;
 		}

@@ -70,8 +70,13 @@ typedef enum
 	 *  server offered.
 	 */
 	PURPLE_REASON_AUTHENTICATION_IMPOSSIBLE,
-	/** There was an error negotiating SSL on this connection, or encryption
-	 *  was unavailable and an account option was set to require it.
+	/** libpurple was built without SSL support, and the connection needs
+	 *  SSL.
+	 */
+	PURPLE_REASON_NO_SSL_SUPPORT,
+	/** There was an error negotiating SSL on this connection, or the
+	 *  server does not support encryption but an account option was set to
+	 *  require it.
 	 */
 	PURPLE_REASON_ENCRYPTION_ERROR,
 	/** Someone is already connected to the server using the name you are

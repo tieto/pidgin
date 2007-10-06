@@ -800,7 +800,7 @@ msn_login(PurpleAccount *account)
 	if (!purple_ssl_is_supported())
 	{
 		gc->wants_to_die = TRUE;
-		purple_connection_error_reason (gc, PURPLE_REASON_ENCRYPTION_ERROR,
+		purple_connection_error_reason (gc, PURPLE_REASON_NO_SSL_SUPPORT,
 			_("SSL support is needed for MSN. Please install a supported "
 			  "SSL library."));
 		return;

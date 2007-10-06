@@ -628,7 +628,7 @@ jabber_login(PurpleAccount *account)
 					jabber_ssl_connect_failure, js->gc);
 		} else {
 			js->gc->wants_to_die = TRUE;
-			purple_connection_error_reason (js->gc, PURPLE_REASON_ENCRYPTION_ERROR,
+			purple_connection_error_reason (js->gc, PURPLE_REASON_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 		}
 	}
@@ -1117,7 +1117,7 @@ void jabber_register_account(PurpleAccount *account)
 					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
 		} else {
 			gc->wants_to_die = TRUE;
-			purple_connection_error_reason (gc, PURPLE_REASON_ENCRYPTION_ERROR,
+			purple_connection_error_reason (gc, PURPLE_REASON_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 		}
 	}

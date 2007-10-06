@@ -51,7 +51,7 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 			return TRUE;
 		} else if(xmlnode_get_child(starttls, "required")) {
 			js->gc->wants_to_die = TRUE;
-			purple_connection_error_reason (js->gc, PURPLE_REASON_ENCRYPTION_ERROR,
+			purple_connection_error_reason (js->gc, PURPLE_REASON_NO_SSL_SUPPORT,
 				_("Server requires TLS/SSL for login.  No TLS/SSL support found."));
 			return TRUE;
 		}

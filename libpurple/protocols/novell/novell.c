@@ -2209,7 +2209,7 @@ novell_login(PurpleAccount * account)
 		if (user->conn->ssl_conn->data == NULL) {
 			gc->wants_to_die = TRUE;
 			purple_connection_error_reason (gc,
-				PURPLE_REASON_ENCRYPTION_ERROR,
+				PURPLE_REASON_NO_SSL_SUPPORT,
 				_("Error. SSL support is not installed."));
 		}
 	}
