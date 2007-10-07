@@ -676,6 +676,20 @@ purple_plugin_unload(PurplePlugin *plugin)
 		}
 	}
 
+	/* Remove this plugin from each dependency's dependent_plugins list. */
+	for (l = plugin->info->dependencies; l != NULL; l = l->next)
+	{
+		const char *dep_name = (const char *)l->data;
+		PurplePlugin *dependency;
+
+		dependency = purple_plugins_find_with_id(dep_name);
+
+		if (dependency != NULL)
+			dependency->dependent_plugins = g_list_remove(dependency->dependent_plugins, plugin->info->id);
+		else
+			purple_debug_error("plugins", "Unable to remove from dependency list for %s\n", dep_name);
+	}
+
 	if (plugin->native_plugin) {
 		if (plugin->info->unload != NULL)
 			if (!plugin->info->unload(plugin))
