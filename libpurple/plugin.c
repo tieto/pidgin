@@ -671,7 +671,7 @@ purple_plugin_unload(PurplePlugin *plugin)
 			}
 			else
 			{
-				plugin->dependent_plugins = g_list_remove(plugin->dependent_plugins, dep_name);
+				plugin->dependent_plugins = g_list_delete_link(plugin->dependent_plugins, l);
 			}
 		}
 	}
