@@ -12,6 +12,9 @@ version 2.3.0 (??/??/????):
 		Changed:
 		* purple_plugin_unload() now honors the return value of a
 		  plugin's unload function and can actually return FALSE now.
+		* purple_plugin_unload() no longer does its own notifications
+		  when a dependent plugin fails to unload.  The UI should do
+		  something appropriate.
 
 version 2.2.0 (09/13/2007):
 	libpurple:

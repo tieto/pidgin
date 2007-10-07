@@ -292,6 +292,18 @@ gboolean purple_plugin_load(PurplePlugin *plugin);
 gboolean purple_plugin_unload(PurplePlugin *plugin);
 
 /**
+ * Disable a plugin.
+ *
+ * This function adds the plugin to a list of plugins to "disable at the next
+ * startup" by excluding said plugins from the list of plugins to save.  The
+ * UI needs to call purple_plugins_save_loaded() after calling this for it
+ * to have any effect.
+ *
+ * @since 2.3.0
+ */
+void purple_plugin_disable(PurplePlugin *plugin);
+
+/**
  * Reloads a plugin.
  *
  * @param plugin The old plugin handle.

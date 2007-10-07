@@ -58,6 +58,7 @@ static GList *protocol_plugins = NULL;
 #ifdef PURPLE_PLUGINS
 static GList *load_queue       = NULL;
 static GList *plugin_loaders   = NULL;
+static GList *plugins_to_disable = NULL;
 #endif
 
 static void (*probe_cb)(void *) = NULL;
@@ -658,15 +659,10 @@ purple_plugin_unload(PurplePlugin *plugin)
 		{
 			if (!purple_plugin_unload(dep_plugin))
 			{
-				char *tmp;
-
-				tmp = g_strdup_printf(_("The dependent plugin %s failed to unload."),
-				                      _(dep_plugin->info->name));
-
-				purple_notify_error(NULL, NULL,
-				                    _("There were errors unloading the plugin."), tmp);
-				g_free(tmp);
-
+				g_free(plugin->error);
+				plugin->error = g_strdup_printf(_("%s requires %s, but it failed to unload."),
+				                                _(plugin->info->name),
+				                                _(dep_plugin->info->name));
 				return FALSE;
 			}
 			else
@@ -691,9 +687,8 @@ purple_plugin_unload(PurplePlugin *plugin)
 	}
 
 	if (plugin->native_plugin) {
-		if (plugin->info->unload != NULL)
-			if (!plugin->info->unload(plugin))
-				return FALSE;
+		if (plugin->info->unload && !plugin->info->unload(plugin))
+			return FALSE;
 
 		if (plugin->info->type == PURPLE_PLUGIN_PROTOCOL) {
 			PurplePluginProtocolInfo *prpl_info;
@@ -728,9 +723,8 @@ purple_plugin_unload(PurplePlugin *plugin)
 
 		loader_info = PURPLE_PLUGIN_LOADER_INFO(loader);
 
-		if (loader_info->unload != NULL)
-			if (!loader_info->unload(plugin))
-				return FALSE;
+		if (loader_info->unload && !loader_info->unload(plugin))
+			return FALSE;
 	}
 
 	/* cancel any pending dialogs the plugin has */
@@ -743,7 +737,15 @@ purple_plugin_unload(PurplePlugin *plugin)
 	loaded_plugins = g_list_remove(loaded_plugins, plugin);
 	if ((plugin->info != NULL) && PURPLE_IS_PROTOCOL_PLUGIN(plugin))
 		protocol_plugins = g_list_remove(protocol_plugins, plugin);
+	plugins_to_disable = g_list_remove(plugins_to_disable, plugin);
 	plugin->loaded = FALSE;
+
+	/* We wouldn't be anywhere near here if the plugin wasn't loaded, so
+	 * if plugin->error is set at all, it had to be from a previous
+	 * unload failure.  It's obviously okay now.
+	 */
+	g_free(plugin->error);
+	plugin->error = NULL;
 
 	if (unload_cb != NULL)
 		unload_cb(plugin, unload_cb_data);
@@ -756,6 +758,15 @@ purple_plugin_unload(PurplePlugin *plugin)
 #else
 	return TRUE;
 #endif /* PURPLE_PLUGINS */
+}
+
+void
+purple_plugin_disable(PurplePlugin *plugin)
+{
+	g_return_if_fail(plugin != NULL);
+
+	if (!g_list_find(plugins_to_disable, plugin))
+		plugins_to_disable = g_list_prepend(plugins_to_disable, plugin);
 }
 
 gboolean
@@ -1223,14 +1234,14 @@ purple_plugins_save_loaded(const char *key)
 #ifdef PURPLE_PLUGINS
 	GList *pl;
 	GList *files = NULL;
-	PurplePlugin *p;
 
 	for (pl = purple_plugins_get_loaded(); pl != NULL; pl = pl->next) {
-		p = pl->data;
+		PurplePlugin *plugin = pl->data;
 
-		if (p->info->type != PURPLE_PLUGIN_PROTOCOL &&
-			p->info->type != PURPLE_PLUGIN_LOADER) {
-				files = g_list_append(files, p->path);
+		if (plugin->info->type != PURPLE_PLUGIN_PROTOCOL &&
+		    plugin->info->type != PURPLE_PLUGIN_LOADER &&
+		    !g_list_find(plugins_to_disable, plugin)) {
+			files = g_list_append(files, plugin->path);
 		}
 	}
 
