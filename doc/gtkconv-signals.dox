@@ -139,4 +139,4 @@ void (*conversation_displayed)(PidginConversation *gtkconv);
  @endsignaldef
 
 */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et
