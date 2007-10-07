@@ -8,7 +8,7 @@
 #include "tests.h"
 
 #include "../cipher.h"
-#include "../signal.h"
+#include "../signals.h"
 
 /******************************************************************************
  * MD4 Tests
