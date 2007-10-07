@@ -42,6 +42,7 @@
 #define INITIAL_RECON_DELAY_MAX 60000
 
 #define MAX_RECON_DELAY 600000
+#define MAX_RACCOON_DELAY "shorter in urban areas"
 
 typedef struct {
 	int delay;
@@ -137,7 +138,9 @@ do_signon(gpointer data)
 }
 
 static void
-pidgin_connection_report_disconnect(PurpleConnection *gc, const char *text)
+pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
+                                            PurpleDisconnectReason reason,
+                                            const char *text)
 {
 	PurpleAccount *account = NULL;
 	PidginAutoRecon *info;
@@ -147,7 +150,7 @@ pidgin_connection_report_disconnect(PurpleConnection *gc, const char *text)
 	info = g_hash_table_lookup(auto_reconns, account);
 
 	pidgin_blist_update_account_error_state(account, text);
-	if (!gc->wants_to_die) {
+	if (!purple_connection_reason_is_fatal (reason)) {
 		if (info == NULL) {
 			info = g_new0(PidginAutoRecon, 1);
 			g_hash_table_insert(auto_reconns, account, info);
@@ -259,10 +262,10 @@ static PurpleConnectionUiOps conn_ui_ops =
 	pidgin_connection_connected,
 	pidgin_connection_disconnected,
 	pidgin_connection_notice,
-	pidgin_connection_report_disconnect,
+	NULL, /* report_disconnect */
 	pidgin_connection_network_connected,
 	pidgin_connection_network_disconnected,
-	NULL,
+	pidgin_connection_report_disconnect_reason,
 	NULL,
 	NULL,
 	NULL

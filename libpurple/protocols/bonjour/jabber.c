@@ -580,7 +580,8 @@ bonjour_jabber_start(BonjourJabber *data)
 	if ((data->socket = socket(PF_INET, SOCK_STREAM, 0)) < 0)
 	{
 		purple_debug_error("bonjour", "Cannot open socket: %s\n", strerror(errno));
-		purple_connection_error(data->account->gc, _("Cannot open socket"));
+		purple_connection_error_reason (data->account->gc,
+			PURPLE_REASON_NETWORK_ERROR, _("Cannot open socket"));
 		return -1;
 	}
 
@@ -588,7 +589,8 @@ bonjour_jabber_start(BonjourJabber *data)
 	if (setsockopt(data->socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) != 0)
 	{
 		purple_debug_error("bonjour", "Error setting socket options: %s\n", strerror(errno));
-		purple_connection_error(data->account->gc, _("Error setting socket options"));
+		purple_connection_error_reason (data->account->gc,
+			PURPLE_REASON_NETWORK_ERROR, _("Error setting socket options"));
 		return -1;
 	}
 
@@ -612,7 +614,8 @@ bonjour_jabber_start(BonjourJabber *data)
 	if (!bind_successful)
 	{
 		purple_debug_error("bonjour", "Cannot bind socket: %s\n", strerror(errno));
-		purple_connection_error(data->account->gc, _("Could not bind socket to port"));
+		purple_connection_error_reason (data->account->gc,
+			PURPLE_REASON_NETWORK_ERROR, _("Could not bind socket to port"));
 		return -1;
 	}
 
@@ -620,7 +623,8 @@ bonjour_jabber_start(BonjourJabber *data)
 	if (listen(data->socket, 10) != 0)
 	{
 		purple_debug_error("bonjour", "Cannot listen on socket: %s\n", strerror(errno));
-		purple_connection_error(data->account->gc, _("Could not listen on socket"));
+		purple_connection_error_reason (data->account->gc,
+			PURPLE_REASON_NETWORK_ERROR, _("Could not listen on socket"));
 		return -1;
 	}
 

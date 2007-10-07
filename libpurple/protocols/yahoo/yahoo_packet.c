@@ -304,7 +304,8 @@ yahoo_packet_send_can_write(gpointer data, gint source, PurpleInputCondition con
 		return;
 	else if (ret < 0) {
 		/* TODO: what to do here - do we really have to disconnect? */
-		purple_connection_error(yd->gc, _("Write Error"));
+		purple_connection_error_reason(yd->gc, PURPLE_REASON_NETWORK_ERROR,
+		                               _("Write Error"));
 		return;
 	}
 

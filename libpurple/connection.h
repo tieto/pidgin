@@ -54,11 +54,82 @@ typedef enum
 
 } PurpleConnectionState;
 
+/** Possible errors that can cause a connection to be closed. */
+typedef enum
+{
+	/** There was an error sending or receiving on the network socket, or
+	 *  there was some protocol error (such as the server sending malformed
+	 *  data).
+	 */
+	PURPLE_REASON_NETWORK_ERROR = 0,
+	/** The username or password (or some other credential) was incorrect.
+	 */
+	PURPLE_REASON_AUTHENTICATION_FAILED,
+	/** libpurple doesn't speak any of the authentication methods the
+	 *  server offered.
+	 */
+	PURPLE_REASON_AUTHENTICATION_IMPOSSIBLE,
+	/** libpurple was built without SSL support, and the connection needs
+	 *  SSL.
+	 */
+	PURPLE_REASON_NO_SSL_SUPPORT,
+	/** There was an error negotiating SSL on this connection, or the
+	 *  server does not support encryption but an account option was set to
+	 *  require it.
+	 */
+	PURPLE_REASON_ENCRYPTION_ERROR,
+	/** Someone is already connected to the server using the name you are
+	 *  trying to connect with.
+	 */
+	PURPLE_REASON_NAME_IN_USE,
+
+	/** The username/server/other preference for the account isn't valid.
+	 *  For instance, on IRC the screen name cannot contain white space.
+	 *  This reason should not be used for incorrect passwords etc: use
+	 *  #PURPLE_REASON_AUTHENTICATION_FAILED for that.
+	 *
+	 *  @todo This reason really shouldn't be necessary.  Usernames and
+	 *        other account preferences should be validated when the
+	 *        account is created.
+	 */
+	PURPLE_REASON_INVALID_SETTINGS,
+
+	/** The server did not provide a SSL certificate. */
+	PURPLE_REASON_CERT_NOT_PROVIDED,
+	/** The server's SSL certificate could not be trusted. */
+	PURPLE_REASON_CERT_UNTRUSTED,
+	/** The server's SSL certificate has expired. */
+	PURPLE_REASON_CERT_EXPIRED,
+	/** The server's SSL certificate is not yet valid. */
+	PURPLE_REASON_CERT_NOT_ACTIVATED,
+	/** The server's SSL certificate did not match its hostname. */
+	PURPLE_REASON_CERT_HOSTNAME_MISMATCH,
+	/** The server's SSL certificate does not have the expected
+	 *  fingerprint.
+	 */
+	PURPLE_REASON_CERT_FINGERPRINT_MISMATCH,
+	/** The server's SSL certificate is self-signed.  */
+	PURPLE_REASON_CERT_SELF_SIGNED,
+	/** There was some other error validating the server's SSL certificate.
+	 */
+	PURPLE_REASON_CERT_OTHER_ERROR,
+
+	/** Some other error occured which fits into none of the other
+	 *  categories.
+	 */
+	PURPLE_REASON_OTHER_ERROR,
+
+	/** The number of PurpleDisconnectReason elements; not a valid reason.
+	 */
+	PURPLE_NUM_REASONS
+} PurpleDisconnectReason;
+
 #include <time.h>
 
 #include "account.h"
 #include "plugin.h"
 #include "status.h"
+#include "sslconn.h"
 
 /** Connection UI operations.  Used to notify the user of changes to
  *  connections, such as being disconnected, and to respond to the
@@ -73,11 +144,13 @@ typedef struct
 	 *  the UI of what is happening, as well as which @a step out of @a
 	 *  step_count has been reached (which might be displayed as a progress
 	 *  bar).
+	 *  @see #purple_connection_update_progress
 	 */
 	void (*connect_progress)(PurpleConnection *gc,
 	                         const char *text,
 	                         size_t step,
 	                         size_t step_count);
+
 	/** Called when a connection is established (just before the
 	 *  @ref signed-on signal).
 	 */
@@ -86,17 +159,23 @@ typedef struct
 	 *  and @ref signed-off signals).
 	 */
 	void (*disconnected)(PurpleConnection *gc);
+
 	/** Used to display connection-specific notices.  (Pidgin's Gtk user
 	 *  interface implements this as a no-op; #purple_connection_notice(),
 	 *  which uses this operation, is not used by any of the protocols
 	 *  shipped with libpurple.)
 	 */
 	void (*notice)(PurpleConnection *gc, const char *text);
+
 	/** Called when an error causes a connection to be disconnected.
 	 *  Called before #disconnected.
 	 *  @param text  a localized error message.
+	 *  @see #purple_connection_error
+	 *  @deprecated in favour of
+	 *              #PurpleConnectionUiOps.report_disconnect_reason.
 	 */
 	void (*report_disconnect)(PurpleConnection *gc, const char *text);
+
 	/** Called when libpurple discovers that the computer's network
 	 *  connection is active.  On Linux, this uses Network Manager if
 	 *  available; on Windows, it uses Win32's network change notification
@@ -108,10 +187,21 @@ typedef struct
 	 */
 	void (*network_disconnected)();
 
+	/** Called when a connection is disconnected, whether due to an
+	 *  error or to user request.  Called before #disconnected.
+	 *  @param reason  why the connection ended, if known, or
+	 *                 PURPLE_REASON_OTHER_ERROR, if not.
+	 *  @param text  a localized message describing the disconnection
+	 *               in more detail to the user.
+	 *  @see #purple_connection_error_reason
+	 */
+	void (*report_disconnect_reason)(PurpleConnection *gc,
+	                                 PurpleDisconnectReason reason,
+	                                 const char *text);
+
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
-	void (*_purple_reserved4)(void);
 } PurpleConnectionUiOps;
 
 struct _PurpleConnection
@@ -289,8 +379,52 @@ void purple_connection_notice(PurpleConnection *gc, const char *text);
  *
  * @param gc     The connection.
  * @param reason The error text.
+ * @deprecated in favour of #purple_connection_error_reason.  Calling
+ *  @c purple_connection_error(gc, text) is equivalent to calling
+ *  @c purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR, text).
  */
 void purple_connection_error(PurpleConnection *gc, const char *reason);
+
+/**
+ * Closes a connection with an error and an optional description of the
+ * error.
+ *
+ * @param reason      why the connection is closing.
+ * @param description a localized description of the error.
+ */
+void
+purple_connection_error_reason (PurpleConnection *gc,
+                                PurpleDisconnectReason reason,
+                                const char *description);
+
+/**
+ * Closes a connection due to an SSL error; this is basically a shortcut to
+ * turning the #PurpleSslErrorType into a #PurpleDisconnectReason and a
+ * human-readable string and then calling purple_connection_error_reason().
+ */
+void
+purple_connection_ssl_error (PurpleConnection *gc,
+                             PurpleSslErrorType ssl_error);
+
+/**
+ * Reports whether a disconnection reason is fatal (in which case the account
+ * should probably not be automatically reconnected) or transient (so
+ * auto-reconnection is a good idea.
+ * For instance, #PURPLE_REASON_NETWORK_ERROR is a temporary
+ * error, which might be caused by losing the network connection, so
+ * @a purple_connection_reason_is_fatal(PURPLE_REASON_NETWORK_ERROR) is
+ * @a FALSE.  On the other hand, #PURPLE_REASON_AUTHENTICATION_FAILED probably
+ * indicates a misconfiguration of the account which needs the user to go fix
+ * it up, so @a
+ * purple_connection_reason_is_fatal(PURPLE_REASON_AUTHENTICATION_FAILED)
+ * is @a TRUE.
+ *
+ * (This function is meant to replace checking PurpleConnection.wants_to_die.)
+ *
+ * @return @a TRUE iff automatic reconnection is a bad idea.
+ */
+gboolean
+purple_connection_reason_is_fatal (PurpleDisconnectReason reason);
 
 /*@}*/
 

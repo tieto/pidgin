@@ -405,7 +405,7 @@ void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, PurpleConne
 				">>> %d bytes -> [default] decrypt and dump\n%s",
 				buf_len, hex_dump);
 		try_dump_as_gbk(buf, buf_len);
-		purple_connection_error(gc, _("Error requesting login token"));
+		purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR, _("Error requesting login token"));
 	}
 	g_free(hex_dump);
 }
@@ -482,10 +482,12 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 		gc->wants_to_die = TRUE;
 		if (!purple_account_get_remember_password(gc->account))
 			purple_account_set_password(gc->account, NULL);
-		purple_connection_error(gc, _("Incorrect password."));
+		purple_connection_error_reason(gc,
+			PURPLE_REASON_AUTHENTICATION_FAILED, _("Incorrect password."));
 		break;
 	case QQ_LOGIN_REPLY_MISC_ERROR:
-		purple_connection_error(gc, _("Unable to login, check debug log"));
+		purple_connection_error_reason(gc,
+			PURPLE_REASON_NETWORK_ERROR, _("Unable to login, check debug log"));
 		break;
 	case QQ_LOGIN_REPLY_OK:
 		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Login replys OK, everything is fine\n");

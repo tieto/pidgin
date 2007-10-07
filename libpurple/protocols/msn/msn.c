@@ -800,7 +800,7 @@ msn_login(PurpleAccount *account)
 	if (!purple_ssl_is_supported())
 	{
 		gc->wants_to_die = TRUE;
-		purple_connection_error(gc,
+		purple_connection_error_reason (gc, PURPLE_REASON_NO_SSL_SUPPORT,
 			_("SSL support is needed for MSN. Please install a supported "
 			  "SSL library."));
 		return;
@@ -829,7 +829,8 @@ msn_login(PurpleAccount *account)
 		purple_account_set_username(account, username);
 
 	if (!msn_session_connect(session, host, port, http_method))
-		purple_connection_error(gc, _("Failed to connect to server."));
+		purple_connection_error_reason (gc, PURPLE_REASON_NETWORK_ERROR,
+			_("Failed to connect to server."));
 }
 
 static void
