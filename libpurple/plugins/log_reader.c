@@ -232,7 +232,6 @@ static char *adium_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	struct adium_logger_data *data;
 	GError *error = NULL;
 	gchar *read = NULL;
-	gsize length;
 
 	/* XXX: TODO: We probably want to set PURPLE_LOG_READ_NO_NEWLINE
 	 * XXX: TODO: for HTML logs. */
@@ -246,8 +245,9 @@ static char *adium_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	g_return_val_if_fail(data->path != NULL, g_strdup(""));
 
 	purple_debug_info("Adium log read", "Reading %s\n", data->path);
-	if (!g_file_get_contents(data->path, &read, &length, &error)) {
-		purple_debug_error("Adium log read", "Error reading log\n");
+	if (!g_file_get_contents(data->path, &read, NULL, &error)) {
+		purple_debug_error("Adium log read", "Error reading log: %s\n",
+					   (error && error->message) ? error->message : "Unknown error");
 		if (error)
 			g_error_free(error);
 		return g_strdup("");
@@ -1808,8 +1808,10 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	error = NULL;
 	if (!g_file_get_contents(path, &contents, NULL, &error)) {
 		purple_debug_error("QIP logger",
-		                   "Couldn't read file %s: %s \n", path, error->message);
-		g_error_free(error);
+				   "Couldn't read file %s: %s \n", path,
+				   (error && error->message) ? error->message : "Unknown error");
+		if (error)
+			g_error_free(error);
 		g_free(path);
 		return list;
 	}
@@ -1955,8 +1957,10 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	error = NULL;
 	if (!(utf8_string = g_convert(contents, -1, "UTF-8", "Cp1251", NULL, NULL, &error))) {
 		purple_debug_error("QIP logger",
-			"Couldn't convert file %s to UTF-8: %s\n", data->path, error->message);
-		g_error_free(error);
+			"Couldn't convert file %s to UTF-8: %s\n", data->path,
+				   (error && error->message) ? error->message : "Unknown error");
+		if (error)
+			g_error_free(error);
 		g_free(contents);
 		return g_strdup("");
 	}
@@ -2151,18 +2155,18 @@ init_plugin(PurplePlugin *plugin)
 
 	/* Calculate default Messenger Plus! log directory. */
 #ifdef _WIN32
+	path = NULL;
 	folder = wpurple_get_special_folder(CSIDL_PERSONAL);
 	if (folder) {
 		path = g_build_filename(folder, "My Chat Logs", NULL);
 		g_free(folder);
-	} else
-		path = g_strdup("");
+	}
 #else
 	path = g_build_filename(PURPLE_LOG_READER_WINDOWS_MOUNT_POINT,
 	                        "Documents and Settings", g_get_user_name(),
 	                        "My Documents", "My Chat Logs", NULL);
 #endif
-	purple_prefs_add_string("/plugins/core/log_reader/messenger_plus/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/messenger_plus/log_directory", path ? path : "");
 	g_free(path);
 
 
@@ -2171,18 +2175,18 @@ init_plugin(PurplePlugin *plugin)
 
 	/* Calculate default MSN message history directory. */
 #ifdef _WIN32
+	path = NULL;
 	folder = wpurple_get_special_folder(CSIDL_PERSONAL);
 	if (folder) {
 		path = g_build_filename(folder, "My Received Files", NULL);
 		g_free(folder);
-	} else
-		path = g_strdup("");
+	}
 #else
 	path = g_build_filename(PURPLE_LOG_READER_WINDOWS_MOUNT_POINT,
 	                        "Documents and Settings", g_get_user_name(),
 	                        "My Documents", "My Received Files", NULL);
 #endif
-	purple_prefs_add_string("/plugins/core/log_reader/msn/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/msn/log_directory", path ? path : "");
 	g_free(path);
 
 
@@ -2261,22 +2265,22 @@ init_plugin(PurplePlugin *plugin)
 			g_key_file_free(key_file);
 		}
 #else /* !GLIB_CHECK_VERSION(2,6,0) */
-		gsize length;
 		gchar *contents = NULL;
 
 		purple_debug_info("Trillian talk.ini read",
-					"Reading %s\n", path);
-		if (!g_file_get_contents(path, &contents, &length, &error)) {
+				  "Reading %s\n", path);
+		if (!g_file_get_contents(path, &contents, NULL, &error)) {
 			purple_debug_error("Trillian talk.ini read",
-			                   "Error reading talk.ini\n");
+					   "Error reading talk.ini: %s\n",
+					   (error && error->message) ? error->message : "Unknown error");
 			if (error)
 				g_error_free(error);
-			g_free(path);
 		} else {
-			char *line = contents;
-			while (*contents) {
-				if (*contents == '\n') {
-					*contents = '\0';
+			char *cursor, *line;
+			line = cursor = contents;
+			while (*cursor) {
+				if (*cursor == '\n') {
+					*cursor = '\0';
 
 					/* XXX: This assumes the first Directory key is under [Logging]. */
 					if (purple_str_has_prefix(line, "Directory=")) {
@@ -2288,25 +2292,29 @@ init_plugin(PurplePlugin *plugin)
 						found = TRUE;
 					}
 
-					contents++;
-					line = contents;
+					cursor++;
+					line = cursor;
 				} else
-					contents++;
+					cursor++;
 			}
-			g_free(path);
 			g_free(contents);
 		}
+		g_free(path);
 #endif /* !GTK_CHECK_VERSION(2,6,0) */
 	} /* path */
 
 	if (!found) {
+		path = NULL;
 		folder = wpurple_get_special_folder(CSIDL_PROGRAM_FILES);
 		if (folder) {
 			path = g_build_filename(folder, "Trillian", "users",
 			                        "default", "logs", NULL);
 			g_free(folder);
-		} else
-			path = g_strdup("");
+		}
+
+		purple_prefs_add_string(
+			"/plugins/core/log_reader/trillian/log_directory", path ? path : "");
+		g_free(path);
 	}
 #else /* !defined(_WIN32) */
 	/* TODO: At some point, this could attempt to parse talk.ini
@@ -2317,28 +2325,27 @@ init_plugin(PurplePlugin *plugin)
 	path = g_build_filename(PURPLE_LOG_READER_WINDOWS_MOUNT_POINT,
 	                        "Program Files", "Trillian", "users",
 	                        "default", "logs", NULL);
-#endif
-
-	/*XXX: Why do we even bother allocating it ? */
+	purple_prefs_add_string(
+		"/plugins/core/log_reader/trillian/log_directory", path);
 	g_free(path);
-
+#endif
 
 	/* Add QIP log directory preference. */
 	purple_prefs_add_none("/plugins/core/log_reader/qip");
 
 	/* Calculate default QIP log directory. */
 #ifdef _WIN32
+	path = NULL;
 	folder = wpurple_get_special_folder(CSIDL_PROGRAM_FILES);
 	if (folder) {
 		path = g_build_filename(folder, "QIP", "Users", NULL);
 		g_free(folder);
-	} else
-		path = g_strdup("");
+	}
 #else
 	path = g_build_filename(PURPLE_LOG_READER_WINDOWS_MOUNT_POINT,
 	                        "Program Files", "QIP", "Users", NULL);
 #endif
-	purple_prefs_add_string("/plugins/core/log_reader/qip/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/qip/log_directory", path ? path : "");
 	g_free(path);
 }
 
