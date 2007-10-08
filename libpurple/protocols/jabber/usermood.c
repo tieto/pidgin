@@ -176,14 +176,14 @@ static void do_mood_set_mood(PurplePluginAction *action) {
 											FALSE);
 	purple_request_field_group_add_field(group, field);
 	
-	purple_request_fields(gc, _("Edit User Mood"),
+	purple_request_fields_with_hint(gc, _("Edit User Mood"),
 						  _("Edit User Mood"),
 						  _("Please select your mood from the list."),
 						  fields,
 						  _("Set"), G_CALLBACK(do_mood_set_from_fields),
 						  _("Cancel"), NULL,
 						  purple_connection_get_account(gc), NULL, NULL,
-						  gc);
+						  "blist", gc);
 	
 }
 

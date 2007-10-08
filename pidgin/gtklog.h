@@ -54,9 +54,12 @@ struct _PidginLogViewer {
 
 
 void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account);
+void pidgin_log_show_with_parent(GtkWindow *parent, PurpleLogType type, const char *screenname, PurpleAccount *account);
 void pidgin_log_show_contact(PurpleContact *contact);
+void pidgin_log_show_contact_with_parent(GtkWindow *parent, PurpleContact *contact);
 
 void pidgin_syslog_show(void);
+void pidgin_syslog_show_with_parent(GtkWindow *parent);
 
 /**************************************************************************/
 /** @name GTK+ Log Subsystem                                              */
