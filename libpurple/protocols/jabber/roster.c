@@ -229,6 +229,11 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 			remove_purple_buddies(js, jid);
 		} else {
 			GSList *groups = NULL;
+
+			if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
+				if (!jabber_google_roster_incoming(js, item))
+					continue;
+
 			for(group = xmlnode_get_child(item, "group"); group; group = xmlnode_get_next_twin(group)) {
 				char *group_name;
 
@@ -237,10 +242,9 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 
 				if (g_slist_find_custom(groups, group_name, (GCompareFunc)purple_utf8_strcasecmp) == NULL)
 					groups = g_slist_append(groups, group_name);
+				else
+					g_free(group_name);
 			}
-			if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
-				if (!jabber_google_roster_incoming(js, item))
-					continue;
 			add_purple_buddies_to_groups(js, jid, name, groups);
 		}
 	}
