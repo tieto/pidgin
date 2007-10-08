@@ -131,6 +131,7 @@ msn_soap_init(MsnSoapConn *soapconn,char * host, gboolean ssl,
 				MsnSoapSslErrorCbFunction error_cb)
 {
 	purple_debug_misc("MSN SOAP","Initializing SOAP connection\n");
+	g_free(soapconn->login_host);
 	soapconn->login_host = g_strdup(host);
 	soapconn->ssl_conn = ssl;
 	soapconn->connect_cb = connect_cb;
@@ -204,11 +205,9 @@ msn_soap_clean_unhandled_requests(MsnSoapConn *soapconn)
 void
 msn_soap_destroy(MsnSoapConn *soapconn)
 {
-	if(soapconn->login_host)
-		g_free(soapconn->login_host);
+	g_free(soapconn->login_host);
 
-	if(soapconn->login_path)
-		g_free(soapconn->login_path);
+	g_free(soapconn->login_path);
 
 	/*remove the write handler*/
 	if (soapconn->output_handler > 0){
