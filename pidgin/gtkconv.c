@@ -4363,7 +4363,6 @@ entry_popup_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 1);
 }
 
-
 static void resize_imhtml_cb(PidginConversation *gtkconv)
 {
 	GtkTextBuffer *buffer;
@@ -4404,7 +4403,14 @@ static void resize_imhtml_cb(PidginConversation *gtkconv)
 	if (diff > 0) {
 		gtk_widget_size_request(gtkconv->lower_hbox, &sr);
 		gtkconv->entry_growing = TRUE;
-		gtk_widget_set_size_request(gtkconv->lower_hbox, -1, diff + sr.height);
+
+		/* uncomment this to auto resize even after the user manually
+		   resizes
+		gtk_paned_set_position(GTK_PANED(gtkconv->lower_hbox->parent->parent),
+			-1);
+		*/
+		gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
+			diff + gtkconv->lower_hbox->allocation.height);
 	}
 }
 
