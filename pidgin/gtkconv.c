@@ -2498,11 +2498,16 @@ update_tab_icon(PurpleConversation *conv)
 	gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model), 
 			&(gtkconv->infopane_iter),
 			CONV_EMBLEM_COLUMN, emblem, -1);
+	if (emblem)
+		g_object_unref(emblem);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons")) {
+		emblem = pidgin_create_prpl_icon(gtkconv->active_conv->account, PIDGIN_PRPL_ICON_SMALL);
 		gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model),
 			&(gtkconv->infopane_iter),
-			CONV_PROTOCOL_ICON_COLUMN, pidgin_create_prpl_icon(gtkconv->active_conv->account, PIDGIN_PRPL_ICON_SMALL), -1);
+			CONV_PROTOCOL_ICON_COLUMN, emblem, -1);
+		if (emblem)
+			g_object_unref(emblem);
 	}
 
 	/* XXX seanegan Why do I have to do this? */
@@ -4727,7 +4732,6 @@ setup_common_pane(PidginConversation *gtkconv)
 #if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
-
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, FALSE);
