@@ -67,8 +67,10 @@ static void add_purple_buddies_to_groups(JabberStream *js, const char *jid,
 	if(!groups) {
 		if(!buddies)
 			g2 = g_slist_append(g2, g_strdup(_("Buddies")));
-		else
+		else {
+			g_slist_free(buddies);
 			return;
+		}
 	}
 
 	my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
@@ -267,6 +269,9 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 	JabberIq *iq;
 	xmlnode *query, *item, *group;
 
+	if(!(b = purple_find_buddy(js->gc->account, name)))
+		return;
+
 	if(grps) {
 		groups = grps;
 	} else {
@@ -280,9 +285,6 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 			buddies = g_slist_remove(buddies, b);
 		}
 	}
-
-	if(!(b = purple_find_buddy(js->gc->account, name)))
-		return;
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:roster");
 
