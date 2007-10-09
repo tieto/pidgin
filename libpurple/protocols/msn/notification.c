@@ -230,11 +230,9 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
 	PurpleAccount *account;
-	PurpleConnection *gc;
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = purple_account_get_connection(account);
 
 	if (!g_ascii_strcasecmp(cmd->params[1], "OK"))
 	{
@@ -1616,7 +1614,6 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	MsnSession *session;
 	PurpleAccount *account;
-	PurpleConnection *gc;
 	MsnUser *user;
 	const char *passport;
 	char *psm_str, *currentmedia_str, *str;
@@ -1626,7 +1623,6 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = purple_account_get_connection(account);
 
 	passport = cmd->params[0];
 	user = msn_userlist_find_user(session->userlist, passport);
