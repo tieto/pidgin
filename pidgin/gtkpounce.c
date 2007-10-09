@@ -1310,6 +1310,7 @@ create_pounces_list(PouncesManager *dialog)
 
 void
 pidgin_pounces_manager_show(void)
+{
 	PouncesManager *dialog;
 	GtkWidget *bbox;
 	GtkWidget *button;
