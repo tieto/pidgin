@@ -4368,40 +4368,40 @@ static void resize_imhtml_cb(PidginConversation *gtkconv)
 {
 	GtkTextBuffer *buffer;
 	GtkTextIter iter;
-        int wrapped_lines;
-        int lines;
-        GdkRectangle oneline;
+	int wrapped_lines;
+	int lines;
+	GdkRectangle oneline;
 	GtkRequisition sr;
-        int height;
-        int pad_top, pad_inside, pad_bottom;
+	int height;
+	int pad_top, pad_inside, pad_bottom;
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 
-        wrapped_lines = 1;
-        gtk_text_buffer_get_start_iter(buffer, &iter);
-        gtk_text_view_get_iter_location(GTK_TEXT_VIEW(gtkconv->entry), &iter, &oneline);
-        while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(gtkconv->entry), &iter))
-                wrapped_lines++;
+	wrapped_lines = 1;
+	gtk_text_buffer_get_start_iter(buffer, &iter);
+	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(gtkconv->entry), &iter, &oneline);
+	while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(gtkconv->entry), &iter))
+		wrapped_lines++;
 
-        lines = gtk_text_buffer_get_line_count(buffer);
+	lines = gtk_text_buffer_get_line_count(buffer);
 
-        /* Show a maximum of 4 lines */
-        lines = MIN(lines, 4);
-        wrapped_lines = MIN(wrapped_lines, 4);
+	/* Show a maximum of 4 lines */
+	lines = MIN(lines, 4);
+	wrapped_lines = MIN(wrapped_lines, 4);
 
-        pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
-        pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
-        pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(gtkconv->entry));
+	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
+	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
+	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(gtkconv->entry));
 
-        height = (oneline.height + pad_top + pad_bottom) * lines;
-        height += (oneline.height + pad_inside) * (wrapped_lines - lines);
+	height = (oneline.height + pad_top + pad_bottom) * lines;
+	height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
 	gtkconv->auto_resize = TRUE;
-        g_idle_add(reset_auto_resize_cb, gtkconv);
+	g_idle_add(reset_auto_resize_cb, gtkconv);
 	gtk_widget_size_request(gtkconv->lower_hbox, &sr);
 	if (sr.height < height + PIDGIN_HIG_BOX_SPACE) {
 		gtkconv->entry_growing = TRUE;
-	        gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height + PIDGIN_HIG_BOX_SPACE);
+		gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height + PIDGIN_HIG_BOX_SPACE);
 	}
 }
 
