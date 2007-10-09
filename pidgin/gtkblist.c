@@ -4347,7 +4347,6 @@ create_connection_error_buttons(gpointer key, gpointer value,
                                 gpointer user_data)
 {
 	PurpleAccount *account;
-	PurpleStatusType *status_type;
 	gchar *escaped, *text;
 	GtkWidget *button, *label, *image, *hbox;
 	GdkPixbuf *pixbuf;
@@ -4362,8 +4361,8 @@ create_connection_error_buttons(gpointer key, gpointer value,
 	hbox = gtk_hbox_new(FALSE, 6);
 
 	/* Create the icon */
-	if ((status_type = purple_account_get_status_type_with_primitive(account,
-							PURPLE_STATUS_OFFLINE))) {
+	if (purple_account_get_status_type_with_primitive(account,
+							PURPLE_STATUS_OFFLINE) != NULL) {
 		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 		if (pixbuf != NULL) {
 			image = gtk_image_new_from_pixbuf(pixbuf);
