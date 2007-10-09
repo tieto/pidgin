@@ -4,6 +4,8 @@
   @signal playing-sound-event
  @endsignals
 
+ @see sound.h
+
  <hr>
 
  @signaldef playing-sound-event
@@ -18,4 +20,4 @@ gboolean (*playing_sound_event)(PurpleSoundEventID event, PurpleAccount *account
  @endsignaldef
 
  */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

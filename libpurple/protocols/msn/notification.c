@@ -450,7 +450,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	const char *passport;
 	const char *content_type;
 
-	purple_debug_info("MSNP14","Process UBM payload:%s\n",payload);
+	purple_debug_info("MSNP14","Process UBM payload:%.*s\n", len, payload);
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
 	msn_message_parse_payload(msg, payload, len,MSG_LINE_DEM,MSG_BODY_DEM);
@@ -533,7 +533,7 @@ ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}else{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
-		purple_debug_info("MSNP14","UBM payload:{%s}\n",cmd->payload);
+		purple_debug_info("MSNP14","UBM payload:{%.*s}\n", cmd->payload_len, cmd->payload);
 		ubm_cmd_post(cmdproc, cmd, cmd->payload, cmd->payload_len);
 	}
 }
