@@ -781,12 +781,7 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 	g_free(title);
 }
 
-void pidgin_syslog_show(void)
-{
-	pidgin_syslog_show_with_parent(NULL);
-}
-
-void pidgin_syslog_show_with_parent(GtkWindow *parent)
+void pidgin_syslog_show()
 {
 	GList *accounts = NULL;
 	GList *logs = NULL;
@@ -806,7 +801,7 @@ void pidgin_syslog_show_with_parent(GtkWindow *parent)
 	}
 	logs = g_list_sort(logs, purple_log_compare);
 
-	syslog_viewer = display_log_viewer(parent, NULL, logs, _("System Log"), NULL, 0);
+	syslog_viewer = display_log_viewer(NULL, logs, _("System Log"), NULL, 0);
 }
 
 /****************************************************************************
