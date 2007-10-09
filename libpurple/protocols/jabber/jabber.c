@@ -144,7 +144,6 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		if(jabber_process_starttls(js, packet))
 			return;
 	} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE) && !js->gsc) {
-		js->gc->wants_to_die = TRUE;
 		purple_connection_error_reason (js->gc, PURPLE_REASON_ENCRYPTION_ERROR,
 			_("You require encryption, but it is not available on this server."));
 		return;
@@ -588,14 +587,12 @@ jabber_login(PurpleAccount *account)
 	js->old_length = -1;
 
 	if(!js->user) {
-		gc->wants_to_die = TRUE;
 		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
 		return;
 	}
 	
 	if (!js->user->domain || *(js->user->domain) == '\0') {
-		gc->wants_to_die = TRUE;
 		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
 		return;
@@ -627,7 +624,6 @@ jabber_login(PurpleAccount *account)
 					purple_account_get_int(account, "port", 5223), jabber_login_callback_ssl,
 					jabber_ssl_connect_failure, js->gc);
 		} else {
-			js->gc->wants_to_die = TRUE;
 			purple_connection_error_reason (js->gc, PURPLE_REASON_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 		}
@@ -1082,7 +1078,6 @@ void jabber_register_account(PurpleAccount *account)
 	js->old_length = -1;
 
 	if(!js->user) {
-		gc->wants_to_die = TRUE;
 		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
 		return;
@@ -1116,7 +1111,6 @@ void jabber_register_account(PurpleAccount *account)
 					purple_account_get_int(account, "port", 5222),
 					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
 		} else {
-			gc->wants_to_die = TRUE;
 			purple_connection_error_reason (gc, PURPLE_REASON_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 		}
