@@ -488,7 +488,10 @@ purple_connection_disconnect_cb(gpointer data)
 void
 purple_connection_error(PurpleConnection *gc, const char *text)
 {
-	purple_connection_error_reason (gc, PURPLE_REASON_OTHER_ERROR, text);
+	PurpleDisconnectReason reason = gc->wants_to_die
+	                              ? PURPLE_REASON_OTHER_ERROR
+	                              : PURPLE_REASON_NETWORK_ERROR;
+	purple_connection_error_reason (gc, reason, text);
 }
 
 void
@@ -497,27 +500,20 @@ purple_connection_error_reason (PurpleConnection *gc,
                                 const char *description)
 {
 	PurpleConnectionUiOps *ops;
-	gboolean fatal;
 
 	g_return_if_fail(gc   != NULL);
+	g_assert (reason < PURPLE_NUM_REASONS);
 
 	if (description == NULL) {
 		purple_debug_error("connection", "purple_connection_error_reason: check `description != NULL' failed\n");
 		description = _("Unknown error");
 	}
 
-	g_assert (reason < PURPLE_NUM_REASONS);
-
-	/* This should probably be removed at some point */
-	fatal = purple_connection_reason_is_fatal (reason);
-	if (fatal != gc->wants_to_die)
-		purple_debug_warning ("connection",
-			"reason %u is %sfatal but wants_to_die is %u",
-			reason, (fatal ? "" : "not "), gc->wants_to_die);
-
 	/* If we've already got one error, we don't need any more */
 	if (gc->disconnect_timeout)
 		return;
+
+	gc->wants_to_die = purple_connection_reason_is_fatal (reason);
 
 	ops = purple_connections_get_ui_ops();
 

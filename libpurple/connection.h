@@ -215,19 +215,23 @@ struct _PurpleConnection
 	char *password;              /**< The password used.                 */
 	int inpa;                    /**< The input watcher.                 */
 
-	GSList *buddy_chats;         /**< A list of active chats.            */
+	GSList *buddy_chats;         /**< A list of active chats
+	                                  (#PurpleConversation structs of type
+	                                  #PURPLE_CONV_TYPE_CHAT).           */
 	void *proto_data;            /**< Protocol-specific data.            */
 
 	char *display_name;          /**< How you appear to other people.    */
 	guint keepalive;             /**< Keep-alive.                        */
 
+	/** Wants to Die state.  This is set when the user chooses to log out, or
+	 * when the protocol is disconnected and should not be automatically
+	 * reconnected (incorrect password, etc.).  prpls should rely on
+	 * purple_connection_error_reason() to set this for them rather than
+	 * setting it themselves.
+	 * @see purple_connection_reason_is_fatal
+	 */
+	gboolean wants_to_die;
 
-	gboolean wants_to_die;	     /**< Wants to Die state.  This is set
-	                                  when the user chooses to log out,
-	                                  or when the protocol is
-	                                  disconnected and should not be
-	                                  automatically reconnected
-	                                  (incorrect password, etc.)         */
 	guint disconnect_timeout;    /**< Timer used for nasty stack tricks  */
 };
 
@@ -285,7 +289,7 @@ void purple_connection_destroy(PurpleConnection *gc);
 
 /**
  * Sets the connection state.  PRPLs should call this and pass in
- * the state "PURPLE_CONNECTED" when the account is completely
+ * the state #PURPLE_CONNECTED when the account is completely
  * signed on.  What does it mean to be completely signed on?  If
  * the core can call prpl->set_status, and it successfully changes
  * your status, then the account is online.
@@ -381,13 +385,17 @@ void purple_connection_notice(PurpleConnection *gc, const char *text);
  * @param reason The error text.
  * @deprecated in favour of #purple_connection_error_reason.  Calling
  *  @c purple_connection_error(gc, text) is equivalent to calling
- *  @c purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR, text).
+ *  @c purple_connection_error_reason(gc, reason, text) where @c reason is
+ *  #PURPLE_REASON_OTHER_ERROR if @c gc->wants_to_die is @c TRUE, and
+ *  #PURPLE_REASON_NETWORK_ERROR if not.  (This is to keep auto-reconnection
+ *  behaviour the same when using old prpls which don't use reasons yet.)
  */
 void purple_connection_error(PurpleConnection *gc, const char *reason);
 
 /**
  * Closes a connection with an error and an optional description of the
- * error.
+ * error.  It also sets @c gc->wants_to_die to the value of
+ * #purple_connection_reason_is_fatal(@a reason).
  *
  * @param reason      why the connection is closing.
  * @param description a localized description of the error.
@@ -409,19 +417,19 @@ purple_connection_ssl_error (PurpleConnection *gc,
 /**
  * Reports whether a disconnection reason is fatal (in which case the account
  * should probably not be automatically reconnected) or transient (so
- * auto-reconnection is a good idea.
+ * auto-reconnection is a good idea).
  * For instance, #PURPLE_REASON_NETWORK_ERROR is a temporary
  * error, which might be caused by losing the network connection, so
  * @a purple_connection_reason_is_fatal(PURPLE_REASON_NETWORK_ERROR) is
- * @a FALSE.  On the other hand, #PURPLE_REASON_AUTHENTICATION_FAILED probably
+ * @c FALSE.  On the other hand, #PURPLE_REASON_AUTHENTICATION_FAILED probably
  * indicates a misconfiguration of the account which needs the user to go fix
  * it up, so @a
  * purple_connection_reason_is_fatal(PURPLE_REASON_AUTHENTICATION_FAILED)
- * is @a TRUE.
+ * is @c TRUE.
  *
  * (This function is meant to replace checking PurpleConnection.wants_to_die.)
  *
- * @return @a TRUE iff automatic reconnection is a bad idea.
+ * @return @c TRUE iff automatic reconnection is a bad idea.
  */
 gboolean
 purple_connection_reason_is_fatal (PurpleDisconnectReason reason);
