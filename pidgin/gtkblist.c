@@ -3108,7 +3108,7 @@ static GtkItemFactoryEntry blist_menu[] =
 #if GTK_CHECK_VERSION(2,6,0)
 	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<StockItem>", GTK_STOCK_ABOUT },
 #else
-	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0, "<Item>", NULL },
+	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<Item>", NULL },
 #endif
 };
 
