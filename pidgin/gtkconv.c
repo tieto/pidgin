@@ -4371,8 +4371,8 @@ static void resize_imhtml_cb(PidginConversation *gtkconv)
 	int wrapped_lines;
 	int lines;
 	GdkRectangle oneline;
-	GtkRequisition sr;
-	int height;
+	GtkRequisition sr, entry_sr;
+	int height, diff;
 	int pad_top, pad_inside, pad_bottom;
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
@@ -4398,10 +4398,14 @@ static void resize_imhtml_cb(PidginConversation *gtkconv)
 
 	gtkconv->auto_resize = TRUE;
 	g_idle_add(reset_auto_resize_cb, gtkconv);
-	gtk_widget_size_request(gtkconv->lower_hbox, &sr);
-	if (sr.height < height + PIDGIN_HIG_BOX_SPACE) {
+
+	gtk_widget_size_request(gtkconv->entry, &entry_sr);
+	diff = height - entry_sr.height;
+
+	if (diff > 0) {
+		gtk_widget_size_request(gtkconv->lower_hbox, &sr);
 		gtkconv->entry_growing = TRUE;
-		gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height + PIDGIN_HIG_BOX_SPACE);
+		gtk_widget_set_size_request(gtkconv->lower_hbox, -1, diff + sr.height);
 	}
 }
 
