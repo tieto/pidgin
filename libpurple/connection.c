@@ -502,7 +502,7 @@ purple_connection_error_reason (PurpleConnection *gc,
 	PurpleConnectionUiOps *ops;
 
 	g_return_if_fail(gc   != NULL);
-	g_assert (reason < PURPLE_NUM_REASONS);
+	g_return_if_fail(reason < PURPLE_NUM_REASONS);
 
 	if (description == NULL) {
 		purple_debug_error("connection", "purple_connection_error_reason: check `description != NULL' failed\n");
@@ -575,6 +575,8 @@ purple_connection_reason_is_fatal (PurpleDisconnectReason reason)
 		case PURPLE_REASON_INVALID_SETTINGS:
 		case PURPLE_REASON_OTHER_ERROR:
 			return TRUE;
+		default:
+			g_return_val_if_reached(TRUE);
 	}
 }
 
