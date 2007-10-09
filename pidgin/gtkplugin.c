@@ -532,8 +532,6 @@ void pidgin_plugin_dialog_show()
 						    NULL,
 						    GTK_DIALOG_NO_SEPARATOR,
 						    NULL);
-	if (parent)
-		gtk_window_set_transient_for(GTK_WINDOW(plugin_dialog), parent);
 	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
 						_("Configure Pl_ugin"), PIDGIN_RESPONSE_CONFIGURE);
 	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
