@@ -3098,7 +3098,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
-	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_system_log_cb, 0, "<Item>", NULL },
+	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 	/* Help */
