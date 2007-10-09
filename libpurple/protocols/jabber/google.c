@@ -110,7 +110,7 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 		tos[i] = (to_name != NULL ?  to_name : "");
 		froms[i] = (from != NULL ?  from : "");
 		subjects[i] = (subject != NULL ? subject : g_strdup(""));
-		urls[i] = (url != NULL ? url : "");
+		urls[i] = url;
 
 		tid = xmlnode_get_attrib(message, "tid");
 		if (tid &&
