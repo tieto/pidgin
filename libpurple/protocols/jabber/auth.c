@@ -541,15 +541,15 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	if(type && !strcmp(type, "result")) {
 		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
 	} else {
-		char *msg = jabber_parse_error(js, packet);
+		PurpleDisconnectReason reason = PURPLE_REASON_NETWORK_ERROR;
+		char *msg = jabber_parse_error(js, packet, &reason);
 		xmlnode *error;
 		const char *err_code;
-		PurpleDisconnectReason reason = PURPLE_REASON_NETWORK_ERROR;
 
+		/* FIXME: Why is this not in jabber_parse_error? */
 		if((error = xmlnode_get_child(packet, "error")) &&
 					(err_code = xmlnode_get_attrib(error, "code")) &&
 					!strcmp(err_code, "401")) {
-			js->gc->wants_to_die = TRUE;
 			reason = PURPLE_REASON_AUTHENTICATION_FAILED;
 			/* Clear the pasword if it isn't being saved */
 			if (!purple_account_get_remember_password(js->gc->account))
@@ -573,9 +573,9 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			_("Invalid response from server."));
 		return;
 	} else if(!strcmp(type, "error")) {
-		char *msg = jabber_parse_error(js, packet);
-		purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR,
-			msg);
+		PurpleDisconnectReason reason = PURPLE_REASON_NETWORK_ERROR;
+		char *msg = jabber_parse_error(js, packet, &reason);
+		purple_connection_error_reason (js->gc, reason, msg);
 		g_free(msg);
 	} else if(!strcmp(type, "result")) {
 		query = xmlnode_get_child(packet, "query");
@@ -975,14 +975,14 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 
 void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 {
-	char *msg = jabber_parse_error(js, packet);
+	PurpleDisconnectReason reason = PURPLE_REASON_NETWORK_ERROR;
+	char *msg = jabber_parse_error(js, packet, &reason);
 
 	if(!msg) {
 		purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR,
 			_("Invalid response from server."));
 	} else {
-		purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR,
-			msg);
+		purple_connection_error_reason (js->gc, reason, msg);
 		g_free(msg);
 	}
 }

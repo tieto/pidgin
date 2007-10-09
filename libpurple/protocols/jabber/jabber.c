@@ -129,8 +129,9 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 			g_free(full_jid);
 		}
 	} else {
-		char *msg = jabber_parse_error(js, packet);
-		purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR, msg);
+		PurpleDisconnectReason reason = PURPLE_REASON_NETWORK_ERROR;
+		char *msg = jabber_parse_error(js, packet, &reason);
+		purple_connection_error_reason (js->gc, reason, msg);
 		g_free(msg);
 	}
 
@@ -176,12 +177,11 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 
 static void jabber_stream_handle_error(JabberStream *js, xmlnode *packet)
 {
-	char *msg = jabber_parse_error(js, packet);
+	PurpleDisconnectReason reason = PURPLE_REASON_NETWORK_ERROR;
+	char *msg = jabber_parse_error(js, packet, &reason);
 
-	if (js->gc->wants_to_die)
-		purple_connection_error_reason (js->gc, PURPLE_REASON_OTHER_ERROR, msg);
-	else
-		purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR, msg);
+	purple_connection_error_reason (js->gc, reason, msg);
+
 	g_free(msg);
 }
 
@@ -687,7 +687,7 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 				_("Registration Successful"), buf);
 		g_free(buf);
 	} else {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 
 		if(!msg)
 			msg = g_strdup(_("Unknown Error"));
@@ -717,7 +717,7 @@ jabber_unregistration_result_cb(JabberStream *js, xmlnode *packet, gpointer data
 						   _("Unregistration Successful"), buf);
 		g_free(buf);
 	} else {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 		
 		if(!msg)
 			msg = g_strdup(_("Unknown Error"));
@@ -1141,7 +1141,7 @@ static void jabber_unregister_account_iq_cb(JabberStream *js, xmlnode *packet, g
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 	const char *type = xmlnode_get_attrib(packet,"type");
 	if(!strcmp(type,"error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 		
 		purple_notify_error(js->gc, _("Error unregistering account"),
 							_("Error unregistering account"), msg);
@@ -1691,7 +1691,7 @@ jabber_password_change_result_cb(JabberStream *js, xmlnode *packet,
 		purple_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
 				_("Your password has been changed."));
 	} else {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Error changing password"),
 				_("Error changing password"), msg);
@@ -1855,12 +1855,17 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 }
 
 
-char *jabber_parse_error(JabberStream *js, xmlnode *packet)
+char *jabber_parse_error(JabberStream *js,
+                         xmlnode *packet,
+                         PurpleDisconnectReason *reason)
 {
 	xmlnode *error;
 	const char *code = NULL, *text = NULL;
 	const char *xmlns = xmlnode_get_namespace(packet);
 	char *cdata = NULL;
+
+#define SET_REASON(x) \
+	if(reason != NULL) { *reason = x; }
 
 	if((error = xmlnode_get_child(packet, "error"))) {
 		cdata = xmlnode_get_data(error);
@@ -1913,41 +1918,41 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 			text = _("Unknown Error");
 		}
 	} else if(xmlns && !strcmp(xmlns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
+		/* Most common reason can be the default */
+		SET_REASON(PURPLE_REASON_AUTHENTICATION_FAILED);
 		if(xmlnode_get_child(packet, "aborted")) {
-			js->gc->wants_to_die = TRUE;
 			text = _("Authorization Aborted");
 		} else if(xmlnode_get_child(packet, "incorrect-encoding")) {
+			SET_REASON(PURPLE_REASON_NETWORK_ERROR);
 			text = _("Incorrect encoding in authorization");
 		} else if(xmlnode_get_child(packet, "invalid-authzid")) {
-			js->gc->wants_to_die = TRUE;
 			text = _("Invalid authzid");
 		} else if(xmlnode_get_child(packet, "invalid-mechanism")) {
-			js->gc->wants_to_die = TRUE;
 			text = _("Invalid Authorization Mechanism");
 		} else if(xmlnode_get_child(packet, "mechanism-too-weak")) {
-			js->gc->wants_to_die = TRUE;
 			text = _("Authorization mechanism too weak");
 		} else if(xmlnode_get_child(packet, "not-authorized")) {
-			js->gc->wants_to_die = TRUE;
 			/* Clear the pasword if it isn't being saved */
 			if (!purple_account_get_remember_password(js->gc->account))
 				purple_account_set_password(js->gc->account, NULL);
 			text = _("Not Authorized");
 		} else if(xmlnode_get_child(packet, "temporary-auth-failure")) {
+			SET_REASON(PURPLE_REASON_NETWORK_ERROR);
 			text = _("Temporary Authentication Failure");
 		} else {
-			js->gc->wants_to_die = TRUE;
 			text = _("Authentication Failure");
 		}
 	} else if(!strcmp(packet->name, "stream:error") ||
 			 (!strcmp(packet->name, "error") &&
 				!strcmp(xmlns, "http://etherx.jabber.org/streams"))) {
+		/* Most common reason as default: */
+		SET_REASON(PURPLE_REASON_NETWORK_ERROR);
 		if(xmlnode_get_child(packet, "bad-format")) {
 			text = _("Bad Format");
 		} else if(xmlnode_get_child(packet, "bad-namespace-prefix")) {
 			text = _("Bad Namespace Prefix");
 		} else if(xmlnode_get_child(packet, "conflict")) {
-			js->gc->wants_to_die = TRUE;
+			SET_REASON(PURPLE_REASON_NAME_IN_USE);
 			text = _("Resource Conflict");
 		} else if(xmlnode_get_child(packet, "connection-timeout")) {
 			text = _("Connection Timeout");
@@ -1995,6 +2000,8 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 			text = _("Stream Error");
 		}
 	}
+
+#undef SET_REASON
 
 	if(text || cdata) {
 		char *ret = g_strdup_printf("%s%s%s", code ? code : "",
