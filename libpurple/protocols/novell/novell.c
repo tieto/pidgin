@@ -133,7 +133,6 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 				 */
 				if (!purple_account_get_remember_password(gc->account))
 					purple_account_set_password(gc->account, NULL);
-				gc->wants_to_die = TRUE;
 				reason = PURPLE_REASON_AUTHENTICATION_FAILED;
 				break;
 			default:
@@ -2019,7 +2018,6 @@ _evt_user_disconnect(NMUser * user, NMEvent * event)
 	gc = purple_account_get_connection(account);
 	if (gc)
 	{
-		gc->wants_to_die = TRUE; /* we don't want to reconnect in this case */
 		if (!purple_account_get_remember_password(account))
 			purple_account_set_password(account, NULL);
 		purple_connection_error_reason (gc, PURPLE_REASON_NAME_IN_USE,
@@ -2178,7 +2176,6 @@ novell_login(PurpleAccount * account)
 		 */
 
 		/* ...but for now just error out with a nice message. */
-		gc->wants_to_die = TRUE;
 		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
 			_("Unable to connect to server. Please enter the "
 			  "address of the server you wish to connect to."));
@@ -2207,7 +2204,6 @@ novell_login(PurpleAccount * account)
 													  user->conn->addr, user->conn->port,
 													  novell_ssl_connected_cb, novell_ssl_connect_error, gc);
 		if (user->conn->ssl_conn->data == NULL) {
-			gc->wants_to_die = TRUE;
 			purple_connection_error_reason (gc,
 				PURPLE_REASON_NO_SSL_SUPPORT,
 				_("Error. SSL support is not installed."));

@@ -1258,7 +1258,6 @@ oscar_login(PurpleAccount *account)
 	if (!aim_snvalid(purple_account_get_username(account))) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
-		gc->wants_to_die = TRUE;
 		purple_connection_error_reason(gc, PURPLE_REASON_INVALID_SETTINGS, buf);
 		g_free(buf);
 	}
@@ -1342,19 +1341,16 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		switch (info->errorcode) {
 		case 0x01:
 			/* Unregistered screen name */
-			gc->wants_to_die = TRUE;
 			purple_connection_error_reason(gc, PURPLE_REASON_AUTHENTICATION_FAILED, _("Invalid screen name."));
 			break;
 		case 0x05:
 			/* Incorrect password */
-			gc->wants_to_die = TRUE;
 			if (!purple_account_get_remember_password(account))
 				purple_account_set_password(account, NULL);
 			purple_connection_error_reason(gc, PURPLE_REASON_AUTHENTICATION_FAILED, _("Incorrect password."));
 			break;
 		case 0x11:
 			/* Suspended account */
-			gc->wants_to_die = TRUE;
 			purple_connection_error_reason(gc, PURPLE_REASON_AUTHENTICATION_FAILED, _("Your account is currently suspended."));
 			break;
 		case 0x14:
@@ -1363,22 +1359,18 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			break;
 		case 0x18:
 			/* screen name connecting too frequently */
-			gc->wants_to_die = TRUE;
 			purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
 			break;
 		case 0x1c:
 			/* client too old */
-			gc->wants_to_die = TRUE;
 			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"), PURPLE_WEBSITE);
 			purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR, buf);
 			break;
 		case 0x1d:
 			/* IP address connecting too frequently */
-			gc->wants_to_die = TRUE;
 			purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
 			break;
 		default:
-			gc->wants_to_die = TRUE;
 			purple_connection_error_reason(gc, PURPLE_REASON_AUTHENTICATION_FAILED, _("Authentication failed"));
 			break;
 		}
@@ -1434,7 +1426,6 @@ purple_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
 	PurpleConnection *gc = user_data;
 
 	/* Disconnect */
-	gc->wants_to_die = TRUE;
 	purple_connection_error_reason(gc, PURPLE_REASON_AUTHENTICATION_FAILED,
 		_("The SecurID key entered is invalid."));
 }

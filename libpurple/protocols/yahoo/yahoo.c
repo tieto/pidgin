@@ -201,7 +201,6 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *message = NULL;
 
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
-		gc->wants_to_die = TRUE;
 		if (!purple_account_get_remember_password(account))
 			purple_account_set_password(account, NULL);
 		purple_connection_error_reason(gc, PURPLE_REASON_NAME_IN_USE,
@@ -2140,7 +2139,6 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	else
 		fullmsg = g_strdup(msg);
 
-	gc->wants_to_die = TRUE;
 	purple_connection_error_reason(gc, PURPLE_REASON_AUTHENTICATION_FAILED, fullmsg);
 	g_free(msg);
 	g_free(fullmsg);

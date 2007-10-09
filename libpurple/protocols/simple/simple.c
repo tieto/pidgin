@@ -1042,8 +1042,6 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 			if(sip->registerstatus != SIMPLE_REGISTER_RETRY) {
 				purple_debug_info("simple", "REGISTER retries %d\n", sip->registrar.retries);
 				if(sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) {
-					purple_debug_info("simple", "Setting wants_to_die to true.\n");
-					sip->gc->wants_to_die = TRUE;
 					if (!purple_account_get_remember_password(sip->gc->account))
 						purple_account_set_password(sip->gc->account, NULL);
 					purple_connection_error_reason(sip->gc,
@@ -1061,7 +1059,6 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 			if (sip->registerstatus != SIMPLE_REGISTER_RETRY) {
 				purple_debug_info("simple", "Unrecognized return code for REGISTER.\n");
 				if (sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) {
-					sip->gc->wants_to_die = TRUE;
 					purple_connection_error_reason(sip->gc, PURPLE_REASON_OTHER_ERROR,
 						_("Unknown server response."));
 					return TRUE;
@@ -1709,7 +1706,6 @@ static void simple_login(PurpleAccount *account)
 	gc = purple_account_get_connection(account);
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
-		gc->wants_to_die = TRUE;
 		purple_connection_error_reason(gc, PURPLE_REASON_INVALID_SETTINGS,
 			_("SIP screen names may not contain whitespaces or @ symbols"));
 		return;

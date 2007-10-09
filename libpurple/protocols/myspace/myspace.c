@@ -291,7 +291,6 @@ msim_login(PurpleAccount *acct)
 		/* Notify an error message also, because this is important! */
 		purple_notify_error(acct, _("MySpaceIM Error"), str, NULL);
 
-		gc->wants_to_die = TRUE;
 		purple_connection_error_reason (gc,
 			PURPLE_REASON_AUTHENTICATION_FAILED, str);
 		g_free(str);
@@ -1559,7 +1558,6 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 		purple_notify_error(session->account, 
 				_("No username set"),
 				_("Please go to http://editprofile.myspace.com/index.cfm?fuseaction=profile.username and choose a username and try to login again."), NULL);
-		session->gc->wants_to_die = TRUE;
 		purple_connection_error_reason (session->gc, PURPLE_REASON_AUTHENTICATION_FAILED, _("No username set"));
 		return FALSE;
 	}
@@ -1801,13 +1799,11 @@ msim_error(MsimSession *session, MsimMessage *msg)
 		switch (err) {
 			case 260: /* Incorrect password */
 				reason = PURPLE_REASON_AUTHENTICATION_FAILED;
-				session->gc->wants_to_die = TRUE;
 				if (!purple_account_get_remember_password(session->account))
 					purple_account_set_password(session->account, NULL);
 				break;
 			case 6: /* Logged in elsewhere */
 				reason = PURPLE_REASON_NAME_IN_USE;
-				session->gc->wants_to_die = TRUE;
 				if (!purple_account_get_remember_password(session->account))
 					purple_account_set_password(session->account, NULL);
 				break;

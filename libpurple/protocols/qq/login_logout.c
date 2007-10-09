@@ -479,7 +479,6 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 
 	switch (ret) {
 	case QQ_LOGIN_REPLY_PWD_ERROR:
-		gc->wants_to_die = TRUE;
 		if (!purple_account_get_remember_password(gc->account))
 			purple_account_set_password(gc->account, NULL);
 		purple_connection_error_reason(gc,

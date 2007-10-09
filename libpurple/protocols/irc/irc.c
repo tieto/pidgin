@@ -297,7 +297,6 @@ static void irc_login(PurpleAccount *account)
 	gc->flags |= PURPLE_CONNECTION_NO_NEWLINES;
 
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
-		gc->wants_to_die = TRUE;
 		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
 			_("IRC nicks may not contain whitespace"));
 		return;
@@ -328,7 +327,6 @@ static void irc_login(PurpleAccount *account)
 					purple_account_get_int(account, "port", IRC_DEFAULT_SSL_PORT),
 					irc_login_cb_ssl, irc_ssl_connect_failure, gc);
 		} else {
-			gc->wants_to_die = TRUE;
 			purple_connection_error_reason (gc, PURPLE_REASON_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 			return;
