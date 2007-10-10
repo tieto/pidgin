@@ -366,7 +366,8 @@ static void modify_info_ok_cb(modify_info_data *mid, PurpleRequestFields *fields
 	groups = g_list_remove_link(groups, groups);
 	list = purple_request_field_group_get_fields(groups->data);
 	info->intro = parse_field(&list, FALSE);
-	groups = g_list_remove_link(groups, groups);
+
+	g_list_free(groups);
 
 	qq_send_packet_modify_info(gc, (gchar **) info);
 
