@@ -7,6 +7,8 @@
   @signal signed-off
  @endsignals
 
+ @see connection.h
+
  <hr>
 
  @signaldef signing-on
@@ -46,4 +48,4 @@ void (*signed_off)(PurpleConnection *gc);
  @endsignaldef
 
  */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

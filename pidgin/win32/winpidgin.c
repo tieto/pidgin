@@ -545,7 +545,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	if (strstr(lpszCmdLine, "-d") || strstr(lpszCmdLine, "-h") || strstr(lpszCmdLine, "-v")) {
 		/* If stdout hasn't been redirected to a file, alloc a console
 		 *  (_istty() doesn't work for stuff using the GUI subsystem) */
-		if (_fileno(stdout) == -1) {
+		if (_fileno(stdout) == -1 || _fileno(stdout) == -2) {
 			LPFNATTACHCONSOLE MyAttachConsole = NULL;
 			if ((hmod = GetModuleHandle("kernel32.dll"))) {
 				MyAttachConsole =

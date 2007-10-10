@@ -6,6 +6,8 @@
   @signal displaying-emails-notification
  @endsignals
 
+ @see notify.h
+
  @signaldef displaying-userinfo
   @signalproto
 void (*displaying_userinfo)(PurpleAccount *account, const char *who, PurpleNotifyUserInfo *user_info);
@@ -53,4 +55,4 @@ void (*displaying_emails_notification)(const char **subjects,
  @endsignaldef
 
 */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et
