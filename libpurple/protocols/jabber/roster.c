@@ -403,12 +403,12 @@ void jabber_roster_group_rename(PurpleConnection *gc, const char *old_name,
 void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		PurpleGroup *group) {
 	GSList *buddies = purple_find_buddies(gc->account, buddy->name);
-	GSList *groups = NULL;
 
 	buddies = g_slist_remove(buddies, buddy);
 	if(buddies != NULL) {
 		PurpleBuddy *tmpbuddy;
 		PurpleGroup *tmpgroup;
+		GSList *groups = NULL;
 
 		while(buddies) {
 			tmpbuddy = buddies->data;
@@ -418,6 +418,7 @@ void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 		}
 
 		jabber_roster_update(gc->proto_data, buddy->name, groups);
+		g_slist_free(groups);
 	} else {
 		JabberIq *iq = jabber_iq_new_query(gc->proto_data, JABBER_IQ_SET,
 				"jabber:iq:roster");
@@ -429,9 +430,4 @@ void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 
 		jabber_iq_send(iq);
 	}
-
-	if(buddies)
-		g_slist_free(buddies);
-	if(groups)
-		g_slist_free(groups);
 }

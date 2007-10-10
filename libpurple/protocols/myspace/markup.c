@@ -400,6 +400,8 @@ static void
 msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin, 
 		gchar **end)
 {
+	g_return_if_fail(root != NULL);
+
 	if (g_str_equal(root->name, "f")) {
 		msim_markup_f_to_html(session, root, begin, end);
 	} else if (g_str_equal(root->name, "a")) {
@@ -415,7 +417,7 @@ msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 	} else {
 		purple_debug_info("msim", "msim_markup_tag_to_html: "
 				"unknown tag name=%s, ignoring", 
-				(root && root->name) ? root->name : "(NULL)");
+				root->name ? root->name : "(NULL)");
 		*begin = g_strdup("");
 		*end = g_strdup("");
 	}

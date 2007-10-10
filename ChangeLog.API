@@ -1,5 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+Version 2.2.2 (??/??/????):
+	libpurple:
+		Changed:
+		* The size parameter of purple_util_write_data_to_file_absolute
+		  has been changed to gssize instead of a size_t to correctly
+		  indicate that -1 can be used for a nul-delimited string.
+
 Version 2.2.0 (09/13/2007):
 	libpurple:
 		Added:
@@ -86,9 +93,6 @@ version 2.1.0 (7/28/2007):
 		* purple_core_ensure_single_instance
 		    This is for UIs to use to ensure only one copy is running.
 		* purple_dbus_is_owner
-		* purple_timeout_add_seconds
-		    Callers should prefer this to purple_timeout_add for timers
-		    longer than 1 second away.  Be aware of the rounding, though.
 		* purple_timeout_add_seconds
 		    Callers should prefer this to purple_timeout_add for timers
 		    longer than 1 second away.  Be aware of the rounding, though.
