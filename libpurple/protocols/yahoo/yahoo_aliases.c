@@ -216,7 +216,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	struct callback_data *cb;
 	PurpleBuddy *buddy;
 	PurpleUtilFetchUrlData *url_data;
-   
+
 	g_return_if_fail(alias!= NULL);
 	g_return_if_fail(who!=NULL);
 	g_return_if_fail(gc!=NULL);
@@ -224,7 +224,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	purple_debug_info("yahoo", "Sending '%s' as new alias for user '%s'.\n",alias, who);
 
 	buddy = purple_find_buddy(gc->account, who);
-	if (buddy->proto_data == NULL) {
+	if (buddy == NULL || buddy->proto_data == NULL) {
 		purple_debug_info("yahoo", "Missing proto_data (get_yahoo_aliases must have failed), bailing out\n");
 		return;
 	}
