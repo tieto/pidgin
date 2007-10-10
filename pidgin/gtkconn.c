@@ -181,9 +181,29 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 		}
 
 		p = g_strdup_printf(_("%s disconnected"), n);
-		s = g_strdup_printf(_("%s\n\n"
-				"%s will not attempt to reconnect the account until you "
-				"correct the error and re-enable the account."), text, PIDGIN_NAME);
+		switch (reason)
+		{
+			case PURPLE_REASON_NO_SSL_SUPPORT:
+				s = g_strdup_printf(
+					_("%s\n\n"
+					"%s will not attempt to reconnect the account until you "
+					"re-enable the account.  See %s for information on how to "
+					"compile %s with SSL support."), text, PIDGIN_NAME,
+					"http://developer.pidgin.im/wiki/FAQssl", PIDGIN_NAME);
+				break;
+			case PURPLE_REASON_NAME_IN_USE:
+				s = g_strdup_printf(
+					_("%s\n\n"
+					"%s will not attempt to reconnect the account until you "
+					"re-enable it."), text, PIDGIN_NAME);
+				break;
+			default:
+				s = g_strdup_printf(
+					_("%s\n\n"
+					"%s will not attempt to reconnect the account until you "
+					"correct the error and re-enable the account."), text,
+					PIDGIN_NAME);
+		}
 		purple_notify_error(NULL, NULL, p, s);
 		g_free(p);
 		g_free(s);
