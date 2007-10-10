@@ -131,7 +131,7 @@ xmlnode_remove_attrib(xmlnode *node, const char *attr)
 		if(attr_node->type == XMLNODE_TYPE_ATTRIB &&
 				!strcmp(attr_node->name, attr))
 		{
-			if(node->child == attr_node) {
+			if(sibling == NULL) {
 				node->child = attr_node->next;
 			} else {
 				sibling->next = attr_node->next;
@@ -174,7 +174,7 @@ xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char
 		   !strcmp(attr_node->name, attr) &&
 		   _xmlnode_compare_xmlns(xmlns, attr_node->xmlns))
 		{
-			if(node->child == attr_node) {
+			if(sibling == NULL) {
 				node->child = attr_node->next;
 			} else {
 				sibling->next = attr_node->next;
