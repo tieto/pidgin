@@ -1,5 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+Version 2.2.2 (??/??/????):
+	libpurple:
+		Changed:
+		* The size parameter of purple_util_write_data_to_file_absolute
+		  has been changed to gssize instead of a size_t to correctly
+		  indicate that -1 can be used for a nul-delimited string.
+
 Version 2.2.0 (09/13/2007):
 	libpurple:
 		Added:
