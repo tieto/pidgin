@@ -943,7 +943,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			imdata->msg = body_str;
 			imdata->flags = flags;
 			imdata->when = time(NULL);
-			g_idle_add(msn_send_me_im, imdata);
+			purple_timeout_add(0, msn_send_me_im, imdata);
 		}
 
 		msn_message_destroy(msg);
@@ -1103,7 +1103,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	userlist = session->userlist;
 	who = msn_normalize(gc->account, buddy->name);
 
-	purple_debug_info("MSN","Add user:%s to group:%s\n", who, group->name);
+	purple_debug_info("MSN","Add user:%s to group:%s\n", who, (group && group->name) ? group->name : "(null)");
 	if (!session->logged_in)
 	{
 #if 0

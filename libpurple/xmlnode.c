@@ -131,7 +131,7 @@ xmlnode_remove_attrib(xmlnode *node, const char *attr)
 		if(attr_node->type == XMLNODE_TYPE_ATTRIB &&
 				!strcmp(attr_node->name, attr))
 		{
-			if(node->child == attr_node) {
+			if(sibling == NULL) {
 				node->child = attr_node->next;
 			} else {
 				sibling->next = attr_node->next;
@@ -146,6 +146,19 @@ xmlnode_remove_attrib(xmlnode *node, const char *attr)
 	}
 }
 
+/* Compare two nullable xmlns strings.
+ * They are considered equal if they're both NULL or the strings are equal
+ */
+static gboolean _xmlnode_compare_xmlns(const char *xmlns1, const char *xmlns2) {
+	gboolean equal = FALSE;
+
+	if (xmlns1 == NULL && xmlns2 == NULL)
+		equal = TRUE;
+	else if (xmlns1 != NULL && xmlns2 != NULL && !strcmp(xmlns1, xmlns2))
+		equal = TRUE;
+
+	return equal;
+}
 
 void
 xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char *xmlns)
@@ -159,9 +172,9 @@ xmlnode_remove_attrib_with_namespace(xmlnode *node, const char *attr, const char
 	{
 		if(attr_node->type == XMLNODE_TYPE_ATTRIB &&
 		   !strcmp(attr_node->name, attr) &&
-		   !strcmp(attr_node->xmlns, xmlns))
+		   _xmlnode_compare_xmlns(xmlns, attr_node->xmlns))
 		{
-			if(node->child == attr_node) {
+			if(sibling == NULL) {
 				node->child = attr_node->next;
 			} else {
 				sibling->next = attr_node->next;
@@ -238,7 +251,8 @@ xmlnode_get_attrib_with_namespace(xmlnode *node, const char *attr, const char *x
 
 	for(x = node->child; x; x = x->next) {
 		if(x->type == XMLNODE_TYPE_ATTRIB &&
-		   !strcmp(attr, x->name) && !strcmp(x->xmlns, xmlns)) {
+		   !strcmp(attr, x->name) &&
+		   _xmlnode_compare_xmlns(xmlns, x->xmlns)) {
 			return x->data;
 		}
 	}
@@ -326,6 +340,7 @@ xmlnode_get_child_with_namespace(const xmlnode *parent, const char *name, const 
 	child_name = names[1];
 
 	for(x = parent->child; x; x = x->next) {
+		/* XXX: Is it correct to ignore the namespace for the match if none was specified? */
 		const char *xmlns = NULL;
 		if(ns)
 			xmlns = xmlnode_get_namespace(x);
@@ -673,6 +688,7 @@ xmlnode_get_next_twin(xmlnode *node)
 	g_return_val_if_fail(node->type == XMLNODE_TYPE_TAG, NULL);
 
 	for(sibling = node->next; sibling; sibling = sibling->next) {
+		/* XXX: Is it correct to ignore the namespace for the match if none was specified? */
 		const char *xmlns = NULL;
 		if(ns)
 			xmlns = xmlnode_get_namespace(sibling);

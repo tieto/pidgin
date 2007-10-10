@@ -306,12 +306,10 @@ static void modify_info_cancel_cb(modify_info_data *mid)
 	g_free(mid);
 }
 
-static gchar *parse_field(GList **list, gboolean choice)
+static gchar *parse_field(PurpleRequestField *field, gboolean choice)
 {
 	gchar *value;
-	PurpleRequestField *field;
 
-	field = (PurpleRequestField *) (*list)->data;
 	if (choice) {
 		value = g_strdup_printf("%d", purple_request_field_choice_get_value(field));
 	} else {
@@ -321,7 +319,6 @@ static gchar *parse_field(GList **list, gboolean choice)
 		else
 			value = utf8_to_qq(value, QQ_CHARSET_DEFAULT);
 	}
-	*list = g_list_remove_link(*list, *list);
 
 	return value;
 }
@@ -331,7 +328,7 @@ static void modify_info_ok_cb(modify_info_data *mid, PurpleRequestFields *fields
 {
 	PurpleConnection *gc;
 	qq_data *qd;
-	GList *list,  *groups;
+	GList *groups;
 	contact_info *info;
 
 	gc = mid->gc;
@@ -341,33 +338,76 @@ static void modify_info_ok_cb(modify_info_data *mid, PurpleRequestFields *fields
 	info = mid->info;
 
 	groups = purple_request_fields_get_groups(fields);
-	list = purple_request_field_group_get_fields(groups->data);
-	info->uid = parse_field(&list, FALSE);
-	info->nick = parse_field(&list, FALSE);
-	info->name = parse_field(&list, FALSE);
-	info->age = parse_field(&list, FALSE);
-	info->gender = parse_field(&list, TRUE);
-	info->country = parse_field(&list, FALSE);
-	info->province = parse_field(&list, FALSE);
-	info->city = parse_field(&list, FALSE);
-	groups = g_list_remove_link(groups, groups);
-	list = purple_request_field_group_get_fields(groups->data);
-	info->horoscope = parse_field(&list, TRUE);
-	info->occupation = parse_field(&list, FALSE);
-	info->zodiac = parse_field(&list, TRUE);
-	info->blood = parse_field(&list, TRUE);
-	info->college = parse_field(&list, FALSE);
-	info->email = parse_field(&list, FALSE);
-	info->address = parse_field(&list, FALSE);
-	info->zipcode = parse_field(&list, FALSE);
-	info->hp_num = parse_field(&list, FALSE);
-	info->tel = parse_field(&list, FALSE);
-	info->homepage = parse_field(&list, FALSE);
-	groups = g_list_remove_link(groups, groups);
-	list = purple_request_field_group_get_fields(groups->data);
-	info->intro = parse_field(&list, FALSE);
-	groups = g_list_remove_link(groups, groups);
+	while (groups != NULL) {
+		PurpleRequestFieldGroup *group = groups->data;
+		const char *g_name = purple_request_field_group_get_title(group);
+		GList *fields = purple_request_field_group_get_fields(group);
 
+		if (g_name == NULL)
+			continue;
+
+		while (fields != NULL) {
+			PurpleRequestField *field = fields->data;
+			const char *f_id = purple_request_field_get_id(field);
+
+			if (!strcmp(QQ_PRIMARY_INFORMATION, g_name)) {
+
+				if (!strcmp(f_id, "uid"))
+					info->uid = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "nick"))
+					info->nick = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "name"))
+					info->name = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "age"))
+					info->age = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "gender"))
+					info->gender = parse_field(field, TRUE);
+				else if (!strcmp(f_id, "country"))
+					info->country = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "province"))
+					info->province = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "city"))
+					info->city = parse_field(field, FALSE);
+
+			} else if (!strcmp(QQ_ADDITIONAL_INFORMATION, g_name)) {
+
+				if (!strcmp(f_id, "horoscope"))
+					info->horoscope = parse_field(field, TRUE);
+				else if (!strcmp(f_id, "occupation"))
+					info->occupation = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "zodiac"))
+					info->zodiac = parse_field(field, TRUE);
+				else if (!strcmp(f_id, "blood"))
+					info->blood = parse_field(field, TRUE);
+				else if (!strcmp(f_id, "college"))
+					info->college = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "email"))
+					info->email = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "address"))
+					info->address = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "zipcode"))
+					info->zipcode = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "hp_num"))
+					info->hp_num = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "tel"))
+					info->tel = parse_field(field, FALSE);
+				else if (!strcmp(f_id, "homepage"))
+					info->homepage = parse_field(field, FALSE);
+
+			} else if (!strcmp(QQ_INTRO, g_name)) {
+
+				if (!strcmp(f_id, "intro"))
+					info->intro = parse_field(field, FALSE);
+
+			}
+
+			fields = fields->next;
+		}
+
+		groups = groups->next;
+	}
+
+	/* This casting looks like a horrible idea to me -DAA */
 	qq_send_packet_modify_info(gc, (gchar **) info);
 
 	g_strfreev((gchar **) mid->info);
@@ -437,6 +477,7 @@ static void create_modify_info_dialogue(PurpleConnection *gc, const contact_info
 		add_string_field_to_group(group, "country", QQ_COUNTRY, info->country);
 		add_string_field_to_group(group, "province", QQ_PROVINCE, info->province);
 		add_string_field_to_group(group, "city", QQ_CITY, info->city);
+
 		group = setup_field_group(fields, QQ_ADDITIONAL_INFORMATION);
 		add_choice_field_to_group(group, "horoscope", QQ_HOROSCOPE, info->horoscope, horoscope_names, QQ_HOROSCOPE_SIZE);
 		add_string_field_to_group(group, "occupation", QQ_OCCUPATION, info->occupation);

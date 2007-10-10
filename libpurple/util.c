@@ -2548,15 +2548,14 @@ purple_util_write_data_to_file(const char *filename, const char *data, gssize si
 
 	filename_full = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", user_dir, filename);
 
-	ret = purple_util_write_data_to_file_absolute(filename_full,
-						      data,size);
+	ret = purple_util_write_data_to_file_absolute(filename_full, data, size);
 
 	g_free(filename_full);
 	return ret;
 }
 
 gboolean
-purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, size_t size)
+purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, gssize size)
 {
 	gchar *filename_temp;
 	FILE *file;

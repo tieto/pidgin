@@ -26,6 +26,7 @@
 #include <string.h>
 #include "internal.h"
 #include "request.h"
+#include "debug.h"
 
 static const char *moodstrings[] = {
 	"afraid",
@@ -145,9 +146,26 @@ void jabber_mood_init(void) {
 }
 
 static void do_mood_set_from_fields(PurpleConnection *gc, PurpleRequestFields *fields) {
-	JabberStream *js = gc->proto_data;
-	
-	jabber_mood_set(js, moodstrings[purple_request_fields_get_choice(fields, "mood")], purple_request_fields_get_string(fields, "text"));
+	JabberStream *js;
+	int max_mood_idx;
+	int selected_mood = purple_request_fields_get_choice(fields, "mood");
+
+	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
+		purple_debug_error("jabber", "Unable to set mood; account offline.\n");
+		return;
+	}
+
+	js = gc->proto_data;
+
+	/* This is ugly, but protects us from unexpected values. */
+	for (max_mood_idx = 0; moodstrings[max_mood_idx]; max_mood_idx++);
+
+	if (selected_mood < 0 || selected_mood >= max_mood_idx) {
+		purple_debug_error("jabber", "Invalid mood index (%d) selected.\n", selected_mood);
+		return;
+	}
+
+	jabber_mood_set(js, moodstrings[selected_mood], purple_request_fields_get_string(fields, "text"));
 }
 
 static void do_mood_set_mood(PurplePluginAction *action) {
