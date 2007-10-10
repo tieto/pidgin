@@ -82,7 +82,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 	if (crt != NULL) {
 		gchar *default_hostname;
 		default_hostname = purple_certificate_get_subject_name(crt);
-		purple_request_input_with_hint(NULL,
+		purple_request_input(NULL,
 				_("Certificate Import"),
 				_("Specify a hostname"),
 				_("Type the host name this certificate is for."),
@@ -90,7 +90,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 				_("OK"), G_CALLBACK(tls_peers_mgmt_import_ok2_cb),
 				_("Cancel"), G_CALLBACK(tls_peers_mgmt_import_cancel2_cb),
 				NULL, NULL, NULL,
-				"certmgr", crt);
+				crt);
 		g_free(default_hostname);
 	} else {
 		gchar * secondary;
@@ -106,13 +106,13 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 static void
 add_cert_cb(GntWidget *button, gpointer null)
 {
-	purple_request_file_with_hint(NULL,
+	purple_request_file(NULL,
 			_("Select a PEM certificate"),
 			"certificate.pem",
 			FALSE,
 			G_CALLBACK(tls_peers_mgmt_import_ok_cb),
 			NULL,
-			NULL, NULL, NULL, "certmgr", NULL );
+			NULL, NULL, NULL, NULL );
 }
 
 /* Save certs in some file */
@@ -155,13 +155,13 @@ save_cert_cb(GntWidget *button, gpointer null)
 		return;
 	}
 
-	purple_request_file_with_hint((void*)key,
+	purple_request_file((void*)key,
 			_("PEM X.509 Certificate Export"),
 			"certificate.pem", TRUE,
 			G_CALLBACK(tls_peers_mgmt_export_ok_cb),
 			G_CALLBACK(purple_certificate_destroy),
 			NULL, NULL, NULL,
-			"certmgr", crt);
+			crt);
 }
 
 /* Show information about a cert */
@@ -233,10 +233,10 @@ delete_cert_cb(GntWidget *button, gpointer null)
 	primary = g_strdup_printf(_("Really delete certificate for %s?"), key);
 
 	purple_request_close_with_handle((void *)key);
-	purple_request_yes_no_with_hint((void *)key, _("Confirm certificate delete"),
+	purple_request_yes_no((void *)key, _("Confirm certificate delete"),
 			primary, NULL,
 			2,
-			NULL, NULL, NULL, "certmgr",
+			NULL, NULL, NULL,
 			g_strdup(key),
 			tls_peers_mgmt_delete_confirm_cb,
 			g_free);

@@ -500,7 +500,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
 							chat->config_dialog_type = PURPLE_REQUEST_ACTION;
 							chat->config_dialog_handle =
-								purple_request_action_with_hint(js->gc,
+								purple_request_action(js->gc,
 										_("Create New Room"),
 										_("Create New Room"),
 										_("You are creating a new room.  Would"
@@ -508,7 +508,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 											" accept the default settings?"),
 										/* Default Action */ 1,
 										purple_connection_get_account(js->gc), NULL, chat->conv,
-										"chat", chat, 2,
+										chat, 2,
 										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
 										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
 						}

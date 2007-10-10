@@ -417,9 +417,9 @@ static void _qq_menu_block_buddy(PurpleBlistNode * node)
 	g->gc = gc;
 	g->uid = uid;
 
-	purple_request_action_with_hint(gc, _("Block Buddy"),
+	purple_request_action(gc, _("Block Buddy"),
 			    _("Are you sure you want to block this buddy?"), NULL,
-			    1, g, "blist", 2,
+			    1, g, 2,
 			    _("Cancel"),
 			    G_CALLBACK(qq_do_nothing_with_gc_and_uid),
 			    _("Block"), G_CALLBACK(qq_block_buddy_with_gc_and_uid));
@@ -470,11 +470,11 @@ static void _qq_menu_search_or_add_permanent_group(PurplePluginAction *action)
 static void _qq_menu_create_permanent_group(PurplePluginAction * action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input_with_hint(gc, _("Create QQ Qun"),
+	purple_request_input(gc, _("Create QQ Qun"),
 			   _("Input Qun name here"),
 			   _("Only QQ members can create permanent Qun"),
 			   "OpenQ", FALSE, FALSE, NULL,
-			   _("Create"), G_CALLBACK(qq_group_create_with_name), _("Cancel"), NULL, "blist", gc);
+			   _("Create"), G_CALLBACK(qq_group_create_with_name), _("Cancel"), NULL, gc);
 }
 */
 

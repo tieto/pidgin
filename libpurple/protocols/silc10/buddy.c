@@ -309,9 +309,9 @@ void silcpurple_buddy_keyagr_request(SilcClient client,
 		a->hostname = strdup(hostname);
 	a->port = port;
 
-	purple_request_action_with_hint(client->application, _("Key Agreement Request"), tmp,
+	purple_request_action(client->application, _("Key Agreement Request"), tmp,
 			    hostname ? tmp2 : NULL, 1, gc->account, client_entry->nickname,
-				NULL, a, "blist", 2, _("Yes"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb),
+				NULL, a, 2, _("Yes"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb),
 			    _("No"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb));
 }
 
@@ -462,11 +462,11 @@ silcpurple_buddy_privkey(PurpleConnection *gc, const char *name)
 	p->client = sg->client;
 	p->conn = sg->conn;
 	p->client_id = *clients[0]->id;
-	purple_request_input_with_hint(gc, _("IM With Password"), NULL,
+	purple_request_input(gc, _("IM With Password"), NULL,
 	                     _("Set IM Password"), NULL, FALSE, TRUE, NULL,
 	                     _("OK"), G_CALLBACK(silcpurple_buddy_privkey_cb),
 	                     _("Cancel"), G_CALLBACK(silcpurple_buddy_privkey_cb),
-	                     gc->account, NULL, NULL, "blist", p);
+	                     gc->account, NULL, NULL, p);
 
 	silc_free(clients);
 	silc_free(nickname);
@@ -1064,10 +1064,10 @@ silcpurple_add_buddy_ask_pk_cb(SilcPurpleBuddyRes r, gint id)
 	}
 
 	/* Open file selector to select the public key. */
-	purple_request_file_with_hint(r->client->application, _("Open..."), NULL, FALSE,
+	purple_request_file(r->client->application, _("Open..."), NULL, FALSE,
 			  G_CALLBACK(silcpurple_add_buddy_ask_import),
 			  G_CALLBACK(silcpurple_add_buddy_ask_pk_cancel),
-			  purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, "blist", r);
+			  purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, r);
 
 }
 
@@ -1077,10 +1077,10 @@ silcpurple_add_buddy_ask_pk(SilcPurpleBuddyRes r)
 	char tmp[512];
 	g_snprintf(tmp, sizeof(tmp), _("The %s buddy is not present in the network"),
 		   r->b->name);
-	purple_request_action_with_hint(r->client->application, _("Add Buddy"), tmp,
+	purple_request_action(r->client->application, _("Add Buddy"), tmp,
 			    _("To add the buddy you must import his/her public key. "
 			      "Press Import to import a public key."), 0,
-				  purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, "blist", r, 2,
+				  purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, r, 2,
 			    _("Cancel"), G_CALLBACK(silcpurple_add_buddy_ask_pk_cb),
 			    _("_Import..."), G_CALLBACK(silcpurple_add_buddy_ask_pk_cb));
 }
@@ -1177,7 +1177,7 @@ silcpurple_add_buddy_select(SilcPurpleBuddyRes r,
 		silc_free(fingerprint);
 	}
 
-	purple_request_fields_with_hint(r->client->application, _("Add Buddy"),
+	purple_request_fields(r->client->application, _("Add Buddy"),
 				_("Select correct user"),
 				r->pubkey_search
 					? _("More than one user was found with the same public key. Select "
@@ -1187,7 +1187,7 @@ silcpurple_add_buddy_select(SilcPurpleBuddyRes r,
 				fields,
 				_("OK"), G_CALLBACK(silcpurple_add_buddy_select_cb),
 				_("Cancel"), G_CALLBACK(silcpurple_add_buddy_select_cancel),
-				purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, "blist", r);
+				purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, r);
 }
 
 static void

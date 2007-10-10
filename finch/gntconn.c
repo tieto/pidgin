@@ -130,9 +130,9 @@ finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 				"Finch will not attempt to reconnect the account until you "
 				"correct the error and re-enable the account."), text);
 
-		purple_request_action_with_hint(account, NULL, primary, secondary, 2,
+		purple_request_action(account, NULL, primary, secondary, 2,
 							account, NULL, NULL,
-							"blist", account, 3,
+							account, 3,
 							_("OK"), NULL,
 							_("Modify Account"), PURPLE_CALLBACK(ce_modify_account_cb),
 							_("Re-enable Account"), PURPLE_CALLBACK(ce_enable_account_cb));

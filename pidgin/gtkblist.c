@@ -522,9 +522,9 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 	if (i > 1)
 	{
 		char *msg = g_strdup_printf(ngettext("You have %d contact named %s. Would you like to merge them?", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
-		purple_request_action_with_hint(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
+		purple_request_action(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
 							 "You can separate them again by choosing 'Expand' from the contact's context menu"), 0, NULL, NULL, NULL,
-				      "blist", merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
+				      merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
 		g_free(msg);
 	} else
 		g_list_free(merges);
@@ -4323,9 +4323,9 @@ connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
 	text = g_hash_table_lookup(gtkblist->connection_errors, account);
 
 	enabled = purple_account_get_enabled(account, purple_core_get_ui());
-	purple_request_action_with_hint(account, _("Connection Error"), primary, text, 2,
+	purple_request_action(account, _("Connection Error"), primary, text, 2,
 						account, NULL, NULL,
-						"account", account, 3,
+						account, 3,
 						_("OK"), NULL,
 						_("Modify Account"), PURPLE_CALLBACK(ce_modify_account_cb),
 						enabled ? _("Connect") : _("Re-enable Account"),
@@ -6271,13 +6271,13 @@ add_group_cb(PurpleConnection *gc, const char *group_name)
 static void
 pidgin_blist_request_add_group(void)
 {
-	purple_request_input_with_hint(NULL, _("Add Group"), NULL,
+	purple_request_input(NULL, _("Add Group"), NULL,
 					   _("Please enter the name of the group to be added."),
 					   NULL, FALSE, FALSE, NULL,
 					   _("Add"), G_CALLBACK(add_group_cb),
 					   _("Cancel"), NULL,
 					   NULL, NULL, NULL,
-					   "blist", NULL);
+					   NULL);
 }
 
 void

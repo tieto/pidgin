@@ -1912,10 +1912,10 @@ _evt_conference_invite(NMUser * user, NMEvent * event)
 
 	/* Prompt the user */
 	gc = purple_account_get_connection(user->client_data);
-	purple_request_action_with_hint(gc, title, primary, secondary,
+	purple_request_action(gc, title, primary, secondary,
 						PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), name, NULL,
-						"chat", parms, 2,
+						parms, 2,
 						_("Yes"), G_CALLBACK(_join_conference_cb),
 						_("No"), G_CALLBACK(_reject_conference_cb));
 
@@ -2165,7 +2165,7 @@ novell_login(PurpleAccount * account)
 	if (server == NULL || *server == '\0') {
 
 		/* TODO: Would be nice to prompt if not set!
-		 *  purple_request_fields_with_hint(gc, _("Server Address"),...);
+		 *  purple_request_fields(gc, _("Server Address"),...);
 		 */
 
 		/* ...but for now just error out with a nice message. */
