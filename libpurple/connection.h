@@ -429,7 +429,8 @@ purple_connection_ssl_error (PurpleConnection *gc,
  *
  * (This function is meant to replace checking PurpleConnection.wants_to_die.)
  *
- * @return @c TRUE iff automatic reconnection is a bad idea.
+ * @return @c TRUE if the account should not be automatically reconnected, and
+ *         @c FALSE otherwise.
  */
 gboolean
 purple_connection_reason_is_fatal (PurpleDisconnectReason reason);

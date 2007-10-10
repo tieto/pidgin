@@ -488,6 +488,12 @@ purple_connection_disconnect_cb(gpointer data)
 void
 purple_connection_error(PurpleConnection *gc, const char *text)
 {
+	/* prpls that have not been updated to use disconnection reasons will
+	 * be setting wants_to_die before calling this function, so choose
+	 * PURPLE_REASON_OTHER_ERROR (which is fatal) if it's true, and
+	 * PURPLE_REASON_NETWORK_ERROR (which isn't) if not.  See the
+	 * documentation in connection.h.
+	 */
 	PurpleDisconnectReason reason = gc->wants_to_die
 	                              ? PURPLE_REASON_OTHER_ERROR
 	                              : PURPLE_REASON_NETWORK_ERROR;
