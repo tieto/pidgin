@@ -270,8 +270,9 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 	primary_esc = g_markup_escape_text(primary, -1);
 	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
 	g_snprintf(label_text, sizeof(label_text),
-			   "<span weight=\"bold\" size=\"larger\">%s</span>\n\n%s",
-			   primary_esc, (secondary ? secondary_esc : ""));
+			   "<span weight=\"bold\" size=\"larger\">%s</span>%s%s",
+			   primary_esc, (secondary ? "\n\n" : ""),
+			   (secondary ? secondary_esc : ""));
 	g_free(primary_esc);
 	g_free(secondary_esc);
 
