@@ -64,24 +64,24 @@ typedef enum
 	PURPLE_REASON_NETWORK_ERROR = 0,
 	/** The username or password (or some other credential) was incorrect.
 	 */
-	PURPLE_REASON_AUTHENTICATION_FAILED,
+	PURPLE_REASON_AUTHENTICATION_FAILED = 1,
 	/** libpurple doesn't speak any of the authentication methods the
 	 *  server offered.
 	 */
-	PURPLE_REASON_AUTHENTICATION_IMPOSSIBLE,
+	PURPLE_REASON_AUTHENTICATION_IMPOSSIBLE = 2,
 	/** libpurple was built without SSL support, and the connection needs
 	 *  SSL.
 	 */
-	PURPLE_REASON_NO_SSL_SUPPORT,
+	PURPLE_REASON_NO_SSL_SUPPORT = 3,
 	/** There was an error negotiating SSL on this connection, or the
 	 *  server does not support encryption but an account option was set to
 	 *  require it.
 	 */
-	PURPLE_REASON_ENCRYPTION_ERROR,
+	PURPLE_REASON_ENCRYPTION_ERROR = 4,
 	/** Someone is already connected to the server using the name you are
 	 *  trying to connect with.
 	 */
-	PURPLE_REASON_NAME_IN_USE,
+	PURPLE_REASON_NAME_IN_USE = 5,
 
 	/** The username/server/other preference for the account isn't valid.
 	 *  For instance, on IRC the screen name cannot contain white space.
@@ -92,37 +92,36 @@ typedef enum
 	 *        other account preferences should be validated when the
 	 *        account is created.
 	 */
-	PURPLE_REASON_INVALID_SETTINGS,
+	PURPLE_REASON_INVALID_SETTINGS = 6,
 
 	/** The server did not provide a SSL certificate. */
-	PURPLE_REASON_CERT_NOT_PROVIDED,
+	PURPLE_REASON_CERT_NOT_PROVIDED = 7,
 	/** The server's SSL certificate could not be trusted. */
-	PURPLE_REASON_CERT_UNTRUSTED,
+	PURPLE_REASON_CERT_UNTRUSTED = 8,
 	/** The server's SSL certificate has expired. */
-	PURPLE_REASON_CERT_EXPIRED,
+	PURPLE_REASON_CERT_EXPIRED = 9,
 	/** The server's SSL certificate is not yet valid. */
-	PURPLE_REASON_CERT_NOT_ACTIVATED,
+	PURPLE_REASON_CERT_NOT_ACTIVATED = 10,
 	/** The server's SSL certificate did not match its hostname. */
-	PURPLE_REASON_CERT_HOSTNAME_MISMATCH,
+	PURPLE_REASON_CERT_HOSTNAME_MISMATCH = 11,
 	/** The server's SSL certificate does not have the expected
 	 *  fingerprint.
 	 */
-	PURPLE_REASON_CERT_FINGERPRINT_MISMATCH,
+	PURPLE_REASON_CERT_FINGERPRINT_MISMATCH = 12,
 	/** The server's SSL certificate is self-signed.  */
-	PURPLE_REASON_CERT_SELF_SIGNED,
+	PURPLE_REASON_CERT_SELF_SIGNED = 13,
 	/** There was some other error validating the server's SSL certificate.
 	 */
-	PURPLE_REASON_CERT_OTHER_ERROR,
+	PURPLE_REASON_CERT_OTHER_ERROR = 14,
 
 	/** Some other error occured which fits into none of the other
 	 *  categories.
 	 */
-	PURPLE_REASON_OTHER_ERROR,
-
-	/** The number of PurpleDisconnectReason elements; not a valid reason.
-	 */
-	PURPLE_NUM_REASONS
+	PURPLE_REASON_OTHER_ERROR = 15
 } PurpleDisconnectReason;
+
+/** 1 more than the value of the last #PurpleDisconnectReason. */
+#define PURPLE_NUM_REASONS 16
 
 #include <time.h>
 
