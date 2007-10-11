@@ -1,5 +1,23 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+Version 2.3.0 (xx/xx/xxxx):
+	libpurple:
+		Added:
+		* PurpleDisconnectReason enumeration of machine-readable
+		  types of connection error.
+		* purple_connection_error_reason(), to be used by prpls
+		  (instead of purple_connection_error() and setting
+		  gc->wants_to_die) to report errors along with a
+		  PurpleDisconnectReason.
+		* PurpleConnectionUiOps.report_disconnect_reason, to be
+		  implemented by UIs (rather than .report_disconnect) if
+		  they want to use the reported PurpleDisconnectReason
+		  to give a more specific error.
+		* purple_connection_reason_is_fatal(), acting as a hint
+		  to whether automatic reconnection should be attempted
+		  after a connection error (rather than checking
+		  gc->wants_to_die).
+
 Version 2.2.0 (09/13/2007):
 	libpurple:
 		Added:
