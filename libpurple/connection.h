@@ -187,10 +187,12 @@ typedef struct
 	 */
 	void (*network_disconnected)();
 
-	/** Called when a connection is disconnected, whether due to an
-	 *  error or to user request.  Called before #disconnected.
+	/** Called when an error causes a connection to be disconnected.
+	 *  Called before #disconnected.  This op is intended to replace
+	 *  #report_disconnect.  If both are implemented, this will be called
+	 *  first; however, there's no real reason to implement both.
 	 *  @param reason  why the connection ended, if known, or
-	 *                 PURPLE_REASON_OTHER_ERROR, if not.
+	 *                 #PURPLE_REASON_OTHER_ERROR, if not.
 	 *  @param text  a localized message describing the disconnection
 	 *               in more detail to the user.
 	 *  @see #purple_connection_error_reason
