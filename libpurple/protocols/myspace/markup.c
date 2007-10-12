@@ -258,8 +258,8 @@ msim_markup_f_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 	}
 
 
-	*begin = gs_begin->str;
-	*end = gs_end->str;
+	*begin = g_string_free(gs_begin, FALSE);
+	*end = g_string_free(gs_end, FALSE);
 }
 
 /** Convert a msim markup color to a color suitable for libpurple.
@@ -444,7 +444,8 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_UNDERLINE);
 		*end = g_strdup("</f>");
 	} else if (!purple_utf8_strcasecmp(root->name, "a")) {
-		const gchar *href, *link_text;
+		const gchar *href;
+		gchar *link_text;
 
 		href = xmlnode_get_attrib(root, "href");
 
@@ -476,6 +477,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 
 		/* Sorry, kid. MySpace doesn't support you within <a> tags. */
 		xmlnode_free(root->child);
+		g_free(link_text);
 		root->child = NULL;
 
 		*end = g_strdup("");
@@ -568,10 +570,7 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 	
 		case XMLNODE_TYPE_DATA:
 			/* Literal text. */
-			inner = g_new0(char, node->data_sz + 1);
-			strncpy(inner, node->data, node->data_sz);
-			inner[node->data_sz] = 0;
-
+			inner = g_strndup(node->data, node->data_sz);
 			purple_debug_info("msim", " ** node data=%s\n", 
 					inner ? inner : "(NULL)");
 			break;
@@ -584,6 +583,8 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 
 		if (inner) {
 			g_string_append(final, inner);
+			g_free(inner);
+			inner = NULL;
 		}
 	}
 
@@ -593,10 +594,13 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 	 * Comment out this line below to see. */
 	g_string_append(final, end);
 
+	g_free(begin);
+	g_free(end);
+
 	purple_debug_info("msim", "msim_markup_xmlnode_to_gtkhtml: RETURNING %s\n",
 			(final && final->str) ? final->str : "(NULL)");
 
-	return final->str;
+	return g_string_free(final, FALSE);
 }
 
 /** Convert XML to something based on MSIM_XMLNODE_CONVERT. */

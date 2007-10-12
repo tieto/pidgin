@@ -452,26 +452,29 @@ void yahoo_process_p2pfilexfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	{
 		struct yahoo_pair *pair = l->data;
 
-		if(pair->key == 5)         /* Get who the packet is for */
+		switch(pair->key) {
+		case 5:         /* Get who the packet is for */
 			me = pair->value;
-
-		if(pair->key == 4)         /* Get who the packet is from */
+			break;
+		case 4:         /* Get who the packet is from */
 			from = pair->value;
-
-		if(pair->key == 49)        /* Get the type of service */
+			break;
+		case 49:        /* Get the type of service */
 			service = pair->value;
-
-		if(pair->key == 14)        /* Get the 'message' of the packet */
+			break;
+		case 14:        /* Get the 'message' of the packet */
 			message = pair->value;
-
-		if(pair->key == 13)        /* Get the command associated with this packet */
+			break;
+		case 13:        /* Get the command associated with this packet */
 			command = pair->value;
-
-		if(pair->key == 63)        /* IMVironment name and version */
+			break;
+		case 63:        /* IMVironment name and version */
 			imv = pair->value;
-
-		if(pair->key == 64)        /* Not sure, but it does vary with initialization of Doodle */
+			break;
+		case 64:        /* Not sure, but it does vary with initialization of Doodle */
 			unknown = pair->value; /* So, I'll keep it (for a little while atleast) */
+			break;
+		}
 
 		l = l->next;
 	}
@@ -481,7 +484,7 @@ void yahoo_process_p2pfilexfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	{
 		/* Check for a Doodle packet and handle it accordingly */
 		if(strstr(imv, "doodle;") != NULL)
-			yahoo_doodle_process(gc, me, from, command, message);
+			yahoo_doodle_process(gc, me, from, command, message, imv);
 
 		/* If an IMVIRONMENT packet comes without a specific imviroment name */
 		if(!strcmp(imv, ";0"))
@@ -513,24 +516,35 @@ void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt)
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
 
-		if (pair->key == 4)
+		switch (pair->key) {
+		case 4:
 			from = pair->value;
-		if (pair->key == 5)
+			break;
+		case 5:
 			to = pair->value;
-		if (pair->key == 14)
+			break;
+		case 14:
 			msg = pair->value;
-		if (pair->key == 20)
+			break;
+		case 20:
 			url = pair->value;
-		if (pair->key == 38)
+			break;
+		case 38:
 			expires = strtol(pair->value, NULL, 10);
-		if (pair->key == 27)
+			break;
+		case 27:
 			filename = pair->value;
-		if (pair->key == 28)
+			break;
+		case 28:
 			filesize = atol(pair->value);
-		if (pair->key == 49)
+			break;
+		case 49:
 			service = pair->value;
-		if (pair->key == 63)
+			break;
+		case 63:
 			imv = pair->value;
+			break;
+		}
 	}
 
 	/*
