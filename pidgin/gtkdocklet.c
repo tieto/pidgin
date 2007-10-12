@@ -407,7 +407,7 @@ new_menu_item_with_status_icon(GtkWidget *menu, const char *str, PurpleStatusPri
 	GdkPixbuf *pixbuf;
 	GtkWidget *image;
 
-	menuitem = gtk_image_menu_item_new_with_mnemonic(str);
+	menuitem = gtk_image_menu_item_new_with_label(str);
 
 	if (menu)
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
