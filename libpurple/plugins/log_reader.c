@@ -28,6 +28,19 @@ enum name_guesses {
 	NAME_GUESS_THEM
 };
 
+/* Some common functions. */
+static int get_month(const char *month)
+{
+	int iter;
+	const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec", NULL};
+	for (iter = 0; months[iter]; iter++) {
+		if (strcmp(month, months[iter]) == 0)
+			break;
+	}
+	return iter;
+}
+
 
 /*****************************************************************************
  * Adium Logger                                                              *
@@ -1348,36 +1361,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 						 * daylight savings time.
 						 */
 						tm.tm_isdst = -1;
-
-						/* Ugly hack, in case current locale
-						 * is not English. This code is taken
-						 * from log.c.
-						 */
-						if (strcmp(month, "Jan") == 0) {
-							tm.tm_mon= 0;
-						} else if (strcmp(month, "Feb") == 0) {
-							tm.tm_mon = 1;
-						} else if (strcmp(month, "Mar") == 0) {
-							tm.tm_mon = 2;
-						} else if (strcmp(month, "Apr") == 0) {
-							tm.tm_mon = 3;
-						} else if (strcmp(month, "May") == 0) {
-							tm.tm_mon = 4;
-						} else if (strcmp(month, "Jun") == 0) {
-							tm.tm_mon = 5;
-						} else if (strcmp(month, "Jul") == 0) {
-							tm.tm_mon = 6;
-						} else if (strcmp(month, "Aug") == 0) {
-							tm.tm_mon = 7;
-						} else if (strcmp(month, "Sep") == 0) {
-							tm.tm_mon = 8;
-						} else if (strcmp(month, "Oct") == 0) {
-							tm.tm_mon = 9;
-						} else if (strcmp(month, "Nov") == 0) {
-							tm.tm_mon = 10;
-						} else if (strcmp(month, "Dec") == 0) {
-							tm.tm_mon = 11;
-						}
+						tm.tm_mon = get_month(month);
 
 						data = g_new0(
 							struct trillian_logger_data, 1);
@@ -2226,23 +2210,14 @@ static GList *amsn_logger_list(PurpleLogType type, const char *sn, PurpleAccount
 						                   "Error parsing start date for %s\n",
 						                   filename);
 					} else {
-						const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-								"Jul", "Aug", "Sep", "Oct", "Nov", "Dec", NULL};
 						tm.tm_year -= 1900;
 
 						/* Let the C library deal with
 						 * daylight savings time.
 						 */
 						tm.tm_isdst = -1;
+						tm.tm_mon = get_month(month);
 
-						/* Ugly hack, in case current locale
-						 * is not English. This code is taken
-						 * from log.c.
-						 */
-						for (tm.tm_mon = 0; months[tm.tm_mon]; tm.tm_mon++) {
-							if (strcmp(month, months[tm.tm_mon]) == 0)
-								break;
-						}
 						found_start = TRUE;
 						offset = c - contents;
 						start_log = c;
