@@ -103,9 +103,10 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 				} else {
 					char *filename = g_build_filename(path, file, NULL);
 					FILE *handle = g_fopen(filename, "rb");
-					char *contents;
+					char contents[57];   /* XXX: This is really inflexible. */
 					char *contents2;
 					struct adium_logger_data *data;
+					size_t rd;
 					PurpleLog *log;
 
 					if (!handle) {
@@ -113,11 +114,9 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 						continue;
 					}
 
-					/* XXX: This is really inflexible. */
-					contents = g_malloc(57);
-					fread(contents, 56, 1, handle);
+					rd = fread(contents, 56, 1, handle) == 0;
 					fclose(handle);
-					contents[56] = '\0';
+					contents[rd] = '\0';
 
 					/* XXX: This is fairly inflexible. */
 					contents2 = contents;
@@ -135,11 +134,9 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 
 						purple_debug_error("Adium log parse",
 						                   "Contents timestamp parsing error\n");
-						g_free(contents);
 						g_free(filename);
 						continue;
 					}
-					g_free(contents);
 
 					data = g_new0(struct adium_logger_data, 1);
 					data->path = filename;
@@ -168,21 +165,20 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 				} else {
 					char *filename = g_build_filename(path, file, NULL);
 					FILE *handle = g_fopen(filename, "rb");
-					char *contents;
+					char contents[14];   /* XXX: This is really inflexible. */
 					char *contents2;
 					struct adium_logger_data *data;
 					PurpleLog *log;
+					size_t rd;
 
 					if (!handle) {
 						g_free(filename);
 						continue;
 					}
 
-					/* XXX: This is really inflexible. */
-					contents = g_malloc(14);
-					fread(contents, 13, 1, handle);
+					rd = fread(contents, 13, 1, handle);
 					fclose(handle);
-					contents[13] = '\0';
+					contents[rd] = '\0';
 
 					contents2 = contents;
 					while (*contents2 && *contents2 != '(')
@@ -195,12 +191,9 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 
 						purple_debug_error("Adium log parse",
 						                   "Contents timestamp parsing error\n");
-						g_free(contents);
 						g_free(filename);
 						continue;
 					}
-
-					g_free(contents);
 
 					tm.tm_year -= 1900;
 					tm.tm_mon  -= 1;
@@ -1446,7 +1439,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 	file = g_fopen(data->path, "rb");
 	fseek(file, data->offset, SEEK_SET);
-	fread(read, data->length, 1, file);
+	data->length = fread(read, data->length, 1, file);
 	fclose(file);
 
 	if (read[data->length-1] == '\n') {
@@ -1945,7 +1938,7 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	contents = g_malloc(data->length + 2);
 
 	fseek(file, data->offset, SEEK_SET);
-	fread(contents, data->length, 1, file);
+	data->length = fread(contents, data->length, 1, file);
 	fclose(file);
 
 	contents[data->length] = '\n';
@@ -2338,7 +2331,7 @@ static char *amsn_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	g_return_val_if_fail(file != NULL, g_strdup(""));
 	
 	fseek(file, data->offset, SEEK_SET);
-	fread(contents, data->length, 1, file);
+	data->length = fread(contents, data->length, 1, file);
 	fclose(file);
 
 	contents[data->length] = '\n';
