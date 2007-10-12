@@ -25,6 +25,11 @@
 
 #include <string.h>
 
+struct _GntWindowPriv
+{
+	GHashTable *accels;   /* key => menuitem-id */
+};
+
 enum
 {
 	SIG_WORKSPACE_HIDE,
@@ -55,6 +60,10 @@ gnt_window_destroy(GntWidget *widget)
 	GntWindow *window = GNT_WINDOW(widget);
 	if (window->menu)
 		gnt_widget_destroy(GNT_WIDGET(window->menu));
+	if (window->priv) {
+		g_hash_table_destroy(window->priv->accels);
+		g_free(window->priv);
+	}
 	org_destroy(widget);
 }
 
@@ -98,8 +107,11 @@ static void
 gnt_window_init(GTypeInstance *instance, gpointer class)
 {
 	GntWidget *widget = GNT_WIDGET(instance);
+	GntWindow *win = GNT_WINDOW(widget);
 	GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_CAN_TAKE_FOCUS);
+	win->priv = g_new0(GntWindowPriv, 1);
+	win->priv->accels = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	GNTDEBUG;
 }
 
@@ -170,8 +182,23 @@ gnt_window_workspace_showing(GntWindow *window)
 void gnt_window_set_menu(GntWindow *window, GntMenu *menu)
 {
 	/* If a menu already existed, then destroy that first. */
+	const char *name = gnt_widget_get_name(GNT_WIDGET(window));
 	if (window->menu)
 		gnt_widget_destroy(GNT_WIDGET(window->menu));
 	window->menu = menu;
+	if (name && window->priv) {
+		if (!gnt_style_read_menu_accels(name, window->priv->accels)) {
+			g_hash_table_destroy(window->priv->accels);
+			g_free(window->priv);
+			window->priv = NULL;
+		}
+	}
+}
+
+const char * gnt_window_get_accel_item(GntWindow *window, const char *key)
+{
+	if (window->priv)
+		return g_hash_table_lookup(window->priv->accels, key);
+	return NULL;
 }
 

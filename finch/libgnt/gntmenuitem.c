@@ -33,6 +33,7 @@ gnt_menuitem_destroy(GObject *obj)
 	item->text = NULL;
 	if (item->submenu)
 		gnt_widget_destroy(GNT_WIDGET(item->submenu));
+	g_free(item->priv.id);
 	parent_class->dispose(obj);
 }
 
@@ -104,6 +105,11 @@ void gnt_menuitem_set_submenu(GntMenuItem *item, GntMenu *menu)
 	item->submenu = menu;
 }
 
+GntMenu *gnt_menuitem_get_submenu(GntMenuItem *item)
+{
+	return item->submenu;
+}
+
 void gnt_menuitem_set_trigger(GntMenuItem *item, char trigger)
 {
 	item->priv.trigger = trigger;
@@ -112,5 +118,16 @@ void gnt_menuitem_set_trigger(GntMenuItem *item, char trigger)
 char gnt_menuitem_get_trigger(GntMenuItem *item)
 {
 	return item->priv.trigger;
+}
+
+void gnt_menuitem_set_id(GntMenuItem *item, const char *id)
+{
+	g_free(item->priv.id);
+	item->priv.id = g_strdup(id);
+}
+
+const char * gnt_menuitem_get_id(GntMenuItem *item)
+{
+	return item->priv.id;
 }
 
