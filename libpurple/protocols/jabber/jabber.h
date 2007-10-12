@@ -216,7 +216,14 @@ void jabber_register_start(JabberStream *js);
 
 char *jabber_get_next_id(JabberStream *js);
 
-char *jabber_parse_error(JabberStream *js, xmlnode *packet);
+/** Parse an error into a human-readable string and optionally a disconnect
+ *  reason.
+ *  @param js     the stream on which the error occurred.
+ *  @param packet the error packet
+ *  @param reason where to store the disconnection reason, or @c NULL if you
+ *                don't care or you don't intend to close the connection.
+ */
+char *jabber_parse_error(JabberStream *js, xmlnode *packet, PurpleDisconnectReason *reason);
 
 void jabber_add_feature(const gchar *shortname, const gchar *namespace, JabberFeatureEnabled cb); /* cb may be NULL */
 void jabber_remove_feature(const gchar *shortname);

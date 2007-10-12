@@ -945,7 +945,7 @@ msn_get_address_cb(MsnSoapConn *soapconn)
 		msn_get_address_book(contact, NULL, NULL);
 		*/
 		msn_session_disconnect(session);
-		purple_connection_error(session->account->gc, _("Unable to retrieve MSN Address Book"));
+		purple_connection_error_reason(session->account->gc, PURPLE_REASON_NETWORK_ERROR, _("Unable to retrieve MSN Address Book"));
 		return FALSE;
 	}
 }
