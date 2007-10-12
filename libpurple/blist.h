@@ -40,6 +40,8 @@ typedef struct _PurpleGroup PurpleGroup;
 typedef struct _PurpleContact PurpleContact;
 typedef struct _PurpleBuddy PurpleBuddy;
 
+typedef gboolean (*PurpleFilterBlistFunc)(PurpleBlistNode *node);
+
 /**************************************************************************/
 /* Enumerations                                                           */
 /**************************************************************************/
@@ -65,9 +67,12 @@ typedef enum
 typedef enum
 {
 	PURPLE_BLIST_NODE_FLAG_NO_SAVE      = 1 << 0, /**< node should not be saved with the buddy list */
+	PURPLE_BLIST_NODE_HAS_CONVERSATION  = 1 << 1, /**< node (buddy or chat) has an open conversation */
 
 } PurpleBlistNodeFlags;
 
+#define PURPLE_BLIST_NODE_SET_FLAG(node, f)    (((PurpleBlistNode *)node)->flags |= (f))
+#define PURPLE_BLIST_NODE_UNSET_FLAG(node, f)  (((PurpleBlistNode *)node)->flags &= ~(f))
 #define PURPLE_BLIST_NODE_HAS_FLAG(b, f) (((PurpleBlistNode*)(b))->flags & (f))
 #define PURPLE_BLIST_NODE_SHOULD_SAVE(b) (! PURPLE_BLIST_NODE_HAS_FLAG(b, PURPLE_BLIST_NODE_FLAG_NO_SAVE))
 

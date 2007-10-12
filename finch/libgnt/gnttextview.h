@@ -204,6 +204,8 @@ void gnt_text_view_attach_editor_widget(GntTextView *view, GntWidget *pager);
  *
  * @param view  The textview widget
  * @param flag  The flag to set
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_text_view_set_flag(GntTextView *view, GntTextViewFlag flag);
 
