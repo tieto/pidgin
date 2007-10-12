@@ -36,7 +36,7 @@ INCLUDE_PATHS +=	-I. \
 			-I$(PIDGIN_TREE_TOP)
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
-			-L$(BONJOUR_TOP)/lib \
+			-L$(BONJOUR_TOP)/lib/win32 \
 			-L$(LIBXML2_TOP)/lib \
 			-L$(PURPLE_TOP)
 

@@ -12,6 +12,8 @@
   @signal file-send-complete
  @endsignals
 
+ @see ft.h
+
  <hr>
 
  @signaldef file-recv-accept
@@ -109,4 +111,4 @@ void (*file_send_complete)(PurpleXfer *xfer, gpointer data);
  @endsignaldef
 
  */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

@@ -189,6 +189,8 @@ bonjour_close(PurpleConnection *connection)
 	if (bonjour_group != NULL)
 		purple_blist_remove_group(bonjour_group);
 
+	g_free(bd);
+	connection->proto_data = NULL;
 }
 
 static const char *
@@ -582,7 +584,7 @@ static gpointer _win32_name_lookup_thread(gpointer data) {
 			fullname = g_utf16_to_utf8(username, -1, NULL, NULL, NULL);
 	}
 
-	g_idle_add(_set_default_name_cb, fullname);
+	purple_timeout_add(0, _set_default_name_cb, fullname);
 
 	return NULL;
 }

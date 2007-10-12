@@ -608,8 +608,9 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 	purple_debug_info("MSN OIM:OIM", "%s", xmlmsg);
 
 	node = xmlnode_from_str(xmlmsg, strlen(xmlmsg));
-	if (strcmp(node->name, "MD") != 0) {
-		xmlnode_free(node);
+	if (!node || !node->name || strcmp(node->name, "MD") != 0) {
+		if (node)
+			xmlnode_free(node);
 		return;
 	}
 

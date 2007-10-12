@@ -139,6 +139,8 @@ void gnt_util_parse_widgets(const char *string, int num, ...);
  * @param string   The XHTML string
  * @param tv       The GntTextView
  * @return  @c TRUE if the string was added to the textview properly, @c FALSE otherwise.
+ *
+ * @since 2.2.0
  */
 gboolean gnt_util_parse_xhtml_to_textview(const char *string, GntTextView *tv);
 
@@ -148,6 +150,8 @@ gboolean gnt_util_parse_xhtml_to_textview(const char *string, GntTextView *tv);
  * @param widget  The widget
  * @param key     The key to trigger the button
  * @param button  The button to trigger
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_util_set_trigger_widget(GntWidget *wid, const char *text, GntWidget *button);
 

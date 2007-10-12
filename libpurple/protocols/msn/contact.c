@@ -1177,7 +1177,7 @@ msn_add_contact_to_group(MsnContact *contact, MsnCallbackState *state,
 		purple_debug_warning("MSN CL", "Unable to retrieve user %s from the userlist!\n", passport);
 	}
 
-	if (user->uid != NULL) {
+	if (user != NULL && user->uid != NULL) {
 		contact_xml = g_strdup_printf(MSN_CONTACT_ID_XML, user->uid);
 	} else {
 		contact_xml = g_strdup_printf(MSN_CONTACT_XML, passport);
