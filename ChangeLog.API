@@ -1,5 +1,15 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.3.0 (??/??/????):
+	libpurple:
+		Added:
+		* purple_request_field_blist_nodes_new and its accessory functions.
+		* Added a PurpleConversation field in PurpleConvMessage
+		* Added account-authorization signals. (see account-signals.dox for
+		  details) (Stefan Ott)
+		* Added libpurple/purple.h, which includes #define's and #include's
+		  required to compile stand-alone plugins.
+
 Version 2.2.2 (??/??/????):
 	libpurple:
 		Changed:
