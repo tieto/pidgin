@@ -96,9 +96,6 @@ version 2.1.0 (7/28/2007):
 		* purple_timeout_add_seconds
 		    Callers should prefer this to purple_timeout_add for timers
 		    longer than 1 second away.  Be aware of the rounding, though.
-		* purple_timeout_add_seconds
-		    Callers should prefer this to purple_timeout_add for timers
-		    longer than 1 second away.  Be aware of the rounding, though.
 		* purple_xfer_get_remote_user
 		* purple_pounces_get_all_for_ui
 		* purple_prefs_get_children_names

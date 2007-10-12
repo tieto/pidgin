@@ -376,6 +376,8 @@ void pidgin_load_accels(void);
  *
  * @param conn   The connection to get information from.
  * @param name   The user to get information about.
+ *
+ * @since 2.1.0
  */
 void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name);
 
@@ -385,6 +387,8 @@ void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name);
  * @param conn   The connection to get information from.
  * @param name   The user to get information about.
  * @param chatid The chat id.
+ *
+ * @since 2.1.0
  */
 void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name, int chatid);
 
@@ -423,6 +427,8 @@ void pidgin_set_accessible_label(GtkWidget *w, GtkWidget *l);
  *
  * @param w The widget that we want to label.
  * @param l A GtkLabel that we want to use as the label for the widget.
+ *
+ * @since 2.2.0
  */
 void pidgin_set_accessible_relations(GtkWidget *w, GtkWidget *l);
 
@@ -437,6 +443,8 @@ void pidgin_set_accessible_relations(GtkWidget *w, GtkWidget *l);
  *        where the menu shall be drawn. This is an output parameter.
  * @param push_in This is an output parameter?
  * @param data Not used by this particular position function.
+ *
+ * @since 2.1.0
  */
 void pidgin_menu_position_func_helper(GtkMenu *menu, gint *x, gint *y,
 										gboolean *push_in, gpointer data);
@@ -671,6 +679,8 @@ GtkTreePath *gtk_tree_path_new_from_indices (gint first_index, ...);
  *
  * @return               A newly created text GtkComboBox containing a GtkEntry
  *                       child.
+ *
+ * @since 2.2.0
  */
 GtkWidget *pidgin_text_combo_box_entry_new(const char *default_item, GList *items);
 
@@ -680,6 +690,8 @@ GtkWidget *pidgin_text_combo_box_entry_new(const char *default_item, GList *item
  * @param widget         The simple text GtkComboBoxEntry equivalent widget
  *
  * @return               The text in the widget's entry. It must not be freed
+ *
+ * @since 2.2.0
  */
 const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget);
 
@@ -688,6 +700,8 @@ const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget);
  *
  * @param widget         The simple text GtkComboBoxEntry equivalent widget
  * @param text           The text to set
+ *
+ * @since 2.2.0
  */
 void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
 
