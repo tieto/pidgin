@@ -35,6 +35,8 @@ struct docklet_ui_ops
 	void (*blank_icon)(void);
 	void (*set_tooltip)(gchar *);
 	GtkMenuPositionFunc position_menu;
+	gboolean (*get_geometry)(gint *x, gint *y, gint *w, gint *h);
+	GObject *(*get_gdk_screen)(void);
 };
 
 
@@ -48,6 +50,28 @@ void pidgin_docklet_unload(void);
 void pidgin_docklet_init(void);
 void pidgin_docklet_uninit(void);
 void*pidgin_docklet_get_handle(void);
+
+/**
+ * Get the geometry of the docklet. Any of the parameters may be
+ * NULL if that value is not desired.
+ *
+ * @param x x coordinate of the top left corner of the docklet in screen coordinates
+ * @param y y coordinate of the top left corner of the docklet in screen coordinates
+ * @param w width of the docklet
+ * @param h height of the docklet
+ *
+ * @return TRUE if the geometry was found, otherwise FALSE
+ */
+gboolean pidgin_docklet_get_geometry(gint *x, gint *y, gint *w, gint *h);
+
+/**
+ * Get the GdkScreen of the docklet. If the GdkScreen is not available, including
+ * running on versions of Gtk/Gdk where GdkScreen does not exist (<2.2), NULL is
+ * returned.
+ *
+ * @return GdkScreen if available, otherwise NULL
+ */
+GObject *pidgin_docklet_get_gdk_screen(void);
 
 /* function in gtkdocklet-{x11,win32}.c */
 void docklet_ui_init(void);
