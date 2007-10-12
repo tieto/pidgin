@@ -54,7 +54,9 @@ typedef enum
 
 } PurpleConnectionState;
 
-/** Possible errors that can cause a connection to be closed. */
+/** Possible errors that can cause a connection to be closed.
+ *  @since 2.3.0
+ */
 typedef enum
 {
 	/** There was an error sending or receiving on the network socket, or
@@ -195,6 +197,7 @@ typedef struct
 	 *  @param text  a localized message describing the disconnection
 	 *               in more detail to the user.
 	 *  @see #purple_connection_error_reason
+	 *  @since 2.3.0
 	 */
 	void (*report_disconnect_reason)(PurpleConnection *gc,
 	                                 PurpleDisconnectReason reason,
@@ -400,6 +403,7 @@ void purple_connection_error(PurpleConnection *gc, const char *reason);
  *
  * @param reason      why the connection is closing.
  * @param description a localized description of the error.
+ * @since 2.3.0
  */
 void
 purple_connection_error_reason (PurpleConnection *gc,
@@ -410,6 +414,7 @@ purple_connection_error_reason (PurpleConnection *gc,
  * Closes a connection due to an SSL error; this is basically a shortcut to
  * turning the #PurpleSslErrorType into a #PurpleDisconnectReason and a
  * human-readable string and then calling purple_connection_error_reason().
+ * @since 2.3.0
  */
 void
 purple_connection_ssl_error (PurpleConnection *gc,
@@ -432,6 +437,7 @@ purple_connection_ssl_error (PurpleConnection *gc,
  *
  * @return @c TRUE if the account should not be automatically reconnected, and
  *         @c FALSE otherwise.
+ * @since 2.3.0
  */
 gboolean
 purple_connection_reason_is_fatal (PurpleDisconnectReason reason);
