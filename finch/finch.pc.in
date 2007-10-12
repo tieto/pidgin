@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+datadir=@datadir@
+sysconfdir=@sysconfdir@
+
+Name: Finch
+Description: Finch is an instant messenger application that uses libpurple for protocol support and ncurses (libgnt) for the UI.
+Version: @VERSION@
+Requires: gnt purple
+Cflags: -I${includedir}/finch
+

@@ -463,6 +463,6 @@ void
 msn_nexus_connect(MsnNexus *nexus)
 {
 	/*  Authenticate via Windows Live ID. */
-	msn_soap_init(nexus->soapconn, MSN_TWN_SERVER, 1, nexus_login_connect_cb, nexus_login_error_cb);
+	msn_soap_init(nexus->soapconn, MSN_TWN_SERVER, TRUE, nexus_login_connect_cb, nexus_login_error_cb);
 	msn_soap_connect(nexus->soapconn);
 }

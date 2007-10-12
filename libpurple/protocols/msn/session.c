@@ -130,7 +130,9 @@ void
 msn_session_disconnect(MsnSession *session)
 {
 	g_return_if_fail(session != NULL);
-	g_return_if_fail(session->connected);
+
+	if (!session->connected)
+		return;
 
 	session->connected = FALSE;
 

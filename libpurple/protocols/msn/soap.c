@@ -26,7 +26,7 @@
 #include "msn.h"
 #include "soap.h"
 
-
+#define MSN_SOAP_DEBUG
 /*local function prototype*/
 void msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step);
 
@@ -49,17 +49,16 @@ msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step)
 	soapconn->step = step;
 }
 
-//msn_soap_new(MsnSession *session,gpointer data,int sslconn)
 /*new a soap connection*/
 MsnSoapConn *
-msn_soap_new(MsnSession *session,gpointer data,int sslconn)
+msn_soap_new(MsnSession *session,gpointer data, gboolean ssl)
 {
 	MsnSoapConn *soapconn;
 
 	soapconn = g_new0(MsnSoapConn, 1);
 	soapconn->session = session;
 	soapconn->parent = data;
-	soapconn->ssl_conn = sslconn;
+	soapconn->ssl_conn = ssl;
 
 	soapconn->gsc = NULL;
 	soapconn->input_handler = 0;
@@ -127,11 +126,12 @@ msn_soap_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data
 
 /*init the soap connection*/
 void
-msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,
+msn_soap_init(MsnSoapConn *soapconn,char * host, gboolean ssl,
 				MsnSoapSslConnectCbFunction connect_cb,
 				MsnSoapSslErrorCbFunction error_cb)
 {
 	purple_debug_misc("MSN SOAP","Initializing SOAP connection\n");
+	g_free(soapconn->login_host);
 	soapconn->login_host = g_strdup(host);
 	soapconn->ssl_conn = ssl;
 	soapconn->connect_cb = connect_cb;
@@ -205,11 +205,9 @@ msn_soap_clean_unhandled_requests(MsnSoapConn *soapconn)
 void
 msn_soap_destroy(MsnSoapConn *soapconn)
 {
-	if(soapconn->login_host)
-		g_free(soapconn->login_host);
+	g_free(soapconn->login_host);
 
-	if(soapconn->login_path)
-		g_free(soapconn->login_path);
+	g_free(soapconn->login_path);
 
 	/*remove the write handler*/
 	if (soapconn->output_handler > 0){
@@ -765,7 +763,7 @@ msn_soap_post_head_request(MsnSoapConn *soapconn)
  * if not connected, Connected first.
  */
 void
-msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request)
+msn_soap_post(MsnSoapConn *soapconn, MsnSoapReq *request)
 {
 	MsnSoapReq *head_request;
 
@@ -809,10 +807,15 @@ msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request)
 			return;
 		}
 
+#ifdef MSN_SOAP_DEBUG
 		purple_debug_info("MSN SOAP", "Currently processing another SOAP request\n");
 	} else {
 		purple_debug_info("MSN SOAP", "No requests left to dispatch\n");
 	}
+#else
+      }
+#endif
+
 }
 
 /*Post the soap request action*/

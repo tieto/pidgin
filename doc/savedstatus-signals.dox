@@ -4,6 +4,8 @@
   @signal savedstatus-changed
  @endsignals
 
+ @see savedstatus.h
+
  <hr>
 
  @signaldef savedstatus-changed
@@ -15,4 +17,4 @@ void (*savedstatus_changed)(PurpleSavedStatus *new, PurpleSavedStatus *old);
  @endsignaldef
 
  */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

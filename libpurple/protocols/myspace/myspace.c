@@ -2035,17 +2035,13 @@ static MsimMessage *
 msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before, 
 		const gchar *uid_field_name, guint uid)
 {
+	MsimMessageElement *elem;
 	msim_msg_dump("msim_do_postprocessing msg: %s\n", msg);
 
 	/* First, check - if the field already exists, replace <uid> within it */
-	if (msim_msg_get(msg, uid_field_name)) {
-		MsimMessageElement *elem;
+	if ((elem = msim_msg_get(msg, uid_field_name)) != NULL) {
 		gchar *fmt_string;
 		gchar *uid_str, *new_str;
-
-		/* Warning: this is a delicate, but safe, operation */
-
-		elem = msim_msg_get(msg, uid_field_name);
 
 		/* Get the packed element, flattening it. This allows <uid> to be
 		 * replaced within nested data structures, since the replacement is done

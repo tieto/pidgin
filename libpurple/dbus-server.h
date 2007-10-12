@@ -1,6 +1,7 @@
 /**
  * @file dbus-server.h Purple DBUS Server
  * @ingroup core
+ * @see @ref dbus-server-signals
  */
 
 /* purple
@@ -22,8 +23,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
- *
- * @see @ref dbus-server-signals
  */
 
 #ifndef _PURPLE_DBUS_SERVER_H_

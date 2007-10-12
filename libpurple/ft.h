@@ -1,6 +1,7 @@
 /**
  * @file ft.h File Transfer API
  * @ingroup core
+ * @see @ref xfer-signals
  */
 
 /* purple
@@ -22,8 +23,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
- *
- * @see @ref xfer-signals
  */
 #ifndef _PURPLE_FT_H_
 #define _PURPLE_FT_H_
@@ -243,6 +242,8 @@ PurpleAccount *purple_xfer_get_account(const PurpleXfer *xfer);
  * @param xfer The file transfer.
  *
  * @return The name of the remote user.
+ *
+ * @since 2.1.0
  */
 const char *purple_xfer_get_remote_user(const PurpleXfer *xfer);
 

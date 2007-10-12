@@ -51,10 +51,10 @@ msn_oim_new(MsnSession *session)
 
 	oim = g_new0(MsnOim, 1);
 	oim->session = session;
-	oim->retrieveconn = msn_soap_new(session,oim,1);
+	oim->retrieveconn = msn_soap_new(session, oim, TRUE);
 	
-	oim->oim_list	= NULL;
-	oim->sendconn = msn_soap_new(session,oim,1);
+	oim->oim_list = NULL;
+	oim->sendconn = msn_soap_new(session, oim, TRUE);
 	oim->run_id = rand_guid();
 	oim->challenge = NULL;
 	oim->send_queue = g_queue_new();
@@ -165,70 +165,73 @@ static void
 msn_oim_send_process(MsnOim *oim, const char *body, int len)
 {
 	xmlnode *responseNode, *bodyNode;
-	xmlnode	*faultNode, *faultCodeNode, *faultstringNode;
+	xmlnode *faultNode = NULL, *faultCodeNode, *faultstringNode;
 	xmlnode *detailNode, *challengeNode;
-	char *faultCodeStr = NULL, *faultstring = NULL;
+	char *fault_code, *fault_text;
 
 	responseNode = xmlnode_from_str(body,len);
+
 	g_return_if_fail(responseNode != NULL);
-	bodyNode = xmlnode_get_child(responseNode,"Body");
-	faultNode = xmlnode_get_child(bodyNode,"Fault");
-	if(faultNode == NULL){
+
+	if ((bodyNode = xmlnode_get_child(responseNode, "Body")))
+		faultNode = xmlnode_get_child(bodyNode, "Fault");
+
+	if (faultNode == NULL) {
 		/*Send OK! return*/
 		MsnOimSendReq *request;
-		
-		purple_debug_info("MSN OIM","send OIM OK!");
+
 		xmlnode_free(responseNode);
 		request = g_queue_pop_head(oim->send_queue);
 		msn_oim_free_send_req(request);
 		/*send next buffered Offline Message*/
 		msn_soap_post(oim->sendconn, NULL);
+
 		return;
 	}
+
 	/*get the challenge,and repost it*/
-	faultCodeNode = xmlnode_get_child(faultNode,"faultcode");
+	if (faultNode)
+		faultCodeNode = xmlnode_get_child(faultNode, "faultcode");
+
 	if(faultCodeNode == NULL){
-		purple_debug_info("MSN OIM","faultcode Node is NULL\n");
-		goto oim_send_process_fail;
+		purple_debug_info("MSN OIM", "No faultcode for failed Offline Message.\n");
+		xmlnode_free(responseNode);
+		return;
 	}
-	faultCodeStr = xmlnode_get_data(faultCodeNode);
-	purple_debug_info("MSN OIM","fault code:{%s}\n",faultCodeStr);
+
+	fault_code = xmlnode_get_data(faultCodeNode);
 #if 0
-	if(!strcmp(faultCodeStr,"q0:AuthenticationFailed")){
+	if(!strcmp(fault_code,"q0:AuthenticationFailed")){
 		/*other Fault Reason?*/
 		goto oim_send_process_fail;
 	}
 #endif
 
-	faultstringNode = xmlnode_get_child(faultNode,"faultstring");
-	faultstring = xmlnode_get_data(faultstringNode);
-	purple_debug_info("MSN OIM","fault string :{%s}\n",faultstring);
+	faultstringNode = xmlnode_get_child(faultNode, "faultstring");
+	fault_text = xmlnode_get_data(faultstringNode);
+	purple_debug_info("MSN OIM", "Error sending Offline Message: %s (%s)\n",
+		fault_text ? fault_text : "(null)", fault_code ? fault_code : "(null)");
 
 	/* lock key fault reason,
 	 * compute the challenge and resend it
 	 */
-	detailNode = xmlnode_get_child(faultNode, "detail");
-	if(detailNode == NULL){
-		goto oim_send_process_fail;
+	if ((detailNode = xmlnode_get_child(faultNode, "detail"))
+			&& (challengeNode = xmlnode_get_child(detailNode, "LockKeyChallenge"))) {
+		g_free(oim->challenge);
+		oim->challenge = xmlnode_get_data(challengeNode);
+
+		purple_debug_info("MSN OIM", "Retrying Offline IM with lockkey:{%s}\n",
+			oim->challenge ? oim->challenge : "(null)");
+
+		/*repost the send*/
+		msn_oim_send_msg(oim);
+
+		/* XXX: This needs to give up eventually (1 retry, maybe?) */
 	}
-	challengeNode = xmlnode_get_child(detailNode,"LockKeyChallenge");
-	if (challengeNode == NULL) {
-		goto oim_send_process_fail;
-	}
 
-	g_free(oim->challenge);
-	oim->challenge = xmlnode_get_data(challengeNode);
-	purple_debug_info("MSN OIM","lockkey:{%s}\n",oim->challenge);
-
-	/*repost the send*/
-	purple_debug_info("MSN OIM","prepare to repost the send...\n");
-	msn_oim_send_msg(oim);
-
-oim_send_process_fail:
-	g_free(faultstring);
-	g_free(faultCodeStr);
+	g_free(fault_text);
+	g_free(fault_code);
 	xmlnode_free(responseNode);
-	return ;
 }
 
 static gboolean
@@ -300,7 +303,7 @@ msn_oim_send_msg(MsnOim *oim)
 		purple_debug_info("MSN OIM","no lock key challenge,wait for SOAP Fault and Resend\n");
 		buf[0]='\0';
 	}
-	purple_debug_info("MSN OIM","get the lock key challenge {%s}\n",buf);	
+	purple_debug_info("MSN OIM","get the lock key challenge {%s}\n",buf);
 
 	msg_body = msn_oim_msg_to_str(oim, oim_request->oim_msg);
 	soap_body = g_strdup_printf(MSN_OIM_SEND_TEMPLATE,
@@ -311,8 +314,8 @@ msn_oim_send_msg(MsnOim *oim)
 					MSNP13_WLM_PRODUCT_ID,
 					buf,
 					oim_request->send_seq,
-					msg_body
-					);
+					msg_body);
+
 	soap_request = msn_soap_request_new(MSN_OIM_SEND_HOST,
 					MSN_OIM_SEND_URL,
 					MSN_OIM_SEND_SOAP_ACTION,
@@ -605,8 +608,9 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 	purple_debug_info("MSN OIM:OIM", "%s", xmlmsg);
 
 	node = xmlnode_from_str(xmlmsg, strlen(xmlmsg));
-	if (strcmp(node->name, "MD") != 0) {
-		xmlnode_free(node);
+	if (!node || !node->name || strcmp(node->name, "MD") != 0) {
+		if (node)
+			xmlnode_free(node);
 		return;
 	}
 
@@ -644,10 +648,8 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		nickname = xmlnode_get_data(nNode);
 		/*receive time*/
 		rtNode = xmlnode_get_child(mNode,"RT");
-		if(rtNode != NULL) {
+		if(rtNode != NULL)
 			rTime = xmlnode_get_data(rtNode);
-			rtNode = NULL;
-		}
 /*		purple_debug_info("MSN OIM","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime); */
 
 		oim->oim_list = g_list_append(oim->oim_list,strdup(msgid));
@@ -694,7 +696,7 @@ static void
 msn_oim_retrieve_connect_init(MsnSoapConn *soapconn)
 {
 	purple_debug_info("MSN OIM","Initializing OIM retrieve connection\n");
-	msn_soap_init(soapconn, MSN_OIM_RETRIEVE_HOST, 1,
+	msn_soap_init(soapconn, MSN_OIM_RETRIEVE_HOST, TRUE,
 		      msn_oim_get_connect_cb,
 		      msn_oim_get_error_cb);
 }
@@ -704,7 +706,7 @@ static void
 msn_oim_send_connect_init(MsnSoapConn *sendconn)
 {
 	purple_debug_info("MSN OIM","Initializing OIM send connection\n");
-	msn_soap_init(sendconn, MSN_OIM_SEND_HOST, 1,
+	msn_soap_init(sendconn, MSN_OIM_SEND_HOST, TRUE,
 		      msn_oim_send_connect_cb,
 		      msn_oim_send_error_cb);
 }

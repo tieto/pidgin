@@ -637,9 +637,10 @@ purple_dnsquery_a(const char *hostname, int port,
 static gboolean
 dns_main_thread_cb(gpointer data)
 {
-	PurpleDnsQueryData *query_data;
+	PurpleDnsQueryData *query_data = data;
 
-	query_data = data;
+	/* We're done, so purple_dnsquery_destroy() shouldn't think it is canceling an in-progress lookup */
+	query_data->resolver = NULL;
 
 	if (query_data->error_message != NULL)
 		purple_dnsquery_failed(query_data, query_data->error_message);
@@ -713,7 +714,7 @@ dns_thread(gpointer data)
 #endif
 
 	/* back to main thread */
-	g_idle_add(dns_main_thread_cb, query_data);
+	purple_timeout_add(0, dns_main_thread_cb, query_data);
 
 	return 0;
 }
@@ -780,14 +781,12 @@ purple_dnsquery_a(const char *hostname, int port,
 
 	purple_debug_info("dnsquery", "Performing DNS lookup for %s\n", hostname);
 
-	query_data = g_new(PurpleDnsQueryData, 1);
+	query_data = g_new0(PurpleDnsQueryData, 1);
 	query_data->hostname = g_strdup(hostname);
 	g_strstrip(query_data->hostname);
 	query_data->port = port;
 	query_data->callback = callback;
 	query_data->data = data;
-	query_data->error_message = NULL;
-	query_data->hosts = NULL;
 
 	if (strlen(query_data->hostname) == 0)
 	{
