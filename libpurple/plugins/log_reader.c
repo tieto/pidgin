@@ -127,7 +127,7 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 						continue;
 					}
 
-					rd = fread(contents, 56, 1, handle) == 0;
+					rd = fread(contents, 1, 56, handle) == 0;
 					fclose(handle);
 					contents[rd] = '\0';
 
@@ -189,7 +189,7 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 						continue;
 					}
 
-					rd = fread(contents, 13, 1, handle);
+					rd = fread(contents, 1, 13, handle);
 					fclose(handle);
 					contents[rd] = '\0';
 
@@ -1423,7 +1423,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 	file = g_fopen(data->path, "rb");
 	fseek(file, data->offset, SEEK_SET);
-	data->length = fread(read, data->length, 1, file);
+	data->length = fread(read, 1, data->length, file);
 	fclose(file);
 
 	if (read[data->length-1] == '\n') {
@@ -1922,7 +1922,7 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	contents = g_malloc(data->length + 2);
 
 	fseek(file, data->offset, SEEK_SET);
-	data->length = fread(contents, data->length, 1, file);
+	data->length = fread(contents, 1, data->length, file);
 	fclose(file);
 
 	contents[data->length] = '\n';
@@ -2306,7 +2306,7 @@ static char *amsn_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	g_return_val_if_fail(file != NULL, g_strdup(""));
 	
 	fseek(file, data->offset, SEEK_SET);
-	data->length = fread(contents, data->length, 1, file);
+	data->length = fread(contents, 1, data->length, file);
 	fclose(file);
 
 	contents[data->length] = '\n';
