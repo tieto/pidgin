@@ -31,6 +31,8 @@ version 2.2.2:
 	* Pidgin's display is now saved with the command line for session
 	  restoration.  (David Mohr)
 	* ICQ Birthday notifications are shown as buddy list emblems.
+	* Plugin actions are now available from the docklet context menu
+	  in addition to the Tool menu of the buddy list.
 
 version 2.2.1 (09/29/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
