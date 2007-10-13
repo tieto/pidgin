@@ -2565,6 +2565,8 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	purple_debug_info("util", "Writing file %s\n",
 					filename_full);
 
+	g_return_val_if_fail((size >= 0 || size == -1), FALSE);
+
 	filename_temp = g_strdup_printf("%s.save", filename_full);
 
 	/* Remove an old temporary file, if one exists */
@@ -2590,7 +2592,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	}
 
 	/* Write to file */
-	real_size = (size == -1) ? strlen(data) : size;
+	real_size = (size == -1) ? strlen(data) : (size_t) size;
 	byteswritten = fwrite(data, 1, real_size, file);
 
 	/* Close file */
