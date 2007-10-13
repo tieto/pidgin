@@ -114,6 +114,7 @@ purple_coreheaders = \
 	privacy.h \
 	proxy.h \
 	prpl.h \
+	purple.h \
 	request.h \
 	roomlist.h \
 	savedstatuses.h \

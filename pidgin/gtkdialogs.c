@@ -767,6 +767,10 @@ pidgin_dialogs_im(void)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
+	field = purple_request_field_blist_nodes_new("blistnodes", _("Buddy"),
+			PURPLE_REQUEST_BLIST_FLAG_BUDDY, NULL);
+	purple_request_field_group_add_field(group, field);
+
 	field = purple_request_field_account_new("account", _("_Account"), NULL);
 	purple_request_field_set_type_hint(field, "account");
 	purple_request_field_set_visible(field,
