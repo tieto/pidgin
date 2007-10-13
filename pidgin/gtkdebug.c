@@ -36,6 +36,7 @@
 #include "gtkimhtml.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
+#include "gtkblist.h"
 
 #ifdef HAVE_REGEX_H
 # include <regex.h>
@@ -673,6 +674,7 @@ toolbar_context(GtkWidget *toolbar, GdkEventButton *event, gpointer null)
 static DebugWindow *
 debug_window_new(void)
 {
+	PidginBuddyList *blist;
 	DebugWindow *win;
 	GtkWidget *vbox;
 	GtkWidget *toolbar;
@@ -687,6 +689,9 @@ debug_window_new(void)
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/height");
 
 	PIDGIN_DIALOG(win->window);
+	if ((blist = pidgin_blist_get_default_gtk_blist()) != NULL)
+		if (blist->window)
+			gtk_window_set_transient_for(GTK_WINDOW(win->window), GTK_WINDOW(blist->window));
 	purple_debug_info("gtkdebug", "Setting dimensions to %d, %d\n",
 					width, height);
 

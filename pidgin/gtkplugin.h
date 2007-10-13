@@ -77,4 +77,9 @@ void pidgin_plugins_save(void);
  */
 void pidgin_plugin_dialog_show(void);
 
+/**
+ * Shows the Plugins dialog, transient to a parent window
+ */
+void pidgin_plugin_dialog_show_with_parent(GtkWindow *parent);
+
 #endif /* _PIDGINPLUGIN_H_ */
