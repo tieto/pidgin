@@ -1073,7 +1073,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 static void process_incoming_notify(struct simple_account_data *sip, struct sipmsg *msg) {
 	gchar *from;
 	gchar *fromhdr;
-	gchar *tmp2;
+	gchar *basicstatus_data;
 	xmlnode *pidf;
 	xmlnode *basicstatus = NULL, *tuple, *status;
 	gboolean isonline = FALSE;
@@ -1086,8 +1086,9 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 
 	if(!pidf) {
 		purple_debug_info("simple", "process_incoming_notify: no parseable pidf\n");
-		g_free(from);
+		purple_prpl_got_user_status(sip->account, from, "offline", NULL);
 		send_sip_response(sip->gc, msg, 200, "OK", NULL);
+		g_free(from);
 		return;
 	}
 
@@ -1102,27 +1103,28 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 		return;
 	}
 
-	tmp2 = xmlnode_get_data(basicstatus);
+	basicstatus_data = xmlnode_get_data(basicstatus);
 
-	if(!tmp2) {
+	if(!basicstatus_data) {
 		purple_debug_info("simple", "process_incoming_notify: no basic data found\n");
 		xmlnode_free(pidf);
 		g_free(from);
 		return;
 	}
 
-	if(strstr(tmp2, "open")) {
+	if(strstr(basicstatus_data, "open"))
 		isonline = TRUE;
-	}
 
-	g_free(tmp2);
 
-	if(isonline) purple_prpl_got_user_status(sip->account, from, "available", NULL);
-	else purple_prpl_got_user_status(sip->account, from, "offline", NULL);
+	if(isonline) 
+		purple_prpl_got_user_status(sip->account, from, "available", NULL);
+	else 
+		purple_prpl_got_user_status(sip->account, from, "offline", NULL);
 
 	xmlnode_free(pidf);
-
 	g_free(from);
+	g_free(basicstatus_data);
+
 	send_sip_response(sip->gc, msg, 200, "OK", NULL);
 }
 
