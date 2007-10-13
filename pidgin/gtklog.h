@@ -52,13 +52,34 @@ struct _PidginLogViewer {
 };
 
 
-
+/**
+ * @deprecated Use pidgin_log_show_with_parent() instead.
+ */
 void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account);
+
+/**
+ * @since 2.3.0
+ */
 void pidgin_log_show_with_parent(GtkWindow *parent, PurpleLogType type, const char *screenname, PurpleAccount *account);
+
+/**
+ * @deprecated pidgin_log_show_contact_with_parent() instead.
+ */
 void pidgin_log_show_contact(PurpleContact *contact);
+
+/**
+ * @since 2.3.0
+ */
 void pidgin_log_show_contact_with_parent(GtkWindow *parent, PurpleContact *contact);
 
+/**
+ * @deprecated Use pidgin_syslog_show_with_parent() instead.
+ */
 void pidgin_syslog_show(void);
+
+/**
+ * @since 2.3.0
+ */
 void pidgin_syslog_show_with_parent(GtkWindow *parent);
 
 /**************************************************************************/
