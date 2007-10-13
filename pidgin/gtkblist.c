@@ -5781,7 +5781,7 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 	gtkblist = PIDGIN_BLIST(purple_get_blist());
 
 	data->window = gtk_dialog_new_with_buttons(_("Add Buddy"),
-			NULL, GTK_DIALOG_NO_SEPARATOR,
+			gtkblist ? gtkblist->window : NULL, GTK_DIALOG_NO_SEPARATOR,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			GTK_STOCK_ADD, GTK_RESPONSE_OK,
 			NULL);
@@ -6163,7 +6163,7 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	data->window = gtk_dialog_new_with_buttons(_("Add Chat"),
-		NULL, GTK_DIALOG_NO_SEPARATOR,
+		gtkblist ? gtkblist->window : NULL, GTK_DIALOG_NO_SEPARATOR,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_ADD, GTK_RESPONSE_OK,
 		NULL);
