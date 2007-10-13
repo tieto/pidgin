@@ -5792,6 +5792,8 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 			GTK_STOCK_ADD, GTK_RESPONSE_OK,
 			NULL);
 
+	if (gtkblist)
+		gtk_window_set_transient_for(GTK_WINDOW(data->window), GTK_WINDOW(gtkblist->window));
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width(GTK_CONTAINER(data->window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
@@ -6174,6 +6176,8 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 		GTK_STOCK_ADD, GTK_RESPONSE_OK,
 		NULL);
 
+	if (gtkblist)
+		gtk_window_set_transient_for(GTK_WINDOW(data->window), GTK_WINDOW(gtkblist->window));
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width(GTK_CONTAINER(data->window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
