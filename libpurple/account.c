@@ -63,7 +63,10 @@ typedef struct
 	PurpleAccountRequestType type;
 	PurpleAccount *account;
 	void *ui_handle;
-
+	char *user;
+	gpointer userdata;
+	PurpleAccountRequestAuthorizationCb auth_cb;
+	PurpleAccountRequestAuthorizationCb deny_cb;
 } PurpleAccountRequestInfo;
 
 static PurpleAccountUiOps *account_ui_ops = NULL;
@@ -1157,6 +1160,28 @@ purple_account_request_close(void *ui_handle)
 	}
 }
 
+static void
+request_auth_cb(void *data)
+{
+	PurpleAccountRequestInfo *info = data;
+	info->auth_cb(info->userdata);
+	purple_signal_emit(purple_accounts_get_handle(),
+			"account-authorization-granted", info->account, info->user);
+	g_free(info->user);
+	g_free(info);
+}
+
+static void
+request_deny_cb(void *data)
+{
+	PurpleAccountRequestInfo *info = data;
+	info->deny_cb(info->userdata);
+	purple_signal_emit(purple_accounts_get_handle(),
+			"account-authorization-denied", info->account, info->user);
+	g_free(info->user);
+	g_free(info);
+}
+
 void *
 purple_account_request_authorization(PurpleAccount *account, const char *remote_user,
 				     const char *id, const char *alias, const char *message, gboolean on_list,
@@ -1164,18 +1189,35 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 {
 	PurpleAccountUiOps *ui_ops;
 	PurpleAccountRequestInfo *info;
+	int plugin_return;
 
 	g_return_val_if_fail(account     != NULL, NULL);
 	g_return_val_if_fail(remote_user != NULL, NULL);
 
 	ui_ops = purple_accounts_get_ui_ops();
 
+	plugin_return = GPOINTER_TO_INT(
+			purple_signal_emit_return_1(purple_accounts_get_handle(),
+				"account-authorization-requested", account, remote_user));
+
+	if (plugin_return > 0) {
+		auth_cb(user_data);
+		return NULL;
+	} else if (plugin_return < 0) {
+		deny_cb(user_data);
+		return NULL;
+	}
+
 	if (ui_ops != NULL && ui_ops->request_authorize != NULL) {
 		info            = g_new0(PurpleAccountRequestInfo, 1);
 		info->type      = PURPLE_ACCOUNT_REQUEST_AUTHORIZATION;
 		info->account   = account;
+		info->auth_cb   = auth_cb;
+		info->deny_cb   = deny_cb;
+		info->userdata  = user_data;
+		info->user      = g_strdup(remote_user);
 		info->ui_handle = ui_ops->request_authorize(account, remote_user, id, alias, message,
-							    on_list, auth_cb, deny_cb, user_data);
+							    on_list, request_auth_cb, request_deny_cb, info);
 
 		handles = g_list_append(handles, info);
 		return info->ui_handle;
@@ -2451,6 +2493,25 @@ purple_accounts_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 							 			PURPLE_SUBTYPE_ACCOUNT),
 						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "account-authorization-requested",
+						purple_marshal_INT__POINTER_POINTER,
+						purple_value_new(PURPLE_TYPE_INT), 2,
+						purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "account-authorization-denied",
+						purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+						purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "account-authorization-granted",
+						purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+						purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						purple_value_new(PURPLE_TYPE_STRING));
 
 	load_accounts();
 

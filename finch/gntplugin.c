@@ -83,6 +83,7 @@ plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 
 		if (!purple_plugin_unload(plugin)) {
 			purple_notify_error(NULL, _("ERROR"), _("unloading plugin failed"), NULL);
+			purple_plugin_disable(plugin);
 			gnt_tree_set_choice(GNT_TREE(tree), plugin, TRUE);
 		}
 

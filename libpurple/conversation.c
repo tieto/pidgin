@@ -225,6 +225,7 @@ add_message_to_history(PurpleConversation *conv, const char *who, const char *me
 	msg->flags = flags;
 	msg->what = g_strdup(message);
 	msg->when = when;
+	msg->conv = conv;
 
 	conv->message_history = g_list_prepend(conv->message_history, msg);
 }

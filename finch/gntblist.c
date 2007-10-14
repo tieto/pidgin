@@ -2328,10 +2328,12 @@ create_menu()
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
 
 	item = gnt_menuitem_new(_("Send IM..."));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "send-im");
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), send_im_select, NULL);
 
 	item = gnt_menuitem_new(_("Join Chat..."));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "join-chat");
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), join_chat_select, NULL);
 
@@ -2341,12 +2343,14 @@ create_menu()
 	gnt_menuitem_set_submenu(item, GNT_MENU(subsub));
 
 	item = gnt_menuitem_check_new(_("Empty groups"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "show-empty-groups");
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
 				purple_prefs_get_bool(PREF_ROOT "/emptygroups"));
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), toggle_pref_cb, PREF_ROOT "/emptygroups");
 	
 	item = gnt_menuitem_check_new(_("Offline buddies"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "show-offline-buddies");
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
 				purple_prefs_get_bool(PREF_ROOT "/showoffline"));
 	gnt_menu_add_item(GNT_MENU(subsub), item);
@@ -2358,14 +2362,17 @@ create_menu()
 	gnt_menuitem_set_submenu(item, GNT_MENU(subsub));
 
 	item = gnt_menuitem_new(_("By Status"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "sort-status");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), sort_blist_change_cb, "status");
 
 	item = gnt_menuitem_new(_("Alphabetically"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "sort-alpha");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), sort_blist_change_cb, "text");
 
 	item = gnt_menuitem_new(_("By Log Size"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "sort-log");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), sort_blist_change_cb, "log");
 
@@ -2376,14 +2383,17 @@ create_menu()
 	gnt_menuitem_set_submenu(item, GNT_MENU(subsub));
 
 	item = gnt_menuitem_new("Buddy");
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "add-buddy");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(item, menu_add_buddy_cb, NULL);
 
 	item = gnt_menuitem_new("Chat");
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "add-chat");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(item, menu_add_chat_cb, NULL);
 
 	item = gnt_menuitem_new("Group");
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "add-group");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(item, menu_add_group_cb, NULL);
 

@@ -31,8 +31,19 @@
 #include "conversation.h"
 
 /* Functions in gtkdialogs.c (these should actually stay in this file) */
+
 void pidgin_dialogs_destroy_all(void);
+
+/**
+ * @deprecated Use pidgin_dialogs_about_with_parent() instead.
+ */
 void pidgin_dialogs_about(void);
+
+/**
+ * @since 2.3.0
+ */
+void pidgin_dialogs_about_with_parent(GtkWindow *parent);
+
 void pidgin_dialogs_im(void);
 void pidgin_dialogs_im_with_user(PurpleAccount *, const char *);
 void pidgin_dialogs_info(void);
