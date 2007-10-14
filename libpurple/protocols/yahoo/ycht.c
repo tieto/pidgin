@@ -286,7 +286,7 @@ static void ycht_packet_send_write_cb(gpointer data, gint source, PurpleInputCon
 		/* TODO: error handling */
 /*
 		purple_connection_error_reason(purple_account_get_connection(irc->account),
-			      PURPLE_REASON_NETWORK_ERROR,
+			      PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			      _("Server has disconnected"));
 */
 		return;

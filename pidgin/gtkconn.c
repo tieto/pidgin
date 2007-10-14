@@ -139,7 +139,7 @@ do_signon(gpointer data)
 
 static void
 pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
-                                            PurpleDisconnectReason reason,
+                                            PurpleConnectionError reason,
                                             const char *text)
 {
 	PurpleAccount *account = NULL;
@@ -150,7 +150,7 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 	info = g_hash_table_lookup(auto_reconns, account);
 
 	pidgin_blist_update_account_error_state(account, text);
-	if (!purple_connection_reason_is_fatal (reason)) {
+	if (!purple_connection_error_is_fatal (reason)) {
 		if (info == NULL) {
 			info = g_new0(PidginAutoRecon, 1);
 			g_hash_table_insert(auto_reconns, account, info);
@@ -183,7 +183,7 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 		p = g_strdup_printf(_("%s disconnected"), n);
 		switch (reason)
 		{
-			case PURPLE_REASON_NO_SSL_SUPPORT:
+			case PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT:
 				s = g_strdup_printf(
 					_("%s\n\n"
 					"%s will not attempt to reconnect the account until you "
@@ -191,7 +191,7 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 					"compile %s with SSL support."), text, PIDGIN_NAME,
 					"http://developer.pidgin.im/wiki/FAQssl", PIDGIN_NAME);
 				break;
-			case PURPLE_REASON_NAME_IN_USE:
+			case PURPLE_CONNECTION_ERROR_NAME_IN_USE:
 				s = g_strdup_printf(
 					_("%s\n\n"
 					"%s will not attempt to reconnect the account until you "

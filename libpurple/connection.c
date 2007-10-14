@@ -490,33 +490,34 @@ purple_connection_error(PurpleConnection *gc, const char *text)
 {
 	/* prpls that have not been updated to use disconnection reasons will
 	 * be setting wants_to_die before calling this function, so choose
-	 * PURPLE_REASON_OTHER_ERROR (which is fatal) if it's true, and
-	 * PURPLE_REASON_NETWORK_ERROR (which isn't) if not.  See the
-	 * documentation in connection.h.
+	 * PURPLE_CONNECTION_ERROR_OTHER_ERROR (which is fatal) if it's true,
+	 * and PURPLE_CONNECTION_ERROR_NETWORK_ERROR (which isn't) if not.  See
+	 * the documentation in connection.h.
 	 */
-	PurpleDisconnectReason reason = gc->wants_to_die
-	                              ? PURPLE_REASON_OTHER_ERROR
-	                              : PURPLE_REASON_NETWORK_ERROR;
+	PurpleConnectionError reason = gc->wants_to_die
+	                             ? PURPLE_CONNECTION_ERROR_OTHER_ERROR
+	                             : PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 	purple_connection_error_reason (gc, reason, text);
 }
 
 void
 purple_connection_error_reason (PurpleConnection *gc,
-                                PurpleDisconnectReason reason,
+                                PurpleConnectionError reason,
                                 const char *description)
 {
 	PurpleConnectionUiOps *ops;
 
 	g_return_if_fail(gc   != NULL);
-	/* This sanity check relies on PURPLE_REASON_OTHER_ERROR being the
-	 * last member of the PurpleDisconnectReason enum in connection.h; if
-	 * other reasons are added after it, this check should be updated.
+	/* This sanity check relies on PURPLE_CONNECTION_ERROR_OTHER_ERROR
+	 * being the last member of the PurpleConnectionError enum in
+	 * connection.h; if other reasons are added after it, this check should
+	 * be updated.
 	 */
-	if (reason > PURPLE_REASON_OTHER_ERROR) {
+	if (reason > PURPLE_CONNECTION_ERROR_OTHER_ERROR) {
 		purple_debug_error("connection",
 			"purple_connection_error_reason: reason %u isn't a "
 			"valid reason\n", reason);
-		reason = PURPLE_REASON_OTHER_ERROR;
+		reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
 	}
 
 	if (description == NULL) {
@@ -528,7 +529,7 @@ purple_connection_error_reason (PurpleConnection *gc,
 	if (gc->disconnect_timeout)
 		return;
 
-	gc->wants_to_die = purple_connection_reason_is_fatal (reason);
+	gc->wants_to_die = purple_connection_error_is_fatal (reason);
 
 	ops = purple_connections_get_ui_ops();
 
@@ -548,47 +549,48 @@ void
 purple_connection_ssl_error (PurpleConnection *gc,
                              PurpleSslErrorType ssl_error)
 {
-	PurpleDisconnectReason reason;
+	PurpleConnectionError reason;
 
 	switch (ssl_error) {
 		case PURPLE_SSL_HANDSHAKE_FAILED:
 		case PURPLE_SSL_CONNECT_FAILED:
-			reason = PURPLE_REASON_ENCRYPTION_ERROR;
+			reason = PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR;
 			break;
 		case PURPLE_SSL_CERTIFICATE_INVALID:
 			/* TODO: maybe PURPLE_SSL_* should be more specific? */
-			reason = PURPLE_REASON_CERT_OTHER_ERROR;
+			reason = PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR;
 			break;
 		default:
 			g_assert_not_reached ();
-			reason = PURPLE_REASON_ENCRYPTION_ERROR;
+			reason = PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR;
 	}
 
-	purple_connection_error_reason (gc, reason, purple_ssl_strerror(ssl_error));
+	purple_connection_error_reason (gc, reason,
+		purple_ssl_strerror(ssl_error));
 }
 
 gboolean
-purple_connection_reason_is_fatal (PurpleDisconnectReason reason)
+purple_connection_error_is_fatal (PurpleConnectionError reason)
 {
 	switch (reason)
 	{
-		case PURPLE_REASON_NETWORK_ERROR:
-		case PURPLE_REASON_AUTHENTICATION_IMPOSSIBLE:
-		case PURPLE_REASON_CERT_NOT_PROVIDED:
-		case PURPLE_REASON_CERT_UNTRUSTED:
-		case PURPLE_REASON_CERT_EXPIRED:
-		case PURPLE_REASON_CERT_NOT_ACTIVATED:
-		case PURPLE_REASON_CERT_HOSTNAME_MISMATCH:
-		case PURPLE_REASON_CERT_FINGERPRINT_MISMATCH:
-		case PURPLE_REASON_CERT_SELF_SIGNED:
-		case PURPLE_REASON_CERT_OTHER_ERROR:
+		case PURPLE_CONNECTION_ERROR_NETWORK_ERROR:
+		case PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE:
+		case PURPLE_CONNECTION_ERROR_CERT_NOT_PROVIDED:
+		case PURPLE_CONNECTION_ERROR_CERT_UNTRUSTED:
+		case PURPLE_CONNECTION_ERROR_CERT_EXPIRED:
+		case PURPLE_CONNECTION_ERROR_CERT_NOT_ACTIVATED:
+		case PURPLE_CONNECTION_ERROR_CERT_HOSTNAME_MISMATCH:
+		case PURPLE_CONNECTION_ERROR_CERT_FINGERPRINT_MISMATCH:
+		case PURPLE_CONNECTION_ERROR_CERT_SELF_SIGNED:
+		case PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR:
 			return FALSE;
-		case PURPLE_REASON_AUTHENTICATION_FAILED:
-		case PURPLE_REASON_NO_SSL_SUPPORT:
-		case PURPLE_REASON_ENCRYPTION_ERROR:
-		case PURPLE_REASON_NAME_IN_USE:
-		case PURPLE_REASON_INVALID_SETTINGS:
-		case PURPLE_REASON_OTHER_ERROR:
+		case PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED:
+		case PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT:
+		case PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR:
+		case PURPLE_CONNECTION_ERROR_NAME_IN_USE:
+		case PURPLE_CONNECTION_ERROR_INVALID_SETTINGS:
+		case PURPLE_CONNECTION_ERROR_OTHER_ERROR:
 			return TRUE;
 		default:
 			g_return_val_if_reached(TRUE);

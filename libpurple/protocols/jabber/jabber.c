@@ -89,7 +89,8 @@ jabber_session_initialized_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		if(js->unregistration)
 			jabber_unregister_account_cb(js);
 	} else {
-		purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason (js->gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			("Error initializing session"));
 	}
 }
@@ -121,7 +122,8 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 			JabberBuddy *my_jb = NULL;
 			jabber_id_free(js->user);
 			if(!(js->user = jabber_id_new(full_jid))) {
-				purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR,
+				purple_connection_error_reason (js->gc,
+					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Invalid response from server."));
 			}
 			if((my_jb = jabber_buddy_find(js, full_jid, TRUE)))
@@ -129,7 +131,7 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 			g_free(full_jid);
 		}
 	} else {
-		PurpleDisconnectReason reason = PURPLE_REASON_NETWORK_ERROR;
+		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		char *msg = jabber_parse_error(js, packet, &reason);
 		purple_connection_error_reason (js->gc, reason, msg);
 		g_free(msg);
@@ -144,7 +146,8 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 		if(jabber_process_starttls(js, packet))
 			return;
 	} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE) && !js->gsc) {
-		purple_connection_error_reason (js->gc, PURPLE_REASON_ENCRYPTION_ERROR,
+		purple_connection_error_reason (js->gc,
+			 PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 			_("You require encryption, but it is not available on this server."));
 		return;
 	}
@@ -176,7 +179,7 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 
 static void jabber_stream_handle_error(JabberStream *js, xmlnode *packet)
 {
-	PurpleDisconnectReason reason = PURPLE_REASON_NETWORK_ERROR;
+	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 	char *msg = jabber_parse_error(js, packet, &reason);
 
 	purple_connection_error_reason (js->gc, reason, msg);
@@ -261,7 +264,8 @@ static void jabber_send_cb(gpointer data, gint source, PurpleInputCondition cond
 	if (ret < 0 && errno == EAGAIN)
 		return;
 	else if (ret <= 0) {
-		purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason (js->gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Write error"));
 		return;
 	}
@@ -316,7 +320,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 
 			if (ret < 0 && errno != EAGAIN)
 				purple_connection_error_reason (js->gc,
-					PURPLE_REASON_NETWORK_ERROR,
+					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Write error"));
 			else if (ret < olen) {
 				if (ret < 0)
@@ -346,7 +350,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 
 	if (ret < 0 && errno != EAGAIN)
 		purple_connection_error_reason (js->gc,
-			PURPLE_REASON_NETWORK_ERROR,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Write error"));
 	else if (ret < len) {
 		if (ret < 0)
@@ -416,7 +420,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 		return;
 	else
 		purple_connection_error_reason (js->gc,
-			PURPLE_REASON_NETWORK_ERROR,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Read Error"));
 }
 
@@ -455,7 +459,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 		return;
 	} else {
 		purple_connection_error_reason (js->gc,
-			PURPLE_REASON_NETWORK_ERROR,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Read Error"));
 	}
 }
@@ -495,7 +499,8 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
 				error);
-		purple_connection_error_reason (gc, PURPLE_REASON_NETWORK_ERROR, tmp);
+		purple_connection_error_reason (gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	}
@@ -540,7 +545,8 @@ static void jabber_login_connect(JabberStream *js, const char *fqdn, const char 
 
 	if (purple_proxy_connect(js->gc, js->gc->account, host,
 			port, jabber_login_callback, js->gc) == NULL)
-		purple_connection_error_reason (js->gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason (js->gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to create socket"));
 }
 
@@ -587,13 +593,15 @@ jabber_login(PurpleAccount *account)
 	js->old_length = -1;
 
 	if(!js->user) {
-		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
 		return;
 	}
 	
 	if (!js->user->domain || *(js->user->domain) == '\0') {
-		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID. Domain must be set."));
 		return;
 	}
@@ -624,7 +632,8 @@ jabber_login(PurpleAccount *account)
 					purple_account_get_int(account, "port", 5223), jabber_login_callback_ssl,
 					jabber_ssl_connect_failure, js->gc);
 		} else {
-			purple_connection_error_reason (js->gc, PURPLE_REASON_NO_SSL_SUPPORT,
+			purple_connection_error_reason (js->gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 		}
 	}
@@ -1078,7 +1087,8 @@ void jabber_register_account(PurpleAccount *account)
 	js->old_length = -1;
 
 	if(!js->user) {
-		purple_connection_error_reason (gc, PURPLE_REASON_INVALID_SETTINGS,
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
 			_("Invalid XMPP ID"));
 		return;
 	}
@@ -1111,7 +1121,8 @@ void jabber_register_account(PurpleAccount *account)
 					purple_account_get_int(account, "port", 5222),
 					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
 		} else {
-			purple_connection_error_reason (gc, PURPLE_REASON_NO_SSL_SUPPORT,
+			purple_connection_error_reason (gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("SSL support unavailable"));
 		}
 	}
@@ -1827,7 +1838,7 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 
 char *jabber_parse_error(JabberStream *js,
                          xmlnode *packet,
-                         PurpleDisconnectReason *reason)
+                         PurpleConnectionError *reason)
 {
 	xmlnode *error;
 	const char *code = NULL, *text = NULL;
@@ -1889,11 +1900,11 @@ char *jabber_parse_error(JabberStream *js,
 		}
 	} else if(xmlns && !strcmp(xmlns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
 		/* Most common reason can be the default */
-		SET_REASON(PURPLE_REASON_AUTHENTICATION_FAILED);
+		SET_REASON(PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED);
 		if(xmlnode_get_child(packet, "aborted")) {
 			text = _("Authorization Aborted");
 		} else if(xmlnode_get_child(packet, "incorrect-encoding")) {
-			SET_REASON(PURPLE_REASON_NETWORK_ERROR);
+			SET_REASON(PURPLE_CONNECTION_ERROR_NETWORK_ERROR);
 			text = _("Incorrect encoding in authorization");
 		} else if(xmlnode_get_child(packet, "invalid-authzid")) {
 			text = _("Invalid authzid");
@@ -1907,7 +1918,7 @@ char *jabber_parse_error(JabberStream *js,
 				purple_account_set_password(js->gc->account, NULL);
 			text = _("Not Authorized");
 		} else if(xmlnode_get_child(packet, "temporary-auth-failure")) {
-			SET_REASON(PURPLE_REASON_NETWORK_ERROR);
+			SET_REASON(PURPLE_CONNECTION_ERROR_NETWORK_ERROR);
 			text = _("Temporary Authentication Failure");
 		} else {
 			text = _("Authentication Failure");
@@ -1916,13 +1927,13 @@ char *jabber_parse_error(JabberStream *js,
 			 (!strcmp(packet->name, "error") && xmlns &&
 				!strcmp(xmlns, "http://etherx.jabber.org/streams"))) {
 		/* Most common reason as default: */
-		SET_REASON(PURPLE_REASON_NETWORK_ERROR);
+		SET_REASON(PURPLE_CONNECTION_ERROR_NETWORK_ERROR);
 		if(xmlnode_get_child(packet, "bad-format")) {
 			text = _("Bad Format");
 		} else if(xmlnode_get_child(packet, "bad-namespace-prefix")) {
 			text = _("Bad Namespace Prefix");
 		} else if(xmlnode_get_child(packet, "conflict")) {
-			SET_REASON(PURPLE_REASON_NAME_IN_USE);
+			SET_REASON(PURPLE_CONNECTION_ERROR_NAME_IN_USE);
 			text = _("Resource Conflict");
 		} else if(xmlnode_get_child(packet, "connection-timeout")) {
 			text = _("Connection Timeout");

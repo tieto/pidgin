@@ -139,7 +139,7 @@ static void _qq_got_login(gpointer data, gint source, const gchar *error_message
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	if (source < 0) {	/* socket returns -1 */
-		purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR, error_message);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_message);
 		return;
 	}
 
@@ -494,7 +494,7 @@ gint qq_proxy_write(qq_data *qd, guint8 *data, gint len)
 		ret = send(qd->fd, data, len, 0);
 	}
 	if (ret == -1)
-		purple_connection_error_reason(qd->gc, PURPLE_REASON_NETWORK_ERROR, strerror(errno));
+		purple_connection_error_reason(qd->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, strerror(errno));
 
 	return ret;
 }

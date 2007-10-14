@@ -215,7 +215,7 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 		/* Close the connection */
 		if (!sg->detaching)
 		  purple_connection_error_reason(gc,
-		                                 PURPLE_REASON_NETWORK_ERROR,
+		                                 PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 		                                 _("Disconnected by server"));
 		else
 		  /* TODO: Does this work correctly? Maybe we need to set wants_to_die? */
@@ -223,30 +223,30 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 		break;
 
 	case SILC_CLIENT_CONN_ERROR:
-		purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 		                             _("Error during connecting to SILC Server"));
 		g_unlink(silcpurple_session_file(purple_account_get_username(sg->account)));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_KE:
-		purple_connection_error_reason(gc, PURPLE_REASON_ENCRYPTION_ERROR,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
 		                             _("Key Exchange failed"));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_AUTH:
-		purple_connection_error_reason(gc, PURPLE_REASON_AUTHENTICATION_FAILED,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 		                             _("Authentication failed"));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_RESUME:
-		purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 		                             _("Resuming detached session failed. "
 		                               "Press Reconnect to create new connection."));
 		g_unlink(silcpurple_session_file(purple_account_get_username(sg->account)));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_TIMEOUT:
-		purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 		                             _("Connection Timeout"));
 		break;
 	}
@@ -268,7 +268,7 @@ silcpurple_stream_created(SilcSocketStreamStatus status, SilcStream stream,
 	sg = gc->proto_data;
 
 	if (status != SILC_SOCKET_OK) {
-		purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 		                             _("Connection failed"));
 		silc_pkcs_public_key_free(sg->public_key);
 		silc_pkcs_private_key_free(sg->private_key);
@@ -315,7 +315,7 @@ silcpurple_login_connected(gpointer data, gint source, const gchar *error_messag
 	sg = gc->proto_data;
 
 	if (source < 0) {
-		purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 		                             _("Connection failed"));
 		silc_pkcs_public_key_free(sg->public_key);
 		silc_pkcs_private_key_free(sg->private_key);
@@ -357,7 +357,7 @@ static void silcpurple_running(SilcClient client, void *context)
 				(char *)purple_account_get_string(account, "private-key", prd),
 				(gc->password == NULL) ? "" : gc->password,
 				&sg->public_key, &sg->private_key)) {
-		purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 		                             _("Could not load SILC key pair"));
 		gc->proto_data = NULL;
 		silc_free(sg);
@@ -371,7 +371,7 @@ static void silcpurple_running(SilcClient client, void *context)
 				 purple_account_get_int(account, "port", 706),
 				 silcpurple_login_connected, gc) == NULL)
 	{
-		purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 		                             _("Unable to create connection"));
 		gc->proto_data = NULL;
 		silc_free(sg);
@@ -401,7 +401,7 @@ silcpurple_login(PurpleAccount *account)
 	/* Allocate SILC client */
 	client = silc_client_alloc(&ops, &params, gc, NULL);
 	if (!client) {
-		purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 		                             _("Out of memory"));
 		return;
 	}
@@ -444,14 +444,14 @@ silcpurple_login(PurpleAccount *account)
 	/* Init SILC client */
 	if (!silc_client_init(client, username, hostname, realname,
 			      silcpurple_running, account)) {
-		purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 		                             _("Cannot initialize SILC protocol"));
 		return;
 	}
 
 	/* Check the ~/.silc dir and create it, and new key pair if necessary. */
 	if (!silcpurple_check_silc_dir(gc)) {
-		purple_connection_error_reason(gc, PURPLE_REASON_OTHER_ERROR,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 		                             _("Error loading SILC key pair"));
 		return;
 	}

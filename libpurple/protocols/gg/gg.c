@@ -381,14 +381,15 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 
 	if (email == NULL || p1 == NULL || p2 == NULL || t == NULL ||
 	    *email == '\0' || *p1 == '\0' || *p2 == '\0' || *t == '\0') {
-		purple_connection_error_reason (gc, PURPLE_REASON_OTHER_ERROR,
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 			_("Fill in the registration fields."));
 		goto exit_err;
 	}
 
 	if (g_utf8_collate(p1, p2) != 0) {
 		purple_connection_error_reason (gc,
-			PURPLE_REASON_AUTHENTICATION_FAILED,
+			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
 			_("Passwords do not match."));
 		goto exit_err;
 	}
@@ -397,7 +398,8 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 			token->id, t);
 	h = gg_register3(email, p1, token->id, t, 0);
 	if (h == NULL || !(s = h->data) || !s->success) {
-		purple_connection_error_reason (gc, PURPLE_REASON_OTHER_ERROR,
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 			_("Unable to register new account. Error occurred.\n"));
 		goto exit_err;
 	}
@@ -1310,7 +1312,8 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 	if (!(ev = gg_watch_fd(info->session))) {
 		purple_debug_error("gg",
 			"ggp_callback_recv: gg_watch_fd failed -- CRITICAL!\n");
-		purple_connection_error_reason (gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to read socket"));
 		return;
 	}
@@ -1464,7 +1467,8 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 
 	if (!(ev = gg_watch_fd(info->session))) {
 		purple_debug_error("gg", "login_handler: gg_watch_fd failed!\n");
-		purple_connection_error_reason (gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to read socket"));
 		return;
 	}
@@ -1512,7 +1516,7 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 			purple_input_remove(gc->inpa);
 			gc->inpa = 0;
 			purple_connection_error_reason (gc,
-				PURPLE_REASON_NETWORK_ERROR,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Connection failed."));
 			break;
 		default:
@@ -1719,7 +1723,8 @@ static void ggp_login(PurpleAccount *account)
 
 	info->session = gg_login(glp);
 	if (info->session == NULL) {
-		purple_connection_error_reason (gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Connection failed."));
 		g_free(glp);
 		return;
@@ -2003,7 +2008,8 @@ static void ggp_keepalive(PurpleConnection *gc)
 	if (gg_ping(info->session) < 0) {
 		purple_debug_info("gg", "Not connected to the server "
 				"or gg_session is not correct\n");
-		purple_connection_error_reason (gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Not connected to the server."));
 	}
 }

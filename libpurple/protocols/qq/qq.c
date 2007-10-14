@@ -136,7 +136,7 @@ static void _qq_login(PurpleAccount *account)
 	purple_connection_update_progress(gc, _("Connecting"), 0, QQ_CONNECT_STEPS);
 
 	if (qq_connect(account, qq_server, strtol(qq_port, NULL, 10), use_tcp, FALSE) < 0)
-		purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR,
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unable to connect."));
 }
 

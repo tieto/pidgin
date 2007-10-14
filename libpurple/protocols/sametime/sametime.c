@@ -414,7 +414,8 @@ static int mw_session_io_write(struct mwSession *session,
 
   } else if(len > 0) {
     DEBUG_ERROR("write returned %i, %i bytes left unwritten\n", ret, len);
-    purple_connection_error_reason(pd->gc, PURPLE_REASON_NETWORK_ERROR,
+    purple_connection_error_reason(pd->gc,
+                                   PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                    _("Connection closed (writing)"));
 
 #if 0
@@ -1553,36 +1554,36 @@ static void mw_session_stateChange(struct mwSession *session,
 
     if(GPOINTER_TO_UINT(info) & ERR_FAILURE) {
       char *err = mwError(GPOINTER_TO_UINT(info));
-      PurpleDisconnectReason reason;
+      PurpleConnectionError reason;
       switch (GPOINTER_TO_UINT(info)) {
       case VERSION_MISMATCH:
-        reason = PURPLE_REASON_OTHER_ERROR;
+        reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
         break;
 
       case USER_RESTRICTED:
       case INCORRECT_LOGIN:
       case USER_UNREGISTERED:
       case GUEST_IN_USE:
-        reason = PURPLE_REASON_AUTHENTICATION_FAILED;
+        reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
         break;
 
       case ENCRYPT_MISMATCH:
       case ERR_ENCRYPT_NO_SUPPORT:
       case ERR_NO_COMMON_ENCRYPT:
-        reason = PURPLE_REASON_ENCRYPTION_ERROR;
+        reason = PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR;
         break;
 
       case VERIFICATION_DOWN:
-        reason = PURPLE_REASON_AUTHENTICATION_IMPOSSIBLE;
+        reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE;
         break;
 
       case MULTI_SERVER_LOGIN:
       case MULTI_SERVER_LOGIN2:
-        reason = PURPLE_REASON_NAME_IN_USE;
+        reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
         break;
 
       default:
-        reason = PURPLE_REASON_NETWORK_ERROR;
+        reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
       }
       purple_connection_error_reason(gc, reason, err);
       g_free(err);
@@ -1732,7 +1733,9 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
   if(! ret) {
     const char *msg = _("Connection reset");
     DEBUG_INFO("connection reset\n");
-    purple_connection_error_reason(pd->gc, PURPLE_REASON_NETWORK_ERROR, msg);
+    purple_connection_error_reason(pd->gc,
+                                   PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+                                   msg);
 
   } else if(ret < 0) {
     char *msg = strerror(err);
@@ -1740,7 +1743,9 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
     DEBUG_INFO("error in read callback: %s\n", msg);
 
     msg = g_strdup_printf(_("Error reading from socket: %s"), msg);
-    purple_connection_error_reason(pd->gc, PURPLE_REASON_NETWORK_ERROR, msg);
+    purple_connection_error_reason(pd->gc,
+                                   PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+                                   msg);
     g_free(msg);
   }
 }
@@ -1763,7 +1768,9 @@ static void connect_cb(gpointer data, gint source, const gchar *error_message) {
     } else {
       /* this is a regular connect, error out */
       const char *msg = _("Unable to connect to host");
-      purple_connection_error_reason(pd->gc, PURPLE_REASON_NETWORK_ERROR, msg);
+      purple_connection_error_reason(pd->gc,
+                                     PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+                                     msg);
     }
 
     return;
@@ -3646,7 +3653,9 @@ static void mw_prpl_login(PurpleAccount *acct);
 
 static void prompt_host_cancel_cb(PurpleConnection *gc) {
   const char *msg = _("No Sametime Community Server specified");
-  purple_connection_error_reason(gc, PURPLE_REASON_INVALID_SETTINGS, msg);
+  purple_connection_error_reason(gc,
+                                 PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+                                 msg);
 }
 
 
@@ -3758,7 +3767,7 @@ static void mw_prpl_login(PurpleAccount *account) {
   purple_connection_update_progress(gc, _("Connecting"), 1, MW_CONNECT_STEPS);
 
   if (purple_proxy_connect(gc, account, host, port, connect_cb, pd) == NULL) {
-    purple_connection_error_reason(gc, PURPLE_REASON_NETWORK_ERROR,
+    purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
                                    _("Unable to connect to host"));
   }
 }
