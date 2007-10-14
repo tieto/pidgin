@@ -169,7 +169,8 @@ ALIASES                = "signal=- @ref" \
                          "endsignalproto=@endcode" \
                          "signaldesc=@par Description:" \
                          "signals=@b Signals:" \
-                         "endsignals="
+                         "endsignals=" \
+                         "constreturn=@note The return value of this function must not be modified or freed. @return"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources 
 # only. Doxygen will then generate output that is more tailored for C. 
