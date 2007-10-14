@@ -799,9 +799,9 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 				   who, purple_account_get_username(account), name);
 
 
-		purple_request_accept_cancel(gc, NULL, _("Accept chat invitation?"), buf2,
+		purple_request_accept_cancel_with_hint(gc, NULL, _("Accept chat invitation?"), buf2,
 							   PURPLE_DEFAULT_ACTION_NONE, account, who, NULL,
-							   cid, G_CALLBACK(chat_invite_accept),
+							   "chat", cid, G_CALLBACK(chat_invite_accept),
 							   G_CALLBACK(chat_invite_reject));
 	}
 	else if (plugin_return > 0)
