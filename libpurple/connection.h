@@ -119,11 +119,12 @@ typedef enum
 	/** Some other error occured which fits into none of the other
 	 *  categories.
 	 */
+	/* purple_connection_error_reason() in connection.c uses the fact that
+	 * this is the last member of the enum when sanity-checking; if other
+	 * reasons are added after it, the check must be updated.
+	 */
 	PURPLE_REASON_OTHER_ERROR = 15
 } PurpleDisconnectReason;
-
-/** 1 more than the value of the last #PurpleDisconnectReason. */
-#define PURPLE_NUM_REASONS 16
 
 #include <time.h>
 

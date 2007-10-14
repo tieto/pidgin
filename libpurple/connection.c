@@ -508,7 +508,16 @@ purple_connection_error_reason (PurpleConnection *gc,
 	PurpleConnectionUiOps *ops;
 
 	g_return_if_fail(gc   != NULL);
-	g_return_if_fail(reason < PURPLE_NUM_REASONS);
+	/* This sanity check relies on PURPLE_REASON_OTHER_ERROR being the
+	 * last member of the PurpleDisconnectReason enum in connection.h; if
+	 * other reasons are added after it, this check should be updated.
+	 */
+	if (reason > PURPLE_REASON_OTHER_ERROR) {
+		purple_debug_error("connection",
+			"purple_connection_error_reason: reason %u isn't a "
+			"valid reason\n", reason);
+		reason = PURPLE_REASON_OTHER_ERROR;
+	}
 
 	if (description == NULL) {
 		purple_debug_error("connection", "purple_connection_error_reason: check `description != NULL' failed\n");
