@@ -194,6 +194,7 @@ finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 	PurpleAccount *account = purple_connection_get_account(gc);
 	GString *message = g_string_new(NULL);
 	void *ret;
+	static int key = 0;
 
 	if (!detailed)
 	{
@@ -212,7 +213,7 @@ finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 
 		to = g_strdup_printf("%s (%s)", tos ? *tos : purple_account_get_username(account),
 					purple_account_get_protocol_name(account));
-		gnt_tree_add_row_after(GNT_TREE(emaildialog.tree), GINT_TO_POINTER(time(NULL)),
+		gnt_tree_add_row_after(GNT_TREE(emaildialog.tree), GINT_TO_POINTER(++key),
 				gnt_tree_create_row(GNT_TREE(emaildialog.tree), to,
 					froms ? *froms : "[Unknown sender]",
 					*subjects),
@@ -360,7 +361,8 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 	i = 0;
 	for (iter = results->columns; iter; iter = iter->next)
 	{
-		gnt_tree_set_column_title(GNT_TREE(tree), i, iter->data);
+		PurpleNotifySearchColumn *column = iter->data;
+		gnt_tree_set_column_title(GNT_TREE(tree), i, column->title);
 		i++;
 	}
 

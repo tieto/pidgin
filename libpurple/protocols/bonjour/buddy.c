@@ -62,8 +62,10 @@ void clear_bonjour_buddy_values(BonjourBuddy *buddy) {
 }
 
 void
-set_bonjour_buddy_value(BonjourBuddy* buddy, const char *record_key, const char *value, uint32_t len){
+set_bonjour_buddy_value(BonjourBuddy* buddy, const char *record_key, const char *value, guint32 len){
 	gchar **fld = NULL;
+
+	g_return_if_fail(record_key != NULL);
 
 	if (!strcmp(record_key, "1st"))
 		fld = &buddy->first;

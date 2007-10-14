@@ -457,7 +457,8 @@ RECURSIVE              = NO
 # excluded from the INPUT source files. This way you can easily exclude a 
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = 
+EXCLUDE                = libpurple/purple-client.h \
+                         libpurple/purple-client-bindings.h
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or directories 
 # that are symbolic links (a Unix filesystem feature) are excluded from the input.
@@ -857,7 +858,7 @@ MAN_LINKS              = NO
 # feature is still experimental and incomplete at the 
 # moment.
 
-GENERATE_XML           = NO
+GENERATE_XML           = YES
 
 # The XML_OUTPUT tag is used to specify where the XML pages will be put. 
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 
@@ -1160,7 +1161,7 @@ MAX_DOT_GRAPH_HEIGHT   = 1024
 # not sufficient to fit the graph (see MAX_DOT_GRAPH_WIDTH and MAX_DOT_GRAPH_HEIGHT). 
 # If 0 is used for the depth value (the default), the graph is not depth-constrained.
 
-MAX_DOT_GRAPH_DEPTH    = 0
+MAX_DOT_GRAPH_DEPTH    = 2
 
 # Set the DOT_TRANSPARENT tag to YES to generate images with a transparent 
 # background. This is disabled by default, which results in a white background. 

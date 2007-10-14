@@ -1526,6 +1526,8 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 
 			if (prpl_info && prpl_info->can_receive_file)
 				ft = prpl_info->can_receive_file(gc, who);
+			else if (prpl_info && prpl_info->send_file)
+				ft = TRUE;
 
 			if (im && ft)
 				purple_request_choice(NULL, NULL,
@@ -1559,6 +1561,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 						    _("Set as buddy icon"), DND_BUDDY_ICON,
 						    (ft ? _("Send image file") : _("Insert in message")), (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
 							NULL);
+			gdk_pixbuf_unref(pb);
 			return;
 		}
 
