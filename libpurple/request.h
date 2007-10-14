@@ -198,27 +198,76 @@ typedef struct
 
 } PurpleRequestField;
 
-/**
- * List of UI hints used by purple
+/*
+ * UI hints for the request functions.  These are used by libpurple.
  */
-#define PURPLE_REQUEST_HINT_ACCOUNT  "account"
-#define PURPLE_REQUEST_HINT_BLIST    "blist"
-#define PURPLE_REQUEST_HINT_BUDDY    "buddy"
-#define PURPLE_REQUEST_HINT_CONV     "conversation"
-#define PURPLE_REQUEST_HINT_REGISTER "register-account"
-#define PURPLE_REQUEST_HINT_XFER     "xfer"
 
 /**
- * List of UI hints used by purple UIs
- * We need a header file included by both pidgin and finch, but not part of
- * libpurple for these
+ * @since 2.3.0
+ */
+#define PURPLE_REQUEST_HINT_ACCOUNT  "account"
+
+/**
+ * @since 2.3.0
+ */
+#define PURPLE_REQUEST_HINT_BLIST    "blist"
+
+/**
+ * @since 2.3.0
+ */
+#define PURPLE_REQUEST_HINT_BUDDY    "buddy"
+
+/**
+ * @since 2.3.0
+ */
+#define PURPLE_REQUEST_HINT_CONV     "conversation"
+
+/**
+ * @since 2.3.0
+ */
+#define PURPLE_REQUEST_HINT_REGISTER "register-account"
+
+/**
+ * @since 2.3.0
+ */
+#define PURPLE_REQUEST_HINT_XFER     "xfer"
+
+
+/*
+ * UI hints for the request functions.  These are common hints used by UIs.
+ * UIs can still define any hints they like, but standardization is good.
+ */
+
+/**
+ * @since 2.3.0
  */
 #define PURPLE_UI_REQUEST_HINT_ACCOUNTMGR "accountmgr"
+
+/**
+ * @since 2.3.0
+ */
 #define PURPLE_UI_REQUEST_HINT_CERTMGR    "certmgr"
+
+/**
+ * @since 2.3.0
+ */
 #define PURPLE_UI_REQUEST_HINT_PLUGINMGR  "pluginmgr"
+
+/**
+ * @since 2.3.0
+ */
 #define PURPLE_UI_REQUEST_HINT_POUNCEMGR  "pouncemgr"
+
+/**
+ * @since 2.3.0
+ */
 #define PURPLE_UI_REQUEST_HINT_PREFSMGR   "preferences"
+
+/**
+ * @since 2.3.0
+ */
 #define PURPLE_UI_REQUEST_HINT_STATUSMGR  "statusmgr"
+
 
 /**
  * Request UI operations.
@@ -1370,7 +1419,6 @@ void *purple_request_input_with_hint(void *handle, const char *title,
  * @param account		The PurpleAccount associated with this request, or NULL if none is
  * @param who			The username of the buddy assocaited with this request, or NULL if none is
  * @param conv			The PurpleConversation associated with this request, or NULL if none is
- * @param ui_hint       UI hint
  * @param user_data     The data to pass to the callback.
  *
  * @return A UI-specific handle.
@@ -1439,7 +1487,6 @@ void *purple_request_choice_with_hint(void *handle, const char *title,
  * @param account		The PurpleAccount associated with this request, or NULL if none is
  * @param who			The username of the buddy assocaited with this request, or NULL if none is
  * @param conv			The PurpleConversation associated with this request, or NULL if none is
- * @param ui_hint       UI hint
  * @param user_data     The data to pass to the callback.
  * @param ...           The choices.  This argument list should be
  *                      terminated with a NULL parameter.
@@ -1509,7 +1556,6 @@ void *purple_request_choice_varg_with_hint(void *handle, const char *title,
  * @param account		The PurpleAccount associated with this request, or NULL if none is
  * @param who			The username of the buddy assocaited with this request, or NULL if none is
  * @param conv			The PurpleConversation associated with this request, or NULL if none is
- * @param ui_hint       UI hint
  * @param user_data     The data to pass to the callback.
  * @param choices       The choices.  This argument list should be
  *                      terminated with a @c NULL parameter.
@@ -1579,7 +1625,6 @@ void *purple_request_action_with_hint(void *handle, const char *title,
  * @param account		 The PurpleAccount associated with this request, or NULL if none is
  * @param who			 The username of the buddy assocaited with this request, or NULL if none is
  * @param conv			 The PurpleConversation associated with this request, or NULL if none is
- * @param ui_hint        UI hint
  * @param user_data      The data to pass to the callback.
  * @param action_count   The number of actions.
  * @param ...            A list of actions.  These are pairs of
@@ -1648,7 +1693,6 @@ void *purple_request_action_varg_with_hint(void *handle, const char *title,
  * @param account		 The PurpleAccount associated with this request, or NULL if none is
  * @param who			 The username of the buddy assocaited with this request, or NULL if none is
  * @param conv			 The PurpleConversation associated with this request, or NULL if none is
- * @param ui_hint        UI hint
  * @param user_data      The data to pass to the callback.
  * @param action_count   The number of actions.
  * @param actions        A list of actions and callbacks.
@@ -1715,7 +1759,6 @@ void *purple_request_fields_with_hint(void *handle, const char *title,
  * @param account	  The PurpleAccount associated with this request, or NULL if none is
  * @param who		  The username of the buddy associated with this request, or NULL if none is
  * @param conv		  The PurpleConversation associated with this request, or NULL if none is
- * @param ui_hint     UI hint
  * @param user_data   The data to pass to the callback.
  *
  * @return A UI-specific handle.
@@ -1870,7 +1913,6 @@ void *purple_request_file_with_hint(void *handle, const char *title, const char 
  * @param account	  The PurpleAccount associated with this request, or NULL if none is
  * @param who		  The username of the buddy assocaited with this request, or NULL if none is
  * @param conv		  The PurpleConversation associated with this request, or NULL if none is
- * @param ui_hint     UI hint
  * @param user_data   The data to pass to the callback.
  *
  * @return A UI-specific handle.
@@ -1925,7 +1967,6 @@ void *purple_request_folder_with_hint(void *handle, const char *title, const cha
  * @param account	  The PurpleAccount associated with this request, or NULL if none is
  * @param who		  The username of the buddy assocaited with this request, or NULL if none is
  * @param conv		  The PurpleConversation associated with this request, or NULL if none is
- * @param ui_hint     UI hint
  * @param user_data   The data to pass to the callback.
  *
  * @return A UI-specific handle.
