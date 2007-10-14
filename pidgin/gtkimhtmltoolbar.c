@@ -429,14 +429,14 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 		}
 
 		toolbar->link_dialog =
-			purple_request_fields(toolbar, _("Insert Link"),
+			purple_request_fields_with_hint(toolbar, _("Insert Link"),
 					    NULL,
-						msg,
+					    msg,
 					    fields,
 					    _("_Insert"), G_CALLBACK(do_insert_link_cb),
 					    _("Cancel"), G_CALLBACK(cancel_link_cb),
-						NULL, NULL, NULL,
-					    toolbar);
+					    NULL, NULL, NULL,
+					    "conversation", toolbar);
 		g_free(msg);
 		g_free(desc);
 	} else {
