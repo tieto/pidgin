@@ -297,6 +297,7 @@ prefs_start_element_handler (GMarkupParseContext *context,
 						g_filename_from_utf8(pref_value, -1, NULL, NULL, NULL));
 			}
 		}
+		g_string_free(pref_name_full, TRUE);
 	} else {
 		char *decoded;
 
