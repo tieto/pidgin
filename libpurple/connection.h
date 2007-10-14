@@ -387,7 +387,7 @@ void purple_connection_notice(PurpleConnection *gc, const char *text);
  * Closes a connection with an error.
  *
  * @param gc     The connection.
- * @param reason The error text.
+ * @param reason The error text, which may not be @c NULL.
  * @deprecated in favour of #purple_connection_error_reason.  Calling
  *  @c purple_connection_error(gc, text) is equivalent to calling
  *  @c purple_connection_error_reason(gc, reason, text) where @c reason is
@@ -399,12 +399,12 @@ void purple_connection_notice(PurpleConnection *gc, const char *text);
 void purple_connection_error(PurpleConnection *gc, const char *reason);
 
 /**
- * Closes a connection with an error and an optional description of the
+ * Closes a connection with an error and a human-readable description of the
  * error.  It also sets @c gc->wants_to_die to the value of
  * #purple_connection_error_is_fatal(@a reason).
  *
  * @param reason      why the connection is closing.
- * @param description a localized description of the error.
+ * @param description a non-@c NULL localized description of the error.
  * @since 2.3.0
  */
 void
@@ -426,14 +426,14 @@ purple_connection_ssl_error (PurpleConnection *gc,
  * Reports whether a disconnection reason is fatal (in which case the account
  * should probably not be automatically reconnected) or transient (so
  * auto-reconnection is a good idea).
- * For instance, #PURPLE_CONNECTION_ERROR_NETWORK_ERROR is a temporary
- * error, which might be caused by losing the network connection, so
- * @c purple_connection_error_is_fatal
- * (@c PURPLE_CONNECTION_ERROR_NETWORK_ERROR) is @c FALSE.  On the other hand,
+ * For instance, #PURPLE_CONNECTION_ERROR_NETWORK_ERROR is a temporary error,
+ * which might be caused by losing the network connection, so <tt>
+ * purple_connection_error_is_fatal (PURPLE_CONNECTION_ERROR_NETWORK_ERROR)</tt>
+ * is @c FALSE.  On the other hand,
  * #PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED probably indicates a
  * misconfiguration of the account which needs the user to go fix it up, so
- * @c purple_connection_error_is_fatal
- * (@c PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED) is @c TRUE.
+ * <tt> purple_connection_error_is_fatal
+ * (PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED)</tt> is @c TRUE.
  *
  * (This function is meant to replace checking PurpleConnection.wants_to_die.)
  *
