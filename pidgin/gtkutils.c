@@ -111,19 +111,20 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 		desc = pango_font_description_from_string(font);
 	} else if (purple_running_gnome()) {
 		/* Use the GNOME "document" font, if applicable */
-		char *path, *font;
+		char *path;
 
 		if ((path = g_find_program_in_path("gconftool-2"))) {
+			char *font = NULL;
 			g_free(path);
-			if (!g_spawn_command_line_sync(
+			if (g_spawn_command_line_sync(
 					"gconftool-2 -g /desktop/gnome/interface/document_font_name",
-					&font, NULL, NULL, NULL))
-				return;
+					&font, NULL, NULL, NULL)) {
+				desc = pango_font_description_from_string(font);
+			}
+			g_free(font);
 		}
-		desc = pango_font_description_from_string(font);
-		g_free(font);
 	}
-	
+
 	if (desc) {
 		gtk_widget_modify_font(imhtml, desc);
 		pango_font_description_free(desc);
@@ -1525,6 +1526,8 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 
 			if (prpl_info && prpl_info->can_receive_file)
 				ft = prpl_info->can_receive_file(gc, who);
+			else if (prpl_info && prpl_info->send_file)
+				ft = TRUE;
 
 			if (im && ft)
 				purple_request_choice(NULL, NULL,
@@ -1558,6 +1561,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 						    _("Set as buddy icon"), DND_BUDDY_ICON,
 						    (ft ? _("Send image file") : _("Insert in message")), (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
 							NULL);
+			gdk_pixbuf_unref(pb);
 			return;
 		}
 

@@ -48,6 +48,13 @@ docs: Doxyfile
 if HAVE_DOXYGEN
 	@echo "Running doxygen..."
 	@doxygen
+if HAVE_XSLTPROC
+	@echo "Generating devhelp index..."
+	@xsltproc doxy2devhelp.xsl doc/xml/index.xml > doc/html/pidgin.devhelp
+	@echo "(Symlink doc/html to ~/.local/share/gtk-doc/html/pidgin to make devhelp see the documentation)"
+else
+	@echo "Not generating devhelp index: xsltproc was not found by configure"
+endif
 else
 	@echo "doxygen was not found during configure.  Aborting."
 	@echo;

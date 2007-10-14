@@ -138,11 +138,21 @@ int wpurple_sendto(int socket, const void *buf, size_t len, int flags, const str
 
 /* fcntl.h */
 /* This is not a full implementation of fcntl. Update as needed.. */
-int wpurple_fcntl(int socket, int command, int val) {
+int wpurple_fcntl(int socket, int command, ...) {
+
 	switch( command ) {
+	case F_GETFL:
+		return 0;
+
 	case F_SETFL:
 	{
+		va_list args;
+		int val;
 		int ret=0;
+
+		va_start(args, command);
+		val = va_arg(args, int);
+		va_end(args);
 
 		switch( val ) {
 		case O_NONBLOCK:
@@ -152,7 +162,7 @@ int wpurple_fcntl(int socket, int command, int val) {
 			break;
 		}
 		case 0:
-	        {
+		{
 			u_long imode=0;
 			ret = ioctlsocket(socket, FIONBIO, &imode);
 			break;

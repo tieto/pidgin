@@ -227,10 +227,7 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 	}
 	else if (list_id == MSN_LIST_RL)
 	{
-		PurpleConnection *gc;
 		PurpleConversation *convo;
-
-		gc = purple_account_get_connection(account);
 
 		purple_debug_info("msn",
 						"%s has added you to his or her buddy list.\n",

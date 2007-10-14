@@ -142,13 +142,21 @@ AM_GLIB_GNU_GETTEXT
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
 dnl AM_GLIB_GNU_GETTEXT found it.
 
-if test x$MSGFMT = xno
+if test x$MSGFMT = xno -o x$MSGFMT$GMSGFMT = x
 then
 	AC_ERROR([
 
 The msgfmt command is required to build libpurple.  If it is installed
 on your system, ensure that it is in your path.  If it is not, install
 GNU gettext to continue.
+
+If you have msgfmt installed, but for some reason this error message
+is still displayed, you have encountered what appears to be a bug in
+third-party configure macros.  Try setting the MSGFMT environment
+variable to the absolute path to your msgfmt binary and trying
+configure again, like this:
+
+MSGFMT=/path/to/msgfmt ./configure ...
 ])
 fi
 
@@ -2093,6 +2101,10 @@ AC_ARG_ENABLE(dot,
 	[AC_HELP_STRING([--enable-dot],
 		[enable graphs in doxygen via 'dot'])],
 	enable_dot="$enableval", enable_dot="yes")
+AC_ARG_ENABLE(devhelp,
+	[AC_HELP_STRING([--enable-devhelp],
+		[enable building index for devhelp documentation browser])],
+	enable_devhelp="$enableval", enable_devhelp="yes")
 
 if test "x$enable_doxygen" = xyes; then
 	AC_CHECK_PROG(DOXYGEN, doxygen, true, false)
@@ -2112,14 +2124,28 @@ if test "x$enable_doxygen" = xyes; then
 				AC_DEFINE_UNQUOTED(HAVE_DOT, 1, [whether or not we have dot])
 			fi
 		fi
+
+		if test "x$enable_devhelp" = "xyes"; then
+			AC_CHECK_PROG(XSLTPROC, xsltproc, true, false)
+
+			if test $XSLTPROC = false; then
+				enable_devhelp="no";
+				AC_MSG_WARN([*** xsltproc not found; devhelp index will not be created])
+			else
+				AC_DEFINE_UNQUOTED(HAVE_XSLTPROC, 1, [whether or not we have xsltproc for devhelp index])
+			fi
+		fi
 	fi
 else
 	enable_dot="no"
+	enable_devhelp="no"
 fi
 
 AC_SUBST(enable_doxygen)
 AC_SUBST(enable_dot)
+AC_SUBST(enable_devhelp)
 AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
+AM_CONDITIONAL(HAVE_XSLTPROC, test "x$enable_devhelp" = "xyes")
 
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)
@@ -2247,6 +2273,7 @@ AC_OUTPUT([Makefile
 		   share/Makefile
 		   share/sounds/Makefile
 		   share/ca-certs/Makefile
+		   finch/finch.pc
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc

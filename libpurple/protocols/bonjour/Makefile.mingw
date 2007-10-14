@@ -36,7 +36,6 @@ INCLUDE_PATHS +=	-I. \
 			-I$(PIDGIN_TREE_TOP)
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
-			-L$(BONJOUR_TOP)/lib \
 			-L$(LIBXML2_TOP)/lib \
 			-L$(PURPLE_TOP)
 
@@ -66,6 +65,7 @@ LIBS =	\
 
 ifeq ($(LINK_DNS_SD_DIRECTLY), 1)
 	CFLAGS += -DLINK_DNS_SD_DIRECTLY
+	LIB_PATHS += -L$(BONJOUR_TOP)/lib/win32 -L$(BONJOUR_TOP)/lib
 	LIBS += -ldnssd
 endif
 

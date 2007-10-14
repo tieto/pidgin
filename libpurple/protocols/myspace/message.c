@@ -314,7 +314,7 @@ msim_msg_clone_element(gpointer data, gpointer user_data)
 	MsimMessageElement *elem;
 	MsimMessage **new;
 	gpointer new_data;
-				
+
 	GString *gs;
 	MsimMessage *dict;
 
@@ -349,7 +349,7 @@ msim_msg_clone_element(gpointer data, gpointer user_data)
 
 		default:
 			purple_debug_info("msim", "msim_msg_clone_element: unknown type %d\n", elem->type);
-			g_return_if_fail(NULL);
+			g_return_if_reached();
 	}
 
 	/* Append cloned data. Note that the 'name' field is a static string, so it
@@ -905,7 +905,7 @@ msim_msg_pack_element(gpointer data, gpointer user_data)
 
 		default:
 			g_free(data_string);
-			g_return_if_fail(FALSE);
+			g_return_if_reached();
 			break;
 	}
 

@@ -230,11 +230,9 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
 	PurpleAccount *account;
-	PurpleConnection *gc;
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = purple_account_get_connection(account);
 
 	if (!g_ascii_strcasecmp(cmd->params[1], "OK"))
 	{
@@ -448,7 +446,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	const char *passport;
 	const char *content_type;
 
-	purple_debug_info("MSNP14","Process UBM payload:%s\n",payload);
+	purple_debug_info("MSNP14","Process UBM payload:%.*s\n", len, payload);
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
 	msn_message_parse_payload(msg, payload, len,MSG_LINE_DEM,MSG_BODY_DEM);
@@ -531,7 +529,7 @@ ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}else{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
-		purple_debug_info("MSNP14","UBM payload:{%s}\n",cmd->payload);
+		purple_debug_info("MSNP14","UBM payload:{%.*s}\n", cmd->payload_len, cmd->payload);
 		ubm_cmd_post(cmdproc, cmd, cmd->payload, cmd->payload_len);
 	}
 }
@@ -1614,7 +1612,6 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	MsnSession *session;
 	PurpleAccount *account;
-	PurpleConnection *gc;
 	MsnUser *user;
 	const char *passport;
 	char *psm_str, *currentmedia_str, *str;
@@ -1624,7 +1621,6 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = purple_account_get_connection(account);
 
 	passport = cmd->params[0];
 	user = msn_userlist_find_user(session->userlist, passport);

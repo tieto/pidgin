@@ -3070,7 +3070,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/Get User _Info..."), "<CTL>I", pidgin_dialogs_info, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_USER_INFO },
 	{ N_("/Buddies/View User _Log..."), "<CTL>L", pidgin_dialogs_log, 0, "<Item>", NULL },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Buddies/Show"), NULL, NULL, 0, "<Branch>", NULL},
+	{ N_("/Buddies/Sh_ow"), NULL, NULL, 0, "<Branch>", NULL},
 	{ N_("/Buddies/Show/_Offline Buddies"), NULL, pidgin_blist_edit_mode_cb, 1, "<CheckItem>", NULL },
 	{ N_("/Buddies/Show/_Empty Groups"), NULL, pidgin_blist_show_empty_groups_cb, 1, "<CheckItem>", NULL },
 	{ N_("/Buddies/Show/Buddy _Details"), NULL, pidgin_blist_buddy_details_cb, 1, "<CheckItem>", NULL },
@@ -3663,25 +3663,31 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 			else
 				idletime = g_strdup(_("Idle"));
 
-			if (!selected)
+			if (!selected) {
+				g_free(text);
 				text = g_strdup_printf("<span color='%s'>%s</span>\n"
-				"<span color='%s' size='smaller'>%s%s%s</span>",
-				dim_grey(), esc, dim_grey(),
-				idletime != NULL ? idletime : "",
-				(idletime != NULL && statustext != NULL) ? " - " : "",
-				statustext != NULL ? statustext : "");
+					"<span color='%s' size='smaller'>%s%s%s</span>",
+					dim_grey(), esc, dim_grey(),
+					idletime != NULL ? idletime : "",
+					(idletime != NULL && statustext != NULL) ? " - " : "",
+					statustext != NULL ? statustext : "");
+			}
 		}
-		else if (!selected && !statustext) /* We handle selected text later */
+		else if (!selected && !statustext) {/* We handle selected text later */
+			g_free(text);
 			text = g_strdup_printf("<span color='%s'>%s</span>", dim_grey(), esc);
-		else if (!selected && !text)
+		} else if (!selected && !text) {
+			g_free(text);
 			text = g_strdup_printf("<span color='%s'>%s</span>\n"
 				"<span color='%s' size='smaller'>%s</span>",
 				dim_grey(), esc, dim_grey(),
 				statustext != NULL ? statustext : "");
+		}
 	} else if (!PURPLE_BUDDY_IS_ONLINE(b)) {
-		if (!selected && !statustext) /* We handle selected text later */
+		if (!selected && !statustext) {/* We handle selected text later */
+			g_free(text);
 			text = g_strdup_printf("<span color='%s'>%s</span>", dim_grey(), esc);
-		else if (!selected && !text)
+		} else if (!selected && !text)
 			text = g_strdup_printf("<span color='%s'>%s</span>\n"
 				"<span color='%s' size='smaller'>%s</span>",
 				dim_grey(), esc, dim_grey(),
@@ -3698,13 +3704,15 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 	}
 
 	/* It is selected. */
-	if ((selected && !text) || (selected && idletime))
+	if ((selected && !text) || (selected && idletime)) {
+		g_free(text);
 		text = g_strdup_printf("%s\n"
 			"<span size='smaller'>%s%s%s</span>",
 			esc,
 			idletime != NULL ? idletime : "",
 			(idletime != NULL && statustext != NULL) ? " - " : "",
 			statustext != NULL ? statustext :  "");
+	}
 
 	g_free(idletime);
 	g_free(statustext);
@@ -4339,7 +4347,6 @@ create_connection_error_buttons(gpointer key, gpointer value,
                                 gpointer user_data)
 {
 	PurpleAccount *account;
-	PurpleStatusType *status_type;
 	gchar *escaped, *text;
 	GtkWidget *button, *label, *image, *hbox;
 	GdkPixbuf *pixbuf;
@@ -4354,8 +4361,8 @@ create_connection_error_buttons(gpointer key, gpointer value,
 	hbox = gtk_hbox_new(FALSE, 6);
 
 	/* Create the icon */
-	if ((status_type = purple_account_get_status_type_with_primitive(account,
-							PURPLE_STATUS_OFFLINE))) {
+	if (purple_account_get_status_type_with_primitive(account,
+							PURPLE_STATUS_OFFLINE) != NULL) {
 		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 		if (pixbuf != NULL) {
 			image = gtk_image_new_from_pixbuf(pixbuf);
@@ -5293,7 +5300,7 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *node)
 {
 	PurplePresence *presence;
-	GdkPixbuf *status, *avatar, *emblem;
+	GdkPixbuf *status, *avatar, *emblem, *prpl_icon;
 	char *mark;
 	char *idle = NULL;
 	gboolean expanded = ((struct _pidgin_blist_node *)(node->parent->ui_data))->contact_expanded;
@@ -5303,7 +5310,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 
 	if (editing_blist)
 		return;
-	
+
 	status = pidgin_blist_get_status_icon((PurpleBlistNode*)buddy,
 						PIDGIN_STATUS_ICON_SMALL);
 
@@ -5350,6 +5357,8 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 		}
 	}
 
+	prpl_icon = pidgin_create_prpl_icon(buddy->account, PIDGIN_PRPL_ICON_SMALL);
+
 	gtk_tree_store_set(gtkblist->treemodel, iter,
 			   STATUS_ICON_COLUMN, status,
 			   STATUS_ICON_VISIBLE_COLUMN, TRUE,
@@ -5359,8 +5368,8 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 			   BUDDY_ICON_COLUMN, avatar,
 			   BUDDY_ICON_VISIBLE_COLUMN, biglist,
 			   EMBLEM_COLUMN, emblem,
-			   EMBLEM_VISIBLE_COLUMN, emblem,
-			   PROTOCOL_ICON_COLUMN, pidgin_create_prpl_icon(buddy->account, PIDGIN_PRPL_ICON_SMALL),
+			   EMBLEM_VISIBLE_COLUMN, (emblem != NULL),
+			   PROTOCOL_ICON_COLUMN, prpl_icon,
 			   PROTOCOL_ICON_VISIBLE_COLUMN, purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"),
 			   BGCOLOR_COLUMN, NULL,
 			   CONTACT_EXPANDER_COLUMN, NULL,
@@ -5370,10 +5379,14 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 
 	g_free(mark);
 	g_free(idle);
+	if(emblem)
+		g_object_unref(emblem);
 	if(status)
 		g_object_unref(status);
 	if(avatar)
 		g_object_unref(avatar);
+	if(prpl_icon)
+		g_object_unref(prpl_icon);
 }
 
 /* This is a variation on the original gtk_blist_update_contact. Here we
@@ -5494,9 +5507,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 
 	if(purple_account_is_connected(chat->account)) {
 		GtkTreeIter iter;
-		GdkPixbuf *status;
-		GdkPixbuf *avatar;
-		GdkPixbuf *emblem;
+		GdkPixbuf *status, *avatar, *emblem, *prpl_icon;
 		char *mark;
 		gboolean showicons = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 		PidginBlistNode *ui;
@@ -5527,6 +5538,8 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 			mark = bold;
 		}
 
+		prpl_icon = pidgin_create_prpl_icon(chat->account, PIDGIN_PRPL_ICON_SMALL);
+
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				STATUS_ICON_COLUMN, status,
 				STATUS_ICON_VISIBLE_COLUMN, TRUE,
@@ -5534,17 +5547,21 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 				BUDDY_ICON_VISIBLE_COLUMN,  purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons"),
 				EMBLEM_COLUMN, emblem,
 				EMBLEM_VISIBLE_COLUMN, emblem != NULL,
-				PROTOCOL_ICON_COLUMN, pidgin_create_prpl_icon(chat->account, PIDGIN_PRPL_ICON_SMALL),
+				PROTOCOL_ICON_COLUMN, prpl_icon,
 				PROTOCOL_ICON_VISIBLE_COLUMN, purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"),
 				NAME_COLUMN, mark,
 				GROUP_EXPANDER_VISIBLE_COLUMN, FALSE,
 				-1);
 
 		g_free(mark);
+		if(emblem)
+			g_object_unref(emblem);
 		if(status)
 			g_object_unref(status);
 		if(avatar)
 			g_object_unref(avatar);
+		if(prpl_icon)
+			g_object_unref(prpl_icon);
 	} else {
 		pidgin_blist_hide_node(list, node, TRUE);
 	}

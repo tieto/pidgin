@@ -1066,7 +1066,7 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name, const
 		return;
 	}
 
-	msg = g_markup_escape_text(tmp, -1);
+	msg = irc_escape_privmsg(tmp, -1);
 	g_free(tmp);
 
 	tmp = irc_mirc2html(msg);
