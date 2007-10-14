@@ -106,16 +106,16 @@ get_request_parent(const char *ui_hint, PidginConversation *convo)
 	if (convo)
 		return GTK_WINDOW(convo->win->window);
 
-	if (strcmp(ui_hint, "blist")) {
+	if (strcmp(ui_hint, PURPLE_REQUEST_HINT_BLIST)) {
 		GList *ll_toplevels = NULL;
 
 		ll_toplevels = gtk_window_list_toplevels();
 
 		if (!(toplevel = find_toplevel(ll_toplevels, ui_hint))) {
-			if (!strcmp(ui_hint, "register-account"))
+			if (!strcmp(ui_hint, PURPLE_REQUEST_HINT_REGISTER))
 				toplevel = find_toplevel(ll_toplevels, "account");
 			else
-			if (!strcmp(ui_hint, "xfer"))
+			if (!strcmp(ui_hint, PURPLE_REQUEST_HINT_XFER))
 				toplevel = find_toplevel(ll_toplevels, "file transfer");
 		}
 		
