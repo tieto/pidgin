@@ -2423,13 +2423,15 @@ static void amsn_logger_finalize(PurpleLog *log)
 static void
 init_plugin(PurplePlugin *plugin)
 {
+
+}
+
+static void log_reader_init_prefs() {
 	char *path;
 #ifdef _WIN32
 	char *folder;
 	gboolean found = FALSE;
 #endif
-
-	g_return_if_fail(plugin != NULL);
 
 	purple_prefs_add_none("/plugins/core/log_reader");
 
@@ -2688,6 +2690,8 @@ static gboolean
 plugin_load(PurplePlugin *plugin)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
+
+	log_reader_init_prefs();
 
 	/* The names of IM clients are marked for translation at the request of
 	   translators who wanted to transliterate them.  Many translators
