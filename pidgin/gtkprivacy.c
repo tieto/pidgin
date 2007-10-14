@@ -88,6 +88,8 @@ static size_t menu_entry_count = sizeof(menu_entries) / sizeof(*menu_entries);
 
 static PidginPrivacyDialog *privacy_dialog = NULL;
 
+#define PIDGIN_REQUEST_HINT_PRIVACY "privacy"
+
 static void
 rebuild_allow_list(PidginPrivacyDialog *dialog)
 {
@@ -367,7 +369,7 @@ privacy_dialog_new(void)
 
 	dialog = g_new0(PidginPrivacyDialog, 1);
 
-	dialog->win = pidgin_create_window(_("Privacy"), PIDGIN_HIG_BORDER, "privacy", TRUE);
+	dialog->win = pidgin_create_window(_("Privacy"), PIDGIN_HIG_BORDER, PIDGIN_REQUEST_HINT_PRIVACY, TRUE);
 
 	g_signal_connect(G_OBJECT(dialog->win), "delete_event",
 					 G_CALLBACK(destroy_cb), dialog);
@@ -562,7 +564,7 @@ pidgin_request_add_permit(PurpleAccount *account, const char *name)
 			_("_Permit"), G_CALLBACK(add_permit_block_cb),
 			_("Cancel"), G_CALLBACK(destroy_request_data),
 			account, name, NULL,
-			"privacy", data);
+			PIDGIN_REQUEST_HINT_PRIVACY, data);
 	}
 	else {
 		char *primary = g_strdup_printf(_("Allow %s to contact you?"), name);
@@ -574,7 +576,7 @@ pidgin_request_add_permit(PurpleAccount *account, const char *name)
 		purple_request_action_with_hint(account, _("Permit User"), primary, secondary,
 							0,
 							account, name, NULL,
-							"privacy", data, 2,
+							PIDGIN_REQUEST_HINT_PRIVACY, data, 2,
 							_("_Permit"), G_CALLBACK(confirm_permit_block_cb),
 							_("Cancel"), G_CALLBACK(destroy_request_data));
 
@@ -603,7 +605,7 @@ pidgin_request_add_block(PurpleAccount *account, const char *name)
 			_("_Block"), G_CALLBACK(add_permit_block_cb),
 			_("Cancel"), G_CALLBACK(destroy_request_data),
 			account, name, NULL,
-			"privacy", data);
+			PIDGIN_REQUEST_HINT_PRIVACY, data);
 	}
 	else {
 		char *primary = g_strdup_printf(_("Block %s?"), name);
@@ -613,7 +615,7 @@ pidgin_request_add_block(PurpleAccount *account, const char *name)
 		purple_request_action_with_hint(account, _("Block User"), primary, secondary,
 							0,
 							account, name, NULL,
-							"privacy", data, 2,
+							PIDGIN_REQUEST_HINT_PRIVACY, data, 2,
 							_("_Block"), G_CALLBACK(confirm_permit_block_cb),
 							_("Cancel"), G_CALLBACK(destroy_request_data));
 
