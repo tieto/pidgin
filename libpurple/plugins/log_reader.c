@@ -2671,12 +2671,16 @@ init_plugin(PurplePlugin *plugin)
 
 	/* Calculate default aMSN log directory. */
 #ifdef _WIN32
+	path = NULL;
 	folder = wpurple_get_special_folder(CSIDL_PROFILE); /* Silly aMSN, not using CSIDL_APPDATA */
-	path = g_build_filename(folder, "amsn", NULL);
+	if (folder) {
+		path = g_build_filename(folder, "amsn", NULL);
+		g_free(folder);
+	}
 #else
 	path = g_build_filename(purple_home_dir(), ".amsn", NULL);
 #endif
-	purple_prefs_add_string("/plugins/core/log_reader/amsn/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/amsn/log_directory", path ? path : "");
 	g_free(path);
 }
 
