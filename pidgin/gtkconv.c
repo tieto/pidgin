@@ -1029,11 +1029,11 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 		if (*c == '/' || *c == '\\')
 			*c = ' ';
 	}
-	purple_request_file(PIDGIN_CONVERSATION(conv), _("Save Conversation"),
+	purple_request_file_with_hint(PIDGIN_CONVERSATION(conv), _("Save Conversation"),
 					  buf,
 					  TRUE, G_CALLBACK(savelog_writefile_cb), NULL,
 					  NULL, NULL, conv,
-					  conv);
+					  "conversation", conv);
 
 	g_free(buf);
 }
@@ -1081,7 +1081,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 		PurpleBlistNode *node = cur->data;
 		if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
 		{
-			pidgin_log_show_contact((PurpleContact *)node->parent);
+			pidgin_log_show_contact_with_parent(GTK_WINDOW(win->window), (PurpleContact *)node->parent);
 			g_slist_free(buddies);
 			gdk_window_set_cursor(gtkblist->window->window, NULL);
 			gdk_window_set_cursor(win->window->window, NULL);
@@ -1090,7 +1090,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	}
 	g_slist_free(buddies);
 
-	pidgin_log_show(type, name, account);
+	pidgin_log_show_with_parent(GTK_WINDOW(win->window), type, name, account);
 
 	gdk_window_set_cursor(gtkblist->window->window, NULL);
 	gdk_window_set_cursor(win->window->window, NULL);
@@ -1236,7 +1236,7 @@ menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 
 	conv = pidgin_conv_window_get_active_gtkconv(win)->active_conv;
 
-	pidgin_pounce_editor_show(purple_conversation_get_account(conv),
+	pidgin_pounce_editor_show_with_parent(GTK_WINDOW(win->window), purple_conversation_get_account(conv),
 								purple_conversation_get_name(conv), NULL);
 }
 
@@ -2718,10 +2718,10 @@ icon_menu_save_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	buf = g_strdup_printf("%s.%s", purple_normalize(conv->account, conv->name), ext);
 
-	purple_request_file(gtkconv, _("Save Icon"), buf, TRUE,
+	purple_request_file_with_hint(gtkconv, _("Save Icon"), buf, TRUE,
 					 G_CALLBACK(saveicon_writefile_cb), NULL,
 					conv->account, NULL, conv,
-					gtkconv);
+					"conversation", gtkconv);
 
 	g_free(buf);
 }
