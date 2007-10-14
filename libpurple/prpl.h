@@ -297,12 +297,13 @@ struct _PurplePluginProtocolInfo
 	/** new user registration */
 	void (*register_user)(PurpleAccount *);
 
-	/** Deprecated and vestigal; use #get_cb_real_name and #get_info
-	 *  instead.
+	/**
+	 * @deprecated Use #PurplePluginProtocolInfo.get_info instead.
 	 */
 	void (*get_cb_info)(PurpleConnection *, int, const char *who);
-	/** Also deprecated and vestigal; use #get_cb_real_name and
-	 *  #status_text instead.
+	/**
+	 * @deprecated Use #PurplePluginProtocolInfo.get_cb_real_name and
+	 *             #PurplePluginProtocolInfo.status_text instead.
 	 */
 	void (*get_cb_away)(PurpleConnection *, int, const char *who);
 
