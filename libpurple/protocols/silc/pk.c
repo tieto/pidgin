@@ -109,7 +109,7 @@ static void silcpurple_verify_ask(const char *entity,
 
 	purple_request_action_with_hint(gc, _("Verify Public Key"), tmp, tmp2,
 			      PURPLE_DEFAULT_ACTION_NONE,
-			      purple_connection_get_account(gc), entity, NULL, PURPLE_REQUEST_HINT_BLIST, verify, 3,
+			      purple_connection_get_account(gc), entity, NULL, PURPLE_REQUEST_UI_HINT_BLIST, verify, 3,
 			      _("Yes"), G_CALLBACK(silcpurple_verify_cb),
 			      _("No"), G_CALLBACK(silcpurple_verify_cb),
 			      _("_View..."), G_CALLBACK(silcpurple_verify_details));

@@ -161,7 +161,7 @@ sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer
 					_("You can edit/delete the pounce from the `Buddy Pounces' dialog"),
 					1,
 					offline->account, offline->who, offline->conv,
-					PURPLE_REQUEST_HINT_BUDDY, offline, 2,
+					PURPLE_REQUEST_UI_HINT_BUDDY, offline, 2,
 					_("Yes"), record_pounce,
 					_("No"), cancel_poune);
 		g_free(ask);

@@ -785,7 +785,7 @@ PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc)
 			_("Find Rooms"), PURPLE_CALLBACK(roomlist_ok_cb),
 			_("Cancel"), PURPLE_CALLBACK(roomlist_cancel_cb),
 			purple_connection_get_account(gc), NULL, NULL,			 
-			PURPLE_REQUEST_HINT_CONV, js);
+			PURPLE_REQUEST_UI_HINT_CONV, js);
 
 	return js->roomlist;
 }

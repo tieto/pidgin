@@ -1814,7 +1814,7 @@ silc_ask_passphrase(SilcClient client, SilcClientConnection conn,
 			     _("Passphrase required"), NULL, FALSE, TRUE, NULL,
 			     _("OK"), G_CALLBACK(silc_ask_passphrase_cb),
 			     _("Cancel"), G_CALLBACK(silc_ask_passphrase_cb),
-			     purple_connection_get_account(gc), NULL, NULL, PURPLE_REQUEST_HINT_BLIST, internal);
+			     purple_connection_get_account(gc), NULL, NULL, PURPLE_REQUEST_UI_HINT_BLIST, internal);
 }
 
 

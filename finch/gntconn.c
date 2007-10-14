@@ -132,7 +132,7 @@ finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 
 		purple_request_action_with_hint(account, NULL, primary, secondary, 2,
 							account, NULL, NULL,
-							PURPLE_REQUEST_HINT_BLIST, account, 3,
+							PURPLE_REQUEST_UI_HINT_BLIST, account, 3,
 							_("OK"), NULL,
 							_("Modify Account"), PURPLE_CALLBACK(ce_modify_account_cb),
 							_("Re-enable Account"), PURPLE_CALLBACK(ce_enable_account_cb));

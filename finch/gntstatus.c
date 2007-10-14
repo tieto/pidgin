@@ -140,7 +140,7 @@ ask_before_delete(GntWidget *button, gpointer null)
 
 	purple_request_action_with_hint(saved, _("Delete Status"), ask, NULL, 0,
 			NULL, NULL, NULL,
-			PURPLE_UI_REQUEST_HINT_STATUSMGR, saved, 2,
+			PURPLE_REQUEST_UI_HINT_STATUSMGR, saved, 2,
 			_("Delete"), really_delete_status,
 			_("Cancel"), NULL);
 	g_free(ask);

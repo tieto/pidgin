@@ -205,32 +205,32 @@ typedef struct
 /**
  * @since 2.3.0
  */
-#define PURPLE_REQUEST_HINT_ACCOUNT  "account"
+#define PURPLE_REQUEST_UI_HINT_ACCOUNT  "account"
 
 /**
  * @since 2.3.0
  */
-#define PURPLE_REQUEST_HINT_BLIST    "blist"
+#define PURPLE_REQUEST_UI_HINT_BLIST    "blist"
 
 /**
  * @since 2.3.0
  */
-#define PURPLE_REQUEST_HINT_BUDDY    "buddy"
+#define PURPLE_REQUEST_UI_HINT_BUDDY    "buddy"
 
 /**
  * @since 2.3.0
  */
-#define PURPLE_REQUEST_HINT_CONV     "conversation"
+#define PURPLE_REQUEST_UI_HINT_CONV     "conversation"
 
 /**
  * @since 2.3.0
  */
-#define PURPLE_REQUEST_HINT_REGISTER "register-account"
+#define PURPLE_REQUEST_UI_HINT_REGISTER "register-account"
 
 /**
  * @since 2.3.0
  */
-#define PURPLE_REQUEST_HINT_XFER     "xfer"
+#define PURPLE_REQUEST_UI_HINT_XFER     "xfer"
 
 
 /*
@@ -241,32 +241,32 @@ typedef struct
 /**
  * @since 2.3.0
  */
-#define PURPLE_UI_REQUEST_HINT_ACCOUNTMGR "accountmgr"
+#define PURPLE_REQUEST_UI_HINT_ACCOUNTMGR "accountmgr"
 
 /**
  * @since 2.3.0
  */
-#define PURPLE_UI_REQUEST_HINT_CERTMGR    "certmgr"
+#define PURPLE_REQUEST_UI_HINT_CERTMGR    "certmgr"
 
 /**
  * @since 2.3.0
  */
-#define PURPLE_UI_REQUEST_HINT_PLUGINMGR  "pluginmgr"
+#define PURPLE_REQUEST_UI_HINT_PLUGINMGR  "pluginmgr"
 
 /**
  * @since 2.3.0
  */
-#define PURPLE_UI_REQUEST_HINT_POUNCEMGR  "pouncemgr"
+#define PURPLE_REQUEST_UI_HINT_POUNCEMGR  "pouncemgr"
 
 /**
  * @since 2.3.0
  */
-#define PURPLE_UI_REQUEST_HINT_PREFSMGR   "preferences"
+#define PURPLE_REQUEST_UI_HINT_PREFSMGR   "preferences"
 
 /**
  * @since 2.3.0
  */
-#define PURPLE_UI_REQUEST_HINT_STATUSMGR  "statusmgr"
+#define PURPLE_REQUEST_UI_HINT_STATUSMGR  "statusmgr"
 
 
 /**

@@ -284,7 +284,7 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 			                    _("Multiple plugins will be unloaded."),
 			                    tmp->str, 0,
 			                    NULL, NULL, NULL,
-			                    PURPLE_UI_REQUEST_HINT_PLUGINMGR, cb_data, 2,
+			                    PURPLE_REQUEST_UI_HINT_PLUGINMGR, cb_data, 2,
 			                    _("Unload Plugins"), G_CALLBACK(plugin_unload_confirm_cb),
 			                    _("Cancel"), g_free);
 			g_string_free(tmp, TRUE);

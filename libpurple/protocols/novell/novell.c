@@ -1915,7 +1915,7 @@ _evt_conference_invite(NMUser * user, NMEvent * event)
 	purple_request_action_with_hint(gc, title, primary, secondary,
 						PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), name, NULL,
-						PURPLE_REQUEST_HINT_CONV, parms, 2,
+						PURPLE_REQUEST_UI_HINT_CONV, parms, 2,
 						_("Yes"), G_CALLBACK(_join_conference_cb),
 						_("No"), G_CALLBACK(_reject_conference_cb));
 
