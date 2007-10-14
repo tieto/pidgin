@@ -1315,6 +1315,7 @@ void *purple_request_input_with_hint(void *handle, const char *title,
 						 PurpleAccount *account, const char *who, PurpleConversation *conv,
 						 const char *ui_hint, void *user_data);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Prompts the user for text input.
  *
@@ -1362,6 +1363,7 @@ void *purple_request_input(void *handle, const char *title,
 						 const char *cancel_text, GCallback cancel_cb,
 						 PurpleAccount *account, const char *who, PurpleConversation *conv,
 						 void *user_data);
+#endif
 
 /**
  * Prompts the user for multiple-choice input.
@@ -1397,6 +1399,7 @@ void *purple_request_choice_with_hint(void *handle, const char *title,
 						  PurpleAccount *account, const char *who, PurpleConversation *conv,
 						  const char *ui_hint, void *user_data, ...) G_GNUC_NULL_TERMINATED;
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Prompts the user for multiple-choice input.
  *
@@ -1430,6 +1433,7 @@ void *purple_request_choice(void *handle, const char *title,
 						  const char *cancel_text, GCallback cancel_cb,
 						  PurpleAccount *account, const char *who, PurpleConversation *conv,
 						  void *user_data, ...) G_GNUC_NULL_TERMINATED;
+#endif
 
 /**
  * Prompts the user for multiple-choice input.
@@ -1465,6 +1469,7 @@ void *purple_request_choice_varg_with_hint(void *handle, const char *title,
 							   PurpleAccount *account, const char *who, PurpleConversation *conv,
 							   const char *ui_hint, void *user_data, va_list choices);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Prompts the user for multiple-choice input.
  *
@@ -1498,6 +1503,7 @@ void *purple_request_choice_varg(void *handle, const char *title,
 							   const char *cancel_text, GCallback cancel_cb,
 							   PurpleAccount *account, const char *who, PurpleConversation *conv,
 							   void *user_data, va_list choices);
+#endif
 
 /**
  * Prompts the user for an action.
@@ -1535,6 +1541,7 @@ void *purple_request_action_with_hint(void *handle, const char *title,
 						  PurpleAccount *account, const char *who, PurpleConversation *conv,
 						  const char *ui_hint, void *user_data, size_t action_count, ...);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Prompts the user for an action.
  *
@@ -1570,6 +1577,7 @@ void *purple_request_action(void *handle, const char *title,
 						  int default_action,
 						  PurpleAccount *account, const char *who, PurpleConversation *conv,
 						  void *user_data, size_t action_count, ...);
+#endif
 
 /**
  * Prompts the user for an action.
@@ -1602,6 +1610,7 @@ void *purple_request_action_varg_with_hint(void *handle, const char *title,
 							   const char *ui_hint, void *user_data, size_t action_count,
 							   va_list actions);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Prompts the user for an action.
  *
@@ -1632,6 +1641,7 @@ void *purple_request_action_varg(void *handle, const char *title,
 							   PurpleAccount *account, const char *who, PurpleConversation *conv,
 							   void *user_data, size_t action_count,
 							   va_list actions);
+#endif
 
 /**
  * Displays groups of fields for the user to fill in.
@@ -1665,6 +1675,7 @@ void *purple_request_fields_with_hint(void *handle, const char *title,
 						  PurpleAccount *account, const char *who, PurpleConversation *conv,
 						  const char *ui_hint, void *user_data);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Displays groups of fields for the user to fill in.
  *
@@ -1696,6 +1707,7 @@ void *purple_request_fields(void *handle, const char *title,
 						  const char *cancel_text, GCallback cancel_cb,
 						  PurpleAccount *account, const char *who, PurpleConversation *conv,
 						  void *user_data);
+#endif
 
 /**
  * Closes a request.
@@ -1724,6 +1736,7 @@ void purple_request_close_with_handle(void *handle);
 						(default_action), account, who, conv, (ui_hint), (user_data), 2, \
 						_("_Yes"), (yes_cb), _("_No"), (no_cb))
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
  *
@@ -1735,6 +1748,7 @@ void purple_request_close_with_handle(void *handle);
 	purple_request_action((handle), (title), (primary), (secondary), \
 						(default_action), account, who, conv, (user_data), 2, \
 						_("_Yes"), (yes_cb), _("_No"), (no_cb))
+#endif
 
 /**
  * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
@@ -1748,6 +1762,7 @@ void purple_request_close_with_handle(void *handle);
 						(default_action), account, who, conv, (ui_hint), (user_data), 2, \
 						_("_OK"), (ok_cb), _("_Cancel"), (cancel_cb))
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
  *
@@ -1759,6 +1774,7 @@ void purple_request_close_with_handle(void *handle);
 	purple_request_action((handle), (title), (primary), (secondary), \
 						(default_action), account, who, conv, (user_data), 2, \
 						_("_OK"), (ok_cb), _("_Cancel"), (cancel_cb))
+#endif
 
 /**
  * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
@@ -1772,6 +1788,7 @@ void purple_request_close_with_handle(void *handle);
 						(default_action), account, who, conv, (ui_hint), (user_data), 2, \
 						_("_Accept"), (accept_cb), _("_Cancel"), (cancel_cb))
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
  *
@@ -1783,6 +1800,7 @@ void purple_request_close_with_handle(void *handle);
 	purple_request_action((handle), (title), (primary), (secondary), \
 						(default_action), account, who, conv, (user_data), 2, \
 						_("_Accept"), (accept_cb), _("_Cancel"), (cancel_cb))
+#endif
 
 /**
  * Displays a file selector request dialog.  Returns the selected filename to
@@ -1813,6 +1831,7 @@ void *purple_request_file_with_hint(void *handle, const char *title, const char 
 						PurpleAccount *account, const char *who, PurpleConversation *conv,
 						const char *ui_hint, void *user_data);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Displays a file selector request dialog.  Returns the selected filename to
  * the callback.  Can be used for either opening a file or saving a file.
@@ -1841,6 +1860,7 @@ void *purple_request_file(void *handle, const char *title, const char *filename,
 						GCallback ok_cb, GCallback cancel_cb,
 						PurpleAccount *account, const char *who, PurpleConversation *conv,
 						void *user_data);
+#endif
 
 /**
  * Displays a folder select dialog. Returns the selected filename to
@@ -1868,6 +1888,7 @@ void *purple_request_folder_with_hint(void *handle, const char *title, const cha
 						PurpleAccount *account, const char *who, PurpleConversation *conv,
 						const char *ui_hint, void *user_data);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Displays a folder select dialog. Returns the selected filename to
  * the callback.
@@ -1893,6 +1914,7 @@ void *purple_request_folder(void *handle, const char *title, const char *dirname
 						GCallback ok_cb, GCallback cancel_cb,
 						PurpleAccount *account, const char *who, PurpleConversation *conv,
 						void *user_data);
+#endif
 
 /*@}*/
 

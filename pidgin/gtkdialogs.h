@@ -34,10 +34,12 @@
 
 void pidgin_dialogs_destroy_all(void);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * @deprecated Use pidgin_dialogs_about_with_parent() instead.
  */
 void pidgin_dialogs_about(void);
+#endif
 
 /**
  * @since 2.3.0
@@ -49,11 +51,13 @@ void pidgin_dialogs_im_with_user(PurpleAccount *, const char *);
 void pidgin_dialogs_info(void);
 void pidgin_dialogs_log(void);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * @deprecated This function is no longer used and will be removed in
  *             Pidgin 3.0.0 unless there is sufficient demand to keep it.
  */
 void pidgin_dialogs_alias_contact(PurpleContact *);
+#endif
 
 void pidgin_dialogs_alias_buddy(PurpleBuddy *);
 void pidgin_dialogs_alias_chat(PurpleChat *);
