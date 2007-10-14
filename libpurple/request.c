@@ -1230,7 +1230,7 @@ purple_request_input(void *handle, const char *title, const char *primary,
 {
 	return purple_request_input_with_hint(
 		handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, ok_cb,
-		cancel_text, cancel_cb, account, who, conv, "blist", user_data);
+		cancel_text, cancel_cb, account, who, conv, PURPLE_REQUEST_HINT_BLIST, user_data);
 }
 
 void *
@@ -1289,7 +1289,7 @@ purple_request_choice(void *handle, const char *title, const char *primary,
 	ui_handle = purple_request_choice_varg_with_hint(handle, title, primary, secondary,
 					     default_value, ok_text, ok_cb,
 					     cancel_text, cancel_cb,
-					     account, who, conv, "blist", user_data, args);
+					     account, who, conv, PURPLE_REQUEST_HINT_BLIST, user_data, args);
 	va_end(args);
 
 	return ui_handle;
@@ -1330,7 +1330,7 @@ purple_request_choice_varg(void *handle, const char *title,
 {
 	return purple_request_choice_varg_with_hint(
 		handle, title, primary, secondary, default_value, ok_text, ok_cb,
-		cancel_text, cancel_cb, account, who, conv, "blist", user_data, choices);
+		cancel_text, cancel_cb, account, who, conv, PURPLE_REQUEST_HINT_BLIST, user_data, choices);
 }
 
 void *
@@ -1384,7 +1384,7 @@ purple_request_action(void *handle, const char *title, const char *primary,
 	va_start(args, action_count);
 	ui_handle = purple_request_action_varg_with_hint(handle, title, primary, secondary,
 										 default_action, account, who, conv,
-										 "blist", user_data, action_count, args);
+										 PURPLE_REQUEST_HINT_BLIST, user_data, action_count, args);
 	va_end(args);
 
 	return ui_handle;
@@ -1419,7 +1419,7 @@ purple_request_action_varg(void *handle, const char *title,
 {
 	return purple_request_action_varg_with_hint(
 		handle, title, primary, secondary, default_action, account, who, conv,
-		"blist", user_data, action_count, actions);
+		PURPLE_REQUEST_HINT_BLIST, user_data, action_count, actions);
 }
 
 void *
@@ -1463,7 +1463,7 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 {
 	return purple_request_fields_with_hint(
 		handle, title, primary, secondary, fields, ok_text, ok_cb,
-		cancel_text, cancel_cb, account, who, conv, "blist", user_data);
+		cancel_text, cancel_cb, account, who, conv, PURPLE_REQUEST_HINT_BLIST, user_data);
 }
 
 void *
@@ -1510,7 +1510,7 @@ purple_request_file(void *handle, const char *title, const char *filename,
 				  void *user_data)
 {
 	return purple_request_file_with_hint(
-		handle, title, filename, savedialog, ok_cb, cancel_cb, account, who, conv, "blist", user_data);
+		handle, title, filename, savedialog, ok_cb, cancel_cb, account, who, conv, PURPLE_REQUEST_HINT_BLIST, user_data);
 }
 
 void *
@@ -1547,7 +1547,7 @@ purple_request_folder(void *handle, const char *title, const char *dirname,
 				  void *user_data)
 {
 	return purple_request_folder_with_hint(
-		handle, title, dirname, ok_cb, cancel_cb, account, who, conv, "blist", user_data);
+		handle, title, dirname, ok_cb, cancel_cb, account, who, conv, PURPLE_REQUEST_HINT_BLIST, user_data);
 }
 
 void *

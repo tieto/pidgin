@@ -872,7 +872,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			purple_request_fields_with_hint(jsx->js->gc, _("Select a Resource"), msg, NULL, fields,
 					_("Send File"), G_CALLBACK(resource_select_ok_cb), _("Cancel"), G_CALLBACK(resource_select_cancel_cb),
-					jsx->js->gc->account, xfer->who, NULL, "xfer", xfer);
+					jsx->js->gc->account, xfer->who, NULL, PURPLE_REQUEST_HINT_XFER, xfer);
 
 			g_free(msg);
 		}

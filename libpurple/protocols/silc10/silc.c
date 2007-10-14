@@ -734,7 +734,7 @@ silcpurple_attrs(PurplePluginAction *action)
 			    fields,
 			    _("OK"), G_CALLBACK(silcpurple_attrs_cb),
 			    _("Cancel"), G_CALLBACK(silcpurple_attrs_cancel),
-				gc->account, NULL, NULL, "blist", gc);
+				gc->account, NULL, NULL, PURPLE_REQUEST_HINT_BLIST, gc);
 }
 
 static void

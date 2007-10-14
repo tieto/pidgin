@@ -436,7 +436,7 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 					    _("_Insert"), G_CALLBACK(do_insert_link_cb),
 					    _("Cancel"), G_CALLBACK(cancel_link_cb),
 					    NULL, NULL, NULL,
-					    "conversation", toolbar);
+					    PURPLE_REQUEST_HINT_CONV, toolbar);
 		g_free(msg);
 		g_free(desc);
 	} else {

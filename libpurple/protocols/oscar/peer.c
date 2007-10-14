@@ -1041,7 +1041,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 						  "risk."),
 						PURPLE_DEFAULT_ACTION_NONE,
 						account, sn, NULL,
-						"buddy", conn, 2,
+						PURPLE_REQUEST_HINT_BUDDY, conn, 2,
 						_("C_onnect"), G_CALLBACK(peer_connection_got_proposition_yes_cb),
 						_("Cancel"), G_CALLBACK(peer_connection_got_proposition_no_cb));
 	}
