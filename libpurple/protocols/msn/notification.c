@@ -262,14 +262,15 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		for (cur = elems; *cur != NULL; cur++)
 		{
 			tokens = g_strsplit(*cur, "=", 2);
-			if(tokens[0]&&tokens[1])
+			if(tokens[0] && tokens[1])
 			{
 				purple_debug_info("MSNP14","challenge %p,key:%s,value:%s\n",
 									session->nexus->challenge_data,tokens[0],tokens[1]);
 				g_hash_table_insert(session->nexus->challenge_data, tokens[0], tokens[1]);
-			}
-			/* Don't free each of the tokens, only the array. */
-			g_free(tokens);
+				/* Don't free each of the tokens, only the array. */
+				g_free(tokens);
+			} else
+				g_strfreev(tokens);
 		}
 
 		g_strfreev(elems);
@@ -735,7 +736,7 @@ msn_notification_send_fqy(MsnSession *session, const char *passport)
 	msn_cmdproc_send_trans(cmdproc, trans);
 
 	g_free(payload);
-	g_free(tokens);
+	g_strfreev(tokens);
 }
 
 static void

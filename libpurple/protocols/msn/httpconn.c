@@ -169,7 +169,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	/* Now we should be able to process the data. */
 	if ((s = purple_strcasestr(header, "X-MSN-Messenger: ")) != NULL)
 	{
-		char *full_session_id, *gw_ip, *session_action;
+		gchar *full_session_id = NULL, *gw_ip = NULL, *session_action = NULL;
 		char *t, *session_id;
 		char **elems, **cur, **tokens;
 
@@ -196,13 +196,16 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		{
 			tokens = g_strsplit(*cur, "=", 2);
 
-			if (strcmp(tokens[0], "SessionID") == 0)
+			if (strcmp(tokens[0], "SessionID") == 0) {
+				g_free(full_session_id);
 				full_session_id = tokens[1];
-			else if (strcmp(tokens[0], "GW-IP") == 0)
+			} else if (strcmp(tokens[0], "GW-IP") == 0) {
+				g_free(gw_ip);
 				gw_ip = tokens[1];
-			else if (strcmp(tokens[0], "Session") == 0)
+			} else if (strcmp(tokens[0], "Session") == 0) {
+				g_free(session_action);
 				session_action = tokens[1];
-			else
+			} else
 				g_free(tokens[1]);
 
 			g_free(tokens[0]);
