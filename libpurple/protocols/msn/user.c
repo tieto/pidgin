@@ -94,9 +94,9 @@ msn_user_update(MsnUser *user)
 	if (user->statusline != NULL && user->currentmedia != NULL) {
 		purple_prpl_got_user_status(account, user->passport, user->status,
 		                          "message", user->statusline,
-		                          "currentmedia", user->currentmedia, NULL);
+		                          PURPLE_TUNE_FULL, user->currentmedia, NULL);
 	} else if (user->currentmedia != NULL) {
-		purple_prpl_got_user_status(account, user->passport, user->status, "currentmedia",
+		purple_prpl_got_user_status(account, user->passport, user->status, PURPLE_TUNE_FULL,
 		                          user->currentmedia, NULL);
 	} else if (user->statusline != NULL) {
 		//char *status = g_strdup_printf("%s - %s", user->status, user->statusline);

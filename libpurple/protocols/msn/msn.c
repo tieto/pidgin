@@ -552,7 +552,7 @@ msn_status_text(PurpleBuddy *buddy)
 	status = purple_presence_get_active_status(presence);
 
 	msg = purple_status_get_attr_string(status, "message");
-	cmedia = purple_status_get_attr_string(status, "currentmedia");
+	cmedia = purple_status_get_attr_string(status, PURPLE_TUNE_FULL);
 
 	if (cmedia)
 		return g_markup_escape_text(cmedia, -1);
@@ -577,7 +577,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		char *tmp;
 
 		psm = purple_status_get_attr_string(status, "message");
-		currentmedia = purple_status_get_attr_string(status, "currentmedia");
+		currentmedia = purple_status_get_attr_string(status, PURPLE_TUNE_FULL);
 
 		if (!purple_presence_is_available(presence)) {
 			name = purple_status_get_name(status);
@@ -632,40 +632,40 @@ msn_status_types(PurpleAccount *account)
 	status = purple_status_type_new_with_attrs(
 				PURPLE_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
 				"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-				"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+				PURPLE_TUNE_FULL, _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 				NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_FULL, _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, "brb", _("Be Right Back"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_FULL, _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_UNAVAILABLE, "busy", _("Busy"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_FULL, _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_UNAVAILABLE, "phone", _("On the Phone"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_FULL, _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 	status = purple_status_type_new_with_attrs(
 			PURPLE_STATUS_AWAY, "lunch", _("Out to Lunch"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_FULL, _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 
