@@ -687,6 +687,17 @@ msn_httpconn_destroy(MsnHttpConn *httpconn)
 
 	g_free(httpconn->host);
 
+	while (httpconn->queue != NULL) {
+		MsnHttpQueueData *queue_data;
+
+		queue_data = (MsnHttpQueueData *) httpconn->queue->data;
+
+		httpconn->queue = g_list_remove_link(httpconn->queue, httpconn->queue);
+
+		g_free(queue_data->body);
+		g_free(queue_data);
+	}
+
 	purple_circ_buffer_destroy(httpconn->tx_buf);
 	if (httpconn->tx_handler > 0)
 		purple_input_remove(httpconn->tx_handler);

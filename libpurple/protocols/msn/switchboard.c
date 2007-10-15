@@ -108,8 +108,8 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	g_free(swboard->auth_key);
 	g_free(swboard->session_id);
 
-	for (l = swboard->users; l != NULL; l = l->next)
-		g_free(l->data);
+	for (; swboard->users; swboard->users = g_list_remove_link(swboard->users, swboard->users))
+		g_free(swboard->users->data);
 
 	session = swboard->session;
 	session->switches = g_list_remove(session->switches, swboard);
