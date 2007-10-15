@@ -1029,11 +1029,11 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 		if (*c == '/' || *c == '\\')
 			*c = ' ';
 	}
-	purple_request_file(PIDGIN_CONVERSATION(conv), _("Save Conversation"),
+	purple_request_file_with_hint(PIDGIN_CONVERSATION(conv), _("Save Conversation"),
 					  buf,
 					  TRUE, G_CALLBACK(savelog_writefile_cb), NULL,
 					  NULL, NULL, conv,
-					  conv);
+					  PURPLE_REQUEST_UI_HINT_BLIST, conv);
 
 	g_free(buf);
 }
@@ -1081,7 +1081,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 		PurpleBlistNode *node = cur->data;
 		if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
 		{
-			pidgin_log_show_contact((PurpleContact *)node->parent);
+			pidgin_log_show_contact_with_parent(GTK_WINDOW(win->window), (PurpleContact *)node->parent);
 			g_slist_free(buddies);
 			gdk_window_set_cursor(gtkblist->window->window, NULL);
 			gdk_window_set_cursor(win->window->window, NULL);
@@ -1090,7 +1090,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	}
 	g_slist_free(buddies);
 
-	pidgin_log_show(type, name, account);
+	pidgin_log_show_with_parent(GTK_WINDOW(win->window), type, name, account);
 
 	gdk_window_set_cursor(gtkblist->window->window, NULL);
 	gdk_window_set_cursor(win->window->window, NULL);
@@ -1236,7 +1236,7 @@ menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 
 	conv = pidgin_conv_window_get_active_gtkconv(win)->active_conv;
 
-	pidgin_pounce_editor_show(purple_conversation_get_account(conv),
+	pidgin_pounce_editor_show_with_parent(GTK_WINDOW(win->window), purple_conversation_get_account(conv),
 								purple_conversation_get_name(conv), NULL);
 }
 
@@ -2718,10 +2718,10 @@ icon_menu_save_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	buf = g_strdup_printf("%s.%s", purple_normalize(conv->account, conv->name), ext);
 
-	purple_request_file(gtkconv, _("Save Icon"), buf, TRUE,
+	purple_request_file_with_hint(gtkconv, _("Save Icon"), buf, TRUE,
 					 G_CALLBACK(saveicon_writefile_cb), NULL,
 					conv->account, NULL, conv,
-					gtkconv);
+					PURPLE_REQUEST_UI_HINT_BLIST, gtkconv);
 
 	g_free(buf);
 }
@@ -6519,6 +6519,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		AtkObject *accessibility_obj;
 		/* I think this is a little longer than it needs to be but I'm lazy. */
 		char *style;
+		gboolean bold = FALSE;
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 			im = PURPLE_CONV_IM(conv);
@@ -6552,7 +6553,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
 				CONV_TEXT_COLUMN, markup, -1);
 	        /* XXX seanegan Why do I have to do this? */
-        	gtk_widget_queue_draw(gtkconv->infopane);
+		gtk_widget_queue_draw(gtkconv->infopane);
 	
 		if (title != markup)
 			g_free(markup);
@@ -6571,31 +6572,41 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			style = "color=\"#c4a000\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)	{
 			atk_object_set_description(accessibility_obj, _("Nick Said"));
-			style = "color=\"#204a87\" weight=\"bold\"";
+			style = "color=\"#cc0000\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
-			style = "color=\"#cc0000\" weight=\"bold\"";
+			if (gtkconv->active_conv->type == PURPLE_CONV_TYPE_CHAT)
+				style = "color=\"#204a87\" weight=\"bold\"";
+			else
+				style = "color=\"#cc0000\" weight=\"bold\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
 			atk_object_set_description(accessibility_obj, _("New Event"));
-			style = "color=\"#888a85\" weight=\"bold\"";
+			style = "color=\"#888a85\"";
 		} else {
-			style = "";
+			style = NULL;
 		}
+
+		if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT ||
+				gtkconv->unseen_state == PIDGIN_UNSEEN_NICK ||
+				gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
+			bold = TRUE;
 		
-		if (*style != '\0')
+		if (style || bold)
 		{
 			char *html_title,*label;
 
 			html_title = g_markup_escape_text(title, -1);
-			label = g_strdup_printf("<span %s>%s</span>",
-			                        style, html_title);
+			label = g_strdup_printf("<span %s %s>%s</span>",
+			                        style ? style : "",
+			                        bold ? "weight=\"bold\"" : "",
+			                        html_title);
 			g_free(html_title);
 			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
 			g_free(label);
 		}
 		else
 			gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
-		
+
 		if (pidgin_conv_window_is_active_conversation(conv))
 			update_typing_icon(gtkconv);
 

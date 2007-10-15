@@ -261,9 +261,9 @@ void finch_prefs_show_all()
 	add_pref_group(fields, _("Idle"), idle);
 
 	pref_request.showing = TRUE;
-	pref_request.window = purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
+	pref_request.window = purple_request_fields_with_hint(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(save_cb), _("Cancel"), free_strings,
 			NULL, NULL, NULL,
-			NULL);
+			PURPLE_REQUEST_UI_HINT_PREFSMGR, NULL);
 }
 

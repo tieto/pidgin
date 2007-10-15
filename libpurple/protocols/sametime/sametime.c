@@ -3423,12 +3423,12 @@ static void blist_menu_conf_create(PurpleBuddy *buddy, const char *msg) {
 	   " message to be sent to %s");
   msg1 = g_strdup_printf(msgB, buddy->name);
 
-  purple_request_fields(gc, _("New Conference"),
+  purple_request_fields_with_hint(gc, _("New Conference"),
 		      msgA, msg1, fields,
 		      _("Create"), G_CALLBACK(conf_create_prompt_join),
 		      _("Cancel"), G_CALLBACK(conf_create_prompt_cancel),
 			  acct, purple_buddy_get_name(buddy), NULL,
-		      buddy);
+		      PURPLE_REQUEST_UI_HINT_CONV, buddy);
   g_free(msg1);
 }
 
@@ -3509,12 +3509,12 @@ static void blist_menu_conf_list(PurpleBuddy *buddy,
 	   " create a new conference to invite this user to.");
   msg = g_strdup_printf(msgB, buddy->name);
 
-  purple_request_fields(gc, _("Invite to Conference"),
+  purple_request_fields_with_hint(gc, _("Invite to Conference"),
 		      msgA, msg, fields,
 		      _("Invite"), G_CALLBACK(conf_select_prompt_invite),
 		      _("Cancel"), G_CALLBACK(conf_select_prompt_cancel),
 			  acct, purple_buddy_get_name(buddy), NULL,
-		      buddy);
+		      PURPLE_REQUEST_UI_HINT_CONV, buddy);
   g_free(msg);
 }
 
@@ -3682,13 +3682,13 @@ static void prompt_host(PurpleConnection *gc) {
 	  " continue logging in.");
   msg = g_strdup_printf(msgA, NSTR(purple_account_get_username(acct)));
   
-  purple_request_input(gc, _("Meanwhile Connection Setup"),
+  purple_request_input_with_hint(gc, _("Meanwhile Connection Setup"),
 		     _("No Sametime Community Server Specified"), msg,
 		     MW_PLUGIN_DEFAULT_HOST, FALSE, FALSE, NULL,
 		     _("Connect"), G_CALLBACK(prompt_host_ok_cb),
 		     _("Cancel"), G_CALLBACK(prompt_host_cancel_cb),
 			 acct, NULL, NULL,
-		     gc);
+		     PURPLE_REQUEST_UI_HINT_CONV, gc);
 
   g_free(msg);
 }
@@ -5260,10 +5260,10 @@ static void st_import_action(PurplePluginAction *act) {
   title = g_strdup_printf(_("Import Sametime List for Account %s"),
 			  purple_account_get_username(account));
 
-  purple_request_file(gc, title, NULL, FALSE,
+  purple_request_file_with_hint(gc, title, NULL, FALSE,
 		    G_CALLBACK(st_import_action_cb), NULL,
 		    account, NULL, NULL,
-		    gc);
+		    PURPLE_REQUEST_UI_HINT_CONV, gc);
 
   g_free(title);
 }
@@ -5300,10 +5300,10 @@ static void st_export_action(PurplePluginAction *act) {
   title = g_strdup_printf(_("Export Sametime List for Account %s"),
 			  purple_account_get_username(account));
 
-  purple_request_file(gc, title, NULL, TRUE,
+  purple_request_file_with_hint(gc, title, NULL, TRUE,
 		    G_CALLBACK(st_export_action_cb), NULL,
 			account, NULL, NULL,
-		    gc);
+		    PURPLE_REQUEST_UI_HINT_CONV, gc);
 
   g_free(title);
 }
@@ -5436,12 +5436,12 @@ static void remote_group_multi(struct mwResolveResult *result,
 	  " the list below to add it to your buddy list.");
   msg = g_strdup_printf(msgB, result->name);
 
-  purple_request_fields(gc, _("Select Notes Address Book"),
+  purple_request_fields_with_hint(gc, _("Select Notes Address Book"),
 		      msgA, msg, fields,
 		      _("Add Group"), G_CALLBACK(remote_group_multi_cb),
 		      _("Cancel"), G_CALLBACK(remote_group_multi_cleanup),
 			  purple_connection_get_account(gc), result->name, NULL,
-		      pd);
+		      PURPLE_REQUEST_UI_HINT_BLIST, pd);
 
   g_free(msg);
 }
@@ -5526,12 +5526,12 @@ static void remote_group_action(PurplePluginAction *act) {
   msgB = _("Enter the name of a Notes Address Book group in the field below"
 	  " to add the group and its members to your buddy list.");
 
-  purple_request_input(gc, _("Add Group"), msgA, msgB, NULL,
+  purple_request_input_with_hint(gc, _("Add Group"), msgA, msgB, NULL,
 		     FALSE, FALSE, NULL,
 		     _("Add"), G_CALLBACK(remote_group_action_cb),
 		     _("Cancel"), NULL,
 			 purple_connection_get_account(gc), NULL, NULL,
-		     gc);
+		     PURPLE_REQUEST_UI_HINT_BLIST, gc);
 }
 
 
@@ -5651,12 +5651,12 @@ static void search_action(PurplePluginAction *act) {
   msgB = _("Enter a name or partial ID in the field below to search"
 	   " for matching users in your Sametime community.");
 
-  purple_request_input(gc, _("User Search"), msgA, msgB, NULL,
+  purple_request_input_with_hint(gc, _("User Search"), msgA, msgB, NULL,
 		     FALSE, FALSE, NULL,
 		     _("Search"), G_CALLBACK(search_action_cb),
 		     _("Cancel"), NULL,
 			 purple_connection_get_account(gc), NULL, NULL,
-			 gc);
+			 PURPLE_REQUEST_UI_HINT_BLIST, gc);
 }
 
 

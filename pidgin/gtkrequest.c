@@ -35,6 +35,7 @@
 #include "gtkrequest.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
+#include "gtkblist.h"
 
 #include <gdk/gdkkeysyms.h>
 
@@ -79,6 +80,55 @@ typedef struct
 	} u;
 
 } PidginRequestData;
+
+static GtkWindow *
+find_toplevel(GList *ll_toplevels, const char *role)
+{
+	const char *window_role = NULL;
+	GList *ll_itr = NULL;
+
+	for (ll_itr = ll_toplevels ; ll_itr ; ll_itr = ll_itr->next) {
+		if ((window_role = gtk_window_get_role(GTK_WINDOW(ll_itr->data))) != NULL) {
+			if (!strcmp(window_role, role))
+				return GTK_WINDOW(ll_itr->data);
+		}
+	}
+
+	return NULL;
+}
+
+static GtkWindow *
+get_request_parent(const char *ui_hint, PidginConversation *convo)
+{
+	GtkWindow *toplevel = NULL;
+	PidginBuddyList *blist = NULL;
+
+	if (convo)
+		return GTK_WINDOW(convo->win->window);
+
+	if (strcmp(ui_hint, PURPLE_REQUEST_UI_HINT_BLIST)) {
+		GList *ll_toplevels = NULL;
+
+		ll_toplevels = gtk_window_list_toplevels();
+
+		if (!(toplevel = find_toplevel(ll_toplevels, ui_hint))) {
+			if (!strcmp(ui_hint, PURPLE_REQUEST_UI_HINT_REGISTER))
+				toplevel = find_toplevel(ll_toplevels, "account");
+			else
+			if (!strcmp(ui_hint, PURPLE_REQUEST_UI_HINT_XFER))
+				toplevel = find_toplevel(ll_toplevels, "file transfer");
+		}
+		
+		g_list_free(ll_toplevels);
+	}
+
+	/* Takes care of "pidgin-statusbox" as well */
+	if (!toplevel)
+		if ((blist = pidgin_blist_get_default_gtk_blist()) != NULL)
+			return GTK_WINDOW(blist->window);
+
+	return toplevel;
+}
 
 static void
 generic_response_start(PidginRequestData *data)
@@ -288,7 +338,7 @@ pidgin_request_input(const char *title, const char *primary,
 					   const char *ok_text, GCallback ok_cb,
 					   const char *cancel_text, GCallback cancel_cb,
 					   PurpleAccount *account, const char *who, PurpleConversation *conv,
-					   void *user_data)
+					   const char *ui_hint, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *dialog;
@@ -313,7 +363,7 @@ pidgin_request_input(const char *title, const char *primary,
 
 	/* Create the dialog. */
 	dialog = gtk_dialog_new_with_buttons(title ? title : PIDGIN_ALERT_TITLE,
-					     NULL, 0,
+					     get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL), 0,
 					     text_to_stock(cancel_text), 1,
 					     text_to_stock(ok_text),     0,
 					     NULL);
@@ -451,7 +501,7 @@ pidgin_request_choice(const char *title, const char *primary,
 			const char *ok_text, GCallback ok_cb,
 			const char *cancel_text, GCallback cancel_cb,
 			PurpleAccount *account, const char *who, PurpleConversation *conv,
-			void *user_data, va_list args)
+			const char *ui_hint, void *user_data, va_list args)
 {
 	PidginRequestData *data;
 	GtkWidget *dialog;
@@ -475,6 +525,8 @@ pidgin_request_choice(const char *title, const char *primary,
 
 	/* Create the dialog. */
 	data->dialog = dialog = gtk_dialog_new();
+	gtk_window_set_transient_for(GTK_WINDOW(dialog),
+		get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL));
 
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
@@ -555,7 +607,7 @@ static void *
 pidgin_request_action(const char *title, const char *primary,
 						const char *secondary, int default_action,
 					    PurpleAccount *account, const char *who, PurpleConversation *conv,
-						void *user_data, size_t action_count, va_list actions)
+						const char *ui_hint, void *user_data, size_t action_count, va_list actions)
 {
 	PidginRequestData *data;
 	GtkWidget *dialog;
@@ -585,6 +637,8 @@ pidgin_request_action(const char *title, const char *primary,
 
 	/* Create the dialog. */
 	data->dialog = dialog = gtk_dialog_new();
+	gtk_window_set_transient_for(GTK_WINDOW(dialog),
+		get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL));
 
 #if GTK_CHECK_VERSION(2,10,0)
 	gtk_window_set_deletable(GTK_WINDOW(data->dialog), FALSE);
@@ -1138,7 +1192,7 @@ pidgin_request_fields(const char *title, const char *primary,
 						const char *ok_text, GCallback ok_cb,
 						const char *cancel_text, GCallback cancel_cb,
 					    PurpleAccount *account, const char *who, PurpleConversation *conv,
-						void *user_data)
+						const char *ui_hint, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *win;
@@ -1179,6 +1233,8 @@ pidgin_request_fields(const char *title, const char *primary,
 #else /* !_WIN32 */
 	data->dialog = win = pidgin_create_window(title, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
 #endif /* _WIN32 */
+	gtk_window_set_transient_for(GTK_WINDOW(win),
+		get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL));
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(destroy_multifield_cb), data);
@@ -1593,10 +1649,10 @@ file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 
 	if ((data->u.file.savedialog == TRUE) &&
 		(g_file_test(data->u.file.name, G_FILE_TEST_EXISTS))) {
-		purple_request_action(data, NULL, _("That file already exists"),
+		purple_request_action_with_hint(data, NULL, _("That file already exists"),
 							_("Would you like to overwrite it?"), 0,
 							NULL, NULL, NULL,
-							data, 2,
+							"pidgin-request-file", data, 2,
 							_("Overwrite"), G_CALLBACK(file_yes_no_cb),
 							_("Choose New Name"), G_CALLBACK(file_yes_no_cb));
 	} else
@@ -1621,7 +1677,7 @@ pidgin_request_file(const char *title, const char *filename,
 					  gboolean savedialog,
 					  GCallback ok_cb, GCallback cancel_cb,
 					  PurpleAccount *account, const char *who, PurpleConversation *conv,
-					  void *user_data)
+					  const char *ui_hint, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *filesel;
@@ -1709,6 +1765,9 @@ pidgin_request_file(const char *title, const char *filename,
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(filesel)->ok_button), "clicked",
 					 G_CALLBACK(file_ok_check_if_exists_cb), data);
 #endif /* FILECHOOSER */
+	gtk_window_set_role(GTK_WINDOW(filesel), "pidgin-request-file");
+	gtk_window_set_transient_for(GTK_WINDOW(filesel),
+		get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL));
 
 	data->dialog = filesel;
 	gtk_widget_show(filesel);
@@ -1720,7 +1779,7 @@ static void *
 pidgin_request_folder(const char *title, const char *dirname,
 					  GCallback ok_cb, GCallback cancel_cb,
 					  PurpleAccount *account, const char *who, PurpleConversation *conv,
-					  void *user_data)
+					  const char *ui_hint, void *user_data)
 {
 	PidginRequestData *data;
 	GtkWidget *dirsel;
@@ -1759,6 +1818,9 @@ pidgin_request_folder(const char *title, const char *dirname,
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dirsel)->ok_button), "clicked",
 					 G_CALLBACK(file_ok_check_if_exists_cb), data);
 #endif
+	gtk_window_set_role(GTK_WINDOW(dirsel), "pidgin-request-dir");
+	gtk_window_set_transient_for(GTK_WINDOW(dirsel),
+		get_request_parent(ui_hint, conv ? PIDGIN_CONVERSATION(conv) : NULL));
 
 	data->dialog = dirsel;
 	gtk_widget_show(dirsel);

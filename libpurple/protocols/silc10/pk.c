@@ -113,9 +113,9 @@ static void silcpurple_verify_ask(const char *entity,
 		   _("Fingerprint and babbleprint for the %s key are:\n\n"
 		     "%s\n%s\n"), entity, fingerprint, babbleprint);
 
-	purple_request_action(gc, _("Verify Public Key"), tmp, tmp2,
+	purple_request_action_with_hint(gc, _("Verify Public Key"), tmp, tmp2,
 						PURPLE_DEFAULT_ACTION_NONE,
-						purple_connection_get_account(gc), entity, NULL, verify, 3,
+						purple_connection_get_account(gc), entity, NULL, verify, PURPLE_REQUEST_UI_HINT_BLIST, 3,
 			    _("Yes"), G_CALLBACK(silcpurple_verify_cb),
 			    _("No"), G_CALLBACK(silcpurple_verify_cb),
 			    _("_View..."), G_CALLBACK(silcpurple_verify_details));
