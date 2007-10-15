@@ -14,6 +14,8 @@ version 2.3.0 (??/??/????):
 		  to unload a plugin--fails.  This then prevents the plugin
 		  from being saved in the saved plugins list, so it'll won't
 		  be loaded at the next startup.
+		* purple_util_init()
+		* purple_util_uninit()
 
 		* pidgin_dialogs_about_with_parent()
 		* pidgin_log_show_contact_with_parent()
