@@ -539,7 +539,7 @@ void purple_notify_user_info_add_pair(PurpleNotifyUserInfo *user_info, const cha
 void purple_notify_user_info_prepend_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
 
 /**
- * Remove a PurpleNotifyUserInfoEntry from a PurpleNotifyUserInfo object
+ * Remove a PurpleNotifyUserInfoEntry from a PurpleNotifyUserInfo object without freeing the entry.
  *
  * @param user_info          The PurpleNotifyUserInfo
  * @param user_info_entry    The PurpleNotifyUserInfoEntry
