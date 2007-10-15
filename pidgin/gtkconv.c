@@ -2853,6 +2853,9 @@ pidgin_conversations_find_unseen_list(PurpleConversationType type,
 		if (gtkconv != NULL && gtkconv->active_conv != conv)
 			continue;
 		if (gtkconv == NULL) {
+			if (!hidden_only ||
+					!purple_conversation_get_data(conv, "unseen-count"))
+				continue;
 			r = g_list_prepend(r, conv);
 			c++;
 		} else {
