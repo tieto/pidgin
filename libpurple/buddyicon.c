@@ -505,37 +505,33 @@ purple_buddy_icons_set_for_user(PurpleAccount *account, const char *username,
 		purple_buddy_icon_set_data(icon, icon_data, icon_len, checksum);
 	else if (icon_data && icon_len > 0)
 	{
-		if (icon_data != NULL && icon_len > 0)
+		PurpleBuddyIcon *icon = purple_buddy_icon_new(account, username, icon_data, icon_len, checksum);
+
+		/* purple_buddy_icon_new() calls
+		 * purple_buddy_icon_set_data(), which calls
+		 * purple_buddy_icon_update(), which has the buddy list
+		 * and conversations take references as appropriate.
+		 * This function doesn't return icon, so we can't
+		 * leave a reference dangling. */
+		purple_buddy_icon_unref(icon);
+	}
+	else
+	{
+		/* If the buddy list or a conversation was holding a
+		 * reference, we'd have found the icon in the cache.
+		 * Since we know we're deleting the icon, we only
+		 * need a subset of purple_buddy_icon_update(). */
+
+		GSList *buddies = purple_find_buddies(account, username);
+		while (buddies != NULL)
 		{
-			PurpleBuddyIcon *icon = purple_buddy_icon_new(account, username, icon_data, icon_len, checksum);
+			PurpleBuddy *buddy = (PurpleBuddy *)buddies->data;
 
-			/* purple_buddy_icon_new() calls
-			 * purple_buddy_icon_set_data(), which calls
-			 * purple_buddy_icon_update(), which has the buddy list
-			 * and conversations take references as appropriate.
-			 * This function doesn't return icon, so we can't
-			 * leave a reference dangling. */
-			purple_buddy_icon_unref(icon);
-		}
-		else
-		{
-			/* If the buddy list or a conversation was holding a
-			 * reference, we'd have found the icon in the cache.
-			 * Since we know we're deleting the icon, we only
-			 * need a subset of purple_buddy_icon_update(). */
+			unref_filename(purple_blist_node_get_string((PurpleBlistNode *)buddy, "buddy_icon"));
+			purple_blist_node_remove_setting((PurpleBlistNode *)buddy, "buddy_icon");
+			purple_blist_node_remove_setting((PurpleBlistNode *)buddy, "icon_checksum");
 
-			GSList *buddies = purple_find_buddies(account, username);
-			while (buddies != NULL)
-			{
-				PurpleBuddy *buddy = (PurpleBuddy *)buddies->data;
-
-				unref_filename(purple_blist_node_get_string((PurpleBlistNode *)buddy, "buddy_icon"));
-				purple_blist_node_remove_setting((PurpleBlistNode *)buddy, "buddy_icon");
-				purple_blist_node_remove_setting((PurpleBlistNode *)buddy, "icon_checksum");
-
-				buddies = g_slist_delete_link(buddies, buddies);
-			}
-
+			buddies = g_slist_delete_link(buddies, buddies);
 		}
 	}
 }
