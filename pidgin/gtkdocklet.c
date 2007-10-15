@@ -145,22 +145,15 @@ docklet_update_status()
 		if (ui_ops->set_tooltip) {
 			GString *tooltip_text = g_string_new("");
 			for (l = convs, count = 0 ; l != NULL ; l = l->next, count++) {
-				PurpleConversation *conv = (PurpleConversation *)l->data;
-				PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-
-				if (count == DOCKLET_TOOLTIP_LINE_LIMIT - 1) {
-					g_string_append(tooltip_text, _("Right-click for more unread messages...\n"));
-				} else if(gtkconv) {
-					g_string_append_printf(tooltip_text,
-						ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
-						gtkconv->unseen_count,
-						gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
-				} else {
-					g_string_append_printf(tooltip_text,
-						ngettext("%d unread message from %s\n", "%d unread messages from %s\n",
-						GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count"))),
-						GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")),
-						purple_conversation_get_name(conv));
+				if (PIDGIN_IS_PIDGIN_CONVERSATION(l->data)) {
+					PidginConversation *gtkconv = PIDGIN_CONVERSATION((PurpleConversation *)l->data);
+					if (count == DOCKLET_TOOLTIP_LINE_LIMIT - 1)
+						g_string_append(tooltip_text, _("Right-click for more unread messages...\n"));
+					else
+						g_string_append_printf(tooltip_text,
+							ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
+							gtkconv->unseen_count,
+							gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
 				}
 			}
 
@@ -765,7 +758,7 @@ pidgin_docklet_clicked(int button_type)
 			if (pending) {
 				GList *l = get_pending_list(1);
 				if (l != NULL) {
-					pidgin_conv_present_conversation((PurpleConversation *)l->data);
+					purple_conversation_present((PurpleConversation *)l->data);
 					g_list_free(l);
 				}
 			} else {
