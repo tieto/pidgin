@@ -664,10 +664,11 @@ msn_message_get_hashtable_from_body(const MsnMessage *msg)
 
 		tokens = g_strsplit(*cur, ": ", 2);
 
-		if (tokens[0] != NULL && tokens[1] != NULL)
+		if (tokens[0] != NULL && tokens[1] != NULL) {
 			g_hash_table_insert(table, tokens[0], tokens[1]);
-
-		g_free(tokens);
+			g_free(tokens);
+		} else
+			g_strfreev(tokens);
 	}
 
 	g_strfreev(elems);
