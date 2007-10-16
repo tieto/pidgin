@@ -98,6 +98,12 @@ version 2.3.0 (??/??/????):
 		  attributes in place of colors if the terminal doesn't have color
 		  support. (Bug: #3560) All future code should use gnt_color_pair
 		  instead of COLOR_PAIR.
+		* Added gnt_menuitem_set_id and gnt_menuitem_get_id to set and get the
+		  string id of a menuitem respectively.
+		* Added gnt_window_get_accel_item, which returns a the id of a menuitem
+		  bound to a keystroke.
+		* Added gnt_menu_get_item to activate and return a menuitem of the
+		  given id from a menu.
 
 version 2.2.2 (??/??/????):
 	libpurple:

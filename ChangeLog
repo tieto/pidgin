@@ -20,6 +20,8 @@ version 2.3.0:
 	  remove the plugin from the list of saved plugins so it won't load
 	  at the next startup.  Previously, we were ignoring this case, which
 	  could lead to crashes.
+	* It's possible to bind key-strokes to specific menuitems in the windows.
+	  Read the 'Menus' section in the man-page for details.
 
 version 2.2.2:
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.2

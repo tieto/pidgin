@@ -123,6 +123,8 @@ void gnt_menuitem_set_submenu(GntMenuItem *item, GntMenu *menu);
  * @param item   The menuitem.
  *
  * @return  The submenu, or @c NULL.
+ *
+ * @since 2.3.0
  */
 GntMenu *gnt_menuitem_get_submenu(GntMenuItem *item);
 
@@ -150,6 +152,8 @@ char gnt_menuitem_get_trigger(GntMenuItem *item);
  *
  * @param item   The menuitem.
  * @param id     The ID for the menuitem.
+ *
+ * @since 2.3.0
  */
 void gnt_menuitem_set_id(GntMenuItem *item, const char *id);
 
@@ -159,6 +163,8 @@ void gnt_menuitem_set_id(GntMenuItem *item, const char *id);
  * @param item   The menuitem.
  *
  * @return  The ID for the menuitem.
+ *
+ * @since 2.3.0
  */
 const char * gnt_menuitem_get_id(GntMenuItem *item);
 
