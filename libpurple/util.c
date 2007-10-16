@@ -3493,7 +3493,7 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 	gboolean full;
 	int len;
 
-	if ((s = g_strstr_len(data, data_len, "Location: ")) == NULL)
+	if ((s = g_strstr_len(data, data_len, "\nLocation: ")) == NULL)
 		/* We're not being redirected */
 		return FALSE;
 
