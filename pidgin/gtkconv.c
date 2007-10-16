@@ -6581,9 +6581,9 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
 			if (gtkconv->active_conv->type == PURPLE_CONV_TYPE_CHAT)
-				style = "color=\"#204a87\" weight=\"bold\"";
+				style = "color=\"#204a87\"";
 			else
-				style = "color=\"#cc0000\" weight=\"bold\"";
+				style = "color=\"#cc0000\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
 			atk_object_set_description(accessibility_obj, _("New Event"));
 			style = "color=\"#888a85\"";
@@ -6595,7 +6595,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				gtkconv->unseen_state == PIDGIN_UNSEEN_NICK ||
 				gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
 			bold = TRUE;
-		
+
 		if (style || bold)
 		{
 			char *html_title,*label;
