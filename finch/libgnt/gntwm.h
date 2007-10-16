@@ -113,7 +113,7 @@ struct _GntWM
 	 * whether to give focus to a new window.
 	 */
 	gboolean event_stack;
-	
+
 	GntKeyPressMode mode;
 
 	GHashTable *positions;
@@ -184,108 +184,149 @@ struct _GntWMClass
 G_BEGIN_DECLS
 
 /**
- * 
- *
- * @return
+ * @return GType for GntWM.
  */
 GType gnt_wm_get_gtype(void);
 
+/**
+ * Add a workspace.
+ * @param wm   The window-manager.
+ * @param ws   The workspace to add.
+ */
 void gnt_wm_add_workspace(GntWM *wm, GntWS *ws);
 
+/**
+ * Switch to a workspace.
+ * @param wm   The window-manager.
+ * @param n    Index of the workspace to switch to.
+ *
+ * @return   @c TRUE if the switch was successful.
+ */
 gboolean gnt_wm_switch_workspace(GntWM *wm, gint n);
+
+/**
+ * Switch to the previous workspace from the current one.
+ * @param wm  The window-manager.
+ */
 gboolean gnt_wm_switch_workspace_prev(GntWM *wm);
+
+/**
+ * Switch to the next workspace from the current one.
+ * @param wm  The window-manager.
+ */
 gboolean gnt_wm_switch_workspace_next(GntWM *wm);
+
+/**
+ * Move a window to a specific workspace.
+ * @param wm     The window manager.
+ * @param neww   The new workspace.
+ * @param widget The widget to move.
+ */
 void gnt_wm_widget_move_workspace(GntWM *wm, GntWS *neww, GntWidget *widget);
+
+/**
+ * Set the list of workspaces .
+ * @param wm            The window manager.
+ * @param workspaces    The list of workspaces.
+ */
 void gnt_wm_set_workspaces(GntWM *wm, GList *workspaces);
+
+/**
+ * Find the workspace that contains a specific widget.
+ * @param wm       The window-manager.
+ * @param widget   The widget to find.
+ * @return   The workspace that has the widget.
+ */
 GntWS *gnt_wm_widget_find_workspace(GntWM *wm, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param widget
+ * Process a new window.
+ *
+ * @param wm       The window-manager.
+ * @param widget   The new window.
  */
 void gnt_wm_new_window(GntWM *wm, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param widget
+ * Decorate a window.
+ * @param wm       The window-manager.
+ * @param widget   The widget to decorate.
  */
 void gnt_wm_window_decorate(GntWM *wm, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param widget
+ * Close a window.
+ * @param wm       The window-manager.
+ * @param widget   The window to close.
  */
 void gnt_wm_window_close(GntWM *wm, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param string
+ * Process input.
  *
- * @return
+ * @param wm      The window-manager.
+ * @param string  The input string to process.
+ *
+ * @return @c TRUE of the string was processed, @c FALSE otherwise.
  */
 gboolean gnt_wm_process_input(GntWM *wm, const char *string);
 
 /**
- * 
- * @param wm
- * @param event
- * @param x
- * @param y
- * @param widget
+ * Process a click event.
+ * @param wm      The window manager.
+ * @param event   The mouse event.
+ * @param x       The x-coordinate of the mouse.
+ * @param y       The y-coordinate of the mouse.
+ * @param widget  The widget under the mouse.
  *
- * @return
+ * @return  @c TRUE if the event was handled, @c FALSE otherwise.
  */
 gboolean gnt_wm_process_click(GntWM *wm, GntMouseEvent event, int x, int y, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param widget
- * @param width
- * @param height
+ * Resize a window.
+ * @param wm        The window manager.
+ * @param widget    The window to resize.
+ * @param width     The desired width of the window.
+ * @param height    The desired height of the window.
  */
 void gnt_wm_resize_window(GntWM *wm, GntWidget *widget, int width, int height);
 
 /**
- * 
- * @param wm
- * @param widget
- * @param x
- * @param y
+ * Move a window.
+ * @param wm      The window manager.
+ * @param widget  The window to move.
+ * @param x       The desired x-coordinate of the window.
+ * @param y       The desired y-coordinate of the window.
  */
 void gnt_wm_move_window(GntWM *wm, GntWidget *widget, int x, int y);
 
 /**
- * 
- * @param wm
- * @param widget
+ * Update a window.
+ * @param wm      The window-manager.
+ * @param widget  The window to update.
  */
 void gnt_wm_update_window(GntWM *wm, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param widget
+ * Raise a window.
+ * @param wm      The window-manager.
+ * @param widget  The window to raise.
  */
 void gnt_wm_raise_window(GntWM *wm, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param set
+ * @internal
  */
 void gnt_wm_set_event_stack(GntWM *wm, gboolean set);
 
+/**
+ * @internal
+ */
 void gnt_wm_copy_win(GntWidget *widget, GntNode *node);
 
 /**
- * 
- *
- * @return
+ * @return  The idle time of the user.
  */
 time_t gnt_wm_get_idle_time(void);
 

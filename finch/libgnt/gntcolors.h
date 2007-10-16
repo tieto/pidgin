@@ -99,6 +99,6 @@ void gnt_color_pairs_parse(GKeyFile *kfile);
  *
  * @since 2.3.0
  */
-int gnt_color_pair(int pair);
+int gnt_color_pair(int color);
 
 #endif
