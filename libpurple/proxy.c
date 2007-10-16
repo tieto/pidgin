@@ -690,11 +690,12 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 				gchar *tmp = ntlm;
 				guint8 *nonce;
 				gchar *domain = (gchar*)purple_proxy_info_get_username(connect_data->gpi);
-				gchar *username;
+				gchar *username = NULL;
 				gchar *request;
 				gchar *response;
 
-				username = strchr(domain, '\\');
+				if (domain != NULL)
+					username = strchr(domain, '\\');
 				if (username == NULL)
 				{
 					purple_proxy_connect_data_disconnect_formatted(connect_data,
@@ -738,9 +739,11 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 			} else if((ntlm = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: NTLM"))) { /* Empty message */
 				gchar request[2048];
 				gchar *domain = (gchar*) purple_proxy_info_get_username(connect_data->gpi);
-				gchar *username;
+				gchar *username = NULL;
 				int request_len;
-				username = strchr(domain, '\\');
+
+				if (domain != NULL)
+					username = strchr(domain, '\\');
 				if (username == NULL)
 				{
 					purple_proxy_connect_data_disconnect_formatted(connect_data,
