@@ -6,6 +6,10 @@ version 2.2.2 (??/??/????):
 		* The size parameter of purple_util_write_data_to_file_absolute
 		  has been changed to gssize instead of a size_t to correctly
 		  indicate that -1 can be used for a nul-delimited string.
+		* The documentation for purple_savedstatuses_get_popular used to
+		  incorrectly claim that the active status is excluded from the
+		  returned list. The documentation has been corrected. Also, the
+		  function now returns a correct list when called with a value of 0.
 
 version 2.2.0 (09/13/2007):
 	libpurple:
