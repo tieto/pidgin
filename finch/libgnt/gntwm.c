@@ -1046,7 +1046,7 @@ static void remove_tag(gpointer wid, gpointer wim)
 	GntWM *wm = GNT_WM(wim);
 	GntWidget *w = GNT_WIDGET(wid);
 	wm->tagged = g_list_remove(wm->tagged, w);
-	mvwhline(w->window, 0, 1, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL), 3);
+	mvwhline(w->window, 0, 1, ACS_HLINE | gnt_color_pair(GNT_COLOR_NORMAL), 3);
 	gnt_widget_draw(w);
 }
 
@@ -1066,7 +1066,7 @@ tag_widget(GntBindable *b, GList *params)
 	}
 
 	wm->tagged = g_list_prepend(wm->tagged, widget);
-	wbkgdset(widget->window, ' ' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+	wbkgdset(widget->window, ' ' | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
 	mvwprintw(widget->window, 0, 1, "[T]");
 	gnt_widget_draw(widget);
 	return TRUE;

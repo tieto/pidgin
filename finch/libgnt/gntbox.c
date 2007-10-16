@@ -80,12 +80,12 @@ gnt_box_draw(GntWidget *widget)
 		get_title_thingies(box, title, &pos, &right);
 
 		if (gnt_widget_has_focus(widget))
-			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TITLE));
+			wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_TITLE));
 		else
-			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TITLE_D));
-		mvwaddch(widget->window, 0, pos-1, ACS_RTEE | COLOR_PAIR(GNT_COLOR_NORMAL));
+			wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_TITLE_D));
+		mvwaddch(widget->window, 0, pos-1, ACS_RTEE | gnt_color_pair(GNT_COLOR_NORMAL));
 		mvwaddstr(widget->window, 0, pos, title);
-		mvwaddch(widget->window, 0, right, ACS_LTEE | COLOR_PAIR(GNT_COLOR_NORMAL));
+		mvwaddch(widget->window, 0, right, ACS_LTEE | gnt_color_pair(GNT_COLOR_NORMAL));
 		g_free(title);
 	}
 	
@@ -603,7 +603,7 @@ void gnt_box_set_title(GntBox *b, const char *title)
 		/* Erase the old title */
 		int pos, right;
 		get_title_thingies(b, prev, &pos, &right);
-		mvwhline(w->window, 0, pos - 1, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL),
+		mvwhline(w->window, 0, pos - 1, ACS_HLINE | gnt_color_pair(GNT_COLOR_NORMAL),
 				right - pos + 2);
 		g_free(prev);
 	}

@@ -482,7 +482,7 @@ void gnt_init()
 
 	gnt_init_colors();
 
-	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
+	wbkgdset(stdscr, '\0' | gnt_color_pair(GNT_COLOR_NORMAL));
 	refresh();
 
 #ifdef ALL_MOUSE_EVENTS
@@ -490,7 +490,7 @@ void gnt_init()
 		mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
 #endif
 
-	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
+	wbkgdset(stdscr, '\0' | gnt_color_pair(GNT_COLOR_NORMAL));
 	werase(stdscr);
 	wrefresh(stdscr);
 

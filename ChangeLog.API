@@ -92,6 +92,13 @@ version 2.3.0 (??/??/????):
 		  PURPLE_TUNE_{ARTIST, TITLE, ALBUM, GENRE, COMMENT, TRACK, TIME,
 		  YEAR, URL} attributes.
 
+	Finch:
+		libgnt:
+		* Added gnt_color_pair, which will try to intelligenty set text
+		  attributes in place of colors if the terminal doesn't have color
+		  support. (Bug: #3560) All future code should use gnt_color_pair
+		  instead of COLOR_PAIR.
+
 version 2.2.2 (??/??/????):
 	libpurple:
 		Changed:

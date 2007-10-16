@@ -56,12 +56,12 @@ gnt_menu_draw(GntWidget *widget)
 	int i;
 
 	if (menu->type == GNT_MENU_TOPLEVEL) {
-		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+		wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
 		werase(widget->window);
 
 		for (i = 0, iter = menu->list; iter; iter = iter->next, i++) {
 			GntMenuItem *item = GNT_MENU_ITEM(iter->data);
-			type = ' ' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT);
+			type = ' ' | gnt_color_pair(GNT_COLOR_HIGHLIGHT);
 			if (i == menu->selected)
 				type |= A_REVERSE;
 			item->priv.x = getcurx(widget->window) + widget->priv.x;
