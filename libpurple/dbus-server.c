@@ -697,12 +697,12 @@ purple_dbus_message_append_purple_values(DBusMessageIter *iter,
 			dbus_message_iter_append_basic(iter, DBUS_TYPE_UINT32, &xuint);
 			break;
 		case PURPLE_TYPE_INT64:
-			xint = my_arg(gint64);
-			dbus_message_iter_append_basic(iter, DBUS_TYPE_INT64, &xint);
+			xint64 = my_arg(gint64);
+			dbus_message_iter_append_basic(iter, DBUS_TYPE_INT64, &xint64);
 			break;
 		case PURPLE_TYPE_UINT64:
-			xuint = my_arg(guint64);
-			dbus_message_iter_append_basic(iter, DBUS_TYPE_UINT64, &xuint);
+			xuint64 = my_arg(guint64);
+			dbus_message_iter_append_basic(iter, DBUS_TYPE_UINT64, &xuint64);
 			break;
 		case PURPLE_TYPE_BOOLEAN:
 			xboolean = my_arg(gboolean);
