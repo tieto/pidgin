@@ -1263,6 +1263,7 @@ oscar_login(PurpleAccount *account)
 		gc->wants_to_die = TRUE;
 		purple_connection_error(gc, buf);
 		g_free(buf);
+		return;
 	}
 
 	if (aim_snvalid_icq((purple_account_get_username(account)))) {
