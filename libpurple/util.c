@@ -1515,8 +1515,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							plain = g_string_append(plain, alt->str);
 						if(!src && xhtml)
 							xhtml = g_string_append(xhtml, alt->str);
+						g_string_free(alt, TRUE);
 					}
-					g_string_free(alt, TRUE);
 					g_string_free(src, TRUE);
 					continue;
 				}
