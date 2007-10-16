@@ -3877,13 +3877,26 @@ unseen_conv_menu()
 {
 	static GtkWidget *menu = NULL;
 	GList *convs = NULL;
+	GList *chats, *ims;
 
 	if (menu) {
 		gtk_widget_destroy(menu);
 		menu = NULL;
 	}
 
-	convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_ANY, PIDGIN_UNSEEN_TEXT, TRUE, 0);
+	ims = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
+				PIDGIN_UNSEEN_TEXT, FALSE, 0);
+
+	chats = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
+				PIDGIN_UNSEEN_NICK, FALSE, 0);
+
+	if(ims && chats)
+		convs = g_list_concat(ims, chats);
+	else if(ims && !chats)
+		convs = ims;
+	else if(!ims && chats)
+		convs = chats;
+
 	if (!convs)
 		/* no conversations added, don't show the menu */
 		return;
@@ -3905,7 +3918,11 @@ menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 	switch (event->button) {
 		case 1:
 			convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
-															PIDGIN_UNSEEN_TEXT, TRUE, 1);
+							PIDGIN_UNSEEN_TEXT, FALSE, 1);
+
+			if(!convs)
+				convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
+								PIDGIN_UNSEEN_NICK, FALSE, 1);
 			if (convs) {
 				pidgin_conv_present_conversation((PurpleConversation*)convs->data);
 				g_list_free(convs);
@@ -3923,6 +3940,7 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
                         PidginBuddyList *gtkblist)
 {
 	GList *convs = NULL;
+	GList *ims, *chats;
 	GList *l = NULL;
 
 	if (type != PURPLE_CONV_UPDATE_UNSEEN)
@@ -3939,7 +3957,19 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
 		gtkblist->menutrayicon = NULL;
 	}
 
-	convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_ANY, PIDGIN_UNSEEN_TEXT, TRUE, 0);
+	ims = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
+				PIDGIN_UNSEEN_TEXT, FALSE, 0);
+
+	chats = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
+				PIDGIN_UNSEEN_NICK, FALSE, 0);
+
+	if(ims && chats)
+		convs = g_list_concat(ims, chats);
+	else if(ims && !chats)
+		convs = ims;
+	else if(!ims && chats)
+		convs = chats;
+
 	if (convs) {
 		GtkWidget *img = NULL;
 		GString *tooltip_text = NULL;
@@ -3947,7 +3977,14 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
 		tooltip_text = g_string_new("");
 		l = convs;
 		while (l != NULL) {
-			int count = GPOINTER_TO_INT(purple_conversation_get_data(l->data, "unseen-count"));
+			int count = 0;
+			PidginConversation *gtkconv = PIDGIN_CONVERSATION((PurpleConversation *)l->data);
+
+			if(gtkconv)
+				count = gtkconv->unseen_count;
+			else if(purple_conversation_get_data(l->data, "unseen-count"))
+				count = GPOINTER_TO_INT(purple_conversation_get_data(l->data, "unseen-count"));
+
 			g_string_append_printf(tooltip_text,
 					ngettext("%d unread message from %s\n", "%d unread messages from %s\n", count),
 					count, purple_conversation_get_name(l->data));
