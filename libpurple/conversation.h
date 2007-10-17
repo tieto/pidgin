@@ -1042,7 +1042,7 @@ GList *purple_conv_chat_set_ignored(PurpleConvChat *chat, GList *ignored);
  *
  * @param chat The chat.
  *
- * @return The list of ignored users.
+ * @constreturn The list of ignored users.
  */
 GList *purple_conv_chat_get_ignored(const PurpleConvChat *chat);
 
