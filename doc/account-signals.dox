@@ -9,6 +9,7 @@
   @signal account-setting-info
   @signal account-set-info
   @signal account-status-changed
+  @signal account-alias-changed
  @endsignals
 
  @see account.h
