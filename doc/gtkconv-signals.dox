@@ -28,12 +28,14 @@ void (*conversation_dragging)(PidginWindow *source, PidginWindow *destination);
 
  @signaldef conversation-timestamp
   @signalproto
-char *(*conversation_timestamp)(PurpleConversation *conv, time_t when);
+char *(*conversation_timestamp)(PurpleConversation *conv, time_t when,
+                                gboolean show_date);
   @endsignalproto
   @signaldesc
    Emitted to allow plugins to customize the timestamp on a message.
-  @param conv The conversation the message belongs to.
-  @param when The time to be converted to a string.
+  @param conv      The conversation the message belongs to.
+  @param when      The time to be converted to a string.
+  @param show_date Whether the date should be displayed.
   @return A textual representation of the time, or @c NULL to use a
           default format.
  @endsignaldef
