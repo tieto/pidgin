@@ -414,7 +414,7 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
-		purple_debug_info("MSNP14","MSG payload:{%s}\n",cmd->payload);
+		purple_debug_info("MSNP14","MSG payload:{%.*s}\n",cmd->payload_len, cmd->payload);
 		cmd->payload_cb(cmdproc, cmd, cmd->payload, cmd->payload_len);
 	}
 }
