@@ -25,6 +25,8 @@ version 2.3.0 (??/??/????):
 		* pidgin_pounce_editor_show_with_parent()
 		* pidgin_pounces_manager_show_with_parent()
 		* pidgin_syslog_show_with_parent()
+		* pidgin_docklet_get_geometry()
+		* pidgin_docklet_get_gdk_screen()
 
 		* purple_request_accept_cancel_with_hint()
 		* purple_request_action_varg_with_hint()
