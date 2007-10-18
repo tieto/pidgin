@@ -645,11 +645,10 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>Network Security Services (NSS):</b> Disabled<br/>");
 #endif
 
-#ifdef HAVE_PERL
+if (purple_plugins_find_with_id("core-perl") != NULL)
 	g_string_append(str, "    <b>Perl:</b> Enabled<br/>");
-#else
+else
 	g_string_append(str, "    <b>Perl:</b> Disabled<br/>");
-#endif
 
 #ifndef _WIN32
 #ifdef HAVE_STARTUP_NOTIFICATION
@@ -659,17 +658,17 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 #endif
 #endif
 
-#ifdef HAVE_TCL
+if (purple_plugins_find_with_id("core-tcl") != NULL) {
 	g_string_append(str, "    <b>Tcl:</b> Enabled<br/>");
-#else
-	g_string_append(str, "    <b>Tcl:</b> Disabled<br/>");
-#endif
-
 #ifdef HAVE_TK
 	g_string_append(str, "    <b>Tk:</b> Enabled<br/>");
 #else
 	g_string_append(str, "    <b>Tk:</b> Disabled<br/>");
 #endif
+} else {
+	g_string_append(str, "    <b>Tcl:</b> Disabled<br/>");
+	g_string_append(str, "    <b>Tk:</b> Disabled<br/>");
+}
 
 #ifndef _WIN32
 #ifdef USE_SM
