@@ -254,6 +254,7 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 	trans = msn_transaction_new(cmdproc, "PGD", "%s 1 %d", who, payload_len);
 
 	msn_transaction_set_payload(trans, payload, payload_len);
+	g_free(payload);
 
 	msn_page_destroy(page);
 
@@ -1982,7 +1983,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	purple_debug_info("MSNP14","photo url:{%s}\n", photo_url_text ? photo_url_text : "(null)");
 
 	/* Marshall the existing state */
-	info2_data = g_malloc0(sizeof(MsnGetInfoStepTwoData));
+	info2_data = g_new0(MsnGetInfoStepTwoData, 1);
 	info2_data->info_data = info_data;
 	info2_data->stripped = stripped;
 	info2_data->url_buffer = url_buffer;

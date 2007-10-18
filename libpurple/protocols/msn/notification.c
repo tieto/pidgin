@@ -465,15 +465,12 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	if(!strcmp(content_type,"text/plain")){
 		const char *value;
 		const char *body;
-		char *body_str;
 		char *body_enc;
 		char *body_final = NULL;
 		size_t body_len;
 
 		body = msn_message_get_bin_data(msg, &body_len);
-		body_str = g_strndup(body, body_len);
-		body_enc = g_markup_escape_text(body_str, -1);
-		g_free(body_str);
+		body_enc = g_markup_escape_text(body, body_len);
 
 		if ((value = msn_message_get_attr(msg, "X-MMS-IM-Format")) != NULL)	{
 			char *pre, *post;
@@ -486,6 +483,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		}
 		g_free(body_enc);
 		serv_got_im(gc, passport, body_final, 0, time(NULL));
+		g_free(body_final);
 	}
 	if(!strcmp(content_type,"text/x-msmsgscontrol")){
 		if(msn_message_get_attr(msg, "TypingUser") != NULL){

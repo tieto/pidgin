@@ -313,6 +313,7 @@ msn_message_parse_payload(MsnMessage *msg,
 		/* Import the body. */
 		if (body_len > 0) {
 			msg->body_len = body_len;
+			g_free(msg->body);
 			msg->body = g_malloc0(msg->body_len + 1);
 			memcpy(msg->body, tmp, msg->body_len);
 			tmp += body_len;
@@ -329,6 +330,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	{
 		if (payload_len - (tmp - tmp_base) > 0) {
 			msg->body_len = payload_len - (tmp - tmp_base);
+			g_free(msg->body);
 			msg->body = g_malloc0(msg->body_len + 1);
 			memcpy(msg->body, tmp, msg->body_len);
 		}

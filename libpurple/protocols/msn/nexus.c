@@ -228,7 +228,7 @@ nexus_login_connect_cb(MsnSoapConn *soapconn, PurpleSslConnection *gsc)
 	char *ru,*lc,*id,*tw,*ct,*kpp,*kv,*ver,*rn,*tpf;
 	char *fs0,*fs;
 	char *username, *password;
-	char *request_str, *head, *tail;
+	char *request_str, *tail;
 #ifdef NEXUS_LOGIN_TWN
 	char *challenge_str;
 #else
@@ -318,22 +318,21 @@ nexus_login_connect_cb(MsnSoapConn *soapconn, PurpleSslConnection *gsc)
 	g_free(fs);
 
 	soapconn->login_path = g_strdup(TWN_POST_URL);
-	head = g_strdup_printf(
+	request_str = g_strdup_printf(
 					"POST %s HTTP/1.1\r\n"
 					"Accept: text/*\r\n"
 					"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
 					"Host: %s\r\n"
 					"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 					"Connection: Keep-Alive\r\n"
-					"Cache-Control: no-cache\r\n\r\n",
-					soapconn->login_path, soapconn->login_host, strlen(tail));
-
-	request_str = g_strdup_printf("%s%s", head,tail);
+					"Cache-Control: no-cache\r\n\r\n"
+					"%s",
+					soapconn->login_path, soapconn->login_host, strlen(tail),
+					tail);
 
 #ifdef MSN_SOAP_DEBUG	
 	purple_debug_misc("MSN Nexus", "TWN Sending:\n%s\n", request_str);
 #endif
-	g_free(head);
 	g_free(tail);
 	g_free(username);
 	g_free(password);

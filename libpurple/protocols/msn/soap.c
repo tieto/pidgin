@@ -679,6 +679,8 @@ msn_soap_write(MsnSoapConn * soapconn, char *write_buf, MsnSoapWrittenCbFunction
 
 	msn_soap_set_process_step(soapconn, MSN_SOAP_PROCESSING);
 
+	/* Ideally this wouldn't ever be necessary, but i believe that it is leaking the previous value */
+	g_free(soapconn->write_buf);
 	soapconn->write_buf = write_buf;
 	soapconn->written_len = 0;
 	soapconn->written_cb = written_cb;
@@ -822,7 +824,6 @@ msn_soap_post(MsnSoapConn *soapconn, MsnSoapReq *request)
 void
 msn_soap_post_request(MsnSoapConn *soapconn, MsnSoapReq *request)
 {
-	char * soap_head = NULL;
 	char * request_str = NULL;
 #ifdef MSN_SOAP_DEBUG
 #if !defined(_WIN32)
@@ -832,7 +833,7 @@ msn_soap_post_request(MsnSoapConn *soapconn, MsnSoapReq *request)
 #endif
 
 	msn_soap_set_process_step(soapconn, MSN_SOAP_PROCESSING);
-	soap_head = g_strdup_printf(
+	request_str = g_strdup_printf(
 					"POST %s HTTP/1.1\r\n"
 					"SOAPAction: %s\r\n"
 					"Content-Type:text/xml; charset=utf-8\r\n"
@@ -842,14 +843,15 @@ msn_soap_post_request(MsnSoapConn *soapconn, MsnSoapReq *request)
 					"Host: %s\r\n"
 					"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 					"Connection: Keep-Alive\r\n"
-					"Cache-Control: no-cache\r\n\r\n",
+					"Cache-Control: no-cache\r\n\r\n"
+					"%s",
 					request->login_path,
 					request->soap_action,
 					soapconn->session->passport_info.mspauth,
 					request->login_host,
-					strlen(request->body)
+					strlen(request->body),
+					request->body
 					);
-	request_str = g_strdup_printf("%s%s", soap_head, request->body);
 
 #if defined(MSN_SOAP_DEBUG) && !defined(_WIN32)
 	node = xmlnode_from_str(request->body, -1);
@@ -863,7 +865,6 @@ msn_soap_post_request(MsnSoapConn *soapconn, MsnSoapReq *request)
 		purple_debug_info("MSN SOAP","Failed to parse SOAP request being sent:\n%s\n", request_str);
 #endif
 	
-	g_free(soap_head);
 	/*free read buffer*/
 	// msn_soap_free_read_buf(soapconn);
 	/*post it to server*/

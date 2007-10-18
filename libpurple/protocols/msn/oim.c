@@ -40,7 +40,7 @@ static void msn_oim_send_connect_init(MsnSoapConn *soapconn);
 static void msn_oim_free_send_req(MsnOimSendReq *req);
 static void msn_oim_report_to_user(MsnOim *oim, const char *msg_str);
 static void msn_oim_get_process(MsnOim *oim, const char *oim_msg);
-static char *msn_oim_msg_to_str(MsnOim *oim, const char *body);
+static gchar *msn_oim_msg_to_str(MsnOim *oim, const char *body);
 static void msn_oim_send_process(MsnOim *oim, const char *body, int len);
 
 /*new a OIM object*/
@@ -115,7 +115,7 @@ msn_oim_free_send_req(MsnOimSendReq *req)
  * OIM send SOAP request
  * **************************************/
 /*encode the message to OIM Message Format*/
-static char *
+static gchar *
 msn_oim_msg_to_str(MsnOim *oim, const char *body)
 {
 	char *oim_body,*oim_base64;
@@ -125,6 +125,7 @@ msn_oim_msg_to_str(MsnOim *oim, const char *body)
 	purple_debug_info("MSN OIM","encoded base64 body:{%s}\n",oim_base64);	
 	oim_body = g_strdup_printf(MSN_OIM_MSG_TEMPLATE,
 				oim->run_id,oim->send_seq,oim_base64);
+	g_free(oim_base64);
 
 	return oim_body;
 }
@@ -280,7 +281,7 @@ msn_oim_send_msg(MsnOim *oim)
 	MsnSoapReq *soap_request;
 	MsnOimSendReq *oim_request;
 	char *soap_body,*mspauth;
-	char *msg_body;
+	gchar *msg_body;
 	char buf[33];
 
 	g_return_if_fail(oim != NULL);
@@ -362,7 +363,8 @@ static void
 msn_oim_post_delete_msg(MsnOim *oim,const char *msgid)
 {
 	MsnSoapReq *soap_request;
-	const char *soap_body,*t,*p;
+	gchar *soap_body;
+	const char *t,*p;
 
 	g_return_if_fail(oim != NULL);
 	g_return_if_fail(msgid != NULL);
@@ -384,6 +386,7 @@ msn_oim_post_delete_msg(MsnOim *oim,const char *msgid)
 					msn_oim_delete_read_cb,
 					msn_oim_delete_written_cb,
 					msn_oim_retrieve_connect_init);
+	g_free(soap_body);
 	msn_soap_post(oim->retrieveconn,soap_request);
 }
 
@@ -669,7 +672,8 @@ static void
 msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 {
 	MsnSoapReq *soap_request;
-	const char *soap_body,*t,*p;
+	gchar *soap_body;
+	const char *t,*p;
 
 	purple_debug_info("MSN OIM","Get single OIM Message\n");
 	t = oim->session->passport_info.t;
@@ -688,6 +692,7 @@ msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 					msn_oim_get_read_cb,
 					msn_oim_get_written_cb,
 					msn_oim_retrieve_connect_init);
+	g_free(soap_body);
 	msn_soap_post(oim->retrieveconn,soap_request);
 }
 
