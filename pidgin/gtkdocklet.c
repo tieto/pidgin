@@ -154,13 +154,13 @@ docklet_update_status()
 					g_string_append_printf(tooltip_text,
 						ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
 						gtkconv->unseen_count,
-						gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+						purple_conversation_get_title(conv));
 				} else {
 					g_string_append_printf(tooltip_text,
 						ngettext("%d unread message from %s\n", "%d unread messages from %s\n",
 						GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count"))),
 						GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")),
-						purple_conversation_get_name(conv));
+						purple_conversation_get_title(conv));
 				}
 			}
 

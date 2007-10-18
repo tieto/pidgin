@@ -3987,7 +3987,7 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
 
 			g_string_append_printf(tooltip_text,
 					ngettext("%d unread message from %s\n", "%d unread messages from %s\n", count),
-					count, purple_conversation_get_name(l->data));
+					count, purple_conversation_get_title(l->data));
 			l = l->next;
 		}
 		if(tooltip_text->len > 0) {
