@@ -1301,8 +1301,12 @@ purple_xfers_init(void) {
 }
 
 void
-purple_xfers_uninit(void) {
-	purple_signals_disconnect_by_handle(purple_xfers_get_handle());
+purple_xfers_uninit(void)
+{
+	void *handle = purple_xfers_get_handle();
+
+	purple_signals_disconnect_by_handle(handle);
+	purple_signals_unregister_by_instance(handle);
 }
 
 void
