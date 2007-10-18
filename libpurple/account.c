@@ -63,7 +63,10 @@ typedef struct
 	PurpleAccountRequestType type;
 	PurpleAccount *account;
 	void *ui_handle;
-
+	char *user;
+	gpointer userdata;
+	PurpleAccountRequestAuthorizationCb auth_cb;
+	PurpleAccountRequestAuthorizationCb deny_cb;
 } PurpleAccountRequestInfo;
 
 static PurpleAccountUiOps *account_ui_ops = NULL;
@@ -1004,7 +1007,7 @@ purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
 	field = purple_request_field_bool_new("remember", _("Save password"), FALSE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(account,
+	purple_request_fields_with_hint(account,
                         NULL,
                         primary,
                         NULL,
@@ -1012,7 +1015,7 @@ purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
                         _("OK"), ok_cb,
                         _("Cancel"), cancel_cb,
 						account, NULL, NULL,
-                        user_data);
+                        PURPLE_REQUEST_UI_HINT_ACCOUNT, user_data);
 	g_free(primary);
 }
 
@@ -1157,6 +1160,28 @@ purple_account_request_close(void *ui_handle)
 	}
 }
 
+static void
+request_auth_cb(void *data)
+{
+	PurpleAccountRequestInfo *info = data;
+	info->auth_cb(info->userdata);
+	purple_signal_emit(purple_accounts_get_handle(),
+			"account-authorization-granted", info->account, info->user);
+	g_free(info->user);
+	g_free(info);
+}
+
+static void
+request_deny_cb(void *data)
+{
+	PurpleAccountRequestInfo *info = data;
+	info->deny_cb(info->userdata);
+	purple_signal_emit(purple_accounts_get_handle(),
+			"account-authorization-denied", info->account, info->user);
+	g_free(info->user);
+	g_free(info);
+}
+
 void *
 purple_account_request_authorization(PurpleAccount *account, const char *remote_user,
 				     const char *id, const char *alias, const char *message, gboolean on_list,
@@ -1164,18 +1189,35 @@ purple_account_request_authorization(PurpleAccount *account, const char *remote_
 {
 	PurpleAccountUiOps *ui_ops;
 	PurpleAccountRequestInfo *info;
+	int plugin_return;
 
 	g_return_val_if_fail(account     != NULL, NULL);
 	g_return_val_if_fail(remote_user != NULL, NULL);
 
 	ui_ops = purple_accounts_get_ui_ops();
 
+	plugin_return = GPOINTER_TO_INT(
+			purple_signal_emit_return_1(purple_accounts_get_handle(),
+				"account-authorization-requested", account, remote_user));
+
+	if (plugin_return > 0) {
+		auth_cb(user_data);
+		return NULL;
+	} else if (plugin_return < 0) {
+		deny_cb(user_data);
+		return NULL;
+	}
+
 	if (ui_ops != NULL && ui_ops->request_authorize != NULL) {
 		info            = g_new0(PurpleAccountRequestInfo, 1);
 		info->type      = PURPLE_ACCOUNT_REQUEST_AUTHORIZATION;
 		info->account   = account;
+		info->auth_cb   = auth_cb;
+		info->deny_cb   = deny_cb;
+		info->userdata  = user_data;
+		info->user      = g_strdup(remote_user);
 		info->ui_handle = ui_ops->request_authorize(account, remote_user, id, alias, message,
-							    on_list, auth_cb, deny_cb, user_data);
+							    on_list, request_auth_cb, request_deny_cb, info);
 
 		handles = g_list_append(handles, info);
 		return info->ui_handle;
@@ -1253,7 +1295,7 @@ purple_account_request_change_password(PurpleAccount *account)
 
 	/* I'm sticking this somewhere in the code: bologna */
 
-	purple_request_fields(purple_account_get_connection(account),
+	purple_request_fields_with_hint(purple_account_get_connection(account),
 						NULL,
 						primary,
 						_("Please enter your current password and your "
@@ -1262,7 +1304,7 @@ purple_account_request_change_password(PurpleAccount *account)
 						_("OK"), G_CALLBACK(change_password_cb),
 						_("Cancel"), NULL,
 						account, NULL, NULL,
-						account);
+						PURPLE_REQUEST_UI_HINT_ACCOUNT, account);
 }
 
 static void
@@ -1290,14 +1332,14 @@ purple_account_request_change_user_info(PurpleAccount *account)
 			   _("Change user information for %s"),
 			   purple_account_get_username(account));
 
-	purple_request_input(gc, _("Set User Info"), primary, NULL,
+	purple_request_input_with_hint(gc, _("Set User Info"), primary, NULL,
 					   purple_account_get_user_info(account),
 					   TRUE, FALSE, ((gc != NULL) &&
 					   (gc->flags & PURPLE_CONNECTION_HTML) ? "html" : NULL),
 					   _("Save"), G_CALLBACK(set_user_info_cb),
 					   _("Cancel"), NULL,
 					   account, NULL, NULL,
-					   account);
+					   PURPLE_REQUEST_UI_HINT_ACCOUNT, account);
 }
 
 void
@@ -2451,6 +2493,25 @@ purple_accounts_init(void)
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 							 			PURPLE_SUBTYPE_ACCOUNT),
 						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "account-authorization-requested",
+						purple_marshal_INT__POINTER_POINTER,
+						purple_value_new(PURPLE_TYPE_INT), 2,
+						purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "account-authorization-denied",
+						purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+						purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "account-authorization-granted",
+						purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+						purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT),
+						purple_value_new(PURPLE_TYPE_STRING));
 
 	load_accounts();
 

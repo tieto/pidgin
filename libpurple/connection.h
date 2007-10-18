@@ -150,6 +150,7 @@ extern "C" {
 /**************************************************************************/
 /*@{*/
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * This function should only be called by purple_account_connect()
  * in account.c.  If you're trying to sign on an account, use that
@@ -166,10 +167,14 @@ extern "C" {
  * @param regist   Whether we are registering a new account or just
  *                 trying to do a normal signon.
  * @param password The password to use.
+ *
+ * @deprecated As this is internal, we should make it private in 3.0.0.
  */
 void purple_connection_new(PurpleAccount *account, gboolean regist,
 									const char *password);
+#endif
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * This function should only be called by purple_account_unregister()
  * in account.c.
@@ -179,9 +184,15 @@ void purple_connection_new(PurpleAccount *account, gboolean regist,
  *
  * @param account  The account to unregister
  * @param password The password to use.
+ * @param cb Optional callback to be called when unregistration is complete
+ * @param user_data user data to pass to the callback
+ *
+ * @deprecated As this is internal, we should make it private in 3.0.0.
  */
 void purple_connection_new_unregister(PurpleAccount *account, const char *password, PurpleAccountUnregistrationCb cb, void *user_data);
+#endif
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Disconnects and destroys a PurpleConnection.
  *
@@ -190,8 +201,11 @@ void purple_connection_new_unregister(PurpleAccount *account, const char *passwo
  * function instead.
  *
  * @param gc The purple connection to destroy.
+ *
+ * @deprecated As this is internal, we should make it private in 3.0.0.
  */
 void purple_connection_destroy(PurpleConnection *gc);
+#endif
 
 /**
  * Sets the connection state.  PRPLs should call this and pass in

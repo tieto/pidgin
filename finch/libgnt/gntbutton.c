@@ -47,7 +47,7 @@ gnt_button_draw(GntWidget *widget)
 	else
 		type = GNT_COLOR_NORMAL;
 
-	wbkgdset(widget->window, '\0' | COLOR_PAIR(type));
+	wbkgdset(widget->window, '\0' | gnt_color_pair(type));
 	mvwaddstr(widget->window, (small_button) ? 0 : 1, 2, button->priv->text);
 	if (small_button) {
 		type = GNT_COLOR_HIGHLIGHT;
@@ -126,6 +126,7 @@ gnt_button_init(GTypeInstance *instance, gpointer class)
 	widget->priv.minh = small_button ? 1 : 3;
 	if (small_button)
 		GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER | GNT_WIDGET_NO_SHADOW);
+	GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
 	GNTDEBUG;
 }
 

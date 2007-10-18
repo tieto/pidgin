@@ -201,9 +201,9 @@ gnt_entry_draw(GntWidget *widget)
 	gboolean focus;
 
 	if ((focus = gnt_widget_has_focus(widget)))
-		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TEXT_NORMAL));
+		wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_TEXT_NORMAL));
 	else
-		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+		wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_HIGHLIGHT_D));
 
 	if (entry->masked)
 	{

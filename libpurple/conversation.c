@@ -225,6 +225,7 @@ add_message_to_history(PurpleConversation *conv, const char *who, const char *me
 	msg->flags = flags;
 	msg->what = g_strdup(message);
 	msg->when = when;
+	msg->conv = conv;
 
 	conv->message_history = g_list_prepend(conv->message_history, msg);
 }
@@ -1208,9 +1209,9 @@ purple_conv_send_confirm(PurpleConversation *conv, const char *message)
 	data[0] = conv;
 	data[1] = (gpointer)message;
 
-	purple_request_action(conv, NULL, _("Send Message"), text, 0,
+	purple_request_action_with_hint(conv, NULL, _("Send Message"), text, 0,
 						  purple_conversation_get_account(conv), NULL, conv,
-						  data, 2,
+						  PURPLE_REQUEST_UI_HINT_CONV, data, 2,
 						  _("_Send Message"), G_CALLBACK(purple_conv_send_confirm_cb),
 						  _("Cancel"), NULL);
 }

@@ -86,6 +86,27 @@ PurpleMenuAction *purple_menu_action_new(const char *label, PurpleCallback callb
 void purple_menu_action_free(PurpleMenuAction *act);
 
 /**************************************************************************/
+/** @name Utility Subsystem                                               */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Initializes the utility subsystem.
+ *
+ * @since 2.3.0
+ */
+void purple_util_init(void);
+
+/**
+ * Uninitializes the util subsystem.
+ *
+ * @since 2.3.0
+ */
+void purple_util_uninit(void);
+
+/*@}*/
+
+/**************************************************************************/
 /** @name Base16 Functions                                                */
 /**************************************************************************/
 /*@{*/

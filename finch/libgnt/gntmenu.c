@@ -56,12 +56,12 @@ gnt_menu_draw(GntWidget *widget)
 	int i;
 
 	if (menu->type == GNT_MENU_TOPLEVEL) {
-		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+		wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
 		werase(widget->window);
 
 		for (i = 0, iter = menu->list; iter; iter = iter->next, i++) {
 			GntMenuItem *item = GNT_MENU_ITEM(iter->data);
-			type = ' ' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT);
+			type = ' ' | gnt_color_pair(GNT_COLOR_HIGHLIGHT);
 			if (i == menu->selected)
 				type |= A_REVERSE;
 			item->priv.x = getcurx(widget->window) + widget->priv.x;
@@ -457,5 +457,36 @@ GntWidget *gnt_menu_new(GntMenuType type)
 void gnt_menu_add_item(GntMenu *menu, GntMenuItem *item)
 {
 	menu->list = g_list_append(menu->list, item);
+}
+
+GntMenuItem *gnt_menu_get_item(GntMenu *menu, const char *id)
+{
+	GntMenuItem *item = NULL;
+	GList *iter = menu->list;
+
+	if (!id || !*id)
+		return NULL;
+
+	for (; iter; iter = iter->next) {
+		GntMenu *sub;
+		item = iter->data;
+		sub = gnt_menuitem_get_submenu(item);
+		if (sub) {
+			item = gnt_menu_get_item(sub, id);
+			if (item)
+				break;
+		} else {
+			const char *itid = gnt_menuitem_get_id(item);
+			if (itid && strcmp(itid, id) == 0)
+				break;
+			/* XXX: Perhaps look at the menu-label as well? */
+		}
+		item = NULL;
+	}
+
+	if (item)
+		menuitem_activate(menu, item);
+
+	return item;
 }
 

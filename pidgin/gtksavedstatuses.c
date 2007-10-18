@@ -63,7 +63,7 @@ enum
 };
 
 /**
- * These is used for the GtkTreeView containing the list of accounts
+ * These are used for the GtkTreeView containing the list of accounts
  * at the bottom of the window when you're editing a particular
  * saved status.
  */
@@ -338,9 +338,9 @@ status_window_delete_cb(GtkButton *button, gpointer user_data)
 		handle = dialog;
 	}
 
-	purple_request_action(handle, NULL, title, NULL, 0,
+	purple_request_action_with_hint(handle, NULL, title, NULL, 0,
 		 NULL, NULL, NULL,
-		 sel_titles, 2,
+		 PURPLE_REQUEST_UI_HINT_STATUSMGR, sel_titles, 2,
 		_("Delete"), status_window_delete_confirm_cb,
 		_("Cancel"), status_window_delete_cancel_cb);
 
@@ -898,6 +898,12 @@ create_status_type_menu(PurpleStatusPrimitive type)
 
 	for (i = PURPLE_STATUS_UNSET + 1; i < PURPLE_STATUS_NUM_PRIMITIVES; i++)
 	{
+		if (i == PURPLE_STATUS_MOBILE || i == PURPLE_STATUS_TUNE)
+			/*
+			 * Special-case these.  They're intended to be independent
+			 * status types, so don't show them in the list.
+			 */
+			continue;
 		item = gtk_menu_item_new_with_label(purple_primitive_get_name_from_type(i));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	}
@@ -1588,8 +1594,12 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 
 		status_type = list->data;
 
-		/* Only allow users to select statuses that are flagged as "user settable" */
-		if (!purple_status_type_is_user_settable(status_type))
+		/*
+		 * Only allow users to select statuses that are flagged as
+		 * "user settable" and that aren't independent.
+		 */
+		if (!purple_status_type_is_user_settable(status_type) ||
+				purple_status_type_is_independent(status_type))
 			continue;
 
 		id = purple_status_type_get_id(status_type);

@@ -301,10 +301,10 @@ silcpurple_chat_chpk_cb(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 	f = purple_request_fields_get_field(fields, "list");
 	if (!purple_request_field_list_get_selected(f)) {
 		/* Add new public key */
-		purple_request_file(sg->gc, _("Open Public Key..."), NULL, FALSE,
+		purple_request_file_with_hint(sg->gc, _("Open Public Key..."), NULL, FALSE,
 				    G_CALLBACK(silcpurple_chat_chpk_add),
 				    G_CALLBACK(silcpurple_chat_chpk_cancel),
-				    purple_connection_get_account(sg->gc), NULL, NULL, sgc);
+				    purple_connection_get_account(sg->gc), NULL, NULL, PURPLE_REQUEST_UI_HINT_CONV, sgc);
 		return;
 	}
 
@@ -441,11 +441,11 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 	if (!channel_pubkeys || !silc_dlist_count(channel_pubkeys)) {
 		f = purple_request_field_list_new("list", NULL);
 		purple_request_field_group_add_field(g, f);
-		purple_request_fields(sg->gc, _("Channel Authentication"),
+		purple_request_fields_with_hint(sg->gc, _("Channel Authentication"),
 				      _("Channel Authentication"), t, fields,
 				      _("Add / Remove"), G_CALLBACK(silcpurple_chat_chpk_cb),
 				      _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok),
-				      purple_connection_get_account(sg->gc), NULL, NULL, sgc);
+				      purple_connection_get_account(sg->gc), NULL, NULL, PURPLE_REQUEST_UI_HINT_CONV, sgc);
 		if (channel_pubkeys)
 		  silc_dlist_uninit(channel_pubkeys);
 		return;
@@ -476,11 +476,11 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 	}
 
 	purple_request_field_list_set_multi_select(f, FALSE);
-	purple_request_fields(sg->gc, _("Channel Authentication"),
+	purple_request_fields_with_hint(sg->gc, _("Channel Authentication"),
 			      _("Channel Authentication"), t, fields,
 			      _("Add / Remove"), G_CALLBACK(silcpurple_chat_chpk_cb),
 			      _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok),
-			      purple_connection_get_account(sg->gc), NULL, NULL, sgc);
+			      purple_connection_get_account(sg->gc), NULL, NULL, PURPLE_REQUEST_UI_HINT_CONV, sgc);
 }
 
 static void
@@ -611,10 +611,10 @@ silcpurple_chat_prv(PurpleBlistNode *node, gpointer data)
 	g_snprintf(tmp, sizeof(tmp),
 		   _("Please enter the %s channel private group name and passphrase."),
 		   p->channel);
-	purple_request_fields(gc, _("Add Channel Private Group"), NULL, tmp, fields,
+	purple_request_fields_with_hint(gc, _("Add Channel Private Group"), NULL, tmp, fields,
 			      _("Add"), G_CALLBACK(silcpurple_chat_prv_add),
 			      _("Cancel"), G_CALLBACK(silcpurple_chat_prv_cancel),
-			      purple_connection_get_account(gc), NULL, NULL, p);
+			      purple_connection_get_account(gc), NULL, NULL, PURPLE_REQUEST_UI_HINT_CONV, p);
 }
 
 
@@ -739,12 +739,12 @@ silcpurple_chat_ulimit(PurpleBlistNode *node, gpointer data)
 	s->channel = ch;
 	s->sg = sg;
 	g_snprintf(tmp, sizeof(tmp), "%d", (int)channel->user_limit);
-	purple_request_input(gc, _("User Limit"), NULL,
+	purple_request_input_with_hint(gc, _("User Limit"), NULL,
 			   _("Set user limit on channel. Set to zero to reset user limit."),
 			   tmp, FALSE, FALSE, NULL,
 			   _("OK"), G_CALLBACK(silcpurple_chat_ulimit_cb),
 			   _("Cancel"), G_CALLBACK(silcpurple_chat_ulimit_cb),
-			   purple_connection_get_account(gc), NULL, NULL, s);
+			   purple_connection_get_account(gc), NULL, NULL, PURPLE_REQUEST_UI_HINT_CONV, s);
 }
 
 static void

@@ -28,20 +28,48 @@
 
 #include "pounce.h"
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
  *
  * @param account    The optional account to use.
  * @param name       The optional name to pounce on.
  * @param cur_pounce The current buddy pounce, if editing an existing one.
+ *
+ * @deprecated Use pidgin_pounce_editor_show_with_parent() instead.
  */
 void pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 								PurplePounce *cur_pounce);
+#endif
+
+/**
+ * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
+ *
+ * @param parent     The parent window.
+ * @param account    The optional account to use.
+ * @param name       The optional name to pounce on.
+ * @param cur_pounce The current buddy pounce, if editing an existing one.
+ *
+ * @since 2.3.0
+ */
+void pidgin_pounce_editor_show_with_parent(GtkWindow *parent, PurpleAccount *account, const char *name,
+								PurplePounce *cur_pounce);
+
+#ifndef PURPLE_DISABLE_DEPRECATED
+/**
+ * Shows the pounces manager window.
+ *
+ * @deprecated Use pidgin_pounces_manager_show_with_parent() instead.
+ */
+void pidgin_pounces_manager_show(void);
+#endif
 
 /**
  * Shows the pounces manager window.
+ *
+ * @since 2.3.0
  */
-void pidgin_pounces_manager_show(void);
+void pidgin_pounces_manager_show_with_parent(GtkWindow *parent);
 
 /**
  * Hides the pounces manager window.

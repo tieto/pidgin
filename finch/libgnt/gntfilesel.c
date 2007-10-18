@@ -718,6 +718,7 @@ gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel)
 
 void gnt_file_sel_set_suggested_filename(GntFileSel *sel, const char *suggest)
 {
+	g_free(sel->suggest);
 	sel->suggest = g_strdup(suggest);
 }
 

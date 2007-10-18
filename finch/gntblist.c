@@ -338,12 +338,12 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 		purple_request_field_account_set_value(field, account);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(NULL, _("Add Buddy"), NULL, _("Please enter buddy information."),
+	purple_request_fields_with_hint(NULL, _("Add Buddy"), NULL, _("Please enter buddy information."),
 			fields,
 			_("Add"), G_CALLBACK(add_buddy_cb),
 			_("Cancel"), NULL,
 			account, NULL, NULL,
-			NULL);
+			PURPLE_REQUEST_UI_HINT_BLIST, NULL);
 }
 
 static void
@@ -416,11 +416,11 @@ finch_request_add_chat(PurpleAccount *account, PurpleGroup *grp, const char *ali
 	field = purple_request_field_bool_new("autojoin", _("Auto-join"), FALSE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(NULL, _("Add Chat"), NULL,
+	purple_request_fields_with_hint(NULL, _("Add Chat"), NULL,
 			_("You can edit more information from the context menu later."),
 			fields, _("Add"), G_CALLBACK(add_chat_cb), _("Cancel"), NULL,
 			NULL, NULL, NULL,
-			NULL);
+			PURPLE_REQUEST_UI_HINT_BLIST, NULL);
 }
 
 static void
@@ -451,11 +451,11 @@ add_group_cb(gpointer null, const char *group)
 static void
 finch_request_add_group()
 {
-	purple_request_input(NULL, _("Add Group"), NULL, _("Enter the name of the group"),
+	purple_request_input_with_hint(NULL, _("Add Group"), NULL, _("Enter the name of the group"),
 			NULL, FALSE, FALSE, NULL,
 			_("Add"), G_CALLBACK(add_group_cb), _("Cancel"), NULL,
 			NULL, NULL, NULL,
-			NULL);
+			PURPLE_REQUEST_UI_HINT_BLIST, NULL);
 }
 
 static PurpleBlistUiOps blist_ui_ops =
@@ -799,10 +799,10 @@ chat_components_edit(PurpleBlistNode *selected, PurpleChat *chat)
 
 	g_list_free(parts);
 
-	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please Update the necessary fields."),
+	purple_request_fields_with_hint(NULL, _("Edit Chat"), NULL, _("Please Update the necessary fields."),
 			fields, _("Edit"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
 			NULL, NULL, NULL,
-			chat);
+			PURPLE_REQUEST_UI_HINT_BLIST, chat);
 }
 
 static void
@@ -1000,11 +1000,11 @@ finch_blist_rename_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	prompt = g_strdup_printf(_("Please enter the new name for %s"), name);
 
 	text = PURPLE_BLIST_NODE_IS_GROUP(node) ? _("Rename") : _("Set Alias");
-	purple_request_input(node, text, prompt, _("Enter empty string to reset the name."),
+	purple_request_input_with_hint(node, text, prompt, _("Enter empty string to reset the name."),
 			name, FALSE, FALSE, NULL, text, G_CALLBACK(rename_blist_node),
 			_("Cancel"), NULL,
 			NULL, NULL, NULL,
-			node);
+			PURPLE_REQUEST_UI_HINT_BLIST, node);
 
 	g_free(prompt);
 }
@@ -1092,11 +1092,11 @@ finch_blist_remove_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	primary = g_strdup_printf(_("Are you sure you want to remove %s?"), name);
 
 	/* XXX: anything to do with the returned ui-handle? */
-	purple_request_action(node, _("Confirm Remove"),
+	purple_request_action_with_hint(node, _("Confirm Remove"),
 			primary, sec,
 			1,
 			account, name, NULL,
-			node, 2,
+			PURPLE_REQUEST_UI_HINT_BLIST, node, 2,
 			_("Remove"), finch_blist_remove_node,
 			_("Cancel"), NULL);
 	g_free(primary);
@@ -2215,7 +2215,7 @@ send_im_select(GntMenuItem *item, gpointer n)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(purple_get_blist(), _("New Instant Message"),
+	purple_request_fields_with_hint(purple_get_blist(), _("New Instant Message"),
 						NULL,
 						_("Please enter the screen name or alias of the person "
 						  "you would like to IM."),
@@ -2223,7 +2223,7 @@ send_im_select(GntMenuItem *item, gpointer n)
 						_("OK"), G_CALLBACK(send_im_select_cb),
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
-						NULL);
+						PURPLE_REQUEST_UI_HINT_BLIST, NULL);
 }
 
 static void
@@ -2279,14 +2279,14 @@ join_chat_select(GntMenuItem *item, gpointer n)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(purple_get_blist(), _("Join a Chat"),
+	purple_request_fields_with_hint(purple_get_blist(), _("Join a Chat"),
 						NULL,
 						_("Please enter the name of the chat you want to join."),
 						fields,
 						_("Join"), G_CALLBACK(join_chat_select_cb),
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
-						NULL);
+						PURPLE_REQUEST_UI_HINT_BLIST, NULL);
 }
 
 static void
@@ -2328,10 +2328,12 @@ create_menu()
 	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
 
 	item = gnt_menuitem_new(_("Send IM..."));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "send-im");
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), send_im_select, NULL);
 
 	item = gnt_menuitem_new(_("Join Chat..."));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "join-chat");
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), join_chat_select, NULL);
 
@@ -2341,12 +2343,14 @@ create_menu()
 	gnt_menuitem_set_submenu(item, GNT_MENU(subsub));
 
 	item = gnt_menuitem_check_new(_("Empty groups"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "show-empty-groups");
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
 				purple_prefs_get_bool(PREF_ROOT "/emptygroups"));
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), toggle_pref_cb, PREF_ROOT "/emptygroups");
 	
 	item = gnt_menuitem_check_new(_("Offline buddies"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "show-offline-buddies");
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
 				purple_prefs_get_bool(PREF_ROOT "/showoffline"));
 	gnt_menu_add_item(GNT_MENU(subsub), item);
@@ -2358,14 +2362,17 @@ create_menu()
 	gnt_menuitem_set_submenu(item, GNT_MENU(subsub));
 
 	item = gnt_menuitem_new(_("By Status"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "sort-status");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), sort_blist_change_cb, "status");
 
 	item = gnt_menuitem_new(_("Alphabetically"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "sort-alpha");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), sort_blist_change_cb, "text");
 
 	item = gnt_menuitem_new(_("By Log Size"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "sort-log");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), sort_blist_change_cb, "log");
 
@@ -2376,14 +2383,17 @@ create_menu()
 	gnt_menuitem_set_submenu(item, GNT_MENU(subsub));
 
 	item = gnt_menuitem_new("Buddy");
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "add-buddy");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(item, menu_add_buddy_cb, NULL);
 
 	item = gnt_menuitem_new("Chat");
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "add-chat");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(item, menu_add_chat_cb, NULL);
 
 	item = gnt_menuitem_new("Group");
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "add-group");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(item, menu_add_group_cb, NULL);
 

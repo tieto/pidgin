@@ -1,13 +1,118 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-Version 2.2.2 (??/??/????):
+version 2.3.0 (??/??/????):
+	libpurple:
+		Added:
+		* purple_request_field_blist_nodes_new and its accessory functions.
+		* a PurpleConversation field in PurpleConvMessage
+		* account-authorization signals (see account-signals.dox for
+		  details) (Stefan Ott)
+		* libpurple/purple.h, which includes #define's and #include's
+		  required to compile stand-alone plugins
+		* PURPLE_STATUS_TUNE as a new PurpleStatusPrimitive
+		* purple_plugin_disable(), which is intended to be called when
+		  a purple_plugin_unload()--which was called when a user tried
+		  to unload a plugin--fails.  This then prevents the plugin
+		  from being saved in the saved plugins list, so it'll won't
+		  be loaded at the next startup.
+		* purple_util_init()
+		* purple_util_uninit()
+
+		* pidgin_dialogs_about_with_parent()
+		* pidgin_log_show_contact_with_parent()
+		* pidgin_log_show_with_parent()
+		* pidgin_plugin_dialog_show_with_parent()
+		* pidgin_pounce_editor_show_with_parent()
+		* pidgin_pounces_manager_show_with_parent()
+		* pidgin_syslog_show_with_parent()
+
+		* purple_request_accept_cancel_with_hint()
+		* purple_request_action_varg_with_hint()
+		* purple_request_action_with_hint()
+		* purple_request_choice_varg_with_hint()
+		* purple_request_choice_with_hint()
+		* purple_request_fields_with_hint()
+		* purple_request_file_with_hint()
+		* purple_request_folder_with_hint()
+		* purple_request_input_with_hint()
+		* purple_request_ok_cancel_with_hint()
+		* purple_request_yes_no_with_hint()
+
+		  UI hints set by libpurple:
+		* PURPLE_REQUEST_UI_HINT_ACCOUNT
+		* PURPLE_REQUEST_UI_HINT_BLIST
+		* PURPLE_REQUEST_UI_HINT_BUDDY
+		* PURPLE_REQUEST_UI_HINT_CONV
+		* PURPLE_REQUEST_UI_HINT_REGISTER
+		* PURPLE_REQUEST_UI_HINT_XFER
+
+		  Common UI hints set by UIs:
+		* PURPLE_REQUEST_UI_HINT_ACCOUNTMGR
+		* PURPLE_REQUEST_UI_HINT_CERTMGR
+		* PURPLE_REQUEST_UI_HINT_PLUGINMGR
+		* PURPLE_REQUEST_UI_HINT_POUNCEMGR
+		* PURPLE_REQUEST_UI_HINT_PREFSMGR
+		* PURPLE_REQUEST_UI_HINT_STATUSMGR
+
+		Changed:
+		* purple_plugin_unload() now honors the return value of a
+		  plugin's unload function and can actually return FALSE now.
+		* purple_plugin_unload() no longer does its own notifications
+		  when a dependent plugin fails to unload.  The UI should do
+		  something appropriate.
+
+		Deprecated:
+		* pidgin_dialogs_about()
+		* pidgin_log_show_contact()
+		* pidgin_log_show()
+		* pidgin_plugin_dialog_show()
+		* pidgin_pounce_editor_show()
+		* pidgin_pounces_manager_show()
+		* pidgin_syslog_show()
+
+		* purple_request_accept_cancel()
+		* purple_request_action_varg()
+		* purple_request_action()
+		* purple_request_choice_varg()
+		* purple_request_choice()
+		* purple_request_fields()
+		* purple_request_file()
+		* purple_request_folder()
+		* purple_request_input()
+		* purple_request_ok_cancel()
+		* purple_request_yes_no()
+
+		MSN:
+		* A new independant status type with PURPLE_STATUS_TUNE primitive, and
+		  PURPLE_TUNE_ARTIST, PURPLE_TUNE_ALBUM and PURPLE_TUNE_TITLE
+		  attributes.
+
+		XMPP:
+		* A new independant status type with PURPLE_STATUS_TUNE primitive, and
+		  PURPLE_TUNE_{ARTIST, TITLE, ALBUM, GENRE, COMMENT, TRACK, TIME,
+		  YEAR, URL} attributes.
+
+	Finch:
+		libgnt:
+		* Added gnt_color_pair, which will try to intelligenty set text
+		  attributes in place of colors if the terminal doesn't have color
+		  support. (Bug: #3560) All future code should use gnt_color_pair
+		  instead of COLOR_PAIR.
+		* Added gnt_menuitem_set_id and gnt_menuitem_get_id to set and get the
+		  string id of a menuitem respectively.
+		* Added gnt_window_get_accel_item, which returns a the id of a menuitem
+		  bound to a keystroke.
+		* Added gnt_menu_get_item to activate and return a menuitem of the
+		  given id from a menu.
+
+version 2.2.2 (??/??/????):
 	libpurple:
 		Changed:
 		* The size parameter of purple_util_write_data_to_file_absolute
 		  has been changed to gssize instead of a size_t to correctly
 		  indicate that -1 can be used for a nul-delimited string.
 
-Version 2.2.0 (09/13/2007):
+version 2.2.0 (09/13/2007):
 	libpurple:
 		Added:
 		* PURPLE_MESSAGE_INVISIBLE flag, which can be used by
@@ -64,7 +169,7 @@ Version 2.2.0 (09/13/2007):
 		* gnt_util_parse_xhtml_to_textview to parse XHTML strings in a
 		  GntTextView (this works only if libxml2 is available)
 
-Version 2.1.1 (08/20/2007):
+version 2.1.1 (08/20/2007):
 	libpurple:
 		Changed:
 		* PurpleAccountUiOps.request_authorize's authorize_cb and
