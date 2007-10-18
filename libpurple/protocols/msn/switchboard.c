@@ -108,7 +108,7 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	g_free(swboard->auth_key);
 	g_free(swboard->session_id);
 
-	for (; swboard->users; swboard->users = g_list_remove_link(swboard->users, swboard->users))
+	for (; swboard->users; swboard->users = g_list_delete_link(swboard->users, swboard->users))
 		g_free(swboard->users->data);
 
 	session = swboard->session;
@@ -735,10 +735,9 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	msn_message_show_readable(msg, "SB RECV", FALSE);
 #endif
 
-	if (msg->remote_user != NULL)
-		g_free (msg->remote_user);
-
+	g_free (msg->remote_user);
 	msg->remote_user = g_strdup(cmd->params[0]);
+
 	msn_cmdproc_process_msg(cmdproc, msg);
 
 	msn_message_destroy(msg);

@@ -692,7 +692,7 @@ msn_httpconn_destroy(MsnHttpConn *httpconn)
 
 		queue_data = (MsnHttpQueueData *) httpconn->queue->data;
 
-		httpconn->queue = g_list_remove_link(httpconn->queue, httpconn->queue);
+		httpconn->queue = g_list_delete_link(httpconn->queue, httpconn->queue);
 
 		g_free(queue_data->body);
 		g_free(queue_data);

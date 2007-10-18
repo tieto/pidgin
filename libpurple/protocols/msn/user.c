@@ -383,7 +383,7 @@ msn_user_remove_group_id(MsnUser *user, const char *id)
 		return;
 
 	g_free(l->data);
-	user->group_ids = g_list_remove_link(user->group_ids, l);
+	user->group_ids = g_list_delete_link(user->group_ids, l);
 }
 
 void
