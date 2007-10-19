@@ -1265,8 +1265,10 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, vo
 {
 	GntTreeRow *pr = NULL;
 
-	g_hash_table_replace(tree->hash, key, row);
 	row->tree = tree;
+	row->key = key;
+	row->data = NULL;
+	g_hash_table_replace(tree->hash, key, row);
 
 	if (bigbro == NULL && tree->priv->compare)
 	{
@@ -1326,9 +1328,6 @@ GntTreeRow *gnt_tree_add_row_after(GntTree *tree, void *key, GntTreeRow *row, vo
 			tree->list = g_list_insert(tree->list, key, position + 1);
 		}
 	}
-
-	row->key = key;
-	row->data = NULL;
 
 	redraw_tree(tree);
 
