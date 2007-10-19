@@ -378,7 +378,8 @@ static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, gpointe
 			break;
 		}
 	}
-	g_free(user_data);
+	g_free(userdata->from);
+	g_free(userdata);
 }
 
 void jabber_presence_parse(JabberStream *js, xmlnode *packet)
