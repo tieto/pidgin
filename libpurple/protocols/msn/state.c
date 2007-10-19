@@ -191,7 +191,7 @@ msn_get_psm(char *xml_str, gsize len)
 	return psm;
 }
 
-/* set the MSN's PSM info,Currently Read from the status Line 
+/* Set the MSN PSM based on the "message" attribute of the current status
  * Thanks for Cris Code
  */
 void
@@ -204,27 +204,27 @@ msn_set_psm(MsnSession *session)
 	MsnTransaction *trans;
 	char *payload;
 	const char *statusline;
-	gchar *unescapedstatusline;
+	gchar *statusline_stripped;
 
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->notification != NULL);
 
 	cmdproc = session->notification->cmdproc;
-	/*prepare PSM info*/
-	if(session->psm){
-		g_free(session->psm);
-	}
-	/*Get the PSM string from Purple's Status Line*/
+
+	/* Get the PSM string from Purple's Status Line */
 	presence = purple_account_get_presence(account);
 	status = purple_presence_get_active_status(presence);
 	statusline = purple_status_get_attr_string(status, "message");
-	unescapedstatusline = purple_unescape_html(statusline);
-	session->psm = msn_build_psm(unescapedstatusline, NULL, NULL);
-	g_free(unescapedstatusline);
-	payload = session->psm;
 
+	/* MSN expects plain text, not HTML */
+	statusline_stripped = purple_markup_strip_html(statusline);
+	g_free(session->psm);
+	session->psm = msn_build_psm(statusline_stripped, NULL, NULL);
+	g_free(statusline_stripped);
+
+	payload = session->psm;
 	purple_debug_misc("MSNP14","Sending UUX command with payload: %s\n",payload);
-	trans = msn_transaction_new(cmdproc, "UUX","%d",strlen(payload));
+	trans = msn_transaction_new(cmdproc, "UUX", "%d", strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
