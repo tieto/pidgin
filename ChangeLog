@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-Version 2.2.1 (09/29/2007):
+version 2.2.1 (09/29/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
 		NOTE: Due to the backporting that happened for the actual
 		      release, it is possible bugs marked as fixed in 2.2.1
@@ -25,7 +25,7 @@ Version 2.2.1 (09/29/2007):
 	* Pressing 'Insert' in the buddylist will bring up the 'Add Buddy'
 	  dialog.
 
-Version 2.2.0 (09/13/2007):
+version 2.2.0 (09/13/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.0
 
 	Libpurple:
@@ -2266,6 +2266,6 @@ version 0.8.0  (04/31/1999):
 	* Add/Remove buddy from conversation window
 	* Scroll-Wheel Mice work in Conversation Window
 	* Fixed WindowMaker Appicon
-	* Version Number in About Box
+	* version Number in About Box
 	* Gaim Slogan in about box :)
 	* Created Changelog File :)
