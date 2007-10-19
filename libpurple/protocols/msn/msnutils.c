@@ -166,10 +166,15 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 char *
 msn_encode_mime(const char *str)
 {
-	char *base64;
+	gchar *base64, *retval;
+
+	g_return_val_if_fail(str != NULL, NULL);
 	
 	base64 = purple_base64_encode((guchar *)str, strlen(str));
-	return g_strdup_printf("=?utf-8?B?%s?=", base64);
+	retval = g_strdup_printf("=?utf-8?B?%s?=", base64);
+	g_free(base64);
+
+	return retval;
 }
 
 /*
