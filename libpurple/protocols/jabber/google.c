@@ -231,7 +231,7 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 	const char *jid = xmlnode_get_attrib(item, "jid");
 	gboolean on_block_list = FALSE;
 
-	char *jid_norm = g_strdup(jabber_normalize(account, jid));
+	char *jid_norm;
 
 	const char *grt = xmlnode_get_attrib_with_namespace(item, "t", "google:roster");
 	const char *subscription = xmlnode_get_attrib(item, "subscription");
@@ -242,6 +242,8 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 		 */
 		return FALSE;
 	}
+
+ 	jid_norm = g_strdup(jabber_normalize(account, jid));
 
 	while (list) {
 		if (!strcmp(jid_norm, (char*)list->data)) {
