@@ -5081,7 +5081,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 			   BUDDY_ICON_COLUMN, avatar,
 			   BUDDY_ICON_VISIBLE_COLUMN, biglist,
 			   EMBLEM_COLUMN, emblem,
-			   EMBLEM_VISIBLE_COLUMN, emblem,
+			   EMBLEM_VISIBLE_COLUMN, (emblem != NULL),
 			   PROTOCOL_ICON_COLUMN, pidgin_create_prpl_icon(buddy->account, PIDGIN_PRPL_ICON_SMALL),
 			   PROTOCOL_ICON_VISIBLE_COLUMN, purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons"),
 			   BGCOLOR_COLUMN, NULL,
@@ -5092,6 +5092,8 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 
 	g_free(mark);
 	g_free(idle);
+	if(emblem)
+		g_object_unref(emblem);
 	if(status)
 		g_object_unref(status);
 	if(avatar)
@@ -5260,6 +5262,8 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 				-1);
 
 		g_free(mark);
+		if(emblem)
+			g_object_unref(emblem);
 		if(status)
 			g_object_unref(status);
 		if(avatar)

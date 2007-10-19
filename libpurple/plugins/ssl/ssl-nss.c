@@ -386,6 +386,7 @@ ssl_nss_write(PurpleSslConnection *gsc, const void *data, size_t len)
 static GList *
 ssl_nss_peer_certs(PurpleSslConnection *gsc)
 {
+#if 0
 	PurpleSslNssData *nss_data = PURPLE_SSL_NSS_DATA(gsc);
 	CERTCertificate *cert;
 /*
@@ -396,6 +397,10 @@ ssl_nss_peer_certs(PurpleSslConnection *gsc)
 
 	/* TODO: this is a blind guess */
 	cert = SSL_PeerCertificate(nss_data->fd);
+
+	if (cert)
+		CERT_DestroyCertificate(cert);
+#endif
 
 	
 
@@ -430,11 +435,12 @@ x509_import_from_file(const gchar *filename)
 			  filename);
 	
 	/* Load the raw data up */
-	g_return_val_if_fail(
-		g_file_get_contents(filename,
-				    &rawcert, &len,
-				    NULL ),
-		NULL);
+	if (!g_file_get_contents(filename,
+				 &rawcert, &len,
+				 NULL)) {
+		purple_debug_error("nss/x509", "Unable to read certificate file.\n");
+		return NULL;
+	}
 
 	/* Decode the certificate */
 	crt_dat = CERT_DecodeCertFromPackage(rawcert, len);
