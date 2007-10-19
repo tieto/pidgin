@@ -3459,25 +3459,31 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 			else
 				idletime = g_strdup(_("Idle"));
 
-			if (!selected)
+			if (!selected) {
+				g_free(text);
 				text = g_strdup_printf("<span color='%s'>%s</span>\n"
-				"<span color='%s' size='smaller'>%s%s%s</span>",
-				dim_grey(), esc, dim_grey(),
-				idletime != NULL ? idletime : "",
-				(idletime != NULL && statustext != NULL) ? " - " : "",
-				statustext != NULL ? statustext : "");
+					"<span color='%s' size='smaller'>%s%s%s</span>",
+					dim_grey(), esc, dim_grey(),
+					idletime != NULL ? idletime : "",
+					(idletime != NULL && statustext != NULL) ? " - " : "",
+					statustext != NULL ? statustext : "");
+			}
 		}
-		else if (!selected && !statustext) /* We handle selected text later */
+		else if (!selected && !statustext) {/* We handle selected text later */
+			g_free(text);
 			text = g_strdup_printf("<span color='%s'>%s</span>", dim_grey(), esc);
-		else if (!selected && !text)
+		} else if (!selected && !text) {
+			g_free(text);
 			text = g_strdup_printf("<span color='%s'>%s</span>\n"
 				"<span color='%s' size='smaller'>%s</span>",
 				dim_grey(), esc, dim_grey(),
 				statustext != NULL ? statustext : "");
+		}
 	} else if (!PURPLE_BUDDY_IS_ONLINE(b)) {
-		if (!selected && !statustext) /* We handle selected text later */
+		if (!selected && !statustext) {/* We handle selected text later */
+			g_free(text);
 			text = g_strdup_printf("<span color='%s'>%s</span>", dim_grey(), esc);
-		else if (!selected && !text)
+		} else if (!selected && !text)
 			text = g_strdup_printf("<span color='%s'>%s</span>\n"
 				"<span color='%s' size='smaller'>%s</span>",
 				dim_grey(), esc, dim_grey(),
@@ -3494,13 +3500,15 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 	}
 
 	/* It is selected. */
-	if ((selected && !text) || (selected && idletime))
+	if ((selected && !text) || (selected && idletime)) {
+		g_free(text);
 		text = g_strdup_printf("%s\n"
 			"<span size='smaller'>%s%s%s</span>",
 			esc,
 			idletime != NULL ? idletime : "",
 			(idletime != NULL && statustext != NULL) ? " - " : "",
 			statustext != NULL ? statustext :  "");
+	}
 
 	g_free(idletime);
 	g_free(statustext);
