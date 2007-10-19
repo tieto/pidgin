@@ -931,7 +931,7 @@ finch_conv_present(PurpleConversation *conv)
 {
 	FinchConv *fc = FINCH_CONV(conv);
 	if (fc && fc->window)
-		return gnt_window_present(fc->window);
+		gnt_window_present(fc->window);
 }
 
 static gboolean
