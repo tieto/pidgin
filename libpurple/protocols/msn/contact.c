@@ -92,71 +92,46 @@ msn_callback_state_free(MsnCallbackState *state)
 void
 msn_callback_state_set_who(MsnCallbackState *state, const gchar *who)
 {
-	gchar *new_str = NULL;
-
 	g_return_if_fail(state != NULL);
 
-	if (who != NULL)
-		new_str = g_strdup(who);
-
 	g_free(state->who);
-	state->who = new_str;
+	state->who = g_strdup(who);
 }
 
 void
 msn_callback_state_set_uid(MsnCallbackState *state, const gchar *uid)
 {
-	gchar *new_str = NULL;
-
 	g_return_if_fail(state != NULL);
 
-	if (uid != NULL)
-		new_str = g_strdup(uid);
-
 	g_free(state->uid);
-	state->uid = new_str;
+	state->uid = g_strdup(uid);
 }
 
 void
 msn_callback_state_set_old_group_name(MsnCallbackState *state, const gchar *old_group_name)
 {
-	gchar *new_str = NULL;
-
 	g_return_if_fail(state != NULL);
 
-	if (old_group_name != NULL)
-		new_str = g_strdup(old_group_name);
-
 	g_free(state->old_group_name);
-	state->old_group_name = new_str;
+	state->old_group_name = g_strdup(old_group_name);
 }
 
 void
 msn_callback_state_set_new_group_name(MsnCallbackState *state, const gchar *new_group_name)
 {
-	gchar *new_str = NULL;
-
 	g_return_if_fail(state != NULL);
 
-	if (new_group_name != NULL)
-		new_str = g_strdup(new_group_name);
-
 	g_free(state->new_group_name);
-	state->new_group_name = new_str;
+	state->new_group_name = g_strdup(new_group_name);
 }
 
 void
 msn_callback_state_set_guid(MsnCallbackState *state, const gchar *guid)
 {
-	gchar *new_str = NULL;
-
 	g_return_if_fail(state != NULL);
 
-	if (guid != NULL)
-		new_str = g_strdup(guid);
-
 	g_free(state->guid);
-	state->guid = new_str;
+	state->guid = g_strdup(guid);
 }
 
 

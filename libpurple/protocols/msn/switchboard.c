@@ -152,9 +152,7 @@ msn_switchboard_set_session_id(MsnSwitchBoard *swboard, const char *id)
 	g_return_if_fail(swboard != NULL);
 	g_return_if_fail(id != NULL);
 
-	if (swboard->session_id != NULL)
-		g_free(swboard->session_id);
-
+	g_free(swboard->session_id);
 	swboard->session_id = g_strdup(id);
 }
 

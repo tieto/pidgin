@@ -60,17 +60,10 @@ msn_message_destroy(MsnMessage *msg)
 	purple_debug_info("msn", "message destroy (%p)\n", msg);
 #endif
 
-	if (msg->remote_user != NULL)
-		g_free(msg->remote_user);
-
-	if (msg->body != NULL)
-		g_free(msg->body);
-
-	if (msg->content_type != NULL)
-		g_free(msg->content_type);
-
-	if (msg->charset != NULL)
-		g_free(msg->charset);
+	g_free(msg->remote_user);
+	g_free(msg->body);
+	g_free(msg->content_type);
+	g_free(msg->charset);
 
 	g_hash_table_destroy(msg->attr_table);
 	g_list_free(msg->attr_list);
@@ -556,10 +549,8 @@ msn_message_set_content_type(MsnMessage *msg, const char *type)
 {
 	g_return_if_fail(msg != NULL);
 
-	if (msg->content_type != NULL)
-		g_free(msg->content_type);
-
-	msg->content_type = (type != NULL) ? g_strdup(type) : NULL;
+	g_free(msg->content_type);
+	msg->content_type = g_strdup(type);
 }
 
 const char *
@@ -575,10 +566,8 @@ msn_message_set_charset(MsnMessage *msg, const char *charset)
 {
 	g_return_if_fail(msg != NULL);
 
-	if (msg->charset != NULL)
-		g_free(msg->charset);
-
-	msg->charset = (charset != NULL) ? g_strdup(charset) : NULL;
+	g_free(msg->charset);
+	msg->charset = g_strdup(charset);
 }
 
 const char *

@@ -190,13 +190,10 @@ nexus_login_read_cb(MsnSoapConn *soapconn)
 	msn_twn_p = (char *)g_hash_table_lookup(nexus->challenge_data, "p");
 
 	/*setup the t and p parameter for session*/
-	if (session->passport_info.t != NULL){
-			g_free(session->passport_info.t);
-	}
+	g_free(session->passport_info.t);
 	session->passport_info.t = g_strdup(msn_twn_t);
 
-	if (session->passport_info.p != NULL)
-			g_free(session->passport_info.p);
+	g_free(session->passport_info.p);
 	session->passport_info.p = g_strdup(msn_twn_p);
 
 	cert_str = g_strdup_printf("t=%s&p=%s",msn_twn_t,msn_twn_p);

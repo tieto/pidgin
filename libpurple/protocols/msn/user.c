@@ -391,10 +391,8 @@ msn_user_set_home_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->phone.home != NULL)
-		g_free(user->phone.home);
-
-	user->phone.home = (number == NULL ? NULL : g_strdup(number));
+	g_free(user->phone.home);
+	user->phone.home = g_strdup(number);
 }
 
 void
@@ -402,10 +400,8 @@ msn_user_set_work_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->phone.work != NULL)
-		g_free(user->phone.work);
-
-	user->phone.work = (number == NULL ? NULL : g_strdup(number));
+	g_free(user->phone.work);
+	user->phone.work = g_strdup(number);
 }
 
 void
@@ -413,10 +409,8 @@ msn_user_set_mobile_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->phone.mobile != NULL)
-		g_free(user->phone.mobile);
-
-	user->phone.mobile = (number == NULL ? NULL : g_strdup(number));
+	g_free(user->phone.mobile);
+	user->phone.mobile = g_strdup(number);
 }
 
 void
