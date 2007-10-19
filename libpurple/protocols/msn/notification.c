@@ -1790,7 +1790,9 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		return;
 
 	/*new a oim session*/
-	session->oim = msn_oim_new(session);
+	/* There are several things that call this */
+	if (session->oim == NULL)
+		session->oim = msn_oim_new(session);
 //	msn_oim_connect(session->oim);
 
 	table = msn_message_get_hashtable_from_body(msg);
