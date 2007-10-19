@@ -553,6 +553,7 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 
 	if (GTK_IMHTML(imhtml)->tip) {
 		if ((tip == GTK_IMHTML(imhtml)->tip)) {
+			g_slist_free(tags);
 			return FALSE;
 		}
 		/* We've left the cell.  Remove the timeout and create a new one below */
