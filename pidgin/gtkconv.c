@@ -5063,6 +5063,9 @@ void
 pidgin_conv_new(PurpleConversation *conv)
 {
 	private_gtkconv_new(conv, FALSE);
+	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
+		purple_signal_emit(pidgin_conversations_get_handle(),
+				"conversation-displayed", PIDGIN_CONVERSATION(conv));
 }
 
 static void
