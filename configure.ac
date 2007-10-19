@@ -2247,6 +2247,7 @@ AC_OUTPUT([Makefile
 		   share/Makefile
 		   share/sounds/Makefile
 		   share/ca-certs/Makefile
+		   finch/finch.pc
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc
