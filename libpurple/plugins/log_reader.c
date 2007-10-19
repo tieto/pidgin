@@ -1939,13 +1939,11 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	g_return_val_if_fail(data->path != NULL, g_strdup(""));
 	g_return_val_if_fail(data->length > 0, g_strdup(""));
 
-	error = NULL;
-	
-	contents = g_malloc(data->length + 2);
-
 	file = g_fopen(data->path, "rb");
 	g_return_val_if_fail(file != NULL, g_strdup(""));
-	
+
+	contents = g_malloc(data->length + 2);
+
 	fseek(file, data->offset, SEEK_SET);
 	fread(contents, data->length, 1, file);
 	fclose(file);
@@ -2026,7 +2024,7 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 					g_string_append(formatted, "</font> ");
 
 					if (is_in_message) {
-						if (buddy_name != NULL && buddy->alias) {
+						if (buddy_name != NULL && buddy != NULL && buddy->alias) {
 							g_string_append_printf(formatted,
 								"<span style=\"color: #A82F2F;\">"
 								"<b>%s</b></span>: ", buddy->alias);
@@ -2056,7 +2054,9 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 				g_string_append(formatted, line);
 				g_string_append(formatted, "<br>");
 			}
-			line = ++c;
+
+			if (c)
+				line = ++c;
 		}
 	}
 	g_free(contents);
