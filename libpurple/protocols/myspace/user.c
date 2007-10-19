@@ -203,6 +203,8 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		/* Ignore because PurpleBuddy knows this already */
 		g_free(value_str);
 	} else if (g_str_equal(key_str, "ImageURL") || g_str_equal(key_str, "AvatarURL")) {
+		const gchar *previous_url;
+
 		if (user->temporary_user) {
 			/* This user will be destroyed soon; don't try to look up its image or avatar, 
 			 * since that won't return immediately and we will end up accessing freed data.
@@ -211,8 +213,6 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 			return;
 		}
 		
-		const gchar *previous_url;
-
 		g_free(user->image_url);
 
 		user->image_url = value_str;
