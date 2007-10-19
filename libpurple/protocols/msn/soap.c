@@ -857,7 +857,7 @@ msn_soap_post_request(MsnSoapConn *soapconn, MsnSoapReq *request)
 	node = xmlnode_from_str(request->body, -1);
 	if (node != NULL) {
 		char *formattedstr = xmlnode_to_formatted_str(node, NULL);
-		purple_debug_info("MSN SOAP","Posting request to SOAP server:\n%s%s\n",soap_head, formattedstr);
+		purple_debug_info("MSN SOAP","Posting request to SOAP server:\n%s%s\n",request_str, formattedstr);
 		g_free(formattedstr);
 		xmlnode_free(node);
 	}
