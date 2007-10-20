@@ -413,11 +413,14 @@ void gnt_init_styles()
 void gnt_uninit_styles()
 {
 	int i;
-	for (i = 0; i < GNT_STYLES; i++)
+	for (i = 0; i < GNT_STYLES; i++) {
 		g_free(str_styles[i]);
+		str_styles[i] = NULL;
+	}
 
 #if GLIB_CHECK_VERSION(2,6,0)
 	g_key_file_free(gkfile);
+	gkfile = NULL;
 #endif
 }
 
