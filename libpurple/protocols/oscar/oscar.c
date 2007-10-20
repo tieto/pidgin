@@ -1128,8 +1128,10 @@ flap_connection_established_chat(OscarData *od, FlapConnection *conn)
 	aim_clientready(od, conn);
 
 	chatcon = find_oscar_chat_by_conn(gc, conn);
-	chatcon->id = id;
-	chatcon->conv = serv_got_joined_chat(gc, id++, chatcon->show);
+	if (chatcon) {
+		chatcon->id = id;
+		chatcon->conv = serv_got_joined_chat(gc, id++, chatcon->show);
+	}
 }
 
 static void
