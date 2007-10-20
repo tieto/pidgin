@@ -1775,6 +1775,7 @@ void gnt_tree_set_column_visible(GntTree *tree, int col, gboolean vis)
 					break;
 			}
 	}
+	readjust_columns(tree);
 }
 
 void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res)

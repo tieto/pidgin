@@ -181,7 +181,15 @@ gnt_menu_map(GntWidget *widget)
 static void
 menuitem_activate(GntMenu *menu, GntMenuItem *item)
 {
-	if (item) {
+	if (!item)
+		return;
+
+	if (gnt_menuitem_activate(item)) {
+		while (menu) {
+			gnt_widget_hide(GNT_WIDGET(menu));
+			menu = menu->parentmenu;
+		}
+	} else {
 		if (item->submenu) {
 			GntMenu *sub = GNT_MENU(item->submenu);
 			menu->submenu = sub;
@@ -195,12 +203,6 @@ menuitem_activate(GntMenu *menu, GntMenuItem *item)
 			gnt_widget_set_position(GNT_WIDGET(sub), item->priv.x, item->priv.y);
 			GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(sub), GNT_WIDGET_INVISIBLE);
 			gnt_widget_draw(GNT_WIDGET(sub));
-		} else if (item->callback) {
-			item->callback(item, item->callbackdata);
-			while (menu) {
-				gnt_widget_hide(GNT_WIDGET(menu));
-				menu = menu->parentmenu;
-			}
 		}
 	}
 }
@@ -326,8 +328,7 @@ gnt_menu_toggled(GntTree *tree, gpointer key)
 	GntMenu *menu = GNT_MENU(tree);
 	gboolean check = gnt_menuitem_check_get_checked(GNT_MENU_ITEM_CHECK(item));
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item), !check);
-	if (item->callback)
-		item->callback(item, item->callbackdata);
+	gnt_menuitem_activate(item);
 	while (menu) {
 		gnt_widget_hide(GNT_WIDGET(menu));
 		menu = menu->parentmenu;

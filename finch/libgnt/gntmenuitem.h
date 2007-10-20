@@ -168,6 +168,19 @@ void gnt_menuitem_set_id(GntMenuItem *item, const char *id);
  */
 const char * gnt_menuitem_get_id(GntMenuItem *item);
 
+/**
+ * Activate a menuitem.
+ * Activating the menuitem will first trigger the 'activate' signal for the
+ * menuitem. Then the callback for the menuitem is triggered, if there is one.
+ *
+ * @param item   The menuitem.
+ *
+ * @return  Whether the callback for the menuitem was called.
+ *
+ * @since 2.3.0
+ */
+gboolean gnt_menuitem_activate(GntMenuItem *item);
+
 G_END_DECLS
 
 #endif /* GNT_MENUITEM_H */
