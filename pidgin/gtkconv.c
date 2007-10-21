@@ -6455,6 +6455,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		AtkObject *accessibility_obj;
 		/* I think this is a little longer than it needs to be but I'm lazy. */
 		char *style;
+		gboolean bold = FALSE;
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 			im = PURPLE_CONV_IM(conv);
@@ -6488,7 +6489,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
 				CONV_TEXT_COLUMN, markup, -1);
 	        /* XXX seanegan Why do I have to do this? */
-        	gtk_widget_queue_draw(gtkconv->infopane);
+		gtk_widget_queue_draw(gtkconv->infopane);
 	
 		if (title != markup)
 			g_free(markup);
@@ -6507,31 +6508,38 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			style = "color=\"#c4a000\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)	{
 			atk_object_set_description(accessibility_obj, _("Nick Said"));
-			style = "color=\"#204a87\" weight=\"bold\"";
+			style = "color=\"#204a87\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
-			style = "color=\"#cc0000\" weight=\"bold\"";
+			style = "color=\"#cc0000\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
 			atk_object_set_description(accessibility_obj, _("New Event"));
-			style = "color=\"#888a85\" weight=\"bold\"";
+			style = "color=\"#888a85\"";
 		} else {
-			style = "";
+			style = NULL;
 		}
+
+		if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT ||
+				gtkconv->unseen_state == PIDGIN_UNSEEN_NICK ||
+				gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
+			bold = TRUE;
 		
-		if (*style != '\0')
+		if (style || bold)
 		{
 			char *html_title,*label;
 
 			html_title = g_markup_escape_text(title, -1);
-			label = g_strdup_printf("<span %s>%s</span>",
-			                        style, html_title);
+			label = g_strdup_printf("<span %s %s>%s</span>",
+			                        style ? style : "",
+			                        bold ? "weight=\"bold\"" : "",
+			                        html_title);
 			g_free(html_title);
 			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
 			g_free(label);
 		}
 		else
 			gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
-		
+
 		if (pidgin_conv_window_is_active_conversation(conv))
 			update_typing_icon(gtkconv);
 
