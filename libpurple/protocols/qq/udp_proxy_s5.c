@@ -33,6 +33,7 @@ static void _qq_s5_canread_again(gpointer data, gint source, PurpleInputConditio
 	struct sockaddr_in sin;
 	int len, error;
 	socklen_t errlen;
+	int flags;
 
 	purple_input_remove(phb->inpa);
 	purple_debug(PURPLE_DEBUG_INFO, "socks5 proxy", "Able to read again.\n");
@@ -89,7 +90,8 @@ static void _qq_s5_canread_again(gpointer data, gint source, PurpleInputConditio
 		close(phb->udpsock);
 		return;
 	}
-	fcntl(phb->udpsock, F_SETFL, 0);
+	flags = fcntl(phb->udpsock, F_GETFL);
+	fcntl(phb->udpsock, F_SETFL, flags & ~O_NONBLOCK);
 
 	if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 		phb->func(phb->data, phb->udpsock, NULL);
@@ -106,6 +108,7 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 	struct sockaddr_in sin, ctlsin;
 	int port; 
 	socklen_t ctllen;
+	int flags;
 
 	purple_debug(PURPLE_DEBUG_INFO, "s5_sendconnect", "remote host is %s:%d\n", phb->host, phb->port);
 
@@ -133,7 +136,8 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 		return;
 	}
 
-	fcntl(phb->udpsock, F_SETFL, O_NONBLOCK);
+	flags = fcntl(phb->udpsock, F_GETFL);
+	fcntl(phb->udpsock, F_SETFL, flags | O_NONBLOCK);
 
 	port = g_ntohs(ctlsin.sin_port) + 1;
 	while (1) {
@@ -287,6 +291,7 @@ static void _qq_s5_canwrite(gpointer data, gint source, PurpleInputCondition con
 	struct PHB *phb = data;
 	socklen_t len;
 	int error = ETIMEDOUT;
+	int flags;
 
 	purple_debug(PURPLE_DEBUG_INFO, "socks5 proxy", "Connected.\n");
 
@@ -306,7 +311,8 @@ static void _qq_s5_canwrite(gpointer data, gint source, PurpleInputCondition con
 		g_free(phb);
 		return;
 	}
-	fcntl(source, F_SETFL, 0);
+	flags = fcntl(source, F_GETFL);
+	fcntl(source, F_SETFL, flags & ~O_NONBLOCK);
 
 	i = 0;
 	buf[0] = 0x05;		/* SOCKS version 5 */
@@ -343,6 +349,8 @@ static void _qq_s5_canwrite(gpointer data, gint source, PurpleInputCondition con
 gint qq_proxy_socks5(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 {
 	gint fd;
+	int flags;
+
 	purple_debug(PURPLE_DEBUG_INFO, "QQ",
 		   "Connecting to %s:%d via %s:%d using SOCKS5\n",
 		   phb->host, phb->port, purple_proxy_info_get_host(phb->gpi), purple_proxy_info_get_port(phb->gpi));
@@ -352,7 +360,8 @@ gint qq_proxy_socks5(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "proxy_sock5 return fd=%d\n", fd);
 
-	fcntl(fd, F_SETFL, O_NONBLOCK);
+	flags = fcntl(fd, F_GETFL);
+	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 	if (connect(fd, addr, addrlen) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Connect in asynchronous mode.\n");
@@ -363,7 +372,8 @@ gint qq_proxy_socks5(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 		}
 	} else {
 		purple_debug(PURPLE_DEBUG_MISC, "QQ", "Connect in blocking mode.\n");
-		fcntl(fd, F_SETFL, 0);
+		flags = fcntl(fd, F_GETFL);
+		fcntl(fd, F_SETFL, flags & ~O_NONBLOCK);
 		_qq_s5_canwrite(phb, fd, PURPLE_INPUT_WRITE);
 	}
 
