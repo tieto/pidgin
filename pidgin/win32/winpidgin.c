@@ -452,6 +452,8 @@ static BOOL winpidgin_set_running() {
 		if (GetLastError() == ERROR_ALREADY_EXISTS) {
 			HWND msg_win;
 
+			printf("An instance of Pidgin is already running.\n");
+
 			if((msg_win = FindWindow(TEXT("WinpidginMsgWinCls"), NULL)))
 				if(SendMessage(msg_win, PIDGIN_WM_FOCUS_REQUEST, (WPARAM) NULL, (LPARAM) NULL))
 					return FALSE;
