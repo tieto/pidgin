@@ -265,6 +265,7 @@ local_read_fn(const char *path, GList **files, GError **error)
 		}
 		g_free(fp);
 	}
+	g_dir_close(dir);
 
 	*files = g_list_reverse(*files);
 	return TRUE;
