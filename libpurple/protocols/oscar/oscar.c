@@ -1801,7 +1801,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	if (have_status_message)
 	{
-		if ((status_id == OSCAR_STATUS_ID_AVAILABLE) && (info->itmsurl != NULL))
+		if ((!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE)) && (info->itmsurl != NULL))
 		{
 			char *itmsurl;
 			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
