@@ -80,14 +80,15 @@ static void simple_keep_alive(PurpleConnection *gc) {
 static gboolean process_register_response(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc);
 static void send_notify(struct simple_account_data *sip, struct simple_watcher *);
 
-static void send_publish(struct simple_account_data *sip);
+static void send_open_publish(struct simple_account_data *sip);
+static void send_closed_publish(struct simple_account_data *sip);
 
 static void do_notifies(struct simple_account_data *sip) {
 	GSList *tmp = sip->watcher;
 	purple_debug_info("simple", "do_notifies()\n");
 	if((sip->republish != -1) || sip->republish < time(NULL)) {
 		if(purple_account_get_bool(sip->account, "dopublish", TRUE)) {
-			send_publish(sip);
+			send_open_publish(sip);
 		}
 	}
 
@@ -1020,7 +1021,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 		case 200:
 			if(sip->registerstatus < SIMPLE_REGISTER_COMPLETE) { /* registered */
 				if(purple_account_get_bool(sip->account, "dopublish", TRUE)) {
-					send_publish(sip);
+					send_open_publish(sip);
 				}
 			}
 			sip->registerstatus = SIMPLE_REGISTER_COMPLETE;
@@ -1186,28 +1187,27 @@ static gchar* gen_xpidf(struct simple_account_data *sip) {
 	return doc;
 }
 
-
-
-static gchar* gen_pidf(struct simple_account_data *sip) {
+static gchar* gen_pidf(struct simple_account_data *sip, gboolean open) {
 	gchar *doc = g_strdup_printf("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			"<presence xmlns=\"urn:ietf:params:xml:ns:pidf\"\n"
 			"xmlns:im=\"urn:ietf:params:xml:ns:pidf:im\"\n"
 			"entity=\"sip:%s@%s\">\n"
 			"<tuple id=\"bs35r9f\">\n"
 			"<status>\n"
-			"<basic>open</basic>\n"
+			"<basic>%s</basic>\n"
 			"</status>\n"
 			"<note>%s</note>\n"
 			"</tuple>\n"
 			"</presence>",
 			sip->username,
 			sip->servername,
-			sip->status);
+			(open == TRUE) ? "open" : "closed",
+			(open == TRUE) ? sip->status : "");
 	return doc;
 }
 
 static void send_notify(struct simple_account_data *sip, struct simple_watcher *watcher) {
-	gchar *doc = watcher->needsxpidf ? gen_xpidf(sip) : gen_pidf(sip);
+	gchar *doc = watcher->needsxpidf ? gen_xpidf(sip) : gen_pidf(sip, TRUE);
 	gchar *hdr = watcher->needsxpidf ? "Event: presence\r\nContent-Type: application/xpidf+xml\r\n" : "Event: presence\r\nContent-Type: application/pidf+xml\r\n";
 	send_sip_request(sip->gc, "NOTIFY", watcher->name, watcher->name, hdr, doc, &watcher->dialog, NULL);
 	g_free(doc);
@@ -1221,14 +1221,26 @@ static gboolean process_publish_response(struct simple_account_data *sip, struct
 	return TRUE;
 }
 
-static void send_publish(struct simple_account_data *sip) {
+static void send_open_publish(struct simple_account_data *sip) {
 	gchar *uri = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
-	gchar *doc = gen_pidf(sip);
+	gchar *doc = gen_pidf(sip, TRUE);
 	send_sip_request(sip->gc, "PUBLISH", uri, uri,
 		"Expires: 600\r\nEvent: presence\r\n"
 		"Content-Type: application/pidf+xml\r\n",
 		doc, NULL, process_publish_response);
 	sip->republish = time(NULL) + 500;
+	g_free(uri);
+	g_free(doc);
+}
+
+static void send_closed_publish(struct simple_account_data *sip) {
+	gchar *uri = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
+	gchar *doc = gen_pidf(sip, FALSE);
+	send_sip_request(sip->gc, "PUBLISH", uri, uri,
+		"Expires: 600\r\nEvent: presence\r\n"
+		"Content-Type: application/pidf+xml\r\n",
+		doc, NULL, process_publish_response);
+	/*sip->republish = time(NULL) + 500;*/
 	g_free(uri);
 	g_free(doc);
 }
@@ -1736,7 +1748,14 @@ static void simple_close(PurpleConnection *gc)
 	if(sip) {
 		/* unregister */
 		if (sip->registerstatus == SIMPLE_REGISTER_COMPLETE)
+		{
+			if(purple_account_get_bool(sip->account, 
+				"dopublish", 
+				TRUE))
+				send_closed_publish(sip);
+			
 			do_register_exp(sip, 0);
+		}
 		connection_free_all(sip);
 
 		if (sip->query_data != NULL)
