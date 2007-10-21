@@ -48,6 +48,14 @@ static void (*org_size_request)(GntWidget *wid);
 static gboolean (*org_key_pressed)(GntWidget *w, const char *t);
 
 static void
+menu_hide_all(GntMenu *menu)
+{
+	while (menu->parentmenu)
+		menu = menu->parentmenu;
+	gnt_widget_hide(GNT_WIDGET(menu));
+}
+
+static void
 gnt_menu_draw(GntWidget *widget)
 {
 	GntMenu *menu = GNT_MENU(widget);
@@ -185,10 +193,7 @@ menuitem_activate(GntMenu *menu, GntMenuItem *item)
 		return;
 
 	if (gnt_menuitem_activate(item)) {
-		while (menu) {
-			gnt_widget_hide(GNT_WIDGET(menu));
-			menu = menu->parentmenu;
-		}
+		menu_hide_all(menu);
 	} else {
 		if (item->submenu) {
 			GntMenu *sub = GNT_MENU(item->submenu);
@@ -203,6 +208,8 @@ menuitem_activate(GntMenu *menu, GntMenuItem *item)
 			gnt_widget_set_position(GNT_WIDGET(sub), item->priv.x, item->priv.y);
 			GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(sub), GNT_WIDGET_INVISIBLE);
 			gnt_widget_draw(GNT_WIDGET(sub));
+		} else {
+			menu_hide_all(menu);
 		}
 	}
 }
@@ -288,10 +295,8 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 
 		if (current != menu->selected) {
 			GntMenu *sub = menu->submenu;
-			while (sub) {
+			if (sub)
 				gnt_widget_hide(GNT_WIDGET(sub));
-				sub = sub->submenu;
-			}
 			gnt_widget_draw(widget);
 			return TRUE;
 		}
