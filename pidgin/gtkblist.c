@@ -3703,7 +3703,7 @@ menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 			convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
 															PIDGIN_UNSEEN_TEXT, TRUE, 1);
 			if (convs) {
-				purple_conversation_present((PurpleConversation*)convs->data);
+				pidgin_conv_present_conversation((PurpleConversation*)convs->data);
 				g_list_free(convs);
 			}
 			break;
