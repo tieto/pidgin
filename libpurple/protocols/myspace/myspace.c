@@ -933,7 +933,6 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 	gchar *username;
 	PurpleNotifyUserInfo *user_info;
 	MsimUser *user;
-	gboolean temporary_user;
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
@@ -955,10 +954,14 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 
 	if (!user) {
 		/* User isn't on blist, create a temporary user to store info. */
-		temporary_user = TRUE;
+		PurpleBuddy *buddy;
+
 		user = g_new0(MsimUser, 1);
-	} else {
-		temporary_user = FALSE;
+		user->temporary_user = TRUE;
+
+		buddy = purple_buddy_new(session->account, username, NULL);
+		user->buddy = buddy;
+		buddy->proto_data = (gpointer)user;
 	}
 
 	/* Update user structure with new information */
@@ -974,7 +977,8 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 
 	purple_notify_user_info_destroy(user_info);
 
-	if (temporary_user) {
+	if (user->temporary_user) {
+		purple_blist_remove_buddy(user->buddy);
 		g_free(user->client_info);
 		g_free(user->gender);
 		g_free(user->location);
@@ -1450,7 +1454,7 @@ msim_check_newer_version_cb(PurpleUtilFetchUrlData *url_data,
 	purple_debug_info("msim", "data=%s\n", data->str
 			? data->str : "(NULL)");
 
-	/* url_text is variable=data\n... */
+	/* url_text is variable=data\n...â€ */
 
 	/* Check FILEVER, 1.0.716.0. 716 is build, MSIM_CLIENT_VERSION */
 	/* New (english) version can be downloaded from SETUPURL+SETUPFILE */
