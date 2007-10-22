@@ -16515,7 +16515,7 @@ msgstr "交谈放置"
 msgid ""
 "Note: The preference for \"New conversations\" must be set to \"By "
 "conversation count\"."
-msgstr "请注意：“新建对话”的"首选项必须设定为“按对话次数”。
+msgstr "请注意：“新建对话”的\"首选项必须设定为“按对话次数”。"
 
 #: ../pidgin/plugins/extplacement.c:111
 msgid "Number of conversations per window"
