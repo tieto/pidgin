@@ -5,6 +5,8 @@
   @signal certificate-deleted
  @endsignals
 
+ @see certificate.h
+
  <hr>
 
  @signaldef certificate-stored
@@ -28,4 +30,4 @@ void (*certificate_deleted)(PurpleCertificatePool *pool, const gchar *id, gpoint
  @endsignaldef
 
  */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

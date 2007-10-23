@@ -688,8 +688,11 @@ purple_notify_user_info_add_section_break(PurpleNotifyUserInfo *user_info)
 void
 purple_notify_user_info_remove_last_item(PurpleNotifyUserInfo *user_info)
 {
-	user_info->user_info_entries = g_list_remove(user_info->user_info_entries,
-												 g_list_last(user_info->user_info_entries)->data);
+	GList *last = g_list_last(user_info->user_info_entries);
+	if (last) {
+		purple_notify_user_info_entry_destroy(last->data);
+		user_info->user_info_entries = g_list_delete_link(user_info->user_info_entries, last);
+	}
 }
 
 void *

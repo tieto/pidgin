@@ -41,15 +41,52 @@ msim_attention_types(PurpleAccount *acct)
 		types = g_list_append(types, attn);
 
 		/* TODO: icons for each zap */
+
+		/* Lots of comments for translators: */
+
+		/* Zap means "to strike suddenly and forcefully as if with a
+		 * projectile or weapon."  This term often has an electrical
+		 * connotation, for example, "he was zapped by electricity when
+		 * he put a fork in the toaster." */
 		_MSIM_ADD_NEW_ATTENTION(NULL, _("Zap"), _("%s has zapped you!"), _("Zapping %s..."));
+
+		/* Whack means "to hit or strike someone with a sharp blow" */
 		_MSIM_ADD_NEW_ATTENTION(NULL, _("Whack"), _("%s has whacked you!"), _("Whacking %s..."));
+
+		/* Torch means "to set on fire."  Don't worry, this doesn't
+		 * make a whole lot of sense in English, either.  Feel free
+		 * to translate it literally. */
 		_MSIM_ADD_NEW_ATTENTION(NULL, _("Torch"), _("%s has torched you!"), _("Torching %s..."));
+
+		/* Smooch means "to kiss someone, often enthusiastically" */
 		_MSIM_ADD_NEW_ATTENTION(NULL, _("Smooch"), _("%s has smooched you!"), _("Smooching %s..."));
+
+		/* A hug is a display of affection; wrapping your arms around someone */
 		_MSIM_ADD_NEW_ATTENTION(NULL, _("Hug"), _("%s has hugged you!"), _("Hugging %s..."));
+
+		/* Slap means "to hit someone with an open/flat hand" */
 		_MSIM_ADD_NEW_ATTENTION(NULL, _("Slap"), _("%s has slapped you!"), _("Slapping %s..."));
+
+		/* Goose means "to pinch someone on their butt" */
 		_MSIM_ADD_NEW_ATTENTION(NULL, _("Goose"), _("%s has goosed you!"), _("Goosing %s..."));
+
+		/* A high-five is when two people's hands slap each other
+		 * in the air above their heads.  It is done to celebrate
+		 * something, often a victory, or to congratulate someone. */
 		_MSIM_ADD_NEW_ATTENTION(NULL, _("High-five"), _("%s has high-fived you!"), _("High-fiving %s..."));
+
+		/* We're not entirely sure what the MySpace people mean by
+		 * this... but we think it's the equivalent of "prank."  Or, for
+		 * someone to perform a mischievous trick or practical joke. */
 		_MSIM_ADD_NEW_ATTENTION(NULL, _("Punk"), _("%s has punk'd you!"), _("Punking %s..."));
+
+		/* Raspberry is a slang term for the vibrating sound made
+		 * when you stick your tongue out of your mouth with your
+		 * lips closed and blow.  It is typically done when
+		 * gloating or bragging.  Nowadays it's a pretty silly
+		 * gesture, so it does not carry a harsh negative
+		 * connotation.  It is generally used in a playful tone
+		 * with friends. */
 		_MSIM_ADD_NEW_ATTENTION(NULL, _("Raspberry"), _("%s has raspberried you!"), _("Raspberrying %s..."));
 	}
 

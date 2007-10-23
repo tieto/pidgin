@@ -1,6 +1,7 @@
 /**
  * @file gtkimhtml.h GTK+ IM/HTML rendering component
  * @ingroup pidgin
+ * @see @ref gtkimhtml-signals
  */
 
 /* Pidgin is the legal property of its developers, whose names are too numerous
@@ -440,6 +441,8 @@ GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, i
  * @param id       The id to associate with the image.
  *
  * @return A new IM/HTML Scalable object with an image.
+ *
+ * @since 2.1.0
  */
 /*
  * TODO: All this animation code could be combined much better with
@@ -836,6 +839,8 @@ char *gtk_imhtml_get_text(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *st
  *
  * @param imhtml  The GTK+ IM/HTML.
  * @param flags   The connection flag which describes the allowed types of formatting.
+ *
+ * @since 2.1.0
  */
 void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags);
 

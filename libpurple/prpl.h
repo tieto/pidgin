@@ -226,11 +226,17 @@ struct _PurplePluginProtocolInfo
 	void (*tooltip_text)(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean full);
 
 	/**
-	 * This must be implemented, and must add at least the offline
-	 * and online states.
+	 * Returns a list of #PurpleStatusType which exist for this account;
+	 * this must be implemented, and must add at least the offline and
+	 * online states.
 	 */
 	GList *(*status_types)(PurpleAccount *account);
 
+	/**
+	 * Returns a list of #PurpleMenuAction structs, which represent extra
+	 * actions to be shown in (for example) the right-click menu for @a
+	 * node.
+	 */
 	GList *(*blist_node_menu)(PurpleBlistNode *node);
 	GList *(*chat_info)(PurpleConnection *);
 	GHashTable *(*chat_info_defaults)(PurpleConnection *, const char *chat_name);
@@ -258,6 +264,10 @@ struct _PurplePluginProtocolInfo
 
 	void (*set_info)(PurpleConnection *, const char *info);
 	unsigned int (*send_typing)(PurpleConnection *, const char *name, PurpleTypingState state);
+	/**
+	 * Should arrange for purple_notify_userinfo() to be called with
+	 * @a who's user info.
+	 */
 	void (*get_info)(PurpleConnection *, const char *who);
 	void (*set_status)(PurpleAccount *account, PurpleStatus *status);
 
@@ -287,8 +297,14 @@ struct _PurplePluginProtocolInfo
 	/** new user registration */
 	void (*register_user)(PurpleAccount *);
 
-	/* get "chat buddy" info and away message */
+	/**
+	 * @deprecated Use #PurplePluginProtocolInfo.get_info instead.
+	 */
 	void (*get_cb_info)(PurpleConnection *, int, const char *who);
+	/**
+	 * @deprecated Use #PurplePluginProtocolInfo.get_cb_real_name and
+	 *             #PurplePluginProtocolInfo.status_text instead.
+	 */
 	void (*get_cb_away)(PurpleConnection *, int, const char *who);
 
 	/** save/store buddy's alias on server list/roster */
@@ -348,9 +364,12 @@ struct _PurplePluginProtocolInfo
 	/* room list serialize */
 	char *(*roomlist_room_serialize)(PurpleRoomlistRoom *room);
 
-	/* Remove the user from the server. (This is only at the bottom to keep binary compatibility.)
-	 * The account can either be connected or disconnected. After the removal is finished,
-	 * the connection will stay open and has to be closed!
+	/** Remove the user from the server.  The account can either be
+	 * connected or disconnected. After the removal is finished, the
+	 * connection will stay open and has to be closed!
+	 */
+	/* This is here rather than next to register_user for API compatibility
+	 * reasons.
 	 */
 	void (*unregister_user)(PurpleAccount *, PurpleAccountUnregistrationCb cb, void *user_data);
 	

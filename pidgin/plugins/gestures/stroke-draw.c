@@ -13,7 +13,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 
-#include <gdk/gdkx.h>
 #include "gstroke.h"
 #include "gstroke-internal.h"
 

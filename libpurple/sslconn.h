@@ -31,6 +31,7 @@
 
 #define PURPLE_SSL_DEFAULT_PORT 443
 
+/** Possible SSL errors. */
 typedef enum
 {
 	PURPLE_SSL_HANDSHAKE_FAILED = 1,
@@ -86,39 +87,48 @@ struct _PurpleSslConnection
 typedef struct
 {
 	/** Initializes the SSL system provided.
-     *  @return TRUE if initialization succeeded
-     */
+	 *  @return @a TRUE if initialization succeeded
+	 *  @see purple_ssl_init
+	 */
 	gboolean (*init)(void);
-	/** Unloads the SSL system. Inverse of init. */
+	/** Unloads the SSL system. Inverse of PurpleSslOps::init.
+	 *  @see purple_ssl_uninit
+	 */
 	void (*uninit)(void);
-	/** Sets up the SSL connection for a PurpleSslConnection once
-     *  the TCP connection has been established */
+	/** Sets up the SSL connection for a #PurpleSslConnection once
+	 *  the TCP connection has been established
+	 *  @see purple_ssl_connect
+	 */
 	void (*connectfunc)(PurpleSslConnection *gsc);
 	/** Destroys the internal data of the SSL connection provided.
 	 *  Freeing gsc itself is left to purple_ssl_close()
-	 *
+	 *  @see purple_ssl_close
 	 */
 	void (*close)(PurpleSslConnection *gsc);
 	/** Reads data from a connection (like POSIX read())
-	 * @param gsc	Connection context
-	 * @param data	Pointer to buffer to drop data into
-	 * @param len	Maximum number of bytes to read
-	 * @return	Number of bytes actually written into the buffer, or <0 on error
+	 * @param gsc   Connection context
+	 * @param data  Pointer to buffer to drop data into
+	 * @param len   Maximum number of bytes to read
+	 * @return      Number of bytes actually written into @a data (which may be
+	 *              less than @a len), or <0 on error
+	 * @see purple_ssl_read
 	*/
 	size_t (*read)(PurpleSslConnection *gsc, void *data, size_t len);
 	/** Writes data to a connection (like POSIX send())
-	* @param gsc	Connection context
-	* @param data	Data buffer to send data from
-	* @param len	Number of bytes to send from buffer
-	* @return	The number of bytes written (may be less than len) or <0 on error
+	* @param gsc    Connection context
+	* @param data   Data buffer to send data from
+	* @param len    Number of bytes to send from buffer
+	* @return       The number of bytes written to @a data (may be less than
+	*               @a len) or <0 on error
+	* @see purple_ssl_write
 	*/
 	size_t (*write)(PurpleSslConnection *gsc, const void *data, size_t len);
 	/** Obtains the certificate chain provided by the peer
 	 *
 	 * @param gsc   Connection context
-	 * @return      A newly allocated list containing the certificates
-	 *              the peer provided.
-	 * @see PurpleCertificate
+	 * @return      A newly allocated list of #PurpleCertificate containing the
+	 *              certificates the peer provided.
+	 * @see purple_ssl_get_peer_certificates
 	 * @todo        Decide whether the ordering of certificates in this
 	 *              list can be guaranteed.
 	 */
@@ -141,12 +151,12 @@ extern "C" {
 /**
  * Returns whether or not SSL is currently supported.
  *
- * @return TRUE if SSL is supported, or FALSE otherwise.
+ * @return @a TRUE if SSL is supported, or @a FALSE otherwise.
  */
 gboolean purple_ssl_is_supported(void);
 
 /**
- * Returns a human-readable string for an SSL error
+ * Returns a human-readable string for an SSL error.
  *
  * @param error      Error code
  * @return Human-readable error explanation
@@ -163,8 +173,8 @@ const gchar * purple_ssl_strerror(PurpleSslErrorType error);
  * @param port       The destination port.
  * @param func       The SSL input handler function.
  * @param error_func The SSL error handler function.  This function
- *                   should NOT call purple_ssl_close().  In the event
- *                   of an error the PurpleSslConnection will be
+ *                   should <strong>NOT</strong> call purple_ssl_close().  In
+ *                   the event of an error the #PurpleSslConnection will be
  *                   destroyed for you.
  * @param data       User-defined data.
  *
@@ -177,7 +187,8 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
 
 /**
  * Makes a SSL connection using an already open file descriptor.
- * DEPRECATED. Use purple_ssl_connect_with_host_fd instead.
+ *
+ * @deprecated Use purple_ssl_connect_with_host_fd() instead.
  *
  * @param account    The account making the connection.
  * @param fd         The file descriptor.
@@ -193,17 +204,19 @@ PurpleSslConnection *purple_ssl_connect_fd(PurpleAccount *account, int fd,
  									   void *data);
 
 /**
-  * Makes a SSL connection using an already open file descriptor.
-  *
-  * @param account    The account making the connection.
-  * @param fd         The file descriptor.
-  * @param func       The SSL input handler function.
-  * @param error_func The SSL error handler function.
-  * @param host       The hostname of the other peer (to verify the CN)
-  * @param data       User-defined data.
-  *
-  * @return The SSL connection handle.
-  */
+ * Makes a SSL connection using an already open file descriptor.
+ *
+ * @param account    The account making the connection.
+ * @param fd         The file descriptor.
+ * @param func       The SSL input handler function.
+ * @param error_func The SSL error handler function.
+ * @param host       The hostname of the other peer (to verify the CN)
+ * @param data       User-defined data.
+ *
+ * @return The SSL connection handle.
+ *
+ * @since 2.2.0
+ */
 PurpleSslConnection *purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
                                            PurpleSslInputFunction func,
                                            PurpleSslErrorFunction error_func,
@@ -256,7 +269,9 @@ size_t purple_ssl_write(PurpleSslConnection *gsc, const void *buffer, size_t len
  * @param gsc    The SSL connection handle
  *
  * @return The peer certificate chain, in the order of certificate, issuer,
- *         issuer's issuer, etc. NULL if no certificates have been provided,
+ *         issuer's issuer, etc. @a NULL if no certificates have been provided,
+ *
+ * @since 2.2.0
  */
 GList * purple_ssl_get_peer_certificates(PurpleSslConnection *gsc);
 

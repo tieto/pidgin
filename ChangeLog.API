@@ -1,6 +1,17 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-Version 2.2.0 (09/13/2007):
+version 2.2.2 (??/??/????):
+	libpurple:
+		Changed:
+		* The size parameter of purple_util_write_data_to_file_absolute
+		  has been changed to gssize instead of a size_t to correctly
+		  indicate that -1 can be used for a nul-delimited string.
+		* The documentation for purple_savedstatuses_get_popular used to
+		  incorrectly claim that the active status is excluded from the
+		  returned list. The documentation has been corrected. Also, the
+		  function now returns a correct list when called with a value of 0.
+
+version 2.2.0 (09/13/2007):
 	libpurple:
 		Added:
 		* PURPLE_MESSAGE_INVISIBLE flag, which can be used by
@@ -57,7 +68,7 @@ Version 2.2.0 (09/13/2007):
 		* gnt_util_parse_xhtml_to_textview to parse XHTML strings in a
 		  GntTextView (this works only if libxml2 is available)
 
-Version 2.1.1 (08/20/2007):
+version 2.1.1 (08/20/2007):
 	libpurple:
 		Changed:
 		* PurpleAccountUiOps.request_authorize's authorize_cb and
@@ -86,9 +97,6 @@ version 2.1.0 (7/28/2007):
 		* purple_core_ensure_single_instance
 		    This is for UIs to use to ensure only one copy is running.
 		* purple_dbus_is_owner
-		* purple_timeout_add_seconds
-		    Callers should prefer this to purple_timeout_add for timers
-		    longer than 1 second away.  Be aware of the rounding, though.
 		* purple_timeout_add_seconds
 		    Callers should prefer this to purple_timeout_add for timers
 		    longer than 1 second away.  Be aware of the rounding, though.

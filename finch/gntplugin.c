@@ -32,6 +32,7 @@
 
 #include "finch.h"
 
+#include "debug.h"
 #include "notify.h"
 #include "request.h"
 
@@ -127,8 +128,8 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 	/* XXX: Use formatting and stuff */
 	gnt_text_view_clear(GNT_TEXT_VIEW(plugins.aboot));
 	text = g_strdup_printf(_("Name: %s\nVersion: %s\nDescription: %s\nAuthor: %s\nWebsite: %s\nFilename: %s\n"),
-			SAFE(plugin->info->name), SAFE(plugin->info->version), SAFE(plugin->info->description),
-			SAFE(plugin->info->author), SAFE(plugin->info->homepage), SAFE(plugin->path));
+			SAFE(_(plugin->info->name)), SAFE(_(plugin->info->version)), SAFE(_(plugin->info->description)),
+			SAFE(_(plugin->info->author)), SAFE(_(plugin->info->homepage)), SAFE(plugin->path));
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(plugins.aboot),
 			text, GNT_TEXT_FLAG_NORMAL);
 	gnt_text_view_scroll(GNT_TEXT_VIEW(plugins.aboot), 0);
@@ -237,6 +238,93 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	}
 }
 
+static void
+install_selected_file_cb(gpointer handle, const char *filename)
+{
+	/* Try to init the selected file.
+	 * If it succeeds, try to make a copy of the file in $USERDIR/plugins/.
+	 * If the copy succeeds, unload and destroy the plugin in the original
+	 *  location and init+load the new one.
+	 * Select the plugin in the plugin list.
+	 */
+	char *path;
+	PurplePlugin *plugin;
+
+	g_return_if_fail(plugins.window);
+	
+	plugin = purple_plugin_probe(filename);
+	if (!plugin) {
+		purple_notify_error(handle, _("Error loading plugin"),
+				_("The selected file is not a valid plugin."),
+				_("Please open the debug window and try again to see the exact error message."));
+		return;
+	}
+	if (g_list_find(gnt_tree_get_rows(GNT_TREE(plugins.tree)), plugin)) {
+		purple_plugin_load(plugin);
+		gnt_tree_set_choice(GNT_TREE(plugins.tree), plugin, purple_plugin_is_loaded(plugin));
+		gnt_tree_set_selected(GNT_TREE(plugins.tree), plugin);
+		return;
+	}
+
+	path = g_build_filename(purple_user_dir(), "plugins", NULL);
+	if (purple_build_dir(path, S_IRUSR | S_IWUSR | S_IXUSR) == 0) {
+		char *content = NULL;
+		gsize length = 0;
+
+		if (g_file_get_contents(filename, &content, &length, NULL)) {
+			char *file = g_path_get_basename(filename);
+			g_free(path);
+			path = g_build_filename(purple_user_dir(), "plugins", file, NULL);
+			if (purple_util_write_data_to_file_absolute(path, content, length)) {
+				purple_plugin_destroy(plugin);
+				plugin = purple_plugin_probe(path);
+				if (!plugin) {
+					purple_debug_warning("gntplugin", "This is really strange. %s can be loaded, but %s can't!\n",
+							filename, path);
+					g_unlink(path);
+					plugin = purple_plugin_probe(filename);
+				}
+			} else {
+			}
+		}
+		g_free(content);
+	}
+	g_free(path);
+
+	purple_plugin_load(plugin);
+
+	if (plugin->info->type == PURPLE_PLUGIN_LOADER) {
+		GList *cur;
+		for (cur = PURPLE_PLUGIN_LOADER_INFO(plugin)->exts; cur != NULL;
+				cur = cur->next)
+			purple_plugins_probe(cur->data);
+		return;
+	}
+
+	if (plugin->info->type != PURPLE_PLUGIN_STANDARD ||
+			(plugin->info->flags & PURPLE_PLUGIN_FLAG_INVISIBLE) ||
+			plugin->error)
+		return;
+
+	gnt_tree_add_choice(GNT_TREE(plugins.tree), plugin,
+			gnt_tree_create_row(GNT_TREE(plugins.tree), plugin->info->name), NULL, NULL);
+	gnt_tree_set_choice(GNT_TREE(plugins.tree), plugin, purple_plugin_is_loaded(plugin));
+	gnt_tree_set_row_flags(GNT_TREE(plugins.tree), plugin, GNT_TEXT_FLAG_BOLD);
+	gnt_tree_set_selected(GNT_TREE(plugins.tree), plugin);
+}
+
+static void
+install_plugin_cb(GntWidget *w, gpointer null)
+{
+	static int handle;
+
+	purple_request_close_with_handle(&handle);
+	purple_request_file(&handle, _("Select plugin to install"), NULL,
+			FALSE, G_CALLBACK(install_selected_file_cb), NULL,
+			NULL, NULL, NULL, &handle);
+	g_signal_connect_swapped(G_OBJECT(w), "destroy", G_CALLBACK(purple_request_close_with_handle), &handle);
+}
+
 void finch_plugins_show_all()
 {
 	GntWidget *window, *tree, *box, *aboot, *button;
@@ -272,6 +360,7 @@ void finch_plugins_show_all()
 	gnt_box_add_widget(GNT_BOX(box), gnt_vline_new());
 
 	plugins.aboot = aboot = gnt_text_view_new();
+	gnt_text_view_set_flag(GNT_TEXT_VIEW(aboot), GNT_TEXT_VIEW_TOP_ALIGN);
 	gnt_widget_set_size(aboot, 40, 20);
 	gnt_box_add_widget(GNT_BOX(box), aboot);
 
@@ -306,6 +395,10 @@ void finch_plugins_show_all()
 
 	box = gnt_hbox_new(FALSE);
 	gnt_box_add_widget(GNT_BOX(window), box);
+
+	button = gnt_button_new(_("Install Plugin..."));
+	gnt_box_add_widget(GNT_BOX(box), button);
+	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(install_plugin_cb), NULL);
 
 	button = gnt_button_new(_("Close"));
 	gnt_box_add_widget(GNT_BOX(box), button);

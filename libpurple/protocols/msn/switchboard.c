@@ -25,7 +25,7 @@
 #include "prefs.h"
 #include "switchboard.h"
 #include "notification.h"
-#include "msn-utils.h"
+#include "msnutils.h"
 
 #include "error.h"
 
@@ -108,8 +108,8 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	g_free(swboard->auth_key);
 	g_free(swboard->session_id);
 
-	for (l = swboard->users; l != NULL; l = l->next)
-		g_free(l->data);
+	for (; swboard->users; swboard->users = g_list_delete_link(swboard->users, swboard->users))
+		g_free(swboard->users->data);
 
 	session = swboard->session;
 	session->switches = g_list_remove(session->switches, swboard);
@@ -152,9 +152,7 @@ msn_switchboard_set_session_id(MsnSwitchBoard *swboard, const char *id)
 	g_return_if_fail(swboard != NULL);
 	g_return_if_fail(id != NULL);
 
-	if (swboard->session_id != NULL)
-		g_free(swboard->session_id);
-
+	g_free(swboard->session_id);
 	swboard->session_id = g_strdup(id);
 }
 
@@ -534,6 +532,7 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	payload = msn_message_gen_payload(msg, &payload_len);
 
 #ifdef MSN_DEBUG_SB
+	purple_debug_info("MSNP14","SB length:{%d}",payload_len);
 	msn_message_show_readable(msg, "SB SEND", FALSE);
 #endif
 
@@ -621,6 +620,7 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg,
 	g_return_if_fail(swboard != NULL);
 	g_return_if_fail(msg     != NULL);
 
+	purple_debug_info("MSNP14","switchboard send msg..\n");
 	if (msn_switchboard_can_send(swboard))
 		release_msg(swboard, msg);
 	else if (queue)
@@ -727,15 +727,15 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
-	msn_message_parse_payload(msg, payload, len);
+	msn_message_parse_payload(msg, payload, len,
+					MSG_LINE_DEM,MSG_BODY_DEM);
 #ifdef MSN_DEBUG_SB
 	msn_message_show_readable(msg, "SB RECV", FALSE);
 #endif
 
-	if (msg->remote_user != NULL)
-		g_free (msg->remote_user);
-
+	g_free (msg->remote_user);
 	msg->remote_user = g_strdup(cmd->params[0]);
+
 	msn_cmdproc_process_msg(cmdproc, msg);
 
 	msn_message_destroy(msg);
@@ -745,6 +745,14 @@ static void
 msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	cmdproc->servconn->payload_len = atoi(cmd->params[2]);
+	cmdproc->last_cmd->payload_cb = msg_cmd_post;
+}
+
+static void
+ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	purple_debug_misc("MSNP14","get UBM...\n");
+	cmdproc->servconn->payload_len = atoi(cmd->params[4]);
 	cmdproc->last_cmd->payload_cb = msg_cmd_post;
 }
 
@@ -1084,6 +1092,8 @@ static void
 cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 {
 	int reason = MSN_SB_ERROR_UNKNOWN;
+	MsnMessage *msg;
+	MsnSwitchBoard *swboard = trans->data;
 
 	if (error == 215)
 	{
@@ -1096,7 +1106,19 @@ cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	}
 
 	purple_debug_warning("msn", "cal_error: command %s gave error %i\n", trans->command, error);
+	purple_debug_warning("msn", "Will Use Offline Message to sendit\n");
 
+//	cal_error_helper(trans, reason);
+	/*offline Message send Process*/
+
+	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL){
+		purple_debug_warning("MSNP14","offline msg to send:{%s}\n",msg->body);
+		/* The messages could not be sent due to a switchboard error */
+		swboard->error = MSN_SB_ERROR_USER_OFFLINE;
+		msg_error_helper(swboard->cmdproc, msg,
+							 MSN_MSG_ERROR_SB);
+		msn_message_unref(msg);
+	}
 	cal_error_helper(trans, reason);
 }
 
@@ -1140,6 +1162,7 @@ got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* The conversation window was closed. */
 		return;
 
+	purple_debug_info("MSNP14","Switchboard:auth:{%s} socket:{%s}\n",cmd->params[4],cmd->params[2]);
 	msn_switchboard_set_auth_key(swboard, cmd->params[4]);
 
 	msn_parse_socket(cmd->params[2], &host, &port);
@@ -1252,6 +1275,7 @@ msn_switchboard_init(void)
 	msn_table_add_cmd(cbs_table, "USR", "USR", usr_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "MSG", msg_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "UBM", ubm_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "JOI", joi_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "BYE", bye_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "OUT", out_cmd);

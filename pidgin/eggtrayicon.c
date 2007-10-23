@@ -23,7 +23,6 @@
 
 #include "eggtrayicon.h"
 
-#include <gdk/gdkx.h>
 #include <X11/Xatom.h>
 
 #define _(x) x

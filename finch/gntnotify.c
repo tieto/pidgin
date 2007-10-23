@@ -84,8 +84,8 @@ finch_notify_message(PurpleNotifyMsgType type, const char *title,
 		if (type == PURPLE_NOTIFY_FORMATTED) {
 			int width = -1, height = -1;
 			msg = gnt_text_view_new();
+			gnt_text_view_set_flag(GNT_TEXT_VIEW(msg), GNT_TEXT_VIEW_TOP_ALIGN);
 			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(msg), secondary, sf);
-			gnt_text_view_scroll(GNT_TEXT_VIEW(msg), 0);
 			gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(msg), button);
 			gnt_util_get_text_bound(secondary, &width, &height);
 			gnt_widget_set_size(msg, width + 3, height + 1);
@@ -194,6 +194,7 @@ finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 	PurpleAccount *account = purple_connection_get_account(gc);
 	GString *message = g_string_new(NULL);
 	void *ret;
+	static int key = 0;
 
 	if (!detailed)
 	{
@@ -212,7 +213,7 @@ finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 
 		to = g_strdup_printf("%s (%s)", tos ? *tos : purple_account_get_username(account),
 					purple_account_get_protocol_name(account));
-		gnt_tree_add_row_after(GNT_TREE(emaildialog.tree), GINT_TO_POINTER(time(NULL)),
+		gnt_tree_add_row_after(GNT_TREE(emaildialog.tree), GINT_TO_POINTER(++key),
 				gnt_tree_create_row(GNT_TREE(emaildialog.tree), to,
 					froms ? *froms : "[Unknown sender]",
 					*subjects),
@@ -352,14 +353,18 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 		gnt_box_add_widget(GNT_BOX(window),
 			gnt_label_new_with_format(secondary, GNT_TEXT_FLAG_NORMAL));
 
-	columns = purple_notify_searchresults_get_columns_count(results);
+	columns = g_list_length(results->columns);
 	tree = gnt_tree_new_with_columns(columns);
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
 	gnt_box_add_widget(GNT_BOX(window), tree);
 
-	for (i = 0; i < columns; i++)
-		gnt_tree_set_column_title(GNT_TREE(tree), i, 
-				purple_notify_searchresults_column_get_title(results, i));
+	i = 0;
+	for (iter = results->columns; iter; iter = iter->next)
+	{
+		PurpleNotifySearchColumn *column = iter->data;
+		gnt_tree_set_column_title(GNT_TREE(tree), i, column->title);
+		i++;
+	}
 
 	box = gnt_hbox_new(TRUE);
 
