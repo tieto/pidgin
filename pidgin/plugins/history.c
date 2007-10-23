@@ -46,6 +46,9 @@ static void historize(PurpleConversation *c)
 
 	convtype = purple_conversation_get_type(c);
 	gtkconv = PIDGIN_CONVERSATION(c);
+	if (gtkconv == NULL)
+		return;
+
 	if (convtype == PURPLE_CONV_TYPE_IM && g_list_length(gtkconv->convs) < 2)
 	{
 		GSList *buddies;
@@ -166,6 +169,7 @@ plugin_load(PurplePlugin *plugin)
 	purple_signal_connect(purple_conversations_get_handle(),
 						"conversation-created",
 						plugin, PURPLE_CALLBACK(historize), NULL);
+	/* XXX: Do we want to listen to pidgin's "conversation-displayed" signal? */
 
 	purple_prefs_connect_callback(plugin, "/purple/logging/log_ims",
 								history_prefs_cb, plugin);

@@ -519,7 +519,8 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 #endif
 
 		err = g_strdup_printf("html_tag_to_msim_markup: unrecognized "
-				"HTML tag %s was sent by the IM client; ignoring", (root->name ? root->name : "(NULL)"));
+			"HTML tag %s was sent by the IM client; ignoring", 
+			root->name ? root->name : "(NULL)");
 		msim_unrecognized(NULL, NULL, err);
 		g_free(err);
 	}

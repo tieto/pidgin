@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [2])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [2])
-m4_define([purple_micro_version], [1])
+m4_define([purple_micro_version], [2])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [2])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [2])
-m4_define([gnt_micro_version], [1])
+m4_define([gnt_micro_version], [2])
 m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -2101,6 +2101,10 @@ AC_ARG_ENABLE(dot,
 	[AC_HELP_STRING([--enable-dot],
 		[enable graphs in doxygen via 'dot'])],
 	enable_dot="$enableval", enable_dot="yes")
+AC_ARG_ENABLE(devhelp,
+	[AC_HELP_STRING([--enable-devhelp],
+		[enable building index for devhelp documentation browser])],
+	enable_devhelp="$enableval", enable_devhelp="yes")
 
 if test "x$enable_doxygen" = xyes; then
 	AC_CHECK_PROG(DOXYGEN, doxygen, true, false)
@@ -2120,14 +2124,28 @@ if test "x$enable_doxygen" = xyes; then
 				AC_DEFINE_UNQUOTED(HAVE_DOT, 1, [whether or not we have dot])
 			fi
 		fi
+
+		if test "x$enable_devhelp" = "xyes"; then
+			AC_CHECK_PROG(XSLTPROC, xsltproc, true, false)
+
+			if test $XSLTPROC = false; then
+				enable_devhelp="no";
+				AC_MSG_WARN([*** xsltproc not found; devhelp index will not be created])
+			else
+				AC_DEFINE_UNQUOTED(HAVE_XSLTPROC, 1, [whether or not we have xsltproc for devhelp index])
+			fi
+		fi
 	fi
 else
 	enable_dot="no"
+	enable_devhelp="no"
 fi
 
 AC_SUBST(enable_doxygen)
 AC_SUBST(enable_dot)
+AC_SUBST(enable_devhelp)
 AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
+AM_CONDITIONAL(HAVE_XSLTPROC, test "x$enable_devhelp" = "xyes")
 
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)

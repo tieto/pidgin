@@ -5,6 +5,8 @@
   @signal cipher-removed
  @endsignals
 
+ @see cipher.h
+
  <hr>
 
  @signaldef cipher-added
@@ -26,4 +28,4 @@ void (*cipher_removed)(PurpleCipher *cipher);
  @endsignaldef
 
  */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

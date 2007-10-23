@@ -100,6 +100,15 @@ complete_suggest(GntEntry *entry, const char *text)
 	return changed;
 }
 
+static int
+max_common_prefix(const char *s, const char *t)
+{
+	const char *f = s;
+	while (*f && *t && *f == *t++)
+		f++;
+	return f - s;
+}
+
 static gboolean
 show_suggest_dropdown(GntEntry *entry)
 {
@@ -110,6 +119,7 @@ show_suggest_dropdown(GntEntry *entry)
 	GList *iter;
 	const char *text = NULL;
 	const char *sgst = NULL;
+	int max = -1;
 
 	if (entry->word)
 	{
@@ -121,14 +131,13 @@ show_suggest_dropdown(GntEntry *entry)
 	else
 		suggest = g_strdup(entry->start);
 	len = strlen(suggest);  /* Don't need to use the utf8-function here */
-	
+
 	if (entry->ddown == NULL)
 	{
 		GntWidget *box = gnt_vbox_new(FALSE);
 		entry->ddown = gnt_tree_new();
 		gnt_tree_set_compare_func(GNT_TREE(entry->ddown), (GCompareFunc)g_utf8_collate);
 		gnt_box_add_widget(GNT_BOX(box), entry->ddown);
-		/* XXX: Connect to the "activate" signal for the dropdown tree */
 
 		GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_TRANSIENT);
 
@@ -151,6 +160,10 @@ show_suggest_dropdown(GntEntry *entry)
 					gnt_tree_create_row(GNT_TREE(entry->ddown), text),
 					NULL, NULL);
 			count++;
+			if (max == -1)
+				max = strlen(text) - len;
+			else if (max)
+				max = MIN(max, max_common_prefix(sgst + len, text + len));
 			sgst = text;
 		}
 	}
@@ -163,6 +176,17 @@ show_suggest_dropdown(GntEntry *entry)
 		destroy_suggest(entry);
 		return complete_suggest(entry, sgst);
 	} else {
+		if (max > 0) {
+			GntWidget *ddown = entry->ddown;
+			char *match = g_strndup(sgst + len, max);
+			entry->ddown = NULL;
+			gnt_entry_key_pressed(GNT_WIDGET(entry), match);
+			g_free(match);
+			if (entry->ddown)
+				gnt_widget_destroy(ddown);
+			else
+				entry->ddown = ddown;
+		}
 		gnt_widget_draw(entry->ddown->parent);
 	}
 

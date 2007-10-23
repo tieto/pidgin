@@ -291,9 +291,10 @@ msim_login(PurpleAccount *acct)
 		/* Notify an error message also, because this is important! */
 		purple_notify_error(acct, _("MySpaceIM Error"), str, NULL);
 
+		gc->wants_to_die = TRUE;
 		purple_connection_error(gc, str);
-		
 		g_free(str);
+		return;
 	}
 #endif
 
@@ -458,6 +459,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	purple_cipher_context_append(key_context, hash_pw, HASH_SIZE);
 	purple_cipher_context_append(key_context, (guchar *)(nonce + NONCE_SIZE), NONCE_SIZE);
 	purple_cipher_context_digest(key_context, sizeof(key), key, NULL);
+	purple_cipher_context_destroy(key_context);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
 	purple_debug_info("msim", "key = ");
@@ -1044,7 +1046,7 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 	PurpleStatusType *type;
 	MsimSession *session;
 	guint status_code;
-	const gchar *statstring;
+	gchar *statstring;
 
 	session = (MsimSession *)account->gc->proto_data;
 
@@ -1078,7 +1080,7 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 			break;
 	}
 
-	statstring = purple_status_get_attr_string(status, "message");
+	statstring = (gchar *)purple_status_get_attr_string(status, "message");
 
 	if (!statstring) {
 		statstring = "";
@@ -1087,7 +1089,7 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 	/* Status strings are plain text. */
 	statstring = purple_markup_strip_html(statstring);
 
-	msim_set_status_code(session, status_code, g_strdup(statstring));
+	msim_set_status_code(session, status_code, statstring);
 }
 
 /** Go idle. */
@@ -1218,7 +1220,7 @@ msim_uid2username_from_blist(MsimSession *session, guint wanted_uid)
 		if (uid == wanted_uid)
 		{
 			ret = g_strdup(name);
-            break;
+			break;
 		}
 	}
 
@@ -1795,11 +1797,13 @@ msim_error(MsimSession *session, MsimMessage *msg)
 	/* Destroy session if fatal. */
 	if (msim_msg_get(msg, "fatal")) {
 		purple_debug_info("msim", "fatal error, closing\n");
-		if (err == 260) {
-			/* Incorrect password */
-			session->gc->wants_to_die = TRUE;
-			if (!purple_account_get_remember_password(session->account))
-				purple_account_set_password(session->account, NULL);
+		switch (err) {
+			case 260: /* Incorrect password */
+			case 6: /* Logged in elsewhere */
+				session->gc->wants_to_die = TRUE;
+				if (!purple_account_get_remember_password(session->account))
+					purple_account_set_password(session->account, NULL);
+				break;
 		}
 		purple_connection_error(session->gc, full_errmsg);
 	} else {
@@ -1871,6 +1875,7 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		purple_blist_add_buddy(buddy, NULL, NULL, NULL);
 
 		user = msim_get_user_from_buddy(buddy);
+		/* TODO: free user. memory leak? */
 
 		/* All buddies on list should have 'uid' integer associated with them. */
 		purple_blist_node_set_int(&buddy->node, "UserID", msim_msg_get_integer(msg, "f"));
@@ -2537,13 +2542,13 @@ msim_status_text(PurpleBuddy *buddy)
 	display_name = headline = NULL;
 
 	/* Retrieve display name and/or headline, depending on user preference. */
-	if (purple_account_get_bool(session->account, "show_display_name", TRUE)) {
-		display_name = user->display_name;
-	} 
-
-	if (purple_account_get_bool(session->account, "show_headline", FALSE)) {
+	if (purple_account_get_bool(session->account, "show_headline", TRUE)) {
 		headline = user->headline;
 	}
+
+	if (purple_account_get_bool(session->account, "show_display_name", FALSE)) {
+		display_name = user->display_name;
+	} 
 
 	/* Return appropriate combination of display name and/or headline, or neither. */
 
@@ -2864,7 +2869,7 @@ msim_actions(PurplePlugin *plugin, gpointer context)
 }
 
 /** Callbacks called by Purple, to access this plugin. */
-PurplePluginProtocolInfo prpl_info = {
+static PurplePluginProtocolInfo prpl_info = {
 	/* options */
 	  OPT_PROTO_USE_POINTSIZE        /* specify font size in sane point size */
 	| OPT_PROTO_MAIL_CHECK,

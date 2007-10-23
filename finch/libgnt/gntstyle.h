@@ -53,6 +53,8 @@ const char *gnt_style_get(GntStyle style);
  * @param key     The key
  *
  * @return  The value of the setting as a string, or @c NULL
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 char *gnt_style_get_from_name(const char *group, const char *key);
 
@@ -62,6 +64,8 @@ char *gnt_style_get_from_name(const char *group, const char *key);
  *
  * @param value   The value of the boolean setting as a string
  * @return    The boolean value
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 gboolean gnt_style_parse_bool(const char *value);
 

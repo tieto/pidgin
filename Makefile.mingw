@@ -65,12 +65,16 @@ EXTERNAL_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(EXTERNAL_DLLS))
 all: $(PIDGIN_CONFIG_H)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE)
+ifndef DISABLE_NLS
 	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE)
+endif
 
 install: all $(PIDGIN_INSTALL_DIR)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) install
+ifndef DISABLE_NLS
 	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) install
+endif
 	$(MAKE) -C share -f $(MINGW_MAKEFILE) install
 
 create_release_install_dir: install

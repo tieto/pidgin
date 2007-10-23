@@ -121,7 +121,8 @@ typedef enum
 #define PURPLE_TUNE_TRACK	"tune_track"
 #define PURPLE_TUNE_TIME	"tune_time"
 #define PURPLE_TUNE_YEAR	"tune_year"
-#define PURPLE_TUNE_URL	"tune_url"
+#define PURPLE_TUNE_URL		"tune_url"
+#define PURPLE_TUNE_FULL	"tune_full"
 
 #ifdef __cplusplus
 extern "C" {

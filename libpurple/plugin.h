@@ -1,6 +1,9 @@
 /**
  * @file plugin.h Plugin API
  * @ingroup core
+ * @see @ref plugin-signals
+ * @see @ref plugin-ids
+ * @see @ref plugin-i18n
  */
 
 /* purple
@@ -22,10 +25,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
- *
- * @see @ref plugin-signals
- * @see @ref plugin-ids
- * @see @ref plugin-i18n
  */
 #ifndef _PURPLE_PLUGIN_H_
 #define _PURPLE_PLUGIN_H_
@@ -613,7 +612,7 @@ PurplePlugin *purple_plugins_find_with_id(const char *id);
 /**
  * Returns a list of all loaded plugins.
  *
- * @return A list of all loaded plugins.
+ * @constreturn A list of all loaded plugins.
  */
 GList *purple_plugins_get_loaded(void);
 
@@ -623,14 +622,14 @@ GList *purple_plugins_get_loaded(void);
  * to the PURPLE_INIT_PLUGIN() macro, or if it was compiled
  * against an incompatable API version.
  *
- * @return A list of all protocol plugins.
+ * @constreturn A list of all protocol plugins.
  */
 GList *purple_plugins_get_protocols(void);
 
 /**
  * Returns a list of all plugins, whether loaded or not.
  *
- * @return A list of all plugins.
+ * @constreturn A list of all plugins.
  */
 GList *purple_plugins_get_all(void);
 

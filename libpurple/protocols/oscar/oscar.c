@@ -5575,6 +5575,8 @@ const char* oscar_list_emblem(PurpleBuddy *b)
 			return "hiptop";
 		if (userinfo->capabilities & OSCAR_CAPABILITY_SECUREIM)
 			return "secure";
+		if (userinfo->icqinfo.status & AIM_ICQ_STATE_BIRTHDAY)
+			return "birthday";
 	}
 	return NULL;
 }

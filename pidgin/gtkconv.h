@@ -1,6 +1,7 @@
 /**
  * @file gtkconv.h GTK+ Conversation API
  * @ingroup pidgin
+ * @see @ref gtkconv-signals
  */
 
 /* pidgin
@@ -252,6 +253,8 @@ void pidgin_conv_present_conversation(PurpleConversation *conv);
  * @param conv  The conversation.
  *
  * @return  Wheter Pidgin UI was successfully attached.
+ *
+ * @since 2.2.0
  */
 gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv);
 
