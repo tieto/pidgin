@@ -1,5 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.2.2 (10/23/2007):
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
+		NOTE: Due to the backporting that has happened for the actual
+			  release, it is possible that bugs marked as fixed in
+			  2.2.1 or 2.2.2 will not be fixed until the next release
+			  from the im.pidgin.pidgin branch.
+
 version 2.2.1 (09/29/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
 		NOTE: Due to the backporting that happened for the actual
