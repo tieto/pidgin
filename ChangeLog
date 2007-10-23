@@ -39,6 +39,12 @@ version 2.2.2 (10/23/2007):
 			  bugs marked as fixed in 2.2.1 or 2.2.2 will not be fixed
 			  until the next release.
 
+	* Various bug and memory leak fixes
+	* Look for a default prefs.xml in the CSIDL_COMMON_APPDATA directory
+	  (e.g. c:\Documents and Settings\All Users\
+	        Application Data\purple\prefs.xml) on Windows, similarly to
+	  how this is done on other platforms.
+
 version 2.2.1 (09/29/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
 		NOTE: Due to the backporting that happened for the actual
