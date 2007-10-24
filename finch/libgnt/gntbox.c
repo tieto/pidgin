@@ -27,6 +27,13 @@
 
 enum
 {
+	PROP_0,
+	PROP_VERTICAL,
+	PROP_HOMO        /* ... */
+};
+
+enum
+{
 	SIGS = 1,
 };
 
@@ -511,8 +518,44 @@ gnt_box_clicked(GntWidget *widget, GntMouseEvent event, int cx, int cy)
 }
 
 static void
+gnt_box_set_property(GObject *obj, guint prop_id, const GValue *value,
+		GParamSpec *spec)
+{
+	GntBox *box = GNT_BOX(obj);
+	switch (prop_id) {
+		case PROP_VERTICAL:
+			box->vertical = g_value_get_boolean(value);
+			break;
+		case PROP_HOMO:
+			box->homogeneous = g_value_get_boolean(value);
+			break;
+		default:
+			g_return_if_reached();
+			break;
+	}
+}
+
+static void
+gnt_box_get_property(GObject *obj, guint prop_id, GValue *value,
+		GParamSpec *spec)
+{
+	GntBox *box = GNT_BOX(obj);
+	switch (prop_id) {
+		case PROP_VERTICAL:
+			g_value_set_boolean(value, box->vertical);
+			break;
+		case PROP_HOMO:
+			g_value_set_boolean(value, box->homogeneous);
+			break;
+		default:
+			break;
+	}
+}
+
+static void
 gnt_box_class_init(GntBoxClass *klass)
 {
+	GObjectClass *gclass = G_OBJECT_CLASS(klass);
 	parent_class = GNT_WIDGET_CLASS(klass);
 	parent_class->destroy = gnt_box_destroy;
 	parent_class->draw = gnt_box_draw;
@@ -527,7 +570,24 @@ gnt_box_class_init(GntBoxClass *klass)
 	parent_class->confirm_size = gnt_box_confirm_size;
 	parent_class->size_changed = gnt_box_size_changed;
 
-	GNTDEBUG;
+	gclass->set_property = gnt_box_set_property;
+	gclass->get_property = gnt_box_get_property;
+	g_object_class_install_property(gclass,
+			PROP_VERTICAL,
+			g_param_spec_boolean("vertical", "Vertical",
+				"Whether the child widgets in the box should be stacked vertically.",
+				TRUE,
+				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+			)
+		);
+	g_object_class_install_property(gclass,
+			PROP_HOMO,
+			g_param_spec_boolean("homogeneous", "Homogeneous",
+				"Whether the child widgets in the box should have the same size.",
+				TRUE,
+				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+			)
+		);
 }
 
 static void
