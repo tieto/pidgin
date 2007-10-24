@@ -1,5 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.2.3:
+	Pidgin:
+	* Attempt to avoid focusing windows prompted by external events
+
 version 2.2.2 (10/23/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
 		NOTE: Due to the way this release was made, it is possible that
