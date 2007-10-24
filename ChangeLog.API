@@ -26,6 +26,8 @@ version 2.3.0 (??/??/????):
 		  implemented by UIs (rather than .report_disconnect) if
 		  they want to use the reported PurpleDisconnectReason
 		  to give a more specific error.
+		* A connection-error signal, fired just after the UiOp is
+		  called.
 		* purple_connection_reason_is_fatal(), acting as a hint
 		  to whether automatic reconnection should be attempted
 		  after a connection error (rather than checking

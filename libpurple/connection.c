@@ -541,6 +541,9 @@ purple_connection_error_reason (PurpleConnection *gc,
 			ops->report_disconnect (gc, description);
 	}
 
+	purple_signal_emit(purple_connections_get_handle(), "connection-error",
+		gc, reason, description);
+
 	gc->disconnect_timeout = purple_timeout_add(0, purple_connection_disconnect_cb,
 			purple_connection_get_account(gc));
 }
@@ -658,6 +661,14 @@ purple_connections_init(void)
 						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONNECTION));
+
+	purple_signal_register(handle, "connection-error",
+	                       purple_marshal_VOID__POINTER_INT_POINTER, NULL, 1,
+	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                                        PURPLE_SUBTYPE_CONNECTION),
+	                       purple_value_new(PURPLE_TYPE_ENUM),
+	                       purple_value_new(PURPLE_TYPE_STRING));
+
 }
 
 void
