@@ -138,7 +138,6 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	gpointer data)
 {
 	MsnOim *oim = data;
-	xmlnode	*faultNode, *challengeNode;
 	MsnOimSendReq *msg = g_queue_pop_head(oim->send_queue);
 
 	g_return_if_fail(msg != NULL);
@@ -146,34 +145,54 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	if (response == NULL) {
 		purple_debug_info("MSNP14", "cannot send OIM: %s\n", msg->oim_msg);
 	} else {
-		faultNode = msn_soap_xml_get(response->xml, "Body/Fault");
+		xmlnode	*faultNode = msn_soap_xml_get(response->xml, "Body/Fault");
 
 		if (faultNode == NULL) {
 			/*Send OK! return*/
 			purple_debug_info("MSNP14", "sent OIM: %s\n", msg->oim_msg);
 		} else {
-			/*get the challenge,and repost it*/
-			challengeNode = msn_soap_xml_get(faultNode,
-				"detail/LockKeyChallenge");
+			xmlnode *faultcode = xmlnode_get_child(faultNode, "faultcode");
 
-			if (challengeNode == NULL) {
-				purple_debug_info("MSNP14", "can't find lock key for OIM: %s\n", msg);
-			} else {
-				char buf[33];
+			if (faultcode) {
+				char *faultcode_str = xmlnode_get_data(faultcode);
 
-				char *challenge = xmlnode_get_data(challengeNode);
-				msn_handle_chl(challenge, buf);
+				if (g_str_equal(faultcode_str, "q0:AuthenticationFailed")) {
+					xmlnode *challengeNode = msn_soap_xml_get(faultNode,
+						"detail/LockKeyChallenge");
 
-				g_free(oim->challenge);
-				oim->challenge = g_strndup(buf, sizeof(buf));
-				g_free(challenge);
-				purple_debug_info("MSNP14","lockkey:{%s}\n",oim->challenge);
+					if (challengeNode == NULL) {
+						if (oim->challenge) {
+							g_free(oim->challenge);
+							oim->challenge = NULL;
 
-				/*repost the send*/
-				purple_debug_info("MSNP14","resending OIM: %s\n", msg->oim_msg);
-				g_queue_push_head(oim->send_queue, msg);
-				msn_oim_send_msg(oim);
-				return;
+							purple_debug_info("msnoim","resending OIM: %s\n",
+								msg->oim_msg);
+							g_queue_push_head(oim->send_queue, msg);
+							msn_oim_send_msg(oim);
+							return;
+						} else {
+							purple_debug_info("msnoim",
+								"can't find lock key for OIM: %s\n",
+								msg->oim_msg);
+						}
+					} else {
+						char buf[33];
+
+						char *challenge = xmlnode_get_data(challengeNode);
+						msn_handle_chl(challenge, buf);
+
+						g_free(oim->challenge);
+						oim->challenge = g_strndup(buf, sizeof(buf));
+						g_free(challenge);
+						purple_debug_info("MSNP14","lockkey:{%s}\n",oim->challenge);
+
+						/*repost the send*/
+						purple_debug_info("MSNP14","resending OIM: %s\n", msg->oim_msg);
+						g_queue_push_head(oim->send_queue, msg);
+						msn_oim_send_msg(oim);
+						return;
+					}
+				}
 			}
 		}
 	}

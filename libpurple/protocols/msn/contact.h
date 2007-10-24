@@ -379,6 +379,7 @@ struct _MsnCallbackState
 	gchar * guid;
 	MsnListId list_id;
 	MsnCallbackAction action;
+	MsnSession *session;
 };
 
 typedef enum 
@@ -396,7 +397,7 @@ typedef enum
 MsnContact * msn_contact_new(MsnSession *session);
 void msn_contact_destroy(MsnContact *contact);
 
-MsnCallbackState * msn_callback_state_new(void);
+MsnCallbackState * msn_callback_state_new(MsnSession *session);
 void msn_callback_state_free(MsnCallbackState *state);
 void msn_callback_state_set_who(MsnCallbackState *state, const gchar *who);
 void msn_callback_state_set_old_group_name(MsnCallbackState *state,
