@@ -391,7 +391,7 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 			}
 		}
 	} else if(!strcmp(type, "error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Configuration error"), _("Configuration error"), msg);
 
@@ -465,7 +465,7 @@ static void jabber_chat_register_x_data_result_cb(JabberStream *js, xmlnode *pac
 	const char *type = xmlnode_get_attrib(packet, "type");
 
 	if(type && !strcmp(type, "error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
 
@@ -534,7 +534,7 @@ static void jabber_chat_register_cb(JabberStream *js, xmlnode *packet, gpointer 
 			}
 		}
 	} else if(!strcmp(type, "error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
 
@@ -673,7 +673,7 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 		return;
 
 	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result")) {
-		char *err = jabber_parse_error(js,packet);
+		char *err = jabber_parse_error(js, packet, NULL);
 		purple_notify_error(js->gc, _("Error"),
 				_("Error retrieving room list"), err);
 		purple_roomlist_set_in_progress(js->roomlist, FALSE);
@@ -684,7 +684,7 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 	}
 
 	if(!(query = xmlnode_get_child(packet, "query"))) {
-		char *err = jabber_parse_error(js, packet);
+		char *err = jabber_parse_error(js, packet, NULL);
 		purple_notify_error(js->gc, _("Error"),
 				_("Error retrieving room list"), err);
 		purple_roomlist_set_in_progress(js->roomlist, FALSE);

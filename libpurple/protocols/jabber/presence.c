@@ -429,7 +429,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	}
 
 	if(type && !strcmp(type, "error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 
 		state = JABBER_BUDDY_STATE_ERROR;
 		jb->error_msg = msg ? msg : g_strdup(_("Unknown Error in presence"));
@@ -561,7 +561,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 
 		if(state == JABBER_BUDDY_STATE_ERROR) {
-			char *title, *msg = jabber_parse_error(js, packet);
+			char *title, *msg = jabber_parse_error(js, packet, NULL);
 
 			if(chat->conv) {
 				title = g_strdup_printf(_("Error in chat %s"), from);

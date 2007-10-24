@@ -15,6 +15,22 @@ version 2.3.0 (??/??/????):
 		  to unload a plugin--fails.  This then prevents the plugin
 		  from being saved in the saved plugins list, so it'll won't
 		  be loaded at the next startup.
+
+		* PurpleDisconnectReason enumeration of machine-readable
+		  types of connection error.
+		* purple_connection_error_reason(), to be used by prpls
+		  (instead of purple_connection_error() and setting
+		  gc->wants_to_die) to report errors along with a
+		  PurpleDisconnectReason.
+		* PurpleConnectionUiOps.report_disconnect_reason, to be
+		  implemented by UIs (rather than .report_disconnect) if
+		  they want to use the reported PurpleDisconnectReason
+		  to give a more specific error.
+		* purple_connection_reason_is_fatal(), acting as a hint
+		  to whether automatic reconnection should be attempted
+		  after a connection error (rather than checking
+		  gc->wants_to_die).
+
 		* purple_util_init()
 		* purple_util_uninit()
 
