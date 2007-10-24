@@ -156,9 +156,7 @@ aim_snvalid_aim(const char *sn)
 		return FALSE;
 
 	for (i = 0; sn[i] != '\0'; i++) {
-		if (!isalnum(sn[i]) && (sn[i] != ' ') &&
-			(sn[i] != '.') &&
-			(sn[i] != '_') && (sn[i] != '-'))
+		if (!isalnum(sn[i]) && (sn[i] != ' '))
 			return FALSE;
 	}
 

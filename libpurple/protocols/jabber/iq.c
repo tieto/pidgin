@@ -248,7 +248,6 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 	JabberIq *iq;
 	const char *type, *from, *id;
 	xmlnode *query;
-	char *os = NULL;
 
 	type = xmlnode_get_attrib(packet, "type");
 
@@ -256,6 +255,7 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 		GHashTable *ui_info;
 		const char *ui_name = NULL, *ui_version = NULL;
 #if 0
+		char *os = NULL;
 		if(!purple_prefs_get_bool("/plugins/prpl/jabber/hide_os")) {
 			struct utsname osinfo;
 
@@ -290,10 +290,12 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 			xmlnode_insert_data(xmlnode_new_child(query, "version"), VERSION, -1);
 		}
 
+#if 0
 		if(os) {
 			xmlnode_insert_data(xmlnode_new_child(query, "os"), os, -1);
 			g_free(os);
 		}
+#endif
 
 		jabber_iq_send(iq);
 	}

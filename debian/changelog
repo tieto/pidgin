@@ -1,3 +1,17 @@
+pidgin (2.2.2-1) unstable; urgency=high
+
+  * New upstream version
+    - Fixes a possible crash when parsing invalid HTML (CVE-2007-4999)
+  * 00_debian-ca-certs.patch:
+    - Make the X.509 certificate authority code look in /etc/ssl/certs and
+      make libpurple0 Recommend: ca-certificates. As far as I know
+      this is not used in any protocols yet.
+  * Fix dpkg-shlibdeps warning when trying to resolve plugin dependencies
+    (by making an shlibs.local with empty libjabber and liboscar entries),
+    since this will be a failure in the experimental version of dpkg
+
+ -- Ari Pollak <ari@debian.org>  Wed, 24 Oct 2007 15:12:52 -0400
+
 pidgin (2.2.1-1) unstable; urgency=high
 
   * New upstream release

@@ -1,0 +1,14 @@
+diff -Nur pidgin-2.2.1/libpurple/certificate.c pidgin-2.2.1.new/libpurple/certificate.c
+--- pidgin-2.2.1/libpurple/certificate.c	2007-09-29 12:39:03.000000000 -0400
++++ pidgin-2.2.1.new/libpurple/certificate.c	2007-10-02 20:32:38.000000000 -0400
+@@ -680,8 +680,8 @@
+ 		x509_ca_syspath = g_build_filename(DATADIR,
+ 						   "ca-certs", NULL);
+ #else
+-		x509_ca_syspath = g_build_filename(DATADIR,
+-						   "purple", "ca-certs", NULL);
++		x509_ca_syspath = g_build_filename("etc",
++						   "ssl", "certs", NULL);
+ #endif
+ 	}
+ 

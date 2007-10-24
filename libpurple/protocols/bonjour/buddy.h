@@ -83,7 +83,7 @@ void clear_bonjour_buddy_values(BonjourBuddy *buddy);
 /**
  * Sets a value in the BonjourBuddy struct, destroying the old value
  */
-void set_bonjour_buddy_value(BonjourBuddy *buddy, const char *record_key, const char *value, uint32_t len);
+void set_bonjour_buddy_value(BonjourBuddy *buddy, const char *record_key, const char *value, guint32 len);
 
 /**
  * Check if all the compulsory buddy data is present.

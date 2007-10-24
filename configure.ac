@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [2])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [2])
-m4_define([purple_micro_version], [1])
+m4_define([purple_micro_version], [2])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [2])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [2])
-m4_define([gnt_micro_version], [1])
+m4_define([gnt_micro_version], [2])
 m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -142,13 +142,21 @@ AM_GLIB_GNU_GETTEXT
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
 dnl AM_GLIB_GNU_GETTEXT found it.
 
-if test x$MSGFMT = xno
+if test x$MSGFMT = xno -o x$MSGFMT$GMSGFMT = x
 then
 	AC_ERROR([
 
 The msgfmt command is required to build libpurple.  If it is installed
 on your system, ensure that it is in your path.  If it is not, install
 GNU gettext to continue.
+
+If you have msgfmt installed, but for some reason this error message
+is still displayed, you have encountered what appears to be a bug in
+third-party configure macros.  Try setting the MSGFMT environment
+variable to the absolute path to your msgfmt binary and trying
+configure again, like this:
+
+MSGFMT=/path/to/msgfmt ./configure ...
 ])
 fi
 
@@ -1460,7 +1468,7 @@ AC_ARG_ENABLE(nss,
 	[enable_nss="$enableval"],
 	[enable_nss="yes"])
 
-msg_ssl="None (MSN and Google Talk will not work without SSL!)"
+msg_ssl="None. MSN, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
 
 dnl #
 dnl # Check for GnuTLS if it's specified.
@@ -2247,6 +2255,7 @@ AC_OUTPUT([Makefile
 		   share/Makefile
 		   share/sounds/Makefile
 		   share/ca-certs/Makefile
+		   finch/finch.pc
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc

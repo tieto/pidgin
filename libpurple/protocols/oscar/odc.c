@@ -27,6 +27,8 @@
 #include "imgstore.h"
 #include "util.h"
 
+#define DIRECTIM_MAX_FILESIZE 52428800
+
 /**
  * Free any ODC related data and print a message to the conversation
  * window based on conn->disconnect_reason.
@@ -587,6 +589,27 @@ peer_odc_recv_frame(PeerConnection *conn, ByteStream *bs)
 
 	if (frame->payload.len > 0)
 	{
+		if (frame->payload.len > DIRECTIM_MAX_FILESIZE)
+		{
+			gchar *tmp, *size1, *size2;
+			PurpleAccount *account;
+			PurpleConversation *conv;
+
+			size1 = purple_str_size_to_units(frame->payload.len);
+			size2 = purple_str_size_to_units(DIRECTIM_MAX_FILESIZE);
+			tmp = g_strdup_printf(_("%s tried to send you a %s file, but we only allow files up to %s over Direct IM.  Try using file transfer instead.\n"), conn->sn, size1, size2);
+			g_free(size1);
+			g_free(size2);
+
+			account = purple_connection_get_account(conn->od->gc);
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
+			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			g_free(tmp);
+
+			peer_connection_destroy(conn, OSCAR_DISCONNECT_LOCAL_CLOSED, NULL);
+			return;
+		}
+
 		/* We have payload data!  Switch to the ODC watcher to read it. */
 		frame->payload.data = g_new(guint8, frame->payload.len);
 		frame->payload.offset = 0;

@@ -9,7 +9,12 @@ import xml.dom.minidom
 
 xml.dom.minidom.Element.all   = xml.dom.minidom.Element.getElementsByTagName
 
-obj = dbus.SessionBus().get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+obj = None
+try:
+    obj = dbus.SessionBus().get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+except:
+    pass
+
 purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
 class CheckedObject:
@@ -212,7 +217,10 @@ def execute(uri):
 
 if len(sys.argv) == 1:
     show_help()
-
+elif (obj == None):
+    print "No existing libpurple instance detected."
+    sys.exit(1);
+    
 for arg in sys.argv[1:]:
     output = execute(arg)
 

@@ -36,7 +36,6 @@ INCLUDE_PATHS +=	-I. \
 			-I$(PIDGIN_TREE_TOP)
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
-			-L$(BONJOUR_TOP)/lib \
 			-L$(LIBXML2_TOP)/lib \
 			-L$(PURPLE_TOP)
 
@@ -45,6 +44,7 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 C_SRC =			bonjour.c \
 			buddy.c \
+			dns_sd_proxy.c \
 			mdns_common.c \
 			mdns_win32.c \
 			parser.c \
@@ -59,10 +59,15 @@ LIBS =	\
 			-lglib-2.0 \
 			-lws2_32 \
 			-lintl \
-			-ldnssd \
 			-lnetapi32 \
 			-lxml2 \
 			-lpurple
+
+ifeq ($(LINK_DNS_SD_DIRECTLY), 1)
+	CFLAGS += -DLINK_DNS_SD_DIRECTLY
+	LIB_PATHS += -L$(BONJOUR_TOP)/lib/win32 -L$(BONJOUR_TOP)/lib
+	LIBS += -ldnssd
+endif
 
 include $(PIDGIN_COMMON_RULES)
 

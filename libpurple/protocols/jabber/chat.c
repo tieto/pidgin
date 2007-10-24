@@ -964,7 +964,7 @@ gboolean jabber_chat_kick_user(JabberChat *chat, const char *who, const char *wh
 static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	JabberChat *chat;
-	xmlnode *query;
+	/*xmlnode *query;*/
 	int id = GPOINTER_TO_INT(data);
 
 	if(!(chat = jabber_chat_find_by_id(js, id)))
@@ -974,6 +974,8 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpoi
 	 * support this request */
 	chat->xhtml = TRUE;
 
+	/* disabling this until more MUC servers support
+	 * announcing this
 	if(xmlnode_get_child(packet, "error")) {
 		return;
 	}
@@ -981,8 +983,6 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpoi
 	if(!(query = xmlnode_get_child(packet, "query")))
 		return;
 
-	/* disabling this until more MUC servers support
-	 * announcing this
 	chat->xhtml = FALSE;
 
 	for(x = xmlnode_get_child(query, "feature"); x; x = xmlnode_get_next_twin(x)) {

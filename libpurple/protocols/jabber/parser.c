@@ -80,7 +80,7 @@ jabber_parser_element_start_libxml(void *user_data,
 			char *attrib_ns = NULL;
 
 			if (attributes[i+2]) {
-				attrib_ns = g_strdup((char*)attributes[i+2]);;
+				attrib_ns = g_strdup((char*)attributes[i+2]);
 			}
 
 			memcpy(attrib, attributes[i+3], attrib_len);

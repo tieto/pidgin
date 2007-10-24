@@ -1,18 +1,6 @@
 diff -Nur pidgin-2.0.0~beta6+mtn20070409/libpurple/purple-remote pidgin-2.0.0~beta6+mtn20070409.new/libpurple/purple-remote
---- pidgin-2.0.0~beta6+mtn20070409/libpurple/purple-remote	2007-04-09 22:20:12.000000000 -0400
-+++ pidgin-2.0.0~beta6+mtn20070409.new/libpurple/purple-remote	2007-04-09 22:21:12.000000000 -0400
-@@ -1,6 +1,10 @@
- #!/usr/bin/python
- 
--import dbus
-+try:
-+    import dbus
-+except:
-+    print "DBus library not installed. Please install the python-dbus package."
-+    raise
- import re
- import urllib
- import sys
+--- pidgin-2.0.0~beta6+mtn20070409/libpurple/purple-remote	2007-04-09 22:16:28.000000000 -0400
++++ pidgin-2.0.0~beta6+mtn20070409.new/libpurple/purple-remote	2007-04-09 22:20:36.000000000 -0400
 @@ -61,6 +65,7 @@
      GaimAccountsFindConnected?name=&protocol=prpl-jabber
      GaimAccountFindConnected(,prpl-jabber)
@@ -33,18 +21,6 @@ diff -Nur pidgin-2.0.0~beta6+mtn20070409/libpurple/purple-remote pidgin-2.0.0~be
 diff -Nur pidgin-2.0.0~beta6+mtn20070409/libpurple/purple-url-handler pidgin-2.0.0~beta6+mtn20070409.new/libpurple/purple-url-handler
 --- pidgin-2.0.0~beta6+mtn20070409/libpurple/purple-url-handler	2007-04-09 22:16:28.000000000 -0400
 +++ pidgin-2.0.0~beta6+mtn20070409.new/libpurple/purple-url-handler	2007-04-09 22:20:36.000000000 -0400
-@@ -1,6 +1,10 @@
- #!/usr/bin/python
- 
--import dbus
-+try:
-+    import dbus
-+except:
-+    print "DBus library not installed. Please install the python-dbus package."
-+    raise
- import re
- import sys
- import time
 @@ -254,7 +258,7 @@
  
  

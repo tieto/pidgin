@@ -33,6 +33,7 @@ clean::
 common-install-impl::
 	rm -f debian/tmp/usr/lib/pidgin/relnot.so # release notification plugin
 	rm -f debian/tmp/usr/bin/{nullclient,purple-client-example} # examples
+	rm -rf debian/tmp/usr/share/purple/ca-certs # we use /etc/ssl/certs
 	find debian/tmp/usr/lib -name '*.la' -print0 | xargs -0 rm
 	# Include author lists in copyright file
 	sed -e '/@PIDGIN_COPYRIGHT@/r COPYRIGHT' \

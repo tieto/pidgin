@@ -38,6 +38,7 @@ typedef struct _MsimUser
 	gchar *band_name, *song_name;
 	gchar *image_url;
 	guint last_image_updated;
+	gboolean temporary_user;
 } MsimUser;
 
 /* Callback function pointer type for when a user's information is received, 

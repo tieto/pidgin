@@ -521,6 +521,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	struct sockaddr_in their_addr; /* connector's address information */
 	socklen_t sin_size = sizeof(struct sockaddr);
 	int client_socket;
+	int flags;
 	BonjourBuddy *bb;
 	char *address_text = NULL;
 	PurpleBuddyList *bl = purple_get_blist();
@@ -533,7 +534,8 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	if ((client_socket = accept(server_socket, (struct sockaddr *)&their_addr, &sin_size)) == -1)
 		return;
 
-	fcntl(client_socket, F_SETFL, O_NONBLOCK);
+	flags = fcntl(client_socket, F_GETFL);
+	fcntl(client_socket, F_SETFL, flags | O_NONBLOCK);
 
 	/* Look for the buddy that has opened the conversation and fill information */
 	address_text = inet_ntoa(their_addr.sin_addr);

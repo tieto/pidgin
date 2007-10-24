@@ -75,8 +75,8 @@ wpurple_send(socket, buf, buflen, flags)
 wpurple_ioctl( fd, command, val )
 
 /* fcntl.h */
-#define fcntl( fd, command, val ) \
-wpurple_fcntl( fd, command, val )
+#define fcntl( fd, command, ... ) \
+wpurple_fcntl( fd, command, ##__VA_ARGS__ )
 
 /* arpa/inet.h */
 #define inet_aton( name, addr ) \

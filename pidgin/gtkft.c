@@ -912,7 +912,7 @@ pidgin_xfer_dialog_show(PidginXferDialog *dialog)
 
 		gtk_widget_show(tmp->window);
 	} else {
-		gtk_widget_show(dialog->window);
+		gtk_window_present(GTK_WINDOW(dialog->window));
 	}
 }
 

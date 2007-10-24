@@ -1,5 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.2.2 (10/23/2007):
+	Luke: Because the main branch of pidgin development is still not
+	ready for public consumption, I have taken some time to try to
+	pull the many bug fixes that have happened since then into a
+	separate branch.  This release is the result of that effort.
+
 2.2.1 (9/28/2007):
 	Richard: We have some new code in the pipeline, but it's not quite
 	ready for a general release.  Instead, this is basically a bug fix

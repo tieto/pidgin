@@ -1914,7 +1914,7 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 			text = _("Authentication Failure");
 		}
 	} else if(!strcmp(packet->name, "stream:error") ||
-			 (!strcmp(packet->name, "error") &&
+			 (!strcmp(packet->name, "error") && xmlns &&
 				!strcmp(xmlns, "http://etherx.jabber.org/streams"))) {
 		if(xmlnode_get_child(packet, "bad-format")) {
 			text = _("Bad Format");

@@ -26,6 +26,7 @@
 #define UNICODE
 #include <windows.h>
 #include <lm.h>
+#include "dns_sd_proxy.h"
 #endif
 
 #include "internal.h"
@@ -99,6 +100,17 @@ bonjour_login(PurpleAccount *account)
 	PurpleStatus *status;
 	PurplePresence *presence;
 
+#ifdef _WIN32
+	if (!dns_sd_available()) {
+		gc->wants_to_die = TRUE;
+		purple_connection_error(gc,
+			_("The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: "
+			  "http://developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging"
+			  " for more information."));
+		return;
+	}
+#endif
+
 	gc->flags |= PURPLE_CONNECTION_HTML;
 	gc->proto_data = bd = g_new0(BonjourData, 1);
 
@@ -155,13 +167,13 @@ bonjour_close(PurpleConnection *connection)
 	BonjourData *bd = connection->proto_data;
 
 	/* Stop looking for buddies in the LAN */
-	if (bd->dns_sd_data != NULL)
+	if (bd != NULL && bd->dns_sd_data != NULL)
 	{
 		bonjour_dns_sd_stop(bd->dns_sd_data);
 		bonjour_dns_sd_free(bd->dns_sd_data);
 	}
 
-	if (bd->jabber_data != NULL)
+	if (bd != NULL && bd->jabber_data != NULL)
 	{
 		/* Stop waiting for conversations */
 		bonjour_jabber_stop(bd->jabber_data);
@@ -176,6 +188,8 @@ bonjour_close(PurpleConnection *connection)
 	if (bonjour_group != NULL)
 		purple_blist_remove_group(bonjour_group);
 
+	g_free(bd);
+	connection->proto_data = NULL;
 }
 
 static const char *
@@ -569,7 +583,7 @@ static gpointer _win32_name_lookup_thread(gpointer data) {
 			fullname = g_utf16_to_utf8(username, -1, NULL, NULL, NULL);
 	}
 
-	g_idle_add(_set_default_name_cb, fullname);
+	purple_timeout_add(0, _set_default_name_cb, fullname);
 
 	return NULL;
 }
