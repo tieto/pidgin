@@ -154,7 +154,6 @@ void msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request);
 void msn_soap_free_read_buf(MsnSoapConn *soapconn);
 void msn_soap_free_write_buf(MsnSoapConn *soapconn);
 void msn_soap_connect_cb(gpointer data, PurpleSslConnection *gsc, PurpleInputCondition cond);
-void msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond);
 
 /*clean the unhandled requests*/
 void msn_soap_clean_unhandled_requests(MsnSoapConn *soapconn);
