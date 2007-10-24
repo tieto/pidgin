@@ -1900,27 +1900,28 @@ char *jabber_parse_error(JabberStream *js,
 		}
 	} else if(xmlns && !strcmp(xmlns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
 		/* Most common reason can be the default */
-		SET_REASON(PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED);
+		SET_REASON(PURPLE_CONNECTION_ERROR_NETWORK_ERROR);
 		if(xmlnode_get_child(packet, "aborted")) {
 			text = _("Authorization Aborted");
 		} else if(xmlnode_get_child(packet, "incorrect-encoding")) {
-			SET_REASON(PURPLE_CONNECTION_ERROR_NETWORK_ERROR);
 			text = _("Incorrect encoding in authorization");
 		} else if(xmlnode_get_child(packet, "invalid-authzid")) {
 			text = _("Invalid authzid");
 		} else if(xmlnode_get_child(packet, "invalid-mechanism")) {
 			text = _("Invalid Authorization Mechanism");
 		} else if(xmlnode_get_child(packet, "mechanism-too-weak")) {
+			SET_REASON(PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE);
 			text = _("Authorization mechanism too weak");
 		} else if(xmlnode_get_child(packet, "not-authorized")) {
+			SET_REASON(PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED);
 			/* Clear the pasword if it isn't being saved */
 			if (!purple_account_get_remember_password(js->gc->account))
 				purple_account_set_password(js->gc->account, NULL);
 			text = _("Not Authorized");
 		} else if(xmlnode_get_child(packet, "temporary-auth-failure")) {
-			SET_REASON(PURPLE_CONNECTION_ERROR_NETWORK_ERROR);
 			text = _("Temporary Authentication Failure");
 		} else {
+			SET_REASON(PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED);
 			text = _("Authentication Failure");
 		}
 	} else if(!strcmp(packet->name, "stream:error") ||
