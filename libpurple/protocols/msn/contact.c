@@ -924,27 +924,21 @@ static void
 msn_delete_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	gpointer data)
 {
-	if (resp == NULL)
-		return;
+	MsnCallbackState *state = data;
 
-	purple_debug_info("MSNCL","Delete contact successful\n");
+	if (resp != NULL) {
+		MsnUser *user;
+		MsnUserList *userlist = state->session->userlist;
 
-	user = msn_userlist_find_user_with_id(userlist, state->uid);
-	if (user != NULL) {
-		msn_userlist_remove_user(userlist, user);
+		purple_debug_info("MSNCL","Delete contact successful\n");
+
+		user = msn_userlist_find_user_with_id(userlist, state->uid);
+		if (user != NULL) {
+			msn_userlist_remove_user(userlist, user);
+		}
 	}
 
 	msn_callback_state_free(state);
-	msn_soap_free_read_buf(soapconn);
-
-	return TRUE;
-}
-
-static void
-msn_delete_contact_written_cb(MsnSoapConn *soapconn)
-{
-	purple_debug_info("MSNCL","Delete contact request written\n");
-	soapconn->read_cb = msn_delete_contact_read_cb;
 }
 
 /*delete a Contact*/
@@ -953,24 +947,23 @@ msn_delete_contact(MsnContact *contact, const char *contactId)
 {	
 	gchar *body = NULL;
 	gchar *contact_id_xml = NULL ;
+    MsnCallbackState *state;
 
 	g_return_if_fail(contactId != NULL);
 	contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, contactId);
 
-	state = msn_callback_state_new();
+	state = msn_callback_state_new(contact->session);
 	msn_callback_state_set_uid(state, contactId);
 
 	/* build SOAP request */
 	purple_debug_info("MSNCL","Deleting contact with contactId: %s\n", contactId);
 	body = g_strdup_printf(MSN_DEL_CONTACT_TEMPLATE, contact_id_xml);
-	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
-					MSN_ADDRESS_BOOK_POST_URL,
-					MSN_CONTACT_DEL_SOAP_ACTION,
-					body,
-					state,
-					msn_delete_contact_read_cb,
-					msn_delete_contact_written_cb,
-					msn_contact_connect_init);
+
+	msn_soap_message_send(state->session,
+		msn_soap_message_new(MSN_CONTACT_DEL_SOAP_ACTION,
+			xmlnode_from_str(body, -1)),
+		MSN_CONTACT_SERVER, MSN_ADDRESS_BOOK_POST_URL,
+		msn_delete_contact_read_cb, state);
 
 	g_free(contact_id_xml);
 	g_free(body);
@@ -1181,9 +1174,9 @@ msn_add_contact_to_list_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	}
 
 	if (state->list_id == MSN_LIST_AL) {
-		purple_privacy_permit_add(soapconn->session->account, state->who, TRUE);
+		purple_privacy_permit_add(state->session->account, state->who, TRUE);
 	} else if (state->list_id == MSN_LIST_BL) {
-		purple_privacy_deny_add(soapconn->session->account, state->who, TRUE);
+		purple_privacy_deny_add(state->session->account, state->who, TRUE);
 	}
 
 	msn_callback_state_free(state);
