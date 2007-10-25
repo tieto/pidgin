@@ -128,6 +128,7 @@ struct _GtkIMHtml {
 		GtkTextTag *link;
 	} edit;
 
+	/* These are not used anymore and should be removed when possible */
 	char *clipboard_text_string;
 	char *clipboard_html_string;
 
