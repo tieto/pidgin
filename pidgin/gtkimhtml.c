@@ -138,7 +138,7 @@ static guint signals [LAST_SIGNAL] = { 0 };
 
 static char *html_clipboard = NULL;
 static char *text_clipboard = NULL;
-GtkClipboard *clipboard_selection = NULL;
+static GtkClipboard *clipboard_selection = NULL;
 
 static GtkTargetEntry selection_targets[] = {
 #ifndef _WIN32
@@ -898,10 +898,9 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 	char *text = NULL;
 	gboolean primary = (clipboard != clipboard_selection);
 	GtkTextIter start, end;
-	GtkTextMark *sel = NULL;
-	GtkTextMark *ins = NULL; 
 
-	if (primary) { 
+	if (primary) {
+		GtkTextMark *sel = NULL, *ins = NULL;
 		ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 		sel = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, sel);
@@ -969,20 +968,16 @@ static void copy_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
 		if (!clipboard_selection)
 			clipboard_selection = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
-		gtk_clipboard_set_with_owner(clipboard_selection,
+		gtk_clipboard_set_with_data(clipboard_selection,
 						 selection_targets, sizeof(selection_targets) / sizeof(GtkTargetEntry),
 						 (GtkClipboardGetFunc)gtk_imhtml_clipboard_get,
-						 (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, G_OBJECT(imhtml));
+						 (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, NULL);
 
 		g_free(html_clipboard);
 		g_free(text_clipboard);
 
-		imhtml->clipboard_html_string = gtk_imhtml_get_markup_range(imhtml, &start, &end);
-		imhtml->clipboard_text_string = gtk_imhtml_get_text(imhtml, &start, &end);
-
-		text_clipboard = imhtml->clipboard_text_string;
-		html_clipboard = imhtml->clipboard_html_string;
-	
+		html_clipboard = gtk_imhtml_get_markup_range(imhtml, &start, &end);
+		text_clipboard = gtk_imhtml_get_text(imhtml, &start, &end);
 	}
 
 	g_signal_stop_emission_by_name(imhtml, "copy-clipboard");
@@ -994,19 +989,16 @@ static void cut_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
 		if (!clipboard_selection)
 			clipboard_selection = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
-		gtk_clipboard_set_with_owner(clipboard_selection,
+		gtk_clipboard_set_with_data(clipboard_selection,
 						 selection_targets, sizeof(selection_targets) / sizeof(GtkTargetEntry),
 						 (GtkClipboardGetFunc)gtk_imhtml_clipboard_get,
-						 (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, G_OBJECT(imhtml));
+						 (GtkClipboardClearFunc)gtk_imhtml_clipboard_clear, NULL);
 
 		g_free(html_clipboard);
 		g_free(text_clipboard);
 
-		imhtml->clipboard_html_string = gtk_imhtml_get_markup_range(imhtml, &start, &end);
-		imhtml->clipboard_text_string = gtk_imhtml_get_text(imhtml, &start, &end);
-
-		text_clipboard = imhtml->clipboard_text_string;
-		html_clipboard = imhtml->clipboard_html_string;
+		html_clipboard = gtk_imhtml_get_markup_range(imhtml, &start, &end);
+		text_clipboard = gtk_imhtml_get_text(imhtml, &start, &end);
 
 		if (imhtml->editable)
 			gtk_text_buffer_delete_selection(imhtml->text_buffer, FALSE, FALSE);
@@ -1269,11 +1261,6 @@ gtk_imhtml_finalize (GObject *object)
 	g_free(imhtml->search_string);
 	g_object_unref(imhtml->undo_manager);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
-	if (clipboard_selection)
-		gtk_clipboard_set_with_owner(clipboard_selection,
-        	                             selection_targets, sizeof(selection_targets) / sizeof(GtkTargetEntry),
-                	                     (GtkClipboardGetFunc)gtk_imhtml_clipboard_get,
-                        	             (GtkClipboardClearFunc)NULL, G_OBJECT(imhtml));
 
 }
 
@@ -1463,9 +1450,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 
 	gtk_widget_add_events(GTK_WIDGET(imhtml),
 			GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK);
-
-	imhtml->clipboard_text_string = NULL;
-	imhtml->clipboard_html_string = NULL;
 
 	imhtml->tip = NULL;
 	imhtml->tip_timer = 0;
