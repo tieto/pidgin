@@ -329,7 +329,6 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 				value = sep + 2;
 				*sep = '\0';
 				msn_soap_message_add_header(conn->message, key, value);
-				purple_debug_info("soap", "header %s: %s\n", key, value);
 
 				if ((conn->response_code == 301 || conn->response_code == 300)
 					&& strcmp(key, "Location") == 0) {
