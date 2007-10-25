@@ -348,6 +348,7 @@ msn_parse_contact_list(MsnContact *contact, xmlnode *node)
 			 service; service = xmlnode_get_next_twin(service)) {
 			msn_parse_each_service(contact->session, service);
 		}
+		g_free(typedata);
 	}
 }
 
@@ -403,8 +404,6 @@ msn_get_contact_list(MsnContact * contact,
 	if ( update_time != NULL ) {
 		purple_debug_info("MSNCL","Last update time: %s\n",update_time);
 		update_str = g_strdup_printf(MSN_GET_CONTACT_UPDATE_XML,update_time);
-	} else {
-		update_str = g_strdup("");
 	}
 
 	body = g_strdup_printf(MSN_GET_CONTACT_TEMPLATE, partner_scenario_str,
@@ -692,6 +691,10 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 			msn_send_privacy(session->account->gc);
 			msn_notification_dump_contact(session);
 		}
+
+		/*free the read buffer*/
+		msn_soap_free_read_buf(soapconn);
+		return TRUE;
 	} else {
 		/* This is making us loop infinitely when we fail to parse the
 		  address book, disable for now (we should re-enable when we
@@ -702,6 +705,7 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		*/
 		msn_session_disconnect(session);
 		purple_connection_error(session->account->gc, _("Unable to retrieve MSN Address Book"));
+		return FALSE;
 	}
 }
 
@@ -1263,7 +1267,7 @@ msn_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 
 	if (resp == NULL) {
 		msn_callback_state_free(state);
-		return;
+		return TRUE;
 	}
 
 	if (state) {
