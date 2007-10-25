@@ -1,3 +1,6 @@
+version 2.2.3:
+	* No changes
+
 version 2.2.2 (10/23/2007):
 	* Updated gtkspell to include a patch to share Aspell dictionaries
 	  among all the input fields to avoid excessive memory usage.
@@ -8,6 +11,9 @@ version 2.2.2 (10/23/2007):
 	* libpurple now looks for a default prefs.xml in the COMMON_APPDATA
 	  directory (e.g. \Documents and Settings\All Users\Application Data\purple\prefs.xml)
 	  similarly to how this is done on other platforms.
+
+version 2.2.1 (09/29/2007):
+	* No changes
 
 version 2.2.0 (09/13/2007):
 	* Updated gtkspell to 2.0.11
