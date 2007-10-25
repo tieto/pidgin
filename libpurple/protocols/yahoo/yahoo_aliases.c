@@ -63,7 +63,8 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	if (len == 0) {
-		purple_debug_info("yahoo","No Aliases to process\n");
+		purple_debug_info("yahoo", "No Aliases to process.%s%s\n",
+						  error_message ? " Error:" : "", error_message ? error_message : "");
 	} else {
 		const char *yid, *full_name, *nick_name, *alias, *id, *fn, *ln, *nn;
 		PurpleBuddy *b = NULL;
@@ -160,8 +161,6 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 	url_data = purple_util_fetch_url_request(url, FALSE, NULL, TRUE, request, FALSE, yahoo_fetch_aliases_cb, cb);
 	if (url_data != NULL) {
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
-	} else {
-		g_free(cb);
 	}
 
 	g_free(url);
@@ -183,12 +182,22 @@ yahoo_update_alias_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,const
 	yd = gc->proto_data;
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
+	if (len == 0 || error_message != NULL) {
+		purple_debug_info("yahoo", "Error updating alias: %s\n",
+						  error_message ? error_message : "");
+		g_free(cb->id);
+		g_free(cb);
+		return;
+	}
+
 	result = xmlnode_from_str(url_text, -1);
 
 	purple_debug_info("yahoo", "ID: %s, Return data: %s\n",cb->id, url_text);
 
 	if (result == NULL) {
-		purple_debug_error("yahoo","Alias update faild: Badly formed response\n");
+		purple_debug_error("yahoo","Alias update failed: Badly formed response\n");
+		g_free(cb->id);
+		g_free(cb);
 		return;
 	}
 
@@ -259,9 +268,6 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	url_data = purple_util_fetch_url_request(url, FALSE, NULL, TRUE, request, FALSE, yahoo_update_alias_cb, cb);
 	if (url_data != NULL) {
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
-	} else {
-		g_free(cb->id);
-		g_free(cb);
 	}
 
 	g_free(content);
