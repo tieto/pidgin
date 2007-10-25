@@ -1067,7 +1067,7 @@ msn_update_contact(MsnContact *contact, const char* nickname)
 	gchar *body = NULL, *escaped_nickname;
 
 	purple_debug_info("MSN CL","Update contact information with new friendly name: %s\n", nickname);
-	
+
 	escaped_nickname = g_markup_escape_text(nickname, -1);
 
 	body = g_strdup_printf(MSN_CONTACT_UPDATE_TEMPLATE, escaped_nickname);
