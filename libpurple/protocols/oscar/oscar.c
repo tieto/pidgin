@@ -4766,10 +4766,11 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 	if (reason == 0x0005) {
 		purple_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
-						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few hours."));
+						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few minutes."));
 		if (od->getblisttimer > 0)
 			purple_timeout_remove(od->getblisttimer);
 		od->getblisttimer = purple_timeout_add(30000, purple_ssi_rerequestdata, od);
+		return 1;
 	}
 
 	oscar_set_extendedstatus(gc);
