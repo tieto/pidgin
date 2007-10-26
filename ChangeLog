@@ -24,6 +24,7 @@ version 2.3.0:
 	  Read the 'Menus' section in the man-page for details.
 	* 'transpose-chars' operation for the entry boxes. The default key-binding
 	  is ctrl+t.
+	* 'yank' operation for the entry boxes. The default binding is ctrl+y.
 
 version 2.2.2:
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
