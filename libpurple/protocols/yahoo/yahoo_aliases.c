@@ -139,8 +139,8 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct callback_data *cb;
-	char *url, *request, *webpage, *webaddress, *strtmp;
-	int inttmp;
+	const char *url = YAHOO_ALIAS_FETCH_URL;
+	char *request, *webpage, *webaddress;
 	PurpleUtilFetchUrlData *url_data;
 
 	/* Using callback_data so I have access to gc in the callback function */
@@ -148,8 +148,7 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 	cb->gc = gc;
 
 	/*  Build all the info to make the web request */
-	url = g_strdup(YAHOO_ALIAS_FETCH_URL);
-	purple_url_parse(url, &webaddress, &inttmp, &webpage, &strtmp, &strtmp);
+	purple_url_parse(url, &webaddress, NULL, &webpage, NULL, NULL);
 	request = g_strdup_printf("GET /%s HTTP/1.1\r\n"
 				 "User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
 				 "Cookie: T=%s; Y=%s\r\n"
@@ -163,7 +162,8 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 	}
 
-	g_free(url);
+	g_free(webaddress);
+	g_free(webpage);
 	g_free(request);
 }
 
