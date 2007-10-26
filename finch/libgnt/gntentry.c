@@ -580,6 +580,33 @@ delete_forward_word(GntBindable *bind, GList *list)
 }
 
 static gboolean
+transpose_chars(GntBindable *bind, GList *null)
+{
+	GntEntry *entry = GNT_ENTRY(bind);
+	char *current, *prev;
+	char hold[8];  /* that's right */
+
+	if (entry->cursor <= entry->start)
+		return FALSE;
+
+	if (!*entry->cursor)
+		entry->cursor = g_utf8_find_prev_char(entry->start, entry->cursor);
+
+	current = entry->cursor;
+	prev = g_utf8_find_prev_char(entry->start, entry->cursor);
+	move_forward(bind, null);
+
+	/* Let's do this dance! */
+	memcpy(hold, prev, current - prev);
+	memmove(prev, current, entry->cursor - current);
+	memcpy(prev + (entry->cursor - current), hold, current - prev);
+
+	entry_redraw(GNT_WIDGET(entry));
+	entry_text_changed(entry);
+	return TRUE;
+}
+
+static gboolean
 gnt_entry_key_pressed(GntWidget *widget, const char *text)
 {
 	GntEntry *entry = GNT_ENTRY(widget);
@@ -762,6 +789,8 @@ gnt_entry_class_init(GntEntryClass *klass)
 				"\033" "f", NULL);
 	gnt_bindable_class_register_action(bindable, "delete-next-word", delete_forward_word,
 				"\033" "d", NULL);
+	gnt_bindable_class_register_action(bindable, "transpose-chars", transpose_chars,
+				GNT_KEY_CTRL_T, NULL);
 	gnt_bindable_class_register_action(bindable, "suggest-show", suggest_show,
 				"\t", NULL);
 	gnt_bindable_class_register_action(bindable, "suggest-next", suggest_next,
