@@ -3199,7 +3199,7 @@ purple_strcasestr(const char *haystack, const char *needle)
 char *
 purple_str_size_to_units(size_t size)
 {
-	static const char *size_str[4] = { "bytes", "KiB", "MiB", "GiB" };
+	static const char * const size_str[] = { "bytes", "KiB", "MiB", "GiB" };
 	float size_mag;
 	int size_index = 0;
 
@@ -3392,11 +3392,11 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	char host[256], path[256], user[256], passwd[256];
 	int port = 0;
 	/* hyphen at end includes it in control set */
-	static char addr_ctrl[] = "A-Za-z0-9.-";
-	static char port_ctrl[] = "0-9";
-	static char page_ctrl[] = "A-Za-z0-9.~_/:*!@&%%?=+^-";
-	static char user_ctrl[] = "A-Za-z0-9.~_/*!&%%?=+^-";
-	static char passwd_ctrl[] = "A-Za-z0-9.~_/*!&%%?=+^-";
+	static const char addr_ctrl[] = "A-Za-z0-9.-";
+	static const char port_ctrl[] = "0-9";
+	static const char page_ctrl[] = "A-Za-z0-9.~_/:*!@&%%?=+^-";
+	static const char user_ctrl[] = "A-Za-z0-9.~_/*!&%%?=+^-";
+	static const char passwd_ctrl[] = "A-Za-z0-9.~_/*!&%%?=+^-";
 
 	g_return_val_if_fail(url != NULL, FALSE);
 

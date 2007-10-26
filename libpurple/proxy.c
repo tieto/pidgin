@@ -70,7 +70,7 @@ struct _PurpleProxyConnectData {
 	gsize read_len;
 };
 
-static const char *socks5errors[] = {
+static const char * const socks5errors[] = {
 	"succeeded\n",
 	"general SOCKS server failure\n",
 	"connection not allowed by ruleset\n",

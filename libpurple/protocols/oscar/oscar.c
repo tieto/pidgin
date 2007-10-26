@@ -112,7 +112,7 @@ struct name_data {
 	gchar *nick;
 };
 
-static char *msgerrreason[] = {
+static const char * const msgerrreason[] = {
 	N_("Invalid error"),
 	N_("Invalid SNAC"),
 	N_("Rate to host"),
@@ -139,7 +139,7 @@ static char *msgerrreason[] = {
 	N_("Queue full"),
 	N_("Not while on AOL")
 };
-static int msgerrreasonlen = 25;
+static const int msgerrreasonlen = G_N_ELEMENTS(msgerrreason);
 
 /* All the libfaim->purple callback functions */
 static int purple_parse_auth_resp  (OscarData *, FlapConnection *, FlapFrame *, ...);

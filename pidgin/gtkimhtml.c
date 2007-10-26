@@ -113,7 +113,7 @@ static void imhtml_clear_formatting(GtkIMHtml *imhtml);
 /* POINT_SIZE converts from AIM font sizes to a point size scale factor. */
 #define MAX_FONT_SIZE 7
 #define POINT_SIZE(x) (_point_sizes [MIN ((x > 0 ? x : 1), MAX_FONT_SIZE) - 1])
-static gdouble _point_sizes [] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736};
+static const gdouble _point_sizes [] = { .85, .95, 1, 1.2, 1.44, 1.728, 2.0736};
 
 enum {
 	TARGET_HTML,
@@ -140,7 +140,7 @@ static char *html_clipboard = NULL;
 static char *text_clipboard = NULL;
 static GtkClipboard *clipboard_selection = NULL;
 
-static GtkTargetEntry selection_targets[] = {
+static const GtkTargetEntry selection_targets[] = {
 #ifndef _WIN32
 	{ "text/html", 0, TARGET_HTML },
 #else
@@ -151,7 +151,7 @@ static GtkTargetEntry selection_targets[] = {
 	{ "STRING", 0, TARGET_STRING },
 	{ "TEXT", 0, TARGET_TEXT}};
 
-static GtkTargetEntry link_drag_drop_targets[] = {
+static const GtkTargetEntry link_drag_drop_targets[] = {
 	GTK_IMHTML_DND_TARGETS
 };
 

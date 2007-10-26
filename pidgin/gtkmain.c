@@ -92,7 +92,7 @@ static SnDisplay *sn_display = NULL;
  * Lists of signals we wish to catch and those we wish to ignore.
  * Each list terminated with -1
  */
-static int catch_sig_list[] = {
+static const int catch_sig_list[] = {
 	SIGSEGV,
 	SIGHUP,
 	SIGINT,
@@ -103,7 +103,7 @@ static int catch_sig_list[] = {
 	-1
 };
 
-static int ignore_sig_list[] = {
+static const int ignore_sig_list[] = {
 	SIGPIPE,
 	-1
 };

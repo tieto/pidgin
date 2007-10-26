@@ -68,7 +68,7 @@ struct artist {
 };
 
 /* Order: Lead Developer, then Alphabetical by Last Name */
-static struct developer developers[] = {
+static const struct developer developers[] = {
 	{"Sean Egan",					N_("lead developer"), "sean.egan@gmail.com"},
 	{"Daniel 'datallah' Atallah",	N_("developer"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
@@ -94,7 +94,7 @@ static struct developer developers[] = {
 };
 
 /* Order: Alphabetical by Last Name */
-static struct developer patch_writers[] = {
+static const struct developer patch_writers[] = {
 	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
@@ -104,7 +104,7 @@ static struct developer patch_writers[] = {
 };
 
 /* Order: Alphabetical by Last Name */
-static struct developer retired_developers[] = {
+static const struct developer retired_developers[] = {
 	{"Herman Bloggs",		N_("win32 port"), "herman@bluedigits.com"},
 	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
 	{"Rob Flynn",			N_("maintainer"), NULL},
@@ -119,7 +119,7 @@ static struct developer retired_developers[] = {
 };
 
 /* Order: Alphabetical by Last Name */
-static struct developer retired_patch_writers[] = {
+static const struct developer retired_patch_writers[] = {
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
@@ -129,7 +129,7 @@ static struct developer retired_patch_writers[] = {
 };
 
 /* Order: Code, then Alphabetical by Last Name */
-static struct translator current_translators[] = {
+static const struct translator current_translators[] = {
 	{N_("Afrikaans"),           "af", "Friedel Wolff", "friedel@translate.org.za"},
 	{N_("Arabic"),              "ar", "Khaled Hosny", "khaledhosny@eglug.org"},
 	{N_("Belarusian Latin"),    "be@latin", "Ihar Hrachyshka", "ihar.hrachyshka@gmail.com"},
@@ -221,7 +221,7 @@ static struct translator current_translators[] = {
 };
 
 
-static struct translator past_translators[] = {
+static const struct translator past_translators[] = {
 	{N_("Amharic"),             "am", "Daniel Yacob", NULL},
 	{N_("Arabic"),              "ar", "Mohamed Magdy", "alnokta@yahoo.com"},
 	{N_("Bulgarian"),           "bg", "Hristo Todorov", NULL},
@@ -271,7 +271,7 @@ static struct translator past_translators[] = {
 	{NULL, NULL, NULL, NULL}
 };
 
-static struct artist artists[] = {
+static const struct artist artists[] = {
 	{"Hylke Bons",	"h.bons@student.rug.nl"},
 	{NULL, NULL}
 };

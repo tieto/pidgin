@@ -1326,7 +1326,7 @@ static GList *get_available_browsers()
 	};
 
 	/* Sorted reverse alphabetically */
-	static struct browser possible_browsers[] = {
+	static const struct browser possible_browsers[] = {
 		{N_("Seamonkey"), "seamonkey"},
 		{N_("Opera"), "opera"},
 		{N_("Netscape"), "netscape"},
