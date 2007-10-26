@@ -367,7 +367,6 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 
 void bonjour_jabber_stream_ended(PurpleBuddy *pb) {
 	BonjourBuddy *bb = pb->proto_data;
-	PurpleConversation *conv;
 
 	purple_debug_info("bonjour", "Recieved conversation close notification from %s.\n", pb->name);
 
@@ -376,6 +375,7 @@ void bonjour_jabber_stream_ended(PurpleBuddy *pb) {
 	/* Inform the user that the conversation has been closed */
 	if (bb->conversation != NULL) {
 #if 0
+		PurpleConversation *conv;
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pb->name, pb->account);
 		if (conv != NULL) {
 			char *tmp = g_strdup_printf(_("%s has closed the conversation."), pb->name);
