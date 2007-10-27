@@ -2858,7 +2858,7 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 	gtk_window_set_urgency_hint(window, urgent);
 #elif defined _WIN32
 	winpidgin_window_flash(window, urgent);
-#else
+#elif defined GDK_WINDOWING_X11
 	GdkWindow *gdkwin;
 	XWMHints *hints;
 
@@ -2880,6 +2880,8 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 	XSetWMHints(GDK_WINDOW_XDISPLAY(gdkwin),
 	            GDK_WINDOW_XWINDOW(gdkwin), hints);
 	XFree(hints);
+#else
+	/* do something else? */
 #endif
 }
 
