@@ -4943,43 +4943,52 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/sound/method",
 			pidgin_blist_sound_method_pref_cb, NULL);
 
+
 	/* Setup some purple signal handlers. */
-	purple_signal_connect(purple_accounts_get_handle(), "account-enabled",
-			gtkblist, PURPLE_CALLBACK(account_modified), gtkblist);
-	purple_signal_connect(purple_accounts_get_handle(), "account-disabled",
-			gtkblist, PURPLE_CALLBACK(account_modified), gtkblist);
-	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
-			gtkblist, PURPLE_CALLBACK(account_modified), gtkblist);
-	purple_signal_connect(purple_accounts_get_handle(), "account-status-changed",
-			gtkblist, PURPLE_CALLBACK(account_status_changed), gtkblist);
 
-	purple_signal_connect(pidgin_account_get_handle(), "account-modified",
-			gtkblist, PURPLE_CALLBACK(account_modified), gtkblist);
+	handle = purple_accounts_get_handle();
+	purple_signal_connect(handle, "account-enabled", gtkblist,
+	                      PURPLE_CALLBACK(account_modified), gtkblist);
+	purple_signal_connect(handle, "account-disabled", gtkblist,
+	                      PURPLE_CALLBACK(account_modified), gtkblist);
+	purple_signal_connect(handle, "account-removed", gtkblist,
+	                      PURPLE_CALLBACK(account_modified), gtkblist);
+	purple_signal_connect(handle, "account-status-changed", gtkblist,
+	                      PURPLE_CALLBACK(account_status_changed),
+	                      gtkblist);
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
-						gtkblist, PURPLE_CALLBACK(sign_on_off_cb), list);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off",
-						gtkblist, PURPLE_CALLBACK(sign_on_off_cb), list);
+	handle = pidgin_account_get_handle();
+	purple_signal_connect(handle, "account-modified", gtkblist,
+	                      PURPLE_CALLBACK(account_modified), gtkblist);
 
-	purple_signal_connect(purple_plugins_get_handle(), "plugin-load",
-			gtkblist, PURPLE_CALLBACK(plugin_changed_cb), NULL);
-	purple_signal_connect(purple_plugins_get_handle(), "plugin-unload",
-			gtkblist, PURPLE_CALLBACK(plugin_changed_cb), NULL);
+	handle = purple_connections_get_handle();
+	purple_signal_connect(handle, "signed-on", gtkblist,
+	                      PURPLE_CALLBACK(sign_on_off_cb), list);
+	purple_signal_connect(handle, "signed-off", gtkblist,
+	                      PURPLE_CALLBACK(sign_on_off_cb), list);
 
-	purple_signal_connect(purple_conversations_get_handle(), "conversation-updated",
-						gtkblist, PURPLE_CALLBACK(conversation_updated_cb),
-						gtkblist);
-	purple_signal_connect(purple_conversations_get_handle(), "deleting-conversation",
-						gtkblist, PURPLE_CALLBACK(conversation_deleting_cb),
-						gtkblist);
-	purple_signal_connect(purple_conversations_get_handle(), "conversation-created",
-			gtkblist, PURPLE_CALLBACK(conversation_created_cb),
-			gtkblist);
+	handle = purple_plugins_get_handle();
+	purple_signal_connect(handle, "plugin-load", gtkblist,
+	                      PURPLE_CALLBACK(plugin_changed_cb), NULL);
+	purple_signal_connect(handle, "plugin-unload", gtkblist,
+	                      PURPLE_CALLBACK(plugin_changed_cb), NULL);
+
+	handle = purple_conversations_get_handle();
+	purple_signal_connect(handle, "conversation-updated", gtkblist,
+	                      PURPLE_CALLBACK(conversation_updated_cb),
+	                      gtkblist);
+	purple_signal_connect(handle, "deleting-conversation", gtkblist,
+	                      PURPLE_CALLBACK(conversation_deleting_cb),
+	                      gtkblist);
+	purple_signal_connect(handle, "conversation-created", gtkblist,
+	                      PURPLE_CALLBACK(conversation_created_cb),
+	                      gtkblist);
 
 	gtk_widget_hide(gtkblist->headline_hbox);
 	gtk_widget_hide(gtkblist->error_buttons);
 
 	/* emit our created signal */
+	handle = pidgin_blist_get_handle();
 	purple_signal_emit(handle, "gtkblist-created", list);
 }
 
