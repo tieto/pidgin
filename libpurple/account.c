@@ -41,6 +41,14 @@
 #include "util.h"
 #include "xmlnode.h"
 
+typedef struct
+{
+	PurpleAccountCurrentError *current_error;
+} PurpleAccountPrivate;
+
+#define PURPLE_ACCOUNT_GET_PRIVATE(account) \
+	((PurpleAccountPrivate *) (account->priv))
+
 /* TODO: Should use PurpleValue instead of this?  What about "ui"? */
 typedef struct
 {
@@ -76,6 +84,8 @@ static guint    save_timer = 0;
 static gboolean accounts_loaded = FALSE;
 
 static GList *handles = NULL;
+
+static void clear_current_error(PurpleAccount *account);
 
 /*********************************************************************
  * Writing to disk                                                   *
@@ -827,6 +837,7 @@ PurpleAccount *
 purple_account_new(const char *username, const char *protocol_id)
 {
 	PurpleAccount *account = NULL;
+	PurpleAccountPrivate *priv = NULL;
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleStatusType *status_type;
@@ -841,6 +852,8 @@ purple_account_new(const char *username, const char *protocol_id)
 
 	account = g_new0(PurpleAccount, 1);
 	PURPLE_DBUS_REGISTER_POINTER(account, PurpleAccount);
+	priv = g_new0(PurpleAccountPrivate, 1);
+	account->priv = priv;
 
 	purple_account_set_username(account, username);
 
@@ -881,6 +894,7 @@ purple_account_new(const char *username, const char *protocol_id)
 void
 purple_account_destroy(PurpleAccount *account)
 {
+	PurpleAccountPrivate *priv = NULL;
 	GList *l;
 
 	g_return_if_fail(account != NULL);
@@ -911,6 +925,10 @@ purple_account_destroy(PurpleAccount *account)
 
 	if(account->system_log)
 		purple_log_free(account->system_log);
+
+	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	g_free(priv->current_error);
+	g_free(priv);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(account);
 	g_free(account);
@@ -2214,6 +2232,53 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
 	return prpl_info->offline_message(buddy);
 }
 
+static void
+clear_current_error(PurpleAccount *account)
+{
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	if (priv->current_error)
+	{
+		g_free (priv->current_error);
+		priv->current_error = NULL;
+	}
+
+	purple_signal_emit(purple_accounts_get_handle(), "account-error-changed",
+	                   account, priv->current_error);
+}
+
+static void
+signed_on_cb(PurpleConnection *gc,
+             gpointer unused)
+{
+	PurpleAccount *account = purple_connection_get_account(gc);
+	clear_current_error(account);
+}
+
+static void
+connection_error_cb(PurpleConnection *gc,
+                    PurpleConnectionError err,
+                    const gchar *desc,
+                    gpointer unused)
+{
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+
+	if (!priv->current_error)
+		priv->current_error = g_new0(PurpleAccountCurrentError, 1);
+	priv->current_error->reason = err;
+	priv->current_error->description = desc;
+
+	purple_signal_emit(purple_accounts_get_handle(), "account-error-changed",
+	                   account, priv->current_error);
+}
+
+const PurpleAccountCurrentError *
+purple_account_get_current_error(PurpleAccount *account)
+{
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	return priv->current_error;
+}
+
 void
 purple_accounts_add(PurpleAccount *account)
 {
@@ -2238,6 +2303,7 @@ purple_accounts_remove(PurpleAccount *account)
 
 	schedule_accounts_save();
 
+	clear_current_error(account);
 	purple_signal_emit(purple_accounts_get_handle(), "account-removed", account);
 }
 
@@ -2443,6 +2509,7 @@ void
 purple_accounts_init(void)
 {
 	void *handle = purple_accounts_get_handle();
+	void *conn_handle = purple_connections_get_handle();
 
 	purple_signal_register(handle, "account-connecting",
 						 purple_marshal_VOID__POINTER, NULL, 1,
@@ -2513,6 +2580,15 @@ purple_accounts_init(void)
 										PURPLE_SUBTYPE_ACCOUNT),
 						purple_value_new(PURPLE_TYPE_STRING));
 
+	purple_signal_register(handle, "account-error-changed",
+	                       purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                                        PURPLE_SUBTYPE_ACCOUNT),
+	                       purple_value_new(PURPLE_TYPE_POINTER));
+
+	purple_signal_connect(conn_handle, "signed-on", handle,
+	                      PURPLE_CALLBACK(signed_on_cb), NULL);
+
 	load_accounts();
 
 }
@@ -2520,6 +2596,7 @@ purple_accounts_init(void)
 void
 purple_accounts_uninit(void)
 {
+	gpointer handle = purple_accounts_get_handle();
 	if (save_timer != 0)
 	{
 		purple_timeout_remove(save_timer);
@@ -2527,5 +2604,6 @@ purple_accounts_uninit(void)
 		sync_accounts();
 	}
 
-	purple_signals_unregister_by_instance(purple_accounts_get_handle());
+	purple_signals_disconnect_by_handle(handle);
+	purple_signals_unregister_by_instance(handle);
 }

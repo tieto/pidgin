@@ -12,6 +12,7 @@
   @signal account-authorization-requested
   @signal account-authorization-denied
   @signal account-authorization-granted
+  @signal account-error-changed
  @endsignals
 
  @see account.h
@@ -138,6 +139,18 @@ void (*account_authorization_granted)(PurpleAccount *account, const char *user);
    Emitted when the authorization request for a buddy is granted.
   @param account The account.
   @param user    The name of the user requesting authorization.
+  @since 2.3.0
+ @endsignaldef
+
+ @signaldef account-error-changed
+  @signalproto
+void (*account_error_changed)(PurpleAccount *account, const PurpleAccountCurrentError *current_error);
+  @endsignalproto
+  @signaldesc
+   Emitted when @a account's error changes.
+  @param account       The account whose error has changed.
+  @param current_error The account's current error, or @c NULL if it has no error.
+  @see purple_account_get_current_error()
   @since 2.3.0
  @endsignaldef
 
