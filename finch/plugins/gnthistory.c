@@ -177,7 +177,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,
 	HISTORY_PLUGIN_ID,
 	N_("GntHistory"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Shows recently logged conversations in new conversations."),
 	N_("When a new conversation is opened this plugin will insert "
 	   "the last conversation into the current conversation."),

@@ -316,7 +316,7 @@ static PurplePluginInfo info =
 	/* This is a cultural reference.  Dy'er Mak'er is a song by Led Zeppelin.
 	   If that doesn't translate well into your language, drop the 's before translating. */
 	N_("I'dle Mak'er"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Allows you to hand-configure how long you've been idle"),
 	N_("Allows you to hand-configure how long you've been idle"),
 	"Eric Warmenhoven <eric@warmenhoven.org>",

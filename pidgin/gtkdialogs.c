@@ -315,7 +315,7 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	context = gtk_widget_get_pango_context(widget);
 	layout = pango_layout_new(context);
 
-	markup = g_strdup_printf("<span foreground=\"#000000\">%s</span>", VERSION);
+	markup = g_strdup_printf("<span foreground=\"#000000\">%s</span>", DISPLAY_VERSION);
 	pango_layout_set_font_description(layout, style->font_desc);
 	pango_layout_set_markup(layout, markup, strlen(markup));
 	g_free(markup);
@@ -382,7 +382,7 @@ void pidgin_dialogs_about()
 	gdk_pixbuf_unref(pixbuf);
 	/* Insert the logo */
 	obj = gtk_widget_get_accessible(logo);
-	tmp = g_strconcat(PIDGIN_NAME, " " VERSION, NULL);
+	tmp = g_strconcat(PIDGIN_NAME, " " DISPLAY_VERSION, NULL);
 	atk_object_set_description(obj, tmp);
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
@@ -394,7 +394,7 @@ void pidgin_dialogs_about()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR><BR>", PIDGIN_NAME, VERSION);
+		"<CENTER><FONT SIZE=\"4\"><B>%s %s</B></FONT></CENTER><BR><BR>", PIDGIN_NAME, DISPLAY_VERSION);
 
 	g_string_append_printf(str,
 		_("%s is a graphical modular messaging client based on "

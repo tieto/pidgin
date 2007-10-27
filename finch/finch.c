@@ -203,7 +203,7 @@ show_usage(const char *name, gboolean terse)
 	char *text;
 
 	if (terse) {
-		text = g_strdup_printf(_("%s. Try `%s -h' for more information.\n"), VERSION, name);
+		text = g_strdup_printf(_("%s. Try `%s -h' for more information.\n"), DISPLAY_VERSION, name);
 	} else {
 		text = g_strdup_printf(_("%s\n"
 		       "Usage: %s [OPTION]...\n\n"
@@ -211,7 +211,7 @@ show_usage(const char *name, gboolean terse)
 		       "  -d, --debug         print debugging messages to stdout\n"
 		       "  -h, --help          display this help and exit\n"
 		       "  -n, --nologin       don't automatically login\n"
-		       "  -v, --version       display the current version and exit\n"), VERSION, name);
+		       "  -v, --version       display the current version and exit\n"), DISPLAY_VERSION, name);
 	}
 
 	purple_print_utf8_to_console(stdout, text);
@@ -298,7 +298,7 @@ init_libpurple(int argc, char **argv)
 		/* Translators may want to transliterate the name.
 		 It is not to be translated. */
 		gnt_quit();
-		printf("%s %s\n", _("Finch"), VERSION);
+		printf("%s %s\n", _("Finch"), DISPLAY_VERSION);
 		return 0;
 	}
 

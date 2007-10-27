@@ -58,6 +58,7 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 	gchar *dummy;
 	gchar *dummy2;
 	gchar *tmp;
+	const gchar *tmp2;
 	int i=1;
 	if(!lines[0]) return NULL;
 	parts = g_strsplit(lines[0], " ", 3);
@@ -100,14 +101,16 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 		g_strfreev(parts);
 	}
 	g_strfreev(lines);
-	msg->bodylen = strtol(sipmsg_find_header(msg, "Content-Length"),NULL,10);
+	tmp2 = sipmsg_find_header(msg, "Content-Length");
+	if (tmp2 != NULL)
+		msg->bodylen = strtol(tmp2, NULL, 10);
 	if(msg->response) {
-		tmp = sipmsg_find_header(msg, "CSeq");
-		if(!tmp) {
+		tmp2 = sipmsg_find_header(msg, "CSeq");
+		if(!tmp2) {
 			/* SHOULD NOT HAPPEN */
 			msg->method = 0;
 		} else {
-			parts = g_strsplit(tmp, " ", 2);
+			parts = g_strsplit(tmp2, " ", 2);
 			msg->method = g_strdup(parts[1]);
 			g_strfreev(parts);
 		}
@@ -192,7 +195,7 @@ void sipmsg_remove_header(struct sipmsg *msg, const gchar *name) {
 	return;
 }
 
-gchar *sipmsg_find_header(struct sipmsg *msg, const gchar *name) {
+const gchar *sipmsg_find_header(struct sipmsg *msg, const gchar *name) {
 	GSList *tmp;
 	struct siphdrelement *elem;
 	tmp = msg->headers;

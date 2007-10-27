@@ -1642,7 +1642,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->src_tag = "font";
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
-					if(style->len)
+					if(style->len && xhtml)
 						g_string_append_printf(xhtml, "<span style='%s'>", g_strstrip(style->str));
 					else
 						pt->ignore = TRUE;
@@ -3066,9 +3066,6 @@ purple_str_add_cr(const char *text)
 			ret[j++] = '\r';
 		ret[j++] = text[i];
 	}
-
-	purple_debug_misc("purple_str_add_cr", "got: %s, leaving with %s\n",
-					text, ret);
 
 	return ret;
 }

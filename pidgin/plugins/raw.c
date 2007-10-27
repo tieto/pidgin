@@ -173,7 +173,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,
 	RAW_PLUGIN_ID,
 	N_("Raw"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Lets you send raw input to text-based protocols."),
 	N_("Lets you send raw input to text-based protocols (XMPP, MSN, IRC, "
 	   "TOC). Hit 'Enter' in the entry box to send. Watch the debug window."),

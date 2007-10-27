@@ -525,7 +525,7 @@ void wpurple_init(void) {
 	char *newenv;
 
 	purple_debug_info("wpurple", "wpurple_init start\n");
-	purple_debug_info("wpurple", "libpurple version: " VERSION "\n");
+	purple_debug_info("wpurple", "libpurple version: " DISPLAY_VERSION "\n");
 
 
 	purple_debug_info("wpurple", "Glib:%u.%u.%u\n",

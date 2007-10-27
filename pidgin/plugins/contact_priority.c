@@ -185,7 +185,7 @@ static PurplePluginInfo info =
 
 	CONTACT_PRIORITY_PLUGIN_ID,                       /**< id             */
 	N_("Contact Priority"),                           /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
                                                     /**< summary        */
 	N_("Allows for controlling the values associated with different buddy states."),
                                                     /**< description    */

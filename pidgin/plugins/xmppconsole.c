@@ -858,7 +858,7 @@ static PurplePluginInfo info =
 
 	"gtk-xmpp",                                       /**< id             */
 	N_("XMPP Console"),                                  /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Send and receive raw XMPP stanzas."),
 	                                                  /**  description    */
