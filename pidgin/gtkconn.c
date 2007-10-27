@@ -82,8 +82,6 @@ pidgin_connection_connected(PurpleConnection *gc)
 					   (purple_connections_get_connecting() != NULL));
 
 	g_hash_table_remove(auto_reconns, account);
-
-	pidgin_blist_update_account_error_state(account, NULL);
 }
 
 static void
@@ -149,7 +147,6 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 	account = purple_connection_get_account(gc);
 	info = g_hash_table_lookup(auto_reconns, account);
 
-	pidgin_blist_update_account_error_state(account, text);
 	if (!purple_connection_error_is_fatal (reason)) {
 		if (info == NULL) {
 			info = g_new0(PidginAutoRecon, 1);
@@ -301,8 +298,6 @@ static void
 account_removed_cb(PurpleAccount *account, gpointer user_data)
 {
 	g_hash_table_remove(auto_reconns, account);
-
-	pidgin_blist_update_account_error_state(account, NULL);
 }
 
 
