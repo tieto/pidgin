@@ -617,7 +617,12 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	 * XXX: blocked icon overlay isn't always accurate for MSN.
 	 * XXX: This can die as soon as purple_privacy_check() knows that
 	 * XXX: this prpl always honors both the allow and deny lists. */
-	if (user)
+	/* While the above comment may be strictly correct (the privacy API needs
+	 * rewriteing), purple_privacy_check() is going to be more accurate at
+	 * indicating whether a particular buddy is going to be able to message
+	 * you, which is the important information that this is trying to convey.
+	 */
+	if (full && user)
 	{
 		purple_notify_user_info_add_pair(user_info, _("Blocked"),
 									   ((user->list_op & (1 << MSN_LIST_BL)) ? _("Yes") : _("No")));
