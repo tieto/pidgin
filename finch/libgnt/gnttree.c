@@ -455,9 +455,10 @@ redraw_tree(GntTree *tree)
 		}
 		if (pos)
 		{
-			tree_mark_columns(tree, pos, 0, ACS_TTEE | gnt_color_pair(GNT_COLOR_NORMAL));
+			tree_mark_columns(tree, pos, 0,
+					(tree->show_separator ? ACS_TTEE : ACS_HLINE) | gnt_color_pair(GNT_COLOR_NORMAL));
 			tree_mark_columns(tree, pos, widget->priv.height - pos,
-					ACS_BTEE | gnt_color_pair(GNT_COLOR_NORMAL));
+					(tree->show_separator ? ACS_BTEE : ACS_HLINE) | gnt_color_pair(GNT_COLOR_NORMAL));
 		}
 		tree_mark_columns(tree, pos, pos + 1,
 			(tree->show_separator ? ACS_PLUS : ACS_HLINE) | gnt_color_pair(GNT_COLOR_NORMAL));

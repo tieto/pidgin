@@ -4,7 +4,7 @@ version 2.3.0 (??/??/????):
 	libpurple:
 		Added:
 		* purple_request_field_blist_nodes_new and its accessory functions.
-		* a PurpleConversation field in PurpleConvMessage
+		* a PurpleConversation field and an alias field in PurpleConvMessage
 		* account-authorization signals (see account-signals.dox for
 		  details) (Stefan Ott)
 		* libpurple/purple.h, which includes #define's and #include's
@@ -133,6 +133,7 @@ version 2.3.0 (??/??/????):
 		  given id from a menu.
 		* Added gnt_menuitem_activate, which triggers the 'activate' signal on
 		  the menuitem and calls the callback function, if available.
+		* Added GntEntryKillRing in GntEntry.
 
 version 2.2.2 (??/??/????):
 	libpurple:

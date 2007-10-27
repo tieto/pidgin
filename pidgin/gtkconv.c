@@ -7435,7 +7435,7 @@ add_message_history_to_gtkconv(gpointer data)
 			gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR><HR>", 0);
 			g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 		}
-		pidgin_conv_write_conv(msg->conv, msg->who, msg->who, msg->what, msg->flags, msg->when);
+		pidgin_conv_write_conv(msg->conv, msg->who, msg->alias, msg->what, msg->flags, msg->when);
 		if (im) {
 			gtkconv->attach.current = g_list_delete_link(gtkconv->attach.current, gtkconv->attach.current);
 		} else {
@@ -7465,7 +7465,7 @@ add_message_history_to_gtkconv(gpointer data)
 		msgs = g_list_sort(msgs, message_compare);
 		for (; msgs; msgs = g_list_delete_link(msgs, msgs)) {
 			PurpleConvMessage *msg = msgs->data;
-			pidgin_conv_write_conv(msg->conv, msg->who, msg->who, msg->what, msg->flags, msg->when);
+			pidgin_conv_write_conv(msg->conv, msg->who, msg->alias, msg->what, msg->flags, msg->when);
 		}
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR><HR>", 0);
 		g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
