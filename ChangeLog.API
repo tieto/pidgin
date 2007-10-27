@@ -27,11 +27,18 @@ version 2.3.0 (??/??/????):
 		  they want to use the reported PurpleDisconnectReason
 		  to give a more specific error.
 		* A connection-error signal, fired just after the UiOp is
-		  called.
+		  called with the same information.
 		* purple_connection_reason_is_fatal(), acting as a hint
 		  to whether automatic reconnection should be attempted
 		  after a connection error (rather than checking
 		  gc->wants_to_die).
+		* purple_account_get_current_error() to get the most recent
+		  PurpleConnectionError and description (or NULL if the
+		  account is happy with life), to allow bits of the UI to know
+		  the last error without caching it themselves (as
+		  PidginBuddyList does).
+		* An account-error-changed signal, firing when
+		  purple_account_get_current_error()'s return value changes.
 
 		* purple_util_init()
 		* purple_util_uninit()
