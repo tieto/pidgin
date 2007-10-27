@@ -321,7 +321,7 @@ static char *parse_attribute(const char *attrname, const char *source) {
 	return retval;
 }
 
-static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_auth *auth) {
+static void fill_auth(struct simple_account_data *sip, const gchar *hdr, struct sip_auth *auth) {
 	int i = 0;
 	const char *authuser;
 	char *tmp;
@@ -592,7 +592,7 @@ static void transactions_add_buf(struct simple_account_data *sip, const gchar *b
 static struct transaction *transactions_find(struct simple_account_data *sip, struct sipmsg *msg) {
 	struct transaction *trans;
 	GSList *transactions = sip->transactions;
-	gchar *cseq = sipmsg_find_header(msg, "CSeq");
+	const gchar *cseq = sipmsg_find_header(msg, "CSeq");
 
 	if (cseq) {
 		while(transactions) {
@@ -800,7 +800,7 @@ static void simple_subscribe(struct simple_account_data *sip, struct simple_budd
 }
 
 static gboolean simple_add_lcs_contacts(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc) {
-	gchar *tmp;
+	const gchar *tmp;
 	xmlnode *item, *group, *isc;
 	const char *name_group;
 	PurpleBuddy *b;
@@ -960,7 +960,7 @@ static int simple_im_send(PurpleConnection *gc, const char *who, const char *wha
 
 static void process_incoming_message(struct simple_account_data *sip, struct sipmsg *msg) {
 	gchar *from;
-	gchar *contenttype;
+	const gchar *contenttype;
 	gboolean found = FALSE;
 
 	from = parse_from(sipmsg_find_header(msg, "From"));
@@ -1015,7 +1015,7 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 
 
 gboolean process_register_response(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc) {
-	gchar *tmp;
+	const gchar *tmp;
 	purple_debug(PURPLE_DEBUG_MISC, "simple", "in process register response response: %d\n", msg->response);
 	switch (msg->response) {
 		case 200:
@@ -1072,7 +1072,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 
 static void process_incoming_notify(struct simple_account_data *sip, struct sipmsg *msg) {
 	gchar *from;
-	gchar *fromhdr;
+	const gchar *fromhdr;
 	gchar *basicstatus_data;
 	xmlnode *pidf;
 	xmlnode *basicstatus = NULL, *tuple, *status;
@@ -1255,8 +1255,8 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 	gchar *theirtag = find_tag(from_hdr);
 	gchar *ourtag = find_tag(sipmsg_find_header(msg, "To"));
 	gboolean tagadded = FALSE;
-	gchar *callid = sipmsg_find_header(msg, "Call-ID");
-	gchar *expire = sipmsg_find_header(msg, "Expire");
+	const gchar *callid = sipmsg_find_header(msg, "Call-ID");
+	const gchar *expire = sipmsg_find_header(msg, "Expire");
 	gchar *tmp;
 	struct simple_watcher *watcher = watcher_find(sip, from);
 	if(!ourtag) {
@@ -1264,14 +1264,14 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 		ourtag = gentag();
 	}
 	if(!watcher) { /* new subscription */
-		gchar *acceptheader = sipmsg_find_header(msg, "Accept");
+		const gchar *acceptheader = sipmsg_find_header(msg, "Accept");
 		gboolean needsxpidf = FALSE;
 		if(!purple_privacy_check(sip->account, from)) {
 			send_sip_response(sip->gc, msg, 202, "Ok", NULL);
 			goto privend;
 		}
 		if(acceptheader) {
-			gchar *tmp = acceptheader;
+			const gchar *tmp = acceptheader;
 			gboolean foundpidf = FALSE;
 			gboolean foundxpidf = FALSE;
 			while(tmp && tmp < acceptheader + strlen(acceptheader)) {
@@ -1289,7 +1289,6 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 					tmp = 0;
 			}
 			if(!foundpidf && foundxpidf) needsxpidf = TRUE;
-			g_free(acceptheader);
 		}
 		watcher = watcher_create(sip, from, callid, ourtag, theirtag, needsxpidf);
 	}
@@ -1314,8 +1313,6 @@ privend:
 	g_free(from);
 	g_free(theirtag);
 	g_free(ourtag);
-	g_free(callid);
-	g_free(expire);
 }
 
 static void process_input_message(struct simple_account_data *sip, struct sipmsg *msg) {
@@ -1337,7 +1334,8 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 		struct transaction *trans = transactions_find(sip, msg);
 		if(trans) {
 			if(msg->response == 407) {
-				gchar *resend, *auth, *ptmp;
+				gchar *resend, *auth;
+				const gchar *ptmp;
 
 				if(sip->proxy.retries > 3) return;
 				sip->proxy.retries++;
@@ -1381,7 +1379,8 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 							/* This is encountered when a generic (MESSAGE, NOTIFY, etc)
 							 * was denied until further authorization is provided.
 							 */
-							gchar *resend, *auth, *ptmp;
+							gchar *resend, *auth;
+							const gchar *ptmp;
 
 							if(sip->registrar.retries > SIMPLE_REGISTER_RETRY_MAX) return;
 							sip->registrar.retries++;
