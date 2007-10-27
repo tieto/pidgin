@@ -910,7 +910,7 @@ static PurplePluginInfo info =
 
 	"prpl-irc",                                       /**< id             */
 	"IRC",                                            /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	N_("IRC Protocol Plugin"),                        /**  summary        */
 	N_("The IRC Protocol Plugin that Sucks Less"),    /**  description    */
 	NULL,                                             /**< author         */

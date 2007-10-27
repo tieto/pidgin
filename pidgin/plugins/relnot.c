@@ -141,7 +141,7 @@ static PurplePluginInfo info =
 
 	"gtk-relnot",                                     /**< id             */
 	N_("Release Notification"),                       /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Checks periodically for new releases."),
 	                                                  /**  description    */

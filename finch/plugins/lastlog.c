@@ -120,7 +120,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,
 	"gntlastlog",
 	N_("GntLastlog"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Lastlog plugin."),
 	N_("Lastlog plugin."),
 	"Sadrul H Chowdhury <sadrul@users.sourceforge.net>",

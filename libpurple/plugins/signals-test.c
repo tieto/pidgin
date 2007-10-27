@@ -709,7 +709,7 @@ static PurplePluginInfo info =
 
 	SIGNAL_TEST_PLUGIN_ID,                            /**< id             */
 	N_("Signals Test"),                               /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Test to see that all signals are working properly."),
 	                                                  /**  description    */

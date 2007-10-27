@@ -421,7 +421,7 @@ static PurplePluginInfo tcl_info =
 	PURPLE_PRIORITY_DEFAULT,
 	"core-tcl",
 	N_("Tcl Plugin Loader"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Provides support for loading Tcl plugins"),
 	N_("Provides support for loading Tcl plugins"),
 	"Ethan Blanton <eblanton@cs.purdue.edu>",
