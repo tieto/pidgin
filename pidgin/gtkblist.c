@@ -174,9 +174,12 @@ static char *dim_grey()
  ***************************************************/
 static gboolean gtk_blist_visibility_cb(GtkWidget *w, GdkEventVisibility *event, gpointer data)
 {
-	if (event->state == GDK_VISIBILITY_FULLY_OBSCURED)
+	if (event->state == GDK_VISIBILITY_FULLY_OBSCURED ||
+		event->state == GDK_VISIBILITY_PARTIAL) {
+
 		gtk_blist_obscured = TRUE;
-	else if (gtk_blist_obscured) {
+
+	} else if (gtk_blist_obscured) {
 			gtk_blist_obscured = FALSE;
 			pidgin_blist_refresh_timer(purple_get_blist());
 	}
