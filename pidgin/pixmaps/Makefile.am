@@ -6,28 +6,20 @@ SUBDIRS = animations/16 buddy_icons/qq dialogs/16 dialogs/64 emblems/16 \
           toolbar/16 toolbar/22 tray/16 tray/22 tray/32 tray/48
 
 MAKEFILE_MINGW = \
-		animations/Makefile.mingw \
 		animations/16/Makefile.mingw \
-		buddy_icons/Makefile.mingw \
 		buddy_icons/qq/Makefile.mingw \
-		dialogs/Makefile.mingw \
 		dialogs/16/Makefile.mingw \
 		dialogs/64/Makefile.mingw \
-		icons/Makefile.mingw \
 		icons/16/Makefile.mingw \
 		icons/24/Makefile.mingw \
 		icons/32/Makefile.mingw \
 		icons/48/Makefile.mingw \
-		emotes/Makefile.mingw \
 		emotes/default/Makefile.mingw \
 		emotes/default/24/Makefile.mingw \
 		emotes/none/Makefile.mingw \
-		emblems/Makefile.mingw \
 		emblems/16/Makefile.mingw \
-		protocols/Makefile.mingw \
 		protocols/22/Makefile.mingw \
 		protocols/48/Makefile.mingw \
-		status/Makefile.mingw \
 		status/11/Makefile.mingw \
 		status/11/rtl/Makefile.mingw \
 		status/16/Makefile.mingw \
@@ -38,10 +30,8 @@ MAKEFILE_MINGW = \
 		status/32/rtl/Makefile.mingw \
 		status/48/Makefile.mingw \
 		status/48/rtl/Makefile.mingw \
-		toolbar/Makefile.mingw \
 		toolbar/16/Makefile.mingw \
 		toolbar/22/Makefile.mingw \
-		tray/Makefile.mingw \
 		tray/16/Makefile.mingw \
 		tray/22/Makefile.mingw \
 		tray/32/Makefile.mingw \
