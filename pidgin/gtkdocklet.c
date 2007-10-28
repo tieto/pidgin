@@ -712,16 +712,14 @@ pidgin_docklet_get_handle()
 gboolean
 pidgin_docklet_get_geometry(gint *x, gint *y, gint *w, gint *h)
 {
-	if(visible && ui_ops && ui_ops->get_geometry)
-		return ui_ops->get_geometry(x, y, w, h);
+	if(visible && ui_ops && ui_ops->get_geometry) return ui_ops->get_geometry(x, y, w, h);
 	return FALSE;
 }
 
 GObject *
 pidgin_docklet_get_gdk_screen()
 {
-	if(visible && ui_ops && ui_ops->get_gdk_screen)
-		return ui_ops->get_gdk_screen();
+	if(visible && ui_ops && ui_ops->get_gdk_screen) return ui_ops->get_gdk_screen();
 	return NULL;
 }
 
