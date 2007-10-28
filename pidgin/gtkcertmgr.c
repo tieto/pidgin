@@ -525,7 +525,7 @@ tls_peers_mgmt_build(void)
 	return mgmt_widget;
 }
 
-PidginCertificateManager tls_peers_mgmt = {
+const PidginCertificateManager tls_peers_mgmt = {
 	tls_peers_mgmt_build, /* Widget creation function */
 	N_("SSL Servers")
 };

@@ -212,7 +212,7 @@ peer_oft_checksum_file(PeerConnection *conn, PurpleXfer *xfer, GSourceFunc callb
 	if (checksum_data->file == NULL)
 	{
 		purple_debug_error("oscar", "Unable to open %s for checksumming: %s\n",
-				purple_xfer_get_local_filename(xfer), strerror(errno));
+				purple_xfer_get_local_filename(xfer), g_strerror(errno));
 		callback(checksum_data);
 		g_free(checksum_data);
 	}

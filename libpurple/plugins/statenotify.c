@@ -146,7 +146,7 @@ static PurplePluginInfo info =
 
 	STATENOTIFY_PLUGIN_ID,                            /**< id             */
 	N_("Buddy State Notification"),                   /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Notifies in a conversation window when a buddy goes or returns from "
 	   "away or idle."),

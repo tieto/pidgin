@@ -40,9 +40,7 @@ static void irc_dccsend_recv_destroy(PurpleXfer *xfer)
 {
 	struct irc_xfer_rx_data *xd = xfer->data;
 
-	if (xd->ip != NULL)
-		g_free(xd->ip);
-
+	g_free(xd->ip);
 	g_free(xd);
 }
 
@@ -123,8 +121,8 @@ void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg) {
 		} else {
 			xd->ip = g_strdup(token[i]);
 		}
-		purple_debug(PURPLE_DEBUG_INFO, "irc", "Receiving file from %s\n",
-				   xd->ip);
+		purple_debug(PURPLE_DEBUG_INFO, "irc", "Receiving file (%s) from %s\n",
+			     filename->str, xd->ip);
 		purple_xfer_set_size(xfer, token[i+2] ? atoi(token[i+2]) : 0);
 		
 		purple_xfer_set_init_fnc(xfer, irc_dccsend_recv_init);
@@ -166,8 +164,7 @@ static void irc_dccsend_send_destroy(PurpleXfer *xfer)
 	if (xd->fd != -1)
 		close(xd->fd);
 
-	if (xd->rxqueue)
-		g_free(xd->rxqueue);
+	g_free(xd->rxqueue);
 
 	g_free(xd);
 }
@@ -251,7 +248,7 @@ static void irc_dccsend_send_connected(gpointer data, int source, PurpleInputCon
 		 * to the nonblocking nature of the listening socket, so we'll
 		 * just try again next time */
 		/* Let's print an error message anyway */
-		purple_debug_warning("irc", "accept: %s\n", strerror(errno));
+		purple_debug_warning("irc", "accept: %s\n", g_strerror(errno));
 		return;
 	}
 

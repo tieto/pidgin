@@ -61,6 +61,7 @@
 #include "pidginstock.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
+#include "pidgin/minidialog.h"
 
 typedef struct {
 	GtkWidget *menu;
@@ -2858,7 +2859,7 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 	gtk_window_set_urgency_hint(window, urgent);
 #elif defined _WIN32
 	winpidgin_window_flash(window, urgent);
-#else
+#elif defined GDK_WINDOWING_X11
 	GdkWindow *gdkwin;
 	XWMHints *hints;
 
@@ -2880,6 +2881,8 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 	XSetWMHints(GDK_WINDOW_XDISPLAY(gdkwin),
 	            GDK_WINDOW_XWINDOW(gdkwin), hints);
 	XFree(hints);
+#else
+	/* do something else? */
 #endif
 }
 
@@ -2908,89 +2911,76 @@ static void alert_killed_cb(GtkWidget *widget)
 	minidialogs = g_slist_remove(minidialogs, widget);
 }
 
-void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
-				const char *primary, const char *secondary,
-				void *user_data,  ...)
+struct _old_button_clicked_cb_data
 {
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *hbox2;
-	GtkWidget *label;
-	GtkWidget *button;
-	GtkWidget *img = NULL;
-	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
-	char label_text[2048];
+	PidginUtilMiniDialogCallback cb;
+	gpointer data;
+};
+
+static void
+old_mini_dialog_button_clicked_cb(PidginMiniDialog *mini_dialog,
+                                  GtkButton *button,
+                                  gpointer user_data)
+{
+	struct _old_button_clicked_cb_data *data = user_data;
+	data->cb(data->data, button);
+}
+
+static void
+old_mini_dialog_destroy_cb(GtkWidget *dialog,
+                           GList *cb_datas)
+{
+	while (cb_datas != NULL)
+	{
+		g_free(cb_datas->data);
+		cb_datas = g_list_delete_link(cb_datas, cb_datas);
+	}
+}
+
+GtkWidget *
+pidgin_make_mini_dialog(PurpleConnection *gc,
+                        const char *icon_name,
+                        const char *primary,
+                        const char *secondary,
+                        void *user_data,
+                        ...)
+{
+	PidginMiniDialog *mini_dialog;
 	const char *button_text;
-	GCallback callback;
-	char *primary_esc, *secondary_esc = NULL;
+	GList *cb_datas = NULL;
 	va_list args;
 	static gboolean first_call = TRUE;
-
-	img = gtk_image_new_from_stock(icon_name, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-
-	vbox = gtk_vbox_new(FALSE,0);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BOX_SPACE);
-
-	g_object_set_data(G_OBJECT(vbox), "gc" ,gc);
-	minidialogs = g_slist_prepend(minidialogs, vbox);
-	g_signal_connect(G_OBJECT(vbox), "destroy", G_CALLBACK(alert_killed_cb), NULL);
 
 	if (first_call) {
 		first_call = FALSE;
 		purple_signal_connect(purple_connections_get_handle(), "signed-off",
-				    pidgin_utils_get_handle(),
-				    PURPLE_CALLBACK(connection_signed_off_cb), NULL);
+		                      pidgin_utils_get_handle(),
+		                      PURPLE_CALLBACK(connection_signed_off_cb), NULL);
 	}
 
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(vbox), hbox);
-
-	if (img != NULL)
-		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-
-	primary_esc = g_markup_escape_text(primary, -1);
-
-	if (secondary)
-		secondary_esc = g_markup_escape_text(secondary, -1);
-	g_snprintf(label_text, sizeof(label_text),
-		   "<span weight=\"bold\" size=\"smaller\">%s</span>%s<span size=\"smaller\">%s</span>",
-		   primary_esc, secondary ? "\n" : "", secondary_esc ? secondary_esc : "");
-	g_free(primary_esc);
-	g_free(secondary_esc);
-	label = gtk_label_new(NULL);
-	gtk_widget_set_size_request(label, purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25,-1);
-	gtk_label_set_markup(GTK_LABEL(label), label_text);
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-
-	hbox2 = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);
+	mini_dialog = pidgin_mini_dialog_new(primary, secondary, icon_name);
+	g_object_set_data(G_OBJECT(mini_dialog), "gc" ,gc);
+	g_signal_connect(G_OBJECT(mini_dialog), "destroy",
+		G_CALLBACK(alert_killed_cb), NULL);
 
 	va_start(args, user_data);
 	while ((button_text = va_arg(args, char*))) {
-		callback = va_arg(args, GCallback);
-		button = gtk_button_new();
-
-		if (callback)
-			g_signal_connect_swapped(G_OBJECT(button), "clicked", callback, user_data);
-		g_signal_connect_swapped(G_OBJECT(button), "clicked", G_CALLBACK(gtk_widget_destroy), vbox);
-		hbox = gtk_hbox_new(FALSE, 0);
-		gtk_container_add(GTK_CONTAINER(button), hbox);
-		gtk_container_set_border_width(GTK_CONTAINER(hbox), 3);
-		g_snprintf(label_text, sizeof(label_text),
-			   "<span size=\"smaller\">%s</span>", button_text);
-		label = gtk_label_new(NULL);
-		gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), label_text);
-		gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
-		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-		gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
-		gtk_size_group_add_widget(sg, button);
+		PidginUtilMiniDialogCallback callback =
+			va_arg(args, PidginUtilMiniDialogCallback);
+		struct _old_button_clicked_cb_data *data =
+			g_new0(struct _old_button_clicked_cb_data, 1);
+		data->cb = callback;
+		data->data = user_data;
+		pidgin_mini_dialog_add_button(mini_dialog, button_text,
+			old_mini_dialog_button_clicked_cb, data);
+		cb_datas = g_list_append(cb_datas, data);
 	}
 	va_end(args);
 
-	return vbox;
+	g_signal_connect(G_OBJECT(mini_dialog), "destroy",
+		G_CALLBACK(old_mini_dialog_destroy_cb), cb_datas);
+
+	return GTK_WIDGET(mini_dialog);
 }
 
 /*

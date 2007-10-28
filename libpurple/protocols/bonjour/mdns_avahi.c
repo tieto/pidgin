@@ -81,6 +81,7 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 				/* We've already freed the resolver */
 				if (r == ((AvahiBuddyImplData *)bb->mdns_impl_data)->resolver)
 					((AvahiBuddyImplData *)bb->mdns_impl_data)->resolver = NULL;
+				purple_account_remove_buddy(account, pb, NULL);
 				purple_blist_remove_buddy(pb);
 			}
 			break;
@@ -117,9 +118,10 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 			}
 
 			if (!bonjour_buddy_check(bb)) {
-				if (pb != NULL)
+				if (pb != NULL) {
+					purple_account_remove_buddy(account, pb, NULL);
 					purple_blist_remove_buddy(pb);
-				else
+				} else
 					bonjour_buddy_delete(bb);
 			} else
 				/* Add or update the buddy in our buddy list */
@@ -163,8 +165,10 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 		case AVAHI_BROWSER_REMOVE:
 			purple_debug_info("bonjour", "_browser_callback - Remove service\n");
 			pb = purple_find_buddy(account, name);
-			if (pb != NULL)
+			if (pb != NULL) {
+				purple_account_remove_buddy(account, pb, NULL);
 				purple_blist_remove_buddy(pb);
+			}
 			break;
 		case AVAHI_BROWSER_ALL_FOR_NOW:
 		case AVAHI_BROWSER_CACHE_EXHAUSTED:

@@ -691,7 +691,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,		/**< priority       */
 	WINTRANS_PLUGIN_ID,		/**< id             */
 	N_("Transparency"),		/**< name           */
-	VERSION,			/**< version        */
+	DISPLAY_VERSION,		/**< version        */
 					/**  summary        */
 	N_("Variable Transparency for the buddy list and conversations."),
 					/**  description    */

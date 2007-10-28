@@ -53,6 +53,7 @@ typedef struct _BonjourJabberConversation
 	gpointer stream_data;
 	xmlParserCtxt *context;
 	xmlnode *current;
+	PurpleBuddy *pb;
 } BonjourJabberConversation;
 
 /**
@@ -63,7 +64,7 @@ typedef struct _BonjourJabberConversation
  */
 gint bonjour_jabber_start(BonjourJabber *data);
 
-int bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *body);
+int bonjour_jabber_send_message(BonjourJabber *data, const char *to, const char *body);
 
 void bonjour_jabber_close_conversation(BonjourJabberConversation *bconv);
 
@@ -74,5 +75,25 @@ void bonjour_jabber_stream_ended(PurpleBuddy *pb);
 void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet);
 
 void bonjour_jabber_stop(BonjourJabber *data);
+
+typedef enum {
+	XEP_IQ_SET,
+	XEP_IQ_GET,
+	XEP_IQ_RESULT,
+	XEP_IQ_ERROR,
+	XEP_IQ_NONE
+} XepIqType;
+
+typedef struct _XepIq {
+	XepIqType type;
+	char *id;
+	xmlnode *node;
+	char *to;
+	void *data;
+} XepIq;
+
+XepIq *xep_iq_new(void *data, XepIqType type, const char *to, const char *from, const char *id);
+int xep_iq_send_and_free(XepIq *iq);
+const char *purple_network_get_my_ip_ext2(int fd);
 
 #endif /* _BONJOUR_JABBER_H_ */

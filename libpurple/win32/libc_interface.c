@@ -300,7 +300,9 @@ char* wpurple_strerror( int errornum ) {
 		return errbuf;
 	}
 	else
-		return strerror( errornum );
+		/* Nothing is supposed to modify what is returned by strerror,
+		   but it isn't const for some reason */
+		return (char *)g_strerror( errornum );
 }
 
 /* unistd.h */

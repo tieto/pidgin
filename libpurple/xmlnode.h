@@ -55,6 +55,8 @@ struct _xmlnode
 	struct _xmlnode *child;		/**< The child node or @c NULL.*/
 	struct _xmlnode *lastchild;	/**< The last child node or @c NULL.*/
 	struct _xmlnode *next;		/**< The next node or @c NULL. */
+	char *prefix;               /**< The namespace prefix if any. */
+	GHashTable *namespace_map;  /**< The namespace map. */
 };
 
 /**
@@ -129,7 +131,7 @@ void xmlnode_insert_data(xmlnode *node, const char *data, gssize size);
  *
  * @param node The node to get data from.
  *
- * @return The data from the node.  This data is in raw escaped format.
+ * @return The data from the node or NULL. This data is in raw escaped format.
  *         You must g_free this string when finished using it.
  */
 char *xmlnode_get_data(xmlnode *node);
@@ -152,6 +154,16 @@ char *xmlnode_get_data_unescaped(xmlnode *node);
  * @param value The value of the attribute.
  */
 void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
+
+/**
+ * Sets a prefixed attribute for a node
+ *
+ * @param node   The node to set an attribute for.
+ * @param attr   The name of the attribute to set
+ * @param prefix The prefix of the attribute to ste
+ * @param value  The value of the attribute
+ */
+void xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char *prefix, const char *value);
 
 /**
  * Sets a namespaced attribute for a node
@@ -216,6 +228,22 @@ void xmlnode_set_namespace(xmlnode *node, const char *xmlns);
  * @return The namespace of this node
  */
 const char *xmlnode_get_namespace(xmlnode *node);
+
+/**
+ * Sets the prefix of a node
+ *
+ * @param node   The node to qualify
+ * @param prefix The prefix of the node
+ */
+void xmlnode_set_prefix(xmlnode *node, const char *prefix);
+
+/**
+ * Returns the prefix of a node
+ *
+ * @param node The node to get the prefix from
+ * @return The prefix of this node
+ */
+const char *xmlnode_get_prefix(xmlnode *node);
 
 /**
  * Returns the node in a string of xml.

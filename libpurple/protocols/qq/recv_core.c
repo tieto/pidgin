@@ -306,7 +306,8 @@ void qq_input_pending(gpointer data, gint source, PurpleInputCondition cond)
 	gc = (PurpleConnection *) data;
 
 	if(cond != PURPLE_INPUT_READ) {
-		purple_connection_error(gc, _("Socket error"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Socket error"));
 		return;
 	}
 
@@ -316,7 +317,8 @@ void qq_input_pending(gpointer data, gint source, PurpleInputCondition cond)
 	/* here we have UDP proxy suppport */
 	len = qq_proxy_read(qd, buf, MAX_PACKET_SIZE);
 	if (len <= 0) {
-		purple_connection_error(gc, _("Unable to read from socket"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Unable to read from socket"));
 		return;
 	} else {
 		_qq_packet_process(buf, len, gc);

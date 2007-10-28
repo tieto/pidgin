@@ -242,7 +242,7 @@ static HWND winpidgin_message_window_init(void) {
 
 	/* Create the window */
 	if(!(win_hwnd = CreateWindow(wname, TEXT("WinpidginMsgWin"), 0, 0, 0, 0, 0,
-			NULL, NULL, winpidgin_exe_hinstance(), 0))) {
+			HWND_MESSAGE, NULL, winpidgin_exe_hinstance(), 0))) {
 		purple_debug_error("winpidgin",
 			"Unable to create message window.\n");
 		return NULL;

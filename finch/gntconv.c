@@ -114,87 +114,81 @@ send_typing_notification(GntWidget *w, FinchConv *ggconv)
 	}
 }
 
-static gboolean
-entry_key_pressed(GntWidget *w, const char *key, FinchConv *ggconv)
+static void
+entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 {
-	if (key[0] == '\r' && key[1] == 0)
+	const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
+	if (*text == '/')
 	{
-		const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
-		if (*text == '/')
-		{
-			PurpleConversation *conv = ggconv->active_conv;
-			PurpleCmdStatus status;
-			const char *cmdline = text + 1;
-			char *error = NULL, *escape;
+		PurpleConversation *conv = ggconv->active_conv;
+		PurpleCmdStatus status;
+		const char *cmdline = text + 1;
+		char *error = NULL, *escape;
 
-			escape = g_markup_escape_text(cmdline, -1);
-			status = purple_cmd_do_command(conv, cmdline, escape, &error);
-			g_free(escape);
+		escape = g_markup_escape_text(cmdline, -1);
+		status = purple_cmd_do_command(conv, cmdline, escape, &error);
+		g_free(escape);
 
-			switch (status)
-			{
-				case PURPLE_CMD_STATUS_OK:
-					break;
-				case PURPLE_CMD_STATUS_NOT_FOUND:
-					purple_conversation_write(conv, "", _("No such command."),
-							PURPLE_MESSAGE_NO_LOG, time(NULL));
-					break;
-				case PURPLE_CMD_STATUS_WRONG_ARGS:
-					purple_conversation_write(conv, "", _("Syntax Error:  You typed the wrong number of arguments "
-										"to that command."),
-							PURPLE_MESSAGE_NO_LOG, time(NULL));
-					break;
-				case PURPLE_CMD_STATUS_FAILED:
-					purple_conversation_write(conv, "", error ? error : _("Your command failed for an unknown reason."),
-							PURPLE_MESSAGE_NO_LOG, time(NULL));
-					break;
-				case PURPLE_CMD_STATUS_WRONG_TYPE:
-					if(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
-						purple_conversation_write(conv, "", _("That command only works in chats, not IMs."),
-								PURPLE_MESSAGE_NO_LOG, time(NULL));
-					else
-						purple_conversation_write(conv, "", _("That command only works in IMs, not chats."),
-								PURPLE_MESSAGE_NO_LOG, time(NULL));
-					break;
-				case PURPLE_CMD_STATUS_WRONG_PRPL:
-					purple_conversation_write(conv, "", _("That command doesn't work on this protocol."),
-							PURPLE_MESSAGE_NO_LOG, time(NULL));
-					break;
-			}
-			g_free(error);
-		}
-		else if (!purple_account_is_connected(ggconv->active_conv->account))
+		switch (status)
 		{
-			purple_conversation_write(ggconv->active_conv, "", _("Message was not sent, because you are not signed on."),
-					PURPLE_MESSAGE_ERROR | PURPLE_MESSAGE_NO_LOG, time(NULL));
+			case PURPLE_CMD_STATUS_OK:
+				break;
+			case PURPLE_CMD_STATUS_NOT_FOUND:
+				purple_conversation_write(conv, "", _("No such command."),
+						PURPLE_MESSAGE_NO_LOG, time(NULL));
+				break;
+			case PURPLE_CMD_STATUS_WRONG_ARGS:
+				purple_conversation_write(conv, "", _("Syntax Error:  You typed the wrong number of arguments "
+							"to that command."),
+						PURPLE_MESSAGE_NO_LOG, time(NULL));
+				break;
+			case PURPLE_CMD_STATUS_FAILED:
+				purple_conversation_write(conv, "", error ? error : _("Your command failed for an unknown reason."),
+						PURPLE_MESSAGE_NO_LOG, time(NULL));
+				break;
+			case PURPLE_CMD_STATUS_WRONG_TYPE:
+				if(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
+					purple_conversation_write(conv, "", _("That command only works in chats, not IMs."),
+							PURPLE_MESSAGE_NO_LOG, time(NULL));
+				else
+					purple_conversation_write(conv, "", _("That command only works in IMs, not chats."),
+							PURPLE_MESSAGE_NO_LOG, time(NULL));
+				break;
+			case PURPLE_CMD_STATUS_WRONG_PRPL:
+				purple_conversation_write(conv, "", _("That command doesn't work on this protocol."),
+						PURPLE_MESSAGE_NO_LOG, time(NULL));
+				break;
 		}
-		else
-		{
-			char *escape = g_markup_escape_text(text, -1);
-			char *apos = purple_strreplace(escape, "&apos;", "'");
-			g_free(escape);
-			escape = apos;
-			switch (purple_conversation_get_type(ggconv->active_conv))
-			{
-				case PURPLE_CONV_TYPE_IM:
-					purple_conv_im_send_with_flags(PURPLE_CONV_IM(ggconv->active_conv), escape, PURPLE_MESSAGE_SEND);
-					break;
-				case PURPLE_CONV_TYPE_CHAT:
-					purple_conv_chat_send(PURPLE_CONV_CHAT(ggconv->active_conv), escape);
-					break;
-				default:
-					g_free(escape);
-					g_return_val_if_reached(FALSE);
-			}
-			g_free(escape);
-			purple_idle_touch();
-		}
-		gnt_entry_add_to_history(GNT_ENTRY(ggconv->entry), text);
-		gnt_entry_clear(GNT_ENTRY(ggconv->entry));
-		return TRUE;
+		g_free(error);
 	}
-
-	return FALSE;
+	else if (!purple_account_is_connected(ggconv->active_conv->account))
+	{
+		purple_conversation_write(ggconv->active_conv, "", _("Message was not sent, because you are not signed on."),
+				PURPLE_MESSAGE_ERROR | PURPLE_MESSAGE_NO_LOG, time(NULL));
+	}
+	else
+	{
+		char *escape = g_markup_escape_text(text, -1);
+		char *apos = purple_strreplace(escape, "&apos;", "'");
+		g_free(escape);
+		escape = apos;
+		switch (purple_conversation_get_type(ggconv->active_conv))
+		{
+			case PURPLE_CONV_TYPE_IM:
+				purple_conv_im_send_with_flags(PURPLE_CONV_IM(ggconv->active_conv), escape, PURPLE_MESSAGE_SEND);
+				break;
+			case PURPLE_CONV_TYPE_CHAT:
+				purple_conv_chat_send(PURPLE_CONV_CHAT(ggconv->active_conv), escape);
+				break;
+			default:
+				g_free(escape);
+				g_return_if_reached();
+		}
+		g_free(escape);
+		purple_idle_touch();
+	}
+	gnt_entry_add_to_history(GNT_ENTRY(ggconv->entry), text);
+	gnt_entry_clear(GNT_ENTRY(ggconv->entry));
 }
 
 static void
@@ -311,13 +305,40 @@ buddy_signed_on_off(PurpleBuddy *buddy, gpointer null)
 static void
 account_signed_on_off(PurpleConnection *gc, gpointer null)
 {
-	GList *ims = purple_get_ims();
-	while (ims) {
-		PurpleConversation *conv = ims->data;
+	GList *list = purple_get_ims();
+	while (list) {
+		PurpleConversation *conv = list->data;
 		PurpleConversation *cc = find_conv_with_contact(conv->account, conv->name);
 		if (cc)
 			generate_send_to_menu(cc->ui_data);
-		ims = ims->next;
+		list = list->next;
+	}
+
+	if (PURPLE_CONNECTION_IS_CONNECTED(gc)) {
+		/* We just signed on. Let's see if there's any chat that we have open,
+		 * and hadn't left before the disconnect. */
+		list = purple_get_chats();
+		while (list) {
+			PurpleConversation *conv = list->data;
+			PurpleChat *chat;
+			GHashTable *comps = NULL;
+
+			list = list->next;
+			if (conv->account != gc->account ||
+					!purple_conversation_get_data(conv, "want-to-rejoin"))
+				continue;
+
+			chat = purple_blist_find_chat(conv->account, conv->name);
+			if (chat == NULL) {
+				if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
+					comps = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, conv->name);
+			} else {
+				comps = chat->components;
+			}
+			serv_join_chat(gc, comps);
+			if (chat == NULL && comps != NULL)
+				g_hash_table_destroy(comps);
+		}
 	}
 }
 
@@ -662,7 +683,7 @@ finch_create_conversation(PurpleConversation *conv)
 	gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(ggc->tv), ggc->entry);
 	gnt_text_view_attach_pager_widget(GNT_TEXT_VIEW(ggc->tv), ggc->entry);
 
-	g_signal_connect_after(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(entry_key_pressed), ggc);
+	g_signal_connect_after(G_OBJECT(ggc->entry), "activate", G_CALLBACK(entry_key_pressed), ggc);
 	g_signal_connect(G_OBJECT(ggc->entry), "completion", G_CALLBACK(completion_cb), NULL);
 	g_signal_connect(G_OBJECT(ggc->window), "destroy", G_CALLBACK(closing_window), ggc);
 
@@ -738,7 +759,8 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 					_("<AUTO-REPLY> "), GNT_TEXT_FLAG_BOLD);
 
-	if (who && *who && (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)))
+	if (who && *who && (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)) &&
+			!(flags & PURPLE_MESSAGE_NOTIFY))
 	{
 		char * name = NULL;
 
@@ -1011,7 +1033,7 @@ debug_command_cb(PurpleConversation *conv,
 	PurpleCmdStatus status;
 
 	if (!g_ascii_strcasecmp(args[0], "version")) {
-		tmp = g_strdup_printf("me is using Finch v%s.", VERSION);
+		tmp = g_strdup_printf("me is using Finch v%s.", DISPLAY_VERSION);
 		markup = g_markup_escape_text(tmp, -1);
 
 		status = purple_cmd_do_command(conv, tmp, markup, error);

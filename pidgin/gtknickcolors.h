@@ -25,7 +25,7 @@
 #ifndef _PIDGINNICKCOLORS_H_
 #define _PIDGINNICKCOLORS_H_
 
-static GdkColor nick_seed_colors[] = {
+static const GdkColor nick_seed_colors[] = {
 	{0, 64764, 59881, 20303},       /* Butter #1 */
 	{0, 60909, 54484, 0},           /* Butter #2 */
 	{0, 50372, 41120, 0},           /* Butter #3 */

@@ -115,7 +115,7 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 {
 	sw_discovery_resolve_id rid;
 	PurpleAccount *account = (PurpleAccount*)extra;
-	PurpleBuddy *gb = NULL;
+	PurpleBuddy *pb = NULL;
 
 	switch (status)
 	{
@@ -148,9 +148,11 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 			break;
 		case SW_DISCOVERY_BROWSE_REMOVE_SERVICE:
 			purple_debug_info("bonjour", "_browser_reply --> Remove service\n");
-			gb = purple_find_buddy(account, name);
-			if (gb != NULL)
-				purple_blist_remove_buddy(gb);
+			pb = purple_find_buddy(account, name);
+			if (pb != NULL) {
+				purple_account_remove_buddy(account, pb, NULL);
+				purple_blist_remove_buddy(pb);
+			}
 			break;
 		case SW_DISCOVERY_BROWSE_RESOLVED:
 			purple_debug_info("bonjour", "_browse_reply --> Resolved\n");

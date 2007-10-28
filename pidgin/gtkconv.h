@@ -1,6 +1,7 @@
 /**
  * @file gtkconv.h GTK+ Conversation API
  * @ingroup pidgin
+ * @see @ref gtkconv-signals
  */
 
 /* pidgin
@@ -142,7 +143,12 @@ struct _PidginConversation
 	GtkWidget *tab_label;
 	GtkWidget *menu_icon;
 	GtkWidget *menu_label;
+#ifndef PIDGIN_DISABLE_DEPRECATED
+	/** @deprecated */
 	GtkSizeGroup *sg;
+#else
+	gpointer depr1;
+#endif
 
 	GtkWidget *lower_hbox;
 
@@ -252,6 +258,8 @@ void pidgin_conv_present_conversation(PurpleConversation *conv);
  * @param conv  The conversation.
  *
  * @return  Wheter Pidgin UI was successfully attached.
+ *
+ * @since 2.2.0
  */
 gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv);
 

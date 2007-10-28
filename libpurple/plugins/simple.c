@@ -35,7 +35,7 @@ static PurplePluginInfo info =
 
 	SIMPLE_PLUGIN_ID,                                 /**< id             */
 	N_("Simple Plugin"),                              /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Tests to see that most things are working."),
 	                                                  /**  description    */

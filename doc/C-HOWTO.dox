@@ -269,3 +269,4 @@ static PurplePluginInfo info = {
   you may have guessed, this also gets read when libpurple is probing your
   plugin.  If this is missing, the plugin will not load.
  */
+// vim: syntax=c.doxygen

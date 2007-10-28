@@ -98,113 +98,123 @@ struct _GntFile
 G_BEGIN_DECLS
 
 /**
- * 
- *
- * @return
+ * @return GType for GntFileSel.
  */
 GType gnt_file_sel_get_gtype(void);
 
 /**
- * 
+ * Create a new file selector.
  *
- * @return
+ * @return  The newly created file selector.
  */
 GntWidget * gnt_file_sel_new(void);
 
 /**
- * 
- * @param sel
- * @param path
+ * Set the current location of the file selector.
  *
- * @return
+ * @param sel   The file selector.
+ * @param path  The current path of the selector.
+ *
+ * @return @c TRUE if the current location was successfully changed, @c FALSE otherwise.
  */
 gboolean gnt_file_sel_set_current_location(GntFileSel *sel, const char *path);
 
 /**
- * 
- * @param sel
- * @param dirs
+ * Set wheter to only allow selecting directories.
+ *
+ * @param sel    The file selector.
+ * @param dirs   @c TRUE if only directories can be selected, @c FALSE if files
+ *               can also be selected.
  */
 void gnt_file_sel_set_dirs_only(GntFileSel *sel, gboolean dirs);
 
 /**
- * 
- * @param sel
+ * Check whether the file selector allows only selecting directories.
  *
- * @return
+ * @param sel  The file selector.
+ *
+ * @return  @c TRUE if only directories can be selected.
  */
 gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel);
 
 /**
- * 
- * @param sel
- * @param must
+ * Set whether a selected file must exist.
+ *
+ * @param sel   The file selector.
+ * @param must  @c TRUE if the selected file must exist.
  */
 void gnt_file_sel_set_must_exist(GntFileSel *sel, gboolean must);
 
 /**
- * 
- * @param sel
+ * Check whether the selector allows selecting non-existent files.
  *
- * @return
+ * @param sel  The file selector.
+ *
+ * @return  @c TRUE if the selected file must exist, @c FALSE if a non-existent
+ *          file can be selected.
  */
 gboolean gnt_file_sel_get_must_exist(GntFileSel *sel);
 
 /**
- * 
- * @param sel
+ * Get the selected file in the selector.
  *
- * @return
+ * @param sel  The file selector.
+ *
+ * @return The path of the selected file. The caller should g_free the returned
+ *         string.
  */
 char * gnt_file_sel_get_selected_file(GntFileSel *sel);
 
-  /* The returned value should be free'd */
-
 /**
- * 
- * @param sel
+ * Get the list of selected files in the selector.
  *
- * @return
+ * @param sel  The file selector.
+ *
+ * @return  A list of paths for the selected files. The caller must g_free the
+ *          contents of the list, and g_list_free the list.
  */
 GList * gnt_file_sel_get_selected_multi_files(GntFileSel *sel);
 
 /**
- * 
- * @param sel
- * @param set
+ * Allow selecting multiple files.
+ *
+ * @param sel  The file selector.
+ * @param set  @c TRUE if selecting multiple files should be allowed.
  */
 void gnt_file_sel_set_multi_select(GntFileSel *sel, gboolean set);
 
 /**
- * 
- * @param sel
- * @param suggest
+ * Set the suggested file to have selected at startup.
+ *
+ * @param sel      The file selector.
+ * @param suggest  The suggested filename.
  */
 void gnt_file_sel_set_suggested_filename(GntFileSel *sel, const char *suggest);
 
 /**
- * 
- * @param sel
- * @param path
- * @param files
- * @param error)
+ * Set custom functions to read the names of files.
+ *
+ * @param sel      The file selector.
+ * @param read_fn  The custom read function.
  */
 void gnt_file_sel_set_read_fn(GntFileSel *sel, gboolean (*read_fn)(const char *path, GList **files, GError **error));
 
 /**
- * 
- * @param name
- * @param size
+ * Create a new GntFile.
  *
- * @return
+ * @param name   The name of the file.
+ * @param size   The size of the file.
+ *
+ * @return  The newly created GntFile.
  */
 GntFile* gnt_file_new(const char *name, unsigned long size);
 
 /**
- * 
- * @param name
+ * Create a new GntFile for a directory.
  *
- * @return
+ * @param name  The name of the directory.
+ *
+ * @return  The newly created GntFile.
  */
 GntFile* gnt_file_new_dir(const char *name);
 

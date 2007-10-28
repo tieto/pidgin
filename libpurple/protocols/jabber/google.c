@@ -516,3 +516,22 @@ char *jabber_google_format_to_html(const char *text)
 	}
 	return g_string_free(str, FALSE);
 }
+
+void jabber_google_presence_incoming(JabberStream *js, const char *user, JabberBuddyResource *jbr)
+{
+	if (!js->googletalk)
+		return;
+	if (jbr->status && !strncmp(jbr->status, "♫ ", strlen("♫ "))) {
+		purple_prpl_got_user_status(js->gc->account, user, "tune",
+					    PURPLE_TUNE_TITLE, jbr->status + strlen("♫ "), NULL);
+		jbr->status = NULL;
+	} else {
+		purple_prpl_got_user_status_deactive(js->gc->account, user, "tune");
+	}
+}
+
+char *jabber_google_presence_outgoing(PurpleStatus *tune)
+{
+	char *ret = g_strdup_printf("♫ %s", purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE));
+	return ret;
+}

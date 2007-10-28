@@ -377,7 +377,8 @@
 /* #define USE_SM 1 */
 
 /* Version number of package */
-/* #define VERSION "2.0.0dev" */
+#define VERSION "@VERSION@"
+#define DISPLAY_VERSION "@DISPLAY_VERSION@"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */
@@ -408,4 +409,7 @@
  * Following are added for Win32 version of Pidgin
  */
 #define HAVE_VSNPRINTF 1
+
+#define HAVE_FILENO 1
+
 

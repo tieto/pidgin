@@ -437,6 +437,7 @@ static void buddy_signed_off(PurpleBuddy *buddy) {
 static void buddy_idle(PurpleBuddy *buddy, gboolean old_idle, gboolean idle) {
 }
 
+#if 0
 static void blist_node_extended_menu(PurpleBlistNode *node, GList **menu) {
 	PurpleBuddy *buddy;
 	PurpleMenuAction *menu_action;
@@ -451,6 +452,7 @@ static void blist_node_extended_menu(PurpleBlistNode *node, GList **menu) {
 			PURPLE_CALLBACK(display_statistics_action_cb), NULL, NULL);
 	*menu = g_list_append(*menu, menu_action);
 }
+#endif
 
 /* drawing-tooltip */
 static void drawing_tooltip(PurpleBlistNode *node, GString *text, gboolean full) {
@@ -934,7 +936,7 @@ static PurplePluginInfo info = {
 	PURPLE_PRIORITY_DEFAULT,							/**< priority		*/
 	CAP_PLUGIN_ID,									/**< id			*/
 	N_("Contact Availability Prediction"),				/**< name		*/
-	VERSION,										/**< version		*/
+	DISPLAY_VERSION,									/**< version		*/
 	N_("Contact Availability Prediction plugin."),	/**  summary		*/
 	N_("The contact availability plugin (cap) is used to display statistical information about buddies in a users contact list."),
 	/**  description	*/

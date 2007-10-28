@@ -1,6 +1,7 @@
 /**
  * @file log.h Logging API
  * @ingroup core
+ * @see @ref log-signals
  */
 
 /* purple
@@ -22,8 +23,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
- *
- * @see @ref log-signals
  */
 #ifndef _PURPLE_LOG_H_
 #define _PURPLE_LOG_H_

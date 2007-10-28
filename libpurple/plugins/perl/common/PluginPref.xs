@@ -93,6 +93,10 @@ gboolean
 purple_plugin_pref_get_masked(pref)
 	Purple::PluginPref pref
 
+Purple::String::Format::Type
+purple_plugin_pref_get_format_type(pref)
+	Purple::PluginPref pref
+
 unsigned int
 purple_plugin_pref_get_max_length(pref)
 	Purple::PluginPref pref
@@ -143,6 +147,11 @@ void
 purple_plugin_pref_set_masked(pref, mask)
 	Purple::PluginPref pref
 	gboolean mask
+
+void
+purple_plugin_pref_set_format_type(pref, format)
+	Purple::PluginPref pref
+	Purple::String::Format::Type format
 
 void
 purple_plugin_pref_set_max_length(pref, max_length)

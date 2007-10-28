@@ -5,15 +5,18 @@
 # files for better handling of cross directory dependencies
 #
 
-$(PIDGIN_CONFIG_H): $(PIDGIN_TREE_TOP)/config.h.mingw
-	cp $(PIDGIN_TREE_TOP)/config.h.mingw $(PIDGIN_CONFIG_H)
+$(PIDGIN_CONFIG_H): $(PIDGIN_CONFIG_H).mingw $(PIDGIN_TREE_TOP)/configure.ac
+	sed -e 's/@VERSION@/$(PIDGIN_VERSION)/; s/@DISPLAY_VERSION@/$(DISPLAY_VERSION)/' $@.mingw > $@
+
+$(PURPLE_PURPLE_H): $(PURPLE_PURPLE_H).in
+	sed -e 's/@PLUGINS_DEFINE@/#define PURPLE_PLUGINS 1/' $@.in > $@
 
 $(PURPLE_VERSION_H): $(PURPLE_VERSION_H).in $(PIDGIN_TREE_TOP)/configure.ac
-	cp $(PURPLE_VERSION_H).in $(PURPLE_VERSION_H)
+	cp $@.in $@
 	awk 'BEGIN {FS="[\\(\\)\\[\\]]"} \
-	  /^m4_define..purple_major_version/ {system("sed -i -e s/@PURPLE_MAJOR_VERSION@/"$$5"/ $(PURPLE_VERSION_H)");} \
-	  /^m4_define..purple_minor_version/ {system("sed -i -e s/@PURPLE_MINOR_VERSION@/"$$5"/ $(PURPLE_VERSION_H)");} \
-	  /^m4_define..purple_micro_version/ {system("sed -i -e s/@PURPLE_MICRO_VERSION@/"$$5"/ $(PURPLE_VERSION_H)"); exit}' $(PIDGIN_TREE_TOP)/configure.ac
+	  /^m4_define..purple_major_version/ {system("sed -i -e s/@PURPLE_MAJOR_VERSION@/"$$5"/ $@");} \
+	  /^m4_define..purple_minor_version/ {system("sed -i -e s/@PURPLE_MINOR_VERSION@/"$$5"/ $@");} \
+	  /^m4_define..purple_micro_version/ {system("sed -i -e s/@PURPLE_MICRO_VERSION@/"$$5"/ $@"); exit}' $(PIDGIN_TREE_TOP)/configure.ac
 
 $(PURPLE_DLL) $(PURPLE_DLL).a: $(PURPLE_VERSION_H)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) libpurple.dll
@@ -29,9 +32,6 @@ $(PIDGIN_IDLETRACK_DLL) $(PIDGIN_IDLETRACK_DLL).a:
 
 $(PIDGIN_EXE):
 	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) pidgin.exe
-
-$(PIDGIN_PORTABLE_EXE):
-	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) pidgin-portable.exe
 
 # Installation Directories
 $(PIDGIN_INSTALL_DIR):

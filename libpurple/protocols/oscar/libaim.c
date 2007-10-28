@@ -113,7 +113,7 @@ static PurplePluginInfo info =
 
 	"prpl-aim",                                       /**< id             */
 	"AIM",                                            /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("AIM Protocol Plugin"),
 	                                                  /**  description    */

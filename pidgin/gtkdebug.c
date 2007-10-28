@@ -68,7 +68,7 @@ typedef struct
 	GtkWidget *filterlevel;
 } DebugWindow;
 
-static char debug_fg_colors[][8] = {
+static const char debug_fg_colors[][8] = {
 	"#000000",    /**< All debug levels. */
 	"#666666",    /**< Misc.             */
 	"#000000",    /**< Information.      */

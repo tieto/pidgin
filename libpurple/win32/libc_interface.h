@@ -121,6 +121,8 @@ wpurple_g_access( filename, mode )
 #define gethostname( name, size ) \
 wpurple_gethostname( name, size )
 
+#define fsync(fd) _commit(fd)
+
 /* sys/time.h */
 #define gettimeofday( timeval, timezone ) \
 wpurple_gettimeofday( timeval, timezone )

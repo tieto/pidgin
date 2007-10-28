@@ -48,6 +48,7 @@
 typedef struct _GntEntry			GntEntry;
 typedef struct _GntEntryPriv		GntEntryPriv;
 typedef struct _GntEntryClass	GntEntryClass;
+typedef struct _GntEntryKillRing    GntEntryKillRing;
 
 typedef enum
 {
@@ -71,9 +72,9 @@ struct _GntEntry
 	char *scroll;   /* Current scrolling position */
 	char *cursor;   /* Cursor location */
 	                /* 0 <= cursor - scroll < widget-width */
-	
+
 	size_t buffer;  /* Size of the buffer */
-	
+
 	int max;        /* 0 means infinite */
 	gboolean masked;
 
@@ -84,6 +85,7 @@ struct _GntEntry
 	gboolean word;      /* Are the suggestions for only a word, or for the whole thing? */
 	gboolean always;    /* Should the list of suggestions show at all times, or only on tab-press? */
 	GntWidget *ddown;   /* The dropdown with the suggested list */
+	GntEntryKillRing *killring; /**< @since 2.3.0 */
 };
 
 struct _GntEntryClass

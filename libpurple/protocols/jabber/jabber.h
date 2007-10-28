@@ -66,6 +66,9 @@ typedef struct _JabberStream JabberStream;
 
 #define CAPS0115_NODE "http://pidgin.im/caps"
 
+/* Index into attention_types list */
+#define JABBER_BUZZ 0
+
 typedef enum {
 	JABBER_STREAM_OFFLINE,
 	JABBER_STREAM_CONNECTING,
@@ -114,7 +117,7 @@ struct _JabberStream
 	GHashTable *disco_callbacks;
 	int next_id;
 
-
+	GList *bs_proxies;
 	GList *oob_file_transfers;
 	GList *file_transfers;
 
@@ -143,7 +146,7 @@ struct _JabberStream
 	char *gmail_last_time;
 	char *gmail_last_tid;
 
-    char *serverFQDN;
+	char *serverFQDN;
 
 	/* OK, this stays at the end of the struct, so plugins can depend
 	 * on the rest of the stuff being in the right place
@@ -199,6 +202,13 @@ typedef struct _JabberFeature
 	JabberFeatureEnabled *is_enabled;
 } JabberFeature;
 
+typedef struct _JabberBytestreamsStreamhost {
+	char *jid;
+	char *host;
+	int port;
+	char *zeroconf;
+} JabberBytestreamsStreamhost;
+
 /* what kind of additional features as returned from disco#info are supported? */
 extern GList *jabber_features;
 
@@ -213,7 +223,14 @@ void jabber_register_start(JabberStream *js);
 
 char *jabber_get_next_id(JabberStream *js);
 
-char *jabber_parse_error(JabberStream *js, xmlnode *packet);
+/** Parse an error into a human-readable string and optionally a disconnect
+ *  reason.
+ *  @param js     the stream on which the error occurred.
+ *  @param packet the error packet
+ *  @param reason where to store the disconnection reason, or @c NULL if you
+ *                don't care or you don't intend to close the connection.
+ */
+char *jabber_parse_error(JabberStream *js, xmlnode *packet, PurpleConnectionError *reason);
 
 void jabber_add_feature(const gchar *shortname, const gchar *namespace, JabberFeatureEnabled cb); /* cb may be NULL */
 void jabber_remove_feature(const gchar *shortname);
@@ -231,6 +248,8 @@ void jabber_keepalive(PurpleConnection *gc);
 void jabber_register_gateway(JabberStream *js, const char *gateway);
 void jabber_register_account(PurpleAccount *account);
 void jabber_unregister_account(PurpleAccount *account, PurpleAccountUnregistrationCb cb, void *user_data);
+gboolean jabber_send_attention(PurpleConnection *gc, const char *username, guint code);
+GList *jabber_attention_types(PurpleAccount *account);
 void jabber_convo_closed(PurpleConnection *gc, const char *who);
 PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name);
 gboolean jabber_offline_message(const PurpleBuddy *buddy);

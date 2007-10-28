@@ -383,6 +383,8 @@ void gnt_tree_set_col_width(GntTree *tree, int col, int width);
  *
  * @see gnt_tree_set_column_titles
  * @see gnt_tree_set_show_title
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_tree_set_column_title(GntTree *tree, int index, const char *title);
 
@@ -486,6 +488,8 @@ void gnt_tree_set_column_visible(GntTree *tree, int col, gboolean vis);
  *
  * @see gnt_tree_set_col_width
  * @see gnt_tree_set_column_width_ratio
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res);
 
@@ -505,6 +509,8 @@ void gnt_tree_set_column_is_binary(GntTree *tree, int col, gboolean bin);
  * @param tree  The tree
  * @param col   The index of the column
  * @param right @c TRUE if the text in the column should be right aligned
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_tree_set_column_is_right_aligned(GntTree *tree, int col, gboolean right);
 
@@ -519,6 +525,8 @@ void gnt_tree_set_column_is_right_aligned(GntTree *tree, int col, gboolean right
  *
  * @see gnt_tree_set_col_width
  * @see gnt_tree_set_column_resizable
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_tree_set_column_width_ratio(GntTree *tree, int cols[]);
 
@@ -527,6 +535,8 @@ void gnt_tree_set_column_width_ratio(GntTree *tree, int cols[]);
  *
  * @param tree   The tree
  * @param col    The index of the column
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_tree_set_search_column(GntTree *tree, int col);
 
@@ -535,6 +545,8 @@ void gnt_tree_set_search_column(GntTree *tree, int col);
  *
  * @param tree   The tree
  * @return  @c TRUE if the user is searching, @c FALSE otherwise.
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 gboolean gnt_tree_is_searching(GntTree *tree);
 
@@ -547,6 +559,8 @@ gboolean gnt_tree_is_searching(GntTree *tree);
  *              string and the content of row in the search column.
  *              If the function returns @c TRUE, the row is dislayed,
  *              otherwise it's not.
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_tree_set_search_function(GntTree *tree,
 		gboolean (*func)(GntTree *tree, gpointer key, const char *search, const char *current));

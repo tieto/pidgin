@@ -375,7 +375,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,
 	"gntgf",
 	N_("GntGf"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Toaster plugin"),
 	N_("Toaster plugin"),
 	"Sadrul H Chowdhury <sadrul@users.sourceforge.net>",

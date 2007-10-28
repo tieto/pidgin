@@ -109,9 +109,15 @@ static void do_adhoc_action_cb(JabberStream *js, xmlnode *result, const char *ac
 	xmlnode_set_namespace(command,"http://jabber.org/protocol/commands");
 	xmlnode_set_attrib(command,"sessionid",actionInfo->sessionid);
 	xmlnode_set_attrib(command,"node",actionInfo->node);
-	if(actionhandle)
-		xmlnode_set_attrib(command,"action",actionhandle);
-	xmlnode_insert_child(command,result);
+	
+	/* cancel is handled differently on ad-hoc commands than regular forms */
+	if(!strcmp(xmlnode_get_namespace(result),"jabber:x:data") && !strcmp(xmlnode_get_attrib(result, "type"),"cancel")) {
+		xmlnode_set_attrib(command,"action","cancel");
+	} else {
+		if(actionhandle)
+			xmlnode_set_attrib(command,"action",actionhandle);
+		xmlnode_insert_child(command,result);
+	}
 	
 	for(action = actionInfo->actionslist; action; action = g_list_next(action)) {
 		char *handle = action->data;
@@ -132,7 +138,7 @@ static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	const char *type = xmlnode_get_attrib(packet,"type");
 	
 	if(type && !strcmp(type,"error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 		if(!msg)
 			msg = g_strdup(_("Unknown Error"));
 		

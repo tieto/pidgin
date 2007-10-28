@@ -1,3 +1,18 @@
+pidgin (2.3.0-1) unstable; urgency=low
+
+  * New upstream release
+    - Fixes Jabber crash in non-UTF-8 locale (Closes: #436236)
+    - Fixes problem entering password manually into Jabber (Closes: #446365)
+  * 21_zephyr-external.patch
+    - Apply patch from Klee Dienes to fix the Zephyr protocol when
+      compiled against the system library, as we do (Closes: #451165)
+  * Build the Contact Availability Prediction plugin, and make sqlite optional
+    (Closes: #448096)
+  * Remove 14_xulrunner_nss patch and bump build-depends for libnss3-dev
+    (Closes: #450402)
+
+ -- Ari Pollak <ari@debian.org>  Sun, 28 Oct 2007 14:47:48 -0400
+
 pidgin (2.2.2-1) unstable; urgency=high
 
   * New upstream version

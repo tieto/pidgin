@@ -158,7 +158,7 @@ static PurplePluginInfo info =
 
 	GTK_SIGNAL_TEST_PLUGIN_ID,                        /**< id             */
 	N_("GTK Signals Test"),                             /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Test to see that all ui signals are working properly."),
 	                                                  /**  description    */

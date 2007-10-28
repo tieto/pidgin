@@ -269,6 +269,13 @@ int main()
 	PurpleAccount *account;
 	PurpleSavedStatus *status;
 
+	/* libpurple's built-in DNS resolution forks processes to perform
+	 * blocking lookups without blocking the main process.  It does not
+	 * handle SIGCHLD itself, so if the UI does not you quickly get an army
+	 * of zombie subprocesses marching around.
+	 */
+	signal(SIGCHLD, SIG_IGN);
+
 	init_libpurple();
 
 	printf("libpurple initialized.\n");

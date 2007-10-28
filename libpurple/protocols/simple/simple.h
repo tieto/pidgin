@@ -43,6 +43,9 @@
 #define SIMPLE_REGISTER_RETRY 2
 #define SIMPLE_REGISTER_COMPLETE 3
 
+#define PUBLISH_EXPIRATION 600
+#define SUBSCRIBE_EXPIRATION 1200
+
 struct sip_dialog {
 	gchar *ourtag;
 	gchar *theirtag;
@@ -59,6 +62,7 @@ struct simple_watcher {
 struct simple_buddy {
 	gchar *name;
 	time_t resubscribe;
+	struct sip_dialog *dialog;
 };
 
 struct sip_auth {
@@ -127,7 +131,7 @@ struct transaction {
 	int retries;
 	int transport; /* 0 = tcp, 1 = udp */
 	int fd;
-	gchar *cseq;
+	const gchar *cseq;
 	struct sipmsg *msg;
 	TransCallback callback;
 };

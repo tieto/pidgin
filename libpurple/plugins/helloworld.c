@@ -114,8 +114,8 @@ static PurplePluginInfo info = {
 
 	"core-hello_world",
 	"Hello World!",
-	VERSION, /* This constant is defined in version.h, but you shouldn't use it for
-		    your own plugins.  We use it here because it's our plugin. */
+	DISPLAY_VERSION, /* This constant is defined in config.h, but you shouldn't use it for
+		    your own plugins.  We use it here because it's our plugin. And we're lazy. */
 
 	"Hello World Plugin",
 	"Hello World Plugin",

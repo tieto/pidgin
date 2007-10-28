@@ -158,6 +158,7 @@ Purple::StatusType			T_PurpleObj
 const Purple::StatusType			T_PurpleObj
 
 Purple::StoredImage			T_PurpleObj
+Purple::String::Format::Type		T_IV
 Purple::Stringref				T_PurpleObj
 Purple::Util::FetchUrlData	T_PTR
 Purple::Util::InfoFieldFormatCallback	T_PTR

@@ -85,7 +85,7 @@ static PurplePluginInfo info =
 
 	IPC_TEST_CLIENT_PLUGIN_ID,                        /**< id             */
 	N_("IPC Test Client"),                            /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Test plugin IPC support, as a client."),
 	                                                  /**  description    */

@@ -525,7 +525,7 @@ void wpurple_init(void) {
 	char *newenv;
 
 	purple_debug_info("wpurple", "wpurple_init start\n");
-	purple_debug_info("wpurple", "libpurple version: " VERSION "\n");
+	purple_debug_info("wpurple", "libpurple version: " DISPLAY_VERSION "\n");
 
 
 	purple_debug_info("wpurple", "Glib:%u.%u.%u\n",
@@ -573,6 +573,22 @@ void wpurple_cleanup(void) {
 	app_data_dir = NULL;
 
 	libpurpledll_hInstance = NULL;
+}
+
+long
+wpurple_get_tz_offset() {
+	TIME_ZONE_INFORMATION tzi;
+	DWORD ret;
+	long off = -1;
+
+	if ((ret = GetTimeZoneInformation(&tzi)) != TIME_ZONE_ID_INVALID)
+	{
+		off = -(tzi.Bias * 60);
+		if (ret == TIME_ZONE_ID_DAYLIGHT)
+			off -= tzi.DaylightBias * 60;
+	}
+
+	return off;
 }
 
 /* DLL initializer */

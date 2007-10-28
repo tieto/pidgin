@@ -113,10 +113,10 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_prpl_send_raw,			/* send_raw */
 	jabber_roomlist_room_serialize, /* roomlist_room_serialize */
 	jabber_unregister_account,		/* unregister_user */
+	jabber_send_attention,			/* send_attention */
+	jabber_attention_types,			/* attention_types */
 
 	/* padding */
-	NULL,
-	NULL,
 	NULL
 };
 
@@ -165,7 +165,7 @@ static PurplePluginInfo info =
 
 	"prpl-jabber",                                    /**< id             */
 	"XMPP",                                           /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("XMPP Protocol Plugin"),
 	                                                  /**  description    */
@@ -193,6 +193,9 @@ static void
 init_plugin(PurplePlugin *plugin)
 {
 #ifdef HAVE_CYRUS_SASL
+#ifdef _WIN32
+	gchar *sasldir;
+#endif
 	int ret;
 #endif
 	PurpleAccountUserSplit *split;
@@ -230,13 +233,26 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 	
-	
+#if 0 /* TODO: Enable this when we're string unfrozen */
+	option = purple_account_option_string_new(_("File transfer proxies"),
+						  "ft_proxies",
+						/* TODO: Is this an acceptable default? */
+						  "proxy.jabber.org:7777");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+						  option);
+#endif
+
 	jabber_init_plugin(plugin);
 	
 	purple_prefs_remove("/plugins/prpl/jabber");
 	
 	/* XXX - If any other plugin wants SASL this won't be good ... */
 #ifdef HAVE_CYRUS_SASL
+#ifdef _WIN32
+	sasldir = g_build_filename(wpurple_install_dir(), "sasl2", NULL);
+	sasl_set_path(SASL_PATH_TYPE_PLUGIN, sasldir);
+	g_free(sasldir);
+#endif
 	if ((ret = sasl_client_init(NULL)) != SASL_OK) {
 		purple_debug_error("xmpp", "Error (%d) initializing SASL.\n", ret);
 	}

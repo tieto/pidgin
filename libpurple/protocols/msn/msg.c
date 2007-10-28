@@ -60,17 +60,10 @@ msn_message_destroy(MsnMessage *msg)
 	purple_debug_info("msn", "message destroy (%p)\n", msg);
 #endif
 
-	if (msg->remote_user != NULL)
-		g_free(msg->remote_user);
-
-	if (msg->body != NULL)
-		g_free(msg->body);
-
-	if (msg->content_type != NULL)
-		g_free(msg->content_type);
-
-	if (msg->charset != NULL)
-		g_free(msg->charset);
+	g_free(msg->remote_user);
+	g_free(msg->body);
+	g_free(msg->content_type);
+	g_free(msg->charset);
 
 	g_hash_table_destroy(msg->attr_table);
 	g_list_free(msg->attr_list);
@@ -126,7 +119,7 @@ msn_message_new_plain(const char *message)
 	msn_message_set_charset(msg, "UTF-8");
 	msn_message_set_flag(msg, 'A');
 	msn_message_set_attr(msg, "X-MMS-IM-Format",
-						 "FN=MS%20Sans%20Serif; EF=; CO=0; PF=0");
+						 "FN=MS%20Sans%20Serif; EF=; CO=0; CS=86;PF=0");
 
 	message_cr = purple_str_add_cr(message);
 	msn_message_set_bin_data(msg, message_cr, strlen(message_cr));
@@ -206,7 +199,8 @@ msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 
 void
 msn_message_parse_payload(MsnMessage *msg,
-						  const char *payload, size_t payload_len)
+						  const char *payload, size_t payload_len,
+						  const char *line_dem,const char *body_dem)
 {
 	char *tmp_base, *tmp;
 	const char *content_type;
@@ -214,12 +208,11 @@ msn_message_parse_payload(MsnMessage *msg,
 	char **elems, **cur, **tokens;
 
 	g_return_if_fail(payload != NULL);
-
 	tmp_base = tmp = g_malloc0(payload_len + 1);
 	memcpy(tmp_base, payload, payload_len);
 
 	/* Parse the attributes. */
-	end = strstr(tmp, "\r\n\r\n");
+	end = strstr(tmp, body_dem);
 	/* TODO? some clients use \r delimiters instead of \r\n, the official client
 	 * doesn't send such messages, but does handle receiving them. We'll just
 	 * avoid crashing for now */
@@ -229,7 +222,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	}
 	*end = '\0';
 
-	elems = g_strsplit(tmp, "\r\n", 0);
+	elems = g_strsplit(tmp, line_dem, 0);
 
 	for (cur = elems; *cur != NULL; cur++)
 	{
@@ -240,6 +233,7 @@ msn_message_parse_payload(MsnMessage *msg,
 		key = tokens[0];
 		value = tokens[1];
 
+		/*if not MIME content ,then return*/
 		if (!strcmp(key, "MIME-Version"))
 		{
 			g_strfreev(tokens);
@@ -274,7 +268,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	g_strfreev(elems);
 
 	/* Proceed to the end of the "\r\n\r\n" */
-	tmp = end + 4;
+	tmp = end + strlen(body_dem);
 
 	/* Now we *should* be at the body. */
 	content_type = msn_message_get_content_type(msg);
@@ -312,6 +306,7 @@ msn_message_parse_payload(MsnMessage *msg,
 		/* Import the body. */
 		if (body_len > 0) {
 			msg->body_len = body_len;
+			g_free(msg->body);
 			msg->body = g_malloc0(msg->body_len + 1);
 			memcpy(msg->body, tmp, msg->body_len);
 			tmp += body_len;
@@ -328,6 +323,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	{
 		if (payload_len - (tmp - tmp_base) > 0) {
 			msg->body_len = payload_len - (tmp - tmp_base);
+			g_free(msg->body);
 			msg->body = g_malloc0(msg->body_len + 1);
 			memcpy(msg->body, tmp, msg->body_len);
 		}
@@ -480,6 +476,7 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 		{
 			memcpy(n, body, body_len);
 			n += body_len;
+			*n = '\0';
 		}
 	}
 
@@ -552,10 +549,8 @@ msn_message_set_content_type(MsnMessage *msg, const char *type)
 {
 	g_return_if_fail(msg != NULL);
 
-	if (msg->content_type != NULL)
-		g_free(msg->content_type);
-
-	msg->content_type = (type != NULL) ? g_strdup(type) : NULL;
+	g_free(msg->content_type);
+	msg->content_type = g_strdup(type);
 }
 
 const char *
@@ -571,10 +566,8 @@ msn_message_set_charset(MsnMessage *msg, const char *charset)
 {
 	g_return_if_fail(msg != NULL);
 
-	if (msg->charset != NULL)
-		g_free(msg->charset);
-
-	msg->charset = (charset != NULL) ? g_strdup(charset) : NULL;
+	g_free(msg->charset);
+	msg->charset = g_strdup(charset);
 }
 
 const char *
@@ -662,10 +655,11 @@ msn_message_get_hashtable_from_body(const MsnMessage *msg)
 
 		tokens = g_strsplit(*cur, ": ", 2);
 
-		if (tokens[0] != NULL && tokens[1] != NULL)
+		if (tokens[0] != NULL && tokens[1] != NULL) {
 			g_hash_table_insert(table, tokens[0], tokens[1]);
-
-		g_free(tokens);
+			g_free(tokens);
+		} else
+			g_strfreev(tokens);
 	}
 
 	g_strfreev(elems);

@@ -15,7 +15,7 @@ LDFLAGS = -Wl,--as-needed
 
 DEB_CONFIGURE_EXTRA_FLAGS := --enable-perl --with-zephyr=/usr --enable-dbus --enable-gnutls=no --enable-nss=yes --enable-cyrus-sasl
 DEB_DH_MAKESHLIBS_ARGS_pidgin := -V -X/usr/lib/pidgin
-DEB_DH_SHLIBDEPS_ARGS_pidgin := -X/usr/lib/pidgin/gevolution.so
+DEB_DH_SHLIBDEPS_ARGS_pidgin := -X/usr/lib/pidgin/gevolution.so -X/usr/lib/pidgin/cap.so -- -dSuggests debian/pidgin/usr/lib/pidgin/cap.so -dDepends
 
 # finch package
 DEB_DH_MAKESHLIBS_ARGS_finch := -V -X/usr/lib/finch

@@ -25,6 +25,7 @@
 #include "user.h"
 #include "slp.h"
 
+/*new a user object*/
 MsnUser *
 msn_user_new(MsnUserList *userlist, const char *passport,
 			 const char *store_name)
@@ -50,6 +51,7 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	return user;
 }
 
+/*destroy a user object*/
 void
 msn_user_destroy(MsnUser *user)
 {
@@ -59,7 +61,14 @@ msn_user_destroy(MsnUser *user)
 		g_hash_table_destroy(user->clientcaps);
 
 	if (user->group_ids != NULL)
+	{
+		GList *l;
+		for (l = user->group_ids; l != NULL; l = l->next)
+		{
+			g_free(l->data);
+		}
 		g_list_free(user->group_ids);
+	}
 
 	if (user->msnobj != NULL)
 		msn_object_destroy(user->msnobj);
@@ -67,9 +76,13 @@ msn_user_destroy(MsnUser *user)
 	g_free(user->passport);
 	g_free(user->friendly_name);
 	g_free(user->store_name);
+	g_free(user->uid);
 	g_free(user->phone.home);
 	g_free(user->phone.work);
 	g_free(user->phone.mobile);
+	g_free(user->media.artist);
+	g_free(user->media.title);
+	g_free(user->media.album);
 
 	g_free(user);
 }
@@ -82,11 +95,23 @@ msn_user_update(MsnUser *user)
 	account = user->userlist->session->account;
 
 	if (user->status != NULL) {
-		if (!strcmp(user->status, "offline") && user->mobile) {
-			purple_prpl_got_user_status(account, user->passport, "offline", NULL);
+		gboolean offline = (strcmp(user->status, "offline") == 0);
+		purple_prpl_got_user_status(account, user->passport, user->status,
+				"message", user->statusline, NULL);
+
+		if (!offline && user->media.title) {
+			purple_prpl_got_user_status(account, user->passport, "tune",
+					PURPLE_TUNE_ARTIST, user->media.artist,
+					PURPLE_TUNE_ALBUM, user->media.album,
+					PURPLE_TUNE_TITLE, user->media.title,
+					NULL);
+		} else {
+			purple_prpl_got_user_status_deactive(account, user->passport, "tune");
+		}
+
+		if (!offline && user->mobile) {
 			purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
 		} else {
-			purple_prpl_got_user_status(account, user->passport, user->status, NULL);
 			purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
 		}
 	}
@@ -142,12 +167,71 @@ msn_user_set_friendly_name(MsnUser *user, const char *name)
 }
 
 void
+msn_user_set_statusline(MsnUser *user, const char *statusline)
+{
+	g_return_if_fail(user != NULL);
+
+	g_free(user->statusline);
+	user->statusline = g_strdup(statusline);
+}
+
+void
+msn_user_set_currentmedia(MsnUser *user, const CurrentMedia *media)
+{
+	g_return_if_fail(user != NULL);
+
+	g_free(user->media.title);
+	g_free(user->media.album);
+	g_free(user->media.artist);
+
+	user->media.title  = media ? g_strdup(media->title) : NULL;
+	user->media.artist = media ? g_strdup(media->artist) : NULL;
+	user->media.album  = media ? g_strdup(media->album) : NULL;
+}
+
+void
 msn_user_set_store_name(MsnUser *user, const char *name)
 {
 	g_return_if_fail(user != NULL);
 
-	g_free(user->store_name);
-	user->store_name = g_strdup(name);
+	if (name != NULL)
+	{
+		g_free(user->store_name);
+		user->store_name = g_strdup(name);
+	}
+}
+
+void
+msn_user_set_uid(MsnUser *user, const char *uid)
+{
+	g_return_if_fail(user != NULL);
+
+	g_free(user->uid);
+	user->uid = g_strdup(uid);
+}
+
+void
+msn_user_set_type(MsnUser *user, MsnUserType type)
+{
+	g_return_if_fail(user != NULL);
+
+	user->type = type;
+}
+
+void
+msn_user_set_op(MsnUser *user, int list_op)
+{
+	g_return_if_fail(user != NULL);
+
+	user->list_op |= list_op;
+}
+
+void
+msn_user_unset_op(MsnUser *user, int list_op)
+{
+	g_return_if_fail(user != NULL);
+	
+	user->list_op &= ~list_op;
 }
 
 void
@@ -218,54 +302,97 @@ msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img)
 	}
 }
 
+/*add group id to User object*/
 void
-msn_user_add_group_id(MsnUser *user, int id)
+msn_user_add_group_id(MsnUser *user, const char* id)
 {
 	MsnUserList *userlist;
 	PurpleAccount *account;
 	PurpleBuddy *b;
 	PurpleGroup *g;
 	const char *passport;
+	char *group_id;
 	const char *group_name;
 
 	g_return_if_fail(user != NULL);
-	g_return_if_fail(id >= 0);
+	g_return_if_fail(id != NULL);
 
-	user->group_ids = g_list_append(user->group_ids, GINT_TO_POINTER(id));
+	group_id = g_strdup(id);
+	user->group_ids = g_list_append(user->group_ids, group_id);
 
 	userlist = user->userlist;
 	account = userlist->session->account;
 	passport = msn_user_get_passport(user);
 
-	group_name = msn_userlist_find_group_name(userlist, id);
+	group_name = msn_userlist_find_group_name(userlist, group_id);
+
+	purple_debug_info("User","group id:%s,name:%s,user:%s\n", group_id, group_name, passport);
 
 	g = purple_find_group(group_name);
 
-	if ((id == 0) && (g == NULL))
+	if ((id == NULL) && (g == NULL))
 	{
 		g = purple_group_new(group_name);
 		purple_blist_add_group(g, NULL);
 	}
 
 	b = purple_find_buddy_in_group(account, passport, g);
-
 	if (b == NULL)
 	{
 		b = purple_buddy_new(account, passport, NULL);
-
 		purple_blist_add_buddy(b, NULL, g, NULL);
 	}
-
 	b->proto_data = user;
+	/*Update the blist Node info*/
+//	purple_blist_node_set_string(&(b->node), "", "");
+}
+
+/*check if the msn user is online*/
+gboolean
+msn_user_is_online(PurpleAccount *account, const char *name)
+{
+	PurpleBuddy *buddy;
+
+	buddy =purple_find_buddy(account,name);
+	return PURPLE_BUDDY_IS_ONLINE(buddy);
+}
+
+gboolean
+msn_user_is_yahoo(PurpleAccount *account, const char *name)
+{
+	MsnSession *session = NULL;
+	MsnUser *user;
+	PurpleConnection *gc;
+
+	gc = purple_account_get_connection(account);
+	if (gc != NULL)
+		session = gc->proto_data;
+
+	if ((session != NULL) && (session->protocol_ver == WLM_PROT_VER))
+		return FALSE;
+
+	if ((session != NULL) && (user = msn_userlist_find_user(session->userlist, name)) != NULL)
+	{
+		return (user->type == MSN_USER_TYPE_YAHOO);
+	}
+	return (strstr(name,"@yahoo.") != NULL);
 }
 
 void
-msn_user_remove_group_id(MsnUser *user, int id)
+msn_user_remove_group_id(MsnUser *user, const char *id)
 {
-	g_return_if_fail(user != NULL);
-	g_return_if_fail(id >= 0);
+	GList *l;
 
-	user->group_ids = g_list_remove(user->group_ids, GINT_TO_POINTER(id));
+	g_return_if_fail(user != NULL);
+	g_return_if_fail(id != NULL);
+
+	l = g_list_find_custom(user->group_ids, id, (GCompareFunc)strcmp);
+
+	if (l == NULL)
+		return;
+
+	g_free(l->data);
+	user->group_ids = g_list_delete_link(user->group_ids, l);
 }
 
 void
@@ -273,10 +400,8 @@ msn_user_set_home_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->phone.home != NULL)
-		g_free(user->phone.home);
-
-	user->phone.home = (number == NULL ? NULL : g_strdup(number));
+	g_free(user->phone.home);
+	user->phone.home = g_strdup(number);
 }
 
 void
@@ -284,10 +409,8 @@ msn_user_set_work_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->phone.work != NULL)
-		g_free(user->phone.work);
-
-	user->phone.work = (number == NULL ? NULL : g_strdup(number));
+	g_free(user->phone.work);
+	user->phone.work = g_strdup(number);
 }
 
 void
@@ -295,10 +418,8 @@ msn_user_set_mobile_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->phone.mobile != NULL)
-		g_free(user->phone.mobile);
-
-	user->phone.mobile = (number == NULL ? NULL : g_strdup(number));
+	g_free(user->phone.mobile);
+	user->phone.mobile = g_strdup(number);
 }
 
 void

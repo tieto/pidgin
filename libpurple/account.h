@@ -1,6 +1,7 @@
 /**
  * @file account.h Account API
  * @ingroup core
+ * @see @ref account-signals
  */
 
 /* purple
@@ -22,8 +23,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
- *
- * @see @ref account-signals
  */
 #ifndef _PURPLE_ACCOUNT_H_
 #define _PURPLE_ACCOUNT_H_
@@ -141,6 +140,8 @@ struct _PurpleAccount
 	void *ui_data;              /**< The UI can put data here.              */
 	PurpleAccountRegistrationCb registration_cb;
 	void *registration_cb_user_data;
+
+	gpointer priv;              /**< Pointer to opaque private data. */
 };
 
 #ifdef __cplusplus
@@ -893,6 +894,25 @@ void purple_account_change_password(PurpleAccount *account, const char *orig_pw,
  * @param buddy   The buddy
  */
 gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleBuddy *buddy);
+
+/**
+ * Get the error that caused the account to be disconnected, or @c NULL if the
+ * account is happily connected or disconnected without an error.
+ *
+ * @param account The account whose error should be retrieved.
+ * @constreturn   The type of error and a human-readable description of the
+ *                current error, or @c NULL if there is no current error.  This
+ *                pointer is guaranteed to remain valid until the @ref
+ *                account-error-changed signal is emitted for @a account.
+ */
+const PurpleConnectionErrorInfo *purple_account_get_current_error(PurpleAccount *account);
+
+/**
+ * Clear an account's current error state, resetting it to @c NULL.
+ *
+ * @param account The account whose error state should be cleared.
+ */
+void purple_account_clear_current_error(PurpleAccount *account);
 
 /*@}*/
 

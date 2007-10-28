@@ -6,6 +6,9 @@
 /* Define if debugging is enabled. */
 #undef DEBUG
 
+/* display version info */
+#undef DISPLAY_VERSION
+
 /* Define if mono enabled. */
 #undef ENABLE_MONO
 
@@ -60,6 +63,9 @@
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
+
+/* Define to 1 if your stdio has int fileno(FILE *). */
+#undef HAVE_FILENO
 
 /* Define to 1 if you have the getaddrinfo function. */
 #undef HAVE_GETADDRINFO
@@ -320,6 +326,9 @@
 
 /* Define to 1 if you have the <X11/SM/SMlib.h> header file. */
 #undef HAVE_X11_SM_SMLIB_H
+
+/* whether or not we have xsltproc for devhelp index */
+#undef HAVE_XSLTPROC
 
 /* Define if external libzephyr should be used. */
 #undef LIBZEPHYR_EXT

@@ -543,7 +543,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 				 PurpleMessageFlags flags, time_t mtime)
 {
 	PurpleAccount *account;
-	PurpleConversation *cnv;
+	PurpleConversation *conv;
 	char *message, *name;
 	char *angel, *buffy;
 	int plugin_return;
@@ -562,22 +562,19 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	 * We should update the conversation window buttons and menu,
 	 * if it exists.
 	 */
-	cnv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, gc->account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, gc->account);
 
 	/*
-	 * Plugin stuff. we pass a char ** but we don't want to pass what's
-	 * been given us by the prpls. So we create temp holders and pass
-	 * those instead. It's basically just to avoid segfaults.
+	 * Make copies of the message and the sender in case plugins want
+	 * to free these strings and replace them with a modifed version.
 	 */
-	/* TODO: MAX(message, BUF_LONG) is pretty ugly. */
-	buffy = g_malloc(MAX(strlen(msg) + 1, BUF_LONG));
-	strcpy(buffy, msg);
+	buffy = g_strdup(msg);
 	angel = g_strdup(who);
 
 	plugin_return = GPOINTER_TO_INT(
 		purple_signal_emit_return_1(purple_conversations_get_handle(),
 								  "receiving-im-msg", gc->account,
-								  &angel, &buffy, cnv, &flags));
+								  &angel, &buffy, conv, &flags));
 
 	if (!buffy || !angel || plugin_return) {
 		g_free(buffy);
@@ -589,21 +586,21 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	message = buffy;
 
 	purple_signal_emit(purple_conversations_get_handle(), "received-im-msg", gc->account,
-					 name, message, cnv, flags);
+					 name, message, conv, flags);
 
 	/* search for conversation again in case it was created by received-im-msg handler */
-	if (cnv == NULL)
-		cnv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, gc->account);
+	if (conv == NULL)
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, gc->account);
 
 	/*
 	 * XXX: Should we be setting this here, or relying on prpls to set it?
 	 */
 	flags |= PURPLE_MESSAGE_RECV;
 
-	if (cnv == NULL)
-		cnv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+	if (conv == NULL)
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
 
-	purple_conv_im_write(PURPLE_CONV_IM(cnv), NULL, message, flags, mtime);
+	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, message, flags, mtime);
 	g_free(message);
 
 	/*
@@ -670,7 +667,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 				{
 					serv_send_im(gc, name, away_msg, PURPLE_MESSAGE_AUTO_RESP);
 
-					purple_conv_im_write(PURPLE_CONV_IM(cnv), NULL, away_msg,
+					purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, away_msg,
 									   PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_AUTO_RESP,
 									   mtime);
 				}
@@ -892,15 +889,10 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 		return;
 
 	/*
-	 * Plugin stuff. We pass a char ** but we don't want to pass what's
-	 * been given us by the prpls. so we create temp holders and pass those
-	 * instead. It's basically just to avoid segfaults. Of course, if the
-	 * data is binary, plugins don't see it. Bitch all you want; i really
-	 * don't want you to be dealing with it.
+	 * Make copies of the message and the sender in case plugins want
+	 * to free these strings and replace them with a modifed version.
 	 */
-	/* TODO: MAX(message, BUF_LONG) is pretty ugly. */
-	buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
-	strcpy(buffy, message);
+	buffy = g_strdup(message);
 	angel = g_strdup(who);
 
 	plugin_return = GPOINTER_TO_INT(
@@ -913,6 +905,7 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 		g_free(angel);
 		return;
 	}
+
 	who = angel;
 	message = buffy;
 

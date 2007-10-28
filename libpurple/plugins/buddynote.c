@@ -88,7 +88,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,						/**< priority		*/
 	"core-plugin_pack-buddynote",					/**< id				*/
 	N_("Buddy Notes"),								/**< name			*/
-	VERSION,										/**< version		*/
+	DISPLAY_VERSION,									/**< version		*/
 	N_("Store notes on particular buddies."),		/**< summary		*/
 	N_("Adds the option to store notes for buddies "
 	   "on your buddy list."),						/**< description	*/

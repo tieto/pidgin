@@ -197,6 +197,7 @@ typedef PurplePluginUiInfo *		Purple__PluginUiInfo;
 typedef PurplePluginPref *		Purple__PluginPref;
 typedef PurplePluginPrefFrame *		Purple__PluginPref__Frame;
 typedef PurplePluginPrefType		Purple__PluginPrefType;
+typedef PurpleStringFormatType		Purple__String__Format__Type;
 
 /* pounce.h */
 typedef PurplePounce *			Purple__Pounce;

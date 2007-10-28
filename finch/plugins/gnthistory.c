@@ -25,13 +25,14 @@
 #include "conversation.h"
 #include "debug.h"
 #include "log.h"
-#include "notify.h"
+#include "request.h"
 #include "prefs.h"
 #include "signals.h"
 #include "util.h"
 #include "version.h"
 
 #include "gntplugin.h"
+#include "gntrequest.h"
 
 #define HISTORY_PLUGIN_ID "gnt-history"
 
@@ -135,10 +136,50 @@ history_prefs_check(PurplePlugin *plugin)
 	if (!purple_prefs_get_bool("/purple/logging/log_ims") &&
 	    !purple_prefs_get_bool("/purple/logging/log_chats"))
 	{
-		purple_notify_warning(plugin, NULL, _("History Plugin Requires Logging"),
-							_("Logging can be enabled from Tools -> Preferences -> Logging.\n\n"
-							  "Enabling logs for instant messages and/or chats will activate "
-							  "history for the same conversation type(s)."));
+		PurpleRequestFields *fields = purple_request_fields_new();
+		PurpleRequestFieldGroup *group;
+		PurpleRequestField *field;
+		struct {
+			const char *pref;
+			const char *label;
+		} prefs[] = {
+			{"/purple/logging/log_ims", N_("Log IMs")},
+			{"/purple/logging/log_chats", N_("Log chats")},
+			{NULL, NULL}
+		};
+		int iter;
+		GList *list = purple_log_logger_get_options();
+		const char *system = purple_prefs_get_string("/purple/logging/format");
+
+		group = purple_request_field_group_new(_("Logging"));
+
+		field = purple_request_field_list_new("/purple/logging/format", _("Log format"));
+		while (list) {
+			const char *label = _(list->data);
+			list = g_list_delete_link(list, list);
+			purple_request_field_list_add(field, label, list->data);
+			if (system && strcmp(system, list->data) == 0)
+				purple_request_field_list_add_selected(field, label);
+			list = g_list_delete_link(list, list);
+		}
+		purple_request_field_group_add_field(group, field);
+
+		for (iter = 0; prefs[iter].pref; iter++) {
+			field = purple_request_field_bool_new(prefs[iter].pref, _(prefs[iter].label),
+						purple_prefs_get_bool(prefs[iter].pref));
+			purple_request_field_group_add_field(group, field);
+		}
+
+		purple_request_fields_add_group(fields, group);
+
+		purple_request_fields(plugin, NULL, _("History Plugin Requires Logging"),
+				      _("Logging can be enabled from Tools -> Preferences -> Logging.\n\n"
+				      "Enabling logs for instant messages and/or chats will activate "
+				      "history for the same conversation type(s)."),
+				      fields,
+				      _("OK"), G_CALLBACK(finch_request_save_in_prefs),
+				      _("Cancel"), NULL,
+				      NULL, NULL, NULL, plugin);
 	}
 }
 
@@ -177,7 +218,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,
 	HISTORY_PLUGIN_ID,
 	N_("GntHistory"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Shows recently logged conversations in new conversations."),
 	N_("When a new conversation is opened this plugin will insert "
 	   "the last conversation into the current conversation."),

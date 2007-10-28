@@ -112,5 +112,36 @@ char *ggp_buddy_get_name(PurpleConnection *gc, const uin_t uin)
 }
 /* }}} */
 
+void ggp_status_fake_to_self(PurpleAccount *account)
+{
+	PurplePresence *presence;
+	PurpleStatus *status;
+	const char *status_id;
+	const char *msg;
+
+	if (! purple_find_buddy(account, purple_account_get_username(account)))
+		return;
+
+	presence = purple_account_get_presence(account);
+	status = purple_presence_get_active_status(presence);
+	msg = purple_status_get_attr_string(status, "message");
+	if (msg && !*msg)
+		msg = NULL;
+
+	status_id = purple_status_get_id(status);
+	if (strcmp(status_id, "invisible") == 0) {
+		status_id = "offline";
+	}
+
+	if (msg) {
+		if (strlen(msg) > GG_STATUS_DESCR_MAXSIZE) {
+			msg = purple_markup_slice(msg, 0, GG_STATUS_DESCR_MAXSIZE);
+		}
+	}
+	purple_prpl_got_user_status(account, purple_account_get_username(account),
+				    status_id,
+				    msg ? "message" : NULL, msg, NULL);
+}
+
 
 /* vim: set ts=8 sts=0 sw=8 noet: */

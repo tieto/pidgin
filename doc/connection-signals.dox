@@ -7,6 +7,8 @@
   @signal signed-off
  @endsignals
 
+ @see connection.h
+
  <hr>
 
  @signaldef signing-on
@@ -45,5 +47,16 @@ void (*signed_off)(PurpleConnection *gc);
   @param gc The connection that has signed off.
  @endsignaldef
 
+ @signaldef connection-error
+  @signalproto
+void (*connection_error)(PurpleConnection *gc, PurpleConnectionError err, const gchar *desc)
+  @endsignalproto
+  @signaldesc
+   Emitted when a connection error occurs, before @ref signed-off.
+   @param gc     The connection on which the error has occured
+   @param err    The error that occured
+   @param desc   A description of the error, giving more information.
+ @endsignaldef
+
  */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

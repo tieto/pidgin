@@ -28,6 +28,19 @@ enum name_guesses {
 	NAME_GUESS_THEM
 };
 
+/* Some common functions. */
+static int get_month(const char *month)
+{
+	int iter;
+	const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec", NULL};
+	for (iter = 0; months[iter]; iter++) {
+		if (strcmp(month, months[iter]) == 0)
+			break;
+	}
+	return iter;
+}
+
 
 /*****************************************************************************
  * Adium Logger                                                              *
@@ -1348,36 +1361,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 						 * daylight savings time.
 						 */
 						tm.tm_isdst = -1;
-
-						/* Ugly hack, in case current locale
-						 * is not English. This code is taken
-						 * from log.c.
-						 */
-						if (strcmp(month, "Jan") == 0) {
-							tm.tm_mon= 0;
-						} else if (strcmp(month, "Feb") == 0) {
-							tm.tm_mon = 1;
-						} else if (strcmp(month, "Mar") == 0) {
-							tm.tm_mon = 2;
-						} else if (strcmp(month, "Apr") == 0) {
-							tm.tm_mon = 3;
-						} else if (strcmp(month, "May") == 0) {
-							tm.tm_mon = 4;
-						} else if (strcmp(month, "Jun") == 0) {
-							tm.tm_mon = 5;
-						} else if (strcmp(month, "Jul") == 0) {
-							tm.tm_mon = 6;
-						} else if (strcmp(month, "Aug") == 0) {
-							tm.tm_mon = 7;
-						} else if (strcmp(month, "Sep") == 0) {
-							tm.tm_mon = 8;
-						} else if (strcmp(month, "Oct") == 0) {
-							tm.tm_mon = 9;
-						} else if (strcmp(month, "Nov") == 0) {
-							tm.tm_mon = 10;
-						} else if (strcmp(month, "Dec") == 0) {
-							tm.tm_mon = 11;
-						}
+						tm.tm_mon = get_month(month);
 
 						data = g_new0(
 							struct trillian_logger_data, 1);
@@ -2111,168 +2095,54 @@ struct amsn_logger_data {
 #define AMSN_LOG_CONV_END "|\"LRED[You have closed the window on "
 #define AMSN_LOG_CONV_EXTRA "01 Aug 2001 00:00:00]"
 
-/* `log_dir`/username@hotmail.com/logs/buddyname@hotmail.com.log */
-/* `log_dir`/username@hotmail.com/logs/Month Year/buddyname@hotmail.com.log */
-static GList *amsn_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
+static GList *amsn_logger_parse_file(char *filename, const char *sn, PurpleAccount *account)
 {
 	GList *list = NULL;
-	struct amsn_logger_data *data;
-	const char *logdir;
-	char *username;
-	char *log_path;
-	char *buddy_log;
-	char *filename;
-	GDir *dir;
-	const char *name;
 	GError *error;
 	char *contents;
+	struct amsn_logger_data *data;
 	PurpleLog *log;
-	GList *files = NULL;
-	GList *f;
 
-	logdir = purple_prefs_get_string("/plugins/core/log_reader/amsn/log_directory");
-
-	/* By clearing the log directory path, this logger can be (effectively) disabled. */
-	if (!logdir || !*logdir)
-		return NULL;
-
-	/* aMSN only works with MSN/WLM */
-	if (strcmp(account->protocol_id, "prpl-msn"))
-		return NULL;
-
-	username = g_strdup(purple_normalize(account, account->username));
-	buddy_log = g_strdup_printf("%s.log", purple_normalize(account, sn));
-	log_path = g_build_filename(logdir, username, "logs", NULL);
-
-	/* First check in the top-level */
-	filename = g_build_filename(log_path, buddy_log, NULL);
-	if (g_file_test(filename, G_FILE_TEST_EXISTS))
-		files = g_list_prepend(files, filename);
-	else
-		g_free(filename);
-
-	/* Check in previous months */
-	dir = g_dir_open(log_path, 0, NULL);
-	if (dir) {
-		while ((name = g_dir_read_name(dir)) != NULL) {
-			filename = g_build_filename(log_path, name, buddy_log, NULL);
-			if (g_file_test(filename, G_FILE_TEST_EXISTS))
-				files = g_list_prepend(files, filename);
-			else
-				g_free(filename);
-		}
-		g_dir_close(dir);
-	}
-
-	g_free(log_path);
-
-	/* New versions use 'friendlier' directory names */
-	purple_util_chrreplace(username, '@', '_');
-	purple_util_chrreplace(username, '.', '_');
-
-	log_path = g_build_filename(logdir, username, "logs", NULL);
-
-	/* First check in the top-level */
-	filename = g_build_filename(log_path, buddy_log, NULL);
-	if (g_file_test(filename, G_FILE_TEST_EXISTS))
-		files = g_list_prepend(files, filename);
-	else
-		g_free(filename);
-
-	/* Check in previous months */
-	dir = g_dir_open(log_path, 0, NULL);
-	if (dir) {
-		while ((name = g_dir_read_name(dir)) != NULL) {
-			filename = g_build_filename(log_path, name, buddy_log, NULL);
-			if (g_file_test(filename, G_FILE_TEST_EXISTS))
-				files = g_list_prepend(files, filename);
-			else
-				g_free(filename);
-		}
-		g_dir_close(dir);
-	}
-
-	g_free(log_path);
-	g_free(username);
-	g_free(buddy_log);
-
-	/* Loop through files looking for logs */
-	for(f = g_list_first(files); f; f = g_list_next(f)) {
-		filename = f->data;
-		purple_debug_info("aMSN logger", "Reading %s\n", filename);
-		error = NULL;
-		if (!g_file_get_contents(filename, &contents, NULL, &error)) {
-			purple_debug_error("aMSN logger",
-			                   "Couldn't read file %s: %s \n", filename,
-			                   (error && error->message) ?
-			                    error->message : "Unknown error");
-			if (error)
-				g_error_free(error);
-		} else {
-			char *c = contents;
-			gboolean found_start = FALSE;
-			char *start_log = c;
-			int offset = 0;
-			struct tm tm;
-			while (c && *c) {
-				if (purple_str_has_prefix(c, AMSN_LOG_CONV_START)) {
-					char month[4];
-					if (sscanf(c + strlen(AMSN_LOG_CONV_START),
-					           "%u %3s %u %u:%u:%u",
-					           &tm.tm_mday, (char*)&month, &tm.tm_year,
-					           &tm.tm_hour, &tm.tm_min, &tm.tm_sec) != 6) {
-						found_start = FALSE;
-						purple_debug_error("aMSN logger",
-						                   "Error parsing start date for %s\n",
-						                   filename);
-					} else {
-						const char *months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-								"Jul", "Aug", "Sep", "Oct", "Nov", "Dec", NULL};
-						tm.tm_year -= 1900;
-
-						/* Let the C library deal with
-						 * daylight savings time.
-						 */
-						tm.tm_isdst = -1;
-
-						/* Ugly hack, in case current locale
-						 * is not English. This code is taken
-						 * from log.c.
-						 */
-						for (tm.tm_mon = 0; months[tm.tm_mon]; tm.tm_mon++) {
-							if (strcmp(month, months[tm.tm_mon]) == 0)
-								break;
-						}
-						found_start = TRUE;
-						offset = c - contents;
-						start_log = c;
-					}
-				} else if (purple_str_has_prefix(c, AMSN_LOG_CONV_END) && found_start) {
-					data = g_new0(struct amsn_logger_data, 1);
-					data->path = g_strdup(filename);
-					data->offset = offset;
-					data->length = c - start_log
-					             + strlen(AMSN_LOG_CONV_END)
-					             + strlen(AMSN_LOG_CONV_EXTRA);
-					log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
-					log->logger = amsn_logger;
-					log->logger_data = data;
-					list = g_list_prepend(list, log);
+	purple_debug_info("aMSN logger", "Reading %s\n", filename);
+	error = NULL;
+	if (!g_file_get_contents(filename, &contents, NULL, &error)) {
+		purple_debug_error("aMSN logger",
+		                   "Couldn't read file %s: %s \n", filename,
+		                   (error && error->message) ?
+		                    error->message : "Unknown error");
+		if (error)
+			g_error_free(error);
+	} else {
+		char *c = contents;
+		gboolean found_start = FALSE;
+		char *start_log = c;
+		int offset = 0;
+		struct tm tm;
+		while (c && *c) {
+			if (purple_str_has_prefix(c, AMSN_LOG_CONV_START)) {
+				char month[4];
+				if (sscanf(c + strlen(AMSN_LOG_CONV_START),
+				           "%u %3s %u %u:%u:%u",
+				           &tm.tm_mday, (char*)&month, &tm.tm_year,
+				           &tm.tm_hour, &tm.tm_min, &tm.tm_sec) != 6) {
 					found_start = FALSE;
+					purple_debug_error("aMSN logger",
+					                   "Error parsing start date for %s\n",
+					                   filename);
+				} else {
+					tm.tm_year -= 1900;
 
-					purple_debug_info("aMSN logger",
-					                  "Found log for %s:"
-					                  " path = (%s),"
-					                  " offset = (%d),"
-					                  " length = (%d)\n",
-					                  sn, data->path, data->offset, data->length);
+					/* Let the C library deal with
+					 * daylight savings time.
+					 */
+					tm.tm_isdst = -1;
+					tm.tm_mon = get_month(month);
+
+					found_start = TRUE;
+					offset = c - contents;
+					start_log = c;
 				}
-				c = strstr(c, "\n");
-				c++;
-			}
-
-			/* I've seen the file end without the AMSN_LOG_CONV_END bit */
-			if (found_start) {
+			} else if (purple_str_has_prefix(c, AMSN_LOG_CONV_END) && found_start) {
 				data = g_new0(struct amsn_logger_data, 1);
 				data->path = g_strdup(filename);
 				data->offset = offset;
@@ -2292,12 +2162,112 @@ static GList *amsn_logger_list(PurpleLogType type, const char *sn, PurpleAccount
 				                  " length = (%d)\n",
 				                  sn, data->path, data->offset, data->length);
 			}
-			g_free(contents);
+			c = strstr(c, "\n");
+			c++;
 		}
-		g_free(filename);
+
+		/* I've seen the file end without the AMSN_LOG_CONV_END bit */
+		if (found_start) {
+			data = g_new0(struct amsn_logger_data, 1);
+			data->path = g_strdup(filename);
+			data->offset = offset;
+			data->length = c - start_log
+				             + strlen(AMSN_LOG_CONV_END)
+				             + strlen(AMSN_LOG_CONV_EXTRA);
+			log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
+			log->logger = amsn_logger;
+			log->logger_data = data;
+			list = g_list_prepend(list, log);
+			found_start = FALSE;
+
+			purple_debug_info("aMSN logger",
+			                  "Found log for %s:"
+			                  " path = (%s),"
+			                  " offset = (%d),"
+			                  " length = (%d)\n",
+			                  sn, data->path, data->offset, data->length);
+		}
+		g_free(contents);
 	}
 
-	g_list_free(files);
+	return list;
+}
+
+/* `log_dir`/username@hotmail.com/logs/buddyname@hotmail.com.log */
+/* `log_dir`/username@hotmail.com/logs/Month Year/buddyname@hotmail.com.log */
+static GList *amsn_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
+{
+	GList *list = NULL;
+	const char *logdir;
+	char *username;
+	char *log_path;
+	char *buddy_log;
+	char *filename;
+	GDir *dir;
+	const char *name;
+
+	logdir = purple_prefs_get_string("/plugins/core/log_reader/amsn/log_directory");
+
+	/* By clearing the log directory path, this logger can be (effectively) disabled. */
+	if (!logdir || !*logdir)
+		return NULL;
+
+	/* aMSN only works with MSN/WLM */
+	if (strcmp(account->protocol_id, "prpl-msn"))
+		return NULL;
+
+	username = g_strdup(purple_normalize(account, account->username));
+	buddy_log = g_strdup_printf("%s.log", purple_normalize(account, sn));
+	log_path = g_build_filename(logdir, username, "logs", NULL);
+
+	/* First check in the top-level */
+	filename = g_build_filename(log_path, buddy_log, NULL);
+	if (g_file_test(filename, G_FILE_TEST_EXISTS))
+		list = amsn_logger_parse_file(filename, sn, account);
+	else
+		g_free(filename);
+
+	/* Check in previous months */
+	dir = g_dir_open(log_path, 0, NULL);
+	if (dir) {
+		while ((name = g_dir_read_name(dir)) != NULL) {
+			filename = g_build_filename(log_path, name, buddy_log, NULL);
+			if (g_file_test(filename, G_FILE_TEST_EXISTS))
+				list = g_list_concat(list, amsn_logger_parse_file(filename, sn, account));
+			g_free(filename);
+		}
+		g_dir_close(dir);
+	}
+
+	g_free(log_path);
+
+	/* New versions use 'friendlier' directory names */
+	purple_util_chrreplace(username, '@', '_');
+	purple_util_chrreplace(username, '.', '_');
+
+	log_path = g_build_filename(logdir, username, "logs", NULL);
+
+	/* First check in the top-level */
+	filename = g_build_filename(log_path, buddy_log, NULL);
+	if (g_file_test(filename, G_FILE_TEST_EXISTS))
+		list = g_list_concat(list, amsn_logger_parse_file(filename, sn, account));
+	g_free(filename);
+
+	/* Check in previous months */
+	dir = g_dir_open(log_path, 0, NULL);
+	if (dir) {
+		while ((name = g_dir_read_name(dir)) != NULL) {
+			filename = g_build_filename(log_path, name, buddy_log, NULL);
+			if (g_file_test(filename, G_FILE_TEST_EXISTS))
+				list = g_list_concat(list, amsn_logger_parse_file(filename, sn, account));
+			g_free(filename);
+		}
+		g_dir_close(dir);
+	}
+
+	g_free(log_path);
+	g_free(username);
+	g_free(buddy_log);
 
 	return list;
 }
@@ -2918,7 +2888,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 	"core-log_reader",                                /**< id             */
 	N_("Log Reader"),                                 /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 
 	/** summary */
 	N_("Includes other IM clients' logs in the "

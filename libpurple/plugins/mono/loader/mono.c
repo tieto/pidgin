@@ -215,7 +215,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,
 	MONO_PLUGIN_ID,
 	N_("Mono Plugin Loader"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Loads .NET plugins with Mono."),
 	N_("Loads .NET plugins with Mono."),
 	"Eoin Coffey <ecoffey@simla.colostate.edu>",

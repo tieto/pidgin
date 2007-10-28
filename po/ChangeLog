@@ -1,12 +1,32 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.2.2
+version 2.3.0
+	* Afrikaans translation added (Friedel Wolff)
+	* Belarusian Latin translation updated (Ihar Hrachyshka)
 	* Catalan translation updated (Josep Puigdemont)
+	* Chinese (Hong Kong) translation updated (Ambrose C. Li)
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
-	* German translation updated (Jochen Kemnade,Bjoern Voigt)
+	* Estonian translation updated (Ivar Smolin)
+	* Finnish translation updated (Timo Jyrinki)
+	* French translation updated (Éric Boumaour)
+	* German translation updated (Jochen Kemnade, Björn Voigt)
+	* Hebrew translation updated (Shalom Craimer)
+	* Hungarian translation updated (Gabor Kelemen)
+	* Indonesian translation updated (Rai S. Regawa)
+	* Italian translation updated (Claudio Satriano)
 	* Korean translation updated (Sushizang)
+	* Norwegian Bokmål translation updated (Hallvard Glad)
+	* Portuguese (Brazilian) translation updated (Mauricio de
+	  L R Collares Neto)
+	* Punjabi translation updated (Amanpreet Singh Alam)
+	* Romanian translation updated (Mişu Moldovan)
+	* Russian translation updated (Dmitry Beloglazov)
 	* Slovak translation updated (loptosko)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Swedish translation updated (Peter Hjalmarsson)
+	* Telugu translation updated (RKVS Raman)
+	* Urdu translation added (RKVS Raman)
 
 version 2.2.1
 	* Arabic translation updated (Khaled Hosny)

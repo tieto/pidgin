@@ -354,7 +354,7 @@ static PurplePluginInfo info =
 
 	TICKER_PLUGIN_ID,                                 /**< id             */
 	N_("Buddy Ticker"),                               /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("A horizontal scrolling version of the buddy list."),
 	                                                  /**  description    */

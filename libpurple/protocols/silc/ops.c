@@ -1274,13 +1274,15 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				unsigned char *pk;
 				SilcUInt32 pk_len;
 				pk = silc_pkcs_public_key_encode(client_entry->public_key, &pk_len);
-				fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
-				babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
-				purple_notify_user_info_add_pair(user_info, _("Public Key Fingerprint"), fingerprint);
-				purple_notify_user_info_add_pair(user_info, _("Public Key Babbleprint"), babbleprint);
-				silc_free(fingerprint);
-				silc_free(babbleprint);
-				silc_free(pk);
+				if (pk) {
+					fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
+					babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
+					purple_notify_user_info_add_pair(user_info, _("Public Key Fingerprint"), fingerprint);
+					purple_notify_user_info_add_pair(user_info, _("Public Key Babbleprint"), babbleprint);
+					silc_free(fingerprint);
+					silc_free(babbleprint);
+					silc_free(pk);
+				}
 			}
 
 #if 0 /* XXX for now, let's not show attrs here */
@@ -1346,13 +1348,15 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				unsigned char *pk;
 				SilcUInt32 pk_len;
 				pk = silc_pkcs_public_key_encode(client_entry->public_key, &pk_len);
-				fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
-				babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
-				purple_notify_user_info_add_pair(user_info, _("Public Key Fingerprint"), fingerprint);
-				purple_notify_user_info_add_pair(user_info, _("Public Key Babbleprint"), babbleprint);
-				silc_free(fingerprint);
-				silc_free(babbleprint);
-				silc_free(pk);
+				if (pk) {
+					fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
+					babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
+					purple_notify_user_info_add_pair(user_info, _("Public Key Fingerprint"), fingerprint);
+					purple_notify_user_info_add_pair(user_info, _("Public Key Babbleprint"), babbleprint);
+					silc_free(fingerprint);
+					silc_free(babbleprint);
+					silc_free(pk);
+				}
 			}
 
 			purple_notify_userinfo(gc, nickname, user_info, NULL, NULL);

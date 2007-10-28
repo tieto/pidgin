@@ -153,7 +153,7 @@ static PurplePluginInfo info =
 
 	"dbus-example",                                   /**< id             */
 	N_("DBus Example"),                               /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("DBus Plugin Example"),
 	                                                  /**  description    */

@@ -28,7 +28,7 @@
 #include "request.h"
 #include "debug.h"
 
-static const char *moodstrings[] = {
+static const char * const moodstrings[] = {
 	"afraid",
 	"amazed",
 	"angry",

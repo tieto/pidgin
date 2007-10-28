@@ -380,9 +380,13 @@ flap_connection_destroy_cb(gpointer data)
 	{
 		/* No more FLAP connections!  Sign off this PurpleConnection! */
 		gchar *tmp;
+		PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
+
 		if (conn->disconnect_code == 0x0001) {
+			reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
 			tmp = g_strdup(_("You have signed on from another location."));
-			od->gc->wants_to_die = TRUE;
+			if (!purple_account_get_remember_password(account))
+				purple_account_set_password(account, NULL);
 		} else if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
 			tmp = g_strdup(_("Server closed the connection."));
 		else if (conn->disconnect_reason == OSCAR_DISCONNECT_LOST_CONNECTION)
@@ -402,7 +406,7 @@ flap_connection_destroy_cb(gpointer data)
 
 		if (tmp != NULL)
 		{
-			purple_connection_error(od->gc, tmp);
+			purple_connection_error_reason(od->gc, reason, tmp);
 			g_free(tmp);
 		}
 	}
@@ -466,7 +470,7 @@ flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason, cons
  * @param error_message A brief error message that gives more detail
  *        regarding the reason for the disconnecting.  This should
  *        be NULL for everything except OSCAR_DISCONNECT_LOST_CONNECTION,
- *        in which case it should contain the value of strerror(errno),
+ *        in which case it should contain the value of g_strerror(errno),
  *        and OSCAR_DISCONNECT_COULD_NOT_CONNECT, in which case it
  *        should contain the error_message passed back from the call
  *        to purple_proxy_connect().
@@ -810,7 +814,7 @@ flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 				/* Error! */
 				flap_connection_schedule_destroy(conn,
-						OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
+						OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 				break;
 			}
 
@@ -871,7 +875,7 @@ flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 				/* Error! */
 				flap_connection_schedule_destroy(conn,
-						OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
+						OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 				break;
 			}
 
@@ -922,7 +926,7 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		close(conn->fd);
 		conn->fd = -1;
 		flap_connection_schedule_destroy(conn,
-				OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
+				OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 		return;
 	}
 

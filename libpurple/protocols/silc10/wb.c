@@ -279,6 +279,9 @@ silcpurple_wb_request(SilcClient client, const unsigned char *message,
 		return;
 	}
 
+	/* Close any previous unaccepted requests */
+	purple_request_close_with_handle(sender);
+
 	if (!channel) {
 		g_snprintf(tmp, sizeof(tmp),
 			_("%s sent message to whiteboard. Would you like "
@@ -299,7 +302,7 @@ silcpurple_wb_request(SilcClient client, const unsigned char *message,
 	req->channel = channel;
 	req->sg = sg;
 
-	purple_request_action(gc, _("Whiteboard"), tmp, NULL, 1,
+	purple_request_action(sender, _("Whiteboard"), tmp, NULL, 1,
 				sg->account, sender->nickname, NULL, req, 2,
 			    _("Yes"), G_CALLBACK(silcpurple_wb_request_cb),
 			    _("No"), G_CALLBACK(silcpurple_wb_request_cb));

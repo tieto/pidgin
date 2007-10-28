@@ -75,7 +75,11 @@ constlists = [
 ]
 
 pointer = "#pointer#"
-myexception = "My Exception"
+
+class MyException(Exception):
+    pass
+
+myexception = MyException()
 
 def ctopascal(name):
     newname = ""
@@ -520,7 +524,7 @@ class BindingSet:
 
             try:
                 self.processfunction(functiontext, paramtexts)
-            except myexception:
+            except MyException:
                 sys.stderr.write(myline + "\n")
             except:
                 sys.stderr.write(myline + "\n")
