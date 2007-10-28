@@ -32,7 +32,7 @@ version 2.3.0 (??/??/????):
 		  to whether automatic reconnection should be attempted
 		  after a connection error (rather than checking
 		  gc->wants_to_die).
-		* PurpleConnectionErrorPair, a struct to hold a
+		* PurpleConnectionErrorInfo, a struct to hold a
 		  PurpleConnectionError and a const char *description.
 		* purple_account_get_current_error() to get the most recent
 		  PurpleConnectionError and description (or NULL if the

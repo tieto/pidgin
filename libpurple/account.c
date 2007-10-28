@@ -43,7 +43,7 @@
 
 typedef struct
 {
-	PurpleConnectionErrorPair *current_error;
+	PurpleConnectionErrorInfo *current_error;
 } PurpleAccountPrivate;
 
 #define PURPLE_ACCOUNT_GET_PRIVATE(account) \
@@ -2236,7 +2236,7 @@ static void
 clear_current_error(PurpleAccount *account)
 {
 	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	PurpleConnectionErrorPair *old;
+	PurpleConnectionErrorInfo *old;
 
 	if (priv->current_error)
 	{
@@ -2266,9 +2266,9 @@ connection_error_cb(PurpleConnection *gc,
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	PurpleConnectionErrorPair *old = priv->current_error;
+	PurpleConnectionErrorInfo *old = priv->current_error;
 
-	priv->current_error = g_new0(PurpleConnectionErrorPair, 1);
+	priv->current_error = g_new0(PurpleConnectionErrorInfo, 1);
 	priv->current_error->type = err;
 	priv->current_error->description = desc;
 
@@ -2278,7 +2278,7 @@ connection_error_cb(PurpleConnection *gc,
 	g_free(old);
 }
 
-const PurpleConnectionErrorPair *
+const PurpleConnectionErrorInfo *
 purple_account_get_current_error(PurpleAccount *account)
 {
 	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);

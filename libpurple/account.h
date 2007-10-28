@@ -903,7 +903,7 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
  * @constreturn   The type of error and a human-readable description of the
  *                current error, or @c NULL if there is no current error.
  */
-const PurpleConnectionErrorPair *purple_account_get_current_error(PurpleAccount *account);
+const PurpleConnectionErrorInfo *purple_account_get_current_error(PurpleAccount *account);
 
 /*@}*/
 
