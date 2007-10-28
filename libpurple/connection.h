@@ -424,8 +424,10 @@ void purple_connection_error(PurpleConnection *gc, const char *reason);
 /**
  * Closes a connection with an error and a human-readable description of the
  * error.  It also sets @c gc->wants_to_die to the value of
- * #purple_connection_error_is_fatal(@a reason).
+ * #purple_connection_error_is_fatal(@a reason), mainly for
+ * backwards-compatibility.
  *
+ * @param gc          the connection which is closing.
  * @param reason      why the connection is closing.
  * @param description a non-@c NULL localized description of the error.
  * @since 2.3.0
