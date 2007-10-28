@@ -144,7 +144,7 @@ void (*account_authorization_granted)(PurpleAccount *account, const char *user);
 
  @signaldef account-error-changed
   @signalproto
-void (*account_error_changed)(PurpleAccount *account, const PurpleAccountCurrentError *old_error, const PurpleAccountCurrentError *current_error);
+void (*account_error_changed)(PurpleAccount *account, const PurpleConnectionErrorPair *old_error, const PurpleConnectionErrorPair *current_error);
   @endsignalproto
   @signaldesc
    Emitted when @a account's error changes.

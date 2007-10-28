@@ -144,15 +144,6 @@ struct _PurpleAccount
 	gpointer priv;              /**< Pointer to opaque private data. */
 };
 
-/** The error most recently encountered on an account. */
-typedef struct
-{
-	/** The type of error. */
-	PurpleConnectionError reason;
-	/** A localised, human-readable description of the error. */
-	const char *description;
-} PurpleAccountCurrentError;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -912,7 +903,7 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
  * @constreturn   The type of error and a human-readable description of the
  *                current error, or @c NULL if there is no current error.
  */
-const PurpleAccountCurrentError *purple_account_get_current_error(PurpleAccount *account);
+const PurpleConnectionErrorPair *purple_account_get_current_error(PurpleAccount *account);
 
 /*@}*/
 

@@ -4395,8 +4395,8 @@ create_connection_error_buttons(gpointer key, gpointer value,
 
 static void
 update_account_error_state(PurpleAccount *account,
-                           PurpleAccountCurrentError *old,
-                           PurpleAccountCurrentError *new,
+                           PurpleConnectionErrorPair *old,
+                           PurpleConnectionErrorPair *new,
                            PidginBuddyList *gtkblist)
 {
 	if (new)

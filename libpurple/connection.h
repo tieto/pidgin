@@ -126,6 +126,15 @@ typedef enum
 	PURPLE_CONNECTION_ERROR_OTHER_ERROR = 15
 } PurpleConnectionError;
 
+/** Holds the type of an error along with its description. */
+typedef struct
+{
+	/** The type of error. */
+	PurpleConnectionError type;
+	/** A localised, human-readable description of the error. */
+	const char *description;
+} PurpleConnectionErrorPair;
+
 #include <time.h>
 
 #include "account.h"
