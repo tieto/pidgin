@@ -15,7 +15,9 @@ include ./Makefile.am
 install:
 	if test '$(SUBDIRS)'; then \
 	  list='$(SUBDIRS)'; for subdir in $$list; do \
+	  if [ "$$subdir" != "icons/22" ]; then \
 	    $(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) install || exit 1 ;\
+	  fi \
 	  done; \
 	fi;
 	if test '$(pidginbuttonpix_DATA)'; then \
