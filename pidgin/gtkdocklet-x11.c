@@ -229,35 +229,6 @@ docklet_x11_destroy()
 }
 
 static gboolean
-docklet_x11_get_geometry(gint *x, gint *y, gint *w, gint *h)
-{
-	int lx,ly;
-	GtkWidget *widget = GTK_WIDGET(docklet);
-
-	if(docklet==NULL) return FALSE;
-
-	gdk_window_get_origin(GDK_WINDOW(widget->window), &lx, &ly);
-
-	if(x!=NULL) *x = lx + widget->allocation.x;
-	if(y!=NULL) *y = ly + widget->allocation.y;
-
-	if(w!=NULL) *w = widget->allocation.width;
-	if(h!=NULL) *h = widget->allocation.height;
-
-	return TRUE;
-}
-
-static GObject *
-docklet_x11_get_gdk_screen()
-{
-#if GTK_CHECK_VERSION(2,2,0)
-	return (GObject *)gtk_widget_get_screen(GTK_WIDGET(docklet));
-#else
-	return NULL;
-#endif
-}
-
-static gboolean
 docklet_x11_embed_timeout_cb()
 {
 	/* The docklet was not embedded within the timeout.
@@ -342,12 +313,10 @@ static struct docklet_ui_ops ui_ops =
 	docklet_x11_blank_icon,
 	docklet_x11_set_tooltip,
 #if GTK_CHECK_VERSION(2,2,0)
-	docklet_x11_position_menu,
+	docklet_x11_position_menu
 #else
-	NULL,
+	NULL
 #endif
-	docklet_x11_get_geometry,
-	docklet_x11_get_gdk_screen
 };
 
 void

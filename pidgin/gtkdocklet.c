@@ -709,22 +709,6 @@ pidgin_docklet_get_handle()
 	return &i;
 }
 
-gboolean
-pidgin_docklet_get_geometry(gint *x, gint *y, gint *w, gint *h)
-{
-	if(!visible) return FALSE;
-	if(ui_ops && ui_ops->get_geometry) return ui_ops->get_geometry(x, y, w, h);
-	return FALSE;
-}
-
-GObject *
-pidgin_docklet_get_gdk_screen()
-{
-	if(!visible) return NULL;
-	if(ui_ops && ui_ops->get_gdk_screen) return ui_ops->get_gdk_screen();
-	return NULL;
-}
-
 void
 pidgin_docklet_init()
 {
