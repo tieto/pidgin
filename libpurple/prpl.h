@@ -339,6 +339,15 @@ struct _PurplePluginProtocolInfo
 
 	void (*remove_group)(PurpleConnection *gc, PurpleGroup *group);
 
+	/** Gets the real name of a participant in a chat.  For example, on
+	 *  XMPP this turns a chat room nick <tt>foo</tt> into
+	 *  <tt>room@server/foo</tt>
+	 *  @param gc  the connection on which the room is.
+	 *  @param id  the ID of the chat room.
+	 *  @param who the nickname of the chat participant.
+	 *  @return    the real name of the participant.  This string must be
+	 *             freed by the caller.
+	 */
 	char *(*get_cb_real_name)(PurpleConnection *gc, int id, const char *who);
 
 	void (*set_chat_topic)(PurpleConnection *gc, int id, const char *topic);
