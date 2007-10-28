@@ -4393,12 +4393,14 @@ create_connection_error_buttons(gpointer key, gpointer value,
 	gtk_widget_show_all(gtkblist->error_buttons);
 }
 
-void
-account_error_changed_cb(PurpleAccount *account,
-                         PurpleAccountCurrentError *err)
+static void
+update_account_error_state(PurpleAccount *account,
+                           PurpleAccountCurrentError *old,
+                           PurpleAccountCurrentError *new,
+                           PidginBuddyList *gtkblist)
 {
-	if (err)
-		pidgin_blist_update_account_error_state(account, err->description);
+	if (new)
+		pidgin_blist_update_account_error_state(account, new->description);
 	else
 		pidgin_blist_update_account_error_state(account, NULL);
 }
@@ -4967,7 +4969,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	                      PURPLE_CALLBACK(account_status_changed),
 	                      gtkblist);
 	purple_signal_connect(handle, "account-error-changed", gtkblist,
-	                      PURPLE_CALLBACK(account_error_changed_cb),
+	                      PURPLE_CALLBACK(update_account_error_state),
 	                      gtkblist);
 
 	handle = pidgin_account_get_handle();

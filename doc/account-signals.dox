@@ -144,12 +144,14 @@ void (*account_authorization_granted)(PurpleAccount *account, const char *user);
 
  @signaldef account-error-changed
   @signalproto
-void (*account_error_changed)(PurpleAccount *account, const PurpleAccountCurrentError *current_error);
+void (*account_error_changed)(PurpleAccount *account, const PurpleAccountCurrentError *old_error, const PurpleAccountCurrentError *current_error);
   @endsignalproto
   @signaldesc
    Emitted when @a account's error changes.
-  @param account       The account whose error has changed.
-  @param current_error The account's current error, or @c NULL if it has no error.
+  @param account   The account whose error has changed.
+  @param old_error The account's previous error, or @c NULL if it had no
+                   error.
+  @param new_error The account's new error, or @c NULL if it has no error.
   @see purple_account_get_current_error()
   @since 2.3.0
  @endsignaldef

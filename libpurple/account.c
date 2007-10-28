@@ -2236,14 +2236,18 @@ static void
 clear_current_error(PurpleAccount *account)
 {
 	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	PurpleAccountCurrentError *old;
+
 	if (priv->current_error)
 	{
-		g_free (priv->current_error);
+		old = priv->current_error;
 		priv->current_error = NULL;
+		purple_signal_emit(purple_accounts_get_handle(),
+		                   "account-error-changed",
+		                   account, old, priv->current_error);
+		g_free (old);
 	}
 
-	purple_signal_emit(purple_accounts_get_handle(), "account-error-changed",
-	                   account, priv->current_error);
 }
 
 static void
@@ -2262,14 +2266,16 @@ connection_error_cb(PurpleConnection *gc,
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	PurpleAccountCurrentError *old = priv->current_error;
 
-	if (!priv->current_error)
-		priv->current_error = g_new0(PurpleAccountCurrentError, 1);
+	priv->current_error = g_new0(PurpleAccountCurrentError, 1);
 	priv->current_error->reason = err;
 	priv->current_error->description = desc;
 
-	purple_signal_emit(purple_accounts_get_handle(), "account-error-changed",
-	                   account, priv->current_error);
+	purple_signal_emit(purple_accounts_get_handle(),
+	                   "account-error-changed",
+	                   account, old, priv->current_error);
+	g_free(old);
 }
 
 const PurpleAccountCurrentError *
@@ -2581,9 +2587,11 @@ purple_accounts_init(void)
 						purple_value_new(PURPLE_TYPE_STRING));
 
 	purple_signal_register(handle, "account-error-changed",
-	                       purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+	                       purple_marshal_VOID__POINTER_POINTER_POINTER,
+	                       NULL, 3,
 	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
 	                                        PURPLE_SUBTYPE_ACCOUNT),
+	                       purple_value_new(PURPLE_TYPE_POINTER),
 	                       purple_value_new(PURPLE_TYPE_POINTER));
 
 	purple_signal_connect(conn_handle, "signed-on", handle,
