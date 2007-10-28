@@ -276,7 +276,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 			return FALSE;
 		}
 
-		box->buddy_icon_sel = pidgin_buddy_icon_chooser_new(NULL, icon_choose_cb, box);
+		box->buddy_icon_sel = pidgin_buddy_icon_chooser_new(GTK_WINDOW(gtk_widget_get_toplevel(widget)), icon_choose_cb, box);
 		gtk_widget_show_all(box->buddy_icon_sel);
 	}
 	return FALSE;
@@ -1586,9 +1586,9 @@ tree_view_delete_current_selection(PidginStatusBox *status_box, GtkTreePath *pat
 
 	msg = g_strdup_printf(_("Are you sure you want to delete %s?"), purple_savedstatus_get_title(saved));
 
-	purple_request_action(saved, NULL, msg, NULL, 0,
+	purple_request_action_with_hint(saved, NULL, msg, NULL, 0,
 		NULL, NULL, NULL,
-		data, 2,
+		"pidgin-statusbox", data, 2,
 		_("Delete"), tree_view_delete_current_selection_cb,
 		_("Cancel"), NULL);
 

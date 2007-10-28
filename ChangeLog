@@ -1,5 +1,31 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.3.0:
+	http://developer.pidgin.im/query?status=closed&milestone=2.3.0
+
+	libpurple:
+	* We now honor a PURPLE_DISABLE_DEPRECATED define to allow plugins to
+	  catch deprecated functions earlier rather than later.
+
+	Pidgin:
+	* If a plugin says it can't be unloaded, we now display an error and
+	  remove the plugin from the list of saved plugins so it won't load
+	  at the next startup.  Previously, we were ignoring this case, which
+	  could lead to crashes.
+	* Mark dialog windows as transient for appropriate parent windows to
+	  help window managers do the right thing  (Gabriel Schulhof)
+
+	Finch:
+	* If a plugin says it can't be unloaded, we now display an error and
+	  remove the plugin from the list of saved plugins so it won't load
+	  at the next startup.  Previously, we were ignoring this case, which
+	  could lead to crashes.
+	* It's possible to bind key-strokes to specific menuitems in the windows.
+	  Read the 'Menus' section in the man-page for details.
+	* 'transpose-chars' operation for the entry boxes. The default key-binding
+	  is ctrl+t.
+	* 'yank' operation for the entry boxes. The default binding is ctrl+y.
+
 version 2.2.2:
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
 		NOTE: Due to 2.2.1 being a security fix release, some bugs
@@ -31,6 +57,8 @@ version 2.2.2:
 	* Pidgin's display is now saved with the command line for session
 	  restoration.  (David Mohr)
 	* ICQ Birthday notifications are shown as buddy list emblems.
+	* Plugin actions are now available from the docklet context menu
+	  in addition to the Tool menu of the buddy list.
 
 version 2.2.1 (09/29/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.1

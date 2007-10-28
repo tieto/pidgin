@@ -1046,7 +1046,7 @@ static void remove_tag(gpointer wid, gpointer wim)
 	GntWM *wm = GNT_WM(wim);
 	GntWidget *w = GNT_WIDGET(wid);
 	wm->tagged = g_list_remove(wm->tagged, w);
-	mvwhline(w->window, 0, 1, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL), 3);
+	mvwhline(w->window, 0, 1, ACS_HLINE | gnt_color_pair(GNT_COLOR_NORMAL), 3);
 	gnt_widget_draw(w);
 }
 
@@ -1066,7 +1066,7 @@ tag_widget(GntBindable *b, GList *params)
 	}
 
 	wm->tagged = g_list_prepend(wm->tagged, widget);
-	wbkgdset(widget->window, ' ' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+	wbkgdset(widget->window, ' ' | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
 	mvwprintw(widget->window, 0, 1, "[T]");
 	gnt_widget_draw(widget);
 	return TRUE;
@@ -1675,7 +1675,7 @@ void gnt_wm_new_window(GntWM *wm, GntWidget *widget)
 {
 	while (widget->parent)
 		widget = widget->parent;
-	
+
 	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_INVISIBLE) ||
 			g_hash_table_lookup(wm->nodes, widget)) {
 		update_screen(wm);
@@ -1852,8 +1852,19 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 		ret = gnt_widget_key_pressed(GNT_WIDGET(wm->menu), keys);
 	else if (wm->_list.window)
 		ret = gnt_widget_key_pressed(wm->_list.window, keys);
-	else if (wm->cws->ordered)
-		ret = gnt_widget_key_pressed(GNT_WIDGET(wm->cws->ordered->data), keys);
+	else if (wm->cws->ordered) {
+		GntWidget *win = wm->cws->ordered->data;
+		if (GNT_IS_WINDOW(win)) {
+			GntMenu *menu = GNT_WINDOW(win)->menu;
+			if (menu) {
+				const char *id = gnt_window_get_accel_item(GNT_WINDOW(win), keys);
+				if (id)
+					ret = (gnt_menu_get_item(menu, id) != NULL);
+			}
+		}
+		if (!ret)
+			ret = gnt_widget_key_pressed(win, keys);
+	}
 	return ret;
 }
 

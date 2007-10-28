@@ -70,6 +70,7 @@ struct _PurpleUtilFetchUrlData
 static char *custom_user_dir = NULL;
 static char *user_dir = NULL;
 
+
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
                      GList *children)
@@ -89,6 +90,25 @@ purple_menu_action_free(PurpleMenuAction *act)
 
 	g_free(act->label);
 	g_free(act);
+}
+
+void
+purple_util_init(void)
+{
+	/* This does nothing right now.  It exists for symmetry with 
+	 * purple_util_uninit() and forwards compatibility. */
+}
+
+void
+purple_util_uninit(void)
+{
+	/* Free these so we don't have leaks at shutdown. */
+
+	g_free(custom_user_dir);
+	custom_user_dir = NULL;
+
+	g_free(user_dir);
+	user_dir = NULL;
 }
 
 /**************************************************************************
@@ -2565,6 +2585,8 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	purple_debug_info("util", "Writing file %s\n",
 					filename_full);
 
+	g_return_val_if_fail((size >= -1), FALSE);
+
 	filename_temp = g_strdup_printf("%s.save", filename_full);
 
 	/* Remove an old temporary file, if one exists */
@@ -2590,7 +2612,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	}
 
 	/* Write to file */
-	real_size = (size == -1) ? strlen(data) : size;
+	real_size = (size == -1) ? strlen(data) : (size_t) size;
 	byteswritten = fwrite(data, 1, real_size, file);
 
 	/* Close file */

@@ -294,6 +294,8 @@ struct _PurpleConvMessage
 	char *what;
 	PurpleMessageFlags flags;
 	time_t when;
+	PurpleConversation *conv;  /**< @since 2.3.0 */
+	char *alias;               /**< @since 2.3.0 */
 };
 
 /**
