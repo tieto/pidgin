@@ -1113,12 +1113,25 @@ static void proxy_print_option(GtkEntry *entry, int entrynum)
 		purple_prefs_set_string("/purple/proxy/password", gtk_entry_get_text(entry));
 }
 
+static void
+proxy_button_clicked_cb(GtkWidget *button, gpointer null)
+{
+	GError *err = NULL;
+
+	if (g_spawn_command_line_async ("gnome-network-preferences", &err))
+		return;
+
+	purple_notify_error(NULL, NULL, _("Cannot start proxy configuration program."), err->message);
+	g_error_free(err);
+}
+
 static GtkWidget *
 network_page()
 {
 	GtkWidget *ret;
 	GtkWidget *vbox, *hbox, *entry;
 	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
+	GtkWidget *warning, *proxy_button;
 	GtkSizeGroup *sg;
 	PurpleProxyInfo *proxy_info = NULL;
 
@@ -1201,9 +1214,33 @@ network_page()
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
 
-	if (!purple_running_gnome()) {
-		vbox = pidgin_make_frame(ret, _("Proxy Server"));
-		prefs_proxy_frame = gtk_vbox_new(FALSE, 0);
+	vbox = pidgin_make_frame(ret, _("Proxy Server"));
+	prefs_proxy_frame = gtk_vbox_new(FALSE, 0);
+
+	if (purple_running_gnome()) {
+		warning = hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
+
+		label = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(label),
+		                     _("<b>Proxy configuration program was not found.</b>"));
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
+		label = gtk_label_new(_("Proxy preferences are configured in\n"
+		                        "GNOME Control Center: Desktop Preferences"));
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		gtk_widget_show(label);
+
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
+		proxy_button = gtk_button_new_with_mnemonic(_("Configure _Proxy"));
+		g_signal_connect(G_OBJECT(proxy_button), "clicked",
+		                 G_CALLBACK(proxy_button_clicked_cb), NULL);
+		gtk_box_pack_start(GTK_BOX(hbox), proxy_button, FALSE, FALSE, 0);
+		gtk_widget_show(proxy_button);
+	} else {
 		pidgin_prefs_dropdown(vbox, _("Proxy _type:"), PURPLE_PREF_STRING,
 					"/purple/proxy/type",
 					_("No proxy"), "none",
@@ -1303,8 +1340,21 @@ network_page()
 	/* Only hide table if not running gnome otherwise we hide the IP address table! */
 	if (!purple_running_gnome() && (proxy_info == NULL ||
 	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_NONE ||
-	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_ENVVAR))
+	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_ENVVAR)) {
 		gtk_widget_hide(table);
+	} else {
+		gchar *path;
+		path = g_find_program_in_path("gnome-network-preferences");
+		if (path != NULL) {
+			gtk_widget_set_sensitive(proxy_button, TRUE);
+			gtk_widget_hide(warning);
+			g_free(path);
+		} else {
+			gtk_widget_set_sensitive(proxy_button, FALSE);
+			gtk_widget_show(warning);
+		}
+	}
+
 	return ret;
 }
 
