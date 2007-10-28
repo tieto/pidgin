@@ -1,4 +1,6 @@
-SUBDIRS = animations/16 buddy_icons/qq dialogs/16 dialogs/64 emblems/16 \
+pidginpixmapdir = $(datadir)/pixmaps/pidgin
+
+SUBDIRS = buddy_icons/qq dialogs/16 dialogs/64 emblems/16 \
           emotes/default/24 emotes/none \
           icons/16 icons/22 icons/24 icons/32 icons/48 \
           protocols/16 protocols/22 protocols/48 \
@@ -36,6 +38,23 @@ MAKEFILE_MINGW = \
 		tray/22/Makefile.mingw \
 		tray/32/Makefile.mingw \
 		tray/48/Makefile.mingw
+
+ANIMATIONS_16 = \
+		animations/16/connect0.png \
+		animations/16/connect1.png \
+		animations/16/connect2.png \
+		animations/16/connect3.png \
+		animations/16/connect4.png \
+		animations/16/connect5.png \
+		animations/16/connect6.png \
+		animations/16/connect7.png \
+		animations/16/connect8.png \
+		animations/16/typing0.png \
+		animations/16/typing1.png \
+		animations/16/typing2.png \
+		animations/16/typing3.png \
+		animations/16/typing4.png \
+		animations/16/typing5.png
 
 DIALOGS_16_SCALABLE = \
 		dialogs/16/scalable/error.svg \
@@ -434,3 +453,4 @@ pidginbuttonpix_DATA = edit.png pause.png info.png
 pidgindistpixdir = $(datadir)/pixmaps/pidgin
 pidgindistpix_DATA = logo.png arrow-down.xpm arrow-left.xpm arrow-right.xpm arrow-up.xpm
 
+nobase_dist_pidginpixmap_DATA = $(ANIMATIONS_16)

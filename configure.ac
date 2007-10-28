@@ -2178,7 +2178,6 @@ AC_OUTPUT([Makefile
 		   pidgin/pidgin.pc
 		   pidgin/pidgin-uninstalled.pc
 		   pidgin/pixmaps/Makefile
-		   pidgin/pixmaps/animations/16/Makefile
 		   pidgin/pixmaps/buddy_icons/qq/Makefile
 		   pidgin/pixmaps/dialogs/16/Makefile
 		   pidgin/pixmaps/dialogs/64/Makefile
