@@ -8,7 +8,6 @@ SUBDIRS = buddy_icons/qq dialogs/16 dialogs/64 emblems/16 \
           toolbar/16 toolbar/22 tray/16 tray/22 tray/32 tray/48
 
 MAKEFILE_MINGW = \
-		animations/16/Makefile.mingw \
 		buddy_icons/qq/Makefile.mingw \
 		dialogs/16/Makefile.mingw \
 		dialogs/64/Makefile.mingw \

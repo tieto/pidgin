@@ -20,6 +20,13 @@ install:
 	  fi \
 	  done; \
 	fi;
+	if test '$(nobase_dist_pidginpixmap_DATA)'; then \
+	  list='$(nobase_dist_pidginpixmap_DATA)'; for file in $$list; do \
+	    dir=`dirname $$file`; \
+	    mkdir -p $(pidginpixmapdir)/$$dir; \
+	    cp $$file $(pidginpixmapdir)/$$dir/; \
+	  done; \
+	fi;
 	if test '$(pidginbuttonpix_DATA)'; then \
 	  mkdir -p $(pidginbuttonpixdir); \
 	  cp $(pidginbuttonpix_DATA) $(pidginbuttonpixdir); \
