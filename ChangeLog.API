@@ -32,6 +32,8 @@ version 2.3.0 (??/??/????):
 		  to whether automatic reconnection should be attempted
 		  after a connection error (rather than checking
 		  gc->wants_to_die).
+		* PurpleConnectionErrorPair, a struct to hold a
+		  PurpleConnectionError and a const char *description.
 		* purple_account_get_current_error() to get the most recent
 		  PurpleConnectionError and description (or NULL if the
 		  account is happy with life), to allow bits of the UI to know
@@ -108,6 +110,10 @@ version 2.3.0 (??/??/????):
 		* purple_request_input()
 		* purple_request_ok_cancel()
 		* purple_request_yes_no()
+
+		* purple_connection_error()
+		* pidgin_blist_update_account_error_state()
+		* PidginBuddyList.connection_errors
 
 		MSN:
 		* A new independant status type with PURPLE_STATUS_TUNE primitive, and
