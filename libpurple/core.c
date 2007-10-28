@@ -138,15 +138,17 @@ purple_core_init(const char *ui)
 	/* The buddy icon code uses the imgstore, so init it early. */
 	purple_imgstore_init();
 
-	/* Accounts use status and buddy icons, so initialize these before accounts */
+	/* Accounts use status, buddy icons and connection signals, so
+	 * initialize these before accounts
+	 */
 	purple_status_init();
 	purple_buddy_icons_init();
+	purple_connections_init();
 
 	purple_accounts_init();
 	purple_savedstatuses_init();
 	purple_notify_init();
 	purple_certificate_init();
-	purple_connections_init();
 	purple_conversations_init();
 	purple_blist_init();
 	purple_log_init();
