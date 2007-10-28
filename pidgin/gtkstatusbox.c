@@ -276,7 +276,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 			return FALSE;
 		}
 
-		box->buddy_icon_sel = pidgin_buddy_icon_chooser_new(NULL, icon_choose_cb, box);
+		box->buddy_icon_sel = pidgin_buddy_icon_chooser_new(GTK_WINDOW(gtk_widget_get_toplevel(widget)), icon_choose_cb, box);
 		gtk_widget_show_all(box->buddy_icon_sel);
 	}
 	return FALSE;
