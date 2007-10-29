@@ -1607,18 +1607,22 @@ static void
 test_sound(GtkWidget *button, gpointer i_am_NULL)
 {
 	char *pref;
-	gboolean temp_value;
+	gboolean temp_enabled;
+	gboolean temp_mute;
 
 	pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/enabled/%s",
 			pidgin_sound_get_event_option(sound_row_sel));
 
-	temp_value = purple_prefs_get_bool(pref);
+	temp_enabled = purple_prefs_get_bool(pref);
+	temp_mute = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/sound/mute");
 
-	if (!temp_value) purple_prefs_set_bool(pref, TRUE);
+	if (!temp_enabled) purple_prefs_set_bool(pref, TRUE);
+	if (temp_mute) purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/sound/mute", FALSE);
 
 	purple_sound_play_event(sound_row_sel, NULL);
 
-	if (!temp_value) purple_prefs_set_bool(pref, FALSE);
+	if (!temp_enabled) purple_prefs_set_bool(pref, FALSE);
+	if (temp_mute) purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/sound/mute", TRUE);
 
 	g_free(pref);
 }
