@@ -174,8 +174,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 		}
 
 		if (accept) {
-			/* TODO: strstr() should not be used here because data isn't NULL terminated */
-			delimiter = (const guchar *)strstr((char *)&data[pos], "\xc0\x80");
+			delimiter = (const guchar *)g_strstr_len((const char *)&data[pos], len - pos, "\xc0\x80");
 			if (delimiter == NULL)
 			{
 				/* Malformed packet! (It doesn't end in 0xc0 0x80) */
