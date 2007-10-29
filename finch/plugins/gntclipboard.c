@@ -156,7 +156,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,
 	"gntclipboard",
 	N_("GntClipboard"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Clipboard plugin"),
 	N_("When the gnt clipboard contents change, "
 		"the contents are made available to X, if possible."),

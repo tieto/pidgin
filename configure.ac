@@ -283,6 +283,17 @@ You must have the GLib 2.0 development headers installed to build.
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
+AC_ARG_WITH([extraversion],
+			AC_HELP_STRING([--with-extraversion=STRING],
+						   [extra version number to be displayed in Help->About and --help (for packagers)]),
+						   EXTRA_VERSION=$withval)
+
+if test x"$EXTRA_VERSION" != "x" ; then
+	AC_DEFINE_UNQUOTED(DISPLAY_VERSION, "$VERSION-$EXTRA_VERSION", [display version info])
+else
+	AC_DEFINE_UNQUOTED(DISPLAY_VERSION, "$VERSION", [display version info])
+fi
+
 AC_ARG_WITH(x, [],
 	with_x="$withval", with_x="yes")
 AC_ARG_ENABLE(gtkui, [AC_HELP_STRING([--disable-gtkui],

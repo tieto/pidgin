@@ -2148,7 +2148,7 @@ static PurplePluginInfo info = {
 
 	"prpl-gg",			/* id */
 	"Gadu-Gadu",			/* name */
-	VERSION,			/* version */
+	DISPLAY_VERSION,		/* version */
 
 	N_("Gadu-Gadu Protocol Plugin"),	/* summary */
 	N_("Polish popular IM"),		/* description */

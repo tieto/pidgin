@@ -203,14 +203,6 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		/* Ignore because PurpleBuddy knows this already */
 		g_free(value_str);
 	} else if (g_str_equal(key_str, "ImageURL") || g_str_equal(key_str, "AvatarURL")) {
-		if (user->temporary_user) {
-			/* This user will be destroyed soon; don't try to look up its image or avatar, 
-			 * since that won't return immediately and we will end up accessing freed data.
-			 */
-			g_free(value_str);
-			return;
-		}
-		
 		const gchar *previous_url;
 
 		if (user->temporary_user) {
@@ -220,7 +212,15 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 			g_free(value_str);
 			return;
 		}
-		
+
+		if (user->temporary_user) {
+			/* This user will be destroyed soon; don't try to look up its image or avatar, 
+			 * since that won't return immediately and we will end up accessing freed data.
+			 */
+			g_free(value_str);
+			return;
+		}
+
 		g_free(user->image_url);
 
 		user->image_url = value_str;
@@ -233,7 +233,7 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 				NULL, 0, NULL);
 			return;
 		}
-	
+
 		/* TODO: use ETag for checksum */
 		previous_url = purple_buddy_icons_get_checksum_for_user(user->buddy);
 

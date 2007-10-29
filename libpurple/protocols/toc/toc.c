@@ -2301,7 +2301,7 @@ static PurplePluginInfo info =
 
 	"prpl-toc",                                       /**< id             */
 	"TOC",                                            /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("TOC Protocol Plugin"),
 	                                                  /**  description    */
