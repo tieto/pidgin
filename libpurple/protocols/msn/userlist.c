@@ -70,7 +70,7 @@ msn_cancel_add_cb(gpointer data)
 	{
 		MsnSession *session = pa->gc->proto_data;
 		MsnUserList *userlist = session->userlist;
-		MsnCallbackState *state = msn_callback_state_new();
+		MsnCallbackState *state = msn_callback_state_new(session);
 
 		msn_callback_state_set_action(state, MSN_DENIED_BUDDY);
 
@@ -683,7 +683,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 	
 	purple_debug_info("MSN Userlist", "Add user: %s to group: %s\n", who, new_group_name);
 
-	state = msn_callback_state_new();
+	state = msn_callback_state_new(userlist->session);
 	msn_callback_state_set_who(state, who);
 	msn_callback_state_set_new_group_name(state, new_group_name);
 
@@ -844,7 +844,7 @@ msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 	g_return_if_fail(userlist->session != NULL);
 	g_return_if_fail(userlist->session->contact != NULL);
 
-	state = msn_callback_state_new();
+	state = msn_callback_state_new(userlist->session);
 	msn_callback_state_set_who(state, who);
 	msn_callback_state_set_action(state, MSN_MOVE_BUDDY);
 	msn_callback_state_set_old_group_name(state, old_group_name);
