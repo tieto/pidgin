@@ -956,6 +956,7 @@ interface_page()
 	g_list_free(names);
 
 	gtk_widget_show_all(ret);
+	g_object_unref(sg);
 	return ret;
 }
 
@@ -1131,7 +1132,7 @@ network_page()
 	GtkWidget *ret;
 	GtkWidget *vbox, *hbox, *entry;
 	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
-	GtkWidget *warning, *proxy_button;
+	GtkWidget *warning = NULL, *proxy_button = NULL;
 	GtkSizeGroup *sg;
 	PurpleProxyInfo *proxy_info = NULL;
 
@@ -1193,6 +1194,8 @@ network_page()
 
 	g_signal_connect(G_OBJECT(auto_ip_checkbox), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), table);
+
+	g_object_unref(sg);
 
 	vbox = pidgin_make_frame (ret, _("Ports"));
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -1337,12 +1340,13 @@ network_page()
 	}
 
 	gtk_widget_show_all(ret);
+	g_object_unref(sg);
 	/* Only hide table if not running gnome otherwise we hide the IP address table! */
 	if (!purple_running_gnome() && (proxy_info == NULL ||
 	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_NONE ||
 	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_ENVVAR)) {
 		gtk_widget_hide(table);
-	} else {
+	} else if (purple_running_gnome()) {
 		gchar *path;
 		path = g_find_program_in_path("gnome-network-preferences");
 		if (path != NULL) {
@@ -1501,6 +1505,7 @@ browser_page()
 	pidgin_set_accessible_label (entry, label);
 
 	gtk_widget_show_all(ret);
+	g_object_unref(sg);
 	return ret;
 }
 #endif /*_WIN32*/
@@ -1942,6 +1947,7 @@ sound_page()
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 
 	gtk_widget_show_all(ret);
+	g_object_unref(sg);
 
 	return ret;
 }
@@ -2067,6 +2073,7 @@ away_page()
 	}
 
 	gtk_widget_show_all(ret);
+	g_object_unref(sg);
 
 	return ret;
 }

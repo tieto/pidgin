@@ -2341,6 +2341,8 @@ get_config_frame(PurplePlugin *plugin)
 #endif
 
 	gtk_widget_show_all(ret);
+	g_object_unref(sg);
+	g_object_unref(sg2);
 	return ret;
 }
 

@@ -2992,6 +2992,8 @@ void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
 	}
 	va_end(args);
 
+	g_object_unref(sg);
+
 	return vbox;
 }
 

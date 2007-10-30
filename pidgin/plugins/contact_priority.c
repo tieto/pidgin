@@ -157,6 +157,7 @@ get_config_frame(PurplePlugin *plugin)
 	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(ret);
+	g_object_unref(sg);
 
 	return ret;
 }
