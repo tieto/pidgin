@@ -1492,7 +1492,8 @@ void gnt_tree_change_text(GntTree *tree, gpointer key, int colno, const char *te
 			col->text = g_strdup(text ? text : "");
 		}
 
-		if (get_distance(tree->top, row) >= 0 && get_distance(row, tree->bottom) >= 0)
+		if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_MAPPED) &&
+			get_distance(tree->top, row) >= 0 && get_distance(row, tree->bottom) >= 0)
 			redraw_tree(tree);
 	}
 }
