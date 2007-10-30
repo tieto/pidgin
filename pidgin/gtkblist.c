@@ -4439,7 +4439,7 @@ update_account_error_state(PurpleAccount *account,
 		l = g_list_find_custom(children, account, (GCompareFunc) find_account_button);
 		if (l) { /* it may have already been removed by being clicked on */
 			button = GTK_WIDGET(l->data);
-			remove_error_button(button);
+			remove_error_button(GTK_BUTTON(button));
 		}
 		g_list_free(l);
 		l = NULL;
