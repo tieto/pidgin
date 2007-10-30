@@ -901,7 +901,9 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
  *
  * @param account The account whose error should be retrieved.
  * @constreturn   The type of error and a human-readable description of the
- *                current error, or @c NULL if there is no current error.
+ *                current error, or @c NULL if there is no current error.  This
+ *                pointer is guaranteed to remain valid until the @ref
+ *                account-error-changed signal is emitted for @a account.
  */
 const PurpleConnectionErrorInfo *purple_account_get_current_error(PurpleAccount *account);
 

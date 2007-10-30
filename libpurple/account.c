@@ -2309,6 +2309,10 @@ purple_accounts_remove(PurpleAccount *account)
 
 	schedule_accounts_save();
 
+	/* Clearing the error ensures that account-error-changed is emitted,
+	 * which is the end of the guarantee that the the error's pointer is
+	 * valid.
+	 */
 	clear_current_error(account);
 	purple_signal_emit(purple_accounts_get_handle(), "account-removed", account);
 }

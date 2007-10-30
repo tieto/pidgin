@@ -150,8 +150,12 @@ void (*account_error_changed)(PurpleAccount *account, const PurpleConnectionErro
    Emitted when @a account's error changes.
   @param account   The account whose error has changed.
   @param old_error The account's previous error, or @c NULL if it had no
-                   error.
+                   error.  After this signal is emitted, @a old_error is
+                   not guaranteed to be a valid pointer.
   @param new_error The account's new error, or @c NULL if it has no error.
+                   If not @c NULL, @a new_error will remain a valid until
+                   pointer just after the next time this signal is emitted
+                   for this @a account.
   @see purple_account_get_current_error()
   @since 2.3.0
  @endsignaldef
