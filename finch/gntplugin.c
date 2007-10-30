@@ -29,6 +29,7 @@
 #include <gntlabel.h>
 #include <gntline.h>
 #include <gnttree.h>
+#include <gntutils.h>
 
 #include "finch.h"
 
@@ -399,6 +400,7 @@ void finch_plugins_show_all()
 
 	button = gnt_button_new(_("Install Plugin..."));
 	gnt_box_add_widget(GNT_BOX(box), button);
+	gnt_util_set_trigger_widget(GNT_WIDGET(tree), GNT_KEY_INS, button);
 	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(install_plugin_cb), NULL);
 
 	button = gnt_button_new(_("Close"));
