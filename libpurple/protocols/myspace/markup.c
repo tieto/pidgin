@@ -580,7 +580,6 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 		default:
 			purple_debug_info("msim",
 					"msim_convert_xmlnode: strange node\n");
-			inner = g_strdup("");
 		}
 
 		if (inner) {
