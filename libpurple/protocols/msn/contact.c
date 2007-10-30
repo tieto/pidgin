@@ -389,13 +389,13 @@ msn_get_contact_list_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	g_free(cb_data);
 }
 
-/* SOAP  get contact list*/
+/*SOAP  get contact list*/
 void
 msn_get_contact_list(MsnContact * contact,
 	const MsnSoapPartnerScenario partner_scenario, const char *update_time)
 {
 	gchar *body = NULL;
-	gchar * update_str;
+	gchar *update_str = NULL;
 	GetContactListCbData cb_data = { contact, partner_scenario };
 	const gchar *partner_scenario_str = MsnSoapPartnerScenarioText[partner_scenario];
 
@@ -406,8 +406,7 @@ msn_get_contact_list(MsnContact * contact,
 		update_str = g_strdup_printf(MSN_GET_CONTACT_UPDATE_XML,update_time);
 	}
 
-	body = g_strdup_printf(MSN_GET_CONTACT_TEMPLATE, partner_scenario_str,
-		update_str);
+	body = g_strdup_printf(MSN_GET_CONTACT_TEMPLATE, partner_scenario_str, update_str ? update_str : "");
 
 	msn_soap_message_send(contact->session,
 		msn_soap_message_new(MSN_GET_CONTACT_SOAP_ACTION,
@@ -657,7 +656,7 @@ msn_parse_addressbook(MsnContact * contact, xmlnode *node)
 
 		if ((node2 = xmlnode_get_child(abNode, "lastChange")))
 			tmp = xmlnode_get_data(node2);
-		purple_debug_info("MsnAB"," lastchanged Time:{%s}\n", tmp ? tmp : "(null)");
+		purple_debug_info("MSNAB"," lastchanged Time:{%s}\n", tmp ? tmp : "(null)");
 		purple_account_set_string(session->account, "ablastChange", tmp);
 
 		g_free(tmp); tmp = NULL;
@@ -691,10 +690,6 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 			msn_send_privacy(session->account->gc);
 			msn_notification_dump_contact(session);
 		}
-
-		/*free the read buffer*/
-		msn_soap_free_read_buf(soapconn);
-		return TRUE;
 	} else {
 		/* This is making us loop infinitely when we fail to parse the
 		  address book, disable for now (we should re-enable when we
@@ -705,7 +700,6 @@ msn_get_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		*/
 		msn_session_disconnect(session);
 		purple_connection_error(session->account->gc, _("Unable to retrieve MSN Address Book"));
-		return FALSE;
 	}
 }
 
@@ -715,26 +709,17 @@ msn_get_address_book(MsnContact *contact,
 	MsnSoapPartnerScenario partner_scenario, const char *LastChanged,
 	const char *dynamicItemLastChange)
 {
-	char *body = NULL;
-	char *ab_update_str,*update_str;
+	char *body, *update_str = NULL;
 
 	purple_debug_misc("MSNAB","Getting Address Book\n");
 
 	/*build SOAP and POST it*/
-	if ( LastChanged != NULL ) {
-		ab_update_str = g_strdup_printf(MSN_GET_ADDRESS_UPDATE_XML,LastChanged);
-	} else {
-		ab_update_str = g_strdup("");
-	}
-	if ( dynamicItemLastChange != NULL ) {
-		update_str = g_strdup_printf(MSN_GET_ADDRESS_UPDATE_XML,
-									 dynamicItemLastChange);
-	} else {
-		update_str = g_strdup(ab_update_str);
-	}
-	
-	body = g_strdup_printf(MSN_GET_ADDRESS_TEMPLATE, MsnSoapPartnerScenarioText[partner_scenario], update_str);
-	g_free(update_str);
+	if (dynamicItemLastChange != NULL)
+		update_str = g_strdup_printf(MSN_GET_ADDRESS_UPDATE_XML, dynamicItemLastChange);
+	else if (LastChanged != NULL)
+		update_str = g_strdup_printf(MSN_GET_ADDRESS_UPDATE_XML, LastChanged);
+
+	body = g_strdup_printf(MSN_GET_ADDRESS_TEMPLATE, MsnSoapPartnerScenarioText[partner_scenario], update_str ? update_str : "");
 
 	msn_soap_message_send(contact->session,
 		msn_soap_message_new(MSN_GET_ADDRESS_SOAP_ACTION,
@@ -742,7 +727,7 @@ msn_get_address_book(MsnContact *contact,
 		MSN_CONTACT_SERVER, MSN_ADDRESS_BOOK_POST_URL, msn_get_address_cb,
 		contact);
 
-	g_free(ab_update_str);
+	g_free(update_str);
 	g_free(body);
 }
 
@@ -763,22 +748,17 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 		// the code this block is replacing didn't send ADL for yahoo contacts,
 		// but i haven't confirmed this is WLM's behaviour wrt yahoo contacts
-
 		if ( !msn_user_is_yahoo(session->account, state->who) ) {
-		
 			msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_AL);
 			msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
 		}
+
 		msn_notification_send_fqy(session, state->who);
 
 		user = msn_userlist_find_add_user(userlist, state->who, state->who);
 		msn_user_add_group_id(user, state->guid);
-
-		if (msn_userlist_user_is_in_list(user, MSN_LIST_PL)) {
-			msn_del_contact_from_list(session->contact, NULL, state->who, MSN_LIST_PL);
-		}
 	}
-	
+
 	msn_callback_state_free(state);
 }
 
@@ -931,12 +911,11 @@ msn_delete_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	MsnCallbackState *state = data;
 
 	if (resp != NULL) {
-		MsnUser *user;
 		MsnUserList *userlist = state->session->userlist;
+		MsnUser *user = msn_userlist_find_user_with_id(userlist, state->uid);
 
 		purple_debug_info("MSNCL","Delete contact successful\n");
 
-		user = msn_userlist_find_user_with_id(userlist, state->uid);
 		if (user != NULL) {
 			msn_userlist_remove_user(userlist, user);
 		}
@@ -951,7 +930,7 @@ msn_delete_contact(MsnContact *contact, const char *contactId)
 {	
 	gchar *body = NULL;
 	gchar *contact_id_xml = NULL ;
-    MsnCallbackState *state;
+	MsnCallbackState *state;
 
 	g_return_if_fail(contactId != NULL);
 	contact_id_xml = g_strdup_printf(MSN_CONTACT_ID_XML, contactId);
@@ -962,8 +941,7 @@ msn_delete_contact(MsnContact *contact, const char *contactId)
 	/* build SOAP request */
 	purple_debug_info("MSNCL","Deleting contact with contactId: %s\n", contactId);
 	body = g_strdup_printf(MSN_DEL_CONTACT_TEMPLATE, contact_id_xml);
-
-	msn_soap_message_send(state->session,
+	msn_soap_message_send(contact->session,
 		msn_soap_message_new(MSN_CONTACT_DEL_SOAP_ACTION,
 			xmlnode_from_str(body, -1)),
 		MSN_CONTACT_SERVER, MSN_ADDRESS_BOOK_POST_URL,
@@ -1086,10 +1064,15 @@ msn_del_contact_from_list_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	MsnCallbackState *state = data;
 	MsnSession *session = state->session;
 
-	if (resp != NULL) {	
+	if (resp != NULL) {
 		purple_debug_info("MSN CL", "Contact %s deleted successfully from %s list on server!\n", state->who, MsnMemberRole[state->list_id]);
 
 		if (state->list_id == MSN_LIST_PL) {
+			MsnUser *user = msn_userlist_find_user(session->userlist, state->who);
+
+			if (user != NULL)
+				msn_user_unset_op(user, MSN_LIST_PL_OP);
+
 			msn_add_contact_to_list(session->contact, state, state->who, MSN_LIST_RL);
 		} else if (state->list_id == MSN_LIST_AL) {
 			purple_privacy_permit_remove(session->account, state->who, TRUE);
@@ -1166,21 +1149,22 @@ msn_add_contact_to_list_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	if (resp != NULL) {
 		purple_debug_info("MSN CL", "Contact %s added successfully to %s list on server!\n", state->who, MsnMemberRole[state->list_id]);
 
-		if (state->list_id == MSN_LIST_RL &&
-			(state->action & MSN_DENIED_BUDDY)) {
+		if (state->list_id == MSN_LIST_RL) {
+			MsnUser *user = msn_userlist_find_user(state->session->userlist, state->who);
+		
+			if (user != NULL) {
+				msn_user_set_op(user, MSN_LIST_RL_OP);
+			}
 
-			msn_add_contact_to_list(state->session->contact, NULL, state->who, MSN_LIST_BL);
-		} else if (state->list_id == MSN_LIST_AL) {
-			purple_privacy_permit_add(state->session->account, state->who, TRUE);
-		} else if (state->list_id == MSN_LIST_BL) {
-			purple_privacy_deny_add(state->session->account, state->who, TRUE);
+			if (state->action & MSN_DENIED_BUDDY) {
+
+				msn_add_contact_to_list(state->session->contact, NULL, state->who, MSN_LIST_BL);
+			} else if (state->list_id == MSN_LIST_AL) {
+				purple_privacy_permit_add(state->session->account, state->who, TRUE);
+			} else if (state->list_id == MSN_LIST_BL) {
+				purple_privacy_deny_add(state->session->account, state->who, TRUE);
+			}
 		}
-	}
-
-	if (state->list_id == MSN_LIST_AL) {
-		purple_privacy_permit_add(state->session->account, state->who, TRUE);
-	} else if (state->list_id == MSN_LIST_BL) {
-		purple_privacy_deny_add(state->session->account, state->who, TRUE);
 	}
 
 	msn_callback_state_free(state);
@@ -1267,7 +1251,7 @@ msn_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 
 	if (resp == NULL) {
 		msn_callback_state_free(state);
-		return TRUE;
+		return;
 	}
 
 	if (state) {
