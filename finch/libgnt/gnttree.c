@@ -363,7 +363,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 		notfirst = TRUE;
 
 		if (len > width) {
-			len = width - 1;
+			len = MAX(1, width - 1);
 			cut = TRUE;
 		}
 
@@ -373,7 +373,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 
 		text = gnt_util_onscreen_width_to_pointer(display, len - fl, NULL);
 		string = g_string_append_len(string, display, text - display);
-		if (cut) { /* ellipsis */
+		if (cut && width > 1) { /* ellipsis */
 			if (gnt_ascii_only())
 				g_string_append_c(string, '~');
 			else
