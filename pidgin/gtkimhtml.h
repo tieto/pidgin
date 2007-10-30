@@ -128,9 +128,15 @@ struct _GtkIMHtml {
 		GtkTextTag *link;
 	} edit;
 
-	/* These are not used anymore and should be removed when possible */
+#ifndef PIDGIN_DISABLE_DEPRECATED
+	/** @deprecated */
 	char *clipboard_text_string;
+	/** @deprecated */
 	char *clipboard_html_string;
+#else
+	char *depr1;
+	char *depr2;
+#endif
 
 	GSList *im_images;
 	GtkIMHtmlFuncs *funcs;
