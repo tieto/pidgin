@@ -368,7 +368,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 		}
 
 		if (RIGHT_ALIGNED(tree, i) && len < tree->columns[i].width) {
-			g_string_append_printf(string, "%*s", width - len, "");
+			g_string_append_printf(string, "%*s", width - len - cut, "");
 		}
 
 		text = gnt_util_onscreen_width_to_pointer(display, len - fl, NULL);
