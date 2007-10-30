@@ -1129,6 +1129,7 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 	g_list_free(dialog->user_split_entries);
 	g_list_free(dialog->protocol_opt_entries);
 	g_free(dialog->protocol_id);
+	g_object_unref(dialog->sg);
 
 	purple_imgstore_unref(dialog->icon_img);
 
