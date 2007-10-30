@@ -4376,15 +4376,12 @@ create_connection_error_button(PurpleAccount *account,
 	hbox = gtk_hbox_new(FALSE, 6);
 
 	/* Create the icon */
-	if (purple_account_get_status_type_with_primitive(account,
-							PURPLE_STATUS_OFFLINE) != NULL) {
-		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
-		if (pixbuf != NULL) {
-			image = gtk_image_new_from_pixbuf(pixbuf);
-			g_object_unref(pixbuf);
+	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	if (pixbuf != NULL) {
+		image = gtk_image_new_from_pixbuf(pixbuf);
+		g_object_unref(pixbuf);
 
-			gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
-		}
+		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
 	}
 
 	/* Create the text */
