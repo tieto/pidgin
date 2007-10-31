@@ -4658,6 +4658,9 @@ add_to_signed_on_elsewhere(PurpleAccount *account)
 	gtk_box_pack_start(GTK_BOX(priv->signed_on_elsewhere_minidialog_accounts),
 		account_label, FALSE, FALSE, 0);
 	gtk_widget_show_all(account_label);
+
+	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
+		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
 }
 
 static void
