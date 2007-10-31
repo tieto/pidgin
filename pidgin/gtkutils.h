@@ -600,13 +600,26 @@ char *pidgin_make_pretty_arrows(const char *str);
 
 /**
  * Creates a "mini-dialog" suitable for embedding in the buddy list scrollbook
+ * with pidgin_blist_add_alert().
  *
- * @param handle         A handle
- * @param stock_id       The ID of a stock image to use in the mini dialog
+ * @param handle         The #PurpleConnection to which this mini-dialog
+ *                       refers, or @c NULL if it does not refer to a
+ *                       connection.  If @a handle is supplied, the mini-dialog
+ *                       will be automatically removed and destroyed when the
+ *                       connection signs off.
+ * @param stock_id       The ID of a stock image to use in the mini dialog.
  * @param primary        The primary text
  * @param secondary      The secondary text
  * @param user_data      Data to pass to the callbacks
- * @param ...            a NULL-terminated list of button labels and callbacks
+ * @param ...            a <tt>NULL</tt>-terminated list of button labels
+ *                       (<tt>char *</tt>) and callbacks, which should take a
+ *                       <tt>void *</tt> argument, as which @a user_data will
+ *                       be passed.  (Strictly speaking a <tt>GtkButton *</tt>
+ *                       will be passed as the second argument, but it can
+ *                       safely be omitted.)
+ * @return               A <tt>GtkWidget *</tt> suitable for passing to
+ *                       pidgin_blist_add_alert().
+ * @see pidginstock.h
  */
 void *pidgin_make_mini_dialog(PurpleConnection *handle, const char* stock_id, 
 				const char *primary, const char *secondary,
