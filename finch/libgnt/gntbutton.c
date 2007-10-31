@@ -98,6 +98,14 @@ gnt_button_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 }
 
 static void
+gnt_button_destroy(GntWidget *widget)
+{
+	GntButton *button = GNT_BUTTON(widget);
+	g_free(button->priv->text);
+	g_free(button->priv);
+}
+
+static void
 gnt_button_class_init(GntWidgetClass *klass)
 {
 	char *style;
@@ -108,6 +116,7 @@ gnt_button_class_init(GntWidgetClass *klass)
 	parent_class->size_request = gnt_button_size_request;
 	parent_class->key_pressed = gnt_button_key_pressed;
 	parent_class->clicked = gnt_button_clicked;
+	parent_class->destroy = gnt_button_destroy;
 
 	style = gnt_style_get_from_name(NULL, "small-button");
 	small_button = gnt_style_parse_bool(style);
