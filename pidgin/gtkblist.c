@@ -107,6 +107,23 @@ typedef struct
 	GList *entries;
 } PidginJoinChatData;
 
+typedef struct
+{
+	/** List of #PurpleAccount that were disconnected with
+	 * #PURPLE_CONNECTION_ERROR_NAME_IN_USE that have not been dealt with
+	 * by the user.
+	 */
+	GList *accounts_signed_on_elsewhere;
+	/** Pointer to the mini-dialog about having signed on elsewhere, if one
+	 * is showing; @c NULL otherwise.
+	 */
+	GtkWidget *signed_on_elsewhere_minidialog;
+	GtkLabel *signed_on_elsewhere_minidialog_title;
+	GtkVBox *signed_on_elsewhere_minidialog_accounts;
+} PidginBuddyListPrivate;
+
+#define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
+	((PidginBuddyListPrivate *)((list)->priv))
 
 static GtkWidget *accountmenu = NULL;
 
@@ -4067,10 +4084,13 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 static void pidgin_blist_new_list(PurpleBuddyList *blist)
 {
 	PidginBuddyList *gtkblist;
+	PidginBuddyListPrivate *priv;
 
 	gtkblist = g_new0(PidginBuddyList, 1);
 	gtkblist->connection_errors = g_hash_table_new_full(g_direct_hash,
 												g_direct_equal, NULL, g_free);
+	gtkblist->priv = priv = g_new0(PidginBuddyListPrivate, 1);
+
 	blist->ui_data = gtkblist;
 }
 
@@ -4296,6 +4316,36 @@ headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginBuddyList 
 /* Connection error handling stuff */
 /***********************************/
 
+#define OBJECT_DATA_KEY_ACCOUNT "account"
+
+static gboolean
+find_account_widget(GObject *widget,
+                    PurpleAccount *account)
+{
+	if (g_object_get_data(widget, OBJECT_DATA_KEY_ACCOUNT) == account)
+		return 0; /* found */
+	else
+		return 1;
+}
+
+static void
+pack_prpl_icon_start(GtkWidget *box,
+                     PurpleAccount *account)
+{
+	GdkPixbuf *pixbuf;
+	GtkWidget *image;
+
+	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	if (pixbuf != NULL) {
+		image = gtk_image_new_from_pixbuf(pixbuf);
+		g_object_unref(pixbuf);
+
+		gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+	}
+}
+
+/* Generic error buttons */
+
 static void
 ce_modify_account_cb(PurpleAccount *account)
 {
@@ -4356,16 +4406,13 @@ connection_error_button_clicked_cb(GtkButton *button, gpointer user_data)
 	remove_error_button(button);
 }
 
-#define BUTTON_DATA_KEY_ACCOUNT "account"
-
 /* Add a button showing the connection error message */
 static void
 add_generic_connection_error_button(PurpleAccount *account,
                                     const PurpleConnectionErrorInfo *err)
 {
 	gchar *escaped, *text;
-	GtkWidget *button, *label, *image, *hbox;
-	GdkPixbuf *pixbuf;
+	GtkWidget *button, *label, *hbox;
 
 	escaped = g_markup_escape_text(err->description, -1);
 	text = g_strdup_printf(_("<span color=\"red\">%s disconnected: %s</span>"),
@@ -4375,14 +4422,7 @@ add_generic_connection_error_button(PurpleAccount *account,
 
 	hbox = gtk_hbox_new(FALSE, 6);
 
-	/* Create the icon */
-	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
-	if (pixbuf != NULL) {
-		image = gtk_image_new_from_pixbuf(pixbuf);
-		g_object_unref(pixbuf);
-
-		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
-	}
+	pack_prpl_icon_start(hbox, account);
 
 	/* Create the text */
 	label = gtk_label_new(NULL);
@@ -4395,7 +4435,7 @@ add_generic_connection_error_button(PurpleAccount *account,
 
 	/* Create the actual button and put the icon and text on it */
 	button = gtk_button_new();
-	g_object_set_data(G_OBJECT(button), BUTTON_DATA_KEY_ACCOUNT, account);
+	g_object_set_data(G_OBJECT(button), OBJECT_DATA_KEY_ACCOUNT, account);
 	gtk_container_add(GTK_CONTAINER(button), hbox);
 	g_signal_connect(G_OBJECT(button), "clicked",
 	                 G_CALLBACK(connection_error_button_clicked_cb),
@@ -4407,29 +4447,244 @@ add_generic_connection_error_button(PurpleAccount *account,
 	gtk_widget_show_all(gtkblist->error_buttons);
 }
 
-static gboolean
-find_account_button(GObject *button,
-                    PurpleAccount *account)
-{
-	if (g_object_get_data(button, BUTTON_DATA_KEY_ACCOUNT) == account)
-		return 0; /* found */
-	else
-		return 1;
-}
-
 static void
 remove_generic_connection_error_button(PurpleAccount *account)
 {
 	GtkButton *button;
 	GList *l = NULL;
 	GList *children = gtk_container_get_children(GTK_CONTAINER(gtkblist->error_buttons));
-	l = g_list_find_custom(children, account, (GCompareFunc) find_account_button);
+	l = g_list_find_custom(children, account, (GCompareFunc) find_account_widget);
 	if (l) { /* it may have already been removed by being clicked on */
 		button = GTK_BUTTON(l->data);
 		remove_error_button(button);
 	}
 	g_list_free(children);
 }
+
+
+/* Notifications about accounts which were disconnected with
+ * PURPLE_CONNECTION_ERROR_NAME_IN_USE
+ */
+
+static void
+destroy_signed_on_elsewhere_minidialog(PidginBuddyListPrivate *priv)
+{
+	if(priv->signed_on_elsewhere_minidialog == NULL)
+		return;
+
+	gtk_widget_destroy(priv->signed_on_elsewhere_minidialog);
+	priv->signed_on_elsewhere_minidialog = NULL;
+	priv->signed_on_elsewhere_minidialog_accounts = NULL;
+	priv->signed_on_elsewhere_minidialog_title = NULL;
+}
+
+static void
+reconnect_elsewhere_accounts(PidginBuddyList *gtkblist)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	GList *l;
+	PurpleAccount *account;
+	for (l = priv->accounts_signed_on_elsewhere; l; l = l->next) {
+		account = l->data;
+		purple_account_set_enabled(account, purple_core_get_ui(), TRUE);
+	}
+	g_list_free(priv->accounts_signed_on_elsewhere);
+	priv->accounts_signed_on_elsewhere = NULL;
+
+	destroy_signed_on_elsewhere_minidialog(priv);
+}
+
+static void
+ignore_elsewhere_accounts(PidginBuddyList *gtkblist)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+
+	g_list_free(priv->accounts_signed_on_elsewhere);
+	priv->accounts_signed_on_elsewhere = NULL;
+
+	destroy_signed_on_elsewhere_minidialog(priv);
+}
+
+static GtkWidget *
+make_elsewhere_minidialog_button(const char *text,
+                                 GCallback callback)
+{
+	GtkWidget *button = gtk_button_new();
+	GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+	GtkWidget *label = gtk_label_new(NULL);
+	char *button_text =
+		g_strdup_printf("<span size=\"smaller\">%s</span>", text);
+
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), 3);
+
+	g_signal_connect_swapped(G_OBJECT(button), "clicked", callback,
+		gtkblist);
+	gtk_container_add(GTK_CONTAINER(button), hbox);
+
+	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), button_text);
+	g_free(button_text);
+
+	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+
+	return button;
+}
+
+static void
+create_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	GtkWidget *dialog, *vbox, *hbox, *label, *img, *button;
+	GtkSizeGroup *sg;
+
+	if(priv->signed_on_elsewhere_minidialog)
+		return;
+
+	dialog = gtk_vbox_new(FALSE, 0);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BOX_SPACE);
+	priv->signed_on_elsewhere_minidialog = dialog;
+
+	/* HBox to hold error icon and title */
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_DISCONNECT,
+		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	if (img)
+		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+
+	label = gtk_label_new(NULL);
+	priv->signed_on_elsewhere_minidialog_title = GTK_LABEL(label);
+	gtk_widget_set_size_request(label,
+		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25, -1);
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(dialog), hbox, FALSE, FALSE, 0);
+
+	/* VBox to hold "[prplicon] account@server.com" widgets */
+	vbox = gtk_vbox_new(FALSE, 0);
+	priv->signed_on_elsewhere_minidialog_accounts = GTK_VBOX(vbox);
+	gtk_box_pack_start(GTK_BOX(dialog), vbox, FALSE, FALSE, 0);
+
+	/* HBox to hold buttons */
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
+
+	button = make_elsewhere_minidialog_button(_("Re-enable"),
+		(GCallback) reconnect_elsewhere_accounts);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_size_group_add_widget(sg, button);
+
+	button = make_elsewhere_minidialog_button(_("Ignore"),
+		(GCallback) ignore_elsewhere_accounts);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_size_group_add_widget(sg, button);
+
+	gtk_box_pack_start(GTK_BOX(dialog), hbox, FALSE, FALSE, 0);
+	pidgin_blist_add_alert(dialog);
+}
+
+static void
+update_signed_on_elsewhere_minidialog_title(void)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	guint length;
+	char *title, *title_markup;
+
+	length = g_list_length(priv->accounts_signed_on_elsewhere);
+	if (length == 0)
+	{
+		destroy_signed_on_elsewhere_minidialog(priv);
+		return;
+	}
+
+	create_signed_on_elsewhere_minidialog(gtkblist);
+
+	title = g_strdup_printf(
+		ngettext("%d account was disabled because you signed on from another location.",
+			 "%d accounts were disabled because you signed on from another location.",
+			 length),
+		length);
+	title_markup = g_strdup_printf("<span weight=\"bold\" size=\"smaller\">%s</span>", title);
+
+	gtk_label_set_markup(priv->signed_on_elsewhere_minidialog_title, title_markup);
+
+	g_free(title_markup);
+	g_free(title);
+
+	gtk_widget_show_all(priv->signed_on_elsewhere_minidialog);
+}
+
+static GtkWidget *
+create_account_label(PurpleAccount *account)
+{
+	GtkWidget *hbox, *label;
+	const char *username = purple_account_get_username(account);
+	char *markup;
+
+	hbox = gtk_hbox_new(FALSE, 6);
+	g_object_set_data(G_OBJECT(hbox), OBJECT_DATA_KEY_ACCOUNT, account);
+
+	pack_prpl_icon_start(hbox, account);
+
+	label = gtk_label_new(NULL);
+	markup = g_strdup_printf("<span size=\"smaller\">%s</span>", username);
+	gtk_label_set_markup(GTK_LABEL(label), markup);
+	g_free(markup);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+#if GTK_CHECK_VERSION(2,6,0)
+	g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+
+	return hbox;
+}
+
+static void
+add_to_signed_on_elsewhere(PurpleAccount *account)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	GtkWidget *account_label;
+	if(g_list_find(priv->accounts_signed_on_elsewhere, account) != NULL)
+		return;
+
+	priv->accounts_signed_on_elsewhere =
+		g_list_prepend(priv->accounts_signed_on_elsewhere, account);
+
+	update_signed_on_elsewhere_minidialog_title();
+
+	account_label = create_account_label(account);
+	gtk_box_pack_start(GTK_BOX(priv->signed_on_elsewhere_minidialog_accounts),
+		account_label, FALSE, FALSE, 0);
+	gtk_widget_show_all(account_label);
+}
+
+static void
+remove_from_signed_on_elsewhere(PurpleAccount *account)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	if(g_list_find(priv->accounts_signed_on_elsewhere, account) == NULL)
+		return;
+
+	priv->accounts_signed_on_elsewhere =
+		g_list_remove(priv->accounts_signed_on_elsewhere, account);
+
+	if(priv->signed_on_elsewhere_minidialog_accounts) {
+		GList *children = gtk_container_get_children(
+			GTK_CONTAINER(priv->signed_on_elsewhere_minidialog_accounts));
+		GList *l = g_list_find_custom(children, account,
+			(GCompareFunc) find_account_widget);
+		if (l)
+			gtk_widget_destroy(GTK_WIDGET(l->data));
+
+		g_list_free(children);
+	}
+
+	update_signed_on_elsewhere_minidialog_title();
+}
+
+/* Call appropriate error notification code based on error types */
 
 static void
 update_account_error_state(PurpleAccount *account,
@@ -4444,11 +4699,17 @@ update_account_error_state(PurpleAccount *account,
 		pidgin_blist_update_account_error_state(account, NULL);
 
 	if (old) {
-		remove_generic_connection_error_button(account);
+		if(old->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE)
+			remove_from_signed_on_elsewhere(account);
+		else
+			remove_generic_connection_error_button(account);
 	}
 
 	if (new) {
-		add_generic_connection_error_button(account, new);
+		if(new->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE)
+			add_to_signed_on_elsewhere(account);
+		else
+			add_generic_connection_error_button(account, new);
 	}
 }
 
@@ -5662,6 +5923,8 @@ static void pidgin_blist_update(PurpleBuddyList *list, PurpleBlistNode *node)
 
 static void pidgin_blist_destroy(PurpleBuddyList *list)
 {
+	PidginBuddyListPrivate *priv;
+
 	if (!gtkblist)
 		return;
 
@@ -5694,6 +5957,9 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	gdk_cursor_unref(gtkblist->arrow_cursor);
 	gtkblist->hand_cursor = NULL;
 	gtkblist->arrow_cursor = NULL;
+
+	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	g_free(priv);
 
 	g_free(gtkblist);
 	accountmenu = NULL;

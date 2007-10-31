@@ -126,6 +126,8 @@ struct _PidginBuddyList {
 	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
 	GtkWidget *statusbox;            /**< The status selector dropdown */
 	GdkPixbuf *empty_avatar;         /**< A 32x32 transparent pixbuf */
+
+	gpointer priv;                   /**< Pointer to opaque private data */
 };
 
 #define PIDGIN_BLIST(list) ((PidginBuddyList *)(list)->ui_data)
