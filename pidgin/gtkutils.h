@@ -616,7 +616,11 @@ char *pidgin_make_pretty_arrows(const char *str);
  *                       <tt>void *</tt> argument, as which @a user_data will
  *                       be passed.  (Strictly speaking a <tt>GtkButton *</tt>
  *                       will be passed as the second argument, but it can
- *                       safely be omitted.)
+ *                       safely be omitted.)  When a button is pressed, the
+ *                       callback will be called; when the callback returns the
+ *                       dialog will evaporate.  Callbacks may be @c NULL, in
+ *                       which case pressing the corresponding button simply
+ *                       dismisses the dialog.
  * @return               A <tt>GtkWidget *</tt> suitable for passing to
  *                       pidgin_blist_add_alert().
  * @see pidginstock.h
