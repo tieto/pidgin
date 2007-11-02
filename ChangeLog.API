@@ -39,6 +39,8 @@ version 2.3.0 (??/??/????):
 		  account is happy with life), to allow bits of the UI to know
 		  the last error without caching it themselves (as
 		  PidginBuddyList does).
+		* purple_account_clear_current_error() to reset an account's
+		  error state to NULL.
 		* An account-error-changed signal, firing when
 		  purple_account_get_current_error()'s return value changes.
 

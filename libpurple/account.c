@@ -85,8 +85,6 @@ static gboolean accounts_loaded = FALSE;
 
 static GList *handles = NULL;
 
-static void clear_current_error(PurpleAccount *account);
-
 /*********************************************************************
  * Writing to disk                                                   *
  *********************************************************************/
@@ -2233,29 +2231,11 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
 }
 
 static void
-clear_current_error(PurpleAccount *account)
-{
-	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	PurpleConnectionErrorInfo *old;
-
-	if (priv->current_error)
-	{
-		old = priv->current_error;
-		priv->current_error = NULL;
-		purple_signal_emit(purple_accounts_get_handle(),
-		                   "account-error-changed",
-		                   account, old, priv->current_error);
-		g_free (old);
-	}
-
-}
-
-static void
 signed_on_cb(PurpleConnection *gc,
              gpointer unused)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	clear_current_error(account);
+	purple_account_clear_current_error(account);
 }
 
 static void
@@ -2285,6 +2265,24 @@ purple_account_get_current_error(PurpleAccount *account)
 	return priv->current_error;
 }
 
+static void
+purple_account_clear_current_error(PurpleAccount *account)
+{
+	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	PurpleConnectionErrorInfo *old;
+
+	if (priv->current_error)
+	{
+		old = priv->current_error;
+		priv->current_error = NULL;
+		purple_signal_emit(purple_accounts_get_handle(),
+		                   "account-error-changed",
+		                   account, old, priv->current_error);
+		g_free (old);
+	}
+}
+
+
 void
 purple_accounts_add(PurpleAccount *account)
 {
@@ -2313,7 +2311,7 @@ purple_accounts_remove(PurpleAccount *account)
 	 * which is the end of the guarantee that the the error's pointer is
 	 * valid.
 	 */
-	clear_current_error(account);
+	purple_account_clear_current_error(account);
 	purple_signal_emit(purple_accounts_get_handle(), "account-removed", account);
 }
 

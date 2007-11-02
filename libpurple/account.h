@@ -907,6 +907,13 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
  */
 const PurpleConnectionErrorInfo *purple_account_get_current_error(PurpleAccount *account);
 
+/**
+ * Clear an account's current error state, resetting it to @c NULL.
+ *
+ * @param account The account whose error state should be cleared.
+ */
+static void purple_account_clear_current_error(PurpleAccount *account);
+
 /*@}*/
 
 /**************************************************************************/
