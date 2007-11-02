@@ -2239,23 +2239,40 @@ signed_on_cb(PurpleConnection *gc,
 }
 
 static void
-connection_error_cb(PurpleConnection *gc,
-                    PurpleConnectionError err,
-                    const gchar *desc,
-                    gpointer unused)
+set_current_error(PurpleAccount *account,
+                  PurpleConnectionErrorInfo *new_err)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	PurpleConnectionErrorInfo *old = priv->current_error;
+	PurpleConnectionErrorInfo *old_err = priv->current_error;
 
-	priv->current_error = g_new0(PurpleConnectionErrorInfo, 1);
-	priv->current_error->type = err;
-	priv->current_error->description = desc;
+	if(new_err == old_err)
+		return;
+
+	priv->current_error = new_err;
 
 	purple_signal_emit(purple_accounts_get_handle(),
 	                   "account-error-changed",
-	                   account, old, priv->current_error);
-	g_free(old);
+	                   account, old_err, new_err);
+
+	if(old_err)
+		g_free(old_err->description);
+
+	g_free(old_err);
+}
+
+static void
+connection_error_cb(PurpleConnection *gc,
+                    PurpleConnectionError type,
+                    const gchar *description,
+                    gpointer unused)
+{
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleConnectionErrorInfo *err = g_new0(PurpleConnectionErrorInfo, 1);
+
+	err->type = type;
+	err->description = g_strdup(description);
+
+	set_current_error(account, err);
 }
 
 const PurpleConnectionErrorInfo *
@@ -2268,18 +2285,7 @@ purple_account_get_current_error(PurpleAccount *account)
 static void
 purple_account_clear_current_error(PurpleAccount *account)
 {
-	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	PurpleConnectionErrorInfo *old;
-
-	if (priv->current_error)
-	{
-		old = priv->current_error;
-		priv->current_error = NULL;
-		purple_signal_emit(purple_accounts_get_handle(),
-		                   "account-error-changed",
-		                   account, old, priv->current_error);
-		g_free (old);
-	}
+	set_current_error(account, NULL);
 }
 
 
