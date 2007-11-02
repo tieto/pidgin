@@ -204,8 +204,6 @@ clipboard_win32_to_html(char *clipboard) {
 	html = g_strjoinv("\n", split);
 	g_strfreev(split);
 
-	html = g_strstrip(html);
-
 #if 0 /* Debugging for Windows clipboard */
 	purple_debug_info("imhtml clipboard", "HTML fragment: '%s'\n", html);
 #endif
