@@ -90,6 +90,11 @@ version 2.3.0 (??/??/????):
 		  when a dependent plugin fails to unload.  The UI should do
 		  something appropriate.
 
+		* pidgin_make_mini_dialog() now declares its return type to be
+		  GtkWidget * rather than void *.  This should not break any
+		  existing code since any code using it must already rely on
+		  the return type actually being GtkWidget * all along.
+
 		Deprecated:
 		* pidgin_dialogs_about()
 		* pidgin_log_show_contact()

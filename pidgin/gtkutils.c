@@ -2908,9 +2908,13 @@ static void alert_killed_cb(GtkWidget *widget)
 	minidialogs = g_slist_remove(minidialogs, widget);
 }
 
-void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
-				const char *primary, const char *secondary,
-				void *user_data,  ...)
+GtkWidget *
+pidgin_make_mini_dialog(PurpleConnection *gc,
+                        const char *icon_name,
+                        const char *primary,
+                        const char *secondary,
+                        void *user_data,
+                        ...)
 {
 	GtkWidget *vbox;
 	GtkWidget *hbox;

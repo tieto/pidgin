@@ -621,13 +621,13 @@ char *pidgin_make_pretty_arrows(const char *str);
  *                       dialog will evaporate.  Callbacks may be @c NULL, in
  *                       which case pressing the corresponding button simply
  *                       dismisses the dialog.
- * @return               A <tt>GtkWidget *</tt> suitable for passing to
+ * @return               The dialog widget, suitable for passing to
  *                       pidgin_blist_add_alert().
  * @see pidginstock.h
  */
-void *pidgin_make_mini_dialog(PurpleConnection *handle, const char* stock_id, 
-				const char *primary, const char *secondary,
-				void *user_data,  ...);
+GtkWidget *pidgin_make_mini_dialog(PurpleConnection *handle,
+	const char* stock_id, const char *primary, const char *secondary,
+	void *user_data, ...);
 
 /**
  * This is a callback function to be used for Ctrl+F searching in treeviews.
