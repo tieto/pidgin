@@ -4495,7 +4495,7 @@ make_elsewhere_minidialog_button(const char *text,
 	char *button_text =
 		g_strdup_printf("<span size=\"smaller\">%s</span>", text);
 
-	gtk_container_set_border_width(GTK_CONTAINER(hbox), 3);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 
 	g_signal_connect_swapped(G_OBJECT(button), "clicked", callback,
 		gtkblist);
@@ -4515,7 +4515,6 @@ create_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 	GtkWidget *dialog, *vbox, *hbox, *label, *img, *button;
-	GtkSizeGroup *sg;
 
 	if(priv->signed_on_elsewhere_minidialog)
 		return;
@@ -4548,18 +4547,15 @@ create_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 	gtk_box_pack_start(GTK_BOX(dialog), vbox, FALSE, FALSE, 0);
 
 	/* HBox to hold buttons */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
+	hbox = gtk_hbox_new(FALSE, 0);
 
 	button = make_elsewhere_minidialog_button(_("Re-enable"),
 		(GCallback) reconnect_elsewhere_accounts);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, button);
 
 	button = make_elsewhere_minidialog_button(_("Ignore"),
 		(GCallback) ignore_elsewhere_accounts);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, button);
 
 	gtk_box_pack_start(GTK_BOX(dialog), hbox, FALSE, FALSE, 0);
 	pidgin_blist_add_alert(dialog);

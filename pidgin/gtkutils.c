@@ -2922,7 +2922,6 @@ pidgin_make_mini_dialog(PurpleConnection *gc,
 	GtkWidget *label;
 	GtkWidget *button;
 	GtkWidget *img = NULL;
-	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 	char label_text[2048];
 	const char *button_text;
 	GCallback callback;
@@ -2947,7 +2946,7 @@ pidgin_make_mini_dialog(PurpleConnection *gc,
 				    PURPLE_CALLBACK(connection_signed_off_cb), NULL);
 	}
 
-	hbox = gtk_hbox_new(FALSE, 0);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
 	if (img != NULL)
@@ -2969,7 +2968,7 @@ pidgin_make_mini_dialog(PurpleConnection *gc,
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
-	hbox2 = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	hbox2 = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);
 
 	va_start(args, user_data);
@@ -2982,7 +2981,7 @@ pidgin_make_mini_dialog(PurpleConnection *gc,
 		g_signal_connect_swapped(G_OBJECT(button), "clicked", G_CALLBACK(gtk_widget_destroy), vbox);
 		hbox = gtk_hbox_new(FALSE, 0);
 		gtk_container_add(GTK_CONTAINER(button), hbox);
-		gtk_container_set_border_width(GTK_CONTAINER(hbox), 3);
+		gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
 		g_snprintf(label_text, sizeof(label_text),
 			   "<span size=\"smaller\">%s</span>", button_text);
 		label = gtk_label_new(NULL);
@@ -2990,7 +2989,6 @@ pidgin_make_mini_dialog(PurpleConnection *gc,
 		gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
 		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 		gtk_box_pack_end(GTK_BOX(hbox2), button, FALSE, FALSE, 0);
-		gtk_size_group_add_widget(sg, button);
 	}
 	va_end(args);
 
