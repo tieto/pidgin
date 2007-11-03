@@ -346,7 +346,7 @@ purple_dnsquery_resolver_new(gboolean show_debug)
 	/* Create pipes for communicating with the child process */
 	if (pipe(child_out) || pipe(child_in)) {
 		purple_debug_error("dns",
-				   "Could not create pipes: %s\n", strerror(errno));
+				   "Could not create pipes: %s\n", g_strerror(errno));
 		return NULL;
 	}
 
@@ -374,7 +374,7 @@ purple_dnsquery_resolver_new(gboolean show_debug)
 	if (resolver->dns_pid == -1) {
 		purple_debug_error("dns",
 				   "Could not create child process for DNS: %s\n",
-				   strerror(errno));
+				   g_strerror(errno));
 		purple_dnsquery_resolver_destroy(resolver);
 		return NULL;
 	}
@@ -416,7 +416,7 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 		return FALSE;
 	} else if (pid < 0) {
 		purple_debug_warning("dns", "Wait for DNS child %d failed: %s\n",
-				resolver->dns_pid, strerror(errno));
+				resolver->dns_pid, g_strerror(errno));
 		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;
 	}
@@ -430,7 +430,7 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 	rc = write(resolver->fd_in, &dns_params, sizeof(dns_params));
 	if (rc < 0) {
 		purple_debug_error("dns", "Unable to write to DNS child %d: %d\n",
-				resolver->dns_pid, strerror(errno));
+				resolver->dns_pid, g_strerror(errno));
 		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;
 	}
@@ -571,7 +571,7 @@ host_resolved(gpointer data, gint source, PurpleInputCondition cond)
 		purple_dnsquery_resolved(query_data, hosts);
 
 	} else if (rc == -1) {
-		g_snprintf(message, sizeof(message), _("Error reading from resolver process:\n%s"), strerror(errno));
+		g_snprintf(message, sizeof(message), _("Error reading from resolver process:\n%s"), g_strerror(errno));
 		purple_dnsquery_failed(query_data, message);
 
 	} else if (rc == 0) {

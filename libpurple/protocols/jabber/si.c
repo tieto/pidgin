@@ -536,7 +536,7 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 	if(acceptfd == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
 		return;
 	else if(acceptfd == -1) {
-		purple_debug_warning("jabber", "accept: %s\n", strerror(errno));
+		purple_debug_warning("jabber", "accept: %s\n", g_strerror(errno));
 		return;
 	}
 

@@ -2505,7 +2505,7 @@ int purple_build_dir (const char *path, int mode)
 		}
 
 		if (g_mkdir(dir, mode) < 0) {
-			purple_debug_warning("build_dir", "mkdir: %s\n", strerror(errno));
+			purple_debug_warning("build_dir", "mkdir: %s\n", g_strerror(errno));
 			g_strfreev(components);
 			g_free(dir);
 			return -1;
@@ -2541,7 +2541,7 @@ purple_util_write_data_to_file(const char *filename, const char *data, gssize si
 		if (g_mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
 		{
 			purple_debug_error("util", "Error creating directory %s: %s\n",
-							 user_dir, strerror(errno));
+							 user_dir, g_strerror(errno));
 			return FALSE;
 		}
 	}
@@ -2576,7 +2576,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		{
 			purple_debug_error("util", "Error removing old file "
 					   "%s: %s\n",
-					   filename_temp, strerror(errno));
+					   filename_temp, g_strerror(errno));
 		}
 	}
 
@@ -2586,7 +2586,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	{
 		purple_debug_error("util", "Error opening file %s for "
 				   "writing: %s\n",
-				   filename_temp, strerror(errno));
+				   filename_temp, g_strerror(errno));
 		g_free(filename_temp);
 		return FALSE;
 	}
@@ -2599,7 +2599,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	if (fclose(file) != 0)
 	{
 		purple_debug_error("util", "Error closing file %s: %s\n",
-				   filename_temp, strerror(errno));
+				   filename_temp, g_strerror(errno));
 		g_free(filename_temp);
 		return FALSE;
 	}
@@ -2631,7 +2631,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	if (chmod(filename_temp, S_IRUSR | S_IWUSR) == -1)
 	{
 		purple_debug_error("util", "Error setting permissions of file %s: %s\n",
-						 filename_temp, strerror(errno));
+						 filename_temp, g_strerror(errno));
 	}
 #endif
 
@@ -2640,7 +2640,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	{
 		purple_debug_error("util", "Error renaming %s to %s: %s\n",
 				   filename_temp, filename_full,
-				   strerror(errno));
+				   g_strerror(errno));
 	}
 
 	g_free(filename_temp);
@@ -3688,7 +3688,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 					if(new_data == NULL) {
 						purple_debug_error("util",
 								"Failed to allocate %u bytes: %s\n",
-								content_len, strerror(errno));
+								content_len, g_strerror(errno));
 						purple_util_fetch_url_error(gfud,
 								_("Unable to allocate enough memory to hold "
 								  "the contents from %s.  The web server may "
@@ -3726,7 +3726,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 			return;
 		} else {
 			purple_util_fetch_url_error(gfud, _("Error reading from %s: %s"),
-					gfud->website.address, strerror(errno));
+					gfud->website.address, g_strerror(errno));
 			return;
 		}
 	}
@@ -3757,7 +3757,7 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	else if (len < 0) {
 		purple_util_fetch_url_error(gfud, _("Error writing to %s: %s"),
-				gfud->website.address, strerror(errno));
+				gfud->website.address, g_strerror(errno));
 		return;
 	}
 	gfud->request_written += len;

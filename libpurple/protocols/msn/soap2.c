@@ -271,7 +271,7 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	if (count < 0 && errno == EAGAIN)
 		return;
 	else if (count <= 0) {
-		purple_debug_info("soap", "read: %s\n", strerror(errno));
+		purple_debug_info("soap", "read: %s\n", g_strerror(errno));
 		purple_ssl_close(conn->ssl);
 		conn->ssl = NULL;
 		msn_soap_connection_handle_next(conn);

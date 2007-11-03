@@ -116,7 +116,7 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 		{
 			purple_debug_error("buddyicon",
 			                   "Unable to create directory %s: %s\n",
-			                   dirname, strerror(errno));
+			                   dirname, g_strerror(errno));
 		}
 	}
 
@@ -125,7 +125,7 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 		if (!fwrite(purple_imgstore_get_data(img), purple_imgstore_get_size(img), 1, file))
 		{
 			purple_debug_error("buddyicon", "Error writing %s: %s\n",
-			                   path, strerror(errno));
+			                   path, g_strerror(errno));
 		}
 		else
 			purple_debug_info("buddyicon", "Wrote cache file: %s\n", path);
@@ -135,7 +135,7 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 	else
 	{
 		purple_debug_error("buddyicon", "Unable to create file %s: %s\n",
-		                   path, strerror(errno));
+		                   path, g_strerror(errno));
 		g_free(path);
 		return;
 	}
@@ -163,7 +163,7 @@ purple_buddy_icon_data_uncache_file(const char *filename)
 		if (g_unlink(path))
 		{
 			purple_debug_error("buddyicon", "Failed to delete %s: %s\n",
-			                   path, strerror(errno));
+			                   path, g_strerror(errno));
 		}
 		else
 		{
@@ -951,7 +951,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 			if (!fwrite(icon_data, icon_len, 1, file))
 			{
 				purple_debug_error("buddyicon", "Error writing %s: %s\n",
-				                   path, strerror(errno));
+				                   path, g_strerror(errno));
 			}
 			else
 				purple_debug_info("buddyicon", "Wrote migrated cache file: %s\n", path);
@@ -961,7 +961,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 		else
 		{
 			purple_debug_error("buddyicon", "Unable to create file %s: %s\n",
-			                   path, strerror(errno));
+			                   path, g_strerror(errno));
 			g_free(new_filename);
 			g_free(path);
 
@@ -1056,7 +1056,7 @@ _purple_buddy_icons_blist_loaded_cb()
 			{
 				purple_debug_error("buddyicon",
 				                   "Unable to create directory %s: %s\n",
-				                   dirname, strerror(errno));
+				                   dirname, g_strerror(errno));
 			}
 		}
 	}
