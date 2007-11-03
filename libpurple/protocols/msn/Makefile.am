@@ -52,6 +52,8 @@ MSNSOURCES = \
 	slpsession.h \
 	soap.c\
 	soap.h\
+	soap2.c \
+	soap2.h \
 	state.c \
 	state.h \
 	switchboard.c \
