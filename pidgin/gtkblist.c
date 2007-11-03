@@ -109,6 +109,11 @@ typedef struct
 
 typedef struct
 {
+	/** PidginScrollBook used to hold error minidialogs.  Gets packed
+	 * inside PidginBuddyList.error_buttons
+	 */
+	GtkWidget *error_scrollbook;
+
 	/** List of #PurpleAccount that were disconnected with
 	 * #PURPLE_CONNECTION_ERROR_NAME_IN_USE that have not been dealt with
 	 * by the user.
@@ -4351,6 +4356,30 @@ pack_prpl_icon_start(GtkWidget *box,
 	}
 }
 
+static void
+add_error_dialog(PidginBuddyList *gtkblist,
+                 GtkWidget *dialog)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	gtk_container_add(GTK_CONTAINER(priv->error_scrollbook), dialog);
+
+	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
+		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+}
+
+static void
+remove_child_widget_by_account(GtkContainer *container,
+                               PurpleAccount *account)
+{
+	GList *l = NULL;
+	GList *children = gtk_container_get_children(container);
+	l = g_list_find_custom(children, account, (GCompareFunc) find_account_widget);
+	if (l) { /* it may have already been removed by being acted on */
+		gtk_widget_destroy(GTK_WIDGET(l->data));
+	}
+	g_list_free(children);
+}
+
 /* Generic error buttons */
 
 static void
@@ -4375,18 +4404,7 @@ static void
 generic_error_destroy_cb(GtkObject *dialog,
                          PurpleAccount *account)
 {
-	GList *l;
-
 	g_hash_table_remove(gtkblist->connection_errors, account);
-
-	/* Hide the error_buttons hbox if there are no more buttons, saving a
-	 * glorious 6 pixels of vertical screen real estate!
-	 */
-	l = gtk_container_get_children(GTK_CONTAINER(gtkblist->error_buttons));
-	if (l == NULL)
-		gtk_widget_hide(gtkblist->error_buttons);
-	else
-		g_list_free(l);
 }
 
 static void
@@ -4418,21 +4436,16 @@ add_generic_error_dialog(PurpleAccount *account,
 		(GCallback)generic_error_destroy_cb,
 		account);
 
-	gtk_box_pack_end(GTK_BOX(gtkblist->error_buttons), mini_dialog,
-	                 FALSE, FALSE, 0);
-	gtk_widget_show_all(gtkblist->error_buttons);
+	gtk_widget_show_all(mini_dialog);
+	add_error_dialog(gtkblist, mini_dialog);
 }
 
 static void
 remove_generic_error_dialog(PurpleAccount *account)
 {
-	GList *l = NULL;
-	GList *children = gtk_container_get_children(GTK_CONTAINER(gtkblist->error_buttons));
-	l = g_list_find_custom(children, account, (GCompareFunc) find_account_widget);
-	if (l) { /* it may have already been removed by being acted on */
-		gtk_widget_destroy(GTK_WIDGET(l->data));
-	}
-	g_list_free(children);
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	remove_child_widget_by_account(GTK_CONTAINER(priv->error_scrollbook),
+		account);
 }
 
 
@@ -4568,7 +4581,7 @@ create_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(dialog), hbox, FALSE, FALSE, 0);
-	pidgin_blist_add_alert(dialog);
+	add_error_dialog(gtkblist, dialog);
 }
 
 static void
@@ -4667,16 +4680,10 @@ remove_from_signed_on_elsewhere(PurpleAccount *account)
 	priv->accounts_signed_on_elsewhere =
 		g_list_remove(priv->accounts_signed_on_elsewhere, account);
 
-	if(priv->signed_on_elsewhere_minidialog_accounts) {
-		GList *children = gtk_container_get_children(
-			GTK_CONTAINER(priv->signed_on_elsewhere_minidialog_accounts));
-		GList *l = g_list_find_custom(children, account,
-			(GCompareFunc) find_account_widget);
-		if (l)
-			gtk_widget_destroy(GTK_WIDGET(l->data));
-
-		g_list_free(children);
-	}
+	if(priv->signed_on_elsewhere_minidialog_accounts)
+		remove_child_widget_by_account(GTK_CONTAINER(
+			priv->signed_on_elsewhere_minidialog_accounts),
+			account);
 
 	update_signed_on_elsewhere_minidialog_title();
 }
@@ -4866,6 +4873,7 @@ kiosk_page()
 
 static void pidgin_blist_show(PurpleBuddyList *list)
 {
+	PidginBuddyListPrivate *priv;
 	void *handle;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *column;
@@ -4892,6 +4900,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	}
 
 	gtkblist = PIDGIN_BLIST(list);
+	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 
 	gtkblist->empty_avatar = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
 	gdk_pixbuf_fill(gtkblist->empty_avatar, 0x00000000);
@@ -5194,11 +5203,19 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->scrollbook = pidgin_scroll_book_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->scrollbook, FALSE, FALSE, 0);
 
-	/* Create an empty vbox used for showing connection errors */
+	/* Create an vbox which holds the scrollbook which is actually used to
+	 * display connection errors.  The vbox needs to still exist for
+	 * backwards compatibility.
+	 */
 	gtkblist->error_buttons = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->error_buttons, FALSE, FALSE, 0);
-        gtk_container_set_border_width(GTK_CONTAINER(gtkblist->error_buttons), 3);
-	
+	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->error_buttons), 0);
+
+	priv->error_scrollbook = pidgin_scroll_book_new();
+	gtk_box_pack_start(GTK_BOX(gtkblist->error_buttons),
+		priv->error_scrollbook, FALSE, FALSE, 0);
+
+
 	/* Add the statusbox */
 	gtkblist->statusbox = pidgin_status_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
@@ -5314,7 +5331,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	                      gtkblist);
 
 	gtk_widget_hide(gtkblist->headline_hbox);
-	gtk_widget_hide(gtkblist->error_buttons);
 
 	show_initial_account_errors(gtkblist);
 
