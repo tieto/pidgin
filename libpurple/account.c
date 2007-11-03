@@ -2356,7 +2356,7 @@ purple_account_get_current_error(PurpleAccount *account)
 	return priv->current_error;
 }
 
-static void
+void
 purple_account_clear_current_error(PurpleAccount *account)
 {
 	set_current_error(account, NULL);

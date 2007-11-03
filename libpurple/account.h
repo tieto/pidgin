@@ -912,7 +912,7 @@ const PurpleConnectionErrorInfo *purple_account_get_current_error(PurpleAccount 
  *
  * @param account The account whose error state should be cleared.
  */
-static void purple_account_clear_current_error(PurpleAccount *account);
+void purple_account_clear_current_error(PurpleAccount *account);
 
 /*@}*/
 
