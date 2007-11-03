@@ -161,7 +161,7 @@ msn_soap_connected_cb(gpointer data, PurpleSslConnection *ssl,
 	conn->connected = TRUE;
 
 	if (conn->event_handle == 0)
-		conn->event_handle = g_idle_add(msn_soap_connection_run, conn);
+		conn->event_handle = purple_timeout_add(0, msn_soap_connection_run, conn);
 }
 
 static void
@@ -260,34 +260,44 @@ static void
 msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 {
     MsnSoapConnection *conn = data;
-	int count;
+	int count = 0, cnt;
 	char buf[8192];
 	char *linebreak;
 	char *cursor;
 	gboolean handled = FALSE;
 
-	g_return_if_fail(cond == PURPLE_INPUT_READ);
-
-	count = purple_ssl_read(conn->ssl, buf, sizeof(buf));
-	purple_debug_info("soap", "read %d bytes\n", count);
-	if (count < 0 && errno == EAGAIN)
-		return;
-	else if (count <= 0) {
-		purple_debug_info("soap", "read: %s\n", g_strerror(errno));
-		purple_ssl_close(conn->ssl);
-		conn->ssl = NULL;
-		msn_soap_connection_handle_next(conn);
-		return;
-	}
-
 	if (conn->message == NULL) {
 		conn->message = msn_soap_message_new(NULL, NULL);
 	}
 
-	if (conn->buf == NULL) {
-		conn->buf = g_string_new_len(buf, count);
-	} else {
-		g_string_append_len(conn->buf, buf, count);
+	while ((cnt = purple_ssl_read(conn->ssl, buf, sizeof(buf))) > 0) {
+		purple_debug_info("soap", "read %d bytes\n", cnt);
+		count += cnt;
+		if (conn->buf == NULL) {
+			conn->buf = g_string_new_len(buf, cnt);
+		} else {
+			g_string_append_len(conn->buf, buf, cnt);
+		}
+	}
+
+	if (cnt < 0) {
+		if (errno != EAGAIN) {
+			purple_debug_info("soap", "read: %s\n", g_strerror(errno));
+			purple_ssl_close(conn->ssl);
+			conn->ssl = NULL;
+			msn_soap_connection_handle_next(conn);
+			return;
+		} else if (count == 0) {
+			return;
+		}
+	}
+
+	if (cnt == 0 && count == 0) {
+		purple_debug_info("soap", "msn_soap_read_cb() called, but no data available?\n");
+		purple_ssl_close(conn->ssl);
+		conn->ssl = NULL;
+		msn_soap_connection_handle_next(conn);
+		return;
 	}
 
 	purple_debug_info("soap", "current %s\n", conn->buf->str);
