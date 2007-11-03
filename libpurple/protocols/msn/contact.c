@@ -348,7 +348,6 @@ msn_parse_contact_list(MsnContact *contact, xmlnode *node)
 			 service; service = xmlnode_get_next_twin(service)) {
 			msn_parse_each_service(contact->session, service);
 		}
-		g_free(typedata);
 	}
 }
 
