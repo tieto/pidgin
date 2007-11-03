@@ -956,21 +956,17 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	}else	{
 		/*send Offline Instant Message,only to MSN Passport User*/
 		MsnSession *session;
-		MsnOim *oim;
 		char *friendname;
 
 		purple_debug_info("MSNP14","prepare to send offline Message\n");
 		session = gc->proto_data;
-		/* XXX/khc: hack */
-		if (!session->oim)
-			session->oim = msn_oim_new(session);
 
-		oim = session->oim;
 		friendname = msn_encode_mime(account->username);
-		msn_oim_prep_send_msg_info(oim, purple_account_get_username(account),
-								   friendname, who,	message);
+		msn_oim_prep_send_msg_info(session->oim,
+			purple_account_get_username(account),
+			friendname, who,	message);
+		msn_oim_send_msg(session->oim);
 		g_free(friendname);
-		msn_oim_send_msg(oim);
 	}
 
 	return 1;
