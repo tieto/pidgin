@@ -648,7 +648,7 @@ msn_soap_request_destroy(MsnSoapRequest *req)
 xmlnode *
 msn_soap_xml_get(xmlnode *parent, const char *node)
 {
-	xmlnode *ret;
+	xmlnode *ret = NULL;
 	char **tokens = g_strsplit(node, "/", -1);
 	int i;
 
