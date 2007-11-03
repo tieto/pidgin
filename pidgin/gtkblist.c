@@ -4472,15 +4472,25 @@ static void
 ignore_elsewhere_accounts(PidginBuddyList *gtkblist)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
-	GList *l;
+	GList *accounts_elsewhere, *l;
 
-	for (l = priv->accounts_signed_on_elsewhere; l != NULL; l = l->next) {
+	/* priv->accounts_signed_on_elsewhere gets changed in
+	 * update_account_error_state, which is called when
+	 * purple_account_clear_current_error emits account-error-changed. So
+	 * let's take a copy.
+	 *
+	 * (Or maybe we could just use while(priv->accounts_elsewhere) and rely
+	 * on it being ultimately reduced to NULL?  But that sounds fragile.)
+	 */
+	accounts_elsewhere = g_list_copy(priv->accounts_signed_on_elsewhere);
+
+	for (l = accounts_elsewhere; l != NULL; l = l->next)
+	{
 		PurpleAccount *account = l->data;
 		purple_account_clear_current_error(account);
 	}
 
-	g_list_free(priv->accounts_signed_on_elsewhere);
-	priv->accounts_signed_on_elsewhere = NULL;
+	g_list_free(accounts_elsewhere);
 
 	destroy_signed_on_elsewhere_minidialog(priv);
 }
