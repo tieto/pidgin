@@ -4498,6 +4498,12 @@ static void
 ignore_elsewhere_accounts(PidginBuddyList *gtkblist)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	GList *l;
+
+	for (l = priv->accounts_signed_on_elsewhere; l != NULL; l = l->next) {
+		PurpleAccount *account = l->data;
+		purple_account_clear_current_error(account);
+	}
 
 	g_list_free(priv->accounts_signed_on_elsewhere);
 	priv->accounts_signed_on_elsewhere = NULL;
@@ -4687,8 +4693,8 @@ remove_from_signed_on_elsewhere(PurpleAccount *account)
 	update_signed_on_elsewhere_minidialog_title();
 }
 
-/* Call appropriate error notification code based on error types */
 
+/* Call appropriate error notification code based on error types */
 static void
 update_account_error_state(PurpleAccount *account,
                            const PurpleConnectionErrorInfo *old,
@@ -4713,6 +4719,26 @@ update_account_error_state(PurpleAccount *account,
 			add_to_signed_on_elsewhere(account);
 		else
 			add_generic_connection_error_button(account, new);
+	}
+}
+
+/* In case accounts are loaded before the blist (which they currently are),
+ * let's call update_account_error_state ourselves on every account's current
+ * state when the blist starts.
+ */
+static void
+show_initial_account_errors(PidginBuddyList *gtkblist)
+{
+	GList *l = purple_accounts_get_all();
+	PurpleAccount *account;
+	const PurpleConnectionErrorInfo *err;
+
+	for (; l; l = l->next)
+	{
+		account = l->data;
+		err = purple_account_get_current_error(account);
+
+		update_account_error_state(account, NULL, err, gtkblist);
 	}
 }
 
@@ -5301,6 +5327,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	gtk_widget_hide(gtkblist->headline_hbox);
 	gtk_widget_hide(gtkblist->error_buttons);
+
+	show_initial_account_errors(gtkblist);
 
 	/* emit our created signal */
 	handle = pidgin_blist_get_handle();
