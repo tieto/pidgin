@@ -132,7 +132,7 @@ typedef struct
 	/** The type of error. */
 	PurpleConnectionError type;
 	/** A localised, human-readable description of the error. */
-	const char *description;
+	char *description;
 } PurpleConnectionErrorInfo;
 
 #include <time.h>
