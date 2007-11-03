@@ -4640,7 +4640,15 @@ create_account_label(PurpleAccount *account)
 	g_free(markup);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 #if GTK_CHECK_VERSION(2,6,0)
-	g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	g_object_set(G_OBJECT(label), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif
+#if GTK_CHECK_VERSION(2,12,0)
+	{ /* avoid unused variable warnings on pre-2.12 Gtk */
+		char *description =
+			purple_account_get_current_error(account)->description;
+		if (description != NULL && *description != '\0')
+			gtk_widget_set_tooltip_text(label, description);
+	}
 #endif
 	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
