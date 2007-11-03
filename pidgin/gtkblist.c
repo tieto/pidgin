@@ -4354,24 +4354,30 @@ pack_prpl_icon_start(GtkWidget *box,
 /* Generic error buttons */
 
 static void
-ce_modify_account_cb(PurpleAccount *account)
+generic_error_modify_cb(PurpleAccount *account)
 {
 	pidgin_account_dialog_show(PIDGIN_MODIFY_ACCOUNT_DIALOG, account);
 }
 
 static void
-ce_enable_account_cb(PurpleAccount *account)
+generic_error_enable_cb(PurpleAccount *account)
 {
 	purple_account_set_enabled(account, purple_core_get_ui(), TRUE);
 }
 
 static void
-remove_error_button(GtkButton *button)
+generic_error_ignore_cb(PurpleAccount *account)
 {
-	GList *l = NULL;
+	purple_account_clear_current_error(account);
+}
 
-	/* This also removes button from gtkblist->error_buttons */
-	gtk_widget_destroy(GTK_WIDGET(button));
+static void
+generic_error_destroy_cb(GtkObject *dialog,
+                         PurpleAccount *account)
+{
+	GList *l;
+
+	g_hash_table_remove(gtkblist->connection_errors, account);
 
 	/* Hide the error_buttons hbox if there are no more buttons, saving a
 	 * glorious 6 pixels of vertical screen real estate!
@@ -4384,86 +4390,47 @@ remove_error_button(GtkButton *button)
 }
 
 static void
-connection_error_button_clicked_cb(GtkButton *button, gpointer user_data)
+add_generic_error_dialog(PurpleAccount *account,
+                         const PurpleConnectionErrorInfo *err)
 {
-	PurpleAccount *account;
-	char *primary;
-	const char *text;
-	gboolean enabled;
-	const PurpleConnectionErrorInfo *err;
+	GtkWidget *mini_dialog;
+	const char *username = purple_account_get_username(account);
+	gboolean enabled =
+		purple_account_get_enabled(account, purple_core_get_ui());
+	char *primary = g_strdup_printf(_("%s disconnected"), username);
 
-	account = user_data;
-	primary = g_strdup_printf(_("%s disconnected"),
-	                          purple_account_get_username(account));
-	err = purple_account_get_current_error(account);
-	text = err->description;
 
-	enabled = purple_account_get_enabled(account, purple_core_get_ui());
-	purple_request_action_with_hint(account, _("Connection Error"), primary, text, 2,
-						account, NULL, NULL,
-						PURPLE_REQUEST_UI_HINT_ACCOUNT, account, 3,
-						_("OK"), NULL,
-						_("Modify Account"), PURPLE_CALLBACK(ce_modify_account_cb),
-						enabled ? _("Connect") : _("Re-enable Account"),
-						enabled ? PURPLE_CALLBACK(purple_account_connect) :
-									PURPLE_CALLBACK(ce_enable_account_cb));
+	mini_dialog = pidgin_make_mini_dialog(NULL, PIDGIN_STOCK_DISCONNECT,
+		primary, err->description, account,
+		(enabled ? _("Reconnect") : _("Re-enable")),
+		(enabled ? PURPLE_CALLBACK(purple_account_connect)
+		         : PURPLE_CALLBACK(generic_error_enable_cb)),
+		_("Modify Account"), PURPLE_CALLBACK(generic_error_modify_cb),
+		_("Ignore"), PURPLE_CALLBACK(generic_error_ignore_cb),
+		NULL);
+
 	g_free(primary);
-	g_hash_table_remove(gtkblist->connection_errors, account);
 
-	remove_error_button(button);
-}
+	g_object_set_data(G_OBJECT(mini_dialog), OBJECT_DATA_KEY_ACCOUNT,
+		account);
 
-/* Add a button showing the connection error message */
-static void
-add_generic_connection_error_button(PurpleAccount *account,
-                                    const PurpleConnectionErrorInfo *err)
-{
-	gchar *escaped, *text;
-	GtkWidget *button, *label, *hbox;
+	g_signal_connect_after(mini_dialog, "destroy",
+		(GCallback)generic_error_destroy_cb,
+		account);
 
-	escaped = g_markup_escape_text(err->description, -1);
-	text = g_strdup_printf(_("<span color=\"red\">%s disconnected: %s</span>"),
-	                       purple_account_get_username(account),
-	                       escaped);
-	g_free(escaped);
-
-	hbox = gtk_hbox_new(FALSE, 6);
-
-	pack_prpl_icon_start(hbox, account);
-
-	/* Create the text */
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(label), text);
-	g_free(text);
-#if GTK_CHECK_VERSION(2,6,0)
-	g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
-	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-
-	/* Create the actual button and put the icon and text on it */
-	button = gtk_button_new();
-	g_object_set_data(G_OBJECT(button), OBJECT_DATA_KEY_ACCOUNT, account);
-	gtk_container_add(GTK_CONTAINER(button), hbox);
-	g_signal_connect(G_OBJECT(button), "clicked",
-	                 G_CALLBACK(connection_error_button_clicked_cb),
-	                 account);
-	gtk_widget_show_all(button);
-
-	gtk_box_pack_end(GTK_BOX(gtkblist->error_buttons), button,
+	gtk_box_pack_end(GTK_BOX(gtkblist->error_buttons), mini_dialog,
 	                 FALSE, FALSE, 0);
 	gtk_widget_show_all(gtkblist->error_buttons);
 }
 
 static void
-remove_generic_connection_error_button(PurpleAccount *account)
+remove_generic_error_dialog(PurpleAccount *account)
 {
-	GtkButton *button;
 	GList *l = NULL;
 	GList *children = gtk_container_get_children(GTK_CONTAINER(gtkblist->error_buttons));
 	l = g_list_find_custom(children, account, (GCompareFunc) find_account_widget);
-	if (l) { /* it may have already been removed by being clicked on */
-		button = GTK_BUTTON(l->data);
-		remove_error_button(button);
+	if (l) { /* it may have already been removed by being acted on */
+		gtk_widget_destroy(GTK_WIDGET(l->data));
 	}
 	g_list_free(children);
 }
@@ -4726,14 +4693,14 @@ update_account_error_state(PurpleAccount *account,
 		if(old->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE)
 			remove_from_signed_on_elsewhere(account);
 		else
-			remove_generic_connection_error_button(account);
+			remove_generic_error_dialog(account);
 	}
 
 	if (new) {
 		if(new->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE)
 			add_to_signed_on_elsewhere(account);
 		else
-			add_generic_connection_error_button(account, new);
+			add_generic_error_dialog(account, new);
 	}
 }
 
