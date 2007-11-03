@@ -4246,6 +4246,13 @@ headline_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event, PidginBuddyLis
 					widget->allocation.width - 2 - HEADLINE_CLOSE_SIZE, 2,
 					HEADLINE_CLOSE_SIZE, HEADLINE_CLOSE_SIZE,
 					GDK_RGB_DITHER_NONE, 0, 0);
+#if 0
+		/* The presence of one opening paren in each branch of
+		 * GTK_CHECK_VERSION confuses vim's bracket matching for the
+		 * rest of the file.
+		 */
+		)
+#endif
 		gtk_paint_focus(widget->style, widget->window, GTK_STATE_PRELIGHT,
 				NULL, widget, NULL,
 				widget->allocation.width - HEADLINE_CLOSE_SIZE - 3, 1,
