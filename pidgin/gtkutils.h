@@ -599,8 +599,13 @@ void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const
 char *pidgin_make_pretty_arrows(const char *str);
 
 /**
- * Creates a "mini-dialog" suitable for embedding in the buddy list scrollbook
- * with pidgin_blist_add_alert().
+ * The type of callbacks passed to pidgin_make_mini_dialog().
+ */
+typedef void (*PidginUtilMiniDialogCallback)(gpointer user_data, GtkButton *);
+
+/**
+ * Creates a #PidginMiniDialog, tied to a #PurpleConnection, suitable for
+ * embedding in the buddy list scrollbook with pidgin_blist_add_alert().
  *
  * @param handle         The #PurpleConnection to which this mini-dialog
  *                       refers, or @c NULL if it does not refer to a
@@ -609,19 +614,17 @@ char *pidgin_make_pretty_arrows(const char *str);
  *                       connection signs off.
  * @param stock_id       The ID of a stock image to use in the mini dialog.
  * @param primary        The primary text
- * @param secondary      The secondary text
+ * @param secondary      The secondary text, or @c NULL for no description.
  * @param user_data      Data to pass to the callbacks
  * @param ...            a <tt>NULL</tt>-terminated list of button labels
- *                       (<tt>char *</tt>) and callbacks, which should take a
- *                       <tt>void *</tt> argument, as which @a user_data will
- *                       be passed.  (Strictly speaking a <tt>GtkButton *</tt>
- *                       will be passed as the second argument, but it can
- *                       safely be omitted.)  When a button is pressed, the
- *                       callback will be called; when the callback returns the
- *                       dialog will evaporate.  Callbacks may be @c NULL, in
- *                       which case pressing the corresponding button simply
- *                       dismisses the dialog.
- * @return               The dialog widget, suitable for passing to
+ *                       (<tt>char *</tt>) and callbacks
+ *                       (#PidginUtilMiniDialogCallback).  @a user_data will be
+ *                       passed as the first argument.  (Callbacks may lack a
+ *                       second argument, or be @c NULL to take no action when
+ *                       the corresponding button is pressed.) When a button is
+ *                       pressed, the callback (if any) will be called; when
+ *                       the callback returns the dialog will be destroyed.
+ * @return               A #PidginMiniDialog, suitable for passing to
  *                       pidgin_blist_add_alert().
  * @see pidginstock.h
  */
