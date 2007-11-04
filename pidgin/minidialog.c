@@ -99,6 +99,13 @@ struct _mini_dialog_button_clicked_cb_data
 	gpointer user_data;
 };
 
+static gboolean
+idle_destroy_cb(GtkWidget *mini_dialog)
+{
+	gtk_widget_destroy(mini_dialog);
+	return FALSE;
+}
+
 static void
 mini_dialog_button_clicked_cb(GtkButton *button,
                               gpointer user_data)
@@ -107,7 +114,7 @@ mini_dialog_button_clicked_cb(GtkButton *button,
 
 	data->callback(data->mini_dialog, button, data->user_data);
 
-	gtk_widget_destroy(GTK_WIDGET(data->mini_dialog));
+	g_idle_add((GSourceFunc) idle_destroy_cb, data->mini_dialog);
 }
 
 static void
