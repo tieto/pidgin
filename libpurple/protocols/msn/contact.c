@@ -100,46 +100,56 @@ msn_callback_state_free(MsnCallbackState *state)
 void
 msn_callback_state_set_who(MsnCallbackState *state, const gchar *who)
 {
+	gchar *nval;
 	g_return_if_fail(state != NULL);
 
+	nval = g_strdup(who);
 	g_free(state->who);
-	state->who = g_strdup(who);
+	state->who = nval;
 }
 
 void
 msn_callback_state_set_uid(MsnCallbackState *state, const gchar *uid)
 {
+	gchar *nval;
 	g_return_if_fail(state != NULL);
 
+	nval = g_strdup(uid);
 	g_free(state->uid);
-	state->uid = g_strdup(uid);
+	state->uid = nval;
 }
 
 void
 msn_callback_state_set_old_group_name(MsnCallbackState *state, const gchar *old_group_name)
 {
+	gchar *nval;
 	g_return_if_fail(state != NULL);
 
+	nval = g_strdup(old_group_name);
 	g_free(state->old_group_name);
-	state->old_group_name = g_strdup(old_group_name);
+	state->old_group_name = nval;
 }
 
 void
 msn_callback_state_set_new_group_name(MsnCallbackState *state, const gchar *new_group_name)
 {
+	gchar *nval;
 	g_return_if_fail(state != NULL);
 
+	nval = g_strdup(new_group_name);
 	g_free(state->new_group_name);
-	state->new_group_name = g_strdup(new_group_name);
+	state->new_group_name = nval;
 }
 
 void
 msn_callback_state_set_guid(MsnCallbackState *state, const gchar *guid)
 {
+	gchar *nval;
 	g_return_if_fail(state != NULL);
 
+	nval = g_strdup(guid);
 	g_free(state->guid);
-	state->guid = g_strdup(guid);
+	state->guid = nval;
 }
 
 
@@ -236,11 +246,12 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	MsnListId list)
 {
 	char *passport = xmlnode_get_data(xmlnode_get_child(member, node));
-	char *type = xmlnode_get_data(xmlnode_get_child(member, "type"));
+	char *type = xmlnode_get_data(xmlnode_get_child(member, "Type"));
 	char *member_id = xmlnode_get_data(xmlnode_get_child(member, "MembershipId"));
 	MsnUser *user = msn_userlist_find_add_user(session->userlist, passport, NULL);
 
-	purple_debug_info("msncl","%s name: %s, Type: %s\n", node, passport, type);
+	purple_debug_info("msncl","%s name: %s, Type: %s, MembershipID: %s\n",
+		node, passport, type, member_id == NULL ? "(null)" : member_id);
 
 	if (member_id) {
 		user->membership_id[list] = atoi(member_id);
@@ -282,7 +293,7 @@ msn_parse_each_service(MsnSession *session, xmlnode *service)
 				xmlnode *member;
 
 				purple_debug_info("msncl", "MemberRole role: %s, list: %d\n",
-					role, list);
+					role_str, list);
 
 				for (member = msn_soap_xml_get(membership, "Members/Member");
 					 member; member = xmlnode_get_next_twin(member)) {
@@ -1073,6 +1084,7 @@ msn_del_contact_from_list_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 				msn_user_unset_op(user, MSN_LIST_PL_OP);
 
 			msn_add_contact_to_list(session->contact, state, state->who, MSN_LIST_RL);
+			return;
 		} else if (state->list_id == MSN_LIST_AL) {
 			purple_privacy_permit_remove(session->account, state->who, TRUE);
 			msn_add_contact_to_list(session->contact, NULL, state->who, MSN_LIST_BL);
@@ -1190,7 +1202,7 @@ msn_add_contact_to_list(MsnContact *contact, MsnCallbackState *state,
 
 	partner_scenario = (list == MSN_LIST_RL) ? MSN_PS_CONTACT_API : MSN_PS_BLOCK_UNBLOCK;
 
-	member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML, passport);
+	member = g_strdup_printf(MSN_MEMBER_PASSPORT_XML, state->who);
 
 	body = g_strdup_printf(MSN_CONTACT_ADD_TO_LIST_TEMPLATE, 
 			       MsnSoapPartnerScenarioText[partner_scenario],

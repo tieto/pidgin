@@ -2463,7 +2463,7 @@ static void yahoo_pending(gpointer data, gint source, PurpleInputCondition cond)
 			return;
 
 		tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
-				strerror(errno));
+				g_strerror(errno));
 		purple_connection_error(gc, tmp);
 		g_free(tmp);
 		return;
@@ -2630,7 +2630,7 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 			return;
 
 		tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
-				strerror(errno));
+				g_strerror(errno));
 		purple_connection_error(gc, tmp);
 		g_free(tmp);
 		return;
@@ -2701,7 +2701,7 @@ static void yahoo_got_cookies_send_cb(gpointer data, gint source, PurpleInputCon
 			purple_input_remove(gc->inpa);
 		gc->inpa = 0;
 		tmp = g_strdup_printf(_("Lost connection with %s:\n%s"),
-				"login.yahoo.com:80", strerror(errno));
+				"login.yahoo.com:80", g_strerror(errno));
 		purple_connection_error(gc, tmp);
 		g_free(tmp);
 		return;

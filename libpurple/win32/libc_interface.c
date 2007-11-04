@@ -300,7 +300,7 @@ char* wpurple_strerror( int errornum ) {
 		return errbuf;
 	}
 	else
-		return strerror( errornum );
+		return g_strerror( errornum );
 }
 
 /* unistd.h */
