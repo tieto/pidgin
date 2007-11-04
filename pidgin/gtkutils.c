@@ -2922,7 +2922,17 @@ old_mini_dialog_button_clicked_cb(PidginMiniDialog *mini_dialog,
 {
 	struct _old_button_clicked_cb_data *data = user_data;
 	data->cb(data->data, button);
-	g_free(data);
+}
+
+static void
+old_mini_dialog_destroy_cb(GtkWidget *dialog,
+                           GList *cb_datas)
+{
+	while (cb_datas != NULL)
+	{
+		g_free(cb_datas->data);
+		cb_datas = g_list_delete_link(cb_datas, cb_datas);
+	}
 }
 
 GtkWidget *
@@ -2935,6 +2945,7 @@ pidgin_make_mini_dialog(PurpleConnection *gc,
 {
 	PidginMiniDialog *mini_dialog;
 	const char *button_text;
+	GList *cb_datas = NULL;
 	va_list args;
 	static gboolean first_call = TRUE;
 
@@ -2960,8 +2971,12 @@ pidgin_make_mini_dialog(PurpleConnection *gc,
 		data->data = user_data;
 		pidgin_mini_dialog_add_button(mini_dialog, button_text,
 			old_mini_dialog_button_clicked_cb, data);
+		cb_datas = g_list_append(cb_datas, data);
 	}
 	va_end(args);
+
+	g_signal_connect(G_OBJECT(mini_dialog), "destroy",
+		G_CALLBACK(old_mini_dialog_destroy_cb), cb_datas);
 
 	return GTK_WIDGET(mini_dialog);
 }
