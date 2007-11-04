@@ -89,6 +89,11 @@ typedef struct {
 /** The class of #PidginMiniDialog objects. */
 typedef struct {
 	GtkBoxClass parent_class;
+
+	void (*_purple_reserved1) (void);
+	void (*_purple_reserved2) (void);
+	void (*_purple_reserved3) (void);
+	void (*_purple_reserved4) (void);
 } PidginMiniDialogClass;
 
 /** The type of a callback triggered by a button in a mini-dialog being pressed.
