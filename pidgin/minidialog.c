@@ -47,9 +47,10 @@ enum
 typedef struct _PidginMiniDialogPrivate
 {
 	GtkImage *icon;
-	GtkBox *label_box;
+	GtkBox *title_box;
 	GtkLabel *title;
-	GtkLabel *description;
+	GtkBox *desc_box;
+	GtkLabel *desc;
 	GtkBox *buttons;
 } PidginMiniDialogPrivate;
 
@@ -147,7 +148,7 @@ pidgin_mini_dialog_add_button(PidginMiniDialog *self,
 
 	gtk_box_pack_end(GTK_BOX(priv->buttons), button, FALSE, FALSE,
 		0);
-	gtk_widget_show(GTK_WIDGET(button));
+	gtk_widget_show_all(GTK_WIDGET(button));
 }
 
 static void
@@ -164,7 +165,7 @@ pidgin_mini_dialog_get_property(GObject *object,
 			g_value_set_string(value, gtk_label_get_text(priv->title));
 			break;
 		case PROP_DESCRIPTION:
-			g_value_set_string(value, gtk_label_get_text(priv->description));
+			g_value_set_string(value, gtk_label_get_text(priv->desc));
 			break;
 		case PROP_ICON_NAME:
 		{
@@ -207,17 +208,17 @@ mini_dialog_set_description(PidginMiniDialog *self,
 		char *desc_markup = g_strdup_printf(
 			"<span size=\"smaller\">%s</span>", desc_esc);
 
-		gtk_label_set_markup(priv->description, desc_markup);
+		gtk_label_set_markup(priv->desc, desc_markup);
 
 		g_free(desc_esc);
 		g_free(desc_markup);
 
-		gtk_widget_show(GTK_WIDGET(priv->description));
+		gtk_widget_show_all(GTK_WIDGET(priv->desc_box));
 	}
 	else
 	{
-		gtk_label_set_text(priv->description, NULL);
-		gtk_widget_hide(GTK_WIDGET(priv->description));
+		gtk_label_set_text(priv->desc, NULL);
+		gtk_widget_hide_all(GTK_WIDGET(priv->desc_box));
 	}
 }
 
@@ -259,14 +260,61 @@ pidgin_mini_dialog_finalize(GObject *object)
 }
 
 static void
+pidgin_mini_dialog_add(GtkContainer *container,
+                       GtkWidget *widget)
+{
+	PidginMiniDialog *self = PIDGIN_MINI_DIALOG(container);
+	gtk_widget_show_all(widget);
+	gtk_box_pack_start(self->contents, widget, FALSE, FALSE, 0);
+}
+
+static void
+pidgin_mini_dialog_remove(GtkContainer *container,
+                          GtkWidget *widget)
+{
+	PidginMiniDialog *self = PIDGIN_MINI_DIALOG(container);
+	gtk_container_remove(GTK_CONTAINER(self->contents), widget);
+}
+
+static void
+pidgin_mini_dialog_forall(GtkContainer *container,
+                          gboolean include_internals,
+                          GtkCallback callback,
+                          gpointer callback_data)
+{
+	PidginMiniDialog *self = PIDGIN_MINI_DIALOG(container);
+	PidginMiniDialogPrivate *priv = PIDGIN_MINI_DIALOG_GET_PRIVATE(self);
+	GtkContainer *contents = GTK_CONTAINER(self->contents);
+
+	if(include_internals)
+	{
+		(*callback)(GTK_WIDGET(priv->title_box), callback_data);
+		(*callback)(GTK_WIDGET(priv->desc_box), callback_data);
+	}
+
+	gtk_container_foreach(contents, callback, callback_data);
+
+	if (include_internals)
+		(*callback)(GTK_WIDGET(priv->buttons), callback_data);
+}
+
+static void
 pidgin_mini_dialog_class_init(PidginMiniDialogClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
+	GtkContainerClass *container_class = GTK_CONTAINER_CLASS(klass);
 	GParamSpec *param_spec;
 
 	object_class->get_property = pidgin_mini_dialog_get_property;
 	object_class->set_property = pidgin_mini_dialog_set_property;
 	object_class->finalize = pidgin_mini_dialog_finalize;
+
+	container_class->add = pidgin_mini_dialog_add;
+	container_class->remove = pidgin_mini_dialog_remove;
+	container_class->forall = pidgin_mini_dialog_forall;
+	/* TODO: Implement set_focus_child, {get,set}_child_property and pals
+	 * if necessary.
+	 */
 
 	param_spec = g_param_spec_string("title", "title",
 		"String specifying the mini-dialog's title", NULL,
@@ -298,12 +346,13 @@ static void
 pidgin_mini_dialog_init(PidginMiniDialog *self)
 {
 	GtkBox *self_box = GTK_BOX(self);
+
 	PidginMiniDialogPrivate *priv = g_new0(PidginMiniDialogPrivate, 1);
 	self->priv = priv;
 
 	gtk_container_set_border_width(GTK_CONTAINER(self), PIDGIN_HIG_BOX_SPACE);
 
-	priv->label_box = GTK_BOX(gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE));
+	priv->title_box = GTK_BOX(gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE));
 
 	priv->icon = GTK_IMAGE(gtk_image_new());
 	gtk_misc_set_alignment(GTK_MISC(priv->icon), 0, 0);
@@ -317,26 +366,33 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 	gtk_label_set_line_wrap(priv->title, TRUE);
 	gtk_misc_set_alignment(GTK_MISC(priv->title), 0, 0);
 
-	gtk_box_pack_start(priv->label_box, GTK_WIDGET(priv->icon), FALSE, FALSE, 0);
-	gtk_box_pack_start(priv->label_box, GTK_WIDGET(priv->title), TRUE, TRUE, 0);
+	gtk_box_pack_start(priv->title_box, GTK_WIDGET(priv->icon), FALSE, FALSE, 0);
+	gtk_box_pack_start(priv->title_box, GTK_WIDGET(priv->title), TRUE, TRUE, 0);
+	gtk_widget_show_all(GTK_WIDGET(priv->title_box));
 
-	priv->description = GTK_LABEL(gtk_label_new(""));
+	priv->desc_box = GTK_BOX(gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE));
+	priv->desc = GTK_LABEL(gtk_label_new(""));
 	/* TODO: update this request when /blist/width updates.  Also, 25 is
 	 * magic.
 	 */
-	gtk_widget_set_size_request(GTK_WIDGET(priv->description),
+	gtk_widget_set_size_request(GTK_WIDGET(priv->desc),
 		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25, -1);
-	gtk_label_set_line_wrap(priv->description, TRUE);
-	gtk_misc_set_alignment(GTK_MISC(priv->description), 0, 0);
+	gtk_label_set_line_wrap(priv->desc, TRUE);
+	gtk_misc_set_alignment(GTK_MISC(priv->desc), 0, 0);
+	gtk_box_pack_start(priv->desc_box, GTK_WIDGET(priv->desc),
+		TRUE, TRUE, 0);
+	gtk_widget_hide_all(GTK_WIDGET(priv->desc_box));
 
 	self->contents = GTK_BOX(gtk_vbox_new(FALSE, 0));
-	priv->buttons = GTK_BOX(gtk_hbox_new(FALSE, 0));
+	gtk_widget_show_all(GTK_WIDGET(self->contents));
 
-	gtk_box_pack_start(self_box, GTK_WIDGET(priv->label_box), FALSE, FALSE, 0);
-	gtk_box_pack_start(self_box, GTK_WIDGET(priv->description), FALSE, FALSE, 0);
+	priv->buttons = GTK_BOX(gtk_hbox_new(FALSE, 0));
+	gtk_widget_show_all(GTK_WIDGET(priv->buttons));
+
+	gtk_box_pack_start(self_box, GTK_WIDGET(priv->title_box), FALSE, FALSE, 0);
+	gtk_box_pack_start(self_box, GTK_WIDGET(priv->desc_box), FALSE, FALSE, 0);
 	gtk_box_pack_start(self_box, GTK_WIDGET(self->contents), TRUE, TRUE, 0);
 	gtk_box_pack_start(self_box, GTK_WIDGET(priv->buttons), FALSE, FALSE, 0);
 
 	gtk_widget_show_all(GTK_WIDGET(self));
-	gtk_widget_hide(GTK_WIDGET(priv->description));
 }
