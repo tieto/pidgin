@@ -99,6 +99,12 @@ struct _mini_dialog_button_clicked_cb_data
 	gpointer user_data;
 };
 
+guint
+pidgin_mini_dialog_get_num_children(PidginMiniDialog *mini_dialog)
+{
+	return g_list_length(mini_dialog->contents->children);
+}
+
 static gboolean
 idle_destroy_cb(GtkWidget *mini_dialog)
 {

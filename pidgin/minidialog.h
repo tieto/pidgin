@@ -151,6 +151,12 @@ void pidgin_mini_dialog_add_button(PidginMiniDialog *mini_dialog,
 	const char *text, PidginMiniDialogCallback clicked_cb,
 	gpointer user_data);
 
+/** Gets the number of widgets packed into PidginMiniDialog.contents.
+ *  @param mini_dialog a mini-dialog
+ *  @return the number of widgets in @a mini_dialog->contents.
+ */
+guint pidgin_mini_dialog_get_num_children(PidginMiniDialog *mini_dialog);
+
 G_END_DECLS
 
 #endif /* __PIDGIN_MINI_DIALOG_H__ */
