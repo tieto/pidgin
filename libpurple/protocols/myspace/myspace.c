@@ -2353,7 +2353,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 	} else if (n < 0) {
 		purple_debug_error("msim", "msim_input_cb: read error, ret=%d, "
 			"error=%s, source=%d, fd=%d (%X))\n", 
-			n, strerror(errno), source, session->fd, session->fd);
+			n, g_strerror(errno), source, session->fd, session->fd);
 		purple_connection_error(gc, _("Read error"));
 		return;
 	} else if (n == 0) {

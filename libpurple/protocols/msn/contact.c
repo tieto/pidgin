@@ -236,11 +236,12 @@ msn_parse_each_member(MsnSession *session, xmlnode *member, const char *node,
 	MsnListId list)
 {
 	char *passport = xmlnode_get_data(xmlnode_get_child(member, node));
-	char *type = xmlnode_get_data(xmlnode_get_child(member, "type"));
+	char *type = xmlnode_get_data(xmlnode_get_child(member, "Type"));
 	char *member_id = xmlnode_get_data(xmlnode_get_child(member, "MembershipId"));
 	MsnUser *user = msn_userlist_find_add_user(session->userlist, passport, NULL);
 
-	purple_debug_info("msncl","%s name: %s, Type: %s\n", node, passport, type);
+	purple_debug_info("msncl","%s name: %s, Type: %s, MembershipID: %s\n",
+		node, passport, type, member_id == NULL ? "(null)" : member_id);
 
 	if (member_id) {
 		user->membership_id[list] = atoi(member_id);
@@ -282,7 +283,7 @@ msn_parse_each_service(MsnSession *session, xmlnode *service)
 				xmlnode *member;
 
 				purple_debug_info("msncl", "MemberRole role: %s, list: %d\n",
-					role, list);
+					role_str, list);
 
 				for (member = msn_soap_xml_get(membership, "Members/Member");
 					 member; member = xmlnode_get_next_twin(member)) {
