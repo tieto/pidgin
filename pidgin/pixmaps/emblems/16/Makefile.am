@@ -1,5 +1,3 @@
-SUBDIRS = scalable
-
 EXTRA_DIST = 	aol-client.png \
 		birthday.png \
 		blocked.png \
