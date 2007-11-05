@@ -334,7 +334,6 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 
 	gtk_box_pack_start(priv->title_box, GTK_WIDGET(priv->icon), FALSE, FALSE, 0);
 	gtk_box_pack_start(priv->title_box, GTK_WIDGET(priv->title), TRUE, TRUE, 0);
-	gtk_widget_show_all(GTK_WIDGET(priv->title_box));
 
 	priv->desc_box = GTK_BOX(gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE));
 	priv->desc = GTK_LABEL(gtk_label_new(""));
@@ -347,13 +346,10 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 	gtk_misc_set_alignment(GTK_MISC(priv->desc), 0, 0);
 	gtk_box_pack_start(priv->desc_box, GTK_WIDGET(priv->desc),
 		TRUE, TRUE, 0);
-	gtk_widget_hide_all(GTK_WIDGET(priv->desc_box));
 
 	self->contents = GTK_BOX(gtk_vbox_new(FALSE, 0));
-	gtk_widget_show_all(GTK_WIDGET(self->contents));
 
 	priv->buttons = GTK_BOX(gtk_hbox_new(FALSE, 0));
-	gtk_widget_show_all(GTK_WIDGET(priv->buttons));
 
 	gtk_box_pack_start(self_box, GTK_WIDGET(priv->title_box), FALSE, FALSE, 0);
 	gtk_box_pack_start(self_box, GTK_WIDGET(priv->desc_box), FALSE, FALSE, 0);
@@ -361,4 +357,5 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 	gtk_box_pack_start(self_box, GTK_WIDGET(priv->buttons), FALSE, FALSE, 0);
 
 	gtk_widget_show_all(GTK_WIDGET(self));
+	gtk_widget_hide_all(GTK_WIDGET(priv->desc_box));
 }
