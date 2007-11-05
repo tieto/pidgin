@@ -402,7 +402,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	
 			default: purple_debug_error("msn", "servconn read error,"
 						"len: %d, errno: %d, error: %s\n",
-						len, errno, strerror(errno));
+						len, errno, g_strerror(errno));
 				 msn_servconn_got_error(servconn, 
 						 MSN_SERVCONN_ERROR_READ);
 				 return;

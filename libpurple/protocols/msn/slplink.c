@@ -39,22 +39,17 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
 	char *tmp;
 	char *dir;
 	char *pload;
-	FILE *tf;
 	int c;
 	gsize pload_size;
 
 	dir = send ? "send" : "recv";
 	c = send ? m_sc++ : m_rc++;
 	tmp = g_strdup_printf("%s/msntest/%s/%03d", g_get_home_dir(), dir, c);
-	tf = g_fopen(tmp, "wb");
-	if (tf == NULL)
-	{
-		purple_debug_error("msn", "could not open debug file\n");
-		return;
-	}
 	pload = msn_message_gen_payload(msg, &pload_size);
-	fwrite(pload, 1, pload_size, tf);
-	fclose(tf);
+	if (!purple_util_write_data_to_file_absolute(tmp, pload, pload_size))
+	{
+		purple_debug_error("msn", "could not save debug file");
+	}
 	g_free(tmp);
 }
 #endif

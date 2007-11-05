@@ -580,14 +580,20 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		psm = purple_status_get_attr_string(status, "message");
 		currentmedia = purple_status_get_attr_string(status, PURPLE_TUNE_FULL);
 
-		if (!purple_presence_is_available(presence)) {
+		if (!purple_status_is_available(status)) {
 			name = purple_status_get_name(status);
 		} else {
 			name = NULL;
 		}
 
 		if (name != NULL && *name) {
-			char *tmp2 = g_markup_escape_text(name, -1);
+			char *tmp2;
+
+			if (purple_presence_is_idle(presence)) {
+				tmp2 = g_markup_printf_escaped("%s/%s", name, _("Idle"));
+			} else {
+				tmp2 = g_markup_escape_text(name, -1);
+			}
 
 			if (psm != NULL && *psm) {
 				tmp = g_markup_escape_text(psm, -1);
@@ -601,8 +607,20 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		} else {
 			if (psm != NULL && *psm) {
 				tmp = g_markup_escape_text(psm, -1);
-				purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
+				if (purple_presence_is_idle(presence)) {
+					purple_notify_user_info_add_pair(user_info, _("Idle"), tmp);
+				} else {
+					purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
+				}
 				g_free(tmp);
+			} else {
+				if (purple_presence_is_idle(presence)) {
+					purple_notify_user_info_add_pair(user_info, _("Status"),
+						_("Idle"));
+				} else {
+					purple_notify_user_info_add_pair(user_info, _("Status"),
+						purple_status_get_name(status));
+				}
 			}
 		}
 
@@ -956,21 +974,17 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	}else	{
 		/*send Offline Instant Message,only to MSN Passport User*/
 		MsnSession *session;
-		MsnOim *oim;
 		char *friendname;
 
 		purple_debug_info("MSNP14","prepare to send offline Message\n");
 		session = gc->proto_data;
-		/* XXX/khc: hack */
-		if (!session->oim)
-			session->oim = msn_oim_new(session);
 
-		oim = session->oim;
 		friendname = msn_encode_mime(account->username);
-		msn_oim_prep_send_msg_info(oim, purple_account_get_username(account),
-								   friendname, who,	message);
+		msn_oim_prep_send_msg_info(session->oim,
+			purple_account_get_username(account),
+			friendname, who,	message);
+		msn_oim_send_msg(session->oim);
 		g_free(friendname);
-		msn_oim_send_msg(oim);
 	}
 
 	return 1;

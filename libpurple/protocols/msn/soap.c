@@ -274,7 +274,7 @@ msn_soap_read(MsnSoapConn *soapconn)
 
 			default : purple_debug_error("MSN SOAP", "Read error!"
 						"read len: %d, error = %s\n",
-						len, strerror(errno));
+						len, g_strerror(errno));
 				  purple_input_remove(soapconn->input_handler);
 				  //soapconn->input_handler = 0;
 				  g_free(soapconn->read_buf);
@@ -308,7 +308,7 @@ msn_soap_read(MsnSoapConn *soapconn)
 }
 
 /*read the whole SOAP server response*/
-void 
+static void 
 msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn *soapconn = data;

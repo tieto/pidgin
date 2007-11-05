@@ -244,7 +244,7 @@ _send_data_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	else if (ret <= 0) {
 		PurpleConversation *conv;
-		const char *error = strerror(errno);
+		const char *error = g_strerror(errno);
 
 		purple_debug_error("bonjour", "Error sending message to buddy %s error: %s\n",
 				   purple_buddy_get_name(pb), error ? error : "(null)");
@@ -287,7 +287,7 @@ _send_data(PurpleBuddy *pb, char *message)
 		ret = 0;
 	else if (ret <= 0) {
 		PurpleConversation *conv;
-		const char *error = strerror(errno);
+		const char *error = g_strerror(errno);
 
 		purple_debug_error("bonjour", "Error sending message to buddy %s error: %s\n",
 				   purple_buddy_get_name(pb), error ? error : "(null)");
@@ -337,7 +337,7 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 		if (errno != EAGAIN) {
 			BonjourBuddy *bb = pb->proto_data;
 
-			purple_debug_warning("bonjour", "receive error: %s\n", strerror(errno));
+			purple_debug_warning("bonjour", "receive error: %s\n", g_strerror(errno));
 
 			bonjour_jabber_close_conversation(bb->conversation);
 			bb->conversation = NULL;
@@ -427,7 +427,7 @@ _start_stream(gpointer data, gint source, PurpleInputCondition condition)
 	if (ret == -1 && errno == EAGAIN)
 		return;
 	else if (ret <= 0) {
-		const char *err = strerror(errno);
+		const char *err = g_strerror(errno);
 		PurpleConversation *conv;
 
 		purple_debug_error("bonjour", "Error starting stream with buddy %s at %s:%d error: %s\n",
@@ -482,7 +482,7 @@ static gboolean bonjour_jabber_stream_init(PurpleBuddy *pb, int client_socket)
 	if (ret == -1 && errno == EAGAIN)
 		ret = 0;
 	else if (ret <= 0) {
-		const char *err = strerror(errno);
+		const char *err = g_strerror(errno);
 
 		purple_debug_error("bonjour", "Error starting stream with buddy %s at %s:%d error: %s\n",
 				   purple_buddy_get_name(pb), bb->ip ? bb->ip : "(null)", bb->port_p2pj, err ? err : "(null)");
@@ -583,7 +583,7 @@ bonjour_jabber_start(BonjourJabber *data)
 	/* Open a listening socket for incoming conversations */
 	if ((data->socket = socket(PF_INET, SOCK_STREAM, 0)) < 0)
 	{
-		purple_debug_error("bonjour", "Cannot open socket: %s\n", strerror(errno));
+		purple_debug_error("bonjour", "Cannot open socket: %s\n", g_strerror(errno));
 		purple_connection_error(data->account->gc, _("Cannot open socket"));
 		return -1;
 	}
@@ -591,7 +591,7 @@ bonjour_jabber_start(BonjourJabber *data)
 	/* Make the socket reusable */
 	if (setsockopt(data->socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) != 0)
 	{
-		purple_debug_error("bonjour", "Error setting socket options: %s\n", strerror(errno));
+		purple_debug_error("bonjour", "Error setting socket options: %s\n", g_strerror(errno));
 		purple_connection_error(data->account->gc, _("Error setting socket options"));
 		return -1;
 	}
@@ -615,7 +615,7 @@ bonjour_jabber_start(BonjourJabber *data)
 	/* On no!  We tried 10 ports and could not bind to ANY of them */
 	if (!bind_successful)
 	{
-		purple_debug_error("bonjour", "Cannot bind socket: %s\n", strerror(errno));
+		purple_debug_error("bonjour", "Cannot bind socket: %s\n", g_strerror(errno));
 		purple_connection_error(data->account->gc, _("Could not bind socket to port"));
 		return -1;
 	}
@@ -623,7 +623,7 @@ bonjour_jabber_start(BonjourJabber *data)
 	/* Attempt to listen on the bound socket */
 	if (listen(data->socket, 10) != 0)
 	{
-		purple_debug_error("bonjour", "Cannot listen on socket: %s\n", strerror(errno));
+		purple_debug_error("bonjour", "Cannot listen on socket: %s\n", g_strerror(errno));
 		purple_connection_error(data->account->gc, _("Could not listen on socket"));
 		return -1;
 	}
@@ -670,7 +670,7 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 	}
 
 	if (!bonjour_jabber_stream_init(pb, source)) {
-		const char *err = strerror(errno);
+		const char *err = g_strerror(errno);
 		PurpleConversation *conv;
 
 		purple_debug_error("bonjour", "Error starting stream with buddy %s at %s:%d error: %s\n",

@@ -1411,7 +1411,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		purple_debug_error("msn",
 						 "Error opening temp passport file: %s\n",
-						 strerror(errno));
+						 g_strerror(errno));
 	}
 	else
 	{
@@ -1460,7 +1460,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		{
 			purple_debug_error("msn",
 							 "Error closing temp passport file: %s\n",
-							 strerror(errno));
+							 g_strerror(errno));
 
 			g_unlink(session->passport_info.file);
 			g_free(session->passport_info.file);
@@ -1790,9 +1790,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		return;
 
 	/*new a oim session*/
-	/* There are several things that call this */
-	if (session->oim == NULL)
-		session->oim = msn_oim_new(session);
+//	session->oim = msn_oim_new(session);
 //	msn_oim_connect(session->oim);
 
 	table = msn_message_get_hashtable_from_body(msg);
