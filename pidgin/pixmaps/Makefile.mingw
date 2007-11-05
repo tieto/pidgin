@@ -36,5 +36,3 @@ install:
 	  cp $(pidgindistpix_DATA) $(pidgindistpixdir); \
 	fi;
 
-clean:
-	$(MAKE) -C emotes -f $(MINGW_MAKEFILE) clean || exit 1 ;\
