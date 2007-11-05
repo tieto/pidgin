@@ -2334,7 +2334,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		return;
 
 	if(!(type = xmlnode_get_attrib(packet, "type")) || !strcmp(type, "error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 
 		if(!msg)
 			msg = g_strdup(_("Unknown error"));

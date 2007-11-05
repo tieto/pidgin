@@ -226,6 +226,18 @@ signed_off_cb(PurpleConnection *gc, void *data)
 					purple_account_get_username(purple_connection_get_account(gc)));
 }
 
+static void
+connection_error_cb(PurpleConnection *gc,
+                    PurpleConnectionError err,
+                    const gchar *desc,
+                    void *data)
+{
+	const gchar *username =
+		purple_account_get_username(purple_connection_get_account(gc));
+	purple_debug_misc("signals test", "connection-error (%s, %u, %s)\n",
+		username, err, desc);
+}
+
 /**************************************************************************
  * Conversation subsystem signal callbacks
  **************************************************************************/
@@ -626,6 +638,8 @@ plugin_load(PurplePlugin *plugin)
 						plugin, PURPLE_CALLBACK(signing_off_cb), NULL);
 	purple_signal_connect(conn_handle, "signed-off",
 						plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
+	purple_signal_connect(conn_handle, "connection-error",
+						plugin, PURPLE_CALLBACK(connection_error_cb), NULL);
 
 	/* Conversations subsystem signals */
 	purple_signal_connect(conv_handle, "writing-im-msg",

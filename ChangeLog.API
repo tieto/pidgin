@@ -15,6 +15,35 @@ version 2.3.0 (??/??/????):
 		  to unload a plugin--fails.  This then prevents the plugin
 		  from being saved in the saved plugins list, so it'll won't
 		  be loaded at the next startup.
+
+		* PurpleDisconnectReason enumeration of machine-readable
+		  types of connection error.
+		* purple_connection_error_reason(), to be used by prpls
+		  (instead of purple_connection_error() and setting
+		  gc->wants_to_die) to report errors along with a
+		  PurpleDisconnectReason.
+		* PurpleConnectionUiOps.report_disconnect_reason, to be
+		  implemented by UIs (rather than .report_disconnect) if
+		  they want to use the reported PurpleDisconnectReason
+		  to give a more specific error.
+		* A connection-error signal, fired just after the UiOp is
+		  called with the same information.
+		* purple_connection_reason_is_fatal(), acting as a hint
+		  to whether automatic reconnection should be attempted
+		  after a connection error (rather than checking
+		  gc->wants_to_die).
+		* PurpleConnectionErrorInfo, a struct to hold a
+		  PurpleConnectionError and a const char *description.
+		* purple_account_get_current_error() to get the most recent
+		  PurpleConnectionError and description (or NULL if the
+		  account is happy with life), to allow bits of the UI to know
+		  the last error without caching it themselves (as
+		  PidginBuddyList does).
+		* purple_account_clear_current_error() to reset an account's
+		  error state to NULL.
+		* An account-error-changed signal, firing when
+		  purple_account_get_current_error()'s return value changes.
+
 		* purple_util_init()
 		* purple_util_uninit()
 
@@ -61,6 +90,11 @@ version 2.3.0 (??/??/????):
 		  when a dependent plugin fails to unload.  The UI should do
 		  something appropriate.
 
+		* pidgin_make_mini_dialog() now declares its return type to be
+		  GtkWidget * rather than void *.  This should not break any
+		  existing code since any code using it must already rely on
+		  the return type actually being GtkWidget * all along.
+
 		Deprecated:
 		* pidgin_dialogs_about()
 		* pidgin_log_show_contact()
@@ -81,6 +115,10 @@ version 2.3.0 (??/??/????):
 		* purple_request_input()
 		* purple_request_ok_cancel()
 		* purple_request_yes_no()
+
+		* purple_connection_error()
+		* pidgin_blist_update_account_error_state()
+		* PidginBuddyList.connection_errors
 
 		MSN:
 		* A new independant status type with PURPLE_STATUS_TUNE primitive, and

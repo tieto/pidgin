@@ -599,18 +599,38 @@ void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const
 char *pidgin_make_pretty_arrows(const char *str);
 
 /**
- * Creates a "mini-dialog" suitable for embedding in the buddy list scrollbook
- *
- * @param handle         A handle
- * @param stock_id       The ID of a stock image to use in the mini dialog
- * @param primary        The primary text
- * @param secondary      The secondary text
- * @param user_data      Data to pass to the callbacks
- * @param ...            a NULL-terminated list of button labels and callbacks
+ * The type of callbacks passed to pidgin_make_mini_dialog().
  */
-void *pidgin_make_mini_dialog(PurpleConnection *handle, const char* stock_id, 
-				const char *primary, const char *secondary,
-				void *user_data,  ...);
+typedef void (*PidginUtilMiniDialogCallback)(gpointer user_data, GtkButton *);
+
+/**
+ * Creates a #PidginMiniDialog, tied to a #PurpleConnection, suitable for
+ * embedding in the buddy list scrollbook with pidgin_blist_add_alert().
+ *
+ * @param handle         The #PurpleConnection to which this mini-dialog
+ *                       refers, or @c NULL if it does not refer to a
+ *                       connection.  If @a handle is supplied, the mini-dialog
+ *                       will be automatically removed and destroyed when the
+ *                       connection signs off.
+ * @param stock_id       The ID of a stock image to use in the mini dialog.
+ * @param primary        The primary text
+ * @param secondary      The secondary text, or @c NULL for no description.
+ * @param user_data      Data to pass to the callbacks
+ * @param ...            a <tt>NULL</tt>-terminated list of button labels
+ *                       (<tt>char *</tt>) and callbacks
+ *                       (#PidginUtilMiniDialogCallback).  @a user_data will be
+ *                       passed as the first argument.  (Callbacks may lack a
+ *                       second argument, or be @c NULL to take no action when
+ *                       the corresponding button is pressed.) When a button is
+ *                       pressed, the callback (if any) will be called; when
+ *                       the callback returns the dialog will be destroyed.
+ * @return               A #PidginMiniDialog, suitable for passing to
+ *                       pidgin_blist_add_alert().
+ * @see pidginstock.h
+ */
+GtkWidget *pidgin_make_mini_dialog(PurpleConnection *handle,
+	const char* stock_id, const char *primary, const char *secondary,
+	void *user_data, ...);
 
 /**
  * This is a callback function to be used for Ctrl+F searching in treeviews.
