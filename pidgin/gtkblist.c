@@ -58,6 +58,7 @@
 #include "gtkstatusbox.h"
 #include "gtkscrollbook.h"
 #include "gtkutils.h"
+#include "pidgin/minidialog.h"
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
@@ -114,17 +115,10 @@ typedef struct
 	 */
 	GtkWidget *error_scrollbook;
 
-	/** List of #PurpleAccount that were disconnected with
-	 * #PURPLE_CONNECTION_ERROR_NAME_IN_USE that have not been dealt with
-	 * by the user.
-	 */
-	GList *accounts_signed_on_elsewhere;
 	/** Pointer to the mini-dialog about having signed on elsewhere, if one
 	 * is showing; @c NULL otherwise.
 	 */
-	GtkWidget *signed_on_elsewhere_minidialog;
-	GtkLabel *signed_on_elsewhere_minidialog_title;
-	GtkVBox *signed_on_elsewhere_minidialog_accounts;
+	PidginMiniDialog *signed_on_elsewhere;
 } PidginBuddyListPrivate;
 
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
@@ -4367,17 +4361,27 @@ add_error_dialog(PidginBuddyList *gtkblist,
 		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
 }
 
+static GtkWidget *
+find_child_widget_by_account(GtkContainer *container,
+                             PurpleAccount *account)
+{
+	GList *l = NULL;
+	GList *children = gtk_container_get_children(container);
+	GtkWidget *ret = NULL;
+	l = g_list_find_custom(children, account, (GCompareFunc) find_account_widget);
+	if (l)
+		ret = GTK_WIDGET(l->data);
+	g_list_free(children);
+	return ret;
+}
+
 static void
 remove_child_widget_by_account(GtkContainer *container,
                                PurpleAccount *account)
 {
-	GList *l = NULL;
-	GList *children = gtk_container_get_children(container);
-	l = g_list_find_custom(children, account, (GCompareFunc) find_account_widget);
-	if (l) { /* it may have already been removed by being acted on */
-		gtk_widget_destroy(GTK_WIDGET(l->data));
-	}
-	g_list_free(children);
+	GtkWidget *widget = find_child_widget_by_account(container, account);
+	if(widget)
+		gtk_widget_destroy(widget);
 }
 
 /* Generic error buttons */
@@ -4453,166 +4457,95 @@ remove_generic_error_dialog(PurpleAccount *account)
  * PURPLE_CONNECTION_ERROR_NAME_IN_USE
  */
 
-static void
-destroy_signed_on_elsewhere_minidialog(PidginBuddyListPrivate *priv)
-{
-	if(priv->signed_on_elsewhere_minidialog == NULL)
-		return;
-
-	gtk_widget_destroy(priv->signed_on_elsewhere_minidialog);
-	priv->signed_on_elsewhere_minidialog = NULL;
-	priv->signed_on_elsewhere_minidialog_accounts = NULL;
-	priv->signed_on_elsewhere_minidialog_title = NULL;
-}
+typedef void (*AccountFunction)(PurpleAccount *);
 
 static void
-reconnect_elsewhere_accounts(PidginBuddyList *gtkblist)
+elsewhere_foreach_account(PidginMiniDialog *mini_dialog,
+                          AccountFunction f)
 {
-	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
-	GList *l;
 	PurpleAccount *account;
-	for (l = priv->accounts_signed_on_elsewhere; l; l = l->next) {
-		account = l->data;
-		purple_account_set_enabled(account, purple_core_get_ui(), TRUE);
-	}
-	g_list_free(priv->accounts_signed_on_elsewhere);
-	priv->accounts_signed_on_elsewhere = NULL;
+	GList *labels = gtk_container_get_children(
+		GTK_CONTAINER(mini_dialog->contents));
+	GList *l;
 
-	destroy_signed_on_elsewhere_minidialog(priv);
+	for (l = labels; l; l = l->next) {
+		account = g_object_get_data(G_OBJECT(l->data), OBJECT_DATA_KEY_ACCOUNT);
+		if (account)
+			f(account);
+		else
+			purple_debug_warning("gtkblist", "mini_dialog's child "
+				"didn't have an account stored in it!");
+	}
+	g_list_free(labels);
 }
 
 static void
-ignore_elsewhere_accounts(PidginBuddyList *gtkblist)
+enable_account(PurpleAccount *account)
 {
-	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
-	GList *accounts_elsewhere, *l;
-
-	/* priv->accounts_signed_on_elsewhere gets changed in
-	 * update_account_error_state, which is called when
-	 * purple_account_clear_current_error emits account-error-changed. So
-	 * let's take a copy.
-	 *
-	 * (Or maybe we could just use while(priv->accounts_elsewhere) and rely
-	 * on it being ultimately reduced to NULL?  But that sounds fragile.)
-	 */
-	accounts_elsewhere = g_list_copy(priv->accounts_signed_on_elsewhere);
-
-	for (l = accounts_elsewhere; l != NULL; l = l->next)
-	{
-		PurpleAccount *account = l->data;
-		purple_account_clear_current_error(account);
-	}
-
-	g_list_free(accounts_elsewhere);
-
-	destroy_signed_on_elsewhere_minidialog(priv);
-}
-
-static GtkWidget *
-make_elsewhere_minidialog_button(const char *text,
-                                 GCallback callback)
-{
-	GtkWidget *button = gtk_button_new();
-	GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
-	GtkWidget *label = gtk_label_new(NULL);
-	char *button_text =
-		g_strdup_printf("<span size=\"smaller\">%s</span>", text);
-
-	gtk_container_set_border_width(GTK_CONTAINER(hbox), 0);
-
-	g_signal_connect_swapped(G_OBJECT(button), "clicked", callback,
-		gtkblist);
-	gtk_container_add(GTK_CONTAINER(button), hbox);
-
-	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), button_text);
-	g_free(button_text);
-
-	gtk_misc_set_alignment(GTK_MISC(label), 0.5, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-
-	return button;
+	purple_account_set_enabled(account, purple_core_get_ui(), TRUE);
 }
 
 static void
-create_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
+reconnect_elsewhere_accounts(PidginMiniDialog *mini_dialog,
+                             GtkButton *button,
+                             gpointer unused)
+{
+	elsewhere_foreach_account(mini_dialog, enable_account);
+}
+
+static void
+ignore_elsewhere_accounts(PidginMiniDialog *mini_dialog,
+                          GtkButton *button,
+                          gpointer unused)
+{
+	elsewhere_foreach_account(mini_dialog, purple_account_clear_current_error);
+}
+
+static void
+ensure_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
-	GtkWidget *dialog, *vbox, *hbox, *label, *img, *button;
+	PidginMiniDialog *mini_dialog;
 
-	if(priv->signed_on_elsewhere_minidialog)
+	if(priv->signed_on_elsewhere)
 		return;
+	
+	mini_dialog = priv->signed_on_elsewhere =
+		pidgin_mini_dialog_new(NULL, NULL, PIDGIN_STOCK_DISCONNECT);
 
-	dialog = gtk_vbox_new(FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BOX_SPACE);
-	priv->signed_on_elsewhere_minidialog = dialog;
+	pidgin_mini_dialog_add_button(mini_dialog, _("Re-enable"),
+		reconnect_elsewhere_accounts, NULL);
 
-	/* HBox to hold error icon and title */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	pidgin_mini_dialog_add_button(mini_dialog, _("Ignore"),
+		ignore_elsewhere_accounts, NULL);
 
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_DISCONNECT,
-		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-	if (img)
-		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	add_error_dialog(gtkblist, GTK_WIDGET(mini_dialog));
 
-	label = gtk_label_new(NULL);
-	priv->signed_on_elsewhere_minidialog_title = GTK_LABEL(label);
-	gtk_widget_set_size_request(label,
-		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25, -1);
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(dialog), hbox, FALSE, FALSE, 0);
-
-	/* VBox to hold "[prplicon] account@server.com" widgets */
-	vbox = gtk_vbox_new(FALSE, 0);
-	priv->signed_on_elsewhere_minidialog_accounts = GTK_VBOX(vbox);
-	gtk_box_pack_start(GTK_BOX(dialog), vbox, FALSE, FALSE, 0);
-
-	/* HBox to hold buttons */
-	hbox = gtk_hbox_new(FALSE, 0);
-
-	button = make_elsewhere_minidialog_button(_("Re-enable"),
-		(GCallback) reconnect_elsewhere_accounts);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-	button = make_elsewhere_minidialog_button(_("Ignore"),
-		(GCallback) ignore_elsewhere_accounts);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-	gtk_box_pack_start(GTK_BOX(dialog), hbox, FALSE, FALSE, 0);
-	add_error_dialog(gtkblist, dialog);
+	/* Set priv->signed_on_elsewhere to NULL when it is destroyed */
+	g_signal_connect(G_OBJECT(mini_dialog), "destroy",
+		(GCallback) gtk_widget_destroyed, &(priv->signed_on_elsewhere));
 }
 
 static void
 update_signed_on_elsewhere_minidialog_title(void)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
-	guint length;
-	char *title, *title_markup;
+	PidginMiniDialog *mini_dialog = priv->signed_on_elsewhere;
+	guint accounts;
+	char *title;
 
-	length = g_list_length(priv->accounts_signed_on_elsewhere);
-	if (length == 0)
-	{
-		destroy_signed_on_elsewhere_minidialog(priv);
+	if (mini_dialog == NULL)
 		return;
-	}
 
-	create_signed_on_elsewhere_minidialog(gtkblist);
+	accounts = pidgin_mini_dialog_get_num_children(mini_dialog);
 
 	title = g_strdup_printf(
 		ngettext("%d account was disabled because you signed on from another location.",
 			 "%d accounts were disabled because you signed on from another location.",
-			 length),
-		length);
-	title_markup = g_strdup_printf("<span weight=\"bold\" size=\"smaller\">%s</span>", title);
-
-	gtk_label_set_markup(priv->signed_on_elsewhere_minidialog_title, title_markup);
-
-	g_free(title_markup);
+			 accounts),
+		accounts);
+	pidgin_mini_dialog_set_title(mini_dialog, title);
 	g_free(title);
-
-	gtk_widget_show_all(priv->signed_on_elsewhere_minidialog);
 }
 
 static GtkWidget *
@@ -4652,19 +4585,20 @@ static void
 add_to_signed_on_elsewhere(PurpleAccount *account)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	PidginMiniDialog *mini_dialog;
 	GtkWidget *account_label;
-	if(g_list_find(priv->accounts_signed_on_elsewhere, account) != NULL)
+
+	ensure_signed_on_elsewhere_minidialog(gtkblist);
+	mini_dialog = priv->signed_on_elsewhere;
+
+	if(find_child_widget_by_account(GTK_CONTAINER(mini_dialog->contents), account))
 		return;
 
-	priv->accounts_signed_on_elsewhere =
-		g_list_prepend(priv->accounts_signed_on_elsewhere, account);
+	account_label = create_account_label(account);
+	gtk_box_pack_start(mini_dialog->contents, account_label, FALSE, FALSE, 0);
+	gtk_widget_show_all(account_label);
 
 	update_signed_on_elsewhere_minidialog_title();
-
-	account_label = create_account_label(account);
-	gtk_box_pack_start(GTK_BOX(priv->signed_on_elsewhere_minidialog_accounts),
-		account_label, FALSE, FALSE, 0);
-	gtk_widget_show_all(account_label);
 
 	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
 		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
@@ -4674,16 +4608,11 @@ static void
 remove_from_signed_on_elsewhere(PurpleAccount *account)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
-	if(g_list_find(priv->accounts_signed_on_elsewhere, account) == NULL)
+	PidginMiniDialog *mini_dialog = priv->signed_on_elsewhere;
+	if(mini_dialog == NULL)
 		return;
 
-	priv->accounts_signed_on_elsewhere =
-		g_list_remove(priv->accounts_signed_on_elsewhere, account);
-
-	if(priv->signed_on_elsewhere_minidialog_accounts)
-		remove_child_widget_by_account(GTK_CONTAINER(
-			priv->signed_on_elsewhere_minidialog_accounts),
-			account);
+	remove_child_widget_by_account(GTK_CONTAINER(mini_dialog->contents), account);
 
 	update_signed_on_elsewhere_minidialog_title();
 }
