@@ -307,10 +307,16 @@ pidgin_mini_dialog_class_init(PidginMiniDialogClass *klass)
 	g_object_class_install_property (object_class, PROP_ICON_NAME, param_spec);
 }
 
+/* 16 is the width of the icon, due to PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL */
+#define BLIST_WIDTH_OTHER_THAN_LABEL \
+	((PIDGIN_HIG_BOX_SPACE * 3) + 16)
+
 static void
 pidgin_mini_dialog_init(PidginMiniDialog *self)
 {
 	GtkBox *self_box = GTK_BOX(self);
+	guint blist_width = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width");
+	guint label_width = blist_width - BLIST_WIDTH_OTHER_THAN_LABEL;
 
 	PidginMiniDialogPrivate *priv = g_new0(PidginMiniDialogPrivate, 1);
 	self->priv = priv;
@@ -323,11 +329,8 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 	gtk_misc_set_alignment(GTK_MISC(priv->icon), 0, 0);
 
 	priv->title = GTK_LABEL(gtk_label_new(NULL));
-	/* TODO: update this request when /blist/width updates.  Also, 25 is
-	 * magic.
-	 */
-	gtk_widget_set_size_request(GTK_WIDGET(priv->title),
-		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25, -1);
+	/* TODO: update this request when /blist/width updates. */
+	gtk_widget_set_size_request(GTK_WIDGET(priv->title), label_width, -1);
 	gtk_label_set_line_wrap(priv->title, TRUE);
 	gtk_misc_set_alignment(GTK_MISC(priv->title), 0, 0);
 
@@ -335,11 +338,8 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 	gtk_box_pack_start(priv->title_box, GTK_WIDGET(priv->title), TRUE, TRUE, 0);
 
 	priv->desc = GTK_LABEL(gtk_label_new(NULL));
-	/* TODO: update this request when /blist/width updates.  Also, 25 is
-	 * magic.
-	 */
-	gtk_widget_set_size_request(GTK_WIDGET(priv->desc),
-		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25, -1);
+	/* TODO: update this request when /blist/width updates. */
+	gtk_widget_set_size_request(GTK_WIDGET(priv->desc), label_width, -1);
 	gtk_label_set_line_wrap(priv->desc, TRUE);
 	gtk_misc_set_alignment(GTK_MISC(priv->desc), 0, 0);
 
