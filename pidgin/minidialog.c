@@ -273,61 +273,14 @@ pidgin_mini_dialog_finalize(GObject *object)
 }
 
 static void
-pidgin_mini_dialog_add(GtkContainer *container,
-                       GtkWidget *widget)
-{
-	PidginMiniDialog *self = PIDGIN_MINI_DIALOG(container);
-	gtk_widget_show_all(widget);
-	gtk_box_pack_start(self->contents, widget, FALSE, FALSE, 0);
-}
-
-static void
-pidgin_mini_dialog_remove(GtkContainer *container,
-                          GtkWidget *widget)
-{
-	PidginMiniDialog *self = PIDGIN_MINI_DIALOG(container);
-	gtk_container_remove(GTK_CONTAINER(self->contents), widget);
-}
-
-static void
-pidgin_mini_dialog_forall(GtkContainer *container,
-                          gboolean include_internals,
-                          GtkCallback callback,
-                          gpointer callback_data)
-{
-	PidginMiniDialog *self = PIDGIN_MINI_DIALOG(container);
-	PidginMiniDialogPrivate *priv = PIDGIN_MINI_DIALOG_GET_PRIVATE(self);
-	GtkContainer *contents = GTK_CONTAINER(self->contents);
-
-	if(include_internals)
-	{
-		(*callback)(GTK_WIDGET(priv->title_box), callback_data);
-		(*callback)(GTK_WIDGET(priv->desc_box), callback_data);
-	}
-
-	gtk_container_foreach(contents, callback, callback_data);
-
-	if (include_internals)
-		(*callback)(GTK_WIDGET(priv->buttons), callback_data);
-}
-
-static void
 pidgin_mini_dialog_class_init(PidginMiniDialogClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
-	GtkContainerClass *container_class = GTK_CONTAINER_CLASS(klass);
 	GParamSpec *param_spec;
 
 	object_class->get_property = pidgin_mini_dialog_get_property;
 	object_class->set_property = pidgin_mini_dialog_set_property;
 	object_class->finalize = pidgin_mini_dialog_finalize;
-
-	container_class->add = pidgin_mini_dialog_add;
-	container_class->remove = pidgin_mini_dialog_remove;
-	container_class->forall = pidgin_mini_dialog_forall;
-	/* TODO: Implement set_focus_child, {get,set}_child_property and pals
-	 * if necessary.
-	 */
 
 	param_spec = g_param_spec_string("title", "title",
 		"String specifying the mini-dialog's title", NULL,
