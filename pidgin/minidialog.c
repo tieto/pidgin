@@ -49,7 +49,6 @@ typedef struct _PidginMiniDialogPrivate
 	GtkImage *icon;
 	GtkBox *title_box;
 	GtkLabel *title;
-	GtkBox *desc_box;
 	GtkLabel *desc;
 	GtkBox *buttons;
 } PidginMiniDialogPrivate;
@@ -226,12 +225,12 @@ mini_dialog_set_description(PidginMiniDialog *self,
 		g_free(desc_esc);
 		g_free(desc_markup);
 
-		gtk_widget_show_all(GTK_WIDGET(priv->desc_box));
+		gtk_widget_show(GTK_WIDGET(priv->desc));
 	}
 	else
 	{
 		gtk_label_set_text(priv->desc, NULL);
-		gtk_widget_hide_all(GTK_WIDGET(priv->desc_box));
+		gtk_widget_hide(GTK_WIDGET(priv->desc));
 	}
 }
 
@@ -323,7 +322,7 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 	priv->icon = GTK_IMAGE(gtk_image_new());
 	gtk_misc_set_alignment(GTK_MISC(priv->icon), 0, 0);
 
-	priv->title = GTK_LABEL(gtk_label_new(""));
+	priv->title = GTK_LABEL(gtk_label_new(NULL));
 	/* TODO: update this request when /blist/width updates.  Also, 25 is
 	 * magic.
 	 */
@@ -335,8 +334,7 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 	gtk_box_pack_start(priv->title_box, GTK_WIDGET(priv->icon), FALSE, FALSE, 0);
 	gtk_box_pack_start(priv->title_box, GTK_WIDGET(priv->title), TRUE, TRUE, 0);
 
-	priv->desc_box = GTK_BOX(gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE));
-	priv->desc = GTK_LABEL(gtk_label_new(""));
+	priv->desc = GTK_LABEL(gtk_label_new(NULL));
 	/* TODO: update this request when /blist/width updates.  Also, 25 is
 	 * magic.
 	 */
@@ -344,18 +342,16 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 		purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25, -1);
 	gtk_label_set_line_wrap(priv->desc, TRUE);
 	gtk_misc_set_alignment(GTK_MISC(priv->desc), 0, 0);
-	gtk_box_pack_start(priv->desc_box, GTK_WIDGET(priv->desc),
-		TRUE, TRUE, 0);
 
 	self->contents = GTK_BOX(gtk_vbox_new(FALSE, 0));
 
 	priv->buttons = GTK_BOX(gtk_hbox_new(FALSE, 0));
 
 	gtk_box_pack_start(self_box, GTK_WIDGET(priv->title_box), FALSE, FALSE, 0);
-	gtk_box_pack_start(self_box, GTK_WIDGET(priv->desc_box), FALSE, FALSE, 0);
+	gtk_box_pack_start(self_box, GTK_WIDGET(priv->desc), FALSE, FALSE, 0);
 	gtk_box_pack_start(self_box, GTK_WIDGET(self->contents), TRUE, TRUE, 0);
 	gtk_box_pack_start(self_box, GTK_WIDGET(priv->buttons), FALSE, FALSE, 0);
 
 	gtk_widget_show_all(GTK_WIDGET(self));
-	gtk_widget_hide_all(GTK_WIDGET(priv->desc_box));
+	gtk_widget_hide(GTK_WIDGET(priv->desc));
 }
