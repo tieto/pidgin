@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: mk\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-09-28 15:32-0500\n"
-"PO-Revision-Date: 2007-09-09 21:21+0200\n"
+"PO-Revision-Date: 2007-11-03 22:57+0100\n"
 "Last-Translator: Arangel Angov <arangel@linux.net.mk>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
 "MIME-Version: 1.0\n"
@@ -484,8 +484,7 @@ msgstr "Внесете празен стринг за ресетирање на 
 
 #: ../finch/gntblist.c:1079
 msgid "Removing this contact will also remove all the buddies in the contact"
-msgstr ""
-"Отстранување на овој контакт ќе ги отстрани и другите пријатели во контактот"
+msgstr "Отстранување на овој контакт ќе ги отстрани и другите пријатели во контактот"
 
 #: ../finch/gntblist.c:1087
 msgid "Removing this group will also remove all the buddies in the group"
@@ -623,8 +622,7 @@ msgid "New Instant Message"
 msgstr "Нова инстант порака"
 
 #: ../finch/gntblist.c:2218 ../pidgin/gtkdialogs.c:769
-msgid ""
-"Please enter the screen name or alias of the person you would like to IM."
+msgid "Please enter the screen name or alias of the person you would like to IM."
 msgstr ""
 "Внесете го името или алијасот на пријателот на кој што сакате да му "
 "испратите порака."
@@ -676,12 +674,10 @@ msgid "Send IM..."
 msgstr "Испрати ИП..."
 
 #: ../finch/gntblist.c:2251
-#, fuzzy
 msgid "Show empty groups"
 msgstr "Покажи празни групи"
 
 #: ../finch/gntblist.c:2257
-#, fuzzy
 msgid "Show offline buddies"
 msgstr "Покажи исклучени пријатели"
 
@@ -698,17 +694,16 @@ msgid "Sort by log size"
 msgstr "Подреди по големина на лог"
 
 #: ../finch/gntcertmgr.c:86 ../pidgin/gtkcertmgr.c:188
-#, fuzzy
 msgid "Certificate Import"
-msgstr "Порт за поврзување"
+msgstr "Увоз на сертификат"
 
 #: ../finch/gntcertmgr.c:87 ../pidgin/gtkcertmgr.c:189
 msgid "Specify a hostname"
-msgstr ""
+msgstr "Одредете име на хост"
 
 #: ../finch/gntcertmgr.c:88 ../pidgin/gtkcertmgr.c:190
 msgid "Type the host name this certificate is for."
-msgstr ""
+msgstr "Внесете име на хост за сертификатот."
 
 #: ../finch/gntcertmgr.c:97 ../pidgin/gtkcertmgr.c:210
 #, c-format
@@ -716,19 +711,20 @@ msgid ""
 "File %s could not be imported.\n"
 "Make sure that the file is readable and in PEM format.\n"
 msgstr ""
+"Датотеката %s не може да биде увезена.\n"
+"Осигурајте се дека датотеката е читлива во PEM формат.\n"
 
 #: ../finch/gntcertmgr.c:99 ../pidgin/gtkcertmgr.c:212
 msgid "Certificate Import Error"
-msgstr ""
+msgstr "Грешка при увоз на сертификатот"
 
 #: ../finch/gntcertmgr.c:100 ../pidgin/gtkcertmgr.c:213
 msgid "X.509 certificate import failed"
-msgstr ""
+msgstr "Увозот на X.509 сертификатот не успеа"
 
 #: ../finch/gntcertmgr.c:110 ../pidgin/gtkcertmgr.c:224
-#, fuzzy
 msgid "Select a PEM certificate"
-msgstr "Изберете датотека"
+msgstr "Изберете PEM сертификат"
 
 #: ../finch/gntcertmgr.c:127 ../pidgin/gtkcertmgr.c:245
 #, c-format
@@ -739,20 +735,20 @@ msgstr ""
 
 #: ../finch/gntcertmgr.c:129 ../pidgin/gtkcertmgr.c:247
 msgid "Certificate Export Error"
-msgstr ""
+msgstr "Грешка при извоз на сертификатот"
 
 #: ../finch/gntcertmgr.c:130 ../pidgin/gtkcertmgr.c:248
 msgid "X.509 certificate export failed"
-msgstr ""
+msgstr "Не успеа извозот на X.509 сертификатот"
 
 #: ../finch/gntcertmgr.c:159 ../pidgin/gtkcertmgr.c:299
 msgid "PEM X.509 Certificate Export"
-msgstr ""
+msgstr "Извоз на сертификат PEM X.509"
 
 #: ../finch/gntcertmgr.c:188
-#, fuzzy, c-format
+#, c-format
 msgid "Certificate for %s"
-msgstr "Статус за %s"
+msgstr "Сертификат за %s"
 
 #: ../finch/gntcertmgr.c:195
 #, c-format
@@ -762,23 +758,27 @@ msgid ""
 "SHA1 fingerprint:\n"
 "%s"
 msgstr ""
+"Common name: %s\n"
+"\n"
+"SHA1 fingerprint:\n"
+"%s"
 
 #: ../finch/gntcertmgr.c:198
 msgid "SSL Host Certificate"
-msgstr ""
+msgstr "SSL хост сертификат"
 
 #: ../finch/gntcertmgr.c:233 ../pidgin/gtkcertmgr.c:372
 #, c-format
 msgid "Really delete certificate for %s?"
-msgstr ""
+msgstr "Стварно да го избришанм сертификатот за %s?"
 
 #: ../finch/gntcertmgr.c:236 ../pidgin/gtkcertmgr.c:374
 msgid "Confirm certificate delete"
-msgstr ""
+msgstr "Потврда за бришење на сертификатот"
 
 #: ../finch/gntcertmgr.c:293 ../pidgin/gtkcertmgr.c:602
 msgid "Certificate Manager"
-msgstr ""
+msgstr "Менаџер за сертификати"
 
 #. Creating the user splits
 #: ../finch/gntcertmgr.c:298 ../libpurple/protocols/bonjour/bonjour.c:652
@@ -835,8 +835,7 @@ msgstr "Нема таква команда."
 
 #: ../finch/gntconv.c:143 ../pidgin/gtkconv.c:489
 msgid "Syntax Error:  You typed the wrong number of arguments to that command."
-msgstr ""
-"Грешка во синтаксата:  Внесовте погрешен број на аргументи за таа команда."
+msgstr "Грешка во синтаксата:  Внесовте погрешен број на аргументи за таа команда."
 
 #: ../finch/gntconv.c:148 ../pidgin/gtkconv.c:495
 msgid "Your command failed for an unknown reason."
@@ -855,9 +854,8 @@ msgid "That command doesn't work on this protocol."
 msgstr "Оваа команда не работи со овој протокол."
 
 #: ../finch/gntconv.c:168
-#, fuzzy
 msgid "Message was not sent, because you are not signed on."
-msgstr "Пораката не може да се испрати бидејќи праќате премногу брзо:"
+msgstr "Пораката не може да се испрати бидејќи не сте најавени."
 
 #: ../finch/gntconv.c:251
 #, c-format
@@ -887,10 +885,8 @@ msgid "Logging started. Future messages in this conversation will be logged."
 msgstr "Логирањето започна. Идните пораки во овој разговор ќе бидат логирани."
 
 #: ../finch/gntconv.c:393 ../pidgin/gtkconv.c:1370
-msgid ""
-"Logging stopped. Future messages in this conversation will not be logged."
-msgstr ""
-"Логирањето е запрено. Идните пораки во овој разговор нема да бидат логирани."
+msgid "Logging stopped. Future messages in this conversation will not be logged."
+msgstr "Логирањето е запрено. Идните пораки во овој разговор нема да бидат логирани."
 
 #: ../finch/gntconv.c:442
 msgid "Send To"
@@ -913,14 +909,12 @@ msgid "Add Buddy Pounce..."
 msgstr "Додај дејство за пријател..."
 
 #: ../finch/gntconv.c:527
-#, fuzzy
 msgid "Enable Logging"
-msgstr "/Опции/Овозможи логирање"
+msgstr "Вклучи логирање"
 
 #: ../finch/gntconv.c:533
-#, fuzzy
 msgid "Enable Sounds"
-msgstr "Вклучи звуци:"
+msgstr "Вклучи звуци"
 
 #: ../finch/gntconv.c:739
 msgid "<AUTO-REPLY> "
@@ -1113,7 +1107,7 @@ msgstr "%.2f KiB/с"
 #: ../finch/gntft.c:431
 #, c-format
 msgid "The file was saved as %s."
-msgstr ""
+msgstr "Датотеката е зачувана како %s."
 
 #: ../finch/gntft.c:432 ../finch/gntft.c:433 ../pidgin/gtkft.c:163
 #: ../pidgin/gtkft.c:1116
@@ -1341,18 +1335,16 @@ msgid "Recurring"
 msgstr "Од време на време"
 
 #: ../finch/gntpounce.c:618
-#, fuzzy
 msgid "Cannot create pounce"
-msgstr "Не можам да го променам прекарот"
+msgstr "Не можам да креирам дејство"
 
 #: ../finch/gntpounce.c:619
-#, fuzzy
 msgid "You do not have any accounts."
-msgstr "Мора да одредите сметка."
+msgstr "Немате ниедна сметка."
 
 #: ../finch/gntpounce.c:620
 msgid "You must create an account first before you can create a pounce."
-msgstr ""
+msgstr "Мора да креирате сметка пред да креирате дејство."
 
 #: ../finch/gntpounce.c:662 ../pidgin/gtkpounce.c:1096
 #, c-format
@@ -1771,7 +1763,7 @@ msgstr "Зачувај и користи"
 
 #: ../finch/gntui.c:85
 msgid "Certificates"
-msgstr ""
+msgstr "Сертификати"
 
 #: ../finch/gntui.c:89 ../pidgin/gtkprefs.c:2035
 msgid "Sounds"
@@ -1783,23 +1775,20 @@ msgstr "Статуси"
 
 #: ../finch/plugins/gntclipboard.c:115 ../finch/plugins/gntclipboard.c:121
 #: ../finch/plugins/gntclipboard.c:128
-#, fuzzy
 msgid "Error loading the plugin."
-msgstr "Се појавија грешки при вадење на додатокот."
+msgstr "Грешка при вчитување на додатокот."
 
 #: ../finch/plugins/gntclipboard.c:116
-#, fuzzy
 msgid "Couldn't find X display"
-msgstr "Не можам да ја отворам датотеката"
+msgstr "Не можам да го најдам X приказот"
 
 #: ../finch/plugins/gntclipboard.c:122
-#, fuzzy
 msgid "Couldn't find window"
-msgstr "Не можам да ја отворам датотеката"
+msgstr "Не можам да го најдам прозорецот"
 
 #: ../finch/plugins/gntclipboard.c:129
 msgid "This plugin cannot be loaded because it was not built with X11 support."
-msgstr ""
+msgstr "Додатокот не може да биде вчитан поради тоа што не е избилдан со подршка X11."
 
 #: ../finch/plugins/gntclipboard.c:158
 msgid "GntClipboard"
@@ -2026,7 +2015,7 @@ msgstr "листа на пријатели"
 
 #: ../libpurple/certificate.c:545
 msgid "(DOES NOT MATCH)"
-msgstr ""
+msgstr "(НЕ СЕ СОВПАЃА)"
 
 #. Make messages
 #: ../libpurple/certificate.c:549
@@ -2060,20 +2049,19 @@ msgstr ""
 
 #. Make messages
 #: ../libpurple/certificate.c:1171
-#, fuzzy, c-format
+#, c-format
 msgid "Accept certificate for %s?"
-msgstr "Прифати ја поканата за разговор?"
+msgstr "Прифати сертификат за %s?"
 
 #. TODO: Find what the handle ought to be
 #: ../libpurple/certificate.c:1177
 msgid "SSL Certificate Verification"
-msgstr ""
+msgstr "Проверка на SSL сертификат"
 
 #. Number of actions
 #: ../libpurple/certificate.c:1186
-#, fuzzy
 msgid "Accept"
-msgstr "_Прифати"
+msgstr "Прифати"
 
 #: ../libpurple/certificate.c:1187 ../libpurple/protocols/qq/buddy_opt.c:214
 #: ../libpurple/protocols/qq/group_im.c:144
@@ -2085,7 +2073,7 @@ msgstr "Одбиј"
 
 #: ../libpurple/certificate.c:1188
 msgid "_View Certificate..."
-msgstr ""
+msgstr "_Види сертификат..."
 
 #. Prompt the user to authenticate the certificate
 #. TODO: Provide the user with more guidance about why he is
@@ -2118,14 +2106,12 @@ msgstr ""
 #. TODO: Probably wrong.
 #. TODO: Probably wrong
 #: ../libpurple/certificate.c:1339 ../libpurple/certificate.c:1416
-#, fuzzy
 msgid "SSL Certificate Error"
-msgstr "Грешка во запишувањето"
+msgstr "Грешка во SSL сертификатот"
 
 #: ../libpurple/certificate.c:1340
-#, fuzzy
 msgid "Invalid certificate chain"
-msgstr "Невалиден наслов"
+msgstr "Невалиден синџир на сертификати"
 
 #. vrq will be completed by user_auth
 #: ../libpurple/certificate.c:1360
@@ -2136,8 +2122,7 @@ msgstr ""
 
 #. vrq will be completed by user_auth
 #: ../libpurple/certificate.c:1382
-msgid ""
-"The root certificate this one claims to be issued by is unknown to Pidgin."
+msgid "The root certificate this one claims to be issued by is unknown to Pidgin."
 msgstr ""
 
 #: ../libpurple/certificate.c:1408
@@ -2166,18 +2151,16 @@ msgstr ""
 
 #. TODO: Find what the handle ought to be
 #: ../libpurple/certificate.c:1890
-#, fuzzy
 msgid "Certificate Information"
-msgstr "Информации за серверот"
+msgstr "Информации за сертификатот"
 
 #: ../libpurple/connection.c:107
 msgid "Registration Error"
 msgstr "Грешка во регистрацијата"
 
 #: ../libpurple/connection.c:180
-#, fuzzy
 msgid "Unregistration Error"
-msgstr "Грешка во регистрацијата"
+msgstr "Грешка при дерегестрација"
 
 #: ../libpurple/connection.c:350
 #, c-format
@@ -2269,8 +2252,7 @@ msgstr "Не успеав да го добијам името на сервер�
 
 #: ../libpurple/dbus-server.h:85
 msgid "Purple's D-BUS server is not running for the reason listed below"
-msgstr ""
-"D-BUS серверот на Purple не се извршува поради причините наведени подолу"
+msgstr "D-BUS серверот на Purple не се извршува поради причините наведени подолу"
 
 #: ../libpurple/desktopitem.c:287 ../libpurple/desktopitem.c:878
 msgid "No name"
@@ -2462,38 +2444,31 @@ msgstr "Командата користена за справување со \"a
 
 #: ../libpurple/gconf/purple.schemas.in.h:3
 msgid "The command used to handle \"gg\" URLs, if enabled."
-msgstr ""
-"Командата која се користи за справување со „gg“ URL, ако тоа е овозможено."
+msgstr "Командата која се користи за справување со „gg“ URL, ако тоа е овозможено."
 
 #: ../libpurple/gconf/purple.schemas.in.h:4
 msgid "The command used to handle \"icq\" URLs, if enabled."
-msgstr ""
-"Командата која се користи за справување со „icq“ URL, ако тоа е овозможено."
+msgstr "Командата која се користи за справување со „icq“ URL, ако тоа е овозможено."
 
 #: ../libpurple/gconf/purple.schemas.in.h:5
 msgid "The command used to handle \"irc\" URLs, if enabled."
-msgstr ""
-"Командата која се користи за справување со „irc“ URL, ако тоа е овозможено."
+msgstr "Командата која се користи за справување со „irc“ URL, ако тоа е овозможено."
 
 #: ../libpurple/gconf/purple.schemas.in.h:6
 msgid "The command used to handle \"msnim\" URLs, if enabled."
-msgstr ""
-"Командата која се користи за справување со „msnim“ URL, ако тоа е овозможено."
+msgstr "Командата која се користи за справување со „msnim“ URL, ако тоа е овозможено."
 
 #: ../libpurple/gconf/purple.schemas.in.h:7
 msgid "The command used to handle \"sip\" URLs, if enabled."
-msgstr ""
-"Командата која се користи за справување со „sip“ URL, ако тоа е овозможено."
+msgstr "Командата која се користи за справување со „sip“ URL, ако тоа е овозможено."
 
 #: ../libpurple/gconf/purple.schemas.in.h:8
 msgid "The command used to handle \"xmpp\" URLs, if enabled."
-msgstr ""
-"Командата која се користи за справување со „xmpp“ URL, ако тоа е овозможено."
+msgstr "Командата која се користи за справување со „xmpp“ URL, ако тоа е овозможено."
 
 #: ../libpurple/gconf/purple.schemas.in.h:9
 msgid "The command used to handle \"ymsgr\" URLs, if enabled."
-msgstr ""
-"Командата која се користи за справување со „ymsgr“ URL, ако тоа е овозможено."
+msgstr "Командата која се користи за справување со „ymsgr“ URL, ако тоа е овозможено."
 
 #: ../libpurple/gconf/purple.schemas.in.h:10
 msgid "The handler for \"aim\" URLs"
@@ -2675,8 +2650,7 @@ msgstr ""
 
 #: ../libpurple/log.c:1426 ../libpurple/log.c:1559
 msgid "<font color=\"red\"><b>Unable to find log path!</b></font>"
-msgstr ""
-"<font color=\"red\"><b>Не можам да ја најдам патеката на логот!</b></font>"
+msgstr "<font color=\"red\"><b>Не можам да ја најдам патеката на логот!</b></font>"
 
 #: ../libpurple/log.c:1438 ../libpurple/log.c:1568
 #, c-format
@@ -2754,8 +2728,7 @@ msgstr "Автоматски прифаќај пренос на податоци
 #: ../libpurple/plugins/autoaccept.c:80
 #, c-format
 msgid "Autoaccepted file transfer of \"%s\" from \"%s\" completed."
-msgstr ""
-"Автоматски прифатениот пренос на датотеки на \"%s\" од \"%s\" е завршен."
+msgstr "Автоматски прифатениот пренос на датотеки на \"%s\" од \"%s\" е завршен."
 
 #: ../libpurple/plugins/autoaccept.c:82
 msgid "Autoaccept complete"
@@ -3090,8 +3063,7 @@ msgstr ""
 
 #: ../libpurple/plugins/log_reader.c:1643
 msgid "Message could not be sent because the maximum length was exceeded."
-msgstr ""
-"Пораката не може да се испрати бидејќи е надмината максималната должина."
+msgstr "Пораката не може да се испрати бидејќи е надмината максималната должина."
 
 #: ../libpurple/plugins/log_reader.c:1648
 msgid "Message could not be sent."
@@ -3241,8 +3213,7 @@ msgstr "Емулирање на офлајн пораки"
 
 #: ../libpurple/plugins/offlinemsg.c:25 ../libpurple/plugins/offlinemsg.c:26
 msgid "Save messages sent to an offline user as pounce."
-msgstr ""
-"Зачувај ги пораките испратени до офлајн корисниците како дејство за пријател."
+msgstr "Зачувај ги пораките испратени до офлајн корисниците како дејство за пријател."
 
 #: ../libpurple/plugins/offlinemsg.c:95
 msgid ""
@@ -3267,8 +3238,7 @@ msgstr "Офлајн порака"
 
 #: ../libpurple/plugins/offlinemsg.c:161
 msgid "You can edit/delete the pounce from the `Buddy Pounces' dialog"
-msgstr ""
-"Можете да го уредувате/бришете дејството од дијалогот „Дејства за пријатели“"
+msgstr "Можете да го уредувате/бришете дејството од дијалогот „Дејства за пријатели“"
 
 #: ../libpurple/plugins/offlinemsg.c:165
 #: ../libpurple/protocols/msn/dialog.c:133
@@ -3540,10 +3510,8 @@ msgid "Unable to listen for incoming IM connections\n"
 msgstr "Не можам да слушам за доаѓачки врски\n"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:137
-msgid ""
-"Unable to establish connection with the local mDNS server.  Is it running?"
-msgstr ""
-"Не можам да воспоставам врска со локалниот mDNS сервер. Дали се извршува?"
+msgid "Unable to establish connection with the local mDNS server.  Is it running?"
+msgstr "Не можам да воспоставам врска со локалниот mDNS сервер. Дали се извршува?"
 
 #. Creating the options for the protocol
 #: ../libpurple/protocols/bonjour/bonjour.c:351
@@ -3671,8 +3639,7 @@ msgstr "Зачувај ја листата со пријатели..."
 
 #: ../libpurple/protocols/gg/gg.c:270
 msgid "Your buddylist is empty, nothing was written to the file."
-msgstr ""
-"Вашата листа со пријатели е празна, па ништо не се запиша во датотеката."
+msgstr "Вашата листа со пријатели е празна, па ништо не се запиша во датотеката."
 
 #: ../libpurple/protocols/gg/gg.c:276 ../libpurple/protocols/gg/gg.c:278
 msgid "Couldn't open file"
@@ -4632,8 +4599,7 @@ msgstr "topic [нов наслов]:  Прегледај или промени �
 
 #: ../libpurple/protocols/irc/parse.c:150
 msgid "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode."
-msgstr ""
-"umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Постави го или тргни го корисничкиот режим."
+msgstr "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Постави го или тргни го корисничкиот режим."
 
 #: ../libpurple/protocols/irc/parse.c:151
 msgid "version [nick]: send CTCP VERSION request to a user"
@@ -4661,8 +4627,7 @@ msgstr "whois [сервер] &lt;прекар&gt;:  Собери информа�
 
 #: ../libpurple/protocols/irc/parse.c:155
 msgid "whowas &lt;nick&gt;: Get information on a user that has logged off."
-msgstr ""
-"whowas &lt;nick&gt;: Добијте информации за корисник кој што се одјавил."
+msgstr "whowas &lt;nick&gt;: Добијте информации за корисник кој што се одјавил."
 
 #: ../libpurple/protocols/irc/parse.c:465
 #, c-format
@@ -4693,14 +4658,12 @@ msgstr "Непозната грешка"
 
 #: ../libpurple/protocols/jabber/adhoccommands.c:139
 #: ../libpurple/protocols/jabber/adhoccommands.c:140
-#, fuzzy
 msgid "Ad-Hoc Command Failed"
-msgstr "Командата е исклучена"
+msgstr "Ад-хок командата не успеа"
 
 #: ../libpurple/protocols/jabber/adhoccommands.c:173
-#, fuzzy
 msgid "execute"
-msgstr "Не е очекувано"
+msgstr "изврши"
 
 #: ../libpurple/protocols/jabber/auth.c:53
 msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
@@ -4708,8 +4671,7 @@ msgstr "Серверот бара TLS/SSL за најавување.  Не пр�
 
 #: ../libpurple/protocols/jabber/auth.c:116
 msgid "Server requires plaintext authentication over an unencrypted stream"
-msgstr ""
-"Серверот бара проверка на автентичност со чист текст преку неенкриптиран тек"
+msgstr "Серверот бара проверка на автентичност со чист текст преку неенкриптиран тек"
 
 #: ../libpurple/protocols/jabber/auth.c:319
 #: ../libpurple/protocols/jabber/auth.c:508
@@ -4883,13 +4845,12 @@ msgstr "Оперативен систем"
 #: ../libpurple/protocols/jabber/buddy.c:815
 #: ../libpurple/protocols/jabber/buddy.c:975
 msgid "Last Activity"
-msgstr ""
+msgstr "Последна активност"
 
 #: ../libpurple/protocols/jabber/buddy.c:817
 #: ../libpurple/protocols/jabber/buddy.c:977
-#, fuzzy
 msgid "Service Discovery Info"
-msgstr "Постави информации за директориумот"
+msgstr "Информации за откривање на сервиси"
 
 #: ../libpurple/protocols/jabber/buddy.c:819
 #: ../libpurple/protocols/jabber/buddy.c:979
@@ -4898,21 +4859,18 @@ msgstr ""
 
 #: ../libpurple/protocols/jabber/buddy.c:821
 #: ../libpurple/protocols/jabber/buddy.c:981
-#, fuzzy
 msgid "Extended Stanza Addressing"
-msgstr "Проширена адреса"
+msgstr "Проширена stanza адреса"
 
 #: ../libpurple/protocols/jabber/buddy.c:823
 #: ../libpurple/protocols/jabber/buddy.c:983
-#, fuzzy
 msgid "Multi-User Chat"
-msgstr "Алијас разговор"
+msgstr "Мулти-кориснички разговор"
 
 #: ../libpurple/protocols/jabber/buddy.c:825
 #: ../libpurple/protocols/jabber/buddy.c:985
-#, fuzzy
 msgid "Multi-User Chat Extended Presence Information"
-msgstr "Корисникот нема информации за директориумот."
+msgstr "Информации за продолежно присуство за мулти-кориснички разговор"
 
 #: ../libpurple/protocols/jabber/buddy.c:827
 #: ../libpurple/protocols/jabber/buddy.c:987
@@ -4921,9 +4879,8 @@ msgstr ""
 
 #: ../libpurple/protocols/jabber/buddy.c:829
 #: ../libpurple/protocols/jabber/buddy.c:989
-#, fuzzy
 msgid "Ad-Hoc Commands"
-msgstr "Команда"
+msgstr "Ад-хок команди"
 
 #: ../libpurple/protocols/jabber/buddy.c:831
 #: ../libpurple/protocols/jabber/buddy.c:991
@@ -4942,45 +4899,38 @@ msgstr ""
 
 #: ../libpurple/protocols/jabber/buddy.c:837
 #: ../libpurple/protocols/jabber/buddy.c:997
-#, fuzzy
 msgid "XHTML-IM"
-msgstr "HTML"
+msgstr "XHTML-IM"
 
 #: ../libpurple/protocols/jabber/buddy.c:839
 #: ../libpurple/protocols/jabber/buddy.c:999
-#, fuzzy
 msgid "In-Band Registration"
 msgstr "Грешка во регистрацијата"
 
 #: ../libpurple/protocols/jabber/buddy.c:841
 #: ../libpurple/protocols/jabber/buddy.c:1001
-#, fuzzy
 msgid "User Location"
-msgstr "Локација"
+msgstr "Локација на корисникот"
 
 #: ../libpurple/protocols/jabber/buddy.c:843
 #: ../libpurple/protocols/jabber/buddy.c:1003
-#, fuzzy
 msgid "User Avatar"
-msgstr "Пребарување на корисници"
+msgstr "Аватар на корисникот"
 
 #: ../libpurple/protocols/jabber/buddy.c:845
 #: ../libpurple/protocols/jabber/buddy.c:1005
-#, fuzzy
 msgid "Chat State Notifications"
-msgstr "Известување за состојбата на пријателот"
+msgstr "Известување за состојбата на разговорот"
 
 #: ../libpurple/protocols/jabber/buddy.c:847
 #: ../libpurple/protocols/jabber/buddy.c:1007
-#, fuzzy
 msgid "Software Version"
-msgstr "Неподдржана верзија"
+msgstr "Верзија на софтверот"
 
 #: ../libpurple/protocols/jabber/buddy.c:849
 #: ../libpurple/protocols/jabber/buddy.c:1009
-#, fuzzy
 msgid "Stream Initiation"
-msgstr "Ориентација"
+msgstr "Иницирање на стримот"
 
 #: ../libpurple/protocols/jabber/buddy.c:851
 #: ../libpurple/protocols/jabber/buddy.c:1011
@@ -4990,21 +4940,18 @@ msgstr "Пренос на датотеки"
 
 #: ../libpurple/protocols/jabber/buddy.c:853
 #: ../libpurple/protocols/jabber/buddy.c:1013
-#, fuzzy
 msgid "User Mood"
-msgstr "Кориснички режими"
+msgstr "Расположение на корисникот"
 
 #: ../libpurple/protocols/jabber/buddy.c:855
 #: ../libpurple/protocols/jabber/buddy.c:1015
-#, fuzzy
 msgid "User Activity"
-msgstr "Лимит на корисници"
+msgstr "Активност на корисникот"
 
 #: ../libpurple/protocols/jabber/buddy.c:857
 #: ../libpurple/protocols/jabber/buddy.c:1017
-#, fuzzy
 msgid "Entity Capabilities"
-msgstr "Можности"
+msgstr ""
 
 #: ../libpurple/protocols/jabber/buddy.c:859
 #: ../libpurple/protocols/jabber/buddy.c:1019
@@ -5013,106 +4960,93 @@ msgstr ""
 
 #: ../libpurple/protocols/jabber/buddy.c:861
 #: ../libpurple/protocols/jabber/buddy.c:1021
-#, fuzzy
 msgid "User Tune"
-msgstr "Корисничко име"
+msgstr ""
 
 #: ../libpurple/protocols/jabber/buddy.c:863
 #: ../libpurple/protocols/jabber/buddy.c:1023
-#, fuzzy
 msgid "Roster Item Exchange"
-msgstr "Инстант порака со размена на клуч"
+msgstr ""
 
 #: ../libpurple/protocols/jabber/buddy.c:865
 #: ../libpurple/protocols/jabber/buddy.c:1025
-#, fuzzy
 msgid "Reachability Address"
-msgstr "Адреса за е-пошта"
+msgstr ""
 
 #: ../libpurple/protocols/jabber/buddy.c:867
 #: ../libpurple/protocols/jabber/buddy.c:1027
-#, fuzzy
 msgid "User Profile"
-msgstr "Профил"
+msgstr "Кориснички профил"
 
 #: ../libpurple/protocols/jabber/buddy.c:869
 #: ../libpurple/protocols/jabber/buddy.c:1029
-#, fuzzy
 msgid "Jingle"
-msgstr "Приклучи се"
+msgstr "Jingle"
 
 #: ../libpurple/protocols/jabber/buddy.c:871
 #: ../libpurple/protocols/jabber/buddy.c:1031
 msgid "Jingle Audio"
-msgstr ""
+msgstr "Jingle аудио"
 
 #: ../libpurple/protocols/jabber/buddy.c:873
 #: ../libpurple/protocols/jabber/buddy.c:1033
-#, fuzzy
 msgid "User Nickname"
-msgstr "Корисничко име"
+msgstr "Кориснички прекар"
 
 #: ../libpurple/protocols/jabber/buddy.c:875
 #: ../libpurple/protocols/jabber/buddy.c:1035
 msgid "Jingle ICE UDP"
-msgstr ""
+msgstr "Jingle ICE UDP"
 
 #: ../libpurple/protocols/jabber/buddy.c:877
 #: ../libpurple/protocols/jabber/buddy.c:1037
 msgid "Jingle ICE TCP"
-msgstr ""
+msgstr "Jingle ICE TCP"
 
 #: ../libpurple/protocols/jabber/buddy.c:879
 #: ../libpurple/protocols/jabber/buddy.c:1039
 msgid "Jingle Raw UDP"
-msgstr ""
+msgstr "Jingle Raw UDP"
 
 #: ../libpurple/protocols/jabber/buddy.c:881
 #: ../libpurple/protocols/jabber/buddy.c:1041
-#, fuzzy
 msgid "Jingle Video"
-msgstr "Видео во живо"
+msgstr "Jingle видео"
 
 #: ../libpurple/protocols/jabber/buddy.c:883
 #: ../libpurple/protocols/jabber/buddy.c:1043
 msgid "Jingle DTMF"
-msgstr ""
+msgstr "Jingle DTMF"
 
 #: ../libpurple/protocols/jabber/buddy.c:885
 #: ../libpurple/protocols/jabber/buddy.c:1045
-#, fuzzy
 msgid "Message Receipts"
-msgstr "Примена е порака"
+msgstr "Примачи на пораката"
 
 #: ../libpurple/protocols/jabber/buddy.c:887
 #: ../libpurple/protocols/jabber/buddy.c:1047
-#, fuzzy
 msgid "Public Key Publishing"
-msgstr "Јавен отпечаток од клучот"
+msgstr "Објавување на јавниот клуч"
 
 #: ../libpurple/protocols/jabber/buddy.c:889
 #: ../libpurple/protocols/jabber/buddy.c:1049
-#, fuzzy
 msgid "User Chatting"
-msgstr "Опции за корисникот"
+msgstr "Корисникот разговара"
 
 #: ../libpurple/protocols/jabber/buddy.c:891
 #: ../libpurple/protocols/jabber/buddy.c:1051
-#, fuzzy
 msgid "User Browsing"
-msgstr "Кориснички режими"
+msgstr "Корисникот сурфа"
 
 #: ../libpurple/protocols/jabber/buddy.c:893
 #: ../libpurple/protocols/jabber/buddy.c:1053
-#, fuzzy
 msgid "User Gaming"
-msgstr "Корисничко име"
+msgstr "Корисникот игра"
 
 #: ../libpurple/protocols/jabber/buddy.c:895
 #: ../libpurple/protocols/jabber/buddy.c:1055
-#, fuzzy
 msgid "User Viewing"
-msgstr "Лимит на корисници"
+msgstr "Корисникот гледа"
 
 #: ../libpurple/protocols/jabber/buddy.c:897
 #: ../libpurple/protocols/jabber/buddy.c:1057
@@ -5125,9 +5059,8 @@ msgstr "Ping"
 
 #: ../libpurple/protocols/jabber/buddy.c:899
 #: ../libpurple/protocols/jabber/buddy.c:1059
-#, fuzzy
 msgid "Stanza Encryption"
-msgstr "Trillian енкрипција"
+msgstr "Stanza енкрипција"
 
 #: ../libpurple/protocols/jabber/buddy.c:901
 #: ../libpurple/protocols/jabber/buddy.c:1061
@@ -5238,14 +5171,12 @@ msgid "Unsubscribe"
 msgstr "Откажи"
 
 #: ../libpurple/protocols/jabber/buddy.c:1985
-#, fuzzy
 msgid "Log In"
-msgstr "Најавен"
+msgstr "Најава"
 
 #: ../libpurple/protocols/jabber/buddy.c:1989
-#, fuzzy
 msgid "Log Out"
-msgstr "Логирај разговори"
+msgstr "Одјава"
 
 #: ../libpurple/protocols/jabber/buddy.c:2035
 #: ../libpurple/protocols/jabber/jabber.c:1553
@@ -5448,7 +5379,7 @@ msgstr "Грешка во иницијализацијата на сесијат
 
 #: ../libpurple/protocols/jabber/jabber.c:145
 msgid "You require encryption, but it is not available on this server."
-msgstr ""
+msgstr "Барате енкрипција, но не е достапна на овој сервер."
 
 #: ../libpurple/protocols/jabber/jabber.c:259
 #: ../libpurple/protocols/jabber/jabber.c:312
@@ -5492,9 +5423,9 @@ msgid "Registration of %s@%s successful"
 msgstr "Регистрирањето на %s@%s е успешно"
 
 #: ../libpurple/protocols/jabber/jabber.c:662
-#, fuzzy, c-format
+#, c-format
 msgid "Registration to %s successful"
-msgstr "Регистрирањето на %s@%s е успешно"
+msgstr "Регистрацијата на %s е успешна"
 
 #: ../libpurple/protocols/jabber/jabber.c:664
 #: ../libpurple/protocols/jabber/jabber.c:665
@@ -5507,21 +5438,19 @@ msgid "Registration Failed"
 msgstr "Регистрирањето не успеа"
 
 #: ../libpurple/protocols/jabber/jabber.c:692
-#, fuzzy, c-format
+#, c-format
 msgid "Registration from %s successfully removed"
-msgstr "Регистрирањето на %s@%s е успешно"
+msgstr "Регистрацијата од %s е успешно отстранета"
 
 #: ../libpurple/protocols/jabber/jabber.c:694
 #: ../libpurple/protocols/jabber/jabber.c:695
-#, fuzzy
 msgid "Unregistration Successful"
-msgstr "Регистрирањето е успешно"
+msgstr "Дерегистрирањето е успешно"
 
 #: ../libpurple/protocols/jabber/jabber.c:703
 #: ../libpurple/protocols/jabber/jabber.c:704
-#, fuzzy
 msgid "Unregistration Failed"
-msgstr "Регистрирањето не успеа"
+msgstr "Дерегистрацијата не успеа"
 
 #: ../libpurple/protocols/jabber/jabber.c:864
 #: ../libpurple/protocols/jabber/jabber.c:865
@@ -5553,17 +5482,12 @@ msgid "Date"
 msgstr "Датум"
 
 #: ../libpurple/protocols/jabber/jabber.c:987
-#, fuzzy
 msgid "Unregister"
-msgstr "Регистрирај"
+msgstr "Дерегистрирај"
 
 #: ../libpurple/protocols/jabber/jabber.c:994
-#, fuzzy
-msgid ""
-"Please fill out the information below to change your account registration."
-msgstr ""
-"Ве молам, пополнете ги информациите подолу за да ја регистрирате Вашата нова "
-"сметка."
+msgid "Please fill out the information below to change your account registration."
+msgstr "Ве молам, пополнете ги информациите подолу за да ја смените регистрацијата за Вашата сметка."
 
 #: ../libpurple/protocols/jabber/jabber.c:997
 msgid "Please fill out the information below to register your new account."
@@ -5582,40 +5506,36 @@ msgid "Register"
 msgstr "Регистрирај"
 
 #: ../libpurple/protocols/jabber/jabber.c:1012
-#, fuzzy, c-format
+#, c-format
 msgid "Change Account Registration at %s"
-msgstr "Промени корисничко инфо за %s"
+msgstr "Сменете ја регистрацијата за сметката на %s"
 
 #: ../libpurple/protocols/jabber/jabber.c:1013
-#, fuzzy, c-format
+#, c-format
 msgid "Register New Account at %s"
-msgstr "Регистрирај нова XMPP сметка"
+msgstr "Регистрирајте нова сметка на %s"
 
 #: ../libpurple/protocols/jabber/jabber.c:1016
-#, fuzzy
 msgid "Change Registration"
-msgstr "Смени го статусот во"
+msgstr "Сменете регистрација"
 
 #: ../libpurple/protocols/jabber/jabber.c:1120
 #: ../libpurple/protocols/jabber/jabber.c:1121
-#, fuzzy
 msgid "Error unregistering account"
-msgstr "Грешка при менување на информации за сметката"
+msgstr "Грешка при дерегистрација на сметката"
 
 #: ../libpurple/protocols/jabber/jabber.c:1126
 #: ../libpurple/protocols/jabber/jabber.c:1127
-#, fuzzy
 msgid "Account successfully unregistered"
-msgstr "Успешно креиравте Qun"
+msgstr "Сметката е успешно дерегистрирана"
 
 #: ../libpurple/protocols/jabber/jabber.c:1284
 msgid "Initializing Stream"
 msgstr "Го иницијализирам системот"
 
 #: ../libpurple/protocols/jabber/jabber.c:1289
-#, fuzzy
 msgid "Initializing SSL/TLS"
-msgstr "Го иницијализирам системот"
+msgstr "Иницирам SSL/TLS"
 
 #: ../libpurple/protocols/jabber/jabber.c:1293
 #: ../libpurple/protocols/msn/session.c:351
@@ -5685,27 +5605,24 @@ msgstr "Расположение"
 #: ../libpurple/protocols/jabber/jabber.c:1580
 #: ../libpurple/protocols/jabber/jabber.c:1603
 #: ../libpurple/protocols/jabber/jabber.c:1626
-#, fuzzy
 msgid "Mood Text"
-msgstr "Крвна група"
+msgstr "Текст за расположение"
 
 #: ../libpurple/protocols/jabber/jabber.c:1535
 #: ../libpurple/protocols/jabber/jabber.c:1558
 #: ../libpurple/protocols/jabber/jabber.c:1581
 #: ../libpurple/protocols/jabber/jabber.c:1604
 #: ../libpurple/protocols/jabber/jabber.c:1627
-#, fuzzy
 msgid "Tune Artist"
-msgstr "Артисти"
+msgstr "Артист за песната"
 
 #: ../libpurple/protocols/jabber/jabber.c:1536
 #: ../libpurple/protocols/jabber/jabber.c:1559
 #: ../libpurple/protocols/jabber/jabber.c:1582
 #: ../libpurple/protocols/jabber/jabber.c:1605
 #: ../libpurple/protocols/jabber/jabber.c:1628
-#, fuzzy
 msgid "Tune Title"
-msgstr "Наслов"
+msgstr "Наслов на песната"
 
 #: ../libpurple/protocols/jabber/jabber.c:1537
 #: ../libpurple/protocols/jabber/jabber.c:1560
@@ -5713,7 +5630,7 @@ msgstr "Наслов"
 #: ../libpurple/protocols/jabber/jabber.c:1606
 #: ../libpurple/protocols/jabber/jabber.c:1629
 msgid "Tune Album"
-msgstr ""
+msgstr "Албум за песната"
 
 #: ../libpurple/protocols/jabber/jabber.c:1538
 #: ../libpurple/protocols/jabber/jabber.c:1561
@@ -5721,16 +5638,15 @@ msgstr ""
 #: ../libpurple/protocols/jabber/jabber.c:1607
 #: ../libpurple/protocols/jabber/jabber.c:1630
 msgid "Tune Genre"
-msgstr ""
+msgstr "Жанр за песната"
 
 #: ../libpurple/protocols/jabber/jabber.c:1539
 #: ../libpurple/protocols/jabber/jabber.c:1562
 #: ../libpurple/protocols/jabber/jabber.c:1585
 #: ../libpurple/protocols/jabber/jabber.c:1608
 #: ../libpurple/protocols/jabber/jabber.c:1631
-#, fuzzy
 msgid "Tune Comment"
-msgstr "Коментар за пријател"
+msgstr "Коментар за песната"
 
 #: ../libpurple/protocols/jabber/jabber.c:1540
 #: ../libpurple/protocols/jabber/jabber.c:1563
@@ -5746,7 +5662,7 @@ msgstr ""
 #: ../libpurple/protocols/jabber/jabber.c:1610
 #: ../libpurple/protocols/jabber/jabber.c:1633
 msgid "Tune Time"
-msgstr ""
+msgstr "Време за песна"
 
 #: ../libpurple/protocols/jabber/jabber.c:1542
 #: ../libpurple/protocols/jabber/jabber.c:1565
@@ -5754,7 +5670,7 @@ msgstr ""
 #: ../libpurple/protocols/jabber/jabber.c:1611
 #: ../libpurple/protocols/jabber/jabber.c:1634
 msgid "Tune Year"
-msgstr ""
+msgstr "Година за песната"
 
 #: ../libpurple/protocols/jabber/jabber.c:1543
 #: ../libpurple/protocols/jabber/jabber.c:1566
@@ -5762,16 +5678,15 @@ msgstr ""
 #: ../libpurple/protocols/jabber/jabber.c:1612
 #: ../libpurple/protocols/jabber/jabber.c:1635
 msgid "Tune URL"
-msgstr ""
+msgstr "URL за песната"
 
 #: ../libpurple/protocols/jabber/jabber.c:1545
 #: ../libpurple/protocols/jabber/jabber.c:1568
 #: ../libpurple/protocols/jabber/jabber.c:1591
 #: ../libpurple/protocols/jabber/jabber.c:1614
 #: ../libpurple/protocols/jabber/jabber.c:1637
-#, fuzzy
 msgid "Allow Buzz"
-msgstr "Дозволи"
+msgstr "Дозволи buzz"
 
 #: ../libpurple/protocols/jabber/jabber.c:1665
 msgid "Password Changed"
@@ -6049,9 +5964,9 @@ msgid "Unable to kick user %s"
 msgstr "Не успеав да го исфрлам корисникот %s"
 
 #: ../libpurple/protocols/jabber/jabber.c:2185
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to ping user %s"
-msgstr "Не можам да го банирам корисникот %s"
+msgstr "Не можам да го пингнам корисникот %s"
 
 #: ../libpurple/protocols/jabber/jabber.c:2207
 #: ../libpurple/protocols/jabber/jabber.c:2217
@@ -6065,9 +5980,9 @@ msgid "Unable to buzz, because user %s might be offline."
 msgstr ""
 
 #: ../libpurple/protocols/jabber/jabber.c:2239
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to buzz, because the user %s does not support it."
-msgstr "Не може да испратите датотека дo %s, корисникот не поддржува пренос"
+msgstr ""
 
 #: ../libpurple/protocols/jabber/jabber.c:2253
 msgid "config:  Configure a chat room."
@@ -6122,15 +6037,14 @@ msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
 msgstr "kick &lt;корисник&gt; [соба]:  Исфрли корисник од собата."
 
 #: ../libpurple/protocols/jabber/jabber.c:2318
-msgid ""
-"msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
+msgid "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
 msgstr ""
 "msg &lt;корисник&gt; &lt;порака&gt;:  Испрати приватна порака до друг "
 "корисник."
 
 #: ../libpurple/protocols/jabber/jabber.c:2324
 msgid "ping &lt;jid&gt;:\tPing a user/component/server."
-msgstr ""
+msgstr "ping &lt;jid&gt;:\tПингни корисник/компонента/сервер."
 
 #: ../libpurple/protocols/jabber/jabber.c:2329
 #: ../libpurple/protocols/yahoo/yahoo.c:4145
@@ -6159,7 +6073,7 @@ msgstr "Домен"
 
 #: ../libpurple/protocols/jabber/libxmpp.c:210
 msgid "Require SSL/TLS"
-msgstr ""
+msgstr "Барa SSL/TLS"
 
 #: ../libpurple/protocols/jabber/libxmpp.c:214
 msgid "Force old (port 5223) SSL"
@@ -6216,9 +6130,9 @@ msgstr "Грешка во XMPP пораката"
 
 #: ../libpurple/protocols/jabber/message.c:307
 #: ../libpurple/protocols/yahoo/yahoo.c:4120
-#, fuzzy, c-format
+#, c-format
 msgid "%s has buzzed you!"
-msgstr "%s се најави."
+msgstr "%s Ви испрати buzz!"
 
 #: ../libpurple/protocols/jabber/message.c:407
 #, c-format
@@ -6293,8 +6207,7 @@ msgstr "Не може да испратите датотека дo %s, не се
 #: ../libpurple/protocols/jabber/si.c:857
 #, c-format
 msgid "Please select which resource of %s you would like to send a file to"
-msgstr ""
-"Ве молам изберете на кој ресурс од %s сакате да му ја испратите датотеката"
+msgstr "Ве молам изберете на кој ресурс од %s сакате да му ја испратите датотеката"
 
 #: ../libpurple/protocols/jabber/si.c:873
 msgid "Select a Resource"
@@ -6302,34 +6215,29 @@ msgstr "Изберете ресурс"
 
 #: ../libpurple/protocols/jabber/usermood.c:179
 #: ../libpurple/protocols/jabber/usermood.c:180
-#, fuzzy
 msgid "Edit User Mood"
-msgstr "Кориснички режими"
+msgstr "Уреди располо жение"
 
 #: ../libpurple/protocols/jabber/usermood.c:181
 msgid "Please select your mood from the list."
-msgstr ""
+msgstr "Ве молам изберете го расположението од листата."
 
 #: ../libpurple/protocols/jabber/usermood.c:183
 #: ../libpurple/protocols/jabber/usernick.c:78
-#, fuzzy
 msgid "Set"
-msgstr "_Постави"
+msgstr "Постави"
 
 #: ../libpurple/protocols/jabber/usermood.c:191
-#, fuzzy
 msgid "Set Mood..."
-msgstr "Испрати ИП..."
+msgstr "Постави расположение..."
 
 #: ../libpurple/protocols/jabber/usernick.c:76
-#, fuzzy
 msgid "Set User Nickname"
-msgstr "Постави лимит на корисници"
+msgstr "Постави кориснички прекар"
 
 #: ../libpurple/protocols/jabber/usernick.c:76
-#, fuzzy
 msgid "Please specify a new nickname for you."
-msgstr "Ве молам внесете ново име за %s"
+msgstr "Ве молам одредете нов прекар."
 
 #: ../libpurple/protocols/jabber/usernick.c:77
 msgid ""
@@ -6338,19 +6246,16 @@ msgid ""
 msgstr ""
 
 #: ../libpurple/protocols/jabber/usernick.c:99
-#, fuzzy
 msgid "Set Nickname..."
-msgstr "Прекар"
+msgstr "Постави прекар..."
 
 #: ../libpurple/protocols/jabber/xdata.c:378
-#, fuzzy
 msgid "Actions"
-msgstr "Дејство"
+msgstr "Дејства"
 
 #: ../libpurple/protocols/jabber/xdata.c:380
-#, fuzzy
 msgid "Select an action"
-msgstr "Изберете датотека"
+msgstr "Изберете дејство"
 
 #: ../libpurple/protocols/msn/dialog.c:110
 #, c-format
@@ -6660,12 +6565,12 @@ msgstr "Грешка од MSN: %s\n"
 
 #: ../libpurple/protocols/msn/msn.c:130
 msgid "Nudge"
-msgstr ""
+msgstr "Nudge"
 
 #: ../libpurple/protocols/msn/msn.c:131
-#, fuzzy, c-format
+#, c-format
 msgid "%s has nudged you!"
-msgstr "%s се најави."
+msgstr "%s Ви испрати nudge!"
 
 #: ../libpurple/protocols/msn/msn.c:132
 #, c-format
@@ -7066,9 +6971,8 @@ msgid "Use HTTP Method"
 msgstr "Користи го HTTP методот"
 
 #: ../libpurple/protocols/msn/msn.c:2199
-#, fuzzy
 msgid "HTTP Method Server"
-msgstr "IPC тест сервер"
+msgstr "HTTP метод за сервер"
 
 #: ../libpurple/protocols/msn/msn.c:2204
 msgid "Show custom smileys"
@@ -7231,8 +7135,7 @@ msgid "Unable to authenticate: %s"
 msgstr "Не можам да се најавам: %s"
 
 #: ../libpurple/protocols/msn/session.c:325
-msgid ""
-"Your MSN buddy list is temporarily unavailable. Please wait and try again."
+msgid "Your MSN buddy list is temporarily unavailable. Please wait and try again."
 msgstr ""
 "Вашата листа на пријатели од MSN е моментално недостапна. Ве молам почекајте "
 "и пробајте пак."
@@ -7284,8 +7187,7 @@ msgstr "Пораката не може да се испрати, бидејќи 
 
 #: ../libpurple/protocols/msn/switchboard.c:416
 msgid "Message could not be sent because a connection error occurred:"
-msgstr ""
-"Пораката не може да биде испратена бидејќи се појави грешка со врската:"
+msgstr "Пораката не може да биде испратена бидејќи се појави грешка со врската:"
 
 #: ../libpurple/protocols/msn/switchboard.c:420
 msgid "Message could not be sent because we are sending too quickly:"
@@ -7301,8 +7203,7 @@ msgstr ""
 "минути."
 
 #: ../libpurple/protocols/msn/switchboard.c:431
-msgid ""
-"Message could not be sent because an error with the switchboard occurred:"
+msgid "Message could not be sent because an error with the switchboard occurred:"
 msgstr ""
 "Пораката не можеше да се испрати бидејќи се случи грешка со контролната "
 "табла:"
@@ -7331,9 +7232,8 @@ msgid "The screen name specified is invalid."
 msgstr "Името за екранот е невалидно."
 
 #: ../libpurple/protocols/myspace/myspace.c:111
-#, fuzzy
 msgid "Missing Cipher"
-msgstr "Шифра"
+msgstr "Недостасува cipher"
 
 #: ../libpurple/protocols/myspace/myspace.c:112
 msgid "The RC4 cipher could not be found"
@@ -7356,22 +7256,19 @@ msgstr ""
 #: ../libpurple/protocols/myspace/myspace.c:292
 #: ../libpurple/protocols/myspace/myspace.c:1801
 msgid "MySpaceIM Error"
-msgstr ""
+msgstr "Грешка со MySpaceIM"
 
 #: ../libpurple/protocols/myspace/myspace.c:349
-#, fuzzy
 msgid "Reading challenge"
-msgstr "Грешка во читањето"
+msgstr ""
 
 #: ../libpurple/protocols/myspace/myspace.c:355
-#, fuzzy
 msgid "Unexpected challenge length from server"
-msgstr "Невалиден предизвик од серверот"
+msgstr "Невалиден должина на предизвик од серверот"
 
 #: ../libpurple/protocols/myspace/myspace.c:359
-#, fuzzy
 msgid "Logging in"
-msgstr "Логирање"
+msgstr "Се најавувам"
 
 #: ../libpurple/protocols/myspace/myspace.c:1286
 #, c-format
@@ -7380,29 +7277,28 @@ msgstr ""
 
 #. Can't write _()'d strings in array initializers. Workaround.
 #: ../libpurple/protocols/myspace/myspace.c:1328
-#, fuzzy
 msgid "New mail messages"
-msgstr "Испрати порака"
+msgstr "Нова пошта"
 
 #: ../libpurple/protocols/myspace/myspace.c:1329
 msgid "New blog comments"
-msgstr ""
+msgstr "Нови коментари на блог"
 
 #: ../libpurple/protocols/myspace/myspace.c:1330
 msgid "New profile comments"
-msgstr ""
+msgstr "Нови коментари на профилот"
 
 #: ../libpurple/protocols/myspace/myspace.c:1331
 msgid "New friend requests!"
-msgstr ""
+msgstr "Нови барања за пријатели!"
 
 #: ../libpurple/protocols/myspace/myspace.c:1332
 msgid "New picture comments"
-msgstr ""
+msgstr "Нови коментари на слика"
 
 #: ../libpurple/protocols/myspace/myspace.c:1360
 msgid "MySpace"
-msgstr ""
+msgstr "MySpace"
 
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
@@ -7414,90 +7310,81 @@ msgstr "Врзано"
 
 #: ../libpurple/protocols/myspace/myspace.c:1554
 #: ../libpurple/protocols/myspace/myspace.c:1556
-#, fuzzy
 msgid "No username set"
-msgstr "Нема име"
+msgstr "Не е поставено корисничко име"
 
 #: ../libpurple/protocols/myspace/myspace.c:1555
 msgid ""
 "Please go to http://editprofile.myspace.com/index.cfm?fuseaction=profile."
 "username and choose a username and try to login again."
 msgstr ""
+"Ве молам одете на http://editprofile.myspace.com/index.cfm?fuseaction=profile."
+"username и одберете корисничко име и пробајте да се најавите."
 
 #: ../libpurple/protocols/myspace/myspace.c:1782
-#, fuzzy, c-format
+#, c-format
 msgid "Protocol error, code %d: %s"
-msgstr "Процесот врати код на грешка %d"
+msgstr "Грешка во протоколот, код %d: %s"
 
 #: ../libpurple/protocols/myspace/myspace.c:1972
 #: ../libpurple/protocols/myspace/myspace.c:2006
-#, fuzzy
 msgid "Failed to add buddy"
-msgstr "Не можам да приклучам пријател во разговорот"
+msgstr "Не успеав да го додадам пријателот"
 
 #: ../libpurple/protocols/myspace/myspace.c:1972
-#, fuzzy
 msgid "'addbuddy' command failed."
-msgstr "Вчитај ја листата со пријатели од датотека..."
+msgstr "командата 'addbuddy' не успеа."
 
 #: ../libpurple/protocols/myspace/myspace.c:2006
 #: ../libpurple/protocols/myspace/myspace.c:2247
-#, fuzzy
 msgid "persist command failed"
-msgstr "Контролната табла не успеа"
+msgstr "командата persist не успеа"
 
 #: ../libpurple/protocols/myspace/myspace.c:2115
 #, c-format
 msgid "No such user: %s"
-msgstr ""
+msgstr "Нема таков корисник: %s"
 
 #: ../libpurple/protocols/myspace/myspace.c:2116
-#, fuzzy
 msgid "User lookup"
-msgstr "Кориснички соби"
+msgstr "Проверка на корисникот"
 
 #: ../libpurple/protocols/myspace/myspace.c:2228
 #: ../libpurple/protocols/myspace/myspace.c:2247
 #: ../libpurple/protocols/myspace/myspace.c:2269
-#, fuzzy
 msgid "Failed to remove buddy"
-msgstr "Не можам да приклучам пријател во разговорот"
+msgstr "Не успеав да го отстранам пријателот"
 
 #: ../libpurple/protocols/myspace/myspace.c:2228
 msgid "'delbuddy' command failed"
 msgstr ""
 
 #: ../libpurple/protocols/myspace/myspace.c:2269
-#, fuzzy
 msgid "blocklist command failed"
-msgstr "Контролната табла не успеа"
+msgstr "командата blocklist не успеа"
 
 #: ../libpurple/protocols/myspace/myspace.c:2315
-#, fuzzy
 msgid "Invalid input condition"
-msgstr "Привршување на поврзувањето"
+msgstr "Невалиден влезен услов"
 
 #. TODO: g_realloc like msn, yahoo, irc, jabber?
 #: ../libpurple/protocols/myspace/myspace.c:2333
 #: ../libpurple/protocols/myspace/myspace.c:2364
-#, fuzzy
 msgid "Read buffer full"
-msgstr "Редот е полн"
+msgstr "Баферот е полн"
 
 #: ../libpurple/protocols/myspace/myspace.c:2402
-#, fuzzy
 msgid "Unparseable message"
-msgstr "Не можам да ја анализирам пораката"
+msgstr "Порака што не може да се парсира"
 
 #: ../libpurple/protocols/myspace/myspace.c:2471
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't connect to host: %s (%d)"
-msgstr "Не може да се врзе со серверот"
+msgstr "Не можам да се поврзам со хостот: %s (%d)"
 
 #: ../libpurple/protocols/myspace/myspace.c:2642
-#, fuzzy
 msgid "IM Friends"
-msgstr "_Прозорци за пораки"
+msgstr "IM пријатели"
 
 #: ../libpurple/protocols/myspace/myspace.c:2741
 #, c-format
@@ -7507,30 +7394,26 @@ msgid ""
 msgstr ""
 
 #: ../libpurple/protocols/myspace/myspace.c:2742
-#, fuzzy
 msgid "Add contacts from server"
-msgstr "Невалиден одговор од серверот."
+msgstr "Додај контакти од серверот"
 
 #: ../libpurple/protocols/myspace/myspace.c:2794
 #: ../libpurple/protocols/myspace/myspace.c:2859
 msgid "Add friends from MySpace.com"
-msgstr ""
+msgstr "Додај пријатели од MySpace.com"
 
 #: ../libpurple/protocols/myspace/myspace.c:2795
-#, fuzzy
 msgid "Importing friends failed"
-msgstr "вчитувањето на додатокот не успеа"
+msgstr "Увозот на пријатели не успеа"
 
 #. TODO: find out how
 #: ../libpurple/protocols/myspace/myspace.c:2851
-#, fuzzy
 msgid "Find people..."
 msgstr "Најди пријатели..."
 
 #: ../libpurple/protocols/myspace/myspace.c:2854
-#, fuzzy
 msgid "Change IM name..."
-msgstr "Промени ја лозинката..."
+msgstr "Промени го IM името..."
 
 #: ../libpurple/protocols/myspace/myspace.c:3156
 msgid "myim URL handler"
@@ -7553,17 +7436,16 @@ msgid "Show headline in status text"
 msgstr ""
 
 #: ../libpurple/protocols/myspace/myspace.c:3289
-#, fuzzy
 msgid "Send emoticons"
-msgstr "Опции за звук"
+msgstr "Испрати емоции"
 
 #: ../libpurple/protocols/myspace/myspace.c:3294
 msgid "Screen resolution (dots per inch)"
-msgstr ""
+msgstr "Резолуција на екранот (точки по инч)"
 
 #: ../libpurple/protocols/myspace/myspace.c:3297
 msgid "Base font size (points)"
-msgstr ""
+msgstr "Основна големина на фонт (points)"
 
 #: ../libpurple/protocols/myspace/user.c:95
 #: ../libpurple/protocols/zephyr/zephyr.c:786
@@ -7578,36 +7460,33 @@ msgid "Profile"
 msgstr "Профил"
 
 #: ../libpurple/protocols/myspace/user.c:124
-#, fuzzy
 msgid "Headline"
-msgstr "_Прекар:"
+msgstr "Наслов"
 
 #: ../libpurple/protocols/myspace/user.c:129
-#, fuzzy
 msgid "Song"
-msgstr "Звуци"
+msgstr "Песна"
 
 #: ../libpurple/protocols/myspace/user.c:134
 msgid "Total Friends"
-msgstr ""
+msgstr "Вкупно пријатели"
 
 #: ../libpurple/protocols/myspace/user.c:145
 #: ../libpurple/protocols/myspace/user.c:148
 #: ../libpurple/protocols/myspace/user.c:151
-#, fuzzy
 msgid "Client Version"
-msgstr "Затвори разговор"
+msgstr "Верзија на клиентот"
 
 #. TODO: icons for each zap
 #: ../libpurple/protocols/myspace/zap.c:44
 #: ../libpurple/protocols/myspace/zap.c:177
 msgid "Zap"
-msgstr ""
+msgstr "Zap"
 
 #: ../libpurple/protocols/myspace/zap.c:44
-#, fuzzy, c-format
+#, c-format
 msgid "%s has zapped you!"
-msgstr "%s се најави."
+msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:44
 #, c-format
@@ -7619,24 +7498,23 @@ msgid "Whack"
 msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:45
-#, fuzzy, c-format
+#, c-format
 msgid "%s has whacked you!"
-msgstr "Корисникот Ве блокирал"
+msgstr "%s Ве тресна!"
 
 #: ../libpurple/protocols/myspace/zap.c:45
 #, c-format
 msgid "Whacking %s..."
-msgstr ""
+msgstr "Го трескам %s..."
 
 #: ../libpurple/protocols/myspace/zap.c:46
-#, fuzzy
 msgid "Torch"
-msgstr "Наслов"
+msgstr "Факел"
 
 #: ../libpurple/protocols/myspace/zap.c:46
-#, fuzzy, c-format
+#, c-format
 msgid "%s has torched you!"
-msgstr "Корисникот Ве блокирал"
+msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:46
 #, c-format
@@ -7648,9 +7526,9 @@ msgid "Smooch"
 msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:47
-#, fuzzy, c-format
+#, c-format
 msgid "%s has smooched you!"
-msgstr "%s се најави."
+msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:47
 #, c-format
@@ -7659,27 +7537,26 @@ msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:48
 msgid "Hug"
-msgstr ""
+msgstr "Гушка"
 
 #: ../libpurple/protocols/myspace/zap.c:48
-#, fuzzy, c-format
+#, c-format
 msgid "%s has hugged you!"
-msgstr "%s се најави."
+msgstr "%s Ве гушна!"
 
 #: ../libpurple/protocols/myspace/zap.c:48
 #, c-format
 msgid "Hugging %s..."
-msgstr ""
+msgstr "Го/ја гушкам %s..."
 
 #: ../libpurple/protocols/myspace/zap.c:49
-#, fuzzy
 msgid "Slap"
-msgstr "Сонлив"
+msgstr "Шамар"
 
 #: ../libpurple/protocols/myspace/zap.c:49
-#, fuzzy, c-format
+#, c-format
 msgid "%s has slapped you!"
-msgstr "%s се најави."
+msgstr "%s Ви удри шамар!"
 
 #: ../libpurple/protocols/myspace/zap.c:49
 #, c-format
@@ -7687,28 +7564,27 @@ msgid "Slapping %s..."
 msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:50
-#, fuzzy
 msgid "Goose"
-msgstr "Си замина"
+msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:50
-#, fuzzy, c-format
+#, c-format
 msgid "%s has goosed you!"
-msgstr "%s си замина."
+msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:50
-#, fuzzy, c-format
+#, c-format
 msgid "Goosing %s..."
-msgstr "Го барам %s"
+msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:51
 msgid "High-five"
 msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:51
-#, fuzzy, c-format
+#, c-format
 msgid "%s has high-fived you!"
-msgstr "%s се најави."
+msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:51
 #, c-format
@@ -7720,9 +7596,9 @@ msgid "Punk"
 msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:52
-#, fuzzy, c-format
+#, c-format
 msgid "%s has punk'd you!"
-msgstr "%s се најави."
+msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:52
 #, c-format
@@ -7734,9 +7610,9 @@ msgid "Raspberry"
 msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:53
-#, fuzzy, c-format
+#, c-format
 msgid "%s has raspberried you!"
-msgstr "%s се најави."
+msgstr ""
 
 #: ../libpurple/protocols/myspace/zap.c:53
 #, c-format
@@ -7878,14 +7754,12 @@ msgstr "Најавата не успеа (%s)."
 #: ../libpurple/protocols/novell/novell.c:247
 #, c-format
 msgid "Unable to send message. Could not get details for user (%s)."
-msgstr ""
-"Не можам да испратам порака. Не можам да добијам детали за корисникот (%s)."
+msgstr "Не можам да испратам порака. Не можам да добијам детали за корисникот (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:396
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
-msgstr ""
-"Не можам да го додадам пријателот %s наа Вашата листа со пријатели (%s)."
+msgstr "Не можам да го додадам пријателот %s наа Вашата листа со пријатели (%s)."
 
 #. TODO: Improve this! message to who or for what conference?
 #: ../libpurple/protocols/novell/novell.c:422
@@ -7909,8 +7783,7 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:537
 #, c-format
 msgid "Unable to send message. Could not create the conference (%s)."
-msgstr ""
-"Не можам да испратам порака. Не можам да ја креирам конференцијата (%s)."
+msgstr "Не можам да испратам порака. Не можам да ја креирам конференцијата (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:584
 #, c-format
@@ -8053,10 +7926,8 @@ msgstr "Одјавени сте бидејќи се најавивте од др
 
 #: ../libpurple/protocols/novell/novell.c:2069
 #, c-format
-msgid ""
-"%s appears to be offline and did not receive the message that you just sent."
-msgstr ""
-"%s изгледа дека е исклучен(a) и не ја прими пораката која што ја испративте."
+msgid "%s appears to be offline and did not receive the message that you just sent."
+msgstr "%s изгледа дека е исклучен(a) и не ја прими пораката која што ја испративте."
 
 #. TODO: Would be nice to prompt if not set!
 #. *  purple_request_fields(gc, _("Server Address"),...);
@@ -8536,8 +8407,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:1371
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
-msgstr ""
-"Верзијата на клиентот кој го користите е престара. Ве молам, надградете на %s"
+msgstr "Верзијата на клиентот кој го користите е престара. Ве молам, надградете на %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:1410
 msgid "Could Not Connect"
@@ -8604,8 +8474,7 @@ msgstr "Не можам да иницијализирам врска"
 
 #: ../libpurple/protocols/oscar/oscar.c:2202
 msgid "Please authorize me so I can add you to my buddy list."
-msgstr ""
-"Те молам авторизирај ме за да можам да те додадам во листата со пријатели."
+msgstr "Те молам авторизирај ме за да можам да те додадам во листата со пријатели."
 
 #: ../libpurple/protocols/oscar/oscar.c:2230
 msgid "Authorization Request Message:"
@@ -8724,27 +8593,19 @@ msgstr[2] "Пропуштивте %hu пораки од %s, бидејќи бе�
 
 #: ../libpurple/protocols/oscar/oscar.c:2614
 #, c-format
-msgid ""
-"You missed %hu message from %s because the rate limit has been exceeded."
-msgid_plural ""
-"You missed %hu messages from %s because the rate limit has been exceeded."
-msgstr[0] ""
-"Пропуштивте %hu порака од %s, бидејќи лимитот за честота беше надминат."
-msgstr[1] ""
-"Пропуштивте %hu пораки од %s, бидејќи лимитот за честота беше надминат."
-msgstr[2] ""
-"Пропуштивте %hu пораки од %s, бидејќи лимитот за честота беше надминат."
+msgid "You missed %hu message from %s because the rate limit has been exceeded."
+msgid_plural "You missed %hu messages from %s because the rate limit has been exceeded."
+msgstr[0] "Пропуштивте %hu порака од %s, бидејќи лимитот за честота беше надминат."
+msgstr[1] "Пропуштивте %hu пораки од %s, бидејќи лимитот за честота беше надминат."
+msgstr[2] "Пропуштивте %hu пораки од %s, бидејќи лимитот за честота беше надминат."
 
 #: ../libpurple/protocols/oscar/oscar.c:2623
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
-msgstr[0] ""
-"Пропуштивте %hu порака од %s, бидејќи тој/таа беше премногу злобен/злобна."
-msgstr[1] ""
-"Пропуштивте %hu пораки од %s, бидејќи тој/таа беше премногу злобен/злобна."
-msgstr[2] ""
-"Пропуштивте %hu пораки од %s, бидејќи тој/таа беше премногу злобен/злобна."
+msgstr[0] "Пропуштивте %hu порака од %s, бидејќи тој/таа беше премногу злобен/злобна."
+msgstr[1] "Пропуштивте %hu пораки од %s, бидејќи тој/таа беше премногу злобен/злобна."
+msgstr[2] "Пропуштивте %hu пораки од %s, бидејќи тој/таа беше премногу злобен/злобна."
 
 #: ../libpurple/protocols/oscar/oscar.c:2632
 #, c-format
@@ -8964,8 +8825,7 @@ msgid "Account Info"
 msgstr "Информации за сметката"
 
 #: ../libpurple/protocols/oscar/oscar.c:4218
-msgid ""
-"Your IM Image was not sent. You must be Direct Connected to send IM Images."
+msgid "Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr ""
 "Вашата инстант порака не беше испратена. Мора да бидете директно поврзани за "
 "да испратите слики во инстант пораки."
@@ -10055,8 +9915,7 @@ msgstr "Стартувам сервиси"
 
 #: ../libpurple/protocols/sametime/sametime.c:1645
 #, c-format
-msgid ""
-"A Sametime administrator has issued the following announcement on server %s"
+msgid "A Sametime administrator has issued the following announcement on server %s"
 msgstr "Администратор на Sametime ја издаде следнава најава на серверот %s"
 
 #: ../libpurple/protocols/sametime/sametime.c:1650
@@ -10387,8 +10246,7 @@ msgstr "Нема пронајдени резултати"
 #: ../libpurple/protocols/sametime/sametime.c:5564
 #, c-format
 msgid "The identifier '%s' did not match any users in your Sametime community."
-msgstr ""
-"Ознаката „%s“ не се совпадна со ниеден корисник во Вашата Sametime заедница."
+msgstr "Ознаката „%s“ не се совпадна со ниеден корисник во Вашата Sametime заедница."
 
 #: ../libpurple/protocols/sametime/sametime.c:5568
 msgid "No Matches"
@@ -11129,8 +10987,7 @@ msgstr "Постави таен канал"
 #: ../libpurple/protocols/silc/chat.c:1045
 #: ../libpurple/protocols/silc10/chat.c:1102
 #, c-format
-msgid ""
-"You have to join the %s channel before you are able to join the private group"
+msgid "You have to join the %s channel before you are able to join the private group"
 msgstr ""
 "Мора да се приклучите кон каналот %s пред да можете да се приклучите во "
 "приватната група"
@@ -11549,8 +11406,7 @@ msgstr ""
 #: ../libpurple/protocols/silc/pk.c:103 ../libpurple/protocols/silc10/pk.c:109
 #, c-format
 msgid "Received %s's public key. Would you like to accept this public key?"
-msgstr ""
-"Го примив јавниот клуч на %s. Дали сакате да го прифатите овој јавен клуч?"
+msgstr "Го примив јавниот клуч на %s. Дали сакате да го прифатите овој јавен клуч?"
 
 #: ../libpurple/protocols/silc/pk.c:107 ../libpurple/protocols/silc10/pk.c:113
 #, c-format
@@ -11596,8 +11452,7 @@ msgstr "Размената на клучевите не успеа"
 
 #: ../libpurple/protocols/silc/silc.c:238
 #: ../libpurple/protocols/silc10/ops.c:1714
-msgid ""
-"Resuming detached session failed. Press Reconnect to create new connection."
+msgid "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr ""
 "Продолжувањето на одделената сесија не успеа. Притиснете на „Поврзи се "
 "повторно“ за да креирате нова врска."
@@ -11880,8 +11735,7 @@ msgstr "topic [&lt;нов наслов&gt;]:  Прегледај го или п�
 #: ../libpurple/protocols/silc/silc.c:1666
 #: ../libpurple/protocols/silc10/silc.c:1595
 msgid "join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"
-msgstr ""
-"join &lt;канал&gt; [&lt;лозинка&gt;]:  Приклучи се кон разговор на мрежата"
+msgstr "join &lt;канал&gt; [&lt;лозинка&gt;]:  Приклучи се кон разговор на мрежата"
 
 #: ../libpurple/protocols/silc/silc.c:1670
 #: ../libpurple/protocols/silc10/silc.c:1599
@@ -11897,14 +11751,12 @@ msgstr "whois &lt;прекар&gt;:  Прегледај ги информаци�
 #: ../libpurple/protocols/silc10/silc.c:1607
 #: ../libpurple/protocols/zephyr/zephyr.c:2685
 msgid "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"
-msgstr ""
-"msg &lt;прекар&gt; &lt;порака&gt;:  Испрати приватна порака до корисник"
+msgstr "msg &lt;прекар&gt; &lt;порака&gt;:  Испрати приватна порака до корисник"
 
 #: ../libpurple/protocols/silc/silc.c:1682
 #: ../libpurple/protocols/silc10/silc.c:1611
 msgid "query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
-msgstr ""
-"query &lt;прекар&gt; [&lt;порака&gt;]:  Испрати приватна порака до корисник"
+msgstr "query &lt;прекар&gt; [&lt;порака&gt;]:  Испрати приватна порака до корисник"
 
 #: ../libpurple/protocols/silc/silc.c:1686
 #: ../libpurple/protocols/silc10/silc.c:1615
@@ -12250,8 +12102,7 @@ msgstr "Неуспех: Несогласување на верзијата, на
 #: ../libpurple/protocols/silc10/ops.c:1934
 #, c-format
 msgid "Failure: Remote does not trust/support your public key"
-msgstr ""
-"Неуспех: Оддалечениот хост не го поддржува/нема доверба во Вашиот јавен клуч"
+msgstr "Неуспех: Оддалечениот хост не го поддржува/нема доверба во Вашиот јавен клуч"
 
 #: ../libpurple/protocols/silc10/ops.c:1937
 #, c-format
@@ -12321,9 +12172,8 @@ msgid "Could not connect"
 msgstr "Не можам да се поврзам"
 
 #: ../libpurple/protocols/simple/simple.c:1059
-#, fuzzy
 msgid "Unknown server response."
-msgstr "Непозната причина."
+msgstr "Непознат одговор од серверот."
 
 #: ../libpurple/protocols/simple/simple.c:1563
 #: ../libpurple/protocols/simple/simple.c:1605
@@ -12342,8 +12192,7 @@ msgstr "Не можам да го преведам името на хостот"
 
 #: ../libpurple/protocols/simple/simple.c:1694
 msgid "SIP screen names may not contain whitespaces or @ symbols"
-msgstr ""
-"SIP имињата на корисници не смеат да содржат празни места или симболот @"
+msgstr "SIP имињата на корисници не смеат да содржат празни места или симболот @"
 
 #. *< type
 #. *< ui_requirement
@@ -12686,8 +12535,7 @@ msgstr "Да го игнорирам пријателот?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2129
 msgid "Your account is locked, please log in to the Yahoo! website."
-msgstr ""
-"Вашата сметка е заклучена. Ве молам, најавете се на страницата на Yahoo!."
+msgstr "Вашата сметка е заклучена. Ве молам, најавете се на страницата на Yahoo!."
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2132
 #, c-format
@@ -12817,9 +12665,8 @@ msgid "Activate which ID?"
 msgstr "Кој ID. да го активирам?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3506
-#, fuzzy
 msgid "Join whom in chat?"
-msgstr "Кого да приклучам во разговорот?"
+msgstr "На кој да му се приклучам во разговорот?"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3518
 msgid "Activate ID..."
@@ -13003,8 +12850,7 @@ msgstr "Информациите за корисникот %s не се дост
 msgid ""
 "Sorry, this profile seems to be in a language or format that is not "
 "supported at this time."
-msgstr ""
-"Извинете но овој профил изгледа е на јазик кој не е поддржан моментално."
+msgstr "Извинете но овој профил изгледа е на јазик кој не е поддржан моментално."
 
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1221
 msgid ""
@@ -13032,8 +12878,7 @@ msgstr "Профилот на корисникот е празен."
 #: ../libpurple/protocols/yahoo/yahoochat.c:217
 #, c-format
 msgid "%s declined your conference invitation to room \"%s\" because \"%s\"."
-msgstr ""
-"%s ја одби Вашата покана за конференција во собата \"%s\" поради \"%s\"."
+msgstr "%s ја одби Вашата покана за конференција во собата \"%s\" поради \"%s\"."
 
 #: ../libpurple/protocols/yahoo/yahoochat.c:219
 msgid "Invitation Rejected"
@@ -13176,13 +13021,11 @@ msgstr ""
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2705
 msgid "inst &lt;instance&gt;: Set the instance to be used on this class"
-msgstr ""
-"inst &lt;instance&gt;: Постави ја инстанцата да биде користена на оваа класа"
+msgstr "inst &lt;instance&gt;: Постави ја инстанцата да биде користена на оваа класа"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2710
 msgid "topic &lt;instance&gt;: Set the instance to be used on this class"
-msgstr ""
-"topic &lt;instance&gt;: Постави ја инстанцата да биде користена на оваа класа"
+msgstr "topic &lt;instance&gt;: Постави ја инстанцата да биде користена на оваа класа"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2716
 msgid "sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"
@@ -13191,10 +13034,8 @@ msgstr ""
 "разговор"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2721
-msgid ""
-"zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"
-msgstr ""
-"zi &lt;instance&gt;: Испрати порака до &lt;message,<i>instance</i>,*&gt;"
+msgid "zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"
+msgstr "zi &lt;instance&gt;: Испрати порака до &lt;message,<i>instance</i>,*&gt;"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2727
 msgid ""
@@ -13377,9 +13218,8 @@ msgid "Accept chat invitation?"
 msgstr "Прифати ја поканата за разговор?"
 
 #: ../libpurple/sslconn.c:164
-#, fuzzy
 msgid "SSL Connection Failed"
-msgstr "Поврзувањето не успеа"
+msgstr "SSL врската не успеа"
 
 #: ../libpurple/sslconn.c:166
 msgid "SSL Handshake Failed"
@@ -13390,9 +13230,8 @@ msgid "SSL peer presented an invalid certificate"
 msgstr ""
 
 #: ../libpurple/sslconn.c:171
-#, fuzzy
 msgid "Unknown SSL error"
-msgstr "Непозната грешка"
+msgstr "Непозната SSL грешка"
 
 #: ../libpurple/status.c:153
 msgid "Unset"
@@ -13682,9 +13521,8 @@ msgid "Pa_ssword:"
 msgstr "Ло_зинка:"
 
 #: ../pidgin/gtkaccount.c:1195
-#, fuzzy
 msgid "Unable to save new account"
-msgstr "Не можам да креирам врска"
+msgstr "Не можам да ја зачувам новата сметка"
 
 #: ../pidgin/gtkaccount.c:1196
 msgid "An account already exists with the specified criteria."
@@ -13775,9 +13613,8 @@ msgid "I_M"
 msgstr "Порака"
 
 #: ../pidgin/gtkblist.c:1148
-#, fuzzy
 msgid "_Send File"
-msgstr "Испрати датотека"
+msgstr "_Испрати датотека"
 
 #: ../pidgin/gtkblist.c:1155
 msgid "Add Buddy _Pounce"
@@ -13839,10 +13676,8 @@ msgstr "/Алатки/Исклучи звуци"
 
 #: ../pidgin/gtkblist.c:2057 ../pidgin/gtkconv.c:4840
 #: ../pidgin/gtkpounce.c:430
-msgid ""
-"You are not currently signed on with an account that can add that buddy."
-msgstr ""
-"Не сте моментално најавени со сметка која може да го додаде тој пријател."
+msgid "You are not currently signed on with an account that can add that buddy."
+msgstr "Не сте моментално најавени со сметка која може да го додаде тој пријател."
 
 #. Buddies menu
 #: ../pidgin/gtkblist.c:2869
@@ -13866,34 +13701,28 @@ msgid "/Buddies/View User _Log..."
 msgstr "/Пријатели/Прегледај _лог..."
 
 #: ../pidgin/gtkblist.c:2875
-#, fuzzy
 msgid "/Buddies/Show"
-msgstr "/_Пријатели"
+msgstr "/Пријатели/Покажи"
 
 #: ../pidgin/gtkblist.c:2876
-#, fuzzy
 msgid "/Buddies/Show/_Offline Buddies"
-msgstr "/Пријатели/Покажи исклучени пријатели"
+msgstr "/Пријатели/Покажи/_Исклучени пријатели"
 
 #: ../pidgin/gtkblist.c:2877
-#, fuzzy
 msgid "/Buddies/Show/_Empty Groups"
-msgstr "/Пријатели/Покажи празни групи"
+msgstr "/Пријатели/Покажи/_Празни групи"
 
 #: ../pidgin/gtkblist.c:2878
-#, fuzzy
 msgid "/Buddies/Show/Buddy _Details"
-msgstr "/Пријатели/Покажи детали за _пријател"
+msgstr "/Пријатели/Покажи/_Детали за _пријател"
 
 #: ../pidgin/gtkblist.c:2879
-#, fuzzy
 msgid "/Buddies/Show/Idle _Times"
-msgstr "/Пријатели/Покажи време на _неактивност"
+msgstr "/Пријатели/Покажи/_Време на _неактивност"
 
 #: ../pidgin/gtkblist.c:2880
-#, fuzzy
 msgid "/Buddies/Show/_Protocol Icons"
-msgstr "/Пријатели/Покажи празни групи"
+msgstr "/Пријатели/Покажи/_Икони за протоколите"
 
 #: ../pidgin/gtkblist.c:2881
 msgid "/Buddies/_Sort Buddies"
@@ -13934,9 +13763,8 @@ msgid "/Tools/Buddy _Pounces"
 msgstr "/Алатки/Дејства за _пријател"
 
 #: ../pidgin/gtkblist.c:2896
-#, fuzzy
 msgid "/Tools/_Certificates"
-msgstr "/Алатки/Пр_еференци"
+msgstr "/Алатки/_Сертификати"
 
 #: ../pidgin/gtkblist.c:2897
 msgid "/Tools/Plu_gins"
@@ -14115,7 +13943,7 @@ msgstr "/Сметки"
 
 #. Translators: Please maintain the use of -> and <- to refer to menu heirarchy
 #: ../pidgin/gtkblist.c:4334
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "<span weight='bold' size='larger'>Welcome to %s!</span>\n"
 "\n"
@@ -14134,29 +13962,24 @@ msgstr ""
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
 #: ../pidgin/gtkblist.c:4597
-#, fuzzy
 msgid "/Buddies/Show/Offline Buddies"
-msgstr "/Пријатели/Покажи исклучени пријатели"
+msgstr "/Пријатели/Покажи/Исклучени пријатели"
 
 #: ../pidgin/gtkblist.c:4600
-#, fuzzy
 msgid "/Buddies/Show/Empty Groups"
-msgstr "/Пријатели/Покажи празни групи"
+msgstr "/Пријатели/Покажи/Празни групи"
 
 #: ../pidgin/gtkblist.c:4606
-#, fuzzy
 msgid "/Buddies/Show/Buddy Details"
-msgstr "/Пријатели/Покажи детали за пријатели"
+msgstr "/Пријатели/Покажи/Детали за пријатели"
 
 #: ../pidgin/gtkblist.c:4609
-#, fuzzy
 msgid "/Buddies/Show/Idle Times"
-msgstr "/Пријатели/Време на неактивност"
+msgstr "/Пријатели/Покажи/Време на неактивност"
 
 #: ../pidgin/gtkblist.c:4612
-#, fuzzy
 msgid "/Buddies/Show/Protocol Icons"
-msgstr "/Пријатели/Покажи празни групи"
+msgstr "/Пријатели/Покажи/Икони за протоколите"
 
 #: ../pidgin/gtkblist.c:5507
 msgid ""
@@ -14234,9 +14057,8 @@ msgstr "/Пријатели/Подреди пријатели"
 
 #. Widget creation function
 #: ../pidgin/gtkcertmgr.c:530
-#, fuzzy
 msgid "SSL Servers"
-msgstr "Сервер"
+msgstr "SSL сервери"
 
 #: ../pidgin/gtkconn.c:180
 #, c-format
@@ -14260,10 +14082,8 @@ msgid "That buddy is not on the same protocol as this chat."
 msgstr "Овој пријател не е на истиот протокол како во овој разговор."
 
 #: ../pidgin/gtkconv.c:774
-msgid ""
-"You are not currently signed on with an account that can invite that buddy."
-msgstr ""
-"Не сте моментално најавени со сметка која може да го покани овој пријател."
+msgid "You are not currently signed on with an account that can invite that buddy."
+msgstr "Не сте моментално најавени со сметка која може да го покани овој пријател."
 
 #: ../pidgin/gtkconv.c:827
 msgid "Invite Buddy Into Chat Room"
@@ -14837,9 +14657,8 @@ msgid "Spanish"
 msgstr "Spanish"
 
 #: ../pidgin/gtkdialogs.c:161
-#, fuzzy
 msgid "Estonian"
-msgstr "Bosnian"
+msgstr "Estonian"
 
 #: ../pidgin/gtkdialogs.c:162 ../pidgin/gtkdialogs.c:163
 msgid "Euskera(Basque)"
@@ -14926,9 +14745,8 @@ msgid "Kurdish"
 msgstr "Kurdish"
 
 #: ../pidgin/gtkdialogs.c:185
-#, fuzzy
 msgid "Lao"
-msgstr "Лав"
+msgstr "Lao"
 
 #: ../pidgin/gtkdialogs.c:186 ../pidgin/gtkdialogs.c:252
 #: ../pidgin/gtkdialogs.c:253
@@ -15055,7 +14873,7 @@ msgid "About %s"
 msgstr "За %s"
 
 #: ../pidgin/gtkdialogs.c:400
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s is a graphical modular messaging client based on libpurple which is "
 "capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
@@ -15069,7 +14887,7 @@ msgid ""
 msgstr ""
 "%s е графички модуларен клиент за испраќање на пораки базиран на libpurple  "
 "кој што е способен да се врзува на AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, "
-"SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, и "
+"SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, и "
 "QQ одеднаш. Напишан е со користење на GTK+. <BR><BR>Смеете да ја менувате и "
 "редистрибуирате програмата според условите во GPL (верзија 2 или понова).  "
 "Копија од GPL доаѓа во датотеката 'COPYING' која што се дистрибуира заедно "
@@ -15134,8 +14952,7 @@ msgstr "Види лог од корисникот"
 msgid ""
 "Please enter the screen name or alias of the person whose log you would like "
 "to view."
-msgstr ""
-"Внесете го името или алијасот на пријателот чиј лог сакате да го прегледате."
+msgstr "Внесете го името или алијасот на пријателот чиј лог сакате да го прегледате."
 
 #: ../pidgin/gtkdialogs.c:1020
 msgid "Alias Contact"
@@ -15224,8 +15041,7 @@ msgstr "_Отстрани група"
 
 #: ../pidgin/gtkdialogs.c:1247
 #, c-format
-msgid ""
-"You are about to remove %s from your buddy list.  Do you want to continue?"
+msgid "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr ""
 "Штотуку се обидовте да го/ја отстранете %s од Вашата листа со пријатели.  "
 "Дали сакате да продолжете?"
@@ -15276,7 +15092,6 @@ msgid "Mute Sounds"
 msgstr "Замолчи звуци"
 
 #: ../pidgin/gtkdocklet.c:535
-#, fuzzy
 msgid "Blink on new message"
 msgstr "Трепкај на нова порака"
 
@@ -15520,9 +15335,8 @@ msgid "_Font"
 msgstr "_Фонт"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1054
-#, fuzzy
 msgid "Group Items"
-msgstr "Ид. на групата"
+msgstr "Групирај предмети"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1054
 msgid "Ungroup Items"
@@ -15553,34 +15367,28 @@ msgid "Decrease Font Size"
 msgstr ""
 
 #: ../pidgin/gtkimhtmltoolbar.c:1096
-#, fuzzy
 msgid "Font Face"
-msgstr "_Изглед на фонт"
+msgstr "Изглед на фонт"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1097
-#, fuzzy
 msgid "Background Color"
-msgstr "Бој_а на позадина"
+msgstr "Боја на позадина"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1098
-#, fuzzy
 msgid "Foreground Color"
-msgstr "Боја на _фонт"
+msgstr "Боја на фонт"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1100
-#, fuzzy
 msgid "Reset Formatting"
-msgstr "_Исчисти форматирање"
+msgstr "Ресетирај форматирање"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1103
-#, fuzzy
 msgid "Insert IM Image"
 msgstr "Внеси слика"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1104
-#, fuzzy
 msgid "Insert Smiley"
-msgstr "Внеси слика"
+msgstr "Внеси смајли"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1179
 msgid "<b>_Bold</b>"
@@ -15595,9 +15403,8 @@ msgid "<u>_Underline</u>"
 msgstr "<u>_Подвлечено</u>"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1182
-#, fuzzy
 msgid "<span strikethrough='true'>Strikethrough</span>"
-msgstr "<span size='larger'>_Поголемо</span>"
+msgstr "<span size='larger'>Прешкртано</span>"
 
 #: ../pidgin/gtkimhtmltoolbar.c:1183
 msgid "<span size='larger'>_Larger</span>"
@@ -15700,8 +15507,7 @@ msgstr ""
 "преференцата е овозможена."
 
 #: ../pidgin/gtklog.c:557
-msgid ""
-"Chats will only be logged if the \"Log all chats\" preference is enabled."
+msgid "Chats will only be logged if the \"Log all chats\" preference is enabled."
 msgstr ""
 "Разговорите ќе бидат логирани само ако е избрано \"Логирај ги сите разговори"
 "\"."
@@ -15739,7 +15545,7 @@ msgid "%s %s. Try `%s -h' for more information.\n"
 msgstr "%s %s. Пробајте `%s -h' за повеќе информации.\n"
 
 #: ../pidgin/gtkmain.c:388
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s %s\n"
 "Usage: %s [OPTION]...\n"
@@ -15754,7 +15560,7 @@ msgid ""
 "  -v, --version       display the current version and exit\n"
 msgstr ""
 "%s %s\n"
-"Употреба: %s [OPTION]...\n"
+"Употреба: %s [ОПЦИЈА]...\n"
 "\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
@@ -15766,7 +15572,7 @@ msgstr ""
 "  -v, --version       display the current version and exit\n"
 
 #: ../pidgin/gtkmain.c:512
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s has segfaulted and attempted to dump a core file.\n"
 "This is a bug in the software and has happened through\n"
@@ -15792,7 +15598,7 @@ msgstr ""
 "\n"
 "Ако можете да ја репродуцирате грешката, Ве молам, известете\n"
 "ги развивачите со пријавување на бубачка на:\n"
-"%snewticket/\n"
+"%ssimpleticket/\n"
 "\n"
 "Осигурете се дека точно наведивте што правевте во тоа време\n"
 "и испратете ја трагата од датотеката со јадрото(core).  Ако не знаете\n"
@@ -15827,12 +15633,12 @@ msgstr[1] "%s има %d нови пораки."
 msgstr[2] "%s има %d нови пораки."
 
 #: ../pidgin/gtknotify.c:564
-#, fuzzy, c-format
+#, c-format
 msgid "<b>You have %d new e-mail.</b>"
 msgid_plural "<b>You have %d new e-mails.</b>"
-msgstr[0] "<b>Имате %d нова е-пошта.</b>"
-msgstr[1] "<b>Имате %d нови е-пошти.</b>"
-msgstr[2] "<b>Имате %d нови е-пошти.</b>"
+msgstr[0] "<b>Имате %d нова порака.</b>"
+msgstr[1] "<b>Имате %d нови пораки.</b>"
+msgstr[2] "<b>Имате %d нови пораки.</b>"
 
 #: ../pidgin/gtknotify.c:989
 #, c-format
@@ -15850,8 +15656,7 @@ msgid "Error launching \"%s\": %s"
 msgstr "Грешка при лансирање на \"%s\": %s"
 
 #: ../pidgin/gtknotify.c:1145
-msgid ""
-"The 'Manual' browser command has been chosen, but no command has been set."
+msgid "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Избрана е рачната команда на прелистувачот, но не е поставена команда."
 
 #: ../pidgin/gtkplugin.c:265
@@ -16460,8 +16265,7 @@ msgstr "Напишете корисник на кого му дозволува�
 
 #: ../pidgin/gtkprivacy.c:559
 msgid "Please enter the name of the user you wish to be able to contact you."
-msgstr ""
-"Внесете го името на корисникот со кого посакувате да можете да контактирате."
+msgstr "Внесете го името на корисникот со кого посакувате да можете да контактирате."
 
 #: ../pidgin/gtkprivacy.c:562 ../pidgin/gtkprivacy.c:578
 msgid "_Permit"
@@ -16540,8 +16344,7 @@ msgstr "_Додај разговор"
 
 #: ../pidgin/gtksavedstatuses.c:337
 msgid "Are you sure you want to delete the selected saved statuses?"
-msgstr ""
-"Дали сте сигурни дека сакате да ги избришете избраните зачувани статуси?"
+msgstr "Дали сте сигурни дека сакате да ги избришете избраните зачувани статуси?"
 
 #. Use button
 #: ../pidgin/gtksavedstatuses.c:620 ../pidgin/gtksavedstatuses.c:1266
@@ -16686,8 +16489,7 @@ msgstr ""
 #: ../pidgin/gtkutils.c:2641
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
-msgstr ""
-"Датотеката „%s“ е преголема за %s.  Ве молам, пробајте со помала слика.\n"
+msgstr "Датотеката „%s“ е преголема за %s.  Ве молам, пробајте со помала слика.\n"
 
 #: ../pidgin/gtkutils.c:2643
 msgid "Icon Error"
@@ -16704,8 +16506,7 @@ msgstr "Не успеав да ја отворам датотеката '%s': %s
 
 #: ../pidgin/gtkutils.c:2793
 #, c-format
-msgid ""
-"Failed to load image '%s': reason not known, probably a corrupt image file"
+msgid "Failed to load image '%s': reason not known, probably a corrupt image file"
 msgstr ""
 "Не успеав да ја вчитам сликата „%s“: причините не се познати, најверојатно "
 "сликата е оштетена"
@@ -16870,8 +16671,7 @@ msgstr "Приоритет на контакт"
 #. *< version
 #. *< summary
 #: ../pidgin/plugins/contact_priority.c:190
-msgid ""
-"Allows for controlling the values associated with different buddy states."
+msgid "Allows for controlling the values associated with different buddy states."
 msgstr ""
 "Овозможува контрола на вредностите асоцирани со различни состојби на "
 "пријателите."
@@ -16953,8 +16753,7 @@ msgstr "Број на разговори по прозорец"
 
 #: ../pidgin/plugins/extplacement.c:117
 msgid "Separate IM and Chat windows when placing by number"
-msgstr ""
-"Одделни прозорци за IM и прозорци за разговори кога се поставуваат по број"
+msgstr "Одделни прозорци за IM и прозорци за разговори кога се поставуваат по број"
 
 #. *< type
 #. *< ui_requirement
@@ -17707,8 +17506,7 @@ msgstr "Прикажувај време во стилот на iChat"
 #. *  description
 #: ../pidgin/plugins/timestamp.c:207
 msgid "Display iChat-style timestamps every N minutes."
-msgstr ""
-"Додава временски ознаки во стилот на iChat во разговорите на секои N минути."
+msgstr "Додава временски ознаки во стилот на iChat во разговорите на секои N минути."
 
 #: ../pidgin/plugins/timestamp_format.c:23
 msgid "Timestamp Format Options"
@@ -17879,8 +17677,7 @@ msgid "Options specific to Pidgin for Windows."
 msgstr "Опции наменети за Pidgin за Windows."
 
 #: ../pidgin/plugins/win32/winprefs/winprefs.c:374
-msgid ""
-"Provides options specific to Pidgin for Windows , such as buddy list docking."
+msgid "Provides options specific to Pidgin for Windows , such as buddy list docking."
 msgstr ""
 "Овозможува опции наменети за Pidgin за Windows, како што се прикачување на "
 "листата со пријатели и трепкање на разговорите."
@@ -17932,130 +17729,3 @@ msgstr "Испрати и прими чисти XMPP делови."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Овој приклучок е корисен за дебагирање на XMPP сервери или клиенти."
 
-#, fuzzy
-#~ msgid "Offline buddies"
-#~ msgstr "Покажи исклучени пријатели"
-
-#, fuzzy
-#~ msgid "Sort"
-#~ msgstr "Порта"
-
-#, fuzzy
-#~ msgid "By Status"
-#~ msgstr "По статус"
-
-#, fuzzy
-#~ msgid "By Log Size"
-#~ msgstr "По големина на лог"
-
-#, fuzzy
-#~ msgid "Unable to connect to contact server"
-#~ msgstr "Не можам да се поврзам со серверот."
-
-#, fuzzy
-#~ msgid "Unable to retrieve MSN Address Book"
-#~ msgstr "Одберете адресар за белешки"
-
-#, fuzzy
-#~ msgid "Current media"
-#~ msgstr "Тековен знак"
-
-#, fuzzy
-#~ msgid "Windows Live Messenger Protocol Plugin"
-#~ msgstr "Додаток за Novell GroupWise Messenger"
-
-#, fuzzy
-#~ msgid "Windows Live ID authentication Failed"
-#~ msgstr "Неуспех: Авторизирањето не успеа"
-
-#~ msgid "%s just sent you a Nudge!"
-#~ msgstr "%s штотуку ти испрати Nudge!"
-
-#, fuzzy
-#~ msgid "Unknown error (%d)"
-#~ msgstr "Непозната грешка"
-
-#, fuzzy
-#~ msgid "Unable to connect to OIM server"
-#~ msgstr "Не можам да се поврзам со серверот."
-
-#, fuzzy
-#~ msgid "%s (%s) changed status from %s to %s"
-#~ msgstr "%s го смени статусот од %s во %s"
-
-#, fuzzy
-#~ msgid "%s (%s) is now %s"
-#~ msgstr "%s сега е %s"
-
-#, fuzzy
-#~ msgid "%s (%s) is no longer %s"
-#~ msgstr "%s не е веќе %s"
-
-#, fuzzy
-#~ msgid "_Merge"
-#~ msgstr "_Порака:"
-
-#, fuzzy
-#~ msgid "_Send File..."
-#~ msgstr "_Испрати датотека"
-
-#, fuzzy
-#~ msgid "Add Buddy _Pounce..."
-#~ msgstr "Додај дејство за пријател..."
-
-#, fuzzy
-#~ msgid "Hide when offline"
-#~ msgstr "Не е дозволен додека сте исклучени"
-
-#, fuzzy
-#~ msgid "Show when offline"
-#~ msgstr "Не е дозволен додека сте исклучени"
-
-#, fuzzy
-#~ msgid "Add _Buddy..."
-#~ msgstr "Додај пријател"
-
-#, fuzzy
-#~ msgid "Add C_hat..."
-#~ msgstr "Додај разговор"
-
-#, fuzzy
-#~ msgid "Persistent"
-#~ msgstr "Persian"
-
-#, fuzzy
-#~ msgid "/Accounts/Manage"
-#~ msgstr "/Сметки"
-
-#, fuzzy
-#~ msgid "A_ccount:"
-#~ msgstr "Сметка:"
-
-#, fuzzy
-#~ msgid "S_end To"
-#~ msgstr "Испрати на"
-
-#, fuzzy
-#~ msgid "_Smile!"
-#~ msgstr "Смајли!"
-
-#~ msgid "You have just sent a Nudge!"
-#~ msgstr "Само што испративте Nudge!"
-
-#~ msgid "Would like to add him?"
-#~ msgstr "Дали сакате да го додадете?"
-
-#~ msgid "%s just sent you a Buzz!"
-#~ msgstr "%s штотуку ти испрати Buzz!"
-
-#~ msgid "You have just sent a Buzz!"
-#~ msgstr "Само што испративте Buzz!"
-
-#~ msgid "/Options/Show Buddy _Icon"
-#~ msgstr "/Опции/Покажи икона на _пријател"
-
-#~ msgid "/Options/Show Buddy Icon"
-#~ msgstr "/Опции/Покажи икона на пријател"
-
-#~ msgid "Norwegian"
-#~ msgstr "Norwegian"
