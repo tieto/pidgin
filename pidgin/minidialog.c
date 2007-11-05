@@ -226,11 +226,13 @@ mini_dialog_set_description(PidginMiniDialog *self,
 		g_free(desc_markup);
 
 		gtk_widget_show(GTK_WIDGET(priv->desc));
+		g_object_set(G_OBJECT(priv->desc), "no-show-all", FALSE, NULL);
 	}
 	else
 	{
 		gtk_label_set_text(priv->desc, NULL);
 		gtk_widget_hide(GTK_WIDGET(priv->desc));
+		g_object_set(G_OBJECT(priv->desc), "no-show-all", TRUE, NULL);
 	}
 }
 
@@ -342,6 +344,10 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 	gtk_widget_set_size_request(GTK_WIDGET(priv->desc), label_width, -1);
 	gtk_label_set_line_wrap(priv->desc, TRUE);
 	gtk_misc_set_alignment(GTK_MISC(priv->desc), 0, 0);
+	/* make calling show_all() on the minidialog not affect desc even though
+	 * it's packed inside it.
+	 */
+	g_object_set(G_OBJECT(priv->desc), "no-show-all", TRUE, NULL);
 
 	self->contents = GTK_BOX(gtk_vbox_new(FALSE, 0));
 
@@ -353,5 +359,4 @@ pidgin_mini_dialog_init(PidginMiniDialog *self)
 	gtk_box_pack_start(self_box, GTK_WIDGET(priv->buttons), FALSE, FALSE, 0);
 
 	gtk_widget_show_all(GTK_WIDGET(self));
-	gtk_widget_hide(GTK_WIDGET(priv->desc));
 }

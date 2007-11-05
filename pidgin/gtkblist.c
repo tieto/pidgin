@@ -4445,7 +4445,6 @@ add_generic_error_dialog(PurpleAccount *account,
 		account);
 
 	add_error_dialog(gtkblist, mini_dialog);
-	gtk_widget_show_all(mini_dialog);
 }
 
 static void
@@ -4524,10 +4523,6 @@ ensure_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 		ignore_elsewhere_accounts, NULL);
 
 	add_error_dialog(gtkblist, GTK_WIDGET(mini_dialog));
-	gtk_widget_show_all(GTK_WIDGET(mini_dialog));
-
-	/* Hide the description field now that the dialog has been shown. */
-	g_object_set(G_OBJECT(mini_dialog), "description", NULL, NULL);
 
 	/* Set priv->signed_on_elsewhere to NULL when the dialog is destroyed */
 	g_signal_connect(G_OBJECT(mini_dialog), "destroy",
