@@ -717,76 +717,79 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 
 		return FALSE;
 	}
-	else
+
+	if ((text[0] == '\r' || text[0] == ' ') && entry->ddown)
 	{
-		if ((text[0] == '\r' || text[0] == ' ') && entry->ddown)
-		{
-			char *text = g_strdup(gnt_tree_get_selection_data(GNT_TREE(entry->ddown)));
-			destroy_suggest(entry);
-			complete_suggest(entry, text);
-			g_free(text);
-			update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
-			entry_text_changed(entry);
-			return TRUE;
-		}
+		char *text = g_strdup(gnt_tree_get_selection_data(GNT_TREE(entry->ddown)));
+		destroy_suggest(entry);
+		complete_suggest(entry, text);
+		g_free(text);
+		update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
+		entry_text_changed(entry);
+		return TRUE;
+	}
 
-		if (!iscntrl(text[0]))
-		{
-			const char *str, *next;
+	if (!iscntrl(text[0]))
+	{
+		const char *str, *next;
 
-			for (str = text; *str; str = next)
+		for (str = text; *str; str = next)
+		{
+			int len;
+			next = g_utf8_find_next_char(str, NULL);
+			len = next - str;
+
+			/* Valid input? */
+			/* XXX: Is it necessary to use _unichar_ variants here? */
+			if (ispunct(*str) && (entry->flag & GNT_ENTRY_FLAG_NO_PUNCT))
+				continue;
+			if (isspace(*str) && (entry->flag & GNT_ENTRY_FLAG_NO_SPACE))
+				continue;
+			if (isalpha(*str) && !(entry->flag & GNT_ENTRY_FLAG_ALPHA))
+				continue;
+			if (isdigit(*str) && !(entry->flag & GNT_ENTRY_FLAG_INT))
+				continue;
+
+			/* Reached the max? */
+			if (entry->max && g_utf8_pointer_to_offset(entry->start, entry->end) >= entry->max)
+				continue;
+
+			if (entry->end + len - entry->start >= entry->buffer)
 			{
-				int len;
-				next = g_utf8_find_next_char(str, NULL);
-				len = next - str;
-
-				/* Valid input? */
-				/* XXX: Is it necessary to use _unichar_ variants here? */
-				if (ispunct(*str) && (entry->flag & GNT_ENTRY_FLAG_NO_PUNCT))
-					continue;
-				if (isspace(*str) && (entry->flag & GNT_ENTRY_FLAG_NO_SPACE))
-					continue;
-				if (isalpha(*str) && !(entry->flag & GNT_ENTRY_FLAG_ALPHA))
-					continue;
-				if (isdigit(*str) && !(entry->flag & GNT_ENTRY_FLAG_INT))
-					continue;
-
-				/* Reached the max? */
-				if (entry->max && g_utf8_pointer_to_offset(entry->start, entry->end) >= entry->max)
-					continue;
-
-				if (entry->end + len - entry->start >= entry->buffer)
-				{
-					/* This will cause the buffer to grow */
-					char *tmp = g_strdup(entry->start);
-					gnt_entry_set_text_internal(entry, tmp);
-					g_free(tmp);
-				}
-
-				memmove(entry->cursor + len, entry->cursor, entry->end - entry->cursor + 1);
-				entry->end += len;
-
-				while (str < next)
-				{
-					if (*str == '\r' || *str == '\n')
-						*entry->cursor = ' ';
-					else
-						*entry->cursor = *str;
-					entry->cursor++;
-					str++;
-				}
-
-				while (gnt_util_onscreen_width(entry->scroll, entry->cursor) >= widget->priv.width)
-					entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
-
-				if (entry->ddown)
-					show_suggest_dropdown(entry);
+				/* This will cause the buffer to grow */
+				char *tmp = g_strdup(entry->start);
+				gnt_entry_set_text_internal(entry, tmp);
+				g_free(tmp);
 			}
-			update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
-			entry_redraw(widget);
-			entry_text_changed(entry);
-			return TRUE;
+
+			memmove(entry->cursor + len, entry->cursor, entry->end - entry->cursor + 1);
+			entry->end += len;
+
+			while (str < next)
+			{
+				if (*str == '\r' || *str == '\n')
+					*entry->cursor = ' ';
+				else
+					*entry->cursor = *str;
+				entry->cursor++;
+				str++;
+			}
+
+			while (gnt_util_onscreen_width(entry->scroll, entry->cursor) >= widget->priv.width)
+				entry->scroll = g_utf8_find_next_char(entry->scroll, NULL);
+
+			if (entry->ddown)
+				show_suggest_dropdown(entry);
 		}
+		update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
+		entry_redraw(widget);
+		entry_text_changed(entry);
+		return TRUE;
+	}
+
+	if (text[0] == '\r') {
+		gnt_widget_activate(widget);
+		return TRUE;
 	}
 
 	return FALSE;
