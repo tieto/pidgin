@@ -4419,8 +4419,12 @@ add_generic_error_dialog(PurpleAccount *account,
 	const char *username = purple_account_get_username(account);
 	gboolean enabled =
 		purple_account_get_enabled(account, purple_core_get_ui());
-	char *primary = g_strdup_printf(_("%s disconnected"), username);
-
+	char *primary;
+	
+	if (enabled)
+		primary = g_strdup_printf(_("%s disconnected"), username);
+	else
+		primary = g_strdup_printf(_("%s disabled"), username);
 
 	mini_dialog = pidgin_make_mini_dialog(NULL, PIDGIN_STOCK_DISCONNECT,
 		primary, err->description, account,
