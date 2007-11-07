@@ -86,32 +86,26 @@ struct _GntMenuItemClass
 G_BEGIN_DECLS
 
 /**
- * 
+ *
  *
  * @return
  */
 GType gnt_menuitem_get_gtype(void);
 
 /**
- * 
- * @param text
+ *
  *
  * @return
  */
 GntMenuItem * gnt_menuitem_new(const char *text);
 
 /**
- * 
- * @param item
- * @param callback
- * @param data
+ *
  */
 void gnt_menuitem_set_callback(GntMenuItem *item, GntMenuItemCallback callback, gpointer data);
 
 /**
- * 
- * @param item
- * @param menu
+ *
  */
 void gnt_menuitem_set_submenu(GntMenuItem *item, GntMenu *menu);
 

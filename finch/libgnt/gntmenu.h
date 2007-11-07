@@ -63,7 +63,7 @@ struct _GntMenu
 {
 	GntTree parent;
 	GntMenuType type;
-	
+
 	GList *list;
 	int selected;
 
@@ -86,24 +86,20 @@ struct _GntMenuClass
 G_BEGIN_DECLS
 
 /**
- * 
+ *
  *
  * @return
  */
 GType gnt_menu_get_gtype(void);
 
 /**
- * 
- * @param type
  *
  * @return
  */
 GntWidget * gnt_menu_new(GntMenuType type);
 
 /**
- * 
- * @param menu
- * @param item
+ *
  */
 void gnt_menu_add_item(GntMenu *menu, GntMenuItem *item);
 

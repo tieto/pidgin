@@ -67,33 +67,28 @@ struct _GntLabelClass
 G_BEGIN_DECLS
 
 /**
- * 
+ *
  *
  * @return
  */
 GType gnt_label_get_gtype(void);
 
 /**
- * 
- * @param text
+ *
  *
  * @return
  */
 GntWidget * gnt_label_new(const char *text);
 
 /**
- * 
- * @param text
- * @param flags
+ *
  *
  * @return
  */
 GntWidget * gnt_label_new_with_format(const char *text, GntTextFormatFlags flags);
 
 /**
- * 
- * @param label
- * @param text
+ *
  */
 void gnt_label_set_text(GntLabel *label, const char *text);
 

@@ -66,32 +66,28 @@ struct _GntMenuItemCheckClass
 G_BEGIN_DECLS
 
 /**
- * 
+ *
  *
  * @return
  */
 GType gnt_menuitem_check_get_gtype(void);
 
 /**
- * 
- * @param text
+ *
  *
  * @return
  */
 GntMenuItem * gnt_menuitem_check_new(const char *text);
 
 /**
- * 
- * @param item
+ *
  *
  * @return
  */
 gboolean gnt_menuitem_check_get_checked(GntMenuItemCheck *item);
 
 /**
- * 
- * @param item
- * @param set
+ *
  */
 void gnt_menuitem_check_set_checked(GntMenuItemCheck *item, gboolean set);
 

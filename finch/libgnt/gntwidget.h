@@ -140,135 +140,99 @@ struct _GntWidgetClass
 G_BEGIN_DECLS
 
 /**
- * 
+ *
  *
  * @return
  */
 GType gnt_widget_get_gtype(void);
 
 /**
- * 
- * @param widget
+ *
  */
 void gnt_widget_destroy(GntWidget *widget);
 
 /**
- * 
- * @param widget
+ *
  */
 void gnt_widget_show(GntWidget *widget);
 
 /**
- * 
- * @param widget
+ *
  */
 void gnt_widget_draw(GntWidget *widget);
 
 /**
- * 
- * @param widget
- * @param x
- * @param y
- * @param width
- * @param height
+ *
  */
 void gnt_widget_expose(GntWidget *widget, int x, int y, int width, int height);
 
 /**
- * 
- * @param widget
+ *
  */
 void gnt_widget_hide(GntWidget *widget);
 
 /**
- * 
- * @param widget
- * @param x
- * @param y
+ *
  */
 void gnt_widget_get_position(GntWidget *widget, int *x, int *y);
 
 /**
- * 
- * @param widget
- * @param x
- * @param y
+ *
  */
 void gnt_widget_set_position(GntWidget *widget, int x, int y);
 
 /**
- * 
- * @param widget
+ *
  */
 void gnt_widget_size_request(GntWidget *widget);
 
 /**
- * 
- * @param widget
- * @param width
- * @param height
+ *
  */
 void gnt_widget_get_size(GntWidget *widget, int *width, int *height);
 
 /**
- * 
- * @param widget
- * @param width
- * @param height
+ *
  *
  * @return
  */
 gboolean gnt_widget_set_size(GntWidget *widget, int width, int height);
 
 /**
- * 
- * @param widget
- * @param width
- * @param height
+ *
  *
  * @return
  */
 gboolean gnt_widget_confirm_size(GntWidget *widget, int width, int height);
 
 /**
- * 
- * @param widget
- * @param keys
+ *
  *
  * @return
  */
 gboolean gnt_widget_key_pressed(GntWidget *widget, const char *keys);
 
 /**
- * 
- * @param widget
- * @param event
- * @param x
- * @param y
+ *
  *
  * @return
  */
 gboolean gnt_widget_clicked(GntWidget *widget, GntMouseEvent event, int x, int y);
 
 /**
- * 
- * @param widget
- * @param set
+ *
  *
  * @return
  */
 gboolean gnt_widget_set_focus(GntWidget *widget, gboolean set);
 
 /**
- * 
- * @param widget
+ *
  */
 void gnt_widget_activate(GntWidget *widget);
 
 /**
- * 
- * @param widget
- * @param name
+ *
  */
 void gnt_widget_set_name(GntWidget *widget, const char *name);
 
@@ -277,28 +241,22 @@ const char *gnt_widget_get_name(GntWidget *widget);
 /* Widget-subclasses should call this from the draw-callback.
  * Applications should just call gnt_widget_draw instead of this. */
 /**
- * 
- * @param widget
+ *
  */
 void gnt_widget_queue_update(GntWidget *widget);
 
 /**
- * 
- * @param widget
- * @param set
+ *
  */
 void gnt_widget_set_take_focus(GntWidget *widget, gboolean set);
 
 /**
- * 
- * @param widget
- * @param set
+ *
  */
 void gnt_widget_set_visible(GntWidget *widget, gboolean set);
 
 /**
- * 
- * @param widget
+ *
  *
  * @return
  */

@@ -38,8 +38,7 @@ typedef enum
 } GntStyle;
 
 /**
- * 
- * @param filename
+ *
  */
 void gnt_style_read_configure_file(const char *filename);
 
@@ -70,9 +69,7 @@ char *gnt_style_get_from_name(const char *group, const char *key);
 gboolean gnt_style_parse_bool(const char *value);
 
 /**
- * 
- * @param style
- * @param def
+ *
  *
  * @return
  */
@@ -80,28 +77,24 @@ gboolean gnt_style_get_bool(GntStyle style, gboolean def);
 
 /* This should be called only once for the each type */
 /**
- * 
- * @param type
- * @param hash
+ *
  */
 void gnt_styles_get_keyremaps(GType type, GHashTable *hash);
 
 /**
- * 
- * @param type
- * @param klass
+ *
  */
 void gnt_style_read_actions(GType type, GntBindableClass *klass);
 
 void gnt_style_read_workspaces(GntWM *wm);
 
 /**
- * 
+ *
  */
 void gnt_init_styles(void);
 
 /**
- * 
+ *
  */
 void gnt_uninit_styles(void);
 

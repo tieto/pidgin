@@ -98,61 +98,50 @@ struct _GntFile
 G_BEGIN_DECLS
 
 /**
- * 
+ *
  *
  * @return
  */
 GType gnt_file_sel_get_gtype(void);
 
 /**
- * 
+ *
  *
  * @return
  */
 GntWidget * gnt_file_sel_new(void);
 
 /**
- * 
- * @param sel
- * @param path
  *
  * @return
  */
 gboolean gnt_file_sel_set_current_location(GntFileSel *sel, const char *path);
 
 /**
- * 
- * @param sel
- * @param dirs
+ *
  */
 void gnt_file_sel_set_dirs_only(GntFileSel *sel, gboolean dirs);
 
 /**
- * 
- * @param sel
  *
  * @return
  */
 gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel);
 
 /**
- * 
- * @param sel
- * @param must
+ *
  */
 void gnt_file_sel_set_must_exist(GntFileSel *sel, gboolean must);
 
 /**
- * 
- * @param sel
+ *
  *
  * @return
  */
 gboolean gnt_file_sel_get_must_exist(GntFileSel *sel);
 
 /**
- * 
- * @param sel
+ *
  *
  * @return
  */
@@ -161,48 +150,36 @@ char * gnt_file_sel_get_selected_file(GntFileSel *sel);
   /* The returned value should be free'd */
 
 /**
- * 
- * @param sel
+ *
  *
  * @return
  */
 GList * gnt_file_sel_get_selected_multi_files(GntFileSel *sel);
 
 /**
- * 
- * @param sel
- * @param set
+ *
  */
 void gnt_file_sel_set_multi_select(GntFileSel *sel, gboolean set);
 
 /**
- * 
- * @param sel
- * @param suggest
+ *
  */
 void gnt_file_sel_set_suggested_filename(GntFileSel *sel, const char *suggest);
 
 /**
- * 
- * @param sel
- * @param path
- * @param files
- * @param error)
+ *
  */
 void gnt_file_sel_set_read_fn(GntFileSel *sel, gboolean (*read_fn)(const char *path, GList **files, GError **error));
 
 /**
- * 
- * @param name
- * @param size
+ *
  *
  * @return
  */
 GntFile* gnt_file_new(const char *name, unsigned long size);
 
 /**
- * 
- * @param name
+ *
  *
  * @return
  */

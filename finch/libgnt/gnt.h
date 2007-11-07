@@ -46,17 +46,17 @@
 #endif
 
 /**
- * 
+ *
  */
 void gnt_init(void);
 
 /**
- * 
+ *
  */
 void gnt_main(void);
 
 /**
- * 
+ *
  *
  * @return
  */
@@ -66,103 +66,87 @@ gboolean gnt_ascii_only(void);
  * Present a window. If the event was triggered because of user interaction,
  * the window is moved to the foreground. Otherwise, the Urgent hint is set.
  *
- * @param window   The window the present.
+ * @param window   The window to present.
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_window_present(GntWidget *window);
+
 /**
- * 
- * @param widget
+ *
  */
 void gnt_screen_occupy(GntWidget *widget);
 
 /**
- * 
- * @param widget
+ *
  */
 void gnt_screen_release(GntWidget *widget);
 
 /**
- * 
- * @param widget
+ *
  */
 void gnt_screen_update(GntWidget *widget);
 
 /**
- * 
- * @param widget
- * @param width
- * @param height
+ *
  */
 void gnt_screen_resize_widget(GntWidget *widget, int width, int height);
 
 /**
- * 
- * @param widget
- * @param x
- * @param y
+ *
  */
 void gnt_screen_move_widget(GntWidget *widget, int x, int y);
 
 /**
- * 
- * @param widget
- * @param text
+ *
  */
 void gnt_screen_rename_widget(GntWidget *widget, const char *text);
 
 /**
- * 
- * @param widget
+ *
  *
  * @return
  */
 gboolean gnt_widget_has_focus(GntWidget *widget);
 
 /**
- * 
- * @param widget
+ *
  */
 void gnt_widget_set_urgent(GntWidget *widget);
 
 /**
- * 
- * @param label
- * @param callback
+ *
  */
 void gnt_register_action(const char *label, void (*callback)());
 
 /**
- * 
- * @param menu
+ *
  *
  * @return
  */
 gboolean gnt_screen_menu_show(gpointer menu);
 
 /**
- * 
+ *
  */
 void gnt_quit(void);
 
 /**
- * 
+ *
  *
  * @return
  */
 GntClipboard * gnt_get_clipboard(void);
 
 /**
- * 
+ *
  *
  * @return
  */
 gchar * gnt_get_clipboard_string(void);
 
 /**
- * 
- * @param string
+ *
  */
 void gnt_set_clipboard_string(gchar *string);
 

@@ -113,7 +113,7 @@ struct _GntWM
 	 * whether to give focus to a new window.
 	 */
 	gboolean event_stack;
-	
+
 	GntKeyPressMode mode;
 
 	GHashTable *positions;
@@ -184,7 +184,7 @@ struct _GntWMClass
 G_BEGIN_DECLS
 
 /**
- * 
+ *
  *
  * @return
  */
@@ -200,90 +200,63 @@ void gnt_wm_set_workspaces(GntWM *wm, GList *workspaces);
 GntWS *gnt_wm_widget_find_workspace(GntWM *wm, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param widget
+ *
  */
 void gnt_wm_new_window(GntWM *wm, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param widget
+ *
  */
 void gnt_wm_window_decorate(GntWM *wm, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param widget
+ *
  */
 void gnt_wm_window_close(GntWM *wm, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param string
+ *
  *
  * @return
  */
 gboolean gnt_wm_process_input(GntWM *wm, const char *string);
 
 /**
- * 
- * @param wm
- * @param event
- * @param x
- * @param y
- * @param widget
+ *
  *
  * @return
  */
 gboolean gnt_wm_process_click(GntWM *wm, GntMouseEvent event, int x, int y, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param widget
- * @param width
- * @param height
+ *
  */
 void gnt_wm_resize_window(GntWM *wm, GntWidget *widget, int width, int height);
 
 /**
- * 
- * @param wm
- * @param widget
- * @param x
- * @param y
+ *
  */
 void gnt_wm_move_window(GntWM *wm, GntWidget *widget, int x, int y);
 
 /**
- * 
- * @param wm
- * @param widget
+ *
  */
 void gnt_wm_update_window(GntWM *wm, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param widget
+ *
  */
 void gnt_wm_raise_window(GntWM *wm, GntWidget *widget);
 
 /**
- * 
- * @param wm
- * @param set
+ *
  */
 void gnt_wm_set_event_stack(GntWM *wm, gboolean set);
 
 void gnt_wm_copy_win(GntWidget *widget, GntNode *node);
 
 /**
- * 
+ *
  *
  * @return
  */
