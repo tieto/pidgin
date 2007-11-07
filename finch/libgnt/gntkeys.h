@@ -107,12 +107,13 @@ extern char *gnt_key_cright;
  * This will do stuff with the terminal settings and stuff.
  */
 /**
- *
+ * 
  */
 void gnt_init_keys(void);
 
 /**
- *
+ * 
+ * @param text
  */
 void gnt_keys_refine(char *text);
 
@@ -120,23 +121,26 @@ const char *gnt_key_translate(const char *name);
 const char *gnt_key_lookup(const char *key);
 
 /**
- *
+ * 
+ * @param path
  */
 void gnt_keys_add_combination(const char *path);
 
 /**
- *
+ * 
+ * @param path
  */
 void gnt_keys_del_combination(const char *path);
 
 /**
- *
+ * 
+ * @param path
  *
  * @return
  */
 int gnt_keys_find_combination(const char *path);
 
-/* A lot of commonly used variable names are defined in <term.h>.
+/* A lot of commonly used variable names are defined in <term.h>. 
  * #undef them to make life easier for everyone. */
 
 #undef columns

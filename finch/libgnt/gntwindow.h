@@ -67,7 +67,7 @@ struct _GntWindowClass
 G_BEGIN_DECLS
 
 /**
- *
+ * 
  *
  * @return
  */
@@ -77,21 +77,25 @@ GType gnt_window_get_gtype(void);
 #define gnt_hwindow_new(homo) gnt_window_box_new(homo, FALSE)
 
 /**
- *
+ * 
  *
  * @return
  */
 GntWidget * gnt_window_new(void);
 
 /**
- *
+ * 
+ * @param homo
+ * @param vert
  *
  * @return
  */
 GntWidget * gnt_window_box_new(gboolean homo, gboolean vert);
 
 /**
- *
+ * 
+ * @param window
+ * @param menu
  */
 void gnt_window_set_menu(GntWindow *window, GntMenu *menu);
 

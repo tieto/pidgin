@@ -88,7 +88,7 @@ struct _GntTextViewClass
 G_BEGIN_DECLS
 
 /**
- *
+ * 
  *
  * @return
  */
@@ -97,7 +97,7 @@ GType gnt_text_view_get_gtype(void);
 /* XXX: For now, don't set a textview to have any border.
  *      If you want borders real bad, put it in a box. */
 /**
- *
+ * 
  *
  * @return
  */
@@ -105,48 +105,62 @@ GntWidget * gnt_text_view_new(void);
 
 /* scroll > 0 means scroll up, < 0 means scroll down, == 0 means scroll to the end */
 /**
- *
+ * 
+ * @param view
+ * @param scroll
  */
 void gnt_text_view_scroll(GntTextView *view, int scroll);
 
 /**
- *
+ * 
+ * @param view
+ * @param text
+ * @param flags
  */
 void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, GntTextFormatFlags flags);
 
 /**
- *
+ * 
+ * @param view
+ * @param text
+ * @param flags
+ * @param tag
  */
 void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text, GntTextFormatFlags flags, const char *tag);
 
 /* Move the cursor to the beginning of the next line and resets text-attributes.
  * It first completes the current line with the current text-attributes. */
 /**
- *
+ * 
+ * @param view
  */
 void gnt_text_view_next_line(GntTextView *view);
 
 /**
- *
+ * 
+ * @param flags
  *
  * @return
  */
 chtype gnt_text_format_flag_to_chtype(GntTextFormatFlags flags);
 
 /**
- *
+ * 
+ * @param view
  */
 void gnt_text_view_clear(GntTextView *view);
 
 /**
- *
+ * 
+ * @param view
  *
  * @return
  */
 int gnt_text_view_get_lines_below(GntTextView *view);
 
 /**
- *
+ * 
+ * @param view
  *
  * @return
  */
@@ -154,24 +168,34 @@ int gnt_text_view_get_lines_above(GntTextView *view);
 
 /* If text is NULL, then the tag is removed. */
 /**
- *
+ * 
+ * @param view
+ * @param name
+ * @param text
+ * @param all
  *
  * @return
  */
 int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *text, gboolean all);
 
 /**
- *
+ * 
+ * @param view
+ * @param widget
  */
 void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget);
 
 /**
- *
+ * 
+ * @param view
+ * @param widget
  */
 void gnt_text_view_attach_pager_widget(GntTextView *view, GntWidget *pager);
 
 /**
- *
+ * 
+ * @param view
+ * @param widget
  */
 void gnt_text_view_attach_editor_widget(GntTextView *view, GntWidget *pager);
 
