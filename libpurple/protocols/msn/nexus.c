@@ -194,7 +194,7 @@ msn_nexus_connect(MsnNexus *nexus)
 		);
 
 	/*build the SOAP windows Live ID XML body */
-	tail = g_strdup_printf(TWN_ENVELOP_TEMPLATE,username,password,challenge_str	);
+	tail = g_strdup_printf(TWN_ENVELOP_TEMPLATE, username, password, challenge_str);
 	g_free(challenge_str);
 #else
 	rst1_str = g_strdup_printf(
@@ -214,6 +214,7 @@ msn_nexus_connect(MsnNexus *nexus)
 	g_free(fs);
 
 	soap = msn_soap_message_new(NULL, xmlnode_from_str(tail, -1));
+	g_free(tail);
 	msn_soap_message_send(nexus->session, soap, MSN_TWN_SERVER, TWN_POST_URL,
 		nexus_got_response_cb, nexus);
 }
