@@ -153,5 +153,5 @@ gboolean gnt_util_parse_xhtml_to_textview(const char *string, GntTextView *tv);
  *
  * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
-void gnt_util_set_trigger_widget(GntWidget *wid, const char *text, GntWidget *button);
+void gnt_util_set_trigger_widget(GntWidget *widget, const char *key, GntWidget *button);
 

@@ -646,7 +646,7 @@ gboolean gnt_screen_menu_show(gpointer newmenu)
 	return TRUE;
 }
 
-void gnt_set_clipboard_string(gchar *string)
+void gnt_set_clipboard_string(const gchar *string)
 {
 	gnt_clipboard_set_string(clipboard, string);
 }
