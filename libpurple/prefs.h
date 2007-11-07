@@ -45,9 +45,20 @@ typedef enum _PurplePrefType
 } PurplePrefType;
 
 /**
- * Pref change callback type
+ * The type of callbacks for preference changes.
+ *
+ * @param name the name of the preference which has changed.
+ * @param type the type of the preferenced named @a name
+ * @param val  the new value of the preferencs; should be cast to the correct
+ *             type.  For instance, to recover the value of a #PURPLE_PREF_INT
+ *             preference, use <tt>GPOINTER_TO_INT(val)</tt>.  Alternatively,
+ *             just call purple_prefs_get_int(), purple_prefs_get_string_list()
+ *             etc.
+ * @param data Arbitrary data specified when the callback was connected with
+ *             purple_prefs_connect_callback().
+ *
+ * @see purple_prefs_connect_callback()
  */
-
 typedef void (*PurplePrefCallback) (const char *name, PurplePrefType type,
 		gconstpointer val, gpointer data);
 
