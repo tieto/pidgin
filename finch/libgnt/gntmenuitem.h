@@ -86,32 +86,33 @@ struct _GntMenuItemClass
 G_BEGIN_DECLS
 
 /**
- * 
- *
- * @return
+ * @return GType for GntMenuItem.
  */
 GType gnt_menuitem_get_gtype(void);
 
 /**
- * 
- * @param text
+ * Create a new menuitem.
  *
- * @return
+ * @param text   Label for the menuitem.
+ *
+ * @return  The newly created menuitem.
  */
 GntMenuItem * gnt_menuitem_new(const char *text);
 
 /**
- * 
- * @param item
- * @param callback
- * @param data
+ * Set a callback function for a menuitem.
+ *
+ * @param item       The menuitem.
+ * @param callback   The callback function.
+ * @param data       Data to send to the callback function.
  */
 void gnt_menuitem_set_callback(GntMenuItem *item, GntMenuItemCallback callback, gpointer data);
 
 /**
- * 
- * @param item
- * @param menu
+ * Set a submenu for a menuitem. A menuitem with a submenu cannot have a callback.
+ *
+ * @param item  The menuitem.
+ * @param menu  The submenu.
  */
 void gnt_menuitem_set_submenu(GntMenuItem *item, GntMenu *menu);
 

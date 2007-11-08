@@ -11,10 +11,6 @@ MAKEFILE_MINGW = \
 		buddy_icons/qq/Makefile.mingw \
 		dialogs/16/Makefile.mingw \
 		dialogs/64/Makefile.mingw \
-		icons/16/Makefile.mingw \
-		icons/24/Makefile.mingw \
-		icons/32/Makefile.mingw \
-		icons/48/Makefile.mingw \
 		emotes/default/Makefile.mingw \
 		emotes/default/24/Makefile.mingw \
 		emotes/none/Makefile.mingw \

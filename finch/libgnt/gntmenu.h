@@ -86,24 +86,24 @@ struct _GntMenuClass
 G_BEGIN_DECLS
 
 /**
- * 
- *
- * @return
+ * @return  The GType for GntMenu.
  */
 GType gnt_menu_get_gtype(void);
 
 /**
- * 
- * @param type
+ * Create a new menu.
  *
- * @return
+ * @param type  The type of the menu, whether it's a toplevel menu or a popup menu.
+ *
+ * @return  The newly created menu.
  */
 GntWidget * gnt_menu_new(GntMenuType type);
 
 /**
- * 
- * @param menu
- * @param item
+ * Add an item to the menu.
+ *
+ * @param menu   The menu.
+ * @param item   The item to add to the menu.
  */
 void gnt_menu_add_item(GntMenu *menu, GntMenuItem *item);
 
