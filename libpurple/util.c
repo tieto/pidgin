@@ -1352,7 +1352,9 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
 						if(plain && !strcmp(pt->src_tag, "a")) {
 							/* if this is a link, we have to add the url to the plaintext, too */
-							if (cdata && url && !g_string_equal(cdata, url))
+							if (cdata && url &&
+									(!g_string_equal(cdata, url) && (g_ascii_strncasecmp(url->str, "mailto:", 7) != 0 ||
+									                                 g_utf8_collate(url->str + 7, cdata->str) != 0)))
 								g_string_append_printf(plain, " <%s>", g_strstrip(url->str));
 							if (cdata) {
 								g_string_free(cdata, TRUE);
@@ -1712,6 +1714,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				xhtml = g_string_append_len(xhtml, c, len);
 			if(plain)
 				plain = g_string_append(plain, pln);
+			if(cdata)
+				cdata = g_string_append_len(cdata, c, len);
 			c += len;
 		} else {
 			if(xhtml)
@@ -1737,6 +1741,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 		*plain_out = g_string_free(plain, FALSE);
 	if(url)
 		g_string_free(url, TRUE);
+	if (cdata)
+		g_string_free(cdata, TRUE);
 }
 
 /* The following are probably reasonable changes:
