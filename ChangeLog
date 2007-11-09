@@ -32,7 +32,8 @@ version 2.2.3:
 	* ICQ Birthday notifications are shown as buddy list emblems.
 	* Plugin actions are now available from the docklet context menu
 	  in addition to the Tool menu of the buddy list.
-	* Updated the manual page.
+	* The manual page has been heavily rewritten to bring it in line
+	  with current functionality.
 
 version 2.2.2 (10/23/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
