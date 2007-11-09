@@ -112,9 +112,9 @@ The remainder of the menu will consist of protocol specific commands.
 These commands vary depending on the protocol.
 .TP
 .B Status Selector
-At the bottom of the \fBBuddy List\fR is a status selector which allows
-one to change his/her status.  This will be discussed further below.
-.T
+At the bottom of the \fBBuddy List\fR is a status selector which allows one to
+change his/her status.  This will be discussed further in the \fBSTATUS
+MESSAGES\fR section below.
 
 .SH ACCOUNT EDITOR
 The account editor consists of a list of accounts and information about
@@ -381,8 +381,72 @@ can leave an informative message for others to see.  Status and status
 messages are configured via the status selector at the bottom of the Buddy
 List window.  By default the menu shown here is divided into sections for
 "primitive" status types, such as \fIAvailable\fR, \fIAway\fR, etc.; a few
-"popular" statuses which have been recently used, and a section which shows
-\fBNew...\fR and \fBSaved...\fR options for more advanced status manipulation.
+"popular" statuses (including "transient" statuses)  which have been
+recently used, and a section which shows \fBNew Status...\fR and \fBSaved
+Statuses...\fR options for more advanced status manipulation.
+
+.TP
+.B Primitive Statuses
+A primitive status is a basic status supported by the protocol.  Examples of
+primitive statuses would be Available, Away, Invisible, etc.  A primitive
+status can be used to create a \fBTransient Status\fB or a \fBSaved Status\fR,
+both explained below.  Essentially, primitive statuses are building blocks
+of more complicated statuses.
+
+.TP
+.B Transient Statuses
+When one of the statuses from the topmost section of the status selector's
+menu is selected, this creates a transient, or temporary, status.  The status
+will show in the "popular statuses" section in the menu until it has not been
+used for a sufficiently long time.  A transient status may also be created by
+selecting \fINew Status...\fR from the status selector's menu, then clicking
+\fIUse\fR once the user has entered the message.
+
+.TP
+.B Saved Statuses
+Saved statuses are permanent--once created, they will exist until deleted.
+Saved statuses are useful for statuses and status messages that will be used
+on a regular basis.  They are also useful for creating complex statuses in
+which some accounts should always have a different status from others.  For
+example, one might wish to create a status called "Sleeping" that has all
+accounts set to "Away", then create another status called "Working" that
+has three accounts set to "Away" and another account set to "Available."
+
+.TP
+.B New Status Window
+When the user selects \fINew Status...\fR from the status selector menu,
+Pidgin presents the user with a dialog asking for status-related information.
+That information is discussed below:
+
+\fITitle\fR - The name of the status that will appear in the status selctor's
+menu.  If the user clicks the \fISave\fR or \fISave & Use\fR button, this
+name will also be shown in the \fBSaved Status Window\fR.  The title should
+be a short description of the status.
+
+\fIStatus\fR - The type of status being created, such as Available, Away, etc.
+
+\fIMessage\fR - The content of the status message.  This is what is visible
+to other users.  Some protocols will allow formatting in some status messages;
+where formatting is not supported it will be stripped to the bare text entered.
+
+\fIUse a different status for some accounts\fR - This allows the creation of
+complex statuses in which some accounts' status differs from that of other
+accounts.  To use this, the user will click the expander to the left of the
+text, then select individual accounts which will have a different status
+and/or status message.  When the user selects an account, Pidgin will present
+another status dialog asking for a status and a message just for the selected
+account.
+
+.TP
+.B Saved Status Window
+When the user selects \fISaved Statuses...\fR from the status selector's menu,
+Pidgin presents a dialog that lists all saved statuses.  "Transient" statuses,
+discussed above, are \fB\fINOT\fR\fR shown here.  This window provides the
+ability to manage saved statuses by allowing the creation, modification, and
+deletion of saved statuses.  The \fIUse\fR, \fIModify\fR, and \fIDelete\fR
+buttons here allow operation on the status selected from the list; the \fAdd\fR
+button allows creation of a new saved status, and the \fIClose\fR button closes
+the window.
 
 .SH BUDDY POUNCE
 A Buddy Pounce is an automated trigger that occurs when a buddy returns to
@@ -399,37 +463,53 @@ until removed by the \fBDelete\fR button.
 
 .SH PLUGINS
 Pidgin allows for dynamic loading of plugins to add extra functionality
-to Pidgin.  Plugins can be enabled and configured from the
-\fBPreferences\fR window.  See \fIplugins/HOWTO\fR or
-\fIhttp://developer.pidgin.im/wiki/CHowTo\fR for more information on
-writing plugins.
+to Pidgin.  See \fIplugins/HOWTO\fR or
+\fIhttp://developer.pidgin.im/wiki/CHowTo\fR for information on writing
+plugins.
+
+The plugins dialog can be accessed by selecting Plugins from the Tools menu.
+Each plugin available appears in this dialog with its name, version, and a
+short summary of its functionality. Plugins can be enabled with the checkbox
+beside the name and short description.  More information on the currently
+selected plugin is available by clicking the expander beside the text
+\fIPlugin Details\fR.  If the selected plugin has preferences or configuration
+options, the \fIConfigure Plugin\fR button will present the plugin's
+preferences dialog.
 
 .SH PERL
-Pidgin allows for perl scripting.  See \fIPerl Scripting HOWTO\fR in
-the Pidgin documentation for more information about perl scripting.
+Pidgin allows for plugins to be written in the perl scripting language.  See
+\fIPerl Scripting HOWTO\fR in the Pidgin documentation for more information
+about perl scripting.
 
 .SH TCL
-Pidgin allows for Tcl scripting. See \fIplugins/tcl/TCL-HOWTO\fR for
-more information about Tcl scripting.
+Pidgin allows for plugins to be written in the Tcl scripting language. See
+\fIplugins/tcl/TCL-HOWTO\fR for more information about Tcl scripting.
+
+.SH D-Bus
+Pidgin allows for interaction via D-Bus.  Currently very little documentation
+on this interaction exists.
 
 .SH FILES
   \fI@prefix@/bin/pidgin\fR: Pidgin's location.
 .br
+  \fI~/.purple/blist.xml\fR: the buddy list.
+.br
+  \fI~/.purple/accounts.xml\fR: information about your accounts.
+.br
+  \fI~/.purple/pounces.xml\fR: stores your buddy pounces.
+.br
+  \fI~/.purple/prefs.xml\fR: Pidgin's configuration file.
+.br
+  \fI~/.purple/status.xml\fR: stores your away messages.
+.br
+  \fI~/.purple/logs/PROTOCOL/ACCOUNT/SCREENNAME/DATE.{html,txt}\fR: conversation logs.
+
+.SH DIRECTORIES
   \fI@prefix@/lib/pidgin/\fR: Pidgin's plugins directory.
 .br
   \fI@prefix@/lib/purple-2/\fR: libpurple's plugins directory.
 .br
-  \fI~/.purple/prefs.xml\fR: Pidgin's configuration file.
-.br
-  \fI~/.purple/accounts.xml\fR: information about your accounts.
-.br
-  \fI~/.purple/status.xml\fR: stores your away messages.
-.br
-  \fI~/.purple/pounces.xml\fR: stores your buddy pounces.
-.br
-  \fI~/.purple/logs/PROTOCOL/ACCOUNT/SCREENNAME/DATE.{html,txt}\fR: conversation logs.
-.br
-  \fI~/.purple/blist.xml\fR: the buddy list.
+  \fI~/.purple\fR: users' local settings
 .br
   \fI~/.purple/plugins/\fR: users' local plugins
 
