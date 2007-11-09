@@ -2619,6 +2619,13 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	/* Apparently XFS (and possibly other filesystems) do not
 	 * guarantee that file data is flushed before file metadata,
 	 * so this procedure is insufficient without some flushage. */
+	if (fflush(file) < 0) {
+		purple_debug_error("util", "Error flushing %s: %s\n",
+				   filename_temp, g_strerror(errno));
+		g_free(filename_temp);
+		fclose(file);
+		return FALSE;
+	}
 	if (fsync(fileno(file)) < 0) {
 		purple_debug_error("util", "Error syncing file contents for %s: %s\n",
 				   filename_temp, g_strerror(errno));
