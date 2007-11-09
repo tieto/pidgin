@@ -77,25 +77,27 @@ GType gnt_window_get_gtype(void);
 #define gnt_hwindow_new(homo) gnt_window_box_new(homo, FALSE)
 
 /**
- * 
+ * Create a new window.
  *
- * @return
+ * @return The newly created window.
  */
 GntWidget * gnt_window_new(void);
 
 /**
- * 
- * @param homo
- * @param vert
+ * Create a new window.
  *
- * @return
+ * @param homo  @c TRUE if the widgets inside the window should have the same dimensions.
+ * @param vert  @c TRUE if the widgets inside the window should be stacked vertically.
+ *
+ * @return  The newly created window.
  */
 GntWidget * gnt_window_box_new(gboolean homo, gboolean vert);
 
 /**
- * 
- * @param window
- * @param menu
+ * Set the menu for a window.
+ *
+ * @param window  The window.
+ * @param menu    The menu for the window.
  */
 void gnt_window_set_menu(GntWindow *window, GntMenu *menu);
 

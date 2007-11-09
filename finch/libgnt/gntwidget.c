@@ -617,7 +617,7 @@ void gnt_widget_queue_update(GntWidget *widget)
 		return;
 	while (widget->parent)
 		widget = widget->parent;
-	
+
 	if (!g_object_get_data(G_OBJECT(widget), "gnt:queue_update"))
 	{
 		int id = g_timeout_add(0, update_queue_callback, widget);

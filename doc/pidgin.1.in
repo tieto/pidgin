@@ -227,17 +227,28 @@ Lets the user choose when and what sounds are to be played.
 .SH Network
 
 .TP
-.B IP Address
-\fIAutodetect IP Address\fR: Pidgin will attempt to automatically determine
-your IP address for use in file transfers and Direct IMs.
-
-\fIPublic IP\fR: What IP address to use for file transfer and Direct IMs. This
-is mainly useful for users with multiple network interfaces or behind NAT.
+.B STUN server
+This allows specifying a server which uses the STUN protocol to determine
+a host's public IP address.  This can be particularly useful for some
+protocols.
 
 .TP
-.B Ports
-\fIManually specify range of ports to listen on\fR: Specify specific ports to
-listen on, overriding any defaults.
+.B Autodetect IP address
+When checked, causes Pidign to attempt to determine the public IP address
+of the host on which Pidgin is running and disables the \fBPublic IP\fR
+text field listed below.
+
+.TP
+.B Public IP
+If \fBAutodetect IP address\fR is disabled, this field allows manually
+specifying the public IP address for the host on which Pidgin is running.
+This is mainly useful for users with multiple network interfaces or behind
+NATs.
+
+.TP
+.B Manually specify range of ports to listen on
+Specify a range ports to listen on, overriding any defaults.  This is
+sometimes useful for file transfers and Direct IM.
 
 .TP
 .B Proxy Server
@@ -246,56 +257,82 @@ server.  Pidgin currently supports SOCKS 4/5 and HTTP proxies.
 
 .SH Browser
 
+.TP
+.B Browser
 Allows the user to select Pidgin's default web browser.  Firefox, Galeon,
 Konqueror, Mozilla, Netscape and Opera are supported natively.  The user
 can also manually enter a command to be executed when a link is clicked
 (\fI%s\fR expands to the URL).  For example, \fIxterm -e lynx "%s"\fR will
-open the link with lynx.  \fIOpen new window by default\fR makes the
-browser use a new window instead of using the current window (or spawning a
-new tab).
+open the link with lynx.
+
+.TP
+.B Open link in
+Allows the user to specify whether to use an existing window, a new tab, a
+new window, or to let the browser to decide what to do when calling the
+browser to open a link.  Which options are available will depend on which
+browser is selected.
 
 .SH Logging
 
-\fIMessage Logs\fR lets the user choose whether \fBConversations\fR and/or
-\fBBuddy Chats\fR will be logged as well as whether logs will be in HTML or
-plain text format.  \fISystem Logs\fR describes the types of events to be
-logged.
-
-.SH Away / Idle
-
-\fIQueue new messages when away\fR: Messages received since going Away will
-not be shown until away status is removed.
-
-\fISend auto-response\fR: If someone messages you while away, your
-auto-response will be sent.
-
-\fIOnly send auto-response when idle\fR: If someone messages you while
-away, your auto-response will only be sent if Pidgin decides that the
-connection is idle.
-
-\fIIdle time reporting\fR: If \fINone\fR is selected, account idle time
-will not be reported.  \fIPidgin usage\fR infers your idle time from your
-usage of Pidgin.  \fIX usage\fR infers your idle time from \fBX\fR
-(this option may not be universally available).
-
-\fIAuto-away\fR: Determines if and under what conditions Pidgin will
-automatically turn on the Away status.
+.TP
+.B Log format
+Specifies how to log.  Pidgin supports HTML and plain text, but plugins can
+provide other logging methods.
 
 .TP
-.B Away Messages
-Lets the user add/edit/remove available \fBAway Messages\fR.
+.B Log all instant messages
+When enabled, all IM conversations are logged.  This can be overridden on a
+per-conversation basis in the conversation window.
 
-.SH Plugins
+.TP
+.B Log all chats
+When enabled, all chat conversations are logged.  This can be overridden on a
+per-conversation basis in the conversation window.
 
-Allows the user to enable add-on plugins for Pidgin.  Several of these
-come with Pidgin, while others must be downloaded separately.  The
-\fIDescription\fR field gives the plugin author's description of the
-plugin, while the \fIDetails\fR field gives the plugin's authorship, URL,
-and file name/location information.
+.TP
+.B Log all status changes to system log
+When enabled, status changes are logged.
 
-Some plugins can be configured.  If you load such a plugin, its
-configuration preferences will appear as a submenu to \fBPlugins\fR, with
-the submenu title determined by the plugin's name.
+.SH Status / Idle
+
+.TP
+.B Report idle time
+Determines under which conditions to report idle time.  \fBBased on keyboard
+and mouse use\fR uses keyboard and mouse activity to determine idle time.
+\fBFrom last sent message\fR uses the time at which you last sent a message
+in Pidgin to determine idle.  \fBNever\fR disables idle reporting.
+
+.TP
+.B Auto-reply
+Determines when to send an auto-reply on protocols which support it
+(currently only AIM).
+
+.TP
+.B Change status when idle
+When enabled, this uses the \fBMinutes before becoming idle\fR and \fBChange
+status to\fR preferences described below to set status on idle.
+
+.TP
+.B Minutes before becoming idle
+Specifies how many minutes of inactivity are required before considering the
+user to be idle.
+
+.TP
+.B Change status to
+Specifies which "primitive" or "saved" status to use when setting status on
+idle.
+
+.TP
+.B Use status from last exit at startup
+If this is checked, Pidgin will remember what status was active when the
+user closed Pidgin and restore it at the next run.  When disabled, Pidgin
+will always set the status selected in \fBStatus to apply at startup\fR
+at startup.
+
+.TP
+.B Status to apply at startup
+When \fBUse status from last exit at startup\fR is disabled, this specifies
+which "primitive" or "saved" status to use at startup.
 
 .SH CONVERSATIONS
 When starting a new conversation, the user is presented with the
@@ -530,4 +567,8 @@ Our retired crazy patch writers include:
 .br
 
 
-This manpage was originally written by Dennis Ristuccia <\fIdennis@dennisr.net\fR>.  It has been updated and largely rewritten by Sean Egan <\fIseanegan@gmail.com\fR> and Ben Tegarden <\fItegarden@uclink.berkeley.edu\fR>.
+This manpage was originally written by Dennis Ristuccia
+<\fIdennis@dennisr.net\fR>.  It has been updated and largely rewritten by
+Sean Egan <\fIseanegan@gmail.com\fR>,
+Ben Tegarden <\fItegarden@uclink.berkeley.edu\fR>,
+and John Bailey <\fIrekkanoryo@pidgin.im\fR>.

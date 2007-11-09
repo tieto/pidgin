@@ -149,5 +149,5 @@ gboolean gnt_util_parse_xhtml_to_textview(const char *string, GntTextView *tv);
  * @param key     The key to trigger the button
  * @param button  The button to trigger
  */
-void gnt_util_set_trigger_widget(GntWidget *wid, const char *text, GntWidget *button);
+void gnt_util_set_trigger_widget(GntWidget *widget, const char *key, GntWidget *button);
 

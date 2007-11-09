@@ -895,8 +895,8 @@ interface_page()
 	label = pidgin_prefs_dropdown(vbox, _("_Show system tray icon:"), PURPLE_PREF_STRING,
 					PIDGIN_PREFS_ROOT "/docklet/show",
 					_("Always"), "always",
-					_("Never"), "never",
 					_("On unread messages"), "pending",
+					_("Never"), "never",
 					NULL);
 	gtk_size_group_add_widget(sg, label);
         gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
