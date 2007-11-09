@@ -2918,7 +2918,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 	"core-log_reader",                                /**< id             */
 	N_("Log Reader"),                                 /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 
 	/** summary */
 	N_("Includes other IM clients' logs in the "

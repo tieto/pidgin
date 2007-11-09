@@ -905,7 +905,7 @@ static PurplePluginInfo info =
 
 	NOTIFY_PLUGIN_ID,                                 /**< id             */
 	N_("Message Notification"),                       /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Provides a variety of ways of notifying you of unread messages."),
 	                                                  /**  description    */

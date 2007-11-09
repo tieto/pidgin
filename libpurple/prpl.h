@@ -338,6 +338,11 @@ struct _PurplePluginProtocolInfo
 	gboolean (*can_receive_file)(PurpleConnection *, const char *who);
 	void (*send_file)(PurpleConnection *, const char *who, const char *filename);
 	PurpleXfer *(*new_xfer)(PurpleConnection *, const char *who);
+
+	/** Checks whether offline messages to @a buddy are supported.
+	 *  @return @c TRUE if @a buddy can be sent messages while they are
+	 *          offline, or @c FALSE if not.
+	 */
 	gboolean (*offline_message)(const PurpleBuddy *buddy);
 
 	PurpleWhiteboardPrplOps *whiteboard_prpl_ops;

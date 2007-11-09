@@ -1886,7 +1886,7 @@ static PurplePluginInfo info =
 
 	"prpl-simple",                                    /**< id             */
 	"SIMPLE",                                         /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	N_("SIP/SIMPLE Protocol Plugin"),                 /**  summary        */
 	N_("The SIP/SIMPLE Protocol Plugin"),             /**  description    */
 	"Thomas Butter <butter@uni-mannheim.de>",         /**< author         */

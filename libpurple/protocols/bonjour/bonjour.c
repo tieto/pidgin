@@ -476,7 +476,7 @@ static PurplePluginInfo info =
 
 	"prpl-bonjour",                                   /**< id             */
 	"Bonjour",                                        /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Bonjour Protocol Plugin"),
 	                                                  /**  description    */

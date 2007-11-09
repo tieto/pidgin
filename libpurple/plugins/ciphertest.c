@@ -262,7 +262,7 @@ static PurplePluginInfo info =
 
 	"core-cipher-test",									/**< id             */
 	N_("Cipher Test"),									/**< name           */
-	VERSION,											/**< version        */
+	DISPLAY_VERSION,										/**< version        */
 														/**  summary        */
 	N_("Tests the ciphers that ship with libpurple."),
 														/**  description    */

@@ -172,9 +172,12 @@ struct _PurpleConversationUiOps
 	void (*write_im)(PurpleConversation *conv, const char *who,
 	                 const char *message, PurpleMessageFlags flags,
 	                 time_t mtime);
-	/** Write a message to a conversation.  This is used rather than
-	 *  the chat- or im-specific ops for generic messages, such as system
-	 *  messages like "x is now know as y".
+	/** Write a message to a conversation.  This is used rather than the
+	 *  chat- or im-specific ops for errors, system messages (such as "x is
+	 *  now know as y"), and as the fallback if #write_im and #write_chat
+	 *  are not implemented.  It should be implemented, or the UI will miss
+	 *  conversation error messages and your users will hate you.
+	 *
 	 *  @see purple_conversation_write()
 	 */
 	void (*write_conv)(PurpleConversation *conv,

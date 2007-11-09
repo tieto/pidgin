@@ -165,7 +165,7 @@ static PurplePluginInfo info =
 
 	"prpl-jabber",                                    /**< id             */
 	"XMPP",                                           /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("XMPP Protocol Plugin"),
 	                                                  /**  description    */

@@ -599,7 +599,7 @@ static PurplePluginInfo info =
 
 	PERL_PLUGIN_ID,                                   /**< id             */
 	N_("Perl Plugin Loader"),                         /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	N_("Provides support for loading perl plugins."), /**< summary        */
 	N_("Provides support for loading perl plugins."), /**< description    */
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */

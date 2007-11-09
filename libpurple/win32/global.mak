@@ -72,6 +72,7 @@ PIDGIN_VERSION := $(shell \
 PURPLE_VERSION := $(PIDGIN_VERSION)
 
 DEFINES += 	-DVERSION=\"$(PIDGIN_VERSION)\" \
+		-DDISPLAY_VERSION=\"$(PIDGIN_VERSION)\" \
 		-DHAVE_CONFIG_H
 
 # Use -g flag when building debug version of Pidgin (including plugins).

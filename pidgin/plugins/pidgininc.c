@@ -89,7 +89,7 @@ static PurplePluginInfo info =
 
 	PURPLEINC_PLUGIN_ID,                                /**< id             */
 	N_("Pidgin Demonstration Plugin"),                  /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("An example plugin that does stuff - see the description."),
 	                                                  /**  description    */

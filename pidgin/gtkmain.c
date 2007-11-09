@@ -92,7 +92,7 @@ static SnDisplay *sn_display = NULL;
  * Lists of signals we wish to catch and those we wish to ignore.
  * Each list terminated with -1
  */
-static int catch_sig_list[] = {
+static const int catch_sig_list[] = {
 	SIGSEGV,
 	SIGHUP,
 	SIGINT,
@@ -103,7 +103,7 @@ static int catch_sig_list[] = {
 	-1
 };
 
-static int ignore_sig_list[] = {
+static const int ignore_sig_list[] = {
 	SIGPIPE,
 	-1
 };
@@ -383,7 +383,7 @@ show_usage(const char *name, gboolean terse)
 	char *text;
 
 	if (terse) {
-		text = g_strdup_printf(_("%s %s. Try `%s -h' for more information.\n"), PIDGIN_NAME, VERSION, name);
+		text = g_strdup_printf(_("%s %s. Try `%s -h' for more information.\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
 	} else {
 		text = g_strdup_printf(_("%s %s\n"
 		       "Usage: %s [OPTION]...\n\n"
@@ -394,7 +394,10 @@ show_usage(const char *name, gboolean terse)
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use, separated by commas)\n"
-		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, VERSION, name);
+#ifndef WIN32
+		       "  --display=DISPLAY   X display to use\n"
+#endif
+		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
 	}
 
 	purple_print_utf8_to_console(stdout, text);
@@ -481,6 +484,7 @@ int main(int argc, char *argv[])
 		{"nologin",  no_argument,       NULL, 'n'},
 		{"session",  required_argument, NULL, 's'},
 		{"version",  no_argument,       NULL, 'v'},
+		{"display",  required_argument, NULL, 'D'},
 		{0, 0, 0, 0}
 	};
 
@@ -509,7 +513,7 @@ int main(int argc, char *argv[])
 #ifndef DEBUG
 		/* We translate this here in case the crash breaks gettext. */
 		segfault_message_tmp = g_strdup_printf(_(
-			"%s has segfaulted and attempted to dump a core file.\n"
+			"%s %s has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
 			"If you can reproduce the crash, please notify the developers\n"
@@ -523,7 +527,7 @@ int main(int argc, char *argv[])
 			"LSchiere (via AIM).  Contact information for Sean and Luke \n"
 			"on other protocols is at\n"
 			"%swiki/DeveloperPages\n"),
-			PIDGIN_NAME, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE
+			PIDGIN_NAME, DISPLAY_VERSION, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE
 		);
 
 		/* we have to convert the message (UTF-8 to console
@@ -626,6 +630,9 @@ int main(int argc, char *argv[])
 		case 'm':   /* do not ensure single instance. */
 			opt_si = FALSE;
 			break;
+		case 'D':   /* --display */
+			/* handled by gtk_init_check below */
+			break;
 		case '?':	/* show terse help */
 		default:
 			show_usage(argv[0], TRUE);
@@ -647,7 +654,7 @@ int main(int argc, char *argv[])
 	}
 	/* show version message */
 	if (opt_version) {
-		printf("%s %s\n", PIDGIN_NAME, VERSION);
+		printf("%s %s\n", PIDGIN_NAME, DISPLAY_VERSION);
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
 #endif
@@ -684,7 +691,7 @@ int main(int argc, char *argv[])
 	if (!gui_check) {
 		char *display = gdk_get_display();
 
-		printf("%s %s\n", PIDGIN_NAME, VERSION);
+		printf("%s %s\n", PIDGIN_NAME, DISPLAY_VERSION);
 
 		g_warning("cannot open display: %s", display ? display : "unset");
 		g_free(display);

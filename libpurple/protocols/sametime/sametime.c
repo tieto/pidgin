@@ -5667,7 +5667,7 @@ static PurplePluginInfo mw_plugin_info =
 
 	PLUGIN_ID,                                        /**< id             */
 	PLUGIN_NAME,                                      /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	PLUGIN_SUMMARY,                                   /**< summary        */
 	PLUGIN_DESC,                                      /**<  description    */
 	PLUGIN_AUTHOR,                                    /**< author         */

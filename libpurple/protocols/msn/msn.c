@@ -2147,7 +2147,7 @@ static PurplePluginInfo info =
 
 	"prpl-msn",                                       /**< id             */
 	"MSN",                                            /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("MSN Protocol Plugin"),
 	                                                  /**  description    */

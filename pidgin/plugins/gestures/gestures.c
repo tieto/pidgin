@@ -293,7 +293,7 @@ static PurplePluginInfo info =
 
 	GESTURES_PLUGIN_ID,                               /**< id             */
 	N_("Mouse Gestures"),                             /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Provides support for mouse gestures"),
 	                                                  /**  description    */
