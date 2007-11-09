@@ -71,9 +71,7 @@ PIDGIN_VERSION := $(shell \
 )
 PURPLE_VERSION := $(PIDGIN_VERSION)
 
-DEFINES += 	-DVERSION=\"$(PIDGIN_VERSION)\" \
-		-DDISPLAY_VERSION=\"$(PIDGIN_VERSION)\" \
-		-DHAVE_CONFIG_H
+DEFINES += -DHAVE_CONFIG_H
 
 # Use -g flag when building debug version of Pidgin (including plugins).
 # Use -fnative-struct instead of -mms-bitfields when using mingw 1.1

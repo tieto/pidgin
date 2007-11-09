@@ -1664,6 +1664,8 @@ jabber_password_change_result_cb(JabberStream *js, xmlnode *packet,
 	if(type && !strcmp(type, "result")) {
 		purple_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
 				_("Your password has been changed."));
+
+		purple_account_set_password(js->gc->account, (char *)data);
 	} else {
 		char *msg = jabber_parse_error(js, packet);
 
@@ -1671,6 +1673,8 @@ jabber_password_change_result_cb(JabberStream *js, xmlnode *packet,
 				_("Error changing password"), msg);
 		g_free(msg);
 	}
+
+	g_free(data);
 }
 
 static void jabber_password_change_cb(JabberStream *js,
@@ -1699,11 +1703,9 @@ static void jabber_password_change_cb(JabberStream *js,
 	y = xmlnode_new_child(query, "password");
 	xmlnode_insert_data(y, p1, -1);
 
-	jabber_iq_set_callback(iq, jabber_password_change_result_cb, NULL);
+	jabber_iq_set_callback(iq, jabber_password_change_result_cb, g_strdup(p1));
 
 	jabber_iq_send(iq);
-
-	purple_account_set_password(js->gc->account, p1);
 }
 
 static void jabber_password_change(PurplePluginAction *action)

@@ -1292,6 +1292,7 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 					 G_CALLBACK(status_editor_ok_cb), dialog);
 
 	gtk_widget_show_all(win);
+	g_object_unref(sg);
 }
 
 
@@ -1621,6 +1622,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	}
 
 	gtk_widget_show_all(win);
+	g_object_unref(sg);
 }
 
 

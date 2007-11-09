@@ -109,7 +109,7 @@ typedef struct
 static GtkWidget *accountmenu = NULL;
 
 static guint visibility_manager_count = 0;
-static gboolean gtk_blist_obscured = FALSE;
+static GdkVisibilityState gtk_blist_visibility = GDK_VISIBILITY_UNOBSCURED;
 static gboolean editing_blist = FALSE;
 
 static GList *pidgin_blist_sort_methods = NULL;
@@ -162,11 +162,14 @@ static char *dim_grey()
  ***************************************************/
 static gboolean gtk_blist_visibility_cb(GtkWidget *w, GdkEventVisibility *event, gpointer data)
 {
-	if (event->state == GDK_VISIBILITY_FULLY_OBSCURED)
-		gtk_blist_obscured = TRUE;
-	else if (gtk_blist_obscured) {
-			gtk_blist_obscured = FALSE;
-			pidgin_blist_refresh_timer(purple_get_blist());
+	GdkVisibilityState old_state = gtk_blist_visibility;
+	gtk_blist_visibility = event->state;
+
+	if (gtk_blist_visibility == GDK_VISIBILITY_FULLY_OBSCURED &&
+		old_state != GDK_VISIBILITY_FULLY_OBSCURED) {
+
+		/* no longer fully obscured */
+		pidgin_blist_refresh_timer(purple_get_blist());
 	}
 
 	/* continue to handle event normally */
@@ -3561,7 +3564,8 @@ static gboolean pidgin_blist_refresh_timer(PurpleBuddyList *list)
 {
 	PurpleBlistNode *gnode, *cnode;
 
-	if (gtk_blist_obscured || !GTK_WIDGET_VISIBLE(gtkblist->window))
+	if (gtk_blist_visibility == GDK_VISIBILITY_FULLY_OBSCURED
+			|| !GTK_WIDGET_VISIBLE(gtkblist->window)) 
 		return TRUE;
 
 	for(gnode = list->root; gnode; gnode = gnode->next) {
@@ -5991,7 +5995,8 @@ pidgin_blist_toggle_visibility()
 {
 	if (gtkblist && gtkblist->window) {
 		if (GTK_WIDGET_VISIBLE(gtkblist->window)) {
-			purple_blist_set_visible(PIDGIN_WINDOW_ICONIFIED(gtkblist->window) || gtk_blist_obscured);
+			purple_blist_set_visible(PIDGIN_WINDOW_ICONIFIED(gtkblist->window) ||
+					gtk_blist_visibility != GDK_VISIBILITY_UNOBSCURED);
 		} else {
 			purple_blist_set_visible(TRUE);
 		}

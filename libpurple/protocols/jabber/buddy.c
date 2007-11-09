@@ -2252,6 +2252,16 @@ static void user_search_x_data_cb(JabberStream *js, xmlnode *result, gpointer da
 	xmlnode *query;
 	JabberIq *iq;
 	char *dir_server = data;
+	const char *type;
+
+	/* if they've cancelled the search, we're
+	 * just going to get an error if we send
+	 * a cancel, so skip it */
+	type = xmlnode_get_attrib(result, "type");
+	if(type && !strcmp(type, "cancel")) {
+		g_free(dir_server);
+		return;
+	}
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:search");
 	query = xmlnode_get_child(iq->node, "query");

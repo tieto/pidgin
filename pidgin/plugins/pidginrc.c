@@ -515,6 +515,11 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 	                 G_CALLBACK(purplerc_reread), NULL);
 
 	gtk_widget_show_all(ret);
+
+	g_object_unref(labelsg);
+	g_object_unref(widgetsg);
+	g_object_unref(buttonsg);
+
 	return ret;
 }
 

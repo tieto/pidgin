@@ -2162,6 +2162,9 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 		                        purple_imgstore_get_size(status_box->buddy_icon_img), NULL);
 		gdk_pixbuf_loader_close(loader, NULL);
 		status_box->buddy_icon = gdk_pixbuf_loader_get_pixbuf(loader);
+		if (status_box->buddy_icon)
+			g_object_ref(status_box->buddy_icon);
+		g_object_unref(loader);
 	}
 
 	if (status_box->buddy_icon == NULL)

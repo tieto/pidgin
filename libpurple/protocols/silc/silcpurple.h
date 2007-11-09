@@ -35,6 +35,9 @@
 #include "server.h"
 #include "util.h"
 
+#undef SILC_VERSION
+#define SILC_VERSION(a, b, c) (((a) << 24) + ((b) << 16) + ((c) << 8))
+
 /* Default public and private key file names */
 #define SILCPURPLE_PUBLIC_KEY_NAME "public_key.pub"
 #define SILCPURPLE_PRIVATE_KEY_NAME "private_key.prv"
@@ -68,7 +71,9 @@ typedef struct SilcPurpleStruct {
 	SilcClientConnection conn;
 	SilcPublicKey public_key;
 	SilcPrivateKey private_key;
+	SilcHash sha1hash;
 
+	SilcDList tasks;
 	guint scheduler;
 	PurpleConnection *gc;
 	PurpleAccount *account;

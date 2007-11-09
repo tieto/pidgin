@@ -347,8 +347,12 @@ void silcpurple_show_public_key(SilcPurple sg,
 	key_len = silc_pkcs_public_key_get_len(public_key);
 
 	pk = silc_pkcs_public_key_encode(public_key, &pk_len);
+	if (!pk)
+	  return;
 	fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
 	babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
+	if (!fingerprint || !babbleprint)
+	  return;
 
 	s = g_string_new("");
 	if (ident->realname)
