@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-05 21:51+0100\n"
-"PO-Revision-Date: 2007-11-05 21:49+0100\n"
+"POT-Creation-Date: 2007-11-09 20:52+0100\n"
+"PO-Revision-Date: 2007-11-09 21:57+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -11989,6 +11989,12 @@ msgstr "Status für %s"
 
 msgid "Waiting for network connection"
 msgstr "Warte auf Netzwerkverbindung"
+
+msgid "New status..."
+msgstr "Neuer Status..."
+
+msgid "Saved statuses..."
+msgstr "Gespeicherter Status..."
 
 msgid "Google Talk"
 msgstr "Google Talk"
