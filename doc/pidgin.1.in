@@ -341,81 +341,30 @@ Some plugins can be configured.  If you load such a plugin, its
 configuration preferences will appear as a submenu to \fBPlugins\fR, with
 the submenu title determined by the plugin's name.
 
-.SH Protocols
-
-Protocols provide protocol specific preferences here.
-
 .SH CONVERSATIONS
 When starting a new conversation, the user is presented with the
 \fBConversation\fR window.  The conversation appears in the upper text box
 and the user types his/her message in the lower text box.  Between the two
-is a row of settings, represented by icons.  Some or all buttons may not be
+is a row of options, represented by icons.  Some or all buttons may not be
 active if the protocol does not support the specific formatting. From left
 to right:
 .TP
-.B Bold
-Turns on/off bold.
+.B Font
+This menu provides font control options for the current conversation.  Size,
+style, and face may be configured here.
 .TP
-.B Italics
-Turns on/off italics.
+.B Insert
+This menu provides the ability to insert images, horizontal rules, and links
+where the protocol supports each of these features.
 .TP
-.B Underline
-Turns on/off underline.
-.TP
-.B Decrease font size
-Increases the size of the message text.
-.TP
-.B Increase font size
-Decreases the size of the message text.
-.TP
-.B Select a foreground color
-Changes the foreground color of the message text.
-.TP
-.B Select a background color
-Changes the background color of the message text.
-.TP
-.B Add image
-Inserts an in-line image in the message.
-.TP
-.B Add hyperlink
-Adds a clickable link to the message.
-.TP
-.B Add smiley
-Adds an emoticon (smiley) to your message.
+.B Smile!
+Allows the insertion of graphical smileys via the mouse.  This button shows
+the user a dialog with the available smileys for the current conversation.
 
-Beneath the lower text box is a row of buttons that execute commands:
-.TP
-.B Warn
-This issues a warning to the other person in the conversation (not
-available in all protocols).
-.TP
-.B Block
-This adds the other person to your deny list (not available in all
-protocols).
-.TP
-.B Send File
-Send a file to this user. This option is only available on protocols where
-Pidgin supports file transfer.
-.TP
-.B Add
-This adds this user to your buddy list.  This option is not available if
-the user is already on your list.
-.TP
-.B Remove
-This removes this user from your buddy list.  This option is not available
-if the user is not on your list.
-.TP
-.B Info
-This gets information (a profile) about the other person in the
-conversation (not available in all protocols).
-.TP
-.B Send
-This sends what's currently in the lower text box
+.SH CHATS
+For protocols that allow it, \fBChats\fR can be entered through the
+\fIBuddies\fR menu.
 
-.SH BUDDY CHATS
-For protocols that allow it, \fBBuddy Chats\fR can be entered through the
-\fIFile\fR menu or the \fIChat\fR button at the bottom of the \fBBuddy
-List\fR's \fBOnline\fR tab.
 
 Additional commands available in chat, depending on the protocol are:
 .TP
@@ -433,37 +382,33 @@ Ignore anything said by the chosen person
 Set the topic of the chat room.  This is usually a brief sentence
 describing the nature of the chat--an explanation of the chat room's name.
 
-.SH AWAY MESSAGES
-Most protocols allow for away messages.  When a user is \fIAway\fR, he can
-leave an informative message for others to see.  The \fBAway\fR submenu of
-the \fBTools\fR menu is used to add and remove away messages.
-
-\fINew Away Message\fR provides space for one to enter an away message and
-a title for that message.  If \fISave\fR or \fISave & Use\fR are chosen,
-this message will be saved.  It can later be referred to by the title given
-to it.
-
-\fIRemove Away Message\fR is a submenu containing the titles of saved away
-messages.  Clicking on one of these titles will remove the away message
-associated with it.
-
-The rest of the \fIaway\fR menu provides the user with a way to assign
-different away messages to different connections.  Choosing \fISet All
-Away\fR will set away all the connections capable of the away state.
+.SH STATUS MESSAGES
+Most protocols allow for status messages.  By using status messages, a user
+can leave an informative message for others to see.  Status and status
+messages are configured via the status selector at the bottom of the Buddy
+List window.  By default the menu shown here is divided into sections for
+"primitive" status types, such as \fIAvailable\fR, \fIAway\fR, etc.; a few
+"popular" statuses which have been recently used, and a section which shows
+\fBNew...\fR and \fBSaved...\fR options for more advanced status manipulation.
 
 .SH BUDDY POUNCE
 A Buddy Pounce is an automated trigger that occurs when a buddy returns to
-a normal state from an away state.  The \fBNew Buddy Pounce\fR dialog box
-can be activated by selecting the \fIBuddy Pounce\fR submenu from the
-\fBTools\fR menu. A pounce can be set to occur on any combination of the
-events listed, and any combination of actions can result.  If \fISave this
-pounce after activation\fR is checked, the trigger will remain until it is
-removed from the \fIRemove Buddy Pounce\fR menu.
+a normal state from an away state.  The \fBBuddy Pounce\fR dialog box
+can be activated by selecting the \fIBuddy Pounce\fR option from the
+\fBTools\fR menu. From this dialog, new pounces can be created with the
+\fBAdd\fR button and existing pounces can be removed with the \fBDelete\fR
+button.  A pounce can be set to occur on any combination of the
+events listed, and any combination of actions can result.  If \fIPounce
+only when my status is not Available\fR is checked, the pounce will occur
+only if you are set to a non-available status, such as invisible, do not
+disturb, away, etc.  If \fIRecurring\fR is checked, the pounce will remain
+until removed by the \fBDelete\fR button.
 
 .SH PLUGINS
 Pidgin allows for dynamic loading of plugins to add extra functionality
 to Pidgin.  Plugins can be enabled and configured from the
-\fBPreferences\fR window.  See \fIplugins/HOWTO\fR for more information on
+\fBPreferences\fR window.  See \fIplugins/HOWTO\fR or
+\fIhttp://developer.pidgin.im/wiki/CHowTo\fR for more information on
 writing plugins.
 
 .SH PERL
@@ -491,19 +436,15 @@ more information about Tcl scripting.
 .br
 \fI~/.purple/blist.xml\fR: the buddy list.
 .br
-\fI~/.purple/plugins/\fR: users local plugins
+\fI~/.purple/plugins/\fR: users' local plugins
 
 .SH BUGS
-The bug tracker can be reached by visiting:
-.br
-\fIhttp://developer.pidgin.im/report\fR
+The bug tracker can be reached by visiting \fIhttp://developer.pidgin.im/query\fR
 
 .SH PATCHES
 If you fix a bug in Pidgin (or otherwise enhance it), please submit a
 patch (using \fImtn diff > my.diff\fR against the latest version from the
-Monotone repository) at
-.br
-\fIhttp://developer.pidgin.im/newticket\fR
+Monotone repository) at \fIhttp://developer.pidgin.im/simpleticket\fR
 
 Before sending a bug report, please verify that you have the latest
 version of Pidgin.  Many bugs (major and minor) are fixed
@@ -530,86 +471,105 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
 
 .SH AUTHORS
 Pidgin's active developers are:
-
- Sean Egan (lead developer) <\fIseanegan@gmail.com\fR>
 .br
- Daniel 'datallah' Atallah (developer)
+  Sean Egan (lead developer) <\fIseanegan@gmail.com\fR>
 .br
- Ethan 'Paco-Paco' Blanton (developer)
+  Daniel 'datallah' Atallah (developer)
 .br
- Thomas Butter (developer)
+  John 'rekkanoryo' Bailey (developer)
 .br
- Ka-Hing Cheung (developer)
+  Ethan 'Paco-Paco' Blanton (developer)
 .br
- Sadrul Habib Chowdhury (developer)
+  Thomas Butter (developer)
 .br
- Mark 'KingAnt' Doliner (developer) <\fIthekingant@users.sourceforge.net\fR>
+  Ka-Hing Cheung (developer)
 .br
- Christian 'ChipX86' Hammond (developer & webmaster) <\fIchipx86@chipx86.com\fR>
+  Sadrul Habib Chowdhury (developer)
 .br
- Gary 'grim' Kramlich (developer)
+  Mark 'KingAnt' Doliner (developer) <\fIthekingant@users.sourceforge.net\fR>
 .br
- Richard 'rlaager' Laager (developer) <\fIrlaager@pidgin.im\fR>
+  Casey Harkins (developer)
 .br
- Richard 'wabz' Nelson (developer)
+  Gary 'grim' Kramlich (developer)
 .br
- Christopher 'siege' O'Brien (developer)
+  Richard 'rlaager' Laager (developer) <\fIrlaager@pidgin.im\fR>
 .br
- Bartosz Oler (developer)
+  Richard 'wabz' Nelson (developer)
 .br
- Etan 'deryni' Reisner (developer)
+  Christopher 'siege' O'Brien (developer)
 .br
- Tim 'marv' Ringenbach (developer) <\fImarv_sf@users.sf.net\fR>
+  Bartosz Oler (developer)
 .br
- Luke 'LSchiere' Schierer (support)
+  Etan 'deryni' Reisner (developer)
 .br
- Megan 'Cae' Schneider (support/QA)
+  Tim 'marv' Ringenbach (developer) <\fImarv_sf@users.sf.net\fR>
 .br
- Evan Schoenberg (developer)
+  Luke 'LSchiere' Schierer (support)
 .br
- Stu 'nosnilmot' Tomlinson (developer)
+  Megan 'Cae' Schneider (support/QA)
 .br
- Nathan 'faceprint' Walp (developer)
+  Evan Schoenberg (developer)
+.br
+  Kevin 'SimGuy' Stange (developer and webmaster)
+.br
+  Stu 'nosnilmot' Tomlinson (developer)
+.br
+  Nathan 'faceprint' Walp (developer)
 .br
 
 
 Our crazy patch writers include:
-
-John 'rekkanoryo' Bailey
 .br
-Felipe 'shx' Contreras
+  Dennis 'EvilDennisR' Ristuccia
 .br
-Decklin Foster
+  Peter 'fmoo' Ruibal
 .br
-Casey Harkins
+  Gabriel 'Nix' Schulhof
 .br
-Peter 'Bleeter' Lawler
-.br
-Robert 'Robot101' McQueen
-.br
-Benjamin Miller
-.br
-Kevin 'SimGuy' Stange
+  Will 'resiak' Thompson
 .br
 
 
-The retired developers of \fBgaim\fR are:
+Our artists are:
+.br
+  Hylke Bons <\fIh.bons@student.rug.nl\fR>
+.br
 
- Herman Bloggs (win32 port) <\fIherman@bluedigits.com\fR>
+
+Our retired developers are:
 .br
- Jim Duchek <\fIjim@linuxpimps.com\fR> (maintainer)
+  Herman Bloggs (win32 port) <\fIherman@bluedigits.com\fR>
 .br
- Rob Flynn <\fIgaim@robflynn.com\fR> (maintainer)
+  Jim Duchek <\fIjim@linuxpimps.com\fR> (maintainer)
 .br
- Adam Fritzler (libfaim maintainer)
+  Rob Flynn <\fIgaim@robflynn.com\fR> (maintainer)
 .br
- Syd Logan (hacker and designated driver [lazy bum])
+  Adam Fritzler (libfaim maintainer)
 .br
- Jim Seymour (Jabber developer)
+  Christian 'ChipX86' Hammond (developer & webmaster) <\fIchipx86@chipx86.com\fR>
 .br
- Mark Spencer (original author) <\fImarkster@marko.net\fR>
+  Syd Logan (hacker and designated driver [lazy bum])
 .br
- Eric Warmenhoven (former lead developer) <\fIeric@warmenhoven.org\fR>
+  Jim Seymour (XMPP developer)
 .br
+  Mark Spencer (original author) <\fImarkster@marko.net\fR>
+.br
+  Eric Warmenhoven (former lead developer) <\fIeric@warmenhoven.org\fR>
+.br
+
+
+Our retired crazy patch writers include:
+.br
+  Felipe 'shx' Contreras
+.br
+  Decklin Foster
+.br
+  Peter 'Bleeter' Lawler
+.br
+  Robert 'Robot101' McQueen
+.br
+  Benjamin Miller
+.br
+
 
 This manpage was originally written by Dennis Ristuccia <\fIdennis@dennisr.net\fR>.  It has been updated and largely rewritten by Sean Egan <\fIseanegan@gmail.com\fR> and Ben Tegarden <\fItegarden@uclink.berkeley.edu\fR>.
