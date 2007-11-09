@@ -32,7 +32,7 @@ Pidgin v@VERSION@ \- Instant Messaging client
 which is capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC,
 Novell GroupWise, Lotus Sametime, Zephyr, Gadu-Gadu, and QQ all at once. It has
 many common features found in other clients, as well as many unique features.
-Finch is not endorsed by or affiliated with America Online, ICQ, Microsoft, or
+Pidgin is not endorsed by or affiliated with America Online, ICQ, Microsoft, or
 Yahoo.
 
 .SH OPTIONS
@@ -48,6 +48,9 @@ that are displayed in the \fBDebug Window\fR.
 .TP
 .B \-h, \-\-help
 Print a summary of command line options and exit.
+.TP
+.B \-m, \-\-multiple
+Allow multiple instances of Pidgin to run.
 .TP
 .B \-n, \-\-nologin
 Don't automatically login when Pidgin starts.  Sets the global status to
@@ -68,9 +71,9 @@ You can also add and remove buddies from your buddy list.
 
 The \fBBuddy List\fR window contains a list of your buddies who are online
 and have allowed you to be notified of their presence.  The icon to the
-left of each buddy indicates the buddy's current state and the protocol
-they are using.  Double clicking a buddy will open a new \fBConversation\fR
-window.  Right clicking will pop up a menu:
+left of each buddy indicates the buddy's current status.  Double clicking
+a buddy will open a new \fBConversation\fR window.  Right clicking will
+pop up a menu:
 .TP
 .B Get Info
 Retrieves and displays information about the buddy.  This information is
@@ -89,16 +92,17 @@ buddy's state changes.  This will open the \fBBuddy Pounce\fR dialog to be
 discussed later.
 .TP
 .B View Log
-Pidgin is capable of automatically log its activities.  These logs are
+Pidgin is capable of automatically logging messages.  These logs are
 either plain text files (with a .txt extension) or html files (with a
 \&.html extension) located under the \fI~/.purple/logs\fR directory.  This
 menu command will display Pidgin's log viewer with logs loaded for that
 buddy or chat.
 .TP
 .B Alias
-Create an alias for this buddy.  This will open up a new dialog in which
-one can give this buddy an alternate name to appear on the buddy list and
-in conversations.
+Create an alias for this buddy.  This will show an editable text field where
+the buddy's screen name was displayed.  In this field one can give this
+buddy an alternate, more friendly name to appear on the buddy list and in
+conversations.
 
 For example, if a buddy's name screen name was jsmith1281xx and his real
 name was 'John Q. Smith,' one could create an alias as to identify the
@@ -106,39 +110,27 @@ buddy by his common name.
 .LP
 The remainder of the menu will consist of protocol specific commands.
 These commands vary depending on the protocol.
-.LP
-At the bottom of the \fBBuddy List\fR are several buttons (if enabled in
-\fBPreferences\fR):
 .TP
-.B IM
-Opens a new \fBConversation\fR window to to the selected buddy, or brings
-up the \fBNew Message\fR dialog box if no buddy is selected.
-.TP
-.B Info
-Retrieves and display information about the selected buddy, or brings up
-the \fBGet User Info\fR dialog box if no buddy is selected.
-.TP
-.B Chat
-Brings up the \fBJoin Chat\fR dialog box, prompting the user to select
-which username to use and what chat group to join.
-.TP
-.B Away
-Brings up a menu of all available \fBAway Messages\fR.  If an item is
-selected, all online accounts will use this item as their away message.
+.B Status Selector
+At the bottom of the \fBBuddy List\fR is a status selector which allows
+one to change his/her status.  This will be discussed further below.
+.T
 
 .SH ACCOUNT EDITOR
 The account editor consists of a list of accounts and information about
-them.  Clicking \fIDelete\fR will delete the currently selected account.
+them.  It can be accessed by selecting \fBManage\fR from the Tools menu.
+Clicking \fIDelete\fR will delete the currently selected account.
 Clicking \fIAdd\fR or \fIModify\fR will invoke a \fBModify Account\fR
 window.  Here, you can add or alter account information.  When creating a
 new account, you will submit your screen name and password.  You will also
 choose your protocol.
 
 If \fIRemember Password\fR is chosen, the password will be saved in
-Pidgin's configuration file.
+Pidgin's \fI~/.purple/accounts.xml\fR configuration file.
 
-If \fIAuto-Login\fR is chosen, this account will automatically login upon
-starting Pidgin.
+If \fIEnabled\fR is checked in the accounts dialog, this account will
+follow the status currently selected in the status selector.  If it is
+not checked, the account will always be offline.
 
 Each protocol has its own specific options that can be found in the
 modify screen.
@@ -149,120 +141,84 @@ All options take effect immediately.
 
 .SH Interface
 
-\fIDisplay remote nicknames if no alias is set\fR: Toggles whether server
-nickname data should be used if no local alias exists.
+.TP
+.B Show system tray icon
+Specifies when to show a Pidgin icon in the notification area of your
+panel (commonly referred to as the System Tray).
 
-.SH Buddy List
-\fISorting\fR: Toggles the order in which buddies are shown in your
-\fBBuddy List\fR between none, alphabetical, by status and by log size.
+.TP
+.B Hide new IM conversations
+Specifies when to hide new IM messages.  Messages will queue under the
+specified condition until shown.  Clicking the Pidgin icon in the
+notification area or system tray will display the queued messages.  An
+icon also appears in the buddy list's menu bar; this icon may also be
+used to display queued messages.
 
-\fIShow buttons as\fR: Toggles between picture-only, text-only, picture and
-text or no buttons view of the buttons on the \fBBuddy List\fR.
+.TP
+.B Show IMs and chats in tabbed windows
+When checked, this option will cause IM and chat sessions to appear in
+windows with multiple tabs.  One tab will represent one conversation or
+chat.  Where tabs are placed will be dictated by the preferences below.
 
-\fIRaise window on events\fR: Tells Pidgin to bring the \fBBuddy
-List\fR window to the top when buddies sign in or out.
+.TP
+.B Show close buttons on tabs
+When checked, this option will cause a clickable "U+2715 MULTIPLICATION X"
+unicode character to appear at the right edge of each tab.  Clicking this
+will cause the tab to be closed.
 
-\fIShow numbers in groups\fR: The number of buddies from each group
-currently logged in will be shown along with the total number of buddies in
-the group.
+.TP
+.B Placement
+Specifies where to place tabs in the window.  Some tab orientations may
+allow some users to fit more tabs into a single window comfortably.
 
-\fIShow buddy icons\fR: Toggles the display of buddies' custom icons.
-
-\fIShow warning levels\fR: Each buddy's warning level will be displayed
-next to the screen name. As a buddy's warning level increases, outgoing
-messages are more and more severely rate-limited.
-
-\fIShow idle times\fR: The amount of time each buddy has been idle will be
-displayed next to the screen name (if the buddy has opted to have their
-client report this information).
-
-\fIDim idle buddies\fR: If enabled, idle buddies will be displayed in grey
-text instead of black text.
-
-\fIAutomatically expand contacts\fR: If enabled, contacts will
-automatically expand to show the associated buddies when the mouse is held
-over the contact for a short period.
+.TP
+.B New conversations
+Specifies under which conditions tabs are placed into existing windows or
+into new windows.  For a single window, select \fILast created window\fR here.
 
 .SH Conversations
 
-\fIShow buttons as...\fR: The selected item will determine whether
-picture-only, text-only, combined picture/text, or no buttons will be used
-for \fBConversation\fR windows.
-
-\fIShow formatting toolbar\fR: Display the formatting toolbar between the
-upper and lower text boxes in conversations.
-
-\fIShow aliases in tabs/titles\fR: Displays buddy alias instead of screen
-name in window tabs and titles.
-
-\fIShow buddy icons\fR: For protocols that support it, buddy icons allow
-buddies to send small pictures to be displayed during the course of a
-conversation. Turning this option off hides those pictures.
-
-\fIEnable buddy icon animation\fR: If these pictures happen to be animated,
-this option will enable the animation, otherwise only the first frame will
-be displayed.
-
-\fINotify buddies that you are typing to them\fR: Some protocols allow
-clients to tell their buddies when they are typing. This option enables
-this feature for protocols that supports it.
-
-\fIRaise IM windows on events\fR: If enabled, IM \fBConversation\fR windows
-will be brought to the top when new messages are received.
-
-\fIRaise Chat windows on events\fR: If enabled, chat \fBConversation\fR windows
-will be brought to the top when new messages are received.
-
-\fIUse multi-colored screen names in chats\fR: Color code the screen names of
-users in chat rooms.
+.TP
+.B Enable buddy icon animation
+If a buddy's icon happens to be animated, this option will enable the
+animation, otherwise only the first frame will be displayed.
 
 .TP
-.B Tab Options
-\fIShow IMs and chats in tabbed windows\fR: Tabbed chatting allows one to
-have multiple conversations without multiple windows.
-
-\fIShow close buttons on tabs\fR: Adds a close button to each tab.
-
-\fITab Placement...\fR: Specifies where tabs are shown in the conversation
-window.
-
-\fI New conversation placement...\fR: Determines where new conversations will
-be placed (Last created window / New window / windows grouped by group or
-account / separate windows for IMs and Chats).
+.B Notify buddies that you are typing to them
+Some protocols allow clients to tell their buddies when they are typing.
+This option enables this feature for protocols that supports it.  For XMPP,
+this also enables sending the "User has left the conversation" message
+when ending the conversation.
 
 .TP
-.B Message Text
-\fIShow timestamp on messages\fR: Toggles the timestamp behavior for
-conversations.  Per-conversation behavior can be changed by pressing
-\fIF2\fR in the \fBConversation\fR window.
+.B Default Formatting
+Allows specifying the default formatting to apply to all outgoing messages
+(only applicable to protocols that support formatting in messages).
 
-\fIHighlight misspelled words\fR: Toggles highlighting of misspelled words
-as you type.
-
-\fIIgnore colors/font faces/font sizes\fR: Tells Pidgin to disregard
-buddies' color/font/size information in displaying IMs or Chats.
-
-\fIDefault Formatting\fR: Allows specifying the default formatting to apply
-to all outgoing messages (only applicable to protocols that support
-formatting in messages).
-
-.TP
-.B Shortcuts
-Allows the user to determine which keyboard shortcuts are available.
-
-.TP
-.B Smiley Themes
+.SH Smiley Themes
 Allows the user to choose between different smiley themes. The "none" theme
 will disable graphical emoticons - they will be displayed as text instead.
+The \fBAdd\fR and \fBRemove\fR buttons may be used to install or uninstall
+smiley themes.  Themes may also be installed by dragging and dropping them
+onto the list of themes.
 
 .SH Sounds
 
-\fISounds while away\fR: Determines whether sounds are played when an away
-message is up.
+.TP
+.B Method
+Lets the user choose between different playback methods. The user can also
+manually enter a command to be executed when a sound is to be played\
+(\fI%s\fR expands to the full path to the file name).
 
-\fISound Method\fR lets the user choose between different playback methods.
-The user can also manually enter a command to be executed when a sound is
-to be played (\fI%s\fR expands to the full path to the file name).
+.TP
+.B Sounds when conversation has focus
+When checked, sounds will play for events in the active conversation if
+the window is focused.  When unchecked, sounds will not play for the
+active conversation when the window is focused.
+
+.TP
+.B Enable Sounds
+Determines when to play sounds.
 
 .TP
 .B Sound Events
@@ -420,23 +376,25 @@ Pidgin allows for Tcl scripting. See \fIplugins/tcl/TCL-HOWTO\fR for
 more information about Tcl scripting.
 
 .SH FILES
-\fI@prefix@/bin/pidgin\fR: Pidgin's location.
+  \fI@prefix@/bin/pidgin\fR: Pidgin's location.
 .br
-\fI@prefix@/lib/pidgin/\fR: Pidgin's plugins directory.
+  \fI@prefix@/lib/pidgin/\fR: Pidgin's plugins directory.
 .br
-\fI~/.purple/prefs.xml\fR: Pidgin's configuration file.
+  \fI@prefix@/lib/purple-2/\fR: libpurple's plugins directory.
 .br
-\fI~/.purple/accounts.xml\fR: information about your accounts.
+  \fI~/.purple/prefs.xml\fR: Pidgin's configuration file.
 .br
-\fI~/.purple/status.xml\fR: stores your away messages.
+  \fI~/.purple/accounts.xml\fR: information about your accounts.
 .br
-\fI~/.purple/pounces.xml\fR: stores your buddy pounces.
+  \fI~/.purple/status.xml\fR: stores your away messages.
 .br
-\fI~/.purple/logs/PROTOCOL/ACCOUNT/SCREENNAME/DATE.{html,txt}\fR: conversation logs.
+  \fI~/.purple/pounces.xml\fR: stores your buddy pounces.
 .br
-\fI~/.purple/blist.xml\fR: the buddy list.
+  \fI~/.purple/logs/PROTOCOL/ACCOUNT/SCREENNAME/DATE.{html,txt}\fR: conversation logs.
 .br
-\fI~/.purple/plugins/\fR: users' local plugins
+  \fI~/.purple/blist.xml\fR: the buddy list.
+.br
+  \fI~/.purple/plugins/\fR: users' local plugins
 
 .SH BUGS
 The bug tracker can be reached by visiting \fIhttp://developer.pidgin.im/query\fR

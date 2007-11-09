@@ -2833,8 +2833,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						{
 						    gtk_imhtml_toggle_underline(imhtml);
 						    font->underline = 1;
-						} else
-							g_free(textdec);
+						}
+						g_free(textdec);
 
 						if (oldfont)
 						{

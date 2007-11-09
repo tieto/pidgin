@@ -233,6 +233,30 @@ AC_SYS_LARGEFILE
 dnl FreeBSD doesn't have libdl, dlopen is provided by libc
 AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
+AC_MSG_CHECKING(for fileno())
+AC_TRY_RUN([
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+	int fd;
+
+	fd = fileno(stdout);
+
+	return !(fd > 0);
+}
+], [
+	AC_MSG_RESULT(yes)
+	AC_DEFINE([HAVE_FILENO], [1],
+	          [Define to 1 if your stdio has int fileno(FILE *).])
+], [
+	AC_MSG_RESULT(no)
+], [
+	# Fallback for Cross Compiling...
+	# This will enable the compatibility code.
+	AC_MSG_RESULT(no)
+])
+
 AC_MSG_CHECKING(for the %z format string in strftime())
 AC_TRY_RUN([
 #ifdef HAVE_SYS_TIME_H
