@@ -605,6 +605,8 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
 			return;
 	}
 
+	pidgin_blist_tooltip_destroy();
+
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 	g_object_set(G_OBJECT(gtkblist->text_rend), "editable", TRUE, NULL);
 	gtk_tree_view_set_enable_search (GTK_TREE_VIEW(gtkblist->treeview), FALSE);
@@ -2800,6 +2802,12 @@ static gboolean pidgin_blist_tooltip_timeout(GtkWidget *tv)
 	GtkTreeIter iter;
 	PurpleBlistNode *node;
 	GValue val;
+	gboolean editable = FALSE;
+
+	/* If we're editing a cell (e.g. alias editing), don't show the tooltip */
+	g_object_get(G_OBJECT(gtkblist->text_rend), "editable", &editable, NULL);
+	if (editable)
+		return FALSE;
 
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y + (gtkblist->tip_rect.height/2), 
 		&path, NULL, NULL, NULL))
@@ -3856,7 +3864,7 @@ update_menu_bar(PidginBuddyList *gtkblist)
 	gtk_widget_set_sensitive(widget, pidgin_blist_joinchat_is_showable());
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Privacy"));
-	gtk_widget_set_sensitive(widget, (purple_connections_get_all() != NULL));
+	gtk_widget_set_sensitive(widget, sensitive);
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Room List"));
 	gtk_widget_set_sensitive(widget, pidgin_roomlist_is_showable());
