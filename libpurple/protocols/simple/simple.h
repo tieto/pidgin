@@ -127,7 +127,7 @@ struct transaction {
 	int retries;
 	int transport; /* 0 = tcp, 1 = udp */
 	int fd;
-	gchar *cseq;
+	const gchar *cseq;
 	struct sipmsg *msg;
 	TransCallback callback;
 };
