@@ -1103,7 +1103,7 @@ Function DoWeNeedGtk
 
   have_gtk:
     ; GTK+ is already installed; check version.
-	; Change this to not even run the GTK installer if this version is already installed.
+    ; Change this to not even run the GTK installer if this version is already installed.
     ${VersionCompare} ${GTK_INSTALL_VERSION} $0 $3
     IntCmp $3 1 +1 good_version good_version
     ${VersionCompare} ${GTK_MIN_VERSION} $0 $3
@@ -1167,6 +1167,8 @@ FunctionEnd
 
 Function .onInit
   Push $R0
+  Push $R1
+  Push $R2
   System::Call 'kernel32::CreateMutexA(i 0, i 0, t "pidgin_installer_running") i .r1 ?e'
   Pop $R0
   StrCmp $R0 0 +3
@@ -1233,15 +1235,37 @@ Function .onInit
 
   ${GetParameters} $R0
   ClearErrors
-  ${GetOptions} $R0 "/L=" $R0
+  ${GetOptions} "$R0" "/L=" $R1
   IfErrors +3
-  StrCpy $LANGUAGE $R0
+  StrCpy $LANGUAGE $R1
   Goto skip_lang
 
   ; Select Language
     ; Display Language selection dialog
     !insertmacro MUI_LANGDLL_DISPLAY
     skip_lang:
+
+  ClearErrors
+  ${GetOptions} "$R0" "/DS=" $R1
+  IfErrors +7
+  SectionGetFlags ${SecDesktopShortcut} $R2
+  StrCmp "1" $R1 0 +2
+  IntOp $R2 $R2 | ${SF_SELECTED}
+  StrCmp "0" $R1 0 +3
+  IntOp $R1 ${SF_SELECTED} ~
+  IntOp $R2 $R2 & $R1
+  SectionSetFlags ${SecDesktopShortcut} $R2
+
+  ClearErrors
+  ${GetOptions} "$R0" "/SMS=" $R1
+  IfErrors +7
+  SectionGetFlags ${SecStartMenuShortcut} $R2
+  StrCmp "1" $R1 0 +2
+  IntOp $R2 $R2 | ${SF_SELECTED}
+  StrCmp "0" $R1 0 +3
+  IntOp $R1 ${SF_SELECTED} ~
+  IntOp $R2 $R2 & $R1
+  SectionSetFlags ${SecStartMenuShortcut} $R2
 
   ; If install path was set on the command, use it.
   StrCmp $INSTDIR "" 0 instdir_done
@@ -1270,6 +1294,8 @@ Function .onInit
 
   instdir_done:
 ;LogSet on
+  Pop $R2
+  Pop $R1
   Pop $R0
 FunctionEnd
 
