@@ -123,7 +123,7 @@ Switch to the previous workspace
 Tag (or untag) the current window
 .TP
 .B Alt \+ T
-Attached all the tag windows to the current workspace
+Attached all the tagged windows to the current workspace
 .TP
 .B Alt \+ s
 Show the workspace list

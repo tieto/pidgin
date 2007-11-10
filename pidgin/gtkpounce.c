@@ -531,6 +531,7 @@ pidgin_pounce_editor_show_with_parent(GtkWindow *parent, PurpleAccount *account,
 	gtk_window_set_title(GTK_WINDOW(window), (cur_pounce == NULL ? _("New Buddy Pounce") : _("Edit Buddy Pounce")));
 	gtk_window_set_role(GTK_WINDOW(window), "buddy_pounce");
 	gtk_container_set_border_width(GTK_CONTAINER(dialog->window), PIDGIN_HIG_BORDER);
+	gtk_window_set_transient_for(GTK_WINDOW(window), parent);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
