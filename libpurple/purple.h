@@ -3,7 +3,8 @@
  * This file contains all the necessary preprocessor directives to include
  * libpurple's headers and other preprocessor directives required for plugins
  * or UIs to build.  Inlcuding this file eliminates the need to directly
- * include any other libpurple files.
+ * include any other libpurple files.  It will still be necessary for plugins
+ * to define @c PURPLE_PLUGINS before including this header.
  *
  * @ingroup core libpurple
  */
@@ -28,11 +29,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-
-#ifndef _PURPLE_PURPLE_H_
-#define _PURPLE_PURPLE_H_
-
-#include <glib.h>
+#ifndef _PURPLE_H
+#define _PURPLE_H
 
 #ifndef G_GNUC_NULL_TERMINATED
 #	if     __GNUC__ >= 4
@@ -41,8 +39,6 @@
 #		define G_GNUC_NULL_TERMINATED
 #	endif
 #endif
-
-@PLUGINS_DEFINE@
 
 #include <account.h>
 #include <accountopt.h>
