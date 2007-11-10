@@ -2356,13 +2356,12 @@ purple_account_get_current_error(PurpleAccount *account)
 	return priv->current_error;
 }
 
-static void
-signed_on_cb(PurpleConnection *gc,
-             gpointer unused)
+void
+purple_account_clear_current_error(PurpleAccount *account)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
-	purple_account_clear_current_error(account);
+	set_current_error(account, NULL);
 }
+
 void
 purple_accounts_add(PurpleAccount *account)
 {

@@ -2977,8 +2977,6 @@ pidgin_make_mini_dialog(PurpleConnection *gc,
 	}
 	va_end(args);
 
-	g_object_unref(sg);
-
 	g_signal_connect(G_OBJECT(mini_dialog), "destroy",
 		G_CALLBACK(old_mini_dialog_destroy_cb), cb_datas);
 
