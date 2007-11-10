@@ -3064,9 +3064,7 @@ toggle_debug(void)
 			!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"));
 }
 
-typedef void (*ShowWithParentFunc)(GtkWindow *parent);
-
-static ShowWithParentFunc show_with_parent_funcs[5] = 
+static void (*show_with_parent_funcs[5])(GtkWindow *parent) = 
 {
 	NULL,
 	pidgin_pounces_manager_show_with_parent,
