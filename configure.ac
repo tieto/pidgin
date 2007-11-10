@@ -2003,9 +2003,12 @@ AC_SUBST(LIBS)
 if test "x$enable_plugins" = "xyes" ; then
 	AC_DEFINE(PURPLE_PLUGINS, 1, [Define if plugins are enabled.])
 	AM_CONDITIONAL(PLUGINS, true)
+	PLUGINS_DEFINE="#define PURPLE_PLUGINS 1"
 else
 	AM_CONDITIONAL(PLUGINS, false)
+	PLUGINS_DEFINE="#undef PURPLE_PLUGINS"
 fi
+AC_SUBST(PLUGINS_DEFINE)
 
 dnl #######################################################################
 dnl # Check for Cyrus-SASL (for Jabber)
@@ -2272,6 +2275,7 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/yahoo/Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
+		   libpurple/purple.h
 		   libpurple/version.h
 		   share/Makefile
 		   share/sounds/Makefile
