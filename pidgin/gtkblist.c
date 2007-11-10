@@ -3064,10 +3064,9 @@ toggle_debug(void)
 			!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"));
 }
 
-/***************************************************
- *            Crap                                 *
- ***************************************************/
-static void (*show_with_parent_funcs)(GtkWindow *parent)[5] = 
+typedef void (*ShowWithParentFunc)(GtkWindow *parent);
+
+static ShowWithParentFunc show_with_parent_funcs[5] = 
 {
 	NULL,
 	pidgin_pounces_manager_show_with_parent,
@@ -3076,6 +3075,15 @@ static void (*show_with_parent_funcs)(GtkWindow *parent)[5] =
 	pidgin_dialogs_about_with_parent
 };
 
+static void
+pidgin_blist_show_with_parent(gpointer data1, gint show_with_parent_idx, gpointer data3)
+{
+	show_with_parent_funcs[show_with_parent_idx](GTK_WINDOW(gtkblist->window));
+}
+
+/***************************************************
+ *            Crap                                 *
+ ***************************************************/
 static GtkItemFactoryEntry blist_menu[] =
 {
 	/* Buddies menu */
@@ -3126,12 +3134,6 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Help/_About"), NULL, pidgin_blist_show_with_parent, 4, "<Item>", NULL },
 #endif
 };
-
-static void
-pidgin_blist_show_with_parent(gpointer data1, gint show_with_parent_idx, gpointer data3)
-{
-	show_with_parent_funcs[show_with_parent_idx](GTK_WINDOW(gtkblist->window));
-}
 
 /*********************************************************
  * Private Utility functions                             *
