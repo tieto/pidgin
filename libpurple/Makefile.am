@@ -6,6 +6,7 @@ EXTRA_DIST = \
 		purple-send \
 		purple-send-async \
 		purple-url-handler \
+		purple.h.in \
 		purple.pc.in \
 		purple-uninstalled.pc.in \
 		version.h.in \
@@ -114,6 +115,7 @@ purple_coreheaders = \
 	privacy.h \
 	proxy.h \
 	prpl.h \
+	purple.h \
 	request.h \
 	roomlist.h \
 	savedstatuses.h \
@@ -133,7 +135,7 @@ purple_coreheaders = \
 	xmlnode.h \
 	whiteboard.h
 
-BUILT_SOURCES = version.h
+BUILT_SOURCES = purple.h version.h
 
 if ENABLE_DBUS
 

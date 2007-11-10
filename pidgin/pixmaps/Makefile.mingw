@@ -15,7 +15,7 @@ include ./Makefile.am
 install:
 	if test '$(SUBDIRS)'; then \
 	  list='$(SUBDIRS)'; for subdir in $$list; do \
-	  if [ "$$subdir" != "icons/22" ]; then \
+	  if [[ "$$subdir" != icons/* ]]; then \
 	    $(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) install || exit 1 ;\
 	  fi \
 	  done; \
@@ -36,5 +36,3 @@ install:
 	  cp $(pidgindistpix_DATA) $(pidgindistpixdir); \
 	fi;
 
-clean:
-	$(MAKE) -C emotes -f $(MINGW_MAKEFILE) clean || exit 1 ;\

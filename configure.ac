@@ -43,10 +43,10 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [2])
+m4_define([purple_lt_current], [3])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [2])
-m4_define([purple_micro_version], [3])
+m4_define([purple_minor_version], [3])
+m4_define([purple_micro_version], [0])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -232,6 +232,30 @@ AC_SYS_LARGEFILE
 
 dnl FreeBSD doesn't have libdl, dlopen is provided by libc
 AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
+
+AC_MSG_CHECKING(for fileno())
+AC_TRY_RUN([
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+	int fd;
+
+	fd = fileno(stdout);
+
+	return !(fd > 0);
+}
+], [
+	AC_MSG_RESULT(yes)
+	AC_DEFINE([HAVE_FILENO], [1],
+	          [Define to 1 if your stdio has int fileno(FILE *).])
+], [
+	AC_MSG_RESULT(no)
+], [
+	# Fallback for Cross Compiling...
+	# This will enable the compatibility code.
+	AC_MSG_RESULT(no)
+])
 
 AC_MSG_CHECKING(for the %z format string in strftime())
 AC_TRY_RUN([
@@ -1979,9 +2003,12 @@ AC_SUBST(LIBS)
 if test "x$enable_plugins" = "xyes" ; then
 	AC_DEFINE(PURPLE_PLUGINS, 1, [Define if plugins are enabled.])
 	AM_CONDITIONAL(PLUGINS, true)
+	PLUGINS_DEFINE="#define PURPLE_PLUGINS 1"
 else
 	AM_CONDITIONAL(PLUGINS, false)
+	PLUGINS_DEFINE="#undef PURPLE_PLUGINS"
 fi
+AC_SUBST(PLUGINS_DEFINE)
 
 dnl #######################################################################
 dnl # Check for Cyrus-SASL (for Jabber)
@@ -2226,6 +2253,7 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/yahoo/Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
+		   libpurple/purple.h
 		   libpurple/version.h
 		   share/Makefile
 		   share/sounds/Makefile

@@ -6,11 +6,7 @@ SUBDIRS = buddy_icons/qq emotes/default/24 emotes/none \
 MAKEFILE_MINGW = \
 		buddy_icons/qq/Makefile.mingw \
 		emotes/default/24/Makefile.mingw \
-		emotes/none/Makefile.mingw \
-		icons/16/Makefile.mingw \
-		icons/24/Makefile.mingw \
-		icons/32/Makefile.mingw \
-		icons/48/Makefile.mingw
+		emotes/none/Makefile.mingw
 
 ANIMATIONS_16 = \
 		animations/16/connect0.png \

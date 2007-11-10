@@ -719,7 +719,7 @@ void jabber_setup_set_info(PurplePluginAction *action)
 	if(x_vc_data != NULL)
 		xmlnode_free(x_vc_data);
 
-	purple_request_fields(gc, _("Edit XMPP vCard"),
+	purple_request_fields_with_hint(gc, _("Edit XMPP vCard"),
 						_("Edit XMPP vCard"),
 						_("All items below are optional. Enter only the "
 						  "information with which you feel comfortable."),
@@ -727,7 +727,7 @@ void jabber_setup_set_info(PurplePluginAction *action)
 						_("Save"), G_CALLBACK(jabber_format_info),
 						_("Cancel"), NULL,
 						purple_connection_get_account(gc), NULL, NULL,
-						gc);
+						PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
 }
 
 /*---------------------------------------*/
@@ -2420,12 +2420,12 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		usi->js = js;
 		usi->directory_server = g_strdup(from);
 
-		purple_request_fields(js->gc, _("Search for XMPP users"),
+		purple_request_fields_with_hint(js->gc, _("Search for XMPP users"),
 				_("Search for XMPP users"), instructions, fields,
 				_("Search"), G_CALLBACK(user_search_cb),
 				_("Cancel"), G_CALLBACK(user_search_cancel_cb),
 				purple_connection_get_account(js->gc), NULL, NULL,
-				usi);
+				PURPLE_REQUEST_UI_HINT_ACCOUNT, usi);
 
 		g_free(instructions);
 	}
@@ -2454,14 +2454,14 @@ void jabber_user_search_begin(PurplePluginAction *action)
 	PurpleConnection *gc = (PurpleConnection *) action->context;
 	JabberStream *js = gc->proto_data;
 
-	purple_request_input(gc, _("Enter a User Directory"), _("Enter a User Directory"),
+	purple_request_input_with_hint(gc, _("Enter a User Directory"), _("Enter a User Directory"),
 			_("Select a user directory to search"),
 			js->user_directories ? js->user_directories->data : NULL,
 			FALSE, FALSE, NULL,
 			_("Search Directory"), PURPLE_CALLBACK(jabber_user_search),
 			_("Cancel"), NULL,
 			NULL, NULL, NULL,
-			js);
+			PURPLE_REQUEST_UI_HINT_ACCOUNT, js);
 }
 
 

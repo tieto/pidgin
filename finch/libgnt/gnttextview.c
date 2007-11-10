@@ -71,7 +71,7 @@ gnt_text_view_draw(GntWidget *widget)
 	int comp = 0;          /* Used for top-aligned text */
 	gboolean has_scroll = !(view->flags & GNT_TEXT_VIEW_NO_SCROLL);
 
-	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
+	wbkgd(widget->window, gnt_color_pair(GNT_COLOR_NORMAL));
 	werase(widget->window);
 
 	if ((view->flags & GNT_TEXT_VIEW_TOP_ALIGN) &&
@@ -158,15 +158,15 @@ gnt_text_view_draw(GntWidget *widget)
 			position = rows - showing;
 
 		mvwvline(widget->window, position + 1, scrcol,
-				ACS_CKBOARD | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D), showing);
+				ACS_CKBOARD | gnt_color_pair(GNT_COLOR_HIGHLIGHT_D), showing);
 	}
 
 	if (has_scroll) {
 		mvwaddch(widget->window, 0, scrcol,
-				(lines ? ACS_UARROW : ' ') | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+				(lines ? ACS_UARROW : ' ') | gnt_color_pair(GNT_COLOR_HIGHLIGHT_D));
 		mvwaddch(widget->window, widget->priv.height - 1, scrcol,
 				((view->list && view->list->prev) ? ACS_DARROW : ' ') |
-					COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+					gnt_color_pair(GNT_COLOR_HIGHLIGHT_D));
 	}
 
 	GNTDEBUG;
@@ -645,11 +645,11 @@ chtype gnt_text_format_flag_to_chtype(GntTextFormatFlags flags)
 		fl |= A_BLINK;
 
 	if (flags & GNT_TEXT_FLAG_DIM)
-		fl |= (A_DIM | COLOR_PAIR(GNT_COLOR_DISABLED));
+		fl |= (A_DIM | gnt_color_pair(GNT_COLOR_DISABLED));
 	else if (flags & GNT_TEXT_FLAG_HIGHLIGHT)
-		fl |= (A_DIM | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+		fl |= (A_DIM | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
 	else
-		fl |= COLOR_PAIR(GNT_COLOR_NORMAL);
+		fl |= gnt_color_pair(GNT_COLOR_NORMAL);
 
 	return fl;
 }

@@ -168,6 +168,17 @@ signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 }
 
 static void
+setup_buddy_list_suggestion(GntEntry *entry, gboolean offline)
+{
+	PurpleBlistNode *node = purple_blist_get_root();
+	for (; node; node = purple_blist_node_next(node, offline)) {
+		if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+			continue;
+		gnt_entry_add_suggest(entry, purple_buddy_get_name((PurpleBuddy*)node));
+	}
+}
+
+static void
 save_pounce_cb(GntWidget *w, PurpleGntPounceDialog *dialog)
 {
 	const char *name;
@@ -359,6 +370,8 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 
 	dialog->buddy_entry = gnt_entry_new(NULL);
 	gnt_box_add_widget(GNT_BOX(hbox), dialog->buddy_entry);
+
+	setup_buddy_list_suggestion(GNT_ENTRY(dialog->buddy_entry), TRUE);
 
 	gnt_box_add_widget(GNT_BOX(window), hbox);
 
@@ -660,9 +673,9 @@ pounces_manager_delete_cb(GntButton *button, gpointer user_data)
 	pouncer = purple_account_get_username(account);
 	pouncee = purple_pounce_get_pouncee(pounce);
 	buf = g_strdup_printf(_("Are you sure you want to delete the pounce on %s for %s?"), pouncee, pouncer);
-	purple_request_action(pounce, NULL, buf, NULL, 0,
+	purple_request_action_with_hint(pounce, NULL, buf, NULL, 0,
 						account, pouncee, NULL,
-						pounce, 2,
+						PURPLE_REQUEST_UI_HINT_POUNCEMGR, pounce, 2,
 						_("Delete"), pounces_manager_delete_confirm_cb,
 						_("Cancel"), NULL);
 	g_free(buf);

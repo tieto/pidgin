@@ -83,10 +83,10 @@ static void _qq_search_before_auth_with_gc_and_uid(gc_and_uid *g)
 	qq_send_packet_get_info(gc, uid, TRUE);	/* we want to see window */
 
 	nombre = uid_to_purple_name(uid);
-	purple_request_action
+	purple_request_action_with_hint
 	    (gc, NULL, _("Do you want to approve the request?"), "", 2,
 		 purple_connection_get_account(gc), nombre, NULL,
-		 g, 2,
+		 PURPLE_REQUEST_UI_HINT_CONV, g, 2,
 	     _("Reject"), G_CALLBACK(qq_reject_add_request_with_gc_and_uid),
 	     _("Approve"), G_CALLBACK(qq_approve_add_request_with_gc_and_uid));
 	g_free(nombre);
@@ -106,11 +106,11 @@ static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 
 	qq_send_packet_get_info(gc, uid, TRUE);	/* we want to see window */
 	nombre = uid_to_purple_name(uid);
-	purple_request_action
+	purple_request_action_with_hint
 	    (gc, NULL, _("Do you want to add this buddy?"), "", 2,
 		 purple_connection_get_account(gc), nombre, NULL,
-		 g, 2,
-	     _("Cancel"), NULL,
+		 PURPLE_REQUEST_UI_HINT_BUDDY, g, 2,
+		 _("Cancel"), NULL,
 		 _("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid));
 	g_free(nombre);
 }
@@ -165,10 +165,10 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 		g->uid = uid;	/* only need to get value */
 		message = g_strdup_printf(_("You have been added by %s"), from);
 		_qq_sys_msg_log_write(gc, message, from);
-		purple_request_action(gc, NULL, message,
+		purple_request_action_with_hint(gc, NULL, message,
 				    _("Would you like to add him?"), 2,
 					purple_connection_get_account(gc), name, NULL,
-					g, 3,
+					PURPLE_REQUEST_UI_HINT_BUDDY, g, 3,
 				    _("Cancel"), NULL,
 					_("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid),
 				    _("Search"), G_CALLBACK(_qq_search_before_add_with_gc_and_uid));
@@ -239,10 +239,10 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 	reason = g_strdup_printf(_("Message: %s"), msg_utf8);
 	_qq_sys_msg_log_write(gc, message, from);
 
-	purple_request_action
+	purple_request_action_with_hint
 	    (gc, NULL, message, reason, 2,
 		purple_connection_get_account(gc), name, NULL,
-		 g, 3,
+		 PURPLE_REQUEST_UI_HINT_BUDDY, g, 3,
 	     _("Reject"),
 	     G_CALLBACK(qq_reject_add_request_with_gc_and_uid),
 	     _("Approve"),
@@ -259,10 +259,10 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 		g2->gc = gc;
 		g2->uid = strtol(from, NULL, 10);
 		message = g_strdup_printf(_("%s is not in your buddy list"), from);
-		purple_request_action(gc, NULL, message,
+		purple_request_action_with_hint(gc, NULL, message,
 				    _("Would you like to add him?"), 2,
 					purple_connection_get_account(gc), name, NULL,
-					g2, 3,
+					PURPLE_REQUEST_UI_HINT_BLIST, g2, 3,
 					_("Cancel"), NULL,
 					_("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid),
 				    _("Search"), G_CALLBACK(_qq_search_before_add_with_gc_and_uid));

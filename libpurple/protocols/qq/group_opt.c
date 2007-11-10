@@ -121,9 +121,9 @@ void qq_group_search_application_with_struct(group_member_opt *g)
 	g_return_if_fail(g != NULL && g->gc != NULL && g->member > 0);
 
 	qq_send_packet_get_info(g->gc, g->member, TRUE);	/* we want to see window */
-	purple_request_action(g->gc, NULL, _("Do you want to approve the request?"), "", 2,
+	purple_request_action_with_hint(g->gc, NULL, _("Do you want to approve the request?"), "", 2,
 					purple_connection_get_account(g->gc), NULL, NULL,
-					g, 2,
+					PURPLE_REQUEST_UI_HINT_CONV, g, 2,
 					_("Reject"), G_CALLBACK(qq_group_reject_application_with_struct),
 					_("Approve"), G_CALLBACK(qq_group_approve_application_with_struct));
 }
@@ -137,13 +137,13 @@ void qq_group_reject_application_with_struct(group_member_opt *g)
 	msg2 = g_strdup(_("Enter your reason:"));
 
 	nombre = uid_to_purple_name(g->member);
-	purple_request_input(g->gc, /* title */ NULL, msg1, msg2,
+	purple_request_input_with_hint(g->gc, /* title */ NULL, msg1, msg2,
 			   _("Sorry, you are not my type..."), /* multiline */ TRUE, /* masked */ FALSE,
 			   /* hint */ NULL,
 			   _("Send"), G_CALLBACK(_qq_group_reject_application_real),
 			   _("Cancel"), G_CALLBACK(_qq_group_do_nothing_with_struct),
 			   purple_connection_get_account(g->gc), nombre, NULL,
-			   g);
+			   PURPLE_REQUEST_UI_HINT_CONV, g);
 
 	g_free(msg1);
 	g_free(msg2);
@@ -388,13 +388,13 @@ void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len
 	g->gc = gc;
 	g->uid = internal_group_id;
 
-	purple_request_action(gc, _("QQ Qun Operation"),
+	purple_request_action_with_hint(gc, _("QQ Qun Operation"),
 			    _("You have successfully created a Qun"),
 			    _
 			    ("Would you like to set up the Qun details now?"),
 			    1,
 				purple_connection_get_account(gc), NULL, NULL,
-				g, 2,
+				PURPLE_REQUEST_UI_HINT_CONV, g, 2,
 				_("Setup"), G_CALLBACK(qq_group_setup_with_gc_and_uid),
 			    _("Cancel"), G_CALLBACK(qq_do_nothing_with_gc_and_uid));
 }

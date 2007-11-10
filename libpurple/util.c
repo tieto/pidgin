@@ -70,6 +70,7 @@ struct _PurpleUtilFetchUrlData
 static char *custom_user_dir = NULL;
 static char *user_dir = NULL;
 
+
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
                      GList *children)
@@ -89,6 +90,25 @@ purple_menu_action_free(PurpleMenuAction *act)
 
 	g_free(act->label);
 	g_free(act);
+}
+
+void
+purple_util_init(void)
+{
+	/* This does nothing right now.  It exists for symmetry with 
+	 * purple_util_uninit() and forwards compatibility. */
+}
+
+void
+purple_util_uninit(void)
+{
+	/* Free these so we don't have leaks at shutdown. */
+
+	g_free(custom_user_dir);
+	custom_user_dir = NULL;
+
+	g_free(user_dir);
+	user_dir = NULL;
 }
 
 /**************************************************************************
@@ -1352,7 +1372,9 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
 						if(plain && !strcmp(pt->src_tag, "a")) {
 							/* if this is a link, we have to add the url to the plaintext, too */
-							if (cdata && url && !g_string_equal(cdata, url))
+							if (cdata && url &&
+									(!g_string_equal(cdata, url) && (g_ascii_strncasecmp(url->str, "mailto:", 7) != 0 ||
+									                                 g_utf8_collate(url->str + 7, cdata->str) != 0)))
 								g_string_append_printf(plain, " <%s>", g_strstrip(url->str));
 							if (cdata) {
 								g_string_free(cdata, TRUE);
@@ -1533,7 +1555,11 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							if(*q == '\'' || *q == '\"')
 								q++;
 							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
-								url = g_string_append_c(url, *q);
+								int len;
+								if ((*q == '&') && (purple_markup_unescape_entity(q, &len) == NULL))
+									url = g_string_append(url, "&amp;");
+								else
+									url = g_string_append_c(url, *q);
 								q++;
 							}
 							p = q;
@@ -1712,6 +1738,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				xhtml = g_string_append_len(xhtml, c, len);
 			if(plain)
 				plain = g_string_append(plain, pln);
+			if(cdata)
+				cdata = g_string_append_len(cdata, c, len);
 			c += len;
 		} else {
 			if(xhtml)
@@ -1737,6 +1765,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 		*plain_out = g_string_free(plain, FALSE);
 	if(url)
 		g_string_free(url, TRUE);
+	if (cdata)
+		g_string_free(cdata, TRUE);
 }
 
 /* The following are probably reasonable changes:
@@ -2561,6 +2591,9 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	FILE *file;
 	size_t real_size, byteswritten;
 	struct stat st;
+#ifndef HAVE_FILENO
+	int fd;
+#endif
 
 	purple_debug_info("util", "Writing file %s\n",
 					filename_full);
@@ -2595,6 +2628,26 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	real_size = (size == -1) ? strlen(data) : (size_t) size;
 	byteswritten = fwrite(data, 1, real_size, file);
 
+#ifdef HAVE_FILENO
+	/* Apparently XFS (and possibly other filesystems) do not
+	 * guarantee that file data is flushed before file metadata,
+	 * so this procedure is insufficient without some flushage. */
+	if (fflush(file) < 0) {
+		purple_debug_error("util", "Error flushing %s: %s\n",
+				   filename_temp, g_strerror(errno));
+		g_free(filename_temp);
+		fclose(file);
+		return FALSE;
+	}
+	if (fsync(fileno(file)) < 0) {
+		purple_debug_error("util", "Error syncing file contents for %s: %s\n",
+				   filename_temp, g_strerror(errno));
+		g_free(filename_temp);
+		fclose(file);
+		return FALSE;
+	}
+#endif
+    
 	/* Close file */
 	if (fclose(file) != 0)
 	{
@@ -2603,6 +2656,30 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		g_free(filename_temp);
 		return FALSE;
 	}
+
+#ifndef HAVE_FILENO
+	/* This is the same effect (we hope) as the HAVE_FILENO block
+	 * above, but for systems without fileno(). */
+	if ((fd = open(filename_temp, O_RDWR)) < 0) {
+		purple_debug_error("util", "Error opening file %s for flush: %s\n",
+				   filename_temp, g_strerror(errno));
+		g_free(filename_temp);
+		return FALSE;
+	}
+	if (fsync(fd) < 0) {
+		purple_debug_error("util", "Error syncing %s: %s\n",
+				   filename_temp, g_strerror(errno));
+		g_free(filename_temp);
+		close(fd);
+		return FALSE;
+	}
+	if (close(fd) < 0) {
+		purple_debug_error("util", "Error closing %s after sync: %s\n",
+				   filename_temp, g_strerror(errno));
+		g_free(filename_temp);
+		return FALSE;
+	}
+#endif
 
 	/* Ensure the file is the correct size */
 	if (byteswritten != real_size)

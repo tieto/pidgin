@@ -10,6 +10,10 @@ void
 pidgin_dialogs_about()
 
 void
+pidgin_dialogs_about_with_parent(parent)
+	void * parent
+
+void
 pidgin_dialogs_im()
 
 void

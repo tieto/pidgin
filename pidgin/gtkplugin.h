@@ -72,9 +72,20 @@ GtkWidget *pidgin_plugin_get_config_frame(PurplePlugin *plugin);
  */
 void pidgin_plugins_save(void);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Shows the Plugins dialog
+ *
+ * @deprecated Use pidgin_plugin_dialog_show_with_parent() instead.
  */
 void pidgin_plugin_dialog_show(void);
+#endif
+
+/**
+ * Shows the Plugins dialog, transient to a parent window
+ *
+ * @since 2.3.0
+ */
+void pidgin_plugin_dialog_show_with_parent(GtkWindow *parent);
 
 #endif /* _PIDGINPLUGIN_H_ */

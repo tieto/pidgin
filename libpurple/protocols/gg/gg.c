@@ -333,10 +333,10 @@ static void ggp_action_buddylist_save(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-	purple_request_file(action, _("Save buddylist..."), NULL, TRUE,
+	purple_request_file_with_hint(action, _("Save buddylist..."), NULL, TRUE,
 			G_CALLBACK(ggp_callback_buddylist_save_ok), NULL,
 			purple_connection_get_account(gc), NULL, NULL,
-			gc);
+			PURPLE_REQUEST_UI_HINT_BLIST, gc);
 }
 /* }}} */
 
@@ -347,10 +347,10 @@ static void ggp_action_buddylist_load(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-	purple_request_file(action, "Load buddylist from file...", NULL, FALSE,
+	purple_request_file_with_hint(action, "Load buddylist from file...", NULL, FALSE,
 			G_CALLBACK(ggp_callback_buddylist_load_ok), NULL,
 			purple_connection_get_account(gc), NULL, NULL,
-			gc);
+			PURPLE_REQUEST_UI_HINT_BLIST, gc);
 }
 /* }}} */
 
@@ -498,7 +498,7 @@ static void ggp_register_user_dialog(PurpleConnection *gc)
 			_("Current token"), token->data, token->size);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(account,
+	purple_request_fields_with_hint(account,
 		_("Register New Gadu-Gadu Account"),
 		_("Register New Gadu-Gadu Account"),
 		_("Please, fill in the following fields"),
@@ -506,7 +506,7 @@ static void ggp_register_user_dialog(PurpleConnection *gc)
 		_("OK"), G_CALLBACK(ggp_callback_register_account_ok),
 		_("Cancel"), G_CALLBACK(ggp_callback_register_account_cancel),
 		purple_connection_get_account(gc), NULL, NULL,
-		gc);
+		PURPLE_REQUEST_UI_HINT_REGISTER, gc);
 }
 /* }}} */
 
@@ -657,7 +657,7 @@ static void ggp_find_buddies(PurplePluginAction *action)
 			_("Only online"), FALSE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(gc,
+	purple_request_fields_with_hint(gc,
 		_("Find buddies"),
 		_("Find buddies"),
 		_("Please, enter your search criteria below"),
@@ -665,7 +665,7 @@ static void ggp_find_buddies(PurplePluginAction *action)
 		_("OK"), G_CALLBACK(ggp_callback_find_buddies),
 		_("Cancel"), NULL,
 		purple_connection_get_account(gc), NULL, NULL,
-		gc);
+		PURPLE_REQUEST_UI_HINT_BLIST, gc);
 }
 /* }}} */
 
@@ -795,14 +795,14 @@ static void ggp_change_passwd_dialog(PurpleConnection *gc)
 		_("Please, enter your current password and your new password for UIN: "),
 		ggp_get_uin(purple_connection_get_account(gc)));
 
-	purple_request_fields(gc,
+	purple_request_fields_with_hint(gc,
 		_("Change Gadu-Gadu Password"),
 		_("Change Gadu-Gadu Password"),
 		msg,
 		fields, _("OK"), G_CALLBACK(ggp_callback_change_passwd_ok),
 		_("Cancel"), NULL,
 		purple_connection_get_account(gc), NULL, NULL,
-		gc);
+		PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
 
 	g_free(msg);
 }
@@ -828,6 +828,7 @@ static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestField
 {
 	GGPInfo *info = gc->proto_data;
 	PurpleRequestField *field;
+	/* TODO: sel may be null. */
 	GList *sel;
 
 	field = purple_request_fields_get_field(fields, "name");
@@ -875,7 +876,7 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 
 	msg = g_strdup_printf(_("Select a chat for buddy: %s"),
 			      purple_buddy_get_alias(buddy));
-	purple_request_fields(gc,
+	purple_request_fields_with_hint(gc,
 			_("Add to chat..."),
 			_("Add to chat..."),
 			msg,
@@ -883,7 +884,7 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 			_("Add"), G_CALLBACK(ggp_callback_add_to_chat_ok),
 			_("Cancel"), NULL,
 			purple_connection_get_account(gc), NULL, NULL,			  
-			gc);
+			PURPLE_REQUEST_UI_HINT_BUDDY, gc);
 	g_free(msg);
 }
 /* }}} */
@@ -1868,15 +1869,24 @@ static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 		gg_change_status_descr(info->session, new_status_descr, new_msg);
 		g_free(new_msg);
 	}
+
+	ggp_status_fake_to_self(account);
+
 }
 /* }}} */
 
 /* static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {{{ */
 static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
+	PurpleAccount *account;
 	GGPInfo *info = gc->proto_data;
 
 	gg_add_notify(info->session, ggp_str_to_uin(buddy->name));
+
+	account = purple_connection_get_account(gc);
+	if (strcmp(purple_account_get_username(account), buddy->name) == 0) {
+		ggp_status_fake_to_self(account);
+	}
 }
 /* }}} */
 

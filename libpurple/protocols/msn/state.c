@@ -83,60 +83,56 @@ msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr)
 }
 
 /* parse CurrentMedia string */
-char *
-msn_parse_currentmedia(const char *cmedia)
+gboolean
+msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
 {
 	char **cmedia_array;
-	GString *buffer = NULL;
 	int strings;
 
 	if ((cmedia == NULL) || (*cmedia == '\0')) {
 		purple_debug_info("msn", "No currentmedia string\n");
-		return NULL;
+		return FALSE;
 	}
 
 	purple_debug_info("msn", "Parsing currentmedia string: \"%s\"\n", cmedia);
 
 	cmedia_array = g_strsplit(cmedia, "\\0", 0);
 
+	/*
+	 * 0: Media Player
+	 * 1: 'Music'
+	 * 2: '1' if enabled, '0' if not
+	 * 3: Format (eg. {0} by {1})
+	 * 4: Title
+	 * 5: Artist
+	 * 6: Album
+	 * 7: ?
+	 */
 	strings = 0;
-	/* Yes, we want to skip the first element here, as it is empty due to
-	 * the cmedia string starting with \0 -- see the examples below. */
 	while (cmedia_array[++strings] != NULL);
 
-	/* The cmedia_array[2] field contains a 1 if enabled. */
-	if ((strings > 3) && (!strcmp(cmedia_array[2], "1"))) {
-		char *inptr = cmedia_array[3];
+	if (strings < 4)
+		return FALSE;
+	if (strcmp(cmedia_array[2], "1"))
+		return FALSE;
 
-		buffer = g_string_new(NULL);
-
-		while (*inptr != '\0') {
-			if ((*inptr == '{') && ((*(inptr + 1) != '\0') && (*(inptr+2) == '}'))) {
-				char *tmpptr;
-				int tmp;
-
-				errno = 0;
-				tmp = strtol(inptr + 1, &tmpptr, 10);
-
-				if (errno == 0 && tmpptr != inptr + 1 &&
-				    tmp + 4 < strings) {
-					/* Replace {?} tag with appropriate text only when successful.
-					 * Skip otherwise. */
-					buffer = g_string_append(buffer, cmedia_array[tmp + 4]);
-				}
-				inptr += 3; /* Skip to the next char after '}' */
-			} else {
-				buffer = g_string_append_c(buffer, *inptr++);
-			}
-		}
-		purple_debug_info("msn", "Parsed currentmedia string, result: \"%s\"\n",
-		                  buffer->str);
+	if (strings == 4) {
+		media->title = g_strdup(cmedia_array[3]);
 	} else {
-		purple_debug_info("msn", "Current media marked disabled, not parsing.\n");
+		media->title = g_strdup(cmedia_array[4]);
 	}
 
-	g_strfreev(cmedia_array);
-	return buffer ? g_string_free(buffer, FALSE) : NULL;
+	if (strings > 5)
+		media->artist = g_strdup(cmedia_array[5]);
+	else
+		media->artist = NULL;
+
+	if (strings > 6)
+		media->album = g_strdup(cmedia_array[6]);
+	else
+		media->album = NULL;
+
+	return TRUE;
 }
 
 /* get the CurrentMedia info from the XML string */
@@ -191,7 +187,28 @@ msn_get_psm(char *xml_str, gsize len)
 	return psm;
 }
 
-/* Set the MSN PSM based on the "message" attribute of the current status
+static char *
+create_media_string(PurplePresence *presence)
+{
+	const char *artist, *title, *album;
+	char *ret;
+	PurpleStatus *status = purple_presence_get_status(presence, "tune");
+	if (!status || !purple_status_is_active(status))
+		return g_strdup_printf("WMP\\0Music\\00\\0{0} - {1}\\0\\0\\0\\0\\0");
+
+	artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+	title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
+	album = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
+
+	ret = g_strdup_printf("WMP\\0Music\\0%c\\0{0} - {1}\\0%s\\0%s\\0%s\\0\\0",
+			(title && *title) ? '1' : '0',
+			title ? title : "",
+			artist ? artist : "",
+			album ? album : "");
+	return ret;
+}
+
+/* set the MSN's PSM info,Currently Read from the status Line 
  * Thanks for Cris Code
  */
 void
@@ -204,7 +221,7 @@ msn_set_psm(MsnSession *session)
 	MsnTransaction *trans;
 	char *payload;
 	const char *statusline;
-	gchar *statusline_stripped;
+	gchar *statusline_stripped, *media = NULL;
 
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->notification != NULL);
@@ -218,8 +235,9 @@ msn_set_psm(MsnSession *session)
 
 	/* MSN expects plain text, not HTML */
 	statusline_stripped = purple_markup_strip_html(statusline);
+	media = create_media_string(presence);
 	g_free(session->psm);
-	session->psm = msn_build_psm(statusline_stripped, NULL, NULL);
+	session->psm = msn_build_psm(statusline_stripped, media, NULL);
 	g_free(statusline_stripped);
 
 	payload = session->psm;

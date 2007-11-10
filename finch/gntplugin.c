@@ -29,6 +29,7 @@
 #include <gntlabel.h>
 #include <gntline.h>
 #include <gnttree.h>
+#include <gntutils.h>
 
 #include "finch.h"
 
@@ -83,6 +84,7 @@ plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 
 		if (!purple_plugin_unload(plugin)) {
 			purple_notify_error(NULL, _("ERROR"), _("unloading plugin failed"), NULL);
+			purple_plugin_disable(plugin);
 			gnt_tree_set_choice(GNT_TREE(tree), plugin, TRUE);
 		}
 
@@ -398,6 +400,7 @@ void finch_plugins_show_all()
 
 	button = gnt_button_new(_("Install Plugin..."));
 	gnt_box_add_widget(GNT_BOX(box), button);
+	gnt_util_set_trigger_widget(GNT_WIDGET(tree), GNT_KEY_INS, button);
 	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(install_plugin_cb), NULL);
 
 	button = gnt_button_new(_("Close"));
@@ -468,9 +471,9 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 		}
 	}
 
-	return purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
+	return purple_request_fields_with_hint(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(finch_request_save_in_prefs), _("Cancel"), NULL,
 			NULL, NULL, NULL,
-			NULL);
+			PURPLE_REQUEST_UI_HINT_PLUGINMGR, NULL);
 }
 

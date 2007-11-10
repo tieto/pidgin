@@ -159,12 +159,12 @@ set_auto_accept_settings(PurpleBlistNode *node, gpointer plugin)
 
 	message = g_strdup_printf(_("When a file-transfer request arrives from %s"), 
 					purple_contact_get_alias((PurpleContact *)node));
-	purple_request_choice(plugin, _("Set Autoaccept Setting"), message,
+	purple_request_choice_with_hint(plugin, _("Set Autoaccept Setting"), message,
 						NULL, purple_blist_node_get_int(node, "autoaccept"),
 						_("_Save"), G_CALLBACK(save_cb),
 						_("_Cancel"), NULL,
 						NULL, NULL, NULL,
-						node,
+						PURPLE_REQUEST_UI_HINT_XFER, node,
 						_("Ask"), FT_ASK,
 						_("Auto Accept"), FT_ACCEPT,
 						_("Auto Reject"), FT_REJECT,

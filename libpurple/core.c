@@ -94,6 +94,8 @@ purple_core_init(const char *ui)
 	/* The signals subsystem is important and should be first. */
 	purple_signals_init();
 
+	purple_util_init();
+
 	purple_signal_register(core, "uri-handler",
 		purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
 		purple_value_new(PURPLE_TYPE_BOOLEAN), 3,
@@ -229,6 +231,9 @@ purple_core_quit(void)
 #ifdef HAVE_DBUS
 	purple_dbus_uninit();
 #endif
+
+	purple_util_uninit();
+
 	purple_signals_uninit();
 
 	g_free(core->ui);
