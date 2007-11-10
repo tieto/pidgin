@@ -116,6 +116,7 @@ static gboolean editing_blist = FALSE;
 
 static GList *pidgin_blist_sort_methods = NULL;
 static struct pidgin_blist_sort_method *current_sort_method = NULL;
+
 static void sort_method_none(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 
 /* The functions we use for sorting aren't available in gtk 2.0.x, and
@@ -3063,15 +3064,18 @@ toggle_debug(void)
 			!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"));
 }
 
-static void
-pidgin_blist_show_with_parent(gpointer data1, void (*callback)(GtkWindow *parent), gpointer data3)
-{
-	callback(GTK_WINDOW(gtkblist->window));
-}
-
 /***************************************************
  *            Crap                                 *
  ***************************************************/
+static void (*show_with_parent_funcs)(GtkWindow *parent)[5] = 
+{
+	NULL,
+	pidgin_pounces_manager_show_with_parent,
+	pidgin_plugin_dialog_show_with_parent,
+	pidgin_syslog_show_with_parent,
+	pidgin_dialogs_about_with_parent
+};
+
 static GtkItemFactoryEntry blist_menu[] =
 {
 	/* Buddies menu */
@@ -3101,15 +3105,15 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_blist_show_with_parent, (int)pidgin_pounces_manager_show_with_parent, "<Item>", NULL },
+	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_blist_show_with_parent, 1, "<Item>", NULL },
 	{ N_("/Tools/_Certificates"), NULL, pidgin_certmgr_show, 0, "<Item>", NULL },
-	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_blist_show_with_parent, (int)pidgin_plugin_dialog_show_with_parent, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
+	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_blist_show_with_parent, 2, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
-	{ N_("/Tools/System _Log"), NULL, pidgin_blist_show_with_parent, (int)pidgin_syslog_show_with_parent, "<Item>", NULL },
+	{ N_("/Tools/System _Log"), NULL, pidgin_blist_show_with_parent, 3, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 	/* Help */
@@ -3117,11 +3121,17 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
 #if GTK_CHECK_VERSION(2,6,0)
-	{ N_("/Help/_About"), NULL, pidgin_blist_show_with_parent, (int)pidgin_dialogs_about_with_parent, "<StockItem>", GTK_STOCK_ABOUT },
+	{ N_("/Help/_About"), NULL, pidgin_blist_show_with_parent, 4, "<StockItem>", GTK_STOCK_ABOUT },
 #else
-	{ N_("/Help/_About"), NULL, pidgin_blist_show_with_parent, (int)pidgin_dialogs_about_with_parent, "<Item>", NULL },
+	{ N_("/Help/_About"), NULL, pidgin_blist_show_with_parent, 4, "<Item>", NULL },
 #endif
 };
+
+static void
+pidgin_blist_show_with_parent(gpointer data1, gint show_with_parent_idx, gpointer data3)
+{
+	show_with_parent_funcs[show_with_parent_idx](GTK_WINDOW(gtkblist->window));
+}
 
 /*********************************************************
  * Private Utility functions                             *
