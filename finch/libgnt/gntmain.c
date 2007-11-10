@@ -291,7 +291,8 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		k += p;
 	}
 end:
-	gnt_wm_set_event_stack(wm, FALSE);
+	if (wm)
+		gnt_wm_set_event_stack(wm, FALSE);
 	g_free(cvrt);
 	return TRUE;
 }

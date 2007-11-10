@@ -1777,7 +1777,8 @@ void gnt_tree_set_column_visible(GntTree *tree, int col, gboolean vis)
 					break;
 			}
 	}
-	readjust_columns(tree);
+	if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_MAPPED))
+		readjust_columns(tree);
 }
 
 void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res)
