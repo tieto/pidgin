@@ -1,7 +1,7 @@
 pidginpixmapdir = $(datadir)/pixmaps/pidgin
+pidginiconsdir = $(datadir)
 
-SUBDIRS = buddy_icons/qq emotes/default/24 emotes/none \
-          icons/16 icons/22 icons/24 icons/32 icons/48
+SUBDIRS = buddy_icons/qq emotes/default/24 emotes/none
 
 MAKEFILE_MINGW = \
 		buddy_icons/qq/Makefile.mingw \
@@ -323,19 +323,29 @@ PROTOCOLS_16 = \
 		protocols/16/zephyr.png
 
 ICONS_16_SCALABLE = \
-		icons/16/scalable/pidgin.svg
+		icons/hicolor/16x16/apps/scalable/pidgin.svg
+
+ICONS_16 = icons/hicolor/16x16/apps/pidgin.png
 
 ICONS_22_SCALABLE = \
-		icons/22/scalable/pidgin.svg
+		icons/hicolor/22x22/apps/scalable/pidgin.svg
+
+ICONS_22 = icons/hicolor/22x22/apps/pidgin.png
 
 ICONS_24_SCALABLE = \
-		icons/24/scalable/pidgin.svg
+		icons/hicolor/24x24/apps/scalable/pidgin.svg
+
+ICONS_24 = icons/hicolor/24x24/apps/pidgin.png
 
 ICONS_32_SCALABLE = \
-		icons/32/scalable/pidgin.svg
+		icons/hicolor/32x32/apps/scalable/pidgin.svg
+
+ICONS_32 = icons/hicolor/32x32/apps/pidgin.png
 
 ICONS_48_SCALABLE = \
-		icons/48/scalable/pidgin.svg
+		icons/hicolor/48x48/apps/scalable/pidgin.svg
+
+ICONS_48 = icons/hicolor/48x48/apps/pidgin.png
 
 PROTOCOLS_22_SCALABLE = \
 		protocols/22/scalable/aim.svg \
@@ -691,3 +701,9 @@ nobase_dist_pidginpixmap_DATA = \
 		$(TRAY_32) \
 		$(TRAY_48)
 
+nobase_dist_pidginicons_DATA = \
+		$(ICONS_16) \
+		$(ICONS_22) \
+		$(ICONS_24) \
+		$(ICONS_32) \
+		$(ICONS_48)

@@ -2208,11 +2208,6 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/buddy_icons/qq/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
-		   pidgin/pixmaps/icons/16/Makefile
-		   pidgin/pixmaps/icons/22/Makefile
-		   pidgin/pixmaps/icons/24/Makefile
-		   pidgin/pixmaps/icons/32/Makefile
-		   pidgin/pixmaps/icons/48/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile
