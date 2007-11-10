@@ -993,7 +993,7 @@ static PurplePluginInfo info =
 
 	SSL_GNUTLS_PLUGIN_ID,                             /**< id             */
 	N_("GNUTLS"),                                     /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Provides SSL support through GNUTLS."),
 	                                                  /**  description    */

@@ -148,6 +148,7 @@ static GList *generate_invite_user_names(PurpleConnection *gc);
 static void add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const char *old_name);
 static gboolean tab_complete(PurpleConversation *conv);
 static void pidgin_conv_updated(PurpleConversation *conv, PurpleConvUpdateType type);
+static void conv_set_unseen(PurpleConversation *gtkconv, PidginUnseenState state);
 static void gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state);
 static void update_typing_icon(PidginConversation *gtkconv);
 static const char *item_factory_translate_func (const char *path, gpointer func_data);
@@ -358,7 +359,7 @@ debug_command_cb(PurpleConversation *conv,
 	PurpleCmdStatus status;
 
 	if (!g_ascii_strcasecmp(args[0], "version")) {
-		tmp = g_strdup_printf("me is using %s v%s.", "Pidgin", VERSION);
+		tmp = g_strdup_printf("me is using %s v%s.", "Pidgin", DISPLAY_VERSION);
 		markup = g_markup_escape_text(tmp, -1);
 
 		status = purple_cmd_do_command(conv, tmp, markup, error);
@@ -2853,8 +2854,9 @@ pidgin_conversations_find_unseen_list(PurpleConversationType type,
 		if (gtkconv != NULL && gtkconv->active_conv != conv)
 			continue;
 		if (gtkconv == NULL) {
-			if (!hidden_only ||
-					!purple_conversation_get_data(conv, "unseen-count"))
+			if (!purple_conversation_get_data(conv, "unseen-count") ||
+				!purple_conversation_get_data(conv, "unseen-state") ||
+				GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-state"))<min_state)
 				continue;
 			r = g_list_prepend(r, conv);
 			c++;
@@ -3524,6 +3526,7 @@ update_send_to_selection(PidginWindow *win)
 
 		if (b == item_buddy) {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
+			g_list_free(child);
 			break;
 		}
 	}
@@ -5037,7 +5040,6 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtkconv->send_history = g_list_append(NULL, NULL);
 
 	/* Setup some initial variables. */
-	gtkconv->sg       = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 	gtkconv->tooltips = gtk_tooltips_new();
 	gtkconv->unseen_state = PIDGIN_UNSEEN_NONE;
 	gtkconv->unseen_count = 0;
@@ -5162,6 +5164,8 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
 			purple_conversation_set_ui_ops(conv, NULL);
 			ui_ops->create_conversation = pidgin_conv_new;
+		} else {
+			/* TODO: update the unseen_state data on the conv here */
 		}
 	} else {
 		/* new message for an IM */
@@ -6572,13 +6576,13 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			style = "color=\"#c4a000\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)	{
 			atk_object_set_description(accessibility_obj, _("Nick Said"));
-			style = "color=\"#cc0000\"";
+			style = "color=\"#204a87\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
 			if (gtkconv->active_conv->type == PURPLE_CONV_TYPE_CHAT)
-				style = "color=\"#204a87\" weight=\"bold\"";
+				style = "color=\"#cc0000\"";
 			else
-				style = "color=\"#cc0000\" weight=\"bold\"";
+				style = "color=\"#204a87\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
 			atk_object_set_description(accessibility_obj, _("New Event"));
 			style = "color=\"#888a85\"";
@@ -6590,7 +6594,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				gtkconv->unseen_state == PIDGIN_UNSEEN_NICK ||
 				gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
 			bold = TRUE;
-		
+
 		if (style || bold)
 		{
 			char *html_title,*label;
@@ -6668,13 +6672,24 @@ pidgin_conv_updated(PurpleConversation *conv, PurpleConvUpdateType type)
 
 static void
 wrote_msg_update_unseen_cb(PurpleAccount *account, const char *who, const char *message,
-		PurpleConversation *conv, PurpleMessageFlags flag, gpointer null)
+		PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
 {
 	if (conv == NULL || PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 		return;
-	if (flag & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)) {
-		purple_conversation_set_data(conv, "unseen-count",
-				GINT_TO_POINTER(GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")) + 1));
+	if (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)) {
+		PidginUnseenState unseen = PIDGIN_UNSEEN_NONE;
+
+		if ((flags & PURPLE_MESSAGE_NICK) == PURPLE_MESSAGE_NICK)
+			unseen = PIDGIN_UNSEEN_NICK;
+		else if (((flags & PURPLE_MESSAGE_SYSTEM) == PURPLE_MESSAGE_SYSTEM) ||
+			  ((flags & PURPLE_MESSAGE_ERROR) == PURPLE_MESSAGE_ERROR))
+			unseen = PIDGIN_UNSEEN_EVENT;
+		else if ((flags & PURPLE_MESSAGE_NO_LOG) == PURPLE_MESSAGE_NO_LOG)
+			unseen = PIDGIN_UNSEEN_NO_LOG;
+		else
+			unseen = PIDGIN_UNSEEN_TEXT;
+
+		conv_set_unseen(conv, unseen);
 		purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
 	}
 }
@@ -7482,6 +7497,7 @@ pidgin_conv_attach(PurpleConversation *conv)
 {
 	int timer;
 	purple_conversation_set_data(conv, "unseen-count", NULL);
+	purple_conversation_set_data(conv, "unseen-state", NULL);
 	purple_conversation_set_ui_ops(conv, pidgin_conversations_get_conv_ui_ops());
 	private_gtkconv_new(conv, FALSE);
 	timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
@@ -7980,6 +7996,38 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 	pidgin_conv_window_destroy(win);
 
 	return TRUE;
+}
+
+static void
+conv_set_unseen(PurpleConversation *conv, PidginUnseenState state)
+{
+	int unseen_count = 0;
+	PidginUnseenState unseen_state = PIDGIN_UNSEEN_NONE;
+
+	if(purple_conversation_get_data(conv, "unseen-count"))
+		unseen_count = GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count"));
+
+	if(purple_conversation_get_data(conv, "unseen-state"))
+		unseen_state = GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-state"));
+
+	if (state == PIDGIN_UNSEEN_NONE)
+	{
+		unseen_count = 0;
+		unseen_state = PIDGIN_UNSEEN_NONE;
+	}
+	else
+	{
+		if (state >= PIDGIN_UNSEEN_TEXT)
+			unseen_count++;
+
+		if (state > unseen_state)
+			unseen_state = state;
+	}
+
+	purple_conversation_set_data(conv, "unseen-count", GINT_TO_POINTER(unseen_count));
+	purple_conversation_set_data(conv, "unseen-state", GINT_TO_POINTER(unseen_state));
+
+	purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
 }
 
 static void
@@ -8844,6 +8892,9 @@ pidgin_conv_window_new()
 	GtkPositionType pos;
 	GtkWidget *testidea;
 	GtkWidget *menubar;
+#if GTK_CHECK_VERSION(2,6,0)
+	GdkModifierType state;
+#endif
 
 	win = g_malloc0(sizeof(PidginWindow));
 
@@ -8851,6 +8902,10 @@ pidgin_conv_window_new()
 
 	/* Create the window. */
 	win->window = pidgin_create_window(NULL, 0, "conversation", TRUE);
+#if GTK_CHECK_VERSION(2,6,0)
+	if (!gtk_get_current_event_state(&state))
+		gtk_window_set_focus_on_map(GTK_WINDOW(win->window), FALSE);
+#endif
 	pidgin_conv_restore_position(win);
 
 	if (available_list == NULL) {
@@ -8923,7 +8978,8 @@ pidgin_conv_window_new()
 	g_signal_connect(G_OBJECT(win->window), "show",
 	                 G_CALLBACK(winpidgin_ensure_onscreen), win->window);
 
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/win32/minimize_new_convs"))
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/win32/minimize_new_convs")
+			&& !gtk_get_current_event_state(&state))
 		gtk_window_iconify(GTK_WINDOW(win->window));
 #endif
 

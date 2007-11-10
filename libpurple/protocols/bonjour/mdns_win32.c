@@ -147,10 +147,13 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 	}
 
 	/* free the hosts list*/
-	g_slist_free(hosts);
+	while (hosts != NULL) {
+		hosts = g_slist_remove(hosts, hosts->data);
+		g_free(hosts->data);
+		hosts = g_slist_remove(hosts, hosts->data);
+	}
 
 	/* free the remaining args memory */
-	purple_dnsquery_destroy(args->query);
 	g_free(args->full_service_name);
 	g_free(args);
 }

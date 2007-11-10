@@ -1,5 +1,3 @@
-SUBDIRS = scalable
-
 EXTRA_DIST = change-bgcolor.png \
 		change-fgcolor.png \
 		emote-select.png \

@@ -112,7 +112,7 @@ struct name_data {
 	gchar *nick;
 };
 
-static char *msgerrreason[] = {
+static const char * const msgerrreason[] = {
 	N_("Invalid error"),
 	N_("Invalid SNAC"),
 	N_("Rate to host"),
@@ -139,7 +139,7 @@ static char *msgerrreason[] = {
 	N_("Queue full"),
 	N_("Not while on AOL")
 };
-static int msgerrreasonlen = 25;
+static const int msgerrreasonlen = G_N_ELEMENTS(msgerrreason);
 
 /* All the libfaim->purple callback functions */
 static int purple_parse_auth_resp  (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -778,7 +778,7 @@ oscar_user_info_convert_and_add(PurpleAccount *account, PurpleNotifyUserInfo *us
 	gchar *utf8;
 	
 	if (value && value[0] && (utf8 = oscar_utf8_try_convert(account, value))) {
-		purple_notify_user_info_add_pair(user_info, name, value);
+		purple_notify_user_info_add_pair(user_info, name, utf8);
 		g_free(utf8);
 	}
 }
@@ -1263,6 +1263,7 @@ oscar_login(PurpleAccount *account)
 		gc->wants_to_die = TRUE;
 		purple_connection_error(gc, buf);
 		g_free(buf);
+		return;
 	}
 
 	if (aim_snvalid_icq((purple_account_get_username(account)))) {
@@ -1801,7 +1802,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	if (have_status_message)
 	{
-		if ((status_id == OSCAR_STATUS_ID_AVAILABLE) && (info->itmsurl != NULL))
+		if ((!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE)) && (info->itmsurl != NULL))
 		{
 			char *itmsurl;
 			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
@@ -4765,10 +4766,11 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 	if (reason == 0x0005) {
 		purple_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
-						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few hours."));
+						  _("The AIM servers were temporarily unable to send your buddy list.  Your buddy list is not lost, and will probably become available in a few minutes."));
 		if (od->getblisttimer > 0)
 			purple_timeout_remove(od->getblisttimer);
 		od->getblisttimer = purple_timeout_add(30000, purple_ssi_rerequestdata, od);
+		return 1;
 	}
 
 	oscar_set_extendedstatus(gc);
@@ -5006,6 +5008,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 					g = purple_group_new(gname_utf8);
 					purple_blist_add_group(g, NULL);
 				}
+				g_free(gname_utf8);
 			} break;
 
 			case 0x0002: { /* Permit buddy */

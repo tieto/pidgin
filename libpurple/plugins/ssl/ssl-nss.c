@@ -814,7 +814,7 @@ static PurplePluginInfo info =
 
 	SSL_NSS_PLUGIN_ID,                             /**< id             */
 	N_("NSS"),                                        /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Provides SSL support through Mozilla NSS."),
 	                                                  /**  description    */

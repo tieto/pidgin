@@ -317,7 +317,7 @@ peer_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 				return;
 
 			peer_connection_destroy(conn,
-					OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
+					OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 			return;
 		}
 
@@ -367,7 +367,7 @@ peer_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 			return;
 
 		peer_connection_destroy(conn,
-				OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
+				OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 		return;
 	}
 
@@ -607,6 +607,7 @@ peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 	PurpleConnection *gc;
 	struct sockaddr addr;
 	socklen_t addrlen = sizeof(addr);
+	int flags;
 
 	conn = data;
 	od = conn->od;
@@ -633,7 +634,8 @@ peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	fcntl(conn->fd, F_SETFL, O_NONBLOCK);
+	flags = fcntl(conn->fd, F_GETFL);
+	fcntl(conn->fd, F_SETFL, flags | O_NONBLOCK);
 	purple_input_remove(conn->watcher_incoming);
 
 	peer_connection_finalize_connection(conn);

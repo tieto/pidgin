@@ -144,7 +144,7 @@ static PurplePluginInfo info = {
 
 	CRAZYCHAT_PLUGIN_ID,				  /**< id             */
 	N_("Crazychat"),				  /**< name           */
-	VERSION,					  /**< version        */
+	DISPLAY_VERSION,				  /**< version        */
 							  /**  summary        */
 	N_("Plugin to establish a Crazychat session."),
 							  /**  description    */

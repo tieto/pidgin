@@ -135,7 +135,7 @@ static PurplePluginInfo info = {
 
 	PLUGIN_ID,                  /* id */
 	"Notify API Example",       /* name */
-	VERSION,                    /* version */
+	DISPLAY_VERSION,            /* version */
 	"Notify API Example",       /* summary */
 	"Notify API Example",       /* description */
 	PLUGIN_AUTHOR,              /* author */

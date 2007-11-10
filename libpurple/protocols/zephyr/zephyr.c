@@ -2941,7 +2941,7 @@ static PurplePluginInfo info = {
 
 	"prpl-zephyr",					   /**< id	       */
 	"Zephyr",						 /**< name	     */
-	VERSION,						  /**< version	      */
+	DISPLAY_VERSION,					  /**< version	      */
 	/**  summary	    */
 	N_("Zephyr Protocol Plugin"),
 	/**  description    */

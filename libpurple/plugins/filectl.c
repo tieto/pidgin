@@ -246,7 +246,7 @@ static PurplePluginInfo info =
 
 	FILECTL_PLUGIN_ID,                                /**< id             */
 	N_("File Control"),                               /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Allows control by entering commands in a file."),
 	                                                  /**  description    */

@@ -52,7 +52,7 @@ typedef struct
 	{
 		int integer;
 		char *string;
-		gboolean bool;
+		gboolean boolean;
 
 	} value;
 
@@ -107,7 +107,7 @@ setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 	}
 	else if (setting->type == PURPLE_PREF_BOOLEAN) {
 		xmlnode_set_attrib(child, "type", "bool");
-		snprintf(buf, sizeof(buf), "%d", setting->value.bool);
+		snprintf(buf, sizeof(buf), "%d", setting->value.boolean);
 		xmlnode_insert_data(child, buf, -1);
 	}
 }
@@ -1620,7 +1620,7 @@ purple_account_set_bool(PurpleAccount *account, const char *name, gboolean value
 	setting = g_new0(PurpleAccountSetting, 1);
 
 	setting->type       = PURPLE_PREF_BOOLEAN;
-	setting->value.bool = value;
+	setting->value.boolean = value;
 
 	g_hash_table_insert(account->settings, g_strdup(name), setting);
 
@@ -1706,7 +1706,7 @@ purple_account_set_ui_bool(PurpleAccount *account, const char *ui,
 
 	setting->type       = PURPLE_PREF_BOOLEAN;
 	setting->ui         = g_strdup(ui);
-	setting->value.bool = value;
+	setting->value.boolean = value;
 
 	table = get_ui_settings_table(account, ui);
 
@@ -1981,7 +1981,7 @@ purple_account_get_bool(const PurpleAccount *account, const char *name,
 
 	g_return_val_if_fail(setting->type == PURPLE_PREF_BOOLEAN, default_value);
 
-	return setting->value.bool;
+	return setting->value.boolean;
 }
 
 int
@@ -2047,7 +2047,7 @@ purple_account_get_ui_bool(const PurpleAccount *account, const char *ui,
 
 	g_return_val_if_fail(setting->type == PURPLE_PREF_BOOLEAN, default_value);
 
-	return setting->value.bool;
+	return setting->value.boolean;
 }
 
 PurpleLog *

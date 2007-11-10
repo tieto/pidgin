@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [2])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [2])
-m4_define([gnt_micro_version], [2])
+m4_define([gnt_micro_version], [3])
 m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -233,6 +233,30 @@ AC_SYS_LARGEFILE
 dnl FreeBSD doesn't have libdl, dlopen is provided by libc
 AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
+AC_MSG_CHECKING(for fileno())
+AC_TRY_RUN([
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+	int fd;
+
+	fd = fileno(stdout);
+
+	return !(fd > 0);
+}
+], [
+	AC_MSG_RESULT(yes)
+	AC_DEFINE([HAVE_FILENO], [1],
+	          [Define to 1 if your stdio has int fileno(FILE *).])
+], [
+	AC_MSG_RESULT(no)
+], [
+	# Fallback for Cross Compiling...
+	# This will enable the compatibility code.
+	AC_MSG_RESULT(no)
+])
+
 AC_MSG_CHECKING(for the %z format string in strftime())
 AC_TRY_RUN([
 #ifdef HAVE_SYS_TIME_H
@@ -282,6 +306,17 @@ You must have the GLib 2.0 development headers installed to build.
 ])])
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
+
+AC_ARG_WITH([extraversion],
+			AC_HELP_STRING([--with-extraversion=STRING],
+						   [extra version number to be displayed in Help->About and --help (for packagers)]),
+						   EXTRA_VERSION=$withval)
+
+if test x"$EXTRA_VERSION" != "x" ; then
+	AC_DEFINE_UNQUOTED(DISPLAY_VERSION, "$VERSION-$EXTRA_VERSION", [display version info])
+else
+	AC_DEFINE_UNQUOTED(DISPLAY_VERSION, "$VERSION", [display version info])
+fi
 
 AC_ARG_WITH(x, [],
 	with_x="$withval", with_x="yes")
@@ -2167,66 +2202,34 @@ AC_OUTPUT([Makefile
 		   pidgin/pidgin.pc
 		   pidgin/pidgin-uninstalled.pc
 		   pidgin/pixmaps/Makefile
-		   pidgin/pixmaps/animations/Makefile
-		   pidgin/pixmaps/animations/16/Makefile
-		   pidgin/pixmaps/buddy_icons/Makefile
 		   pidgin/pixmaps/buddy_icons/qq/Makefile
-		   pidgin/pixmaps/dialogs/Makefile
 		   pidgin/pixmaps/dialogs/16/Makefile
-		   pidgin/pixmaps/dialogs/16/scalable/Makefile
 		   pidgin/pixmaps/dialogs/64/Makefile
-		   pidgin/pixmaps/dialogs/64/scalable/Makefile
-		   pidgin/pixmaps/emblems/Makefile
 		   pidgin/pixmaps/emblems/16/Makefile
-		   pidgin/pixmaps/emblems/16/scalable/Makefile
-		   pidgin/pixmaps/emotes/Makefile
-		   pidgin/pixmaps/emotes/default/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
-		   pidgin/pixmaps/emotes/default/24/scalable/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
-		   pidgin/pixmaps/icons/Makefile
 		   pidgin/pixmaps/icons/16/Makefile
-		   pidgin/pixmaps/icons/16/scalable/Makefile
 		   pidgin/pixmaps/icons/22/Makefile
-		   pidgin/pixmaps/icons/22/scalable/Makefile
 		   pidgin/pixmaps/icons/24/Makefile
-		   pidgin/pixmaps/icons/24/scalable/Makefile
 		   pidgin/pixmaps/icons/32/Makefile
-		   pidgin/pixmaps/icons/32/scalable/Makefile
 		   pidgin/pixmaps/icons/48/Makefile
-		   pidgin/pixmaps/icons/48/scalable/Makefile
-		   pidgin/pixmaps/protocols/Makefile
 		   pidgin/pixmaps/protocols/16/Makefile
-		   pidgin/pixmaps/protocols/16/scalable/Makefile
 		   pidgin/pixmaps/protocols/22/Makefile
-		   pidgin/pixmaps/protocols/22/scalable/Makefile
 		   pidgin/pixmaps/protocols/48/Makefile
-		   pidgin/pixmaps/protocols/48/scalable/Makefile
-		   pidgin/pixmaps/status/Makefile
 		   pidgin/pixmaps/status/11/Makefile
-		   pidgin/pixmaps/status/11/scalable/Makefile
 		   pidgin/pixmaps/status/11/rtl/Makefile
 		   pidgin/pixmaps/status/16/Makefile
 		   pidgin/pixmaps/status/16/rtl/Makefile
-		   pidgin/pixmaps/status/16/scalable/Makefile
 		   pidgin/pixmaps/status/22/Makefile
 		   pidgin/pixmaps/status/22/rtl/Makefile
-		   pidgin/pixmaps/status/22/scalable/Makefile
 		   pidgin/pixmaps/status/32/Makefile
 		   pidgin/pixmaps/status/32/rtl/Makefile
-		   pidgin/pixmaps/status/32/scalable/Makefile
 		   pidgin/pixmaps/status/48/Makefile
 		   pidgin/pixmaps/status/48/rtl/Makefile
-		   pidgin/pixmaps/toolbar/Makefile
 		   pidgin/pixmaps/toolbar/16/Makefile
-		   pidgin/pixmaps/toolbar/16/scalable/Makefile
 		   pidgin/pixmaps/toolbar/22/Makefile
-		   pidgin/pixmaps/toolbar/22/scalable/Makefile
-		   pidgin/pixmaps/tray/Makefile
 		   pidgin/pixmaps/tray/16/Makefile
-		   pidgin/pixmaps/tray/16/scalable/Makefile
 		   pidgin/pixmaps/tray/22/Makefile
-		   pidgin/pixmaps/tray/22/scalable/Makefile
 		   pidgin/pixmaps/tray/32/Makefile
 		   pidgin/pixmaps/tray/48/Makefile
 		   pidgin/plugins/Makefile
