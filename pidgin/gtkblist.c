@@ -116,7 +116,6 @@ static gboolean editing_blist = FALSE;
 
 static GList *pidgin_blist_sort_methods = NULL;
 static struct pidgin_blist_sort_method *current_sort_method = NULL;
-
 static void sort_method_none(PurpleBlistNode *node, PurpleBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 
 /* The functions we use for sorting aren't available in gtk 2.0.x, and
