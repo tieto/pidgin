@@ -113,7 +113,7 @@ static PurplePluginInfo info =
 
 	"prpl-icq",                                     /**< id             */
 	"ICQ",                                        /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("ICQ Protocol Plugin"),
 	                                                  /**  description    */

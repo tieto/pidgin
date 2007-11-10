@@ -474,7 +474,7 @@ static void ycht_pending(gpointer data, gint source, PurpleInputCondition cond)
 			return;
 
 		tmp = g_strdup_printf(_("Lost connection with server\n%s"),
-				strerror(errno));
+				g_strerror(errno));
 		ycht_connection_error(ycht, tmp);
 		g_free(tmp);
 		return;

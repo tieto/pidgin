@@ -339,7 +339,7 @@ void purple_pounces_unregister_handler(const char *ui);
 /**
  * Returns a list of all registered buddy pounces.
  *
- * @return The list of buddy pounces.
+ * @constreturn The list of buddy pounces.
  */
 GList *purple_pounces_get_all(void);
 

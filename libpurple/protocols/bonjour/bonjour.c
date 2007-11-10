@@ -480,7 +480,7 @@ static PurplePluginInfo info =
 
 	"prpl-bonjour",                                   /**< id             */
 	"Bonjour",                                        /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Bonjour Protocol Plugin"),
 	                                                  /**  description    */
@@ -652,7 +652,7 @@ initialize_default_account_values()
 	/* TODO: Avoid 'localhost,' if possible */
 	if (gethostname(hostname, 255) != 0) {
 		purple_debug_warning("bonjour", "Error when getting host name: %s.  Using \"localhost.\"\n",
-				strerror(errno));
+				g_strerror(errno));
 		strcpy(hostname, "localhost");
 	}
 	default_hostname = g_strdup(hostname);

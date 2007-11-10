@@ -437,7 +437,7 @@ msgstr "Informazione"
 
 #: ../finch/gntblist.c:864 ../pidgin/gtkutils.c:931
 msgid "Retrieving..."
-msgstr "Sacaricamento in corso..."
+msgstr "Scaricamento in corso..."
 
 #: ../finch/gntblist.c:904 ../finch/gntconv.c:507
 #: ../libpurple/protocols/silc/chat.c:899

@@ -1,5 +1,3 @@
-SUBDIRS = scalable
-
 EXTRA_DIST =	aim.png \
 		bonjour.png \
 		gadu-gadu.png \

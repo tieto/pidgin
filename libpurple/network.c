@@ -263,6 +263,7 @@ static PurpleNetworkListenData *
 purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
 {
 	int listenfd = -1;
+	int flags;
 	const int on = 1;
 	PurpleNetworkListenData *listen_data;
 	unsigned short actual_port;
@@ -284,7 +285,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 #ifndef _WIN32
 		purple_debug_warning("network", "getaddrinfo: %s\n", gai_strerror(errnum));
 		if (errnum == EAI_SYSTEM)
-			purple_debug_warning("network", "getaddrinfo: system error: %s\n", strerror(errno));
+			purple_debug_warning("network", "getaddrinfo: system error: %s\n", g_strerror(errno));
 #else
 		purple_debug_warning("network", "getaddrinfo: Error Code = %d\n", errnum);
 #endif
@@ -301,7 +302,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 		if (listenfd < 0)
 			continue;
 		if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0)
-			purple_debug_warning("network", "setsockopt: %s\n", strerror(errno));
+			purple_debug_warning("network", "setsockopt: %s\n", g_strerror(errno));
 		if (bind(listenfd, next->ai_addr, next->ai_addrlen) == 0)
 			break; /* success */
 		/* XXX - It is unclear to me (datallah) whether we need to be
@@ -317,30 +318,31 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	struct sockaddr_in sockin;
 
 	if ((listenfd = socket(AF_INET, socket_type, 0)) < 0) {
-		purple_debug_warning("network", "socket: %s\n", strerror(errno));
+		purple_debug_warning("network", "socket: %s\n", g_strerror(errno));
 		return NULL;
 	}
 
 	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0)
-		purple_debug_warning("network", "setsockopt: %s\n", strerror(errno));
+		purple_debug_warning("network", "setsockopt: %s\n", g_strerror(errno));
 
 	memset(&sockin, 0, sizeof(struct sockaddr_in));
 	sockin.sin_family = PF_INET;
 	sockin.sin_port = htons(port);
 
 	if (bind(listenfd, (struct sockaddr *)&sockin, sizeof(struct sockaddr_in)) != 0) {
-		purple_debug_warning("network", "bind: %s\n", strerror(errno));
+		purple_debug_warning("network", "bind: %s\n", g_strerror(errno));
 		close(listenfd);
 		return NULL;
 	}
 #endif
 
 	if (socket_type == SOCK_STREAM && listen(listenfd, 4) != 0) {
-		purple_debug_warning("network", "listen: %s\n", strerror(errno));
+		purple_debug_warning("network", "listen: %s\n", g_strerror(errno));
 		close(listenfd);
 		return NULL;
 	}
-	fcntl(listenfd, F_SETFL, O_NONBLOCK);
+	flags = fcntl(listenfd, F_GETFL);
+	fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
 
 	actual_port = purple_network_get_port_from_fd(listenfd);
 
@@ -424,7 +426,7 @@ purple_network_get_port_from_fd(int fd)
 
 	len = sizeof(addr);
 	if (getsockname(fd, (struct sockaddr *) &addr, &len) == -1) {
-		purple_debug_warning("network", "getsockname: %s\n", strerror(errno));
+		purple_debug_warning("network", "getsockname: %s\n", g_strerror(errno));
 		return 0;
 	}
 

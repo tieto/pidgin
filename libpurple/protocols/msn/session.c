@@ -24,6 +24,7 @@
 #include "msn.h"
 #include "session.h"
 #include "notification.h"
+#include "oim.h"
 
 #include "dialog.h"
 
@@ -42,6 +43,7 @@ msn_session_new(PurpleAccount *account)
 
 	session->user = msn_user_new(session->userlist,
 								 purple_account_get_username(account), NULL);
+	session->oim = msn_oim_new(session);
 
 	/*if you want to chat with Yahoo Messenger*/
 	//session->protocol_ver = WLM_YAHOO_PROT_VER;
@@ -98,6 +100,12 @@ msn_session_destroy(MsnSession *session)
 
 	if (session->user != NULL)
 		msn_user_destroy(session->user);
+
+	if (session->soap_table)
+		g_hash_table_destroy(session->soap_table);
+
+	if (session->soap_cleanup_handle)
+		purple_timeout_remove(session->soap_cleanup_handle);
 
 	g_free(session);
 }

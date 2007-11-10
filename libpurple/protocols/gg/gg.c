@@ -833,6 +833,7 @@ static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestField
 {
 	GGPInfo *info = gc->proto_data;
 	PurpleRequestField *field;
+	/* TODO: sel may be null. */
 	GList *sel;
 
 	field = purple_request_fields_get_field(fields, "name");
@@ -1881,15 +1882,24 @@ static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 		gg_change_status_descr(info->session, new_status_descr, new_msg);
 		g_free(new_msg);
 	}
+
+	ggp_status_fake_to_self(account);
+
 }
 /* }}} */
 
 /* static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {{{ */
 static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
+	PurpleAccount *account;
 	GGPInfo *info = gc->proto_data;
 
 	gg_add_notify(info->session, ggp_str_to_uin(buddy->name));
+
+	account = purple_connection_get_account(gc);
+	if (strcmp(purple_account_get_username(account), buddy->name) == 0) {
+		ggp_status_fake_to_self(account);
+	}
 }
 /* }}} */
 
@@ -2163,7 +2173,7 @@ static PurplePluginInfo info = {
 
 	"prpl-gg",			/* id */
 	"Gadu-Gadu",			/* name */
-	VERSION,			/* version */
+	DISPLAY_VERSION,		/* version */
 
 	N_("Gadu-Gadu Protocol Plugin"),	/* summary */
 	N_("Polish popular IM"),		/* description */

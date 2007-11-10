@@ -254,6 +254,7 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 	trans = msn_transaction_new(cmdproc, "PGD", "%s 1 %d", who, payload_len);
 
 	msn_transaction_set_payload(trans, payload, payload_len);
+	g_free(payload);
 
 	msn_page_destroy(page);
 
@@ -597,14 +598,20 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 			/* We could probably just use user->media.title etc. here */
 		}
 
-		if (!purple_presence_is_available(presence)) {
+		if (!purple_status_is_available(status)) {
 			name = purple_status_get_name(status);
 		} else {
 			name = NULL;
 		}
 
 		if (name != NULL && *name) {
-			char *tmp2 = g_markup_escape_text(name, -1);
+			char *tmp2;
+
+			if (purple_presence_is_idle(presence)) {
+				tmp2 = g_markup_printf_escaped("%s/%s", name, _("Idle"));
+			} else {
+				tmp2 = g_markup_escape_text(name, -1);
+			}
 
 			if (psm != NULL && *psm) {
 				tmp = g_markup_escape_text(psm, -1);
@@ -618,8 +625,20 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		} else {
 			if (psm != NULL && *psm) {
 				tmp = g_markup_escape_text(psm, -1);
-				purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
+				if (purple_presence_is_idle(presence)) {
+					purple_notify_user_info_add_pair(user_info, _("Idle"), tmp);
+				} else {
+					purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
+				}
 				g_free(tmp);
+			} else {
+				if (purple_presence_is_idle(presence)) {
+					purple_notify_user_info_add_pair(user_info, _("Status"),
+						_("Idle"));
+				} else {
+					purple_notify_user_info_add_pair(user_info, _("Status"),
+						purple_status_get_name(status));
+				}
 			}
 		}
 
@@ -635,7 +654,12 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	 * XXX: blocked icon overlay isn't always accurate for MSN.
 	 * XXX: This can die as soon as purple_privacy_check() knows that
 	 * XXX: this prpl always honors both the allow and deny lists. */
-	if (user)
+	/* While the above comment may be strictly correct (the privacy API needs
+	 * rewriteing), purple_privacy_check() is going to be more accurate at
+	 * indicating whether a particular buddy is going to be able to message
+	 * you, which is the important information that this is trying to convey.
+	 */
+	if (full && user)
 	{
 		purple_notify_user_info_add_pair(user_info, _("Blocked"),
 									   ((user->list_op & (1 << MSN_LIST_BL)) ? _("Yes") : _("No")));
@@ -973,20 +997,17 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	}else	{
 		/*send Offline Instant Message,only to MSN Passport User*/
 		MsnSession *session;
-		MsnOim *oim;
 		char *friendname;
 
 		purple_debug_info("MSNP14","prepare to send offline Message\n");
 		session = gc->proto_data;
-		/* XXX/khc: hack */
-		if (!session->oim)
-			session->oim = msn_oim_new(session);
 
-		oim = session->oim;
 		friendname = msn_encode_mime(account->username);
-		msn_oim_prep_send_msg_info(oim, purple_account_get_username(account),
-								   friendname, who,	message);
-		msn_oim_send_msg(oim);
+		msn_oim_prep_send_msg_info(session->oim,
+			purple_account_get_username(account),
+			friendname, who,	message);
+		msn_oim_send_msg(session->oim);
+		g_free(friendname);
 	}
 
 	return 1;
@@ -1617,7 +1638,6 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	gboolean sect_info = FALSE;
 	gboolean has_contact_info = FALSE;
 	char *url_buffer;
-	GString *s, *s2;
 	int stripped_len;
 #if PHOTO_SUPPORT
 	char *photo_url_text = NULL;
@@ -1701,11 +1721,6 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 	purple_debug_misc("msn", "stripped = %p\n", stripped);
 	purple_debug_misc("msn", "url_buffer = %p\n", url_buffer);
-
-	/* Gonna re-use the memory we've already got for url_buffer */
-	/* No we're not. */
-	s = g_string_sized_new(strlen(url_buffer));
-	s2 = g_string_sized_new(strlen(url_buffer));
 
 	/* General section header */
 	if (has_tooltip_text)
@@ -2011,7 +2026,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	purple_debug_info("MSNP14","photo url:{%s}\n", photo_url_text ? photo_url_text : "(null)");
 
 	/* Marshall the existing state */
-	info2_data = g_malloc0(sizeof(MsnGetInfoStepTwoData));
+	info2_data = g_new0(MsnGetInfoStepTwoData, 1);
 	info2_data->info_data = info_data;
 	info2_data->stripped = stripped;
 	info2_data->url_buffer = url_buffer;
@@ -2053,7 +2068,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		purple_debug_warning("msn", "invalid connection. ignoring buddy photo info.\n");
 		g_free(stripped);
 		g_free(url_buffer);
-		g_free(user_info);
+		purple_notify_user_info_destroy(user_info);
 		g_free(info_data->name);
 		g_free(info_data);
 		g_free(photo_url_text);
@@ -2287,7 +2302,7 @@ static PurplePluginInfo info =
 
 	"prpl-msn",                                       /**< id             */
 	"MSN",                                            /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Windows Live Messenger Protocol Plugin"),
 	                                                  /**  description    */

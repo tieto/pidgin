@@ -26,11 +26,10 @@ version 2.3.0:
 	  is ctrl+t.
 	* 'yank' operation for the entry boxes. The default binding is ctrl+y.
 
-version 2.2.2:
-	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
-		NOTE: Due to 2.2.1 being a security fix release, some bugs
-		      marked fixed in 2.2.1 may not have been fixed until
-		      this release (2.2.2).
+version 2.2.3:
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.3
+		NOTE: Some bugs marked fixed in 2.2.1 may not have been fixed
+		      until this release (2.2.3).
 
 	libpurple:
 	* Real usernames are now shown in the system log.
@@ -59,6 +58,20 @@ version 2.2.2:
 	* ICQ Birthday notifications are shown as buddy list emblems.
 	* Plugin actions are now available from the docklet context menu
 	  in addition to the Tool menu of the buddy list.
+	* The manual page has been heavily rewritten to bring it in line
+	  with current functionality.
+
+version 2.2.2 (10/23/2007):
+	http://developer.pidgin.im/query?status=closed&milestone=2.2.2
+		NOTE: Due to the way this release was made, it is possible that
+			  bugs marked as fixed in 2.2.1 or 2.2.2 will not be fixed
+			  until the next release.
+
+	* Various bug and memory leak fixes
+	* Look for a default prefs.xml in the CSIDL_COMMON_APPDATA directory
+	  (e.g. c:\Documents and Settings\All Users\
+	        Application Data\purple\prefs.xml) on Windows, similarly to
+	  how this is done on other platforms.
 
 version 2.2.1 (09/29/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.2.1
@@ -92,7 +105,7 @@ version 2.2.0 (09/13/2007):
 	* New protocol plugin: MySpaceIM (Jeff Connelly, Google Summer of
 	  Code)
 	* XMPP enhancements. See
- 	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas 
+	  http://www.adiumx.com/blog/2007/07/soc-xmpp-update.php (Andreas 
 	  Monitzer, Google Summer of Code for Adium)
 	* Certificate management. Libpurple will validate certificates on
 	  SSL-encrypted protocols (William Ehlhardt, Google Summer of Code)
@@ -2326,6 +2339,6 @@ version 0.8.0  (04/31/1999):
 	* Add/Remove buddy from conversation window
 	* Scroll-Wheel Mice work in Conversation Window
 	* Fixed WindowMaker Appicon
-	* Version Number in About Box
+	* version Number in About Box
 	* Gaim Slogan in about box :)
 	* Created Changelog File :)

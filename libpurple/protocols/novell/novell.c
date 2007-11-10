@@ -3530,7 +3530,7 @@ static PurplePluginInfo info = {
 	PURPLE_PRIORITY_DEFAULT,			/**< priority       */
 	"prpl-novell",				/**< id             */
 	"GroupWise",				/**< name           */
-	VERSION,				/**< version        */
+	DISPLAY_VERSION,			/**< version        */
 	/**  summary        */
 	N_("Novell GroupWise Messenger Protocol Plugin"),
 	/**  description    */

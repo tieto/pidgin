@@ -15,7 +15,16 @@ include ./Makefile.am
 install:
 	if test '$(SUBDIRS)'; then \
 	  list='$(SUBDIRS)'; for subdir in $$list; do \
+	  if [[ "$$subdir" != icons/* ]]; then \
 	    $(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) install || exit 1 ;\
+	  fi \
+	  done; \
+	fi;
+	if test '$(nobase_dist_pidginpixmap_DATA)'; then \
+	  list='$(nobase_dist_pidginpixmap_DATA)'; for file in $$list; do \
+	    dir=`dirname $$file`; \
+	    mkdir -p $(pidginpixmapdir)/$$dir; \
+	    cp $$file $(pidginpixmapdir)/$$dir/; \
 	  done; \
 	fi;
 	if test '$(pidginbuttonpix_DATA)'; then \
@@ -27,5 +36,3 @@ install:
 	  cp $(pidgindistpix_DATA) $(pidgindistpixdir); \
 	fi;
 
-clean:
-	$(MAKE) -C emotes -f $(MINGW_MAKEFILE) clean || exit 1 ;\

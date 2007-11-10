@@ -470,7 +470,7 @@ flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason, cons
  * @param error_message A brief error message that gives more detail
  *        regarding the reason for the disconnecting.  This should
  *        be NULL for everything except OSCAR_DISCONNECT_LOST_CONNECTION,
- *        in which case it should contain the value of strerror(errno),
+ *        in which case it should contain the value of g_strerror(errno),
  *        and OSCAR_DISCONNECT_COULD_NOT_CONNECT, in which case it
  *        should contain the error_message passed back from the call
  *        to purple_proxy_connect().
@@ -814,7 +814,7 @@ flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 				/* Error! */
 				flap_connection_schedule_destroy(conn,
-						OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
+						OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 				break;
 			}
 
@@ -875,7 +875,7 @@ flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 				/* Error! */
 				flap_connection_schedule_destroy(conn,
-						OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
+						OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 				break;
 			}
 
@@ -926,7 +926,7 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		close(conn->fd);
 		conn->fd = -1;
 		flap_connection_schedule_destroy(conn,
-				OSCAR_DISCONNECT_LOST_CONNECTION, strerror(errno));
+				OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 		return;
 	}
 

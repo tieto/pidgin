@@ -127,7 +127,7 @@ typedef struct
 static GtkWidget *accountmenu = NULL;
 
 static guint visibility_manager_count = 0;
-static gboolean gtk_blist_obscured = FALSE;
+static GdkVisibilityState gtk_blist_visibility = GDK_VISIBILITY_UNOBSCURED;
 static gboolean editing_blist = FALSE;
 
 static GList *pidgin_blist_sort_methods = NULL;
@@ -190,11 +190,14 @@ static char *dim_grey()
  ***************************************************/
 static gboolean gtk_blist_visibility_cb(GtkWidget *w, GdkEventVisibility *event, gpointer data)
 {
-	if (event->state == GDK_VISIBILITY_FULLY_OBSCURED)
-		gtk_blist_obscured = TRUE;
-	else if (gtk_blist_obscured) {
-			gtk_blist_obscured = FALSE;
-			pidgin_blist_refresh_timer(purple_get_blist());
+	GdkVisibilityState old_state = gtk_blist_visibility;
+	gtk_blist_visibility = event->state;
+
+	if (gtk_blist_visibility == GDK_VISIBILITY_FULLY_OBSCURED &&
+		old_state != GDK_VISIBILITY_FULLY_OBSCURED) {
+
+		/* no longer fully obscured */
+		pidgin_blist_refresh_timer(purple_get_blist());
 	}
 
 	/* continue to handle event normally */
@@ -617,6 +620,8 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
 			/* Now it's definitely a bug */
 			return;
 	}
+
+	pidgin_blist_tooltip_destroy();
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 	g_object_set(G_OBJECT(gtkblist->text_rend), "editable", TRUE, NULL);
@@ -2808,6 +2813,12 @@ static gboolean pidgin_blist_tooltip_timeout(GtkWidget *tv)
 	GtkTreeIter iter;
 	PurpleBlistNode *node;
 	GValue val;
+	gboolean editable = FALSE;
+
+	/* If we're editing a cell (e.g. alias editing), don't show the tooltip */
+	g_object_get(G_OBJECT(gtkblist->text_rend), "editable", &editable, NULL);
+	if (editable)
+		return FALSE;
 
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y + (gtkblist->tip_rect.height/2), 
 		&path, NULL, NULL, NULL))
@@ -3781,7 +3792,8 @@ static gboolean pidgin_blist_refresh_timer(PurpleBuddyList *list)
 {
 	PurpleBlistNode *gnode, *cnode;
 
-	if (gtk_blist_obscured || !GTK_WIDGET_VISIBLE(gtkblist->window))
+	if (gtk_blist_visibility == GDK_VISIBILITY_FULLY_OBSCURED
+			|| !GTK_WIDGET_VISIBLE(gtkblist->window)) 
 		return TRUE;
 
 	for(gnode = list->root; gnode; gnode = gnode->next) {
@@ -3868,7 +3880,7 @@ update_menu_bar(PidginBuddyList *gtkblist)
 	gtk_widget_set_sensitive(widget, pidgin_blist_joinchat_is_showable());
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Privacy"));
-	gtk_widget_set_sensitive(widget, (purple_connections_get_all() != NULL));
+	gtk_widget_set_sensitive(widget, sensitive);
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Room List"));
 	gtk_widget_set_sensitive(widget, pidgin_roomlist_is_showable());
@@ -3893,13 +3905,26 @@ unseen_conv_menu()
 {
 	static GtkWidget *menu = NULL;
 	GList *convs = NULL;
+	GList *chats, *ims;
 
 	if (menu) {
 		gtk_widget_destroy(menu);
 		menu = NULL;
 	}
 
-	convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_ANY, PIDGIN_UNSEEN_TEXT, TRUE, 0);
+	ims = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
+				PIDGIN_UNSEEN_TEXT, FALSE, 0);
+
+	chats = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
+				PIDGIN_UNSEEN_NICK, FALSE, 0);
+
+	if(ims && chats)
+		convs = g_list_concat(ims, chats);
+	else if(ims && !chats)
+		convs = ims;
+	else if(!ims && chats)
+		convs = chats;
+
 	if (!convs)
 		/* no conversations added, don't show the menu */
 		return;
@@ -3921,9 +3946,13 @@ menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 	switch (event->button) {
 		case 1:
 			convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
-															PIDGIN_UNSEEN_TEXT, TRUE, 1);
+							PIDGIN_UNSEEN_TEXT, FALSE, 1);
+
+			if(!convs)
+				convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
+								PIDGIN_UNSEEN_NICK, FALSE, 1);
 			if (convs) {
-				purple_conversation_present((PurpleConversation*)convs->data);
+				pidgin_conv_present_conversation((PurpleConversation*)convs->data);
 				g_list_free(convs);
 			}
 			break;
@@ -3939,6 +3968,7 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
                         PidginBuddyList *gtkblist)
 {
 	GList *convs = NULL;
+	GList *ims, *chats;
 	GList *l = NULL;
 
 	if (type != PURPLE_CONV_UPDATE_UNSEEN)
@@ -3955,7 +3985,19 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
 		gtkblist->menutrayicon = NULL;
 	}
 
-	convs = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_ANY, PIDGIN_UNSEEN_TEXT, TRUE, 0);
+	ims = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
+				PIDGIN_UNSEEN_TEXT, FALSE, 0);
+
+	chats = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
+				PIDGIN_UNSEEN_NICK, FALSE, 0);
+
+	if(ims && chats)
+		convs = g_list_concat(ims, chats);
+	else if(ims && !chats)
+		convs = ims;
+	else if(!ims && chats)
+		convs = chats;
+
 	if (convs) {
 		GtkWidget *img = NULL;
 		GString *tooltip_text = NULL;
@@ -3963,10 +4005,17 @@ conversation_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type,
 		tooltip_text = g_string_new("");
 		l = convs;
 		while (l != NULL) {
-			int count = GPOINTER_TO_INT(purple_conversation_get_data(l->data, "unseen-count"));
+			int count = 0;
+			PidginConversation *gtkconv = PIDGIN_CONVERSATION((PurpleConversation *)l->data);
+
+			if(gtkconv)
+				count = gtkconv->unseen_count;
+			else if(purple_conversation_get_data(l->data, "unseen-count"))
+				count = GPOINTER_TO_INT(purple_conversation_get_data(l->data, "unseen-count"));
+
 			g_string_append_printf(tooltip_text,
 					ngettext("%d unread message from %s\n", "%d unread messages from %s\n", count),
-					count, purple_conversation_get_name(l->data));
+					count, purple_conversation_get_title(l->data));
 			l = l->next;
 		}
 		if(tooltip_text->len > 0) {
@@ -6588,7 +6637,8 @@ pidgin_blist_toggle_visibility()
 {
 	if (gtkblist && gtkblist->window) {
 		if (GTK_WIDGET_VISIBLE(gtkblist->window)) {
-			purple_blist_set_visible(PIDGIN_WINDOW_ICONIFIED(gtkblist->window) || gtk_blist_obscured);
+			purple_blist_set_visible(PIDGIN_WINDOW_ICONIFIED(gtkblist->window) ||
+					gtk_blist_visibility != GDK_VISIBILITY_UNOBSCURED);
 		} else {
 			purple_blist_set_visible(TRUE);
 		}

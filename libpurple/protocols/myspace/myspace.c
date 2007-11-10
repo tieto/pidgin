@@ -938,7 +938,6 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 	gchar *username;
 	PurpleNotifyUserInfo *user_info;
 	MsimUser *user;
-	gboolean temporary_user;
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
@@ -960,10 +959,14 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 
 	if (!user) {
 		/* User isn't on blist, create a temporary user to store info. */
-		temporary_user = TRUE;
+		PurpleBuddy *buddy;
+
 		user = g_new0(MsimUser, 1);
-	} else {
-		temporary_user = FALSE;
+		user->temporary_user = TRUE;
+
+		buddy = purple_buddy_new(session->account, username, NULL);
+		user->buddy = buddy;
+		buddy->proto_data = (gpointer)user;
 	}
 
 	/* Update user structure with new information */
@@ -979,7 +982,8 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 
 	purple_notify_user_info_destroy(user_info);
 
-	if (temporary_user) {
+	if (user->temporary_user) {
+		purple_blist_remove_buddy(user->buddy);
 		g_free(user->client_info);
 		g_free(user->gender);
 		g_free(user->location);
@@ -1456,7 +1460,7 @@ msim_check_newer_version_cb(PurpleUtilFetchUrlData *url_data,
 	purple_debug_info("msim", "data=%s\n", data->str
 			? data->str : "(NULL)");
 
-	/* url_text is variable=data\n... */
+	/* url_text is variable=data\n...â€ */
 
 	/* Check FILEVER, 1.0.716.0. 716 is build, MSIM_CLIENT_VERSION */
 	/* New (english) version can be downloaded from SETUPURL+SETUPFILE */
@@ -2362,7 +2366,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 	} else if (n < 0) {
 		purple_debug_error("msim", "msim_input_cb: read error, ret=%d, "
 			"error=%s, source=%d, fd=%d (%X))\n", 
-			n, strerror(errno), source, session->fd, session->fd);
+			n, g_strerror(errno), source, session->fd, session->fd);
 		purple_connection_error_reason (gc, 
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Read error"));
@@ -2561,13 +2565,13 @@ msim_status_text(PurpleBuddy *buddy)
 	display_name = headline = NULL;
 
 	/* Retrieve display name and/or headline, depending on user preference. */
-	if (purple_account_get_bool(session->account, "show_display_name", TRUE)) {
-		display_name = user->display_name;
-	} 
-
-	if (purple_account_get_bool(session->account, "show_headline", FALSE)) {
+	if (purple_account_get_bool(session->account, "show_headline", TRUE)) {
 		headline = user->headline;
 	}
+
+	if (purple_account_get_bool(session->account, "show_display_name", FALSE)) {
+		display_name = user->display_name;
+	} 
 
 	/* Return appropriate combination of display name and/or headline, or neither. */
 

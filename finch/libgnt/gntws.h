@@ -42,7 +42,7 @@ typedef struct _GntWS GntWS;
 struct _GntWS
 {
 	GntBindable inherit;
-	gchar *name;
+	char *name;
 	GList *list;
 	GList *ordered;
 	gpointer ui_data;

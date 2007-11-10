@@ -1738,7 +1738,7 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
                                    msg);
 
   } else if(ret < 0) {
-    char *msg = strerror(err);
+    char *msg = g_strerror(err);
 
     DEBUG_INFO("error in read callback: %s\n", msg);
 
@@ -2208,7 +2208,7 @@ static void ft_send(struct mwFileTransfer *ft, FILE *fp) {
   } else {
     int err = errno;
     DEBUG_WARN("problem reading from file %s: %s\n",
-	       NSTR(mwFileTransfer_getFileName(ft)), strerror(err));
+	       NSTR(mwFileTransfer_getFileName(ft)), g_strerror(err));
 
     mwFileTransfer_cancel(ft);
   }
@@ -5054,7 +5054,7 @@ static void ft_outgoing_init(PurpleXfer *xfer) {
   fp = g_fopen(filename, "rb");
   if(! fp) {
     char *msg = g_strdup_printf(_("Error reading file %s: \n%s\n"),
-				filename, strerror(errno));
+				filename, g_strerror(errno));
     purple_xfer_error(purple_xfer_get_type(xfer), acct, xfer->who, msg);
     g_free(msg);
     return;
@@ -5712,7 +5712,7 @@ static PurplePluginInfo mw_plugin_info =
 
 	PLUGIN_ID,                                        /**< id             */
 	PLUGIN_NAME,                                      /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	PLUGIN_SUMMARY,                                   /**< summary        */
 	PLUGIN_DESC,                                      /**<  description    */
 	PLUGIN_AUTHOR,                                    /**< author         */

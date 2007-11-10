@@ -237,7 +237,7 @@ static void no_one_calls(gpointer data, gint source, PurpleInputCondition cond)
 		close(source);
 		purple_input_remove(phb->inpa);
 
-		purple_debug_error("proxy", "getsockopt SO_ERROR check: %s\n", strerror(error));
+		purple_debug_error("proxy", "getsockopt SO_ERROR check: %s\n", g_strerror(error));
 
 		phb->func(phb->data, -1, _("Unable to connect"));
 		return;
@@ -258,18 +258,20 @@ static void no_one_calls(gpointer data, gint source, PurpleInputCondition cond)
 static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 {
 	gint fd = -1;
+	int flags;
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Using UDP without proxy\n");
 	fd = socket(PF_INET, SOCK_DGRAM, 0);
 
 	if (fd < 0) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ Redirect", 
-			"Unable to create socket: %s\n", strerror(errno));
+			"Unable to create socket: %s\n", g_strerror(errno));
 		return -1;
 	}
 
 	/* we use non-blocking mode to speed up connection */
-	fcntl(fd, F_SETFL, O_NONBLOCK);
+	flags = fcntl(fd, F_GETFL);
+	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 
 	/* From Unix-socket-FAQ: http://www.faqs.org/faqs/unix-faq/socket/
 	 *
@@ -295,13 +297,14 @@ static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t add
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Connect in asynchronous mode.\n");
 			phb->inpa = purple_input_add(fd, PURPLE_INPUT_WRITE, no_one_calls, phb);
 		} else {
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Connection failed: %d\n", strerror(errno));
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Connection failed: %d\n", g_strerror(errno));
 			close(fd);
 			return -1;
 		}		/* if errno */
 	} else {		/* connect returns 0 */
 		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Connected.\n");
-		fcntl(fd, F_SETFL, 0);
+		flags = fcntl(fd, F_GETFL);
+		fcntl(fd, F_SETFL, flags & ~O_NONBLOCK);
 		phb->func(phb->data, fd, NULL);
 	}
 
@@ -494,7 +497,7 @@ gint qq_proxy_write(qq_data *qd, guint8 *data, gint len)
 		ret = send(qd->fd, data, len, 0);
 	}
 	if (ret == -1)
-		purple_connection_error_reason(qd->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, strerror(errno));
+		purple_connection_error_reason(qd->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, g_strerror(errno));
 
 	return ret;
 }

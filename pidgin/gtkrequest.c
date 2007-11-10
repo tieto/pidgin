@@ -986,7 +986,7 @@ create_image_field(PurpleRequestField *field)
 			purple_request_field_image_get_scale_y(field) * gdk_pixbuf_get_height(buf),
 			GDK_INTERP_BILINEAR);
 	widget = gtk_image_new_from_pixbuf(scale);
-	g_object_unref(G_OBJECT(buf));
+	g_object_unref(G_OBJECT(loader));
 	g_object_unref(G_OBJECT(scale));
 
 	return widget;

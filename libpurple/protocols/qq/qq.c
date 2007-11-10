@@ -721,7 +721,7 @@ static PurplePluginInfo info = {
 
 	"prpl-qq",			/**< id			*/
 	"QQ",				/**< name		*/
-	VERSION,			/**< version		*/
+	DISPLAY_VERSION,		/**< version		*/
 					/**  summary		*/
 	N_("QQ Protocol	Plugin"),
 					/**  description	*/
