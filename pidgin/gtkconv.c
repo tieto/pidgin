@@ -3074,6 +3074,9 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 					chat, (GDestroyNotify)purple_blist_remove_chat);
 		}
 	} else {
+		if (!purple_account_is_connected(conv->account))
+			return FALSE;
+
 		buddy = purple_find_buddy(conv->account, conv->name);
 
 		/* gotta remain bug-compatible :( libpurple < 2.0.2 didn't handle
