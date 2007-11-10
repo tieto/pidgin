@@ -1555,7 +1555,11 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							if(*q == '\'' || *q == '\"')
 								q++;
 							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
-								url = g_string_append_c(url, *q);
+								int len;
+								if ((*q == '&') && (purple_markup_unescape_entity(q, &len) == NULL))
+									url = g_string_append(url, "&amp;");
+								else
+									url = g_string_append_c(url, *q);
 								q++;
 							}
 							p = q;
