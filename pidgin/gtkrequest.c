@@ -29,7 +29,6 @@
 #include "prefs.h"
 #include "util.h"
 
-#include "gtkblist.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtkrequest.h"
