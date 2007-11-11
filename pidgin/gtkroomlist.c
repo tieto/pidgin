@@ -61,6 +61,15 @@ typedef struct _PidginRoomlist {
 	GtkWidget *tree;
 	GHashTable *cats; /**< Meow. */
 	gint num_rooms, total_rooms;
+	GtkWidget *tipwindow;
+	GdkRectangle tip_rect;
+	guint timeout;
+	PangoLayout *tip_layout;
+	PangoLayout *tip_name_layout;
+	int tip_height;
+	int tip_width;
+	int tip_name_height;
+	int tip_name_width;
 } PidginRoomlist;
 
 enum {
@@ -329,6 +338,310 @@ static void row_expanded_cb(GtkTreeView *treeview, GtkTreeIter *arg1, GtkTreePat
 		purple_roomlist_expand_category(list, category);
 		category->expanded_once = TRUE;
 	}
+}
+
+static void pidgin_roomlist_tooltip_destroy(PidginRoomlist *grl)
+{
+	if ((grl == NULL) || (grl->tipwindow == NULL))
+		return;
+
+	gtk_widget_destroy(grl->tipwindow);
+	grl->tipwindow = NULL;
+}
+
+static void pidgin_roomlist_tooltip_destroy_cb(GObject *object, PidginRoomlist *grl)
+{
+	if ((grl == NULL) || (grl->tipwindow == NULL))
+		return;
+
+	if (grl->timeout)
+		g_source_remove(grl->timeout);
+	grl->timeout = 0;
+
+	pidgin_roomlist_tooltip_destroy(grl);
+}
+
+#define SMALL_SPACE 6
+#define TOOLTIP_BORDER 12
+
+static void pidgin_roomlist_paint_tip(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+{
+	PidginRoomlist *grl = (PidginRoomlist *)user_data;
+	GtkStyle *style;
+	int current_height, max_width;
+	int max_text_width;
+	GtkTextDirection dir = gtk_widget_get_direction(GTK_WIDGET(grl->tree));
+
+	style = grl->tipwindow->style;
+	gtk_paint_flat_box(style, grl->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+			NULL, grl->tipwindow, "tooltip", 0, 0, -1, -1);
+
+	max_text_width = 0;
+
+	max_text_width = MAX(grl->tip_width, grl->tip_name_width);
+	max_width = TOOLTIP_BORDER + SMALL_SPACE + max_text_width + TOOLTIP_BORDER;
+
+	current_height = 12;
+
+	if (dir == GTK_TEXT_DIR_RTL) {
+		gtk_paint_layout(style, grl->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+				NULL, grl->tipwindow, "tooltip",
+				max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
+				current_height, grl->tip_name_layout);
+	} else {
+		gtk_paint_layout (style, grl->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+				NULL, grl->tipwindow, "tooltip",
+				TOOLTIP_BORDER + SMALL_SPACE, current_height, grl->tip_name_layout);
+	}
+	if (dir != GTK_TEXT_DIR_RTL) {
+		gtk_paint_layout (style, grl->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+				NULL, grl->tipwindow, "tooltip",
+				TOOLTIP_BORDER + SMALL_SPACE, current_height + grl->tip_name_height, grl->tip_layout);
+	} else {
+		gtk_paint_layout(style, grl->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+				NULL, grl->tipwindow, "tooltip",
+				max_width - (TOOLTIP_BORDER + SMALL_SPACE) - PANGO_PIXELS(600000),
+				current_height + grl->tip_name_height,
+				grl->tip_layout);
+	}
+
+}
+
+static gboolean pidgin_roomlist_create_tip(PurpleRoomlist *list)
+{
+	PidginRoomlist *grl = list->ui_data;
+	GtkWidget *tv = grl->tree;
+	PurpleRoomlistRoom *room;
+	GtkTreePath *path;
+	GtkTreeIter iter;
+	GValue val;
+	gchar *name, *tmp, *node_name;
+	GString *tooltip_text = NULL;
+	GList *l, *k;
+	gint j;
+	gboolean first = TRUE;
+
+	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), grl->tip_rect.x, grl->tip_rect.y + (grl->tip_rect.height/2),
+		&path, NULL, NULL, NULL))
+		return FALSE;
+
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(grl->model), &iter, path);
+
+	val.g_type = 0;
+	gtk_tree_model_get_value(GTK_TREE_MODEL(grl->model), &iter, ROOM_COLUMN, &val);
+	room = g_value_get_pointer(&val);
+
+	if (!room || !(room->type & PURPLE_ROOMLIST_ROOMTYPE_ROOM))
+		return FALSE;
+
+	tooltip_text = g_string_new("");
+	gtk_tree_model_get(GTK_TREE_MODEL(grl->model), &iter, NAME_COLUMN, &name, -1);
+
+	for (j = NUM_OF_COLUMNS, l = room->fields, k = list->fields; l && k; j++, l = l->next, k = k->next) {
+		PurpleRoomlistField *f = k->data;
+		gchar *label;
+		if (f->hidden)
+			continue;
+		label = g_markup_escape_text(f->label, -1);
+		switch (f->type) {
+			case PURPLE_ROOMLIST_FIELD_BOOL:
+				g_string_append_printf(tooltip_text, "%s<b>%s:</b> %s", first ? "" : "\n", label, l->data ? "True" : "False");
+				break;
+			case PURPLE_ROOMLIST_FIELD_INT:
+				g_string_append_printf(tooltip_text, "%s<b>%s:</b> %d", first ? "" : "\n", label, GPOINTER_TO_INT(l->data));
+				break;
+			case PURPLE_ROOMLIST_FIELD_STRING:
+				tmp = g_markup_escape_text((char *)l->data, -1);
+				g_string_append_printf(tooltip_text, "%s<b>%s:</b> %s", first ? "" : "\n", label, tmp);
+				g_free(tmp);
+				break;
+		}
+		first = FALSE;
+		g_free(label);
+	}
+
+	gtk_tree_path_free(path);
+
+	grl->tip_layout = gtk_widget_create_pango_layout(grl->tipwindow, NULL);
+	grl->tip_name_layout = gtk_widget_create_pango_layout(grl->tipwindow, NULL);
+
+	tmp = g_markup_escape_text(name, -1);
+	g_free(name);
+	node_name = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>", tmp);
+	g_free(tmp);
+
+	pango_layout_set_markup(grl->tip_layout, tooltip_text->str, -1);
+	pango_layout_set_wrap(grl->tip_layout, PANGO_WRAP_WORD);
+	pango_layout_set_width(grl->tip_layout, 600000);
+
+	pango_layout_get_size (grl->tip_layout, &grl->tip_width, &grl->tip_height);
+	grl->tip_width = PANGO_PIXELS(grl->tip_width);
+	grl->tip_height = PANGO_PIXELS(grl->tip_height);
+
+	pango_layout_set_markup(grl->tip_name_layout, node_name, -1);
+	pango_layout_set_wrap(grl->tip_name_layout, PANGO_WRAP_WORD);
+	pango_layout_set_width(grl->tip_name_layout, 600000);
+
+	pango_layout_get_size (grl->tip_name_layout, &grl->tip_name_width, &grl->tip_name_height);
+	grl->tip_name_width = PANGO_PIXELS(grl->tip_name_width) + SMALL_SPACE;
+	grl->tip_name_height = MAX(PANGO_PIXELS(grl->tip_name_height), SMALL_SPACE);
+
+	g_free(node_name);
+	g_string_free(tooltip_text, TRUE);
+
+	return TRUE;
+}
+
+static void pidgin_roomlist_draw_tooltip(PurpleRoomlist *list, GtkWidget *widget)
+{
+	PidginRoomlist *grl = list->ui_data;
+	int scr_w, scr_h, w, h, x, y;
+#if GTK_CHECK_VERSION(2,2,0)
+	int mon_num;
+	GdkScreen *screen = NULL;
+#endif
+	GdkRectangle mon_size;
+	int sig;
+	const char *name;
+
+	pidgin_roomlist_tooltip_destroy(grl);
+	grl->tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
+	gtk_widget_ensure_style (grl->tipwindow);
+
+	if (!pidgin_roomlist_create_tip(list)) {
+		pidgin_roomlist_tooltip_destroy(grl);
+		return;
+	}
+
+	name = gtk_window_get_title(GTK_WINDOW(gtk_widget_get_toplevel(widget)));
+	gtk_widget_set_app_paintable(grl->tipwindow, TRUE);
+	gtk_window_set_title(GTK_WINDOW(grl->tipwindow), name ? name : _("Room List"));
+	gtk_window_set_resizable(GTK_WINDOW(grl->tipwindow), FALSE);
+	gtk_widget_set_name(grl->tipwindow, "gtk-tooltips");
+	g_signal_connect(G_OBJECT(grl->tipwindow), "expose_event",
+			G_CALLBACK(pidgin_roomlist_paint_tip), grl);
+
+	w = TOOLTIP_BORDER + SMALL_SPACE +
+		MAX(grl->tip_width, grl->tip_name_width) + TOOLTIP_BORDER;
+	h = TOOLTIP_BORDER + grl->tip_height + grl->tip_name_height
+		+ TOOLTIP_BORDER;
+
+#if GTK_CHECK_VERSION(2,2,0)
+	gdk_display_get_pointer(gdk_display_get_default(), &screen, &x, &y, NULL);
+	mon_num = gdk_screen_get_monitor_at_point(screen, x, y);
+	gdk_screen_get_monitor_geometry(screen, mon_num, &mon_size);
+
+	scr_w = mon_size.width + mon_size.x;
+	scr_h = mon_size.height + mon_size.y;
+#else
+	scr_w = gdk_screen_width();
+	scr_h = gdk_screen_height();
+	gdk_window_get_pointer(NULL, &x, &y, NULL);
+	mon_size.x = 0;
+	mon_size.y = 0;
+#endif
+
+#if GTK_CHECK_VERSION(2,2,0)
+	if (w > mon_size.width)
+		w = mon_size.width - 10;
+
+	if (h > mon_size.height)
+		h = mon_size.height - 10;
+#endif
+	x -= ((w >> 1) + 4);
+
+	if ((y + h + 4) > scr_h)
+		y = y - h - 5;
+	else
+		y = y + 6;
+
+	if (y < mon_size.y)
+		y = mon_size.y;
+
+	if (y != mon_size.y) {
+		if ((x + w) > scr_w)
+			x -= (x + w + 5) - scr_w;
+		else if (x < mon_size.x)
+			x = mon_size.x;
+	} else {
+		x -= (w / 2 + 10);
+		if (x < mon_size.x)
+			x = mon_size.x;
+	}
+
+	gtk_widget_set_size_request(grl->tipwindow, w, h);
+	gtk_window_move(GTK_WINDOW(grl->tipwindow), x, y);
+	gtk_widget_show(grl->tipwindow);
+
+	/* Hide the tooltip when the widget is destroyed */
+	sig = g_signal_connect(G_OBJECT(widget), "destroy", G_CALLBACK(pidgin_roomlist_tooltip_destroy_cb), grl);
+	g_signal_connect_swapped(G_OBJECT(grl->tipwindow), "destroy", G_CALLBACK(g_source_remove), GINT_TO_POINTER(sig));
+}
+
+static gboolean pidgin_roomlist_tooltip_timeout(PurpleRoomlist *list)
+{
+	PidginRoomlist *grl = list->ui_data;
+	GtkWidget *tv = grl->tree;
+	GtkTreePath *path;
+
+	pidgin_roomlist_tooltip_destroy(grl);
+
+	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), grl->tip_rect.x, grl->tip_rect.y + (grl->tip_rect.height/2),
+	                                   &path, NULL, NULL, NULL))
+		return FALSE;
+
+	pidgin_roomlist_draw_tooltip(list, GTK_WIDGET(grl->tree));
+
+	return FALSE;
+}
+
+static gboolean row_motion_cb(GtkWidget *tv, GdkEventMotion *event, gpointer user_data)
+{
+	PurpleRoomlist *list = user_data;
+	PidginRoomlist *grl = list->ui_data;
+	GtkTreePath *path;
+	int delay;
+
+	/* XXX: should this be using the blist delay pref? */
+	delay = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay");
+
+	if (delay == 0)
+		return FALSE;
+
+	if (grl->timeout) {
+		if ((event->y > grl->tip_rect.y) && ((event->y - grl->tip_rect.height) < grl->tip_rect.y))
+			return FALSE;
+		/* We've left the cell.  Remove the timeout and create a new one below */
+		pidgin_roomlist_tooltip_destroy(grl);
+	}
+
+	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), event->x, event->y, &path, NULL, NULL, NULL);
+
+	if (path == NULL) {
+		pidgin_roomlist_tooltip_destroy(grl);
+		return FALSE;
+	}
+
+	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &grl->tip_rect);
+
+	if (path)
+		gtk_tree_path_free(path);
+	grl->timeout = g_timeout_add(delay, (GSourceFunc)pidgin_roomlist_tooltip_timeout, list);
+
+	return FALSE;
+}
+
+static void row_leave_cb(GtkWidget *tv, GdkEventCrossing *e, gpointer user_data)
+{
+	PurpleRoomlist *list = user_data;
+	PidginRoomlist *grl = list->ui_data;
+
+	if (grl->timeout) {
+		g_source_remove(grl->timeout);
+		grl->timeout = 0;
+	}
+
+	pidgin_roomlist_tooltip_destroy(grl);
 }
 
 static gboolean account_filter_func(PurpleAccount *account)
@@ -650,6 +963,8 @@ static void pidgin_roomlist_set_fields(PurpleRoomlist *list, GList *fields)
 	g_signal_connect(G_OBJECT(tree), "button-press-event", G_CALLBACK(room_click_cb), list);
 	g_signal_connect(G_OBJECT(tree), "row-expanded", G_CALLBACK(row_expanded_cb), list);
 	g_signal_connect(G_OBJECT(tree), "row-activated", G_CALLBACK(row_activated_cb), list);
+	g_signal_connect(G_OBJECT(tree), "motion-notify-event", G_CALLBACK(row_motion_cb), list);
+	g_signal_connect(G_OBJECT(tree), "leave-notify-event", G_CALLBACK(row_leave_cb), list);
 
 	/* Enable CTRL+F searching */
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(tree), NAME_COLUMN);
