@@ -42,7 +42,7 @@ if ENABLE_GNT
 GNT_DIR=finch
 endif
 
-SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros po share
+SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros po share/ca-certs share/sounds
 
 docs: Doxyfile
 if HAVE_DOXYGEN

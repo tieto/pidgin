@@ -900,7 +900,7 @@ if test "x$gadu_libs" = "xyes"; then
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $GADU_CFLAGS"
 	AC_TRY_COMPILE([#include <libgadu.h>], [
-#ifdef __GG_LIBGADU_HAVE_OPENSSL
+#if defined(__GG_LIBGADU_HAVE_OPENSSL) || defined(GG_CONFIG_HAVE_OPENSSL)
 #error "libgadu is not compatible with the GPL when compiled with OpenSSL support."
 #endif
 	], [
@@ -912,10 +912,11 @@ if test "x$gadu_libs" = "xyes"; then
 		echo
 		echo
 		echo "libgadu is not compatible with the GPL when compiled with OpenSSL support."
-		echo "Please recompile libgadu using:"
+		echo "To compile against system libgadu, please recompile libgadu using:"
 		echo "./autogen.sh --disable-libgadu-openssl --disable-static --enable-shared"
 		echo "Then rerun this ./configure"
 		echo
+		echo "Falling back to using our own copy of libgadu"
 		echo
 		GADU_LIBS=""
 		GADU_CFLAGS=""
@@ -2262,7 +2263,6 @@ AC_OUTPUT([Makefile
 		   libpurple/tests/Makefile
 		   libpurple/purple.h
 		   libpurple/version.h
-		   share/Makefile
 		   share/sounds/Makefile
 		   share/ca-certs/Makefile
 		   finch/finch.pc
