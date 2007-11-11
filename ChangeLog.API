@@ -44,6 +44,9 @@ version 2.3.0 (??/??/????):
 		* An account-error-changed signal, firing when
 		  purple_account_get_current_error()'s return value changes.
 
+		* PidginMiniDialog, a Gtk widget-ified version of
+		  pidgin_make_mini_dialog().
+
 		* purple_util_init()
 		* purple_util_uninit()
 
