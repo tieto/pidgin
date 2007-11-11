@@ -2206,35 +2206,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pidgin-uninstalled.pc
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/buddy_icons/qq/Makefile
-		   pidgin/pixmaps/dialogs/16/Makefile
-		   pidgin/pixmaps/dialogs/64/Makefile
-		   pidgin/pixmaps/emblems/16/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
-		   pidgin/pixmaps/icons/16/Makefile
-		   pidgin/pixmaps/icons/22/Makefile
-		   pidgin/pixmaps/icons/24/Makefile
-		   pidgin/pixmaps/icons/32/Makefile
-		   pidgin/pixmaps/icons/48/Makefile
-		   pidgin/pixmaps/protocols/16/Makefile
-		   pidgin/pixmaps/protocols/22/Makefile
-		   pidgin/pixmaps/protocols/48/Makefile
-		   pidgin/pixmaps/status/11/Makefile
-		   pidgin/pixmaps/status/11/rtl/Makefile
-		   pidgin/pixmaps/status/16/Makefile
-		   pidgin/pixmaps/status/16/rtl/Makefile
-		   pidgin/pixmaps/status/22/Makefile
-		   pidgin/pixmaps/status/22/rtl/Makefile
-		   pidgin/pixmaps/status/32/Makefile
-		   pidgin/pixmaps/status/32/rtl/Makefile
-		   pidgin/pixmaps/status/48/Makefile
-		   pidgin/pixmaps/status/48/rtl/Makefile
-		   pidgin/pixmaps/toolbar/16/Makefile
-		   pidgin/pixmaps/toolbar/22/Makefile
-		   pidgin/pixmaps/tray/16/Makefile
-		   pidgin/pixmaps/tray/22/Makefile
-		   pidgin/pixmaps/tray/32/Makefile
-		   pidgin/pixmaps/tray/48/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile
