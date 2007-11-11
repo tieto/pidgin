@@ -503,7 +503,7 @@ about this interaction exists.
 .br
   \fI~/.purple/prefs.xml\fR: Pidgin's configuration file.
 .br
-  \fI~/.purple/status.xml\fR: stores the user's  away messages.
+  \fI~/.purple/status.xml\fR: stores the user's away messages.
 .br
   \fI~/.purple/logs/PROTOCOL/ACCOUNT/SCREENNAME/DATE.{html,txt}\fR: conversation logs.
 
