@@ -368,7 +368,9 @@ silcpurple_stream_created(SilcSocketStreamStatus status, SilcStream stream,
 	sg = gc->proto_data;
 
 	if (status != SILC_SOCKET_OK) {
-		purple_connection_error(gc, _("Connection failed"));
+		purple_connection_error_reason(gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Connection failed"));
 		silc_pkcs_public_key_free(sg->public_key);
 		silc_pkcs_private_key_free(sg->private_key);
 		silc_free(sg);
@@ -544,8 +546,8 @@ silcpurple_login(PurpleAccount *account)
 	/* Init SILC client */
 	if (!silc_client_init(client, username, hostname, realname,
 			      silcpurple_running, sg)) {
-		purple_connection_error(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
-		                      _("Cannot initialize SILC protocol"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		                             _("Cannot initialize SILC protocol"));
 		gc->proto_data = NULL;
 		silc_free(sg);
 		return;
