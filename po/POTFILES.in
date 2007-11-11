@@ -103,6 +103,16 @@ libpurple/protocols/msn/session.c
 libpurple/protocols/msn/state.c
 libpurple/protocols/msn/switchboard.c
 libpurple/protocols/msn/userlist.c
+libpurple/protocols/msnp9/dialog.c
+libpurple/protocols/msnp9/error.c
+libpurple/protocols/msnp9/msn.c
+libpurple/protocols/msnp9/nexus.c
+libpurple/protocols/msnp9/notification.c
+libpurple/protocols/msnp9/servconn.c
+libpurple/protocols/msnp9/session.c
+libpurple/protocols/msnp9/state.c
+libpurple/protocols/msnp9/switchboard.c
+libpurple/protocols/msnp9/userlist.c
 libpurple/protocols/myspace/myspace.c
 libpurple/protocols/myspace/user.c
 libpurple/protocols/myspace/zap.c
