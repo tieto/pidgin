@@ -136,43 +136,6 @@ do_signon(gpointer data)
 }
 
 static void
-notify_account_disabled(PurpleAccount *account,
-                        PurpleConnectionError reason,
-                        const char *text)
-{
-	const char *username = purple_account_get_username(account);
-	const char *alias = purple_account_get_alias(account);
-	const char *protocol = purple_account_get_protocol_name(account);
-	char *p, *s, *n;
-
-	if (alias)
-		n = g_strdup_printf("%s (%s) (%s)", username, alias, protocol);
-	else
-		n = g_strdup_printf("%s (%s)", username, protocol);
-
-	p = g_strdup_printf(_("%s disconnected"), n);
-
-	if(reason == PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT)
-		s = g_strdup_printf(
-			_("%s\n\n"
-			"%s will not attempt to reconnect the account until you "
-			"re-enable the account.  See %s for information on how to "
-			"compile %s with SSL support."), text, PIDGIN_NAME,
-			"http://developer.pidgin.im/wiki/FAQssl", PIDGIN_NAME);
-	else
-		s = g_strdup_printf(
-			_("%s\n\n"
-			"%s will not attempt to reconnect the account until you "
-			"correct the error and re-enable the account."), text,
-			PIDGIN_NAME);
-
-	purple_notify_error(NULL, NULL, p, s);
-	g_free(p);
-	g_free(s);
-	g_free(n);
-}
-
-static void
 pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
                                             PurpleConnectionError reason,
                                             const char *text)
@@ -198,9 +161,6 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 	} else {
 		if (info != NULL)
 			g_hash_table_remove(auto_reconns, account);
-
-		if (reason != PURPLE_CONNECTION_ERROR_NAME_IN_USE)
-			notify_account_disabled(account, reason, text);
 
 		/*
 		 * TODO: Do we really want to disable the account when it's
