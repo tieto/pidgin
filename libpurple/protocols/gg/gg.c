@@ -254,16 +254,14 @@ static void ggp_action_buddylist_delete(PurplePluginAction *action)
 /*
  */
 /* static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *file) {{{ */
-static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *file)
+static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *filename)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 
-	FILE *fh;
 	char *buddylist = ggp_buddylist_dump(account);
-	gchar *msg;
 
 	purple_debug_info("gg", "Saving...\n");
-	purple_debug_info("gg", "file = %s\n", file);
+	purple_debug_info("gg", "file = %s\n", filename);
 
 	if (buddylist == NULL) {
 		purple_notify_info(account, _("Save Buddylist..."),
@@ -272,30 +270,18 @@ static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *fil
 		return;
 	}
 
-	if ((fh = g_fopen(file, "wb")) == NULL) {
-		msg = g_strconcat(_("Couldn't open file"), ": ", file, "\n", NULL);
-		purple_debug_error("gg", "Could not open file: %s\n", file);
-		purple_notify_error(account, _("Couldn't open file"), msg, NULL);
-		g_free(msg);
-		g_free(buddylist);
-		return;
-	}
-
-	if (!fwrite(buddylist, sizeof(char), g_utf8_strlen(buddylist, -1), fh)) {
-		const gchar *err = g_strerror(errno);
-		gchar *title = g_strdup_printf(
-			_("Couldn't write buddylist to %s"), err);
-
-		purple_debug_error("gg", "Error writing %s: %s\n", file, err);
-		purple_notify_error(account, title, title, err);
-
-		g_free(title);
-	} else {
+	if(purple_util_write_data_to_file_absolute(filename, buddylist, -1)) {
 		purple_notify_info(account, _("Save Buddylist..."),
 			 _("Buddylist saved successfully!"), NULL);
+	} else {
+		gchar *primary = g_strdup_printf(
+			_("Couldn't write buddy list for %s to %s"),
+			purple_account_get_username(account), filename);
+		purple_notify_error(account, _("Couldn't save buddy list"),
+			primary, NULL);
+		g_free(primary);
 	}
 
-	fclose(fh);
 	g_free(buddylist);
 }
 /* }}} */
