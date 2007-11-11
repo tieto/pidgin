@@ -281,7 +281,7 @@ static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *fil
 		return;
 	}
 
-	if (!fwrite(buddylist, sizeof(char), g_utf8_strlen(buddylist, -1), fh)) {
+	if (!fwrite(buddylist, strlen(buddylist), 1, fh)) {
 		const gchar *err = g_strerror(errno);
 		gchar *title = g_strdup_printf(
 			_("Couldn't write buddylist to %s"), err);
