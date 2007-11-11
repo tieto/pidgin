@@ -2090,6 +2090,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	char *url = NULL;
 	char *fullmsg;
 	PurpleAccount *account = gc->account;
+	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -2105,6 +2106,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	switch (err) {
 	case 3:
 		msg = g_strdup(_("Invalid screen name."));
+		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 		break;
 	case 13:
 #ifdef TRY_WEBMESSENGER_LOGIN
@@ -2139,7 +2141,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	else
 		fullmsg = g_strdup(msg);
 
-	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, fullmsg);
+	purple_connection_error_reason(gc, reason, fullmsg);
 	g_free(msg);
 	g_free(fullmsg);
 }
