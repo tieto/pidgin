@@ -277,7 +277,7 @@ static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *fil
 		gchar *primary = g_strdup_printf(
 			_("Couldn't write buddy list for %s to %s"),
 			purple_account_get_username(account), filename);
-		purple_notify_error(account, _("Couldn't save buddy list"),
+		purple_notify_error(account, _("Save Buddylist..."),
 			primary, NULL);
 		g_free(primary);
 	}
