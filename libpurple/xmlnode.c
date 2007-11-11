@@ -590,7 +590,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 		}
 
 		for(i=0; i < nb_attributes * 5; i+=5) {
-			const char *prefix = attributes[i + 1];
+			const char *prefix = (const char *)attributes[i + 1];
 			char *txt;
 			int attrib_len = attributes[i+4] - attributes[i+3];
 			char *attrib = g_malloc(attrib_len + 1);
