@@ -58,22 +58,22 @@ Don't automatically login when Pidgin starts.  Sets the global status to
 .TP
 .B \-l, \-\-login[=\fINAME\fR,\fINAME\fR,...]
 Sign in the comma-separated list of accounts provided, in addition to the
-accounts that would be logged in anyway.  If you do not specify such a
-comma-separated list, your first account will be signed in.
+accounts that would be logged in anyway.  If the user does not specify such a
+comma-separated list, the first account in accounts.xml will be signed in.
 .TP
 .B \-v, \-\-version
 Print the current version and exit.
 
 .SH BUDDY LIST
 The \fBBuddy List\fR window is Pidgin's main interface window.  Using
-this window you can see which of your buddies is online, away, idle, etc.
-You can also add and remove buddies from your buddy list.
+this window a user can see which of his/her buddies is online, away, idle,
+etc.  The user can also add buddies to and remove buddies from the buddy list.
 
-The \fBBuddy List\fR window contains a list of your buddies who are online
-and have allowed you to be notified of their presence.  The icon to the
-left of each buddy indicates the buddy's current status.  Double clicking
-a buddy will open a new \fBConversation\fR window.  Right clicking will
-pop up a menu:
+The \fBBuddy List\fR window contains a list of the user's buddies who are
+online and have allowed the user to be notified of their presence.  The icon
+to the left of each buddy indicates the buddy's current status.  Double
+clicking a buddy will open a new \fBConversation\fR window.  Right clicking
+will pop up a menu:
 .TP
 .B Get Info
 Retrieves and displays information about the buddy.  This information is
@@ -121,9 +121,9 @@ The account editor consists of a list of accounts and information about
 them.  It can be accessed by selecting \fBManage\fR from the Tools menu.
 Clicking \fIDelete\fR will delete the currently selected account.
 Clicking \fIAdd\fR or \fIModify\fR will invoke a \fBModify Account\fR
-window.  Here, you can add or alter account information.  When creating a
-new account, you will submit your screen name and password.  You will also
-choose your protocol.
+window.  Here, the user  can add or alter account information.  When creating
+a new account, the user will submit a screen name and password.  The user will
+also choose the protocol for the account.
 
 If \fIRemember Password\fR is chosen, the password will be saved in
 Pidgin's \fI~/.purple/accounts.xml\fR configuration file.
@@ -143,7 +143,7 @@ All options take effect immediately.
 
 .TP
 .B Show system tray icon
-Specifies when to show a Pidgin icon in the notification area of your
+Specifies when to show a Pidgin icon in the notification area of the user's
 panel (commonly referred to as the System Tray).
 
 .TP
@@ -299,8 +299,8 @@ When enabled, status changes are logged.
 .B Report idle time
 Determines under which conditions to report idle time.  \fBBased on keyboard
 and mouse use\fR uses keyboard and mouse activity to determine idle time.
-\fBFrom last sent message\fR uses the time at which you last sent a message
-in Pidgin to determine idle.  \fBNever\fR disables idle reporting.
+\fBFrom last sent message\fR uses the time at which the user last sent a
+message in Pidgin to determine idle.  \fBNever\fR disables idle reporting.
 
 .TP
 .B Auto-reply
@@ -358,8 +358,7 @@ the user a dialog with the available smileys for the current conversation.
 For protocols that allow it, \fBChats\fR can be entered through the
 \fIBuddies\fR menu.
 
-
-Additional commands available in chat, depending on the protocol are:
+Additional features available in chat, depending on the protocol are:
 .TP
 .B Whisper
 The text will appear in the chat conversation, but it will only be visible
@@ -374,6 +373,10 @@ Ignore anything said by the chosen person
 .B Set Topic
 Set the topic of the chat room.  This is usually a brief sentence
 describing the nature of the chat--an explanation of the chat room's name.
+.TP
+.B Private Message (IM)
+Send a message to a specific person in the chat.  Messages sent this way will
+not appear in the chat window, but instead open a new IM conversation.
 
 .SH STATUS MESSAGES
 Most protocols allow for status messages.  By using status messages, a user
@@ -457,7 +460,7 @@ can be activated by selecting the \fIBuddy Pounce\fR option from the
 button.  A pounce can be set to occur on any combination of the
 events listed, and any combination of actions can result.  If \fIPounce
 only when my status is not Available\fR is checked, the pounce will occur
-only if you are set to a non-available status, such as invisible, do not
+only if the user is set to a non-available status, such as invisible, do not
 disturb, away, etc.  If \fIRecurring\fR is checked, the pounce will remain
 until removed by the \fBDelete\fR button.
 
@@ -487,20 +490,20 @@ Pidgin allows for plugins to be written in the Tcl scripting language. See
 
 .SH D-Bus
 Pidgin allows for interaction via D-Bus.  Currently very little documentation
-on this interaction exists.
+about this interaction exists.
 
 .SH FILES
   \fI@prefix@/bin/pidgin\fR: Pidgin's location.
 .br
   \fI~/.purple/blist.xml\fR: the buddy list.
 .br
-  \fI~/.purple/accounts.xml\fR: information about your accounts.
+  \fI~/.purple/accounts.xml\fR: information about the user's accounts.
 .br
-  \fI~/.purple/pounces.xml\fR: stores your buddy pounces.
+  \fI~/.purple/pounces.xml\fR: stores the user's buddy pounces.
 .br
   \fI~/.purple/prefs.xml\fR: Pidgin's configuration file.
 .br
-  \fI~/.purple/status.xml\fR: stores your away messages.
+  \fI~/.purple/status.xml\fR: stores the user's  away messages.
 .br
   \fI~/.purple/logs/PROTOCOL/ACCOUNT/SCREENNAME/DATE.{html,txt}\fR: conversation logs.
 
