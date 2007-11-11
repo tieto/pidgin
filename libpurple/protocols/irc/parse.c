@@ -612,6 +612,7 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	struct _irc_msg *msgent;
 	char *cur, *end, *tmp, *from, *msgname, *fmt, **args, *msg;
 	guint i;
+	PurpleConnection *gc = purple_account_get_connection(irc->account);
 
 	irc->recv_time = time(NULL);
 
@@ -620,7 +621,7 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	 * TODO: It should be passed as an array of bytes and a length
 	 * instead of a null terminated string.
 	 */
-	purple_signal_emit(_irc_plugin, "irc-receiving-text", purple_account_get_connection(irc->account), &input);
+	purple_signal_emit(_irc_plugin, "irc-receiving-text", gc, &input);
 	
 	if (!strncmp(input, "PING ", 5)) {
 		msg = irc_format(irc, "vv", "PONG", input + 5);
@@ -630,10 +631,13 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	} else if (!strncmp(input, "ERROR ", 6)) {
 		if (g_utf8_validate(input, -1, NULL)) {
 			char *tmp = g_strdup_printf("%s\n%s", _("Disconnected."), input);
-			purple_connection_error(purple_account_get_connection(irc->account), tmp);
+			purple_connection_error_reason (gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 			g_free(tmp);
 		} else
-			purple_connection_error(purple_account_get_connection(irc->account), _("Disconnected."));
+			purple_connection_error_reason (gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Disconnected."));
 		return;
 	}
 

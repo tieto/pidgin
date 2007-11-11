@@ -138,7 +138,7 @@ static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	const char *type = xmlnode_get_attrib(packet,"type");
 	
 	if(type && !strcmp(type,"error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 		if(!msg)
 			msg = g_strdup(_("Unknown Error"));
 		
