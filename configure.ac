@@ -2263,7 +2263,6 @@ AC_OUTPUT([Makefile
 		   libpurple/tests/Makefile
 		   libpurple/purple.h
 		   libpurple/version.h
-		   share/Makefile
 		   share/sounds/Makefile
 		   share/ca-certs/Makefile
 		   finch/finch.pc
