@@ -86,7 +86,8 @@ install: all $(PIDGIN_INSTALL_DIR)
 ifndef DISABLE_NLS
 	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) install
 endif
-	$(MAKE) -C share -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C share/ca-certs -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C share/sounds -f $(MINGW_MAKEFILE) install
 
 create_release_install_dir: install
 	rm -rf $(STRIPPED_RELEASE_DIR)
