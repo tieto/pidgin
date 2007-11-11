@@ -67,7 +67,8 @@ typedef enum
 	/** The username supplied was not valid. */
 	PURPLE_CONNECTION_ERROR_INVALID_USERNAME = 1,
 	/** The username, password or some other credential was incorrect.  Use
-	 *  the above errors if the username is known to be invalid.
+	 *  #PURPLE_CONNECTION_ERROR_INVALID_USERNAME instead if the username
+         *  is known to be invalid.
 	 */
 	PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED = 2,
 	/** libpurple doesn't speak any of the authentication methods the
