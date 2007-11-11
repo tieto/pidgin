@@ -66,30 +66,27 @@ typedef enum
 	PURPLE_CONNECTION_ERROR_NETWORK_ERROR = 0,
 	/** The username supplied was not valid. */
 	PURPLE_CONNECTION_ERROR_INVALID_USERNAME = 1,
-	/** The password was incorrect. */
-	PURPLE_CONNECTION_ERROR_INCORRECT_PASSWORD = 2,
 	/** The username, password or some other credential was incorrect.  Use
-	 *  the above two errors if the username or password in particular are
-	 *  known to be incorrect.
+	 *  the above errors if the username is known to be invalid.
 	 */
-	PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED = 3,
+	PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED = 2,
 	/** libpurple doesn't speak any of the authentication methods the
 	 *  server offered.
 	 */
-	PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE = 4,
+	PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE = 3,
 	/** libpurple was built without SSL support, and the connection needs
 	 *  SSL.
 	 */
-	PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT = 5,
+	PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT = 4,
 	/** There was an error negotiating SSL on this connection, or the
 	 *  server does not support encryption but an account option was set to
 	 *  require it.
 	 */
-	PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR = 6,
+	PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR = 5,
 	/** Someone is already connected to the server using the name you are
 	 *  trying to connect with.
 	 */
-	PURPLE_CONNECTION_ERROR_NAME_IN_USE = 7,
+	PURPLE_CONNECTION_ERROR_NAME_IN_USE = 6,
 
 	/** The username/server/other preference for the account isn't valid.
 	 *  For instance, on IRC the screen name cannot contain white space.
@@ -100,27 +97,27 @@ typedef enum
 	 *        other account preferences should be validated when the
 	 *        account is created.
 	 */
-	PURPLE_CONNECTION_ERROR_INVALID_SETTINGS = 8,
+	PURPLE_CONNECTION_ERROR_INVALID_SETTINGS = 7,
 
 	/** The server did not provide a SSL certificate. */
-	PURPLE_CONNECTION_ERROR_CERT_NOT_PROVIDED = 9,
+	PURPLE_CONNECTION_ERROR_CERT_NOT_PROVIDED = 8,
 	/** The server's SSL certificate could not be trusted. */
-	PURPLE_CONNECTION_ERROR_CERT_UNTRUSTED = 10,
+	PURPLE_CONNECTION_ERROR_CERT_UNTRUSTED = 9,
 	/** The server's SSL certificate has expired. */
-	PURPLE_CONNECTION_ERROR_CERT_EXPIRED = 11,
+	PURPLE_CONNECTION_ERROR_CERT_EXPIRED = 10,
 	/** The server's SSL certificate is not yet valid. */
-	PURPLE_CONNECTION_ERROR_CERT_NOT_ACTIVATED = 12,
+	PURPLE_CONNECTION_ERROR_CERT_NOT_ACTIVATED = 11,
 	/** The server's SSL certificate did not match its hostname. */
-	PURPLE_CONNECTION_ERROR_CERT_HOSTNAME_MISMATCH = 13,
+	PURPLE_CONNECTION_ERROR_CERT_HOSTNAME_MISMATCH = 12,
 	/** The server's SSL certificate does not have the expected
 	 *  fingerprint.
 	 */
-	PURPLE_CONNECTION_ERROR_CERT_FINGERPRINT_MISMATCH = 14,
+	PURPLE_CONNECTION_ERROR_CERT_FINGERPRINT_MISMATCH = 13,
 	/** The server's SSL certificate is self-signed.  */
-	PURPLE_CONNECTION_ERROR_CERT_SELF_SIGNED = 15,
+	PURPLE_CONNECTION_ERROR_CERT_SELF_SIGNED = 14,
 	/** There was some other error validating the server's SSL certificate.
 	 */
-	PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR = 16,
+	PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR = 15,
 
 	/** Some other error occured which fits into none of the other
 	 *  categories.
@@ -129,7 +126,7 @@ typedef enum
 	 * this is the last member of the enum when sanity-checking; if other
 	 * reasons are added after it, the check must be updated.
 	 */
-	PURPLE_CONNECTION_ERROR_OTHER_ERROR = 17
+	PURPLE_CONNECTION_ERROR_OTHER_ERROR = 16
 } PurpleConnectionError;
 
 /** Holds the type of an error along with its description. */
