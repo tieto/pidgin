@@ -281,12 +281,22 @@ static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *fil
 		return;
 	}
 
-	fwrite(buddylist, sizeof(char), g_utf8_strlen(buddylist, -1), fh);
+	if (!fwrite(buddylist, sizeof(char), g_utf8_strlen(buddylist, -1), fh)) {
+		const gchar *err = g_strerror(errno);
+		gchar *title = g_strdup_printf(
+			_("Couldn't write buddylist to %s"), err);
+
+		purple_debug_error("gg", "Error writing %s: %s\n", file, err);
+		purple_notify_error(account, title, title, err);
+
+		g_free(title);
+	} else {
+		purple_notify_info(account, _("Save Buddylist..."),
+			 _("Buddylist saved successfully!"), NULL);
+	}
+
 	fclose(fh);
 	g_free(buddylist);
-
-	purple_notify_info(account, _("Save Buddylist..."),
-			 _("Buddylist saved successfully!"), NULL);
 }
 /* }}} */
 
