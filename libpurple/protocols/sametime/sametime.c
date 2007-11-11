@@ -1702,11 +1702,12 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
     purple_connection_error(pd->gc, _("Connection reset"));
 
   } else if(ret < 0) {
-    char *msg = g_strerror(err);
+    const gchar *err_str = g_strerror(err);
+    char *msg = NULL;
 
-    DEBUG_INFO("error in read callback: %s\n", msg);
+    DEBUG_INFO("error in read callback: %s\n", err_str);
 
-    msg = g_strdup_printf(_("Error reading from socket: %s"), msg);
+    msg = g_strdup_printf(_("Error reading from socket: %s"), err_str);
     purple_connection_error(pd->gc, msg);
     g_free(msg);
   }
