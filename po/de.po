@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-09 20:52+0100\n"
-"PO-Revision-Date: 2007-11-09 21:57+0100\n"
+"POT-Creation-Date: 2007-11-11 14:59+0100\n"
+"PO-Revision-Date: 2007-11-11 14:58+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1948,11 +1948,8 @@ msgid "Unable to load your plugin."
 msgstr "Konnte Ihr Plugin nicht laden."
 
 #, c-format
-msgid "The dependent plugin %s failed to unload."
-msgstr "Das erforderliche Plugin %s konnte nicht entladen werden."
-
-msgid "There were errors unloading the plugin."
-msgstr "Beim Entladen des Plugins traten Fehler auf."
+msgid "%s requires %s, but it failed to unload."
+msgstr "%s hängt von %s ab, konnte aber nicht entladen werden."
 
 msgid "Autoaccept"
 msgstr "Auto-Akzeptieren"
@@ -3959,8 +3956,14 @@ msgstr "Abonnement"
 msgid "Mood"
 msgstr "Stimmung"
 
+msgid "Current media"
+msgstr "Aktuelles Medium"
+
 msgid "Mood Text"
 msgstr "Stimmungstext"
+
+msgid "Allow Buzz"
+msgstr "Anklopfen erlauben"
 
 msgid "Tune Artist"
 msgstr "Künstler anpassen"
@@ -3988,9 +3991,6 @@ msgstr "Jahr anpassen"
 
 msgid "Tune URL"
 msgstr "URL anpassen"
-
-msgid "Allow Buzz"
-msgstr "Anklopfen erlauben"
 
 msgid "Password Changed"
 msgstr "Passwort geändert"
@@ -4674,9 +4674,6 @@ msgstr "Eine SMS senden."
 msgid "Page"
 msgstr "Nachricht"
 
-msgid "Current media"
-msgstr "Aktuelles Medium"
-
 msgid "Be Right Back"
 msgstr "Bin gleich zurück"
 
@@ -4688,6 +4685,12 @@ msgstr "Am Telefon"
 
 msgid "Out to Lunch"
 msgstr "Zur Mittagspause"
+
+msgid "Artist"
+msgstr "Interpret"
+
+msgid "Album"
+msgstr "Album"
 
 msgid "Set Friendly Name..."
 msgstr "Setze Spitzname..."
@@ -5127,6 +5130,23 @@ msgstr "Kann „%s“ nicht hinzufügen."
 
 msgid "The screen name specified is invalid."
 msgstr "Der angegebene Benutzername ist ungültig."
+
+#, fuzzy
+msgid "Has you"
+msgstr "Hat Sie"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+msgid "MSN Protocol Plugin"
+msgstr "MSN-Protokoll-Plugin"
 
 msgid "Missing Cipher"
 msgstr "Verschlüsselung fehlt"
@@ -5706,7 +5726,7 @@ msgstr ""
 "haben, nicht empfangen."
 
 #. TODO: Would be nice to prompt if not set!
-#. *  purple_request_fields(gc, _("Server Address"),...);
+#. *  purple_request_fields_with_hint(gc, _("Server Address"),...);
 #.
 #. ...but for now just error out with a nice message.
 msgid ""
@@ -6086,6 +6106,13 @@ msgstr "Geben Sie die 6-stellige Nummer vom Digital-Display ein."
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#. *
+#. * @since 2.3.0
+#.
+#. *
+#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
+#. *
+#. * @deprecated Please use purple_request_ok_cancel_with_hint instead.
 #.
 msgid "_OK"
 msgstr "_OK"
@@ -9021,7 +9048,7 @@ msgstr "Anfangen zu malen"
 msgid "Activate which ID?"
 msgstr "Welche ID aktivieren?"
 
-msgid "Join whom in chat?"
+msgid "Join who in chat?"
 msgstr "Wen wollen Sie zum Chat einladen?"
 
 msgid "Activate ID..."
@@ -9406,6 +9433,13 @@ msgstr "Kann den Hostnamen nicht auflösen"
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
+#. *
+#. * @since 2.3.0
+#.
+#. *
+#. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
+#. *
+#. * @deprecated Please use purple_request_yes_no_with_hint instead.
 #.
 msgid "_Yes"
 msgstr "_Ja"
@@ -9415,6 +9449,13 @@ msgstr "_Nein"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
+#. *
+#. * @since 2.3.0
+#.
+#. *
+#. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
+#. *
+#. * @deprecated Please use purple_request_accept_cancel_with_hint instead.
 #.
 msgid "_Accept"
 msgstr "_Akzeptieren"
@@ -9478,6 +9519,9 @@ msgstr "Abwesend (erweitert)"
 
 msgid "Mobile"
 msgstr "Mobil"
+
+msgid "Listening to music"
+msgstr ""
 
 #, c-format
 msgid "%s changed status from %s to %s"
@@ -10800,6 +10844,9 @@ msgstr "Debugging-Information"
 msgid "_Name"
 msgstr "_Name"
 
+msgid "Buddy"
+msgstr "Buddy"
+
 msgid "_Account"
 msgstr "_Konto"
 
@@ -11406,6 +11453,16 @@ msgstr "Mehrere Plugins werden entladen."
 
 msgid "Unload Plugins"
 msgstr "Plugins entladen"
+
+msgid "Could not unload plugin"
+msgstr "Konnte das Plugin nicht entladen"
+
+msgid ""
+"The plugin could not be unloaded now, but will be disabled at the next "
+"startup."
+msgstr ""
+"Das Plugin kann im Moment nicht entladen werden, wird aber beim nächsten "
+"Start deaktiviert."
 
 #, c-format
 msgid ""
@@ -13086,9 +13143,3 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
-
-#~ msgid "Unable to connect to contact server"
-#~ msgstr "Verbindung zum Kontaktserver nicht möglich"
-
-#~ msgid "Unable to connect to OIM server"
-#~ msgstr "Verbindung zum OIM-Server nicht möglich"
