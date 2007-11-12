@@ -195,6 +195,18 @@ clean_pid()
 
 char *segfault_message;
 
+/*
+ * This signal handler shouldn't be touching this much stuff.
+ * It should just set a flag and return, and something else in
+ * Pidgin should monitor the flag to see if something needs to
+ * be done.  Because the signal handler interrupts the program,
+ * it could be called in the middle of adding a new connection
+ * to the list of connections, and then if we try to disconnect
+ * all connections it could lead to a crash because the linked
+ * list of connections could be in a weird state.  But, well,
+ * this signal handler probably isn't called very often, so it's
+ * not a big deal.
+ */
 static void
 sighandler(int sig)
 {
