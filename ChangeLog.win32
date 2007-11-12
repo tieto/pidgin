@@ -1,7 +1,7 @@
 version 2.2.3:
 	* Updated GTK+ to 2.12.1 (This was actually included in 2.2.2, but 
 	  didn't get into the Changelog.)
-	* Upgrade SILC to use the 1.1.2 toolkit
+	* Upgrade SILC to use the 1.1.5 toolkit
 
 version 2.2.2 (10/23/2007):
 	* Updated gtkspell to include a patch to share Aspell dictionaries
