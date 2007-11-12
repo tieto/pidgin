@@ -41,6 +41,7 @@
 #include "mdns_common.h"
 #include "jabber.h"
 #include "buddy.h"
+#include "bonjour_ft.h"
 
 /*
  * TODO: Should implement an add_buddy callback that removes the buddy
@@ -453,8 +454,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* roomlist_cancel */
 	NULL,                                                    /* roomlist_expand_category */
 	NULL,                                                    /* can_receive_file */
-	NULL,                                                    /* send_file */
-	NULL,                                                    /* new_xfer */
+	bonjour_send_file,                                       /* send_file */
+	bonjour_new_xfer,                                        /* new_xfer */
 	NULL,                                                    /* offline_message */
 	NULL,                                                    /* whiteboard_prpl_ops */
 	NULL,                                                    /* send_raw */

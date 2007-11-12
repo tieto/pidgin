@@ -18,7 +18,9 @@ BONJOURSOURCES = \
 	mdns_interface.h \
 	mdns_types.h \
 	parser.c \
-	parser.h
+	parser.h \
+	bonjour_ft.c \
+	bonjour_ft.h 
 
 if MDNS_AVAHI
   BONJOURSOURCES += mdns_avahi.c

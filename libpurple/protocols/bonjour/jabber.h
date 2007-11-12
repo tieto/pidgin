@@ -75,4 +75,24 @@ void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet);
 
 void bonjour_jabber_stop(BonjourJabber *data);
 
+typedef enum {
+	XEP_IQ_SET,
+	XEP_IQ_GET,
+	XEP_IQ_RESULT,
+	XEP_IQ_ERROR,
+	XEP_IQ_NONE
+} XepIqType;
+
+typedef struct _XepIq {
+	XepIqType type;
+	char *id;
+	xmlnode *node;
+	char *to;
+	void *data;
+} XepIq;
+
+XepIq *xep_iq_new(void *data, XepIqType type, const gchar *to, const gchar *id);
+int xep_iq_send(XepIq *iq);
+char *purple_network_get_my_ip_ext2(int fd);
+
 #endif /* _BONJOUR_JABBER_H_ */

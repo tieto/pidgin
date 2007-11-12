@@ -20,6 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #ifndef _WIN32
+#include <net/if.h>
+#include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -45,11 +47,21 @@
 #include "parser.h"
 #include "bonjour.h"
 #include "buddy.h"
+#include "bonjour_ft.h"
+
+#ifdef _SIZEOF_ADDR_IFREQ
+#  define HX_SIZE_OF_IFREQ(a) _SIZEOF_ADDR_IFREQ(a)
+#else
+#  define HX_SIZE_OF_IFREQ(a) sizeof(a)
+#endif
 
 #define STREAM_END "</stream:stream>"
 /* TODO: specify version='1.0' and send stream features */
 #define DOCTYPE "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" \
 		"<stream:stream xmlns=\"jabber:client\" xmlns:stream=\"http://etherx.jabber.org/streams\" from=\"%s\" to=\"%s\">"
+
+static void
+xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb);
 
 #if 0 /* this isn't used anywhere... */
 static const char *
@@ -316,6 +328,8 @@ _send_data(PurpleBuddy *pb, char *message)
 void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet) {
 	if (!strcmp(packet->name, "message"))
 		_jabber_parse_and_write_message_to_ui(packet, pb);
+	else if(!strcmp(packet->name, "iq"))
+		xep_iq_parse(packet, NULL, pb);
 	else
 		purple_debug_warning("bonjour", "Unknown packet: %s\n",
 				packet->name);
@@ -838,4 +852,219 @@ bonjour_jabber_stop(BonjourJabber *data)
 
 		g_slist_free(buddies);
 	}
+}
+static PurpleBuddy *
+_start_conversation(BonjourJabber *data, const gchar *to)
+{
+	PurpleBuddy *pb = NULL;
+	BonjourBuddy *bb = NULL;
+
+	if(data == NULL || to == NULL)
+		return NULL;
+
+	purple_debug_info("Bonjour", "start-conversation with  %s - \n", to);
+
+	pb = purple_find_buddy(data->account, to);
+	if (pb == NULL)
+		/* You can not send a message to an offline buddy */
+		return NULL;
+
+	bb = (BonjourBuddy *) pb->proto_data;
+	if(bb == NULL)
+		return NULL;
+
+	/* Check if there is a previously open conversation */
+	if (bb->conversation == NULL)
+	{
+		PurpleProxyConnectData *connect_data;
+		PurpleProxyInfo *proxy_info;
+
+		/* Make sure that the account always has a proxy of "none".
+		 * This is kind of dirty, but proxy_connect_none() isn't exposed. */
+		proxy_info = purple_account_get_proxy_info(data->account);
+		if (proxy_info == NULL) {
+			proxy_info = purple_proxy_info_new();
+			purple_account_set_proxy_info(data->account, proxy_info);
+		}
+		purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_NONE);
+
+		connect_data = purple_proxy_connect(data->account->gc, data->account,
+						    bb->ip, bb->port_p2pj, _connected_to_buddy, pb);
+
+		if (connect_data == NULL) {
+			purple_debug_error("bonjour", "Unable to connect to buddy (%s).\n", to);
+			return NULL;
+		}
+
+		bb->conversation = bonjour_jabber_conv_new();
+		bb->conversation->connect_data = connect_data;
+		/* We don't want _send_data() to register the tx_handler;
+		 * that neeeds to wait until we're actually connected. */
+		bb->conversation->tx_handler = 0;
+	}
+	return pb;
+}
+
+XepIq *
+xep_iq_new(void *data, XepIqType type, const gchar *to, const gchar *id)
+{
+	xmlnode *iq_node = NULL;
+	XepIq *iq = NULL;
+
+	if(data == NULL || to == NULL || id == NULL)
+		return NULL;
+	iq = g_new0(XepIq, 1);
+	if(iq == NULL)
+		return NULL;
+
+	iq_node = xmlnode_new("iq");
+	if(iq_node == NULL) {
+		g_free(iq);
+		return NULL;
+	}
+
+	xmlnode_set_attrib(iq_node, "to", to);
+	xmlnode_set_attrib(iq_node, "id", id);
+	switch (type) {
+		case XEP_IQ_SET:
+			xmlnode_set_attrib(iq_node, "type", "set");
+			break;
+		case XEP_IQ_GET:
+			xmlnode_set_attrib(iq_node, "type", "get");
+			break;
+		case XEP_IQ_RESULT:
+			xmlnode_set_attrib(iq_node, "type", "result");
+			break;
+		case XEP_IQ_ERROR:
+			xmlnode_set_attrib(iq_node, "type", "error");
+			break;
+		case XEP_IQ_NONE:
+		default:
+			xmlnode_set_attrib(iq_node, "type", "none");
+			break;
+	}
+
+	iq->node = iq_node;
+	iq->type = type;
+	iq->data = ((BonjourData*)data)->jabber_data;
+	iq->to = (char*)to;
+	return iq;
+}
+
+static gboolean
+check_if_blocked(PurpleBuddy *pb)
+{
+	gboolean blocked = FALSE;
+	GSList *l = NULL;
+	PurpleAccount *acc = NULL;
+
+	if(pb == NULL)
+		return FALSE;
+
+	acc = pb->account;
+
+	for(l = acc->deny; l != NULL; l = l->next) {
+		if(!purple_utf8_strcasecmp(pb->name, (char *)l->data)) {
+			purple_debug_info("Bonjour", "%s has been blocked.\n", pb->name, acc->username);
+			blocked = TRUE;
+			break;
+		}
+	}
+	return blocked;
+}
+
+static void
+xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb)
+{
+	xmlnode *child = NULL;
+
+	if(packet == NULL || pb == NULL)
+		return;
+
+	if(connection == NULL) {
+		if(pb->account != NULL)
+			connection = (pb->account)->gc;
+	}
+
+	if(check_if_blocked(pb))
+		return;
+
+	if ((child = xmlnode_get_child(packet, "si")) || (child = xmlnode_get_child(packet, "si")))
+		xep_si_parse(connection, packet, pb);
+	else
+		xep_bytestreams_parse(connection, packet, pb);
+}
+
+int
+xep_iq_send(XepIq *iq)
+{
+	char *msg = NULL;
+	gint msg_len = 0;
+	int ret = -1;
+	PurpleBuddy *pb = NULL;
+	/* Convert xml node into stream */
+	msg = xmlnode_to_str(iq->node, &msg_len);
+	xmlnode_free(iq->node);
+	/* start the talk, reuse the message socket  */
+	pb = _start_conversation ((BonjourJabber*)iq->data, iq->to);
+	/* Send the message */
+	if (pb != NULL)
+		ret = _send_data(pb, msg);
+	g_free(msg);
+	if (ret == -1)
+		return -1;
+	return 0;
+}
+
+char *
+purple_network_get_my_ip_ext2(int fd)
+{
+	char buffer[1024];
+	static char ip_ext[17 * 10];
+	char *tmp;
+	char *tip;
+	struct ifconf ifc;
+	struct ifreq *ifr;
+	struct sockaddr_in *sinptr;
+	guint32 lhost = htonl(127 * 256 * 256 * 256 + 1);
+	long unsigned int add;
+	int source = fd;
+	int len;
+
+	if (fd < 0)
+		source = socket(PF_INET, SOCK_STREAM, 0);
+
+	ifc.ifc_len = sizeof(buffer);
+	ifc.ifc_req = (struct ifreq *)buffer;
+	ioctl(source, SIOCGIFCONF, &ifc);
+
+	if (fd < 0)
+		close(source);
+	memset(ip_ext, 0, 17 * 10);
+	memcpy(ip_ext, "0.0.0.0", 7);
+	tmp = buffer;
+	tip = ip_ext;
+	while (tmp < buffer + ifc.ifc_len)
+	{
+		ifr = (struct ifreq *)tmp;
+		tmp += HX_SIZE_OF_IFREQ(*ifr);
+
+		if (ifr->ifr_addr.sa_family == AF_INET)
+		{
+			sinptr = (struct sockaddr_in *)&ifr->ifr_addr;
+			if (sinptr->sin_addr.s_addr != lhost)
+			{
+				add = ntohl(sinptr->sin_addr.s_addr);
+				len = g_snprintf(tip, 17, "%lu.%lu.%lu.%lu;",
+					((add >> 24) & 255),
+					((add >> 16) & 255),
+					((add >> 8) & 255),
+					add & 255);
+				tip = (char*) ((int) tip + len);
+				continue;
+			}
+		}
+	}
+
+	return ip_ext;
 }
