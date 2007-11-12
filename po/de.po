@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-12 09:54+0100\n"
+"POT-Creation-Date: 2007-11-12 21:38+0100\n"
 "PO-Revision-Date: 2007-11-12 09:54+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
@@ -2408,10 +2408,10 @@ msgid "Provides support for loading perl plugins."
 msgstr "Ermöglicht das Laden von Perl-Plugins."
 
 msgid "Psychic Mode"
-msgstr "Psycho-Modus"
+msgstr "Gesprächsvorhersage-Modus"
 
 msgid "Psychic mode for incoming conversation"
-msgstr "Psycho-Modus für eingehende Gespräche"
+msgstr "Vorhersage-Modus für eingehende Gespräche"
 
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
@@ -2433,7 +2433,7 @@ msgid "Display notification message in conversations"
 msgstr "Benachrichtigung in Gesprächen anzeigen"
 
 msgid "Raise psychic conversations"
-msgstr "Psycho-Unterhaltungen anheben"
+msgstr "Gesprächsvorhersage-Meldungen im Vordergrund"
 
 #. *< type
 #. *< ui_requirement
@@ -9508,7 +9508,7 @@ msgid "Mobile"
 msgstr "Mobil"
 
 msgid "Listening to music"
-msgstr ""
+msgstr "Musik hören"
 
 #, c-format
 msgid "%s changed status from %s to %s"
