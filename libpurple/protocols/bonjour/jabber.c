@@ -957,7 +957,7 @@ xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb)
 	if(check_if_blocked(pb))
 		return;
 
-	if ((child = xmlnode_get_child(packet, "si")) || (child = xmlnode_get_child(packet, "si")))
+	if ((child = xmlnode_get_child(packet, "si")) || (child = xmlnode_get_child(packet, "error")))
 		xep_si_parse(connection, packet, pb);
 	else
 		xep_bytestreams_parse(connection, packet, pb);
