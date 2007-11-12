@@ -109,12 +109,10 @@ void
 gnt_wm_copy_win(GntWidget *widget, GntNode *node)
 {
 	WINDOW *src, *dst;
-	int shadow;
 	if (!node)
 		return;
 	src = widget->window;
 	dst = node->window;
-	shadow = gnt_widget_has_shadow(widget) ? 1 : 0;
 	copywin(src, dst, node->scroll, 0, 0, 0, getmaxy(dst) - 1, getmaxx(dst) - 1, 0);
 }
 
@@ -1004,9 +1002,9 @@ refresh_screen(GntBindable *bindable, GList *null)
 	GntWM *wm = GNT_WM(bindable);
 
 	endwin();
-
-	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_node, NULL);
 	refresh();
+
+	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_node, GINT_TO_POINTER(TRUE));
 	g_signal_emit(wm, signals[SIG_TERMINAL_REFRESH], 0);
 	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, TRUE);
@@ -1622,13 +1620,11 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 			shadow = FALSE;
 		x = widget->priv.x;
 		y = widget->priv.y;
-		w = widget->priv.width;
-		h = widget->priv.height;
+		w = widget->priv.width + shadow;
+		h = widget->priv.height + shadow;
 
-		getmaxyx(stdscr, maxy, maxx);
-		maxy -= 1;              /* room for the taskbar */
-		maxy -= shadow;
-		maxx -= shadow;
+		maxx = getmaxx(stdscr);
+		maxy = getmaxy(stdscr) - 1;              /* room for the taskbar */
 
 		x = MAX(0, x);
 		y = MAX(0, y);
@@ -1639,7 +1635,7 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 
 		w = MIN(w, maxx);
 		h = MIN(h, maxy);
-		node->window = newwin(h + shadow, w + shadow, y, x);
+		node->window = newwin(h, w, y, x);
 		gnt_wm_copy_win(widget, node);
 	}
 #endif
@@ -1884,9 +1880,8 @@ void gnt_wm_resize_window(GntWM *wm, GntWidget *widget, int width, int height)
 {
 	gboolean ret = TRUE;
 	GntNode *node;
-	int shadow;
 	int maxx, maxy;
-	
+
 	while (widget->parent)
 		widget = widget->parent;
 	node = g_hash_table_lookup(wm->nodes, widget);
@@ -1900,9 +1895,8 @@ void gnt_wm_resize_window(GntWM *wm, GntWidget *widget, int width, int height)
 	gnt_widget_set_size(widget, width, height);
 	gnt_widget_draw(widget);
 
-	shadow = gnt_widget_has_shadow(widget) ? 1 : 0;
-	maxx = getmaxx(stdscr) - shadow;
-	maxy = getmaxy(stdscr) - 1 - shadow;
+	maxx = getmaxx(stdscr);
+	maxy = getmaxy(stdscr) - 1;
 	height = MIN(height, maxy);
 	width = MIN(width, maxx);
 	wresize(node->window, height, width);
