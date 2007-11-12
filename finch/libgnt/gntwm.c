@@ -224,17 +224,22 @@ update_screen(GntWM *wm)
 }
 
 static gboolean
-sanitize_position(GntWidget *widget, int *x, int *y)
+sanitize_position(GntWidget *widget, int *x, int *y, gboolean m)
 {
 	int X_MAX = getmaxx(stdscr);
 	int Y_MAX = getmaxy(stdscr) - 1;
 	int w, h;
 	int nx, ny;
 	gboolean changed = FALSE;
+	GntWindowFlags flags = GNT_IS_WINDOW(widget) ?
+			gnt_window_get_maximize(GNT_WINDOW(widget)) : 0;
 
 	gnt_widget_get_size(widget, &w, &h);
 	if (x) {
-		if (*x + w > X_MAX) {
+		if (m && (flags & GNT_WINDOW_MAXIMIZE_X) && *x != 0) {
+			*x = 0;
+			changed = TRUE;
+		} else if (*x + w > X_MAX) {
 			nx = MAX(0, X_MAX - w);
 			if (nx != *x) {
 				*x = nx;
@@ -243,7 +248,10 @@ sanitize_position(GntWidget *widget, int *x, int *y)
 		}
 	}
 	if (y) {
-		if (*y + h > Y_MAX) {
+		if (m && (flags & GNT_WINDOW_MAXIMIZE_Y) && *y != 0) {
+			*y = 0;
+			changed = TRUE;
+		} else if (*y + h > Y_MAX) {
 			ny = MAX(0, Y_MAX - h);
 			if (ny != *y) {
 				*y = ny;
@@ -255,7 +263,7 @@ sanitize_position(GntWidget *widget, int *x, int *y)
 }
 
 static void
-refresh_node(GntWidget *widget, GntNode *node, gpointer null)
+refresh_node(GntWidget *widget, GntNode *node, gpointer m)
 {
 	int x, y, w, h;
 	int nw, nh;
@@ -263,14 +271,28 @@ refresh_node(GntWidget *widget, GntNode *node, gpointer null)
 	int X_MAX = getmaxx(stdscr);
 	int Y_MAX = getmaxy(stdscr) - 1;
 
+	GntWindowFlags flags = 0;
+
+	if (m && GNT_IS_WINDOW(widget)) {
+		flags = gnt_window_get_maximize(GNT_WINDOW(widget));
+	}
+
 	gnt_widget_get_position(widget, &x, &y);
 	gnt_widget_get_size(widget, &w, &h);
 
-	if (sanitize_position(widget, &x, &y))
+	if (sanitize_position(widget, &x, &y, !!m))
 		gnt_screen_move_widget(widget, x, y);
 
-	nw = MIN(w, X_MAX);
-	nh = MIN(h, Y_MAX);
+	if (flags & GNT_WINDOW_MAXIMIZE_X)
+		nw = X_MAX;
+	else
+		nw = MIN(w, X_MAX);
+
+	if (flags & GNT_WINDOW_MAXIMIZE_Y)
+		nh = Y_MAX;
+	else
+		nh = MIN(h, Y_MAX);
+
 	if (nw != w || nh != h)
 		gnt_screen_resize_widget(widget, nw, nh);
 }
@@ -1607,7 +1629,7 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 
 	g_hash_table_replace(wm->nodes, widget, node);
 
-	refresh_node(widget, node, NULL);
+	refresh_node(widget, node, GINT_TO_POINTER(TRUE));
 
 	transient = !!GNT_WIDGET_IS_FLAG_SET(node->me, GNT_WIDGET_TRANSIENT);
 
@@ -1682,7 +1704,7 @@ void gnt_wm_new_window(GntWM *wm, GntWidget *widget)
 		const char *title = GNT_BOX(widget)->title;
 		GntPosition *p = NULL;
 		if (title && (p = g_hash_table_lookup(wm->positions, title)) != NULL) {
-			sanitize_position(widget, &p->x, &p->y);
+			sanitize_position(widget, &p->x, &p->y, TRUE);
 			gnt_widget_set_position(widget, p->x, p->y);
 			mvwin(widget->window, p->y, p->x);
 		}

@@ -28,6 +28,7 @@
 struct _GntWindowPriv
 {
 	GHashTable *accels;   /* key => menuitem-id */
+	GntWindowFlags flags;
 };
 
 enum
@@ -189,16 +190,33 @@ void gnt_window_set_menu(GntWindow *window, GntMenu *menu)
 	if (name && window->priv) {
 		if (!gnt_style_read_menu_accels(name, window->priv->accels)) {
 			g_hash_table_destroy(window->priv->accels);
-			g_free(window->priv);
-			window->priv = NULL;
+			window->priv->accels = NULL;
 		}
 	}
 }
 
 const char * gnt_window_get_accel_item(GntWindow *window, const char *key)
 {
-	if (window->priv)
+	if (window->priv->accels)
 		return g_hash_table_lookup(window->priv->accels, key);
 	return NULL;
+}
+
+void gnt_window_set_maximize(GntWindow *window, GntWindowFlags maximize)
+{
+	if (maximize & GNT_WINDOW_MAXIMIZE_X)
+		window->priv->flags |= GNT_WINDOW_MAXIMIZE_X;
+	else
+		window->priv->flags &= ~GNT_WINDOW_MAXIMIZE_X;
+
+	if (maximize & GNT_WINDOW_MAXIMIZE_Y)
+		window->priv->flags |= GNT_WINDOW_MAXIMIZE_Y;
+	else
+		window->priv->flags &= ~GNT_WINDOW_MAXIMIZE_Y;
+}
+
+GntWindowFlags gnt_window_get_maximize(GntWindow *window)
+{
+	return (window->priv->flags & (GNT_WINDOW_MAXIMIZE_X | GNT_WINDOW_MAXIMIZE_Y));
 }
 
