@@ -24,6 +24,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#include "internal.h"
+
 #include <gtk/gtkhbox.h>
 #include <gtk/gtkbutton.h>
 

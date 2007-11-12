@@ -93,6 +93,7 @@ PIDGIN_C_SRC =	\
 			gtkthemes.c \
 			gtkutils.c \
 			gtkwhiteboard.c \
+			minidialog.c \
 			pidginstock.c \
 			win32/MinimizeToTray.c \
 			win32/gtkdocklet-win32.c \
