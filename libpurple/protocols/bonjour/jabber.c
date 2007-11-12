@@ -997,7 +997,7 @@ purple_network_get_my_ip_ext2(int fd)
 	guint32 lhost = htonl(127 * 256 * 256 * 256 + 1);
 	long unsigned int add;
 	int source = fd;
-	int len;
+	int len, count = 0;
 
 	if (fd < 0)
 		source = socket(PF_INET, SOCK_STREAM, 0);
@@ -1013,7 +1013,7 @@ purple_network_get_my_ip_ext2(int fd)
 	memcpy(ip_ext, "0.0.0.0", 7);
 	tmp = buffer;
 	tip = ip_ext;
-	while (tmp < buffer + ifc.ifc_len)
+	while (tmp < buffer + ifc.ifc_len && count < 10)
 	{
 		ifr = (struct ifreq *)tmp;
 		tmp += HX_SIZE_OF_IFREQ(*ifr);
@@ -1030,6 +1030,7 @@ purple_network_get_my_ip_ext2(int fd)
 					((add >> 8) & 255),
 					add & 255);
 				tip = (char*) ((int) tip + len);
+				count++;
 				continue;
 			}
 		}
