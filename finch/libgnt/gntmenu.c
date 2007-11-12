@@ -235,7 +235,7 @@ check_for_trigger(GntMenu *menu, char trigger)
 
 	if (nth == NULL)
 		return FALSE;
-		
+
 	find = find_item_with_trigger(nth->next, NULL, trigger);
 	if (!find)
 		find = find_item_with_trigger(menu->list, nth->next, trigger);

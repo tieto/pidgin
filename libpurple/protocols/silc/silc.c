@@ -425,7 +425,7 @@ silcpurple_login_connected(gpointer data, gint source, const gchar *error_messag
 		return;
 	}
 
-	silc_hash_alloc("sha1", &sg->sha1hash);
+	silc_hash_alloc((unsigned char *)"sha1", &sg->sha1hash);
 
 	/* Wrap socket to TCP stream */
 	silc_socket_tcp_stream_create(source, TRUE, FALSE,
