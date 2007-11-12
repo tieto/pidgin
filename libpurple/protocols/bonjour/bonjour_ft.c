@@ -303,13 +303,13 @@ bonjour_free_xfer(PurpleXfer *xfer)
 		purple_debug_info("Bonjour", "bonjour-free-xfer-null.\n");
 		return;
 	}
-	purple_debug_info("Bonjour", "bonjour-free-xfer-%x.\n", (int)xfer);
+	purple_debug_info("Bonjour", "bonjour-free-xfer-%p.\n", xfer);
 	xf = (XepXfer*)xfer->data;
 	if(xf != NULL){
 		bd = (BonjourData*)xf->data;
 		if(bd != NULL){
 			bd->xfer_lists = g_list_remove(bd->xfer_lists, xfer);
-			purple_debug_info("Bonjour", "B free xfer from lists(0x%x).\n", (int)bd->xfer_lists);
+			purple_debug_info("Bonjour", "B free xfer from lists(%p).\n", bd->xfer_lists);
 		}
 		if (xf->proxy_connection != NULL)
 			purple_proxy_connect_cancel(xf->proxy_connection);
@@ -318,10 +318,11 @@ bonjour_free_xfer(PurpleXfer *xfer)
 		g_free(xf->jid);
 		g_free(xf->proxy_host);
 		g_free(xf->buddy_ip);
+		g_free(xf->sid);
 		g_free(xf);
 		xfer->data = NULL;
 	}
-	purple_debug_info("Bonjour", "Need close socket=0x%x.\n", xfer->fd);
+	purple_debug_info("Bonjour", "Need close socket=%d.\n", xfer->fd);
 }
 
 PurpleXfer *
@@ -347,7 +348,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 			return NULL;
 		}
 		xep_xfer->data = bd;
-		purple_debug_info("Bonjour", "Bonjour-new-xfer bd=0x%x data=0x%x.\n",(int)bd, (int)xep_xfer->data);
+		purple_debug_info("Bonjour", "Bonjour-new-xfer bd=%p data=%p.\n", bd, xep_xfer->data);
 		xep_xfer->mode = XEP_BYTESTREAMS | XEP_IBB;
 		xfer->data = xep_xfer;
 		xep_xfer->sid = NULL;
@@ -461,7 +462,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 				purple_xfer_cancel_remote(xfer);
 			}
 		} else {
-			purple_debug_info("Bonjour", "si offer Message type - Unknown-%d.\n",type);
+			purple_debug_info("Bonjour", "si offer Message type - Unknown-%d.\n", type);
 		}
 	}
 }
@@ -504,7 +505,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 							xf->proxy_host = g_strdup(host);
 							xf->proxy_port = portnum;
 							purple_debug_info("Bonjour", "bytestream offer parse"
-							                  "jid=%s host=%s port=0x%x.\n",jid, host, portnum);
+							                  "jid=%s host=%s port=%d.\n", jid, host, portnum);
 							bonjour_bytestreams_connect(xfer);
 						}
 					} else {
@@ -516,7 +517,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 			}
 
 		} else {
-			purple_debug_info("Bonjour", "bytestream offer Message type - Unknown-%d.\n",type);
+			purple_debug_info("Bonjour", "bytestream offer Message type - Unknown-%d.\n", type);
 		}
 	}
 }
@@ -631,7 +632,7 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 		} else if(acceptfd == -1) {
 
 		} else {
-			purple_debug_info("Bonjour", "Conjour-sock5-request-cb. state= %d, accept=%d\n", xf->sock5_req_state,acceptfd);
+			purple_debug_info("Bonjour", "Conjour-sock5-request-cb. state= %d, accept=%d\n", xf->sock5_req_state, acceptfd);
 			purple_input_remove(xfer->watcher);
 			close(source);
 			xfer->watcher = purple_input_add(acceptfd, PURPLE_INPUT_READ,

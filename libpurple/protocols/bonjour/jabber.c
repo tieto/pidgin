@@ -711,29 +711,29 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 	}
 }
 
-int
-bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *body)
+static PurpleBuddy *
+_find_or_start_conversation(BonjourJabber *data, const gchar *to)
 {
-	xmlnode *message_node, *node, *node2;
-	gchar *message;
-	PurpleBuddy *pb;
-	BonjourBuddy *bb;
-	int ret;
+	PurpleBuddy *pb = NULL;
+	BonjourBuddy *bb = NULL;
+
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(to != NULL, NULL);
 
 	pb = purple_find_buddy(data->account, to);
-	if (pb == NULL) {
-		purple_debug_info("bonjour", "Can't send a message to an offline buddy (%s).\n", to);
+	if (pb == NULL || pb->proto_data == NULL)
 		/* You can not send a message to an offline buddy */
-		return -10000;
-	}
+		return NULL;
 
-	bb = pb->proto_data;
+	bb = (BonjourBuddy *) pb->proto_data;
 
 	/* Check if there is a previously open conversation */
 	if (bb->conversation == NULL)
 	{
 		PurpleProxyConnectData *connect_data;
 		PurpleProxyInfo *proxy_info;
+
+		purple_debug_info("Bonjour", "Starting conversation with %s\n", to);
 
 		/* Make sure that the account always has a proxy of "none".
 		 * This is kind of dirty, but proxy_connect_none() isn't exposed. */
@@ -744,13 +744,12 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 		}
 		purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_NONE);
 
-		connect_data =
-			purple_proxy_connect(data->account->gc, data->account, bb->ip,
-					     bb->port_p2pj, _connected_to_buddy, pb);
+		connect_data = purple_proxy_connect(data->account->gc, data->account,
+						    bb->ip, bb->port_p2pj, _connected_to_buddy, pb);
 
 		if (connect_data == NULL) {
 			purple_debug_error("bonjour", "Unable to connect to buddy (%s).\n", to);
-			return -10001;
+			return NULL;
 		}
 
 		bb->conversation = bonjour_jabber_conv_new();
@@ -759,6 +758,26 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 		 * that neeeds to wait until we're actually connected. */
 		bb->conversation->tx_handler = 0;
 	}
+	return pb;
+}
+
+int
+bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *body)
+{
+	xmlnode *message_node, *node, *node2;
+	gchar *message;
+	PurpleBuddy *pb;
+	BonjourBuddy *bb;
+	int ret;
+
+	pb = _find_or_start_conversation(data, to);
+	if (pb == NULL) {
+		purple_debug_info("bonjour", "Can't send a message to an offline buddy (%s).\n", to);
+		/* You can not send a message to an offline buddy */
+		return -10000;
+	}
+
+	bb = pb->proto_data;
 
 	message_node = xmlnode_new("message");
 	xmlnode_set_attrib(message_node, "to", bb->name);
@@ -852,57 +871,6 @@ bonjour_jabber_stop(BonjourJabber *data)
 
 		g_slist_free(buddies);
 	}
-}
-static PurpleBuddy *
-_start_conversation(BonjourJabber *data, const gchar *to)
-{
-	PurpleBuddy *pb = NULL;
-	BonjourBuddy *bb = NULL;
-
-	if(data == NULL || to == NULL)
-		return NULL;
-
-	purple_debug_info("Bonjour", "start-conversation with  %s - \n", to);
-
-	pb = purple_find_buddy(data->account, to);
-	if (pb == NULL)
-		/* You can not send a message to an offline buddy */
-		return NULL;
-
-	bb = (BonjourBuddy *) pb->proto_data;
-	if(bb == NULL)
-		return NULL;
-
-	/* Check if there is a previously open conversation */
-	if (bb->conversation == NULL)
-	{
-		PurpleProxyConnectData *connect_data;
-		PurpleProxyInfo *proxy_info;
-
-		/* Make sure that the account always has a proxy of "none".
-		 * This is kind of dirty, but proxy_connect_none() isn't exposed. */
-		proxy_info = purple_account_get_proxy_info(data->account);
-		if (proxy_info == NULL) {
-			proxy_info = purple_proxy_info_new();
-			purple_account_set_proxy_info(data->account, proxy_info);
-		}
-		purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_NONE);
-
-		connect_data = purple_proxy_connect(data->account->gc, data->account,
-						    bb->ip, bb->port_p2pj, _connected_to_buddy, pb);
-
-		if (connect_data == NULL) {
-			purple_debug_error("bonjour", "Unable to connect to buddy (%s).\n", to);
-			return NULL;
-		}
-
-		bb->conversation = bonjour_jabber_conv_new();
-		bb->conversation->connect_data = connect_data;
-		/* We don't want _send_data() to register the tx_handler;
-		 * that neeeds to wait until we're actually connected. */
-		bb->conversation->tx_handler = 0;
-	}
-	return pb;
 }
 
 XepIq *
@@ -998,22 +966,21 @@ xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb)
 int
 xep_iq_send(XepIq *iq)
 {
-	char *msg = NULL;
-	gint msg_len = 0;
 	int ret = -1;
 	PurpleBuddy *pb = NULL;
-	/* Convert xml node into stream */
-	msg = xmlnode_to_str(iq->node, &msg_len);
-	xmlnode_free(iq->node);
+
 	/* start the talk, reuse the message socket  */
-	pb = _start_conversation ((BonjourJabber*)iq->data, iq->to);
+	pb = _find_or_start_conversation ((BonjourJabber*)iq->data, iq->to);
 	/* Send the message */
-	if (pb != NULL)
+	if (pb != NULL) {
+		/* Convert xml node into stream */
+		gchar *msg = xmlnode_to_str(iq->node, NULL);
 		ret = _send_data(pb, msg);
-	g_free(msg);
-	if (ret == -1)
-		return -1;
-	return 0;
+		g_free(msg);
+	}
+	xmlnode_free(iq->node);
+
+	return (ret >= 0) ? 0 : -1;
 }
 
 /* This returns a ';' delimited string containing all non-localhost IPs */
