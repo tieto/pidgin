@@ -62,8 +62,8 @@ EXTERNAL_DLLS = \
 	saslGSSAPI.dll \
 	saslLOGIN.dll \
 	saslPLAIN.dll \
-	silc.dll \
-	silcclient.dll \
+	libsilc-1-1-2.dll \
+	libsilcclient-1-1-2.dll \
 	smime3.dll \
 	softokn3.dll \
 	ssl3.dll
