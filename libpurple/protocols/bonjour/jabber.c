@@ -1016,6 +1016,7 @@ xep_iq_send(XepIq *iq)
 	return 0;
 }
 
+/* This returns a ';' delimited string containing all non-localhost IPs */
 char *
 purple_network_get_my_ip_ext2(int fd)
 {
@@ -1040,7 +1041,8 @@ purple_network_get_my_ip_ext2(int fd)
 
 	if (fd < 0)
 		close(source);
-	memset(ip_ext, 0, 17 * 10);
+
+	memset(ip_ext, 0, sizeof(ip_ext));
 	memcpy(ip_ext, "0.0.0.0", 7);
 	tmp = buffer;
 	tip = ip_ext;
