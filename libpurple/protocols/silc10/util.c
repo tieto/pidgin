@@ -667,7 +667,7 @@ SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
 			text = purple_unescape_html(tmp);
 			g_free(tmp);
 			/* Add text */
-			silc_mime_add_data(p, text, strlen(text));
+			silc_mime_add_data(p, (unsigned char *)text, strlen(text));
 			g_free(text);
 
 			if (!parts)
@@ -720,7 +720,7 @@ SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
 				    "text/plain; charset=utf-8");
 
 		/* Add text */
-		silc_mime_add_data(p, tmp, strlen(tmp));
+		silc_mime_add_data(p, (unsigned char *)tmp, strlen(tmp));
 		g_free(tmp);
 
 		if (!parts)
