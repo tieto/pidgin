@@ -311,7 +311,7 @@ void silcpurple_buddy_keyagr_request(SilcClient client,
 
 	purple_request_action_with_hint(client->application, _("Key Agreement Request"), tmp,
 			    hostname ? tmp2 : NULL, 1, gc->account, client_entry->nickname,
-				NULL, a, PURPLE_REQUEST_UI_HINT_BLIST, 2, _("Yes"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb),
+				NULL, PURPLE_REQUEST_UI_HINT_BLIST, a, 2, _("Yes"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb),
 			    _("No"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb));
 }
 
