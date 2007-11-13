@@ -139,9 +139,9 @@ docklet_x11_update_icon(PurpleStatusPrimitive status, gboolean connecting, gbool
 static void
 docklet_x11_resize_icon(GtkWidget *widget)
 {
-	if (docklet_height == MIN(widget->allocation.height, widget->allocation.width))
+	if (docklet_height == widget->allocation.height)
 		return;
-	docklet_height = MIN(widget->allocation.height, widget->allocation.width);
+	docklet_height = widget->allocation.height;
 	pidgin_docklet_update_icon();
 }
 
