@@ -92,7 +92,7 @@ typedef struct _XepIq {
 } XepIq;
 
 XepIq *xep_iq_new(void *data, XepIqType type, const gchar *to, const gchar *id);
-int xep_iq_send(XepIq *iq);
-char *purple_network_get_my_ip_ext2(int fd);
+int xep_iq_send_and_free(XepIq *iq);
+const char *purple_network_get_my_ip_ext2(int fd);
 
 #endif /* _BONJOUR_JABBER_H_ */

@@ -879,17 +879,11 @@ xep_iq_new(void *data, XepIqType type, const gchar *to, const gchar *id)
 	xmlnode *iq_node = NULL;
 	XepIq *iq = NULL;
 
-	if(data == NULL || to == NULL || id == NULL)
-		return NULL;
-	iq = g_new0(XepIq, 1);
-	if(iq == NULL)
-		return NULL;
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(to != NULL, NULL);
+	g_return_val_if_fail(id != NULL, NULL);
 
 	iq_node = xmlnode_new("iq");
-	if(iq_node == NULL) {
-		g_free(iq);
-		return NULL;
-	}
 
 	xmlnode_set_attrib(iq_node, "to", to);
 	xmlnode_set_attrib(iq_node, "id", id);
@@ -912,6 +906,7 @@ xep_iq_new(void *data, XepIqType type, const gchar *to, const gchar *id)
 			break;
 	}
 
+	iq = g_new0(XepIq, 1);
 	iq->node = iq_node;
 	iq->type = type;
 	iq->data = ((BonjourData*)data)->jabber_data;
@@ -964,7 +959,7 @@ xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb)
 }
 
 int
-xep_iq_send(XepIq *iq)
+xep_iq_send_and_free(XepIq *iq)
 {
 	int ret = -1;
 	PurpleBuddy *pb = NULL;
@@ -978,13 +973,16 @@ xep_iq_send(XepIq *iq)
 		ret = _send_data(pb, msg);
 		g_free(msg);
 	}
+
 	xmlnode_free(iq->node);
+	iq->node = NULL;
+	g_free(iq);
 
 	return (ret >= 0) ? 0 : -1;
 }
 
 /* This returns a ';' delimited string containing all non-localhost IPs */
-char *
+const char *
 purple_network_get_my_ip_ext2(int fd)
 {
 	char buffer[1024];
