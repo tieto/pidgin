@@ -733,7 +733,7 @@ _find_or_start_conversation(BonjourJabber *data, const gchar *to)
 		PurpleProxyConnectData *connect_data;
 		PurpleProxyInfo *proxy_info;
 
-		purple_debug_info("Bonjour", "Starting conversation with %s\n", to);
+		purple_debug_info("bonjour", "Starting conversation with %s\n", to);
 
 		/* Make sure that the account always has a proxy of "none".
 		 * This is kind of dirty, but proxy_connect_none() isn't exposed. */
@@ -928,7 +928,7 @@ check_if_blocked(PurpleBuddy *pb)
 
 	for(l = acc->deny; l != NULL; l = l->next) {
 		if(!purple_utf8_strcasecmp(pb->name, (char *)l->data)) {
-			purple_debug_info("Bonjour", "%s has been blocked.\n", pb->name, acc->username);
+			purple_debug_info("bonjour", "%s has been blocked.\n", pb->name, acc->username);
 			blocked = TRUE;
 			break;
 		}

@@ -58,7 +58,7 @@ xep_ft_si_reject(PurpleXfer *xfer, char *to)
 	if(!xf)
 		return;
 
-	purple_debug_info("Bonjour", "xep file transfer stream initialization error.\n");
+	purple_debug_info("bonjour", "xep file transfer stream initialization error.\n");
 	iq = xep_iq_new(xf->data, XEP_IQ_ERROR, to, xf->sid);
 	if(iq == NULL)
 		return;
@@ -79,27 +79,27 @@ xep_ft_si_reject(PurpleXfer *xfer, char *to)
 
 static void bonjour_xfer_cancel_send(PurpleXfer *xfer)
 {
-	purple_debug_info("Bonjour", "Bonjour-xfer-cancel-send.\n");
+	purple_debug_info("bonjour", "Bonjour-xfer-cancel-send.\n");
 	bonjour_free_xfer(xfer);
 }
 
 static void bonjour_xfer_request_denied(PurpleXfer *xfer)
 {
-	purple_debug_info("Bonjour", "Bonjour-xfer-request-denied.\n");
+	purple_debug_info("bonjour", "Bonjour-xfer-request-denied.\n");
 	xep_ft_si_reject(xfer, xfer->who);
 	bonjour_free_xfer(xfer);
 }
 
 static void bonjour_xfer_cancel_recv(PurpleXfer *xfer)
 {
-	purple_debug_info("Bonjour", "Bonjour-xfer-cancel-recv.\n");
+	purple_debug_info("bonjour", "Bonjour-xfer-cancel-recv.\n");
 	bonjour_free_xfer(xfer);
 }
 
 
 static void bonjour_xfer_end(PurpleXfer *xfer)
 {
-	purple_debug_info("Bonjour", "Bonjour-xfer-end.\n");
+	purple_debug_info("bonjour", "Bonjour-xfer-end.\n");
 	bonjour_free_xfer(xfer);
 }
 
@@ -113,7 +113,7 @@ bonjour_si_xfer_find(BonjourData *bd, const char *sid, const char *from)
 	if(!sid || !from || !bd)
 		return NULL;
 
-	purple_debug_info("Bonjour", "Look for sid=%s from=%s xferlists.\n",
+	purple_debug_info("bonjour", "Look for sid=%s from=%s xferlists.\n",
 			  sid, from);
 
 	for(xfers = bd->xfer_lists; xfers; xfers = xfers->next) {
@@ -128,7 +128,7 @@ bonjour_si_xfer_find(BonjourData *bd, const char *sid, const char *from)
 			return xfer;
 	}
 
-	purple_debug_info("Bonjour", "Look for xfer list fail\n");
+	purple_debug_info("bonjour", "Look for xfer list fail\n");
 
 	return NULL;
 }
@@ -156,7 +156,7 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 	if(!bd)
 		return;
 
-	purple_debug_info("Bonjour", "xep file transfer stream initialization offer-id=%d.\n", next_id);
+	purple_debug_info("bonjour", "xep file transfer stream initialization offer-id=%d.\n", next_id);
 
 	/* Assign stream id. */
 	memset(buf, 0, 32);
@@ -215,7 +215,7 @@ xep_ft_si_reject2(BonjourData *bd, const char *to, const char *sid)
 	if(!to || !sid)
 		return;
 
-	purple_debug_info("Bonjour", "xep file transfer stream initialization error.\n");
+	purple_debug_info("bonjour", "xep file transfer stream initialization error.\n");
 	iq = xep_iq_new(bd, XEP_IQ_ERROR, to, sid);
 	if(iq == NULL)
 		return;
@@ -251,7 +251,7 @@ xep_ft_si_result(PurpleXfer *xfer, char *to)
 	if(!xf)
 		return;
 
-	purple_debug_info("Bonjour", "xep file transfer stream initialization result.\n");
+	purple_debug_info("bonjour", "xep file transfer stream initialization result.\n");
 	iq = xep_iq_new(xf->data, XEP_IQ_RESULT, to, xf->sid);
 	if(iq == NULL)
 		return;
@@ -282,18 +282,18 @@ bonjour_free_xfer(PurpleXfer *xfer)
 	BonjourData *bd = NULL;
 
 	if(xfer == NULL) {
-		purple_debug_info("Bonjour", "bonjour-free-xfer-null.\n");
+		purple_debug_info("bonjour", "bonjour-free-xfer-null.\n");
 		return;
 	}
 
-	purple_debug_info("Bonjour", "bonjour-free-xfer-%p.\n", xfer);
+	purple_debug_info("bonjour", "bonjour-free-xfer-%p.\n", xfer);
 
 	xf = (XepXfer*)xfer->data;
 	if(xf != NULL) {
 		bd = (BonjourData*)xf->data;
 		if(bd != NULL) {
 			bd->xfer_lists = g_list_remove(bd->xfer_lists, xfer);
-			purple_debug_info("Bonjour", "B free xfer from lists(%p).\n", bd->xfer_lists);
+			purple_debug_info("bonjour", "B free xfer from lists(%p).\n", bd->xfer_lists);
 		}
 		if (xf->proxy_connection != NULL)
 			purple_proxy_connect_cancel(xf->proxy_connection);
@@ -307,7 +307,7 @@ bonjour_free_xfer(PurpleXfer *xfer)
 		xfer->data = NULL;
 	}
 
-	purple_debug_info("Bonjour", "Need close socket=%d.\n", xfer->fd);
+	purple_debug_info("bonjour", "Need close socket=%d.\n", xfer->fd);
 }
 
 PurpleXfer *
@@ -320,7 +320,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 	if(who == NULL || gc == NULL)
 		return NULL;
 
-	purple_debug_info("Bonjour", "Bonjour-new-xfer to %s.\n", who);
+	purple_debug_info("bonjour", "Bonjour-new-xfer to %s.\n", who);
 	bd = (BonjourData*) gc->proto_data;
 	if(bd == NULL)
 		return NULL;
@@ -330,7 +330,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 	xfer->data = xep_xfer = g_new0(XepXfer, 1);
 	xep_xfer->data = bd;
 
-	purple_debug_info("Bonjour", "Bonjour-new-xfer bd=%p data=%p.\n", bd, xep_xfer->data);
+	purple_debug_info("bonjour", "Bonjour-new-xfer bd=%p data=%p.\n", bd, xep_xfer->data);
 
 	xep_xfer->mode = XEP_BYTESTREAMS | XEP_IBB;
 	xep_xfer->sid = NULL;
@@ -351,7 +351,7 @@ bonjour_send_file(PurpleConnection *gc, const char *who, const char *file)
 	PurpleXfer *xfer = NULL;
 	if(gc == NULL || who == NULL)
 		return;
-	purple_debug_info("Bonjour", "Bonjour-send-file to=%s.\n", who);
+	purple_debug_info("bonjour", "Bonjour-send-file to=%s.\n", who);
 	xfer = bonjour_new_xfer(gc, who);
 	if(xfer == NULL)
 		return;
@@ -374,7 +374,7 @@ bonjour_xfer_init(PurpleXfer *xfer)
 	xf = (XepXfer*)xfer->data;
 	if(xf == NULL)
 		return;
-	purple_debug_info("Bonjour", "Bonjour-xfer-init.\n");
+	purple_debug_info("bonjour", "Bonjour-xfer-init.\n");
 
 	buddy = purple_find_buddy(xfer->account, xfer->who);
 	/* this buddy is offline. */
@@ -385,13 +385,13 @@ bonjour_xfer_init(PurpleXfer *xfer)
 	xf->buddy_ip = g_strdup(bd->ip);
 	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
 		/* initiate file transfer, send SI offer. */
-		purple_debug_info("Bonjour", "Bonjour xfer type is PURPLE_XFER_SEND.\n");
+		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_SEND.\n");
 		xep_ft_si_offer(xfer, xfer->who);
 
 	} else {
 		/* accept file transfer request, send SI result. */
 		xep_ft_si_result(xfer, xfer->who);
-		purple_debug_info("Bonjour", "Bonjour xfer type is PURPLE_XFER_RECEIVE.\n");
+		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_RECEIVE.\n");
 	}
 	return;
 }
@@ -413,7 +413,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	if(bd == NULL)
 		return;
 
-	purple_debug_info("Bonjour", "xep-si-parse.\n");
+	purple_debug_info("bonjour", "xep-si-parse.\n");
 
 	type = xmlnode_get_attrib(packet, "type");
 	from = pb->name;
@@ -421,7 +421,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	if(type) {
 		if(!strcmp(type, "set")){
 			si = xmlnode_get_child(packet,"si");
-			purple_debug_info("Bonjour", "si offer Message type - SET.\n");
+			purple_debug_info("bonjour", "si offer Message type - SET.\n");
 			file = xmlnode_get_child(si, "file");
 			/**/
 			filename = xmlnode_get_attrib(file, "name");
@@ -430,24 +430,24 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 			bonjour_xfer_receive(pc, id, from, filesize, filename, option);
 		} else if(!strcmp(type, "result")){
 			si = xmlnode_get_child(packet,"si");
-			purple_debug_info("Bonjour", "si offer Message type - RESULT.\n");
+			purple_debug_info("bonjour", "si offer Message type - RESULT.\n");
 			xfer = bonjour_si_xfer_find(bd, id, from);
 			if(xfer == NULL){
-				purple_debug_info("Bonjour", "xfer find fail.\n");
+				purple_debug_info("bonjour", "xfer find fail.\n");
 				xep_ft_si_reject2((BonjourData *)pc->proto_data, from, id);
 			} else {
 				bonjour_bytestreams_init(xfer);
 			}
 		} else if(!strcmp(type, "error")){
-			purple_debug_info("Bonjour", "si offer Message type - ERROR.\n");
+			purple_debug_info("bonjour", "si offer Message type - ERROR.\n");
 			xfer = bonjour_si_xfer_find(bd, id, from);
 			if(xfer == NULL){
-				purple_debug_info("Bonjour", "xfer find fail.\n");
+				purple_debug_info("bonjour", "xfer find fail.\n");
 			} else {
 				purple_xfer_cancel_remote(xfer);
 			}
 		} else {
-			purple_debug_info("Bonjour", "si offer Message type - Unknown-%d.\n", type);
+			purple_debug_info("bonjour", "si offer Message type - Unknown-%d.\n", type);
 		}
 	}
 }
@@ -470,14 +470,14 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 	if(bd == NULL)
 		return;
 
-	purple_debug_info("Bonjour", "xep-bytestreams-parse.\n");
+	purple_debug_info("bonjour", "xep-bytestreams-parse.\n");
 
 	type = xmlnode_get_attrib(packet, "type");
 	from = pb->name;
 	query = xmlnode_get_child(packet,"query");
 	if(type) {
 		if(!strcmp(type, "set")){
-			purple_debug_info("Bonjour", "bytestream offer Message type - SET.\n");
+			purple_debug_info("bonjour", "bytestream offer Message type - SET.\n");
 
 			id = xmlnode_get_attrib(query, "sid");
 			xfer = bonjour_si_xfer_find(bd, id, from);
@@ -497,14 +497,14 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 							xf->jid = g_strdup(jid);
 							xf->proxy_host = g_strdup(host);
 							xf->proxy_port = portnum;
-							purple_debug_info("Bonjour", "bytestream offer parse"
+							purple_debug_info("bonjour", "bytestream offer parse"
 									  "jid=%s host=%s port=%d.\n", jid, host, portnum);
 							bonjour_bytestreams_connect(xfer);
 							break;
 						}
 
 					} else {
-						purple_debug_info("Bonjour", "bytestream offer Message parse error.\n");
+						purple_debug_info("bonjour", "bytestream offer Message parse error.\n");
 					}
 				}
 			} else {
@@ -512,7 +512,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 			}
 
 		} else {
-			purple_debug_info("Bonjour", "bytestream offer Message type - Unknown-%d.\n", type);
+			purple_debug_info("bonjour", "bytestream offer Message type - Unknown-%d.\n", type);
 		}
 	}
 }
@@ -532,7 +532,7 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *from,
 	if(bd == NULL)
 		return;
 
-	purple_debug_info("Bonjour", "bonjour-xfer-receive.\n");
+	purple_debug_info("bonjour", "bonjour-xfer-receive.\n");
 
 	/* Build the file transfer handle */
 	xfer = purple_xfer_new(pc->account, PURPLE_XFER_RECEIVE, from);
@@ -576,7 +576,7 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 		} else if(acceptfd == -1) {
 
 		} else {
-			purple_debug_info("Bonjour", "Conjour-sock5-request-cb. state= %d, accept=%d\n", xf->sock5_req_state, acceptfd);
+			purple_debug_info("bonjour", "Conjour-sock5-request-cb. state= %d, accept=%d\n", xf->sock5_req_state, acceptfd);
 			purple_input_remove(xfer->watcher);
 			close(source);
 			xfer->watcher = purple_input_add(acceptfd, PURPLE_INPUT_READ,
@@ -681,7 +681,7 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 	const char *local_ip = NULL;
 	char token [] = ";";
 
-	purple_debug_info("Bonjour", "Bonjour-bytestreams-listen. sock=%d.\n", sock);
+	purple_debug_info("bonjour", "Bonjour-bytestreams-listen. sock=%d.\n", sock);
 	if (sock < 0 || xfer == NULL) {
 		/*purple_xfer_cancel_local(xfer);*/
 		return;
@@ -724,10 +724,12 @@ bonjour_bytestreams_init(PurpleXfer *xfer)
 	XepXfer *xf = NULL;
 	if(xfer == NULL)
 		return;
-	purple_debug_info("Bonjour", "Bonjour-bytestreams-init.\n");
+	purple_debug_info("bonjour", "Bonjour-bytestreams-init.\n");
 	xf = xfer->data;
+	purple_network_listen_map_external(FALSE);
 	xf->listen_data = purple_network_listen_range(0, 0, SOCK_STREAM,
 						      bonjour_bytestreams_listen, xfer);
+	purple_network_listen_map_external(TRUE);
 	if (xf->listen_data == NULL) {
 		purple_xfer_cancel_local(xfer);
 	}
@@ -762,7 +764,7 @@ bonjour_bytestreams_connect(PurpleXfer *xfer)
 	if(xfer == NULL)
 		return;
 
-	purple_debug_info("Bonjour", "bonjour-bytestreams-connect.\n");
+	purple_debug_info("bonjour", "bonjour-bytestreams-connect.\n");
 
 	xf = (XepXfer*)xfer->data;
 	if(!xf)

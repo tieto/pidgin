@@ -50,6 +50,9 @@ version 2.3.0 (??/??/????):
 		* purple_util_init()
 		* purple_util_uninit()
 
+		* purple_network_listen_map_external() to temporarily disable
+		  mapping ports externally via NAT-PMP or UPnP.
+
 		* pidgin_dialogs_about_with_parent()
 		* pidgin_log_show_contact_with_parent()
 		* pidgin_log_show_with_parent()
