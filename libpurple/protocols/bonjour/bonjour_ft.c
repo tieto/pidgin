@@ -96,10 +96,42 @@ static void bonjour_xfer_cancel_recv(PurpleXfer *xfer)
 	bonjour_free_xfer(xfer);
 }
 
+struct socket_cleanup {
+	int fd;
+	guint handle;
+};
+
+static void
+_wait_for_socket_close(gpointer data, gint source, PurpleInputCondition cond)
+{
+	struct socket_cleanup *sc = data;
+	char buf[1];
+	int ret;
+
+	ret = recv(source, buf, 1, 0);
+
+	if (ret == 0 || (ret == -1 && !(errno == EAGAIN || errno == EWOULDBLOCK))) {
+		purple_debug_info("bonjour", "Client completed recieving; closing server socket.\n");
+		purple_input_remove(sc->handle);
+		close(sc->fd);
+		g_free(sc);
+	}
+}
 
 static void bonjour_xfer_end(PurpleXfer *xfer)
 {
 	purple_debug_info("bonjour", "Bonjour-xfer-end.\n");
+
+	/* We can't allow the server side to close the connection until the client is complete,
+	 * otherwise there is a RST resulting in an error on the client side */
+	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND && purple_xfer_is_completed(xfer)) {
+		struct socket_cleanup *sc = g_new0(struct socket_cleanup, 1);
+		sc->fd = xfer->fd;
+		xfer->fd = -1;
+		sc->handle = purple_input_add(sc->fd, PURPLE_INPUT_READ,
+						 _wait_for_socket_close, sc);
+	}
+
 	bonjour_free_xfer(xfer);
 }
 
@@ -568,6 +600,8 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 	if(xf == NULL)
 		return;
 
+	purple_debug_info("bonjour", "bonjour_sock5_request_cb - req_state = 0x%x\n", xf->sock5_req_state);
+
 	switch(xf->sock5_req_state){
 	case 0x00:
 		acceptfd = accept(source, NULL, 0);
@@ -576,7 +610,13 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 		} else if(acceptfd == -1) {
 
 		} else {
-			purple_debug_info("bonjour", "Conjour-sock5-request-cb. state= %d, accept=%d\n", xf->sock5_req_state, acceptfd);
+			int flags;
+
+			purple_debug_info("bonjour", "Accepted SOCKS5 ft connection - fd=%d\n", acceptfd);
+
+			flags = fcntl(acceptfd, F_GETFL);
+			fcntl(acceptfd, F_SETFL, flags | O_NONBLOCK);
+
 			purple_input_remove(xfer->watcher);
 			close(source);
 			xfer->watcher = purple_input_add(acceptfd, PURPLE_INPUT_READ,
