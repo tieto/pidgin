@@ -120,7 +120,7 @@ PidginMiniDialog *pidgin_mini_dialog_new(const gchar *title,
  *  @param mini_dialog a mini-dialog
  *  @param title       the new title for @a mini_dialog
  */
-void pidgin_mini_dialog_set_title(PidginMiniDialog *mini_dialogtitle ,
+void pidgin_mini_dialog_set_title(PidginMiniDialog *mini_dialog,
 	const char *title);
 
 /** Shortcut for setting a mini-dialog's description via GObject properties.
@@ -133,7 +133,7 @@ void pidgin_mini_dialog_set_description(PidginMiniDialog *mini_dialog,
 
 /** Shortcut for setting a mini-dialog's icon via GObject properties.
  *  @param mini_dialog a mini-dialog
- *  @param title       the Gtk stock ID of an icon, or @c NULL for no icon.
+ *  @param icon_name   the Gtk stock ID of an icon, or @c NULL for no icon.
  */
 void pidgin_mini_dialog_set_icon_name(PidginMiniDialog *mini_dialog,
 	const char *icon_name);
