@@ -110,13 +110,13 @@ typedef struct
 
 typedef struct
 {
-	/** PidginScrollBook used to hold error minidialogs.  Gets packed
-	 * inside PidginBuddyList.error_buttons
+	/** Used to hold error minidialogs.  Gets packed
+	 *  inside PidginBuddyList.error_buttons
 	 */
-	GtkWidget *error_scrollbook;
+	PidginScrollBook *error_scrollbook;
 
 	/** Pointer to the mini-dialog about having signed on elsewhere, if one
-	 * is showing; @c NULL otherwise.
+	 *  is showing; @c NULL otherwise.
 	 */
 	PidginMiniDialog *signed_on_elsewhere;
 } PidginBuddyListPrivate;
@@ -4538,8 +4538,8 @@ static void
 remove_generic_error_dialog(PurpleAccount *account)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
-	remove_child_widget_by_account(GTK_CONTAINER(priv->error_scrollbook),
-		account);
+	remove_child_widget_by_account(
+		GTK_CONTAINER(priv->error_scrollbook->notebook), account);
 }
 
 
@@ -5230,9 +5230,9 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->error_buttons, FALSE, FALSE, 0);
 	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->error_buttons), 0);
 
-	priv->error_scrollbook = pidgin_scroll_book_new();
+	priv->error_scrollbook = PIDGIN_SCROLL_BOOK(pidgin_scroll_book_new());
 	gtk_box_pack_start(GTK_BOX(gtkblist->error_buttons),
-		priv->error_scrollbook, FALSE, FALSE, 0);
+		GTK_WIDGET(priv->error_scrollbook), FALSE, FALSE, 0);
 
 
 	/* Add the statusbox */
