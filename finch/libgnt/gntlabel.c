@@ -130,7 +130,10 @@ gnt_label_class_init(GntLabelClass *klass)
 			PROP_TEXT_FLAG,
 			g_param_spec_int("text-flag", "Text flag",
 				"Text attribute to use when displaying the text in the label.",
-				GNT_TEXT_FLAG_NORMAL, GNT_TEXT_FLAG_HIGHLIGHT, GNT_TEXT_FLAG_NORMAL,
+				GNT_TEXT_FLAG_NORMAL,
+				GNT_TEXT_FLAG_NORMAL|GNT_TEXT_FLAG_BOLD|GNT_TEXT_FLAG_UNDERLINE|
+				GNT_TEXT_FLAG_BLINK|GNT_TEXT_FLAG_DIM|GNT_TEXT_FLAG_HIGHLIGHT,
+				GNT_TEXT_FLAG_NORMAL,
 				G_PARAM_READWRITE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
 			)
 		);
