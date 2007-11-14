@@ -490,9 +490,6 @@ GntMenuItem *gnt_menu_get_item(GntMenu *menu, const char *id)
 		item = NULL;
 	}
 
-	if (item)
-		menuitem_activate(menu, item);
-
 	return item;
 }
 
