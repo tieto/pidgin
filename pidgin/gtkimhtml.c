@@ -1165,17 +1165,15 @@ static gboolean gtk_imhtml_button_press_event(GtkIMHtml *imhtml, GdkEventButton 
 static void
 gtk_imhtml_undo(GtkIMHtml *imhtml) {
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	g_return_if_fail(imhtml->editable);
-	
-	gtk_source_undo_manager_undo(imhtml->undo_manager);
+	if (imhtml->editable)
+		gtk_source_undo_manager_undo(imhtml->undo_manager);
 }
 
 static void
 gtk_imhtml_redo(GtkIMHtml *imhtml) {
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	g_return_if_fail(imhtml->editable);
-	
-	gtk_source_undo_manager_redo(imhtml->undo_manager);
+	if (imhtml->editable)
+		gtk_source_undo_manager_redo(imhtml->undo_manager);
 
 }
 
@@ -2950,8 +2948,10 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		} else if (imhtml->edit.link == NULL &&
 				gtk_imhtml_is_smiley(imhtml, fonts, c, &smilelen)) {
 			GtkIMHtmlFontDetail *fd;
-
 			gchar *sml = NULL;
+
+			br = FALSE;
+
 			if (fonts) {
 				fd = fonts->data;
 				sml = fd->sml;
@@ -2969,6 +2969,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			wpos = 0;
 			ws[0] = 0;
 		} else if (*c == '&' && (amp = purple_markup_unescape_entity(c, &tlen))) {
+			br = FALSE;
 			while(*amp) {
 				ws [wpos++] = *amp++;
 			}
@@ -2997,6 +2998,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			c++;
 			pos++;
 		} else if ((len_protocol = gtk_imhtml_is_protocol(c)) > 0){
+			br = FALSE;
 			while(len_protocol--){
 				/* Skip the next len_protocol characters, but make sure they're
 				   copied into the ws array.
@@ -3005,6 +3007,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				 pos++;
 			}
 		} else if (*c) {
+			br = FALSE;
 			ws [wpos++] = *c++;
 			pos++;
 		} else {
