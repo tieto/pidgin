@@ -4721,6 +4721,16 @@ update_account_error_state(PurpleAccount *account,
 	else
 		pidgin_blist_update_account_error_state(account, NULL);
 
+	/* Don't bother updating the error if it hasn't changed.  This stops
+	 * URGENT being repeatedly set for network errors whenever they try to
+	 * reconnect.
+	 */
+	if ((old == new) ||
+	    (old != NULL && new != NULL && old->type == new->type
+	     && g_str_equal(old->description, new->description))
+	   )
+		return;
+
 	if (old) {
 		if(old->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE)
 			remove_from_signed_on_elsewhere(account);
