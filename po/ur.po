@@ -1079,14 +1079,6 @@ msgstr "%s (%s -- %s)"
 msgid "%s [%s]"
 msgstr "%s [%s]"
 
-#: ../finch/gntconv.c:273
-#: ../finch/gntconv.c:795
-#, c-format
-msgid ""
-"\n"
-"%s is typing..."
-msgstr "صارف ٹائپ کررہا ہے۔۔۔"
-
 #: ../finch/gntconv.c:292
 #, fuzzy
 msgid "You have left this chat."
@@ -12403,11 +12395,6 @@ msgstr "ایلگارتھم: \t%s\n"
 msgid "Key Length: \t%d bits\n"
 msgstr "کلید طوالت: \t%d بائٹس\n"
 
-#: ../libpurple/protocols/silc/util.c:378
-#, c-format
-msgid "Version: \t%s\n"
-msgstr "وجہ:%s"
-
 #: ../libpurple/protocols/silc/util.c:380
 #: ../libpurple/protocols/silc10/util.c:369
 #, c-format
@@ -13706,13 +13693,6 @@ msgstr "ہوسٹ سےكنیكٹ ہونے میں نااہل"
 #, c-format
 msgid "Unable to allocate enough memory to hold the contents from %s.  The web server may be trying something malicious."
 msgstr ""
-
-#: ../libpurple/util.c:3805
-#, c-format
-msgid "Error reading from %s: %s"
-msgstr ""
-"Error reading file %s: \n"
-"%s\n"
 
 #: ../libpurple/util.c:3836
 #, c-format
