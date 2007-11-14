@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-12 21:38+0100\n"
-"PO-Revision-Date: 2007-11-12 09:54+0100\n"
+"POT-Creation-Date: 2007-11-14 18:06+0100\n"
+"PO-Revision-Date: 2007-11-14 18:06+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -10717,6 +10717,9 @@ msgstr "Niederländisch, Flämisch"
 msgid "Norwegian Nynorsk"
 msgstr "Norwegisch (Nynorsk)"
 
+msgid "Punjabi"
+msgstr "Punjabi"
+
 msgid "Polish"
 msgstr "Polnisch"
 
@@ -10761,6 +10764,9 @@ msgstr "Thailändisch"
 
 msgid "Turkish"
 msgstr "Türkisch"
+
+msgid "Urdu"
+msgstr "Urdu"
 
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
