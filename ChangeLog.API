@@ -146,11 +146,13 @@ version 2.3.0 (??/??/????):
 		  string id of a menuitem respectively.
 		* Added gnt_window_get_accel_item, which returns a the id of a menuitem
 		  bound to a keystroke.
-		* Added gnt_menu_get_item to activate and return a menuitem of the
-		  given id from a menu.
+		* Added gnt_menu_get_item to get a menuitem of the given id from a
+		  menu.
 		* Added gnt_menuitem_activate, which triggers the 'activate' signal on
 		  the menuitem and calls the callback function, if available.
 		* Added GntEntryKillRing in GntEntry.
+		* Added gnt_window_set_maximize and gnt_window_get_maximize, and
+		  GntWindowFlags enum.
 
 version 2.2.2 (??/??/????):
 	libpurple:

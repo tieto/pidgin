@@ -1876,8 +1876,11 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 			GntMenu *menu = GNT_WINDOW(win)->menu;
 			if (menu) {
 				const char *id = gnt_window_get_accel_item(GNT_WINDOW(win), keys);
-				if (id)
-					ret = (gnt_menu_get_item(menu, id) != NULL);
+				if (id) {
+					GntMenuItem *item = gnt_menu_get_item(menu, id);
+					if (item)
+						ret = gnt_menuitem_activate(item);
+				}
 			}
 		}
 		if (!ret)
