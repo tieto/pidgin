@@ -53,6 +53,8 @@ typedef struct _PidginMiniDialogPrivate
 	GtkLabel *title;
 	GtkLabel *desc;
 	GtkBox *buttons;
+
+	guint idle_destroy_cb_id;
 } PidginMiniDialogPrivate;
 
 #define PIDGIN_MINI_DIALOG_GET_PRIVATE(dialog) \
@@ -118,10 +120,18 @@ mini_dialog_button_clicked_cb(GtkButton *button,
                               gpointer user_data)
 {
 	struct _mini_dialog_button_clicked_cb_data *data = user_data;
+	PidginMiniDialogPrivate *priv =
+		PIDGIN_MINI_DIALOG_GET_PRIVATE(data->mini_dialog);
+
+	/* Set up the destruction callback before calling the clicked callback,
+	 * so that if the mini-dialog gets destroyed during the clicked callback
+	 * the idle_destroy_cb is correctly removed by _finalize.
+	 */
+	priv->idle_destroy_cb_id =
+		g_idle_add((GSourceFunc) idle_destroy_cb, data->mini_dialog);
 
 	data->callback(data->mini_dialog, button, data->user_data);
 
-	g_idle_add((GSourceFunc) idle_destroy_cb, data->mini_dialog);
 }
 
 static void
@@ -271,6 +281,9 @@ pidgin_mini_dialog_finalize(GObject *object)
 {
 	PidginMiniDialog *self = PIDGIN_MINI_DIALOG(object);
 	PidginMiniDialogPrivate *priv = PIDGIN_MINI_DIALOG_GET_PRIVATE(self);
+
+	if (priv->idle_destroy_cb_id)
+		g_source_remove(priv->idle_destroy_cb_id);
 
 	g_free(priv);
 	self->priv = NULL;
