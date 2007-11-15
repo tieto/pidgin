@@ -89,13 +89,14 @@ _font_size_purple_to_ichat(int size)
 #endif
 
 static BonjourJabberConversation *
-bonjour_jabber_conv_new() {
+bonjour_jabber_conv_new(PurpleBuddy *pb) {
 
 	BonjourJabberConversation *bconv = g_new0(BonjourJabberConversation, 1);
 	bconv->socket = -1;
 	bconv->tx_buf = purple_circ_buffer_new(512);
 	bconv->tx_handler = 0;
 	bconv->rx_handler = 0;
+	bconv->pb = pb;
 
 	return bconv;
 }
@@ -401,7 +402,6 @@ void bonjour_jabber_stream_ended(PurpleBuddy *pb) {
 		bonjour_jabber_close_conversation(bb->conversation);
 		bb->conversation = NULL;
 	}
-
 }
 
 void bonjour_jabber_stream_started(PurpleBuddy *pb) {
@@ -573,7 +573,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	/* Check if the conversation has been previously started */
 	if (bb->conversation == NULL)
 	{
-		bb->conversation = bonjour_jabber_conv_new();
+		bb->conversation = bonjour_jabber_conv_new(pb);
 
 		if (!bonjour_jabber_stream_init(pb, client_socket)) {
 			close(client_socket);
@@ -752,7 +752,7 @@ _find_or_start_conversation(BonjourJabber *data, const gchar *to)
 			return NULL;
 		}
 
-		bb->conversation = bonjour_jabber_conv_new();
+		bb->conversation = bonjour_jabber_conv_new(pb);
 		bb->conversation->connect_data = connect_data;
 		/* We don't want _send_data() to register the tx_handler;
 		 * that neeeds to wait until we're actually connected. */
@@ -816,8 +816,25 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 void
 bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 {
-	if (bconv != NULL)
-	{
+	if (bconv != NULL) {
+		GList *xfers, *tmp_next;
+		BonjourData *bd = bconv->pb->account->gc->proto_data;
+
+		/* Cancel any file transfers that are waiting to begin */
+		xfers = bd->xfer_lists;
+		while(xfers != NULL) {
+			PurpleXfer *xfer = xfers->data;
+			tmp_next = xfers->next;
+			/* We only need to cancel this if it hasn't actually started transferring. */
+			/* This will change if we ever support IBB transfers. */
+			if (strcmp(xfer->who, bconv->pb->name) == 0
+					&& (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_NOT_STARTED
+					    || purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_UNKNOWN)) {
+				purple_xfer_cancel_remote(xfer);
+			}
+			xfers = tmp_next;
+		}
+
 		/* Close the socket and remove the watcher */
 		if (bconv->socket >= 0) {
 			/* Send the end of the stream to the other end of the conversation */
@@ -874,7 +891,7 @@ bonjour_jabber_stop(BonjourJabber *data)
 }
 
 XepIq *
-xep_iq_new(void *data, XepIqType type, const gchar *to, const gchar *id)
+xep_iq_new(void *data, XepIqType type, const char *to, const char *from, const char *id)
 {
 	xmlnode *iq_node = NULL;
 	XepIq *iq = NULL;
@@ -886,6 +903,7 @@ xep_iq_new(void *data, XepIqType type, const gchar *to, const gchar *id)
 	iq_node = xmlnode_new("iq");
 
 	xmlnode_set_attrib(iq_node, "to", to);
+	xmlnode_set_attrib(iq_node, "from", from);
 	xmlnode_set_attrib(iq_node, "id", id);
 	switch (type) {
 		case XEP_IQ_SET:
@@ -911,6 +929,7 @@ xep_iq_new(void *data, XepIqType type, const gchar *to, const gchar *id)
 	iq->type = type;
 	iq->data = ((BonjourData*)data)->jabber_data;
 	iq->to = (char*)to;
+
 	return iq;
 }
 

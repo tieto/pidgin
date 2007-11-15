@@ -193,6 +193,11 @@ bonjour_close(PurpleConnection *connection)
 	if (bonjour_group != NULL)
 		purple_blist_remove_group(bonjour_group);
 
+	/* Cancel any file transfers */
+	while (bd != NULL && bd->xfer_lists) {
+		purple_xfer_cancel_local(bd->xfer_lists->data);
+	}
+
 	g_free(bd);
 	connection->proto_data = NULL;
 }

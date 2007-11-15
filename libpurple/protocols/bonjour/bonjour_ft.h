@@ -35,7 +35,7 @@ struct _XepXfer
 	void *data;
 	char *filename;
 	int filesize;
-	int id;
+	char *iq_id;
 	char *sid;
 	char *recv_id;
 	char *buddy_ip;
