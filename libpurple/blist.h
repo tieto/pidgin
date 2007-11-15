@@ -528,7 +528,7 @@ void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
 /**
  * Removes a buddy from the buddy list and frees the memory allocated to it.
  * This doesn't actually try to remove the buddy from the server list, nor does
- * it clean up the prpl_info.
+ * it clean up the prpl_data.
  *
  * @param buddy   The buddy to be removed
  */
