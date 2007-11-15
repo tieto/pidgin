@@ -930,7 +930,9 @@ AM_CONDITIONAL(USE_INTERNAL_LIBGADU, test "x$gadu_libs" != "xyes")
 AC_SUBST(GADU_LIBS)
 AC_SUBST(GADU_CFLAGS)
 
-AC_ARG_ENABLE(msnp14,[AC_HELP_STRING([--disable-msnp14], [Disable the newer MSNP14 protocol])],,enable_msnp14=yes)
+# uncomment the next line to make MSNP14 the available
+# AC_ARG_ENABLE(msnp14,[AC_HELP_STRING([--enable-msnp14], [Disable the newer MSNP14 protocol])],,enable_msnp14=no)
+enable_msnp14=no
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")

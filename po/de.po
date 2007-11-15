@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-14 18:09+0100\n"
-"PO-Revision-Date: 2007-11-14 18:06+0100\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2007-11-15 10:37+0100\n"
+"PO-Revision-Date: 2007-11-15 10:36+0100\n"
+"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -718,7 +718,7 @@ msgid "You have mail!"
 msgstr "Sie haben Post!"
 
 msgid "Sender"
-msgstr "Abender"
+msgstr "Absender"
 
 msgid "Subject"
 msgstr "Betreff"
@@ -1458,7 +1458,7 @@ msgid "SSL Certificate Error"
 msgstr "SSL-Zertifikatfehler"
 
 msgid "Invalid certificate chain"
-msgstr "Ungültige Zertifikationskette"
+msgstr "Ungültige Zertifizierungskette"
 
 #. vrq will be completed by user_auth
 msgid ""
@@ -1841,28 +1841,28 @@ msgstr ""
 "verarbeiten, in einem Terminal ausgeführt werden soll."
 
 msgid "Whether the specified command should handle \"aim\" URLs"
-msgstr "Legt fest, ob das angegebene Kommado „aim“-URLs verarbeiten soll"
+msgstr "Legt fest, ob das angegebene Kommando „aim“-URLs verarbeiten soll"
 
 msgid "Whether the specified command should handle \"gg\" URLs"
-msgstr "Legt fest, ob das angegebene Kommado „gg“-URLs verarbeiten soll"
+msgstr "Legt fest, ob das angegebene Kommando „gg“-URLs verarbeiten soll"
 
 msgid "Whether the specified command should handle \"icq\" URLs"
-msgstr "Legt fest, ob das angegebene Kommado „icq“-URLs verarbeiten soll"
+msgstr "Legt fest, ob das angegebene Kommando „icq“-URLs verarbeiten soll"
 
 msgid "Whether the specified command should handle \"irc\" URLs"
-msgstr "Legt fest, ob das angegebene Kommado „irc“-URLs verarbeiten soll"
+msgstr "Legt fest, ob das angegebene Kommando „irc“-URLs verarbeiten soll"
 
 msgid "Whether the specified command should handle \"msnim\" URLs"
-msgstr "Legt fest, ob das angegebene Kommado „msnim“-URLs verarbeiten soll"
+msgstr "Legt fest, ob das angegebene Kommando „msnim“-URLs verarbeiten soll"
 
 msgid "Whether the specified command should handle \"sip\" URLs"
-msgstr "Legt fest, ob das angegebene Kommado „sip“-URLs verarbeiten soll"
+msgstr "Legt fest, ob das angegebene Kommando „sip“-URLs verarbeiten soll"
 
 msgid "Whether the specified command should handle \"xmpp\" URLs"
-msgstr "Legt fest, ob das angegebene Kommado „xmpp“-URLs verarbeiten soll"
+msgstr "Legt fest, ob das angegebene Kommando „xmpp“-URLs verarbeiten soll"
 
 msgid "Whether the specified command should handle \"ymsgr\" URLs"
-msgstr "Legt fest, ob das angegebene Kommado „ymsrg“-URLs verarbeiten soll"
+msgstr "Legt fest, ob das angegebene Kommando „ymsrg“-URLs verarbeiten soll"
 
 msgid "<b><font color=\"red\">The logger has no read function</font></b>"
 msgstr "<b><font color=\"red\">Der Logger hat keine Lesefunktion</font></b>"
@@ -1962,7 +1962,7 @@ msgstr ""
 "Automatisch akzeptierte Übertragung der Datei „%s“ von „%s“ abgeschlossen."
 
 msgid "Autoaccept complete"
-msgstr "Autoaccept fertig"
+msgstr "Auto-Akzeptieren fertig"
 
 #, c-format
 msgid "When a file-transfer request arrives from %s"
@@ -4261,7 +4261,7 @@ msgstr ""
 "einen anderen Benutzer."
 
 msgid "ping &lt;jid&gt;:\tPing a user/component/server."
-msgstr "ping &lt;jid&gt;:\tBenutzer/Kommponente/Server anpingen."
+msgstr "ping &lt;jid&gt;:\tBenutzer/Komponente/Server anpingen."
 
 msgid "buzz: Buzz a user to get their attention"
 msgstr "buzz: Einen Kontakt anrufen, um seine Aufmerksamkeit zu erhalten"
@@ -8889,7 +8889,7 @@ msgstr "TOC-Protokoll-Plugin"
 #, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr ""
-"%s hat Ihnen eine Webcam-Einladung gesenden, die noch nicht unterstützt wird."
+"%s hat Ihnen eine Webcam-Einladung gesendet, die noch nicht unterstützt wird."
 
 msgid "Your Yahoo! message did not get sent."
 msgstr "Ihre Yahoo!-Nachricht wurde nicht verschickt."
@@ -9777,8 +9777,8 @@ msgstr ""
 "Konto. Wenn Sie mehrere IM-Konten mit %s benutzen wollen, drücken Sie erneut "
 "auf <b>Hinzufügen</b> um sie einzurichten.\n"
 "\n"
-"Sie können später über <b>Konten->Hinzufügen/Bearbeiten</b> im "
-"Kontaktlistenfenster zu diesem Dialog zurückkehren und Konten hinzufügen, "
+"Sie können später über <b>Konten->Hinzufügen/Bearbeiten</b> im Buddy-"
+"Listenfenster zu diesem Dialog zurückkehren und Konten hinzufügen, "
 "bearbeiten oder löschen"
 
 #, c-format
@@ -9788,7 +9788,7 @@ msgid_plural ""
 msgstr[0] ""
 "Sie haben %d Kontakt als %s benannt. Möchten Sie diese zusammenführen?"
 msgstr[1] ""
-"Sie haben %d Kontakte als %s benannt. Möchten Sie diese zusammenführen"
+"Sie haben %d Kontakte als %s benannt. Möchten Sie diese zusammenführen?"
 
 msgid ""
 "Merging these contacts will cause them to share a single entry on the buddy "
