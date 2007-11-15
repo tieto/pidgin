@@ -8,9 +8,8 @@ version 2.3.0:
 	  catch deprecated functions earlier rather than later.
 	* Thanks to a patch from Intel, the Bonjour prpl now supports file
 	  transfers using XEP-0096 and XEP-0065.  This should enable file
-	  transfers between libpurple clients and Gaijm clients, but will
-	  not work with iChat or Adium as they use a different file transfer
-	  implementation.
+	  transfers between libpurple clients, but will not work with iChat
+	  or Adium as they use a different file transfer implementation.
 
 	Pidgin:
 	* If a plugin says it can't be unloaded, we now display an error and
