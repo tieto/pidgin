@@ -33,7 +33,7 @@
 static void
 bonjour_bytestreams_init(PurpleXfer *xfer);
 static void
-bonjour_bytestreams_connect(PurpleXfer *xfer);
+bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb);
 static void
 bonjour_xfer_init(PurpleXfer *xfer);
 static void
@@ -546,7 +546,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 							xf->proxy_port = portnum;
 							purple_debug_info("bonjour", "bytestream offer parse"
 									  "jid=%s host=%s port=%d.\n", jid, host, portnum);
-							bonjour_bytestreams_connect(xfer);
+							bonjour_bytestreams_connect(xfer, pb);
 							found = TRUE;
 							break;
 						}
@@ -815,12 +815,16 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 	xmlnode *q_node, *tmp_node;
 	BonjourData *bd;
 
-	if(data == NULL || source < 0) {
+	if(source < 0) {
+		purple_debug_error("bonjour", "Error connecting via SOCKS5 - %s\n",
+			error_message ? error_message : "(null)");
 		xep_ft_si_reject(xf->data, xf->iq_id, xfer->who, "404", "cancel");
 		/* Cancel the connection */
 		purple_xfer_cancel_local(xfer);
 		return;
 	}
+
+	purple_debug_info("bonjour", "Connected successfully via SOCKS5, starting transfer.\n");
 
 	bd = xf->data;
 
@@ -841,7 +845,7 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 }
 
 static void
-bonjour_bytestreams_connect(PurpleXfer *xfer)
+bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 {
 	XepXfer *xf = NULL;
 	char dstaddr[41];
@@ -858,7 +862,7 @@ bonjour_bytestreams_connect(PurpleXfer *xfer)
 	if(!xf)
 		return;
 
-	p = g_strdup_printf("%s@%s", xf->sid, xfer->who);
+	p = g_strdup_printf("%s%s%s", xf->sid, pb->name, purple_account_get_username(pb->account));
 	purple_cipher_digest_region("sha1", (guchar *)p, strlen(p),
 				    sizeof(hashval), hashval, NULL);
 	g_free(p);
