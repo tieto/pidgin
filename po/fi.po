@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-13 22:54+0200\n"
-"PO-Revision-Date: 2007-11-13 22:54+0200\n"
+"POT-Creation-Date: 2007-11-14 23:05+0200\n"
+"PO-Revision-Date: 2007-11-14 23:05+0200\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -197,13 +197,13 @@ msgstr "Alias:"
 #: ../libpurple/protocols/yahoo/yahoo.c:1034
 #: ../libpurple/protocols/yahoo/yahoo.c:3509
 #: ../libpurple/protocols/yahoo/yahoo.c:3520 ../pidgin/gtkaccount.c:1913
-#: ../pidgin/gtkaccount.c:2501 ../pidgin/gtkblist.c:6668
-#: ../pidgin/gtkcertmgr.c:197 ../pidgin/gtkdialogs.c:788
-#: ../pidgin/gtkdialogs.c:927 ../pidgin/gtkdialogs.c:1019
-#: ../pidgin/gtkdialogs.c:1039 ../pidgin/gtkdialogs.c:1063
-#: ../pidgin/gtkdialogs.c:1085 ../pidgin/gtkdialogs.c:1133
-#: ../pidgin/gtkdialogs.c:1174 ../pidgin/gtkdialogs.c:1230
-#: ../pidgin/gtkdialogs.c:1269 ../pidgin/gtkdialogs.c:1296
+#: ../pidgin/gtkaccount.c:2501 ../pidgin/gtkblist.c:6678
+#: ../pidgin/gtkcertmgr.c:197 ../pidgin/gtkdialogs.c:789
+#: ../pidgin/gtkdialogs.c:928 ../pidgin/gtkdialogs.c:1020
+#: ../pidgin/gtkdialogs.c:1040 ../pidgin/gtkdialogs.c:1064
+#: ../pidgin/gtkdialogs.c:1086 ../pidgin/gtkdialogs.c:1134
+#: ../pidgin/gtkdialogs.c:1175 ../pidgin/gtkdialogs.c:1231
+#: ../pidgin/gtkdialogs.c:1270 ../pidgin/gtkdialogs.c:1297
 #: ../pidgin/gtkimhtmltoolbar.c:437 ../pidgin/gtklog.c:328
 #: ../pidgin/gtkplugin.c:289 ../pidgin/gtkpounce.c:1121
 #: ../pidgin/gtkprivacy.c:565 ../pidgin/gtkprivacy.c:581
@@ -265,7 +265,7 @@ msgstr ""
 #: ../libpurple/protocols/sametime/sametime.c:5532
 #: ../libpurple/protocols/silc/chat.c:619
 #: ../libpurple/protocols/silc10/chat.c:599 ../pidgin/gtkaccount.c:2500
-#: ../pidgin/gtkblist.c:6667 ../pidgin/gtkconv.c:1713
+#: ../pidgin/gtkblist.c:6677 ../pidgin/gtkconv.c:1713
 #: ../pidgin/gtkrequest.c:325
 msgid "Add"
 msgstr "Lisää"
@@ -337,8 +337,8 @@ msgstr "Näyttönimi"
 #: ../libpurple/protocols/silc10/chat.c:590
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:704
 #: ../libpurple/protocols/zephyr/zephyr.c:788
-#: ../libpurple/protocols/zephyr/zephyr.c:1207 ../pidgin/gtkdialogs.c:1038
-#: ../pidgin/gtkdialogs.c:1062 ../pidgin/gtkdialogs.c:1084
+#: ../libpurple/protocols/zephyr/zephyr.c:1207 ../pidgin/gtkdialogs.c:1039
+#: ../pidgin/gtkdialogs.c:1063 ../pidgin/gtkdialogs.c:1085
 #: ../pidgin/gtkrequest.c:328
 msgid "Alias"
 msgstr "Alias"
@@ -365,7 +365,7 @@ msgstr "Tili"
 #: ../libpurple/protocols/silc10/buddy.c:1036
 #: ../libpurple/protocols/silc10/buddy.c:1083
 #: ../libpurple/protocols/silc10/buddy.c:1183
-#: ../libpurple/protocols/yahoo/yahoo.c:3354 ../pidgin/gtkblist.c:6169
+#: ../libpurple/protocols/yahoo/yahoo.c:3354 ../pidgin/gtkblist.c:6179
 #: ../pidgin/plugins/gevolution/add_buddy_dialog.c:445
 msgid "Add Buddy"
 msgstr "Lisää tuttava"
@@ -398,7 +398,7 @@ msgstr "Nimi"
 msgid "Auto-join"
 msgstr "Liity automaattisesti"
 
-#: ../finch/gntblist.c:419 ../finch/gntblist.c:854 ../pidgin/gtkblist.c:6553
+#: ../finch/gntblist.c:419 ../finch/gntblist.c:854 ../pidgin/gtkblist.c:6563
 msgid "Add Chat"
 msgstr "Lisää ryhmäkeskustelu"
 
@@ -420,7 +420,7 @@ msgstr "Valitun niminen ryhmä on jo olemassa"
 
 #: ../finch/gntblist.c:454 ../finch/gntblist.c:856
 #: ../libpurple/protocols/sametime/sametime.c:5442
-#: ../libpurple/protocols/sametime/sametime.c:5530 ../pidgin/gtkblist.c:6664
+#: ../libpurple/protocols/sametime/sametime.c:5530 ../pidgin/gtkblist.c:6674
 msgid "Add Group"
 msgstr "Lisää ryhmä"
 
@@ -517,7 +517,7 @@ msgstr "Poista"
 
 #. Buddy List
 #: ../finch/gntblist.c:1226 ../finch/gntblist.c:2434 ../finch/gntprefs.c:258
-#: ../finch/gntui.c:83 ../pidgin/gtkblist.c:2908 ../pidgin/gtkblist.c:4927
+#: ../finch/gntui.c:83 ../pidgin/gtkblist.c:2908 ../pidgin/gtkblist.c:4937
 #: ../pidgin/plugins/win32/winprefs/winprefs.c:326
 msgid "Buddy List"
 msgstr "Tuttavat"
@@ -617,11 +617,11 @@ msgstr "Tallennettu..."
 msgid "Plugins"
 msgstr "Liitännäiset"
 
-#: ../finch/gntblist.c:2220 ../pidgin/gtkdialogs.c:782
+#: ../finch/gntblist.c:2220 ../pidgin/gtkdialogs.c:783
 msgid "New Instant Message"
 msgstr "Uusi pikaviesti"
 
-#: ../finch/gntblist.c:2222 ../pidgin/gtkdialogs.c:784
+#: ../finch/gntblist.c:2222 ../pidgin/gtkdialogs.c:785
 msgid ""
 "Please enter the screen name or alias of the person you would like to IM."
 msgstr ""
@@ -664,8 +664,8 @@ msgstr ""
 #: ../libpurple/protocols/yahoo/yahoo.c:1033
 #: ../libpurple/protocols/yahoo/yahoo.c:3508
 #: ../libpurple/protocols/yahoo/yahoo.c:3519 ../pidgin/gtkcertmgr.c:195
-#: ../pidgin/gtkdialogs.c:787 ../pidgin/gtkdialogs.c:926
-#: ../pidgin/gtkdialogs.c:1018 ../pidgin/gtkrequest.c:320
+#: ../pidgin/gtkdialogs.c:788 ../pidgin/gtkdialogs.c:927
+#: ../pidgin/gtkdialogs.c:1019 ../pidgin/gtkrequest.c:320
 msgid "OK"
 msgstr "OK"
 
@@ -1496,7 +1496,7 @@ msgstr "Näytä joutenoloaika"
 
 #: ../finch/gntprefs.c:185
 msgid "Show Offline Buddies"
-msgstr "Näytä poissaolevat tuttavat"
+msgstr "Näytä poissa linjoilta olevat tuttavat"
 
 #: ../finch/gntprefs.c:192
 msgid "Notify buddies when you are typing"
@@ -1859,7 +1859,7 @@ msgstr "Ikkunaa ei löydetty"
 
 #: ../finch/plugins/gntclipboard.c:129
 msgid "This plugin cannot be loaded because it was not built with X11 support."
-msgstr "Liitännäistä ei voida ladata, koska sitä ei käännetty X11-tuella."
+msgstr "Liitännäistä ei voi ladata, koska sitä ei käännetty X11-tuella."
 
 #: ../finch/plugins/gntclipboard.c:158
 msgid "GntClipboard"
@@ -1973,7 +1973,7 @@ msgid ""
 "When a new conversation is opened this plugin will insert the last "
 "conversation into the current conversation."
 msgstr ""
-"Kun uusi keskustelu aloitetaan, tämä liitännäinen näytää edellisen "
+"Kun uusi keskustelu aloitetaan, tämä liitännäinen näyttää edellisen "
 "keskustelun keskusteluikkunassa."
 
 #: ../finch/plugins/lastlog.c:69
@@ -2074,7 +2074,7 @@ msgstr "Tuntematon"
 
 #: ../libpurple/blist.c:521 ../libpurple/blist.c:1321
 #: ../libpurple/blist.c:1531 ../libpurple/protocols/jabber/roster.c:69
-#: ../libpurple/protocols/myspace/myspace.c:3272 ../pidgin/gtkblist.c:6059
+#: ../libpurple/protocols/myspace/myspace.c:3272 ../pidgin/gtkblist.c:6069
 #: ../pidgin/plugins/gevolution/gevo-util.c:67
 #: ../pidgin/plugins/gevolution/gevolution.c:96
 msgid "Buddies"
@@ -2196,7 +2196,7 @@ msgid ""
 "You have no database of root certificates, so this certificate cannot be "
 "validated."
 msgstr ""
-"Juurivarmennetietokantaa ei ole, joten tätä varmennetta ei voida kelpuuttaa."
+"Juurivarmennetietokantaa ei ole, joten tätä varmennetta ei voi kelpuuttaa."
 
 #. vrq will be completed by user_auth
 #: ../libpurple/certificate.c:1398
@@ -2427,11 +2427,11 @@ msgstr "Kansioon ei ole kirjoitusoikeuksia."
 
 #: ../libpurple/ft.c:268
 msgid "Cannot send a file of 0 bytes."
-msgstr "Ei voida lähettää tiedostoa, jonka koko on 0 tavua."
+msgstr "Ei voi lähettää tiedostoa, jonka koko on 0 tavua."
 
 #: ../libpurple/ft.c:278
 msgid "Cannot send a directory."
-msgstr "Ei voida lähettää kansiota."
+msgstr "Kansiota ei voi lähettää."
 
 #: ../libpurple/ft.c:287
 #, c-format
@@ -3154,7 +3154,7 @@ msgstr "Viestiä ei voi lähettää koska suurin viestin koko ylitettiin."
 
 #: ../libpurple/plugins/log_reader.c:1625
 msgid "Message could not be sent."
-msgstr "Viestiäsi ei voi lähetettää."
+msgstr "Viestiäsi ei voi lähettää."
 
 #. The names of IM clients are marked for translation at the request of
 #. translators who wanted to transliterate them.  Many translators
@@ -3418,7 +3418,7 @@ msgstr "Salli vain tuttavaluettelossa oleville käyttäjille"
 
 #: ../libpurple/plugins/psychic.c:96
 msgid "Disable when away"
-msgstr "Pois käytöstä poissaollessa"
+msgstr "Pois käytöstä poissa ollessa"
 
 #: ../libpurple/plugins/psychic.c:100
 msgid "Display notification message in conversations"
@@ -3619,13 +3619,13 @@ msgstr ""
 
 #: ../libpurple/protocols/bonjour/bonjour.c:127
 msgid "Unable to listen for incoming IM connections\n"
-msgstr "Ei voi kuunnella sisääntulevia pikaviestintäyhteyksiä\n"
+msgstr "Sisääntulevia pikaviestintäyhteyksiä ei voi kuunnella\n"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:154
 msgid ""
 "Unable to establish connection with the local mDNS server.  Is it running?"
 msgstr ""
-"Ei voi luoda yhteyttä paikalliseen mDNS-palvelimeen. Onko se käynnissä?"
+"Paikalliseen mDNS-palvelimeen ei voi luoda yhteyttä. Onko se käynnissä?"
 
 #. Creating the options for the protocol
 #: ../libpurple/protocols/bonjour/bonjour.c:370
@@ -3707,11 +3707,11 @@ msgstr "%s on sulkenut keskustelun."
 #: ../libpurple/protocols/bonjour/jabber.c:686
 #: ../libpurple/protocols/bonjour/jabber.c:704
 msgid "Unable to send the message, the conversation couldn't be started."
-msgstr "Viestiä ei voida lähettää, keskustelua ei voi aloittaa."
+msgstr "Viestiä ei voi lähettää, keskustelua ei voi aloittaa."
 
 #: ../libpurple/protocols/bonjour/jabber.c:603
 msgid "Cannot open socket"
-msgstr "Pistoketta ei voida avata"
+msgstr "Pistoketta ei voi avata"
 
 #: ../libpurple/protocols/bonjour/jabber.c:613
 msgid "Error setting socket options"
@@ -3719,11 +3719,11 @@ msgstr "Virhe asetettaessa pistokevalintoja"
 
 #: ../libpurple/protocols/bonjour/jabber.c:639
 msgid "Could not bind socket to port"
-msgstr "Ei voi liittää pistoketta porttiin"
+msgstr "Pistoketta ei voi liittää porttiin"
 
 #: ../libpurple/protocols/bonjour/jabber.c:649
 msgid "Could not listen on socket"
-msgstr "Ei voi kuunnella pistoketta"
+msgstr "Pistoketta ei voi kuunnella"
 
 #: ../libpurple/protocols/gg/gg.c:76 ../libpurple/proxy.c:1845
 msgid "Invalid proxy settings"
@@ -3744,7 +3744,7 @@ msgstr "Vastamerkkivirhe"
 #: ../libpurple/protocols/gg/gg.c:116 ../libpurple/protocols/gg/gg.c:138
 #: ../libpurple/protocols/gg/gg.c:181
 msgid "Unable to fetch the token.\n"
-msgstr "Ei voi hakea polettia.\n"
+msgstr "Polettia ei voi hakea.\n"
 
 #: ../libpurple/protocols/gg/gg.c:267 ../libpurple/protocols/gg/gg.c:274
 #: ../libpurple/protocols/gg/gg.c:280
@@ -3762,7 +3762,7 @@ msgstr "Tuttavat tallennettiin onnistuneesti!"
 #: ../libpurple/protocols/gg/gg.c:278
 #, c-format
 msgid "Couldn't write buddy list for %s to %s"
-msgstr "Ei voi kirjoittaa %s-tuttavia kohteeseen %s"
+msgstr "%s-tuttavia ei voi kirjoittaa kohteeseen %s"
 
 #: ../libpurple/protocols/gg/gg.c:303 ../libpurple/protocols/gg/gg.c:304
 msgid "Couldn't load buddylist"
@@ -3993,7 +3993,7 @@ msgstr "Syntymävuosi"
 #: ../libpurple/protocols/gg/gg.c:1113 ../libpurple/protocols/gg/gg.c:1182
 #: ../libpurple/protocols/oscar/oscar.c:3921
 msgid "Unable to display the search results."
-msgstr "Ei voida näyttää hakutuloksia."
+msgstr "Hakutuloksia ei voi näyttää."
 
 #: ../libpurple/protocols/gg/gg.c:1173
 msgid "Gadu-Gadu Public Directory"
@@ -4350,7 +4350,7 @@ msgstr "Kielletty"
 #: ../libpurple/protocols/irc/msgs.c:216
 #, c-format
 msgid "Cannot ban %s: banlist is full"
-msgstr "Ei voida estää käyttäjää %s: estolista on täynnä"
+msgstr "Käyttäjää %s ei voi estää: estolista on täynnä"
 
 #: ../libpurple/protocols/irc/msgs.c:301
 msgid " <i>(ircop)</i>"
@@ -4449,7 +4449,7 @@ msgstr "Kutsumanimeä/kanavaa ei ole olemassa"
 
 #: ../libpurple/protocols/irc/msgs.c:626
 msgid "Could not send"
-msgstr "Ei voi lähettää"
+msgstr "Lähettäminen ei onnistu"
 
 #: ../libpurple/protocols/irc/msgs.c:682
 #, c-format
@@ -4522,13 +4522,13 @@ msgstr "PING vastaus -- Viive: %lu sekuntia"
 #: ../libpurple/protocols/irc/msgs.c:1113
 #, c-format
 msgid "Cannot join %s: Registration is required."
-msgstr "Ei voi liittyä kohteeseen %s: Vaatii rekisteröinnin."
+msgstr "Kohteeseen %s ei voi liittyä: vaatii rekisteröinnin."
 
 #: ../libpurple/protocols/irc/msgs.c:1114
 #: ../libpurple/protocols/silc/ops.c:1093
 #: ../libpurple/protocols/silc10/ops.c:1128
 msgid "Cannot join channel"
-msgstr "Ei voida liittyä kanavalle"
+msgstr "Kanavalle ei voi liittyä"
 
 #: ../libpurple/protocols/irc/msgs.c:1148
 msgid "Nick or channel is temporarily unavailable."
@@ -4570,7 +4570,7 @@ msgid ""
 "must be a channel operator to do this."
 msgstr ""
 "devoice &lt;nimi1&gt; [nimi2] ...: Poista ääni-tila joltakulta, estäen heitä "
-"puhumasta jos kanava on moderoitu (+m). Sinun tulee olla kanavaperaattori "
+"puhumasta jos kanava on moderoitu (+m). Sinun tulee olla kanavaoperaattori "
 "tehdäksesi näin."
 
 #: ../libpurple/protocols/irc/parse.c:127
@@ -4951,7 +4951,7 @@ msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable."
 msgstr ""
-"Kaikki allaolevat kentät ovat valinnaisia. Kirjoita vain tiedot, joiden "
+"Kaikki alla olevat kentät ovat valinnaisia. Kirjoita vain tiedot, joiden "
 "luovuttamista pidät sopivana."
 
 #: ../libpurple/protocols/jabber/buddy.c:795
@@ -5347,7 +5347,7 @@ msgstr "Hakemistohaku epäonnistui"
 
 #: ../libpurple/protocols/jabber/buddy.c:2353
 msgid "Could not query the directory server."
-msgstr "Ei voi hakea hakemistopalvelimelta."
+msgstr "Hakemistopalvelimelta ei voi hakea."
 
 #. Try to translate the message (see static message
 #. list in jabber_user_dir_comments[])
@@ -5451,7 +5451,7 @@ msgstr "Konfigurointivirhe"
 #: ../libpurple/protocols/jabber/chat.c:405
 #: ../libpurple/protocols/jabber/chat.c:548
 msgid "Unable to configure"
-msgstr "Ei voida konfiguroida"
+msgstr "Asetusten tekeminen ei onnistu"
 
 #: ../libpurple/protocols/jabber/chat.c:420
 msgid "Room Configuration Error"
@@ -5459,7 +5459,7 @@ msgstr "Huoneen konfigurointivirhe"
 
 #: ../libpurple/protocols/jabber/chat.c:421
 msgid "This room is not capable of being configured"
-msgstr "Tätä huonetta ei voida konfiguroida"
+msgstr "Tätä huonetta ei voi konfiguroida"
 
 #: ../libpurple/protocols/jabber/chat.c:470
 #: ../libpurple/protocols/jabber/chat.c:539
@@ -5517,7 +5517,7 @@ msgid ""
 "Could not establish a connection with the server:\n"
 "%s"
 msgstr ""
-"Ei voi muodostaa yhteyttä palvelimeen:\n"
+"Yhteyttä palvelimeen ei voi muodostaa:\n"
 "%s"
 
 #: ../libpurple/protocols/jabber/jabber.c:550
@@ -5541,7 +5541,7 @@ msgstr "%s@%s:n rekisteröinti onnistui"
 #: ../libpurple/protocols/jabber/jabber.c:689
 #, c-format
 msgid "Registration to %s successful"
-msgstr "Rekisteröinti kohteesen %s onnistui"
+msgstr "Rekisteröinti kohteeseen %s onnistui"
 
 #: ../libpurple/protocols/jabber/jabber.c:691
 #: ../libpurple/protocols/jabber/jabber.c:692
@@ -6004,7 +6004,7 @@ msgstr "Merkistöä ei tueta"
 
 #: ../libpurple/protocols/jabber/jabber.c:1978
 msgid "Unsupported Stanza Type"
-msgstr "Säkeistötyyppiä(stanza type) ei tuettu"
+msgstr "Säkeistötyyppiä (stanza type) ei tuettu"
 
 #: ../libpurple/protocols/jabber/jabber.c:1980
 msgid "Unsupported Version"
@@ -6021,7 +6021,7 @@ msgstr "Datavirtavirhe"
 #: ../libpurple/protocols/jabber/jabber.c:2069
 #, c-format
 msgid "Unable to ban user %s"
-msgstr "Ei voi kieltää käyttäjää %s."
+msgstr "Käyttäjää %s ei voi estää"
 
 #: ../libpurple/protocols/jabber/jabber.c:2089
 #, c-format
@@ -6031,7 +6031,7 @@ msgstr "Tuntematon kytkös: \"%s\""
 #: ../libpurple/protocols/jabber/jabber.c:2094
 #, c-format
 msgid "Unable to affiliate user %s as \"%s\""
-msgstr "Ei voi tehdä käyttäjälle %s kytköstä \"%s\""
+msgstr "Käyttäjälle %s ei voi tehdä kytköstä \"%s\""
 
 #: ../libpurple/protocols/jabber/jabber.c:2113
 #, c-format
@@ -6041,17 +6041,17 @@ msgstr "Tuntematon rooli: \"%s\""
 #: ../libpurple/protocols/jabber/jabber.c:2118
 #, c-format
 msgid "Unable to set role \"%s\" for user: %s"
-msgstr "Ei voi asettaa roolia \"%s\" käyttäjälle: %s"
+msgstr "Roolia \"%s\" ei voi asettaa käyttäjälle: %s"
 
 #: ../libpurple/protocols/jabber/jabber.c:2171
 #, c-format
 msgid "Unable to kick user %s"
-msgstr "Ei voi potkaista käyttäjää %s ulos."
+msgstr "Käyttäjää %s ei voi potkaista ulos."
 
 #: ../libpurple/protocols/jabber/jabber.c:2202
 #, c-format
 msgid "Unable to ping user %s"
-msgstr "Ei voi pingata käyttäjää %s."
+msgstr "Käyttäjää %s ei voi pingata."
 
 #: ../libpurple/protocols/jabber/jabber.c:2220
 #: ../libpurple/protocols/jabber/jabber.c:2231
@@ -6281,7 +6281,7 @@ msgstr "Virhe liityttäessä ryhmäkeskusteluun %s"
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
 msgstr ""
-"Ei voida lähettää tiedostoa käyttäjälle %s, käyttäjä ei tue tiedostonsiirtoja"
+"Tiedostoa ei voi lähettää käyttäjälle %s, käyttäjä ei tue tiedostonsiirtoja"
 
 #: ../libpurple/protocols/jabber/si.c:776
 #: ../libpurple/protocols/jabber/si.c:777
@@ -6297,13 +6297,13 @@ msgstr "Tiedostoa ei voi lähettää käyttäjälle %s, virheellinen JID."
 #: ../libpurple/protocols/jabber/si.c:840
 #, c-format
 msgid "Unable to send file to %s, user is not online"
-msgstr "Ei voida lähettää tiedostoa käyttäjälle %s, käyttäjä ei ole linjoilla"
+msgstr "Tiedostoa ei voi lähettää käyttäjälle %s, käyttäjä ei ole linjoilla"
 
 #: ../libpurple/protocols/jabber/si.c:842
 #, c-format
 msgid "Unable to send file to %s, not subscribed to user presence"
 msgstr ""
-"Ei voida lähettää tiedostoa käyttäjälle %s, käyttäjä ei tue tiedostonsiirtoja"
+"Tiedostoa ei voi lähettää käyttäjälle %s, käyttäjä ei tue tiedostonsiirtoja"
 
 #: ../libpurple/protocols/jabber/si.c:857
 #, c-format
@@ -6503,7 +6503,7 @@ msgstr "Ryhmän nimi liian pitkä"
 #: ../libpurple/protocols/msnp9/error.c:98
 #, c-format
 msgid "Cannot remove group zero"
-msgstr "Ei voida poistaa ryhmää nolla"
+msgstr "Ryhmää nolla ei voi poistaa"
 
 #: ../libpurple/protocols/msn/error.c:103
 #: ../libpurple/protocols/msnp9/error.c:103
@@ -7169,8 +7169,8 @@ msgid ""
 "that the user does not exist, or that the user exists but has not created a "
 "public profile."
 msgstr ""
-"MSN ilmoitti ettei voida löytää käyttäjän profiilia. Tämä tarkoittaa joko "
-"sitä että käyttäjää ei ole tai käyttäjä ei ole luonut julkista profiilia."
+"MSN ilmoitti ettei käyttäjän profiilia löydy. Tämä tarkoittaa joko sitä että "
+"käyttäjää ei ole tai käyttäjä ei ole luonut julkista profiilia."
 
 #: ../libpurple/protocols/msn/msn.c:2012
 #: ../libpurple/protocols/msnp9/msn.c:1865
@@ -7223,7 +7223,7 @@ msgstr "nudge: tönäise tuttavaa huomion saamiseksi"
 
 #: ../libpurple/protocols/msn/nexus.c:70
 msgid "Windows Live ID authentication:Unable to connect"
-msgstr "Windows Live ID -tunnistautuminen: Ei voi yhdistää"
+msgstr "Windows Live ID -tunnistautuminen: Yhdistäminen ei onnistu"
 
 #. we must have failed!
 #: ../libpurple/protocols/msn/nexus.c:126
@@ -7272,13 +7272,13 @@ msgstr "Tuntematon virhe (%d)"
 #: ../libpurple/protocols/msn/notification.c:837
 #: ../libpurple/protocols/sametime/sametime.c:4471
 msgid "Unable to add user"
-msgstr "Ei voi lisätä käyttäjää"
+msgstr "Käyttäjää ei voi lisätä"
 
 #: ../libpurple/protocols/msn/notification.c:897
 #: ../libpurple/protocols/msnp9/notification.c:498
 #, c-format
 msgid "Unable to add user on %s (%s)"
-msgstr "Ei voi lisätä käyttäjää %s (%s)"
+msgstr "Käyttäjää ei voi lisätä %s (%s)"
 
 #: ../libpurple/protocols/msn/notification.c:901
 #: ../libpurple/protocols/msnp9/notification.c:502
@@ -7290,7 +7290,7 @@ msgstr "Ei voi estää käyttäjää %s (%s)"
 #: ../libpurple/protocols/msnp9/notification.c:506
 #, c-format
 msgid "Unable to permit user on %s (%s)"
-msgstr "Ei voida sallia käyttäjää %s (%s)"
+msgstr "Käyttäjää ei voi sallia %s (%s)"
 
 #: ../libpurple/protocols/msn/notification.c:913
 #: ../libpurple/protocols/msnp9/notification.c:514
@@ -7338,8 +7338,8 @@ msgid_plural ""
 "sign in."
 msgstr[0] ""
 "MSN-palvelin ajetaan alas huoltotoimenpiteitä varten %d minuutissa. "
-"Yhteytesi katkaistaan silloin automaattisesti. Ole hyvä ja lopeta "
-"käynnissäolevat keskustelut.\n"
+"Yhteytesi katkaistaan silloin automaattisesti. Ole hyvä ja lopeta käynnissä "
+"olevat keskustelut.\n"
 "\n"
 "Kun huolto on suoritettu voit taas kirjautua palveluun."
 msgstr[1] ""
@@ -7423,13 +7423,13 @@ msgstr "MSN-palvelimet ajetaan alas väliaikaisesti."
 #: ../libpurple/protocols/msnp9/session.c:328
 #, c-format
 msgid "Unable to authenticate: %s"
-msgstr "Ei voida tunnistautua: %s"
+msgstr "Tunnistautuminen ei onnistu: %s"
 
 #: ../libpurple/protocols/msn/session.c:381
 #: ../libpurple/protocols/msnp9/session.c:334
 msgid ""
 "Your MSN buddy list is temporarily unavailable. Please wait and try again."
-msgstr "MSN-tuttavia ei väliaikaisesti voida hakea. Yritä myöhemmin uudelleen."
+msgstr "MSN-tuttavia ei väliaikaisesti voi hakea. Yritä myöhemmin uudelleen."
 
 #: ../libpurple/protocols/msn/session.c:403
 #: ../libpurple/protocols/msn/session.c:405
@@ -7988,11 +7988,11 @@ msgstr "Vaadittuja parametreja ei syötetty"
 
 #: ../libpurple/protocols/novell/nmuser.c:1867
 msgid "Unable to write to network"
-msgstr "Ei voida kirjoittaa verkkoon"
+msgstr "Verkkoon ei voi kirjoittaa"
 
 #: ../libpurple/protocols/novell/nmuser.c:1870
 msgid "Unable to read from network"
-msgstr "Ei voida lukea verkosta"
+msgstr "Verkosta ei voi lukea"
 
 #: ../libpurple/protocols/novell/nmuser.c:1873
 msgid "Error communicating with server"
@@ -8060,7 +8060,7 @@ msgstr "Virheellinen näyttönimi tai salasana"
 
 #: ../libpurple/protocols/novell/nmuser.c:1925
 msgid "Could not recognize the host of the screen name you entered"
-msgstr "Ei voi tunnistaa syötetyn näyttönimen isäntäpalvelinta"
+msgstr "Syötetyn näyttönimen isäntäpalvelinta ei voi tunnistaa"
 
 #: ../libpurple/protocols/novell/nmuser.c:1928
 msgid ""
@@ -8124,7 +8124,7 @@ msgstr "Viestiä ei voi lähettää. Ei saatu yksityiskohtia käyttäjälle (%s)
 #: ../libpurple/protocols/novell/novell.c:404
 #, c-format
 msgid "Unable to add %s to your buddy list (%s)."
-msgstr "Ei voi lisätä %s tuttaviin (%s)."
+msgstr "%s ei voi lisätä tuttaviin (%s)."
 
 #. TODO: Improve this! message to who or for what conference?
 #: ../libpurple/protocols/novell/novell.c:430
@@ -8136,18 +8136,18 @@ msgstr "Viestiä ei voi lähettää (%s)."
 #: ../libpurple/protocols/novell/novell.c:993
 #, c-format
 msgid "Unable to invite user (%s)."
-msgstr "Ei voi kutsua käyttäjää (%s)."
+msgstr "Käyttäjää ei voi kutsua (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:540
 #, c-format
 msgid "Unable to send message to %s. Could not create the conference (%s)."
 msgstr ""
-"Ei voi lähettää viestiä käyttäjälle %s. Ei voutu luoda konferenssia (%s)."
+"Viestiä ei voi lähettää käyttäjälle %s. Konferenssia ei voi luoda (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:545
 #, c-format
 msgid "Unable to send message. Could not create the conference (%s)."
-msgstr "Viestiä ei voi lähettää. Ei voi luoda konferenssia (%s)."
+msgstr "Viestiä ei voi lähettää. Konferenssia ei voi luoda (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:592
 #, c-format
@@ -8155,7 +8155,7 @@ msgid ""
 "Unable to move user %s to folder %s in the server side list. Error while "
 "creating folder (%s)."
 msgstr ""
-"Ei voi siirtää käyttäjää %s kansioon %s palvelinpuolen tuttavissa. Virhe "
+"Käyttäjää %s ei voi siirtää kansioon %s palvelinpuolen tuttavissa. Virhe "
 "luotaessa kansiota (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:640
@@ -8164,7 +8164,7 @@ msgid ""
 "Unable to add %s to your buddy list. Error creating folder in server side "
 "list (%s)."
 msgstr ""
-"Ei voi lisätä %s tuttaviin. Virhe luotaessa kansiota palvelinpuolen "
+"%s ei voi lisätä tuttaviin. Virhe luotaessa kansiota palvelinpuolen "
 "tuttaviin (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:713
@@ -8176,12 +8176,12 @@ msgstr "Ei saatu yksityiskohtia käyttäjälle %s (%s)."
 #: ../libpurple/protocols/novell/novell.c:905
 #, c-format
 msgid "Unable to add user to privacy list (%s)."
-msgstr "Ei voi lisätä käyttäjää yksityisyys-listaan (%s)."
+msgstr "Käyttäjää ei voi lisätä yksityisyys-listaan (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:806
 #, c-format
 msgid "Unable to add %s to deny list (%s)."
-msgstr "Ei voi lisätä %s kieltolistalle (%s)."
+msgstr "%s ei voi lisätä kieltolistalle (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:859
 #, c-format
@@ -8197,12 +8197,12 @@ msgstr "Ei voi poistaa %s yksityisyys-listalta (%s)."
 #: ../libpurple/protocols/novell/novell.c:1656
 #, c-format
 msgid "Unable to change server side privacy settings (%s)."
-msgstr "Ei voi muuttaa palvelinpuolen yksityisyys-asetuksia (%s)."
+msgstr "Palvelinpuolen yksityisyys-asetuksia ei voi muuttaa (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:1020
 #, c-format
 msgid "Unable to create conference (%s)."
-msgstr "Ei voi luoda konferenssia (%s)."
+msgstr "Konferenssia ei voi luoda (%s)."
 
 #: ../libpurple/protocols/novell/novell.c:1131
 #: ../libpurple/protocols/novell/novell.c:1702
@@ -8286,14 +8286,15 @@ msgstr ""
 #, c-format
 msgid ""
 "%s appears to be offline and did not receive the message that you just sent."
-msgstr "%s näyttää olevan poissa eikä saanut viestiä jonka juuri lähetit."
+msgstr ""
+"%s näyttää olevan poissa linjoilta eikä saanut viestiä jonka juuri lähetit."
 
 #: ../libpurple/protocols/novell/novell.c:2184
 msgid ""
 "Unable to connect to server. Please enter the address of the server you wish "
 "to connect to."
 msgstr ""
-"Ei voi yhdistää palvelimeen. Ole hyvä, syötä palvelimen osoite jolle haluat "
+"Palvelimeen ei voi yhdistää. Ole hyvä, syötä palvelimen osoite jolle haluat "
 "yhdistää."
 
 #: ../libpurple/protocols/novell/novell.c:2213
@@ -8412,7 +8413,7 @@ msgstr "Vastaanotettiin virheellisiä tietoja luotaessa yhteyttä käyttäjään
 
 #: ../libpurple/protocols/oscar/odc.c:51
 msgid "Could not establish a connection with the remote user."
-msgstr "Ei voi muodostaa yhteyttä käyttäjän kanssa."
+msgstr "Yhteyttä käyttäjän kanssa ei voi muodostaa."
 
 #: ../libpurple/protocols/oscar/odc.c:562
 msgid "Direct IM established"
@@ -9043,7 +9044,7 @@ msgid ""
 "[Unable to display a message from this user because it contained invalid "
 "characters.]"
 msgstr ""
-"[Ei voi näyttää viestiä tältä käyttäjältä koska se sisälsi epäkelpoja "
+"[Viestiä tältä käyttäjältä ei voi näyttää koska se sisälsi epäkelpoja "
 "merkkejä.]"
 
 #: ../libpurple/protocols/oscar/oscar.c:3406
@@ -9161,7 +9162,7 @@ msgid ""
 "Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
-"Virhe 0x%04x: Sähköpostiosoitetta ei voida muuttaa koska tälle näyttönimelle "
+"Virhe 0x%04x: Sähköpostiosoitetta ei voi muuttaa koska tälle näyttönimelle "
 "on jo käsittelemätön muutospyyntö."
 
 #: ../libpurple/protocols/oscar/oscar.c:4027
@@ -9170,7 +9171,7 @@ msgid ""
 "Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
-"Virhe 0x%04x: Sähköpostiosoitetta ei voida muuttaa koska annettu osoite on "
+"Virhe 0x%04x: Sähköpostiosoitetta ei voi muuttaa koska annettu osoite on "
 "assosioitu liian moneen näyttönimeen."
 
 #: ../libpurple/protocols/oscar/oscar.c:4030
@@ -9179,7 +9180,7 @@ msgid ""
 "Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
-"Virhe 0x%04x: Sähköpostiosoitetta ei voida muuttaa koska annettu osoite on "
+"Virhe 0x%04x: Sähköpostiosoitetta ei voi muuttaa koska annettu osoite on "
 "virheellinen."
 
 #: ../libpurple/protocols/oscar/oscar.c:4033
@@ -9213,7 +9214,7 @@ msgid ""
 "completed.  Your profile remains unset; try setting it again when you are "
 "fully connected."
 msgstr ""
-"Yritit luultavasti asettaa profiilisi ennenkuin kirjautumista saatiin "
+"Yritit luultavasti asettaa profiilisi ennen kuin kirjautumista saatiin "
 "suoritettua loppuun. Profiilia ei asetettu. Yritä asettaa se kun "
 "kirjautuminen on suoritettu."
 
@@ -9260,7 +9261,7 @@ msgid ""
 "must be a valid email address, or start with a letter and contain only "
 "letters, numbers and spaces, or contain only numbers."
 msgstr ""
-"Ei voi lisätä tuttavaa %s koska näyttönimi on virheellinen. Näyttönimen "
+"Tuttavaa %s ei voi lisätä koska näyttönimi on virheellinen. Näyttönimen "
 "tulee olla oikea sähköpostiosoite, tai alkaa kirjaimella ja sisältää vain "
 "kirjaimia, numeroita ja välilyöntejä, tai sisältää vain numeroita."
 
@@ -9297,7 +9298,7 @@ msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
-"Ei voi lisätä tuttavaa %s koska tuttaviasi on liian monta. Ole hyvä ja "
+"Tuttavaa %s ei voi lisätä koska tuttaviasi on liian monta. Ole hyvä ja "
 "poista joku ja yritä uudelleen."
 
 #: ../libpurple/protocols/oscar/oscar.c:5095
@@ -9566,7 +9567,7 @@ msgid ""
 "for IM Images.  Because your IP address will be revealed, this may be "
 "considered a privacy risk."
 msgstr ""
-"Tämä toiminto vaatiin suoran yhteyden koneiden välillä mutta on tarpeellinen "
+"Tämä toiminto vaatii suoran yhteyden koneiden välillä mutta on tarpeellinen "
 "lähetettäessä kuvia. Koska IP-osoitteesi paljastuu, tätä voi pitää "
 "yksityisyysriskinä."
 
@@ -10407,8 +10408,8 @@ msgid ""
 "No host or IP address has been configured for the Meanwhile account %s. "
 "Please enter one below to continue logging in."
 msgstr ""
-"Isäntää tai IP-osoitetta ei ole astetettu Meanwhile-käyttäjätilille %s. "
-"Lisää sellainen alle ennen kirjautumista sisään."
+"Isäntää tai IP-osoitetta ei ole asetettu Meanwhile-käyttäjätilille %s. Lisää "
+"sellainen alle ennen kirjautumista sisään."
 
 #: ../libpurple/protocols/sametime/sametime.c:3686
 msgid "Meanwhile Connection Setup"
@@ -10460,7 +10461,7 @@ msgstr "Valitse käyttäjä"
 
 #: ../libpurple/protocols/sametime/sametime.c:4464
 msgid "Unable to add user: user not found"
-msgstr "Ei voi lisätä käyttäjää: käyttäjää ei löydy"
+msgstr "Käyttäjää ei voi lisätä: käyttäjää ei löydy"
 
 #: ../libpurple/protocols/sametime/sametime.c:4466
 #, c-format
@@ -10517,7 +10518,7 @@ msgstr "Vie Sametime-tuttavat käyttäjätilille %s"
 
 #: ../libpurple/protocols/sametime/sametime.c:5355
 msgid "Unable to add group: group exists"
-msgstr "Ei voi lisätä ryhmää: ryhmä on jo olemassa"
+msgstr "Ryhmää ei voi lisätä: ryhmä on jo olemassa"
 
 #: ../libpurple/protocols/sametime/sametime.c:5356
 #, c-format
@@ -10554,7 +10555,7 @@ msgstr "Valitse Notesin osoitekirja"
 
 #: ../libpurple/protocols/sametime/sametime.c:5483
 msgid "Unable to add group: group not found"
-msgstr "Ei voi lisätä ryhmää: ryhmää ei löytynyt"
+msgstr "Ryhmää ei voi lisätä: ryhmää ei löytynyt"
 
 #: ../libpurple/protocols/sametime/sametime.c:5485
 #, c-format
@@ -10574,7 +10575,7 @@ msgid ""
 "Enter the name of a Notes Address Book group in the field below to add the "
 "group and its members to your buddy list."
 msgstr ""
-"Kirjoita Notesin osoitekirjan ryhmän nimi allaolevaan kenttään lisätäksesi "
+"Kirjoita Notesin osoitekirjan ryhmän nimi alla olevaan kenttään lisätäksesi "
 "ryhmän ja sen jäsenet tuttaviisi."
 
 #: ../libpurple/protocols/sametime/sametime.c:5576
@@ -10687,7 +10688,7 @@ msgstr "Avainsopimus"
 #: ../libpurple/protocols/silc/buddy.c:54
 #: ../libpurple/protocols/silc10/buddy.c:54
 msgid "Cannot perform the key agreement"
-msgstr "Ei voida suorittaa avainsopimusta"
+msgstr "Avainsopimusta ei voi suorittaa"
 
 #: ../libpurple/protocols/silc/buddy.c:111
 #: ../libpurple/protocols/silc10/buddy.c:116
@@ -10768,7 +10769,7 @@ msgstr "Pikaviesti salasanalla"
 #: ../libpurple/protocols/silc/buddy.c:413
 #: ../libpurple/protocols/silc10/buddy.c:424
 msgid "Cannot set IM key"
-msgstr "Ei voida asettaa pikaviestiavainta"
+msgstr "Pikaviestiavainta ei voi asettaa"
 
 #: ../libpurple/protocols/silc/buddy.c:453
 #: ../libpurple/protocols/silc10/buddy.c:466
@@ -10794,7 +10795,7 @@ msgstr "Hae julkinen avain"
 #: ../libpurple/protocols/silc10/ops.c:1495
 #: ../libpurple/protocols/silc10/ops.c:1506
 msgid "Cannot fetch the public key"
-msgstr "Ei voi hakea julkista avainta"
+msgstr "Julkista avainta ei voi hakea"
 
 #: ../libpurple/protocols/silc/buddy.c:622
 #: ../libpurple/protocols/silc/buddy.c:1658
@@ -10810,7 +10811,7 @@ msgstr "Näytä julkinen avain"
 #: ../libpurple/protocols/silc10/buddy.c:1036
 #: ../libpurple/protocols/silc10/chat.c:237
 msgid "Could not load public key"
-msgstr "Ei voi ladata julkista avainta"
+msgstr "Julkista avainta ei voi ladata"
 
 #: ../libpurple/protocols/silc/buddy.c:701
 #: ../libpurple/protocols/silc/ops.c:1053
@@ -10834,7 +10835,7 @@ msgstr "Käyttäjätiedot"
 #: ../libpurple/protocols/silc10/ops.c:1160
 #: ../libpurple/protocols/silc10/ops.c:1314
 msgid "Cannot get user information"
-msgstr "Ei voi hakea käyttäjätietoja"
+msgstr "Käyttäjätietoja ei voi hakea"
 
 #: ../libpurple/protocols/silc/buddy.c:723
 #: ../libpurple/protocols/silc10/buddy.c:735
@@ -10848,7 +10849,7 @@ msgid ""
 "You cannot receive buddy notifications until you import his/her public key.  "
 "You can use the Get Public Key command to get the public key."
 msgstr ""
-"Et voi saada tuttavahuomatuksia ennenkuin lisäät hänen julkisen avaimensa. "
+"Et voi saada tuttavailmoituksia ennen kuin lisäät hänen julkisen avaimensa. "
 "Voit käyttää Hae julkinen avain -komentoa saadaksesi julkisen avaimen."
 
 #. Open file selector to select the public key.
@@ -10903,7 +10904,7 @@ msgstr ""
 #: ../libpurple/protocols/silc/buddy.c:1477
 #: ../libpurple/protocols/silc10/buddy.c:1477
 msgid "Detached"
-msgstr "Irroitettu"
+msgstr "Irrotettu"
 
 #: ../libpurple/protocols/silc/buddy.c:1481
 #: ../libpurple/protocols/silc/silc.c:58
@@ -11343,7 +11344,7 @@ msgstr "Aseta salainen kanava"
 msgid ""
 "You have to join the %s channel before you are able to join the private group"
 msgstr ""
-"Sinun tulee liittyä kanavalle %s ennenkuin voit liittyä yksityiseen ryhmään"
+"Sinun tulee liittyä kanavalle %s ennen kuin voit liittyä yksityiseen ryhmään"
 
 #: ../libpurple/protocols/silc/chat.c:1048
 #: ../libpurple/protocols/silc10/chat.c:1104
@@ -11353,7 +11354,7 @@ msgstr "Liity yksityiseen ryhmään"
 #: ../libpurple/protocols/silc/chat.c:1049
 #: ../libpurple/protocols/silc10/chat.c:1105
 msgid "Cannot join private group"
-msgstr "Ei voida liittyä yksityiseen ryhmään"
+msgstr "Yksityiseen ryhmään ei voi liittyä"
 
 #: ../libpurple/protocols/silc/chat.c:1245
 #: ../libpurple/protocols/silc/silc.c:1360
@@ -11367,7 +11368,7 @@ msgstr "Kutsu komentoa"
 #: ../libpurple/protocols/silc10/chat.c:1299
 #: ../libpurple/protocols/silc10/silc.c:1140
 msgid "Cannot call command"
-msgstr "Komentoa ei voida kutsua"
+msgstr "Komentoa ei voi kutsua"
 
 #: ../libpurple/protocols/silc/chat.c:1246
 #: ../libpurple/protocols/silc/silc.c:1362
@@ -11438,11 +11439,11 @@ msgstr "Tiedostonsiirto on jo aloitettu"
 
 #: ../libpurple/protocols/silc/ft.c:283 ../libpurple/protocols/silc10/ft.c:216
 msgid "Could not perform key agreement for file transfer"
-msgstr "Ei voi suorittaa avainsopimusta tiedostonsiirtoa varten"
+msgstr "Avainsopimusta ei onnistuttu suorittamaan tiedostonsiirtoa varten"
 
 #: ../libpurple/protocols/silc/ft.c:289 ../libpurple/protocols/silc10/ft.c:222
 msgid "Could not start the file transfer"
-msgstr "Ei voi aloittaa tiedostonsiirtoa"
+msgstr "Tiedostonsiirtoa ei voi aloittaa"
 
 #: ../libpurple/protocols/silc/ft.c:426 ../libpurple/protocols/silc10/ft.c:341
 msgid "Cannot send file"
@@ -11605,17 +11606,17 @@ msgstr "Irrota palvelimelta"
 #: ../libpurple/protocols/silc/ops.c:1373
 #: ../libpurple/protocols/silc10/ops.c:1371
 msgid "Cannot detach"
-msgstr "Ei voida irroittaa"
+msgstr "Irrottaminen ei onnistu"
 
 #: ../libpurple/protocols/silc/ops.c:1393
 #: ../libpurple/protocols/silc10/ops.c:1382
 msgid "Cannot set topic"
-msgstr "Ei voida asettaa aihetta"
+msgstr "Aihetta ei voi asettaa"
 
 #: ../libpurple/protocols/silc/ops.c:1422
 #: ../libpurple/protocols/silc10/ops.c:1414
 msgid "Failed to change nickname"
-msgstr "Ei kyetty muuttamaan kutsumanimeä"
+msgstr "Kutsumanimeä ei onnistuttu muuttamaan"
 
 #: ../libpurple/protocols/silc/ops.c:1471
 #: ../libpurple/protocols/silc10/ops.c:1462
@@ -11713,7 +11714,7 @@ msgstr "Ping-vastaus saatu palvelimelta"
 #: ../libpurple/protocols/silc/ops.c:1613
 #: ../libpurple/protocols/silc10/ops.c:1625
 msgid "Could not kill user"
-msgstr "Ei voi poistaa käyttäjää"
+msgstr "Käyttäjää ei voi poistaa"
 
 #: ../libpurple/protocols/silc/ops.c:1652
 msgid "WATCH"
@@ -11808,7 +11809,7 @@ msgstr "Avaintenvaihto epäonnistui"
 msgid ""
 "Resuming detached session failed. Press Reconnect to create new connection."
 msgstr ""
-"Irroitetun yhteyden palauttaminen epäonnistui. Paina Uudelleenyhdistä "
+"Irrotetun yhteyden palauttaminen epäonnistui. Paina Uudelleenyhdistä "
 "luodaksesi uuden yhteyden."
 
 #: ../libpurple/protocols/silc/silc.c:373
@@ -11830,7 +11831,7 @@ msgstr "Yhdistetään SILC-palvelimelle"
 
 #: ../libpurple/protocols/silc/silc.c:455
 msgid "Could not load SILC key pair"
-msgstr "Ei voi ladata SILC-avainparia"
+msgstr "SILC-avainparia ei voi ladata"
 
 #: ../libpurple/protocols/silc/silc.c:469
 #: ../libpurple/protocols/silc10/silc.c:355
@@ -11845,7 +11846,7 @@ msgstr "Muisti loppu"
 #: ../libpurple/protocols/silc/silc.c:550
 #: ../libpurple/protocols/silc10/silc.c:313
 msgid "Cannot initialize SILC protocol"
-msgstr "Ei voida alustaa SILC-yhteyskäytäntöä"
+msgstr "SILC-yhteyskäytäntöä ei voi alustaa"
 
 #: ../libpurple/protocols/silc/silc.c:559
 msgid "Error loading SILC key pair"
@@ -12313,7 +12314,7 @@ msgstr "Luodaan SILC-avainpari..."
 #: ../libpurple/protocols/silc/util.c:216
 #: ../libpurple/protocols/silc/util.c:259
 msgid "Cannot create SILC key pair\n"
-msgstr "SILC-avainparia ei voida luoda\n"
+msgstr "SILC-avainparia ei voi luoda\n"
 
 #. Hint for translators: Please check the tabulator width here and in
 #. the next strings (short strings: 2 tabs, longer strings 1 tab,
@@ -12500,7 +12501,7 @@ msgstr "Virhe: Todennus epäonnistui"
 
 #: ../libpurple/protocols/silc10/silc.c:182
 msgid "Cannot initialize SILC Client connection"
-msgstr "Ei voida alustaa SILC-asiakasyhteyttä"
+msgstr "SILC-asiakasyhteyttä ei voi alustaa"
 
 #: ../libpurple/protocols/silc10/silc.c:290
 msgid "John Noname"
@@ -12508,21 +12509,21 @@ msgstr "Pertti Perusnimi"
 
 #: ../libpurple/protocols/silc10/silc.c:320
 msgid "Cannot find/access ~/.silc directory"
-msgstr "Ei voida löytää/käyttää ~/.silc-hakemistoa"
+msgstr "~/.silc-hakemistoa ei voi löytää/käyttää"
 
 #: ../libpurple/protocols/silc10/silc.c:334
 #, c-format
 msgid "Could not load SILC key pair: %s"
-msgstr "Ei voi ladata SILC-avainparia: %s"
+msgstr "SILC-avainparia ei voi ladata: %s"
 
 #: ../libpurple/protocols/simple/simple.c:419
 msgid "Could not write"
-msgstr "Ei voi kirjoittaa"
+msgstr "Kirjoittaminen ei onnistu"
 
 #: ../libpurple/protocols/simple/simple.c:443
 #: ../libpurple/protocols/simple/simple.c:1691
 msgid "Could not connect"
-msgstr "Ei voi yhdistää"
+msgstr "Yhdistäminen ei onnistu"
 
 #: ../libpurple/protocols/simple/simple.c:1127
 msgid "Unknown server response."
@@ -12758,8 +12759,8 @@ msgstr "TOC on palannut tauoltaan. Voit lähettää viestejä jälleen."
 msgid "Password Change Successful"
 msgstr "Salasanan vaihto onnistui"
 
-#: ../libpurple/protocols/toc/toc.c:1366 ../pidgin/gtkblist.c:6270
-#: ../pidgin/gtkblist.c:6628
+#: ../libpurple/protocols/toc/toc.c:1366 ../pidgin/gtkblist.c:6280
+#: ../pidgin/gtkblist.c:6638
 msgid "_Group:"
 msgstr "_Ryhmä:"
 
@@ -12901,11 +12902,11 @@ msgstr ""
 #, c-format
 msgid "Could not add buddy %s to group %s to the server list on account %s."
 msgstr ""
-"Ei voi lisätä tuttavaa %s ryhmään %s palvelimen tuttavissa, tilillä %s."
+"Tuttavaa %s ei voi lisätä ryhmään %s palvelimen tuttavissa, tilillä %s."
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2192
 msgid "Could not add buddy to server list"
-msgstr "Ei voi lisätä tuttavaa palvelimen tuttaviin"
+msgstr "Tuttavaa ei voi lisätä palvelimen tuttaviin"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2311
 #, c-format
@@ -12941,7 +12942,7 @@ msgid ""
 "Could not establish a connection with %s:\n"
 "%s"
 msgstr ""
-"Ei voi muodostaa yhteyttä palvelimeen %s:\n"
+"Yhteyttä ei voi muodostaa palvelimeen %s:\n"
 "%s"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3092
@@ -12982,7 +12983,7 @@ msgstr "Näytä linjoilla olevalta"
 #: ../libpurple/protocols/yahoo/yahoo.c:3247
 #: ../libpurple/protocols/yahoo/yahoo.c:3323
 msgid "Appear Permanently Offline"
-msgstr "Näytä pysyvästi poissaolevalta"
+msgstr "Näytä pysyvästi poissa linjoilta olevalta"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3265
 msgid "Presence"
@@ -12990,11 +12991,11 @@ msgstr "Läsnäolo"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3308
 msgid "Appear Offline"
-msgstr "Näytä poissaolevalta"
+msgstr "Näytä poissa linjoilta olevalta"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3317
 msgid "Don't Appear Permanently Offline"
-msgstr "Älä näytä pysyvästi poissaolevalta"
+msgstr "Älä näytä pysyvästi poissa linjoilta olevalta"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3365
 msgid "Join in Chat"
@@ -13061,7 +13062,7 @@ msgstr "Yahoo-yhteyskäytäntöliitännäinen"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:4394
 msgid "Yahoo Japan"
-msgstr "Yahoo Japan"
+msgstr "Yahoo Japani"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:4397
 msgid "Pager server"
@@ -13201,7 +13202,7 @@ msgid ""
 "Could not retrieve the user's profile. This most likely is a temporary "
 "server-side problem. Please try again later."
 msgstr ""
-"Ei voi hakea käyttäjän profiilia. Tämä on todennäköisesti väliaikainen "
+"Käyttäjän profiilia ei voi hakea. Tämä on todennäköisesti väliaikainen "
 "palvelimen ongelma. Ole hyvä ja yritä myöhemmin uudestaan."
 
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1224
@@ -13210,7 +13211,7 @@ msgid ""
 "does not exist; however, Yahoo! sometimes does fail to find a user's "
 "profile. If you know that the user exists, please try again later."
 msgstr ""
-"Ei voi hakea käyttäjän profiilia. Tämä todennäköisesti tarkoittaa sitä että "
+"Käyttäjän profiilia ei voi hakea. Tämä todennäköisesti tarkoittaa sitä että "
 "käyttäjää ei ole; kuitenkin Yahoo! joskus epäonnistuu löytämään käyttäjän "
 "profiilin. Jos olet varma että käyttäjä on olemassa, yritä myöhemmin "
 "uudelleen."
@@ -13314,7 +13315,7 @@ msgstr ""
 #: ../libpurple/protocols/zephyr/zephyr.c:752
 #, c-format
 msgid "Unable to send to chat %s,%s,%s"
-msgstr "Ei voida lähettää ryhmäkeskusteluun %s,%s,%s"
+msgstr "Ryhmäkeskusteluun ei voi lähettää %s,%s,%s"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:791
 #: ../libpurple/protocols/zephyr/zephyr.c:1210
@@ -13411,7 +13412,7 @@ msgstr "zc &lt;luokka&gt;: Lähetä viesti &lt;<i>luokka</i>,YKSITYINEN,*&gt;"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2850
 msgid "Resubscribe"
-msgstr "Uudelleentilaa"
+msgstr "Tilaa uudelleen"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2853
 msgid "Retrieve subscriptions from server"
@@ -13458,7 +13459,7 @@ msgstr "Tuo tiedostosta .zephyr.subs"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2991
 msgid "Realm"
-msgstr "Alue(realm)"
+msgstr "Alue (realm)"
 
 #: ../libpurple/protocols/zephyr/zephyr.c:2994
 msgid "Exposure"
@@ -13477,7 +13478,7 @@ msgstr ""
 #: ../libpurple/proxy.c:662
 #, c-format
 msgid "Unable to parse response from HTTP proxy: %s\n"
-msgstr "Ei voi jäsentää vastausta HTTP-välipalvelimelta: %s\n"
+msgstr "Vastausta HTTP-välipalvelimelta ei voi jäsentää: %s\n"
 
 #: ../libpurple/proxy.c:702 ../libpurple/proxy.c:750 ../libpurple/proxy.c:786
 #: ../libpurple/proxy.c:798
@@ -13497,7 +13498,7 @@ msgstr "Virhe selvitettäessä %s"
 
 #: ../libpurple/proxy.c:1730
 msgid "Could not resolve host name"
-msgstr "Ei voi selvittää isäntänimeä"
+msgstr "Isäntänimeä ei voi selvittää"
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
@@ -13747,7 +13748,7 @@ msgid ""
 "Unable to allocate enough memory to hold the contents from %s.  The web "
 "server may be trying something malicious."
 msgstr ""
-"Ei voi varata riittävästi muistia säilyttämään kohteen %s sisältö. "
+"Riittävästi muistia ei voi varata säilyttämään kohteen %s sisältö. "
 "Verkkopalvelin voi olla yrittämässä tehdä jotain pahantahtoista."
 
 #: ../libpurple/util.c:3805
@@ -13758,12 +13759,12 @@ msgstr "Virhe luettaessa kohteesta %s: %s"
 #: ../libpurple/util.c:3836
 #, c-format
 msgid "Error writing to %s: %s"
-msgstr "Virhe kirjoitettaessa kohteseen %s: %s"
+msgstr "Virhe kirjoitettaessa kohteeseen %s: %s"
 
 #: ../libpurple/util.c:3861
 #, c-format
 msgid "Unable to connect to %s: %s"
-msgstr "Ei voi yhdistää kohteeseen %s: %s"
+msgstr "Kohteeseen %s ei voi yhdistää: %s"
 
 #: ../pidgin.desktop.in.h:1
 msgid "Internet Messenger"
@@ -13828,7 +13829,7 @@ msgstr "%s-valinnat"
 
 #: ../pidgin/gtkaccount.c:939
 msgid "Use GNOME Proxy Settings"
-msgstr "Käytä GNOMEn välipalvelinasetuksia"
+msgstr "Käytä Gnomen välipalvelinasetuksia"
 
 #: ../pidgin/gtkaccount.c:940
 msgid "Use Global Proxy Settings"
@@ -13975,7 +13976,7 @@ msgid ""
 "join.\n"
 msgstr "Syötä tiedot ryhmäkeskustelusta, johon haluaisit liittyä.\n"
 
-#: ../pidgin/gtkblist.c:972 ../pidgin/gtkblist.c:6589
+#: ../pidgin/gtkblist.c:972 ../pidgin/gtkblist.c:6599
 #: ../pidgin/gtkpounce.c:554 ../pidgin/gtkroomlist.c:709
 msgid "_Account:"
 msgstr "_Käyttäjätili:"
@@ -14071,7 +14072,7 @@ msgid "_Expand"
 msgstr "_Laajenna"
 
 #: ../pidgin/gtkblist.c:1799 ../pidgin/gtkblist.c:1811
-#: ../pidgin/gtkblist.c:5254 ../pidgin/gtkblist.c:5267
+#: ../pidgin/gtkblist.c:5264 ../pidgin/gtkblist.c:5277
 msgid "/Tools/Mute Sounds"
 msgstr "/Työkalut/Vaimenna äänet"
 
@@ -14153,7 +14154,7 @@ msgstr "/Tuttavat/_Lopeta"
 msgid "/_Accounts"
 msgstr "/_Käyttäjätilit"
 
-#: ../pidgin/gtkblist.c:3125 ../pidgin/gtkblist.c:7291
+#: ../pidgin/gtkblist.c:3125 ../pidgin/gtkblist.c:7301
 msgid "/Accounts/Manage"
 msgstr "/Käyttäjätilit/Hallinta"
 
@@ -14327,7 +14328,7 @@ msgstr "%s pois käytöstä"
 
 #: ../pidgin/gtkblist.c:4498
 msgid "Reconnect"
-msgstr "Uudelleenyhdistä"
+msgstr "Yhdistä uudelleen"
 
 #: ../pidgin/gtkblist.c:4498 ../pidgin/gtkblist.c:4606
 msgid "Re-enable"
@@ -14348,24 +14349,24 @@ msgstr[0] ""
 msgstr[1] ""
 "%d tiliä poistettiin käytöstä koska toisesta paikasta kirjauduttiin sisään."
 
-#: ../pidgin/gtkblist.c:4860
+#: ../pidgin/gtkblist.c:4870
 msgid "<b>Username:</b>"
 msgstr "<b>Käyttäjänimi:</b>"
 
-#: ../pidgin/gtkblist.c:4867
+#: ../pidgin/gtkblist.c:4877
 msgid "<b>Password:</b>"
 msgstr "<b>Salasana:</b>"
 
-#: ../pidgin/gtkblist.c:4878
+#: ../pidgin/gtkblist.c:4888
 msgid "_Login"
 msgstr "_Sisäänkirjautuminen"
 
-#: ../pidgin/gtkblist.c:4963
+#: ../pidgin/gtkblist.c:4973
 msgid "/Accounts"
 msgstr "/Käyttäjätilit"
 
 #. Translators: Please maintain the use of -> and <- to refer to menu heirarchy
-#: ../pidgin/gtkblist.c:4977
+#: ../pidgin/gtkblist.c:4987
 #, c-format
 msgid ""
 "<span weight='bold' size='larger'>Welcome to %s!</span>\n"
@@ -14384,27 +14385,27 @@ msgstr ""
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: ../pidgin/gtkblist.c:5248
+#: ../pidgin/gtkblist.c:5258
 msgid "/Buddies/Show/Offline Buddies"
 msgstr "/Tuttavat/Näytä/Poissaolevat tuttavat"
 
-#: ../pidgin/gtkblist.c:5251
+#: ../pidgin/gtkblist.c:5261
 msgid "/Buddies/Show/Empty Groups"
 msgstr "/Tuttavat/Näytä/Tyhjät ryhmät"
 
-#: ../pidgin/gtkblist.c:5257
+#: ../pidgin/gtkblist.c:5267
 msgid "/Buddies/Show/Buddy Details"
 msgstr "/Tuttavat/Näytä/Tuttavien tiedot"
 
-#: ../pidgin/gtkblist.c:5260
+#: ../pidgin/gtkblist.c:5270
 msgid "/Buddies/Show/Idle Times"
 msgstr "/Tuttavat/Näytä/Joutenoloajat"
 
-#: ../pidgin/gtkblist.c:5263
+#: ../pidgin/gtkblist.c:5273
 msgid "/Buddies/Show/Protocol Icons"
 msgstr "/Tuttavat/Näytä/Yhteyskäytäntökuvakkeet"
 
-#: ../pidgin/gtkblist.c:6195
+#: ../pidgin/gtkblist.c:6205
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -14415,24 +14416,24 @@ msgstr ""
 "kuin mahdollista.\n"
 
 #. Set up stuff for the account box
-#: ../pidgin/gtkblist.c:6218
+#: ../pidgin/gtkblist.c:6228
 msgid "A_ccount:"
 msgstr "_Käyttäjätili:"
 
 #. End of account box
-#: ../pidgin/gtkblist.c:6230
+#: ../pidgin/gtkblist.c:6240
 msgid "_Screen name:"
 msgstr "_Näyttönimi:"
 
-#: ../pidgin/gtkblist.c:6252 ../pidgin/gtkblist.c:6610
+#: ../pidgin/gtkblist.c:6262 ../pidgin/gtkblist.c:6620
 msgid "A_lias:"
 msgstr "A_lias:"
 
-#: ../pidgin/gtkblist.c:6520
+#: ../pidgin/gtkblist.c:6530
 msgid "This protocol does not support chat rooms."
 msgstr "Tämä yhteyskäytäntö ei tue keskusteluhuoneita."
 
-#: ../pidgin/gtkblist.c:6536
+#: ../pidgin/gtkblist.c:6546
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
@@ -14440,7 +14441,7 @@ msgstr ""
 "Et ole kirjautuneena millään yhteyskäytännöllä jolla voisi käyttää "
 "ryhmäkeskustelua."
 
-#: ../pidgin/gtkblist.c:6579
+#: ../pidgin/gtkblist.c:6589
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
@@ -14448,47 +14449,47 @@ msgstr ""
 "Anna lempinimi, ja tiedot ryhmäkeskustelusta jonka haluat lisätä "
 "tuttaviisi.\n"
 
-#: ../pidgin/gtkblist.c:6638
+#: ../pidgin/gtkblist.c:6648
 msgid "Autojoin when account becomes online."
 msgstr "Liity automaattisesti kun käyttäjätili pääsee linjoille."
 
-#: ../pidgin/gtkblist.c:6639
+#: ../pidgin/gtkblist.c:6649
 msgid "Hide chat when the window is closed."
 msgstr "Piilota ryhmäkeskustelu kun ikkuna on suljettu."
 
-#: ../pidgin/gtkblist.c:6665
+#: ../pidgin/gtkblist.c:6675
 msgid "Please enter the name of the group to be added."
 msgstr "Anna lisättävän ryhmän nimi."
 
-#: ../pidgin/gtkblist.c:7311
+#: ../pidgin/gtkblist.c:7321
 msgid "<PurpleMain>/Accounts/"
 msgstr "<PurpleMain>/Käyttäjätilit/"
 
-#: ../pidgin/gtkblist.c:7335
+#: ../pidgin/gtkblist.c:7345
 msgid "_Edit Account"
 msgstr "_Muokkaa käyttäjätiliä"
 
-#: ../pidgin/gtkblist.c:7348 ../pidgin/gtkconv.c:3146
+#: ../pidgin/gtkblist.c:7358 ../pidgin/gtkconv.c:3146
 msgid "No actions available"
 msgstr "Ei toimintoja saatavilla."
 
-#: ../pidgin/gtkblist.c:7356
+#: ../pidgin/gtkblist.c:7366
 msgid "_Disable"
 msgstr "_Poista käytöstä"
 
-#: ../pidgin/gtkblist.c:7368
+#: ../pidgin/gtkblist.c:7378
 msgid "Enable Account"
 msgstr "Ota tili käyttöön"
 
-#: ../pidgin/gtkblist.c:7374
+#: ../pidgin/gtkblist.c:7384
 msgid "<PurpleMain>/Accounts/Enable Account"
 msgstr "<PurpleMain>/Käyttäjätilit/Ota tili käyttöön"
 
-#: ../pidgin/gtkblist.c:7423
+#: ../pidgin/gtkblist.c:7433
 msgid "/Tools"
 msgstr "/Työkalut"
 
-#: ../pidgin/gtkblist.c:7493
+#: ../pidgin/gtkblist.c:7503
 msgid "/Buddies/Sort Buddies"
 msgstr "/Tuttavat/Lajittele tuttavat"
 
@@ -14563,7 +14564,7 @@ msgstr "Viimeksi sanottu"
 
 #: ../pidgin/gtkconv.c:2671
 msgid "Unable to save icon file to disk."
-msgstr "Kuvaketiedostoa ei voida tallentaa levylle."
+msgstr "Kuvaketiedostoa ei voi tallentaa levylle."
 
 #: ../pidgin/gtkconv.c:2722
 msgid "Save Icon"
@@ -14995,7 +14996,7 @@ msgstr "alkuperäinen tekijä"
 msgid "Afrikaans"
 msgstr "afrikaans"
 
-#: ../pidgin/gtkdialogs.c:134 ../pidgin/gtkdialogs.c:227
+#: ../pidgin/gtkdialogs.c:134 ../pidgin/gtkdialogs.c:228
 msgid "Arabic"
 msgstr "arabia"
 
@@ -15004,7 +15005,7 @@ msgid "Belarusian Latin"
 msgstr "valkovenäjä latinalainen"
 
 #: ../pidgin/gtkdialogs.c:136 ../pidgin/gtkdialogs.c:137
-#: ../pidgin/gtkdialogs.c:228
+#: ../pidgin/gtkdialogs.c:229
 msgid "Bulgarian"
 msgstr "bulgaria"
 
@@ -15017,8 +15018,8 @@ msgstr "bengali"
 msgid "Bosnian"
 msgstr "bosnia"
 
-#: ../pidgin/gtkdialogs.c:143 ../pidgin/gtkdialogs.c:229
-#: ../pidgin/gtkdialogs.c:230
+#: ../pidgin/gtkdialogs.c:143 ../pidgin/gtkdialogs.c:230
+#: ../pidgin/gtkdialogs.c:231
 msgid "Catalan"
 msgstr "katalaani"
 
@@ -15026,7 +15027,7 @@ msgstr "katalaani"
 msgid "Valencian-Catalan"
 msgstr "valencian katalaani"
 
-#: ../pidgin/gtkdialogs.c:146 ../pidgin/gtkdialogs.c:231
+#: ../pidgin/gtkdialogs.c:146 ../pidgin/gtkdialogs.c:232
 msgid "Czech"
 msgstr "tšekki"
 
@@ -15035,7 +15036,7 @@ msgid "Danish"
 msgstr "tanska"
 
 #: ../pidgin/gtkdialogs.c:149 ../pidgin/gtkdialogs.c:150
-#: ../pidgin/gtkdialogs.c:232
+#: ../pidgin/gtkdialogs.c:233
 msgid "German"
 msgstr "saksa"
 
@@ -15064,9 +15065,9 @@ msgstr "brittienglanti"
 msgid "Esperanto"
 msgstr "esperanto"
 
-#: ../pidgin/gtkdialogs.c:160 ../pidgin/gtkdialogs.c:233
-#: ../pidgin/gtkdialogs.c:234 ../pidgin/gtkdialogs.c:235
-#: ../pidgin/gtkdialogs.c:236
+#: ../pidgin/gtkdialogs.c:160 ../pidgin/gtkdialogs.c:234
+#: ../pidgin/gtkdialogs.c:235 ../pidgin/gtkdialogs.c:236
+#: ../pidgin/gtkdialogs.c:237
 msgid "Spanish"
 msgstr "espanja"
 
@@ -15083,19 +15084,19 @@ msgstr "euskara (baski)"
 msgid "Persian"
 msgstr "persia"
 
-#: ../pidgin/gtkdialogs.c:167 ../pidgin/gtkdialogs.c:237
-#: ../pidgin/gtkdialogs.c:238
+#: ../pidgin/gtkdialogs.c:167 ../pidgin/gtkdialogs.c:238
+#: ../pidgin/gtkdialogs.c:239
 msgid "Finnish"
 msgstr "suomi"
 
-#: ../pidgin/gtkdialogs.c:168 ../pidgin/gtkdialogs.c:239
-#: ../pidgin/gtkdialogs.c:240 ../pidgin/gtkdialogs.c:241
-#: ../pidgin/gtkdialogs.c:242
+#: ../pidgin/gtkdialogs.c:168 ../pidgin/gtkdialogs.c:240
+#: ../pidgin/gtkdialogs.c:241 ../pidgin/gtkdialogs.c:242
+#: ../pidgin/gtkdialogs.c:243
 msgid "French"
 msgstr "ranska"
 
 #: ../pidgin/gtkdialogs.c:169 ../pidgin/gtkdialogs.c:170
-#: ../pidgin/gtkdialogs.c:243
+#: ../pidgin/gtkdialogs.c:244
 msgid "Galician"
 msgstr "galego"
 
@@ -15107,7 +15108,7 @@ msgstr "gudžarati"
 msgid "Gujarati Language Team"
 msgstr "Gujaratin kääntäjäryhmä"
 
-#: ../pidgin/gtkdialogs.c:173 ../pidgin/gtkdialogs.c:244
+#: ../pidgin/gtkdialogs.c:173 ../pidgin/gtkdialogs.c:245
 msgid "Hebrew"
 msgstr "heprea"
 
@@ -15115,7 +15116,7 @@ msgstr "heprea"
 msgid "Hindi"
 msgstr "hindi"
 
-#: ../pidgin/gtkdialogs.c:175 ../pidgin/gtkdialogs.c:245
+#: ../pidgin/gtkdialogs.c:175 ../pidgin/gtkdialogs.c:246
 msgid "Hungarian"
 msgstr "unkari"
 
@@ -15123,16 +15124,16 @@ msgstr "unkari"
 msgid "Indonesian"
 msgstr "indonesia"
 
-#: ../pidgin/gtkdialogs.c:177 ../pidgin/gtkdialogs.c:246
+#: ../pidgin/gtkdialogs.c:177 ../pidgin/gtkdialogs.c:247
 msgid "Italian"
 msgstr "italia"
 
-#: ../pidgin/gtkdialogs.c:178 ../pidgin/gtkdialogs.c:247
-#: ../pidgin/gtkdialogs.c:248 ../pidgin/gtkdialogs.c:249
+#: ../pidgin/gtkdialogs.c:178 ../pidgin/gtkdialogs.c:248
+#: ../pidgin/gtkdialogs.c:249 ../pidgin/gtkdialogs.c:250
 msgid "Japanese"
 msgstr "japani"
 
-#: ../pidgin/gtkdialogs.c:179 ../pidgin/gtkdialogs.c:250
+#: ../pidgin/gtkdialogs.c:179 ../pidgin/gtkdialogs.c:251
 msgid "Georgian"
 msgstr "georgia"
 
@@ -15148,8 +15149,8 @@ msgstr "kannada"
 msgid "Kannada Translation team"
 msgstr "Kannadan kääntäjäryhmä"
 
-#: ../pidgin/gtkdialogs.c:181 ../pidgin/gtkdialogs.c:251
-#: ../pidgin/gtkdialogs.c:252
+#: ../pidgin/gtkdialogs.c:181 ../pidgin/gtkdialogs.c:252
+#: ../pidgin/gtkdialogs.c:253
 msgid "Korean"
 msgstr "korea"
 
@@ -15162,18 +15163,18 @@ msgstr "kurdi"
 msgid "Lao"
 msgstr "lao"
 
-#: ../pidgin/gtkdialogs.c:186 ../pidgin/gtkdialogs.c:253
-#: ../pidgin/gtkdialogs.c:254
+#: ../pidgin/gtkdialogs.c:186 ../pidgin/gtkdialogs.c:254
+#: ../pidgin/gtkdialogs.c:255
 msgid "Lithuanian"
 msgstr "liettua"
 
 #: ../pidgin/gtkdialogs.c:187 ../pidgin/gtkdialogs.c:188
-#: ../pidgin/gtkdialogs.c:189 ../pidgin/gtkdialogs.c:255
+#: ../pidgin/gtkdialogs.c:189 ../pidgin/gtkdialogs.c:256
 msgid "Macedonian"
 msgstr "makedonia"
 
-#: ../pidgin/gtkdialogs.c:190 ../pidgin/gtkdialogs.c:256
-#: ../pidgin/gtkdialogs.c:257
+#: ../pidgin/gtkdialogs.c:190 ../pidgin/gtkdialogs.c:257
+#: ../pidgin/gtkdialogs.c:258
 msgid "Bokmål Norwegian"
 msgstr "kirjanorja"
 
@@ -15194,7 +15195,7 @@ msgid "Punjabi"
 msgstr "punjabi"
 
 #: ../pidgin/gtkdialogs.c:195 ../pidgin/gtkdialogs.c:196
-#: ../pidgin/gtkdialogs.c:197 ../pidgin/gtkdialogs.c:258
+#: ../pidgin/gtkdialogs.c:197 ../pidgin/gtkdialogs.c:259
 msgid "Polish"
 msgstr "puola"
 
@@ -15214,18 +15215,18 @@ msgstr "paštu"
 msgid "Romanian"
 msgstr "romania"
 
-#: ../pidgin/gtkdialogs.c:202 ../pidgin/gtkdialogs.c:259
-#: ../pidgin/gtkdialogs.c:260
+#: ../pidgin/gtkdialogs.c:202 ../pidgin/gtkdialogs.c:260
+#: ../pidgin/gtkdialogs.c:261
 msgid "Russian"
 msgstr "venäjä"
 
 #: ../pidgin/gtkdialogs.c:203 ../pidgin/gtkdialogs.c:204
-#: ../pidgin/gtkdialogs.c:261 ../pidgin/gtkdialogs.c:262
-#: ../pidgin/gtkdialogs.c:263
+#: ../pidgin/gtkdialogs.c:262 ../pidgin/gtkdialogs.c:263
+#: ../pidgin/gtkdialogs.c:264
 msgid "Slovak"
 msgstr "slovakki"
 
-#: ../pidgin/gtkdialogs.c:205 ../pidgin/gtkdialogs.c:264
+#: ../pidgin/gtkdialogs.c:205 ../pidgin/gtkdialogs.c:265
 msgid "Slovenian"
 msgstr "sloveeni"
 
@@ -15234,12 +15235,12 @@ msgid "Albanian"
 msgstr "albania"
 
 #: ../pidgin/gtkdialogs.c:207 ../pidgin/gtkdialogs.c:208
-#: ../pidgin/gtkdialogs.c:265 ../pidgin/gtkdialogs.c:266
+#: ../pidgin/gtkdialogs.c:266 ../pidgin/gtkdialogs.c:267
 msgid "Serbian"
 msgstr "serbia"
 
-#: ../pidgin/gtkdialogs.c:209 ../pidgin/gtkdialogs.c:267
-#: ../pidgin/gtkdialogs.c:268
+#: ../pidgin/gtkdialogs.c:209 ../pidgin/gtkdialogs.c:268
+#: ../pidgin/gtkdialogs.c:269
 msgid "Swedish"
 msgstr "ruotsi"
 
@@ -15255,42 +15256,46 @@ msgstr "telugu"
 msgid "Thai"
 msgstr "thai"
 
-#: ../pidgin/gtkdialogs.c:213 ../pidgin/gtkdialogs.c:269
+#: ../pidgin/gtkdialogs.c:213 ../pidgin/gtkdialogs.c:270
 msgid "Turkish"
 msgstr "turkki"
 
 #: ../pidgin/gtkdialogs.c:214
+msgid "Urdu"
+msgstr "urdu"
+
+#: ../pidgin/gtkdialogs.c:215
 msgid "Vietnamese"
 msgstr "vietnam"
 
-#: ../pidgin/gtkdialogs.c:214
+#: ../pidgin/gtkdialogs.c:215
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "T.M Thanh ja Gnomen Vi-työryhmä"
 
-#: ../pidgin/gtkdialogs.c:215 ../pidgin/gtkdialogs.c:270
+#: ../pidgin/gtkdialogs.c:216 ../pidgin/gtkdialogs.c:271
 msgid "Simplified Chinese"
 msgstr "kiina (yksinkertaistettu)"
 
-#: ../pidgin/gtkdialogs.c:216 ../pidgin/gtkdialogs.c:217
-#: ../pidgin/gtkdialogs.c:218
+#: ../pidgin/gtkdialogs.c:217 ../pidgin/gtkdialogs.c:218
+#: ../pidgin/gtkdialogs.c:219
 msgid "Hong Kong Chinese"
 msgstr "Hong Kongin kiina"
 
-#: ../pidgin/gtkdialogs.c:219 ../pidgin/gtkdialogs.c:220
-#: ../pidgin/gtkdialogs.c:271
+#: ../pidgin/gtkdialogs.c:220 ../pidgin/gtkdialogs.c:221
+#: ../pidgin/gtkdialogs.c:272
 msgid "Traditional Chinese"
 msgstr "kiina (perinteinen)"
 
-#: ../pidgin/gtkdialogs.c:226
+#: ../pidgin/gtkdialogs.c:227
 msgid "Amharic"
 msgstr "amhara"
 
-#: ../pidgin/gtkdialogs.c:369
+#: ../pidgin/gtkdialogs.c:370
 #, c-format
 msgid "About %s"
 msgstr "Tietoja %sistä"
 
-#: ../pidgin/gtkdialogs.c:412
+#: ../pidgin/gtkdialogs.c:413
 #, c-format
 msgid ""
 "%s is a graphical modular messaging client based on libpurple which is "
@@ -15314,105 +15319,105 @@ msgstr ""
 "luettelo osallistuneista löytyy \"COPYRIGHT\"-tiedostosta. Tekijät eivät "
 "anna ohjelmalle minkäänlaista takuuta.<BR><BR>"
 
-#: ../pidgin/gtkdialogs.c:430
+#: ../pidgin/gtkdialogs.c:431
 #, c-format
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
 msgstr ""
 "<FONT SIZE=\"4\">IRC:</FONT> #pidgin palvelimella irc.freenode.net<BR><BR>"
 
-#: ../pidgin/gtkdialogs.c:435
+#: ../pidgin/gtkdialogs.c:436
 msgid "Current Developers"
 msgstr "Nykyiset kehittäjät"
 
-#: ../pidgin/gtkdialogs.c:450
+#: ../pidgin/gtkdialogs.c:451
 msgid "Crazy Patch Writers"
 msgstr "Villit korjauspäivitysten kirjoittajat"
 
-#: ../pidgin/gtkdialogs.c:465
+#: ../pidgin/gtkdialogs.c:466
 msgid "Retired Developers"
 msgstr "Lopettaneet kehittäjät"
 
-#: ../pidgin/gtkdialogs.c:480
+#: ../pidgin/gtkdialogs.c:481
 msgid "Retired Crazy Patch Writers"
 msgstr "Lopettaneet korjauspäivitysten kirjoittajat"
 
-#: ../pidgin/gtkdialogs.c:495
+#: ../pidgin/gtkdialogs.c:496
 msgid "Artists"
 msgstr "Graafikot"
 
-#: ../pidgin/gtkdialogs.c:510
+#: ../pidgin/gtkdialogs.c:511
 msgid "Current Translators"
 msgstr "Nykyiset kielenkääntäjät"
 
-#: ../pidgin/gtkdialogs.c:530
+#: ../pidgin/gtkdialogs.c:531
 msgid "Past Translators"
 msgstr "Aikaisemmat kielenkääntäjät"
 
-#: ../pidgin/gtkdialogs.c:548
+#: ../pidgin/gtkdialogs.c:549
 msgid "Debugging Information"
 msgstr "Virheenjäljitystietoja"
 
-#: ../pidgin/gtkdialogs.c:765 ../pidgin/gtkdialogs.c:908
-#: ../pidgin/gtkdialogs.c:989
+#: ../pidgin/gtkdialogs.c:766 ../pidgin/gtkdialogs.c:909
+#: ../pidgin/gtkdialogs.c:990
 msgid "_Name"
 msgstr "_Nimi"
 
-#: ../pidgin/gtkdialogs.c:770
+#: ../pidgin/gtkdialogs.c:771
 msgid "Buddy"
 msgstr "Tuttava"
 
-#: ../pidgin/gtkdialogs.c:774 ../pidgin/gtkdialogs.c:913
-#: ../pidgin/gtkdialogs.c:994
+#: ../pidgin/gtkdialogs.c:775 ../pidgin/gtkdialogs.c:914
+#: ../pidgin/gtkdialogs.c:995
 msgid "_Account"
 msgstr "_Käyttäjätili"
 
-#: ../pidgin/gtkdialogs.c:921
+#: ../pidgin/gtkdialogs.c:922
 msgid "Get User Info"
 msgstr "Hae käyttäjätiedot"
 
-#: ../pidgin/gtkdialogs.c:923
+#: ../pidgin/gtkdialogs.c:924
 msgid ""
 "Please enter the screen name or alias of the person whose info you would "
 "like to view."
 msgstr ""
 "Syötä sen henkilön näyttönimi tai lempinimi, jonka tiedot haluat nähdä."
 
-#: ../pidgin/gtkdialogs.c:1013
+#: ../pidgin/gtkdialogs.c:1014
 msgid "View User Log"
 msgstr "Näytä käyttäjäloki"
 
-#: ../pidgin/gtkdialogs.c:1015
+#: ../pidgin/gtkdialogs.c:1016
 msgid ""
 "Please enter the screen name or alias of the person whose log you would like "
 "to view."
 msgstr "Syötä sen henkilön näyttönimi jonka lokia haluat katsella."
 
-#: ../pidgin/gtkdialogs.c:1035
+#: ../pidgin/gtkdialogs.c:1036
 msgid "Alias Contact"
 msgstr "Anna kontaktiryhmälle lempinimi"
 
-#: ../pidgin/gtkdialogs.c:1036
+#: ../pidgin/gtkdialogs.c:1037
 msgid "Enter an alias for this contact."
 msgstr "Anna lempinimi tälle kontaktiryhmälle."
 
-#: ../pidgin/gtkdialogs.c:1058
+#: ../pidgin/gtkdialogs.c:1059
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "Anna %s:n lempinimi."
 
-#: ../pidgin/gtkdialogs.c:1060
+#: ../pidgin/gtkdialogs.c:1061
 msgid "Alias Buddy"
 msgstr "Anna tuttavalle lempinimi"
 
-#: ../pidgin/gtkdialogs.c:1081
+#: ../pidgin/gtkdialogs.c:1082
 msgid "Alias Chat"
 msgstr "Anna ryhmäkeskustelulle lempinimi"
 
-#: ../pidgin/gtkdialogs.c:1082
+#: ../pidgin/gtkdialogs.c:1083
 msgid "Enter an alias for this chat."
 msgstr "Syötä lempinimi tälle ryhmäkeskustelulle."
 
-#: ../pidgin/gtkdialogs.c:1121
+#: ../pidgin/gtkdialogs.c:1122
 #, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddy from "
@@ -15427,59 +15432,59 @@ msgstr[1] ""
 "Olet poistamassa kontaktin, jossa on %s sekä %d muuta tuttavaa tuttavistasi. "
 "Haluatko jatkaa?"
 
-#: ../pidgin/gtkdialogs.c:1129
+#: ../pidgin/gtkdialogs.c:1130
 msgid "Remove Contact"
 msgstr "Poista kontakti"
 
-#: ../pidgin/gtkdialogs.c:1132
+#: ../pidgin/gtkdialogs.c:1133
 msgid "_Remove Contact"
 msgstr "_Poista kontakti"
 
-#: ../pidgin/gtkdialogs.c:1163
+#: ../pidgin/gtkdialogs.c:1164
 #, c-format
 msgid ""
 "You are about to merge the group called %s into the group called %s. Do you "
 "want to continue?"
 msgstr "Olet yhdistämässä ryhmää \"%s\" ryhmään \"%s\".  Haluatko jatkaa?"
 
-#: ../pidgin/gtkdialogs.c:1170
+#: ../pidgin/gtkdialogs.c:1171
 msgid "Merge Groups"
 msgstr "Yhdistä ryhmät"
 
-#: ../pidgin/gtkdialogs.c:1173
+#: ../pidgin/gtkdialogs.c:1174
 msgid "_Merge Groups"
 msgstr "_Yhdistä ryhmät"
 
-#: ../pidgin/gtkdialogs.c:1223
+#: ../pidgin/gtkdialogs.c:1224
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
 "list.  Do you want to continue?"
 msgstr "Olet poistamassa ryhmää nimeltä \"%s\" tuttavistasi.  Haluatko jatkaa?"
 
-#: ../pidgin/gtkdialogs.c:1226
+#: ../pidgin/gtkdialogs.c:1227
 msgid "Remove Group"
 msgstr "Poista ryhmä"
 
-#: ../pidgin/gtkdialogs.c:1229
+#: ../pidgin/gtkdialogs.c:1230
 msgid "_Remove Group"
 msgstr "_Poista ryhmä"
 
-#: ../pidgin/gtkdialogs.c:1262
+#: ../pidgin/gtkdialogs.c:1263
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "Olet poistamassa \"%s\":n tuttavistasi.  Haluatko jatkaa?"
 
-#: ../pidgin/gtkdialogs.c:1265
+#: ../pidgin/gtkdialogs.c:1266
 msgid "Remove Buddy"
 msgstr "Poista tuttava"
 
-#: ../pidgin/gtkdialogs.c:1268
+#: ../pidgin/gtkdialogs.c:1269
 msgid "_Remove Buddy"
 msgstr "_Poista tuttava"
 
-#: ../pidgin/gtkdialogs.c:1289
+#: ../pidgin/gtkdialogs.c:1290
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
@@ -15488,11 +15493,11 @@ msgstr ""
 "Olet poistamassa ryhmäkeskustelun nimeltä \"%s\" tuttavistasi. Haluatko "
 "jatkaa?"
 
-#: ../pidgin/gtkdialogs.c:1292
+#: ../pidgin/gtkdialogs.c:1293
 msgid "Remove Chat"
 msgstr "Poista ryhmäkeskustelu"
 
-#: ../pidgin/gtkdialogs.c:1295
+#: ../pidgin/gtkdialogs.c:1296
 msgid "_Remove Chat"
 msgstr "_Poista ryhmäkeskustelu"
 
@@ -16664,7 +16669,7 @@ msgstr "Vaihda tila, kun ollaan _jouten"
 
 #: ../pidgin/gtkprefs.c:2058
 msgid "_Minutes before becoming idle:"
-msgstr "_Minuutteja ennen joutenolevaksi asettamista:"
+msgstr "_Minuutteja ennen jouten olevaksi asettamista:"
 
 #: ../pidgin/gtkprefs.c:2066
 msgid "Change _status to:"
@@ -16709,7 +16714,7 @@ msgstr "Salli vain käyttäjät tuttavissa"
 
 #: ../pidgin/gtkprivacy.c:82
 msgid "Allow only the users below"
-msgstr "Salli vain allaolevat käyttäjät"
+msgstr "Salli vain alla olevat käyttäjät"
 
 #: ../pidgin/gtkprivacy.c:83
 msgid "Block all users"
@@ -16717,7 +16722,7 @@ msgstr "Estä kaikki käyttäjät"
 
 #: ../pidgin/gtkprivacy.c:84
 msgid "Block only the users below"
-msgstr "Estä vain allaolevat käyttäjät"
+msgstr "Estä vain alla olevat käyttäjät"
 
 #: ../pidgin/gtkprivacy.c:372
 msgid "Privacy"
@@ -16887,7 +16892,7 @@ msgstr "Kuvan avaus epäonnistui"
 #: ../pidgin/gtkutils.c:1500
 #, c-format
 msgid "Cannot send folder %s."
-msgstr "Ei voida lähettää kansiota %s."
+msgstr "Kansiota %s ei voi lähettää."
 
 #: ../pidgin/gtkutils.c:1501
 #, c-format
@@ -16950,7 +16955,7 @@ msgstr ""
 #. The original patch sent the icon used by the launcher.  That's probably wrong
 #: ../pidgin/gtkutils.c:1615
 msgid "Cannot send launcher"
-msgstr "Ei voida lähettää käynnistintä"
+msgstr "Käynnistintä ei voi lähettää"
 
 #: ../pidgin/gtkutils.c:1615
 msgid ""
@@ -16987,14 +16992,14 @@ msgstr "Kuvaketta ei voi asettaa"
 #: ../pidgin/gtkutils.c:2749
 #, c-format
 msgid "Failed to open file '%s': %s"
-msgstr "Ei voi avata tiedostoa \"%s\": %s"
+msgstr "Tiedostoa \"%s\" ei voi avata: %s"
 
 #: ../pidgin/gtkutils.c:2798
 #, c-format
 msgid ""
 "Failed to load image '%s': reason not known, probably a corrupt image file"
 msgstr ""
-"Ei voi ladata kuvaa \"%s\": syy ei ole tiedossa, mahdollisesti vioittunut "
+"Kuvaa \"%s\" ei voi ladata: syy ei ole tiedossa, mahdollisesti vioittunut "
 "kuvatiedosto"
 
 #: ../pidgin/gtkwhiteboard.c:754 ../pidgin/gtkwhiteboard.c:773
@@ -17324,7 +17329,7 @@ msgstr "Pikaviestintä"
 #. Add the label.
 #: ../pidgin/plugins/gevolution/add_buddy_dialog.c:457
 msgid "Select a person from your address book below, or add a new person."
-msgstr "Valitse henkilö allaolevasta osoitekirjasta, tai lisää uusi henkilö."
+msgstr "Valitse henkilö alla olevasta osoitekirjasta, tai lisää uusi henkilö."
 
 #: ../pidgin/plugins/gevolution/add_buddy_dialog.c:551
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:301
@@ -17482,7 +17487,7 @@ msgstr "Historia"
 #. *< id
 #: ../pidgin/plugins/iconaway.c:82
 msgid "Iconify on Away"
-msgstr "Pienennä poissaollessa"
+msgstr "Pienennä poissa ollessa"
 
 #. *< name
 #. *< version
@@ -17490,7 +17495,7 @@ msgstr "Pienennä poissaollessa"
 #. *  description
 #: ../pidgin/plugins/iconaway.c:85 ../pidgin/plugins/iconaway.c:87
 msgid "Iconifies the buddy list and your conversations when you go away."
-msgstr "Pienentää tuttavat- ja keskusteluikkunan poissaoloajaksi."
+msgstr "Pienentää tuttavat- ja keskusteluikkunan poissaolon ajaksi."
 
 #: ../pidgin/plugins/mailchk.c:160
 msgid "Mail Checker"
