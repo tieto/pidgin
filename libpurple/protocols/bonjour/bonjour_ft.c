@@ -37,7 +37,7 @@ bonjour_bytestreams_connect(PurpleXfer *xfer);
 static void
 bonjour_xfer_init(PurpleXfer *xfer);
 static void
-bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *from,
+bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, const char *from,
 		     const int filesize, const char *filename, int option);
 static void bonjour_free_xfer(PurpleXfer *xfer);
 
@@ -202,23 +202,23 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 	purple_debug_info("bonjour", "xep file transfer stream initialization offer-id=%d.\n", next_id);
 
 	/* Assign stream id. */
-	memset(buf, 0, 32);
-	g_snprintf(buf, sizeof(buf), "%u", next_id++);
-	iq = xep_iq_new(xf->data, XEP_IQ_SET, to, purple_account_get_username(bd->jabber_data->account), buf);
+	g_free(xf->iq_id);
+	xf->iq_id = g_strdup_printf("%u", next_id++);
+	iq = xep_iq_new(xf->data, XEP_IQ_SET, to, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
 	if(iq == NULL)
 		return;
 
-	g_free(xf->sid);
-	xf->sid = g_strdup(buf);
 	/*Construct Stream initialization offer message.*/
 	si_node = xmlnode_new_child(iq->node, "si");
 	xmlnode_set_namespace(si_node, "http://jabber.org/protocol/si");
 	xmlnode_set_attrib(si_node, "profile", "http://jabber.org/protocol/si/profile/file-transfer");
+	g_free(xf->sid);
+	xf->sid = g_strdup(xf->iq_id);
+	xmlnode_set_attrib(si_node, "id", xf->sid);
 
 	file = xmlnode_new_child(si_node, "file");
 	xmlnode_set_namespace(file, "http://jabber.org/protocol/si/profile/file-transfer");
 	xmlnode_set_attrib(file, "name", xfer->filename);
-	memset(buf, 0, 32);
 	g_snprintf(buf, sizeof(buf), "%" G_GSIZE_FORMAT, xfer->size);
 	xmlnode_set_attrib(file, "size", buf);
 
@@ -268,7 +268,7 @@ xep_ft_si_result(PurpleXfer *xfer, char *to)
 	bd = xf->data;
 
 	purple_debug_info("bonjour", "xep file transfer stream initialization result.\n");
-	iq = xep_iq_new(bd, XEP_IQ_RESULT, to, purple_account_get_username(bd->jabber_data->account), xf->sid);
+	iq = xep_iq_new(bd, XEP_IQ_RESULT, to, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
 	if(iq == NULL)
 		return;
 
@@ -446,6 +446,8 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 				int filesize = 0;
 				xmlnode *file;
 
+				const char *sid = xmlnode_get_attrib(si, "id");
+
 				if ((file = xmlnode_get_child(si, "file"))) {
 					filename = xmlnode_get_attrib(file, "name");
 					if((filesize_str = xmlnode_get_attrib(file, "size")))
@@ -454,7 +456,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 				/* TODO: Make sure that it is advertising a bytestreams transfer */
 
-				bonjour_xfer_receive(pc, id, pb->name, filesize, filename, XEP_BYTESTREAMS);
+				bonjour_xfer_receive(pc, id, sid, pb->name, filesize, filename, XEP_BYTESTREAMS);
 
 				parsed_receive = TRUE;
 			}
@@ -559,7 +561,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 			if (!found) {
 				purple_debug_error("bonjour", "Didn't find an acceptable streamhost.\n");
 
-				if (iq_id)
+				if (iq_id && xfer != NULL)
 					xep_ft_si_reject(bd, iq_id, xfer->who, "404", "cancel");
 			}
 
@@ -570,7 +572,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 }
 
 static void
-bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *from,
+bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, const char *from,
 		     const int filesize, const char *filename, int option)
 {
 	PurpleXfer *xfer = NULL;
@@ -591,7 +593,8 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *from,
 	xfer->data = xf = g_new0(XepXfer, 1);
 	xf->data = bd;
 	purple_xfer_set_filename(xfer, filename);
-	xf->sid = g_strdup(id);
+	xf->iq_id = g_strdup(id);
+	xf->sid = g_strdup(sid);
 
 	if(filesize > 0)
 		purple_xfer_set_size(xfer, filesize);
@@ -626,7 +629,7 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 		} else if(acceptfd == -1) {
 			/* This should cancel the ft */
-			purple_debug_error("Error accepting incoming SOCKS5 connection. (%d)\n", errno);
+			purple_debug_error("bonjour", "Error accepting incoming SOCKS5 connection. (%d)\n", errno);
 
 			purple_input_remove(xfer->watcher);
 			xfer->watcher = 0;
