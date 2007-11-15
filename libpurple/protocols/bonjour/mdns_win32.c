@@ -238,8 +238,11 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 		/* A peer has sent a goodbye packet, remove them from the buddy list */
 		purple_debug_info("bonjour", "service browser - remove notification\n");
 		pb = purple_find_buddy(account, serviceName);
-		if (pb != NULL)
+		if (pb != NULL) {
+			purple_account_remove_buddy(account, pb, NULL);
 			purple_blist_remove_buddy(pb);
+		} else
+			purple_debug_warning("bonjour", "Unable to find buddy (%s) to remove\n", serviceName ? serviceName : "(null)");
 	}
 }
 

@@ -625,7 +625,14 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 		if(acceptfd == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
 
 		} else if(acceptfd == -1) {
-			/* TODO: This should cancel the ft */
+			/* This should cancel the ft */
+			purple_debug_error("Error accepting incoming SOCKS5 connection. (%d)\n", errno);
+
+			purple_input_remove(xfer->watcher);
+			xfer->watcher = 0;
+			close(source);
+			purple_xfer_cancel_remote(xfer);
+			return;
 		} else {
 			int flags;
 

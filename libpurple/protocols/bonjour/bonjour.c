@@ -86,6 +86,7 @@ bonjour_removeallfromlocal(PurpleConnection *gc)
 				if (buddy->account != account)
 					continue;
 				purple_prpl_got_user_status(account, buddy->name, "offline", NULL);
+				purple_account_remove_buddy(account, buddy, NULL);
 				purple_blist_remove_buddy(buddy);
 			}
 		}
