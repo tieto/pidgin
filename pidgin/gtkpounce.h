@@ -28,7 +28,6 @@
 
 #include "pounce.h"
 
-#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
  *
@@ -40,7 +39,6 @@
  */
 void pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 								PurplePounce *cur_pounce);
-#endif
 
 /**
  * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
@@ -55,14 +53,12 @@ void pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 void pidgin_pounce_editor_show_with_parent(GtkWindow *parent, PurpleAccount *account, const char *name,
 								PurplePounce *cur_pounce);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Shows the pounces manager window.
  *
  * @deprecated Use pidgin_pounces_manager_show_with_parent() instead.
  */
 void pidgin_pounces_manager_show(void);
-#endif
 
 /**
  * Shows the pounces manager window.

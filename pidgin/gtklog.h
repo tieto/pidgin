@@ -52,36 +52,30 @@ struct _PidginLogViewer {
 };
 
 
-#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * @deprecated Use pidgin_log_show_with_parent() instead.
  */
 void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account);
-#endif
 
 /**
  * @since 2.3.0
  */
 void pidgin_log_show_with_parent(GtkWindow *parent, PurpleLogType type, const char *screenname, PurpleAccount *account);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * @deprecated pidgin_log_show_contact_with_parent() instead.
  */
 void pidgin_log_show_contact(PurpleContact *contact);
-#endif
 
 /**
  * @since 2.3.0
  */
 void pidgin_log_show_contact_with_parent(GtkWindow *parent, PurpleContact *contact);
 
-#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * @deprecated Use pidgin_syslog_show_with_parent() instead.
  */
 void pidgin_syslog_show(void);
-#endif
 
 /**
  * @since 2.3.0
