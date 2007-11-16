@@ -902,12 +902,12 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			PurpleBuddy *buddy;
 			PurpleAccount *account;
 			PurpleConversation *c;
-			char *username, *str;
-
-			str = NULL;
+			char *username;
 
 			account = purple_connection_get_account(gc);
-			c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
+			c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, im->from, account);
+			if (c == NULL)
+				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
 
 			if ((buddy = purple_find_buddy(account, im->from)) != NULL)
 				username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
@@ -917,7 +917,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			serv_got_attention(gc, username, YAHOO_BUZZ);
 
 			g_free(username);
-			g_free(str);
 			g_free(m);
 			g_free(im);
 			continue;
@@ -2097,7 +2096,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 
 		if (pair->key == 66)
 			err = strtol(pair->value, NULL, 10);
-		if (pair->key == 20)
+		else if (pair->key == 20)
 			url = pair->value;
 
 		l = l->next;
