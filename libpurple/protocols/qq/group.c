@@ -116,14 +116,14 @@ PurpleRoomlist *qq_roomlist_get_list(PurpleConnection *gc)
 	purple_roomlist_set_fields(rl, fields);
 	purple_roomlist_set_in_progress(qd->roomlist, TRUE);
 
-	purple_request_input_with_hint(gc, _("QQ Qun"),
+	purple_request_input(gc, _("QQ Qun"),
 			   _("Please enter external group ID"),
 			   _("You can only search for permanent QQ groups\n"),
 			   NULL, FALSE, FALSE, NULL, 
 			   _("Search"), G_CALLBACK(_qq_group_search_callback), 
 			   _("Cancel"), G_CALLBACK(_qq_group_search_cancel_callback), 
 			   purple_connection_get_account(gc), NULL, NULL,
-			   "chat", gc);
+			   gc);
 
 	return qd->roomlist;
 }

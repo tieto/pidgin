@@ -161,7 +161,7 @@ idle_action(PurplePluginAction *action)
 	request = purple_request_fields_new();
 	purple_request_fields_add_group(request, group);
 
-	purple_request_fields_with_hint(action->plugin,
+	purple_request_fields(action->plugin,
 			N_("I'dle Mak'er"),
 			_("Set Account Idle Time"),
 			NULL,
@@ -169,7 +169,7 @@ idle_action(PurplePluginAction *action)
 			_("_Set"), G_CALLBACK(idle_action_ok),
 			_("_Cancel"), NULL,
 			NULL, NULL, NULL,
-			"account", NULL);
+			NULL);
 }
 
 static void
@@ -195,7 +195,7 @@ unidle_action(PurplePluginAction *action)
 	request = purple_request_fields_new();
 	purple_request_fields_add_group(request, group);
 
-	purple_request_fields_with_hint(action->plugin,
+	purple_request_fields(action->plugin,
 			N_("I'dle Mak'er"),
 			_("Unset Account Idle Time"),
 			NULL,
@@ -203,7 +203,7 @@ unidle_action(PurplePluginAction *action)
 			_("_Unset"), G_CALLBACK(unidle_action_ok),
 			_("_Cancel"), NULL,
 			NULL, NULL, NULL,
-			"account", NULL);
+			NULL);
 }
 
 static void
@@ -221,7 +221,7 @@ idle_all_action(PurplePluginAction *action)
 	request = purple_request_fields_new();
 	purple_request_fields_add_group(request, group);
 
-	purple_request_fields_with_hint(action->plugin,
+	purple_request_fields(action->plugin,
 			N_("I'dle Mak'er"),
 			_("Set Idle Time for All Accounts"),
 			NULL,
@@ -229,7 +229,7 @@ idle_all_action(PurplePluginAction *action)
 			_("_Set"), G_CALLBACK(idle_all_action_ok),
 			_("_Cancel"), NULL,
 			NULL, NULL, NULL,
-			"account", NULL);
+			NULL);
 }
 
 static void

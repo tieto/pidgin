@@ -209,11 +209,11 @@ void qq_reject_add_request_with_gc_and_uid(gc_and_uid *g)
 	msg2 = g_strdup(_("Input your reason:"));
 
 	nombre = uid_to_purple_name(uid);
-	purple_request_input_with_hint(gc, _("Reject request"), msg1, msg2,
+	purple_request_input(gc, _("Reject request"), msg1, msg2,
 			   _("Sorry, you are not my type..."), TRUE, FALSE,
 			   NULL, _("Reject"), G_CALLBACK(_qq_reject_add_request_real), _("Cancel"), NULL,
 			   purple_connection_get_account(gc), nombre, NULL,
-			   "buddy", g2);
+			   g2);
 	g_free(nombre);
 }
 
@@ -402,7 +402,7 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 			g->gc = gc;
 			g->uid = for_uid;
 			msg = g_strdup_printf(_("User %d needs authentication"), for_uid);
-			purple_request_input_with_hint(gc, NULL, msg,
+			purple_request_input(gc, NULL, msg,
 					   _("Input request here"), /* TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands */
 					   _("Would you be my friend?"),
 					   TRUE, FALSE, NULL, _("Send"),
@@ -410,7 +410,7 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 					   (_qq_send_packet_add_buddy_auth_with_gc_and_uid),
 					   _("Cancel"), G_CALLBACK(qq_do_nothing_with_gc_and_uid),
 					   purple_connection_get_account(gc), nombre, NULL,
-					   "buddy", g);
+					   g);
 			g_free(msg);
 			g_free(nombre);
 		} else {	/* add OK */

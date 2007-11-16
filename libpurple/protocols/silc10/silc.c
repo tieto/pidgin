@@ -726,7 +726,7 @@ silcpurple_attrs(PurplePluginAction *action)
 	purple_request_field_group_add_field(g, f);
 	purple_request_fields_add_group(fields, g);
 
-	purple_request_fields_with_hint(gc, _("User Online Status Attributes"),
+	purple_request_fields(gc, _("User Online Status Attributes"),
 			    _("User Online Status Attributes"),
 			    _("You can let other users see your online status information "
 			      "and your personal information. Please fill the information "
@@ -734,7 +734,7 @@ silcpurple_attrs(PurplePluginAction *action)
 			    fields,
 			    _("OK"), G_CALLBACK(silcpurple_attrs_cb),
 			    _("Cancel"), G_CALLBACK(silcpurple_attrs_cancel),
-				gc->account, NULL, NULL, "blist", gc);
+				gc->account, NULL, NULL, gc);
 }
 
 static void
@@ -940,7 +940,7 @@ silcpurple_create_keypair(PurplePluginAction *action)
 			    _("Create New SILC Key Pair"), NULL, fields,
 			    _("Generate Key Pair"), G_CALLBACK(silcpurple_create_keypair_cb),
 			    _("Cancel"), G_CALLBACK(silcpurple_create_keypair_cancel),
-				gc->account, NULL, NULL, "blist", gc);
+				gc->account, NULL, NULL, gc);
 
 	g_strfreev(u);
 	silc_free(hostname);
