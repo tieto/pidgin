@@ -197,7 +197,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 				     _("Cancel"),
 				     G_CALLBACK(tls_peers_mgmt_import_cancel2_cb),
 				     NULL, NULL, NULL, /* No account/who/conv*/
-				     PURPLE_UI_REQUEST_HINT_CERTMGR, crt    /* Pass cert instance to callback*/
+				     "certmgr", crt    /* Pass cert instance to callback*/
 				     );
 		
 		g_free(default_hostname);
@@ -226,7 +226,7 @@ tls_peers_mgmt_import_cb(GtkWidget *button, gpointer data)
 			    FALSE, /* Not a save dialog */
 			    G_CALLBACK(tls_peers_mgmt_import_ok_cb),
 			    NULL,  /* Do nothing if cancelled */
-			    NULL, NULL, NULL, PURPLE_UI_REQUEST_HINT_CERTMGR, NULL );/* No account,conv,etc. */
+			    NULL, NULL, NULL, "certmgr", NULL );/* No account,conv,etc. */
 }
 
 static void
@@ -302,7 +302,7 @@ tls_peers_mgmt_export_cb(GtkWidget *button, gpointer data)
 			    G_CALLBACK(tls_peers_mgmt_export_ok_cb),
 			    G_CALLBACK(tls_peers_mgmt_export_cancel_cb),
 			    NULL, NULL, NULL, /* No account,conv,etc. */
-			    PURPLE_UI_REQUEST_HINT_CERTMGR, crt); /* Pass the certificate on to the callback */
+			    "certmgr", crt); /* Pass the certificate on to the callback */
 }
 
 static void
@@ -375,7 +375,7 @@ tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
 				      primary, NULL, /* Can this be NULL? */
 				      2, /* NO is default action */
 				      NULL, NULL, NULL,
-				      PURPLE_UI_REQUEST_HINT_CERTMGR,
+				      "certmgr",
 				      id, /* id ownership passed to callback */
 				      tls_peers_mgmt_delete_confirm_cb,
 				      tls_peers_mgmt_delete_confirm_cb );

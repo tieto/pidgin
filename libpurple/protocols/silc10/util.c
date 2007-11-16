@@ -374,7 +374,7 @@ void silcpurple_show_public_key(SilcPurple sg,
 	purple_request_action_with_hint(sg->gc, _("Public Key Information"),
 			    _("Public Key Information"),
 			    buf, 0, purple_connection_get_account(sg->gc),
-				NULL, NULL, context, PURPLE_REQUEST_HINT_BLIST, 1, _("Close"), callback);
+				NULL, NULL, context, "blist", 1, _("Close"), callback);
 
 	g_free(buf);
 	silc_free(fingerprint);

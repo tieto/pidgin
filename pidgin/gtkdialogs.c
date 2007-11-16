@@ -776,7 +776,7 @@ pidgin_dialogs_im(void)
 						_("OK"), G_CALLBACK(pidgin_dialogs_im_cb),
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
-						PURPLE_REQUEST_HINT_BLIST, NULL);
+						"blist", NULL);
 }
 
 void
@@ -915,7 +915,7 @@ pidgin_dialogs_info(void)
 						_("OK"), G_CALLBACK(pidgin_dialogs_info_cb),
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
-						PURPLE_REQUEST_HINT_BLIST, NULL);
+						"blist", NULL);
 }
 
 static void
@@ -1007,7 +1007,7 @@ pidgin_dialogs_log(void)
 						_("OK"), G_CALLBACK(pidgin_dialogs_log_cb),
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
-						PURPLE_REQUEST_HINT_BLIST, NULL);
+						"blist", NULL);
 }
 
 static void
@@ -1027,7 +1027,7 @@ pidgin_dialogs_alias_contact(PurpleContact *contact)
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_contact_cb),
 					   _("Cancel"), NULL,
 					   NULL, purple_contact_get_alias(contact), NULL,
-					   PURPLE_REQUEST_HINT_BLIST, contact);
+					   "blist", contact);
 }
 
 static void
@@ -1051,7 +1051,7 @@ pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_buddy_cb),
 					   _("Cancel"), NULL,
 					   purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,
-					   PURPLE_REQUEST_HINT_BLIST, buddy);
+					   "blist", buddy);
 
 	g_free(secondary);
 }
@@ -1073,7 +1073,7 @@ pidgin_dialogs_alias_chat(PurpleChat *chat)
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_chat_cb),
 					   _("Cancel"), NULL,
 					   chat->account, NULL, NULL,
-					   PURPLE_REQUEST_HINT_BLIST, chat);
+					   "blist", chat);
 }
 
 static void
@@ -1117,7 +1117,7 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 
 		purple_request_action_with_hint(contact, NULL, _("Remove Contact"), text, 0,
 				NULL, purple_contact_get_alias(contact), NULL,
-				PURPLE_REQUEST_HINT_BLIST, contact, 2,
+				"blist", contact, 2,
 				_("_Remove Contact"), G_CALLBACK(pidgin_dialogs_remove_contact_cb),
 				_("Cancel"),
 				NULL);
@@ -1158,7 +1158,7 @@ pidgin_dialogs_merge_groups(PurpleGroup *source, const char *new_name)
 	
 	purple_request_action_with_hint(source, NULL, _("Merge Groups"), text, 0,
 			NULL, NULL, NULL,
-			PURPLE_REQUEST_HINT_BLIST, ggp, 2,
+			"blist", ggp, 2,
 			_("_Merge Groups"), G_CALLBACK(pidgin_dialogs_merge_groups_cb),
 			_("Cancel"), G_CALLBACK(free_ggmo));
 
@@ -1214,7 +1214,7 @@ pidgin_dialogs_remove_group(PurpleGroup *group)
 
 	purple_request_action_with_hint(group, NULL, _("Remove Group"), text, 0,
 						NULL, NULL, NULL,
-						PURPLE_REQUEST_HINT_BLIST, group, 2,
+						"blist", group, 2,
 						_("_Remove Group"), G_CALLBACK(pidgin_dialogs_remove_group_cb),
 						_("Cancel"), NULL);
 
@@ -1253,7 +1253,7 @@ pidgin_dialogs_remove_buddy(PurpleBuddy *buddy)
 
 	purple_request_action_with_hint(buddy, NULL, _("Remove Buddy"), text, 0,
 						purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,
-						PURPLE_REQUEST_HINT_BLIST, buddy, 2,
+						"blist", buddy, 2,
 						_("_Remove Buddy"), G_CALLBACK(pidgin_dialogs_remove_buddy_cb),
 						_("Cancel"), NULL);
 
@@ -1280,7 +1280,7 @@ pidgin_dialogs_remove_chat(PurpleChat *chat)
 
 	purple_request_action_with_hint(chat, NULL, _("Remove Chat"), text, 0,
 						chat->account, NULL, NULL,
-						PURPLE_REQUEST_HINT_BLIST, chat, 2,
+						"blist", chat, 2,
 						_("_Remove Chat"), G_CALLBACK(pidgin_dialogs_remove_chat_cb),
 						_("Cancel"), NULL);
 

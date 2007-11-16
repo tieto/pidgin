@@ -821,7 +821,7 @@ silcpurple_attrs(PurplePluginAction *action)
 			    fields,
 			    _("OK"), G_CALLBACK(silcpurple_attrs_cb),
 			    _("Cancel"), G_CALLBACK(silcpurple_attrs_cancel),
-				gc->account, NULL, NULL, PURPLE_REQUEST_HINT_BLIST, gc);
+				gc->account, NULL, NULL, "blist", gc);
 }
 
 static void
@@ -1029,7 +1029,7 @@ silcpurple_create_keypair(PurplePluginAction *action)
 			      _("Create New SILC Key Pair"), NULL, fields,
 			      _("Generate Key Pair"), G_CALLBACK(silcpurple_create_keypair_cb),
 			      _("Cancel"), G_CALLBACK(silcpurple_create_keypair_cancel),
-			      gc->account, NULL, NULL, PURPLE_REQUEST_HINT_BLIST, gc);
+			      gc->account, NULL, NULL, "blist", gc);
 
 	g_strfreev(u);
 	silc_free(hostname);

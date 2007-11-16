@@ -633,7 +633,7 @@ delete_account_cb(GntWidget *widget, GntTree *tree)
 			purple_account_get_username(account));
 
 	purple_request_action_with_hint(account, _("Delete Account"), prompt, NULL, 0,
-						  account, NULL, NULL, PURPLE_UI_REQUEST_HINT_ACCOUNTMGR, account, 2,
+						  account, NULL, NULL, "accounts", account, 2,
 						  _("Delete"), really_delete_account,
 						  _("Cancel"), NULL);
 	g_free(prompt);
@@ -884,7 +884,7 @@ request_add(PurpleAccount *account, const char *remote_user,
 	purple_request_action_with_hint(NULL, NULL, _("Add buddy to your list?"),
 	                    buffer, PURPLE_DEFAULT_ACTION_NONE,
 						account, remote_user, NULL,
-						PURPLE_REQUEST_HINT_BLIST, data, 2,
+						"blist", data, 2,
 	                    _("Add"),    G_CALLBACK(add_user_cb),
 	                    _("Cancel"), G_CALLBACK(free_add_user_data));
 	g_free(buffer);
@@ -972,7 +972,7 @@ finch_request_authorize(PurpleAccount *account,
 		widget = purple_request_action_with_hint(NULL, _("Authorize buddy?"), buffer, NULL,
 			PURPLE_DEFAULT_ACTION_NONE,
 			account, remote_user, NULL,
-			PURPLE_REQUEST_HINT_BLIST, aa, 2,
+			"blist", aa, 2,
 			_("Authorize"), authorize_and_add_cb,
 			_("Deny"), deny_no_add_cb);
 		gnt_screen_release(widget);
@@ -999,7 +999,7 @@ finch_request_authorize(PurpleAccount *account,
 		uihandle = purple_request_action_with_hint(NULL, _("Authorize buddy?"), buffer, NULL,
 			PURPLE_DEFAULT_ACTION_NONE,
 			account, remote_user, NULL,
-			PURPLE_REQUEST_HINT_BLIST, user_data, 2,
+			"blist", user_data, 2,
 			_("Authorize"), auth_cb,
 			_("Deny"), deny_cb);
 	}

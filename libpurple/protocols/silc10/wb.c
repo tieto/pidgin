@@ -300,7 +300,7 @@ silcpurple_wb_request(SilcClient client, const unsigned char *message,
 	req->sg = sg;
 
 	purple_request_action_with_hint(gc, _("Whiteboard"), tmp, NULL, 1,
-				sg->account, sender->nickname, NULL, PURPLE_REQUEST_HINT_CONV, req, 2,
+				sg->account, sender->nickname, NULL, "conversation", req, 2,
 			    _("Yes"), G_CALLBACK(silcpurple_wb_request_cb),
 			    _("No"), G_CALLBACK(silcpurple_wb_request_cb));
 }

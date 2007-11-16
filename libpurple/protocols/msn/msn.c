@@ -289,7 +289,7 @@ msn_show_set_friendly_name(PurplePluginAction *action)
 					   _("OK"), G_CALLBACK(msn_act_id),
 					   _("Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   PURPLE_REQUEST_HINT_ACCOUNT, gc);
+					   "account", gc);
 }
 
 static void
@@ -306,7 +306,7 @@ msn_show_set_home_phone(PurplePluginAction *action)
 					   _("OK"), G_CALLBACK(msn_set_home_phone_cb),
 					   _("Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   PURPLE_REQUEST_HINT_ACCOUNT, gc);
+					   "account", gc);
 }
 
 static void
@@ -323,7 +323,7 @@ msn_show_set_work_phone(PurplePluginAction *action)
 					   _("OK"), G_CALLBACK(msn_set_work_phone_cb),
 					   _("Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   PURPLE_REQUEST_HINT_ACCOUNT, gc);
+					   "account", gc);
 }
 
 static void
@@ -340,7 +340,7 @@ msn_show_set_mobile_phone(PurplePluginAction *action)
 					   _("OK"), G_CALLBACK(msn_set_mobile_phone_cb),
 					   _("Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   PURPLE_REQUEST_HINT_ACCOUNT, gc);
+					   "account", gc);
 }
 
 static void
@@ -356,7 +356,7 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 						  "to your cell phone or other mobile device?"),
 						-1,
 						purple_connection_get_account(gc), NULL, NULL,
-						PURPLE_REQUEST_HINT_ACCOUNT, gc, 3,
+						"account", gc, 3,
 						_("Allow"), G_CALLBACK(enable_msn_pages_cb),
 						_("Disallow"), G_CALLBACK(disable_msn_pages_cb),
 						_("Cancel"), NULL);
@@ -405,7 +405,7 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 					   _("Page"), G_CALLBACK(send_to_mobile_cb),
 					   _("Close"), G_CALLBACK(close_mobile_page_cb),
 					   purple_connection_get_account(gc), purple_buddy_get_name(buddy), NULL,
-					   PURPLE_REQUEST_HINT_ACCOUNT, data);
+					   "account", data);
 }
 
 static gboolean
