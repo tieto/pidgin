@@ -93,6 +93,16 @@ void gnt_styles_get_keyremaps(GType type, GHashTable *hash);
  */
 void gnt_style_read_actions(GType type, GntBindableClass *klass);
 
+/*
+ * Read menu-accels from ~/.gntrc
+ *
+ * @param name  The name of the window.
+ * @param table The hastable to store the accel information.
+ *
+ * @return  @c TRUE if some accels were read, @c FALSE otherwise.
+ */
+gboolean gnt_style_read_menu_accels(const char *name, GHashTable *table);
+
 void gnt_style_read_workspaces(GntWM *wm);
 
 /**

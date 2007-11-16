@@ -459,3 +459,34 @@ void gnt_menu_add_item(GntMenu *menu, GntMenuItem *item)
 	menu->list = g_list_append(menu->list, item);
 }
 
+GntMenuItem *gnt_menu_get_item(GntMenu *menu, const char *id)
+{
+	GntMenuItem *item = NULL;
+	GList *iter = menu->list;
+
+	if (!id || !*id)
+		return NULL;
+
+	for (; iter; iter = iter->next) {
+		GntMenu *sub;
+		item = iter->data;
+		sub = gnt_menuitem_get_submenu(item);
+		if (sub) {
+			item = gnt_menu_get_item(sub, id);
+			if (item)
+				break;
+		} else {
+			const char *itid = gnt_menuitem_get_id(item);
+			if (itid && strcmp(itid, id) == 0)
+				break;
+			/* XXX: Perhaps look at the menu-label as well? */
+		}
+		item = NULL;
+	}
+
+	if (item)
+		menuitem_activate(menu, item);
+
+	return item;
+}
+
