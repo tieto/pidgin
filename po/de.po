@@ -7,14 +7,13 @@
 #
 # This file is distributed under the same license as the Pidgin package.
 #
-# Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2007.
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-16 10:03+0100\n"
-"PO-Revision-Date: 2007-11-16 10:03+0100\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2007-11-17 00:48+0100\n"
+"PO-Revision-Date: 2007-11-17 00:44+0100\n"
+"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -3496,7 +3495,7 @@ msgid "Multi-User Chat"
 msgstr "Mehrbenutzer-Chat"
 
 msgid "Multi-User Chat Extended Presence Information"
-msgstr "Erweiterte Anwesenheitsinformation im Mehrbenutzer-Chat "
+msgstr "Erweiterte Anwesenheitsinformation im Mehrbenutzer-Chat"
 
 msgid "In-Band Bytestreams"
 msgstr "Bandinterner Bytestrom("
@@ -10184,7 +10183,7 @@ msgid "Please enter the name of the group to be added."
 msgstr "Bitte geben Sie den Namen der Gruppe ein, die hinzugefügt werden soll."
 
 msgid "<PurpleMain>/Accounts/"
-msgstr "<PurpleMain>/Konten"
+msgstr "<PurpleMain>/Konten/"
 
 msgid "_Edit Account"
 msgstr "Konto _bearbeiten"
