@@ -960,9 +960,6 @@ static void gtk_imhtml_primary_clipboard_clear(GtkClipboard *clipboard, GtkIMHtm
 static void gtk_imhtml_clipboard_clear (GtkClipboard *clipboard, GtkSelectionData *sel_data,
 				 guint info, gpointer user_data_or_owner)
 {
-#ifndef _WIN32
-	clipboard_selection = NULL;
-#endif
 }
 
 static void copy_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
