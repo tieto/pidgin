@@ -824,6 +824,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			do_transfer_send(xfer, resource);
 			g_free(resource);
+			return;
 		}
 
 		jb = jabber_buddy_find(jsx->js, xfer->who, TRUE);
