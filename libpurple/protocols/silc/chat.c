@@ -301,7 +301,7 @@ silcpurple_chat_chpk_cb(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 	f = purple_request_fields_get_field(fields, "list");
 	if (!purple_request_field_list_get_selected(f)) {
 		/* Add new public key */
-		purple_request_file_with_hint(sg->gc, _("Open Public Key..."), NULL, FALSE,
+		purple_request_file)with_hint(sg->gc, _("Open Public Key..."), NULL, FALSE,
 				    G_CALLBACK(silcpurple_chat_chpk_add),
 				    G_CALLBACK(silcpurple_chat_chpk_cancel),
 				    purple_connection_get_account(sg->gc), NULL, NULL, "conversation", sgc);
