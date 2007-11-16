@@ -137,7 +137,7 @@ void qq_process_recv_group_im_apply_join
 			    msg, reason,
 			    2,
 				purple_connection_get_account(gc), nombre, NULL,
-				PURPLE_REQUEST_UI_HINT_CONV, g, 3,
+				PURPLE_REQUEST_HINT_CONV, g, 3,
 			    _("Approve"),
 			    G_CALLBACK
 			    (qq_group_approve_application_with_struct),

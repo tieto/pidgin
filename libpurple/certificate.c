@@ -572,7 +572,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 		NULL,         /* No account */
 		NULL,         /* No other user */
 		NULL,         /* No associated conversation */
-		PURPLE_REQUEST_UI_HINT_BLIST,
+		PURPLE_REQUEST_HINT_BLIST,
 		vrq,
 		x509_singleuse_verify_cb,
 		x509_singleuse_verify_cb );
@@ -1195,7 +1195,7 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 		NULL,         /* No account */
 		NULL,         /* No other user */
 		NULL,         /* No associated conversation */
-		PURPLE_REQUEST_UI_HINT_BLIST,
+		PURPLE_REQUEST_HINT_BLIST,
 		x509_tls_cached_ua_ctx_new(vrq, reason),
 		3,            /* Number of actions */
 		_("Accept"), x509_tls_cached_user_auth_accept_cb,

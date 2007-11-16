@@ -524,7 +524,7 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 		char *msg = g_strdup_printf(ngettext("You have %d contact named %s. Would you like to merge them?", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
 		purple_request_action_with_hint(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
 							 "You can separate them again by choosing 'Expand' from the contact's context menu"), 0, NULL, NULL, NULL,
-				      PURPLE_REQUEST_UI_HINT_BLIST, merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
+				      PURPLE_REQUEST_HINT_BLIST, merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
 		g_free(msg);
 	} else
 		g_list_free(merges);
@@ -4325,7 +4325,7 @@ connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
 	enabled = purple_account_get_enabled(account, purple_core_get_ui());
 	purple_request_action_with_hint(account, _("Connection Error"), primary, text, 2,
 						account, NULL, NULL,
-						PURPLE_REQUEST_UI_HINT_ACCOUNT, account, 3,
+						PURPLE_REQUEST_HINT_ACCOUNT, account, 3,
 						_("OK"), NULL,
 						_("Modify Account"), PURPLE_CALLBACK(ce_modify_account_cb),
 						enabled ? _("Connect") : _("Re-enable Account"),
@@ -6287,7 +6287,7 @@ pidgin_blist_request_add_group(void)
 					   _("Add"), G_CALLBACK(add_group_cb),
 					   _("Cancel"), NULL,
 					   NULL, NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_BLIST, NULL);
+					   PURPLE_REQUEST_HINT_BLIST, NULL);
 }
 
 void

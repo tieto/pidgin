@@ -3387,7 +3387,7 @@ static void blist_menu_conf_create(PurpleBuddy *buddy, const char *msg) {
 		      _("Create"), G_CALLBACK(conf_create_prompt_join),
 		      _("Cancel"), G_CALLBACK(conf_create_prompt_cancel),
 			  acct, purple_buddy_get_name(buddy), NULL,
-		      PURPLE_REQUEST_UI_HINT_CONV, buddy);
+		      PURPLE_REQUEST_HINT_CONV, buddy);
   g_free(msg1);
 }
 
@@ -3473,7 +3473,7 @@ static void blist_menu_conf_list(PurpleBuddy *buddy,
 		      _("Invite"), G_CALLBACK(conf_select_prompt_invite),
 		      _("Cancel"), G_CALLBACK(conf_select_prompt_cancel),
 			  acct, purple_buddy_get_name(buddy), NULL,
-		      PURPLE_REQUEST_UI_HINT_CONV, buddy);
+		      PURPLE_REQUEST_HINT_CONV, buddy);
   g_free(msg);
 }
 
@@ -3644,7 +3644,7 @@ static void prompt_host(PurpleConnection *gc) {
 		     _("Connect"), G_CALLBACK(prompt_host_ok_cb),
 		     _("Cancel"), G_CALLBACK(prompt_host_cancel_cb),
 			 acct, NULL, NULL,
-		     PURPLE_REQUEST_UI_HINT_CONV, gc);
+		     PURPLE_REQUEST_HINT_CONV, gc);
 
   g_free(msg);
 }
@@ -5218,7 +5218,7 @@ static void st_import_action(PurplePluginAction *act) {
   purple_request_file_with_hint(gc, title, NULL, FALSE,
 		    G_CALLBACK(st_import_action_cb), NULL,
 		    account, NULL, NULL,
-		    PURPLE_REQUEST_UI_HINT_CONV, gc);
+		    PURPLE_REQUEST_HINT_CONV, gc);
 
   g_free(title);
 }
@@ -5258,7 +5258,7 @@ static void st_export_action(PurplePluginAction *act) {
   purple_request_file_with_hint(gc, title, NULL, TRUE,
 		    G_CALLBACK(st_export_action_cb), NULL,
 			account, NULL, NULL,
-		    PURPLE_REQUEST_UI_HINT_CONV, gc);
+		    PURPLE_REQUEST_HINT_CONV, gc);
 
   g_free(title);
 }
@@ -5396,7 +5396,7 @@ static void remote_group_multi(struct mwResolveResult *result,
 		      _("Add Group"), G_CALLBACK(remote_group_multi_cb),
 		      _("Cancel"), G_CALLBACK(remote_group_multi_cleanup),
 			  purple_connection_get_account(gc), result->name, NULL,
-		      PURPLE_REQUEST_UI_HINT_BLIST, pd);
+		      PURPLE_REQUEST_HINT_BLIST, pd);
 
   g_free(msg);
 }
@@ -5486,7 +5486,7 @@ static void remote_group_action(PurplePluginAction *act) {
 		     _("Add"), G_CALLBACK(remote_group_action_cb),
 		     _("Cancel"), NULL,
 			 purple_connection_get_account(gc), NULL, NULL,
-		     PURPLE_REQUEST_UI_HINT_BLIST, gc);
+		     PURPLE_REQUEST_HINT_BLIST, gc);
 }
 
 
@@ -5611,7 +5611,7 @@ static void search_action(PurplePluginAction *act) {
 		     _("Search"), G_CALLBACK(search_action_cb),
 		     _("Cancel"), NULL,
 			 purple_connection_get_account(gc), NULL, NULL,
-			 PURPLE_REQUEST_UI_HINT_BLIST, gc);
+			 PURPLE_REQUEST_HINT_BLIST, gc);
 }
 
 

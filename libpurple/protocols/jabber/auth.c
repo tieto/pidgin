@@ -321,7 +321,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 					purple_request_yes_no_with_hint(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
 							msg,
-							2, js->gc->account, NULL, NULL, PURPLE_REQUEST_UI_HINT_ACCOUNT, js->gc->account,
+							2, js->gc->account, NULL, NULL, PURPLE_REQUEST_HINT_ACCOUNT, js->gc->account,
 							allow_cyrus_plaintext_auth,
 							disallow_plaintext_auth);
 					g_free(msg);
@@ -512,7 +512,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 					msg,
 					2,
 					purple_connection_get_account(js->gc), NULL, NULL,
-					PURPLE_REQUEST_UI_HINT_ACCOUNT, purple_connection_get_account(js->gc),
+					PURPLE_REQUEST_HINT_ACCOUNT, purple_connection_get_account(js->gc),
 					allow_plaintext_auth, disallow_plaintext_auth);
 			g_free(msg);
 			return;
@@ -600,7 +600,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 						_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 						2,
 						purple_connection_get_account(js->gc), NULL, NULL,
-						PURPLE_REQUEST_UI_HINT_ACCOUNT, purple_connection_get_account(js->gc),
+						PURPLE_REQUEST_HINT_ACCOUNT, purple_connection_get_account(js->gc),
 						allow_plaintext_auth, disallow_plaintext_auth);
 				return;
 			}

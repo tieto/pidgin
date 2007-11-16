@@ -472,6 +472,6 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 	return purple_request_fields_with_hint(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(finch_request_save_in_prefs), _("Cancel"), NULL,
 			NULL, NULL, NULL,
-			PURPLE_REQUEST_UI_HINT_PLUGINMGR, NULL);
+			PURPLE_UI_REQUEST_HINT_PLUGINMGR, NULL);
 }
 
