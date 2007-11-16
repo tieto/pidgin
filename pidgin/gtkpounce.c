@@ -472,13 +472,6 @@ void
 pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 							PurplePounce *cur_pounce)
 {
-	pidgin_pounce_editor_show_with_parent(NULL, account, name, cur_pounce);
-}
-
-void
-pidgin_pounce_editor_show_with_parent(GtkWindow *parent, PurpleAccount *account, const char *name,
-							PurplePounce *cur_pounce)
-{
 	PidginPounceDialog *dialog;
 	GtkWidget *window;
 	GtkWidget *label;
@@ -1057,7 +1050,7 @@ pounces_manager_connection_cb(PurpleConnection *gc, GtkWidget *add_button)
 static void
 pounces_manager_add_cb(GtkButton *button, gpointer user_data)
 {
-	pidgin_pounce_editor_show_with_parent(GTK_WINDOW(pounces_manager->window), NULL, NULL, NULL);
+	pidgin_pounce_editor_show(NULL, NULL, NULL);
 }
 
 static void
@@ -1067,7 +1060,7 @@ pounces_manager_modify_foreach(GtkTreeModel *model, GtkTreePath *path,
 	PurplePounce *pounce;
 
 	gtk_tree_model_get(model, iter, POUNCES_MANAGER_COLUMN_POUNCE, &pounce, -1);
-	pidgin_pounce_editor_show_with_parent(GTK_WINDOW(pounces_manager->window), NULL, NULL, pounce);
+	pidgin_pounce_editor_show(NULL, NULL, pounce);
 }
 
 static void
@@ -1167,7 +1160,7 @@ pounce_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, gpointer us
 	if ((pounce != NULL) && (event->button == 1) &&
 		(event->type == GDK_2BUTTON_PRESS))
 	{
-		pidgin_pounce_editor_show_with_parent(GTK_WINDOW(pounces_manager->window), NULL, NULL, pounce);
+		pidgin_pounce_editor_show(NULL, NULL, pounce);
 		return TRUE;
 	}
 
@@ -1318,12 +1311,6 @@ create_pounces_list(PouncesManager *dialog)
 void
 pidgin_pounces_manager_show(void)
 {
-	pidgin_pounces_manager_show_with_parent(NULL);
-}
-
-void
-pidgin_pounces_manager_show_with_parent(GtkWindow *parent)
-{
 	PouncesManager *dialog;
 	GtkWidget *bbox;
 	GtkWidget *button;
@@ -1334,7 +1321,6 @@ pidgin_pounces_manager_show_with_parent(GtkWindow *parent)
 
 	if (pounces_manager != NULL) {
 		gtk_window_present(GTK_WINDOW(pounces_manager->window));
-		gtk_window_set_transient_for(GTK_WINDOW(pounces_manager->window), parent);
 		return;
 	}
 
@@ -1345,7 +1331,6 @@ pidgin_pounces_manager_show_with_parent(GtkWindow *parent)
 
 	dialog->window = win = pidgin_create_window(_("Buddy Pounces"), PIDGIN_HIG_BORDER, "pounces", TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
-	gtk_window_set_transient_for(GTK_WINDOW(win), parent);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(pounces_manager_destroy_cb), dialog);

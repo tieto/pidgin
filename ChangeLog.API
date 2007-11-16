@@ -14,13 +14,6 @@ version 2.3.0 (??/??/????):
 		  to unload a plugin--fails.  This then prevents the plugin
 		  from being saved in the saved plugins list, so it'll won't
 		  be loaded at the next startup.
-		* pidgin_dialogs_about_with_parent()
-		* pidgin_log_show_contact_with_parent()
-		* pidgin_log_show_with_parent()
-		* pidgin_plugin_dialog_show_with_parent()
-		* pidgin_pounce_editor_show_with_parent()
-		* pidgin_pounces_manager_show_with_parent()
-		* pidgin_syslog_show_with_parent()
 
 		Changed:
 		* purple_plugin_unload() now honors the return value of a
@@ -28,15 +21,6 @@ version 2.3.0 (??/??/????):
 		* purple_plugin_unload() no longer does its own notifications
 		  when a dependent plugin fails to unload.  The UI should do
 		  something appropriate.
-
-		Deprecated:
-		* pidgin_dialogs_about()
-		* pidgin_log_show_contact()
-		* pidgin_log_show()
-		* pidgin_plugin_dialog_show()
-		* pidgin_pounce_editor_show()
-		* pidgin_pounces_manager_show()
-		* pidgin_syslog_show()
 
 version 2.2.2 (??/??/????):
 	libpurple:
