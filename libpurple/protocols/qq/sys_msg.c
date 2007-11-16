@@ -83,7 +83,7 @@ static void _qq_search_before_auth_with_gc_and_uid(gc_and_uid *g)
 	qq_send_packet_get_info(gc, uid, TRUE);	/* we want to see window */
 
 	nombre = uid_to_purple_name(uid);
-	purple_request_action_with_hint
+	purple_request_action
 	    (gc, NULL, _("Do you want to approve the request?"), "", 2,
 		 purple_connection_get_account(gc), nombre, NULL,
 		 PURPLE_REQUEST_HINT_CONV, g, 2,
@@ -106,11 +106,11 @@ static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 
 	qq_send_packet_get_info(gc, uid, TRUE);	/* we want to see window */
 	nombre = uid_to_purple_name(uid);
-	purple_request_action_with_hint
+	purple_request_action
 	    (gc, NULL, _("Do you want to add this buddy?"), "", 2,
 		 purple_connection_get_account(gc), nombre, NULL,
 		 PURPLE_REQUEST_HINT_BUDDY, g, 2,
-		 _("Cancel"), NULL,
+	     _("Cancel"), NULL,
 		 _("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid));
 	g_free(nombre);
 }
@@ -239,7 +239,7 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 	reason = g_strdup_printf(_("Message: %s"), msg_utf8);
 	_qq_sys_msg_log_write(gc, message, from);
 
-	purple_request_action_with_hint
+	purple_request_action
 	    (gc, NULL, message, reason, 2,
 		purple_connection_get_account(gc), name, NULL,
 		 PURPLE_REQUEST_HINT_BUDDY, g, 3,
