@@ -31,41 +31,29 @@
 /**
  * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
  *
- * @param account    The optional account to use.
- * @param name       The optional name to pounce on.
- * @param cur_pounce The current buddy pounce, if editing an existing one.
- *
- * @deprecated Use pidgin_pounce_editor_show_with_parent() instead.
- */
-void pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
-								PurplePounce *cur_pounce);
-
-/**
- * Displays a New Buddy Pounce or Edit Buddy Pounce dialog.
- *
  * @param parent     The parent window.
  * @param account    The optional account to use.
  * @param name       The optional name to pounce on.
  * @param cur_pounce The current buddy pounce, if editing an existing one.
- *
- * @since 2.3.0
  */
 void pidgin_pounce_editor_show_with_parent(GtkWindow *parent, PurpleAccount *account, const char *name,
 								PurplePounce *cur_pounce);
 
 /**
- * Shows the pounces manager window.
- *
- * @deprecated Use pidgin_pounces_manager_show_with_parent() instead.
+ * @deprecated Please use pidgin_pounce_editor_show_with_parent
  */
-void pidgin_pounces_manager_show(void);
+void pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
+								PurplePounce *cur_pounce);
 
 /**
  * Shows the pounces manager window.
- *
- * @since 2.3.0
  */
 void pidgin_pounces_manager_show_with_parent(GtkWindow *parent);
+
+/**
+ * @deprecated Please use pidgin_pounces_manager_show_with_parent
+ */
+void pidgin_pounces_manager_show(void);
 
 /**
  * Hides the pounces manager window.
