@@ -1049,7 +1049,7 @@ purple_network_get_my_ip_ext2(int fd)
 					((add >> 16) & 255),
 					((add >> 8) & 255),
 					add & 255);
-				tip = (char*) ((int) tip + len);
+				tip = &tip[len];
 				count++;
 				continue;
 			}
