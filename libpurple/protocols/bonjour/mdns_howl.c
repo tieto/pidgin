@@ -115,7 +115,7 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 {
 	sw_discovery_resolve_id rid;
 	PurpleAccount *account = (PurpleAccount*)extra;
-	PurpleBuddy *0b = NULL;
+	PurpleBuddy *pb = NULL;
 
 	switch (status)
 	{
