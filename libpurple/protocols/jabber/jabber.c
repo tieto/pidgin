@@ -60,7 +60,7 @@
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
 static PurplePlugin *my_protocol = NULL;
-GList *jabber_features;
+GList *jabber_features = NULL;
 
 static void jabber_unregister_account_cb(JabberStream *js);
 
@@ -209,11 +209,11 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 		jabber_message_parse(js, *packet);
 	} else if(!strcmp((*packet)->name, "stream:features")) {
 		jabber_stream_features_parse(js, *packet);
-	} else if (!strcmp((*packet)->name, "features") &&
+	} else if (!strcmp((*packet)->name, "features") && xmlns &&
 		   !strcmp(xmlns, "http://etherx.jabber.org/streams")) {
 		jabber_stream_features_parse(js, *packet);
 	} else if(!strcmp((*packet)->name, "stream:error") ||
-			 (!strcmp((*packet)->name, "error") &&
+			 (!strcmp((*packet)->name, "error") && xmlns &&
 				!strcmp(xmlns, "http://etherx.jabber.org/streams")))
 	{
 		jabber_stream_handle_error(js, *packet);
@@ -1384,7 +1384,7 @@ void jabber_remove_feature(const char *shortname) {
 			g_free(feat->namespace);
 			
 			g_free(feature->data);
-			feature = g_list_delete_link(feature, feature);
+			jabber_features = g_list_delete_link(jabber_features, feature);
 			break;
 		}
 	}
