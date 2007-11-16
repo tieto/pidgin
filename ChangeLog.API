@@ -14,7 +14,6 @@ version 2.3.0 (??/??/????):
 		  to unload a plugin--fails.  This then prevents the plugin
 		  from being saved in the saved plugins list, so it'll won't
 		  be loaded at the next startup.
-
 		* pidgin_dialogs_about_with_parent()
 		* pidgin_log_show_contact_with_parent()
 		* pidgin_log_show_with_parent()
@@ -22,18 +21,6 @@ version 2.3.0 (??/??/????):
 		* pidgin_pounce_editor_show_with_parent()
 		* pidgin_pounces_manager_show_with_parent()
 		* pidgin_syslog_show_with_parent()
-
-		* purple_request_accept_cancel_with_hint()
-		* purple_request_action_varg_with_hint()
-		* purple_request_action_with_hint()
-		* purple_request_choice_varg_with_hint()
-		* purple_request_choice_with_hint()
-		* purple_request_fields_with_hint()
-		* purple_request_file_with_hint()
-		* purple_request_folder_with_hint()
-		* purple_request_input_with_hint()
-		* purple_request_ok_cancel_with_hint()
-		* purple_request_yes_no_with_hint()
 
 		Changed:
 		* purple_plugin_unload() now honors the return value of a
@@ -50,18 +37,6 @@ version 2.3.0 (??/??/????):
 		* pidgin_pounce_editor_show()
 		* pidgin_pounces_manager_show()
 		* pidgin_syslog_show()
-
-		* purple_request_accept_cancel()
-		* purple_request_action_varg()
-		* purple_request_action()
-		* purple_request_choice_varg()
-		* purple_request_choice()
-		* purple_request_fields()
-		* purple_request_file()
-		* purple_request_folder()
-		* purple_request_input()
-		* purple_request_ok_cancel()
-		* purple_request_yes_no()
 
 version 2.2.2 (??/??/????):
 	libpurple:
