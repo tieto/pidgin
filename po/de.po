@@ -7,13 +7,14 @@
 #
 # This file is distributed under the same license as the Pidgin package.
 #
+# Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2007.
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-15 22:50+0100\n"
-"PO-Revision-Date: 2007-11-15 23:00+0100\n"
-"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2007-11-16 10:03+0100\n"
+"PO-Revision-Date: 2007-11-16 10:03+0100\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1458,7 +1459,7 @@ msgid "SSL Certificate Error"
 msgstr "SSL-Zertifikatfehler"
 
 msgid "Invalid certificate chain"
-msgstr "Ungültige Zertifizierungskette"
+msgstr "Ungültige Zertifikationskette"
 
 #. vrq will be completed by user_auth
 msgid ""
@@ -1962,7 +1963,7 @@ msgstr ""
 "Automatisch akzeptierte Übertragung der Datei „%s“ von „%s“ abgeschlossen."
 
 msgid "Autoaccept complete"
-msgstr "Auto-Akzeptieren fertig"
+msgstr "Autoaccept fertig"
 
 #, c-format
 msgid "When a file-transfer request arrives from %s"
@@ -8889,7 +8890,7 @@ msgstr "TOC-Protokoll-Plugin"
 #, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr ""
-"%s hat Ihnen eine Webcam-Einladung gesendet, die noch nicht unterstützt wird."
+"%s hat Ihnen eine Webcam-Einladung gesenden, die noch nicht unterstützt wird."
 
 msgid "Your Yahoo! message did not get sent."
 msgstr "Ihre Yahoo!-Nachricht wurde nicht verschickt."
