@@ -1400,10 +1400,11 @@ char *jabber_status_text(PurpleBuddy *b)
 		char *stripped;
 
 		if(!(stripped = purple_markup_strip_html(jabber_buddy_get_status_msg(jb)))) {
-			PurpleStatus *status = purple_presence_get_active_status(purple_buddy_get_presence(b));
-
-			if(!purple_status_is_available(status))
-				stripped = g_strdup(purple_status_get_name(status));
+			PurplePresence *presence = purple_buddy_get_presence(b);
+			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
+				PurpleStatus *status = purple_presence_get_status(presence, "tune");
+				stripped = g_strdup(purple_status_get_attr_string(status, PURPLE_TUNE_TITLE));
+			}
 		}
 
 		if(stripped) {
@@ -1429,6 +1430,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 
 	if(jb) {
 		JabberBuddyResource *jbr = NULL;
+		PurplePresence *presence = purple_buddy_get_presence(b);
 		const char *sub;
 		GList *l;
 		const char *mood;
@@ -1455,7 +1457,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 			
 			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
 			
-			status = purple_presence_get_active_status(purple_buddy_get_presence(b));
+			status = purple_presence_get_active_status(presence);
 			value = purple_status_get_attr_value(status, "mood");
 			if (value && purple_value_get_type(value) == PURPLE_TYPE_STRING && (mood = purple_value_get_string(value))) {
 				
@@ -1467,7 +1469,12 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 					g_free(moodplustext);
 				} else
 					purple_notify_user_info_add_pair(user_info, _("Mood"), mood);
-		}
+			}
+			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {	
+				PurpleStatus *tune = purple_presence_get_status(presence, "tune");
+				const char *title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
+				purple_notify_user_info_add_pair(user_info, _("Current media"), title);
+			}
 		}
 
 		for(l=jb->resources; l; l = l->next) {
@@ -1532,15 +1539,6 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
 			NULL);
@@ -1555,15 +1553,6 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
 			NULL);
@@ -1578,15 +1567,6 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
 			NULL);
@@ -1601,15 +1581,6 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
 			NULL);
@@ -1624,15 +1595,6 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
-			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
-			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			"nick", _("Nickname"), purple_value_new(PURPLE_TYPE_STRING),
 			"buzz", _("Allow Buzz"), purple_value_new(PURPLE_TYPE_BOOLEAN),
 			NULL);
@@ -1647,6 +1609,20 @@ GList *jabber_status_types(PurpleAccount *account)
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_UNAVAILABLE),
 			NULL, FALSE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
+	types = g_list_append(types, type);
+
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_TUNE,
+			"tune", NULL, TRUE, TRUE, TRUE,
+			PURPLE_TUNE_ARTIST, _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_ALBUM, _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_GENRE, _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_COMMENT, _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TRACK, _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TIME, _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
+			PURPLE_TUNE_YEAR, _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
+			PURPLE_TUNE_URL, _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1914,7 +1890,7 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 			text = _("Authentication Failure");
 		}
 	} else if(!strcmp(packet->name, "stream:error") ||
-			 (!strcmp(packet->name, "error") &&
+			 (!strcmp(packet->name, "error") && xmlns &&
 				!strcmp(xmlns, "http://etherx.jabber.org/streams"))) {
 		if(xmlnode_get_child(packet, "bad-format")) {
 			text = _("Bad Format");
@@ -2189,55 +2165,67 @@ static PurpleCmdRet jabber_cmd_ping(PurpleConversation *conv,
 	return PURPLE_CMD_RET_OK;
 }
 
+static gboolean _jabber_send_buzz(JabberStream *js, const char *username, char **error) {
+
+	JabberBuddy *jb;
+	JabberBuddyResource *jbr;
+	GList *iter;
+
+	if(!username)
+		return FALSE;
+
+	jb = jabber_buddy_find(js, username, FALSE);
+	if(!jb) {
+		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), username);
+		return FALSE;
+	}
+
+	jbr = jabber_buddy_find_resource(jb, NULL);
+	if(!jbr) {
+		*error = g_strdup_printf(_("Unable to buzz, because user %s might be offline."), username);
+		return FALSE;
+	}
+
+	if(!jbr->caps) {
+		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), username);
+		return FALSE;
+	}
+
+	for(iter = jbr->caps->features; iter; iter = g_list_next(iter)) {
+		if(!strcmp(iter->data, "http://www.xmpp.org/extensions/xep-0224.html#ns")) {
+			xmlnode *buzz, *msg = xmlnode_new("message");
+			gchar *to;
+
+			to = g_strdup_printf("%s/%s", username, jbr->name);
+			xmlnode_set_attrib(msg, "to", to);
+			g_free(to);
+
+			/* avoid offline storage */
+			xmlnode_set_attrib(msg, "type", "headline");
+
+			buzz = xmlnode_new_child(msg, "attention");
+			xmlnode_set_namespace(buzz, "http://www.xmpp.org/extensions/xep-0224.html#ns");
+
+			jabber_send(js, msg);
+			xmlnode_free(msg);
+
+			return TRUE;
+		}
+	}
+
+	*error = g_strdup_printf(_("Unable to buzz, because the user %s does not support it."), username);
+	return FALSE;
+}
+
 static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberStream *js = conv->account->gc->proto_data;
-	xmlnode *msg, *buzz;
-	JabberBuddy *jb;
-	JabberBuddyResource *jbr;
-	char *to;
-	GList *iter;
 
 	if(!args || !args[0])
 		return PURPLE_CMD_RET_FAILED;
-	
-	jb = jabber_buddy_find(js, args[0], FALSE);
-	if(!jb) {
-		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), args[0]);
-		return PURPLE_CMD_RET_FAILED;
-	}
-	
-	jbr = jabber_buddy_find_resource(jb, NULL);
-	if(!jbr) {
-		*error = g_strdup_printf(_("Unable to buzz, because user %s might be offline."), args[0]);
-		return PURPLE_CMD_RET_FAILED;
-	}
-	if(!jbr->caps) {
-		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), args[0]);
-		return PURPLE_CMD_RET_FAILED;
-	}
-	for(iter = jbr->caps->features; iter; iter = g_list_next(iter)) {
-		if(!strcmp(iter->data, "http://www.xmpp.org/extensions/xep-0224.html#ns")) {
-			msg = xmlnode_new("message");
-			to = g_strdup_printf("%s/%s", args[0], jbr->name);
-			xmlnode_set_attrib(msg,"to",to);
-			g_free(to);
-			
-			/* avoid offline storage */
-			xmlnode_set_attrib(msg,"type","headline");
-			
-			buzz = xmlnode_new_child(msg,"attention");
-			xmlnode_set_namespace(buzz,"http://www.xmpp.org/extensions/xep-0224.html#ns");
-			
-			jabber_send(js,msg);
-			xmlnode_free(msg);
-			
-			return PURPLE_CMD_RET_OK;
-		}
-	}
-	*error = g_strdup_printf(_("Unable to buzz, because the user %s does not support it."), args[0]);
-	return PURPLE_CMD_RET_FAILED;
+
+	return _jabber_send_buzz(js, args[0], error)  ? PURPLE_CMD_RET_OK : PURPLE_CMD_RET_FAILED;
 }
 
 GList *jabber_attention_types(PurpleAccount *account)
@@ -2258,23 +2246,16 @@ GList *jabber_attention_types(PurpleAccount *account)
 
 gboolean jabber_send_attention(PurpleConnection *gc, const char *username, guint code)
 {
-	PurpleConversation *conv;
-	char *error;
-	char *args[1];
-	PurpleCmdRet ret;
+	JabberStream *js = gc->proto_data;
+	gchar *error = NULL;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, username, gc->account);
-
-	args[0] = (char *)username;
-
-	ret = jabber_cmd_buzz(conv, "buzz", args, &error, NULL);
-
-	if (ret == PURPLE_CMD_RET_FAILED) {
+	if (!_jabber_send_buzz(js, username, &error)) {
 		purple_debug_error("jabber", "jabber_send_attention: jabber_cmd_buzz failed with error: %s\n", error ? error : "(NULL)");
+		g_free(error);
 		return FALSE;
-	} else {
-		return TRUE;
 	}
+
+	return TRUE;
 }
 
 

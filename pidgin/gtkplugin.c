@@ -303,7 +303,24 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 	{
 		pidgin_set_cursor(plugin_dialog, GDK_WATCH);
 
-		purple_plugin_unload(plug);
+		if (!purple_plugin_unload(plug))
+		{
+			const char *primary = _("Could not unload plugin");
+			const char *reload = _("The plugin could not be unloaded now, but will be disabled at the next startup.");
+
+			if (!plug->error)
+			{
+				purple_notify_warning(NULL, NULL, primary, reload);
+			}
+			else
+			{
+				char *tmp = g_strdup_printf("%s\n\n%s", reload, plug->error);
+				purple_notify_warning(NULL, NULL, primary, tmp);
+				g_free(tmp);
+			}
+
+			purple_plugin_disable(plug);
+		}
 
 		pidgin_clear_cursor(plugin_dialog);
 	}
@@ -516,11 +533,6 @@ show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *co
 
 void pidgin_plugin_dialog_show()
 {
-	pidgin_plugin_dialog_show_with_parent(NULL);
-}
-
-void pidgin_plugin_dialog_show_with_parent(GtkWindow *parent)
-{
 	GtkWidget *sw;
 	GtkWidget *event_view;
 	GtkListStore *ls;
@@ -529,8 +541,6 @@ void pidgin_plugin_dialog_show_with_parent(GtkWindow *parent)
 	GtkTreeSelection *sel;
 
 	if (plugin_dialog != NULL) {
-		if (parent)
-			gtk_window_set_transient_for(GTK_WINDOW(plugin_dialog), parent);
 		gtk_window_present(GTK_WINDOW(plugin_dialog));
 		return;
 	}
@@ -539,8 +549,6 @@ void pidgin_plugin_dialog_show_with_parent(GtkWindow *parent)
 						    NULL,
 						    GTK_DIALOG_NO_SEPARATOR,
 						    NULL);
-	if (parent)
-		gtk_window_set_transient_for(GTK_WINDOW(plugin_dialog), parent);
 	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
 						_("Configure Pl_ugin"), PIDGIN_RESPONSE_CONFIGURE);
 	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),

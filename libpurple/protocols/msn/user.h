@@ -43,6 +43,16 @@ typedef enum
 } MsnUserType;
 
 /**
+ * Current media.
+ */
+typedef struct _CurrentMedia
+{
+	char *artist;   /**< Artist. */
+	char *album;    /**< Album.  */
+	char *title;    /**< Title.  */
+} CurrentMedia;
+
+/**
  * A user.
  */
 struct _MsnUser
@@ -60,7 +70,7 @@ struct _MsnUser
 
 	const char *status;     /**< The state of the user.         */
 	char *statusline;       /**< The state of the user.         */	
-	char *currentmedia;     /**< The current media of the user. */
+	CurrentMedia media;     /**< Current media of the user.     */
 
 	gboolean idle;          /**< The idle state of the user.    */
 
@@ -134,10 +144,10 @@ void msn_user_set_statusline(MsnUser *user, const char *statusline);
  /**
   *  Sets the current media of user.
   * 
-  *  @param user The user.
-  *  @param state The statusline string.
+  *  @param user   The user.
+  *  @param cmedia Current media.
   */
-void msn_user_set_currentmedia(MsnUser *user, const char *currentmedia);
+void msn_user_set_currentmedia(MsnUser *user, const CurrentMedia *cmedia);
 
 /**
  * Sets the new state of user.

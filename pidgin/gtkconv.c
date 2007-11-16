@@ -6519,6 +6519,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		AtkObject *accessibility_obj;
 		/* I think this is a little longer than it needs to be but I'm lazy. */
 		char *style;
+		gboolean bold = FALSE;
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 			im = PURPLE_CONV_IM(conv);
@@ -6552,7 +6553,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
 				CONV_TEXT_COLUMN, markup, -1);
 	        /* XXX seanegan Why do I have to do this? */
-        	gtk_widget_queue_draw(gtkconv->infopane);
+		gtk_widget_queue_draw(gtkconv->infopane);
 	
 		if (title != markup)
 			g_free(markup);
@@ -6571,31 +6572,41 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			style = "color=\"#c4a000\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)	{
 			atk_object_set_description(accessibility_obj, _("Nick Said"));
-			style = "color=\"#204a87\" weight=\"bold\"";
+			style = "color=\"#cc0000\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
-			style = "color=\"#cc0000\" weight=\"bold\"";
+			if (gtkconv->active_conv->type == PURPLE_CONV_TYPE_CHAT)
+				style = "color=\"#204a87\" weight=\"bold\"";
+			else
+				style = "color=\"#cc0000\" weight=\"bold\"";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
 			atk_object_set_description(accessibility_obj, _("New Event"));
-			style = "color=\"#888a85\" weight=\"bold\"";
+			style = "color=\"#888a85\"";
 		} else {
-			style = "";
+			style = NULL;
 		}
+
+		if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT ||
+				gtkconv->unseen_state == PIDGIN_UNSEEN_NICK ||
+				gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
+			bold = TRUE;
 		
-		if (*style != '\0')
+		if (style || bold)
 		{
 			char *html_title,*label;
 
 			html_title = g_markup_escape_text(title, -1);
-			label = g_strdup_printf("<span %s>%s</span>",
-			                        style, html_title);
+			label = g_strdup_printf("<span %s %s>%s</span>",
+			                        style ? style : "",
+			                        bold ? "weight=\"bold\"" : "",
+			                        html_title);
 			g_free(html_title);
 			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
 			g_free(label);
 		}
 		else
 			gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
-		
+
 		if (pidgin_conv_window_is_active_conversation(conv))
 			update_typing_icon(gtkconv);
 
@@ -7397,6 +7408,17 @@ update_chat_topic(PurpleConversation *conv, const char *old, const char *new)
 	pidgin_conv_update_fields(conv, PIDGIN_CONV_TOPIC);
 }
 
+/* Message history stuff */
+
+/* Compare two PurpleConvMessage's, according to time in ascending order. */
+static int
+message_compare(gconstpointer p1, gconstpointer p2)
+{
+	const PurpleConvMessage *m1 = p1, *m2 = p2;
+	return (m1->when > m2->when);
+}
+
+/* Adds some message history to the gtkconv. This happens in a idle-callback. */
 static gboolean
 add_message_history_to_gtkconv(gpointer data)
 {
@@ -7404,49 +7426,106 @@ add_message_history_to_gtkconv(gpointer data)
 	int count = 0;
 	int timer = gtkconv->attach.timer;
 	time_t when = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(gtkconv->entry), "attach-start-time"));
+	gboolean im = (gtkconv->active_conv->type == PURPLE_CONV_TYPE_IM);
 
 	gtkconv->attach.timer = 0;
 	while (gtkconv->attach.current && count < 100) {  /* XXX: 100 is a random value here */
 		PurpleConvMessage *msg = gtkconv->attach.current->data;
-		if (when && when < msg->when) {
+		if (!im && when && when < msg->when) {
 			gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR><HR>", 0);
 			g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 		}
-		pidgin_conv_write_conv(gtkconv->active_conv, msg->who, msg->who, msg->what, msg->flags, msg->when);
-		gtkconv->attach.current = gtkconv->attach.current->prev;
+		pidgin_conv_write_conv(msg->conv, msg->who, msg->who, msg->what, msg->flags, msg->when);
+		if (im) {
+			gtkconv->attach.current = g_list_delete_link(gtkconv->attach.current, gtkconv->attach.current);
+		} else {
+			gtkconv->attach.current = gtkconv->attach.current->prev;
+		}
 		count++;
 	}
 	gtkconv->attach.timer = timer;
 	if (gtkconv->attach.current)
 		return TRUE;
 
+	g_source_remove(gtkconv->attach.timer);
+	gtkconv->attach.timer = 0;
+	if (im) {
+		/* Print any message that was sent while the old history was being added back. */
+		GList *msgs = NULL;
+		GList *iter = gtkconv->convs;
+		for (; iter; iter = iter->next) {
+			PurpleConversation *conv = iter->data;
+			GList *history = purple_conversation_get_message_history(conv);
+			for (; history; history = history->next) {
+				PurpleConvMessage *msg = history->data;
+				if (msg->when > when)
+					msgs = g_list_prepend(msgs, msg);
+			}
+		}
+		msgs = g_list_sort(msgs, message_compare);
+		for (; msgs; msgs = g_list_delete_link(msgs, msgs)) {
+			PurpleConvMessage *msg = msgs->data;
+			pidgin_conv_write_conv(msg->conv, msg->who, msg->who, msg->what, msg->flags, msg->when);
+		}
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR><HR>", 0);
+		g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
+	}
+
 	g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time", NULL);
 	purple_signal_emit(pidgin_conversations_get_handle(),
 			"conversation-displayed", gtkconv);
-	g_source_remove(gtkconv->attach.timer);
-	gtkconv->attach.timer = 0;
 	return FALSE;
+}
+
+static void
+pidgin_conv_attach(PurpleConversation *conv)
+{
+	int timer;
+	purple_conversation_set_data(conv, "unseen-count", NULL);
+	purple_conversation_set_ui_ops(conv, pidgin_conversations_get_conv_ui_ops());
+	private_gtkconv_new(conv, FALSE);
+	timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
+	if (timer)
+		purple_timeout_remove(timer);
 }
 
 gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 {
 	GList *list;
 	PidginConversation *gtkconv;
-	int timer;
 
 	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 		return FALSE;
 
-	purple_conversation_set_data(conv, "unseen-count", NULL);
-	purple_conversation_set_ui_ops(conv, pidgin_conversations_get_conv_ui_ops());
-	private_gtkconv_new(conv, FALSE);
+	pidgin_conv_attach(conv);
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	list = purple_conversation_get_message_history(conv);
 	if (list) {
+		switch (purple_conversation_get_type(conv)) {
+			case PURPLE_CONV_TYPE_IM: 
+			{
+				GList *convs;
+				list = g_list_copy(list);
+				for (convs = purple_get_ims(); convs; convs = convs->next)
+					if (convs->data != conv &&
+							pidgin_conv_find_gtkconv(convs->data) == gtkconv) {
+						pidgin_conv_attach(convs->data);
+						list = g_list_concat(list, g_list_copy(purple_conversation_get_message_history(convs->data)));
+					}
+				list = g_list_sort(list, message_compare);
+				gtkconv->attach.current = list;
+				list = g_list_last(list);
+				break;
+			}
+			case PURPLE_CONV_TYPE_CHAT:
+				gtkconv->attach.current = g_list_last(list);
+				break;
+			default:
+				g_return_val_if_reached(TRUE);
+		}
 		g_object_set_data(G_OBJECT(gtkconv->entry), "attach-start-time",
 				GINT_TO_POINTER(((PurpleConvMessage*)(list->data))->when));
-		gtkconv->attach.current = g_list_last(list);
 		gtkconv->attach.timer = g_idle_add(add_message_history_to_gtkconv, gtkconv);
 	} else {
 		purple_signal_emit(pidgin_conversations_get_handle(),
@@ -7458,9 +7537,6 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 		pidgin_conv_chat_add_users(conv, PURPLE_CONV_CHAT(conv)->in_room, TRUE);
 	}
 
-	timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
-	if (timer)
-		purple_timeout_remove(timer);
 	return TRUE;
 }
 
@@ -9790,4 +9866,5 @@ generate_nick_colors(guint *color_count, GdkColor background)
 
 	return colors;
 }
+
 

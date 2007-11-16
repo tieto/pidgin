@@ -185,6 +185,7 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
 									PurpleSslErrorFunction error_func,
 									void *data);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Makes a SSL connection using an already open file descriptor.
  *
@@ -202,19 +203,22 @@ PurpleSslConnection *purple_ssl_connect_fd(PurpleAccount *account, int fd,
 									   PurpleSslInputFunction func,
 									   PurpleSslErrorFunction error_func,
  									   void *data);
+#endif
 
 /**
-  * Makes a SSL connection using an already open file descriptor.
-  *
-  * @param account    The account making the connection.
-  * @param fd         The file descriptor.
-  * @param func       The SSL input handler function.
-  * @param error_func The SSL error handler function.
-  * @param host       The hostname of the other peer (to verify the CN)
-  * @param data       User-defined data.
-  *
-  * @return The SSL connection handle.
-  */
+ * Makes a SSL connection using an already open file descriptor.
+ *
+ * @param account    The account making the connection.
+ * @param fd         The file descriptor.
+ * @param func       The SSL input handler function.
+ * @param error_func The SSL error handler function.
+ * @param host       The hostname of the other peer (to verify the CN)
+ * @param data       User-defined data.
+ *
+ * @return The SSL connection handle.
+ *
+ * @since 2.2.0
+ */
 PurpleSslConnection *purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
                                            PurpleSslInputFunction func,
                                            PurpleSslErrorFunction error_func,
@@ -268,6 +272,8 @@ size_t purple_ssl_write(PurpleSslConnection *gsc, const void *buffer, size_t len
  *
  * @return The peer certificate chain, in the order of certificate, issuer,
  *         issuer's issuer, etc. @a NULL if no certificates have been provided,
+ *
+ * @since 2.2.0
  */
 GList * purple_ssl_get_peer_certificates(PurpleSslConnection *gsc);
 

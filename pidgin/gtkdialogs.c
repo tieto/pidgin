@@ -334,13 +334,6 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 
 void pidgin_dialogs_about()
 {
-	PidginBuddyList *blist = pidgin_blist_get_default_gtk_blist();
-
-	pidgin_dialogs_about_with_parent(blist ? GTK_WINDOW(blist->window) : NULL);
-}
-
-void pidgin_dialogs_about_with_parent(GtkWindow *parent)
-{
 	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *logo;
@@ -356,15 +349,11 @@ void pidgin_dialogs_about_with_parent(GtkWindow *parent)
 	GdkPixbuf *pixbuf;
 
 	if (about != NULL) {
-		if (parent)
-			gtk_window_set_transient_for(GTK_WINDOW(about), parent);
 		gtk_window_present(GTK_WINDOW(about));
 		return;
 	}
 
 	PIDGIN_DIALOG(about);
-	if (parent)
-		gtk_window_set_transient_for(GTK_WINDOW(about), parent);
 	tmp = g_strdup_printf(_("About %s"), PIDGIN_NAME);
 	gtk_window_set_title(GTK_WINDOW(about), tmp);
 	g_free(tmp);
@@ -765,6 +754,10 @@ pidgin_dialogs_im(void)
 	field = purple_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
 	purple_request_field_set_type_hint(field, "screenname");
 	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+
+	field = purple_request_field_blist_nodes_new("blistnodes", _("Buddy"),
+			PURPLE_REQUEST_BLIST_FLAG_BUDDY, NULL);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_account_new("account", _("_Account"), NULL);

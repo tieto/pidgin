@@ -9,13 +9,6 @@ pidgin_pounce_editor_show(account, name, cur_pounce)
 	const char * name
 	Purple::Pounce cur_pounce
 
-void
-pidgin_pounce_editor_show_with_parent(parent, account, name, cur_pounce)
-	void * parent
-	Purple::Account account
-	const char * name
-	Purple::Pounce cur_pounce
-
 MODULE = Pidgin::Pounce  PACKAGE = Pidgin::Pounces  PREFIX = pidgin_pounces_
 PROTOTYPES: ENABLE
 
@@ -27,10 +20,6 @@ PROTOTYPES: ENABLE
 
 void
 pidgin_pounces_manager_show()
-
-void
-pidgin_pounces_manager_show_with_parent(parent)
-	void * parent
 
 void
 pidgin_pounces_manager_hide()

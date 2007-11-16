@@ -157,7 +157,8 @@ static struct PurpleStatusPrimitiveMap
 	{ PURPLE_STATUS_INVISIBLE,       "invisible",       N_("Invisible")       },
 	{ PURPLE_STATUS_AWAY,            "away",            N_("Away")            },
 	{ PURPLE_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended away")   },
-	{ PURPLE_STATUS_MOBILE,          "mobile",          N_("Mobile")          }
+	{ PURPLE_STATUS_MOBILE,          "mobile",          N_("Mobile")          },
+	{ PURPLE_STATUS_TUNE,            "tune",            N_("Listening to music") }
 };
 
 const char *
@@ -903,6 +904,8 @@ purple_status_set_attr_string(PurpleStatus *status, const char *id,
 	}
 	g_return_if_fail(purple_value_get_type(attr_value) == PURPLE_TYPE_STRING);
 
+	/* XXX: Check if the value has actually changed. If it has, and the status
+	 * is active, should this trigger 'status_has_changed'? */
 	purple_value_set_string(attr_value, value);
 }
 
