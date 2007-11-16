@@ -336,7 +336,7 @@ static void ggp_action_buddylist_save(PurplePluginAction *action)
 	purple_request_file_with_hint(action, _("Save buddylist..."), NULL, TRUE,
 			G_CALLBACK(ggp_callback_buddylist_save_ok), NULL,
 			purple_connection_get_account(gc), NULL, NULL,
-			PURPLE_REQUEST_UI_HINT_BLIST, gc);
+			PURPLE_REQUEST_HINT_BLIST, gc);
 }
 /* }}} */
 
@@ -350,7 +350,7 @@ static void ggp_action_buddylist_load(PurplePluginAction *action)
 	purple_request_file_with_hint(action, "Load buddylist from file...", NULL, FALSE,
 			G_CALLBACK(ggp_callback_buddylist_load_ok), NULL,
 			purple_connection_get_account(gc), NULL, NULL,
-			PURPLE_REQUEST_UI_HINT_BLIST, gc);
+			PURPLE_REQUEST_HINT_BLIST, gc);
 }
 /* }}} */
 
@@ -506,7 +506,7 @@ static void ggp_register_user_dialog(PurpleConnection *gc)
 		_("OK"), G_CALLBACK(ggp_callback_register_account_ok),
 		_("Cancel"), G_CALLBACK(ggp_callback_register_account_cancel),
 		purple_connection_get_account(gc), NULL, NULL,
-		PURPLE_REQUEST_UI_HINT_REGISTER, gc);
+		PURPLE_REQUEST_HINT_REGISTER, gc);
 }
 /* }}} */
 
@@ -665,7 +665,7 @@ static void ggp_find_buddies(PurplePluginAction *action)
 		_("OK"), G_CALLBACK(ggp_callback_find_buddies),
 		_("Cancel"), NULL,
 		purple_connection_get_account(gc), NULL, NULL,
-		PURPLE_REQUEST_UI_HINT_BLIST, gc);
+		PURPLE_REQUEST_HINT_BLIST, gc);
 }
 /* }}} */
 
@@ -802,7 +802,7 @@ static void ggp_change_passwd_dialog(PurpleConnection *gc)
 		fields, _("OK"), G_CALLBACK(ggp_callback_change_passwd_ok),
 		_("Cancel"), NULL,
 		purple_connection_get_account(gc), NULL, NULL,
-		PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
+		PURPLE_REQUEST_HINT_ACCOUNT, gc);
 
 	g_free(msg);
 }
@@ -883,7 +883,7 @@ static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 			_("Add"), G_CALLBACK(ggp_callback_add_to_chat_ok),
 			_("Cancel"), NULL,
 			purple_connection_get_account(gc), NULL, NULL,			  
-			PURPLE_REQUEST_UI_HINT_BUDDY, gc);
+			PURPLE_REQUEST_HINT_BUDDY, gc);
 	g_free(msg);
 }
 /* }}} */

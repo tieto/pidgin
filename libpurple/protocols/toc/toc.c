@@ -2217,7 +2217,7 @@ static void accept_file_dialog(struct ft_request *ft) {
 	}
 
 	purple_request_accept_cancel_with_hint(ft->gc, NULL, buf, NULL, 
-							   PURPLE_DEFAULT_ACTION_NONE, PURPLE_REQUEST_UI_HINT_XFER, ft,
+							   PURPLE_DEFAULT_ACTION_NONE, PURPLE_REQUEST_HINT_XFER, ft,
 							   G_CALLBACK(toc_accept_ft),
 							   G_CALLBACK(toc_reject_ft));
 }
