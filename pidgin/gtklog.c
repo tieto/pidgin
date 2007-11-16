@@ -523,7 +523,7 @@ static void populate_log_tree(PidginLogViewer *lv)
 	}
 }
 
-static PidginLogViewer *display_log_viewer(GtkWindow *parent, struct log_viewer_hash_t *ht, GList *logs,
+static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *logs,
 						const char *title, GtkWidget *icon, int log_size)
 {
 	PidginLogViewer *lv;
@@ -569,7 +569,7 @@ static PidginLogViewer *display_log_viewer(GtkWindow *parent, struct log_viewer_
 		g_hash_table_insert(log_viewers, ht, lv);
 
 	/* Window ***********/
-	lv->window = gtk_dialog_new_with_buttons(title, parent, 0,
+	lv->window = gtk_dialog_new_with_buttons(title, NULL, 0,
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
 #ifdef _WIN32
 	/* Steal the "HELP" response and use it to trigger browsing to the logs folder */
@@ -676,10 +676,6 @@ static PidginLogViewer *display_log_viewer(GtkWindow *parent, struct log_viewer_
 }
 
 void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account) {
-	pidgin_log_show_with_parent(NULL, type, screenname, account);
-}
-
-void pidgin_log_show_with_parent(GtkWindow *parent, PurpleLogType type, const char *screenname, PurpleAccount *account) {
 	struct log_viewer_hash_t *ht;
 	PidginLogViewer *lv = NULL;
 	const char *name = screenname;
@@ -724,7 +720,7 @@ void pidgin_log_show_with_parent(GtkWindow *parent, PurpleLogType type, const ch
 
 	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
-	display_log_viewer(parent, ht, purple_log_get_logs(type, screenname, account),
+	display_log_viewer(ht, purple_log_get_logs(type, screenname, account),
 			title, gtk_image_new_from_pixbuf(prpl_icon),
 			purple_log_get_total_size(type, screenname, account));
 
@@ -734,10 +730,6 @@ void pidgin_log_show_with_parent(GtkWindow *parent, PurpleLogType type, const ch
 }
 
 void pidgin_log_show_contact(PurpleContact *contact) {
-	pidgin_log_show_contact_with_parent(NULL, contact);
-}
-
-void pidgin_log_show_contact_with_parent(GtkWindow *parent, PurpleContact *contact) {
 	struct log_viewer_hash_t *ht = g_new0(struct log_viewer_hash_t, 1);
 	PurpleBlistNode *child;
 	PidginLogViewer *lv = NULL;
@@ -791,16 +783,11 @@ void pidgin_log_show_contact_with_parent(GtkWindow *parent, PurpleContact *conta
 	}
 
 	title = g_strdup_printf(_("Conversations with %s"), name);
-	display_log_viewer(parent, ht, logs, title, image, total_log_size);
+	display_log_viewer(ht, logs, title, image, total_log_size);
 	g_free(title);
 }
 
-void pidgin_syslog_show(void)
-{
-	pidgin_syslog_show_with_parent(NULL);
-}
-
-void pidgin_syslog_show_with_parent(GtkWindow *parent)
+void pidgin_syslog_show()
 {
 	GList *accounts = NULL;
 	GList *logs = NULL;
@@ -820,7 +807,7 @@ void pidgin_syslog_show_with_parent(GtkWindow *parent)
 	}
 	logs = g_list_sort(logs, purple_log_compare);
 
-	syslog_viewer = display_log_viewer(parent, NULL, logs, _("System Log"), NULL, 0);
+	syslog_viewer = display_log_viewer(NULL, logs, _("System Log"), NULL, 0);
 }
 
 /****************************************************************************
