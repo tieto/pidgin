@@ -12805,11 +12805,6 @@ msgstr "అల్గారిథమ్ : \t%s\n"
 msgid "Key Length: \t%d bits\n"
 msgstr "తాళం పొడవు: \t%d बिट\n"
 
-#: ../libpurple/protocols/silc/util.c:378
-#, c-format
-msgid "Version: \t%s\n"
-msgstr "కారణం: %s"
-
 #: ../libpurple/protocols/silc/util.c:380
 #: ../libpurple/protocols/silc10/util.c:369
 #, c-format
