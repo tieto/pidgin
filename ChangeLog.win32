@@ -1,4 +1,4 @@
-version 2.2.3:
+version 2.3.0:
 	* Updated GTK+ to 2.12.1 (This was actually included in 2.2.2, but 
 	  didn't get into the Changelog.)
 	* Upgrade SILC to use the 1.1.5 toolkit
