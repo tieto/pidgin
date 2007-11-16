@@ -199,28 +199,6 @@ typedef struct
 } PurpleRequestField;
 
 /**
- * List of UI hints used by purple
- */
-#define PURPLE_REQUEST_HINT_ACCOUNT  "account"
-#define PURPLE_REQUEST_HINT_BLIST    "blist"
-#define PURPLE_REQUEST_HINT_BUDDY    "buddy"
-#define PURPLE_REQUEST_HINT_CONV     "conversation"
-#define PURPLE_REQUEST_HINT_REGISTER "register-account"
-#define PURPLE_REQUEST_HINT_XFER     "xfer"
-
-/**
- * List of UI hints used by purple UIs
- * We need a header file included by both pidgin and finch, but not part of
- * libpurple for these
- */
-#define PURPLE_UI_REQUEST_HINT_ACCOUNTMGR "accountmgr"
-#define PURPLE_UI_REQUEST_HINT_CERTMGR    "certmgr"
-#define PURPLE_UI_REQUEST_HINT_PLUGINMGR  "pluginmgr"
-#define PURPLE_UI_REQUEST_HINT_POUNCEMGR  "pouncemgr"
-#define PURPLE_UI_REQUEST_HINT_PREFSMGR   "preferences"
-#define PURPLE_UI_REQUEST_HINT_STATUSMGR  "statusmgr"
-
-/**
  * Request UI operations.
  */
 typedef struct

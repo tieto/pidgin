@@ -201,7 +201,7 @@ static void do_mood_set_mood(PurplePluginAction *action) {
 						  _("Set"), G_CALLBACK(do_mood_set_from_fields),
 						  _("Cancel"), NULL,
 						  purple_connection_get_account(gc), NULL, NULL,
-						  PURPLE_REQUEST_HINT_BLIST, gc);
+						  "blist", gc);
 	
 }
 

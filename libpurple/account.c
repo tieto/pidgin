@@ -1015,7 +1015,7 @@ purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
                         _("OK"), ok_cb,
                         _("Cancel"), cancel_cb,
 						account, NULL, NULL,
-                        PURPLE_REQUEST_HINT_ACCOUNT, user_data);
+                        "account", user_data);
 	g_free(primary);
 }
 
@@ -1304,7 +1304,7 @@ purple_account_request_change_password(PurpleAccount *account)
 						_("OK"), G_CALLBACK(change_password_cb),
 						_("Cancel"), NULL,
 						account, NULL, NULL,
-						PURPLE_REQUEST_HINT_ACCOUNT, account);
+						"account", account);
 }
 
 static void
@@ -1339,7 +1339,7 @@ purple_account_request_change_user_info(PurpleAccount *account)
 					   _("Save"), G_CALLBACK(set_user_info_cb),
 					   _("Cancel"), NULL,
 					   account, NULL, NULL,
-					   PURPLE_REQUEST_HINT_ACCOUNT, account);
+					   "account", account);
 }
 
 void

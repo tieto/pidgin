@@ -1293,7 +1293,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			if (client_entry->attrs)
 				purple_request_action_with_hint(gc, _("User Information"),
 						_("User Information"),
-						buf, 1, PURPLE_REQUEST_HINT_BLIST, client_entry, 2,
+						buf, 1, "blist", client_entry, 2,
 						_("OK"), G_CALLBACK(silcpurple_whois_more),
 						_("_More..."), G_CALLBACK(silcpurple_whois_more), gc->account, NULL, NULL);
 			else
@@ -1902,7 +1902,7 @@ silc_ask_passphrase(SilcClient client, SilcClientConnection conn,
 			   _("Passphrase required"), NULL, FALSE, TRUE, NULL,
 			   _("OK"), G_CALLBACK(silc_ask_passphrase_cb),
 			   _("Cancel"), G_CALLBACK(silc_ask_passphrase_cb),
-			   purple_connection_get_account(gc), NULL, NULL, PURPLE_REQUEST_HINT_BLIST, internal);
+			   purple_connection_get_account(gc), NULL, NULL, "blist", internal);
 }
 
 

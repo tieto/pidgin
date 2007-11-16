@@ -642,7 +642,7 @@ static void
 add_theme_button_clicked_cb(GtkWidget *widget, gpointer null)
 {
 	purple_request_file_with_hint(NULL, _("Install Theme"), NULL, FALSE,
-	    (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, PURPLE_UI_REQUEST_HINT_PREFSMGR, NULL) ;
+	    (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, "preferences", NULL) ;
 }
 
 static void
@@ -1627,7 +1627,7 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 
 	purple_request_file_with_hint(prefs, _("Sound Selection"), filename, FALSE,
 					  G_CALLBACK(sound_chosen_cb), NULL,
-					  NULL, NULL, NULL, PURPLE_UI_REQUEST_HINT_PREFSMGR,
+					  NULL, NULL, NULL, "preferences",
 					  GINT_TO_POINTER(sound_row_sel));
 }
 
