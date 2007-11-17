@@ -899,6 +899,9 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 
 	if (primary) {
 		GtkTextMark *sel = NULL, *ins = NULL;
+
+		g_return_if_fail(imhtml != NULL);
+
 		ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 		sel = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, sel);
@@ -957,7 +960,6 @@ static void gtk_imhtml_primary_clipboard_clear(GtkClipboard *clipboard, GtkIMHtm
 static void gtk_imhtml_clipboard_clear (GtkClipboard *clipboard, GtkSelectionData *sel_data,
 				 guint info, gpointer user_data_or_owner)
 {
-	clipboard_selection = NULL;
 }
 
 static void copy_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)

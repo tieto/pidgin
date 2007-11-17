@@ -60,7 +60,7 @@
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
 static PurplePlugin *my_protocol = NULL;
-GList *jabber_features;
+GList *jabber_features = NULL;
 
 static void jabber_unregister_account_cb(JabberStream *js);
 
@@ -209,11 +209,11 @@ void jabber_process_packet(JabberStream *js, xmlnode **packet)
 		jabber_message_parse(js, *packet);
 	} else if(!strcmp((*packet)->name, "stream:features")) {
 		jabber_stream_features_parse(js, *packet);
-	} else if (!strcmp((*packet)->name, "features") &&
+	} else if (!strcmp((*packet)->name, "features") && xmlns &&
 		   !strcmp(xmlns, "http://etherx.jabber.org/streams")) {
 		jabber_stream_features_parse(js, *packet);
 	} else if(!strcmp((*packet)->name, "stream:error") ||
-			 (!strcmp((*packet)->name, "error") &&
+			 (!strcmp((*packet)->name, "error") && xmlns &&
 				!strcmp(xmlns, "http://etherx.jabber.org/streams")))
 	{
 		jabber_stream_handle_error(js, *packet);
@@ -1029,21 +1029,21 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 	cbdata->who = g_strdup(from);
 
 	if(js->registration)
-		purple_request_fields_with_hint(js->gc, _("Register New XMPP Account"),
+		purple_request_fields(js->gc, _("Register New XMPP Account"),
 				_("Register New XMPP Account"), instructions, fields,
 				_("Register"), G_CALLBACK(jabber_register_cb),
 				_("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
 				purple_connection_get_account(js->gc), NULL, NULL,
-				PURPLE_REQUEST_UI_HINT_REGISTER, cbdata);
+				cbdata);
 	else {
 		char *title = registered?g_strdup_printf(_("Change Account Registration at %s"), from)
 								:g_strdup_printf(_("Register New Account at %s"), from);
-		purple_request_fields_with_hint(js->gc, title,
+		purple_request_fields(js->gc, title,
 			  title, instructions, fields,
 			  registered?_("Change Registration"):_("Register"), G_CALLBACK(jabber_register_cb),
 			  _("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
 			  purple_connection_get_account(js->gc), NULL, NULL,
-			  PURPLE_REQUEST_UI_HINT_REGISTER, cbdata);
+			  cbdata);
 		g_free(title);
 	}
 
@@ -1384,7 +1384,7 @@ void jabber_remove_feature(const char *shortname) {
 			g_free(feat->namespace);
 			
 			g_free(feature->data);
-			feature = g_list_delete_link(feature, feature);
+			jabber_features = g_list_delete_link(jabber_features, feature);
 			break;
 		}
 	}
@@ -1740,12 +1740,12 @@ static void jabber_password_change(PurplePluginAction *action)
 	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields_with_hint(js->gc, _("Change XMPP Password"),
+	purple_request_fields(js->gc, _("Change XMPP Password"),
 			_("Change XMPP Password"), _("Please enter your new password"),
 			fields, _("OK"), G_CALLBACK(jabber_password_change_cb),
 			_("Cancel"), NULL,
 			purple_connection_get_account(gc), NULL, NULL,
-			PURPLE_REQUEST_UI_HINT_ACCOUNT, js);
+			js);
 }
 
 GList *jabber_actions(PurplePlugin *plugin, gpointer context)

@@ -33,11 +33,11 @@
 static void
 bonjour_bytestreams_init(PurpleXfer *xfer);
 static void
-bonjour_bytestreams_connect(PurpleXfer *xfer);
+bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb);
 static void
 bonjour_xfer_init(PurpleXfer *xfer);
 static void
-bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *from,
+bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, const char *from,
 		     const int filesize, const char *filename, int option);
 static void bonjour_free_xfer(PurpleXfer *xfer);
 
@@ -202,23 +202,23 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 	purple_debug_info("bonjour", "xep file transfer stream initialization offer-id=%d.\n", next_id);
 
 	/* Assign stream id. */
-	memset(buf, 0, 32);
-	g_snprintf(buf, sizeof(buf), "%u", next_id++);
-	iq = xep_iq_new(xf->data, XEP_IQ_SET, to, purple_account_get_username(bd->jabber_data->account), buf);
+	g_free(xf->iq_id);
+	xf->iq_id = g_strdup_printf("%u", next_id++);
+	iq = xep_iq_new(xf->data, XEP_IQ_SET, to, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
 	if(iq == NULL)
 		return;
 
-	g_free(xf->sid);
-	xf->sid = g_strdup(buf);
 	/*Construct Stream initialization offer message.*/
 	si_node = xmlnode_new_child(iq->node, "si");
 	xmlnode_set_namespace(si_node, "http://jabber.org/protocol/si");
 	xmlnode_set_attrib(si_node, "profile", "http://jabber.org/protocol/si/profile/file-transfer");
+	g_free(xf->sid);
+	xf->sid = g_strdup(xf->iq_id);
+	xmlnode_set_attrib(si_node, "id", xf->sid);
 
 	file = xmlnode_new_child(si_node, "file");
 	xmlnode_set_namespace(file, "http://jabber.org/protocol/si/profile/file-transfer");
 	xmlnode_set_attrib(file, "name", xfer->filename);
-	memset(buf, 0, 32);
 	g_snprintf(buf, sizeof(buf), "%" G_GSIZE_FORMAT, xfer->size);
 	xmlnode_set_attrib(file, "size", buf);
 
@@ -268,7 +268,7 @@ xep_ft_si_result(PurpleXfer *xfer, char *to)
 	bd = xf->data;
 
 	purple_debug_info("bonjour", "xep file transfer stream initialization result.\n");
-	iq = xep_iq_new(bd, XEP_IQ_RESULT, to, purple_account_get_username(bd->jabber_data->account), xf->sid);
+	iq = xep_iq_new(bd, XEP_IQ_RESULT, to, purple_account_get_username(bd->jabber_data->account), xf->iq_id);
 	if(iq == NULL)
 		return;
 
@@ -446,6 +446,8 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 				int filesize = 0;
 				xmlnode *file;
 
+				const char *sid = xmlnode_get_attrib(si, "id");
+
 				if ((file = xmlnode_get_child(si, "file"))) {
 					filename = xmlnode_get_attrib(file, "name");
 					if((filesize_str = xmlnode_get_attrib(file, "size")))
@@ -454,7 +456,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 				/* TODO: Make sure that it is advertising a bytestreams transfer */
 
-				bonjour_xfer_receive(pc, id, pb->name, filesize, filename, XEP_BYTESTREAMS);
+				bonjour_xfer_receive(pc, id, sid, pb->name, filesize, filename, XEP_BYTESTREAMS);
 
 				parsed_receive = TRUE;
 			}
@@ -544,7 +546,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 							xf->proxy_port = portnum;
 							purple_debug_info("bonjour", "bytestream offer parse"
 									  "jid=%s host=%s port=%d.\n", jid, host, portnum);
-							bonjour_bytestreams_connect(xfer);
+							bonjour_bytestreams_connect(xfer, pb);
 							found = TRUE;
 							break;
 						}
@@ -559,7 +561,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 			if (!found) {
 				purple_debug_error("bonjour", "Didn't find an acceptable streamhost.\n");
 
-				if (iq_id)
+				if (iq_id && xfer != NULL)
 					xep_ft_si_reject(bd, iq_id, xfer->who, "404", "cancel");
 			}
 
@@ -570,7 +572,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 }
 
 static void
-bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *from,
+bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, const char *from,
 		     const int filesize, const char *filename, int option)
 {
 	PurpleXfer *xfer = NULL;
@@ -591,7 +593,8 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *from,
 	xfer->data = xf = g_new0(XepXfer, 1);
 	xf->data = bd;
 	purple_xfer_set_filename(xfer, filename);
-	xf->sid = g_strdup(id);
+	xf->iq_id = g_strdup(id);
+	xf->sid = g_strdup(sid);
 
 	if(filesize > 0)
 		purple_xfer_set_size(xfer, filesize);
@@ -625,7 +628,14 @@ bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 		if(acceptfd == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
 
 		} else if(acceptfd == -1) {
-			/* TODO: This should cancel the ft */
+			/* This should cancel the ft */
+			purple_debug_error("bonjour", "Error accepting incoming SOCKS5 connection. (%d)\n", errno);
+
+			purple_input_remove(xfer->watcher);
+			xfer->watcher = 0;
+			close(source);
+			purple_xfer_cancel_remote(xfer);
+			return;
 		} else {
 			int flags;
 
@@ -805,12 +815,16 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 	xmlnode *q_node, *tmp_node;
 	BonjourData *bd;
 
-	if(data == NULL || source < 0) {
+	if(source < 0) {
+		purple_debug_error("bonjour", "Error connecting via SOCKS5 - %s\n",
+			error_message ? error_message : "(null)");
 		xep_ft_si_reject(xf->data, xf->iq_id, xfer->who, "404", "cancel");
 		/* Cancel the connection */
 		purple_xfer_cancel_local(xfer);
 		return;
 	}
+
+	purple_debug_info("bonjour", "Connected successfully via SOCKS5, starting transfer.\n");
 
 	bd = xf->data;
 
@@ -831,7 +845,7 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 }
 
 static void
-bonjour_bytestreams_connect(PurpleXfer *xfer)
+bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 {
 	XepXfer *xf = NULL;
 	char dstaddr[41];
@@ -848,7 +862,7 @@ bonjour_bytestreams_connect(PurpleXfer *xfer)
 	if(!xf)
 		return;
 
-	p = g_strdup_printf("%s@%s", xf->sid, xfer->who);
+	p = g_strdup_printf("%s%s%s", xf->sid, pb->name, purple_account_get_username(pb->account));
 	purple_cipher_digest_region("sha1", (guchar *)p, strlen(p),
 				    sizeof(hashval), hashval, NULL);
 	g_free(p);

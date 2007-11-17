@@ -172,15 +172,14 @@ history_prefs_check(PurplePlugin *plugin)
 
 		purple_request_fields_add_group(fields, group);
 
-		purple_request_fields_with_hint(plugin, NULL, _("History Plugin Requires Logging"),
-							_("Logging can be enabled from Tools -> Preferences -> Logging.\n\n"
-							  "Enabling logs for instant messages and/or chats will activate "
-							  "history for the same conversation type(s)."),
-							fields,
-							_("OK"), G_CALLBACK(finch_request_save_in_prefs),
-							_("Cancel"), NULL,
-							NULL, NULL, NULL,
-							"42. That's your hint. Take it, or leave it.", plugin);
+		purple_request_fields(plugin, NULL, _("History Plugin Requires Logging"),
+				      _("Logging can be enabled from Tools -> Preferences -> Logging.\n\n"
+				      "Enabling logs for instant messages and/or chats will activate "
+				      "history for the same conversation type(s)."),
+				      fields,
+				      _("OK"), G_CALLBACK(finch_request_save_in_prefs),
+				      _("Cancel"), NULL,
+				      NULL, NULL, NULL, plugin);
 	}
 }
 

@@ -86,6 +86,7 @@ bonjour_removeallfromlocal(PurpleConnection *gc)
 				if (buddy->account != account)
 					continue;
 				purple_prpl_got_user_status(account, buddy->name, "offline", NULL);
+				purple_account_remove_buddy(account, buddy, NULL);
 				purple_blist_remove_buddy(buddy);
 			}
 		}
@@ -171,6 +172,9 @@ bonjour_close(PurpleConnection *connection)
 	PurpleGroup *bonjour_group;
 	BonjourData *bd = connection->proto_data;
 
+	/* Remove all the bonjour buddies */
+	bonjour_removeallfromlocal(connection);
+
 	/* Stop looking for buddies in the LAN */
 	if (bd != NULL && bd->dns_sd_data != NULL)
 	{
@@ -184,9 +188,6 @@ bonjour_close(PurpleConnection *connection)
 		bonjour_jabber_stop(bd->jabber_data);
 		g_free(bd->jabber_data);
 	}
-
-	/* Remove all the bonjour buddies */
-	bonjour_removeallfromlocal(connection);
 
 	/* Delete the bonjour group */
 	bonjour_group = purple_find_group(BONJOUR_GROUP_NAME);

@@ -327,13 +327,15 @@ _send_data(PurpleBuddy *pb, char *message)
 }
 
 void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet) {
+
+	g_return_if_fail(packet != NULL);
+
 	if (!strcmp(packet->name, "message"))
 		_jabber_parse_and_write_message_to_ui(packet, pb);
 	else if(!strcmp(packet->name, "iq"))
 		xep_iq_parse(packet, NULL, pb);
 	else
-		purple_debug_warning("bonjour", "Unknown packet: %s\n",
-				packet->name);
+		purple_debug_warning("bonjour", "Unknown packet: %s\n", packet->name ? packet->name : "(null)");
 }
 
 
@@ -351,8 +353,9 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 		/* There have been an error reading from the socket */
 		if (errno != EAGAIN) {
 			BonjourBuddy *bb = pb->proto_data;
+			const char *err = g_strerror(errno);
 
-			purple_debug_warning("bonjour", "receive error: %s\n", g_strerror(errno));
+			purple_debug_warning("bonjour", "receive error: %s\n", err ? err : "(null)");
 
 			bonjour_jabber_close_conversation(bb->conversation);
 			bb->conversation = NULL;
@@ -362,7 +365,7 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 		}
 		return;
 	} else if (len == 0) { /* The other end has closed the socket */
-		purple_debug_warning("bonjour", "Connection closed (without stream end) by %s.\n", pb->name);
+		purple_debug_warning("bonjour", "Connection closed (without stream end) by %s.\n", pb->name ? pb->name : "(null)");
 		bonjour_jabber_stream_ended(pb);
 		return;
 	} else {
@@ -1046,7 +1049,7 @@ purple_network_get_my_ip_ext2(int fd)
 					((add >> 16) & 255),
 					((add >> 8) & 255),
 					add & 255);
-				tip = (char*) ((int) tip + len);
+				tip = &tip[len];
 				count++;
 				continue;
 			}

@@ -2218,4 +2218,4 @@ init_plugin(PurplePlugin *plugin)
 		PURPLE_CALLBACK(msn_uri_handler), NULL);
 }
 
-PURPLE_INIT_PLUGIN(msn, init_plugin, info);
+PURPLE_INIT_PLUGIN(msnp9, init_plugin, info);

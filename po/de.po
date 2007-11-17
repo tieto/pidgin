@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-15 10:37+0100\n"
-"PO-Revision-Date: 2007-11-15 10:36+0100\n"
+"POT-Creation-Date: 2007-11-17 16:16+0100\n"
+"PO-Revision-Date: 2007-11-17 16:14+0100\n"
 "Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1458,7 +1458,7 @@ msgid "SSL Certificate Error"
 msgstr "SSL-Zertifikatfehler"
 
 msgid "Invalid certificate chain"
-msgstr "Ungültige Zertifizierungskette"
+msgstr "Ungültige Zertifikationskette"
 
 #. vrq will be completed by user_auth
 msgid ""
@@ -1962,7 +1962,7 @@ msgstr ""
 "Automatisch akzeptierte Übertragung der Datei „%s“ von „%s“ abgeschlossen."
 
 msgid "Autoaccept complete"
-msgstr "Auto-Akzeptieren fertig"
+msgstr "Autoaccept fertig"
 
 #, c-format
 msgid "When a file-transfer request arrives from %s"
@@ -3495,7 +3495,7 @@ msgid "Multi-User Chat"
 msgstr "Mehrbenutzer-Chat"
 
 msgid "Multi-User Chat Extended Presence Information"
-msgstr "Erweiterte Anwesenheitsinformation im Mehrbenutzer-Chat "
+msgstr "Erweiterte Anwesenheitsinformation im Mehrbenutzer-Chat"
 
 msgid "In-Band Bytestreams"
 msgstr "Bandinterner Bytestrom("
@@ -6095,13 +6095,6 @@ msgstr "Geben Sie die 6-stellige Nummer vom Digital-Display ein."
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#. *
-#. * @since 2.3.0
-#.
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#. *
-#. * @deprecated Please use purple_request_ok_cancel_with_hint instead.
 #.
 msgid "_OK"
 msgstr "_OK"
@@ -8889,7 +8882,7 @@ msgstr "TOC-Protokoll-Plugin"
 #, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr ""
-"%s hat Ihnen eine Webcam-Einladung gesendet, die noch nicht unterstützt wird."
+"%s hat Ihnen eine Webcam-Einladung gesenden, die noch nicht unterstützt wird."
 
 msgid "Your Yahoo! message did not get sent."
 msgstr "Ihre Yahoo!-Nachricht wurde nicht verschickt."
@@ -9035,7 +9028,7 @@ msgstr "Anfangen zu malen"
 msgid "Activate which ID?"
 msgstr "Welche ID aktivieren?"
 
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Wen wollen Sie zum Chat einladen?"
 
 msgid "Activate ID..."
@@ -9419,13 +9412,6 @@ msgstr "Kann den Hostnamen nicht auflösen"
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
-#. *
-#. * @since 2.3.0
-#.
-#. *
-#. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
-#. *
-#. * @deprecated Please use purple_request_yes_no_with_hint instead.
 #.
 msgid "_Yes"
 msgstr "_Ja"
@@ -9435,13 +9421,6 @@ msgstr "_Nein"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
-#. *
-#. * @since 2.3.0
-#.
-#. *
-#. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
-#. *
-#. * @deprecated Please use purple_request_accept_cancel_with_hint instead.
 #.
 msgid "_Accept"
 msgstr "_Akzeptieren"
@@ -10183,7 +10162,7 @@ msgid "Please enter the name of the group to be added."
 msgstr "Bitte geben Sie den Namen der Gruppe ein, die hinzugefügt werden soll."
 
 msgid "<PurpleMain>/Accounts/"
-msgstr "<PurpleMain>/Konten"
+msgstr "<PurpleMain>/Konten/"
 
 msgid "_Edit Account"
 msgstr "Konto _bearbeiten"
@@ -10654,7 +10633,7 @@ msgid "Galician"
 msgstr "Galizisch"
 
 msgid "Gujarati"
-msgstr "Gujaratisch"
+msgstr "Gujarati"
 
 msgid "Gujarati Language Team"
 msgstr "Gujaratisch-Team"
@@ -10717,7 +10696,7 @@ msgid "Norwegian Nynorsk"
 msgstr "Norwegisch (Nynorsk)"
 
 msgid "Punjabi"
-msgstr "Punjabi"
+msgstr "Pandschabi"
 
 msgid "Polish"
 msgstr "Polnisch"
@@ -10753,7 +10732,7 @@ msgid "Swedish"
 msgstr "Schwedisch"
 
 msgid "Tamil"
-msgstr "Tamil"
+msgstr "Tamilisch"
 
 msgid "Telugu"
 msgstr "Telugu"
@@ -10840,9 +10819,6 @@ msgstr "Debugging-Information"
 
 msgid "_Name"
 msgstr "_Name"
-
-msgid "Buddy"
-msgstr "Buddy"
 
 msgid "_Account"
 msgstr "_Konto"
@@ -13140,3 +13116,6 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
+
+msgid "Buddy"
+msgstr "Buddy"

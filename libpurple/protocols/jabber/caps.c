@@ -232,7 +232,8 @@ static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user
 		xmlnode *identity = xmlnode_new_child(client, "identity");
 		xmlnode_set_attrib(identity, "category", id->category);
 		xmlnode_set_attrib(identity, "type", id->type);
-		xmlnode_set_attrib(identity, "name", id->name);
+		if (id->name)
+			xmlnode_set_attrib(identity, "name", id->name);
 	}
 
 	for(iter = props->features; iter; iter = g_list_next(iter)) {

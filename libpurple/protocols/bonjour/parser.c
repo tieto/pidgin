@@ -188,6 +188,9 @@ void bonjour_parser_process(PurpleBuddy *pb, const char *buf, int len)
 {
 	BonjourBuddy *bb = pb->proto_data;
 
+	g_return_if_fail(bb != NULL);
+	g_return_if_fail(bb->conversation != NULL);
+
 	if (bb->conversation->context ==  NULL) {
 		/* libxml inconsistently starts parsing on creating the
 		 * parser, so do a ParseChunk right afterwards to force it. */
