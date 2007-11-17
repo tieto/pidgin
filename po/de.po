@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-17 00:48+0100\n"
-"PO-Revision-Date: 2007-11-17 00:44+0100\n"
+"POT-Creation-Date: 2007-11-17 16:16+0100\n"
+"PO-Revision-Date: 2007-11-17 16:14+0100\n"
 "Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -6095,13 +6095,6 @@ msgstr "Geben Sie die 6-stellige Nummer vom Digital-Display ein."
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#. *
-#. * @since 2.3.0
-#.
-#. *
-#. * A wrapper for purple_request_action() that uses @c OK and @c Cancel buttons.
-#. *
-#. * @deprecated Please use purple_request_ok_cancel_with_hint instead.
 #.
 msgid "_OK"
 msgstr "_OK"
@@ -9035,7 +9028,7 @@ msgstr "Anfangen zu malen"
 msgid "Activate which ID?"
 msgstr "Welche ID aktivieren?"
 
-msgid "Join who in chat?"
+msgid "Join whom in chat?"
 msgstr "Wen wollen Sie zum Chat einladen?"
 
 msgid "Activate ID..."
@@ -9419,13 +9412,6 @@ msgstr "Kann den Hostnamen nicht auflösen"
 
 #. *
 #. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
-#. *
-#. * @since 2.3.0
-#.
-#. *
-#. * A wrapper for purple_request_action() that uses @c Yes and @c No buttons.
-#. *
-#. * @deprecated Please use purple_request_yes_no_with_hint instead.
 #.
 msgid "_Yes"
 msgstr "_Ja"
@@ -9435,13 +9421,6 @@ msgstr "_Nein"
 
 #. *
 #. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
-#. *
-#. * @since 2.3.0
-#.
-#. *
-#. * A wrapper for purple_request_action() that uses Accept and Cancel buttons.
-#. *
-#. * @deprecated Please use purple_request_accept_cancel_with_hint instead.
 #.
 msgid "_Accept"
 msgstr "_Akzeptieren"
@@ -10840,9 +10819,6 @@ msgstr "Debugging-Information"
 
 msgid "_Name"
 msgstr "_Name"
-
-msgid "Buddy"
-msgstr "Buddy"
 
 msgid "_Account"
 msgstr "_Konto"
@@ -13140,3 +13116,6 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
+
+msgid "Buddy"
+msgstr "Buddy"
