@@ -48,6 +48,14 @@ static void (*org_size_request)(GntWidget *wid);
 static gboolean (*org_key_pressed)(GntWidget *w, const char *t);
 
 static void
+menu_hide_all(GntMenu *menu)
+{
+	while (menu->parentmenu)
+		menu = menu->parentmenu;
+	gnt_widget_hide(GNT_WIDGET(menu));
+}
+
+static void
 gnt_menu_draw(GntWidget *widget)
 {
 	GntMenu *menu = GNT_MENU(widget);
@@ -56,12 +64,12 @@ gnt_menu_draw(GntWidget *widget)
 	int i;
 
 	if (menu->type == GNT_MENU_TOPLEVEL) {
-		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+		wbkgdset(widget->window, '\0' | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
 		werase(widget->window);
 
 		for (i = 0, iter = menu->list; iter; iter = iter->next, i++) {
 			GntMenuItem *item = GNT_MENU_ITEM(iter->data);
-			type = ' ' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT);
+			type = ' ' | gnt_color_pair(GNT_COLOR_HIGHLIGHT);
 			if (i == menu->selected)
 				type |= A_REVERSE;
 			item->priv.x = getcurx(widget->window) + widget->priv.x;
@@ -181,7 +189,12 @@ gnt_menu_map(GntWidget *widget)
 static void
 menuitem_activate(GntMenu *menu, GntMenuItem *item)
 {
-	if (item) {
+	if (!item)
+		return;
+
+	if (gnt_menuitem_activate(item)) {
+		menu_hide_all(menu);
+	} else {
 		if (item->submenu) {
 			GntMenu *sub = GNT_MENU(item->submenu);
 			menu->submenu = sub;
@@ -195,12 +208,8 @@ menuitem_activate(GntMenu *menu, GntMenuItem *item)
 			gnt_widget_set_position(GNT_WIDGET(sub), item->priv.x, item->priv.y);
 			GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(sub), GNT_WIDGET_INVISIBLE);
 			gnt_widget_draw(GNT_WIDGET(sub));
-		} else if (item->callback) {
-			item->callback(item, item->callbackdata);
-			while (menu) {
-				gnt_widget_hide(GNT_WIDGET(menu));
-				menu = menu->parentmenu;
-			}
+		} else {
+			menu_hide_all(menu);
 		}
 	}
 }
@@ -226,7 +235,7 @@ check_for_trigger(GntMenu *menu, char trigger)
 
 	if (nth == NULL)
 		return FALSE;
-		
+
 	find = find_item_with_trigger(nth->next, NULL, trigger);
 	if (!find)
 		find = find_item_with_trigger(menu->list, nth->next, trigger);
@@ -286,10 +295,8 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 
 		if (current != menu->selected) {
 			GntMenu *sub = menu->submenu;
-			while (sub) {
+			if (sub)
 				gnt_widget_hide(GNT_WIDGET(sub));
-				sub = sub->submenu;
-			}
 			gnt_widget_draw(widget);
 			return TRUE;
 		}
@@ -326,8 +333,7 @@ gnt_menu_toggled(GntTree *tree, gpointer key)
 	GntMenu *menu = GNT_MENU(tree);
 	gboolean check = gnt_menuitem_check_get_checked(GNT_MENU_ITEM_CHECK(item));
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item), !check);
-	if (item->callback)
-		item->callback(item, item->callbackdata);
+	gnt_menuitem_activate(item);
 	while (menu) {
 		gnt_widget_hide(GNT_WIDGET(menu));
 		menu = menu->parentmenu;
@@ -457,5 +463,33 @@ GntWidget *gnt_menu_new(GntMenuType type)
 void gnt_menu_add_item(GntMenu *menu, GntMenuItem *item)
 {
 	menu->list = g_list_append(menu->list, item);
+}
+
+GntMenuItem *gnt_menu_get_item(GntMenu *menu, const char *id)
+{
+	GntMenuItem *item = NULL;
+	GList *iter = menu->list;
+
+	if (!id || !*id)
+		return NULL;
+
+	for (; iter; iter = iter->next) {
+		GntMenu *sub;
+		item = iter->data;
+		sub = gnt_menuitem_get_submenu(item);
+		if (sub) {
+			item = gnt_menu_get_item(sub, id);
+			if (item)
+				break;
+		} else {
+			const char *itid = gnt_menuitem_get_id(item);
+			if (itid && strcmp(itid, id) == 0)
+				break;
+			/* XXX: Perhaps look at the menu-label as well? */
+		}
+		item = NULL;
+	}
+
+	return item;
 }
 

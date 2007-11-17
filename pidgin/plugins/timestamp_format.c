@@ -149,7 +149,7 @@ static PurplePluginInfo info =
 
 	"core-timestamp_format",                          /**< id             */
 	N_("Message Timestamp Formats"),                  /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Customizes the message timestamp formats."),
 	                                                  /**  description    */

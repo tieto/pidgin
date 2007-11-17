@@ -88,122 +88,152 @@ struct _GntTextViewClass
 G_BEGIN_DECLS
 
 /**
- * 
- *
- * @return
+ * @return  GType for GntTextView.
  */
 GType gnt_text_view_get_gtype(void);
 
-/* XXX: For now, don't set a textview to have any border.
- *      If you want borders real bad, put it in a box. */
 /**
- * 
+ * Create a new textview.
  *
- * @return
+ * @return The newly created textview.
  */
 GntWidget * gnt_text_view_new(void);
 
-/* scroll > 0 means scroll up, < 0 means scroll down, == 0 means scroll to the end */
 /**
- * 
- * @param view
- * @param scroll
+ * Scroll the textview.
+ * @param view     The textview to scroll.
+ * @param scroll   scroll > 0 means scroll up, < 0 means scroll down, == 0 means scroll to the end.
  */
 void gnt_text_view_scroll(GntTextView *view, int scroll);
 
 /**
- * 
- * @param view
- * @param text
- * @param flags
+ * Append new text in a textview.
+ *
+ * @param view   The textview.
+ * @param text   The text to append to the textview.
+ * @param flags  The text-flags to apply to the new text.
  */
 void gnt_text_view_append_text_with_flags(GntTextView *view, const char *text, GntTextFormatFlags flags);
 
 /**
- * 
- * @param view
- * @param text
- * @param flags
- * @param tag
+ * Append text in the textview, with some identifier (tag) for the added text.
+ *
+ * @param view   The textview.
+ * @param text   The text to append.
+ * @param flags  The text-flags to apply to the new text.
+ * @param tag    The tag for the appended text, so it can be changed later (@see gnt_text_view_tag_change)
  */
 void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text, GntTextFormatFlags flags, const char *tag);
 
-/* Move the cursor to the beginning of the next line and resets text-attributes.
- * It first completes the current line with the current text-attributes. */
 /**
- * 
- * @param view
+ * Move the cursor to the beginning of the next line and resets text-attributes.
+ * It first completes the current line with the current text-attributes.
+ *
+ * @param view  The textview.
  */
 void gnt_text_view_next_line(GntTextView *view);
 
 /**
- * 
- * @param flags
+ * Convert GNT-text formats to ncurses-text attributes.
  *
- * @return
+ * @param flags  The GNT text format.
+ *
+ * @return  Nucrses text attribute.
  */
 chtype gnt_text_format_flag_to_chtype(GntTextFormatFlags flags);
 
 /**
- * 
- * @param view
+ * Clear the contents of the textview.
+ *
+ * @param view  The textview.
  */
 void gnt_text_view_clear(GntTextView *view);
 
 /**
- * 
- * @param view
+ * The number of lines below the bottom-most visible line.
  *
- * @return
+ * @param view  The textview.
+ *
+ * @return  Number of lines below the bottom-most visible line.
  */
 int gnt_text_view_get_lines_below(GntTextView *view);
 
 /**
- * 
- * @param view
+ * The number of lines above the topmost visible line.
  *
- * @return
+ * @param view  The textview.
+ *
+ * @return  Number of lines above the topmost visible line.
  */
 int gnt_text_view_get_lines_above(GntTextView *view);
 
-/* If text is NULL, then the tag is removed. */
 /**
- * 
- * @param view
- * @param name
- * @param text
- * @param all
+ * Change the text of a tag.
  *
- * @return
+ * @param view   The textview.
+ * @param name   The name of the tag.
+ * @param text   The new text for the text. If 'text' is @c NULL, the tag is removed.
+ * @param all    @c TRUE if all of the instancess of the tag should be changed, @c FALSE if
+ *               only the first instance should be changed.
+ *
+ * @return  The number of instances changed.
  */
 int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *text, gboolean all);
 
 /**
- * 
- * @param view
- * @param widget
+ * Setup hooks so that pressing up/down/page-up/page-down keys when 'widget' is
+ * in focus scrolls the textview.
+ *
+ * @param view    The textview.
+ * @param widget  The trigger widget.
  */
 void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget);
 
 /**
- * 
- * @param view
- * @param widget
+ * Setup appropriate hooks so that pressing some keys when the 'pager' widget
+ * is in focus triggers the PAGER to popup with the contents of the textview
+ * in it.
+ *
+ * The default key-combination to trigger the pager is a-v, and the default
+ * PAGER application is $PAGER. Both can be changed in ~/.gntrc like this:
+ *
+ * @code
+ * [pager]
+ * key = a-v
+ * path = /path/to/pager
+ * @endcode
+ *
+ * @param view    The textview.
+ * @param pager   The widget to trigger the PAGER.
  */
 void gnt_text_view_attach_pager_widget(GntTextView *view, GntWidget *pager);
 
 /**
- * 
- * @param view
- * @param widget
+ * Setup appropriate hooks so that pressing some keys when 'widget'
+ * is in focus triggers the EDITOR to popup with the contents of the textview
+ * in it.
+ *
+ * The default key-combination to trigger the pager is a-e, and the default
+ * EDITOR application is $EDITOR. Both can be changed in ~/.gntrc like this:
+ *
+ * @code
+ * [editor]
+ * key = a-e
+ * path = /path/to/editor
+ * @endcode
+ *
+ * @param view     The textview.
+ * @param widget   The widget to trigger the EDITOR.
  */
-void gnt_text_view_attach_editor_widget(GntTextView *view, GntWidget *pager);
+void gnt_text_view_attach_editor_widget(GntTextView *view, GntWidget *widget);
 
 /**
  * Set a GntTextViewFlag for the textview widget.
  *
  * @param view  The textview widget
  * @param flag  The flag to set
+ *
+ * @since 2.0.0 (gnt), 2.1.0 (pidgin)
  */
 void gnt_text_view_set_flag(GntTextView *view, GntTextViewFlag flag);
 

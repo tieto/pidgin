@@ -455,12 +455,16 @@ touch --no-create %{_datadir}/icons/hicolor || :
 # libgnt
 %dir %{_includedir}/gnt
 %{_includedir}/gnt/*.h
+%{_libdir}/pkgconfig/finch.pc
 %{_libdir}/pkgconfig/gnt.pc
 %{_libdir}/libgnt.so
 
 %endif
 
 %changelog
+* Tue Oct 23 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Add finch.pc to finch-devel
+
 * Mon Sep 17 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Add version dependency on libpurple for pidgin
 - Support for OpenSuse lowercase package name for GConf2

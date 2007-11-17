@@ -265,6 +265,7 @@ local_read_fn(const char *path, GList **files, GError **error)
 		}
 		g_free(fp);
 	}
+	g_dir_close(dir);
 
 	*files = g_list_reverse(*files);
 	return TRUE;
@@ -634,6 +635,7 @@ gnt_file_sel_init(GTypeInstance *instance, gpointer class)
 	sel->cancel = gnt_button_new("Cancel");
 	sel->select = gnt_button_new("Select");
 
+	g_signal_connect_swapped(G_OBJECT(sel->files), "activate", G_CALLBACK(gnt_widget_activate), sel->select);
 	g_signal_connect(G_OBJECT(sel->select), "activate", G_CALLBACK(select_activated_cb), sel);
 }
 
@@ -718,6 +720,7 @@ gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel)
 
 void gnt_file_sel_set_suggested_filename(GntFileSel *sel, const char *suggest)
 {
+	g_free(sel->suggest);
 	sel->suggest = g_strdup(suggest);
 }
 

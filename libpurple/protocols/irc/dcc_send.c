@@ -251,7 +251,7 @@ static void irc_dccsend_send_connected(gpointer data, int source, PurpleInputCon
 		 * to the nonblocking nature of the listening socket, so we'll
 		 * just try again next time */
 		/* Let's print an error message anyway */
-		purple_debug_warning("irc", "accept: %s\n", strerror(errno));
+		purple_debug_warning("irc", "accept: %s\n", g_strerror(errno));
 		return;
 	}
 

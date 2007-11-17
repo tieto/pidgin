@@ -331,7 +331,7 @@ silcpurple_login(PurpleAccount *account)
 							(char *)purple_account_get_string(account, "private-key", prd),
 				(gc->password == NULL) ? "" : gc->password, &client->pkcs,
 				&client->public_key, &client->private_key)) {
-		g_snprintf(pkd, sizeof(pkd), _("Could not load SILC key pair: %s"), strerror(errno));
+		g_snprintf(pkd, sizeof(pkd), _("Could not load SILC key pair: %s"), g_strerror(errno));
 		purple_connection_error(gc, pkd);
 		return;
 	}

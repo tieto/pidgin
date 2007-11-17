@@ -80,6 +80,9 @@ msn_user_destroy(MsnUser *user)
 	g_free(user->phone.home);
 	g_free(user->phone.work);
 	g_free(user->phone.mobile);
+	g_free(user->media.artist);
+	g_free(user->media.title);
+	g_free(user->media.album);
 
 	g_free(user);
 }
@@ -91,23 +94,24 @@ msn_user_update(MsnUser *user)
 
 	account = user->userlist->session->account;
 
-	if (user->statusline != NULL && user->currentmedia != NULL) {
+	if (user->status != NULL) {
+		gboolean offline = (strcmp(user->status, "offline") == 0);
 		purple_prpl_got_user_status(account, user->passport, user->status,
-		                          "message", user->statusline,
-		                          "currentmedia", user->currentmedia, NULL);
-	} else if (user->currentmedia != NULL) {
-		purple_prpl_got_user_status(account, user->passport, user->status, "currentmedia",
-		                          user->currentmedia, NULL);
-	} else if (user->statusline != NULL) {
-		//char *status = g_strdup_printf("%s - %s", user->status, user->statusline);
-		purple_prpl_got_user_status(account, user->passport, user->status,
-		                          "message", user->statusline, NULL);
-	} else if (user->status != NULL) {
-		if (!strcmp(user->status, "offline") && user->mobile) {
-			purple_prpl_got_user_status(account, user->passport, "offline", NULL);
+				"message", user->statusline, NULL);
+
+		if (!offline && user->media.title) {
+			purple_prpl_got_user_status(account, user->passport, "tune",
+					PURPLE_TUNE_ARTIST, user->media.artist,
+					PURPLE_TUNE_ALBUM, user->media.album,
+					PURPLE_TUNE_TITLE, user->media.title,
+					NULL);
+		} else {
+			purple_prpl_got_user_status_deactive(account, user->passport, "tune");
+		}
+
+		if (!offline && user->mobile) {
 			purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
 		} else {
-			purple_prpl_got_user_status(account, user->passport, user->status, NULL);
 			purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
 		}
 	}
@@ -172,12 +176,17 @@ msn_user_set_statusline(MsnUser *user, const char *statusline)
 }
 
 void
-msn_user_set_currentmedia(MsnUser *user, const char *currentmedia)
+msn_user_set_currentmedia(MsnUser *user, const CurrentMedia *media)
 {
 	g_return_if_fail(user != NULL);
 
-	g_free(user->currentmedia);
-	user->currentmedia = g_strdup(currentmedia);
+	g_free(user->media.title);
+	g_free(user->media.album);
+	g_free(user->media.artist);
+
+	user->media.title  = media ? g_strdup(media->title) : NULL;
+	user->media.artist = media ? g_strdup(media->artist) : NULL;
+	user->media.album  = media ? g_strdup(media->album) : NULL;
 }
 
 void
@@ -383,7 +392,7 @@ msn_user_remove_group_id(MsnUser *user, const char *id)
 		return;
 
 	g_free(l->data);
-	user->group_ids = g_list_remove_link(user->group_ids, l);
+	user->group_ids = g_list_delete_link(user->group_ids, l);
 }
 
 void
@@ -391,10 +400,8 @@ msn_user_set_home_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->phone.home != NULL)
-		g_free(user->phone.home);
-
-	user->phone.home = (number == NULL ? NULL : g_strdup(number));
+	g_free(user->phone.home);
+	user->phone.home = g_strdup(number);
 }
 
 void
@@ -402,10 +409,8 @@ msn_user_set_work_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->phone.work != NULL)
-		g_free(user->phone.work);
-
-	user->phone.work = (number == NULL ? NULL : g_strdup(number));
+	g_free(user->phone.work);
+	user->phone.work = g_strdup(number);
 }
 
 void
@@ -413,10 +418,8 @@ msn_user_set_mobile_phone(MsnUser *user, const char *number)
 {
 	g_return_if_fail(user != NULL);
 
-	if (user->phone.mobile != NULL)
-		g_free(user->phone.mobile);
-
-	user->phone.mobile = (number == NULL ? NULL : g_strdup(number));
+	g_free(user->phone.mobile);
+	user->phone.mobile = g_strdup(number);
 }
 
 void

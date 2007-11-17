@@ -157,6 +157,7 @@ get_config_frame(PurplePlugin *plugin)
 	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(ret);
+	g_object_unref(sg);
 
 	return ret;
 }
@@ -185,7 +186,7 @@ static PurplePluginInfo info =
 
 	CONTACT_PRIORITY_PLUGIN_ID,                       /**< id             */
 	N_("Contact Priority"),                           /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
                                                     /**< summary        */
 	N_("Allows for controlling the values associated with different buddy states."),
                                                     /**< description    */

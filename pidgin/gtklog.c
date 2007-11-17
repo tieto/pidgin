@@ -680,6 +680,7 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 	PidginLogViewer *lv = NULL;
 	const char *name = screenname;
 	char *title;
+	GdkPixbuf *prpl_icon;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(screenname != NULL);
@@ -717,9 +718,14 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 		title = g_strdup_printf(_("Conversations with %s"), name);
 	}
 
+	prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
+
 	display_log_viewer(ht, purple_log_get_logs(type, screenname, account),
-			title, gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), 
+			title, gtk_image_new_from_pixbuf(prpl_icon),
 			purple_log_get_total_size(type, screenname, account));
+
+	if (prpl_icon)
+		g_object_unref(prpl_icon);
 	g_free(title);
 }
 

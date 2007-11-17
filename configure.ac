@@ -43,10 +43,10 @@ AC_PREREQ([2.50])
 #
 # Make sure to update finch/libgnt/configure.ac with libgnt version changes.
 #
-m4_define([purple_lt_current], [2])
+m4_define([purple_lt_current], [3])
 m4_define([purple_major_version], [2])
-m4_define([purple_minor_version], [2])
-m4_define([purple_micro_version], [2])
+m4_define([purple_minor_version], [3])
+m4_define([purple_micro_version], [0])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [2])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [2])
-m4_define([gnt_micro_version], [2])
+m4_define([gnt_micro_version], [3])
 m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -136,19 +136,27 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lo lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@latin sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
+ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lo lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@latin sv ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
 dnl AM_GLIB_GNU_GETTEXT found it.
 
-if test x$MSGFMT = xno
+if test x$MSGFMT = xno -o x$MSGFMT$GMSGFMT = x
 then
 	AC_ERROR([
 
 The msgfmt command is required to build libpurple.  If it is installed
 on your system, ensure that it is in your path.  If it is not, install
 GNU gettext to continue.
+
+If you have msgfmt installed, but for some reason this error message
+is still displayed, you have encountered what appears to be a bug in
+third-party configure macros.  Try setting the MSGFMT environment
+variable to the absolute path to your msgfmt binary and trying
+configure again, like this:
+
+MSGFMT=/path/to/msgfmt ./configure ...
 ])
 fi
 
@@ -225,6 +233,30 @@ AC_SYS_LARGEFILE
 dnl FreeBSD doesn't have libdl, dlopen is provided by libc
 AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
+AC_MSG_CHECKING(for fileno())
+AC_TRY_RUN([
+#include <stdio.h>
+
+int main(int argc, char *argv[])
+{
+	int fd;
+
+	fd = fileno(stdout);
+
+	return !(fd > 0);
+}
+], [
+	AC_MSG_RESULT(yes)
+	AC_DEFINE([HAVE_FILENO], [1],
+	          [Define to 1 if your stdio has int fileno(FILE *).])
+], [
+	AC_MSG_RESULT(no)
+], [
+	# Fallback for Cross Compiling...
+	# This will enable the compatibility code.
+	AC_MSG_RESULT(no)
+])
+
 AC_MSG_CHECKING(for the %z format string in strftime())
 AC_TRY_RUN([
 #ifdef HAVE_SYS_TIME_H
@@ -274,6 +306,17 @@ You must have the GLib 2.0 development headers installed to build.
 ])])
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
+
+AC_ARG_WITH([extraversion],
+			AC_HELP_STRING([--with-extraversion=STRING],
+						   [extra version number to be displayed in Help->About and --help (for packagers)]),
+						   EXTRA_VERSION=$withval)
+
+if test x"$EXTRA_VERSION" != "x" ; then
+	AC_DEFINE_UNQUOTED(DISPLAY_VERSION, "$VERSION-$EXTRA_VERSION", [display version info])
+else
+	AC_DEFINE_UNQUOTED(DISPLAY_VERSION, "$VERSION", [display version info])
+fi
 
 AC_ARG_WITH(x, [],
 	with_x="$withval", with_x="yes")
@@ -857,7 +900,7 @@ if test "x$gadu_libs" = "xyes"; then
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $GADU_CFLAGS"
 	AC_TRY_COMPILE([#include <libgadu.h>], [
-#ifdef __GG_LIBGADU_HAVE_OPENSSL
+#if defined(__GG_LIBGADU_HAVE_OPENSSL) || defined(GG_CONFIG_HAVE_OPENSSL)
 #error "libgadu is not compatible with the GPL when compiled with OpenSSL support."
 #endif
 	], [
@@ -869,10 +912,11 @@ if test "x$gadu_libs" = "xyes"; then
 		echo
 		echo
 		echo "libgadu is not compatible with the GPL when compiled with OpenSSL support."
-		echo "Please recompile libgadu using:"
+		echo "To compile against system libgadu, please recompile libgadu using:"
 		echo "./autogen.sh --disable-libgadu-openssl --disable-static --enable-shared"
 		echo "Then rerun this ./configure"
 		echo
+		echo "Falling back to using our own copy of libgadu"
 		echo
 		GADU_LIBS=""
 		GADU_CFLAGS=""
@@ -886,6 +930,9 @@ AM_CONDITIONAL(USE_INTERNAL_LIBGADU, test "x$gadu_libs" != "xyes")
 AC_SUBST(GADU_LIBS)
 AC_SUBST(GADU_CFLAGS)
 
+# uncomment the next line to make MSNP14 the available
+# AC_ARG_ENABLE(msnp14,[AC_HELP_STRING([--enable-msnp14], [Disable the newer MSNP14 protocol])],,enable_msnp14=no)
+enable_msnp14=no
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
@@ -905,6 +952,9 @@ if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 	if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 		STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
 	fi
+fi
+if test "x$enable_msnp14" != "xyes" ; then
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/msn/msnp9/'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc/silc10/'`
@@ -930,6 +980,8 @@ for i in $STATIC_PRPLS ; do
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.a"
 		elif test "x$i" = "xsilc10"; then
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/libsilcpurple.a"
+		elif test "x$i" = "xmsnp9"; then
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/libmsn.a"
 		else
 			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.a"
 		fi
@@ -942,6 +994,7 @@ for i in $STATIC_PRPLS ; do
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
 		msn)		static_msn=yes ;;
+		msnp9)		static_msn=yes ;;
 		myspace)	static_myspace=yes ;;
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
@@ -989,6 +1042,9 @@ if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
 		DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
 	fi
 fi
+if test "x$enable_msnp14" != "xyes" ; then
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/msn/msnp9/'`
+fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc/silc10/'`
 fi
@@ -1003,6 +1059,7 @@ for i in $DYNAMIC_PRPLS ; do
 		irc)		dynamic_irc=yes ;;
 		jabber)		dynamic_jabber=yes ;;
 		msn)		dynamic_msn=yes ;;
+		msnp9)		dynamic_msn=yes ;;
 		myspace)	dynamic_myspace=yes ;;
 		novell)		dynamic_novell=yes ;;
 		oscar)		dynamic_oscar=yes ;;
@@ -1960,9 +2017,12 @@ AC_SUBST(LIBS)
 if test "x$enable_plugins" = "xyes" ; then
 	AC_DEFINE(PURPLE_PLUGINS, 1, [Define if plugins are enabled.])
 	AM_CONDITIONAL(PLUGINS, true)
+	PLUGINS_DEFINE="#define PURPLE_PLUGINS 1"
 else
 	AM_CONDITIONAL(PLUGINS, false)
+	PLUGINS_DEFINE="#undef PURPLE_PLUGINS"
 fi
+AC_SUBST(PLUGINS_DEFINE)
 
 dnl #######################################################################
 dnl # Check for Cyrus-SASL (for Jabber)
@@ -2093,6 +2153,10 @@ AC_ARG_ENABLE(dot,
 	[AC_HELP_STRING([--enable-dot],
 		[enable graphs in doxygen via 'dot'])],
 	enable_dot="$enableval", enable_dot="yes")
+AC_ARG_ENABLE(devhelp,
+	[AC_HELP_STRING([--enable-devhelp],
+		[enable building index for devhelp documentation browser])],
+	enable_devhelp="$enableval", enable_devhelp="yes")
 
 if test "x$enable_doxygen" = xyes; then
 	AC_CHECK_PROG(DOXYGEN, doxygen, true, false)
@@ -2112,14 +2176,28 @@ if test "x$enable_doxygen" = xyes; then
 				AC_DEFINE_UNQUOTED(HAVE_DOT, 1, [whether or not we have dot])
 			fi
 		fi
+
+		if test "x$enable_devhelp" = "xyes"; then
+			AC_CHECK_PROG(XSLTPROC, xsltproc, true, false)
+
+			if test $XSLTPROC = false; then
+				enable_devhelp="no";
+				AC_MSG_WARN([*** xsltproc not found; devhelp index will not be created])
+			else
+				AC_DEFINE_UNQUOTED(HAVE_XSLTPROC, 1, [whether or not we have xsltproc for devhelp index])
+			fi
+		fi
 	fi
 else
 	enable_dot="no"
+	enable_devhelp="no"
 fi
 
 AC_SUBST(enable_doxygen)
 AC_SUBST(enable_dot)
+AC_SUBST(enable_devhelp)
 AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
+AM_CONDITIONAL(HAVE_XSLTPROC, test "x$enable_devhelp" = "xyes")
 
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)
@@ -2141,68 +2219,9 @@ AC_OUTPUT([Makefile
 		   pidgin/pidgin.pc
 		   pidgin/pidgin-uninstalled.pc
 		   pidgin/pixmaps/Makefile
-		   pidgin/pixmaps/animations/Makefile
-		   pidgin/pixmaps/animations/16/Makefile
-		   pidgin/pixmaps/buddy_icons/Makefile
 		   pidgin/pixmaps/buddy_icons/qq/Makefile
-		   pidgin/pixmaps/dialogs/Makefile
-		   pidgin/pixmaps/dialogs/16/Makefile
-		   pidgin/pixmaps/dialogs/16/scalable/Makefile
-		   pidgin/pixmaps/dialogs/64/Makefile
-		   pidgin/pixmaps/dialogs/64/scalable/Makefile
-		   pidgin/pixmaps/emblems/Makefile
-		   pidgin/pixmaps/emblems/16/Makefile
-		   pidgin/pixmaps/emblems/16/scalable/Makefile
-		   pidgin/pixmaps/emotes/Makefile
-		   pidgin/pixmaps/emotes/default/Makefile
 		   pidgin/pixmaps/emotes/default/24/Makefile
-		   pidgin/pixmaps/emotes/default/24/scalable/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
-		   pidgin/pixmaps/icons/Makefile
-		   pidgin/pixmaps/icons/16/Makefile
-		   pidgin/pixmaps/icons/16/scalable/Makefile
-		   pidgin/pixmaps/icons/22/Makefile
-		   pidgin/pixmaps/icons/22/scalable/Makefile
-		   pidgin/pixmaps/icons/24/Makefile
-		   pidgin/pixmaps/icons/24/scalable/Makefile
-		   pidgin/pixmaps/icons/32/Makefile
-		   pidgin/pixmaps/icons/32/scalable/Makefile
-		   pidgin/pixmaps/icons/48/Makefile
-		   pidgin/pixmaps/icons/48/scalable/Makefile
-		   pidgin/pixmaps/protocols/Makefile
-		   pidgin/pixmaps/protocols/16/Makefile
-		   pidgin/pixmaps/protocols/16/scalable/Makefile
-		   pidgin/pixmaps/protocols/22/Makefile
-		   pidgin/pixmaps/protocols/22/scalable/Makefile
-		   pidgin/pixmaps/protocols/48/Makefile
-		   pidgin/pixmaps/protocols/48/scalable/Makefile
-		   pidgin/pixmaps/status/Makefile
-		   pidgin/pixmaps/status/11/Makefile
-		   pidgin/pixmaps/status/11/scalable/Makefile
-		   pidgin/pixmaps/status/11/rtl/Makefile
-		   pidgin/pixmaps/status/16/Makefile
-		   pidgin/pixmaps/status/16/rtl/Makefile
-		   pidgin/pixmaps/status/16/scalable/Makefile
-		   pidgin/pixmaps/status/22/Makefile
-		   pidgin/pixmaps/status/22/rtl/Makefile
-		   pidgin/pixmaps/status/22/scalable/Makefile
-		   pidgin/pixmaps/status/32/Makefile
-		   pidgin/pixmaps/status/32/rtl/Makefile
-		   pidgin/pixmaps/status/32/scalable/Makefile
-		   pidgin/pixmaps/status/48/Makefile
-		   pidgin/pixmaps/status/48/rtl/Makefile
-		   pidgin/pixmaps/toolbar/Makefile
-		   pidgin/pixmaps/toolbar/16/Makefile
-		   pidgin/pixmaps/toolbar/16/scalable/Makefile
-		   pidgin/pixmaps/toolbar/22/Makefile
-		   pidgin/pixmaps/toolbar/22/scalable/Makefile
-		   pidgin/pixmaps/tray/Makefile
-		   pidgin/pixmaps/tray/16/Makefile
-		   pidgin/pixmaps/tray/16/scalable/Makefile
-		   pidgin/pixmaps/tray/22/Makefile
-		   pidgin/pixmaps/tray/22/scalable/Makefile
-		   pidgin/pixmaps/tray/32/Makefile
-		   pidgin/pixmaps/tray/48/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile
@@ -2230,6 +2249,7 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/irc/Makefile
 		   libpurple/protocols/jabber/Makefile
 		   libpurple/protocols/msn/Makefile
+		   libpurple/protocols/msnp9/Makefile
 		   libpurple/protocols/myspace/Makefile
 		   libpurple/protocols/novell/Makefile
 		   libpurple/protocols/null/Makefile
@@ -2243,10 +2263,11 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/yahoo/Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
+		   libpurple/purple.h
 		   libpurple/version.h
-		   share/Makefile
 		   share/sounds/Makefile
 		   share/ca-certs/Makefile
+		   finch/finch.pc
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc

@@ -61,6 +61,8 @@ static gchar *select_start;
 static gchar *select_end;
 static gboolean double_click;
 
+static void reset_text_view(GntTextView *view);
+
 static void
 gnt_text_view_draw(GntWidget *widget)
 {
@@ -71,7 +73,7 @@ gnt_text_view_draw(GntWidget *widget)
 	int comp = 0;          /* Used for top-aligned text */
 	gboolean has_scroll = !(view->flags & GNT_TEXT_VIEW_NO_SCROLL);
 
-	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
+	wbkgd(widget->window, gnt_color_pair(GNT_COLOR_NORMAL));
 	werase(widget->window);
 
 	if ((view->flags & GNT_TEXT_VIEW_TOP_ALIGN) &&
@@ -158,15 +160,15 @@ gnt_text_view_draw(GntWidget *widget)
 			position = rows - showing;
 
 		mvwvline(widget->window, position + 1, scrcol,
-				ACS_CKBOARD | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D), showing);
+				ACS_CKBOARD | gnt_color_pair(GNT_COLOR_HIGHLIGHT_D), showing);
 	}
 
 	if (has_scroll) {
 		mvwaddch(widget->window, 0, scrcol,
-				(lines ? ACS_UARROW : ' ') | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+				(lines ? ACS_UARROW : ' ') | gnt_color_pair(GNT_COLOR_HIGHLIGHT_D));
 		mvwaddch(widget->window, widget->priv.height - 1, scrcol,
 				((view->list && view->list->prev) ? ACS_DARROW : ' ') |
-					COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+					gnt_color_pair(GNT_COLOR_HIGHLIGHT_D));
 	}
 
 	GNTDEBUG;
@@ -370,7 +372,7 @@ gnt_text_view_reflow(GntTextView *view)
 
 	string = view->string;
 	view->string = NULL;
-	gnt_text_view_clear(view);
+	reset_text_view(view);
 
 	view->string = g_string_set_size(view->string, string->len);
 	view->string->len = 0;
@@ -645,16 +647,16 @@ chtype gnt_text_format_flag_to_chtype(GntTextFormatFlags flags)
 		fl |= A_BLINK;
 
 	if (flags & GNT_TEXT_FLAG_DIM)
-		fl |= (A_DIM | COLOR_PAIR(GNT_COLOR_DISABLED));
+		fl |= (A_DIM | gnt_color_pair(GNT_COLOR_DISABLED));
 	else if (flags & GNT_TEXT_FLAG_HIGHLIGHT)
-		fl |= (A_DIM | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+		fl |= (A_DIM | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
 	else
-		fl |= COLOR_PAIR(GNT_COLOR_NORMAL);
+		fl |= gnt_color_pair(GNT_COLOR_NORMAL);
 
 	return fl;
 }
 
-void gnt_text_view_clear(GntTextView *view)
+static void reset_text_view(GntTextView *view)
 {
 	GntTextLine *line;
 
@@ -667,6 +669,14 @@ void gnt_text_view_clear(GntTextView *view)
 	if (view->string)
 		g_string_free(view->string, TRUE);
 	view->string = g_string_new(NULL);
+}
+
+void gnt_text_view_clear(GntTextView *view)
+{
+	reset_text_view(view);
+
+	g_list_foreach(view->tags, free_tag, NULL);
+	view->tags = NULL;
 
 	if (GNT_WIDGET(view)->window)
 		gnt_widget_draw(GNT_WIDGET(view));
@@ -833,7 +843,7 @@ editor_end_cb(int status, gpointer data)
 	if (status == 0) {
 		char *text = NULL;
 		if (g_file_get_contents(pageditor.file, &text, NULL, NULL)) {
-			gnt_text_view_clear(pageditor.tv);
+			reset_text_view(pageditor.tv);
 			gnt_text_view_append_text_with_flags(pageditor.tv, text, GNT_TEXT_FLAG_NORMAL);
 			gnt_text_view_scroll(GNT_TEXT_VIEW(pageditor.tv), 0);
 			g_free(text);

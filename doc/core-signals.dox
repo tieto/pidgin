@@ -4,6 +4,8 @@
   @signal quitting
  @endsignals
 
+ @see core.h
+
  <hr>
 
  @signaldef quitting
@@ -15,4 +17,4 @@ void (*quitting)();
  @endsignaldef
 
  */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

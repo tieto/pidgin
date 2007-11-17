@@ -60,17 +60,10 @@ msn_message_destroy(MsnMessage *msg)
 	purple_debug_info("msn", "message destroy (%p)\n", msg);
 #endif
 
-	if (msg->remote_user != NULL)
-		g_free(msg->remote_user);
-
-	if (msg->body != NULL)
-		g_free(msg->body);
-
-	if (msg->content_type != NULL)
-		g_free(msg->content_type);
-
-	if (msg->charset != NULL)
-		g_free(msg->charset);
+	g_free(msg->remote_user);
+	g_free(msg->body);
+	g_free(msg->content_type);
+	g_free(msg->charset);
 
 	g_hash_table_destroy(msg->attr_table);
 	g_list_free(msg->attr_list);
@@ -313,6 +306,7 @@ msn_message_parse_payload(MsnMessage *msg,
 		/* Import the body. */
 		if (body_len > 0) {
 			msg->body_len = body_len;
+			g_free(msg->body);
 			msg->body = g_malloc0(msg->body_len + 1);
 			memcpy(msg->body, tmp, msg->body_len);
 			tmp += body_len;
@@ -329,6 +323,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	{
 		if (payload_len - (tmp - tmp_base) > 0) {
 			msg->body_len = payload_len - (tmp - tmp_base);
+			g_free(msg->body);
 			msg->body = g_malloc0(msg->body_len + 1);
 			memcpy(msg->body, tmp, msg->body_len);
 		}
@@ -554,10 +549,8 @@ msn_message_set_content_type(MsnMessage *msg, const char *type)
 {
 	g_return_if_fail(msg != NULL);
 
-	if (msg->content_type != NULL)
-		g_free(msg->content_type);
-
-	msg->content_type = (type != NULL) ? g_strdup(type) : NULL;
+	g_free(msg->content_type);
+	msg->content_type = g_strdup(type);
 }
 
 const char *
@@ -573,10 +566,8 @@ msn_message_set_charset(MsnMessage *msg, const char *charset)
 {
 	g_return_if_fail(msg != NULL);
 
-	if (msg->charset != NULL)
-		g_free(msg->charset);
-
-	msg->charset = (charset != NULL) ? g_strdup(charset) : NULL;
+	g_free(msg->charset);
+	msg->charset = g_strdup(charset);
 }
 
 const char *
@@ -664,10 +655,11 @@ msn_message_get_hashtable_from_body(const MsnMessage *msg)
 
 		tokens = g_strsplit(*cur, ": ", 2);
 
-		if (tokens[0] != NULL && tokens[1] != NULL)
+		if (tokens[0] != NULL && tokens[1] != NULL) {
 			g_hash_table_insert(table, tokens[0], tokens[1]);
-
-		g_free(tokens);
+			g_free(tokens);
+		} else
+			g_strfreev(tokens);
 	}
 
 	g_strfreev(elems);

@@ -48,10 +48,17 @@ typedef struct _GntWindow			GntWindow;
 typedef struct _GntWindowPriv		GntWindowPriv;
 typedef struct _GntWindowClass		GntWindowClass;
 
+typedef enum
+{
+	GNT_WINDOW_MAXIMIZE_X = 1 << 0,
+	GNT_WINDOW_MAXIMIZE_Y = 1 << 1,
+} GntWindowFlags;
+
 struct _GntWindow
 {
 	GntBox parent;
 	GntMenu *menu;
+	GntWindowPriv *priv;
 };
 
 struct _GntWindowClass
@@ -67,9 +74,7 @@ struct _GntWindowClass
 G_BEGIN_DECLS
 
 /**
- * 
- *
- * @return
+ * @return  GType for GntWindow.
  */
 GType gnt_window_get_gtype(void);
 
@@ -77,27 +82,62 @@ GType gnt_window_get_gtype(void);
 #define gnt_hwindow_new(homo) gnt_window_box_new(homo, FALSE)
 
 /**
- * 
+ * Create a new window.
  *
- * @return
+ * @return The newly created window.
  */
 GntWidget * gnt_window_new(void);
 
 /**
- * 
- * @param homo
- * @param vert
+ * Create a new window.
  *
- * @return
+ * @param homo  @c TRUE if the widgets inside the window should have the same dimensions.
+ * @param vert  @c TRUE if the widgets inside the window should be stacked vertically.
+ *
+ * @return  The newly created window.
  */
 GntWidget * gnt_window_box_new(gboolean homo, gboolean vert);
 
 /**
- * 
- * @param window
- * @param menu
+ * Set the menu for a window.
+ *
+ * @param window  The window.
+ * @param menu    The menu for the window.
  */
 void gnt_window_set_menu(GntWindow *window, GntMenu *menu);
+
+/**
+ * Return the id of a menuitem specified to a keystroke.
+ *
+ * @param window    The window.
+ * @param key       The keystroke.
+ *
+ * @return The id of the menuitem bound to the keystroke, or @c NULL.
+ *
+ * @since 2.3.0
+ */
+const char * gnt_window_get_accel_item(GntWindow *window, const char *key);
+
+/**
+ * Maximize a window, either horizontally or vertically, or both.
+ *
+ * @param window    The window to maximize.
+ * @param maximize  The maximization state of the window.
+ *
+ * @since 2.3.0
+ */
+void gnt_window_set_maximize(GntWindow *window, GntWindowFlags maximize);
+
+/**
+ * Get the maximization state of a window.
+ *
+ * @param window  The window.
+ *
+ * @return  The maximization state of the window.
+ *
+ * @since 2.3.0
+ */
+GntWindowFlags gnt_window_get_maximize(GntWindow *window);
 
 void gnt_window_workspace_hiding(GntWindow *);
 void gnt_window_workspace_showing(GntWindow *);

@@ -48,13 +48,10 @@ msn_accept_add_cb(gpointer data)
 	{
 		MsnSession *session = pa->gc->proto_data;
 		MsnUserList *userlist = session->userlist;
-		MsnUser *user = msn_userlist_find_add_user(userlist, pa->who, pa->who);
-
-
+		
 		msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_AL);
 
-		if (msn_userlist_user_is_in_list(user, MSN_LIST_FL))
-			msn_del_contact_from_list(session->contact, NULL, pa->who, MSN_LIST_PL);
+		msn_del_contact_from_list(session->contact, NULL, pa->who, MSN_LIST_PL);
 	}
 
 	g_free(pa->who);
@@ -73,7 +70,7 @@ msn_cancel_add_cb(gpointer data)
 	{
 		MsnSession *session = pa->gc->proto_data;
 		MsnUserList *userlist = session->userlist;
-		MsnCallbackState *state = msn_callback_state_new();
+		MsnCallbackState *state = msn_callback_state_new(session);
 
 		msn_callback_state_set_action(state, MSN_DENIED_BUDDY);
 
@@ -230,10 +227,7 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 	}
 	else if (list_id == MSN_LIST_RL)
 	{
-		PurpleConnection *gc;
 		PurpleConversation *convo;
-
-		gc = purple_account_get_connection(account);
 
 		purple_debug_info("msn",
 						"%s has added you to his or her buddy list.\n",
@@ -686,7 +680,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 	
 	purple_debug_info("MSN Userlist", "Add user: %s to group: %s\n", who, new_group_name);
 
-	state = msn_callback_state_new();
+	state = msn_callback_state_new(userlist->session);
 	msn_callback_state_set_who(state, who);
 	msn_callback_state_set_new_group_name(state, new_group_name);
 
@@ -847,7 +841,7 @@ msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 	g_return_if_fail(userlist->session != NULL);
 	g_return_if_fail(userlist->session->contact != NULL);
 
-	state = msn_callback_state_new();
+	state = msn_callback_state_new(userlist->session);
 	msn_callback_state_set_who(state, who);
 	msn_callback_state_set_action(state, MSN_MOVE_BUDDY);
 	msn_callback_state_set_old_group_name(state, old_group_name);

@@ -80,7 +80,7 @@ jabber_parser_element_start_libxml(void *user_data,
 			char *attrib_ns = NULL;
 
 			if (attributes[i+2]) {
-				attrib_ns = g_strdup((char*)attributes[i+2]);;
+				attrib_ns = g_strdup((char*)attributes[i+2]);
 			}
 
 			memcpy(attrib, attributes[i+3], attrib_len);
@@ -193,7 +193,9 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 		js->context = xmlCreatePushParserCtxt(&jabber_parser_libxml, js, buf, len, NULL);
 		xmlParseChunk(js->context, "", 0, 0);
 	} else if (xmlParseChunk(js->context, buf, len, 0) < 0) {
-		purple_connection_error(js->gc, _("XML Parse error"));
+		purple_connection_error_reason (js->gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("XML Parse error"));
 	}
 }
 

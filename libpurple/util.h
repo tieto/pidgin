@@ -86,6 +86,27 @@ PurpleMenuAction *purple_menu_action_new(const char *label, PurpleCallback callb
 void purple_menu_action_free(PurpleMenuAction *act);
 
 /**************************************************************************/
+/** @name Utility Subsystem                                               */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Initializes the utility subsystem.
+ *
+ * @since 2.3.0
+ */
+void purple_util_init(void);
+
+/**
+ * Uninitializes the util subsystem.
+ *
+ * @since 2.3.0
+ */
+void purple_util_uninit(void);
+
+/*@}*/
+
+/**************************************************************************/
 /** @name Base16 Functions                                                */
 /**************************************************************************/
 /*@{*/
@@ -607,7 +628,7 @@ gboolean purple_util_write_data_to_file(const char *filename, const char *data,
  *
  */
 gboolean
-purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, size_t size);
+purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, gssize size);
 
 /**
  * Read the contents of a given file and parse the results into an

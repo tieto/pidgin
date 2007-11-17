@@ -70,6 +70,7 @@ struct _PurpleUtilFetchUrlData
 static char *custom_user_dir = NULL;
 static char *user_dir = NULL;
 
+
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
                      GList *children)
@@ -89,6 +90,25 @@ purple_menu_action_free(PurpleMenuAction *act)
 
 	g_free(act->label);
 	g_free(act);
+}
+
+void
+purple_util_init(void)
+{
+	/* This does nothing right now.  It exists for symmetry with 
+	 * purple_util_uninit() and forwards compatibility. */
+}
+
+void
+purple_util_uninit(void)
+{
+	/* Free these so we don't have leaks at shutdown. */
+
+	g_free(custom_user_dir);
+	custom_user_dir = NULL;
+
+	g_free(user_dir);
+	user_dir = NULL;
 }
 
 /**************************************************************************
@@ -1352,7 +1372,9 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
 						if(plain && !strcmp(pt->src_tag, "a")) {
 							/* if this is a link, we have to add the url to the plaintext, too */
-							if (cdata && url && !g_string_equal(cdata, url))
+							if (cdata && url &&
+									(!g_string_equal(cdata, url) && (g_ascii_strncasecmp(url->str, "mailto:", 7) != 0 ||
+									                                 g_utf8_collate(url->str + 7, cdata->str) != 0)))
 								g_string_append_printf(plain, " <%s>", g_strstrip(url->str));
 							if (cdata) {
 								g_string_free(cdata, TRUE);
@@ -1515,8 +1537,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							plain = g_string_append(plain, alt->str);
 						if(!src && xhtml)
 							xhtml = g_string_append(xhtml, alt->str);
+						g_string_free(alt, TRUE);
 					}
-					g_string_free(alt, TRUE);
 					g_string_free(src, TRUE);
 					continue;
 				}
@@ -1533,7 +1555,11 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							if(*q == '\'' || *q == '\"')
 								q++;
 							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
-								url = g_string_append_c(url, *q);
+								int len;
+								if ((*q == '&') && (purple_markup_unescape_entity(q, &len) == NULL))
+									url = g_string_append(url, "&amp;");
+								else
+									url = g_string_append_c(url, *q);
 								q++;
 							}
 							p = q;
@@ -1549,7 +1575,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "a";
 					tags = g_list_prepend(tags, pt);
 					if(xhtml)
-						g_string_append_printf(xhtml, "<a href='%s'>", g_strstrip(url->str));
+						g_string_append_printf(xhtml, "<a href='%s'>", url ? g_strstrip(url->str) : "");
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
@@ -1642,7 +1668,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->src_tag = "font";
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
-					if(style->len)
+					if(style->len && xhtml)
 						g_string_append_printf(xhtml, "<span style='%s'>", g_strstrip(style->str));
 					else
 						pt->ignore = TRUE;
@@ -1712,6 +1738,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				xhtml = g_string_append_len(xhtml, c, len);
 			if(plain)
 				plain = g_string_append(plain, pln);
+			if(cdata)
+				cdata = g_string_append_len(cdata, c, len);
 			c += len;
 		} else {
 			if(xhtml)
@@ -1737,6 +1765,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 		*plain_out = g_string_free(plain, FALSE);
 	if(url)
 		g_string_free(url, TRUE);
+	if (cdata)
+		g_string_free(cdata, TRUE);
 }
 
 /* The following are probably reasonable changes:
@@ -2505,7 +2535,7 @@ int purple_build_dir (const char *path, int mode)
 		}
 
 		if (g_mkdir(dir, mode) < 0) {
-			purple_debug_warning("build_dir", "mkdir: %s\n", strerror(errno));
+			purple_debug_warning("build_dir", "mkdir: %s\n", g_strerror(errno));
 			g_strfreev(components);
 			g_free(dir);
 			return -1;
@@ -2541,30 +2571,34 @@ purple_util_write_data_to_file(const char *filename, const char *data, gssize si
 		if (g_mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
 		{
 			purple_debug_error("util", "Error creating directory %s: %s\n",
-							 user_dir, strerror(errno));
+							 user_dir, g_strerror(errno));
 			return FALSE;
 		}
 	}
 
 	filename_full = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", user_dir, filename);
 
-	ret = purple_util_write_data_to_file_absolute(filename_full,
-						      data,size);
+	ret = purple_util_write_data_to_file_absolute(filename_full, data, size);
 
 	g_free(filename_full);
 	return ret;
 }
 
 gboolean
-purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, size_t size)
+purple_util_write_data_to_file_absolute(const char *filename_full, const char *data, gssize size)
 {
 	gchar *filename_temp;
 	FILE *file;
 	size_t real_size, byteswritten;
 	struct stat st;
+#ifndef HAVE_FILENO
+	int fd;
+#endif
 
 	purple_debug_info("util", "Writing file %s\n",
 					filename_full);
+
+	g_return_val_if_fail((size >= -1), FALSE);
 
 	filename_temp = g_strdup_printf("%s.save", filename_full);
 
@@ -2575,7 +2609,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 		{
 			purple_debug_error("util", "Error removing old file "
 					   "%s: %s\n",
-					   filename_temp, strerror(errno));
+					   filename_temp, g_strerror(errno));
 		}
 	}
 
@@ -2585,23 +2619,67 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	{
 		purple_debug_error("util", "Error opening file %s for "
 				   "writing: %s\n",
-				   filename_temp, strerror(errno));
+				   filename_temp, g_strerror(errno));
 		g_free(filename_temp);
 		return FALSE;
 	}
 
 	/* Write to file */
-	real_size = (size == -1) ? strlen(data) : size;
+	real_size = (size == -1) ? strlen(data) : (size_t) size;
 	byteswritten = fwrite(data, 1, real_size, file);
 
+#ifdef HAVE_FILENO
+	/* Apparently XFS (and possibly other filesystems) do not
+	 * guarantee that file data is flushed before file metadata,
+	 * so this procedure is insufficient without some flushage. */
+	if (fflush(file) < 0) {
+		purple_debug_error("util", "Error flushing %s: %s\n",
+				   filename_temp, g_strerror(errno));
+		g_free(filename_temp);
+		fclose(file);
+		return FALSE;
+	}
+	if (fsync(fileno(file)) < 0) {
+		purple_debug_error("util", "Error syncing file contents for %s: %s\n",
+				   filename_temp, g_strerror(errno));
+		g_free(filename_temp);
+		fclose(file);
+		return FALSE;
+	}
+#endif
+    
 	/* Close file */
 	if (fclose(file) != 0)
 	{
 		purple_debug_error("util", "Error closing file %s: %s\n",
-				   filename_temp, strerror(errno));
+				   filename_temp, g_strerror(errno));
 		g_free(filename_temp);
 		return FALSE;
 	}
+
+#ifndef HAVE_FILENO
+	/* This is the same effect (we hope) as the HAVE_FILENO block
+	 * above, but for systems without fileno(). */
+	if ((fd = open(filename_temp, O_RDWR)) < 0) {
+		purple_debug_error("util", "Error opening file %s for flush: %s\n",
+				   filename_temp, g_strerror(errno));
+		g_free(filename_temp);
+		return FALSE;
+	}
+	if (fsync(fd) < 0) {
+		purple_debug_error("util", "Error syncing %s: %s\n",
+				   filename_temp, g_strerror(errno));
+		g_free(filename_temp);
+		close(fd);
+		return FALSE;
+	}
+	if (close(fd) < 0) {
+		purple_debug_error("util", "Error closing %s after sync: %s\n",
+				   filename_temp, g_strerror(errno));
+		g_free(filename_temp);
+		return FALSE;
+	}
+#endif
 
 	/* Ensure the file is the correct size */
 	if (byteswritten != real_size)
@@ -2630,7 +2708,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	if (chmod(filename_temp, S_IRUSR | S_IWUSR) == -1)
 	{
 		purple_debug_error("util", "Error setting permissions of file %s: %s\n",
-						 filename_temp, strerror(errno));
+						 filename_temp, g_strerror(errno));
 	}
 #endif
 
@@ -2639,7 +2717,7 @@ purple_util_write_data_to_file_absolute(const char *filename_full, const char *d
 	{
 		purple_debug_error("util", "Error renaming %s to %s: %s\n",
 				   filename_temp, filename_full,
-				   strerror(errno));
+				   g_strerror(errno));
 	}
 
 	g_free(filename_temp);
@@ -3066,9 +3144,6 @@ purple_str_add_cr(const char *text)
 		ret[j++] = text[i];
 	}
 
-	purple_debug_misc("purple_str_add_cr", "got: %s, leaving with %s\n",
-					text, ret);
-
 	return ret;
 }
 
@@ -3198,7 +3273,7 @@ purple_strcasestr(const char *haystack, const char *needle)
 char *
 purple_str_size_to_units(size_t size)
 {
-	static const char *size_str[4] = { "bytes", "KiB", "MiB", "GiB" };
+	static const char * const size_str[] = { "bytes", "KiB", "MiB", "GiB" };
 	float size_mag;
 	int size_index = 0;
 
@@ -3391,11 +3466,11 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 	char host[256], path[256], user[256], passwd[256];
 	int port = 0;
 	/* hyphen at end includes it in control set */
-	static char addr_ctrl[] = "A-Za-z0-9.-";
-	static char port_ctrl[] = "0-9";
-	static char page_ctrl[] = "A-Za-z0-9.~_/:*!@&%%?=+^-";
-	static char user_ctrl[] = "A-Za-z0-9.~_/*!&%%?=+^-";
-	static char passwd_ctrl[] = "A-Za-z0-9.~_/*!&%%?=+^-";
+	static const char addr_ctrl[] = "A-Za-z0-9.-";
+	static const char port_ctrl[] = "0-9";
+	static const char page_ctrl[] = "A-Za-z0-9.~_/:*!@&%%?=+^-";
+	static const char user_ctrl[] = "A-Za-z0-9.~_/*!&%%?=+^-";
+	static const char passwd_ctrl[] = "A-Za-z0-9.~_/*!&%%?=+^-";
 
 	g_return_val_if_fail(url != NULL, FALSE);
 
@@ -3492,7 +3567,7 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 	gboolean full;
 	int len;
 
-	if ((s = g_strstr_len(data, data_len, "Location: ")) == NULL)
+	if ((s = g_strstr_len(data, data_len, "\nLocation: ")) == NULL)
 		/* We're not being redirected */
 		return FALSE;
 
@@ -3690,7 +3765,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 					if(new_data == NULL) {
 						purple_debug_error("util",
 								"Failed to allocate %u bytes: %s\n",
-								content_len, strerror(errno));
+								content_len, g_strerror(errno));
 						purple_util_fetch_url_error(gfud,
 								_("Unable to allocate enough memory to hold "
 								  "the contents from %s.  The web server may "
@@ -3728,7 +3803,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 			return;
 		} else {
 			purple_util_fetch_url_error(gfud, _("Error reading from %s: %s"),
-					gfud->website.address, strerror(errno));
+					gfud->website.address, g_strerror(errno));
 			return;
 		}
 	}
@@ -3759,7 +3834,7 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	else if (len < 0) {
 		purple_util_fetch_url_error(gfud, _("Error writing to %s: %s"),
-				gfud->website.address, strerror(errno));
+				gfud->website.address, g_strerror(errno));
 		return;
 	}
 	gfud->request_written += len;

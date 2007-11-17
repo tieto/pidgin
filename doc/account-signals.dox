@@ -9,7 +9,13 @@
   @signal account-setting-info
   @signal account-set-info
   @signal account-status-changed
+  @signal account-authorization-requested
+  @signal account-authorization-denied
+  @signal account-authorization-granted
+  @signal account-error-changed
  @endsignals
+
+ @see account.h
 
  <hr>
 
@@ -100,5 +106,59 @@ void (*account_alias_changed)(PurpleAccount *account, const char *old);
   @param old     The alias before change.
  @endsignaldef
 
+ @signaldef account-authorization-requested
+  @signalproto
+void (*account_authorization_requested)(PurpleAccount *account, const char *user);
+  @endsignalproto
+  @signaldesc
+   Emitted when a user requests authorization.
+  @param account The account.
+  @param user    The name of the user requesting authorization.
+  @return Less than zero to deny the request without prompting, greater
+          than zero if the request should be granted. If zero is returned,
+          then the user will be prompted with the request.
+  @since 2.3.0
+ @endsignaldef
+
+ @signaldef account-authorization-denied
+  @signalproto
+void (*account_authorization_denied)(PurpleAccount *account, const char *user);
+  @endsignalproto
+  @signaldesc
+   Emitted when the authorization request for a buddy is denied.
+  @param account The account.
+  @param user    The name of the user requesting authorization.
+  @since 2.3.0
+ @endsignaldef
+
+ @signaldef account-authorization-granted
+  @signalproto
+void (*account_authorization_granted)(PurpleAccount *account, const char *user);
+  @endsignalproto
+  @signaldesc
+   Emitted when the authorization request for a buddy is granted.
+  @param account The account.
+  @param user    The name of the user requesting authorization.
+  @since 2.3.0
+ @endsignaldef
+
+ @signaldef account-error-changed
+  @signalproto
+void (*account_error_changed)(PurpleAccount *account, const PurpleConnectionErrorInfo *old_error, const PurpleConnectionErrorInfo *current_error);
+  @endsignalproto
+  @signaldesc
+   Emitted when @a account's error changes.
+  @param account   The account whose error has changed.
+  @param old_error The account's previous error, or @c NULL if it had no
+                   error.  After this signal is emitted, @a old_error is
+                   not guaranteed to be a valid pointer.
+  @param new_error The account's new error, or @c NULL if it has no error.
+                   If not @c NULL, @a new_error will remain a valid until
+                   pointer just after the next time this signal is emitted
+                   for this @a account.
+  @see purple_account_get_current_error()
+  @since 2.3.0
+ @endsignaldef
+
  */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

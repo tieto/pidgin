@@ -79,7 +79,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 
 	pw = getpwuid(getuid());
 	if (!pw) {
-		purple_debug_error("silc", "silc: %s\n", strerror(errno));
+		purple_debug_error("silc", "silc: %s\n", g_strerror(errno));
 		return FALSE;
 	}
 
@@ -108,7 +108,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 				return FALSE;
 			}
 		} else {
-			purple_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n", filename, strerror(errno));
+			purple_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n", filename, g_strerror(errno));
 			return FALSE;
 		}
 	} else {
@@ -140,7 +140,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 			}
 		} else {
 			purple_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n",
-							 servfilename, strerror(errno));
+							 servfilename, g_strerror(errno));
 			return FALSE;
 		}
 	}
@@ -163,7 +163,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 			}
 		} else {
 			purple_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n",
-							 clientfilename, strerror(errno));
+							 clientfilename, g_strerror(errno));
 			return FALSE;
 		}
 	}
@@ -186,7 +186,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 			}
 		} else {
 			purple_debug_error("silc", "Couldn't stat '%s' directory, error: %s\n",
-							 friendsfilename, strerror(errno));
+							 friendsfilename, g_strerror(errno));
 			return FALSE;
 		}
 	}
@@ -216,12 +216,12 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 
 			if ((g_stat(file_public_key, &st)) == -1) {
 				purple_debug_error("silc", "Couldn't stat '%s' public key, error: %s\n",
-					file_public_key, strerror(errno));
+					file_public_key, g_strerror(errno));
 				return FALSE;
 			}
 		} else {
 			purple_debug_error("silc", "Couldn't stat '%s' public key, error: %s\n",
-							 file_public_key, strerror(errno));
+							 file_public_key, g_strerror(errno));
 			return FALSE;
 		}
 	}
@@ -237,7 +237,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 	if ((fd = g_open(file_private_key, O_RDONLY, 0)) != -1) {
 		if ((fstat(fd, &st)) == -1) {
 			purple_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
-							 file_private_key, strerror(errno));
+							 file_private_key, g_strerror(errno));
 			close(fd);
 			return FALSE;
 		}
@@ -257,7 +257,7 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 			if ((fd = g_open(file_private_key, O_RDONLY, 0)) != -1) {
 				if ((fstat(fd, &st)) == -1) {
 					purple_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
-							 file_private_key, strerror(errno));
+							 file_private_key, g_strerror(errno));
 					close(fd);
 					return FALSE;
 				}
@@ -266,12 +266,12 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 			 * will set the permissions */
 			else if ((g_stat(file_private_key, &st)) == -1) {
 				purple_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
-					file_private_key, strerror(errno));
+					file_private_key, g_strerror(errno));
 				return FALSE;
 			}
 		} else {
 			purple_debug_error("silc", "Couldn't stat '%s' private key, error: %s\n",
-							 file_private_key, strerror(errno));
+							 file_private_key, g_strerror(errno));
 			return FALSE;
 		}
 	}
@@ -667,7 +667,7 @@ SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
 			text = purple_unescape_html(tmp);
 			g_free(tmp);
 			/* Add text */
-			silc_mime_add_data(p, text, strlen(text));
+			silc_mime_add_data(p, (unsigned char *)text, strlen(text));
 			g_free(text);
 
 			if (!parts)
@@ -720,7 +720,7 @@ SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
 				    "text/plain; charset=utf-8");
 
 		/* Add text */
-		silc_mime_add_data(p, tmp, strlen(tmp));
+		silc_mime_add_data(p, (unsigned char *)tmp, strlen(tmp));
 		g_free(tmp);
 
 		if (!parts)

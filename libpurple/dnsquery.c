@@ -346,7 +346,7 @@ purple_dnsquery_resolver_new(gboolean show_debug)
 	/* Create pipes for communicating with the child process */
 	if (pipe(child_out) || pipe(child_in)) {
 		purple_debug_error("dns",
-				   "Could not create pipes: %s\n", strerror(errno));
+				   "Could not create pipes: %s\n", g_strerror(errno));
 		return NULL;
 	}
 
@@ -374,7 +374,7 @@ purple_dnsquery_resolver_new(gboolean show_debug)
 	if (resolver->dns_pid == -1) {
 		purple_debug_error("dns",
 				   "Could not create child process for DNS: %s\n",
-				   strerror(errno));
+				   g_strerror(errno));
 		purple_dnsquery_resolver_destroy(resolver);
 		return NULL;
 	}
@@ -416,7 +416,7 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 		return FALSE;
 	} else if (pid < 0) {
 		purple_debug_warning("dns", "Wait for DNS child %d failed: %s\n",
-				resolver->dns_pid, strerror(errno));
+				resolver->dns_pid, g_strerror(errno));
 		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;
 	}
@@ -430,7 +430,7 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 	rc = write(resolver->fd_in, &dns_params, sizeof(dns_params));
 	if (rc < 0) {
 		purple_debug_error("dns", "Unable to write to DNS child %d: %d\n",
-				resolver->dns_pid, strerror(errno));
+				resolver->dns_pid, g_strerror(errno));
 		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;
 	}
@@ -571,7 +571,7 @@ host_resolved(gpointer data, gint source, PurpleInputCondition cond)
 		purple_dnsquery_resolved(query_data, hosts);
 
 	} else if (rc == -1) {
-		g_snprintf(message, sizeof(message), _("Error reading from resolver process:\n%s"), strerror(errno));
+		g_snprintf(message, sizeof(message), _("Error reading from resolver process:\n%s"), g_strerror(errno));
 		purple_dnsquery_failed(query_data, message);
 
 	} else if (rc == 0) {
@@ -637,9 +637,10 @@ purple_dnsquery_a(const char *hostname, int port,
 static gboolean
 dns_main_thread_cb(gpointer data)
 {
-	PurpleDnsQueryData *query_data;
+	PurpleDnsQueryData *query_data = data;
 
-	query_data = data;
+	/* We're done, so purple_dnsquery_destroy() shouldn't think it is canceling an in-progress lookup */
+	query_data->resolver = NULL;
 
 	if (query_data->error_message != NULL)
 		purple_dnsquery_failed(query_data, query_data->error_message);
@@ -713,7 +714,7 @@ dns_thread(gpointer data)
 #endif
 
 	/* back to main thread */
-	g_idle_add(dns_main_thread_cb, query_data);
+	purple_timeout_add(0, dns_main_thread_cb, query_data);
 
 	return 0;
 }
@@ -780,14 +781,12 @@ purple_dnsquery_a(const char *hostname, int port,
 
 	purple_debug_info("dnsquery", "Performing DNS lookup for %s\n", hostname);
 
-	query_data = g_new(PurpleDnsQueryData, 1);
+	query_data = g_new0(PurpleDnsQueryData, 1);
 	query_data->hostname = g_strdup(hostname);
 	g_strstrip(query_data->hostname);
 	query_data->port = port;
 	query_data->callback = callback;
 	query_data->data = data;
-	query_data->error_message = NULL;
-	query_data->hosts = NULL;
 
 	if (strlen(query_data->hostname) == 0)
 	{

@@ -13,6 +13,8 @@
   @signal blist-node-aliased
  @endsignals
 
+ @see blist.h
+
  <hr>
 
  @signaldef buddy-status-changed
@@ -105,4 +107,4 @@ void (*blist_node_aliased)(PurpleBlistNode *node, const char *old_alias)
   @endsignaldef
 
  */
-// vim: syntax=c tw=75 et
+// vim: syntax=c.doxygen tw=75 et

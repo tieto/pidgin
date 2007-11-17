@@ -229,7 +229,7 @@ static void
 conversation_delete_cb(PurpleConversation *conv) {
 	PidginWindow *win = pidgin_conv_get_window(PIDGIN_CONVERSATION(conv));
 	/* If it is the last conversation in the window, cleanup */
-	if (pidgin_conv_window_get_gtkconv_count(win) == 1)
+	if (win != NULL && pidgin_conv_window_get_gtkconv_count(win) == 1)
 		cleanup_conv_window(win);
 }
 
@@ -691,7 +691,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,		/**< priority       */
 	WINTRANS_PLUGIN_ID,		/**< id             */
 	N_("Transparency"),		/**< name           */
-	VERSION,			/**< version        */
+	DISPLAY_VERSION,		/**< version        */
 					/**  summary        */
 	N_("Variable Transparency for the buddy list and conversations."),
 					/**  description    */

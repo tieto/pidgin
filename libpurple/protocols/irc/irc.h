@@ -99,6 +99,8 @@ typedef int (*IRCCmdCallback) (struct irc_conn *irc, const char *cmd, const char
 int irc_send(struct irc_conn *irc, const char *buf);
 gboolean irc_blist_timeout(struct irc_conn *irc);
 
+char *irc_escape_privmsg(const char *text, gssize length);
+
 char *irc_mirc2html(const char *string);
 char *irc_mirc2txt(const char *string);
 

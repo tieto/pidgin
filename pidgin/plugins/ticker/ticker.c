@@ -124,8 +124,10 @@ static void buddy_ticker_set_pixmap(PurpleContact *c) {
 static gboolean buddy_ticker_set_pixmap_cb(gpointer data) {
 	TickerData *td = data;
 
-	buddy_ticker_update_contact(td->contact);
-	td->timeout = 0;
+	if (g_list_find(tickerbuds, td) != NULL) {
+		buddy_ticker_update_contact(td->contact);
+		td->timeout = 0;
+	}
 
 	return FALSE;
 }
@@ -352,7 +354,7 @@ static PurplePluginInfo info =
 
 	TICKER_PLUGIN_ID,                                 /**< id             */
 	N_("Buddy Ticker"),                               /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("A horizontal scrolling version of the buddy list."),
 	                                                  /**  description    */

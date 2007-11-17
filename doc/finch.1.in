@@ -123,7 +123,7 @@ Switch to the previous workspace
 Tag (or untag) the current window
 .TP
 .B Alt \+ T
-Attached all the tag windows to the current workspace
+Attached all the tagged windows to the current workspace
 .TP
 .B Alt \+ s
 Show the workspace list
@@ -350,6 +350,35 @@ The \fBc-\fR corresponds to the \fBControl\fR key. You can also use \fBctrl-\fR
 or \fBctr-\fR or \fBctl-\fR to indicate a combination. For alt-keys, you can use
 one of \fBa-\fR, \fBalt-\fR, \fBm-\fR or \fBmeta-\fR. You can also use
 \fBhome\fR, \fBend\fR, \fBleft\fR, \fBright\fR etc. keys.
+
+.SH Menus
+You can also specify key-bindings to trigger specific menuitems in windows. For example, the following entry in \fI~/.gntrc\fR will bind \fBCtrl + t\fR to the 'Send IM...' item in the buddylist:
+
+[buddylist::menu]
+.br
+c-t = send-im
+
+The following is the list of IDs of the current menuitems in the buddylist:
+
+send-im
+.br
+join-chat
+.br
+show-empty-groups
+.br
+show-offline-buddies
+.br
+sort-status
+.br
+sort-alpha
+.br
+sort-log
+.br
+add-buddy
+.br
+add-chat
+.br
+add-group
 
 .SH Mouse Support
 There is experimental mouse support. You can focus windows, activate buttons,

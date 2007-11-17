@@ -1,6 +1,7 @@
 /**
  * @file blist.h Buddy List API
  * @ingroup core
+ * @see @ref blist-signals
  */
 
 /* purple
@@ -22,8 +23,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
- *
- * @see @ref blist-signals
  */
 #ifndef _PURPLE_BLIST_H_
 #define _PURPLE_BLIST_H_
@@ -483,6 +482,7 @@ void purple_blist_merge_contact(PurpleContact *source, PurpleBlistNode *node);
  */
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Sets the alias for a contact.
  *
@@ -492,6 +492,7 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
  * @deprecated Use purple_blist_alias_contact() instead.
  */
 void purple_contact_set_alias(PurpleContact *contact, const char *alias);
+#endif
 
 /**
  * Gets the alias for a contact.
@@ -518,8 +519,11 @@ gboolean purple_contact_on_account(PurpleContact *contact, PurpleAccount *accoun
  * @param contact  The contact
  */
 void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
+
 /**
  * Removes a buddy from the buddy list and frees the memory allocated to it.
+ * This doesn't actually try to remove the buddy from the server list, nor does
+ * it clean up the prpl_data.
  *
  * @param buddy   The buddy to be removed
  */

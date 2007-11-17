@@ -1,5 +1,6 @@
 EXTRA_DIST = \
 	mdns_win32.c \
+	dns_sd_proxy.c \
 	dns_sd_proxy.h \
 	Makefile.mingw
 
@@ -17,7 +18,9 @@ BONJOURSOURCES = \
 	mdns_interface.h \
 	mdns_types.h \
 	parser.c \
-	parser.h
+	parser.h \
+	bonjour_ft.c \
+	bonjour_ft.h 
 
 if MDNS_AVAHI
   BONJOURSOURCES += mdns_avahi.c
