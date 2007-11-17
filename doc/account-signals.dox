@@ -9,9 +9,6 @@
   @signal account-setting-info
   @signal account-set-info
   @signal account-status-changed
-  @signal account-authorization-requested
-  @signal account-authorization-denied
-  @signal account-authorization-granted
  @endsignals
 
  @see account.h
@@ -116,7 +113,6 @@ void (*account_authorization_requested)(PurpleAccount *account, const char *user
   @return Less than zero to deny the request without prompting, greater
           than zero if the request should be granted. If zero is returned,
           then the user will be prompted with the request.
-  @since 2.3.0
  @endsignaldef
 
  @signaldef account-authorization-denied
@@ -127,7 +123,6 @@ void (*account_authorization_denied)(PurpleAccount *account, const char *user);
    Emitted when the authorization request for a buddy is denied.
   @param account The account.
   @param user    The name of the user requesting authorization.
-  @since 2.3.0
  @endsignaldef
 
  @signaldef account-authorization-granted
@@ -138,7 +133,6 @@ void (*account_authorization_granted)(PurpleAccount *account, const char *user);
    Emitted when the authorization request for a buddy is granted.
   @param account The account.
   @param user    The name of the user requesting authorization.
-  @since 2.3.0
  @endsignaldef
 
  */

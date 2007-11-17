@@ -1185,8 +1185,6 @@ PurpleFilterAccountFunc purple_request_field_account_get_filter(
  * @param selected A list of PurpleBlistNode's to select by default, or @c NULL.
  *
  * @return  The new field.
- *
- * @since 2.3.0
  */
 PurpleRequestField *purple_request_field_blist_nodes_new(const char *id, const char *text,
 		PurpleRequestBlistFlags flag, GList *selected);
@@ -1198,8 +1196,6 @@ PurpleRequestField *purple_request_field_blist_nodes_new(const char *id, const c
  * @param filter  The filter function.
  *
  * @return  The old filter function, or @c NULL if there was none.
- *
- * @since 2.3.0
  */
 PurpleFilterBlistFunc purple_request_field_blist_set_filter(PurpleRequestField *field, PurpleFilterBlistFunc filter);
 
@@ -1209,8 +1205,6 @@ PurpleFilterBlistFunc purple_request_field_blist_set_filter(PurpleRequestField *
  * @param field  The request field.
  *
  * @return  The filter function, or @c NULL if there isn't any.
- *
- * @since 2.3.0
  */
 PurpleFilterBlistFunc purple_request_field_blist_get_filter(const PurpleRequestField *field);
 
@@ -1221,8 +1215,6 @@ PurpleFilterBlistFunc purple_request_field_blist_get_filter(const PurpleRequestF
  * @param node   The buddylist node to add to the list.
  *
  * @return  @c TRUE if the node is added to the list, @c FALSE if it was already in the list.
- *
- * @since 2.3.0
  */
 gboolean purple_request_field_blist_add(PurpleRequestField *field, PurpleBlistNode *node);
 
@@ -1233,8 +1225,6 @@ gboolean purple_request_field_blist_add(PurpleRequestField *field, PurpleBlistNo
  * @param node    The buddylist node to remove from the list.
  *
  * @return @c TRUE if the node is removed from the list, @c FALSE if the node is not in the list.
- *
- * @since 2.3.0
  */
 gboolean purple_request_field_blist_remove(PurpleRequestField *field, PurpleBlistNode *node);
 
@@ -1244,8 +1234,6 @@ gboolean purple_request_field_blist_remove(PurpleRequestField *field, PurpleBlis
  * @param field      The request field.
  * @param selecteds  The list of selected PurpleBlistNode's. Note that the request field
  *                   becomes the owner of the list, and so the caller should not modify it.
- *
- * @since 2.3.0
  */
 void purple_request_field_blist_set_selection_list(PurpleRequestField *field, GList *selecteds);
 
@@ -1255,8 +1243,6 @@ void purple_request_field_blist_set_selection_list(PurpleRequestField *field, GL
  * @param field  The request field.
  *
  * @return A GList of PurpleBlistNode's.
- *
- * @since 2.3.0
  */
 GList *purple_request_field_blist_get_selection_list(const PurpleRequestField *field);
 
