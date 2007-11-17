@@ -2937,7 +2937,9 @@ purple_running_gnome(void)
 		return FALSE;
 	g_free(tmp);
 
-	return (g_getenv("GNOME_DESKTOP_SESSION_ID") != NULL);
+	tmp = (gchar *)g_getenv("GNOME_DESKTOP_SESSION_ID");
+
+	return ((tmp != NULL) && (*tmp != '\0'));
 #else
 	return FALSE;
 #endif
