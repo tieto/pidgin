@@ -3,7 +3,6 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.3.0 (??/??/????):
 	libpurple:
 		Added:
-		* purple_request_field_blist_nodes_new and its accessory functions.
 		* a PurpleConversation field and an alias field in PurpleConvMessage
 		* account-authorization signals (see account-signals.dox for
 		  details) (Stefan Ott)
@@ -72,18 +71,6 @@ version 2.3.0 (??/??/????):
 		* pidgin_pounce_editor_show()
 		* pidgin_pounces_manager_show()
 		* pidgin_syslog_show()
-
-		* purple_request_accept_cancel()
-		* purple_request_action_varg()
-		* purple_request_action()
-		* purple_request_choice_varg()
-		* purple_request_choice()
-		* purple_request_fields()
-		* purple_request_file()
-		* purple_request_folder()
-		* purple_request_input()
-		* purple_request_ok_cancel()
-		* purple_request_yes_no()
 
 		* purple_connection_error()
 		* pidgin_blist_update_account_error_state()
