@@ -541,9 +541,9 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 	if (i > 1)
 	{
 		char *msg = g_strdup_printf(ngettext("You have %d contact named %s. Would you like to merge them?", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
-		purple_request_action_with_hint(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
+		purple_request_action(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
 							 "You can separate them again by choosing 'Expand' from the contact's context menu"), 0, NULL, NULL, NULL,
-				      PURPLE_REQUEST_UI_HINT_BLIST, merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
+				      merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
 		g_free(msg);
 	} else
 		g_list_free(merges);
@@ -638,7 +638,7 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
 
 static void gtk_blist_menu_bp_cb(GtkWidget *w, PurpleBuddy *b)
 {
-	pidgin_pounce_editor_show_with_parent(GTK_WINDOW(gtkblist->window), b->account, b->name, NULL);
+	pidgin_pounce_editor_show(b->account, b->name, NULL);
 }
 
 static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
@@ -664,7 +664,7 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 			name = prpl_info->get_chat_name(c->components);
 		}
 	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		pidgin_log_show_contact_with_parent(GTK_WINDOW(gtkblist->window), (PurpleContact *)node);
+		pidgin_log_show_contact((PurpleContact *)node);
 		pidgin_clear_cursor(gtkblist->window);
 		return;
 	} else {
@@ -676,7 +676,7 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 	}
 
 	if (name && account) {
-		pidgin_log_show_with_parent(GTK_WINDOW(gtkblist->window), type, name, account);
+		pidgin_log_show(type, name, account);
 		g_free(name);
 
 		pidgin_clear_cursor(gtkblist->window);
@@ -701,6 +701,11 @@ static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
 		}
 	}
 	pidgin_blist_update(purple_get_blist(), node);
+}
+
+static void gtk_blist_show_systemlog_cb()
+{
+	pidgin_syslog_show();
 }
 
 static void gtk_blist_show_onlinehelp_cb()
@@ -3079,20 +3084,6 @@ toggle_debug(void)
 			!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"));
 }
 
-static void (*show_with_parent_funcs[5])(GtkWindow *parent) = 
-{
-	NULL,
-	pidgin_pounces_manager_show_with_parent,
-	pidgin_plugin_dialog_show_with_parent,
-	pidgin_syslog_show_with_parent,
-	pidgin_dialogs_about_with_parent
-};
-
-static void
-pidgin_blist_show_with_parent(gpointer data1, gint show_with_parent_idx, gpointer data3)
-{
-	show_with_parent_funcs[show_with_parent_idx](GTK_WINDOW(gtkblist->window));
-}
 
 /***************************************************
  *            Crap                                 *
@@ -3126,15 +3117,15 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_blist_show_with_parent, 1, "<Item>", NULL },
+	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_pounces_manager_show, 1, "<Item>", NULL },
 	{ N_("/Tools/_Certificates"), NULL, pidgin_certmgr_show, 0, "<Item>", NULL },
-	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_blist_show_with_parent, 2, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
+	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 2, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
-	{ N_("/Tools/System _Log"), NULL, pidgin_blist_show_with_parent, 3, "<Item>", NULL },
+	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 3, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 	/* Help */
@@ -3142,9 +3133,9 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
 #if GTK_CHECK_VERSION(2,6,0)
-	{ N_("/Help/_About"), NULL, pidgin_blist_show_with_parent, 4, "<StockItem>", GTK_STOCK_ABOUT },
+	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 4,  "<StockItem>", GTK_STOCK_ABOUT },
 #else
-	{ N_("/Help/_About"), NULL, pidgin_blist_show_with_parent, 4, "<Item>", NULL },
+	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 4,  "<Item>", NULL },
 #endif
 };
 
@@ -5315,7 +5306,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/sound/method",
 			pidgin_blist_sound_method_pref_cb, NULL);
 
-
 	/* Setup some purple signal handlers. */
 
 	handle = purple_accounts_get_handle();
@@ -6671,13 +6661,13 @@ add_group_cb(PurpleConnection *gc, const char *group_name)
 static void
 pidgin_blist_request_add_group(void)
 {
-	purple_request_input_with_hint(NULL, _("Add Group"), NULL,
+	purple_request_input(NULL, _("Add Group"), NULL,
 					   _("Please enter the name of the group to be added."),
 					   NULL, FALSE, FALSE, NULL,
 					   _("Add"), G_CALLBACK(add_group_cb),
 					   _("Cancel"), NULL,
 					   NULL, NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_BLIST, NULL);
+					   NULL);
 }
 
 void

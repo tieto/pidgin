@@ -15,7 +15,6 @@ version 2.3.0 (??/??/????):
 		  to unload a plugin--fails.  This then prevents the plugin
 		  from being saved in the saved plugins list, so it'll won't
 		  be loaded at the next startup.
-
 		* PurpleDisconnectReason enumeration of machine-readable
 		  types of connection error.
 		* purple_connection_error_reason(), to be used by prpls
@@ -52,42 +51,6 @@ version 2.3.0 (??/??/????):
 
 		* purple_network_listen_map_external() to temporarily disable
 		  mapping ports externally via NAT-PMP or UPnP.
-
-		* pidgin_dialogs_about_with_parent()
-		* pidgin_log_show_contact_with_parent()
-		* pidgin_log_show_with_parent()
-		* pidgin_plugin_dialog_show_with_parent()
-		* pidgin_pounce_editor_show_with_parent()
-		* pidgin_pounces_manager_show_with_parent()
-		* pidgin_syslog_show_with_parent()
-
-		* purple_request_accept_cancel_with_hint()
-		* purple_request_action_varg_with_hint()
-		* purple_request_action_with_hint()
-		* purple_request_choice_varg_with_hint()
-		* purple_request_choice_with_hint()
-		* purple_request_fields_with_hint()
-		* purple_request_file_with_hint()
-		* purple_request_folder_with_hint()
-		* purple_request_input_with_hint()
-		* purple_request_ok_cancel_with_hint()
-		* purple_request_yes_no_with_hint()
-
-		  UI hints set by libpurple:
-		* PURPLE_REQUEST_UI_HINT_ACCOUNT
-		* PURPLE_REQUEST_UI_HINT_BLIST
-		* PURPLE_REQUEST_UI_HINT_BUDDY
-		* PURPLE_REQUEST_UI_HINT_CONV
-		* PURPLE_REQUEST_UI_HINT_REGISTER
-		* PURPLE_REQUEST_UI_HINT_XFER
-
-		  Common UI hints set by UIs:
-		* PURPLE_REQUEST_UI_HINT_ACCOUNTMGR
-		* PURPLE_REQUEST_UI_HINT_CERTMGR
-		* PURPLE_REQUEST_UI_HINT_PLUGINMGR
-		* PURPLE_REQUEST_UI_HINT_POUNCEMGR
-		* PURPLE_REQUEST_UI_HINT_PREFSMGR
-		* PURPLE_REQUEST_UI_HINT_STATUSMGR
 
 		Changed:
 		* purple_plugin_unload() now honors the return value of a

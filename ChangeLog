@@ -20,8 +20,6 @@ version 2.3.0:
 	  remove the plugin from the list of saved plugins so it won't load
 	  at the next startup.  Previously, we were ignoring this case, which
 	  could lead to crashes.
-	* Mark dialog windows as transient for appropriate parent windows to
-	  help window managers do the right thing  (Gabriel Schulhof)
 	* Connection errors are now reported in mini-dialogs inside the buddy
 	  list, rather than as buttons in the buddy list and with dialog
 	  boxes.  If several accounts are disabled when you sign on elsewhere,

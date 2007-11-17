@@ -1444,13 +1444,13 @@ purple_parse_auth_securid_request(OscarData *od, FlapConnection *conn, FlapFrame
 	purple_debug_info("oscar", "Got SecurID request\n");
 
 	primary = g_strdup_printf("Enter the SecurID key for %s.", purple_account_get_username(account));
-	purple_request_input_with_hint(gc, NULL, _("Enter SecurID"), primary,
+	purple_request_input(gc, NULL, _("Enter SecurID"), primary,
 					   _("Enter the 6 digit number from the digital display."),
 					   FALSE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_parse_auth_securid_request_yes_cb),
 					   _("_Cancel"), G_CALLBACK(purple_parse_auth_securid_request_no_cb),
 					   account, NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
+					   gc);
 	g_free(primary);
 
 	return 1;
@@ -2237,12 +2237,12 @@ purple_auth_sendrequest(PurpleConnection *gc, const char *name)
 	data->gc = gc;
 	data->name = g_strdup(name);
 
-	purple_request_input_with_hint(data->gc, NULL, _("Authorization Request Message:"),
+	purple_request_input(data->gc, NULL, _("Authorization Request Message:"),
 					   NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_auth_request),
 					   _("_Cancel"), G_CALLBACK(purple_auth_dontrequest),
 					   purple_connection_get_account(gc), name, NULL,
-					   PURPLE_REQUEST_UI_HINT_BLIST, data);
+					   data);
 }
 
 
@@ -2286,12 +2286,12 @@ static void
 purple_auth_dontgrant_msgprompt(gpointer cbdata)
 {
 	struct name_data *data = cbdata;
-	purple_request_input_with_hint(data->gc, NULL, _("Authorization Denied Message:"),
+	purple_request_input(data->gc, NULL, _("Authorization Denied Message:"),
 					   NULL, _("No reason given."), TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_auth_dontgrant),
 					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
 					   purple_connection_get_account(data->gc), data->name, NULL,
-					   PURPLE_REQUEST_UI_HINT_BLIST, data);
+					   data);
 }
 
 /* When someone sends you buddies */
@@ -2472,12 +2472,12 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 					data->name = g_strdup(text[i*2+1]);
 					data->nick = g_strdup(text[i*2+2]);
 
-					purple_request_action_with_hint(gc, NULL, message,
+					purple_request_action(gc, NULL, message,
 										_("Do you want to add this buddy "
 										  "to your buddy list?"),
 										PURPLE_DEFAULT_ACTION_NONE,
 										purple_connection_get_account(gc), data->name, NULL,
-										PURPLE_REQUEST_UI_HINT_BLIST, data, 2,
+										data, 2,
 										_("_Add"), G_CALLBACK(purple_icq_buddyadd),
 										_("_Decline"), G_CALLBACK(oscar_free_name_data));
 					g_free(message);
@@ -5231,10 +5231,10 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	data->name = g_strdup(sn);
 	data->nick = (buddy ? g_strdup(purple_buddy_get_alias_only(buddy)) : NULL);
 
-	purple_request_yes_no_with_hint(gc, NULL, _("Authorization Given"), dialog_msg,
+	purple_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
 						PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), sn, NULL,
-						PURPLE_REQUEST_UI_HINT_BLIST, data,
+						data,
 						G_CALLBACK(purple_icq_buddyadd),
 						G_CALLBACK(oscar_free_name_data));
 	g_free(dialog_msg);
@@ -5930,12 +5930,12 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	data->nick = g_strdup(purple_buddy_get_alias_only(buddy));
 
 	title = g_strdup_printf(_("Buddy Comment for %s"), data->name);
-	purple_request_input_with_hint(gc, title, _("Buddy Comment:"), NULL,
+	purple_request_input(gc, title, _("Buddy Comment:"), NULL,
 					   comment_utf8, TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(oscar_ssi_editcomment),
 					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
 					   purple_connection_get_account(gc), data->name, NULL,
-					   PURPLE_REQUEST_UI_HINT_BUDDY, data);
+					   data);
 	g_free(title);
 
 	g_free(comment);
@@ -5980,13 +5980,13 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 	buf = g_strdup_printf(_("You have selected to open a Direct IM connection with %s."),
 			buddy->name);
 
-	purple_request_action_with_hint(gc, NULL, buf,
+	purple_request_action(gc, NULL, buf,
 			_("Because this reveals your IP address, it "
 			  "may be considered a security risk.  Do you "
 			  "wish to continue?"),
 			0,
 			purple_connection_get_account(gc), data->who, NULL,
-			PURPLE_REQUEST_UI_HINT_BUDDY, data, 2,
+			data, 2,
 			_("C_onnect"), G_CALLBACK(oscar_ask_directim_yes_cb),
 			_("_Cancel"), G_CALLBACK(oscar_ask_directim_no_cb));
 	g_free(buf);
@@ -6138,12 +6138,12 @@ oscar_show_icq_privacy_opts(PurplePluginAction *action)
 
 	purple_request_fields_add_group(fields, g);
 
-	purple_request_fields_with_hint(gc, _("ICQ Privacy Options"), _("ICQ Privacy Options"),
+	purple_request_fields(gc, _("ICQ Privacy Options"), _("ICQ Privacy Options"),
 						NULL, fields,
 						_("OK"), G_CALLBACK(oscar_icq_privacy_opts),
 						_("Cancel"), NULL,
 						purple_connection_get_account(gc), NULL, NULL,
-						PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
+						gc);
 }
 
 static void oscar_format_screenname(PurpleConnection *gc, const char *nick) {
@@ -6211,12 +6211,12 @@ static void oscar_change_email(PurpleConnection *gc, const char *email)
 static void oscar_show_change_email(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input_with_hint(gc, NULL, _("Change Address To:"), NULL, NULL,
+	purple_request_input(gc, NULL, _("Change Address To:"), NULL, NULL,
 					   FALSE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(oscar_change_email),
 					   _("_Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
+					   gc);
 }
 
 static void oscar_show_awaitingauth(PurplePluginAction *action)
@@ -6278,7 +6278,7 @@ static void search_by_email_cb(PurpleConnection *gc, const char *email)
 static void oscar_show_find_email(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input_with_hint(gc, _("Find Buddy by E-Mail"),
+	purple_request_input(gc, _("Find Buddy by E-Mail"),
 					   _("Search for a buddy by e-mail address"),
 					   _("Type the e-mail address of the buddy you are "
 						 "searching for."),
@@ -6286,7 +6286,7 @@ static void oscar_show_find_email(PurplePluginAction *action)
 					   _("_Search"), G_CALLBACK(search_by_email_cb),
 					   _("_Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
+					   gc);
 }
 
 static void oscar_show_set_info(PurplePluginAction *action)

@@ -322,10 +322,10 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				} else if (!plaintext) {
 					char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 							js->gc->account->username);
-					purple_request_yes_no_with_hint(js->gc, _("Plaintext Authentication"),
+					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
 							msg,
-							2, js->gc->account, NULL, NULL, PURPLE_REQUEST_UI_HINT_ACCOUNT, js->gc->account,
+							2, js->gc->account, NULL, NULL, js->gc->account,
 							allow_cyrus_plaintext_auth,
 							disallow_plaintext_auth);
 					g_free(msg);
@@ -517,13 +517,13 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		if(js->gsc == NULL && !purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
 			char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 					js->gc->account->username);
-			purple_request_yes_no_with_hint(js->gc, _("Plaintext Authentication"),
+			purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 					_("Plaintext Authentication"),
 					msg,
 					2,
 					purple_connection_get_account(js->gc), NULL, NULL,
-					PURPLE_REQUEST_UI_HINT_ACCOUNT, purple_connection_get_account(js->gc),
-					allow_plaintext_auth, disallow_plaintext_auth);
+					purple_connection_get_account(js->gc), allow_plaintext_auth,
+					disallow_plaintext_auth);
 			g_free(msg);
 			return;
 		}
@@ -611,13 +611,13 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		} else if(xmlnode_get_child(query, "password")) {
 			if(js->gsc == NULL && !purple_account_get_bool(js->gc->account,
 						"auth_plain_in_clear", FALSE)) {
-				purple_request_yes_no_with_hint(js->gc, _("Plaintext Authentication"),
+				purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 						_("Plaintext Authentication"),
 						_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 						2,
 						purple_connection_get_account(js->gc), NULL, NULL,
-						PURPLE_REQUEST_UI_HINT_ACCOUNT, purple_connection_get_account(js->gc),
-						allow_plaintext_auth, disallow_plaintext_auth);
+						purple_connection_get_account(js->gc), allow_plaintext_auth,
+						disallow_plaintext_auth);
 				return;
 			}
 			finish_plaintext_authentication(js);
