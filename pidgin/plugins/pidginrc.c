@@ -509,6 +509,11 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 	                 G_CALLBACK(purplerc_reread), NULL);
 
 	gtk_widget_show_all(ret);
+
+	g_object_unref(labelsg);
+	g_object_unref(widgetsg);
+	g_object_unref(buttonsg);
+
 	return ret;
 }
 
@@ -536,7 +541,7 @@ static PurplePluginInfo purplerc_info =
 	PURPLE_PRIORITY_DEFAULT,
 	"purplerc",
 	N_("Pidgin GTK+ Theme Control"),
-	VERSION,
+	DISPLAY_VERSION,
 	N_("Provides access to commonly used gtkrc settings."),
 	N_("Provides access to commonly used gtkrc settings."),
 	"Etan Reisner <deryni@eden.rutgers.edu>",

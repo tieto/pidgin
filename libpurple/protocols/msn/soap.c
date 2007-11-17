@@ -26,7 +26,7 @@
 #include "msn.h"
 #include "soap.h"
 
-
+#define MSN_SOAP_DEBUG
 /*local function prototype*/
 void msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step);
 
@@ -49,17 +49,16 @@ msn_soap_set_process_step(MsnSoapConn *soapconn, MsnSoapStep step)
 	soapconn->step = step;
 }
 
-//msn_soap_new(MsnSession *session,gpointer data,int sslconn)
 /*new a soap connection*/
 MsnSoapConn *
-msn_soap_new(MsnSession *session,gpointer data,int sslconn)
+msn_soap_new(MsnSession *session,gpointer data, gboolean ssl)
 {
 	MsnSoapConn *soapconn;
 
 	soapconn = g_new0(MsnSoapConn, 1);
 	soapconn->session = session;
 	soapconn->parent = data;
-	soapconn->ssl_conn = sslconn;
+	soapconn->ssl_conn = ssl;
 
 	soapconn->gsc = NULL;
 	soapconn->input_handler = 0;
@@ -127,11 +126,12 @@ msn_soap_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data
 
 /*init the soap connection*/
 void
-msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,
+msn_soap_init(MsnSoapConn *soapconn,char * host, gboolean ssl,
 				MsnSoapSslConnectCbFunction connect_cb,
 				MsnSoapSslErrorCbFunction error_cb)
 {
 	purple_debug_misc("MSN SOAP","Initializing SOAP connection\n");
+	g_free(soapconn->login_host);
 	soapconn->login_host = g_strdup(host);
 	soapconn->ssl_conn = ssl;
 	soapconn->connect_cb = connect_cb;
@@ -205,11 +205,9 @@ msn_soap_clean_unhandled_requests(MsnSoapConn *soapconn)
 void
 msn_soap_destroy(MsnSoapConn *soapconn)
 {
-	if(soapconn->login_host)
-		g_free(soapconn->login_host);
+	g_free(soapconn->login_host);
 
-	if(soapconn->login_path)
-		g_free(soapconn->login_path);
+	g_free(soapconn->login_path);
 
 	/*remove the write handler*/
 	if (soapconn->output_handler > 0){
@@ -276,7 +274,7 @@ msn_soap_read(MsnSoapConn *soapconn)
 
 			default : purple_debug_error("MSN SOAP", "Read error!"
 						"read len: %d, error = %s\n",
-						len, strerror(errno));
+						len, g_strerror(errno));
 				  purple_input_remove(soapconn->input_handler);
 				  //soapconn->input_handler = 0;
 				  g_free(soapconn->read_buf);
@@ -310,7 +308,7 @@ msn_soap_read(MsnSoapConn *soapconn)
 }
 
 /*read the whole SOAP server response*/
-void 
+static void 
 msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn *soapconn = data;
@@ -681,6 +679,8 @@ msn_soap_write(MsnSoapConn * soapconn, char *write_buf, MsnSoapWrittenCbFunction
 
 	msn_soap_set_process_step(soapconn, MSN_SOAP_PROCESSING);
 
+	/* Ideally this wouldn't ever be necessary, but i believe that it is leaking the previous value */
+	g_free(soapconn->write_buf);
 	soapconn->write_buf = write_buf;
 	soapconn->written_len = 0;
 	soapconn->written_cb = written_cb;
@@ -765,7 +765,7 @@ msn_soap_post_head_request(MsnSoapConn *soapconn)
  * if not connected, Connected first.
  */
 void
-msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request)
+msn_soap_post(MsnSoapConn *soapconn, MsnSoapReq *request)
 {
 	MsnSoapReq *head_request;
 
@@ -809,17 +809,21 @@ msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request)
 			return;
 		}
 
+#ifdef MSN_SOAP_DEBUG
 		purple_debug_info("MSN SOAP", "Currently processing another SOAP request\n");
 	} else {
 		purple_debug_info("MSN SOAP", "No requests left to dispatch\n");
 	}
+#else
+      }
+#endif
+
 }
 
 /*Post the soap request action*/
 void
 msn_soap_post_request(MsnSoapConn *soapconn, MsnSoapReq *request)
 {
-	char * soap_head = NULL;
 	char * request_str = NULL;
 #ifdef MSN_SOAP_DEBUG
 #if !defined(_WIN32)
@@ -829,7 +833,7 @@ msn_soap_post_request(MsnSoapConn *soapconn, MsnSoapReq *request)
 #endif
 
 	msn_soap_set_process_step(soapconn, MSN_SOAP_PROCESSING);
-	soap_head = g_strdup_printf(
+	request_str = g_strdup_printf(
 					"POST %s HTTP/1.1\r\n"
 					"SOAPAction: %s\r\n"
 					"Content-Type:text/xml; charset=utf-8\r\n"
@@ -839,20 +843,21 @@ msn_soap_post_request(MsnSoapConn *soapconn, MsnSoapReq *request)
 					"Host: %s\r\n"
 					"Content-Length: %" G_GSIZE_FORMAT "\r\n"
 					"Connection: Keep-Alive\r\n"
-					"Cache-Control: no-cache\r\n\r\n",
+					"Cache-Control: no-cache\r\n\r\n"
+					"%s",
 					request->login_path,
 					request->soap_action,
 					soapconn->session->passport_info.mspauth,
 					request->login_host,
-					strlen(request->body)
+					strlen(request->body),
+					request->body
 					);
-	request_str = g_strdup_printf("%s%s", soap_head, request->body);
 
 #if defined(MSN_SOAP_DEBUG) && !defined(_WIN32)
 	node = xmlnode_from_str(request->body, -1);
 	if (node != NULL) {
 		char *formattedstr = xmlnode_to_formatted_str(node, NULL);
-		purple_debug_info("MSN SOAP","Posting request to SOAP server:\n%s%s\n",soap_head, formattedstr);
+		purple_debug_info("MSN SOAP","Posting request to SOAP server:\n%s%s\n",request_str, formattedstr);
 		g_free(formattedstr);
 		xmlnode_free(node);
 	}
@@ -860,7 +865,6 @@ msn_soap_post_request(MsnSoapConn *soapconn, MsnSoapReq *request)
 		purple_debug_info("MSN SOAP","Failed to parse SOAP request being sent:\n%s\n", request_str);
 #endif
 	
-	g_free(soap_head);
 	/*free read buffer*/
 	// msn_soap_free_read_buf(soapconn);
 	/*post it to server*/

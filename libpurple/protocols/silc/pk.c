@@ -158,6 +158,11 @@ void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
 				    NULL, &hostname, &ip, &port);
 
 	pk = silc_pkcs_public_key_encode(public_key, &pk_len);
+	if (!pk) {
+		if (completion)
+			completion(FALSE, context);
+		return;
+	}
 
 	if (conn_type == SILC_CONN_SERVER ||
 	    conn_type == SILC_CONN_ROUTER) {

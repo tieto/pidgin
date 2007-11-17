@@ -83,9 +83,9 @@ struct _MsnSoapConn{
 
 	MsnSoapStep step;
 	/*ssl connection?*/
-	guint	ssl_conn;
+	gboolean ssl_conn;
 	/*normal connection*/
-	guint	fd;
+	guint fd;
 	/*SSL connection*/
 	PurpleSslConnection *gsc;
 	/*ssl connection callback*/
@@ -135,13 +135,13 @@ void msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request);
 void msn_soap_post_head_request(MsnSoapConn *soapconn);
 
 /*new a soap conneciton */
-MsnSoapConn *msn_soap_new(MsnSession *session,gpointer data,int sslconn);
+MsnSoapConn *msn_soap_new(MsnSession *session, gpointer data, gboolean ssl);
 
 /*destroy */
 void msn_soap_destroy(MsnSoapConn *soapconn);
 
 /*init a soap conneciton */
-void msn_soap_init(MsnSoapConn *soapconn, char * host, int ssl,
+void msn_soap_init(MsnSoapConn *soapconn, char * host, gboolean ssl,
 		   MsnSoapSslConnectCbFunction connect_cb,
 		   MsnSoapSslErrorCbFunction error_cb);
 void msn_soap_connect(MsnSoapConn *soapconn);
@@ -154,7 +154,6 @@ void msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request);
 void msn_soap_free_read_buf(MsnSoapConn *soapconn);
 void msn_soap_free_write_buf(MsnSoapConn *soapconn);
 void msn_soap_connect_cb(gpointer data, PurpleSslConnection *gsc, PurpleInputCondition cond);
-void msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond);
 
 /*clean the unhandled requests*/
 void msn_soap_clean_unhandled_requests(MsnSoapConn *soapconn);

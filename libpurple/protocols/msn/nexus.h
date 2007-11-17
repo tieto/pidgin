@@ -139,7 +139,6 @@ typedef struct _MsnNexus MsnNexus;
 struct _MsnNexus
 {
 	MsnSession *session;
-	MsnSoapConn *soapconn;
 	char * challenge_data_str;
 	GHashTable *challenge_data;
 };

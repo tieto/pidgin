@@ -505,6 +505,9 @@ got_invite(MsnSlpCall *slpcall,
 		int port;
 
 		nonce = get_token(content, "Nonce: {", "}\r\n");
+		if (ip_addrs == NULL)
+			return;
+
 		ip_addrs = get_token(content, "IPv4Internal-Addrs: ", "\r\n");
 
 		temp = get_token(content, "IPv4Internal-Port: ", "\r\n");
@@ -513,9 +516,6 @@ got_invite(MsnSlpCall *slpcall,
 		else
 			port = -1;
 		g_free(temp);
-
-		if (ip_addrs == NULL)
-			return;
 
 		if (port > 0)
 			got_transresp(slpcall, nonce, ip_addrs, port);
@@ -598,6 +598,9 @@ got_ok(MsnSlpCall *slpcall,
 		int port;
 
 		nonce = get_token(content, "Nonce: {", "}\r\n");
+		if (ip_addrs == NULL)
+			return;
+
 		ip_addrs = get_token(content, "IPv4Internal-Addrs: ", "\r\n");
 
 		temp = get_token(content, "IPv4Internal-Port: ", "\r\n");
@@ -606,9 +609,6 @@ got_ok(MsnSlpCall *slpcall,
 		else
 			port = -1;
 		g_free(temp);
-
-		if (ip_addrs == NULL)
-			return;
 
 		if (port > 0)
 			got_transresp(slpcall, nonce, ip_addrs, port);

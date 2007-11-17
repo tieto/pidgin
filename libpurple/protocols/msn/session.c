@@ -24,6 +24,7 @@
 #include "msn.h"
 #include "session.h"
 #include "notification.h"
+#include "oim.h"
 
 #include "dialog.h"
 
@@ -42,6 +43,7 @@ msn_session_new(PurpleAccount *account)
 
 	session->user = msn_user_new(session->userlist,
 								 purple_account_get_username(account), NULL);
+	session->oim = msn_oim_new(session);
 
 	/*if you want to chat with Yahoo Messenger*/
 	//session->protocol_ver = WLM_YAHOO_PROT_VER;
@@ -99,6 +101,12 @@ msn_session_destroy(MsnSession *session)
 	if (session->user != NULL)
 		msn_user_destroy(session->user);
 
+	if (session->soap_table)
+		g_hash_table_destroy(session->soap_table);
+
+	if (session->soap_cleanup_handle)
+		purple_timeout_remove(session->soap_cleanup_handle);
+
 	g_free(session);
 }
 
@@ -130,7 +138,9 @@ void
 msn_session_disconnect(MsnSession *session)
 {
 	g_return_if_fail(session != NULL);
-	g_return_if_fail(session->connected);
+
+	if (!session->connected)
+		return;
 
 	session->connected = FALSE;
 
@@ -323,6 +333,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 					  const char *info)
 {
 	PurpleConnection *gc;
+	PurpleConnectionError reason;
 	char *msg;
 
 	gc = purple_account_get_connection(session->account);
@@ -330,49 +341,56 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 	switch (error)
 	{
 		case MSN_ERROR_SERVCONN:
+			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(info);
 			break;
 		case MSN_ERROR_UNSUPPORTED_PROTOCOL:
+			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(_("Our protocol is not supported by the "
 							 "server."));
 			break;
 		case MSN_ERROR_HTTP_MALFORMED:
+			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(_("Error parsing HTTP."));
 			break;
 		case MSN_ERROR_SIGN_OTHER:
-			gc->wants_to_die = TRUE;
+			reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
 			msg = g_strdup(_("You have signed on from another location."));
 			if (!purple_account_get_remember_password(session->account))
 				purple_account_set_password(session->account, NULL);
 			break;
 		case MSN_ERROR_SERV_UNAVAILABLE:
+			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(_("The MSN servers are temporarily "
 							 "unavailable. Please wait and try "
 							 "again."));
 			break;
 		case MSN_ERROR_SERV_DOWN:
+			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(_("The MSN servers are going down "
 							 "temporarily."));
 			break;
 		case MSN_ERROR_AUTH:
-			gc->wants_to_die = TRUE;
+			reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 			msg = g_strdup_printf(_("Unable to authenticate: %s"),
 								  (info == NULL ) ?
 								  _("Unknown error") : info);
 			break;
 		case MSN_ERROR_BAD_BLIST:
+			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(_("Your MSN buddy list is temporarily "
 							 "unavailable. Please wait and try "
 							 "again."));
 			break;
 		default:
+			reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 			msg = g_strdup(_("Unknown error."));
 			break;
 	}
 
 	msn_session_disconnect(session);
 
-	purple_connection_error(gc, msg);
+	purple_connection_error_reason (gc, reason, msg);
 
 	g_free(msg);
 }

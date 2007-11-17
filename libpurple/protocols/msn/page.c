@@ -74,9 +74,7 @@ msn_page_set_body(MsnPage *page, const char *body)
 	g_return_if_fail(page != NULL);
 	g_return_if_fail(body != NULL);
 
-	if (page->body != NULL)
-		g_free(page->body);
-
+	g_free(page->body);
 	page->body = g_strdup(body);
 }
 

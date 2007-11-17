@@ -281,6 +281,61 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 	return purple_utf8_salvage(string);
 }
 
+/* This function is shamelessly stolen from glib--it is an old version of the
+ * private function append_escaped_text, used by g_markup_escape_text, whose
+ * behavior changed in glib 2.12. */
+static void irc_append_escaped_text(GString *str, const char *text, gssize length)
+{
+	const char *p = text;
+	const char *end = text + length;
+	const char *next = NULL;
+
+	while(p != end) {
+		next = g_utf8_next_char(p);
+
+		switch(*p) {
+			case '&':
+				g_string_append(str, "&amp;");
+				break;
+			case '<':
+				g_string_append(str, "&lt;");
+				break;
+			case '>':
+				g_string_append(str, "&gt;");
+				break;
+			case '\'':
+				g_string_append(str, "&apos;");
+				break;
+			case '"':
+				g_string_append(str, "&quot;");
+				break;
+			default:
+				g_string_append_len(str, p, next - p);
+				break;
+		}
+
+		p = next;
+	}
+}
+
+/* This function is shamelessly stolen from glib--it is an old version of the
+ * function g_markup_escape_text, whose behavior changed in glib 2.12. */
+char *irc_escape_privmsg(const char *text, gssize length)
+{
+	GString *str;
+
+	g_return_val_if_fail(text != NULL, NULL);
+
+	if(length < 0)
+		length = strlen(text);
+
+	str = g_string_sized_new(length);
+
+	irc_append_escaped_text(str, text, length);
+
+	return g_string_free(str, FALSE);
+}
+
 /* XXX tag closings are not necessarily correctly nested here!  If we
  *     get a ^O or reach the end of the string and there are open
  *     tags, they are closed in a fixed order ... this means, for
@@ -557,6 +612,7 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	struct _irc_msg *msgent;
 	char *cur, *end, *tmp, *from, *msgname, *fmt, **args, *msg;
 	guint i;
+	PurpleConnection *gc = purple_account_get_connection(irc->account);
 
 	irc->recv_time = time(NULL);
 
@@ -565,7 +621,7 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	 * TODO: It should be passed as an array of bytes and a length
 	 * instead of a null terminated string.
 	 */
-	purple_signal_emit(_irc_plugin, "irc-receiving-text", purple_account_get_connection(irc->account), &input);
+	purple_signal_emit(_irc_plugin, "irc-receiving-text", gc, &input);
 	
 	if (!strncmp(input, "PING ", 5)) {
 		msg = irc_format(irc, "vv", "PONG", input + 5);
@@ -575,10 +631,13 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	} else if (!strncmp(input, "ERROR ", 6)) {
 		if (g_utf8_validate(input, -1, NULL)) {
 			char *tmp = g_strdup_printf("%s\n%s", _("Disconnected."), input);
-			purple_connection_error(purple_account_get_connection(irc->account), tmp);
+			purple_connection_error_reason (gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 			g_free(tmp);
 		} else
-			purple_connection_error(purple_account_get_connection(irc->account), _("Disconnected."));
+			purple_connection_error_reason (gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Disconnected."));
 		return;
 	}
 

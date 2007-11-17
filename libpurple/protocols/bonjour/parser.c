@@ -64,7 +64,7 @@ bonjour_parser_element_start_libxml(void *user_data,
 			char *attrib_ns = NULL;
 
 			if (attributes[i+2]) {
-				attrib_ns = g_strdup((char*)attributes[i+2]);;
+				attrib_ns = g_strdup((char*)attributes[i+2]);
 			}
 
 			memcpy(attrib, attributes[i+3], attrib_len);
@@ -101,7 +101,7 @@ bonjour_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 		if(!xmlStrcmp(element_name, (xmlChar*) "stream")) {
 			/* Asynchronously close the conversation to prevent bonjour_parser_setup()
 			 * being called from within this context */
-			g_idle_add(_async_bonjour_jabber_stream_ended_cb, pb);
+			purple_timeout_add(0, _async_bonjour_jabber_stream_ended_cb, pb);
 		}
 		return;
 	}
@@ -187,6 +187,9 @@ bonjour_parser_setup(BonjourJabberConversation *bconv)
 void bonjour_parser_process(PurpleBuddy *pb, const char *buf, int len)
 {
 	BonjourBuddy *bb = pb->proto_data;
+
+	g_return_if_fail(bb != NULL);
+	g_return_if_fail(bb->conversation != NULL);
 
 	if (bb->conversation->context ==  NULL) {
 		/* libxml inconsistently starts parsing on creating the

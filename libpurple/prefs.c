@@ -297,6 +297,7 @@ prefs_start_element_handler (GMarkupParseContext *context,
 						g_filename_from_utf8(pref_value, -1, NULL, NULL, NULL));
 			}
 		}
+		g_string_free(pref_name_full, TRUE);
 	} else {
 		char *decoded;
 
@@ -382,13 +383,20 @@ purple_prefs_load()
 	purple_debug_info("prefs", "Reading %s\n", filename);
 
 	if(!g_file_get_contents(filename, &contents, &length, &error)) {
-#ifndef _WIN32
+#ifdef _WIN32
+		gchar *common_appdata = wpurple_get_special_folder(CSIDL_COMMON_APPDATA);
+#endif
 		g_free(filename);
 		g_error_free(error);
 
 		error = NULL;
 
+#ifdef _WIN32
+		filename = g_build_filename(common_appdata ? common_appdata : "", "purple", "prefs.xml", NULL);
+		g_free(common_appdata);
+#else
 		filename = g_build_filename(SYSCONFDIR, "purple", "prefs.xml", NULL);
+#endif
 
 		purple_debug_info("prefs", "Reading %s\n", filename);
 
@@ -401,15 +409,6 @@ purple_prefs_load()
 
 			return FALSE;
 		}
-#else /* _WIN32 */
-		purple_debug_error("prefs", "Error reading prefs: %s\n",
-				error->message);
-		g_error_free(error);
-		g_free(filename);
-		prefs_loaded = TRUE;
-
-		return FALSE;
-#endif /* _WIN32 */
 	}
 
 	context = g_markup_parse_context_new(&prefs_parser, 0, NULL, NULL);

@@ -131,7 +131,7 @@ static PurplePluginInfo info =
 
 	"core-pluginpref_example",                     /**< id             */
 	"Pluginpref Example",                           /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	"An example of how to use pluginprefs",
 	                                                  /**  description    */

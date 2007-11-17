@@ -66,7 +66,7 @@ static PurplePluginInfo info =
 
 	"core-plugin_pack-newline",						/**< id				*/
 	N_("New Line"),									/**< name			*/
-	VERSION,										/**< version		*/
+	DISPLAY_VERSION,									/**< version		*/
 	N_("Prepends a newline to displayed message."),	/**< summary		*/
 	N_("Prepends a newline to messages so that the "
 	   "rest of the message appears below the "

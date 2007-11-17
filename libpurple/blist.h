@@ -1,6 +1,7 @@
 /**
  * @file blist.h Buddy List API
  * @ingroup core
+ * @see @ref blist-signals
  */
 
 /* purple
@@ -22,8 +23,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
- *
- * @see @ref blist-signals
  */
 #ifndef _PURPLE_BLIST_H_
 #define _PURPLE_BLIST_H_
@@ -40,8 +39,6 @@ typedef struct _PurpleChat PurpleChat;
 typedef struct _PurpleGroup PurpleGroup;
 typedef struct _PurpleContact PurpleContact;
 typedef struct _PurpleBuddy PurpleBuddy;
-
-typedef gboolean (*PurpleFilterBlistFunc)(PurpleBlistNode *node);
 
 /**************************************************************************/
 /* Enumerations                                                           */
@@ -68,12 +65,9 @@ typedef enum
 typedef enum
 {
 	PURPLE_BLIST_NODE_FLAG_NO_SAVE      = 1 << 0, /**< node should not be saved with the buddy list */
-	PURPLE_BLIST_NODE_HAS_CONVERSATION  = 1 << 1, /**< node (buddy or chat) has an open conversation */
 
 } PurpleBlistNodeFlags;
 
-#define PURPLE_BLIST_NODE_SET_FLAG(node, f)    (((PurpleBlistNode *)node)->flags |= (f))
-#define PURPLE_BLIST_NODE_UNSET_FLAG(node, f)  (((PurpleBlistNode *)node)->flags &= ~(f))
 #define PURPLE_BLIST_NODE_HAS_FLAG(b, f) (((PurpleBlistNode*)(b))->flags & (f))
 #define PURPLE_BLIST_NODE_SHOULD_SAVE(b) (! PURPLE_BLIST_NODE_HAS_FLAG(b, PURPLE_BLIST_NODE_FLAG_NO_SAVE))
 
@@ -488,6 +482,7 @@ void purple_blist_merge_contact(PurpleContact *source, PurpleBlistNode *node);
  */
 PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Sets the alias for a contact.
  *
@@ -497,6 +492,7 @@ PurpleBuddy *purple_contact_get_priority_buddy(PurpleContact *contact);
  * @deprecated Use purple_blist_alias_contact() instead.
  */
 void purple_contact_set_alias(PurpleContact *contact, const char *alias);
+#endif
 
 /**
  * Gets the alias for a contact.
@@ -523,8 +519,11 @@ gboolean purple_contact_on_account(PurpleContact *contact, PurpleAccount *accoun
  * @param contact  The contact
  */
 void purple_contact_invalidate_priority_buddy(PurpleContact *contact);
+
 /**
  * Removes a buddy from the buddy list and frees the memory allocated to it.
+ * This doesn't actually try to remove the buddy from the server list, nor does
+ * it clean up the prpl_data.
  *
  * @param buddy   The buddy to be removed
  */

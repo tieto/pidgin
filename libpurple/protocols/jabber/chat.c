@@ -391,7 +391,7 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 			}
 		}
 	} else if(!strcmp(type, "error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Configuration error"), _("Configuration error"), msg);
 
@@ -465,7 +465,7 @@ static void jabber_chat_register_x_data_result_cb(JabberStream *js, xmlnode *pac
 	const char *type = xmlnode_get_attrib(packet, "type");
 
 	if(type && !strcmp(type, "error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
 
@@ -534,7 +534,7 @@ static void jabber_chat_register_cb(JabberStream *js, xmlnode *packet, gpointer 
 			}
 		}
 	} else if(!strcmp(type, "error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 
 		purple_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
 
@@ -673,7 +673,7 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 		return;
 
 	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result")) {
-		char *err = jabber_parse_error(js,packet);
+		char *err = jabber_parse_error(js, packet, NULL);
 		purple_notify_error(js->gc, _("Error"),
 				_("Error retrieving room list"), err);
 		purple_roomlist_set_in_progress(js->roomlist, FALSE);
@@ -684,7 +684,7 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 	}
 
 	if(!(query = xmlnode_get_child(packet, "query"))) {
-		char *err = jabber_parse_error(js, packet);
+		char *err = jabber_parse_error(js, packet, NULL);
 		purple_notify_error(js->gc, _("Error"),
 				_("Error retrieving room list"), err);
 		purple_roomlist_set_in_progress(js->roomlist, FALSE);
@@ -964,7 +964,7 @@ gboolean jabber_chat_kick_user(JabberChat *chat, const char *who, const char *wh
 static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
 	JabberChat *chat;
-	xmlnode *query;
+	/*xmlnode *query;*/
 	int id = GPOINTER_TO_INT(data);
 
 	if(!(chat = jabber_chat_find_by_id(js, id)))
@@ -974,6 +974,8 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpoi
 	 * support this request */
 	chat->xhtml = TRUE;
 
+	/* disabling this until more MUC servers support
+	 * announcing this
 	if(xmlnode_get_child(packet, "error")) {
 		return;
 	}
@@ -981,8 +983,6 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpoi
 	if(!(query = xmlnode_get_child(packet, "query")))
 		return;
 
-	/* disabling this until more MUC servers support
-	 * announcing this
 	chat->xhtml = FALSE;
 
 	for(x = xmlnode_get_child(query, "feature"); x; x = xmlnode_get_next_twin(x)) {

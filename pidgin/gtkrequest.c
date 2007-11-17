@@ -29,12 +29,12 @@
 #include "prefs.h"
 #include "util.h"
 
-#include "gtkblist.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtkrequest.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
+#include "gtkblist.h"
 
 #include <gdk/gdkkeysyms.h>
 
@@ -932,7 +932,7 @@ create_image_field(PurpleRequestField *field)
 			purple_request_field_image_get_scale_y(field) * gdk_pixbuf_get_height(buf),
 			GDK_INTERP_BILINEAR);
 	widget = gtk_image_new_from_pixbuf(scale);
-	g_object_unref(G_OBJECT(buf));
+	g_object_unref(G_OBJECT(loader));
 	g_object_unref(G_OBJECT(scale));
 
 	return widget;
@@ -951,92 +951,6 @@ create_account_field(PurpleRequestField *field)
 		field);
 
 	return widget;
-}
-
-static GtkWidget *
-create_blist_field(PurpleRequestField *field)
-{
-	GtkTreeStore *model;
-	GtkWidget *tree, *sw;
-	PurpleBlistNode *node;
-	GtkCellRenderer *rend;
-	GtkTreeViewColumn *column;
-	GtkTreeIter parent = {0, NULL, NULL, NULL}, iter;
-	PurpleRequestBlistFlags flags = field->u.blist.flags;
-	gboolean offline = !!(field->u.blist.flags & PURPLE_REQUEST_BLIST_FLAG_ALLOW_OFFLINE);
-
-	/* Create the treeview. Populate the blistnodes.
-	 * Hook to signed-on, signed-off signals to update the list when account goes online/offline.
-	 * Hook to buddy-signed-on/off, -status-changed signals to update the status pixbuf.
-	 */
-
-	model = gtk_tree_store_new(3, GDK_TYPE_PIXBUF, G_TYPE_STRING, GDK_TYPE_PIXBUF);
-	node = purple_blist_get_root();
-	while (node) {
-		GdkPixbuf *status = NULL, *prpl = NULL;
-		const char *name = NULL;
-		if ((PURPLE_BLIST_NODE_IS_BUDDY(node) || PURPLE_BLIST_NODE_IS_CONTACT(node))
-				&& (flags & PURPLE_REQUEST_BLIST_FLAG_BUDDY)) {
-			PurpleBuddy *buddy; 
-			GtkTreeIter *p = NULL;
-			if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
-				buddy = (PurpleBuddy*)node;
-				p = &parent;
-			} else {
-				buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
-				parent = iter;
-			}
-			if (PURPLE_BUDDY_IS_ONLINE(buddy)) {
-				gtk_tree_store_append(model, &iter, p);
-				name = purple_buddy_get_name(buddy);
-				status = pidgin_blist_get_status_icon(node, PIDGIN_STATUS_ICON_SMALL);
-			}
-		} else if (PURPLE_BLIST_NODE_IS_CHAT(node) && (flags & PURPLE_REQUEST_BLIST_FLAG_CHAT)) {
-			gtk_tree_store_append(model, &iter, NULL);
-			name = purple_chat_get_name((PurpleChat*)node);
-			status = pidgin_blist_get_status_icon(node, PIDGIN_STATUS_ICON_SMALL);
-		}
-		if (name)
-			gtk_tree_store_set(model, &iter,
-					0, status,
-					1, name,
-					2, prpl,
-					-1);
-		if (prpl)
-			gdk_pixbuf_unref(prpl);
-		if (status)
-			gdk_pixbuf_unref(status);
-		node = purple_blist_node_next(node, offline);
-	}
-
-	tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree), FALSE);
-	gtk_tree_view_set_search_column(GTK_TREE_VIEW(tree), 1);
-	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(tree), pidgin_tree_view_search_equal_func, NULL, NULL);
-	gtk_widget_show(tree);
-
-	column = gtk_tree_view_column_new();
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), column);
-
-	rend = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(column, rend, FALSE);
-	gtk_tree_view_column_set_attributes(column, rend, "pixbuf", 0, NULL);
-
-	rend = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(column, rend, TRUE);
-	gtk_tree_view_column_set_attributes(column, rend, "markup", 1, NULL);
-
-	rend = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(column, rend, FALSE);
-	gtk_tree_view_column_set_attributes(column, rend, "pixbuf", 2, NULL);
-
-	sw = gtk_scrolled_window_new(NULL,NULL);
-	gtk_widget_show(sw);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_NONE);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(sw), tree);
-
-	return sw;
 }
 
 static void
@@ -1415,8 +1329,6 @@ pidgin_request_fields(const char *title, const char *primary,
 					widget = create_image_field(field);
 				else if (type == PURPLE_REQUEST_FIELD_ACCOUNT)
 					widget = create_account_field(field);
-				else if (type == PURPLE_REQUEST_FIELD_BLIST)
-					widget = create_blist_field(field);
 				else
 					continue;
 

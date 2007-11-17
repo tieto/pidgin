@@ -761,10 +761,13 @@ purple_savedstatuses_get_popular(unsigned int how_many)
 {
 	GList *popular = NULL;
 	GList *cur;
-	int i;
+	unsigned int i;
 	PurpleSavedStatus *next;
 
-	/* Copy 'how_many' elements to a new list */
+	/* Copy 'how_many' elements to a new list. If 'how_many' is 0, then copy all of 'em. */
+	if (how_many == 0)
+		how_many = (unsigned int) -1;
+
 	i = 0;
 	cur = saved_statuses;
 	while ((i < how_many) && (cur != NULL))
@@ -773,7 +776,7 @@ purple_savedstatuses_get_popular(unsigned int how_many)
 		if ((!purple_savedstatus_is_transient(next)
 			|| purple_savedstatus_get_message(next) != NULL))
 		{
-			popular = g_list_prepend(popular, cur->data);
+			popular = g_list_prepend(popular, next);
 			i++;
 		}
 		cur = cur->next;

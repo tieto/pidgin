@@ -26,11 +26,6 @@
 #ifndef _PURPLE_SSLCONN_H_
 #define _PURPLE_SSLCONN_H_
 
-#include "certificate.h"
-#include "proxy.h"
-
-#define PURPLE_SSL_DEFAULT_PORT 443
-
 /** Possible SSL errors. */
 typedef enum
 {
@@ -38,6 +33,11 @@ typedef enum
 	PURPLE_SSL_CONNECT_FAILED = 2,
 	PURPLE_SSL_CERTIFICATE_INVALID = 3
 } PurpleSslErrorType;
+
+#include "certificate.h"
+#include "proxy.h"
+
+#define PURPLE_SSL_DEFAULT_PORT 443
 
 typedef struct _PurpleSslConnection PurpleSslConnection;
 
@@ -126,9 +126,9 @@ typedef struct
 	/** Obtains the certificate chain provided by the peer
 	 *
 	 * @param gsc   Connection context
-	 * @return      A newly allocated list of #PurpleCertificate containing the
-	 *              certificates the peer provided.
-	 * @see purple_ssl_get_peer_certificates
+	 * @return      A newly allocated list containing the certificates
+	 *              the peer provided.
+	 * @see PurpleCertificate
 	 * @todo        Decide whether the ordering of certificates in this
 	 *              list can be guaranteed.
 	 */
@@ -185,6 +185,7 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
 									PurpleSslErrorFunction error_func,
 									void *data);
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Makes a SSL connection using an already open file descriptor.
  *
@@ -202,19 +203,22 @@ PurpleSslConnection *purple_ssl_connect_fd(PurpleAccount *account, int fd,
 									   PurpleSslInputFunction func,
 									   PurpleSslErrorFunction error_func,
  									   void *data);
+#endif
 
 /**
-  * Makes a SSL connection using an already open file descriptor.
-  *
-  * @param account    The account making the connection.
-  * @param fd         The file descriptor.
-  * @param func       The SSL input handler function.
-  * @param error_func The SSL error handler function.
-  * @param host       The hostname of the other peer (to verify the CN)
-  * @param data       User-defined data.
-  *
-  * @return The SSL connection handle.
-  */
+ * Makes a SSL connection using an already open file descriptor.
+ *
+ * @param account    The account making the connection.
+ * @param fd         The file descriptor.
+ * @param func       The SSL input handler function.
+ * @param error_func The SSL error handler function.
+ * @param host       The hostname of the other peer (to verify the CN)
+ * @param data       User-defined data.
+ *
+ * @return The SSL connection handle.
+ *
+ * @since 2.2.0
+ */
 PurpleSslConnection *purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
                                            PurpleSslInputFunction func,
                                            PurpleSslErrorFunction error_func,
@@ -268,6 +272,8 @@ size_t purple_ssl_write(PurpleSslConnection *gsc, const void *buffer, size_t len
  *
  * @return The peer certificate chain, in the order of certificate, issuer,
  *         issuer's issuer, etc. @a NULL if no certificates have been provided,
+ *
+ * @since 2.2.0
  */
 GList * purple_ssl_get_peer_certificates(PurpleSslConnection *gsc);
 

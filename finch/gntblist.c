@@ -1506,6 +1506,8 @@ key_pressed(GntWidget *widget, const char *text, FinchBlist *ggblist)
 {
 	if (text[0] == 27 && text[1] == 0) {
 		/* Escape was pressed */
+		if (gnt_tree_is_searching(GNT_TREE(ggblist->tree)))
+			gnt_bindable_perform_action_named(GNT_BINDABLE(ggblist->tree), "end-search", NULL);
 		remove_peripherals(ggblist);
 	} else if (strcmp(text, GNT_KEY_CTRL_O) == 0) {
 		purple_prefs_set_bool(PREF_ROOT "/showoffline",

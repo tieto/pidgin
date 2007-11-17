@@ -166,10 +166,15 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 char *
 msn_encode_mime(const char *str)
 {
-	char *base64;
+	gchar *base64, *retval;
+
+	g_return_val_if_fail(str != NULL, NULL);
 	
 	base64 = purple_base64_encode((guchar *)str, strlen(str));
-	return g_strdup_printf("=?utf-8?B?%s?=", base64);
+	retval = g_strdup_printf("=?utf-8?B?%s?=", base64);
+	g_free(base64);
+
+	return retval;
 }
 
 /*
@@ -445,10 +450,9 @@ msn_import_html(const char *html, char **attributes, char **message)
 	*attributes = g_strdup_printf("FN=%s; EF=%s; CO=%s; PF=0; RL=%c",
 								  encode_spaces(fontface),
 								  fonteffect, fontcolor, direction);
-	*message = g_strdup(msg);
+	*message = msg;
 
 	g_free(fontface);
-	g_free(msg);
 }
 
 void
