@@ -450,13 +450,6 @@ purple_signal_emit_vargs(void *instance, const char *signal, va_list args)
 	instance_data =
 		(PurpleInstanceData *)g_hash_table_lookup(instance_table, instance);
 
-	if (instance_data == NULL)
-	{
-		purple_debug(PURPLE_DEBUG_ERROR, "signals",
-					 "Instance data for %s not found!\n", signal);
-		return;
-	}
-	
 	g_return_if_fail(instance_data != NULL);
 
 	signal_data =

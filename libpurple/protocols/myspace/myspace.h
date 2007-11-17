@@ -41,7 +41,7 @@
 #include "notify.h"
 #include "plugin.h"
 #include "accountopt.h"
-#include "libpurple/version.h"
+#include "version.h"
 #include "cipher.h"     /* for SHA-1 */
 #include "util.h"       /* for base64 */
 #include "debug.h"      /* for purple_debug_info */

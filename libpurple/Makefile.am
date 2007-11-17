@@ -237,8 +237,6 @@ libpurple_la_LIBADD = \
 	$(LIBXML_LIBS) \
 	$(LIBNM_LIBS) \
 	$(INTLLIBS) \
-	$(SASL_LIBS) \
-	$(MEANWHILE_LIBS) \
 	-lm
 
 AM_CPPFLAGS = \
