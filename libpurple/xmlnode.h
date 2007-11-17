@@ -158,10 +158,10 @@ void xmlnode_set_attrib(xmlnode *node, const char *attr, const char *value);
 /**
  * Sets a prefixed attribute for a node
  *
- * @param node  The node to set an attribute for.
- * @param attr  The name of the attribute to set
- * @param xmlns The prefix of the attribute to ste
- * @param value The value of the attribute
+ * @param node   The node to set an attribute for.
+ * @param attr   The name of the attribute to set
+ * @param prefix The prefix of the attribute to ste
+ * @param value  The value of the attribute
  */
 void xmlnode_set_attrib_with_prefix(xmlnode *node, const char *attr, const char *prefix, const char *value);
 
@@ -232,8 +232,8 @@ const char *xmlnode_get_namespace(xmlnode *node);
 /**
  * Sets the prefix of a node
  *
- * @param node The node to qualify
- * @param xmlns The prefix of the node
+ * @param node   The node to qualify
+ * @param prefix The prefix of the node
  */
 void xmlnode_set_prefix(xmlnode *node, const char *prefix);
 

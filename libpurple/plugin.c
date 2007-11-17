@@ -763,10 +763,12 @@ purple_plugin_unload(PurplePlugin *plugin)
 void
 purple_plugin_disable(PurplePlugin *plugin)
 {
+#ifdef PURPLE_PLUGINS
 	g_return_if_fail(plugin != NULL);
 
 	if (!g_list_find(plugins_to_disable, plugin))
 		plugins_to_disable = g_list_prepend(plugins_to_disable, plugin);
+#endif
 }
 
 gboolean

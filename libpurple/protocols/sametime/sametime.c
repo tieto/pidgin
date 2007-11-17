@@ -414,7 +414,9 @@ static int mw_session_io_write(struct mwSession *session,
 
   } else if(len > 0) {
     DEBUG_ERROR("write returned %i, %i bytes left unwritten\n", ret, len);
-    purple_connection_error(pd->gc, _("Connection closed (writing)"));
+    purple_connection_error_reason(pd->gc,
+                                   PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+                                   _("Connection closed (writing)"));
 
 #if 0
     close(pd->socket);
@@ -1552,7 +1554,38 @@ static void mw_session_stateChange(struct mwSession *session,
 
     if(GPOINTER_TO_UINT(info) & ERR_FAILURE) {
       char *err = mwError(GPOINTER_TO_UINT(info));
-      purple_connection_error(gc, err);
+      PurpleConnectionError reason;
+      switch (GPOINTER_TO_UINT(info)) {
+      case VERSION_MISMATCH:
+        reason = PURPLE_CONNECTION_ERROR_OTHER_ERROR;
+        break;
+
+      case USER_RESTRICTED:
+      case INCORRECT_LOGIN:
+      case USER_UNREGISTERED:
+      case GUEST_IN_USE:
+        reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
+        break;
+
+      case ENCRYPT_MISMATCH:
+      case ERR_ENCRYPT_NO_SUPPORT:
+      case ERR_NO_COMMON_ENCRYPT:
+        reason = PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR;
+        break;
+
+      case VERIFICATION_DOWN:
+        reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE;
+        break;
+
+      case MULTI_SERVER_LOGIN:
+      case MULTI_SERVER_LOGIN2:
+        reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
+        break;
+
+      default:
+        reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
+      }
+      purple_connection_error_reason(gc, reason, err);
       g_free(err);
     }
     break;
@@ -1698,8 +1731,11 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
   }
 
   if(! ret) {
+    const char *msg = _("Connection reset");
     DEBUG_INFO("connection reset\n");
-    purple_connection_error(pd->gc, _("Connection reset"));
+    purple_connection_error_reason(pd->gc,
+                                   PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+                                   msg);
 
   } else if(ret < 0) {
     const gchar *err_str = g_strerror(err);
@@ -1708,7 +1744,9 @@ static void read_cb(gpointer data, gint source, PurpleInputCondition cond) {
     DEBUG_INFO("error in read callback: %s\n", err_str);
 
     msg = g_strdup_printf(_("Error reading from socket: %s"), err_str);
-    purple_connection_error(pd->gc, msg);
+    purple_connection_error_reason(pd->gc,
+                                   PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+                                   msg);
     g_free(msg);
   }
 }
@@ -1730,7 +1768,10 @@ static void connect_cb(gpointer data, gint source, const gchar *error_message) {
 
     } else {
       /* this is a regular connect, error out */
-      purple_connection_error(pd->gc, _("Unable to connect to host"));
+      const char *msg = _("Unable to connect to host");
+      purple_connection_error_reason(pd->gc,
+                                     PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+                                     msg);
     }
 
     return;
@@ -3383,12 +3424,12 @@ static void blist_menu_conf_create(PurpleBuddy *buddy, const char *msg) {
 	   " message to be sent to %s");
   msg1 = g_strdup_printf(msgB, buddy->name);
 
-  purple_request_fields_with_hint(gc, _("New Conference"),
+  purple_request_fields(gc, _("New Conference"),
 		      msgA, msg1, fields,
 		      _("Create"), G_CALLBACK(conf_create_prompt_join),
 		      _("Cancel"), G_CALLBACK(conf_create_prompt_cancel),
 			  acct, purple_buddy_get_name(buddy), NULL,
-		      PURPLE_REQUEST_UI_HINT_CONV, buddy);
+		      buddy);
   g_free(msg1);
 }
 
@@ -3469,12 +3510,12 @@ static void blist_menu_conf_list(PurpleBuddy *buddy,
 	   " create a new conference to invite this user to.");
   msg = g_strdup_printf(msgB, buddy->name);
 
-  purple_request_fields_with_hint(gc, _("Invite to Conference"),
+  purple_request_fields(gc, _("Invite to Conference"),
 		      msgA, msg, fields,
 		      _("Invite"), G_CALLBACK(conf_select_prompt_invite),
 		      _("Cancel"), G_CALLBACK(conf_select_prompt_cancel),
 			  acct, purple_buddy_get_name(buddy), NULL,
-		      PURPLE_REQUEST_UI_HINT_CONV, buddy);
+		      buddy);
   g_free(msg);
 }
 
@@ -3612,7 +3653,10 @@ static void mw_prpl_login(PurpleAccount *acct);
 
 
 static void prompt_host_cancel_cb(PurpleConnection *gc) {
-  purple_connection_error(gc, _("No Sametime Community Server specified"));
+  const char *msg = _("No Sametime Community Server specified");
+  purple_connection_error_reason(gc,
+                                 PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+                                 msg);
 }
 
 
@@ -3639,13 +3683,13 @@ static void prompt_host(PurpleConnection *gc) {
 	  " continue logging in.");
   msg = g_strdup_printf(msgA, NSTR(purple_account_get_username(acct)));
   
-  purple_request_input_with_hint(gc, _("Meanwhile Connection Setup"),
+  purple_request_input(gc, _("Meanwhile Connection Setup"),
 		     _("No Sametime Community Server Specified"), msg,
 		     MW_PLUGIN_DEFAULT_HOST, FALSE, FALSE, NULL,
 		     _("Connect"), G_CALLBACK(prompt_host_ok_cb),
 		     _("Cancel"), G_CALLBACK(prompt_host_cancel_cb),
 			 acct, NULL, NULL,
-		     PURPLE_REQUEST_UI_HINT_CONV, gc);
+		     gc);
 
   g_free(msg);
 }
@@ -3724,7 +3768,8 @@ static void mw_prpl_login(PurpleAccount *account) {
   purple_connection_update_progress(gc, _("Connecting"), 1, MW_CONNECT_STEPS);
 
   if (purple_proxy_connect(gc, account, host, port, connect_cb, pd) == NULL) {
-    purple_connection_error(gc, _("Unable to connect to host"));
+    purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+                                   _("Unable to connect to host"));
   }
 }
 
@@ -5216,10 +5261,10 @@ static void st_import_action(PurplePluginAction *act) {
   title = g_strdup_printf(_("Import Sametime List for Account %s"),
 			  purple_account_get_username(account));
 
-  purple_request_file_with_hint(gc, title, NULL, FALSE,
+  purple_request_file(gc, title, NULL, FALSE,
 		    G_CALLBACK(st_import_action_cb), NULL,
 		    account, NULL, NULL,
-		    PURPLE_REQUEST_UI_HINT_CONV, gc);
+		    gc);
 
   g_free(title);
 }
@@ -5256,10 +5301,10 @@ static void st_export_action(PurplePluginAction *act) {
   title = g_strdup_printf(_("Export Sametime List for Account %s"),
 			  purple_account_get_username(account));
 
-  purple_request_file_with_hint(gc, title, NULL, TRUE,
+  purple_request_file(gc, title, NULL, TRUE,
 		    G_CALLBACK(st_export_action_cb), NULL,
 			account, NULL, NULL,
-		    PURPLE_REQUEST_UI_HINT_CONV, gc);
+		    gc);
 
   g_free(title);
 }
@@ -5392,12 +5437,12 @@ static void remote_group_multi(struct mwResolveResult *result,
 	  " the list below to add it to your buddy list.");
   msg = g_strdup_printf(msgB, result->name);
 
-  purple_request_fields_with_hint(gc, _("Select Notes Address Book"),
+  purple_request_fields(gc, _("Select Notes Address Book"),
 		      msgA, msg, fields,
 		      _("Add Group"), G_CALLBACK(remote_group_multi_cb),
 		      _("Cancel"), G_CALLBACK(remote_group_multi_cleanup),
 			  purple_connection_get_account(gc), result->name, NULL,
-		      PURPLE_REQUEST_UI_HINT_BLIST, pd);
+		      pd);
 
   g_free(msg);
 }
@@ -5482,12 +5527,12 @@ static void remote_group_action(PurplePluginAction *act) {
   msgB = _("Enter the name of a Notes Address Book group in the field below"
 	  " to add the group and its members to your buddy list.");
 
-  purple_request_input_with_hint(gc, _("Add Group"), msgA, msgB, NULL,
+  purple_request_input(gc, _("Add Group"), msgA, msgB, NULL,
 		     FALSE, FALSE, NULL,
 		     _("Add"), G_CALLBACK(remote_group_action_cb),
 		     _("Cancel"), NULL,
 			 purple_connection_get_account(gc), NULL, NULL,
-		     PURPLE_REQUEST_UI_HINT_BLIST, gc);
+		     gc);
 }
 
 
@@ -5607,12 +5652,12 @@ static void search_action(PurplePluginAction *act) {
   msgB = _("Enter a name or partial ID in the field below to search"
 	   " for matching users in your Sametime community.");
 
-  purple_request_input_with_hint(gc, _("User Search"), msgA, msgB, NULL,
+  purple_request_input(gc, _("User Search"), msgA, msgB, NULL,
 		     FALSE, FALSE, NULL,
 		     _("Search"), G_CALLBACK(search_action_cb),
 		     _("Cancel"), NULL,
 			 purple_connection_get_account(gc), NULL, NULL,
-			 PURPLE_REQUEST_UI_HINT_BLIST, gc);
+			 gc);
 }
 
 

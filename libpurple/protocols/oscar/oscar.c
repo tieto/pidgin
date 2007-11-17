@@ -994,7 +994,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 			gchar *msg;
 			msg = g_strdup_printf(_("Could not connect to authentication server:\n%s"),
 					error_message);
-			purple_connection_error(gc, msg);
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 			g_free(msg);
 		}
 		else if (conn->type == SNAC_FAMILY_LOCATE)
@@ -1002,7 +1002,7 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 			gchar *msg;
 			msg = g_strdup_printf(_("Could not connect to BOS server:\n%s"),
 					error_message);
-			purple_connection_error(gc, msg);
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, msg);
 			g_free(msg);
 		}
 		else
@@ -1260,8 +1260,7 @@ oscar_login(PurpleAccount *account)
 	if (!aim_snvalid(purple_account_get_username(account))) {
 		gchar *buf;
 		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
-		gc->wants_to_die = TRUE;
-		purple_connection_error(gc, buf);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_SETTINGS, buf);
 		g_free(buf);
 		return;
 	}
@@ -1283,7 +1282,8 @@ oscar_login(PurpleAccount *account)
 			connection_established_cb, newconn);
 	if (newconn->connect_data == NULL)
 	{
-		purple_connection_error(gc, _("Couldn't connect to host"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Couldn't connect to host"));
 		return;
 	}
 
@@ -1344,43 +1344,37 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 		switch (info->errorcode) {
 		case 0x01:
 			/* Unregistered screen name */
-			gc->wants_to_die = TRUE;
-			purple_connection_error(gc, _("Invalid screen name."));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_USERNAME, _("Invalid screen name."));
 			break;
 		case 0x05:
 			/* Incorrect password */
-			gc->wants_to_die = TRUE;
 			if (!purple_account_get_remember_password(account))
 				purple_account_set_password(account, NULL);
-			purple_connection_error(gc, _("Incorrect password."));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password."));
 			break;
 		case 0x11:
 			/* Suspended account */
-			gc->wants_to_die = TRUE;
-			purple_connection_error(gc, _("Your account is currently suspended."));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Your account is currently suspended."));
 			break;
 		case 0x14:
 			/* service temporarily unavailable */
-			purple_connection_error(gc, _("The AOL Instant Messenger service is temporarily unavailable."));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("The AOL Instant Messenger service is temporarily unavailable."));
 			break;
 		case 0x18:
 			/* screen name connecting too frequently */
-			gc->wants_to_die = TRUE;
-			purple_connection_error(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
 			break;
 		case 0x1c:
 			/* client too old */
-			gc->wants_to_die = TRUE;
 			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"), PURPLE_WEBSITE);
-			purple_connection_error(gc, buf);
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, buf);
 			break;
 		case 0x1d:
 			/* IP address connecting too frequently */
-			gc->wants_to_die = TRUE;
-			purple_connection_error(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
 			break;
 		default:
-			purple_connection_error(gc, _("Authentication failed"));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Authentication failed"));
 			break;
 		}
 		purple_debug_info("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
@@ -1410,7 +1404,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	g_free(host);
 	if (newconn->connect_data == NULL)
 	{
-		purple_connection_error(gc, _("Could Not Connect"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Could Not Connect"));
 		return 0;
 	}
 
@@ -1435,8 +1429,9 @@ purple_parse_auth_securid_request_no_cb(gpointer user_data, const char *value)
 	PurpleConnection *gc = user_data;
 
 	/* Disconnect */
-	gc->wants_to_die = TRUE;
-	purple_connection_error(gc, _("The SecurID key entered is invalid."));
+	purple_connection_error_reason(gc,
+		PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
+		_("The SecurID key entered is invalid."));
 }
 
 static int
@@ -1449,13 +1444,13 @@ purple_parse_auth_securid_request(OscarData *od, FlapConnection *conn, FlapFrame
 	purple_debug_info("oscar", "Got SecurID request\n");
 
 	primary = g_strdup_printf("Enter the SecurID key for %s.", purple_account_get_username(account));
-	purple_request_input_with_hint(gc, NULL, _("Enter SecurID"), primary,
+	purple_request_input(gc, NULL, _("Enter SecurID"), primary,
 					   _("Enter the 6 digit number from the digital display."),
 					   FALSE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_parse_auth_securid_request_yes_cb),
 					   _("_Cancel"), G_CALLBACK(purple_parse_auth_securid_request_no_cb),
 					   account, NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
+					   gc);
 	g_free(primary);
 
 	return 1;
@@ -2242,12 +2237,12 @@ purple_auth_sendrequest(PurpleConnection *gc, const char *name)
 	data->gc = gc;
 	data->name = g_strdup(name);
 
-	purple_request_input_with_hint(data->gc, NULL, _("Authorization Request Message:"),
+	purple_request_input(data->gc, NULL, _("Authorization Request Message:"),
 					   NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_auth_request),
 					   _("_Cancel"), G_CALLBACK(purple_auth_dontrequest),
 					   purple_connection_get_account(gc), name, NULL,
-					   PURPLE_REQUEST_UI_HINT_BLIST, data);
+					   data);
 }
 
 
@@ -2291,12 +2286,12 @@ static void
 purple_auth_dontgrant_msgprompt(gpointer cbdata)
 {
 	struct name_data *data = cbdata;
-	purple_request_input_with_hint(data->gc, NULL, _("Authorization Denied Message:"),
+	purple_request_input(data->gc, NULL, _("Authorization Denied Message:"),
 					   NULL, _("No reason given."), TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_auth_dontgrant),
 					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
 					   purple_connection_get_account(data->gc), data->name, NULL,
-					   PURPLE_REQUEST_UI_HINT_BLIST, data);
+					   data);
 }
 
 /* When someone sends you buddies */
@@ -2477,12 +2472,12 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 					data->name = g_strdup(text[i*2+1]);
 					data->nick = g_strdup(text[i*2+2]);
 
-					purple_request_action_with_hint(gc, NULL, message,
+					purple_request_action(gc, NULL, message,
 										_("Do you want to add this buddy "
 										  "to your buddy list?"),
 										PURPLE_DEFAULT_ACTION_NONE,
 										purple_connection_get_account(gc), data->name, NULL,
-										PURPLE_REQUEST_UI_HINT_BLIST, data, 2,
+										data, 2,
 										_("_Add"), G_CALLBACK(purple_icq_buddyadd),
 										_("_Decline"), G_CALLBACK(oscar_free_name_data));
 					g_free(message);
@@ -5236,10 +5231,10 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	data->name = g_strdup(sn);
 	data->nick = (buddy ? g_strdup(purple_buddy_get_alias_only(buddy)) : NULL);
 
-	purple_request_yes_no_with_hint(gc, NULL, _("Authorization Given"), dialog_msg,
+	purple_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
 						PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), sn, NULL,
-						PURPLE_REQUEST_UI_HINT_BLIST, data,
+						data,
 						G_CALLBACK(purple_icq_buddyadd),
 						G_CALLBACK(oscar_free_name_data));
 	g_free(dialog_msg);
@@ -5935,12 +5930,12 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	data->nick = g_strdup(purple_buddy_get_alias_only(buddy));
 
 	title = g_strdup_printf(_("Buddy Comment for %s"), data->name);
-	purple_request_input_with_hint(gc, title, _("Buddy Comment:"), NULL,
+	purple_request_input(gc, title, _("Buddy Comment:"), NULL,
 					   comment_utf8, TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(oscar_ssi_editcomment),
 					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
 					   purple_connection_get_account(gc), data->name, NULL,
-					   PURPLE_REQUEST_UI_HINT_BUDDY, data);
+					   data);
 	g_free(title);
 
 	g_free(comment);
@@ -5985,13 +5980,13 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 	buf = g_strdup_printf(_("You have selected to open a Direct IM connection with %s."),
 			buddy->name);
 
-	purple_request_action_with_hint(gc, NULL, buf,
+	purple_request_action(gc, NULL, buf,
 			_("Because this reveals your IP address, it "
 			  "may be considered a security risk.  Do you "
 			  "wish to continue?"),
 			0,
 			purple_connection_get_account(gc), data->who, NULL,
-			PURPLE_REQUEST_UI_HINT_BUDDY, data, 2,
+			data, 2,
 			_("C_onnect"), G_CALLBACK(oscar_ask_directim_yes_cb),
 			_("_Cancel"), G_CALLBACK(oscar_ask_directim_no_cb));
 	g_free(buf);
@@ -6143,12 +6138,12 @@ oscar_show_icq_privacy_opts(PurplePluginAction *action)
 
 	purple_request_fields_add_group(fields, g);
 
-	purple_request_fields_with_hint(gc, _("ICQ Privacy Options"), _("ICQ Privacy Options"),
+	purple_request_fields(gc, _("ICQ Privacy Options"), _("ICQ Privacy Options"),
 						NULL, fields,
 						_("OK"), G_CALLBACK(oscar_icq_privacy_opts),
 						_("Cancel"), NULL,
 						purple_connection_get_account(gc), NULL, NULL,
-						PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
+						gc);
 }
 
 static void oscar_format_screenname(PurpleConnection *gc, const char *nick) {
@@ -6216,12 +6211,12 @@ static void oscar_change_email(PurpleConnection *gc, const char *email)
 static void oscar_show_change_email(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input_with_hint(gc, NULL, _("Change Address To:"), NULL, NULL,
+	purple_request_input(gc, NULL, _("Change Address To:"), NULL, NULL,
 					   FALSE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(oscar_change_email),
 					   _("_Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
+					   gc);
 }
 
 static void oscar_show_awaitingauth(PurplePluginAction *action)
@@ -6283,7 +6278,7 @@ static void search_by_email_cb(PurpleConnection *gc, const char *email)
 static void oscar_show_find_email(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input_with_hint(gc, _("Find Buddy by E-Mail"),
+	purple_request_input(gc, _("Find Buddy by E-Mail"),
 					   _("Search for a buddy by e-mail address"),
 					   _("Type the e-mail address of the buddy you are "
 						 "searching for."),
@@ -6291,7 +6286,7 @@ static void oscar_show_find_email(PurplePluginAction *action)
 					   _("_Search"), G_CALLBACK(search_by_email_cb),
 					   _("_Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
+					   gc);
 }
 
 static void oscar_show_set_info(PurplePluginAction *action)

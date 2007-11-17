@@ -212,7 +212,8 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 						  (gc->password == NULL)
 						  ? "" : gc->password,
 						  NULL, NULL, FALSE)) {
-				purple_connection_error(gc, _("Cannot create SILC key pair\n"));
+				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+				                             _("Cannot create SILC key pair\n"));
 				return FALSE;
 			}
 
@@ -254,7 +255,8 @@ gboolean silcpurple_check_silc_dir(PurpleConnection *gc)
 						  (gc->password == NULL)
 						  ? "" : gc->password,
 						  NULL, NULL, FALSE)) {
-				purple_connection_error(gc, _("Cannot create SILC key pair\n"));
+				purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+				                             _("Cannot create SILC key pair\n"));
 				return FALSE;
 			}
 
@@ -380,10 +382,10 @@ void silcpurple_show_public_key(SilcPurple sg,
 
 	buf = g_string_free(s, FALSE);
 
-	purple_request_action_with_hint(sg->gc, _("Public Key Information"),
+	purple_request_action(sg->gc, _("Public Key Information"),
 			      _("Public Key Information"),
 			      buf, 0, purple_connection_get_account(sg->gc),
-			      NULL, NULL, PURPLE_REQUEST_UI_HINT_BLIST, context, 1, _("Close"), callback);
+			      NULL, NULL, context, 1, _("Close"), callback);
 
 	g_free(buf);
 	silc_free(fingerprint);

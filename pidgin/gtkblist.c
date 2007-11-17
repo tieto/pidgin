@@ -58,6 +58,7 @@
 #include "gtkstatusbox.h"
 #include "gtkscrollbook.h"
 #include "gtkutils.h"
+#include "pidgin/minidialog.h"
 
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
@@ -107,6 +108,21 @@ typedef struct
 	GList *entries;
 } PidginJoinChatData;
 
+typedef struct
+{
+	/** Used to hold error minidialogs.  Gets packed
+	 *  inside PidginBuddyList.error_buttons
+	 */
+	PidginScrollBook *error_scrollbook;
+
+	/** Pointer to the mini-dialog about having signed on elsewhere, if one
+	 *  is showing; @c NULL otherwise.
+	 */
+	PidginMiniDialog *signed_on_elsewhere;
+} PidginBuddyListPrivate;
+
+#define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
+	((PidginBuddyListPrivate *)((list)->priv))
 
 static GtkWidget *accountmenu = NULL;
 
@@ -525,9 +541,9 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 	if (i > 1)
 	{
 		char *msg = g_strdup_printf(ngettext("You have %d contact named %s. Would you like to merge them?", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
-		purple_request_action_with_hint(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
+		purple_request_action(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
 							 "You can separate them again by choosing 'Expand' from the contact's context menu"), 0, NULL, NULL, NULL,
-				      PURPLE_REQUEST_UI_HINT_BLIST, merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
+				      merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
 		g_free(msg);
 	} else
 		g_list_free(merges);
@@ -622,7 +638,7 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
 
 static void gtk_blist_menu_bp_cb(GtkWidget *w, PurpleBuddy *b)
 {
-	pidgin_pounce_editor_show_with_parent(GTK_WINDOW(gtkblist->window), b->account, b->name, NULL);
+	pidgin_pounce_editor_show(b->account, b->name, NULL);
 }
 
 static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
@@ -648,7 +664,7 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 			name = prpl_info->get_chat_name(c->components);
 		}
 	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		pidgin_log_show_contact_with_parent(GTK_WINDOW(gtkblist->window), (PurpleContact *)node);
+		pidgin_log_show_contact((PurpleContact *)node);
 		pidgin_clear_cursor(gtkblist->window);
 		return;
 	} else {
@@ -660,7 +676,7 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 	}
 
 	if (name && account) {
-		pidgin_log_show_with_parent(GTK_WINDOW(gtkblist->window), type, name, account);
+		pidgin_log_show(type, name, account);
 		g_free(name);
 
 		pidgin_clear_cursor(gtkblist->window);
@@ -685,6 +701,11 @@ static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
 		}
 	}
 	pidgin_blist_update(purple_get_blist(), node);
+}
+
+static void gtk_blist_show_systemlog_cb()
+{
+	pidgin_syslog_show();
 }
 
 static void gtk_blist_show_onlinehelp_cb()
@@ -3063,20 +3084,6 @@ toggle_debug(void)
 			!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"));
 }
 
-static void (*show_with_parent_funcs[5])(GtkWindow *parent) = 
-{
-	NULL,
-	pidgin_pounces_manager_show_with_parent,
-	pidgin_plugin_dialog_show_with_parent,
-	pidgin_syslog_show_with_parent,
-	pidgin_dialogs_about_with_parent
-};
-
-static void
-pidgin_blist_show_with_parent(gpointer data1, gint show_with_parent_idx, gpointer data3)
-{
-	show_with_parent_funcs[show_with_parent_idx](GTK_WINDOW(gtkblist->window));
-}
 
 /***************************************************
  *            Crap                                 *
@@ -3110,15 +3117,15 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_blist_show_with_parent, 1, "<Item>", NULL },
+	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_pounces_manager_show, 1, "<Item>", NULL },
 	{ N_("/Tools/_Certificates"), NULL, pidgin_certmgr_show, 0, "<Item>", NULL },
-	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_blist_show_with_parent, 2, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
+	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 2, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
-	{ N_("/Tools/System _Log"), NULL, pidgin_blist_show_with_parent, 3, "<Item>", NULL },
+	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 3, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 	/* Help */
@@ -3126,9 +3133,9 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
 #if GTK_CHECK_VERSION(2,6,0)
-	{ N_("/Help/_About"), NULL, pidgin_blist_show_with_parent, 4, "<StockItem>", GTK_STOCK_ABOUT },
+	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 4,  "<StockItem>", GTK_STOCK_ABOUT },
 #else
-	{ N_("/Help/_About"), NULL, pidgin_blist_show_with_parent, 4, "<Item>", NULL },
+	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 4,  "<Item>", NULL },
 #endif
 };
 
@@ -4125,10 +4132,13 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 static void pidgin_blist_new_list(PurpleBuddyList *blist)
 {
 	PidginBuddyList *gtkblist;
+	PidginBuddyListPrivate *priv;
 
 	gtkblist = g_new0(PidginBuddyList, 1);
 	gtkblist->connection_errors = g_hash_table_new_full(g_direct_hash,
 												g_direct_equal, NULL, g_free);
+	gtkblist->priv = priv = g_new0(PidginBuddyListPrivate, 1);
+
 	blist->ui_data = gtkblist;
 }
 
@@ -4284,6 +4294,13 @@ headline_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event, PidginBuddyLis
 					widget->allocation.width - 2 - HEADLINE_CLOSE_SIZE, 2,
 					HEADLINE_CLOSE_SIZE, HEADLINE_CLOSE_SIZE,
 					GDK_RGB_DITHER_NONE, 0, 0);
+#if 0
+		/* The presence of one opening paren in each branch of
+		 * GTK_CHECK_VERSION confuses vim's bracket matching for the
+		 * rest of the file.
+		 */
+		)
+#endif
 		gtk_paint_focus(widget->style, widget->window, GTK_STATE_PRELIGHT,
 				NULL, widget, NULL,
 				widget->allocation.width - HEADLINE_CLOSE_SIZE - 3, 1,
@@ -4354,124 +4371,402 @@ headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginBuddyList 
 /* Connection error handling stuff */
 /***********************************/
 
+#define OBJECT_DATA_KEY_ACCOUNT "account"
+
+static gboolean
+find_account_widget(GObject *widget,
+                    PurpleAccount *account)
+{
+	if (g_object_get_data(widget, OBJECT_DATA_KEY_ACCOUNT) == account)
+		return 0; /* found */
+	else
+		return 1;
+}
+
 static void
-ce_modify_account_cb(PurpleAccount *account)
+pack_prpl_icon_start(GtkWidget *box,
+                     PurpleAccount *account)
+{
+	GdkPixbuf *pixbuf;
+	GtkWidget *image;
+
+	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	if (pixbuf != NULL) {
+		image = gtk_image_new_from_pixbuf(pixbuf);
+		g_object_unref(pixbuf);
+
+		gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+	}
+}
+
+static void
+add_error_dialog(PidginBuddyList *gtkblist,
+                 GtkWidget *dialog)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	gtk_container_add(GTK_CONTAINER(priv->error_scrollbook), dialog);
+
+	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
+		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+}
+
+static GtkWidget *
+find_child_widget_by_account(GtkContainer *container,
+                             PurpleAccount *account)
+{
+	GList *l = NULL;
+	GList *children = gtk_container_get_children(container);
+	GtkWidget *ret = NULL;
+	l = g_list_find_custom(children, account, (GCompareFunc) find_account_widget);
+	if (l)
+		ret = GTK_WIDGET(l->data);
+	g_list_free(children);
+	return ret;
+}
+
+static void
+remove_child_widget_by_account(GtkContainer *container,
+                               PurpleAccount *account)
+{
+	GtkWidget *widget = find_child_widget_by_account(container, account);
+	if(widget)
+		gtk_widget_destroy(widget);
+}
+
+/* Generic error buttons */
+
+static void
+generic_error_modify_cb(PurpleAccount *account)
 {
 	pidgin_account_dialog_show(PIDGIN_MODIFY_ACCOUNT_DIALOG, account);
 }
 
 static void
-ce_enable_account_cb(PurpleAccount *account)
+generic_error_enable_cb(PurpleAccount *account)
 {
 	purple_account_set_enabled(account, purple_core_get_ui(), TRUE);
 }
 
 static void
-connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
+generic_error_ignore_cb(PurpleAccount *account)
 {
-	PurpleAccount *account;
-	char *primary;
-	const char *text;
-	gboolean enabled;
-	GList *list;
-
-	account = user_data;
-	primary = g_strdup_printf(_("%s disconnected"),
-							  purple_account_get_username(account));
-	text = g_hash_table_lookup(gtkblist->connection_errors, account);
-
-	enabled = purple_account_get_enabled(account, purple_core_get_ui());
-	purple_request_action_with_hint(account, _("Connection Error"), primary, text, 2,
-						account, NULL, NULL,
-						PURPLE_REQUEST_UI_HINT_ACCOUNT, account, 3,
-						_("OK"), NULL,
-						_("Modify Account"), PURPLE_CALLBACK(ce_modify_account_cb),
-						enabled ? _("Connect") : _("Re-enable Account"),
-						enabled ? PURPLE_CALLBACK(purple_account_connect) :
-									PURPLE_CALLBACK(ce_enable_account_cb));
-	g_free(primary);
-	gtk_widget_destroy(GTK_WIDGET(widget));
-	g_hash_table_remove(gtkblist->connection_errors, account);
-	if ((list = gtk_container_get_children(GTK_CONTAINER(gtkblist->error_buttons))) == NULL) {
-		gtk_widget_hide(gtkblist->error_buttons);
-	} else {
-		g_list_free(list);
-	}
+	purple_account_clear_current_error(account);
 }
 
-/* Add some buttons that show connection errors */
 static void
-create_connection_error_buttons(gpointer key, gpointer value,
-                                gpointer user_data)
+generic_error_destroy_cb(GtkObject *dialog,
+                         PurpleAccount *account)
 {
-	PurpleAccount *account;
-	gchar *escaped, *text;
-	GtkWidget *button, *label, *image, *hbox;
-	GdkPixbuf *pixbuf;
+	g_hash_table_remove(gtkblist->connection_errors, account);
+}
 
-	account = key;
-	escaped = g_markup_escape_text((const gchar *)value, -1);
-	text = g_strdup_printf(_("<span color=\"red\">%s disconnected: %s</span>"),
-	                       purple_account_get_username(account),
-	                       escaped);
-	g_free(escaped);
+#define SSL_FAQ_URI "http://d.pidgin.im/wiki/FAQssl"
 
-	hbox = gtk_hbox_new(FALSE, 6);
+static void
+ssl_faq_clicked_cb(GtkButton *button,
+                   PurpleAccount *account)
+{
+	purple_notify_uri(NULL, SSL_FAQ_URI);
+}
 
-	/* Create the icon */
-	if (purple_account_get_status_type_with_primitive(account,
-							PURPLE_STATUS_OFFLINE) != NULL) {
-		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
-		if (pixbuf != NULL) {
-			image = gtk_image_new_from_pixbuf(pixbuf);
-			g_object_unref(pixbuf);
+static void
+add_generic_error_dialog(PurpleAccount *account,
+                         const PurpleConnectionErrorInfo *err)
+{
+	GtkWidget *mini_dialog;
+	const char *username = purple_account_get_username(account);
+	gboolean enabled =
+		purple_account_get_enabled(account, purple_core_get_ui());
+	char *primary;
+	
+	if (enabled)
+		primary = g_strdup_printf(_("%s disconnected"), username);
+	else
+		primary = g_strdup_printf(_("%s disabled"), username);
 
-			gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
-		}
+	mini_dialog = pidgin_make_mini_dialog(NULL, PIDGIN_STOCK_DIALOG_ERROR,
+		primary, err->description, account,
+		(enabled ? _("Reconnect") : _("Re-enable")),
+		(enabled ? PURPLE_CALLBACK(purple_account_connect)
+		         : PURPLE_CALLBACK(generic_error_enable_cb)),
+		_("Modify Account"), PURPLE_CALLBACK(generic_error_modify_cb),
+		_("Ignore"), PURPLE_CALLBACK(generic_error_ignore_cb),
+		NULL);
+
+	g_free(primary);
+
+	g_object_set_data(G_OBJECT(mini_dialog), OBJECT_DATA_KEY_ACCOUNT,
+		account);
+
+	if(err->type == PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT) {
+		GtkWidget *faq_button = gtk_button_new();
+		GtkWidget *faq_label = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(faq_label),
+			"<span underline=\"single\" foreground=\"blue\""
+			" size=\"smaller\">" SSL_FAQ_URI "</span>");
+#if GTK_CHECK_VERSION(2,6,0)
+		g_object_set(G_OBJECT(faq_label), "ellipsize",
+			PANGO_ELLIPSIZE_MIDDLE, NULL);
+#endif
+		gtk_container_add(GTK_CONTAINER(faq_button), faq_label);
+		gtk_button_set_relief(GTK_BUTTON(faq_button), GTK_RELIEF_NONE);
+
+		g_signal_connect(faq_button, "clicked",
+			(GCallback)ssl_faq_clicked_cb, account);
+
+		gtk_box_pack_start(PIDGIN_MINI_DIALOG(mini_dialog)->contents,
+			faq_button, FALSE, FALSE, 0);
 	}
 
-	/* Create the text */
-	label = gtk_label_new("");
-	gtk_label_set_markup(GTK_LABEL(label), text);
-	g_free(text);
+	g_signal_connect_after(mini_dialog, "destroy",
+		(GCallback)generic_error_destroy_cb,
+		account);
+
+	add_error_dialog(gtkblist, mini_dialog);
+}
+
+static void
+remove_generic_error_dialog(PurpleAccount *account)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	remove_child_widget_by_account(
+		GTK_CONTAINER(priv->error_scrollbook->notebook), account);
+}
+
+
+/* Notifications about accounts which were disconnected with
+ * PURPLE_CONNECTION_ERROR_NAME_IN_USE
+ */
+
+typedef void (*AccountFunction)(PurpleAccount *);
+
+static void
+elsewhere_foreach_account(PidginMiniDialog *mini_dialog,
+                          AccountFunction f)
+{
+	PurpleAccount *account;
+	GList *labels = gtk_container_get_children(
+		GTK_CONTAINER(mini_dialog->contents));
+	GList *l;
+
+	for (l = labels; l; l = l->next) {
+		account = g_object_get_data(G_OBJECT(l->data), OBJECT_DATA_KEY_ACCOUNT);
+		if (account)
+			f(account);
+		else
+			purple_debug_warning("gtkblist", "mini_dialog's child "
+				"didn't have an account stored in it!");
+	}
+	g_list_free(labels);
+}
+
+static void
+enable_account(PurpleAccount *account)
+{
+	purple_account_set_enabled(account, purple_core_get_ui(), TRUE);
+}
+
+static void
+reconnect_elsewhere_accounts(PidginMiniDialog *mini_dialog,
+                             GtkButton *button,
+                             gpointer unused)
+{
+	elsewhere_foreach_account(mini_dialog, enable_account);
+}
+
+static void
+ignore_elsewhere_accounts(PidginMiniDialog *mini_dialog,
+                          GtkButton *button,
+                          gpointer unused)
+{
+	elsewhere_foreach_account(mini_dialog, purple_account_clear_current_error);
+}
+
+static void
+ensure_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	PidginMiniDialog *mini_dialog;
+
+	if(priv->signed_on_elsewhere)
+		return;
+	
+	mini_dialog = priv->signed_on_elsewhere =
+		pidgin_mini_dialog_new(NULL, NULL, PIDGIN_STOCK_DISCONNECT);
+
+	pidgin_mini_dialog_add_button(mini_dialog, _("Re-enable"),
+		reconnect_elsewhere_accounts, NULL);
+
+	pidgin_mini_dialog_add_button(mini_dialog, _("Ignore"),
+		ignore_elsewhere_accounts, NULL);
+
+	add_error_dialog(gtkblist, GTK_WIDGET(mini_dialog));
+
+	/* Set priv->signed_on_elsewhere to NULL when the dialog is destroyed */
+	g_signal_connect(G_OBJECT(mini_dialog), "destroy",
+		(GCallback) gtk_widget_destroyed, &(priv->signed_on_elsewhere));
+}
+
+static void
+update_signed_on_elsewhere_minidialog_title(void)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	PidginMiniDialog *mini_dialog = priv->signed_on_elsewhere;
+	guint accounts;
+	char *title;
+
+	if (mini_dialog == NULL)
+		return;
+
+	accounts = pidgin_mini_dialog_get_num_children(mini_dialog);
+
+	title = g_strdup_printf(
+		ngettext("%d account was disabled because you signed on from another location.",
+			 "%d accounts were disabled because you signed on from another location.",
+			 accounts),
+		accounts);
+	pidgin_mini_dialog_set_title(mini_dialog, title);
+	g_free(title);
+}
+
+static GtkWidget *
+create_account_label(PurpleAccount *account)
+{
+	GtkWidget *hbox, *label;
+	const char *username = purple_account_get_username(account);
+	char *markup;
+
+	hbox = gtk_hbox_new(FALSE, 6);
+	g_object_set_data(G_OBJECT(hbox), OBJECT_DATA_KEY_ACCOUNT, account);
+
+	pack_prpl_icon_start(hbox, account);
+
+	label = gtk_label_new(NULL);
+	markup = g_strdup_printf("<span size=\"smaller\">%s</span>", username);
+	gtk_label_set_markup(GTK_LABEL(label), markup);
+	g_free(markup);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 #if GTK_CHECK_VERSION(2,6,0)
-	g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	g_object_set(G_OBJECT(label), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif
+#if GTK_CHECK_VERSION(2,12,0)
+	{ /* avoid unused variable warnings on pre-2.12 Gtk */
+		char *description =
+			purple_account_get_current_error(account)->description;
+		if (description != NULL && *description != '\0')
+			gtk_widget_set_tooltip_text(label, description);
+	}
 #endif
 	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
-	/* Create the actual button and put the icon and text on it */
-	button = gtk_button_new();
-	gtk_container_add(GTK_CONTAINER(button), hbox);
-	g_signal_connect(G_OBJECT(button), "clicked",
-	                 G_CALLBACK(connection_error_button_clicked_cb),
-	                 account);
-	gtk_widget_show_all(button);
-	gtk_box_pack_end(GTK_BOX(gtkblist->error_buttons), button,
-	                 FALSE, FALSE, 0);
-	gtk_widget_show_all(gtkblist->error_buttons);
+	return hbox;
+}
+
+static void
+add_to_signed_on_elsewhere(PurpleAccount *account)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	PidginMiniDialog *mini_dialog;
+	GtkWidget *account_label;
+
+	ensure_signed_on_elsewhere_minidialog(gtkblist);
+	mini_dialog = priv->signed_on_elsewhere;
+
+	if(find_child_widget_by_account(GTK_CONTAINER(mini_dialog->contents), account))
+		return;
+
+	account_label = create_account_label(account);
+	gtk_box_pack_start(mini_dialog->contents, account_label, FALSE, FALSE, 0);
+	gtk_widget_show_all(account_label);
+
+	update_signed_on_elsewhere_minidialog_title();
+
+	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
+		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+}
+
+static void
+remove_from_signed_on_elsewhere(PurpleAccount *account)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	PidginMiniDialog *mini_dialog = priv->signed_on_elsewhere;
+	if(mini_dialog == NULL)
+		return;
+
+	remove_child_widget_by_account(GTK_CONTAINER(mini_dialog->contents), account);
+
+	update_signed_on_elsewhere_minidialog_title();
+}
+
+
+/* Call appropriate error notification code based on error types */
+static void
+update_account_error_state(PurpleAccount *account,
+                           const PurpleConnectionErrorInfo *old,
+                           const PurpleConnectionErrorInfo *new,
+                           PidginBuddyList *gtkblist)
+{
+	/* For backwards compatibility: */
+	if (new)
+		pidgin_blist_update_account_error_state(account, new->description);
+	else
+		pidgin_blist_update_account_error_state(account, NULL);
+
+	/* Don't bother updating the error if it hasn't changed.  This stops
+	 * URGENT being repeatedly set for network errors whenever they try to
+	 * reconnect.
+	 */
+	if ((old == new) ||
+	    (old != NULL && new != NULL && old->type == new->type
+	     && g_str_equal(old->description, new->description))
+	   )
+		return;
+
+	if (old) {
+		if(old->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE)
+			remove_from_signed_on_elsewhere(account);
+		else
+			remove_generic_error_dialog(account);
+	}
+
+	if (new) {
+		if(new->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE)
+			add_to_signed_on_elsewhere(account);
+		else
+			add_generic_error_dialog(account, new);
+	}
+}
+
+/* In case accounts are loaded before the blist (which they currently are),
+ * let's call update_account_error_state ourselves on every account's current
+ * state when the blist starts.
+ */
+static void
+show_initial_account_errors(PidginBuddyList *gtkblist)
+{
+	GList *l = purple_accounts_get_all();
+	PurpleAccount *account;
+	const PurpleConnectionErrorInfo *err;
+
+	for (; l; l = l->next)
+	{
+		account = l->data;
+		err = purple_account_get_current_error(account);
+
+		update_account_error_state(account, NULL, err, gtkblist);
+	}
 }
 
 void
 pidgin_blist_update_account_error_state(PurpleAccount *account, const char *text)
 {
-	GList *l;
-
+	/* connection_errors isn't actually used anywhere; it's just kept in
+	 * sync with reality in case a plugin uses it.
+	 */
 	if (text == NULL)
 		g_hash_table_remove(gtkblist->connection_errors, account);
 	else
 		g_hash_table_insert(gtkblist->connection_errors, account, g_strdup(text));
-
-	/* Remove the old error buttons */
-	for (l = gtk_container_get_children(GTK_CONTAINER(gtkblist->error_buttons));
-			l != NULL;
-			l = g_list_delete_link(l, l))
-	{
-		gtk_widget_destroy(GTK_WIDGET(l->data));
-	}
-
-	/* Add new error buttons */
-	g_hash_table_foreach(gtkblist->connection_errors,
-			create_connection_error_buttons, NULL);
 }
 
 static gboolean
@@ -4598,6 +4893,7 @@ kiosk_page()
 
 static void pidgin_blist_show(PurpleBuddyList *list)
 {
+	PidginBuddyListPrivate *priv;
 	void *handle;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *column;
@@ -4624,6 +4920,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	}
 
 	gtkblist = PIDGIN_BLIST(list);
+	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 
 	gtkblist->empty_avatar = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
 	gdk_pixbuf_fill(gtkblist->empty_avatar, 0x00000000);
@@ -4926,11 +5223,19 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->scrollbook = pidgin_scroll_book_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->scrollbook, FALSE, FALSE, 0);
 
-	/* Create an empty vbox used for showing connection errors */
+	/* Create an vbox which holds the scrollbook which is actually used to
+	 * display connection errors.  The vbox needs to still exist for
+	 * backwards compatibility.
+	 */
 	gtkblist->error_buttons = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->error_buttons, FALSE, FALSE, 0);
-        gtk_container_set_border_width(GTK_CONTAINER(gtkblist->error_buttons), 3);
-	
+	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->error_buttons), 0);
+
+	priv->error_scrollbook = PIDGIN_SCROLL_BOOK(pidgin_scroll_book_new());
+	gtk_box_pack_start(GTK_BOX(gtkblist->error_buttons),
+		GTK_WIDGET(priv->error_scrollbook), FALSE, FALSE, 0);
+
+
 	/* Add the statusbox */
 	gtkblist->statusbox = pidgin_status_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
@@ -5002,42 +5307,54 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 			pidgin_blist_sound_method_pref_cb, NULL);
 
 	/* Setup some purple signal handlers. */
-	purple_signal_connect(purple_accounts_get_handle(), "account-enabled",
-			gtkblist, PURPLE_CALLBACK(account_modified), gtkblist);
-	purple_signal_connect(purple_accounts_get_handle(), "account-disabled",
-			gtkblist, PURPLE_CALLBACK(account_modified), gtkblist);
-	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
-			gtkblist, PURPLE_CALLBACK(account_modified), gtkblist);
-	purple_signal_connect(purple_accounts_get_handle(), "account-status-changed",
-			gtkblist, PURPLE_CALLBACK(account_status_changed), gtkblist);
 
-	purple_signal_connect(pidgin_account_get_handle(), "account-modified",
-			gtkblist, PURPLE_CALLBACK(account_modified), gtkblist);
+	handle = purple_accounts_get_handle();
+	purple_signal_connect(handle, "account-enabled", gtkblist,
+	                      PURPLE_CALLBACK(account_modified), gtkblist);
+	purple_signal_connect(handle, "account-disabled", gtkblist,
+	                      PURPLE_CALLBACK(account_modified), gtkblist);
+	purple_signal_connect(handle, "account-removed", gtkblist,
+	                      PURPLE_CALLBACK(account_modified), gtkblist);
+	purple_signal_connect(handle, "account-status-changed", gtkblist,
+	                      PURPLE_CALLBACK(account_status_changed),
+	                      gtkblist);
+	purple_signal_connect(handle, "account-error-changed", gtkblist,
+	                      PURPLE_CALLBACK(update_account_error_state),
+	                      gtkblist);
 
-	purple_signal_connect(purple_connections_get_handle(), "signed-on",
-						gtkblist, PURPLE_CALLBACK(sign_on_off_cb), list);
-	purple_signal_connect(purple_connections_get_handle(), "signed-off",
-						gtkblist, PURPLE_CALLBACK(sign_on_off_cb), list);
+	handle = pidgin_account_get_handle();
+	purple_signal_connect(handle, "account-modified", gtkblist,
+	                      PURPLE_CALLBACK(account_modified), gtkblist);
 
-	purple_signal_connect(purple_plugins_get_handle(), "plugin-load",
-			gtkblist, PURPLE_CALLBACK(plugin_changed_cb), NULL);
-	purple_signal_connect(purple_plugins_get_handle(), "plugin-unload",
-			gtkblist, PURPLE_CALLBACK(plugin_changed_cb), NULL);
+	handle = purple_connections_get_handle();
+	purple_signal_connect(handle, "signed-on", gtkblist,
+	                      PURPLE_CALLBACK(sign_on_off_cb), list);
+	purple_signal_connect(handle, "signed-off", gtkblist,
+	                      PURPLE_CALLBACK(sign_on_off_cb), list);
 
-	purple_signal_connect(purple_conversations_get_handle(), "conversation-updated",
-						gtkblist, PURPLE_CALLBACK(conversation_updated_cb),
-						gtkblist);
-	purple_signal_connect(purple_conversations_get_handle(), "deleting-conversation",
-						gtkblist, PURPLE_CALLBACK(conversation_deleting_cb),
-						gtkblist);
-	purple_signal_connect(purple_conversations_get_handle(), "conversation-created",
-			gtkblist, PURPLE_CALLBACK(conversation_created_cb),
-			gtkblist);
+	handle = purple_plugins_get_handle();
+	purple_signal_connect(handle, "plugin-load", gtkblist,
+	                      PURPLE_CALLBACK(plugin_changed_cb), NULL);
+	purple_signal_connect(handle, "plugin-unload", gtkblist,
+	                      PURPLE_CALLBACK(plugin_changed_cb), NULL);
+
+	handle = purple_conversations_get_handle();
+	purple_signal_connect(handle, "conversation-updated", gtkblist,
+	                      PURPLE_CALLBACK(conversation_updated_cb),
+	                      gtkblist);
+	purple_signal_connect(handle, "deleting-conversation", gtkblist,
+	                      PURPLE_CALLBACK(conversation_deleting_cb),
+	                      gtkblist);
+	purple_signal_connect(handle, "conversation-created", gtkblist,
+	                      PURPLE_CALLBACK(conversation_created_cb),
+	                      gtkblist);
 
 	gtk_widget_hide(gtkblist->headline_hbox);
-	gtk_widget_hide(gtkblist->error_buttons);
+
+	show_initial_account_errors(gtkblist);
 
 	/* emit our created signal */
+	handle = pidgin_blist_get_handle();
 	purple_signal_emit(handle, "gtkblist-created", list);
 }
 
@@ -5660,6 +5977,8 @@ static void pidgin_blist_update(PurpleBuddyList *list, PurpleBlistNode *node)
 
 static void pidgin_blist_destroy(PurpleBuddyList *list)
 {
+	PidginBuddyListPrivate *priv;
+
 	if (!gtkblist)
 		return;
 
@@ -5692,6 +6011,9 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	gdk_cursor_unref(gtkblist->arrow_cursor);
 	gtkblist->hand_cursor = NULL;
 	gtkblist->arrow_cursor = NULL;
+
+	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	g_free(priv);
 
 	g_free(gtkblist);
 	accountmenu = NULL;
@@ -6339,13 +6661,13 @@ add_group_cb(PurpleConnection *gc, const char *group_name)
 static void
 pidgin_blist_request_add_group(void)
 {
-	purple_request_input_with_hint(NULL, _("Add Group"), NULL,
+	purple_request_input(NULL, _("Add Group"), NULL,
 					   _("Please enter the name of the group to be added."),
 					   NULL, FALSE, FALSE, NULL,
 					   _("Add"), G_CALLBACK(add_group_cb),
 					   _("Cancel"), NULL,
 					   NULL, NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_BLIST, NULL);
+					   NULL);
 }
 
 void

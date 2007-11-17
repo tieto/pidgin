@@ -138,9 +138,9 @@ ask_before_delete(GntWidget *button, gpointer null)
 	ask = g_strdup_printf(_("Are you sure you want to delete \"%s\""),
 			purple_savedstatus_get_title(saved));
 
-	purple_request_action_with_hint(saved, _("Delete Status"), ask, NULL, 0,
+	purple_request_action(saved, _("Delete Status"), ask, NULL, 0,
 			NULL, NULL, NULL,
-			PURPLE_REQUEST_UI_HINT_STATUSMGR, saved, 2,
+			saved, 2,
 			_("Delete"), really_delete_status,
 			_("Cancel"), NULL);
 	g_free(ask);

@@ -429,7 +429,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	}
 
 	if(type && !strcmp(type, "error")) {
-		char *msg = jabber_parse_error(js, packet);
+		char *msg = jabber_parse_error(js, packet, NULL);
 
 		state = JABBER_BUDDY_STATE_ERROR;
 		jb->error_msg = msg ? msg : g_strdup(_("Unknown Error in presence"));
@@ -512,7 +512,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
 							chat->config_dialog_type = PURPLE_REQUEST_ACTION;
 							chat->config_dialog_handle =
-								purple_request_action_with_hint(js->gc,
+								purple_request_action(js->gc,
 										_("Create New Room"),
 										_("Create New Room"),
 										_("You are creating a new room.  Would"
@@ -520,7 +520,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 											" accept the default settings?"),
 										/* Default Action */ 1,
 										purple_connection_get_account(js->gc), NULL, chat->conv,
-										PURPLE_REQUEST_UI_HINT_CONV, chat, 2,
+										chat, 2,
 										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
 										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
 						}
@@ -561,7 +561,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 
 		if(state == JABBER_BUDDY_STATE_ERROR) {
-			char *title, *msg = jabber_parse_error(js, packet);
+			char *title, *msg = jabber_parse_error(js, packet, NULL);
 
 			if(chat->conv) {
 				title = g_strdup_printf(_("Error in chat %s"), from);

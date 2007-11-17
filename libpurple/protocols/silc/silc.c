@@ -314,34 +314,40 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 
 		/* Close the connection */
 		if (!sg->detaching)
-		  purple_connection_error(gc, _("Disconnected by server"));
+		  purple_connection_error_reason(gc,
+		                                 PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		                                 _("Disconnected by server"));
 		else
 		  /* TODO: Does this work correctly? Maybe we need to set wants_to_die? */
 		  purple_account_disconnect(purple_connection_get_account(gc));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR:
-		purple_connection_error(gc, _("Error during connecting to SILC Server"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		                             _("Error during connecting to SILC Server"));
 		g_unlink(silcpurple_session_file(purple_account_get_username(sg->account)));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_KE:
-		purple_connection_error(gc, _("Key Exchange failed"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
+		                             _("Key Exchange failed"));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_AUTH:
-		purple_connection_error(gc, _("Authentication failed"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
+		                             _("Authentication failed"));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_RESUME:
-		purple_connection_error(gc,
-				      _("Resuming detached session failed. "
-					"Press Reconnect to create new connection."));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		                             _("Resuming detached session failed. "
+		                               "Press Reconnect to create new connection."));
 		g_unlink(silcpurple_session_file(purple_account_get_username(sg->account)));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_TIMEOUT:
-		purple_connection_error(gc, _("Connection Timeout"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		                             _("Connection Timeout"));
 		break;
 	}
 
@@ -362,7 +368,9 @@ silcpurple_stream_created(SilcSocketStreamStatus status, SilcStream stream,
 	sg = gc->proto_data;
 
 	if (status != SILC_SOCKET_OK) {
-		purple_connection_error(gc, _("Connection failed"));
+		purple_connection_error_reason(gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Connection failed"));
 		silc_pkcs_public_key_free(sg->public_key);
 		silc_pkcs_private_key_free(sg->private_key);
 		silc_free(sg);
@@ -408,7 +416,8 @@ silcpurple_login_connected(gpointer data, gint source, const gchar *error_messag
 	sg = gc->proto_data;
 
 	if (source < 0) {
-		purple_connection_error(gc, _("Connection failed"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		                             _("Connection failed"));
 		silc_pkcs_public_key_free(sg->public_key);
 		silc_pkcs_private_key_free(sg->private_key);
 		silc_free(sg);
@@ -416,7 +425,7 @@ silcpurple_login_connected(gpointer data, gint source, const gchar *error_messag
 		return;
 	}
 
-	silc_hash_alloc("sha1", &sg->sha1hash);
+	silc_hash_alloc((unsigned char *)"sha1", &sg->sha1hash);
 
 	/* Wrap socket to TCP stream */
 	silc_socket_tcp_stream_create(source, TRUE, FALSE,
@@ -431,6 +440,7 @@ static void silcpurple_running(SilcClient client, void *context)
 	PurpleAccount *account = purple_connection_get_account(gc);
 	char pkd[256], prd[256];
 
+
 	/* Progress */
 	purple_connection_update_progress(gc, _("Connecting to SILC Server"), 1, 5);
 
@@ -441,8 +451,8 @@ static void silcpurple_running(SilcClient client, void *context)
 				(char *)purple_account_get_string(account, "private-key", prd),
 				(gc->password == NULL) ? "" : gc->password,
 				&sg->public_key, &sg->private_key)) {
-		g_snprintf(pkd, sizeof(pkd), _("Could not load SILC key pair"));
-		purple_connection_error(gc, pkd);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		                             _("Could not load SILC key pair"));
 		gc->proto_data = NULL;
 		silc_free(sg);
 		return;
@@ -455,7 +465,8 @@ static void silcpurple_running(SilcClient client, void *context)
 				 purple_account_get_int(account, "port", 706),
 				 silcpurple_login_connected, gc) == NULL)
 	{
-		purple_connection_error(gc, _("Unable to create connection"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		                             _("Unable to create connection"));
 		gc->proto_data = NULL;
 		silc_free(sg);
 		return;
@@ -484,7 +495,8 @@ silcpurple_login(PurpleAccount *account)
 	/* Allocate SILC client */
 	client = silc_client_alloc(&ops, &params, gc, NULL);
 	if (!client) {
-		purple_connection_error(gc, _("Out of memory"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		                             _("Out of memory"));
 		return;
 	}
 
@@ -534,8 +546,8 @@ silcpurple_login(PurpleAccount *account)
 	/* Init SILC client */
 	if (!silc_client_init(client, username, hostname, realname,
 			      silcpurple_running, sg)) {
-		gc->wants_to_die = TRUE;
-		purple_connection_error(gc, _("Cannot initialize SILC protocol"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		                             _("Cannot initialize SILC protocol"));
 		gc->proto_data = NULL;
 		silc_free(sg);
 		return;
@@ -543,8 +555,8 @@ silcpurple_login(PurpleAccount *account)
 
 	/* Check the ~/.silc dir and create it, and new key pair if necessary. */
 	if (!silcpurple_check_silc_dir(gc)) {
-		gc->wants_to_die = TRUE;
-		purple_connection_error(gc, _("Error loading SILC key pair"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		                             _("Error loading SILC key pair"));
 		gc->proto_data = NULL;
 		silc_free(sg);
 		return;
@@ -944,7 +956,7 @@ silcpurple_attrs(PurplePluginAction *action)
 	purple_request_field_group_add_field(g, f);
 	purple_request_fields_add_group(fields, g);
 
-	purple_request_fields_with_hint(gc, _("User Online Status Attributes"),
+	purple_request_fields(gc, _("User Online Status Attributes"),
 			    _("User Online Status Attributes"),
 			    _("You can let other users see your online status information "
 			      "and your personal information. Please fill the information "
@@ -952,7 +964,7 @@ silcpurple_attrs(PurplePluginAction *action)
 			    fields,
 			    _("OK"), G_CALLBACK(silcpurple_attrs_cb),
 			    _("Cancel"), G_CALLBACK(silcpurple_attrs_cancel),
-				gc->account, NULL, NULL, PURPLE_REQUEST_UI_HINT_BLIST, gc);
+				gc->account, NULL, NULL, gc);
 }
 
 static void
@@ -1156,11 +1168,11 @@ silcpurple_create_keypair(PurplePluginAction *action)
 	purple_request_field_group_add_field(g, f);
 	purple_request_fields_add_group(fields, g);
 
-	purple_request_fields_with_hint(gc, _("Create New SILC Key Pair"),
+	purple_request_fields(gc, _("Create New SILC Key Pair"),
 			      _("Create New SILC Key Pair"), NULL, fields,
 			      _("Generate Key Pair"), G_CALLBACK(silcpurple_create_keypair_cb),
 			      _("Cancel"), G_CALLBACK(silcpurple_create_keypair_cancel),
-			      gc->account, NULL, NULL, PURPLE_REQUEST_UI_HINT_BLIST, gc);
+			      gc->account, NULL, NULL, gc);
 
 	g_strfreev(u);
 	silc_free(hostname);

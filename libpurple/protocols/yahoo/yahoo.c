@@ -201,10 +201,10 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 	char *message = NULL;
 
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
-		gc->wants_to_die = TRUE;
 		if (!purple_account_get_remember_password(account))
 			purple_account_set_password(account, NULL);
-		purple_connection_error(gc, _("You have signed on from another location."));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NAME_IN_USE,
+			_("You have signed on from another location."));
 		return;
 	}
 
@@ -902,12 +902,12 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			PurpleBuddy *buddy;
 			PurpleAccount *account;
 			PurpleConversation *c;
-			char *username, *str;
-
-			str = NULL;
+			char *username;
 
 			account = purple_connection_get_account(gc);
-			c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
+			c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, im->from, account);
+			if (c == NULL)
+				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
 
 			if ((buddy = purple_find_buddy(account, im->from)) != NULL)
 				username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
@@ -917,7 +917,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			serv_got_attention(gc, username, YAHOO_BUZZ);
 
 			g_free(username);
-			g_free(str);
 			g_free(m);
 			g_free(im);
 			continue;
@@ -1028,12 +1027,12 @@ yahoo_buddy_add_deny_noreason_cb(struct yahoo_add_request *add_req, const char*m
 static void
 yahoo_buddy_add_deny_reason_cb(gpointer data) {
 	struct yahoo_add_request *add_req = data;
-	purple_request_input_with_hint(add_req->gc, NULL, _("Authorization denied message:"),
+	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
 			NULL, _("No reason given."), TRUE, FALSE, NULL,
 			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
 			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb),
 			purple_connection_get_account(add_req->gc), add_req->who, NULL,
-			PURPLE_REQUEST_UI_HINT_BLIST, add_req);
+			add_req);
 }
 
 static void yahoo_buddy_denied_our_add(PurpleConnection *gc, const char *who, const char *reason)
@@ -2065,9 +2064,9 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 		g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
 					"user is on your buddy list.  Clicking \"Yes\" "
 					"will remove and ignore the buddy."), who);
-		purple_request_yes_no_with_hint(gc, NULL, _("Ignore buddy?"), buf, 0,
+		purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
 						gc->account, who, NULL,
-						PURPLE_REQUEST_UI_HINT_BLIST, b,
+						b,
 						G_CALLBACK(ignore_buddy),
 						G_CALLBACK(keep_buddy));
 		break;
@@ -2090,13 +2089,14 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	char *url = NULL;
 	char *fullmsg;
 	PurpleAccount *account = gc->account;
+	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 
 		if (pair->key == 66)
 			err = strtol(pair->value, NULL, 10);
-		if (pair->key == 20)
+		else if (pair->key == 20)
 			url = pair->value;
 
 		l = l->next;
@@ -2105,6 +2105,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	switch (err) {
 	case 3:
 		msg = g_strdup(_("Invalid screen name."));
+		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 		break;
 	case 13:
 #ifdef TRY_WEBMESSENGER_LOGIN
@@ -2139,8 +2140,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 	else
 		fullmsg = g_strdup(msg);
 
-	gc->wants_to_die = TRUE;
-	purple_connection_error(gc, fullmsg);
+	purple_connection_error_reason(gc, reason, fullmsg);
 	g_free(msg);
 	g_free(fullmsg);
 }
@@ -2464,11 +2464,12 @@ static void yahoo_pending(gpointer data, gint source, PurpleInputCondition cond)
 
 		tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
 				g_strerror(errno));
-		purple_connection_error(gc, tmp);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	} else if (len == 0) {
-		purple_connection_error(gc, _("Server closed the connection."));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Server closed the connection."));
 		return;
 	}
 
@@ -2559,7 +2560,7 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
 				error_message);
-		purple_connection_error(gc, tmp);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	}
@@ -2591,7 +2592,7 @@ static void yahoo_got_web_connected(gpointer data, gint source, const gchar *err
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
 				error_message);
-		purple_connection_error(gc, tmp);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	}
@@ -2631,11 +2632,12 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 
 		tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
 				g_strerror(errno));
-		purple_connection_error(gc, tmp);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	} else if (len == 0) {
-		purple_connection_error(gc, _("Server closed the connection."));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Server closed the connection."));
 		return;
 	}
 
@@ -2650,7 +2652,8 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 
 	if ((strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302")) &&
 			  strncmp(buf, "HTTP/1.1 302", strlen("HTTP/1.1 302")))) {
-		purple_connection_error(gc, _("Received unexpected HTTP response from server."));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Received unexpected HTTP response from server."));
 		return;
 	}
 
@@ -2672,9 +2675,10 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 	yd->rxlen = 0;
 	/* Now we have our cookies to login with.  I'll go get the milk. */
 	if (purple_proxy_connect(gc, account, "wcs2.msg.dcn.yahoo.com",
-			       purple_account_get_int(account, "port", YAHOO_PAGER_PORT),
-			       yahoo_got_web_connected, gc) == NULL) {
-		purple_connection_error(gc, _("Connection problem"));
+	                         purple_account_get_int(account, "port", YAHOO_PAGER_PORT),
+	                         yahoo_got_web_connected, gc) == NULL) {
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		                               _("Connection problem"));
 		return;
 	}
 }
@@ -2702,7 +2706,7 @@ static void yahoo_got_cookies_send_cb(gpointer data, gint source, PurpleInputCon
 		gc->inpa = 0;
 		tmp = g_strdup_printf(_("Lost connection with %s:\n%s"),
 				"login.yahoo.com:80", g_strerror(errno));
-		purple_connection_error(gc, tmp);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	}
@@ -2727,7 +2731,7 @@ static void yahoo_got_cookies(gpointer data, gint source, const gchar *error_mes
 		gchar *tmp;
 		tmp = g_strdup_printf(_("Could not establish a connection with %s:\n%s"),
 				"login.yahoo.com:80", error_message);
-		purple_connection_error(gc, tmp);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, tmp);
 		g_free(tmp);
 		return;
 	}
@@ -2811,7 +2815,8 @@ yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	if (error_message != NULL)
 	{
-		purple_connection_error(gc, error_message);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		                               error_message);
 		return;
 	}
 
@@ -2860,7 +2865,8 @@ yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	g_hash_table_destroy(hash);
 	yd->auth = g_string_free(url, FALSE);
 	if (purple_proxy_connect(gc, account, "login.yahoo.com", 80, yahoo_got_cookies, gc) == NULL) {
-		purple_connection_error(gc, _("Connection problem"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		                               _("Connection problem"));
 		return;
 	}
 
@@ -2963,7 +2969,8 @@ static void yahoo_login(PurpleAccount *account) {
 		                       purple_account_get_int(account, "port", YAHOO_PAGER_PORT),
 		                       yahoo_got_connected, gc) == NULL)
 		{
-			purple_connection_error(gc, _("Connection problem"));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			                               _("Connection problem"));
 			return;
 		}
 	} else {
@@ -2973,7 +2980,8 @@ static void yahoo_login(PurpleAccount *account) {
 		                       purple_account_get_int(account, "port", YAHOO_PAGER_PORT),
 		                       yahoo_got_connected, gc) == NULL)
 		{
-			purple_connection_error(gc, _("Connection problem"));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			                               _("Connection problem"));
 			return;
 		}
 	}
@@ -3494,23 +3502,23 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 static void yahoo_show_act_id(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input_with_hint(gc, NULL, _("Activate which ID?"), NULL,
+	purple_request_input(gc, NULL, _("Activate which ID?"), NULL,
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
 					   _("Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
+					   gc);
 }
 
 static void yahoo_show_chat_goto(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input_with_hint(gc, NULL, _("Join who in chat?"), NULL,
+	purple_request_input(gc, NULL, _("Join whom in chat?"), NULL,
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
 					   _("Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_CONV, gc);
+					   gc);
 }
 
 static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {

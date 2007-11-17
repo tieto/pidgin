@@ -824,6 +824,7 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			do_transfer_send(xfer, resource);
 			g_free(resource);
+			return;
 		}
 
 		jb = jabber_buddy_find(jsx->js, xfer->who, TRUE);
@@ -870,9 +871,9 @@ static void jabber_si_xfer_init(PurpleXfer *xfer)
 
 			purple_request_fields_add_group(fields, group);
 
-			purple_request_fields_with_hint(jsx->js->gc, _("Select a Resource"), msg, NULL, fields,
+			purple_request_fields(jsx->js->gc, _("Select a Resource"), msg, NULL, fields,
 					_("Send File"), G_CALLBACK(resource_select_ok_cb), _("Cancel"), G_CALLBACK(resource_select_cancel_cb),
-					jsx->js->gc->account, xfer->who, NULL, PURPLE_REQUEST_UI_HINT_XFER, xfer);
+					jsx->js->gc->account, xfer->who, NULL, xfer);
 
 			g_free(msg);
 		}

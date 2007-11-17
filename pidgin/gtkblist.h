@@ -84,7 +84,14 @@ struct _PidginBuddyList {
 	GtkWidget *menutray;            /**< The menu tray widget. */
 	GtkWidget *menutrayicon;        /**< The menu tray icon. */
 
-	GHashTable *connection_errors;  /**< Caches connection error messages and accounts. */
+	/** Caches connection error messages; keys are #PurpleAccount and
+	 *  values are non-@c NULL <tt>const char *</tt>s containing localised
+	 *  error messages.  (If an account does not have an error, it will not
+	 *  appear in the table.)
+	 *  @deprecated in favour of purple_account_get_current_error(), which also
+	 *              gives you the #PurpleConnectionError value.
+	 */
+	GHashTable *connection_errors;
 
 	guint refresh_timer;            /**< The timer for refreshing every 30 seconds */
 
@@ -119,6 +126,8 @@ struct _PidginBuddyList {
 	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
 	GtkWidget *statusbox;            /**< The status selector dropdown */
 	GdkPixbuf *empty_avatar;         /**< A 32x32 transparent pixbuf */
+
+	gpointer priv;                   /**< Pointer to opaque private data */
 };
 
 #define PIDGIN_BLIST(list) ((PidginBuddyList *)(list)->ui_data)
@@ -339,13 +348,16 @@ void pidgin_append_blist_node_proto_menu (GtkWidget *menu, PurpleConnection *gc,
 void pidgin_append_blist_node_extended_menu(GtkWidget *menu, PurpleBlistNode *node);
 
 /**
- * Used by the connection API to tell the blist if an account
- * has a connection error or no longer has a connection error.
+ * Was used by the connection API to tell the blist if an account has a
+ * connection error or no longer has a connection error, but the blist now does
+ * this itself with the @ref account-error-changed signal.
  *
  * @param account The account that either has a connection error
  *        or no longer has a connection error.
  * @param message The connection error message, or NULL if this
  *        account is no longer in an error state.
+ * @deprecated There was no good reason for code other than gtkconn to call
+ *             this.
  */
 void pidgin_blist_update_account_error_state(PurpleAccount *account, const char *message);
 

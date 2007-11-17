@@ -42,6 +42,7 @@
 #define INITIAL_RECON_DELAY_MAX 60000
 
 #define MAX_RECON_DELAY 600000
+#define MAX_RACCOON_DELAY "shorter in urban areas"
 
 typedef struct {
 	int delay;
@@ -81,8 +82,6 @@ pidgin_connection_connected(PurpleConnection *gc)
 					   (purple_connections_get_connecting() != NULL));
 
 	g_hash_table_remove(auto_reconns, account);
-
-	pidgin_blist_update_account_error_state(account, NULL);
 }
 
 static void
@@ -137,7 +136,9 @@ do_signon(gpointer data)
 }
 
 static void
-pidgin_connection_report_disconnect(PurpleConnection *gc, const char *text)
+pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
+                                            PurpleConnectionError reason,
+                                            const char *text)
 {
 	PurpleAccount *account = NULL;
 	PidginAutoRecon *info;
@@ -146,8 +147,7 @@ pidgin_connection_report_disconnect(PurpleConnection *gc, const char *text)
 	account = purple_connection_get_account(gc);
 	info = g_hash_table_lookup(auto_reconns, account);
 
-	pidgin_blist_update_account_error_state(account, text);
-	if (!gc->wants_to_die) {
+	if (!purple_connection_error_is_fatal (reason)) {
 		if (info == NULL) {
 			info = g_new0(PidginAutoRecon, 1);
 			g_hash_table_insert(auto_reconns, account, info);
@@ -159,32 +159,8 @@ pidgin_connection_report_disconnect(PurpleConnection *gc, const char *text)
 		}
 		info->timeout = g_timeout_add(info->delay, do_signon, account);
 	} else {
-		char *p, *s, *n=NULL ;
 		if (info != NULL)
 			g_hash_table_remove(auto_reconns, account);
-
-		if (purple_account_get_alias(account))
-		{
-			n = g_strdup_printf("%s (%s) (%s)",
-					purple_account_get_username(account),
-					purple_account_get_alias(account),
-					purple_account_get_protocol_name(account));
-		}
-		else
-		{
-			n = g_strdup_printf("%s (%s)",
-					purple_account_get_username(account),
-					purple_account_get_protocol_name(account));
-		}
-
-		p = g_strdup_printf(_("%s disconnected"), n);
-		s = g_strdup_printf(_("%s\n\n"
-				"%s will not attempt to reconnect the account until you "
-				"correct the error and re-enable the account."), text, PIDGIN_NAME);
-		purple_notify_error(NULL, NULL, p, s);
-		g_free(p);
-		g_free(s);
-		g_free(n);
 
 		/*
 		 * TODO: Do we really want to disable the account when it's
@@ -259,10 +235,10 @@ static PurpleConnectionUiOps conn_ui_ops =
 	pidgin_connection_connected,
 	pidgin_connection_disconnected,
 	pidgin_connection_notice,
-	pidgin_connection_report_disconnect,
+	NULL, /* report_disconnect */
 	pidgin_connection_network_connected,
 	pidgin_connection_network_disconnected,
-	NULL,
+	pidgin_connection_report_disconnect_reason,
 	NULL,
 	NULL,
 	NULL
@@ -278,8 +254,6 @@ static void
 account_removed_cb(PurpleAccount *account, gpointer user_data)
 {
 	g_hash_table_remove(auto_reconns, account);
-
-	pidgin_blist_update_account_error_state(account, NULL);
 }
 
 

@@ -341,7 +341,7 @@ struct _PurplePluginProtocolInfo
 
 	/** Gets the real name of a participant in a chat.  For example, on
 	 *  XMPP this turns a chat room nick <tt>foo</tt> into
-	 *  <tt>room@server/foo</tt>
+	 *  <tt>room\@server/foo</tt>
 	 *  @param gc  the connection on which the room is.
 	 *  @param id  the ID of the chat room.
 	 *  @param who the nickname of the chat participant.

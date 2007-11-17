@@ -3,7 +3,6 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.3.0 (??/??/????):
 	libpurple:
 		Added:
-		* purple_request_field_blist_nodes_new and its accessory functions.
 		* a PurpleConversation field and an alias field in PurpleConvMessage
 		* account-authorization signals (see account-signals.dox for
 		  details) (Stefan Ott)
@@ -15,44 +14,42 @@ version 2.3.0 (??/??/????):
 		  to unload a plugin--fails.  This then prevents the plugin
 		  from being saved in the saved plugins list, so it'll won't
 		  be loaded at the next startup.
+		* PurpleDisconnectReason enumeration of machine-readable
+		  types of connection error.
+		* purple_connection_error_reason(), to be used by prpls
+		  (instead of purple_connection_error() and setting
+		  gc->wants_to_die) to report errors along with a
+		  PurpleDisconnectReason.
+		* PurpleConnectionUiOps.report_disconnect_reason, to be
+		  implemented by UIs (rather than .report_disconnect) if
+		  they want to use the reported PurpleDisconnectReason
+		  to give a more specific error.
+		* A connection-error signal, fired just after the UiOp is
+		  called with the same information.
+		* purple_connection_reason_is_fatal(), acting as a hint
+		  to whether automatic reconnection should be attempted
+		  after a connection error (rather than checking
+		  gc->wants_to_die).
+		* PurpleConnectionErrorInfo, a struct to hold a
+		  PurpleConnectionError and a const char *description.
+		* purple_account_get_current_error() to get the most recent
+		  PurpleConnectionError and description (or NULL if the
+		  account is happy with life), to allow bits of the UI to know
+		  the last error without caching it themselves (as
+		  PidginBuddyList does).
+		* purple_account_clear_current_error() to reset an account's
+		  error state to NULL.
+		* An account-error-changed signal, firing when
+		  purple_account_get_current_error()'s return value changes.
+
+		* PidginMiniDialog, a Gtk widget-ified version of
+		  pidgin_make_mini_dialog().
+
 		* purple_util_init()
 		* purple_util_uninit()
 
-		* pidgin_dialogs_about_with_parent()
-		* pidgin_log_show_contact_with_parent()
-		* pidgin_log_show_with_parent()
-		* pidgin_plugin_dialog_show_with_parent()
-		* pidgin_pounce_editor_show_with_parent()
-		* pidgin_pounces_manager_show_with_parent()
-		* pidgin_syslog_show_with_parent()
-
-		* purple_request_accept_cancel_with_hint()
-		* purple_request_action_varg_with_hint()
-		* purple_request_action_with_hint()
-		* purple_request_choice_varg_with_hint()
-		* purple_request_choice_with_hint()
-		* purple_request_fields_with_hint()
-		* purple_request_file_with_hint()
-		* purple_request_folder_with_hint()
-		* purple_request_input_with_hint()
-		* purple_request_ok_cancel_with_hint()
-		* purple_request_yes_no_with_hint()
-
-		  UI hints set by libpurple:
-		* PURPLE_REQUEST_UI_HINT_ACCOUNT
-		* PURPLE_REQUEST_UI_HINT_BLIST
-		* PURPLE_REQUEST_UI_HINT_BUDDY
-		* PURPLE_REQUEST_UI_HINT_CONV
-		* PURPLE_REQUEST_UI_HINT_REGISTER
-		* PURPLE_REQUEST_UI_HINT_XFER
-
-		  Common UI hints set by UIs:
-		* PURPLE_REQUEST_UI_HINT_ACCOUNTMGR
-		* PURPLE_REQUEST_UI_HINT_CERTMGR
-		* PURPLE_REQUEST_UI_HINT_PLUGINMGR
-		* PURPLE_REQUEST_UI_HINT_POUNCEMGR
-		* PURPLE_REQUEST_UI_HINT_PREFSMGR
-		* PURPLE_REQUEST_UI_HINT_STATUSMGR
+		* purple_network_listen_map_external() to temporarily disable
+		  mapping ports externally via NAT-PMP or UPnP.
 
 		Changed:
 		* purple_plugin_unload() now honors the return value of a
@@ -60,6 +57,11 @@ version 2.3.0 (??/??/????):
 		* purple_plugin_unload() no longer does its own notifications
 		  when a dependent plugin fails to unload.  The UI should do
 		  something appropriate.
+
+		* pidgin_make_mini_dialog() now declares its return type to be
+		  GtkWidget * rather than void *.  This should not break any
+		  existing code since any code using it must already rely on
+		  the return type actually being GtkWidget * all along.
 
 		Deprecated:
 		* pidgin_dialogs_about()
@@ -70,17 +72,9 @@ version 2.3.0 (??/??/????):
 		* pidgin_pounces_manager_show()
 		* pidgin_syslog_show()
 
-		* purple_request_accept_cancel()
-		* purple_request_action_varg()
-		* purple_request_action()
-		* purple_request_choice_varg()
-		* purple_request_choice()
-		* purple_request_fields()
-		* purple_request_file()
-		* purple_request_folder()
-		* purple_request_input()
-		* purple_request_ok_cancel()
-		* purple_request_yes_no()
+		* purple_connection_error()
+		* pidgin_blist_update_account_error_state()
+		* PidginBuddyList.connection_errors
 
 		MSN:
 		* A new independant status type with PURPLE_STATUS_TUNE primitive, and
@@ -102,11 +96,13 @@ version 2.3.0 (??/??/????):
 		  string id of a menuitem respectively.
 		* Added gnt_window_get_accel_item, which returns a the id of a menuitem
 		  bound to a keystroke.
-		* Added gnt_menu_get_item to activate and return a menuitem of the
-		  given id from a menu.
+		* Added gnt_menu_get_item to get a menuitem of the given id from a
+		  menu.
 		* Added gnt_menuitem_activate, which triggers the 'activate' signal on
 		  the menuitem and calls the callback function, if available.
 		* Added GntEntryKillRing in GntEntry.
+		* Added gnt_window_set_maximize and gnt_window_get_maximize, and
+		  GntWindowFlags enum.
 
 version 2.2.2 (??/??/????):
 	libpurple:

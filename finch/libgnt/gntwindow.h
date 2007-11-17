@@ -48,6 +48,12 @@ typedef struct _GntWindow			GntWindow;
 typedef struct _GntWindowPriv		GntWindowPriv;
 typedef struct _GntWindowClass		GntWindowClass;
 
+typedef enum
+{
+	GNT_WINDOW_MAXIMIZE_X = 1 << 0,
+	GNT_WINDOW_MAXIMIZE_Y = 1 << 1,
+} GntWindowFlags;
+
 struct _GntWindow
 {
 	GntBox parent;
@@ -111,6 +117,27 @@ void gnt_window_set_menu(GntWindow *window, GntMenu *menu);
  * @since 2.3.0
  */
 const char * gnt_window_get_accel_item(GntWindow *window, const char *key);
+
+/**
+ * Maximize a window, either horizontally or vertically, or both.
+ *
+ * @param window    The window to maximize.
+ * @param maximize  The maximization state of the window.
+ *
+ * @since 2.3.0
+ */
+void gnt_window_set_maximize(GntWindow *window, GntWindowFlags maximize);
+
+/**
+ * Get the maximization state of a window.
+ *
+ * @param window  The window.
+ *
+ * @return  The maximization state of the window.
+ *
+ * @since 2.3.0
+ */
+GntWindowFlags gnt_window_get_maximize(GntWindow *window);
 
 void gnt_window_workspace_hiding(GntWindow *);
 void gnt_window_workspace_showing(GntWindow *);

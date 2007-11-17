@@ -1,5 +1,7 @@
-version 2.2.3:
-	* No changes
+version 2.3.0:
+	* Updated GTK+ to 2.12.1 (This was actually included in 2.2.2, but 
+	  didn't get into the Changelog.)
+	* Upgrade SILC to use the 1.1.5 toolkit
 
 version 2.2.2 (10/23/2007):
 	* Updated gtkspell to include a patch to share Aspell dictionaries
@@ -11,6 +13,7 @@ version 2.2.2 (10/23/2007):
 	* libpurple now looks for a default prefs.xml in the COMMON_APPDATA
 	  directory (e.g. \Documents and Settings\All Users\Application Data\purple\prefs.xml)
 	  similarly to how this is done on other platforms.
+	* Updated GTK+ to 2.12.1
 
 version 2.2.1 (09/29/2007):
 	* No changes

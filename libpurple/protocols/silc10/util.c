@@ -371,10 +371,10 @@ void silcpurple_show_public_key(SilcPurple sg,
 
 	buf = g_string_free(s, FALSE);
 
-	purple_request_action_with_hint(sg->gc, _("Public Key Information"),
+	purple_request_action(sg->gc, _("Public Key Information"),
 			    _("Public Key Information"),
 			    buf, 0, purple_connection_get_account(sg->gc),
-				NULL, NULL, context, PURPLE_REQUEST_UI_HINT_BLIST, 1, _("Close"), callback);
+				NULL, NULL, context, 1, _("Close"), callback);
 
 	g_free(buf);
 	silc_free(fingerprint);
@@ -667,7 +667,7 @@ SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
 			text = purple_unescape_html(tmp);
 			g_free(tmp);
 			/* Add text */
-			silc_mime_add_data(p, text, strlen(text));
+			silc_mime_add_data(p, (unsigned char *)text, strlen(text));
 			g_free(text);
 
 			if (!parts)
@@ -720,7 +720,7 @@ SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
 				    "text/plain; charset=utf-8");
 
 		/* Add text */
-		silc_mime_add_data(p, tmp, strlen(tmp));
+		silc_mime_add_data(p, (unsigned char *)tmp, strlen(tmp));
 		g_free(tmp);
 
 		if (!parts)

@@ -120,21 +120,27 @@ _login_resp_cb(NMUser * user, NMERR_T ret_code,
 		_check_for_disconnect(user, rc);
 
 	} else {
-
+		PurpleConnectionError reason;
 		char *err = g_strdup_printf(_("Login failed (%s)."),
 					    nm_error_to_string (ret_code));
 
-		/* Don't attempt to auto-reconnect if our password
-		 * was invalid.
-		 */
-		if (ret_code == NMERR_AUTHENTICATION_FAILED ||
-			ret_code == NMERR_CREDENTIALS_MISSING ||
-			ret_code == NMERR_PASSWORD_INVALID) {
-			if (!purple_account_get_remember_password(gc->account))
-				purple_account_set_password(gc->account, NULL);
-			gc->wants_to_die = TRUE;
+		switch (ret_code) {
+			case NMERR_AUTHENTICATION_FAILED:
+			case NMERR_CREDENTIALS_MISSING:
+			case NMERR_PASSWORD_INVALID:
+				/* Don't attempt to auto-reconnect if our
+				 * password was invalid.
+				 */
+				if (!purple_account_get_remember_password(gc->account))
+					purple_account_set_password(gc->account, NULL);
+				reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
+				break;
+			default:
+				/* FIXME: There are other reasons login could fail */
+				reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 		}
-		purple_connection_error(gc, err);
+
+		purple_connection_error_reason (gc, reason, err);
 		g_free(err);
 	}
 }
@@ -1120,8 +1126,9 @@ _check_for_disconnect(NMUser * user, NMERR_T err)
 
 	if (_is_disconnect_error(err)) {
 
-		purple_connection_error(gc, _("Error communicating with server."
-									" Closing connection."));
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Error communicating with server. Closing connection."));
 		return TRUE;
 
 	}
@@ -1667,7 +1674,7 @@ novell_ssl_connect_error(PurpleSslConnection * gsc,
 	user = gc->proto_data;
 	user->conn->ssl_conn->data = NULL;
 
-	purple_connection_error(gc, _("Unable to make SSL connection to server."));
+	purple_connection_ssl_error (gc, error);
 }
 
 static void
@@ -1690,9 +1697,9 @@ novell_ssl_recv_cb(gpointer data, PurpleSslConnection * gsc,
 
 		if (_is_disconnect_error(rc)) {
 
-			purple_connection_error(gc,
-								  _("Error communicating with server."
-									" Closing connection."));
+			purple_connection_error_reason (gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Error communicating with server. Closing connection."));
 		} else {
 			purple_debug(PURPLE_DEBUG_INFO, "novell",
 					   "Error processing event or response (%d).\n", rc);
@@ -1731,7 +1738,9 @@ novell_ssl_connected_cb(gpointer data, PurpleSslConnection * gsc,
 		conn->connected = TRUE;
 		purple_ssl_input_add(gsc, novell_ssl_recv_cb, gc);
 	} else {
-		purple_connection_error(gc, _("Unable to connect to server."));
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Unable to connect to server."));
 	}
 
 	purple_connection_update_progress(gc, _("Waiting for response..."),
@@ -1912,10 +1921,10 @@ _evt_conference_invite(NMUser * user, NMEvent * event)
 
 	/* Prompt the user */
 	gc = purple_account_get_connection(user->client_data);
-	purple_request_action_with_hint(gc, title, primary, secondary,
+	purple_request_action(gc, title, primary, secondary,
 						PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), name, NULL,
-						PURPLE_REQUEST_UI_HINT_CONV, parms, 2,
+						parms, 2,
 						_("Yes"), G_CALLBACK(_join_conference_cb),
 						_("No"), G_CALLBACK(_reject_conference_cb));
 
@@ -2011,11 +2020,12 @@ _evt_user_disconnect(NMUser * user, NMEvent * event)
 	gc = purple_account_get_connection(account);
 	if (gc)
 	{
-		gc->wants_to_die = TRUE; /* we don't want to reconnect in this case */
 		if (!purple_account_get_remember_password(account))
 			purple_account_set_password(account, NULL);
-		purple_connection_error(gc, _("You have been logged out because you"
-									" logged in at another workstation."));
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_NAME_IN_USE,
+			_("You have been logged out because you"
+			  " logged in at another workstation."));
 	}
 }
 
@@ -2165,13 +2175,14 @@ novell_login(PurpleAccount * account)
 	if (server == NULL || *server == '\0') {
 
 		/* TODO: Would be nice to prompt if not set!
-		 *  purple_request_fields_with_hint(gc, _("Server Address"),...);
+		 *  purple_request_fields(gc, _("Server Address"),...);
 		 */
 
 		/* ...but for now just error out with a nice message. */
-		purple_connection_error(gc, _("Unable to connect to server."
-									" Please enter the address of the server"
-									" you wish to connect to."));
+		purple_connection_error_reason (gc,
+			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
+			_("Unable to connect to server. Please enter the "
+			  "address of the server you wish to connect to."));
 		return;
 	}
 
@@ -2197,8 +2208,9 @@ novell_login(PurpleAccount * account)
 													  user->conn->addr, user->conn->port,
 													  novell_ssl_connected_cb, novell_ssl_connect_error, gc);
 		if (user->conn->ssl_conn->data == NULL) {
-			purple_connection_error(gc, _("Error."
-										" SSL support is not installed."));
+			purple_connection_error_reason (gc,
+				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+				_("Error. SSL support is not installed."));
 		}
 	}
 }

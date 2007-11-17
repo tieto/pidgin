@@ -41,10 +41,15 @@ static void
 msn_accept_add_cb(gpointer data)
 {
 	MsnPermitAdd *pa = data;
-	MsnSession *session = pa->gc->proto_data;
-	MsnUserList *userlist = session->userlist;
+	MsnSession *session;
+	MsnUserList *userlist;
 
-	msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_AL, NULL);
+	if (PURPLE_CONNECTION_IS_VALID(pa->gc)) {
+		session = pa->gc->proto_data;
+		userlist = session->userlist;
+
+		msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_AL, NULL);
+	}
 
 	g_free(pa->who);
 	g_free(pa->friendly);
@@ -55,10 +60,15 @@ static void
 msn_cancel_add_cb(gpointer data)
 {
 	MsnPermitAdd *pa = data;
-	MsnSession *session = pa->gc->proto_data;
-	MsnUserList *userlist = session->userlist;
+	MsnSession *session;
+	MsnUserList *userlist;
 
-	msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_BL, NULL);
+	if (PURPLE_CONNECTION_IS_VALID(pa->gc)) {
+		session = pa->gc->proto_data;
+		userlist = session->userlist;
+
+		msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_BL, NULL);
+	}
 
 	g_free(pa->who);
 	g_free(pa->friendly);
