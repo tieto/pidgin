@@ -171,9 +171,12 @@ struct _PurpleConversationUiOps
 	void (*write_im)(PurpleConversation *conv, const char *who,
 	                 const char *message, PurpleMessageFlags flags,
 	                 time_t mtime);
-	/** Write a message to a conversation.  This is used rather than
-	 *  the chat- or im-specific ops for generic messages, such as system
-	 *  messages like "x is now know as y".
+	/** Write a message to a conversation.  This is used rather than the
+	 *  chat- or im-specific ops for errors, system messages (such as "x is
+	 *  now know as y"), and as the fallback if #write_im and #write_chat
+	 *  are not implemented.  It should be implemented, or the UI will miss
+	 *  conversation error messages and your users will hate you.
+	 *
 	 *  @see purple_conversation_write()
 	 */
 	void (*write_conv)(PurpleConversation *conv,
@@ -294,7 +297,8 @@ struct _PurpleConvMessage
 	char *what;
 	PurpleMessageFlags flags;
 	time_t when;
-	PurpleConversation *conv;
+	PurpleConversation *conv;  /**< @since 2.3.0 */
+	char *alias;               /**< @since 2.3.0 */
 };
 
 /**
@@ -1043,7 +1047,7 @@ GList *purple_conv_chat_set_ignored(PurpleConvChat *chat, GList *ignored);
  *
  * @param chat The chat.
  *
- * @return The list of ignored users.
+ * @constreturn The list of ignored users.
  */
 GList *purple_conv_chat_get_ignored(const PurpleConvChat *chat);
 

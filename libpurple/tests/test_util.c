@@ -81,6 +81,18 @@ START_TEST(test_util_str_to_time)
 }
 END_TEST
 
+START_TEST(test_markup_html_to_xhtml)
+{
+	gchar *xhtml = NULL;
+	gchar *plaintext = NULL;
+	purple_markup_html_to_xhtml("<a>", &xhtml, &plaintext);
+	fail_unless(strcmp("<a href=''></a>", xhtml) == 0, NULL);
+	g_free(xhtml);
+	fail_unless(strcmp("", plaintext) == 0, NULL);
+	g_free(plaintext);
+}
+END_TEST
+
 Suite *
 util_suite(void)
 {
@@ -111,6 +123,10 @@ util_suite(void)
 
 	tc = tcase_create("Time");
 	tcase_add_test(tc, test_util_str_to_time);
+	suite_add_tcase(s, tc);
+
+	tc = tcase_create("Markup");
+	tcase_add_test(tc, test_markup_html_to_xhtml);
 	suite_add_tcase(s, tc);
 
 	return s;

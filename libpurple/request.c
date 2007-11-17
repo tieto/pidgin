@@ -377,13 +377,6 @@ purple_request_field_destroy(PurpleRequestField *field)
 		g_hash_table_destroy(field->u.list.item_data);
 		g_hash_table_destroy(field->u.list.selected_table);
 	}
-	else if (field->type == PURPLE_REQUEST_FIELD_BLIST)
-	{
-		if (field->u.blist.default_nodes)
-			g_list_free(field->u.blist.default_nodes);
-		if (field->u.blist.selecteds)
-			g_list_free(field->u.blist.selecteds);
-	}
 
 	g_free(field);
 }
@@ -1136,85 +1129,6 @@ purple_request_field_account_get_filter(const PurpleRequestField *field)
 	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_ACCOUNT, FALSE);
 
 	return field->u.account.filter_func;
-}
-
-/* -- */
-
-PurpleRequestField *purple_request_field_blist_nodes_new(const char *id,
-		const char *text, PurpleRequestBlistFlags flags, GList *selected)
-{
-	PurpleRequestField *field;
-
-	g_return_val_if_fail(id   != NULL, NULL);
-	g_return_val_if_fail(text != NULL, NULL);
-
-	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_BLIST);
-
-	field->u.blist.flags = flags;
-	field->u.blist.default_nodes = selected;
-	purple_request_field_blist_set_selection_list(field, selected);
-
-	return field;
-}
-
-PurpleFilterBlistFunc
-purple_request_field_blist_set_filter(PurpleRequestField *field, PurpleFilterBlistFunc filter)
-{
-	PurpleFilterBlistFunc old;
-	g_return_val_if_fail(field != NULL, NULL);
-	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_BLIST, NULL);
-	old = field->u.blist.filter;
-	field->u.blist.filter = filter;
-	return old;
-}
-
-PurpleFilterBlistFunc
-purple_request_field_blist_get_filter(const PurpleRequestField *field)
-{
-	g_return_val_if_fail(field != NULL, NULL);
-	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_BLIST, NULL);
-	return field->u.blist.filter;
-}
-
-GList *purple_request_field_blist_get_selection_list(const PurpleRequestField *field)
-{
-	g_return_val_if_fail(field != NULL, NULL);
-	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_BLIST, NULL);
-	return field->u.blist.selecteds;
-}
-
-gboolean purple_request_field_blist_add(PurpleRequestField *field, PurpleBlistNode *node)
-{
-	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_BLIST, FALSE);
-	if (!g_list_find(field->u.blist.selecteds, node)) {
-		field->u.blist.selecteds = g_list_append(field->u.blist.selecteds, node);
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-}
-
-gboolean purple_request_field_blist_remove(PurpleRequestField *field, PurpleBlistNode *node)
-{
-	GList *search;
-	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_BLIST, FALSE);
-	if ((search = g_list_find(field->u.blist.selecteds, node)) != NULL) {
-		field->u.blist.selecteds = g_list_delete_link(field->u.blist.selecteds, search);
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-}
-
-void purple_request_field_blist_set_selection_list(PurpleRequestField *field, GList *selecteds)
-{
-	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_BLIST);
-	if (field->u.blist.selecteds)
-		g_list_free(field->u.blist.selecteds);
-	field->u.blist.selecteds = selecteds;
 }
 
 /* -- */

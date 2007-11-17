@@ -276,7 +276,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 			return FALSE;
 		}
 
-		box->buddy_icon_sel = pidgin_buddy_icon_chooser_new(NULL, icon_choose_cb, box);
+		box->buddy_icon_sel = pidgin_buddy_icon_chooser_new(GTK_WINDOW(gtk_widget_get_toplevel(widget)), icon_choose_cb, box);
 		gtk_widget_show_all(box->buddy_icon_sel);
 	}
 	return FALSE;
@@ -1069,8 +1069,8 @@ pidgin_status_box_regenerate(PidginStatusBox *status_box)
 		add_popular_statuses(status_box);
 
 		pidgin_status_box_add_separator(PIDGIN_STATUS_BOX(status_box));
-		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_CUSTOM, NULL, _("New..."), NULL, NULL);
-		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_SAVED, NULL, _("Saved..."), NULL, NULL);
+		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_CUSTOM, NULL, _("New status..."), NULL, NULL);
+		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_SAVED, NULL, _("Saved statuses..."), NULL, NULL);
 		if (pixbuf)	g_object_unref(G_OBJECT(pixbuf));
 
 		status_menu_refresh_iter(status_box);
@@ -2162,6 +2162,9 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 		                        purple_imgstore_get_size(status_box->buddy_icon_img), NULL);
 		gdk_pixbuf_loader_close(loader, NULL);
 		status_box->buddy_icon = gdk_pixbuf_loader_get_pixbuf(loader);
+		if (status_box->buddy_icon)
+			g_object_ref(status_box->buddy_icon);
+		g_object_unref(loader);
 	}
 
 	if (status_box->buddy_icon == NULL)

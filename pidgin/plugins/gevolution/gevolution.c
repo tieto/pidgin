@@ -525,7 +525,7 @@ static PurplePluginInfo info =
 
 	GEVOLUTION_PLUGIN_ID,                             /**< id             */
 	N_("Evolution Integration"),                      /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Provides integration with Evolution."),
 	                                                  /**  description    */

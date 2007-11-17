@@ -1357,6 +1357,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		/* Okay, we're done here */
 		purple_certificate_verify_complete(vrq,
 						   PURPLE_CERTIFICATE_INVALID);
+		return;
 	} /* if (signature chain not good) */
 
 	/* Next, attempt to verify the last certificate against a CA */

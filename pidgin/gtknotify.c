@@ -270,8 +270,9 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 	primary_esc = g_markup_escape_text(primary, -1);
 	secondary_esc = (secondary != NULL) ? g_markup_escape_text(secondary, -1) : NULL;
 	g_snprintf(label_text, sizeof(label_text),
-			   "<span weight=\"bold\" size=\"larger\">%s</span>\n\n%s",
-			   primary_esc, (secondary ? secondary_esc : ""));
+			   "<span weight=\"bold\" size=\"larger\">%s</span>%s%s",
+			   primary_esc, (secondary ? "\n\n" : ""),
+			   (secondary ? secondary_esc : ""));
 	g_free(primary_esc);
 	g_free(secondary_esc);
 
@@ -740,7 +741,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	GtkListStore *model;
 	GtkCellRenderer *renderer;
 	guint col_num;
-	GList *column;
+	GList *columniter;
 	guint i;
 
 	GtkWidget *vbox;
@@ -824,11 +825,12 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 					-1, "", renderer, "pixbuf", 0, NULL);
 
 	i = 1;
-	for (column = results->columns; column != NULL; column = column->next) {
+	for (columniter = results->columns; columniter != NULL; columniter = columniter->next) {
+		PurpleNotifySearchColumn *column = columniter->data;
 		renderer = gtk_cell_renderer_text_new();
 
 		gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1,
-				column->data, renderer, "text", i, NULL);
+				column->title, renderer, "text", i, NULL);
 		i++;
 	}
 

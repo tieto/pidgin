@@ -11,17 +11,18 @@
 # Locations of our various dependencies
 WIN32_DEV_TOP ?= $(PIDGIN_TREE_TOP)/../win32-dev
 ASPELL_TOP ?= $(WIN32_DEV_TOP)/aspell-dev-0-50-3-3
-GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.11
+GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.11-daa1
 GTK_TOP ?= $(WIN32_DEV_TOP)/gtk_2_0
 GTK_BIN ?= $(GTK_TOP)/bin
 BONJOUR_TOP ?= $(WIN32_DEV_TOP)/Bonjour_SDK
-LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2
+LIBXML2_TOP ?= $(WIN32_DEV_TOP)/libxml2-2.6.30
 MEANWHILE_TOP ?= $(WIN32_DEV_TOP)/meanwhile-1.0.2
 NSPR_TOP ?= $(WIN32_DEV_TOP)/nspr-4.6.4
 NSS_TOP ?= $(WIN32_DEV_TOP)/nss-3.11.4
 PERL_LIB_TOP ?= $(WIN32_DEV_TOP)/perl58
-SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.2
+SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.1.5
 TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.4.5
+GSTREAMER_TOP ?= $(WIN32_DEV_TOP)/gstreamer-0.10.13
 
 # Where we installing this stuff to?
 PIDGIN_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
@@ -47,6 +48,7 @@ PURPLE_PROTOS_TOP := $(PURPLE_TOP)/protocols
 PIDGIN_CONFIG_H := $(PIDGIN_TREE_TOP)/config.h
 PURPLE_CONFIG_H := $(PIDGIN_TREE_TOP)/config.h
 PIDGIN_IDLETRACK_DLL := $(PIDGIN_IDLETRACK_TOP)/idletrack.dll
+PURPLE_PURPLE_H := $(PURPLE_TOP)/purple.h
 PURPLE_VERSION_H := $(PURPLE_TOP)/version.h
 PURPLE_DLL := $(PURPLE_TOP)/libpurple.dll
 PURPLE_PERL_DLL := $(PURPLE_PERL_TOP)/perl.dll
@@ -69,9 +71,13 @@ PIDGIN_VERSION := $(shell \
   cat $(PIDGIN_TREE_TOP)/VERSION \
 )
 PURPLE_VERSION := $(PIDGIN_VERSION)
+ifdef EXTRAVERSION
+DISPLAY_VERSION := $(PIDGIN_VERSION)-$(EXTRAVERSION)
+else
+DISPLAY_VERSION := $(PIDGIN_VERSION)
+endif
 
-DEFINES += 	-DVERSION=\"$(PIDGIN_VERSION)\" \
-		-DHAVE_CONFIG_H
+DEFINES += -DHAVE_CONFIG_H
 
 # Use -g flag when building debug version of Pidgin (including plugins).
 # Use -fnative-struct instead of -mms-bitfields when using mingw 1.1

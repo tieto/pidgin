@@ -174,8 +174,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 		}
 
 		if (accept) {
-			/* TODO: strstr() should not be used here because data isn't NULL terminated */
-			delimiter = (const guchar *)strstr((char *)&data[pos], "\xc0\x80");
+			delimiter = (const guchar *)g_strstr_len((const char *)&data[pos], len - pos, "\xc0\x80");
 			if (delimiter == NULL)
 			{
 				/* Malformed packet! (It doesn't end in 0xc0 0x80) */
@@ -304,7 +303,8 @@ yahoo_packet_send_can_write(gpointer data, gint source, PurpleInputCondition con
 		return;
 	else if (ret < 0) {
 		/* TODO: what to do here - do we really have to disconnect? */
-		purple_connection_error(yd->gc, _("Write Error"));
+		purple_connection_error_reason(yd->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		                               _("Write Error"));
 		return;
 	}
 

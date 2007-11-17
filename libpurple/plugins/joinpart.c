@@ -268,7 +268,7 @@ static PurplePluginInfo info =
 
 	JOINPART_PLUGIN_ID,                               /**< id             */
 	N_("Join/Part Hiding"),                           /**< name           */
-	VERSION,                                          /**< version        */
+	DISPLAY_VERSION,                                  /**< version        */
 	                                                  /**  summary        */
 	N_("Hides extraneous join/part messages."),
 	                                                  /**  description    */

@@ -416,4 +416,6 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 
 	/* Show it. */
 	gtk_widget_show(dialog->win);
+	g_object_unref(sg);
+	g_object_unref(sg2);
 }

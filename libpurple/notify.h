@@ -289,7 +289,7 @@ void purple_notify_searchresults_column_add(PurpleNotifySearchResults *results,
  */
 void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
 									   GList *row);
-
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Returns a number of the rows in the search results object.
  *
@@ -308,7 +308,9 @@ void purple_notify_searchresults_row_add(PurpleNotifySearchResults *results,
  * @return Number of the result rows.
  */
 guint purple_notify_searchresults_get_rows_count(PurpleNotifySearchResults *results);
+#endif
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Returns a number of the columns in the search results object.
  *
@@ -327,7 +329,9 @@ guint purple_notify_searchresults_get_rows_count(PurpleNotifySearchResults *resu
  * @return Number of the columns.
  */
 guint purple_notify_searchresults_get_columns_count(PurpleNotifySearchResults *results);
+#endif
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Returns a row of the results from the search results object.
  *
@@ -348,7 +352,9 @@ guint purple_notify_searchresults_get_columns_count(PurpleNotifySearchResults *r
  */
 GList *purple_notify_searchresults_row_get(PurpleNotifySearchResults *results,
 										 unsigned int row_id);
+#endif
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Returns a title of the search results object's column.
  *
@@ -367,6 +373,7 @@ GList *purple_notify_searchresults_row_get(PurpleNotifySearchResults *results,
  */
 char *purple_notify_searchresults_column_get_title(PurpleNotifySearchResults *results,
 												 unsigned int column_id);
+#endif
 
 /*@}*/
 
@@ -539,7 +546,7 @@ void purple_notify_user_info_add_pair(PurpleNotifyUserInfo *user_info, const cha
 void purple_notify_user_info_prepend_pair(PurpleNotifyUserInfo *user_info, const char *label, const char *value);
 
 /**
- * Remove a PurpleNotifyUserInfoEntry from a PurpleNotifyUserInfo object
+ * Remove a PurpleNotifyUserInfoEntry from a PurpleNotifyUserInfo object without freeing the entry.
  *
  * @param user_info          The PurpleNotifyUserInfo
  * @param user_info_entry    The PurpleNotifyUserInfoEntry

@@ -136,7 +136,8 @@ static void _qq_login(PurpleAccount *account)
 	purple_connection_update_progress(gc, _("Connecting"), 0, QQ_CONNECT_STEPS);
 
 	if (qq_connect(account, qq_server, strtol(qq_port, NULL, 10), use_tcp, FALSE) < 0)
-		purple_connection_error(gc, _("Unable to connect."));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Unable to connect."));
 }
 
 /* directly goes for qq_disconnect */
@@ -720,7 +721,7 @@ static PurplePluginInfo info = {
 
 	"prpl-qq",			/**< id			*/
 	"QQ",				/**< name		*/
-	VERSION,			/**< version		*/
+	DISPLAY_VERSION,		/**< version		*/
 					/**  summary		*/
 	N_("QQ Protocol	Plugin"),
 					/**  description	*/

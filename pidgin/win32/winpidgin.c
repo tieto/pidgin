@@ -452,7 +452,9 @@ static BOOL winpidgin_set_running() {
 		if (GetLastError() == ERROR_ALREADY_EXISTS) {
 			HWND msg_win;
 
-			if((msg_win = FindWindow(TEXT("WinpidginMsgWinCls"), NULL)))
+			printf("An instance of Pidgin is already running.\n");
+
+			if((msg_win = FindWindowEx(HWND_MESSAGE, NULL, TEXT("WinpidginMsgWinCls"), NULL)))
 				if(SendMessage(msg_win, PIDGIN_WM_FOCUS_REQUEST, (WPARAM) NULL, (LPARAM) NULL))
 					return FALSE;
 
@@ -492,7 +494,7 @@ static void handle_protocol(char *cmd) {
 		return;
 	}
 
-	if (!(msg_win = FindWindow(TEXT("WinpidginMsgWinCls"), NULL))) {
+	if (!(msg_win = FindWindowEx(HWND_MESSAGE, NULL, TEXT("WinpidginMsgWinCls"), NULL))) {
 		printf("Unable to find an instance of Pidgin to handle protocol message.\n");
 		return;
 	}
