@@ -61,8 +61,7 @@ typedef enum
 	PURPLE_REQUEST_FIELD_LIST,
 	PURPLE_REQUEST_FIELD_LABEL,
 	PURPLE_REQUEST_FIELD_IMAGE,
-	PURPLE_REQUEST_FIELD_ACCOUNT,
-	PURPLE_REQUEST_FIELD_BLIST,
+	PURPLE_REQUEST_FIELD_ACCOUNT
 
 } PurpleRequestFieldType;
 
@@ -93,17 +92,6 @@ typedef struct
 	GList *fields;
 
 } PurpleRequestFieldGroup;
-
-/**
- * Flags that can be used for Buddylist Fields.
- */
-typedef enum
-{
-	PURPLE_REQUEST_BLIST_FLAG_BUDDY         = 0x01,  /**< Include buddies in the list. */
-	PURPLE_REQUEST_BLIST_FLAG_CHAT          = 0x02,  /**< Include chats in the list. */
-	PURPLE_REQUEST_BLIST_FLAG_GROUP         = 0x04,  /**< Include groups in the list. */
-	PURPLE_REQUEST_BLIST_FLAG_ALLOW_OFFLINE = 0x08,  /**< Include offline buddies in the list. */
-} PurpleRequestBlistFlags;
 
 /**
  * A request field.
@@ -183,14 +171,6 @@ typedef struct
 			const char *buffer;
 			gsize size;
 		} image;
-
-		struct
-		{
-			GList *default_nodes;
-			PurpleRequestBlistFlags flags;
-			GList *selecteds;
-			PurpleFilterBlistFunc filter;
-		} blist;
 
 	} u;
 
@@ -1167,84 +1147,6 @@ gboolean purple_request_field_account_get_show_all(
  */
 PurpleFilterAccountFunc purple_request_field_account_get_filter(
 		const PurpleRequestField *field);
-
-/*@}*/
-
-/**************************************************************************/
-/** @name Buddylist Field API                                             */
-/**************************************************************************/
-/*@{*/
-
-/**
- * Creates a buddylist field.
- *
- * @param id       The field ID.
- * @param text     The label for the field.
- * @param flag     Flags dictating what kind of blist nodes should be
- *                 included in the request field.
- * @param selected A list of PurpleBlistNode's to select by default, or @c NULL.
- *
- * @return  The new field.
- */
-PurpleRequestField *purple_request_field_blist_nodes_new(const char *id, const char *text,
-		PurpleRequestBlistFlags flag, GList *selected);
-
-/**
- * Set a filter for the request field.
- *
- * @param field   The request field.
- * @param filter  The filter function.
- *
- * @return  The old filter function, or @c NULL if there was none.
- */
-PurpleFilterBlistFunc purple_request_field_blist_set_filter(PurpleRequestField *field, PurpleFilterBlistFunc filter);
-
-/**
- * Get the filter function for the request field.
- *
- * @param field  The request field.
- *
- * @return  The filter function, or @c NULL if there isn't any.
- */
-PurpleFilterBlistFunc purple_request_field_blist_get_filter(const PurpleRequestField *field);
-
-/**
- * Add a PurpleBlistNode to the selected list.
- *
- * @param field  The request field.
- * @param node   The buddylist node to add to the list.
- *
- * @return  @c TRUE if the node is added to the list, @c FALSE if it was already in the list.
- */
-gboolean purple_request_field_blist_add(PurpleRequestField *field, PurpleBlistNode *node);
-
-/**
- * Remove a PurpleBlistNode from the selected list.
- *
- * @param field   The request field.
- * @param node    The buddylist node to remove from the list.
- *
- * @return @c TRUE if the node is removed from the list, @c FALSE if the node is not in the list.
- */
-gboolean purple_request_field_blist_remove(PurpleRequestField *field, PurpleBlistNode *node);
-
-/**
- * Set the list of selected nodes in the request field.
- *
- * @param field      The request field.
- * @param selecteds  The list of selected PurpleBlistNode's. Note that the request field
- *                   becomes the owner of the list, and so the caller should not modify it.
- */
-void purple_request_field_blist_set_selection_list(PurpleRequestField *field, GList *selecteds);
-
-/**
- * Get a list of the selected buddylist nodes.
- *
- * @param field  The request field.
- *
- * @return A GList of PurpleBlistNode's.
- */
-GList *purple_request_field_blist_get_selection_list(const PurpleRequestField *field);
 
 /*@}*/
 
