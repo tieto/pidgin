@@ -7,7 +7,7 @@
 # Gabor Kelemen <kelemeng@gnome.hu>, 2005, 2006, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: pidgin 2.2.x\n"
+"Project-Id-Version: pidgin 2.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-11-12 10:24+0100\n"
 "PO-Revision-Date: 2007-11-12 10:25+0100\n"
