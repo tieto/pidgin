@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-15 22:50+0100\n"
-"PO-Revision-Date: 2007-11-15 23:00+0100\n"
+"POT-Creation-Date: 2007-11-17 00:48+0100\n"
+"PO-Revision-Date: 2007-11-17 00:44+0100\n"
 "Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1458,7 +1458,7 @@ msgid "SSL Certificate Error"
 msgstr "SSL-Zertifikatfehler"
 
 msgid "Invalid certificate chain"
-msgstr "Ungültige Zertifizierungskette"
+msgstr "Ungültige Zertifikationskette"
 
 #. vrq will be completed by user_auth
 msgid ""
@@ -1962,7 +1962,7 @@ msgstr ""
 "Automatisch akzeptierte Übertragung der Datei „%s“ von „%s“ abgeschlossen."
 
 msgid "Autoaccept complete"
-msgstr "Auto-Akzeptieren fertig"
+msgstr "Autoaccept fertig"
 
 #, c-format
 msgid "When a file-transfer request arrives from %s"
@@ -3495,7 +3495,7 @@ msgid "Multi-User Chat"
 msgstr "Mehrbenutzer-Chat"
 
 msgid "Multi-User Chat Extended Presence Information"
-msgstr "Erweiterte Anwesenheitsinformation im Mehrbenutzer-Chat "
+msgstr "Erweiterte Anwesenheitsinformation im Mehrbenutzer-Chat"
 
 msgid "In-Band Bytestreams"
 msgstr "Bandinterner Bytestrom("
@@ -8889,7 +8889,7 @@ msgstr "TOC-Protokoll-Plugin"
 #, c-format
 msgid "%s has sent you a webcam invite, which is not yet supported."
 msgstr ""
-"%s hat Ihnen eine Webcam-Einladung gesendet, die noch nicht unterstützt wird."
+"%s hat Ihnen eine Webcam-Einladung gesenden, die noch nicht unterstützt wird."
 
 msgid "Your Yahoo! message did not get sent."
 msgstr "Ihre Yahoo!-Nachricht wurde nicht verschickt."
@@ -10183,7 +10183,7 @@ msgid "Please enter the name of the group to be added."
 msgstr "Bitte geben Sie den Namen der Gruppe ein, die hinzugefügt werden soll."
 
 msgid "<PurpleMain>/Accounts/"
-msgstr "<PurpleMain>/Konten"
+msgstr "<PurpleMain>/Konten/"
 
 msgid "_Edit Account"
 msgstr "Konto _bearbeiten"

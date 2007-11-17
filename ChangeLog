@@ -3,7 +3,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.3.0:
 	http://developer.pidgin.im/query?status=closed&milestone=2.3.0
 		NOTE: Some bugs marked fixed in 2.2.1, 2.2.2 or 2.2.3 may not
-		      have been fixed until this release (2.2.3).
+		      have been fixed until this release (2.3.0).
 
 	libpurple:
 	* Real usernames are now shown in the system log.
@@ -20,6 +20,8 @@ version 2.3.0:
 	  remove the plugin from the list of saved plugins so it won't load
 	  at the next startup.  Previously, we were ignoring this case, which
 	  could lead to crashes.
+	* Mark dialog windows as transient for appropriate parent windows to
+	  help window managers do the right thing  (Gabriel Schulhof)
 	* Connection errors are now reported in mini-dialogs inside the buddy
 	  list, rather than as buttons in the buddy list and with dialog
 	  boxes.  If several accounts are disabled when you sign on elsewhere,
