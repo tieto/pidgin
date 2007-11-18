@@ -26,6 +26,9 @@ version 2.3.0:
 	  list, rather than as buttons in the buddy list and with dialog
 	  boxes.  If several accounts are disabled when you sign on elsewhere,
 	  you can now re-enable them all with a single click.
+	* Added tooltips to the Room List window to show full topics
+	* Added buttons in preferences to access GNOME network and browser
+	  preferences configuration dialogs when running under GNOME
 	* If you alias a buddy to an alias that is already present within
 	  a particular group, we now offer to merge the buddies into the
 	  same contact.
