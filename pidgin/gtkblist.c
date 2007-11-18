@@ -4226,18 +4226,44 @@ static void _prefs_change_sort_method(const char *pref_name, PurplePrefType type
 		pidgin_blist_sort_method_set(val);
 }
 
-static void account_modified(PurpleAccount *account, PidginBuddyList *gtkblist)
+static gboolean pidgin_blist_select_notebook_page_cb(gpointer user_data)
 {
+	PidginBuddyList *gtkblist = (PidginBuddyList *)user_data;
+	int errors = 0;
 	GList *list;
-	if (!gtkblist)
-		return;
+	PidginBuddyListPrivate *priv;
 
-	if ((list = purple_accounts_get_all_active()) != NULL) {
+	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+
+	/* this is far too ugly thanks to me not wanting to fix #3989 properly right now */
+	if (priv->error_scrollbook != NULL) {
+#if GTK_CHECK_VERSION(2,2,0)
+		errors = gtk_notebook_get_n_pages(GTK_NOTEBOOK(priv->error_scrollbook->notebook));
+#else
+		errors = g_list_length(GTK_NOTEBOOK(priv->error_scrollbook->notebook)->children);
+#endif
+	}
+	if ((list = purple_accounts_get_all_active()) != NULL || errors ||
+	    (list = gtk_container_get_children(GTK_CONTAINER(priv->error_scrollbook)))) {
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 1);
 		g_list_free(list);
 	} else
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 0);
 
+	return FALSE;
+}
+
+static void pidgin_blist_select_notebook_page(PidginBuddyList *gtkblist)
+{
+	purple_timeout_add(0, pidgin_blist_select_notebook_page_cb, gtkblist);
+}
+
+static void account_modified(PurpleAccount *account, PidginBuddyList *gtkblist)
+{
+	if (!gtkblist)
+		return;
+
+	pidgin_blist_select_notebook_page(gtkblist);
 	update_menu_bar(gtkblist);
 }
 
@@ -4248,7 +4274,7 @@ account_status_changed(PurpleAccount *account, PurpleStatus *old,
 	if (!gtkblist)
 		return;
 
-	update_menu_bar(gtkblist);
+	account_modified(account, gtkblist);
 }
 
 static gboolean
@@ -4429,8 +4455,10 @@ remove_child_widget_by_account(GtkContainer *container,
                                PurpleAccount *account)
 {
 	GtkWidget *widget = find_child_widget_by_account(container, account);
-	if(widget)
+	if(widget) {
+		gtk_container_remove(container, widget);
 		gtk_widget_destroy(widget);
+	}
 }
 
 /* Generic error buttons */
@@ -4438,12 +4466,14 @@ remove_child_widget_by_account(GtkContainer *container,
 static void
 generic_error_modify_cb(PurpleAccount *account)
 {
+	purple_account_clear_current_error(account);
 	pidgin_account_dialog_show(PIDGIN_MODIFY_ACCOUNT_DIALOG, account);
 }
 
 static void
 generic_error_enable_cb(PurpleAccount *account)
 {
+	purple_account_clear_current_error(account);
 	purple_account_set_enabled(account, purple_core_get_ui(), TRUE);
 }
 
@@ -4530,7 +4560,7 @@ remove_generic_error_dialog(PurpleAccount *account)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 	remove_child_widget_by_account(
-		GTK_CONTAINER(priv->error_scrollbook->notebook), account);
+		GTK_CONTAINER(priv->error_scrollbook), account);
 }
 
 
@@ -4712,6 +4742,7 @@ update_account_error_state(PurpleAccount *account,
 	else
 		pidgin_blist_update_account_error_state(account, NULL);
 
+	pidgin_blist_select_notebook_page(gtkblist);
 	/* Don't bother updating the error if it hasn't changed.  This stops
 	 * URGENT being repeatedly set for network errors whenever they try to
 	 * reconnect.
@@ -4902,7 +4933,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	GtkWidget *sw;
 	GtkWidget *sep;
 	GtkWidget *label;
-	GList *accounts;
 	char *pretty, *tmp;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
@@ -4993,10 +5023,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->vbox = gtk_vbox_new(FALSE, 0);
 	gtk_notebook_append_page(GTK_NOTEBOOK(gtkblist->notebook), gtkblist->vbox, NULL);
 	gtk_widget_show_all(gtkblist->notebook);
-	if ((accounts = purple_accounts_get_all_active())) {
-		g_list_free(accounts);
-		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 1);
-	}
+	pidgin_blist_select_notebook_page(gtkblist);
 
 	ebox = gtk_event_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), ebox, FALSE, FALSE, 0);
