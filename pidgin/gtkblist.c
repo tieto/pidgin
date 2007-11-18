@@ -5561,13 +5561,31 @@ static gboolean insert_node(PurpleBuddyList *list, PurpleBlistNode *node, GtkTre
 	return TRUE;
 }
 
+static gboolean pidgin_blist_group_has_show_offline_buddy(PurpleGroup *group)
+{
+	PurpleBlistNode *gnode, *cnode, *bnode;
+
+	gnode = (PurpleBlistNode *)group;
+	for(cnode = gnode->child; cnode; cnode = cnode->next) {
+		if(PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				PurpleBuddy *buddy = (PurpleBuddy *)bnode;
+				if (purple_account_is_connected(buddy->account) &&
+					purple_blist_node_get_bool(bnode, "show_offline"))
+					return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
+
 /*This version of pidgin_blist_update_group can take the original buddy
 or a group, but has much better algorithmic performance with a pre-known buddy*/
 static void pidgin_blist_update_group(PurpleBuddyList *list, PurpleBlistNode *node)
 {
 	PurpleGroup *group;
 	int count;
-	gboolean show = FALSE;
+	gboolean show = FALSE, show_offline = FALSE;
 	PurpleBlistNode* gnode;
 
 	g_return_if_fail(node != NULL);
@@ -5586,16 +5604,21 @@ static void pidgin_blist_update_group(PurpleBuddyList *list, PurpleBlistNode *no
 
 	group = (PurpleGroup*)gnode;
 
-	if(purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_offline_buddies"))
+	show_offline = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_offline_buddies");
+
+	if(show_offline)
 		count = purple_blist_get_group_size(group, FALSE);
 	else
 		count = purple_blist_get_group_online_count(group);
 
 	if (count > 0 || purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_empty_groups"))
 		show = TRUE;
-	else if (PURPLE_BLIST_NODE_IS_BUDDY(node)){ /* Or chat? */
+	else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) { /* Or chat? */
 		if (buddy_is_displayable((PurpleBuddy*)node))
-			show = TRUE;}
+			show = TRUE;
+	} else if (!show_offline && PURPLE_BLIST_NODE_IS_GROUP(node)) {
+		show = pidgin_blist_group_has_show_offline_buddy(group);
+	}
 
 	if (show) {
 		GtkTreeIter iter;
