@@ -749,7 +749,7 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 
 	iq = jabber_iq_new_query(cbdata->js, JABBER_IQ_SET, "jabber:iq:register");
 	query = xmlnode_get_child(iq->node, "query");
-	xmlnode_set_attrib(iq->node,"to",cbdata->who);
+	xmlnode_set_attrib(iq->node, "to", cbdata->who);
 
 	for(groups = purple_request_fields_get_groups(fields); groups;
 			groups = groups->next) {
@@ -824,7 +824,7 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 		username = g_strdup_printf("%s@%s/%s", cbdata->js->user->node, cbdata->js->user->domain,
 				cbdata->js->user->resource);
 		purple_account_set_username(cbdata->js->gc->account, username);
-	g_free(username);
+		g_free(username);
 	}
 
 	jabber_iq_set_callback(iq, jabber_registration_result_cb, cbdata->who);
@@ -866,150 +866,141 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 	const char *type;
-	const char *from = xmlnode_get_attrib(packet, "from");
-		PurpleRequestFields *fields;
-		PurpleRequestFieldGroup *group;
-		PurpleRequestField *field;
-		xmlnode *query, *x, *y;
-		char *instructions;
+	const char *from;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+	xmlnode *query, *x, *y;
+	char *instructions;
 	JabberRegisterCBData *cbdata;
 	gboolean registered = FALSE;
 
 	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result"))
 		return;
 
-	if(js->registration)
+	from = xmlnode_get_attrib(packet, "from");
+	if (!from)
+		from = js->serverFQDN;
+	g_return_if_fail(from != NULL);
+	
+	if(js->registration) {
 		/* get rid of the login thingy */
 		purple_connection_set_state(js->gc, PURPLE_CONNECTED);
+	}
 
-		query = xmlnode_get_child(packet, "query");
+	query = xmlnode_get_child(packet, "query");
 
-		if(xmlnode_get_child(query, "registered")) {
+	if(xmlnode_get_child(query, "registered")) {
 		registered = TRUE;
-		
+
 		if(js->registration) {
 			purple_notify_error(NULL, _("Already Registered"),
-					_("Already Registered"), NULL);
+								_("Already Registered"), NULL);
 			if(account->registration_cb)
 				(account->registration_cb)(account, FALSE, account->registration_cb_user_data);
 			jabber_connection_schedule_close(js);
 			return;
 		}
 	}
-
-		if((x = xmlnode_get_child_with_namespace(packet, "x",
-						"jabber:x:data"))) {
+	
+	if((x = xmlnode_get_child_with_namespace(packet, "x", "jabber:x:data"))) {
 		jabber_x_data_request(js, x, jabber_register_x_data_cb, g_strdup(from));
-			return;
-		} else if((x = xmlnode_get_child_with_namespace(packet, "x",
-						"jabber:x:oob"))) {
-			xmlnode *url;
+		return;
 
-			if((url = xmlnode_get_child(x, "url"))) {
-				char *href;
-				if((href = xmlnode_get_data(url))) {
-					purple_notify_uri(NULL, href);
-					g_free(href);
-					if(js->registration) {
-						js->gc->wants_to_die = TRUE;
-						if(account->registration_cb) /* succeeded, but we have no login info */
-							(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
-						jabber_connection_schedule_close(js);
-					}
-					return;
+	} else if((x = xmlnode_get_child_with_namespace(packet, "x", "jabber:x:oob"))) {
+		xmlnode *url;
+
+		if((url = xmlnode_get_child(x, "url"))) {
+			char *href;
+			if((href = xmlnode_get_data(url))) {
+				purple_notify_uri(NULL, href);
+				g_free(href);
+
+				if(js->registration) {
+					js->gc->wants_to_die = TRUE;
+					if(account->registration_cb) /* succeeded, but we have no login info */
+						(account->registration_cb)(account, TRUE, account->registration_cb_user_data);
+					jabber_connection_schedule_close(js);
 				}
+				return;
 			}
 		}
+	}
 
-		/* as a last resort, use the old jabber:iq:register syntax */
+	/* as a last resort, use the old jabber:iq:register syntax */
 
-		fields = purple_request_fields_new();
-		group = purple_request_field_group_new(NULL);
-		purple_request_fields_add_group(fields, group);
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
 
 	if(js->registration)
-		field = purple_request_field_string_new("username", _("Username"),
-				js->user->node, FALSE);
+		field = purple_request_field_string_new("username", _("Username"), js->user->node, FALSE);
 	else
-		field = purple_request_field_string_new("username", _("Username"),
-				NULL, FALSE);
+		field = purple_request_field_string_new("username", _("Username"), NULL, FALSE);
 
-		purple_request_field_group_add_field(group, field);
+	purple_request_field_group_add_field(group, field);
 
 	if(js->registration)
 		field = purple_request_field_string_new("password", _("Password"),
-				purple_connection_get_password(js->gc), FALSE);
+									purple_connection_get_password(js->gc), FALSE);
 	else
-		field = purple_request_field_string_new("password", _("Password"),
-				NULL, FALSE);
+		field = purple_request_field_string_new("password", _("Password"), NULL, FALSE);
 
-		purple_request_field_string_set_masked(field, TRUE);
-		purple_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-		if(xmlnode_get_child(query, "name")) {
+	if(xmlnode_get_child(query, "name")) {
 		if(js->registration)
 			field = purple_request_field_string_new("name", _("Name"),
-					purple_account_get_alias(js->gc->account), FALSE);
+													purple_account_get_alias(js->gc->account), FALSE);
 		else
-			field = purple_request_field_string_new("name", _("Name"),
-					NULL, FALSE);
-			purple_request_field_group_add_field(group, field);
-		}
-		if(xmlnode_get_child(query, "email")) {
-			field = purple_request_field_string_new("email", _("E-mail"),
-					NULL, FALSE);
-			purple_request_field_group_add_field(group, field);
-		}
-		if(xmlnode_get_child(query, "nick")) {
-			field = purple_request_field_string_new("nick", _("Nickname"),
-					NULL, FALSE);
-			purple_request_field_group_add_field(group, field);
-		}
-		if(xmlnode_get_child(query, "first")) {
-			field = purple_request_field_string_new("first", _("First name"),
-					NULL, FALSE);
-			purple_request_field_group_add_field(group, field);
-		}
-		if(xmlnode_get_child(query, "last")) {
-			field = purple_request_field_string_new("last", _("Last name"),
-					NULL, FALSE);
-			purple_request_field_group_add_field(group, field);
-		}
-		if(xmlnode_get_child(query, "address")) {
-			field = purple_request_field_string_new("address", _("Address"),
-					NULL, FALSE);
-			purple_request_field_group_add_field(group, field);
-		}
-		if(xmlnode_get_child(query, "city")) {
-			field = purple_request_field_string_new("city", _("City"),
-					NULL, FALSE);
-			purple_request_field_group_add_field(group, field);
-		}
-		if(xmlnode_get_child(query, "state")) {
-			field = purple_request_field_string_new("state", _("State"),
-					NULL, FALSE);
-			purple_request_field_group_add_field(group, field);
-		}
-		if(xmlnode_get_child(query, "zip")) {
-			field = purple_request_field_string_new("zip", _("Postal code"),
-					NULL, FALSE);
-			purple_request_field_group_add_field(group, field);
-		}
-		if(xmlnode_get_child(query, "phone")) {
-			field = purple_request_field_string_new("phone", _("Phone"),
-					NULL, FALSE);
-			purple_request_field_group_add_field(group, field);
-		}
-		if(xmlnode_get_child(query, "url")) {
-			field = purple_request_field_string_new("url", _("URL"),
-					NULL, FALSE);
-			purple_request_field_group_add_field(group, field);
-		}
-		if(xmlnode_get_child(query, "date")) {
-			field = purple_request_field_string_new("date", _("Date"),
-					NULL, FALSE);
-			purple_request_field_group_add_field(group, field);
-		}
+			field = purple_request_field_string_new("name", _("Name"), NULL, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if(xmlnode_get_child(query, "email")) {
+		field = purple_request_field_string_new("email", _("E-mail"), NULL, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if(xmlnode_get_child(query, "nick")) {
+		field = purple_request_field_string_new("nick", _("Nickname"), NULL, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if(xmlnode_get_child(query, "first")) {
+		field = purple_request_field_string_new("first", _("First name"), NULL, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if(xmlnode_get_child(query, "last")) {
+		field = purple_request_field_string_new("last", _("Last name"), NULL, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if(xmlnode_get_child(query, "address")) {
+		field = purple_request_field_string_new("address", _("Address"), NULL, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if(xmlnode_get_child(query, "city")) {
+		field = purple_request_field_string_new("city", _("City"), NULL, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if(xmlnode_get_child(query, "state")) {
+		field = purple_request_field_string_new("state", _("State"), NULL, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if(xmlnode_get_child(query, "zip")) {
+		field = purple_request_field_string_new("zip", _("Postal code"), NULL, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if(xmlnode_get_child(query, "phone")) {
+		field = purple_request_field_string_new("phone", _("Phone"), NULL, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if(xmlnode_get_child(query, "url")) {
+		field = purple_request_field_string_new("url", _("URL"), NULL, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
+	if(xmlnode_get_child(query, "date")) {
+		field = purple_request_field_string_new("date", _("Date"), NULL, FALSE);
+		purple_request_field_group_add_field(group, field);
+	}
 	if(registered) {
 		field = purple_request_field_bool_new("unregister", _("Unregister"), FALSE);
 		purple_request_field_group_add_field(group, field);
@@ -1040,7 +1031,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 								:g_strdup_printf(_("Register New Account at %s"), from);
 		purple_request_fields(js->gc, title,
 			  title, instructions, fields,
-			  registered?_("Change Registration"):_("Register"), G_CALLBACK(jabber_register_cb),
+			  (registered ? _("Change Registration") : _("Register")), G_CALLBACK(jabber_register_cb),
 			  _("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
 			  purple_connection_get_account(js->gc), NULL, NULL,
 			  cbdata);
