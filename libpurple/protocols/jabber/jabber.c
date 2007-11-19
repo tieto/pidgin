@@ -749,7 +749,7 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 
 	iq = jabber_iq_new_query(cbdata->js, JABBER_IQ_SET, "jabber:iq:register");
 	query = xmlnode_get_child(iq->node, "query");
-	xmlnode_set_attrib(iq->node,"to",cbdata->who);
+	xmlnode_set_attrib(iq->node, "to", cbdata->who);
 
 	for(groups = purple_request_fields_get_groups(fields); groups;
 			groups = groups->next) {
@@ -824,7 +824,7 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 		username = g_strdup_printf("%s@%s/%s", cbdata->js->user->node, cbdata->js->user->domain,
 				cbdata->js->user->resource);
 		purple_account_set_username(cbdata->js->gc->account, username);
-	g_free(username);
+		g_free(username);
 	}
 
 	jabber_iq_set_callback(iq, jabber_registration_result_cb, cbdata->who);
@@ -866,7 +866,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 {
 	PurpleAccount *account = purple_connection_get_account(js->gc);
 	const char *type;
-	const char *from = xmlnode_get_attrib(packet, "from");
+	const char *from;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
 	PurpleRequestField *field;
@@ -878,6 +878,11 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result"))
 		return;
 
+	from = xmlnode_get_attrib(packet, "from");
+	if (!from)
+		from = js->serverFQDN;
+	g_return_if_fail(from != NULL);
+	
 	if(js->registration) {
 		/* get rid of the login thingy */
 		purple_connection_set_state(js->gc, PURPLE_CONNECTED);
