@@ -998,6 +998,11 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 {
 	PurpleXfer *xfer = (PurpleXfer *)data;
 
+	if (source < 0) {
+		purple_xfer_cancel_local(xfer);
+		return;
+	}
+
 	xfer->fd = source;
 
 	begin_transfer(xfer, PURPLE_INPUT_READ);
