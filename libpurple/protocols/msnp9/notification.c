@@ -1348,7 +1348,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 void
 msn_notification_add_buddy(MsnNotification *notification, const char *list,
-						   const char *who, const char *store_name,
+						   const char *who, const char *friendly_name,
 						   int group_id)
 {
 	MsnCmdProc *cmdproc;
@@ -1360,11 +1360,11 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 	if (group_id >= 0)
 	{
 		msn_cmdproc_send(cmdproc, "ADD", "%s %s %s %d",
-						 list, who, store_name, group_id);
+						 list, who, friendly_name, group_id);
 	}
 	else
 	{
-		msn_cmdproc_send(cmdproc, "ADD", "%s %s %s", list, who, store_name);
+		msn_cmdproc_send(cmdproc, "ADD", "%s %s %s", list, who, friendly_name);
 	}
 }
 
