@@ -34,3 +34,9 @@ install:
 	  cp $(pidgindistpix_DATA) $(pidgindistpixdir); \
 	fi;
 
+clean:
+	if test '$(SUBDIRS)'; then \
+		list='$(SUBDIRS)'; for subdir in $$list; do \
+		$(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) clean;\
+		done; \
+	fi;
