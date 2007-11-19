@@ -82,20 +82,20 @@ void (*buddy_added)(PurpleBuddy *buddy)
    Emitted when a new buddy is added to the buddy list.
   @endsignaldef
 
- @signaldef buddy-icon-changed
-  @signalproto
-void (*buddy_icon_changed)(PurpleBuddy *buddy)
-  @endsignalproto
-  @signaldesc
-   Emitted when a buddy's icon is set.
-  @endsignaldef
-
  @signaldef buddy-removed
   @signalproto
 void (*buddy_removed)(PurpleBuddy *buddy)
   @endsignalproto
   @signaldesc
    Emitted when a buddy is removed from the buddy list.
+  @endsignaldef
+
+ @signaldef buddy-icon-changed
+  @signalproto
+void (*buddy_icon_changed)(PurpleBuddy *buddy)
+  @endsignalproto
+  @signaldesc
+   Emitted when a buddy's icon is set.
   @endsignaldef
 
  @signaldef blist-node-aliased

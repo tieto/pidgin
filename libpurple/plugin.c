@@ -1175,7 +1175,7 @@ void
 purple_plugins_init(void) {
 	void *handle = purple_plugins_get_handle();
 
-        purple_plugins_add_search_path(LIBDIR);
+	purple_plugins_add_search_path(LIBDIR);
 
 	purple_signal_register(handle, "plugin-load",
 						 purple_marshal_VOID__POINTER,
@@ -1190,8 +1190,12 @@ purple_plugins_init(void) {
 }
 
 void
-purple_plugins_uninit(void) {
-	purple_signals_disconnect_by_handle(purple_plugins_get_handle());
+purple_plugins_uninit(void)
+{
+	void *handle = purple_plugins_get_handle();
+
+	purple_signals_disconnect_by_handle(handle);
+	purple_signals_unregister_by_instance(handle);
 }
 
 /**************************************************************************

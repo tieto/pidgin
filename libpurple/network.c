@@ -708,4 +708,7 @@ purple_network_uninit(void)
 	if(nm_context)
 		libnm_glib_shutdown(nm_context);
 #endif
+
+	purple_signal_unregister(purple_network_get_handle(),
+	                         "network-configuration-changed");
 }
