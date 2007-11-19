@@ -558,7 +558,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 				g_free(widthstring);
 				heightstring = g_strdup_printf("%u", height);
 				xmlnode_set_attrib(info, "height", heightstring);
-				g_free(lengthstring);
+				g_free(heightstring);
 				
 				/* publish the metadata */
 				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
