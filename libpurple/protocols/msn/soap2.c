@@ -208,45 +208,44 @@ static gboolean
 msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 {
 	xmlnode *body = xmlnode_get_child(response->xml, "Body");
+	xmlnode *fault = xmlnode_get_child(response->xml, "Fault");
 
-	if (body) {
-		MsnSoapRequest *request;
+	if (fault) {
+		xmlnode *faultcode = xmlnode_get_child(fault, "faultcode");
 
-		if (strcmp(body->name, "Fault") == 0) {
-			xmlnode *fault = xmlnode_get_child(body, "faultcode");
+		if (faultcode != NULL) {
+			char *faultdata = xmlnode_get_data(faultcode);
 
-			if (fault != NULL) {
-				char *faultdata = xmlnode_get_data(fault);
+			if (g_str_equal(faultdata, "psf:Redirect")) {
+				xmlnode *url = xmlnode_get_child(body, "redirectUrl");
 
-				if (strcmp(faultdata, "psf:Redirect") == 0) {
-					xmlnode *url = xmlnode_get_child(body, "redirectUrl");
-
-					if (url) {
-						char *urldata = xmlnode_get_data(url);
-						msn_soap_handle_redirect(conn, urldata);
-						g_free(urldata);
-					}
-
-					g_free(faultdata);
-					return TRUE;
-				} else if (strcmp(faultdata, "wsse:FailedAuthentication") == 0) {
-					xmlnode *reason = xmlnode_get_child(body, "faultstring");
-					char *reasondata = xmlnode_get_data(reason);
-
-					msn_soap_connection_sanitize(conn, TRUE);
-					msn_session_set_error(conn->session, MSN_ERROR_AUTH,
-						reasondata);
-
-					g_free(reasondata);
-					g_free(faultdata);
-					return FALSE;
+				if (url) {
+					char *urldata = xmlnode_get_data(url);
+					msn_soap_handle_redirect(conn, urldata);
+					g_free(urldata);
 				}
 
 				g_free(faultdata);
-			}
-		}
+				return TRUE;
+			} else if (g_str_equal(faultdata, "wsse:FailedAuthentication")) {
+				xmlnode *reason = xmlnode_get_child(body, "faultstring");
+				char *reasondata = xmlnode_get_data(reason);
 
-		request = conn->current_request;
+				msn_soap_connection_sanitize(conn, TRUE);
+				msn_session_set_error(conn->session, MSN_ERROR_AUTH,
+					reasondata);
+
+				g_free(reasondata);
+				g_free(faultdata);
+				return FALSE;
+			}
+
+			g_free(faultdata);
+		}
+	}
+
+	if (fault || body) {
+		MsnSoapRequest *request = conn->current_request;
 		conn->current_request = NULL;
 		request->cb(request->message, response,
 			request->cb_data);
