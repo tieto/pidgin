@@ -16,6 +16,11 @@ version 2.3.0 (11/20/2007):
 	  implementation.
 	* XMPP password changes that return errors no longer cause the saved
 	  password to be changed.
+	* XMPP file transfer support has been enhanced to support sending
+	  files through a proxy when the server supports discovering a
+	  a bytestream proxy.  This should make file transfers much more
+	  reliable.  The next release will add support for manually specifying
+	  a proxy when the server doesn't advertise one.
 
 	Pidgin:
 	* If a plugin says it can't be unloaded, we now display an error and

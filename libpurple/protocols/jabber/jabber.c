@@ -1234,20 +1234,31 @@ void jabber_close(PurpleConnection *gc)
 		g_hash_table_destroy(js->buddies);
 	if(js->chats)
 		g_hash_table_destroy(js->chats);
+
 	while(js->chat_servers) {
 		g_free(js->chat_servers->data);
 		js->chat_servers = g_list_delete_link(js->chat_servers, js->chat_servers);
 	}
+
 	while(js->user_directories) {
 		g_free(js->user_directories->data);
 		js->user_directories = g_list_delete_link(js->user_directories, js->user_directories);
 	}
-	if(js->stream_id)
-		g_free(js->stream_id);
+
+	while(js->bs_proxies) {
+		JabberBytestreamsStreamhost *sh = js->bs_proxies->data;
+		g_free(sh->jid);
+		g_free(sh->host);
+		g_free(sh->zeroconf);
+		g_free(sh);
+		js->bs_proxies = g_list_delete_link(js->bs_proxies, js->bs_proxies);
+	}
+
+	g_free(js->stream_id);
 	if(js->user)
 		jabber_id_free(js->user);
-	if(js->avatar_hash)
-		g_free(js->avatar_hash);
+	g_free(js->avatar_hash);
+
 	purple_circ_buffer_destroy(js->write_buffer);
 	if(js->writeh)
 		purple_input_remove(js->writeh);
@@ -1256,11 +1267,9 @@ void jabber_close(PurpleConnection *gc)
 		sasl_dispose(&js->sasl);
 	if(js->sasl_mechs)
 		g_string_free(js->sasl_mechs, TRUE);
-	if(js->sasl_cb)
-		g_free(js->sasl_cb);
+	g_free(js->sasl_cb);
 #endif
-	if(js->serverFQDN)
-		g_free(js->serverFQDN);
+	g_free(js->serverFQDN);
 	while(js->commands) {
 		JabberAdHocCommands *cmd = js->commands->data;
 		g_free(cmd->jid);
@@ -1272,21 +1281,14 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->server_name);
 	g_free(js->gmail_last_time);
 	g_free(js->gmail_last_tid);
-	if(js->old_msg)
-		g_free(js->old_msg);
-	if(js->old_avatarhash)
-		g_free(js->old_avatarhash);
-	if(js->old_artist)
-		g_free(js->old_artist);
-	if(js->old_title)
-		g_free(js->old_title);
-	if(js->old_source)
-		g_free(js->old_source);
-	if(js->old_uri)
-		g_free(js->old_uri);
-	if(js->old_track)
-		g_free(js->old_track);
-	
+	g_free(js->old_msg);
+	g_free(js->old_avatarhash);
+	g_free(js->old_artist);
+	g_free(js->old_title);
+	g_free(js->old_source);
+	g_free(js->old_uri);
+	g_free(js->old_track);
+
 	g_free(js);
 
 	gc->proto_data = NULL;
