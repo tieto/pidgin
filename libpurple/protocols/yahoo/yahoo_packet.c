@@ -219,15 +219,16 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 
 void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data)
 {
+	GSList *l = pkt->hash;
 	int pos = 0;
 
 	/* This is only called from one place, and the list is
 	 * always backwards */
 
-	pkt->hash = g_slist_reverse(pkt->hash);
+	l = g_slist_reverse(l);
 
-	while (pkt->hash) {
-		struct yahoo_pair *pair = pkt->hash->data;
+	while (l) {
+		struct yahoo_pair *pair = l->data;
 		gchar buf[100];
 
 		g_snprintf(buf, sizeof(buf), "%d", pair->key);
@@ -241,7 +242,7 @@ void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data)
 		data[pos++] = 0xc0;
 		data[pos++] = 0x80;
 
-		pkt->hash = pkt->hash->next;
+		l = l->next;
 	}
 }
 
