@@ -14,6 +14,8 @@ version 2.3.0 (11/20/2007):
 	  transfers between libpurple clients and Gajim clients, but will not
 	  work with iChat or Adium as they use a different file transfer
 	  implementation.
+	* XMPP password changes that return errors no longer cause the saved
+	  password to be changed.
 
 	Pidgin:
 	* If a plugin says it can't be unloaded, we now display an error and
