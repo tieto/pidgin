@@ -776,6 +776,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (opt_si && !purple_core_ensure_single_instance()) {
+		purple_debug_info("main", "exiting because another libpurple client is already running\n");
 		purple_core_quit();
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
