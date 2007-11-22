@@ -4445,7 +4445,7 @@ find_child_widget_by_account(GtkContainer *container,
 	GtkWidget *ret = NULL;
 	/* XXX: Workaround for the currently incomplete implementation of PidginScrollBook */
 	if (PIDGIN_IS_SCROLL_BOOK(container))
-		container = PIDGIN_SCROLL_BOOK(container)->notebook;
+		container = GTK_CONTAINER(PIDGIN_SCROLL_BOOK(container)->notebook);
 	children = gtk_container_get_children(container);
 	l = g_list_find_custom(children, account, (GCompareFunc) find_account_widget);
 	if (l)
