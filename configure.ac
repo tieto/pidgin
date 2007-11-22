@@ -303,6 +303,9 @@ PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0],
 	AC_MSG_ERROR([
 
 You must have the GLib 2.0 development headers installed to build.
+
+If you have these installed already you may need to install pkg-config so
+I can find them.
 ])])
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
