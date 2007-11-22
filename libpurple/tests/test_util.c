@@ -76,7 +76,7 @@ END_TEST
 
 START_TEST(test_util_str_to_time)
 {
-	fail_unless(377185800 == purple_str_to_time("19811214T12:50:00", TRUE, NULL, NULL, NULL));
+	fail_unless(377182200 == purple_str_to_time("19811214T12:50:00", TRUE, NULL, NULL, NULL));
 	fail_unless(1175919261 == purple_str_to_time("20070407T04:14:21", TRUE, NULL, NULL, NULL));
 }
 END_TEST

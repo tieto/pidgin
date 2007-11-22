@@ -837,7 +837,19 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 			}
 			else if (utc)
 			{
-				t->tm_isdst = -1;
+				struct tm *tmptm;
+				time_t tmp;
+				tmp = mktime(t);
+				/* we care about whether it *was* dst, and the offset, here on this
+				 * date, not whether we are currently observing dst locally *now*.
+				 * This isn't perfect, because we would need to know in advance the
+				 * offset we are trying to work out in advance to be sure this
+				 * works for times around dst transitions but it'll have to do. */
+				tmptm = localtime(&tmp);
+				t->tm_isdst = tmptm->tm_isdst;
+#ifdef HAVE_TM_GMTOFF
+				t->tm_gmtoff = tmptm->tm_gmtoff;
+#endif
 			}
 
 			if (rest != NULL && *c != '\0')
