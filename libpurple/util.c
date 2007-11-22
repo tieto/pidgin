@@ -817,8 +817,11 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 
 			t->tm_isdst = -1;
 
-			if (*c == '.' && *(c+1) >= '0' && *(c+1) <= '9') /* dealing with precision we don't care about */
-				c += 4;
+			if (*c == '.') {
+				do {
+					c++;
+				} while (*c >= '0' && *c <= '9'); /* dealing with precision we don't care about */
+			}
 			if (*c == '+')
 				offset_positive = TRUE;
 			if (((*c == '+' || *c == '-') && (c = c + 1)) &&
