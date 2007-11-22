@@ -4441,8 +4441,12 @@ find_child_widget_by_account(GtkContainer *container,
                              PurpleAccount *account)
 {
 	GList *l = NULL;
-	GList *children = gtk_container_get_children(container);
+	GList *children = NULL;
 	GtkWidget *ret = NULL;
+	/* XXX: Workaround for the currently incomplete implementation of PidginScrollBook */
+	if (PIDGIN_IS_SCROLL_BOOK(container))
+		container = PIDGIN_SCROLL_BOOK(container)->notebook;
+	children = gtk_container_get_children(container);
 	l = g_list_find_custom(children, account, (GCompareFunc) find_account_widget);
 	if (l)
 		ret = GTK_WIDGET(l->data);
@@ -4456,7 +4460,6 @@ remove_child_widget_by_account(GtkContainer *container,
 {
 	GtkWidget *widget = find_child_widget_by_account(container, account);
 	if(widget) {
-		gtk_container_remove(container, widget);
 		gtk_widget_destroy(widget);
 	}
 }
@@ -4620,7 +4623,7 @@ ensure_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 
 	if(priv->signed_on_elsewhere)
 		return;
-	
+
 	mini_dialog = priv->signed_on_elsewhere =
 		pidgin_mini_dialog_new(NULL, NULL, PIDGIN_STOCK_DISCONNECT);
 
@@ -4649,6 +4652,10 @@ update_signed_on_elsewhere_minidialog_title(void)
 		return;
 
 	accounts = pidgin_mini_dialog_get_num_children(mini_dialog);
+	if (accounts == 0) {
+		gtk_widget_destroy(GTK_WIDGET(mini_dialog));
+		return;
+	}
 
 	title = g_strdup_printf(
 		ngettext("%d account was disabled because you signed on from another location.",
