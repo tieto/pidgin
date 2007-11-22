@@ -753,13 +753,13 @@ purple_str_to_time(const char *timestamp, gboolean utc,
                  struct tm *tm, long *tz_off, const char **rest)
 {
 	time_t retval = 0;
-	struct tm *t;
+	static struct tm t;
 	const char *c = timestamp;
 	int year = 0;
 	long tzoff = PURPLE_NO_TZ_OFF;
 
 	time(&retval);
-	t = localtime(&retval);
+	localtime_r(&retval, &t);
 
 	/* 4 digit year */
 	if (sscanf(c, "%04d", &year) && year > 1900)
@@ -767,11 +767,11 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 		c += 4;
 		if (*c == '-')
 			c++;
-		t->tm_year = year - 1900;
+		t.tm_year = year - 1900;
 	}
 
 	/* 2 digit month */
-	if (!sscanf(c, "%02d", &t->tm_mon))
+	if (!sscanf(c, "%02d", &t.tm_mon))
 	{
 		if (rest != NULL && *c != '\0')
 			*rest = c;
@@ -780,10 +780,10 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 	c += 2;
 	if (*c == '-' || *c == '/')
 		c++;
-	t->tm_mon -= 1;
+	t.tm_mon -= 1;
 
 	/* 2 digit day */
-	if (!sscanf(c, "%02d", &t->tm_mday))
+	if (!sscanf(c, "%02d", &t.tm_mday))
 	{
 		if (rest != NULL && *c != '\0')
 			*rest = c;
@@ -794,13 +794,13 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 	{
 		c++;
 
-		if (!sscanf(c, "%04d", &t->tm_year))
+		if (!sscanf(c, "%04d", &t.tm_year))
 		{
 			if (rest != NULL && *c != '\0')
 				*rest = c;
 			return 0;
 		}
-		t->tm_year -= 1900;
+		t.tm_year -= 1900;
 	}
 	else if (*c == 'T' || *c == '.')
 	{
@@ -808,14 +808,14 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 		/* we have more than a date, keep going */
 
 		/* 2 digit hour */
-		if ((sscanf(c, "%02d:%02d:%02d", &t->tm_hour, &t->tm_min, &t->tm_sec) == 3 && (c = c + 8)) ||
-		    (sscanf(c, "%02d%02d%02d", &t->tm_hour, &t->tm_min, &t->tm_sec) == 3 && (c = c + 6)))
+		if ((sscanf(c, "%02d:%02d:%02d", &t.tm_hour, &t.tm_min, &t.tm_sec) == 3 && (c = c + 8)) ||
+		    (sscanf(c, "%02d%02d%02d", &t.tm_hour, &t.tm_min, &t.tm_sec) == 3 && (c = c + 6)))
 		{
 			gboolean offset_positive = FALSE;
 			int tzhrs;
 			int tzmins;
 
-			t->tm_isdst = -1;
+			t.tm_isdst = -1;
 
 			if (*c == '.') {
 				do {
@@ -833,22 +833,22 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 					tzoff *= -1;
 				/* We don't want the C library doing DST calculations
 				 * if we know the UTC offset already. */
-				t->tm_isdst = 0;
+				t.tm_isdst = 0;
 			}
 			else if (utc)
 			{
-				struct tm *tmptm;
+				static struct tm tmptm;
 				time_t tmp;
-				tmp = mktime(t);
+				tmp = mktime(&t);
 				/* we care about whether it *was* dst, and the offset, here on this
 				 * date, not whether we are currently observing dst locally *now*.
 				 * This isn't perfect, because we would need to know in advance the
 				 * offset we are trying to work out in advance to be sure this
 				 * works for times around dst transitions but it'll have to do. */
-				tmptm = localtime(&tmp);
-				t->tm_isdst = tmptm->tm_isdst;
+				localtime_r(&tmp, &tmptm);
+				t.tm_isdst = tmptm.tm_isdst;
 #ifdef HAVE_TM_GMTOFF
-				t->tm_gmtoff = tmptm->tm_gmtoff;
+				t.tm_gmtoff = tmptm.tm_gmtoff;
 #endif
 			}
 
@@ -878,7 +878,7 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 					tzoff += sys_tzoff;
 #else
 #ifdef HAVE_TM_GMTOFF
-				tzoff += t->tm_gmtoff;
+				tzoff += t.tm_gmtoff;
 #else
 #	ifdef HAVE_TIMEZONE
 				tzset();    /* making sure */
@@ -897,12 +897,12 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 
 	if (tm != NULL)
 	{
-		*tm = *t;
+		memcpy(tm, &t, sizeof(struct tm));
 		tm->tm_isdst = -1;
 		mktime(tm);
 	}
 
-	retval = mktime(t);
+	retval = mktime(&t);
 	if (tzoff != PURPLE_NO_TZ_OFF)
 		retval += tzoff;
 
