@@ -897,7 +897,7 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 
 	if (tm != NULL)
 	{
-		memcpy(tm, &t, sizeof(struct tm));
+		*tm = t;
 		tm->tm_isdst = -1;
 		mktime(tm);
 	}
