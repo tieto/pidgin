@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-17 16:16+0100\n"
+"POT-Creation-Date: 2007-11-22 21:19+0100\n"
 "PO-Revision-Date: 2007-11-17 16:14+0100\n"
 "Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
@@ -4300,6 +4300,9 @@ msgstr "Verbindungsport"
 #. Account options
 msgid "Connect server"
 msgstr "Verbindungsserver"
+
+msgid "File transfer proxies"
+msgstr "Proxys für Dateiübertragungen"
 
 #, c-format
 msgid "%s has left the conversation."
