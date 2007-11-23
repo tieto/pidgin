@@ -81,6 +81,7 @@ static gboolean workspace_prev(GntBindable *wm, GList *n);
 static int widestringwidth(wchar_t *wide);
 #endif
 
+static void ensure_normal_mode(GntWM *wm);
 static gboolean write_already(gpointer data);
 static int write_timeout;
 static time_t last_active_time;
@@ -392,6 +393,10 @@ switch_window(GntWM *wm, int direction)
 	if (!wm->cws->ordered || !wm->cws->ordered->next)
 		return;
 
+	if (wm->mode != GNT_KP_MODE_NORMAL) {
+		ensure_normal_mode(wm);
+	}
+
 	w = wm->cws->ordered->data;
 	pos = g_list_index(wm->cws->list, w);
 	pos += direction;
@@ -503,6 +508,7 @@ window_close(GntBindable *bindable, GList *null)
 
 	if (wm->cws->ordered) {
 		gnt_widget_destroy(wm->cws->ordered->data);
+		ensure_normal_mode(wm);
 	}
 
 	return TRUE;
@@ -522,6 +528,7 @@ static void
 setup__list(GntWM *wm)
 {
 	GntWidget *tree, *win;
+	ensure_normal_mode(wm);
 	win = wm->_list.window = gnt_box_new(FALSE, FALSE);
 	gnt_box_set_toplevel(GNT_BOX(win), TRUE);
 	gnt_box_set_pad(GNT_BOX(win), 0);
@@ -970,6 +977,16 @@ window_reverse(GntWidget *win, gboolean set, GntWM *wm)
 
 	gnt_wm_copy_win(win, g_hash_table_lookup(wm->nodes, win));
 	update_screen(wm);
+}
+
+static void
+ensure_normal_mode(GntWM *wm)
+{
+	if (wm->mode != GNT_KP_MODE_NORMAL) {
+		if (wm->cws->ordered)
+			window_reverse(wm->cws->ordered->data, FALSE, wm);
+		wm->mode = GNT_KP_MODE_NORMAL;
+	}
 }
 
 static gboolean
@@ -1453,6 +1470,7 @@ gnt_wm_switch_workspace(GntWM *wm, gint n)
 	if (wm->_list.window) {
 		gnt_widget_destroy(wm->_list.window);
 	}
+	ensure_normal_mode(wm);
 	gnt_ws_hide(wm->cws, wm->nodes);
 	wm->cws = s;
 	gnt_ws_show(wm->cws, wm->nodes);
