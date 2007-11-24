@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.3.0 (11/20/2007):
+version 2.3.0 (11/24/2007):
 	libpurple:
 		Added:
 		* a PurpleConversation field and an alias field in PurpleConvMessage
