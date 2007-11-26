@@ -1097,6 +1097,38 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 	g_free(text);
 }
 
+
+static void smart_backspace_cb(GtkIMHtml *imhtml, gpointer blah)
+{
+	GtkTextIter iter;
+	GtkTextChildAnchor* anchor;
+	char * text;
+	gint offset;
+
+	if (!imhtml->editable)
+		return;
+
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, gtk_text_buffer_get_insert(imhtml->text_buffer));
+
+	/* Get the character before the insertion point */
+	offset = gtk_text_iter_get_offset(&iter);
+	if (offset <= 0)
+		return;
+
+	gtk_text_iter_backward_char(&iter);
+	anchor = gtk_text_iter_get_child_anchor(&iter);
+
+	if (!anchor)
+		return; /* No smiley here */
+
+	text = g_object_get_data(G_OBJECT(anchor), "gtkimhtml_plaintext");
+	if (!text)
+		return;
+
+	/* ok, then we need to insert the image buffer text before the anchor */
+	gtk_text_buffer_insert(imhtml->text_buffer, &iter, text, -1);
+}
+
 static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
 {
 #ifdef _WIN32
@@ -4052,8 +4084,11 @@ void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable)
 	imhtml->format_functions = GTK_IMHTML_ALL;
 
 	if (editable)
+	{
 		g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set",
-		                       G_CALLBACK(mark_set_cb), imhtml);
+				G_CALLBACK(mark_set_cb), imhtml);
+		g_signal_connect(G_OBJECT(imhtml), "backspace", G_CALLBACK(smart_backspace_cb), NULL);
+	}
 }
 
 void gtk_imhtml_set_whole_buffer_formatting_only(GtkIMHtml *imhtml, gboolean wbfo)
