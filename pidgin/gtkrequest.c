@@ -1089,9 +1089,9 @@ pidgin_request_fields(const char *title, const char *primary,
 
 
 #ifdef _WIN32
-	data->dialog = win = pidgin_create_window(PIDGIN_ALERT_TITLE, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
+	data->dialog = win = pidgin_create_dialog(PIDGIN_ALERT_TITLE, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
 #else /* !_WIN32 */
-	data->dialog = win = pidgin_create_window(title, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
+	data->dialog = win = pidgin_create_dialog(title, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
 #endif /* _WIN32 */
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
@@ -1099,7 +1099,7 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	/* Setup the main horizontal box */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(win), hbox);
+	gtk_container_add(GTK_CONTAINER(pidgin_dialog_get_vbox(GTK_DIALOG(win))), hbox);
 	gtk_widget_show(hbox);
 
 	/* Dialog icon. */
@@ -1383,11 +1383,9 @@ pidgin_request_fields(const char *title, const char *primary,
 	g_object_unref(sg);
 
 	/* Button box. */
-	bbox = gtk_hbutton_box_new();
+	bbox = pidgin_dialog_get_action_area(GTK_DIALOG(win));
 	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
 
 	/* Cancel button */
 	button = gtk_button_new_from_stock(text_to_stock(cancel_text));

@@ -759,15 +759,13 @@ pidgin_xfer_dialog_new(void)
 		purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/filetransfer/clear_finished");
 
 	/* Create the window. */
-	dialog->window = window = pidgin_create_window(_("File Transfers"), PIDGIN_HIG_BORDER, "file transfer", TRUE);
+	dialog->window = window = pidgin_create_dialog(_("File Transfers"), PIDGIN_HIG_BORDER, "file transfer", TRUE);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Create the parent vbox for everything. */
-	vbox1 = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(window), vbox1);
-	gtk_widget_show(vbox1);
+	vbox1 = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(window), FALSE, PIDGIN_HIG_BORDER);
 
 	/* Create the main vbox for top half of the window. */
 	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -813,11 +811,9 @@ pidgin_xfer_dialog_new(void)
 	gtk_widget_show(table);
 
 	/* Now the button box for the buttons */
-	bbox = gtk_hbutton_box_new();
+	bbox = pidgin_dialog_get_action_area(GTK_DIALOG(window));
 	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_end(GTK_BOX(vbox1), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
 
 	/* Open button */
 	button = gtk_button_new_from_stock(GTK_STOCK_OPEN);
