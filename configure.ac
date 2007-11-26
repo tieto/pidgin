@@ -383,7 +383,7 @@ if test "x$enable_gtkui" = "xyes" ; then
 		AC_MSG_ERROR([
 
 You must have the GTK+ 2.0 development headers installed to compile Pidgin.
-If you only want to build Finch then specify --disable-gtkui when running configure.
+If you want to build only Finch then specify --disable-gtkui when running configure.
 ])])
 
 	AC_SUBST(GTK_CFLAGS)
