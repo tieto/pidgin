@@ -12,7 +12,7 @@ version 2.4.0 (??/??/????):
 		  pidgin_dialog_get_vbox, pidgin_dialog_get_action_area to access the
 		  contents in the created dialog. (Peter 'fmoo' Ruibal)
 		* GTK_IMHTML_NO_SMILEY for GtkIMHtmlOptions means not to look for
-		  smileys in the text. (goutnet)
+		  smileys in the text. (Florian 'goutnet' Delizy)
 
 version 2.3.0 (11/24/2007):
 	libpurple:
