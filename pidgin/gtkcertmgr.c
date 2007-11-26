@@ -599,7 +599,7 @@ pidgin_certmgr_show(void)
 	dlg = certmgr_dialog = g_new0(CertMgrDialog, 1);
 
 	win = dlg->window =
-		pidgin_create_window(_("Certificate Manager"),/* Title */
+		pidgin_create_dialog(_("Certificate Manager"),/* Title */
 				     PIDGIN_HIG_BORDER, /*Window border*/
 				     "certmgr",         /* Role */
 				     TRUE); /* Allow resizing */
@@ -611,9 +611,7 @@ pidgin_certmgr_show(void)
 	gtk_window_set_default_size(GTK_WINDOW(win), 400, 400);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new( FALSE, PIDGIN_HIG_BORDER );
-	gtk_container_add(GTK_CONTAINER(win), vbox);
-	gtk_widget_show(vbox);
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, PIDGIN_HIG_BORDER);
 
 	/* Notebook of various certificate managers */
 	dlg->notebook = gtk_notebook_new();
@@ -623,11 +621,9 @@ pidgin_certmgr_show(void)
 	gtk_widget_show(dlg->notebook);
 
 	/* Box for the close button */
-	bbox = gtk_hbutton_box_new();
+	bbox = pidgin_dialog_get_action_area(GTK_DIALOG(win));
 	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
 
 	/* Close button */
 	dlg->closebutton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
