@@ -4230,7 +4230,7 @@ static gboolean pidgin_blist_select_notebook_page_cb(gpointer user_data)
 {
 	PidginBuddyList *gtkblist = (PidginBuddyList *)user_data;
 	int errors = 0;
-	GList *list;
+	GList *list = NULL;
 	PidginBuddyListPrivate *priv;
 
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
@@ -4243,8 +4243,7 @@ static gboolean pidgin_blist_select_notebook_page_cb(gpointer user_data)
 		errors = g_list_length(GTK_NOTEBOOK(priv->error_scrollbook->notebook)->children);
 #endif
 	}
-	if ((list = purple_accounts_get_all_active()) != NULL || errors ||
-	    (list = gtk_container_get_children(GTK_CONTAINER(priv->error_scrollbook)))) {
+	if ((list = purple_accounts_get_all_active()) != NULL || errors) {
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 1);
 		g_list_free(list);
 	} else
@@ -4491,6 +4490,7 @@ generic_error_destroy_cb(GtkObject *dialog,
                          PurpleAccount *account)
 {
 	g_hash_table_remove(gtkblist->connection_errors, account);
+	purple_account_clear_current_error(account);
 }
 
 #define SSL_FAQ_URI "http://d.pidgin.im/wiki/FAQssl"
@@ -4511,7 +4511,7 @@ add_generic_error_dialog(PurpleAccount *account,
 	gboolean enabled =
 		purple_account_get_enabled(account, purple_core_get_ui());
 	char *primary;
-	
+
 	if (enabled)
 		primary = g_strdup_printf(_("%s disconnected"), username);
 	else
