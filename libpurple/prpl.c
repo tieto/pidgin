@@ -258,8 +258,8 @@ purple_prpl_change_account_status(PurpleAccount *account,
 								PurpleStatus *old_status, PurpleStatus *new_status)
 {
 	g_return_if_fail(account    != NULL);
-	g_return_if_fail(old_status != NULL);
 	g_return_if_fail(new_status != NULL);
+	g_return_if_fail(!purple_status_is_exclusive(new_status) || old_status != NULL);
 
 	do_prpl_change_account_status(account, old_status, new_status);
 
