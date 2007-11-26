@@ -192,7 +192,9 @@ pidgin_scroll_book_forall(GtkContainer *container,
 			   GtkCallback callback,
 			   gpointer callback_data)
 {
+#if 0
 	GList *children;
+#endif
 	PidginScrollBook *scroll_book;
 
 	g_return_if_fail(GTK_IS_CONTAINER(container));
@@ -204,6 +206,7 @@ pidgin_scroll_book_forall(GtkContainer *container,
 		(*callback)(scroll_book->notebook, callback_data);
 	}
 
+#if 0
 	children = scroll_book->children;
 
 	while (children) {
@@ -212,6 +215,7 @@ pidgin_scroll_book_forall(GtkContainer *container,
 		children = children->next;
 		(*callback)(child, callback_data);
 	}
+#endif
 }
 
 static void
