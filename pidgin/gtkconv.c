@@ -5032,7 +5032,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		gtk_widget_show(gtkconv->toolbar);
 	else
 		gtk_widget_hide(gtkconv->toolbar);
-	g_idle_add(resize_imhtml_cb, gtkconv);
+	g_idle_add((GSourceFunc)resize_imhtml_cb, gtkconv);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons"))
 		gtk_widget_show(gtkconv->infopane_hbox);
@@ -7044,7 +7044,7 @@ show_formatting_toolbar_pref_cb(const char *name, PurplePrefType type,
 		else
 			gtk_widget_hide(gtkconv->toolbar);
 
-		g_idle_add(resize_imhtml_cb,gtkconv);
+		g_idle_add((GSourceFunc)resize_imhtml_cb,gtkconv);
 	}
 }
 
