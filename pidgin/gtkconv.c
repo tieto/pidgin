@@ -235,11 +235,7 @@ close_conv_cb(GtkWidget *w, GdkEventButton *dontuse, PidginConversation *gtkconv
 	switch (purple_conversation_get_type(conv)) {
 		case PURPLE_CONV_TYPE_IM:
 		{
-			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/close_immediately"))
-				close_this_sucker(gtkconv);
-			else
-				hide_conv(gtkconv, TRUE);
-			break;
+			hide_conv(gtkconv, TRUE);
 		}
 		case PURPLE_CONV_TYPE_CHAT:
 		{
@@ -5036,7 +5032,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		gtk_widget_show(gtkconv->toolbar);
 	else
 		gtk_widget_hide(gtkconv->toolbar);
-	g_idle_add(resize_imhtml_cb, gtkconv);
+	g_idle_add((GSourceFunc)resize_imhtml_cb, gtkconv);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons"))
 		gtk_widget_show(gtkconv->infopane_hbox);
@@ -7048,7 +7044,7 @@ show_formatting_toolbar_pref_cb(const char *name, PurplePrefType type,
 		else
 			gtk_widget_hide(gtkconv->toolbar);
 
-		g_idle_add(resize_imhtml_cb,gtkconv);
+		g_idle_add((GSourceFunc)resize_imhtml_cb,gtkconv);
 	}
 }
 
@@ -7549,7 +7545,6 @@ pidgin_conversations_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", TRUE);
 
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new", "never");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/close_immediately", TRUE);
 
 #ifdef _WIN32
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/win32/minimize_new_convs", FALSE);
