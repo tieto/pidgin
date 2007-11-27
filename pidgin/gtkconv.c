@@ -236,6 +236,7 @@ close_conv_cb(GtkWidget *w, GdkEventButton *dontuse, PidginConversation *gtkconv
 		case PURPLE_CONV_TYPE_IM:
 		{
 			hide_conv(gtkconv, TRUE);
+			break;
 		}
 		case PURPLE_CONV_TYPE_CHAT:
 		{
