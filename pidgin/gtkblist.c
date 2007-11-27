@@ -4601,14 +4601,6 @@ reconnect_elsewhere_accounts(PidginMiniDialog *mini_dialog,
 }
 
 static void
-ignore_elsewhere_accounts(PidginMiniDialog *mini_dialog,
-                          GtkButton *button,
-                          gpointer unused)
-{
-	elsewhere_foreach_account(mini_dialog, purple_account_clear_current_error);
-}
-
-static void
 ensure_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
@@ -4618,13 +4610,10 @@ ensure_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 		return;
 
 	mini_dialog = priv->signed_on_elsewhere =
-		pidgin_mini_dialog_new(NULL, NULL, PIDGIN_STOCK_DISCONNECT);
+		pidgin_mini_dialog_new(_("Welcome back!"), NULL, PIDGIN_STOCK_DISCONNECT);
 
 	pidgin_mini_dialog_add_button(mini_dialog, _("Re-enable"),
 		reconnect_elsewhere_accounts, NULL);
-
-	pidgin_mini_dialog_add_button(mini_dialog, _("Ignore"),
-		ignore_elsewhere_accounts, NULL);
 
 	add_error_dialog(gtkblist, GTK_WIDGET(mini_dialog));
 
@@ -4651,11 +4640,11 @@ update_signed_on_elsewhere_minidialog_title(void)
 	}
 
 	title = g_strdup_printf(
-		ngettext("%d account was disabled because you signed on from another location.",
-			 "%d accounts were disabled because you signed on from another location.",
+		ngettext("%d account was disabled because you signed on from another location:",
+			 "%d accounts were disabled because you signed on from another location:",
 			 accounts),
 		accounts);
-	pidgin_mini_dialog_set_title(mini_dialog, title);
+	pidgin_mini_dialog_set_description(mini_dialog, title);
 	g_free(title);
 }
 
