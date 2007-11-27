@@ -189,6 +189,18 @@ GtkWidget *pidgin_dialog_get_action_area(GtkDialog *dialog)
 	return GTK_DIALOG(dialog)->action_area;
 }
 
+GtkWidget *pidgin_dialog_add_button(GtkDialog *dialog, const char *label,
+		GCallback callback, gpointer callbackdata)
+{
+	GtkWidget *button = gtk_button_new_from_stock(label);
+	GtkWidget *bbox = pidgin_dialog_get_action_area(dialog);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	if (callback)
+		g_signal_connect(G_OBJECT(button), "clicked", callback, callbackdata);
+	gtk_widget_show(button);
+	return button;
+}
+
 GtkWidget *
 pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret)
 {

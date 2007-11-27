@@ -153,6 +153,20 @@ GtkWidget *pidgin_dialog_get_vbox_with_properties(GtkDialog *dialog, gboolean ho
 GtkWidget *pidgin_dialog_get_vbox(GtkDialog *dialog);
 
 /**
+ * Add a button to a dialog created by #pidgin_create_dialog.
+ *
+ * @param dialog         The dialog window
+ * @param label          The stock-id or the label for the button
+ * @param callback       The callback function for the button
+ * @param callbackdata   The user data for the callback function
+ *
+ * @return The created button.
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_dialog_add_button(GtkDialog *dialog, const char *label,
+		GCallback callback, gpointer callbackdata);
+
+/**
  * Retrieves the action area (button box) from a pidgin dialog window
  *
  * @param dialog       The dialog window

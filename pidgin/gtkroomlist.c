@@ -741,12 +741,9 @@ pidgin_roomlist_dialog_new_with_account(PurpleAccount *account)
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 
 	/* stop button */
-	dialog->stop_button = gtk_button_new_from_stock(GTK_STOCK_STOP);
-	gtk_box_pack_start(GTK_BOX(bbox), dialog->stop_button, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(dialog->stop_button), "clicked",
+	dialog->stop_button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_STOP,
 	                 G_CALLBACK(stop_button_cb), dialog);
 	gtk_widget_set_sensitive(dialog->stop_button, FALSE);
-	gtk_widget_show(dialog->stop_button);
 
 	/* list button */
 	dialog->list_button = pidgin_pixbuf_button_from_stock(_("_Get List"), GTK_STOCK_REFRESH,
@@ -775,11 +772,8 @@ pidgin_roomlist_dialog_new_with_account(PurpleAccount *account)
 	gtk_widget_show(dialog->join_button);
 
 	/* close button */
-	dialog->close_button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_box_pack_start(GTK_BOX(bbox), dialog->close_button, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(dialog->close_button), "clicked",
+	dialog->close_button = pidgin_dialog_add_button(GTK_DIALOG(window), GTK_STOCK_CLOSE,
 					 G_CALLBACK(close_button_cb), dialog);
-	gtk_widget_show(dialog->close_button);
 
 	/* show the dialog window and return the dialog */
 	gtk_widget_show(dialog->window);

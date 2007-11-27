@@ -559,7 +559,6 @@ pidgin_certmgr_show(void)
 	CertMgrDialog *dlg;
 	GtkWidget *win;
 	GtkWidget *vbox;
-	GtkWidget *bbox;
 
 	/* Enumerate all the certificates on file */
 	{
@@ -620,17 +619,9 @@ pidgin_certmgr_show(void)
 			   0);
 	gtk_widget_show(dlg->notebook);
 
-	/* Box for the close button */
-	bbox = pidgin_dialog_get_action_area(GTK_DIALOG(win));
-	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-
 	/* Close button */
-	dlg->closebutton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_box_pack_start(GTK_BOX(bbox), dlg->closebutton, FALSE, FALSE, 0);
-	gtk_widget_show(dlg->closebutton);
-	g_signal_connect(G_OBJECT(dlg->closebutton), "clicked",
-			 G_CALLBACK(certmgr_close_cb), dlg);
+	dlg->closebutton = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE,
+			G_CALLBACK(certmgr_close_cb), dlg);
 
 	/* Add the defined certificate managers */
 	/* TODO: Find a way of determining whether each is shown or not */

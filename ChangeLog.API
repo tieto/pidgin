@@ -11,6 +11,8 @@ version 2.4.0 (??/??/????):
 		  added utility functions pidgin_dialog_get_vbox_with_properties,
 		  pidgin_dialog_get_vbox, pidgin_dialog_get_action_area to access the
 		  contents in the created dialog. (Peter 'fmoo' Ruibal)
+		* pidgin_dialog_add_button to add buttons to a dialog created by
+		  pidgin_create_dialog.
 		* GTK_IMHTML_NO_SMILEY for GtkIMHtmlOptions means not to look for
 		  smileys in the text. (Florian 'goutnet' Delizy)
 

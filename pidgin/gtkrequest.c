@@ -1059,7 +1059,6 @@ pidgin_request_fields(const char *title, const char *primary,
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
 	GtkWidget *hbox;
-	GtkWidget *bbox;
 	GtkWidget *frame;
 	GtkWidget *label;
 	GtkWidget *table;
@@ -1382,33 +1381,15 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	g_object_unref(sg);
 
-	/* Button box. */
-	bbox = pidgin_dialog_get_action_area(GTK_DIALOG(win));
-	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-
 	/* Cancel button */
-	button = gtk_button_new_from_stock(text_to_stock(cancel_text));
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(multifield_cancel_cb), data);
-
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(cancel_text), G_CALLBACK(multifield_cancel_cb), data);
 	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
 
 	/* OK button */
-	button = gtk_button_new_from_stock(text_to_stock(ok_text));
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(ok_text), G_CALLBACK(multifield_ok_cb), data);
 	data->ok_button = button;
-
 	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
 	gtk_window_set_default(GTK_WINDOW(win), button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(multifield_ok_cb), data);
 
 	if (!purple_request_fields_all_required_filled(fields))
 		gtk_widget_set_sensitive(button, FALSE);

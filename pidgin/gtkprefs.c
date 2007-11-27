@@ -2149,7 +2149,6 @@ static void prefs_notebook_init() {
 void pidgin_prefs_show(void)
 {
 	GtkWidget *vbox;
-	GtkWidget *bbox;
 	GtkWidget *notebook;
 	GtkWidget *button;
 
@@ -2176,16 +2175,9 @@ void pidgin_prefs_show(void)
 	gtk_box_pack_start (GTK_BOX (vbox), notebook, FALSE, FALSE, 0);
 	gtk_widget_show(prefsnotebook);
 
-	/* The buttons to press! */
-	bbox = pidgin_dialog_get_action_area(GTK_DIALOG(prefs));
-	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-
-	button = gtk_button_new_from_stock (GTK_STOCK_CLOSE);
+	button = pidgin_dialog_add_button(GTK_DIALOG(prefs), GTK_STOCK_CLOSE, NULL, NULL);
 	g_signal_connect_swapped(G_OBJECT(button), "clicked",
 							 G_CALLBACK(gtk_widget_destroy), prefs);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
 
 	prefs_notebook_init();
 
