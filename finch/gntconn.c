@@ -130,9 +130,9 @@ finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 				"Finch will not attempt to reconnect the account until you "
 				"correct the error and re-enable the account."), text);
 
-		purple_request_action_with_hint(account, NULL, primary, secondary, 2,
+		purple_request_action(account, NULL, primary, secondary, 2,
 							account, NULL, NULL,
-							PURPLE_REQUEST_UI_HINT_BLIST, account, 3,
+							account, 3,
 							_("OK"), NULL,
 							_("Modify Account"), PURPLE_CALLBACK(ce_modify_account_cb),
 							_("Re-enable Account"), PURPLE_CALLBACK(ce_enable_account_cb));
@@ -152,6 +152,10 @@ finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 				purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
 			continue;
 		purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
+		purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
+					"longer in this chat. You will be automatically rejoined in the chat when "
+					"the account reconnects."),
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 	}
 }
 

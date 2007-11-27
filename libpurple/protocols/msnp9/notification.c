@@ -780,14 +780,27 @@ not_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 rea_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	/* TODO: This might be for us too */
-
 	MsnSession *session;
+	PurpleAccount *account;
 	PurpleConnection *gc;
 	const char *friendly;
+	char *username;
 
 	session = cmdproc->session;
-	gc = session->account->gc;
+	account = session->account;
+	username = g_strdup(purple_normalize(account,
+						purple_account_get_username(account)));
+
+	/* Only set display name if our *own* friendly name changed! */
+	if (strcmp(username, purple_normalize(account, cmd->params[2])))
+	{
+		g_free(username);
+		return;
+	}
+
+	g_free(username);
+
+	gc = account->gc;
 	friendly = purple_url_decode(cmd->params[3]);
 
 	purple_connection_set_display_name(gc, friendly);
@@ -1348,7 +1361,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 void
 msn_notification_add_buddy(MsnNotification *notification, const char *list,
-						   const char *who, const char *store_name,
+						   const char *who, const char *friendly_name,
 						   int group_id)
 {
 	MsnCmdProc *cmdproc;
@@ -1360,11 +1373,11 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 	if (group_id >= 0)
 	{
 		msn_cmdproc_send(cmdproc, "ADD", "%s %s %s %d",
-						 list, who, store_name, group_id);
+						 list, who, friendly_name, group_id);
 	}
 	else
 	{
-		msn_cmdproc_send(cmdproc, "ADD", "%s %s %s", list, who, store_name);
+		msn_cmdproc_send(cmdproc, "ADD", "%s %s %s", list, who, friendly_name);
 	}
 }
 

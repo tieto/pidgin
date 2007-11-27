@@ -303,7 +303,7 @@ void xmlnode_set_prefix(xmlnode *node, const char *prefix)
 
 const char *xmlnode_get_prefix(xmlnode *node)
 {
-	g_return_val_if_fail(node != NULL, NULL);                                   
+	g_return_val_if_fail(node != NULL, NULL);
 	return node->prefix;
 }
 
@@ -345,6 +345,9 @@ xmlnode_free(xmlnode *node)
 	g_free(node->name);
 	g_free(node->data);
 	g_free(node->xmlns);
+
+	if(node->namespace_map)
+		g_hash_table_destroy(node->namespace_map);
 
 	PURPLE_DBUS_UNREGISTER_POINTER(node);
 	g_free(node);

@@ -99,8 +99,6 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleConnection *gc = NULL;
 	JabberStream *js = NULL;
-	gboolean disconnected;
-	int primitive;
 	xmlnode *presence, *x, *photo;
 	char *stripped = NULL;
 	JabberBuddyState state;
@@ -108,22 +106,26 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	const char *artist = NULL, *title = NULL, *source = NULL, *uri = NULL, *track = NULL;
 	int length = -1;
 	gboolean allowBuzz;
-	PurplePresence *p = purple_account_get_presence(account);
+	PurplePresence *p;
 	PurpleStatus *tune;
 
+	if (purple_account_is_disconnected(account))
+		return;
+
+	p = purple_account_get_presence(account);
 	if (NULL == status) {
 		status = purple_presence_get_active_status(p);
 	}
 
-	if(!purple_status_is_active(status))
-		return;
-
-	disconnected = purple_account_is_disconnected(account);
-
-	if(disconnected)
-		return;
-
-	primitive = purple_status_type_get_primitive(purple_status_get_type(status));
+	if (purple_status_is_exclusive(status)) {
+		/* An exclusive status can't be deactivated. You should just
+		 * activate some other exclusive status. */
+		if (!purple_status_is_active(status))
+			return;
+	} else {
+		/* Work with the exclusive status. */
+		status = purple_presence_get_active_status(p);
+	}
 
 	gc = purple_account_get_connection(account);
 	js = gc->proto_data;
@@ -308,8 +310,9 @@ struct _jabber_add_permit {
 static void authorize_add_cb(gpointer data)
 {
 	struct _jabber_add_permit *jap = data;
-	jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
-			"subscribed");
+	if(PURPLE_CONNECTION_IS_VALID(jap->gc))
+		jabber_presence_subscription_set(jap->gc->proto_data,
+			jap->who, "subscribed");
 	g_free(jap->who);
 	g_free(jap);
 }
@@ -317,9 +320,9 @@ static void authorize_add_cb(gpointer data)
 static void deny_add_cb(gpointer data)
 {
 	struct _jabber_add_permit *jap = data;
-	jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
-			"unsubscribed");
-
+	if(PURPLE_CONNECTION_IS_VALID(jap->gc))
+		jabber_presence_subscription_set(jap->gc->proto_data,
+			jap->who, "unsubscribed");
 	g_free(jap->who);
 	g_free(jap);
 }
@@ -512,7 +515,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
 							chat->config_dialog_type = PURPLE_REQUEST_ACTION;
 							chat->config_dialog_handle =
-								purple_request_action_with_hint(js->gc,
+								purple_request_action(js->gc,
 										_("Create New Room"),
 										_("Create New Room"),
 										_("You are creating a new room.  Would"
@@ -520,7 +523,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 											" accept the default settings?"),
 										/* Default Action */ 1,
 										purple_connection_get_account(js->gc), NULL, chat->conv,
-										PURPLE_REQUEST_UI_HINT_CONV, chat, 2,
+										chat, 2,
 										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
 										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
 						}

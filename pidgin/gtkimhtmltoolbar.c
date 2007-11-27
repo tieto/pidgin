@@ -184,8 +184,6 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 			g_signal_connect_after(G_OBJECT(toolbar->font_dialog), "realize",
 							 G_CALLBACK(realize_toolbar_font), toolbar);
 		}
-		gtk_window_set_transient_for(GTK_WINDOW(toolbar->font_dialog),
-		    GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(toolbar))));
 		gtk_window_present(GTK_WINDOW(toolbar->font_dialog));
 	} else {
 		cancel_toolbar_font(font, toolbar);
@@ -429,14 +427,14 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 		}
 
 		toolbar->link_dialog =
-			purple_request_fields_with_hint(toolbar, _("Insert Link"),
+			purple_request_fields(toolbar, _("Insert Link"),
 					    NULL,
-					    msg,
+						msg,
 					    fields,
 					    _("_Insert"), G_CALLBACK(do_insert_link_cb),
 					    _("Cancel"), G_CALLBACK(cancel_link_cb),
-					    NULL, NULL, NULL,
-					    PURPLE_REQUEST_UI_HINT_CONV, toolbar);
+						NULL, NULL, NULL,
+					    toolbar);
 		g_free(msg);
 		g_free(desc);
 	} else {
@@ -711,8 +709,6 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
-	gtk_window_set_transient_for(GTK_WINDOW(dialog),
-	    GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(toolbar))));
 
 	if (unique_smileys != NULL) {
 		struct smiley_button_list *ls, *it, *it_tmp;
@@ -781,6 +777,8 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	/* show everything */
 	gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
 	gtk_widget_show_all(dialog);
+	gtk_window_set_transient_for(GTK_WINDOW(dialog),
+			GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(toolbar))));
 #ifdef _WIN32
 	winpidgin_ensure_onscreen(dialog);
 #endif

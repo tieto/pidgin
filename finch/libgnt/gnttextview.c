@@ -61,6 +61,8 @@ static gchar *select_start;
 static gchar *select_end;
 static gboolean double_click;
 
+static void reset_text_view(GntTextView *view);
+
 static void
 gnt_text_view_draw(GntWidget *widget)
 {
@@ -370,7 +372,7 @@ gnt_text_view_reflow(GntTextView *view)
 
 	string = view->string;
 	view->string = NULL;
-	gnt_text_view_clear(view);
+	reset_text_view(view);
 
 	view->string = g_string_set_size(view->string, string->len);
 	view->string->len = 0;
@@ -654,7 +656,7 @@ chtype gnt_text_format_flag_to_chtype(GntTextFormatFlags flags)
 	return fl;
 }
 
-void gnt_text_view_clear(GntTextView *view)
+static void reset_text_view(GntTextView *view)
 {
 	GntTextLine *line;
 
@@ -667,6 +669,14 @@ void gnt_text_view_clear(GntTextView *view)
 	if (view->string)
 		g_string_free(view->string, TRUE);
 	view->string = g_string_new(NULL);
+}
+
+void gnt_text_view_clear(GntTextView *view)
+{
+	reset_text_view(view);
+
+	g_list_foreach(view->tags, free_tag, NULL);
+	view->tags = NULL;
 
 	if (GNT_WIDGET(view)->window)
 		gnt_widget_draw(GNT_WIDGET(view));
@@ -833,7 +843,7 @@ editor_end_cb(int status, gpointer data)
 	if (status == 0) {
 		char *text = NULL;
 		if (g_file_get_contents(pageditor.file, &text, NULL, NULL)) {
-			gnt_text_view_clear(pageditor.tv);
+			reset_text_view(pageditor.tv);
 			gnt_text_view_append_text_with_flags(pageditor.tv, text, GNT_TEXT_FLAG_NORMAL);
 			gnt_text_view_scroll(GNT_TEXT_VIEW(pageditor.tv), 0);
 			g_free(text);

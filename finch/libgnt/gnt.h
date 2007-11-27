@@ -30,6 +30,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
+#ifndef GNT_H
+#define GNT_H
+
 #include <glib.h>
 #include "gntwidget.h"
 #include "gntclipboard.h"
@@ -201,3 +204,4 @@ gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
  */
 gboolean gnt_is_refugee(void);
 
+#endif /* GNT_H */

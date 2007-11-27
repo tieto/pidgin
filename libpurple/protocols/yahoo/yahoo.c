@@ -902,12 +902,12 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			PurpleBuddy *buddy;
 			PurpleAccount *account;
 			PurpleConversation *c;
-			char *username, *str;
-
-			str = NULL;
+			char *username;
 
 			account = purple_connection_get_account(gc);
-			c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
+			c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, im->from, account);
+			if (c == NULL)
+				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
 
 			if ((buddy = purple_find_buddy(account, im->from)) != NULL)
 				username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
@@ -917,7 +917,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			serv_got_attention(gc, username, YAHOO_BUZZ);
 
 			g_free(username);
-			g_free(str);
 			g_free(m);
 			g_free(im);
 			continue;
@@ -1028,12 +1027,12 @@ yahoo_buddy_add_deny_noreason_cb(struct yahoo_add_request *add_req, const char*m
 static void
 yahoo_buddy_add_deny_reason_cb(gpointer data) {
 	struct yahoo_add_request *add_req = data;
-	purple_request_input_with_hint(add_req->gc, NULL, _("Authorization denied message:"),
+	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
 			NULL, _("No reason given."), TRUE, FALSE, NULL,
 			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
 			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb),
 			purple_connection_get_account(add_req->gc), add_req->who, NULL,
-			PURPLE_REQUEST_UI_HINT_BLIST, add_req);
+			add_req);
 }
 
 static void yahoo_buddy_denied_our_add(PurpleConnection *gc, const char *who, const char *reason)
@@ -2065,9 +2064,9 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 		g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
 					"user is on your buddy list.  Clicking \"Yes\" "
 					"will remove and ignore the buddy."), who);
-		purple_request_yes_no_with_hint(gc, NULL, _("Ignore buddy?"), buf, 0,
+		purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
 						gc->account, who, NULL,
-						PURPLE_REQUEST_UI_HINT_BLIST, b,
+						b,
 						G_CALLBACK(ignore_buddy),
 						G_CALLBACK(keep_buddy));
 		break;
@@ -2097,7 +2096,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 
 		if (pair->key == 66)
 			err = strtol(pair->value, NULL, 10);
-		if (pair->key == 20)
+		else if (pair->key == 20)
 			url = pair->value;
 
 		l = l->next;
@@ -3503,23 +3502,23 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 static void yahoo_show_act_id(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input_with_hint(gc, NULL, _("Activate which ID?"), NULL,
+	purple_request_input(gc, NULL, _("Activate which ID?"), NULL,
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
 					   _("Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_ACCOUNT, gc);
+					   gc);
 }
 
 static void yahoo_show_chat_goto(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input_with_hint(gc, NULL, _("Join who in chat?"), NULL,
+	purple_request_input(gc, NULL, _("Join whom in chat?"), NULL,
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
 					   _("Cancel"), NULL,
 					   purple_connection_get_account(gc), NULL, NULL,
-					   PURPLE_REQUEST_UI_HINT_CONV, gc);
+					   gc);
 }
 
 static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {

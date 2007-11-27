@@ -1,6 +1,9 @@
 if HAVE_CHECK
 TESTS=check_libpurple
 
+clean-local:
+	-rm -rf libpurple..
+
 check_PROGRAMS=check_libpurple
 
 check_libpurple_SOURCES=\

@@ -138,6 +138,8 @@ void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, 
 				irc->mode_chars = g_strdup(val + 1);
 		}
 	}
+
+	g_strfreev(features);
 }
 
 void irc_msg_luser(struct irc_conn *irc, const char *name, const char *from, char **args)

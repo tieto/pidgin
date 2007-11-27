@@ -31,6 +31,7 @@
 
 #include "internal.h"
 #include "pidgin.h"
+#include "pidginstock.h"
 
 #include "debug.h"
 #include "util.h"
@@ -811,6 +812,7 @@ static void clear_formatting_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
 static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 {
 	GtkWidget *menuitem;
+	GtkWidget *mi, *img;
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("Paste as Plain _Text"));
 	gtk_widget_show(menuitem);
@@ -836,6 +838,28 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 5);
 
 	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(clear_formatting_cb), imhtml);
+	
+	mi = gtk_menu_item_new();
+	gtk_widget_show(mi);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
+
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SMILEY, GTK_ICON_SIZE_MENU);
+	mi = gtk_image_menu_item_new_with_label(_("_Smile!"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
+	gtk_widget_show(mi);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
+
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT, GTK_ICON_SIZE_MENU);
+	mi = gtk_image_menu_item_new_with_label(_("_Insert"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
+	gtk_widget_show(mi);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
+
+	img = gtk_image_new_from_stock(GTK_STOCK_BOLD, GTK_ICON_SIZE_MENU);
+	mi = gtk_image_menu_item_new_with_label(_("_Font"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
+	gtk_widget_show(mi);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
 }
 
 static char *
@@ -899,6 +923,9 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 
 	if (primary) {
 		GtkTextMark *sel = NULL, *ins = NULL;
+
+		g_return_if_fail(imhtml != NULL);
+
 		ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
 		sel = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, sel);
@@ -957,7 +984,6 @@ static void gtk_imhtml_primary_clipboard_clear(GtkClipboard *clipboard, GtkIMHtm
 static void gtk_imhtml_clipboard_clear (GtkClipboard *clipboard, GtkSelectionData *sel_data,
 				 guint info, gpointer user_data_or_owner)
 {
-	clipboard_selection = NULL;
 }
 
 static void copy_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
@@ -1095,6 +1121,38 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 	g_free(text);
 }
 
+
+static void smart_backspace_cb(GtkIMHtml *imhtml, gpointer blah)
+{
+	GtkTextIter iter;
+	GtkTextChildAnchor* anchor;
+	char * text;
+	gint offset;
+
+	if (!imhtml->editable)
+		return;
+
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, gtk_text_buffer_get_insert(imhtml->text_buffer));
+
+	/* Get the character before the insertion point */
+	offset = gtk_text_iter_get_offset(&iter);
+	if (offset <= 0)
+		return;
+
+	gtk_text_iter_backward_char(&iter);
+	anchor = gtk_text_iter_get_child_anchor(&iter);
+
+	if (!anchor)
+		return; /* No smiley here */
+
+	text = g_object_get_data(G_OBJECT(anchor), "gtkimhtml_plaintext");
+	if (!text)
+		return;
+
+	/* ok, then we need to insert the image buffer text before the anchor */
+	gtk_text_buffer_insert(imhtml->text_buffer, &iter, text, -1);
+}
+
 static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
 {
 #ifdef _WIN32
@@ -1165,17 +1223,15 @@ static gboolean gtk_imhtml_button_press_event(GtkIMHtml *imhtml, GdkEventButton 
 static void
 gtk_imhtml_undo(GtkIMHtml *imhtml) {
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	g_return_if_fail(imhtml->editable);
-	
-	gtk_source_undo_manager_undo(imhtml->undo_manager);
+	if (imhtml->editable)
+		gtk_source_undo_manager_undo(imhtml->undo_manager);
 }
 
 static void
 gtk_imhtml_redo(GtkIMHtml *imhtml) {
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	g_return_if_fail(imhtml->editable);
-	
-	gtk_source_undo_manager_redo(imhtml->undo_manager);
+	if (imhtml->editable)
+		gtk_source_undo_manager_redo(imhtml->undo_manager);
 
 }
 
@@ -2950,8 +3006,10 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		} else if (imhtml->edit.link == NULL &&
 				gtk_imhtml_is_smiley(imhtml, fonts, c, &smilelen)) {
 			GtkIMHtmlFontDetail *fd;
-
 			gchar *sml = NULL;
+
+			br = FALSE;
+
 			if (fonts) {
 				fd = fonts->data;
 				sml = fd->sml;
@@ -2969,6 +3027,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			wpos = 0;
 			ws[0] = 0;
 		} else if (*c == '&' && (amp = purple_markup_unescape_entity(c, &tlen))) {
+			br = FALSE;
 			while(*amp) {
 				ws [wpos++] = *amp++;
 			}
@@ -2997,6 +3056,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			c++;
 			pos++;
 		} else if ((len_protocol = gtk_imhtml_is_protocol(c)) > 0){
+			br = FALSE;
 			while(len_protocol--){
 				/* Skip the next len_protocol characters, but make sure they're
 				   copied into the ws array.
@@ -3005,6 +3065,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				 pos++;
 			}
 		} else if (*c) {
+			br = FALSE;
 			ws [wpos++] = *c++;
 			pos++;
 		} else {
@@ -4047,8 +4108,11 @@ void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable)
 	imhtml->format_functions = GTK_IMHTML_ALL;
 
 	if (editable)
+	{
 		g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set",
-		                       G_CALLBACK(mark_set_cb), imhtml);
+				G_CALLBACK(mark_set_cb), imhtml);
+		g_signal_connect(G_OBJECT(imhtml), "backspace", G_CALLBACK(smart_backspace_cb), NULL);
+	}
 }
 
 void gtk_imhtml_set_whole_buffer_formatting_only(GtkIMHtml *imhtml, gboolean wbfo)
@@ -4215,6 +4279,33 @@ static void imhtml_emit_signal_for_format(GtkIMHtml *imhtml, GtkIMHtmlButtons bu
 	object = g_object_ref(G_OBJECT(imhtml));
 	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, button);
 	g_object_unref(object);
+}
+
+static void populate_popup_cb(GtkTextView *textview, GtkMenu *menu, gpointer nul)
+{
+	GtkWidget *mi, *img;
+	
+	mi = gtk_menu_item_new();
+	gtk_widget_show(mi);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
+
+	img = gtk_image_new_from_stock(GTK_STOCK_BOLD, GTK_ICON_SIZE_MENU);
+	mi = gtk_image_menu_item_new_with_label(_("_Font"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
+	gtk_widget_show(mi);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
+
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT, GTK_ICON_SIZE_MENU);
+	mi = gtk_image_menu_item_new_with_label(_("_Insert"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
+	gtk_widget_show(mi);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
+
+	img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SMILEY, GTK_ICON_SIZE_MENU);
+	mi = gtk_image_menu_item_new_with_label(_("_Smile!"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
+	gtk_widget_show(mi);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
 }
 
 static void imhtml_toggle_bold(GtkIMHtml *imhtml)

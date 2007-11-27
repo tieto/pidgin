@@ -67,7 +67,7 @@ nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	xmlnode *node;
 
 	if (resp == NULL) {
-		msn_session_set_error(session, MSN_ERROR_AUTH, _("Windows Live ID authentication:Unable to connect"));
+		msn_session_set_error(session, MSN_ERROR_SERVCONN, _("Windows Live ID authentication:Unable to connect"));
 		return;
 	}
 

@@ -46,17 +46,17 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [3])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [3])
-m4_define([purple_micro_version], [0])
-m4_define([purple_version_suffix], [])
+m4_define([purple_micro_version], [1])
+m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [2])
+m4_define([gnt_lt_current], [3])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [2])
-m4_define([gnt_micro_version], [3])
-m4_define([gnt_version_suffix], [])
+m4_define([gnt_minor_version], [3])
+m4_define([gnt_micro_version], [1])
+m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
@@ -136,7 +136,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lo lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@latin sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
+ALL_LINGUAS="af am ar az be@latin bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lo lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@latin sv ta te th tr uk ur vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
@@ -303,6 +303,9 @@ PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0],
 	AC_MSG_ERROR([
 
 You must have the GLib 2.0 development headers installed to build.
+
+If you have these installed already you may need to install pkg-config so
+I can find them.
 ])])
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
@@ -380,14 +383,14 @@ if test "x$enable_gtkui" = "xyes" ; then
 		AC_MSG_ERROR([
 
 You must have the GTK+ 2.0 development headers installed to compile Pidgin.
-If you only want to build Finch then specify --disable-gtkui when running configure.
+If you want to build only Finch then specify --disable-gtkui when running configure.
 ])])
 
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
 
 	dnl We only really need Pango >= 1.4 for decent RTL support
-	PKG_CHECK_MODULES(pango, [pango >= 1.4.0],
+	PKG_CHECK_MODULES(PANGO, [pango >= 1.4.0],
 			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
 	dnl #######################################################################
@@ -930,7 +933,9 @@ AM_CONDITIONAL(USE_INTERNAL_LIBGADU, test "x$gadu_libs" != "xyes")
 AC_SUBST(GADU_LIBS)
 AC_SUBST(GADU_CFLAGS)
 
-AC_ARG_ENABLE(msnp14,[AC_HELP_STRING([--disable-msnp14], [Disable the newer MSNP14 protocol])],,enable_msnp14=yes)
+# uncomment the next line to make MSNP14 the available
+# AC_ARG_ENABLE(msnp14,[AC_HELP_STRING([--enable-msnp14], [Disable the newer MSNP14 protocol])],,enable_msnp14=no)
+enable_msnp14=no
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")

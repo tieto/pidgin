@@ -563,7 +563,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 	secondary = g_strdup_printf(_("Common name: %s %s\nFingerprint (SHA1): %s"), cn, cn_match, sha_asc);
 	
 	/* Make a semi-pretty display */
-	purple_request_accept_cancel_with_hint(
+	purple_request_accept_cancel(
 		vrq->cb_data, /* TODO: Find what the handle ought to be */
 		_("Single-use Certificate Verification"),
 		primary,
@@ -572,7 +572,6 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 		NULL,         /* No account */
 		NULL,         /* No other user */
 		NULL,         /* No associated conversation */
-		PURPLE_REQUEST_UI_HINT_BLIST,
 		vrq,
 		x509_singleuse_verify_cb,
 		x509_singleuse_verify_cb );
@@ -1186,7 +1185,7 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 				  vrq->subject_name);
 		
 	/* Make a semi-pretty display */
-	purple_request_action_with_hint(
+	purple_request_action(
 		vrq->cb_data, /* TODO: Find what the handle ought to be */
 		_("SSL Certificate Verification"),
 		primary,
@@ -1195,7 +1194,6 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 		NULL,         /* No account */
 		NULL,         /* No other user */
 		NULL,         /* No associated conversation */
-		PURPLE_REQUEST_UI_HINT_BLIST,
 		x509_tls_cached_ua_ctx_new(vrq, reason),
 		3,            /* Number of actions */
 		_("Accept"), x509_tls_cached_user_auth_accept_cb,
@@ -1359,6 +1357,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 		/* Okay, we're done here */
 		purple_certificate_verify_complete(vrq,
 						   PURPLE_CERTIFICATE_INVALID);
+		return;
 	} /* if (signature chain not good) */
 
 	/* Next, attempt to verify the last certificate against a CA */
@@ -1759,7 +1758,6 @@ purple_certificate_get_pools(void)
 gboolean
 purple_certificate_register_pool(PurpleCertificatePool *pool)
 {
-	gboolean success = FALSE;
 	g_return_val_if_fail(pool, FALSE);
 	g_return_val_if_fail(pool->scheme_name, FALSE);
 	g_return_val_if_fail(pool->name, FALSE);
@@ -1772,46 +1770,42 @@ purple_certificate_register_pool(PurpleCertificatePool *pool)
 
 	/* Initialize the pool if needed */
 	if (pool->init) {
+		gboolean success;
+
 		success = pool->init();
-	} else {
-		success = TRUE;
+		if (!success)
+			return FALSE;
 	}
-	
-	if (success) {
-		/* Register the Pool */
-		cert_pools = g_list_prepend(cert_pools, pool);
 
-		/* TODO: Emit a signal that the pool got registered */
+	/* Register the Pool */
+	cert_pools = g_list_prepend(cert_pools, pool);
 
-		PURPLE_DBUS_REGISTER_POINTER(pool, PurpleCertificatePool);
-		purple_signal_register(pool, /* Signals emitted from pool */
-				       "certificate-stored",
-				       purple_marshal_VOID__POINTER_POINTER,
-				       NULL, /* No callback return value */
-				       2,    /* Two non-data arguments */
-				       purple_value_new(PURPLE_TYPE_SUBTYPE,
-							PURPLE_SUBTYPE_CERTIFICATEPOOL),
-				       purple_value_new(PURPLE_TYPE_STRING));
+	/* TODO: Emit a signal that the pool got registered */
 
-		purple_signal_register(pool, /* Signals emitted from pool */
-				       "certificate-deleted",
-				       purple_marshal_VOID__POINTER_POINTER,
-				       NULL, /* No callback return value */
-				       2,    /* Two non-data arguments */
-				       purple_value_new(PURPLE_TYPE_SUBTYPE,
-							PURPLE_SUBTYPE_CERTIFICATEPOOL),
-				       purple_value_new(PURPLE_TYPE_STRING));
+	PURPLE_DBUS_REGISTER_POINTER(pool, PurpleCertificatePool);
+	purple_signal_register(pool, /* Signals emitted from pool */
+			       "certificate-stored",
+			       purple_marshal_VOID__POINTER_POINTER,
+			       NULL, /* No callback return value */
+			       2,    /* Two non-data arguments */
+			       purple_value_new(PURPLE_TYPE_SUBTYPE,
+						PURPLE_SUBTYPE_CERTIFICATEPOOL),
+			       purple_value_new(PURPLE_TYPE_STRING));
 
+	purple_signal_register(pool, /* Signals emitted from pool */
+			       "certificate-deleted",
+			       purple_marshal_VOID__POINTER_POINTER,
+			       NULL, /* No callback return value */
+			       2,    /* Two non-data arguments */
+			       purple_value_new(PURPLE_TYPE_SUBTYPE,
+						PURPLE_SUBTYPE_CERTIFICATEPOOL),
+			       purple_value_new(PURPLE_TYPE_STRING));
 
-		purple_debug_info("certificate",
-			  "CertificatePool %s registered\n",
-			  pool->name);
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-	
-	/* Control does not reach this point */
+	purple_debug_info("certificate",
+		  "CertificatePool %s registered\n",
+		  pool->name);
+
+	return TRUE;
 }
 
 gboolean

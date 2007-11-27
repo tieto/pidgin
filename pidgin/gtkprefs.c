@@ -641,8 +641,7 @@ request_theme_file_name_cb(gpointer data, char *theme_file_name)
 static void
 add_theme_button_clicked_cb(GtkWidget *widget, gpointer null)
 {
-	purple_request_file_with_hint(NULL, _("Install Theme"), NULL, FALSE,
-	    (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, PURPLE_REQUEST_UI_HINT_PREFSMGR, NULL) ;
+	purple_request_file(NULL, _("Install Theme"), NULL, FALSE, (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, NULL) ;
 }
 
 static void
@@ -996,8 +995,6 @@ conv_page()
 
 	pidgin_prefs_checkbox(_("Show _formatting on incoming messages"),
 				PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting", vbox);
-	pidgin_prefs_checkbox(_("Close IMs immediately when the tab is closed"),
-				PIDGIN_PREFS_ROOT "/conversations/im/close_immediately", vbox);
 
 	iconpref1 = pidgin_prefs_checkbox(_("Show _detailed information"),
 			PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", vbox);
@@ -1722,9 +1719,9 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 	if (*filename == '\0')
 		filename = NULL;
 
-	purple_request_file_with_hint(prefs, _("Sound Selection"), filename, FALSE,
+	purple_request_file(prefs, _("Sound Selection"), filename, FALSE,
 					  G_CALLBACK(sound_chosen_cb), NULL,
-					  NULL, NULL, NULL, PURPLE_REQUEST_UI_HINT_PREFSMGR,
+					  NULL, NULL, NULL,
 					  GINT_TO_POINTER(sound_row_sel));
 }
 
@@ -2307,6 +2304,7 @@ void pidgin_prefs_update_old()
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/show_group_count");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/show_warning_level");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/button_type");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/close_immediately");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/ctrl_enter_sends");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/enter_sends");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/escape_closes");

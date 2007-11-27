@@ -466,7 +466,6 @@ gnt_widget_get_size(GntWidget *wid, int *width, int *height)
 		*width = wid->priv.width + shadow;
 	if (height)
 		*height = wid->priv.height + shadow;
-	
 }
 
 static void

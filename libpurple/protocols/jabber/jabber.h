@@ -117,7 +117,7 @@ struct _JabberStream
 	GHashTable *disco_callbacks;
 	int next_id;
 
-
+	GList *bs_proxies;
 	GList *oob_file_transfers;
 	GList *file_transfers;
 
@@ -146,7 +146,7 @@ struct _JabberStream
 	char *gmail_last_time;
 	char *gmail_last_tid;
 
-    char *serverFQDN;
+	char *serverFQDN;
 
 	/* OK, this stays at the end of the struct, so plugins can depend
 	 * on the rest of the stuff being in the right place
@@ -201,6 +201,13 @@ typedef struct _JabberFeature
 	gchar *namespace;
 	JabberFeatureEnabled *is_enabled;
 } JabberFeature;
+
+typedef struct _JabberBytestreamsStreamhost {
+	char *jid;
+	char *host;
+	int port;
+	char *zeroconf;
+} JabberBytestreamsStreamhost;
 
 /* what kind of additional features as returned from disco#info are supported? */
 extern GList *jabber_features;

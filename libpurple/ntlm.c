@@ -187,7 +187,7 @@ des_ecb_encrypt(const guint8 *plaintext, guint8 *result, const guint8 *key)
 {
 	PurpleCipher *cipher;
 	PurpleCipherContext *context;
-	gsize outlen;
+	size_t outlen;
 
 	cipher = purple_ciphers_find_cipher("des");
 	context = purple_cipher_context_new(cipher, NULL);

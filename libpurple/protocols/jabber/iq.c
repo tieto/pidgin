@@ -399,5 +399,6 @@ void jabber_iq_init(void)
 void jabber_iq_uninit(void)
 {
 	g_hash_table_destroy(iq_handlers);
+	iq_handlers = NULL;
 }
 

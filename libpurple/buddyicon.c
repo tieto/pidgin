@@ -689,8 +689,6 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	PurpleStoredImage *img = NULL;
 	char *old_icon;
 
-	old_img = g_hash_table_lookup(pointer_icon_cache, account);
-
 	if (icon_data != NULL && icon_len > 0)
 	{
 		img = purple_buddy_icon_data_new(icon_data, icon_len, NULL);
@@ -728,7 +726,7 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 			prpl_info->set_buddy_icon(gc, img);
 	}
 
-	if (old_img)
+	if ((old_img = g_hash_table_lookup(pointer_icon_cache, account)))
 		purple_imgstore_unref(old_img);
 	else if (old_icon)
 	{

@@ -43,14 +43,6 @@
 #include "buddy.h"
 #include "bonjour_ft.h"
 
-/*
- * TODO: Should implement an add_buddy callback that removes the buddy
- *       from the local list.  Bonjour manages buddies for you, and
- *       adding someone locally by hand is stupid.  Or, maybe even better,
- *       if a PRPL does not have an add_buddy callback then do not allow
- *       users to add buddies.
- */
-
 static char *default_firstname;
 static char *default_lastname;
 static char *default_hostname;
@@ -86,6 +78,7 @@ bonjour_removeallfromlocal(PurpleConnection *gc)
 				if (buddy->account != account)
 					continue;
 				purple_prpl_got_user_status(account, buddy->name, "offline", NULL);
+				purple_account_remove_buddy(account, buddy, NULL);
 				purple_blist_remove_buddy(buddy);
 			}
 		}
@@ -171,6 +164,9 @@ bonjour_close(PurpleConnection *connection)
 	PurpleGroup *bonjour_group;
 	BonjourData *bd = connection->proto_data;
 
+	/* Remove all the bonjour buddies */
+	bonjour_removeallfromlocal(connection);
+
 	/* Stop looking for buddies in the LAN */
 	if (bd != NULL && bd->dns_sd_data != NULL)
 	{
@@ -185,13 +181,15 @@ bonjour_close(PurpleConnection *connection)
 		g_free(bd->jabber_data);
 	}
 
-	/* Remove all the bonjour buddies */
-	bonjour_removeallfromlocal(connection);
-
 	/* Delete the bonjour group */
 	bonjour_group = purple_find_group(BONJOUR_GROUP_NAME);
 	if (bonjour_group != NULL)
 		purple_blist_remove_group(bonjour_group);
+
+	/* Cancel any file transfers */
+	while (bd != NULL && bd->xfer_lists) {
+		purple_xfer_cancel_local(bd->xfer_lists->data);
+	}
 
 	g_free(bd);
 	connection->proto_data = NULL;
@@ -254,6 +252,25 @@ bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
 	g_free(stripped);
 }
 
+/*
+ * The add_buddy callback removes the buddy from the local list.
+ * Bonjour manages buddies for you, and adding someone locally by
+ * hand is stupid.  Perhaps we should change libpurple not to allow adding
+ * if there is no add_buddy callback.
+ */
+static void
+bonjour_fake_add_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group) {
+	purple_debug_error("bonjour", "Buddy '%s' manually added; removing.  "
+				      "Bonjour buddies must be discovered and not manually added.\n",
+			   purple_buddy_get_name(buddy));
+
+	/* I suppose we could alert the user here, but it seems unnecessary. */
+
+	/* If this causes problems, it can be moved to an idle callback */
+	purple_blist_remove_buddy(buddy);
+}
+
+
 static void bonjour_remove_buddy(PurpleConnection *pc, PurpleBuddy *buddy, PurpleGroup *group) {
 	if (buddy->proto_data) {
 		bonjour_buddy_delete(buddy->proto_data);
@@ -297,7 +314,7 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
 	BonjourBuddy *bb;
 
-	if (buddy == NULL)
+	if (buddy == NULL || buddy->proto_data == NULL)
 	{
 		/*
 		 * This buddy is not in our buddy list, and therefore does not really
@@ -364,6 +381,11 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 	if (message != NULL)
 		purple_notify_user_info_add_pair(user_info, _("Message"), message);
 
+	if (bb == NULL) {
+		purple_debug_error("bonjour", "Got tooltip request for a buddy without protocol data.\n");
+		return;
+	}
+
 	/* Only show first/last name if there is a nickname set (to avoid duplication) */
 	if (bb->nick != NULL) {
 		if (bb->first != NULL)
@@ -419,7 +441,7 @@ static PurplePluginProtocolInfo prpl_info =
 	bonjour_set_status,                                      /* set_status */
 	NULL,                                                    /* set_idle */
 	NULL,                                                    /* change_passwd */
-	NULL,                                                    /* add_buddy */
+	bonjour_fake_add_buddy,                                  /* add_buddy */
 	NULL,                                                    /* add_buddies */
 	bonjour_remove_buddy,                                    /* remove_buddy */
 	NULL,                                                    /* remove_buddies */

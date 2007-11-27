@@ -9,7 +9,7 @@ $(PIDGIN_CONFIG_H): $(PIDGIN_CONFIG_H).mingw $(PIDGIN_TREE_TOP)/configure.ac
 	sed -e 's/@VERSION@/$(PIDGIN_VERSION)/; s/@DISPLAY_VERSION@/$(DISPLAY_VERSION)/' $@.mingw > $@
 
 $(PURPLE_PURPLE_H): $(PURPLE_PURPLE_H).in
-	sed -e 's/@PLUGINS_DEFINE@/#define PURPLE_PLUGINS 1/; $@.in > $@
+	sed -e 's/@PLUGINS_DEFINE@/#define PURPLE_PLUGINS 1/' $@.in > $@
 
 $(PURPLE_VERSION_H): $(PURPLE_VERSION_H).in $(PIDGIN_TREE_TOP)/configure.ac
 	cp $@.in $@

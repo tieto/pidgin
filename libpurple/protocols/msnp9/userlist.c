@@ -41,10 +41,15 @@ static void
 msn_accept_add_cb(gpointer data)
 {
 	MsnPermitAdd *pa = data;
-	MsnSession *session = pa->gc->proto_data;
-	MsnUserList *userlist = session->userlist;
+	MsnSession *session;
+	MsnUserList *userlist;
 
-	msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_AL, NULL);
+	if (PURPLE_CONNECTION_IS_VALID(pa->gc)) {
+		session = pa->gc->proto_data;
+		userlist = session->userlist;
+
+		msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_AL, NULL);
+	}
 
 	g_free(pa->who);
 	g_free(pa->friendly);
@@ -55,10 +60,15 @@ static void
 msn_cancel_add_cb(gpointer data)
 {
 	MsnPermitAdd *pa = data;
-	MsnSession *session = pa->gc->proto_data;
-	MsnUserList *userlist = session->userlist;
+	MsnSession *session;
+	MsnUserList *userlist;
 
-	msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_BL, NULL);
+	if (PURPLE_CONNECTION_IS_VALID(pa->gc)) {
+		session = pa->gc->proto_data;
+		userlist = session->userlist;
+
+		msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_BL, NULL);
+	}
 
 	g_free(pa->who);
 	g_free(pa->friendly);
@@ -122,18 +132,18 @@ user_is_there(MsnUser *user, int list_id, int group_id)
 }
 
 static const char*
-get_store_name(MsnUser *user)
+get_friendly_name(MsnUser *user)
 {
-	const char *store_name;
+	const char *friendly_name;
 
 	g_return_val_if_fail(user != NULL, NULL);
 
-	store_name = msn_user_get_store_name(user);
+	friendly_name = msn_user_get_friendly_name(user);
 
-	if (store_name != NULL)
-		store_name = purple_url_encode(store_name);
+	if (friendly_name != NULL)
+		friendly_name = purple_url_encode(friendly_name);
 	else
-		store_name = msn_user_get_passport(user);
+		friendly_name = msn_user_get_passport(user);
 
 	/* this might be a bit of a hack, but it should prevent notification server
 	 * disconnections for people who have buddies with insane friendly names
@@ -143,10 +153,10 @@ get_store_name(MsnUser *user)
 	/* Stu: yeah, that's why it's a bit of a hack, as you pointed out, we're
 	 * probably decoding the incoming store_name wrong, or something. bleh. */
 
-	if (strlen(store_name) > BUDDY_ALIAS_MAXLEN)
-		store_name = msn_user_get_passport(user);
+	if (strlen(friendly_name) > BUDDY_ALIAS_MAXLEN)
+		friendly_name = msn_user_get_passport(user);
 
-	return store_name;
+	return friendly_name;
 }
 
 static void
@@ -350,7 +360,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	gc = purple_account_get_connection(account);
 
 	passport = msn_user_get_passport(user);
-	store = msn_user_get_store_name(user);
+	store = msn_user_get_friendly_name(user);
 
 	if (list_op & MSN_LIST_FL_OP)
 	{
@@ -629,7 +639,7 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 	MsnUser *user;
 	int group_id;
 	const char *list;
-	const char *store_name;
+	const char *friendly_name;
 
 	group_id = -1;
 
@@ -671,13 +681,13 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 		return;
 	}
 
-	store_name = (user != NULL) ? get_store_name(user) : who;
+	friendly_name = (user != NULL) ? get_friendly_name(user) : who;
 
 	/* Then request the add to the server. */
 	list = lists[list_id];
 
 	msn_notification_add_buddy(userlist->session->notification, list, who,
-							   store_name, group_id);
+							   friendly_name, group_id);
 }
 
 void

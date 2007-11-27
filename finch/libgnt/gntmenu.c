@@ -47,12 +47,28 @@ static void (*org_map)(GntWidget *wid);
 static void (*org_size_request)(GntWidget *wid);
 static gboolean (*org_key_pressed)(GntWidget *w, const char *t);
 
+static void menuitem_activate(GntMenu *menu, GntMenuItem *item);
+
 static void
 menu_hide_all(GntMenu *menu)
 {
 	while (menu->parentmenu)
 		menu = menu->parentmenu;
 	gnt_widget_hide(GNT_WIDGET(menu));
+}
+
+static void
+show_submenu(GntMenu *menu)
+{
+	GntMenuItem *item;
+
+	if (menu->type != GNT_MENU_TOPLEVEL)
+			return;
+
+	item = g_list_nth_data(menu->list, menu->selected);
+	if (!item || !item->submenu)
+		return;
+	menuitem_activate(menu, item);
 }
 
 static void
@@ -235,7 +251,7 @@ check_for_trigger(GntMenu *menu, char trigger)
 
 	if (nth == NULL)
 		return FALSE;
-		
+
 	find = find_item_with_trigger(nth->next, NULL, trigger);
 	if (!find)
 		find = find_item_with_trigger(menu->list, nth->next, trigger);
@@ -276,6 +292,8 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 			gnt_widget_hide(widget);
 		} else
 			gnt_widget_hide(widget);
+		if (par && par->type == GNT_MENU_TOPLEVEL)
+			gnt_menu_key_pressed(GNT_WIDGET(par), text);
 		return TRUE;
 	}
 
@@ -297,6 +315,7 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 			GntMenu *sub = menu->submenu;
 			if (sub)
 				gnt_widget_hide(GNT_WIDGET(sub));
+			show_submenu(menu);
 			gnt_widget_draw(widget);
 			return TRUE;
 		}
@@ -489,9 +508,6 @@ GntMenuItem *gnt_menu_get_item(GntMenu *menu, const char *id)
 		}
 		item = NULL;
 	}
-
-	if (item)
-		menuitem_activate(menu, item);
 
 	return item;
 }

@@ -664,7 +664,7 @@ purple_connections_init(void)
 										PURPLE_SUBTYPE_CONNECTION));
 
 	purple_signal_register(handle, "connection-error",
-	                       purple_marshal_VOID__POINTER_INT_POINTER, NULL, 1,
+	                       purple_marshal_VOID__POINTER_INT_POINTER, NULL, 3,
 	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
 	                                        PURPLE_SUBTYPE_CONNECTION),
 	                       purple_value_new(PURPLE_TYPE_ENUM),

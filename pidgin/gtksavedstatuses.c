@@ -338,9 +338,9 @@ status_window_delete_cb(GtkButton *button, gpointer user_data)
 		handle = dialog;
 	}
 
-	purple_request_action_with_hint(handle, NULL, title, NULL, 0,
+	purple_request_action(handle, NULL, title, NULL, 0,
 		 NULL, NULL, NULL,
-		 PURPLE_REQUEST_UI_HINT_STATUSMGR, sel_titles, 2,
+		 sel_titles, 2,
 		_("Delete"), status_window_delete_confirm_cb,
 		_("Cancel"), status_window_delete_cancel_cb);
 
