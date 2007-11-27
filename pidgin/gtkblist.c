@@ -4480,12 +4480,6 @@ generic_error_enable_cb(PurpleAccount *account)
 }
 
 static void
-generic_error_ignore_cb(PurpleAccount *account)
-{
-	purple_account_clear_current_error(account);
-}
-
-static void
 generic_error_destroy_cb(GtkObject *dialog,
                          PurpleAccount *account)
 {
@@ -4523,7 +4517,6 @@ add_generic_error_dialog(PurpleAccount *account,
 		(enabled ? PURPLE_CALLBACK(purple_account_connect)
 		         : PURPLE_CALLBACK(generic_error_enable_cb)),
 		_("Modify Account"), PURPLE_CALLBACK(generic_error_modify_cb),
-		_("Ignore"), PURPLE_CALLBACK(generic_error_ignore_cb),
 		NULL);
 
 	g_free(primary);
