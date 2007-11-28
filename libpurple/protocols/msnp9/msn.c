@@ -1920,7 +1920,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		purple_debug_warning("msn", "invalid connection. ignoring buddy photo info.\n");
 		g_free(stripped);
 		g_free(url_buffer);
-		g_free(user_info);
+		purple_notify_user_info_destroy(user_info);
 		g_free(info_data->name);
 		g_free(info_data);
 		g_free(photo_url_text);
