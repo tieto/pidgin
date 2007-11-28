@@ -3312,3 +3312,107 @@ void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text)
 	gtk_entry_set_text(GTK_ENTRY(GTK_BIN((widget))->child), (text));
 }
 
+gboolean pidgin_auto_parent_window(GtkWidget *widget)
+{
+#if 0
+	/* This looks at the most recent window that received focus, and makes
+	 * that the parent window. */
+#ifndef _WIN32
+	static GdkAtom _WindowTime = GDK_NONE;
+	static GdkAtom _Cardinal = GDK_NONE;
+	GList *windows = NULL;
+	GtkWidget *parent = NULL;
+	time_t window_time = 0;
+
+	windows = gtk_window_list_toplevels();
+
+	if (_WindowTime == GDK_NONE) {
+		_WindowTime = gdk_x11_xatom_to_atom(gdk_x11_get_xatom_by_name("_NET_WM_USER_TIME"));
+	}
+	if (_Cardinal == GDK_NONE) {
+		_Cardinal = gdk_atom_intern("CARDINAL", FALSE);
+	}
+
+	while (windows) {
+		GtkWidget *window = windows->data;
+		guchar *data = NULL;
+		int al = 0;
+		time_t value;
+
+		windows = g_list_delete_link(windows, windows);
+
+		if (window == widget ||
+				!GTK_WIDGET_VISIBLE(window))
+			continue;
+
+		if (!gdk_property_get(window->window, _WindowTime, _Cardinal, 0, sizeof(time_t), FALSE,
+				NULL, NULL, &al, &data))
+			continue;
+		value = *(time_t *)data;
+		if (window_time < value) {
+			window_time = value;
+			parent = window;
+		}
+		g_free(data);
+	}
+	if (windows)
+		g_list_free(windows);
+	if (parent) {
+		if (!gtk_get_current_event() && gtk_window_has_toplevel_focus(GTK_WINDOW(parent))) {
+			/* The window is in focus, and the new window was not triggered by a keypress/click
+			 * event. So do not set it transient, to avoid focus stealing and all that.
+			 */
+			return FALSE;
+		}
+		gtk_window_set_transient_for(GTK_WINDOW(widget), GTK_WINDOW(parent));
+		return TRUE;
+	}
+	return FALSE;
+#endif
+#else
+	/* This finds the currently active window and makes that the parent window. */
+	GList *windows = NULL;
+	GtkWidget *parent = NULL;
+	GdkEvent *event = gtk_get_current_event();
+	GdkWindow *menu = NULL;
+
+	if (event == NULL)
+		/* The window was not triggered by a user action. */
+		return FALSE;
+
+	/* We need to special case events from a popup menu. */
+	if (event->type == GDK_BUTTON_RELEASE) {
+		/* XXX: Neither of the following works:
+			menu = event->button.window;
+			menu = gdk_window_get_parent(event->button.window);
+			menu = gdk_window_get_toplevel(event->button.window);
+		*/
+	} else if (event->type == GDK_KEY_PRESS)
+		menu = event->key.window;
+
+	windows = gtk_window_list_toplevels();
+	while (windows) {
+		GtkWidget *window = windows->data;
+		windows = g_list_delete_link(windows, windows);
+
+		if (window == widget ||
+				!GTK_WIDGET_VISIBLE(window)) {
+			continue;
+		}
+
+		if (gtk_window_has_toplevel_focus(GTK_WINDOW(window)) ||
+				(menu && menu == window->window)) {
+			parent = window;
+			break;
+		}
+	}
+	if (windows)
+		g_list_free(windows);
+	if (parent) {
+		gtk_window_set_transient_for(GTK_WINDOW(widget), GTK_WINDOW(parent));
+		return TRUE;
+	}
+	return FALSE;
+#endif
+}
+

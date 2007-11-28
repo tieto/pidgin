@@ -439,6 +439,8 @@ pidgin_request_input(const char *title, const char *primary,
 	pidgin_set_accessible_label (entry, label);
 	data->u.input.entry = entry;
 
+	pidgin_auto_parent_window(dialog);
+
 	/* Show everything. */
 	gtk_widget_show(dialog);
 
@@ -546,6 +548,8 @@ pidgin_request_choice(const char *title, const char *primary,
 	g_object_set_data(G_OBJECT(dialog), "radio", radio);
 
 	/* Show everything. */
+	pidgin_auto_parent_window(dialog);
+
 	gtk_widget_show_all(dialog);
 
 	return data;
@@ -661,6 +665,8 @@ pidgin_request_action(const char *title, const char *primary,
 		gtk_dialog_set_default_response(GTK_DIALOG(dialog), default_action);
 
 	/* Show everything. */
+	pidgin_auto_parent_window(dialog);
+
 	gtk_widget_show_all(dialog);
 
 	return data;
@@ -1394,6 +1400,8 @@ pidgin_request_fields(const char *title, const char *primary,
 	if (!purple_request_fields_all_required_filled(fields))
 		gtk_widget_set_sensitive(button, FALSE);
 
+	pidgin_auto_parent_window(win);
+
 	gtk_widget_show(win);
 
 	return data;
@@ -1601,6 +1609,8 @@ pidgin_request_file(const char *title, const char *filename,
 					 G_CALLBACK(file_ok_check_if_exists_cb), data);
 #endif /* FILECHOOSER */
 
+	pidgin_auto_parent_window(filesel);
+
 	data->dialog = filesel;
 	gtk_widget_show(filesel);
 
@@ -1652,6 +1662,8 @@ pidgin_request_folder(const char *title, const char *dirname,
 #endif
 
 	data->dialog = dirsel;
+	pidgin_auto_parent_window(dirsel);
+
 	gtk_widget_show(dirsel);
 
 	return (void *)data;

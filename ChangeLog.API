@@ -15,6 +15,8 @@ version 2.4.0 (??/??/????):
 		  pidgin_create_dialog.
 		* GTK_IMHTML_NO_SMILEY for GtkIMHtmlOptions means not to look for
 		  smileys in the text. (Florian 'goutnet' Delizy)
+		* pidgin_auto_parent_window to make a window transient for a suitable
+		  parent window.
 
 version 2.3.0 (11/24/2007):
 	libpurple:

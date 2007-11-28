@@ -780,5 +780,15 @@ const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget);
  */
 void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
 
+/**
+ * Automatically make a window transient to a suitable parent window.
+ *
+ * @param window    The window to make transient.
+ *
+ * @return  Whether the window was made transient or not.
+ * @since 2.4.0
+ */
+gboolean pidgin_auto_parent_window(GtkWidget *window);
+
 #endif /* _PIDGINUTILS_H_ */
 
