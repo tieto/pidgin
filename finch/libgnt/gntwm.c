@@ -28,6 +28,7 @@
 #include "config.h"
 
 #include <glib.h>
+#include <glib/gstdio.h>
 #include <ctype.h>
 #include <gmodule.h>
 #include <stdlib.h>
@@ -41,6 +42,7 @@
 #include "gntbox.h"
 #include "gntbutton.h"
 #include "gntentry.h"
+#include "gntfilesel.h"
 #include "gntlabel.h"
 #include "gntmenu.h"
 #include "gnttextview.h"
@@ -663,12 +665,12 @@ window_list(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
-static gboolean
-dump_screen(GntBindable *bindable, GList *null)
+static void
+dump_file_save(GntFileSel *fs, const char *path, const char *f, gpointer n)
 {
+	FILE *file;
 	int x, y;
 	chtype old = 0, now = 0;
-	FILE *file = fopen("dump.html", "w");
 	struct {
 		char ascii;
 		char *unicode;
@@ -689,6 +691,11 @@ dump_screen(GntBindable *bindable, GList *null)
 		{'v', "&#x2534;"},
 		{'\0', NULL}
 	};
+
+
+	if ((file = g_fopen(path, "w+")) == NULL) {
+		return;
+	}
 
 	fprintf(file, "<head>\n  <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n</head>\n<body>\n");
 	fprintf(file, "<pre>");
@@ -796,6 +803,24 @@ dump_screen(GntBindable *bindable, GList *null)
 	}
 	fprintf(file, "</pre>\n</body>");
 	fclose(file);
+	gnt_widget_destroy(GNT_WIDGET(fs));
+}
+
+static void
+dump_file_cancel(GntWidget *w, GntFileSel *fs)
+{
+	gnt_widget_destroy(GNT_WIDGET(fs));
+}
+
+static gboolean
+dump_screen(GntBindable *b, GList *null)
+{
+	GntWidget *window = gnt_file_sel_new();
+	GntFileSel *sel = GNT_FILE_SEL(window);
+	gnt_file_sel_set_suggested_filename(sel, "dump.html");
+	g_signal_connect(G_OBJECT(sel), "file_selected", G_CALLBACK(dump_file_save), NULL);
+	g_signal_connect(G_OBJECT(sel->cancel), "activate", G_CALLBACK(dump_file_cancel), sel);
+	gnt_widget_show(window);
 	return TRUE;
 }
 
@@ -1366,7 +1391,7 @@ gnt_wm_class_init(GntWMClass *klass)
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-list", window_list,
 				"\033" "w", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "dump-screen", dump_screen,
-				"\033" "d", NULL);
+				"\033" "D", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "shift-left", shift_left,
 				"\033" ",", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "shift-right", shift_right,
