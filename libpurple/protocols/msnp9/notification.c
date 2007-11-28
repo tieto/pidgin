@@ -235,6 +235,8 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* OK */
 		const char *friendly = purple_url_decode(cmd->params[3]);
 
+		session->passport_info.verified = atoi(cmd->params[4]);
+
 		purple_connection_set_display_name(gc, friendly);
 
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_SYN);
