@@ -132,12 +132,9 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 	}
 }
 
-GtkWidget *
-pidgin_create_window(const char *title, guint border_width, const char *role, gboolean resizable)
+static
+void pidgin_window_init(GtkWindow *wnd, const char *title, guint border_width, const char *role, gboolean resizable)
 {
-	GtkWindow *wnd = NULL;
-
-	wnd = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
 	if (title)
 		gtk_window_set_title(wnd, title);
 #ifdef _WIN32
@@ -148,8 +145,60 @@ pidgin_create_window(const char *title, guint border_width, const char *role, gb
 	if (role)
 		gtk_window_set_role(wnd, role);
 	gtk_window_set_resizable(wnd, resizable);
+}
+
+GtkWidget *
+pidgin_create_window(const char *title, guint border_width, const char *role, gboolean resizable)
+{
+	GtkWindow *wnd = NULL;
+
+	wnd = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
+	pidgin_window_init(wnd, title, border_width, role, resizable);
 
 	return GTK_WIDGET(wnd);
+}
+
+GtkWidget *
+pidgin_create_dialog(const char *title, guint border_width, const char *role, gboolean resizable)
+{
+	GtkWindow *wnd = NULL;
+
+	wnd = GTK_WINDOW(gtk_dialog_new());
+	pidgin_window_init(wnd, title, border_width, role, resizable);
+	g_object_set(G_OBJECT(wnd), "has-separator", FALSE, NULL);
+
+	return GTK_WIDGET(wnd);
+}
+
+GtkWidget *
+pidgin_dialog_get_vbox_with_properties(GtkDialog *dialog, gboolean homogeneous, gint spacing)
+{
+	GtkBox *vbox = GTK_BOX(GTK_DIALOG(dialog)->vbox);
+	gtk_box_set_homogeneous(vbox, homogeneous);
+	gtk_box_set_spacing(vbox, spacing);
+	return GTK_WIDGET(vbox);
+}
+
+GtkWidget *pidgin_dialog_get_vbox(GtkDialog *dialog)
+{
+	return GTK_DIALOG(dialog)->vbox;
+}
+
+GtkWidget *pidgin_dialog_get_action_area(GtkDialog *dialog)
+{
+	return GTK_DIALOG(dialog)->action_area;
+}
+
+GtkWidget *pidgin_dialog_add_button(GtkDialog *dialog, const char *label,
+		GCallback callback, gpointer callbackdata)
+{
+	GtkWidget *button = gtk_button_new_from_stock(label);
+	GtkWidget *bbox = pidgin_dialog_get_action_area(dialog);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	if (callback)
+		g_signal_connect(G_OBJECT(button), "clicked", callback, callbackdata);
+	gtk_widget_show(button);
+	return button;
 }
 
 GtkWidget *
