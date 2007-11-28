@@ -753,6 +753,11 @@ do_joinchat(GtkWidget *dialog, int id, PidginJoinChatData *info)
 	{
 		case GTK_RESPONSE_OK:
 			do_join_chat(info);
+			break;
+
+		case 1:
+			pidgin_roomlist_dialog_show_with_account(info->account);
+			return;
 
 		break;
 	}
@@ -769,6 +774,8 @@ do_joinchat(GtkWidget *dialog, int id, PidginJoinChatData *info)
 static void
 joinchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 {
+	PurplePluginProtocolInfo *prpl_info;
+	PurpleConnection *gc;
 	PidginJoinChatData *data;
 	GList *tmp;
 	const char *text;
@@ -789,6 +796,12 @@ joinchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 	}
 
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), GTK_RESPONSE_OK, sensitive);
+
+	gc = purple_account_get_connection(data->account);
+	prpl_info = (gc != NULL) ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
+	sensitive = (prpl_info != NULL && prpl_info->roomlist_get_list != NULL);
+
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), 1, sensitive);
 }
 
 static void
@@ -944,6 +957,7 @@ pidgin_blist_joinchat_show(void)
 
 	data->window = gtk_dialog_new_with_buttons(_("Join a Chat"),
 		NULL, GTK_DIALOG_NO_SEPARATOR,
+		_("Room _List"), 1,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		PIDGIN_STOCK_CHAT, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
@@ -6392,6 +6406,10 @@ add_chat_resp_cb(GtkWidget *w, int resp, PidginAddChatData *data)
 	{
 		add_chat_cb(NULL, data);
 	}
+	else if (resp == 1)
+	{
+		pidgin_roomlist_dialog_show_with_account(data->account);
+	}
 	else
 	{
 		gtk_widget_destroy(data->window);
@@ -6408,6 +6426,8 @@ add_chat_resp_cb(GtkWidget *w, int resp, PidginAddChatData *data)
 static void
 addchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 {
+	PurplePluginProtocolInfo *prpl_info;
+	PurpleConnection *gc;
 	PidginAddChatData *data;
 	GList *tmp;
 	const char *text;
@@ -6428,6 +6448,12 @@ addchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 	}
 
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), GTK_RESPONSE_OK, sensitive);
+
+	gc = purple_account_get_connection(data->account);
+	prpl_info = (gc != NULL) ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
+	sensitive = (prpl_info != NULL && prpl_info->roomlist_get_list != NULL);
+
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), 1, sensitive);
 }
 
 static void
@@ -6593,6 +6619,7 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 
 	data->window = gtk_dialog_new_with_buttons(_("Add Chat"),
 		gtkblist ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_NO_SEPARATOR,
+		_("Room _List"), 1,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_ADD, GTK_RESPONSE_OK,
 		NULL);
@@ -6676,8 +6703,8 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	pidgin_set_accessible_label (data->group_combo, label);
 	gtk_box_pack_end(GTK_BOX(rowbox), data->group_combo, TRUE, TRUE, 0);
 	
-	data->autojoin = gtk_check_button_new_with_mnemonic(_("Autojoin when account becomes online."));
-	data->persistent = gtk_check_button_new_with_mnemonic(_("Hide chat when the window is closed."));
+	data->autojoin = gtk_check_button_new_with_mnemonic(_("Auto_join when account becomes online."));
+	data->persistent = gtk_check_button_new_with_mnemonic(_("_Hide chat when the window is closed."));
 	gtk_box_pack_start(GTK_BOX(vbox), data->autojoin, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), data->persistent, FALSE, FALSE, 0);
 
