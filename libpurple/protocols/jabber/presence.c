@@ -376,23 +376,26 @@ typedef struct _JabberPresenceCapabilities {
 static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, gpointer user_data) {
 	JabberPresenceCapabilities *userdata = user_data;
 	GList *iter;
-	
+
 	if(userdata->jbr->caps)
 		jabber_caps_free_clientinfo(userdata->jbr->caps);
 	userdata->jbr->caps = info;
-	
-	for(iter = info->features; iter; iter = g_list_next(iter)) {
-		if(!strcmp((const char*)iter->data, "http://jabber.org/protocol/commands")) {
-			JabberIq *iq = jabber_iq_new_query(userdata->js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
-			xmlnode *query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#items");
-			xmlnode_set_attrib(iq->node, "to", userdata->from);
-			xmlnode_set_attrib(query, "node", "http://jabber.org/protocol/commands");
-			
-			jabber_iq_set_callback(iq, jabber_adhoc_disco_result_cb, NULL);
-			jabber_iq_send(iq);
-			break;
+
+	if (info) {
+		for(iter = info->features; iter; iter = g_list_next(iter)) {
+			if(!strcmp((const char*)iter->data, "http://jabber.org/protocol/commands")) {
+				JabberIq *iq = jabber_iq_new_query(userdata->js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
+				xmlnode *query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#items");
+				xmlnode_set_attrib(iq->node, "to", userdata->from);
+				xmlnode_set_attrib(query, "node", "http://jabber.org/protocol/commands");
+
+				jabber_iq_set_callback(iq, jabber_adhoc_disco_result_cb, NULL);
+				jabber_iq_send(iq);
+				break;
+			}
 		}
 	}
+
 	g_free(userdata->from);
 	g_free(userdata);
 }
