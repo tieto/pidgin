@@ -1211,6 +1211,9 @@ network_page()
 	vbox = pidgin_make_frame (ret, _("Ports"));
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
+	pidgin_prefs_checkbox(_("_Enable automatic router port forwarding"),
+			"/purple/network/map_ports", vbox);
+
 	ports_checkbox = pidgin_prefs_checkbox(_("_Manually specify range of ports to listen on"),
 			"/purple/network/ports_range_use", vbox);
 
