@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-28 10:03+0100\n"
-"PO-Revision-Date: 2007-11-28 10:03+0100\n"
+"POT-Creation-Date: 2007-11-30 10:22+0100\n"
+"PO-Revision-Date: 2007-11-30 10:21+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2335,6 +2335,12 @@ msgstr "Mono-Plugin-Lader"
 
 msgid "Loads .NET plugins with Mono."
 msgstr "Lädt .NET-Plugins mit Mono."
+
+msgid "Add new line in IMs"
+msgstr "Neue Zeile in IMs einfügen"
+
+msgid "Add new line in Chats"
+msgstr "Neue Zeile in Chats einfügen"
 
 #. *< magic
 #. *< major version
