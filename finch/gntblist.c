@@ -131,6 +131,32 @@ static int color_away;
 static int color_offline;
 static int color_idle;
 
+static int
+get_display_color(PurpleBlistNode  *node)
+{
+	PurpleBuddy *buddy;
+	int color = 0;
+
+	if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+		node = (PurpleBlistNode*)purple_contact_get_priority_buddy((PurpleContact*)node);
+	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+		return 0;
+
+	buddy = (PurpleBuddy*)node;
+	if (purple_presence_is_idle(purple_buddy_get_presence(buddy))) {
+		color = color_idle;
+	} else if (purple_presence_is_available(purple_buddy_get_presence(buddy))) {
+		color = color_available;
+	} else if (purple_presence_is_online(purple_buddy_get_presence(buddy)) &&
+			!purple_presence_is_available(purple_buddy_get_presence(buddy))) {
+		color = color_away;
+	} else if (!purple_presence_is_online(purple_buddy_get_presence(buddy))) {
+		color = color_offline;
+	}
+
+	return color;
+}
+
 static gboolean
 is_contact_online(PurpleContact *contact)
 {
@@ -235,6 +261,7 @@ node_update(PurpleBuddyList *list, PurpleBlistNode *node)
 		gnt_tree_change_text(GNT_TREE(ggblist->tree), node,
 				0, get_display_name(node));
 		gnt_tree_sort_row(GNT_TREE(ggblist->tree), node);
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), node, get_display_color(node));
 	}
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
@@ -588,11 +615,11 @@ add_contact(PurpleContact *contact, FinchBlist *ggblist)
 
 	if (node->ui_data)
 		return;
-	
+
 	name = get_display_name(node);
 	if (name == NULL)
 		return;
-	
+
 	group = (PurpleGroup*)node->parent;
 	add_node((PurpleBlistNode*)group, ggblist);
 
@@ -608,6 +635,7 @@ add_buddy(PurpleBuddy *buddy, FinchBlist *ggblist)
 {
 	PurpleContact *contact;
 	PurpleBlistNode *node = (PurpleBlistNode *)buddy;
+	int color = 0;
 	if (node->ui_data)
 		return;
 
@@ -623,20 +651,10 @@ add_buddy(PurpleBuddy *buddy, FinchBlist *ggblist)
 				gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)),
 				contact, NULL);
 
-	if (purple_presence_is_idle(purple_buddy_get_presence(buddy))) {
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_idle);
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_idle);
-	} else if (purple_presence_is_available(purple_buddy_get_presence(buddy)) && color_available) {
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_available);
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_available);
-	} else if (purple_presence_is_online(purple_buddy_get_presence(buddy)) &&
-			!purple_presence_is_available(purple_buddy_get_presence(buddy)) && color_away) {
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_away);
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_away);
-	} else if (!purple_presence_is_online(purple_buddy_get_presence(buddy)) && color_offline) {
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_offline);
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_offline);
-	}
+	color = get_display_color((PurpleBlistNode*)buddy);
+	gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color);
+	if (buddy == purple_contact_get_priority_buddy(contact))
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color);
 }
 
 #if 0
@@ -1557,7 +1575,8 @@ update_buddy_display(PurpleBuddy *buddy, FinchBlist *ggblist)
 {
 	PurpleContact *contact;
 	GntTextFormatFlags bflag = 0, cflag = 0;
-	
+	int color = 0;
+
 	contact = purple_buddy_get_contact(buddy);
 
 	gnt_tree_change_text(GNT_TREE(ggblist->tree), buddy, 0, get_display_name((PurpleBlistNode*)buddy));
@@ -1571,28 +1590,11 @@ update_buddy_display(PurpleBuddy *buddy, FinchBlist *ggblist)
 	if (ggblist->tnode == (PurpleBlistNode*)buddy)
 		draw_tooltip(ggblist);
 
-	if (purple_presence_is_idle(purple_buddy_get_presence(buddy))) {
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_idle);
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_idle);
-		if (buddy == purple_contact_get_priority_buddy(contact))
-			gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_idle);
-	} else if (purple_presence_is_available(purple_buddy_get_presence(buddy)) && color_available) {
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_available);
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_available);
-		if (buddy == purple_contact_get_priority_buddy(contact))
-			gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_available);
-	} else if (purple_presence_is_online(purple_buddy_get_presence(buddy)) &&
-			!purple_presence_is_available(purple_buddy_get_presence(buddy)) && color_away) {
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_away);
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_away);
-		if (buddy == purple_contact_get_priority_buddy(contact))
-			gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_away);
-	} else if (!purple_presence_is_online(purple_buddy_get_presence(buddy)) && color_offline) {
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_offline);
-		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_offline);
-		if (buddy == purple_contact_get_priority_buddy(contact))
-			gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_offline);
-	}
+	color = get_display_color((PurpleBlistNode*)buddy);
+	gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color);
+	if (buddy == purple_contact_get_priority_buddy(contact))
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color);
+
 	gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, bflag);
 	if (buddy == purple_contact_get_priority_buddy(contact))
 		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, cflag);
