@@ -1,5 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.3.1 (??/??/????):
+	Finch:
+	* Color is used in the buddylist to indicate status. Look at the sample
+	  gntrc file in the man-page for details.
+
 version 2.3.0 (11/24/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.3.0
 		NOTE: Some bugs marked fixed in 2.2.1, 2.2.2 or 2.2.3 may not

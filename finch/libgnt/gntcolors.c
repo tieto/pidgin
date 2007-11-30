@@ -164,8 +164,12 @@ gnt_colors_get_color(char *key)
 		color = COLOR_MAGENTA;
 	else if (strcmp(key, "cyan") == 0)
 		color = COLOR_CYAN;
-	else
+	else if (strcmp(key, "default") == 0)
 		color = -1;
+	else {
+		g_warning("Invalid color name: %s\n", key);
+		color = -1;
+	}
 	return color;
 }
 

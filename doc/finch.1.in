@@ -137,13 +137,13 @@ A sample file looks like:
 .br
 [Finch]
 .br
-online-color: green; black
+color-available = green; black
 .br
-away-color: blue; black
+color-away = blue; black
 .br
-idle-color: gray; black
+color-idle = gray; black
 .br
-offline-color: red; black
+color-offline = red; black
 .br
 #See below for details on color
 .br

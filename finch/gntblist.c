@@ -27,7 +27,6 @@
 
 #include <account.h>
 #include <blist.h>
-#include <curses.h>
 #include <notify.h>
 #include <request.h>
 #include <savedstatuses.h>
@@ -1788,22 +1787,19 @@ get_color(char *key)
 
 void finch_blist_init()
 {
-	short fg, bg;
-	if (has_colors()) {
-		pair_content(GNT_COLOR_NORMAL, &fg, &bg);
-		color_available = get_color("color-available");
-		if (!color_available)
-			color_available = gnt_color_add_pair(COLOR_GREEN, bg);
-		color_away = get_color("color-away");
-		if (!color_away)
-			color_away = gnt_color_add_pair(COLOR_BLUE, bg);
-		color_idle = get_color("color-idle");
-		if (!color_idle)
-			color_idle = gnt_color_add_pair(COLOR_CYAN, bg);
-		color_offline = get_color("color-offline");
-		if (!color_offline)
-			color_offline = gnt_color_add_pair(COLOR_RED, bg);
-	}
+	color_available = get_color("color-available");
+	if (!color_available)
+		color_available = gnt_color_add_pair(COLOR_GREEN, -1);
+	color_away = get_color("color-away");
+	if (!color_away)
+		color_away = gnt_color_add_pair(COLOR_BLUE, -1);
+	color_idle = get_color("color-idle");
+	if (!color_idle)
+		color_idle = gnt_color_add_pair(COLOR_CYAN, -1);
+	color_offline = get_color("color-offline");
+	if (!color_offline)
+		color_offline = gnt_color_add_pair(COLOR_RED, -1);
+
 	purple_prefs_add_none(PREF_ROOT);
 	purple_prefs_add_none(PREF_ROOT "/size");
 	purple_prefs_add_int(PREF_ROOT "/size/width", 20);
