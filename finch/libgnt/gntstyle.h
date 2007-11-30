@@ -65,6 +65,20 @@ const char *gnt_style_get(GntStyle style);
 char *gnt_style_get_from_name(const char *group, const char *key);
 
 /**
+ * Get the value of a preference in ~/.gntrc.
+ *
+ * @param group   The name of the group in the keyfile. If @c NULL, the prgname
+ *                will be used first, if available. Otherwise, "general" will be used.
+ * @param key     The key
+ * @param length  Return location for the number of strings returned, or NULL
+ *
+ * @return        NULL terminated string array. The array should be freed with g_strfreev().
+ *
+ * @since 2.3.1 (gnt), 2.3.1 (pidgin)
+ */
+char **gnt_style_get_string_list(const char *group, const char *key, gsize *length);
+
+/**
  * Parse a boolean preference. For example, if 'value' is "false" (ignoring case)
  * or "0", the return value will be @c FALSE, otherwise @c TRUE.
  *

@@ -135,6 +135,18 @@ Create a new workspace and switch to it
 .TP
 A sample file looks like:
 .br
+[Finch]
+.br
+online-color: green; black
+.br
+away-color: blue; black
+.br
+idle-color: gray; black
+.br
+offline-color: red; black
+.br
+#See below for details on color
+.br
 [general]
 .br
 shadow = 0

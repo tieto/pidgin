@@ -27,6 +27,7 @@
 
 #include <account.h>
 #include <blist.h>
+#include <curses.h>
 #include <notify.h>
 #include <request.h>
 #include <savedstatuses.h>
@@ -37,6 +38,7 @@
 #include "debug.h"
 
 #include "gntbox.h"
+#include "gntcolors.h"
 #include "gntcombobox.h"
 #include "gntentry.h"
 #include "gntft.h"
@@ -46,6 +48,7 @@
 #include "gntmenuitem.h"
 #include "gntmenuitemcheck.h"
 #include "gntpounce.h"
+#include "gntstyle.h"
 #include "gnttree.h"
 #include "gntutils.h"
 #include "gntwindow.h"
@@ -123,6 +126,11 @@ static int blist_node_compare_position(PurpleBlistNode *n1, PurpleBlistNode *n2)
 static int blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2);
 static int blist_node_compare_status(PurpleBlistNode *n1, PurpleBlistNode *n2);
 static int blist_node_compare_log(PurpleBlistNode *n1, PurpleBlistNode *n2);
+
+static int color_available;
+static int color_away;
+static int color_offline;
+static int color_idle;
 
 static gboolean
 is_contact_online(PurpleContact *contact)
@@ -615,12 +623,20 @@ add_buddy(PurpleBuddy *buddy, FinchBlist *ggblist)
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), buddy,
 				gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)),
 				contact, NULL);
+
 	if (purple_presence_is_idle(purple_buddy_get_presence(buddy))) {
-		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, GNT_TEXT_FLAG_DIM);
-		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, GNT_TEXT_FLAG_DIM);
-	} else {
-		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, 0);
-		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, 0);
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_idle);
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_idle);
+	} else if (purple_presence_is_available(purple_buddy_get_presence(buddy)) && color_available) {
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_available);
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_available);
+	} else if (purple_presence_is_online(purple_buddy_get_presence(buddy)) &&
+			!purple_presence_is_available(purple_buddy_get_presence(buddy)) && color_away) {
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_away);
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_away);
+	} else if (!purple_presence_is_online(purple_buddy_get_presence(buddy)) && color_offline) {
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_offline);
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_offline);
 	}
 }
 
@@ -1557,18 +1573,33 @@ update_buddy_display(PurpleBuddy *buddy, FinchBlist *ggblist)
 		draw_tooltip(ggblist);
 
 	if (purple_presence_is_idle(purple_buddy_get_presence(buddy))) {
-		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, bflag | GNT_TEXT_FLAG_DIM);
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_idle);
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_idle);
 		if (buddy == purple_contact_get_priority_buddy(contact))
-			gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, cflag | GNT_TEXT_FLAG_DIM);
-		else
-			update_buddy_display(purple_contact_get_priority_buddy(contact), ggblist);
-	} else {
-		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, bflag);
+			gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_idle);
+	} else if (purple_presence_is_available(purple_buddy_get_presence(buddy)) && color_available) {
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_available);
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_available);
 		if (buddy == purple_contact_get_priority_buddy(contact))
-			gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, cflag);
-		else
-			update_buddy_display(purple_contact_get_priority_buddy(contact), ggblist);
+			gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_available);
+	} else if (purple_presence_is_online(purple_buddy_get_presence(buddy)) &&
+			!purple_presence_is_available(purple_buddy_get_presence(buddy)) && color_away) {
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_away);
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_away);
+		if (buddy == purple_contact_get_priority_buddy(contact))
+			gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_away);
+	} else if (!purple_presence_is_online(purple_buddy_get_presence(buddy)) && color_offline) {
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), buddy, color_offline);
+		gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_offline);
+		if (buddy == purple_contact_get_priority_buddy(contact))
+			gnt_tree_set_row_color(GNT_TREE(ggblist->tree), contact, color_offline);
 	}
+	gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), buddy, bflag);
+	if (buddy == purple_contact_get_priority_buddy(contact))
+		gnt_tree_set_row_flags(GNT_TREE(ggblist->tree), contact, cflag);
+
+	if (buddy != purple_contact_get_priority_buddy(contact))
+			update_buddy_display(purple_contact_get_priority_buddy(contact), ggblist);
 }
 
 static void
@@ -1736,8 +1767,43 @@ redraw_blist(const char *name, PurplePrefType type, gconstpointer val, gpointer 
 	draw_tooltip(ggblist);
 }
 
+static int
+get_color(char *key)
+{
+#if GLIB_CHECK_VERSION(2,6,0)
+	int fg = 0, bg = 0;
+	gsize n;
+	char **vals;
+	vals = gnt_style_get_string_list(NULL, key, &n);
+	if (vals && n == 2) {
+		fg = gnt_colors_get_color(vals[0]);
+		bg = gnt_colors_get_color(vals[1]);
+		return gnt_color_add_pair(fg, bg);
+	}
+	return 0;
+#else
+	return 0;
+#endif
+}
+
 void finch_blist_init()
 {
+	short fg, bg;
+	if (has_colors()) {
+		pair_content(GNT_COLOR_NORMAL, &fg, &bg);
+		color_available = get_color("color-available");
+		if (!color_available)
+			color_available = gnt_color_add_pair(COLOR_GREEN, bg);
+		color_away = get_color("color-away");
+		if (!color_away)
+			color_away = gnt_color_add_pair(COLOR_BLUE, bg);
+		color_idle = get_color("color-idle");
+		if (!color_idle)
+			color_idle = gnt_color_add_pair(COLOR_CYAN, bg);
+		color_offline = get_color("color-offline");
+		if (!color_offline)
+			color_offline = gnt_color_add_pair(COLOR_RED, bg);
+	}
 	purple_prefs_add_none(PREF_ROOT);
 	purple_prefs_add_none(PREF_ROOT "/size");
 	purple_prefs_add_int(PREF_ROOT "/size/width", 20);
@@ -2550,4 +2616,3 @@ void finch_blist_set_size(int width, int height)
 {
 	gnt_widget_set_size(ggblist->window, width, height);
 }
-

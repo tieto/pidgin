@@ -75,6 +75,7 @@ struct _GntTreeRow
 	                               If choice is true, then child will be NULL */
 	gboolean isselected;
 	GntTextFormatFlags flags;
+	int color;
 
 	GntTreeRow *parent;
 	GntTreeRow *child;
@@ -522,9 +523,14 @@ redraw_tree(GntTree *tree)
 		else
 		{
 			if (flags & GNT_TEXT_FLAG_DIM)
-				attr |= (A_DIM | gnt_color_pair(GNT_COLOR_DISABLED));
+				if (row->color)
+					attr |= (A_DIM | gnt_color_pair(row->color));
+				else
+					attr |= (A_DIM | gnt_color_pair(GNT_COLOR_DISABLED));
 			else if (flags & GNT_TEXT_FLAG_HIGHLIGHT)
 				attr |= (A_DIM | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
+			else if (row->color)
+				attr |= gnt_color_pair(row->color);
 			else
 				attr |= gnt_color_pair(GNT_COLOR_NORMAL);
 		}
@@ -1557,6 +1563,16 @@ void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags)
 
 	row->flags = flags;
 	redraw_tree(tree);	/* XXX: It shouldn't be necessary to redraw the whole darned tree */
+}
+
+void gnt_tree_set_row_color(GntTree *tree, void *key, int color)
+{
+	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
+	if (!row || row->color == color)
+		return;
+
+	row->color = color;
+	redraw_tree(tree);
 }
 
 void gnt_tree_set_selected(GntTree *tree , void *key)

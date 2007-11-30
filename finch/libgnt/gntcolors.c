@@ -33,6 +33,7 @@
 #include <string.h>
 
 static gboolean hascolors;
+static int custom_type = GNT_COLORS;
 static struct
 {
 	short r, g, b;
@@ -137,8 +138,8 @@ gnt_uninit_colors()
 }
 
 #if GLIB_CHECK_VERSION(2,6,0)
-static int
-get_color(char *key)
+int
+gnt_colors_get_color(char *key)
 {
 	int color;
 	gboolean custom = can_use_custom_color();
@@ -196,7 +197,7 @@ void gnt_colors_parse(GKeyFile *kfile)
 				int color = -1;
 
 				key = g_ascii_strdown(key, -1);
-				color = get_color(key);
+				color = gnt_colors_get_color(key);
 				g_free(key);
 				if (color == -1)
 					continue;
@@ -237,8 +238,8 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 			GntColorType type = 0;
 			gchar *fgc = g_ascii_strdown(list[0], -1);
 			gchar *bgc = g_ascii_strdown(list[1], -1);
-			int fg = get_color(fgc);
-			int bg = get_color(bgc);
+			int fg = gnt_colors_get_color(fgc);
+			int bg = gnt_colors_get_color(bgc);
 			g_free(fgc);
 			g_free(bgc);
 			if (fg == -1 || bg == -1)
@@ -287,3 +288,8 @@ int gnt_color_pair(int pair)
 		  pair == GNT_COLOR_TITLE_D || pair == GNT_COLOR_DISABLED) ? 0 : A_STANDOUT));
 }
 
+int gnt_color_add_pair(int fg, int bg)
+{
+	init_pair(custom_type, fg, bg);
+	return custom_type++;
+}
