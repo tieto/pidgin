@@ -328,7 +328,7 @@ AC_ARG_ENABLE(gtkui, [AC_HELP_STRING([--disable-gtkui],
 	enable_gtkui="$enableval", enable_gtkui="yes")
 AC_ARG_ENABLE(consoleui, [AC_HELP_STRING([--disable-consoleui],
 		[compile without console user interface])],
-	enable_consoleui=$enableval, enable_consoleui=yes)
+	[enable_consoleui=$enableval force_finch=$enableval], [enable_consoleui=yes force_finch=no])
 
 dnl #######################################################################
 dnl # Check for GTK+ 2.0 and other things used by the GTK UI
@@ -620,6 +620,14 @@ if test "x$enable_consoleui" = "xyes"; then
 			fi
 		fi
 	fi
+fi
+
+if test "x$force_finch" = "xyes" -a "x$enable_consoleui" != "xyes"; then
+	AC_MSG_ERROR([
+
+Finch will not be built. You need to install ncursesw (or ncurses) and its development headers.
+
+])
 fi
 
 AC_SUBST(GNT_LIBS)
