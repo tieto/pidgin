@@ -1,6 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.3.1 (??/??/????):
+	libpurple:
+	* Fixed various problems with loss of status messages when going
+	  or returning from idle on MySpaceIM.
+
 	Finch:
 	* Color is used in the buddylist to indicate status. Look at the sample
 	  gntrc file in the man-page for details.
