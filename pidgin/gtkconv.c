@@ -2860,11 +2860,11 @@ pidgin_conversations_find_unseen_list(PurpleConversationType type,
 
 		if(gtkconv == NULL || gtkconv->active_conv != conv)
 			continue;
-		if (gtkconv == NULL) {
-			if (!purple_conversation_get_data(conv, "unseen-count") ||
-				!purple_conversation_get_data(conv, "unseen-state") ||
-				GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-state"))<min_state)
-				continue;
+
+		if (gtkconv->unseen_state >= min_state
+				&& (!hidden_only ||
+					(hidden_only && gtkconv->win == hidden_convwin))) {
+
 			r = g_list_prepend(r, conv);
 			c++;
 		}
