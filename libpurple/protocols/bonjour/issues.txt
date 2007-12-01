@@ -2,5 +2,4 @@
 ============= Known issues ===============
 ==========================================
 
-* File transfers
 * Typing notifications

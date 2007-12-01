@@ -620,7 +620,7 @@ bonjour_jabber_start(BonjourJabber *data)
 	}
 
 	memset(&my_addr, 0, sizeof(struct sockaddr_in));
-	my_addr.sin_family = PF_INET;
+	my_addr.sin_family = AF_INET;
 
 	/* Attempt to find a free port */
 	bind_successful = FALSE;
