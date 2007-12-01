@@ -106,6 +106,18 @@ PPCODE:
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Pounce")));
 	}
 
+void
+purple_pounces_get_all_for_ui(ui)
+	const char *ui
+PREINIT:
+	GList *l, *ll;
+PPCODE:
+	ll = purple_pounces_get_all_for_ui(ui);
+	for (l = ll; l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Pounce")));
+	}
+	g_list_free(ll);
+
 Purple::Handle
 purple_pounces_get_handle()
 
