@@ -575,15 +575,16 @@ static const char *
 next_begin_word(const char *text, const char *end)
 {
 	gunichar ch = 0;
+
+	while (text && text < end && g_unichar_isspace(g_utf8_get_char(text)))
+		text = g_utf8_find_next_char(text, end);
+
 	ch = g_utf8_get_char(text);
 	while ((text = g_utf8_find_next_char(text, end)) != NULL && text <= end) {
 		gunichar cur = g_utf8_get_char(text);
 		if (!SAME(ch, cur))
 			break;
 	}
-
-	while (text && text < end && g_unichar_isspace(g_utf8_get_char(text)))
-		text = g_utf8_find_next_char(text, end);
 	return (text ? text : end);
 }
 
