@@ -1047,15 +1047,18 @@ void
 msim_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleStatusType *type;
+	PurplePresence *pres;
 	MsimSession *session;
 	guint status_code;
-	gchar *statstring;
+	const gchar *message;
+	gchar *stripped;
 
 	session = (MsimSession *)account->gc->proto_data;
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
 	type = purple_status_get_type(status);
+	pres = purple_status_get_presence(status);
 
 	switch (purple_status_type_get_primitive(type)) {
 		case PURPLE_STATUS_AVAILABLE:
@@ -1083,16 +1086,20 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 			break;
 	}
 
-	statstring = (gchar *)purple_status_get_attr_string(status, "message");
-
-	if (!statstring) {
-		statstring = "";
-	}
+	message = (gchar *)purple_status_get_attr_string(status, "message");
 
 	/* Status strings are plain text. */
-	statstring = purple_markup_strip_html(statstring);
+	if (message != NULL)
+		stripped = purple_markup_strip_html(message);
+	else
+		stripped = g_strdup("");
 
-	msim_set_status_code(session, status_code, statstring);
+	msim_set_status_code(session, status_code, stripped);
+
+	/* If we should be idle, set that status. Time is irrelevant here. */
+	if (purple_presence_is_idle(pres) && status_code != MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN)
+		msim_set_idle(account->gc, 1);
+
 }
 
 /** Go idle. */
@@ -1100,6 +1107,7 @@ void
 msim_set_idle(PurpleConnection *gc, int time)
 {
 	MsimSession *session;
+	PurpleStatus *status;
 
 	g_return_if_fail(gc != NULL);
 
@@ -1107,16 +1115,30 @@ msim_set_idle(PurpleConnection *gc, int time)
 
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
+	status = purple_account_get_active_status(session->account);
+
 	if (time == 0) {
 		/* Going back from idle. In msim, idle is mutually exclusive 
 		 * from the other states (you can only be away or idle, but not
-		 * both, for example), so by going non-idle I go online.
+		 * both, for example), so by going non-idle I go back to what
+		 * libpurple says I should be.
 		 */
-		/* TODO: find out how to keep old status string? */
-		msim_set_status_code(session, MSIM_STATUS_CODE_ONLINE, g_strdup(""));
+		msim_set_status(session->account, status);
 	} else {
+		const gchar *message;
+		gchar *stripped;
+
+		/* Set the idle message to the status message from the real
+		 * current status.
+		 */
+		message = purple_status_get_attr_string(status, "message");
+		if (message != NULL)
+			stripped = purple_markup_strip_html(message);
+		else
+			stripped = g_strdup("");
+
 		/* msim doesn't support idle time, so just go idle */
-		msim_set_status_code(session, MSIM_STATUS_CODE_IDLE, g_strdup(""));
+		msim_set_status_code(session, MSIM_STATUS_CODE_IDLE, stripped);
 	}
 }
 
@@ -1894,7 +1916,7 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 		purple_debug_info("msim", "msim_status: found buddy %s\n", username);
 	}
 
-	if (status_headline) {
+	if (status_headline && strcmp(status_headline, "") != 0) {
 		/* The status headline is plaintext, but libpurple treats it as HTML,
 		 * so escape any HTML characters to their entity equivalents. */
 		status_headline_escaped = g_markup_escape_text(status_headline, strlen(status_headline));
