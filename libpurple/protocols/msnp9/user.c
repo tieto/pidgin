@@ -126,16 +126,23 @@ void
 msn_user_set_friendly_name(MsnUser *user, const char *name)
 {
 	MsnCmdProc *cmdproc;
+	MsnSession *session;
+	const char *encoded;
 
 	g_return_if_fail(user != NULL);
 
-	if (user->friendly_name && strcmp(user->friendly_name, name)) {
+	encoded = purple_url_encode(name);
+	session = user->userlist->session;
+
+	if (user->friendly_name && strcmp(user->friendly_name, name)
+		&& (strlen(encoded) < 387) && session->passport_info.verified &&
+		(user->list_op & MSN_LIST_FL_OP)) {
 		/* copy the new name to the server list, but only when new */
 		/* should we check this more thoroughly? */
-		cmdproc = user->userlist->session->notification->cmdproc;
+		cmdproc = session->notification->cmdproc;
 		msn_cmdproc_send(cmdproc, "REA", "%s %s",
 						 user->passport,
-						 purple_url_encode(name));
+						 encoded);
 	}
 
 	g_free(user->friendly_name);

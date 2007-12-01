@@ -297,7 +297,6 @@ init_libpurple(int argc, char **argv)
 	if (opt_version) {
 		/* Translators may want to transliterate the name.
 		 It is not to be translated. */
-		gnt_quit();
 		printf("%s %s\n", _("Finch"), DISPLAY_VERSION);
 		return 0;
 	}
@@ -417,8 +416,6 @@ int main(int argc, char *argv[])
 #if GLIB_CHECK_VERSION(2,2,0)
 	g_set_application_name(_("Finch"));
 #endif
-
-	gnt_init();
 
 	if (gnt_start(&argc, &argv)) {
 		gnt_main();

@@ -19,6 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "internal.h"
+
 #ifndef _WIN32
 #include <net/if.h>
 #include <sys/ioctl.h>
@@ -33,7 +36,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include "internal.h"
 #include "network.h"
 #include "eventloop.h"
 #include "connection.h"
@@ -618,7 +620,7 @@ bonjour_jabber_start(BonjourJabber *data)
 	}
 
 	memset(&my_addr, 0, sizeof(struct sockaddr_in));
-	my_addr.sin_family = PF_INET;
+	my_addr.sin_family = AF_INET;
 
 	/* Attempt to find a free port */
 	bind_successful = FALSE;

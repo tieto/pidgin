@@ -338,7 +338,7 @@ login_connect_cb(gpointer data, PurpleSslConnection *gsc,
 		g_strdup(purple_url_encode(purple_account_get_username(session->account)));
 
 	password =
-		g_strndup(purple_url_encode(purple_connection_get_password(session->account->gc)), 16);
+		g_strdup(purple_url_encode(purple_connection_get_password(session->account->gc)));
 
 	ctint = strtoul((char *)g_hash_table_lookup(nexus->challenge_data, "ct"), NULL, 10) + 200;
 

@@ -1758,7 +1758,6 @@ purple_certificate_get_pools(void)
 gboolean
 purple_certificate_register_pool(PurpleCertificatePool *pool)
 {
-	gboolean success = FALSE;
 	g_return_val_if_fail(pool, FALSE);
 	g_return_val_if_fail(pool->scheme_name, FALSE);
 	g_return_val_if_fail(pool->name, FALSE);
@@ -1771,46 +1770,42 @@ purple_certificate_register_pool(PurpleCertificatePool *pool)
 
 	/* Initialize the pool if needed */
 	if (pool->init) {
+		gboolean success;
+
 		success = pool->init();
-	} else {
-		success = TRUE;
+		if (!success)
+			return FALSE;
 	}
-	
-	if (success) {
-		/* Register the Pool */
-		cert_pools = g_list_prepend(cert_pools, pool);
 
-		/* TODO: Emit a signal that the pool got registered */
+	/* Register the Pool */
+	cert_pools = g_list_prepend(cert_pools, pool);
 
-		PURPLE_DBUS_REGISTER_POINTER(pool, PurpleCertificatePool);
-		purple_signal_register(pool, /* Signals emitted from pool */
-				       "certificate-stored",
-				       purple_marshal_VOID__POINTER_POINTER,
-				       NULL, /* No callback return value */
-				       2,    /* Two non-data arguments */
-				       purple_value_new(PURPLE_TYPE_SUBTYPE,
-							PURPLE_SUBTYPE_CERTIFICATEPOOL),
-				       purple_value_new(PURPLE_TYPE_STRING));
+	/* TODO: Emit a signal that the pool got registered */
 
-		purple_signal_register(pool, /* Signals emitted from pool */
-				       "certificate-deleted",
-				       purple_marshal_VOID__POINTER_POINTER,
-				       NULL, /* No callback return value */
-				       2,    /* Two non-data arguments */
-				       purple_value_new(PURPLE_TYPE_SUBTYPE,
-							PURPLE_SUBTYPE_CERTIFICATEPOOL),
-				       purple_value_new(PURPLE_TYPE_STRING));
+	PURPLE_DBUS_REGISTER_POINTER(pool, PurpleCertificatePool);
+	purple_signal_register(pool, /* Signals emitted from pool */
+			       "certificate-stored",
+			       purple_marshal_VOID__POINTER_POINTER,
+			       NULL, /* No callback return value */
+			       2,    /* Two non-data arguments */
+			       purple_value_new(PURPLE_TYPE_SUBTYPE,
+						PURPLE_SUBTYPE_CERTIFICATEPOOL),
+			       purple_value_new(PURPLE_TYPE_STRING));
 
+	purple_signal_register(pool, /* Signals emitted from pool */
+			       "certificate-deleted",
+			       purple_marshal_VOID__POINTER_POINTER,
+			       NULL, /* No callback return value */
+			       2,    /* Two non-data arguments */
+			       purple_value_new(PURPLE_TYPE_SUBTYPE,
+						PURPLE_SUBTYPE_CERTIFICATEPOOL),
+			       purple_value_new(PURPLE_TYPE_STRING));
 
-		purple_debug_info("certificate",
-			  "CertificatePool %s registered\n",
-			  pool->name);
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-	
-	/* Control does not reach this point */
+	purple_debug_info("certificate",
+		  "CertificatePool %s registered\n",
+		  pool->name);
+
+	return TRUE;
 }
 
 gboolean

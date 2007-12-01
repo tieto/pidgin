@@ -512,9 +512,8 @@ x509_import_from_file(const gchar * filename)
 	dt.data = (unsigned char *) buf;
 	dt.size = buf_sz;
 
-	/* Perform the conversion */
-	crt = x509_import_from_datum(dt,
-				     GNUTLS_X509_FMT_PEM); // files should be in PEM format
+	/* Perform the conversion; files should be in PEM format */
+	crt = x509_import_from_datum(dt, GNUTLS_X509_FMT_PEM);
 
 	/* Cleanup */
 	g_free(buf);

@@ -1,5 +1,23 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.3.1 (12/??/2007):
+	http://developer.pidgin.im/query?status=closed&milestone=2.3.1
+		NOTE: Due to the way this release was made, it is possible that
+			  bugs marked as fixed in 2.3.1 will not be fixed until the
+			  next release.
+
+	libpurple:
+	* Fixed a number of MSN bugs introduced in 2.3.0, resolving problems
+	  connecting to MSN and random local display name changes
+	* Fixed various problems with loss of status messages when going
+	  or returning from idle on MySpaceIM.
+	* Fixed crashes in XMPP when discovering a clients capabilities
+	* Don't set the current tune title if it's NULL (XMPP/Google Talk)
+	* Don't allow buddies to be manually added to Bonjour
+	* Don't advertise IPv6 on Bonjour because we don't support it
+	* Compile fixes for FreeBSD & Solaris
+
+
 version 2.3.0 (11/24/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.3.0
 		NOTE: Some bugs marked fixed in 2.2.1, 2.2.2 or 2.2.3 may not
