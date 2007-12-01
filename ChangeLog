@@ -11,11 +11,11 @@ version 2.3.1 (12/??/2007):
 	  connecting to MSN and random local display name changes
 	* Fixed various problems with loss of status messages when going
 	  or returning from idle on MySpaceIM.
-	* Fixed crashes in XMPP when discovering a clients capabilities
+	* Fixed crashes in XMPP when discovering a client's capabilities
 	* Don't set the current tune title if it's NULL (XMPP/Google Talk)
 	* Don't allow buddies to be manually added to Bonjour
 	* Don't advertise IPv6 on Bonjour because we don't support it
-	* Compile fixes for FreeBSD & Solaris
+	* Compile fixes for FreeBSD and Solaris
 
 
 version 2.3.0 (11/24/2007):
