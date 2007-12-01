@@ -6555,7 +6555,28 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			}
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 			const char *topic = gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text));
-			char *esc = topic ? g_markup_escape_text(topic, -1) : NULL;
+			char *esc = NULL;
+#if GTK_CHECK_VERSION(2,6,0)
+			esc = topic ? g_markup_escape_text(topic, -1) : NULL;
+#else
+			/* GTK < 2.6 doesn't have auto ellipsization, so we do a crude
+			 * trucation to prevent forcing the window to be as wide as the topic */
+			int len = 0;
+			char *c, *tmp = g_strdup(topic);
+			c = tmp;
+			while(*c && len < 72) {
+				c = g_utf8_next_char(c);
+				len++;
+			}
+			if (len == 72) {
+				*c = '\0';
+				c = g_strdup_printf("%s...", tmp);
+				g_free(tmp);
+				tmp = c;
+			}
+			esc = tmp ? g_markup_escape_text(tmp, -1) : NULL;
+			g_free(tmp);
+#endif
 			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",
 						purple_conversation_get_title(conv),
 						esc  && *esc ? "\n" : "",
