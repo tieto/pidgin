@@ -1086,7 +1086,7 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 			break;
 	}
 
-	message = (gchar *)purple_status_get_attr_string(status, "message");
+	message = purple_status_get_attr_string(status, "message");
 
 	/* Status strings are plain text. */
 	if (message != NULL)
