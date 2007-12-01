@@ -125,6 +125,7 @@ typedef struct {
 static GtkWidget *invite_dialog = NULL;
 static GtkWidget *warn_close_dialog = NULL;
 
+static PidginWindow *hidden_convwin = NULL;
 static GList *window_list = NULL;
 
 /* Lists of status icons at all available sizes for use as window icons */
@@ -235,10 +236,7 @@ close_conv_cb(GtkWidget *w, GdkEventButton *dontuse, PidginConversation *gtkconv
 	switch (purple_conversation_get_type(conv)) {
 		case PURPLE_CONV_TYPE_IM:
 		{
-			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/close_immediately"))
-				close_this_sucker(gtkconv);
-			else
-				hide_conv(gtkconv, TRUE);
+			hide_conv(gtkconv, TRUE);
 			break;
 		}
 		case PURPLE_CONV_TYPE_CHAT:
@@ -263,43 +261,6 @@ lbox_size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, gpointer data)
 {
 	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/chat/userlist_width", allocation->width == 1 ? 0 : allocation->width);
 
-	return FALSE;
-}
-
-static gboolean
-size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, PidginConversation *gtkconv)
-{
-	PurpleConversation *conv = gtkconv->active_conv;
-
-	if (!GTK_WIDGET_VISIBLE(w))
-		return FALSE;
-
-	if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
-		return FALSE;
-	if (gtkconv->auto_resize) {
-		return FALSE;
-	}
-
-	if (gdk_window_get_state(gtkconv->win->window->window) & GDK_WINDOW_STATE_MAXIMIZED) {
-		return FALSE;
-	}
-
-	/* I find that I resize the window when it has a bunch of conversations in it, mostly so that the
-	 * tab bar will fit, but then I don't want new windows taking up the entire screen.  I check to see
-	 * if there is only one conversation in the window.  This way we'll be setting new windows to the
-	 * size of the last resized new window. */
-	/* I think that the above justification is not the majority, and that the new tab resizing should
-	 * negate it anyway.  --luke */
-	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
-	{
-		if (w == gtkconv->lower_hbox)
-			purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/im/entry_height", allocation->height);
-	}
-	else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
-	{
-		if (w == gtkconv->lower_hbox)
-			purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/chat/entry_height", allocation->height);
-	}
 	return FALSE;
 }
 
@@ -452,18 +413,6 @@ send_history_add(PidginConversation *gtkconv, const char *message)
 	gtkconv->send_history = g_list_prepend(first, NULL);
 }
 
-static void
-reset_default_size(PidginConversation *gtkconv)
-{
-	PurpleConversation *conv = gtkconv->active_conv;
-	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
-		gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
-					    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/entry_height"));
-	else
-		gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
-					    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/entry_height"));
-}
-
 static gboolean
 check_for_and_do_command(PurpleConversation *conv)
 {
@@ -573,7 +522,6 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	if (check_for_and_do_command(conv)) {
 		if (gtkconv->entry_growing) {
-			reset_default_size(gtkconv);
 			gtkconv->entry_growing = FALSE;
 		}
 		gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
@@ -633,7 +581,6 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 	if (gtkconv->entry_growing) {
-		reset_default_size(gtkconv);
 		gtkconv->entry_growing = FALSE;
 	}
 	gtkconv_set_unseen(gtkconv, PIDGIN_UNSEEN_NONE);
@@ -1378,7 +1325,13 @@ hide_conv(PidginConversation *gtkconv, gboolean closetimer)
 			timer = purple_timeout_add_seconds(CLOSE_CONV_TIMEOUT_SECS, close_already, conv);
 			purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(timer));
 		}
+#if 0
+		/* I will miss you */
 		purple_conversation_set_ui_ops(conv, NULL);
+#else
+		pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
+		pidgin_conv_window_add_gtkconv(hidden_convwin, gtkconv);
+#endif
 	}
 }
 
@@ -2819,6 +2772,9 @@ pidgin_conv_present_conversation(PurpleConversation *conv)
 	if (gtkconv == NULL) {
 		pidgin_conv_attach_to_conversation(conv);
 		gtkconv = PIDGIN_CONVERSATION(conv);
+	} else if (gtkconv->win == hidden_convwin) {
+		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
+		pidgin_conv_placement_place(gtkconv);
 	}
 
 	pidgin_conv_switch_active_conversation(conv);
@@ -2851,20 +2807,15 @@ pidgin_conversations_find_unseen_list(PurpleConversationType type,
 		PurpleConversation *conv = (PurpleConversation*)l->data;
 		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 
-		if (gtkconv != NULL && gtkconv->active_conv != conv)
+		if(gtkconv == NULL || gtkconv->active_conv != conv)
 			continue;
-		if (gtkconv == NULL) {
-			if (!purple_conversation_get_data(conv, "unseen-count") ||
-				!purple_conversation_get_data(conv, "unseen-state") ||
-				GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-state"))<min_state)
-				continue;
+
+		if (gtkconv->unseen_state >= min_state
+			&& (!hidden_only ||
+				(hidden_only && gtkconv->win == hidden_convwin))) {
+
 			r = g_list_prepend(r, conv);
 			c++;
-		} else {
-			if (gtkconv->unseen_state >= min_state && !hidden_only) {
-				r = g_list_prepend(r, conv);
-				c++;
-			}
 		}
 	}
 
@@ -2907,8 +2858,8 @@ pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs)
 		GdkPixbuf *pbuf = pidgin_conv_get_icon(conv, icon, PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC);
 		GtkWidget *item;
 		gchar *text = g_strdup_printf("%s (%d)",
-				gtkconv ? gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)) : purple_conversation_get_name(conv),
-				gtkconv ? gtkconv->unseen_count : GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count")));
+				gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)),
+				gtkconv->unseen_count);
 
 		gtk_image_set_from_pixbuf(GTK_IMAGE(icon), pbuf);
 		g_object_unref(pbuf);
@@ -3169,7 +3120,7 @@ regenerate_plugins_items(PidginWindow *win)
 	PurpleConversation *conv;
 	GtkWidget *item;
 
-	if (win->window == NULL)
+	if (win->window == NULL || win == hidden_convwin)
 		return;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
@@ -4369,7 +4320,7 @@ entry_popup_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 1);
 }
 
-static void resize_imhtml_cb(PidginConversation *gtkconv)
+static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 {
 	GtkTextBuffer *buffer;
 	GtkTextIter iter;
@@ -4406,18 +4357,12 @@ static void resize_imhtml_cb(PidginConversation *gtkconv)
 
 	diff = height - gtkconv->entry->allocation.height;
 
-	if (diff > 0) {
-		gtk_widget_size_request(gtkconv->lower_hbox, &sr);
-		gtkconv->entry_growing = TRUE;
+	gtk_widget_size_request(gtkconv->lower_hbox, &sr);
+	gtkconv->entry_growing = TRUE;
 
-		/* uncomment this to auto resize even after the user manually
-		   resizes
-		gtk_paned_set_position(GTK_PANED(gtkconv->lower_hbox->parent->parent),
-			-1);
-		*/
-		gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
-			diff + gtkconv->lower_hbox->allocation.height);
-	}
+	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
+		diff + gtkconv->lower_hbox->allocation.height);
+	return FALSE;
 }
 
 static void
@@ -4687,19 +4632,15 @@ pidgin_userlist_motion_cb (GtkWidget *w, GdkEventMotion *event, PidginConversati
 static GtkWidget *
 setup_common_pane(PidginConversation *gtkconv)
 {
-	GtkWidget *paned, *vbox, *frame, *imhtml_sw, *event_box;
+	GtkWidget *vbox, *frame, *imhtml_sw, *event_box;
 	GtkCellRenderer *rend;
 	GtkTreePath *path;
 	PurpleConversation *conv = gtkconv->active_conv;
 	gboolean chat = (conv->type == PURPLE_CONV_TYPE_CHAT);
 	GtkPolicyType imhtml_sw_hscroll;
 
-	paned = gtk_vpaned_new();
-	gtk_widget_show(paned);
-
 	/* Setup the top part of the pane */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_paned_pack1(GTK_PANED(paned), vbox, TRUE, TRUE);
 	gtk_widget_show(vbox);
 
 	/* Setup the info pane */
@@ -4794,30 +4735,18 @@ setup_common_pane(PidginConversation *gtkconv)
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_release_event",
 	                 G_CALLBACK(refocus_entry_cb), gtkconv);
 
-	/* Setup the bottom half of the conversation window */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_paned_pack2(GTK_PANED(paned), vbox, FALSE, TRUE);
-	gtk_widget_show(vbox);
-
 	gtkconv->lower_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->lower_hbox, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->lower_hbox, FALSE, FALSE, 0);
 	gtk_widget_show(gtkconv->lower_hbox);
-
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_end(GTK_BOX(gtkconv->lower_hbox), vbox, TRUE, TRUE, 0);
-	gtk_widget_show(vbox);
 
 	/* Setup the toolbar, entry widget and all signals */
 	frame = pidgin_create_imhtml(TRUE, &gtkconv->entry, &gtkconv->toolbar, NULL);
-	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkconv->lower_hbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
 	gtk_widget_set_name(gtkconv->entry, "pidgin_conv_entry");
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
 			purple_account_get_protocol_name(conv->account));
-	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
-			chat ? purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/entry_height") :
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/entry_height"));
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "populate-popup",
 	                 G_CALLBACK(entry_popup_menu_cb), gtkconv);
@@ -4827,8 +4756,6 @@ setup_common_pane(PidginConversation *gtkconv)
 	                       G_CALLBACK(send_cb), gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
-	g_signal_connect(G_OBJECT(gtkconv->lower_hbox), "size-allocate",
-	                 G_CALLBACK(size_allocate_cb), gtkconv);
 
 	gtkconv->entry_buffer =
 		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
@@ -4851,7 +4778,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	default_formatize(gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "format_function_clear",
 	                       G_CALLBACK(clear_formatting_cb), gtkconv);
-	return paned;
+	return vbox;
 }
 
 static void
@@ -5025,9 +4952,6 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	GtkWidget *tab_cont;
 	PurpleBlistNode *convnode;
 
-	if (hidden)
-		return;
-
 	if (conv_type == PURPLE_CONV_TYPE_IM && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
 		conv->ui_data = gtkconv;
 		if (!g_list_find(gtkconv->convs, conv))
@@ -5111,6 +5035,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		gtk_widget_show(gtkconv->toolbar);
 	else
 		gtk_widget_hide(gtkconv->toolbar);
+	g_idle_add((GSourceFunc)resize_imhtml_cb, gtkconv);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons"))
 		gtk_widget_show(gtkconv->infopane_hbox);
@@ -5126,7 +5051,10 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	                         G_CALLBACK(gtk_widget_grab_focus),
 	                         gtkconv->entry);
 
-	pidgin_conv_placement_place(gtkconv);
+	if (hidden)
+		pidgin_conv_window_add_gtkconv(hidden_convwin, gtkconv);
+	else
+		pidgin_conv_placement_place(gtkconv);
 
 	if (nick_colors == NULL) {
 		nbr_nick_colors = NUM_NICK_COLORS;
@@ -5134,13 +5062,11 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	}
 }
 
-#if 0
 static void
 pidgin_conv_new_hidden(PurpleConversation *conv)
 {
 	private_gtkconv_new(conv, TRUE);
 }
-#endif
 
 void
 pidgin_conv_new(PurpleConversation *conv)
@@ -5156,24 +5082,30 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 				   PurpleConversation *conv, PurpleMessageFlags flags)
 {
 	PurpleConversationUiOps *ui_ops = pidgin_conversations_get_conv_ui_ops();
+	gboolean hide = FALSE;
 
 	/* create hidden conv if hide_new pref is always */
-	/* or if hide_new pref is away and account is away */
-	if ((strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always") == 0) ||
-		(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away") == 0 &&
-		 !purple_status_is_available(purple_account_get_active_status(account)))) {
-		if (!conv) {
-			ui_ops->create_conversation = NULL;
-			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
-			purple_conversation_set_ui_ops(conv, NULL);
-			ui_ops->create_conversation = pidgin_conv_new;
-		} else {
-			/* TODO: update the unseen_state data on the conv here */
+	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always") == 0)
+		hide = TRUE;
+
+	/* create hidden conv if hide_new pref is away and account is away */
+	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away") == 0 &&
+	    !purple_status_is_available(purple_account_get_active_status(account)))
+		hide = TRUE;
+
+	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv) && !hide) {
+		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+		if (gtkconv->win == hidden_convwin) {
+			pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
+			pidgin_conv_placement_place(gtkconv);
 		}
-	} else {
-		/* new message for an IM */
-		if (conv && conv->type == PURPLE_CONV_TYPE_IM)
-			pidgin_conv_attach_to_conversation(conv);
+		return;
+	}
+
+	if (hide) {
+		ui_ops->create_conversation = pidgin_conv_new_hidden;
+		purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
+		ui_ops->create_conversation = pidgin_conv_new;
 	}
 }
 
@@ -5181,9 +5113,6 @@ static void
 pidgin_conv_destroy(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-
-	if (!gtkconv)
-		return;
 
 	gtkconv->convs = g_list_remove(gtkconv->convs, conv);
 	/* Don't destroy ourselves until all our convos are gone */
@@ -6526,7 +6455,6 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		AtkObject *accessibility_obj;
 		/* I think this is a little longer than it needs to be but I'm lazy. */
 		char *style;
-		gboolean bold = FALSE;
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 			im = PURPLE_CONV_IM(conv);
@@ -6561,7 +6489,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				CONV_TEXT_COLUMN, markup, -1);
 	        /* XXX seanegan Why do I have to do this? */
 		gtk_widget_queue_draw(gtkconv->infopane);
-	
+
 		if (title != markup)
 			g_free(markup);
 
@@ -6572,47 +6500,43 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		if (im != NULL &&
 		    purple_conv_im_get_typing_state(im) == PURPLE_TYPING) {
 			atk_object_set_description(accessibility_obj, _("Typing"));
-			style = "color=\"#4e9a06\"";
+			style = "tab-label-typing";
 		} else if (im != NULL &&
 		         purple_conv_im_get_typing_state(im) == PURPLE_TYPED) {
 			atk_object_set_description(accessibility_obj, _("Stopped Typing"));
-			style = "color=\"#c4a000\"";
+			style = "tab-label-typed";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)	{
 			atk_object_set_description(accessibility_obj, _("Nick Said"));
-			style = "color=\"#204a87\"";
+			style = "tab-label-attention";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
 			if (gtkconv->active_conv->type == PURPLE_CONV_TYPE_CHAT)
 				style = "color=\"#cc0000\"";
 			else
-				style = "color=\"#204a87\"";
+				style = "tab-label-attention";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
 			atk_object_set_description(accessibility_obj, _("New Event"));
-			style = "color=\"#888a85\"";
+			style = "tab-label-event";
 		} else {
 			style = NULL;
 		}
 
+		gtk_widget_set_name(gtkconv->tab_label, style);
+		gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
+		gtk_widget_set_state(gtkconv->tab_label, GTK_STATE_ACTIVE);
+
 		if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT ||
 				gtkconv->unseen_state == PIDGIN_UNSEEN_NICK ||
-				gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
-			bold = TRUE;
-
-		if (style || bold)
-		{
-			char *html_title,*label;
-
-			html_title = g_markup_escape_text(title, -1);
-			label = g_strdup_printf("<span %s %s>%s</span>",
-			                        style ? style : "",
-			                        bold ? "weight=\"bold\"" : "",
-			                        html_title);
-			g_free(html_title);
-			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
-			g_free(label);
-		}
-		else
-			gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
+				gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
+			PangoAttrList *list = pango_attr_list_new();
+			PangoAttribute *attr = pango_attr_weight_new(PANGO_WEIGHT_BOLD);
+			attr->start_index = 0;
+			attr->end_index = -1;
+			pango_attr_list_insert(list, attr);
+			gtk_label_set_attributes(GTK_LABEL(gtkconv->tab_label), list);
+			pango_attr_list_unref(list);
+		} else
+			gtk_label_set_attributes(GTK_LABEL(gtkconv->tab_label), NULL);
 
 		if (pidgin_conv_window_is_active_conversation(conv))
 			update_typing_icon(gtkconv);
@@ -7121,6 +7045,8 @@ show_formatting_toolbar_pref_cb(const char *name, PurplePrefType type,
 			gtk_widget_show(gtkconv->toolbar);
 		else
 			gtk_widget_hide(gtkconv->toolbar);
+
+		g_idle_add((GSourceFunc)resize_imhtml_cb,gtkconv);
 	}
 }
 
@@ -7196,7 +7122,6 @@ static void
 account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
                           PurpleStatus *newstatus)
 {
-#if 0
 	GList *l;
 	PurpleConversation *conv = NULL;
 	PidginConversation *gtkconv;
@@ -7206,7 +7131,27 @@ account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus,
 
 	if(purple_status_is_available(oldstatus) || !purple_status_is_available(newstatus))
 		return;
-#endif
+
+	while ((l = hidden_convwin->gtkconvs) != NULL)
+	{
+		gtkconv = l->data;
+
+		conv = gtkconv->active_conv;
+
+		while(l && !purple_status_is_available(
+					purple_account_get_active_status(
+					purple_conversation_get_account(conv))))
+			l = l->next;
+		if (!l)
+			break;
+
+		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
+		pidgin_conv_placement_place(gtkconv);
+
+		/* TODO: do we need to do anything for any other conversations that are in the same gtkconv here?
+		 * I'm a little concerned that not doing so will cause the "pending" indicator in the gtkblist not to be cleared. -DAA*/
+		purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
+	}
 }
 
 static void
@@ -7214,7 +7159,12 @@ hide_new_pref_cb(const char *name, PurplePrefType type,
 				 gconstpointer value, gpointer data)
 {
 	GList *l;
+	PurpleConversation *conv = NULL;
+	PidginConversation *gtkconv;
 	gboolean when_away = FALSE;
+
+	if(!hidden_convwin)
+		return;
 
 	if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always")==0)
 		return;
@@ -7222,17 +7172,19 @@ hide_new_pref_cb(const char *name, PurplePrefType type,
 	if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away")==0)
 		when_away = TRUE;
 
-	for (l = purple_get_conversations(); l; l = l->next)
+	while ((l = hidden_convwin->gtkconvs) != NULL)
 	{
-		PurpleConversation *conv = l->data;
-		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-		if (gtkconv)
-			continue;
+		gtkconv = l->data;
+
+		conv = gtkconv->active_conv;
+
 		if(when_away && !purple_status_is_available(
 							purple_account_get_active_status(
 							purple_conversation_get_account(conv))))
 			continue;
-		pidgin_conv_attach_to_conversation(conv);
+
+		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
+		pidgin_conv_placement_place(gtkconv);
 	}
 }
 
@@ -7513,8 +7465,14 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 	GList *list;
 	PidginConversation *gtkconv;
 
-	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
-		return FALSE;
+	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
+		gtkconv = PIDGIN_CONVERSATION(conv);
+		if (gtkconv->win != hidden_convwin)
+			return FALSE;
+		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
+		pidgin_conv_placement_place(gtkconv);
+		return TRUE;
+	}
 
 	pidgin_conv_attach(conv);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -7621,7 +7579,6 @@ pidgin_conversations_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", TRUE);
 
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new", "never");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/close_immediately", TRUE);
 
 #ifdef _WIN32
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/win32/minimize_new_convs", FALSE);
@@ -7785,6 +7742,9 @@ pidgin_conversations_init(void)
 
 	purple_conversations_set_ui_ops(&conversation_ui_ops);
 
+	hidden_convwin = pidgin_conv_window_new();
+	window_list = g_list_remove(window_list, hidden_convwin);
+
 	purple_signal_connect(purple_accounts_get_handle(), "account-status-changed",
                         handle, PURPLE_CALLBACK(account_status_changed_cb), NULL);
 
@@ -7824,6 +7784,40 @@ pidgin_conversations_init(void)
 			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
 	purple_signal_connect(purple_conversations_get_handle(), "wrote-chat-msg", handle,
 			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
+
+	{
+		/* Set default tab colors */
+		GString *str = g_string_new(NULL);
+		GtkSettings *settings = gtk_settings_get_default();
+		struct {
+			const char *stylename;
+			const char *labelname;
+			const char *color;
+		} styles[] = {
+			{"pidgin_tab_label_typing_default", "tab-label-typing", "#4e9a06"},
+			{"pidgin_tab_label_typed_default", "tab-label-typed", "#c4a000"},
+			{"pidgin_tab_label_attention_default", "tab-label-attention", "#204a87"},
+			{"pidgin_tab_label_event_default", "tab-label-event", "#888a85"},
+			{NULL, NULL, NULL}
+		};
+		int iter;
+		for (iter = 0; styles[iter].stylename; iter++) {
+			if (!gtk_rc_get_style_by_paths(settings, styles[iter].labelname, NULL, G_TYPE_NONE))
+				/* Apparently both ACTIVE and NORMAL are required */
+				g_string_append_printf(str, "style \"%s\" {\n"
+						"fg[ACTIVE] = \"%s\"\n"
+						"}\n"
+						"widget \"*%s\" style \"%s\"\n",
+						styles[iter].stylename,
+						styles[iter].color,
+						styles[iter].labelname, styles[iter].stylename);
+		}
+		gtk_rc_parse_string(str->str);
+		g_string_free(str, TRUE);
+#if GTK_CHECK_VERSION(2,4,0)
+		gtk_rc_reset_styles(settings);
+#endif
+	}
 }
 
 void
@@ -9126,6 +9120,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(tmp_lab = purple_conversation_get_title(conv));
+	gtk_widget_set_name(gtkconv->tab_label, "tab-label");
 
 	gtkconv->menu_tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtkconv->menu_label = gtk_label_new(tmp_lab);
@@ -9285,7 +9280,7 @@ pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 	if (win->gtkconvs && win->gtkconvs->next == NULL)
 		pidgin_conv_tab_pack(win, win->gtkconvs->data);
 
-	if (!win->gtkconvs)
+	if (!win->gtkconvs && win != hidden_convwin)
 		pidgin_conv_window_destroy(win);
 }
 
@@ -9824,7 +9819,9 @@ pidgin_conv_placement_place(PidginConversation *gtkconv)
 gboolean
 pidgin_conv_is_hidden(PidginConversation *gtkconv)
 {
-	return (gtkconv == NULL);
+	g_return_val_if_fail(gtkconv != NULL, FALSE);
+
+	return (gtkconv->win == hidden_convwin);
 }
 
 
@@ -9925,5 +9922,3 @@ generate_nick_colors(guint *color_count, GdkColor background)
 
 	return colors;
 }
-
-

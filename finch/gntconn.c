@@ -152,6 +152,10 @@ finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 				purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
 			continue;
 		purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
+		purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
+					"longer in this chat. You will be automatically rejoined in the chat when "
+					"the account reconnects."),
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 	}
 }
 

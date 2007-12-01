@@ -117,6 +117,7 @@ msn_command_from_string(const char *string)
 		cmd->trId = 0;
 	}
 
+	/* khc: Huh! */
 	/*add payload Length checking*/
 	msn_set_payload_len(cmd);
 	purple_debug_info("MSNP14","get payload len:%d\n",cmd->payload_len);

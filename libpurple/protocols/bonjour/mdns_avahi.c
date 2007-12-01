@@ -155,7 +155,7 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 			/* Make sure it isn't us */
 			if (purple_utf8_strcasecmp(name, account->username) != 0) {
 				if (!avahi_service_resolver_new(avahi_service_browser_get_client(b),
-						interface, protocol, name, type, domain, AVAHI_PROTO_UNSPEC,
+						interface, protocol, name, type, domain, AVAHI_PROTO_INET,
 						0, _resolver_callback, account)) {
 					purple_debug_warning("bonjour", "_browser_callback -- Error initiating resolver: %s\n",
 						avahi_strerror(avahi_client_errno(avahi_service_browser_get_client(b))));
@@ -315,14 +315,14 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 		case PUBLISH_START:
 			publish_result = avahi_entry_group_add_service_strlst(
 				idata->group, AVAHI_IF_UNSPEC,
-				AVAHI_PROTO_UNSPEC, 0,
+				AVAHI_PROTO_INET, 0,
 				purple_account_get_username(data->account),
 				ICHAT_SERVICE, NULL, NULL, data->port_p2pj, lst);
 			break;
 		case PUBLISH_UPDATE:
 			publish_result = avahi_entry_group_update_service_txt_strlst(
 				idata->group, AVAHI_IF_UNSPEC,
-				AVAHI_PROTO_UNSPEC, 0,
+				AVAHI_PROTO_INET, 0,
 				purple_account_get_username(data->account),
 				ICHAT_SERVICE, NULL, lst);
 			break;
@@ -354,7 +354,7 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 
 	g_return_val_if_fail(idata != NULL, FALSE);
 
-	idata->sb = avahi_service_browser_new(idata->client, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, ICHAT_SERVICE, NULL, 0, _browser_callback, data->account);
+	idata->sb = avahi_service_browser_new(idata->client, AVAHI_IF_UNSPEC, AVAHI_PROTO_INET, ICHAT_SERVICE, NULL, 0, _browser_callback, data->account);
 	if (!idata->sb) {
 
 		purple_debug_error("bonjour",
@@ -400,7 +400,7 @@ gboolean _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data
 				purple_account_get_username(data->account));
 
 		ret = avahi_entry_group_add_record(idata->buddy_icon_group, AVAHI_IF_UNSPEC,
-			AVAHI_PROTO_UNSPEC, flags, svc_name,
+			AVAHI_PROTO_INET, flags, svc_name,
 			AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_NULL, 120, avatar_data, avatar_len);
 
 		g_free(svc_name);
@@ -486,7 +486,7 @@ void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
 
 	name = g_strdup_printf("%s." ICHAT_SERVICE "local", buddy->name);
 	idata->buddy_icon_rec_browser = avahi_record_browser_new(session_idata->client, AVAHI_IF_UNSPEC,
-		AVAHI_PROTO_UNSPEC, name, AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_NULL, 0,
+		AVAHI_PROTO_INET, name, AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_NULL, 0,
 		_buddy_icon_record_cb, buddy);
 	g_free(name);
 

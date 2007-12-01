@@ -140,7 +140,6 @@ get_beginning_of_word(GntEntry *entry)
 static gboolean
 complete_suggest(GntEntry *entry, const char *text)
 {
-	gboolean changed = FALSE;
 	int offstart = 0, offend = 0;
 
 	if (entry->word) {
@@ -148,27 +147,22 @@ complete_suggest(GntEntry *entry, const char *text)
 		const char *iter = text;
 		offstart = g_utf8_pointer_to_offset(entry->start, s);
 		while (*iter && toupper(*s) == toupper(*iter)) {
-			if (*s != *iter)
-				changed = TRUE;
 			*s++ = *iter++;
 		}
 		if (*iter) {
 			gnt_entry_key_pressed(GNT_WIDGET(entry), iter);
-			changed = TRUE;
 		}
 		offend = g_utf8_pointer_to_offset(entry->start, entry->cursor);
 	} else {
 		offstart = 0;
 		gnt_entry_set_text_internal(entry, text);
-		changed = TRUE;
 		offend = g_utf8_strlen(text, -1);
 	}
 
-	if (changed)
-		g_signal_emit(G_OBJECT(entry), signals[SIG_COMPLETION], 0,
-				entry->start + offstart, entry->start + offend);
+	g_signal_emit(G_OBJECT(entry), signals[SIG_COMPLETION], 0,
+			entry->start + offstart, entry->start + offend);
 	update_kill_ring(entry, ENTRY_JAIL, NULL, 0);
-	return changed;
+	return TRUE;
 }
 
 static int
@@ -575,15 +569,16 @@ static const char *
 next_begin_word(const char *text, const char *end)
 {
 	gunichar ch = 0;
+
+	while (text && text < end && g_unichar_isspace(g_utf8_get_char(text)))
+		text = g_utf8_find_next_char(text, end);
+
 	ch = g_utf8_get_char(text);
 	while ((text = g_utf8_find_next_char(text, end)) != NULL && text <= end) {
 		gunichar cur = g_utf8_get_char(text);
 		if (!SAME(ch, cur))
 			break;
 	}
-
-	while (text && text < end && g_unichar_isspace(g_utf8_get_char(text)))
-		text = g_utf8_find_next_char(text, end);
 	return (text ? text : end);
 }
 

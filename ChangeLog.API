@@ -1,6 +1,15 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.3.0 (??/??/????):
+version 2.3.1 (??/??/????):
+	Finch:
+		libgnt:
+		* Added gnt_tree_set_row_color to set the color for a row in a tree.
+		* Added gnt_style_get_string_list
+		* Added gnt_color_add_pair to define a new color.
+		* Added gnt_colors_get_color to get an ncurses color value from a
+		  string.
+
+version 2.3.0 (11/24/2007):
 	libpurple:
 		Added:
 		* a PurpleConversation field and an alias field in PurpleConvMessage

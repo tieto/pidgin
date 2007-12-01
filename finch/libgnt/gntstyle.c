@@ -59,6 +59,21 @@ char *gnt_style_get_from_name(const char *group, const char *key)
 #endif
 }
 
+char **gnt_style_get_string_list(const char *group, const char *key, gsize *length)
+{
+#if GLIB_CHECK_VERSION(2,6,0)
+	const char *prg = g_get_prgname();
+	if ((group == NULL || *group == '\0') && prg &&
+			g_key_file_has_group(gkfile, prg))
+		group = prg;
+	if (!group)
+		group = "general";
+	return g_key_file_get_string_list(gkfile, group, key, length, NULL);
+#else
+	return NULL;
+#endif
+}
+
 gboolean gnt_style_get_bool(GntStyle style, gboolean def)
 {
 	const char * str;

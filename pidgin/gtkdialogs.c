@@ -349,6 +349,7 @@ void pidgin_dialogs_about()
 	AtkObject *obj;
 	char* filename, *tmp;
 	GdkPixbuf *pixbuf;
+	PidginBuddyList *buddylist;
 
 	if (about != NULL) {
 		gtk_window_present(GTK_WINDOW(about));
@@ -724,6 +725,11 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 	gtk_widget_grab_default(button);
 
 	/* Let's give'em something to talk about -- woah woah woah */
+	buddylist = pidgin_blist_get_default_gtk_blist();
+	if (buddylist)
+		gtk_window_set_transient_for(GTK_WINDOW(about),
+				GTK_WINDOW(buddylist->window));
+
 	gtk_widget_show_all(about);
 	gtk_window_present(GTK_WINDOW(about));
 }

@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-17 16:16+0100\n"
-"PO-Revision-Date: 2007-11-17 16:14+0100\n"
-"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2007-11-30 10:22+0100\n"
+"PO-Revision-Date: 2007-11-30 10:21+0100\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -21,6 +21,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.11.4\n"
 
+#. Translators may want to transliterate the name.
+#. It is not to be translated.
 msgid "Finch"
 msgstr "Finch"
 
@@ -492,6 +494,14 @@ msgstr ""
 
 msgid "Re-enable Account"
 msgstr "Konten reaktivieren"
+
+msgid ""
+"The account has disconnected and you are no longer in this chat. You will be "
+"automatically rejoined in the chat when the account reconnects."
+msgstr ""
+"Das Konto wurde getrennt und Sie sind nicht mehr in diesem Chat. Sie werden "
+"automatisch wieder mit dem Chat verbunden, wenn das Konto wieder verbunden "
+"ist."
 
 msgid "No such command."
 msgstr "Es gibt kein solches Kommando."
@@ -2325,6 +2335,12 @@ msgstr "Mono-Plugin-Lader"
 
 msgid "Loads .NET plugins with Mono."
 msgstr "Lädt .NET-Plugins mit Mono."
+
+msgid "Add new line in IMs"
+msgstr "Neue Zeile in IMs einfügen"
+
+msgid "Add new line in Chats"
+msgstr "Neue Zeile in Chats einfügen"
 
 #. *< magic
 #. *< major version
@@ -4300,6 +4316,9 @@ msgstr "Verbindungsport"
 #. Account options
 msgid "Connect server"
 msgstr "Verbindungsserver"
+
+msgid "File transfer proxies"
+msgstr "Proxys für Dateiübertragungen"
 
 #, c-format
 msgid "%s has left the conversation."
@@ -9782,6 +9801,9 @@ msgstr ""
 msgid "_Merge"
 msgstr "_Zusammenführen"
 
+msgid "Room _List"
+msgstr "Ra_umliste"
+
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
 "join.\n"
@@ -10056,19 +10078,19 @@ msgstr "Wiederverbinden"
 msgid "Re-enable"
 msgstr "Reaktivieren"
 
-msgid "Ignore"
-msgstr "Ignorieren"
+msgid "Welcome back!"
+msgstr "Willkommen zurück!"
 
 #, c-format
-msgid "%d account was disabled because you signed on from another location."
+msgid "%d account was disabled because you signed on from another location:"
 msgid_plural ""
-"%d accounts were disabled because you signed on from another location."
+"%d accounts were disabled because you signed on from another location:"
 msgstr[0] ""
 "%d Konto wurde deaktiviert, da Sie sich von einem anderen Ort angemeldet "
-"haben."
+"haben:"
 msgstr[1] ""
 "%d Konten wurden deaktiviert, da Sie sich von einem anderen Ort angemeldet "
-"haben."
+"haben:"
 
 msgid "<b>Username:</b>"
 msgstr "<b>Benutzername:</b>"
@@ -10152,11 +10174,11 @@ msgstr ""
 "Bitte geben Sie einen Alias und geeignete Informationen über den Chat ein, "
 "den Sie in Ihre Buddy-Liste aufnehmen wollen.\n"
 
-msgid "Autojoin when account becomes online."
-msgstr "Automatisch beitreten, wenn das Konto online geht."
+msgid "Auto_join when account becomes online."
+msgstr "Automatisch _beitreten, wenn das Konto online geht."
 
-msgid "Hide chat when the window is closed."
-msgstr "Chat verstecken, wenn das Fenster geschlossen wird."
+msgid "_Hide chat when the window is closed."
+msgstr "_Chat verstecken, wenn das Fenster geschlossen wird."
 
 msgid "Please enter the name of the group to be added."
 msgstr "Bitte geben Sie den Namen der Gruppe ein, die hinzugefügt werden soll."
@@ -10233,6 +10255,9 @@ msgstr "_Suche nach:"
 
 msgid "Un-Ignore"
 msgstr "Nicht Ignorieren"
+
+msgid "Ignore"
+msgstr "Ignorieren"
 
 msgid "Get Away Message"
 msgstr "Neue Abwesenheitsnachricht abholen"
@@ -11030,6 +11055,15 @@ msgstr "Einfügen als normaler _Text"
 msgid "_Reset formatting"
 msgstr "Formatierung _zurücksetzen"
 
+msgid "_Smile!"
+msgstr "_Lächeln!"
+
+msgid "_Insert"
+msgstr "_Einfügen"
+
+msgid "_Font"
+msgstr "_Schrift"
+
 msgid "Hyperlink color"
 msgstr "Hyperlink-Farbe"
 
@@ -11124,9 +11158,6 @@ msgstr "Bitte geben Sie die URL des Links an, den Sie einfügen möchten."
 msgid "Insert Link"
 msgstr "Link einfügen"
 
-msgid "_Insert"
-msgstr "_Einfügen"
-
 #, c-format
 msgid "Failed to store image: %s\n"
 msgstr "Speichern des Bildes fehlgeschlagen: %s\n"
@@ -11140,9 +11171,6 @@ msgstr "Dieses Thema verfügt über keine Smileys."
 #. show everything
 msgid "Smile!"
 msgstr "Lächeln!"
-
-msgid "_Font"
-msgstr "_Schrift"
 
 msgid "Group Items"
 msgstr "Elemente gruppieren"
@@ -11227,9 +11255,6 @@ msgstr "_Link"
 
 msgid "_Horizontal rule"
 msgstr "_Horizontale Linie"
-
-msgid "_Smile!"
-msgstr "_Lächeln!"
 
 #, c-format
 msgid ""
@@ -11609,9 +11634,6 @@ msgstr "N_eue Unterhaltungen:"
 
 msgid "Show _formatting on incoming messages"
 msgstr "Zeige _Formatierung bei ankommenden Nachrichten"
-
-msgid "Close IMs immediately when the tab is closed"
-msgstr "Schließe IMs sofort, wenn der Reiter geschlossen wird"
 
 msgid "Show _detailed information"
 msgstr "_Detaillierte Informationen anzeigen"
@@ -13116,6 +13138,3 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
-
-msgid "Buddy"
-msgstr "Buddy"

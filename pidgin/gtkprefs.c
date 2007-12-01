@@ -995,8 +995,6 @@ conv_page()
 
 	pidgin_prefs_checkbox(_("Show _formatting on incoming messages"),
 				PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting", vbox);
-	pidgin_prefs_checkbox(_("Close IMs immediately when the tab is closed"),
-				PIDGIN_PREFS_ROOT "/conversations/im/close_immediately", vbox);
 
 	iconpref1 = pidgin_prefs_checkbox(_("Show _detailed information"),
 			PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", vbox);
@@ -1212,6 +1210,9 @@ network_page()
 
 	vbox = pidgin_make_frame (ret, _("Ports"));
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	pidgin_prefs_checkbox(_("_Enable automatic router port forwarding"),
+			"/purple/network/map_ports", vbox);
 
 	ports_checkbox = pidgin_prefs_checkbox(_("_Manually specify range of ports to listen on"),
 			"/purple/network/ports_range_use", vbox);
@@ -2306,6 +2307,7 @@ void pidgin_prefs_update_old()
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/show_group_count");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/show_warning_level");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/button_type");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/close_immediately");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/ctrl_enter_sends");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/enter_sends");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/escape_closes");

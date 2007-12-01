@@ -753,6 +753,11 @@ do_joinchat(GtkWidget *dialog, int id, PidginJoinChatData *info)
 	{
 		case GTK_RESPONSE_OK:
 			do_join_chat(info);
+			break;
+
+		case 1:
+			pidgin_roomlist_dialog_show_with_account(info->account);
+			return;
 
 		break;
 	}
@@ -769,6 +774,8 @@ do_joinchat(GtkWidget *dialog, int id, PidginJoinChatData *info)
 static void
 joinchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 {
+	PurplePluginProtocolInfo *prpl_info;
+	PurpleConnection *gc;
 	PidginJoinChatData *data;
 	GList *tmp;
 	const char *text;
@@ -789,6 +796,12 @@ joinchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 	}
 
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), GTK_RESPONSE_OK, sensitive);
+
+	gc = purple_account_get_connection(data->account);
+	prpl_info = (gc != NULL) ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
+	sensitive = (prpl_info != NULL && prpl_info->roomlist_get_list != NULL);
+
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), 1, sensitive);
 }
 
 static void
@@ -944,6 +957,7 @@ pidgin_blist_joinchat_show(void)
 
 	data->window = gtk_dialog_new_with_buttons(_("Join a Chat"),
 		NULL, GTK_DIALOG_NO_SEPARATOR,
+		_("Room _List"), 1,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		PIDGIN_STOCK_CHAT, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
@@ -2537,7 +2551,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
  *
  *
  */
-#define STATUS_SIZE 22
+#define STATUS_SIZE 16 
 #define TOOLTIP_BORDER 12
 #define SMALL_SPACE 6
 #define LARGE_SPACE 12
@@ -3451,8 +3465,8 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 	struct _pidgin_blist_node *gtkbuddynode = NULL;
 	PurpleBuddy *buddy = NULL;
 	PurpleChat *chat = NULL;
-	GtkIconSize icon_size = gtk_icon_size_from_name((size == PIDGIN_STATUS_ICON_LARGE) ? PIDGIN_ICON_SIZE_TANGO_SMALL :
-											 PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+	GtkIconSize icon_size = gtk_icon_size_from_name((size == PIDGIN_STATUS_ICON_LARGE) ? PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL :
+											 PIDGIN_ICON_SIZE_TANGO_MICROSCOPIC);
 
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
@@ -4230,7 +4244,7 @@ static gboolean pidgin_blist_select_notebook_page_cb(gpointer user_data)
 {
 	PidginBuddyList *gtkblist = (PidginBuddyList *)user_data;
 	int errors = 0;
-	GList *list;
+	GList *list = NULL;
 	PidginBuddyListPrivate *priv;
 
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
@@ -4243,8 +4257,7 @@ static gboolean pidgin_blist_select_notebook_page_cb(gpointer user_data)
 		errors = g_list_length(GTK_NOTEBOOK(priv->error_scrollbook->notebook)->children);
 #endif
 	}
-	if ((list = purple_accounts_get_all_active()) != NULL || errors ||
-	    (list = gtk_container_get_children(GTK_CONTAINER(priv->error_scrollbook)))) {
+	if ((list = purple_accounts_get_all_active()) != NULL || errors) {
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkblist->notebook), 1);
 		g_list_free(list);
 	} else
@@ -4441,8 +4454,12 @@ find_child_widget_by_account(GtkContainer *container,
                              PurpleAccount *account)
 {
 	GList *l = NULL;
-	GList *children = gtk_container_get_children(container);
+	GList *children = NULL;
 	GtkWidget *ret = NULL;
+	/* XXX: Workaround for the currently incomplete implementation of PidginScrollBook */
+	if (PIDGIN_IS_SCROLL_BOOK(container))
+		container = GTK_CONTAINER(PIDGIN_SCROLL_BOOK(container)->notebook);
+	children = gtk_container_get_children(container);
 	l = g_list_find_custom(children, account, (GCompareFunc) find_account_widget);
 	if (l)
 		ret = GTK_WIDGET(l->data);
@@ -4456,7 +4473,6 @@ remove_child_widget_by_account(GtkContainer *container,
 {
 	GtkWidget *widget = find_child_widget_by_account(container, account);
 	if(widget) {
-		gtk_container_remove(container, widget);
 		gtk_widget_destroy(widget);
 	}
 }
@@ -4478,16 +4494,11 @@ generic_error_enable_cb(PurpleAccount *account)
 }
 
 static void
-generic_error_ignore_cb(PurpleAccount *account)
-{
-	purple_account_clear_current_error(account);
-}
-
-static void
 generic_error_destroy_cb(GtkObject *dialog,
                          PurpleAccount *account)
 {
 	g_hash_table_remove(gtkblist->connection_errors, account);
+	purple_account_clear_current_error(account);
 }
 
 #define SSL_FAQ_URI "http://d.pidgin.im/wiki/FAQssl"
@@ -4508,7 +4519,7 @@ add_generic_error_dialog(PurpleAccount *account,
 	gboolean enabled =
 		purple_account_get_enabled(account, purple_core_get_ui());
 	char *primary;
-	
+
 	if (enabled)
 		primary = g_strdup_printf(_("%s disconnected"), username);
 	else
@@ -4520,7 +4531,6 @@ add_generic_error_dialog(PurpleAccount *account,
 		(enabled ? PURPLE_CALLBACK(purple_account_connect)
 		         : PURPLE_CALLBACK(generic_error_enable_cb)),
 		_("Modify Account"), PURPLE_CALLBACK(generic_error_modify_cb),
-		_("Ignore"), PURPLE_CALLBACK(generic_error_ignore_cb),
 		NULL);
 
 	g_free(primary);
@@ -4605,14 +4615,6 @@ reconnect_elsewhere_accounts(PidginMiniDialog *mini_dialog,
 }
 
 static void
-ignore_elsewhere_accounts(PidginMiniDialog *mini_dialog,
-                          GtkButton *button,
-                          gpointer unused)
-{
-	elsewhere_foreach_account(mini_dialog, purple_account_clear_current_error);
-}
-
-static void
 ensure_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
@@ -4620,15 +4622,12 @@ ensure_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 
 	if(priv->signed_on_elsewhere)
 		return;
-	
+
 	mini_dialog = priv->signed_on_elsewhere =
-		pidgin_mini_dialog_new(NULL, NULL, PIDGIN_STOCK_DISCONNECT);
+		pidgin_mini_dialog_new(_("Welcome back!"), NULL, PIDGIN_STOCK_DISCONNECT);
 
 	pidgin_mini_dialog_add_button(mini_dialog, _("Re-enable"),
 		reconnect_elsewhere_accounts, NULL);
-
-	pidgin_mini_dialog_add_button(mini_dialog, _("Ignore"),
-		ignore_elsewhere_accounts, NULL);
 
 	add_error_dialog(gtkblist, GTK_WIDGET(mini_dialog));
 
@@ -4649,13 +4648,17 @@ update_signed_on_elsewhere_minidialog_title(void)
 		return;
 
 	accounts = pidgin_mini_dialog_get_num_children(mini_dialog);
+	if (accounts == 0) {
+		gtk_widget_destroy(GTK_WIDGET(mini_dialog));
+		return;
+	}
 
 	title = g_strdup_printf(
-		ngettext("%d account was disabled because you signed on from another location.",
-			 "%d accounts were disabled because you signed on from another location.",
+		ngettext("%d account was disabled because you signed on from another location:",
+			 "%d accounts were disabled because you signed on from another location:",
 			 accounts),
 		accounts);
-	pidgin_mini_dialog_set_title(mini_dialog, title);
+	pidgin_mini_dialog_set_description(mini_dialog, title);
 	g_free(title);
 }
 
@@ -5737,7 +5740,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 		return;
 
 	status = pidgin_blist_get_status_icon((PurpleBlistNode*)buddy,
-						PIDGIN_STATUS_ICON_SMALL);
+						biglist ? PIDGIN_STATUS_ICON_LARGE : PIDGIN_STATUS_ICON_SMALL);
 
 	/* Speed it up if we don't want buddy icons. */
 	if(biglist)
@@ -5821,6 +5824,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 	PurpleBlistNode *cnode;
 	PurpleContact *contact;
 	PurpleBuddy *buddy;
+	gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 	struct _pidgin_blist_node *gtknode;
 
 	if (editing_blist)
@@ -5856,7 +5860,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 			char *mark;
 
 			status = pidgin_blist_get_status_icon(cnode,
-					 PIDGIN_STATUS_ICON_SMALL);
+					 biglist? PIDGIN_STATUS_ICON_LARGE : PIDGIN_STATUS_ICON_SMALL);
 
 			mark = g_markup_escape_text(purple_contact_get_alias(contact), -1);
 			gtk_tree_store_set(gtkblist->treemodel, &iter,
@@ -5935,6 +5939,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		GdkPixbuf *status, *avatar, *emblem, *prpl_icon;
 		char *mark;
 		gboolean showicons = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
+		gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 		PidginBlistNode *ui;
 		PurpleConversation *conv;
 		gboolean hidden;
@@ -5947,7 +5952,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		hidden = (conv && (ui->conv.flags & PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE));
 
 		status = pidgin_blist_get_status_icon(node,
-				 PIDGIN_STATUS_ICON_SMALL);
+				 biglist ? PIDGIN_STATUS_ICON_LARGE : PIDGIN_STATUS_ICON_SMALL);
 		emblem = pidgin_blist_get_emblem(node);
 
 		/* Speed it up if we don't want buddy icons. */
@@ -6401,6 +6406,10 @@ add_chat_resp_cb(GtkWidget *w, int resp, PidginAddChatData *data)
 	{
 		add_chat_cb(NULL, data);
 	}
+	else if (resp == 1)
+	{
+		pidgin_roomlist_dialog_show_with_account(data->account);
+	}
 	else
 	{
 		gtk_widget_destroy(data->window);
@@ -6417,6 +6426,8 @@ add_chat_resp_cb(GtkWidget *w, int resp, PidginAddChatData *data)
 static void
 addchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 {
+	PurplePluginProtocolInfo *prpl_info;
+	PurpleConnection *gc;
 	PidginAddChatData *data;
 	GList *tmp;
 	const char *text;
@@ -6437,6 +6448,12 @@ addchat_set_sensitive_if_input_cb(GtkWidget *entry, gpointer user_data)
 	}
 
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), GTK_RESPONSE_OK, sensitive);
+
+	gc = purple_account_get_connection(data->account);
+	prpl_info = (gc != NULL) ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
+	sensitive = (prpl_info != NULL && prpl_info->roomlist_get_list != NULL);
+
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window), 1, sensitive);
 }
 
 static void
@@ -6602,6 +6619,7 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 
 	data->window = gtk_dialog_new_with_buttons(_("Add Chat"),
 		gtkblist ? GTK_WINDOW(gtkblist->window) : NULL, GTK_DIALOG_NO_SEPARATOR,
+		_("Room _List"), 1,
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GTK_STOCK_ADD, GTK_RESPONSE_OK,
 		NULL);
@@ -6685,8 +6703,8 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	pidgin_set_accessible_label (data->group_combo, label);
 	gtk_box_pack_end(GTK_BOX(rowbox), data->group_combo, TRUE, TRUE, 0);
 	
-	data->autojoin = gtk_check_button_new_with_mnemonic(_("Autojoin when account becomes online."));
-	data->persistent = gtk_check_button_new_with_mnemonic(_("Hide chat when the window is closed."));
+	data->autojoin = gtk_check_button_new_with_mnemonic(_("Auto_join when account becomes online."));
+	data->persistent = gtk_check_button_new_with_mnemonic(_("_Hide chat when the window is closed."));
 	gtk_box_pack_start(GTK_BOX(vbox), data->autojoin, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), data->persistent, FALSE, FALSE, 0);
 

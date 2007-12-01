@@ -325,6 +325,15 @@ gboolean gnt_tree_get_choice(GntTree *tree, void *key);
 void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags);
 
 /**
+ * Set color for the text in a row in the tree.
+ *
+ * @param tree   The tree
+ * @param key    The key for the row
+ * @param color  The color
+ */
+void gnt_tree_set_row_color(GntTree *, void *, int);
+
+/**
  * Select a row.
  *
  * @param tree  The tree

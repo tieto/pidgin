@@ -257,18 +257,23 @@ static void jabber_caps_store(void) {
 
 /* this function assumes that all information is available locally */
 static JabberCapsClientInfo *jabber_caps_collect_info(const char *node, const char *ver, GList *ext) {
-	JabberCapsClientInfo *result = g_new0(JabberCapsClientInfo, 1);
+	JabberCapsClientInfo *result;
 	JabberCapsKey *key = g_new0(JabberCapsKey, 1);
 	JabberCapsValue *caps;
 	GList *iter;
-	
+
 	key->node = (char *)node;
 	key->ver = (char *)ver;
-	
+
 	caps = g_hash_table_lookup(capstable,key);
-	
+
 	g_free(key);
-	
+
+	if (caps == NULL)
+		return NULL;
+
+	result = g_new0(JabberCapsClientInfo, 1);
+
 	/* join all information */
 	for(iter = caps->identities; iter; iter = g_list_next(iter)) {
 		JabberCapsIdentity *id = iter->data;

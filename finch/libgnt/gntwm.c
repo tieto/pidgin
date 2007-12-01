@@ -21,13 +21,14 @@
  */
 
 #define _GNU_SOURCE
-#if defined(__APPLE__) || defined(__unix__)
+#if (defined(__APPLE__) || defined(__unix__)) && !defined(__FreeBSD__)
 #define _XOPEN_SOURCE_EXTENDED
 #endif
 
 #include "config.h"
 
 #include <glib.h>
+#include <glib/gstdio.h>
 #include <ctype.h>
 #include <gmodule.h>
 #include <stdlib.h>
@@ -41,6 +42,7 @@
 #include "gntbox.h"
 #include "gntbutton.h"
 #include "gntentry.h"
+#include "gntfilesel.h"
 #include "gntlabel.h"
 #include "gntmenu.h"
 #include "gnttextview.h"
@@ -81,6 +83,7 @@ static gboolean workspace_prev(GntBindable *wm, GList *n);
 static int widestringwidth(wchar_t *wide);
 #endif
 
+static void ensure_normal_mode(GntWM *wm);
 static gboolean write_already(gpointer data);
 static int write_timeout;
 static time_t last_active_time;
@@ -392,6 +395,10 @@ switch_window(GntWM *wm, int direction)
 	if (!wm->cws->ordered || !wm->cws->ordered->next)
 		return;
 
+	if (wm->mode != GNT_KP_MODE_NORMAL) {
+		ensure_normal_mode(wm);
+	}
+
 	w = wm->cws->ordered->data;
 	pos = g_list_index(wm->cws->list, w);
 	pos += direction;
@@ -503,6 +510,7 @@ window_close(GntBindable *bindable, GList *null)
 
 	if (wm->cws->ordered) {
 		gnt_widget_destroy(wm->cws->ordered->data);
+		ensure_normal_mode(wm);
 	}
 
 	return TRUE;
@@ -522,6 +530,7 @@ static void
 setup__list(GntWM *wm)
 {
 	GntWidget *tree, *win;
+	ensure_normal_mode(wm);
 	win = wm->_list.window = gnt_box_new(FALSE, FALSE);
 	gnt_box_set_toplevel(GNT_BOX(win), TRUE);
 	gnt_box_set_pad(GNT_BOX(win), 0);
@@ -656,12 +665,12 @@ window_list(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
-static gboolean
-dump_screen(GntBindable *bindable, GList *null)
+static void
+dump_file_save(GntFileSel *fs, const char *path, const char *f, gpointer n)
 {
+	FILE *file;
 	int x, y;
 	chtype old = 0, now = 0;
-	FILE *file = fopen("dump.html", "w");
 	struct {
 		char ascii;
 		char *unicode;
@@ -682,6 +691,11 @@ dump_screen(GntBindable *bindable, GList *null)
 		{'v', "&#x2534;"},
 		{'\0', NULL}
 	};
+
+
+	if ((file = g_fopen(path, "w+")) == NULL) {
+		return;
+	}
 
 	fprintf(file, "<head>\n  <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n</head>\n<body>\n");
 	fprintf(file, "<pre>");
@@ -789,6 +803,24 @@ dump_screen(GntBindable *bindable, GList *null)
 	}
 	fprintf(file, "</pre>\n</body>");
 	fclose(file);
+	gnt_widget_destroy(GNT_WIDGET(fs));
+}
+
+static void
+dump_file_cancel(GntWidget *w, GntFileSel *fs)
+{
+	gnt_widget_destroy(GNT_WIDGET(fs));
+}
+
+static gboolean
+dump_screen(GntBindable *b, GList *null)
+{
+	GntWidget *window = gnt_file_sel_new();
+	GntFileSel *sel = GNT_FILE_SEL(window);
+	gnt_file_sel_set_suggested_filename(sel, "dump.html");
+	g_signal_connect(G_OBJECT(sel), "file_selected", G_CALLBACK(dump_file_save), NULL);
+	g_signal_connect(G_OBJECT(sel->cancel), "activate", G_CALLBACK(dump_file_cancel), sel);
+	gnt_widget_show(window);
 	return TRUE;
 }
 
@@ -970,6 +1002,16 @@ window_reverse(GntWidget *win, gboolean set, GntWM *wm)
 
 	gnt_wm_copy_win(win, g_hash_table_lookup(wm->nodes, win));
 	update_screen(wm);
+}
+
+static void
+ensure_normal_mode(GntWM *wm)
+{
+	if (wm->mode != GNT_KP_MODE_NORMAL) {
+		if (wm->cws->ordered)
+			window_reverse(wm->cws->ordered->data, FALSE, wm);
+		wm->mode = GNT_KP_MODE_NORMAL;
+	}
 }
 
 static gboolean
@@ -1349,7 +1391,7 @@ gnt_wm_class_init(GntWMClass *klass)
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-list", window_list,
 				"\033" "w", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "dump-screen", dump_screen,
-				"\033" "d", NULL);
+				"\033" "D", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "shift-left", shift_left,
 				"\033" ",", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "shift-right", shift_right,
@@ -1453,6 +1495,7 @@ gnt_wm_switch_workspace(GntWM *wm, gint n)
 	if (wm->_list.window) {
 		gnt_widget_destroy(wm->_list.window);
 	}
+	ensure_normal_mode(wm);
 	gnt_ws_hide(wm->cws, wm->nodes);
 	wm->cws = s;
 	gnt_ws_show(wm->cws, wm->nodes);
