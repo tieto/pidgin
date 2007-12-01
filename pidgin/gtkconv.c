@@ -6511,7 +6511,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
 			if (gtkconv->active_conv->type == PURPLE_CONV_TYPE_CHAT)
-				style = "color=\"#cc0000\"";
+				style = "tab-label-unreadchat";
 			else
 				style = "tab-label-attention";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
@@ -7797,6 +7797,7 @@ pidgin_conversations_init(void)
 			{"pidgin_tab_label_typing_default", "tab-label-typing", "#4e9a06"},
 			{"pidgin_tab_label_typed_default", "tab-label-typed", "#c4a000"},
 			{"pidgin_tab_label_attention_default", "tab-label-attention", "#204a87"},
+			{"pidgin_tab_label_unreadchat_default", "tab-label-unreadchat", "#cc0000"},
 			{"pidgin_tab_label_event_default", "tab-label-event", "#888a85"},
 			{NULL, NULL, NULL}
 		};
