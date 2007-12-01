@@ -1325,7 +1325,13 @@ hide_conv(PidginConversation *gtkconv, gboolean closetimer)
 			timer = purple_timeout_add_seconds(CLOSE_CONV_TIMEOUT_SECS, close_already, conv);
 			purple_conversation_set_data(conv, "close-timer", GINT_TO_POINTER(timer));
 		}
+#if 0
+		/* I will miss you */
 		purple_conversation_set_ui_ops(conv, NULL);
+#else
+		pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
+		pidgin_conv_window_add_gtkconv(hidden_convwin, gtkconv);
+#endif
 	}
 }
 
@@ -3114,7 +3120,7 @@ regenerate_plugins_items(PidginWindow *win)
 	PurpleConversation *conv;
 	GtkWidget *item;
 
-	if (win->window == NULL || win->window == hidden_convwin)
+	if (win->window == NULL || win == hidden_convwin)
 		return;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
@@ -5076,24 +5082,30 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 				   PurpleConversation *conv, PurpleMessageFlags flags)
 {
 	PurpleConversationUiOps *ui_ops = pidgin_conversations_get_conv_ui_ops();
+	gboolean hide = FALSE;
 
 	/* create hidden conv if hide_new pref is always */
 	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "always") == 0)
-	{
-		ui_ops->create_conversation = pidgin_conv_new_hidden;
-		purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
-		ui_ops->create_conversation = pidgin_conv_new;
-		return;
-	}
+		hide = TRUE;
 
 	/* create hidden conv if hide_new pref is away and account is away */
 	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away") == 0 &&
 	    !purple_status_is_available(purple_account_get_active_status(account)))
-	{
+		hide = TRUE;
+
+	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv) && !hide) {
+		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+		if (gtkconv->win == hidden_convwin) {
+			pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
+			pidgin_conv_placement_place(gtkconv);
+		}
+		return;
+	}
+
+	if (hide) {
 		ui_ops->create_conversation = pidgin_conv_new_hidden;
 		purple_conversation_new(PURPLE_CONV_TYPE_IM, account, sender);
 		ui_ops->create_conversation = pidgin_conv_new;
-		return;
 	}
 }
 
@@ -7453,8 +7465,14 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 	GList *list;
 	PidginConversation *gtkconv;
 
-	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
-		return FALSE;
+	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
+		gtkconv = PIDGIN_CONVERSATION(conv);
+		if (gtkconv->win != hidden_convwin)
+			return FALSE;
+		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
+		pidgin_conv_placement_place(gtkconv);
+		return TRUE;
+	}
 
 	pidgin_conv_attach(conv);
 	gtkconv = PIDGIN_CONVERSATION(conv);
