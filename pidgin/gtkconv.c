@@ -6449,7 +6449,6 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		AtkObject *accessibility_obj;
 		/* I think this is a little longer than it needs to be but I'm lazy. */
 		char *style;
-		gboolean bold = FALSE;
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 			im = PURPLE_CONV_IM(conv);
@@ -6484,7 +6483,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				CONV_TEXT_COLUMN, markup, -1);
 	        /* XXX seanegan Why do I have to do this? */
 		gtk_widget_queue_draw(gtkconv->infopane);
-	
+
 		if (title != markup)
 			g_free(markup);
 
@@ -6495,47 +6494,43 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		if (im != NULL &&
 		    purple_conv_im_get_typing_state(im) == PURPLE_TYPING) {
 			atk_object_set_description(accessibility_obj, _("Typing"));
-			style = "color=\"#4e9a06\"";
+			style = "tab-label-typing";
 		} else if (im != NULL &&
 		         purple_conv_im_get_typing_state(im) == PURPLE_TYPED) {
 			atk_object_set_description(accessibility_obj, _("Stopped Typing"));
-			style = "color=\"#c4a000\"";
+			style = "tab-label-typed";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)	{
 			atk_object_set_description(accessibility_obj, _("Nick Said"));
-			style = "color=\"#204a87\"";
+			style = "tab-label-attention";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
 			if (gtkconv->active_conv->type == PURPLE_CONV_TYPE_CHAT)
 				style = "color=\"#cc0000\"";
 			else
-				style = "color=\"#204a87\"";
+				style = "tab-label-attention";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
 			atk_object_set_description(accessibility_obj, _("New Event"));
-			style = "color=\"#888a85\"";
+			style = "tab-label-event";
 		} else {
 			style = NULL;
 		}
 
+		gtk_widget_set_name(gtkconv->tab_label, style);
+		gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
+		gtk_widget_set_state(gtkconv->tab_label, GTK_STATE_ACTIVE);
+
 		if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT ||
 				gtkconv->unseen_state == PIDGIN_UNSEEN_NICK ||
-				gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
-			bold = TRUE;
-
-		if (style || bold)
-		{
-			char *html_title,*label;
-
-			html_title = g_markup_escape_text(title, -1);
-			label = g_strdup_printf("<span %s %s>%s</span>",
-			                        style ? style : "",
-			                        bold ? "weight=\"bold\"" : "",
-			                        html_title);
-			g_free(html_title);
-			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
-			g_free(label);
-		}
-		else
-			gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
+				gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
+			PangoAttrList *list = pango_attr_list_new();
+			PangoAttribute *attr = pango_attr_weight_new(PANGO_WEIGHT_BOLD);
+			attr->start_index = 0;
+			attr->end_index = -1;
+			pango_attr_list_insert(list, attr);
+			gtk_label_set_attributes(GTK_LABEL(gtkconv->tab_label), list);
+			pango_attr_list_unref(list);
+		} else
+			gtk_label_set_attributes(GTK_LABEL(gtkconv->tab_label), NULL);
 
 		if (pidgin_conv_window_is_active_conversation(conv))
 			update_typing_icon(gtkconv);
@@ -7748,6 +7743,40 @@ pidgin_conversations_init(void)
 			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
 	purple_signal_connect(purple_conversations_get_handle(), "wrote-chat-msg", handle,
 			PURPLE_CALLBACK(wrote_msg_update_unseen_cb), NULL);
+
+	{
+		/* Set default tab colors */
+		GString *str = g_string_new(NULL);
+		GtkSettings *settings = gtk_settings_get_default();
+		struct {
+			const char *stylename;
+			const char *labelname;
+			const char *color;
+		} styles[] = {
+			{"pidgin_tab_label_typing_default", "tab-label-typing", "#4e9a06"},
+			{"pidgin_tab_label_typed_default", "tab-label-typed", "#c4a000"},
+			{"pidgin_tab_label_attention_default", "tab-label-attention", "#204a87"},
+			{"pidgin_tab_label_event_default", "tab-label-event", "#888a85"},
+			{NULL, NULL, NULL}
+		};
+		int iter;
+		for (iter = 0; styles[iter].stylename; iter++) {
+			if (!gtk_rc_get_style_by_paths(settings, styles[iter].labelname, NULL, G_TYPE_NONE))
+				/* Apparently both ACTIVE and NORMAL are required */
+				g_string_append_printf(str, "style \"%s\" {\n"
+						"fg[ACTIVE] = \"%s\"\n"
+						"}\n"
+						"widget \"*%s\" style \"%s\"\n",
+						styles[iter].stylename,
+						styles[iter].color,
+						styles[iter].labelname, styles[iter].stylename);
+		}
+		gtk_rc_parse_string(str->str);
+		g_string_free(str, TRUE);
+#if GTK_CHECK_VERSION(2,4,0)
+		gtk_rc_reset_styles(settings);
+#endif
+	}
 }
 
 void
@@ -9050,6 +9079,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(tmp_lab = purple_conversation_get_title(conv));
+	gtk_widget_set_name(gtkconv->tab_label, "tab-label");
 
 	gtkconv->menu_tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtkconv->menu_label = gtk_label_new(tmp_lab);
