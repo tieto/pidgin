@@ -1831,9 +1831,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		signon = info->onlinesince;
 	else if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
 		signon = time(NULL) - info->sessionlen;
-	if (!aim_sncmp(purple_account_get_username(account), info->sn)) {
-		purple_connection_set_display_name(gc, info->sn);
-	}
 	purple_prpl_got_user_login_time(account, info->sn, signon);
 
 	/* Idle time stuff */
@@ -3434,6 +3431,8 @@ static int purple_selfinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, .
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
+
+	purple_connection_set_display_name(od->gc, info->sn);
 
 	/*
 	 * What's with the + 0.5?
