@@ -692,6 +692,7 @@ dump_file_save(GntFileSel *fs, const char *path, const char *f, gpointer n)
 		{'\0', NULL}
 	};
 
+	gnt_widget_destroy(GNT_WIDGET(fs));
 
 	if ((file = g_fopen(path, "w+")) == NULL) {
 		return;
@@ -803,7 +804,6 @@ dump_file_save(GntFileSel *fs, const char *path, const char *f, gpointer n)
 	}
 	fprintf(file, "</pre>\n</body>");
 	fclose(file);
-	gnt_widget_destroy(GNT_WIDGET(fs));
 }
 
 static void
