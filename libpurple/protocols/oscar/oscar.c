@@ -5352,26 +5352,29 @@ oscar_join_chat(PurpleConnection *gc, GHashTable *data)
 	OscarData *od = (OscarData *)gc->proto_data;
 	FlapConnection *conn;
 	char *name, *exchange;
+	int exchange_int;
 
 	name = g_hash_table_lookup(data, "room");
 	exchange = g_hash_table_lookup(data, "exchange");
 
-	if ((name == NULL) || (*name == '\0')) {
-		purple_notify_error(gc, NULL, _("Invalid chat name specified."), NULL);
-		return;
-	}
+	g_return_if_fail(name != NULL && *name != '\0');
+	g_return_if_fail(exchange != NULL);
+
+	errno = 0;
+	exchange_int = strtol(exchange, NULL, 10);
+	g_return_if_fail(errno == 0);
 
 	purple_debug_info("oscar", "Attempting to join chat room %s.\n", name);
 
 	if ((conn = flap_connection_getbytype(od, SNAC_FAMILY_CHATNAV)))
 	{
 		purple_debug_info("oscar", "chatnav exists, creating room\n");
-		aim_chatnav_createroom(od, conn, name, atoi(exchange));
+		aim_chatnav_createroom(od, conn, name, exchange_int);
 	} else {
 		/* this gets tricky */
 		struct create_room *cr = g_new0(struct create_room, 1);
 		purple_debug_info("oscar", "chatnav does not exist, opening chatnav\n");
-		cr->exchange = atoi(exchange);
+		cr->exchange = exchange_int;
 		cr->name = g_strdup(name);
 		od->create_rooms = g_slist_prepend(od->create_rooms, cr);
 		aim_srv_requestnew(od, SNAC_FAMILY_CHATNAV);
