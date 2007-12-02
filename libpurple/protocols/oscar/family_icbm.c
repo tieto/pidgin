@@ -290,7 +290,7 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 		if (!args->msg || (args->msglen <= 0))
 			return -EINVAL;
 
-		if (args->msglen >= MAXMSGLEN)
+		if (args->msglen > MAXMSGLEN)
 			return -E2BIG;
 	}
 
