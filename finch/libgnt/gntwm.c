@@ -817,6 +817,11 @@ dump_screen(GntBindable *b, GList *null)
 {
 	GntWidget *window = gnt_file_sel_new();
 	GntFileSel *sel = GNT_FILE_SEL(window);
+
+	g_object_set(G_OBJECT(window), "vertical", TRUE, NULL);
+	gnt_box_add_widget(GNT_BOX(window), gnt_label_new("Please enter the filename to save the screenshot."));
+	gnt_box_set_title(GNT_BOX(window), "Save Screenshot...");
+
 	gnt_file_sel_set_suggested_filename(sel, "dump.html");
 	g_signal_connect(G_OBJECT(sel), "file_selected", G_CALLBACK(dump_file_save), NULL);
 	g_signal_connect(G_OBJECT(sel->cancel), "activate", G_CALLBACK(dump_file_cancel), sel);
