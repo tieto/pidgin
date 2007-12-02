@@ -176,7 +176,6 @@ static int purple_parse_mtn        (OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_parse_locaterights(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_buddyrights(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_locerr     (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_icbm_param_info  (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_genericerr (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_memrequest       (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_selfinfo         (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -1228,7 +1227,6 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_RECVAUTHREQ, purple_ssi_authrequest, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_RECVAUTHREP, purple_ssi_authreply, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_ADDED, purple_ssi_gotadded, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, 0x0005, purple_icbm_param_info, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_INCOMING, purple_parse_incoming_im, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_MISSEDCALL, purple_parse_misses, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_CLIENTAUTORESP, purple_parse_clientauto, 0);
@@ -3494,32 +3492,6 @@ static int purple_connerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 			oscar_chat_kill(gc, cc);
 		}
 	}
-
-	return 1;
-}
-
-static int purple_icbm_param_info(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	struct aim_icbmparameters *params;
-	va_list ap;
-
-	va_start(ap, fr);
-	params = va_arg(ap, struct aim_icbmparameters *);
-	va_end(ap);
-
-	/* XXX - evidently this crashes on solaris. i have no clue why
-	purple_debug_misc("oscar", "ICBM Parameters: maxchannel = %hu, default flags = 0x%08lx, max msg len = %hu, "
-			"max sender evil = %f, max receiver evil = %f, min msg interval = %u\n",
-			params->maxchan, params->flags, params->maxmsglen,
-			((float)params->maxsenderwarn)/10.0, ((float)params->maxrecverwarn)/10.0,
-			params->minmsginterval);
-	*/
-
-	/* Maybe senderwarn and recverwarn should be user preferences... */
-	params->flags = 0x0000000b;
-	params->maxmsglen = 8000;
-	params->minmsginterval = 0;
-
-	aim_im_setparams(od, params);
 
 	return 1;
 }
