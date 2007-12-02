@@ -355,7 +355,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 }
 
 static void
-connect_cb(gpointer data, gint source, const gchar *error_message)
+connect_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnDirectConn* directconn;
 	int fd;
