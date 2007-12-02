@@ -294,6 +294,13 @@ int gnt_color_pair(int pair)
 
 int gnt_color_add_pair(int fg, int bg)
 {
+	int i;
+	for (i = 1; i < custom_type; i++) {
+		short f, b;
+		if (pair_content(i, &f, &b) != ERR &&
+				f == fg && b == bg)
+			return i;
+	}
 	init_pair(custom_type, fg, bg);
 	return custom_type++;
 }
