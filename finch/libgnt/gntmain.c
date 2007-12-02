@@ -679,8 +679,9 @@ reap_child(GPid pid, gint status, gpointer data)
 	g_free(cp);
 	clean_pid();
 	wm->mode = GNT_KP_MODE_NORMAL;
-	clear();
+	endwin();
 	setup_io();
+	refresh();
 	refresh_screen();
 }
 #endif
