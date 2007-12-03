@@ -6699,7 +6699,7 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_bool_new(
-		_("Always use ICQ proxy server for file transfers\n(slower, but does not reveal your IP address)"), "always_use_rv_proxy",
+		_("Always use AIM/ICQ proxy server for\nfile transfers and direct IM (slower,\nbut does not reveal your IP address)"), "always_use_rv_proxy",
 		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
