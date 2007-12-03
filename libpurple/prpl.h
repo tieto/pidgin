@@ -292,6 +292,13 @@ struct _PurplePluginProtocolInfo
 	void (*chat_whisper)(PurpleConnection *, int id,
 						 const char *who, const char *message);
 	int  (*chat_send)(PurpleConnection *, int id, const char *message, PurpleMessageFlags flags);
+
+	/** If implemented, this will be called regularly for this prpl's
+	 *  active connections.  You'd want to do this if you need to repeatedly
+	 *  send some kind of keepalive packet to the server to avoid being
+	 *  disconnected.  ("Regularly" is defined by
+	 *  <code>KEEPALIVE_INTERVAL</code> in <tt>libpurple/connection.c</tt>.)
+	 */
 	void (*keepalive)(PurpleConnection *);
 
 	/** new user registration */

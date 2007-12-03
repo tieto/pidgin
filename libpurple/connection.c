@@ -38,6 +38,8 @@
 #include "signals.h"
 #include "util.h"
 
+#define KEEPALIVE_INTERVAL 30
+
 static GList *connections = NULL;
 static GList *connections_connecting = NULL;
 static PurpleConnectionUiOps *connection_ui_ops = NULL;
@@ -73,7 +75,7 @@ update_keepalive(PurpleConnection *gc, gboolean on)
 	if (on && !gc->keepalive)
 	{
 		purple_debug_info("connection", "Activating keepalive.\n");
-		gc->keepalive = purple_timeout_add_seconds(30, send_keepalive, gc);
+		gc->keepalive = purple_timeout_add_seconds(KEEPALIVE_INTERVAL, send_keepalive, gc);
 	}
 	else if (!on && gc->keepalive > 0)
 	{
