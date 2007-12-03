@@ -176,7 +176,6 @@ static int purple_parse_mtn        (OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_parse_locaterights(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_buddyrights(OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_locerr     (OscarData *, FlapConnection *, FlapFrame *, ...);
-static int purple_icbm_param_info  (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_parse_genericerr (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_memrequest       (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_selfinfo         (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -1228,7 +1227,6 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_RECVAUTHREQ, purple_ssi_authrequest, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_RECVAUTHREP, purple_ssi_authreply, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_ADDED, purple_ssi_gotadded, 0);
-	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, 0x0005, purple_icbm_param_info, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_INCOMING, purple_parse_incoming_im, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_MISSEDCALL, purple_parse_misses, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_CLIENTAUTORESP, purple_parse_clientauto, 0);
@@ -1833,9 +1831,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		signon = info->onlinesince;
 	else if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
 		signon = time(NULL) - info->sessionlen;
-	if (!aim_sncmp(purple_account_get_username(account), info->sn)) {
-		purple_connection_set_display_name(gc, info->sn);
-	}
 	purple_prpl_got_user_login_time(account, info->sn, signon);
 
 	/* Idle time stuff */
@@ -3437,6 +3432,8 @@ static int purple_selfinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, .
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
+	purple_connection_set_display_name(od->gc, info->sn);
+
 	/*
 	 * What's with the + 0.5?
 	 * The 0.5 is basically poor-man's rounding.  Normally
@@ -3494,32 +3491,6 @@ static int purple_connerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 			oscar_chat_kill(gc, cc);
 		}
 	}
-
-	return 1;
-}
-
-static int purple_icbm_param_info(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
-	struct aim_icbmparameters *params;
-	va_list ap;
-
-	va_start(ap, fr);
-	params = va_arg(ap, struct aim_icbmparameters *);
-	va_end(ap);
-
-	/* XXX - evidently this crashes on solaris. i have no clue why
-	purple_debug_misc("oscar", "ICBM Parameters: maxchannel = %hu, default flags = 0x%08lx, max msg len = %hu, "
-			"max sender evil = %f, max receiver evil = %f, min msg interval = %u\n",
-			params->maxchan, params->flags, params->maxmsglen,
-			((float)params->maxsenderwarn)/10.0, ((float)params->maxrecverwarn)/10.0,
-			params->minmsginterval);
-	*/
-
-	/* Maybe senderwarn and recverwarn should be user preferences... */
-	params->flags = 0x0000000b;
-	params->maxmsglen = 8000;
-	params->minmsginterval = 0;
-
-	aim_im_setparams(od, params);
 
 	return 1;
 }
@@ -5364,6 +5335,7 @@ GHashTable *oscar_chat_info_defaults(PurpleConnection *gc, const char *chat_name
 
 	if (chat_name != NULL)
 		g_hash_table_insert(defaults, "room", g_strdup(chat_name));
+	g_hash_table_insert(defaults, "exchange", g_strdup("4"));
 
 	return defaults;
 }
@@ -5380,26 +5352,29 @@ oscar_join_chat(PurpleConnection *gc, GHashTable *data)
 	OscarData *od = (OscarData *)gc->proto_data;
 	FlapConnection *conn;
 	char *name, *exchange;
+	int exchange_int;
 
 	name = g_hash_table_lookup(data, "room");
 	exchange = g_hash_table_lookup(data, "exchange");
 
-	if ((name == NULL) || (*name == '\0')) {
-		purple_notify_error(gc, NULL, _("Invalid chat name specified."), NULL);
-		return;
-	}
+	g_return_if_fail(name != NULL && *name != '\0');
+	g_return_if_fail(exchange != NULL);
+
+	errno = 0;
+	exchange_int = strtol(exchange, NULL, 10);
+	g_return_if_fail(errno == 0);
 
 	purple_debug_info("oscar", "Attempting to join chat room %s.\n", name);
 
 	if ((conn = flap_connection_getbytype(od, SNAC_FAMILY_CHATNAV)))
 	{
 		purple_debug_info("oscar", "chatnav exists, creating room\n");
-		aim_chatnav_createroom(od, conn, name, atoi(exchange));
+		aim_chatnav_createroom(od, conn, name, exchange_int);
 	} else {
 		/* this gets tricky */
 		struct create_room *cr = g_new0(struct create_room, 1);
 		purple_debug_info("oscar", "chatnav does not exist, opening chatnav\n");
-		cr->exchange = atoi(exchange);
+		cr->exchange = exchange_int;
 		cr->name = g_strdup(name);
 		od->create_rooms = g_slist_prepend(od->create_rooms, cr);
 		aim_srv_requestnew(od, SNAC_FAMILY_CHATNAV);
@@ -6725,7 +6700,7 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 
 	option = purple_account_option_bool_new(
-		_("Always use ICQ proxy server for file transfers\n(slower, but does not reveal your IP address)"), "always_use_rv_proxy",
+		_("Always use AIM/ICQ proxy server for\nfile transfers and direct IM (slower,\nbut does not reveal your IP address)"), "always_use_rv_proxy",
 		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
 	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
 

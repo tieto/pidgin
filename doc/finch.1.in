@@ -145,8 +145,19 @@ color-idle = gray; black
 .br
 color-offline = red; black
 .br
+color-message-sent = cyan; default
+.br
+color-message-received = red; default
+.br
+color-message-highlight = black; green
+.br
+color-message-action = yellow; default
+.br
+color-timestamp = blue; default
+.br
 #See below for details on color
 .br
+
 [general]
 .br
 shadow = 0

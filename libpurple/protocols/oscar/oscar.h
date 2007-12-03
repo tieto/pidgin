@@ -94,11 +94,8 @@ extern "C" {
  * for WinAIM clients (up through the latest (4.0.1957)) to
  * send any more than 1kb.  Amaze all your windows friends
  * with utterly oversized instant messages!
- *
- * TODO: the real limit is the total SNAC size at 8192. Fix this.
- *
  */
-#define MAXMSGLEN 7987
+#define MAXMSGLEN 2544
 
 /*
  * Maximum size of a Buddy Icon.
