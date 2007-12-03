@@ -29,6 +29,49 @@
 
 #include "oscar.h"
 
+static int
+error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
+{
+	int ret = 0;
+	aim_snac_t *snac2;
+	guint16 error, chatnav_error;
+	GSList *tlvlist;
+
+	if (!(snac2 = aim_remsnac(od, snac->id))) {
+		purple_debug_warning("oscar", "chatnav error: received response to unknown request (%08lx)\n", snac->id);
+		return 0;
+	}
+
+	if (snac2->family != 0x000d) {
+		purple_debug_warning("oscar", "chatnav error: received response that maps to corrupt request (fam=%04x)\n", snac2->family);
+		return 0;
+	}
+
+	/*
+	 * We now know what the original SNAC subtype was.
+	 */
+	if (snac2->type == 0x0008) /* create room */
+	{
+		error = byte_stream_get16(bs);
+		tlvlist = aim_tlvlist_read(bs);
+		chatnav_error = aim_tlv_get16(tlvlist, 0x0008, 1);
+
+		purple_debug_warning("oscar",
+				"Could not join room, error=0x%04hx, chatnav_error=0x%04hx\n",
+				error, chatnav_error);
+		purple_notify_error(od->gc, NULL, _("Could not join chat room"),
+				chatnav_error == 0x0033 ? _("Invalid chat room name") : _("Unknown error"));
+
+		ret = 1;
+	}
+
+	if (snac2)
+		g_free(snac2->data);
+	g_free(snac2);
+
+	return ret;
+}
+
 /*
  * Subtype 0x0002
  *
@@ -451,7 +494,9 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 static int
 snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	if (snac->subtype == 0x0009)
+	if (snac->subtype == 0x0001)
+		return error(od, conn, mod, frame, snac, bs);
+	else if (snac->subtype == 0x0009)
 		return parseinfo(od, conn, mod, frame, snac, bs);
 
 	return 0;

@@ -49,6 +49,7 @@
 #include "gntmenu.h"
 #include "gntmenuitem.h"
 #include "gntmenuitemcheck.h"
+#include "gntstyle.h"
 #include "gnttextview.h"
 #include "gnttree.h"
 #include "gntutils.h"
@@ -63,6 +64,12 @@
 static void finch_write_common(PurpleConversation *conv, const char *who,
 		const char *message, PurpleMessageFlags flags, time_t mtime);
 static void generate_send_to_menu(FinchConv *ggc);
+
+static int color_message_receive;
+static int color_message_send;
+static int color_message_highlight;
+static int color_message_action;
+static int color_timestamp;
 
 static PurpleBlistNode *
 get_conversation_blist_node(PurpleConversation *conv)
@@ -753,7 +760,9 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 	/* Unnecessary to print the timestamp for delayed message */
 	if (purple_prefs_get_bool("/finch/conversations/timestamps"))
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-					purple_utf8_strftime("(%H:%M:%S) ", localtime(&mtime)), GNT_TEXT_FLAG_DIM);
+					purple_utf8_strftime("(%H:%M:%S)", localtime(&mtime)), gnt_color_pair(color_timestamp));
+
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), " ", GNT_TEXT_FLAG_NORMAL);
 
 	if (flags & PURPLE_MESSAGE_AUTO_RESP)
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
@@ -764,22 +773,31 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 	{
 		char * name = NULL;
 
-		if (purple_message_meify((char*)message, -1))
-			name = g_strdup_printf("*** %s ", who);
-		else
-			name =  g_strdup_printf("%s: ", who);
-
-		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-				name, GNT_TEXT_FLAG_BOLD);
+		if (purple_message_meify((char*)message, -1)) {
+			name = g_strdup_printf("*** %s", who);
+			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
+				name, gnt_color_pair(color_message_action));
+		} else {
+			name =  g_strdup_printf("%s", who);
+			if (flags & PURPLE_MESSAGE_SEND)
+				gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
+					name, gnt_color_pair(color_message_send));
+			else
+				if (flags & PURPLE_MESSAGE_NICK) {
+					gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
+						name, gnt_color_pair(color_message_highlight));
+				} else {
+					gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
+						name, gnt_color_pair(color_message_receive));
+				}
+		}
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), ": ", GNT_TEXT_FLAG_NORMAL);
 		g_free(name);
-	}
-	else
+	} else
 		fl = GNT_TEXT_FLAG_DIM;
 
 	if (flags & PURPLE_MESSAGE_ERROR)
 		fl |= GNT_TEXT_FLAG_BOLD;
-	if (flags & PURPLE_MESSAGE_NICK)
-		fl |= GNT_TEXT_FLAG_UNDERLINE;
 
 	/* XXX: Remove this workaround when textview can parse messages. */
 	newline = purple_strdup_withhtml(message);
@@ -1126,6 +1144,21 @@ users_command_cb(PurpleConversation *conv, const char *cmd, char **args, char **
 
 void finch_conversation_init()
 {
+	color_message_send = gnt_style_get_color(NULL, "color-message-sent");
+	if (!color_message_send)
+		color_message_send = gnt_color_add_pair(COLOR_CYAN, -1);
+	color_message_receive = gnt_style_get_color(NULL, "color-message-received");
+	if (!color_message_receive)
+		color_message_receive = gnt_color_add_pair(COLOR_RED, -1);
+	color_message_highlight = gnt_style_get_color(NULL, "color-message-highlight");
+	if (!color_message_highlight)
+		color_message_highlight = gnt_color_add_pair(COLOR_GREEN, -1);
+	color_timestamp = gnt_style_get_color(NULL, "color-timestamp");
+	if (!color_timestamp)
+		color_timestamp = gnt_color_add_pair(COLOR_BLUE, -1);
+	color_message_action = gnt_style_get_color(NULL, "color-message-action");
+	if (!color_message_action)
+		color_message_action = gnt_color_add_pair(COLOR_YELLOW, -1);
 	purple_prefs_add_none(PREF_ROOT);
 	purple_prefs_add_none(PREF_ROOT "/size");
 	purple_prefs_add_int(PREF_ROOT "/size/width", 70);

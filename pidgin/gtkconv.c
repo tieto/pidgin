@@ -6476,7 +6476,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				markup = title;
 			}
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-			const char *topic = gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text));
+			const char *topic = gtkconv->u.chat->topic_text ? gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text)) : NULL;
 			char *esc = NULL;
 #if GTK_CHECK_VERSION(2,6,0)
 			esc = topic ? g_markup_escape_text(topic, -1) : NULL;
@@ -8674,7 +8674,7 @@ alias_cb(GtkEntry *entry, gpointer user_data)
                                                  gtk_entry_get_text(entry));
 		}
 		serv_alias_buddy(buddy);
-	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {	        
+	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		gtk_entry_set_text(GTK_ENTRY(gtkconv->u.chat->topic_text), gtk_entry_get_text(entry));
 		topic_callback(NULL, gtkconv);
 	}
@@ -8685,7 +8685,7 @@ static gboolean
 infopane_entry_activate(PidginConversation *gtkconv)
 {
 	GtkWidget *entry = NULL;
-        PurpleConversation *conv = gtkconv->active_conv;
+	PurpleConversation *conv = gtkconv->active_conv;
 	const char *text = NULL;
 
 	if (!GTK_WIDGET_VISIBLE(gtkconv->tab_label)) {
@@ -8701,9 +8701,21 @@ infopane_entry_activate(PidginConversation *gtkconv)
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
 		PurpleBuddy *buddy = purple_find_buddy(gtkconv->active_conv->account, gtkconv->active_conv->name);
 		if (!buddy)
+			/* This buddy isn't in your buddy list, so we can't alias him */
 			return FALSE;
+
 		text = purple_buddy_get_contact_alias(buddy);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+		PurpleConnection *gc;
+		PurplePluginProtocolInfo *prpl_info = NULL;
+
+		gc = purple_conversation_get_gc(conv);
+		if (gc != NULL)
+			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		if (prpl_info && prpl_info->set_chat_topic == NULL)
+			/* This protocol doesn't support setting the chat room topic */
+			return FALSE;
+
 		text = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv));
 	}
 
@@ -8722,10 +8734,9 @@ infopane_entry_activate(PidginConversation *gtkconv)
 	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(alias_cb), gtkconv);
 	g_signal_connect(G_OBJECT(entry), "focus-out-event", G_CALLBACK(alias_focus_cb), gtkconv);
 	g_signal_connect(G_OBJECT(entry), "key-press-event", G_CALLBACK(alias_key_press_cb), gtkconv);
-	
-	
 
-	gtk_entry_set_text(GTK_ENTRY(entry), text);
+	if (text != NULL)
+		gtk_entry_set_text(GTK_ENTRY(entry), text);
 	gtk_widget_show(entry);
 	gtk_widget_hide(gtkconv->infopane);
 	gtk_widget_grab_focus(entry);
