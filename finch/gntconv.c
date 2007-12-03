@@ -772,26 +772,25 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 			!(flags & PURPLE_MESSAGE_NOTIFY))
 	{
 		char * name = NULL;
+		GntTextFormatFlags msgflags = GNT_TEXT_FLAG_NORMAL;
+		gboolean me = FALSE;
 
 		if (purple_message_meify((char*)message, -1)) {
 			name = g_strdup_printf("*** %s", who);
-			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-				name, gnt_color_pair(color_message_action));
+			msgflags = gnt_color_pair(color_message_action);
+			me = TRUE;
 		} else {
 			name =  g_strdup_printf("%s", who);
 			if (flags & PURPLE_MESSAGE_SEND)
-				gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-					name, gnt_color_pair(color_message_send));
+				msgflags = gnt_color_pair(color_message_send);
+			else if (flags & PURPLE_MESSAGE_NICK)
+				msgflags = gnt_color_pair(color_message_highlight);
 			else
-				if (flags & PURPLE_MESSAGE_NICK) {
-					gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-						name, gnt_color_pair(color_message_highlight));
-				} else {
-					gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
-						name, gnt_color_pair(color_message_receive));
-				}
+				msgflags = gnt_color_pair(color_message_receive);
 		}
-		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), ": ", GNT_TEXT_FLAG_NORMAL);
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
+				name, msgflags);
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), me ? " " : ": ", GNT_TEXT_FLAG_NORMAL);
 		g_free(name);
 	} else
 		fl = GNT_TEXT_FLAG_DIM;
