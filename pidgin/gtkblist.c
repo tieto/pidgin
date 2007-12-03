@@ -1398,7 +1398,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	pidgin_append_blist_node_proto_menu(menu, buddy->account->gc, node);
 	pidgin_append_blist_node_extended_menu(menu, node);
 
-	if (!contact_expanded)
+	if (!contact_expanded && contact != NULL)
 		pidgin_append_blist_node_move_to_menu(menu, (PurpleBlistNode *)contact);
 
 	if (node->parent && node->parent->child->next && 
