@@ -1310,7 +1310,7 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		g = (PurpleGroup *)((PurpleBlistNode *)c)->parent;
 	} else {
 		if (group) {
-			/* Add chat to blist if isn't already on it. Fixes #2752. */
+			/* Add group to blist if isn't already on it. Fixes #2752. */
 			if (!purple_find_group(group->name)) {
 				purple_blist_add_group(group,
 						purple_blist_get_last_sibling(purplebuddylist->root));

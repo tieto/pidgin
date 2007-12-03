@@ -1398,7 +1398,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	pidgin_append_blist_node_proto_menu(menu, buddy->account->gc, node);
 	pidgin_append_blist_node_extended_menu(menu, node);
 
-	if (!contact_expanded)
+	if (!contact_expanded && contact != NULL)
 		pidgin_append_blist_node_move_to_menu(menu, (PurpleBlistNode *)contact);
 
 	if (node->parent && node->parent->child->next && 
@@ -5715,11 +5715,11 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 
 	esc = g_markup_escape_text(group->name, -1);
 	if (selected)
-		mark = g_strdup_printf("<span weight='bold'>%s</span>%s", esc, group_count);
+		mark = g_strdup_printf("<span weight='bold'>%s</span>%s", esc ? esc : "", group_count);
 	else
 		mark = g_strdup_printf("<span color='#%02x%02x%02x' weight='bold'>%s</span>%s",
 				       textcolor.red>>8, textcolor.green>>8, textcolor.blue>>8,
-				       esc, group_count);
+				       esc ? esc : "", group_count);
 
 	g_free(esc);
 	return mark;
