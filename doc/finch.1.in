@@ -157,6 +157,7 @@ color-timestamp = blue; default
 .br
 #See below for details on color
 .br
+
 [general]
 .br
 shadow = 0
@@ -244,8 +245,6 @@ titled = white; gray
 text = white; blue
 .br
 disabled = gray; black
-.br
-urgent = green; black
 .br
 urgent = green; black
 .br
