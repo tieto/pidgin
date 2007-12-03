@@ -59,6 +59,25 @@ char *gnt_style_get_from_name(const char *group, const char *key)
 #endif
 }
 
+int
+gnt_style_get_color(char *group, char *key)
+{
+#if GLIB_CHECK_VERSION(2,6,0)
+	int fg = 0, bg = 0;
+	gsize n;
+	char **vals;
+	vals = gnt_style_get_string_list(group, key, &n);
+	if (vals && n == 2) {
+		fg = gnt_colors_get_color(vals[0]);
+		bg = gnt_colors_get_color(vals[1]);
+		return gnt_color_add_pair(fg, bg);
+	}
+	return 0;
+#else
+	return 0;
+#endif
+}
+
 char **gnt_style_get_string_list(const char *group, const char *key, gsize *length)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
