@@ -1777,7 +1777,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			passport = msn_user_get_passport(session->user);
 			url = session->passport_info.file;
 
-			purple_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
+			purple_notify_emails(gc, count, FALSE, NULL, NULL,
 							   &passport, &url, NULL, NULL);
 		}
 	}
@@ -1850,7 +1850,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			passport = msn_user_get_passport(session->user);
 			url = session->passport_info.file;
 
-			purple_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
+			purple_notify_emails(gc, count, FALSE, NULL, NULL,
 							   &passport, &url, NULL, NULL);
 		}
 	}
