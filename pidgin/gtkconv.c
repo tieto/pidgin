@@ -7817,7 +7817,7 @@ pidgin_conversations_init(void)
 		} styles[] = {
 			{"pidgin_tab_label_typing_default", "tab-label-typing", "#4e9a06"},
 			{"pidgin_tab_label_typed_default", "tab-label-typed", "#c4a000"},
-			{"pidgin_tab_label_attention_default", "tab-label-attention", "#204a87"},
+			{"pidgin_tab_label_attention_default", "tab-label-attention", "#006aff"},
 			{"pidgin_tab_label_unreadchat_default", "tab-label-unreadchat", "#cc0000"},
 			{"pidgin_tab_label_event_default", "tab-label-event", "#888a85"},
 			{NULL, NULL, NULL}
