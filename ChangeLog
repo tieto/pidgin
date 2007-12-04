@@ -9,8 +9,8 @@ version 2.3.1 (12/??/2007):
 	libpurple:
 	* Fixed a number of MSN bugs introduced in 2.3.0, resolving problems
 	  connecting to MSN and random local display name changes
-	* Fixed various problems with loss of status messages when going
-	  or returning from idle on MySpaceIM.
+	* Going idle on MySpaceIM will no longer clear your status and message.
+	* Idle MySpaceIM buddies should now appear online at login.
 	* Fixed crashes in XMPP when discovering a client's capabilities
 	* Don't set the current tune title if it's NULL (XMPP/Google Talk)
 	* Don't allow buddies to be manually added to Bonjour
