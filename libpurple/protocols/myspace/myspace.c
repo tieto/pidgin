@@ -1954,8 +1954,8 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 			break;
 
 		case MSIM_STATUS_CODE_IDLE:
-			/* will be handled below */
-			purple_status_code = -1;
+			/* Treat idle as an available status. */
+			purple_status_code = PURPLE_STATUS_AVAILABLE;
 			break;
 
 		default:
