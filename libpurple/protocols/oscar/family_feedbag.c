@@ -341,13 +341,9 @@ struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *list, const 
  */
 struct aim_ssi_item *aim_ssi_itemlist_exists(struct aim_ssi_item *list, const char *sn)
 {
-	struct aim_ssi_item *cur;
-	if (!list || !sn)
+	if (!sn)
 		return NULL;
-	for (cur=list; cur; cur=cur->next)
-		if ((cur->type == AIM_SSI_TYPE_BUDDY) && (cur->name) && (!aim_sncmp(cur->name, sn)))
-			return cur;
-	return NULL;
+	return aim_ssi_itemlist_finditem(list, NULL, sn, AIM_SSI_TYPE_BUDDY);
 }
 
 /**
