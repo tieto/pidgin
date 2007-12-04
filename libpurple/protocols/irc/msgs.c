@@ -707,6 +707,7 @@ void irc_msg_ison(struct irc_conn *irc, const char *name, const char *from, char
 	g_strfreev(nicks);
 
 	g_hash_table_foreach(irc->buddies, (GHFunc)irc_buddy_status, (gpointer)irc);
+	irc->ison_outstanding = FALSE;
 }
 
 static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *irc)
