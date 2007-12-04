@@ -1369,7 +1369,9 @@ msim_check_inbox_cb(MsimSession *session, MsimMessage *reply, gpointer data)
 	msim_msg_dump("msim_check_inbox_cb: reply=%s\n", reply);
 
 	body = msim_msg_get_dictionary(reply, "body");
-	g_return_if_fail(body != NULL);
+
+	if (body == NULL)
+		return;
 
 	old_inbox_status = session->inbox_status;
 
@@ -1432,6 +1434,11 @@ msim_check_inbox(gpointer data)
 	MsimSession *session;
 
 	session = (MsimSession *)data;
+
+	if (!MSIM_SESSION_VALID(session)) {
+		purple_debug_info("msim", "msim_check_inbox: session invalid, stopping the mail check.\n");
+		return FALSE;
+	}
 
 	purple_debug_info("msim", "msim_check_inbox: checking mail\n");
 	g_return_val_if_fail(msim_send(session, 
@@ -1645,7 +1652,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 
 	/* Check mail if they want to. */
 	if (purple_account_get_check_mail(session->account)) {
-		purple_timeout_add(MSIM_MAIL_INTERVAL_CHECK, 
+		session->inbox_handle = purple_timeout_add(MSIM_MAIL_INTERVAL_CHECK, 
 				(GSourceFunc)msim_check_inbox, session);
 		msim_check_inbox(session);
 	}
