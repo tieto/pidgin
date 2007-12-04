@@ -3170,6 +3170,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		GList *cur;
 		struct proto_chat_entry *pce;
 		char *name, *value;
+		PidginBlistNode *bnode = node->ui_data;
 
 		chat = (PurpleChat *)node;
 		prpl = purple_find_prpl(purple_account_get_protocol_id(chat->account));
@@ -3180,6 +3181,11 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			tmp = g_markup_escape_text(chat->account->username, -1);
 			g_string_append_printf(str, _("\n<b>Account:</b> %s"), tmp);
 			g_free(tmp);
+		}
+
+		if (bnode && bnode->conv.conv) {
+			const char *topic = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(bnode->conv.conv));
+			g_string_append_printf(str, _("\n<b>Topic:</b> %s"), topic ? topic : _("(no topic set)"));
 		}
 
 		if (prpl_info->chat_info != NULL)
