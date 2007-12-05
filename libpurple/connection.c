@@ -38,6 +38,8 @@
 #include "signals.h"
 #include "util.h"
 
+#define KEEPALIVE_INTERVAL 30
+
 static GList *connections = NULL;
 static GList *connections_connecting = NULL;
 static PurpleConnectionUiOps *connection_ui_ops = NULL;
@@ -73,7 +75,7 @@ update_keepalive(PurpleConnection *gc, gboolean on)
 	if (on && !gc->keepalive)
 	{
 		purple_debug_info("connection", "Activating keepalive.\n");
-		gc->keepalive = purple_timeout_add_seconds(30, send_keepalive, gc);
+		gc->keepalive = purple_timeout_add_seconds(KEEPALIVE_INTERVAL, send_keepalive, gc);
 	}
 	else if (!on && gc->keepalive > 0)
 	{
@@ -219,9 +221,6 @@ purple_connection_destroy(PurpleConnection *gc)
 {
 	PurpleAccount *account;
 	GSList *buddies;
-#if 0
-	GList *wins;
-#endif
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	gboolean remove = FALSE;
 
@@ -268,19 +267,6 @@ purple_connection_destroy(PurpleConnection *gc)
 		purple_blist_remove_account(account);
 
 	purple_signal_emit(purple_connections_get_handle(), "signed-off", gc);
-
-#if 0
-	/* see comment later in file on if 0'd same code */
-	/*
-	 * XXX This is a hack! Remove this and replace it with a better event
-	 *     notification system.
-	 */
-	for (wins = purple_get_windows(); wins != NULL; wins = wins->next) {
-		PurpleConvWindow *win = (PurpleConvWindow *)wins->data;
-		purple_conversation_update(purple_conv_window_get_conversation_at(win, 0),
-								 PURPLE_CONV_ACCOUNT_OFFLINE);
-	}
-#endif
 
 	purple_account_request_close_with_account(account);
 	purple_request_close_with_handle(gc);

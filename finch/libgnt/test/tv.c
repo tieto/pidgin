@@ -112,8 +112,8 @@ int main()
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "plugins: ", GNT_TEXT_FLAG_BOLD);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "this is the 2nd line\n", GNT_TEXT_FLAG_NORMAL);
 
-	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "plugins: ", GNT_TEXT_FLAG_BOLD);
-	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "this is the 3rd line\n", GNT_TEXT_FLAG_NORMAL);
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "plugins: ", GNT_TEXT_FLAG_BOLD | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "this is the 3rd line\n", GNT_TEXT_FLAG_NORMAL | gnt_color_pair(GNT_COLOR_HIGHLIGHT));
 
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "plugins: ", GNT_TEXT_FLAG_BOLD);
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(view), "this is the 4th line\n", GNT_TEXT_FLAG_NORMAL);

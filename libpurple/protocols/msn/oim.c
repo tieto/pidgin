@@ -488,10 +488,12 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		char *unread = xmlnode_get_data(iu_node);
 		const char *passport = msn_user_get_passport(session->user);
 		const char *url = session->passport_info.file;
+		int count = atoi(unread);
 
 		/* XXX/khc: pretty sure this is wrong */
-		purple_notify_emails(session->account->gc, atoi(unread), FALSE, NULL,
-			NULL, &passport, &url, NULL, NULL);
+		if (count > 0)
+			purple_notify_emails(session->account->gc, count, FALSE, NULL,
+				NULL, &passport, &url, NULL, NULL);
 		g_free(unread);
 	}
 

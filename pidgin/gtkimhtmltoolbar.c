@@ -1315,7 +1315,9 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 
 	purple_prefs_connect_callback(toolbar, PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
 			imhtmltoolbar_view_pref_changed, toolbar);
-	purple_prefs_trigger_callback(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide");
+	g_signal_connect_data(G_OBJECT(toolbar), "realize",
+			G_CALLBACK(purple_prefs_trigger_callback), PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
+			NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
 #if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);

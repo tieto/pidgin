@@ -609,7 +609,7 @@ int main(int argc, char *argv[])
 #ifndef _WIN32
 				  "c:dhmnl::s:v",
 #else
-				  "c:dhnl::v",
+				  "c:dhmnl::v",
 #endif
 				  long_options, NULL)) != -1) {
 		switch (opt) {

@@ -1768,37 +1768,18 @@ redraw_blist(const char *name, PurplePrefType type, gconstpointer val, gpointer 
 	draw_tooltip(ggblist);
 }
 
-static int
-get_color(char *key)
-{
-#if GLIB_CHECK_VERSION(2,6,0)
-	int fg = 0, bg = 0;
-	gsize n;
-	char **vals;
-	vals = gnt_style_get_string_list(NULL, key, &n);
-	if (vals && n == 2) {
-		fg = gnt_colors_get_color(vals[0]);
-		bg = gnt_colors_get_color(vals[1]);
-		return gnt_color_add_pair(fg, bg);
-	}
-	return 0;
-#else
-	return 0;
-#endif
-}
-
 void finch_blist_init()
 {
-	color_available = get_color("color-available");
+	color_available = gnt_style_get_color(NULL, "color-available");
 	if (!color_available)
 		color_available = gnt_color_add_pair(COLOR_GREEN, -1);
-	color_away = get_color("color-away");
+	color_away = gnt_style_get_color(NULL, "color-away");
 	if (!color_away)
 		color_away = gnt_color_add_pair(COLOR_BLUE, -1);
-	color_idle = get_color("color-idle");
+	color_idle = gnt_style_get_color(NULL, "color-idle");
 	if (!color_idle)
 		color_idle = gnt_color_add_pair(COLOR_CYAN, -1);
-	color_offline = get_color("color-offline");
+	color_offline = gnt_style_get_color(NULL, "color-offline");
 	if (!color_offline)
 		color_offline = gnt_color_add_pair(COLOR_RED, -1);
 

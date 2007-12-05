@@ -209,7 +209,6 @@ int aim_im_reqparams(OscarData *od)
  */
 static int aim_im_paraminfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	aim_rxcallback_t userfunc;
 	struct aim_icbmparameters params;
 
 	params.maxchan = byte_stream_get16(bs);
@@ -219,8 +218,11 @@ static int aim_im_paraminfo(OscarData *od, FlapConnection *conn, aim_module_t *m
 	params.maxrecverwarn = byte_stream_get16(bs);
 	params.minmsginterval = byte_stream_get32(bs);
 
-	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		return userfunc(od, conn, frame, &params);
+	params.flags = 0x0000000b;
+	params.maxmsglen = 8000;
+	params.minmsginterval = 0;
+
+	aim_im_setparams(od, &params);
 
 	return 0;
 }
@@ -288,7 +290,7 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 		if (!args->msg || (args->msglen <= 0))
 			return -EINVAL;
 
-		if (args->msglen >= MAXMSGLEN)
+		if (args->msglen > MAXMSGLEN)
 			return -E2BIG;
 	}
 

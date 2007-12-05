@@ -4349,7 +4349,7 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(gtkconv->entry));
 
-	height = (oneline.height + pad_top + pad_bottom) * lines;
+	height = (oneline.height + pad_top + pad_bottom) * (lines + 1);
 	height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
 	gtkconv->auto_resize = TRUE;
@@ -6476,8 +6476,29 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				markup = title;
 			}
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-			const char *topic = gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text));
-			char *esc = topic ? g_markup_escape_text(topic, -1) : NULL;
+			const char *topic = gtkconv->u.chat->topic_text ? gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text)) : NULL;
+			char *esc = NULL;
+#if GTK_CHECK_VERSION(2,6,0)
+			esc = topic ? g_markup_escape_text(topic, -1) : NULL;
+#else
+			/* GTK < 2.6 doesn't have auto ellipsization, so we do a crude
+			 * trucation to prevent forcing the window to be as wide as the topic */
+			int len = 0;
+			char *c, *tmp = g_strdup(topic);
+			c = tmp;
+			while(*c && len < 72) {
+				c = g_utf8_next_char(c);
+				len++;
+			}
+			if (len == 72) {
+				*c = '\0';
+				c = g_strdup_printf("%s...", tmp);
+				g_free(tmp);
+				tmp = c;
+			}
+			esc = tmp ? g_markup_escape_text(tmp, -1) : NULL;
+			g_free(tmp);
+#endif
 			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",
 						purple_conversation_get_title(conv),
 						esc  && *esc ? "\n" : "",
@@ -6511,7 +6532,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)	{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
 			if (gtkconv->active_conv->type == PURPLE_CONV_TYPE_CHAT)
-				style = "color=\"#cc0000\"";
+				style = "tab-label-unreadchat";
 			else
 				style = "tab-label-attention";
 		} else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT) {
@@ -7172,15 +7193,18 @@ hide_new_pref_cb(const char *name, PurplePrefType type,
 	if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away")==0)
 		when_away = TRUE;
 
-	while ((l = hidden_convwin->gtkconvs) != NULL)
+	for (l = hidden_convwin->gtkconvs; l; )
 	{
 		gtkconv = l->data;
+		l = l->next;
 
 		conv = gtkconv->active_conv;
 
-		if(when_away && !purple_status_is_available(
+		if (conv->type == PURPLE_CONV_TYPE_CHAT ||
+				gtkconv->unseen_count == 0 ||
+				(when_away && !purple_status_is_available(
 							purple_account_get_active_status(
-							purple_conversation_get_account(conv))))
+							purple_conversation_get_account(conv)))))
 			continue;
 
 		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
@@ -7796,7 +7820,8 @@ pidgin_conversations_init(void)
 		} styles[] = {
 			{"pidgin_tab_label_typing_default", "tab-label-typing", "#4e9a06"},
 			{"pidgin_tab_label_typed_default", "tab-label-typed", "#c4a000"},
-			{"pidgin_tab_label_attention_default", "tab-label-attention", "#204a87"},
+			{"pidgin_tab_label_attention_default", "tab-label-attention", "#006aff"},
+			{"pidgin_tab_label_unreadchat_default", "tab-label-unreadchat", "#cc0000"},
 			{"pidgin_tab_label_event_default", "tab-label-event", "#888a85"},
 			{NULL, NULL, NULL}
 		};
@@ -8652,7 +8677,7 @@ alias_cb(GtkEntry *entry, gpointer user_data)
                                                  gtk_entry_get_text(entry));
 		}
 		serv_alias_buddy(buddy);
-	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {	        
+	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		gtk_entry_set_text(GTK_ENTRY(gtkconv->u.chat->topic_text), gtk_entry_get_text(entry));
 		topic_callback(NULL, gtkconv);
 	}
@@ -8663,7 +8688,7 @@ static gboolean
 infopane_entry_activate(PidginConversation *gtkconv)
 {
 	GtkWidget *entry = NULL;
-        PurpleConversation *conv = gtkconv->active_conv;
+	PurpleConversation *conv = gtkconv->active_conv;
 	const char *text = NULL;
 
 	if (!GTK_WIDGET_VISIBLE(gtkconv->tab_label)) {
@@ -8679,9 +8704,21 @@ infopane_entry_activate(PidginConversation *gtkconv)
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
 		PurpleBuddy *buddy = purple_find_buddy(gtkconv->active_conv->account, gtkconv->active_conv->name);
 		if (!buddy)
+			/* This buddy isn't in your buddy list, so we can't alias him */
 			return FALSE;
+
 		text = purple_buddy_get_contact_alias(buddy);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+		PurpleConnection *gc;
+		PurplePluginProtocolInfo *prpl_info = NULL;
+
+		gc = purple_conversation_get_gc(conv);
+		if (gc != NULL)
+			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		if (prpl_info && prpl_info->set_chat_topic == NULL)
+			/* This protocol doesn't support setting the chat room topic */
+			return FALSE;
+
 		text = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv));
 	}
 
@@ -8700,10 +8737,9 @@ infopane_entry_activate(PidginConversation *gtkconv)
 	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(alias_cb), gtkconv);
 	g_signal_connect(G_OBJECT(entry), "focus-out-event", G_CALLBACK(alias_focus_cb), gtkconv);
 	g_signal_connect(G_OBJECT(entry), "key-press-event", G_CALLBACK(alias_key_press_cb), gtkconv);
-	
-	
 
-	gtk_entry_set_text(GTK_ENTRY(entry), text);
+	if (text != NULL)
+		gtk_entry_set_text(GTK_ENTRY(entry), text);
 	gtk_widget_show(entry);
 	gtk_widget_hide(gtkconv->infopane);
 	gtk_widget_grab_focus(entry);
