@@ -838,28 +838,6 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 5);
 
 	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(clear_formatting_cb), imhtml);
-	
-	mi = gtk_menu_item_new();
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
-
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SMILEY, GTK_ICON_SIZE_MENU);
-	mi = gtk_image_menu_item_new_with_mnemonic(_("S_mile!"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
-
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT, GTK_ICON_SIZE_MENU);
-	mi = gtk_image_menu_item_new_with_mnemonic(_("_Insert"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
-
-	img = gtk_image_new_from_stock(GTK_STOCK_BOLD, GTK_ICON_SIZE_MENU);
-	mi = gtk_image_menu_item_new_with_mnemonic(_("_Font"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
 }
 
 static char *
