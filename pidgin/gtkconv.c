@@ -5093,7 +5093,7 @@ received_im_msg_cb(PurpleAccount *account, char *sender, char *message,
 	    !purple_status_is_available(purple_account_get_active_status(account)))
 		hide = TRUE;
 
-	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv) && !hide) {
+	if (conv && PIDGIN_IS_PIDGIN_CONVERSATION(conv) && !hide) {
 		PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 		if (gtkconv->win == hidden_convwin) {
 			pidgin_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
@@ -6638,7 +6638,6 @@ wrote_msg_update_unseen_cb(PurpleAccount *account, const char *who, const char *
 			unseen = PIDGIN_UNSEEN_TEXT;
 
 		conv_set_unseen(conv, unseen);
-		purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
 	}
 }
 
@@ -7495,6 +7494,8 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 			return FALSE;
 		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
 		pidgin_conv_placement_place(gtkconv);
+		purple_signal_emit(pidgin_conversations_get_handle(),
+				"conversation-displayed", gtkconv);
 		return TRUE;
 	}
 
@@ -7714,17 +7715,17 @@ pidgin_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_INT));
 
 	purple_signal_register(handle, "conversation-switched",
-						 purple_marshal_VOID__POINTER_POINTER, NULL, 1,
+						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION));
 
 	purple_signal_register(handle, "conversation-hiding",
-						 purple_marshal_VOID__POINTER_POINTER, NULL, 1,
+						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_BOXED,
 										"PidginConversation *"));
 
 	purple_signal_register(handle, "conversation-displayed",
-						 purple_marshal_VOID__POINTER_POINTER, NULL, 1,
+						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_BOXED,
 										"PidginConversation *"));
 

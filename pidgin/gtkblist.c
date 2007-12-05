@@ -4097,7 +4097,7 @@ written_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *me
 		PurpleConversation *conv, PurpleMessageFlags flag, PurpleBlistNode *node)
 {
 	PidginBlistNode *ui = node->ui_data;
-	if (ui->conv.conv != conv || PIDGIN_CONVERSATION(conv) ||
+	if (ui->conv.conv != conv || !pidgin_conv_is_hidden(PIDGIN_CONVERSATION(conv)) ||
 			!(flag & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)))
 		return;
 	ui->conv.flags |= PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE;
@@ -4106,11 +4106,10 @@ written_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *me
 }
 
 static void
-displayed_msg_update_ui_cb(PurpleAccount *account, const char *who, const char *message,
-		PurpleConversation *conv, PurpleMessageFlags flag, PurpleBlistNode *node)
+displayed_msg_update_ui_cb(PidginConversation *gtkconv, PurpleBlistNode *node)
 {
 	PidginBlistNode *ui = node->ui_data;
-	if (ui->conv.conv != conv)
+	if (ui->conv.conv != gtkconv->active_conv)
 		return;
 	ui->conv.flags &= ~PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE;
 	pidgin_blist_update(purple_get_blist(), node);
@@ -4136,10 +4135,11 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 							ui, PURPLE_CALLBACK(conversation_deleted_update_ui_cb), ui);
 					purple_signal_connect(purple_conversations_get_handle(), "wrote-im-msg",
 							ui, PURPLE_CALLBACK(written_msg_update_ui_cb), buddy);
-					purple_signal_connect(pidgin_conversations_get_handle(), "displayed-im-msg",
+					purple_signal_connect(pidgin_conversations_get_handle(), "conversation-displayed",
 							ui, PURPLE_CALLBACK(displayed_msg_update_ui_cb), buddy);
 				}
 			}
+			break;
 		case PURPLE_CONV_TYPE_CHAT:
 			{
 				PurpleChat *chat = purple_blist_find_chat(conv->account, conv->name);
@@ -4156,9 +4156,10 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 						ui, PURPLE_CALLBACK(conversation_deleted_update_ui_cb), ui);
 				purple_signal_connect(purple_conversations_get_handle(), "wrote-chat-msg",
 						ui, PURPLE_CALLBACK(written_msg_update_ui_cb), chat);
-				purple_signal_connect(pidgin_conversations_get_handle(), "displayed-chat-msg",
+				purple_signal_connect(pidgin_conversations_get_handle(), "conversation-displayed",
 						ui, PURPLE_CALLBACK(displayed_msg_update_ui_cb), chat);
 			}
+			break;
 		default:
 			break;
 	}
@@ -5967,7 +5968,8 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 
 		ui = node->ui_data;
 		conv = ui->conv.conv;
-		hidden = (conv && (ui->conv.flags & PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE));
+		hidden = (conv && (ui->conv.flags & PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE) &&
+				pidgin_conv_is_hidden(PIDGIN_CONVERSATION(conv)));
 
 		status = pidgin_blist_get_status_icon(node,
 				 biglist ? PIDGIN_STATUS_ICON_LARGE : PIDGIN_STATUS_ICON_SMALL);
