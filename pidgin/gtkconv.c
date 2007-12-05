@@ -9030,8 +9030,6 @@ pidgin_conv_window_destroy(PidginWindow *win)
 	if (win->dialogs.search)
 		gtk_widget_destroy(win->dialogs.search);
 
-	gtk_widget_hide_all(win->window);
-
 	if (win->gtkconvs) {
 		while (win->gtkconvs) {
 			gboolean last = (win->gtkconvs->next == NULL);
