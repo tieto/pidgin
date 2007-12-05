@@ -66,13 +66,15 @@ gnt_style_get_color(char *group, char *key)
 	int fg = 0, bg = 0;
 	gsize n;
 	char **vals;
+	int ret = 0;
 	vals = gnt_style_get_string_list(group, key, &n);
 	if (vals && n == 2) {
 		fg = gnt_colors_get_color(vals[0]);
 		bg = gnt_colors_get_color(vals[1]);
-		return gnt_color_add_pair(fg, bg);
+		ret = gnt_color_add_pair(fg, bg);
 	}
-	return 0;
+	g_strfreev(vals);
+	return ret;
 #else
 	return 0;
 #endif
