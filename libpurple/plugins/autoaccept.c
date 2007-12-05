@@ -114,22 +114,23 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 		case FT_ACCEPT:
 			if (ensure_path_exists(pref))
 			{
-				dirname = g_build_filename(pref, xfer->who, NULL);
+				dirname = g_build_filename(pref, purple_normalize(account, xfer->who), NULL);
 
 				if (!ensure_path_exists(dirname))
 				{
 					g_free(dirname);
 					break;
 				}
-				
-				filename = g_build_filename(dirname, xfer->filename, NULL);
+
+				filename = g_build_filename(dirname,
+						purple_escape_filename(xfer->filename), NULL);
 
 				purple_xfer_request_accepted(xfer, filename);
 
 				g_free(dirname);
 				g_free(filename);
 			}
-			
+
 			purple_signal_connect(purple_xfers_get_handle(), "file-recv-complete", handle,
 								PURPLE_CALLBACK(auto_accept_complete_cb), xfer);
 			break;
