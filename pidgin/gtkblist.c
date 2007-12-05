@@ -3183,7 +3183,9 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			g_free(tmp);
 		}
 
-		if (bnode && bnode->conv.conv) {
+		if (bnode && bnode->conv.conv &&
+				prpl_info && (prpl_info->options & OPT_PROTO_CHAT_TOPIC) &&
+				!purple_conv_chat_has_left(PURPLE_CONV_CHAT(bnode->conv.conv))) {
 			const char *topic = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(bnode->conv.conv));
 			g_string_append_printf(str, _("\n<b>Topic:</b> %s"), topic ? topic : _("(no topic set)"));
 		}
@@ -3257,7 +3259,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		/* Alias */
 		/* If there's not a contact alias, the node is being displayed with
 		 * this alias, so there's no point in showing it in the tooltip. */
-		if (full && b->alias != NULL && b->alias[0] != '\0' &&
+		if (full && c && b->alias != NULL && b->alias[0] != '\0' &&
 		    (c->alias != NULL && c->alias[0] != '\0') &&
 		    strcmp(c->alias, b->alias) != 0)
 		{
@@ -3308,13 +3310,13 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		}
 
 		/* Last Seen */
-		if (full && !PURPLE_BUDDY_IS_ONLINE(b))
+		if (full && c && !PURPLE_BUDDY_IS_ONLINE(b))
 		{
 			struct _pidgin_blist_node *gtknode = ((PurpleBlistNode *)c)->ui_data;
 			PurpleBlistNode *bnode;
 			int lastseen = 0;
 
-			if (!gtknode->contact_expanded || PURPLE_BLIST_NODE_IS_CONTACT(node))
+			if (gtknode && (!gtknode->contact_expanded || PURPLE_BLIST_NODE_IS_CONTACT(node)))
 			{
 				/* We're either looking at a buddy for a collapsed contact or
 				 * an expanded contact itself so we show the most recent
