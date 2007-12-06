@@ -2529,21 +2529,18 @@ purple_accounts_find(const char *name, const char *protocol_id)
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	who = g_strdup(purple_normalize(NULL, name));
-
 	for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
 		account = (PurpleAccount *)l->data;
 
-		if (!strcmp(purple_normalize(NULL, purple_account_get_username(account)), who) &&
+		who = g_strdup(purple_normalize(account, name));
+		if (!strcmp(purple_normalize(account, purple_account_get_username(account)), who) &&
 			(!protocol_id || !strcmp(account->protocol_id, protocol_id))) {
-
+			g_free(who);
 			break;
 		}
-
+		g_free(who);
 		account = NULL;
 	}
-
-	g_free(who);
 
 	return account;
 }

@@ -83,6 +83,7 @@ msn_user_destroy(MsnUser *user)
 	g_free(user->media.artist);
 	g_free(user->media.title);
 	g_free(user->media.album);
+	g_free(user->statusline);
 
 	g_free(user);
 }
