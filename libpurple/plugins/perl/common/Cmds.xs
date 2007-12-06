@@ -66,21 +66,23 @@ purple_cmd_help(conv, command)
 	Purple::Conversation conv
 	const gchar *command
 PREINIT:
-	GList *l;
+	GList *l, *ll;
 PPCODE:
-	for (l = purple_cmd_help(conv, command); l != NULL; l = l->next) {
+	for (l = ll = purple_cmd_help(conv, command); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 	}
+	g_list_free(ll);
 
 void
 purple_cmd_list(conv)
 	Purple::Conversation conv
 PREINIT:
-	GList *l;
+	GList *l, *ll;
 PPCODE:
-	for (l = purple_cmd_list(conv); l != NULL; l = l->next) {
+	for (l = ll = purple_cmd_list(conv); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 	}
+	g_list_free(ll);
 
 Purple::Cmd::Id
 purple_cmd_register(plugin, command, args, priority, flag, prpl_id, func, helpstr, data = 0)

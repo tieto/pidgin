@@ -90,6 +90,7 @@ PPCODE:
 		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(source_list), i, 0), t_sl));
 	}
 	purple_presence_add_list(presence, t_GL);
+	g_list_free(t_GL);
 
 void
 purple_presence_add_status(presence, status)
@@ -361,28 +362,6 @@ void
 purple_status_type_destroy(status_type)
 	Purple::StatusType status_type
 
-Purple::StatusType
-purple_status_type_find_with_id(status_types, id)
-	SV *status_types
-	const char *id
-PREINIT:
-/* XXX Check that this function actually works, I think it might need a */
-/* status_type as it's first argument to work as $status_type->find_with_id */
-/* properly. */
-	GList *t_GL;
-	int i, t_len;
-CODE:
-	t_GL = NULL;
-	t_len = av_len((AV *)SvRV(status_types));
-
-	for (i = 0; i < t_len; i++) {
-		STRLEN t_sl;
-		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(status_types), i, 0), t_sl));
-	}
-	RETVAL = (PurpleStatusType *)purple_status_type_find_with_id(t_GL, id);
-OUTPUT:
-	RETVAL
-
 Purple::StatusAttr
 purple_status_type_get_attr(status_type, id)
 	Purple::StatusType status_type
@@ -397,6 +376,26 @@ PPCODE:
 	for (l = purple_status_type_get_attrs(status_type); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::StatusAttr")));
 	}
+
+Purple::StatusType
+purple_status_type_find_with_id(status_types, id)
+	SV *status_types
+	const char *id
+PREINIT:
+	GList *t_GL;
+	int i, t_len;
+CODE:
+	t_GL = NULL;
+	t_len = av_len((AV *)SvRV(status_types));
+
+	for (i = 0; i < t_len; i++) {
+		STRLEN t_sl;
+		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(status_types), i, 0), t_sl));
+	}
+	RETVAL = (PurpleStatusType *)purple_status_type_find_with_id(t_GL, id);
+	g_list_free(t_GL);
+OUTPUT:
+	RETVAL
 
 const char *
 purple_status_type_get_id(status_type)

@@ -44,11 +44,13 @@ purple_find_buddies(account, name)
 	Purple::Account account
 	const char * name
 PREINIT:
-	GSList *l;
+	GSList *l, *ll;
 PPCODE:
-	for (l = purple_find_buddies(account, name); l != NULL; l = l->next) {
+	ll = purple_find_buddies(account, name);
+	for (l = ll; l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::BuddyList::Buddy")));
 	}
+	g_slist_free(ll);
 
 Purple::BuddyList::Group
 purple_find_group(name)
@@ -101,11 +103,13 @@ void
 purple_group_get_accounts(group)
 	Purple::BuddyList::Group  group
 PREINIT:
-	GSList *l;
+	GSList *l, *ll;
 PPCODE:
-	for (l = purple_group_get_accounts(group); l != NULL; l = l->next) {
+	ll = purple_group_get_accounts(group);
+	for (l = ll; l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Account")));
 	}
+	g_slist_free(ll);
 
 gboolean
 purple_group_on_account(group, account)
@@ -268,11 +272,15 @@ void
 purple_blist_node_get_extended_menu(node)
 	Purple::BuddyList::Node node
 PREINIT:
-	GList *l;
+	GList *l, *ll;
 PPCODE:
-	for (l = purple_blist_node_get_extended_menu(node); l != NULL; l = g_list_delete_link(l, l)) {
+	ll = purple_blist_node_get_extended_menu(node);
+	for (l = ll; l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Menu::Action")));
 	}
+	/* We can free the list here but the script needs to free the
+	 * Purple::Menu::Action 'objects' itself. */
+	g_list_free(ll);
 
 void
 purple_blist_node_set_bool(node, key, value)

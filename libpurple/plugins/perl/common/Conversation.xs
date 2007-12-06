@@ -464,6 +464,10 @@ PPCODE:
 
 	purple_conv_chat_add_users(chat, t_GL_users, t_GL_extra_msgs, t_GL_flags, new_arrivals);
 
+	g_list_free(t_GL_users);
+	g_list_free(t_GL_extra_msgs);
+	g_list_free(t_GL_flags);
+
 gboolean
 purple_conv_chat_find_user(chat, user)
 	Purple::Conversation::Chat chat
