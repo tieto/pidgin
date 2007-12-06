@@ -243,7 +243,9 @@ substatus_to_xmlnode(PurpleSavedStatusSub *substatus)
 
 	child = xmlnode_new_child(node, "account");
 	xmlnode_set_attrib(child, "protocol", purple_account_get_protocol_id(substatus->account));
-	xmlnode_insert_data(child, purple_account_get_username(substatus->account), -1);
+	xmlnode_insert_data(child,
+			purple_normalize(substatus->account,
+				purple_account_get_username(substatus->account)), -1);
 
 	child = xmlnode_new_child(node, "state");
 	xmlnode_insert_data(child, purple_status_type_get_id(substatus->type), -1);
