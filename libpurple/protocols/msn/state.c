@@ -238,13 +238,15 @@ msn_set_psm(MsnSession *session)
 	media = create_media_string(presence);
 	g_free(session->psm);
 	session->psm = msn_build_psm(statusline_stripped, media, NULL);
-	g_free(statusline_stripped);
 
 	payload = session->psm;
 	purple_debug_misc("MSNP14","Sending UUX command with payload: %s\n",payload);
 	trans = msn_transaction_new(cmdproc, "UUX", "%d", strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
+
+	g_free(statusline_stripped);
+	g_free(media);
 }
 
 void
