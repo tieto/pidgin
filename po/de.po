@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-30 10:22+0100\n"
-"PO-Revision-Date: 2007-11-30 10:21+0100\n"
+"POT-Creation-Date: 2007-12-06 15:10+0100\n"
+"PO-Revision-Date: 2007-12-06 15:10+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -5766,6 +5766,12 @@ msgstr "Server-Adresse"
 msgid "Server port"
 msgstr "Server-Port"
 
+msgid "Could not join chat room"
+msgstr "Konnte Chatraum nicht betreten"
+
+msgid "Invalid chat room name"
+msgstr "Ungültiger Chatraumname"
+
 msgid "Server closed the connection."
 msgstr "Der Server hat die Verbindung beendet."
 
@@ -6569,9 +6575,6 @@ msgstr "Autorisierung abgelehnt"
 msgid "_Exchange:"
 msgstr "A_ustausch:"
 
-msgid "Invalid chat name specified."
-msgstr "Ungültiger Chat-Name angegeben."
-
 msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
 msgstr ""
 "Ihr IM-Bild wurde nicht gesendet. Sie können keine IM-Bilder in AIM-Chats "
@@ -6707,11 +6710,13 @@ msgid "Show how long you have been idle"
 msgstr "Anzeigen, wie lange ich untätig war"
 
 msgid ""
-"Always use ICQ proxy server for file transfers\n"
-"(slower, but does not reveal your IP address)"
+"Always use AIM/ICQ proxy server for\n"
+"file transfers and direct IM (slower,\n"
+"but does not reveal your IP address)"
 msgstr ""
-"Benutze immer den AIM/ICQ-Proxyserver\n"
-"(langsamer, aber zeigt Ihre IP-Adresse nicht)"
+"Benutze immer den AIM/ICQ-Proxyserver für\n"
+"Dateiübertragungen und Direkt-IM (langsamer,\n"
+"aber zeigt Ihre IP-Adresse nicht)"
 
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
@@ -9995,6 +10000,17 @@ msgstr ""
 "\n"
 "<b>Konto:</b> %s"
 
+#, c-format
+msgid ""
+"\n"
+"<b>Topic:</b> %s"
+msgstr ""
+"\n"
+"<b>Thema:</b> %s"
+
+msgid "(no topic set)"
+msgstr "(kein Thema gesetzt)"
+
 msgid "Buddy Alias"
 msgstr "Buddy-Alias"
 
@@ -11055,15 +11071,6 @@ msgstr "Einfügen als normaler _Text"
 msgid "_Reset formatting"
 msgstr "Formatierung _zurücksetzen"
 
-msgid "_Smile!"
-msgstr "_Lächeln!"
-
-msgid "_Insert"
-msgstr "_Einfügen"
-
-msgid "_Font"
-msgstr "_Schrift"
-
 msgid "Hyperlink color"
 msgstr "Hyperlink-Farbe"
 
@@ -11129,6 +11136,15 @@ msgstr "Bild speichern"
 
 msgid "_Save Image..."
 msgstr "Bild _speichern..."
+
+msgid "_Font"
+msgstr "_Schrift"
+
+msgid "_Insert"
+msgstr "_Einfügen"
+
+msgid "S_mile!"
+msgstr "_Lächeln!"
 
 msgid "Select Font"
 msgstr "Schriftart wählen"
@@ -11255,6 +11271,9 @@ msgstr "_Link"
 
 msgid "_Horizontal rule"
 msgstr "_Horizontale Linie"
+
+msgid "_Smile!"
+msgstr "_Lächeln!"
 
 #, c-format
 msgid ""
@@ -11698,6 +11717,9 @@ msgstr "Öffentliche _IP:"
 
 msgid "Ports"
 msgstr "Ports"
+
+msgid "_Enable automatic router port forwarding"
+msgstr "Automatischer _Router-Port-Weiterleitung aktivieren"
 
 msgid "_Manually specify range of ports to listen on"
 msgstr "Port-Bereich, auf dem gehört werden soll, _manuell bestimmen"
