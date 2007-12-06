@@ -184,8 +184,13 @@ int irc_send(struct irc_conn *irc, const char *buf)
 /* XXX I don't like messing directly with these buddies */
 gboolean irc_blist_timeout(struct irc_conn *irc)
 {
-	GString *string = g_string_sized_new(512);
+	GString *string;
 	char *list, *buf;
+
+	if (irc->ison_outstanding)
+		return TRUE;
+
+	string = g_string_sized_new(512);
 
 	g_hash_table_foreach(irc->buddies, (GHFunc)irc_buddy_append, (gpointer)string);
 
@@ -199,6 +204,8 @@ gboolean irc_blist_timeout(struct irc_conn *irc)
 	g_free(list);
 	irc_send(irc, buf);
 	g_free(buf);
+
+	irc->ison_outstanding = TRUE;
 
 	return TRUE;
 }

@@ -17,6 +17,8 @@ version 2.3.1 (12/??/2007):
 	* Don't advertise IPv6 on Bonjour because we don't support it
 	* Compile fixes for FreeBSD and Solaris
 	* Update QQ client version so we can connect again
+	* Do not allow ISON requests to stack in IRC, preventing flooding IRC
+	  servers when temporary network outages are restored
 
 
 version 2.3.0 (11/24/2007):
