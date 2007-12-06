@@ -1579,6 +1579,7 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	xmlnode * root;
 	gchar * buf;
+	int xmllen;
 
 	g_return_if_fail(cmd->payload != NULL);
 
@@ -1588,10 +1589,10 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		return;
 	}
 	
-	buf = xmlnode_to_formatted_str(root, NULL);
+	buf = xmlnode_to_formatted_str(root, &xmllen);
 
 	/* get the payload content */
-	purple_debug_info("MSNP14","GCF command payload:\n%s\n",buf);
+	purple_debug_info("MSNP14","GCF command payload:\n%.*s\n", xmllen, buf);
 	
 	g_free(buf);
 	xmlnode_free(root);
