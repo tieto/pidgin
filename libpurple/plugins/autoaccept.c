@@ -114,22 +114,33 @@ file_recv_request_cb(PurpleXfer *xfer, gpointer handle)
 		case FT_ACCEPT:
 			if (ensure_path_exists(pref))
 			{
-				dirname = g_build_filename(pref, xfer->who, NULL);
+				int count = 1;
+				const char *escape;
+				dirname = g_build_filename(pref, purple_normalize(account, xfer->who), NULL);
 
 				if (!ensure_path_exists(dirname))
 				{
 					g_free(dirname);
 					break;
 				}
-				
-				filename = g_build_filename(dirname, xfer->filename, NULL);
+
+				escape = purple_escape_filename(xfer->filename);
+				filename = g_build_filename(dirname, escape, NULL);
+
+				/* Make sure the file doesn't exist. Do we want some better checking than this? */
+				while (g_file_test(filename, G_FILE_TEST_EXISTS)) {
+					char *file = g_strdup_printf("%s-%d", escape, count++);
+					g_free(filename);
+					filename = g_build_filename(dirname, file, NULL);
+					g_free(file);
+				}
 
 				purple_xfer_request_accepted(xfer, filename);
 
 				g_free(dirname);
 				g_free(filename);
 			}
-			
+
 			purple_signal_connect(purple_xfers_get_handle(), "file-recv-complete", handle,
 								PURPLE_CALLBACK(auto_accept_complete_cb), xfer);
 			break;
