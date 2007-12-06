@@ -1659,16 +1659,24 @@ if test "x$enable_nss" != "xno"; then
 			])
 			mozilla_nspr="mozilla-nspr"
 			mozilla_nss="mozilla-nss"
-		else
-			if `$PKG_CONFIG --exists nss`; then
-				PKG_CHECK_MODULES(NSS, nss, [
-					have_nss="yes"
-				], [
-					AC_MSG_RESULT(no)
-				])
-				mozilla_nspr="nspr"
-				mozilla_nss="nss"
-			fi
+		elif `$PKG_CONFIG --exists nss`; then
+			PKG_CHECK_MODULES(NSS, nss, [
+				have_nss="yes"
+			], [
+				AC_MSG_RESULT(no)
+				have_nss="no"
+			])
+			mozilla_nspr="nspr"
+			mozilla_nss="nss"
+		elif `$PKG_CONFIG --exists microb-engine-nss`; then
+			PKG_CHECK_MODULES(NSS, microb-engine-nss, [
+				have_nss="yes"
+			], [
+				AC_MSG_RESULT(no)
+				have_nss="no"
+			])
+			mozilla_nspr="mozilla-nspr"
+			mozilla_nss="microb-engine-nss"
 		fi
 
 		if test "x$have_nss" = "xyes"; then
