@@ -7273,15 +7273,18 @@ hide_new_pref_cb(const char *name, PurplePrefType type,
 	if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new"), "away")==0)
 		when_away = TRUE;
 
-	while ((l = hidden_convwin->gtkconvs) != NULL)
+	for (l = hidden_convwin->gtkconvs; l; )
 	{
 		gtkconv = l->data;
+		l = l->next;
 
 		conv = gtkconv->active_conv;
 
-		if(when_away && !purple_status_is_available(
+		if (conv->type == PURPLE_CONV_TYPE_CHAT ||
+				gtkconv->unseen_count == 0 ||
+				(when_away && !purple_status_is_available(
 							purple_account_get_active_status(
-							purple_conversation_get_account(conv))))
+							purple_conversation_get_account(conv)))))
 			continue;
 
 		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
