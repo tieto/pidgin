@@ -9,6 +9,11 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	others commit bug and, more, leak fixes.  People should be noticing
 	remarkably fewer memory leaks now than 2 or more releases ago.
 
+	Kevin: I'm not quite sure what happened to our MySpaceIM Summer of
+	Code student, but I fixed a few MySpace bugs with idle and status.
+	I will try to fix some of the other more significant bugs, after I
+	figure out the protocol, especially including grouping issues.
+
 2.3.0 (11/20/2007):
 	Luke: While this does not have the new MSN code, rest assured that
 	we are working on it and that it is nearing release.  This contains
