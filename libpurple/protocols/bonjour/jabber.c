@@ -788,7 +788,7 @@ _find_or_start_conversation(BonjourJabber *data, const gchar *to)
 		}
 		purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_NONE);
 
-		connect_data = purple_proxy_connect(data->account->gc, data->account,
+		connect_data = purple_proxy_connect(NULL, data->account,
 						    bb->ip, bb->port_p2pj, _connected_to_buddy, pb);
 
 		if (connect_data == NULL) {
