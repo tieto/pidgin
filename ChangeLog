@@ -16,7 +16,7 @@ version 2.3.1 (12/??/2007):
 	* Don't allow buddies to be manually added to Bonjour
 	* Don't advertise IPv6 on Bonjour because we don't support it
 	* Compile fixes for FreeBSD and Solaris
-	* Update QQ client version so we can connect again
+	* Update QQ client version so some accounts can connect again
 	* Do not allow ISON requests to stack in IRC, preventing flooding IRC
 	  servers when temporary network outages are restored
 	* Plug several leaks in the perl plugin loader
