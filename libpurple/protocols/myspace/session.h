@@ -45,6 +45,7 @@ typedef struct _MsimSession
 	guint next_rid;                     /**< Next request/response ID */
 	time_t last_comm;                   /**< Time received last communication */
 	guint inbox_status;                 /**< Bit field of inbox notifications */
+	guint inbox_handle;                 /**< The handle for the mail check timer */
 } MsimSession;
 
 /* Check if an MsimSession is valid */

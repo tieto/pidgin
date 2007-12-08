@@ -21,13 +21,15 @@ purple_prpl_get_statuses(account, presence)
 	Purple::Account account
 	Purple::Presence presence
 PREINIT:
-	GList *l;
+	GList *l, *ll;
 PPCODE:
-	for (l = purple_prpl_get_statuses(account,presence); l != NULL; l = l->next) {
-		/* XXX Someone please test and make sure this is the right
-		 * type for these things. */
+	ll = purple_prpl_get_statuses(account,presence);
+	for (l = ll; l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Status")));
 	}
+	/* We can free the list here but the script needs to free the
+	 * Purple::Status 'objects' itself. */
+	g_list_free(ll);
 
 void
 purple_prpl_got_account_idle(account, idle, idle_time)

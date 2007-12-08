@@ -114,7 +114,7 @@ struct _MsnSession
 		char *file;
 		char *client_ip;
 		int client_port;
-
+		int verified;
 	} passport_info;
 };
 

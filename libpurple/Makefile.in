@@ -552,7 +552,7 @@ BUILT_SOURCES = $(purple_builtheaders)
 @ENABLE_DBUS_TRUE@dbus_headers = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h dbus-types.h
 @ENABLE_DBUS_TRUE@dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h \
 @ENABLE_DBUS_TRUE@                connection.h conversation.h core.h ft.h log.h notify.h prefs.h roomlist.h \
-@ENABLE_DBUS_TRUE@                savedstatuses.h status.h server.h util.h xmlnode.h
+@ENABLE_DBUS_TRUE@                savedstatuses.h status.h server.h util.h xmlnode.h prpl.h
 
 @ENABLE_DBUS_TRUE@purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders)) \
 @ENABLE_DBUS_TRUE@		$(purple_builtheaders)

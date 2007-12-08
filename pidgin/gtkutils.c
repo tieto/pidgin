@@ -2451,7 +2451,13 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 	g_signal_connect(G_OBJECT(dialog->icon_filesel), "destroy",
 					 G_CALLBACK(icon_filesel_delete_cb), dialog);
 #endif /* FILECHOOSER */
-	return 	dialog->icon_filesel;
+
+#ifdef _WIN32
+	g_signal_connect(G_OBJECT(dialog->icon_filesel), "show",
+		G_CALLBACK(winpidgin_ensure_onscreen), dialog->icon_filesel);
+#endif
+
+	return dialog->icon_filesel;
 }
 
 

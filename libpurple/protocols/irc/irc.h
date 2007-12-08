@@ -56,6 +56,8 @@ struct irc_conn {
 	guint timer;
 	GHashTable *buddies;
 
+	gboolean ison_outstanding;
+
 	char *inbuf;
 	int inbuflen;
 	int inbufused;

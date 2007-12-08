@@ -494,7 +494,7 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 	tmp = g_strdup_printf(_("Write settings to %s%sgtkrc-2.0"),
-	                      homepath, G_DIR_SEPARATOR_S);
+	                      homepath, G_DIR_SEPARATOR_S ".purple" G_DIR_SEPARATOR_S);
 	check = gtk_button_new_with_label(tmp);
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(hbox), check, FALSE, FALSE, 0);

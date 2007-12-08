@@ -49,11 +49,17 @@ timestamp_display(PurpleConversation *conv, time_t then, time_t now)
 	const char *mdate;
 	int y, height;
 	GdkRectangle rect;
-	
+
 	/* display timestamp */
 	mdate = purple_utf8_strftime(then == 0 ? "%H:%M" : "\n%H:%M",
 		localtime(&now));
 	gtk_text_buffer_get_end_iter(buffer, &iter);
+
+	if (gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(buffer), "TIMESTAMP") == NULL)
+		gtk_text_buffer_create_tag(buffer, "TIMESTAMP",
+			"foreground", "#888888", "justification", GTK_JUSTIFY_CENTER,
+			"weight", PANGO_WEIGHT_BOLD, NULL);
+
 	gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, mdate,
 		strlen(mdate), "TIMESTAMP", NULL);
 
@@ -95,16 +101,8 @@ timestamp_displaying_conv_msg(PurpleAccount *account, const char *who,
 static void
 timestamp_new_convo(PurpleConversation *conv)
 {
-	PidginConversation *gtk_conv = PIDGIN_CONVERSATION(conv);
-	GtkTextBuffer *buffer;
-
 	if (!g_list_find(purple_get_conversations(), conv))
 		return;
-
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtk_conv->imhtml));
-	gtk_text_buffer_create_tag(buffer, "TIMESTAMP",
-		"foreground", "#888888", "justification", GTK_JUSTIFY_CENTER,
-		"weight", PANGO_WEIGHT_BOLD, NULL);
 
 	purple_conversation_set_data(conv, "timestamp-last", GINT_TO_POINTER(0));
 }

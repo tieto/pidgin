@@ -19,6 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+
+#include "internal.h"
+
 #ifndef _WIN32
 #include <net/if.h>
 #include <sys/ioctl.h>
@@ -33,7 +36,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#include "internal.h"
 #include "network.h"
 #include "eventloop.h"
 #include "connection.h"
@@ -59,6 +61,12 @@
 /* TODO: specify version='1.0' and send stream features */
 #define DOCTYPE "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" \
 		"<stream:stream xmlns=\"jabber:client\" xmlns:stream=\"http://etherx.jabber.org/streams\" from=\"%s\" to=\"%s\">"
+
+enum sent_stream_start_types {
+	NOT_SENT       = 0,
+	PARTIALLY_SENT = 1,
+	FULLY_SENT     = 2
+};
 
 static void
 xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb);
@@ -97,6 +105,8 @@ bonjour_jabber_conv_new(PurpleBuddy *pb) {
 	bconv->tx_handler = 0;
 	bconv->rx_handler = 0;
 	bconv->pb = pb;
+
+	bonjour_parser_setup(bconv);
 
 	return bconv;
 }
@@ -287,7 +297,7 @@ _send_data(PurpleBuddy *pb, char *message)
 	/* If we're not ready to actually send, append it to the buffer */
 	if (bconv->tx_handler != 0
 			|| bconv->connect_data != NULL
-			|| !bconv->sent_stream_start
+			|| bconv->sent_stream_start != FULLY_SENT
 			|| !bconv->recv_stream_start
 			|| purple_circ_buffer_get_max_read(bconv->tx_buf) > 0) {
 		ret = -1;
@@ -317,6 +327,7 @@ _send_data(PurpleBuddy *pb, char *message)
 	}
 
 	if (ret < len) {
+		/* Don't interfere with the stream starting */
 		if (bconv->tx_handler == 0)
 			bconv->tx_handler = purple_input_add(bconv->socket, PURPLE_INPUT_WRITE,
 				_send_data_write_cb, pb);
@@ -407,20 +418,6 @@ void bonjour_jabber_stream_ended(PurpleBuddy *pb) {
 	}
 }
 
-void bonjour_jabber_stream_started(PurpleBuddy *pb) {
-	BonjourBuddy *bb = pb->proto_data;
-	BonjourJabberConversation *bconv = bb->conversation;
-
-	/* If the stream has been completely started, we can start doing stuff */
-	if (bconv->sent_stream_start && bconv->recv_stream_start && purple_circ_buffer_get_max_read(bconv->tx_buf) > 0) {
-		/* Watch for when we can write the buffered messages */
-		bconv->tx_handler = purple_input_add(bconv->socket, PURPLE_INPUT_WRITE,
-			_send_data_write_cb, pb);
-		/* We can probably write the data right now. */
-		_send_data_write_cb(pb, bconv->socket, PURPLE_INPUT_WRITE);
-	}
-
-}
 
 struct _stream_start_data {
 	char *msg;
@@ -476,14 +473,13 @@ _start_stream(gpointer data, gint source, PurpleInputCondition condition)
 
 	/* Stream started; process the send buffer if there is one */
 	purple_input_remove(bconv->tx_handler);
-	bconv->tx_handler= 0;
-	bconv->sent_stream_start = TRUE;
+	bconv->tx_handler = 0;
+	bconv->sent_stream_start = FULLY_SENT;
 
 	bonjour_jabber_stream_started(pb);
-
 }
 
-static gboolean bonjour_jabber_stream_init(PurpleBuddy *pb, int client_socket)
+static gboolean bonjour_jabber_send_stream_init(PurpleBuddy *pb, int client_socket)
 {
 	int ret, len;
 	char *stream_start;
@@ -492,6 +488,8 @@ static gboolean bonjour_jabber_stream_init(PurpleBuddy *pb, int client_socket)
 	stream_start = g_strdup_printf(DOCTYPE, purple_account_get_username(pb->account),
 								   purple_buddy_get_name(pb));
 	len = strlen(stream_start);
+
+	bb->conversation->sent_stream_start = PARTIALLY_SENT;
 
 	/* Start the stream */
 	ret = send(client_socket, stream_start, len, 0);
@@ -519,18 +517,55 @@ static gboolean bonjour_jabber_stream_init(PurpleBuddy *pb, int client_socket)
 		bb->conversation->tx_handler = purple_input_add(client_socket,
 			PURPLE_INPUT_WRITE, _start_stream, pb);
 	} else
-		bb->conversation->sent_stream_start = TRUE;
+		bb->conversation->sent_stream_start = FULLY_SENT;
 
 	g_free(stream_start);
 
-	/* setup the parser fresh for each stream */
-	bonjour_parser_setup(bb->conversation);
-
-	bb->conversation->socket = client_socket;
-	bb->conversation->rx_handler = purple_input_add(client_socket,
-		PURPLE_INPUT_READ, _client_socket_handler, pb);
-
 	return TRUE;
+}
+
+static gboolean
+_async_bonjour_jabber_close_conversation(gpointer data) {
+	BonjourJabberConversation *bconv = data;
+	bonjour_jabber_close_conversation(bconv);
+	return FALSE;
+}
+
+void bonjour_jabber_stream_started(PurpleBuddy *pb) {
+	BonjourBuddy *bb = pb->proto_data;
+	BonjourJabberConversation *bconv = bb->conversation;
+
+	if (bconv->sent_stream_start == NOT_SENT && !bonjour_jabber_send_stream_init(pb, bconv->socket)) {
+		const char *err = g_strerror(errno);
+		PurpleConversation *conv;
+
+		purple_debug_error("bonjour", "Error starting stream with buddy %s at %s:%d error: %s\n",
+				   purple_buddy_get_name(pb), bb->ip ? bb->ip : "(null)", bb->port_p2pj, err ? err : "(null)");
+
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, pb->account);
+		if (conv != NULL)
+			purple_conversation_write(conv, NULL,
+				  _("Unable to send the message, the conversation couldn't be started."),
+				  PURPLE_MESSAGE_SYSTEM, time(NULL));
+
+		close(bconv->socket);
+		/* This must be asynchronous because it destroys the parser and we
+		 * may be in the middle of parsing.
+		 */
+		purple_timeout_add(0, _async_bonjour_jabber_close_conversation, bb->conversation);
+		bb->conversation = NULL;
+		return;
+	}
+
+	/* If the stream has been completely started, we can start doing stuff */
+	if (bconv->sent_stream_start == FULLY_SENT && bconv->recv_stream_start && purple_circ_buffer_get_max_read(bconv->tx_buf) > 0) {
+		/* Watch for when we can write the buffered messages */
+		bconv->tx_handler = purple_input_add(bconv->socket, PURPLE_INPUT_WRITE,
+			_send_data_write_cb, pb);
+		/* We can probably write the data right now. */
+		_send_data_write_cb(pb, bconv->socket, PURPLE_INPUT_WRITE);
+	}
+
 }
 
 static void
@@ -574,14 +609,15 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	bb = pb->proto_data;
 
 	/* Check if the conversation has been previously started */
+	/* This really shouldn't ever happen unless something weird is going on */
 	if (bb->conversation == NULL)
 	{
 		bb->conversation = bonjour_jabber_conv_new(pb);
 
-		if (!bonjour_jabber_stream_init(pb, client_socket)) {
-			close(client_socket);
-			return;
-		}
+		/* We wait for the stream start before doing anything else */
+		bb->conversation->socket = client_socket;
+		bb->conversation->rx_handler = purple_input_add(client_socket,
+			PURPLE_INPUT_READ, _client_socket_handler, pb);
 
 	} else {
 		purple_debug_warning("bonjour", "Ignoring incoming connection because an existing connection exists.\n");
@@ -618,7 +654,7 @@ bonjour_jabber_start(BonjourJabber *data)
 	}
 
 	memset(&my_addr, 0, sizeof(struct sockaddr_in));
-	my_addr.sin_family = PF_INET;
+	my_addr.sin_family = AF_INET;
 
 	/* Attempt to find a free port */
 	bind_successful = FALSE;
@@ -694,7 +730,7 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 		return;
 	}
 
-	if (!bonjour_jabber_stream_init(pb, source)) {
+	if (!bonjour_jabber_send_stream_init(pb, source)) {
 		const char *err = g_strerror(errno);
 		PurpleConversation *conv;
 
@@ -712,6 +748,11 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 		bb->conversation = NULL;
 		return;
 	}
+
+	/* Start listening for the stream acknowledgement */
+	bb->conversation->socket = source;
+	bb->conversation->rx_handler = purple_input_add(source,
+		PURPLE_INPUT_READ, _client_socket_handler, pb);
 }
 
 static PurpleBuddy *
@@ -747,7 +788,7 @@ _find_or_start_conversation(BonjourJabber *data, const gchar *to)
 		}
 		purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_NONE);
 
-		connect_data = purple_proxy_connect(data->account->gc, data->account,
+		connect_data = purple_proxy_connect(NULL, data->account,
 						    bb->ip, bb->port_p2pj, _connected_to_buddy, pb);
 
 		if (connect_data == NULL) {
@@ -841,7 +882,7 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 		/* Close the socket and remove the watcher */
 		if (bconv->socket >= 0) {
 			/* Send the end of the stream to the other end of the conversation */
-			if (bconv->sent_stream_start)
+			if (bconv->sent_stream_start == FULLY_SENT)
 				send(bconv->socket, STREAM_END, strlen(STREAM_END), 0);
 			/* TODO: We're really supposed to wait for "</stream:stream>" before closing the socket */
 			close(bconv->socket);

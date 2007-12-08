@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [3])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [3])
-m4_define([purple_micro_version], [0])
+m4_define([purple_micro_version], [1])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [3])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [3])
-m4_define([gnt_micro_version], [0])
+m4_define([gnt_micro_version], [1])
 m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -328,7 +328,7 @@ AC_ARG_ENABLE(gtkui, [AC_HELP_STRING([--disable-gtkui],
 	enable_gtkui="$enableval", enable_gtkui="yes")
 AC_ARG_ENABLE(consoleui, [AC_HELP_STRING([--disable-consoleui],
 		[compile without console user interface])],
-	enable_consoleui=$enableval, enable_consoleui=yes)
+	[enable_consoleui=$enableval force_finch=$enableval], [enable_consoleui=yes force_finch=no])
 
 dnl #######################################################################
 dnl # Check for GTK+ 2.0 and other things used by the GTK UI
@@ -383,7 +383,7 @@ if test "x$enable_gtkui" = "xyes" ; then
 		AC_MSG_ERROR([
 
 You must have the GTK+ 2.0 development headers installed to compile Pidgin.
-If you only want to build Finch then specify --disable-gtkui when running configure.
+If you want to build only Finch then specify --disable-gtkui when running configure.
 ])])
 
 	AC_SUBST(GTK_CFLAGS)
@@ -620,6 +620,14 @@ if test "x$enable_consoleui" = "xyes"; then
 			fi
 		fi
 	fi
+fi
+
+if test "x$force_finch" = "xyes" -a "x$enable_consoleui" != "xyes"; then
+	AC_MSG_ERROR([
+
+Finch will not be built. You need to install ncursesw (or ncurses) and its development headers.
+
+])
 fi
 
 AC_SUBST(GNT_LIBS)
@@ -1651,16 +1659,24 @@ if test "x$enable_nss" != "xno"; then
 			])
 			mozilla_nspr="mozilla-nspr"
 			mozilla_nss="mozilla-nss"
-		else
-			if `$PKG_CONFIG --exists nss`; then
-				PKG_CHECK_MODULES(NSS, nss, [
-					have_nss="yes"
-				], [
-					AC_MSG_RESULT(no)
-				])
-				mozilla_nspr="nspr"
-				mozilla_nss="nss"
-			fi
+		elif `$PKG_CONFIG --exists nss`; then
+			PKG_CHECK_MODULES(NSS, nss, [
+				have_nss="yes"
+			], [
+				AC_MSG_RESULT(no)
+				have_nss="no"
+			])
+			mozilla_nspr="nspr"
+			mozilla_nss="nss"
+		elif `$PKG_CONFIG --exists microb-engine-nss`; then
+			PKG_CHECK_MODULES(NSS, microb-engine-nss, [
+				have_nss="yes"
+			], [
+				AC_MSG_RESULT(no)
+				have_nss="no"
+			])
+			mozilla_nspr="mozilla-nspr"
+			mozilla_nss="microb-engine-nss"
 		fi
 
 		if test "x$have_nss" = "xyes"; then

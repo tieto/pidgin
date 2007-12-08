@@ -532,6 +532,6 @@ void jabber_google_presence_incoming(JabberStream *js, const char *user, JabberB
 
 char *jabber_google_presence_outgoing(PurpleStatus *tune)
 {
-	char *ret = g_strdup_printf("♫ %s", purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE));
-	return ret;
+	const char *attr = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
+	return attr ? g_strdup_printf("♫ %s", attr) : g_strdup("");
 }

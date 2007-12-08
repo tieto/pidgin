@@ -1,3 +1,11 @@
+pidgin (2.3.1-1) unstable; urgency=low
+
+  * New upstream release
+    - Fixes problems logging into MSN (Closes: #454592)
+    - Fixes MSN display name randomly changing (Closes: #454490)
+
+ -- Ari Pollak <ari@debian.org>  Fri, 07 Dec 2007 20:33:46 -0500
+
 pidgin (2.3.0-1) unstable; urgency=low
 
   * New upstream release
@@ -11,7 +19,7 @@ pidgin (2.3.0-1) unstable; urgency=low
   * Remove 14_xulrunner_nss patch and bump build-depends for libnss3-dev
     (Closes: #450402)
 
- -- Ari Pollak <ari@debian.org>  Sun, 28 Oct 2007 14:47:48 -0400
+ -- Ari Pollak <ari@debian.org>  Mon, 03 Dec 2007 14:47:48 -0400
 
 pidgin (2.2.2-1) unstable; urgency=high
 

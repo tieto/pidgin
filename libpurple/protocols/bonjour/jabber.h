@@ -47,7 +47,7 @@ typedef struct _BonjourJabberConversation
 	guint rx_handler;
 	guint tx_handler;
 	PurpleCircBuffer *tx_buf;
-	gboolean sent_stream_start;
+	int sent_stream_start; /* 0 = Unsent, 1 = Partial, 2 = Complete */
 	gboolean recv_stream_start;
 	PurpleProxyConnectData *connect_data;
 	gpointer stream_data;

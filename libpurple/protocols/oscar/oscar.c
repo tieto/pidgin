@@ -5364,6 +5364,7 @@ GHashTable *oscar_chat_info_defaults(PurpleConnection *gc, const char *chat_name
 
 	if (chat_name != NULL)
 		g_hash_table_insert(defaults, "room", g_strdup(chat_name));
+	g_hash_table_insert(defaults, "exchange", g_strdup("4"));
 
 	return defaults;
 }

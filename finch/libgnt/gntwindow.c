@@ -62,7 +62,8 @@ gnt_window_destroy(GntWidget *widget)
 	if (window->menu)
 		gnt_widget_destroy(GNT_WIDGET(window->menu));
 	if (window->priv) {
-		g_hash_table_destroy(window->priv->accels);
+		if (window->priv->accels)
+			g_hash_table_destroy(window->priv->accels);
 		g_free(window->priv);
 	}
 	org_destroy(widget);

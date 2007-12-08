@@ -57,6 +57,7 @@ PPCODE:
 		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(value), i, 0), t_sl));
 	}
 	purple_prefs_add_string_list(name, t_GL);
+	g_list_free(t_GL);
 
 void
 purple_prefs_destroy()
@@ -159,6 +160,7 @@ PPCODE:
 		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(value), i, 0), t_sl));
 	}
 	purple_prefs_set_string_list(name, t_GL);
+	g_list_free(t_GL);
 
 void
 purple_prefs_trigger_callback(name)
