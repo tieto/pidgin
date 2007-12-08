@@ -187,6 +187,7 @@ pidgin_tooltip_draw(PidginTooltipData *data)
 		data->path = NULL;
 	}
 
+	pidgin_tooltip_destroy();
 	pidgin_tooltip.tipwindow = tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
 	pidgin_tooltip.widget = gtk_widget_get_toplevel(data->widget);
 	pidgin_tooltip.paint_tooltip = data->paint_tooltip;
