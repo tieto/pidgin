@@ -302,6 +302,34 @@ if test "x$enable_gnt" = "xno"; then
 *** You need ncursesw or ncurses and its header files.])
 fi
 
+dnl Check for Python headers (currently useful only for libgnt)
+dnl (Thanks to XChat)
+AC_PATH_PROG(pythonpath, python)
+if test "_$pythonpath" != _ ; then
+	AC_MSG_CHECKING(for Python compile flags)
+	PY_PREFIX=`$pythonpath -c 'import sys ; print sys.prefix'`
+	PY_EXEC_PREFIX=`$pythonpath -c 'import sys ; print sys.exec_prefix'`
+	changequote(<<, >>)dnl
+	PY_VERSION=`$pythonpath -c 'import sys ; print sys.version[0:3]'`
+	PY_MAJOR=`$pythonpath -c 'import sys ; print sys.version[0:2]'`
+	changequote([, ])dnl
+	if test -f $PY_PREFIX/include/python$PY_VERSION/Python.h -a "$PY_MAJOR" = "2."; then
+		AC_CHECK_LIB(pthread, pthread_create, )
+		AC_CHECK_LIB(util, openpty, )
+		AC_CHECK_LIB(db, dbopen, )
+		PY_LIBS="-lpython$PY_VERSION -L$PY_EXEC_PREFIX/lib/python$PY_VERSION/config"
+		PY_CFLAGS="-I$PY_PREFIX/include/python$PY_VERSION"
+		AC_DEFINE(USE_PYTHON, [1], [Define if python headers are available.])
+		AC_MSG_RESULT(ok)
+	else
+		AC_MSG_RESULT([Can't find Python.h])
+		PY_LIBS=""
+		PY_CFLAGS=""
+	fi
+fi
+AC_SUBST(PY_CFLAGS)
+AC_SUBST(PY_LIBS)
+
 dnl Check for libxml
 have_libxml=yes
 PKG_CHECK_MODULES(LIBXML, [libxml-2.0], , [
