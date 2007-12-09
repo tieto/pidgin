@@ -899,7 +899,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		purple_util_chrreplace(m, '\r', '\n');
 
 		if (!strcmp(m, "<ding>")) {
-			PurpleBuddy *buddy;
 			PurpleAccount *account;
 			PurpleConversation *c;
 			char *username;
@@ -909,13 +908,8 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			if (c == NULL)
 				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
 
-			if ((buddy = purple_find_buddy(account, im->from)) != NULL)
-				username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
-			else
-				username = g_markup_escape_text(im->from, -1);
-
+			username = g_markup_escape_text(im->from, -1);
 			serv_got_attention(gc, username, YAHOO_BUZZ);
-
 			g_free(username);
 			g_free(m);
 			g_free(im);
