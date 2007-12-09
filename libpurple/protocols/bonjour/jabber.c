@@ -32,6 +32,12 @@
 #include "libc_interface.h"
 #endif
 #include <sys/types.h>
+
+/* Solaris */
+#if defined (__SVR4) && defined (__sun)
+#include <sys/sockio.h>
+#endif
+
 #include <glib.h>
 #include <unistd.h>
 #include <fcntl.h>
