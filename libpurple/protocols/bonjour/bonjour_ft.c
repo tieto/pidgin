@@ -387,7 +387,7 @@ static void
 bonjour_xfer_init(PurpleXfer *xfer)
 {
 	PurpleBuddy *buddy = NULL;
-	BonjourBuddy *bd = NULL;
+	BonjourBuddy *bb = NULL;
 	XepXfer *xf = NULL;
 
 	xf = (XepXfer*)xfer->data;
@@ -401,8 +401,10 @@ bonjour_xfer_init(PurpleXfer *xfer)
 	if (buddy == NULL)
 		return;
 
-	bd = (BonjourBuddy *)buddy->proto_data;
-	xf->buddy_ip = g_strdup(bd->ip);
+	bb = (BonjourBuddy *)buddy->proto_data;
+	/* Assume it is the first IP. We could do something like keep track of which one is in use or something. */
+	if (bb->ips)
+		xf->buddy_ip = g_strdup(bb->ips->data);
 	if (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND) {
 		/* initiate file transfer, send SI offer. */
 		purple_debug_info("bonjour", "Bonjour xfer type is PURPLE_XFER_SEND.\n");

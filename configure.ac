@@ -722,59 +722,6 @@ AC_CHECK_LIB(avahi-client, avahi_client_new, [avahilibs=yes], [avahilibs=no], $A
 AC_SUBST(AVAHI_CFLAGS)
 AC_SUBST(AVAHI_LIBS)
 
-AM_CONDITIONAL(MDNS_AVAHI, test "x$avahiincludes" = "xyes" -a "x$avahilibs" = "xyes")
-
-dnl #######################################################################
-dnl # Check for Howl headers (for Bonjour)
-dnl #######################################################################
-AC_ARG_WITH(howl-includes, [AC_HELP_STRING([--with-howl-includes=DIR], [compile the Bonjour plugin against the Howl includes in DIR])], [ac_howl_includes="$withval"], [ac_howl_includes="no"])
-AC_ARG_WITH(howl-libs, [AC_HELP_STRING([--with-howl-libs=DIR], [compile the Bonjour plugin against the Howl libs in DIR])], [ac_howl_libs="$withval"], [ac_howl_libs="no"])
-HOWL_CFLAGS=""
-HOWL_LIBS=""
-
-dnl Attempt to autodetect avahi-compat-howl
-dnl TODO: (This should be removed when the native avahi stuff is stable)
-PKG_CHECK_MODULES(HOWL, avahi-compat-howl, [
-	howlincludes="yes"
-	howllibs="yes"
-], [
-	AC_MSG_RESULT(no)
-	howlincludes="no"
-	howllibs="no"
-])
-
-dnl Attempt to autodetect Howl
-if test "x$howlincludes" = "xno"; then
-	PKG_CHECK_MODULES(HOWL, howl, [
-		howlincludes="yes"
-		howllibs="yes"
-	], [
-		AC_MSG_RESULT(no)
-		howlincludes="no"
-		howllibs="no"
-	])
-fi
-
-dnl Override HOWL_CFLAGS if the user specified an include dir
-if test "$ac_howl_includes" != "no"; then
-	HOWL_CFLAGS="-I$ac_howl_includes"
-fi
-CPPFLAGS_save="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS $HOWL_CFLAGS"
-AC_CHECK_HEADER(howl.h, [howlincludes=yes], [howlincludes=no])
-CPPFLAGS="$CPPFLAGS_save"
-
-dnl Override HOWL_LIBS if the user specified a libs dir
-if test "$ac_howl_libs" != "no"; then
-	HOWL_LIBS="-L$ac_howl_libs -lhowl"
-fi
-AC_CHECK_LIB(howl, sw_discovery_init, [howllibs=yes], [howllibs=no], $HOWL_LIBS)
-
-AC_SUBST(HOWL_CFLAGS)
-AC_SUBST(HOWL_LIBS)
-
-AM_CONDITIONAL(MDNS_HOWL, test "x$howlincludes" = "xyes" -a "x$howllibs" = "xyes")
-
 
 dnl #######################################################################
 dnl # Check for SILC client includes and libraries
@@ -960,9 +907,7 @@ if test "x$have_meanwhile" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
 fi
 if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
-	if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
-		STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
-	fi
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$enable_msnp14" != "xyes" ; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/msn/msnp9/'`
@@ -1049,9 +994,7 @@ if test "x$have_meanwhile" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
 fi
 if test "x$avahiincludes" != "xyes" -o "x$avahilibs" != "xyes"; then
-	if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
-		DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
-	fi
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$enable_msnp14" != "xyes" ; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/msn/msnp9/'`
@@ -1087,7 +1030,7 @@ for i in $DYNAMIC_PRPLS ; do
 		*)			echo "Invalid dynamic protocol $i!!" ; exit ;;
 	esac
 done
-AM_CONDITIONAL(DYNAMIC_BONJOUR, test "x$dynamic_bonjour" = "xyes"  -a [ [ "x$avahiincludes" = "xyes" -a "x$avahilibs " = "xyes" ] -o [ "x$howlincludes" = "xyes" -a "x$howllibs" = "xyes" ] ] )
+AM_CONDITIONAL(DYNAMIC_BONJOUR, test "x$dynamic_bonjour" = "xyes"  -a [ "x$avahiincludes" = "xyes" -a "x$avahilibs " = "xyes" ] )
 AM_CONDITIONAL(DYNAMIC_GG, test "x$dynamic_gg" = "xyes")
 AM_CONDITIONAL(DYNAMIC_IRC, test "x$dynamic_irc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")

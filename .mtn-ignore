@@ -33,6 +33,7 @@ pidgin.desktop$
 pidgin.spec$
 pidgin-.*.tar.gz
 pidgin-.*.tar.bz2
+pidgin-*.*.*-win32bin$
 pidgin/pidgin$
 pidgin/pixmaps/emotes/default/24/theme
 pidgin/pixmaps/emotes/none/theme
