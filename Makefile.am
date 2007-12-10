@@ -51,7 +51,7 @@ if HAVE_DOXYGEN
 	@doxygen
 if HAVE_XSLTPROC
 	@echo "Generating devhelp index..."
-	@xsltproc doxy2devhelp.xsl doc/xml/index.xml > doc/html/pidgin.devhelp
+	@xsltproc $(top_srcdir)/doxy2devhelp.xsl doc/xml/index.xml > doc/html/pidgin.devhelp
 	@echo "(Symlink doc/html to ~/.local/share/gtk-doc/html/pidgin to make devhelp see the documentation)"
 else
 	@echo "Not generating devhelp index: xsltproc was not found by configure"

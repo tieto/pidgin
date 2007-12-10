@@ -32,6 +32,12 @@
 #include "libc_interface.h"
 #endif
 #include <sys/types.h>
+
+/* Solaris */
+#if defined (__SVR4) && defined (__sun)
+#include <sys/sockio.h>
+#endif
+
 #include <glib.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -233,13 +239,24 @@ _check_buddy_by_address(gpointer key, gpointer value, gpointer data)
 	/*
 	 * If the current PurpleBuddy's data is not null and the PurpleBuddy's account
 	 * is the same as the account requesting the check then continue to determine
-	 * whether the buddies IP matches the target IP.
+	 * whether one of the buddies IPs matches the target IP.
 	 */
 	if (cbba->bj->account == pb->account)
 	{
 		bb = pb->proto_data;
-		if ((bb != NULL) && (g_ascii_strcasecmp(bb->ip, cbba->address) == 0))
-			*(cbba->pb) = pb;
+		if (bb != NULL) {
+			const char *ip;
+			GSList *tmp = bb->ips;
+
+			while(tmp) {
+				ip = tmp->data;
+				if (ip != NULL && g_ascii_strcasecmp(ip, cbba->address) == 0) {
+					*(cbba->pb) = pb;
+					break;
+				}
+				tmp = tmp->next;
+			}
+		}
 	}
 }
 
@@ -443,9 +460,14 @@ _start_stream(gpointer data, gint source, PurpleInputCondition condition)
 	else if (ret <= 0) {
 		const char *err = g_strerror(errno);
 		PurpleConversation *conv;
+		const char *ip = NULL;
+
+		/* For better or worse, use the first IP*/
+		if (bb->ips)
+			ip = bb->ips->data;
 
 		purple_debug_error("bonjour", "Error starting stream with buddy %s at %s:%d error: %s\n",
-				   purple_buddy_get_name(pb), bb->ip ? bb->ip : "(null)", bb->port_p2pj, err ? err : "(null)");
+				   purple_buddy_get_name(pb), ip ? ip : "(null)", bb->port_p2pj, err ? err : "(null)");
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, pb->account);
 		if (conv != NULL)
@@ -498,9 +520,14 @@ static gboolean bonjour_jabber_send_stream_init(PurpleBuddy *pb, int client_sock
 		ret = 0;
 	else if (ret <= 0) {
 		const char *err = g_strerror(errno);
+		const char *ip = NULL;
+
+		/* For better or worse, use the first IP*/
+		if (bb->ips)
+			ip = bb->ips->data;
 
 		purple_debug_error("bonjour", "Error starting stream with buddy %s at %s:%d error: %s\n",
-				   purple_buddy_get_name(pb), bb->ip ? bb->ip : "(null)", bb->port_p2pj, err ? err : "(null)");
+				   purple_buddy_get_name(pb), ip ? ip : "(null)", bb->port_p2pj, err ? err : "(null)");
 
 		close(client_socket);
 		g_free(stream_start);
@@ -538,9 +565,14 @@ void bonjour_jabber_stream_started(PurpleBuddy *pb) {
 	if (bconv->sent_stream_start == NOT_SENT && !bonjour_jabber_send_stream_init(pb, bconv->socket)) {
 		const char *err = g_strerror(errno);
 		PurpleConversation *conv;
+		const char *ip = NULL;
+
+		/* For better or worse, use the first IP*/
+		if (bb->ips)
+			ip = bb->ips->data;
 
 		purple_debug_error("bonjour", "Error starting stream with buddy %s at %s:%d error: %s\n",
-				   purple_buddy_get_name(pb), bb->ip ? bb->ip : "(null)", bb->port_p2pj, err ? err : "(null)");
+				   purple_buddy_get_name(pb), ip ? ip : "(null)", bb->port_p2pj, err ? err : "(null)");
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, pb->account);
 		if (conv != NULL)
@@ -715,9 +747,14 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 
 	if (source < 0) {
 		PurpleConversation *conv;
+		const char *ip = NULL;
+
+		/* For better or worse, use the first IP*/
+		if (bb->ips)
+			ip = bb->ips->data;
 
 		purple_debug_error("bonjour", "Error connecting to buddy %s at %s:%d error: %s\n",
-				   purple_buddy_get_name(pb), bb->ip ? bb->ip : "(null)", bb->port_p2pj, error ? error : "(null)");
+				   purple_buddy_get_name(pb), ip ? ip : "(null)", bb->port_p2pj, error ? error : "(null)");
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, pb->account);
 		if (conv != NULL)
@@ -733,9 +770,14 @@ _connected_to_buddy(gpointer data, gint source, const gchar *error)
 	if (!bonjour_jabber_send_stream_init(pb, source)) {
 		const char *err = g_strerror(errno);
 		PurpleConversation *conv;
+		const char *ip = NULL;
+
+		/* For better or worse, use the first IP*/
+		if (bb->ips)
+			ip = bb->ips->data;
 
 		purple_debug_error("bonjour", "Error starting stream with buddy %s at %s:%d error: %s\n",
-				   purple_buddy_get_name(pb), bb->ip ? bb->ip : "(null)", bb->port_p2pj, err ? err : "(null)");
+				   purple_buddy_get_name(pb), ip ? ip : "(null)", bb->port_p2pj, err ? err : "(null)");
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, pb->account);
 		if (conv != NULL)
@@ -776,6 +818,11 @@ _find_or_start_conversation(BonjourJabber *data, const gchar *to)
 	{
 		PurpleProxyConnectData *connect_data;
 		PurpleProxyInfo *proxy_info;
+		const char *ip = NULL;
+
+		/* For better or worse, use the first IP*/
+		if (bb->ips)
+			ip = bb->ips->data;
 
 		purple_debug_info("bonjour", "Starting conversation with %s\n", to);
 
@@ -789,7 +836,7 @@ _find_or_start_conversation(BonjourJabber *data, const gchar *to)
 		purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_NONE);
 
 		connect_data = purple_proxy_connect(NULL, data->account,
-						    bb->ip, bb->port_p2pj, _connected_to_buddy, pb);
+						    ip, bb->port_p2pj, _connected_to_buddy, pb);
 
 		if (connect_data == NULL) {
 			purple_debug_error("bonjour", "Unable to connect to buddy (%s).\n", to);

@@ -1,11 +1,12 @@
 #include <glib.h>
 #include <stdlib.h>
 
+#include "tests.h"
+
 #include "../core.h"
 #include "../eventloop.h"
 #include "../util.h"
 
-#include "tests.h"
 
 /******************************************************************************
  * libpurple goodies
