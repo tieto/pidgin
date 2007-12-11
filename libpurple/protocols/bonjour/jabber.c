@@ -77,31 +77,6 @@ enum sent_stream_start_types {
 static void
 xep_iq_parse(xmlnode *packet, PurpleConnection *connection, PurpleBuddy *pb);
 
-#if 0 /* this isn't used anywhere... */
-static const char *
-_font_size_purple_to_ichat(int size)
-{
-	switch (size) {
-		case 1:
-			return "8";
-		case 2:
-			return "10";
-		case 3:
-			return "12";
-		case 4:
-			return "14";
-		case 5:
-			return "17";
-		case 6:
-			return "21";
-		case 7:
-			return "24";
-	}
-
-	return "12";
-}
-#endif
-
 static BonjourJabberConversation *
 bonjour_jabber_conv_new(PurpleBuddy *pb) {
 
@@ -143,34 +118,48 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 {
 	xmlnode *body_node, *html_node, *events_node;
 	PurpleConnection *gc = pb->account->gc;
-	char *body, *html_body = NULL;
-	const char *ichat_balloon_color = NULL;
-	const char *ichat_text_color = NULL;
-	const char *font_face = NULL;
-	const char *font_size = NULL;
-	const char *font_color = NULL;
+	gchar *body = NULL;
 	gboolean composing_event = FALSE;
 
 	body_node = xmlnode_get_child(message_node, "body");
-	if (body_node == NULL)
-		return;
-	body = xmlnode_get_data(body_node);
-
 	html_node = xmlnode_get_child(message_node, "html");
-	if (html_node != NULL)
-	{
+
+	if (body_node == NULL && html_node == NULL) {
+		purple_debug_error("bonjour", "No body or html node found, discarding message.\n");
+		return;
+	}
+
+	events_node = xmlnode_get_child_with_namespace(message_node, "x", "jabber:x:event");
+	if (events_node != NULL) {
+		if (xmlnode_get_child(events_node, "composing") != NULL)
+			composing_event = TRUE;
+		if (xmlnode_get_child(events_node, "id") != NULL) {
+			/* The user is just typing */
+			/* TODO: Deal with typing notification */
+			return;
+		}
+	}
+
+	if (html_node != NULL) {
 		xmlnode *html_body_node;
 
 		html_body_node = xmlnode_get_child(html_node, "body");
-		if (html_body_node != NULL)
-		{
+		if (html_body_node != NULL) {
 			xmlnode *html_body_font_node;
+			const char *ichat_balloon_color = NULL;
+			const char *ichat_text_color = NULL;
+			const char *font_face = NULL;
+			const char *font_size = NULL;
+			const char *font_color = NULL;
 
 			ichat_balloon_color = xmlnode_get_attrib(html_body_node, "ichatballooncolor");
 			ichat_text_color = xmlnode_get_attrib(html_body_node, "ichattextcolor");
 			html_body_font_node = xmlnode_get_child(html_body_node, "font");
-			if (html_body_font_node != NULL)
-			{ /* Types of messages sent by iChat */
+
+			/* Types of messages sent by iChat */
+			if (html_body_font_node != NULL) {
+				gchar *html_body;
+
 				font_face = xmlnode_get_attrib(html_body_font_node, "face");
 				/* The absolute iChat font sizes should be converted to 1..7 range */
 				font_size = xmlnode_get_attrib(html_body_font_node, "ABSZ");
@@ -178,49 +167,41 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleBuddy *pb)
 					font_size = _font_size_ichat_to_purple(atoi(font_size));
 				font_color = xmlnode_get_attrib(html_body_font_node, "color");
 				html_body = xmlnode_get_data(html_body_font_node);
+
 				if (html_body == NULL)
 					/* This is the kind of formated messages that Purple creates */
 					html_body = xmlnode_to_str(html_body_font_node, NULL);
+
+				if (html_body != NULL) {
+					/* Use some sane defaults */
+					if (font_face == NULL) font_face = "Helvetica";
+					if (font_size == NULL) font_size = "3";
+					if (ichat_text_color == NULL) ichat_text_color = "#000000";
+					if (ichat_balloon_color == NULL) ichat_balloon_color = "#FFFFFF";
+
+					body = g_strdup_printf("<font face='%s' size='%s' color='%s' back='%s'>%s</font>",
+								   font_face, font_size, ichat_text_color, ichat_balloon_color,
+								   html_body);
+
+					g_free(html_body);
+				}
 			}
 		}
 	}
 
-	events_node = xmlnode_get_child_with_namespace(message_node, "x", "jabber:x:event");
-	if (events_node != NULL)
-	{
-		if (xmlnode_get_child(events_node, "composing") != NULL)
-			composing_event = TRUE;
-		if (xmlnode_get_child(events_node, "id") != NULL)
-		{
-			/* The user is just typing */
-			/* TODO: Deal with typing notification */
-			g_free(body);
-			g_free(html_body);
-			return;
-		}
-	}
-
 	/* Compose the message */
-	if (html_body != NULL)
-	{
-		g_free(body);
+	if (body == NULL && body_node != NULL)
+		body = xmlnode_get_data(body_node);
 
-		if (font_face == NULL) font_face = "Helvetica";
-		if (font_size == NULL) font_size = "3";
-		if (ichat_text_color == NULL) ichat_text_color = "#000000";
-		if (ichat_balloon_color == NULL) ichat_balloon_color = "#FFFFFF";
-		body = g_strdup_printf("<font face='%s' size='%s' color='%s' back='%s'>%s</font>",
-				       font_face, font_size, ichat_text_color, ichat_balloon_color,
-				       html_body);
+	if (body == NULL) {
+		purple_debug_error("bonjour", "No html body or regular body found.\n");
+		return;
 	}
-
-	/* TODO: Should we do something with "composing_event" here? */
 
 	/* Send the message to the UI */
 	serv_got_im(gc, pb->name, body, 0, time(NULL));
 
 	g_free(body);
-	g_free(html_body);
 }
 
 struct _check_buddy_by_address_t {
@@ -345,7 +326,7 @@ _send_data(PurpleBuddy *pb, char *message)
 
 	if (ret < len) {
 		/* Don't interfere with the stream starting */
-		if (bconv->tx_handler == 0)
+		if (bconv->sent_stream_start == FULLY_SENT && bconv->recv_stream_start && bconv->tx_handler == 0)
 			bconv->tx_handler = purple_input_add(bconv->socket, PURPLE_INPUT_WRITE,
 				_send_data_write_cb, pb);
 		purple_circ_buffer_append(bconv->tx_buf, message + ret, len - ret);
