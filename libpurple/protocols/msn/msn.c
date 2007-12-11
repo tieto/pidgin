@@ -847,7 +847,7 @@ msn_login(PurpleAccount *account)
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 			_("SSL support is needed for MSN. Please install a supported "
-			  "SSL library. See the FAQ at http://developer.pidgin.im/wiki/FAQssl"));
+			  "SSL library."));
 		return;
 	}
 
