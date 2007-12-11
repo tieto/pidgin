@@ -154,6 +154,7 @@ void pidgin_tooltip_show(GtkWidget *widget, gpointer userdata,
 
 	pidgin_tooltip_destroy();
 	pidgin_tooltip.tipwindow = tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
+	gtk_window_set_type_hint(GTK_WINDOW(tipwindow), GDK_WINDOW_TYPE_HINT_TOOLTIP);
 	pidgin_tooltip.widget = gtk_widget_get_toplevel(widget);
 	pidgin_tooltip.paint_tooltip = paint_tooltip;
 	gtk_widget_ensure_style(tipwindow);
@@ -181,14 +182,17 @@ pidgin_tooltip_draw(PidginTooltipData *data)
 	}
 
 	if (data->path) {
-		if (gtk_tree_path_compare(data->path, path) == 0)
+		if (gtk_tree_path_compare(data->path, path) == 0) {
+			gtk_tree_path_free(path);
 			return;
+		}
 		gtk_tree_path_free(data->path);
 		data->path = NULL;
 	}
 
 	pidgin_tooltip_destroy();
 	pidgin_tooltip.tipwindow = tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
+	gtk_window_set_type_hint(GTK_WINDOW(tipwindow), GDK_WINDOW_TYPE_HINT_TOOLTIP);
 	pidgin_tooltip.widget = gtk_widget_get_toplevel(data->widget);
 	pidgin_tooltip.paint_tooltip = data->paint_tooltip;
 	gtk_widget_ensure_style(tipwindow);
