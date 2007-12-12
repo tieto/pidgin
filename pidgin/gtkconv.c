@@ -4375,7 +4375,7 @@ setup_chat_topic(PidginConversation *gtkconv, GtkWidget *vbox)
 	{
 		GtkWidget *hbox, *label;
 		PidginChatPane *gtkchat = gtkconv->u.chat;
-		
+
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
@@ -4524,16 +4524,25 @@ pidgin_conv_tooltip_timeout(PidginConversation *gtkconv)
 	conv = gtkconv->active_conv;
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		node = (PurpleBlistNode*)(purple_blist_find_chat(conv->account, conv->name));
+#if 0
+		/* Using the transient blist nodes to show the tooltip doesn't quite work yet. */
+		if (!node)
+			node = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_chat");
+#endif
 	} else {
 		node = (PurpleBlistNode*)(purple_find_buddy(conv->account, conv->name));
+#if 0
+		if (!node)
+			node = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_buddy");
+#endif
 	}
 
-	if (node) 
+	if (node)
 		pidgin_blist_draw_tooltip(node, gtkconv->infopane);
 	return FALSE;
 }
 
-static void 
+static void
 pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv)
 {
 	pidgin_blist_tooltip_destroy();
@@ -7477,10 +7486,13 @@ pidgin_conv_attach(PurpleConversation *conv)
 	purple_conversation_set_data(conv, "unseen-count", NULL);
 	purple_conversation_set_data(conv, "unseen-state", NULL);
 	purple_conversation_set_ui_ops(conv, pidgin_conversations_get_conv_ui_ops());
-	private_gtkconv_new(conv, FALSE);
+	if (!PIDGIN_CONVERSATION(conv))
+		private_gtkconv_new(conv, FALSE);
 	timer = GPOINTER_TO_INT(purple_conversation_get_data(conv, "close-timer"));
-	if (timer)
+	if (timer) {
 		purple_timeout_remove(timer);
+		purple_conversation_set_data(conv, "close-timer", NULL);
+	}
 }
 
 gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
@@ -7489,6 +7501,7 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 	PidginConversation *gtkconv;
 
 	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
+		/* This is pretty much always the case now. */
 		gtkconv = PIDGIN_CONVERSATION(conv);
 		if (gtkconv->win != hidden_convwin)
 			return FALSE;
@@ -7496,6 +7509,11 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 		pidgin_conv_placement_place(gtkconv);
 		purple_signal_emit(pidgin_conversations_get_handle(),
 				"conversation-displayed", gtkconv);
+		list = gtkconv->convs;
+		while (list) {
+			pidgin_conv_attach(list->data);
+			list = list->next;
+		}
 		return TRUE;
 	}
 
