@@ -45,7 +45,10 @@ struct sipmsg *sipmsg_parse_msg(const gchar *msg) {
 	line = g_strndup(msg, tmp - msg);
 
 	smsg = sipmsg_parse_header(line);
-	smsg->body = g_strdup(tmp + 4);
+	if(smsg != NULL)
+		smsg->body = g_strdup(tmp + 4);
+	else
+		purple_debug_error("SIMPLE", "No header parsed from line: %s\n", line);
 
 	g_free(line);
 	return smsg;
