@@ -4349,7 +4349,7 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(gtkconv->entry));
 
-	height = (oneline.height + pad_top + pad_bottom) * (lines + 1);
+	height = (oneline.height + pad_top + pad_bottom) * MAX(lines, 2);
 	height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
 	gtkconv->auto_resize = TRUE;
