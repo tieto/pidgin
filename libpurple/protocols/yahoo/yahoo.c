@@ -493,13 +493,14 @@ static char *_getcookie(char *rawcookie)
 static void yahoo_process_cookie(struct yahoo_data *yd, char *c)
 {
 	if (c[0] == 'Y') {
-		if (yd->cookie_y)
-			g_free(yd->cookie_y);
+		g_free(yd->cookie_y);
 		yd->cookie_y = _getcookie(c);
 	} else if (c[0] == 'T') {
-		if (yd->cookie_t)
-			g_free(yd->cookie_t);
+		g_free(yd->cookie_t);
 		yd->cookie_t = _getcookie(c);
+	} else if (c[0] == 'C') {
+		g_free(yd->cookie_c);
+		yd->cookie_c = _getcookie(c);
 	} else
 		purple_debug_info("yahoo", "Ignoring unrecognized cookie '%c'\n", c[0]);
 }
@@ -899,7 +900,6 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		purple_util_chrreplace(m, '\r', '\n');
 
 		if (!strcmp(m, "<ding>")) {
-			PurpleBuddy *buddy;
 			PurpleAccount *account;
 			PurpleConversation *c;
 			char *username;
@@ -909,13 +909,8 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			if (c == NULL)
 				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
 
-			if ((buddy = purple_find_buddy(account, im->from)) != NULL)
-				username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
-			else
-				username = g_markup_escape_text(im->from, -1);
-
+			username = g_markup_escape_text(im->from, -1);
 			serv_got_attention(gc, username, YAHOO_BUZZ);
-
 			g_free(username);
 			g_free(m);
 			g_free(im);
@@ -2439,6 +2434,12 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_AUDIBLE:
 		yahoo_process_audible(gc, pkt);
 		break;
+	case YAHOO_SERVICE_Y7_FILETRANSFER:
+		yahoo_process_y7_filetransfer(gc, pkt);
+		break;
+	case YAHOO_SERVICE_Y7_FILETRANSFER_INFO:
+		yahoo_process_y7_filetransfer_info(gc, pkt);
+		break;
 	default:
 		purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
 				   "Unhandled service 0x%02x\n", pkt->service);
@@ -3018,6 +3019,7 @@ static void yahoo_close(PurpleConnection *gc) {
 
 	g_free(yd->cookie_y);
 	g_free(yd->cookie_t);
+	g_free(yd->cookie_c);
 
 	if (yd->txhandler)
 		purple_input_remove(yd->txhandler);

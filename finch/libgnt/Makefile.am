@@ -84,10 +84,12 @@ libgnt_la_LDFLAGS = -export-dynamic -version_info $(GNT_LT_VERSION_INFO) -no-und
 libgnt_la_LIBADD = \
 	$(GLIB_LIBS) \
 	$(GNT_LIBS) \
-	$(LIBXML_LIBS)
+	$(LIBXML_LIBS) \
+	$(PY_LIBS)
 
 AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(GNT_CFLAGS) \
 	$(DEBUG_CFLAGS) \
-	$(LIBXML_CFLAGS)
+	$(LIBXML_CFLAGS) \
+	$(PY_CFLAGS)

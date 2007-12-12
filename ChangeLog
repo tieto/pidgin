@@ -4,6 +4,9 @@ version 2.3.2 (??/??/????):
 	libpurple:
 	* Fixed various problems with loss of status messages when going
 	  or returning from idle on MySpaceIM.
+	* Eliminated unmaintained Howl backend implementation for the
+	  Bonjour protocol.  Avahi (or Apple's Bonjour runtime on win32) is
+	  now required to use Bonjour.
 
 	Finch:
 	* Color is used in the buddylist to indicate status, and the conversation

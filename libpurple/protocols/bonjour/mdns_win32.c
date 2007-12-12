@@ -28,17 +28,7 @@
 #include "dnsquery.h"
 #include "mdns_common.h"
 
-
-/* data structure for the resolve callback */
-typedef struct _ResolveCallbackArgs {
-	DNSServiceRef resolver;
-	guint resolver_handler;
-	gchar *full_service_name;
-
-	PurpleDnsQueryData *query;
-
-	BonjourBuddy* buddy;
-} ResolveCallbackArgs;
+static GSList *pending_buddies = NULL;
 
 /* data used by win32 bonjour implementation */
 typedef struct _win32_session_impl_data {
@@ -50,12 +40,61 @@ typedef struct _win32_session_impl_data {
 	guint browser_handler;
 } Win32SessionImplData;
 
-typedef struct _win32_buddy_impl_data {
+typedef struct _win32_buddy_service_resolver_data {
 	DNSServiceRef txt_query;
 	guint txt_query_handler;
+	uint32_t if_idx;
+	gchar *name;
+	gchar *type;
+	gchar *domain;
+	/* This is a reference to the entry in BonjourBuddy->ips */
+	const char *ip;
+} Win32SvcResolverData;
+
+typedef struct _win32_buddy_impl_data {
+	GSList *resolvers;
 	DNSServiceRef null_query;
 	guint null_query_handler;
 } Win32BuddyImplData;
+
+/* data structure for the resolve callback */
+typedef struct _ResolveCallbackArgs {
+	DNSServiceRef resolver;
+	guint resolver_handler;
+	PurpleAccount *account;
+	BonjourBuddy *bb;
+	Win32SvcResolverData *res_data;
+	gchar *full_service_name;
+	PurpleDnsQueryData *query;
+} ResolveCallbackArgs;
+
+static gint
+_find_resolver_data(gconstpointer a, gconstpointer b) {
+	const Win32SvcResolverData *rd_a = a;
+	const Win32SvcResolverData *rd_b = b;
+	gint ret = 1;
+
+	if(rd_a->if_idx == rd_b->if_idx
+			&& !strcmp(rd_a->name, rd_b->name)
+			&& !strcmp(rd_a->type, rd_b->type)
+			&& !strcmp(rd_a->domain, rd_b->domain)) {
+		ret = 0;
+	}
+
+	return ret;
+}
+
+static void
+_cleanup_resolver_data(Win32SvcResolverData *rd) {
+	if (rd->txt_query != NULL) {
+		purple_input_remove(rd->txt_query_handler);
+		DNSServiceRefDeallocate(rd->txt_query);
+	}
+	g_free(rd->name);
+	g_free(rd->type);
+	g_free(rd->domain);
+	g_free(rd);
+}
 
 static void
 _mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition) {
@@ -63,7 +102,7 @@ _mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition) {
 }
 
 static void
-_mdns_parse_text_record(BonjourBuddy* buddy, const char* record, uint16_t record_len)
+_mdns_parse_text_record(BonjourBuddy *buddy, const char *record, uint16_t record_len)
 {
 	const char *txt_entry;
 	uint8_t txt_len;
@@ -114,35 +153,44 @@ _mdns_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags flags,
 static void
 _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_message)
 {
-	ResolveCallbackArgs* args = (ResolveCallbackArgs*)data;
-	BonjourBuddy* bb = args->buddy;
+	ResolveCallbackArgs* args = (ResolveCallbackArgs*) data;
+	Win32BuddyImplData *idata = args->bb->mdns_impl_data;
+	gboolean delete_buddy = FALSE;
+	PurpleBuddy *pb;
+
+	if ((pb = purple_find_buddy(args->account, args->bb->name)))
+		if (pb->proto_data != args->bb)
+			purple_debug_error("bonjour", "Found purple buddy for %s not matching bonjour buddy record. "
+				"This is going to be ugly!.\n", args->bb->name);
 
 	if (!hosts || !hosts->data) {
 		purple_debug_error("bonjour", "host resolution - callback error.\n");
-		bonjour_buddy_delete(bb);
+		delete_buddy = TRUE;
 	} else {
-		struct sockaddr_in *addr = (struct sockaddr_in*)g_slist_nth_data(hosts, 1);
-		Win32BuddyImplData *idata = bb->mdns_impl_data;
-
-		g_return_if_fail(idata != NULL);
-
-		g_free(bb->ip);
-		bb->ip = g_strdup(inet_ntoa(addr->sin_addr));
+		struct sockaddr_in *addr = g_slist_nth_data(hosts, 1);
 
 		/* finally, set up the continuous txt record watcher, and add the buddy to purple */
 
-		if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&idata->txt_query, kDNSServiceFlagsLongLivedQuery,
+		if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&args->res_data->txt_query, kDNSServiceFlagsLongLivedQuery,
 				kDNSServiceInterfaceIndexAny, args->full_service_name, kDNSServiceType_TXT,
-				kDNSServiceClass_IN, _mdns_record_query_callback, bb)) {
+				kDNSServiceClass_IN, _mdns_record_query_callback, args->bb)) {
 
-			purple_debug_info("bonjour", "Found buddy %s at %s:%d\n", bb->name, bb->ip, bb->port_p2pj);
+			const char *ip = inet_ntoa(addr->sin_addr);
 
-			idata->txt_query_handler = purple_input_add(DNSServiceRefSockFD(idata->txt_query),
-				PURPLE_INPUT_READ, _mdns_handle_event, idata->txt_query);
+			purple_debug_info("bonjour", "Found buddy %s at %s:%d\n", args->bb->name, ip, args->bb->port_p2pj);
 
-			bonjour_buddy_add_to_purple(bb, NULL);
-		} else
-			bonjour_buddy_delete(bb);
+
+			args->bb->ips = g_slist_prepend(args->bb->ips, g_strdup(ip));
+			args->res_data->ip = args->bb->ips->data;
+
+			args->res_data->txt_query_handler = purple_input_add(DNSServiceRefSockFD(args->res_data->txt_query),
+				PURPLE_INPUT_READ, _mdns_handle_event, args->res_data->txt_query);
+
+			bonjour_buddy_add_to_purple(args->bb, NULL);
+		} else {
+			purple_debug_error("bonjour", "Unable to set up record watcher for buddy %s\n", args->bb->name);
+			delete_buddy = TRUE;
+		}
 
 	}
 
@@ -151,6 +199,26 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 		hosts = g_slist_remove(hosts, hosts->data);
 		g_free(hosts->data);
 		hosts = g_slist_remove(hosts, hosts->data);
+	}
+
+	if (delete_buddy) {
+		idata->resolvers = g_slist_remove(idata->resolvers, args->res_data);
+		_cleanup_resolver_data(args->res_data);
+
+		/* If this was the last resolver, remove the buddy */
+		if (idata->resolvers == NULL) {
+			if (pb) {
+				purple_account_remove_buddy(args->account, pb, NULL);
+				purple_blist_remove_buddy(pb);
+			} else
+				bonjour_buddy_delete(args->bb);
+
+			/* Remove from the pending list */
+			pending_buddies = g_slist_remove(pending_buddies, args->bb);
+		}
+	} else {
+		/* Remove from the pending list */
+		pending_buddies = g_slist_remove(pending_buddies, args->bb);
 	}
 
 	/* free the remaining args memory */
@@ -163,36 +231,53 @@ _mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint3
     const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void *context)
 {
 	ResolveCallbackArgs *args = (ResolveCallbackArgs*)context;
+	Win32BuddyImplData *idata = args->bb->mdns_impl_data;
 
 	/* remove the input fd and destroy the service ref */
 	purple_input_remove(args->resolver_handler);
+	args->resolver_handler = 0;
 	DNSServiceRefDeallocate(args->resolver);
+	args->resolver = NULL;
 
 	if (kDNSServiceErr_NoError != errorCode)
-	{
 		purple_debug_error("bonjour", "service resolver - callback error.\n");
-		bonjour_buddy_delete(args->buddy);
-		g_free(args);
-	}
-	else
-	{
-		args->buddy->port_p2pj = ntohs(port);
-
-		/* parse the text record */
-		_mdns_parse_text_record(args->buddy, txtRecord, txtLen);
-
+	else {
 		/* set more arguments, and start the host resolver */
-		args->full_service_name = g_strdup(fullname);
 
-		if (!(args->query =
-			purple_dnsquery_a(hosttarget, port, _mdns_resolve_host_callback, args)))
-		{
+		if ((args->query =
+				purple_dnsquery_a(hosttarget, port, _mdns_resolve_host_callback, args)) != NULL) {
+
+			args->full_service_name = g_strdup(fullname);
+
+			/* TODO: Should this be per resolver? */
+			args->bb->port_p2pj = ntohs(port);
+
+			/* We don't want to hit the cleanup code */
+			return;
+		} else
 			purple_debug_error("bonjour", "service resolver - host resolution failed.\n");
-			bonjour_buddy_delete(args->buddy);
-			g_free(args->full_service_name);
-			g_free(args);
+	}
+
+	/* If we get this far, clean up */
+
+	idata->resolvers = g_slist_remove(idata->resolvers, args->res_data);
+	_cleanup_resolver_data(args->res_data);
+
+	/* If this was the last resolver, remove the buddy */
+	if (idata->resolvers == NULL) {
+		PurpleBuddy *pb;
+		/* See if this is now attached to a PurpleBuddy */
+		if ((pb = purple_find_buddy(args->account, args->bb->name))) {
+			purple_account_remove_buddy(args->account, pb, NULL);
+			purple_blist_remove_buddy(pb);
+		} else {
+			/* Remove from the pending list */
+			pending_buddies = g_slist_remove(pending_buddies, args->bb);
+			bonjour_buddy_delete(args->bb);
 		}
 	}
+
+	g_free(args);
 
 }
 
@@ -212,7 +297,6 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
     DNSServiceErrorType errorCode, const char *serviceName, const char *regtype, const char *replyDomain, void *context)
 {
 	PurpleAccount *account = (PurpleAccount*)context;
-	PurpleBuddy *pb = NULL;
 
 	if (kDNSServiceErr_NoError != errorCode)
 		purple_debug_error("bonjour", "service browser - callback error\n");
@@ -221,28 +305,118 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 		if (purple_utf8_strcasecmp(serviceName, account->username) != 0) {
 			/* OK, lets go ahead and resolve it to add to the buddy list */
 			ResolveCallbackArgs *args = g_new0(ResolveCallbackArgs, 1);
-			args->buddy = bonjour_buddy_new(serviceName, account);
 
-			if (kDNSServiceErr_NoError != DNSServiceResolve(&args->resolver, 0, 0, serviceName, regtype,
+			purple_debug_info("bonjour", "Received new record for '%s' on iface %u (%s, %s)\n",
+							  serviceName, interfaceIndex, regtype ? regtype : "",
+							  replyDomain ? replyDomain : "");
+
+			if (kDNSServiceErr_NoError == DNSServiceResolve(&args->resolver, 0, 0, serviceName, regtype,
 					replyDomain, _mdns_service_resolve_callback, args)) {
-				bonjour_buddy_delete(args->buddy);
-				g_free(args);
-				purple_debug_error("bonjour", "service browser - failed to resolve service.\n");
-			} else {
+				GSList *tmp = pending_buddies;
+				PurpleBuddy *pb;
+				BonjourBuddy* bb = NULL;
+				Win32SvcResolverData *rd;
+				Win32BuddyImplData *idata;
+				gint fd;
+
+				/* Is there an existing buddy? */
+				if ((pb = purple_find_buddy(account, serviceName)))
+					bb = pb->proto_data;
+				/* Is there a pending buddy? */
+				else {
+					while (tmp) {
+						BonjourBuddy *bb_tmp = tmp->data;
+						if (!strcmp(bb_tmp->name, serviceName)) {
+							bb = bb_tmp;
+							break;
+						}
+						tmp = tmp->next;
+					}
+				}
+
+				if (bb == NULL) {
+					bb = bonjour_buddy_new(serviceName, account);
+
+					/* This is only necessary for the wacky case where someone previously manually added a buddy. */
+					if (pb == NULL)
+						pending_buddies = g_slist_prepend(pending_buddies, bb);
+					else
+						pb->proto_data = bb;
+				}
+
+
+				rd = g_new0(Win32SvcResolverData, 1);
+				rd->if_idx = interfaceIndex;
+				rd->name = g_strdup(serviceName);
+				rd->type = g_strdup(regtype);
+				rd->domain = g_strdup(replyDomain);
+
+				idata = bb->mdns_impl_data;
+				idata->resolvers = g_slist_prepend(idata->resolvers, rd);
+
+				args->bb = bb;
+				args->res_data = rd;
+				args->account = account;
+
 				/* get a file descriptor for this service ref, and add it to the input list */
-				gint fd = DNSServiceRefSockFD(args->resolver);
+				fd = DNSServiceRefSockFD(args->resolver);
 				args->resolver_handler = purple_input_add(fd, PURPLE_INPUT_READ, _mdns_handle_event, args->resolver);
+			} else {
+				purple_debug_error("bonjour", "service browser - failed to resolve service.\n");
+				g_free(args);
 			}
 		}
 	} else {
+		PurpleBuddy *pb = NULL;
+
 		/* A peer has sent a goodbye packet, remove them from the buddy list */
-		purple_debug_info("bonjour", "service browser - remove notification\n");
+		purple_debug_info("bonjour", "Received remove notification for '%s' on iface %u (%s, %s)\n",
+						  serviceName, interfaceIndex, regtype ? regtype : "",
+						  replyDomain ? replyDomain : "");
+
 		pb = purple_find_buddy(account, serviceName);
 		if (pb != NULL) {
-			purple_account_remove_buddy(account, pb, NULL);
-			purple_blist_remove_buddy(pb);
-		} else
+			GSList *l;
+			/* There may be multiple presences, we should only get rid of this one */
+			Win32SvcResolverData *rd_search;
+			BonjourBuddy *bb = pb->proto_data;
+			Win32BuddyImplData *idata;
+
+			g_return_if_fail(bb != NULL);
+
+			idata = bb->mdns_impl_data;
+
+			rd_search = g_new0(Win32SvcResolverData, 1);
+			rd_search->if_idx = interfaceIndex;
+			rd_search->name = (gchar *) serviceName;
+			rd_search->type = (gchar *) regtype;
+			rd_search->domain = (gchar *) replyDomain;
+
+			l = g_slist_find_custom(idata->resolvers, rd_search, _find_resolver_data);
+
+			g_free(rd_search);
+
+			if (l != NULL) {
+				Win32SvcResolverData *rd = l->data;
+				idata->resolvers = g_slist_delete_link(idata->resolvers, l);
+				/* This IP is no longer available */
+				if (rd->ip != NULL) {
+					bb->ips = g_slist_remove(bb->ips, rd->ip);
+					g_free((gchar *) rd->ip);
+				}
+				_cleanup_resolver_data(rd);
+
+				/* If this was the last resolver, remove the buddy */
+				if (idata->resolvers == NULL) {
+					purple_debug_info("bonjour", "Removed last presence for buddy '%s'; removing buddy.\n", serviceName);
+					purple_account_remove_buddy(account, pb, NULL);
+					purple_blist_remove_buddy(pb);
+				}
+			}
+		} else {
 			purple_debug_warning("bonjour", "Unable to find buddy (%s) to remove\n", serviceName ? serviceName : "(null)");
+			/* TODO: Should we look in the pending buddies list? */
+		}
 	}
 }
 
@@ -385,9 +559,10 @@ void _mdns_delete_buddy(BonjourBuddy *buddy) {
 
 	g_return_if_fail(idata != NULL);
 
-	if (idata->txt_query != NULL) {
-		purple_input_remove(idata->txt_query_handler);
-		DNSServiceRefDeallocate(idata->txt_query);
+	while (idata->resolvers) {
+		Win32SvcResolverData *rd = idata->resolvers->data;
+		_cleanup_resolver_data(rd);
+		idata->resolvers = g_slist_delete_link(idata->resolvers, idata->resolvers);
 	}
 
 	if (idata->null_query != NULL) {
