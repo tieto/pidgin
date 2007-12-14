@@ -149,7 +149,7 @@ static void bonjour_xfer_end(PurpleXfer *xfer)
 static PurpleXfer*
 bonjour_si_xfer_find(BonjourData *bd, const char *sid, const char *from)
 {
-	GList *xfers = NULL;
+	GSList *xfers = NULL;
 	PurpleXfer *xfer = NULL;
 	XepXfer *xf = NULL;
 
@@ -309,7 +309,7 @@ bonjour_free_xfer(PurpleXfer *xfer)
 	if(xf != NULL) {
 		bd = (BonjourData*)xf->data;
 		if(bd != NULL) {
-			bd->xfer_lists = g_list_remove(bd->xfer_lists, xfer);
+			bd->xfer_lists = g_slist_remove(bd->xfer_lists, xfer);
 			purple_debug_info("bonjour", "B free xfer from lists(%p).\n", bd->xfer_lists);
 		}
 		if (xf->proxy_connection != NULL)
@@ -359,7 +359,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 	purple_xfer_set_cancel_send_fnc(xfer, bonjour_xfer_cancel_send);
 	purple_xfer_set_end_fnc(xfer, bonjour_xfer_end);
 
-	bd->xfer_lists = g_list_append(bd->xfer_lists, xfer);
+	bd->xfer_lists = g_slist_append(bd->xfer_lists, xfer);
 
 	return xfer;
 }
@@ -605,7 +605,7 @@ bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, cons
 	purple_xfer_set_cancel_recv_fnc(xfer, bonjour_xfer_cancel_recv);
 	purple_xfer_set_end_fnc(xfer, bonjour_xfer_end);
 
-	bd->xfer_lists = g_list_append(bd->xfer_lists, xfer);
+	bd->xfer_lists = g_slist_append(bd->xfer_lists, xfer);
 
 	purple_xfer_request(xfer);
 }

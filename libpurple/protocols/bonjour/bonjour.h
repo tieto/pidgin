@@ -44,7 +44,7 @@ typedef struct _BonjourData
 {
 	BonjourDnsSd *dns_sd_data;
 	BonjourJabber *jabber_data;
-	GList *xfer_lists;
+	GSList *xfer_lists;
 } BonjourData;
 
 #endif /* _BONJOUR_H_ */

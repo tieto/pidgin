@@ -38,7 +38,8 @@ typedef struct _BonjourJabber
 	gint port;
 	gint socket;
 	gint watcher_id;
-	PurpleAccount* account;
+	PurpleAccount *account;
+	GSList *pending_conversations;
 } BonjourJabber;
 
 typedef struct _BonjourJabberConversation
@@ -54,6 +55,11 @@ typedef struct _BonjourJabberConversation
 	xmlParserCtxt *context;
 	xmlnode *current;
 	PurpleBuddy *pb;
+	PurpleAccount *account;
+
+	/* The following are only needed before attaching to a PurpleBuddy */
+	gchar *buddy_name;
+	gchar *ip;
 } BonjourJabberConversation;
 
 /**
@@ -68,13 +74,19 @@ int bonjour_jabber_send_message(BonjourJabber *data, const char *to, const char 
 
 void bonjour_jabber_close_conversation(BonjourJabberConversation *bconv);
 
-void bonjour_jabber_stream_started(PurpleBuddy *pb);
+void async_bonjour_jabber_close_conversation(BonjourJabberConversation *bconv);
 
-void bonjour_jabber_stream_ended(PurpleBuddy *pb);
+void bonjour_jabber_stream_started(BonjourJabberConversation *bconv);
+
+void bonjour_jabber_stream_ended(BonjourJabberConversation *bconv);
 
 void bonjour_jabber_process_packet(PurpleBuddy *pb, xmlnode *packet);
 
 void bonjour_jabber_stop(BonjourJabber *data);
+
+void bonjour_jabber_conv_match_by_ip(BonjourJabberConversation *bconv);
+
+void bonjour_jabber_conv_match_by_name(BonjourJabberConversation *bconv);
 
 typedef enum {
 	XEP_IQ_SET,

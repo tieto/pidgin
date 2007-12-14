@@ -109,7 +109,7 @@ bonjour_login(PurpleAccount *account)
 	gc->proto_data = bd = g_new0(BonjourData, 1);
 
 	/* Start waiting for jabber connections (iChat style) */
-	bd->jabber_data = g_new(BonjourJabber, 1);
+	bd->jabber_data = g_new0(BonjourJabber, 1);
 	bd->jabber_data->port = BONJOUR_DEFAULT_PORT_INT;
 	bd->jabber_data->account = account;
 
