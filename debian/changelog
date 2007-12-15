@@ -1,3 +1,15 @@
+pidgin (2.3.1-2) unstable; urgency=low
+
+  * Make libpurple0 shlibs slightly looser by making it
+    >= MAJOR.MINOR.0 instead of >= VERSION.
+  * Change browser command in /etc/purple/prefs.xml to be of type
+    'path' instead of 'string', to match what is set by pidgin.
+    Thanks to Will Thompson for the fix. (Closes: #456441)
+  * Fix FTBFS when doing a "make docs" by adding an appropriate $(top_srcdir)
+    before the path to an included file. (Closes: #454549)
+
+ -- Ari Pollak <ari@debian.org>  Sat, 15 Dec 2007 15:23:38 -0500
+
 pidgin (2.3.1-1) unstable; urgency=low
 
   * New upstream release
