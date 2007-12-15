@@ -914,7 +914,7 @@ purple_prefs_set_path(const char *name, const char *value)
 	if(pref) {
 		if(pref->type != PURPLE_PREF_PATH) {
 			purple_debug_error("prefs",
-					"purple_prefs_set_path: %s not a string pref\n", name);
+					"purple_prefs_set_path: %s not a path pref\n", name);
 			return;
 		}
 
