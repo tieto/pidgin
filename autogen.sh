@@ -19,7 +19,7 @@ fi
 	exit;
 }
 
-(libtoolize --version) < /dev/null > /dev/null 2>&1 || {
+(glibtoolize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
 	echo "You must have libtool installed to compile Pidgin.";
 	echo;
@@ -44,7 +44,7 @@ echo "Generating configuration files for Pidgin, please wait...."
 echo;
 
 echo "Running libtoolize, please ignore non-fatal messages...."
-echo n | libtoolize --copy --force || exit;
+echo n | glibtoolize --copy --force || exit;
 
 # Add other directories to this list if people continue to experience
 # brokennesses ...  Obviously the real answer is for them to fix it
@@ -57,7 +57,7 @@ do
 	fi
 done
 
-libtoolize -c -f --automake
+glibtoolize -c -f --automake
 glib-gettextize --force --copy
 intltoolize --force --copy
 aclocal $ACLOCAL_FLAGS || exit;
