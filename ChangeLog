@@ -8,6 +8,11 @@ version 2.3.2 (??/??/????):
 	  Bonjour protocol.  Avahi (or Apple's Bonjour runtime on win32) is
 	  now required to use Bonjour.
 
+	Pidgin:
+	* Added the ability to theme conversation name colors (red and blue)
+	  through your GTK+ theme, and exposed those theme settings to the 
+	  Pidgin GTK+ Theme Control plugin (Dustin Howett)
+
 	Finch:
 	* Color is used in the buddylist to indicate status, and the conversation
 	  window to indicate various message attributes. Look at the sample gntrc
