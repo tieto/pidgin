@@ -331,6 +331,12 @@ current_error_to_xmlnode(PurpleConnectionErrorInfo *err)
 	if(err == NULL)
 		return node;
 
+	/* It doesn't make sense to have transient errors persist across a
+	 * restart.
+	 */
+	if(!purple_connection_error_is_fatal (err->type))
+		return node;
+
 	child = xmlnode_new_child(node, "type");
 	snprintf(type_str, sizeof(type_str), "%u", err->type);
 	xmlnode_insert_data(child, type_str, -1);
