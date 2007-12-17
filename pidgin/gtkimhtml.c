@@ -1397,6 +1397,22 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        _("Hyperlink prelight color"),
 	                                        _("Color to draw hyperlinks when mouse is over them."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("send-name-color",
+	                                        _("Sent Message Name Color"),
+	                                        _("Color to draw the name of a message you sent."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("receive-name-color",
+	                                        _("Received Message Name Color"),
+	                                        _("Color to draw the name of a message you received."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("highlight-name-color",
+	                                        _("\"Attention\" Name Color"),
+	                                        _("Color to draw the name of a message you received containing your name."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("action-name-color",
+	                                        _("Action Message Name Color"),
+	                                        _("Color to draw the name of an action message."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 
 	binding_set = gtk_binding_set_by_class (parent_class);
 	gtk_binding_entry_add_signal (binding_set, GDK_b, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_BOLD);

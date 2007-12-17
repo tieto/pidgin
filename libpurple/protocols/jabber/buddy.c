@@ -1153,8 +1153,10 @@ static void jabber_vcard_save_mine(JabberStream *js, xmlnode *packet, gpointer d
 
 void jabber_vcard_fetch_mine(JabberStream *js)
 {
-	JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_GET, "vcard-temp");
-
+	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
+	
+	xmlnode *vcard = xmlnode_new_child(iq->node, "vCard");
+	xmlnode_set_namespace(vcard, "vcard-temp");
 	jabber_iq_set_callback(iq, jabber_vcard_save_mine, NULL);
 
 	jabber_iq_send(iq);
