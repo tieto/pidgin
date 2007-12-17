@@ -4643,6 +4643,13 @@ reconnect_elsewhere_accounts(PidginMiniDialog *mini_dialog,
 }
 
 static void
+clear_elsewhere_errors(PidginMiniDialog *mini_dialog,
+                       gpointer unused)
+{
+	elsewhere_foreach_account(mini_dialog, purple_account_clear_current_error);
+}
+
+static void
 ensure_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 {
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
@@ -4656,6 +4663,12 @@ ensure_signed_on_elsewhere_minidialog(PidginBuddyList *gtkblist)
 
 	pidgin_mini_dialog_add_button(mini_dialog, _("Re-enable"),
 		reconnect_elsewhere_accounts, NULL);
+
+	/* Make dismissing the dialog clear the errors.  The "destroy" signal
+	 * does not appear to fire at quit, which is fortunate!
+	 */
+	g_signal_connect(G_OBJECT(mini_dialog), "destroy",
+		(GCallback) clear_elsewhere_errors, NULL);
 
 	add_error_dialog(gtkblist, GTK_WIDGET(mini_dialog));
 
