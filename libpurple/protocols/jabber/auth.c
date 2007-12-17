@@ -330,14 +330,21 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 							disallow_plaintext_auth);
 					g_free(msg);
 					return;
-				/* Everything else has failed, so fail the
-				 * connection. Should probably have a better
-				 * error here.
-				 */
+
 				} else {
-					purple_connection_error_reason (js->gc,
-						PURPLE_CONNECTION_ERROR_AUTHENTICATION_IMPOSSIBLE,
-						_("Server does not use any supported authentication method"));
+					/* We have no mechs which can work.
+					 * Try falling back on the old jabber:iq:auth method. We get here if the server supports
+					 * one or more sasl mechs, we are compiled with cyrus-sasl support, but we support or can connect with none of
+					 * the offerred mechs. jabberd 2.0 w/ SASL and Apple's iChat Server 10.5 both handle and expect
+					 * jabber:iq:auth in this situation.  iChat Server in particular offers SASL GSSAPI by default, which is often
+					 * not configured on the client side, and expects a fallback to jabber:iq:auth when it (predictably) fails.
+					 *
+					 * Note: xep-0078 points out that using jabber:iq:auth after a sasl failure is wrong. However,
+					 * I believe this refers to actual authentication failure, not a simple lack of concordant mechanisms.
+					 * Doing otherwise means that simply compiling with SASL support renders the client unable to connect to servers
+					 * which would connect without issue otherwise. -evands
+					 */
+					jabber_auth_start_old(js);
 					return;
 				}
 				/* not reached */
