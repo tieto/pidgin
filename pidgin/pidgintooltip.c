@@ -28,6 +28,7 @@
 #include "prefs.h"
 #include "pidgin.h"
 #include "pidgintooltip.h"
+#include "debug.h"
 
 struct
 {
@@ -66,17 +67,35 @@ void pidgin_tooltip_destroy()
 	}
 }
 
-static void
+static gboolean
 pidgin_tooltip_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 	if (pidgin_tooltip.paint_tooltip)
-		pidgin_tooltip.paint_tooltip(widget, event, data);
+		pidgin_tooltip.paint_tooltip(widget, data);
+	return FALSE;
+}
+
+static GtkWidget*
+setup_tooltip_window()
+{
+	const char *name;
+	GtkWidget *tipwindow;
+
+	tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
+	name = gtk_window_get_title(GTK_WINDOW(pidgin_tooltip.widget));
+	gtk_window_set_type_hint(GTK_WINDOW(tipwindow), GDK_WINDOW_TYPE_HINT_TOOLTIP);
+	gtk_widget_set_app_paintable(tipwindow, TRUE);
+	gtk_window_set_title(GTK_WINDOW(tipwindow), name ? name : _("Pidgin Tooltip"));
+	gtk_window_set_resizable(GTK_WINDOW(tipwindow), FALSE);
+	gtk_widget_set_name(tipwindow, "gtk-tooltips");
+	gtk_widget_ensure_style(tipwindow);
+	gtk_widget_realize(tipwindow);
+	return tipwindow;
 }
 
 static void
-setup_tooltip_window(gpointer data, int w, int h)
+setup_tooltip_window_position(gpointer data, int w, int h)
 {
-	const char *name;
 	int sig;
 	int scr_w, scr_h, x, y;
 #if GTK_CHECK_VERSION(2,2,0)
@@ -85,14 +104,6 @@ setup_tooltip_window(gpointer data, int w, int h)
 #endif
 	GdkRectangle mon_size;
 	GtkWidget *tipwindow = pidgin_tooltip.tipwindow;
-
-	name = gtk_window_get_title(GTK_WINDOW(pidgin_tooltip.widget));
-	gtk_widget_set_app_paintable(tipwindow, TRUE);
-	gtk_window_set_title(GTK_WINDOW(tipwindow), name ? name : _("Pidgin Tooltip"));
-	gtk_window_set_resizable(GTK_WINDOW(tipwindow), FALSE);
-	gtk_widget_set_name(tipwindow, "gtk-tooltips");
-	g_signal_connect(G_OBJECT(tipwindow), "expose_event",
-			G_CALLBACK(pidgin_tooltip_expose_event), data);
 
 #if GTK_CHECK_VERSION(2,2,0)
 	gdk_display_get_pointer(gdk_display_get_default(), &screen, &x, &y, NULL);
@@ -141,6 +152,9 @@ setup_tooltip_window(gpointer data, int w, int h)
 	gtk_window_move(GTK_WINDOW(tipwindow), x, y);
 	gtk_widget_show(tipwindow);
 
+	g_signal_connect(G_OBJECT(tipwindow), "expose_event",
+			G_CALLBACK(pidgin_tooltip_expose_event), data);
+
 	/* Hide the tooltip when the widget is destroyed */
 	sig = g_signal_connect(G_OBJECT(pidgin_tooltip.widget), "destroy", G_CALLBACK(pidgin_tooltip_destroy), NULL);
 	g_signal_connect_swapped(G_OBJECT(tipwindow), "destroy", G_CALLBACK(g_source_remove), GINT_TO_POINTER(sig));
@@ -153,17 +167,16 @@ void pidgin_tooltip_show(GtkWidget *widget, gpointer userdata,
 	int w, h;
 
 	pidgin_tooltip_destroy();
-	pidgin_tooltip.tipwindow = tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
-	gtk_window_set_type_hint(GTK_WINDOW(tipwindow), GDK_WINDOW_TYPE_HINT_TOOLTIP);
+
 	pidgin_tooltip.widget = gtk_widget_get_toplevel(widget);
+	pidgin_tooltip.tipwindow = tipwindow = setup_tooltip_window();
 	pidgin_tooltip.paint_tooltip = paint_tooltip;
-	gtk_widget_ensure_style(tipwindow);
 
 	if (!create_tooltip(tipwindow, userdata, &w, &h)) {
 		pidgin_tooltip_destroy();
 		return;
 	}
-	setup_tooltip_window(userdata, w, h);
+	setup_tooltip_window_position(userdata, w, h);
 }
 
 static void
@@ -198,11 +211,10 @@ pidgin_tooltip_draw(PidginTooltipData *data)
 	}
 
 	pidgin_tooltip_destroy();
-	pidgin_tooltip.tipwindow = tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
-	gtk_window_set_type_hint(GTK_WINDOW(tipwindow), GDK_WINDOW_TYPE_HINT_TOOLTIP);
+
 	pidgin_tooltip.widget = gtk_widget_get_toplevel(data->widget);
+	pidgin_tooltip.tipwindow = tipwindow = setup_tooltip_window();
 	pidgin_tooltip.paint_tooltip = data->paint_tooltip;
-	gtk_widget_ensure_style(tipwindow);
 
 	if (!data->create_tooltip(tipwindow, path, data->userdata, &w, &h)) {
 		pidgin_tooltip_destroy();
@@ -210,8 +222,9 @@ pidgin_tooltip_draw(PidginTooltipData *data)
 		return;
 	}
 
+	setup_tooltip_window_position(data->userdata, w, h);
+
 	data->path = path;
-	setup_tooltip_window(data->userdata, w, h);
 	g_signal_connect_swapped(G_OBJECT(tipwindow), "destroy",
 			G_CALLBACK(reset_data_treepath), data);
 }
@@ -229,6 +242,9 @@ row_motion_cb(GtkWidget *tv, GdkEventMotion *event, gpointer userdata)
 {
 	GtkTreePath *path;
 	int delay;
+
+	if (event->window != gtk_tree_view_get_bin_window(GTK_TREE_VIEW(tv)))
+		return FALSE;    /* The cursor is probably on the TreeView's header. */
 
 	/* XXX: probably use something more generic? */
 	delay = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay");
@@ -250,9 +266,8 @@ row_motion_cb(GtkWidget *tv, GdkEventMotion *event, gpointer userdata)
 	}
 
 	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &pidgin_tooltip.tip_rect);
+	gtk_tree_path_free(path);
 
-	if (path)
-		gtk_tree_path_free(path);
 	pidgin_tooltip.timeout = g_timeout_add(delay, (GSourceFunc)pidgin_tooltip_timeout, userdata);
 
 	return FALSE;

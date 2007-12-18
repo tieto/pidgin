@@ -2632,7 +2632,8 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 	return td;
 }
 
-static gboolean pidgin_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+static gboolean
+pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 {
 	GtkStyle *style;
 	int current_height, max_width;

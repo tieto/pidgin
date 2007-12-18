@@ -346,7 +346,7 @@ static void row_expanded_cb(GtkTreeView *treeview, GtkTreeIter *arg1, GtkTreePat
 #define TOOLTIP_BORDER 12
 
 static gboolean
-pidgin_roomlist_paint_tooltip(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+pidgin_roomlist_paint_tooltip(GtkWidget *widget, gpointer user_data)
 {
 	PurpleRoomlist *list = user_data;
 	PidginRoomlist *grl = list->ui_data;
