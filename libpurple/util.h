@@ -1110,6 +1110,17 @@ gchar *purple_utf8_try_convert(const char *str);
 gchar *purple_utf8_salvage(const char *str);
 
 /**
+ * Return the UTF-8 version of gai_strerror().  It calls gai_strerror()
+ * then converts the result to UTF-8.  This function is analogous to
+ * g_strerror().
+ *
+ * @param errnum The error code.
+ *
+ * @return The UTF-8 error message.
+ */
+G_CONST_RETURN gchar *purple_gai_strerror(gint errnum);
+
+/**
  * Compares two UTF-8 strings case-insensitively.  This string is
  * more expensive than a simple g_utf8_collate() comparison because
  * it calls g_utf8_casefold() on each string, which allocates new

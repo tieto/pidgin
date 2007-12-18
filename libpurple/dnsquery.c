@@ -547,7 +547,7 @@ host_resolved(gpointer data, gint source, PurpleInputCondition cond)
 	{
 #ifdef HAVE_GETADDRINFO
 		g_snprintf(message, sizeof(message), _("Error resolving %s:\n%s"),
-				query_data->hostname, gai_strerror(err));
+				query_data->hostname, purple_gai_strerror(err));
 #else
 		g_snprintf(message, sizeof(message), _("Error resolving %s: %d"),
 				query_data->hostname, err);
@@ -695,7 +695,7 @@ dns_thread(gpointer data)
 		}
 		freeaddrinfo(tmp);
 	} else {
-		query_data->error_message = g_strdup_printf(_("Error resolving %s:\n%s"), query_data->hostname, gai_strerror(rc));
+		query_data->error_message = g_strdup_printf(_("Error resolving %s:\n%s"), query_data->hostname, purple_gai_strerror(rc));
 	}
 #else
 	if ((hp = gethostbyname(query_data->hostname))) {

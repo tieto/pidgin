@@ -153,6 +153,7 @@ static void pidgin_conv_updated(PurpleConversation *conv, PurpleConvUpdateType t
 static void conv_set_unseen(PurpleConversation *gtkconv, PidginUnseenState state);
 static void gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state);
 static void update_typing_icon(PidginConversation *gtkconv);
+static void update_typing_message(PidginConversation *gtkconv, const char *message);
 static const char *item_factory_translate_func (const char *path, gpointer func_data);
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
 static void pidgin_conv_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data);
@@ -3377,6 +3378,33 @@ typing_animation(gpointer data) {
 }
 
 static void
+update_typing_message(PidginConversation *gtkconv, const char *message)
+{
+	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml));
+	GtkTextMark *stmark, *enmark;
+
+	stmark = gtk_text_buffer_get_mark(buffer, "typing-notification-start");
+	enmark = gtk_text_buffer_get_mark(buffer, "typing-notification-end");
+	if (stmark && enmark) {
+		GtkTextIter start, end;
+		gtk_text_buffer_get_iter_at_mark(buffer, &start, stmark);
+		gtk_text_buffer_get_iter_at_mark(buffer, &end, enmark);
+		gtk_text_buffer_delete_mark(buffer, stmark);
+		gtk_text_buffer_delete_mark(buffer, enmark);
+		gtk_text_buffer_delete(buffer, &start, &end);
+	}
+
+	if (message) {
+		GtkTextIter iter;
+		gtk_text_buffer_get_end_iter(buffer, &iter);
+		gtk_text_buffer_create_mark(buffer, "typing-notification-start", &iter, TRUE);
+		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, message, -1, "TYPING-NOTIFICATION", NULL);
+		gtk_text_buffer_get_end_iter(buffer, &iter);
+		gtk_text_buffer_create_mark(buffer, "typing-notification-end", &iter, TRUE);
+	}
+}
+
+static void
 update_typing_icon(PidginConversation *gtkconv)
 {
 	PidginWindow *gtkwin;
@@ -3384,6 +3412,7 @@ update_typing_icon(PidginConversation *gtkconv)
 	PurpleConversation *conv = gtkconv->active_conv;
 	char *stock_id;
 	const char *tooltip;
+	char *message = NULL;
 
 	gtkwin = gtkconv->win;
 
@@ -3402,6 +3431,7 @@ update_typing_icon(PidginConversation *gtkconv)
 			g_source_remove(gtkconv->u.im->typing_timer);
 			gtkconv->u.im->typing_timer = 0;
 		}
+		update_typing_message(gtkconv, NULL);
 		return;
 	}
 
@@ -3411,9 +3441,11 @@ update_typing_icon(PidginConversation *gtkconv)
 		}
 		stock_id = PIDGIN_STOCK_ANIMATION_TYPING1;
 		tooltip = _("User is typing...");
+		message = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_name(conv));
 	} else {
 		stock_id = PIDGIN_STOCK_ANIMATION_TYPING5;
 		tooltip = _("User has typed something and stopped");
+		message = g_strdup_printf(_("\n%s has typed something and stopped"), purple_conversation_get_name(conv));
 		if (gtkconv->u.im->typing_timer != 0) {
 			g_source_remove(gtkconv->u.im->typing_timer);
 			gtkconv->u.im->typing_timer = 0;
@@ -3436,6 +3468,8 @@ update_typing_icon(PidginConversation *gtkconv)
 	}
 
 	gtk_widget_show(gtkwin->menu.typing_icon);
+	update_typing_message(gtkconv, message);
+	g_free(message);
 }
 
 static gboolean
@@ -5030,6 +5064,11 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	                 G_CALLBACK(conv_dnd_recv), gtkconv);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
 	                 G_CALLBACK(conv_dnd_recv), gtkconv);
+
+	gtk_text_buffer_create_tag(GTK_IMHTML(gtkconv->imhtml)->text_buffer, "TYPING-NOTIFICATION",
+			"foreground", "#888888",
+			"justification", GTK_JUSTIFY_LEFT,  /* XXX: RTL'ify */
+			"weight", PANGO_WEIGHT_BOLD, NULL);
 
 	/* Setup the container for the tab. */
 	gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);

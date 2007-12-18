@@ -397,6 +397,7 @@ show_usage(const char *name, gboolean terse)
 	if (terse) {
 		text = g_strdup_printf(_("%s %s. Try `%s -h' for more information.\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
 	} else {
+#ifndef WIN32
 		text = g_strdup_printf(_("%s %s\n"
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -c, --config=DIR    use DIR for config files\n"
@@ -406,10 +407,20 @@ show_usage(const char *name, gboolean terse)
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use, separated by commas)\n"
-#ifndef WIN32
 		       "  --display=DISPLAY   X display to use\n"
-#endif
 		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
+#else
+		text = g_strdup_printf(_("%s %s\n"
+		       "Usage: %s [OPTION]...\n\n"
+		       "  -c, --config=DIR    use DIR for config files\n"
+		       "  -d, --debug         print debugging messages to stdout\n"
+		       "  -h, --help          display this help and exit\n"
+		       "  -m, --multiple      do not ensure single instance\n"
+		       "  -n, --nologin       don't automatically login\n"
+		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
+		       "                      account(s) to use, separated by commas)\n"
+		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
+#endif
 	}
 
 	purple_print_utf8_to_console(stdout, text);
