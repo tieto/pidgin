@@ -1117,6 +1117,7 @@ gchar *purple_utf8_salvage(const char *str);
  * @param errnum The error code.
  *
  * @return The UTF-8 error message.
+ * @since 2.4.0
  */
 G_CONST_RETURN gchar *purple_gai_strerror(gint errnum);
 

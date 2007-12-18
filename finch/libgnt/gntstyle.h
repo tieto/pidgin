@@ -74,7 +74,7 @@ char *gnt_style_get_from_name(const char *group, const char *key);
  *
  * @return        NULL terminated string array. The array should be freed with g_strfreev().
  *
- * @since 2.3.2
+ * @since 2.4.0
  */
 char **gnt_style_get_string_list(const char *group, const char *key, gsize *length);
 
@@ -87,7 +87,7 @@ char **gnt_style_get_string_list(const char *group, const char *key, gsize *leng
  *
  * @return  The value of the color as an int, or 0 on error.
  *
- * @since 2.3.2
+ * @since 2.4.0
  */
 int gnt_style_get_color(char *group, char *key);
 

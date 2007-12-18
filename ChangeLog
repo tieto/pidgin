@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.3.2 (??/??/????):
+version 2.4.0 (??/??/????):
 	libpurple:
 	* Fixed various problems with loss of status messages when going
 	  or returning from idle on MySpaceIM.

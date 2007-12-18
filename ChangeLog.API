@@ -4,6 +4,7 @@ version 2.4.0 (??/??/????):
 	libpurple:
 		Added:
 		* purple_certificate_add_ca_search_path. (Florian Quèze)
+		* purple_gai_strerror.
 
 	Pidgin:
 		Added:
@@ -20,7 +21,6 @@ version 2.4.0 (??/??/????):
 		* pidgin_tooltip_setup_for_treeview, pidgin_tooltip_destroy and
 		  pidgin_tooltip_show to simplify the process of drawing tooltips.
 
-version 2.3.2 (??/??/????):
 	Finch:
 		libgnt:
 		* Added gnt_tree_set_row_color to set the color for a row in a tree.
