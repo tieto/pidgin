@@ -1502,7 +1502,9 @@ file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 	}
 
 #endif /* FILECHOOSER */
-
+#if 0 /* mismatched curly braces */
+	}
+#endif
 	if ((data->u.file.savedialog == TRUE) &&
 		(g_file_test(data->u.file.name, G_FILE_TEST_EXISTS))) {
 		purple_request_action(data, NULL, _("That file already exists"),

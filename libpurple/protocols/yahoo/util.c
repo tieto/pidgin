@@ -715,11 +715,14 @@ char *yahoo_html_to_codes(const char *src)
 			} else if (((len - i) >= 4) && !strncmp(&src[i], "&gt;", 4)) {
 				g_string_append_c(dest, '>');
 				i += 3;
-			} else if (((len - i) >= 5) && !strncmp(&src[i], "&amp;", 4)) {
+			} else if (((len - i) >= 5) && !strncmp(&src[i], "&amp;", 5)) {
 				g_string_append_c(dest, '&');
 				i += 4;
-			} else if (((len - i) >= 6) && !strncmp(&src[i], "&quot;", 4)) {
+			} else if (((len - i) >= 6) && !strncmp(&src[i], "&quot;", 6)) {
 				g_string_append_c(dest, '"');
+				i += 5;
+			} else if (((len - i) >= 6) && !strncmp(&src[i], "&apos;", 6)) {
+				g_string_append_c(dest, '\'');
 				i += 5;
 			} else {
 				g_string_append_c(dest, src[i]);

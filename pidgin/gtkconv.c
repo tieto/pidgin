@@ -95,9 +95,10 @@ enum {
 
 #define	PIDGIN_CONV_ALL	((1 << 7) - 1)
 
-#define SEND_COLOR "#204a87"
-#define RECV_COLOR "#cc0000"
-#define HIGHLIGHT_COLOR "#AF7F00"
+#define DEFAULT_SEND_COLOR "#204a87"
+#define DEFAULT_RECV_COLOR "#cc0000"
+#define DEFAULT_HIGHLIGHT_COLOR "#AF7F00"
+#define DEFAULT_ACTION_COLOR "#062585"
 
 /* Undef this to turn off "custom-smiley" debug messages */
 #define DEBUG_CUSTOM_SMILEY
@@ -3790,7 +3791,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	if (is_me)
 	{
 		GdkColor send_color;
-		gdk_color_parse(SEND_COLOR, &send_color);
+		gdk_color_parse(DEFAULT_SEND_COLOR, &send_color);
 
 #if GTK_CHECK_VERSION(2,6,0)
 		gtk_list_store_insert_with_values(ls, &iter,
@@ -4341,8 +4342,8 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 
 	lines = gtk_text_buffer_get_line_count(buffer);
 
-	/* Show a maximum of 4 lines, minimum of 2 */
-	lines = MIN(MAX(lines, 2), 4);
+	/* Show a maximum of 4 lines */
+	lines = MIN(lines, 4);
 	wrapped_lines = MIN(MAX(wrapped_lines, 2), 4);
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
@@ -5602,6 +5603,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		}
 		else {
 			if (purple_message_meify(new_message, -1)) {
+				GdkColor *col;
 				str = g_malloc(1024);
 
 				if (flags & PURPLE_MESSAGE_AUTO_RESP) {
@@ -5614,9 +5616,20 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 				}
 
 				if (flags & PURPLE_MESSAGE_NICK)
-					strcpy(color, HIGHLIGHT_COLOR);
+					gtk_widget_style_get(GTK_WIDGET(gtkconv->imhtml), "highlight-name-color", &col, NULL);
 				else
-					strcpy(color, "#062585");
+					gtk_widget_style_get(GTK_WIDGET(gtkconv->imhtml), "action-name-color", &col, NULL);
+
+				if(col) {
+					g_snprintf(color, sizeof(color), "#%02X%02X%02X",
+						col->red >> 8, col->green >> 8, col->blue >> 8);
+				}
+				else {
+					if (flags & PURPLE_MESSAGE_NICK)
+						strcpy(color, DEFAULT_HIGHLIGHT_COLOR);
+					else
+						strcpy(color, DEFAULT_ACTION_COLOR);
+				}
 			}
 			else {
 				str = g_malloc(1024);
@@ -5628,19 +5641,46 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 					g_snprintf(str, 1024, "%s:", alias_escaped);
 					tag_end_offset = 1;
 				}
-				if (flags & PURPLE_MESSAGE_NICK)
-					strcpy(color, HIGHLIGHT_COLOR);
+				if (flags & PURPLE_MESSAGE_NICK) {
+					GdkColor *col;
+					gtk_widget_style_get(GTK_WIDGET(gtkconv->imhtml), "highlight-name-color", &col, NULL);
+					if(col) {
+						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
+							col->red >> 8, col->green >> 8, col->blue >> 8);
+					}
+					else {
+						strcpy(color, DEFAULT_HIGHLIGHT_COLOR);
+					}
+				}
 				else if (flags & PURPLE_MESSAGE_RECV) {
 					if (type == PURPLE_CONV_TYPE_CHAT) {
 						GdkColor *col = get_nick_color(gtkconv, name);
 
 						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 							   col->red >> 8, col->green >> 8, col->blue >> 8);
-					} else
-						strcpy(color, RECV_COLOR);
+					} else {
+						GdkColor *col;
+						gtk_widget_style_get(GTK_WIDGET(gtkconv->imhtml), "receive-name-color", &col, NULL);
+						if(col) {
+							g_snprintf(color, sizeof(color), "#%02X%02X%02X",
+								col->red >> 8, col->green >> 8, col->blue >> 8);
+						}
+						else {
+							strcpy(color, DEFAULT_RECV_COLOR);
+						}
+					}
 				}
-				else if (flags & PURPLE_MESSAGE_SEND)
-					strcpy(color, SEND_COLOR);
+				else if (flags & PURPLE_MESSAGE_SEND) {
+					GdkColor *col;
+					gtk_widget_style_get(GTK_WIDGET(gtkconv->imhtml), "send-name-color", &col, NULL);
+					if(col) {
+						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
+							col->red >> 8, col->green >> 8, col->blue >> 8);
+					}
+					else {
+						strcpy(color, DEFAULT_SEND_COLOR);
+					}
+				}
 				else {
 					purple_debug_error("gtkconv", "message missing flags\n");
 					strcpy(color, "#000000");
@@ -9923,8 +9963,8 @@ generate_nick_colors(guint *color_count, GdkColor background)
 	GdkColor send_color;
 	time_t breakout_time;
 
-	gdk_color_parse(HIGHLIGHT_COLOR, &nick_highlight);
-	gdk_color_parse(SEND_COLOR, &send_color);
+	gdk_color_parse(DEFAULT_HIGHLIGHT_COLOR, &nick_highlight);
+	gdk_color_parse(DEFAULT_SEND_COLOR, &send_color);
 
 	srand(background.red + background.green + background.blue + 1);
 

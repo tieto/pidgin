@@ -813,10 +813,8 @@ msn_soap_post(MsnSoapConn *soapconn, MsnSoapReq *request)
 		purple_debug_info("MSN SOAP", "Currently processing another SOAP request\n");
 	} else {
 		purple_debug_info("MSN SOAP", "No requests left to dispatch\n");
-	}
-#else
-      }
 #endif
+	}
 
 }
 

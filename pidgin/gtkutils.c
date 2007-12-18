@@ -1399,7 +1399,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			char *str;
 
 			str = g_strdup_printf(_("The following error has occurred loading %s: %s"),
-						data->filename, strerror(errno));
+						data->filename, g_strerror(errno));
 			purple_notify_error(NULL, NULL,
 					  _("Failed to load image"),
 					  str);
@@ -2306,6 +2306,9 @@ icon_filesel_choose_cb(GtkWidget *w, struct _icon_chooser *dialog)
 	}
 
 #endif /* FILECHOOSER */
+#if 0 /* mismatched curly braces */
+	}
+#endif
 	if (dialog->callback)
 		dialog->callback(filename, dialog->data);
 	gtk_widget_destroy(dialog->icon_filesel);
