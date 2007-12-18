@@ -1289,16 +1289,16 @@ msn_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 				purple_debug_info("MSNCL", "Adding group %s with guid = %s to the userlist\n", state->new_group_name, guid);
 				msn_group_new(session->userlist, guid, state->new_group_name);
 
-				g_free(guid);
-
 				if (state->action & MSN_ADD_BUDDY) {
 					msn_userlist_add_buddy(session->userlist,
 						state->who,
 						state->new_group_name);
 				} else if (state->action & MSN_MOVE_BUDDY) {
 					msn_add_contact_to_group(session->contact, state, state->who, guid); 
+					g_free(guid);
 					return;
 				}
+				g_free(guid);
 			} else {
 				purple_debug_info("MSNCL", "Adding group %s failed\n",
 					state->new_group_name);

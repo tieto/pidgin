@@ -45,6 +45,7 @@ typedef struct
 	GtkWidget *add_button;
 	GtkWidget *remove_button;
 	GtkWidget *clear_button;
+	GtkWidget *close_button;
 
 	GtkWidget *button_box;
 	GtkWidget *allow_widget;
@@ -259,18 +260,21 @@ type_changed_cb(GtkOptionMenu *optmenu, PidginPrivacyDialog *dialog)
 
 	gtk_widget_hide(dialog->allow_widget);
 	gtk_widget_hide(dialog->block_widget);
-	gtk_widget_hide(dialog->button_box);
+	gtk_widget_hide_all(dialog->button_box);
 
 	if (new_type == PURPLE_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
-		gtk_widget_show(dialog->button_box);
+		gtk_widget_show_all(dialog->button_box);
 		dialog->in_allow_list = TRUE;
 	}
 	else if (new_type == PURPLE_PRIVACY_DENY_USERS) {
 		gtk_widget_show(dialog->block_widget);
-		gtk_widget_show(dialog->button_box);
+		gtk_widget_show_all(dialog->button_box);
 		dialog->in_allow_list = FALSE;
 	}
+
+	gtk_widget_show_all(dialog->close_button);
+	gtk_widget_show(dialog->button_box);
 
 	purple_blist_schedule_save();
 	pidgin_blist_refresh(purple_get_blist());
@@ -355,7 +359,6 @@ static PidginPrivacyDialog *
 privacy_dialog_new(void)
 {
 	PidginPrivacyDialog *dialog;
-	GtkWidget *bbox;
 	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *button;
@@ -367,15 +370,13 @@ privacy_dialog_new(void)
 
 	dialog = g_new0(PidginPrivacyDialog, 1);
 
-	dialog->win = pidgin_create_window(_("Privacy"), PIDGIN_HIG_BORDER, "privacy", TRUE);
+	dialog->win = pidgin_create_dialog(_("Privacy"), PIDGIN_HIG_BORDER, "privacy", TRUE);
 
 	g_signal_connect(G_OBJECT(dialog->win), "delete_event",
 					 G_CALLBACK(destroy_cb), dialog);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(dialog->win), vbox);
-	gtk_widget_show(vbox);
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(dialog->win), FALSE, PIDGIN_HIG_BORDER);
 
 	/* Description label */
 	label = gtk_label_new(
@@ -433,52 +434,27 @@ privacy_dialog_new(void)
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->block_widget, TRUE, TRUE, 0);
 
 	/* Add the button box for Add, Remove, Clear */
-	dialog->button_box = bbox = gtk_hbutton_box_new();
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_SPREAD);
-	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
+	dialog->button_box = pidgin_dialog_get_action_area(GTK_DIALOG(dialog->win));
 
 	/* Add button */
-	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), GTK_STOCK_ADD, G_CALLBACK(add_cb), dialog);
 	dialog->add_button = button;
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(add_cb), dialog);
 
 	/* Remove button */
-	button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), GTK_STOCK_REMOVE, G_CALLBACK(remove_cb), dialog);
 	dialog->remove_button = button;
 	gtk_widget_set_sensitive(button, FALSE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(remove_cb), dialog);
 
 	/* Clear button */
-	button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
+	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), GTK_STOCK_CLEAR, G_CALLBACK(clear_cb), dialog);
 	dialog->clear_button = button;
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(clear_cb), dialog);
-
-	/* Another button box. */
-	bbox = gtk_hbutton_box_new();
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
-	gtk_widget_show(bbox);
 
 	/* Close button */
-	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
+	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), GTK_STOCK_CLOSE, G_CALLBACK(close_cb), dialog);
+	dialog->close_button = button;
 
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(close_cb), dialog);
-
+	type_changed_cb(GTK_OPTION_MENU(dialog->type_menu), dialog);
+#if 0
 	if (dialog->account->perm_deny == PURPLE_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
 		gtk_widget_show(dialog->button_box);
@@ -489,7 +465,7 @@ privacy_dialog_new(void)
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = FALSE;
 	}
-
+#endif
 	return dialog;
 }
 

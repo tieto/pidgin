@@ -1012,7 +1012,7 @@ static void cut_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 static void imhtml_paste_insert(GtkIMHtml *imhtml, const char *text, gboolean plaintext)
 {
 	GtkTextIter iter;
-	GtkIMHtmlOptions flags = plaintext ? 0 : (GTK_IMHTML_NO_NEWLINE | GTK_IMHTML_NO_COMMENTS);
+	GtkIMHtmlOptions flags = plaintext ? GTK_IMHTML_NO_SMILEY : (GTK_IMHTML_NO_NEWLINE | GTK_IMHTML_NO_COMMENTS);
 
 	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, NULL, NULL))
 		gtk_text_buffer_delete_selection(imhtml->text_buffer, TRUE, TRUE);
@@ -1396,6 +1396,22 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-prelight-color",
 	                                        _("Hyperlink prelight color"),
 	                                        _("Color to draw hyperlinks when mouse is over them."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("send-name-color",
+	                                        _("Sent Message Name Color"),
+	                                        _("Color to draw the name of a message you sent."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("receive-name-color",
+	                                        _("Received Message Name Color"),
+	                                        _("Color to draw the name of a message you received."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("highlight-name-color",
+	                                        _("\"Attention\" Name Color"),
+	                                        _("Color to draw the name of a message you received containing your name."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("action-name-color",
+	                                        _("Action Message Name Color"),
+	                                        _("Color to draw the name of an action message."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 
 	binding_set = gtk_binding_set_by_class (parent_class);
@@ -2982,6 +2998,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			pos += tlen;
 			g_free(tag); /* This was allocated back in VALID_TAG() */
 		} else if (imhtml->edit.link == NULL &&
+				!(options & GTK_IMHTML_NO_SMILEY) &&
 				gtk_imhtml_is_smiley(imhtml, fonts, c, &smilelen)) {
 			GtkIMHtmlFontDetail *fd;
 			gchar *sml = NULL;

@@ -445,11 +445,12 @@ static void winpidgin_set_locale() {
 #define PIDGIN_WM_FOCUS_REQUEST (WM_APP + 13)
 #define PIDGIN_WM_PROTOCOL_HANDLE (WM_APP + 14)
 
-static BOOL winpidgin_set_running() {
+static BOOL winpidgin_set_running(BOOL fail_if_running) {
 	HANDLE h;
 
 	if ((h = CreateMutex(NULL, FALSE, "pidgin_is_running"))) {
-		if (GetLastError() == ERROR_ALREADY_EXISTS) {
+		DWORD err = GetLastError();
+		if (err == ERROR_ALREADY_EXISTS && fail_if_running) {
 			HWND msg_win;
 
 			printf("An instance of Pidgin is already running.\n");
@@ -465,7 +466,8 @@ static BOOL winpidgin_set_running() {
 				NULL, MB_OK | MB_TOPMOST);
 
 			return FALSE;
-		}
+		} else
+			printf("Error (%d) accessing \"pidgin_is_running\" mutex.\n", err);
 	}
 	return TRUE;
 }
@@ -628,8 +630,8 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 	winpidgin_set_locale();
 	/* If help, version or multiple flag used, do not check Mutex */
-	if (!strstr(lpszCmdLine, "-h") && !strstr(lpszCmdLine, "-v") && !strstr(lpszCmdLine, "-m"))
-		if (!getenv("PIDGIN_MULTI_INST") && !winpidgin_set_running())
+	if (!strstr(lpszCmdLine, "-h") && !strstr(lpszCmdLine, "-v"))
+		if (!winpidgin_set_running(getenv("PIDGIN_MULTI_INST") == NULL && strstr(lpszCmdLine, "-m") == NULL))
 			return 0;
 
 	/* Now we are ready for Pidgin .. */

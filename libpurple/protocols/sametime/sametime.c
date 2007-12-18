@@ -3749,7 +3749,7 @@ static void mw_prpl_login(PurpleAccount *account) {
 
     client = purple_account_get_int(account, MW_KEY_CLIENT, mwLogin_BINARY);
     major = purple_account_get_int(account, MW_KEY_MAJOR, 0x001e);
-    minor = purple_account_get_int(account, MW_KEY_MINOR, 0x001d);
+    minor = purple_account_get_int(account, MW_KEY_MINOR, 0x196f);
 
     DEBUG_INFO("client id: 0x%04x\n", client);
     DEBUG_INFO("client major: 0x%04x\n", major);

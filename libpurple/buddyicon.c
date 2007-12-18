@@ -98,8 +98,7 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 {
 	const char *dirname;
 	char *path;
-	FILE *file = NULL;
-
+	
 	g_return_if_fail(img != NULL);
 
 	if (!purple_buddy_icons_is_caching())
@@ -120,24 +119,12 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 		}
 	}
 
-	if ((file = g_fopen(path, "wb")) != NULL)
-	{
-		if (!fwrite(purple_imgstore_get_data(img), purple_imgstore_get_size(img), 1, file))
-		{
-			purple_debug_error("buddyicon", "Error writing %s: %s\n",
-			                   path, g_strerror(errno));
-		}
-		else
-			purple_debug_info("buddyicon", "Wrote cache file: %s\n", path);
-
-		fclose(file);
-	}
-	else
-	{
+	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
+		purple_util_write_data_to_file_absolute(path, purple_imgstore_get_data(img),
+							purple_imgstore_get_size(img));	
+	} else 	{
 		purple_debug_error("buddyicon", "Unable to create file %s: %s\n",
 		                   path, g_strerror(errno));
-		g_free(path);
-		return;
 	}
 	g_free(path);
 }

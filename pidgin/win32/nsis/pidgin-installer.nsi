@@ -1154,11 +1154,21 @@ FunctionEnd
 !macro RunCheckMacro UN
 Function ${UN}RunCheck
   Push $R0
-  System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "pidgin_is_running") i .R0'
-  IntCmp $R0 0 done
-    MessageBox MB_OK|MB_ICONEXCLAMATION $(PIDGIN_IS_RUNNING) /SD IDOK
+  Push $R1
+
+  IntOp $R1 0 + 0
+  retry_runcheck:
+  ; Close the Handle (needed if we're retrying)
+  IntCmp $R1 0 +2
+    System::Call 'kernel32::CloseHandle(i $R1) i .R1'
+  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "pidgin_is_running") i .R1 ?e'
+  Pop $R0
+  IntCmp $R0 0 +3 ;This could check for ERROR_ALREADY_EXISTS(183), but lets just assume
+    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(PIDGIN_IS_RUNNING) /SD IDCANCEL IDRETRY retry_runcheck
     Abort
+
   done:
+  Pop $R1
   Pop $R0
 FunctionEnd
 !macroend
@@ -1169,10 +1179,16 @@ Function .onInit
   Push $R0
   Push $R1
   Push $R2
-  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "pidgin_installer_running") i .r1 ?e'
+
+  IntOp $R1 0 + 0
+  retry_runcheck:
+  ; Close the Handle (needed if we're retrying)
+  IntCmp $R1 0 +2
+    System::Call 'kernel32::CloseHandle(i $R1) i .R1'
+  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "pidgin_installer_running") i .R1 ?e'
   Pop $R0
-  StrCmp $R0 0 +3
-    MessageBox MB_OK|MB_ICONEXCLAMATION $(INSTALLER_IS_RUNNING) /SD IDOK
+  IntCmp $R0 0 +3 ;This could check for ERROR_ALREADY_EXISTS(183), but lets just assume
+    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(INSTALLER_IS_RUNNING) /SD IDCANCEL IDRETRY retry_runcheck
     Abort
   Call RunCheck
   StrCpy $name "Pidgin ${PIDGIN_VERSION}"

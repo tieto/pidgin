@@ -121,6 +121,61 @@ GtkWidget *pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWi
 GtkWidget *pidgin_create_window(const char *title, guint border_width, const char *role, gboolean resizable);
 
 /**
+ * Creates a new dialog window
+ *
+ * @param title        The window title, or @c NULL
+ * @param border_width The window's desired border width
+ * @param role         A string indicating what the window is responsible for doing, or @c NULL
+ * @param resizable    Whether the window should be resizable (@c TRUE) or not (@c FALSE)
+ *
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_create_dialog(const char *title, guint border_width, const char *role, gboolean resizable);
+
+/**
+ * Retrieves the main content box (vbox) from a pidgin dialog window
+ *
+ * @param dialog       The dialog window
+ * @param homogeneous  TRUE if all children are to be given equal space allotments. 
+ * @param spacing      the number of pixels to place by default between children
+ *
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_dialog_get_vbox_with_properties(GtkDialog *dialog, gboolean homogeneous, gint spacing);
+
+/**
+ * Retrieves the main content box (vbox) from a pidgin dialog window
+ *
+ * @param dialog       The dialog window
+ *
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_dialog_get_vbox(GtkDialog *dialog);
+
+/**
+ * Add a button to a dialog created by #pidgin_create_dialog.
+ *
+ * @param dialog         The dialog window
+ * @param label          The stock-id or the label for the button
+ * @param callback       The callback function for the button
+ * @param callbackdata   The user data for the callback function
+ *
+ * @return The created button.
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_dialog_add_button(GtkDialog *dialog, const char *label,
+		GCallback callback, gpointer callbackdata);
+
+/**
+ * Retrieves the action area (button box) from a pidgin dialog window
+ *
+ * @param dialog       The dialog window
+ *
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_dialog_get_action_area(GtkDialog *dialog);
+
+/**
  * Toggles the sensitivity of a widget.
  *
  * @param widget    @c NULL. Used for signal handlers.
@@ -724,6 +779,16 @@ const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget);
  * @since 2.2.0
  */
 void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
+
+/**
+ * Automatically make a window transient to a suitable parent window.
+ *
+ * @param window    The window to make transient.
+ *
+ * @return  Whether the window was made transient or not.
+ * @since 2.4.0
+ */
+gboolean pidgin_auto_parent_window(GtkWidget *window);
 
 #endif /* _PIDGINUTILS_H_ */
 

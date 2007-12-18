@@ -439,6 +439,8 @@ pidgin_request_input(const char *title, const char *primary,
 	pidgin_set_accessible_label (entry, label);
 	data->u.input.entry = entry;
 
+	pidgin_auto_parent_window(dialog);
+
 	/* Show everything. */
 	gtk_widget_show(dialog);
 
@@ -546,6 +548,8 @@ pidgin_request_choice(const char *title, const char *primary,
 	g_object_set_data(G_OBJECT(dialog), "radio", radio);
 
 	/* Show everything. */
+	pidgin_auto_parent_window(dialog);
+
 	gtk_widget_show_all(dialog);
 
 	return data;
@@ -661,6 +665,8 @@ pidgin_request_action(const char *title, const char *primary,
 		gtk_dialog_set_default_response(GTK_DIALOG(dialog), default_action);
 
 	/* Show everything. */
+	pidgin_auto_parent_window(dialog);
+
 	gtk_widget_show_all(dialog);
 
 	return data;
@@ -1059,7 +1065,6 @@ pidgin_request_fields(const char *title, const char *primary,
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
 	GtkWidget *hbox;
-	GtkWidget *bbox;
 	GtkWidget *frame;
 	GtkWidget *label;
 	GtkWidget *table;
@@ -1089,9 +1094,9 @@ pidgin_request_fields(const char *title, const char *primary,
 
 
 #ifdef _WIN32
-	data->dialog = win = pidgin_create_window(PIDGIN_ALERT_TITLE, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
+	data->dialog = win = pidgin_create_dialog(PIDGIN_ALERT_TITLE, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
 #else /* !_WIN32 */
-	data->dialog = win = pidgin_create_window(title, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
+	data->dialog = win = pidgin_create_dialog(title, PIDGIN_HIG_BORDER, "multifield", TRUE) ;
 #endif /* _WIN32 */
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
@@ -1099,7 +1104,7 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	/* Setup the main horizontal box */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(win), hbox);
+	gtk_container_add(GTK_CONTAINER(pidgin_dialog_get_vbox(GTK_DIALOG(win))), hbox);
 	gtk_widget_show(hbox);
 
 	/* Dialog icon. */
@@ -1382,38 +1387,20 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	g_object_unref(sg);
 
-	/* Button box. */
-	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
-
 	/* Cancel button */
-	button = gtk_button_new_from_stock(text_to_stock(cancel_text));
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(multifield_cancel_cb), data);
-
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(cancel_text), G_CALLBACK(multifield_cancel_cb), data);
 	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
 
 	/* OK button */
-	button = gtk_button_new_from_stock(text_to_stock(ok_text));
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(ok_text), G_CALLBACK(multifield_ok_cb), data);
 	data->ok_button = button;
-
 	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
 	gtk_window_set_default(GTK_WINDOW(win), button);
 
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(multifield_ok_cb), data);
-
 	if (!purple_request_fields_all_required_filled(fields))
 		gtk_widget_set_sensitive(button, FALSE);
+
+	pidgin_auto_parent_window(win);
 
 	gtk_widget_show(win);
 
@@ -1622,6 +1609,8 @@ pidgin_request_file(const char *title, const char *filename,
 					 G_CALLBACK(file_ok_check_if_exists_cb), data);
 #endif /* FILECHOOSER */
 
+	pidgin_auto_parent_window(filesel);
+
 	data->dialog = filesel;
 	gtk_widget_show(filesel);
 
@@ -1673,6 +1662,8 @@ pidgin_request_folder(const char *title, const char *dirname,
 #endif
 
 	data->dialog = dirsel;
+	pidgin_auto_parent_window(dirsel);
+
 	gtk_widget_show(dirsel);
 
 	return (void *)data;
