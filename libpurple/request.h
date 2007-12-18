@@ -1207,7 +1207,7 @@ PurpleFilterAccountFunc purple_request_field_account_get_filter(
  *                      @c NULL.
  * @param account       The #PurpleAccount associated with this request, or @c
  *                      NULL if none is.
- * @param who           The username of the buddy assonciated with this request,
+ * @param who           The username of the buddy associated with this request,
  *                      or @c NULL if none is.
  * @param conv          The #PurpleConversation associated with this request, or
  *                      @c NULL if none is.
@@ -1245,7 +1245,7 @@ void *purple_request_input(void *handle, const char *title, const char *primary,
  *                      do nothing.
  * @param account       The #PurpleAccount associated with this request, or @c
  *                      NULL if none is.
- * @param who           The username of the buddy assonciated with this request,
+ * @param who           The username of the buddy associated with this request,
  *                      or @c NULL if none is.
  * @param conv          The #PurpleConversation associated with this request, or
  *                      @c NULL if none is.
@@ -1285,7 +1285,7 @@ void *purple_request_choice(void *handle, const char *title, const char *primary
  *                      nothing.
  * @param account       The #PurpleAccount associated with this request, or @c
  *                      NULL if none is
- * @param who           The username of the buddy assonciated with this request,
+ * @param who           The username of the buddy associated with this request,
  *                      or @c NULL if none is
  * @param conv          The #PurpleConversation associated with this request, or
  *                      @c NULL if none is
@@ -1320,7 +1320,7 @@ void *purple_request_choice_varg(void *handle, const char *title,
  *                       supplied should be the default, supply <tt>2</tt>.
  * @param account        The #PurpleAccount associated with this request, or @c
  *                       NULL if none is.
- * @param who            The username of the buddy assonciated with this request,
+ * @param who            The username of the buddy associated with this request,
  *                       or @c NULL if none is.
  * @param conv           The #PurpleConversation associated with this request, or
  *                       @c NULL if none is.
@@ -1358,7 +1358,7 @@ void *purple_request_action(void *handle, const char *title, const char *primary
  *                       supplied should be the default, supply <tt>2</tt>.
  * @param account        The #PurpleAccount associated with this request, or @c
  *                       NULL if none is.
- * @param who            The username of the buddy assonciated with this request,
+ * @param who            The username of the buddy associated with this request,
  *                       or @c NULL if none is.
  * @param conv           The #PurpleConversation associated with this request, or
  *                       @c NULL if none is.
@@ -1400,7 +1400,7 @@ void *purple_request_action_varg(void *handle, const char *title,
  *                    @c NULL.
  * @param account     The #PurpleAccount associated with this request, or @c
  *                    NULL if none is
- * @param who         The username of the buddy assonciated with this request,
+ * @param who         The username of the buddy associated with this request,
  *                    or @c NULL if none is
  * @param conv        The #PurpleConversation associated with this request, or
  *                    @c NULL if none is
@@ -1479,7 +1479,7 @@ void purple_request_close_with_handle(void *handle);
  * @param cancel_cb   The callback for the @c Cancel button.
  * @param account     The #PurpleAccount associated with this request, or @c
  *                    NULL if none is
- * @param who         The username of the buddy assonciated with this request,
+ * @param who         The username of the buddy associated with this request,
  *                    or @c NULL if none is
  * @param conv        The #PurpleConversation associated with this request, or
  *                    @c NULL if none is
@@ -1506,7 +1506,7 @@ void *purple_request_file(void *handle, const char *title, const char *filename,
  * @param cancel_cb   The callback for the @c Cancel button.
  * @param account     The #PurpleAccount associated with this request, or @c
  *                    NULL if none is
- * @param who         The username of the buddy assonciated with this request,
+ * @param who         The username of the buddy associated with this request,
  *                    or @c NULL if none is
  * @param conv        The #PurpleConversation associated with this request, or
  *                    @c NULL if none is
