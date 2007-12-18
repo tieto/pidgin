@@ -289,7 +289,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	errnum = getaddrinfo(NULL /* any IP */, serv, &hints, &res);
 	if (errnum != 0) {
 #ifndef _WIN32
-		purple_debug_warning("network", "getaddrinfo: %s\n", gai_strerror(errnum));
+		purple_debug_warning("network", "getaddrinfo: %s\n", purple_gai_strerror(errnum));
 		if (errnum == EAI_SYSTEM)
 			purple_debug_warning("network", "getaddrinfo: system error: %s\n", g_strerror(errno));
 #else

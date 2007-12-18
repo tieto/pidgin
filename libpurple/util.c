@@ -4257,6 +4257,49 @@ purple_utf8_salvage(const char *str)
 	return g_string_free(workstr, FALSE);
 }
 
+G_CONST_RETURN gchar *
+purple_gai_strerror(gint errnum)
+{
+	static GStaticPrivate msg_private = G_STATIC_PRIVATE_INIT;
+	char *msg;
+	int saved_errno = errno;
+
+	const char *msg_locale;
+
+	msg_locale = gai_strerror(errnum);
+	if (g_get_charset(NULL))
+	{
+		/* This string is already UTF-8--great! */
+		errno = saved_errno;
+		return msg_locale;
+	}
+	else
+	{
+		gchar *msg_utf8 = g_locale_to_utf8(msg_locale, -1, NULL, NULL, NULL);
+		if (msg_utf8)
+		{
+			/* Stick in the quark table so that we can return a static result */
+			GQuark msg_quark = g_quark_from_string(msg_utf8);
+			g_free(msg_utf8);
+
+			msg_utf8 = (gchar *)g_quark_to_string(msg_quark);
+			errno = saved_errno;
+			return msg_utf8;
+		}
+	}
+
+	msg = g_static_private_get(&msg_private);
+	if (!msg)
+	{
+		msg = g_new(gchar, 64);
+		g_static_private_set(&msg_private, msg, g_free);
+	}
+
+	sprintf(msg, "unknown error (%d)", errnum);
+
+	errno = saved_errno;
+	return msg;
+}
 
 char *
 purple_utf8_ncr_encode(const char *str)
