@@ -1241,8 +1241,8 @@ void *purple_request_input(void *handle, const char *title, const char *primary,
  *                      NULL.
  * @param cancel_text   The text for the @c Cancel button, which may not be @c
  *                      NULL.
- * @param cancel_cb     The callback for the @c Cancel button, which may not be
- *                      @c NULL.
+ * @param cancel_cb     The callback for the @c Cancel button, or @c NULL to
+ *                      do nothing.
  * @param account       The #PurpleAccount associated with this request, or @c
  *                      NULL if none is.
  * @param who           The username of the buddy assonciated with this request,
@@ -1281,8 +1281,8 @@ void *purple_request_choice(void *handle, const char *title, const char *primary
  *                      NULL.
  * @param cancel_text   The text for the @c Cancel button, which may not be @c
  *                      NULL.
- * @param cancel_cb     The callback for the @c Cancel button, which may not be
- *                      @c NULL.
+ * @param cancel_cb     The callback for the @c Cancel button, or @c NULL to do
+ *                      nothing.
  * @param account       The #PurpleAccount associated with this request, or @c
  *                      NULL if none is
  * @param who           The username of the buddy assonciated with this request,
