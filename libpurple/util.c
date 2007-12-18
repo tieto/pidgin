@@ -4257,6 +4257,10 @@ purple_utf8_salvage(const char *str)
 	return g_string_free(workstr, FALSE);
 }
 
+/*
+ * This function is copied from g_strerror() but changed to use
+ * gai_strerror().
+ */
 G_CONST_RETURN gchar *
 purple_gai_strerror(gint errnum)
 {
