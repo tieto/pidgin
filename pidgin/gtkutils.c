@@ -1399,7 +1399,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			char *str;
 
 			str = g_strdup_printf(_("The following error has occurred loading %s: %s"),
-						data->filename, strerror(errno));
+						data->filename, g_strerror(errno));
 			purple_notify_error(NULL, NULL,
 					  _("Failed to load image"),
 					  str);
