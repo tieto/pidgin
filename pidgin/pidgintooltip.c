@@ -167,6 +167,13 @@ void pidgin_tooltip_show(GtkWidget *widget, gpointer userdata,
 }
 
 static void
+reset_data_treepath(PidginTooltipData *data)
+{
+	gtk_tree_path_free(data->path);
+	data->path = NULL;
+}
+
+static void
 pidgin_tooltip_draw(PidginTooltipData *data)
 {
 	GtkWidget *tipwindow;
@@ -205,6 +212,8 @@ pidgin_tooltip_draw(PidginTooltipData *data)
 
 	data->path = path;
 	setup_tooltip_window(data->userdata, w, h);
+	g_signal_connect_swapped(G_OBJECT(tipwindow), "destroy",
+			G_CALLBACK(reset_data_treepath), data);
 }
 
 static gboolean
