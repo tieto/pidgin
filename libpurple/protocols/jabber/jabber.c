@@ -388,9 +388,29 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	g_free(txt);
 }
 
+static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer timeout) 
+{
+	g_source_remove(GPOINTER_TO_INT(timeout));
+}
+
+static gboolean jabber_pong_timeout(PurpleConnection *gc)
+{
+	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+					_("Ping timeout"));
+	return FALSE;
+}
+
 void jabber_keepalive(PurpleConnection *gc)
 {
-	jabber_send_raw(gc->proto_data, "\t", -1);
+	JabberIq *iq = jabber_iq_new(gc->proto_data, JABBER_IQ_GET);
+	guint timeout;
+
+        xmlnode *ping = xmlnode_new_child(iq->node, "ping");
+        xmlnode_set_namespace(ping, "urn:xmpp:ping");
+
+	timeout = purple_timeout_add_seconds(20, (GSourceFunc)(jabber_pong_timeout), gc);
+        jabber_iq_set_callback(iq, jabber_pong_cb, GINT_TO_POINTER(timeout));
+	jabber_iq_send(iq);
 }
 
 static void
