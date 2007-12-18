@@ -467,10 +467,11 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 	GtkTextMark *ins;
 
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	if (response != GTK_RESPONSE_ACCEPT) {
+	if (response != GTK_RESPONSE_ACCEPT)
 #else /* FILECHOOSER */
-	if (response != GTK_RESPONSE_OK) {
+	if (response != GTK_RESPONSE_OK)
 #endif /* FILECHOOSER */
+	{
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
 	}

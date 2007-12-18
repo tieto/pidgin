@@ -348,7 +348,6 @@ PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int fun
 				void(*get_log_sets)(PurpleLogSetCallback cb, GHashTable *sets),
 				gboolean(*remove)(PurpleLog *log),
 				gboolean(*is_deletable)(PurpleLog *log))
-{
 #endif
 	PurpleLogLogger *logger;
 	va_list args;

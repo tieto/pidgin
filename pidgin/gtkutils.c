@@ -2306,6 +2306,9 @@ icon_filesel_choose_cb(GtkWidget *w, struct _icon_chooser *dialog)
 	}
 
 #endif /* FILECHOOSER */
+#if 0 /* mismatched curly braces */
+	}
+#endif
 	if (dialog->callback)
 		dialog->callback(filename, dialog->data);
 	gtk_widget_destroy(dialog->icon_filesel);

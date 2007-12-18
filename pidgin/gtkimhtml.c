@@ -1136,14 +1136,13 @@ static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
 #ifdef _WIN32
 	/* If we're on windows, let's see if we can get data from the HTML Format
 	   clipboard before we try to paste from the GTK buffer */
-	if (!clipboard_paste_html_win32(imhtml)) {
+	if (!clipboard_paste_html_win32(imhtml))
 #endif
+	{
 	GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
 	gtk_clipboard_request_contents(clipboard, gdk_atom_intern("text/html", FALSE),
 				       paste_received_cb, imhtml);
-#ifdef _WIN32
 	}
-#endif
 	g_signal_stop_emission_by_name(imhtml, "paste-clipboard");
 }
 
@@ -3483,6 +3482,9 @@ image_save_check_if_exists_cb(GtkWidget *button, GtkIMHtmlImage *image)
 		return;
 	}
 #endif /* FILECHOOSER */
+#if 0 /* mismatched curly braces */
+	}
+#endif
 
 	/*
 	 * XXX - We should probably prompt the user to determine if they really
