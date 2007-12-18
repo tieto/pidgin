@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-06 15:10+0100\n"
-"PO-Revision-Date: 2007-12-06 15:10+0100\n"
+"POT-Creation-Date: 2007-12-18 16:51+0100\n"
+"PO-Revision-Date: 2007-12-18 16:50+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -3412,11 +3412,11 @@ msgstr ""
 msgid "Plaintext Authentication"
 msgstr "Klartext-Authentifizierung"
 
-msgid "Server does not use any supported authentication method"
-msgstr "Der Server benutzt keine der unterstützten Authentifizierungsmethoden"
-
 msgid "Invalid response from server."
 msgstr "Ungültige Serverantwort."
+
+msgid "Server does not use any supported authentication method"
+msgstr "Der Server benutzt keine der unterstützten Authentifizierungsmethoden"
 
 msgid ""
 "This server requires plaintext authentication over an unencrypted "
@@ -3829,6 +3829,9 @@ msgstr ""
 
 msgid "Write error"
 msgstr "Schreibfehler"
+
+msgid "Ping timeout"
+msgstr "Ping-Zeitüberschreitung"
 
 msgid "Read Error"
 msgstr "Fehler beim Lesen"
@@ -9513,24 +9516,12 @@ msgid "Listening to music"
 msgstr "Musik hören"
 
 #, c-format
-msgid "%s changed status from %s to %s"
-msgstr "%s hat den Status von %s zu %s geändert"
-
-#, c-format
 msgid "%s (%s) changed status from %s to %s"
 msgstr "%s (%s) hat den Status von %s zu %s geändert"
 
 #, c-format
-msgid "%s is now %s"
-msgstr "%s ist jetzt %s"
-
-#, c-format
 msgid "%s (%s) is now %s"
 msgstr "%s (%s) ist jetzt %s"
-
-#, c-format
-msgid "%s is no longer %s"
-msgstr "%s ist nicht mehr %s"
 
 #, c-format
 msgid "%s (%s) is no longer %s"
@@ -9637,6 +9628,28 @@ msgstr "Fehler beim Schreiben von %s: %s"
 #, c-format
 msgid "Unable to connect to %s: %s"
 msgstr "Verbindung zu %s nicht möglich: %s"
+
+#. 10053
+#, fuzzy, c-format
+msgid "Connection interrupted by other software on your computer."
+msgstr ""
+"Die Verbindung wurde von einer anderen Software auf ihrem Computer "
+"unterbrochen."
+
+#. 10054
+#, fuzzy, c-format
+msgid "Remote host closed connection."
+msgstr "Der entfernte Host hat die Verbindung beendet."
+
+#. 10060
+#, c-format
+msgid "Connection timed out."
+msgstr "Verbindungsabbruch wegen Zeitüberschreitung."
+
+#. 10061
+#, c-format
+msgid "Connection refused."
+msgstr "Verbindung abgelehnt."
 
 msgid "Internet Messenger"
 msgstr "Internet-Sofortnachrichtendienst"
@@ -11084,6 +11097,32 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr ""
 "Farbe zum Darstellen von Hyperlinks, wenn sich die Maus darüber befindet."
 
+#, fuzzy
+msgid "Sent Message Name Color"
+msgstr "Gesendete Nachrichten"
+
+msgid "Color to draw the name of a message you sent."
+msgstr ""
+
+#, fuzzy
+msgid "Received Message Name Color"
+msgstr "Empfangene Nachrichten"
+
+msgid "Color to draw the name of a message you received."
+msgstr ""
+
+msgid "\"Attention\" Name Color"
+msgstr ""
+
+msgid "Color to draw the name of a message you received containing your name."
+msgstr ""
+
+msgid "Action Message Name Color"
+msgstr ""
+
+msgid "Color to draw the name of an action message."
+msgstr ""
+
 msgid "_Copy E-Mail Address"
 msgstr "Kopiere _E-Mail-Adresse"
 
@@ -11694,8 +11733,8 @@ msgid ""
 "This is how your outgoing message text will appear when you use protocols "
 "that support formatting."
 msgstr ""
-"So wird der ausgehende Nachrichtentext aussehen, wenn Sie "
-"Protokollebenutzen, die Formatierung unterstützen."
+"So wird der ausgehende Nachrichtentext aussehen, wenn Sie Protokolle "
+"benutzen, die Formatierung unterstützen."
 
 msgid "Cannot start proxy configuration program."
 msgstr "Kann das Proxy-Konfigurationsprogramm nicht starten."
@@ -12773,6 +12812,10 @@ msgstr "Sekundäre Cursor-Farbe"
 msgid "Hyperlink Color"
 msgstr "Hyperlink-Farbe"
 
+#, fuzzy
+msgid "Highlighted Message Name Color"
+msgstr "Hervorgehobene Nachrichten"
+
 msgid "GtkTreeView Horizontal Separation"
 msgstr "GtkTreeview horizontaler Abstand"
 
@@ -13160,3 +13203,12 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
+
+#~ msgid "%s changed status from %s to %s"
+#~ msgstr "%s hat den Status von %s zu %s geändert"
+
+#~ msgid "%s is now %s"
+#~ msgstr "%s ist jetzt %s"
+
+#~ msgid "%s is no longer %s"
+#~ msgstr "%s ist nicht mehr %s"
