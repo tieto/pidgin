@@ -529,7 +529,7 @@ static int __send(int s, char *buf, int len)
 	while (total < len) {
 		n = send(s, buf + total, bytesleft, 0);
 		if (n == -1) {
-			Debug("ERROR: %s\n", strerror(errno));
+			Debug("ERROR: %s\n", g_strerror(errno));
 			return -1;
 		}
 		total += n;
