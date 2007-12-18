@@ -4342,8 +4342,8 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 
 	lines = gtk_text_buffer_get_line_count(buffer);
 
-	/* Show a maximum of 4 lines, minimum of 2 */
-	lines = MIN(MAX(lines, 2), 4);
+	/* Show a maximum of 4 lines */
+	lines = MIN(lines, 4);
 	wrapped_lines = MIN(MAX(wrapped_lines, 2), 4);
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
