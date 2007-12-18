@@ -1203,7 +1203,7 @@ PurpleFilterAccountFunc purple_request_field_account_get_filter(
  *                      NULL.
  * @param cancel_text   The text for the @c Cancel button, which may not be @c
  *                      NULL.
- * @param cancel_cb     The callback for the @c Cancel button, which may not be
+ * @param cancel_cb     The callback for the @c Cancel button, which may be
  *                      @c NULL.
  * @param account       The #PurpleAccount associated with this request, or @c
  *                      NULL if none is.
@@ -1396,7 +1396,7 @@ void *purple_request_action_varg(void *handle, const char *title,
  *                    NULL.
  * @param cancel_text The text for the @c Cancel button, which may not be @c
  *                    NULL.
- * @param cancel_cb   The callback for the @c Cancel button, which may not be
+ * @param cancel_cb   The callback for the @c Cancel button, which may be
  *                    @c NULL.
  * @param account     The #PurpleAccount associated with this request, or @c
  *                    NULL if none is
@@ -1476,7 +1476,7 @@ void purple_request_close_with_handle(void *handle);
  * @param savedialog  True if this dialog is being used to save a file.
  *                    False if it is being used to open a file.
  * @param ok_cb       The callback for the @c OK button.
- * @param cancel_cb   The callback for the @c Cancel button.
+ * @param cancel_cb   The callback for the @c Cancel button, which may be @c NULL.
  * @param account     The #PurpleAccount associated with this request, or @c
  *                    NULL if none is
  * @param who         The username of the buddy associated with this request,
@@ -1503,7 +1503,7 @@ void *purple_request_file(void *handle, const char *title, const char *filename,
  *                    no title.
  * @param dirname     The default directory name (may be @c NULL)
  * @param ok_cb       The callback for the @c OK button.
- * @param cancel_cb   The callback for the @c Cancel button.
+ * @param cancel_cb   The callback for the @c Cancel button, which may be @c NULL.
  * @param account     The #PurpleAccount associated with this request, or @c
  *                    NULL if none is
  * @param who         The username of the buddy associated with this request,
