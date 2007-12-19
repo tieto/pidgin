@@ -83,7 +83,9 @@ setup_tooltip_window()
 
 	tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
 	name = gtk_window_get_title(GTK_WINDOW(pidgin_tooltip.widget));
+#if GTK_CHECK_VERSION(2,10,0)
 	gtk_window_set_type_hint(GTK_WINDOW(tipwindow), GDK_WINDOW_TYPE_HINT_TOOLTIP);
+#endif
 	gtk_widget_set_app_paintable(tipwindow, TRUE);
 	gtk_window_set_title(GTK_WINDOW(tipwindow), name ? name : _("Pidgin Tooltip"));
 	gtk_window_set_resizable(GTK_WINDOW(tipwindow), FALSE);
