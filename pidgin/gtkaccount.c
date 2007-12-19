@@ -55,7 +55,6 @@ enum
 	COLUMN_ENABLED,
 	COLUMN_PROTOCOL,
 	COLUMN_DATA,
-	COLUMN_PULSE_DATA,
 	NUM_COLUMNS
 };
 
@@ -138,18 +137,6 @@ typedef struct
 	GtkWidget *proxy_pass_entry;
 
 } AccountPrefsDialog;
-
-typedef struct
-{
-	GdkPixbuf *online_pixbuf;
-	gboolean pulse_to_grey;
-	float pulse_value;
-	int timeout;
-	PurpleAccount *account;
-	GtkTreeModel *model;
-
-} PidginPulseData;
-
 
 static AccountsWindow *accounts_window = NULL;
 static GHashTable *account_pref_wins;
@@ -1550,7 +1537,6 @@ static void
 signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 {
 	PurpleAccount *account;
-	PidginPulseData *pulse_data;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GdkPixbuf *pixbuf;
@@ -1566,28 +1552,13 @@ signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 
 	if (gtk_tree_model_iter_nth_child(model, &iter, NULL, index))
 	{
-		gtk_tree_model_get(GTK_TREE_MODEL(accounts_window->model), &iter,
-						   COLUMN_PULSE_DATA, &pulse_data, -1);
-
-		if (pulse_data != NULL)
-		{
-			if (pulse_data->timeout > 0)
-				g_source_remove(pulse_data->timeout);
-
-			g_object_unref(G_OBJECT(pulse_data->online_pixbuf));
-
-			g_free(pulse_data);
-		}
-
 		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 		if ((pixbuf != NULL) && purple_account_is_disconnected(account))
 			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
 		gtk_list_store_set(accounts_window->model, &iter,
 				   COLUMN_ICON, pixbuf,
-				   COLUMN_PULSE_DATA, NULL,
 				   -1);
-
 
 		if (pixbuf != NULL)
 			g_object_unref(G_OBJECT(pixbuf));
