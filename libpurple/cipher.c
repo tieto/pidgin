@@ -340,10 +340,10 @@ static PurpleCipherOps MD5Ops = {
 	NULL,			/* get salt size */
 	NULL,			/* set key */
 	NULL,			/* get key size */
+	NULL,			/* set batch mode */
+	NULL,			/* get batch mode */
 
 	/* padding */
-	NULL,
-	NULL,
 	NULL,
 	NULL
 };
@@ -595,10 +595,10 @@ static PurpleCipherOps MD4Ops = {
 	NULL,                   /* get salt size */
 	NULL,                   /* set key */
 	NULL,                   /* get key size */
+	NULL,                   /* set batch mode */
+	NULL,                   /* get batch mode */
 
 	/* padding */
-	NULL,
-	NULL,
 	NULL,
 	NULL
 };
@@ -986,6 +986,36 @@ des_encrypt(PurpleCipherContext *context, const guchar data[],
 	return 0;
 }
 
+static gint
+des_decrypt(PurpleCipherContext *context, const guchar data[],
+	    size_t len, guchar output[], size_t *outlen) {
+	int offset = 0;
+	int i = 0;
+	int tmp;
+	guint8 buf[8] = {0,0,0,0,0,0,0,0};
+	while(offset+8<=len) {
+		des_ecb_crypt(purple_cipher_context_get_data(context),
+				data+offset,
+				output+offset,
+				1);
+		offset+=8;
+	}
+	*outlen = len;
+	if(offset<len) {
+		*outlen += len - offset;
+		tmp = offset;
+		while(tmp<len) {
+			buf[i++] = data[tmp];
+			tmp++;
+		}
+		des_ecb_crypt(purple_cipher_context_get_data(context),
+				buf,
+				output+offset,
+				1);
+	}	
+	return 0;
+}
+
 static void
 des_init(PurpleCipherContext *context, gpointer extra) {
 	struct _des_ctx *mctx;
@@ -1005,28 +1035,379 @@ des_uninit(PurpleCipherContext *context) {
 }
 
 static PurpleCipherOps DESOps = {
-	NULL,                   /* Set option */
-	NULL,                   /* Get option */
-	des_init,               /* init */
-	NULL,              /* reset */
-	des_uninit,             /* uninit */
-	NULL,                   /* set iv */
-	NULL,             /* append */
-	NULL,             /* digest */
-	des_encrypt,                   /* encrypt */
-	NULL,                   /* decrypt */
-	NULL,                   /* set salt */
-	NULL,                   /* get salt size */
-	des_set_key,		/* set key */
-	NULL,                   /* get key size */
+	NULL,              /* Set option */
+	NULL,              /* Get option */
+	des_init,          /* init */
+ 	NULL,              /* reset */
+	des_uninit,        /* uninit */
+	NULL,              /* set iv */
+	NULL,              /* append */
+	NULL,              /* digest */
+	des_encrypt,       /* encrypt */
+	des_decrypt,       /* decrypt */
+	NULL,              /* set salt */
+	NULL,              /* get salt size */
+	des_set_key,       /* set key */
+	NULL,              /* get key size */
+	NULL,              /* set batch mode */
+	NULL,              /* get batch mode */
 
 	/* padding */
-	NULL,
-	NULL,
 	NULL,
 	NULL
 };
 
+/******************************************************************************
+ * Triple-DES
+ *****************************************************************************/
+
+typedef struct _des3_ctx
+{
+	PurpleCipherBatchMode mode;
+	guchar iv[8];
+	/* First key for encryption */
+	struct _des_ctx key1;
+	/* Second key for decryption */
+	struct _des_ctx key2;
+	/* Third key for encryption */
+	struct _des_ctx key3;
+} des3_ctx[1];
+
+/*
+ *  Fill a DES3 context with subkeys calculated from 3 64bit key.
+ *  Does not check parity bits, but simply ignore them.
+ *  Does not check for weak keys.
+ **/
+static void
+des3_set_key(PurpleCipherContext *context, const guchar * key)
+{
+	struct _des3_ctx *ctx = purple_cipher_context_get_data(context);
+	int i;
+
+	des_key_schedule (key +  0, ctx->key1.encrypt_subkeys);
+	des_key_schedule (key +  8, ctx->key2.encrypt_subkeys);
+	des_key_schedule (key + 16, ctx->key3.encrypt_subkeys);
+
+	for (i = 0; i < 32; i += 2)
+	{
+		ctx->key1.decrypt_subkeys[i]	= ctx->key1.encrypt_subkeys[30-i];
+		ctx->key1.decrypt_subkeys[i+1]	= ctx->key1.encrypt_subkeys[31-i];
+		ctx->key2.decrypt_subkeys[i]	= ctx->key2.encrypt_subkeys[30-i];
+		ctx->key2.decrypt_subkeys[i+1]	= ctx->key2.encrypt_subkeys[31-i];
+		ctx->key3.decrypt_subkeys[i]	= ctx->key3.encrypt_subkeys[30-i];
+		ctx->key3.decrypt_subkeys[i+1]	= ctx->key3.encrypt_subkeys[31-i];
+	}
+}
+
+static gint
+des3_ecb_encrypt(struct _des3_ctx *ctx, const guchar data[],
+                 size_t len, guchar output[], size_t *outlen)
+{
+	int offset = 0;
+	int i = 0;
+	int tmp;
+	guint8 buf[8] = {0,0,0,0,0,0,0,0};
+	while (offset + 8 <= len) {
+		des_ecb_crypt(&ctx->key1,
+		              data+offset,
+		              output+offset,
+		              0);
+		des_ecb_crypt(&ctx->key2,
+		              output+offset,
+		              buf,
+		              1);
+		des_ecb_crypt(&ctx->key3,
+		              buf,
+		              output+offset,
+		              0);
+		offset += 8;
+	}
+	*outlen = len;
+	if (offset < len) {
+		*outlen += len - offset;
+		tmp = offset;
+		memset(buf, 0, 8);
+		while (tmp < len) {
+			buf[i++] = data[tmp];
+			tmp++;
+		}
+		des_ecb_crypt(&ctx->key1,
+		              buf,
+		              output+offset,
+		              0);
+		des_ecb_crypt(&ctx->key2,
+		              output+offset,
+		              buf,
+		              1);
+		des_ecb_crypt(&ctx->key3,
+		              buf,
+		              output+offset,
+		              0);
+	}
+	return 0;
+}
+
+static gint
+des3_cbc_encrypt(struct _des3_ctx *ctx, const guchar data[],
+                 size_t len, guchar output[], size_t *outlen)
+{
+	int offset = 0;
+	int i = 0;
+	int tmp;
+	guint8 buf[8];
+	memcpy(buf, ctx->iv, 8);
+	while (offset + 8 <= len) {
+		for (i = 0; i < 8; i++)
+			buf[i] ^= data[offset + i];
+		des_ecb_crypt(&ctx->key1,
+		              buf,
+		              output+offset,
+		              0);
+		des_ecb_crypt(&ctx->key2,
+		              output+offset,
+		              buf,
+		              1);
+		des_ecb_crypt(&ctx->key3,
+		              buf,
+		              output+offset,
+		              0);
+		memcpy(buf, output+offset, 8);
+		offset += 8;
+	}
+	*outlen = len;
+	if (offset < len) {
+		*outlen += len - offset;
+		tmp = offset;
+		i = 0;
+		while (tmp < len) {
+			buf[i++] ^= data[tmp];
+			tmp++;
+		}
+		des_ecb_crypt(&ctx->key1,
+		              buf,
+		              output+offset,
+		              0);
+		des_ecb_crypt(&ctx->key2,
+		              output+offset,
+		              buf,
+		              1);
+		des_ecb_crypt(&ctx->key3,
+		              buf,
+		              output+offset,
+		              0);
+	}
+	return 0;
+}
+
+static gint
+des3_encrypt(PurpleCipherContext *context, const guchar data[],
+             size_t len, guchar output[], size_t *outlen)
+{
+	struct _des3_ctx *ctx = purple_cipher_context_get_data(context);
+
+	if (ctx->mode == PURPLE_CIPHER_BATCH_MODE_ECB) {
+		return des3_ecb_encrypt(ctx, data, len, output, outlen);
+	} else if (ctx->mode == PURPLE_CIPHER_BATCH_MODE_CBC) {
+		return des3_cbc_encrypt(ctx, data, len, output, outlen);
+	} else {
+		g_return_val_if_reached(0);
+	}
+
+	return 0;
+}
+
+static gint
+des3_ecb_decrypt(struct _des3_ctx *ctx, const guchar data[],
+                 size_t len, guchar output[], size_t *outlen)
+{
+	int offset = 0;
+	int i = 0;
+	int tmp;
+	guint8 buf[8] = {0,0,0,0,0,0,0,0};
+	while (offset + 8 <= len) {
+		/* NOTE: Apply key in reverse */
+		des_ecb_crypt(&ctx->key3,
+		              data+offset,
+		              output+offset,
+		              1);
+		des_ecb_crypt(&ctx->key2,
+		              output+offset,
+		              buf,
+		              0);
+		des_ecb_crypt(&ctx->key1,
+		              buf,
+		              output+offset,
+		              1);
+		offset+=8;
+	}
+	*outlen = len;
+	if (offset < len) {
+		*outlen += len - offset;
+		tmp = offset;
+		memset(buf, 0, 8);
+		while (tmp < len) {
+			buf[i++] = data[tmp];
+			tmp++;
+		}
+		des_ecb_crypt(&ctx->key3,
+		              buf,
+		              output+offset,
+		              1);
+		des_ecb_crypt(&ctx->key2,
+		              output+offset,
+		              buf,
+		              0);
+		des_ecb_crypt(&ctx->key1,
+		              buf,
+		              output+offset,
+		              1);
+	}
+	return 0;
+}
+
+static gint
+des3_cbc_decrypt(struct _des3_ctx *ctx, const guchar data[],
+                 size_t len, guchar output[], size_t *outlen)
+{
+	int offset = 0;
+	int i = 0;
+	int tmp;
+	guint8 buf[8] = {0,0,0,0,0,0,0,0};
+	guint8 link[8];
+	memcpy(link, ctx->iv, 8);
+	while (offset + 8 <= len) {
+		des_ecb_crypt(&ctx->key3,
+		              data+offset,
+		              output+offset,
+		              1);
+		des_ecb_crypt(&ctx->key2,
+		              output+offset,
+		              buf,
+		              0);
+		des_ecb_crypt(&ctx->key1,
+		              buf,
+		              output+offset,
+		              1);
+		for (i = 0; i < 8; i++)
+			output[offset + i] ^= link[i];
+		memcpy(link, data + offset, 8);
+		offset+=8;
+	}
+	*outlen = len;
+	if(offset<len) {
+		*outlen += len - offset;
+		tmp = offset;
+		memset(buf, 0, 8);
+		i = 0;
+		while(tmp<len) {
+			buf[i++] = data[tmp];
+			tmp++;
+		}
+		des_ecb_crypt(&ctx->key3,
+		              buf,
+		              output+offset,
+		              1);
+		des_ecb_crypt(&ctx->key2,
+		              output+offset,
+		              buf,
+		              0);
+		des_ecb_crypt(&ctx->key1,
+		              buf,
+		              output+offset,
+		              1);
+		for (i = 0; i < 8; i++)
+			output[offset + i] ^= link[i];
+	}
+	return 0;
+}
+
+static gint
+des3_decrypt(PurpleCipherContext *context, const guchar data[],
+             size_t len, guchar output[], size_t *outlen)
+{
+	struct _des3_ctx *ctx = purple_cipher_context_get_data(context);
+
+	if (ctx->mode == PURPLE_CIPHER_BATCH_MODE_ECB) {
+		return des3_ecb_decrypt(ctx, data, len, output, outlen);
+	} else if (ctx->mode == PURPLE_CIPHER_BATCH_MODE_CBC) {
+		return des3_cbc_decrypt(ctx, data, len, output, outlen);
+	} else {
+		g_return_val_if_reached(0);
+	}
+
+	return 0;
+}
+
+static void
+des3_set_batch(PurpleCipherContext *context, PurpleCipherBatchMode mode)
+{
+	struct _des3_ctx *ctx = purple_cipher_context_get_data(context);
+
+	ctx->mode = mode;
+}
+
+static PurpleCipherBatchMode
+des3_get_batch(PurpleCipherContext *context)
+{
+	struct _des3_ctx *ctx = purple_cipher_context_get_data(context);
+
+	return ctx->mode;
+}
+
+static void
+des3_set_iv(PurpleCipherContext *context, guchar *iv, size_t len)
+{
+	struct _des3_ctx *ctx;
+
+	g_return_if_fail(len == 8);
+
+	ctx = purple_cipher_context_get_data(context);
+
+	memcpy(ctx->iv, iv, len);
+}
+
+static void
+des3_init(PurpleCipherContext *context, gpointer extra)
+{
+	struct _des3_ctx *mctx;
+	mctx = g_new0(struct _des3_ctx, 1);
+	purple_cipher_context_set_data(context, mctx);
+}
+
+static void
+des3_uninit(PurpleCipherContext *context)
+{
+	struct _des3_ctx *des3_context;
+
+	des3_context = purple_cipher_context_get_data(context);
+	memset(des3_context, 0, sizeof(des3_context));
+
+	g_free(des3_context);
+	des3_context = NULL;
+}
+
+static PurpleCipherOps DES3Ops = {
+	NULL,              /* Set option */
+	NULL,              /* Get option */
+	des3_init,         /* init */
+	NULL,              /* reset */
+	des3_uninit,       /* uninit */
+	des3_set_iv,       /* set iv */
+	NULL,              /* append */
+	NULL,              /* digest */
+	des3_encrypt,      /* encrypt */
+	des3_decrypt,      /* decrypt */
+	NULL,              /* set salt */
+	NULL,              /* get salt size */
+	des3_set_key,      /* set key */
+	NULL,              /* get key size */
+	des3_set_batch,    /* set batch mode */
+	des3_get_batch,    /* get batch mode */
+
+	/* padding */
+	NULL,
+	NULL
+};
 
 /*******************************************************************************
  * SHA-1
@@ -1266,10 +1647,10 @@ static PurpleCipherOps SHA1Ops = {
 	NULL,			/* get salt size	*/
 	NULL,			/* set key			*/
 	NULL,			/* get key size		*/
+	NULL,			/* set batch mode */
+	NULL,			/* get batch mode */
 
 	/* padding */
-	NULL,
-	NULL,
 	NULL,
 	NULL
 };
@@ -1435,10 +1816,10 @@ static PurpleCipherOps RC4Ops = {
 	NULL,          /* get salt size */
 	rc4_set_key,   /* set key       */
 	rc4_get_key_size, /* get key size  */
+	NULL,          /* set batch mode */
+	NULL,          /* get batch mode */
 
 	/* padding */
-	NULL,
-	NULL,
 	NULL,
 	NULL
 };
@@ -1510,6 +1891,10 @@ purple_cipher_get_capabilities(PurpleCipher *cipher) {
 		caps |= PURPLE_CIPHER_CAPS_SET_KEY;
 	if(ops->get_key_size)
 		caps |= PURPLE_CIPHER_CAPS_GET_KEY_SIZE;
+	if(ops->set_batch_mode)
+		caps |= PURPLE_CIPHER_CAPS_SET_BATCH_MODE;
+	if(ops->get_batch_mode)
+		caps |= PURPLE_CIPHER_CAPS_GET_BATCH_MODE;
 
 	return caps;
 }
@@ -1637,6 +2022,7 @@ purple_ciphers_init() {
 	purple_ciphers_register_cipher("sha1", &SHA1Ops);
 	purple_ciphers_register_cipher("md4", &MD4Ops);
 	purple_ciphers_register_cipher("des", &DESOps);
+	purple_ciphers_register_cipher("des3", &DES3Ops);
 	purple_ciphers_register_cipher("rc4", &RC4Ops);
 }
 
@@ -1962,6 +2348,43 @@ purple_cipher_context_get_key_size(PurpleCipherContext *context) {
 		purple_debug_info("cipher", "the %s cipher does not support the "
 						"get_key_size operation\n", cipher->name);
 
+		return -1;
+	}
+}
+
+void
+purple_cipher_context_set_batch_mode(PurpleCipherContext *context,
+                                     PurpleCipherBatchMode mode)
+{
+	PurpleCipher *cipher = NULL;
+
+	g_return_if_fail(context);
+
+	cipher = context->cipher;
+	g_return_if_fail(cipher);
+
+	if(cipher->ops && cipher->ops->set_batch_mode)
+		cipher->ops->set_batch_mode(context, mode);
+	else
+		purple_debug_info("cipher", "The %s cipher does not support the "
+		                            "set_batch_mode operation\n", cipher->name);
+}
+
+PurpleCipherBatchMode
+purple_cipher_context_get_batch_mode(PurpleCipherContext *context)
+{
+	PurpleCipher *cipher = NULL;
+
+	g_return_val_if_fail(context, -1);
+
+	cipher = context->cipher;
+	g_return_val_if_fail(cipher, -1);
+
+	if(cipher->ops && cipher->ops->get_batch_mode)
+		return cipher->ops->get_batch_mode(context);
+	else {
+		purple_debug_info("cipher", "The %s cipher does not support the "
+		                            "get_batch_mode operation\n", cipher->name);
 		return -1;
 	}
 }
