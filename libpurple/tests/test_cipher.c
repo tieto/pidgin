@@ -408,6 +408,293 @@ START_TEST(test_des3_cbc_null_key_and_text) {
 END_TEST
 
 /******************************************************************************
+ * HMAC Tests
+ * See RFC2202 and some other NULL tests I made up
+ *****************************************************************************/
+
+#define HMAC_TEST(data, data_len, key, key_len, type, digest) { \
+	PurpleCipher *cipher = NULL; \
+	PurpleCipherContext *context = NULL; \
+	gchar cdigest[41]; \
+	gboolean ret = FALSE; \
+	\
+	cipher = purple_ciphers_find_cipher("hmac"); \
+	context = purple_cipher_context_new(cipher, NULL); \
+	purple_cipher_context_set_option(context, "hash", type); \
+	purple_cipher_context_set_key_with_len(context, (guchar *)key, (key_len)); \
+	\
+	purple_cipher_context_append(context, (guchar *)(data), (data_len)); \
+	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
+	                                        NULL); \
+	\
+	fail_unless(ret == TRUE, NULL); \
+	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
+	\
+	purple_cipher_context_destroy(context); \
+}
+
+/* HMAC MD5 */
+
+START_TEST(test_hmac_md5_Hi) {
+	HMAC_TEST("Hi There",
+	          8,
+	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b",
+	          16,
+	          "md5",
+	          "9294727a3638bb1c13f48ef8158bfc9d");
+}
+END_TEST
+
+START_TEST(test_hmac_md5_what) {
+	HMAC_TEST("what do ya want for nothing?",
+	          28,
+	          "Jefe",
+	          4,
+	          "md5",
+	          "750c783e6ab0b503eaa86e310a5db738");
+}
+END_TEST
+
+START_TEST(test_hmac_md5_dd) {
+	HMAC_TEST("\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd"
+	          "\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd"
+	          "\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd"
+	          "\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd"
+	          "\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd",
+	          50,
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
+	          16,
+	          "md5",
+	          "56be34521d144c88dbb8c733f0e8b3f6");
+}
+END_TEST
+
+START_TEST(test_hmac_md5_cd) {
+	HMAC_TEST("\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd"
+	          "\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd"
+	          "\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd"
+	          "\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd"
+	          "\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd",
+	          50,
+	          "\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a"
+	          "\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14"
+	          "\x15\x16\x17\x18\x19",
+	          25,
+	          "md5",
+	          "697eaf0aca3a3aea3a75164746ffaa79");
+}
+END_TEST
+
+START_TEST(test_hmac_md5_truncation) {
+	HMAC_TEST("Test With Truncation",
+	          20,
+	          "\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c",
+	          16,
+	          "md5",
+	          "56461ef2342edc00f9bab995690efd4c");
+}
+END_TEST
+
+START_TEST(test_hmac_md5_large_key) {
+	HMAC_TEST("Test Using Larger Than Block-Size Key - Hash Key First",
+	          54,
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
+	          80,
+	          "md5",
+	          "6b1ab7fe4bd7bf8f0b62e6ce61b9d0cd");
+}
+END_TEST
+
+START_TEST(test_hmac_md5_large_key_and_data) {
+	HMAC_TEST("Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data",
+	          73,
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
+	          80,
+	          "md5",
+	          "6f630fad67cda0ee1fb1f562db3aa53e");
+}
+END_TEST
+
+START_TEST(test_hmac_md5_null_key) {
+	HMAC_TEST("Hi There",
+	          8,
+	          "\x0a\x0b\x00\x0d\x0e\x0f\x1a\x2f\x0b\x0b"
+	          "\x0b\x00\x00\x0b\x0b\x49\x5f\x6e\x0b\x0b",
+	          20,
+	          "md5",
+	          "597bfd644b797a985561eeb03a169e59");
+}
+END_TEST
+
+START_TEST(test_hmac_md5_null_text) {
+	HMAC_TEST("Hi\x00There",
+	          8,
+	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
+	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b",
+	          20,
+	          "md5",
+	          "70be8e1b7b50dfcc335d6cd7992c564f");
+}
+END_TEST
+
+START_TEST(test_hmac_md5_null_key_and_text) {
+	HMAC_TEST("Hi\x00Th\x00re",
+	          8,
+	          "\x0c\x0d\x00\x0f\x10\x1a\x3a\x3a\xe6\x34"
+	          "\x0b\x00\x00\x0b\x0b\x49\x5f\x6e\x0b\x0b",
+	          20,
+	          "md5",
+	          "b31bcbba35a33a067cbba9131cba4889");
+}
+END_TEST
+
+/* HMAC SHA1 */
+
+START_TEST(test_hmac_sha1_Hi) {
+	HMAC_TEST("Hi There",
+	          8,
+	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
+	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b",
+	          20,
+	          "sha1",
+	          "b617318655057264e28bc0b6fb378c8ef146be00");
+}
+END_TEST
+
+START_TEST(test_hmac_sha1_what) {
+	HMAC_TEST("what do ya want for nothing?",
+	          28,
+	          "Jefe",
+	          4,
+	          "sha1",
+	          "effcdf6ae5eb2fa2d27416d5f184df9c259a7c79");
+}
+END_TEST
+
+START_TEST(test_hmac_sha1_dd) {
+	HMAC_TEST("\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd"
+	          "\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd"
+	          "\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd"
+	          "\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd"
+	          "\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd",
+	          50,
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
+	          20,
+	          "sha1",
+	          "125d7342b9ac11cd91a39af48aa17b4f63f175d3");
+}
+END_TEST
+
+START_TEST(test_hmac_sha1_cd) {
+	HMAC_TEST("\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd"
+	          "\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd"
+	          "\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd"
+	          "\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd"
+	          "\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd",
+	          50,
+	          "\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a"
+	          "\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14"
+	          "\x15\x16\x17\x18\x19",
+	          25,
+	          "sha1",
+	          "4c9007f4026250c6bc8414f9bf50c86c2d7235da");
+}
+END_TEST
+
+START_TEST(test_hmac_sha1_truncation) {
+	HMAC_TEST("Test With Truncation",
+	          20,
+	          "\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c"
+	          "\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c",
+	          20,
+	          "sha1",
+	          "4c1a03424b55e07fe7f27be1d58bb9324a9a5a04");
+}
+END_TEST
+
+START_TEST(test_hmac_sha1_large_key) {
+	HMAC_TEST("Test Using Larger Than Block-Size Key - Hash Key First",
+	          54,
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
+	          80,
+	          "sha1",
+	          "aa4ae5e15272d00e95705637ce8a3b55ed402112");
+}
+END_TEST
+
+START_TEST(test_hmac_sha1_large_key_and_data) {
+	HMAC_TEST("Test Using Larger Than Block-Size Key and Larger Than One Block-Size Data",
+	          73,
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"
+	          "\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa",
+	          80,
+	          "sha1",
+	          "e8e99d0f45237d786d6bbaa7965c7808bbff1a91");
+}
+END_TEST
+
+START_TEST(test_hmac_sha1_null_key) {
+	HMAC_TEST("Hi There",
+	          8,
+	          "\x0a\x0b\x00\x0d\x0e\x0f\x1a\x2f\x0b\x0b"
+	          "\x0b\x00\x00\x0b\x0b\x49\x5f\x6e\x0b\x0b",
+	          20,
+	          "sha1",
+	          "eb62a2e0e33d300be669c52aab3f591bc960aac5");
+}
+END_TEST
+
+START_TEST(test_hmac_sha1_null_text) {
+	HMAC_TEST("Hi\x00There",
+	          8,
+	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"
+	          "\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b",
+	          20,
+	          "sha1",
+	          "31ca58d849e971e418e3439de2c6f83144b6abb7");
+}
+END_TEST
+
+START_TEST(test_hmac_sha1_null_key_and_text) {
+	HMAC_TEST("Hi\x00Th\x00re",
+	          8,
+	          "\x0c\x0d\x00\x0f\x10\x1a\x3a\x3a\xe6\x34"
+	          "\x0b\x00\x00\x0b\x0b\x49\x5f\x6e\x0b\x0b",
+	          20,
+	          "sha1",
+	          "e6b8e2fede87aa09dcb13e554df1435e056eae36");
+}
+END_TEST
+
+/******************************************************************************
  * Suite
  *****************************************************************************/
 Suite *
@@ -466,6 +753,30 @@ cipher_suite(void) {
 	tcase_add_test(tc, test_des3_cbc_null_key);
 	tcase_add_test(tc, test_des3_cbc_null_text);
 	tcase_add_test(tc, test_des3_cbc_null_key_and_text);
+	suite_add_tcase(s, tc);
+
+	/* hmac tests */
+	tc = tcase_create("HMAC");
+	tcase_add_test(tc, test_hmac_md5_Hi);
+	tcase_add_test(tc, test_hmac_md5_what);
+	tcase_add_test(tc, test_hmac_md5_dd);
+	tcase_add_test(tc, test_hmac_md5_cd);
+	tcase_add_test(tc, test_hmac_md5_truncation);
+	tcase_add_test(tc, test_hmac_md5_large_key);
+	tcase_add_test(tc, test_hmac_md5_large_key_and_data);
+	tcase_add_test(tc, test_hmac_md5_null_key);
+	tcase_add_test(tc, test_hmac_md5_null_text);
+	tcase_add_test(tc, test_hmac_md5_null_key_and_text);
+	tcase_add_test(tc, test_hmac_sha1_Hi);
+	tcase_add_test(tc, test_hmac_sha1_what);
+	tcase_add_test(tc, test_hmac_sha1_dd);
+	tcase_add_test(tc, test_hmac_sha1_cd);
+	tcase_add_test(tc, test_hmac_sha1_truncation);
+	tcase_add_test(tc, test_hmac_sha1_large_key);
+	tcase_add_test(tc, test_hmac_sha1_large_key_and_data);
+	tcase_add_test(tc, test_hmac_sha1_null_key);
+	tcase_add_test(tc, test_hmac_sha1_null_text);
+	tcase_add_test(tc, test_hmac_sha1_null_key_and_text);
 	suite_add_tcase(s, tc);
 
 	return s;

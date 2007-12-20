@@ -65,7 +65,9 @@ typedef enum _PurpleCipherCaps {
 	PURPLE_CIPHER_CAPS_GET_KEY_SIZE     = 1 << 14,  /**< Get key size flag	*/
 	PURPLE_CIPHER_CAPS_SET_BATCH_MODE   = 1 << 15,  /**< Set batch mode flag */
 	PURPLE_CIPHER_CAPS_GET_BATCH_MODE   = 1 << 16,  /**< Get batch mode flag */
-	PURPLE_CIPHER_CAPS_UNKNOWN			= 1 << 17   /**< Unknown			*/
+	PURPLE_CIPHER_CAPS_GET_BLOCK_SIZE   = 1 << 17,  /**< The get block size flag */
+	PURPLE_CIPHER_CAPS_SET_KEY_WITH_LEN = 1 << 18,  /**< The set key with length flag */
+	PURPLE_CIPHER_CAPS_UNKNOWN          = 1 << 19   /**< Unknown			*/
 } PurpleCipherCaps;
 
 /**
@@ -120,8 +122,11 @@ struct _PurpleCipherOps {
 	/** The get batch mode function */
 	PurpleCipherBatchMode (*get_batch_mode)(PurpleCipherContext *context);
 
-	void (*_purple_reserved1)(void);
-	void (*_purple_reserved2)(void);
+	/** The get block size function */
+	size_t (*get_block_size)(PurpleCipherContext *context);
+
+	/** The set key with length function */
+	void (*set_key_with_len)(PurpleCipherContext *context, const guchar *key, size_t len);
 };
 
 #ifdef __cplusplus
@@ -406,6 +411,25 @@ void purple_cipher_context_set_batch_mode(PurpleCipherContext *context, PurpleCi
  * @return The batch mode under which the cipher is operating
  */
 PurpleCipherBatchMode purple_cipher_context_get_batch_mode(PurpleCipherContext *context);
+
+/**
+ * Gets the block size of a context
+ *
+ * @param context The context whose block size to get
+ *
+ * @return The block size of the context
+ */
+size_t purple_cipher_context_get_block_size(PurpleCipherContext *context);
+
+/**
+ * Sets the key with a given length on a context 
+ *
+ * @param context The context whose key to set
+ * @param key     The key
+ * @param len     The length of the key
+ *
+ */
+void purple_cipher_context_set_key_with_len(PurpleCipherContext *context, const guchar *key, size_t len);
 
 /**
  * Sets the cipher data for a context
