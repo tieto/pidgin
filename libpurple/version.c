@@ -42,21 +42,3 @@ const char *purple_version_check(guint required_major, guint required_minor, gui
 		return "libpurple version too old (micro mismatch)";
 	return NULL;
 }
-
-guint
-purple_version_get_major()
-{
-	return purple_major_version;
-}
-
-guint
-purple_version_get_minor()
-{
-	return purple_minor_version;
-}
-
-guint
-purple_version_get_micro()
-{
-	return purple_micro_version;
-}

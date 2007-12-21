@@ -49,33 +49,6 @@ extern "C" {
  */
 const char *purple_version_check(guint required_major, guint required_minor, guint required_micro);
 
-/**
- * Returns the major version of the running libpurple.  Contrast with
- * #PURPLE_MAJOR_VERSION, which expands at compile time to the major version of
- * libpurple being compiled against.
- *
- * @since 2.4.0
- */
-guint purple_version_get_major(void);
-
-/**
- * Returns the minor version of the running libpurple.  Contrast with
- * #PURPLE_MINOR_VERSION, which expands at compile time to the minor version of
- * libpurple being compiled against.
- *
- * @since 2.4.0
- */
-guint purple_version_get_minor(void);
-/**
- *
- * Returns the micro version of the running libpurple.  Contrast with
- * #PURPLE_MICRO_VERSION, which expands at compile time to the micro version of
- * libpurple being compiled against.
- *
- * @since 2.4.0
- */
-guint purple_version_get_micro(void);
-
 #ifdef __cplusplus
 }
 #endif
