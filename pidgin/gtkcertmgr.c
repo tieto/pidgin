@@ -545,12 +545,13 @@ typedef struct
    So if it is set, don't open another one! */
 CertMgrDialog *certmgr_dialog = NULL;
 
-static void
+static gboolean
 certmgr_close_cb(GtkWidget *w, CertMgrDialog *dlg)
 {
 	/* TODO: Ignoring the arguments to this function may not be ideal,
 	   but there *should* only be "one dialog to rule them all" at a time*/
 	pidgin_certmgr_hide();
+	return FALSE;
 }
 
 void

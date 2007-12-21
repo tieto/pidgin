@@ -1108,7 +1108,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					 G_CALLBACK(proxy_type_changed_cb), dialog);
 }
 
-static void
+static gboolean
 account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 					   AccountPrefsDialog *dialog)
 {
@@ -1129,6 +1129,7 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 	purple_signals_disconnect_by_handle(dialog);
 
 	g_free(dialog);
+	return FALSE;
 }
 
 static void

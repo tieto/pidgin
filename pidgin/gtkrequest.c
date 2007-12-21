@@ -251,11 +251,12 @@ multifield_cancel_cb(GtkWidget *button, PidginRequestData *data)
 	purple_request_close(PURPLE_REQUEST_FIELDS, data);
 }
 
-static void
+static gboolean
 destroy_multifield_cb(GtkWidget *dialog, GdkEvent *event,
 					  PidginRequestData *data)
 {
 	multifield_cancel_cb(NULL, data);
+	return FALSE;
 }
 
 
@@ -1505,7 +1506,7 @@ file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 }
 
 #if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-static void
+static gboolean
 file_cancel_cb(PidginRequestData *data)
 {
 	generic_response_start(data);
@@ -1514,6 +1515,7 @@ file_cancel_cb(PidginRequestData *data)
 		((PurpleRequestFileCb)data->cbs[0])(data->user_data, NULL);
 
 	purple_request_close(data->type, data);
+	return FALSE;
 }
 #endif /* FILECHOOSER */
 

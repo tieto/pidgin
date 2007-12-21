@@ -1100,7 +1100,7 @@ static gboolean imhtml_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkI
 	return TRUE;
 }
 
-static int imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStatusBox *status_box)
+static gboolean imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStatusBox *status_box)
 {
 	if (event->keyval == GDK_Tab || event->keyval == GDK_KP_Tab)
 	{

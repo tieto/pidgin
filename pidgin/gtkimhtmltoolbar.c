@@ -99,7 +99,7 @@ do_big(GtkWidget *large, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-static void
+static gboolean
 destroy_toolbar_font(GtkWidget *widget, GdkEvent *event,
 					 GtkIMHtmlToolbar *toolbar)
 {
@@ -111,6 +111,7 @@ destroy_toolbar_font(GtkWidget *widget, GdkEvent *event,
 		gtk_widget_destroy(toolbar->font_dialog);
 		toolbar->font_dialog = NULL;
 	}
+	return FALSE;
 }
 
 static void
@@ -191,7 +192,7 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-static void
+static gboolean
 destroy_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
 						GtkIMHtmlToolbar *toolbar)
 {
@@ -203,6 +204,7 @@ destroy_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
 		gtk_widget_destroy(toolbar->fgcolor_dialog);
 		toolbar->fgcolor_dialog = NULL;
 	}
+	return FALSE;
 }
 
 static void cancel_toolbar_fgcolor(GtkWidget *widget,
@@ -263,7 +265,7 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-static void
+static gboolean
 destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
 						GtkIMHtmlToolbar *toolbar)
 {
@@ -279,6 +281,7 @@ destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
 		gtk_widget_destroy(toolbar->bgcolor_dialog);
 		toolbar->bgcolor_dialog = NULL;
 	}
+	return FALSE;
 }
 
 static void
@@ -575,11 +578,12 @@ destroy_smiley_dialog(GtkIMHtmlToolbar *toolbar)
 	}
 }
 
-static void
+static gboolean
 close_smiley_dialog(GtkWidget *widget, GdkEvent *event,
 					GtkIMHtmlToolbar *toolbar)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smiley), FALSE);
+	return FALSE;
 }
 
 

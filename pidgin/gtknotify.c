@@ -166,16 +166,18 @@ reset_mail_dialog(GtkDialog *dialog)
 	mail_dialog = NULL;
 }
 
-static void
+static gboolean
 formatted_close_cb(GtkWidget *win, GdkEvent *event, void *user_data)
 {
 	purple_notify_close(PURPLE_NOTIFY_FORMATTED, win);
+	return FALSE;
 }
 
-static void
+static gboolean
 searchresults_close_cb(PidginNotifySearchResultsData *data, GdkEvent *event, gpointer user_data)
 {
 	purple_notify_close(PURPLE_NOTIFY_SEARCHRESULTS, data);
+	return FALSE;
 }
 
 static void

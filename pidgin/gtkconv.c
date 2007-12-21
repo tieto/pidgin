@@ -4579,11 +4579,12 @@ pidgin_conv_tooltip_timeout(PidginConversation *gtkconv)
 	return FALSE;
 }
 
-static void
+static gboolean
 pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv)
 {
 	pidgin_blist_tooltip_destroy();
 	reset_tooltip();
+	return FALSE;
 }
 
 static gboolean 
