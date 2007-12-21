@@ -7912,6 +7912,7 @@ pidgin_conversations_init(void)
 		/* Set default tab colors */
 		GString *str = g_string_new(NULL);
 		GtkSettings *settings = gtk_settings_get_default();
+		GtkStyle *parent = gtk_rc_get_style_by_paths(settings, "tab-container.tab-label*", NULL, G_TYPE_NONE), *now;
 		struct {
 			const char *stylename;
 			const char *labelname;
@@ -7926,8 +7927,9 @@ pidgin_conversations_init(void)
 		};
 		int iter;
 		for (iter = 0; styles[iter].stylename; iter++) {
-			if (!gtk_rc_get_style_by_paths(settings, styles[iter].labelname, NULL, G_TYPE_NONE))
-				/* Apparently both ACTIVE and NORMAL are required */
+			now = gtk_rc_get_style_by_paths(settings, styles[iter].labelname, NULL, G_TYPE_NONE);
+			if (parent == now ||
+					(parent && now && parent->rc_style == now->rc_style)) {
 				g_string_append_printf(str, "style \"%s\" {\n"
 						"fg[ACTIVE] = \"%s\"\n"
 						"}\n"
@@ -7935,6 +7937,7 @@ pidgin_conversations_init(void)
 						styles[iter].stylename,
 						styles[iter].color,
 						styles[iter].labelname, styles[iter].stylename);
+			}
 		}
 		gtk_rc_parse_string(str->str);
 		g_string_free(str, TRUE);
@@ -9335,6 +9338,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 		gtkconv->tabby = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	else
 		gtkconv->tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_widget_set_name(gtkconv->tabby, "tab-container");
 
 	/* select the correct ordering for verticle tabs */
 	if (angle == 90) {
