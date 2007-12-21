@@ -2970,7 +2970,7 @@ static gboolean pidgin_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, gp
 	return FALSE;
 }
 
-static void pidgin_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer n)
+static gboolean pidgin_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer n)
 {
 	if (gtkblist->timeout) {
 		g_source_remove(gtkblist->timeout);
@@ -2988,6 +2988,7 @@ static void pidgin_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer n
 			pidgin_blist_collapse_contact_cb(NULL, gtkblist->mouseover_contact);
 		gtkblist->mouseover_contact = NULL;
 	}
+	return FALSE;
 }
 
 static void
