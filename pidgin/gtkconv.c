@@ -3392,7 +3392,8 @@ update_typing_message(PidginConversation *gtkconv, const char *message)
 		gtk_text_buffer_delete_mark(buffer, stmark);
 		gtk_text_buffer_delete_mark(buffer, enmark);
 		gtk_text_buffer_delete(buffer, &start, &end);
-	}
+	} else if (message && *message == '\n' && !*(message + 1))
+		message = NULL;
 
 	if (message) {
 		GtkTextIter iter;
@@ -3431,7 +3432,7 @@ update_typing_icon(PidginConversation *gtkconv)
 			g_source_remove(gtkconv->u.im->typing_timer);
 			gtkconv->u.im->typing_timer = 0;
 		}
-		update_typing_message(gtkconv, NULL);
+		update_typing_message(gtkconv, "\n");
 		return;
 	}
 
@@ -5068,7 +5069,9 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtk_text_buffer_create_tag(GTK_IMHTML(gtkconv->imhtml)->text_buffer, "TYPING-NOTIFICATION",
 			"foreground", "#888888",
 			"justification", GTK_JUSTIFY_LEFT,  /* XXX: RTL'ify */
-			"weight", PANGO_WEIGHT_BOLD, NULL);
+			"weight", PANGO_WEIGHT_BOLD,
+			"scale", PANGO_SCALE_SMALL,
+			NULL);
 
 	/* Setup the container for the tab. */
 	gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -5840,6 +5843,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		(type == PURPLE_CONV_TYPE_IM ? "displayed-im-msg" : "displayed-chat-msg"),
 		account, name, displaying, conv, flags);
 	g_free(displaying);
+	update_typing_message(gtkconv, NULL);
 }
 
 static void
