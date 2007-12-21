@@ -165,7 +165,7 @@ static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 static gboolean pidgin_userlist_motion_cb (GtkWidget *w, GdkEventMotion *event, PidginConversation *gtkconv);
-static void pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv);
+static gboolean pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv);
 static void hide_conv(PidginConversation *gtkconv, gboolean closetimer);
 
 static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
@@ -3442,11 +3442,11 @@ update_typing_icon(PidginConversation *gtkconv)
 		}
 		stock_id = PIDGIN_STOCK_ANIMATION_TYPING1;
 		tooltip = _("User is typing...");
-		message = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_name(conv));
+		message = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_title(conv));
 	} else {
 		stock_id = PIDGIN_STOCK_ANIMATION_TYPING5;
 		tooltip = _("User has typed something and stopped");
-		message = g_strdup_printf(_("\n%s has typed something and stopped"), purple_conversation_get_name(conv));
+		message = g_strdup_printf(_("\n%s has typed something and stopped"), purple_conversation_get_title(conv));
 		if (gtkconv->u.im->typing_timer != 0) {
 			g_source_remove(gtkconv->u.im->typing_timer);
 			gtkconv->u.im->typing_timer = 0;
