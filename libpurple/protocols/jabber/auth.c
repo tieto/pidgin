@@ -691,7 +691,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			int i;
 
 			challenge = xmlnode_get_attrib(xmlnode_get_child(query, "crammd5"), "challenge");
-			auth_hmac_md5(challenge, strlen(challenge), pw, strlen(pw), &digest);
+			auth_hmac_md5(challenge, strlen(challenge), pw, strlen(pw), digest);
 
 			/* Create the response query */
 			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
