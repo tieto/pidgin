@@ -812,7 +812,6 @@ static void clear_formatting_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
 static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 {
 	GtkWidget *menuitem;
-	GtkWidget *mi, *img;
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("Paste as Plain _Text"));
 	gtk_widget_show(menuitem);

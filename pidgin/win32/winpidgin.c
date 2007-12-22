@@ -467,7 +467,7 @@ static BOOL winpidgin_set_running(BOOL fail_if_running) {
 
 			return FALSE;
 		} else
-			printf("Error (%d) accessing \"pidgin_is_running\" mutex.\n", err);
+			printf("Error (%u) accessing \"pidgin_is_running\" mutex.\n", (UINT) err);
 	}
 	return TRUE;
 }
