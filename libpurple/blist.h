@@ -680,7 +680,8 @@ PurpleGroup *purple_buddy_get_group(PurpleBuddy *buddy);
  *
  * @param g The group
  *
- * @return A list of purple_accounts
+ * @return A GSList of accounts (which must be freed), or NULL if the group
+ *         has no accounts.
  */
 GSList *purple_group_get_accounts(PurpleGroup *g);
 
