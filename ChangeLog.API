@@ -5,6 +5,9 @@ version 2.4.0 (??/??/????):
 		Added:
 		* purple_certificate_add_ca_search_path. (Florian Quèze)
 		* purple_gai_strerror.
+		* purple_major_version, purple_minor_version,
+		  purple_micro_version variables are exported by version.h,
+		  giving the version of libpurple in use at runtime.
 
 	Pidgin:
 		Added:
