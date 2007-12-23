@@ -1228,6 +1228,9 @@ x509_tls_cached_peer_cert_changed(PurpleCertificateVerificationRequest *vrq)
 }
 
 static void
+x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq);
+
+static void
 x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 {
 	/* TODO: Looking this up by name over and over is expensive.
@@ -1268,8 +1271,8 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 	} else {
 		purple_debug_info("certificate/x509/tls_cached",
 				  "Peer cert did NOT match cached\n");
-		/* vrq now becomes the problem of cert_changed */
-		x509_tls_cached_peer_cert_changed(vrq);
+		/* vrq now becomes the problem of the user */
+		x509_tls_cached_unknown_peer(vrq);
 	}
 	
 	purple_certificate_destroy(cached_crt);
