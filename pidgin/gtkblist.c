@@ -535,12 +535,14 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 			if (node_alias && !g_utf8_collate(node_alias, a)) {
 				merges = g_list_append(merges, buddy);
 				i++;
+				g_free(node_alias);
+				break;
 			}
 			g_free(node_alias);
 		}
 	}
 	g_free(a);
-	
+
 	if (i > 1)
 	{
 		char *msg = g_strdup_printf(ngettext("You have %d contact named %s. Would you like to merge them?", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
