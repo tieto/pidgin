@@ -1228,6 +1228,9 @@ x509_tls_cached_peer_cert_changed(PurpleCertificateVerificationRequest *vrq)
 }
 
 static void
+x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq);
+
+static void
 x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 {
 	/* TODO: Looking this up by name over and over is expensive.
@@ -1268,8 +1271,8 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 	} else {
 		purple_debug_info("certificate/x509/tls_cached",
 				  "Peer cert did NOT match cached\n");
-		/* vrq now becomes the problem of cert_changed */
-		x509_tls_cached_peer_cert_changed(vrq);
+		/* vrq now becomes the problem of the user */
+		x509_tls_cached_unknown_peer(vrq);
 	}
 	
 	purple_certificate_destroy(cached_crt);
@@ -1280,7 +1283,9 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 /* For when we've never communicated with this party before */
 /* TODO: Need ways to specify possibly multiple problems with a cert, or at
    least  reprioritize them. For example, maybe the signature ought to be
-   checked BEFORE the hostname checking? */
+   checked BEFORE the hostname checking?
+   Stu thinks we should check the signature before the name, so we do now.
+   The above TODO still stands. */
 static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 {
@@ -1291,35 +1296,6 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	gchar *ca_id;
 
 	peer_crt = (PurpleCertificate *) chain->data;
-
-	/* First, check that the hostname matches */
-	if ( ! purple_certificate_check_subject_name(peer_crt,
-						     vrq->subject_name) ) {
-		gchar *sn = purple_certificate_get_subject_name(peer_crt);
-		gchar *msg;
-		
-		purple_debug_info("certificate/x509/tls_cached",
-				  "Name mismatch: Certificate given for %s "
-				  "has a name of %s\n",
-				  vrq->subject_name, sn);
-
-		/* Prompt the user to authenticate the certificate */
-		/* TODO: Provide the user with more guidance about why he is
-		   being prompted */
-		/* vrq will be completed by user_auth */
-		msg = g_strdup_printf(_("The certificate presented by \"%s\" "
-					"claims to be from \"%s\" instead.  "
-					"This could mean that you are not "
-					"connecting to the service you "
-					"believe you are."),
-				      vrq->subject_name, sn);
-				      
-		x509_tls_cached_user_auth(vrq,msg);
-
-		g_free(sn);
-		g_free(msg);
-		return;
-	} /* if (name mismatch) */
 
 	/* TODO: Figure out a way to check for a bad signature, as opposed to
 	   "not self-signed" */
@@ -1341,7 +1317,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 
 		g_free(msg);
 		return;
-	} /* if (name mismatch) */
+	} /* if (self signed) */
 	
 	/* Next, check that the certificate chain is valid */
 	if ( ! purple_certificate_check_signature_chain(chain) ) {
@@ -1439,6 +1415,35 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 						   PURPLE_CERTIFICATE_INVALID);
 		return;
 	} /* if (CA signature not good) */
+
+	/* Last, check that the hostname matches */
+	if ( ! purple_certificate_check_subject_name(peer_crt,
+						     vrq->subject_name) ) {
+		gchar *sn = purple_certificate_get_subject_name(peer_crt);
+		gchar *msg;
+		
+		purple_debug_info("certificate/x509/tls_cached",
+				  "Name mismatch: Certificate given for %s "
+				  "has a name of %s\n",
+				  vrq->subject_name, sn);
+
+		/* Prompt the user to authenticate the certificate */
+		/* TODO: Provide the user with more guidance about why he is
+		   being prompted */
+		/* vrq will be completed by user_auth */
+		msg = g_strdup_printf(_("The certificate presented by \"%s\" "
+					"claims to be from \"%s\" instead.  "
+					"This could mean that you are not "
+					"connecting to the service you "
+					"believe you are."),
+				      vrq->subject_name, sn);
+				      
+		x509_tls_cached_user_auth(vrq,msg);
+
+		g_free(sn);
+		g_free(msg);
+		return;
+	} /* if (name mismatch) */
 
 	/* If we reach this point, the certificate is good. */
 	/* Look up the local cache and store it there for future use */
