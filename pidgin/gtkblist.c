@@ -3312,7 +3312,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		/* Accounts with buddies in group */
 		accounts = purple_group_get_accounts(group);
 		for (; accounts != NULL;
-		     accounts = g_slist_remove_link(accounts, accounts)) {
+		     accounts = g_slist_delete_link(accounts, accounts)) {
 			PurpleAccount *account = accounts->data;
 			purple_notify_user_info_add_pair(user_info, _("Account"), purple_account_get_username(account));
 		}
