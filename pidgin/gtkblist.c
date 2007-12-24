@@ -409,6 +409,7 @@ static void gtk_blist_menu_join_cb(GtkWidget *w, PurpleChat *chat)
 static void gtk_blist_renderer_editing_cancelled_cb(GtkCellRenderer *renderer, PurpleBuddyList *list)
 {
 	editing_blist = FALSE;
+	g_object_set(G_OBJECT(renderer), "editable", FALSE, NULL);
 	pidgin_blist_refresh(list);
 }
 
