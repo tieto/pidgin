@@ -39,37 +39,12 @@
 #include "packet_parse.h"
 #include "utils.h"
 
-/* TODO: can't we use qsort here? */
-/* This implement quick sort algorithm (low->high) */
-static void _quick_sort(gint *numbers, gint left, gint right)
+static int _compare_guint32(const void *a,
+                            const void *b)
 {
-	gint pivot, l_hold, r_hold;
-
-	l_hold = left;
-	r_hold = right;
-	pivot = numbers[left];
-	while (left < right) {
-		while ((numbers[right] >= pivot) && (left < right))
-			right--;
-		if (left != right) {
-			numbers[left] = numbers[right];
-			left++;
-		}
-		while ((numbers[left] <= pivot) && (left < right))
-			left++;
-		if (left != right) {
-			numbers[right] = numbers[left];
-			right--;
-		}
-	}
-	numbers[left] = pivot;
-	pivot = left;
-	left = l_hold;
-	right = r_hold;
-	if (left < pivot)
-		_quick_sort(numbers, left, pivot - 1);
-	if (right > pivot)
-		_quick_sort(numbers, pivot + 1, right);
+	const guint32 *x = a;
+	const guint32 *y = b;
+	return (*x - *y);
 }
 
 static void _sort(guint32 *list)
@@ -77,7 +52,7 @@ static void _sort(guint32 *list)
 	gint i;
 	for (i = 0; list[i] < 0xffffffff; i++) {;
 	}
-	_quick_sort((gint *) list, 0, i - 1);
+	qsort (list, i, sizeof (guint32), _compare_guint32);
 }
 
 static void _qq_group_member_opt(PurpleConnection *gc, qq_group *group, gint operation, guint32 *members)
