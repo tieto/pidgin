@@ -170,6 +170,9 @@ msn_soap_error_cb(PurpleSslConnection *ssl, PurpleSslErrorType error,
 {
 	MsnSoapConnection *conn = data;
 
+	/* sslconn already frees the connection in case of error */
+	conn->ssl = NULL;
+
 	g_hash_table_remove(conn->session->soap_table, conn->host);
 }
 
