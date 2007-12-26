@@ -39,7 +39,7 @@ static char *ticket_domains[][2] = {
 	{"messengerclear.live.com", NULL},       /* Authentication for messenger. */
 	{"messenger.msn.com", "?id=507"},        /* Messenger website authentication. */
 	{"contacts.msn.com", "MBI"},             /* Authentication for the Contact server. */
-	{"messengersecure.live.com", "MBI_SSL"}, /* Unknown */
+	{"messengersecure.live.com", "MBI_SSL"}, /* Used for messenger.live.com */
 	{"spaces.live.com", "MBI"},              /* Authentication for the Windows Live Spaces */
 	{"livecontacts.live.com", "MBI"},        /* Live Contacts API, a simplified version of the Contacts SOAP service */
 	{"storage.live.com", "MBI"},             /* Storage REST API */
@@ -416,23 +416,28 @@ msn_nexus_get_token(MsnNexus *nexus, MsnAuthDomains id)
 	if (time(NULL) > nexus->tokens[id].expiry)
 		msn_nexus_update_token(nexus, id);
 
-	return g_hash_table_ref(nexus->tokens[id].token);
+	return nexus->tokens[id].token;
 }
 
-char *
-msn_nexus_get_token_str(MsnNexus *session, MsnAuthDomains id)
+const char *
+msn_nexus_get_token_str(MsnNexus *nexus, MsnAuthDomains id)
 {
-#if 0
+	static char buf[1024];
 	GHashTable *token = msn_nexus_get_token(nexus, id);
-	GString *token_str;
+	const char *msn_t;
+	const char *msn_p;
+	gint ret;
 
 	g_return_val_if_fail(token != NULL, NULL);
 
-	token_str = g_string_new(NULL);
-	g_hash_table_foreach(token, GHFunc func, token_str);
+	msn_t = g_hash_table_lookup(token, "t");
+	msn_p = g_hash_table_lookup(token, "p");
 
-	g_hash_table_unref (token);
-#endif
-	return NULL;
+	g_return_val_if_fail(msn_t != NULL, NULL);
+	g_return_val_if_fail(msn_p != NULL, NULL);
+
+	ret = g_snprintf(buf, sizeof(buf) - 1, "t=%s&amp;p=%s", msn_t, msn_p);
+	g_return_val_if_fail(ret != -1, NULL);
+
+	return buf;
 }
-

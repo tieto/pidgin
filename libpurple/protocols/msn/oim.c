@@ -217,7 +217,7 @@ void
 msn_oim_send_msg(MsnOim *oim)
 {
 	MsnOimSendReq *oim_request;
-	char *soap_body,*mspauth;
+	char *soap_body;
 	char *msg_body;
 
 	g_return_if_fail(oim != NULL);
@@ -225,16 +225,12 @@ msn_oim_send_msg(MsnOim *oim)
 	g_return_if_fail(oim_request != NULL);
 
 	purple_debug_info("MSNP14","sending OIM: %s\n", oim_request->oim_msg);
-	mspauth = g_strdup_printf("t=%s&amp;p=%s",
-		oim->session->passport_info.t,
-		oim->session->passport_info.p
-		);
 
 	/* if we got the challenge lock key, we compute it
 	 * else we go for the SOAP fault and resend it.
 	 */
 	if(oim->challenge == NULL){
-		purple_debug_info("MSNP14","no lock key challenge,wait for SOAP Fault and Resend\n");
+		purple_debug_info("MSNP14","no lock key challenge, wait for SOAP Fault and Resend\n");
 	}
 
 	msg_body = msn_oim_msg_to_str(oim, oim_request->oim_msg);
@@ -242,7 +238,7 @@ msn_oim_send_msg(MsnOim *oim)
 					oim_request->from_member,
 					oim_request->friendname,
 					oim_request->to_member,
-					mspauth,
+		msn_nexus_get_token_str(oim->session->nexus, MSN_AUTH_LIVE_SECURE),
 					MSNP15_WLM_PRODUCT_ID,
 					oim->challenge ? oim->challenge : "",
 					oim->send_seq,
@@ -258,7 +254,6 @@ msn_oim_send_msg(MsnOim *oim)
 		oim->send_seq++;
 	}
 
-	g_free(mspauth);
 	g_free(msg_body);
 	g_free(soap_body);
 }

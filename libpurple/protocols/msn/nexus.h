@@ -32,7 +32,7 @@ typedef enum
 	MSN_AUTH_MESSENGER     = 0,
 	MSN_AUTH_MESSENGER_WEB = 1,
 	MSN_AUTH_CONTACTS      = 2,
-	MSN_AUTH_LIVE_UNKNOWN  = 3,
+	MSN_AUTH_LIVE_SECURE   = 3,
 	MSN_AUTH_SPACES        = 4,
 	MSN_AUTH_LIVE_CONTACTS = 5,
 	MSN_AUTH_STORAGE       = 6
@@ -134,7 +134,7 @@ void msn_nexus_connect(MsnNexus *nexus);
 MsnNexus *msn_nexus_new(MsnSession *session);
 void msn_nexus_destroy(MsnNexus *nexus);
 GHashTable *msn_nexus_get_token(MsnNexus *session, MsnAuthDomains id);
-char *msn_nexus_get_token_str(MsnNexus *session, MsnAuthDomains id);
+const char *msn_nexus_get_token_str(MsnNexus *session, MsnAuthDomains id);
 
 #endif /* _MSN_NEXUS_H_ */
 

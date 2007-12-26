@@ -81,7 +81,7 @@
 #define MSN_OIM_SEND_TEMPLATE "<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
 "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 	"<soap:Header>"\
-		"<From memberName=\"%s\" friendlyName=\"%s\" xml:lang=\"en-US\" proxy=\"MSNMSGR\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\" msnpVer=\"MSNP14\" buildVer=\"8.0.0792\"/>"\
+		"<From memberName=\"%s\" friendlyName=\"%s\" xml:lang=\"en-US\" proxy=\"MSNMSGR\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\" msnpVer=\"MSNP15\" buildVer=\"8.1.0178\"/>"\
 		"<To memberName=\"%s\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\"/>"\
 		"<Ticket passport=\"%s\" appid=\"%s\" lockkey=\"%s\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\"/>"\
 		"<Sequence xmlns=\"http://schemas.xmlsoap.org/ws/2003/03/rm\">"\
