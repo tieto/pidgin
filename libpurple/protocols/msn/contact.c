@@ -1370,6 +1370,7 @@ void
 msn_add_group(MsnSession *session, MsnCallbackState *state, const char* group_name)
 {
 	char *body = NULL;
+	char *escaped_group_name = NULL;
 
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(group_name != NULL);
@@ -1386,9 +1387,11 @@ msn_add_group(MsnSession *session, MsnCallbackState *state, const char* group_na
 	/* escape group name's html special chars so it can safely be sent
 	* in a XML SOAP request
 	*/
-	body = g_markup_printf_escaped(MSN_GROUP_ADD_TEMPLATE,
-	                               msn_contact_get_token(session->contact),
-	                               group_name);
+	escaped_group_name = g_markup_escape_text(group_name, -1);
+	body = g_strdup_printf(MSN_GROUP_ADD_TEMPLATE,
+	                       msn_contact_get_token(session->contact),
+	                       escaped_group_name);
+	g_free(escaped_group_name);
 
 	msn_soap_message_send(session,
 		msn_soap_message_new(MSN_GROUP_ADD_SOAP_ACTION,
@@ -1451,6 +1454,7 @@ msn_contact_rename_group(MsnSession *session, const char *old_group_name, const 
 	gchar *body = NULL;
 	const gchar * guid;
 	MsnCallbackState *state;
+	char *escaped_group_name;
 	
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->userlist != NULL);
@@ -1474,9 +1478,11 @@ msn_contact_rename_group(MsnSession *session, const char *old_group_name, const 
 
 	msn_callback_state_set_action(state, MSN_RENAME_GROUP);
 	
-	body = g_markup_printf_escaped(MSN_GROUP_RENAME_TEMPLATE,
-	                               msn_contact_get_token(session->contact),
-	                               guid, new_group_name);
+	escaped_group_name = g_markup_escape_text(new_group_name, -1);
+	body = g_strdup_printf(MSN_GROUP_RENAME_TEMPLATE,
+	                       msn_contact_get_token(session->contact),
+	                       guid, escaped_group_name);
+	g_free(escaped_group_name);
 	
 	msn_soap_message_send(session,
 		msn_soap_message_new(MSN_GROUP_RENAME_SOAP_ACTION,
