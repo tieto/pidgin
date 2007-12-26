@@ -204,7 +204,7 @@ group_error_helper(MsnSession *session, const char *msg, const char *group_id, i
  **************************************************************************/
 
 void
-msn_got_login_params(MsnSession *session, const char *login_params)
+msn_got_login_params(MsnSession *session, const char *ticket, const char *response)
 {
 	MsnCmdProc *cmdproc;
 
@@ -212,7 +212,7 @@ msn_got_login_params(MsnSession *session, const char *login_params)
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_END);
 
-	msn_cmdproc_send(cmdproc, "USR", "TWN S %s", login_params);
+	msn_cmdproc_send(cmdproc, "USR", "SSO S %s %s", ticket, response);
 }
 
 static void
@@ -221,8 +221,8 @@ cvr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleAccount *account;
 
 	account = cmdproc->session->account;
-	msn_cmdproc_send(cmdproc, "USR", "TWN I %s",
-					 purple_account_get_username(account));
+
+	msn_cmdproc_send(cmdproc, "USR", "SSO I %s", purple_account_get_username(account));
 }
 
 static void
@@ -248,32 +248,14 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 //		msn_cmdproc_send(cmdproc, "SYN", "%s", "0");
 		//TODO we should use SOAP contact to fetch contact list
 	}
-	else if (!g_ascii_strcasecmp(cmd->params[1], "TWN"))
+	else if (!g_ascii_strcasecmp(cmd->params[1], "SSO"))
 	{
-		/* Passport authentication */
-		char **elems, **cur, **tokens;
+		/* RPS authentication */
 
 		session->nexus = msn_nexus_new(session);
 
-		/* Parse the challenge data. */
-		session->nexus->challenge_data_str = g_strdup(cmd->params[3]);
-		elems = g_strsplit(cmd->params[3], ",", 0);
-
-		for (cur = elems; *cur != NULL; cur++)
-		{
-			tokens = g_strsplit(*cur, "=", 2);
-			if(tokens[0] && tokens[1])
-			{
-				purple_debug_info("MSNP14","challenge %p,key:%s,value:%s\n",
-									session->nexus->challenge_data,tokens[0],tokens[1]);
-				g_hash_table_insert(session->nexus->challenge_data, tokens[0], tokens[1]);
-				/* Don't free each of the tokens, only the array. */
-				g_free(tokens);
-			} else
-				g_strfreev(tokens);
-		}
-
-		g_strfreev(elems);
+		session->nexus->policy = g_strdup(cmd->params[3]);
+		session->nexus->nonce = g_strdup(cmd->params[4]);
 
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_START);
 
