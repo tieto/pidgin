@@ -161,6 +161,8 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 					xmlnode *challengeNode = msn_soap_xml_get(faultNode,
 						"detail/LockKeyChallenge");
 
+					g_free(faultcode_str);
+
 					if (challengeNode == NULL) {
 						if (oim->challenge) {
 							g_free(oim->challenge);

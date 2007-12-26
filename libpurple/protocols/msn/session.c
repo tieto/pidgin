@@ -100,7 +100,7 @@ msn_session_destroy(MsnSession *session)
 	if (session->user != NULL)
 		msn_user_destroy(session->user);
 
-	if (session->soap_table)
+	if (session->soap_table != NULL)
 		g_hash_table_destroy(session->soap_table);
 
 	if (session->soap_cleanup_handle)

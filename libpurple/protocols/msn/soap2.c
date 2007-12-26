@@ -229,6 +229,7 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 				}
 
 				g_free(faultdata);
+				msn_soap_message_destroy(response);
 				return TRUE;
 			} else if (g_str_equal(faultdata, "wsse:FailedAuthentication")) {
 				xmlnode *reason = xmlnode_get_child(body, "faultstring");
@@ -240,6 +241,7 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 
 				g_free(reasondata);
 				g_free(faultdata);
+				msn_soap_message_destroy(response);
 				return FALSE;
 			}
 
@@ -252,6 +254,7 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 		conn->current_request = NULL;
 		request->cb(request->message, response,
 			request->cb_data);
+		msn_soap_message_destroy(response);
 		msn_soap_request_destroy(request);
 	}
 

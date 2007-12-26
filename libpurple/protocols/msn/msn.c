@@ -927,7 +927,10 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	}
 
 	msn_import_html(message, &msgformat, &msgtext);
-	if(msn_user_is_online(account, who)||
+	/* this is incorrect, we should try to initiate a connection to the
+	   buddy first, and only falls back if that fails. Otherwise we can
+	   only send offline message to invisible buddies */
+	if (msn_user_is_online(account, who)||
 		msn_user_is_yahoo(account, who)){
 		/*User online,then send Online Instant Message*/
 
@@ -994,7 +997,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		}
 
 		msn_message_destroy(msg);
-	}else	{
+	} else {
 		/*send Offline Instant Message,only to MSN Passport User*/
 		MsnSession *session;
 		char *friendname;
@@ -1005,8 +1008,11 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		friendname = msn_encode_mime(account->username);
 		msn_oim_prep_send_msg_info(session->oim,
 			purple_account_get_username(account),
-			friendname, who,	message);
+			friendname, who, msgformat);
 		msn_oim_send_msg(session->oim);
+
+		g_free(msgformat);
+		g_free(msgtext);
 		g_free(friendname);
 	}
 

@@ -246,18 +246,19 @@ nexus_parse_response(MsnNexus *nexus, xmlnode *xml)
 		xmlnode *expires = msn_soap_xml_get(node, "LifeTime/Expires");
 
 		if (token) {
-			char *token_str = xmlnode_get_data(token);
+			char *token_str, *expiry_str;
 			const char *id_str = xmlnode_get_attrib(token, "Id");
 			char **elems, **cur, **tokens;
 			int id;
 
-			if (token_str == NULL) continue;
 			if (id_str == NULL) continue;
 
 			id = atol(id_str + 7) - 1;	/* 'Compact#' or 'PPToken#' */
 			if (id >= nexus->token_len)
 				continue;	/* Where did this come from? */
 
+			token_str = xmlnode_get_data(token);
+			if (token_str == NULL) continue;
 			elems = g_strsplit(token_str, "&", 0);
 
 			for (cur = elems; *cur != NULL; cur++){
@@ -271,13 +272,17 @@ nexus_parse_response(MsnNexus *nexus, xmlnode *xml)
 			g_strfreev(elems);
 
 			if (secret)
-				nexus->tokens[id].secret = g_strdup(xmlnode_get_data(secret));
+				nexus->tokens[id].secret = xmlnode_get_data(secret);
 			else
 				nexus->tokens[id].secret = NULL;
 
 			/* Yay for MS using ISO-8601 */
-			nexus->tokens[id].expiry = purple_str_to_time(xmlnode_get_data(expires),
-			                                              FALSE, NULL, NULL, NULL);
+			expiry_str = xmlnode_get_data(expires);
+
+			nexus->tokens[id].expiry = purple_str_to_time(expiry_str,
+				FALSE, NULL, NULL, NULL);
+
+			g_free(expiry_str);
 
 			purple_debug_info("msnp15", "Updated ticket for domain '%s'\n",
 			                  ticket_domains[id][SSO_VALID_TICKET_DOMAIN]);
