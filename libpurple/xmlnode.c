@@ -345,6 +345,7 @@ xmlnode_free(xmlnode *node)
 	g_free(node->name);
 	g_free(node->data);
 	g_free(node->xmlns);
+	g_free(node->prefix);
 
 	if(node->namespace_map)
 		g_hash_table_destroy(node->namespace_map);
