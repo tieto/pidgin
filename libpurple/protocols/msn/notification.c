@@ -343,7 +343,8 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 */
 	msn_cmdproc_send(cmdproc, "CVR",
 //					 "0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %s",
-					"0x0804 winnt 5.1 i386 MSNMSGR 8.0.0792 msmsgs %s",
+//					"0x0804 winnt 5.1 i386 MSNMSGR 8.0.0792 msmsgs %s",
+					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1288.816 msmsgs %s",
 					 purple_account_get_username(account));
 }
 
@@ -550,7 +551,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	context = purple_cipher_context_new(cipher, NULL);
 	purple_cipher_context_append(context, (const guchar *)cmd->params[1],
 							   strlen(cmd->params[1]));
-	challenge_resp = MSNP13_WLM_PRODUCT_KEY;
+	challenge_resp = MSNP15_WLM_PRODUCT_KEY;
 
 	purple_cipher_context_append(context, (const guchar *)challenge_resp,
 							   strlen(challenge_resp));
@@ -565,7 +566,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	msn_handle_chl(cmd->params[1], buf);
 #endif
 //	purple_debug_info("MSNP14","<<challenge:{%s}:{%s}\n",cmd->params[1],buf);
-	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", MSNP13_WLM_PRODUCT_ID);
+	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", MSNP15_WLM_PRODUCT_ID);
 
 	msn_transaction_set_payload(trans, buf, 32);
 

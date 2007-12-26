@@ -77,7 +77,7 @@
 
 #define MSN_OIM_SEND_HOST	"ows.messenger.msn.com"
 #define MSN_OIM_SEND_URL	"/OimWS/oim.asmx"
-#define MSN_OIM_SEND_SOAP_ACTION	"http://messenger.msn.com/ws/2004/09/oim/Store"
+#define MSN_OIM_SEND_SOAP_ACTION	"http://messenger.live.com/ws/2006/09/oim/Store2"
 #define MSN_OIM_SEND_TEMPLATE "<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
 "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 	"<soap:Header>"\

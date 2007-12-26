@@ -243,7 +243,7 @@ msn_oim_send_msg(MsnOim *oim)
 					oim_request->friendname,
 					oim_request->to_member,
 					mspauth,
-					MSNP13_WLM_PRODUCT_ID,
+					MSNP15_WLM_PRODUCT_ID,
 					oim->challenge ? oim->challenge : "",
 					oim->send_seq,
 					msg_body);
@@ -472,7 +472,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 	xmlnode *iu_node;
 	MsnSession *session = oim->session;
 
-	purple_debug_info("MSNP14:OIM", "%s", xmlmsg);
+	purple_debug_info("MSNP14:OIM", "%s\n", xmlmsg);
 
 	node = xmlnode_from_str(xmlmsg, -1);
 	if (strcmp(node->name, "MD") != 0) {
