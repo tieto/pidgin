@@ -1008,7 +1008,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		friendname = msn_encode_mime(account->username);
 		msn_oim_prep_send_msg_info(session->oim,
 			purple_account_get_username(account),
-			friendname, who, msgformat);
+			friendname, who, msgtext);
 		msn_oim_send_msg(session->oim);
 
 		g_free(msgformat);
