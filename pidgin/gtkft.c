@@ -156,14 +156,14 @@ get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 	}
 
 	if (time_remaining != NULL) {
-		if (purple_xfer_get_size(xfer) == 0) {
-			*time_remaining = g_strdup(_("Unknown"));
-		}
-		else if (purple_xfer_is_completed(xfer)) {
+		if (purple_xfer_is_completed(xfer)) {
 			*time_remaining = g_strdup(_("Finished"));
 		}
 		else if (purple_xfer_is_canceled(xfer)) {
 			*time_remaining = g_strdup(_("Canceled"));
+		}
+		else if (purple_xfer_get_size(xfer) == 0 || (kb_sent > 0 && kbps == 0)) {
+			*time_remaining = g_strdup(_("Unknown"));
 		}
 		else if (kb_sent <= 0) {
 			*time_remaining = g_strdup(_("Waiting for transfer to begin"));
