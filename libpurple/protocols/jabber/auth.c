@@ -1077,10 +1077,12 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 		}
 	}
 	/* If we've negotiated a security layer, we need to enable it */
-	sasl_getprop(js->sasl, SASL_SSF, &x);
-	if (*(int *)x > 0) {
-		sasl_getprop(js->sasl, SASL_MAXOUTBUF, &x);
-		js->sasl_maxbuf = *(int *)x;
+	if (js->sasl) {
+		sasl_getprop(js->sasl, SASL_SSF, &x);
+		if (*(int *)x > 0) {
+			sasl_getprop(js->sasl, SASL_MAXOUTBUF, &x);
+			js->sasl_maxbuf = *(int *)x;
+		}
 	}
 #endif
 
