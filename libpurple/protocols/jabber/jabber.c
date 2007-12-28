@@ -390,7 +390,7 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 
 static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer timeout) 
 {
-	g_source_remove(GPOINTER_TO_INT(timeout));
+	purple_timeout_remove(GPOINTER_TO_INT(timeout));
 }
 
 static gboolean jabber_pong_timeout(PurpleConnection *gc)
