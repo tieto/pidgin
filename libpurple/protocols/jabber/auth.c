@@ -396,24 +396,6 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				g_free(enc_out);
 			}
 		}
-		
-		if (mech && (strcmp(mech, "DIGEST-MD5") == 0)) {
-			/* CYRUS-SASL's DIGEST-MD5 and Java's DIGEST-MD5 are mutually incompatible because of different interpretations of RFC2831.
-			 * This means that if we are using SASL and connecting to a Java-based server such as OpenFire, we will receive an authentication
-			 * failure if that server offers DIGEST-MD5 in such a way that SASL chooses it as the best mechanism for us.
-			 *
-			 * However, we implement our own DIGEST-MD5 for use when we're compiled without SASL support, and that implementation
-			 * works correctly. Therefore, if SASL chooses DIGEST-MD5, we switch over to our own implementation.
-			 * jabber_auth_handle_challenge() will note the auth_type and take it from there.
-			 *
-			 * SASL would change state to SASL_OK after when handling the challenge; we do so immediately to avoid an error later.
-			 */
-			js->auth_type = JABBER_AUTH_DIGEST_MD5;
-			js->sasl_state = SASL_OK;
-			sasl_dispose(&js->sasl);
-			js->sasl = NULL;
-		}
-
 		jabber_send(js, auth);
 		xmlnode_free(auth);
 	} else {
