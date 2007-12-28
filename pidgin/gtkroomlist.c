@@ -356,8 +356,6 @@ pidgin_roomlist_paint_tooltip(GtkWidget *widget, gpointer user_data)
 	GtkTextDirection dir = gtk_widget_get_direction(GTK_WIDGET(grl->tree));
 
 	style = grl->tipwindow->style;
-	gtk_paint_flat_box(style, grl->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-			NULL, grl->tipwindow, "tooltip", 0, 0, -1, -1);
 
 	max_text_width = 0;
 

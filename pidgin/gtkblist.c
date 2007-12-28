@@ -2659,8 +2659,6 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 		return FALSE;
 
 	style = gtkblist->tipwindow->style;
-	gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-			NULL, gtkblist->tipwindow, "tooltip", 0, 0, -1, -1);
 
 	max_text_width = 0;
 	max_avatar_width = 0;
@@ -2707,6 +2705,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
 				                0, 0, TOOLTIP_BORDER, current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
 		}
+
 		if(td->avatar) {
 			if (dir == GTK_TEXT_DIR_RTL)
 				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL,
@@ -2717,7 +2716,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 						current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
 		}
 
-		if (!td->avatar_is_prpl_icon)
+		if (!td->avatar_is_prpl_icon && td->prpl_icon)
 			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->prpl_icon,
 					0, 0,
 					prpl_col,
@@ -2791,6 +2790,11 @@ pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, i
 {
 	PurpleBlistNode *node = data;
 	int width, height;
+
+	if (gtkblist->tooltipdata) {
+		gtkblist->tipwindow = NULL;
+		pidgin_blist_destroy_tooltip_data();
+	}
 
 	gtkblist->tipwindow = widget;
 	if(PURPLE_BLIST_NODE_IS_CHAT(node) ||
