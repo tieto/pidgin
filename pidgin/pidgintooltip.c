@@ -43,15 +43,22 @@ typedef struct
 {
 	GtkWidget *widget;
 	gpointer userdata;
-	PidginTooltipCreateForTree create_tooltip;
 	PidginTooltipPaint paint_tooltip;
-	GtkTreePath *path;
+	union {
+		struct {
+			PidginTooltipCreateForTree create_tooltip;
+			GtkTreePath *path;
+		} treeview;
+		struct {
+			PidginTooltipCreate create_tooltip;
+		} widget;
+	} common;
 } PidginTooltipData;
 
 static void
 destroy_tooltip_data(PidginTooltipData *data)
 {
-	gtk_tree_path_free(data->path);
+	gtk_tree_path_free(data->common.treeview.path);
 	g_free(data);
 }
 
@@ -70,8 +77,11 @@ void pidgin_tooltip_destroy()
 static gboolean
 pidgin_tooltip_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-	if (pidgin_tooltip.paint_tooltip)
+	if (pidgin_tooltip.paint_tooltip) {
+		gtk_paint_flat_box(widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+				NULL, widget, "tooltip", 0, 0, -1, -1);
 		pidgin_tooltip.paint_tooltip(widget, data);
+	}
 	return FALSE;
 }
 
@@ -184,12 +194,33 @@ void pidgin_tooltip_show(GtkWidget *widget, gpointer userdata,
 static void
 reset_data_treepath(PidginTooltipData *data)
 {
-	gtk_tree_path_free(data->path);
-	data->path = NULL;
+	gtk_tree_path_free(data->common.treeview.path);
+	data->common.treeview.path = NULL;
 }
 
 static void
 pidgin_tooltip_draw(PidginTooltipData *data)
+{
+	GtkWidget *tipwindow;
+	int w, h;
+
+	pidgin_tooltip_destroy();
+
+	pidgin_tooltip.widget = gtk_widget_get_toplevel(data->widget);
+	pidgin_tooltip.tipwindow = tipwindow = setup_tooltip_window();
+	pidgin_tooltip.paint_tooltip = data->paint_tooltip;
+
+	if (!data->common.widget.create_tooltip(tipwindow, data->userdata, &w, &h)) {
+		if (tipwindow == pidgin_tooltip.tipwindow)
+			pidgin_tooltip_destroy();
+		return;
+	}
+
+	setup_tooltip_window_position(data->userdata, w, h);
+}
+
+static void
+pidgin_tooltip_draw_tree(PidginTooltipData *data)
 {
 	GtkWidget *tipwindow;
 	GtkTreePath *path = NULL;
@@ -203,13 +234,13 @@ pidgin_tooltip_draw(PidginTooltipData *data)
 		return;
 	}
 
-	if (data->path) {
-		if (gtk_tree_path_compare(data->path, path) == 0) {
+	if (data->common.treeview.path) {
+		if (gtk_tree_path_compare(data->common.treeview.path, path) == 0) {
 			gtk_tree_path_free(path);
 			return;
 		}
-		gtk_tree_path_free(data->path);
-		data->path = NULL;
+		gtk_tree_path_free(data->common.treeview.path);
+		data->common.treeview.path = NULL;
 	}
 
 	pidgin_tooltip_destroy();
@@ -218,24 +249,29 @@ pidgin_tooltip_draw(PidginTooltipData *data)
 	pidgin_tooltip.tipwindow = tipwindow = setup_tooltip_window();
 	pidgin_tooltip.paint_tooltip = data->paint_tooltip;
 
-	if (!data->create_tooltip(tipwindow, path, data->userdata, &w, &h)) {
-		pidgin_tooltip_destroy();
+	if (!data->common.treeview.create_tooltip(tipwindow, path, data->userdata, &w, &h)) {
+		if (tipwindow == pidgin_tooltip.tipwindow)
+			pidgin_tooltip_destroy();
 		gtk_tree_path_free(path);
 		return;
 	}
 
 	setup_tooltip_window_position(data->userdata, w, h);
 
-	data->path = path;
-	g_signal_connect_swapped(G_OBJECT(tipwindow), "destroy",
+	data->common.treeview.path = path;
+	g_signal_connect_swapped(G_OBJECT(pidgin_tooltip.tipwindow), "destroy",
 			G_CALLBACK(reset_data_treepath), data);
 }
 
 static gboolean
 pidgin_tooltip_timeout(gpointer data)
 {
+	PidginTooltipData *tdata = data;
 	pidgin_tooltip.timeout = 0;
-	pidgin_tooltip_draw(data);
+	if (GTK_IS_TREE_VIEW(tdata->widget))
+		pidgin_tooltip_draw_tree(data);
+	else
+		pidgin_tooltip_draw(data);
 	return FALSE;
 }
 
@@ -276,7 +312,7 @@ row_motion_cb(GtkWidget *tv, GdkEventMotion *event, gpointer userdata)
 }
 
 static gboolean
-row_leave_cb(GtkWidget *tv, GdkEvent *event, gpointer userdata)
+widget_leave_cb(GtkWidget *tv, GdkEvent *event, gpointer userdata)
 {
 	pidgin_tooltip_destroy();
 	return FALSE;
@@ -288,12 +324,40 @@ gboolean pidgin_tooltip_setup_for_treeview(GtkWidget *tree, gpointer userdata,
 	PidginTooltipData *tdata = g_new0(PidginTooltipData, 1);
 	tdata->widget = tree;
 	tdata->userdata = userdata;
-	tdata->create_tooltip = create_tooltip;
+	tdata->common.treeview.create_tooltip = create_tooltip;
 	tdata->paint_tooltip = paint_tooltip;
 
 	g_signal_connect(G_OBJECT(tree), "motion-notify-event", G_CALLBACK(row_motion_cb), tdata);
-	g_signal_connect(G_OBJECT(tree), "leave-notify-event", G_CALLBACK(row_leave_cb), NULL);
+	g_signal_connect(G_OBJECT(tree), "leave-notify-event", G_CALLBACK(widget_leave_cb), NULL);
 	g_signal_connect_swapped(G_OBJECT(tree), "destroy", G_CALLBACK(destroy_tooltip_data), tdata);
+	return TRUE;
+}
+
+static gboolean
+widget_motion_cb(GtkWidget *widget, GdkEvent *event, gpointer data)
+{
+	int delay = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay");
+
+	pidgin_tooltip_destroy();
+	if (delay == 0)
+		return FALSE;
+
+	pidgin_tooltip.timeout = g_timeout_add(delay, (GSourceFunc)pidgin_tooltip_timeout, data);
+	return FALSE;
+}
+
+gboolean pidgin_tooltip_setup_for_widget(GtkWidget *widget, gpointer userdata,
+		PidginTooltipCreate create_tooltip, PidginTooltipPaint paint_tooltip)
+{
+	PidginTooltipData *wdata = g_new0(PidginTooltipData, 1);
+	wdata->widget = widget;
+	wdata->userdata = userdata;
+	wdata->common.widget.create_tooltip = create_tooltip;
+	wdata->paint_tooltip = paint_tooltip;
+
+	g_signal_connect(G_OBJECT(widget), "motion-notify-event", G_CALLBACK(widget_motion_cb), wdata);
+	g_signal_connect(G_OBJECT(widget), "leave-notify-event", G_CALLBACK(widget_leave_cb), NULL);
+	g_signal_connect_swapped(G_OBJECT(widget), "destroy", G_CALLBACK(g_free), wdata);
 	return TRUE;
 }
 

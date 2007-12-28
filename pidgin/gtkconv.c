@@ -67,6 +67,7 @@
 #include "gtkthemes.h"
 #include "gtkutils.h"
 #include "pidginstock.h"
+#include "pidgintooltip.h"
 
 #include "gtknickcolors.h"
 
@@ -164,8 +165,6 @@ static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields
 static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
 static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
-static gboolean pidgin_userlist_motion_cb (GtkWidget *w, GdkEventMotion *event, PidginConversation *gtkconv);
-static gboolean pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv);
 static void hide_conv(PidginConversation *gtkconv, gboolean closetimer);
 
 static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
@@ -4434,6 +4433,36 @@ setup_chat_topic(PidginConversation *gtkconv, GtkWidget *vbox)
 	}
 }
 
+static gboolean
+pidgin_conv_userlist_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
+		gpointer userdata, int *w, int *h)
+{
+	PidginConversation *gtkconv = userdata;
+	GtkTreeIter iter;
+	GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkconv->u.chat->list));
+	PurpleConversation *conv = gtkconv->active_conv;
+	PurpleBlistNode *node;
+	PurplePluginProtocolInfo *prpl_info;
+	PurpleAccount *account = purple_conversation_get_account(conv);
+	char *who = NULL;
+
+	if (account->gc == NULL)
+		return FALSE;
+
+	if (!gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path))
+		return FALSE;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+	node = (PurpleBlistNode*)(purple_find_buddy(conv->account, who));
+	if (node && prpl_info && (prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME))
+		pidgin_blist_draw_tooltip(node, gtkconv->infopane);
+
+	g_free(who);
+	return FALSE;
+}
+
 static void
 setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 {
@@ -4488,13 +4517,12 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	g_signal_connect(G_OBJECT(list), "button_press_event",
 					 G_CALLBACK(right_click_chat_cb), gtkconv);
-	g_signal_connect(G_OBJECT(list), "motion-notify-event",
-					 G_CALLBACK(pidgin_userlist_motion_cb), gtkconv);
-	g_signal_connect(G_OBJECT(list), "leave-notify-event",
-					 G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
 	g_signal_connect(G_OBJECT(list), "popup-menu",
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), gtkconv);
 	g_signal_connect(G_OBJECT(lbox), "size-allocate", G_CALLBACK(lbox_size_allocate_cb), gtkconv);
+
+	pidgin_tooltip_setup_for_treeview(list, gtkconv,
+			pidgin_conv_userlist_create_tooltip, NULL);
 
 	rend = gtk_cell_renderer_text_new();
 	g_object_set(rend,
@@ -4531,32 +4559,12 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 	gtk_container_add(GTK_CONTAINER(sw), list);
 }
 
-/* Stuff used to display tooltips on the infopane */
-static struct {
-	int timeout;
-	PidginConversation *gtkconv;   /* This is the Pidgin conversation that
-	                                  triggered the tooltip */
-	int userlistx;
-	int userlisty;
-} tooltip;
-
-static void
-reset_tooltip()
-{
-	if (tooltip.timeout != 0) {
-		g_source_remove(tooltip.timeout);
-		tooltip.timeout = 0;
-	}
-	tooltip.gtkconv = NULL;
-}
-
 static gboolean
-pidgin_conv_tooltip_timeout(PidginConversation *gtkconv)
+pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int *h)
 {
 	PurpleBlistNode *node = NULL;
 	PurpleConversation *conv;
-
-	g_return_val_if_fail (tooltip.gtkconv == gtkconv, FALSE);
+	PidginConversation *gtkconv = userdata;
 
 	conv = gtkconv->active_conv;
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
@@ -4579,103 +4587,6 @@ pidgin_conv_tooltip_timeout(PidginConversation *gtkconv)
 	return FALSE;
 }
 
-static gboolean
-pidgin_conv_leave_cb (GtkWidget *w, GdkEventCrossing *e, PidginConversation *gtkconv)
-{
-	pidgin_blist_tooltip_destroy();
-	reset_tooltip();
-	return FALSE;
-}
-
-static gboolean 
-pidgin_conv_motion_cb (GtkWidget *infopane, GdkEventMotion *event, PidginConversation *gtkconv)
-{
-	int delay = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay");
-
-	pidgin_blist_tooltip_destroy();
-	if (delay == 0)
-		return FALSE;
-
-	if (tooltip.timeout != 0)
-		g_source_remove(tooltip.timeout);
-
-	tooltip.timeout = g_timeout_add(delay, (GSourceFunc)pidgin_conv_tooltip_timeout, gtkconv);
-	tooltip.gtkconv = gtkconv;
-	return FALSE;
-}
-
-static gboolean
-pidgin_userlist_tooltip_timeout(PidginConversation *gtkconv)
-{
-	PurplePluginProtocolInfo *prpl_info;
-	PurpleConversation *conv = gtkconv->active_conv;
-	PidginChatPane *gtkchat;
-	PurpleBlistNode *node = NULL;
-	PurpleAccount *account;
-	GtkTreePath *path;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	GtkTreeViewColumn *column;
-	gchar *who;
-	int x, y;
-
-	gtkchat = gtkconv->u.chat;
-	account = purple_conversation_get_account(conv);
-
-	if (account->gc == NULL)
-		return FALSE;
-
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
-
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
-
-	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(gtkchat->list),
-								  tooltip.userlistx, tooltip.userlisty, &path, &column, &x, &y))
-		return FALSE;
-
-	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
-	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
-
-	node = (PurpleBlistNode*)(purple_find_buddy(conv->account, who));
-	if (node && prpl_info && (prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME))
-		pidgin_blist_draw_tooltip(node, gtkconv->infopane);
-
-	g_free(who);
-	gtk_tree_path_free(path);
-
-
-	return FALSE;
-}
-
-static gboolean
-pidgin_userlist_motion_cb (GtkWidget *w, GdkEventMotion *event, PidginConversation *gtkconv)
-{
-	PurpleConversation *conv;
-	PurpleAccount *account;
-	int delay = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay");
-	
-	pidgin_blist_tooltip_destroy();
-	if (delay == 0)
-		return FALSE;
-
-	if (tooltip.timeout != 0)
-		g_source_remove(tooltip.timeout);
-	tooltip.timeout = 0;
-
-	conv = gtkconv->active_conv;
-	account = purple_conversation_get_account(conv);
-
-	if (account->gc == NULL)
-		return FALSE;
-
-	tooltip.timeout = g_timeout_add(delay, (GSourceFunc)pidgin_userlist_tooltip_timeout, gtkconv);
-	tooltip.gtkconv = gtkconv;
-	tooltip.userlistx = event->x;
-	tooltip.userlisty = event->y;
-
-	return FALSE;
-}
- 
 static GtkWidget *
 setup_common_pane(PidginConversation *gtkconv)
 {
@@ -4705,10 +4616,8 @@ setup_common_pane(PidginConversation *gtkconv)
 	g_signal_connect(G_OBJECT(event_box), "button-press-event",
 	                 G_CALLBACK(infopane_press_cb), gtkconv);
 
-	g_signal_connect(G_OBJECT(event_box), "motion-notify-event", 
-			G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
-	g_signal_connect(G_OBJECT(event_box), "leave-notify-event", 
-			G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
+	pidgin_tooltip_setup_for_widget(event_box, gtkconv,
+		pidgin_conv_create_tooltip, NULL);
 
 	gtkconv->infopane = gtk_cell_view_new();
 	gtkconv->infopane_model = gtk_list_store_new(CONV_NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, GDK_TYPE_PIXBUF, GDK_TYPE_PIXBUF);
@@ -5213,9 +5122,6 @@ pidgin_conv_destroy(PurpleConversation *conv)
 	if (gtkconv->attach.timer) {
 		g_source_remove(gtkconv->attach.timer);
 	}
-
-	if (tooltip.gtkconv == gtkconv)
-		reset_tooltip();
 
 	g_free(gtkconv);
 }
@@ -6925,10 +6831,8 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
                               GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
 					 G_CALLBACK(icon_menu), gtkconv);
-	g_signal_connect(G_OBJECT(event), "motion-notify-event",
-			G_CALLBACK(pidgin_conv_motion_cb), gtkconv);
-	g_signal_connect(G_OBJECT(event), "leave-notify-event",
-			G_CALLBACK(pidgin_conv_leave_cb), gtkconv);
+
+	pidgin_tooltip_setup_for_widget(event, gtkconv, pidgin_conv_create_tooltip, NULL);
 	gtk_widget_show(event);
 
 	gtkconv->u.im->icon = gtk_image_new_from_pixbuf(scale);

@@ -409,6 +409,7 @@ static void gtk_blist_menu_join_cb(GtkWidget *w, PurpleChat *chat)
 static void gtk_blist_renderer_editing_cancelled_cb(GtkCellRenderer *renderer, PurpleBuddyList *list)
 {
 	editing_blist = FALSE;
+	g_object_set(G_OBJECT(renderer), "editable", FALSE, NULL);
 	pidgin_blist_refresh(list);
 }
 
@@ -534,12 +535,14 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 			if (node_alias && !g_utf8_collate(node_alias, a)) {
 				merges = g_list_append(merges, buddy);
 				i++;
+				g_free(node_alias);
+				break;
 			}
 			g_free(node_alias);
 		}
 	}
 	g_free(a);
-	
+
 	if (i > 1)
 	{
 		char *msg = g_strdup_printf(ngettext("You have %d contact named %s. Would you like to merge them?", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
@@ -2575,28 +2578,37 @@ struct tooltip_data {
 
 static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean full)
 {
-	char *tooltip_text = NULL;
 	struct tooltip_data *td = g_new0(struct tooltip_data, 1);
 	PurpleAccount *account = NULL;
-	char *tmp, *node_name;
+	char *tmp = NULL, *node_name = NULL, *tooltip_text = NULL;
 
-	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		account = ((PurpleBuddy*)(node))->account;
-	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
+	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		account = ((PurpleChat*)(node))->account;
 	}
 
 	td->status_icon = pidgin_blist_get_status_icon(node, PIDGIN_STATUS_ICON_LARGE);
 	td->avatar = pidgin_blist_get_buddy_icon(node, !full, FALSE);
-	td->prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	if (account != NULL) {
+		td->prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+	}
 	tooltip_text = pidgin_get_tooltip_text(node, full);
 	td->layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
 	td->name_layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
 
-	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		tmp = g_markup_escape_text(purple_buddy_get_name((PurpleBuddy*)node), -1);
-	else
+	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		tmp = g_markup_escape_text(purple_chat_get_name((PurpleChat*)node), -1);
+	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
+		tmp = g_markup_escape_text(purple_group_get_name((PurpleGroup*)node), -1);
+	} else {
+		/* I don't believe this can happen currently, I think
+		 * everything that calls this function checks for one of the
+		 * above node types first. */
+		tmp = g_strdup(_("Unknown node type"));
+	}
 	node_name = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>", tmp);
 	g_free(tmp);
 
@@ -2647,8 +2659,6 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 		return FALSE;
 
 	style = gtkblist->tipwindow->style;
-	gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-			NULL, gtkblist->tipwindow, "tooltip", 0, 0, -1, -1);
 
 	max_text_width = 0;
 	max_avatar_width = 0;
@@ -2687,14 +2697,16 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 		}
 
 #if GTK_CHECK_VERSION(2,2,0)
-		if (dir == GTK_TEXT_DIR_RTL)
-			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
-					0, 0, max_width - TOOLTIP_BORDER - STATUS_SIZE, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
-		else
-			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
-					0, 0, TOOLTIP_BORDER, current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
-		if(td->avatar)
-		{
+		if (td->status_icon) {
+			if (dir == GTK_TEXT_DIR_RTL)
+				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
+				                0, 0, max_width - TOOLTIP_BORDER - STATUS_SIZE, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+			else
+				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
+				                0, 0, TOOLTIP_BORDER, current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
+		}
+
+		if(td->avatar) {
 			if (dir == GTK_TEXT_DIR_RTL)
 				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL,
 						td->avatar, 0, 0, TOOLTIP_BORDER, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
@@ -2704,7 +2716,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 						current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
 		}
 
-		if (!td->avatar_is_prpl_icon)
+		if (!td->avatar_is_prpl_icon && td->prpl_icon)
 			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->prpl_icon,
 					0, 0,
 					prpl_col,
@@ -2712,7 +2724,9 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 					-1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
 
 #else
-		gdk_pixbuf_render_to_drawable(td->status_icon, GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, 12, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+		if (td->status_icon) {
+			gdk_pixbuf_render_to_drawable(td->status_icon, GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, 12, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+		}
 		if(td->avatar)
 			gdk_pixbuf_render_to_drawable(td->avatar,
 					GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0,
@@ -2777,8 +2791,15 @@ pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, i
 	PurpleBlistNode *node = data;
 	int width, height;
 
+	if (gtkblist->tooltipdata) {
+		gtkblist->tipwindow = NULL;
+		pidgin_blist_destroy_tooltip_data();
+	}
+
 	gtkblist->tipwindow = widget;
-	if(PURPLE_BLIST_NODE_IS_CHAT(node) || PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+	if(PURPLE_BLIST_NODE_IS_CHAT(node) ||
+	   PURPLE_BLIST_NODE_IS_BUDDY(node) ||
+	   PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		struct tooltip_data *td = create_tip_for_node(node, TRUE);
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
 		width = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
@@ -3271,10 +3292,44 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		g_free(tmp);
 
 		purple_notify_user_info_destroy(user_info);
+	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
+		GSList *accounts;
+		PurpleGroup *group = (PurpleGroup*)node;
+		PurpleNotifyUserInfo *user_info;
+
+		user_info = purple_notify_user_info_new();
+
+		/* Total buddies (from online accounts) in group */
+		tmp = g_strdup_printf("%d",
+		                      purple_blist_get_group_size(group, FALSE));
+		purple_notify_user_info_add_pair(user_info, _("Total Buddies"),
+		                                 tmp);
+		g_free(tmp);
+
+		/* Online buddies in group */
+		tmp = g_strdup_printf("%d",
+		                      purple_blist_get_group_online_count(group));
+		purple_notify_user_info_add_pair(user_info, _("Online Buddies"),
+		                                 tmp);
+		g_free(tmp);
+
+		/* Accounts with buddies in group */
+		accounts = purple_group_get_accounts(group);
+		for (; accounts != NULL;
+		     accounts = g_slist_delete_link(accounts, accounts)) {
+			PurpleAccount *account = accounts->data;
+			purple_notify_user_info_add_pair(user_info, _("Account"), purple_account_get_username(account));
+		}
+
+		tmp = purple_notify_user_info_get_text_with_newline(user_info, "\n");
+		g_string_append(str, tmp);
+		g_free(tmp);
+
+		purple_notify_user_info_destroy(user_info);
 	}
 
-	purple_signal_emit(pidgin_blist_get_handle(),
-			 "drawing-tooltip", node, str, full);
+	purple_signal_emit(pidgin_blist_get_handle(), "drawing-tooltip",
+	                   node, str, full);
 
 	return g_string_free(str, FALSE);
 }

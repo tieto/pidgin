@@ -1645,7 +1645,7 @@ purple_account_set_status_list(PurpleAccount *account, const char *status_id,
 	if (status == NULL)
 	{
 		purple_debug_error("account",
-				   "Invalid status ID %s for account %s (%s)\n",
+				   "Invalid status ID '%s' for account %s (%s)\n",
 				   status_id, purple_account_get_username(account),
 				   purple_account_get_protocol_id(account));
 		return;

@@ -21,8 +21,9 @@ version 2.4.0 (??/??/????):
 		  smileys in the text. (Florian 'goutnet' Delizy)
 		* pidgin_auto_parent_window to make a window transient for a suitable
 		  parent window.
-		* pidgin_tooltip_setup_for_treeview, pidgin_tooltip_destroy and
-		  pidgin_tooltip_show to simplify the process of drawing tooltips.
+		* pidgin_tooltip_setup_for_treeview, pidgin_tooltip_destroy,
+		  pidgin_tooltip_show and pidgin_tooltip_setup_for_widget to simplify
+		  the process of drawing tooltips.
 
 	Finch:
 		libgnt:

@@ -678,7 +678,6 @@ dnl #######################################################################
 PKG_CHECK_MODULES(MEANWHILE, [meanwhile >= 1.0.0 meanwhile < 2.0.0], [
 	have_meanwhile="yes"
 ], [
-	AC_MSG_RESULT(no)
 	have_meanwhile="no"
 ])
 AC_SUBST(MEANWHILE_CFLAGS)
@@ -697,7 +696,6 @@ PKG_CHECK_MODULES(AVAHI, [avahi-client avahi-glib], [
 	avahiincludes="yes"
 	avahilibs="yes"
 ], [
-	AC_MSG_RESULT(no)
 	avahiincludes="no"
 	avahilibs="no"
 ])
@@ -742,7 +740,6 @@ if test "x$silc_manual_check" = "xno"; then
 		silcincludes="yes"
 		silcclient="yes"
 	], [
-		AC_MSG_RESULT(no)
 		have_silc="no"
 	])
 	if test "x$have_silc" = "xno"; then
@@ -751,7 +748,6 @@ if test "x$silc_manual_check" = "xno"; then
 			silc10includes="yes"
 			silc10client="yes"
 		], [
-			AC_MSG_RESULT(no)
 			have_silc="no"
 		])
 		dnl If silcclient.pc wasn't found, check for just silc.pc
@@ -761,7 +757,6 @@ if test "x$silc_manual_check" = "xno"; then
 				silc10includes="yes"
 				silc10client="yes"
 			], [
-				AC_MSG_RESULT(no)
 				have_silc="no"
 			])
 		fi
@@ -1154,7 +1149,6 @@ if test "x$enable_dbus" = "xyes" ; then
 		AC_SUBST(DBUS_LIBS)
 		enable_dbus=yes
 	], [
-		AC_MSG_RESULT(no)
 		enable_dbus=no
 	])
 

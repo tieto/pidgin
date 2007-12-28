@@ -1759,16 +1759,14 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 	}
 }
 
-static gint
+static gboolean
 accedit_win_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsWindow *dialog)
 {
-	/* Since this is called as the window is closing, we don't need
-	 * pidgin_accounts_window_hide() to also dispose of the window */
 	dialog->window = NULL;
 
 	pidgin_accounts_window_hide();
 
-	return 0;
+	return FALSE;
 }
 
 static gboolean
@@ -2102,24 +2100,24 @@ account_treeview_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, g
 	GtkTreeViewColumn *column;
 	GtkTreeIter iter;
 	PurpleAccount *account;
-	const gchar *title;
 
 	dialog = (AccountsWindow *)user_data;
+
+	if (event->window != gtk_tree_view_get_bin_window(treeview))
+	    return FALSE;
 
 	/* Figure out which node was clicked */
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(dialog->treeview), event->x, event->y, &path, &column, NULL, NULL))
 		return FALSE;
-	title = gtk_tree_view_column_get_title(column);
-	/* The -1 is required because the first two columns of the list
-	 * store are displayed as only one column in the tree view. */
-	column = gtk_tree_view_get_column(treeview, COLUMN_ENABLED-1);
+	if (column == gtk_tree_view_get_column(treeview, 0))
+		return FALSE;
+
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
 	gtk_tree_path_free(path);
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter, COLUMN_DATA, &account, -1);
 
 	if ((account != NULL) && (event->button == 1) &&
-		(event->type == GDK_2BUTTON_PRESS) &&
-		(strcmp(gtk_tree_view_column_get_title(column), title)))
+		(event->type == GDK_2BUTTON_PRESS))
 	{
 		pidgin_account_dialog_show(PIDGIN_MODIFY_ACCOUNT_DIALOG, account);
 		return TRUE;
