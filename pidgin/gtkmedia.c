@@ -88,7 +88,8 @@ pidgin_media_get_type()
 			NULL,
 			sizeof(PidginMedia),
 			0,
-			(GInstanceInitFunc) pidgin_media_init
+			(GInstanceInitFunc) pidgin_media_init,
+			NULL
 		};
 		type = g_type_register_static(GTK_TYPE_HBOX, "PidginMedia", &info, 0);
 	}
@@ -202,9 +203,9 @@ level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 	rms_db = g_value_get_double(value);
 
 	if (!strcmp(gst_element_get_name(src), "sendlevel"))	
-		gtk_progress_bar_set_fraction(gtkmedia->priv->send_progress, pow(10, rms_db / 20) * 5);
+		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtkmedia->priv->send_progress), pow(10, rms_db / 20) * 5);
 	else
-		gtk_progress_bar_set_fraction(gtkmedia->priv->recv_progress, pow(10, rms_db / 20) * 5);
+		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtkmedia->priv->recv_progress), pow(10, rms_db / 20) * 5);
 
 	return TRUE;
 }
@@ -213,9 +214,9 @@ static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	GstElement *element = purple_media_get_audio_pipeline(media);
-	gst_bus_add_signal_watch(gst_pipeline_get_bus(element));
-	g_signal_connect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))), "message", level_message_cb, gtkmedia);
-	printf("\n\nbus: %d\n", gst_pipeline_get_bus(GST_PIPELINE(element)));
+	gst_bus_add_signal_watch(GST_BUS(gst_pipeline_get_bus(GST_PIPELINE(element))));
+	g_signal_connect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))), "message", G_CALLBACK(level_message_cb), gtkmedia);
+	printf("\n\nbus: %p\n", gst_pipeline_get_bus(GST_PIPELINE(element)));
 }
 
 static void
@@ -231,14 +232,14 @@ static void
 pidgin_media_hangup_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	pidgin_media_emit_message(gtkmedia, _("You have ended the call."));
-	gtk_widget_destroy(gtkmedia);
+	gtk_widget_destroy(GTK_WIDGET(gtkmedia));
 }
 
 static void
 pidgin_media_reject_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	pidgin_media_emit_message(gtkmedia, _("You have rejected the call."));
-	gtk_widget_destroy(gtkmedia);
+	gtk_widget_destroy(GTK_WIDGET(gtkmedia));
 }
 
 static void

@@ -4601,7 +4601,6 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	/* Setup the top part of the pane */
 	gtkconv->topvbox = vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_paned_pack1(GTK_PANED(paned), vbox, TRUE, TRUE);
 	gtk_widget_show(vbox);
 
 	/* Setup the info pane */
