@@ -118,6 +118,10 @@ static PurplePluginProtocolInfo prpl_info =
 
 	/* padding */
 	NULL
+	NULL,
+	NULL,
+	jabber_media_initiate,          /* initiate_media */
+	sizeof(PurplePluginProtocolInfo)
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)

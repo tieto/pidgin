@@ -2286,7 +2286,7 @@ static PurplePluginProtocolInfo prpl_info =
 	msn_attention_types,                    /* attention_types */
 
 	/* padding */
-	NULL
+        sizeof(PurplePluginProtocolInfo)
 };
 
 static PurplePluginInfo info =

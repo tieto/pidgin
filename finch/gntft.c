@@ -23,19 +23,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include "internal.h"
+#include "debug.h"
+#include "notify.h"
+#include "ft.h"
+#include "prpl.h"
+#include "util.h"
+
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
 #include <gntcheckbox.h>
 #include <gntlabel.h>
 #include <gnttree.h>
-#include "internal.h"
-
-#include "debug.h"
-#include "notify.h"
-#include "ft.h"
-#include "prpl.h"
-#include "util.h"
 
 #include "gntft.h"
 #include "prefs.h"

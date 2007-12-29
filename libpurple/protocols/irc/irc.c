@@ -953,7 +953,7 @@ static PurplePluginInfo info =
 	NULL,
 	NULL,
 	NULL,
-	NULL
+        sizeof(PurplePluginProtocolInfo)
 };
 
 static void _init_plugin(PurplePlugin *plugin)
