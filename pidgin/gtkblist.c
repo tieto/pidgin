@@ -5040,8 +5040,9 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_label_set_line_wrap(GTK_LABEL(gtkblist->headline_label), TRUE);
 	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_image, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkblist->headline_hbox), gtkblist->headline_label, TRUE, TRUE, 0);
-	g_signal_connect(gtkblist->headline_hbox,
-			 "style-set",
+	g_signal_connect(gtkblist->headline_label,   /* connecting on headline_hbox doesn't work, because
+	                                                the signal is not emitted when theme is changed */
+			"style-set",
 			 G_CALLBACK(headline_style_set),
 			 NULL);
 	g_signal_connect (gtkblist->headline_hbox,
