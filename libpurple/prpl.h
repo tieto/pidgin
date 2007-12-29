@@ -404,7 +404,7 @@ struct _PurplePluginProtocolInfo
 #ifdef USE_FARSIGHT
 	PurpleMedia  *(*initiate_media)(PurpleConnection *conn, const char *who, PurpleMediaStreamType type);
 #else
-	void (*initiate_media)(void)
+	void (*initiate_media)(void);
 #endif
 	/* Make sure you do not try to dereference anything past struct_size! */
 	int struct_size;
