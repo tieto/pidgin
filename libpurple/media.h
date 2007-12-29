@@ -26,10 +26,6 @@
 #ifndef __MEDIA_H_
 #define __MEDIA_H_
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #ifdef USE_FARSIGHT
 
 #include <farsight/farsight.h>
