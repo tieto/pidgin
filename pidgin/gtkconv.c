@@ -8702,7 +8702,7 @@ infopane_entry_activate(PidginConversation *gtkconv)
 	PurpleConversation *conv = gtkconv->active_conv;
 	const char *text = NULL;
 
-	if (!GTK_WIDGET_VISIBLE(gtkconv->tab_label)) {
+	if (!GTK_WIDGET_VISIBLE(gtkconv->infopane)) {
 		/* There's already an entry for alias. Let's not create another one. */
 		return FALSE;
 	}
