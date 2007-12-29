@@ -55,8 +55,5 @@ AM_CPPFLAGS = \
 if MDNS_AVAHI
   AM_CPPFLAGS += $(AVAHI_CFLAGS)
 else
-if MDNS_HOWL
-    AM_CPPFLAGS += $(HOWL_CFLAGS)
-endif
 endif
 
