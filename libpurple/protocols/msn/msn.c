@@ -2283,10 +2283,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* roomlist_room_serialize */
 	NULL,					/* unregister_user */
 	msn_send_attention,                     /* send_attention */
-	msn_attention_types,                    /* attention_types */
-
-	/* padding */
-        sizeof(PurplePluginProtocolInfo)
+	msn_attention_types,                    /* get_attention_types */
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	NULL                                    /* initiate_media */
 };
 
 static PurplePluginInfo info =

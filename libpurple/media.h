@@ -69,7 +69,7 @@ struct _PurpleMedia
 	PurpleMediaPrivate *priv;
 };
 
-GType purple_media_get_type();
+GType purple_media_get_type(void);
 
 void purple_media_get_elements(PurpleMedia *media, GstElement **audio_src, GstElement **audio_sink,
 						  GstElement **video_src, GstElement **video_sink);

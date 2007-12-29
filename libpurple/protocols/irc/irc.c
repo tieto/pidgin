@@ -899,12 +899,11 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* whiteboard_prpl_ops */
 	irc_send_raw,			/* send_raw */
 	NULL,					/* roomlist_room_serialize */
-
-	/* padding */
-	NULL,
-	NULL,
-	NULL,
-	NULL
+	NULL,                   /* unregister_user */
+	NULL,                   /* send_attention */
+	NULL,                   /* get_attention_types */
+	sizeof(PurplePluginProtocolInfo),    /* struct_size */
+	NULL                    /* initiate_media */
 };
 
 static gboolean load_plugin (PurplePlugin *plugin) {
@@ -953,7 +952,7 @@ static PurplePluginInfo info =
 	NULL,
 	NULL,
 	NULL,
-        sizeof(PurplePluginProtocolInfo)
+	NULL
 };
 
 static void _init_plugin(PurplePlugin *plugin)
