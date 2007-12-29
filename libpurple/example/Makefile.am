@@ -7,7 +7,7 @@ nullclient_LDADD = \
 	$(DBUS_LIBS) \
 	$(INTLLIBS) \
 	$(GLIB_LIBS) \
-	$(LIBXML_LIBS) \	
+	$(LIBXML_LIBS) \
 	$(FARSIGHT_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
