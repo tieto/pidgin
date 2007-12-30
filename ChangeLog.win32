@@ -1,3 +1,6 @@
+version 2.3.1 (12/7/2007):
+	* No changes
+
 version 2.3.0 (11/24/2007):
 	* Updated GTK+ to 2.12.1 (This was actually included in 2.2.2, but 
 	  didn't get into the Changelog.)
@@ -135,7 +138,7 @@ version 0.82.1 (08/27/2004):
 
 version 0.82 (08/26/2004):
 	* Selecting away messages using the system tray icon works
-	  (Thanks Fran?ois Gagn?)
+	  (Thanks François Gagné)
 	* Transparency plugin will save your settings again (Kevin Stange)
 	* Updated gtk-wimp to 0.6.2
 	* Updated libpng to 1.2.6 (major security update)
