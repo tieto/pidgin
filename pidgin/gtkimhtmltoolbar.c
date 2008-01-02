@@ -709,10 +709,8 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		smileys = smileys->next;
 	}
 
-	PIDGIN_DIALOG(dialog);
+	dialog = pidgin_create_dialog(_("Smile!"), 0, "smiley_dialog", FALSE);
 
-	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
-	gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
 
 	if (unique_smileys != NULL) {
@@ -769,18 +767,15 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	}
 
 	g_signal_connect(G_OBJECT(dialog), "key-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
-	gtk_container_add(GTK_CONTAINER(dialog), smiley_table);
+	gtk_container_add(GTK_CONTAINER(pidgin_dialog_get_vbox(GTK_DIALOG(dialog))), smiley_table);
 
 	gtk_widget_show(smiley_table);
-
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 
 	/* connect signals */
 	g_signal_connect(G_OBJECT(dialog), "delete_event",
 					 G_CALLBACK(close_smiley_dialog), toolbar);
 
 	/* show everything */
-	gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
 	gtk_widget_show_all(dialog);
 	gtk_window_set_transient_for(GTK_WINDOW(dialog),
 			GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(toolbar))));

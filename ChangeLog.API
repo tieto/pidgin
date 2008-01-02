@@ -25,6 +25,9 @@ version 2.4.0 (??/??/????):
 		  pidgin_tooltip_show and pidgin_tooltip_setup_for_widget to simplify
 		  the process of drawing tooltips.
 
+	        Deprecated:
+	        * PIDGIN_DIALOG
+
 	Finch:
 		libgnt:
 		* Added gnt_tree_set_row_color to set the color for a row in a tree.

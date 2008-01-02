@@ -337,12 +337,10 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 
 void pidgin_dialogs_about()
 {
-	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *logo;
 	GtkWidget *frame;
 	GtkWidget *text;
-	GtkWidget *bbox;
 	GtkWidget *button;
 	GtkTextIter iter;
 	GString *str;
@@ -357,20 +355,12 @@ void pidgin_dialogs_about()
 		return;
 	}
 
-	PIDGIN_DIALOG(about);
 	tmp = g_strdup_printf(_("About %s"), PIDGIN_NAME);
-	gtk_window_set_title(GTK_WINDOW(about), tmp);
+	about = pidgin_create_dialog(tmp, PIDGIN_HIG_BORDER, "about", TRUE);
 	g_free(tmp);
-	gtk_window_set_role(GTK_WINDOW(about), "about");
-	gtk_window_set_resizable(GTK_WINDOW(about), TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(about), 340, 450);
 
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(hbox), PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(about), hbox);
-
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(hbox), vbox);
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(about), FALSE, PIDGIN_HIG_BORDER);
 
 	/* Generate a logo with a version number */
 	logo = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -709,15 +699,9 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 	gtk_text_buffer_place_cursor(gtk_text_view_get_buffer(GTK_TEXT_VIEW(text)), &iter);
 
 	/* Close Button */
-	bbox = gtk_hbutton_box_new();
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
+	button = pidgin_dialog_add_button(GTK_DIALOG(about), GTK_STOCK_CLOSE,
+	                G_CALLBACK(destroy_about), about);
 
-	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-
-	g_signal_connect_swapped(G_OBJECT(button), "clicked",
-							 G_CALLBACK(destroy_about), G_OBJECT(about));
 	g_signal_connect(G_OBJECT(about), "destroy",
 					 G_CALLBACK(destroy_about), G_OBJECT(about));
 
