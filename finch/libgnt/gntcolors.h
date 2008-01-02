@@ -93,7 +93,7 @@ void gnt_color_pairs_parse(GKeyFile *kfile);
  *
  * @return A color
  *
- * @since 2.3.1 (gnt), 2.3.1 (pidgin)
+ * @since 2.4.0
  */
 int gnt_colors_get_color(char *key);
 #endif
@@ -119,7 +119,7 @@ int gnt_color_pair(int color);
  *
  * @return  A color pair
  *
- * @since 2.3.1
+ * @since 2.4.0
  */
 int gnt_color_add_pair(int fg, int bg);
 #endif

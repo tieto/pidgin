@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.3.2 (??/??/????):
+version 2.4.0 (??/??/????):
 	libpurple:
 	* Fixed various problems with loss of status messages when going
 	  or returning from idle on MySpaceIM.
@@ -12,6 +12,8 @@ version 2.3.2 (??/??/????):
 	* Added the ability to theme conversation name colors (red and blue)
 	  through your GTK+ theme, and exposed those theme settings to the 
 	  Pidgin GTK+ Theme Control plugin (Dustin Howett)
+	* Fixed having multiple alias edit areas in the infopane (Elliott Sales de
+	  Andrade)
 
 	Finch:
 	* Color is used in the buddylist to indicate status, and the conversation

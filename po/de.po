@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-18 16:51+0100\n"
-"PO-Revision-Date: 2007-12-18 16:50+0100\n"
+"POT-Creation-Date: 2007-12-19 10:17+0100\n"
+"PO-Revision-Date: 2007-12-19 10:17+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1018,6 +1018,9 @@ msgstr "Datei speichern..."
 
 msgid "Open File..."
 msgstr "Datei öffnen..."
+
+msgid "Choose Location..."
+msgstr "Wählen Sie einen Ort..."
 
 msgid "Buddy logs in"
 msgstr "Buddy meldet sich an"
@@ -9630,7 +9633,7 @@ msgid "Unable to connect to %s: %s"
 msgstr "Verbindung zu %s nicht möglich: %s"
 
 #. 10053
-#, fuzzy, c-format
+#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr ""
 "Die Verbindung wurde von einer anderen Software auf ihrem Computer "
@@ -10459,6 +10462,14 @@ msgstr "Benutzer tippt gerade..."
 
 msgid "User has typed something and stopped"
 msgstr "Benutzer hat etwas getippt und wartet nun"
+
+#, c-format
+msgid ""
+"\n"
+"%s has typed something and stopped"
+msgstr ""
+"\n"
+"%s hat etwas getippt und wartet nun"
 
 #. Build the Send To menu
 msgid "S_end To"
@@ -11421,6 +11432,33 @@ msgstr ""
 "                      NAME bestimmt Konto(n), die benutzt werden\n"
 "                      sollen, getrennt durch Kommata)\n"
 "  --display=DISPLAY   zu benutzendes X-Display\n"
+"  -v, --version       zeigt aktuelle Version und beendet das Programm\n"
+
+#, c-format
+msgid ""
+"%s %s\n"
+"Usage: %s [OPTION]...\n"
+"\n"
+"  -c, --config=DIR    use DIR for config files\n"
+"  -d, --debug         print debugging messages to stdout\n"
+"  -h, --help          display this help and exit\n"
+"  -m, --multiple      do not ensure single instance\n"
+"  -n, --nologin       don't automatically login\n"
+"  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
+"                      account(s) to use, separated by commas)\n"
+"  -v, --version       display the current version and exit\n"
+msgstr ""
+"%s %s\n"
+"Benutzung: %s [OPTION]...\n"
+"\n"
+"  -c, --config=VERZ   benutze VERZ als Konfigurationsverzeichnis\n"
+"  -d, --debug         gibt Debugging-Meldungen nach stdout aus\n"
+"  -h, --help          zeigt diese Hilfe und beendet das Programm\n"
+"  -m, --multiple      mehrere Instanzen erlauben\n"
+"  -n, --nologin       nicht automatisch anmelden\n"
+"  -l, --login[=NAME]  automatische Anmeldung (optionales Argument \n"
+"                      NAME bestimmt Konto(n), die benutzt werden\n"
+"                      sollen, getrennt durch Kommata)\n"
 "  -v, --version       zeigt aktuelle Version und beendet das Programm\n"
 
 #, c-format
@@ -13203,12 +13241,3 @@ msgstr "Sendet und empfängt RAW-XMPP-Blöcke."
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Dieses Plugin ist nützlich zur Fehlersuche in XMPP-Servern oder -Clients."
-
-#~ msgid "%s changed status from %s to %s"
-#~ msgstr "%s hat den Status von %s zu %s geändert"
-
-#~ msgid "%s is now %s"
-#~ msgstr "%s ist jetzt %s"
-
-#~ msgid "%s is no longer %s"
-#~ msgstr "%s ist nicht mehr %s"

@@ -166,16 +166,18 @@ reset_mail_dialog(GtkDialog *dialog)
 	mail_dialog = NULL;
 }
 
-static void
+static gboolean
 formatted_close_cb(GtkWidget *win, GdkEvent *event, void *user_data)
 {
 	purple_notify_close(PURPLE_NOTIFY_FORMATTED, win);
+	return FALSE;
 }
 
-static void
+static gboolean
 searchresults_close_cb(PidginNotifySearchResultsData *data, GdkEvent *event, gpointer user_data)
 {
 	purple_notify_close(PURPLE_NOTIFY_SEARCHRESULTS, data);
+	return FALSE;
 }
 
 static void
@@ -283,6 +285,8 @@ pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 	gtk_label_set_selectable(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	pidgin_auto_parent_window(dialog);
 
 	gtk_widget_show_all(dialog);
 
@@ -684,6 +688,8 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	g_object_set_data(G_OBJECT(window), "info-widget", imhtml);
 
 	/* Show the window */
+	pidgin_auto_parent_window(window);
+
 	gtk_widget_show(window);
 
 	return window;
@@ -894,6 +900,8 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	pidgin_notify_searchresults_new_rows(gc, results, data);
 
 	/* Show the window */
+	pidgin_auto_parent_window(window);
+
 	gtk_widget_show(window);
 	return data;
 }

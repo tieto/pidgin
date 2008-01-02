@@ -64,7 +64,7 @@ pidgin_scroll_book_get_type (void)
 	return scroll_book_type;
 }
 
-static void
+static gboolean
 scroll_left_cb(PidginScrollBook *scroll_book)
 {
 	int index;
@@ -72,9 +72,10 @@ scroll_left_cb(PidginScrollBook *scroll_book)
 
 	if (index > 0)
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(scroll_book->notebook), index - 1);
+	return TRUE;
 }
 
-static void
+static gboolean
 scroll_right_cb(PidginScrollBook *scroll_book)
 {
 	int index, count;
@@ -87,6 +88,7 @@ scroll_right_cb(PidginScrollBook *scroll_book)
 
 	if (index + 1 < count)
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(scroll_book->notebook), index + 1);
+	return TRUE;
 }
 
 static void
@@ -136,10 +138,11 @@ page_count_change_cb(PidginScrollBook *scroll_book)
 	refresh_scroll_box(scroll_book, index, count);
 }
 
-static void
+static gboolean
 scroll_close_cb(PidginScrollBook *scroll_book)
 {
 	gtk_widget_destroy(gtk_notebook_get_nth_page(GTK_NOTEBOOK(scroll_book->notebook), gtk_notebook_get_current_page(GTK_NOTEBOOK(scroll_book->notebook))));
+	return FALSE;
 }
 
 static void

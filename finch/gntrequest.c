@@ -44,7 +44,7 @@ typedef struct
 	GntWidget *dialog;
 	GCallback *cbs;
 	gboolean save;
-} PurpleGntFileRequest;
+} FinchFileRequest;
 
 static GntWidget *
 setup_request_window(const char *title, const char *primary,
@@ -387,6 +387,156 @@ update_selected_account(GntEntry *screenname, const char *start, const char *end
 	}
 }
 
+static GntWidget*
+create_boolean_field(PurpleRequestField *field)
+{
+	const char *label = purple_request_field_get_label(field);
+	GntWidget *check = gnt_check_box_new(label);
+	gnt_check_box_set_checked(GNT_CHECK_BOX(check),
+			purple_request_field_bool_get_default_value(field));
+	return check;
+}
+
+static GntWidget*
+create_string_field(PurpleRequestField *field, GntWidget **screenname)
+{
+	const char *hint = purple_request_field_get_type_hint(field);
+	GntWidget *entry = gnt_entry_new(
+			purple_request_field_string_get_default_value(field));
+	gnt_entry_set_masked(GNT_ENTRY(entry),
+			purple_request_field_string_is_masked(field));
+	if (hint && purple_str_has_prefix(hint, "screenname")) {
+		PurpleBlistNode *node = purple_blist_get_root();
+		gboolean offline = purple_str_has_suffix(hint, "all");
+		for (; node; node = purple_blist_node_next(node, offline)) {
+			if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
+				continue;
+			gnt_entry_add_suggest(GNT_ENTRY(entry), purple_buddy_get_name((PurpleBuddy*)node));
+		}
+		gnt_entry_set_always_suggest(GNT_ENTRY(entry), TRUE);
+		if (screenname)
+			*screenname = entry;
+	} else if (hint && !strcmp(hint, "group")) {
+		PurpleBlistNode *node;
+		for (node = purple_blist_get_root(); node; node = node->next) {
+			if (PURPLE_BLIST_NODE_IS_GROUP(node))
+				gnt_entry_add_suggest(GNT_ENTRY(entry), ((PurpleGroup *)node)->name);
+		}
+	}
+	return entry;
+}
+
+static GntWidget*
+create_integer_field(PurpleRequestField *field)
+{
+	char str[256];
+	int val = purple_request_field_int_get_default_value(field);
+	GntWidget *entry;
+
+	snprintf(str, sizeof(str), "%d", val);
+	entry = gnt_entry_new(str);
+	gnt_entry_set_flag(GNT_ENTRY(entry), GNT_ENTRY_FLAG_INT);
+	return entry;
+}
+
+static GntWidget*
+create_choice_field(PurpleRequestField *field)
+{
+	int id;
+	GList *list;
+	GntWidget *combo = gnt_combo_box_new();
+
+	list = purple_request_field_choice_get_labels(field);
+	for (id = 1; list; list = list->next, id++)
+	{
+		gnt_combo_box_add_data(GNT_COMBO_BOX(combo),
+				GINT_TO_POINTER(id), list->data);
+	}
+	gnt_combo_box_set_selected(GNT_COMBO_BOX(combo),
+			GINT_TO_POINTER(purple_request_field_choice_get_default_value(field)));
+	return combo;
+}
+
+static GntWidget*
+create_list_field(PurpleRequestField *field)
+{
+	GntWidget *ret = NULL;
+	GList *list;
+	gboolean multi = purple_request_field_list_get_multi_select(field);
+	if (multi)
+	{
+		GntWidget *tree = gnt_tree_new();
+
+		list = purple_request_field_list_get_items(field);
+		for (; list; list = list->next)
+		{
+			const char *text = list->data;
+			gpointer key = purple_request_field_list_get_data(field, text);
+			gnt_tree_add_choice(GNT_TREE(tree), key,
+					gnt_tree_create_row(GNT_TREE(tree), text), NULL, NULL);
+			if (purple_request_field_list_is_selected(field, text))
+				gnt_tree_set_choice(GNT_TREE(tree), key, TRUE);
+		}
+		ret = tree;
+	}
+	else
+	{
+		GntWidget *combo = gnt_combo_box_new();
+
+		list = purple_request_field_list_get_items(field);
+		for (; list; list = list->next)
+		{
+			const char *text = list->data;
+			gpointer key = purple_request_field_list_get_data(field, text);
+			gnt_combo_box_add_data(GNT_COMBO_BOX(combo), key, text);
+			if (purple_request_field_list_is_selected(field, text))
+				gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), key);
+		}
+		ret = combo;
+	}
+	return ret;
+}
+
+static GntWidget*
+create_account_field(PurpleRequestField *field)
+{
+	gboolean all;
+	PurpleAccount *def;
+	GList *list;
+	GntWidget *combo = gnt_combo_box_new();
+
+	all = purple_request_field_account_get_show_all(field);
+	def = purple_request_field_account_get_value(field);
+	if (!def)
+		def = purple_request_field_account_get_default_value(field);
+
+	if (all)
+		list = purple_accounts_get_all();
+	else
+		list = purple_connections_get_all();
+
+	for (; list; list = list->next)
+	{
+		PurpleAccount *account;
+		char *text;
+
+		if (all)
+			account = list->data;
+		else
+			account = purple_connection_get_account(list->data);
+
+		text = g_strdup_printf("%s (%s)",
+				purple_account_get_username(account),
+				purple_account_get_protocol_name(account));
+		gnt_combo_box_add_data(GNT_COMBO_BOX(combo), account, text);
+		g_free(text);
+		if (account == def)
+			gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), account);
+	}
+	gnt_widget_set_size(combo, 20, 3); /* ew */
+	return combo;
+}
+
 static void *
 finch_request_fields(const char *title, const char *primary,
 		const char *secondary, PurpleRequestFields *allfields,
@@ -424,10 +574,10 @@ finch_request_fields(const char *title, const char *primary,
 			PurpleRequestField *field = fields->data;
 			PurpleRequestFieldType type = purple_request_field_get_type(field);
 			const char *label = purple_request_field_get_label(field);
-				
+
 			hbox = gnt_hbox_new(TRUE);   /* hrm */
 			gnt_box_add_widget(GNT_BOX(box), hbox);
-			
+
 			if (type != PURPLE_REQUEST_FIELD_BOOLEAN && label)
 			{
 				GntWidget *l = gnt_label_new(label);
@@ -437,154 +587,35 @@ finch_request_fields(const char *title, const char *primary,
 
 			if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
 			{
-				GntWidget *check = gnt_check_box_new(label);
-				gnt_check_box_set_checked(GNT_CHECK_BOX(check),
-						purple_request_field_bool_get_default_value(field));
-				gnt_box_add_widget(GNT_BOX(hbox), check);
-				field->ui_data = check;
+				field->ui_data = create_boolean_field(field);
 			}
 			else if (type == PURPLE_REQUEST_FIELD_STRING)
 			{
-				const char *hint = purple_request_field_get_type_hint(field);
-				GntWidget *entry = gnt_entry_new(
-							purple_request_field_string_get_default_value(field));
-				gnt_entry_set_masked(GNT_ENTRY(entry),
-						purple_request_field_string_is_masked(field));
-				if (hint && purple_str_has_prefix(hint, "screenname")) {
-					PurpleBlistNode *node = purple_blist_get_root();
-					gboolean offline = purple_str_has_suffix(hint, "all");
-					for (; node; node = purple_blist_node_next(node, offline)) {
-						if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
-							continue;
-						gnt_entry_add_suggest(GNT_ENTRY(entry), purple_buddy_get_name((PurpleBuddy*)node));
-					}
-					gnt_entry_set_always_suggest(GNT_ENTRY(entry), TRUE);
-					screenname = entry;
-				} else if (hint && !strcmp(hint, "group")) {
-					PurpleBlistNode *node;
-					for (node = purple_blist_get_root(); node; node = node->next) {
-						if (PURPLE_BLIST_NODE_IS_GROUP(node))
-							gnt_entry_add_suggest(GNT_ENTRY(entry), ((PurpleGroup *)node)->name);
-					}
-				}
-				gnt_box_add_widget(GNT_BOX(hbox), entry);
-				field->ui_data = entry;
+				field->ui_data = create_string_field(field, &screenname);
 			}
 			else if (type == PURPLE_REQUEST_FIELD_INTEGER)
 			{
-				char str[256];
-				int val = purple_request_field_int_get_default_value(field);
-				GntWidget *entry;
-				
-				snprintf(str, sizeof(str), "%d", val);
-				entry = gnt_entry_new(str);
-				gnt_entry_set_flag(GNT_ENTRY(entry), GNT_ENTRY_FLAG_INT);
-				gnt_box_add_widget(GNT_BOX(hbox), entry);
-				field->ui_data = entry;
+				field->ui_data = create_integer_field(field);
 			}
 			else if (type == PURPLE_REQUEST_FIELD_CHOICE)
 			{
-				int id;
-				GList *list;
-				GntWidget *combo = gnt_combo_box_new();
-				gnt_box_add_widget(GNT_BOX(hbox), combo);
-				field->ui_data = combo;
-
-				list = purple_request_field_choice_get_labels(field);
-				for (id = 1; list; list = list->next, id++)
-				{
-					gnt_combo_box_add_data(GNT_COMBO_BOX(combo),
-							GINT_TO_POINTER(id), list->data);
-				}
-				gnt_combo_box_set_selected(GNT_COMBO_BOX(combo),
-						GINT_TO_POINTER(purple_request_field_choice_get_default_value(field)));
+				field->ui_data = create_choice_field(field);
 			}
 			else if (type == PURPLE_REQUEST_FIELD_LIST)
 			{
-				GList *list;
-				gboolean multi = purple_request_field_list_get_multi_select(field);
-				if (multi)
-				{
-					GntWidget *tree = gnt_tree_new();
-					gnt_box_add_widget(GNT_BOX(hbox), tree);
-					field->ui_data = tree;
-
-					list = purple_request_field_list_get_items(field);
-					for (; list; list = list->next)
-					{
-						const char *text = list->data;
-						gpointer key = purple_request_field_list_get_data(field, text);
-						gnt_tree_add_choice(GNT_TREE(tree), key,
-								gnt_tree_create_row(GNT_TREE(tree), text), NULL, NULL);
-						if (purple_request_field_list_is_selected(field, text))
-							gnt_tree_set_choice(GNT_TREE(tree), key, TRUE);
-					}
-				}
-				else
-				{
-					GntWidget *combo = gnt_combo_box_new();
-					gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
-					gnt_box_add_widget(GNT_BOX(hbox), combo);
-					field->ui_data = combo;
-
-					list = purple_request_field_list_get_items(field);
-					for (; list; list = list->next)
-					{
-						const char *text = list->data;
-						gpointer key = purple_request_field_list_get_data(field, text);
-						gnt_combo_box_add_data(GNT_COMBO_BOX(combo), key, text);
-						if (purple_request_field_list_is_selected(field, text))
-							gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), key);
-					}
-				}
+				field->ui_data = create_list_field(field);
 			}
 			else if (type == PURPLE_REQUEST_FIELD_ACCOUNT)
 			{
-				gboolean all;
-				PurpleAccount *def;
-				GList *list;
-				GntWidget *combo = gnt_combo_box_new();
-				gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
-				gnt_box_add_widget(GNT_BOX(hbox), combo);
-				field->ui_data = combo;
-
-				all = purple_request_field_account_get_show_all(field);
-				def = purple_request_field_account_get_value(field);
-				if (!def)
-					def = purple_request_field_account_get_default_value(field);
-
-				if (all)
-					list = purple_accounts_get_all();
-				else
-					list = purple_connections_get_all();
-
-				for (; list; list = list->next)
-				{
-					PurpleAccount *account;
-					char *text;
-
-					if (all)
-						account = list->data;
-					else
-						account = purple_connection_get_account(list->data);
-
-					text = g_strdup_printf("%s (%s)",
-							purple_account_get_username(account),
-							purple_account_get_protocol_name(account));
-					gnt_combo_box_add_data(GNT_COMBO_BOX(combo), account, text);
-					g_free(text);
-					if (account == def)
-						gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), account);
-				}
-				gnt_widget_set_size(combo, 20, 3); /* ew */
-				accountlist = combo;
+				accountlist = field->ui_data = create_account_field(field);
 			}
 			else
 			{
-				gnt_box_add_widget(GNT_BOX(hbox),
-						gnt_label_new_with_format(_("Not implemented yet."),
-							GNT_TEXT_FLAG_BOLD));
+				field->ui_data = gnt_label_new_with_format(_("Not implemented yet."),
+						GNT_TEXT_FLAG_BOLD);
 			}
+			gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
+			gnt_box_add_widget(GNT_BOX(hbox), GNT_WIDGET(field->ui_data));
 		}
 		if (grlist->next)
 			gnt_box_add_widget(GNT_BOX(box), gnt_hline_new());
@@ -610,7 +641,7 @@ finch_request_fields(const char *title, const char *primary,
 static void
 file_cancel_cb(gpointer fq, GntWidget *wid)
 {
-	PurpleGntFileRequest *data = fq;
+	FinchFileRequest *data = fq;
 	if (data->cbs[1] != NULL)
 		((PurpleRequestFileCb)data->cbs[1])(data->user_data, NULL);
 
@@ -620,7 +651,7 @@ file_cancel_cb(gpointer fq, GntWidget *wid)
 static void
 file_ok_cb(gpointer fq, GntWidget *widget)
 {
-	PurpleGntFileRequest *data = fq;
+	FinchFileRequest *data = fq;
 	char *file = gnt_file_sel_get_selected_file(GNT_FILE_SEL(data->dialog));
 	char *dir = g_path_get_dirname(file);
 	if (data->cbs[0] != NULL)
@@ -634,37 +665,29 @@ file_ok_cb(gpointer fq, GntWidget *widget)
 }
 
 static void
-file_request_destroy(PurpleGntFileRequest *data)
+file_request_destroy(FinchFileRequest *data)
 {
 	g_free(data->cbs);
 	g_free(data);
 }
 
-static void *
-finch_request_file(const char *title, const char *filename,
-				gboolean savedialog,
+static FinchFileRequest *
+finch_file_request_window(const char *title, const char *path,
 				GCallback ok_cb, GCallback cancel_cb,
-				PurpleAccount *account, const char *who, PurpleConversation *conv,
 				void *user_data)
 {
 	GntWidget *window = gnt_file_sel_new();
 	GntFileSel *sel = GNT_FILE_SEL(window);
-	PurpleGntFileRequest *data = g_new0(PurpleGntFileRequest, 1);
-	const char *path;
+	FinchFileRequest *data = g_new0(FinchFileRequest, 1);
 
 	data->user_data = user_data;
 	data->cbs = g_new0(GCallback, 2);
 	data->cbs[0] = ok_cb;
 	data->cbs[1] = cancel_cb;
 	data->dialog = window;
-	data->save = savedialog;
-	gnt_box_set_title(GNT_BOX(window), title ? title : (savedialog ? _("Save File...") : _("Open File...")));
+	gnt_box_set_title(GNT_BOX(window), title);
 
-	path = purple_prefs_get_path(savedialog ? "/finch/filelocations/last_save_folder" : "/finch/filelocations/last_open_folder");
 	gnt_file_sel_set_current_location(sel, (path && *path) ? path : purple_home_dir());
-
-	if (savedialog)
-		gnt_file_sel_set_suggested_filename(sel, filename);
 
 	g_signal_connect(G_OBJECT(sel->cancel), "activate",
 			G_CALLBACK(action_performed), window);
@@ -678,9 +701,45 @@ finch_request_file(const char *title, const char *filename,
 	setup_default_callback(window, file_cancel_cb, data);
 	g_object_set_data_full(G_OBJECT(window), "filerequestdata", data,
 			(GDestroyNotify)file_request_destroy);
-	gnt_widget_show(window);
 
-	return window;
+	return data;
+}
+
+static void *
+finch_request_file(const char *title, const char *filename,
+				gboolean savedialog,
+				GCallback ok_cb, GCallback cancel_cb,
+				PurpleAccount *account, const char *who, PurpleConversation *conv,
+				void *user_data)
+{
+	FinchFileRequest *data;
+	const char *path;
+
+	path = purple_prefs_get_path(savedialog ? "/finch/filelocations/last_save_folder" : "/finch/filelocations/last_open_folder");
+	data = finch_file_request_window(title ? title : (savedialog ? _("Save File...") : _("Open File...")), path,
+			ok_cb, cancel_cb, user_data);
+	data->save = savedialog;
+	if (savedialog)
+		gnt_file_sel_set_suggested_filename(GNT_FILE_SEL(data->dialog), filename);
+
+	gnt_widget_show(data->dialog);
+	return data->dialog;
+}
+
+static void *
+finch_request_folder(const char *title, const char *dirname, GCallback ok_cb,
+		GCallback cancel_cb, PurpleAccount *account, const char *who, PurpleConversation *conv,
+		void *user_data)
+{
+	FinchFileRequest *data;
+
+	data = finch_file_request_window(title ? title : _("Choose Location..."), dirname,
+			ok_cb, cancel_cb, user_data);
+	data->save = TRUE;
+	gnt_file_sel_set_dirs_only(GNT_FILE_SEL(data->dialog), TRUE);
+
+	gnt_widget_show(data->dialog);
+	return data->dialog;
 }
 
 static PurpleRequestUiOps uiops =
@@ -691,7 +750,7 @@ static PurpleRequestUiOps uiops =
 	finch_request_fields,
 	finch_request_file,
 	finch_close_request,
-	NULL,                       /* No plans for request_folder */
+	finch_request_folder,
 	NULL,
 	NULL,
 	NULL,

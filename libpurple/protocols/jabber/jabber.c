@@ -390,26 +390,29 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 
 static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer timeout) 
 {
-	g_source_remove(GPOINTER_TO_INT(timeout));
+	purple_timeout_remove(GPOINTER_TO_INT(timeout));
+	js->keepalive_timeout = -1;
 }
 
 static gboolean jabber_pong_timeout(PurpleConnection *gc)
 {
+	JabberStream *js = gc->proto_data;
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Ping timeout"));
+	js->keepalive_timeout = -1;
 	return FALSE;
 }
 
 void jabber_keepalive(PurpleConnection *gc)
 {
-	JabberIq *iq = jabber_iq_new(gc->proto_data, JABBER_IQ_GET);
-	guint timeout;
+	JabberStream *js = gc->proto_data;
+	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
 
-        xmlnode *ping = xmlnode_new_child(iq->node, "ping");
-        xmlnode_set_namespace(ping, "urn:xmpp:ping");
+	xmlnode *ping = xmlnode_new_child(iq->node, "ping");
+	xmlnode_set_namespace(ping, "urn:xmpp:ping");
 
-	timeout = purple_timeout_add_seconds(20, (GSourceFunc)(jabber_pong_timeout), gc);
-        jabber_iq_set_callback(iq, jabber_pong_cb, GINT_TO_POINTER(timeout));
+	js->keepalive_timeout = purple_timeout_add_seconds(20, (GSourceFunc)(jabber_pong_timeout), gc);
+	jabber_iq_set_callback(iq, jabber_pong_cb, GINT_TO_POINTER(js->keepalive_timeout));
 	jabber_iq_send(iq);
 }
 
@@ -612,6 +615,7 @@ jabber_login(PurpleAccount *account)
 	js->next_id = g_random_int();
 	js->write_buffer = purple_circ_buffer_new(512);
 	js->old_length = -1;
+	js->keepalive_timeout = -1;
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
@@ -1311,6 +1315,9 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->old_uri);
 	g_free(js->old_track);
 
+	if (js->keepalive_timeout != -1)
+		purple_timeout_remove(js->keepalive_timeout);
+	
 	g_free(js);
 
 	gc->proto_data = NULL;

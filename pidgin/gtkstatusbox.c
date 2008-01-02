@@ -119,7 +119,10 @@ enum {
 	DATA_COLUMN,
 
 	/**
- 	 * This column stores the GdkPixbuf for the status emblem. Currently only 'saved' is stored
+ 	 * This column stores the GdkPixbuf for the status emblem. Currently only 'saved' is stored.
+	 * In the GtkTreeModel for the dropdown, this is the stock-id (gchararray), and for the
+	 * GtkTreeModel for the cell_view (for the account-specific statusbox), this is the prpl-icon
+	 * (GdkPixbuf) of the account.
  	 */
 	EMBLEM_COLUMN,
 
@@ -606,7 +609,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	char aa_color[8];
 	PurpleSavedStatus *saved_status;
 	char *primary, *secondary, *text;
-	GdkPixbuf *pixbuf;
+	GdkPixbuf *pixbuf, *emblem = NULL;
 	GtkTreePath *path;
 	gboolean account_status = FALSE;
 	PurpleAccount *acct = (status_box->token_status_account) ? status_box->token_status_account : status_box->account;
@@ -703,6 +706,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 		text = g_strdup_printf("%s - <span size=\"smaller\" color=\"%s\">%s</span>",
 				       purple_account_get_username(status_box->account),
 				       aa_color, secondary ? secondary : primary);
+		emblem = pidgin_create_prpl_icon(status_box->account, PIDGIN_PRPL_ICON_SMALL);
 	} else if (secondary != NULL) {
 		text = g_strdup_printf("%s<span size=\"smaller\" color=\"%s\"> - %s</span>",
 				       primary, aa_color, secondary);
@@ -719,10 +723,14 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	gtk_list_store_set(status_box->store, &(status_box->iter),
 			   ICON_COLUMN, pixbuf,
 			   TEXT_COLUMN, text,
+			   EMBLEM_COLUMN, emblem,
+			   EMBLEM_VISIBLE_COLUMN, (emblem != NULL),
 			   -1);
 	if ((status_box->typing == 0) && (!status_box->connecting))
 		g_object_unref(pixbuf);
 	g_free(text);
+	if (emblem)
+		g_object_unref(emblem);
 
 	/* Make sure to activate the only row in the tree view */
 	path = gtk_tree_path_new_from_string("0");
@@ -1100,7 +1108,7 @@ static gboolean imhtml_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkI
 	return TRUE;
 }
 
-static int imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStatusBox *status_box)
+static gboolean imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStatusBox *status_box)
 {
 	if (event->keyval == GDK_Tab || event->keyval == GDK_KP_Tab)
 	{
@@ -1690,7 +1698,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
 
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, 
-					       G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
+					       G_TYPE_STRING, G_TYPE_POINTER, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN);
 	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, 
 							G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
@@ -1775,10 +1783,13 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 
 	status_box->icon_rend = gtk_cell_renderer_pixbuf_new();
 	status_box->text_rend = gtk_cell_renderer_text_new();
+	emblem_rend = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box->cell_view), status_box->icon_rend, FALSE);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box->cell_view), status_box->text_rend, TRUE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box->cell_view), emblem_rend, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->icon_rend, "pixbuf", ICON_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->text_rend, "markup", TEXT_COLUMN, NULL);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), emblem_rend, "pixbuf", EMBLEM_COLUMN, "visible", EMBLEM_VISIBLE_COLUMN, NULL);
 #if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(status_box->text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif

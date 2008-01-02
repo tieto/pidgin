@@ -121,6 +121,61 @@ GtkWidget *pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWi
 GtkWidget *pidgin_create_window(const char *title, guint border_width, const char *role, gboolean resizable);
 
 /**
+ * Creates a new dialog window
+ *
+ * @param title        The window title, or @c NULL
+ * @param border_width The window's desired border width
+ * @param role         A string indicating what the window is responsible for doing, or @c NULL
+ * @param resizable    Whether the window should be resizable (@c TRUE) or not (@c FALSE)
+ *
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_create_dialog(const char *title, guint border_width, const char *role, gboolean resizable);
+
+/**
+ * Retrieves the main content box (vbox) from a pidgin dialog window
+ *
+ * @param dialog       The dialog window
+ * @param homogeneous  TRUE if all children are to be given equal space allotments. 
+ * @param spacing      the number of pixels to place by default between children
+ *
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_dialog_get_vbox_with_properties(GtkDialog *dialog, gboolean homogeneous, gint spacing);
+
+/**
+ * Retrieves the main content box (vbox) from a pidgin dialog window
+ *
+ * @param dialog       The dialog window
+ *
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_dialog_get_vbox(GtkDialog *dialog);
+
+/**
+ * Add a button to a dialog created by #pidgin_create_dialog.
+ *
+ * @param dialog         The dialog window
+ * @param label          The stock-id or the label for the button
+ * @param callback       The callback function for the button
+ * @param callbackdata   The user data for the callback function
+ *
+ * @return The created button.
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_dialog_add_button(GtkDialog *dialog, const char *label,
+		GCallback callback, gpointer callbackdata);
+
+/**
+ * Retrieves the action area (button box) from a pidgin dialog window
+ *
+ * @param dialog       The dialog window
+ *
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_dialog_get_action_area(GtkDialog *dialog);
+
+/**
  * Toggles the sensitivity of a widget.
  *
  * @param widget    @c NULL. Used for signal handlers.
@@ -319,16 +374,20 @@ void pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidge
 gboolean pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *completion_entry, gpointer all_accounts);
 
 /**
- * @deprecated
  * Add autocompletion of screenames to an entry.
- * The usage of this function is deprecated. For new code, use the equivalent:
- * pidgin_setup_screenname_autocomplete_with_filter(entry, optmenu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(all))
+ *
+ * @deprecated
+ *   For new code, use the equivalent:
+ *   #pidgin_setup_screenname_autocomplete_with_filter(@a entry, @a optmenu,
+ *   #pidgin_screenname_autocomplete_default_filter, <tt>GINT_TO_POINTER(@a
+ *   all)</tt>)
  *
  * @param entry     The GtkEntry on which to setup autocomplete.
- * @param optmenu   A menu for accounts, returned by pidgin_account_option_menu_new().
- *                  If @a optmenu is not @c NULL, it'll be updated when a screenname is chosen
- *                  from the autocomplete list.
- * @param all       Whether to include screennames from disconnected accounts. 
+ * @param optmenu   A menu for accounts, returned by
+ *                  pidgin_account_option_menu_new().  If @a optmenu is not @c
+ *                  NULL, it'll be updated when a screenname is chosen from the
+ *                  autocomplete list.
+ * @param all       Whether to include screennames from disconnected accounts.
  */
 void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, gboolean all);
 
@@ -451,7 +510,7 @@ void pidgin_menu_position_func_helper(GtkMenu *menu, gint *x, gint *y,
 
 /**
  * A valid GtkMenuPositionFunc.  This is used to determine where 
- * to draw context menu's when the menu is activated with the 
+ * to draw context menus when the menu is activated with the 
  * keyboard (shift+F10).  If the menu is activated with the mouse, 
  * then you should just use GTK's built-in position function, 
  * because it does a better job of positioning the menu.
@@ -724,6 +783,16 @@ const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget);
  * @since 2.2.0
  */
 void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
+
+/**
+ * Automatically make a window transient to a suitable parent window.
+ *
+ * @param window    The window to make transient.
+ *
+ * @return  Whether the window was made transient or not.
+ * @since 2.4.0
+ */
+gboolean pidgin_auto_parent_window(GtkWidget *window);
 
 #endif /* _PIDGINUTILS_H_ */
 

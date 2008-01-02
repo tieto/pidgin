@@ -690,6 +690,10 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			char h[17], *p;
 			int i;
 
+			challenge = xmlnode_get_attrib(xmlnode_get_child(query, "crammd5"), "challenge");
+			auth_hmac_md5(challenge, strlen(challenge), pw, strlen(pw), digest);
+
+			/* Create the response query */
 			iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
 			query = xmlnode_get_child(iq->node, "query");
 
@@ -699,8 +703,6 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			xmlnode_insert_data(x, js->user->resource, -1);
 
 			x = xmlnode_new_child(query, "crammd5");
-			challenge = xmlnode_get_attrib(xmlnode_get_child(query, "crammd5"), "challenge");
-			auth_hmac_md5(challenge, strlen(challenge), pw, strlen(pw), &digest);
 
 			/* Translate the digest to a hexadecimal notation */
 			p = h;
@@ -1075,10 +1077,12 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 		}
 	}
 	/* If we've negotiated a security layer, we need to enable it */
-	sasl_getprop(js->sasl, SASL_SSF, &x);
-	if (*(int *)x > 0) {
-		sasl_getprop(js->sasl, SASL_MAXOUTBUF, &x);
-		js->sasl_maxbuf = *(int *)x;
+	if (js->sasl) {
+		sasl_getprop(js->sasl, SASL_SSF, &x);
+		if (*(int *)x > 0) {
+			sasl_getprop(js->sasl, SASL_MAXOUTBUF, &x);
+			js->sasl_maxbuf = *(int *)x;
+		}
 	}
 #endif
 

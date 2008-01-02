@@ -627,7 +627,7 @@ x509_ca_element_free(x509_ca_element *el)
 
 /** System directory to probe for CA certificates */
 /* This is set in the lazy_init function */
-static const gchar *x509_ca_syspath = NULL;
+static GList *x509_ca_paths = NULL;
 
 /** A list of loaded CAs, populated from the above path whenever the lazy_init
     happens. Contains pointers to x509_ca_elements */
@@ -674,6 +674,7 @@ x509_ca_lazy_init(void)
 	GDir *certdir;
 	const gchar *entry;
 	GPatternSpec *pempat;
+	GList *iter = NULL;
 	
 	if (x509_ca_initialized) return TRUE;
 
@@ -687,54 +688,48 @@ x509_ca_lazy_init(void)
 		return FALSE;
 	}
 
-	/* Attempt to point at the appropriate system path */
-	if (NULL == x509_ca_syspath) {
-#ifdef _WIN32
-		x509_ca_syspath = g_build_filename(DATADIR,
-						   "ca-certs", NULL);
-#else
-		x509_ca_syspath = g_build_filename(DATADIR,
-						   "purple", "ca-certs", NULL);
-#endif
-	}
-
-	/* Populate the certificates pool from the system path */
-	certdir = g_dir_open(x509_ca_syspath, 0, NULL);
-	g_return_val_if_fail(certdir, FALSE);
-
 	/* Use a glob to only read .pem files */
 	pempat = g_pattern_spec_new("*.pem");
-	
-	while ( (entry = g_dir_read_name(certdir)) ) {
-		gchar *fullpath;
-		PurpleCertificate *crt;
 
-		if ( !g_pattern_match_string(pempat, entry) ) {
+	/* Populate the certificates pool from the search path(s) */
+	for (iter = x509_ca_paths; iter; iter = iter->next) {
+		certdir = g_dir_open(iter->data, 0, NULL);
+		if (!certdir) {
+			purple_debug_error("certificate/x509/ca", "Couldn't open location '%s'\n", iter->data);
 			continue;
 		}
 
-		fullpath = g_build_filename(x509_ca_syspath, entry, NULL);
-		
-		/* TODO: Respond to a failure in the following? */
-		crt = purple_certificate_import(x509, fullpath);
+		while ( (entry = g_dir_read_name(certdir)) ) {
+			gchar *fullpath;
+			PurpleCertificate *crt;
 
-		if (x509_ca_quiet_put_cert(crt)) {
-			purple_debug_info("certificate/x509/ca",
-					  "Loaded %s\n",
-					  fullpath);
-		} else {
-			purple_debug_error("certificate/x509/ca",
-					  "Failed to load %s\n",
-					  fullpath);
+			if ( !g_pattern_match_string(pempat, entry) ) {
+				continue;
+			}
+
+			fullpath = g_build_filename(iter->data, entry, NULL);
+
+			/* TODO: Respond to a failure in the following? */
+			crt = purple_certificate_import(x509, fullpath);
+
+			if (x509_ca_quiet_put_cert(crt)) {
+				purple_debug_info("certificate/x509/ca",
+						  "Loaded %s\n",
+						  fullpath);
+			} else {
+				purple_debug_error("certificate/x509/ca",
+						  "Failed to load %s\n",
+						  fullpath);
+			}
+
+			purple_certificate_destroy(crt);
+			g_free(fullpath);
 		}
-
-		purple_certificate_destroy(crt);
-		g_free(fullpath);
+		g_dir_close(certdir);
 	}
 
 	g_pattern_spec_free(pempat);
-	g_dir_close(certdir);
-	
+
 	purple_debug_info("certificate/x509/ca",
 			  "Lazy init completed.\n");
 	x509_ca_initialized = TRUE;
@@ -744,6 +739,17 @@ x509_ca_lazy_init(void)
 static gboolean
 x509_ca_init(void)
 {
+	/* Attempt to point at the appropriate system path */
+	if (NULL == x509_ca_paths) {
+#ifdef _WIN32
+		x509_ca_paths = g_list_append(NULL, g_build_filename(DATADIR,
+						   "ca-certs", NULL));
+#else
+		x509_ca_paths = g_list_append(NULL, g_build_filename(DATADIR,
+						   "purple", "ca-certs", NULL));
+#endif
+	}
+
 	/* Attempt to initialize now, but if it doesn't work, that's OK;
 	   it will get done later */
 	if ( ! x509_ca_lazy_init()) {
@@ -752,7 +758,7 @@ x509_ca_init(void)
 				  "dependency is not yet registered. "
 				  "It has been deferred to later.\n");
 	}
-	
+
 	return TRUE;
 }
 
@@ -768,6 +774,9 @@ x509_ca_uninit(void)
 	g_list_free(x509_ca_certs);
 	x509_ca_certs = NULL;
 	x509_ca_initialized = FALSE;
+	g_list_foreach(x509_ca_paths, (GFunc)g_free, NULL);
+	g_list_free(x509_ca_paths);
+	x509_ca_paths = NULL;
 }
 
 /** Look up a ca_element by dn */
@@ -1219,6 +1228,9 @@ x509_tls_cached_peer_cert_changed(PurpleCertificateVerificationRequest *vrq)
 }
 
 static void
+x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq);
+
+static void
 x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 {
 	/* TODO: Looking this up by name over and over is expensive.
@@ -1259,8 +1271,8 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 	} else {
 		purple_debug_info("certificate/x509/tls_cached",
 				  "Peer cert did NOT match cached\n");
-		/* vrq now becomes the problem of cert_changed */
-		x509_tls_cached_peer_cert_changed(vrq);
+		/* vrq now becomes the problem of the user */
+		x509_tls_cached_unknown_peer(vrq);
 	}
 	
 	purple_certificate_destroy(cached_crt);
@@ -1271,7 +1283,9 @@ x509_tls_cached_cert_in_cache(PurpleCertificateVerificationRequest *vrq)
 /* For when we've never communicated with this party before */
 /* TODO: Need ways to specify possibly multiple problems with a cert, or at
    least  reprioritize them. For example, maybe the signature ought to be
-   checked BEFORE the hostname checking? */
+   checked BEFORE the hostname checking?
+   Stu thinks we should check the signature before the name, so we do now.
+   The above TODO still stands. */
 static void
 x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 {
@@ -1282,35 +1296,6 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 	gchar *ca_id;
 
 	peer_crt = (PurpleCertificate *) chain->data;
-
-	/* First, check that the hostname matches */
-	if ( ! purple_certificate_check_subject_name(peer_crt,
-						     vrq->subject_name) ) {
-		gchar *sn = purple_certificate_get_subject_name(peer_crt);
-		gchar *msg;
-		
-		purple_debug_info("certificate/x509/tls_cached",
-				  "Name mismatch: Certificate given for %s "
-				  "has a name of %s\n",
-				  vrq->subject_name, sn);
-
-		/* Prompt the user to authenticate the certificate */
-		/* TODO: Provide the user with more guidance about why he is
-		   being prompted */
-		/* vrq will be completed by user_auth */
-		msg = g_strdup_printf(_("The certificate presented by \"%s\" "
-					"claims to be from \"%s\" instead.  "
-					"This could mean that you are not "
-					"connecting to the service you "
-					"believe you are."),
-				      vrq->subject_name, sn);
-				      
-		x509_tls_cached_user_auth(vrq,msg);
-
-		g_free(sn);
-		g_free(msg);
-		return;
-	} /* if (name mismatch) */
 
 	/* TODO: Figure out a way to check for a bad signature, as opposed to
 	   "not self-signed" */
@@ -1332,7 +1317,7 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 
 		g_free(msg);
 		return;
-	} /* if (name mismatch) */
+	} /* if (self signed) */
 	
 	/* Next, check that the certificate chain is valid */
 	if ( ! purple_certificate_check_signature_chain(chain) ) {
@@ -1430,6 +1415,35 @@ x509_tls_cached_unknown_peer(PurpleCertificateVerificationRequest *vrq)
 						   PURPLE_CERTIFICATE_INVALID);
 		return;
 	} /* if (CA signature not good) */
+
+	/* Last, check that the hostname matches */
+	if ( ! purple_certificate_check_subject_name(peer_crt,
+						     vrq->subject_name) ) {
+		gchar *sn = purple_certificate_get_subject_name(peer_crt);
+		gchar *msg;
+		
+		purple_debug_info("certificate/x509/tls_cached",
+				  "Name mismatch: Certificate given for %s "
+				  "has a name of %s\n",
+				  vrq->subject_name, sn);
+
+		/* Prompt the user to authenticate the certificate */
+		/* TODO: Provide the user with more guidance about why he is
+		   being prompted */
+		/* vrq will be completed by user_auth */
+		msg = g_strdup_printf(_("The certificate presented by \"%s\" "
+					"claims to be from \"%s\" instead.  "
+					"This could mean that you are not "
+					"connecting to the service you "
+					"believe you are."),
+				      vrq->subject_name, sn);
+				      
+		x509_tls_cached_user_auth(vrq,msg);
+
+		g_free(sn);
+		g_free(msg);
+		return;
+	} /* if (name mismatch) */
 
 	/* If we reach this point, the certificate is good. */
 	/* Look up the local cache and store it there for future use */
@@ -1899,5 +1913,12 @@ purple_certificate_display_x509(PurpleCertificate *crt)
 	g_free(activ_str);
 	g_free(expir_str);
 	g_byte_array_free(sha_bin, TRUE);
+}
+
+void purple_certificate_add_ca_search_path(const char *path)
+{
+	if (g_list_find_custom(x509_ca_paths, path, (GCompareFunc)strcmp))
+		return;
+	x509_ca_paths = g_list_append(x509_ca_paths, g_strdup(path));
 }
 

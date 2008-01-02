@@ -812,7 +812,6 @@ static void clear_formatting_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
 static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 {
 	GtkWidget *menuitem;
-	GtkWidget *mi, *img;
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("Paste as Plain _Text"));
 	gtk_widget_show(menuitem);
@@ -1012,7 +1011,7 @@ static void cut_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 static void imhtml_paste_insert(GtkIMHtml *imhtml, const char *text, gboolean plaintext)
 {
 	GtkTextIter iter;
-	GtkIMHtmlOptions flags = plaintext ? 0 : (GTK_IMHTML_NO_NEWLINE | GTK_IMHTML_NO_COMMENTS);
+	GtkIMHtmlOptions flags = plaintext ? GTK_IMHTML_NO_SMILEY : (GTK_IMHTML_NO_NEWLINE | GTK_IMHTML_NO_COMMENTS);
 
 	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, NULL, NULL))
 		gtk_text_buffer_delete_selection(imhtml->text_buffer, TRUE, TRUE);
@@ -2997,6 +2996,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			pos += tlen;
 			g_free(tag); /* This was allocated back in VALID_TAG() */
 		} else if (imhtml->edit.link == NULL &&
+				!(options & GTK_IMHTML_NO_SMILEY) &&
 				gtk_imhtml_is_smiley(imhtml, fonts, c, &smilelen)) {
 			GtkIMHtmlFontDetail *fd;
 			gchar *sml = NULL;
@@ -4275,33 +4275,6 @@ static void imhtml_emit_signal_for_format(GtkIMHtml *imhtml, GtkIMHtmlButtons bu
 	object = g_object_ref(G_OBJECT(imhtml));
 	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, button);
 	g_object_unref(object);
-}
-
-static void populate_popup_cb(GtkTextView *textview, GtkMenu *menu, gpointer nul)
-{
-	GtkWidget *mi, *img;
-	
-	mi = gtk_menu_item_new();
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
-
-	img = gtk_image_new_from_stock(GTK_STOCK_BOLD, GTK_ICON_SIZE_MENU);
-	mi = gtk_image_menu_item_new_with_mnemonic(_("_Font"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
-
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT, GTK_ICON_SIZE_MENU);
-	mi = gtk_image_menu_item_new_with_mnemonic(_("_Insert"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
-
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SMILEY, GTK_ICON_SIZE_MENU);
-	mi = gtk_image_menu_item_new_with_mnemonic(_("S_mile!"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
 }
 
 static void imhtml_toggle_bold(GtkIMHtml *imhtml)

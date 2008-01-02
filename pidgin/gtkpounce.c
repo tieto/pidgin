@@ -1317,7 +1317,6 @@ void
 pidgin_pounces_manager_show(void)
 {
 	PouncesManager *dialog;
-	GtkWidget *bbox;
 	GtkWidget *button;
 	GtkWidget *list;
 	GtkWidget *vbox;
@@ -1334,7 +1333,7 @@ pidgin_pounces_manager_show(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/pounces/dialog/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/pounces/dialog/height");
 
-	dialog->window = win = pidgin_create_window(_("Buddy Pounces"), PIDGIN_HIG_BORDER, "pounces", TRUE);
+	dialog->window = win = pidgin_create_dialog(_("Buddy Pounces"), PIDGIN_HIG_BORDER, "pounces", TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
@@ -1343,61 +1342,33 @@ pidgin_pounces_manager_show(void)
 					 G_CALLBACK(pounces_manager_configure_cb), dialog);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(win), vbox);
-	gtk_widget_show(vbox);
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, PIDGIN_HIG_BORDER);
 
 	/* List of saved buddy pounces */
 	list = create_pounces_list(dialog);
 	gtk_box_pack_start(GTK_BOX(vbox), list, TRUE, TRUE, 0);
 
-	/* Button box. */
-	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
-
 	/* Add button */
-	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_ADD, G_CALLBACK(pounces_manager_add_cb), dialog);
 	gtk_widget_set_sensitive(button, (purple_accounts_get_all() != NULL));
+
 	purple_signal_connect(purple_connections_get_handle(), "signed-on",
 						pounces_manager, PURPLE_CALLBACK(pounces_manager_connection_cb), button);
 	purple_signal_connect(purple_connections_get_handle(), "signed-off",
 						pounces_manager, PURPLE_CALLBACK(pounces_manager_connection_cb), button);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(pounces_manager_add_cb), dialog);
 
 	/* Modify button */
-	button = gtk_button_new_from_stock(PIDGIN_STOCK_MODIFY);
-	dialog->modify_button = button;
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_MODIFY, G_CALLBACK(pounces_manager_modify_cb), dialog);
 	gtk_widget_set_sensitive(button, FALSE);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(pounces_manager_modify_cb), dialog);
+	dialog->modify_button = button;
 
 	/* Delete button */
-	button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-	dialog->delete_button = button;
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_DELETE, G_CALLBACK(pounces_manager_delete_cb), dialog);
 	gtk_widget_set_sensitive(button, FALSE);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(pounces_manager_delete_cb), dialog);
+	dialog->delete_button = button;
 
 	/* Close button */
-	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(pounces_manager_close_cb), dialog);
+	pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE, G_CALLBACK(pounces_manager_close_cb), dialog);
 
 	gtk_widget_show(win);
 }

@@ -162,11 +162,6 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 		if (info != NULL)
 			g_hash_table_remove(auto_reconns, account);
 
-		/*
-		 * TODO: Do we really want to disable the account when it's
-		 * disconnected by wants_to_die?  This happens when you sign
-		 * on from somewhere else, or when you enter an invalid password.
-		 */
 		purple_account_set_enabled(account, PIDGIN_UI, FALSE);
 	}
 

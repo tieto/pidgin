@@ -430,7 +430,7 @@ tls_peers_mgmt_build(void)
 		/* Set up the display columns */
 		renderer = gtk_cell_renderer_text_new();
 		column = gtk_tree_view_column_new_with_attributes(
-			"Hostname",
+			_("Hostname"),
 			renderer,
 			"text", TPM_HOSTNAME_COLUMN,
 			NULL);
@@ -545,12 +545,13 @@ typedef struct
    So if it is set, don't open another one! */
 CertMgrDialog *certmgr_dialog = NULL;
 
-static void
+static gboolean
 certmgr_close_cb(GtkWidget *w, CertMgrDialog *dlg)
 {
 	/* TODO: Ignoring the arguments to this function may not be ideal,
 	   but there *should* only be "one dialog to rule them all" at a time*/
 	pidgin_certmgr_hide();
+	return FALSE;
 }
 
 void
@@ -559,7 +560,6 @@ pidgin_certmgr_show(void)
 	CertMgrDialog *dlg;
 	GtkWidget *win;
 	GtkWidget *vbox;
-	GtkWidget *bbox;
 
 	/* Enumerate all the certificates on file */
 	{
@@ -599,7 +599,7 @@ pidgin_certmgr_show(void)
 	dlg = certmgr_dialog = g_new0(CertMgrDialog, 1);
 
 	win = dlg->window =
-		pidgin_create_window(_("Certificate Manager"),/* Title */
+		pidgin_create_dialog(_("Certificate Manager"),/* Title */
 				     PIDGIN_HIG_BORDER, /*Window border*/
 				     "certmgr",         /* Role */
 				     TRUE); /* Allow resizing */
@@ -611,9 +611,7 @@ pidgin_certmgr_show(void)
 	gtk_window_set_default_size(GTK_WINDOW(win), 400, 400);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new( FALSE, PIDGIN_HIG_BORDER );
-	gtk_container_add(GTK_CONTAINER(win), vbox);
-	gtk_widget_show(vbox);
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, PIDGIN_HIG_BORDER);
 
 	/* Notebook of various certificate managers */
 	dlg->notebook = gtk_notebook_new();
@@ -622,19 +620,9 @@ pidgin_certmgr_show(void)
 			   0);
 	gtk_widget_show(dlg->notebook);
 
-	/* Box for the close button */
-	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
-
 	/* Close button */
-	dlg->closebutton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_box_pack_start(GTK_BOX(bbox), dlg->closebutton, FALSE, FALSE, 0);
-	gtk_widget_show(dlg->closebutton);
-	g_signal_connect(G_OBJECT(dlg->closebutton), "clicked",
-			 G_CALLBACK(certmgr_close_cb), dlg);
+	dlg->closebutton = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE,
+			G_CALLBACK(certmgr_close_cb), dlg);
 
 	/* Add the defined certificate managers */
 	/* TODO: Find a way of determining whether each is shown or not */

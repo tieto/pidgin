@@ -1209,7 +1209,6 @@ purple_request_choice_varg(void *handle, const char *title,
 	g_return_val_if_fail(ok_text != NULL,  NULL);
 	g_return_val_if_fail(ok_cb   != NULL,  NULL);
 	g_return_val_if_fail(cancel_text != NULL,  NULL);
-	g_return_val_if_fail(cancel_cb   != NULL,  NULL);
 
 	ops = purple_request_get_ui_ops();
 
@@ -1299,7 +1298,6 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 	g_return_val_if_fail(ok_text != NULL, NULL);
 	g_return_val_if_fail(ok_cb   != NULL, NULL);
 	g_return_val_if_fail(cancel_text != NULL, NULL);
-	g_return_val_if_fail(cancel_cb   != NULL, NULL);
 
 	ops = purple_request_get_ui_ops();
 
