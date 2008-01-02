@@ -396,6 +396,7 @@ static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer timeout)
 
 static gboolean jabber_pong_timeout(PurpleConnection *gc)
 {
+	JabberStream *js = gc->proto_data;
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Ping timeout"));
 	js->keepalive_timeout = -1;
