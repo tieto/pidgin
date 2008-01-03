@@ -614,7 +614,7 @@ jabber_login(PurpleAccount *account)
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->write_buffer = purple_circ_buffer_new(512);
-	js->old_length = -1;
+	js->old_length = 0;
 	js->keepalive_timeout = -1;
 
 	if(!js->user) {
@@ -1100,7 +1100,7 @@ void jabber_register_account(PurpleAccount *account)
 			g_free, g_free);
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
-	js->old_length = -1;
+	js->old_length = 0;
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
