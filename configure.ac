@@ -1086,7 +1086,6 @@ if test "x$GCC" = "xyes"; then
 			"-Wmissing-prototypes" \
 			"-Wnested-externs" \
 			"-Wpointer-arith" \
-			"-Wstrict-prototypes" \
 			"-Wundef" \
 	; do
 		orig_CFLAGS="$CFLAGS"
