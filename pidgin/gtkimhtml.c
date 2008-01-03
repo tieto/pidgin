@@ -289,7 +289,7 @@ static gboolean clipboard_paste_html_win32(GtkIMHtml *imhtml) {
 #endif
 
 static GtkSmileyTree*
-gtk_smiley_tree_new ()
+gtk_smiley_tree_new (void)
 {
 	return g_new0 (GtkSmileyTree, 1);
 }

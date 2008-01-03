@@ -86,7 +86,7 @@ pidgin_tooltip_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer d
 }
 
 static GtkWidget*
-setup_tooltip_window()
+setup_tooltip_window(void)
 {
 	const char *name;
 	GtkWidget *tipwindow;

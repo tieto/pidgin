@@ -171,7 +171,7 @@ plugin_compare(PurplePlugin *p1, PurplePlugin *p2)
 }
 
 static void
-confwin_init()
+confwin_init(void)
 {
 	confwins = g_hash_table_new(g_direct_hash, g_direct_equal);
 }

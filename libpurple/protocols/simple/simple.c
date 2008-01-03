@@ -45,17 +45,17 @@
 #include "dnssrv.h"
 #include "ntlm.h"
 
-static char *gentag() {
+static char *gentag(void) {
 	return g_strdup_printf("%04d%04d", rand() & 0xFFFF, rand() & 0xFFFF);
 }
 
-static char *genbranch() {
+static char *genbranch(void) {
 	return g_strdup_printf("z9hG4bK%04X%04X%04X%04X%04X",
 		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
 		rand() & 0xFFFF, rand() & 0xFFFF);
 }
 
-static char *gencallid() {
+static char *gencallid(void) {
 	return g_strdup_printf("%04Xg%04Xa%04Xi%04Xm%04Xt%04Xb%04Xx%04Xx",
 		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
 		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,

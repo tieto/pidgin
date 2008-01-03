@@ -2947,7 +2947,7 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 GSList *minidialogs = NULL;
 
 static void *
-pidgin_utils_get_handle()
+pidgin_utils_get_handle(void)
 {
 	static int handle;
 

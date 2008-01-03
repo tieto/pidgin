@@ -177,7 +177,7 @@ typedef struct _pidgin_blist_node {
 } PidginBlistNode;
 
 static char dim_grey_string[8] = "";
-static char *dim_grey()
+static char *dim_grey(void)
 {
 	if (!gtkblist)
 		return "dim grey";
@@ -708,12 +708,12 @@ static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
 	pidgin_blist_update(purple_get_blist(), node);
 }
 
-static void gtk_blist_show_systemlog_cb()
+static void gtk_blist_show_systemlog_cb(void)
 {
 	pidgin_syslog_show();
 }
 
-static void gtk_blist_show_onlinehelp_cb()
+static void gtk_blist_show_onlinehelp_cb(void)
 {
 	purple_notify_uri(NULL, PURPLE_WEBSITE "documentation");
 }
@@ -1117,7 +1117,7 @@ static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTr
 	}
 }
 
-static void pidgin_blist_add_chat_cb()
+static void pidgin_blist_add_chat_cb(void)
 {
 	GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));
 	GtkTreeIter iter;
@@ -1137,7 +1137,7 @@ static void pidgin_blist_add_chat_cb()
 	}
 }
 
-static void pidgin_blist_add_buddy_cb()
+static void pidgin_blist_add_buddy_cb(void)
 {
 	GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));
 	GtkTreeIter iter;
@@ -2761,7 +2761,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 }
 
 static void
-pidgin_blist_destroy_tooltip_data()
+pidgin_blist_destroy_tooltip_data(void)
 {
 	while(gtkblist->tooltipdata) {
 		struct tooltip_data *td = gtkblist->tooltipdata->data;
@@ -3750,7 +3750,7 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 	return text;
 }
 
-static void pidgin_blist_restore_position()
+static void pidgin_blist_restore_position(void)
 {
 	int blist_x, blist_y, blist_width, blist_height;
 
@@ -3897,7 +3897,7 @@ plugin_changed_cb(PurplePlugin *p, gpointer *data)
 }
 
 static void
-unseen_conv_menu()
+unseen_conv_menu(void)
 {
 	static GtkWidget *menu = NULL;
 	GList *convs = NULL;
@@ -4183,7 +4183,7 @@ void pidgin_blist_setup_sort_methods()
 	pidgin_blist_sort_method_set(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/sort_type"));
 }
 
-static void _prefs_change_redo_list()
+static void _prefs_change_redo_list(void)
 {
 	GtkTreeSelection *sel;
 	GtkTreeIter iter;

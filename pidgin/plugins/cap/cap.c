@@ -434,26 +434,6 @@ static void buddy_signed_off(PurpleBuddy *buddy) {
 	stats->last_seen = time(NULL);
 }
 
-static void buddy_idle(PurpleBuddy *buddy, gboolean old_idle, gboolean idle) {
-}
-
-#if 0
-static void blist_node_extended_menu(PurpleBlistNode *node, GList **menu) {
-	PurpleBuddy *buddy;
-	PurpleMenuAction *menu_action;
-	purple_debug_info("cap", "got extended blist menu\n");
-	purple_debug_info("cap", "is buddy: %d\n", PURPLE_BLIST_NODE_IS_BUDDY(node));
-	purple_debug_info("cap", "is contact: %d\n", PURPLE_BLIST_NODE_IS_CONTACT(node));
-	purple_debug_info("cap", "is group: %d\n", PURPLE_BLIST_NODE_IS_GROUP(node));
-	/* Probably only concerned with buddy/contact types. Contacts = meta-buddies (grouped msn/jabber/etc.) */
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
-	buddy = (PurpleBuddy *)node;
-	menu_action = purple_menu_action_new(_("Display Statistics"),
-			PURPLE_CALLBACK(display_statistics_action_cb), NULL, NULL);
-	*menu = g_list_append(*menu, menu_action);
-}
-#endif
-
 /* drawing-tooltip */
 static void drawing_tooltip(PurpleBlistNode *node, GString *text, gboolean full) {
 	if(node->type == PURPLE_BLIST_BUDDY_NODE) {
@@ -662,15 +642,6 @@ static void insert_word_count(const char *sender, const char *receiver, guint co
 	/* result = dbi_conn_queryf(_conn, "insert into cap_message values(\'%s\', \'%s\', %d, now());", sender, receiver, count); */
 }
 
-/* Callbacks */
-void display_statistics_action_cb(PurpleBlistNode *node, gpointer data) {
-	PurpleBuddy *buddy;
-
-	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
-	buddy = (PurpleBuddy *)node;
-	purple_debug_info("cap", "Statistics for %s requested.\n", buddy->name);
-}
-
 /* Purple plugin specific code */
 
 static gboolean plugin_load(PurplePlugin *plugin) {
@@ -714,9 +685,6 @@ static void add_plugin_functionality(PurplePlugin *plugin) {
 	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off", plugin,
 			PURPLE_CALLBACK(buddy_signed_off), NULL);
 
-	/*purple_signal_connect(purple_blist_get_handle(), "blist-node-extended-menu", plugin,
-			PURPLE_CALLBACK(blist_node_extended_menu), NULL);*/
-
 	purple_signal_connect(pidgin_blist_get_handle(), "drawing-tooltip", plugin,
 			PURPLE_CALLBACK(drawing_tooltip), NULL);
 
@@ -725,9 +693,6 @@ static void add_plugin_functionality(PurplePlugin *plugin) {
 	
 	purple_signal_connect(purple_connections_get_handle(), "signed-off", plugin,
 			PURPLE_CALLBACK(signed_off), NULL);
-
-	purple_signal_connect(purple_blist_get_handle(), "buddy-idle-changed", plugin,
-			PURPLE_CALLBACK(buddy_idle), NULL);
 
 	_signals_connected = TRUE;
 }
@@ -765,9 +730,6 @@ static void remove_plugin_functionality(PurplePlugin *plugin) {
 	purple_signal_disconnect(purple_blist_get_handle(), "buddy-signed-off", plugin,
 			PURPLE_CALLBACK(buddy_signed_off));
 
-	/*purple_signal_disconnect(purple_blist_get_handle(), "blist-node-extended-menu", plugin,
-			PURPLE_CALLBACK(blist_node_extended_menu));*/
-
 	purple_signal_disconnect(pidgin_blist_get_handle(), "drawing-tooltip", plugin,
 			PURPLE_CALLBACK(drawing_tooltip));
 
@@ -776,9 +738,6 @@ static void remove_plugin_functionality(PurplePlugin *plugin) {
 	
 	purple_signal_disconnect(purple_connections_get_handle(), "signed-off", plugin,
 			PURPLE_CALLBACK(signed_off));
-
-	purple_signal_disconnect(purple_blist_get_handle(), "buddy-idle-changed", plugin,
-			PURPLE_CALLBACK(buddy_idle));
 
 	_signals_connected = FALSE;
 }

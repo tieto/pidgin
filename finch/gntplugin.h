@@ -40,7 +40,7 @@
  **********************************************************************/
 /*@{*/
 
-typedef GntWidget* (*FinchPluginFrame) ();
+typedef GntWidget* (*FinchPluginFrame) (void);
 
 /* Guess where these came from */
 #define FINCH_PLUGIN_TYPE FINCH_UI

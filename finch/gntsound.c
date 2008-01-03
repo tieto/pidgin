@@ -286,7 +286,7 @@ account_signon_cb(PurpleConnection *gc, gpointer data)
 }
 
 static void *
-finch_sound_get_handle()
+finch_sound_get_handle(void)
 {
 	static int handle;
 

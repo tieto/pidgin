@@ -95,7 +95,7 @@ static GtkWidget *widget_bool_widgets[G_N_ELEMENTS(widget_bool_prefs)];
 */
 
 static GString *
-make_gtkrc_string()
+make_gtkrc_string(void)
 {
 	gint i;
 	gchar *prefbase = NULL;
@@ -185,7 +185,7 @@ make_gtkrc_string()
 }
 
 static void
-purplerc_make_changes()
+purplerc_make_changes(void)
 {
 	GString *str = make_gtkrc_string();
 #if GTK_CHECK_VERSION(2,4,0)

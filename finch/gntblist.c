@@ -483,7 +483,7 @@ add_group_cb(gpointer null, const char *group)
 }
 
 static void
-finch_request_add_group()
+finch_request_add_group(void)
 {
 	purple_request_input(NULL, _("Add Group"), NULL, _("Enter the name of the group"),
 			NULL, FALSE, FALSE, NULL,
@@ -511,7 +511,7 @@ static PurpleBlistUiOps blist_ui_ops =
 };
 
 static gpointer
-finch_blist_get_handle()
+finch_blist_get_handle(void)
 {
 	static int handle;
 
@@ -1663,7 +1663,7 @@ reset_blist_window(GntWidget *window, gpointer null)
 }
 
 static void
-populate_buddylist()
+populate_buddylist(void)
 {
 	PurpleBlistNode *node;
 	PurpleBuddyList *list;
@@ -1696,7 +1696,7 @@ destroy_status_list(GList *list)
 }
 
 static void
-populate_status_dropdown()
+populate_status_dropdown(void)
 {
 	int i;
 	GList *iter;
@@ -2123,7 +2123,7 @@ build_plugin_actions(GntMenuItem *item, PurplePlugin *plugin, gpointer context)
 }
 
 static void
-reconstruct_plugins_menu()
+reconstruct_plugins_menu(void)
 {
 	GntWidget *sub;
 	GntMenuItem *plg;
@@ -2155,7 +2155,7 @@ reconstruct_plugins_menu()
 }
 
 static void
-reconstruct_accounts_menu()
+reconstruct_accounts_menu(void)
 {
 	GntWidget *sub;
 	GntMenuItem *acc, *item;
@@ -2355,7 +2355,7 @@ menu_add_group_cb(GntMenuItem *item, gpointer null)
 }
 
 static void
-create_menu()
+create_menu(void)
 {
 	GntWidget *menu, *sub, *subsub;
 	GntMenuItem *item;

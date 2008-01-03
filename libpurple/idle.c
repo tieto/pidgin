@@ -216,7 +216,7 @@ check_idleness(void)
  * Check idle and set the timer to fire at the next idle-worth event 
  */
 static gint
-check_idleness_timer()
+check_idleness_timer(void)
 {
 	check_idleness();
 	if (time_until_next_idle_event == 0)
@@ -295,7 +295,7 @@ purple_idle_get_ui_ops(void)
 }
 
 static void *
-purple_idle_get_handle()
+purple_idle_get_handle(void)
 {
 	static int handle;
 

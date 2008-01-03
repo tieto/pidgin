@@ -190,7 +190,7 @@ saved_statuses_sort_func(gconstpointer a, gconstpointer b)
  * does the expiration.
  */
 static void
-remove_old_transient_statuses()
+remove_old_transient_statuses(void)
 {
 	GList *l, *next;
 	PurpleSavedStatus *saved_status, *current_status;
