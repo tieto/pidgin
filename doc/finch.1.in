@@ -105,6 +105,12 @@ Refresh the windows. This is useful after resizing the terminal window.
 .B Alt \+ 1 2 ... 0
 Jump to the 1st, 2nd ... 10th window.
 .TP
+.B Alt \+ Tab
+Jump to the next URGENT (highlighted) window.
+.TP
+.B Alt \+ Shift \+ Tab
+Jump to the previous URGENT (highlighted) window.
+.TP
 .B Ctrl \+ o
 Bring up the menu (if there is one) for a window.
 .TP
@@ -460,6 +466,7 @@ a-/ = help-for-widget
 .br
 # switch-window-n
 .br
+# Other actions: window-next-urgent, window-prev-urgent
 
 # For the sample custom window manager
 .br

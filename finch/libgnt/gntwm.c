@@ -388,10 +388,10 @@ gnt_wm_init(GTypeInstance *instance, gpointer class)
 }
 
 static void
-switch_window(GntWM *wm, int direction)
+switch_window(GntWM *wm, int direction, gboolean urgent)
 {
 	GntWidget *w = NULL, *wid = NULL;
-	int pos;
+	int pos, orgpos;
 
 	if (wm->_list.window || wm->menu)
 		return;
@@ -404,15 +404,20 @@ switch_window(GntWM *wm, int direction)
 	}
 
 	w = wm->cws->ordered->data;
-	pos = g_list_index(wm->cws->list, w);
-	pos += direction;
+	orgpos = pos = g_list_index(wm->cws->list, w);
 
-	if (pos < 0)
-		wid = g_list_last(wm->cws->list)->data;
-	else if (pos >= g_list_length(wm->cws->list))
-		wid = wm->cws->list->data;
-	else if (pos >= 0)
-		wid = g_list_nth_data(wm->cws->list, pos);
+	do {
+		pos += direction;
+
+		if (pos < 0) {
+			wid = g_list_last(wm->cws->list)->data;
+			pos = g_list_length(wm->cws->list) - 1;
+		} else if (pos >= g_list_length(wm->cws->list)) {
+			wid = wm->cws->list->data;
+			pos = 0;
+		} else
+			wid = g_list_nth_data(wm->cws->list, pos);
+	} while (urgent && !GNT_WIDGET_IS_FLAG_SET(wid, GNT_WIDGET_URGENT) && pos != orgpos);
 
 	gnt_wm_raise_window(wm, wid);
 }
@@ -421,7 +426,7 @@ static gboolean
 window_next(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
-	switch_window(wm, 1);
+	switch_window(wm, 1, FALSE);
 	return TRUE;
 }
 
@@ -429,7 +434,7 @@ static gboolean
 window_prev(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
-	switch_window(wm, -1);
+	switch_window(wm, -1, FALSE);
 	return TRUE;
 }
 
@@ -1202,6 +1207,22 @@ ignore_keys_end(GntBindable *bindable, GList *n)
 	return ignore_keys ? !(ignore_keys = FALSE) : FALSE;
 }
 
+static gboolean
+window_next_urgent(GntBindable *bindable, GList *n)
+{
+	GntWM *wm = GNT_WM(bindable);
+	switch_window(wm, 1, TRUE);
+	return TRUE;
+}
+
+static gboolean
+window_prev_urgent(GntBindable *bindable, GList *n)
+{
+	GntWM *wm = GNT_WM(bindable);
+	switch_window(wm, -1, TRUE);
+	return TRUE;
+}
+
 #ifdef USE_PYTHON
 static void
 python_script_selected(GntFileSel *fs, const char *path, const char *f, gpointer n)
@@ -1323,6 +1344,7 @@ gnt_wm_class_init(GntWMClass *klass)
 {
 	int i;
 	GObjectClass *gclass = G_OBJECT_CLASS(klass);
+	char key[32];
 
 	gclass->dispose = gnt_wm_destroy;
 
@@ -1482,10 +1504,15 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" "\\", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-window", help_for_window,
 				"\033" "|", NULL);
-	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-start", ignore_keys_start, 
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-start", ignore_keys_start,
 				GNT_KEY_CTRL_G, NULL);
-	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-end", ignore_keys_end, 
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-end", ignore_keys_end,
 				"\033" GNT_KEY_CTRL_G, NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-next-urgent", window_next_urgent,
+				"\033" "\t", NULL);
+	snprintf(key, sizeof(key), "\033%s", GNT_KEY_BACK_TAB);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-prev-urgent", window_prev_urgent,
+				key[1] ? key : NULL, NULL);
 #ifdef USE_PYTHON
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "run-python", run_python,
 				GNT_KEY_F3, NULL);
