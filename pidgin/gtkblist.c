@@ -2576,6 +2576,35 @@ struct tooltip_data {
 	int height;
 };
 
+static PangoLayout * create_pango_layout(const char *markup, int *width, int *height)
+{
+	PangoLayout *layout;
+	int w, h;
+
+	layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
+	pango_layout_set_markup(layout, markup, -1);
+	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
+	pango_layout_set_width(layout, 300000);
+
+	pango_layout_get_size (layout, &w, &h);
+	if (width)
+		*width = PANGO_PIXELS(w);
+	if (height)
+		*height = PANGO_PIXELS(h);
+	return layout;
+}
+
+static struct tooltip_data * create_tip_for_account(PurpleAccount *account)
+{
+	struct tooltip_data *td = g_new0(struct tooltip_data, 1);
+	td->status_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
+		/* Yes, status_icon, not prpl_icon */
+	if (purple_account_is_disconnected(account))
+		gdk_pixbuf_saturate_and_pixelate(td->status_icon, td->status_icon, 0.0, FALSE);
+	td->layout = create_pango_layout(purple_account_get_username(account), &td->width, &td->height);
+	return td;
+}
+
 static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean full)
 {
 	struct tooltip_data *td = g_new0(struct tooltip_data, 1);
@@ -2594,9 +2623,9 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 		td->prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 	}
 	tooltip_text = pidgin_get_tooltip_text(node, full);
-	if (tooltip_text && *tooltip_text)
-		td->layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
-	td->name_layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
+	if (tooltip_text && *tooltip_text) {
+		td->layout = create_pango_layout(tooltip_text, &td->width, &td->height);
+	}
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		tmp = g_markup_escape_text(purple_buddy_get_name((PurpleBuddy*)node), -1);
@@ -2613,23 +2642,9 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 	node_name = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>", tmp);
 	g_free(tmp);
 
-	if (td->layout) {
-		pango_layout_set_markup(td->layout, tooltip_text, -1);
-		pango_layout_set_wrap(td->layout, PANGO_WRAP_WORD);
-		pango_layout_set_width(td->layout, 300000);
-
-		pango_layout_get_size (td->layout, &td->width, &td->height);
-		td->width = PANGO_PIXELS(td->width);
-		td->height = PANGO_PIXELS(td->height);
-	}
-
-	pango_layout_set_markup(td->name_layout, node_name, -1);
-	pango_layout_set_wrap(td->name_layout, PANGO_WRAP_WORD);
-	pango_layout_set_width(td->name_layout, 300000);
-
-	pango_layout_get_size (td->name_layout, &td->name_width, &td->name_height);
-	td->name_width = PANGO_PIXELS(td->name_width) + SMALL_SPACE + PRPL_SIZE;
-	td->name_height = MAX(PANGO_PIXELS(td->name_height), PRPL_SIZE + SMALL_SPACE);
+	td->name_layout = create_pango_layout(node_name, &td->name_width, &td->name_height);
+	td->name_width += SMALL_SPACE + PRPL_SIZE;
+	td->name_height = MAX(td->name_height, PRPL_SIZE + SMALL_SPACE);
 #if 0  /* PRPL Icon as avatar */
 	if(!td->avatar && full) {
 		td->avatar = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_LARGE);
@@ -2739,15 +2754,17 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 					max_width - (td->avatar_width + TOOLTIP_BORDER),
 					current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 #endif
-		if (dir == GTK_TEXT_DIR_RTL) {
-			gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-					NULL, gtkblist->tipwindow, "tooltip",
-					max_width  -(TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
-					current_height, td->name_layout);
-		} else {
-			gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-					NULL, gtkblist->tipwindow, "tooltip",
-					TOOLTIP_BORDER + status_size + SMALL_SPACE, current_height, td->name_layout);
+		if (td->name_layout) {
+			if (dir == GTK_TEXT_DIR_RTL) {
+				gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+						NULL, gtkblist->tipwindow, "tooltip",
+						max_width  -(TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
+						current_height, td->name_layout);
+			} else {
+				gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+						NULL, gtkblist->tipwindow, "tooltip",
+						TOOLTIP_BORDER + status_size + SMALL_SPACE, current_height, td->name_layout);
+			}
 		}
 
 		if (td->layout) {
@@ -2783,7 +2800,8 @@ pidgin_blist_destroy_tooltip_data()
 			g_object_unref(td->prpl_icon);
 		if (td->layout)
 			g_object_unref(td->layout);
-		g_object_unref(td->name_layout);
+		if (td->name_layout)
+			g_object_unref(td->name_layout);
 		g_free(td);
 		gtkblist->tooltipdata = g_list_delete_link(gtkblist->tooltipdata, gtkblist->tooltipdata);
 	}
@@ -2800,6 +2818,10 @@ pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, i
 {
 	PurpleBlistNode *node = data;
 	int width, height;
+	GList *list;
+	int max_text_width = 0;
+	int max_avatar_width = 0;
+	int status_size = 0;
 
 	if (gtkblist->tooltipdata) {
 		gtkblist->tipwindow = NULL;
@@ -2807,21 +2829,27 @@ pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, i
 	}
 
 	gtkblist->tipwindow = widget;
-	if(PURPLE_BLIST_NODE_IS_CHAT(node) ||
-	   PURPLE_BLIST_NODE_IS_BUDDY(node) ||
-	   PURPLE_BLIST_NODE_IS_GROUP(node)) {
+	if (PURPLE_BLIST_NODE_IS_CHAT(node) ||
+	   PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		struct tooltip_data *td = create_tip_for_node(node, TRUE);
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
-		width = TOOLTIP_BORDER + (td->status_icon ? STATUS_SIZE : 0) + SMALL_SPACE +
-			MAX(td->width, td->name_width) + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER;
-		height = TOOLTIP_BORDER + MAX(td->height + td->name_height,
-				MAX(td->status_icon ? STATUS_SIZE : 0, td->avatar ? td->avatar_height : 0))
-			+ TOOLTIP_BORDER;
-	} else if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
+		PurpleGroup *group = (PurpleGroup*)node;
+		GSList *accounts;
+		struct tooltip_data *td = create_tip_for_node(node, TRUE);
+		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
+
+		/* Accounts with buddies in group */
+		accounts = purple_group_get_accounts(group);
+		for (; accounts != NULL;
+		     accounts = g_slist_delete_link(accounts, accounts)) {
+			PurpleAccount *account = accounts->data;
+			td = create_tip_for_account(account);
+			gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
+		}
+	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleBlistNode *child;
 		PurpleBuddy *b = purple_contact_get_priority_buddy((PurpleContact *)node);
-		int max_text_width = 0;
-		int max_avatar_width = 0;
 		width = height = 0;
 
 		for(child = node->child; child; child = child->next)
@@ -2833,17 +2861,24 @@ pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, i
 				} else {
 					gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
 				}
-				max_text_width = MAX(max_text_width, MAX(td->width, td->name_width));
-				max_avatar_width = MAX(max_avatar_width, td->avatar_width);
-				height += MAX(TOOLTIP_BORDER + MAX(STATUS_SIZE,td->avatar_height),
-						TOOLTIP_BORDER + td->height + td->name_height);
 			}
 		}
-		height += TOOLTIP_BORDER;
-		width = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + max_text_width + SMALL_SPACE + max_avatar_width + TOOLTIP_BORDER;
 	} else {
 		return FALSE;
 	}
+
+	height = width = 0;
+	for (list = gtkblist->tooltipdata; list; list = list->next) {
+		struct tooltip_data *td = list->data;
+		max_text_width = MAX(max_text_width, MAX(td->width, td->name_width));
+		max_avatar_width = MAX(max_avatar_width, td->avatar_width);
+		height += MAX(TOOLTIP_BORDER + MAX(STATUS_SIZE, td->avatar_height),
+				TOOLTIP_BORDER + td->height + td->name_height);
+		if (td->status_icon)
+			status_size = MAX(status_size, STATUS_SIZE);
+	}
+	height += TOOLTIP_BORDER;
+	width = TOOLTIP_BORDER + status_size + SMALL_SPACE + max_text_width + SMALL_SPACE + max_avatar_width + TOOLTIP_BORDER;
 
 	if (w)
 		*w = width;
@@ -3111,7 +3146,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		if (g_list_length(purple_connections_get_all()) > 1)
 		{
 			tmp = g_markup_escape_text(chat->account->username, -1);
-			g_string_append_printf(str, _("\n<b>Account:</b> %s"), tmp);
+			g_string_append_printf(str, _("<b>Account:</b> %s"), tmp);
 			g_free(tmp);
 		}
 
@@ -3304,7 +3339,6 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 
 		purple_notify_user_info_destroy(user_info);
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
-		GSList *accounts;
 		PurpleGroup *group = (PurpleGroup*)node;
 		PurpleNotifyUserInfo *user_info;
 
@@ -3323,14 +3357,6 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		purple_notify_user_info_add_pair(user_info, _("Online Buddies"),
 		                                 tmp);
 		g_free(tmp);
-
-		/* Accounts with buddies in group */
-		accounts = purple_group_get_accounts(group);
-		for (; accounts != NULL;
-		     accounts = g_slist_delete_link(accounts, accounts)) {
-			PurpleAccount *account = accounts->data;
-			purple_notify_user_info_add_pair(user_info, _("Account"), purple_account_get_username(account));
-		}
 
 		tmp = purple_notify_user_info_get_text_with_newline(user_info, "\n");
 		g_string_append(str, tmp);
