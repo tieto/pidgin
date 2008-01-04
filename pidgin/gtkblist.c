@@ -2594,7 +2594,8 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 		td->prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 	}
 	tooltip_text = pidgin_get_tooltip_text(node, full);
-	td->layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
+	if (tooltip_text && *tooltip_text)
+		td->layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
 	td->name_layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
@@ -2612,13 +2613,15 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 	node_name = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>", tmp);
 	g_free(tmp);
 
-	pango_layout_set_markup(td->layout, tooltip_text, -1);
-	pango_layout_set_wrap(td->layout, PANGO_WRAP_WORD);
-	pango_layout_set_width(td->layout, 300000);
+	if (td->layout) {
+		pango_layout_set_markup(td->layout, tooltip_text, -1);
+		pango_layout_set_wrap(td->layout, PANGO_WRAP_WORD);
+		pango_layout_set_width(td->layout, 300000);
 
-	pango_layout_get_size (td->layout, &td->width, &td->height);
-	td->width = PANGO_PIXELS(td->width);
-	td->height = PANGO_PIXELS(td->height);
+		pango_layout_get_size (td->layout, &td->width, &td->height);
+		td->width = PANGO_PIXELS(td->width);
+		td->height = PANGO_PIXELS(td->height);
+	}
 
 	pango_layout_set_markup(td->name_layout, node_name, -1);
 	pango_layout_set_wrap(td->name_layout, PANGO_WRAP_WORD);
@@ -2654,6 +2657,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 	GList *l;
 	int prpl_col = 0;
 	GtkTextDirection dir = gtk_widget_get_direction(widget);
+	int status_size = 0;
 
 	if(gtkblist->tooltipdata == NULL)
 		return FALSE;
@@ -2670,13 +2674,15 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 		max_text_width = MAX(max_text_width,
 				MAX(td->width, td->name_width));
 		max_avatar_width = MAX(max_avatar_width, td->avatar_width);
+		if (td->status_icon)
+			status_size = STATUS_SIZE;
 	}
 
-	max_width = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + max_text_width + SMALL_SPACE + max_avatar_width + TOOLTIP_BORDER;
+	max_width = TOOLTIP_BORDER + status_size + SMALL_SPACE + max_text_width + SMALL_SPACE + max_avatar_width + TOOLTIP_BORDER;
 	if (dir == GTK_TEXT_DIR_RTL)
 		prpl_col = TOOLTIP_BORDER + max_avatar_width + SMALL_SPACE;
 	else
-		prpl_col = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + max_text_width - PRPL_SIZE;
+		prpl_col = TOOLTIP_BORDER + status_size + SMALL_SPACE + max_text_width - PRPL_SIZE;
 
 	current_height = 12;
 	for(l = gtkblist->tooltipdata; l; l = l->next)
@@ -2700,7 +2706,7 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 		if (td->status_icon) {
 			if (dir == GTK_TEXT_DIR_RTL)
 				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
-				                0, 0, max_width - TOOLTIP_BORDER - STATUS_SIZE, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+				                0, 0, max_width - TOOLTIP_BORDER - status_size, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 			else
 				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
 				                0, 0, TOOLTIP_BORDER, current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
@@ -2736,23 +2742,26 @@ pidgin_blist_paint_tip(GtkWidget *widget, gpointer null)
 		if (dir == GTK_TEXT_DIR_RTL) {
 			gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
 					NULL, gtkblist->tipwindow, "tooltip",
-					max_width  -(TOOLTIP_BORDER + STATUS_SIZE +SMALL_SPACE) - PANGO_PIXELS(300000),
+					max_width  -(TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
 					current_height, td->name_layout);
 		} else {
 			gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
 					NULL, gtkblist->tipwindow, "tooltip",
-					TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height, td->name_layout);
+					TOOLTIP_BORDER + status_size + SMALL_SPACE, current_height, td->name_layout);
 		}
-		if (dir != GTK_TEXT_DIR_RTL) {
-			gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-					NULL, gtkblist->tipwindow, "tooltip",
-					TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height + td->name_height, td->layout);
-		} else {
-			gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-					NULL, gtkblist->tipwindow, "tooltip",
-					max_width - (TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE) - PANGO_PIXELS(300000),
-					current_height + td->name_height,
-					td->layout);
+
+		if (td->layout) {
+			if (dir != GTK_TEXT_DIR_RTL) {
+				gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+						NULL, gtkblist->tipwindow, "tooltip",
+						TOOLTIP_BORDER + status_size + SMALL_SPACE, current_height + td->name_height, td->layout);
+			} else {
+				gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+						NULL, gtkblist->tipwindow, "tooltip",
+						max_width - (TOOLTIP_BORDER + status_size + SMALL_SPACE) - PANGO_PIXELS(300000),
+						current_height + td->name_height,
+						td->layout);
+			}
 		}
 
 		current_height += MAX(td->name_height + td->height, td->avatar_height) + TOOLTIP_BORDER;
@@ -2772,7 +2781,8 @@ pidgin_blist_destroy_tooltip_data()
 			g_object_unref(td->status_icon);
 		if(td->prpl_icon)
 			g_object_unref(td->prpl_icon);
-		g_object_unref(td->layout);
+		if (td->layout)
+			g_object_unref(td->layout);
 		g_object_unref(td->name_layout);
 		g_free(td);
 		gtkblist->tooltipdata = g_list_delete_link(gtkblist->tooltipdata, gtkblist->tooltipdata);
@@ -2802,9 +2812,10 @@ pidgin_blist_create_tooltip_for_node(GtkWidget *widget, gpointer data, int *w, i
 	   PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		struct tooltip_data *td = create_tip_for_node(node, TRUE);
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
-		width = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
+		width = TOOLTIP_BORDER + (td->status_icon ? STATUS_SIZE : 0) + SMALL_SPACE +
 			MAX(td->width, td->name_width) + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER;
-		height = TOOLTIP_BORDER + MAX(td->height + td->name_height, MAX(STATUS_SIZE, td->avatar_height))
+		height = TOOLTIP_BORDER + MAX(td->height + td->name_height,
+				MAX(td->status_icon ? STATUS_SIZE : 0, td->avatar ? td->avatar_height : 0))
 			+ TOOLTIP_BORDER;
 	} else if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleBlistNode *child;
