@@ -124,7 +124,7 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 							purple_imgstore_get_size(img));	
 	} else 	{
 		purple_debug_error("buddyicon", "Unable to create file %s: %s\n",
-		                   path, g_strerror(errno));
+		                   path, "File already exists.");
 	}
 	g_free(path);
 }
