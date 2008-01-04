@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-19 10:17+0100\n"
-"PO-Revision-Date: 2007-12-19 10:17+0100\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2008-01-04 15:36+0100\n"
+"PO-Revision-Date: 2008-01-04 15:21+0100\n"
+"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1436,19 +1436,6 @@ msgid "_View Certificate..."
 msgstr "Ze_rtifikat ansehen..."
 
 #. Prompt the user to authenticate the certificate
-#. TODO: Provide the user with more guidance about why he is
-#. being prompted
-#. vrq will be completed by user_auth
-#, c-format
-msgid ""
-"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
-"could mean that you are not connecting to the service you believe you are."
-msgstr ""
-"Das Zertifikat, welches von „%s“ präsentiert wurde, behauptet stattdessen "
-"von „%s“ zu kommen.  Das kann bedeuten, dass Sie tatsächlich nicht mit dem "
-"Dienst verbunden sind, mit dem Sie glauben verbunden zu sein."
-
-#. Prompt the user to authenticate the certificate
 #. vrq will be completed by user_auth
 #, c-format
 msgid ""
@@ -1497,6 +1484,19 @@ msgstr ""
 
 msgid "Invalid certificate authority signature"
 msgstr "Unbekannte Zertifizierungsstellensignatur"
+
+#. Prompt the user to authenticate the certificate
+#. TODO: Provide the user with more guidance about why he is
+#. being prompted
+#. vrq will be completed by user_auth
+#, c-format
+msgid ""
+"The certificate presented by \"%s\" claims to be from \"%s\" instead.  This "
+"could mean that you are not connecting to the service you believe you are."
+msgstr ""
+"Das Zertifikat, welches von „%s“ präsentiert wurde, behauptet stattdessen "
+"von „%s“ zu kommen.  Das kann bedeuten, dass Sie tatsächlich nicht mit dem "
+"Dienst verbunden sind, mit dem Sie glauben verbunden zu sein."
 
 #. Make messages
 #, c-format
@@ -3284,6 +3284,10 @@ msgstr "nick &lt;new nickname&gt;:  Ihren Spitznamen ändern."
 
 msgid "nickserv: Send a command to nickserv"
 msgstr "nickserv: Sendet ein Kommando zum Nickserv"
+
+msgid "notice &lt;target&lt;:  Send a notice to a user or channel."
+msgstr ""
+"notice &lt;Ziel&gt;:  Sende eine Notiz an einen Benutzer oder an einen Kanal."
 
 msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
@@ -9640,7 +9644,7 @@ msgstr ""
 "unterbrochen."
 
 #. 10054
-#, fuzzy, c-format
+#, c-format
 msgid "Remote host closed connection."
 msgstr "Der entfernte Host hat die Verbindung beendet."
 
@@ -9908,6 +9912,12 @@ msgstr ""
 "Sie sind im Moment nicht mit einem Konto angemeldet, welches benutzt werden "
 "kann, um diesen Buddy hinzuzufügen."
 
+#. I don't believe this can happen currently, I think
+#. * everything that calls this function checks for one of the
+#. * above node types first.
+msgid "Unknown node type"
+msgstr "Unbekannter Knotentyp"
+
 #. Buddies menu
 msgid "/_Buddies"
 msgstr "/_Buddys"
@@ -10044,6 +10054,12 @@ msgstr "Großartig"
 
 msgid "Rockin'"
 msgstr "Abgefahren"
+
+msgid "Total Buddies"
+msgstr "Buddy-Anzahl"
+
+msgid "Online Buddies"
+msgstr "Online-Buddys"
 
 #, c-format
 msgid "Idle %dd %dh %02dm"
@@ -11108,31 +11124,33 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr ""
 "Farbe zum Darstellen von Hyperlinks, wenn sich die Maus darüber befindet."
 
-#, fuzzy
 msgid "Sent Message Name Color"
-msgstr "Gesendete Nachrichten"
+msgstr "Farbnane für gesendete Nachrichten"
 
 msgid "Color to draw the name of a message you sent."
 msgstr ""
+"Farbe, mit der der Name in einer gesendeten Nachricht dargestellt wird."
 
-#, fuzzy
 msgid "Received Message Name Color"
-msgstr "Empfangene Nachrichten"
+msgstr "Farbname für empfangene Nachrichten"
 
 msgid "Color to draw the name of a message you received."
 msgstr ""
+"Farbe, mit der der Name in einer empfangenen Nachricht dargestellt wird."
 
 msgid "\"Attention\" Name Color"
-msgstr ""
+msgstr "Farbname für \"Achtung\"-Nachrichten"
 
 msgid "Color to draw the name of a message you received containing your name."
 msgstr ""
+"Farbe, mit der der Name in einer Nachricht dargestellt wird, die Ihren Namen "
+"enthält."
 
 msgid "Action Message Name Color"
-msgstr ""
+msgstr "Farbname für Aktions-Nachrichten"
 
 msgid "Color to draw the name of an action message."
-msgstr ""
+msgstr "Farbe, mit der der Name in einer Aktions-Nachricht dargestellt wird."
 
 msgid "_Copy E-Mail Address"
 msgstr "Kopiere _E-Mail-Adresse"
@@ -11187,15 +11205,6 @@ msgstr "Bild speichern"
 msgid "_Save Image..."
 msgstr "Bild _speichern..."
 
-msgid "_Font"
-msgstr "_Schrift"
-
-msgid "_Insert"
-msgstr "_Einfügen"
-
-msgid "S_mile!"
-msgstr "_Lächeln!"
-
 msgid "Select Font"
 msgstr "Schriftart wählen"
 
@@ -11224,6 +11233,9 @@ msgstr "Bitte geben Sie die URL des Links an, den Sie einfügen möchten."
 msgid "Insert Link"
 msgstr "Link einfügen"
 
+msgid "_Insert"
+msgstr "_Einfügen"
+
 #, c-format
 msgid "Failed to store image: %s\n"
 msgstr "Speichern des Bildes fehlgeschlagen: %s\n"
@@ -11231,12 +11243,14 @@ msgstr "Speichern des Bildes fehlgeschlagen: %s\n"
 msgid "Insert Image"
 msgstr "Bild einfügen"
 
+msgid "Smile!"
+msgstr "Lächeln!"
+
 msgid "This theme has no available smileys."
 msgstr "Dieses Thema verfügt über keine Smileys."
 
-#. show everything
-msgid "Smile!"
-msgstr "Lächeln!"
+msgid "_Font"
+msgstr "_Schrift"
 
 msgid "Group Items"
 msgstr "Elemente gruppieren"
@@ -12850,9 +12864,8 @@ msgstr "Sekundäre Cursor-Farbe"
 msgid "Hyperlink Color"
 msgstr "Hyperlink-Farbe"
 
-#, fuzzy
 msgid "Highlighted Message Name Color"
-msgstr "Hervorgehobene Nachrichten"
+msgstr "Farbname für hervorgehobene Nachrichten"
 
 msgid "GtkTreeView Horizontal Separation"
 msgstr "GtkTreeview horizontaler Abstand"
@@ -12861,7 +12874,7 @@ msgid "Conversation Entry"
 msgstr "Unterhaltungseintrag"
 
 msgid "Request Dialog"
-msgstr "Dialog anfordern"
+msgstr "Anfrage-Dialog"
 
 msgid "Notify Dialog"
 msgstr "Benachrichtigungsdialog"
