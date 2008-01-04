@@ -7008,7 +7008,8 @@ void pidgin_blist_sort_method_reg(const char *id, const char *name, pidgin_blist
 	pidgin_blist_update_sort_methods();
 }
 
-void pidgin_blist_sort_method_unreg(const char *id){
+void pidgin_blist_sort_method_unreg(const char *id)
+{
 	GList *l = pidgin_blist_sort_methods;
 
 	while(l) {
@@ -7020,6 +7021,7 @@ void pidgin_blist_sort_method_unreg(const char *id){
 			g_free(method);
 			break;
 		}
+		l = l->next;
 	}
 	pidgin_blist_update_sort_methods();
 }
