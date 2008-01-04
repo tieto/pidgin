@@ -123,7 +123,7 @@ _mdns_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags flags,
 	uint32_t ttl, void *context)
 {
 
-	if (kDNSServiceErr_NoError != errorCode) {
+	if (errorCode != kDNSServiceErr_NoError) {
 		purple_debug_error("bonjour", "record query - callback error.\n");
 		/* TODO: Probably should remove the buddy when this happens */
 	} else if (flags & kDNSServiceFlagsAdd) {
@@ -168,13 +168,14 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 		delete_buddy = TRUE;
 	} else {
 		struct sockaddr_in *addr = g_slist_nth_data(hosts, 1);
+		DNSServiceErrorType errorCode;
 
 		/* finally, set up the continuous txt record watcher, and add the buddy to purple */
 
-		if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&args->res_data->txt_query, kDNSServiceFlagsLongLivedQuery,
+		errorCode = DNSServiceQueryRecord(&args->res_data->txt_query, kDNSServiceFlagsLongLivedQuery,
 				kDNSServiceInterfaceIndexAny, args->full_service_name, kDNSServiceType_TXT,
-				kDNSServiceClass_IN, _mdns_record_query_callback, args->bb)) {
-
+				kDNSServiceClass_IN, _mdns_record_query_callback, args->bb);
+		if (errorCode == kDNSServiceErr_NoError) {
 			const char *ip = inet_ntoa(addr->sin_addr);
 
 			purple_debug_info("bonjour", "Found buddy %s at %s:%d\n", args->bb->name, ip, args->bb->port_p2pj);
@@ -188,7 +189,7 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 
 			bonjour_buddy_add_to_purple(args->bb, NULL);
 		} else {
-			purple_debug_error("bonjour", "Unable to set up record watcher for buddy %s\n", args->bb->name);
+			purple_debug_error("bonjour", "Unable to set up record watcher for buddy %s (%d)\n", args->bb->name, errorCode);
 			delete_buddy = TRUE;
 		}
 
@@ -239,7 +240,7 @@ _mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint3
 	DNSServiceRefDeallocate(args->resolver);
 	args->resolver = NULL;
 
-	if (kDNSServiceErr_NoError != errorCode)
+	if (errorCode != kDNSServiceErr_NoError)
 		purple_debug_error("bonjour", "service resolver - callback error.\n");
 	else {
 		/* set more arguments, and start the host resolver */
@@ -286,7 +287,7 @@ _mdns_service_register_callback(DNSServiceRef sdRef, DNSServiceFlags flags, DNSS
 				const char *name, const char *regtype, const char *domain, void *context) {
 
 	/* TODO: deal with collision */
-	if (kDNSServiceErr_NoError != errorCode)
+	if (errorCode != kDNSServiceErr_NoError)
 		purple_debug_error("bonjour", "service advertisement - callback error (%d).\n", errorCode);
 	else
 		purple_debug_info("bonjour", "service advertisement - callback.\n");
@@ -298,11 +299,12 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 {
 	PurpleAccount *account = (PurpleAccount*)context;
 
-	if (kDNSServiceErr_NoError != errorCode)
-		purple_debug_error("bonjour", "service browser - callback error\n");
+	if (errorCode != kDNSServiceErr_NoError)
+		purple_debug_error("bonjour", "service browser - callback error (%d)\n", errorCode);
 	else if (flags & kDNSServiceFlagsAdd) {
 		/* A presence service instance has been discovered... check it isn't us! */
 		if (purple_utf8_strcasecmp(serviceName, account->username) != 0) {
+			DNSServiceErrorType resErrorCode;
 			/* OK, lets go ahead and resolve it to add to the buddy list */
 			ResolveCallbackArgs *args = g_new0(ResolveCallbackArgs, 1);
 
@@ -310,8 +312,9 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 							  serviceName, interfaceIndex, regtype ? regtype : "",
 							  replyDomain ? replyDomain : "");
 
-			if (kDNSServiceErr_NoError == DNSServiceResolve(&args->resolver, 0, 0, serviceName, regtype,
-					replyDomain, _mdns_service_resolve_callback, args)) {
+			resErrorCode = DNSServiceResolve(&args->resolver, 0, 0, serviceName, regtype,
+					replyDomain, _mdns_service_resolve_callback, args);
+			if (resErrorCode == kDNSServiceErr_NoError) {
 				GSList *tmp = pending_buddies;
 				PurpleBuddy *pb;
 				BonjourBuddy* bb = NULL;
@@ -362,7 +365,7 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 				fd = DNSServiceRefSockFD(args->resolver);
 				args->resolver_handler = purple_input_add(fd, PURPLE_INPUT_READ, _mdns_handle_event, args->resolver);
 			} else {
-				purple_debug_error("bonjour", "service browser - failed to resolve service.\n");
+				purple_debug_error("bonjour", "service browser - failed to resolve service. (%d)\n", resErrorCode);
 				g_free(args);
 			}
 		}
@@ -432,7 +435,7 @@ gboolean _mdns_init_session(BonjourDnsSd *data) {
 gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 	TXTRecordRef dns_data;
 	gboolean ret = TRUE;
-	DNSServiceErrorType set_ret = kDNSServiceErr_NoError;
+	DNSServiceErrorType errorCode = kDNSServiceErr_NoError;
 	Win32SessionImplData *idata = data->mdns_impl_data;
 
 	g_return_val_if_fail(idata != NULL, FALSE);
@@ -441,36 +444,34 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 
 	while (records) {
 		PurpleKeyValuePair *kvp = records->data;
-		set_ret = TXTRecordSetValue(&dns_data, kvp->key, strlen(kvp->value), kvp->value);
-		if (set_ret != kDNSServiceErr_NoError)
+		errorCode = TXTRecordSetValue(&dns_data, kvp->key, strlen(kvp->value), kvp->value);
+		if (errorCode != kDNSServiceErr_NoError)
 			break;
 		records = records->next;
 	}
 
-	if (set_ret != kDNSServiceErr_NoError) {
-		purple_debug_error("bonjour", "Unable to allocate memory for text record.\n");
+	if (errorCode != kDNSServiceErr_NoError) {
+		purple_debug_error("bonjour", "Unable to allocate memory for text record.(%d)\n", errorCode);
 		ret = FALSE;
 	} else {
-		DNSServiceErrorType err = kDNSServiceErr_NoError;
-
 		/* OK, we're done constructing the text record, (re)publish the service */
 
 		switch (type) {
 			case PUBLISH_START:
 				purple_debug_info("bonjour", "Registering presence on port %d\n", data->port_p2pj);
-				err = DNSServiceRegister(&idata->presence_svc, 0, 0, purple_account_get_username(data->account), ICHAT_SERVICE,
+				errorCode = DNSServiceRegister(&idata->presence_svc, 0, 0, purple_account_get_username(data->account), ICHAT_SERVICE,
 					NULL, NULL, htons(data->port_p2pj), TXTRecordGetLength(&dns_data), TXTRecordGetBytesPtr(&dns_data),
 					_mdns_service_register_callback, NULL);
 				break;
 
 			case PUBLISH_UPDATE:
 				purple_debug_info("bonjour", "Updating presence.\n");
-				err = DNSServiceUpdateRecord(idata->presence_svc, NULL, 0, TXTRecordGetLength(&dns_data), TXTRecordGetBytesPtr(&dns_data), 0);
+				errorCode = DNSServiceUpdateRecord(idata->presence_svc, NULL, 0, TXTRecordGetLength(&dns_data), TXTRecordGetBytesPtr(&dns_data), 0);
 				break;
 		}
 
-		if (err != kDNSServiceErr_NoError) {
-			purple_debug_error("bonjour", "Failed to publish presence service.\n");
+		if (errorCode != kDNSServiceErr_NoError) {
+			purple_debug_error("bonjour", "Failed to publish presence service.(%d)\n", errorCode);
 			ret = FALSE;
 		} else if (type == PUBLISH_START) {
 			/* We need to do this because according to the Apple docs:
@@ -488,17 +489,20 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 }
 
 gboolean _mdns_browse(BonjourDnsSd *data) {
+	DNSServiceErrorType errorCode;
 	Win32SessionImplData *idata = data->mdns_impl_data;
 
 	g_return_val_if_fail(idata != NULL, FALSE);
 
-	if (DNSServiceBrowse(&idata->browser_svc, 0, 0, ICHAT_SERVICE, NULL,
-				 _mdns_service_browse_callback, data->account)
-			== kDNSServiceErr_NoError) {
+	errorCode = DNSServiceBrowse(&idata->browser_svc, 0, 0, ICHAT_SERVICE, NULL,
+						   _mdns_service_browse_callback, data->account);
+	if (errorCode == kDNSServiceErr_NoError) {
 		idata->browser_handler = purple_input_add(DNSServiceRefSockFD(idata->browser_svc),
 			PURPLE_INPUT_READ, _mdns_handle_event, idata->browser_svc);
 		return TRUE;
-	}
+	} else
+		purple_debug_error("bonjour", "Error registering Local Link presence browser. (%d)\n", errorCode);
+
 
 	return FALSE;
 }
@@ -526,28 +530,30 @@ void _mdns_stop(BonjourDnsSd *data) {
 
 gboolean _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data, gsize avatar_len) {
 	Win32SessionImplData *idata = data->mdns_impl_data;
-	DNSServiceErrorType err = kDNSServiceErr_NoError;
+	DNSServiceErrorType errorCode = kDNSServiceErr_NoError;
 
 	g_return_val_if_fail(idata != NULL, FALSE);
 
 	if (avatar_data != NULL && idata->buddy_icon_rec == NULL) {
 		purple_debug_info("bonjour", "Setting new buddy icon.\n");
-		err = DNSServiceAddRecord(idata->presence_svc, &idata->buddy_icon_rec,
+		errorCode = DNSServiceAddRecord(idata->presence_svc, &idata->buddy_icon_rec,
 			0, kDNSServiceType_NULL, avatar_len, avatar_data, 0);
 	} else if (avatar_data != NULL) {
 		purple_debug_info("bonjour", "Updating existing buddy icon.\n");
-		err = DNSServiceUpdateRecord(idata->presence_svc, idata->buddy_icon_rec,
+		errorCode = DNSServiceUpdateRecord(idata->presence_svc, idata->buddy_icon_rec,
 			0, avatar_len, avatar_data, 0);
 	} else if (idata->buddy_icon_rec != NULL) {
 		purple_debug_info("bonjour", "Removing existing buddy icon.\n");
-		DNSServiceRemoveRecord(idata->presence_svc, idata->buddy_icon_rec, 0);
+		errorCode = DNSServiceRemoveRecord(idata->presence_svc, idata->buddy_icon_rec, 0);
 		idata->buddy_icon_rec = NULL;
 	}
 
-	if (err != kDNSServiceErr_NoError)
-		purple_debug_error("bonjour", "Error (%d) setting buddy icon record.\n", err);
+	if (errorCode != kDNSServiceErr_NoError) {
+		purple_debug_error("bonjour", "Error (%d) setting buddy icon record.\n", errorCode);
+		return FALSE;
+	}
 
-	return (err == kDNSServiceErr_NoError);
+	return TRUE;
 }
 
 void _mdns_init_buddy(BonjourBuddy *buddy) {
@@ -589,11 +595,16 @@ void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
 		idata->null_query = NULL;
 	}
 
-	DNSServiceConstructFullName(svc_name, buddy->name, ICHAT_SERVICE, "local");
-	if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&idata->null_query, 0, kDNSServiceInterfaceIndexAny, svc_name,
-			kDNSServiceType_NULL, kDNSServiceClass_IN, _mdns_record_query_callback, buddy)) {
-		idata->null_query_handler = purple_input_add(DNSServiceRefSockFD(idata->null_query),
-			PURPLE_INPUT_READ, _mdns_handle_event, idata->null_query);
+	if (DNSServiceConstructFullName(svc_name, buddy->name, ICHAT_SERVICE, "local") != 0)
+		purple_debug_error("bonjour", "Unable to construct full name to retrieve buddy icon for %s.\n", buddy->name);
+	else {
+		DNSServiceErrorType errorCode = DNSServiceQueryRecord(&idata->null_query, 0, kDNSServiceInterfaceIndexAny,
+			svc_name, kDNSServiceType_NULL, kDNSServiceClass_IN, _mdns_record_query_callback, buddy);
+		if (errorCode == kDNSServiceErr_NoError)
+			idata->null_query_handler = purple_input_add(DNSServiceRefSockFD(idata->null_query),
+				PURPLE_INPUT_READ, _mdns_handle_event, idata->null_query);
+		else
+			purple_debug_error("bonjour", "Unable to query buddy icon record for %s. (%d)\n", buddy->name, errorCode);
 	}
 
 }
