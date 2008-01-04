@@ -450,23 +450,25 @@ static BOOL winpidgin_set_running(BOOL fail_if_running) {
 
 	if ((h = CreateMutex(NULL, FALSE, "pidgin_is_running"))) {
 		DWORD err = GetLastError();
-		if (err == ERROR_ALREADY_EXISTS && fail_if_running) {
-			HWND msg_win;
+		if (err == ERROR_ALREADY_EXISTS) {
+			if (fail_if_running) {
+				HWND msg_win;
 
-			printf("An instance of Pidgin is already running.\n");
+				printf("An instance of Pidgin is already running.\n");
 
-			if((msg_win = FindWindowEx(HWND_MESSAGE, NULL, TEXT("WinpidginMsgWinCls"), NULL)))
-				if(SendMessage(msg_win, PIDGIN_WM_FOCUS_REQUEST, (WPARAM) NULL, (LPARAM) NULL))
-					return FALSE;
+				if((msg_win = FindWindowEx(HWND_MESSAGE, NULL, TEXT("WinpidginMsgWinCls"), NULL)))
+					if(SendMessage(msg_win, PIDGIN_WM_FOCUS_REQUEST, (WPARAM) NULL, (LPARAM) NULL))
+						return FALSE;
 
-			/* If we get here, the focus request wasn't successful */
+				/* If we get here, the focus request wasn't successful */
 
-			MessageBox(NULL,
-				"An instance of Pidgin is already running",
-				NULL, MB_OK | MB_TOPMOST);
+				MessageBox(NULL,
+					"An instance of Pidgin is already running",
+					NULL, MB_OK | MB_TOPMOST);
 
-			return FALSE;
-		} else
+				return FALSE;
+			}
+		} else if (err != ERROR_SUCCESS)
 			printf("Error (%u) accessing \"pidgin_is_running\" mutex.\n", (UINT) err);
 	}
 	return TRUE;
