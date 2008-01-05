@@ -1350,6 +1350,7 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 	PidginWindow *win = data;
 	PurpleConversation *conv;
 	gboolean logging;
+	PurpleBlistNode *node;
 
 	conv = pidgin_conv_window_get_active_conversation(win);
 
@@ -1360,6 +1361,8 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 
 	if (logging == purple_conversation_is_logging(conv))
 		return;
+	
+	node = get_conversation_blist_node(conv);
 
 	if (logging)
 	{
@@ -1382,6 +1385,27 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 
 		/* Disable the logging second, so that the above message can be logged. */
 		purple_conversation_set_logging(conv, FALSE);
+	}
+
+	/* Save the setting IFF it's different than the pref. */
+	switch (conv->type)
+	{
+		case PURPLE_CONV_TYPE_IM:
+			if (logging == purple_prefs_get_bool("/purple/logging/log_ims"))
+				purple_blist_node_remove_setting(node, "enable-logging");
+			else
+				purple_blist_node_set_bool(node, "enable-logging", logging);
+			break;
+
+		case PURPLE_CONV_TYPE_CHAT:
+			if (logging == purple_prefs_get_bool("/purple/logging/log_chats"))
+				purple_blist_node_remove_setting(node, "enable-logging");
+			else
+				purple_blist_node_set_bool(node, "enable-logging", logging);
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -4907,6 +4931,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
 	PurpleBlistNode *convnode;
+	PurpleValue *value;
 
 	if (conv_type == PURPLE_CONV_TYPE_IM && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
 		conv->ui_data = gtkconv;
@@ -4993,6 +5018,13 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	convnode = get_conversation_blist_node(conv);
 	if (convnode == NULL || !purple_blist_node_get_bool(convnode, "gtk-mute-sound"))
 		gtkconv->make_sound = TRUE;
+
+	if (convnode != NULL &&
+	    (value = g_hash_table_lookup(convnode->settings, "enable-logging")) &&
+	    purple_value_get_type(value) == PURPLE_TYPE_BOOLEAN)
+	{
+		purple_conversation_set_logging(conv, purple_value_get_boolean(value));
+	}
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar"))
 		gtk_widget_show(gtkconv->toolbar);

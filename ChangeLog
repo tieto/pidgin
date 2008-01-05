@@ -12,8 +12,10 @@ version 2.4.0 (??/??/????):
 	* Added the ability to theme conversation name colors (red and blue)
 	  through your GTK+ theme, and exposed those theme settings to the 
 	  Pidgin GTK+ Theme Control plugin (Dustin Howett)
-	* Fixed having multiple alias edit areas in the infopane (Elliott Sales de
-	  Andrade)
+	* Fixed having multiple alias edit areas in the infopane (Elliott Sales
+	  de Andrade)
+	* Save the conversation "Enable Logging" option per-contact (Moos
+	  Heintzen)
 
 	Finch:
 	* Color is used in the buddylist to indicate status, and the conversation
