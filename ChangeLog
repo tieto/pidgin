@@ -7,6 +7,8 @@ version 2.4.0 (??/??/????):
 	* Eliminated unmaintained Howl backend implementation for the
 	  Bonjour protocol.  Avahi (or Apple's Bonjour runtime on win32) is
 	  now required to use Bonjour.
+	* Partial support for viewing ICQ status notes (Collin from
+	  ComBOTS GmbH).
 
 	Pidgin:
 	* Added the ability to theme conversation name colors (red and blue)

@@ -1879,6 +1879,31 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		g_free(b16);
 	}
 
+	/*
+	 * If we didn't receive a status message with the status change,
+	 * or if the message is empty, and we have a note hash, then
+	 * query the ICQ6 status note.
+	 *
+	 * TODO: We should probably always query the status note regardless
+	 *       of whether they have a status message set, and we should
+	 *       figure out a way to display both the status note and the
+	 *       status message at the same time.
+	 */
+	if (info->status == NULL || info->status[0] == '\0')
+	{
+		struct aim_ssi_item *ssi_item;
+		aim_tlv_t *note_hash;
+
+		ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
+				NULL, info->sn, AIM_SSI_TYPE_BUDDY);
+		if (ssi_item != NULL)
+		{
+			note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
+			if (note_hash != NULL)
+				aim_icq_getstatusnote(od, info->sn, note_hash->value, note_hash->length);
+		}
+	}
+
 	return 1;
 }
 
@@ -4520,12 +4545,11 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		/* This is needed for us to un-set any previous away message. */
 		away = g_strdup("");
 	}
-	else if ((primitive == PURPLE_STATUS_AWAY) ||
-			 (primitive == PURPLE_STATUS_EXTENDED_AWAY))
+	else
 	{
 		htmlaway = purple_status_get_attr_string(status, "message");
 		if ((htmlaway == NULL) || (*htmlaway == '\0'))
-			htmlaway = _("Away");
+			htmlaway = purple_status_type_get_name(status_type);
 		away = purple_prpl_oscar_convert_to_infotext(htmlaway, &awaylen, &away_encoding);
 
 		if (awaylen > od->rights.maxawaymsglen)
@@ -5099,6 +5123,8 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	char *gname, *gname_utf8, *alias, *alias_utf8;
 	PurpleBuddy *b;
 	PurpleGroup *g;
+	struct aim_ssi_item *ssi_item;
+	aim_tlv_t *note_hash;
 	va_list ap;
 	guint16 snac_subtype, type;
 	const char *name;
@@ -5164,6 +5190,21 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 					OSCAR_STATUS_ID_MOBILE, NULL);
 		}
 
+	}
+
+	ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
+			gname, name, AIM_SSI_TYPE_BUDDY);
+	if (ssi_item != NULL)
+	{
+		note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
+		if (note_hash != NULL)
+			aim_icq_getstatusnote(od, name, note_hash->value, note_hash->length);
+	}
+	else
+	{
+		purple_debug_error("oscar", "purple_ssi_parseaddmod: "
+				"Could not find ssi item for oncoming buddy %s, "
+				"group %s\n", name, gname);
 	}
 
 	g_free(gname_utf8);

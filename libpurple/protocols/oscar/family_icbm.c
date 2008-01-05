@@ -51,6 +51,9 @@
 #include "win32dep.h"
 #endif
 
+#include "util.h"
+
+
 /**
  * Add a standard ICBM header to the given bstream with the given
  * information.
@@ -2335,11 +2338,166 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	sn = byte_stream_getstr(bs, snlen);
 	reason = byte_stream_get16(bs);
 
-	if (channel == 0x0002) { /* File transfer declined */
+	if (channel == 0x0002)
+	{
+		/* parse status note text */
+
+		struct aim_icq_info *info = NULL;
+		struct aim_icq_info *prev_info = NULL;
+		char *response = NULL;
+		char *encoding = NULL;
+		char *stripped_encoding = NULL;
+		char *status_note_text = NULL;
+		char *stripped_status_note_text = NULL;
+		char *status_note = NULL;
+
+		/*
+		 * TODO: Using a while statement here is kind of an ugly hack
+		 *       to be able to use 'break'.  We might as well be using
+		 *       'goto'.  Should probably get rid of this.
+		 */
+		while (reason == 0x0003) /* channel-specific */
+		{
+			guint32 length;
+			guint16 version;
+			guint32 capability;
+			guint8 message_type;
+			guint16 status_code;
+			guint16 text_length;
+			guint32 request_length;
+			guint32 response_length;
+			guint32 encoding_length;
+			PurpleAccount *account;
+			PurpleBuddy *buddy;
+			PurplePresence *presence;
+			PurpleStatus *status;
+
+			for (info = od->icq_info; info != NULL; info = info->next)
+			{
+				if (memcmp(&info->icbm_cookie, cookie, 8) == 0)
+				{
+					if (prev_info == NULL)
+						od->icq_info = info->next;
+					else
+						prev_info->next = info->next;
+
+					break;
+				}
+
+				prev_info = info;
+			}
+
+			if (info == NULL)
+				break;
+
+			if ((length = byte_stream_getle16(bs)) != 27)
+			{
+				purple_debug_misc("oscar", "clientautoresp: incorrect header size; expected 27, received %u.\n", length);
+				break;
+			}
+			if ((version = byte_stream_getle16(bs)) != 9)
+			{
+				purple_debug_misc("oscar", "clientautoresp: incorrect version; expected 9, received %u.\n", version);
+				break;
+			}
+			capability = aim_locate_getcaps(od, bs, 0x10);
+			if (capability != OSCAR_CAPABILITY_EMPTY)
+			{
+				purple_debug_misc("oscar", "clientautoresp: plugin ID is not null.\n");
+				break;
+			}
+			byte_stream_advance(bs, 2); /* unknown */
+			byte_stream_advance(bs, 4); /* client capabilities flags */
+			byte_stream_advance(bs, 1); /* unknown */
+			byte_stream_advance(bs, 2); /* downcouner? */
+
+			if ((length = byte_stream_getle16(bs)) != 14)
+			{
+				purple_debug_misc("oscar", "clientautoresp: incorrect header size; expected 14, received %u.\n", length);
+				break;
+			}
+			byte_stream_advance(bs, 2); /* downcounter? */
+			byte_stream_advance(bs, 12); /* unknown */
+
+			if ((message_type = byte_stream_get8(bs)) != 0x1a)
+			{
+				purple_debug_misc("oscar", "clientautoresp: incorrect message type; expected 0x1a, received 0x%x.\n", message_type);
+				break;
+			}
+			byte_stream_advance(bs, 1); /* message flags */
+			if ((status_code = byte_stream_getle16(bs)) != 0)
+			{
+				purple_debug_misc("oscar", "clientautoresp: incorrect status code; expected 0, received %u.\n", status_code);
+				break;
+			}
+			byte_stream_advance(bs, 2); /* priority code */
+
+			text_length = byte_stream_getle16(bs);
+			byte_stream_advance(bs, text_length); /* text */
+
+			length = byte_stream_getle16(bs);
+			byte_stream_advance(bs, 18); /* unknown */
+			if (length != 18 + 4 + (request_length = byte_stream_getle32(bs)) + 17)
+			{
+				purple_debug_misc("oscar", "clientautoresp: incorrect block; expected length is %u, got %u.\n", 18 + 4 + request_length + 17, length);
+				break;
+			}
+			byte_stream_advance(bs, request_length); /* x request */
+			byte_stream_advance(bs, 17); /* unknown */
+
+			length = byte_stream_getle32(bs);
+			response_length = byte_stream_getle32(bs);
+			response = byte_stream_getstr(bs, response_length);
+			if (length != 4 + response_length + 4 + (encoding_length = byte_stream_getle32(bs)))
+			{
+				purple_debug_misc("oscar", "clientautoresp: incorrect block; expected length is %u, got %u.\n", 4 + response_length + 4 + encoding_length, length);
+				break;
+			}
+			encoding = byte_stream_getstr(bs, encoding_length);
+
+			account = purple_connection_get_account(od->gc);
+			stripped_encoding = oscar_encoding_extract(encoding);
+			status_note_text = oscar_encoding_to_utf8(account, stripped_encoding, response, response_length);
+			stripped_status_note_text = purple_markup_strip_html(status_note_text);
+
+			if (stripped_status_note_text != NULL && stripped_status_note_text[0] != 0)
+				status_note = g_strdup_printf("%s: %s", info->status_note_title, stripped_status_note_text);
+			else
+				status_note = g_strdup(info->status_note_title);
+
+			buddy = purple_find_buddy(account, sn);
+			if (buddy == NULL)
+			{
+				purple_debug_misc("oscar", "clientautoresp: buddy %s was not found.\n", sn);
+				break;
+			}
+
+			purple_debug_misc("oscar", "clientautoresp: setting status message to \"%s\".\n", status_note);
+
+			presence = purple_buddy_get_presence(buddy);
+			status = purple_presence_get_active_status(presence);
+
+			purple_prpl_got_user_status(account, sn,
+					purple_status_get_id(status),
+					"message", status_note, NULL);
+
+			break;
+		}
+
+		g_free(status_note);
+		g_free(stripped_status_note_text);
+		g_free(status_note_text);
+		g_free(stripped_encoding);
+		g_free(encoding);
+		g_free(response);
+		g_free(info->status_note_title);
+		g_free(info);
+
 		byte_stream_get16(bs); /* Unknown */
 		byte_stream_get16(bs); /* Unknown */
 		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 			ret = userfunc(od, conn, frame, channel, sn, reason, cookie);
+
 	} else if (channel == 0x0004) { /* ICQ message */
 		switch (reason) {
 			case 0x0003: { /* ICQ status message.  Maybe other stuff too, you never know with these people. */
