@@ -617,7 +617,7 @@ static gpointer _win32_name_lookup_thread(gpointer data) {
 #endif
 
 static void
-initialize_default_account_values()
+initialize_default_account_values(void)
 {
 #ifndef _WIN32
 	struct passwd *info;

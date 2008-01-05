@@ -59,7 +59,7 @@ static guint32 _get_file_key(guint8 seed)
 	return key;
 }
 		
-static guint32 _gen_file_key()
+static guint32 _gen_file_key(void)
 {
 	guint8 seed;
 	

@@ -350,7 +350,7 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 }
 
 static gpointer
-finch_conv_get_handle()
+finch_conv_get_handle(void)
 {
 	static int handle;
 	return &handle;
@@ -1119,7 +1119,7 @@ help_command_cb(PurpleConversation *conv,
 static PurpleCmdRet
 cmd_show_window(PurpleConversation *conv, const char *cmd, char **args, char **error, gpointer data)
 {
-	void (*callback)() = data;
+	void (*callback)(void) = data;
 	callback();
 	return PURPLE_CMD_STATUS_OK;
 }

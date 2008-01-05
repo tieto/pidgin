@@ -949,7 +949,7 @@ add_popular_statuses(PidginStatusBox *statusbox)
 
 /* This returns NULL if the active accounts don't have identical
  * statuses and a token account if they do */
-static PurpleAccount* check_active_accounts_for_identical_statuses()
+static PurpleAccount* check_active_accounts_for_identical_statuses(void)
 {
 	PurpleAccount *acct = NULL, *acct2;
 	GList *tmp, *tmp2, *active_accts = purple_accounts_get_all_active();

@@ -163,9 +163,9 @@ Code_t ZReadAscii32 ZP((char *, int, unsigned long *));
 Code_t ZReadAscii16 ZP((char *, int, unsigned short *));
 Code_t ZSendPacket ZP((char*, int, int));
 Code_t ZSendList ZP((ZNotice_t*, char *[], int, Z_AuthProc));
-Code_t ZSrvSendList ZP((ZNotice_t*, char*[], int, Z_AuthProc, Code_t (*)()));
+Code_t ZSrvSendList ZP((ZNotice_t*, char*[], int, Z_AuthProc, Code_t (*)(void)));
 Code_t ZSendNotice ZP((ZNotice_t *, Z_AuthProc));
-Code_t ZSrvSendNotice ZP((ZNotice_t*, Z_AuthProc, Code_t (*)()));
+Code_t ZSrvSendNotice ZP((ZNotice_t*, Z_AuthProc, Code_t (*)(void)));
 Code_t ZFormatNotice ZP((ZNotice_t*, char**, int*, Z_AuthProc));
 Code_t ZFormatSmallNotice ZP((ZNotice_t*, ZPacket_t, int*, Z_AuthProc));
 Code_t ZFormatRawNoticeList ZP((ZNotice_t *notice, char *list[], int nitems,

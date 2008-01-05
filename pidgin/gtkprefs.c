@@ -353,7 +353,7 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	gtk_tree_path_free(path);
 }
 
-static GtkTreeRowReference *theme_refresh_theme_list()
+static GtkTreeRowReference *theme_refresh_theme_list(void)
 {
 	GdkPixbuf *pixbuf;
 	GSList *themes;
@@ -617,7 +617,7 @@ remove_theme_button_clicked_cb(GtkWidget *button, GtkTreeView *tv)
 }
 
 static GtkWidget *
-theme_page()
+theme_page(void)
 {
 	GtkWidget *add_button, *remove_button;
 	GtkWidget *hbox_buttons;
@@ -818,7 +818,7 @@ conversation_usetabs_cb(const char *name, PurplePrefType type,
 }
 
 static GtkWidget *
-interface_page()
+interface_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -911,7 +911,7 @@ pidgin_custom_font_set(GtkFontButton *font_button, gpointer nul)
 #endif
 
 static GtkWidget *
-conv_page()
+conv_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -1073,7 +1073,7 @@ browser_button_clicked_cb(GtkWidget *button, gpointer null)
 }
 
 static GtkWidget *
-network_page()
+network_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox, *hbox, *entry;
@@ -1347,7 +1347,7 @@ static gboolean manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpoin
 	return FALSE;
 }
 
-static GList *get_available_browsers()
+static GList *get_available_browsers(void)
 {
 	struct browser {
 		char *name;
@@ -1413,7 +1413,7 @@ browser_changed2_cb(const char *name, PurplePrefType type,
 }
 
 static GtkWidget *
-browser_page()
+browser_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -1474,7 +1474,7 @@ browser_page()
 #endif /*_WIN32*/
 
 static GtkWidget *
-logging_page()
+logging_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -1702,7 +1702,7 @@ static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 }
 
 static GtkWidget *
-sound_page()
+sound_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox, *sw, *button;
@@ -1909,7 +1909,7 @@ set_startupstatus(PurpleSavedStatus *status)
 }
 
 static GtkWidget *
-away_page()
+away_page(void)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -2015,7 +2015,7 @@ prefs_notebook_add_page(const char *text,
 #endif
 }
 
-static void prefs_notebook_init() {
+static void prefs_notebook_init(void) {
 	prefs_notebook_add_page(_("Interface"), interface_page(), notebook_page++);
 	prefs_notebook_add_page(_("Conversations"), conv_page(), notebook_page++);
 	prefs_notebook_add_page(_("Smiley Themes"), theme_page(), notebook_page++);

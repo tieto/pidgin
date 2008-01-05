@@ -85,7 +85,7 @@ enum
  **************************************************************************/
 
 static void
-update_title_progress()
+update_title_progress(void)
 {
 	GList *list;
 	int num_active_xfers = 0;

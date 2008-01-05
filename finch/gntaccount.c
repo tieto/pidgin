@@ -722,7 +722,7 @@ void finch_account_dialog_show(PurpleAccount *account)
 }
 
 static gpointer
-finch_accounts_get_handle()
+finch_accounts_get_handle(void)
 {
 	static int handle;
 

@@ -695,7 +695,7 @@ static int buf_get_line(char *ibuf, char **buf, int *position, gsize len)
 	return 1;
 }
 
-static void load_conf()
+static void load_conf(void)
 {
 	/* Corrections to change "...", "(c)", "(r)", and "(tm)" to their
 	 * Unicode character equivalents were not added here even though
@@ -1912,7 +1912,7 @@ static void case_sensitive_toggled(GtkCellRendererToggle *cellrenderertoggle,
 	save_list();
 }
 
-static void list_add_new()
+static void list_add_new(void)
 {
 	GtkTreeIter iter;
 	const char *word = gtk_entry_get_text(GTK_ENTRY(bad_entry));
@@ -2015,7 +2015,7 @@ static void remove_row(void *data1, gpointer data2)
 	gtk_tree_row_reference_free(row_reference);
 }
 
-static void list_delete()
+static void list_delete(void)
 {
 	GtkTreeSelection *sel;
 	GSList *list = NULL;

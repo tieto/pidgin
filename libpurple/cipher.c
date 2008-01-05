@@ -775,7 +775,7 @@ hmac_set_key_with_len(PurpleCipherContext *context, const guchar * key, size_t k
 static void
 hmac_set_key(PurpleCipherContext *context, const guchar * key)
 {
-	hmac_set_key_with_len(context, key, strlen(key));
+	hmac_set_key_with_len(context, key, strlen((char *)key));
 }
 
 static size_t 

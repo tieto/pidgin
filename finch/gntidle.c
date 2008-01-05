@@ -28,7 +28,7 @@
 #include "idle.h"
 
 static time_t
-finch_get_idle_time()
+finch_get_idle_time(void)
 {
 	return gnt_wm_get_idle_time();
 }

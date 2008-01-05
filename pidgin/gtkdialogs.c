@@ -288,7 +288,7 @@ pidgin_dialogs_destroy_all()
 	}
 }
 
-static void destroy_about()
+static void destroy_about(void)
 {
 	if (about != NULL)
 		gtk_widget_destroy(about);

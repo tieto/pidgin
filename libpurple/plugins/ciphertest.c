@@ -61,7 +61,7 @@ struct test md5_tests[8] = {
 };
 
 static void
-cipher_test_md5() {
+cipher_test_md5(void) {
 	PurpleCipher *cipher;
 	PurpleCipherContext *context;
 	gchar digest[33];
@@ -113,12 +113,12 @@ struct test sha1_tests[5] = {
 	{"a", "86f7e437faa5a7fce15d1ddcb9eaeaea377667b8"},
 	{"abc", "a9993e364706816aba3e25717850c26c9cd0d89d"} ,
 	{"abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq", "84983e441c3bd26ebaae4aa1f95129e5e54670f1"} ,
-    {NULL, "34aa973cd4c4daa4f61eeb2bdbad27316534016f"},
+	{NULL, "34aa973cd4c4daa4f61eeb2bdbad27316534016f"},
 	{NULL, NULL}
 };
 
 static void
-cipher_test_sha1() {
+cipher_test_sha1(void) {
 	PurpleCipher *cipher;
 	PurpleCipherContext *context;
 	gchar digest[41];
@@ -176,7 +176,7 @@ cipher_test_sha1() {
 }
 
 static void
-cipher_test_digest()
+cipher_test_digest(void)
 {
 	const gchar *nonce = "dcd98b7102dd2f0e8b11d0f600bfb0c093";
 	const gchar *client_nonce = "0a4f113b";
