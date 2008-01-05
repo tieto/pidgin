@@ -466,7 +466,6 @@ struct _OscarData
 
 	gboolean icq;
 	guint getblisttimer;
-	guint getinfotimer;
 
 	struct {
 		guint maxwatchers; /* max users who can watch you */
@@ -511,9 +510,7 @@ struct _OscarData
 
 	struct {
 		struct aim_userinfo_s *userinfo;
-		struct userinfo_node *torequest;
 		struct userinfo_node *requested;
-		gboolean waiting_for_response;
 	} locate;
 
 	/* Server-stored information (ssi) */
