@@ -412,7 +412,7 @@ sighandler(int sig)
 #ifdef SIGWINCH
 	case SIGWINCH:
 		erase();
-		g_idle_add(refresh_screen, NULL);
+		g_idle_add((GSourceFunc)refresh_screen, NULL);
 		if (org_winch_handler)
 			org_winch_handler(sig);
 		signal(SIGWINCH, sighandler);

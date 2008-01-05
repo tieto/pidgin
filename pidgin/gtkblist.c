@@ -4183,7 +4183,8 @@ void pidgin_blist_setup_sort_methods()
 	pidgin_blist_sort_method_set(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/sort_type"));
 }
 
-static void _prefs_change_redo_list(void)
+static void _prefs_change_redo_list(const char *name, PurplePrefType type,
+                                    gconstpointer val, gpointer data)
 {
 	GtkTreeSelection *sel;
 	GtkTreeIter iter;

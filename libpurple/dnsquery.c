@@ -142,7 +142,7 @@ purple_dnsquery_ui_resolve(PurpleDnsQueryData *query_data)
  */
 #ifdef HAVE_SIGNAL_H
 G_GNUC_NORETURN static void
-trap_gdb_bug(void)
+trap_gdb_bug(int sig)
 {
 	const char *message =
 		"Purple's DNS child got a SIGTRAP signal.\n"

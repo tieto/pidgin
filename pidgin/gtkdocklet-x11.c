@@ -48,7 +48,7 @@ static int docklet_height = 0;
 static void docklet_x11_create(gboolean);
 
 static gboolean
-docklet_x11_recreate_cb(void)
+docklet_x11_recreate_cb(gpointer data)
 {
 	docklet_x11_create(TRUE);
 
@@ -230,7 +230,7 @@ docklet_x11_destroy(void)
 }
 
 static gboolean
-docklet_x11_embed_timeout_cb(void)
+docklet_x11_embed_timeout_cb(gpointer data)
 {
 	/* The docklet was not embedded within the timeout.
 	 * Remove it as a visibility manager, but leave the plugin

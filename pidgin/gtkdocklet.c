@@ -62,7 +62,7 @@ static gboolean visibility_manager = FALSE;
  * docklet status and utility functions
  **************************************************************************/
 static gboolean
-docklet_blink_icon(void)
+docklet_blink_icon(gpointer data)
 {
 	static gboolean blinked = FALSE;
 	gboolean ret = FALSE; /* by default, don't keep blinking */
