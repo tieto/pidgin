@@ -2161,14 +2161,13 @@ static GtkWidget *
 get_config_frame(PurplePlugin *plugin)
 {
 	GtkWidget *ret, *vbox, *win;
-	GtkWidget *hbox, *label;
+	GtkWidget *hbox;
 	GtkWidget *button;
 	GtkSizeGroup *sg;
 	GtkSizeGroup *sg2;
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
 	GtkWidget *vbox2;
-	GtkWidget *hbox2;
 	GtkWidget *vbox3;
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
@@ -2275,37 +2274,15 @@ get_config_frame(PurplePlugin *plugin)
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	sg2 = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	hbox2 = gtk_hbox_new(FALSE, 2);
-	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, 0);
-	gtk_widget_show(hbox2);
-
-	label = gtk_label_new_with_mnemonic(_("You _type:"));
-	gtk_box_pack_start(GTK_BOX(hbox2), label, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-
 	bad_entry = gtk_entry_new();
 	/* Set a minimum size. Since they're in a size group, the other entry will match up. */
 	gtk_widget_set_size_request(bad_entry, 350, -1);
-	gtk_box_pack_start(GTK_BOX(hbox2), bad_entry, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(sg2, bad_entry);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), bad_entry);
-	gtk_widget_show(bad_entry);
-
-	hbox2 = gtk_hbox_new(FALSE, 2);
-	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, 0);
-	gtk_widget_show(hbox2);
-
-	label = gtk_label_new_with_mnemonic(_("You _send:"));
-	gtk_box_pack_start(GTK_BOX(hbox2), label, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox2), _("You _type:"), sg, bad_entry, FALSE, NULL);
 
 	good_entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox2), good_entry, TRUE, TRUE, 0);
 	gtk_size_group_add_widget(sg2, good_entry);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), good_entry);
-	gtk_widget_show(good_entry);
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox2), _("You _send:"), sg, good_entry, FALSE, NULL);
 
 	/* Created here so it can be passed to whole_words_button_toggled. */
 	case_toggle = gtk_check_button_new_with_mnemonic(_("_Exact case match (uncheck for automatic case handling)"));

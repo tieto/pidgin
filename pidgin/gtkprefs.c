@@ -1749,7 +1749,6 @@ sound_page()
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
 	entry = gtk_entry_new();
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 	gtk_editable_set_editable(GTK_EDITABLE(entry), TRUE);
 	cmd = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/sound/command");
 	if(cmd)
@@ -1776,13 +1775,6 @@ sound_page()
 				NULL);
 
 #ifdef USE_GSTREAMER
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-	label = gtk_label_new_with_mnemonic(_("Volume:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-
 	sw = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
 	gtk_range_set_increments(GTK_RANGE(sw), 5.0, 25.0);
 	gtk_range_set_value(GTK_RANGE(sw), purple_prefs_get_int(PIDGIN_PREFS_ROOT "/sound/volume"));
@@ -1792,7 +1784,7 @@ sound_page()
 	g_signal_connect (G_OBJECT (sw), "value-changed",
 			  G_CALLBACK (prefs_sound_volume_changed),
 			  NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 0);
+	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Volume:"), NULL, sw, TRUE, NULL);
 
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/method",
 								sound_changed3_cb, hbox);
