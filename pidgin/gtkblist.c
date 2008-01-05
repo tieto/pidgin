@@ -843,19 +843,9 @@ rebuild_joinchat_entries(PidginJoinChatData *data)
 
 	for (tmp = list; tmp; tmp = tmp->next)
 	{
-		GtkWidget *label;
-		GtkWidget *rowbox;
 		GtkWidget *input;
 
 		pce = tmp->data;
-
-		rowbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-		gtk_box_pack_start(GTK_BOX(data->entries_box), rowbox, FALSE, FALSE, 0);
-
-		label = gtk_label_new_with_mnemonic(pce->label);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_size_group_add_widget(data->sg, label);
-		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
 
 		if (pce->is_int)
 		{
@@ -864,7 +854,7 @@ rebuild_joinchat_entries(PidginJoinChatData *data)
 										1, 10, 10);
 			input = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
 			gtk_widget_set_size_request(input, 50, -1);
-			gtk_box_pack_end(GTK_BOX(rowbox), input, FALSE, FALSE, 0);
+			pidgin_add_widget_to_vbox(GTK_BOX(data->entries_box), pce->label, data->sg, input, FALSE, NULL);
 		}
 		else
 		{
@@ -880,7 +870,7 @@ rebuild_joinchat_entries(PidginJoinChatData *data)
 				if (gtk_entry_get_invisible_char(GTK_ENTRY(input)) == '*')
 					gtk_entry_set_invisible_char(GTK_ENTRY(input), PIDGIN_INVISIBLE_CHAR);
 			}
-			gtk_box_pack_end(GTK_BOX(rowbox), input, TRUE, TRUE, 0);
+			pidgin_add_widget_to_vbox(GTK_BOX(data->entries_box), pce->label, data->sg, input, TRUE, NULL);
 			g_signal_connect(G_OBJECT(input), "changed",
 							 G_CALLBACK(joinchat_set_sensitive_if_input_cb), data);
 		}
@@ -891,8 +881,6 @@ rebuild_joinchat_entries(PidginJoinChatData *data)
 			gtk_widget_grab_focus(input);
 			focus = FALSE;
 		}
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), input);
-		pidgin_set_accessible_label(input, label);
 		g_object_set_data(G_OBJECT(input), "identifier", (gpointer)pce->identifier);
 		g_object_set_data(G_OBJECT(input), "is_spin", GINT_TO_POINTER(pce->is_int));
 		g_object_set_data(G_OBJECT(input), "required", GINT_TO_POINTER(pce->required));
@@ -988,23 +976,14 @@ pidgin_blist_joinchat_show(void)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
-	rowbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_box_pack_start(GTK_BOX(vbox), rowbox, TRUE, TRUE, 0);
-
 	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-
-	label = gtk_label_new_with_mnemonic(_("_Account:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(data->sg, label);
 
 	data->account_menu = pidgin_account_option_menu_new(NULL, FALSE,
 			G_CALLBACK(joinchat_select_account_cb),
 			chat_account_filter_func, data);
 	gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label),
-								  GTK_WIDGET(data->account_menu));
-	pidgin_set_accessible_label (data->account_menu, label);
+
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Account:"), data->sg, data->account_menu, TRUE, NULL);
 
 	data->entries_box = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(vbox), data->entries_box);
@@ -6516,19 +6495,9 @@ rebuild_addchat_entries(PidginAddChatData *data)
 
 	for (tmp = list; tmp; tmp = tmp->next)
 	{
-		GtkWidget *label;
-		GtkWidget *rowbox;
 		GtkWidget *input;
 
 		pce = tmp->data;
-
-		rowbox = gtk_hbox_new(FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(data->entries_box), rowbox, FALSE, FALSE, 0);
-
-		label = gtk_label_new_with_mnemonic(pce->label);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_size_group_add_widget(data->sg, label);
-		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
 
 		if (pce->is_int)
 		{
@@ -6537,7 +6506,7 @@ rebuild_addchat_entries(PidginAddChatData *data)
 										1, 10, 10);
 			input = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
 			gtk_widget_set_size_request(input, 50, -1);
-			gtk_box_pack_end(GTK_BOX(rowbox), input, FALSE, FALSE, 0);
+			pidgin_add_widget_to_vbox(GTK_BOX(data->entries_box), pce->label, data->sg, input, FALSE, NULL);
 		}
 		else
 		{
@@ -6553,7 +6522,7 @@ rebuild_addchat_entries(PidginAddChatData *data)
 				if (gtk_entry_get_invisible_char(GTK_ENTRY(input)) == '*')
 					gtk_entry_set_invisible_char(GTK_ENTRY(input), PIDGIN_INVISIBLE_CHAR);
 			}
-			gtk_box_pack_end(GTK_BOX(rowbox), input, TRUE, TRUE, 0);
+			pidgin_add_widget_to_vbox(GTK_BOX(data->entries_box), pce->label, data->sg, input, TRUE, NULL);
 			g_signal_connect(G_OBJECT(input), "changed",
 							 G_CALLBACK(addchat_set_sensitive_if_input_cb), data);
 		}
@@ -6564,8 +6533,6 @@ rebuild_addchat_entries(PidginAddChatData *data)
 			gtk_widget_grab_focus(input);
 			focus = FALSE;
 		}
-		gtk_label_set_mnemonic_widget(GTK_LABEL(label), input);
-		pidgin_set_accessible_label(input, label);
 		g_object_set_data(G_OBJECT(input), "identifier", (gpointer)pce->identifier);
 		g_object_set_data(G_OBJECT(input), "is_spin", GINT_TO_POINTER(pce->is_int));
 		g_object_set_data(G_OBJECT(input), "required", GINT_TO_POINTER(pce->required));
@@ -6608,7 +6575,6 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	GList *l;
 	PurpleConnection *gc;
 	GtkWidget *label;
-	GtkWidget *rowbox;
 	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *img;
@@ -6684,20 +6650,10 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
-	rowbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
-
-	label = gtk_label_new_with_mnemonic(_("_Account:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_size_group_add_widget(data->sg, label);
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-
 	data->account_menu = pidgin_account_option_menu_new(account, FALSE,
 			G_CALLBACK(addchat_select_account_cb),
 			chat_account_filter_func, data);
-	gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), data->account_menu);
-	pidgin_set_accessible_label (data->account_menu, label);
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Account:"), data->sg, data->account_menu, TRUE, NULL);
 
 	data->entries_box = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(data->entries_box), 0);
@@ -6705,36 +6661,17 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 
 	rebuild_addchat_entries(data);
 
-	rowbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
-
-	label = gtk_label_new_with_mnemonic(_("A_lias:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_size_group_add_widget(data->sg, label);
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-
 	data->alias_entry = gtk_entry_new();
 	if (alias != NULL)
 		gtk_entry_set_text(GTK_ENTRY(data->alias_entry), alias);
-	gtk_box_pack_end(GTK_BOX(rowbox), data->alias_entry, TRUE, TRUE, 0);
 	gtk_entry_set_activates_default(GTK_ENTRY(data->alias_entry), TRUE);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), data->alias_entry);
-	pidgin_set_accessible_label (data->alias_entry, label);
+
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("A_lias:"), data->sg, data->alias_entry, TRUE, NULL);
 	if (name != NULL)
 		gtk_widget_grab_focus(data->alias_entry);
 
-	rowbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
-
-	label = gtk_label_new_with_mnemonic(_("_Group:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_size_group_add_widget(data->sg, label);
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-
 	data->group_combo = pidgin_text_combo_box_entry_new(group ? group->name : NULL, groups_tree());
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_BIN(data->group_combo)->child);
-	pidgin_set_accessible_label (data->group_combo, label);
-	gtk_box_pack_end(GTK_BOX(rowbox), data->group_combo, TRUE, TRUE, 0);
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Group:"), data->sg, data->group_combo, TRUE, NULL);
 	
 	data->autojoin = gtk_check_button_new_with_mnemonic(_("Auto_join when account becomes online."));
 	data->persistent = gtk_check_button_new_with_mnemonic(_("_Hide chat when the window is closed."));

@@ -794,5 +794,20 @@ void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
  */
 gboolean pidgin_auto_parent_window(GtkWidget *window);
 
+/**
+ * Add a labelled widget to a GtkVBox
+ *
+ * @param vbox         The GtkVBox to add the widget to.
+ * @param widget_label The label to give the widget.
+ * @param sg           The GtkSizeGroup to add the label to.
+ * @param widget       The GtkWidget to add
+ * @param expand       Whether to expand the widget horizontally.
+ * @param p_label      Place to store a pointer to the GtkLabel, or NULL if you don't care.
+ *
+ * @return  A GtkHBox already added to the GtkVBox containing the GtkLabel and the GtkWidget.
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *sg, GtkWidget *widget, gboolean expand, GtkWidget **p_label);
+
 #endif /* _PIDGINUTILS_H_ */
 
