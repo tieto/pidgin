@@ -158,25 +158,7 @@ static GtkWidget *
 add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 			 const char *text, GtkWidget *widget)
 {
-	GtkWidget *hbox;
-	GtkWidget *label;
-
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(parent), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new_with_mnemonic(text);
-	gtk_size_group_add_widget(dialog->sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
-	gtk_widget_show(label);
-
-	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, PIDGIN_HIG_BORDER);
-	gtk_widget_show(widget);
-	pidgin_set_accessible_label (widget, label);
-
-	return hbox;
+	return pidgin_add_widget_to_vbox(GTK_BOX(parent), text, dialog->sg, widget, TRUE, NULL);
 }
 
 static void

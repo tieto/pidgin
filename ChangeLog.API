@@ -8,6 +8,7 @@ version 2.4.0 (??/??/????):
 		* purple_major_version, purple_minor_version,
 		  purple_micro_version variables are exported by version.h,
 		  giving the version of libpurple in use at runtime.
+		* purple_util_set_current_song, purple_util_format_song_info
 
 	Pidgin:
 		Added:
@@ -24,9 +25,11 @@ version 2.4.0 (??/??/????):
 		* pidgin_tooltip_setup_for_treeview, pidgin_tooltip_destroy,
 		  pidgin_tooltip_show and pidgin_tooltip_setup_for_widget to simplify
 		  the process of drawing tooltips.
+		* pidgin_add_widget_to_vbox to simplify adding a labeled widget to a
+		  window.
 
-	        Deprecated:
-	        * PIDGIN_DIALOG
+		Deprecated:
+		* PIDGIN_DIALOG
 
 	Finch:
 		libgnt:

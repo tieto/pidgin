@@ -359,7 +359,6 @@ static PidginPrivacyDialog *
 privacy_dialog_new(void)
 {
 	PidginPrivacyDialog *dialog;
-	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *button;
 	GtkWidget *dropdown;
@@ -386,22 +385,10 @@ privacy_dialog_new(void)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_widget_show(label);
 
-	/* Hbox for the accounts drop-down and label. */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	/* "Set privacy for:" label */
-	label = gtk_label_new(_("Set privacy for:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
 	/* Accounts drop-down */
 	dropdown = pidgin_account_option_menu_new(NULL, FALSE,
 												G_CALLBACK(select_account_cb), NULL, dialog);
-	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
-	gtk_widget_show(dropdown);
-	pidgin_set_accessible_label (dropdown, label);
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Set privacy for:"), NULL, dropdown, TRUE, NULL);
 	dialog->account = pidgin_account_option_menu_get_selected(dropdown);
 
 	/* Add the drop-down list with the allow/block types. */
