@@ -2420,7 +2420,6 @@ update_tab_icon(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv;
 	PidginWindow *win;
-	PurpleBuddy *b;
 	GList *l;
 	GdkPixbuf *status = NULL;
 	GdkPixbuf *infopane_status = NULL;
@@ -2433,13 +2432,18 @@ update_tab_icon(PurpleConversation *conv)
 	if (conv != gtkconv->active_conv)
 		return;
 
-
 	status = pidgin_conv_get_tab_icon(conv, TRUE);
 	infopane_status = pidgin_conv_get_tab_icon(conv, FALSE);
 
-	b = purple_find_buddy(conv->account, conv->name);
-	if (b)
-		emblem = pidgin_blist_get_emblem((PurpleBlistNode*)b);
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		PurpleBuddy *b = purple_find_buddy(conv->account, conv->name);
+		if (b)
+			emblem = pidgin_blist_get_emblem((PurpleBlistNode*)b);
+	} else {
+		PurpleChat *c = purple_blist_find_chat(conv->account, conv->name);
+		if (c)
+			emblem = pidgin_blist_get_emblem((PurpleBlistNode*)c);
+	}
 
 	g_return_if_fail(status != NULL);
 
