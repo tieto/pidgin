@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl -w
 #
 # check_po.pl  -  check po file translations for likely errors
 #
