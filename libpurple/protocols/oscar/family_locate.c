@@ -320,10 +320,10 @@ aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
 		cur->away_encoding = g_strdup(userinfo->away_encoding);
 		cur->away_len = userinfo->away_len;
 
-	} else if (!(userinfo->flags & AIM_FLAG_AWAY)) {
+	} else {
 		/*
-		 * We don't have an away message specified in this user_info block.
-		 * If the user is not away, clear any cached away message now.
+		 * We don't have an away message specified in this user_info
+		 * block, so clear any cached away message now.
 		 */
 		if (cur->away) {
 			g_free(cur->away);

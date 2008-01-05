@@ -1722,8 +1722,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	int type = 0;
 	gboolean buddy_is_away = FALSE;
 	const char *status_id;
-	gboolean have_status_message = FALSE;
-	char *message = NULL;
+	char *itmsurl = NULL;
 	va_list ap;
 	aim_userinfo_t *info;
 
@@ -1771,20 +1770,10 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
 	}
 
-	/*
-	 * Handle the available message.  If info->status is NULL then the user
-	 * may or may not have an available message, so don't do anything.  If
-	 * info->status is set to the empty string, then the user's client DOES
-	 * support available messages and the user DOES NOT have one set.
-	 * Otherwise info->status contains the available message.
-	 */
-	if (info->status != NULL)
-	{
-		have_status_message = TRUE;
-		if (info->status[0] != '\0')
-			message = oscar_encoding_to_utf8(account, info->status_encoding,
-											 info->status, info->status_len);
-	}
+	if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len)
+		/* Grab the iTunes Music Store URL */
+		itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
+				info->itmsurl, info->itmsurl_len);
 
 	if (info->flags & AIM_FLAG_WIRELESS)
 	{
@@ -1793,38 +1782,27 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_prpl_got_user_status_deactive(account, info->sn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	if (have_status_message)
+	if (status_id == OSCAR_STATUS_ID_AVAILABLE)
 	{
-		if ((!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE)) && (info->itmsurl != NULL))
-		{
-			char *itmsurl;
-			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
-					info->itmsurl, info->itmsurl_len);
-			purple_prpl_got_user_status(account, info->sn, status_id,
-					"message", message, "itmsurl", itmsurl, NULL);
-			g_free(itmsurl);
-		}
-		else
-		{
-			purple_prpl_got_user_status(account, info->sn, status_id,
-					"message", message, NULL);
-		}
+		char *message = NULL;
+
+		if (info->status != NULL && info->status[0] != '\0')
+			/* Grab the available message */
+			message = oscar_encoding_to_utf8(account, info->status_encoding,
+					info->status, info->status_len);
+
+		purple_prpl_got_user_status(account, info->sn, status_id,
+				"message", message, "itmsurl", itmsurl, NULL);
+
 		g_free(message);
 	}
 	else
 	{
-		PurpleBuddy *b = purple_find_buddy(account, info->sn);
-		PurpleStatus *status = NULL;
-		const char *active_status_id = NULL;
-
-		if (b != NULL) {
-			status = purple_presence_get_active_status(purple_buddy_get_presence(b));
-			active_status_id = purple_status_get_id(status);
-		}
-
-		if (!active_status_id || strcmp(active_status_id, status_id))
-			purple_prpl_got_user_status(account, info->sn, status_id, NULL);
+		purple_prpl_got_user_status(account, info->sn, status_id,
+				"itmsurl", itmsurl, NULL);
 	}
+
+	g_free(itmsurl);
 
 	/* Login time stuff */
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
@@ -3025,7 +3003,7 @@ static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	if (!aim_snvalid_icq(userinfo->sn))
 	{
-		if (strcmp(purple_buddy_get_name(b), userinfo->sn))
+		if (strcmp(purple_buddy_get_name(b), userinfo->sn) != 0)
 			serv_got_alias(gc, purple_buddy_get_name(b), userinfo->sn);
 		else
 			serv_got_alias(gc, purple_buddy_get_name(b), NULL);
@@ -3034,23 +3012,19 @@ static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *
 	presence = purple_buddy_get_presence(b);
 	status = purple_presence_get_active_status(presence);
 
-	if (!purple_status_is_available(status) && purple_status_is_online(status))
+	if (purple_status_is_online(status) && !purple_status_is_available(status) &&
+			userinfo->flags & AIM_FLAG_AWAY && userinfo->away_len > 0 &&
+			userinfo->away != NULL && userinfo->away_encoding != NULL)
 	{
-		if ((userinfo->flags & AIM_FLAG_AWAY) &&
-			(userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
-			gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
-			message = oscar_encoding_to_utf8(account, charset,
-			                                 userinfo->away,
-			                                 userinfo->away_len);
-			g_free(charset);
-			purple_status_set_attr_string(status, "message", message);
-			g_free(message);
-		}
-		else
-			/* Set an empty message so that we know not to show "pending" */
-			purple_status_set_attr_string(status, "message", "");
-
-		purple_blist_update_buddy_status(b, status);
+		gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
+		message = oscar_encoding_to_utf8(account, charset,
+		                                 userinfo->away,
+		                                 userinfo->away_len);
+		g_free(charset);
+		purple_prpl_got_user_status(account, userinfo->sn,
+				purple_status_get_id(status),
+				"message", message, NULL);
+		g_free(message);
 	}
 
 	return 1;
