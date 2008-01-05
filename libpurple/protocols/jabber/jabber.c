@@ -1523,10 +1523,16 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 				} else
 					purple_notify_user_info_add_pair(user_info, _("Mood"), mood);
 			}
-			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {	
+			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 				PurpleStatus *tune = purple_presence_get_status(presence, "tune");
 				const char *title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
-				purple_notify_user_info_add_pair(user_info, _("Current media"), title);
+				const char *artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
+				const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
+				char *playing = purple_util_format_song_info(title, artist, album, NULL);
+				if (playing) {
+					purple_notify_user_info_add_pair(user_info, _("Now Listening"), playing);
+					g_free(playing);
+				}
 			}
 		}
 
