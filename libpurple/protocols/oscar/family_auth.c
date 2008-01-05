@@ -196,6 +196,10 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
  *   unknown= 0x0000008b
  *   serverstore = 0x01
  *
+ * @param truncate_pass Truncate the password to 8 characters.  This
+ *        usually happens for AOL accounts.  We are told that we
+ *        should truncate it if the 0x0017/0x0007 SNAC contains
+ *        a TLV of type 0x0026 with data 0x0000.
  */
 int
 aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key)
@@ -522,8 +526,8 @@ keyparse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 
 	/*
 	 * If the truncate_pass TLV exists then we should truncate the
-	 * user's password to 8 characters.  This flag is sent when you
-	 * try to log in with an AOL user's screen name.
+	 * user's password to 8 characters.  This flag is sent to us
+	 * when logging in with an AOL user's screen name.
 	 */
 	truncate_pass = aim_tlv_gettlv(tlvlist, 0x0026, 1) != NULL;
 
