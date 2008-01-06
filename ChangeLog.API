@@ -41,6 +41,7 @@ version 2.4.0 (??/??/????):
 		* PIDGIN_DIALOG
 
 	Finch:
+		* finch_roomlist_get_ui_ops and finch_roomlist_show_all
 		* finch_request_field_get_widget to get the widget for a request
 		  field.
 

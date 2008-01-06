@@ -35,6 +35,7 @@
 #include "gntpounce.h"
 #include "gntprefs.h"
 #include "gntrequest.h"
+#include "gntroomlist.h"
 #include "gntstatus.h"
 #include "gntsound.h"
 
@@ -71,13 +72,19 @@ void gnt_ui_init()
 	finch_notify_init();
 	purple_notify_set_ui_ops(finch_notify_get_ui_ops());
 
+	/* Request */
 	finch_request_init();
 	purple_request_set_ui_ops(finch_request_get_ui_ops());
 
+	/* Pounce */
 	finch_pounces_init();
 
+	/* File transfer */
 	finch_xfers_init();
 	purple_xfers_set_ui_ops(finch_xfers_get_ui_ops());
+
+	/* Roomlist */
+	purple_roomlist_set_ui_ops(finch_roomlist_get_ui_ops());
 
 	gnt_register_action(_("Accounts"), finch_accounts_show_all);
 	gnt_register_action(_("Buddy List"), finch_blist_show);
@@ -86,6 +93,7 @@ void gnt_ui_init()
 	gnt_register_action(_("Debug Window"), finch_debug_window_show);
 	gnt_register_action(_("File Transfers"), finch_xfer_dialog_show);
 	gnt_register_action(_("Plugins"), finch_plugins_show_all);
+	gnt_register_action(_("Room List"), finch_roomlist_show_all);
 	gnt_register_action(_("Sounds"), finch_sounds_show_all);
 	gnt_register_action(_("Preferences"), finch_prefs_show_all);
 	gnt_register_action(_("Statuses"), finch_savedstatus_show_all);
