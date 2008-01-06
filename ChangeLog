@@ -9,6 +9,7 @@ version 2.4.0 (??/??/????):
 	  now required to use Bonjour.
 	* Partial support for viewing ICQ status notes (Collin from
 	  ComBOTS GmbH).
+	* Support for Yahoo Messenger 7.0+ file transfer method (Thanumalayan S.)
 
 	Pidgin:
 	* Added the ability to theme conversation name colors (red and blue)
