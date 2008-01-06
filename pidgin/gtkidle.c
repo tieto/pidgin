@@ -69,7 +69,7 @@
  */
 #if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
 static time_t
-pidgin_get_time_idle()
+pidgin_get_time_idle(void)
 {
 # ifdef HAVE_IOKIT
 	/* Query the IOKit API */

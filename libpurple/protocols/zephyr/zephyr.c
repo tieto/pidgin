@@ -53,7 +53,7 @@
 
 extern Code_t ZGetLocations(ZLocations_t *, int *);
 extern Code_t ZSetLocation(char *);
-extern Code_t ZUnsetLocation();
+extern Code_t ZUnsetLocation(void);
 extern Code_t ZGetSubscriptions(ZSubscription_t *, int*);
 extern char __Zephyr_realm[];
 typedef struct _zframe zframe;
@@ -1386,7 +1386,7 @@ static gint check_loc(gpointer data)
 
 #endif /* WIN32 */
 
-static char *get_exposure_level()
+static char *get_exposure_level(void)
 {
 	/* XXX add real error reporting */
 	char *exposure = ZGetVariable("exposure");
@@ -2058,7 +2058,7 @@ static void zephyr_close(PurpleConnection * gc)
 static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instance, char* recipient, const char *im, 
 			       const char *sig, char *opcode) ;
 
-static const char * zephyr_get_signature()
+static const char * zephyr_get_signature(void)
 {
 	/* XXX add zephyr error reporting */
 	const char * sig =ZGetVariable("zwrite-signature");
@@ -2676,7 +2676,7 @@ static PurpleCmdRet zephyr_purple_cmd_zc(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 }
 
-static void zephyr_register_slash_commands()
+static void zephyr_register_slash_commands(void)
 {
 
 	purple_cmd_register("msg","ws", PURPLE_CMD_P_PRPL,

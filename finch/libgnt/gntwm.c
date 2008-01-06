@@ -135,7 +135,7 @@ gnt_wm_copy_win(GntWidget *widget, GntNode *node)
  * to expose the entire character, it is not always redrawn.
  */
 static void
-work_around_for_ncurses_bug()
+work_around_for_ncurses_bug(void)
 {
 #ifndef NO_WIDECHAR
 	PANEL *panel = NULL;
@@ -183,7 +183,7 @@ right:
 }
 
 static void
-update_act_msg()
+update_act_msg(void)
 {
 	GntWidget *label;
 	GList *iter;

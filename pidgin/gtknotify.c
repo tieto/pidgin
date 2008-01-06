@@ -332,7 +332,7 @@ mail_window_focus_cb(GtkWidget *widget, GdkEventFocus *focus, gpointer null)
 }
 
 static GtkWidget *
-pidgin_get_mail_dialog()
+pidgin_get_mail_dialog(void)
 {
 	if (mail_dialog == NULL) {
 		GtkWidget *dialog = NULL;
@@ -604,7 +604,7 @@ formatted_input_cb(GtkWidget *win, GdkEventKey *event, gpointer data)
 }
 
 static GtkIMHtmlOptions
-notify_imhtml_options()
+notify_imhtml_options(void)
 {
 	GtkIMHtmlOptions options = 0;
 

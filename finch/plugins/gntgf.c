@@ -122,7 +122,7 @@ error_handler(Display *dpy, XErrorEvent *error)
 }
 
 static void
-urgent()
+urgent(void)
 {
 	/* This is from deryni/tuomov's urgent_test.c */
 	Display *dpy;
@@ -322,7 +322,7 @@ toggle_option(GntCheckBox *check, gpointer str)
 }
 
 static GntWidget *
-config_frame()
+config_frame(void)
 {
 	GntWidget *window, *tree, *check;
 	int i;

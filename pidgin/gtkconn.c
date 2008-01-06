@@ -177,7 +177,7 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 	}
 }
 
-static void pidgin_connection_network_connected ()
+static void pidgin_connection_network_connected (void)
 {
 	GList *list, *l;
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
@@ -196,7 +196,7 @@ static void pidgin_connection_network_connected ()
 	g_list_free(list);
 }
 
-static void pidgin_connection_network_disconnected ()
+static void pidgin_connection_network_disconnected (void)
 {
 	GList *list, *l;
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();

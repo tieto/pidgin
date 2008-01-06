@@ -916,7 +916,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 }
 
 static GntEntryKillRing *
-new_killring()
+new_killring(void)
 {
 	GntEntryKillRing *kr = g_new0(GntEntryKillRing, 1);
 	kr->buffer = g_string_new(NULL);

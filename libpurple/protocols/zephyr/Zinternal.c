@@ -33,8 +33,6 @@
 #include <utmp.h>
 #endif
 
-extern char *inet_ntoa ();
-
 int __Zephyr_fd = -1;
 int __Zephyr_open;
 int __Zephyr_port = -1;
@@ -144,7 +142,7 @@ static int find_or_insert_uid(uid, kind)
 
 /* Return 1 if there is a packet waiting, 0 otherwise */
 
-static int Z_PacketWaiting()
+static int Z_PacketWaiting(void)
 {
     struct timeval tv;
     fd_set read;
@@ -158,7 +156,7 @@ static int Z_PacketWaiting()
 
 /* Wait for a complete notice to become available */
 
-Code_t Z_WaitForComplete()
+Code_t Z_WaitForComplete(void)
 {
     Code_t retval;
 
@@ -195,9 +193,7 @@ Code_t Z_ReadEnqueue()
  * notices that haven't been touched in a while
  */
 
-static struct _Z_InputQ *Z_SearchQueue(uid, kind)
-    ZUnique_Id_t *uid;
-    ZNotice_Kind_t kind;
+static struct _Z_InputQ *Z_SearchQueue(ZUnique_Id_t *uid, ZNotice_Kind_t kind)
 {
     register struct _Z_InputQ *qptr;
     struct _Z_InputQ *next;

@@ -727,7 +727,7 @@ dropdown_changed_cb(GtkComboBox *widget, gpointer nul)
 }
 
 static void 
-create_console() 
+create_console(PurplePluginAction *action) 
 {
 	GtkWidget *vbox = gtk_vbox_new(FALSE, 6);
 	GtkWidget *sw = gtk_scrolled_window_new(NULL, NULL);

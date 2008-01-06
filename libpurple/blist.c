@@ -298,7 +298,7 @@ accountprivacy_to_xmlnode(PurpleAccount *account)
 }
 
 static xmlnode *
-blist_to_xmlnode()
+blist_to_xmlnode(void)
 {
 	xmlnode *node, *child, *grandchild;
 	PurpleBlistNode *gnode;
@@ -332,7 +332,7 @@ blist_to_xmlnode()
 }
 
 static void
-purple_blist_sync()
+purple_blist_sync(void)
 {
 	xmlnode *node;
 	char *data;

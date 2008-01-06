@@ -149,7 +149,7 @@ static int tcl_init_interp(Tcl_Interp *interp)
 	return 0;
 }
 
-static Tcl_Interp *tcl_create_interp()
+static Tcl_Interp *tcl_create_interp(void)
 {
 	Tcl_Interp *interp;
 

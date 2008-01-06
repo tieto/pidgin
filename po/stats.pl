@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # Copyright 2003-2005 Nathan Walp <faceprint@faceprint.com>
 #

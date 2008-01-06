@@ -72,7 +72,7 @@ static gboolean mouse_enabled;
 
 static void setup_io(void);
 
-static gboolean refresh_screen();
+static gboolean refresh_screen(void);
 
 static GntWM *wm;
 static GntClipboard *clipboard;
@@ -326,7 +326,7 @@ setup_io()
 }
 
 static gboolean
-refresh_screen()
+refresh_screen(void)
 {
 	gnt_bindable_perform_action_named(GNT_BINDABLE(wm), "refresh-screen", NULL);
 	return FALSE;
@@ -363,7 +363,7 @@ exit_win_close(GntWidget *w, GntWidget **win)
 }
 
 static void
-ask_before_exit()
+ask_before_exit(void)
 {
 	static GntWidget *win = NULL;
 	GntWidget *bbox, *button;
@@ -412,7 +412,7 @@ sighandler(int sig)
 #ifdef SIGWINCH
 	case SIGWINCH:
 		erase();
-		g_idle_add(refresh_screen, NULL);
+		g_idle_add((GSourceFunc)refresh_screen, NULL);
 		if (org_winch_handler)
 			org_winch_handler(sig);
 		signal(SIGWINCH, sighandler);
@@ -430,7 +430,7 @@ sighandler(int sig)
 }
 
 static void
-init_wm()
+init_wm(void)
 {
 	const char *name = gnt_style_get(GNT_STYLE_WM);
 	gpointer handle;
@@ -614,7 +614,7 @@ void gnt_screen_rename_widget(GntWidget *widget, const char *text)
 	gnt_wm_update_window(wm, widget);
 }
 
-void gnt_register_action(const char *label, void (*callback)())
+void gnt_register_action(const char *label, void (*callback)(void))
 {
 	GntAction *action = g_new0(GntAction, 1);
 	action->label = g_strdup(label);
