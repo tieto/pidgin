@@ -218,6 +218,11 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
 		prpl_info->roomlist_expand_category(list, category);
 }
 
+GList * purple_roomlist_get_fields(PurpleRoomlist *list)
+{
+	return list->fields;
+}
+
 /*@}*/
 
 /**************************************************************************/
@@ -293,6 +298,26 @@ void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 	g_hash_table_destroy(components);
 }
 
+PurpleRoomlistRoomType purple_roomlist_room_get_type(PurpleRoomlistRoom *room)
+{
+	return room->type;
+}
+
+const char * purple_roomlist_room_get_name(PurpleRoomlistRoom *room)
+{
+	return room->name;
+}
+
+PurpleRoomlistRoom * purple_roomlist_room_get_parent(PurpleRoomlistRoom *room)
+{
+	return room->parent;
+}
+
+GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom *room)
+{
+	return room->fields;
+}
+
 /*@}*/
 
 /**************************************************************************/
@@ -317,6 +342,21 @@ PurpleRoomlistField *purple_roomlist_field_new(PurpleRoomlistFieldType type,
 	f->hidden = hidden;
 
 	return f;
+}
+
+PurpleRoomlistFieldType purple_roomlist_field_get_type(PurpleRoomlistField *field)
+{
+	return field->type;
+}
+
+const char * purple_roomlist_field_get_label(PurpleRoomlistField *field)
+{
+	return field->label;
+}
+
+gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field)
+{
+	return field->hidden;
 }
 
 /*@}*/
