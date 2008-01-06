@@ -34,6 +34,8 @@
 #define YAHOO_MAIL_URL "https://login.yahoo.com/config/login?.src=ym"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
 #define YAHOO_XFER_PORT 80
+#define YAHOO_XFER_RELAY_HOST "relay.msg.yahoo.com"
+#define YAHOO_XFER_RELAY_PORT 80
 #define YAHOO_ROOMLIST_URL "http://insider.msg.yahoo.com/ycontent/"
 #define YAHOO_ROOMLIST_LOCALE "us"
 /* really we should get the list of servers from
@@ -43,6 +45,9 @@
 #define YAHOOJP_MAIL_URL "http://mail.yahoo.co.jp/"
 #define YAHOOJP_XFER_HOST "filetransfer.msg.yahoo.co.jp"
 #define YAHOOJP_WEBCAM_HOST "wc.yahoo.co.jp"
+/*not sure, must test:*/
+#define YAHOOJP_XFER_RELAY_HOST "relay.msg.yahoo.com" 
+#define YAHOOJP_XFER_RELAY_PORT 80
 
 #define YAHOO_AUDIBLE_URL "http://us.dl1.yimg.com/download.yahoo.com/dl/aud"
 
@@ -67,6 +72,9 @@
 #define YAHOO_STATUS_TYPE_INVISIBLE "invisible"
 #define YAHOO_STATUS_TYPE_MOBILE "mobile"
 
+#define YAHOO_CLIENT_VERSION_ID "2097087"
+#define YAHOO_CLIENT_VERSION "8.1.0.421"
+
 /* Index into attention types list. */
 #define YAHOO_BUZZ 0
 
@@ -86,7 +94,8 @@ enum yahoo_status {
 	YAHOO_STATUS_IDLE = 999,
 	YAHOO_STATUS_WEBLOGIN = 0x5a55aa55,
 	YAHOO_STATUS_OFFLINE = 0x5a55aa56, /* don't ask */
-	YAHOO_STATUS_TYPING = 0x16
+	YAHOO_STATUS_TYPING = 0x16,
+	YAHOO_STATUS_DISCONNECTED = 0xffffffff /* in ymsg 15. doesnt mean the normal sense of 'disconnected' */
 };
 
 struct yahoo_buddy_icon_upload_data {
@@ -153,6 +162,8 @@ struct yahoo_data {
 	 * for when we lookup people profile or photo information.
 	 */
 	GSList *url_datas;
+	GHashTable *xfer_peer_idstring_map;/*Hey, i dont know, but putting this HashTable next to friends gives a run time fault...*/
+	GSList *cookies;/*contains all cookies, including _y and _t*/
 };
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (255)
@@ -210,6 +221,12 @@ void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 
 /* yahoo_profile.c */
 void yahoo_get_info(PurpleConnection *gc, const char *name);
+
+/* needed for xfer, thought theyd be useful for other enhancements later on
+   Returns list of cookies stored in yahoo_data formatted as a single null terminated string
+   returned value must be g_freed
+*/
+gchar* yahoo_get_cookies(PurpleConnection *gc);
 
 /**
  * Check to see whether the sender is permitted to send

@@ -392,6 +392,10 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 		case 97: /* Unicode status message */
 			unicode = !strcmp(pair->value, "1");
 			break;
+		case 244: /* client version number. Yahoo Client Detection */
+			if(f && strtol(pair->value, NULL, 10))
+				f->version_id = strtol(pair->value, NULL, 10);
+			break;
 
 		default:
 			purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
@@ -501,7 +505,8 @@ static void yahoo_process_cookie(struct yahoo_data *yd, char *c)
 			g_free(yd->cookie_t);
 		yd->cookie_t = _getcookie(c);
 	} else
-		purple_debug_info("yahoo", "Ignoring unrecognized cookie '%c'\n", c[0]);
+		purple_debug_info("yahoo", "Unrecognized cookie '%c'\n", c[0]);
+	yd->cookies = g_slist_prepend(yd->cookies, g_strdup(c));
 }
 
 static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -509,6 +514,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	GSList *l = pkt->hash;
 
 	PurpleAccount *account = purple_connection_get_account(gc);
+	struct yahoo_data *yd = gc->proto_data;
 	GHashTable *ht;
 	char *grp = NULL;
 	char *norm_bud = NULL;
@@ -573,6 +579,9 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 				f->protocol = strtol(pair->value, NULL, 10);
 				purple_debug_info("yahoo", "Setting protocol to %d\n", f->protocol);
 			}
+			break;
+		case 59: /* somebody told cookies come here too, but im not sure */
+			yahoo_process_cookie(yd, pair->value);
 			break;
 		case 317: /* Stealth Setting */
 			if (f && (strtol(pair->value, NULL, 10) == 2)) {
@@ -1497,7 +1506,13 @@ static void yahoo_process_auth_old(PurpleConnection *gc, const char *seed)
 	to_y64(result96, digest, 16);
 
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pack, "ssss", 0, name, 6, result6, 96, result96, 1, name);
+	yahoo_packet_hash(pack, "ssssss",
+					  0, name,
+					  6, result6,
+					  96, result96,
+					  1, name,
+					  244,YAHOO_CLIENT_VERSION_ID,
+					  135, YAHOO_CLIENT_VERSION);
 	yahoo_packet_send_and_free(pack, yd);
 
 	g_free(hash_string_p);
@@ -1942,8 +1957,13 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	}
 	purple_debug_info("yahoo", "yahoo status: %d\n", yd->current_status);
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	yd->current_status, 0);
-	yahoo_packet_hash(pack, "sssss", 0, name, 6, resp_6, 96, resp_96, 1,
-	                  name, 135, "6,0,0,1710");
+	yahoo_packet_hash(pack, "ssssss",
+					  0, name,
+					  6, resp_6,
+					  96, resp_96,
+					  1, name,
+					  244, YAHOO_CLIENT_VERSION_ID,
+					  135, YAHOO_CLIENT_VERSION);
 	if (yd->picture_checksum)
 		yahoo_packet_hash_int(pack, 192, yd->picture_checksum);
 
@@ -2433,6 +2453,16 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_AUDIBLE:
 		yahoo_process_audible(gc, pkt);
 		break;
+	case YAHOO_SERVICE_FILETRANS_15:
+		yahoo_process_filetrans_15(gc, pkt);
+		break;
+	case YAHOO_SERVICE_FILETRANS_INFO_15:
+		yahoo_process_filetrans_info_15(gc, pkt);
+		break;
+	case YAHOO_SERVICE_FILETRANS_ACC_15:
+		yahoo_process_filetrans_acc_15(gc, pkt);
+		break;
+
 	default:
 		purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
 				   "Unhandled service 0x%02x\n", pkt->service);
@@ -2654,11 +2684,15 @@ static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition c
 	s = g_string_sized_new(len);
 
 	while ((i = strstr(i, "Set-Cookie: "))) {
+
 		i += strlen("Set-Cookie: ");
 		for (;*i != ';' && *i != '\0'; i++)
 			g_string_append_c(s, *i);
-
+        
 		g_string_append(s, "; ");
+		/* Should these cookies be included too when trying for xfer?
+		 * It seems to work without these
+		 */
 	}
 
 	yd->auth = g_string_free(s, FALSE);
@@ -2948,6 +2982,7 @@ static void yahoo_login(PurpleAccount *account) {
 	yd->txbuf = purple_circ_buffer_new(0);
 	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);
 	yd->imvironments = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	yd->xfer_peer_idstring_map = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,NULL);
 	yd->confs = NULL;
 	yd->conf_id = 2;
 
@@ -3002,12 +3037,19 @@ static void yahoo_close(PurpleConnection *gc) {
 	}
 	g_slist_free(yd->confs);
 
+	for (l = yd->cookies; l; l = l->next) {
+		g_free(l->data);
+		l->data=NULL;
+	}
+	g_slist_free(yd->cookies);
+
 	yd->chat_online = 0;
 	if (yd->in_chat)
 		yahoo_c_leave(gc, 1); /* 1 = YAHOO_CHAT_ID */
 
 	g_hash_table_destroy(yd->friends);
 	g_hash_table_destroy(yd->imvironments);
+	g_hash_table_destroy(yd->xfer_peer_idstring_map);
 	g_free(yd->chat_name);
 
 	g_free(yd->cookie_y);

@@ -51,4 +51,8 @@ PurpleXfer *yahoo_new_xfer(PurpleConnection *gc, const char *who);
  */
 void yahoo_send_file(PurpleConnection *gc, const char *who, const char *file);
 
+void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt);
+void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *pkt);
+void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *pkt);
+
 #endif
