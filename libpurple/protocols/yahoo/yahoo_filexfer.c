@@ -650,7 +650,7 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 			xfer_data->txbuf = NULL;
 			xfer_data->txbuflen = 0;
 			xfer_data->txbuf_written = 0;
-			xfer_data->tx_handler = (int) NULL;
+			xfer_data->tx_handler = 0;
 			xfer_data->rxqueue = NULL;
 			xfer_data->rxlen = 0;
 			xfer_data->xfer_idstring_for_relay = NULL;

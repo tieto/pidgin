@@ -1601,7 +1601,7 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 
 	magic_ptr = seed;
 
-	while (*magic_ptr != (int)NULL) {
+	while (*magic_ptr != '\0') {
 		char   *loc;
 
 		/* Ignore parentheses. */
