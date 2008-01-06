@@ -345,7 +345,7 @@ fl_destroy(PurpleRoomlist *list)
 	if (froomlist.roomlist == list) {
 		froomlist.roomlist = NULL;
 		gnt_tree_remove_all(GNT_TREE(froomlist.tree));
-		gnt_widget_destroy(froomlist.tree);
+		gnt_widget_draw(froomlist.tree);
 	}
 }
 
