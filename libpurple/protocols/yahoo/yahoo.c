@@ -1547,7 +1547,7 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	char				*delimit_lookup		= ",;";
 
 	char				*password_hash		= (char *)g_malloc(25);
-	char				*crypt_hashi		= (char *)g_malloc(25);
+	char				*crypt_hash			= (char *)g_malloc(25);
 	char				*crypt_result		= NULL;
 
 	unsigned char		pass_hash_xor1[64];
