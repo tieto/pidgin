@@ -1511,7 +1511,7 @@ static void yahoo_process_auth_old(PurpleConnection *gc, const char *seed)
 					  6, result6,
 					  96, result96,
 					  1, name,
-					  244,YAHOO_CLIENT_VERSION_ID,
+					  244, YAHOO_CLIENT_VERSION_ID,
 					  135, YAHOO_CLIENT_VERSION);
 	yahoo_packet_send_and_free(pack, yd);
 
@@ -1531,11 +1531,11 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	char *enc_pass;
 	struct yahoo_data *yd = gc->proto_data;
 
-	PurpleCipher			*md5_cipher;
+	PurpleCipher		*md5_cipher;
 	PurpleCipherContext	*md5_ctx;
 	guchar				md5_digest[16];
 
-	PurpleCipher			*sha1_cipher;
+	PurpleCipher		*sha1_cipher;
 	PurpleCipherContext	*sha1_ctx1;
 	PurpleCipherContext	*sha1_ctx2;
 
@@ -1547,7 +1547,7 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	char				*delimit_lookup		= ",;";
 
 	char				*password_hash		= (char *)g_malloc(25);
-	char				*crypt_hash		= (char *)g_malloc(25);
+	char				*crypt_hashi		= (char *)g_malloc(25);
 	char				*crypt_result		= NULL;
 
 	unsigned char		pass_hash_xor1[64];
@@ -1654,7 +1654,7 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	 * dust on the values.
 	 */
 
-	for (magic_cnt = magic_len-2; magic_cnt >= 0; magic_cnt--) {
+	for (magic_cnt = magic_len - 2; magic_cnt >= 0; magic_cnt--) {
 		unsigned char	byte1;
 		unsigned char	byte2;
 
@@ -1670,7 +1670,7 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 		byte1 ^= byte2;
 
 		magic[magic_cnt+1] = byte1;
-			}
+	}
 
 	/*
 	 * Magic: Phase 3.  This computes 20 bytes.  The first 4 bytes are used as our magic
@@ -1685,8 +1685,8 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	x = 0;
 
 	do {
-		unsigned int	bl = 0;
-		unsigned int	cl = magic[magic_cnt++];
+		unsigned int bl = 0;
+		unsigned int cl = magic[magic_cnt++];
 
 		if (magic_cnt >= magic_len)
 			break;
@@ -1711,17 +1711,18 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 
 	/* First four bytes are magic key. */
 	memcpy(&magic_key_char[0], comparison_src, 4);
-	magic_4 = magic_key_char[0] | (magic_key_char[1]<<8) | (magic_key_char[2]<<16) | (magic_key_char[3]<<24);
+	magic_4 = magic_key_char[0] | (magic_key_char[1] << 8) |
+			(magic_key_char[2] << 16) | (magic_key_char[3] << 24);
 
 	/*
 	 * Magic: Phase 4.  Determine what function to use later by getting outside/inside
 	 * loop values until we match our previous buffer.
 	 */
 	for (x = 0; x < 65535; x++) {
-		int			leave = 0;
+		int leave = 0;
 
 		for (y = 0; y < 5; y++) {
-			unsigned char	test[3];
+			unsigned char test[3];
 
 			/* Calculate buffer. */
 			test[0] = x;
@@ -2982,7 +2983,7 @@ static void yahoo_login(PurpleAccount *account) {
 	yd->txbuf = purple_circ_buffer_new(0);
 	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);
 	yd->imvironments = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	yd->xfer_peer_idstring_map = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,NULL);
+	yd->xfer_peer_idstring_map = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 	yd->confs = NULL;
 	yd->conf_id = 2;
 

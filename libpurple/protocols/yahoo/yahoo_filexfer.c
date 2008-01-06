@@ -48,13 +48,23 @@ struct yahoo_xfer_data {
 	guint tx_handler;
 	gchar *rxqueue;
 	guint rxlen;
-	gchar *xfer_idstring_between_peers;
+	gchar *xfer_peer_idstring;
 	gchar *xfer_idstring_for_relay;
 	int version; /*0 for old, 15 for Y7(YMSG 15)*/
 	int info_val_249;
-	enum {STARTED = 0,HEAD_REQUESTED,HEAD_REPLY_RECEIVED,TRANSFER_PHASE,ACCEPTED} status_15;
-	GSList *filename_list;/*contains all filenames, in case of multiple transfers, with the first one in the list being the current(ymsg15)*/
-	GSList *size_list;/*corresponds to filename_list, with size as **STRING** */
+
+	enum {
+		STARTED = 0,
+		HEAD_REQUESTED,
+		HEAD_REPLY_RECEIVED,
+		TRANSFER_PHASE,
+		ACCEPTED
+	} status_15;
+
+	/* contains all filenames, in case of multiple transfers, with the first
+	 * one in the list being the current file's name (ymsg15) */
+	GSList *filename_list;
+	GSList *size_list; /*corresponds to filename_list, with size as **STRING** */
 	gboolean firstoflist;
 };
 
@@ -69,10 +79,10 @@ static void yahoo_xfer_data_free(struct yahoo_xfer_data *xd)
 	yd = gc->proto_data;
 
 	/*remove entry from map*/
-	if(xd->xfer_idstring_between_peers) {
-		xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map, xd->xfer_idstring_between_peers);
+	if(xd->xfer_peer_idstring) {
+		xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map, xd->xfer_peer_idstring);
 		if(xfer)
-			g_hash_table_remove(yd->xfer_peer_idstring_map, xd->xfer_idstring_between_peers);
+			g_hash_table_remove(yd->xfer_peer_idstring_map, xd->xfer_peer_idstring);
 	}
 
 	/*empty file & filesize list*/
@@ -90,7 +100,7 @@ static void yahoo_xfer_data_free(struct yahoo_xfer_data *xd)
 	g_free(xd->host);
 	g_free(xd->path);
 	g_free(xd->txbuf);
-	g_free(xd->xfer_idstring_between_peers);
+	g_free(xd->xfer_peer_idstring);
 	g_free(xd->xfer_idstring_for_relay);
 	if (xd->tx_handler)
 		purple_input_remove(xd->tx_handler);
@@ -352,7 +362,7 @@ static void yahoo_xfer_init_15(PurpleXfer *xfer)
 		yahoo_packet_hash(pkt, "sssiiiisiii",
 			1, purple_normalize(account, purple_account_get_username(account)),
 			5, xfer->who,
-			265, xfer_data->xfer_idstring_between_peers,
+			265, xfer_data->xfer_peer_idstring,
 			222, 1,
 			266, 1,
 			302, 268,
@@ -370,7 +380,7 @@ static void yahoo_xfer_init_15(PurpleXfer *xfer)
 			yahoo_packet_hash(pkt, "sssi",
 				1, purple_normalize(account, purple_account_get_username(account)),
 				5, xfer->who,
-				265, xfer_data->xfer_idstring_between_peers,
+				265, xfer_data->xfer_peer_idstring,
 				222, 3);
 		} else {
 			pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANS_ACC_15,
@@ -379,7 +389,7 @@ static void yahoo_xfer_init_15(PurpleXfer *xfer)
 			yahoo_packet_hash(pkt, "sssi",
 				1, purple_normalize(account, purple_account_get_username(account)),
 				5, xfer->who,
-				265, xfer_data->xfer_idstring_between_peers,
+				265, xfer_data->xfer_peer_idstring,
 				271, 1);
 		}
 	}
@@ -520,7 +530,7 @@ static void yahoo_xfer_cancel_send(PurpleXfer *xfer)
 			yahoo_packet_hash(pkt, "sssi",
 				1, purple_normalize(account, purple_account_get_username(account)),
 				5, xfer->who,
-				265, xfer_data->xfer_idstring_between_peers,
+				265, xfer_data->xfer_peer_idstring,
 				66, -1);
 		}
 		else
@@ -531,7 +541,7 @@ static void yahoo_xfer_cancel_send(PurpleXfer *xfer)
 			yahoo_packet_hash(pkt, "sssi",
 				1, purple_normalize(account, purple_account_get_username(account)),
 				5, xfer->who,
-				265, xfer_data->xfer_idstring_between_peers,
+				265, xfer_data->xfer_peer_idstring,
 				222, 2);
 		}
 		yahoo_packet_send_and_free(pkt, yd);
@@ -568,7 +578,7 @@ static void yahoo_xfer_cancel_recv(PurpleXfer *xfer)
 			yahoo_packet_hash(pkt, "sssi",
 				1, purple_normalize(account, purple_account_get_username(account)),
 				5, xfer->who,
-				265, xfer_data->xfer_idstring_between_peers,
+				265, xfer_data->xfer_peer_idstring,
 				222, 4);
 		}
 		else
@@ -579,7 +589,7 @@ static void yahoo_xfer_cancel_recv(PurpleXfer *xfer)
 			yahoo_packet_hash(pkt, "sssi",
 				1, purple_normalize(account, purple_account_get_username(account)),
 				5, xfer->who,
-				265, xfer_data->xfer_idstring_between_peers,
+				265, xfer_data->xfer_peer_idstring,
 				66, -1);
 		}
 		yahoo_packet_send_and_free(pkt, yd);
@@ -675,8 +685,8 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 				purple_xfer_set_request_denied_fnc(xfer,yahoo_xfer_cancel_recv);
 
 				/*update map to current xfer*/
-				g_hash_table_remove(yd->xfer_peer_idstring_map, xfer_data->xfer_idstring_between_peers);
-				g_hash_table_insert(yd->xfer_peer_idstring_map, xfer_data->xfer_idstring_between_peers, xfer);
+				g_hash_table_remove(yd->xfer_peer_idstring_map, xfer_data->xfer_peer_idstring);
+				g_hash_table_insert(yd->xfer_peer_idstring_map, xfer_data->xfer_peer_idstring, xfer);
 
 				/* Now perform the request */
 				purple_xfer_request(xfer);
@@ -1010,7 +1020,7 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 	yahoo_packet_hash(pkt, "ssssis",
 		1, purple_normalize(account, purple_account_get_username(account)),
 		5, xfer->who,
-		265, xd->xfer_idstring_between_peers,
+		265, xd->xfer_peer_idstring,
 		27,  filename,
 		249, 3,
 		250, xd->host);
@@ -1039,8 +1049,8 @@ void yahoo_send_file(PurpleConnection *gc, const char *who, const char *file)
 		xfer_data->status_15 = STARTED;
 		purple_xfer_set_init_fnc(xfer, yahoo_xfer_init_15);
 		xfer_data->version = 15;
-		xfer_data->xfer_idstring_between_peers = yahoo_xfer_new_xfer_id();
-		g_hash_table_insert(yd->xfer_peer_idstring_map, xfer_data->xfer_idstring_between_peers, xfer);
+		xfer_data->xfer_peer_idstring = yahoo_xfer_new_xfer_id();
+		g_hash_table_insert(yd->xfer_peer_idstring_map, xfer_data->xfer_peer_idstring, xfer);
 	}
 
 	/* Now perform the request */
@@ -1247,7 +1257,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	struct yahoo_xfer_data *xfer_data;
 	char *service = NULL;
 	char *filename = NULL;
-	char *xfer_idstring_between_peers = NULL;
+	char *xfer_peer_idstring = NULL;
 	unsigned long filesize = 0L;
 	GSList *l;
 	GSList *filename_list = NULL;
@@ -1267,7 +1277,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 			to = pair->value;
 			break;
 		case 265:
-			xfer_idstring_between_peers = pair->value;
+			xfer_peer_idstring = pair->value;
 			break;
 		case 27:
 			filename_list = g_slist_prepend(filename_list, g_strdup(pair->value));
@@ -1292,13 +1302,13 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 		}
 	}
-	if(!xfer_idstring_between_peers)
+	if(!xfer_peer_idstring)
 		return;
 
 	if(val_222 == 2 || val_222 == 4)
 	{
 		xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map,
-								   xfer_idstring_between_peers);
+								   xfer_peer_idstring);
 		if(!xfer) return;
 		purple_xfer_cancel_remote(xfer);
 		return;
@@ -1306,7 +1316,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	if(val_222 == 3)
 	{
 		xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map,
-								   xfer_idstring_between_peers);
+								   xfer_peer_idstring);
 		if(!xfer)
 			return;
 		/*
@@ -1356,7 +1366,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 	xfer_data->version = 15;
 	xfer_data->firstoflist = TRUE;
 	xfer_data->gc = gc;
-	xfer_data->xfer_idstring_between_peers = g_strdup(xfer_idstring_between_peers);
+	xfer_data->xfer_peer_idstring = g_strdup(xfer_peer_idstring);
 	xfer_data->filename_list = filename_list;
 	xfer_data->size_list = size_list;
 	
@@ -1386,7 +1396,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 		purple_xfer_set_request_denied_fnc(xfer,yahoo_xfer_cancel_recv);
 
 		g_hash_table_insert(yd->xfer_peer_idstring_map,
-							xfer_data->xfer_idstring_between_peers,
+							xfer_data->xfer_peer_idstring,
 							xfer);
 		
 		if(nooffiles > 1) {
@@ -1411,7 +1421,7 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 	struct yahoo_data *yd;
 	struct yahoo_xfer_data *xfer_data;
 	char *filename = NULL;
-	char *xfer_idstring_between_peers = NULL;
+	char *xfer_peer_idstring = NULL;
 	char *xfer_idstring_for_relay = NULL;
 	GSList *l;
 	struct yahoo_packet *pkt_to_send;
@@ -1430,7 +1440,7 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 			to = pair->value;
 			break;
 		case 265:
-			xfer_idstring_between_peers = pair->value;
+			xfer_peer_idstring = pair->value;
 			break;
 		case 27:
 			filename = pair->value;
@@ -1456,10 +1466,10 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 		}
 	}
 
-	if(!xfer_idstring_between_peers)
+	if(!xfer_peer_idstring)
 		return;
 
-	xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map, xfer_idstring_between_peers);
+	xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map, xfer_peer_idstring);
 
 	if(!xfer) return;
 
@@ -1486,7 +1496,7 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 	yahoo_packet_hash(pkt_to_send, "ssssisi",
 		1, purple_normalize(account, purple_account_get_username(account)),
 		5, xfer->who,
-		265, xfer_data->xfer_idstring_between_peers,
+		265, xfer_data->xfer_peer_idstring,
 		27, xfer->filename,
 		249, xfer_data->info_val_249,
 		251, xfer_data->xfer_idstring_for_relay,
@@ -1504,7 +1514,7 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 /*TODO: Check filename etc. No probs till some hacker comes in the way*/
 void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
-	gchar *xfer_idstring_between_peers = NULL;
+	gchar *xfer_peer_idstring = NULL;
 	gchar *xfer_idstring_for_relay = NULL;
 	PurpleXfer *xfer;
 	struct yahoo_data *yd;
@@ -1522,14 +1532,14 @@ void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *p
 			xfer_idstring_for_relay = pair->value;
 			break;
 		case 265:
-			xfer_idstring_between_peers = pair->value;
+			xfer_peer_idstring = pair->value;
 			break;
 		case 66:
 			val_66 = atol(pair->value);
 		}
 	}
 
-	xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map, xfer_idstring_between_peers);
+	xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map, xfer_peer_idstring);
 	if(!xfer) return;
 
 	if(val_66 == -1 || !(xfer_idstring_for_relay))
