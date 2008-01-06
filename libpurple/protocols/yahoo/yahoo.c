@@ -493,14 +493,13 @@ static char *_getcookie(char *rawcookie)
 static void yahoo_process_cookie(struct yahoo_data *yd, char *c)
 {
 	if (c[0] == 'Y') {
-		g_free(yd->cookie_y);
+		if (yd->cookie_y)
+			g_free(yd->cookie_y);
 		yd->cookie_y = _getcookie(c);
 	} else if (c[0] == 'T') {
-		g_free(yd->cookie_t);
+		if (yd->cookie_t)
+			g_free(yd->cookie_t);
 		yd->cookie_t = _getcookie(c);
-	} else if (c[0] == 'C') {
-		g_free(yd->cookie_c);
-		yd->cookie_c = _getcookie(c);
 	} else
 		purple_debug_info("yahoo", "Ignoring unrecognized cookie '%c'\n", c[0]);
 }
@@ -2434,12 +2433,6 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_AUDIBLE:
 		yahoo_process_audible(gc, pkt);
 		break;
-	case YAHOO_SERVICE_Y7_FILETRANSFER:
-		yahoo_process_y7_filetransfer(gc, pkt);
-		break;
-	case YAHOO_SERVICE_Y7_FILETRANSFER_INFO:
-		yahoo_process_y7_filetransfer_info(gc, pkt);
-		break;
 	default:
 		purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
 				   "Unhandled service 0x%02x\n", pkt->service);
@@ -3019,7 +3012,6 @@ static void yahoo_close(PurpleConnection *gc) {
 
 	g_free(yd->cookie_y);
 	g_free(yd->cookie_t);
-	g_free(yd->cookie_c);
 
 	if (yd->txhandler)
 		purple_input_remove(yd->txhandler);

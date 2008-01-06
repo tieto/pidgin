@@ -134,7 +134,6 @@ struct yahoo_data {
 	gsize auth_written;
 	char *cookie_y;
 	char *cookie_t;
-	char *cookie_c;
 	int session_id;
 	gboolean jp;
 	gboolean wm; /* connected w/ web messenger method */

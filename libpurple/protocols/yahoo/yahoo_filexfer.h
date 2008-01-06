@@ -30,16 +30,6 @@
 void yahoo_process_p2pfilexfer( PurpleConnection *gc, struct yahoo_packet *pkt );
 
 /**
- * Process ymsg version 7 file receive invites.
- */
-void yahoo_process_y7_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt);
-
-/**
- * Process ymsg version 7 file receive connection setups.
- */
-void yahoo_process_y7_filetransfer_info(PurpleConnection *gc, struct yahoo_packet *pkt);
-
-/**
  * Process ymsg file receive invites.
  */
 void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt);
