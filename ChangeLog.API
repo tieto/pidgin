@@ -41,6 +41,9 @@ version 2.4.0 (??/??/????):
 		* PIDGIN_DIALOG
 
 	Finch:
+		* finch_request_field_get_widget to get the widget for a request
+		  field.
+
 		libgnt:
 		* Added gnt_tree_set_row_color to set the color for a row in a tree.
 		* Added gnt_style_get_string_list
