@@ -7,6 +7,7 @@
  * Some code copyright (C) 2001-2007, Mark Doliner <thekingant@users.sourceforge.net>
  * Some code copyright (C) 2005, Jonathan Clark <ardentlygnarly@users.sourceforge.net>
  * Some code copyright (C) 2007, ComBOTS Product GmbH (htfv) <foss@combots.com>
+ * Some code copyright (C) 2008, Aman Gupta
  *
  * Most libfaim code copyright (C) 1998-2001 Adam Fritzler <afritz@auk.cx>
  * Some libfaim code copyright (C) 2001-2004 Mark Doliner <thekingant@users.sourceforge.net>
