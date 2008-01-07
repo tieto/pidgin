@@ -617,9 +617,8 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 				purple_buddy_icon_set_data(icon, data, len, checksum);
 			}
 			else
-			{
 				delete_buddy_icon_settings((PurpleBlistNode*)b, "buddy_icon");
-			}
+
 			g_free(path);
 		}
 
