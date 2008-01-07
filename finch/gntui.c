@@ -84,6 +84,7 @@ void gnt_ui_init()
 	purple_xfers_set_ui_ops(finch_xfers_get_ui_ops());
 
 	/* Roomlist */
+	finch_roomlist_init();
 	purple_roomlist_set_ui_ops(finch_roomlist_get_ui_ops());
 
 	gnt_register_action(_("Accounts"), finch_accounts_show_all);
@@ -125,6 +126,9 @@ void gnt_ui_uninit()
 
 	finch_xfers_uninit();
 	purple_xfers_set_ui_ops(NULL);
+
+	finch_roomlist_uninit();
+	purple_roomlist_set_ui_ops(NULL);
 
 	gnt_quit();
 #endif

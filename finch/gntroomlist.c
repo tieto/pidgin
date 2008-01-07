@@ -38,6 +38,8 @@
 
 #include "debug.h"
 
+#define PREF_ROOT "/finch/roomlist"
+
 /* Yes, just one roomlist at a time. Let's not get greedy. Aight? */
 struct _FinchRoomlist
 {
@@ -138,9 +140,13 @@ roomlist_activated(GntWidget *widget)
 			purple_roomlist_room_join(froomlist.roomlist, room);
 			break;
 		case PURPLE_ROOMLIST_ROOMTYPE_CATEGORY:
-			purple_roomlist_expand_category(froomlist.roomlist, room);
+			if (!room->expanded_once) {
+				purple_roomlist_expand_category(froomlist.roomlist, room);
+				room->expanded_once = TRUE;
+			}
 			break;
 	}
+	gnt_tree_set_expanded(GNT_TREE(widget), room, TRUE);
 }
 
 static void
@@ -191,8 +197,10 @@ roomlist_selection_changed(GntWidget *widget, gpointer old, gpointer current, gp
 	}
 
 	if (purple_roomlist_room_get_type(room) == PURPLE_ROOMLIST_ROOMTYPE_CATEGORY) {
+		if (!first)
+			gnt_text_view_append_text_with_flags(tv, "\n", GNT_TEXT_FLAG_NORMAL);
 		gnt_text_view_append_text_with_flags(tv,
-				_("\nHit 'Enter' to find more rooms of this category."),
+				_("Hit 'Enter' to find more rooms of this category."),
 				GNT_TEXT_FLAG_NORMAL);
 	}
 }
@@ -235,6 +243,15 @@ reset_account_list(PurpleAccount *account)
 			g_free(text);
 		}
 	}
+}
+
+static void
+size_changed_cb(GntWidget *widget, int oldw, int oldh)
+{
+	int w, h;
+	gnt_widget_get_size(widget, &w, &h);
+	purple_prefs_set_int(PREF_ROOT "/size/width", w);
+	purple_prefs_set_int(PREF_ROOT "/size/height", h);
 }
 
 static void
@@ -284,7 +301,7 @@ setup_roomlist(PurpleAccount *account)
 	froomlist.details = gnt_text_view_new();
 	gnt_text_view_set_flag(GNT_TEXT_VIEW(froomlist.details), GNT_TEXT_VIEW_TOP_ALIGN);
 	gnt_box_add_widget(GNT_BOX(window), froomlist.details);
-	gnt_widget_set_size(froomlist.details, -1, 10);
+	gnt_widget_set_size(froomlist.details, -1, 8);
 
 	hbox = gnt_hbox_new(FALSE);
 	gnt_box_add_widget(GNT_BOX(window), hbox);
@@ -306,6 +323,13 @@ static void
 fl_show_with_account(PurpleAccount *account)
 {
 	setup_roomlist(account);
+	g_signal_handlers_disconnect_matched(G_OBJECT(froomlist.window), G_SIGNAL_MATCH_FUNC,
+			0, 0, NULL, G_CALLBACK(size_changed_cb), NULL);
+	gnt_widget_show(froomlist.window);
+	gnt_screen_resize_widget(froomlist.window,
+			purple_prefs_get_int(PREF_ROOT "/size/width"),
+			purple_prefs_get_int(PREF_ROOT "/size/height"));
+	g_signal_connect(G_OBJECT(froomlist.window), "size_changed", G_CALLBACK(size_changed_cb), NULL);
 	gnt_window_present(froomlist.window);
 }
 
@@ -325,15 +349,18 @@ fl_set_fields(PurpleRoomlist *list, GList *fields)
 static void
 fl_add_room(PurpleRoomlist *roomlist, PurpleRoomlistRoom *room)
 {
+	gboolean category;
 	if (froomlist.roomlist != roomlist)
 		return;
 
+	category = (purple_roomlist_room_get_type(room) == PURPLE_ROOMLIST_ROOMTYPE_CATEGORY);
 	gnt_tree_remove(GNT_TREE(froomlist.tree), room);
 	gnt_tree_add_row_after(GNT_TREE(froomlist.tree), room,
 			gnt_tree_create_row(GNT_TREE(froomlist.tree),
 				purple_roomlist_room_get_name(room),
-				purple_roomlist_room_get_type(room) == PURPLE_ROOMLIST_ROOMTYPE_CATEGORY ? "<" : ""),
+				category ? "<" : ""),
 			purple_roomlist_room_get_parent(room), NULL);
+	gnt_tree_set_expanded(GNT_TREE(froomlist.tree), room, !category);
 }
 
 static void
@@ -363,6 +390,7 @@ static PurpleRoomlistUiOps ui_ops =
 	NULL, /* void (*_purple_reserved3)(void); */
 	NULL /* void (*_purple_reserved4)(void); */
 };
+
 PurpleRoomlistUiOps *finch_roomlist_get_ui_ops(void)
 {
 	return &ui_ops;
@@ -371,5 +399,17 @@ PurpleRoomlistUiOps *finch_roomlist_get_ui_ops(void)
 void finch_roomlist_show_all(void)
 {
 	purple_roomlist_show_with_account(NULL);
+}
+
+void finch_roomlist_init(void)
+{
+	purple_prefs_add_none(PREF_ROOT);
+	purple_prefs_add_none(PREF_ROOT "/size");
+	purple_prefs_add_int(PREF_ROOT "/size/width", 60);
+	purple_prefs_add_int(PREF_ROOT "/size/height", 15);
+}
+
+void finch_roomlist_uninit(void)
+{
 }
 
