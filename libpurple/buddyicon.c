@@ -614,6 +614,10 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 				checksum = purple_blist_node_get_string((PurpleBlistNode*)b, "icon_checksum");
 				purple_buddy_icon_set_data(icon, data, len, checksum);
 			}
+			else
+			{
+				delete_buddy_icon_settings((PurpleBlistNode*)b, "buddy_icon");
+			}
 			g_free(path);
 		}
 
