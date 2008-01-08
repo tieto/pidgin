@@ -192,7 +192,7 @@ struct _JabberStream
 	int old_length;
 	char *old_track;
 	
-	char *host;
+	char *certificate_CN;
 	
 	/* A purple timeout tag for the keepalive */
 	int keepalive_timeout;

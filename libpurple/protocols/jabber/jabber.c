@@ -559,13 +559,12 @@ static void tls_init(JabberStream *js)
 	purple_input_remove(js->gc->inpa);
 	js->gc->inpa = 0;
 	js->gsc = purple_ssl_connect_with_host_fd(js->gc->account, js->fd,
-			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->host, js->gc);
+			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->certificate_CN, js->gc);
 }
 
 static void jabber_login_connect(JabberStream *js, const char *fqdn, const char *host, int port)
 {
 	js->serverFQDN = g_strdup(fqdn);
-	js->host = g_strdup(host);
 
 	if (purple_proxy_connect(js->gc, js->gc->account, host,
 			port, jabber_login_callback, js->gc) == NULL)
@@ -616,6 +615,7 @@ jabber_login(PurpleAccount *account)
 	js->write_buffer = purple_circ_buffer_new(512);
 	js->old_length = 0;
 	js->keepalive_timeout = -1;
+	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
@@ -653,7 +653,7 @@ jabber_login(PurpleAccount *account)
 	if(purple_account_get_bool(js->gc->account, "old_ssl", FALSE)) {
 		if(purple_ssl_is_supported()) {
 			js->gsc = purple_ssl_connect(js->gc->account,
-					connect_server[0] ? connect_server : js->user->domain,
+					js->certificate_CN,
 					purple_account_get_int(account, "port", 5223), jabber_login_callback_ssl,
 					jabber_ssl_connect_failure, js->gc);
 		} else {
@@ -1128,6 +1128,7 @@ void jabber_register_account(PurpleAccount *account)
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
 	server = connect_server[0] ? connect_server : js->user->domain;
+	js->certificate_CN = g_strdup(server);
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
@@ -1304,7 +1305,7 @@ void jabber_close(PurpleConnection *gc)
 		js->commands = g_list_delete_link(js->commands, js->commands);
 	}
 	g_free(js->server_name);
-	g_free(js->host);
+	g_free(js->certificate_CN);
 	g_free(js->gmail_last_time);
 	g_free(js->gmail_last_tid);
 	g_free(js->old_msg);
