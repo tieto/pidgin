@@ -625,7 +625,7 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 		purple_buddy_icons_set_caching(caching);
 	}
 
-	return purple_buddy_icon_ref(icon);
+	return (icon ? purple_buddy_icon_ref(icon) : nil);
 }
 
 gboolean
