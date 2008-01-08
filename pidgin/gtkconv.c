@@ -153,7 +153,9 @@ static gboolean tab_complete(PurpleConversation *conv);
 static void pidgin_conv_updated(PurpleConversation *conv, PurpleConvUpdateType type);
 static void conv_set_unseen(PurpleConversation *gtkconv, PidginUnseenState state);
 static void gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state);
+#if 0
 static void update_typing_icon(PidginConversation *gtkconv);
+#endif
 static void update_typing_message(PidginConversation *gtkconv, const char *message);
 static const char *item_factory_translate_func (const char *path, gpointer func_data);
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
@@ -2245,7 +2247,9 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 	purple_signal_emit(pidgin_conversations_get_handle(), "conversation-switched", conv);
 
 	gray_stuff_out(gtkconv);
+#if 0
 	update_typing_icon(gtkconv);
+#endif
 	g_object_set_data(G_OBJECT(entry), "transient_buddy", NULL);
 	regenerate_options_items(gtkconv->win);
 
@@ -3365,6 +3369,7 @@ got_typing_keypress(PidginConversation *gtkconv, gboolean first)
 	}
 }
 
+#if 0
 static gboolean
 typing_animation(gpointer data) {
 	PidginConversation *gtkconv = data;
@@ -3403,6 +3408,7 @@ typing_animation(gpointer data) {
 	gtk_widget_show(gtkwin->menu.typing_icon);
 	return TRUE;
 }
+#endif
 
 static void
 update_typing_message(PidginConversation *gtkconv, const char *message)
@@ -3432,6 +3438,7 @@ update_typing_message(PidginConversation *gtkconv, const char *message)
 	}
 }
 
+#if 0
 static void
 update_typing_icon(PidginConversation *gtkconv)
 {
@@ -3479,7 +3486,7 @@ update_typing_icon(PidginConversation *gtkconv)
 			gtkconv->u.im->typing_timer = 0;
 		}
 	}
-
+	
 	if (gtkwin->menu.typing_icon == NULL)
 	{
 		gtkwin->menu.typing_icon = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
@@ -3499,6 +3506,7 @@ update_typing_icon(PidginConversation *gtkconv)
 	update_typing_message(gtkconv, message);
 	g_free(message);
 }
+#endif
 
 static gboolean
 update_send_to_selection(PidginWindow *win)
@@ -6594,10 +6602,10 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			pango_attr_list_unref(list);
 		} else
 			gtk_label_set_attributes(GTK_LABEL(gtkconv->tab_label), NULL);
-
+#if 0
 		if (pidgin_conv_window_is_active_conversation(conv))
 			update_typing_icon(gtkconv);
-
+#endif
 		gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
 		if (pidgin_conv_window_is_active_conversation(conv))
 			gtk_window_set_title(GTK_WINDOW(win->window), title);
