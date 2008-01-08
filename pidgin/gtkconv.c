@@ -3365,6 +3365,7 @@ got_typing_keypress(PidginConversation *gtkconv, gboolean first)
 	}
 }
 
+#if 0
 static gboolean
 typing_animation(gpointer data) {
 	PidginConversation *gtkconv = data;
@@ -3403,6 +3404,7 @@ typing_animation(gpointer data) {
 	gtk_widget_show(gtkwin->menu.typing_icon);
 	return TRUE;
 }
+#endif
 
 static void
 update_typing_message(PidginConversation *gtkconv, const char *message)
@@ -3438,8 +3440,6 @@ update_typing_icon(PidginConversation *gtkconv)
 	PidginWindow *gtkwin;
 	PurpleConvIm *im = NULL;
 	PurpleConversation *conv = gtkconv->active_conv;
-	char *stock_id;
-	const char *tooltip;
 	char *message = NULL;
 
 	gtkwin = gtkconv->win;
@@ -3447,55 +3447,20 @@ update_typing_icon(PidginConversation *gtkconv)
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		im = PURPLE_CONV_IM(conv);
 
-	if (gtkwin->menu.typing_icon) {
-		gtk_widget_hide(gtkwin->menu.typing_icon);
-	}
-
 	if (im == NULL)
 		return;
 
 	if (purple_conv_im_get_typing_state(im) == PURPLE_NOT_TYPING) {
-		if (gtkconv->u.im->typing_timer != 0) {
-			g_source_remove(gtkconv->u.im->typing_timer);
-			gtkconv->u.im->typing_timer = 0;
-		}
 		update_typing_message(gtkconv, "\n");
 		return;
 	}
 
 	if (purple_conv_im_get_typing_state(im) == PURPLE_TYPING) {
-		if (gtkconv->u.im->typing_timer == 0) {
-			gtkconv->u.im->typing_timer = g_timeout_add(250, typing_animation, gtkconv);
-		}
-		stock_id = PIDGIN_STOCK_ANIMATION_TYPING1;
-		tooltip = _("User is typing...");
 		message = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_title(conv));
 	} else {
-		stock_id = PIDGIN_STOCK_ANIMATION_TYPING5;
-		tooltip = _("User has typed something and stopped");
-		message = g_strdup_printf(_("\n%s has typed something and stopped"), purple_conversation_get_title(conv));
-		if (gtkconv->u.im->typing_timer != 0) {
-			g_source_remove(gtkconv->u.im->typing_timer);
-			gtkconv->u.im->typing_timer = 0;
-		}
+		message = g_strdup_printf(_("\n%s has stopped typing"), purple_conversation_get_title(conv));
 	}
 
-	if (gtkwin->menu.typing_icon == NULL)
-	{
-		gtkwin->menu.typing_icon = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
-		pidgin_menu_tray_append(PIDGIN_MENU_TRAY(gtkwin->menu.tray),
-								  gtkwin->menu.typing_icon,
-								  tooltip);
-	}
-	else
-	{
-		gtk_image_set_from_stock(GTK_IMAGE(gtkwin->menu.typing_icon), stock_id, GTK_ICON_SIZE_MENU);
-		pidgin_menu_tray_set_tooltip(PIDGIN_MENU_TRAY(gtkwin->menu.tray),
-									   gtkwin->menu.typing_icon,
-									   tooltip);
-	}
-
-	gtk_widget_show(gtkwin->menu.typing_icon);
 	update_typing_message(gtkconv, message);
 	g_free(message);
 }
@@ -6594,7 +6559,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			pango_attr_list_unref(list);
 		} else
 			gtk_label_set_attributes(GTK_LABEL(gtkconv->tab_label), NULL);
-
+		
 		if (pidgin_conv_window_is_active_conversation(conv))
 			update_typing_icon(gtkconv);
 

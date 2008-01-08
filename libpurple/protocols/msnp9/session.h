@@ -103,8 +103,6 @@ struct _MsnSession
 	GList *directconns; /**< The list of all the directconnections. */
 	GList *slplinks; /**< The list of all the slplinks. */
 
-	int conv_seq; /**< The current conversation sequence number. */
-
 	struct
 	{
 		char *kv;
