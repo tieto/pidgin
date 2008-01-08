@@ -549,11 +549,11 @@ purple_connection_ssl_error (PurpleConnection *gc,
 			break;
 		case PURPLE_SSL_CERTIFICATE_INVALID:
 			/* TODO: maybe PURPLE_SSL_* should be more specific? */
-			reason = PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR:
+			reason = PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR;
 			break;
 		default:
 			g_assert_not_reached ();
-			reason = PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR:
+			reason = PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR;
 	}
 
 	purple_connection_error_reason (gc, reason,
