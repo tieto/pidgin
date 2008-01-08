@@ -435,6 +435,65 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 	return 0;
 }
 
+/*
+ * getstatusnote may be a misleading name because the response
+ * contains a lot of different information but currently it's only
+ * used to get that.
+ */
+int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, guint16 note_hash_len)
+{
+	FlapConnection *conn;
+	FlapFrame *frame;
+	aim_snacid_t snacid;
+	int bslen;
+
+	purple_debug_misc("oscar", "aim_icq_getstatusnote: requesting status note for %s.\n", uin);
+
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0015)))
+	{
+		purple_debug_misc("oscar", "aim_icq_getstatusnote: no connection.\n");
+		return -EINVAL;
+	}
+
+	bslen = 2 + 4 + 2 + 2 + 2 + 2 + 58 + strlen(uin);
+
+	frame = flap_frame_new(od, 0x02, 10 + 4 + bslen);
+
+	snacid = aim_cachesnac(od, 0x0015, 0x0002, 0x0000, NULL, 0);
+	aim_putsnac(&frame->data, 0x0015, 0x0002, 0x0000, snacid);
+
+	/* For simplicity, don't bother using a tlvlist */
+	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&frame->data, bslen);
+
+	byte_stream_putle16(&frame->data, bslen - 2);
+	byte_stream_putle32(&frame->data, atoi(od->sn));
+	byte_stream_putle16(&frame->data, 0x07d0); /* I command thee. */
+	byte_stream_putle16(&frame->data, snacid); /* eh. */
+	byte_stream_putle16(&frame->data, 0x0fa0); /* shrug. */
+	byte_stream_putle16(&frame->data, 58 + strlen(uin));
+
+	byte_stream_put32(&frame->data, 0x05b90002);    /* don't ask */
+	byte_stream_put32(&frame->data, 0x80000000);
+	byte_stream_put32(&frame->data, 0x00000006);
+	byte_stream_put32(&frame->data, 0x00010002);
+	byte_stream_put32(&frame->data, 0x00020000);
+	byte_stream_put32(&frame->data, 0x04e30000);
+	byte_stream_put32(&frame->data, 0x00020002);
+	byte_stream_put32(&frame->data, 0x00000001);
+
+	byte_stream_put16(&frame->data, 24 + strlen(uin));
+	byte_stream_put32(&frame->data, 0x003c0010);
+	byte_stream_putraw(&frame->data, note_hash, 16); /* status note hash */
+	byte_stream_put16(&frame->data, 0x0032);        /* buddy uin */
+	byte_stream_put16(&frame->data, strlen(uin));
+	byte_stream_putstr(&frame->data, uin);
+
+	flap_connection_send(conn, frame);
+
+	return 0;
+}
+
 static void aim_icq_freeinfo(struct aim_icq_info *info) {
 	int i;
 
@@ -467,6 +526,7 @@ static void aim_icq_freeinfo(struct aim_icq_info *info) {
 	g_free(info->workposition);
 	g_free(info->workwebpage);
 	g_free(info->info);
+	g_free(info->status_note_title);
 	g_free(info);
 }
 
@@ -641,6 +701,178 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 			info->email = byte_stream_getstr(&qbs, byte_stream_getle16(&qbs));
 			/* Then 0x00 02 00 00 00 00 00 */
 		} break;
+
+		/* status note title and send request for status note text */
+		case 0x0fb4: {
+			GSList *tlvlist;
+			aim_tlv_t *tlv;
+			FlapConnection *conn;
+			char *uin = NULL;
+			char *status_note_title = NULL;
+
+			conn = flap_connection_findbygroup(od, 0x0004);
+			if (conn == NULL)
+			{
+				purple_debug_misc("oscar", "icq/0x0fb4: flap connection was not found.\n");
+				break;
+			}
+
+			byte_stream_advance(&qbs, 0x02); /* length */
+			byte_stream_advance(&qbs, 0x2f); /* unknown stuff */
+
+			tlvlist = aim_tlvlist_read(&qbs);
+
+			tlv = aim_tlv_gettlv(tlvlist, 0x0032, 1);
+			if (tlv != NULL)
+				/* Get user number */
+				uin = aim_tlv_getvalue_as_string(tlv);
+
+			tlv = aim_tlv_gettlv(tlvlist, 0x0226, 1);
+			if (tlv != NULL)
+				/* Get status note title */
+				status_note_title = aim_tlv_getvalue_as_string(tlv);
+
+			aim_tlvlist_free(tlvlist);
+
+			if (uin == NULL || status_note_title == NULL)
+			{
+				purple_debug_misc("oscar", "icq/0x0fb4: uin or "
+						"status_note_title was not found\n");
+				g_free(uin);
+				g_free(status_note_title);
+				break;
+			}
+
+			if (status_note_title[0] == '\0')
+			{
+				PurpleAccount *account;
+				PurpleBuddy *buddy;
+				PurplePresence *presence;
+				PurpleStatus *status;
+
+				account = purple_connection_get_account(od->gc);
+				buddy = purple_find_buddy(account, uin);
+				presence = purple_buddy_get_presence(buddy);
+				status = purple_presence_get_active_status(presence);
+
+				purple_prpl_got_user_status(account, uin,
+						purple_status_get_id(status),
+						"message", NULL, NULL);
+
+				g_free(status_note_title);
+			}
+			else
+			{
+				struct aim_icq_info *info;
+				guint32 data_len;
+				FlapFrame *frame;
+				aim_snacid_t snacid;
+				guchar cookie[8];
+
+				info = g_new0(struct aim_icq_info, 1);
+
+				if (info == NULL)
+				{
+					g_free(uin);
+					g_free(status_note_title);
+
+					break;
+				}
+
+				data_len = 13 + strlen(uin) + 30 + 6 + 4 + 55 + 85 + 4;
+				frame = flap_frame_new(od, 0x0002, 10 + 4 + data_len);
+				snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, NULL, 0);
+
+				aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
+
+				aim_icbm_makecookie(cookie);
+
+				byte_stream_putraw(&frame->data, cookie, 8); /* ICBM cookie */
+				byte_stream_put16(&frame->data, 0x0002); /* message channel */
+				byte_stream_put8(&frame->data, strlen(uin)); /* uin */
+				byte_stream_putstr(&frame->data, uin);
+
+				byte_stream_put16(&frame->data, 0x0005); /* rendez vous data */
+				byte_stream_put16(&frame->data, 0x00b2);
+				byte_stream_put16(&frame->data, 0x0000); /* request */
+				byte_stream_putraw(&frame->data, cookie, 8); /* ICBM cookie */
+				byte_stream_put32(&frame->data, 0x09461349); /* ICQ server relaying */
+				byte_stream_put16(&frame->data, 0x4c7f);
+				byte_stream_put16(&frame->data, 0x11d1);
+				byte_stream_put32(&frame->data, 0x82224445);
+				byte_stream_put32(&frame->data, 0x53540000);
+
+				byte_stream_put16(&frame->data, 0x000a); /* unknown TLV */
+				byte_stream_put16(&frame->data, 0x0002);
+				byte_stream_put16(&frame->data, 0x0001);
+
+				byte_stream_put16(&frame->data, 0x000f); /* unknown TLV */
+				byte_stream_put16(&frame->data, 0x0000);
+
+				byte_stream_put16(&frame->data, 0x2711); /* extended data */
+				byte_stream_put16(&frame->data, 0x008a);
+				byte_stream_putle16(&frame->data, 0x001b); /* length */
+				byte_stream_putle16(&frame->data, 0x0009); /* version */
+				byte_stream_putle32(&frame->data, 0x00000000); /* plugin: none */
+				byte_stream_putle32(&frame->data, 0x00000000);
+				byte_stream_putle32(&frame->data, 0x00000000);
+				byte_stream_putle32(&frame->data, 0x00000000);
+				byte_stream_putle16(&frame->data, 0x0000); /* unknown */
+				byte_stream_putle32(&frame->data, 0x00000000); /* client capabilities flags */
+				byte_stream_put8(&frame->data, 0x00); /* unknown */
+				byte_stream_putle16(&frame->data, 0x0064); /* downcounter? */
+				byte_stream_putle16(&frame->data, 0x000e); /* length */
+				byte_stream_putle16(&frame->data, 0x0064); /* downcounter? */
+				byte_stream_putle32(&frame->data, 0x00000000); /* unknown */
+				byte_stream_putle32(&frame->data, 0x00000000);
+				byte_stream_putle32(&frame->data, 0x00000000);
+				byte_stream_put8(&frame->data, 0x1a); /* message type: plugin message descibed by text string */
+				byte_stream_put8(&frame->data, 0x00); /* message flags */
+				byte_stream_putle16(&frame->data, 0x0000); /* status code */
+				byte_stream_putle16(&frame->data, 0x0001); /* priority code */
+				byte_stream_putle16(&frame->data, 0x0000); /* text length */
+
+				byte_stream_put8(&frame->data, 0x3a); /* message dump */
+				byte_stream_put32(&frame->data, 0x00811a18);
+				byte_stream_put32(&frame->data, 0xbc0e6c18);
+				byte_stream_put32(&frame->data, 0x47a5916f);
+				byte_stream_put32(&frame->data, 0x18dcc76f);
+				byte_stream_put32(&frame->data, 0x1a010013);
+				byte_stream_put32(&frame->data, 0x00000041);
+				byte_stream_put32(&frame->data, 0x77617920);
+				byte_stream_put32(&frame->data, 0x53746174);
+				byte_stream_put32(&frame->data, 0x7573204d);
+				byte_stream_put32(&frame->data, 0x65737361);
+				byte_stream_put32(&frame->data, 0x67650100);
+				byte_stream_put32(&frame->data, 0x00000000);
+				byte_stream_put32(&frame->data, 0x00000000);
+				byte_stream_put32(&frame->data, 0x00000000);
+				byte_stream_put32(&frame->data, 0x00000015);
+				byte_stream_put32(&frame->data, 0x00000000);
+				byte_stream_put32(&frame->data, 0x0000000d);
+				byte_stream_put32(&frame->data, 0x00000074);
+				byte_stream_put32(&frame->data, 0x6578742f);
+				byte_stream_put32(&frame->data, 0x782d616f);
+				byte_stream_put32(&frame->data, 0x6c727466);
+
+				byte_stream_put16(&frame->data, 0x0003); /* server ACK requested */
+				byte_stream_put16(&frame->data, 0x0000);
+
+				info->uin = atoi(uin);
+				info->status_note_title = status_note_title;
+
+				memcpy(&info->icbm_cookie, cookie, 8);
+
+				info->next = od->icq_info;
+				od->icq_info = info;
+
+				flap_connection_send(conn, frame);
+			}
+
+			g_free(uin);
+
+		} break;
+
 		} /* End switch statement */
 
 		if (!(snac->flags & 0x0001)) {

@@ -1350,6 +1350,7 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 	PidginWindow *win = data;
 	PurpleConversation *conv;
 	gboolean logging;
+	PurpleBlistNode *node;
 
 	conv = pidgin_conv_window_get_active_conversation(win);
 
@@ -1360,6 +1361,8 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 
 	if (logging == purple_conversation_is_logging(conv))
 		return;
+	
+	node = get_conversation_blist_node(conv);
 
 	if (logging)
 	{
@@ -1382,6 +1385,27 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 
 		/* Disable the logging second, so that the above message can be logged. */
 		purple_conversation_set_logging(conv, FALSE);
+	}
+
+	/* Save the setting IFF it's different than the pref. */
+	switch (conv->type)
+	{
+		case PURPLE_CONV_TYPE_IM:
+			if (logging == purple_prefs_get_bool("/purple/logging/log_ims"))
+				purple_blist_node_remove_setting(node, "enable-logging");
+			else
+				purple_blist_node_set_bool(node, "enable-logging", logging);
+			break;
+
+		case PURPLE_CONV_TYPE_CHAT:
+			if (logging == purple_prefs_get_bool("/purple/logging/log_chats"))
+				purple_blist_node_remove_setting(node, "enable-logging");
+			else
+				purple_blist_node_set_bool(node, "enable-logging", logging);
+			break;
+
+		default:
+			break;
 	}
 }
 
@@ -2420,7 +2444,6 @@ update_tab_icon(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv;
 	PidginWindow *win;
-	PurpleBuddy *b;
 	GList *l;
 	GdkPixbuf *status = NULL;
 	GdkPixbuf *infopane_status = NULL;
@@ -2433,13 +2456,18 @@ update_tab_icon(PurpleConversation *conv)
 	if (conv != gtkconv->active_conv)
 		return;
 
-
 	status = pidgin_conv_get_tab_icon(conv, TRUE);
 	infopane_status = pidgin_conv_get_tab_icon(conv, FALSE);
 
-	b = purple_find_buddy(conv->account, conv->name);
-	if (b)
-		emblem = pidgin_blist_get_emblem((PurpleBlistNode*)b);
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		PurpleBuddy *b = purple_find_buddy(conv->account, conv->name);
+		if (b)
+			emblem = pidgin_blist_get_emblem((PurpleBlistNode*)b);
+	} else {
+		PurpleChat *c = purple_blist_find_chat(conv->account, conv->name);
+		if (c)
+			emblem = pidgin_blist_get_emblem((PurpleBlistNode*)c);
+	}
 
 	g_return_if_fail(status != NULL);
 
@@ -3337,6 +3365,7 @@ got_typing_keypress(PidginConversation *gtkconv, gboolean first)
 	}
 }
 
+#if 0
 static gboolean
 typing_animation(gpointer data) {
 	PidginConversation *gtkconv = data;
@@ -3375,6 +3404,7 @@ typing_animation(gpointer data) {
 	gtk_widget_show(gtkwin->menu.typing_icon);
 	return TRUE;
 }
+#endif
 
 static void
 update_typing_message(PidginConversation *gtkconv, const char *message)
@@ -3410,8 +3440,6 @@ update_typing_icon(PidginConversation *gtkconv)
 	PidginWindow *gtkwin;
 	PurpleConvIm *im = NULL;
 	PurpleConversation *conv = gtkconv->active_conv;
-	char *stock_id;
-	const char *tooltip;
 	char *message = NULL;
 
 	gtkwin = gtkconv->win;
@@ -3419,55 +3447,20 @@ update_typing_icon(PidginConversation *gtkconv)
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		im = PURPLE_CONV_IM(conv);
 
-	if (gtkwin->menu.typing_icon) {
-		gtk_widget_hide(gtkwin->menu.typing_icon);
-	}
-
 	if (im == NULL)
 		return;
 
 	if (purple_conv_im_get_typing_state(im) == PURPLE_NOT_TYPING) {
-		if (gtkconv->u.im->typing_timer != 0) {
-			g_source_remove(gtkconv->u.im->typing_timer);
-			gtkconv->u.im->typing_timer = 0;
-		}
 		update_typing_message(gtkconv, "\n");
 		return;
 	}
 
 	if (purple_conv_im_get_typing_state(im) == PURPLE_TYPING) {
-		if (gtkconv->u.im->typing_timer == 0) {
-			gtkconv->u.im->typing_timer = g_timeout_add(250, typing_animation, gtkconv);
-		}
-		stock_id = PIDGIN_STOCK_ANIMATION_TYPING1;
-		tooltip = _("User is typing...");
 		message = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_title(conv));
 	} else {
-		stock_id = PIDGIN_STOCK_ANIMATION_TYPING5;
-		tooltip = _("User has typed something and stopped");
-		message = g_strdup_printf(_("\n%s has typed something and stopped"), purple_conversation_get_title(conv));
-		if (gtkconv->u.im->typing_timer != 0) {
-			g_source_remove(gtkconv->u.im->typing_timer);
-			gtkconv->u.im->typing_timer = 0;
-		}
+		message = g_strdup_printf(_("\n%s has stopped typing"), purple_conversation_get_title(conv));
 	}
 
-	if (gtkwin->menu.typing_icon == NULL)
-	{
-		gtkwin->menu.typing_icon = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
-		pidgin_menu_tray_append(PIDGIN_MENU_TRAY(gtkwin->menu.tray),
-								  gtkwin->menu.typing_icon,
-								  tooltip);
-	}
-	else
-	{
-		gtk_image_set_from_stock(GTK_IMAGE(gtkwin->menu.typing_icon), stock_id, GTK_ICON_SIZE_MENU);
-		pidgin_menu_tray_set_tooltip(PIDGIN_MENU_TRAY(gtkwin->menu.tray),
-									   gtkwin->menu.typing_icon,
-									   tooltip);
-	}
-
-	gtk_widget_show(gtkwin->menu.typing_icon);
 	update_typing_message(gtkconv, message);
 	g_free(message);
 }
@@ -4907,6 +4900,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
 	PurpleBlistNode *convnode;
+	PurpleValue *value;
 
 	if (conv_type == PURPLE_CONV_TYPE_IM && (gtkconv = pidgin_conv_find_gtkconv(conv))) {
 		conv->ui_data = gtkconv;
@@ -4993,6 +4987,13 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	convnode = get_conversation_blist_node(conv);
 	if (convnode == NULL || !purple_blist_node_get_bool(convnode, "gtk-mute-sound"))
 		gtkconv->make_sound = TRUE;
+
+	if (convnode != NULL &&
+	    (value = g_hash_table_lookup(convnode->settings, "enable-logging")) &&
+	    purple_value_get_type(value) == PURPLE_TYPE_BOOLEAN)
+	{
+		purple_conversation_set_logging(conv, purple_value_get_boolean(value));
+	}
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar"))
 		gtk_widget_show(gtkconv->toolbar);
@@ -6558,7 +6559,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			pango_attr_list_unref(list);
 		} else
 			gtk_label_set_attributes(GTK_LABEL(gtkconv->tab_label), NULL);
-
+		
 		if (pidgin_conv_window_is_active_conversation(conv))
 			update_typing_icon(gtkconv);
 

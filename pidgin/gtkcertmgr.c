@@ -430,7 +430,7 @@ tls_peers_mgmt_build(void)
 		/* Set up the display columns */
 		renderer = gtk_cell_renderer_text_new();
 		column = gtk_tree_view_column_new_with_attributes(
-			"Hostname",
+			_("Hostname"),
 			renderer,
 			"text", TPM_HOSTNAME_COLUMN,
 			NULL);

@@ -7,13 +7,17 @@ version 2.4.0 (??/??/????):
 	* Eliminated unmaintained Howl backend implementation for the
 	  Bonjour protocol.  Avahi (or Apple's Bonjour runtime on win32) is
 	  now required to use Bonjour.
+	* Partial support for viewing ICQ status notes (Collin from
+	  ComBOTS GmbH).
 
 	Pidgin:
 	* Added the ability to theme conversation name colors (red and blue)
 	  through your GTK+ theme, and exposed those theme settings to the 
 	  Pidgin GTK+ Theme Control plugin (Dustin Howett)
-	* Fixed having multiple alias edit areas in the infopane (Elliott Sales de
-	  Andrade)
+	* Fixed having multiple alias edit areas in the infopane (Elliott Sales
+	  de Andrade)
+	* Save the conversation "Enable Logging" option per-contact (Moos
+	  Heintzen)
 
 	Finch:
 	* Color is used in the buddylist to indicate status, and the conversation
@@ -22,6 +26,11 @@ version 2.4.0 (??/??/????):
 	* The default keybinding for dump-screen is now M-D and uses a file
 	  request dialog. M-d will properly delete-forward-word, and M-f has been
 	  fixed to imitate readline's behavior.
+	* New bindings alt+tab and alt+shift+tab to help navigating between the
+	  higlighted windows (details on the man-page).
+	* Recently signed on (or off) buddies blink in the buddy list.
+	* New action 'Room List' in the action-list can be used to get the list of
+	  available chat rooms for an online account.
 
 version 2.3.1 (12/7/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.3.1

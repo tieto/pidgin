@@ -3,8 +3,6 @@
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
- * Some code copyright (C) 2007, ComBOTS Product GmbH (htfv) <foss@combots.com>
- *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -311,7 +309,7 @@ struct _ClientInfo
 }
 
 #define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_5_1_3036
-#define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQ_5_45_3777
+#define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQBASIC_14_34_3000
 
 typedef enum
 {
@@ -468,7 +466,6 @@ struct _OscarData
 
 	gboolean icq;
 	guint getblisttimer;
-	guint getinfotimer;
 
 	struct {
 		guint maxwatchers; /* max users who can watch you */
@@ -513,9 +510,7 @@ struct _OscarData
 
 	struct {
 		struct aim_userinfo_s *userinfo;
-		struct userinfo_node *torequest;
 		struct userinfo_node *requested;
-		gboolean waiting_for_response;
 	} locate;
 
 	/* Server-stored information (ssi) */
@@ -1329,6 +1324,10 @@ struct aim_icq_info
 
 	/* we keep track of these in a linked list because we're 1337 */
 	struct aim_icq_info *next;
+
+	/* status note info */
+	guint8 icbm_cookie[8];
+	char *status_note_title;
 };
 
 int aim_icq_reqofflinemsgs(OscarData *od);
@@ -1339,7 +1338,7 @@ int aim_icq_getsimpleinfo(OscarData *od, const char *uin);
 int aim_icq_getalias(OscarData *od, const char *uin);
 int aim_icq_getallinfo(OscarData *od, const char *uin);
 int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char *alias);
-
+int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, guint16 note_hash_len);
 
 
 /* 0x0017 - family_auth.c */

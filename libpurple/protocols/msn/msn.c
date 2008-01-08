@@ -461,7 +461,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 	msn_switchboard_request_add_user(swboard, buddy->name);
 
 	/* TODO: This might move somewhere else, after USR might be */
-	swboard->chat_id = session->conv_seq++;
+	swboard->chat_id = msn_switchboard_get_chat_id();
 	swboard->conv = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
 	swboard->flag = MSN_SB_FLAG_IM;
 
@@ -593,8 +593,8 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 			PurpleStatus *tune = purple_presence_get_status(presence, "tune");
 			const char *title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
 			const char *artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
-			currentmedia = g_strdup_printf("%s%s%s", title, artist ? " - " : "",
-					artist ? artist : "");
+			const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
+			currentmedia = purple_util_format_song_info(title, artist, album, NULL);
 			/* We could probably just use user->media.title etc. here */
 		}
 
@@ -643,9 +643,7 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 		}
 
 		if (currentmedia) {
-			tmp = g_markup_escape_text(currentmedia, -1);
-			purple_notify_user_info_add_pair(user_info, _("Current media"), tmp);
-			g_free(tmp);
+			purple_notify_user_info_add_pair(user_info, _("Now Listening"), currentmedia);
 			g_free(currentmedia);
 		}
 	}

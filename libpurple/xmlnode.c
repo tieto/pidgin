@@ -552,6 +552,9 @@ xmlnode_to_formatted_str(xmlnode *node, int *len)
 		g_strdup_printf("<?xml version='1.0' encoding='UTF-8' ?>" NEWLINE_S NEWLINE_S "%s", xml);
 	g_free(xml);
 
+	if (len)
+		*len += sizeof("<?xml version='1.0' encoding='UTF-8' ?>" NEWLINE_S NEWLINE_S) - 1;
+
 	return xml_with_declaration;
 }
 

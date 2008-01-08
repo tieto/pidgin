@@ -830,7 +830,7 @@ struct
 
 
 static void
-cleanup_pageditor()
+cleanup_pageditor(void)
 {
 	unlink(pageditor.file);
 	g_free(pageditor.file);

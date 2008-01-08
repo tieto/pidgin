@@ -4628,3 +4628,57 @@ void purple_restore_default_signal_handlers(void)
 #endif /* HAVE_SIGNAL_H */
 #endif /* !_WIN32 */
 }
+
+void purple_util_set_current_song(const char *title, const char *artist, const char *album)
+{
+	GList *list = purple_accounts_get_all();
+	for (; list; list = list->next) {
+		PurplePresence *presence;
+		PurpleStatus *tune;
+		PurpleAccount *account = list->data;
+		if (!purple_account_get_enabled(account, purple_core_get_ui()))
+			continue;
+
+		presence = purple_account_get_presence(account);
+		tune = purple_presence_get_status(presence, "tune");
+		if (!tune)
+			continue;
+		if (title) {
+			purple_status_set_active(tune, TRUE);
+			purple_status_set_attr_string(tune, PURPLE_TUNE_TITLE, title);
+			purple_status_set_attr_string(tune, PURPLE_TUNE_ARTIST, artist);
+			purple_status_set_attr_string(tune, PURPLE_TUNE_ALBUM, album);
+		} else {
+			purple_status_set_active(tune, FALSE);
+		}
+	}
+}
+
+char * purple_util_format_song_info(const char *title, const char *artist, const char *album, gpointer unused)
+{
+	GString *string;
+	char *esc;
+
+	if (!title)
+		return NULL;
+
+	esc = g_markup_escape_text(title, -1);
+	string = g_string_new("");
+	g_string_append_printf(string, "%s", esc);
+	g_free(esc);
+
+	if (artist) {
+		esc = g_markup_escape_text(artist, -1);
+		g_string_append_printf(string, _(" - %s"), esc);
+		g_free(esc);
+	}
+
+	if (album) {
+		esc = g_markup_escape_text(album, -1);
+		g_string_append_printf(string, _(" (%s)"), esc);
+		g_free(esc);
+	}
+
+	return g_string_free(string, FALSE);
+}
+

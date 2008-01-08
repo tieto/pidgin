@@ -320,10 +320,10 @@ aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
 		cur->away_encoding = g_strdup(userinfo->away_encoding);
 		cur->away_len = userinfo->away_len;
 
-	} else if (!(userinfo->flags & AIM_FLAG_AWAY)) {
+	} else {
 		/*
-		 * We don't have an away message specified in this user_info block.
-		 * If the user is not away, clear any cached away message now.
+		 * We don't have an away message specified in this user_info
+		 * block, so clear any cached away message now.
 		 */
 		if (cur->away) {
 			g_free(cur->away);
@@ -345,41 +345,6 @@ aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_LOCATE);
 	if ((userfunc = aim_callhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_GOTINFOBLOCK)))
 		userfunc(od, conn, NULL, cur);
-}
-
-void
-aim_locate_dorequest(OscarData *od)
-{
-	struct userinfo_node *cur = od->locate.torequest;
-
-	if (od->locate.waiting_for_response == TRUE)
-		return;
-
-	od->locate.waiting_for_response = TRUE;
-	aim_locate_getinfoshort(od, cur->sn, 0x00000003);
-
-	/* Move this node to the "requested" queue */
-	od->locate.torequest = cur->next;
-	cur->next = od->locate.requested;
-	od->locate.requested = cur;
-}
-
-static gboolean
-purple_reqinfo_timeout_cb(void *data)
-{
-	OscarData *od;
-
-	od = data;
-
-	if (od->locate.torequest == NULL)
-	{
-		od->getinfotimer = 0;
-		return FALSE;
-	}
-
-	aim_locate_dorequest(od);
-
-	return TRUE;
 }
 
 /**
@@ -417,19 +382,6 @@ aim_locate_gotuserinfo(OscarData *od, FlapConnection *conn, const char *sn)
 			cur = cur->next;
 	}
 
-	if (!was_explicit) {
-		od->locate.waiting_for_response = FALSE;
-
-		/*
-		 * Wait a little while then call aim_locate_dorequest(od).
-		 * This keeps us from hitting the rate limit due to
-		 * requesting away messages and info too quickly.
-		 */
-		if (od->getinfotimer == 0)
-			od->getinfotimer = purple_timeout_add(500,
-					purple_reqinfo_timeout_cb, od);
-	}
-
 	return was_explicit;
 }
 
@@ -438,22 +390,18 @@ aim_locate_requestuserinfo(OscarData *od, const char *sn)
 {
 	struct userinfo_node *cur;
 
-	/* Make sure we aren't already requesting info for this buddy */
-	cur = od->locate.torequest;
-	while (cur != NULL) {
+	/* Make sure we haven't already requested info for this buddy */
+	for (cur = od->locate.requested; cur != NULL; cur = cur->next)
 		if (aim_sncmp(sn, cur->sn) == 0)
 			return;
-		cur = cur->next;
-	}
 
 	/* Add a new node to our request queue */
 	cur = (struct userinfo_node *)g_malloc(sizeof(struct userinfo_node));
 	cur->sn = g_strdup(sn);
-	cur->next = od->locate.torequest;
-	od->locate.torequest = cur;
+	cur->next = od->locate.requested;
+	od->locate.requested = cur;
 
-	/* Actually request some info up in this piece */
-	aim_locate_dorequest(od);
+	aim_locate_getinfoshort(od, cur->sn, 0x00000003);
 }
 
 aim_userinfo_t *aim_locate_finduserinfo(OscarData *od, const char *sn) {

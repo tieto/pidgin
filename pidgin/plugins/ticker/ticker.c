@@ -65,7 +65,7 @@ static gboolean buddy_ticker_destroy_window(GtkWidget *window,
 	return TRUE; /* don't actually destroy the window */
 }
 
-static void buddy_ticker_create_window() {
+static void buddy_ticker_create_window(void) {
 	if(tickerwindow) {
 		gtk_widget_show(tickerwindow);
 		return;
@@ -215,7 +215,7 @@ static void buddy_ticker_remove_buddy(PurpleBuddy *b) {
 	buddy_ticker_update_contact(c);
 }
 
-static void buddy_ticker_show()
+static void buddy_ticker_show(void)
 {
 	PurpleBuddyList *list = purple_get_blist();
 	PurpleBlistNode *gnode, *cnode, *bnode;

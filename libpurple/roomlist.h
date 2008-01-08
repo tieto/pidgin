@@ -237,6 +237,15 @@ void purple_roomlist_cancel_get_list(PurpleRoomlist *list);
  */
 void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *category);
 
+/**
+ * Get the list of fields for a roomlist.
+ *
+ * @param roomlist  The roomlist, which must not be @c NULL.
+ * @constreturn A list of fields
+ * @since 2.4.0
+ */
+GList * purple_roomlist_get_fields(PurpleRoomlist *roomlist);
+
 /*@}*/
 
 /**************************************************************************/
@@ -273,6 +282,39 @@ void purple_roomlist_room_add_field(PurpleRoomlist *list, PurpleRoomlistRoom *ro
  */
 void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room);
 
+/**
+ * Get the type of a room.
+ * @param room  The room, which must not be @c NULL.
+ * @return The type of the room.
+ * @since 2.4.0
+ */
+PurpleRoomlistRoomType purple_roomlist_room_get_type(PurpleRoomlistRoom *room);
+
+/**
+ * Get the name of a room.
+ * @param room  The room, which must not be @c NULL.
+ * @return The name of the room.
+ * @since 2.4.0
+ */
+const char * purple_roomlist_room_get_name(PurpleRoomlistRoom *room);
+
+/**
+ * Get the parent of a room.
+ * @param room  The room, which must not be @c NULL.
+ * @return The parent of the room, which can be @c NULL.
+ * @since 2.4.0
+ */
+PurpleRoomlistRoom * purple_roomlist_room_get_parent(PurpleRoomlistRoom *room);
+
+/**
+ * Get the list of fields for a room.
+ *
+ * @param room  The room, which must not be @c NULL.
+ * @constreturn A list of fields
+ * @since 2.4.0
+ */
+GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom *room);
+
 /*@}*/
 
 /**************************************************************************/
@@ -294,6 +336,36 @@ void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room);
 PurpleRoomlistField *purple_roomlist_field_new(PurpleRoomlistFieldType type,
                                            const gchar *label, const gchar *name,
                                            gboolean hidden);
+
+/**
+ * Get the type of a field.
+ *
+ * @param field  A PurpleRoomlistField, which must not be @c NULL.
+ *
+ * @return  The type of the field.
+ * @since 2.4.0
+ */
+PurpleRoomlistFieldType purple_roomlist_field_get_type(PurpleRoomlistField *field);
+
+/**
+ * Get the label of a field.
+ *
+ * @param field  A PurpleRoomlistField, which must not be @c NULL.
+ *
+ * @return  The label of the field.
+ * @since 2.4.0
+ */
+const char * purple_roomlist_field_get_label(PurpleRoomlistField *field);
+
+/**
+ * Check whether a roomlist-field is hidden.
+ * @param field  A PurpleRoomlistField, which must not be @c NULL.
+ *
+ * @return  @c TRUE if the field is hidden, @c FALSE otherwise.
+ * @since 2.4.0
+ */
+gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field);
+
 /*@}*/
 
 /**************************************************************************/

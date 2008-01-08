@@ -521,9 +521,7 @@ pidgin_roomlist_dialog_new_with_account(PurpleAccount *account)
 	GtkWidget *window;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
-	GtkWidget *account_hbox;
 	GtkWidget *bbox;
-	GtkWidget *label;
 
 	dialog = g_new0(PidginRoomlistDialog, 1);
 	dialog->account = account;
@@ -542,25 +540,11 @@ pidgin_roomlist_dialog_new_with_account(PurpleAccount *account)
 	gtk_widget_show(vbox2);
 
 	/* accounts dropdown list */
-	account_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox2), account_hbox, FALSE, FALSE, 0);
-	gtk_widget_show(account_hbox);
-
-	label = gtk_label_new(NULL);
-	gtk_box_pack_start(GTK_BOX(account_hbox), label, FALSE, FALSE, 0);
-	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Account:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_widget_show(label);
-
 	dialog->account_widget = pidgin_account_option_menu_new(dialog->account, FALSE,
 	                         G_CALLBACK(dialog_select_account_cb), account_filter_func, dialog);
-
 	if (!dialog->account) /* this is normally null, and we normally don't care what the first selected item is */
 		dialog->account = pidgin_account_option_menu_get_selected(dialog->account_widget);
-
-	gtk_box_pack_start(GTK_BOX(account_hbox), dialog->account_widget, TRUE, TRUE, 0);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(dialog->account_widget));
-	gtk_widget_show(dialog->account_widget);
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox2), _("_Account:"), NULL, dialog->account_widget, TRUE, NULL);
 
 	/* scrolled window */
 	dialog->sw = gtk_scrolled_window_new(NULL, NULL);

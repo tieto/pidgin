@@ -8,6 +8,16 @@ version 2.4.0 (??/??/????):
 		* purple_major_version, purple_minor_version,
 		  purple_micro_version variables are exported by version.h,
 		  giving the version of libpurple in use at runtime.
+		* purple_util_set_current_song, purple_util_format_song_info
+		* Some accessor functions to the Roomlist API:
+			* purple_roomlist_get_fields
+			* purple_roomlist_room_get_type
+			* purple_roomlist_room_get_name
+			* purple_roomlist_room_get_parent
+			* purple_roomlist_room_get_fields
+			* purple_roomlist_field_get_type
+			* purple_roomlist_field_get_label
+			* purple_roomlist_field_get_hidden
 
 	Pidgin:
 		Added:
@@ -24,8 +34,17 @@ version 2.4.0 (??/??/????):
 		* pidgin_tooltip_setup_for_treeview, pidgin_tooltip_destroy,
 		  pidgin_tooltip_show and pidgin_tooltip_setup_for_widget to simplify
 		  the process of drawing tooltips.
+		* pidgin_add_widget_to_vbox to simplify adding a labeled widget to a
+		  window.
+
+		Deprecated:
+		* PIDGIN_DIALOG
 
 	Finch:
+		* finch_roomlist_get_ui_ops and finch_roomlist_show_all
+		* finch_request_field_get_widget to get the widget for a request
+		  field.
+
 		libgnt:
 		* Added gnt_tree_set_row_color to set the color for a row in a tree.
 		* Added gnt_style_get_string_list

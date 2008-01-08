@@ -289,7 +289,7 @@ static gboolean clipboard_paste_html_win32(GtkIMHtml *imhtml) {
 #endif
 
 static GtkSmileyTree*
-gtk_smiley_tree_new ()
+gtk_smiley_tree_new (void)
 {
 	return g_new0 (GtkSmileyTree, 1);
 }
@@ -4275,33 +4275,6 @@ static void imhtml_emit_signal_for_format(GtkIMHtml *imhtml, GtkIMHtmlButtons bu
 	object = g_object_ref(G_OBJECT(imhtml));
 	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, button);
 	g_object_unref(object);
-}
-
-static void populate_popup_cb(GtkTextView *textview, GtkMenu *menu, gpointer nul)
-{
-	GtkWidget *mi, *img;
-	
-	mi = gtk_menu_item_new();
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
-
-	img = gtk_image_new_from_stock(GTK_STOCK_BOLD, GTK_ICON_SIZE_MENU);
-	mi = gtk_image_menu_item_new_with_mnemonic(_("_Font"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
-
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT, GTK_ICON_SIZE_MENU);
-	mi = gtk_image_menu_item_new_with_mnemonic(_("_Insert"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
-
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SMILEY, GTK_ICON_SIZE_MENU);
-	mi = gtk_image_menu_item_new_with_mnemonic(_("S_mile!"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
 }
 
 static void imhtml_toggle_bold(GtkIMHtml *imhtml)

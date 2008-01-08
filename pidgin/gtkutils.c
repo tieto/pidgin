@@ -1701,23 +1701,23 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive prim, GtkWidget *w, 
 	GdkPixbuf *pixbuf = NULL;
 
 	if (prim == PURPLE_STATUS_UNAVAILABLE)
-        	pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_BUSY,
-                                                 icon_size, "GtkWidget");
-        else if (prim == PURPLE_STATUS_AWAY)
-                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AWAY,
-                                                 icon_size, "GtkWidget");
-        else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
-                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_XA,
-                                                 icon_size, "GtkWidget");
-        else if (prim == PURPLE_STATUS_INVISIBLE)
-                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_INVISIBLE,
-                                                 icon_size, "GtkWidget");
-        else if (prim == PURPLE_STATUS_OFFLINE)
-                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_OFFLINE,
-                                                 icon_size, "GtkWidget");
-        else
-                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AVAILABLE,
-                                                 icon_size, "GtkWidget");
+		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_BUSY,
+				icon_size, "GtkWidget");
+	else if (prim == PURPLE_STATUS_AWAY)
+		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AWAY,
+				icon_size, "GtkWidget");
+	else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
+		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_XA,
+				icon_size, "GtkWidget");
+	else if (prim == PURPLE_STATUS_INVISIBLE)
+		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_INVISIBLE,
+				icon_size, "GtkWidget");
+	else if (prim == PURPLE_STATUS_OFFLINE)
+		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_OFFLINE,
+				icon_size, "GtkWidget");
+	else
+		pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AVAILABLE,
+				icon_size, "GtkWidget");
 	return pixbuf;
 
 }
@@ -2947,7 +2947,7 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent)
 GSList *minidialogs = NULL;
 
 static void *
-pidgin_utils_get_handle()
+pidgin_utils_get_handle(void)
 {
 	static int handle;
 
@@ -3319,6 +3319,40 @@ const char *pidgin_text_combo_box_entry_get_text(GtkWidget *widget)
 void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text)
 {
 	gtk_entry_set_text(GTK_ENTRY(GTK_BIN((widget))->child), (text));
+}
+
+GtkWidget *
+pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *sg, GtkWidget *widget, gboolean expand, GtkWidget **p_label)
+{
+	GtkWidget *hbox;
+	GtkWidget *label = NULL;
+
+	if (widget_label) {
+		hbox = gtk_hbox_new(FALSE, 5);
+		gtk_widget_show(hbox);
+		gtk_box_pack_start(vbox, hbox, FALSE, FALSE, 0);
+
+		label = gtk_label_new_with_mnemonic(widget_label);
+		gtk_widget_show(label);
+		if (sg) {
+			gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+			gtk_size_group_add_widget(sg, label);
+		}
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	} else {
+		hbox = GTK_WIDGET(vbox);
+	}
+
+	gtk_widget_show(widget);
+	gtk_box_pack_start(GTK_BOX(hbox), widget, expand, TRUE, 0);
+	if (label) {
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
+		pidgin_set_accessible_label (widget, label);
+	}
+
+	if (p_label)
+		(*p_label) = label;
+	return hbox;
 }
 
 gboolean pidgin_auto_parent_window(GtkWidget *widget)

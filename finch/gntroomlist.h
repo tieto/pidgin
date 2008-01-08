@@ -1,5 +1,5 @@
 /**
- * @file gntrequest.h GNT Request API
+ * @file gntroomlist.h GNT Room List API
  * @ingroup finch
  */
 
@@ -23,49 +23,39 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#ifndef _GNT_REQUEST_H
-#define _GNT_REQUEST_H
+#ifndef _GNT_ROOMLIST_H
+#define _GNT_ROOMLIST_H
 
-#include "request.h"
-#include "gnt.h"
+#include "roomlist.h"
 
 /**********************************************************************
- * @name GNT Request API
+ * @name GNT Room List API
  **********************************************************************/
 /*@{*/
 
 /**
+ * Initialize the roomlist subsystem.
+ */
+void finch_roomlist_init(void);
+
+/**
  * Get the ui-functions.
  *
- * @return The PurpleRequestUiOps structure populated with the appropriate functions.
+ * @return The PurpleRoomlistUiOps structure populated with the appropriate functions.
  */
-PurpleRequestUiOps *finch_request_get_ui_ops(void);
+PurpleRoomlistUiOps *finch_roomlist_get_ui_ops(void);
 
 /**
- * Perform necessary initializations.
+ * Show the roomlist dialog.
  */
-void finch_request_init(void);
+void finch_roomlist_show_all(void);
 
 /**
- * Perform necessary uninitializations.
+ * Uninitialize the roomlist subsystem.
  */
-void finch_request_uninit(void);
+void finch_roomlist_uninit(void);
 
-/**
- * Save the request fields in preferences where the id attribute of each field is the
- * id of a preference.
- */
-void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *fields);
-
-/**
- * Create a widget field for a request-field.
- *
- * @param field   The request field.
- *
- * @return A GntWidget for the request field.
- * @since 2.4.0
- */
-GntWidget *finch_request_field_get_widget(PurpleRequestField *field);
 /*@}*/
 
 #endif
+

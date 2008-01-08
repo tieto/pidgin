@@ -49,6 +49,8 @@ static GHashTable *account_cache = NULL;
 static GHashTable *icon_data_cache = NULL;
 static GHashTable *icon_file_cache = NULL;
 
+static void delete_buddy_icon_settings(PurpleBlistNode *node, const char *setting_name);
+
 /* This one is used for both custom buddy icons
  * on PurpleContacts and account icons. */
 static GHashTable *pointer_icon_cache = NULL;
@@ -124,7 +126,7 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 							purple_imgstore_get_size(img));	
 	} else 	{
 		purple_debug_error("buddyicon", "Unable to create file %s: %s\n",
-		                   path, g_strerror(errno));
+		                   path, "File already exists.");
 	}
 	g_free(path);
 }
@@ -614,13 +616,16 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 				checksum = purple_blist_node_get_string((PurpleBlistNode*)b, "icon_checksum");
 				purple_buddy_icon_set_data(icon, data, len, checksum);
 			}
+			else
+				delete_buddy_icon_settings((PurpleBlistNode*)b, "buddy_icon");
+
 			g_free(path);
 		}
 
 		purple_buddy_icons_set_caching(caching);
 	}
 
-	return purple_buddy_icon_ref(icon);
+	return (icon ? purple_buddy_icon_ref(icon) : NULL);
 }
 
 gboolean

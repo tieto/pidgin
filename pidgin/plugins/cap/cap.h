@@ -98,7 +98,6 @@ static void buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old_status, P
 static void buddy_signed_on(PurpleBuddy *buddy);
 /* buddy-signed-off */
 static void buddy_signed_off(PurpleBuddy *buddy);
-static void buddy_idle(PurpleBuddy *buddy, gboolean old_idle, gboolean idle);
 /* drawing-tooltip */
 static void drawing_tooltip(PurpleBlistNode *node, GString *text, gboolean full);
 /* signed-on */
@@ -107,21 +106,20 @@ static void signed_on(PurpleConnection *gc);
 static void signed_off(PurpleConnection *gc);
 static void reset_all_last_message_times(gpointer key, gpointer value, gpointer user_data);
 static PurpleStatus * get_status_for(PurpleBuddy *buddy);
-static void create_tables();
-static gboolean create_database_connection();
-static void destroy_database_connection();
+static void create_tables(void);
+static gboolean create_database_connection(void);
+static void destroy_database_connection(void);
 static guint word_count(const gchar *string);
 static void insert_status_change(CapStatistics *statistics);
 static void insert_status_change_from_purple_status(CapStatistics *statistics, PurpleStatus *status);
 static void insert_word_count(const char *sender, const char *receiver, guint count);
-void display_statistics_action_cb(PurpleBlistNode *node, gpointer data);
 static gboolean plugin_load(PurplePlugin *plugin);
 static void add_plugin_functionality(PurplePlugin *plugin);
 static void cancel_conversation_timeouts(gpointer key, gpointer value, gpointer user_data);
 static void remove_plugin_functionality(PurplePlugin *plugin);
 static void write_stats_on_unload(gpointer key, gpointer value, gpointer user_data);
 static gboolean plugin_unload(PurplePlugin *plugin);
-static CapPrefsUI * create_cap_prefs_ui();
+static CapPrefsUI * create_cap_prefs_ui(void);
 static void cap_prefs_ui_destroy_cb(GtkObject *object, gpointer user_data);
 static void numeric_spinner_prefs_cb(GtkSpinButton *spinbutton, gpointer user_data);
 static GtkWidget * get_config_frame(PurplePlugin *plugin);

@@ -374,16 +374,20 @@ void pidgin_setup_screenname_autocomplete_with_filter(GtkWidget *entry, GtkWidge
 gboolean pidgin_screenname_autocomplete_default_filter(const PidginBuddyCompletionEntry *completion_entry, gpointer all_accounts);
 
 /**
- * @deprecated
  * Add autocompletion of screenames to an entry.
- * The usage of this function is deprecated. For new code, use the equivalent:
- * pidgin_setup_screenname_autocomplete_with_filter(entry, optmenu, pidgin_screenname_autocomplete_default_filter, GINT_TO_POINTER(all))
+ *
+ * @deprecated
+ *   For new code, use the equivalent:
+ *   #pidgin_setup_screenname_autocomplete_with_filter(@a entry, @a optmenu,
+ *   #pidgin_screenname_autocomplete_default_filter, <tt>GINT_TO_POINTER(@a
+ *   all)</tt>)
  *
  * @param entry     The GtkEntry on which to setup autocomplete.
- * @param optmenu   A menu for accounts, returned by pidgin_account_option_menu_new().
- *                  If @a optmenu is not @c NULL, it'll be updated when a screenname is chosen
- *                  from the autocomplete list.
- * @param all       Whether to include screennames from disconnected accounts. 
+ * @param optmenu   A menu for accounts, returned by
+ *                  pidgin_account_option_menu_new().  If @a optmenu is not @c
+ *                  NULL, it'll be updated when a screenname is chosen from the
+ *                  autocomplete list.
+ * @param all       Whether to include screennames from disconnected accounts.
  */
 void pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *optmenu, gboolean all);
 
@@ -506,7 +510,7 @@ void pidgin_menu_position_func_helper(GtkMenu *menu, gint *x, gint *y,
 
 /**
  * A valid GtkMenuPositionFunc.  This is used to determine where 
- * to draw context menu's when the menu is activated with the 
+ * to draw context menus when the menu is activated with the 
  * keyboard (shift+F10).  If the menu is activated with the mouse, 
  * then you should just use GTK's built-in position function, 
  * because it does a better job of positioning the menu.
@@ -789,6 +793,21 @@ void pidgin_text_combo_box_entry_set_text(GtkWidget *widget, const char *text);
  * @since 2.4.0
  */
 gboolean pidgin_auto_parent_window(GtkWidget *window);
+
+/**
+ * Add a labelled widget to a GtkVBox
+ *
+ * @param vbox         The GtkVBox to add the widget to.
+ * @param widget_label The label to give the widget.
+ * @param sg           The GtkSizeGroup to add the label to.
+ * @param widget       The GtkWidget to add
+ * @param expand       Whether to expand the widget horizontally.
+ * @param p_label      Place to store a pointer to the GtkLabel, or NULL if you don't care.
+ *
+ * @return  A GtkHBox already added to the GtkVBox containing the GtkLabel and the GtkWidget.
+ * @since 2.4.0
+ */
+GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *sg, GtkWidget *widget, gboolean expand, GtkWidget **p_label);
 
 #endif /* _PIDGINUTILS_H_ */
 

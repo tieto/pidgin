@@ -142,7 +142,7 @@ purple_dnsquery_ui_resolve(PurpleDnsQueryData *query_data)
  */
 #ifdef HAVE_SIGNAL_H
 G_GNUC_NORETURN static void
-trap_gdb_bug()
+trap_gdb_bug(int sig)
 {
 	const char *message =
 		"Purple's DNS child got a SIGTRAP signal.\n"
@@ -286,7 +286,7 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
  * Begin the functions for dealing with the DNS child processes.
  */
 static void
-cope_with_gdb_brokenness()
+cope_with_gdb_brokenness(void)
 {
 #ifdef __linux__
 	static gboolean already_done = FALSE;
@@ -460,7 +460,7 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 static void host_resolved(gpointer data, gint source, PurpleInputCondition cond);
 
 static void
-handle_next_queued_request()
+handle_next_queued_request(void)
 {
 	PurpleDnsQueryData *query_data;
 	PurpleDnsQueryResolverProcess *resolver;

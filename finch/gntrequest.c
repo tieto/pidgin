@@ -36,6 +36,7 @@
 
 #include "finch.h"
 #include "gntrequest.h"
+#include "debug.h"
 #include "util.h"
 
 typedef struct
@@ -822,5 +823,34 @@ void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *allfields)
 			}
 		}
 	}
+}
+
+GntWidget *finch_request_field_get_widget(PurpleRequestField *field)
+{
+	GntWidget *ret = NULL;
+	switch (purple_request_field_get_type(field)) {
+		case PURPLE_REQUEST_FIELD_BOOLEAN:
+			ret = create_boolean_field(field);
+			break;
+		case PURPLE_REQUEST_FIELD_STRING:
+			ret = create_string_field(field, NULL);
+			break;
+		case PURPLE_REQUEST_FIELD_INTEGER:
+			ret = create_integer_field(field);
+			break;
+		case PURPLE_REQUEST_FIELD_CHOICE:
+			ret = create_choice_field(field);
+			break;
+		case PURPLE_REQUEST_FIELD_LIST:
+			ret = create_list_field(field);
+			break;
+		case PURPLE_REQUEST_FIELD_ACCOUNT:
+			ret = create_account_field(field);
+			break;
+		default:
+			purple_debug_error("GntRequest", "Unimplemented request-field %d\n", purple_request_field_get_type(field));
+			break;
+	}
+	return ret;
 }
 

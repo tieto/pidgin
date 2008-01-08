@@ -196,11 +196,11 @@ typedef struct
 	 *  available; on Windows, it uses Win32's network change notification
 	 *  infrastructure.
 	 */
-	void (*network_connected)();
+	void (*network_connected)(void);
 	/** Called when libpurple discovers that the computer's network
 	 *  connection has gone away.
 	 */
-	void (*network_disconnected)();
+	void (*network_disconnected)(void);
 
 	/** Called when an error causes a connection to be disconnected.
 	 *  Called before #disconnected.  This op is intended to replace

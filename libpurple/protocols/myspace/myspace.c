@@ -2912,8 +2912,7 @@ msim_actions(PurplePlugin *plugin, gpointer context)
 	menu = g_list_append(menu, act);
 #endif
 
-	act = purple_plugin_action_new(g_strdup_printf("%s",
-				_("Add friends from MySpace.com")), msim_import_friends);
+	act = purple_plugin_action_new(_("Add friends from MySpace.com"), msim_import_friends);
 	menu = g_list_append(menu, act);
 
 	return menu;

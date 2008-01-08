@@ -73,7 +73,7 @@ typedef struct _GntPosition
 typedef struct _GntAction
 {
 	const char *label;
-	void (*callback)();
+	void (*callback)(void);
 } GntAction;
 
 struct _GntWM

@@ -686,13 +686,11 @@ debug_window_new(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/height");
 
-	PIDGIN_DIALOG(win->window);
+	win->window = pidgin_create_dialog(_("Debug Window"), 0, "debug", TRUE);
 	purple_debug_info("gtkdebug", "Setting dimensions to %d, %d\n",
 					width, height);
 
 	gtk_window_set_default_size(GTK_WINDOW(win->window), width, height);
-	gtk_window_set_role(GTK_WINDOW(win->window), "debug");
-	gtk_window_set_title(GTK_WINDOW(win->window), _("Debug Window"));
 
 	g_signal_connect(G_OBJECT(win->window), "delete_event",
 	                 G_CALLBACK(debug_window_destroy), NULL);
@@ -700,7 +698,7 @@ debug_window_new(void)
 	                 G_CALLBACK(configure_cb), win);
 
 	handle = pidgin_debug_get_handle();
-	
+
 #ifdef HAVE_REGEX_H
 	/* the list store for all the messages */
 	win->store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
@@ -716,8 +714,7 @@ debug_window_new(void)
 #endif /* HAVE_REGEX_H */
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(win->window), vbox);
+	vbox = pidgin_dialog_get_vbox(GTK_DIALOG(win->window));
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/toolbar")) {
 		/* Setup our top button bar thingie. */

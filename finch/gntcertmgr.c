@@ -246,7 +246,7 @@ delete_cert_cb(GntWidget *button, gpointer null)
 
 /* populate the list */
 static void
-populate_cert_list()
+populate_cert_list(void)
 {
 	GList *idlist, *l;
 

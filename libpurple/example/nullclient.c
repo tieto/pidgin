@@ -167,7 +167,7 @@ static PurpleConversationUiOps null_conv_uiops =
 };
 
 static void
-null_ui_init()
+null_ui_init(void)
 {
 	/**
 	 * This should initialize the UI components for all the modules. Here we
@@ -191,7 +191,7 @@ static PurpleCoreUiOps null_core_uiops =
 };
 
 static void
-init_libpurple()
+init_libpurple(void)
 {
 	/* Set a custom user directory (optional) */
 	purple_util_set_user_dir(CUSTOM_USER_DIRECTORY);
@@ -250,14 +250,14 @@ signed_on(PurpleConnection *gc, gpointer null)
 }
 
 static void
-connect_to_signals_for_demonstration_purposes_only()
+connect_to_signals_for_demonstration_purposes_only(void)
 {
 	static int handle;
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", &handle,
 				PURPLE_CALLBACK(signed_on), NULL);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	GList *iter;
 	int i, num;

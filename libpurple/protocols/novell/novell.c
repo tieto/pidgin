@@ -1029,7 +1029,7 @@ _createconf_resp_send_invite(NMUser * user, NMERR_T ret_code,
  ******************************************************************************/
 
 static char *
-_user_agent_string()
+_user_agent_string(void)
 {
 
 #if !defined(_WIN32)
