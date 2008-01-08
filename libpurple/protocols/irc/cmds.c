@@ -368,10 +368,10 @@ int irc_cmd_privmsg(struct irc_conn *irc, const char *cmd, const char *target, c
 			end = cur + strlen(cur);
 		msg = g_strndup(cur, end - cur);
 
-		if(!strcmp(cmd, "msg"))
-			buf = irc_format(irc, "vt:", "PRIVMSG", args[0], msg);
-		else /* seding a notice if we get here */
+		if(!strcmp(cmd, "notice"))
 			buf = irc_format(irc, "vt:", "NOTICE", args[0], msg);
+		else
+			buf = irc_format(irc, "vt:", "PRIVMSG", args[0], msg);
 
 		irc_send(irc, buf);
 		g_free(msg);
