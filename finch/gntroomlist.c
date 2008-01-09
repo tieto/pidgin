@@ -65,8 +65,12 @@ static void
 unset_roomlist(gpointer null)
 {
 	froomlist.window = NULL;
-	if (froomlist.roomlist)
+	if (froomlist.roomlist) {
 		purple_roomlist_unref(froomlist.roomlist);
+		froomlist.roomlist = NULL;
+	}
+	froomlist.account = NULL;
+	froomlist.tree = NULL;
 }
 
 static void
@@ -97,6 +101,7 @@ static void fl_get_list(GntWidget *button, gpointer null)
 	if (!gc)
 		return;
 
+	update_roomlist(NULL);
 	froomlist.roomlist = purple_roomlist_get_list(gc);
 	gnt_box_give_focus_to_child(GNT_BOX(froomlist.window), froomlist.tree);
 }
