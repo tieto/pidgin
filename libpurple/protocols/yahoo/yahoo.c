@@ -970,13 +970,19 @@ static void
 yahoo_buddy_add_authorize_cb(gpointer data) {
 	struct yahoo_add_request *add_req = data;
 
-	struct yahoo_packet *pkt;
-	struct yahoo_data *yd = add_req->gc->proto_data;
+	if (PURPLE_CONNECTION_IS_VALID(add_req->gc)) {
+		struct yahoo_packet *pkt;
+		struct yahoo_data *yd = add_req->gc->proto_data;
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssiii", 1, add_req->id, 5, add_req->who, 241, add_req->protocol,
-	                  13, 1, 334, 0);
-	yahoo_packet_send_and_free(pkt, yd);
+		pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15, YAHOO_STATUS_AVAILABLE, 0);
+		yahoo_packet_hash(pkt, "ssiii",
+						  1, add_req->id,
+						  5, add_req->who,
+						  241, add_req->protocol,
+						  13, 1,
+						  334, 0);
+		yahoo_packet_send_and_free(pkt, yd);
+	}
 
 	g_free(add_req->id);
 	g_free(add_req->who);
@@ -985,28 +991,31 @@ yahoo_buddy_add_authorize_cb(gpointer data) {
 
 static void
 yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg) {
-	struct yahoo_packet *pkt;
-	char *encoded_msg = NULL;
-	struct yahoo_data *yd = add_req->gc->proto_data;
-	PurpleAccount *account = purple_connection_get_account(add_req->gc);
 
-	if (msg && *msg)
-		encoded_msg = yahoo_string_encode(add_req->gc, msg, NULL);
+	if (PURPLE_CONNECTION_IS_VALID(add_req->gc)) {
+		struct yahoo_data *yd = add_req->gc->proto_data;
+		struct yahoo_packet *pkt;
+		char *encoded_msg = NULL;
+		PurpleAccount *account = purple_connection_get_account(add_req->gc);
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15,
-			YAHOO_STATUS_AVAILABLE, 0);
+		if (msg && *msg)
+			encoded_msg = yahoo_string_encode(add_req->gc, msg, NULL);
 
-	yahoo_packet_hash(pkt, "ssiiis",
-			1, purple_normalize(account, purple_account_get_username(account)),
-			5, add_req->who,
-			13, 2,
-			334, 0,
-			97, 1,
-			14, encoded_msg ? encoded_msg : "");
+		pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH_REQ_15,
+				YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_send_and_free(pkt, yd);
+		yahoo_packet_hash(pkt, "ssiiis",
+				1, purple_normalize(account, purple_account_get_username(account)),
+				5, add_req->who,
+				13, 2,
+				334, 0,
+				97, 1,
+				14, encoded_msg ? encoded_msg : "");
 
-	g_free(encoded_msg);
+		yahoo_packet_send_and_free(pkt, yd);
+
+		g_free(encoded_msg);
+	}
 
 	g_free(add_req->id);
 	g_free(add_req->who);
