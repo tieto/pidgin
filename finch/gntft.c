@@ -65,6 +65,7 @@ typedef struct
 	gboolean in_list;
 
 	char *name;
+	gboolean notified;   /* Has the completion of the transfer been notified? */
 
 } PurpleGntXferUiData;
 
@@ -412,7 +413,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	if ((data = FINCHXFER(xfer)) == NULL)
 		return;
 
-	if (data->in_list == FALSE)
+	if (data->in_list == FALSE || data->notified)
 		return;
 
 	current_time = time(NULL);
@@ -441,6 +442,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_REMAINING, _("Finished"));
 		purple_xfer_conversation_write(xfer, msg, FALSE);
 		g_free(msg);
+		data->notified = TRUE;
 	} else {
 		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_STATUS, _("Transferring"));
 	}
