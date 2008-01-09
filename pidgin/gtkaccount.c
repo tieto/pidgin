@@ -241,7 +241,7 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 
 	gtk_widget_grab_focus(dialog->protocol_menu);
 
-	if (!dialog->prpl_info || !dialog->prpl_info->register_user || 
+	if (!dialog->prpl_info || !dialog->prpl_info->register_user ||
 	    g_object_get_data(G_OBJECT(item), "fake")) {
 		gtk_widget_hide(dialog->register_button);
 	} else {
@@ -2478,6 +2478,7 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 						  _("Authorize"), authorize_and_add_cb,
 						  _("Deny"), deny_no_add_cb,
 						  NULL);
+		g_object_set_data(G_OBJECT(alert), "auth_and_add", aa);
 	} else {
 		alert = pidgin_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 						  _("Authorize buddy?"), buffer, user_data,
@@ -2489,13 +2490,20 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 
 	g_free(buffer);
 
-	return NULL;
+	return alert;
 }
 
 static void
 pidgin_accounts_request_close(void *ui_handle)
 {
-
+	/* This is super ugly, but without API changes, this is how it works */
+	struct auth_and_add *aa = g_object_get_data(G_OBJECT(ui_handle), "auth_and_add");
+	if (aa != NULL) {
+		g_free(aa->username);
+		g_free(aa->alias);
+		g_free(aa);
+	}
+	gtk_widget_destroy(GTK_WIDGET(ui_handle));
 }
 
 static PurpleAccountUiOps ui_ops =
