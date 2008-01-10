@@ -1356,10 +1356,21 @@ static void send_notify(struct simple_account_data *sip, struct simple_watcher *
 }
 
 static gboolean process_publish_response(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc) {
+
+	const gchar *etag = NULL;
+
 	if(msg->response != 200 && msg->response != 408) {
 		/* never send again */
 		sip->republish = -1;
 	}
+
+	etag = sipmsg_find_header(msg, "SIP-Etag");
+	if (etag) {
+		/* we must store the etag somewhere. */
+		g_free(sip->publish_etag);
+		sip->publish_etag = g_strdup(etag);
+	}
+
 	return TRUE;
 }
 
@@ -1368,10 +1379,12 @@ static void send_open_publish(struct simple_account_data *sip) {
 	gchar *uri = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
 	gchar *doc = gen_pidf(sip, TRUE);
 
-	add_headers = g_strdup_printf("%s%d%s",
-		"Expires: ",
-		PUBLISH_EXPIRATION,
-		"\r\nEvent: presence\r\n"
+	add_headers = g_strdup_printf("%s%s%s%s%d\r\n%s",
+		sip->publish_etag ? "SIP-If-Match: " : "",
+		sip->publish_etag ? sip->publish_etag : "",
+		sip->publish_etag ? "\r\n" : "",
+		"Expires: ", PUBLISH_EXPIRATION,
+		"Event: presence\r\n"
 		"Content-Type: application/pidf+xml\r\n");
 
 	send_sip_request(sip->gc, "PUBLISH", uri, uri,
@@ -1384,14 +1397,23 @@ static void send_open_publish(struct simple_account_data *sip) {
 
 static void send_closed_publish(struct simple_account_data *sip) {
 	gchar *uri = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
-	gchar *doc = gen_pidf(sip, FALSE);
-	send_sip_request(sip->gc, "PUBLISH", uri, uri,
-		"Expires: 600\r\nEvent: presence\r\n"
-		"Content-Type: application/pidf+xml\r\n",
+	gchar *add_headers, *doc;
+
+	add_headers = g_strdup_printf("%s%s%s%s",
+		sip->publish_etag ? "SIP-If-Match: " : "",
+		sip->publish_etag ? sip->publish_etag : "",
+		sip->publish_etag ? "\r\n" : "",
+		"Expires: 600\r\n"
+		"Event: presence\r\n"
+		"Content-Type: application/pidf+xml\r\n");
+
+	doc = gen_pidf(sip, FALSE);
+	send_sip_request(sip->gc, "PUBLISH", uri, uri, add_headers,
 		doc, NULL, process_publish_response);
 	/*sip->republish = time(NULL) + 500;*/
 	g_free(uri);
 	g_free(doc);
+	g_free(add_headers);
 }
 
 static void process_incoming_subscribe(struct simple_account_data *sip, struct sipmsg *msg) {
@@ -1948,6 +1970,7 @@ static void simple_close(PurpleConnection *gc)
 		g_free(sip->proxy.target);
 		g_free(sip->proxy.realm);
 		g_free(sip->proxy.digest_session_key);
+		g_free(sip->publish_etag);
 		if(sip->txbuf)
 			purple_circ_buffer_destroy(sip->txbuf);
 		g_free(sip->realhostname);
