@@ -77,7 +77,7 @@ enum
 	FONT_UNDERLINE	= 1 << 2
 };
 
-struct
+static struct
 {
 	PurpleMessageFlags flag;
 	char *prefix;
@@ -129,6 +129,11 @@ displaying_msg(PurpleAccount *account, const char *who, char **displaying,
 
 	if (purple_prefs_get_bool(PREF_IGNORE))
 	{
+		/* This seems to be necessary, especially for received messages. */
+		t = *displaying;
+		*displaying = purple_strreplace(t, "\n", "<br>");
+		g_free(t);
+
 		t = *displaying;
 		*displaying = purple_markup_strip_html(t);
 		g_free(t);
