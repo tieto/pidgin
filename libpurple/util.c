@@ -4659,7 +4659,7 @@ char * purple_util_format_song_info(const char *title, const char *artist, const
 	GString *string;
 	char *esc;
 
-	if (!title)
+	if (!title || !*title)
 		return NULL;
 
 	esc = g_markup_escape_text(title, -1);
@@ -4667,13 +4667,13 @@ char * purple_util_format_song_info(const char *title, const char *artist, const
 	g_string_append_printf(string, "%s", esc);
 	g_free(esc);
 
-	if (artist) {
+	if (artist && *artist) {
 		esc = g_markup_escape_text(artist, -1);
 		g_string_append_printf(string, _(" - %s"), esc);
 		g_free(esc);
 	}
 
-	if (album) {
+	if (album && *album) {
 		esc = g_markup_escape_text(album, -1);
 		g_string_append_printf(string, _(" (%s)"), esc);
 		g_free(esc);
