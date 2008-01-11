@@ -5219,7 +5219,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	data->nick = (buddy ? g_strdup(purple_buddy_get_alias_only(buddy)) : NULL);
 
 	purple_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
-						PURPLE_DEFAULT_ACTION_NONE,
+						1, /* Default action is "no" */
 						purple_connection_get_account(gc), sn, NULL,
 						data,
 						G_CALLBACK(purple_icq_buddyadd),
