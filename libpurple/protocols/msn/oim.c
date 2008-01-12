@@ -41,6 +41,7 @@ typedef struct {
 } MsnOimRecvData;
 
 /*Local Function Prototype*/
+static void msn_parse_oim_xml(MsnOim *oim, xmlnode *node);
 static void msn_oim_post_single_get_msg(MsnOim *oim, char *msgid);
 static MsnOimSendReq *msn_oim_new_send_req(const char *from_member,
 										   const char *friendname,
@@ -109,6 +110,50 @@ msn_oim_free_send_req(MsnOimSendReq *req)
 	g_free(req->oim_msg);
 	
 	g_free(req);
+}
+
+/****************************************
+ * OIM GetMetadata request
+ * **************************************/
+static void
+msn_oim_get_metadata_cb(MsnSoapMessage *request, MsnSoapMessage *response,
+	gpointer data)
+{
+	MsnOim *oim = data;
+
+	if (response) {
+		msn_parse_oim_xml(oim,
+			xmlnode_get_child(response->xml, "Body/GetMetadataResponse/MD"));
+	}
+}
+
+/* Post to get the OIM Metadata */
+static void
+msn_oim_get_metadata(MsnOim *oim)
+{
+	char *soap_body;
+	GHashTable *token;
+	const char *msn_t;
+	const char *msn_p;
+
+	token = msn_nexus_get_token(oim->session->nexus, MSN_AUTH_MESSENGER_WEB);
+	g_return_if_fail(token != NULL);
+
+	msn_t = g_hash_table_lookup(token, "t");
+	msn_p = g_hash_table_lookup(token, "p");
+
+	g_return_if_fail(msn_t != NULL);
+	g_return_if_fail(msn_p != NULL);
+
+	soap_body = g_strdup_printf(MSN_OIM_GET_METADATA_TEMPLATE, msn_t, msn_p);
+
+	msn_soap_message_send(oim->session,
+		msn_soap_message_new(MSN_OIM_GET_METADATA_ACTION,
+			xmlnode_from_str(soap_body, -1)),
+		MSN_OIM_RETRIEVE_HOST, MSN_OIM_RETRIEVE_URL,
+		msn_oim_get_metadata_cb, oim);
+
+	g_free(soap_body);
 }
 
 /****************************************
@@ -476,16 +521,33 @@ msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 void
 msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 {
-	xmlnode *node, *mNode;
-	xmlnode *iu_node;
-	MsnSession *session = oim->session;
+	xmlnode *node;
 
 	purple_debug_info("MSNP14:OIM", "%s\n", xmlmsg);
 
-	node = xmlnode_from_str(xmlmsg, -1);
-	if (strcmp(node->name, "MD") != 0) {
-		purple_debug_info("msnoim", "WTF is this? %s\n", xmlmsg);
+	if (!strcmp(xmlmsg, "too-large")) {
+		/* Too many OIM's to send via NS, so we need to request them via SOAP. */
+		msn_oim_get_metadata(oim);
+	} else {
+		node = xmlnode_from_str(xmlmsg, -1);
+		msn_parse_oim_xml(oim, node);
 		xmlnode_free(node);
+	}
+}
+
+static void
+msn_parse_oim_xml(MsnOim *oim, xmlnode *node)
+{
+	xmlnode *mNode;
+	xmlnode *iu_node;
+	MsnSession *session = oim->session;
+
+	g_return_if_fail(node != NULL);
+
+	if (strcmp(node->name, "MD") != 0) {
+		char *xmlmsg = xmlnode_to_str(node, NULL);
+		purple_debug_info("msnoim", "WTF is this? %s\n", xmlmsg);
+		g_free(xmlmsg);
 		return;
 	}
 
@@ -536,8 +598,6 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		g_free(rtime);
 		g_free(nickname);
 	}
-
-	xmlnode_free(node);
 }
 
 /*Post to get the Offline Instant Message*/
