@@ -937,7 +937,6 @@ void
 pidgin_blist_joinchat_show(void)
 {
 	GtkWidget *hbox, *vbox;
-	GtkWidget *rowbox;
 	GtkWidget *label;
 	PidginBuddyList *gtkblist;
 	GtkWidget *img = NULL;
@@ -981,7 +980,6 @@ pidgin_blist_joinchat_show(void)
 	data->account_menu = pidgin_account_option_menu_new(NULL, FALSE,
 			G_CALLBACK(joinchat_select_account_cb),
 			chat_account_filter_func, data);
-	gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
 
 	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Account:"), data->sg, data->account_menu, TRUE, NULL);
 

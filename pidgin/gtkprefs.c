@@ -1457,15 +1457,15 @@ browser_page(void)
 	}
 
 	entry = gtk_entry_new();
-	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
-		gtk_widget_set_sensitive(hbox, FALSE);
-	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
-								browser_changed2_cb, hbox);
 	gtk_entry_set_text(GTK_ENTRY(entry),
 					   purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command"));
 	g_signal_connect(G_OBJECT(entry), "focus-out-event",
 					 G_CALLBACK(manual_browser_set), NULL);
-	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Manual:\n(%s for URL)"), sg, entry, TRUE, NULL);
+	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Manual:\n(%s for URL)"), sg, entry, TRUE, NULL);
+	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
+		gtk_widget_set_sensitive(hbox, FALSE);
+	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
+			browser_changed2_cb, hbox);
 
 	gtk_widget_show_all(ret);
 	g_object_unref(sg);
