@@ -474,6 +474,8 @@ pidgin_privacy_dialog_hide(void)
 	if (privacy_dialog == NULL)
 		return;
 
+	g_object_unref(G_OBJECT(privacy_dialog->allow_store));
+	g_object_unref(G_OBJECT(privacy_dialog->block_store));
 	g_free(privacy_dialog);
 	privacy_dialog = NULL;
 }

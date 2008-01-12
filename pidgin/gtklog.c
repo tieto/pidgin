@@ -614,6 +614,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	gtk_paned_add1(GTK_PANED(pane), sw);
 	lv->treestore = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
 	lv->treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL (lv->treestore));
+	g_object_unref(G_OBJECT(lv->treestore));
 	rend = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes ("time", rend, "markup", 0, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(lv->treeview), col);

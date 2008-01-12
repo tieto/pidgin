@@ -422,6 +422,7 @@ tls_peers_mgmt_build(void)
 	
 	tpm_dat->listview = listview =
 		GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(store)));
+	g_object_unref(G_OBJECT(store));
 	
 	{
 		GtkCellRenderer *renderer;

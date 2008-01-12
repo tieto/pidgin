@@ -6069,6 +6069,7 @@ static void pidgin_blist_destroy(PurpleBuddyList *list)
 	gtkblist->timeout = 0;
 	gtkblist->drag_timeout = 0;
 	gtkblist->window = gtkblist->vbox = gtkblist->treeview = NULL;
+	g_object_unref(G_OBJECT(gtkblist->treemodel));
 	gtkblist->treemodel = NULL;
 	g_object_unref(G_OBJECT(gtkblist->ift));
 	g_object_unref(G_OBJECT(gtkblist->empty_avatar));

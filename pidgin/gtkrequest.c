@@ -1007,6 +1007,7 @@ create_list_field(PurpleRequestField *field)
 
 	/* Create the tree view */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
+	g_object_unref(G_OBJECT(store));
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(treeview), FALSE);
 
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
