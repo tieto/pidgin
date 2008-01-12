@@ -287,10 +287,10 @@ setup_roomlist(PurpleAccount *account)
 
 	froomlist.accounts = accounts = gnt_combo_box_new();
 	reset_account_list(account);
-	gnt_box_add_widget(GNT_BOX(window), froomlist.accounts);
-	g_signal_connect(G_OBJECT(froomlist.accounts), "selection-changed",
+	gnt_box_add_widget(GNT_BOX(window), accounts);
+	g_signal_connect(G_OBJECT(accounts), "selection-changed",
 			G_CALLBACK(roomlist_account_changed), NULL);
-	froomlist.account = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(froomlist.accounts));
+	froomlist.account = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(accounts));
 
 	froomlist.tree = tree = gnt_tree_new_with_columns(2);
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
