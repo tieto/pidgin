@@ -211,7 +211,7 @@ msn_get_user_type(char *type)
 static void
 msn_create_address_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 {
-	if (resp && msn_soap_xml_get(resp->xml, "Body/Fault") == NULL) {
+	if (resp && xmlnode_get_child(resp->xml, "Body/Fault") == NULL) {
 		purple_debug_info("msnab", "Address Book successfully created!\n");
 		msn_get_address_book((MsnContact *)data, MSN_PS_INITIAL, NULL, NULL);
 	} else {
@@ -272,7 +272,7 @@ msn_parse_each_service(MsnSession *session, xmlnode *service)
 {
 	xmlnode *type;
 
-	if ((type = msn_soap_xml_get(service, "Info/Handle/Type"))) {
+	if ((type = xmlnode_get_child(service, "Info/Handle/Type"))) {
 		char *type_str = xmlnode_get_data(type);
 
 		if (g_str_equal(type_str, "Profile")) {
@@ -286,7 +286,7 @@ msn_parse_each_service(MsnSession *session, xmlnode *service)
 			purple_account_set_string(session->account,	"CLLastChange",
 				lastchange_str);
 
-			for (membership = msn_soap_xml_get(service,
+			for (membership = xmlnode_get_child(service,
 					"Memberships/Membership");
 				 membership; membership = xmlnode_get_next_twin(membership)) {
 
@@ -298,7 +298,7 @@ msn_parse_each_service(MsnSession *session, xmlnode *service)
 				purple_debug_info("msncl", "MemberRole role: %s, list: %d\n",
 					role_str, list);
 
-				for (member = msn_soap_xml_get(membership, "Members/Member");
+				for (member = xmlnode_get_child(membership, "Members/Member");
 					 member; member = xmlnode_get_next_twin(member)) {
 					const char *member_type = xmlnode_get_attrib(member, "type");
 					if (g_str_equal(member_type, "PassportMember")) {
@@ -334,14 +334,14 @@ msn_parse_contact_list(MsnContact *contact, xmlnode *node)
 	 *
 	 * this is not handled yet
 	 */
-	if ((fault = msn_soap_xml_get(node, "Body/Fault"))) {
+	if ((fault = xmlnode_get_child(node, "Body/Fault"))) {
 		if ((faultnode = xmlnode_get_child(fault, "faultstring"))) {
 			char *faultstring = xmlnode_get_data(faultnode);
 			purple_debug_info("msncl", "Retrieving contact list failed: %s\n",
 				faultstring);
 			g_free(faultstring);
 		}
-		if ((faultnode = msn_soap_xml_get(fault, "detail/errorcode"))) {
+		if ((faultnode = xmlnode_get_child(fault, "detail/errorcode"))) {
 			char *errorcode = xmlnode_get_data(faultnode);
 
 			if (g_str_equal(errorcode, "ABDoesNotExist")) {
@@ -357,7 +357,7 @@ msn_parse_contact_list(MsnContact *contact, xmlnode *node)
 	} else {
 		xmlnode *service;
 
-		for (service = msn_soap_xml_get(node, "Body/FindMembershipResponse/"
+		for (service = xmlnode_get_child(node, "Body/FindMembershipResponse/"
 				"FindMembershipResult/Services/Service");
 			 service; service = xmlnode_get_next_twin(service)) {
 			msn_parse_each_service(contact->session, service);
@@ -602,7 +602,7 @@ msn_parse_addressbook(MsnContact * contact, xmlnode *node)
 
 	session = contact->session;
 
-	if ((fault = msn_soap_xml_get(node, "Body/Fault"))) {
+	if ((fault = xmlnode_get_child(node, "Body/Fault"))) {
 		xmlnode *faultnode;
 
 		if ((faultnode = xmlnode_get_child(fault, "faultstring"))) {
@@ -611,7 +611,7 @@ msn_parse_addressbook(MsnContact * contact, xmlnode *node)
 			g_free(faultstring);
 		}
 
-		if ((faultnode = msn_soap_xml_get(fault, "detail/errorcode"))) {
+		if ((faultnode = xmlnode_get_child(fault, "detail/errorcode"))) {
 			gchar *errorcode = xmlnode_get_data(faultnode);
 
 			purple_debug_info("MSNAB", "Error Code: %s\n", errorcode);
@@ -625,7 +625,7 @@ msn_parse_addressbook(MsnContact * contact, xmlnode *node)
 		return FALSE;
 	}
 
-	result = msn_soap_xml_get(node, "Body/ABFindAllResponse/ABFindAllResult");
+	result = xmlnode_get_child(node, "Body/ABFindAllResponse/ABFindAllResult");
 	if(result == NULL){
 		purple_debug_misc("MSNAB","receive no address book update\n");
 		return TRUE;
@@ -1304,7 +1304,7 @@ msn_group_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 			/* the response is taken from
 			   http://telepathy.freedesktop.org/wiki/Pymsn/MSNP/ContactListActions
 			   should copy it to msnpiki some day */
-			xmlnode *guid_node = msn_soap_xml_get(resp->xml,
+			xmlnode *guid_node = xmlnode_get_child(resp->xml,
 				"Body/ABGroupAddResponse/ABGroupAddResult/guid");
 
 			if (guid_node) {

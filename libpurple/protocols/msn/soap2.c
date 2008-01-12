@@ -654,21 +654,3 @@ msn_soap_request_destroy(MsnSoapRequest *req)
 	g_free(req);
 }
 
-xmlnode *
-msn_soap_xml_get(xmlnode *parent, const char *node)
-{
-	xmlnode *ret = NULL;
-	char **tokens = g_strsplit(node, "/", -1);
-	int i;
-
-	for (i = 0; tokens[i]; i++) {
-		if ((ret = xmlnode_get_child(parent, tokens[i])) != NULL)
-			parent = ret;
-		else
-			break;
-	}
-
-	g_strfreev(tokens);
-	return ret;
-}
-

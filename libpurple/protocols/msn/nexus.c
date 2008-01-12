@@ -233,7 +233,7 @@ nexus_parse_response(MsnNexus *nexus, xmlnode *xml)
 	xmlnode *node;
 	gboolean result = FALSE;
 
-	node = msn_soap_xml_get(xml, "Body/RequestSecurityTokenResponseCollection/RequestSecurityTokenResponse");
+	node = xmlnode_get_child(xml, "Body/RequestSecurityTokenResponseCollection/RequestSecurityTokenResponse");
 
 	if (node)
 		node = node->next;	/* The first one is not useful */
@@ -241,9 +241,9 @@ nexus_parse_response(MsnNexus *nexus, xmlnode *xml)
 		return FALSE;
 
 	for (; node; node = node->next) {
-		xmlnode *token = msn_soap_xml_get(node, "RequestedSecurityToken/BinarySecurityToken");
-		xmlnode *secret = msn_soap_xml_get(node, "RequestedProofToken/BinarySecret");
-		xmlnode *expires = msn_soap_xml_get(node, "LifeTime/Expires");
+		xmlnode *token = xmlnode_get_child(node, "RequestedSecurityToken/BinarySecurityToken");
+		xmlnode *secret = xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
+		xmlnode *expires = xmlnode_get_child(node, "LifeTime/Expires");
 
 		if (token) {
 			char *token_str, *expiry_str;
@@ -446,3 +446,4 @@ msn_nexus_get_token_str(MsnNexus *nexus, MsnAuthDomains id)
 
 	return buf;
 }
+

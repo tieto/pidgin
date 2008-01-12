@@ -146,7 +146,7 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	if (response == NULL) {
 		purple_debug_info("MSNP14", "cannot send OIM: %s\n", msg->oim_msg);
 	} else {
-		xmlnode	*faultNode = msn_soap_xml_get(response->xml, "Body/Fault");
+		xmlnode	*faultNode = xmlnode_get_child(response->xml, "Body/Fault");
 
 		if (faultNode == NULL) {
 			/*Send OK! return*/
@@ -158,7 +158,7 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 				char *faultcode_str = xmlnode_get_data(faultcode);
 
 				if (g_str_equal(faultcode_str, "q0:AuthenticationFailed")) {
-					xmlnode *challengeNode = msn_soap_xml_get(faultNode,
+					xmlnode *challengeNode = xmlnode_get_child(faultNode,
 						"detail/LockKeyChallenge");
 
 					g_free(faultcode_str);
@@ -269,7 +269,7 @@ msn_oim_delete_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 {
 	MsnOimRecvData *rdata = data;
 
-	if (response && msn_soap_xml_get(response->xml, "Body/Fault") == NULL) {
+	if (response && xmlnode_get_child(response->xml, "Body/Fault") == NULL) {
 		purple_debug_info("msnoim", "delete OIM success\n");
 		rdata->oim->oim_list = g_list_remove(rdata->oim->oim_list,
 			rdata->msg_id);
@@ -453,7 +453,7 @@ msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	MsnOimRecvData *rdata = data;
 
 	if (response != NULL) {
-		xmlnode *msg_node = msn_soap_xml_get(response->xml,
+		xmlnode *msg_node = xmlnode_get_child(response->xml,
 			"Body/GetMessageResponse/GetMessageResult");
 
 		if (msg_node) {
@@ -489,7 +489,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		return;
 	}
 
-	iu_node = msn_soap_xml_get(node, "E/IU");
+	iu_node = xmlnode_get_child(node, "E/IU");
 
 	if (iu_node != NULL && purple_account_get_check_mail(session->account))
 	{
