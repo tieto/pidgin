@@ -288,11 +288,22 @@ msn_oim_post_delete_msg(MsnOimRecvData *rdata)
 	MsnOim *oim = rdata->oim;
 	char *msgid = rdata->msg_id;
 	char *soap_body;
+	GHashTable *token;
+	const char *msn_t;
+	const char *msn_p;
 
 	purple_debug_info("MSNP14","Delete single OIM Message {%s}\n",msgid);
 
-	soap_body = g_strdup_printf(MSN_OIM_DEL_TEMPLATE,
-		oim->session->passport_info.t, oim->session->passport_info.p, msgid);
+	token = msn_nexus_get_token(oim->session->nexus, MSN_AUTH_MESSENGER_WEB);
+	g_return_if_fail(token != NULL);
+
+	msn_t = g_hash_table_lookup(token, "t");
+	msn_p = g_hash_table_lookup(token, "p");
+
+	g_return_if_fail(msn_t != NULL);
+	g_return_if_fail(msn_p != NULL);
+
+	soap_body = g_strdup_printf(MSN_OIM_DEL_TEMPLATE, msn_t, msn_p, msgid);
 
 	msn_soap_message_send(oim->session,
 		msn_soap_message_new(MSN_OIM_DEL_SOAP_ACTION,
@@ -535,14 +546,24 @@ msn_oim_post_single_get_msg(MsnOim *oim, char *msgid)
 {
 	char *soap_body;
 	MsnOimRecvData *data = g_new0(MsnOimRecvData, 1);
+	GHashTable *token;
+	const char *msn_t;
+	const char *msn_p;
 
 	purple_debug_info("MSNP14","Get single OIM Message\n");
+
+	token = msn_nexus_get_token(oim->session->nexus, MSN_AUTH_MESSENGER_WEB);
+	g_return_if_fail(token != NULL);
+
+	msn_t = g_hash_table_lookup(token, "t");
+	msn_p = g_hash_table_lookup(token, "p");
+	g_return_if_fail(msn_t != NULL);
+	g_return_if_fail(msn_p != NULL);
 
 	data->oim = oim;
 	data->msg_id = msgid;
 
-	soap_body = g_strdup_printf(MSN_OIM_GET_TEMPLATE,
-		oim->session->passport_info.t, oim->session->passport_info.p, msgid);
+	soap_body = g_strdup_printf(MSN_OIM_GET_TEMPLATE, msn_t, msn_p, msgid);
 
 	msn_soap_message_send(oim->session,
 		msn_soap_message_new(MSN_OIM_GET_SOAP_ACTION,

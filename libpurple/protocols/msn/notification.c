@@ -326,7 +326,7 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	msn_cmdproc_send(cmdproc, "CVR",
 //					 "0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %s",
 //					"0x0804 winnt 5.1 i386 MSNMSGR 8.0.0792 msmsgs %s",
-					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1288.816 msmsgs %s",
+					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1288 msmsgs %s",
 					 purple_account_get_username(account));
 }
 
