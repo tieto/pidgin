@@ -435,7 +435,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 	msn_switchboard_request_add_user(swboard, buddy->name);
 
 	/* TODO: This might move somewhere else, after USR might be */
-	swboard->chat_id = session->conv_seq++;
+	swboard->chat_id = msn_switchboard_get_chat_id();
 	swboard->conv = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
 	swboard->flag = MSN_SB_FLAG_IM;
 

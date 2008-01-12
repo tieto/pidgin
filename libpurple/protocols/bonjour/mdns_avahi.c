@@ -445,14 +445,14 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 				idata->group, AVAHI_IF_UNSPEC,
 				AVAHI_PROTO_INET, 0,
 				purple_account_get_username(data->account),
-				ICHAT_SERVICE, NULL, NULL, data->port_p2pj, lst);
+				LINK_LOCAL_RECORD_NAME, NULL, NULL, data->port_p2pj, lst);
 			break;
 		case PUBLISH_UPDATE:
 			publish_result = avahi_entry_group_update_service_txt_strlst(
 				idata->group, AVAHI_IF_UNSPEC,
 				AVAHI_PROTO_INET, 0,
 				purple_account_get_username(data->account),
-				ICHAT_SERVICE, NULL, lst);
+				LINK_LOCAL_RECORD_NAME, NULL, lst);
 			break;
 	}
 
@@ -461,7 +461,7 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 
 	if (publish_result < 0) {
 		purple_debug_error("bonjour",
-			"Failed to add the " ICHAT_SERVICE " service. Error: %s\n",
+			"Failed to add the " LINK_LOCAL_RECORD_NAME " service. Error: %s\n",
 			avahi_strerror(publish_result));
 		return FALSE;
 	}
@@ -469,7 +469,7 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 	if (type == PUBLISH_START
 			&& (publish_result = avahi_entry_group_commit(idata->group)) < 0) {
 		purple_debug_error("bonjour",
-			"Failed to commit " ICHAT_SERVICE " service. Error: %s\n",
+			"Failed to commit " LINK_LOCAL_RECORD_NAME " service. Error: %s\n",
 			avahi_strerror(publish_result));
 		return FALSE;
 	}
@@ -482,7 +482,7 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 
 	g_return_val_if_fail(idata != NULL, FALSE);
 
-	idata->sb = avahi_service_browser_new(idata->client, AVAHI_IF_UNSPEC, AVAHI_PROTO_INET, ICHAT_SERVICE, NULL, 0, _browser_callback, data->account);
+	idata->sb = avahi_service_browser_new(idata->client, AVAHI_IF_UNSPEC, AVAHI_PROTO_INET, LINK_LOCAL_RECORD_NAME, NULL, 0, _browser_callback, data->account);
 	if (!idata->sb) {
 
 		purple_debug_error("bonjour",
@@ -524,7 +524,7 @@ gboolean _mdns_set_buddy_icon_data(BonjourDnsSd *data, gconstpointer avatar_data
 			return FALSE;
 		}
 
-		svc_name = g_strdup_printf("%s." ICHAT_SERVICE "local",
+		svc_name = g_strdup_printf("%s." LINK_LOCAL_RECORD_NAME "local",
 				purple_account_get_username(data->account));
 
 		ret = avahi_entry_group_add_record(idata->buddy_icon_group, AVAHI_IF_UNSPEC,
@@ -615,7 +615,7 @@ void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
 
 	purple_debug_info("bonjour", "Retrieving buddy icon for '%s'.\n", buddy->name);
 
-	name = g_strdup_printf("%s." ICHAT_SERVICE "local", buddy->name);
+	name = g_strdup_printf("%s." LINK_LOCAL_RECORD_NAME "local", buddy->name);
 	idata->buddy_icon_rec_browser = avahi_record_browser_new(session_idata->client, AVAHI_IF_UNSPEC,
 		AVAHI_PROTO_INET, name, AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_NULL, 0,
 		_buddy_icon_record_cb, buddy);

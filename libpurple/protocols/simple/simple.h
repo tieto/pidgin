@@ -112,6 +112,7 @@ struct simple_account_data {
 	int registerexpire;
 	gchar *realhostname;
 	int realport; /* port and hostname from SRV record */
+	gchar *publish_etag;
 };
 
 struct sip_connection {

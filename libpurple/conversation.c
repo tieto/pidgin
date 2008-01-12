@@ -295,10 +295,14 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 	/* Check if this conversation already exists. */
 	if ((conv = purple_find_conversation_with_account(type, name, account)) != NULL)
 	{
-		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
+		if (purple_conversation_get_type(conv) != PURPLE_CONV_TYPE_CHAT ||
 				purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
-			purple_conversation_chat_cleanup_for_rejoin(conv);
-		return conv;
+		{
+			if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
+				purple_conversation_chat_cleanup_for_rejoin(conv);
+
+			return conv;
+		}
 	}
 
 	gc = purple_account_get_connection(account);

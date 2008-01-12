@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-05 13:31+0100\n"
-"PO-Revision-Date: 2008-01-05 13:31+0100\n"
+"POT-Creation-Date: 2008-01-08 11:16+0100\n"
+"PO-Revision-Date: 2008-01-08 11:15+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1021,6 +1021,16 @@ msgstr "Datei öffnen..."
 
 msgid "Choose Location..."
 msgstr "Wählen Sie einen Ort..."
+
+msgid "Hit 'Enter' to find more rooms of this category."
+msgstr "Drücken Sie 'Enter', um mehr Räume dieser Kategorie zu finden."
+
+msgid "Get"
+msgstr "Holen"
+
+#. Create the window.
+msgid "Room List"
+msgstr "Raumliste"
 
 msgid "Buddy logs in"
 msgstr "Buddy meldet sich an"
@@ -3976,7 +3986,7 @@ msgid "Mood"
 msgstr "Stimmung"
 
 msgid "Now Listening"
-msgstr ""
+msgstr "Hört gerade"
 
 msgid "Mood Text"
 msgstr "Stimmungstext"
@@ -10480,16 +10490,13 @@ msgstr "/Optionen/Zeige Zeitstempel"
 msgid "User is typing..."
 msgstr "Benutzer tippt gerade..."
 
-msgid "User has typed something and stopped"
-msgstr "Benutzer hat etwas getippt und wartet nun"
-
 #, c-format
 msgid ""
 "\n"
-"%s has typed something and stopped"
+"%s has stopped typing"
 msgstr ""
 "\n"
-"%s hat etwas getippt und wartet nun"
+"%s hat aufgehört zu tippen"
 
 #. Build the Send To menu
 msgid "S_end To"
@@ -12110,10 +12117,6 @@ msgstr "Einen neuen Namen wählen"
 msgid "Select Folder..."
 msgstr "Ordner auswählen..."
 
-#. Create the window.
-msgid "Room List"
-msgstr "Raumliste"
-
 #. list button
 msgid "_Get List"
 msgstr "_Liste abrufen"
@@ -12303,9 +12306,6 @@ msgstr "Wenn Sie dies auswählen, werden grafische Emoticons deaktiviert."
 
 msgid "none"
 msgstr "keine"
-
-msgid "Display Statistics"
-msgstr "Statistik anzeigen"
 
 msgid "Response Probability:"
 msgstr "Antwortwahrscheinlichkeit:"

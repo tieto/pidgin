@@ -7,6 +7,7 @@
  * Some code copyright (C) 2001-2007, Mark Doliner <thekingant@users.sourceforge.net>
  * Some code copyright (C) 2005, Jonathan Clark <ardentlygnarly@users.sourceforge.net>
  * Some code copyright (C) 2007, ComBOTS Product GmbH (htfv) <foss@combots.com>
+ * Some code copyright (C) 2008, Aman Gupta
  *
  * Most libfaim code copyright (C) 1998-2001 Adam Fritzler <afritz@auk.cx>
  * Some libfaim code copyright (C) 2001-2004 Mark Doliner <thekingant@users.sourceforge.net>
@@ -5218,7 +5219,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	data->nick = (buddy ? g_strdup(purple_buddy_get_alias_only(buddy)) : NULL);
 
 	purple_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
-						PURPLE_DEFAULT_ACTION_NONE,
+						1, /* Default action is "no" */
 						purple_connection_get_account(gc), sn, NULL,
 						data,
 						G_CALLBACK(purple_icq_buddyadd),

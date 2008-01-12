@@ -1219,7 +1219,11 @@ purple_account_request_close_info(PurpleAccountRequestInfo *info)
 	if (ops != NULL && ops->close_account_request != NULL)
 		ops->close_account_request(info->ui_handle);
 
+	/* TODO: This will leak info->user_data, but there is no callback to just clean that up */
+
+	g_free(info->user);
 	g_free(info);
+
 }
 
 void
@@ -1264,9 +1268,14 @@ static void
 request_auth_cb(void *data)
 {
 	PurpleAccountRequestInfo *info = data;
+
+	handles = g_list_remove(handles, info);
+
 	info->auth_cb(info->userdata);
+
 	purple_signal_emit(purple_accounts_get_handle(),
 			"account-authorization-granted", info->account, info->user);
+
 	g_free(info->user);
 	g_free(info);
 }
@@ -1275,9 +1284,14 @@ static void
 request_deny_cb(void *data)
 {
 	PurpleAccountRequestInfo *info = data;
+
+	handles = g_list_remove(handles, info);
+
 	info->deny_cb(info->userdata);
+
 	purple_signal_emit(purple_accounts_get_handle(),
 			"account-authorization-denied", info->account, info->user);
+
 	g_free(info->user);
 	g_free(info);
 }

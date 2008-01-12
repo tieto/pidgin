@@ -65,6 +65,7 @@ typedef struct
 	gboolean in_list;
 
 	char *name;
+	gboolean notified;   /* Has the completion of the transfer been notified? */
 
 } PurpleGntXferUiData;
 
@@ -142,15 +143,23 @@ toggle_clear_finished_cb(GntWidget *w)
 	xfer_dialog->auto_clear = !xfer_dialog->auto_clear;
 	purple_prefs_set_bool("/finch/filetransfer/clear_finished",
 						xfer_dialog->auto_clear);
+	if (xfer_dialog->auto_clear) {
+		GList *iter = purple_xfers_get_all();
+		while (iter) {
+			PurpleXfer *xfer = iter->data;
+			iter = iter->next;
+			if (purple_xfer_is_completed(xfer) || purple_xfer_is_canceled(xfer))
+			finch_xfer_dialog_remove_xfer(xfer);
+		}
+	}
 }
 
 static void
 remove_button_cb(GntButton *button)
 {
 	PurpleXfer *selected_xfer = gnt_tree_get_selection_data(GNT_TREE(xfer_dialog->tree));
-	if (selected_xfer && (selected_xfer->status == PURPLE_XFER_STATUS_CANCEL_LOCAL ||
-			selected_xfer->status == PURPLE_XFER_STATUS_CANCEL_REMOTE ||
-			selected_xfer->status == PURPLE_XFER_STATUS_DONE)) {
+	if (selected_xfer && (purple_xfer_is_completed(selected_xfer) ||
+				purple_xfer_is_canceled(selected_xfer))) {
 		finch_xfer_dialog_remove_xfer(selected_xfer);
 	}
 }
@@ -404,7 +413,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	if ((data = FINCHXFER(xfer)) == NULL)
 		return;
 
-	if (data->in_list == FALSE)
+	if (data->in_list == FALSE || data->notified)
 		return;
 
 	current_time = time(NULL);
@@ -433,6 +442,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_REMAINING, _("Finished"));
 		purple_xfer_conversation_write(xfer, msg, FALSE);
 		g_free(msg);
+		data->notified = TRUE;
 	} else {
 		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_STATUS, _("Transferring"));
 	}

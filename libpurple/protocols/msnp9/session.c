@@ -44,7 +44,6 @@ msn_session_new(PurpleAccount *account)
 								 purple_account_get_username(account), NULL);
 
 	session->protocol_ver = 9;
-	session->conv_seq = 1;
 
 	return session;
 }

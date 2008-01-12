@@ -48,7 +48,6 @@ msn_session_new(PurpleAccount *account)
 	/*if you want to chat with Yahoo Messenger*/
 	//session->protocol_ver = WLM_YAHOO_PROT_VER;
 	session->protocol_ver = WLM_PROT_VER;
-	session->conv_seq = 1;
 
 	return session;
 }

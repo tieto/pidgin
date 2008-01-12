@@ -476,7 +476,7 @@ gboolean _mdns_publish(BonjourDnsSd *data, PublishType type, GSList *records) {
 		switch (type) {
 			case PUBLISH_START:
 				purple_debug_info("bonjour", "Registering presence on port %d\n", data->port_p2pj);
-				errorCode = DNSServiceRegister(&presence_sr, 0, 0, purple_account_get_username(data->account), ICHAT_SERVICE,
+				errorCode = DNSServiceRegister(&presence_sr, 0, 0, purple_account_get_username(data->account), LINK_LOCAL_RECORD_NAME,
 					NULL, NULL, htons(data->port_p2pj), TXTRecordGetLength(&dns_data), TXTRecordGetBytesPtr(&dns_data),
 					_mdns_service_register_callback, NULL);
 				break;
@@ -515,7 +515,7 @@ gboolean _mdns_browse(BonjourDnsSd *data) {
 
 	g_return_val_if_fail(idata != NULL, FALSE);
 
-	errorCode = DNSServiceBrowse(&browser_sr, 0, 0, ICHAT_SERVICE, NULL,
+	errorCode = DNSServiceBrowse(&browser_sr, 0, 0, LINK_LOCAL_RECORD_NAME, NULL,
 		_mdns_service_browse_callback, data->account);
 	if (errorCode == kDNSServiceErr_NoError) {
 		idata->browser_query = g_new(DnsSDServiceRefHandlerData, 1);
@@ -622,7 +622,7 @@ void _mdns_retrieve_buddy_icon(BonjourBuddy* buddy) {
 		idata->null_query = NULL;
 	}
 
-	if (DNSServiceConstructFullName(svc_name, buddy->name, ICHAT_SERVICE, "local") != 0)
+	if (DNSServiceConstructFullName(svc_name, buddy->name, LINK_LOCAL_RECORD_NAME, "local") != 0)
 		purple_debug_error("bonjour", "Unable to construct full name to retrieve buddy icon for %s.\n", buddy->name);
 	else {
 		DNSServiceRef null_query_sr;
