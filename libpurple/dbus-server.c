@@ -729,7 +729,7 @@ purple_dbus_message_append_purple_values(DBusMessageIter *iter,
 			if (id == 0 && val != NULL)
 				error = TRUE;      /* Some error happened. */
 			dbus_message_iter_append_basic(iter,
-					(sizeof(void *) == 4) ? DBUS_TYPE_UINT32 : DBUS_TYPE_UINT64, &id);
+					(sizeof(id) == sizeof(dbus_int32_t)) ? DBUS_TYPE_INT32 : DBUS_TYPE_INT64, &id);
 			break;
 		default: /* no conversion implemented */
 			g_return_val_if_reached(TRUE);

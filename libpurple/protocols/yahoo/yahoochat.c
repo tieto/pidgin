@@ -1461,28 +1461,30 @@ static void yahoo_roomlist_got_connected(gpointer data, gint source, const gchar
 
 PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 {
-	struct yahoo_roomlist *yrl;
+	PurpleAccount *account;
 	PurpleRoomlist *rl;
-	const char *rll;
-	char *url;
-	GList *fields = NULL;
 	PurpleRoomlistField *f;
+	GList *fields = NULL;
+	struct yahoo_roomlist *yrl;
+	const char *rll, *rlurl;
+	char *url;
 
-	rll = purple_account_get_string(purple_connection_get_account(gc),
-								  "room_list_locale", YAHOO_ROOMLIST_LOCALE);
+	account = purple_connection_get_account(gc);
 
-	if (rll != NULL && *rll != '\0') {
-		url = g_strdup_printf("%s?chatcat=0&intl=%s",
-	        purple_account_get_string(purple_connection_get_account(gc),
-	        "room_list", YAHOO_ROOMLIST_URL), rll);
-	} else {
-		url = g_strdup_printf("%s?chatcat=0",
-	        purple_account_get_string(purple_connection_get_account(gc),
-	        "room_list", YAHOO_ROOMLIST_URL));
+	/* for Yahoo Japan, it appears there is only one valid URL and locale */
+	if(purple_account_get_bool(account, "yahoojp", FALSE)) {
+		rll = YAHOOJP_ROOMLIST_LOCALE;
+		rlurl = YAHOOJP_ROOMLIST_URL;
+	}
+	else { /* but for the rest of the world that isn't the case */
+		rll = purple_account_get_string(account, "room_list_locale", YAHOO_ROOMLIST_LOCALE);
+		rlurl = purple_account_get_string(account, "room_list", YAHOO_ROOMLIST_URL);
 	}
 
+	url = g_strdup_printf("%s?chatcat=0&intl=%s", rlurl, rll);
+
 	yrl = g_new0(struct yahoo_roomlist, 1);
-	rl = purple_roomlist_new(purple_connection_get_account(gc));
+	rl = purple_roomlist_new(account);
 	yrl->list = rl;
 
 	purple_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
@@ -1508,7 +1510,7 @@ PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 
 	purple_roomlist_set_fields(rl, fields);
 
-	if (purple_proxy_connect(NULL, purple_connection_get_account(gc), yrl->host, 80,
+	if (purple_proxy_connect(NULL, account, yrl->host, 80,
 	                       yahoo_roomlist_got_connected, yrl) == NULL)
 	{
 		purple_notify_error(gc, NULL, _("Connection problem"), _("Unable to fetch room list."));
