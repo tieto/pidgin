@@ -268,6 +268,7 @@ int main(int argc, char *argv[])
 	GMainLoop *loop = g_main_loop_new(NULL, FALSE);
 	PurpleAccount *account;
 	PurpleSavedStatus *status;
+	char *res;
 
 	/* libpurple's built-in DNS resolution forks processes to perform
 	 * blocking lookups without blocking the main process.  It does not
@@ -290,12 +291,20 @@ int main(int argc, char *argv[])
 		}
 	}
 	printf("Select the protocol [0-%d]: ", i-1);
-	fgets(name, sizeof(name), stdin);
+	res = fgets(name, sizeof(name), stdin);
+	if (!res) {
+		fprintf(stderr, "Failed to gets protocol selection.");
+		abort();
+	}
 	sscanf(name, "%d", &num);
 	prpl = g_list_nth_data(names, num);
 
 	printf("Username: ");
-	fgets(name, sizeof(name), stdin);
+	res = fgets(name, sizeof(name), stdin);
+	if (!res) {
+		fprintf(stderr, "Failed to read user name.");
+		abort();
+	}
 	name[strlen(name) - 1] = 0;  /* strip the \n at the end */
 
 	/* Create the account */
