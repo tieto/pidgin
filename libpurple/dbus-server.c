@@ -689,6 +689,7 @@ purple_dbus_message_append_purple_values(DBusMessageIter *iter,
 		switch (purple_values[i]->type)
 		{
 		case PURPLE_TYPE_INT:
+		case PURPLE_TYPE_ENUM:
 			xint = my_arg(gint);
 			dbus_message_iter_append_basic(iter, DBUS_TYPE_INT32, &xint);
 			break;
