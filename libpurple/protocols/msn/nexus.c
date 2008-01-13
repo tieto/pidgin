@@ -59,7 +59,7 @@ msn_nexus_new(MsnSession *session)
 	nexus->session = session;
 
 	nexus->token_len = sizeof(ticket_domains) / sizeof(char *[2]);
-	nexus->tokens = g_malloc(sizeof(MsnTicketToken) * nexus->token_len);
+	nexus->tokens = g_new0(MsnTicketToken, nexus->token_len);
 
 	for (i = 0; i < nexus->token_len; i++)
 		nexus->tokens[i].token = g_hash_table_new_full(g_str_hash, g_str_equal,
