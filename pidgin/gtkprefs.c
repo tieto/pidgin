@@ -1726,9 +1726,6 @@ sound_page(void)
 	int j;
 	const char *file;
 	char *pref;
-#if !defined _WIN32 || defined USE_GSTREAMER
-	GtkWidget *label;
-#endif
 #ifndef _WIN32
 	GtkWidget *dd;
 	GtkWidget *entry;
