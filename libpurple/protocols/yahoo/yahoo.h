@@ -48,6 +48,8 @@
 /*not sure, must test:*/
 #define YAHOOJP_XFER_RELAY_HOST "relay.msg.yahoo.com" 
 #define YAHOOJP_XFER_RELAY_PORT 80
+#define YAHOOJP_ROOMLIST_URL "http://insider.msg.yahoo.co.jp/ycontent/"
+#define YAHOOJP_ROOMLIST_LOCALE "ja"
 
 #define YAHOO_AUDIBLE_URL "http://us.dl1.yimg.com/download.yahoo.com/dl/aud"
 
