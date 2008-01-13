@@ -320,12 +320,20 @@ statusbox_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 {
 	FILE *f;
 	gchar *path;
+	size_t wc;
 
 	if ((error_message != NULL) || (len == 0))
 		return;
 
 	f = purple_mkstemp(&path, TRUE);
-	fwrite(themedata, len, 1, f);
+	wc = fwrite(themedata, len, 1, f);
+	if (wc != 1) {
+		purple_debug_warning("theme_got_url", "Unable to write theme data.\n");
+		fclose(f);
+		g_unlink(path);
+		g_free(path);
+		return;
+	}
 	fclose(f);
 
 	icon_choose_cb(path, user_data);
