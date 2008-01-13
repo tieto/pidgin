@@ -122,15 +122,11 @@ msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 static GList *
 msn_attention_types(PurpleAccount *account)
 {
-	PurpleAttentionType *attn;
 	static GList *list = NULL;
 
 	if (!list) {
-		attn = g_new0(PurpleAttentionType, 1);
-		attn->name = _("Nudge");
-		attn->incoming_description = _("%s has nudged you!");
-		attn->outgoing_description = _("Nudging %s...");
-		list = g_list_append(list, attn);
+		list = g_list_append(list, purple_attention_type_new("Nudge", _("Nudge"),
+				_("%s has nudged you!"), _("Nudging %s...")));
 	}
 
 	return list;
