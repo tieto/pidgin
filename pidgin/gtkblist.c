@@ -4143,12 +4143,11 @@ conversation_created_cb(PurpleConversation *conv, PidginBuddyList *gtkblist)
 static void pidgin_blist_new_list(PurpleBuddyList *blist)
 {
 	PidginBuddyList *gtkblist;
-	PidginBuddyListPrivate *priv;
 
 	gtkblist = g_new0(PidginBuddyList, 1);
 	gtkblist->connection_errors = g_hash_table_new_full(g_direct_hash,
 												g_direct_equal, NULL, g_free);
-	gtkblist->priv = priv = g_new0(PidginBuddyListPrivate, 1);
+	gtkblist->priv = g_new0(PidginBuddyListPrivate, 1);
 
 	blist->ui_data = gtkblist;
 }
