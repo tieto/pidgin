@@ -24,7 +24,7 @@ Code_t ZSrvSendList(notice, list, nitems, cert_routine, send_routine)
     char *list[];
     int nitems;
     Z_AuthProc cert_routine;
-    Code_t (*send_routine)(void);
+    Code_t (*send_routine)();
 {
     Code_t retval;
     ZNotice_t newnotice;
