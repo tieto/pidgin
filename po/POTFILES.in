@@ -72,6 +72,7 @@ libpurple/plugins/tcl/tcl.c
 libpurple/protocols/bonjour/bonjour.c
 libpurple/protocols/bonjour/bonjour.h
 libpurple/protocols/bonjour/jabber.c
+libpurple/protocols/bonjour/mdns_win32.c
 libpurple/protocols/gg/gg.c
 libpurple/protocols/irc/cmds.c
 libpurple/protocols/irc/dcc_send.c
@@ -213,6 +214,7 @@ pidgin/gtkwhiteboard.c
 pidgin/pidgin.h
 pidgin/pidgincombobox.c
 pidgin/pidginstock.c
+pidgin/pidgintooltip.c
 pidgin/pixmaps/emotes/default/24/default.theme.in
 pidgin/pixmaps/emotes/none/none.theme.in
 pidgin/plugins/cap/cap.c

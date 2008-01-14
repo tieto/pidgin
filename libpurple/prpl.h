@@ -99,9 +99,9 @@ struct _PurpleAttentionType
 	const char *incoming_description;  /**< Shown when sent */
 	const char *outgoing_description;  /**< Shown when receied */
 	const char *icon_name;             /**< Icon to display (optional) */
+	const char *unlocalized_name;      /**< Unlocalized name for UIs needing it */
 
 	/* Reserved fields for future purposes */
-	gpointer _reserved1;
 	gpointer _reserved2;
 	gpointer _reserved3;
 	gpointer _reserved4;
@@ -410,6 +410,127 @@ struct _PurplePluginProtocolInfo
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**************************************************************************/
+/** @name Attention Type API                                              */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a new #PurpleAttentionType object and sets its mandatory parameters.
+ *
+ * @param ulname A non-localized string that can be used by UIs in need of such
+ *               non-localized strings.  This should be the same as @a name,
+ *               without localization.
+ * @param name A localized string that the UI may display for the event. This
+ *             should be the same string as @a ulname, with localization.
+ * @param inc_desc A localized description shown when the event is received.
+ * @param out_desc A localized description shown when the event is sent.
+ * @return A pointer to the new object.
+ * @since 2.4.0
+ */
+PurpleAttentionType *purple_attention_type_new(const char *ulname, const char *name,
+								const char *inc_desc, const char *out_desc);
+
+/**
+ * Sets the displayed name of the attention-demanding event.
+ *
+ * @param type The attention type.
+ * @param name The localized name that will be displayed by UIs. This should be
+ *             the same string given as the unlocalized name, but with
+ *             localization.
+ * @since 2.4.0
+ */
+void purple_attention_type_set_name(PurpleAttentionType *type, const char *name);
+
+/**
+ * Sets the description of the attention-demanding event shown in  conversations
+ * when the event is received.
+ *
+ * @param type The attention type.
+ * @param desc The localized description for incoming events.
+ * @since 2.4.0
+ */
+void purple_attention_type_set_incoming_desc(PurpleAttentionType *type, const char *desc);
+
+/**
+ * Sets the description of the attention-demanding event shown in conversations
+ * when the event is sent.
+ *
+ * @param type The attention type.
+ * @param desc The localized description for outgoing events.
+ * @since 2.4.0
+ */
+void purple_attention_type_set_outgoing_desc(PurpleAttentionType *type, const char *desc);
+
+/**
+ * Sets the name of the icon to display for the attention event; this is optional.
+ *
+ * @param type The attention type.
+ * @param name The icon's name.
+ * @note Icons are optional for attention events.
+ * @since 2.4.0
+ */
+void purple_attention_type_set_icon_name(PurpleAttentionType *type, const char *name);
+
+/**
+ * Sets the unlocalized name of the attention event; some UIs may need this,
+ * thus it is required.
+ *
+ * @param type The attention type.
+ * @param ulname The unlocalized name.  This should be the same string given as
+ *               the localized name, but without localization.
+ * @since 2.4.0
+ */
+void purple_attention_type_set_unlocalized_name(PurpleAttentionType *type, const char *ulname);
+
+/**
+ * Get the attention type's name as displayed by the UI.
+ *
+ * @param type The attention type.
+ * @return The name.
+ * @since 2.4.0
+ */
+const char *purple_attention_type_get_name(PurpleAttentionType *type);
+
+/**
+ * Get the attention type's description shown when the event is received.
+ *
+ * @param type The attention type.
+ * @return The description.
+ * @since 2.4.0
+ */
+const char *purple_attention_type_get_incoming_desc(PurpleAttentionType *type);
+
+/**
+ * Get the attention type's description shown when the event is sent.
+ *
+ * @param type The attention type.
+ * @return The description.
+ * @since 2.4.0
+ */
+const char *purple_attention_type_get_outgoing_desc(PurpleAttentionType *type);
+
+/**
+ * Get the attention type's icon name.
+ *
+ * @param type The attention type.
+ * @return The icon name or @c NULL if unset/empty.
+ * @note Icons are optional for attention events.
+ * @since 2.4.0
+ */
+const char *purple_attention_type_get_icon_name(PurpleAttentionType *type);
+
+/**
+ * Get the attention type's unlocalized name; this is useful for some UIs.
+ *
+ * @param type The attention type
+ * @return The unlocalized name.
+ * @since 2.4.0
+ */
+const char *purple_attention_type_get_unlocalized_name(PurpleAttentionType *type);
+
+/*@}*/
 
 /**************************************************************************/
 /** @name Protocol Plugin API                                             */
