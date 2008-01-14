@@ -156,13 +156,20 @@ extern const char *username;
 #endif
 
 static Code_t zephyr_subscribe_to(zephyr_account* zephyr, char* class, char *instance, char *recipient, char* galaxy) {
+	size_t result;
+	Code_t ret_val = -1;
 
 	if (use_tzc(zephyr)) {
 		/* ((tzcfodder . subscribe) ("class" "instance" "recipient")) */
 		gchar *zsubstr = g_strdup_printf("((tzcfodder . subscribe) (\"%s\" \"%s\" \"%s\"))\n",class,instance,recipient);
-		write(zephyr->totzc[ZEPHYR_FD_WRITE],zsubstr,strlen(zsubstr));
+		size_t len = strlen(zsubstr);
+		result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zsubstr,len);
+		if (result != len) {
+			purple_debug_error("zephyr", "Unable to write a message: %s\n", strerror(errno));
+		} else {
+			ret_val = ZERR_NONE;
+		}
 		g_free(zsubstr);
-		return ZERR_NONE;
 	}
 	else {
 		if (use_zeph02(zephyr)) {
@@ -170,13 +177,10 @@ static Code_t zephyr_subscribe_to(zephyr_account* zephyr, char* class, char *ins
 			sub.zsub_class = class;
 			sub.zsub_classinst = instance;
 			sub.zsub_recipient = recipient; 
-			return ZSubscribeTo(&sub,1,0);
-		} else {
-			/* This should not happen */
-			return -1;
+			ret_val = ZSubscribeTo(&sub,1,0);
 		}
 	}
-	return -1;
+	return ret_val;
 }
 
 char *local_zephyr_normalize(zephyr_account* zephyr,const char *);
@@ -1373,7 +1377,11 @@ static gint check_loc(gpointer data)
 					} else 
 						if (use_tzc(zephyr)) {
 							gchar *zlocstr = g_strdup_printf("((tzcfodder . zlocate) \"%s\")\n",chk);
-							write(zephyr->totzc[ZEPHYR_FD_WRITE],zlocstr,strlen(zlocstr));
+							size_t len = strlen(zlocstr);
+							size_t result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zlocstr,len);
+							if (result != len) {
+								purple_debug_error("zephyr", "Unable to write a message: %s\n", strerror(errno));
+							}
 							g_free(zlocstr);
 						}
 				}
@@ -2193,6 +2201,8 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 	html_buf2 = purple_unescape_html(html_buf);
 
 	if(use_tzc(zephyr)) {
+		size_t len;
+		size_t result;
 		char* zsendstr;
 		/* CMU cclub tzc doesn't grok opcodes for now  */
 		char* tzc_sig = zephyr_tzc_escape_msg(sig);
@@ -2200,7 +2210,14 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 		zsendstr = g_strdup_printf("((tzcfodder . send) (class . \"%s\") (auth . t) (recipients (\"%s\" . \"%s\")) (message . (\"%s\" \"%s\"))	) \n",
 					   zclass, instance, recipient, tzc_sig, tzc_body);
 		/*		fprintf(stderr,"zsendstr = %s\n",zsendstr); */
-		write(zephyr->totzc[ZEPHYR_FD_WRITE],zsendstr,strlen(zsendstr));
+		len = strlen(zsendstr);
+		result = write(zephyr->totzc[ZEPHYR_FD_WRITE], zsendstr, len);
+		if (result != len) {
+			g_free(zsendstr);
+			g_free(html_buf2);
+			g_free(html_buf);
+			return errno;
+		}
 		g_free(zsendstr);
 	} else if (use_zeph02(zephyr)) {
 		ZNotice_t notice;
@@ -2221,6 +2238,9 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 		purple_debug_info("zephyr","About to send notice\n");
 		if (! ZSendNotice(&notice, ZAUTH) == ZERR_NONE) {
 			/* XXX handle errors here */
+			g_free(buf);
+			g_free(html_buf2);
+			g_free(html_buf);
 			return 0;
 		}
 		purple_debug_info("zephyr","notice sent\n");
@@ -2257,7 +2277,7 @@ static void zephyr_zloc(PurpleConnection *gc, const char *who)
 	ZAsyncLocateData_t ald;
 	zephyr_account *zephyr = gc->proto_data;
 	gchar* normalized_who = local_zephyr_normalize(zephyr,who);
-	
+
 	if (use_zeph02(zephyr)) {
 		if (ZRequestLocations(normalized_who, &ald, UNACKED, ZAUTH) == ZERR_NONE) {
 			zephyr->pending_zloc_names = g_list_append(zephyr->pending_zloc_names,
@@ -2266,14 +2286,22 @@ static void zephyr_zloc(PurpleConnection *gc, const char *who)
 			/* XXX deal with errors somehow */
 		}
 	} else if (use_tzc(zephyr)) {
+		size_t len;
+		size_t result;
 		char* zlocstr = g_strdup_printf("((tzcfodder . zlocate) \"%s\")\n",normalized_who);
 		zephyr->pending_zloc_names = g_list_append(zephyr->pending_zloc_names, g_strdup(normalized_who));
-		write(zephyr->totzc[ZEPHYR_FD_WRITE],zlocstr,strlen(zlocstr));
+		len = strlen(zlocstr);
+		result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zlocstr,len);
+		if (result != len) {
+			purple_debug_error("zephyr", "Unable to write a message: %s\n", strerror(errno));
+		}
 		g_free(zlocstr);
 	}
 }
 
 static void zephyr_set_status(PurpleAccount *account, PurpleStatus *status) {
+	size_t len;
+	size_t result;
 	zephyr_account *zephyr = purple_account_get_connection(account)->proto_data;
 	PurpleStatusPrimitive primitive = purple_status_type_get_primitive(purple_status_get_type(status));
 
@@ -2291,7 +2319,11 @@ static void zephyr_set_status(PurpleAccount *account, PurpleStatus *status) {
 		}
 		else {
 			char *zexpstr = g_strdup_printf("((tzcfodder . set-location) (hostname . \"%s\") (exposure . \"%s\"))\n",zephyr->ourhost,zephyr->exposure);
-			write(zephyr->totzc[ZEPHYR_FD_WRITE],zexpstr,strlen(zexpstr));
+			len = strlen(zexpstr);
+			result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zexpstr,len);
+			if (result != len) {
+				purple_debug_error("zephyr", "Unable to write message: %s\n", strerror(errno));
+			}
 			g_free(zexpstr);
 		}
 	} 
@@ -2301,7 +2333,11 @@ static void zephyr_set_status(PurpleAccount *account, PurpleStatus *status) {
 			ZSetLocation(EXPOSE_OPSTAFF);
 		} else {
 			char *zexpstr = g_strdup_printf("((tzcfodder . set-location) (hostname . \"%s\") (exposure . \"%s\"))\n",zephyr->ourhost,EXPOSE_OPSTAFF);
-			write(zephyr->totzc[ZEPHYR_FD_WRITE],zexpstr,strlen(zexpstr));
+			len = strlen(zexpstr);
+			result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zexpstr,len);
+			if (result != len) {
+				purple_debug_error("zephyr", "Unable to write message: %s\n", strerror(errno));
+			}
 			g_free(zexpstr);
 		}
 	}
