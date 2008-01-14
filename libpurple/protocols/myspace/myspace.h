@@ -201,6 +201,8 @@ void msim_set_idle(PurpleConnection *gc, int time);
 void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 
+const char *msim_normalize(const PurpleAccount *account, const char *str);
+
 gboolean msim_offline_message(const PurpleBuddy *buddy);
 
 void msim_close(PurpleConnection *gc);
