@@ -441,6 +441,13 @@ check_for_and_do_command(PurpleConversation *conv)
 
 		cmdline = cmd + strlen(prefix);
 
+		if (strcmp(cmdline, "xyzzy") == 0) {
+			purple_conversation_write(conv, "", "Nothing happens",
+					PURPLE_MESSAGE_NO_LOG, time(NULL));
+			g_free(cmd);
+			return TRUE;
+		}
+
 		gtk_text_iter_forward_chars(&start, g_utf8_strlen(prefix, -1));
 		gtk_text_buffer_get_end_iter(GTK_IMHTML(gtkconv->entry)->text_buffer, &end);
 		markup = gtk_imhtml_get_markup_range(GTK_IMHTML(gtkconv->entry), &start, &end);
