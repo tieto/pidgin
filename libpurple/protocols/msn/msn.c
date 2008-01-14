@@ -122,7 +122,6 @@ msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 static GList *
 msn_attention_types(PurpleAccount *account)
 {
-	PurpleAttentionType *attn;
 	static GList *list = NULL;
 
 	if (!list) {
