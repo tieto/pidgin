@@ -1547,7 +1547,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 		if (result < 0)
 			purple_debug_error("oscar", "Error writing %" G_GSIZE_FORMAT
 					" bytes to fetch AIM hash data: %s\n",
-					strlen(buf), strerror(errno));
+					strlen(buf), g_strerror(errno));
 		else
 			purple_debug_error("oscar", "Tried to write %"
 					G_GSIZE_FORMAT " bytes to fetch AIM hash data but "
