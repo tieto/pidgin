@@ -200,12 +200,20 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 	PurpleSrvCallback cb = query_data->cb;
 	int status;
 
-	if (read(source, &size, sizeof(int)) > 0)
+	if (read(source, &size, sizeof(int)) == sizeof(int))
 	{
+		ssize_t red;
 		purple_debug_info("dnssrv","found %d SRV entries\n", size);
 		tmp = res = g_new0(PurpleSrvResponse, size);
 		for (i = 0; i < size; i++) {
-			read(source, tmp++, sizeof(PurpleSrvResponse));
+			red = read(source, tmp++, sizeof(PurpleSrvResponse));
+			if (red != sizeof(PurpleSrvResponse)) {
+				purple_debug_error("dnssrv","unable to read srv "
+						"response: %s\n", g_strerror(errno));
+				size = 0;
+				g_free(res);
+				res = NULL;
+			}
 		}
 	}
 	else
