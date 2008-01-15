@@ -1795,7 +1795,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_prpl_got_user_status_deactive(account, info->sn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	if (!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE))
+	if (status_id == OSCAR_STATUS_ID_AVAILABLE)
 	{
 		char *message = NULL;
 
@@ -4456,6 +4456,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	PurplePresence *presence;
 	PurpleStatusType *status_type;
 	PurpleStatusPrimitive primitive;
+	gboolean invisible;
 
 	char *htmlinfo;
 	char *info_encoding = NULL;
@@ -4470,6 +4471,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	status_type = purple_status_get_type(status);
 	primitive = purple_status_type_get_primitive(status_type);
 	presence = purple_account_get_presence(account);
+	invisible = purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE);
 
 	if (!setinfo)
 	{

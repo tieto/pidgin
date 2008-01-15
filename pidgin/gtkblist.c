@@ -3316,34 +3316,24 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 
 		purple_notify_user_info_destroy(user_info);
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
-		gint count, total;
 		PurpleGroup *group = (PurpleGroup*)node;
 		PurpleNotifyUserInfo *user_info;
 
 		user_info = purple_notify_user_info_new();
 
-		count = purple_blist_get_group_online_count(group);
+		/* Total buddies (from online accounts) in group */
+		tmp = g_strdup_printf("%d",
+		                      purple_blist_get_group_size(group, FALSE));
+		purple_notify_user_info_add_pair(user_info, _("Total Buddies"),
+		                                 tmp);
+		g_free(tmp);
 
-		if (count != 0) {
-			/* Online buddies in group */
-			tmp = g_strdup_printf("%d", count);
-			purple_notify_user_info_add_pair(user_info,
-			                                 _("Online Buddies"),
-			                                 tmp);
-			g_free(tmp);
-		}
-		count = 0;
-
-		count = purple_blist_get_group_size(group, FALSE);
-		if (count != 0) {
-			/* Total buddies (from online accounts) in group */
-			tmp = g_strdup_printf("%d", count);
-			purple_notify_user_info_add_pair(user_info,
-			                                 _("Total Buddies"),
-			                                 tmp);
-			g_free(tmp);
-		}
-		count = 0;
+		/* Online buddies in group */
+		tmp = g_strdup_printf("%d",
+		                      purple_blist_get_group_online_count(group));
+		purple_notify_user_info_add_pair(user_info, _("Online Buddies"),
+		                                 tmp);
+		g_free(tmp);
 
 		tmp = purple_notify_user_info_get_text_with_newline(user_info, "\n");
 		g_string_append(str, tmp);
