@@ -10,6 +10,8 @@ version 2.4.0 (??/??/????):
 	* Partial support for viewing ICQ status notes (Collin from
 	  ComBOTS GmbH).
 	* Support for Yahoo Messenger 7.0+ file transfer method (Thanumalayan S.)
+	* Support for retrieving full names and addresses from the address book
+	  on Yahoo! Japan (Yusuke Odate)
 
 	Pidgin:
 	* Added the ability to theme conversation name colors (red and blue)

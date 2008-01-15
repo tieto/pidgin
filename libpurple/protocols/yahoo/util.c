@@ -164,6 +164,20 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 		return g_strdup("");
 }
 
+char *yahoo_convert_to_numeric(const char *str)
+{
+	char *retstr, buf[7];
+	const char *p;
+
+	retstr = (char*)malloc(strlen(str) * 6 + 1);
+	memset(retstr, 0x00, sizeof(retstr));
+	for (p = str; *p; p++) {
+		sprintf(buf, "&#%d;", (unsigned char)*p);
+		strcat(retstr, buf);
+	}
+	return retstr;
+}
+
 /*
  * I found these on some website but i don't know that they actually
  * work (or are supposed to work). I didn't implement them yet.

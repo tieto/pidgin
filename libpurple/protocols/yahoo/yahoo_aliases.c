@@ -37,6 +37,8 @@
 /* I hate hardcoding this stuff, but Yahoo never sends us anything to use.  Someone in the know may be able to tweak this URL */
 #define YAHOO_ALIAS_FETCH_URL "http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&diffs=1&t=0&tags=short&rt=0&prog-ver=8.1.0.249&useutf8=1&legenc=codepage-1252"
 #define YAHOO_ALIAS_UPDATE_URL "http://address.yahoo.com/yab/us?v=XM&prog=ymsgr&.intl=us&sync=1&tags=short&noclear=1&useutf8=1&legenc=codepage-1252"
+#define YAHOOJP_ALIAS_FETCH_URL "http://address.yahoo.co.jp/yab/jp?v=XM&prog=ymsgr&.intl=jp&diffs=1&t=0&tags=short&rt=0&prog-ver=7.0.0.7"
+#define YAHOOJP_ALIAS_UPDATE_URL "http://address.yahoo.co.jp/yab/jp?v=XM&prog=ymsgr&.intl=jp&sync=1&tags=short&noclear=1"
 
 void yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias);
 
@@ -90,7 +92,10 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 				id = xmlnode_get_attrib(item,"id");
 
 		                /* Yahoo stores first and last names separately, lets put them together into a full name */
-				full_name = g_strstrip(g_strdup_printf("%s %s", (fn != NULL ? fn : "") , (ln != NULL ? ln : "")));
+				if (yd->jp)
+					full_name = g_strstrip(g_strdup_printf("%s %s", (ln != NULL ? ln : "") , (fn != NULL ? fn : "")));
+				else
+					full_name = g_strstrip(g_strdup_printf("%s %s", (fn != NULL ? fn : "") , (ln != NULL ? ln : "")));
 				nick_name = (nn != NULL ? g_strstrip(g_strdup_printf("%s", nn)) : NULL);
 
 				if (nick_name != NULL)
@@ -139,7 +144,7 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct callback_data *cb;
-	const char *url = YAHOO_ALIAS_FETCH_URL;
+	const char *url;
 	char *request, *webpage, *webaddress;
 	PurpleUtilFetchUrlData *url_data;
 
@@ -148,6 +153,7 @@ yahoo_fetch_aliases(PurpleConnection *gc)
 	cb->gc = gc;
 
 	/*  Build all the info to make the web request */
+	url = yd->jp ? YAHOOJP_ALIAS_FETCH_URL : YAHOO_ALIAS_FETCH_URL;
 	purple_url_parse(url, &webaddress, NULL, &webpage, NULL, NULL);
 	request = g_strdup_printf("GET /%s HTTP/1.1\r\n"
 				 "User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
@@ -225,10 +231,11 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	struct callback_data *cb;
 	PurpleBuddy *buddy;
 	PurpleUtilFetchUrlData *url_data;
+	char *alias_jp, *converted_alias_jp;
 
-	g_return_if_fail(alias!= NULL);
-	g_return_if_fail(who!=NULL);
-	g_return_if_fail(gc!=NULL);
+	g_return_if_fail(alias != NULL);
+	g_return_if_fail(who != NULL);
+	g_return_if_fail(gc != NULL);
 
 	purple_debug_info("yahoo", "Sending '%s' as new alias for user '%s'.\n",alias, who);
 
@@ -247,12 +254,23 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	cb->gc = gc;
 
 	/*  Build all the info to make the web request */
-	url = g_strdup(YAHOO_ALIAS_UPDATE_URL);
+	url = g_strdup(yd->jp? YAHOOJP_ALIAS_UPDATE_URL: YAHOO_ALIAS_UPDATE_URL);
 	purple_url_parse(url, &webaddress, &inttmp, &webpage, &strtmp, &strtmp);
 
-	content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
-				  "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-				  gc->account->username, who, yu->id, g_markup_escape_text(alias, strlen(alias)));
+	if (yd->jp) {
+		alias_jp = g_convert(alias, strlen(alias), "EUC-JP", "UTF-8", NULL, NULL, NULL);
+		converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
+		content = g_strdup_printf("<ab k=\"%s\" cc=\"1\">\n"
+		                          "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
+		                          gc->account->username, who, yu->id, converted_alias_jp);
+		free(converted_alias_jp);
+		g_free(alias_jp);
+	}
+	else {
+		content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
+		                          "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
+		                          gc->account->username, who, yu->id, g_markup_escape_text(alias, strlen(alias)));
+	}
 
 	request = g_strdup_printf("POST /%s HTTP/1.1\r\n"
 				  "User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
