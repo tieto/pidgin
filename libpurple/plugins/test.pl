@@ -1,5 +1,4 @@
 #!/usr/bin/env perl -w
-
 use Gaim;
 
 %PLUGIN_INFO = (

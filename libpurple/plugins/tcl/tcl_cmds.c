@@ -1067,7 +1067,8 @@ int tcl_cmd_prefs(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 			while (cur != NULL) {
 				elem = Tcl_NewStringObj((char *)cur->data, -1);
 				Tcl_ListObjAppendElement(interp, list, elem);
-				cur = g_list_next(cur);
+				g_free(cur->data);
+				cur = g_list_delete_link(cur, cur);
 			}
 			Tcl_SetObjResult(interp, list);
 			break;
