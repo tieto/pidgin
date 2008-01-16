@@ -226,18 +226,17 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 {
 	struct yahoo_data *yd;
 	struct YahooUser *yu;
-	char *content, *url, *request, *webpage, *webaddress, *strtmp;
+	char *content, *url, *request, *webpage, *webaddress, *strtmp, *alias_jp;
 	int inttmp;
 	struct callback_data *cb;
 	PurpleBuddy *buddy;
 	PurpleUtilFetchUrlData *url_data;
-	char *alias_jp, *converted_alias_jp;
 
 	g_return_if_fail(alias != NULL);
 	g_return_if_fail(who != NULL);
 	g_return_if_fail(gc != NULL);
 
-	purple_debug_info("yahoo", "Sending '%s' as new alias for user '%s'.\n",alias, who);
+	purple_debug_info("yahoo", "Sending '%s' as new alias for user '%s'.\n", alias, who);
 
 	buddy = purple_find_buddy(gc->account, who);
 	if (buddy == NULL || buddy->proto_data == NULL) {
@@ -254,16 +253,15 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	cb->gc = gc;
 
 	/*  Build all the info to make the web request */
-	url = yd->jp? YAHOOJP_ALIAS_UPDATE_URL: YAHOO_ALIAS_UPDATE_URL;
+	url = yd->jp ? YAHOOJP_ALIAS_UPDATE_URL : YAHOO_ALIAS_UPDATE_URL;
 	purple_url_parse(url, &webaddress, &inttmp, &webpage, &strtmp, &strtmp);
 
 	if (yd->jp) {
 		alias_jp = g_convert(alias, strlen(alias), "EUC-JP", "UTF-8", NULL, NULL, NULL);
-		converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
 		content = g_strdup_printf("<ab k=\"%s\" cc=\"1\">\n"
 		                          "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-		                          gc->account->username, who, yu->id, converted_alias_jp);
-		free(converted_alias_jp);
+		                          gc->account->username, who, yu->id,
+								  g_markup_escape_text(alias_jp, strlen(alias_jp)));
 		g_free(alias_jp);
 	}
 	else {
