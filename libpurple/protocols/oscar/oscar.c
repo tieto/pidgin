@@ -1795,7 +1795,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_prpl_got_user_status_deactive(account, info->sn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	if (!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE))
+	if (status_id == OSCAR_STATUS_ID_AVAILABLE)
 	{
 		char *message = NULL;
 
