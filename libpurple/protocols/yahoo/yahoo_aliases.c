@@ -254,7 +254,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	cb->gc = gc;
 
 	/*  Build all the info to make the web request */
-	url = g_strdup(yd->jp? YAHOOJP_ALIAS_UPDATE_URL: YAHOO_ALIAS_UPDATE_URL);
+	url = yd->jp? YAHOOJP_ALIAS_UPDATE_URL: YAHOO_ALIAS_UPDATE_URL;
 	purple_url_parse(url, &webaddress, &inttmp, &webpage, &strtmp, &strtmp);
 
 	if (yd->jp) {
@@ -289,7 +289,6 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	}
 
 	g_free(content);
-	g_free(url);
 	g_free(request);
 }
 
