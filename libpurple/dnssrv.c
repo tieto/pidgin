@@ -358,9 +358,12 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	/* Child */
 	if (pid == 0)
 	{
+		g_free(query);
+
 		close(out[0]);
 		close(in[1]);
 		resolve(in[0], out[1]);
+		/* resolve() does not return */
 	}
 
 	close(out[1]);
