@@ -233,7 +233,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	{
 		int ch = getch(); /* This should return ERR, but let's see what it really returns */
 		endwin();
-		printf("ERROR: %s\n", strerror(errno));
+		printf("ERROR: %s\n", g_strerror(errno));
 		printf("File descriptor is: %d\n\nGIOChannel is: %p\ngetch() = %d\n", STDIN_FILENO, source, ch);
 		raise(SIGABRT);
 	}

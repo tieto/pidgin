@@ -56,7 +56,7 @@ static void irc_dccsend_recv_ack(PurpleXfer *xfer, const guchar *data, size_t si
 	l = htonl(xfer->bytes_sent);
 	result = write(xfer->fd, &l, sizeof(l));
 	if (result != sizeof(l)) {
-		purple_debug_error("irc", "unable to send acknowledgement: %s\n", strerror(errno));
+		purple_debug_error("irc", "unable to send acknowledgement: %s\n", g_strerror(errno));
 		/* TODO: We should probably close the connection here or something. */
 	}
 }

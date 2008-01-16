@@ -165,7 +165,7 @@ static Code_t zephyr_subscribe_to(zephyr_account* zephyr, char* class, char *ins
 		size_t len = strlen(zsubstr);
 		result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zsubstr,len);
 		if (result != len) {
-			purple_debug_error("zephyr", "Unable to write a message: %s\n", strerror(errno));
+			purple_debug_error("zephyr", "Unable to write a message: %s\n", g_strerror(errno));
 		} else {
 			ret_val = ZERR_NONE;
 		}
@@ -1380,7 +1380,7 @@ static gint check_loc(gpointer data)
 							size_t len = strlen(zlocstr);
 							size_t result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zlocstr,len);
 							if (result != len) {
-								purple_debug_error("zephyr", "Unable to write a message: %s\n", strerror(errno));
+								purple_debug_error("zephyr", "Unable to write a message: %s\n", g_strerror(errno));
 							}
 							g_free(zlocstr);
 						}
@@ -2293,7 +2293,7 @@ static void zephyr_zloc(PurpleConnection *gc, const char *who)
 		len = strlen(zlocstr);
 		result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zlocstr,len);
 		if (result != len) {
-			purple_debug_error("zephyr", "Unable to write a message: %s\n", strerror(errno));
+			purple_debug_error("zephyr", "Unable to write a message: %s\n", g_strerror(errno));
 		}
 		g_free(zlocstr);
 	}
@@ -2322,7 +2322,7 @@ static void zephyr_set_status(PurpleAccount *account, PurpleStatus *status) {
 			len = strlen(zexpstr);
 			result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zexpstr,len);
 			if (result != len) {
-				purple_debug_error("zephyr", "Unable to write message: %s\n", strerror(errno));
+				purple_debug_error("zephyr", "Unable to write message: %s\n", g_strerror(errno));
 			}
 			g_free(zexpstr);
 		}
@@ -2336,7 +2336,7 @@ static void zephyr_set_status(PurpleAccount *account, PurpleStatus *status) {
 			len = strlen(zexpstr);
 			result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zexpstr,len);
 			if (result != len) {
-				purple_debug_error("zephyr", "Unable to write message: %s\n", strerror(errno));
+				purple_debug_error("zephyr", "Unable to write message: %s\n", g_strerror(errno));
 			}
 			g_free(zexpstr);
 		}
