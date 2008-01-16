@@ -491,7 +491,7 @@ void purple_attention_type_set_unlocalized_name(PurpleAttentionType *type, const
  * @return The name.
  * @since 2.4.0
  */
-const char *purple_attention_type_get_name(PurpleAttentionType *type);
+const char *purple_attention_type_get_name(const PurpleAttentionType *type);
 
 /**
  * Get the attention type's description shown when the event is received.
@@ -500,7 +500,7 @@ const char *purple_attention_type_get_name(PurpleAttentionType *type);
  * @return The description.
  * @since 2.4.0
  */
-const char *purple_attention_type_get_incoming_desc(PurpleAttentionType *type);
+const char *purple_attention_type_get_incoming_desc(const PurpleAttentionType *type);
 
 /**
  * Get the attention type's description shown when the event is sent.
@@ -509,7 +509,7 @@ const char *purple_attention_type_get_incoming_desc(PurpleAttentionType *type);
  * @return The description.
  * @since 2.4.0
  */
-const char *purple_attention_type_get_outgoing_desc(PurpleAttentionType *type);
+const char *purple_attention_type_get_outgoing_desc(const PurpleAttentionType *type);
 
 /**
  * Get the attention type's icon name.
@@ -519,7 +519,7 @@ const char *purple_attention_type_get_outgoing_desc(PurpleAttentionType *type);
  * @note Icons are optional for attention events.
  * @since 2.4.0
  */
-const char *purple_attention_type_get_icon_name(PurpleAttentionType *type);
+const char *purple_attention_type_get_icon_name(const PurpleAttentionType *type);
 
 /**
  * Get the attention type's unlocalized name; this is useful for some UIs.
@@ -528,7 +528,7 @@ const char *purple_attention_type_get_icon_name(PurpleAttentionType *type);
  * @return The unlocalized name.
  * @since 2.4.0
  */
-const char *purple_attention_type_get_unlocalized_name(PurpleAttentionType *type);
+const char *purple_attention_type_get_unlocalized_name(const PurpleAttentionType *type);
 
 /*@}*/
 

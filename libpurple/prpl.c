@@ -87,7 +87,7 @@ purple_attention_type_set_unlocalized_name(PurpleAttentionType *type, const char
 }
 
 const char *
-purple_attention_type_get_name(PurpleAttentionType *type)
+purple_attention_type_get_name(const PurpleAttentionType *type)
 {
 	g_return_val_if_fail(type != NULL, NULL);
 
@@ -95,7 +95,7 @@ purple_attention_type_get_name(PurpleAttentionType *type)
 }
 
 const char *
-purple_attention_type_get_incoming_desc(PurpleAttentionType *type)
+purple_attention_type_get_incoming_desc(const PurpleAttentionType *type)
 {
 	g_return_val_if_fail(type != NULL, NULL);
 
@@ -103,7 +103,7 @@ purple_attention_type_get_incoming_desc(PurpleAttentionType *type)
 }
 
 const char *
-purple_attention_type_get_outgoing_desc(PurpleAttentionType *type)
+purple_attention_type_get_outgoing_desc(const PurpleAttentionType *type)
 {
 	g_return_val_if_fail(type != NULL, NULL);
 
@@ -111,7 +111,7 @@ purple_attention_type_get_outgoing_desc(PurpleAttentionType *type)
 }
 
 const char *
-purple_attention_type_get_icon_name(PurpleAttentionType *type)
+purple_attention_type_get_icon_name(const PurpleAttentionType *type)
 {
 	g_return_val_if_fail(type != NULL, NULL);
 
@@ -122,7 +122,7 @@ purple_attention_type_get_icon_name(PurpleAttentionType *type)
 }
 
 const char *
-purple_attention_type_get_unlocalized_name(PurpleAttentionType *type)
+purple_attention_type_get_unlocalized_name(const PurpleAttentionType *type)
 {
 	g_return_val_if_fail(type != NULL, NULL);
 
