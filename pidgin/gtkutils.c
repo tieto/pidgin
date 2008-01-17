@@ -1595,7 +1595,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			else if (!(im || ft))
 				purple_request_yes_no(NULL, NULL, _("You have dragged an image"),
 							_("Would you like to set it as the buddy icon for this user?"),
-							0,
+							PURPLE_DEFAULT_ACTION_NONE,
 							account, who, NULL,
 							data, (GCallback)dnd_set_icon_ok_cb, (GCallback)dnd_set_icon_cancel_cb);
 			else

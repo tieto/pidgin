@@ -995,7 +995,7 @@ async_bonjour_jabber_close_conversation(BonjourJabberConversation *bconv) {
 			bb->conversation = NULL;
 	}
 
-	purple_timeout_add(0, _async_bonjour_jabber_close_conversation_cb, bconv);
+	bconv->close_timeout = purple_timeout_add(0, _async_bonjour_jabber_close_conversation_cb, bconv);
 }
 
 void
@@ -1053,6 +1053,9 @@ bonjour_jabber_close_conversation(BonjourJabberConversation *bconv)
 
 		if (bconv->context != NULL)
 			bonjour_parser_setup(bconv);
+
+		if (bconv->close_timeout != 0)
+			purple_timeout_remove(bconv->close_timeout);
 
 		g_free(bconv->buddy_name);
 		g_free(bconv->ip);

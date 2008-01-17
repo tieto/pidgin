@@ -122,15 +122,11 @@ msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 static GList *
 msn_attention_types(PurpleAccount *account)
 {
-	PurpleAttentionType *attn;
 	static GList *list = NULL;
 
 	if (!list) {
-		attn = g_new0(PurpleAttentionType, 1);
-		attn->name = _("Nudge");
-		attn->incoming_description = _("%s has nudged you!");
-		attn->outgoing_description = _("Nudging %s...");
-		list = g_list_append(list, attn);
+		list = g_list_append(list, purple_attention_type_new("Nudge", _("Nudge"),
+				_("%s has nudged you!"), _("Nudging %s...")));
 	}
 
 	return list;
@@ -355,7 +351,7 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 						_("Do you want to allow or disallow people on "
 						  "your buddy list to send you MSN Mobile pages "
 						  "to your cell phone or other mobile device?"),
-						-1,
+						PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), NULL, NULL,
 						gc, 3,
 						_("Allow"), G_CALLBACK(enable_msn_pages_cb),

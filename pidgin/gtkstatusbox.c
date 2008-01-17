@@ -320,12 +320,20 @@ statusbox_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 {
 	FILE *f;
 	gchar *path;
+	size_t wc;
 
 	if ((error_message != NULL) || (len == 0))
 		return;
 
 	f = purple_mkstemp(&path, TRUE);
-	fwrite(themedata, len, 1, f);
+	wc = fwrite(themedata, len, 1, f);
+	if (wc != 1) {
+		purple_debug_warning("theme_got_url", "Unable to write theme data.\n");
+		fclose(f);
+		g_unlink(path);
+		g_free(path);
+		return;
+	}
 	fclose(f);
 
 	icon_choose_cb(path, user_data);
@@ -507,16 +515,10 @@ pidgin_status_box_finalize(GObject *obj)
 	purple_signals_disconnect_by_handle(statusbox);
 	purple_prefs_disconnect_by_handle(statusbox);
 
-	gdk_cursor_unref(statusbox->hand_cursor);
-	gdk_cursor_unref(statusbox->arrow_cursor);
+	destroy_icon_box(statusbox);
 
-	purple_imgstore_unref(statusbox->buddy_icon_img);
-	g_object_unref(G_OBJECT(statusbox->buddy_icon));
-	g_object_unref(G_OBJECT(statusbox->buddy_icon_hover));
-
-	if (statusbox->buddy_icon_sel)
-		gtk_widget_destroy(statusbox->buddy_icon_sel);
-
+	g_object_unref(G_OBJECT(statusbox->store));
+	g_object_unref(G_OBJECT(statusbox->dropdown_store));
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
 

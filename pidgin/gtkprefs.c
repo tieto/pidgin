@@ -478,12 +478,20 @@ theme_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 {
 	FILE *f;
 	gchar *path;
+	size_t wc;
 
 	if ((error_message != NULL) || (len == 0))
 		return;
 
 	f = purple_mkstemp(&path, TRUE);
-	fwrite(themedata, len, 1, f);
+	wc = fwrite(themedata, len, 1, f);
+	if (wc != 1) {
+		purple_debug_warning("theme_got_url", "Unable to write theme data.\n");
+		fclose(f);
+		g_unlink(path);
+		g_free(path);
+		return;
+	}
 	fclose(f);
 
 	theme_install_theme(path, user_data);
@@ -1457,15 +1465,15 @@ browser_page(void)
 	}
 
 	entry = gtk_entry_new();
-	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
-		gtk_widget_set_sensitive(hbox, FALSE);
-	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
-								browser_changed2_cb, hbox);
 	gtk_entry_set_text(GTK_ENTRY(entry),
 					   purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command"));
 	g_signal_connect(G_OBJECT(entry), "focus-out-event",
 					 G_CALLBACK(manual_browser_set), NULL);
-	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Manual:\n(%s for URL)"), sg, entry, TRUE, NULL);
+	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Manual:\n(%s for URL)"), sg, entry, TRUE, NULL);
+	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
+		gtk_widget_set_sensitive(hbox, FALSE);
+	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
+			browser_changed2_cb, hbox);
 
 	gtk_widget_show_all(ret);
 	g_object_unref(sg);
@@ -1718,9 +1726,6 @@ sound_page(void)
 	int j;
 	const char *file;
 	char *pref;
-#if !defined _WIN32 || defined USE_GSTREAMER
-	GtkWidget *label;
-#endif
 #ifndef _WIN32
 	GtkWidget *dd;
 	GtkWidget *entry;

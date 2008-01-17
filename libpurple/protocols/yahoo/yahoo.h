@@ -48,6 +48,8 @@
 /*not sure, must test:*/
 #define YAHOOJP_XFER_RELAY_HOST "relay.msg.yahoo.com" 
 #define YAHOOJP_XFER_RELAY_PORT 80
+#define YAHOOJP_ROOMLIST_URL "http://insider.msg.yahoo.co.jp/ycontent/"
+#define YAHOOJP_ROOMLIST_LOCALE "ja"
 
 #define YAHOO_AUDIBLE_URL "http://us.dl1.yimg.com/download.yahoo.com/dl/aud"
 
@@ -215,6 +217,8 @@ char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
  * @return The decoded, utf-8 string, which must be g_free()'d.
  */
 char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8);
+
+char *yahoo_convert_to_numeric(const char *str);
 
 /* previously-static functions, now needed for yahoo_profile.c */
 void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full);

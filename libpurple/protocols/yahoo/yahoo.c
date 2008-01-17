@@ -4165,17 +4165,13 @@ gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint 
 
 GList *yahoo_attention_types(PurpleAccount *account)
 {
-	PurpleAttentionType *attn;
 	static GList *list = NULL;
 
 	if (!list) {
 		/* Yahoo only supports one attention command: the 'buzz'. */
 		/* This is index number YAHOO_BUZZ. */
-		attn = g_new0(PurpleAttentionType, 1);
-		attn->name = _("Buzz");
-		attn->incoming_description = _("%s has buzzed you!");
-		attn->outgoing_description = _("Buzzing %s...");
-		list = g_list_append(list, attn);
+		list = g_list_append(list, purple_attention_type_new("Buzz", _("Buzz"),
+				_("%s has buzzed you!"), _("Buzzing %s...")));
 	}
 
 	return list;

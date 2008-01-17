@@ -139,7 +139,7 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 	{
 		/* Searching for the same term acts as "Find Next" */
 		gtk_imhtml_search_find(GTK_IMHTML(lv->imhtml), lv->search);
-		return;	
+		return;
 	}
 
 	pidgin_set_cursor(lv->window, GDK_WATCH);
@@ -321,7 +321,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 	data2[0] = lv->treestore;
 	data2[1] = data[3]; /* iter */
 	data2[2] = log;
-	purple_request_action(lv, NULL, "Delete Log?", tmp, 0, 
+	purple_request_action(lv, NULL, "Delete Log?", tmp, 0,
 						NULL, NULL, NULL,
 						data2, 2,
 						_("Delete"), delete_log_cb,
@@ -556,7 +556,12 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 				if (!purple_prefs_get_bool("/purple/logging/log_chats"))
 					log_preferences = _("Chats will only be logged if the \"Log all chats\" preference is enabled.");
 			}
+			g_free(ht->screenname);
+			g_free(ht);
 		}
+
+		if(icon != NULL)
+			gtk_widget_destroy(icon);
 
 		purple_notify_info(NULL, title, _("No logs were found"), log_preferences);
 		return NULL;
@@ -614,6 +619,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	gtk_paned_add1(GTK_PANED(pane), sw);
 	lv->treestore = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
 	lv->treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL (lv->treestore));
+	g_object_unref(G_OBJECT(lv->treestore));
 	rend = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes ("time", rend, "markup", 0, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(lv->treeview), col);
@@ -730,18 +736,19 @@ void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *
 }
 
 void pidgin_log_show_contact(PurpleContact *contact) {
-	struct log_viewer_hash_t *ht = g_new0(struct log_viewer_hash_t, 1);
+	struct log_viewer_hash_t *ht;
 	PurpleBlistNode *child;
 	PidginLogViewer *lv = NULL;
 	GList *logs = NULL;
 	GdkPixbuf *pixbuf;
-	GtkWidget *image = gtk_image_new();
+	GtkWidget *image;
 	const char *name = NULL;
 	char *title;
 	int total_log_size = 0;
 
 	g_return_if_fail(contact != NULL);
 
+	ht = g_new0(struct log_viewer_hash_t, 1);
 	ht->type = PURPLE_LOG_IM;
 	ht->contact = contact;
 
@@ -763,9 +770,16 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 	}
 	logs = g_list_sort(logs, purple_log_compare);
 
+	image = gtk_image_new();
 	pixbuf = gtk_widget_render_icon(image, PIDGIN_STOCK_STATUS_PERSON,
 					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL), "GtkWindow");
-	gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
+	if (pixbuf) {
+		gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
+		g_object_unref(pixbuf);
+	} else {
+		gtk_widget_destroy(image);
+		image = NULL;
+	}
 
 	if (contact->alias != NULL)
 		name = contact->alias;

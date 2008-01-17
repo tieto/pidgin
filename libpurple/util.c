@@ -4629,6 +4629,15 @@ void purple_restore_default_signal_handlers(void)
 #endif /* !_WIN32 */
 }
 
+static void
+set_status_with_attrs(PurpleStatus *status, ...)
+{
+	va_list args;
+	va_start(args, status);
+	purple_status_set_active_with_attrs(status, TRUE, args);
+	va_end(args);
+}
+
 void purple_util_set_current_song(const char *title, const char *artist, const char *album)
 {
 	GList *list = purple_accounts_get_all();
@@ -4644,10 +4653,11 @@ void purple_util_set_current_song(const char *title, const char *artist, const c
 		if (!tune)
 			continue;
 		if (title) {
-			purple_status_set_active(tune, TRUE);
-			purple_status_set_attr_string(tune, PURPLE_TUNE_TITLE, title);
-			purple_status_set_attr_string(tune, PURPLE_TUNE_ARTIST, artist);
-			purple_status_set_attr_string(tune, PURPLE_TUNE_ALBUM, album);
+			set_status_with_attrs(tune,
+					PURPLE_TUNE_TITLE, title,
+					PURPLE_TUNE_ARTIST, artist,
+					PURPLE_TUNE_ALBUM, album,
+					NULL);
 		} else {
 			purple_status_set_active(tune, FALSE);
 		}

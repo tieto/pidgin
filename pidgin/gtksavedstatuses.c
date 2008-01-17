@@ -669,6 +669,7 @@ pidgin_status_window_hide(void)
 	purple_request_close_with_handle(status_window);
 	purple_notify_close_with_handle(status_window);
 	purple_signals_disconnect_by_handle(status_window);
+	g_object_unref(G_OBJECT(status_window->model));
 	g_free(status_window);
 	status_window = NULL;
 }
@@ -723,6 +724,7 @@ status_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 
 	status_editor_remove_dialog(dialog);
 	g_free(dialog->original_title);
+	g_object_unref(G_OBJECT(dialog->model));
 	g_free(dialog);
 
 	return FALSE;
