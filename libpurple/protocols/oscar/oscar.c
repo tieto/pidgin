@@ -5227,7 +5227,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	data->nick = (buddy ? g_strdup(purple_buddy_get_alias_only(buddy)) : NULL);
 
 	purple_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
-						1, /* Default action is "no" */
+						PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), sn, NULL,
 						data,
 						G_CALLBACK(purple_icq_buddyadd),
@@ -5983,7 +5983,7 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 			_("Because this reveals your IP address, it "
 			  "may be considered a security risk.  Do you "
 			  "wish to continue?"),
-			0,
+			0, /* Default action is "connect" */
 			purple_connection_get_account(gc), data->who, NULL,
 			data, 2,
 			_("C_onnect"), G_CALLBACK(oscar_ask_directim_yes_cb),
