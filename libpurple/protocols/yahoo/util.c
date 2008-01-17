@@ -166,15 +166,20 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 
 char *yahoo_convert_to_numeric(const char *str)
 {
-	char *retstr, buf[7];
+	GString *gstr = NULL;
+	char *retstr;
 	const char *p;
 
-	retstr = (char*)malloc(strlen(str) * 6 + 1);
-	memset(retstr, 0x00, sizeof(retstr));
+	gstr = g_string_sized_new(strlen(str) * 6 + 1);
+
 	for (p = str; *p; p++) {
-		sprintf(buf, "&#%d;", (unsigned char)*p);
-		strcat(retstr, buf);
+		g_string_append_printf(gstr, "&#%u;", *p);
 	}
+
+	retstr = gstr->str;
+
+	g_string_free(gstr, FALSE);
+
 	return retstr;
 }
 
