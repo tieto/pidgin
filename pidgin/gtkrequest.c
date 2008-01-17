@@ -663,7 +663,11 @@ pidgin_request_action(const char *title, const char *primary,
 		gtk_widget_grab_focus(img);
 		gtk_widget_grab_default(img);
 	} else
-		gtk_dialog_set_default_response(GTK_DIALOG(dialog), default_action);
+		/*
+		 * Need to invert the default_action number because the
+		 * buttons are added to the dialog in reverse order.
+		 */
+		gtk_dialog_set_default_response(GTK_DIALOG(dialog), action_count - 1 - default_action);
 
 	/* Show everything. */
 	pidgin_auto_parent_window(dialog);
