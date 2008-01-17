@@ -1199,7 +1199,7 @@ x509_tls_cached_user_auth(PurpleCertificateVerificationRequest *vrq,
 		_("SSL Certificate Verification"),
 		primary,
 		reason,
-		2,            /* Accept by default */
+		0,            /* Accept by default */
 		NULL,         /* No account */
 		NULL,         /* No other user */
 		NULL,         /* No associated conversation */
