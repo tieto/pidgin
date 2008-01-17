@@ -227,11 +227,11 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	struct yahoo_data *yd;
 	struct YahooUser *yu;
 	char *content, *url, *request, *webpage, *webaddress, *strtmp;
+	char *escaped_alias, *alias_jp, *converted_alias_jp;
 	int inttmp;
 	struct callback_data *cb;
 	PurpleBuddy *buddy;
 	PurpleUtilFetchUrlData *url_data;
-	char *alias_jp, *converted_alias_jp;
 
 	g_return_if_fail(alias != NULL);
 	g_return_if_fail(who != NULL);
@@ -267,9 +267,11 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 		g_free(alias_jp);
 	}
 	else {
+		escaped_alias = g_markup_escape_text(alias, strlen(alias));
 		content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
 		                          "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-		                          gc->account->username, who, yu->id, g_markup_escape_text(alias, strlen(alias)));
+		                          gc->account->username, who, yu->id, escaped_alias);
+		g_free(escaped_alias);
 	}
 
 	request = g_strdup_printf("POST /%s HTTP/1.1\r\n"
