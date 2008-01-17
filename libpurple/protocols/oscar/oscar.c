@@ -1789,11 +1789,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_prpl_got_user_status_deactive(account, info->sn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	/*
-	 * It's ok for us to use == instead of strcmp() here because
-	 * status_id is set to one of these #defines a few lines above here.
-	 */
-	if (status_id == OSCAR_STATUS_ID_AVAILABLE)
+	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0)
 	{
 		char *message = NULL;
 		char *itmsurl = NULL;
