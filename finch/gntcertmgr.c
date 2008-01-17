@@ -235,7 +235,7 @@ delete_cert_cb(GntWidget *button, gpointer null)
 	purple_request_close_with_handle((void *)key);
 	purple_request_yes_no((void *)key, _("Confirm certificate delete"),
 			primary, NULL,
-			2,
+			1,
 			NULL, NULL, NULL,
 			g_strdup(key),
 			tls_peers_mgmt_delete_confirm_cb,

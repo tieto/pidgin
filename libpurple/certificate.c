@@ -568,7 +568,7 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 		_("Single-use Certificate Verification"),
 		primary,
 		secondary,
-		1,            /* Accept by default */
+		0,            /* Accept by default */
 		NULL,         /* No account */
 		NULL,         /* No other user */
 		NULL,         /* No associated conversation */
