@@ -9,7 +9,10 @@ version 2.4.0 (??/??/????):
 	  now required to use Bonjour.
 	* Partial support for viewing ICQ status notes (Collin from
 	  ComBOTS GmbH).
+	* Support for /notice on IRC.
 	* Support for Yahoo Messenger 7.0+ file transfer method (Thanumalayan S.)
+	* Support for retrieving full names and addresses from the address book
+	  on Yahoo! Japan (Yusuke Odate)
 
 	Pidgin:
 	* Added the ability to theme conversation name colors (red and blue)
@@ -23,14 +26,14 @@ version 2.4.0 (??/??/????):
 	Finch:
 	* Color is used in the buddylist to indicate status, and the conversation
 	  window to indicate various message attributes. Look at the sample gntrc
-	  file in the man-page for details.
+	  file in the man page for details.
 	* The default keybinding for dump-screen is now M-D and uses a file
 	  request dialog. M-d will properly delete-forward-word, and M-f has been
 	  fixed to imitate readline's behavior.
 	* New bindings alt+tab and alt+shift+tab to help navigating between the
-	  higlighted windows (details on the man-page).
+	  higlighted windows (details on the man page).
 	* Recently signed on (or off) buddies blink in the buddy list.
-	* New action 'Room List' in the action-list can be used to get the list of
+	* New action 'Room List' in the action list can be used to get the list of
 	  available chat rooms for an online account.
 
 version 2.3.1 (12/7/2007):

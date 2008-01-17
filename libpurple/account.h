@@ -410,37 +410,34 @@ void purple_account_set_proxy_info(PurpleAccount *account, PurpleProxyInfo *info
 void purple_account_set_status_types(PurpleAccount *account, GList *status_types);
 
 /**
- * Activates or deactivates a status.  All changes to the statuses of
- * an account go through this function or purple_account_set_status_list.
+ * Variadic version of purple_account_set_status_list(); the variadic list
+ * replaces @a attrs, and should be <tt>NULL</tt>-terminated.
  *
- * Only independent statuses can be deactivated with this. To deactivate
- * an exclusive status, activate a different (and exclusive?) status.
- *
- * @param account   The account.
- * @param status_id The ID of the status.
- * @param active    The active state.
- * @param ...       Pairs of attributes for the new status passed in
- *                  as a NULL-terminated list of id/value pairs.
+ * @copydoc purple_account_set_status_list()
  */
 void purple_account_set_status(PurpleAccount *account, const char *status_id,
-							 gboolean active, ...) G_GNUC_NULL_TERMINATED;
+	gboolean active, ...) G_GNUC_NULL_TERMINATED;
 
 
 /**
  * Activates or deactivates a status.  All changes to the statuses of
- * an account go through this function or purple_account_set_status.
+ * an account go through this function or purple_account_set_status().
  *
- * Only independent statuses can be deactivated with this. To deactivate
- * an exclusive status, activate a different (and exclusive?) status.
+ * You can only deactivate an exclusive status by activating another exclusive
+ * status.  So, if @a status_id is an exclusive status and @a active is @c
+ * FALSE, this function does nothing.
  *
  * @param account   The account.
  * @param status_id The ID of the status.
- * @param active    The active state.
- * @param attrs		A list of attributes in key/value pairs
+ * @param active    Whether @a status_id is to be activated (<tt>TRUE</tt>) or
+ *                  deactivated (<tt>FALSE</tt>).
+ * @param attrs     A list of <tt>const char *</tt> attribute names followed by
+ *                  <tt>const char *</tt> attribute values for the status.
+ *                  (For example, one pair might be <tt>"message"</tt> followed
+ *                  by <tt>"hello, talk to me!"</tt>.)
  */
 void purple_account_set_status_list(PurpleAccount *account,
-								  const char *status_id,
-								  gboolean active, GList *attrs);
+	const char *status_id, gboolean active, GList *attrs);
 
 /**
  * Clears all protocol-specific settings on an account.

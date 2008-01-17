@@ -1318,6 +1318,8 @@ void *purple_request_choice_varg(void *handle, const char *title,
  * @param secondary      Secondary information, or @c NULL if there is none.
  * @param default_action The default action, zero-indexed; if the third action
  *                       supplied should be the default, supply <tt>2</tt>.
+ *                       The should be the action that users are most likely
+ *                       to select.
  * @param account        The #PurpleAccount associated with this request, or @c
  *                       NULL if none is.
  * @param who            The username of the buddy associated with this request,
@@ -1356,6 +1358,8 @@ void *purple_request_action(void *handle, const char *title, const char *primary
  * @param secondary      Secondary information, or @c NULL if there is none.
  * @param default_action The default action, zero-indexed; if the third action
  *                       supplied should be the default, supply <tt>2</tt>.
+ *                       The should be the action that users are most likely
+ *                       to select.
  * @param account        The #PurpleAccount associated with this request, or @c
  *                       NULL if none is.
  * @param who            The username of the buddy associated with this request,

@@ -1167,6 +1167,10 @@ Function ${UN}RunCheck
     MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(PIDGIN_IS_RUNNING) /SD IDCANCEL IDRETRY retry_runcheck
     Abort
 
+  ; Close the Handle (If we don't do this, the uninstaller called from within will fail)
+  ; This is not optimal because there is a (small) window of time when a new process could start
+  System::Call 'kernel32::CloseHandle(i $R1) i .R1'
+
   Pop $R1
   Pop $R0
 FunctionEnd
