@@ -2316,6 +2316,69 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	msim_msg_free(blocklist_msg);
 }
 
+/**
+ * Borrowed this code from oscar_normalize. Added checking for "if userid, get name before normalizing"
+ *
+ * Basically... Returns a string that has been formated with all the spaces and caps removed.
+ */
+const char *msim_normalize(const PurpleAccount *account, const char *str) {
+	static char normalized[BUF_LEN];
+	MsimSession *session;
+	char *tmp1, *tmp2;
+	int i, j;
+	guint id;
+
+	g_return_val_if_fail(str != NULL, NULL);
+
+	if (msim_is_userid(str)) {
+		/* Have user ID, we need to get their username first :) */
+		const char *username;
+
+		/* If the account does not exist, we can't look up the user. */
+		g_return_val_if_fail(account != NULL, str);
+		g_return_val_if_fail(account->gc != NULL, str);
+		g_return_val_if_fail(account->gc->state == PURPLE_CONNECTED, str);
+
+		purple_debug_info("msim_normalize", "%s is a userid\n",str);
+
+		session = (MsimSession *)account->gc->proto_data;
+		id = atol(str);
+		username = msim_uid2username_from_blist(session, id);
+		if (!username) {
+			/* Not in buddy list... scheisse... TODO: Manual Lookup! */
+			/* Note: manual lookup using msim_lookup_user() is a problem inside 
+			 * msim_normalize(), because msim_lookup_user() calls a callback function
+			 * when the user information has been looked up, but msim_normalize() expects
+			 * the result immediately. */
+			purple_debug_info("msim_normalize", "Failure! %s is not in my list\n", str);
+			strncpy(normalized, str, BUF_LEN);
+		} else {
+			purple_debug_info("msim_normalize","%d is %s\n", id, username);
+			strncpy(normalized, username, BUF_LEN);
+		}
+	} else {
+		/* Have username. */
+		strncpy(normalized, str, BUF_LEN);
+	}
+
+	/* Strip spaces. */
+	for (i=0, j=0; normalized[j]; i++, j++) {
+		while (normalized[j] == ' ')
+			j++;
+		normalized[i] = normalized[j];
+	}
+	normalized[i] = '\0';
+
+	/* Lowercase and perform UTF-8 normalization. */
+	tmp1 = g_utf8_strdown(normalized, -1);
+	tmp2 = g_utf8_normalize(tmp1, -1, G_NORMALIZE_DEFAULT);
+	g_snprintf(normalized, sizeof(normalized), "%s", tmp2);
+	g_free(tmp2);
+	g_free(tmp1);
+
+	return normalized;
+}
+
 /** Return whether the buddy can be messaged while offline.
  *
  * The protocol supports offline messages in just the same way as online
@@ -2970,7 +3033,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,              /* rename_group */
 	NULL,              /* buddy_free */
 	NULL,              /* convo_closed */
-	NULL,              /* normalize */
+	msim_normalize,    /* normalize */
 	NULL,              /* set_buddy_icon */
 	NULL,              /* remove_group */
 	NULL,              /* get_cb_real_name */

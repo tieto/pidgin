@@ -1517,6 +1517,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 {
 	struct pieceofcrap *pos = data;
 	gchar *buf;
+	ssize_t result;
 
 	if (!PURPLE_CONNECTION_IS_VALID(pos->gc))
 	{
@@ -1528,8 +1529,8 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 	pos->fd = source;
 
 	if (source < 0) {
-		buf = g_strdup_printf(_("You may be disconnected shortly.  You may want to use TOC until "
-			"this is fixed.  Check %s for updates."), PURPLE_WEBSITE);
+		buf = g_strdup_printf(_("You may be disconnected shortly.  "
+				"Check %s for updates."), PURPLE_WEBSITE);
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid AIM login hash."),
 							buf);
@@ -1541,7 +1542,18 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 
 	buf = g_strdup_printf("GET " AIMHASHDATA "?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
 			pos->offset, pos->len, pos->modname ? pos->modname : "");
-	write(pos->fd, buf, strlen(buf));
+	result = send(pos->fd, buf, strlen(buf), 0);
+	if (result != strlen(buf)) {
+		if (result < 0)
+			purple_debug_error("oscar", "Error writing %" G_GSIZE_FORMAT
+					" bytes to fetch AIM hash data: %s\n",
+					strlen(buf), g_strerror(errno));
+		else
+			purple_debug_error("oscar", "Tried to write %"
+					G_GSIZE_FORMAT " bytes to fetch AIM hash data but "
+					"instead wrote %" G_GSIZE_FORMAT " bytes\n",
+					strlen(buf), result);
+	}
 	g_free(buf);
 	g_free(pos->modname);
 	pos->inpa = purple_input_add(pos->fd, PURPLE_INPUT_READ, damn_you, pos);
@@ -1723,7 +1735,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	int type = 0;
 	gboolean buddy_is_away = FALSE;
 	const char *status_id;
-	char *itmsurl = NULL;
 	va_list ap;
 	aim_userinfo_t *info;
 
@@ -1771,11 +1782,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
 	}
 
-	if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len)
-		/* Grab the iTunes Music Store URL */
-		itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
-				info->itmsurl, info->itmsurl_len);
-
 	if (info->flags & AIM_FLAG_WIRELESS)
 	{
 		purple_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_MOBILE, NULL);
@@ -1783,27 +1789,31 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_prpl_got_user_status_deactive(account, info->sn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	if (status_id == OSCAR_STATUS_ID_AVAILABLE)
+	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0)
 	{
 		char *message = NULL;
+		char *itmsurl = NULL;
 
 		if (info->status != NULL && info->status[0] != '\0')
 			/* Grab the available message */
 			message = oscar_encoding_to_utf8(account, info->status_encoding,
 					info->status, info->status_len);
 
+		if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len)
+			/* Grab the iTunes Music Store URL */
+			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
+					info->itmsurl, info->itmsurl_len);
+
 		purple_prpl_got_user_status(account, info->sn, status_id,
 				"message", message, "itmsurl", itmsurl, NULL);
 
 		g_free(message);
+		g_free(itmsurl);
 	}
 	else
 	{
-		purple_prpl_got_user_status(account, info->sn, status_id,
-				"itmsurl", itmsurl, NULL);
+		purple_prpl_got_user_status(account, info->sn, status_id, NULL);
 	}
-
-	g_free(itmsurl);
 
 	/* Login time stuff */
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
@@ -4444,7 +4454,6 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	PurplePresence *presence;
 	PurpleStatusType *status_type;
 	PurpleStatusPrimitive primitive;
-	gboolean invisible;
 
 	char *htmlinfo;
 	char *info_encoding = NULL;
@@ -4459,7 +4468,6 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	status_type = purple_status_get_type(status);
 	primitive = purple_status_type_get_primitive(status_type);
 	presence = purple_account_get_presence(account);
-	invisible = purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE);
 
 	if (!setinfo)
 	{
@@ -5219,7 +5227,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	data->nick = (buddy ? g_strdup(purple_buddy_get_alias_only(buddy)) : NULL);
 
 	purple_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
-						1, /* Default action is "no" */
+						PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), sn, NULL,
 						data,
 						G_CALLBACK(purple_icq_buddyadd),
@@ -5975,7 +5983,7 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 			_("Because this reveals your IP address, it "
 			  "may be considered a security risk.  Do you "
 			  "wish to continue?"),
-			0,
+			0, /* Default action is "connect" */
 			purple_connection_get_account(gc), data->who, NULL,
 			data, 2,
 			_("C_onnect"), G_CALLBACK(oscar_ask_directim_yes_cb),

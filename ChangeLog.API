@@ -18,6 +18,18 @@ version 2.4.0 (??/??/????):
 			* purple_roomlist_field_get_type
 			* purple_roomlist_field_get_label
 			* purple_roomlist_field_get_hidden
+		* unlocalized_name field in PurpleAttentionType for UIs that need it.
+		* Some accessor and mutator functions for PurpleAttentionType:
+			* purple_attention_type_set_name
+			* purple_attention_type_set_incoming_desc
+			* purple_attention_type_set_outgoing_desc
+			* purple_attention_type_set_icon_name
+			* purple_attention_type_set_unlocalized_name
+			* purple_attention_type_get_name
+			* purple_attention_type_get_incoming_desc
+			* purple_attention_type_get_outgoing_desc
+			* purple_attention_type_get_icon_name
+			* purple_attention_type_get_unlocalized_name
 
 	Pidgin:
 		Added:

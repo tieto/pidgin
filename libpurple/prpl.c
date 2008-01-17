@@ -29,6 +29,107 @@
 #include "util.h"
 
 /**************************************************************************/
+/** @name Attention Type API                                              */
+/**************************************************************************/
+PurpleAttentionType *
+purple_attention_type_new(const char *ulname, const char *name,
+						const char *inc_desc, const char *out_desc)
+{
+	PurpleAttentionType *attn = g_new0(PurpleAttentionType, 1);
+
+	purple_attention_type_set_name(attn, name);
+	purple_attention_type_set_incoming_desc(attn, inc_desc);
+	purple_attention_type_set_outgoing_desc(attn, out_desc);
+	purple_attention_type_set_unlocalized_name(attn, ulname);
+
+	return attn;
+}
+
+
+void
+purple_attention_type_set_name(PurpleAttentionType *type, const char *name)
+{
+	g_return_if_fail(type != NULL);
+
+	type->name = name;
+}
+
+void
+purple_attention_type_set_incoming_desc(PurpleAttentionType *type, const char *desc)
+{
+	g_return_if_fail(type != NULL);
+
+	type->incoming_description = desc;
+}
+
+void
+purple_attention_type_set_outgoing_desc(PurpleAttentionType *type, const char *desc)
+{
+	g_return_if_fail(type != NULL);
+
+	type->outgoing_description = desc;
+}
+
+void
+purple_attention_type_set_icon_name(PurpleAttentionType *type, const char *name)
+{
+	g_return_if_fail(type != NULL);
+	
+	type->icon_name = name;
+}
+
+void
+purple_attention_type_set_unlocalized_name(PurpleAttentionType *type, const char *ulname)
+{
+	g_return_if_fail(type != NULL);
+
+	type->unlocalized_name = ulname;
+}
+
+const char *
+purple_attention_type_get_name(const PurpleAttentionType *type)
+{
+	g_return_val_if_fail(type != NULL, NULL);
+
+	return type->name;
+}
+
+const char *
+purple_attention_type_get_incoming_desc(const PurpleAttentionType *type)
+{
+	g_return_val_if_fail(type != NULL, NULL);
+
+	return type->incoming_description;
+}
+
+const char *
+purple_attention_type_get_outgoing_desc(const PurpleAttentionType *type)
+{
+	g_return_val_if_fail(type != NULL, NULL);
+
+	return type->outgoing_description;
+}
+
+const char *
+purple_attention_type_get_icon_name(const PurpleAttentionType *type)
+{
+	g_return_val_if_fail(type != NULL, NULL);
+
+	if(type->icon_name == NULL || *(type->icon_name) == '\0')
+		return NULL;
+
+	return type->icon_name;
+}
+
+const char *
+purple_attention_type_get_unlocalized_name(const PurpleAttentionType *type)
+{
+	g_return_val_if_fail(type != NULL, NULL);
+
+	return type->unlocalized_name;
+}
+
+/**************************************************************************/
 /** @name Protocol Plugin API  */
 /**************************************************************************/
 void

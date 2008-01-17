@@ -2301,14 +2301,10 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 GList *jabber_attention_types(PurpleAccount *account)
 {
 	static GList *types = NULL;
-	PurpleAttentionType *attn;
 
 	if (!types) {
-		attn = g_new0(PurpleAttentionType, 1);
-		attn->name = _("Buzz");
-		attn->incoming_description = _("%s has buzzed you!");
-		attn->outgoing_description = _("Buzzing %s...");
-		types = g_list_append(types, attn);
+		types = g_list_append(types, purple_attention_type_new("Buzz", _("Buzz"),
+				_("%s has buzzed you!"), _("Buzzing %s...")));
 	}
 
 	return types;

@@ -1012,7 +1012,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		purple_debug_error("msn",
 						 "Error opening temp passport file: %s\n",
-						 strerror(errno));
+						 g_strerror(errno));
 	}
 	else
 	{
@@ -1061,7 +1061,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		{
 			purple_debug_error("msn",
 							 "Error closing temp passport file: %s\n",
-							 strerror(errno));
+							 g_strerror(errno));
 
 			g_unlink(session->passport_info.file);
 			g_free(session->passport_info.file);
