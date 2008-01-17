@@ -386,11 +386,11 @@ aim_locate_gotuserinfo(OscarData *od, FlapConnection *conn, const char *sn)
 }
 
 void
-aim_locate_requestuserinfo(OscarData *od, const char *sn)
+aim_locate_autofetch_away_message(OscarData *od, const char *sn)
 {
 	struct userinfo_node *cur;
 
-	/* Make sure we haven't already requested info for this buddy */
+	/* Make sure we haven't already made an info request for this buddy */
 	for (cur = od->locate.requested; cur != NULL; cur = cur->next)
 		if (aim_sncmp(sn, cur->sn) == 0)
 			return;
@@ -401,7 +401,7 @@ aim_locate_requestuserinfo(OscarData *od, const char *sn)
 	cur->next = od->locate.requested;
 	od->locate.requested = cur;
 
-	aim_locate_getinfoshort(od, cur->sn, 0x00000003);
+	aim_locate_getinfoshort(od, cur->sn, 0x00000002);
 }
 
 aim_userinfo_t *aim_locate_finduserinfo(OscarData *od, const char *sn) {

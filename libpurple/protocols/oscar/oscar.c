@@ -1735,7 +1735,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	int type = 0;
 	gboolean buddy_is_away = FALSE;
 	const char *status_id;
-	char *itmsurl = NULL;
 	va_list ap;
 	aim_userinfo_t *info;
 
@@ -1783,11 +1782,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
 	}
 
-	if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len)
-		/* Grab the iTunes Music Store URL */
-		itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
-				info->itmsurl, info->itmsurl_len);
-
 	if (info->flags & AIM_FLAG_WIRELESS)
 	{
 		purple_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_MOBILE, NULL);
@@ -1795,27 +1789,31 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_prpl_got_user_status_deactive(account, info->sn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	if (!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE))
+	if (status_id == OSCAR_STATUS_ID_AVAILABLE)
 	{
 		char *message = NULL;
+		char *itmsurl = NULL;
 
 		if (info->status != NULL && info->status[0] != '\0')
 			/* Grab the available message */
 			message = oscar_encoding_to_utf8(account, info->status_encoding,
 					info->status, info->status_len);
 
+		if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len)
+			/* Grab the iTunes Music Store URL */
+			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
+					info->itmsurl, info->itmsurl_len);
+
 		purple_prpl_got_user_status(account, info->sn, status_id,
 				"message", message, "itmsurl", itmsurl, NULL);
 
 		g_free(message);
+		g_free(itmsurl);
 	}
 	else
 	{
-		purple_prpl_got_user_status(account, info->sn, status_id,
-				"itmsurl", itmsurl, NULL);
+		purple_prpl_got_user_status(account, info->sn, status_id, NULL);
 	}
-
-	g_free(itmsurl);
 
 	/* Login time stuff */
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
