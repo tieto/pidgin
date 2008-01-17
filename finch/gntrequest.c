@@ -253,7 +253,7 @@ finch_request_action(const char *title, const char *primary,
 		void *user_data, size_t actioncount,
 		va_list actions)
 {
-	GntWidget *window, *box, *button;
+	GntWidget *window, *box, *button, *focus = NULL;
 	int i;
 
 	window = setup_request_window(title, primary, secondary, PURPLE_REQUEST_ACTION);
@@ -272,9 +272,14 @@ finch_request_action(const char *title, const char *primary,
 		g_object_set_data(G_OBJECT(button), "activate-userdata", user_data);
 		g_object_set_data(G_OBJECT(button), "activate-id", GINT_TO_POINTER(i));
 		g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(request_action_cb), window);
+
+		if (i == default_value)
+			focus = button;
 	}
 
 	gnt_widget_show(window);
+	if (focus)
+		gnt_box_give_focus_to_child(GNT_BOX(window), focus);
 
 	return window;
 }
