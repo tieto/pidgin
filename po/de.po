@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-08 11:16+0100\n"
-"PO-Revision-Date: 2008-01-08 11:15+0100\n"
+"POT-Creation-Date: 2008-01-17 22:50+0100\n"
+"PO-Revision-Date: 2008-01-17 22:50+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2688,6 +2688,9 @@ msgstr "Kann die Socket nicht an den Port binden"
 msgid "Could not listen on socket"
 msgstr "Kann nicht an der Socket hören"
 
+msgid "Error communicating with local mDNSResponder."
+msgstr "Fehler bei der Kommunikation mit lokalem mDNSResponder."
+
 msgid "Invalid proxy settings"
 msgstr "Falsche Proxy-Einstellungen"
 
@@ -4237,6 +4240,8 @@ msgstr "Kann nicht anklopfen, da der Benutzer %s vielleicht offline ist."
 msgid "Unable to buzz, because the user %s does not support it."
 msgstr "Kann nicht anklopfen, da der Benutzer %s dies nicht unterstützt."
 
+#. Yahoo only supports one attention command: the 'buzz'.
+#. This is index number YAHOO_BUZZ.
 msgid "Buzz"
 msgstr "Anklopfen"
 
@@ -9151,6 +9156,10 @@ msgstr "Doodle-Anfrage senden."
 msgid "Unable to establish file descriptor."
 msgstr "Konnte Dateibeschreibung nicht erstellen."
 
+#, c-format
+msgid "%s is trying to send you a group of %d files.\n"
+msgstr "%s versucht, Ihnen eine Gruppe von %d Dateien zu senden.\n"
+
 msgid "Write Error"
 msgstr "Schreibfehler"
 
@@ -12294,6 +12303,9 @@ msgstr "_Bearbeiten"
 
 msgid "_Open Mail"
 msgstr "Mail ö_ffnen"
+
+msgid "Pidgin Tooltip"
+msgstr "Pidgin-Tooltip"
 
 msgid "Pidgin smileys"
 msgstr "Pidgin-Smileys"
