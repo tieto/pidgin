@@ -21,28 +21,11 @@
  *
  */
 
-/* XXX: we probably shouldn't include internal.h in examples */
-#include "internal.h"
-
-#include "account.h"
-#include "conversation.h"
-#include "core.h"
-#include "debug.h"
-#include "eventloop.h"
-#include "ft.h"
-#include "log.h"
-#include "notify.h"
-#include "prefs.h"
-#include "prpl.h"
-#include "pounce.h"
-#include "savedstatuses.h"
-#include "sound.h"
-#include "status.h"
-#include "util.h"
-#include "whiteboard.h"
+#include "purple.h"
 
 #include <glib.h>
 
+#include <signal.h>
 #include <string.h>
 #include <unistd.h>
 
