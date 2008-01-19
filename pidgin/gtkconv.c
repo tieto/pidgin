@@ -4989,7 +4989,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtk_text_buffer_create_tag(GTK_IMHTML(gtkconv->imhtml)->text_buffer, "TYPING-NOTIFICATION",
 			"foreground", "#888888",
 			"justification", GTK_JUSTIFY_LEFT,  /* XXX: RTL'ify */
-			"weight", PANGO_WEIGHT_BOLD,
+			"weight", PANGO_WEIGHT_LIGHT,
 			"scale", PANGO_SCALE_SMALL,
 			NULL);
 
