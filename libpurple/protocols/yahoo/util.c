@@ -168,11 +168,11 @@ char *yahoo_convert_to_numeric(const char *str)
 {
 	GString *gstr = NULL;
 	char *retstr;
-	const char *p;
+	const unsigned char *p;
 
 	gstr = g_string_sized_new(strlen(str) * 6 + 1);
 
-	for (p = str; *p; p++) {
+	for (p = (unsigned char *)str; *p; p++) {
 		g_string_append_printf(gstr, "&#%u;", *p);
 	}
 
