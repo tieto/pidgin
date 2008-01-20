@@ -1210,12 +1210,12 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
  *
  */
 static const gchar *
-msim_uid2username_from_blist(MsimSession *session, guint wanted_uid)
+msim_uid2username_from_blist(PurpleAccount *account, guint wanted_uid)
 {
 	GSList *buddies, *cur;
 	gchar *ret;
 
-	buddies = purple_find_buddies(session->account, NULL); 
+	buddies = purple_find_buddies(account, NULL); 
 
 	if (!buddies)
 	{
@@ -1266,7 +1266,7 @@ msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 		/* 'f' = userid message is from, in buddy messages */
 		uid = msim_msg_get_integer(msg, "f");
 
-		username = msim_uid2username_from_blist(session, uid); 
+		username = msim_uid2username_from_blist(session->account, uid); 
 
 		if (username) {
 			/* Know username already, use it. */
@@ -2338,7 +2338,6 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
  */
 const char *msim_normalize(const PurpleAccount *account, const char *str) {
 	static char normalized[BUF_LEN];
-	MsimSession *session;
 	char *tmp1, *tmp2;
 	int i, j;
 	guint id;
@@ -2350,25 +2349,20 @@ const char *msim_normalize(const PurpleAccount *account, const char *str) {
 		const char *username;
 
 		/* If the account does not exist, we can't look up the user. */
-		g_return_val_if_fail(account != NULL, str);
-		g_return_val_if_fail(account->gc != NULL, str);
-		g_return_val_if_fail(account->gc->state == PURPLE_CONNECTED, str);
+                if (!account)
+                    return str;
 
-		purple_debug_info("msim_normalize", "%s is a userid\n",str);
-
-		session = (MsimSession *)account->gc->proto_data;
 		id = atol(str);
-		username = msim_uid2username_from_blist(session, id);
+		username = msim_uid2username_from_blist(
+                        (PurpleAccount *)account, id);
 		if (!username) {
 			/* Not in buddy list... scheisse... TODO: Manual Lookup! Bug #4631 */
 			/* Note: manual lookup using msim_lookup_user() is a problem inside 
 			 * msim_normalize(), because msim_lookup_user() calls a callback function
 			 * when the user information has been looked up, but msim_normalize() expects
 			 * the result immediately. */
-			purple_debug_info("msim_normalize", "Failure! %s is not in my list\n", str);
 			strncpy(normalized, str, BUF_LEN);
 		} else {
-			purple_debug_info("msim_normalize","%d is %s\n", id, username);
 			strncpy(normalized, username, BUF_LEN);
 		}
 	} else {
@@ -2762,7 +2756,7 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	uid = msim_msg_get_integer(contact_info, "ContactID");
 
 	if (!user_lookup_info) {
-		username = g_strdup(msim_uid2username_from_blist(session, uid));
+		username = g_strdup(msim_uid2username_from_blist(session->account, uid));
 		g_return_if_fail(username != NULL);
 	} else {
 		user_lookup_info_body = msim_msg_get_dictionary(user_lookup_info, "body");
@@ -2830,7 +2824,7 @@ msim_add_contact_from_server(MsimSession *session, MsimMessage *contact_info)
 	g_return_val_if_fail(uid != 0, FALSE);
 
 	/* Lookup the username, since NickName and IMName is unreliable */
-	username = msim_uid2username_from_blist(session, uid);
+	username = msim_uid2username_from_blist(session->account, uid);
 	if (!username) {
 		gchar *uid_str;
 
