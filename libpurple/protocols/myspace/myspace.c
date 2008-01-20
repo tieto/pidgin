@@ -780,8 +780,27 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	} else if (g_str_equal(msg_text, "%stoptyping%")) {
 		serv_got_typing_stopped(session->gc, username);
 		rc = TRUE;
-	} else if (strstr(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_") == msg_text) {
+	} else if (strstr(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_")) {
 		rc = msim_incoming_zap(session, msg);
+	} else if (strstr(msg_text, "!!!GroupCount=")) {
+		/* TODO: support group chats. I think the number in msg_text has
+		 * something to do with the 'gid' field. */
+		purple_debug_info("msim", "msim_incoming_action: TODO: implement #4691, group chats: %s\n", msg_text);
+
+		rc = TRUE;
+	} else if (strstr(msg_text, "!!!Offline=")) {
+		/* TODO: support group chats. This one might mean a user
+		 * went offline or exited the chat. */
+		purple_debug_info("msim", "msim_incoming_action: TODO: implement #4691, group chats: %s\n", msg_text);
+		
+		rc = TRUE;
+	} else if (msim_msg_get_integer(msg, "aid") != 0) {
+		purple_debug_info("msim", "TODO: implement #4691, group chat from %d on %d: %s\n",
+				msim_msg_get_integer(msg, "aid"),
+				msim_msg_get_integer(msg, "f"),
+				msg_text);
+		
+		rc = TRUE;
 	} else {
 		msim_unrecognized(session, msg, 
 				"got to msim_incoming_action but unrecognized value for 'msg'");
