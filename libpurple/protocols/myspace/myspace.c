@@ -117,7 +117,7 @@ msim_load(PurplePlugin *plugin)
 	}
 	return TRUE;
 }
-
+    
 /**
  * Get possible user status types. Based on mockprpl.
  *
@@ -552,22 +552,7 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 		 * return 1 even if the message could not be sent, since I don't know if
 		 * it has failed yet--because the IM is only sent after the userid is
 		 * retrieved from the server (which happens after this function returns).
-		 */
-		/* TODO: maybe if message is delayed, don't echo to conv window,
-		 * but do echo it to conv window manually once it is actually
-		 * sent? Would be complicated. 
-		 *
-		 * Actually, we should instead show in the IM window if an error
-		 * occurred sending the message, but still show it. For example, in AIM
-		 * sending a message to a non-existent or offline user does this:
-		 *
-		 * (5:33:02 PM) me: hi
-		 * (5:33:02 PM) Unable to send message: Not logged in
-		 *
-		 * msimprpl currently pops up a dialog if an error occurs in user
-		 * lookup, but it should be shown in the IM window instead.
-		 *
-		 * Filed as bug #4687.
+                 * If an error does occur, it should be logged to the IM window.
 		 */
 		rc = 1;
 	} else {
@@ -2175,7 +2160,10 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
 		gchar *msg;
 
 		msg = g_strdup_printf(_("No such user: %s"), username);
-		purple_notify_error(NULL, NULL, _("User lookup"), msg);
+                if (!purple_conv_present_error(username, session->account, msg)) { 
+                    purple_notify_error(NULL, NULL, _("User lookup"), msg); 
+                }
+
 		g_free(msg);
 		g_free(username);
 		/* TODO: free
