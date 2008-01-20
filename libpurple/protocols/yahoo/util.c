@@ -164,6 +164,25 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 		return g_strdup("");
 }
 
+char *yahoo_convert_to_numeric(const char *str)
+{
+	GString *gstr = NULL;
+	char *retstr;
+	const unsigned char *p;
+
+	gstr = g_string_sized_new(strlen(str) * 6 + 1);
+
+	for (p = (unsigned char *)str; *p; p++) {
+		g_string_append_printf(gstr, "&#%u;", *p);
+	}
+
+	retstr = gstr->str;
+
+	g_string_free(gstr, FALSE);
+
+	return retstr;
+}
+
 /*
  * I found these on some website but i don't know that they actually
  * work (or are supposed to work). I didn't implement them yet.

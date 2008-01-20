@@ -218,6 +218,8 @@ char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
  */
 char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8);
 
+char *yahoo_convert_to_numeric(const char *str);
+
 /* previously-static functions, now needed for yahoo_profile.c */
 void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full);
 

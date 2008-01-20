@@ -96,7 +96,8 @@ void qq_group_search_application_with_struct(group_member_opt *g)
 	g_return_if_fail(g != NULL && g->gc != NULL && g->member > 0);
 
 	qq_send_packet_get_info(g->gc, g->member, TRUE);	/* we want to see window */
-	purple_request_action(g->gc, NULL, _("Do you want to approve the request?"), "", 2,
+	purple_request_action(g->gc, NULL, _("Do you want to approve the request?"), "",
+					PURPLE_DEFAULT_ACTION_NONE,
 					purple_connection_get_account(g->gc), NULL, NULL,
 					g, 2,
 					_("Reject"), G_CALLBACK(qq_group_reject_application_with_struct),

@@ -373,7 +373,7 @@ tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
 		
 		purple_request_yes_no(tpm_dat, _("Confirm certificate delete"),
 				      primary, NULL, /* Can this be NULL? */
-				      2, /* NO is default action */
+				      1, /* NO is default action */
 				      NULL, NULL, NULL,
 				      id, /* id ownership passed to callback */
 				      tls_peers_mgmt_delete_confirm_cb,

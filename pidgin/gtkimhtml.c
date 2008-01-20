@@ -1455,9 +1455,6 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "SUP", "rise", 5000, NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "PRE", "family", "Monospace", NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "search", "background", "#22ff00", "weight", "bold", NULL);
-#if GTK_CHECK_VERSION(2,8,0)
-	gtk_text_buffer_create_tag(imhtml->text_buffer, "comment", "invisible", FALSE, NULL);
-#endif
 
 	/* When hovering over a link, we show the hand cursor--elsewhere we show the plain ol' pointer cursor */
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
@@ -2984,15 +2981,10 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 
-#if GTK_CHECK_VERSION(2,8,0)
-					wpos = g_snprintf (ws, len, "%s", tag);
-					gtk_text_buffer_insert_with_tags_by_name(imhtml->text_buffer, iter, ws, wpos, "comment", NULL);
-#else
 					if (imhtml->show_comments && !(options & GTK_IMHTML_NO_COMMENTS)) {
 						wpos = g_snprintf (ws, len, "%s", tag);
 						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 					}
-#endif
 					ws[0] = '\0'; wpos = 0;
 
 					/* NEW_BIT (NEW_COMMENT_BIT); */
@@ -3138,12 +3130,6 @@ void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
 void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 					gboolean          show)
 {
-#if GTK_CHECK_VERSION(2,8,0)
-	GtkTextTag *tag;
-	tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), "comment");
-	if (tag)
-		g_object_set(G_OBJECT(tag), "invisible", !show, NULL);
-#endif
 	imhtml->show_comments = show;
 }
 

@@ -347,7 +347,7 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 						_("Do you want to allow or disallow people on "
 						  "your buddy list to send you MSN Mobile pages "
 						  "to your cell phone or other mobile device?"),
-						-1,
+						PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), NULL, NULL,
 						gc, 3,
 						_("Allow"), G_CALLBACK(enable_msn_pages_cb),

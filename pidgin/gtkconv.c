@@ -3428,8 +3428,13 @@ update_typing_message(PidginConversation *gtkconv, const char *message)
 		gtk_text_buffer_delete_mark(buffer, stmark);
 		gtk_text_buffer_delete_mark(buffer, enmark);
 		gtk_text_buffer_delete(buffer, &start, &end);
-	} else if (message && *message == '\n' && !*(message + 1))
+	} else if (message && *message == '\n' && message[1] == ' ' && message[2] == '\0')
 		message = NULL;
+
+#ifdef RESERVE_LINE
+	if (!message)
+		message = "\n ";   /* The blank space is required to avoid a GTK+/Pango bug */
+#endif
 
 	if (message) {
 		GtkTextIter iter;
@@ -3458,7 +3463,11 @@ update_typing_icon(PidginConversation *gtkconv)
 		return;
 
 	if (purple_conv_im_get_typing_state(im) == PURPLE_NOT_TYPING) {
-		update_typing_message(gtkconv, "\n");
+#ifdef RESERVE_LINE
+		update_typing_message(gtkconv, NULL);
+#else
+		update_typing_message(gtkconv, "\n ");
+#endif
 		return;
 	}
 
@@ -4980,7 +4989,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	gtk_text_buffer_create_tag(GTK_IMHTML(gtkconv->imhtml)->text_buffer, "TYPING-NOTIFICATION",
 			"foreground", "#888888",
 			"justification", GTK_JUSTIFY_LEFT,  /* XXX: RTL'ify */
-			"weight", PANGO_WEIGHT_BOLD,
+			"weight", PANGO_WEIGHT_LIGHT,
 			"scale", PANGO_SCALE_SMALL,
 			NULL);
 

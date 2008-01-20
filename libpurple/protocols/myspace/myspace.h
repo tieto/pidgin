@@ -180,6 +180,10 @@
 #define MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS	1
 #define MSIM_CONTACT_LIST_IMPORT_TOP_FRIENDS	2
 
+/* Error codes */
+#define MSIM_ERROR_INCORRECT_PASSWORD           260
+#define MSIM_ERROR_LOGGED_IN_ELSEWHERE          6
+
 /* Functions */
 gboolean msim_load(PurplePlugin *plugin);
 GList *msim_status_types(PurpleAccount *acct);
