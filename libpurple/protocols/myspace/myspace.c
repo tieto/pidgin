@@ -2859,7 +2859,10 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 	msim_msg_dump("msim_got_contact_list: reply=%s", reply);
 
 	body = msim_msg_get_dictionary(reply, "body");
-	g_return_if_fail(body != NULL);
+        if (!body) {
+            /* No friends. Not an error. */
+            return;
+        }
 
 	buddy_count = 0;
 
