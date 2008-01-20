@@ -117,7 +117,7 @@ msim_load(PurplePlugin *plugin)
 	}
 	return TRUE;
 }
-    
+
 /**
  * Get possible user status types. Based on mockprpl.
  *
@@ -133,7 +133,7 @@ msim_status_types(PurpleAccount *acct)
 
 	types = NULL;
 
-    /* Statuses are almost all the same. Define a macro to reduce code repetition. */
+	/* Statuses are almost all the same. Define a macro to reduce code repetition. */
 #define _MSIM_ADD_NEW_STATUS(prim) status =                         \
 	purple_status_type_new_with_attrs(                          \
 	prim,   /* PurpleStatusPrimitive */                         \
@@ -552,7 +552,7 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 		 * return 1 even if the message could not be sent, since I don't know if
 		 * it has failed yet--because the IM is only sent after the userid is
 		 * retrieved from the server (which happens after this function returns).
-                 * If an error does occur, it should be logged to the IM window.
+		 * If an error does occur, it should be logged to the IM window.
 		 */
 		rc = 1;
 	} else {
@@ -587,7 +587,7 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(who != NULL, FALSE);
 	g_return_val_if_fail(text != NULL, FALSE);
-   
+
 	from_username = session->account->username;
 
 	g_return_val_if_fail(from_username != NULL, FALSE);
@@ -596,7 +596,7 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 				  type, from_username, who, text);
 
 	msg = msim_msg_new(
-            "bm", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(type),
+			"bm", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(type),
 			"sesskey", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(session->sesskey),
 			/* 't' will be inserted here */
 			"cv", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(MSIM_CLIENT_VERSION),
@@ -649,7 +649,7 @@ static gboolean
 msim_incoming_bm(MsimSession *session, MsimMessage *msg)
 {
 	guint bm;
-   
+	
 	bm = msim_msg_get_integer(msg, "bm");
 
 	msim_incoming_bm_record_cv(session, msg);
@@ -780,7 +780,7 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	} else if (g_str_equal(msg_text, "%stoptyping%")) {
 		serv_got_typing_stopped(session->gc, username);
 		rc = TRUE;
-	} else if (strstr(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_")) {
+	} else if (strstr(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_") == msg_text) {
 		rc = msim_incoming_zap(session, msg);
 	} else {
 		msim_unrecognized(session, msg, 
@@ -1190,7 +1190,7 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
 	/* Special elements name beginning with '_', we'll use internally within the
 	 * program (did not come directly from the wire). */
 	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, username); /* This makes 'msg' the owner of 'username' */
-  
+	
 	/* TODO: attach more useful information, like ImageURL */
 
 	msim_process(session, msg);
@@ -1936,7 +1936,7 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 
 	/* don't copy; let the MsimUser own the headline, memory-wise */
 	user->headline = status_headline_escaped;
-  
+
 	/* Set user status */
 	switch (status_code) {
 		case MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN: 
@@ -2160,9 +2160,9 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
 		gchar *msg;
 
 		msg = g_strdup_printf(_("No such user: %s"), username);
-                if (!purple_conv_present_error(username, session->account, msg)) { 
-                    purple_notify_error(NULL, NULL, _("User lookup"), msg); 
-                }
+		if (!purple_conv_present_error(username, session->account, msg)) { 
+			purple_notify_error(NULL, NULL, _("User lookup"), msg); 
+		}
 
 		g_free(msg);
 		g_free(username);
@@ -2349,12 +2349,11 @@ const char *msim_normalize(const PurpleAccount *account, const char *str) {
 		const char *username;
 
 		/* If the account does not exist, we can't look up the user. */
-                if (!account)
-                    return str;
+		if (!account)
+			return str;
 
 		id = atol(str);
-		username = msim_uid2username_from_blist(
-                        (PurpleAccount *)account, id);
+		username = msim_uid2username_from_blist((PurpleAccount *)account, id);
 		if (!username) {
 			/* Not in buddy list... scheisse... TODO: Manual Lookup! Bug #4631 */
 			/* Note: manual lookup using msim_lookup_user() is a problem inside 
@@ -2853,10 +2852,10 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 	msim_msg_dump("msim_got_contact_list: reply=%s", reply);
 
 	body = msim_msg_get_dictionary(reply, "body");
-        if (!body) {
-            /* No friends. Not an error. */
-            return;
-        }
+	if (!body) {
+		/* No friends. Not an error. */
+		return;
+	}
 
 	buddy_count = 0;
 
