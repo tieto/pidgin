@@ -33,9 +33,6 @@
 #include "win32dep.h"
 #endif
 
-static GList *flap_connections = NULL;
-#define PURPLE_FLAP_CONNECTION_IS_VALID(conn) (g_list_find(flap_connections, (conn)) != NULL)
-
 /**
  * This sends a channel 1 SNAC containing the FLAP version.
  * The FLAP version is sent by itself at the beginning of every
@@ -276,7 +273,6 @@ flap_connection_new(OscarData *od, int type)
 	conn->queued_snacs = g_queue_new();
 
 	od->oscar_connections = g_slist_prepend(od->oscar_connections, conn);
-	flap_connections = g_list_append(flap_connections, conn);
 
 	return conn;
 }
@@ -363,10 +359,6 @@ flap_connection_destroy_cb(gpointer data)
 	aim_rxcallback_t userfunc;
 
 	conn = data;
-	
-	if (!PURPLE_FLAP_CONNECTION_IS_VALID(conn))
-		return FALSE;
-
 	od = conn->od;
 	account = (PURPLE_CONNECTION_IS_VALID(od->gc) ? purple_connection_get_account(od->gc) : NULL);
 
@@ -447,8 +439,6 @@ flap_connection_destroy_cb(gpointer data)
 	g_queue_free(conn->queued_snacs);
 	if (conn->queued_timeout > 0)
 		purple_timeout_remove(conn->queued_timeout);
-
-	flap_connections = g_list_remove(flap_connections, conn);
 
 	g_free(conn);
 
