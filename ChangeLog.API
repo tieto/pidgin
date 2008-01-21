@@ -30,6 +30,10 @@ version 2.4.0 (??/??/????):
 			* purple_attention_type_get_outgoing_desc
 			* purple_attention_type_get_icon_name
 			* purple_attention_type_get_unlocalized_name
+		* Add some PurpleBuddyListNode accessor functions:
+			* purple_blist_node_get_parent
+			* purple_blist_node_get_first_child
+			* purple_blist_node_get_sibling_next
 
 	Pidgin:
 		Added:

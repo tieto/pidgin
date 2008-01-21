@@ -231,8 +231,47 @@ PurpleBlistNode *purple_blist_get_root(void);
  * @param node		A node.
  * @param offline	Whether to include nodes for offline accounts
  * @return	The next node
+ * @see purple_blist_node_get_parent
+ * @see purple_blist_node_get_first_child
+ * @see purple_blist_node_get_sibling_next
  */
 PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline);
+
+/**
+ * Returns the parent node of a given node.
+ *
+ * @param node A node.
+ * @return  The parent node.
+ * @since 2.4.0
+ * @see purple_blist_node_get_first_child
+ * @see purple_blist_node_get_sibling_next
+ * @see purple_blist_node_next
+ */
+PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node);
+
+/**
+ * Returns the the first child node of a given node.
+ *
+ * @param node A node.
+ * @return  The child node.
+ * @since 2.4.0
+ * @see purple_blist_node_get_parent
+ * @see purple_blist_node_get_sibling_next
+ * @see purple_blist_node_next
+ */
+PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node);
+
+/**
+ * Returns the sibling node of a given node.
+ *
+ * @param node A node.
+ * @return  The sibling node.
+ * @since 2.4.0
+ * @see purple_blist_node_get_parent
+ * @see purple_blist_node_get_first_child
+ * @see purple_blist_node_next
+ */
+PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node);
 
 /**
  * Shows the buddy list, creating a new one if necessary.
