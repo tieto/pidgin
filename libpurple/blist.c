@@ -753,6 +753,21 @@ PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline)
 	return ret;
 }
 
+PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node)
+{
+	return node ? node->parent : NULL;
+}
+
+PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node)
+{
+	return node ? node->child : NULL;
+}
+
+PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node)
+{
+	return node? node->next : NULL;
+}
+
 void
 purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 {
@@ -2230,6 +2245,14 @@ purple_chat_get_group(PurpleChat *chat)
 	g_return_val_if_fail(chat != NULL, NULL);
 
 	return (PurpleGroup *)(((PurpleBlistNode *)chat)->parent);
+}
+
+PurpleAccount *
+purple_chat_get_account(PurpleChat *chat)
+{
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	return chat->account;
 }
 
 PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy)

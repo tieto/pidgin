@@ -575,6 +575,17 @@ gboolean gnt_tree_is_searching(GntTree *tree);
 void gnt_tree_set_search_function(GntTree *tree,
 		gboolean (*func)(GntTree *tree, gpointer key, const char *search, const char *current));
 
+/**
+ * Get the parent key for a row.
+ *
+ * @param  tree  The tree
+ * @param  key   The key for the row.
+ *
+ * @return The key of the parent row.
+ * @since 2.4.0
+ */
+gpointer gnt_tree_get_parent_key(GntTree *tree, gpointer key);
+
 G_END_DECLS
 
 #endif /* GNT_TREE_H */
