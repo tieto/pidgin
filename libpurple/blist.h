@@ -706,6 +706,16 @@ PurpleChat *purple_blist_find_chat(PurpleAccount *account, const char *name);
 PurpleGroup *purple_chat_get_group(PurpleChat *chat);
 
 /**
+ * Returns the account the chat belongs to.
+ *
+ * @param chat  The chat.
+ *
+ * @return  The account the chat belongs to.
+ * @since 2.4.0
+ */
+PurpleAccount *purple_chat_get_account(PurpleChat *chat);
+
+/**
  * Returns the group of which the buddy is a member.
  *
  * @param buddy   The buddy

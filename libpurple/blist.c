@@ -2247,6 +2247,14 @@ purple_chat_get_group(PurpleChat *chat)
 	return (PurpleGroup *)(((PurpleBlistNode *)chat)->parent);
 }
 
+PurpleAccount *
+purple_chat_get_account(PurpleChat *chat)
+{
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	return chat->account;
+}
+
 PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy)
 {
 	g_return_val_if_fail(buddy != NULL, NULL);
