@@ -1470,6 +1470,8 @@ draw_context_menu(FinchBlist *ggblist)
 	tree = GNT_TREE(ggblist->tree);
 
 	node = gnt_tree_get_selection_data(tree);
+	if (node && purple_blist_node_get_type(node) == PURPLE_BLIST_OTHER_NODE)
+		return;
 
 	if (ggblist->tooltip)
 		remove_tooltip(ggblist);
