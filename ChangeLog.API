@@ -70,6 +70,7 @@ version 2.4.0 (??/??/????):
 		  string.
 		* Added gnt_style_get_color to get a color pair from an entry in
 		  ~/.gntrc
+		* Added gnt_tree_get_parent_key to get the key for the parent row.
 
 version 2.3.0 (11/24/2007):
 	libpurple:

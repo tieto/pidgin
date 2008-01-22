@@ -1841,3 +1841,9 @@ void gnt_tree_set_search_function(GntTree *tree,
 	tree->priv->search_func = func;
 }
 
+gpointer gnt_tree_get_parent_key(GntTree *tree, gpointer key)
+{
+	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
+	return row ? row->parent : NULL;
+}
+
