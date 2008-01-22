@@ -2652,17 +2652,17 @@ create_menu(void)
 	subsub = gnt_menu_new(GNT_MENU_POPUP);
 	gnt_menuitem_set_submenu(item, GNT_MENU(subsub));
 
-	item = gnt_menuitem_new("Buddy");
+	item = gnt_menuitem_new(_("Buddy"));
 	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "add-buddy");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(item, menu_add_buddy_cb, NULL);
 
-	item = gnt_menuitem_new("Chat");
+	item = gnt_menuitem_new(_("Chat"));
 	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "add-chat");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(item, menu_add_chat_cb, NULL);
 
-	item = gnt_menuitem_new("Group");
+	item = gnt_menuitem_new(_("Group"));
 	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "add-group");
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(item, menu_add_group_cb, NULL);
