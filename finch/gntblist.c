@@ -534,7 +534,9 @@ new_list(PurpleBuddyList *list)
 
 	ggblist = g_new0(FinchBlist, 1);
 	list->ui_data = ggblist;
-	ggblist->manager = &default_manager;
+	ggblist->manager = finch_blist_manager_find(purple_prefs_get_string(PREF_ROOT "/grouping"));
+	if (!ggblist->manager)
+		ggblist->manager = &default_manager;
 }
 
 static void
@@ -1910,7 +1912,25 @@ static void
 redraw_blist(const char *name, PurplePrefType type, gconstpointer val, gpointer data)
 {
 	PurpleBlistNode *node, *sel;
-	if (ggblist == NULL || ggblist->window == NULL)
+	FinchBlistManager *manager;
+
+	if (ggblist == NULL)
+		return;
+
+	manager = finch_blist_manager_find(purple_prefs_get_string(PREF_ROOT "/grouping"));
+	if (manager == NULL)
+		manager = &default_manager;
+	if (ggblist->manager != manager) {
+		ggblist->manager = manager;
+		if (manager->can_add_node == NULL)
+			manager->can_add_node = default_can_add_node;
+		if (manager->find_parent == NULL)
+			manager->find_parent = default_find_parent;
+		if (manager->create_tooltip == NULL)
+			manager->create_tooltip = default_create_tooltip;
+	}
+
+	if (ggblist->window == NULL)
 		return;
 
 	sel = gnt_tree_get_selection_data(GNT_TREE(ggblist->tree));
@@ -1949,6 +1969,7 @@ void finch_blist_init()
 	purple_prefs_add_bool(PREF_ROOT "/showoffline", FALSE);
 	purple_prefs_add_bool(PREF_ROOT "/emptygroups", FALSE);
 	purple_prefs_add_string(PREF_ROOT "/sort_type", "text");
+	purple_prefs_add_string(PREF_ROOT "/grouping", "default");
 
 	purple_prefs_connect_callback(finch_blist_get_handle(),
 			PREF_ROOT "/emptygroups", redraw_blist, NULL);
@@ -1956,6 +1977,8 @@ void finch_blist_init()
 			PREF_ROOT "/showoffline", redraw_blist, NULL);
 	purple_prefs_connect_callback(finch_blist_get_handle(),
 			PREF_ROOT "/sort_type", redraw_blist, NULL);
+	purple_prefs_connect_callback(finch_blist_get_handle(),
+			PREF_ROOT "/grouping", redraw_blist, NULL);
 
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", purple_blist_get_handle(),
 			G_CALLBACK(account_signed_on_cb), NULL);
@@ -2585,21 +2608,7 @@ static void
 menu_group_set_cb(GntMenuItem *item, gpointer null)
 {
 	const char *id = g_object_get_data(G_OBJECT(item), "grouping-id");
-	FinchBlistManager *manager;
-
-	manager = finch_blist_manager_find(id);
-	if (!manager)
-		return;
-
-	ggblist->manager = manager;
-	if (ggblist->manager->can_add_node == NULL)
-		ggblist->manager->can_add_node = default_can_add_node;
-	if (ggblist->manager->find_parent == NULL)
-		ggblist->manager->find_parent = default_find_parent;
-	if (ggblist->manager->create_tooltip == NULL)
-		ggblist->manager->create_tooltip = default_create_tooltip;
-
-	redraw_blist(NULL, 0, NULL, NULL);
+	purple_prefs_set_string(PREF_ROOT "/grouping", id);
 }
 
 static void
@@ -2853,6 +2862,8 @@ void finch_blist_install_manager(const FinchBlistManager *manager)
 	if (!g_list_find(managers, manager)) {
 		managers = g_list_append(managers, (gpointer)manager);
 		reconstruct_grouping_menu();
+		if (strcmp(manager->id, purple_prefs_get_string(PREF_ROOT "/grouping")) == 0)
+			purple_prefs_trigger_callback(PREF_ROOT "/grouping");
 	}
 }
 
@@ -2861,6 +2872,8 @@ void finch_blist_uninstall_manager(const FinchBlistManager *manager)
 	if (g_list_find(managers, manager)) {
 		managers = g_list_remove(managers, manager);
 		reconstruct_grouping_menu();
+		if (strcmp(manager->id, purple_prefs_get_string(PREF_ROOT "/grouping")) == 0)
+			purple_prefs_trigger_callback(PREF_ROOT "/grouping");
 	}
 }
 
