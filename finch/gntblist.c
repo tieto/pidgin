@@ -81,6 +81,7 @@ typedef struct
 	/* These are the menuitems that get regenerated */
 	GntMenuItem *accounts;
 	GntMenuItem *plugins;
+	GntMenuItem *grouping;
 
 	FinchBlistManager *manager;
 } FinchBlist;
@@ -130,6 +131,7 @@ static void update_node_display(PurpleBlistNode *buddy, FinchBlist *ggblist);
 static void update_buddy_display(PurpleBuddy *buddy, FinchBlist *ggblist);
 static void account_signed_on_cb(PurpleConnection *pc, gpointer null);
 static void finch_request_add_buddy(PurpleAccount *account, const char *username, const char *grp, const char *alias);
+static void menu_group_set_cb(GntMenuItem *item, gpointer null);
 
 /* Sort functions */
 static int blist_node_compare_position(PurpleBlistNode *n1, PurpleBlistNode *n2);
@@ -2377,7 +2379,7 @@ reconstruct_accounts_menu(void)
 		PurpleAccount *account = iter->data;
 		PurpleConnection *gc = purple_account_get_connection(account);
 		PurplePlugin *prpl;
-		
+
 		if (!gc || !PURPLE_CONNECTION_IS_CONNECTED(gc))
 			continue;
 		prpl = gc->prpl;
@@ -2387,6 +2389,30 @@ reconstruct_accounts_menu(void)
 			gnt_menu_add_item(GNT_MENU(sub), item);
 			build_plugin_actions(item, prpl, gc);
 		}
+	}
+}
+
+static void
+reconstruct_grouping_menu(void)
+{
+	GList *iter;
+	GntWidget *subsub;
+
+	if (!ggblist || !ggblist->grouping)
+		return;
+
+	subsub = gnt_menu_new(GNT_MENU_POPUP);
+	gnt_menuitem_set_submenu(ggblist->grouping, GNT_MENU(subsub));
+
+	for (iter = managers; iter; iter = iter->next) {
+		char menuid[128];
+		FinchBlistManager *manager = iter->data;
+		GntMenuItem *item = gnt_menuitem_new(_(manager->name));
+		snprintf(menuid, sizeof(menuid), "grouping-%s", manager->id);
+		gnt_menuitem_set_id(GNT_MENU_ITEM(item), menuid);
+		gnt_menu_add_item(GNT_MENU(subsub), item);
+		g_object_set_data_full(G_OBJECT(item), "grouping-id", g_strdup(manager->id), g_free);
+		gnt_menuitem_set_callback(item, menu_group_set_cb, NULL);
 	}
 }
 
@@ -2582,7 +2608,6 @@ create_menu(void)
 	GntWidget *menu, *sub, *subsub;
 	GntMenuItem *item;
 	GntWindow *window;
-	GList *iter;
 
 	if (!ggblist)
 		return;
@@ -2618,7 +2643,7 @@ create_menu(void)
 				purple_prefs_get_bool(PREF_ROOT "/emptygroups"));
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), toggle_pref_cb, PREF_ROOT "/emptygroups");
-	
+
 	item = gnt_menuitem_check_new(_("Offline buddies"));
 	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "show-offline-buddies");
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
@@ -2667,22 +2692,9 @@ create_menu(void)
 	gnt_menu_add_item(GNT_MENU(subsub), item);
 	gnt_menuitem_set_callback(item, menu_add_group_cb, NULL);
 
-	item = gnt_menuitem_new(_("Grouping"));
+	ggblist->grouping = item = gnt_menuitem_new(_("Grouping"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
-
-	subsub = gnt_menu_new(GNT_MENU_POPUP);
-	gnt_menuitem_set_submenu(item, GNT_MENU(subsub));
-
-	for (iter = managers; iter; iter = iter->next) {
-		char menuid[128];
-		FinchBlistManager *manager = iter->data;
-		item = gnt_menuitem_new(_(manager->name));
-		snprintf(menuid, sizeof(menuid), "grouping-%s", manager->id);
-		gnt_menuitem_set_id(GNT_MENU_ITEM(item), menuid);
-		gnt_menu_add_item(GNT_MENU(subsub), item);
-		g_object_set_data_full(G_OBJECT(item), "grouping-id", g_strdup(manager->id), g_free);
-		gnt_menuitem_set_callback(item, menu_group_set_cb, NULL);
-	}
+	reconstruct_grouping_menu();
 
 	reconstruct_accounts_menu();
 	gnt_menu_add_item(GNT_MENU(menu), ggblist->accounts);
@@ -2838,13 +2850,18 @@ void finch_blist_set_size(int width, int height)
 
 void finch_blist_install_manager(const FinchBlistManager *manager)
 {
-	if (!g_list_find(managers, manager))
+	if (!g_list_find(managers, manager)) {
 		managers = g_list_append(managers, (gpointer)manager);
+		reconstruct_grouping_menu();
+	}
 }
 
 void finch_blist_uninstall_manager(const FinchBlistManager *manager)
 {
-	managers = g_list_remove(managers, manager);
+	if (g_list_find(managers, manager)) {
+		managers = g_list_remove(managers, manager);
+		reconstruct_grouping_menu();
+	}
 }
 
 FinchBlistManager * finch_blist_manager_find(const char *id)
