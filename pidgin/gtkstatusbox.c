@@ -511,11 +511,25 @@ static void
 pidgin_status_box_finalize(GObject *obj)
 {
 	PidginStatusBox *statusbox = PIDGIN_STATUS_BOX(obj);
+	int i;
 
 	purple_signals_disconnect_by_handle(statusbox);
 	purple_prefs_disconnect_by_handle(statusbox);
 
 	destroy_icon_box(statusbox);
+
+	if (statusbox->active_row)
+		gtk_tree_row_reference_free(statusbox->active_row);
+
+	for (i = 0; i < G_N_ELEMENTS(statusbox->connecting_pixbufs); i++) {
+		if (statusbox->connecting_pixbufs[i] != NULL)
+			gdk_pixbuf_unref(statusbox->connecting_pixbufs[i]);
+	}
+
+	for (i = 0; i < G_N_ELEMENTS(statusbox->typing_pixbufs); i++) {
+		if (statusbox->typing_pixbufs[i] != NULL)
+			gdk_pixbuf_unref(statusbox->typing_pixbufs[i]);
+	}
 
 	g_object_unref(G_OBJECT(statusbox->store));
 	g_object_unref(G_OBJECT(statusbox->dropdown_store));
@@ -1166,18 +1180,15 @@ static void
 cache_pixbufs(PidginStatusBox *status_box)
 {
 	GtkIconSize icon_size;
+	int i;
 
 	g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 3, NULL);
 	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
-	if (status_box->connecting_pixbufs[0] != NULL)
-		gdk_pixbuf_unref(status_box->connecting_pixbufs[0]);
-	if (status_box->connecting_pixbufs[1] != NULL)
-		gdk_pixbuf_unref(status_box->connecting_pixbufs[1]);
-	if (status_box->connecting_pixbufs[2] != NULL)
-		gdk_pixbuf_unref(status_box->connecting_pixbufs[2]);
-	if (status_box->connecting_pixbufs[3] != NULL)
-		gdk_pixbuf_unref(status_box->connecting_pixbufs[3]);
+	for (i = 0; i < G_N_ELEMENTS(status_box->connecting_pixbufs); i++) {
+		if (status_box->connecting_pixbufs[i] != NULL)
+			gdk_pixbuf_unref(status_box->connecting_pixbufs[i]);
+	}
 
 	status_box->connecting_index = 0;
 	status_box->connecting_pixbufs[0] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT0,
@@ -1199,14 +1210,10 @@ cache_pixbufs(PidginStatusBox *status_box)
 	status_box->connecting_pixbufs[8] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT8,
 								     icon_size, "PidginStatusBox");
 
-	if (status_box->typing_pixbufs[0] != NULL)
-		gdk_pixbuf_unref(status_box->typing_pixbufs[0]);
-	if (status_box->typing_pixbufs[1] != NULL)
-		gdk_pixbuf_unref(status_box->typing_pixbufs[1]);
-	if (status_box->typing_pixbufs[2] != NULL)
-		gdk_pixbuf_unref(status_box->typing_pixbufs[2]);
-	if (status_box->typing_pixbufs[3] != NULL)
-		gdk_pixbuf_unref(status_box->typing_pixbufs[3]);
+	for (i = 0; i < G_N_ELEMENTS(status_box->typing_pixbufs); i++) {
+		if (status_box->typing_pixbufs[i] != NULL)
+			gdk_pixbuf_unref(status_box->typing_pixbufs[i]);
+	}
 
 	status_box->typing_index = 0;
 	status_box->typing_pixbufs[0] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING0,
