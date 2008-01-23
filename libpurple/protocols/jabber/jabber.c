@@ -432,6 +432,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	}
 
 	while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
+		gc->last_received = time(NULL);
 		buf[len] = '\0';
 		purple_debug(PURPLE_DEBUG_INFO, "jabber", "Recv (ssl)(%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
@@ -459,6 +460,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 		return;
 
 	if((len = read(js->fd, buf, sizeof(buf) - 1)) > 0) {
+		gc->last_received = time(NULL);
 #ifdef HAVE_CYRUS_SASL
 		if (js->sasl_maxbuf>0) {
 			const char *out;
