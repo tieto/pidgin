@@ -132,6 +132,40 @@ static FinchBlistManager on_offline =
 };
 
 /**
+ * Meebo-like Grouping.
+ */
+static PurpleBlistNode meebo = {.type = PURPLE_BLIST_OTHER_NODE};
+static gpointer meebo_find_parent(PurpleBlistNode *node)
+{
+	static FinchBlistManager *def = NULL;
+	if (def == NULL)
+		def = finch_blist_manager_find("default");
+
+	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		PurpleBuddy *buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
+		if (buddy && !PURPLE_BUDDY_IS_ONLINE(buddy)) {
+			GntTree *tree = finch_blist_get_tree();
+			if (!g_list_find(gnt_tree_get_rows(tree), &meebo)) {
+				gnt_tree_add_row_last(tree, &meebo,
+						gnt_tree_create_row(tree, _("Offline")), NULL);
+			}
+			return &meebo;
+		}
+	}
+	return def->find_parent(node);
+}
+
+static FinchBlistManager meebo_group =
+{
+	"meebo",
+	N_("Meebo"),
+	NULL,
+	meebo_find_parent,
+	NULL,
+	{NULL, NULL, NULL, NULL}
+};
+
+/**
  * No Grouping.
  */
 static gboolean no_group_can_add_node(PurpleBlistNode *node)
@@ -168,6 +202,7 @@ static gboolean
 plugin_load(PurplePlugin *plugin)
 {
 	finch_blist_install_manager(&on_offline);
+	finch_blist_install_manager(&meebo_group);
 	finch_blist_install_manager(&no_group);
 	return TRUE;
 }
@@ -176,6 +211,7 @@ static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
 	finch_blist_uninstall_manager(&on_offline);
+	finch_blist_uninstall_manager(&meebo_group);
 	finch_blist_uninstall_manager(&no_group);
 	return TRUE;
 }
