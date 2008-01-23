@@ -38,6 +38,8 @@ typedef struct
 {
 	const char *id;                                    /**< An identifier for the manager. */
 	const char *name;                                  /**< Displayable name for the manager. */
+	gboolean (*init)(void);                            /**< Called right before it's being used. */
+	gboolean (*uninit)(void);                          /**< Called right after it's not being used any more. */
 	gboolean (*can_add_node)(PurpleBlistNode *node);   /**< Whether a node should be added to the view. */
 	gpointer (*find_parent)(PurpleBlistNode *node);    /**< Find the parent row for a node. */
 	gboolean (*create_tooltip)(gpointer selected_row, GString **body, char **title);  /**< Create tooltip for a selected row. */

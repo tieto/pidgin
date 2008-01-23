@@ -299,6 +299,8 @@ static FinchBlistManager default_manager =
 {
 	"default",
 	N_("Default"),
+	NULL,
+	NULL,
 	default_can_add_node,
 	default_find_parent,
 	default_create_tooltip,
@@ -1827,6 +1829,9 @@ populate_buddylist(void)
 	PurpleBlistNode *node;
 	PurpleBuddyList *list;
 
+	if (ggblist->manager->init)
+		ggblist->manager->init();
+
 	if (strcmp(purple_prefs_get_string(PREF_ROOT "/sort_type"), "text") == 0) {
 		gnt_tree_set_compare_func(GNT_TREE(ggblist->tree),
 			(GCompareFunc)blist_node_compare_text);
@@ -1923,6 +1928,9 @@ redraw_blist(const char *name, PurplePrefType type, gconstpointer val, gpointer 
 	if (manager == NULL)
 		manager = &default_manager;
 	if (ggblist->manager != manager) {
+		if (ggblist->manager->uninit)
+			ggblist->manager->uninit();
+
 		ggblist->manager = manager;
 		if (manager->can_add_node == NULL)
 			manager->can_add_node = default_can_add_node;
@@ -1937,6 +1945,7 @@ redraw_blist(const char *name, PurplePrefType type, gconstpointer val, gpointer 
 
 	sel = gnt_tree_get_selection_data(GNT_TREE(ggblist->tree));
 	gnt_tree_remove_all(GNT_TREE(ggblist->tree));
+
 	node = purple_blist_get_root();
 	for (; node; node = purple_blist_node_next(node, TRUE))
 		reset_blist_node_ui_data(node);

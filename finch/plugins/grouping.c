@@ -34,6 +34,18 @@
 static PurpleBlistNode online = {.type = PURPLE_BLIST_OTHER_NODE},
 					   offline = {.type = PURPLE_BLIST_OTHER_NODE};
 
+static gboolean on_offline_init()
+{
+	GntTree *tree = finch_blist_get_tree();
+
+	gnt_tree_add_row_after(tree, &online,
+			gnt_tree_create_row(tree, _("Online")), NULL, NULL);
+	gnt_tree_add_row_after(tree, &offline,
+			gnt_tree_create_row(tree, _("Offline")), NULL, &online);
+
+	return TRUE;
+}
+
 static gboolean on_offline_can_add_node(PurpleBlistNode *node)
 {
 	switch (purple_blist_node_get_type(node)) {
@@ -70,18 +82,6 @@ static gboolean on_offline_can_add_node(PurpleBlistNode *node)
 static gpointer on_offline_find_parent(PurpleBlistNode *node)
 {
 	gpointer ret = NULL;
-	GntTree *tree = finch_blist_get_tree();
-
-	if (!tree)
-		return NULL;
-
-	if (!g_list_find(gnt_tree_get_rows(tree), &online)) {
-		gnt_tree_remove_all(tree);
-		gnt_tree_add_row_after(tree, &online,
-				gnt_tree_create_row(tree, _("Online")), NULL, NULL);
-		gnt_tree_add_row_after(tree, &offline,
-				gnt_tree_create_row(tree, _("Offline")), NULL, &online);
-	}
 
 	switch (purple_blist_node_get_type(node)) {
 		case PURPLE_BLIST_CONTACT_NODE:
@@ -125,6 +125,8 @@ static FinchBlistManager on_offline =
 {
 	"on-offline",
 	N_("Online/Offline"),
+	on_offline_init,
+	NULL,
 	on_offline_can_add_node,
 	on_offline_find_parent,
 	on_offline_create_tooltip,
@@ -135,6 +137,16 @@ static FinchBlistManager on_offline =
  * Meebo-like Grouping.
  */
 static PurpleBlistNode meebo = {.type = PURPLE_BLIST_OTHER_NODE};
+static gboolean meebo_init()
+{
+	GntTree *tree = finch_blist_get_tree();
+	if (!g_list_find(gnt_tree_get_rows(tree), &meebo)) {
+		gnt_tree_add_row_last(tree, &meebo,
+				gnt_tree_create_row(tree, _("Offline")), NULL);
+	}
+	return TRUE;
+}
+
 static gpointer meebo_find_parent(PurpleBlistNode *node)
 {
 	static FinchBlistManager *def = NULL;
@@ -144,11 +156,6 @@ static gpointer meebo_find_parent(PurpleBlistNode *node)
 	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleBuddy *buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
 		if (buddy && !PURPLE_BUDDY_IS_ONLINE(buddy)) {
-			GntTree *tree = finch_blist_get_tree();
-			if (!g_list_find(gnt_tree_get_rows(tree), &meebo)) {
-				gnt_tree_add_row_last(tree, &meebo,
-						gnt_tree_create_row(tree, _("Offline")), NULL);
-			}
 			return &meebo;
 		}
 	}
@@ -159,6 +166,8 @@ static FinchBlistManager meebo_group =
 {
 	"meebo",
 	N_("Meebo"),
+	meebo_init,
+	NULL,
 	NULL,
 	meebo_find_parent,
 	NULL,
@@ -168,6 +177,20 @@ static FinchBlistManager meebo_group =
 /**
  * No Grouping.
  */
+static gboolean no_group_init()
+{
+	GntTree *tree = finch_blist_get_tree();
+	g_object_set(G_OBJECT(tree), "expander-level", 0, NULL);
+	return TRUE;
+}
+
+static gboolean no_group_uninit()
+{
+	GntTree *tree = finch_blist_get_tree();
+	g_object_set(G_OBJECT(tree), "expander-level", 1, NULL);
+	return TRUE;
+}
+
 static gboolean no_group_can_add_node(PurpleBlistNode *node)
 {
 	return on_offline_can_add_node(node);   /* These happen to be the same */
@@ -192,6 +215,8 @@ static FinchBlistManager no_group =
 {
 	"no-group",
 	N_("No Grouping"),
+	no_group_init,
+	no_group_uninit,
 	no_group_can_add_node,
 	no_group_find_parent,
 	NULL,
