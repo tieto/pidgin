@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-17 22:50+0100\n"
-"PO-Revision-Date: 2008-01-17 22:50+0100\n"
+"POT-Creation-Date: 2008-01-23 10:20+0100\n"
+"PO-Revision-Date: 2008-01-23 10:19+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -154,6 +154,29 @@ msgstr "Autorisieren"
 
 msgid "Deny"
 msgstr "Ablehnen"
+
+#, c-format
+msgid ""
+"Online: %d\n"
+"Total: %d"
+msgstr ""
+"Online: %d\n"
+"Gesamt: %d"
+
+#, c-format
+msgid "Account: %s (%s)"
+msgstr "Konto: %s (%s)"
+
+#, c-format
+msgid ""
+"\n"
+"Last Seen: %s ago"
+msgstr ""
+"\n"
+"Zuletzt gesehen: vor %s"
+
+msgid "Default"
+msgstr "Standard"
 
 msgid "You must provide a screename for the buddy."
 msgstr "Sie müssen einen Benutzernamen für den Buddy angeben."
@@ -303,26 +326,6 @@ msgstr "Untätig"
 msgid "On Mobile"
 msgstr "Am Handy"
 
-#, c-format
-msgid ""
-"Online: %d\n"
-"Total: %d"
-msgstr ""
-"Online: %d\n"
-"Gesamt: %d"
-
-#, c-format
-msgid "Account: %s (%s)"
-msgstr "Konto: %s (%s)"
-
-#, c-format
-msgid ""
-"\n"
-"Last Seen: %s ago"
-msgstr ""
-"\n"
-"Zuletzt gesehen: vor %s"
-
 msgid "New..."
 msgstr "Neu..."
 
@@ -388,6 +391,15 @@ msgstr "Alphabetisch"
 
 msgid "By Log Size"
 msgstr "Nach Größe der Logs"
+
+msgid "Buddy"
+msgstr "Buddy"
+
+msgid "Chat"
+msgstr "Chat"
+
+msgid "Grouping"
+msgstr "Gruppierung"
 
 msgid "Certificate Import"
 msgstr "Zertifikat-Import"
@@ -1320,6 +1332,27 @@ msgid ""
 msgstr ""
 "Wenn eine neue Unterhaltung eröffnet wird, fügt dieses Plugin die letzte "
 "Unterhaltung in die aktuelle Unterhaltung ein."
+
+msgid "Online"
+msgstr "Online"
+
+msgid "Offline"
+msgstr "Offline"
+
+msgid "Online Buddies"
+msgstr "Online-Buddys"
+
+msgid "Offline Buddies"
+msgstr "Offline-Buddys"
+
+msgid "Online/Offline"
+msgstr "Online/Offline"
+
+msgid "No Grouping"
+msgstr "Keine Gruppierung"
+
+msgid "Provides alternate buddylist grouping options."
+msgstr "Bietet alternative Einstellungen für die Kontaktlisten-Gruppierung."
 
 msgid "Lastlog"
 msgstr "Verlauf"
@@ -2821,9 +2854,6 @@ msgstr "Wählen sie einen Chat für den Benutzer: %s"
 
 msgid "Add to chat..."
 msgstr "Zum Chat hinzufügen..."
-
-msgid "Offline"
-msgstr "Offline"
 
 msgid "Available"
 msgstr "Verfügbar"
@@ -5976,9 +6006,6 @@ msgstr "Stimme"
 msgid "AIM Direct IM"
 msgstr "AIM direkte Nachricht"
 
-msgid "Chat"
-msgstr "Chat"
-
 msgid "Get File"
 msgstr "Datei abrufen"
 
@@ -6047,9 +6074,6 @@ msgstr "In Web"
 
 msgid "Invisible"
 msgstr "Unsichtbar"
-
-msgid "Online"
-msgstr "Online"
 
 msgid "IP Address"
 msgstr "IP-Adresse"
@@ -10081,9 +10105,6 @@ msgstr "Abgefahren"
 msgid "Total Buddies"
 msgstr "Buddy-Anzahl"
 
-msgid "Online Buddies"
-msgstr "Online-Buddys"
-
 #, c-format
 msgid "Idle %dd %dh %02dm"
 msgstr "Untätig %dd %dh %02dm"
@@ -11690,9 +11711,6 @@ msgstr "_Wiederkehrend"
 
 msgid "Pounce Target"
 msgstr "Alarm-Ziel"
-
-msgid "Default"
-msgstr "Standard"
 
 msgid "Smiley theme failed to unpack."
 msgstr "Smiley-Thema konnte nicht entpackt werden."
