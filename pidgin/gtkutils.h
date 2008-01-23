@@ -798,11 +798,11 @@ gboolean pidgin_auto_parent_window(GtkWidget *window);
  * Add a labelled widget to a GtkVBox
  *
  * @param vbox         The GtkVBox to add the widget to.
- * @param widget_label The label to give the widget.
- * @param sg           The GtkSizeGroup to add the label to.
- * @param widget       The GtkWidget to add
+ * @param widget_label The label to give the widget, can be @c NULL.
+ * @param sg           The GtkSizeGroup to add the label to, can be @c NULL.
+ * @param widget       The GtkWidget to add.
  * @param expand       Whether to expand the widget horizontally.
- * @param p_label      Place to store a pointer to the GtkLabel, or NULL if you don't care.
+ * @param p_label      Place to store a pointer to the GtkLabel, or @c NULL if you don't care.
  *
  * @return  A GtkHBox already added to the GtkVBox containing the GtkLabel and the GtkWidget.
  * @since 2.4.0
