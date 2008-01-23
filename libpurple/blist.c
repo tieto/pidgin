@@ -640,10 +640,10 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 
 		if (purple_account_is_connected(buddy->account))
 		{
-			int cmp;
-
-			cmp = purple_presence_compare(purple_buddy_get_presence(new_priority),
-			                            purple_buddy_get_presence(buddy));
+			int cmp = 1;
+			if (purple_account_is_connected(new_priority->account))
+				cmp = purple_presence_compare(purple_buddy_get_presence(new_priority),
+						purple_buddy_get_presence(buddy));
 
 			if (cmp > 0 || (cmp == 0 &&
 			                purple_prefs_get_bool("/purple/contact/last_match")))
