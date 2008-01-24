@@ -1445,7 +1445,6 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				ALLOW_TAG("pre");
 				ALLOW_TAG("q");
 				ALLOW_TAG("span");
-				ALLOW_TAG("strong");
 				ALLOW_TAG("ul");
 
 
@@ -1465,9 +1464,14 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						plain = g_string_append_c(plain, '\n');
 					continue;
 				}
-				if(!g_ascii_strncasecmp(c, "<b>", 3) || !g_ascii_strncasecmp(c, "<bold>", strlen("<bold>"))) {
+				if(!g_ascii_strncasecmp(c, "<b>", 3) || !g_ascii_strncasecmp(c, "<bold>", strlen("<bold>")) || !g_ascii_strncasecmp(c, "<strong>", strlen("<strong>"))) {
 					struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1);
-					pt->src_tag = *(c+2) == '>' ? "b" : "bold";
+					if (*(c+2) == '>')
+						pt->src_tag = "b";
+					else if (*(c+2) == 'o')
+						pt->src_tag = "bold";
+					else
+						pt->src_tag = "strong";
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
 					c = strchr(c, '>') + 1;
