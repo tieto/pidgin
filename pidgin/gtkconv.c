@@ -169,6 +169,7 @@ static void hide_conv(PidginConversation *gtkconv, gboolean closetimer);
 
 static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
 		int width, int height);
+static gboolean pidgin_conv_xy_to_right_infopane(PidginWindow *win, int x, int y);
 
 static GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
 	static GdkColor col;
@@ -6885,6 +6886,18 @@ pidgin_conv_update_buttons_by_protocol(PurpleConversation *conv)
 		gray_stuff_out(PIDGIN_CONVERSATION(conv));
 }
 
+static gboolean
+pidgin_conv_xy_to_right_infopane(PidginWindow *win, int x, int y)
+{
+	gint pane_x, pane_y, x_rel;
+	PidginConversation *gtkconv;
+
+	gdk_window_get_origin(win->notebook->window, &pane_x, &pane_y);
+	x_rel = x - pane_x;
+	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	return (x_rel > gtkconv->infopane->allocation.x + gtkconv->infopane->allocation.width / 2);
+}
+
 int
 pidgin_conv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right)
 {
@@ -6920,7 +6933,7 @@ pidgin_conv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right)
 		tab = gtk_notebook_get_tab_label(GTK_NOTEBOOK(notebook), page);
 
 		/* Make sure the tab is not hidden beyond an arrow */
-		if (!GTK_WIDGET_DRAWABLE(tab))
+		if (!GTK_WIDGET_DRAWABLE(tab) && gtk_notebook_get_show_tabs(notebook))
 			continue;
 
 		if (horiz) {
@@ -8179,7 +8192,6 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		GtkWidget *tab;
 		gint page_num;
 		gboolean horiz_tabs = FALSE;
-		PidginConversation *gtkconv;
 		gboolean to_right = FALSE;
 
 		/* Get the window that the cursor is over. */
@@ -8193,20 +8205,27 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 		dest_notebook = GTK_NOTEBOOK(dest_win->notebook);
 
-		page_num = pidgin_conv_get_tab_at_xy(dest_win,
-		                                      e->x_root, e->y_root, &to_right);
-		to_right = to_right && (win != dest_win);
+		if (gtk_notebook_get_show_tabs(dest_notebook)) {
+			page_num = pidgin_conv_get_tab_at_xy(dest_win,
+			                                      e->x_root, e->y_root, &to_right);
+			to_right = to_right && (win != dest_win);
+			tab = pidgin_conv_window_get_gtkconv_at_index(dest_win, page_num)->tabby;
+		} else {
+			page_num = 0;
+			to_right = pidgin_conv_xy_to_right_infopane(dest_win, e->x_root, e->y_root);
+			tab = pidgin_conv_window_get_gtkconv_at_index(dest_win, page_num)->infopane;
+		}
 
 		if (gtk_notebook_get_tab_pos(dest_notebook) == GTK_POS_TOP ||
 				gtk_notebook_get_tab_pos(dest_notebook) == GTK_POS_BOTTOM) {
 			horiz_tabs = TRUE;
 		}
 
-		gtkconv = pidgin_conv_window_get_gtkconv_at_index(dest_win, page_num);
-		tab = gtkconv->tabby;
-		if (gtk_notebook_get_show_tabs(dest_notebook) == FALSE) {
-				dnd_hints_show_relative(HINT_ARROW_DOWN, gtkconv->infopane, HINT_POSITION_CENTER, HINT_POSITION_TOP);
-				dnd_hints_show_relative(HINT_ARROW_UP, gtkconv->infopane, HINT_POSITION_CENTER, HINT_POSITION_BOTTOM);
+		if (gtk_notebook_get_show_tabs(dest_notebook) == FALSE && win == dest_win)
+		{
+			/* dragging a tab from a single-tabbed window over its own window */
+			dnd_hints_hide_all();
+			return TRUE;
 		} else if (horiz_tabs) {
 			if (((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) || to_right) {
 				dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
@@ -8403,6 +8422,7 @@ static gboolean
 notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 {
 	PidginWindow *dest_win;
+	GtkNotebook *dest_notebook;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 	gint dest_page_num = 0;
@@ -8478,9 +8498,16 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 	                 "conversation-dragging", win, dest_win);
 
 	/* Get the destination page number. */
-	if (!new_window)
-		dest_page_num = pidgin_conv_get_tab_at_xy(dest_win,
-		                                           e->x_root, e->y_root, &to_right);
+	if (!new_window) {
+		dest_notebook = GTK_NOTEBOOK(dest_win->notebook);
+		if (gtk_notebook_get_show_tabs(dest_notebook)) {
+			dest_page_num = pidgin_conv_get_tab_at_xy(dest_win,
+			                                           e->x_root, e->y_root, &to_right);
+		} else {
+			dest_page_num = 0;
+			to_right = pidgin_conv_xy_to_right_infopane(dest_win, e->x_root, e->y_root);
+		}
+	}
 
 	gtkconv = pidgin_conv_window_get_gtkconv_at_index(win, win->drag_tab);
 
