@@ -167,6 +167,8 @@ static gboolean default_can_add_node(PurpleBlistNode *node)
 			return TRUE;  /* We want to see offline buddies too */
 		if (fnode && fnode->signed_timer)
 			return TRUE;  /* Show if the buddy just signed off */
+		if (purple_blist_node_get_bool(node, "show_offline"))
+			return TRUE;
 	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleBlistNode *nd;
 		for (nd = purple_blist_node_get_first_child(node);
