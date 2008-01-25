@@ -391,7 +391,7 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	session = servconn->session;
 
 	len = read(servconn->fd, buf, sizeof(buf) - 1);
-	servconn->session->account->gc->last_connected = time(NULL);
+	servconn->session->account->gc->last_received = time(NULL);
 
 	if (len <= 0) {
 		switch (errno) {
