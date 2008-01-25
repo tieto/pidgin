@@ -75,6 +75,7 @@ START_TEST(test_util_email_is_valid)
 	fail_if(purple_email_is_valid("purple@devel@lists.sf.net"));
 	fail_if(purple_email_is_valid("purple-devel@list..sf.net"));
 	fail_if(purple_email_is_valid("purple-devel"));
+	fail_if(purple_email_is_valid("purple-devel@"));
 	fail_if(purple_email_is_valid("@lists.sf.net"));
 	fail_if(purple_email_is_valid(""));
 	fail_if(purple_email_is_valid("totally bogus"));
