@@ -53,16 +53,16 @@ send_keepalive(gpointer data)
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	if (gc == NULL)
-		return;
+		return TRUE;
 
 	/* Only send keep-alives if we haven't heard from the
- 	 * server in a while.
- 	 */
+	 * server in a while.
+	 */
 	if ((time(NULL) - gc->last_received) < KEEPALIVE_INTERVAL)
-		return;
+		return TRUE;
 
 	if (gc->prpl == NULL)
-		return;
+		return TRUE;
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
