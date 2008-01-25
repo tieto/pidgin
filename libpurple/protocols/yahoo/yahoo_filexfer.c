@@ -922,7 +922,7 @@ PurpleXfer *yahoo_new_xfer(PurpleConnection *gc, const char *who)
 	return xfer;
 }
 
-static gchar* yahoo_xfer_new_xfer_id()
+static gchar* yahoo_xfer_new_xfer_id(void)
 {
 	gchar *ans;
 	int i,j;
@@ -937,7 +937,7 @@ static gchar* yahoo_xfer_new_xfer_id()
 		else if(j < 52)
 			ans[i] = j - 26 + 'A';
 		else
-			ans[i] = j - 52 + '0';     
+			ans[i] = j - 52 + '0';
 	}
 	return ans;
 }
