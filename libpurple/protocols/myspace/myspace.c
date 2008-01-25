@@ -2475,6 +2475,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 	 * the file descriptor, but it sometimes differs from the 'source' parameter.
 	 */
 	n = recv(session->fd, session->rxbuf + session->rxoff, MSIM_READ_BUF_SIZE - session->rxoff, 0);
+	gc->last_received = time(NULL);
 
 	if (n < 0 && errno == EAGAIN) {
 		return;

@@ -572,6 +572,7 @@ static void read_input(struct irc_conn *irc, int len)
 {
 	char *cur, *end;
 
+	irc->account->gc->last_received = time(NULL);
 	irc->inbufused += len;
 	irc->inbuf[irc->inbufused] = '\0';
 

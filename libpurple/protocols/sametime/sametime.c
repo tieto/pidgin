@@ -1695,7 +1695,9 @@ static int read_recv(struct mwSession *session, int sock) {
   int len;
 
   len = read(sock, buf, BUF_LEN);
-  if(len > 0) mwSession_recv(session, buf, len);
+  if(len > 0) {
+    mwSession_recv(session, buf, len);
+  }
 
   return len;
 }
