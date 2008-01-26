@@ -79,7 +79,7 @@ get_conversation_blist_node(PurpleConversation *conv)
 	switch (purple_conversation_get_type(conv)) {
 		case PURPLE_CONV_TYPE_IM:
 			node = (PurpleBlistNode*)purple_find_buddy(conv->account, conv->name);
-			node = node ? node->parent : NULL;
+			node = node ? purple_blist_node_get_parent(node) : NULL;
 			break;
 		case PURPLE_CONV_TYPE_CHAT:
 			node = (PurpleBlistNode*)purple_blist_find_chat(conv->account, conv->name);
@@ -236,7 +236,8 @@ find_conv_with_contact(PurpleAccount *account, const char *name)
 	if (!buddy)
 		return NULL;
 
-	for (node = ((PurpleBlistNode*)buddy)->parent->child; node; node = node->next) {
+	for (node = purple_blist_node_get_first_child(purple_blist_node_get_parent((PurpleBlistNode*)buddy));
+				node; node = purple_blist_node_get_sibling_next(node)) {
 		if (node == (PurpleBlistNode*)buddy)
 			continue;
 		if ((ret = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
@@ -476,7 +477,8 @@ generate_send_to_menu(FinchConv *ggc)
 
 	for (; buds; buds = g_slist_delete_link(buds, buds)) {
 		PurpleBlistNode *node = (PurpleBlistNode *)purple_buddy_get_contact((PurpleBuddy *)buds->data);
-		for (node = node->child; node != NULL; node = node->next) {
+		for (node = purple_blist_node_get_first_child(node); node != NULL;
+				node = purple_blist_node_get_sibling_next(node)) {
 			PurpleBuddy *buddy = (PurpleBuddy *)node;
 			PurpleAccount *account = purple_buddy_get_account(buddy);
 			if (purple_account_is_connected(account)) {

@@ -2158,7 +2158,7 @@ savedstatus_changed(PurpleSavedStatus *now, PurpleSavedStatus *old)
 static int
 blist_node_compare_position(PurpleBlistNode *n1, PurpleBlistNode *n2)
 {
-	while ((n1 = n1->prev) != NULL)
+	while ((n1 = purple_blist_node_get_sibling_prev(n1)) != NULL)
 		if (n1 == n2)
 			return 1;
 	return -1;
@@ -2171,10 +2171,10 @@ blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	char *us1, *us2;
 	int ret;
 
-	if (n1->type != n2->type)
+	if (purple_blist_node_get_type(n1) != purple_blist_node_get_type(n2))
 		return blist_node_compare_position(n1, n2);
 
-	switch (n1->type)
+	switch (purple_blist_node_get_type(n1))
 	{
 		case PURPLE_BLIST_CHAT_NODE:
 			s1 = purple_chat_get_name((PurpleChat*)n1);
@@ -2206,10 +2206,10 @@ blist_node_compare_status(PurpleBlistNode *n1, PurpleBlistNode *n2)
 {
 	int ret;
 
-	if (n1->type != n2->type)
+	if (purple_blist_node_get_type(n1) != purple_blist_node_get_type(n2))
 		return blist_node_compare_position(n1, n2);
 
-	switch (n1->type) {
+	switch (purple_blist_node_get_type(n1)) {
 		case PURPLE_BLIST_CONTACT_NODE:
 			n1 = (PurpleBlistNode*)purple_contact_get_priority_buddy((PurpleContact*)n1);
 			n2 = (PurpleBlistNode*)purple_contact_get_priority_buddy((PurpleContact*)n2);
@@ -2251,10 +2251,10 @@ blist_node_compare_log(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	int ret;
 	PurpleBuddy *b1, *b2;
 
-	if (n1->type != n2->type)
+	if (purple_blist_node_get_type(n1) != purple_blist_node_get_type(n2))
 		return blist_node_compare_position(n1, n2);
 
-	switch (n1->type) {
+	switch (purple_blist_node_get_type(n1)) {
 		case PURPLE_BLIST_BUDDY_NODE:
 			b1 = (PurpleBuddy*)n1;
 			b2 = (PurpleBuddy*)n2;

@@ -53,10 +53,10 @@ typedef enum
 
 } PurpleBlistNodeType;
 
-#define PURPLE_BLIST_NODE_IS_CHAT(n)    ((n)->type == PURPLE_BLIST_CHAT_NODE)
-#define PURPLE_BLIST_NODE_IS_BUDDY(n)   ((n)->type == PURPLE_BLIST_BUDDY_NODE)
-#define PURPLE_BLIST_NODE_IS_CONTACT(n) ((n)->type == PURPLE_BLIST_CONTACT_NODE)
-#define PURPLE_BLIST_NODE_IS_GROUP(n)   ((n)->type == PURPLE_BLIST_GROUP_NODE)
+#define PURPLE_BLIST_NODE_IS_CHAT(n)    (purple_blist_node_get_type(n) == PURPLE_BLIST_CHAT_NODE)
+#define PURPLE_BLIST_NODE_IS_BUDDY(n)   (purple_blist_node_get_type(n) == PURPLE_BLIST_BUDDY_NODE)
+#define PURPLE_BLIST_NODE_IS_CONTACT(n) (purple_blist_node_get_type(n) == PURPLE_BLIST_CONTACT_NODE)
+#define PURPLE_BLIST_NODE_IS_GROUP(n)   (purple_blist_node_get_type(n) == PURPLE_BLIST_GROUP_NODE)
 
 #define PURPLE_BUDDY_IS_ONLINE(b) \
 	((b) != NULL && purple_account_is_connected((b)->account) && \
@@ -234,6 +234,7 @@ PurpleBlistNode *purple_blist_get_root(void);
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_first_child
  * @see purple_blist_node_get_sibling_next
+ * @see purple_blist_node_get_sibling_prev
  */
 PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline);
 
@@ -245,6 +246,7 @@ PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline)
  * @since 2.4.0
  * @see purple_blist_node_get_first_child
  * @see purple_blist_node_get_sibling_next
+ * @see purple_blist_node_get_sibling_prev
  * @see purple_blist_node_next
  */
 PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node);
@@ -257,6 +259,7 @@ PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node);
  * @since 2.4.0
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_sibling_next
+ * @see purple_blist_node_get_sibling_prev
  * @see purple_blist_node_next
  */
 PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node);
@@ -269,9 +272,23 @@ PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node);
  * @since 2.4.0
  * @see purple_blist_node_get_parent
  * @see purple_blist_node_get_first_child
+ * @see purple_blist_node_get_sibling_prev
  * @see purple_blist_node_next
  */
 PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node);
+
+/**
+ * Returns the previous sibling node of a given node.
+ *
+ * @param node A node.
+ * @return  The sibling node.
+ * @since 2.4.0
+ * @see purple_blist_node_get_parent
+ * @see purple_blist_node_get_first_child
+ * @see purple_blist_node_get_sibling_next
+ * @see purple_blist_node_next
+ */
+PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node);
 
 /**
  * Shows the buddy list, creating a new one if necessary.

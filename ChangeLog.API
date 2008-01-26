@@ -34,6 +34,7 @@ version 2.4.0 (??/??/????):
 			* purple_blist_node_get_parent
 			* purple_blist_node_get_first_child
 			* purple_blist_node_get_sibling_next
+			* purple_blist_node_get_sibling_prev
 			* purple_chat_get_account
 		* Added last_received to PurpleConnection, the time_t of the
 		  last received packet.

@@ -768,6 +768,11 @@ PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node)
 	return node? node->next : NULL;
 }
 
+PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node)
+{
+	return node? node->prev : NULL;
+}
+
 void
 purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 {
