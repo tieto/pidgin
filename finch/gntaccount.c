@@ -686,7 +686,7 @@ void finch_accounts_show_all()
 	}
 
 	g_signal_connect(G_OBJECT(accounts.tree), "toggled", G_CALLBACK(account_toggled), NULL);
-	
+
 	gnt_tree_set_col_width(GNT_TREE(accounts.tree), 0, 40);
 	gnt_tree_set_col_width(GNT_TREE(accounts.tree), 1, 10);
 	gnt_box_add_widget(GNT_BOX(accounts.window), accounts.tree);
@@ -708,11 +708,11 @@ void finch_accounts_show_all()
 	gnt_box_add_widget(GNT_BOX(box), button);
 	gnt_util_set_trigger_widget(GNT_WIDGET(accounts.tree), GNT_KEY_DEL, button);
 	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(delete_account_cb), accounts.tree);
-	
+
 	gnt_box_add_widget(GNT_BOX(accounts.window), box);
 
 	g_signal_connect(G_OBJECT(accounts.window), "destroy", G_CALLBACK(reset_accounts_win), NULL);
-	
+
 	gnt_widget_show(accounts.window);
 }
 
@@ -981,7 +981,7 @@ finch_request_authorize(PurpleAccount *account,
 
 		gnt_box_add_widget(GNT_BOX(uihandle), gnt_hline_new());
 
-		widget = finch_retrieve_user_info(account->gc, remote_user);
+		widget = finch_retrieve_user_info(purple_account_get_connection(account), remote_user);
 		for (iter = GNT_BOX(widget)->list; iter; iter = iter->next) {
 			if (GNT_IS_BUTTON(iter->data)) {
 				gnt_widget_destroy(iter->data);

@@ -658,7 +658,7 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 		purple_blist_alias_chat(chat, alias);
 		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gnt-autojoin", autojoin);
 		if (autojoin)
-			serv_join_chat(chat->account->gc, chat->components);
+			serv_join_chat(purple_account_get_connection(chat->account), chat->components);
 	}
 }
 
@@ -943,7 +943,7 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
 	{
 		PurpleChat *chat = (PurpleChat*)node;
-		serv_join_chat(chat->account->gc, chat->components);
+		serv_join_chat(purple_account_get_connection(chat->account), chat->components);
 	}
 }
 
@@ -1043,10 +1043,12 @@ chat_components_edit(PurpleBlistNode *selected, PurpleChat *chat)
 	PurpleRequestField *field;
 	GList *parts, *iter;
 	struct proto_chat_entry *pce;
+	PurpleConnection *gc;
 
 	purple_request_fields_add_group(fields, group);
 
-	parts = PURPLE_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->chat_info(chat->account->gc);
+	gc = purple_account_get_connection(chat->account);
+	parts = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info(gc);
 
 	for (iter = parts; iter; iter = iter->next) {
 		pce = iter->data;
@@ -1140,13 +1142,13 @@ gpointer finch_retrieve_user_info(PurpleConnection *conn, const char *name)
 static void
 finch_blist_get_buddy_info_cb(PurpleBlistNode *selected, PurpleBuddy *buddy)
 {
-	finch_retrieve_user_info(buddy->account->gc, purple_buddy_get_name(buddy));
+	finch_retrieve_user_info(purple_account_get_connection(buddy->account), purple_buddy_get_name(buddy));
 }
 
 static void
 finch_blist_menu_send_file_cb(PurpleBlistNode *selected, PurpleBuddy *buddy)
 {
-	serv_send_file(buddy->account->gc, buddy->name, NULL);
+	serv_send_file(purple_account_get_connection(buddy->account), buddy->name, NULL);
 }
 
 static void
@@ -1165,8 +1167,9 @@ static void
 create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
 {
 	PurplePluginProtocolInfo *prpl_info;
+	PurpleConnection *gc = purple_account_get_connection(buddy->account);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(buddy->account->gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 	if (prpl_info && prpl_info->get_info)
 	{
 		add_custom_action(menu, _("Get Info"),
@@ -1179,7 +1182,7 @@ create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
 	if (prpl_info && prpl_info->send_file)
 	{
 		if (!prpl_info->can_receive_file ||
-			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
+			prpl_info->can_receive_file(gc, buddy->name))
 			add_custom_action(menu, _("Send File"),
 					PURPLE_CALLBACK(finch_blist_menu_send_file_cb), buddy);
 	}

@@ -531,7 +531,8 @@ gg_create_menu(FinchConv *ggc)
 
 	if (purple_conversation_get_type(ggc->active_conv) == PURPLE_CONV_TYPE_IM) {
 		PurpleAccount *account = purple_conversation_get_account(ggc->active_conv);
-		PurplePluginProtocolInfo *pinfo = account->gc ? PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl) : NULL;
+		PurpleConnection *gc = purple_account_get_connection(account);
+		PurplePluginProtocolInfo *pinfo = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
 
 		if (pinfo && pinfo->get_info) {
 			item = gnt_menuitem_new(_("Get Info"));
@@ -545,7 +546,7 @@ gg_create_menu(FinchConv *ggc)
 
 		if (pinfo && pinfo->send_file &&
 				(!pinfo->can_receive_file ||
-				 	pinfo->can_receive_file(account->gc, purple_conversation_get_name(ggc->active_conv)))) {
+					pinfo->can_receive_file(gc, purple_conversation_get_name(ggc->active_conv)))) {
 			item = gnt_menuitem_new(_("Send File"));
 			gnt_menu_add_item(GNT_MENU(sub), item);
 			gnt_menuitem_set_callback(item, send_file_cb, ggc);

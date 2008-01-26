@@ -808,39 +808,42 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 
 	if (purple_pounce_action_is_enabled(pounce, "popup-notify"))
 	{
-		char *tmp;
+		char *tmp = NULL;
 		const char *name_shown;
 		const char *reason;
+		struct {
+			PurplePounceEvent event;
+			const char *format;
+		} messages[] = {
+			{PURPLE_POUNCE_TYPING, _("%s has started typing to you (%s)")},
+			{PURPLE_POUNCE_TYPED, _("%s has paused while typing to you (%s)")},
+			{PURPLE_POUNCE_SIGNON, _("%s has signed on (%s)")},
+			{PURPLE_POUNCE_IDLE_RETURN, _("%s has returned from being idle (%s)")},
+			{PURPLE_POUNCE_AWAY_RETURN, _("%s has returned from being away (%s)")},
+			{PURPLE_POUNCE_TYPING_STOPPED, _("%s has stopped typing to you (%s)")},
+			{PURPLE_POUNCE_SIGNOFF, _("%s has signed off (%s)")},
+			{PURPLE_POUNCE_IDLE, _("%s has become idle (%s)")},
+			{PURPLE_POUNCE_AWAY, _("%s has gone away. (%s)")},
+			{PURPLE_POUNCE_MESSAGE_RECEIVED, _("%s has sent you a message. (%s)")},
+			{0, NULL}
+		};
+		int i;
 		reason = purple_pounce_action_get_attribute(pounce, "popup-notify",
-														  "reason");
+				"reason");
 
 		/*
 		 * Here we place the protocol name in the pounce dialog to lessen
 		 * confusion about what protocol a pounce is for.
 		 */
-		tmp = g_strdup_printf(
-				   (events & PURPLE_POUNCE_TYPING) ?
-				   _("%s has started typing to you (%s)") :
-				   (events & PURPLE_POUNCE_TYPED) ?
-				   _("%s has paused while typing to you (%s)") :
-				   (events & PURPLE_POUNCE_SIGNON) ?
-				   _("%s has signed on (%s)") :
-				   (events & PURPLE_POUNCE_IDLE_RETURN) ?
-				   _("%s has returned from being idle (%s)") :
-				   (events & PURPLE_POUNCE_AWAY_RETURN) ?
-				   _("%s has returned from being away (%s)") :
-				   (events & PURPLE_POUNCE_TYPING_STOPPED) ?
-				   _("%s has stopped typing to you (%s)") :
-				   (events & PURPLE_POUNCE_SIGNOFF) ?
-				   _("%s has signed off (%s)") :
-				   (events & PURPLE_POUNCE_IDLE) ?
-				   _("%s has become idle (%s)") :
-				   (events & PURPLE_POUNCE_AWAY) ?
-				   _("%s has gone away. (%s)") :
-				   (events & PURPLE_POUNCE_MESSAGE_RECEIVED) ?
-				   _("%s has sent you a message. (%s)") :
-				   _("Unknown pounce event. Please report this!"),
-				   alias, purple_account_get_protocol_name(account));
+		for (i = 0; messages[i].format != NULL; i++) {
+			if (messages[i].event & events) {
+				tmp = g_strdup_printf(messages[i].format, alias,
+						purple_account_get_protocol_name(account));
+				break;
+			}
+		}
+		if (tmp == NULL)
+			tmp = g_strdup(_("Unknown pounce event. Please report this!"));
 
 		/*
 		 * Ok here is where I change the second argument, title, from
@@ -880,7 +883,7 @@ pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 			purple_conversation_write(conv, NULL, message,
 									PURPLE_MESSAGE_SEND, time(NULL));
 
-			serv_send_im(account->gc, (char *)pouncee, (char *)message, 0);
+			serv_send_im(purple_account_get_connection(account), (char *)pouncee, (char *)message, 0);
 		}
 	}
 
