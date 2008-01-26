@@ -1369,6 +1369,7 @@ static GList *get_available_browsers(void)
 		{N_("Netscape"), "netscape"},
 		{N_("Mozilla"), "mozilla"},
 		{N_("Konqueror"), "kfmclient"},
+		{N_("Desktop Default"), "xdg-open"},
 		{N_("GNOME Default"), "gnome-open"},
 		{N_("Galeon"), "galeon"},
 		{N_("Firefox"), "firefox"},
@@ -1391,6 +1392,14 @@ static GList *get_available_browsers(void)
 			browsers = g_list_prepend(browsers, (gpointer)_(possible_browsers[i].name));
 			if(browser_setting && !strcmp(possible_browsers[i].command, browser_setting))
 				browser_setting = NULL;
+			/* If xdg-open is valid, prefer it over gnome-open and skip forward */
+			if(!strcmp(possible_browsers[i].command, "xdg-open")) {
+				if (browser_setting && !strcmp("gnome-open", browser_setting)) {
+					purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/browser", possible_browsers[i].command);
+					browser_setting = NULL;
+				}
+				i++;
+			}
 		}
 	}
 

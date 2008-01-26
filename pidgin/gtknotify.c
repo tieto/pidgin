@@ -1058,7 +1058,12 @@ pidgin_notify_uri(const char *uri)
 	/* if they are running gnome, use the gnome web browser */
 	if (purple_running_gnome() == TRUE)
 	{
-		command = g_strdup_printf("gnome-open %s", escaped);
+		char *tmp = g_find_program_in_path("xdg-open");
+		if (tmp == NULL)
+			command = g_strdup_printf("gnome-open %s", escaped);
+		else
+			command = g_strdup_printf("xdg-open %s", escaped);
+		g_free(tmp);
 	}
 	else if (purple_running_osx() == TRUE)
 	{
@@ -1073,6 +1078,10 @@ pidgin_notify_uri(const char *uri)
 			command = g_strdup_printf("%s -n %s", web_browser, escaped);
 		else
 			command = g_strdup_printf("%s %s", web_browser, escaped);
+	}
+	else if (!strcmp(web_browser, "xdg-open"))
+	{
+		command = g_strdup_printf("xdg-open %s", escaped);
 	}
 	else if (!strcmp(web_browser, "gnome-open"))
 	{
