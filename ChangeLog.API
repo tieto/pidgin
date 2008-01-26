@@ -63,6 +63,12 @@ version 2.4.0 (??/??/????):
 		* finch_roomlist_get_ui_ops and finch_roomlist_show_all
 		* finch_request_field_get_widget to get the widget for a request
 		  field.
+		* finch_blist_get_tree to get the GntTree widget representing the
+		  buddy list.
+		* FinchBlistManager structure to manage the buddylist view, and some
+		  util functions finch_blist_install_manager,
+		  finch_blist_uninstall_manager, finch_blist_manager_find and
+		  finch_blist_manager_add_node.
 
 		libgnt:
 		* Added gnt_tree_set_row_color to set the color for a row in a tree.
