@@ -344,6 +344,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 					 * Doing otherwise means that simply compiling with SASL support renders the client unable to connect to servers
 					 * which would connect without issue otherwise. -evands
 					 */
+					js->auth_type = JABBER_AUTH_IQ_AUTH;
 					jabber_auth_start_old(js);
 					return;
 				}
