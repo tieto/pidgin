@@ -25,14 +25,13 @@
  *
  */
 
-#include "internal.h"
+#include "finch.h"
 
 #include "certificate.h"
 #include "debug.h"
 #include "notify.h"
 #include "request.h"
 
-#include "finch.h"
 #include "gntcertmgr.h"
 
 #include "gntbutton.h"

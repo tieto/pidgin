@@ -35,7 +35,6 @@
 #include <gnttree.h>
 #include <gntutils.h>
 
-#include "internal.h"
 #include "finch.h"
 
 #include "account.h"
