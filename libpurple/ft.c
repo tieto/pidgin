@@ -669,6 +669,22 @@ purple_xfer_get_remote_port(const PurpleXfer *xfer)
 	return xfer->remote_port;
 }
 
+time_t
+purple_xfer_get_start_time(const PurpleXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, 0);
+
+	return xfer->start_time;
+}
+
+time_t
+purple_xfer_get_end_time(const PurpleXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, 0);
+
+	return xfer->end_time;
+}
+
 void
 purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed)
 {
