@@ -142,13 +142,15 @@ chat_nick_matches_name(PurpleConversation *conv, const char *aname)
 	char *nick = NULL;
 	char *name = NULL;
 	gboolean ret = FALSE;
-	chat = purple_conversation_get_chat_data(conv);
+	PurpleAccount *account;
 
+	chat = purple_conversation_get_chat_data(conv);
 	if (chat == NULL)
 		return ret;
 
-	nick = g_strdup(purple_normalize(conv->account, chat->nick));
-	name = g_strdup(purple_normalize(conv->account, aname));
+	account = purple_conversation_get_account(conv);
+	nick = g_strdup(purple_normalize(account, chat->nick));
+	name = g_strdup(purple_normalize(account, aname));
 
 	if (g_utf8_collate(nick, name) == 0)
 		ret = TRUE;

@@ -149,7 +149,7 @@ finch_connection_report_disconnect(PurpleConnection *gc, PurpleConnectionError r
 	while (list) {
 		PurpleConversation *conv = list->data;
 		list = list->next;
-		if (conv->account != account ||
+		if (purple_conversation_get_account(conv) != account ||
 				purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
 			continue;
 		purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));

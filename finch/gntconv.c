@@ -71,6 +71,20 @@ static int color_message_highlight;
 static int color_message_action;
 static int color_timestamp;
 
+static PurpleBuddy *
+find_buddy_for_conversation(PurpleConversation *conv)
+{
+	return purple_find_buddy(purple_conversation_get_account(conv),
+			purple_conversation_get_name(conv));
+}
+
+static PurpleChat *
+find_chat_for_conversation(PurpleConversation *conv)
+{
+	return purple_blist_find_chat(purple_conversation_get_account(conv),
+			purple_conversation_get_name(conv));
+}
+
 static PurpleBlistNode *
 get_conversation_blist_node(PurpleConversation *conv)
 {
@@ -78,11 +92,11 @@ get_conversation_blist_node(PurpleConversation *conv)
 
 	switch (purple_conversation_get_type(conv)) {
 		case PURPLE_CONV_TYPE_IM:
-			node = (PurpleBlistNode*)purple_find_buddy(conv->account, conv->name);
+			node = (PurpleBlistNode*)find_buddy_for_conversation(conv);
 			node = node ? purple_blist_node_get_parent(node) : NULL;
 			break;
 		case PURPLE_CONV_TYPE_CHAT:
-			node = (PurpleBlistNode*)purple_blist_find_chat(conv->account, conv->name);
+			node = (PurpleBlistNode*)find_chat_for_conversation(conv);
 			break;
 		default:
 			break;
@@ -168,7 +182,7 @@ entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 		}
 		g_free(error);
 	}
-	else if (!purple_account_is_connected(ggconv->active_conv->account))
+	else if (!purple_account_is_connected(purple_conversation_get_account(ggconv->active_conv)))
 	{
 		purple_conversation_write(ggconv->active_conv, "", _("Message was not sent, because you are not signed on."),
 				PURPLE_MESSAGE_ERROR | PURPLE_MESSAGE_NO_LOG, time(NULL));
@@ -316,7 +330,8 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 	GList *list = purple_get_ims();
 	while (list) {
 		PurpleConversation *conv = list->data;
-		PurpleConversation *cc = find_conv_with_contact(conv->account, conv->name);
+		PurpleConversation *cc = find_conv_with_contact(
+				purple_conversation_get_account(conv), purple_conversation_get_name(conv));
 		if (cc)
 			generate_send_to_menu(cc->ui_data);
 		list = list->next;
@@ -332,15 +347,15 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 			GHashTable *comps = NULL;
 
 			list = list->next;
-			if (conv->account != purple_connection_get_account(gc) ||
+			if (purple_conversation_get_account(conv) != purple_connection_get_account(gc) ||
 					!purple_conversation_get_data(conv, "want-to-rejoin"))
 				continue;
 
-			chat = purple_blist_find_chat(conv->account, conv->name);
+			chat = find_chat_for_conversation(conv);
 			if (chat == NULL) {
 				PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 				if (info->chat_info_defaults != NULL)
-					comps = info->chat_info_defaults(gc, conv->name);
+					comps = info->chat_info_defaults(gc, purple_conversation_get_name(conv));
 			} else {
 				comps = chat->components;
 			}
@@ -415,15 +430,11 @@ toggle_logging_cb(GntMenuItem *item, gpointer ggconv)
 
 		purple_conversation_write(conv, NULL,
 				_("Logging started. Future messages in this conversation will be logged."),
-				conv->logs ? (PURPLE_MESSAGE_SYSTEM) :
-				(PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG),
-				time(NULL));
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 	} else {
 		purple_conversation_write(conv, NULL,
 				_("Logging stopped. Future messages in this conversation will not be logged."),
-				conv->logs ? (PURPLE_MESSAGE_SYSTEM) :
-				(PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG),
-				time(NULL));
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 
 		/* Disable the logging second, so that the above message can be logged. */
 		purple_conversation_set_logging(conv, FALSE);
@@ -464,7 +475,8 @@ generate_send_to_menu(FinchConv *ggc)
 	GSList *buds;
 	GList *list = NULL;
 
-	buds = purple_find_buddies(ggc->active_conv->account, ggc->active_conv->name);
+	buds = purple_find_buddies(purple_conversation_get_account(ggc->active_conv),
+			purple_conversation_get_name(ggc->active_conv));
 	if (!buds)
 		return;
 
@@ -608,7 +620,8 @@ finch_create_conversation(PurpleConversation *conv)
 	if (ggc)
 		return;
 
-	cc = find_conv_with_contact(conv->account, conv->name);
+	account = purple_conversation_get_account(conv);
+	cc = find_conv_with_contact(account, purple_conversation_get_name(conv));
 	if (cc && cc->ui_data)
 		ggc = cc->ui_data;
 	else
@@ -629,7 +642,6 @@ finch_create_conversation(PurpleConversation *conv)
 		return;
 	}
 
-	account = purple_conversation_get_account(conv);
 	type = purple_conversation_get_type(conv);
 	title = get_conversation_title(conv, account);
 
@@ -638,7 +650,7 @@ finch_create_conversation(PurpleConversation *conv)
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
 	gnt_box_set_pad(GNT_BOX(ggc->window), 0);
 
-	switch(conv->type){
+	switch (purple_conversation_get_type(conv)) {
 		case PURPLE_CONV_TYPE_UNKNOWN:
 			gnt_widget_set_name(ggc->window, "conversation-window-unknown" );
 			break;
