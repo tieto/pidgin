@@ -23,13 +23,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include "finch.h"
+
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
 #include <gntcheckbox.h>
 #include <gntlabel.h>
 #include <gnttree.h>
-#include "internal.h"
 
 #include "debug.h"
 #include "notify.h"
@@ -41,7 +42,7 @@
 #include "prefs.h"
 
 #define FINCHXFER(xfer) \
-	(PurpleGntXferUiData *)(xfer)->ui_data
+	(PurpleGntXferUiData *)FINCH_GET_DATA(xfer)
 
 typedef struct
 {
@@ -467,7 +468,7 @@ finch_xfer_new_xfer(PurpleXfer *xfer)
 
 	/* This is where we're setting xfer->ui_data for the first time. */
 	data = g_new0(PurpleGntXferUiData, 1);
-	xfer->ui_data = data;
+	FINCH_SET_DATA(xfer, data);
 }
 
 static void
@@ -479,7 +480,7 @@ finch_xfer_destroy(PurpleXfer *xfer)
 	if (data) {
 		g_free(data->name);
 		g_free(data);
-		xfer->ui_data = NULL;
+		FINCH_SET_DATA(xfer, NULL);
 	}
 }
 

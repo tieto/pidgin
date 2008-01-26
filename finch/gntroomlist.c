@@ -24,7 +24,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include"internal.h"
+#include "finch.h"
 
 #include "gntrequest.h"
 #include "gntroomlist.h"
@@ -341,7 +341,7 @@ fl_show_with_account(PurpleAccount *account)
 static void
 fl_create(PurpleRoomlist *list)
 {
-	list->ui_data = &froomlist;
+	FINCH_SET_DATA(list, &froomlist);
 	setup_roomlist(NULL);
 	update_roomlist(list);
 }
