@@ -364,7 +364,7 @@ PurpleConnectionState purple_connection_get_state(const PurpleConnection *gc);
  * @return TRUE if the account is connected, otherwise returns FALSE.
  */
 #define PURPLE_CONNECTION_IS_CONNECTED(gc) \
-	(gc->state == PURPLE_CONNECTED)
+	(purple_connection_get_state(gc) == PURPLE_CONNECTED)
 
 /**
  * Returns the connection's account.
@@ -374,6 +374,15 @@ PurpleConnectionState purple_connection_get_state(const PurpleConnection *gc);
  * @return The connection's account.
  */
 PurpleAccount *purple_connection_get_account(const PurpleConnection *gc);
+
+/**
+ * Returns the protocol plugin managing a connection.
+ *
+ * @param gc The connection.
+ *
+ * @return The protocol plugin.
+ */
+PurplePlugin * purple_connection_get_prpl(const PurpleConnection *gc);
 
 /**
  * Returns the connection's password.

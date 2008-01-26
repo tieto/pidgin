@@ -424,6 +424,14 @@ purple_connection_get_account(const PurpleConnection *gc)
 	return gc->account;
 }
 
+PurplePlugin *
+purple_connection_get_prpl(const PurpleConnection *gc)
+{
+	g_return_val_if_fail(gc != NULL, NULL);
+
+	return gc->prpl;
+}
+
 const char *
 purple_connection_get_password(const PurpleConnection *gc)
 {

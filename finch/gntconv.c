@@ -332,14 +332,15 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 			GHashTable *comps = NULL;
 
 			list = list->next;
-			if (conv->account != gc->account ||
+			if (conv->account != purple_connection_get_account(gc) ||
 					!purple_conversation_get_data(conv, "want-to-rejoin"))
 				continue;
 
 			chat = purple_blist_find_chat(conv->account, conv->name);
 			if (chat == NULL) {
-				if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
-					comps = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc, conv->name);
+				PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
+				if (info->chat_info_defaults != NULL)
+					comps = info->chat_info_defaults(gc, conv->name);
 			} else {
 				comps = chat->components;
 			}
@@ -532,7 +533,8 @@ gg_create_menu(FinchConv *ggc)
 	if (purple_conversation_get_type(ggc->active_conv) == PURPLE_CONV_TYPE_IM) {
 		PurpleAccount *account = purple_conversation_get_account(ggc->active_conv);
 		PurpleConnection *gc = purple_account_get_connection(account);
-		PurplePluginProtocolInfo *pinfo = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
+		PurplePluginProtocolInfo *pinfo =
+			gc ? PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc)) : NULL;
 
 		if (pinfo && pinfo->get_info) {
 			item = gnt_menuitem_new(_("Get Info"));
