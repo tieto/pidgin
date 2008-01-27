@@ -24,6 +24,7 @@
 
 #include "connection.h"
 #include "debug.h"
+#include "eventloop.h"
 #include "idle.h"
 #include "log.h"
 #include "prefs.h"
@@ -333,7 +334,7 @@ purple_idle_init()
 
 	/* Initialize the idleness asynchronously so it doesn't check idleness,
 	 * and potentially try to change the status before the UI is initialized */
-	g_idle_add(_do_purple_idle_touch_cb, NULL);
+	purple_timeout_add(0, _do_purple_idle_touch_cb, NULL);
 
 }
 

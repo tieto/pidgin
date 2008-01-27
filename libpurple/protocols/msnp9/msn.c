@@ -27,6 +27,7 @@
 
 #include "msn.h"
 #include "accountopt.h"
+#include "eventloop.h"
 #include "msg.h"
 #include "page.h"
 #include "pluginpref.h"
@@ -856,7 +857,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		imdata->msg = body_str;
 		imdata->flags = flags;
 		imdata->when = time(NULL);
-		g_idle_add(msn_send_me_im, imdata);
+		purple_timeout_add(0, msn_send_me_im, imdata);
 	}
 
 	msn_message_destroy(msg);

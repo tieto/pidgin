@@ -315,7 +315,7 @@ res_thread(gpointer data)
 
 	/* back to main thread */
 	/* Note: this should *not* be attached to query_data->handle - it will cause leakage */
-	g_idle_add(res_main_thread_cb, query_data);
+	purple_timeout_add(0, res_main_thread_cb, query_data);
 
 	g_thread_exit(NULL);
 	return NULL;
@@ -410,7 +410,7 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	 * Asynchronously call the callback since stuff may not expect
 	 * the callback to be called before this returns */
 	if (query_data->error_message != NULL)
-		query_data->handle = g_idle_add(res_main_thread_cb, query_data);
+		query_data->handle = purple_timeout_add(0, res_main_thread_cb, query_data);
 
 	return query_data;
 #endif
