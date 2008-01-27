@@ -117,7 +117,7 @@ msim_load(PurplePlugin *plugin)
 	}
 	return TRUE;
 }
-    
+
 /**
  * Get possible user status types. Based on mockprpl.
  *
@@ -133,7 +133,7 @@ msim_status_types(PurpleAccount *acct)
 
 	types = NULL;
 
-    /* Statuses are almost all the same. Define a macro to reduce code repetition. */
+	/* Statuses are almost all the same. Define a macro to reduce code repetition. */
 #define _MSIM_ADD_NEW_STATUS(prim) status =                         \
 	purple_status_type_new_with_attrs(                          \
 	prim,   /* PurpleStatusPrimitive */                         \
@@ -552,7 +552,7 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 		 * return 1 even if the message could not be sent, since I don't know if
 		 * it has failed yet--because the IM is only sent after the userid is
 		 * retrieved from the server (which happens after this function returns).
-                 * If an error does occur, it should be logged to the IM window.
+		 * If an error does occur, it should be logged to the IM window.
 		 */
 		rc = 1;
 	} else {
@@ -587,7 +587,7 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(who != NULL, FALSE);
 	g_return_val_if_fail(text != NULL, FALSE);
-   
+
 	from_username = session->account->username;
 
 	g_return_val_if_fail(from_username != NULL, FALSE);
@@ -596,7 +596,7 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 				  type, from_username, who, text);
 
 	msg = msim_msg_new(
-            "bm", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(type),
+			"bm", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(type),
 			"sesskey", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(session->sesskey),
 			/* 't' will be inserted here */
 			"cv", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(MSIM_CLIENT_VERSION),
@@ -649,7 +649,7 @@ static gboolean
 msim_incoming_bm(MsimSession *session, MsimMessage *msg)
 {
 	guint bm;
-   
+
 	bm = msim_msg_get_integer(msg, "bm");
 
 	msim_incoming_bm_record_cv(session, msg);
@@ -780,8 +780,27 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	} else if (g_str_equal(msg_text, "%stoptyping%")) {
 		serv_got_typing_stopped(session->gc, username);
 		rc = TRUE;
-	} else if (strstr(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_")) {
+	} else if (strstr(msg_text, "!!!ZAP_SEND!!!=RTE_BTN_ZAPS_") == msg_text) {
 		rc = msim_incoming_zap(session, msg);
+	} else if (strstr(msg_text, "!!!GroupCount=")) {
+		/* TODO: support group chats. I think the number in msg_text has
+		 * something to do with the 'gid' field. */
+		purple_debug_info("msim", "msim_incoming_action: TODO: implement #4691, group chats: %s\n", msg_text);
+
+		rc = TRUE;
+	} else if (strstr(msg_text, "!!!Offline=")) {
+		/* TODO: support group chats. This one might mean a user
+		 * went offline or exited the chat. */
+		purple_debug_info("msim", "msim_incoming_action: TODO: implement #4691, group chats: %s\n", msg_text);
+
+		rc = TRUE;
+	} else if (msim_msg_get_integer(msg, "aid") != 0) {
+		purple_debug_info("msim", "TODO: implement #4691, group chat from %d on %d: %s\n",
+				msim_msg_get_integer(msg, "aid"),
+				msim_msg_get_integer(msg, "f"),
+				msg_text);
+
+		rc = TRUE;
 	} else {
 		msim_unrecognized(session, msg, 
 				"got to msim_incoming_action but unrecognized value for 'msg'");
@@ -1190,7 +1209,7 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
 	/* Special elements name beginning with '_', we'll use internally within the
 	 * program (did not come directly from the wire). */
 	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, username); /* This makes 'msg' the owner of 'username' */
-  
+
 	/* TODO: attach more useful information, like ImageURL */
 
 	msim_process(session, msg);
@@ -1210,12 +1229,12 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
  *
  */
 static const gchar *
-msim_uid2username_from_blist(MsimSession *session, guint wanted_uid)
+msim_uid2username_from_blist(PurpleAccount *account, guint wanted_uid)
 {
 	GSList *buddies, *cur;
 	gchar *ret;
 
-	buddies = purple_find_buddies(session->account, NULL); 
+	buddies = purple_find_buddies(account, NULL); 
 
 	if (!buddies)
 	{
@@ -1266,7 +1285,7 @@ msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 		/* 'f' = userid message is from, in buddy messages */
 		uid = msim_msg_get_integer(msg, "f");
 
-		username = msim_uid2username_from_blist(session, uid); 
+		username = msim_uid2username_from_blist(session->account, uid); 
 
 		if (username) {
 			/* Know username already, use it. */
@@ -1936,7 +1955,7 @@ msim_incoming_status(MsimSession *session, MsimMessage *msg)
 
 	/* don't copy; let the MsimUser own the headline, memory-wise */
 	user->headline = status_headline_escaped;
-  
+
 	/* Set user status */
 	switch (status_code) {
 		case MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN: 
@@ -2160,9 +2179,9 @@ msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo,
 		gchar *msg;
 
 		msg = g_strdup_printf(_("No such user: %s"), username);
-                if (!purple_conv_present_error(username, session->account, msg)) { 
-                    purple_notify_error(NULL, NULL, _("User lookup"), msg); 
-                }
+		if (!purple_conv_present_error(username, session->account, msg)) { 
+			purple_notify_error(NULL, NULL, _("User lookup"), msg); 
+		}
 
 		g_free(msg);
 		g_free(username);
@@ -2338,7 +2357,6 @@ msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
  */
 const char *msim_normalize(const PurpleAccount *account, const char *str) {
 	static char normalized[BUF_LEN];
-	MsimSession *session;
 	char *tmp1, *tmp2;
 	int i, j;
 	guint id;
@@ -2350,25 +2368,19 @@ const char *msim_normalize(const PurpleAccount *account, const char *str) {
 		const char *username;
 
 		/* If the account does not exist, we can't look up the user. */
-		g_return_val_if_fail(account != NULL, str);
-		g_return_val_if_fail(account->gc != NULL, str);
-		g_return_val_if_fail(account->gc->state == PURPLE_CONNECTED, str);
+		if (!account)
+			return str;
 
-		purple_debug_info("msim_normalize", "%s is a userid\n",str);
-
-		session = (MsimSession *)account->gc->proto_data;
 		id = atol(str);
-		username = msim_uid2username_from_blist(session, id);
+		username = msim_uid2username_from_blist((PurpleAccount *)account, id);
 		if (!username) {
 			/* Not in buddy list... scheisse... TODO: Manual Lookup! Bug #4631 */
 			/* Note: manual lookup using msim_lookup_user() is a problem inside 
 			 * msim_normalize(), because msim_lookup_user() calls a callback function
 			 * when the user information has been looked up, but msim_normalize() expects
 			 * the result immediately. */
-			purple_debug_info("msim_normalize", "Failure! %s is not in my list\n", str);
 			strncpy(normalized, str, BUF_LEN);
 		} else {
-			purple_debug_info("msim_normalize","%d is %s\n", id, username);
 			strncpy(normalized, username, BUF_LEN);
 		}
 	} else {
@@ -2452,30 +2464,27 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 	/* Mark down that we got data, so we don't timeout. */
 	session->last_comm = time(NULL);
 
-	/* Only can handle so much data at once... 
-	 * Should be large enough to hold the largest protocol message.
-	 */
-	if (session->rxoff >= MSIM_READ_BUF_SIZE) {
-		purple_debug_error("msim", 
-				"msim_input_cb: %d-byte read buffer full! rxoff=%d. "
-				"If this happens, try recompiling with a higher "
-				"MSIM_READ_BUF_SIZE.",
-				MSIM_READ_BUF_SIZE, session->rxoff);
-		purple_connection_error_reason (gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Read buffer full"));
+	/* If approaching end of buffer, reallocate some more memory. */
+	if (session->rxsize < session->rxoff + MSIM_READ_BUF_SIZE) {
+		purple_debug_info("msim", 
+			"msim_input_cb: %d-byte read buffer full, rxoff=%d, " "growing by %d bytes\n",
+			session->rxsize, session->rxoff, MSIM_READ_BUF_SIZE);
+			session->rxsize += MSIM_READ_BUF_SIZE;
+			session->rxbuf = g_realloc(session->rxbuf, session->rxsize);
+		
 		return;
 	}
 
-	purple_debug_info("msim", "buffer at %d (max %d), reading up to %d\n",
-			session->rxoff, MSIM_READ_BUF_SIZE, 
-			MSIM_READ_BUF_SIZE - session->rxoff);
+	purple_debug_info("msim", "dynamic buffer at %d (max %d), reading up to %d\n",
+			session->rxoff, session->rxsize,
+			MSIM_READ_BUF_SIZE - session->rxoff - 1);
 
 	/* Read into buffer. On Win32, need recv() not read(). session->fd also holds
 	 * the file descriptor, but it sometimes differs from the 'source' parameter.
 	 */
-	n = recv(session->fd, session->rxbuf + session->rxoff, MSIM_READ_BUF_SIZE - session->rxoff, 0);
-	gc->last_received = time(NULL);
+	n = recv(session->fd, 
+		 session->rxbuf + session->rxoff, 
+		 session->rxsize - session->rxoff - 1, 0);
 
 	if (n < 0 && errno == EAGAIN) {
 		return;
@@ -2495,13 +2504,13 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	if (n + session->rxoff >= MSIM_READ_BUF_SIZE) {
+	if (n + session->rxoff > session->rxsize) {
 		purple_debug_info("msim_input_cb", "received %d bytes, pushing rxoff to %d, over buffer size of %d\n",
-				n, n + session->rxoff, MSIM_READ_BUF_SIZE);
-		/* TODO: g_realloc like msn, yahoo, irc, jabber? */
+				n, n + session->rxoff, session->rxsize);
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Read buffer full"));
+			_("Read buffer full (2)"));
+		return;
 	}
 
 	/* Null terminate */
@@ -2544,6 +2553,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 			purple_connection_error_reason (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unparseable message"));
+			break;
 		} else {
 			/* Process message and then free it (processing function should
 			 * clone message if it wants to keep it afterwards.) */
@@ -2556,7 +2566,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 		/* Move remaining part of buffer to beginning. */
 		session->rxoff -= strlen(session->rxbuf) + strlen(MSIM_FINAL_STRING);
 		memmove(session->rxbuf, end + strlen(MSIM_FINAL_STRING), 
-				MSIM_READ_BUF_SIZE - (end + strlen(MSIM_FINAL_STRING) - session->rxbuf));
+				session->rxsize - (end + strlen(MSIM_FINAL_STRING) - session->rxbuf));
 
 		/* Clear end of buffer 
 		 * memset(end, 0, MSIM_READ_BUF_SIZE - (end - session->rxbuf));
@@ -2763,7 +2773,7 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	uid = msim_msg_get_integer(contact_info, "ContactID");
 
 	if (!user_lookup_info) {
-		username = g_strdup(msim_uid2username_from_blist(session, uid));
+		username = g_strdup(msim_uid2username_from_blist(session->account, uid));
 		g_return_if_fail(username != NULL);
 	} else {
 		user_lookup_info_body = msim_msg_get_dictionary(user_lookup_info, "body");
@@ -2831,7 +2841,7 @@ msim_add_contact_from_server(MsimSession *session, MsimMessage *contact_info)
 	g_return_val_if_fail(uid != 0, FALSE);
 
 	/* Lookup the username, since NickName and IMName is unreliable */
-	username = msim_uid2username_from_blist(session, uid);
+	username = msim_uid2username_from_blist(session->account, uid);
 	if (!username) {
 		gchar *uid_str;
 
@@ -2860,7 +2870,10 @@ msim_got_contact_list(MsimSession *session, MsimMessage *reply, gpointer user_da
 	msim_msg_dump("msim_got_contact_list: reply=%s", reply);
 
 	body = msim_msg_get_dictionary(reply, "body");
-	g_return_if_fail(body != NULL);
+	if (!body) {
+		/* No friends. Not an error. */
+		return;
+	}
 
 	buddy_count = 0;
 
