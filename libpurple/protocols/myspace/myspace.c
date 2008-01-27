@@ -2464,29 +2464,27 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 	/* Mark down that we got data, so we don't timeout. */
 	session->last_comm = time(NULL);
 
-	/* Only can handle so much data at once... 
-	 * Should be large enough to hold the largest protocol message.
-	 */
-	if (session->rxoff >= MSIM_READ_BUF_SIZE) {
-		purple_debug_error("msim", 
-				"msim_input_cb: %d-byte read buffer full! rxoff=%d. "
-				"If this happens, try recompiling with a higher "
-				"MSIM_READ_BUF_SIZE.",
-				MSIM_READ_BUF_SIZE, session->rxoff);
-		purple_connection_error_reason (gc,
-				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-				_("Read buffer full"));
+	/* If approaching end of buffer, reallocate some more memory. */
+	if (session->rxsize < session->rxoff + MSIM_READ_BUF_SIZE) {
+		purple_debug_info("msim", 
+			"msim_input_cb: %d-byte read buffer full, rxoff=%d, " "growing by %d bytes\n",
+			session->rxsize, session->rxoff, MSIM_READ_BUF_SIZE);
+			session->rxsize += MSIM_READ_BUF_SIZE;
+			session->rxbuf = g_realloc(session->rxbuf, session->rxsize);
+		
 		return;
 	}
 
-	purple_debug_info("msim", "buffer at %d (max %d), reading up to %d\n",
-			session->rxoff, MSIM_READ_BUF_SIZE, 
-			MSIM_READ_BUF_SIZE - session->rxoff);
+	purple_debug_info("msim", "dynamic buffer at %d (max %d), reading up to %d\n",
+			session->rxoff, session->rxsize,
+			MSIM_READ_BUF_SIZE - session->rxoff - 1);
 
 	/* Read into buffer. On Win32, need recv() not read(). session->fd also holds
 	 * the file descriptor, but it sometimes differs from the 'source' parameter.
 	 */
-	n = recv(session->fd, session->rxbuf + session->rxoff, MSIM_READ_BUF_SIZE - session->rxoff, 0);
+	n = recv(session->fd, 
+		 session->rxbuf + session->rxoff, 
+		 session->rxsize - session->rxoff - 1, 0);
 
 	if (n < 0 && errno == EAGAIN) {
 		return;
@@ -2506,13 +2504,13 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	if (n + session->rxoff >= MSIM_READ_BUF_SIZE) {
+	if (n + session->rxoff > session->rxsize) {
 		purple_debug_info("msim_input_cb", "received %d bytes, pushing rxoff to %d, over buffer size of %d\n",
-				n, n + session->rxoff, MSIM_READ_BUF_SIZE);
-		/* TODO: g_realloc like msn, yahoo, irc, jabber? */
+				n, n + session->rxoff, session->rxsize);
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Read buffer full"));
+			_("Read buffer full (2)"));
+		return;
 	}
 
 	/* Null terminate */
@@ -2555,6 +2553,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 			purple_connection_error_reason (gc,
 				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 				_("Unparseable message"));
+			break;
 		} else {
 			/* Process message and then free it (processing function should
 			 * clone message if it wants to keep it afterwards.) */
@@ -2567,7 +2566,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 		/* Move remaining part of buffer to beginning. */
 		session->rxoff -= strlen(session->rxbuf) + strlen(MSIM_FINAL_STRING);
 		memmove(session->rxbuf, end + strlen(MSIM_FINAL_STRING), 
-				MSIM_READ_BUF_SIZE - (end + strlen(MSIM_FINAL_STRING) - session->rxbuf));
+				session->rxsize - (end + strlen(MSIM_FINAL_STRING) - session->rxbuf));
 
 		/* Clear end of buffer 
 		 * memset(end, 0, MSIM_READ_BUF_SIZE - (end - session->rxbuf));
