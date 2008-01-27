@@ -39,6 +39,7 @@ version 2.4.0 (??/??/????):
 		  last received packet.
 		* Added some more accessor functions:
 			* purple_chat_get_account
+			* purple_chat_get_components
 			* purple_connection_get_prpl
 			* purple_xfer_get_start_time
 			* purple_xfer_get_end_time

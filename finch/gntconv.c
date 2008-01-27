@@ -255,7 +255,7 @@ find_conv_with_contact(PurpleAccount *account, const char *name)
 		if (node == (PurpleBlistNode*)buddy)
 			continue;
 		if ((ret = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-				((PurpleBuddy*)node)->name, ((PurpleBuddy*)node)->account)) != NULL)
+				purple_buddy_get_name((PurpleBuddy*)node), purple_buddy_get_account((PurpleBuddy*)node))) != NULL)
 			break;
 	}
 	return ret;
@@ -318,7 +318,7 @@ chat_left_cb(PurpleConversation *conv, gpointer null)
 static void
 buddy_signed_on_off(PurpleBuddy *buddy, gpointer null)
 {
-	PurpleConversation *conv = find_conv_with_contact(buddy->account, buddy->name);
+	PurpleConversation *conv = find_conv_with_contact(purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
 	if (conv == NULL)
 		return;
 	generate_send_to_menu(FINCH_GET_DATA(conv));
@@ -357,7 +357,7 @@ account_signed_on_off(PurpleConnection *gc, gpointer null)
 				if (info->chat_info_defaults != NULL)
 					comps = info->chat_info_defaults(gc, purple_conversation_get_name(conv));
 			} else {
-				comps = chat->components;
+				comps = purple_chat_get_components(chat);
 			}
 			serv_join_chat(gc, comps);
 			if (chat == NULL && comps != NULL)

@@ -59,7 +59,7 @@ typedef enum
 #define PURPLE_BLIST_NODE_IS_GROUP(n)   (purple_blist_node_get_type(n) == PURPLE_BLIST_GROUP_NODE)
 
 #define PURPLE_BUDDY_IS_ONLINE(b) \
-	((b) != NULL && purple_account_is_connected((b)->account) && \
+	((b) != NULL && purple_account_is_connected(purple_buddy_get_account(b)) && \
 	 purple_presence_is_online(purple_buddy_get_presence(b)))
 
 typedef enum
@@ -731,6 +731,16 @@ PurpleGroup *purple_chat_get_group(PurpleChat *chat);
  * @since 2.4.0
  */
 PurpleAccount *purple_chat_get_account(PurpleChat *chat);
+
+/**
+ * Get a hashtable containing information about a chat.
+ *
+ * @param chat  The chat.
+ *
+ * @constreturn  The hashtable.
+ * @since 2.4.0
+ */
+GHashTable *purple_chat_get_components(PurpleChat *chat);
 
 /**
  * Returns the group of which the buddy is a member.

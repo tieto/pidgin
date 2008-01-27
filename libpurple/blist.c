@@ -2260,6 +2260,14 @@ purple_chat_get_account(PurpleChat *chat)
 	return chat->account;
 }
 
+GHashTable *
+purple_chat_get_components(PurpleChat *chat)
+{
+	g_return_val_if_fail(chat != NULL, NULL);
+
+	return chat->components;
+}
+
 PurpleContact *purple_buddy_get_contact(PurpleBuddy *buddy)
 {
 	g_return_val_if_fail(buddy != NULL, NULL);
