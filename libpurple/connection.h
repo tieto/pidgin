@@ -381,6 +381,7 @@ PurpleAccount *purple_connection_get_account(const PurpleConnection *gc);
  * @param gc The connection.
  *
  * @return The protocol plugin.
+ * @since 2.4.0
  */
 PurplePlugin * purple_connection_get_prpl(const PurpleConnection *gc);
 
