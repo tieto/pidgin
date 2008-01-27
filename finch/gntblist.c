@@ -263,7 +263,7 @@ static gboolean default_create_tooltip(gpointer selected_row, GString **body, ch
 						purple_blist_get_group_online_count(group),
 						purple_blist_get_group_size(group, FALSE));
 
-		title = g_strdup(group->name);
+		title = g_strdup(purple_group_get_name(group));
 	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		PurpleChat *chat = (PurpleChat *)node;
 		PurpleAccount *account = purple_chat_get_account(chat);
@@ -684,7 +684,7 @@ finch_request_add_chat(PurpleAccount *account, PurpleGroup *grp, const char *ali
 	field = purple_request_field_string_new("alias", _("Alias"), alias, FALSE);
 	purple_request_field_group_add_field(group, field);
 
-	field = purple_request_field_string_new("group", _("Group"), grp ? grp->name : NULL, FALSE);
+	field = purple_request_field_string_new("group", _("Group"), grp ? purple_group_get_name(grp) : NULL, FALSE);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_bool_new("autojoin", _("Auto-join"), FALSE);
@@ -824,7 +824,7 @@ get_display_name(PurpleBlistNode *node)
 		strncpy(status, "~", sizeof(status) - 1);
 	}
 	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
-		return ((PurpleGroup*)node)->name;
+		return purple_group_get_name((PurpleGroup*)node);
 
 	snprintf(text, sizeof(text) - 1, "%s %s", status, name);
 
@@ -1102,7 +1102,7 @@ create_chat_menu(GntMenu *menu, PurpleChat *chat)
 static void
 finch_add_buddy(PurpleBlistNode *selected, PurpleGroup *grp)
 {
-	purple_blist_request_add_buddy(NULL, NULL, grp ? grp->name : NULL, NULL);
+	purple_blist_request_add_buddy(NULL, NULL, grp ? purple_group_get_name(grp) : NULL, NULL);
 }
 
 static void
@@ -1266,7 +1266,7 @@ finch_blist_rename_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
 		name = purple_chat_get_name((PurpleChat*)node);
 	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
-		name = ((PurpleGroup*)node)->name;
+		name = purple_group_get_name((PurpleGroup*)node);
 	else
 		g_return_if_reached();
 
@@ -1358,7 +1358,7 @@ finch_blist_remove_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		name = purple_chat_get_name((PurpleChat*)node);
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
-		name = ((PurpleGroup*)node)->name;
+		name = purple_group_get_name((PurpleGroup*)node);
 		sec = _("Removing this group will also remove all the buddies in the group");
 	}
 	else
@@ -1517,7 +1517,7 @@ draw_context_menu(FinchBlist *ggblist)
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		PurpleGroup *group = (PurpleGroup *)node;
 		create_group_menu(GNT_MENU(context), group);
-		title = g_strdup(group->name);
+		title = g_strdup(purple_group_get_name(group));
 	}
 
 	append_extended_menu(GNT_MENU(context), node);

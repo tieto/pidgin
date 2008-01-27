@@ -427,7 +427,7 @@ create_string_field(PurpleRequestField *field, GntWidget **screenname)
 		for (node = purple_blist_get_root(); node;
 				node = purple_blist_node_get_sibling_next(node)) {
 			if (PURPLE_BLIST_NODE_IS_GROUP(node))
-				gnt_entry_add_suggest(GNT_ENTRY(entry), ((PurpleGroup *)node)->name);
+				gnt_entry_add_suggest(GNT_ENTRY(entry), purple_group_get_name((PurpleGroup *)node));
 		}
 	}
 	return entry;
