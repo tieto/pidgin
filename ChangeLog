@@ -13,6 +13,9 @@ version 2.4.0 (??/??/????):
 	* Support for Yahoo Messenger 7.0+ file transfer method (Thanumalayan S.)
 	* Support for retrieving full names and addresses from the address book
 	  on Yahoo! Japan (Yusuke Odate)
+	* The AIM/ICQ server-side preference for "allow others to see me
+	  as idle" is no longer unconditionally set to "yes" even when
+	  your libpurple preference is "no."
 
 	Pidgin:
 	* Added the ability to theme conversation name colors (red and blue)

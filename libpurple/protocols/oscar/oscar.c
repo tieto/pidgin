@@ -197,7 +197,6 @@ static int purple_ssi_gotadded     (OscarData *, FlapConnection *, FlapFrame *, 
 
 static void purple_icons_fetch(PurpleConnection *gc);
 
-static void recent_buddies_cb(const char *name, PurplePrefType type, gconstpointer value, gpointer data);
 void oscar_set_info(PurpleConnection *gc, const char *info);
 static void oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, PurpleStatus *status);
 static void oscar_set_extendedstatus(PurpleConnection *gc);
@@ -1182,6 +1181,48 @@ flap_connection_established(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	return 1;
 }
 
+static void
+idle_reporting_pref_cb(const char *name, PurplePrefType type,
+		gconstpointer value, gpointer data)
+{
+	PurpleConnection *gc;
+	OscarData *od;
+	gboolean report_idle;
+	guint32 presence;
+
+	gc = data;
+	od = gc->proto_data;
+	report_idle = strcmp((const char *)value, "none") != 0;
+	presence = aim_ssi_getpresence(od->ssi.local);
+
+	if (report_idle)
+		aim_ssi_setpresence(od, presence | 0x400);
+	else
+		aim_ssi_setpresence(od, presence & ~0x400);
+}
+
+/**
+ * Should probably make a "Use recent buddies group" account preference
+ * so that this option is surfaced to the user.
+ */
+static void
+recent_buddies_pref_cb(const char *name, PurplePrefType type,
+		gconstpointer value, gpointer data)
+{
+	PurpleConnection *gc;
+	OscarData *od;
+	guint32 presence;
+
+	gc = data;
+	od = gc->proto_data;
+	presence = aim_ssi_getpresence(od->ssi.local);
+
+	if (value)
+		aim_ssi_setpresence(od, presence & ~AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES);
+	else
+		aim_ssi_setpresence(od, presence | AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES);
+}
+
 void
 oscar_login(PurpleAccount *account)
 {
@@ -1272,7 +1313,8 @@ oscar_login(PurpleAccount *account)
 	}
 
 	/* Connect to core Purple signals */
-	purple_prefs_connect_callback(gc, "/plugins/prpl/oscar/recent_buddies", recent_buddies_cb, gc);
+	purple_prefs_connect_callback(gc, "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
+	purple_prefs_connect_callback(gc, "/plugins/prpl/oscar/recent_buddies", recent_buddies_pref_cb, gc);
 
 	newconn = flap_connection_new(od, SNAC_FAMILY_AUTH);
 	newconn->connect_data = purple_proxy_connect(NULL, account,
@@ -4905,9 +4947,21 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			}
 		}
 		/* Presence settings (idle time visibility) */
-		if ((tmp = aim_ssi_getpresence(od->ssi.local)) != 0xFFFFFFFF)
-			if (!(tmp & 0x400))
+		tmp = aim_ssi_getpresence(od->ssi.local);
+		if (tmp != 0xFFFFFFFF) {
+			const char *idle_reporting_pref;
+			gboolean report_idle;
+
+			idle_reporting_pref = purple_prefs_get_string("/purple/away/idle_reporting");
+			report_idle = strcmp(idle_reporting_pref, "none") != 0;
+
+			if (report_idle)
 				aim_ssi_setpresence(od, tmp | 0x400);
+			else
+				aim_ssi_setpresence(od, tmp & ~0x400);
+		}
+
+
 	} /* end pruning buddies from local list */
 
 	/* Add from server list to local list */
@@ -6546,33 +6600,6 @@ oscar_convo_closed(PurpleConnection *gc, const char *who)
 	}
 }
 
-static void
-recent_buddies_cb(const char *name, PurplePrefType type,
-				  gconstpointer value, gpointer data)
-{
-	PurpleConnection *gc = data;
-	OscarData *od = gc->proto_data;
-	guint32 presence;
-
-	presence = aim_ssi_getpresence(od->ssi.local);
-
-	if (value) {
-		presence &= ~AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES;
-		aim_ssi_setpresence(od, presence);
-	} else {
-		presence |= AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES;
-		aim_ssi_setpresence(od, presence);
-	}
-}
-
-#ifdef USE_PRPL_PREFERENCES
-	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/prpl/oscar/recent_buddies", _("Use recent buddies group"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/prpl/oscar/show_idle", _("Show how long you have been idle"));
-	purple_plugin_pref_frame_add(frame, ppref);
-#endif
-
 const char *
 oscar_normalize(const PurpleAccount *account, const char *str)
 {
@@ -6735,7 +6762,7 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 	/* Preferences */
 	purple_prefs_add_none("/plugins/prpl/oscar");
 	purple_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
-	purple_prefs_add_bool("/plugins/prpl/oscar/show_idle", FALSE);
+	purple_prefs_remove("/plugins/prpl/oscar/show_idle");
 	purple_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
 
 	/* protocol handler */
