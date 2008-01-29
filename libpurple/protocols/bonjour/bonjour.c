@@ -673,11 +673,12 @@ initialize_default_account_values(void)
 
 	/* Try to figure out a good host name to use */
 	/* TODO: Avoid 'localhost,' if possible */
-	if (gethostname(hostname, 255) != 0) {
+	if (gethostname(hostname, sizeof(hostname)) != 0) {
 		purple_debug_warning("bonjour", "Error when getting host name: %s.  Using \"localhost.\"\n",
 				g_strerror(errno));
 		strcpy(hostname, "localhost");
 	}
+	hostname[sizeof(hostname) - 1] = '\0';
 	default_hostname = g_strdup(hostname);
 }
 

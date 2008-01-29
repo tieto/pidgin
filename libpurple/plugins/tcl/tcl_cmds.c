@@ -25,6 +25,7 @@
 #include "internal.h"
 #include "conversation.h"
 #include "connection.h"
+#include "eventloop.h"
 #include "account.h"
 #include "server.h"
 #include "notify.h"
@@ -1778,7 +1779,7 @@ int tcl_cmd_unload(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CON
 	}
 	/* We can't unload immediately, but we can unload at the first 
 	 * known safe opportunity. */
-	g_idle_add(unload_self, (gpointer)plugin);
+	purple_timeout_add(0, unload_self, (gpointer)plugin);
 
 	return TCL_OK;
 }
