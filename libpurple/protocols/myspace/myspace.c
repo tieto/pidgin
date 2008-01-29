@@ -1223,16 +1223,15 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
  *
  * @param wanted_uid
  *
- * @return Username of wanted_uid, if on blist, or NULL. Static string.
- * 	TODO: The username string here is a new string from g_strdup(), not
- * 	a static string that doesn't need to be fixed. Probably leaks. TODO: fix.
+ * @return Username of wanted_uid, if on blist, or NULL. 
+ * 	This is a static string, so don't free it. Copy it if needed.
  *
  */
 static const gchar *
 msim_uid2username_from_blist(PurpleAccount *account, guint wanted_uid)
 {
 	GSList *buddies, *cur;
-	gchar *ret;
+	const gchar *ret;
 
 	buddies = purple_find_buddies(account, NULL); 
 
@@ -1258,7 +1257,7 @@ msim_uid2username_from_blist(PurpleAccount *account, guint wanted_uid)
 
 		if (uid == wanted_uid)
 		{
-			ret = g_strdup(name);
+			ret = name;
 			break;
 		}
 	}
@@ -2822,8 +2821,9 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	msim_store_user_info(session, contact_info, NULL);
 
 	/* TODO: other fields, store in 'user' */
-
 	msim_msg_free(contact_info);
+
+	g_free(username);
 }
 
 /** Add first ContactID in contact_info to buddy's list. Used to add
