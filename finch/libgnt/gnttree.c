@@ -684,7 +684,7 @@ action_move_parent(GntBindable *bind, GList *null)
 	GntTreeRow *row = tree->current;
 	int dist;
 
-	if (!row->parent || SEARCHING(tree))
+	if (!row || !row->parent || SEARCHING(tree))
 		return FALSE;
 
 	tree->current = row->parent;
