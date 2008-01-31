@@ -114,6 +114,7 @@ static PurpleConversation *yahoo_find_conference(PurpleConnection *gc, const cha
 
 void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
+	PurpleAccount *account;
 	GSList *l;
 	char *room = NULL;
 	char *who = NULL;
@@ -123,6 +124,8 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 
 	if (pkt->status == 2)
 		return; /* XXX */
+
+	account = purple_connection_get_account(gc);
 
 	members = g_string_sized_new(512);
 
@@ -159,8 +162,9 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 		return;
 	}
 
-	if (!yahoo_privacy_check(gc, who) ||
-			(purple_account_get_bool(purple_connection_get_account(gc), "ignore_invites", FALSE))) {
+	if (!purple_privacy_check(account, who) ||
+			(purple_account_get_bool(account, "ignore_invites", FALSE)))
+	{
 		purple_debug_info("yahoo",
 		    "Invite to conference %s from %s has been dropped.\n", room, who);
 		g_free(room);
@@ -203,7 +207,8 @@ void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet 
 			break;
 		}
 	}
-	if (!yahoo_privacy_check(gc, who)) {
+	if (!purple_privacy_check(purple_connection_get_account(gc), who))
+	{
 		g_free(room);
 		g_free(msg);
 		return;
@@ -664,10 +669,13 @@ void yahoo_process_chat_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 void yahoo_process_chat_addinvite(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
+	PurpleAccount *account;
 	GSList *l;
 	char *room = NULL;
 	char *msg = NULL;
 	char *who = NULL;
+
+	account = purple_connection_get_account(gc);
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -696,8 +704,9 @@ void yahoo_process_chat_addinvite(PurpleConnection *gc, struct yahoo_packet *pkt
 	if (room && who) {
 		GHashTable *components;
 
-		if (!yahoo_privacy_check(gc, who) ||
-				(purple_account_get_bool(purple_connection_get_account(gc), "ignore_invites", FALSE))) {
+		if (!purple_privacy_check(account, who) ||
+				(purple_account_get_bool(account, "ignore_invites", FALSE)))
+		{
 			purple_debug_info("yahoo", "Invite to room %s from %s has been dropped.\n", room, who);
 			g_free(room);
 			g_free(msg);

@@ -77,42 +77,6 @@ yahoo_rem_permit(PurpleConnection *gc, const char *who)
 	purple_privacy_permit_remove(gc->account,who,TRUE);
 }
 
-gboolean
-yahoo_privacy_check(PurpleConnection *gc, const char *who)
-{
-	/* returns TRUE if allowed through, FALSE otherwise */
-	gboolean permitted;
-
-	permitted = purple_privacy_check(gc->account, who);
-
-	/* print some debug info */
-	if (!permitted) {
-		char *deb = NULL;
-		switch (gc->account->perm_deny)
-		{
-			case PURPLE_PRIVACY_DENY_ALL:
-				deb = "PURPLE_PRIVACY_DENY_ALL";
-			break;
-			case PURPLE_PRIVACY_DENY_USERS:
-				deb = "PURPLE_PRIVACY_DENY_USERS";
-			break;
-			case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
-				deb = "PURPLE_PRIVACY_ALLOW_BUDDYLIST";
-			break;
-		}
-		if(deb)
-			purple_debug_info("yahoo",
-				"%s blocked data received from %s (%s)\n",
-				gc->account->username,who, deb);
-	} else if (gc->account->perm_deny == PURPLE_PRIVACY_ALLOW_USERS) {
-		purple_debug_info("yahoo",
-			"%s allowed data received from %s (PURPLE_PRIVACY_ALLOW_USERS)\n",
-			gc->account->username,who);
-	}
-
-	return permitted;
-}
-
 static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFriend *f)
 {
 	char *status = NULL;
@@ -739,12 +703,15 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
+	PurpleAccount *account;
 	char *msg = NULL;
 	char *from = NULL;
 	char *stat = NULL;
 	char *game = NULL;
 	YahooFriend *f = NULL;
 	GSList *l = pkt->hash;
+
+	account = purple_connection_get_account(gc);
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -763,13 +730,14 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt)
 		return;
 
 	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))
-		&& (yahoo_privacy_check(gc, from)))  {
+		&& (purple_privacy_check(account, from)))
+	{
 		if (*stat == '1')
 			serv_got_typing(gc, from, 0, PURPLE_TYPING);
 		else
 			serv_got_typing_stopped(gc, from);
 	} else if (!g_ascii_strncasecmp(msg, "GAME", strlen("GAME"))) {
-		PurpleBuddy *bud = purple_find_buddy(gc->account, from);
+		PurpleBuddy *bud = purple_find_buddy(account, from);
 
 		if (!bud) {
 			purple_debug(PURPLE_DEBUG_WARNING, "yahoo",
@@ -789,7 +757,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt)
 				yahoo_update_status(gc, from, f);
 		}
 	} else if (!g_ascii_strncasecmp(msg, "WEBCAMINVITE", strlen("WEBCAMINVITE"))) {
-                PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, gc->account);
+		PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, account);
 		char *buf = g_strdup_printf(_("%s has sent you a webcam invite, which is not yet supported."), from);
 		purple_conversation_write(conv, NULL, buf, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
 		g_free(buf);
@@ -808,12 +776,14 @@ struct _yahoo_im {
 
 static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
+	PurpleAccount *account;
 	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
 	GSList *list = NULL;
 	struct _yahoo_im *im = NULL;
-
 	const char *imv = NULL;
+
+	account = purple_connection_get_account(gc);
 
 	if (pkt->status <= 1 || pkt->status == 5) {
 		while (l != NULL) {
@@ -859,20 +829,20 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		{
 			PurpleWhiteboard *wb;
 
-			if (!yahoo_privacy_check(gc, im->from)) {
+			if (!purple_privacy_check(account, im->from)) {
 				purple_debug_info("yahoo", "Doodle request from %s dropped.\n", im->from);
 				return;
 			}
 
 			/* I'm not sure the following ever happens -DAA */
 
-			wb = purple_whiteboard_get_session(gc->account, im->from);
+			wb = purple_whiteboard_get_session(account, im->from);
 
 			/* If a Doodle session doesn't exist between this user */
 			if(wb == NULL)
 			{
 				doodle_session *ds;
-				wb = purple_whiteboard_create(gc->account, im->from, DOODLE_STATE_REQUESTED);
+				wb = purple_whiteboard_create(account, im->from, DOODLE_STATE_REQUESTED);
 				ds = wb->proto_data;
 				ds->imv_key = g_strdup(imv);
 
@@ -892,7 +862,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 			continue;
 		}
 
-		if (!yahoo_privacy_check(gc, im->from)) {
+		if (!purple_privacy_check(account, im->from)) {
 			purple_debug_info("yahoo", "Message from %s dropped.\n", im->from);
 			return;
 		}
@@ -908,11 +878,9 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		purple_util_chrreplace(m, '\r', '\n');
 
 		if (!strcmp(m, "<ding>")) {
-			PurpleAccount *account;
 			PurpleConversation *c;
 			char *username;
 
-			account = purple_connection_get_account(gc);
 			c = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, im->from, account);
 			if (c == NULL)
 				c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
@@ -1067,8 +1035,11 @@ static void yahoo_buddy_denied_our_add(PurpleConnection *gc, const char *who, co
 }
 
 static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *pkt) {
+	PurpleAccount *account;
 	GSList *l = pkt->hash;
 	const char *msg = NULL;
+
+	account = purple_connection_get_account(gc);
 
 	/* Buddy authorized/declined our addition */
 	if (pkt->status == 1) {
@@ -1139,7 +1110,8 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 		if (add_req->id && add_req->who) {
 			char *alias = NULL, *dec_msg = NULL;
 
-			if (!yahoo_privacy_check(gc, add_req->who)) {
+			if (!purple_privacy_check(account, add_req->who))
+			{
 				purple_debug_misc("yahoo", "Auth. request from %s dropped and automatically denied due to privacy settings!\n",
 						  add_req->who);
 				yahoo_buddy_add_deny_cb(add_req, NULL);
@@ -1159,11 +1131,12 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 			/* DONE! this is almost exactly the same as what MSN does,
 			 * this should probably be moved to the core.
 			 */
-			 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
-						    alias, dec_msg, purple_find_buddy(purple_connection_get_account(gc), add_req->who) != NULL,
-						    yahoo_buddy_add_authorize_cb,
-						    yahoo_buddy_add_deny_reason_cb,
-						    add_req);
+			 purple_account_request_authorization(account, add_req->who, add_req->id,
+					alias, dec_msg,
+					purple_find_buddy(account, add_req->who) != NULL,
+					yahoo_buddy_add_authorize_cb,
+					yahoo_buddy_add_deny_reason_cb,
+					add_req);
 			g_free(alias);
 			g_free(dec_msg);
 		} else {
@@ -1178,9 +1151,12 @@ static void yahoo_buddy_auth_req_15(PurpleConnection *gc, struct yahoo_packet *p
 
 /* I don't think this happens anymore in Version 15 */
 static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt) {
+	PurpleAccount *account;
 	struct yahoo_add_request *add_req;
 	char *msg = NULL;
 	GSList *l = pkt->hash;
+
+	account = purple_connection_get_account(gc);
 
 	add_req = g_new0(struct yahoo_add_request, 1);
 	add_req->gc = gc;
@@ -1207,7 +1183,7 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 	if (add_req->id && add_req->who) {
 		char *dec_msg = NULL;
 
-		if (!yahoo_privacy_check(gc, add_req->who)) {
+		if (!purple_privacy_check(account, add_req->who)) {
 			purple_debug_misc("yahoo", "Auth. request from %s dropped and automatically denied due to privacy settings!\n",
 					  add_req->who);
 			yahoo_buddy_add_deny_cb(add_req, NULL);
@@ -1220,11 +1196,11 @@ static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt)
 		/* DONE! this is almost exactly the same as what MSN does,
 		 * this should probably be moved to the core.
 		 */
-		 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
-                                                    NULL, dec_msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
-						    yahoo_buddy_add_authorize_cb,
-						    yahoo_buddy_add_deny_reason_cb,
-                                                    add_req);
+		 purple_account_request_authorization(account, add_req->who, add_req->id,
+				NULL, dec_msg,
+				purple_find_buddy(account,add_req->who) != NULL,
+						yahoo_buddy_add_authorize_cb,
+						yahoo_buddy_add_deny_reason_cb, add_req);
 		g_free(dec_msg);
 	} else {
 		g_free(add_req->id);
@@ -2281,8 +2257,11 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 static void yahoo_process_audible(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
+	PurpleAccount *account;
 	char *who = NULL, *msg = NULL, *id = NULL;
 	GSList *l = pkt->hash;
+
+	account = purple_connection_get_account(gc);
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -2319,9 +2298,9 @@ static void yahoo_process_audible(PurpleConnection *gc, struct yahoo_packet *pkt
 		purple_debug_misc("yahoo", "Warning, nonutf8 audible, ignoring!\n");
 		return;
 	}
-	if (!yahoo_privacy_check(gc, who)) {
+	if (!purple_privacy_check(account, who)) {
 		purple_debug_misc("yahoo", "Audible message from %s for %s dropped!\n",
-		      gc->account->username, who);
+				purple_account_get_username(account), who);
 		return;
 	}
 	if (id) {
@@ -3882,7 +3861,8 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 	if (!yd->logged_in)
 		return;
 
-	if (!yahoo_privacy_check(gc, purple_buddy_get_name(buddy)))
+	if (!purple_privacy_check(purple_connection_get_account(gc),
+			purple_buddy_get_name(buddy)))
 		return;
 
 	f = yahoo_friend_find(gc, purple_buddy_get_name(buddy));

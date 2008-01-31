@@ -232,15 +232,6 @@ void yahoo_get_info(PurpleConnection *gc, const char *name);
 */
 gchar* yahoo_get_cookies(PurpleConnection *gc);
 
-/**
- * Check to see whether the sender is permitted to send
- *
- * @param gc The gc handle.
- * @param who The sender of the packet to check
-*/
-gboolean yahoo_privacy_check
-	(PurpleConnection *gc, const char *who);
-
 gboolean yahoo_send_attention(PurpleConnection *gc, const char *username, guint type);
 GList *yahoo_attention_types(PurpleAccount *account);
 
