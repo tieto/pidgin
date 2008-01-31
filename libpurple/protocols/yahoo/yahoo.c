@@ -700,7 +700,7 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 		for (bud = buddies; bud && *bud; bud++) {
 			/* The server is already ignoring the user */
 			got_serv_list = TRUE;
-			purple_privacy_deny_add(gc->account, *bud, 1);
+			purple_privacy_deny_add(account, *bud, 1);
 		}
 		g_strfreev(buddies);
 
@@ -709,13 +709,13 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (got_serv_list &&
-		((gc->account->perm_deny != PURPLE_PRIVACY_ALLOW_BUDDYLIST) &&
-		(gc->account->perm_deny != PURPLE_PRIVACY_DENY_ALL) &&
-		(gc->account->perm_deny != PURPLE_PRIVACY_ALLOW_USERS)))
+		((account->perm_deny != PURPLE_PRIVACY_ALLOW_BUDDYLIST) &&
+		(account->perm_deny != PURPLE_PRIVACY_DENY_ALL) &&
+		(account->perm_deny != PURPLE_PRIVACY_ALLOW_USERS)))
 	{
-		gc->account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
+		account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
 		purple_debug_info("yahoo", "%s privacy defaulting to PURPLE_PRIVACY_DENY_USERS.\n",
-		      gc->account->username);
+				account->username);
 	}
 
 	if (yd->tmp_serv_plist) {
@@ -724,7 +724,7 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 			f = yahoo_friend_find(gc, *bud);
 			if (f) {
 				purple_debug_info("yahoo", "%s setting presence for %s to PERM_OFFLINE\n",
-								 gc->account->username, *bud);
+						account->username, *bud);
 				f->presence = YAHOO_PRESENCE_PERM_OFFLINE;
 			}
 		}
@@ -3957,10 +3957,6 @@ static void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 
 	if (!yd->logged_in)
 		return;
-	/* It seems to work better without this */
-
-	/* if (gc->account->perm_deny != 4)
-		return; */
 
 	if (!who || who[0] == '\0')
 		return;
