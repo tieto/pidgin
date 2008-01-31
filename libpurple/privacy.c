@@ -202,7 +202,10 @@ purple_privacy_deny_remove(PurpleAccount *account, const char *who,
 	return TRUE;
 }
 
-/* This makes sure that only all the buddies are in the permit list. */
+/**
+ * This makes sure your permit list contains all buddies from your
+ * buddy list and ONLY buddies from your buddy list.
+ */
 static void
 add_buddies_in_permit(PurpleAccount *account, gboolean local)
 {
