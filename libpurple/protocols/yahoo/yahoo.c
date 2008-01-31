@@ -3848,12 +3848,10 @@ static void yahoo_keepalive(PurpleConnection *gc)
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
-/* XXX - What's the deal with PurpleGroup *foo? */
-static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *foo)
+static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *g)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
-	PurpleGroup *g;
 	const char *group = NULL;
 	char *group2;
 	YahooFriend *f;
@@ -3867,15 +3865,11 @@ static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGrou
 
 	f = yahoo_friend_find(gc, purple_buddy_get_name(buddy));
 
-	if (foo)
-		group = foo->name;
-	if (!group) {
-		g = purple_buddy_get_group(buddy);
-		if (g)
-			group = g->name;
-		else
-			group = "Buddies";
-	}
+	g = purple_buddy_get_group(buddy);
+	if (g)
+		group = g->name;
+	else
+		group = "Buddies";
 
 	group2 = yahoo_string_encode(gc, group, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
