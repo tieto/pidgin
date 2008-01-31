@@ -332,7 +332,7 @@ void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags);
  * @param color  The color
  * @since 2.4.0
  */
-void gnt_tree_set_row_color(GntTree *, void *, int);
+void gnt_tree_set_row_color(GntTree *tree, void *key, int color);
 
 /**
  * Select a row.

@@ -88,7 +88,7 @@ gboolean pidgin_tooltip_setup_for_treeview(GtkWidget *tree, gpointer userdata,
  * @since 2.4.0
  */
 gboolean pidgin_tooltip_setup_for_widget(GtkWidget *widget, gpointer userdata,
-		PidginTooltipCreate create_tooltip, PidginTooltipPaint paint_tooltip);
+		PidginTooltipCreate create_cb, PidginTooltipPaint paint_cb);
 
 /**
  * Destroy the tooltip.
