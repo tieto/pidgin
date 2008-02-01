@@ -3940,31 +3940,27 @@ static void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
-static void yahoo_set_permit_deny(PurpleConnection *gc) {
-	PurpleAccount *acct;
+static void yahoo_set_permit_deny(PurpleConnection *gc)
+{
+	PurpleAccount *account;
 	GSList *deny;
 
-	acct = gc->account;
+	account = purple_connection_get_account(gc);
 
-	switch (acct->perm_deny) {
-		/* privacy 1 */
+	switch (account->perm_deny)
+	{
 		case PURPLE_PRIVACY_ALLOW_ALL:
-			for (deny = acct->deny;deny;deny = deny->next)
-				yahoo_rem_deny(gc, deny->data);
-			break;
-		/* privacy 3 */
 		case PURPLE_PRIVACY_ALLOW_USERS:
-			for (deny = acct->deny;deny;deny = deny->next)
+			for (deny = account->deny; deny; deny = deny->next)
 				yahoo_rem_deny(gc, deny->data);
 			break;
-		/* privacy 5 */
+
 		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
-		/* privacy 4 */
 		case PURPLE_PRIVACY_DENY_USERS:
-			for (deny = acct->deny;deny;deny = deny->next)
+			for (deny = account->deny; deny; deny = deny->next)
 				yahoo_add_deny(gc, deny->data);
 			break;
-		/* privacy 2 */
+
 		case PURPLE_PRIVACY_DENY_ALL:
 		default:
 			break;
