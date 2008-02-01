@@ -3950,19 +3950,16 @@ static void yahoo_set_permit_deny(PurpleConnection *gc)
 	switch (account->perm_deny)
 	{
 		case PURPLE_PRIVACY_ALLOW_ALL:
-		case PURPLE_PRIVACY_ALLOW_USERS:
 			for (deny = account->deny; deny; deny = deny->next)
 				yahoo_rem_deny(gc, deny->data);
 			break;
 
 		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
+		case PURPLE_PRIVACY_ALLOW_USERS:
 		case PURPLE_PRIVACY_DENY_USERS:
+		case PURPLE_PRIVACY_DENY_ALL:
 			for (deny = account->deny; deny; deny = deny->next)
 				yahoo_add_deny(gc, deny->data);
-			break;
-
-		case PURPLE_PRIVACY_DENY_ALL:
-		default:
 			break;
 	}
 }
