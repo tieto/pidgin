@@ -84,10 +84,10 @@ tls_peers_mgmt_repopulate_list(void)
 	GtkTreeView *listview = tpm_dat->listview;
 	PurpleCertificatePool *tls_peers;
 	GList *idlist, *l;
-	
+
 	GtkListStore *store = GTK_LIST_STORE(
 		gtk_tree_view_get_model(GTK_TREE_VIEW(listview)));
-	
+
 	/* First, delete everything in the list */
 	gtk_list_store_clear(store);
 
@@ -199,7 +199,7 @@ tls_peers_mgmt_import_ok_cb(gpointer data, const char *filename)
 				     NULL, NULL, NULL, /* No account/who/conv*/
 				     crt    /* Pass cert instance to callback*/
 				     );
-		
+
 		g_free(default_hostname);
 	} else {
 		/* Errors! Oh no! */
@@ -235,7 +235,7 @@ tls_peers_mgmt_export_ok_cb(gpointer data, const char *filename)
 	PurpleCertificate *crt = (PurpleCertificate *) data;
 
 	g_assert(filename);
-	
+
 	if (!purple_certificate_export(filename, crt)) {
 		/* Errors! Oh no! */
 		/* TODO: Perhaps find a way to be specific about what just
@@ -260,7 +260,7 @@ tls_peers_mgmt_export_cancel_cb(gpointer data, const char *filename)
 	/* Pressing cancel just frees the duplicated certificate */
 	purple_certificate_destroy(crt);
 }
-	
+
 static void
 tls_peers_mgmt_export_cb(GtkWidget *button, gpointer data)
 {
@@ -293,7 +293,6 @@ tls_peers_mgmt_export_cb(GtkWidget *button, gpointer data)
 	}
 	g_free(id);
 
-	
 	/* TODO: inform user that it will be a PEM? */
 	purple_request_file(tpm_dat,
 			    _("PEM X.509 Certificate Export"),
@@ -327,10 +326,10 @@ tls_peers_mgmt_info_cb(GtkWidget *button, gpointer data)
 	/* Now retrieve the certificate */
 	crt = purple_certificate_pool_retrieve(tpm_dat->tls_peers, id);
 	g_return_if_fail(crt);
-	
+
 	/* Fire the notification */
 	purple_certificate_display_x509(crt);
-	
+
 	g_free(id);
 	purple_certificate_destroy(crt);
 }
@@ -350,7 +349,7 @@ tls_peers_mgmt_delete_confirm_cb(gchar *id, gint choice)
 
 	g_free(id);
 }
-	
+
 static void
 tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
 {
@@ -370,7 +369,7 @@ tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
 		/* Prompt to confirm deletion */
 		primary = g_strdup_printf(
 			_("Really delete certificate for %s?"), id );
-		
+
 		purple_request_yes_no(tpm_dat, _("Confirm certificate delete"),
 				      primary, NULL, /* Can this be NULL? */
 				      1, /* NO is default action */
@@ -378,9 +377,9 @@ tls_peers_mgmt_delete_cb(GtkWidget *button, gpointer data)
 				      id, /* id ownership passed to callback */
 				      tls_peers_mgmt_delete_confirm_cb,
 				      tls_peers_mgmt_delete_confirm_cb );
-		
+
 		g_free(primary);
-				      
+
 	} else {
 		purple_debug_warning("gtkcertmgr/tls_peers_mgmt",
 				     "Delete clicked with no selection?\n");
@@ -406,7 +405,7 @@ tls_peers_mgmt_build(void)
 
 	/* Create a struct to store context information about this window */
 	tpm_dat = g_new0(tls_peers_mgmt_data, 1);
-	
+
 	tpm_dat->mgmt_widget = mgmt_widget =
 		gtk_hbox_new(FALSE, /* Non-homogeneous */
 			     PIDGIN_HIG_BORDER);
@@ -419,11 +418,11 @@ tls_peers_mgmt_build(void)
 
 	/* List view */
 	store = gtk_list_store_new(TPM_N_COLUMNS, G_TYPE_STRING);
-	
+
 	tpm_dat->listview = listview =
 		GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(store)));
 	g_object_unref(G_OBJECT(store));
-	
+
 	{
 		GtkCellRenderer *renderer;
 		GtkTreeViewColumn *column;
@@ -440,11 +439,11 @@ tls_peers_mgmt_build(void)
 		gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(store),
 				TPM_HOSTNAME_COLUMN, GTK_SORT_ASCENDING);
 	}
-	
+
 	/* Get the treeview selector into the struct */
 	tpm_dat->listselect = select =
 		gtk_tree_view_get_selection(GTK_TREE_VIEW(listview));
-	
+
 	/* Force the selection mode */
 	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
 
@@ -452,7 +451,7 @@ tls_peers_mgmt_build(void)
 	   something is selected */
 	g_signal_connect(G_OBJECT(select), "changed",
 			 G_CALLBACK(tls_peers_mgmt_select_chg_cb), NULL);
-	
+
 	gtk_box_pack_start(GTK_BOX(mgmt_widget), GTK_WIDGET(listview),
 			   TRUE, TRUE, /* Take up lots of space */
 			   0); /* TODO: this padding is wrong */
@@ -460,7 +459,7 @@ tls_peers_mgmt_build(void)
 
 	/* Fill the list for the first time */
 	tls_peers_mgmt_repopulate_list();
-	
+
 	/* Right-hand side controls box */
 	bbox = gtk_vbutton_box_new();
 	gtk_box_pack_end(GTK_BOX(mgmt_widget), bbox,
@@ -513,7 +512,7 @@ tls_peers_mgmt_build(void)
 
 	/* Bind us to the tls_peers pool */
 	tpm_dat->tls_peers = purple_certificate_find_pool("x509", "tls_peers");
-	
+
 	/**** libpurple signals ****/
 	/* Respond to certificate add/remove by just reloading everything */
 	purple_signal_connect(tpm_dat->tls_peers, "certificate-stored",
@@ -522,7 +521,7 @@ tls_peers_mgmt_build(void)
 	purple_signal_connect(tpm_dat->tls_peers, "certificate-deleted",
 			      tpm_dat, PURPLE_CALLBACK(tls_peers_mgmt_mod_cb),
 			      NULL);
-	
+
 	return mgmt_widget;
 }
 
@@ -571,7 +570,7 @@ pidgin_certmgr_show(void)
 		      poollist = poollist->next ) {
 			PurpleCertificatePool *pool = poollist->data;
 			GList *l;
-			
+
 			purple_debug_info("gtkcertmgr",
 					  "Pool %s found for scheme %s -"
 					  "Enumerating certificates:\n",
@@ -588,7 +587,7 @@ pidgin_certmgr_show(void)
 		} /* poollist */
 	}
 
-	
+
 	/* If the manager is already open, bring it to the front */
 	if (certmgr_dialog != NULL) {
 		gtk_window_present(GTK_WINDOW(certmgr_dialog->window));
@@ -607,7 +606,7 @@ pidgin_certmgr_show(void)
 	g_signal_connect(G_OBJECT(win), "delete_event",
 			 G_CALLBACK(certmgr_close_cb), dlg);
 
-	
+
 	/* TODO: Retrieve the user-set window size and use it */
 	gtk_window_set_default_size(GTK_WINDOW(win), 400, 400);
 
