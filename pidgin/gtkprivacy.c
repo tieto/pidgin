@@ -44,7 +44,7 @@ typedef struct
 
 	GtkWidget *add_button;
 	GtkWidget *remove_button;
-	GtkWidget *clear_button;
+	GtkWidget *removeall_button;
 	GtkWidget *close_button;
 
 	GtkWidget *button_box;
@@ -115,23 +115,6 @@ rebuild_block_list(PidginPrivacyDialog *dialog)
 		gtk_list_store_append(dialog->block_store, &iter);
 		gtk_list_store_set(dialog->block_store, &iter, 0, l->data, -1);
 	}
-}
-
-static const char *
-find_permit_block_by_name(GSList *list, const char *name)
-{
-	const char *temp_name;
-	GSList *l;
-
-	for (l = list; l != NULL; l = l->next) {
-		temp_name = (const char *)l->data;
-
-		/* Should this use purple_normalize()? */
-		if (!purple_utf8_strcasecmp(name, temp_name))
-			return temp_name;
-	}
-
-	return NULL;
 }
 
 static void
@@ -317,19 +300,16 @@ remove_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 	else
 		return;
 
-	if (dialog->in_allow_list) {
-		if (find_permit_block_by_name(dialog->account->permit, name))
-			purple_privacy_permit_remove(dialog->account, name, FALSE);
-	}
-	else {
-		if (find_permit_block_by_name(dialog->account->deny, name))
-			purple_privacy_deny_remove(dialog->account, name, FALSE);
-	}
+	if (dialog->in_allow_list)
+		purple_privacy_permit_remove(dialog->account, name, FALSE);
+	else
+		purple_privacy_deny_remove(dialog->account, name, FALSE);
+
 	g_free(name);
 }
 
 static void
-clear_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
+removeall_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 {
 	GSList *l;
 	if (dialog->in_allow_list)
@@ -420,7 +400,7 @@ privacy_dialog_new(void)
 	dialog->block_widget = build_block_list(dialog);
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->block_widget, TRUE, TRUE, 0);
 
-	/* Add the button box for Add, Remove, Clear */
+	/* Add the button box for Add, Remove, Remove All */
 	dialog->button_box = pidgin_dialog_get_action_area(GTK_DIALOG(dialog->win));
 
 	/* Add button */
@@ -432,9 +412,9 @@ privacy_dialog_new(void)
 	dialog->remove_button = button;
 	gtk_widget_set_sensitive(button, FALSE);
 
-	/* Clear button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), GTK_STOCK_CLEAR, G_CALLBACK(clear_cb), dialog);
-	dialog->clear_button = button;
+	/* Remove All button */
+	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), _("Remove Al_l"), G_CALLBACK(removeall_cb), dialog);
+	dialog->removeall_button = button;
 
 	/* Close button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), GTK_STOCK_CLOSE, G_CALLBACK(close_cb), dialog);
