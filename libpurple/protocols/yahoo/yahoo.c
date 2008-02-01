@@ -61,22 +61,6 @@ static void yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_
 #endif
 static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status);
 
-static void
-yahoo_add_permit(PurpleConnection *gc, const char *who)
-{
-	purple_debug_info("yahoo",
-			"Permitting ID %s local contact rights for account %s\n", who, gc->account);
-	purple_privacy_permit_add(gc->account,who,TRUE);
-}
-
-static void
-yahoo_rem_permit(PurpleConnection *gc, const char *who)
-{
-	purple_debug_info("yahoo",
-			"Denying ID %s local contact rights for account %s\n", who, gc->account);
-	purple_privacy_permit_remove(gc->account,who,TRUE);
-}
-
 static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFriend *f)
 {
 	char *status = NULL;
@@ -4313,9 +4297,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL, /* add_buddies */
 	yahoo_remove_buddy,
 	NULL, /*remove_buddies */
-	yahoo_add_permit,
+	NULL, /* add_permit */
 	yahoo_add_deny,
-	yahoo_rem_permit,
+	NULL, /* rem_permit */
 	yahoo_rem_deny,
 	yahoo_set_permit_deny,
 	yahoo_c_join,
