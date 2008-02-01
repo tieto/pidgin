@@ -485,11 +485,15 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("Incorrect password."));
 		break;
 	case QQ_LOGIN_REPLY_MISC_ERROR:
-		purple_connection_error_reason(gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to login, check debug log"));
+			if (purple_debug_is_enabled())
+				purple_connection_error_reason(gc,
+					PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to login. Check debug log."));
+			else
+				purple_connection_error_reason(gc,
+					PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Unable to login"));				
 		break;
 	case QQ_LOGIN_REPLY_OK:
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Login replys OK, everything is fine\n");
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Login repliess OK; everything is fine\n");
 		break;
 	case QQ_LOGIN_REPLY_REDIRECT:
 		/* the redirect has been done in _qq_process_login_reply */
