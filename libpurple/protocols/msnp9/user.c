@@ -36,7 +36,8 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	user->userlist = userlist;
 
 	msn_user_set_passport(user, passport);
-	msn_user_set_friendly_name(user, friendly_name);
+	if (friendly_name != NULL)
+		msn_user_set_friendly_name(user, friendly_name);
 
 	return user;
 }
