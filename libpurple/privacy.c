@@ -207,7 +207,7 @@ purple_privacy_deny_remove(PurpleAccount *account, const char *who,
  * buddy list and ONLY buddies from your buddy list.
  */
 static void
-add_buddies_in_permit(PurpleAccount *account, gboolean local)
+add_all_buddies_to_permit_list(PurpleAccount *account, gboolean local)
 {
 	GSList *list;
 
@@ -230,6 +230,12 @@ add_buddies_in_permit(PurpleAccount *account, gboolean local)
 	}
 }
 
+/*
+ * TODO: All callers of this function pass in FALSE for local and
+ *       restore and I don't understand when you would ever want to
+ *       use TRUE for either of them.  I think both parameters could
+ *       safely be removed in the next major version bump.
+ */
 void
 purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 						gboolean restore)
@@ -259,7 +265,7 @@ purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 			break;
 		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
 			if (!purple_find_buddy(account, who)) {
-				add_buddies_in_permit(account, local);
+				add_all_buddies_to_permit_list(account, local);
 				purple_privacy_permit_add(account, who, local);
 				account->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
 			}
@@ -269,6 +275,12 @@ purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 	}
 }
 
+/*
+ * TODO: All callers of this function pass in FALSE for local and
+ *       restore and I don't understand when you would ever want to
+ *       use TRUE for either of them.  I think both parameters could
+ *       safely be removed in the next major version bump.
+ */
 void
 purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
 					gboolean restore)
@@ -298,7 +310,7 @@ purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
 			break;
 		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
 			if (purple_find_buddy(account, who)) {
-				add_buddies_in_permit(account, local);
+				add_all_buddies_to_permit_list(account, local);
 				purple_privacy_permit_remove(account, who, local);
 				account->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
 			}
