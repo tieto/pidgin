@@ -457,7 +457,7 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 
 	gnt_box_add_widget(GNT_BOX(window), gnt_line_new(FALSE));
 	gnt_box_add_widget(GNT_BOX(window), gnt_label_new_with_format(_("Options"), GNT_TEXT_FLAG_BOLD));
-	dialog->on_away = gnt_check_box_new(_("Pounce only when my status is not available"));
+	dialog->on_away = gnt_check_box_new(_("Pounce only when my status is not Available"));
 	gnt_box_add_widget(GNT_BOX(window), dialog->on_away);
 	dialog->save_pounce = gnt_check_box_new(_("Recurring"));
 	gnt_box_add_widget(GNT_BOX(window), dialog->save_pounce);
