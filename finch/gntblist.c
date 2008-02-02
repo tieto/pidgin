@@ -2568,7 +2568,7 @@ block_select_cb(gpointer data, PurpleRequestFields *fields)
 		if (purple_request_fields_get_choice(fields, "block") == 1) {
 			purple_privacy_deny(account, name, FALSE, FALSE);
 		} else {
-			purple_privacy_deny(account, name, FALSE, FALSE);
+			purple_privacy_allow(account, name, FALSE, FALSE);
 		}
 	}
 }
