@@ -75,6 +75,8 @@ version 2.4.0 (??/??/????):
 		  util functions finch_blist_install_manager,
 		  finch_blist_uninstall_manager, finch_blist_manager_find and
 		  finch_blist_manager_add_node.
+		* Added finch_log_show, finch_log_show_contact, finch_syslog_show,
+		  finch_log_init, finch_log_get_handle, finch_log_uninit
 
 		libgnt:
 		* Added gnt_tree_set_row_color to set the color for a row in a tree.

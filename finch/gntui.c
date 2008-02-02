@@ -30,6 +30,7 @@
 #include "gntconv.h"
 #include "gntdebug.h"
 #include "gntft.h"
+#include "gntlog.h"
 #include "gntnotify.h"
 #include "gntplugin.h"
 #include "gntpounce.h"
@@ -79,6 +80,9 @@ void gnt_ui_init()
 	/* Pounce */
 	finch_pounces_init();
 
+	/* Log */
+	finch_log_init();
+
 	/* File transfer */
 	finch_xfers_init();
 	purple_xfers_set_ui_ops(finch_xfers_get_ui_ops());
@@ -123,6 +127,8 @@ void gnt_ui_uninit()
 	finch_request_uninit();
 
 	finch_pounces_uninit();
+
+	finch_log_uninit();
 
 	finch_xfers_uninit();
 	purple_xfers_set_ui_ops(NULL);

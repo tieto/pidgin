@@ -36,6 +36,7 @@
 #include "gntblist.h"
 #include "gntconv.h"
 #include "gntdebug.h"
+#include "gntlog.h"
 #include "gntplugin.h"
 #include "gntprefs.h"
 #include "gntsound.h"
@@ -468,6 +469,44 @@ send_to_cb(GntMenuItem *m, gpointer n)
 }
 
 static void
+view_log_cb(GntMenuItem *n, gpointer ggc)
+{
+	FinchConv *fc;
+	PurpleConversation *conv;
+	PurpleLogType type;
+	const char *name;
+	PurpleAccount *account;
+	GSList *buddies;
+	GSList *cur;
+
+	fc = ggc;
+	conv = fc->active_conv;
+
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
+		type = PURPLE_LOG_IM;
+	else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
+		type = PURPLE_LOG_CHAT;
+	else
+		return;
+
+	name = purple_conversation_get_name(conv);
+	account = purple_conversation_get_account(conv);
+
+	buddies = purple_find_buddies(account, name);
+	for (cur = buddies; cur != NULL; cur = cur->next) {
+		PurpleBlistNode *node = cur->data;
+		if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL))) {
+			finch_log_show_contact((PurpleContact *)node->parent);
+			g_slist_free(buddies);
+			return;
+		}
+	}
+	g_slist_free(buddies);
+
+	finch_log_show(type, name, account);
+}
+
+static void
 generate_send_to_menu(FinchConv *ggc)
 {
 	GntWidget *sub, *menu = ggc->menu;
@@ -568,6 +607,10 @@ gg_create_menu(FinchConv *ggc)
 
 		generate_send_to_menu(ggc);
 	}
+
+	item = gnt_menuitem_new(_("View Log..."));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(item, view_log_cb, ggc);
 
 	item = gnt_menuitem_check_new(_("Enable Logging"));
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),

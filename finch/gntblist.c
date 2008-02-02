@@ -27,6 +27,7 @@
 
 #include <account.h>
 #include <blist.h>
+#include <log.h>
 #include <notify.h>
 #include <request.h>
 #include <savedstatuses.h>
@@ -43,6 +44,7 @@
 #include "gntft.h"
 #include "gntlabel.h"
 #include "gntline.h"
+#include "gntlog.h"
 #include "gntmenu.h"
 #include "gntmenuitem.h"
 #include "gntmenuitemcheck.h"
@@ -1282,6 +1284,43 @@ finch_blist_rename_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	g_free(prompt);
 }
 
+
+static void showlog_cb(PurpleBlistNode *node)
+{
+	PurpleLogType type;
+	PurpleAccount *account;
+	char *name = NULL;
+
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		PurpleBuddy *b = (PurpleBuddy*) node;
+		type = PURPLE_LOG_IM;
+		name = g_strdup(b->name);
+		account = b->account;
+	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
+		PurpleChat *c = (PurpleChat*) node;
+		PurplePluginProtocolInfo *prpl_info = NULL;
+		type = PURPLE_LOG_CHAT;
+		account = c->account;
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
+		if (prpl_info && prpl_info->get_chat_name) {
+			name = prpl_info->get_chat_name(c->components);
+		}
+	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		finch_log_show_contact((PurpleContact *)node);
+		return;
+	} else {
+		/* This callback should not have been registered for a node
+		 * that doesn't match the type of one of the blocks above. */
+		g_return_if_reached();
+	}
+
+	if (name && account) {
+		finch_log_show(type, name, account);
+		g_free(name);
+	}
+}
+
+
 /* Xeroxed from gtkdialogs.c:purple_gtkdialogs_remove_group_cb*/
 static void
 remove_group(PurpleGroup *group)
@@ -1539,6 +1578,10 @@ draw_context_menu(FinchBlist *ggblist)
 		if (PURPLE_BLIST_NODE_IS_BUDDY(node) || PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 			add_custom_action(GNT_MENU(context), _("Toggle Tag"),
 					PURPLE_CALLBACK(finch_blist_toggle_tag_buddy), node);
+		}
+		if (!PURPLE_BLIST_NODE_IS_GROUP(node)) {
+			add_custom_action(GNT_MENU(context), _("View Log"),
+					PURPLE_CALLBACK(showlog_cb), node);
 		}
 	}
 
