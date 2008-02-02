@@ -29,6 +29,7 @@
 #include <blist.h>
 #include <log.h>
 #include <notify.h>
+#include <privacy.h>
 #include <request.h>
 #include <savedstatuses.h>
 #include <server.h>
@@ -1165,10 +1166,23 @@ finch_blist_pounce_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	finch_pounce_editor_show(purple_buddy_get_account(b), purple_buddy_get_name(b), NULL);
 }
 
+static void
+toggle_block_buddy(GntMenuItem *item, gpointer buddy)
+{
+	gboolean block = gnt_menuitem_check_get_checked(GNT_MENU_ITEM_CHECK(item));
+	PurpleAccount *account = purple_buddy_get_account(buddy);
+	const char *name = purple_buddy_get_name(buddy);
+
+	block ? purple_privacy_deny(account, name, FALSE, FALSE) :
+		purple_privacy_allow(account, name, FALSE, FALSE);
+}
 
 static void
 create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
 {
+	PurpleAccount *account;
+	gboolean permitted;
+	GntMenuItem *item;
 	PurplePluginProtocolInfo *prpl_info;
 	PurpleConnection *gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 
@@ -1189,6 +1203,15 @@ create_buddy_menu(GntMenu *menu, PurpleBuddy *buddy)
 			add_custom_action(menu, _("Send File"),
 					PURPLE_CALLBACK(finch_blist_menu_send_file_cb), buddy);
 	}
+
+	account = purple_buddy_get_account(buddy);
+	permitted = purple_privacy_check(account, purple_buddy_get_name(buddy));
+
+	item = gnt_menuitem_check_new(_("Blocked"));
+	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item), !permitted);
+	gnt_menuitem_set_callback(item, toggle_block_buddy, buddy);
+	gnt_menu_add_item(menu, item);
+
 #if 0
 	add_custom_action(tree, _("View Log"),
 			PURPLE_CALLBACK(finch_blist_view_log_cb)), buddy);
@@ -2536,6 +2559,61 @@ static void sort_blist_change_cb(GntMenuItem *item, gpointer n)
 	purple_prefs_set_string(PREF_ROOT "/sort_type", n);
 }
 
+static void
+block_select_cb(gpointer data, PurpleRequestFields *fields)
+{
+	PurpleAccount *account = purple_request_fields_get_account(fields, "account");
+	const char *name = purple_request_fields_get_string(fields,  "screenname");
+	if (account && name && *name != '\0') {
+		if (purple_request_fields_get_choice(fields, "block") == 1) {
+			purple_privacy_deny(account, name, FALSE, FALSE);
+		} else {
+			purple_privacy_deny(account, name, FALSE, FALSE);
+		}
+	}
+}
+
+static void
+block_select(GntMenuItem *item, gpointer n)
+{
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+
+	fields = purple_request_fields_new();
+
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_string_new("screenname", _("Name"), NULL, FALSE);
+	purple_request_field_set_type_hint(field, "screenname");
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+
+	field = purple_request_field_account_new("account", _("Account"), NULL);
+	purple_request_field_set_type_hint(field, "account");
+	purple_request_field_set_visible(field,
+		(purple_connections_get_all() != NULL &&
+		 purple_connections_get_all()->next != NULL));
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+
+	field = purple_request_field_choice_new("block", _("Block/Unblock"), 1);
+	purple_request_field_choice_add(field, _("Block"));
+	purple_request_field_choice_add(field, _("Unblock"));
+	purple_request_field_group_add_field(group, field);
+
+	purple_request_fields(purple_get_blist(), _("Block/Unblock"),
+						NULL,
+						_("Please enter the screen name or alias of the person "
+						  "you would like to Block/Unblock."),
+						fields,
+						_("OK"), G_CALLBACK(block_select_cb),
+						_("Cancel"), NULL,
+						NULL, NULL, NULL,
+						NULL);
+}
+
 /* send_im_select* -- Xerox */
 static void
 send_im_select_cb(gpointer data, PurpleRequestFields *fields)
@@ -2698,6 +2776,11 @@ create_menu(void)
 	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "send-im");
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), send_im_select, NULL);
+
+	item = gnt_menuitem_new(_("Block/Unblock..."));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "block-unblock");
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), block_select, NULL);
 
 	item = gnt_menuitem_new(_("Join Chat..."));
 	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "join-chat");
