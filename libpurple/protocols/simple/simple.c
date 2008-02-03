@@ -1983,13 +1983,6 @@ static void simple_close(PurpleConnection *gc)
 	gc->proto_data = NULL;
 }
 
-/* not needed since privacy is checked for every subscribe */
-static void dummy_add_deny(PurpleConnection *gc, const char *name) {
-}
-
-static void dummy_permit_deny(PurpleConnection *gc) {
-}
-
 static PurplePluginProtocolInfo prpl_info =
 {
 	0,
@@ -2017,11 +2010,11 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* add_buddies */
 	simple_remove_buddy,	/* remove_buddy */
 	NULL,					/* remove_buddies */
-	dummy_add_deny,			/* add_permit */
-	dummy_add_deny,			/* add_deny */
-	dummy_add_deny,			/* rem_permit */
-	dummy_add_deny,			/* rem_deny */
-	dummy_permit_deny,		/* set_permit_deny */
+	NULL,					/* add_permit */
+	NULL,					/* add_deny */
+	NULL,					/* rem_permit */
+	NULL,					/* rem_deny */
+	NULL,					/* set_permit_deny */
 	NULL,					/* join_chat */
 	NULL,					/* reject_chat */
 	NULL,					/* get_chat_name */
