@@ -1087,11 +1087,18 @@ void purple_blist_rename_group(PurpleGroup *source, const char *new_name)
 	if(old_name && source && strcmp(source->name, old_name)) {
 		for (accts = purple_group_get_accounts(source); accts; accts = g_slist_remove(accts, accts->data)) {
 			PurpleAccount *account = accts->data;
+			PurpleConnection *gc = NULL;
+			PurplePlugin *prpl = NULL;
 			PurplePluginProtocolInfo *prpl_info = NULL;
 			GList *l = NULL, *buddies = NULL;
 
-			if(account->gc && account->gc->prpl)
-				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+			gc = purple_account_get_connection(account);
+			
+			if(gc)
+				prpl = purple_connection_get_prpl(gc);
+
+			if(gc && prpl)
+				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 			if(!prpl_info)
 				continue;
@@ -1104,7 +1111,7 @@ void purple_blist_rename_group(PurpleGroup *source, const char *new_name)
 			}
 
 			if(prpl_info->rename_group) {
-				prpl_info->rename_group(account->gc, old_name, source, buddies);
+				prpl_info->rename_group(gc, old_name, source, buddies);
 			} else {
 				GList *cur, *groups = NULL;
 

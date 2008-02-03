@@ -707,7 +707,7 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 		PurplePluginProtocolInfo *prpl_info;
 
 		gc = purple_account_get_connection(account);
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 		if (prpl_info && prpl_info->set_buddy_icon)
 			prpl_info->set_buddy_icon(gc, img);
