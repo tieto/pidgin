@@ -840,6 +840,38 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+bpr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	const char *type, *value, *passport;
+	MsnUser *user;
+
+	passport = cmd->params[1];
+	user = msn_userlist_find_user(cmdproc->session->userlist, passport);
+
+	g_return_if_fail(user != NULL);
+
+	type     = cmd->params[2];
+	value    = cmd->params[3];
+
+	if (value)
+	{
+		if (!strcmp(type, "MOB"))
+		{
+			if (!strcmp(value, "Y"))
+				user->mobile = TRUE;
+			else if (!strcmp(value, "N"))
+				user->mobile = FALSE;
+		}
+		else if (!strcmp(type, "PHH"))
+			msn_user_set_home_phone(user, purple_url_decode(value));
+		else if (!strcmp(type, "PHW"))
+			msn_user_set_work_phone(user, purple_url_decode(value));
+		else if (!strcmp(type, "PHM"))
+			msn_user_set_mobile_phone(user, purple_url_decode(value));
+	}
+}
+
+static void
 reg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
@@ -1435,6 +1467,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, NULL, "IPG", ipg_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "MSG", msg_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "NOT", not_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "BPR", bpr_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "CHL", chl_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "REM", rem_cmd);

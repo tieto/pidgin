@@ -557,8 +557,22 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	 * you, which is the important information that this is trying to convey. */
 	if (full && user)
 	{
+		const char *phone;
+
 		purple_notify_user_info_add_pair(user_info, _("Blocked"),
 									   ((user->list_op & (1 << MSN_LIST_BL)) ? _("Yes") : _("No")));
+
+		phone = msn_user_get_home_phone(user);
+		if (phone != NULL)
+			purple_notify_user_info_add_pair(user_info, _("Home Phone Number"), phone);
+
+		phone = msn_user_get_work_phone(user);
+		if (phone != NULL)
+			purple_notify_user_info_add_pair(user_info, _("Work Phone Number"), phone);
+
+		phone = msn_user_get_mobile_phone(user);
+		if (phone != NULL)
+			purple_notify_user_info_add_pair(user_info, _("Mobile Phone Number"), phone);
 	}
 }
 
