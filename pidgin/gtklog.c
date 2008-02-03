@@ -242,8 +242,8 @@ static void delete_log_cb(gpointer *data)
 {
 	if (!purple_log_delete((PurpleLog *)data[2]))
 	{
-		purple_notify_error(NULL, NULL, "Log Deletion Failed",
-		                  "Check permissions and try again.");
+		purple_notify_error(NULL, NULL, _("Log Deletion Failed"),
+		                  _("Check permissions and try again."));
 	}
 	else
 	{
@@ -321,7 +321,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 	data2[0] = lv->treestore;
 	data2[1] = data[3]; /* iter */
 	data2[2] = log;
-	purple_request_action(lv, NULL, "Delete Log?", tmp, 0,
+	purple_request_action(lv, NULL, _("Delete Log?"), tmp, 0,
 						NULL, NULL, NULL,
 						data2, 2,
 						_("Delete"), delete_log_cb,
@@ -332,7 +332,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 static void log_show_popup_menu(GtkWidget *treeview, GdkEventButton *event, gpointer *data)
 {
 	GtkWidget *menu = gtk_menu_new();
-	GtkWidget *menuitem = gtk_menu_item_new_with_label("Delete Log...");
+	GtkWidget *menuitem = gtk_menu_item_new_with_label(_("Delete Log..."));
 
 	if (!purple_log_is_deletable((PurpleLog *)data[1]))
 		gtk_widget_set_sensitive(menuitem, FALSE);
