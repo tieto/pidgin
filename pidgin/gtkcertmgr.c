@@ -409,9 +409,9 @@ tls_peers_mgmt_build(void)
 
 	tpm_dat->mgmt_widget = mgmt_widget =
 		gtk_hbox_new(FALSE, /* Non-homogeneous */
-			     PIDGIN_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(mgmt_widget), 6);
-	gtk_box_set_spacing(GTK_BOX(mgmt_widget), 6);
+			     PIDGIN_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(mgmt_widget),
+		PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(mgmt_widget);
 
 	/* Ensure that everything gets cleaned up when the dialog box
