@@ -397,8 +397,13 @@ msn_session_finish_login(MsnSession *session)
 	PurpleStoredImage *img;
 	const char *passport;
 
-	if (session->logged_in)
+	if (session->logged_in) {
+		/* We are probably here because of a mid-session notification server XFR
+		 * We must send a CHG now, otherwise the servers default to invisible,
+		 * and prevent things happening, like sending IMs */
+		msn_change_status(session);
 		return;
+	}
 
 	account = session->account;
 	gc = purple_account_get_connection(account);
