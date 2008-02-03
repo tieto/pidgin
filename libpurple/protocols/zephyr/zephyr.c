@@ -2782,36 +2782,6 @@ static void zephyr_register_slash_commands(void)
 }
 
 
-static void
-zephyr_add_deny(PurpleConnection *gc, const char *who)
-{
-	purple_privacy_deny_add(gc->account,who,1);
-}
-
-static void
-zephyr_remove_deny(PurpleConnection *gc, const char *who)
-{
-	purple_privacy_deny_remove(gc->account,who,1);
-}
-
-static void
-zephyr_add_permit(PurpleConnection *gc, const char *who)
-{
-	purple_privacy_permit_add(gc->account,who,1);
-}
-
-static void
-zephyr_remove_permit(PurpleConnection *gc, const char *who)
-{
-	purple_privacy_permit_remove(gc->account,who,1);
-}
-
-static void
-zephyr_set_permit_deny(PurpleConnection *gc)
-{
-	/* This doesn't have to do anything, since really, we can just check account->perm_deny when deciding whether to di */
-	return;
-}
 static int zephyr_resubscribe(PurpleConnection *gc)
 {
 	/* Resubscribe to the in-memory list of subscriptions and also
@@ -2920,11 +2890,11 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,					/* add_buddies */
 	NULL,					/* remove_buddy */
 	NULL,					/* remove_buddies */
-	zephyr_add_permit,		/* add_permit */
-	zephyr_add_deny,		/* add_deny */
-	zephyr_remove_permit,	/* remove_permit */
-	zephyr_remove_deny,		/* remove_deny */
-	zephyr_set_permit_deny,	/* set_permit_deny */
+	NULL,					/* add_permit */
+	NULL,					/* add_deny */
+	NULL,					/* remove_permit */
+	NULL,					/* remove_deny */
+	NULL,					/* set_permit_deny */
 	zephyr_join_chat,		/* join_chat */
 	NULL,					/* reject_chat -- No chat invites*/
 	zephyr_get_chat_name,	/* get_chat_name */

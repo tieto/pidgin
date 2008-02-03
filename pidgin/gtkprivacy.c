@@ -410,6 +410,7 @@ privacy_dialog_new(void)
 	/* Remove button */
 	button = pidgin_dialog_add_button(GTK_DIALOG(dialog->win), GTK_STOCK_REMOVE, G_CALLBACK(remove_cb), dialog);
 	dialog->remove_button = button;
+	/* TODO: This button should be sensitive/invisitive more cleverly */
 	gtk_widget_set_sensitive(button, FALSE);
 
 	/* Remove All button */
