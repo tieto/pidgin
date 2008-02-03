@@ -7,6 +7,7 @@ finch/gntconn.c
 finch/gntconv.c
 finch/gntdebug.c
 finch/gntft.c
+finch/gntlog.c
 finch/gntnotify.c
 finch/gntplugin.c
 finch/gntpounce.c

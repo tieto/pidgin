@@ -42,6 +42,8 @@ version 2.4.0 (??/??/????):
 	  buddylist. The current options are 'Group Online/Offline' and 'No
 	  Group'.
 	* Added a log viewer
+	* Added the ability to block/unblock buddies - see the buddy context menu
+	  and the menu for the buddy list.
 
 version 2.3.1 (12/7/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.3.1
