@@ -632,7 +632,8 @@ delete_account_cb(GntWidget *widget, GntTree *tree)
 	prompt = g_strdup_printf(_("Are you sure you want to delete %s?"),
 			purple_account_get_username(account));
 
-	purple_request_action(account, _("Delete Account"), prompt, NULL, 0,
+	purple_request_action(account, _("Delete Account"), prompt, NULL,
+						  PURPLE_DEFAULT_ACTION_NONE,
 						  account, NULL, NULL, account, 2,
 						  _("Delete"), really_delete_account,
 						  _("Cancel"), NULL);
