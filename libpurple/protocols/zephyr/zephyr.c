@@ -858,52 +858,8 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 			
 			if (!g_ascii_strcasecmp(notice.z_opcode,"PING"))
 				serv_got_typing(gc,stripped_sender,ZEPHYR_TYPING_RECV_TIMEOUT, PURPLE_TYPING);
-			else {
-				/* Based on the values of
-				   account->permit_deny,
-				   account->permit, account>deny , and
-				   the buddylist */
-
-				GSList* l;
-				gboolean in_deny;
-
-				switch (gc->account->perm_deny) {
-				case PURPLE_PRIVACY_ALLOW_ALL: 
-					in_deny = 0; break;
-				case PURPLE_PRIVACY_DENY_ALL: 
-					in_deny = 1; break;
-				case PURPLE_PRIVACY_ALLOW_USERS: /* See if stripped_sender is in gc->account->permit and allow appropriately */
-					in_deny = 1;
-					for(l=gc->account->permit;l!=NULL;l=l->next) {
-						if (!purple_utf8_strcasecmp(stripped_sender, purple_normalize(gc->account, (char *)l->data))) {
-							in_deny=0;
-							break;
-						} 
-					}
-					break;
-				case PURPLE_PRIVACY_DENY_USERS: /* See if stripped_sender is in gc->account->deny and deny if so */ 
-					in_deny = 0;
-					for(l=gc->account->deny;l!=NULL;l=l->next) {
-						if (!purple_utf8_strcasecmp(stripped_sender, purple_normalize(gc->account, (char *)l->data))) {
-							in_deny=1;
-							break;
-						} 
-					}
-					break;
-				case PURPLE_PRIVACY_ALLOW_BUDDYLIST: 
-					in_deny = 1;
-					if (purple_find_buddy(gc->account,stripped_sender)!=NULL) {
-						in_deny = 0;
-					}
-					break;
-				default: 
-					in_deny=0; break;
-				}
-				
-				if (!in_deny) {
-					serv_got_im(gc, stripped_sender, buf3, flags, time(NULL));
-				}
-			}
+			else
+				serv_got_im(gc, stripped_sender, buf3, flags, time(NULL));
 
 			g_free(stripped_sender);
 		} else {
@@ -2272,6 +2228,26 @@ char *local_zephyr_normalize(zephyr_account *zephyr,const char *orig)
 	return buf;
 }
 
+static const char *zephyr_normalize(const PurpleAccount *account, const char *who)
+{
+	static char buf[BUF_LEN];
+	PurpleConnection *gc;
+	char *tmp;
+
+	gc = purple_account_get_connection(account);
+	tmp = local_zephyr_normalize(gc->proto_data, who);
+
+	if (strlen(tmp) >= sizeof(buf)) {
+		g_free(tmp);
+		return NULL;
+	}
+
+	strcpy(buf, tmp);
+	g_free(tmp);
+
+	return buf;
+}
+
 static void zephyr_zloc(PurpleConnection *gc, const char *who)
 {
 	ZAsyncLocateData_t ald;
@@ -2911,7 +2887,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,					/* rename_group */
 	NULL,					/* buddy_free */
 	NULL,					/* convo_closed */
-	NULL,					/* normalize */
+	zephyr_normalize,		/* normalize */
 	NULL,					/* XXX set_buddy_icon */
 	NULL,					/* remove_group */
 	NULL,					/* XXX get_cb_real_name */
