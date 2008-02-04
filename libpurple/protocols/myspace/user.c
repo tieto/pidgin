@@ -20,7 +20,7 @@
 #include "myspace.h"
 
 static void msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user);
-static gchar *msim_format_now_playing(gchar *band, gchar *song);
+static gchar *msim_format_now_playing(const gchar *band, const gchar *song);
 static void msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text,
 		gsize len, const gchar *error_message);
 
@@ -28,7 +28,7 @@ static void msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data, gpointe
  * @return Return a new string (must be g_free()'d), or NULL.
  */
 static gchar *
-msim_format_now_playing(gchar *band, gchar *song)
+msim_format_now_playing(const gchar *band, const gchar *song)
 {
 	if ((band && *band) || (song && *song)) {
 		return g_strdup_printf("%s - %s",
@@ -85,6 +85,7 @@ msim_find_user(MsimSession *session, const gchar *username)
 void
 msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, MsimUser *user, gboolean full)
 {
+	PurplePresence *presence;
 	gchar *str;
 	guint uid;
 	guint cv;
@@ -128,11 +129,22 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 		purple_notify_user_info_add_pair(user_info, _("Headline"), user->headline);
 	}
 
-	str = msim_format_now_playing(user->band_name, user->song_name);
-	if (str && *str) {
-		purple_notify_user_info_add_pair(user_info, _("Song"), str);
+	presence = purple_buddy_get_presence(user->buddy);
+
+	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
+		PurpleStatus *status;
+		const char *artist, *title;
+		
+		status = purple_presence_get_status(presence, "tune");
+		title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
+		artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+
+		str = msim_format_now_playing(artist, title);
+		if (str && *str) {
+			purple_notify_user_info_add_pair(user_info, _("Song"), str);
+		}
+		g_free(str);
 	}
-	g_free(str);
 
 	/* Note: total friends only available if looked up by uid, not username. */
 	if (user->total_friends) {
@@ -159,6 +171,59 @@ msim_append_user_info(MsimSession *session, PurpleNotifyUserInfo *user_info, Msi
 			purple_notify_user_info_add_pair(user_info, _("Client Version"), client);
 		g_free(client);
 	}
+}
+
+/** Set the currently playing song artist and or title.
+ *
+ * @param user User associated with the now playing information.
+ *
+ * @param new_artist New artist to set, or NULL/empty to not change artist.
+ *
+ * @param new_title New title to set, or NULL/empty to not change title.
+ *
+ * If new_artist and new_title are NULL/empty, deactivate PURPLE_STATUS_TUNE.
+ *
+ * This function is useful because it lets you set the artist or title
+ * individually, which purple_prpl_got_user_status() doesn't do.
+ */
+static void msim_set_artist_or_title(MsimUser *user, const char *new_artist, const char *new_title)
+{
+	PurplePresence *presence;
+	const char *prev_artist, *prev_title;
+
+	prev_artist = NULL;
+	prev_title = NULL;
+
+	if (new_artist && !strlen(new_artist))
+		new_artist = NULL;
+	if (new_title && !strlen(new_title))
+		new_title = NULL;
+
+	if (!new_artist && !new_title) {
+		purple_prpl_got_user_status_deactive(user->buddy->account, user->buddy->name, "tune");
+		return;
+	}
+
+	presence = purple_buddy_get_presence(user->buddy);
+
+	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
+		PurpleStatus *status;
+		
+		status = purple_presence_get_status(presence, "tune");
+		prev_title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
+		prev_artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+	} 
+
+	if (!new_artist)
+		new_artist = prev_artist;
+	
+	if (!new_title)
+		new_title = prev_title;
+
+	purple_prpl_got_user_status(user->buddy->account, user->buddy->name, "tune",
+			PURPLE_TUNE_TITLE, new_title,
+			PURPLE_TUNE_ARTIST, new_artist,
+			NULL);
 }
 
 /** Store a field of information about a buddy. 
@@ -194,11 +259,9 @@ msim_store_user_info_each(const gchar *key_str, gchar *value_str, MsimUser *user
 		g_free(user->display_name);
 		user->display_name = value_str;
 	} else if (g_str_equal(key_str, "BandName")) {
-		g_free(user->band_name);
-		user->band_name = value_str;
+		msim_set_artist_or_title(user, value_str, NULL);
 	} else if (g_str_equal(key_str, "SongName")) {
-		g_free(user->song_name);
-		user->song_name = value_str;
+		msim_set_artist_or_title(user, NULL, value_str);
 	} else if (g_str_equal(key_str, "UserName") || g_str_equal(key_str, "IMName") || g_str_equal(key_str, "NickName")) {
 		/* Ignore because PurpleBuddy knows this already */
 		g_free(value_str);

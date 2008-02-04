@@ -158,6 +158,19 @@ msim_status_types(PurpleAccount *acct)
 	_MSIM_ADD_NEW_STATUS(PURPLE_STATUS_OFFLINE);
 	_MSIM_ADD_NEW_STATUS(PURPLE_STATUS_INVISIBLE);
 
+	/* Except tune status is different... */
+	status = purple_status_type_new_with_attrs(
+			PURPLE_STATUS_TUNE,	/* primitive */
+			"tune",                 /* ID */
+			NULL,                   /* name - use default */
+			TRUE,                   /* savable */
+			TRUE,                   /* should be user_settable some day */
+			TRUE,                   /* independent */
+
+			PURPLE_TUNE_ARTIST, _("Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			PURPLE_TUNE_TITLE, _("Title"), purple_value_new(PURPLE_TYPE_STRING));
+
+	types = g_list_append(types, status);
 
 	return types;
 }
@@ -995,8 +1008,6 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg,
 		g_free(user->headline);
 		g_free(user->display_name);
 		g_free(user->username);
-		g_free(user->band_name);
-		g_free(user->song_name);
 		g_free(user->image_url);
 		g_free(user);
 	}
