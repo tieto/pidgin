@@ -2332,6 +2332,13 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 	return TRUE;
 }
 
+#ifdef USE_FARSIGHT
+PurpleMedia *jabber_media_initiate(PurpleConnection *gc, const char *who, PurpleMediaStreamType type)
+{
+	return NULL;
+}
+#endif
+
 void jabber_register_commands(void)
 {
 	purple_cmd_register("config", "", PURPLE_CMD_P_PRPL,

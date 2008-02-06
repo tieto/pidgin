@@ -64,6 +64,7 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 #include "conversation.h"
 #include "ft.h"
 #include "imgstore.h"
+#include "media.h"
 #include "notify.h"
 #include "proxy.h"
 #include "plugin.h"
@@ -393,13 +394,24 @@ struct _PurplePluginProtocolInfo
 	 * reasons.
 	 */
 	void (*unregister_user)(PurpleAccount *, PurpleAccountUnregistrationCb cb, void *user_data);
-	
+
 	/* Attention API for sending & receiving zaps/nudges/buzzes etc. */
 	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
 	GList *(*get_attention_types)(PurpleAccount *acct);
 
-	void (*_purple_reserved4)(void);
+	/* Make sure you do not try to dereference anything past struct_size! */
+	int struct_size;
+
+#ifdef USE_FARSIGHT
+	PurpleMedia  *(*initiate_media)(PurpleConnection *conn, const char *who, PurpleMediaStreamType type);
+#else
+	void (*initiate_media)(void);
+#endif
 };
+
+#define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \
+	((G_STRUCT_OFFSET(PurplePluginProtocolInfo, member) < prpl->struct_size) && \
+	 prpl->member != NULL)
 
 #define PURPLE_IS_PROTOCOL_PLUGIN(plugin) \
 	((plugin)->info->type == PURPLE_PLUGIN_PROTOCOL)
@@ -667,3 +679,4 @@ PurplePlugin *purple_find_prpl(const char *id);
 #endif
 
 #endif /* _PRPL_H_ */
+

@@ -115,9 +115,8 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_unregister_account,		/* unregister_user */
 	jabber_send_attention,			/* send_attention */
 	jabber_attention_types,			/* attention_types */
-
-	/* padding */
-	NULL
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	jabber_media_initiate                   /* initiate_media */
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)

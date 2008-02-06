@@ -55,6 +55,7 @@ typedef struct _JabberStream JabberStream;
 #include "dnssrv.h"
 #include "roomlist.h"
 #include "sslconn.h"
+#include "media.h"
 
 #include "jutil.h"
 #include "xmlnode.h"
@@ -262,5 +263,9 @@ int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len);
 GList *jabber_actions(PurplePlugin *plugin, gpointer context);
 void jabber_register_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
+
+#ifdef USE_FARSIGHT
+PurpleMedia *jabber_media_initiate(PurpleConnection *gc, const char *who, PurpleMediaStreamType type);
+#endif
 
 #endif /* _PURPLE_JABBER_H_ */

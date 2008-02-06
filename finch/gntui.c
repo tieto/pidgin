@@ -19,9 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include <prefs.h>
 #include "finch.h"
 
-#include "gntui.h"
 
 #include "gntaccount.h"
 #include "gntblist.h"
@@ -40,7 +40,7 @@
 #include "gntstatus.h"
 #include "gntsound.h"
 
-#include <prefs.h>
+#include "gntui.h"
 
 void gnt_ui_init()
 {

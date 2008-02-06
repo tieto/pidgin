@@ -23,6 +23,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
+#include <account.h>
+#include <accountopt.h>
+#include <connection.h>
+#include <notify.h>
+#include <plugin.h>
+#include <request.h>
+
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -36,13 +43,6 @@
 #include <gntwindow.h>
 
 #include "finch.h"
-
-#include <account.h>
-#include <accountopt.h>
-#include <connection.h>
-#include <notify.h>
-#include <plugin.h>
-#include <request.h>
 
 #include "gntaccount.h"
 #include "gntblist.h"
