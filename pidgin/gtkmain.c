@@ -174,7 +174,7 @@ static void sighandler(int sig);
  * be wise to move this code into gtksound.c.
  */
 static void
-clean_pid()
+clean_pid(void)
 {
 	int status;
 	pid_t pid;
@@ -241,7 +241,7 @@ sighandler(int sig)
 #endif
 
 static int
-ui_main()
+ui_main(void)
 {
 #ifndef _WIN32
 	GList *icons = NULL;
@@ -359,7 +359,7 @@ pidgin_quit(void)
 	gtk_main_quit();
 }
 
-static GHashTable *pidgin_ui_get_info()
+static GHashTable *pidgin_ui_get_info(void)
 {
 	if(NULL == ui_info) {
 		ui_info = g_hash_table_new(g_str_hash, g_str_equal);
@@ -508,6 +508,7 @@ int main(int argc, char *argv[])
 		{"session",  required_argument, NULL, 's'},
 		{"version",  no_argument,       NULL, 'v'},
 		{"display",  required_argument, NULL, 'D'},
+		{"sync",     no_argument,       NULL, 'S'},
 		{0, 0, 0, 0}
 	};
 
@@ -517,7 +518,7 @@ int main(int argc, char *argv[])
 	debug_enabled = FALSE;
 #endif
 
-	/* This is the first Glib function call. Make sure to initialize GThread bfeore then */
+	/* Initialize GThread before calling any Glib or GTK+ functions. */
 	g_thread_init(NULL);
 
 #ifdef ENABLE_NLS
@@ -654,6 +655,7 @@ int main(int argc, char *argv[])
 			opt_si = FALSE;
 			break;
 		case 'D':   /* --display */
+		case 'S':   /* --sync */
 			/* handled by gtk_init_check below */
 			break;
 		case '?':	/* show terse help */

@@ -49,6 +49,8 @@ static GHashTable *account_cache = NULL;
 static GHashTable *icon_data_cache = NULL;
 static GHashTable *icon_file_cache = NULL;
 
+static void delete_buddy_icon_settings(PurpleBlistNode *node, const char *setting_name);
+
 /* This one is used for both custom buddy icons
  * on PurpleContacts and account icons. */
 static GHashTable *pointer_icon_cache = NULL;
@@ -124,7 +126,7 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 							purple_imgstore_get_size(img));	
 	} else 	{
 		purple_debug_error("buddyicon", "Unable to create file %s: %s\n",
-		                   path, g_strerror(errno));
+		                   path, "File already exists.");
 	}
 	g_free(path);
 }
@@ -614,13 +616,16 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 				checksum = purple_blist_node_get_string((PurpleBlistNode*)b, "icon_checksum");
 				purple_buddy_icon_set_data(icon, data, len, checksum);
 			}
+			else
+				delete_buddy_icon_settings((PurpleBlistNode*)b, "buddy_icon");
+
 			g_free(path);
 		}
 
 		purple_buddy_icons_set_caching(caching);
 	}
 
-	return purple_buddy_icon_ref(icon);
+	return (icon ? purple_buddy_icon_ref(icon) : NULL);
 }
 
 gboolean
@@ -696,18 +701,13 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	}
 	unref_filename(old_icon);
 
-	if (img)
-		g_hash_table_insert(pointer_icon_cache, account, img);
-	else
-		g_hash_table_remove(pointer_icon_cache, account);
-
 	if (purple_account_is_connected(account))
 	{
 		PurpleConnection *gc;
 		PurplePluginProtocolInfo *prpl_info;
 
 		gc = purple_account_get_connection(account);
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 		if (prpl_info && prpl_info->set_buddy_icon)
 			prpl_info->set_buddy_icon(gc, img);
@@ -723,6 +723,11 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 		purple_buddy_icon_data_uncache_file(old_icon);
 	}
 	g_free(old_icon);
+
+	if (img)
+		g_hash_table_insert(pointer_icon_cache, account, img);
+	else
+		g_hash_table_remove(pointer_icon_cache, account);
 
 	return img;
 }
@@ -1156,7 +1161,8 @@ purple_buddy_icons_init()
 	                                        g_free, NULL);
 	pointer_icon_cache = g_hash_table_new(g_direct_hash, g_direct_equal);
 
-	cache_dir = g_build_filename(purple_user_dir(), "icons", NULL);
+    if (!cache_dir)
+    	cache_dir = g_build_filename(purple_user_dir(), "icons", NULL);
 
 	purple_signal_connect(purple_imgstore_get_handle(), "image-deleting",
 	                      purple_buddy_icons_get_handle(),

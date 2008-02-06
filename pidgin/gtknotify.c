@@ -332,7 +332,7 @@ mail_window_focus_cb(GtkWidget *widget, GdkEventFocus *focus, gpointer null)
 }
 
 static GtkWidget *
-pidgin_get_mail_dialog()
+pidgin_get_mail_dialog(void)
 {
 	if (mail_dialog == NULL) {
 		GtkWidget *dialog = NULL;
@@ -379,6 +379,7 @@ pidgin_get_mail_dialog()
 		mail_dialog->treemodel = gtk_tree_store_new(COLUMNS_PIDGIN_MAIL,
 						GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
 		mail_dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(mail_dialog->treemodel));
+		g_object_unref(G_OBJECT(mail_dialog->treemodel));
 		gtk_tree_view_set_search_column(GTK_TREE_VIEW(mail_dialog->treeview), PIDGIN_MAIL_TEXT);
 		gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(mail_dialog->treeview),
 			             pidgin_tree_view_search_equal_func, NULL, NULL);
@@ -604,7 +605,7 @@ formatted_input_cb(GtkWidget *win, GdkEventKey *event, gpointer data)
 }
 
 static GtkIMHtmlOptions
-notify_imhtml_options()
+notify_imhtml_options(void)
 {
 	GtkIMHtmlOptions options = 0;
 
@@ -818,6 +819,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 
 	/* Setup the treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
+	g_object_unref(G_OBJECT(model));
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
 	gtk_widget_set_size_request(treeview, 500, 400);
 	gtk_tree_selection_set_mode(gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)),
@@ -1056,7 +1058,12 @@ pidgin_notify_uri(const char *uri)
 	/* if they are running gnome, use the gnome web browser */
 	if (purple_running_gnome() == TRUE)
 	{
-		command = g_strdup_printf("gnome-open %s", escaped);
+		char *tmp = g_find_program_in_path("xdg-open");
+		if (tmp == NULL)
+			command = g_strdup_printf("gnome-open %s", escaped);
+		else
+			command = g_strdup_printf("xdg-open %s", escaped);
+		g_free(tmp);
 	}
 	else if (purple_running_osx() == TRUE)
 	{
@@ -1071,6 +1078,10 @@ pidgin_notify_uri(const char *uri)
 			command = g_strdup_printf("%s -n %s", web_browser, escaped);
 		else
 			command = g_strdup_printf("%s %s", web_browser, escaped);
+	}
+	else if (!strcmp(web_browser, "xdg-open"))
+	{
+		command = g_strdup_printf("xdg-open %s", escaped);
 	}
 	else if (!strcmp(web_browser, "gnome-open"))
 	{

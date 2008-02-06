@@ -40,7 +40,7 @@ static struct
 } colors[GNT_TOTAL_COLORS];
 
 static void
-backup_colors()
+backup_colors(void)
 {
 	short i;
 	for (i = 0; i < GNT_TOTAL_COLORS; i++)
@@ -51,13 +51,13 @@ backup_colors()
 }
 
 static gboolean
-can_use_custom_color()
+can_use_custom_color(void)
 {
 	return (gnt_style_get_bool(GNT_STYLE_COLOR, FALSE) && can_change_color());
 }
 
 static void
-restore_colors()
+restore_colors(void)
 {
 	short i;
 	for (i = 0; i < GNT_TOTAL_COLORS; i++)

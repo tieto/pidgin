@@ -1697,27 +1697,32 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 		return;
 		break;
 	case SILC_CLIENT_CONN_ERROR:
-		purple_connection_error(gc, _("Error during connecting to SILC Server"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Error during connecting to SILC Server"));
 		g_unlink(silcpurple_session_file(purple_account_get_username(sg->account)));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_KE:
-		purple_connection_error(gc, _("Key Exchange failed"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_ENCRYPTION_ERROR,
+			_("Key Exchange failed"));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_AUTH:
-		purple_connection_error(gc, _("Authentication failed"));
+		purple_connection_error_reason(gc,
+			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED,
+			_("Authentication failed"));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_RESUME:
-		purple_connection_error(gc,
-				      _("Resuming detached session failed. "
-					"Press Reconnect to create new connection."));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+			_("Resuming detached session failed. "
+			  "Press Reconnect to create new connection."));
 		g_unlink(silcpurple_session_file(purple_account_get_username(sg->account)));
 		break;
 
 	case SILC_CLIENT_CONN_ERROR_TIMEOUT:
-		purple_connection_error(gc, _("Connection Timeout"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Connection Timeout"));
 		break;
 	}
 
@@ -1746,7 +1751,8 @@ silc_disconnected(SilcClient client, SilcClientConnection conn,
 
 	/* Close the connection */
 	if (!sg->detaching)
-		purple_connection_error(gc, _("Disconnected by server"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Disconnected by server"));
 	else
 		/* TODO: Does this work correctly? Maybe we need to set wants_to_die? */
 		purple_account_disconnect(purple_connection_get_account(gc));

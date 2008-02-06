@@ -467,7 +467,7 @@ save_cb(gpointer data)
 }
 
 static void
-schedule_accounts_save()
+schedule_accounts_save(void)
 {
 	if (save_timer == 0)
 		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
@@ -752,7 +752,7 @@ parse_current_error(xmlnode *node, PurpleAccount *account)
 
 	current_error = g_new0(PurpleConnectionErrorInfo, 1);
 	current_error->type = type;
-	current_error->description = g_strdup(description);
+	current_error->description = description;
 
 	set_current_error(account, current_error);
 }
@@ -1219,7 +1219,11 @@ purple_account_request_close_info(PurpleAccountRequestInfo *info)
 	if (ops != NULL && ops->close_account_request != NULL)
 		ops->close_account_request(info->ui_handle);
 
+	/* TODO: This will leak info->user_data, but there is no callback to just clean that up */
+
+	g_free(info->user);
 	g_free(info);
+
 }
 
 void
@@ -1264,9 +1268,14 @@ static void
 request_auth_cb(void *data)
 {
 	PurpleAccountRequestInfo *info = data;
+
+	handles = g_list_remove(handles, info);
+
 	info->auth_cb(info->userdata);
+
 	purple_signal_emit(purple_accounts_get_handle(),
 			"account-authorization-granted", info->account, info->user);
+
 	g_free(info->user);
 	g_free(info);
 }
@@ -1275,9 +1284,14 @@ static void
 request_deny_cb(void *data)
 {
 	PurpleAccountRequestInfo *info = data;
+
+	handles = g_list_remove(handles, info);
+
 	info->deny_cb(info->userdata);
+
 	purple_signal_emit(purple_accounts_get_handle(),
 			"account-authorization-denied", info->account, info->user);
+
 	g_free(info->user);
 	g_free(info);
 }
@@ -2186,9 +2200,13 @@ purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePlugin *prpl = NULL;
+	
+	if (gc != NULL)
+	        prpl = purple_connection_get_prpl(gc);      
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (prpl_info != NULL && prpl_info->add_buddy != NULL)
 		prpl_info->add_buddy(gc, buddy, purple_buddy_get_group(buddy));
@@ -2199,10 +2217,14 @@ purple_account_add_buddies(PurpleAccount *account, GList *buddies)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePlugin *prpl = NULL;
+	
+	if (gc != NULL)
+	        prpl = purple_connection_get_prpl(gc);      
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+		
 	if (prpl_info) {
 		GList *cur, *groups = NULL;
 
@@ -2234,10 +2256,14 @@ purple_account_remove_buddy(PurpleAccount *account, PurpleBuddy *buddy,
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePlugin *prpl = NULL;
+	
+	if (gc != NULL)
+	        prpl = purple_connection_get_prpl(gc);      
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+		
 	if (prpl_info && prpl_info->remove_buddy)
 		prpl_info->remove_buddy(gc, buddy, group);
 }
@@ -2247,10 +2273,14 @@ purple_account_remove_buddies(PurpleAccount *account, GList *buddies, GList *gro
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePlugin *prpl = NULL;
+	
+	if (gc != NULL)
+	        prpl = purple_connection_get_prpl(gc);      
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+		
 	if (prpl_info) {
 		if (prpl_info->remove_buddies)
 			prpl_info->remove_buddies(gc, buddies, groups);
@@ -2271,9 +2301,13 @@ purple_account_remove_group(PurpleAccount *account, PurpleGroup *group)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePlugin *prpl = NULL;
+	
+	if (gc != NULL)
+	        prpl = purple_connection_get_prpl(gc);      
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (prpl_info && prpl_info->remove_group)
 		prpl_info->remove_group(gc, group);
@@ -2285,11 +2319,15 @@ purple_account_change_password(PurpleAccount *account, const char *orig_pw,
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc = purple_account_get_connection(account);
-
+	PurplePlugin *prpl = NULL;
+	
 	purple_account_set_password(account, new_pw);
+	
+	if (gc != NULL)
+	        prpl = purple_connection_get_prpl(gc);      
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (prpl_info && prpl_info->change_passwd)
 		prpl_info->change_passwd(gc, orig_pw, new_pw);
@@ -2298,16 +2336,20 @@ purple_account_change_password(PurpleAccount *account, const char *orig_pw,
 gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleBuddy *buddy)
 {
 	PurpleConnection *gc;
-	PurplePluginProtocolInfo *prpl_info;
-
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurplePlugin *prpl = NULL;
+	
 	g_return_val_if_fail(account, FALSE);
 	g_return_val_if_fail(buddy, FALSE);
 
 	gc = purple_account_get_connection(account);
 	if (gc == NULL)
 		return FALSE;
+	
+	prpl = purple_connection_get_prpl(gc);      
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if (prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (!prpl_info || !prpl_info->offline_message)
 		return FALSE;

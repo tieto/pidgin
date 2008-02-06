@@ -53,13 +53,13 @@ typedef enum
 
 } PurpleBlistNodeType;
 
-#define PURPLE_BLIST_NODE_IS_CHAT(n)    ((n)->type == PURPLE_BLIST_CHAT_NODE)
-#define PURPLE_BLIST_NODE_IS_BUDDY(n)   ((n)->type == PURPLE_BLIST_BUDDY_NODE)
-#define PURPLE_BLIST_NODE_IS_CONTACT(n) ((n)->type == PURPLE_BLIST_CONTACT_NODE)
-#define PURPLE_BLIST_NODE_IS_GROUP(n)   ((n)->type == PURPLE_BLIST_GROUP_NODE)
+#define PURPLE_BLIST_NODE_IS_CHAT(n)    (purple_blist_node_get_type(n) == PURPLE_BLIST_CHAT_NODE)
+#define PURPLE_BLIST_NODE_IS_BUDDY(n)   (purple_blist_node_get_type(n) == PURPLE_BLIST_BUDDY_NODE)
+#define PURPLE_BLIST_NODE_IS_CONTACT(n) (purple_blist_node_get_type(n) == PURPLE_BLIST_CONTACT_NODE)
+#define PURPLE_BLIST_NODE_IS_GROUP(n)   (purple_blist_node_get_type(n) == PURPLE_BLIST_GROUP_NODE)
 
 #define PURPLE_BUDDY_IS_ONLINE(b) \
-	((b) != NULL && purple_account_is_connected((b)->account) && \
+	((b) != NULL && purple_account_is_connected(purple_buddy_get_account(b)) && \
 	 purple_presence_is_online(purple_buddy_get_presence(b)))
 
 typedef enum
@@ -231,8 +231,64 @@ PurpleBlistNode *purple_blist_get_root(void);
  * @param node		A node.
  * @param offline	Whether to include nodes for offline accounts
  * @return	The next node
+ * @see purple_blist_node_get_parent
+ * @see purple_blist_node_get_first_child
+ * @see purple_blist_node_get_sibling_next
+ * @see purple_blist_node_get_sibling_prev
  */
 PurpleBlistNode *purple_blist_node_next(PurpleBlistNode *node, gboolean offline);
+
+/**
+ * Returns the parent node of a given node.
+ *
+ * @param node A node.
+ * @return  The parent node.
+ * @since 2.4.0
+ * @see purple_blist_node_get_first_child
+ * @see purple_blist_node_get_sibling_next
+ * @see purple_blist_node_get_sibling_prev
+ * @see purple_blist_node_next
+ */
+PurpleBlistNode *purple_blist_node_get_parent(PurpleBlistNode *node);
+
+/**
+ * Returns the the first child node of a given node.
+ *
+ * @param node A node.
+ * @return  The child node.
+ * @since 2.4.0
+ * @see purple_blist_node_get_parent
+ * @see purple_blist_node_get_sibling_next
+ * @see purple_blist_node_get_sibling_prev
+ * @see purple_blist_node_next
+ */
+PurpleBlistNode *purple_blist_node_get_first_child(PurpleBlistNode *node);
+
+/**
+ * Returns the sibling node of a given node.
+ *
+ * @param node A node.
+ * @return  The sibling node.
+ * @since 2.4.0
+ * @see purple_blist_node_get_parent
+ * @see purple_blist_node_get_first_child
+ * @see purple_blist_node_get_sibling_prev
+ * @see purple_blist_node_next
+ */
+PurpleBlistNode *purple_blist_node_get_sibling_next(PurpleBlistNode *node);
+
+/**
+ * Returns the previous sibling node of a given node.
+ *
+ * @param node A node.
+ * @return  The sibling node.
+ * @since 2.4.0
+ * @see purple_blist_node_get_parent
+ * @see purple_blist_node_get_first_child
+ * @see purple_blist_node_get_sibling_next
+ * @see purple_blist_node_next
+ */
+PurpleBlistNode *purple_blist_node_get_sibling_prev(PurpleBlistNode *node);
 
 /**
  * Shows the buddy list, creating a new one if necessary.
@@ -665,6 +721,26 @@ PurpleChat *purple_blist_find_chat(PurpleAccount *account, const char *name);
  * @return The parent group, or @c NULL if the chat is not in a group.
  */
 PurpleGroup *purple_chat_get_group(PurpleChat *chat);
+
+/**
+ * Returns the account the chat belongs to.
+ *
+ * @param chat  The chat.
+ *
+ * @return  The account the chat belongs to.
+ * @since 2.4.0
+ */
+PurpleAccount *purple_chat_get_account(PurpleChat *chat);
+
+/**
+ * Get a hashtable containing information about a chat.
+ *
+ * @param chat  The chat.
+ *
+ * @constreturn  The hashtable.
+ * @since 2.4.0
+ */
+GHashTable *purple_chat_get_components(PurpleChat *chat);
 
 /**
  * Returns the group of which the buddy is a member.

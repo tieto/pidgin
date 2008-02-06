@@ -23,7 +23,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "internal.h"
 #include "finch.h"
 
 #ifdef _WIN32
@@ -142,13 +141,15 @@ chat_nick_matches_name(PurpleConversation *conv, const char *aname)
 	char *nick = NULL;
 	char *name = NULL;
 	gboolean ret = FALSE;
-	chat = purple_conversation_get_chat_data(conv);
+	PurpleAccount *account;
 
+	chat = purple_conversation_get_chat_data(conv);
 	if (chat == NULL)
 		return ret;
 
-	nick = g_strdup(purple_normalize(conv->account, chat->nick));
-	name = g_strdup(purple_normalize(conv->account, aname));
+	account = purple_conversation_get_account(conv);
+	nick = g_strdup(purple_normalize(account, chat->nick));
+	name = g_strdup(purple_normalize(account, aname));
 
 	if (g_utf8_collate(nick, name) == 0)
 		ret = TRUE;
@@ -286,7 +287,7 @@ account_signon_cb(PurpleConnection *gc, gpointer data)
 }
 
 static void *
-finch_sound_get_handle()
+finch_sound_get_handle(void)
 {
 	static int handle;
 

@@ -355,7 +355,7 @@
 
 /* Loads static protocol plugin module initialization functions. */
 #ifndef STATIC_PROTO_INIT
-#define STATIC_PROTO_INIT static void static_proto_init() {  }
+#define STATIC_PROTO_INIT static void static_proto_init(void) {  }
 #endif
 
 /* Define to 1 if you have the ANSI C header files. */

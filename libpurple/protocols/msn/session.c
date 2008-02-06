@@ -46,7 +46,6 @@ msn_session_new(PurpleAccount *account)
 	session->oim = msn_oim_new(session);
 
 	session->protocol_ver = WLM_PROT_VER;
-	session->conv_seq = 1;
 
 	return session;
 }

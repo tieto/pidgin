@@ -667,7 +667,10 @@ purple_plugin_unload(PurplePlugin *plugin)
 			}
 			else
 			{
+#if 0
+				/* This isn't necessary. This has already been done when unloading dep_plugin. */
 				plugin->dependent_plugins = g_list_delete_link(plugin->dependent_plugins, l);
+#endif
 			}
 		}
 	}

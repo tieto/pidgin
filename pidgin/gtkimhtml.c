@@ -289,7 +289,7 @@ static gboolean clipboard_paste_html_win32(GtkIMHtml *imhtml) {
 #endif
 
 static GtkSmileyTree*
-gtk_smiley_tree_new ()
+gtk_smiley_tree_new (void)
 {
 	return g_new0 (GtkSmileyTree, 1);
 }
@@ -1455,6 +1455,9 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "SUP", "rise", 5000, NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "PRE", "family", "Monospace", NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "search", "background", "#22ff00", "weight", "bold", NULL);
+#if GTK_CHECK_VERSION(2,10,10)
+	gtk_text_buffer_create_tag(imhtml->text_buffer, "comment", "invisible", FALSE, NULL);
+#endif
 
 	/* When hovering over a link, we show the hand cursor--elsewhere we show the plain ol' pointer cursor */
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
@@ -2981,10 +2984,15 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 
+#if GTK_CHECK_VERSION(2,10,10)
+					wpos = g_snprintf (ws, len, "%s", tag);
+					gtk_text_buffer_insert_with_tags_by_name(imhtml->text_buffer, iter, ws, wpos, "comment", NULL);
+#else
 					if (imhtml->show_comments && !(options & GTK_IMHTML_NO_COMMENTS)) {
 						wpos = g_snprintf (ws, len, "%s", tag);
 						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 					}
+#endif
 					ws[0] = '\0'; wpos = 0;
 
 					/* NEW_BIT (NEW_COMMENT_BIT); */
@@ -3130,6 +3138,12 @@ void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
 void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 					gboolean          show)
 {
+#if GTK_CHECK_VERSION(2,10,10)
+	GtkTextTag *tag;
+	tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), "comment");
+	if (tag)
+		g_object_set(G_OBJECT(tag), "invisible", !show, NULL);
+#endif
 	imhtml->show_comments = show;
 }
 
@@ -4275,33 +4289,6 @@ static void imhtml_emit_signal_for_format(GtkIMHtml *imhtml, GtkIMHtmlButtons bu
 	object = g_object_ref(G_OBJECT(imhtml));
 	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, button);
 	g_object_unref(object);
-}
-
-static void populate_popup_cb(GtkTextView *textview, GtkMenu *menu, gpointer nul)
-{
-	GtkWidget *mi, *img;
-	
-	mi = gtk_menu_item_new();
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
-
-	img = gtk_image_new_from_stock(GTK_STOCK_BOLD, GTK_ICON_SIZE_MENU);
-	mi = gtk_image_menu_item_new_with_mnemonic(_("_Font"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
-
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT, GTK_ICON_SIZE_MENU);
-	mi = gtk_image_menu_item_new_with_mnemonic(_("_Insert"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
-
-	img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_SMILEY, GTK_ICON_SIZE_MENU);
-	mi = gtk_image_menu_item_new_with_mnemonic(_("S_mile!"));
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(mi), img);
-	gtk_widget_show(mi);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), mi);
 }
 
 static void imhtml_toggle_bold(GtkIMHtml *imhtml)

@@ -27,6 +27,7 @@
 #define _GNT_REQUEST_H
 
 #include "request.h"
+#include "gnt.h"
 
 /**********************************************************************
  * @name GNT Request API
@@ -56,6 +57,15 @@ void finch_request_uninit(void);
  */
 void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *fields);
 
+/**
+ * Create a widget field for a request-field.
+ *
+ * @param field   The request field.
+ *
+ * @return A GntWidget for the request field.
+ * @since 2.4.0
+ */
+GntWidget *finch_request_field_get_widget(PurpleRequestField *field);
 /*@}*/
 
 #endif

@@ -7,19 +7,43 @@ version 2.4.0 (??/??/????):
 	* Eliminated unmaintained Howl backend implementation for the
 	  Bonjour protocol.  Avahi (or Apple's Bonjour runtime on win32) is
 	  now required to use Bonjour.
+	* Partial support for viewing ICQ status notes (Collin from
+	  ComBOTS GmbH).
+	* Support for /notice on IRC.
+	* Support for Yahoo Messenger 7.0+ file transfer method (Thanumalayan S.)
+	* Support for retrieving full names and addresses from the address book
+	  on Yahoo! Japan (Yusuke Odate)
+	* The AIM/ICQ server-side preference for "allow others to see me
+	  as idle" is no longer unconditionally set to "yes" even when
+	  your libpurple preference is "no."
 
 	Pidgin:
 	* Added the ability to theme conversation name colors (red and blue)
 	  through your GTK+ theme, and exposed those theme settings to the 
 	  Pidgin GTK+ Theme Control plugin (Dustin Howett)
+	* Fixed having multiple alias edit areas in the infopane (Elliott Sales
+	  de Andrade)
+	* Save the conversation "Enable Logging" option per-contact (Moos
+	  Heintzen)
 
 	Finch:
 	* Color is used in the buddylist to indicate status, and the conversation
 	  window to indicate various message attributes. Look at the sample gntrc
-	  file in the man-page for details.
+	  file in the man page for details.
 	* The default keybinding for dump-screen is now M-D and uses a file
 	  request dialog. M-d will properly delete-forward-word, and M-f has been
 	  fixed to imitate readline's behavior.
+	* New bindings alt+tab and alt+shift+tab to help navigating between the
+	  higlighted windows (details on the man page).
+	* Recently signed on (or off) buddies blink in the buddy list.
+	* New action 'Room List' in the action list can be used to get the list of
+	  available chat rooms for an online account.
+	* The 'Grouping' plugin can be used for alternate grouping in the
+	  buddylist. The current options are 'Group Online/Offline' and 'No
+	  Group'.
+	* Added a log viewer
+	* Added the ability to block/unblock buddies - see the buddy context menu
+	  and the menu for the buddy list.
 
 version 2.3.1 (12/7/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.3.1

@@ -360,7 +360,7 @@ flap_connection_destroy_cb(gpointer data)
 
 	conn = data;
 	od = conn->od;
-	account = (PURPLE_CONNECTION_IS_VALID(od->gc) ? purple_connection_get_account(od->gc) : NULL);
+	account = purple_connection_get_account(od->gc);
 
 	purple_debug_info("oscar", "Destroying oscar connection of "
 			"type 0x%04hx.  Disconnect reason is %d\n",
@@ -375,8 +375,8 @@ flap_connection_destroy_cb(gpointer data)
 	 * TODO: If we don't have a SNAC_FAMILY_LOCATE connection then
 	 * we should try to request one instead of disconnecting.
 	 */
-	if (account && !account->disconnecting &&
-		((od->oscar_connections == NULL) || (!flap_connection_getbytype(od, SNAC_FAMILY_LOCATE))))
+	if (!account->disconnecting && ((od->oscar_connections == NULL)
+			|| (!flap_connection_getbytype(od, SNAC_FAMILY_LOCATE))))
 	{
 		/* No more FLAP connections!  Sign off this PurpleConnection! */
 		gchar *tmp;
@@ -817,6 +817,7 @@ flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 						OSCAR_DISCONNECT_LOST_CONNECTION, g_strerror(errno));
 				break;
 			}
+			conn->od->gc->last_received = time(NULL);
 
 			/* If we don't even have a complete FLAP header then do nothing */
 			conn->header_received += read;

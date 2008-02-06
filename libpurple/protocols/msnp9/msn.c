@@ -27,6 +27,7 @@
 
 #include "msn.h"
 #include "accountopt.h"
+#include "eventloop.h"
 #include "msg.h"
 #include "page.h"
 #include "pluginpref.h"
@@ -122,15 +123,11 @@ msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 static GList *
 msn_attention_types(PurpleAccount *account)
 {
-	PurpleAttentionType *attn;
 	static GList *list = NULL;
 
 	if (!list) {
-		attn = g_new0(PurpleAttentionType, 1);
-		attn->name = _("Nudge");
-		attn->incoming_description = _("%s has nudged you!");
-		attn->outgoing_description = _("Nudging %s...");
-		list = g_list_append(list, attn);
+		list = g_list_append(list, purple_attention_type_new("Nudge", _("Nudge"),
+				_("%s has nudged you!"), _("Nudging %s...")));
 	}
 
 	return list;
@@ -351,7 +348,7 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 						_("Do you want to allow or disallow people on "
 						  "your buddy list to send you MSN Mobile pages "
 						  "to your cell phone or other mobile device?"),
-						-1,
+						PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), NULL, NULL,
 						gc, 3,
 						_("Allow"), G_CALLBACK(enable_msn_pages_cb),
@@ -435,7 +432,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 	msn_switchboard_request_add_user(swboard, buddy->name);
 
 	/* TODO: This might move somewhere else, after USR might be */
-	swboard->chat_id = session->conv_seq++;
+	swboard->chat_id = msn_switchboard_get_chat_id();
 	swboard->conv = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
 	swboard->flag = MSN_SB_FLAG_IM;
 
@@ -560,8 +557,22 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	 * you, which is the important information that this is trying to convey. */
 	if (full && user)
 	{
+		const char *phone;
+
 		purple_notify_user_info_add_pair(user_info, _("Blocked"),
 									   ((user->list_op & (1 << MSN_LIST_BL)) ? _("Yes") : _("No")));
+
+		phone = msn_user_get_home_phone(user);
+		if (phone != NULL)
+			purple_notify_user_info_add_pair(user_info, _("Home Phone Number"), phone);
+
+		phone = msn_user_get_work_phone(user);
+		if (phone != NULL)
+			purple_notify_user_info_add_pair(user_info, _("Work Phone Number"), phone);
+
+		phone = msn_user_get_mobile_phone(user);
+		if (phone != NULL)
+			purple_notify_user_info_add_pair(user_info, _("Mobile Phone Number"), phone);
 	}
 }
 
@@ -860,7 +871,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		imdata->msg = body_str;
 		imdata->flags = flags;
 		imdata->when = time(NULL);
-		g_idle_add(msn_send_me_im, imdata);
+		purple_timeout_add(0, msn_send_me_im, imdata);
 	}
 
 	msn_message_destroy(msg);

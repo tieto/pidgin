@@ -44,12 +44,16 @@
 unsigned int
 serv_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->send_typing)
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->send_typing)
 		return prpl_info->send_typing(gc, name, state);
 
 	return 0;
@@ -117,24 +121,28 @@ get_last_auto_response(PurpleConnection *gc, const char *name)
 int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 				 PurpleMessageFlags flags)
 {
-	PurpleConversation *conv;
-	PurpleAccount *account;
-	PurplePresence *presence;
-	PurplePluginProtocolInfo *prpl_info;
+	PurpleConversation *conv = NULL;
+	PurpleAccount *account = NULL;
+	PurplePresence *presence = NULL;
+	PurplePlugin *prpl = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
 	int val = -EINVAL;
-	const gchar *auto_reply_pref;
+	const gchar *auto_reply_pref = NULL;
 
 	g_return_val_if_fail(gc != NULL, val);
-	g_return_val_if_fail(gc->prpl != NULL, val);
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl = purple_connection_get_prpl(gc);
+
+	g_return_val_if_fail(prpl != NULL, val);
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	account  = purple_connection_get_account(gc);
 	presence = purple_account_get_presence(account);
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, gc->account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, account);
 
-	if (prpl_info && prpl_info->send_im)
+	if(prpl_info && prpl_info->send_im)
 		val = prpl_info->send_im(gc, name, message, flags);
 
 	/*
@@ -142,7 +150,7 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 	 * this only reset lar->sent if we're away AND idle?
 	 */
 	auto_reply_pref = purple_prefs_get_string("/purple/away/auto_reply");
-	if ((gc->flags & PURPLE_CONNECTION_AUTO_RESP) &&
+	if((gc->flags & PURPLE_CONNECTION_AUTO_RESP) &&
 			flags & PURPLE_MESSAGE_AUTO_RESP &&
 			!purple_presence_is_available(presence) &&
 			strcmp(auto_reply_pref, "never")) {
@@ -152,7 +160,7 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 		lar->sent = time(NULL);
 	}
 
-	if (conv && purple_conv_im_get_send_typed_timeout(PURPLE_CONV_IM(conv)))
+	if(conv && purple_conv_im_get_send_typed_timeout(PURPLE_CONV_IM(conv)))
 		purple_conv_im_stop_send_typed_timeout(PURPLE_CONV_IM(conv));
 
 	return val;
@@ -160,28 +168,36 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 
 void serv_get_info(PurpleConnection *gc, const char *name)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
+	
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if (gc && prpl_info && prpl_info->get_info)
+	if(gc && prpl_info && prpl_info->get_info)
 		prpl_info->get_info(gc, name);
 }
 
 void serv_set_info(PurpleConnection *gc, const char *info)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleAccount *account;
+	PurpleAccount *account = NULL;;
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
+	
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-	if (prpl_info && prpl_info->set_info) {
+	if(prpl_info && prpl_info->set_info) {
 
 		account = purple_connection_get_account(gc);
 
-		if (purple_signal_emit_return_1(purple_accounts_get_handle(),
+		if(purple_signal_emit_return_1(purple_accounts_get_handle(),
 									  "account-setting-info", account, info))
 			return;
 
@@ -197,30 +213,45 @@ void serv_set_info(PurpleConnection *gc, const char *info)
  */
 void serv_alias_buddy(PurpleBuddy *b)
 {
+	PurpleAccount *account = NULL;
+	PurpleConnection *gc = NULL;
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (b != NULL && b->account->gc && b->account->gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(b->account->gc->prpl);
+	if(b)
+		account = purple_buddy_get_account(b);
 
-	if (b && prpl_info && prpl_info->alias_buddy) {
-		prpl_info->alias_buddy(b->account->gc, b->name, b->alias);
+	if(account)
+		gc = purple_account_get_connection(account);
+
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
+
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(b && prpl_info && prpl_info->alias_buddy) {
+		prpl_info->alias_buddy(gc, b->name, b->alias);
 	}
 }
 
 void
 serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
-	GSList *buddies = purple_find_buddies(account, who);
+	PurpleAccount *account;
+	GSList *buddies;
 	PurpleBuddy *b;
 	PurpleConversation *conv;
+
+	account = purple_connection_get_account(gc);
+	buddies = purple_find_buddies(account, who);
 
 	while (buddies != NULL)
 	{
 		b = buddies->data;
 		buddies = g_slist_delete_link(buddies, buddies);
 
-		if ((b->server_alias == NULL && alias == NULL) ||
+		if((b->server_alias == NULL && alias == NULL) ||
 		    (b->server_alias && alias && !strcmp(b->server_alias, alias)))
 		{
 			continue;
@@ -229,7 +260,7 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 		purple_blist_server_alias_buddy(b, alias);
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, account);
-		if (conv != NULL && alias != NULL && strcmp(alias, who))
+		if(conv != NULL && alias != NULL && strcmp(alias, who))
 		{
 			char *tmp = g_strdup_printf(_("%s is now known as %s.\n"),
 										who, alias);
@@ -296,8 +327,8 @@ serv_send_attention(PurpleConnection *gc, const char *who, guint type_code)
 	else
 		alias = who;
 
-	if (attn && attn->outgoing_description) {
-		description = g_strdup_printf(attn->outgoing_description, alias);
+	if (attn && purple_attention_type_get_outgoing_desc(attn)) {
+		description = g_strdup_printf(purple_attention_type_get_outgoing_desc(attn), alias);
 	} else {
 		description = g_strdup_printf(_("Requesting %s's attention..."), alias);
 	}
@@ -341,8 +372,8 @@ serv_got_attention(PurpleConnection *gc, const char *who, guint type_code)
 	else
 		alias = who;
 
-	if (attn && attn->incoming_description) {
-		description = g_strdup_printf(attn->incoming_description, alias);
+	if (attn && purple_attention_type_get_incoming_desc(attn)) {
+		description = g_strdup_printf(purple_attention_type_get_incoming_desc(attn), alias);
 	} else {
 		description = g_strdup_printf(_("%s has requested your attention!"), alias);
 	}
@@ -367,72 +398,101 @@ serv_got_attention(PurpleConnection *gc, const char *who, guint type_code)
  */
 void serv_move_buddy(PurpleBuddy *b, PurpleGroup *og, PurpleGroup *ng)
 {
+	PurpleAccount *account = NULL;
+	PurpleConnection *gc = NULL;
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	g_return_if_fail(b != NULL);
 	g_return_if_fail(og != NULL);
 	g_return_if_fail(ng != NULL);
 
-	if (b->account->gc != NULL && b->account->gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(b->account->gc->prpl);
+	account = purple_buddy_get_account(b);
+	gc = purple_account_get_connection(account);
 
-	if (b->account->gc && og && ng) {
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
+
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(gc && og && ng) {
 		if (prpl_info && prpl_info->group_buddy) {
-			prpl_info->group_buddy(b->account->gc, b->name, og->name, ng->name);
+			prpl_info->group_buddy(gc, b->name, og->name, ng->name);
 		}
 	}
 }
 
-void serv_add_permit(PurpleConnection *g, const char *name)
+void serv_add_permit(PurpleConnection *gc, const char *name)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->add_permit)
-		prpl_info->add_permit(g, name);
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->add_permit)
+		prpl_info->add_permit(gc, name);
 }
 
-void serv_add_deny(PurpleConnection *g, const char *name)
+void serv_add_deny(PurpleConnection *gc, const char *name)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->add_deny)
-		prpl_info->add_deny(g, name);
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->add_deny)
+		prpl_info->add_deny(gc, name);
 }
 
-void serv_rem_permit(PurpleConnection *g, const char *name)
+void serv_rem_permit(PurpleConnection *gc, const char *name)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->rem_permit)
-		prpl_info->rem_permit(g, name);
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->rem_permit)
+		prpl_info->rem_permit(gc, name);
 }
 
-void serv_rem_deny(PurpleConnection *g, const char *name)
+void serv_rem_deny(PurpleConnection *gc, const char *name)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->rem_deny)
-		prpl_info->rem_deny(g, name);
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->rem_deny)
+		prpl_info->rem_deny(gc, name);
 }
 
-void serv_set_permit_deny(PurpleConnection *g)
+void serv_set_permit_deny(PurpleConnection *gc)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
+
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	/*
 	 * this is called when either you import a buddy list, and make lots
@@ -440,52 +500,64 @@ void serv_set_permit_deny(PurpleConnection *g)
 	 * in the prefs. In either case you should probably be resetting and
 	 * resending the permit/deny info when you get this.
 	 */
-	if (prpl_info && prpl_info->set_permit_deny)
-		prpl_info->set_permit_deny(g);
+	if(prpl_info && prpl_info->set_permit_deny)
+		prpl_info->set_permit_deny(gc);
 }
 
-void serv_join_chat(PurpleConnection *g, GHashTable *data)
+void serv_join_chat(PurpleConnection *gc, GHashTable *data)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->join_chat)
-		prpl_info->join_chat(g, data);
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->join_chat)
+		prpl_info->join_chat(gc, data);
 }
 
 
-void serv_reject_chat(PurpleConnection *g, GHashTable *data)
+void serv_reject_chat(PurpleConnection *gc, GHashTable *data)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->reject_chat)
-		prpl_info->reject_chat(g, data);
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->reject_chat)
+		prpl_info->reject_chat(gc, data);
 }
 
-void serv_chat_invite(PurpleConnection *g, int id, const char *message, const char *name)
+void serv_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConversation *conv;
 	char *buffy = message && *message ? g_strdup(message) : NULL;
 
-	conv = purple_find_chat(g, id);
+	conv = purple_find_chat(gc, id);
 
-	if (conv == NULL)
+	if(conv == NULL)
 		return;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
+
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	purple_signal_emit(purple_conversations_get_handle(), "chat-inviting-user",
 					 conv, name, &buffy);
 
 	if (prpl_info && prpl_info->chat_invite)
-		prpl_info->chat_invite(g, id, buffy, name);
+		prpl_info->chat_invite(gc, id, buffy, name);
 
 	purple_signal_emit(purple_conversations_get_handle(), "chat-invited-user",
 					 conv, name, buffy);
@@ -499,37 +571,47 @@ void serv_chat_invite(PurpleConnection *g, int id, const char *message, const ch
  * to leave a chat without destroying the conversation.
  */
 
-void serv_chat_leave(PurpleConnection *g, int id)
+void serv_chat_leave(PurpleConnection *gc, int id)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (g->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(g->prpl);
+	prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->chat_leave)
-		prpl_info->chat_leave(g, id);
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->chat_leave)
+		prpl_info->chat_leave(gc, id);
 }
 
-void serv_chat_whisper(PurpleConnection *g, int id, const char *who, const char *message)
+void serv_chat_whisper(PurpleConnection *gc, int id, const char *who, const char *message)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->chat_whisper)
-		prpl_info->chat_whisper(g, id, who, message);
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->chat_whisper)
+		prpl_info->chat_whisper(gc, id, who, message);
 }
 
 int serv_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
 {
 	int val = -EINVAL;
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->chat_send)
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->chat_send)
 		val = prpl_info->chat_send(gc, id, message, flags);
 
 	return val;
@@ -552,7 +634,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 	account  = purple_connection_get_account(gc);
 
-	if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->set_permit_deny == NULL) {
+	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
 		/* protocol does not support privacy, handle it ourselves */
 		if (!purple_privacy_check(account, who))
 			return;
@@ -772,7 +854,7 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 	int plugin_return;
 
 	account = purple_connection_get_account(gc);
-	if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->set_permit_deny == NULL) {
+	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
 		/* protocol does not support privacy, handle it ourselves */
 		if (!purple_privacy_check(account, who))
 			return;
@@ -920,10 +1002,14 @@ void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 
 void serv_send_file(PurpleConnection *gc, const char *who, const char *file)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
+
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (prpl_info && prpl_info->send_file) {
 		if (!prpl_info->can_receive_file || prpl_info->can_receive_file(gc, who)) {

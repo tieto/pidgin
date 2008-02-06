@@ -295,10 +295,14 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 	/* Check if this conversation already exists. */
 	if ((conv = purple_find_conversation_with_account(type, name, account)) != NULL)
 	{
-		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
+		if (purple_conversation_get_type(conv) != PURPLE_CONV_TYPE_CHAT ||
 				purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
-			purple_conversation_chat_cleanup_for_rejoin(conv);
-		return conv;
+		{
+			if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
+				purple_conversation_chat_cleanup_for_rejoin(conv);
+
+			return conv;
+		}
 	}
 
 	gc = purple_account_get_connection(account);
@@ -398,7 +402,7 @@ purple_conversation_destroy(PurpleConversation *conv)
 	if (gc != NULL)
 	{
 		/* Still connected */
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		{
@@ -1451,7 +1455,7 @@ purple_conv_chat_write(PurpleConvChat *chat, const char *who, const char *messag
 	conv      = purple_conv_chat_get_conversation(chat);
 	gc        = purple_conversation_get_gc(conv);
 	account   = purple_connection_get_account(gc);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 
 	/* Don't display this if the person who wrote it is ignored. */
 	if (purple_conv_chat_is_user_ignored(chat, who))
@@ -1570,7 +1574,7 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 
 	gc = purple_conversation_get_gc(conv);
 	g_return_if_fail(gc != NULL);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	g_return_if_fail(prpl_info != NULL);
 
 	ul = users;
@@ -1671,7 +1675,7 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 
 	gc = purple_conversation_get_gc(conv);
 	g_return_if_fail(gc != NULL);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	g_return_if_fail(prpl_info != NULL);
 
 	if (!strcmp(chat->nick, purple_normalize(conv->account, old_user))) {
@@ -1789,7 +1793,7 @@ purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users, const char *re
 
 	gc = purple_conversation_get_gc(conv);
 	g_return_if_fail(gc != NULL);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
 	g_return_if_fail(prpl_info != NULL);
 
 	ops  = purple_conversation_get_ui_ops(conv);

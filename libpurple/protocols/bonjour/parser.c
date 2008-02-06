@@ -39,7 +39,7 @@ parse_from_attrib_and_find_buddy(BonjourJabberConversation *bconv, int nb_attrib
 	for(i=0; i < nb_attributes * 5; i+=5) {
 		if(!xmlStrcmp(attributes[i], (xmlChar*) "from")) {
 			int len = attributes[i+4] - attributes[i+3];
-			bconv->buddy_name = g_strndup(attributes[i+3], len);
+			bconv->buddy_name = g_strndup((char *)attributes[i+3], len);
 			bonjour_jabber_conv_match_by_name(bconv);
 
 			return (bconv->pb != NULL);

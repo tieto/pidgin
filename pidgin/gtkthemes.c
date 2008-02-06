@@ -168,7 +168,7 @@ pidgin_themes_destroy_smiley_theme_smileys(struct smiley_theme *theme)
 }
 
 static void
-pidgin_smiley_themes_remove_non_existing()
+pidgin_smiley_themes_remove_non_existing(void)
 {
 	static struct smiley_theme *theme = NULL;
 	GSList *iter = NULL;

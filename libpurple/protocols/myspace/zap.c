@@ -29,15 +29,12 @@ GList *
 msim_attention_types(PurpleAccount *acct)
 {
 	static GList *types = NULL;
-	MsimAttentionType* attn;
+	PurpleAttentionType* attn;
 
 	if (!types) {
-#define _MSIM_ADD_NEW_ATTENTION(icn, nme, incoming, outgoing)              \
-		attn = g_new0(MsimAttentionType, 1);                       \
-		attn->icon_name = icn;                                     \
-		attn->name = nme;                                          \
-		attn->incoming_description = incoming;                     \
-		attn->outgoing_description = outgoing;                     \
+#define _MSIM_ADD_NEW_ATTENTION(icn, ulname, nme, incoming, outgoing) \
+		attn = purple_attention_type_new(ulname, nme, incoming, outgoing); \
+		purple_attention_type_set_icon_name(attn, icn); \
 		types = g_list_append(types, attn);
 
 		/* TODO: icons for each zap */
@@ -48,37 +45,46 @@ msim_attention_types(PurpleAccount *acct)
 		 * projectile or weapon."  This term often has an electrical
 		 * connotation, for example, "he was zapped by electricity when
 		 * he put a fork in the toaster." */
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("Zap"), _("%s has zapped you!"), _("Zapping %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, "Zap", _("Zap"), _("%s has zapped you!"),
+				_("Zapping %s..."));
 
 		/* Whack means "to hit or strike someone with a sharp blow" */
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("Whack"), _("%s has whacked you!"), _("Whacking %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, "Whack", _("Whack"),
+				_("%s has whacked you!"), _("Whacking %s..."));
 
 		/* Torch means "to set on fire."  Don't worry, this doesn't
 		 * make a whole lot of sense in English, either.  Feel free
 		 * to translate it literally. */
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("Torch"), _("%s has torched you!"), _("Torching %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, "Torch", _("Torch"),
+				_("%s has torched you!"), _("Torching %s..."));
 
 		/* Smooch means "to kiss someone, often enthusiastically" */
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("Smooch"), _("%s has smooched you!"), _("Smooching %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, "Smooch", _("Smooch"),
+				_("%s has smooched you!"), _("Smooching %s..."));
 
 		/* A hug is a display of affection; wrapping your arms around someone */
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("Hug"), _("%s has hugged you!"), _("Hugging %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, "Hug", _("Hug"), _("%s has hugged you!"),
+				_("Hugging %s..."));
 
 		/* Slap means "to hit someone with an open/flat hand" */
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("Slap"), _("%s has slapped you!"), _("Slapping %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, "Slap", _("Slap"),
+				_("%s has slapped you!"), _("Slapping %s..."));
 
 		/* Goose means "to pinch someone on their butt" */
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("Goose"), _("%s has goosed you!"), _("Goosing %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, "Goose", _("Goose"),
+				_("%s has goosed you!"), _("Goosing %s..."));
 
 		/* A high-five is when two people's hands slap each other
 		 * in the air above their heads.  It is done to celebrate
 		 * something, often a victory, or to congratulate someone. */
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("High-five"), _("%s has high-fived you!"), _("High-fiving %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, "High-five", _("High-five"),
+				_("%s has high-fived you!"), _("High-fiving %s..."));
 
 		/* We're not entirely sure what the MySpace people mean by
 		 * this... but we think it's the equivalent of "prank."  Or, for
 		 * someone to perform a mischievous trick or practical joke. */
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("Punk"), _("%s has punk'd you!"), _("Punking %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, "Punk", _("Punk"),
+				_("%s has punk'd you!"), _("Punking %s..."));
 
 		/* Raspberry is a slang term for the vibrating sound made
 		 * when you stick your tongue out of your mouth with your
@@ -87,7 +93,8 @@ msim_attention_types(PurpleAccount *acct)
 		 * gesture, so it does not carry a harsh negative
 		 * connotation.  It is generally used in a playful tone
 		 * with friends. */
-		_MSIM_ADD_NEW_ATTENTION(NULL, _("Raspberry"), _("%s has raspberried you!"), _("Raspberrying %s..."));
+		_MSIM_ADD_NEW_ATTENTION(NULL, "Raspberry", _("Raspberry"),
+				_("%s has raspberried you!"), _("Raspberrying %s..."));
 	}
 
 	return types;
@@ -99,14 +106,14 @@ msim_send_attention(PurpleConnection *gc, const gchar *username, guint code)
 {
 	GList *types;
 	MsimSession *session;
-	MsimAttentionType *attn;
+	PurpleAttentionType *attn;
 	PurpleBuddy *buddy;
 
 	session = (MsimSession *)gc->proto_data;
 
 	/* Look for this attention type, by the code index given. */
 	types = msim_attention_types(gc->account);
-	attn = (MsimAttentionType *)g_list_nth_data(types, code);
+	attn = (PurpleAttentionType *)g_list_nth_data(types, code);
 
 	if (!attn) {
 		purple_debug_info("msim_send_attention", "got invalid zap code %d\n", code);
@@ -200,12 +207,12 @@ msim_blist_node_menu(PurpleBlistNode *node)
 	i = 0;
 	do
 	{
-		MsimAttentionType *attn;
+		PurpleAttentionType *attn;
 
-		attn = (MsimAttentionType *)types->data;
+		attn = (PurpleAttentionType *)types->data;
 
-		act = purple_menu_action_new(attn->name, PURPLE_CALLBACK(msim_send_zap_from_menu),
-				GUINT_TO_POINTER(i), NULL);
+		act = purple_menu_action_new(purple_attention_type_get_name(attn),
+				PURPLE_CALLBACK(msim_send_zap_from_menu), GUINT_TO_POINTER(i), NULL);
 		zap_menu = g_list_append(zap_menu, act);
 
 		++i;

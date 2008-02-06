@@ -85,6 +85,31 @@ PurpleMenuAction *purple_menu_action_new(const char *label, PurpleCallback callb
  */
 void purple_menu_action_free(PurpleMenuAction *act);
 
+/**
+ * Set the appropriate presence values for the currently playing song.
+ *
+ * @param title     The title of the song, @c NULL to unset the value.
+ * @param artist    The artist of the song, can be @c NULL.
+ * @param album     The album of the song, can be @c NULL.
+ * @since 2.4.0
+ */
+void purple_util_set_current_song(const char *title, const char *artist,
+		const char *album);
+
+/**
+ * Format song information.
+ *
+ * @param title     The title of the song, @c NULL to unset the value.
+ * @param artist    The artist of the song, can be @c NULL.
+ * @param album     The album of the song, can be @c NULL.
+ * @param unused    Currently unused, must be @c NULL.
+ *
+ * @return   The formatted string. The caller must #g_free the returned string.
+ * @since 2.4.0
+ */
+char * purple_util_format_song_info(const char *title, const char *artist,
+		const char *album, gpointer unused);
+
 /**************************************************************************/
 /** @name Utility Subsystem                                               */
 /**************************************************************************/

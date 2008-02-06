@@ -34,7 +34,7 @@
  **************************************************************************/
 
 static char *
-rand_guid()
+rand_guid(void)
 {
 	return g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
 			rand() % 0xAAFF + 0x1111,

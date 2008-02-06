@@ -142,7 +142,7 @@ purple_dnsquery_ui_resolve(PurpleDnsQueryData *query_data)
  */
 #ifdef HAVE_SIGNAL_H
 G_GNUC_NORETURN static void
-trap_gdb_bug()
+trap_gdb_bug(int sig)
 {
 	const char *message =
 		"Purple's DNS child got a SIGTRAP signal.\n"
@@ -158,6 +158,24 @@ trap_gdb_bug()
 	_exit(1);
 }
 #endif
+
+static void
+write_to_parent(int fd, const void *buf, size_t count)
+{
+	ssize_t written;
+
+	written = write(fd, buf, count);
+	if (written != count) {
+		if (written < 0)
+			fprintf(stderr, "dns[%d]: Error writing data to "
+					"parent: %s\n", getpid(), strerror(errno));
+		else
+			fprintf(stderr, "dns[%d]: Error: Tried to write %"
+					G_GSIZE_FORMAT " bytes to parent but instead "
+					"wrote %" G_GSIZE_FORMAT " bytes\n",
+					getpid(), count, written);
+	}
+}
 
 G_GNUC_NORETURN static void
 purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
@@ -201,7 +219,8 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 		}
 		rc = read(child_in, &dns_params, sizeof(dns_params_t));
 		if (rc < 0) {
-			perror("read()");
+			fprintf(stderr, "dns[%d]: Error: Could not read dns_params: "
+					"%s\n", getpid(), strerror(errno));
 			break;
 		}
 		if (rc == 0) {
@@ -210,11 +229,13 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 			_exit(0);
 		}
 		if (dns_params.hostname[0] == '\0') {
-			printf("dns[%d]: hostname = \"\" (port = %d)!!!\n", getpid(), dns_params.port);
+			fprintf(stderr, "dns[%d]: Error: Parent requested resolution "
+					"of an empty hostname (port = %d)!!!\n", getpid(),
+					dns_params.port);
 			_exit(1);
 		}
 		/* Tell our parent that we read the data successfully */
-		write(child_out, &ch, sizeof(ch));
+		write_to_parent(child_out, &ch, sizeof(ch));
 
 		/* We have the hostname and port, now resolve the IP */
 
@@ -230,7 +251,7 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 		 */
 		hints.ai_socktype = SOCK_STREAM;
 		rc = getaddrinfo(dns_params.hostname, servname, &hints, &res);
-		write(child_out, &rc, sizeof(rc));
+		write_to_parent(child_out, &rc, sizeof(rc));
 		if (rc != 0) {
 			close(child_out);
 			if (show_debug)
@@ -242,17 +263,17 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 		tmp = res;
 		while (res) {
 			size_t ai_addrlen = res->ai_addrlen;
-			write(child_out, &ai_addrlen, sizeof(ai_addrlen));
-			write(child_out, res->ai_addr, res->ai_addrlen);
+			write_to_parent(child_out, &ai_addrlen, sizeof(ai_addrlen));
+			write_to_parent(child_out, res->ai_addr, res->ai_addrlen);
 			res = res->ai_next;
 		}
 		freeaddrinfo(tmp);
-		write(child_out, &zero, sizeof(zero));
+		write_to_parent(child_out, &zero, sizeof(zero));
 #else
 		if (!inet_aton(dns_params.hostname, &sin.sin_addr)) {
 			struct hostent *hp;
 			if (!(hp = gethostbyname(dns_params.hostname))) {
-				write(child_out, &h_errno, sizeof(int));
+				write_to_parent(child_out, &h_errno, sizeof(int));
 				close(child_out);
 				if (show_debug)
 					printf("DNS Error: %d\n", h_errno);
@@ -265,10 +286,10 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 			sin.sin_family = AF_INET;
 
 		sin.sin_port = htons(dns_params.port);
-		write(child_out, &zero, sizeof(zero));
-		write(child_out, &addrlen, sizeof(addrlen));
-		write(child_out, &sin, addrlen);
-		write(child_out, &zero, sizeof(zero));
+		write_to_parent(child_out, &zero, sizeof(zero));
+		write_to_parent(child_out, &addrlen, sizeof(addrlen));
+		write_to_parent(child_out, &sin, addrlen);
+		write_to_parent(child_out, &zero, sizeof(zero));
 #endif
 		dns_params.hostname[0] = '\0';
 	}
@@ -286,7 +307,7 @@ purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
  * Begin the functions for dealing with the DNS child processes.
  */
 static void
-cope_with_gdb_brokenness()
+cope_with_gdb_brokenness(void)
 {
 #ifdef __linux__
 	static gboolean already_done = FALSE;
@@ -460,7 +481,7 @@ send_dns_request_to_child(PurpleDnsQueryData *query_data,
 static void host_resolved(gpointer data, gint source, PurpleInputCondition cond);
 
 static void
-handle_next_queued_request()
+handle_next_queued_request(void)
 {
 	PurpleDnsQueryData *query_data;
 	PurpleDnsQueryResolverProcess *resolver;

@@ -190,13 +190,13 @@ attach_to_pidgin_window(PidginWindow *win, gpointer null)
 }
 
 static void
-detach_from_all_windows()
+detach_from_all_windows(void)
 {
 	g_list_foreach(pidgin_conv_windows_get_list(), (GFunc)detach_from_pidgin_window, NULL);
 }
 
 static void
-attach_to_all_windows()
+attach_to_all_windows(void)
 {
 	g_list_foreach(pidgin_conv_windows_get_list(), (GFunc)attach_to_pidgin_window, NULL);
 }

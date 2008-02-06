@@ -76,17 +76,17 @@ typedef struct
 	PurplePrefType type;
 	const char *pref;
 	const char *label;
-	GList *(*lv)();   /* If the value is to be selected from a number of choices */
+	GList *(*lv)(void);   /* If the value is to be selected from a number of choices */
 } Prefs;
 
 static GList *
-get_log_options()
+get_log_options(void)
 {
 	return purple_log_logger_get_options();
 }
 
 static GList *
-get_idle_options()
+get_idle_options(void)
 {
 	GList *list = NULL;
 	list = g_list_append(list, (char *)_("Based on keyboard use"));
@@ -99,7 +99,7 @@ get_idle_options()
 }
 
 static GList *
-get_status_titles()
+get_status_titles(void)
 {
 	GList *list = NULL;
 	GList *iter;
@@ -212,7 +212,7 @@ static Prefs idle[] =
 };
 
 static void
-free_strings()
+free_strings(void)
 {
 	g_list_foreach(pref_request.freestrings, (GFunc)g_free, NULL);
 	g_list_free(pref_request.freestrings);

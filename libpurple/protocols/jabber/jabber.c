@@ -390,26 +390,29 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 
 static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer timeout) 
 {
-	g_source_remove(GPOINTER_TO_INT(timeout));
+	purple_timeout_remove(GPOINTER_TO_INT(timeout));
+	js->keepalive_timeout = -1;
 }
 
 static gboolean jabber_pong_timeout(PurpleConnection *gc)
 {
+	JabberStream *js = gc->proto_data;
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 					_("Ping timeout"));
+	js->keepalive_timeout = -1;
 	return FALSE;
 }
 
 void jabber_keepalive(PurpleConnection *gc)
 {
-	JabberIq *iq = jabber_iq_new(gc->proto_data, JABBER_IQ_GET);
-	guint timeout;
+	JabberStream *js = gc->proto_data;
+	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
 
-        xmlnode *ping = xmlnode_new_child(iq->node, "ping");
-        xmlnode_set_namespace(ping, "urn:xmpp:ping");
+	xmlnode *ping = xmlnode_new_child(iq->node, "ping");
+	xmlnode_set_namespace(ping, "urn:xmpp:ping");
 
-	timeout = purple_timeout_add_seconds(20, (GSourceFunc)(jabber_pong_timeout), gc);
-        jabber_iq_set_callback(iq, jabber_pong_cb, GINT_TO_POINTER(timeout));
+	js->keepalive_timeout = purple_timeout_add_seconds(20, (GSourceFunc)(jabber_pong_timeout), gc);
+	jabber_iq_set_callback(iq, jabber_pong_cb, GINT_TO_POINTER(js->keepalive_timeout));
 	jabber_iq_send(iq);
 }
 
@@ -429,6 +432,7 @@ jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	}
 
 	while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
+		gc->last_received = time(NULL);
 		buf[len] = '\0';
 		purple_debug(PURPLE_DEBUG_INFO, "jabber", "Recv (ssl)(%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
@@ -456,6 +460,7 @@ jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 		return;
 
 	if((len = read(js->fd, buf, sizeof(buf) - 1)) > 0) {
+		gc->last_received = time(NULL);
 #ifdef HAVE_CYRUS_SASL
 		if (js->sasl_maxbuf>0) {
 			const char *out;
@@ -556,13 +561,12 @@ static void tls_init(JabberStream *js)
 	purple_input_remove(js->gc->inpa);
 	js->gc->inpa = 0;
 	js->gsc = purple_ssl_connect_with_host_fd(js->gc->account, js->fd,
-			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->host, js->gc);
+			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->certificate_CN, js->gc);
 }
 
 static void jabber_login_connect(JabberStream *js, const char *fqdn, const char *host, int port)
 {
 	js->serverFQDN = g_strdup(fqdn);
-	js->host = g_strdup(host);
 
 	if (purple_proxy_connect(js->gc, js->gc->account, host,
 			port, jabber_login_callback, js->gc) == NULL)
@@ -611,7 +615,9 @@ jabber_login(PurpleAccount *account)
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->write_buffer = purple_circ_buffer_new(512);
-	js->old_length = -1;
+	js->old_length = 0;
+	js->keepalive_timeout = -1;
+	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
@@ -649,7 +655,7 @@ jabber_login(PurpleAccount *account)
 	if(purple_account_get_bool(js->gc->account, "old_ssl", FALSE)) {
 		if(purple_ssl_is_supported()) {
 			js->gsc = purple_ssl_connect(js->gc->account,
-					connect_server[0] ? connect_server : js->user->domain,
+					js->certificate_CN,
 					purple_account_get_int(account, "port", 5223), jabber_login_callback_ssl,
 					jabber_ssl_connect_failure, js->gc);
 		} else {
@@ -1096,7 +1102,7 @@ void jabber_register_account(PurpleAccount *account)
 			g_free, g_free);
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
-	js->old_length = -1;
+	js->old_length = 0;
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
@@ -1124,6 +1130,7 @@ void jabber_register_account(PurpleAccount *account)
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
 	server = connect_server[0] ? connect_server : js->user->domain;
+	js->certificate_CN = g_strdup(server);
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
@@ -1300,7 +1307,7 @@ void jabber_close(PurpleConnection *gc)
 		js->commands = g_list_delete_link(js->commands, js->commands);
 	}
 	g_free(js->server_name);
-	g_free(js->host);
+	g_free(js->certificate_CN);
 	g_free(js->gmail_last_time);
 	g_free(js->gmail_last_tid);
 	g_free(js->old_msg);
@@ -1311,6 +1318,9 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->old_uri);
 	g_free(js->old_track);
 
+	if (js->keepalive_timeout != -1)
+		purple_timeout_remove(js->keepalive_timeout);
+	
 	g_free(js);
 
 	gc->proto_data = NULL;
@@ -1516,10 +1526,16 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 				} else
 					purple_notify_user_info_add_pair(user_info, _("Mood"), mood);
 			}
-			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {	
+			if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_TUNE)) {
 				PurpleStatus *tune = purple_presence_get_status(presence, "tune");
 				const char *title = purple_status_get_attr_string(tune, PURPLE_TUNE_TITLE);
-				purple_notify_user_info_add_pair(user_info, _("Current media"), title);
+				const char *artist = purple_status_get_attr_string(tune, PURPLE_TUNE_ARTIST);
+				const char *album = purple_status_get_attr_string(tune, PURPLE_TUNE_ALBUM);
+				char *playing = purple_util_format_song_info(title, artist, album, NULL);
+				if (playing) {
+					purple_notify_user_info_add_pair(user_info, _("Now Listening"), playing);
+					g_free(playing);
+				}
 			}
 		}
 
@@ -2287,14 +2303,10 @@ static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
 GList *jabber_attention_types(PurpleAccount *account)
 {
 	static GList *types = NULL;
-	PurpleAttentionType *attn;
 
 	if (!types) {
-		attn = g_new0(PurpleAttentionType, 1);
-		attn->name = _("Buzz");
-		attn->incoming_description = _("%s has buzzed you!");
-		attn->outgoing_description = _("Buzzing %s...");
-		types = g_list_append(types, attn);
+		types = g_list_append(types, purple_attention_type_new("Buzz", _("Buzz"),
+				_("%s has buzzed you!"), _("Buzzing %s...")));
 	}
 
 	return types;

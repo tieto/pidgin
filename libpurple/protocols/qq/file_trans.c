@@ -59,7 +59,7 @@ static guint32 _get_file_key(guint8 seed)
 	return key;
 }
 		
-static guint32 _gen_file_key()
+static guint32 _gen_file_key(void)
 {
 	guint8 seed;
 	
@@ -97,6 +97,7 @@ static void _fill_file_md5(const gchar *filename, gint filelen, guint8 *md5)
 	guint8 *buffer;
 	PurpleCipher *cipher;
 	PurpleCipherContext *context;
+	size_t wc;
 
 	const gint QQ_MAX_FILE_MD5_LENGTH = 10002432;
 
@@ -109,15 +110,20 @@ static void _fill_file_md5(const gchar *filename, gint filelen, guint8 *md5)
 
 	buffer = g_newa(guint8, filelen);
 	g_return_if_fail(buffer != NULL);
-	fread(buffer, filelen, 1, fp);
+	wc = fread(buffer, filelen, 1, fp);
+	fclose(fp);
+	if (wc != 1) {
+		purple_debug_error("qq", "Unable to read file: %s\n", filename);
+
+		/* TODO: XXX: Really, the caller should be modified to deal with this properly. */
+		return;
+	}
 
 	cipher = purple_ciphers_find_cipher("md5");
 	context = purple_cipher_context_new(cipher, NULL);
 	purple_cipher_context_append(context, buffer, filelen);
 	purple_cipher_context_digest(context, 16, md5, NULL);
 	purple_cipher_context_destroy(context);
-
-	fclose(fp);
 }
 
 static void _qq_get_file_header(guint8 *buf, guint8 **cursor, gint buflen, qq_file_header *fh)

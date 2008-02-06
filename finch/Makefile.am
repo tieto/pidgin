@@ -25,11 +25,13 @@ finch_SOURCES = \
 	gntft.c \
 	finch.c \
 	gntidle.c \
+	gntlog.c \
 	gntnotify.c \
 	gntplugin.c \
 	gntpounce.c \
 	gntprefs.c \
 	gntrequest.c \
+	gntroomlist.c \
 	gntsound.c \
 	gntstatus.c \
 	gntui.c
@@ -44,11 +46,13 @@ finch_headers = \
 	gntft.h \
 	finch.h \
 	gntidle.h \
+	gntlog.h \
 	gntnotify.h \
 	gntplugin.h \
 	gntpounce.h \
 	gntprefs.h \
 	gntrequest.h \
+	gntroomlist.h \
 	gntsound.h \
 	gntstatus.h \
 	gntui.h

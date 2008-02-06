@@ -169,20 +169,25 @@ void purple_roomlist_room_add(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 
 PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	g_return_val_if_fail(gc != NULL, NULL);
 
-	if (gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->roomlist_get_list)
+	if(prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->roomlist_get_list)
 		return prpl_info->roomlist_get_list(gc);
+
 	return NULL;
 }
 
 void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc;
 
@@ -192,15 +197,19 @@ void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 
 	g_return_if_fail(gc != NULL);
 
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->roomlist_cancel)
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->roomlist_cancel)
 		prpl_info->roomlist_cancel(list);
 }
 
 void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *category)
 {
+	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc;
 
@@ -211,11 +220,19 @@ void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *c
 	gc = purple_account_get_connection(list->account);
 	g_return_if_fail(gc != NULL);
 
-	if (gc->prpl != NULL)
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	if(gc)
+		prpl = purple_connection_get_prpl(gc);
 
-	if (prpl_info && prpl_info->roomlist_expand_category)
+	if(prpl)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	if(prpl_info && prpl_info->roomlist_expand_category)
 		prpl_info->roomlist_expand_category(list, category);
+}
+
+GList * purple_roomlist_get_fields(PurpleRoomlist *list)
+{
+	return list->fields;
 }
 
 /*@}*/
@@ -293,6 +310,26 @@ void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 	g_hash_table_destroy(components);
 }
 
+PurpleRoomlistRoomType purple_roomlist_room_get_type(PurpleRoomlistRoom *room)
+{
+	return room->type;
+}
+
+const char * purple_roomlist_room_get_name(PurpleRoomlistRoom *room)
+{
+	return room->name;
+}
+
+PurpleRoomlistRoom * purple_roomlist_room_get_parent(PurpleRoomlistRoom *room)
+{
+	return room->parent;
+}
+
+GList * purple_roomlist_room_get_fields(PurpleRoomlistRoom *room)
+{
+	return room->fields;
+}
+
 /*@}*/
 
 /**************************************************************************/
@@ -317,6 +354,21 @@ PurpleRoomlistField *purple_roomlist_field_new(PurpleRoomlistFieldType type,
 	f->hidden = hidden;
 
 	return f;
+}
+
+PurpleRoomlistFieldType purple_roomlist_field_get_type(PurpleRoomlistField *field)
+{
+	return field->type;
+}
+
+const char * purple_roomlist_field_get_label(PurpleRoomlistField *field)
+{
+	return field->label;
+}
+
+gboolean purple_roomlist_field_get_hidden(PurpleRoomlistField *field)
+{
+	return field->hidden;
 }
 
 /*@}*/

@@ -700,7 +700,6 @@ Section Uninstall
     Delete "$INSTDIR\ca-certs\GTE_CyberTrust_Global_Root.pem"
     Delete "$INSTDIR\ca-certs\Microsoft_Secure_Server_Authority.pem"
     Delete "$INSTDIR\ca-certs\StartCom_Free_SSL_CA.pem"
-    Delete "$INSTDIR\ca-certs\Verisign_Class3_Extended_Validation_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_Class3_Primary_CA.pem"
     Delete "$INSTDIR\ca-certs\Verisign_RSA_Secure_Server_CA.pem"
     RMDir "$INSTDIR\ca-certs"
@@ -1168,7 +1167,10 @@ Function ${UN}RunCheck
     MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION $(PIDGIN_IS_RUNNING) /SD IDCANCEL IDRETRY retry_runcheck
     Abort
 
-  done:
+  ; Close the Handle (If we don't do this, the uninstaller called from within will fail)
+  ; This is not optimal because there is a (small) window of time when a new process could start
+  System::Call 'kernel32::CloseHandle(i $R1) i .R1'
+
   Pop $R1
   Pop $R0
 FunctionEnd
@@ -1264,7 +1266,7 @@ Function .onInit
 
   ClearErrors
   ${GetOptions} "$R0" "/DS=" $R1
-  IfErrors +7
+  IfErrors +8
   SectionGetFlags ${SecDesktopShortcut} $R2
   StrCmp "1" $R1 0 +2
   IntOp $R2 $R2 | ${SF_SELECTED}
@@ -1275,7 +1277,7 @@ Function .onInit
 
   ClearErrors
   ${GetOptions} "$R0" "/SMS=" $R1
-  IfErrors +7
+  IfErrors +8
   SectionGetFlags ${SecStartMenuShortcut} $R2
   StrCmp "1" $R1 0 +2
   IntOp $R2 $R2 | ${SF_SELECTED}

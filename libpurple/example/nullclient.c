@@ -21,28 +21,11 @@
  *
  */
 
-/* XXX: we probably shouldn't include internal.h in examples */
-#include "internal.h"
-
-#include "account.h"
-#include "conversation.h"
-#include "core.h"
-#include "debug.h"
-#include "eventloop.h"
-#include "ft.h"
-#include "log.h"
-#include "notify.h"
-#include "prefs.h"
-#include "prpl.h"
-#include "pounce.h"
-#include "savedstatuses.h"
-#include "sound.h"
-#include "status.h"
-#include "util.h"
-#include "whiteboard.h"
+#include "purple.h"
 
 #include <glib.h>
 
+#include <signal.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -167,7 +150,7 @@ static PurpleConversationUiOps null_conv_uiops =
 };
 
 static void
-null_ui_init()
+null_ui_init(void)
 {
 	/**
 	 * This should initialize the UI components for all the modules. Here we
@@ -191,7 +174,7 @@ static PurpleCoreUiOps null_core_uiops =
 };
 
 static void
-init_libpurple()
+init_libpurple(void)
 {
 	/* Set a custom user directory (optional) */
 	purple_util_set_user_dir(CUSTOM_USER_DIRECTORY);
@@ -250,14 +233,14 @@ signed_on(PurpleConnection *gc, gpointer null)
 }
 
 static void
-connect_to_signals_for_demonstration_purposes_only()
+connect_to_signals_for_demonstration_purposes_only(void)
 {
 	static int handle;
 	purple_signal_connect(purple_connections_get_handle(), "signed-on", &handle,
 				PURPLE_CALLBACK(signed_on), NULL);
 }
 
-int main()
+int main(int argc, char *argv[])
 {
 	GList *iter;
 	int i, num;
@@ -268,6 +251,7 @@ int main()
 	GMainLoop *loop = g_main_loop_new(NULL, FALSE);
 	PurpleAccount *account;
 	PurpleSavedStatus *status;
+	char *res;
 
 	/* libpurple's built-in DNS resolution forks processes to perform
 	 * blocking lookups without blocking the main process.  It does not
@@ -290,12 +274,20 @@ int main()
 		}
 	}
 	printf("Select the protocol [0-%d]: ", i-1);
-	fgets(name, sizeof(name), stdin);
+	res = fgets(name, sizeof(name), stdin);
+	if (!res) {
+		fprintf(stderr, "Failed to gets protocol selection.");
+		abort();
+	}
 	sscanf(name, "%d", &num);
 	prpl = g_list_nth_data(names, num);
 
 	printf("Username: ");
-	fgets(name, sizeof(name), stdin);
+	res = fgets(name, sizeof(name), stdin);
+	if (!res) {
+		fprintf(stderr, "Failed to read user name.");
+		abort();
+	}
 	name[strlen(name) - 1] = 0;  /* strip the \n at the end */
 
 	/* Create the account */

@@ -119,7 +119,10 @@ enum {
 	DATA_COLUMN,
 
 	/**
- 	 * This column stores the GdkPixbuf for the status emblem. Currently only 'saved' is stored
+ 	 * This column stores the GdkPixbuf for the status emblem. Currently only 'saved' is stored.
+	 * In the GtkTreeModel for the dropdown, this is the stock-id (gchararray), and for the
+	 * GtkTreeModel for the cell_view (for the account-specific statusbox), this is the prpl-icon
+	 * (GdkPixbuf) of the account.
  	 */
 	EMBLEM_COLUMN,
 
@@ -317,12 +320,20 @@ statusbox_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 {
 	FILE *f;
 	gchar *path;
+	size_t wc;
 
 	if ((error_message != NULL) || (len == 0))
 		return;
 
 	f = purple_mkstemp(&path, TRUE);
-	fwrite(themedata, len, 1, f);
+	wc = fwrite(themedata, len, 1, f);
+	if (wc != 1) {
+		purple_debug_warning("theme_got_url", "Unable to write theme data.\n");
+		fclose(f);
+		g_unlink(path);
+		g_free(path);
+		return;
+	}
 	fclose(f);
 
 	icon_choose_cb(path, user_data);
@@ -500,20 +511,28 @@ static void
 pidgin_status_box_finalize(GObject *obj)
 {
 	PidginStatusBox *statusbox = PIDGIN_STATUS_BOX(obj);
+	int i;
 
 	purple_signals_disconnect_by_handle(statusbox);
 	purple_prefs_disconnect_by_handle(statusbox);
 
-	gdk_cursor_unref(statusbox->hand_cursor);
-	gdk_cursor_unref(statusbox->arrow_cursor);
+	destroy_icon_box(statusbox);
 
-	purple_imgstore_unref(statusbox->buddy_icon_img);
-	g_object_unref(G_OBJECT(statusbox->buddy_icon));
-	g_object_unref(G_OBJECT(statusbox->buddy_icon_hover));
+	if (statusbox->active_row)
+		gtk_tree_row_reference_free(statusbox->active_row);
 
-	if (statusbox->buddy_icon_sel)
-		gtk_widget_destroy(statusbox->buddy_icon_sel);
+	for (i = 0; i < G_N_ELEMENTS(statusbox->connecting_pixbufs); i++) {
+		if (statusbox->connecting_pixbufs[i] != NULL)
+			gdk_pixbuf_unref(statusbox->connecting_pixbufs[i]);
+	}
 
+	for (i = 0; i < G_N_ELEMENTS(statusbox->typing_pixbufs); i++) {
+		if (statusbox->typing_pixbufs[i] != NULL)
+			gdk_pixbuf_unref(statusbox->typing_pixbufs[i]);
+	}
+
+	g_object_unref(G_OBJECT(statusbox->store));
+	g_object_unref(G_OBJECT(statusbox->dropdown_store));
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
 
@@ -606,7 +625,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	char aa_color[8];
 	PurpleSavedStatus *saved_status;
 	char *primary, *secondary, *text;
-	GdkPixbuf *pixbuf;
+	GdkPixbuf *pixbuf, *emblem = NULL;
 	GtkTreePath *path;
 	gboolean account_status = FALSE;
 	PurpleAccount *acct = (status_box->token_status_account) ? status_box->token_status_account : status_box->account;
@@ -703,6 +722,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 		text = g_strdup_printf("%s - <span size=\"smaller\" color=\"%s\">%s</span>",
 				       purple_account_get_username(status_box->account),
 				       aa_color, secondary ? secondary : primary);
+		emblem = pidgin_create_prpl_icon(status_box->account, PIDGIN_PRPL_ICON_SMALL);
 	} else if (secondary != NULL) {
 		text = g_strdup_printf("%s<span size=\"smaller\" color=\"%s\"> - %s</span>",
 				       primary, aa_color, secondary);
@@ -719,10 +739,14 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	gtk_list_store_set(status_box->store, &(status_box->iter),
 			   ICON_COLUMN, pixbuf,
 			   TEXT_COLUMN, text,
+			   EMBLEM_COLUMN, emblem,
+			   EMBLEM_VISIBLE_COLUMN, (emblem != NULL),
 			   -1);
 	if ((status_box->typing == 0) && (!status_box->connecting))
 		g_object_unref(pixbuf);
 	g_free(text);
+	if (emblem)
+		g_object_unref(emblem);
 
 	/* Make sure to activate the only row in the tree view */
 	path = gtk_tree_path_new_from_string("0");
@@ -941,7 +965,7 @@ add_popular_statuses(PidginStatusBox *statusbox)
 
 /* This returns NULL if the active accounts don't have identical
  * statuses and a token account if they do */
-static PurpleAccount* check_active_accounts_for_identical_statuses()
+static PurpleAccount* check_active_accounts_for_identical_statuses(void)
 {
 	PurpleAccount *acct = NULL, *acct2;
 	GList *tmp, *tmp2, *active_accts = purple_accounts_get_all_active();
@@ -1156,18 +1180,15 @@ static void
 cache_pixbufs(PidginStatusBox *status_box)
 {
 	GtkIconSize icon_size;
+	int i;
 
 	g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 3, NULL);
 	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
-	if (status_box->connecting_pixbufs[0] != NULL)
-		gdk_pixbuf_unref(status_box->connecting_pixbufs[0]);
-	if (status_box->connecting_pixbufs[1] != NULL)
-		gdk_pixbuf_unref(status_box->connecting_pixbufs[1]);
-	if (status_box->connecting_pixbufs[2] != NULL)
-		gdk_pixbuf_unref(status_box->connecting_pixbufs[2]);
-	if (status_box->connecting_pixbufs[3] != NULL)
-		gdk_pixbuf_unref(status_box->connecting_pixbufs[3]);
+	for (i = 0; i < G_N_ELEMENTS(status_box->connecting_pixbufs); i++) {
+		if (status_box->connecting_pixbufs[i] != NULL)
+			gdk_pixbuf_unref(status_box->connecting_pixbufs[i]);
+	}
 
 	status_box->connecting_index = 0;
 	status_box->connecting_pixbufs[0] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT0,
@@ -1189,14 +1210,10 @@ cache_pixbufs(PidginStatusBox *status_box)
 	status_box->connecting_pixbufs[8] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT8,
 								     icon_size, "PidginStatusBox");
 
-	if (status_box->typing_pixbufs[0] != NULL)
-		gdk_pixbuf_unref(status_box->typing_pixbufs[0]);
-	if (status_box->typing_pixbufs[1] != NULL)
-		gdk_pixbuf_unref(status_box->typing_pixbufs[1]);
-	if (status_box->typing_pixbufs[2] != NULL)
-		gdk_pixbuf_unref(status_box->typing_pixbufs[2]);
-	if (status_box->typing_pixbufs[3] != NULL)
-		gdk_pixbuf_unref(status_box->typing_pixbufs[3]);
+	for (i = 0; i < G_N_ELEMENTS(status_box->typing_pixbufs); i++) {
+		if (status_box->typing_pixbufs[i] != NULL)
+			gdk_pixbuf_unref(status_box->typing_pixbufs[i]);
+	}
 
 	status_box->typing_index = 0;
 	status_box->typing_pixbufs[0] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING0,
@@ -1690,7 +1707,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
 
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, 
-					       G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
+					       G_TYPE_STRING, G_TYPE_POINTER, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN);
 	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, 
 							G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
@@ -1775,10 +1792,13 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 
 	status_box->icon_rend = gtk_cell_renderer_pixbuf_new();
 	status_box->text_rend = gtk_cell_renderer_text_new();
+	emblem_rend = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box->cell_view), status_box->icon_rend, FALSE);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box->cell_view), status_box->text_rend, TRUE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box->cell_view), emblem_rend, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->icon_rend, "pixbuf", ICON_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->text_rend, "markup", TEXT_COLUMN, NULL);
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), emblem_rend, "pixbuf", EMBLEM_COLUMN, "visible", EMBLEM_VISIBLE_COLUMN, NULL);
 #if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(status_box->text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif

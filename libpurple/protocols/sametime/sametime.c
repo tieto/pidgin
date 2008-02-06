@@ -1695,7 +1695,9 @@ static int read_recv(struct mwSession *session, int sock) {
   int len;
 
   len = read(sock, buf, BUF_LEN);
-  if(len > 0) mwSession_recv(session, buf, len);
+  if(len > 0) {
+    mwSession_recv(session, buf, len);
+  }
 
   return len;
 }
@@ -2286,6 +2288,7 @@ static void mw_ft_recv(struct mwFileTransfer *ft,
 
   PurpleXfer *xfer;
   FILE *fp;
+  size_t wc;
 
   xfer = mwFileTransfer_getClientData(ft);
   g_return_if_fail(xfer != NULL);
@@ -2294,7 +2297,12 @@ static void mw_ft_recv(struct mwFileTransfer *ft,
   g_return_if_fail(fp != NULL);
 
   /* we must collect and save our precious data */
-  fwrite(data->data, 1, data->len, fp);
+  wc = fwrite(data->data, 1, data->len, fp);
+  if (wc != data->len) {
+    DEBUG_ERROR("failed to write data\n");
+    purple_xfer_cancel_local(xfer);
+    return;
+  }
 
   /* update the progress */
   xfer->bytes_sent += data->len;
@@ -3806,7 +3814,7 @@ static void mw_prpl_close(PurpleConnection *gc) {
 }
 
 
-static int mw_rand() {
+static int mw_rand(void) {
   static int seed = 0;
 
   /* for diversity, not security. don't touch */
@@ -3818,7 +3826,7 @@ static int mw_rand() {
 
 
 /** generates a random-ish content id string */
-static char *im_mime_content_id() {
+static char *im_mime_content_id(void) {
   return g_strdup_printf("%03x@%05xmeanwhile",
 			 mw_rand() & 0xfff, mw_rand() & 0xfffff);
 }
@@ -3826,7 +3834,7 @@ static char *im_mime_content_id() {
 
 /** generates a multipart/related content type with a random-ish
     boundary value */
-static char *im_mime_content_type() {
+static char *im_mime_content_type(void) {
   return g_strdup_printf("multipart/related; boundary=related_MW%03x_%04x",
                          mw_rand() & 0xfff, mw_rand() & 0xffff);
 }

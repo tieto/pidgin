@@ -30,16 +30,6 @@
 void yahoo_process_p2pfilexfer( PurpleConnection *gc, struct yahoo_packet *pkt );
 
 /**
- * Process ymsg version 7 file receive invites.
- */
-void yahoo_process_y7_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt);
-
-/**
- * Process ymsg version 7 file receive connection setups.
- */
-void yahoo_process_y7_filetransfer_info(PurpleConnection *gc, struct yahoo_packet *pkt);
-
-/**
  * Process ymsg file receive invites.
  */
 void yahoo_process_filetransfer(PurpleConnection *gc, struct yahoo_packet *pkt);
@@ -60,5 +50,9 @@ PurpleXfer *yahoo_new_xfer(PurpleConnection *gc, const char *who);
  * @param file What file? If NULL, user will choose after this call.
  */
 void yahoo_send_file(PurpleConnection *gc, const char *who, const char *file);
+
+void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt);
+void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *pkt);
+void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *pkt);
 
 #endif

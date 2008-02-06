@@ -180,7 +180,9 @@
 #define MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS	1
 #define MSIM_CONTACT_LIST_IMPORT_TOP_FRIENDS	2
 
-#define MsimAttentionType PurpleAttentionType
+/* Error codes */
+#define MSIM_ERROR_INCORRECT_PASSWORD           260
+#define MSIM_ERROR_LOGGED_IN_ELSEWHERE          6
 
 /* Functions */
 gboolean msim_load(PurplePlugin *plugin);
@@ -200,6 +202,8 @@ void msim_set_idle(PurpleConnection *gc, int time);
 
 void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
+
+const char *msim_normalize(const PurpleAccount *account, const char *str);
 
 gboolean msim_offline_message(const PurpleBuddy *buddy);
 

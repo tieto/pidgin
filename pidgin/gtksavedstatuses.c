@@ -669,6 +669,7 @@ pidgin_status_window_hide(void)
 	purple_request_close_with_handle(status_window);
 	purple_notify_close_with_handle(status_window);
 	purple_signals_disconnect_by_handle(status_window);
+	g_object_unref(G_OBJECT(status_window->model));
 	g_free(status_window);
 	status_window = NULL;
 }
@@ -723,6 +724,7 @@ status_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 
 	status_editor_remove_dialog(dialog);
 	g_free(dialog->original_title);
+	g_object_unref(G_OBJECT(dialog->model));
 	g_free(dialog);
 
 	return FALSE;
@@ -1092,7 +1094,6 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	GtkWidget *entry;
 	GtkWidget *frame;
 	GtkWidget *hbox;
-	GtkWidget *label;
 	GtkWidget *sw;
 	GtkWidget *text;
 	GtkWidget *toolbar;
@@ -1141,52 +1142,29 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	/* Title */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-	label = gtk_label_new_with_mnemonic(_("_Title:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, label);
-
 	entry = gtk_entry_new();
 	dialog->title = GTK_ENTRY(entry);
 	if ((saved_status != NULL)
 			&& !purple_savedstatus_is_transient(saved_status)
 			&& (purple_savedstatus_get_title(saved_status) != NULL))
 		gtk_entry_set_text(GTK_ENTRY(entry), purple_savedstatus_get_title(saved_status));
-	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(editor_title_changed_cb), dialog);
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Title:"), sg, entry, TRUE, NULL);
 
 	/* Status type */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-	label = gtk_label_new_with_mnemonic(_("_Status:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, label);
-
 	if (saved_status != NULL)
 		dropdown = create_status_type_menu(purple_savedstatus_get_type(saved_status));
 	else
 		dropdown = create_status_type_menu(PURPLE_STATUS_AWAY);
 	dialog->type = GTK_OPTION_MENU(dropdown);
-	gtk_box_pack_start(GTK_BOX(hbox), dropdown, TRUE, TRUE, 0);
+	pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Status:"), sg, dropdown, TRUE, NULL);
 
 	/* Status message */
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
-
-	label = gtk_label_new_with_mnemonic(_("_Message:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, label);
-
 	frame = pidgin_create_imhtml(TRUE, &text, &toolbar, NULL);
 	dialog->message = GTK_IMHTML(text);
-	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
+	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("_Message:"), sg, frame, TRUE, NULL);
+	gtk_container_child_set(GTK_CONTAINER(vbox), hbox, "expand", TRUE, "fill", TRUE, NULL);
 	focus_chain = g_list_prepend(focus_chain, dialog->message);
 	gtk_container_set_focus_chain(GTK_CONTAINER(hbox), focus_chain);
 	g_list_free(focus_chain);

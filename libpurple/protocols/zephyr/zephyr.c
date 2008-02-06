@@ -53,7 +53,7 @@
 
 extern Code_t ZGetLocations(ZLocations_t *, int *);
 extern Code_t ZSetLocation(char *);
-extern Code_t ZUnsetLocation();
+extern Code_t ZUnsetLocation(void);
 extern Code_t ZGetSubscriptions(ZSubscription_t *, int*);
 extern char __Zephyr_realm[];
 typedef struct _zframe zframe;
@@ -156,13 +156,20 @@ extern const char *username;
 #endif
 
 static Code_t zephyr_subscribe_to(zephyr_account* zephyr, char* class, char *instance, char *recipient, char* galaxy) {
+	size_t result;
+	Code_t ret_val = -1;
 
 	if (use_tzc(zephyr)) {
 		/* ((tzcfodder . subscribe) ("class" "instance" "recipient")) */
 		gchar *zsubstr = g_strdup_printf("((tzcfodder . subscribe) (\"%s\" \"%s\" \"%s\"))\n",class,instance,recipient);
-		write(zephyr->totzc[ZEPHYR_FD_WRITE],zsubstr,strlen(zsubstr));
+		size_t len = strlen(zsubstr);
+		result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zsubstr,len);
+		if (result != len) {
+			purple_debug_error("zephyr", "Unable to write a message: %s\n", g_strerror(errno));
+		} else {
+			ret_val = ZERR_NONE;
+		}
 		g_free(zsubstr);
-		return ZERR_NONE;
 	}
 	else {
 		if (use_zeph02(zephyr)) {
@@ -170,13 +177,10 @@ static Code_t zephyr_subscribe_to(zephyr_account* zephyr, char* class, char *ins
 			sub.zsub_class = class;
 			sub.zsub_classinst = instance;
 			sub.zsub_recipient = recipient; 
-			return ZSubscribeTo(&sub,1,0);
-		} else {
-			/* This should not happen */
-			return -1;
+			ret_val = ZSubscribeTo(&sub,1,0);
 		}
 	}
-	return -1;
+	return ret_val;
 }
 
 char *local_zephyr_normalize(zephyr_account* zephyr,const char *);
@@ -854,52 +858,8 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 			
 			if (!g_ascii_strcasecmp(notice.z_opcode,"PING"))
 				serv_got_typing(gc,stripped_sender,ZEPHYR_TYPING_RECV_TIMEOUT, PURPLE_TYPING);
-			else {
-				/* Based on the values of
-				   account->permit_deny,
-				   account->permit, account>deny , and
-				   the buddylist */
-
-				GSList* l;
-				gboolean in_deny;
-
-				switch (gc->account->perm_deny) {
-				case PURPLE_PRIVACY_ALLOW_ALL: 
-					in_deny = 0; break;
-				case PURPLE_PRIVACY_DENY_ALL: 
-					in_deny = 1; break;
-				case PURPLE_PRIVACY_ALLOW_USERS: /* See if stripped_sender is in gc->account->permit and allow appropriately */
-					in_deny = 1;
-					for(l=gc->account->permit;l!=NULL;l=l->next) {
-						if (!purple_utf8_strcasecmp(stripped_sender, purple_normalize(gc->account, (char *)l->data))) {
-							in_deny=0;
-							break;
-						} 
-					}
-					break;
-				case PURPLE_PRIVACY_DENY_USERS: /* See if stripped_sender is in gc->account->deny and deny if so */ 
-					in_deny = 0;
-					for(l=gc->account->deny;l!=NULL;l=l->next) {
-						if (!purple_utf8_strcasecmp(stripped_sender, purple_normalize(gc->account, (char *)l->data))) {
-							in_deny=1;
-							break;
-						} 
-					}
-					break;
-				case PURPLE_PRIVACY_ALLOW_BUDDYLIST: 
-					in_deny = 1;
-					if (purple_find_buddy(gc->account,stripped_sender)!=NULL) {
-						in_deny = 0;
-					}
-					break;
-				default: 
-					in_deny=0; break;
-				}
-				
-				if (!in_deny) {
-					serv_got_im(gc, stripped_sender, buf3, flags, time(NULL));
-				}
-			}
+			else
+				serv_got_im(gc, stripped_sender, buf3, flags, time(NULL));
 
 			g_free(stripped_sender);
 		} else {
@@ -1373,7 +1333,11 @@ static gint check_loc(gpointer data)
 					} else 
 						if (use_tzc(zephyr)) {
 							gchar *zlocstr = g_strdup_printf("((tzcfodder . zlocate) \"%s\")\n",chk);
-							write(zephyr->totzc[ZEPHYR_FD_WRITE],zlocstr,strlen(zlocstr));
+							size_t len = strlen(zlocstr);
+							size_t result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zlocstr,len);
+							if (result != len) {
+								purple_debug_error("zephyr", "Unable to write a message: %s\n", g_strerror(errno));
+							}
 							g_free(zlocstr);
 						}
 				}
@@ -1386,7 +1350,7 @@ static gint check_loc(gpointer data)
 
 #endif /* WIN32 */
 
-static char *get_exposure_level()
+static char *get_exposure_level(void)
 {
 	/* XXX add real error reporting */
 	char *exposure = ZGetVariable("exposure");
@@ -2058,7 +2022,7 @@ static void zephyr_close(PurpleConnection * gc)
 static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instance, char* recipient, const char *im, 
 			       const char *sig, char *opcode) ;
 
-static const char * zephyr_get_signature()
+static const char * zephyr_get_signature(void)
 {
 	/* XXX add zephyr error reporting */
 	const char * sig =ZGetVariable("zwrite-signature");
@@ -2193,6 +2157,8 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 	html_buf2 = purple_unescape_html(html_buf);
 
 	if(use_tzc(zephyr)) {
+		size_t len;
+		size_t result;
 		char* zsendstr;
 		/* CMU cclub tzc doesn't grok opcodes for now  */
 		char* tzc_sig = zephyr_tzc_escape_msg(sig);
@@ -2200,7 +2166,14 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 		zsendstr = g_strdup_printf("((tzcfodder . send) (class . \"%s\") (auth . t) (recipients (\"%s\" . \"%s\")) (message . (\"%s\" \"%s\"))	) \n",
 					   zclass, instance, recipient, tzc_sig, tzc_body);
 		/*		fprintf(stderr,"zsendstr = %s\n",zsendstr); */
-		write(zephyr->totzc[ZEPHYR_FD_WRITE],zsendstr,strlen(zsendstr));
+		len = strlen(zsendstr);
+		result = write(zephyr->totzc[ZEPHYR_FD_WRITE], zsendstr, len);
+		if (result != len) {
+			g_free(zsendstr);
+			g_free(html_buf2);
+			g_free(html_buf);
+			return errno;
+		}
 		g_free(zsendstr);
 	} else if (use_zeph02(zephyr)) {
 		ZNotice_t notice;
@@ -2221,6 +2194,9 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 		purple_debug_info("zephyr","About to send notice\n");
 		if (! ZSendNotice(&notice, ZAUTH) == ZERR_NONE) {
 			/* XXX handle errors here */
+			g_free(buf);
+			g_free(html_buf2);
+			g_free(html_buf);
 			return 0;
 		}
 		purple_debug_info("zephyr","notice sent\n");
@@ -2252,12 +2228,32 @@ char *local_zephyr_normalize(zephyr_account *zephyr,const char *orig)
 	return buf;
 }
 
+static const char *zephyr_normalize(const PurpleAccount *account, const char *who)
+{
+	static char buf[BUF_LEN];
+	PurpleConnection *gc;
+	char *tmp;
+
+	gc = purple_account_get_connection(account);
+	tmp = local_zephyr_normalize(gc->proto_data, who);
+
+	if (strlen(tmp) >= sizeof(buf)) {
+		g_free(tmp);
+		return NULL;
+	}
+
+	strcpy(buf, tmp);
+	g_free(tmp);
+
+	return buf;
+}
+
 static void zephyr_zloc(PurpleConnection *gc, const char *who)
 {
 	ZAsyncLocateData_t ald;
 	zephyr_account *zephyr = gc->proto_data;
 	gchar* normalized_who = local_zephyr_normalize(zephyr,who);
-	
+
 	if (use_zeph02(zephyr)) {
 		if (ZRequestLocations(normalized_who, &ald, UNACKED, ZAUTH) == ZERR_NONE) {
 			zephyr->pending_zloc_names = g_list_append(zephyr->pending_zloc_names,
@@ -2266,14 +2262,22 @@ static void zephyr_zloc(PurpleConnection *gc, const char *who)
 			/* XXX deal with errors somehow */
 		}
 	} else if (use_tzc(zephyr)) {
+		size_t len;
+		size_t result;
 		char* zlocstr = g_strdup_printf("((tzcfodder . zlocate) \"%s\")\n",normalized_who);
 		zephyr->pending_zloc_names = g_list_append(zephyr->pending_zloc_names, g_strdup(normalized_who));
-		write(zephyr->totzc[ZEPHYR_FD_WRITE],zlocstr,strlen(zlocstr));
+		len = strlen(zlocstr);
+		result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zlocstr,len);
+		if (result != len) {
+			purple_debug_error("zephyr", "Unable to write a message: %s\n", g_strerror(errno));
+		}
 		g_free(zlocstr);
 	}
 }
 
 static void zephyr_set_status(PurpleAccount *account, PurpleStatus *status) {
+	size_t len;
+	size_t result;
 	zephyr_account *zephyr = purple_account_get_connection(account)->proto_data;
 	PurpleStatusPrimitive primitive = purple_status_type_get_primitive(purple_status_get_type(status));
 
@@ -2291,7 +2295,11 @@ static void zephyr_set_status(PurpleAccount *account, PurpleStatus *status) {
 		}
 		else {
 			char *zexpstr = g_strdup_printf("((tzcfodder . set-location) (hostname . \"%s\") (exposure . \"%s\"))\n",zephyr->ourhost,zephyr->exposure);
-			write(zephyr->totzc[ZEPHYR_FD_WRITE],zexpstr,strlen(zexpstr));
+			len = strlen(zexpstr);
+			result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zexpstr,len);
+			if (result != len) {
+				purple_debug_error("zephyr", "Unable to write message: %s\n", g_strerror(errno));
+			}
 			g_free(zexpstr);
 		}
 	} 
@@ -2301,7 +2309,11 @@ static void zephyr_set_status(PurpleAccount *account, PurpleStatus *status) {
 			ZSetLocation(EXPOSE_OPSTAFF);
 		} else {
 			char *zexpstr = g_strdup_printf("((tzcfodder . set-location) (hostname . \"%s\") (exposure . \"%s\"))\n",zephyr->ourhost,EXPOSE_OPSTAFF);
-			write(zephyr->totzc[ZEPHYR_FD_WRITE],zexpstr,strlen(zexpstr));
+			len = strlen(zexpstr);
+			result = write(zephyr->totzc[ZEPHYR_FD_WRITE],zexpstr,len);
+			if (result != len) {
+				purple_debug_error("zephyr", "Unable to write message: %s\n", g_strerror(errno));
+			}
 			g_free(zexpstr);
 		}
 	}
@@ -2676,7 +2688,7 @@ static PurpleCmdRet zephyr_purple_cmd_zc(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 }
 
-static void zephyr_register_slash_commands()
+static void zephyr_register_slash_commands(void)
 {
 
 	purple_cmd_register("msg","ws", PURPLE_CMD_P_PRPL,
@@ -2746,36 +2758,6 @@ static void zephyr_register_slash_commands()
 }
 
 
-static void
-zephyr_add_deny(PurpleConnection *gc, const char *who)
-{
-	purple_privacy_deny_add(gc->account,who,1);
-}
-
-static void
-zephyr_remove_deny(PurpleConnection *gc, const char *who)
-{
-	purple_privacy_deny_remove(gc->account,who,1);
-}
-
-static void
-zephyr_add_permit(PurpleConnection *gc, const char *who)
-{
-	purple_privacy_permit_add(gc->account,who,1);
-}
-
-static void
-zephyr_remove_permit(PurpleConnection *gc, const char *who)
-{
-	purple_privacy_permit_remove(gc->account,who,1);
-}
-
-static void
-zephyr_set_permit_deny(PurpleConnection *gc)
-{
-	/* This doesn't have to do anything, since really, we can just check account->perm_deny when deciding whether to di */
-	return;
-}
 static int zephyr_resubscribe(PurpleConnection *gc)
 {
 	/* Resubscribe to the in-memory list of subscriptions and also
@@ -2884,11 +2866,11 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,					/* add_buddies */
 	NULL,					/* remove_buddy */
 	NULL,					/* remove_buddies */
-	zephyr_add_permit,		/* add_permit */
-	zephyr_add_deny,		/* add_deny */
-	zephyr_remove_permit,	/* remove_permit */
-	zephyr_remove_deny,		/* remove_deny */
-	zephyr_set_permit_deny,	/* set_permit_deny */
+	NULL,					/* add_permit */
+	NULL,					/* add_deny */
+	NULL,					/* remove_permit */
+	NULL,					/* remove_deny */
+	NULL,					/* set_permit_deny */
 	zephyr_join_chat,		/* join_chat */
 	NULL,					/* reject_chat -- No chat invites*/
 	zephyr_get_chat_name,	/* get_chat_name */
@@ -2905,7 +2887,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,					/* rename_group */
 	NULL,					/* buddy_free */
 	NULL,					/* convo_closed */
-	NULL,					/* normalize */
+	zephyr_normalize,		/* normalize */
 	NULL,					/* XXX set_buddy_icon */
 	NULL,					/* remove_group */
 	NULL,					/* XXX get_cb_real_name */

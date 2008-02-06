@@ -32,6 +32,7 @@
 #include "proxy.h"
 #include "request.h"
 #include "util.h"
+#include "debug.h"
 
 #define FT_INITIAL_BUFFER_SIZE 4096
 #define FT_MAX_BUFFER_SIZE     65535
@@ -668,6 +669,22 @@ purple_xfer_get_remote_port(const PurpleXfer *xfer)
 	return xfer->remote_port;
 }
 
+time_t
+purple_xfer_get_start_time(const PurpleXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, 0);
+
+	return xfer->start_time;
+}
+
+time_t
+purple_xfer_get_end_time(const PurpleXfer *xfer)
+{
+	g_return_val_if_fail(xfer != NULL, 0);
+
+	return xfer->end_time;
+}
+
 void
 purple_xfer_set_completed(PurpleXfer *xfer, gboolean completed)
 {
@@ -903,7 +920,12 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 	if (condition & PURPLE_INPUT_READ) {
 		r = purple_xfer_read(xfer, &buffer);
 		if (r > 0) {
-			fwrite(buffer, 1, r, xfer->dest_fp);
+			const size_t wc = fwrite(buffer, 1, r, xfer->dest_fp);
+			if (wc != r) {
+				purple_debug_error("filetransfer", "Unable to write whole buffer.\n");
+				purple_xfer_cancel_remote(xfer);
+				return;
+			}
 		} else if(r < 0) {
 			purple_xfer_cancel_remote(xfer);
 			return;
@@ -911,6 +933,7 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 	}
 
 	if (condition & PURPLE_INPUT_WRITE) {
+		size_t result;
 		size_t s = MIN(purple_xfer_get_bytes_remaining(xfer), xfer->current_buffer_size);
 
 		/* this is so the prpl can keep the connection open
@@ -925,7 +948,13 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 
 		buffer = g_malloc0(s);
 
-		fread(buffer, 1, s, xfer->dest_fp);
+		result = fread(buffer, 1, s, xfer->dest_fp);
+		if (result != s) {
+			purple_debug_error("filetransfer", "Unable to read whole buffer.\n");
+			purple_xfer_cancel_remote(xfer);
+			g_free(buffer);
+			return;
+		}
 
 		/* Write as much as we're allowed to. */
 		r = purple_xfer_write(xfer, buffer, s);

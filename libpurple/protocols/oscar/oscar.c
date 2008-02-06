@@ -7,6 +7,7 @@
  * Some code copyright (C) 2001-2007, Mark Doliner <thekingant@users.sourceforge.net>
  * Some code copyright (C) 2005, Jonathan Clark <ardentlygnarly@users.sourceforge.net>
  * Some code copyright (C) 2007, ComBOTS Product GmbH (htfv) <foss@combots.com>
+ * Some code copyright (C) 2008, Aman Gupta
  *
  * Most libfaim code copyright (C) 1998-2001 Adam Fritzler <afritz@auk.cx>
  * Some libfaim code copyright (C) 2001-2004 Mark Doliner <thekingant@users.sourceforge.net>
@@ -196,7 +197,6 @@ static int purple_ssi_gotadded     (OscarData *, FlapConnection *, FlapFrame *, 
 
 static void purple_icons_fetch(PurpleConnection *gc);
 
-static void recent_buddies_cb(const char *name, PurplePrefType type, gconstpointer value, gpointer data);
 void oscar_set_info(PurpleConnection *gc, const char *info);
 static void oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, PurpleStatus *status);
 static void oscar_set_extendedstatus(PurpleConnection *gc);
@@ -1181,6 +1181,48 @@ flap_connection_established(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	return 1;
 }
 
+static void
+idle_reporting_pref_cb(const char *name, PurplePrefType type,
+		gconstpointer value, gpointer data)
+{
+	PurpleConnection *gc;
+	OscarData *od;
+	gboolean report_idle;
+	guint32 presence;
+
+	gc = data;
+	od = gc->proto_data;
+	report_idle = strcmp((const char *)value, "none") != 0;
+	presence = aim_ssi_getpresence(od->ssi.local);
+
+	if (report_idle)
+		aim_ssi_setpresence(od, presence | 0x400);
+	else
+		aim_ssi_setpresence(od, presence & ~0x400);
+}
+
+/**
+ * Should probably make a "Use recent buddies group" account preference
+ * so that this option is surfaced to the user.
+ */
+static void
+recent_buddies_pref_cb(const char *name, PurplePrefType type,
+		gconstpointer value, gpointer data)
+{
+	PurpleConnection *gc;
+	OscarData *od;
+	guint32 presence;
+
+	gc = data;
+	od = gc->proto_data;
+	presence = aim_ssi_getpresence(od->ssi.local);
+
+	if (value)
+		aim_ssi_setpresence(od, presence & ~AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES);
+	else
+		aim_ssi_setpresence(od, presence | AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES);
+}
+
 void
 oscar_login(PurpleAccount *account)
 {
@@ -1271,7 +1313,8 @@ oscar_login(PurpleAccount *account)
 	}
 
 	/* Connect to core Purple signals */
-	purple_prefs_connect_callback(gc, "/plugins/prpl/oscar/recent_buddies", recent_buddies_cb, gc);
+	purple_prefs_connect_callback(gc, "/purple/away/idle_reporting", idle_reporting_pref_cb, gc);
+	purple_prefs_connect_callback(gc, "/plugins/prpl/oscar/recent_buddies", recent_buddies_pref_cb, gc);
 
 	newconn = flap_connection_new(od, SNAC_FAMILY_AUTH);
 	newconn->connect_data = purple_proxy_connect(NULL, account,
@@ -1516,6 +1559,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 {
 	struct pieceofcrap *pos = data;
 	gchar *buf;
+	ssize_t result;
 
 	if (!PURPLE_CONNECTION_IS_VALID(pos->gc))
 	{
@@ -1527,8 +1571,8 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 	pos->fd = source;
 
 	if (source < 0) {
-		buf = g_strdup_printf(_("You may be disconnected shortly.  You may want to use TOC until "
-			"this is fixed.  Check %s for updates."), PURPLE_WEBSITE);
+		buf = g_strdup_printf(_("You may be disconnected shortly.  "
+				"Check %s for updates."), PURPLE_WEBSITE);
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid AIM login hash."),
 							buf);
@@ -1540,7 +1584,18 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 
 	buf = g_strdup_printf("GET " AIMHASHDATA "?offset=%ld&len=%ld&modname=%s HTTP/1.0\n\n",
 			pos->offset, pos->len, pos->modname ? pos->modname : "");
-	write(pos->fd, buf, strlen(buf));
+	result = send(pos->fd, buf, strlen(buf), 0);
+	if (result != strlen(buf)) {
+		if (result < 0)
+			purple_debug_error("oscar", "Error writing %" G_GSIZE_FORMAT
+					" bytes to fetch AIM hash data: %s\n",
+					strlen(buf), g_strerror(errno));
+		else
+			purple_debug_error("oscar", "Tried to write %"
+					G_GSIZE_FORMAT " bytes to fetch AIM hash data but "
+					"instead wrote %" G_GSIZE_FORMAT " bytes\n",
+					strlen(buf), result);
+	}
 	g_free(buf);
 	g_free(pos->modname);
 	pos->inpa = purple_input_add(pos->fd, PURPLE_INPUT_READ, damn_you, pos);
@@ -1722,8 +1777,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	int type = 0;
 	gboolean buddy_is_away = FALSE;
 	const char *status_id;
-	gboolean have_status_message = FALSE;
-	char *message = NULL;
 	va_list ap;
 	aim_userinfo_t *info;
 
@@ -1771,21 +1824,6 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
 	}
 
-	/*
-	 * Handle the available message.  If info->status is NULL then the user
-	 * may or may not have an available message, so don't do anything.  If
-	 * info->status is set to the empty string, then the user's client DOES
-	 * support available messages and the user DOES NOT have one set.
-	 * Otherwise info->status contains the available message.
-	 */
-	if (info->status != NULL)
-	{
-		have_status_message = TRUE;
-		if (info->status[0] != '\0')
-			message = oscar_encoding_to_utf8(account, info->status_encoding,
-											 info->status, info->status_len);
-	}
-
 	if (info->flags & AIM_FLAG_WIRELESS)
 	{
 		purple_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_MOBILE, NULL);
@@ -1793,37 +1831,30 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		purple_prpl_got_user_status_deactive(account, info->sn, OSCAR_STATUS_ID_MOBILE);
 	}
 
-	if (have_status_message)
+	if (strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) == 0)
 	{
-		if ((!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE)) && (info->itmsurl != NULL))
-		{
-			char *itmsurl;
+		char *message = NULL;
+		char *itmsurl = NULL;
+
+		if (info->status != NULL && info->status[0] != '\0')
+			/* Grab the available message */
+			message = oscar_encoding_to_utf8(account, info->status_encoding,
+					info->status, info->status_len);
+
+		if (info->itmsurl_encoding && info->itmsurl && info->itmsurl_len)
+			/* Grab the iTunes Music Store URL */
 			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
 					info->itmsurl, info->itmsurl_len);
-			purple_prpl_got_user_status(account, info->sn, status_id,
-					"message", message, "itmsurl", itmsurl, NULL);
-			g_free(itmsurl);
-		}
-		else
-		{
-			purple_prpl_got_user_status(account, info->sn, status_id,
-					"message", message, NULL);
-		}
+
+		purple_prpl_got_user_status(account, info->sn, status_id,
+				"message", message, "itmsurl", itmsurl, NULL);
+
 		g_free(message);
+		g_free(itmsurl);
 	}
 	else
 	{
-		PurpleBuddy *b = purple_find_buddy(account, info->sn);
-		PurpleStatus *status = NULL;
-		const char *active_status_id = NULL;
-
-		if (b != NULL) {
-			status = purple_presence_get_active_status(purple_buddy_get_presence(b));
-			active_status_id = purple_status_get_id(status);
-		}
-
-		if (!active_status_id || strcmp(active_status_id, status_id))
-			purple_prpl_got_user_status(account, info->sn, status_id, NULL);
+		purple_prpl_got_user_status(account, info->sn, status_id, NULL);
 	}
 
 	/* Login time stuff */
@@ -1877,6 +1908,31 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			}
 		}
 		g_free(b16);
+	}
+
+	/*
+	 * If we didn't receive a status message with the status change,
+	 * or if the message is empty, and we have a note hash, then
+	 * query the ICQ6 status note.
+	 *
+	 * TODO: We should probably always query the status note regardless
+	 *       of whether they have a status message set, and we should
+	 *       figure out a way to display both the status note and the
+	 *       status message at the same time.
+	 */
+	if (info->status == NULL || info->status[0] == '\0')
+	{
+		struct aim_ssi_item *ssi_item;
+		aim_tlv_t *note_hash;
+
+		ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
+				NULL, info->sn, AIM_SSI_TYPE_BUDDY);
+		if (ssi_item != NULL)
+		{
+			note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
+			if (note_hash != NULL)
+				aim_icq_getstatusnote(od, info->sn, note_hash->value, note_hash->length);
+		}
 	}
 
 	return 1;
@@ -3000,7 +3056,7 @@ static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *
 
 	if (!aim_snvalid_icq(userinfo->sn))
 	{
-		if (strcmp(purple_buddy_get_name(b), userinfo->sn))
+		if (strcmp(purple_buddy_get_name(b), userinfo->sn) != 0)
 			serv_got_alias(gc, purple_buddy_get_name(b), userinfo->sn);
 		else
 			serv_got_alias(gc, purple_buddy_get_name(b), NULL);
@@ -3009,23 +3065,19 @@ static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *
 	presence = purple_buddy_get_presence(b);
 	status = purple_presence_get_active_status(presence);
 
-	if (!purple_status_is_available(status) && purple_status_is_online(status))
+	if (purple_status_is_online(status) && !purple_status_is_available(status) &&
+			userinfo->flags & AIM_FLAG_AWAY && userinfo->away_len > 0 &&
+			userinfo->away != NULL && userinfo->away_encoding != NULL)
 	{
-		if ((userinfo->flags & AIM_FLAG_AWAY) &&
-			(userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
-			gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
-			message = oscar_encoding_to_utf8(account, charset,
-			                                 userinfo->away,
-			                                 userinfo->away_len);
-			g_free(charset);
-			purple_status_set_attr_string(status, "message", message);
-			g_free(message);
-		}
-		else
-			/* Set an empty message so that we know not to show "pending" */
-			purple_status_set_attr_string(status, "message", "");
-
-		purple_blist_update_buddy_status(b, status);
+		gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
+		message = oscar_encoding_to_utf8(account, charset,
+		                                 userinfo->away,
+		                                 userinfo->away_len);
+		g_free(charset);
+		purple_prpl_got_user_status(account, userinfo->sn,
+				purple_status_get_id(status),
+				"message", message, NULL);
+		g_free(message);
 	}
 
 	return 1;
@@ -4444,7 +4496,6 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	PurplePresence *presence;
 	PurpleStatusType *status_type;
 	PurpleStatusPrimitive primitive;
-	gboolean invisible;
 
 	char *htmlinfo;
 	char *info_encoding = NULL;
@@ -4459,7 +4510,6 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	status_type = purple_status_get_type(status);
 	primitive = purple_status_type_get_primitive(status_type);
 	presence = purple_account_get_presence(account);
-	invisible = purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE);
 
 	if (!setinfo)
 	{
@@ -4520,12 +4570,11 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		/* This is needed for us to un-set any previous away message. */
 		away = g_strdup("");
 	}
-	else if ((primitive == PURPLE_STATUS_AWAY) ||
-			 (primitive == PURPLE_STATUS_EXTENDED_AWAY))
+	else
 	{
 		htmlaway = purple_status_get_attr_string(status, "message");
 		if ((htmlaway == NULL) || (*htmlaway == '\0'))
-			htmlaway = _("Away");
+			htmlaway = purple_status_type_get_name(status_type);
 		away = purple_prpl_oscar_convert_to_infotext(htmlaway, &awaylen, &away_encoding);
 
 		if (awaylen > od->rights.maxawaymsglen)
@@ -4898,9 +4947,21 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 			}
 		}
 		/* Presence settings (idle time visibility) */
-		if ((tmp = aim_ssi_getpresence(od->ssi.local)) != 0xFFFFFFFF)
-			if (!(tmp & 0x400))
+		tmp = aim_ssi_getpresence(od->ssi.local);
+		if (tmp != 0xFFFFFFFF) {
+			const char *idle_reporting_pref;
+			gboolean report_idle;
+
+			idle_reporting_pref = purple_prefs_get_string("/purple/away/idle_reporting");
+			report_idle = strcmp(idle_reporting_pref, "none") != 0;
+
+			if (report_idle)
 				aim_ssi_setpresence(od, tmp | 0x400);
+			else
+				aim_ssi_setpresence(od, tmp & ~0x400);
+		}
+
+
 	} /* end pruning buddies from local list */
 
 	/* Add from server list to local list */
@@ -5099,6 +5160,8 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	char *gname, *gname_utf8, *alias, *alias_utf8;
 	PurpleBuddy *b;
 	PurpleGroup *g;
+	struct aim_ssi_item *ssi_item;
+	aim_tlv_t *note_hash;
 	va_list ap;
 	guint16 snac_subtype, type;
 	const char *name;
@@ -5164,6 +5227,21 @@ purple_ssi_parseaddmod(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 					OSCAR_STATUS_ID_MOBILE, NULL);
 		}
 
+	}
+
+	ssi_item = aim_ssi_itemlist_finditem(od->ssi.local,
+			gname, name, AIM_SSI_TYPE_BUDDY);
+	if (ssi_item != NULL)
+	{
+		note_hash = aim_tlv_gettlv(ssi_item->data, 0x015c, 1);
+		if (note_hash != NULL)
+			aim_icq_getstatusnote(od, name, note_hash->value, note_hash->length);
+	}
+	else
+	{
+		purple_debug_error("oscar", "purple_ssi_parseaddmod: "
+				"Could not find ssi item for oncoming buddy %s, "
+				"group %s\n", name, gname);
 	}
 
 	g_free(gname_utf8);
@@ -5959,7 +6037,7 @@ oscar_ask_directim(gpointer object, gpointer ignored)
 			_("Because this reveals your IP address, it "
 			  "may be considered a security risk.  Do you "
 			  "wish to continue?"),
-			0,
+			0, /* Default action is "connect" */
 			purple_connection_get_account(gc), data->who, NULL,
 			data, 2,
 			_("C_onnect"), G_CALLBACK(oscar_ask_directim_yes_cb),
@@ -6522,33 +6600,6 @@ oscar_convo_closed(PurpleConnection *gc, const char *who)
 	}
 }
 
-static void
-recent_buddies_cb(const char *name, PurplePrefType type,
-				  gconstpointer value, gpointer data)
-{
-	PurpleConnection *gc = data;
-	OscarData *od = gc->proto_data;
-	guint32 presence;
-
-	presence = aim_ssi_getpresence(od->ssi.local);
-
-	if (value) {
-		presence &= ~AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES;
-		aim_ssi_setpresence(od, presence);
-	} else {
-		presence |= AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES;
-		aim_ssi_setpresence(od, presence);
-	}
-}
-
-#ifdef USE_PRPL_PREFERENCES
-	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/prpl/oscar/recent_buddies", _("Use recent buddies group"));
-	purple_plugin_pref_frame_add(frame, ppref);
-
-	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/prpl/oscar/show_idle", _("Show how long you have been idle"));
-	purple_plugin_pref_frame_add(frame, ppref);
-#endif
-
 const char *
 oscar_normalize(const PurpleAccount *account, const char *str)
 {
@@ -6711,7 +6762,7 @@ void oscar_init(PurplePluginProtocolInfo *prpl_info)
 	/* Preferences */
 	purple_prefs_add_none("/plugins/prpl/oscar");
 	purple_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
-	purple_prefs_add_bool("/plugins/prpl/oscar/show_idle", FALSE);
+	purple_prefs_remove("/plugins/prpl/oscar/show_idle");
 	purple_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
 
 	/* protocol handler */

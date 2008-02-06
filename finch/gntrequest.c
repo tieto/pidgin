@@ -36,6 +36,7 @@
 
 #include "finch.h"
 #include "gntrequest.h"
+#include "debug.h"
 #include "util.h"
 
 typedef struct
@@ -252,7 +253,7 @@ finch_request_action(const char *title, const char *primary,
 		void *user_data, size_t actioncount,
 		va_list actions)
 {
-	GntWidget *window, *box, *button;
+	GntWidget *window, *box, *button, *focus = NULL;
 	int i;
 
 	window = setup_request_window(title, primary, secondary, PURPLE_REQUEST_ACTION);
@@ -271,9 +272,14 @@ finch_request_action(const char *title, const char *primary,
 		g_object_set_data(G_OBJECT(button), "activate-userdata", user_data);
 		g_object_set_data(G_OBJECT(button), "activate-id", GINT_TO_POINTER(i));
 		g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(request_action_cb), window);
+
+		if (i == default_value)
+			focus = button;
 	}
 
 	gnt_widget_show(window);
+	if (focus)
+		gnt_box_give_focus_to_child(GNT_BOX(window), focus);
 
 	return window;
 }
@@ -302,26 +308,26 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 			PurpleRequestFieldType type = purple_request_field_get_type(field);
 			if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
 			{
-				GntWidget *check = field->ui_data;
+				GntWidget *check = FINCH_GET_DATA(field);
 				gboolean value = gnt_check_box_get_checked(GNT_CHECK_BOX(check));
 				purple_request_field_bool_set_value(field, value);
 			}
 			else if (type == PURPLE_REQUEST_FIELD_STRING)
 			{
-				GntWidget *entry = field->ui_data;
+				GntWidget *entry = FINCH_GET_DATA(field);
 				const char *text = gnt_entry_get_text(GNT_ENTRY(entry));
 				purple_request_field_string_set_value(field, (text && *text) ? text : NULL);
 			}
 			else if (type == PURPLE_REQUEST_FIELD_INTEGER)
 			{
-				GntWidget *entry = field->ui_data;
+				GntWidget *entry = FINCH_GET_DATA(field);
 				const char *text = gnt_entry_get_text(GNT_ENTRY(entry));
 				int value = (text && *text) ? atoi(text) : 0;
 				purple_request_field_int_set_value(field, value);
 			}
 			else if (type == PURPLE_REQUEST_FIELD_CHOICE)
 			{
-				GntWidget *combo = field->ui_data;
+				GntWidget *combo = FINCH_GET_DATA(field);
 				int id;
 				id = GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo)));
 				purple_request_field_choice_set_value(field, id);
@@ -332,7 +338,7 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 				if (purple_request_field_list_get_multi_select(field))
 				{
 					GList *iter;
-					GntWidget *tree = field->ui_data;
+					GntWidget *tree = FINCH_GET_DATA(field);
 
 					iter = purple_request_field_list_get_items(field);
 					for (; iter; iter = iter->next)
@@ -345,7 +351,7 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 				}
 				else
 				{
-					GntWidget *combo = field->ui_data;
+					GntWidget *combo = FINCH_GET_DATA(field);
 					gpointer data = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo));
 					list = g_list_append(list, data);
 				}
@@ -355,7 +361,7 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 			}
 			else if (type == PURPLE_REQUEST_FIELD_ACCOUNT)
 			{
-				GntWidget *combo = field->ui_data;
+				GntWidget *combo = FINCH_GET_DATA(field);
 				PurpleAccount *acc = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo));
 				purple_request_field_account_set_value(field, acc);
 			}
@@ -418,9 +424,10 @@ create_string_field(PurpleRequestField *field, GntWidget **screenname)
 			*screenname = entry;
 	} else if (hint && !strcmp(hint, "group")) {
 		PurpleBlistNode *node;
-		for (node = purple_blist_get_root(); node; node = node->next) {
+		for (node = purple_blist_get_root(); node;
+				node = purple_blist_node_get_sibling_next(node)) {
 			if (PURPLE_BLIST_NODE_IS_GROUP(node))
-				gnt_entry_add_suggest(GNT_ENTRY(entry), ((PurpleGroup *)node)->name);
+				gnt_entry_add_suggest(GNT_ENTRY(entry), purple_group_get_name((PurpleGroup *)node));
 		}
 	}
 	return entry;
@@ -587,35 +594,35 @@ finch_request_fields(const char *title, const char *primary,
 
 			if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
 			{
-				field->ui_data = create_boolean_field(field);
+				FINCH_SET_DATA(field, create_boolean_field(field));
 			}
 			else if (type == PURPLE_REQUEST_FIELD_STRING)
 			{
-				field->ui_data = create_string_field(field, &screenname);
+				FINCH_SET_DATA(field, create_string_field(field, &screenname));
 			}
 			else if (type == PURPLE_REQUEST_FIELD_INTEGER)
 			{
-				field->ui_data = create_integer_field(field);
+				FINCH_SET_DATA(field, create_integer_field(field));
 			}
 			else if (type == PURPLE_REQUEST_FIELD_CHOICE)
 			{
-				field->ui_data = create_choice_field(field);
+				FINCH_SET_DATA(field, create_choice_field(field));
 			}
 			else if (type == PURPLE_REQUEST_FIELD_LIST)
 			{
-				field->ui_data = create_list_field(field);
+				FINCH_SET_DATA(field, create_list_field(field));
 			}
 			else if (type == PURPLE_REQUEST_FIELD_ACCOUNT)
 			{
-				accountlist = field->ui_data = create_account_field(field);
+				accountlist = FINCH_SET_DATA(field, create_account_field(field));
 			}
 			else
 			{
-				field->ui_data = gnt_label_new_with_format(_("Not implemented yet."),
-						GNT_TEXT_FLAG_BOLD);
+				FINCH_SET_DATA(field, gnt_label_new_with_format(_("Not implemented yet."),
+						GNT_TEXT_FLAG_BOLD));
 			}
 			gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
-			gnt_box_add_widget(GNT_BOX(hbox), GNT_WIDGET(field->ui_data));
+			gnt_box_add_widget(GNT_BOX(hbox), GNT_WIDGET(FINCH_GET_DATA(field)));
 		}
 		if (grlist->next)
 			gnt_box_add_widget(GNT_BOX(box), gnt_hline_new());
@@ -822,5 +829,34 @@ void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *allfields)
 			}
 		}
 	}
+}
+
+GntWidget *finch_request_field_get_widget(PurpleRequestField *field)
+{
+	GntWidget *ret = NULL;
+	switch (purple_request_field_get_type(field)) {
+		case PURPLE_REQUEST_FIELD_BOOLEAN:
+			ret = create_boolean_field(field);
+			break;
+		case PURPLE_REQUEST_FIELD_STRING:
+			ret = create_string_field(field, NULL);
+			break;
+		case PURPLE_REQUEST_FIELD_INTEGER:
+			ret = create_integer_field(field);
+			break;
+		case PURPLE_REQUEST_FIELD_CHOICE:
+			ret = create_choice_field(field);
+			break;
+		case PURPLE_REQUEST_FIELD_LIST:
+			ret = create_list_field(field);
+			break;
+		case PURPLE_REQUEST_FIELD_ACCOUNT:
+			ret = create_account_field(field);
+			break;
+		default:
+			purple_debug_error("GntRequest", "Unimplemented request-field %d\n", purple_request_field_get_type(field));
+			break;
+	}
+	return ret;
 }
 

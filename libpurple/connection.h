@@ -196,11 +196,11 @@ typedef struct
 	 *  available; on Windows, it uses Win32's network change notification
 	 *  infrastructure.
 	 */
-	void (*network_connected)();
+	void (*network_connected)(void);
 	/** Called when libpurple discovers that the computer's network
 	 *  connection has gone away.
 	 */
-	void (*network_disconnected)();
+	void (*network_disconnected)(void);
 
 	/** Called when an error causes a connection to be disconnected.
 	 *  Called before #disconnected.  This op is intended to replace
@@ -251,6 +251,8 @@ struct _PurpleConnection
 	gboolean wants_to_die;
 
 	guint disconnect_timeout;    /**< Timer used for nasty stack tricks  */
+	time_t last_received;        /**< When we last received a packet. Set by the
+					  prpl to avoid sending unneeded keepalives */
 };
 
 #ifdef __cplusplus
@@ -362,7 +364,7 @@ PurpleConnectionState purple_connection_get_state(const PurpleConnection *gc);
  * @return TRUE if the account is connected, otherwise returns FALSE.
  */
 #define PURPLE_CONNECTION_IS_CONNECTED(gc) \
-	(gc->state == PURPLE_CONNECTED)
+	(purple_connection_get_state(gc) == PURPLE_CONNECTED)
 
 /**
  * Returns the connection's account.
@@ -372,6 +374,16 @@ PurpleConnectionState purple_connection_get_state(const PurpleConnection *gc);
  * @return The connection's account.
  */
 PurpleAccount *purple_connection_get_account(const PurpleConnection *gc);
+
+/**
+ * Returns the protocol plugin managing a connection.
+ *
+ * @param gc The connection.
+ *
+ * @return The protocol plugin.
+ * @since 2.4.0
+ */
+PurplePlugin * purple_connection_get_prpl(const PurpleConnection *gc);
 
 /**
  * Returns the connection's password.

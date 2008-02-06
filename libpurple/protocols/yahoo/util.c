@@ -31,6 +31,70 @@
 #include "yahoo.h"
 
 #include <string.h>
+/*
+ * Returns cookies formatted as a null terminated string for the given connection.
+ * Must g_free return value.
+ * 
+ * TODO:will work, but must test for strict correctness
+ */
+gchar* yahoo_get_cookies(PurpleConnection *gc)
+{
+	gchar *ans = NULL;
+	gchar *cur;
+	char firstflag = 1;
+	gchar *t1,*t2,*t3;
+	GSList *tmp;
+	GSList *cookies;
+	cookies = ((struct yahoo_data*)(gc->proto_data))->cookies;
+	tmp = cookies;
+	while(tmp)
+	{
+		cur = tmp->data;
+		t1 = ans;
+		t2 = g_strrstr(cur, ";expires=");
+		if(t2 == NULL)
+			t2 = g_strrstr(cur, "; expires=");
+		if(t2 == NULL)
+		{
+			if(firstflag)
+				ans = g_strdup_printf("%c=%s", cur[0], cur+2);
+			else
+				ans = g_strdup_printf("%s; %c=%s", t1, cur[0], cur+2);
+		}
+		else
+		{
+			t3 = strstr(t2+1, ";");
+			if(t3 != NULL)
+			{
+				t2[0] = '\0';
+
+				if(firstflag)
+					ans = g_strdup_printf("%c=%s%s", cur[0], cur+2, t3);
+				else
+					ans = g_strdup_printf("%s; %c=%s%s", t1, cur[0], cur+2, t3);
+
+				t2[0] = ';';
+			}
+			else
+			{
+				t2[0] = '\0';
+
+				if(firstflag)
+					ans = g_strdup_printf("%c=%s", cur[0], cur+2);
+				else
+					ans = g_strdup_printf("%s; %c=%s", t1, cur[0], cur+2);
+
+				t2[0] = ';';
+			}
+		}
+		if(firstflag)
+			firstflag = 0;
+		else
+			g_free(t1);
+		tmp = g_slist_next(tmp);
+	}
+	return ans;
+}
 
 /**
  * Encode some text to send to the yahoo server.
@@ -98,6 +162,25 @@ char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 		return ret;
 	else
 		return g_strdup("");
+}
+
+char *yahoo_convert_to_numeric(const char *str)
+{
+	GString *gstr = NULL;
+	char *retstr;
+	const unsigned char *p;
+
+	gstr = g_string_sized_new(strlen(str) * 6 + 1);
+
+	for (p = (unsigned char *)str; *p; p++) {
+		g_string_append_printf(gstr, "&#%u;", *p);
+	}
+
+	retstr = gstr->str;
+
+	g_string_free(gstr, FALSE);
+
+	return retstr;
 }
 
 /*
