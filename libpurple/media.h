@@ -26,10 +26,6 @@
 #ifndef __MEDIA_H_
 #define __MEDIA_H_
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #ifdef USE_FARSIGHT
 
 #include <farsight/farsight.h>
@@ -69,7 +65,7 @@ struct _PurpleMedia
 	PurpleMediaPrivate *priv;
 };
 
-GType purple_media_get_type();
+GType purple_media_get_type(void);
 
 void purple_media_get_elements(PurpleMedia *media, GstElement **audio_src, GstElement **audio_sink,
 						  GstElement **video_src, GstElement **video_sink);

@@ -37,7 +37,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/finch \
 	-I$(top_srcdir)/finch/libgnt \
-	$(DEBUG_CFLAGS) \	
+	$(DEBUG_CFLAGS) \
 	$(FARSIGHT_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(GNT_CFLAGS) \

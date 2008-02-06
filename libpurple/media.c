@@ -99,7 +99,8 @@ purple_media_get_type()
 			NULL,
 			sizeof(PurpleMedia),
 			0,
-			(GInstanceInitFunc) purple_media_init
+			(GInstanceInitFunc) purple_media_init,
+			NULL
 		};
 		type = g_type_register_static(G_TYPE_OBJECT, "PurpleMedia", &info, 0);
 	}

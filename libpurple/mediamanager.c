@@ -78,7 +78,8 @@ purple_media_manager_get_type()
 			NULL,
 			sizeof(PurpleMediaManager),
 			0,
-			(GInstanceInitFunc) purple_media_manager_init
+			(GInstanceInitFunc) purple_media_manager_init,
+			NULL
 		};
 		type = g_type_register_static(G_TYPE_OBJECT, "PurpleMediaManager", &info, 0);
 	}
