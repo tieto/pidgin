@@ -290,27 +290,6 @@ msim_login(PurpleAccount *acct)
 	gc->proto_data = msim_session_new(acct);
 	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC;
 
-#ifdef MSIM_MAX_PASSWORD_LENGTH
-	/* Passwords are limited in length. */
-	if (strlen(acct->password) > MSIM_MAX_PASSWORD_LENGTH) {
-		gchar *str;
-
-		str = g_strdup_printf(
-				_("Sorry, passwords over %d characters in length (yours is "
-				"%d) are not supported by MySpace."), 
-				MSIM_MAX_PASSWORD_LENGTH,
-				(int)strlen(acct->password));
-
-		/* Notify an error message also, because this is important! */
-		purple_notify_error(acct, _("MySpaceIM Error"), str, NULL);
-
-		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, str);
-		g_free(str);
-		return;
-	}
-#endif
-
 	/* 1. connect to server */
 	purple_connection_update_progress(gc, _("Connecting"),
 								  0,   /* which connection step this is */
@@ -1862,6 +1841,24 @@ msim_error(MsimSession *session, MsimMessage *msg)
 				reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 				if (!purple_account_get_remember_password(session->account))
 					purple_account_set_password(session->account, NULL);
+#ifdef MSIM_MAX_PASSWORD_LENGTH
+				if (strlen(session->account->password) > MSIM_MAX_PASSWORD_LENGTH) {
+					gchar *suggestion;
+
+					suggestion = g_strdup_printf(_("%s Your password is "
+							"%d characters, greater than the "
+							"expected maximum length of %d for "
+							"MySpaceIM. Please shorten your "
+							"password at http://profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try again."),
+							full_errmsg, (int)
+							strlen(session->account->password),
+							MSIM_MAX_PASSWORD_LENGTH);
+
+					/* Replace full_errmsg. */
+					g_free(full_errmsg);
+					full_errmsg = suggestion;
+				}
+#endif		
 				break;
 			case MSIM_ERROR_LOGGED_IN_ELSEWHERE: /* Logged in elsewhere */
 				reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
