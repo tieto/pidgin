@@ -50,11 +50,12 @@ msim_escape(const gchar *msg)
 {
 	GString *gs;
 	guint i, j;
+	guint msg_len;
 
 	gs = g_string_new("");
+	msg_len = strlen(msg);	
 
-
-	for (i = 0; i < strlen(msg); ++i) {
+	for (i = 0; i < msg_len; ++i) {
 		struct MSIM_ESCAPE_REPLACEMENT *replacement;
 		gchar *replace;
 
@@ -93,10 +94,12 @@ msim_unescape(const gchar *msg)
 {
 	GString *gs;
 	guint i, j;
+	guint msg_len;
 
 	gs = g_string_new("");
+	msg_len = strlen(msg);	
 
-	for (i = 0; i < strlen(msg); ++i) {
+	for (i = 0; i < msg_len; ++i) {
 		struct MSIM_ESCAPE_REPLACEMENT *replacement;
 		gchar replace;
 
@@ -105,7 +108,7 @@ msim_unescape(const gchar *msg)
 		for (j = 0; (replacement = &msim_escape_replacements[j]) &&
 				replacement->code != NULL; ++j) {
 			if (msg[i] == replacement->code[0] &&
-			    i + 1 < strlen(msg) &&
+			    i + 1 < msg_len &&
 			    msg[i + 1] == replacement->code[1]) {
 				replace = replacement->text;
 				++i;
