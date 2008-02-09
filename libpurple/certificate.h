@@ -31,6 +31,8 @@
 #ifndef _PURPLE_CERTIFICATE_H
 #define _PURPLE_CERTIFICATE_H
 
+#include <time.h>
+
 #include <glib.h>
 
 #ifdef __cplusplus

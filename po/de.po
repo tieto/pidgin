@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-23 10:20+0100\n"
-"PO-Revision-Date: 2008-01-23 10:19+0100\n"
+"POT-Creation-Date: 2008-02-08 16:08+0100\n"
+"PO-Revision-Date: 2008-02-08 16:08+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -270,6 +270,9 @@ msgstr "Buddy-Alarm hinzufügen"
 msgid "Send File"
 msgstr "Datei versenden"
 
+msgid "Blocked"
+msgstr "Blockiert"
+
 msgid "View Log"
 msgstr "Mitschnitt anzeigen"
 
@@ -335,6 +338,28 @@ msgstr "Gespeichert..."
 msgid "Plugins"
 msgstr "Plugins"
 
+msgid "Block/Unblock"
+msgstr "Sperren/Sperrung aufheben"
+
+msgid "Block"
+msgstr "Sperren"
+
+msgid "Unblock"
+msgstr "Sperrung aufheben"
+
+msgid ""
+"Please enter the screen name or alias of the person you would like to Block/"
+"Unblock."
+msgstr ""
+"Bitte geben Sie den Benutzernamen der Person ein, die Sie blockieren oder "
+"für die Sie die Blockierung aufheben wollen."
+
+#. Not multiline
+#. Not masked?
+#. No hints?
+msgid "OK"
+msgstr "OK"
+
 msgid "New Instant Message"
 msgstr "Neue Sofortnachricht"
 
@@ -342,12 +367,6 @@ msgid ""
 "Please enter the screen name or alias of the person you would like to IM."
 msgstr ""
 "Bitte geben Sie den Benutzernamen der Person ein, mit der Sie chatten wollen."
-
-#. Not multiline
-#. Not masked?
-#. No hints?
-msgid "OK"
-msgstr "OK"
 
 msgid "Channel"
 msgstr "Kanal"
@@ -367,6 +386,9 @@ msgstr "Optionen"
 
 msgid "Send IM..."
 msgstr "Nachricht senden..."
+
+msgid "Block/Unblock..."
+msgstr "Sperren/Sperrung aufheben..."
 
 msgid "Join Chat..."
 msgstr "Chat betreten..."
@@ -582,6 +604,9 @@ msgstr "Zeige Zeitstempel"
 msgid "Add Buddy Pounce..."
 msgstr "Buddy-Alarm hinzufügen..."
 
+msgid "View Log..."
+msgstr "Mitschnitt anzeigen.."
+
 msgid "Enable Logging"
 msgstr "Mitschnitt einschalten"
 
@@ -732,6 +757,58 @@ msgstr "Fertig"
 
 msgid "Transferring"
 msgstr "Übertragung"
+
+#, fuzzy, c-format
+msgid "Conversation in %s on %s"
+msgstr "Unterhaltung in %s"
+
+#, fuzzy, c-format
+msgid "Conversation with %s on %s"
+msgstr "Unterhaltung mit %s"
+
+msgid "%B %Y"
+msgstr "%B %Y"
+
+msgid ""
+"System events will only be logged if the \"Log all status changes to system "
+"log\" preference is enabled."
+msgstr ""
+"Systemereignisse werden nur mitgeschnitten, wenn die Option „Schneide alle "
+"Statusveränderungen im System-Mitschnitt mit“ aktiviert ist."
+
+msgid ""
+"Instant messages will only be logged if the \"Log all instant messages\" "
+"preference is enabled."
+msgstr ""
+"Sofortnachrichten werden nur mitgeschnitten, wenn die Option „Alle "
+"Sofortnachrichten mitschneiden“ aktiviert ist."
+
+msgid ""
+"Chats will only be logged if the \"Log all chats\" preference is enabled."
+msgstr ""
+"Chats werden nur mitgeschnitten, wenn die Option „Alle Chats mitschneiden“ "
+"aktiviert ist."
+
+msgid "No logs were found"
+msgstr "Keine Mitschnitte gefunden"
+
+msgid "Total log size:"
+msgstr "Gesamte Mitschnittgröße:"
+
+#. Search box *********
+msgid "Scroll/Search: "
+msgstr "Scrollen/Suchen: "
+
+#, c-format
+msgid "Conversations in %s"
+msgstr "Unterhaltung in %s"
+
+#, c-format
+msgid "Conversations with %s"
+msgstr "Unterhaltung mit %s"
+
+msgid "System Log"
+msgstr "System-Mitschnitt"
 
 msgid "Emails"
 msgstr "E-Mails"
@@ -908,7 +985,7 @@ msgstr "Einen Befehl ausführen"
 msgid "Play a sound"
 msgstr "Einen Klang abspielen"
 
-msgid "Pounce only when my status is not available"
+msgid "Pounce only when my status is not Available"
 msgstr "Nur alarmieren, wenn ich nicht verfügbar bin"
 
 msgid "Recurring"
@@ -1347,6 +1424,9 @@ msgstr "Offline-Buddys"
 
 msgid "Online/Offline"
 msgstr "Online/Offline"
+
+msgid "Meebo"
+msgstr "Meebo"
 
 msgid "No Grouping"
 msgstr "Keine Gruppierung"
@@ -2906,17 +2986,8 @@ msgstr "Ihre Buddy-Liste wurde auf dem Server gespeichert."
 msgid "Connection failed."
 msgstr "Verbindung fehlgeschlagen."
 
-msgid "Blocked"
-msgstr "Blockiert"
-
 msgid "Add to chat"
 msgstr "Zum Chat hinzufügen"
-
-msgid "Unblock"
-msgstr "Sperrung aufheben"
-
-msgid "Block"
-msgstr "Sperren"
 
 msgid "Chat _name:"
 msgstr "Chat_name:"
@@ -4455,9 +4526,9 @@ msgstr ""
 "Kann die Datei nicht an %s senden, Anwesenheit des Benutzers nicht abonniert"
 
 #, c-format
-msgid "Please select which resource of %s you would like to send a file to"
+msgid "Please select the resource of %s to which you would like to send a file"
 msgstr ""
-"Bitte wählen Sie, welcher Ressource von %s Sie eine Datei schicken möchten"
+"Bitte wählen Sie die Ressource von %s, an die Sie eine Datei schicken möchten"
 
 msgid "Select a Resource"
 msgstr "Wählen Sie eine Ressource"
@@ -4741,6 +4812,15 @@ msgstr "Eine SMS senden."
 msgid "Page"
 msgstr "Nachricht"
 
+msgid "Home Phone Number"
+msgstr "Private Telefonnummer"
+
+msgid "Work Phone Number"
+msgstr "Geschäftliche Handynummer"
+
+msgid "Mobile Phone Number"
+msgstr "Handynummer"
+
 msgid "Be Right Back"
 msgstr "Bin gleich zurück"
 
@@ -4753,6 +4833,12 @@ msgstr "Am Telefon"
 msgid "Out to Lunch"
 msgstr "Zur Mittagspause"
 
+#. primitive
+#. ID
+#. name - use default
+#. savable
+#. should be user_settable some day
+#. independent
 msgid "Artist"
 msgstr "Interpret"
 
@@ -5227,18 +5313,6 @@ msgstr ""
 "Benutzen sie libpurple mit RC4-Unterstützung (>= 2.0.1). MySpaceIM-Plugin "
 "wird nicht geladen."
 
-#, c-format
-msgid ""
-"Sorry, passwords over %d characters in length (yours is %d) are not "
-"supported by MySpace."
-msgstr ""
-"Passwörter mit mehr als %d Zeichen (Ihres hat %d) werden von MySpace leider "
-"nicht unterstützt."
-
-#. Notify an error message also, because this is important!
-msgid "MySpaceIM Error"
-msgstr "MySpaceIM-Fehler"
-
 msgid "Reading challenge"
 msgstr "Lese Challenge"
 
@@ -5293,6 +5367,21 @@ msgstr ""
 msgid "Protocol error, code %d: %s"
 msgstr "Protokollfehler, Code %d: %s"
 
+#, c-format
+msgid ""
+"%s Your password is %d characters, greater than the expected maximum length "
+"of %d for MySpaceIM. Please shorten your password at http://profileedit."
+"myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try "
+"again."
+msgstr ""
+"%s Ihr Passwort hat %d Buchstaben, mehr als die erwartete maximale Länge von "
+"%d für MySpaceIM. Bitte kürzen Sie ihr Passwort unter http://profileedit."
+"myspace.com/index.cfm?fuseaction=accountSettings.changePassword und "
+"versuchen Sie es erneut."
+
+msgid "MySpaceIM Error"
+msgstr "MySpaceIM-Fehler"
+
 msgid "Failed to add buddy"
 msgstr "Kontakt konnte nicht hinzugefügt werden"
 
@@ -5321,8 +5410,8 @@ msgstr "'blocklist'-Kommando gescheitert"
 msgid "Invalid input condition"
 msgstr "Ungültige Eingabebedingung"
 
-msgid "Read buffer full"
-msgstr "Lesepuffer voll"
+msgid "Read buffer full (2)"
+msgstr "Lesepuffer voll (2)"
 
 msgid "Unparseable message"
 msgstr "Kann die Nachricht nicht parsen"
@@ -6752,12 +6841,6 @@ msgstr "Suche Buddys nach E-Mail-Adresse..."
 msgid "Search for Buddy by Information"
 msgstr "Suche Buddy nach Information"
 
-msgid "Use recent buddies group"
-msgstr "Benutze neueste Gruppe"
-
-msgid "Show how long you have been idle"
-msgstr "Anzeigen, wie lange ich untätig war"
-
 msgid ""
 "Always use AIM/ICQ proxy server for\n"
 "file transfers and direct IM (slower,\n"
@@ -7116,8 +7199,11 @@ msgstr "Fehler beim Aufrechterhalten der Verbindung (Keep alive)"
 msgid "Error requesting login token"
 msgstr "Fehler beim Abfragen des Anmelde-Tokens"
 
-msgid "Unable to login, check debug log"
-msgstr "Anmeldung fehlgeschlagen, Debugmitschnitt beachten"
+msgid "Unable to login. Check debug log."
+msgstr "Anmeldung fehlgeschlagen, Debugmitschnitt beachten."
+
+msgid "Unable to login"
+msgstr "Anmeldung fehlgeschlagen"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 msgid "Unable to connect."
@@ -8712,9 +8798,6 @@ msgstr "Konnte die SILC-Client-Verbindung nicht herstellen"
 
 msgid "John Noname"
 msgstr "Max Mustermann"
-
-msgid "Cannot find/access ~/.silc directory"
-msgstr "Kann nicht auf das Verzeichnis ~/.silc zugreifen"
 
 #, c-format
 msgid "Could not load SILC key pair: %s"
@@ -11380,6 +11463,12 @@ msgstr "_Horizontale Linie"
 msgid "_Smile!"
 msgstr "_Lächeln!"
 
+msgid "Log Deletion Failed"
+msgstr "Löschen des Mitschnitts fehlgeschlagen"
+
+msgid "Check permissions and try again."
+msgstr "Überprüfenb Sie die Berechtigungen und versuchen Sie es erneut."
+
 #, c-format
 msgid ""
 "Are you sure you want to permanently delete the log of the conversation with "
@@ -11404,6 +11493,12 @@ msgstr ""
 "Wollen Sie wirklich den System-Mitschnitt, gestartet am %s, permanent "
 "löschen?"
 
+msgid "Delete Log?"
+msgstr "Mitschnitt löschen?"
+
+msgid "Delete Log..."
+msgstr "Mitschnitt löschen..."
+
 #, c-format
 msgid "<span size='larger' weight='bold'>Conversation in %s on %s</span>"
 msgstr "<span size='larger' weight='bold'>Unterhaltung mit %s am %s</span>"
@@ -11412,49 +11507,9 @@ msgstr "<span size='larger' weight='bold'>Unterhaltung mit %s am %s</span>"
 msgid "<span size='larger' weight='bold'>Conversation with %s on %s</span>"
 msgstr "<span size='larger' weight='bold'>Unterhaltung mit %s am %s</span>"
 
-msgid "%B %Y"
-msgstr "%B %Y"
-
-msgid ""
-"System events will only be logged if the \"Log all status changes to system "
-"log\" preference is enabled."
-msgstr ""
-"Systemereignisse werden nur mitgeschnitten, wenn die Option „Schneide alle "
-"Statusveränderungen im System-Mitschnitt mit“ aktiviert ist."
-
-msgid ""
-"Instant messages will only be logged if the \"Log all instant messages\" "
-"preference is enabled."
-msgstr ""
-"Sofortnachrichten werden nur mitgeschnitten, wenn die Option „Alle "
-"Sofortnachrichten mitschneiden“ aktiviert ist."
-
-msgid ""
-"Chats will only be logged if the \"Log all chats\" preference is enabled."
-msgstr ""
-"Chats werden nur mitgeschnitten, wenn die Option „Alle Chats mitschneiden“ "
-"aktiviert ist."
-
-msgid "No logs were found"
-msgstr "Keine Mitschnitte gefunden"
-
 #. Steal the "HELP" response and use it to trigger browsing to the logs folder
 msgid "_Browse logs folder"
 msgstr "_Mitschnitt-Ordner anschauen"
-
-msgid "Total log size:"
-msgstr "Gesamte Mitschnittgröße:"
-
-#, c-format
-msgid "Conversations in %s"
-msgstr "Unterhaltung in %s"
-
-#, c-format
-msgid "Conversations with %s"
-msgstr "Unterhaltung mit %s"
-
-msgid "System Log"
-msgstr "System-Mitschnitt"
 
 #, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
@@ -11905,6 +11960,9 @@ msgstr "Mozilla"
 msgid "Konqueror"
 msgstr "Konqueror"
 
+msgid "Desktop Default"
+msgstr "Desktop-Standard"
+
 msgid "GNOME Default"
 msgstr "GNOME-Standard"
 
@@ -12083,6 +12141,10 @@ msgstr "Einstellungen bzgl. der Privatsphäre werden sofort wirksam."
 
 msgid "Set privacy for:"
 msgstr "Setze Privatsphäre für:"
+
+#. Remove All button
+msgid "Remove Al_l"
+msgstr "A_lle Entfernen"
 
 msgid "Permit User"
 msgstr "Benutzer erlauben"
