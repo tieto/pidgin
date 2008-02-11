@@ -6609,18 +6609,18 @@ oscar_normalize(const PurpleAccount *account, const char *str)
 
 	g_return_val_if_fail(str != NULL, NULL);
 
-	strncpy(buf, str, BUF_LEN);
-	for (i=0, j=0; buf[j]; i++, j++)
+	/* copy str to buf and skip all blanks */
+	for (i=0, j=0; str[j] && i < BUF_LEN; i++, j++)
 	{
-		while (buf[j] == ' ')
+		while (str[j] == ' ')
 			j++;
-		buf[i] = buf[j];
+		buf[i] = str[j];
 	}
 	buf[i] = '\0';
 
 	tmp1 = g_utf8_strdown(buf, -1);
 	tmp2 = g_utf8_normalize(tmp1, -1, G_NORMALIZE_DEFAULT);
-	g_snprintf(buf, sizeof(buf), "%s", tmp2);
+	strcpy(buf, tmp2);
 	g_free(tmp2);
 	g_free(tmp1);
 
