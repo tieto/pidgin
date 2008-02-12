@@ -805,6 +805,10 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 
 	g_return_if_fail(ggconv != NULL);
 
+	if (flags & PURPLE_MESSAGE_SYSTEM) {
+		flags &= ~(PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV);
+	}
+
 	if (ggconv->active_conv != conv) {
 		if (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV))
 			finch_conversation_set_active(conv);
@@ -837,7 +841,11 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 
 		if (purple_message_meify((char*)message, -1)) {
 			name = g_strdup_printf("*** %s", who);
-			msgflags = gnt_color_pair(color_message_action);
+			if (!(flags & PURPLE_MESSAGE_SEND) &&
+					(flags & PURPLE_MESSAGE_NICK))
+				msgflags = gnt_color_pair(color_message_highlight);
+			else
+				msgflags = gnt_color_pair(color_message_action);
 			me = TRUE;
 		} else {
 			name =  g_strdup_printf("%s", who);
