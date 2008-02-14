@@ -1033,18 +1033,19 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 void yahoo_send_file(PurpleConnection *gc, const char *who, const char *file)
 {
 	struct yahoo_xfer_data *xfer_data;
-	struct yahoo_data *yd;
+	struct yahoo_data *yd = gc->proto_data;
 	int ver = 0;
 	PurpleXfer *xfer = yahoo_new_xfer(gc, who);
 	YahooFriend *yf = yahoo_friend_find(gc, who);
 
-	/* To determine whether client uses ymsg 15 i.e. client is higher than YM 7 */
-	if(yf && yf->version_id > 500000)
-		ver=15; 
+	/* To determine if we should use yahoo p15 for transfer.  Check other user's
+	 * reported version, but if we're on Yahoo Japan, ignore it. */
+	if(yf && yf->version_id > 500000 && !yd->jp)
+		ver = 15; 
+
 	g_return_if_fail(xfer != NULL);
 
 	if(ver == 15) {
-		yd = gc->proto_data;
 		xfer_data = xfer->data;
 		xfer_data->status_15 = STARTED;
 		purple_xfer_set_init_fnc(xfer, yahoo_xfer_init_15);
@@ -1320,17 +1321,21 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 		if(!xfer)
 			return;
 		/*
-		*	In the file trans info packet tht we must reply with , we are supposed to mention the ip address...
+		*	In the file trans info packet that we must reply with, we are
+		*	supposed to mention the ip address...
 		*	purple connect does not give me a way of finding the ip address...
-		*	so, purple dnsquery is used... but retries, trying with next ip address etc. is not implemented..TODO
+		*	so, purple dnsquery is used... but retries, trying with next ip
+		*	address etc. is not implemented..TODO
 		*/
 		if (yd->jp)
 		{
-			purple_dnsquery_a(YAHOOJP_XFER_RELAY_HOST, YAHOOJP_XFER_RELAY_PORT, yahoo_xfer_dns_connected_15, xfer);
+			purple_dnsquery_a(YAHOOJP_XFER_RELAY_HOST, YAHOOJP_XFER_RELAY_PORT,
+							yahoo_xfer_dns_connected_15, xfer);
 		}
 		else
 		{
-			purple_dnsquery_a(YAHOO_XFER_RELAY_HOST, YAHOO_XFER_RELAY_PORT, yahoo_xfer_dns_connected_15, xfer);
+			purple_dnsquery_a(YAHOO_XFER_RELAY_HOST, YAHOO_XFER_RELAY_PORT,
+							yahoo_xfer_dns_connected_15, xfer);
 		}
 		return;
 	}
