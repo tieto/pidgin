@@ -2797,7 +2797,14 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	 * the documentation claims). */
 	group_name = msim_msg_get_string(contact_info, "GroupName");
 	if (group_name) {
-		group = purple_group_new(group_name);
+		group = purple_find_group(group_name);
+		if (!group) {
+			group = purple_group_new(group_name);
+			/* Add group to beginning. See #2752. */
+			purple_blist_add_group(group, NULL);
+
+		}
+
 		purple_debug_info("msim_add_contact_from_server_cb",
 				"adding to GroupName: %s\n", group_name);
 		g_free(group_name);
@@ -2812,9 +2819,6 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 				"creating new buddy: %s\n", username);
 		buddy = purple_buddy_new(session->account, username, NULL);
 	}
-
-	/* Add group to beginning. See #2752. */
-	purple_blist_add_group(group, NULL);
 
 	/* TODO: use 'Position' in contact_info to take into account where buddy is */
 	purple_blist_add_buddy(buddy, NULL, group, NULL /* insertion point */);
