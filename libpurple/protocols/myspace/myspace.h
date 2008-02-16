@@ -45,7 +45,7 @@
 #include "cipher.h"     /* for SHA-1 */
 #include "util.h"       /* for base64 */
 #include "debug.h"      /* for purple_debug_info */
-#include "request.h" /* For dialogs used in setting the username */
+#include "request.h"    /* For dialogs used in setting the username */
 #include "xmlnode.h"
 #include "core.h"
 
@@ -109,6 +109,7 @@
 
 /* Time between keepalives (seconds) - if no data within this time, is dead. */
 #define MSIM_KEEPALIVE_INTERVAL     (3 * 60)
+/*#define MSIM_USE_KEEPALIVE*/
 
 /* Time to check if alive (milliseconds) */
 #define MSIM_KEEPALIVE_INTERVAL_CHECK   (30 * 1000)

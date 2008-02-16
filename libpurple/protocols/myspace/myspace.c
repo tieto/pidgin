@@ -1546,13 +1546,14 @@ msim_check_newer_version_cb(PurpleUtilFetchUrlData *url_data,
 }
 #endif
 
-/** Called when the session key arrives. */
+/** Called when the session key arrives to check whether the user
+ * has a username, and set one if desired. */
 static gboolean
-msim_is_username_set(MsimSession *session, MsimMessage *msg) {
-	/*MsimMessage *body;*/
-
+msim_is_username_set(MsimSession *session, MsimMessage *msg) 
+{
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
+	g_return_val_if_fail(session->gc != NULL, FALSE);
 
 	session->sesskey = msim_msg_get_integer(msg, "sesskey");
 	purple_debug_info("msim", "SESSKEY=<%d>\n", session->sesskey);
@@ -1580,13 +1581,9 @@ msim_is_username_set(MsimSession *session, MsimMessage *msg) {
 	/* Set display name to username (otherwise will show email address) */
 	purple_connection_set_display_name(session->gc, session->username);
 
-
-	/* Additional post-connect operations */
-
-
+	/* If user lacks a username, help them get one. */
 	if (msim_msg_get_integer(msg, "uniquenick") == session->userid) {
-		purple_debug_info("msim_we_are_logged_on", "TODO: pick username\n");
-		g_return_val_if_fail(session->gc != NULL, FALSE);
+		purple_debug_info("msim_is_username_set", "no username is set\n");
 		purple_request_yes_no(session->gc,
 			_("MySpaceIM - No Username Set"),
 			_("You appear to have no MySpace username."),
@@ -1595,15 +1592,18 @@ msim_is_username_set(MsimSession *session, MsimMessage *msg) {
 			session->account,
 			NULL,
 			NULL,
-			session->gc, G_CALLBACK(msim_set_username_cb), G_CALLBACK(msim_do_not_set_username_cb));
-			purple_debug_info("msim","Username Not Set Alert Prompted\n");
+			session->gc, 
+			G_CALLBACK(msim_set_username_cb), 
+			G_CALLBACK(msim_do_not_set_username_cb));
+		purple_debug_info("msim_is_username_set","'username not set' alert prompted\n");
 		return FALSE;
 	}
 	return TRUE;
 }
 
-/** Called after username is set. */
-gboolean msim_we_are_logged_on(MsimSession *session) {
+/** Called after username is set, if necessary and we're open for business. */
+gboolean msim_we_are_logged_on(MsimSession *session) 
+{
 	MsimMessage *body;
 
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
