@@ -496,6 +496,19 @@ msim_is_userid(const gchar *user)
 	return strspn(user, "0123456789") == strlen(user);
 }
 
+/** Return whether a given username is syntactically valid. 
+ * Note: does not actually check that the user exists. */
+gboolean
+msim_is_valid_username(const gchar *user)
+{
+	return !msim_is_userid(user) &&  /* Not all numeric */
+		strlen(user) <= MSIM_MAX_USERNAME_LENGTH
+		&& strspn(user, "0123456789"
+			"abcdefghijklmnopqrstuvwxyz"
+			"_"
+			"ABCDEFGHIJKLMNOPQRSTUVWXYZ") == strlen(user);
+}
+
 /**
  * Check if a string is an email address (contains an @).
  *

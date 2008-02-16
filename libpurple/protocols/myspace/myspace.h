@@ -89,6 +89,9 @@
  * warn user that it may be too long. */
 #define MSIM_MAX_PASSWORD_LENGTH    10
 
+/* Maximum length of usernames, when setting. */
+#define MSIM_MAX_USERNAME_LENGTH    25
+
 /* Build version of MySpaceIM to report to servers (1.0.xxx.0) */
 #define MSIM_CLIENT_VERSION         697
 
