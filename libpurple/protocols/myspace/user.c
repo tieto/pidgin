@@ -651,9 +651,6 @@ static void msim_username_is_available_cb(MsimSession *session, MsimMessage *use
 			NULL,
 			session->gc, 
 			G_CALLBACK(msim_set_username_confirmed_cb), 
-			/* TODO: Should we really abort the whole process if the user changes their
-			 * mind about setting a username? Maybe should instead ask for another username,
-			 * but there should still be a way to get out of the loop. */
 			G_CALLBACK(msim_do_not_set_username_cb));
 	} else {
 		/* Looks like its in use or we have an invalid response */
@@ -738,10 +735,10 @@ msim_set_username(MsimSession *session, const gchar *username,
 	g_return_if_fail(msim_send(session,
 			 "persist", MSIM_TYPE_INTEGER, 1,
 			 "sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			 "cmd", MSIM_TYPE_INTEGER, 1,
-			 "dsn", MSIM_TYPE_INTEGER, 5,
+			 "cmd", MSIM_TYPE_INTEGER, MSIM_CMD_GET,
+			 "dsn", MSIM_TYPE_INTEGER, MG_MYSPACE_INFO_BY_STRING_DSN,
 			 "uid", MSIM_TYPE_INTEGER, session->userid,
-			 "lid", MSIM_TYPE_INTEGER, 7,
+			 "lid", MSIM_TYPE_INTEGER, MG_MYSPACE_INFO_BY_STRING_LID,
 			 "rid", MSIM_TYPE_INTEGER, rid,
 			 "body", MSIM_TYPE_DICTIONARY, body,
 			 NULL));
@@ -768,10 +765,12 @@ static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo,
 	uid = msim_msg_get_integer(userinfo, "uid");
 	lid = msim_msg_get_integer(userinfo, "lid");
 	body = msim_msg_get_dictionary(userinfo, "body");
-	errmsg = g_strdup("An error occured while trying to set the username.\nPlease try again, or visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username to set your username.");
+	errmsg = g_strdup("An error occured while trying to set the username.\n"
+			"Please try again, or visit http://editprofile.myspace.com/index.cfm?"
+			"fuseaction=profile.username to set your username.");
 	
 	if (!body) {
-		purple_debug_info("msim","No body for in msim_username_is_set\n");
+		purple_debug_info("msim_username_is_set_cb", "No body");
 		/* Error: No body! */
 		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
 	}
@@ -780,24 +779,37 @@ static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo,
 
 	msim_msg_free(body);
 
-	purple_debug_info("msim","username_is_set cmd = %d, dsn = %d, lid = %d, code = %d, username = %s\n",cmd,dsn,lid,code,username);
-	if (cmd == 258 && dsn == 9 && lid == 14) {
-		purple_debug_info("msim","Proper cmd,dsn,lid for username_is_set!\n");
-		purple_debug_info("msim","Username Set with return code %d\n",code);
+	purple_debug_info("msim_username_is_set_cb", 
+			"cmd = %d, dsn = %d, lid = %d, code = %d, username = %s\n", 
+			cmd, dsn, lid, code, username);
+
+	if (cmd == (MSIM_CMD_BIT_REPLY | MSIM_CMD_PUT) 
+			&& dsn == MC_SET_USERNAME_DSN 
+			&& lid == MC_SET_USERNAME_LID) {
+		purple_debug_info("msim_username_is_set_cb", "Proper cmd,dsn,lid for username_is_set!\n");
+		purple_debug_info("msim_username_is_set_cb", "Username Set with return code %d\n",code);
 		if (code == 0) {
 			/* Good! */
 			msim_we_are_logged_on(session);
 		} else {
-			purple_debug_info("msim","code is %d",code);
+			purple_debug_info("msim_username_is_set", "code is %d",code);
+			/* TODO: what to do here? */
 		}
-	} else if (cmd == 257 && dsn == 5 && lid == 7) {
+	} else if (cmd == (MSIM_CMD_BIT_REPLY | MSIM_CMD_GET) 
+			&& dsn == MG_MYSPACE_INFO_BY_STRING_DSN 
+			&& lid == MG_MYSPACE_INFO_BY_STRING_LID) {
 		/* Not quite done... ONE MORE STEP :) */
 		rid = msim_new_reply_callback(session, msim_username_is_set_cb, data);
 		body = msim_msg_new("UserName", MSIM_TYPE_STRING, g_strdup(username),NULL);
-		if (!msim_send(session, "persist", MSIM_TYPE_INTEGER, 1, "sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			 	"cmd", MSIM_TYPE_INTEGER, 2, "dsn", MSIM_TYPE_INTEGER, 9, "uid", MSIM_TYPE_INTEGER, session->userid,
-			 	"lid", MSIM_TYPE_INTEGER, 14, "rid", MSIM_TYPE_INTEGER, rid, "body", MSIM_TYPE_DICTIONARY, body,
-			 	NULL)) {
+		if (!msim_send(session, "persist", MSIM_TYPE_INTEGER, 1, 
+					"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+					"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_PUT, 
+					"dsn", MSIM_TYPE_INTEGER, MC_SET_USERNAME_DSN, 
+					"uid", MSIM_TYPE_INTEGER, session->userid,
+					"lid", MSIM_TYPE_INTEGER, MC_SET_USERNAME_LID, 
+					"rid", MSIM_TYPE_INTEGER, rid, 
+					"body", MSIM_TYPE_DICTIONARY, body, 
+					NULL)) {
 			/* Error! */
 			/* Can't set... Disconnect */
 			purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
