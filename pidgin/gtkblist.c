@@ -4408,6 +4408,7 @@ headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginBuddyList 
 /***********************************/
 
 #define OBJECT_DATA_KEY_ACCOUNT "account"
+#define DO_NOT_CLEAR_ERROR "do-not-clear-error"
 
 static gboolean
 find_account_widget(GObject *widget,
@@ -4470,6 +4471,11 @@ remove_child_widget_by_account(GtkContainer *container,
 {
 	GtkWidget *widget = find_child_widget_by_account(container, account);
 	if(widget) {
+		/* Since we are destroying the widget in response to a change in
+		 * error, we should not clear the error.
+		 */
+		g_object_set_data(G_OBJECT(widget), DO_NOT_CLEAR_ERROR,
+			GINT_TO_POINTER(TRUE));
 		gtk_widget_destroy(widget);
 	}
 }
@@ -4495,7 +4501,12 @@ generic_error_destroy_cb(GtkObject *dialog,
                          PurpleAccount *account)
 {
 	g_hash_table_remove(gtkblist->connection_errors, account);
-	purple_account_clear_current_error(account);
+	/* If the error dialog is being destroyed in response to the
+	 * account-error-changed signal, we don't want to clear the current
+	 * error.
+	 */
+	if (g_object_get_data(G_OBJECT(dialog), DO_NOT_CLEAR_ERROR) == NULL)
+		purple_account_clear_current_error(account);
 }
 
 #define SSL_FAQ_URI "http://d.pidgin.im/wiki/FAQssl"
