@@ -4582,6 +4582,20 @@ remove_generic_error_dialog(PurpleAccount *account)
 }
 
 
+static void
+update_generic_error_message(PurpleAccount *account,
+                             const char *description)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	GtkWidget *mini_dialog = find_child_widget_by_account(
+		GTK_CONTAINER(priv->error_scrollbook), account);
+	pidgin_mini_dialog_set_description(PIDGIN_MINI_DIALOG(mini_dialog),
+		description);
+	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
+		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+}
+
+
 /* Notifications about accounts which were disconnected with
  * PURPLE_CONNECTION_ERROR_NAME_IN_USE
  */
@@ -4753,6 +4767,21 @@ remove_from_signed_on_elsewhere(PurpleAccount *account)
 }
 
 
+static void
+update_signed_on_elsewhere_tooltip(PurpleAccount *account,
+                                   const char *description)
+{
+#if GTK_CHECK_VERSION(2,12,0)
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	GtkContainer *c = GTK_CONTAINER(priv->signed_on_elsewhere->contents);
+	GtkWidget *label = find_child_widget_by_account(c, account);
+	gtk_widget_set_tooltip_text(label, description);
+	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
+		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+#endif
+}
+
+
 /* Call appropriate error notification code based on error types */
 static void
 update_account_error_state(PurpleAccount *account,
@@ -4760,35 +4789,60 @@ update_account_error_state(PurpleAccount *account,
                            const PurpleConnectionErrorInfo *new,
                            PidginBuddyList *gtkblist)
 {
+	gboolean descriptions_differ;
+	const char *desc;
+
+	if (old == NULL && new == NULL)
+		return;
+
 	/* For backwards compatibility: */
 	if (new)
 		pidgin_blist_update_account_error_state(account, new->description);
 	else
 		pidgin_blist_update_account_error_state(account, NULL);
 
-	pidgin_blist_select_notebook_page(gtkblist);
-	/* Don't bother updating the error if it hasn't changed.  This stops
-	 * URGENT being repeatedly set for network errors whenever they try to
-	 * reconnect.
-	 */
-	if ((old == new) ||
-	    (old != NULL && new != NULL && old->type == new->type
-	     && g_str_equal(old->description, new->description))
-	   )
-		return;
+	if (new != NULL)
+		pidgin_blist_select_notebook_page(gtkblist);
 
-	if (old) {
+	if (old != NULL && new == NULL) {
 		if(old->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE)
 			remove_from_signed_on_elsewhere(account);
 		else
 			remove_generic_error_dialog(account);
+		return;
 	}
 
-	if (new) {
+	if (old == NULL && new != NULL) {
 		if(new->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE)
 			add_to_signed_on_elsewhere(account);
 		else
 			add_generic_error_dialog(account, new);
+		return;
+	}
+
+	/* else, new and old are both non-NULL */
+
+	descriptions_differ = strcmp(old->description, new->description);
+	desc = new->description;
+
+	switch (new->type) {
+	case PURPLE_CONNECTION_ERROR_NAME_IN_USE:
+		if (old->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE
+		    && descriptions_differ) {
+			update_signed_on_elsewhere_tooltip(account, desc);
+		} else {
+			remove_generic_error_dialog(account);
+			add_to_signed_on_elsewhere(account);
+		}
+		break;
+	default:
+		if (old->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE) {
+			remove_from_signed_on_elsewhere(account);
+			add_generic_error_dialog(account, new);
+		} else if (descriptions_differ) {
+			update_generic_error_message(account, desc);
+		}
+		break;
 	}
 }
 
