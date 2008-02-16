@@ -24,6 +24,15 @@ static gchar *msim_format_now_playing(const gchar *band, const gchar *song);
 static void msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text,
 		gsize len, const gchar *error_message);
 
+/* Callbacks for setting the username bit */
+static void msim_check_username_availability_cb(PurpleConnection *gc, const char *value);
+static void msim_username_is_available_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+static void msim_set_username_confirmed_cb(PurpleConnection *gc);
+static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+static void msim_set_username(MsimSession *session, const gchar *username,
+		MSIM_USER_LOOKUP_CB cb, gpointer data);
+static char *msim_username_to_set;
+
 /** Format the "now playing" indicator, showing the artist and song.
  * @return Return a new string (must be g_free()'d), or NULL.
  */
@@ -537,4 +546,249 @@ msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
 			user->image_url);		/* checksum */
 }
 
+/*** 
+ * If they hit cancel or no at any point in the Setting Username process, we come here.              *
+ * Currently.. We're safe letting them get by without setting it.. Unless we hear otherwise..        *
+ * So for now, give them a menu.. If this becomes an issue with the Official client.. boot them here */
+void msim_do_not_set_username_cb(PurpleConnection *gc) {
+	purple_debug_info("msim","Dont set username");
+	/* Give them the menu option to set one if they want to later */
+}
+ 
+/* They've decided to set a username! Yay! */
+void msim_set_username_cb(PurpleConnection *gc) {
+	g_return_if_fail(gc != NULL);
+	purple_debug_info("msim","Set username\n");
+	purple_request_input(gc, _("MySpaceIM - Please Set a Username"),
+			_("Please enter a username to check its availability:"),
+			NULL,
+			"", FALSE, FALSE, NULL,
+			_("OK"), G_CALLBACK(msim_check_username_availability_cb),
+			_("Cancel"), G_CALLBACK(msim_do_not_set_username_cb),
+			purple_connection_get_account(gc),
+			NULL,
+			NULL,
+			gc);
+}
 
+/* Once they've submited their new username, we need to see if its available here */
+static void msim_check_username_availability_cb(PurpleConnection *gc, const char *value) {
+	MsimMessage *user_msg;
+	MsimSession *session;
+
+	g_return_if_fail(gc != NULL);
+
+	session = (MsimSession *)gc->proto_data;
+
+	g_return_if_fail(MSIM_SESSION_VALID(session));
+
+	purple_debug_info("msim","Check username for %s\n",value);
+	
+	user_msg = msim_msg_new(
+			"user", MSIM_TYPE_STRING, g_strdup(value),
+			NULL);
+
+	/* 25 characters: letters, numbers, underscores */
+	/* TODO: VERIFY ABOVE */
+	/* \persist\1\sesskey\288500516\cmd\1\dsn\5\uid\204084363\lid\7\rid\367\body\UserName=Jaywalker\final\ */
+	/* Official client uses a standard lookup... So do we! */
+	msim_lookup_user(session, value, msim_username_is_available_cb, user_msg);
+}
+
+/* \persistr\\cmd\257\dsn\5\uid\204084363\lid\7\rid\367\body\UserName=TheAlbinoRhino1\final\ */
+/* This is where we do a bit more than merely prompt the user. Now we have some real data to tell us the state of their requested username */
+static void msim_username_is_available_cb(MsimSession *session, MsimMessage *userinfo, gpointer data) {
+	MsimMessage *msg;
+	gchar *username, *errmsg;
+	MsimMessage *body;
+	gint userid;
+
+	purple_debug_info("msim","Look up username callback made\n");
+	
+	msg = (MsimMessage *)data;
+	g_return_if_fail(MSIM_SESSION_VALID(session));
+	g_return_if_fail(msg != NULL);
+	
+	username = msim_msg_get_string(msg, "user");
+	body = msim_msg_get_dictionary(userinfo, "body");
+
+	if (!body) {
+		errmsg = g_strdup("An error occured while trying to set the username.\nPlease try again, or visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username to set your username.");
+		purple_debug_info("msim","No body for %s?!\n",username);
+		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+		return;
+	}
+
+	userid = msim_msg_get_integer(body, "UserID");
+
+	purple_debug_info("msim","Returned username is %s and userid is %d\n", username,userid);
+	msim_msg_free(body);
+	msim_msg_free(msg);
+
+	/* The response for a free username will ONLY have the UserName in it.. thus making UserID return 0 when we msg_get_integer it */
+	if (userid == 0) {
+		/* This username is currently unused */
+		purple_debug_info("msim","Username available. Prompting to Confirm.\n");
+		msim_username_to_set = g_strdup(username);
+		g_free(username);
+		purple_request_yes_no(session->gc,
+			_("MySpaceIM - Username Available"),
+			_("This username is available. Would you like to set it?"),
+			_("ONCE SET, THIS CANNOT BE CHANGED!"),
+			0,
+			session->account,
+			NULL,
+			NULL,
+			session->gc, G_CALLBACK(msim_set_username_confirmed_cb), G_CALLBACK(msim_do_not_set_username_cb));
+	} else {
+		/* Looks like its in use or we have an invalid response */
+		purple_debug_info("msim","Username unavaiable. Prompting for new entry.\n");
+		purple_request_input(session->gc, _("MySpaceIM - Please Set a Username"),
+			_("This username is unavailable."),
+				_("Please try another username:"),
+				"", FALSE, FALSE, NULL,
+				_("OK"), G_CALLBACK(msim_check_username_availability_cb),
+				_("Cancel"), G_CALLBACK(msim_do_not_set_username_cb),
+				session->account,
+				NULL,
+				NULL,
+				session->gc);
+	}
+}
+
+/* They've confirmed that username that was available, Lets make the call to set it */
+static void msim_set_username_confirmed_cb(PurpleConnection *gc) {
+	MsimMessage *user_msg;
+	MsimSession *session;
+
+	g_return_if_fail(gc != NULL);
+
+	session = (MsimSession *)gc->proto_data;
+
+	g_return_if_fail(MSIM_SESSION_VALID(session));
+
+
+	user_msg = msim_msg_new(
+			"user", MSIM_TYPE_STRING, g_strdup(msim_username_to_set),
+			NULL);
+
+	purple_debug_info("msim","Setting username to %s\n",msim_username_to_set);
+	
+	/* Sets our username... keep your fingers crossed :) */
+	msim_set_username(session, msim_username_to_set, msim_username_is_set_cb, user_msg);
+	g_free(msim_username_to_set);
+}
+
+/**
+ * Asynchronously set new username, calling callback when receive result.
+ *
+ * @param session
+ * @param username The username we're setting for ourselves. Not freed.
+ * @param cb Callback, called with user information when available.
+ * @param data An arbitray data pointer passed to the callback.
+ */
+static void 
+msim_set_username(MsimSession *session, const gchar *username,
+		MSIM_USER_LOOKUP_CB cb, gpointer data)
+{
+	MsimMessage *body;
+	guint rid;
+
+	g_return_if_fail(MSIM_SESSION_VALID(session));
+	g_return_if_fail(username != NULL);
+	g_return_if_fail(cb != NULL);
+
+	purple_debug_info("msim", "msim_set_username: "
+			"Setting username %s\n", username);
+
+	msim_msg_dump("msim_set_username: data=%s\n", (MsimMessage *)data);
+
+	/* Setup callback. Response will be associated with request using 'rid'. */
+	rid = msim_new_reply_callback(session, cb, data);
+
+	/* TODO: I dont know if the ContactType is -/ALWAYS/- 1 */
+
+	body = msim_msg_new("UserName", MSIM_TYPE_STRING, g_strdup(username),NULL);
+/* \setinfo\\sesskey\469958979\info\Age=21.AvatarUrl=.BandName=.ContactType=1.DisplayName=Msim.Gender=M.ImageURL=http:/1/1x.myspace.com/1images/1no_pic.gif.LastLogin=128335268400000000.Location=US.ShowAvatar=False.SongName=.TotalFriends=1.UserName=msimprpl2\final\
+*/
+
+	/* Send request */
+	g_return_if_fail(msim_send(session,
+			 "setinfo", MSIM_TYPE_BOOLEAN, TRUE,
+			 "sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			 "info", MSIM_TYPE_DICTIONARY, body,
+			 NULL));
+	body = msim_msg_new("UserName", MSIM_TYPE_STRING, g_strdup(username),NULL);
+	g_return_if_fail(msim_send(session,
+			 "persist", MSIM_TYPE_INTEGER, 1,
+			 "sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			 "cmd", MSIM_TYPE_INTEGER, 1,
+			 "dsn", MSIM_TYPE_INTEGER, 5,
+			 "uid", MSIM_TYPE_INTEGER, session->userid,
+			 "lid", MSIM_TYPE_INTEGER, 7,
+			 "rid", MSIM_TYPE_INTEGER, rid,
+			 "body", MSIM_TYPE_DICTIONARY, body,
+			 NULL));
+}
+
+static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo, gpointer data) {
+	gchar *username, *errmsg;
+	MsimMessage *body;
+
+	guint rid;
+	gint cmd,dsn,uid,lid,code;
+	/* \persistr\\cmd\258\dsn\9\uid\204084363\lid\14\rid\369\body\UserName=TheAlbinoRhino1.Code=0\final\ */
+
+	purple_debug_info("msim","username_is_set made\n");
+	
+	g_return_if_fail(MSIM_SESSION_VALID(session));
+
+
+	msim_msg_dump("username_is_set message is: %s\n", userinfo);
+	cmd = msim_msg_get_integer(userinfo, "cmd");
+	dsn = msim_msg_get_integer(userinfo, "dsn");
+	uid = msim_msg_get_integer(userinfo, "uid");
+	lid = msim_msg_get_integer(userinfo, "lid");
+	body = msim_msg_get_dictionary(userinfo, "body");
+	errmsg = g_strdup("An error occured while trying to set the username.\nPlease try again, or visit http://editprofile.myspace.com/index.cfm?fuseaction=profile.username to set your username.");
+	
+	if (!body) {
+		purple_debug_info("msim","No body for in msim_username_is_set\n");
+		/* Error: No body! */
+		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+	}
+	username = msim_msg_get_string(body, "UserName");
+	code = msim_msg_get_integer(body,"Code");
+
+	msim_msg_free(body);
+
+	purple_debug_info("msim","username_is_set cmd = %d, dsn = %d, lid = %d, code = %d, username = %s\n",cmd,dsn,lid,code,username);
+	if (cmd == 258 && dsn == 9 && lid == 14) {
+		purple_debug_info("msim","Proper cmd,dsn,lid for username_is_set!\n");
+		purple_debug_info("msim","Username Set with return code %d\n",code);
+		if (code == 0) {
+			/* Good! */
+			msim_we_are_logged_on(session);
+		} else {
+			purple_debug_info("msim","code is %d",code);
+		}
+	} else if (cmd == 257 && dsn == 5 && lid == 7) {
+		/* Not quite done... ONE MORE STEP :) */
+		rid = msim_new_reply_callback(session, msim_username_is_set_cb, data);
+		body = msim_msg_new("UserName", MSIM_TYPE_STRING, g_strdup(username),NULL);
+		if (!msim_send(session, "persist", MSIM_TYPE_INTEGER, 1, "sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			 	"cmd", MSIM_TYPE_INTEGER, 2, "dsn", MSIM_TYPE_INTEGER, 9, "uid", MSIM_TYPE_INTEGER, session->userid,
+			 	"lid", MSIM_TYPE_INTEGER, 14, "rid", MSIM_TYPE_INTEGER, rid, "body", MSIM_TYPE_DICTIONARY, body,
+			 	NULL)) {
+			/* Error! */
+			/* Can't set... Disconnect */
+			purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+		}
+			
+	} else {
+		/* Error! */
+		purple_debug_info("msim","username_is_set Error: Invalid cmd/dsn/lid combination");
+		purple_connection_error_reason(session->gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, errmsg);
+	}
+	g_free(errmsg);
+}

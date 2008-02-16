@@ -52,5 +52,7 @@ gboolean msim_store_user_info(MsimSession *session, MsimMessage *msg, MsimUser *
 gboolean msim_is_userid(const gchar *user);
 gboolean msim_is_email(const gchar *user);
 void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb, gpointer data);
+void msim_set_username_cb(PurpleConnection *gc);
+void msim_do_not_set_username_cb(PurpleConnection *gc);
 
 #endif /* !_MYSPACE_USER_H */

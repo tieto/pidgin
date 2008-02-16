@@ -45,6 +45,7 @@
 #include "cipher.h"     /* for SHA-1 */
 #include "util.h"       /* for base64 */
 #include "debug.h"      /* for purple_debug_info */
+#include "request.h" /* For dialogs used in setting the username */
 #include "xmlnode.h"
 #include "core.h"
 
@@ -220,6 +221,8 @@ int msim_test_escaping(void);
 #endif
 
 gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type);
+
+gboolean msim_we_are_logged_on(MsimSession *session);
 
 
 void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);
