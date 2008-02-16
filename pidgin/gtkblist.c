@@ -159,6 +159,7 @@ static void redo_buddy_list(PurpleBuddyList *list, gboolean remove, gboolean rer
 static void pidgin_blist_collapse_contact_cb(GtkWidget *w, PurpleBlistNode *node);
 static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded);
 static void pidgin_blist_expand_contact_cb(GtkWidget *w, PurpleBlistNode *node);
+static void set_urgent(void);
 
 typedef enum {
 	PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE    =  1 << 0,  /* Whether there's pending message in a conversation */
@@ -4443,8 +4444,7 @@ add_error_dialog(PidginBuddyList *gtkblist,
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 	gtk_container_add(GTK_CONTAINER(priv->error_scrollbook), dialog);
 
-	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
-		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+	set_urgent();
 }
 
 static GtkWidget *
@@ -4591,8 +4591,7 @@ update_generic_error_message(PurpleAccount *account,
 		GTK_CONTAINER(priv->error_scrollbook), account);
 	pidgin_mini_dialog_set_description(PIDGIN_MINI_DIALOG(mini_dialog),
 		description);
-	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
-		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+	set_urgent();
 }
 
 
@@ -4749,8 +4748,7 @@ add_to_signed_on_elsewhere(PurpleAccount *account)
 
 	update_signed_on_elsewhere_minidialog_title();
 
-	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
-		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+	set_urgent();
 }
 
 static void
@@ -4776,8 +4774,7 @@ update_signed_on_elsewhere_tooltip(PurpleAccount *account,
 	GtkContainer *c = GTK_CONTAINER(priv->signed_on_elsewhere->contents);
 	GtkWidget *label = find_child_widget_by_account(c, account);
 	gtk_widget_set_tooltip_text(label, description);
-	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
-		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+	set_urgent();
 #endif
 }
 
@@ -6805,8 +6802,7 @@ pidgin_blist_visibility_manager_remove()
 void pidgin_blist_add_alert(GtkWidget *widget)
 {
 	gtk_container_add(GTK_CONTAINER(gtkblist->scrollbook), widget);
-	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
-		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+	set_urgent();
 }
 
 void
@@ -6824,12 +6820,19 @@ pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callbac
 	gtkblist->headline_data = user_data;
 	gtkblist->headline_destroy = destroy;
 	if (text != NULL || pixbuf != NULL) {
-		if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
-			pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+		set_urgent();
 		gtk_widget_show_all(gtkblist->headline_hbox);
 	} else {
 		gtk_widget_hide(gtkblist->headline_hbox);
 	}
+}
+
+
+static void
+set_urgent(void)
+{
+	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
+		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
 }
 
 static PurpleBlistUiOps blist_ui_ops =
