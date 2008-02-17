@@ -73,7 +73,7 @@ static gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 static gboolean msim_check_alive(gpointer data);
 #endif
 
-static gboolean msim_we_are_logged_on(MsimSession *session, MsimMessage *msg);
+static gboolean msim_is_username_set(MsimSession *session, MsimMessage *msg);
 
 static gboolean msim_process(MsimSession *session, MsimMessage *msg);
 
@@ -1546,14 +1546,14 @@ msim_check_newer_version_cb(PurpleUtilFetchUrlData *url_data,
 }
 #endif
 
-/** Called when the session key arrives. */
+/** Called when the session key arrives to check whether the user
+ * has a username, and set one if desired. */
 static gboolean
-msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
+msim_is_username_set(MsimSession *session, MsimMessage *msg) 
 {
-	MsimMessage *body;
-
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
+	g_return_val_if_fail(session->gc != NULL, FALSE);
 
 	session->sesskey = msim_msg_get_integer(msg, "sesskey");
 	purple_debug_info("msim", "SESSKEY=<%d>\n", session->sesskey);
@@ -1581,26 +1581,38 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 	/* Set display name to username (otherwise will show email address) */
 	purple_connection_set_display_name(session->gc, session->username);
 
+	/* If user lacks a username, help them get one. */
+	if (msim_msg_get_integer(msg, "uniquenick") == session->userid) {
+		purple_debug_info("msim_is_username_set", "no username is set\n");
+		purple_request_yes_no(session->gc,
+			_("MySpaceIM - No Username Set"),
+			_("You appear to have no MySpace username."),
+			_("Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"),
+			0,
+			session->account,
+			NULL,
+			NULL,
+			session->gc, 
+			G_CALLBACK(msim_set_username_cb), 
+			G_CALLBACK(msim_do_not_set_username_cb));
+		purple_debug_info("msim_is_username_set","'username not set' alert prompted\n");
+		return FALSE;
+	}
+	return TRUE;
+}
+
+/** Called after username is set, if necessary and we're open for business. */
+gboolean msim_we_are_logged_on(MsimSession *session) 
+{
+	MsimMessage *body;
+
+	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+
 	/* The session is now set up, ready to be connected. This emits the
 	 * signedOn signal, so clients can now do anything with msimprpl, and
 	 * we're ready for it (session key, userid, username all setup). */
 	purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
 	purple_connection_set_state(session->gc, PURPLE_CONNECTED);
-
-
-	/* Additional post-connect operations */
-
-
-	if (msim_msg_get_integer(msg, "uniquenick") == session->userid) {
-		purple_debug_info("msim_we_are_logged_on", "TODO: pick username\n");
-		/* No username is set. */
-		purple_notify_error(session->account, 
-				_("No username set"),
-				_("Please go to http://editprofile.myspace.com/index.cfm?fuseaction=profile.username and choose a username and try to login again."), NULL);
-		purple_connection_error_reason (session->gc,
-			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("No username set"));
-		return FALSE;
-	}
 
 	body = msim_msg_new(
 			"UserID", MSIM_TYPE_INTEGER, session->userid,
@@ -1687,7 +1699,14 @@ msim_process(MsimSession *session, MsimMessage *msg)
 	if (msim_msg_get_integer(msg, "lc") == 1) {
 		return msim_login_challenge(session, msg);
 	} else if (msim_msg_get_integer(msg, "lc") == 2) {
-		return msim_we_are_logged_on(session, msg);
+		/* return msim_we_are_logged_on(session, msg); */
+		if (msim_is_username_set(session, msg)) {
+			return msim_we_are_logged_on(session);
+		} else {
+			/* No username is set... We'll wait for the callbacks to do their work */
+			/* When they're all done, the last one will call msim_we_are_logged_on() and pick up where we left off */
+			return FALSE;
+		}
 	} else if (msim_msg_get(msg, "bm"))  {
 		return msim_incoming_bm(session, msg);
 	} else if (msim_msg_get(msg, "rid")) {

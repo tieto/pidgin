@@ -45,6 +45,7 @@
 #include "cipher.h"     /* for SHA-1 */
 #include "util.h"       /* for base64 */
 #include "debug.h"      /* for purple_debug_info */
+#include "request.h"    /* For dialogs used in setting the username */
 #include "xmlnode.h"
 #include "core.h"
 
@@ -88,6 +89,9 @@
  * warn user that it may be too long. */
 #define MSIM_MAX_PASSWORD_LENGTH    10
 
+/* Maximum length of usernames, when setting. */
+#define MSIM_MAX_USERNAME_LENGTH    25
+
 /* Build version of MySpaceIM to report to servers (1.0.xxx.0) */
 #define MSIM_CLIENT_VERSION         697
 
@@ -108,6 +112,7 @@
 
 /* Time between keepalives (seconds) - if no data within this time, is dead. */
 #define MSIM_KEEPALIVE_INTERVAL     (3 * 60)
+/*#define MSIM_USE_KEEPALIVE*/
 
 /* Time to check if alive (milliseconds) */
 #define MSIM_KEEPALIVE_INTERVAL_CHECK   (30 * 1000)
@@ -220,6 +225,8 @@ int msim_test_escaping(void);
 #endif
 
 gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type);
+
+gboolean msim_we_are_logged_on(MsimSession *session);
 
 
 void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);
