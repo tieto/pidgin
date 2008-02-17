@@ -407,6 +407,8 @@ gnt_widget_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 {
 	gboolean ret;
 	g_signal_emit(widget, signals[SIG_CLICKED], 0, event, x, y, &ret);
+	if (!ret && event == GNT_RIGHT_MOUSE_DOWN)
+		ret = gnt_bindable_perform_action_named(GNT_BINDABLE(widget), "context-menu", NULL);
 	return ret;
 }
 

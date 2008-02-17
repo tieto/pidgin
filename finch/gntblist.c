@@ -601,10 +601,10 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 	field = purple_request_field_string_new("screenname", _("Screen Name"), username, FALSE);
 	purple_request_field_group_add_field(group, field);
 
-	field = purple_request_field_string_new("alias", _("Alias"), alias, FALSE);
+	field = purple_request_field_string_new("alias", _("Alias (optional)"), alias, FALSE);
 	purple_request_field_group_add_field(group, field);
 
-	field = purple_request_field_string_new("group", _("Group"), grp, FALSE);
+	field = purple_request_field_string_new("group", _("Add in group"), grp, FALSE);
 	purple_request_field_group_add_field(group, field);
 	purple_request_field_set_type_hint(field, "group");
 
@@ -1408,7 +1408,6 @@ finch_blist_remove_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 	char *primary;
 	const char *name, *sec = NULL;
 
-	/* XXX: could be a contact */
 	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleContact *c = (PurpleContact*)node;
 		name = purple_contact_get_alias(c);
@@ -2349,15 +2348,6 @@ blist_node_compare_log(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	return ret;
 }
 
-static gboolean
-blist_clicked(GntTree *tree, GntMouseEvent event, int x, int y, gpointer ggblist)
-{
-	if (event == GNT_RIGHT_MOUSE_DOWN) {
-		draw_context_menu(ggblist);
-	}
-	return FALSE;
-}
-
 static void
 plugin_action(GntMenuItem *item, gpointer data)
 {
@@ -2940,7 +2930,6 @@ blist_show(PurpleBuddyList *list)
 	g_signal_connect(G_OBJECT(ggblist->tree), "key_pressed", G_CALLBACK(key_pressed), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "context-menu", G_CALLBACK(context_menu), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "collapse-toggled", G_CALLBACK(group_collapsed), NULL);
-	g_signal_connect_after(G_OBJECT(ggblist->tree), "clicked", G_CALLBACK(blist_clicked), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "activate", G_CALLBACK(selection_activate), ggblist);
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "gained-focus", G_CALLBACK(draw_tooltip),
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
