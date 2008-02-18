@@ -46,6 +46,7 @@ static void (*org_destroy)(GntWidget *wid);
 static void (*org_map)(GntWidget *wid);
 static void (*org_size_request)(GntWidget *wid);
 static gboolean (*org_key_pressed)(GntWidget *w, const char *t);
+static gboolean (*org_clicked)(GntWidget *w, GntMouseEvent event, int x, int y);
 
 static void menuitem_activate(GntMenu *menu, GntMenuItem *item);
 
@@ -390,6 +391,16 @@ gnt_menu_hide(GntWidget *widget)
 		menu->parentmenu->submenu = NULL;
 }
 
+static gboolean
+gnt_menu_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
+{
+	if (!org_clicked || !org_clicked(widget, event, x, y) ||
+			!GNT_MENU(widget)->type == GNT_MENU_TOPLEVEL)
+			return FALSE;
+	gnt_widget_activate(widget);
+	return TRUE;
+}
+
 static void
 gnt_menu_class_init(GntMenuClass *klass)
 {
@@ -401,6 +412,7 @@ gnt_menu_class_init(GntMenuClass *klass)
 	org_draw = wid_class->draw;
 	org_key_pressed = wid_class->key_pressed;
 	org_size_request = wid_class->size_request;
+	org_clicked = wid_class->clicked;
 
 	wid_class->destroy = gnt_menu_destroy;
 	wid_class->draw = gnt_menu_draw;
@@ -409,6 +421,7 @@ gnt_menu_class_init(GntMenuClass *klass)
 	wid_class->key_pressed = gnt_menu_key_pressed;
 	wid_class->activate = gnt_menu_activate;
 	wid_class->hide = gnt_menu_hide;
+	wid_class->clicked = gnt_menu_clicked;
 
 	parent_class->toggled = gnt_menu_toggled;
 
