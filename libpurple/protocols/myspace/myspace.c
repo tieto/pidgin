@@ -1578,9 +1578,6 @@ msim_is_username_set(MsimSession *session, MsimMessage *msg)
 	 * address and not username. Will be freed in msim_session_destroy(). */
 	session->username = msim_msg_get_string(msg, "uniquenick");
 
-	/* Set display name to username (otherwise will show email address) */
-	purple_connection_set_display_name(session->gc, session->username);
-
 	/* If user lacks a username, help them get one. */
 	if (msim_msg_get_integer(msg, "uniquenick") == session->userid) {
 		purple_debug_info("msim_is_username_set", "no username is set\n");
@@ -1613,6 +1610,9 @@ gboolean msim_we_are_logged_on(MsimSession *session)
 	 * we're ready for it (session key, userid, username all setup). */
 	purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
 	purple_connection_set_state(session->gc, PURPLE_CONNECTED);
+
+	/* Set display name to username (otherwise will show email address) */
+	purple_connection_set_display_name(session->gc, session->username);
 
 	body = msim_msg_new(
 			"UserID", MSIM_TYPE_INTEGER, session->userid,

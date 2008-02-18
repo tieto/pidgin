@@ -564,7 +564,7 @@ msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
  * Currently.. We're safe letting them get by without setting it.. Unless we hear otherwise..        *
  * So for now, give them a menu.. If this becomes an issue with the Official client.. boot them here */
 void msim_do_not_set_username_cb(PurpleConnection *gc) {
-	purple_debug_info("msim", "Dont set username");
+	purple_debug_info("msim", "Don't set username");
 
 	/* Protocol won't log in now without a username set.. Disconnect */
 	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("No username set"));
@@ -803,6 +803,7 @@ static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo,
 		purple_debug_info("msim_username_is_set_cb", "Username Set with return code %d\n",code);
 		if (code == 0) {
 			/* Good! */
+			session->username = username;
 			msim_we_are_logged_on(session);
 		} else {
 			purple_debug_info("msim_username_is_set", "code is %d",code);
@@ -813,7 +814,7 @@ static void msim_username_is_set_cb(MsimSession *session, MsimMessage *userinfo,
 			&& lid == MG_MYSPACE_INFO_BY_STRING_LID) {
 		/* Not quite done... ONE MORE STEP :) */
 		rid = msim_new_reply_callback(session, msim_username_is_set_cb, data);
-		body = msim_msg_new("UserName", MSIM_TYPE_STRING, g_strdup(username),NULL);
+		body = msim_msg_new("UserName", MSIM_TYPE_STRING, g_strdup(username), NULL);
 		if (!msim_send(session, "persist", MSIM_TYPE_INTEGER, 1, 
 					"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 					"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_PUT, 
