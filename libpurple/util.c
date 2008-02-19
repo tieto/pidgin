@@ -921,6 +921,7 @@ purple_markup_unescape_entity(const char *text, int *length)
 {
 	const char *pln;
 	int len, pound;
+	char temp[2];
 
 	if (!text || *text != '&')
 		return NULL;
@@ -943,8 +944,10 @@ purple_markup_unescape_entity(const char *text, int *length)
 		pln = "\302\256";      /* or use g_unichar_to_utf8(0xae); */
 	else if(IS_ENTITY("&apos;"))
 		pln = "\'";
-	else if(*(text+1) == '#' && (sscanf(text, "&#%u;", &pound) == 1) &&
-			pound != 0 && *(text+3+(gint)log10(pound)) == ';') {
+	else if(*(text+1) == '#' &&
+			(sscanf(text, "&#%u%1[;]", &pound, temp) == 2 ||
+			 sscanf(text, "&#x%x%1[;]", &pound, temp) == 2) &&
+			pound != 0) {
 		static char buf[7];
 		int buflen = g_unichar_to_utf8((gunichar)pound, buf);
 		buf[buflen] = '\0';
