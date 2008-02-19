@@ -180,6 +180,7 @@ libpurple/proxy.c
 libpurple/request.h
 libpurple/savedstatuses.c
 libpurple/server.c
+libpurple/smiley.c
 libpurple/sslconn.c
 libpurple/status.c
 libpurple/util.c
@@ -209,6 +210,7 @@ pidgin/gtkprivacy.c
 pidgin/gtkrequest.c
 pidgin/gtkroomlist.c
 pidgin/gtksavedstatuses.c
+pidgin/gtksmiley.c
 pidgin/gtksound.c
 pidgin/gtkstatusbox.c
 pidgin/gtkutils.c
