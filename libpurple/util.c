@@ -2915,9 +2915,11 @@ char *
 purple_util_get_image_filename(gconstpointer image_data, size_t image_len)
 {
 	/* Return the filename */
-	return g_strdup_printf("%s.%s", 
-	                       purple_util_get_image_checksum(image_data, image_len),
+	char *checksum = purple_util_get_image_checksum(image_data, image_len);
+	char *filename = g_strdup_printf("%s.%s", checksum,
 	                       purple_util_get_image_extension(image_data, image_len));
+	g_free(checksum);
+	return filename;
 }
 
 gboolean
