@@ -99,10 +99,10 @@ static char *get_file_full_path(const char *filename);
 
 static PurpleSmiley *purple_smiley_create(const char *shortcut);
 
-PurpleSmiley *purple_smiley_load_file(const char *shortcut, const char *checksum,
+static PurpleSmiley *purple_smiley_load_file(const char *shortcut, const char *checksum,
 		const char *filename);
 
-void
+static void
 purple_smiley_set_data_impl(PurpleSmiley *smiley, guchar *smiley_data,
 		size_t smiley_data_len, const char *filename);
 
@@ -282,7 +282,7 @@ static char *get_file_full_path(const char *filename)
 	return path;
 }
 
-PurpleSmiley *
+static PurpleSmiley *
 purple_smiley_load_file(const char *shortcut, const char *checksum, const char *filename)
 {
 	PurpleSmiley *smiley = NULL;
@@ -299,8 +299,10 @@ purple_smiley_load_file(const char *shortcut, const char *checksum, const char *
 		return NULL;
 
 	smiley = purple_smiley_create(shortcut);
-	if (!smiley)
+	if (!smiley) {
+		g_free(fullpath);
 		return NULL;
+	}
 
 	smiley->checksum = g_strdup(checksum);
 
@@ -309,6 +311,8 @@ purple_smiley_load_file(const char *shortcut, const char *checksum, const char *
 				smiley_data_len, filename);
 	else
 		purple_smiley_delete(smiley);
+
+	g_free(fullpath);
 
 	return smiley;
 }
@@ -420,7 +424,7 @@ purple_smiley_data_new(guchar *smiley_data, size_t smiley_data_len)
 	return stored_img;
 }
 
-void
+static void
 purple_smiley_set_data_impl(PurpleSmiley *smiley, guchar *smiley_data,
 				size_t smiley_data_len, const char *filename)
 {
