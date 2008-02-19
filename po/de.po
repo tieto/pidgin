@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-08 16:08+0100\n"
-"PO-Revision-Date: 2008-02-08 16:08+0100\n"
+"POT-Creation-Date: 2008-02-19 20:29+0100\n"
+"PO-Revision-Date: 2008-02-19 20:28+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -196,11 +196,12 @@ msgstr "Fehler beim Hinzufügen des Buddys"
 msgid "Screen Name"
 msgstr "Benutzername"
 
-msgid "Alias"
-msgstr "Alias"
+msgid "Alias (optional)"
+msgstr "Alias (optional)"
 
-msgid "Group"
-msgstr "Gruppe"
+#, fuzzy
+msgid "Add in group"
+msgstr "Gruppe hinzufügen"
 
 msgid "Account"
 msgstr "Konto"
@@ -217,6 +218,12 @@ msgstr "Chats"
 #. Extract their Name and put it in
 msgid "Name"
 msgstr "Name"
+
+msgid "Alias"
+msgstr "Alias"
+
+msgid "Group"
+msgstr "Gruppe"
 
 msgid "Auto-join"
 msgstr "Automatisch beitreten"
@@ -5346,22 +5353,21 @@ msgstr "Neue Bild-Kommentare"
 msgid "MySpace"
 msgstr "MySpace"
 
+msgid "MySpaceIM - No Username Set"
+msgstr "MySpaceIM - Kein Benutzername gesetzt"
+
+msgid "You appear to have no MySpace username."
+msgstr "Sie scheinen keinen MySpace-Benutzernamen zu haben."
+
+msgid "Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"
+msgstr ""
+"Möchten Sie jetzt einen setzen? (Bemerkung: DIES KANN NICHT GEÄNDERT WERDEN!)"
+
 #. The session is now set up, ready to be connected. This emits the
 #. * signedOn signal, so clients can now do anything with msimprpl, and
 #. * we're ready for it (session key, userid, username all setup).
 msgid "Connected"
 msgstr "Verbunden"
-
-msgid "No username set"
-msgstr "Kein Benutzername gesetzt"
-
-msgid ""
-"Please go to http://editprofile.myspace.com/index.cfm?fuseaction=profile."
-"username and choose a username and try to login again."
-msgstr ""
-"Bitte besuchen Sie http://editprofile.myspace.com/index.cfm?"
-"fuseaction=profile.username und wählen sie einen Benutzernamen und versuchen "
-"Sie sich erneut anzumelden."
 
 #, c-format
 msgid "Protocol error, code %d: %s"
@@ -5491,6 +5497,32 @@ msgstr "Freunde insgesamt"
 
 msgid "Client Version"
 msgstr "Client-Version"
+
+#. Protocol won't log in now without a username set.. Disconnect
+msgid "No username set"
+msgstr "Kein Benutzername gesetzt"
+
+msgid "MySpaceIM - Please Set a Username"
+msgstr "MySpaceIM - Bitte setzen Sie einen Benutzernamen"
+
+msgid "Please enter a username to check its availability:"
+msgstr ""
+"Bitte geben Sie einen Benutzernamen ein um seine Verfügbarkeit zu überprüfen:"
+
+msgid "MySpaceIM - Username Available"
+msgstr "MySpaceIM - Benutzername verfügbar"
+
+msgid "This username is available. Would you like to set it?"
+msgstr "Dieser Benutzername ist verfügbar. Möchten Sie ihn setzen?"
+
+msgid "ONCE SET, THIS CANNOT BE CHANGED!"
+msgstr "EINMAL GESETZT, KANN DIES NICHT GEÄNDERT WERDEN!"
+
+msgid "This username is unavailable."
+msgstr "Dieser Benutzername ist nicht verfügbar."
+
+msgid "Please try another username:"
+msgstr "Bitte versuchen Sie einen anderen Benutzernamen:"
 
 #. TODO: icons for each zap
 #. Lots of comments for translators:
@@ -11837,6 +11869,9 @@ msgstr "N_eue Unterhaltungen:"
 
 msgid "Show _formatting on incoming messages"
 msgstr "Zeige _Formatierung bei ankommenden Nachrichten"
+
+msgid "Close IMs immediately when the tab is closed"
+msgstr "IMs automatisch schließen, wenn der Reiter geschlossen wird"
 
 msgid "Show _detailed information"
 msgstr "_Detaillierte Informationen anzeigen"
