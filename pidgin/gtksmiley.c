@@ -132,11 +132,11 @@ void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
 			continue;
 
 		destroy_gtksmiley(gtksmiley);
-		list = g_slist_delete_link(list, list);
 		break;
 	}
 
-	gtk_smileys = list;
+	if (list)
+		gtk_smileys = g_slist_delete_link(gtk_smileys, list);
 }
 
 void pidgin_smileys_init(void)
