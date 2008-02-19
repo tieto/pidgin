@@ -61,6 +61,7 @@
 #include "gtkroomlist.h"
 #include "gtksavedstatuses.h"
 #include "gtksession.h"
+#include "gtksmiley.h"
 #include "gtksound.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
@@ -327,6 +328,7 @@ pidgin_ui_init(void)
 	pidgin_roomlist_init();
 	pidgin_log_init();
 	pidgin_docklet_init();
+	pidgin_smileys_init();
 }
 
 static GHashTable *ui_info = NULL;
@@ -343,6 +345,7 @@ pidgin_quit(void)
 	pidgin_plugins_save();
 
 	/* Uninit */
+	pidgin_smileys_uninit();
 	pidgin_conversations_uninit();
 	pidgin_status_uninit();
 	pidgin_docklet_uninit();

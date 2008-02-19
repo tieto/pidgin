@@ -5044,6 +5044,12 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		nbr_nick_colors = NUM_NICK_COLORS;
 		nick_colors = generate_nick_colors(&nbr_nick_colors, gtk_widget_get_style(gtkconv->imhtml)->base[GTK_STATE_NORMAL]);
 	}
+
+	/* We don't want to see the custom smileys if our buddy send us the
+	 * defined shortcut. */
+	pidgin_themes_smiley_themeize(gtkconv->imhtml);
+	/* We want to see our smileys in the entry */
+	pidgin_themes_smiley_themeize_custom(gtkconv->entry);
 }
 
 static void
@@ -5350,8 +5356,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	char *bracket;
 	int tag_count = 0;
 	gboolean is_rtl_message = FALSE;
-	GtkSmileyTree *tree = NULL;
-	GHashTable *smiley_data = NULL;
 
 	g_return_if_fail(conv != NULL);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -5510,14 +5514,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 	if (!(flags & PURPLE_MESSAGE_RECV))
 	{
-		/* Temporarily revert to the original smiley-data to avoid showing up
-		 * custom smileys of the buddy when sending message
-		 */
-		tree = GTK_IMHTML(gtkconv->imhtml)->default_smilies;
-		GTK_IMHTML(gtkconv->imhtml)->default_smilies =
-								GTK_IMHTML(gtkconv->entry)->default_smilies;
-		smiley_data = GTK_IMHTML(gtkconv->imhtml)->smiley_data;
-		GTK_IMHTML(gtkconv->imhtml)->smiley_data = GTK_IMHTML(gtkconv->entry)->smiley_data;
+		/* We want to see our own smileys. Need to revert it after send*/
+		pidgin_themes_smiley_themeize_custom(gtkconv->imhtml);
 	}
 
 	/* TODO: These colors should not be hardcoded so log.c can use them */
@@ -5763,8 +5761,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	if (!(flags & PURPLE_MESSAGE_RECV))
 	{
 		/* Restore the smiley-data */
-		GTK_IMHTML(gtkconv->imhtml)->default_smilies = tree;
-		GTK_IMHTML(gtkconv->imhtml)->smiley_data = smiley_data;
+		pidgin_themes_smiley_themeize(gtkconv->imhtml);
 	}
 
 	purple_signal_emit(pidgin_conversations_get_handle(),

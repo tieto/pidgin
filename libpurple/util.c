@@ -921,7 +921,6 @@ purple_markup_unescape_entity(const char *text, int *length)
 {
 	const char *pln;
 	int len, pound;
-	char temp[2];
 
 	if (!text || *text != '&')
 		return NULL;
@@ -944,9 +943,8 @@ purple_markup_unescape_entity(const char *text, int *length)
 		pln = "\302\256";      /* or use g_unichar_to_utf8(0xae); */
 	else if(IS_ENTITY("&apos;"))
 		pln = "\'";
-	else if(*(text+1) == '#' &&
-			(sscanf(text, "&#%u%1[;]", &pound, temp) == 2 || sscanf(text, "&#x%x%1[;]", &pound, temp) == 2) &&
-			pound != 0) {
+	else if(*(text+1) == '#' && (sscanf(text, "&#%u;", &pound) == 1) &&
+			pound != 0 && *(text+3+(gint)log10(pound)) == ';') {
 		static char buf[7];
 		int buflen = g_unichar_to_utf8((gunichar)pound, buf);
 		buf[buflen] = '\0';
@@ -2889,7 +2887,7 @@ purple_util_get_image_extension(gconstpointer data, size_t len)
 }
 
 char *
-purple_util_get_image_filename(gconstpointer image_data, size_t image_len)
+purple_util_get_image_checksum(gconstpointer image_data, size_t image_len)
 {
 	PurpleCipherContext *context;
 	gchar digest[41];
@@ -2910,8 +2908,15 @@ purple_util_get_image_filename(gconstpointer image_data, size_t image_len)
 	}
 	purple_cipher_context_destroy(context);
 
+	return g_strdup(digest);
+}
+
+char *
+purple_util_get_image_filename(gconstpointer image_data, size_t image_len)
+{
 	/* Return the filename */
-	return g_strdup_printf("%s.%s", digest,
+	return g_strdup_printf("%s.%s", 
+	                       purple_util_get_image_checksum(image_data, image_len),
 	                       purple_util_get_image_extension(image_data, image_len));
 }
 
