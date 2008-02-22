@@ -164,7 +164,8 @@ mini_dialog_button_clicked_cb(GtkButton *button,
 	priv->idle_destroy_cb_id =
 		g_idle_add((GSourceFunc) idle_destroy_cb, data->mini_dialog);
 
-	data->callback(data->mini_dialog, button, data->user_data);
+	if (data->callback != NULL)
+		data->callback(data->mini_dialog, button, data->user_data);
 
 }
 
