@@ -3484,8 +3484,13 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 		"Host: login.yahoo.com\r\n"
 		"Content-Length: 0\r\n\r\n",
 		yd->cookie_t, yd->cookie_y);
+	gboolean use_whole_url = FALSE;
 
-	url_data = purple_util_fetch_url_request(base_url, FALSE,
+	/* use whole URL if using HTTP Proxy */
+	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	    use_whole_url = TRUE;
+
+	url_data = purple_util_fetch_url_request(base_url, use_whole_url,
 			"Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, request, FALSE,
 			yahoo_get_inbox_token_cb, gc);
 
