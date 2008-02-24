@@ -18,9 +18,26 @@ XS-Vcs-Svn: svn://svn.debian.org/svn/collab-maint/deb-maint/pidgin/
 XS-Vcs-Browser: http://svn.debian.org/wsvn/collab-maint/deb-maint/pidgin/
 Homepage: http://www.pidgin.im
 
+Package: libpurple0
+Architecture: any
+Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}, libsasl2-modules
+Recommends: ca-certificates, libpurple-bin
+Replaces: pidgin (<< 2.1.1-2)
+Conflicts: pidgin (<< 2.1.1-2)
+Suggests: ${shlibs:Suggests}
+Description: multi-protocol instant messaging library
+ libpurple is a library intended to be used by programmers seeking
+ to write an IM client that connects to many IM networks.
+ Currently supported are: AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr,
+ Gadu-Gadu, Bonjour, Groupwise, Sametime, SILC, and SIMPLE.
+ . 
+ Some extra packages are suggested to use increased functionality:
+  * tcl8.4, tk8.4:
+    - Support for writing plugins with Tcl/Tk
+
 Package: pidgin
 Architecture: any
-Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}
+Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}
 Conflicts: gaim (<< 1:2.0.0+beta6-3), pidgin-data (<< 2.1.1-2)
 Replaces: gaim (<< 1:2.0.0+beta6-3), pidgin-data (<< 2.1.1-2)
 Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
@@ -104,23 +121,6 @@ Description: text-based multi-protocol instant messaging client - development
  This package contains the headers and other development files not included in
  the main finch package. Install this if you wish to compile your own plugins,
  or would like to compile programs that use the libgnt library.
-
-Package: libpurple0
-Architecture: any
-Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z), ${shlibs:Depends}, ${misc:Depends}, libsasl2-modules
-Recommends: ca-certificates, libpurple-bin
-Replaces: pidgin (<< 2.1.1-2)
-Conflicts: pidgin (<< 2.1.1-2)
-Suggests: ${shlibs:Suggests}
-Description: multi-protocol instant messaging library
- libpurple is a library intended to be used by programmers seeking
- to write an IM client that connects to many IM networks.
- Currently supported are: AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr,
- Gadu-Gadu, Bonjour, Groupwise, Sametime, SILC, and SIMPLE.
- . 
- Some extra packages are suggested to use increased functionality:
-  * tcl8.4, tk8.4:
-    - Support for writing plugins with Tcl/Tk
 
 Package: libpurple-dev
 Section: libdevel
