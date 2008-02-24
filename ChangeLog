@@ -10,12 +10,15 @@ version 2.4.0 (??/??/????):
 	* Partial support for viewing ICQ status notes (Collin from
 	  ComBOTS GmbH).
 	* Support for /notice on IRC.
-	* Support for Yahoo Messenger 7.0+ file transfer method (Thanumalayan S.)
+	* Support for Yahoo! Messenger 7.0+ file transfer method (Thanumalayan S.)
 	* Support for retrieving full names and addresses from the address book
 	  on Yahoo! Japan (Yusuke Odate)
 	* The AIM/ICQ server-side preference for "allow others to see me
 	  as idle" is no longer unconditionally set to "yes" even when
 	  your libpurple preference is "no."
+	* Fixed retrieval of buddy icons and setting of server-side aliases on
+	  Yahoo! and Yahoo! Japan when using an HTTP proxy server (Gideon N.
+	  Guillen)
 
 	Pidgin:
 	* Added the ability to theme conversation name colors (red and blue)
