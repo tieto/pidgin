@@ -80,6 +80,7 @@ static void add_gtkimhtml_to_list(GtkIMHtmlSmiley *gtksmiley)
 	purple_debug_info("gtksmiley", "adding %s to gtk_smileys\n", gtksmiley->smile);
 }
 
+/* Perhaps this should be in gtkimhtml.c instead. -- sad */
 static GtkIMHtmlSmiley *smiley_purple_to_gtkimhtml(PurpleSmiley *smiley)
 {
 	GtkIMHtmlSmiley *gtksmiley;
@@ -141,16 +142,16 @@ void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
 
 void pidgin_smileys_init(void)
 {
-	GList *purple_smileys;
+	GList *smileys;
 	PurpleSmiley *smiley;
 
 	if (gtk_smileys != NULL)
 		return;
 
-	purple_smileys = purple_smileys_get_all();
+	smileys = purple_smileys_get_all();
 
-	for (; purple_smileys; purple_smileys = purple_smileys->next) {
-		smiley = (PurpleSmiley*)purple_smileys->data;
+	for (; smileys; smileys = g_list_delete_link(smileys, smileys)) {
+		smiley = (PurpleSmiley*)smileys->data;
 
 		pidgin_smiley_add_to_list(smiley);
 	}
@@ -432,7 +433,8 @@ static void populate_smiley_list(SmileyManager *dialog)
 
 	gtk_list_store_clear(dialog->model);
 
-	for(list = purple_smileys_get_all(); list != NULL; list = list->next) {
+	for(list = purple_smileys_get_all(); list != NULL;
+			list = g_list_delete_link(list, list)) {
 		emoticon = (PurpleSmiley*)list->data;
 
 		store_smiley_add(emoticon);

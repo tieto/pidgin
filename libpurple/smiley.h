@@ -210,9 +210,9 @@ char *purple_smiley_get_full_path(PurpleSmiley *smiley);
 /*@{*/
 
 /**
- * Returns a list of all custom smileys.
+ * Returns a list of all custom smileys. The caller should free the list.
  *
- * @constreturn A list of all custom smileys.
+ * @return A list of all custom smileys.
  */
 GList *
 purple_smileys_get_all(void);

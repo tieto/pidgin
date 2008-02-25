@@ -730,12 +730,9 @@ char *purple_smiley_get_full_path(PurpleSmiley *smiley)
 
 static void add_smiley_to_list(gpointer key, gpointer value, gpointer user_data)
 {
-	GList** preturninglist = (GList**)user_data;
-	GList *returninglist = *preturninglist;
+	GList** returninglist = (GList**)user_data;
 
-	returninglist = g_list_append(returninglist, value);
-
-	*preturninglist = returninglist;
+	*returninglist = g_list_append(*returninglist, value);
 }
 
 GList *
