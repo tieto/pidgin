@@ -86,12 +86,12 @@ static GtkIMHtmlSmiley *smiley_purple_to_gtkimhtml(PurpleSmiley *smiley)
 	gchar *filename;
 	const gchar *file;
 
-	file = purple_imgstore_get_filename(smiley->img);
+	file = purple_imgstore_get_filename(purple_smiley_get_stored_image(smiley));
 
 	filename = g_build_filename(purple_smileys_get_storing_dir(),file, NULL);
 
 	gtksmiley = g_new0(GtkIMHtmlSmiley,1);
-	gtksmiley->smile = g_strdup(smiley->shortcut);
+	gtksmiley->smile = g_strdup(purple_smiley_get_shortcut(smiley));
 	gtksmiley->hidden = FALSE;
 	gtksmiley->file = filename;
 	gtksmiley->flags = GTK_IMHTML_SMILEY_CUSTOM;
@@ -128,7 +128,7 @@ void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
 	for (; list; list = list->next) {
 		gtksmiley = (GtkIMHtmlSmiley*)list->data;
 
-		if (strcmp(gtksmiley->smile, smiley->shortcut))
+		if (strcmp(gtksmiley->smile, purple_smiley_get_shortcut(smiley)))
 			continue;
 
 		destroy_gtksmiley(gtksmiley);
@@ -417,7 +417,7 @@ static void store_smiley_add(PurpleSmiley *smiley)
 
 	gtk_list_store_set(smiley_manager->model, &iter,
 			ICON, sized_smiley,
-			SHORTCUT, smiley->shortcut,
+			SHORTCUT, purple_smiley_get_shortcut(smiley),
 			DATA, NULL,
 			-1);
 

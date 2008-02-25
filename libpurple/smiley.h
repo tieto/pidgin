@@ -36,14 +36,7 @@
  * This contains everything Purple will ever need to know about a custom smiley.
  * Everything.
  */
-typedef struct _PurpleSmiley {
-        PurpleStoredImage *img;        /**< The id of the stored image with the
-                                        the smiley data.        */
-        char *shortcut;                /**< Shortcut associated with the custom
-                                        smiley. This field will work as a
-                                        unique key by this API. */
-        char *checksum;                /**< The smiley checksum.        */
-} PurpleSmiley;
+typedef struct _PurpleSmiley PurpleSmiley;
 
 #ifdef __cplusplus
 extern "C" {

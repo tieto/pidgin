@@ -36,6 +36,16 @@
 /* Main structures, members and constants                                 */
 /**************************************************************************/
 
+struct _PurpleSmiley
+{
+        PurpleStoredImage *img;        /**< The id of the stored image with the
+                                        the smiley data.        */
+        char *shortcut;                /**< Shortcut associated with the custom
+                                        smiley. This field will work as a
+                                        unique key by this API. */
+        char *checksum;                /**< The smiley checksum.        */
+};
+
 static GHashTable *smiley_data_index = NULL;
 static GHashTable *smiley_shortcut_index = NULL;
 static GHashTable *smiley_checksum_index = NULL;
