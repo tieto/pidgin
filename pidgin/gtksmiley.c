@@ -200,7 +200,9 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 
 	if (s->filename == NULL || *entry == 0) {
 		purple_notify_error(s->parent, _("Custom Smiley"),
-				_("More Data needed"), NULL);
+				_("More Data needed"),
+				s->filename ? _("Please provide a shortcut to associate with the smiley.")
+					: _("Please select an image for the smiley."));
 		return;
 	}
 
