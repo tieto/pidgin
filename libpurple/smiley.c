@@ -46,9 +46,8 @@ struct _PurpleSmiley
         char *checksum;                /**< The smiley checksum.        */
 };
 
-static GHashTable *smiley_data_index = NULL;
-static GHashTable *smiley_shortcut_index = NULL;
-static GHashTable *smiley_checksum_index = NULL;
+static GHashTable *smiley_shortcut_index = NULL; /* shortcut (char *) => smiley (PurpleSmiley*) */
+static GHashTable *smiley_checksum_index = NULL; /* checksum (char *) => smiley (PurpleSmiley*) */
 
 static guint save_timer = 0;
 static gboolean smileys_loaded = FALSE;
@@ -170,7 +169,7 @@ smileys_to_xmlnode()
 		smileyset_node = xmlnode_new(XML_SMILEY_SET_TAG);
 		if (smileyset_node) {
 			xmlnode_insert_child(profile_node, smileyset_node);
-			g_hash_table_foreach(smiley_data_index, add_smiley_to_main_node, smileyset_node);
+			g_hash_table_foreach(smiley_shortcut_index, add_smiley_to_main_node, smileyset_node);
 		}
 	}
 
@@ -576,15 +575,9 @@ purple_smiley_new_from_file(const char *shortcut, const char *filepath, const ch
 void
 purple_smiley_delete(PurpleSmiley *smiley)
 {
-	guchar *filename = NULL;
-
 	g_return_if_fail(smiley != NULL);
 
-	filename = g_hash_table_lookup(smiley_shortcut_index, smiley->shortcut);
-
-	if (filename != NULL)
-		purple_smileys_remove(smiley);
-
+	purple_smileys_remove(smiley);
 	if (smiley->img)
 		purple_smiley_data_unstore(purple_imgstore_get_filename(smiley->img));
 
@@ -594,30 +587,18 @@ purple_smiley_delete(PurpleSmiley *smiley)
 gboolean
 purple_smiley_set_shortcut(PurpleSmiley *smiley, const char *shortcut)
 {
-	char *filename = NULL;
-
 	g_return_val_if_fail(smiley  != NULL, FALSE);
 	g_return_val_if_fail(shortcut != NULL, FALSE);
 
-	/* Check out whether the shortcut is already being used. */
-	filename = g_hash_table_lookup(smiley_shortcut_index, shortcut);
-
-	if (filename)
+	/* Check out whether the new shortcut is already being used. */
+	if (g_hash_table_lookup(smiley_shortcut_index, shortcut))
 		return FALSE;
 
-	/* Save filename associated with the current shortcut. */
-	filename = g_strdup(g_hash_table_lookup(
-			smiley_shortcut_index, smiley->shortcut));
+	/* Remove the old shortcut. */
+	g_hash_table_remove(smiley_shortcut_index, smiley->shortcut);
 
-	/* If the updating smiley was already inserted to internal indexes, the
-	 * shortcut index will need update.
-	 * So we remove the old element first, and add the new one right after.
-	 */
-	if (filename) {
-		g_hash_table_remove(smiley_shortcut_index, smiley->shortcut);
-		g_hash_table_insert(smiley_shortcut_index,
-			g_strdup(shortcut), filename);
-	}
+	/* Insert the new shortcut. */
+	g_hash_table_insert(smiley_shortcut_index, g_strdup(shortcut), smiley);
 
 	g_free(smiley->shortcut);
 	smiley->shortcut = g_strdup(shortcut);
@@ -631,28 +612,14 @@ void
 purple_smiley_set_data(PurpleSmiley *smiley, guchar *smiley_data,
 			   size_t smiley_data_len, gboolean keepfilename)
 {
-	gboolean updateindex = FALSE;
-	const char *filename = NULL;
-
 	g_return_if_fail(smiley     != NULL);
 	g_return_if_fail(smiley_data != NULL);
 	g_return_if_fail(smiley_data_len > 0);
 
-	/* If the updating smiley was already inserted to internal indexes, the
-	 * checksum index will need update. And, considering that the filename
-	 * could be regenerated using the file's checksum, the filename index
-	 * will be updated too.
-	 * So we remove it here, and add it again after the information is
-	 * updated by "purple_smiley_set_data_impl" method. */
-	filename = g_hash_table_lookup(smiley_checksum_index, smiley->checksum);
-	if (filename) {
-		g_hash_table_remove(smiley_checksum_index, smiley->checksum);
-		g_hash_table_remove(smiley_data_index, filename);
+	/* Remove the previous entry */
+	g_hash_table_remove(smiley_checksum_index, smiley->checksum);
 
-		updateindex = TRUE;
-	}
-
-	/* Updates the file data. */
+	/* Update the file data. This also updates the checksum. */
 	if ((keepfilename) && (smiley->img) &&
 			(purple_imgstore_get_filename(smiley->img)))
 		purple_smiley_set_data_impl(smiley, smiley_data,
@@ -662,13 +629,8 @@ purple_smiley_set_data(PurpleSmiley *smiley, guchar *smiley_data,
 		purple_smiley_set_data_impl(smiley, smiley_data,
 				smiley_data_len, NULL);
 
-	/* Reinserts the index item. */
-	filename = purple_imgstore_get_filename(smiley->img);
-	if ((updateindex) && (filename)) {
-		g_hash_table_insert(smiley_checksum_index,
-				g_strdup(smiley->checksum), g_strdup(filename));
-		g_hash_table_insert(smiley_data_index, g_strdup(filename), smiley);
-	}
+	/* Reinsert the index item. */
+	g_hash_table_insert(smiley_checksum_index, g_strdup(smiley->checksum), smiley);
 
 	purple_smileys_save();
 }
@@ -740,7 +702,7 @@ purple_smileys_get_all(void)
 {
 	GList *returninglist = NULL;
 
-	g_hash_table_foreach(smiley_data_index, add_smiley_to_list, &returninglist);
+	g_hash_table_foreach(smiley_shortcut_index, add_smiley_to_list, &returninglist);
 
 	return returninglist;
 }
@@ -748,16 +710,11 @@ purple_smileys_get_all(void)
 void
 purple_smileys_add(PurpleSmiley *smiley)
 {
-	const char *filename = NULL;
-
 	g_return_if_fail(smiley != NULL);
 
 	if (!g_hash_table_lookup(smiley_shortcut_index, smiley->shortcut)) {
-		filename = purple_imgstore_get_filename(smiley->img);
-
-		g_hash_table_insert(smiley_data_index, g_strdup(filename), smiley);
-		g_hash_table_insert(smiley_shortcut_index, g_strdup(smiley->shortcut), g_strdup(filename));
-		g_hash_table_insert(smiley_checksum_index, g_strdup(smiley->checksum), g_strdup(filename));
+		g_hash_table_insert(smiley_shortcut_index, g_strdup(smiley->shortcut), smiley);
+		g_hash_table_insert(smiley_checksum_index, g_strdup(smiley->checksum), smiley);
 
 		purple_smileys_save();
 	}
@@ -766,14 +723,9 @@ purple_smileys_add(PurpleSmiley *smiley)
 void
 purple_smileys_remove(PurpleSmiley *smiley)
 {
-	const char *filename = NULL;
-
 	g_return_if_fail(smiley != NULL);
 
-	filename = purple_imgstore_get_filename(smiley->img);
-
-	if (g_hash_table_lookup(smiley_data_index, filename)) {
-		g_hash_table_remove(smiley_data_index, filename);
+	if (g_hash_table_lookup(smiley_shortcut_index, smiley->shortcut)) {
 		g_hash_table_remove(smiley_shortcut_index, smiley->shortcut);
 		g_hash_table_remove(smiley_checksum_index, smiley->checksum);
 
@@ -784,43 +736,17 @@ purple_smileys_remove(PurpleSmiley *smiley)
 PurpleSmiley *
 purple_smileys_find_by_shortcut(const char *shortcut)
 {
-	PurpleSmiley *smiley = NULL;
-	guchar *filename = NULL;
-
 	g_return_val_if_fail(shortcut != NULL, NULL);
 
-	filename = g_hash_table_lookup(smiley_shortcut_index, shortcut);
-
-	if (filename == NULL)
-		return NULL;
-
-	smiley = g_hash_table_lookup(smiley_data_index, filename);
-
-	if (!smiley)
-		return NULL;
-
-	return smiley;
+	return g_hash_table_lookup(smiley_shortcut_index, shortcut);
 }
 
 PurpleSmiley *
 purple_smileys_find_by_checksum(const char *checksum)
 {
-	PurpleSmiley *smiley = NULL;
-	guchar *filename = NULL;
-
 	g_return_val_if_fail(checksum != NULL, NULL);
 
-	filename = g_hash_table_lookup(smiley_checksum_index, checksum);
-
-	if (filename == NULL)
-		return NULL;
-
-	smiley = g_hash_table_lookup(smiley_data_index, filename);
-
-	if (!smiley)
-		return NULL;
-
-	return smiley;
+	return g_hash_table_lookup(smiley_checksum_index, checksum);
 }
 
 const char *
@@ -832,24 +758,12 @@ purple_smileys_get_storing_dir(void)
 void
 purple_smileys_init()
 {
-	smiley_data_index = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, NULL);
-	smiley_shortcut_index = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, g_free);
-	smiley_checksum_index = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, g_free);
+	smiley_shortcut_index = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	smiley_checksum_index = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	smileys_dir = g_build_filename(purple_user_dir(), SMILEYS_DEFAULT_FOLDER, NULL);
 
 	purple_smileys_load();
-}
-
-static gboolean
-free_smiley_data(gpointer key, gpointer value, gpointer user_data)
-{
-	purple_smiley_destroy(value);
-
-	return TRUE;
 }
 
 void
@@ -861,7 +775,6 @@ purple_smileys_uninit()
 		sync_smileys();
 	}
 
-	g_hash_table_foreach_remove(smiley_data_index, free_smiley_data, NULL);
 	g_hash_table_destroy(smiley_shortcut_index);
 	g_hash_table_destroy(smiley_checksum_index);
 	g_free(smileys_dir);
