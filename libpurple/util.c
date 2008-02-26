@@ -4129,6 +4129,17 @@ purple_email_is_valid(const char *address)
 	return ((c - domain) > 3 ? TRUE : FALSE);
 }
 
+gboolean
+purple_ip_address_is_valid(const char *ip)
+{
+	int c, o1, o2, o3, o4;
+	char end;
+	c = sscanf(ip, "%d.%d.%d.%d%c", &o1, &o2, &o3, &o4, &end);
+	if (c > 4 || o1 < 0 || o1 > 255 || o2 < 0 || o2 > 255 || o3 < 0 || o3 > 255 || o4 < 0 || o4 > 255)
+		return FALSE;
+	return TRUE;
+}
+
 /* Stolen from gnome_uri_list_extract_uris */
 GList *
 purple_uri_list_extract_uris(const gchar *uri_list)

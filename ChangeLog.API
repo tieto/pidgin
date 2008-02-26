@@ -9,6 +9,7 @@ version 2.4.0 (??/??/????):
 		  purple_micro_version variables are exported by version.h,
 		  giving the version of libpurple in use at runtime.
 		* purple_util_set_current_song, purple_util_format_song_info
+		* purple_ip_address_is_valid
 		* Some accessor functions to the Roomlist API:
 			* purple_roomlist_get_fields
 			* purple_roomlist_room_get_type
