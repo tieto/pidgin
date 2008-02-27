@@ -2,6 +2,8 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.4.0 (??/??/2008):
 	libpurple:
+	* Added support for offline messages for AIM accounts (thanks to
+	  Matthew Goldstein)
 	* Fixed various problems with loss of status messages when going
 	  or returning from idle on MySpaceIM.
 	* Eliminated unmaintained Howl backend implementation for the
