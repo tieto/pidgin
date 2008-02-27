@@ -751,6 +751,7 @@ parse_current_error(xmlnode *node, PurpleAccount *account)
 		description = g_strdup("");
 
 	current_error = g_new0(PurpleConnectionErrorInfo, 1);
+	PURPLE_DBUS_REGISTER_POINTER(current_error, PurpleConnectionErrorInfo);
 	current_error->type = type;
 	current_error->description = description;
 
@@ -1009,6 +1010,7 @@ purple_account_destroy(PurpleAccount *account)
 		purple_log_free(account->system_log);
 
 	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	PURPLE_DBUS_UNREGISTER_POINTER(priv->current_error);
 	g_free(priv->current_error);
 	g_free(priv);
 
@@ -2365,8 +2367,7 @@ signed_on_cb(PurpleConnection *gc,
 }
 
 static void
-set_current_error(PurpleAccount *account,
-                  PurpleConnectionErrorInfo *new_err)
+set_current_error(PurpleAccount *account, PurpleConnectionErrorInfo *new_err)
 {
 	PurpleAccountPrivate *priv;
 	PurpleConnectionErrorInfo *old_err;
@@ -2389,6 +2390,7 @@ set_current_error(PurpleAccount *account,
 	if(old_err)
 		g_free(old_err->description);
 
+	PURPLE_DBUS_UNREGISTER_POINTER(old_err);
 	g_free(old_err);
 }
 
