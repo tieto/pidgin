@@ -2408,6 +2408,7 @@ connection_error_cb(PurpleConnection *gc,
 	g_return_if_fail(account != NULL);
 
 	err = g_new0(PurpleConnectionErrorInfo, 1);
+	PURPLE_DBUS_REGISTER_POINTER(err, PurpleConnectionErrorInfo);
 
 	err->type = type;
 	err->description = g_strdup(description);
