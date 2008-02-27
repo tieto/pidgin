@@ -44,6 +44,8 @@ version 2.4.0 (??/??/????):
 			* purple_connection_get_prpl
 			* purple_xfer_get_start_time
 			* purple_xfer_get_end_time
+		* purple_serv_got_private_alias for prpls to call after receiving a
+		  private alias from the server.
 
 	Pidgin:
 		Added:
