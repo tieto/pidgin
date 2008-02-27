@@ -713,7 +713,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 		return FALSE;
 	}
 
-	if ((text[0] == '\r' || text[0] == ' ') && entry->ddown)
+	if ((text[0] == '\r' || text[0] == ' ' || text[0] == '\n') && entry->ddown)
 	{
 		char *text = g_strdup(gnt_tree_get_selection_data(GNT_TREE(entry->ddown)));
 		destroy_suggest(entry);
@@ -782,7 +782,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 		return TRUE;
 	}
 
-	if (text[0] == '\r') {
+	if (text[0] == '\r' || text[0] == '\n') {
 		gnt_widget_activate(widget);
 		return TRUE;
 	}

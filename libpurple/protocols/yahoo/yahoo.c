@@ -1471,13 +1471,24 @@ static void yahoo_process_auth_old(PurpleConnection *gc, const char *seed)
 	to_y64(result96, digest, 16);
 
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pack, "ssssss",
-					  0, name,
-					  6, result6,
-					  96, result96,
-					  1, name,
-					  244, YAHOO_CLIENT_VERSION_ID,
-					  135, YAHOO_CLIENT_VERSION);
+
+	if(yd->jp) {
+		yahoo_packet_hash(pack, "sssss",
+						  0, name,
+						  6, result6,
+						  96, result96,
+						  1, name,
+						  135, YAHOOJP_CLIENT_VERSION);
+	} else {
+		yahoo_packet_hash(pack, "ssssss",
+						  0, name,
+						  6, result6,
+						  96, result96,
+						  1, name,
+						  244, YAHOO_CLIENT_VERSION_ID,
+						  135, YAHOO_CLIENT_VERSION);
+	}
+
 	yahoo_packet_send_and_free(pack, yd);
 
 	g_free(hash_string_p);
@@ -1923,13 +1934,24 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	}
 	purple_debug_info("yahoo", "yahoo status: %d\n", yd->current_status);
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	yd->current_status, 0);
-	yahoo_packet_hash(pack, "ssssss",
-					  0, name,
-					  6, resp_6,
-					  96, resp_96,
-					  1, name,
-					  244, YAHOO_CLIENT_VERSION_ID,
-					  135, YAHOO_CLIENT_VERSION);
+
+	if(yd->jp) {
+		yahoo_packet_hash(pack, "sssss",
+						  0, name,
+						  6, resp_6,
+						  96, resp_96,
+						  1, name,
+						  135, YAHOOJP_CLIENT_VERSION);
+	} else {
+		yahoo_packet_hash(pack, "ssssss",
+						  0, name,
+						  6, resp_6,
+						  96, resp_96,
+						  1, name,
+						  244, YAHOO_CLIENT_VERSION_ID,
+						  135, YAHOO_CLIENT_VERSION);
+	}
+
 	if (yd->picture_checksum)
 		yahoo_packet_hash_int(pack, 192, yd->picture_checksum);
 
@@ -3487,8 +3509,13 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 		"Host: login.yahoo.com\r\n"
 		"Content-Length: 0\r\n\r\n",
 		yd->cookie_t, yd->cookie_y);
+	gboolean use_whole_url = FALSE;
 
-	url_data = purple_util_fetch_url_request(base_url, FALSE,
+	/* use whole URL if using HTTP Proxy */
+	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	    use_whole_url = TRUE;
+
+	url_data = purple_util_fetch_url_request(base_url, use_whole_url,
 			"Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, request, FALSE,
 			yahoo_get_inbox_token_cb, gc);
 

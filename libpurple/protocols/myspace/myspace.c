@@ -73,7 +73,7 @@ static gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 static gboolean msim_check_alive(gpointer data);
 #endif
 
-static gboolean msim_we_are_logged_on(MsimSession *session, MsimMessage *msg);
+static gboolean msim_is_username_set(MsimSession *session, MsimMessage *msg);
 
 static gboolean msim_process(MsimSession *session, MsimMessage *msg);
 
@@ -290,27 +290,6 @@ msim_login(PurpleAccount *acct)
 	gc = purple_account_get_connection(acct);
 	gc->proto_data = msim_session_new(acct);
 	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC;
-
-#ifdef MSIM_MAX_PASSWORD_LENGTH
-	/* Passwords are limited in length. */
-	if (strlen(acct->password) > MSIM_MAX_PASSWORD_LENGTH) {
-		gchar *str;
-
-		str = g_strdup_printf(
-				_("Sorry, passwords over %d characters in length (yours is "
-				"%d) are not supported by MySpace."), 
-				MSIM_MAX_PASSWORD_LENGTH,
-				(int)strlen(acct->password));
-
-		/* Notify an error message also, because this is important! */
-		purple_notify_error(acct, _("MySpaceIM Error"), str, NULL);
-
-		purple_connection_error_reason (gc,
-			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, str);
-		g_free(str);
-		return;
-	}
-#endif
 
 	/* 1. connect to server */
 	purple_connection_update_progress(gc, _("Connecting"),
@@ -1567,14 +1546,14 @@ msim_check_newer_version_cb(PurpleUtilFetchUrlData *url_data,
 }
 #endif
 
-/** Called when the session key arrives. */
+/** Called when the session key arrives to check whether the user
+ * has a username, and set one if desired. */
 static gboolean
-msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
+msim_is_username_set(MsimSession *session, MsimMessage *msg) 
 {
-	MsimMessage *body;
-
 	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 	g_return_val_if_fail(msg != NULL, FALSE);
+	g_return_val_if_fail(session->gc != NULL, FALSE);
 
 	session->sesskey = msim_msg_get_integer(msg, "sesskey");
 	purple_debug_info("msim", "SESSKEY=<%d>\n", session->sesskey);
@@ -1599,8 +1578,32 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 	 * address and not username. Will be freed in msim_session_destroy(). */
 	session->username = msim_msg_get_string(msg, "uniquenick");
 
-	/* Set display name to username (otherwise will show email address) */
-	purple_connection_set_display_name(session->gc, session->username);
+	/* If user lacks a username, help them get one. */
+	if (msim_msg_get_integer(msg, "uniquenick") == session->userid) {
+		purple_debug_info("msim_is_username_set", "no username is set\n");
+		purple_request_yes_no(session->gc,
+			_("MySpaceIM - No Username Set"),
+			_("You appear to have no MySpace username."),
+			_("Would you like to set one now? (Note: THIS CANNOT BE CHANGED!)"),
+			0,
+			session->account,
+			NULL,
+			NULL,
+			session->gc, 
+			G_CALLBACK(msim_set_username_cb), 
+			G_CALLBACK(msim_do_not_set_username_cb));
+		purple_debug_info("msim_is_username_set","'username not set' alert prompted\n");
+		return FALSE;
+	}
+	return TRUE;
+}
+
+/** Called after username is set, if necessary and we're open for business. */
+gboolean msim_we_are_logged_on(MsimSession *session) 
+{
+	MsimMessage *body;
+
+	g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
 
 	/* The session is now set up, ready to be connected. This emits the
 	 * signedOn signal, so clients can now do anything with msimprpl, and
@@ -1608,20 +1611,8 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 	purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
 	purple_connection_set_state(session->gc, PURPLE_CONNECTED);
 
-
-	/* Additional post-connect operations */
-
-
-	if (msim_msg_get_integer(msg, "uniquenick") == session->userid) {
-		purple_debug_info("msim_we_are_logged_on", "TODO: pick username\n");
-		/* No username is set. */
-		purple_notify_error(session->account, 
-				_("No username set"),
-				_("Please go to http://editprofile.myspace.com/index.cfm?fuseaction=profile.username and choose a username and try to login again."), NULL);
-		purple_connection_error_reason (session->gc,
-			PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED, _("No username set"));
-		return FALSE;
-	}
+	/* Set display name to username (otherwise will show email address) */
+	purple_connection_set_display_name(session->gc, session->username);
 
 	body = msim_msg_new(
 			"UserID", MSIM_TYPE_INTEGER, session->userid,
@@ -1708,7 +1699,14 @@ msim_process(MsimSession *session, MsimMessage *msg)
 	if (msim_msg_get_integer(msg, "lc") == 1) {
 		return msim_login_challenge(session, msg);
 	} else if (msim_msg_get_integer(msg, "lc") == 2) {
-		return msim_we_are_logged_on(session, msg);
+		/* return msim_we_are_logged_on(session, msg); */
+		if (msim_is_username_set(session, msg)) {
+			return msim_we_are_logged_on(session);
+		} else {
+			/* No username is set... We'll wait for the callbacks to do their work */
+			/* When they're all done, the last one will call msim_we_are_logged_on() and pick up where we left off */
+			return FALSE;
+		}
 	} else if (msim_msg_get(msg, "bm"))  {
 		return msim_incoming_bm(session, msg);
 	} else if (msim_msg_get(msg, "rid")) {
@@ -1863,6 +1861,24 @@ msim_error(MsimSession *session, MsimMessage *msg)
 				reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
 				if (!purple_account_get_remember_password(session->account))
 					purple_account_set_password(session->account, NULL);
+#ifdef MSIM_MAX_PASSWORD_LENGTH
+				if (strlen(session->account->password) > MSIM_MAX_PASSWORD_LENGTH) {
+					gchar *suggestion;
+
+					suggestion = g_strdup_printf(_("%s Your password is "
+							"%d characters, greater than the "
+							"expected maximum length of %d for "
+							"MySpaceIM. Please shorten your "
+							"password at http://profileedit.myspace.com/index.cfm?fuseaction=accountSettings.changePassword and try again."),
+							full_errmsg, (int)
+							strlen(session->account->password),
+							MSIM_MAX_PASSWORD_LENGTH);
+
+					/* Replace full_errmsg. */
+					g_free(full_errmsg);
+					full_errmsg = suggestion;
+				}
+#endif		
 				break;
 			case MSIM_ERROR_LOGGED_IN_ELSEWHERE: /* Logged in elsewhere */
 				reason = PURPLE_CONNECTION_ERROR_NAME_IN_USE;
@@ -2800,7 +2816,14 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	 * the documentation claims). */
 	group_name = msim_msg_get_string(contact_info, "GroupName");
 	if (group_name) {
-		group = purple_group_new(group_name);
+		group = purple_find_group(group_name);
+		if (!group) {
+			group = purple_group_new(group_name);
+			/* Add group to beginning. See #2752. */
+			purple_blist_add_group(group, NULL);
+
+		}
+
 		purple_debug_info("msim_add_contact_from_server_cb",
 				"adding to GroupName: %s\n", group_name);
 		g_free(group_name);
@@ -2815,9 +2838,6 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 				"creating new buddy: %s\n", username);
 		buddy = purple_buddy_new(session->account, username, NULL);
 	}
-
-	/* Add group to beginning. See #2752. */
-	purple_blist_add_group(group, NULL);
 
 	/* TODO: use 'Position' in contact_info to take into account where buddy is */
 	purple_blist_add_buddy(buddy, NULL, group, NULL /* insertion point */);

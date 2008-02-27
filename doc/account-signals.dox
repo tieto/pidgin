@@ -148,7 +148,8 @@ void (*account_authorization_granted)(PurpleAccount *account, const char *user);
 void (*account_error_changed)(PurpleAccount *account, const PurpleConnectionErrorInfo *old_error, const PurpleConnectionErrorInfo *current_error);
   @endsignalproto
   @signaldesc
-   Emitted when @a account's error changes.
+   Emitted when @a account's error changes.  You should not call
+   purple_account_clear_current_error() while this signal is being emitted.
   @param account   The account whose error has changed.
   @param old_error The account's previous error, or @c NULL if it had no
                    error.  After this signal is emitted, @a old_error is

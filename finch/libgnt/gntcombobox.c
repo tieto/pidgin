@@ -155,6 +155,7 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 			{
 				case '\r':
 				case '\t':
+				case '\n':
 					hide_popup(box, TRUE);
 					return TRUE;
 				case 27:

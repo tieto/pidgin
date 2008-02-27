@@ -97,6 +97,7 @@ static const struct developer developers[] = {
 
 /* Order: Alphabetical by Last Name */
 static const struct developer patch_writers[] = {
+	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
 	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
@@ -121,7 +122,6 @@ static const struct developer retired_developers[] = {
 
 /* Order: Alphabetical by Last Name */
 static const struct developer retired_patch_writers[] = {
-	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},

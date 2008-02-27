@@ -274,6 +274,29 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 	}
 }
 
+void
+purple_serv_got_private_alias(PurpleConnection *gc, const char *who, const char *alias)
+{
+	PurpleAccount *account = NULL;
+	GSList *buddies = NULL;
+	PurpleBuddy *b = NULL;
+
+	account = purple_connection_get_account(gc);
+	buddies = purple_find_buddies(account, who);
+
+	while(buddies != NULL) {
+		b = buddies->data;
+
+		buddies = g_slist_delete_link(buddies, buddies);
+
+		if((!b->alias && !alias) || (b->alias && alias && !strcmp(b->alias, alias)))
+			continue;
+
+		purple_blist_alias_buddy(b, alias);
+	}
+}
+
+
 PurpleAttentionType *purple_get_attention_type_from_code(PurpleAccount *account, guint type_code)
 {
 	PurplePlugin *prpl;

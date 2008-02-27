@@ -1081,6 +1081,15 @@ const char *purple_url_encode(const char *str);
 gboolean purple_email_is_valid(const char *address);
 
 /**
+ * Checks if the given IP address is a syntactically valid IPv4 address.
+ *
+ * @param address The IP address to validate.
+ *
+ * @return True if the IP address is syntactically correct.
+ */
+gboolean purple_ip_address_is_valid(const char *ip);
+
+/**
  * This function extracts a list of URIs from the a "text/uri-list"
  * string.  It was "borrowed" from gnome_uri_list_extract_uris
  *

@@ -263,11 +263,10 @@ static void delete_log_cb(gpointer *data)
 				gtk_tree_store_remove(treestore, iter);
 			}
 		}
-		gtk_tree_path_free(path);
 #else
 		gtk_tree_store_remove(treestore, iter);
-		gtk_tree_path_free(path);
 #endif
+		gtk_tree_path_free(path);
 	}
 
 	delete_log_cleanup_cb(data);
@@ -363,6 +362,7 @@ static gboolean log_button_press_cb(GtkWidget *treeview, GdkEventButton *event, 
 		gtk_tree_model_get_iter(GTK_TREE_MODEL(lv->treestore), iter, path);
 		val.g_type = 0;
 		gtk_tree_model_get_value(GTK_TREE_MODEL(lv->treestore), iter, 1, &val);
+		gtk_tree_path_free(path);
 
 		log = g_value_get_pointer(&val);
 

@@ -50,11 +50,12 @@ msim_escape(const gchar *msg)
 {
 	GString *gs;
 	guint i, j;
+	guint msg_len;
 
 	gs = g_string_new("");
+	msg_len = strlen(msg);	
 
-
-	for (i = 0; i < strlen(msg); ++i) {
+	for (i = 0; i < msg_len; ++i) {
 		struct MSIM_ESCAPE_REPLACEMENT *replacement;
 		gchar *replace;
 
@@ -93,10 +94,12 @@ msim_unescape(const gchar *msg)
 {
 	GString *gs;
 	guint i, j;
+	guint msg_len;
 
 	gs = g_string_new("");
+	msg_len = strlen(msg);	
 
-	for (i = 0; i < strlen(msg); ++i) {
+	for (i = 0; i < msg_len; ++i) {
 		struct MSIM_ESCAPE_REPLACEMENT *replacement;
 		gchar replace;
 
@@ -105,7 +108,7 @@ msim_unescape(const gchar *msg)
 		for (j = 0; (replacement = &msim_escape_replacements[j]) &&
 				replacement->code != NULL; ++j) {
 			if (msg[i] == replacement->code[0] &&
-			    i + 1 < strlen(msg) &&
+			    i + 1 < msg_len &&
 			    msg[i + 1] == replacement->code[1]) {
 				replace = replacement->text;
 				++i;
@@ -426,6 +429,7 @@ msim_msg_free_element_data(MsimMessageElement *elem)
  * @param user_data Not used; required to match g_list_foreach() callback prototype.
  *
  * Frees both the element data and the element itself.
+ * Also frees the name if dynamic_name is TRUE.
  */
 static void 
 msim_msg_free_element(gpointer data, gpointer user_data)
@@ -435,6 +439,12 @@ msim_msg_free_element(gpointer data, gpointer user_data)
 	elem = (MsimMessageElement *)data;
 
 	msim_msg_free_element_data(elem);
+
+	if (elem->dynamic_name)
+		/* Need to cast to remove const-ness, because
+		 * elem->name is almost always a constant, static
+		 * string, but not in this case. */
+		g_free((gchar *)elem->name);
 
 	g_free(elem);
 }
@@ -509,15 +519,18 @@ msim_send(MsimSession *session, ...)
 /** Create a new MsimMessageElement * - must be g_free()'d. 
  *
  * For internal use; users probably want msim_msg_append() or msim_msg_insert_before(). 
+ *
+ * @param dynamic_name Whether 'name' should be freed when the message is destroyed.
  */
 static MsimMessageElement *
-msim_msg_element_new(const gchar *name, MsimMessageType type, gpointer data)
+msim_msg_element_new(const gchar *name, MsimMessageType type, gpointer data, gboolean dynamic_name)
 {
 	MsimMessageElement *elem;
 
 	elem = g_new0(MsimMessageElement, 1);
 
 	elem->name = name;
+	elem->dynamic_name = dynamic_name;
 	elem->type = type;
 	elem->data = data;
 
@@ -556,7 +569,18 @@ MsimMessage *
 msim_msg_append(MsimMessage *msg, const gchar *name, 
 		MsimMessageType type, gpointer data)
 {
-	return g_list_append(msg, msim_msg_element_new(name, type, data));
+	return g_list_append(msg, msim_msg_element_new(name, type, data, FALSE));
+}
+
+/** Append a new element, but with a dynamically-allocated name.
+ * Exactly the same as msim_msg_append(), except 'name' will be freed when
+ * the message is destroyed. Normally, it isn't, because a static string is given.
+ */
+static MsimMessage *
+msim_msg_append_dynamic_name(MsimMessage *msg, gchar *name,
+		MsimMessageType type, gpointer data)
+{
+	return g_list_append(msg, msim_msg_element_new(name, type, data, TRUE));
 }
 
 /** Insert a new element into a message, before the given element name.
@@ -573,7 +597,7 @@ msim_msg_insert_before(MsimMessage *msg, const gchar *name_before,
 	MsimMessageElement *new_elem;
 	GList *node_before;
 
-	new_elem = msim_msg_element_new(name, type, data);
+	new_elem = msim_msg_element_new(name, type, data, FALSE);
 
 	node_before = msim_msg_get_node(msg, name_before);
 
@@ -1193,8 +1217,9 @@ msim_msg_dictionary_parse(gchar *raw)
 		purple_debug_info("msim_msg_parse_dictionary","-- %s: %s\n", key ? key : "(NULL)", 
 				value ? value : "(NULL)");
 #endif
-		/* TODO: free key; right now it is treated as static */
-		dict = msim_msg_append(dict, g_strdup(key), MSIM_TYPE_RAW, g_strdup(value));
+		/* Append with _dynamic_name since g_strdup(key) is dynamic, and
+		 * needs to be freed when the message is destroyed. It isn't static as usual. */
+		dict = msim_msg_append_dynamic_name(dict, g_strdup(key), MSIM_TYPE_RAW, g_strdup(value));
 
 		g_strfreev(elements);
 	}

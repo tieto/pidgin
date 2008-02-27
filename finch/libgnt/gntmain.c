@@ -221,7 +221,7 @@ static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
 	char keys[256];
-	int rd;
+	gssize rd;
 	char *k;
 	char *cvrt = NULL;
 

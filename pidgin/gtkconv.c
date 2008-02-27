@@ -238,7 +238,10 @@ close_conv_cb(GtkWidget *w, GdkEventButton *dontuse, PidginConversation *gtkconv
 	switch (purple_conversation_get_type(conv)) {
 		case PURPLE_CONV_TYPE_IM:
 		{
-			hide_conv(gtkconv, TRUE);
+			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/close_immediately"))
+				close_this_sucker(gtkconv);
+			else
+				hide_conv(gtkconv, TRUE);
 			break;
 		}
 		case PURPLE_CONV_TYPE_CHAT:
@@ -2803,16 +2806,11 @@ icon_menu(GtkObject *obj, GdkEventButton *e, PidginConversation *gtkconv)
 void
 pidgin_conv_present_conversation(PurpleConversation *conv)
 {
-	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+	PidginConversation *gtkconv;
 	GdkModifierType state;
 
-	if (gtkconv == NULL) {
-		pidgin_conv_attach_to_conversation(conv);
-		gtkconv = PIDGIN_CONVERSATION(conv);
-	} else if (gtkconv->win == hidden_convwin) {
-		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
-		pidgin_conv_placement_place(gtkconv);
-	}
+	pidgin_conv_attach_to_conversation(conv);
+	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	pidgin_conv_switch_active_conversation(conv);
 	/* Switch the tab only if the user initiated the event by pressing
@@ -7641,6 +7639,7 @@ pidgin_conversations_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", TRUE);
 
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new", "never");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/close_immediately", TRUE);
 
 #ifdef _WIN32
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/win32/minimize_new_convs", FALSE);

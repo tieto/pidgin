@@ -79,7 +79,8 @@ gnt_button_map(GntWidget *widget)
 static gboolean
 gnt_button_key_pressed(GntWidget *widget, const char *key)
 {
-	if (strcmp(key, GNT_KEY_ENTER) == 0)
+	if (strcmp(key, GNT_KEY_ENTER) == 0 ||
+			strcmp(key, SAFE(cursor_down)) == 0)
 	{
 		gnt_widget_activate(widget);
 		return TRUE;
