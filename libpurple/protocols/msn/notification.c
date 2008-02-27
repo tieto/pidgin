@@ -1126,7 +1126,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		}
 	}
 
-	clientid = strtoul(cmd->params[4], NULL, 0);
+	clientid = strtoul(cmd->params[4], NULL, 10);
 	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE);
 
 	msn_user_set_state(user, state);
