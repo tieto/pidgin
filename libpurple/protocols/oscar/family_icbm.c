@@ -372,15 +372,18 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 	if (args->flags & AIM_IMFLAGS_AWAY) {
 		byte_stream_put16(&data, 0x0004);
 		byte_stream_put16(&data, 0x0000);
-	} else if (args->flags & AIM_IMFLAGS_ACK) {
-		/* Set the Request Acknowledge flag */
-		byte_stream_put16(&data, 0x0003);
-		byte_stream_put16(&data, 0x0000);
-	}
+	} else {
+		if (args->flags & AIM_IMFLAGS_ACK) {
+			/* Set the Request Acknowledge flag */
+			byte_stream_put16(&data, 0x0003);
+			byte_stream_put16(&data, 0x0000);
+		}
 
-	if (args->flags & AIM_IMFLAGS_OFFLINE) {
-		byte_stream_put16(&data, 0x0006);
-		byte_stream_put16(&data, 0x0000);
+		if (args->flags & AIM_IMFLAGS_OFFLINE) {
+			/* Allow this message to be queued as an offline message */
+			byte_stream_put16(&data, 0x0006);
+			byte_stream_put16(&data, 0x0000);
+		}
 	}
 
 	/*

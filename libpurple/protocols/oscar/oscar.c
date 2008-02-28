@@ -4225,13 +4225,15 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	PeerConnection *conn;
 	int ret;
 	char *tmp1, *tmp2;
-	gboolean is_html;
+	gboolean is_sms, is_html;
 
 	od = (OscarData *)gc->proto_data;
 	account = purple_connection_get_account(gc);
 	ret = 0;
 
-	if (od->icq && aim_snvalid_sms(name)) {
+	is_sms = aim_snvalid_sms(name);
+
+	if (od->icq && is_sms) {
 		/*
 		 * We're sending to a phone number and this is ICQ,
 		 * so send the message as an SMS using aim_icq_sendsms()
@@ -4257,6 +4259,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		struct aim_sendimext_args args;
 		PurpleConversation *conv;
 		PurpleStoredImage *img;
+		PurpleBuddy *buddy;
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, account);
 
@@ -4266,13 +4269,19 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			                        "You must be Direct Connected to send IM Images."),
 			                        PURPLE_MESSAGE_ERROR, time(NULL));
 
+		buddy = purple_find_buddy(gc->account, name);
+
 		bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, name));
 		if (!bi) {
 			bi = g_new0(struct buddyinfo, 1);
 			g_hash_table_insert(od->buddyinfo, g_strdup(purple_normalize(account, name)), bi);
 		}
 
-		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES | AIM_IMFLAGS_OFFLINE;
+		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
+
+		if (!is_sms && (!buddy || !PURPLE_BUDDY_IS_ONLINE(buddy)))
+			args.flags |= AIM_IMFLAGS_OFFLINE;
+
 		if (od->icq) {
 			/* We have to present different "features" (whose meaning
 			   is unclear and are merely a result of protocol inspection)
@@ -4281,7 +4290,6 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			   encoded" (and instead, assumes them to be UTF-8).
 			   For more details, see SF issue 1179452.
 			*/
-			PurpleBuddy *buddy = purple_find_buddy(gc->account, name);
 			if (buddy && PURPLE_BUDDY_IS_ONLINE(buddy)) {
 				args.features = features_icq;
 				args.featureslen = sizeof(features_icq);
