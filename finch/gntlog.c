@@ -419,7 +419,8 @@ void finch_log_show_contact(PurpleContact *contact) {
 		return;
 	}
 
-	for (child = contact->node.child ; child ; child = child->next) {
+	for (child = purple_blist_node_get_first_child((PurpleBlistNode*)contact); child;
+			child = purple_blist_node_get_sibling_next(child)) {
 		if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
 			continue;
 
@@ -429,17 +430,17 @@ void finch_log_show_contact(PurpleContact *contact) {
 	}
 	logs = g_list_sort(logs, purple_log_compare);
 
-	if (contact->alias != NULL)
-		name = contact->alias;
-	else if (contact->priority != NULL)
-		name = purple_buddy_get_contact_alias(contact->priority);
+	name = purple_contact_get_alias(contact);
+	if (!name)
+		name = purple_buddy_get_contact_alias(purple_contact_get_priority_buddy(contact));
 
 	/* This will happen if the contact doesn't have an alias,
 	 * and none of the contact's buddies are online.
 	 * There is probably a better way to deal with this. */
 	if (name == NULL) {
-		if (contact->node.child != NULL && PURPLE_BLIST_NODE_IS_BUDDY(contact->node.child))
-			name = purple_buddy_get_contact_alias((PurpleBuddy *) contact->node.child);
+		child = purple_blist_node_get_first_child((PurpleBlistNode*)contact);
+		if (child != NULL && PURPLE_BLIST_NODE_IS_BUDDY(child))
+			name = purple_buddy_get_contact_alias((PurpleBuddy *)child);
 		if (name == NULL)
 			name = "";
 	}
