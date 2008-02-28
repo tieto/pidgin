@@ -327,7 +327,9 @@ if [ -n "`which gconftool-2 2>/dev/null`" ]; then
     killall -HUP gconfd-2 &> /dev/null || :
 fi
 touch --no-create %{_datadir}/icons/hicolor || :
-%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
+if [ -x %{_bindir}/gtk-update-icon-cache ]; then
+	%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
+fi
 
 %post -n libpurple -p /sbin/ldconfig
 
@@ -343,7 +345,9 @@ fi
 
 %postun
 touch --no-create %{_datadir}/icons/hicolor || :
-%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
+if [ -x %{_bindir}/gtk-update-icon-cache ]; then
+	%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
+fi
 
 %postun -n libpurple -p /sbin/ldconfig
 
