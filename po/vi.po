@@ -954,7 +954,7 @@ msgid ""
 "\n"
 "SHA1 fingerprint:\n"
 "%s"
-msgstr "Tên chung: %s\m"
+msgstr "Tên chung: %s\n"
 "\n"
 "Vân tay SHA1:\n"
 "%s"
@@ -8725,7 +8725,7 @@ msgstr "Đã thiết lập nhắn tin nhanh trực tiếp"
 msgid ""
 "%s tried to send you a %s file, but we only allow files up to %s over Direct "
 "IM.  Try using file transfer instead.\n"
-msgstr "%s đã cố gửi một tập tin %s, nhưng mạng này chỉ cho phép tập tin đến %s thông qua Nhắn Tin Nhanh Trực Tiếp. Hãy thử sử dụng tính năng truyền tải tập tin thay vào đó."
+msgstr "%s đã cố gửi một tập tin %s, nhưng mạng này chỉ cho phép tập tin đến %s thông qua Nhắn Tin Nhanh Trực Tiếp. Hãy thử sử dụng tính năng truyền tải tập tin thay vào đó.\n"
 
 #: ../libpurple/protocols/oscar/oft.c:656
 #, c-format
@@ -10263,42 +10263,42 @@ msgstr "Tên không hợp lệ"
 #: ../libpurple/protocols/qq/qq.c:440
 #, c-format
 msgid "<b>Current Online</b>: %d<br>\n"
-msgstr "<b>Hiện thời trực tuyến</b>: %d<br>"
+msgstr "<b>Hiện thời trực tuyến</b>: %d<br>\n"
 
 #: ../libpurple/protocols/qq/qq.c:441
 #, c-format
 msgid "<b>Last Refresh</b>: %s<br>\n"
-msgstr "<b>Cập nhật cuối:</b> %s<br>"
+msgstr "<b>Cập nhật cuối:</b> %s<br>\n"
 
 #: ../libpurple/protocols/qq/qq.c:445
 #, c-format
 msgid "<b>Connection Mode</b>: %s<br>\n"
-msgstr "<b>Chế độ kết nối:</b> %s<br>"
+msgstr "<b>Chế độ kết nối:</b> %s<br>\n"
 
 #: ../libpurple/protocols/qq/qq.c:446
 #, c-format
 msgid "<b>Server IP</b>: %s: %d<br>\n"
-msgstr "<b>IP máy phục vụ </b>: %s: %d<br>"
+msgstr "<b>IP máy phục vụ </b>: %s: %d<br>\n"
 
 #: ../libpurple/protocols/qq/qq.c:447
 #, c-format
 msgid "<b>My Public IP</b>: %s<br>\n"
-msgstr "<b>IP công của tôi:</b> %s<br>"
+msgstr "<b>IP công của tôi:</b> %s<br>\n"
 
 #: ../libpurple/protocols/qq/qq.c:452
 #, c-format
 msgid "<b>Login Time</b>: %s<br>\n"
-msgstr "<b>Thời gian đăng nhập:</b> %s<br>"
+msgstr "<b>Thời gian đăng nhập:</b> %s<br>\n"
 
 #: ../libpurple/protocols/qq/qq.c:453
 #, c-format
 msgid "<b>Last Login IP</b>: %s<br>\n"
-msgstr "<b>IP đăng nhập cuối:</b> %s<br>"
+msgstr "<b>IP đăng nhập cuối:</b> %s<br>\n"
 
 #: ../libpurple/protocols/qq/qq.c:454
 #, c-format
 msgid "<b>Last Login Time</b>: %s\n"
-msgstr "<b>Thời gian đăng nhập cuối:</b> %s"
+msgstr "<b>Thời gian đăng nhập cuối:</b> %s\n"
 
 #: ../libpurple/protocols/qq/qq.c:458
 msgid "Login Information"
@@ -12421,7 +12421,7 @@ msgstr "names [-count|-ops|-halfops|-voices|-normal] &lt;kênh(s)&gt;:  Liệt k
 " • ops		(viết tắt) người điều hành\n"
 " • halfops	(viết tắt) người nửa điều hành\n"
 " • voices		người có quyền thoại\n"
-" • normal		bình thường\n"
+" • normal		bình thường"
 
 #.*< type
 #.*< ui_requirement
@@ -15973,7 +15973,7 @@ msgstr "_Mô tả"
 msgid ""
 "Please enter the URL and description of the link that you want to insert. "
 "The description is optional."
-msgstr "Hãy nhập địa chỉ URL và mô tả của liên kết mà bạn muốn chèn. Mô tả là tùy chọn thêm.\n"
+msgstr "Hãy nhập địa chỉ URL và mô tả của liên kết mà bạn muốn chèn. Mô tả là tùy chọn thêm."
 
 #: ../pidgin/gtkimhtmltoolbar.c:425
 msgid "Please enter the URL of the link that you want to insert."

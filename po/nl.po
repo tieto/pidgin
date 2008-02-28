@@ -3144,7 +3144,9 @@ msgstr "Alleen inschakelen voor gebruikers uit mijn contactenlijst"
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
 "(only when there's no conversation with the sender)"
-msgstr "Meld met een pop-up wanneer een automatisch geaccepteerde bestandsoverdracht compleet is\n"
+msgstr ""
+"Meld met een pop-up wanneer een automatisch geaccepteerde\n"
+"bestandsoverdracht compleet is"
 
 #: ../libpurple/plugins/buddynote.c:46
 #: ../libpurple/protocols/msn/msn.c:1808
@@ -8472,7 +8474,7 @@ msgstr "Server heeft de verbinding verbroken."
 msgid ""
 "Lost connection with server:\n"
 "%s"
-msgstr "Verbinding verloren met server:\m%s"
+msgstr "Verbinding verloren met server:\n%s"
 
 #: ../libpurple/protocols/oscar/flap_connection.c:396
 #: ../libpurple/proxy.c:1158
