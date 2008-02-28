@@ -34,7 +34,6 @@ BuildRequires: gtk2-devel
 %{!?_without_startupnotification:BuildRequires: startup-notification-devel}
 %{?_with_avahi:BuildRequires: avahi-glib-devel}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
-%{?_with_howl:BuildRequires: howl-devel}
 %{?_with_meanwhile:BuildRequires: meanwhile-devel}
 %{?_with_mono:BuildRequires: mono-devel}
 %{?_with_sasl:BuildRequires: cyrus-sasl-devel >= 2}
@@ -117,7 +116,7 @@ Requires:   pkgconfig
 %{?_with_dbus:Requires: dbus-devel >= 0.35}
 %endif
 
-%if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
+%if 0%{?_with_avahi:1}
 %package -n libpurple-bonjour
 Summary:    Bonjour plugin for Pidgin
 Group:      Applications/Internet
@@ -184,7 +183,7 @@ The libpurple-devel package contains the header files, developer
 documentation, and libraries required for development of libpurple based
 instant messaging clients or plugins for any libpurple based client.
 
-%if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
+%if 0%{?_with_avahi:1}
 %description -n libpurple-bonjour
 Bonjour plugin for Pidgin.
 %endif
@@ -261,7 +260,7 @@ rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 
-%if 0%{!?_with_howl:1} && 0%{!?_with_avahi:1}
+%if 0%{!?_with_avahi:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libbonjour.so
 %endif
 
@@ -423,7 +422,7 @@ fi
 %endif
 
 
-%if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
+%if 0%{?_with_avahi:1}
 %files -n libpurple-bonjour
 %defattr(-, root, root)
 
@@ -469,6 +468,9 @@ fi
 %endif
 
 %changelog
+* Thu Feb 28 2008 Stu Tomlinson <stu@nosnilmot.com>
+- Remove --with-howl options as we no longer support using howl for bonjour
+
 * Wed Dec  5 2007 Stu Tomlinson <stu@nosnilmot.com>
 - When building with avahi, use native avahi instead of howl compatability
   headers
