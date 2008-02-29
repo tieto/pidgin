@@ -8,6 +8,11 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	is standard with code I committed, where it works great thank the
 	patch writer, and where it's broken, feel free to yell at me. Enjoy!
 
+	Sadrul: Finch is more colourful and blinky in this release! There's
+	now a log viewer, which is very useful, and also the ability to
+	block/unblock buddies. It's now also possible to find chat rooms on
+	many services, e.g. XMPP, IRC, Yahoo! etc. Happy Leap Day!
+
 2.3.1 (12/7/2007):
 	Stu: I'm sorry for the MSN problems and the plugin crashes in 2.3.0.
 	Hopefully this will redeem us. This fixes a number of bugs. I'm a
