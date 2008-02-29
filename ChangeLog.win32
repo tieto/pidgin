@@ -1,4 +1,4 @@
-version 2.4.0 (02/28/2008):
+version 2.4.0 (02/29/2008):
 	* Updated GTK+ to 2.12.8
 	* Updated include Meanwhile library to include patches referenced at:
 	  https://sourceforge.net/tracker/?func=detail&atid=656718&aid=1626349&group_id=110565

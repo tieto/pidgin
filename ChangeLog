@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.4.0 (??/??/2008):
+version 2.4.0 (02/29/2008):
 	libpurple:
 	* Added support for offline messages for AIM accounts (thanks to
 	  Matthew Goldstein)
@@ -62,7 +62,7 @@ version 2.3.1 (12/7/2007):
 		NOTE: Due to the way this release was made, it is possible that
 		      bugs marked as fixed in 2.3.1 will not be fixed until the
 		      next release.
-	
+
 	* Fixed a number of MSN bugs introduced in 2.3.0, resolving problems
 	  connecting to MSN and random local display name changes
 	* Going idle on MySpaceIM will no longer clear your status and message.
