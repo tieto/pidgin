@@ -1,5 +1,13 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.4.0 (2/28/2008):
+	John: While this release took what seems like forever to get out the
+	door, I think it's well worth the wait, especially for Yahoo! users.
+	This release serves up some fixes for long standing bugs and adds
+	file transfer for transfers with newer Yahoo! clients (finally!). As
+	is standard with code I committed, where it works great thank the
+	patch writer, and where it's broken, feel free to yell at me. Enjoy!
+
 2.3.1 (12/7/2007):
 	Stu: I'm sorry for the MSN problems and the plugin crashes in 2.3.0.
 	Hopefully this will redeem us. This fixes a number of bugs. I'm a
