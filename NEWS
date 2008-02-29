@@ -13,6 +13,9 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	block/unblock buddies. It's now also possible to find chat rooms on
 	many services, e.g. XMPP, IRC, Yahoo! etc. Happy Leap Day!
 
+	Ka-Hing: I think all I've done for this release is committing some
+	patches written by other people.
+
 2.3.1 (12/7/2007):
 	Stu: I'm sorry for the MSN problems and the plugin crashes in 2.3.0.
 	Hopefully this will redeem us. This fixes a number of bugs. I'm a
