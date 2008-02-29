@@ -77,6 +77,8 @@ else
 DISPLAY_VERSION := $(PIDGIN_VERSION)
 endif
 
+CYRUS_SASL ?= 1
+
 DEFINES += -DHAVE_CONFIG_H
 
 # Use -g flag when building debug version of Pidgin (including plugins).
