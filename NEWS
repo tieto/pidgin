@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-2.4.0 (2/28/2008):
+2.4.0 (2/29/2008):
 	John: While this release took what seems like forever to get out the
 	door, I think it's well worth the wait, especially for Yahoo! users.
 	This release serves up some fixes for long standing bugs and adds
@@ -15,6 +15,11 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 	Ka-Hing: I think all I've done for this release is committing some
 	patches written by other people.
+
+	Stu: Finally, 2.4.0 lands. I didn't do all that much except complain
+	about things I didn't like or just revert Sean's changes. I'm quite
+	pleased with how well it's turned out in the end.
+	Happy Birthday Fred, you must be nearly 10 now ;-)
 
 2.3.1 (12/7/2007):
 	Stu: I'm sorry for the MSN problems and the plugin crashes in 2.3.0.
