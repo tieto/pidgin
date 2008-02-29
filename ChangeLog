@@ -29,7 +29,7 @@ version 2.4.0 (02/29/2008):
 
 	Pidgin:
 	* Added the ability to theme conversation name colors (red and blue)
-	  through your GTK+ theme, and exposed those theme settings to the 
+	  through your GTK+ theme, and exposed those theme settings to the
 	  Pidgin GTK+ Theme Control plugin (Dustin Howett)
 	* Fixed having multiple alias edit areas in the infopane (Elliott Sales
 	  de Andrade)
