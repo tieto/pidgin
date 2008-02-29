@@ -1,6 +1,4 @@
-#!/usr/bin/env perl -w
-
-use Gaim;
+use Purple;
 
 %PLUGIN_INFO = (
 	perl_api_version => 2,
@@ -8,51 +6,37 @@ use Gaim;
 	version          => '1.0',
 	summary          => 'Provides as a test base for the perl plugin.',
 	description      => 'Provides as a test base for the perl plugin.',
-	author           => 'Christian Hammond <chipx86@gnupdate.org>',
+	author           => 'Etan Reisner <deryni\@pidgin.im>',
 	url              => 'http://pidgin.im',
 
-	load             => "plugin_load",
-	unload           => "plugin_unload"
+	load             => "plugin_load"
 );
-
-sub account_away_cb {
-	Gaim::debug_info("perl test plugin", "In account_away_cb\n");
-
-	my ($account, $state, $message, $data) = @_;
-
-	Gaim::debug_info("perl test plugin", "Account " .
-	                 $account->get_username() . " went away.\n");
-	Gaim::debug_info("perl test plugin", $data . "\n");
-}
 
 sub plugin_init {
 	return %PLUGIN_INFO;
 }
 
-sub plugin_load {
-	Gaim::debug_info("perl test plugin", "plugin_load\n");
-	my $plugin = shift;
+sub account_status_cb {
+	my ($account, $old, $new, $data) = @_;
 
-	Gaim::debug_info("perl test plugin", "Listing accounts.\n");
-	foreach $account (Gaim::accounts()) {
-		Gaim::debug_info("perl test plugin", $account->get_username() . "\n");
-	}
+	Purple::Debug::info("perl test plugin", "In account_status_cb\n");
 
-	Gaim::debug_info("perl test plugin", "Listing buddy list.\n");
-	foreach $group (Gaim::BuddyList::groups()) {
-		Gaim::debug_info("perl test plugin",
-		                 $group->get_name() . ":\n");
-
-		foreach $buddy ($group->buddies()) {
-			Gaim::debug_info("perl test plugin",
-			                 "  " . $buddy->get_name() . "\n");
-		}
-	}
-
-	Gaim::signal_connect(Gaim::Accounts::handle, "account-away",
-	                     $plugin, \&account_away_cb, "test");
+	Purple::Debug::info("perl test plugin", "Account " .
+	                    $account->get_username() . " changed status.\n");
+	Purple::Debug::info("perl test plugin", $data . "\n");
 }
 
-sub plugin_unload {
+sub plugin_load {
 	my $plugin = shift;
+
+	Purple::Debug::info("perl test plugin", "plugin_load\n");
+
+	Purple::Debug::info("perl test plugin", "Listing accounts.\n");
+	foreach $account (Purple::Accounts::get_all()) {
+		Purple::Debug::info("perl test plugin", $account->get_username() . "\n");
+	}
+
+	Purple::Signal::connect(Purple::Accounts::get_handle(),
+	                        "account-status-changed", $plugin,
+	                        \&account_status_cb, "test");
 }
