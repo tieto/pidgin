@@ -79,6 +79,10 @@ endif
 
 CYRUS_SASL ?= 1
 
+ifeq ($(CYRUS_SASL), 1)
+DEFINES += -DHAVE_CYRUS_SASL
+endif
+
 DEFINES += -DHAVE_CONFIG_H
 
 # Use -g flag when building debug version of Pidgin (including plugins).
