@@ -55,7 +55,6 @@ enum
 	COLUMN_ENABLED,
 	COLUMN_PROTOCOL,
 	COLUMN_DATA,
-	COLUMN_PULSE_DATA,
 	NUM_COLUMNS
 };
 
@@ -139,18 +138,6 @@ typedef struct
 
 } AccountPrefsDialog;
 
-typedef struct
-{
-	GdkPixbuf *online_pixbuf;
-	gboolean pulse_to_grey;
-	float pulse_value;
-	int timeout;
-	PurpleAccount *account;
-	GtkTreeModel *model;
-
-} PidginPulseData;
-
-
 static AccountsWindow *accounts_window = NULL;
 static GHashTable *account_pref_wins;
 
@@ -171,25 +158,7 @@ static GtkWidget *
 add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 			 const char *text, GtkWidget *widget)
 {
-	GtkWidget *hbox;
-	GtkWidget *label;
-
-	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(parent), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new_with_mnemonic(text);
-	gtk_size_group_add_widget(dialog->sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
-	gtk_widget_show(label);
-
-	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, PIDGIN_HIG_BORDER);
-	gtk_widget_show(widget);
-	pidgin_set_accessible_label (widget, label);
-
-	return hbox;
+	return pidgin_add_widget_to_vbox(GTK_BOX(parent), text, dialog->sg, widget, TRUE, NULL);
 }
 
 static void
@@ -272,7 +241,7 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 
 	gtk_widget_grab_focus(dialog->protocol_menu);
 
-	if (!dialog->prpl_info || !dialog->prpl_info->register_user || 
+	if (!dialog->prpl_info || !dialog->prpl_info->register_user ||
 	    g_object_get_data(G_OBJECT(item), "fake")) {
 		gtk_widget_hide(dialog->register_button);
 	} else {
@@ -1121,7 +1090,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					 G_CALLBACK(proxy_type_changed_cb), dialog);
 }
 
-static void
+static gboolean
 account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 					   AccountPrefsDialog *dialog)
 {
@@ -1142,6 +1111,7 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 	purple_signals_disconnect_by_handle(dialog);
 
 	g_free(dialog);
+	return FALSE;
 }
 
 static void
@@ -1437,7 +1407,6 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	GtkWidget *win;
 	GtkWidget *main_vbox;
 	GtkWidget *vbox;
-	GtkWidget *bbox;
 	GtkWidget *dbox;
 	GtkWidget *notebook;
 	GtkWidget *button;
@@ -1475,16 +1444,14 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	if ((dialog->plugin = purple_find_prpl(dialog->protocol_id)) != NULL)
 		dialog->prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 
-	dialog->window = win = pidgin_create_window((type == PIDGIN_ADD_ACCOUNT_DIALOG) ? _("Add Account") : _("Modify Account"),
+	dialog->window = win = pidgin_create_dialog((type == PIDGIN_ADD_ACCOUNT_DIALOG) ? _("Add Account") : _("Modify Account"),
 		PIDGIN_HIG_BORDER, "account", FALSE);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(account_win_destroy_cb), dialog);
 
 	/* Setup the vbox */
-	main_vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(win), main_vbox);
-	gtk_widget_show(main_vbox);
+	main_vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, PIDGIN_HIG_BORDER);
 
 	notebook = gtk_notebook_new();
 	gtk_box_pack_start(GTK_BOX(main_vbox), notebook, FALSE, FALSE, 0);
@@ -1511,8 +1478,6 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	if (!dialog->prpl_info || !dialog->prpl_info->register_user)
 		gtk_widget_hide(button);
 
-
-
 	/* Setup the page with 'Advanced'. */
 	dialog->bottom_vbox = dbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(GTK_CONTAINER(dbox), PIDGIN_HIG_BORDER);
@@ -1524,30 +1489,13 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	add_protocol_options(dialog, dbox);
 	add_proxy_options(dialog, dbox);
 
-	/* Setup the button box */
-	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_end(GTK_BOX(main_vbox), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
-
 	/* Cancel button */
-	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(cancel_account_prefs_cb), dialog);
+	pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CANCEL, G_CALLBACK(cancel_account_prefs_cb), dialog);
 
 	/* Save button */
-	button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_SAVE, G_CALLBACK(ok_account_prefs_cb), dialog);
 	if (dialog->account == NULL)
 		gtk_widget_set_sensitive(button, FALSE);
-
-	gtk_widget_show(button);
-
 	dialog->ok_button = button;
 
 	/* Set up DND */
@@ -1561,9 +1509,6 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	g_signal_connect(G_OBJECT(dialog->window), "drag_data_received",
 			 G_CALLBACK(account_dnd_recv), dialog);
 
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(ok_account_prefs_cb), dialog);
-
 	/* Show the window. */
 	gtk_widget_show(win);
 }
@@ -1575,7 +1520,6 @@ static void
 signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 {
 	PurpleAccount *account;
-	PidginPulseData *pulse_data;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GdkPixbuf *pixbuf;
@@ -1591,28 +1535,13 @@ signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 
 	if (gtk_tree_model_iter_nth_child(model, &iter, NULL, index))
 	{
-		gtk_tree_model_get(GTK_TREE_MODEL(accounts_window->model), &iter,
-						   COLUMN_PULSE_DATA, &pulse_data, -1);
-
-		if (pulse_data != NULL)
-		{
-			if (pulse_data->timeout > 0)
-				g_source_remove(pulse_data->timeout);
-
-			g_object_unref(G_OBJECT(pulse_data->online_pixbuf));
-
-			g_free(pulse_data);
-		}
-
 		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 		if ((pixbuf != NULL) && purple_account_is_disconnected(account))
 			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
 		gtk_list_store_set(accounts_window->model, &iter,
 				   COLUMN_ICON, pixbuf,
-				   COLUMN_PULSE_DATA, NULL,
 				   -1);
-
 
 		if (pixbuf != NULL)
 			g_object_unref(G_OBJECT(pixbuf));
@@ -1812,16 +1741,14 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 	}
 }
 
-static gint
+static gboolean
 accedit_win_destroy_cb(GtkWidget *w, GdkEvent *event, AccountsWindow *dialog)
 {
-	/* Since this is called as the window is closing, we don't need
-	 * pidgin_accounts_window_hide() to also dispose of the window */
 	dialog->window = NULL;
 
 	pidgin_accounts_window_hide();
 
-	return 0;
+	return FALSE;
 }
 
 static gboolean
@@ -1906,7 +1833,8 @@ ask_delete_account_sel(GtkTreeModel *model, GtkTreePath *path,
 							  purple_account_get_username(account));
 
 		purple_request_close_with_handle(account);
-		purple_request_action(account, NULL, buf, NULL, 0,
+		purple_request_action(account, NULL, buf, NULL,
+							PURPLE_DEFAULT_ACTION_NONE,
 							account, NULL, NULL,
 							account, 2,
 							_("Delete"), delete_account_cb,
@@ -2155,24 +2083,26 @@ account_treeview_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, g
 	GtkTreeViewColumn *column;
 	GtkTreeIter iter;
 	PurpleAccount *account;
-	const gchar *title;
 
 	dialog = (AccountsWindow *)user_data;
+
+	if (event->window != gtk_tree_view_get_bin_window(treeview))
+	    return FALSE;
 
 	/* Figure out which node was clicked */
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(dialog->treeview), event->x, event->y, &path, &column, NULL, NULL))
 		return FALSE;
-	title = gtk_tree_view_column_get_title(column);
-	/* The -1 is required because the first two columns of the list
-	 * store are displayed as only one column in the tree view. */
-	column = gtk_tree_view_get_column(treeview, COLUMN_ENABLED-1);
+	if (column == gtk_tree_view_get_column(treeview, 0)) {
+		gtk_tree_path_free(path);
+		return FALSE;
+	}
+
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
 	gtk_tree_path_free(path);
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter, COLUMN_DATA, &account, -1);
 
 	if ((account != NULL) && (event->button == 1) &&
-		(event->type == GDK_2BUTTON_PRESS) &&
-		(strcmp(gtk_tree_view_column_get_title(column), title)))
+		(event->type == GDK_2BUTTON_PRESS))
 	{
 		pidgin_account_dialog_show(PIDGIN_MODIFY_ACCOUNT_DIALOG, account);
 		return TRUE;
@@ -2250,6 +2180,7 @@ create_accounts_list(AccountsWindow *dialog)
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
 	dialog->treeview = treeview;
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
+	g_object_unref(G_OBJECT(dialog->model));
 
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 	gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
@@ -2313,7 +2244,6 @@ pidgin_accounts_window_show(void)
 	AccountsWindow *dialog;
 	GtkWidget *win;
 	GtkWidget *vbox;
-	GtkWidget *bbox;
 	GtkWidget *sw;
 	GtkWidget *button;
 	int width, height;
@@ -2328,7 +2258,7 @@ pidgin_accounts_window_show(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/height");
 
-	dialog->window = win = pidgin_create_window(_("Accounts"), PIDGIN_HIG_BORDER, "accounts", TRUE);
+	dialog->window = win = pidgin_create_dialog(_("Accounts"), PIDGIN_HIG_BORDER, "accounts", TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
@@ -2337,57 +2267,28 @@ pidgin_accounts_window_show(void)
 					 G_CALLBACK(configure_cb), accounts_window);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(win), vbox);
-	gtk_widget_show(vbox);
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(win), FALSE, PIDGIN_HIG_BORDER);
 
 	/* Setup the scrolled window that will contain the list of accounts. */
 	sw = create_accounts_list(dialog);
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	gtk_widget_show(sw);
 
-	/* Button box. */
-	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
-	gtk_widget_show(bbox);
-
 	/* Add button */
-	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(add_account_cb), dialog);
+	pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_ADD, G_CALLBACK(add_account_cb), dialog);
 
 	/* Modify button */
-	button = gtk_button_new_from_stock(PIDGIN_STOCK_MODIFY);
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), PIDGIN_STOCK_MODIFY, G_CALLBACK(modify_account_cb), dialog);
 	dialog->modify_button = button;
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_set_sensitive(button, FALSE);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(modify_account_cb), dialog);
 
 	/* Delete button */
-	button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_DELETE, G_CALLBACK(ask_delete_account_cb), dialog);
 	dialog->delete_button = button;
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_set_sensitive(button, FALSE);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(ask_delete_account_cb), dialog);
 
 	/* Close button */
-	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_show(button);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(close_accounts_cb), dialog);
+	pidgin_dialog_add_button(GTK_DIALOG(win), GTK_STOCK_CLOSE, G_CALLBACK(close_accounts_cb), dialog);
 
 	purple_signal_connect(pidgin_account_get_handle(), "account-modified",
 	                    accounts_window,
@@ -2581,6 +2482,7 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 						  _("Authorize"), authorize_and_add_cb,
 						  _("Deny"), deny_no_add_cb,
 						  NULL);
+		g_object_set_data(G_OBJECT(alert), "auth_and_add", aa);
 	} else {
 		alert = pidgin_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 						  _("Authorize buddy?"), buffer, user_data,
@@ -2592,13 +2494,20 @@ pidgin_accounts_request_authorization(PurpleAccount *account,
 
 	g_free(buffer);
 
-	return NULL;
+	return alert;
 }
 
 static void
 pidgin_accounts_request_close(void *ui_handle)
 {
-
+	/* This is super ugly, but without API changes, this is how it works */
+	struct auth_and_add *aa = g_object_get_data(G_OBJECT(ui_handle), "auth_and_add");
+	if (aa != NULL) {
+		g_free(aa->username);
+		g_free(aa->alias);
+		g_free(aa);
+	}
+	gtk_widget_destroy(GTK_WIDGET(ui_handle));
 }
 
 static PurpleAccountUiOps ui_ops =

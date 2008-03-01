@@ -174,7 +174,7 @@ static void sighandler(int sig);
  * be wise to move this code into gtksound.c.
  */
 static void
-clean_pid()
+clean_pid(void)
 {
 	int status;
 	pid_t pid;
@@ -241,7 +241,7 @@ sighandler(int sig)
 #endif
 
 static int
-ui_main()
+ui_main(void)
 {
 #ifndef _WIN32
 	GList *icons = NULL;
@@ -301,6 +301,8 @@ debug_init(void)
 static void
 pidgin_ui_init(void)
 {
+	pidgin_stock_init();
+
 	/* Set the UI operation structures. */
 	purple_accounts_set_ui_ops(pidgin_accounts_get_ui_ops());
 	purple_xfers_set_ui_ops(pidgin_xfers_get_ui_ops());
@@ -315,7 +317,6 @@ pidgin_ui_init(void)
 	purple_idle_set_ui_ops(pidgin_idle_get_ui_ops());
 #endif
 
-	pidgin_stock_init();
 	pidgin_account_init();
 	pidgin_connection_init();
 	pidgin_blist_init();
@@ -359,7 +360,7 @@ pidgin_quit(void)
 	gtk_main_quit();
 }
 
-static GHashTable *pidgin_ui_get_info()
+static GHashTable *pidgin_ui_get_info(void)
 {
 	if(NULL == ui_info) {
 		ui_info = g_hash_table_new(g_str_hash, g_str_equal);
@@ -397,6 +398,7 @@ show_usage(const char *name, gboolean terse)
 	if (terse) {
 		text = g_strdup_printf(_("%s %s. Try `%s -h' for more information.\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
 	} else {
+#ifndef WIN32
 		text = g_strdup_printf(_("%s %s\n"
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -c, --config=DIR    use DIR for config files\n"
@@ -406,10 +408,20 @@ show_usage(const char *name, gboolean terse)
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use, separated by commas)\n"
-#ifndef WIN32
 		       "  --display=DISPLAY   X display to use\n"
-#endif
 		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
+#else
+		text = g_strdup_printf(_("%s %s\n"
+		       "Usage: %s [OPTION]...\n\n"
+		       "  -c, --config=DIR    use DIR for config files\n"
+		       "  -d, --debug         print debugging messages to stdout\n"
+		       "  -h, --help          display this help and exit\n"
+		       "  -m, --multiple      do not ensure single instance\n"
+		       "  -n, --nologin       don't automatically login\n"
+		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
+		       "                      account(s) to use, separated by commas)\n"
+		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
+#endif
 	}
 
 	purple_print_utf8_to_console(stdout, text);
@@ -497,6 +509,7 @@ int main(int argc, char *argv[])
 		{"session",  required_argument, NULL, 's'},
 		{"version",  no_argument,       NULL, 'v'},
 		{"display",  required_argument, NULL, 'D'},
+		{"sync",     no_argument,       NULL, 'S'},
 		{0, 0, 0, 0}
 	};
 
@@ -506,7 +519,7 @@ int main(int argc, char *argv[])
 	debug_enabled = FALSE;
 #endif
 
-	/* This is the first Glib function call. Make sure to initialize GThread bfeore then */
+	/* Initialize GThread before calling any Glib or GTK+ functions. */
 	g_thread_init(NULL);
 
 #ifdef ENABLE_NLS
@@ -643,6 +656,7 @@ int main(int argc, char *argv[])
 			opt_si = FALSE;
 			break;
 		case 'D':   /* --display */
+		case 'S':   /* --sync */
 			/* handled by gtk_init_check below */
 			break;
 		case '?':	/* show terse help */

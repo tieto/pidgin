@@ -438,19 +438,6 @@ purple_prefs_load()
 	g_free(filename);
 	prefs_loaded = TRUE;
 
-	/* I introduced a bug in 2.0.0beta2.  This fixes the broken
-	 * scores on upgrade.  This can be removed sometime shortly
-	 * after 2.0.0 final is released. -- rlaager */
-	if (purple_prefs_get_int("/purple/status/scores/offline") == -500 &&
-	    purple_prefs_get_int("/purple/status/scores/available") == 100 &&
-	    purple_prefs_get_int("/purple/status/scores/invisible") == -50 &&
-	    purple_prefs_get_int("/purple/status/scores/away") == -100 &&
-	    purple_prefs_get_int("/purple/status/scores/extended_away") == -200 &&
-	    purple_prefs_get_int("/purple/status/scores/idle") == -400)
-	{
-		purple_prefs_set_int("/purple/status/scores/idle", -10);
-	}
-
 	return TRUE;
 }
 
@@ -914,7 +901,7 @@ purple_prefs_set_path(const char *name, const char *value)
 	if(pref) {
 		if(pref->type != PURPLE_PREF_PATH) {
 			purple_debug_error("prefs",
-					"purple_prefs_set_path: %s not a string pref\n", name);
+					"purple_prefs_set_path: %s not a path pref\n", name);
 			return;
 		}
 

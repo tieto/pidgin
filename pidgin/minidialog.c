@@ -35,7 +35,41 @@
 #include "pidgin/pidgin.h"
 #include "pidgin/pidginstock.h"
 
-G_DEFINE_TYPE (PidginMiniDialog, pidgin_mini_dialog, GTK_TYPE_VBOX)
+static void     pidgin_mini_dialog_init       (PidginMiniDialog      *self);
+static void     pidgin_mini_dialog_class_init (PidginMiniDialogClass *klass);
+
+static gpointer pidgin_mini_dialog_parent_class = NULL;
+
+static void
+pidgin_mini_dialog_class_intern_init (gpointer klass)
+{
+	pidgin_mini_dialog_parent_class = g_type_class_peek_parent (klass);
+	pidgin_mini_dialog_class_init ((PidginMiniDialogClass*) klass);
+}
+
+GType
+pidgin_mini_dialog_get_type (void)
+{
+	static GType g_define_type_id = 0;
+	if (G_UNLIKELY (g_define_type_id == 0))
+	{
+		static const GTypeInfo g_define_type_info = {
+			sizeof (PidginMiniDialogClass),
+			(GBaseInitFunc) NULL,
+			(GBaseFinalizeFunc) NULL,
+			(GClassInitFunc) pidgin_mini_dialog_class_intern_init,
+			(GClassFinalizeFunc) NULL,
+			NULL,   /* class_data */
+			sizeof (PidginMiniDialog),
+			0,      /* n_preallocs */
+			(GInstanceInitFunc) pidgin_mini_dialog_init,
+			NULL,
+		};
+		g_define_type_id = g_type_register_static (GTK_TYPE_VBOX,
+			"PidginMiniDialog", &g_define_type_info, 0);
+	}
+	return g_define_type_id;
+}
 
 enum
 {
@@ -130,7 +164,8 @@ mini_dialog_button_clicked_cb(GtkButton *button,
 	priv->idle_destroy_cb_id =
 		g_idle_add((GSourceFunc) idle_destroy_cb, data->mini_dialog);
 
-	data->callback(data->mini_dialog, button, data->user_data);
+	if (data->callback != NULL)
+		data->callback(data->mini_dialog, button, data->user_data);
 
 }
 

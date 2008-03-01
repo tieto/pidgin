@@ -141,7 +141,7 @@ void gnt_widget_set_urgent(GntWidget *widget);
  * @param label      The user-visible label for the action.
  * @param callback   The callback function for the action.
  */
-void gnt_register_action(const char *label, void (*callback)());
+void gnt_register_action(const char *label, void (*callback)(void));
 
 /**
  * Show a menu.

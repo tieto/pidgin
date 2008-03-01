@@ -30,17 +30,29 @@ static guint pref_callback;
 static const gchar *color_prefs[] = {
 	"/plugins/gtk/purplerc/color/GtkWidget::cursor-color",
 	"/plugins/gtk/purplerc/color/GtkWidget::secondary-cursor-color",
-	"/plugins/gtk/purplerc/color/GtkIMHtml::hyperlink-color"
+	"/plugins/gtk/purplerc/color/GtkIMHtml::hyperlink-color",
+	"/plugins/gtk/purplerc/color/GtkIMHtml::send-name-color",
+	"/plugins/gtk/purplerc/color/GtkIMHtml::receive-name-color",
+	"/plugins/gtk/purplerc/color/GtkIMHtml::highlight-name-color",
+	"/plugins/gtk/purplerc/color/GtkIMHtml::action-name-color"
 };
 static const gchar *color_prefs_set[] = {
 	"/plugins/gtk/purplerc/set/color/GtkWidget::cursor-color",
 	"/plugins/gtk/purplerc/set/color/GtkWidget::secondary-cursor-color",
-	"/plugins/gtk/purplerc/set/color/GtkIMHtml::hyperlink-color"
+	"/plugins/gtk/purplerc/set/color/GtkIMHtml::hyperlink-color",
+	"/plugins/gtk/purplerc/set/color/GtkIMHtml::send-name-color",
+	"/plugins/gtk/purplerc/set/color/GtkIMHtml::receive-name-color",
+	"/plugins/gtk/purplerc/set/color/GtkIMHtml::highlight-name-color",
+	"/plugins/gtk/purplerc/set/color/GtkIMHtml::action-name-color"
 };
 static const gchar *color_names[] = {
 	N_("Cursor Color"),
 	N_("Secondary Cursor Color"),
-	N_("Hyperlink Color")
+	N_("Hyperlink Color"),
+	N_("Sent Message Name Color"),
+	N_("Received Message Name Color"),
+	N_("Highlighted Message Name Color"),
+	N_("Action Message Name Color")
 };
 static GtkWidget *color_widgets[G_N_ELEMENTS(color_prefs)];
 
@@ -83,7 +95,7 @@ static GtkWidget *widget_bool_widgets[G_N_ELEMENTS(widget_bool_prefs)];
 */
 
 static GString *
-make_gtkrc_string()
+make_gtkrc_string(void)
 {
 	gint i;
 	gchar *prefbase = NULL;
@@ -173,7 +185,7 @@ make_gtkrc_string()
 }
 
 static void
-purplerc_make_changes()
+purplerc_make_changes(void)
 {
 	GString *str = make_gtkrc_string();
 #if GTK_CHECK_VERSION(2,4,0)

@@ -4,4 +4,6 @@ debian/tmp/usr/lib/perl5/Pidgin.pm
 debian/tmp/usr/lib/perl5/auto/Pidgin
 debian/tmp/usr/lib/pidgin
 debian/tmp/usr/share/applications
+debian/tmp/usr/share/man/*/pidgin.*
+debian/tmp/usr/share/man/*/Pidgin.*
 debian/lintian-override/pidgin usr/share/lintian/overrides

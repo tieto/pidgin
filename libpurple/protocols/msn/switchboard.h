@@ -167,6 +167,13 @@ void msn_switchboard_set_session_id(MsnSwitchBoard *swboard, const char *id);
 const char *msn_switchboard_get_session_id(MsnSwitchBoard *swboard);
 
 /**
+ * Returns the next chat ID for use by a switchboard.
+ *
+ * @return The chat ID.
+ */
+int msn_switchboard_get_chat_id(void);
+
+/**
  * Sets whether or not we were invited to this switchboard.
  *
  * @param swboard The switchboard.

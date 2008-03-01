@@ -162,11 +162,6 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 		if (info != NULL)
 			g_hash_table_remove(auto_reconns, account);
 
-		/*
-		 * TODO: Do we really want to disable the account when it's
-		 * disconnected by wants_to_die?  This happens when you sign
-		 * on from somewhere else, or when you enter an invalid password.
-		 */
 		purple_account_set_enabled(account, PIDGIN_UI, FALSE);
 	}
 
@@ -182,38 +177,41 @@ pidgin_connection_report_disconnect_reason (PurpleConnection *gc,
 	}
 }
 
-static void pidgin_connection_network_connected ()
+static void pidgin_connection_network_connected (void)
 {
-	GList *list = purple_accounts_get_all_active();
+	GList *list, *l;
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 
 	if(gtkblist)
 		pidgin_status_box_set_network_available(PIDGIN_STATUS_BOX(gtkblist->statusbox), TRUE);
 
-	while (list) {
-		PurpleAccount *account = (PurpleAccount*)list->data;
+	l = list = purple_accounts_get_all_active();
+	while (l) {
+		PurpleAccount *account = (PurpleAccount*)l->data;
 		g_hash_table_remove(auto_reconns, account);
 		if (purple_account_is_disconnected(account))
 			do_signon(account);
-		list = list->next;
+		l = l->next;
 	}
+	g_list_free(list);
 }
 
-static void pidgin_connection_network_disconnected ()
+static void pidgin_connection_network_disconnected (void)
 {
-	GList *l = purple_accounts_get_all_active();
+	GList *list, *l;
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc = NULL;
-	
+
 	if(gtkblist)
 		pidgin_status_box_set_network_available(PIDGIN_STATUS_BOX(gtkblist->statusbox), FALSE);
 
+	l = list = purple_accounts_get_all_active();
 	while (l) {
 		PurpleAccount *a = (PurpleAccount*)l->data;
 		if (!purple_account_is_disconnected(a)) {
 			gc = purple_account_get_connection(a);
-			if (gc && gc->prpl) 
+			if (gc && gc->prpl)
 				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 			if (prpl_info) {
 				if (prpl_info->keepalive)
@@ -224,6 +222,7 @@ static void pidgin_connection_network_disconnected ()
 		}
 		l = l->next;
 	}
+	g_list_free(list);
 }
 
 static void pidgin_connection_notice(PurpleConnection *gc, const char *text)

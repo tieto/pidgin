@@ -348,7 +348,6 @@ PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int fun
 				void(*get_log_sets)(PurpleLogSetCallback cb, GHashTable *sets),
 				gboolean(*remove)(PurpleLog *log),
 				gboolean(*is_deletable)(PurpleLog *log))
-{
 #endif
 	PurpleLogLogger *logger;
 	va_list args;
@@ -1860,11 +1859,15 @@ static int old_logger_total_size(PurpleLogType type, const char *name, PurpleAcc
 
 static char * old_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 {
+	size_t result;
 	struct old_logger_data *data = log->logger_data;
-	FILE *file = g_fopen(purple_stringref_value(data->pathref), "rb");
+	const char *path = purple_stringref_value(data->pathref);
+	FILE *file = g_fopen(path, "rb");
 	char *read = g_malloc(data->length + 1);
 	fseek(file, data->offset, SEEK_SET);
-	fread(read, data->length, 1, file);
+	result = fread(read, data->length, 1, file);
+	if (result != 1)
+		purple_debug_error("log", "Unable to read from log file: %s\n", path);
 	fclose(file);
 	read[data->length] = '\0';
 	*flags = 0;

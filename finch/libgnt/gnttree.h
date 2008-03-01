@@ -325,6 +325,16 @@ gboolean gnt_tree_get_choice(GntTree *tree, void *key);
 void gnt_tree_set_row_flags(GntTree *tree, void *key, GntTextFormatFlags flags);
 
 /**
+ * Set color for the text in a row in the tree.
+ *
+ * @param tree   The tree
+ * @param key    The key for the row
+ * @param color  The color
+ * @since 2.4.0
+ */
+void gnt_tree_set_row_color(GntTree *tree, void *key, int color);
+
+/**
  * Select a row.
  *
  * @param tree  The tree
@@ -564,6 +574,17 @@ gboolean gnt_tree_is_searching(GntTree *tree);
  */
 void gnt_tree_set_search_function(GntTree *tree,
 		gboolean (*func)(GntTree *tree, gpointer key, const char *search, const char *current));
+
+/**
+ * Get the parent key for a row.
+ *
+ * @param  tree  The tree
+ * @param  key   The key for the row.
+ *
+ * @return The key of the parent row.
+ * @since 2.4.0
+ */
+gpointer gnt_tree_get_parent_key(GntTree *tree, gpointer key);
 
 G_END_DECLS
 

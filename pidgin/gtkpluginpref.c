@@ -93,22 +93,6 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 		case PURPLE_PLUGIN_PREF_NONE:
 		default:
 			if (format == PURPLE_STRING_FORMAT_TYPE_NONE)
-				box = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-			else
-				box = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-
-			gtk_widget_show(box);
-			gtk_box_pack_start(GTK_BOX(parent), box, FALSE, FALSE, 0);
-
-			gtk_label = gtk_label_new_with_mnemonic(pref_label);
-			gtk_misc_set_alignment(GTK_MISC(gtk_label), 0, 0.5);
-			gtk_widget_show(gtk_label);
-			gtk_box_pack_start(GTK_BOX(box), gtk_label, FALSE, FALSE, 0);
-
-			if(sg)
-				gtk_size_group_add_widget(sg, gtk_label);
-
-			if (format == PURPLE_STRING_FORMAT_TYPE_NONE)
 			{				
 				entry = gtk_entry_new();
 				gtk_entry_set_text(GTK_ENTRY(entry), purple_prefs_get_string(pref_name));
@@ -123,9 +107,7 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 				g_signal_connect(G_OBJECT(entry), "changed",
 								 G_CALLBACK(entry_cb),
 								 (gpointer)pref_name);
-				gtk_label_set_mnemonic_widget(GTK_LABEL(gtk_label), entry);
-				gtk_widget_show(entry);
-				gtk_box_pack_start(GTK_BOX(box), entry, FALSE, FALSE, 0);
+				pidgin_add_widget_to_vbox(GTK_BOX(parent), pref_label, sg, entry, TRUE, NULL);
 			}
 			else
 			{
@@ -134,6 +116,19 @@ make_string_pref(GtkWidget *parent, PurplePluginPref *pref, GtkSizeGroup *sg) {
 				GtkWidget *imhtml;
 				GtkWidget *toolbar;
 				GtkWidget *frame;
+
+				box = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+
+				gtk_widget_show(box);
+				gtk_box_pack_start(GTK_BOX(parent), box, FALSE, FALSE, 0);
+
+				gtk_label = gtk_label_new_with_mnemonic(pref_label);
+				gtk_misc_set_alignment(GTK_MISC(gtk_label), 0, 0.5);
+				gtk_widget_show(gtk_label);
+				gtk_box_pack_start(GTK_BOX(box), gtk_label, FALSE, FALSE, 0);
+
+				if(sg)
+					gtk_size_group_add_widget(sg, gtk_label);
 
 				hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 				gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);

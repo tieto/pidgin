@@ -53,7 +53,7 @@ static PurplePluginProtocolInfo prpl_info =
 	OPT_PROTO_SLASH_COMMANDS_NATIVE,
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
-	{"png", 32, 32, 96, 96, 8191, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
+	{"png", 32, 32, 96, 96, 0, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
 	jabber_list_icon,				/* list_icon */
 	jabber_list_emblem,			/* list_emblems */
 	jabber_status_text,				/* status_text */
@@ -219,33 +219,31 @@ init_plugin(PurplePlugin *plugin)
 											   option);
 	
 	option = purple_account_option_bool_new(
-											_("Allow plaintext auth over unencrypted streams"),
-											"auth_plain_in_clear", FALSE);
+						_("Allow plaintext auth over unencrypted streams"),
+						"auth_plain_in_clear", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-											   option);
-	
+						   option);
+
 	option = purple_account_option_int_new(_("Connect port"), "port", 5222);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-											   option);
-	
+						   option);
+
 	option = purple_account_option_string_new(_("Connect server"),
-											  "connect_server", NULL);
+						  "connect_server", NULL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-											   option);
-	
-#if 0 /* TODO: Enable this when we're string unfrozen */
+						  option);
+
 	option = purple_account_option_string_new(_("File transfer proxies"),
 						  "ft_proxies",
 						/* TODO: Is this an acceptable default? */
 						  "proxy.jabber.org:7777");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						  option);
-#endif
 
 	jabber_init_plugin(plugin);
-	
+
 	purple_prefs_remove("/plugins/prpl/jabber");
-	
+
 	/* XXX - If any other plugin wants SASL this won't be good ... */
 #ifdef HAVE_CYRUS_SASL
 #ifdef _WIN32

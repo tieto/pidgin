@@ -88,9 +88,8 @@ done, press \fBEnter\fR or \fBEscape\fR.
 Start resizing a window. Press the cursor keys to resize the window. When you
 are done, press \fBEnter\fR or \fBEscape\fR.
 .TP
-.B Alt \+ d
-Dump the contents of the screen in HTML format in a file named "dump.html" in
-working directory.
+.B Alt \+ D
+Dump the contents of the screen in HTML format.
 .TP
 .B Alt \+ .
 Move the position of the current window in the window list one place to the
@@ -106,9 +105,14 @@ Refresh the windows. This is useful after resizing the terminal window.
 .B Alt \+ 1 2 ... 0
 Jump to the 1st, 2nd ... 10th window.
 .TP
+.B Alt \+ Tab
+Jump to the next URGENT (highlighted) window.
+.TP
+.B Alt \+ Shift \+ Tab
+Jump to the previous URGENT (highlighted) window.
+.TP
 .B Ctrl \+ o
-Bring up the menu (if there is one) for a window. Note that currently only the
-buddylist has a menu.
+Bring up the menu (if there is one) for a window.
 .TP
 .B Alt \+ /
 Show a list of available key-bindings for the current widget in focus.
@@ -137,6 +141,29 @@ Create a new workspace and switch to it
 .TP
 A sample file looks like:
 .br
+[Finch]
+.br
+color-available = green; black
+.br
+color-away = blue; black
+.br
+color-idle = gray; black
+.br
+color-offline = red; black
+.br
+color-message-sent = cyan; default
+.br
+color-message-received = red; default
+.br
+color-message-highlight = black; green
+.br
+color-message-action = yellow; default
+.br
+color-timestamp = blue; default
+.br
+#See below for details on color
+.br
+
 [general]
 .br
 shadow = 0
@@ -439,6 +466,7 @@ a-/ = help-for-widget
 .br
 # switch-window-n
 .br
+# Other actions: window-next-urgent, window-prev-urgent
 
 # For the sample custom window manager
 .br
@@ -494,7 +522,7 @@ FAQ for \fBfinch\fR is located at
 .SH BUGS
 Known bugs are listed at
 .br
-\fIhttp://sourceforge.net/tracker/?group_id=235&atid=100235\fR
+\fIhttp://developer.pidgin.im/query?status=new&status=assigned&status=reopened&component=finch+%28gnt%2Fncurses%29&order=priority\fR
 
 Before sending a bug report, please verify that you have the latest
 version of \fBfinch\fR and \fBlibpurple\fR.  Many bugs (major and minor) are

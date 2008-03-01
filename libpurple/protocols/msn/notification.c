@@ -1091,7 +1091,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
-	int clientid;
+	unsigned long clientid;
 	int wlmclient;
 	const char *state, *passport, *friendly, *old_friendly;
 
@@ -1126,7 +1126,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		}
 	}
 
-	clientid = atoi(cmd->params[4]);
+	clientid = strtoul(cmd->params[4], NULL, 10);
 	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE);
 
 	msn_user_set_state(user, state);
@@ -1579,6 +1579,7 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	xmlnode * root;
 	gchar * buf;
+	int xmllen;
 
 	g_return_if_fail(cmd->payload != NULL);
 
@@ -1588,10 +1589,10 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		return;
 	}
 	
-	buf = xmlnode_to_formatted_str(root, NULL);
+	buf = xmlnode_to_formatted_str(root, &xmllen);
 
 	/* get the payload content */
-	purple_debug_info("MSNP14","GCF command payload:\n%s\n",buf);
+	purple_debug_info("MSNP14","GCF command payload:\n%.*s\n", xmllen, buf);
 	
 	g_free(buf);
 	xmlnode_free(root);
@@ -1777,7 +1778,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			passport = msn_user_get_passport(session->user);
 			url = session->passport_info.file;
 
-			purple_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
+			purple_notify_emails(gc, count, FALSE, NULL, NULL,
 							   &passport, &url, NULL, NULL);
 		}
 	}
@@ -1850,7 +1851,7 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			passport = msn_user_get_passport(session->user);
 			url = session->passport_info.file;
 
-			purple_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
+			purple_notify_emails(gc, count, FALSE, NULL, NULL,
 							   &passport, &url, NULL, NULL);
 		}
 	}

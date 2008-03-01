@@ -48,22 +48,27 @@
 #define	PREF_SEND	PREF_PREFIX "/send"
 #define	PREF_SEND_C	PREF_SEND "/color"
 #define	PREF_SEND_F	PREF_SEND "/format"
+#define	PREF_SEND_E	PREF_SEND "/enabled"
 
 #define PREF_RECV	PREF_PREFIX "/recv"
 #define	PREF_RECV_C	PREF_RECV "/color"
 #define	PREF_RECV_F	PREF_RECV "/format"
+#define	PREF_RECV_E	PREF_RECV "/enabled"
 
 #define PREF_SYSTEM	PREF_PREFIX "/system"
 #define	PREF_SYSTEM_C	PREF_SYSTEM "/color"
 #define	PREF_SYSTEM_F	PREF_SYSTEM "/format"
+#define	PREF_SYSTEM_E	PREF_SYSTEM "/enabled"
 
 #define PREF_ERROR	PREF_PREFIX "/error"
 #define	PREF_ERROR_C	PREF_ERROR "/color"
 #define	PREF_ERROR_F	PREF_ERROR "/format"
+#define	PREF_ERROR_E	PREF_ERROR "/enabled"
 
 #define PREF_NICK	PREF_PREFIX "/nick"
 #define	PREF_NICK_C	PREF_NICK "/color"
 #define	PREF_NICK_F	PREF_NICK "/format"
+#define	PREF_NICK_E	PREF_NICK "/enabled"
 
 enum
 {
@@ -72,7 +77,7 @@ enum
 	FONT_UNDERLINE	= 1 << 2
 };
 
-struct
+static struct
 {
 	PurpleMessageFlags flag;
 	char *prefix;
@@ -104,7 +109,10 @@ displaying_msg(PurpleAccount *account, const char *who, char **displaying,
 	if (!formats[i].prefix)
 		return FALSE;
 
-	if ((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
+	g_snprintf(tmp, sizeof(tmp), "%s/enabled", formats[i].prefix);
+
+	if (!purple_prefs_get_bool(tmp) ||
+			(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
 			!purple_prefs_get_bool(PREF_IMS)) ||
 			(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
 			!purple_prefs_get_bool(PREF_CHATS)))
@@ -121,6 +129,11 @@ displaying_msg(PurpleAccount *account, const char *who, char **displaying,
 
 	if (purple_prefs_get_bool(PREF_IGNORE))
 	{
+		/* This seems to be necessary, especially for received messages. */
+		t = *displaying;
+		*displaying = purple_strreplace(t, "\n", "<br>");
+		g_free(t);
+
 		t = *displaying;
 		*displaying = purple_markup_strip_html(t);
 		g_free(t);
@@ -223,17 +236,29 @@ set_color(GtkWidget *widget, const char *data)
 }
 
 static void
+toggle_enabled(GtkWidget *widget, gpointer data)
+{
+	const char *prefix = (char *)data;
+	gboolean e;
+	char tmp[128];
+
+	g_snprintf(tmp, sizeof(tmp), "%s/enabled", prefix);
+	e = purple_prefs_get_bool(tmp);
+	purple_prefs_set_bool(tmp, !e);
+}
+
+static void
 toggle_something(const char *prefix, int format)
 {
 	int f;
 	char tmp[128];
-	
+
 	g_snprintf(tmp, sizeof(tmp), "%s/format", prefix);
 	f = purple_prefs_get_int(tmp);
 	f ^= format;
 	purple_prefs_set_int(tmp, f);
 }
-		
+
 static void
 toggle_bold(GtkWidget *widget, gpointer data)
 {
@@ -252,6 +277,22 @@ toggle_underline(GtkWidget *widget, gpointer data)
 	toggle_something(data, FONT_UNDERLINE);
 }
 
+static void
+enable_toggled(const char *name, PurplePrefType type, gconstpointer val, gpointer data)
+{
+	GtkWidget *widget = (GtkWidget *)data;
+
+	gtk_widget_set_sensitive(widget, GPOINTER_TO_INT(val));
+}
+
+static void
+disconnect_prefs_callbacks(GtkObject *object, gpointer data)
+{
+	PurplePlugin *plugin = (PurplePlugin *)data;
+
+	purple_prefs_disconnect_by_handle(plugin);
+}
+
 static GtkWidget *
 get_config_frame(PurplePlugin *plugin)
 {
@@ -265,8 +306,13 @@ get_config_frame(PurplePlugin *plugin)
 	for (i = 0; formats[i].prefix; i++)
 	{
 		char tmp[128];
+		char tmp2[128];
 		int f;
+		gboolean e;
 		GtkWidget *vbox, *hbox, *button;
+
+		g_snprintf(tmp2, sizeof(tmp2), "%s/enabled", formats[i].prefix);
+		e = purple_prefs_get_bool(tmp2);
 
 		g_snprintf(tmp, sizeof(tmp), "%s/format", formats[i].prefix);
 		f = purple_prefs_get_int(tmp);
@@ -278,11 +324,20 @@ get_config_frame(PurplePlugin *plugin)
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
+		button = gtk_check_button_new_with_label(_("Enabled"));
+		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+		if (e)
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
+		g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(toggle_enabled),
+				formats[i].prefix);
+
 		button = pidgin_pixbuf_button_from_stock(" Color", GTK_STOCK_SELECT_COLOR,
 				PIDGIN_BUTTON_HORIZONTAL);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 		g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(set_color),
 				formats[i].prefix);
+		gtk_widget_set_sensitive(button, e);
+		purple_prefs_connect_callback(plugin, tmp2, enable_toggled, button);
 
 		button = gtk_check_button_new_with_label(_("Bold"));
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
@@ -290,22 +345,29 @@ get_config_frame(PurplePlugin *plugin)
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
 		g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(toggle_bold),
 				formats[i].prefix);
-		
+		gtk_widget_set_sensitive(button, e);
+		purple_prefs_connect_callback(plugin, tmp2, enable_toggled, button);
+
 		button = gtk_check_button_new_with_label(_("Italic"));
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 		if (f & FONT_ITALIC)
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
 		g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(toggle_italic),
 				formats[i].prefix);
-		
+		gtk_widget_set_sensitive(button, e);
+		purple_prefs_connect_callback(plugin, tmp2, enable_toggled, button);
+
 		button = gtk_check_button_new_with_label(_("Underline"));
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 		if (f & FONT_UNDERLINE)
 			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
 		g_signal_connect(G_OBJECT(button), "clicked",
 				G_CALLBACK(toggle_underline), formats[i].prefix);
+		gtk_widget_set_sensitive(button, e);
+		purple_prefs_connect_callback(plugin, tmp2, enable_toggled, button);
 	}
 
+	g_signal_connect(GTK_OBJECT(ret), "destroy", G_CALLBACK(disconnect_prefs_callbacks), plugin);
 	frame = pidgin_make_frame(ret, _("General"));
 	pidgin_prefs_checkbox(_("Ignore incoming format"), PREF_IGNORE, frame);
 	pidgin_prefs_checkbox(_("Apply in Chats"), PREF_CHATS, frame);
@@ -388,6 +450,12 @@ init_plugin(PurplePlugin *plugin)
 	purple_prefs_add_int(PREF_SYSTEM_F, FONT_ITALIC);
 	purple_prefs_add_int(PREF_ERROR_F, FONT_BOLD | FONT_UNDERLINE);
 	purple_prefs_add_int(PREF_NICK_F, FONT_BOLD);
+
+	purple_prefs_add_bool(PREF_SEND_E, TRUE);
+	purple_prefs_add_bool(PREF_RECV_E, TRUE);
+	purple_prefs_add_bool(PREF_SYSTEM_E, TRUE);
+	purple_prefs_add_bool(PREF_ERROR_E, TRUE);
+	purple_prefs_add_bool(PREF_NICK_E, TRUE);
 }
 
 PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)

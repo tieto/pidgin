@@ -101,13 +101,14 @@ ce_enable_account_cb(PurpleAccount *account)
 }
 
 static void
-finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
+finch_connection_report_disconnect(PurpleConnection *gc, PurpleConnectionError reason,
+		const char *text)
 {
 	FinchAutoRecon *info;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	GList *list;
 
-	if (!gc->wants_to_die) {
+	if (!purple_connection_error_is_fatal(reason)) {
 		info = g_hash_table_lookup(hash, account);
 
 		if (info == NULL) {
@@ -148,10 +149,14 @@ finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 	while (list) {
 		PurpleConversation *conv = list->data;
 		list = list->next;
-		if (conv->account != account ||
+		if (purple_conversation_get_account(conv) != account ||
 				purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
 			continue;
 		purple_conversation_set_data(conv, "want-to-rejoin", GINT_TO_POINTER(TRUE));
+		purple_conversation_write(conv, NULL, _("The account has disconnected and you are no "
+					"longer in this chat. You will be automatically rejoined in the chat when "
+					"the account reconnects."),
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 	}
 }
 
@@ -175,10 +180,10 @@ static PurpleConnectionUiOps ops =
 	NULL, /* connected */
 	NULL, /* disconnected */
 	NULL, /* notice */
-	finch_connection_report_disconnect,
+	NULL,
 	NULL, /* network_connected */
 	NULL, /* network_disconnected */
-	NULL,
+	finch_connection_report_disconnect,
 	NULL,
 	NULL,
 	NULL

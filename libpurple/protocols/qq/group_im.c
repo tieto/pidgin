@@ -135,7 +135,7 @@ void qq_process_recv_group_im_apply_join
 
 	purple_request_action(gc, _("QQ Qun Operation"),
 			    msg, reason,
-			    2,
+			    PURPLE_DEFAULT_ACTION_NONE,
 				purple_connection_get_account(gc), nombre, NULL,
 				g, 3,
 			    _("Approve"),

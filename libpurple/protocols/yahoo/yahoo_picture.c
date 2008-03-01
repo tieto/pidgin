@@ -116,6 +116,11 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		struct yahoo_fetch_picture_data *data;
 		PurpleBuddy *b = purple_find_buddy(gc->account, who);
 		const char *locksum = NULL;
+		gboolean use_whole_url = FALSE;
+
+		/* use whole URL if using HTTP Proxy */
+		if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+		    use_whole_url = TRUE;
 
 		/* FIXME: Cleanup this strtol() stuff if possible. */
 		if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL && 
@@ -126,7 +131,7 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		data->gc = gc;
 		data->who = g_strdup(who);
 		data->checksum = checksum;
-		url_data = purple_util_fetch_url(url, FALSE,
+		url_data = purple_util_fetch_url(url, use_whole_url,
 				"Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
 				yahoo_fetch_picture_cb, data);
 		if (url_data != NULL) {

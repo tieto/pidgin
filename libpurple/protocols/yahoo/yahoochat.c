@@ -114,6 +114,7 @@ static PurpleConversation *yahoo_find_conference(PurpleConnection *gc, const cha
 
 void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
+	PurpleAccount *account;
 	GSList *l;
 	char *room = NULL;
 	char *who = NULL;
@@ -123,6 +124,8 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 
 	if (pkt->status == 2)
 		return; /* XXX */
+
+	account = purple_connection_get_account(gc);
 
 	members = g_string_sized_new(512);
 
@@ -159,8 +162,9 @@ void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *
 		return;
 	}
 
-	if (!yahoo_privacy_check(gc, who) ||
-			(purple_account_get_bool(purple_connection_get_account(gc), "ignore_invites", FALSE))) {
+	if (!purple_privacy_check(account, who) ||
+			(purple_account_get_bool(account, "ignore_invites", FALSE)))
+	{
 		purple_debug_info("yahoo",
 		    "Invite to conference %s from %s has been dropped.\n", room, who);
 		g_free(room);
@@ -203,7 +207,8 @@ void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet 
 			break;
 		}
 	}
-	if (!yahoo_privacy_check(gc, who)) {
+	if (!purple_privacy_check(purple_connection_get_account(gc), who))
+	{
 		g_free(room);
 		g_free(msg);
 		return;
@@ -664,10 +669,13 @@ void yahoo_process_chat_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 void yahoo_process_chat_addinvite(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
+	PurpleAccount *account;
 	GSList *l;
 	char *room = NULL;
 	char *msg = NULL;
 	char *who = NULL;
+
+	account = purple_connection_get_account(gc);
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -696,8 +704,9 @@ void yahoo_process_chat_addinvite(PurpleConnection *gc, struct yahoo_packet *pkt
 	if (room && who) {
 		GHashTable *components;
 
-		if (!yahoo_privacy_check(gc, who) ||
-				(purple_account_get_bool(purple_connection_get_account(gc), "ignore_invites", FALSE))) {
+		if (!purple_privacy_check(account, who) ||
+				(purple_account_get_bool(account, "ignore_invites", FALSE)))
+		{
 			purple_debug_info("yahoo", "Invite to room %s from %s has been dropped.\n", room, who);
 			g_free(room);
 			g_free(msg);
@@ -1461,28 +1470,30 @@ static void yahoo_roomlist_got_connected(gpointer data, gint source, const gchar
 
 PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 {
-	struct yahoo_roomlist *yrl;
+	PurpleAccount *account;
 	PurpleRoomlist *rl;
-	const char *rll;
-	char *url;
-	GList *fields = NULL;
 	PurpleRoomlistField *f;
+	GList *fields = NULL;
+	struct yahoo_roomlist *yrl;
+	const char *rll, *rlurl;
+	char *url;
 
-	rll = purple_account_get_string(purple_connection_get_account(gc),
-								  "room_list_locale", YAHOO_ROOMLIST_LOCALE);
+	account = purple_connection_get_account(gc);
 
-	if (rll != NULL && *rll != '\0') {
-		url = g_strdup_printf("%s?chatcat=0&intl=%s",
-	        purple_account_get_string(purple_connection_get_account(gc),
-	        "room_list", YAHOO_ROOMLIST_URL), rll);
-	} else {
-		url = g_strdup_printf("%s?chatcat=0",
-	        purple_account_get_string(purple_connection_get_account(gc),
-	        "room_list", YAHOO_ROOMLIST_URL));
+	/* for Yahoo Japan, it appears there is only one valid URL and locale */
+	if(purple_account_get_bool(account, "yahoojp", FALSE)) {
+		rll = YAHOOJP_ROOMLIST_LOCALE;
+		rlurl = YAHOOJP_ROOMLIST_URL;
+	}
+	else { /* but for the rest of the world that isn't the case */
+		rll = purple_account_get_string(account, "room_list_locale", YAHOO_ROOMLIST_LOCALE);
+		rlurl = purple_account_get_string(account, "room_list", YAHOO_ROOMLIST_URL);
 	}
 
+	url = g_strdup_printf("%s?chatcat=0&intl=%s", rlurl, rll);
+
 	yrl = g_new0(struct yahoo_roomlist, 1);
-	rl = purple_roomlist_new(purple_connection_get_account(gc));
+	rl = purple_roomlist_new(account);
 	yrl->list = rl;
 
 	purple_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
@@ -1508,7 +1519,7 @@ PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 
 	purple_roomlist_set_fields(rl, fields);
 
-	if (purple_proxy_connect(NULL, purple_connection_get_account(gc), yrl->host, 80,
+	if (purple_proxy_connect(NULL, account, yrl->host, 80,
 	                       yahoo_roomlist_got_connected, yrl) == NULL)
 	{
 		purple_notify_error(gc, NULL, _("Connection problem"), _("Unable to fetch room list."));

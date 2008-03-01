@@ -147,14 +147,14 @@ static void *finch_notify_formatted(const char *title, const char *primary,
 }
 
 static void
-reset_email_dialog()
+reset_email_dialog(void)
 {
 	emaildialog.window = NULL;
 	emaildialog.tree = NULL;
 }
 
 static void
-setup_email_dialog()
+setup_email_dialog(void)
 {
 	GntWidget *box, *tree, *button;
 	if (emaildialog.window)

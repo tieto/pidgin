@@ -55,7 +55,7 @@ void finch_xfer_dialog_show(void);
 /**
  * Hides the file transfer dialog.
  */
-void finch_xfer_dialog_hide();
+void finch_xfer_dialog_hide(void);
 
 /**
  * Adds a file transfer to the dialog.

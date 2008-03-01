@@ -20,7 +20,7 @@
 #include <glib.h>
 #include "account.h"
 
-#define ICHAT_SERVICE "_presence._tcp."
+#define LINK_LOCAL_RECORD_NAME "_presence._tcp."
 
 /**
  * Data to be used by the dns-sd connection.

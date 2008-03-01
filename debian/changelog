@@ -1,3 +1,11 @@
+pidgin (2.4.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Install manpages into their appropriate packages, not pidgin-data
+    (Closes: #459908)
+
+ -- Ari Pollak <ari@debian.org>  Fri, 29 Feb 2008 21:52:50 -0500
+
 pidgin (2.3.1-3) unstable; urgency=low
 
   * Seed libpurple0.symbols file

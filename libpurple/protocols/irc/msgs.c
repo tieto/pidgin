@@ -495,6 +495,8 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 					cur++;
 				} else if(irc->mode_chars
 					  && strchr(irc->mode_chars, *cur)) {
+					if (*cur == '~')
+						f = PURPLE_CBFLAGS_FOUNDER;
 					cur++;
 				}
 				tmp = g_strndup(cur, end - cur);
@@ -854,6 +856,9 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 					newflag = PURPLE_CBFLAGS_HALFOP;
 				else if (*mcur == 'v')
 					newflag = PURPLE_CBFLAGS_VOICE;
+				else if(irc->mode_chars
+					  && strchr(irc->mode_chars, '~') && (*mcur == 'q'))
+					newflag = PURPLE_CBFLAGS_FOUNDER;
 				if (newflag) {
 					if (add)
 						flags |= newflag;

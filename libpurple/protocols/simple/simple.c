@@ -45,17 +45,17 @@
 #include "dnssrv.h"
 #include "ntlm.h"
 
-static char *gentag() {
+static char *gentag(void) {
 	return g_strdup_printf("%04d%04d", rand() & 0xFFFF, rand() & 0xFFFF);
 }
 
-static char *genbranch() {
+static char *genbranch(void) {
 	return g_strdup_printf("z9hG4bK%04X%04X%04X%04X%04X",
 		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
 		rand() & 0xFFFF, rand() & 0xFFFF);
 }
 
-static char *gencallid() {
+static char *gencallid(void) {
 	return g_strdup_printf("%04Xg%04Xa%04Xi%04Xm%04Xt%04Xb%04Xx%04Xx",
 		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
 		rand() & 0xFFFF, rand() & 0xFFFF, rand() & 0xFFFF,
@@ -1356,10 +1356,21 @@ static void send_notify(struct simple_account_data *sip, struct simple_watcher *
 }
 
 static gboolean process_publish_response(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc) {
+
+	const gchar *etag = NULL;
+
 	if(msg->response != 200 && msg->response != 408) {
 		/* never send again */
 		sip->republish = -1;
 	}
+
+	etag = sipmsg_find_header(msg, "SIP-Etag");
+	if (etag) {
+		/* we must store the etag somewhere. */
+		g_free(sip->publish_etag);
+		sip->publish_etag = g_strdup(etag);
+	}
+
 	return TRUE;
 }
 
@@ -1368,10 +1379,12 @@ static void send_open_publish(struct simple_account_data *sip) {
 	gchar *uri = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
 	gchar *doc = gen_pidf(sip, TRUE);
 
-	add_headers = g_strdup_printf("%s%d%s",
-		"Expires: ",
-		PUBLISH_EXPIRATION,
-		"\r\nEvent: presence\r\n"
+	add_headers = g_strdup_printf("%s%s%s%s%d\r\n%s",
+		sip->publish_etag ? "SIP-If-Match: " : "",
+		sip->publish_etag ? sip->publish_etag : "",
+		sip->publish_etag ? "\r\n" : "",
+		"Expires: ", PUBLISH_EXPIRATION,
+		"Event: presence\r\n"
 		"Content-Type: application/pidf+xml\r\n");
 
 	send_sip_request(sip->gc, "PUBLISH", uri, uri,
@@ -1384,14 +1397,23 @@ static void send_open_publish(struct simple_account_data *sip) {
 
 static void send_closed_publish(struct simple_account_data *sip) {
 	gchar *uri = g_strdup_printf("sip:%s@%s", sip->username, sip->servername);
-	gchar *doc = gen_pidf(sip, FALSE);
-	send_sip_request(sip->gc, "PUBLISH", uri, uri,
-		"Expires: 600\r\nEvent: presence\r\n"
-		"Content-Type: application/pidf+xml\r\n",
+	gchar *add_headers, *doc;
+
+	add_headers = g_strdup_printf("%s%s%s%s",
+		sip->publish_etag ? "SIP-If-Match: " : "",
+		sip->publish_etag ? sip->publish_etag : "",
+		sip->publish_etag ? "\r\n" : "",
+		"Expires: 600\r\n"
+		"Event: presence\r\n"
+		"Content-Type: application/pidf+xml\r\n");
+
+	doc = gen_pidf(sip, FALSE);
+	send_sip_request(sip->gc, "PUBLISH", uri, uri, add_headers,
 		doc, NULL, process_publish_response);
 	/*sip->republish = time(NULL) + 500;*/
 	g_free(uri);
 	g_free(doc);
+	g_free(add_headers);
 }
 
 static void process_incoming_subscribe(struct simple_account_data *sip, struct sipmsg *msg) {
@@ -1653,7 +1675,7 @@ static void simple_input_cb(gpointer data, gint source, PurpleInputCondition con
 		if(sip->fd == source) sip->fd = -1;
 		return;
 	}
-
+	gc->last_received = time(NULL);
 	conn->inbufused += len;
 	conn->inbuf[conn->inbufused] = '\0';
 
@@ -1948,6 +1970,7 @@ static void simple_close(PurpleConnection *gc)
 		g_free(sip->proxy.target);
 		g_free(sip->proxy.realm);
 		g_free(sip->proxy.digest_session_key);
+		g_free(sip->publish_etag);
 		if(sip->txbuf)
 			purple_circ_buffer_destroy(sip->txbuf);
 		g_free(sip->realhostname);
@@ -1958,13 +1981,6 @@ static void simple_close(PurpleConnection *gc)
 	}
 	g_free(gc->proto_data);
 	gc->proto_data = NULL;
-}
-
-/* not needed since privacy is checked for every subscribe */
-static void dummy_add_deny(PurpleConnection *gc, const char *name) {
-}
-
-static void dummy_permit_deny(PurpleConnection *gc) {
 }
 
 static PurplePluginProtocolInfo prpl_info =
@@ -1994,11 +2010,11 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* add_buddies */
 	simple_remove_buddy,	/* remove_buddy */
 	NULL,					/* remove_buddies */
-	dummy_add_deny,			/* add_permit */
-	dummy_add_deny,			/* add_deny */
-	dummy_add_deny,			/* rem_permit */
-	dummy_add_deny,			/* rem_deny */
-	dummy_permit_deny,		/* set_permit_deny */
+	NULL,					/* add_permit */
+	NULL,					/* add_deny */
+	NULL,					/* rem_permit */
+	NULL,					/* rem_deny */
+	NULL,					/* set_permit_deny */
 	NULL,					/* join_chat */
 	NULL,					/* reject_chat */
 	NULL,					/* get_chat_name */

@@ -2,10 +2,11 @@
  * @file purple.h  Header files and defines
  * This file contains all the necessary preprocessor directives to include
  * libpurple's headers and other preprocessor directives required for plugins
- * or UIs to build.  Inlcuding this file eliminates the need to directly
+ * or UIs to build.  Including this file eliminates the need to directly
  * include any other libpurple files.
  *
  * @ingroup core libpurple
+ * @since 2.3.0
  */
 
 /* purple

@@ -200,12 +200,20 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 	PurpleSrvCallback cb = query_data->cb;
 	int status;
 
-	if (read(source, &size, sizeof(int)) > 0)
+	if (read(source, &size, sizeof(int)) == sizeof(int))
 	{
+		ssize_t red;
 		purple_debug_info("dnssrv","found %d SRV entries\n", size);
 		tmp = res = g_new0(PurpleSrvResponse, size);
 		for (i = 0; i < size; i++) {
-			read(source, tmp++, sizeof(PurpleSrvResponse));
+			red = read(source, tmp++, sizeof(PurpleSrvResponse));
+			if (red != sizeof(PurpleSrvResponse)) {
+				purple_debug_error("dnssrv","unable to read srv "
+						"response: %s\n", g_strerror(errno));
+				size = 0;
+				g_free(res);
+				res = NULL;
+			}
 		}
 	}
 	else
@@ -307,7 +315,7 @@ res_thread(gpointer data)
 
 	/* back to main thread */
 	/* Note: this should *not* be attached to query_data->handle - it will cause leakage */
-	g_idle_add(res_main_thread_cb, query_data);
+	purple_timeout_add(0, res_main_thread_cb, query_data);
 
 	g_thread_exit(NULL);
 	return NULL;
@@ -350,9 +358,12 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	/* Child */
 	if (pid == 0)
 	{
+		g_free(query);
+
 		close(out[0]);
 		close(in[1]);
 		resolve(in[0], out[1]);
+		/* resolve() does not return */
 	}
 
 	close(out[1]);
@@ -399,7 +410,7 @@ purple_srv_resolve(const char *protocol, const char *transport, const char *doma
 	 * Asynchronously call the callback since stuff may not expect
 	 * the callback to be called before this returns */
 	if (query_data->error_message != NULL)
-		query_data->handle = g_idle_add(res_main_thread_cb, query_data);
+		query_data->handle = purple_timeout_add(0, res_main_thread_cb, query_data);
 
 	return query_data;
 #endif

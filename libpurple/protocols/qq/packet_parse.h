@@ -23,7 +23,7 @@
  */
 
 #ifndef _QQ_PACKET_PARSE_H_
-#define _QQ_PACKED_PARSE_H_
+#define _QQ_PACKET_PARSE_H_
 
 #include <glib.h>
 #include <time.h>

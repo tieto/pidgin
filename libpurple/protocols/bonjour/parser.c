@@ -31,25 +31,58 @@
 #include "util.h"
 #include "xmlnode.h"
 
+static gboolean
+parse_from_attrib_and_find_buddy(BonjourJabberConversation *bconv, int nb_attributes, const xmlChar **attributes) {
+	int i;
+
+	/* If the "from" attribute is specified, attach it to the conversation. */
+	for(i=0; i < nb_attributes * 5; i+=5) {
+		if(!xmlStrcmp(attributes[i], (xmlChar*) "from")) {
+			int len = attributes[i+4] - attributes[i+3];
+			bconv->buddy_name = g_strndup((char *)attributes[i+3], len);
+			bonjour_jabber_conv_match_by_name(bconv);
+
+			return (bconv->pb != NULL);
+		}
+	}
+
+	return FALSE;
+}
+
 static void
 bonjour_parser_element_start_libxml(void *user_data,
 				   const xmlChar *element_name, const xmlChar *prefix, const xmlChar *namespace,
 				   int nb_namespaces, const xmlChar **namespaces,
 				   int nb_attributes, int nb_defaulted, const xmlChar **attributes)
 {
-	PurpleBuddy *pb = user_data;
-	BonjourBuddy *bb = pb->proto_data;
-	BonjourJabberConversation *bconv = bb->conversation;
+	BonjourJabberConversation *bconv = user_data;
 
 	xmlnode *node;
 	int i;
 
-	if(!element_name) {
-		return;
-	} else if(!xmlStrcmp(element_name, (xmlChar*) "stream")) {
-		bconv->recv_stream_start = TRUE;
-		bonjour_jabber_stream_started(pb);
+	g_return_if_fail(element_name != NULL);
+
+	if(!xmlStrcmp(element_name, (xmlChar*) "stream")) {
+		if(!bconv->recv_stream_start) {
+			bconv->recv_stream_start = TRUE;
+
+			if (bconv->pb == NULL)
+				parse_from_attrib_and_find_buddy(bconv, nb_attributes, attributes);
+
+			bonjour_jabber_stream_started(bconv);
+		}
 	} else {
+
+		/* If we haven't yet attached a buddy and this isn't "<stream:features />",
+		 * try to get a "from" attribute as a last resort to match our buddy. */
+		if(bconv->pb == NULL
+				&& !(prefix && !xmlStrcmp(prefix, (xmlChar*) "stream")
+					&& !xmlStrcmp(element_name, (xmlChar*) "features"))
+				&& !parse_from_attrib_and_find_buddy(bconv, nb_attributes, attributes))
+			/* We've run out of options for finding who the conversation is from
+			   using explicitly specified stuff; see if we can make a good match
+			   by using the IP */
+			bonjour_jabber_conv_match_by_ip(bconv);
 
 		if(bconv->current)
 			node = xmlnode_new_child(bconv->current, (const char*) element_name);
@@ -82,27 +115,19 @@ bonjour_parser_element_start_libxml(void *user_data,
 	}
 }
 
-static gboolean _async_bonjour_jabber_stream_ended_cb(gpointer data) {
-	bonjour_jabber_stream_ended((PurpleBuddy *) data);
-	return FALSE;
-}
-
 static void
 bonjour_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 				 const xmlChar *prefix, const xmlChar *namespace)
 {
-	PurpleBuddy *pb = user_data;
-	BonjourBuddy *bb = pb->proto_data;
-	BonjourJabberConversation *bconv = bb->conversation;
+	BonjourJabberConversation *bconv = user_data;
 
 	if(!bconv->current) {
 		/* We don't keep a reference to the start stream xmlnode,
 		 * so we have to check for it here to close the conversation */
-		if(!xmlStrcmp(element_name, (xmlChar*) "stream")) {
+		if(!xmlStrcmp(element_name, (xmlChar*) "stream"))
 			/* Asynchronously close the conversation to prevent bonjour_parser_setup()
 			 * being called from within this context */
-			purple_timeout_add(0, _async_bonjour_jabber_stream_ended_cb, pb);
-		}
+			async_bonjour_jabber_close_conversation(bconv);
 		return;
 	}
 
@@ -112,7 +137,7 @@ bonjour_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 	} else {
 		xmlnode *packet = bconv->current;
 		bconv->current = NULL;
-		bonjour_jabber_process_packet(pb, packet);
+		bonjour_jabber_process_packet(bconv->pb, packet);
 		xmlnode_free(packet);
 	}
 }
@@ -120,9 +145,7 @@ bonjour_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 static void
 bonjour_parser_element_text_libxml(void *user_data, const xmlChar *text, int text_len)
 {
-	PurpleBuddy *pb = user_data;
-	BonjourBuddy *bb = pb->proto_data;
-	BonjourJabberConversation *bconv = bb->conversation;
+	BonjourJabberConversation *bconv = user_data;
 
 	if(!bconv->current)
 		return;
@@ -184,21 +207,17 @@ bonjour_parser_setup(BonjourJabberConversation *bconv)
 }
 
 
-void bonjour_parser_process(PurpleBuddy *pb, const char *buf, int len)
+void bonjour_parser_process(BonjourJabberConversation *bconv, const char *buf, int len)
 {
-	BonjourBuddy *bb = pb->proto_data;
 
-	g_return_if_fail(bb != NULL);
-	g_return_if_fail(bb->conversation != NULL);
-
-	if (bb->conversation->context ==  NULL) {
+	if (bconv->context == NULL) {
 		/* libxml inconsistently starts parsing on creating the
 		 * parser, so do a ParseChunk right afterwards to force it. */
-		bb->conversation->context = xmlCreatePushParserCtxt(&bonjour_parser_libxml, pb, buf, len, NULL);
-		xmlParseChunk(bb->conversation->context, "", 0, 0);
-	} else if (xmlParseChunk(bb->conversation->context, buf, len, 0) < 0) {
+		bconv->context = xmlCreatePushParserCtxt(&bonjour_parser_libxml, bconv, buf, len, NULL);
+		xmlParseChunk(bconv->context, "", 0, 0);
+	} else if (xmlParseChunk(bconv->context, buf, len, 0) < 0)
 		/* TODO: What should we do here - I assume we should display an error or something (maybe just print something to the conv?) */
 		purple_debug_error("bonjour", "Error parsing xml.\n");
-	}
+
 }
 

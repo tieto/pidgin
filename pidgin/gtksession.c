@@ -124,7 +124,7 @@ static void ice_io_error_handler(IceConn connection) {
 	purple_debug(PURPLE_DEBUG_INFO, NULL, "done.\n");
 }
 
-static void ice_init() {
+static void ice_init(void) {
 	IceIOErrorHandler default_handler;
 
 	ice_installed_io_error_handler = IceSetIOErrorHandler(NULL);

@@ -48,6 +48,7 @@ typedef struct _YahooFriend {
 	gboolean bicon_sent_request;
 	YahooPresenceVisibility presence;
 	int protocol; /* 1=LCS, 2=MSN*/
+	long int version_id;
 } YahooFriend;
 
 YahooFriend *yahoo_friend_find(PurpleConnection *gc, const char *name);

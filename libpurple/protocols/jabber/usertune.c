@@ -35,11 +35,12 @@ static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 	xmlnode *tuneinfo, *tune;
 	PurpleJabberTuneInfo tuneinfodata;
 	JabberBuddyResource *resource;
-	
+	gboolean valid = FALSE;
+
 	/* ignore the tune of people not on our buddy list */
 	if (!buddy || !item)
 		return;
-	
+
 	tuneinfodata.artist = NULL;
 	tuneinfodata.title = NULL;
 	tuneinfodata.album = NULL;
@@ -58,36 +59,47 @@ static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 			if (!strcmp(tuneinfo->name, "artist")) {
 				if (tuneinfodata.artist == NULL) /* only pick the first one */
 					tuneinfodata.artist = xmlnode_get_data(tuneinfo);
+				valid = TRUE;
 			} else if (!strcmp(tuneinfo->name, "length")) {
 				if (tuneinfodata.time == -1) {
 					char *length = xmlnode_get_data(tuneinfo);
 					if (length)
 						tuneinfodata.time = strtol(length, NULL, 10);
 					g_free(length);
+					if (tuneinfodata.time > 0)
+						valid = TRUE;
 				}
 			} else if (!strcmp(tuneinfo->name, "source")) {
 				if (tuneinfodata.album == NULL) /* only pick the first one */
 					tuneinfodata.album = xmlnode_get_data(tuneinfo);
+				valid = TRUE;
 			} else if (!strcmp(tuneinfo->name, "title")) {
 				if (tuneinfodata.title == NULL) /* only pick the first one */
 					tuneinfodata.title = xmlnode_get_data(tuneinfo);
+				valid = TRUE;
 			} else if (!strcmp(tuneinfo->name, "track")) {
 				if (tuneinfodata.track == NULL) /* only pick the first one */
 					tuneinfodata.track = xmlnode_get_data(tuneinfo);
+				valid = TRUE;
 			} else if (!strcmp(tuneinfo->name, "uri")) {
 				if (tuneinfodata.url == NULL) /* only pick the first one */
 					tuneinfodata.url = xmlnode_get_data(tuneinfo);
+				valid = TRUE;
 			}
 		}
 	}
 
-	purple_prpl_got_user_status(js->gc->account, from, "tune",
-			PURPLE_TUNE_ARTIST, tuneinfodata.artist,
-			PURPLE_TUNE_TITLE, tuneinfodata.title,
-			PURPLE_TUNE_ALBUM, tuneinfodata.album,
-			PURPLE_TUNE_TRACK, tuneinfodata.track,
-			PURPLE_TUNE_TIME, tuneinfodata.time,
-			PURPLE_TUNE_URL, tuneinfodata.url, NULL);
+	if (valid) {
+		purple_prpl_got_user_status(js->gc->account, from, "tune",
+				PURPLE_TUNE_ARTIST, tuneinfodata.artist,
+				PURPLE_TUNE_TITLE, tuneinfodata.title,
+				PURPLE_TUNE_ALBUM, tuneinfodata.album,
+				PURPLE_TUNE_TRACK, tuneinfodata.track,
+				PURPLE_TUNE_TIME, tuneinfodata.time,
+				PURPLE_TUNE_URL, tuneinfodata.url, NULL);
+	} else {
+		purple_prpl_got_user_status_deactive(js->gc->account, from, "tune");
+	}
 
 	g_free(tuneinfodata.artist);
 	g_free(tuneinfodata.title);
@@ -119,7 +131,7 @@ void jabber_tune_set(PurpleConnection *gc, const PurpleJabberTuneInfo *tuneinfo)
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "source"),tuneinfo->album,-1);
 		if(tuneinfo->url && tuneinfo->url[0] != '\0')
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "uri"),tuneinfo->url,-1);
-		if(tuneinfo->time >= 0) {
+		if(tuneinfo->time > 0) {
 			char *length = g_strdup_printf("%d", tuneinfo->time);
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "length"),length,-1);
 			g_free(length);

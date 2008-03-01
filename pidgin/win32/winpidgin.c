@@ -445,27 +445,31 @@ static void winpidgin_set_locale() {
 #define PIDGIN_WM_FOCUS_REQUEST (WM_APP + 13)
 #define PIDGIN_WM_PROTOCOL_HANDLE (WM_APP + 14)
 
-static BOOL winpidgin_set_running() {
+static BOOL winpidgin_set_running(BOOL fail_if_running) {
 	HANDLE h;
 
 	if ((h = CreateMutex(NULL, FALSE, "pidgin_is_running"))) {
-		if (GetLastError() == ERROR_ALREADY_EXISTS) {
-			HWND msg_win;
+		DWORD err = GetLastError();
+		if (err == ERROR_ALREADY_EXISTS) {
+			if (fail_if_running) {
+				HWND msg_win;
 
-			printf("An instance of Pidgin is already running.\n");
+				printf("An instance of Pidgin is already running.\n");
 
-			if((msg_win = FindWindowEx(HWND_MESSAGE, NULL, TEXT("WinpidginMsgWinCls"), NULL)))
-				if(SendMessage(msg_win, PIDGIN_WM_FOCUS_REQUEST, (WPARAM) NULL, (LPARAM) NULL))
-					return FALSE;
+				if((msg_win = FindWindowEx(HWND_MESSAGE, NULL, TEXT("WinpidginMsgWinCls"), NULL)))
+					if(SendMessage(msg_win, PIDGIN_WM_FOCUS_REQUEST, (WPARAM) NULL, (LPARAM) NULL))
+						return FALSE;
 
-			/* If we get here, the focus request wasn't successful */
+				/* If we get here, the focus request wasn't successful */
 
-			MessageBox(NULL,
-				"An instance of Pidgin is already running",
-				NULL, MB_OK | MB_TOPMOST);
+				MessageBox(NULL,
+					"An instance of Pidgin is already running",
+					NULL, MB_OK | MB_TOPMOST);
 
-			return FALSE;
-		}
+				return FALSE;
+			}
+		} else if (err != ERROR_SUCCESS)
+			printf("Error (%u) accessing \"pidgin_is_running\" mutex.\n", (UINT) err);
 	}
 	return TRUE;
 }
@@ -628,8 +632,8 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 
 	winpidgin_set_locale();
 	/* If help, version or multiple flag used, do not check Mutex */
-	if (!strstr(lpszCmdLine, "-h") && !strstr(lpszCmdLine, "-v") && !strstr(lpszCmdLine, "-m"))
-		if (!getenv("PIDGIN_MULTI_INST") && !winpidgin_set_running())
+	if (!strstr(lpszCmdLine, "-h") && !strstr(lpszCmdLine, "-v"))
+		if (!winpidgin_set_running(getenv("PIDGIN_MULTI_INST") == NULL && strstr(lpszCmdLine, "-m") == NULL))
 			return 0;
 
 	/* Now we are ready for Pidgin .. */

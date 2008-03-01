@@ -3,8 +3,6 @@
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
- * Some code copyright (C) 2007, ComBOTS Product GmbH (htfv) <foss@combots.com>
- *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -94,11 +92,8 @@ extern "C" {
  * for WinAIM clients (up through the latest (4.0.1957)) to
  * send any more than 1kb.  Amaze all your windows friends
  * with utterly oversized instant messages!
- *
- * TODO: the real limit is the total SNAC size at 8192. Fix this.
- *
  */
-#define MAXMSGLEN 7987
+#define MAXMSGLEN 2544
 
 /*
  * Maximum size of a Buddy Icon.
@@ -314,7 +309,7 @@ struct _ClientInfo
 }
 
 #define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_5_1_3036
-#define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQ_5_45_3777
+#define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQBASIC_14_34_3000
 
 typedef enum
 {
@@ -471,7 +466,6 @@ struct _OscarData
 
 	gboolean icq;
 	guint getblisttimer;
-	guint getinfotimer;
 
 	struct {
 		guint maxwatchers; /* max users who can watch you */
@@ -516,9 +510,7 @@ struct _OscarData
 
 	struct {
 		struct aim_userinfo_s *userinfo;
-		struct userinfo_node *torequest;
 		struct userinfo_node *requested;
-		gboolean waiting_for_response;
 	} locate;
 
 	/* Server-stored information (ssi) */
@@ -687,8 +679,9 @@ void aim_ads_requestads(OscarData *od, FlapConnection *conn);
 #define AIM_TRANSFER_DENY_DECLINE	0x0001
 #define AIM_TRANSFER_DENY_NOTACCEPTING	0x0002
 
-#define AIM_IMPARAM_FLAG_CHANMSGS_ALLOWED	0x00000001
-#define AIM_IMPARAM_FLAG_MISSEDCALLS_ENABLED	0x00000002
+#define AIM_IMPARAM_FLAG_CHANMSGS_ALLOWED       0x00000001
+#define AIM_IMPARAM_FLAG_MISSEDCALLS_ENABLED    0x00000002
+#define AIM_IMPARAM_FLAG_SUPPORT_OFFLINEMSGS    0x00000100
 
 /* This is what the server will give you if you don't set them yourself. */
 #define AIM_IMPARAM_DEFAULTS { \
@@ -852,6 +845,7 @@ struct aim_incomingim_ch1_args
 	/* Always provided */
 	aim_mpmsg_t mpmsg;
 	guint32 icbmflags; /* some flags apply only to ->msg, not all mpmsg */
+	time_t timestamp; /* Only set for offline messages */
 
 	/* Only provided if message has a human-readable section */
 	gchar *msg;
@@ -956,6 +950,7 @@ struct aim_incomingim_ch4_args
 /* 0x0006 */ int aim_im_sendch4(OscarData *od, const char *sn, guint16 type, const char *message);
 /* 0x0008 */ int aim_im_warn(OscarData *od, FlapConnection *conn, const char *destsn, guint32 flags);
 /* 0x000b */ int aim_im_denytransfer(OscarData *od, const char *sn, const guchar *cookie, guint16 code);
+/* 0x0010 */ int aim_im_reqofflinemsgs(OscarData *od);
 /* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *sn, guint16 type2);
 void aim_icbm_makecookie(guchar* cookie);
 gchar *oscar_encoding_extract(const char *encoding);
@@ -1082,7 +1077,7 @@ void aim_locate_dorequest(OscarData *od);
 /* 0x000f */ int aim_locate_setinterests(OscarData *od, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, guint16 privacy);
 /* 0x0015 */ int aim_locate_getinfoshort(OscarData *od, const char *sn, guint32 flags);
 
-void aim_locate_requestuserinfo(OscarData *od, const char *sn);
+void aim_locate_autofetch_away_message(OscarData *od, const char *sn);
 guint32 aim_locate_getcaps(OscarData *od, ByteStream *bs, int len);
 guint32 aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len);
 void aim_info_free(aim_userinfo_t *);
@@ -1264,6 +1259,7 @@ int aim_ssi_delicon(OscarData *od);
 #define AIM_ICQ_INFO_UNKNOWN	0x100
 #define AIM_ICQ_INFO_HAVEALL	0x1ff
 
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 struct aim_icq_offlinemsg
 {
 	guint32 sender;
@@ -1274,6 +1270,7 @@ struct aim_icq_offlinemsg
 	char *msg;
 	int msglen;
 };
+#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 
 struct aim_icq_info
 {
@@ -1332,17 +1329,23 @@ struct aim_icq_info
 
 	/* we keep track of these in a linked list because we're 1337 */
 	struct aim_icq_info *next;
+
+	/* status note info */
+	guint8 icbm_cookie[8];
+	char *status_note_title;
 };
 
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 int aim_icq_reqofflinemsgs(OscarData *od);
 int aim_icq_ackofflinemsgs(OscarData *od);
+#endif
 int aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware);
 int aim_icq_changepasswd(OscarData *od, const char *passwd);
 int aim_icq_getsimpleinfo(OscarData *od, const char *uin);
 int aim_icq_getalias(OscarData *od, const char *uin);
 int aim_icq_getallinfo(OscarData *od, const char *uin);
 int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char *alias);
-
+int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, guint16 note_hash_len);
 
 
 /* 0x0017 - family_auth.c */

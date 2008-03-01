@@ -158,7 +158,9 @@ silcpurple_login_connected(gpointer data, gint source, const gchar *error_messag
 	sg = gc->proto_data;
 
 	if (source < 0) {
-		purple_connection_error(gc, _("Connection failed"));
+		purple_connection_error_reason(gc,
+			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Connection failed"));
 		return;
 	}
 
@@ -179,7 +181,8 @@ silcpurple_login_connected(gpointer data, gint source, const gchar *error_messag
 							  "silc.silcnet.org"),
 			  purple_account_get_int(account, "port", 706), sg);
 	if (!conn) {
-		purple_connection_error(gc, _("Cannot initialize SILC Client connection"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+			_("Cannot initialize SILC Client connection"));
 		gc->proto_data = NULL;
 		return;
 	}
@@ -264,7 +267,8 @@ silcpurple_login(PurpleAccount *account)
 	/* Allocate SILC client */
 	client = silc_client_alloc(&ops, &params, gc, NULL);
 	if (!client) {
-		purple_connection_error(gc, _("Out of memory"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		                             _("Out of memory"));
 		return;
 	}
 
@@ -309,15 +313,15 @@ silcpurple_login(PurpleAccount *account)
 
 	/* Init SILC client */
 	if (!silc_client_init(client)) {
-		gc->wants_to_die = TRUE;
-		purple_connection_error(gc, _("Cannot initialize SILC protocol"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		                             _("Cannot initialize SILC protocol"));
 		return;
 	}
 
 	/* Check the ~/.silc dir and create it, and new key pair if necessary. */
 	if (!silcpurple_check_silc_dir(gc)) {
-		gc->wants_to_die = TRUE;
-		purple_connection_error(gc, _("Cannot find/access ~/.silc directory"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		                             _("Error loading SILC key pair"));
 		return;
 	}
 
@@ -332,7 +336,8 @@ silcpurple_login(PurpleAccount *account)
 				(gc->password == NULL) ? "" : gc->password, &client->pkcs,
 				&client->public_key, &client->private_key)) {
 		g_snprintf(pkd, sizeof(pkd), _("Could not load SILC key pair: %s"), g_strerror(errno));
-		purple_connection_error(gc, pkd);
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		                             _("Could not load SILC key pair"));
 		return;
 	}
 
@@ -352,7 +357,8 @@ silcpurple_login(PurpleAccount *account)
 			       purple_account_get_int(account, "port", 706),
 			       silcpurple_login_connected, gc) == NULL)
 	{
-		purple_connection_error(gc, _("Unable to create connection"));
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		                             _("Unable to create connection"));
 		return;
 	}
 

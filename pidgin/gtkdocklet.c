@@ -62,7 +62,7 @@ static gboolean visibility_manager = FALSE;
  * docklet status and utility functions
  **************************************************************************/
 static gboolean
-docklet_blink_icon()
+docklet_blink_icon(gpointer data)
 {
 	static gboolean blinked = FALSE;
 	gboolean ret = FALSE; /* by default, don't keep blinking */
@@ -108,7 +108,7 @@ get_pending_list(guint max)
 }
 
 static gboolean
-docklet_update_status()
+docklet_update_status(void)
 {
 	GList *convs, *l;
 	int count;
@@ -219,7 +219,7 @@ docklet_update_status()
 }
 
 static gboolean
-online_account_supports_chat()
+online_account_supports_chat(void)
 {
 	GList *c = NULL;
 	c = purple_connections_get_all();
@@ -523,7 +523,7 @@ add_account_statuses(GtkWidget *menu, PurpleAccount *account)
 }
 
 static GtkWidget *
-docklet_status_submenu()
+docklet_status_submenu(void)
 {
 	GtkWidget *submenu, *menuitem;
 	GList *popular_statuses, *cur;
@@ -667,7 +667,8 @@ docklet_plugin_actions(GtkWidget *menu)
 }
 
 static void
-docklet_menu() {
+docklet_menu(void)
+{
 	static GtkWidget *menu = NULL;
 	GtkWidget *menuitem;
 

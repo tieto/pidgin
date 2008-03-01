@@ -44,11 +44,24 @@ extern "C" {
 /**************************************************************************/
 /*@{*/
 
-/**
- * Signal Connect Priorities
+/** The priority of a signal connected using purple_signal_connect().
+ *
+ *  @see purple_signal_connect_priority()
  */
 #define PURPLE_SIGNAL_PRIORITY_DEFAULT     0
+/** The largest signal priority; signals with this priority will be called
+ *  <em>last</em>.  (This is highest as in numerical value, not as in order of
+ *  importance.)
+ *
+ *  @see purple_signal_connect_priority().
+ */
 #define PURPLE_SIGNAL_PRIORITY_HIGHEST  9999
+/** The smallest signal priority; signals with this priority will be called
+ *  <em>first</em>.  (This is lowest as in numerical value, not as in order of
+ *  importance.)
+ *
+ *  @see purple_signal_connect_priority().
+ */
 #define PURPLE_SIGNAL_PRIORITY_LOWEST  -9999
 
 /**
@@ -109,19 +122,21 @@ void purple_signal_get_values(void *instance, const char *signal,
  * @param handle   The handle of the receiver.
  * @param func     The callback function.
  * @param data     The data to pass to the callback function.
- * @param priority The priority with which the handler should be called. Signal handlers are called
- *                 in order from PURPLE_SIGNAL_PRIORITY_LOWEST to PURPLE_SIGNAL_PRIORITY_HIGHEST.
+ * @param priority The priority with which the handler should be called. Signal
+ *                 handlers are called in ascending numerical order of @a
+ *                 priority from #PURPLE_SIGNAL_PRIORITY_LOWEST to
+ *                 #PURPLE_SIGNAL_PRIORITY_HIGHEST.
  *
  * @return The signal handler ID.
  *
  * @see purple_signal_disconnect()
  */
 gulong purple_signal_connect_priority(void *instance, const char *signal,
-				   void *handle, PurpleCallback func, void *data, int priority);
+	void *handle, PurpleCallback func, void *data, int priority);
 
 /**
  * Connects a signal handler to a signal for a particular object.
- * (priority defaults to 0)
+ * (Its priority defaults to 0, aka #PURPLE_SIGNAL_PRIORITY_DEFAULT.)
  * 
  * Take care not to register a handler function twice. Purple will
  * not correct any mistakes for you in this area.
@@ -137,7 +152,7 @@ gulong purple_signal_connect_priority(void *instance, const char *signal,
  * @see purple_signal_disconnect()
  */
 gulong purple_signal_connect(void *instance, const char *signal,
-						   void *handle, PurpleCallback func, void *data);
+	void *handle, PurpleCallback func, void *data);
 
 /**
  * Connects a signal handler to a signal for a particular object.
@@ -153,18 +168,22 @@ gulong purple_signal_connect(void *instance, const char *signal,
  * @param handle   The handle of the receiver.
  * @param func     The callback function.
  * @param data     The data to pass to the callback function.
- * @param priority The order in which the signal should be added to the list
+ * @param priority The priority with which the handler should be called. Signal
+ *                 handlers are called in ascending numerical order of @a
+ *                 priority from #PURPLE_SIGNAL_PRIORITY_LOWEST to
+ *                 #PURPLE_SIGNAL_PRIORITY_HIGHEST.
  *
  * @return The signal handler ID.
  *
  * @see purple_signal_disconnect()
  */
 gulong purple_signal_connect_priority_vargs(void *instance, const char *signal,
-					void *handle, PurpleCallback func, void *data, int priority);
+	void *handle, PurpleCallback func, void *data, int priority);
 
 /**
  * Connects a signal handler to a signal for a particular object.
- * (priority defaults to 0)
+ * (Its priority defaults to 0, aka #PURPLE_SIGNAL_PRIORITY_DEFAULT.)
+ *
  * The signal handler will take a va_args of arguments, instead of
  * individual arguments.
  *
@@ -182,7 +201,7 @@ gulong purple_signal_connect_priority_vargs(void *instance, const char *signal,
  * @see purple_signal_disconnect()
  */
 gulong purple_signal_connect_vargs(void *instance, const char *signal,
-								 void *handle, PurpleCallback func, void *data);
+	void *handle, PurpleCallback func, void *data);
 
 /**
  * Disconnects a signal handler from a signal on an object.

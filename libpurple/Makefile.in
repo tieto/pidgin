@@ -222,8 +222,6 @@ GTKSPELL_CFLAGS = @GTKSPELL_CFLAGS@
 GTKSPELL_LIBS = @GTKSPELL_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
-HOWL_CFLAGS = @HOWL_CFLAGS@
-HOWL_LIBS = @HOWL_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -309,6 +307,8 @@ PURPLE_MICRO_VERSION = @PURPLE_MICRO_VERSION@
 PURPLE_MINOR_VERSION = @PURPLE_MINOR_VERSION@
 PURPLE_VERSION = @PURPLE_VERSION@
 PYTHON = @PYTHON@
+PY_CFLAGS = @PY_CFLAGS@
+PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
 SASL_LIBS = @SASL_LIBS@
 SED = @SED@
@@ -392,6 +392,7 @@ pidginpath = @pidginpath@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+pythonpath = @pythonpath@
 sbindir = @sbindir@
 sedpath = @sedpath@
 sharedstatedir = @sharedstatedir@
@@ -535,7 +536,6 @@ purple_coreheaders = \
 	whiteboard.h
 
 purple_builtheaders = purple.h version.h
-BUILT_SOURCES = $(purple_builtheaders)
 @ENABLE_DBUS_TRUE@CLEANFILES = \
 @ENABLE_DBUS_TRUE@	dbus-bindings.c \
 @ENABLE_DBUS_TRUE@	dbus-client-binding.c \
@@ -576,6 +576,14 @@ BUILT_SOURCES = $(purple_builtheaders)
 
 # scripts
 @ENABLE_DBUS_TRUE@bin_SCRIPTS = purple-remote purple-send purple-send-async purple-url-handler
+@ENABLE_DBUS_FALSE@BUILT_SOURCES = $(purple_builtheaders)
+@ENABLE_DBUS_TRUE@BUILT_SOURCES = $(purple_builtheaders) \
+@ENABLE_DBUS_TRUE@	dbus-types.c \
+@ENABLE_DBUS_TRUE@	dbus-types.h \
+@ENABLE_DBUS_TRUE@	dbus-bindings.c \
+@ENABLE_DBUS_TRUE@	purple-client-bindings.c \
+@ENABLE_DBUS_TRUE@	purple-client-bindings.h
+
 lib_LTLIBRARIES = libpurple.la $(libpurple_client_lib)
 libpurple_la_SOURCES = \
 	$(purple_coresources) \

@@ -83,7 +83,10 @@ extern "C" {
 /*@{*/
 
 /**
- * Creates a new account option.
+ * Creates a new account option.  If you know what @a type will be in advance,
+ * consider using purple_account_option_bool_new(),
+ * purple_account_option_int_new(), purple_account_option_string_new() or
+ * purple_account_option_list_new() (as appropriate) instead.
  *
  * @param type      The type of option.
  * @param text      The text of the option.
@@ -91,8 +94,8 @@ extern "C" {
  *
  * @return The account option.
  */
-PurpleAccountOption *purple_account_option_new(PurplePrefType type, const char *text,
-										   const char *pref_name);
+PurpleAccountOption *purple_account_option_new(PurplePrefType type,
+	const char *text, const char *pref_name);
 
 /**
  * Creates a new boolean account option.
@@ -104,8 +107,7 @@ PurpleAccountOption *purple_account_option_new(PurplePrefType type, const char *
  * @return The account option.
  */
 PurpleAccountOption *purple_account_option_bool_new(const char *text,
-												const char *pref_name,
-												gboolean default_value);
+	const char *pref_name, gboolean default_value);
 
 /**
  * Creates a new integer account option.
@@ -117,8 +119,7 @@ PurpleAccountOption *purple_account_option_bool_new(const char *text,
  * @return The account option.
  */
 PurpleAccountOption *purple_account_option_int_new(const char *text,
-											   const char *pref_name,
-											   int default_value);
+	const char *pref_name, int default_value);
 
 /**
  * Creates a new string account option.
@@ -130,8 +131,7 @@ PurpleAccountOption *purple_account_option_int_new(const char *text,
  * @return The account option.
  */
 PurpleAccountOption *purple_account_option_string_new(const char *text,
-												  const char *pref_name,
-												  const char *default_value);
+	const char *pref_name, const char *default_value);
 
 /**
  * Creates a new list account option.
@@ -140,7 +140,7 @@ PurpleAccountOption *purple_account_option_string_new(const char *text,
  * strings inside will be freed automatically.
  *
  * The list is a list of PurpleKeyValuePair items. The key is the ID stored and
- * used internally, and the value is the label displayed.
+ * used internally, and the <tt>(const char *)</tt> value is the label displayed.
  *
  * @param text      The text of the option.
  * @param pref_name The account preference name for the option.
@@ -149,8 +149,7 @@ PurpleAccountOption *purple_account_option_string_new(const char *text,
  * @return The account option.
  */
 PurpleAccountOption *purple_account_option_list_new(const char *text,
-												const char *pref_name,
-												GList *list);
+	const char *pref_name, GList *list);
 
 /**
  * Destroys an account option.
@@ -240,11 +239,13 @@ PurplePrefType purple_account_option_get_type(const PurpleAccountOption *option)
 const char *purple_account_option_get_text(const PurpleAccountOption *option);
 
 /**
- * Returns the account setting for an account option.
+ * Returns the name of an account option.  This corresponds to the @c pref_name
+ * parameter supplied to purple_account_option_new() or one of the
+ * type-specific constructors.
  *
  * @param option The account option.
  *
- * @return The account setting.
+ * @return The option's name.
  */
 const char *purple_account_option_get_setting(const PurpleAccountOption *option);
 

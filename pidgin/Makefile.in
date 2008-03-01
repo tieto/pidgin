@@ -64,7 +64,7 @@ am__pidgin_SOURCES_DIST = eggtrayicon.c pidgincombobox.c pidginstock.c \
 	gtksavedstatuses.c gtkscrollbook.c gtksession.c gtksound.c \
 	gtksourceiter.c gtksourceundomanager.c gtksourceview-marshal.c \
 	gtkstatusbox.c gtkthemes.c gtkutils.c gtkwhiteboard.c \
-	minidialog.c
+	minidialog.c pidgintooltip.c
 @ENABLE_GTK_TRUE@am_pidgin_OBJECTS = eggtrayicon.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	pidgincombobox.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	pidginstock.$(OBJEXT) gtkaccount.$(OBJEXT) \
@@ -93,7 +93,7 @@ am__pidgin_SOURCES_DIST = eggtrayicon.c pidgincombobox.c pidginstock.c \
 @ENABLE_GTK_TRUE@	gtksourceview-marshal.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	gtkstatusbox.$(OBJEXT) gtkthemes.$(OBJEXT) \
 @ENABLE_GTK_TRUE@	gtkutils.$(OBJEXT) gtkwhiteboard.$(OBJEXT) \
-@ENABLE_GTK_TRUE@	minidialog.$(OBJEXT)
+@ENABLE_GTK_TRUE@	minidialog.$(OBJEXT) pidgintooltip.$(OBJEXT)
 pidgin_OBJECTS = $(am_pidgin_OBJECTS)
 am__DEPENDENCIES_1 =
 pidgin_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
@@ -140,7 +140,8 @@ am__pidgininclude_HEADERS_DIST = eggtrayicon.h gtkaccount.h gtkblist.h \
 	gtkrequest.h gtkroomlist.h gtksavedstatuses.h gtkscrollbook.h \
 	gtksession.h gtksound.h gtksourceiter.h gtksourceundomanager.h \
 	gtksourceview-marshal.h gtkstatusbox.h pidginstock.h \
-	gtkthemes.h gtkutils.h gtkwhiteboard.h minidialog.h pidgin.h
+	gtkthemes.h gtkutils.h gtkwhiteboard.h minidialog.h \
+	pidgintooltip.h pidgin.h
 pidginincludeHEADERS_INSTALL = $(INSTALL_HEADER)
 HEADERS = $(pidgininclude_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
@@ -220,8 +221,6 @@ GTKSPELL_CFLAGS = @GTKSPELL_CFLAGS@
 GTKSPELL_LIBS = @GTKSPELL_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
-HOWL_CFLAGS = @HOWL_CFLAGS@
-HOWL_LIBS = @HOWL_LIBS@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -307,6 +306,8 @@ PURPLE_MICRO_VERSION = @PURPLE_MICRO_VERSION@
 PURPLE_MINOR_VERSION = @PURPLE_MINOR_VERSION@
 PURPLE_VERSION = @PURPLE_VERSION@
 PYTHON = @PYTHON@
+PY_CFLAGS = @PY_CFLAGS@
+PY_LIBS = @PY_LIBS@
 RANLIB = @RANLIB@
 SASL_LIBS = @SASL_LIBS@
 SED = @SED@
@@ -390,6 +391,7 @@ pidginpath = @pidginpath@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+pythonpath = @pythonpath@
 sbindir = @sbindir@
 sedpath = @sedpath@
 sharedstatedir = @sharedstatedir@
@@ -517,7 +519,8 @@ EXTRA_DIST = \
 @ENABLE_GTK_TRUE@	gtkthemes.c \
 @ENABLE_GTK_TRUE@	gtkutils.c \
 @ENABLE_GTK_TRUE@	gtkwhiteboard.c \
-@ENABLE_GTK_TRUE@	minidialog.c
+@ENABLE_GTK_TRUE@	minidialog.c \
+@ENABLE_GTK_TRUE@	pidgintooltip.c
 
 @ENABLE_GTK_TRUE@pidgin_headers = \
 @ENABLE_GTK_TRUE@	eggtrayicon.h \
@@ -570,6 +573,7 @@ EXTRA_DIST = \
 @ENABLE_GTK_TRUE@	gtkutils.h \
 @ENABLE_GTK_TRUE@	gtkwhiteboard.h \
 @ENABLE_GTK_TRUE@	minidialog.h \
+@ENABLE_GTK_TRUE@	pidgintooltip.h \
 @ENABLE_GTK_TRUE@	pidgin.h
 
 @ENABLE_GTK_TRUE@pidginincludedir = $(includedir)/pidgin
@@ -736,6 +740,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/minidialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pidgincombobox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pidginstock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pidgintooltip.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

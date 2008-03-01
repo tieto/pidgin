@@ -31,6 +31,8 @@
 #ifndef _PURPLE_CERTIFICATE_H
 #define _PURPLE_CERTIFICATE_H
 
+#include <time.h>
+
 #include <glib.h>
 
 #ifdef __cplusplus
@@ -786,6 +788,12 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool);
 void
 purple_certificate_display_x509(PurpleCertificate *crt);
 
+/**
+ * Add a search path for certificates.
+ *
+ * @param path   Path to search for certificates.
+ */
+void purple_certificate_add_ca_search_path(const char *path);
 
 #ifdef __cplusplus
 }

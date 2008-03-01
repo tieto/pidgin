@@ -164,9 +164,7 @@ _free_field_value(NMField * field)
 		case NMFIELD_TYPE_BINARY:
 		case NMFIELD_TYPE_UTF8:
 		case NMFIELD_TYPE_DN:
-			if (field->ptr_value != NULL) {
-				g_free(field->ptr_value);
-			}
+			g_free(field->ptr_value);
 			break;
 
 		case NMFIELD_TYPE_ARRAY:

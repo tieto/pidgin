@@ -49,14 +49,14 @@
 #include "config.h"
 
 static void
-debug_init()
+debug_init(void)
 {
 	finch_debug_init();
 	purple_debug_set_ui_ops(finch_debug_get_ui_ops());
 }
 
 static GHashTable *ui_info = NULL;
-static GHashTable *finch_ui_get_info()
+static GHashTable *finch_ui_get_info(void)
 {
 	if (ui_info == NULL) {
 		ui_info = g_hash_table_new(g_str_hash, g_str_equal);
@@ -91,7 +91,7 @@ static PurpleCoreUiOps core_ops =
 };
 
 static PurpleCoreUiOps *
-gnt_core_get_ui_ops()
+gnt_core_get_ui_ops(void)
 {
 	return &core_ops;
 }

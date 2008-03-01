@@ -119,7 +119,8 @@ pidgin_SOURCES = \
 	gtkthemes.c \
 	gtkutils.c \
 	gtkwhiteboard.c \
-	minidialog.c
+	minidialog.c \
+	pidgintooltip.c
 
 pidgin_headers = \
 	eggtrayicon.h \
@@ -172,6 +173,7 @@ pidgin_headers = \
 	gtkutils.h \
 	gtkwhiteboard.h \
 	minidialog.h \
+	pidgintooltip.h \
 	pidgin.h
 
 pidginincludedir=$(includedir)/pidgin

@@ -342,7 +342,7 @@ location_changed(GntFileSel *sel, GError **err)
 static gboolean
 dir_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 {
-	if (strcmp(key, "\r") == 0) {
+	if (strcmp(key, "\r") == 0 || strcmp(key, "\n") == 0) {
 		char *str = g_strdup(gnt_tree_get_selection_data(tree));
 		char *path, *dir;
 
@@ -376,7 +376,7 @@ location_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 	struct stat st;
 	int glob_ret;
 #endif
-	if (strcmp(key, "\r"))
+	if (strcmp(key, "\r") && strcmp(key, "\n"))
 		return FALSE;
 
 	str = (char*)gnt_entry_get_text(GNT_ENTRY(sel->location));

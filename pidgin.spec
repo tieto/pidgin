@@ -9,13 +9,13 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.3.1"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.4.0"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.3.1
+%define pidginver 2.4.0
 %endif
 
 # define the minimum API version required, so we can use it for plugin deps
-%define apiver %(echo "2.3.1"|awk -F. '{print $1"."$2}')
+%define apiver %(echo "2.4.0"|awk -F. '{print $1"."$2}')
 
 Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       pidgin
@@ -24,7 +24,7 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.3.1.tar.bz2
+Source:     %{name}-2.4.0.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
@@ -34,7 +34,6 @@ BuildRequires: gtk2-devel
 %{!?_without_startupnotification:BuildRequires: startup-notification-devel}
 %{?_with_avahi:BuildRequires: avahi-glib-devel}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
-%{?_with_howl:BuildRequires: howl-devel}
 %{?_with_meanwhile:BuildRequires: meanwhile-devel}
 %{?_with_mono:BuildRequires: mono-devel}
 %{?_with_sasl:BuildRequires: cyrus-sasl-devel >= 2}
@@ -117,7 +116,7 @@ Requires:   pkgconfig
 %{?_with_dbus:Requires: dbus-devel >= 0.35}
 %endif
 
-%if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
+%if 0%{?_with_avahi:1}
 %package -n libpurple-bonjour
 Summary:    Bonjour plugin for Pidgin
 Group:      Applications/Internet
@@ -184,7 +183,7 @@ The libpurple-devel package contains the header files, developer
 documentation, and libraries required for development of libpurple based
 instant messaging clients or plugins for any libpurple based client.
 
-%if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
+%if 0%{?_with_avahi:1}
 %description -n libpurple-bonjour
 Bonjour plugin for Pidgin.
 %endif
@@ -214,7 +213,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.3.1
+%setup -q -n %{name}-2.4.0
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -261,7 +260,7 @@ rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 
-%if 0%{!?_with_howl:1} && 0%{!?_with_avahi:1}
+%if 0%{!?_with_avahi:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libbonjour.so
 %endif
 
@@ -327,7 +326,9 @@ if [ -n "`which gconftool-2 2>/dev/null`" ]; then
     killall -HUP gconfd-2 &> /dev/null || :
 fi
 touch --no-create %{_datadir}/icons/hicolor || :
-%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
+if [ -x %{_bindir}/gtk-update-icon-cache ]; then
+	%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
+fi
 
 %post -n libpurple -p /sbin/ldconfig
 
@@ -343,7 +344,9 @@ fi
 
 %postun
 touch --no-create %{_datadir}/icons/hicolor || :
-%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
+if [ -x %{_bindir}/gtk-update-icon-cache ]; then
+	%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
+fi
 
 %postun -n libpurple -p /sbin/ldconfig
 
@@ -419,7 +422,7 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 
-%if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
+%if 0%{?_with_avahi:1}
 %files -n libpurple-bonjour
 %defattr(-, root, root)
 
@@ -465,6 +468,9 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 %changelog
+* Thu Feb 28 2008 Stu Tomlinson <stu@nosnilmot.com>
+- Remove --with-howl options as we no longer support using howl for bonjour
+
 * Wed Dec  5 2007 Stu Tomlinson <stu@nosnilmot.com>
 - When building with avahi, use native avahi instead of howl compatability
   headers

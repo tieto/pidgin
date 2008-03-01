@@ -607,13 +607,10 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 
 		if (old_status != NULL)
 		{
-			tmp = g_strdup_printf(_("%s changed status from %s to %s"), buddy_alias,
+			tmp = g_strdup_printf(_("%s (%s) changed status from %s to %s"), buddy_alias, buddy->name,
 			                      purple_status_get_name(old_status),
 			                      purple_status_get_name(new_status));
-			logtmp = g_strdup_printf(_("%s (%s) changed status from %s to %s"), buddy_alias, buddy->name,
-			                      purple_status_get_name(old_status),
-			                      purple_status_get_name(new_status));
-
+			logtmp = g_markup_escape_text(tmp, -1);
 		}
 		else
 		{
@@ -621,18 +618,15 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 
 			if (purple_status_is_active(new_status))
 			{
-				tmp = g_strdup_printf(_("%s is now %s"), buddy_alias,
+				tmp = g_strdup_printf(_("%s (%s) is now %s"), buddy_alias, buddy->name,
 				                      purple_status_get_name(new_status));
-				logtmp = g_strdup_printf(_("%s (%s) is now %s"), buddy_alias, buddy->name,
-				                      purple_status_get_name(new_status));
-
+				logtmp = g_markup_escape_text(tmp, -1);
 			}
 			else
 			{
-				tmp = g_strdup_printf(_("%s is no longer %s"), buddy_alias,
+				tmp = g_strdup_printf(_("%s (%s) is no longer %s"), buddy_alias, buddy->name,
 				                      purple_status_get_name(new_status));
-				logtmp = g_strdup_printf(_("%s (%s) is no longer %s"), buddy_alias, buddy->name,
-				                      purple_status_get_name(new_status));
+				logtmp = g_markup_escape_text(tmp, -1);
 			}
 		}
 
@@ -1244,12 +1238,15 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 
 			if (log != NULL)
 			{
-				char *tmp = g_strdup_printf(_("%s became idle"),
+				char *tmp, *tmp2;
+				tmp = g_strdup_printf(_("%s became idle"),
 				purple_buddy_get_alias(buddy));
+				tmp2 = g_markup_escape_text(tmp, -1);
+				g_free(tmp);
 
 				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
-				purple_buddy_get_alias(buddy), current_time, tmp);
-				g_free(tmp);
+				purple_buddy_get_alias(buddy), current_time, tmp2);
+				g_free(tmp2);
 			}
 		}
 	}
@@ -1261,12 +1258,15 @@ update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 
 			if (log != NULL)
 			{
-				char *tmp = g_strdup_printf(_("%s became unidle"),
+				char *tmp, *tmp2;
+				tmp = g_strdup_printf(_("%s became unidle"),
 				purple_buddy_get_alias(buddy));
+				tmp2 = g_markup_escape_text(tmp, -1);
+				g_free(tmp);
 
 				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
-				purple_buddy_get_alias(buddy), current_time, tmp);
-				g_free(tmp);
+				purple_buddy_get_alias(buddy), current_time, tmp2);
+				g_free(tmp2);
 			}
 		}
 	}
@@ -1310,7 +1310,8 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 	else if (purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_ACCOUNT)
 	{
 		PurpleAccount *account;
-		PurpleConnection *gc;
+		PurpleConnection *gc = NULL;
+		PurplePlugin *prpl = NULL;
 		PurplePluginProtocolInfo *prpl_info = NULL;
 
 		account = purple_presence_get_account(presence);
@@ -1321,13 +1322,15 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 
 			if (log != NULL)
 			{
-				char *msg;
+				char *msg, *tmp;
 
 				if (idle)
-					msg = g_strdup_printf(_("+++ %s became idle"), purple_account_get_username(account));
+					tmp = g_strdup_printf(_("+++ %s became idle"), purple_account_get_username(account));
 				else
-					msg = g_strdup_printf(_("+++ %s became unidle"), purple_account_get_username(account));
+					tmp = g_strdup_printf(_("+++ %s became unidle"), purple_account_get_username(account));
 
+				msg = g_markup_escape_text(tmp, -1);
+				g_free(tmp);
 				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
 				                 purple_account_get_username(account),
 				                 (idle ? idle_time : current_time), msg);
@@ -1337,9 +1340,11 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 
 		gc = purple_account_get_connection(account);
 
-		if (gc != NULL && PURPLE_CONNECTION_IS_CONNECTED(gc) &&
-				gc->prpl != NULL)
-			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		if(gc)
+			prpl = purple_connection_get_prpl(gc);
+
+		if(PURPLE_CONNECTION_IS_CONNECTED(gc) && prpl != NULL)
+			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 		if (prpl_info && prpl_info->set_idle)
 			prpl_info->set_idle(gc, (idle ? (current_time - idle_time) : 0));

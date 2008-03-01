@@ -525,9 +525,10 @@ class BindingSet:
             try:
                 self.processfunction(functiontext, paramtexts)
             except MyException:
-                sys.stderr.write(myline + "\n")
+#                sys.stderr.write(myline + "\n")
+                 pass
             except:
-                sys.stderr.write(myline + "\n")
+#                sys.stderr.write(myline + "\n")
                 raise
 
         self.flush()
@@ -586,7 +587,7 @@ if "export-only" in options:
 else:
     fprefix = ""
 
-sys.stderr.write("%s: Functions not exported:\n" % sys.argv[0])
+#sys.stderr.write("%s: Functions not exported:\n" % sys.argv[0])
 
 if "client" in options:
     bindings = ClientBindingSet(sys.stdin, fprefix,

@@ -490,7 +490,8 @@ void purple_conversation_set_name(PurpleConversation *conv, const char *name);
  *
  * @param conv The conversation.
  *
- * @return The conversation's name.
+ * @return The conversation's name. If the conversation is an IM with a PurpleBuddy,
+ *         then it's the name of the PurpleBuddy.
  */
 const char *purple_conversation_get_name(const PurpleConversation *conv);
 
@@ -718,7 +719,7 @@ const char *purple_conversation_message_get_message(PurpleConvMessage *msg);
  *
  * @param msg   A PurpleConvMessage
  *
- * @return   The name of the sender of the message
+ * @return   The message flags
  *
  * @since 2.2.0
  */
@@ -729,7 +730,7 @@ PurpleMessageFlags purple_conversation_message_get_flags(PurpleConvMessage *msg)
  *
  * @param msg   A PurpleConvMessage
  *
- * @return   The name of the sender of the message
+ * @return   The timestamp of the message
  *
  * @since 2.2.0
  */

@@ -432,6 +432,7 @@ void silcpurple_get_umode_string(SilcUInt32 mode, char *buf,
 		strcat(buf, "[rejects watching] ");
 	if (mode & SILC_UMODE_BLOCK_INVITE)
 		strcat(buf, "[blocks invites] ");
+	g_strchomp(buf);
 }
 
 void silcpurple_get_chmode_string(SilcUInt32 mode, char *buf,
@@ -460,6 +461,7 @@ void silcpurple_get_chmode_string(SilcUInt32 mode, char *buf,
 		strcat(buf, "[users silenced] ");
 	if (mode & SILC_CHANNEL_MODE_SILENCE_OPERS)
 		strcat(buf, "[operators silenced] ");
+	g_strchomp(buf);
 }
 
 void silcpurple_get_chumode_string(SilcUInt32 mode, char *buf,
@@ -478,6 +480,7 @@ void silcpurple_get_chumode_string(SilcUInt32 mode, char *buf,
 		strcat(buf, "[blocks robot messages] ");
 	if (mode & SILC_CHANNEL_UMODE_QUIET)
 		strcat(buf, "[quieted] ");
+	g_strchomp(buf);
 }
 
 void
@@ -534,6 +537,7 @@ silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 	if (strlen(s->str)) {
 		*moodstr = s->str;
 		g_string_free(s, FALSE);
+		g_strchomp(*moodstr);
 	} else
 		g_string_free(s, TRUE);
 
@@ -563,6 +567,7 @@ silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 	if (strlen(s->str)) {
 		*contactstr = s->str;
 		g_string_free(s, FALSE);
+		g_strchomp(*contactstr);
 	} else
 		g_string_free(s, TRUE);
 

@@ -45,6 +45,7 @@
 #include "cipher.h"     /* for SHA-1 */
 #include "util.h"       /* for base64 */
 #include "debug.h"      /* for purple_debug_info */
+#include "request.h"    /* For dialogs used in setting the username */
 #include "xmlnode.h"
 #include "core.h"
 
@@ -84,9 +85,12 @@
  * http://settings.myspace.com/index.cfm?fuseaction=user.changepassword
  * (though curiously, not on the 'current password' field). */
 
-/* Not defined; instead have the client reject the password, until libpurple
- * supports specifying a length limit on the protocol's password. */
-/* #define MSIM_MAX_PASSWORD_LENGTH    10	*/
+/* After login fails, if password is greater than this many characters,
+ * warn user that it may be too long. */
+#define MSIM_MAX_PASSWORD_LENGTH    10
+
+/* Maximum length of usernames, when setting. */
+#define MSIM_MAX_USERNAME_LENGTH    25
 
 /* Build version of MySpaceIM to report to servers (1.0.xxx.0) */
 #define MSIM_CLIENT_VERSION         697
@@ -108,6 +112,7 @@
 
 /* Time between keepalives (seconds) - if no data within this time, is dead. */
 #define MSIM_KEEPALIVE_INTERVAL     (3 * 60)
+/*#define MSIM_USE_KEEPALIVE*/
 
 /* Time to check if alive (milliseconds) */
 #define MSIM_KEEPALIVE_INTERVAL_CHECK   (30 * 1000)
@@ -180,7 +185,9 @@
 #define MSIM_CONTACT_LIST_IMPORT_ALL_FRIENDS	1
 #define MSIM_CONTACT_LIST_IMPORT_TOP_FRIENDS	2
 
-#define MsimAttentionType PurpleAttentionType
+/* Error codes */
+#define MSIM_ERROR_INCORRECT_PASSWORD           260
+#define MSIM_ERROR_LOGGED_IN_ELSEWHERE          6
 
 /* Functions */
 gboolean msim_load(PurplePlugin *plugin);
@@ -201,6 +208,8 @@ void msim_set_idle(PurpleConnection *gc, int time);
 void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 
+const char *msim_normalize(const PurpleAccount *account, const char *str);
+
 gboolean msim_offline_message(const PurpleBuddy *buddy);
 
 void msim_close(PurpleConnection *gc);
@@ -216,6 +225,8 @@ int msim_test_escaping(void);
 #endif
 
 gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type);
+
+gboolean msim_we_are_logged_on(MsimSession *session);
 
 
 void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);
