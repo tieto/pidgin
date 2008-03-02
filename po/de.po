@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-19 20:29+0100\n"
-"PO-Revision-Date: 2008-02-19 20:28+0100\n"
+"POT-Creation-Date: 2008-02-24 19:28+0100\n"
+"PO-Revision-Date: 2008-02-24 19:28+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -199,9 +199,8 @@ msgstr "Benutzername"
 msgid "Alias (optional)"
 msgstr "Alias (optional)"
 
-#, fuzzy
 msgid "Add in group"
-msgstr "Gruppe hinzufügen"
+msgstr "Zu Gruppe hinzufügen"
 
 msgid "Account"
 msgstr "Konto"
@@ -765,13 +764,13 @@ msgstr "Fertig"
 msgid "Transferring"
 msgstr "Übertragung"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Conversation in %s on %s"
-msgstr "Unterhaltung in %s"
+msgstr "Unterhaltung in %s am %s"
 
-#, fuzzy, c-format
+#, c-format
 msgid "Conversation with %s on %s"
-msgstr "Unterhaltung mit %s"
+msgstr "Unterhaltung mit %s am %s"
 
 msgid "%B %Y"
 msgstr "%B %Y"

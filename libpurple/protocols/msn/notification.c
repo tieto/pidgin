@@ -1091,7 +1091,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
-	int clientid;
+	unsigned long clientid;
 	int wlmclient;
 	const char *state, *passport, *friendly, *old_friendly;
 
@@ -1126,7 +1126,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		}
 	}
 
-	clientid = atoi(cmd->params[4]);
+	clientid = strtoul(cmd->params[4], NULL, 10);
 	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE);
 
 	msn_user_set_state(user, state);

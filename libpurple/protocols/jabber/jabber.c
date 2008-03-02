@@ -564,9 +564,16 @@ static void tls_init(JabberStream *js)
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->certificate_CN, js->gc);
 }
 
-static void jabber_login_connect(JabberStream *js, const char *fqdn, const char *host, int port)
+static void jabber_login_connect(JabberStream *js, const char *domain, const char *host, int port)
 {
-	js->serverFQDN = g_strdup(fqdn);
+	/* host should be used in preference to domain to
+	 * allow SASL authentication to work with FQDN of the server,
+	 * but we use domain as fallback for when users enter IP address
+	 * in connect server */
+	if (purple_ip_address_is_valid(host))
+		js->serverFQDN = g_strdup(domain);
+	else
+		js->serverFQDN = g_strdup(host);
 
 	if (purple_proxy_connect(js->gc, js->gc->account, host,
 			port, jabber_login_callback, js->gc) == NULL)

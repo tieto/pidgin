@@ -301,6 +301,8 @@ debug_init(void)
 static void
 pidgin_ui_init(void)
 {
+	pidgin_stock_init();
+
 	/* Set the UI operation structures. */
 	purple_accounts_set_ui_ops(pidgin_accounts_get_ui_ops());
 	purple_xfers_set_ui_ops(pidgin_xfers_get_ui_ops());
@@ -315,7 +317,6 @@ pidgin_ui_init(void)
 	purple_idle_set_ui_ops(pidgin_idle_get_ui_ops());
 #endif
 
-	pidgin_stock_init();
 	pidgin_account_init();
 	pidgin_connection_init();
 	pidgin_blist_init();

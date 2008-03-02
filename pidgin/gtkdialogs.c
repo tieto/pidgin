@@ -97,6 +97,7 @@ static const struct developer developers[] = {
 
 /* Order: Alphabetical by Last Name */
 static const struct developer patch_writers[] = {
+	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Dennis 'EvilDennisR' Ristuccia",	N_("Senior Contributor/QA"),	NULL},
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
 	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
@@ -121,7 +122,6 @@ static const struct developer retired_developers[] = {
 
 /* Order: Alphabetical by Last Name */
 static const struct developer retired_patch_writers[] = {
-	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},
@@ -207,6 +207,7 @@ static const struct translator current_translators[] = {
 	{N_("Albanian"),            "sq", "Besnik Bleta", "besnik@programeshqip.org"},
 	{N_("Serbian"),             "sr", "Miloš Popović", "gpopac@gmail.com"},
 	{N_("Serbian"),             "sr@Latn", "Miloš Popović", "gpopac@gmail.com"},
+	{N_("Sinhala"),             "si", "Danishka Navin", "snavin@redhat.com"},
 	{N_("Swedish"),             "sv", "Peter Hjalmarsson", "xake@telia.com"},
 	{N_("Tamil"),               "ta", "Viveka Nathan K", "vivekanathan@users.sourceforge.net"},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
