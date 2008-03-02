@@ -924,7 +924,7 @@ purple_plugin_get_name(const PurplePlugin *plugin) {
 	g_return_val_if_fail(plugin, NULL);
 	g_return_val_if_fail(plugin->info, NULL);
 
-	return plugin->info->name;
+	return _(plugin->info->name);
 }
 
 const gchar *
@@ -940,7 +940,7 @@ purple_plugin_get_summary(const PurplePlugin *plugin) {
 	g_return_val_if_fail(plugin, NULL);
 	g_return_val_if_fail(plugin->info, NULL);
 
-	return plugin->info->summary;
+	return _(plugin->info->summary);
 }
 
 const gchar *
@@ -948,7 +948,7 @@ purple_plugin_get_description(const PurplePlugin *plugin) {
 	g_return_val_if_fail(plugin, NULL);
 	g_return_val_if_fail(plugin->info, NULL);
 
-	return plugin->info->description;
+	return _(plugin->info->description);
 }
 
 const gchar *
@@ -956,7 +956,7 @@ purple_plugin_get_author(const PurplePlugin *plugin) {
 	g_return_val_if_fail(plugin, NULL);
 	g_return_val_if_fail(plugin->info, NULL);
 
-	return plugin->info->author;
+	return _(plugin->info->author);
 }
 
 const gchar *
