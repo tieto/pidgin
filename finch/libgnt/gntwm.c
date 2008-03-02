@@ -32,7 +32,14 @@
 #endif
 
 #include <glib.h>
-#include <glib/gstdio.h>
+#if GLIB_CHECK_VERSION(2,6,0)
+#	include <glib/gstdio.h>
+#else
+#	include <sys/types.h>
+#	include <sys/stat.h>
+#	include <fcntl.h>
+#	define g_fopen open
+#endif
 #include <ctype.h>
 #include <gmodule.h>
 #include <stdlib.h>

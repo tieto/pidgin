@@ -180,8 +180,10 @@ static int purple_parse_locerr     (OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_parse_genericerr (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_memrequest       (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_selfinfo         (OscarData *, FlapConnection *, FlapFrame *, ...);
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 static int purple_offlinemsg       (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_offlinemsgdone   (OscarData *, FlapConnection *, FlapFrame *, ...);
+#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 static int purple_icqalias         (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_icqinfo          (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_popup            (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -1275,8 +1277,10 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_ERROR, purple_parse_msgerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_MTN, purple_parse_mtn, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_ACK, purple_parse_msgack, 0);
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 	oscar_data_addhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSG, purple_offlinemsg, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSGCOMPLETE, purple_offlinemsgdone, 0);
+#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 	oscar_data_addhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_ALIAS, purple_icqalias, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_INFO, purple_icqinfo, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_RIGHTSINFO, purple_parse_locaterights, 0);
@@ -2079,7 +2083,8 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 		g_datalist_clear(&attribs);
 	}
 
-	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL));
+	serv_got_im(gc, userinfo->sn, tmp, flags,
+			(args->icbmflags & AIM_IMFLAGS_OFFLINE) ? args->timestamp : time(NULL));
 	g_free(tmp);
 
 	return 1;
@@ -2264,6 +2269,8 @@ purple_auth_request(struct name_data *data, char *msg)
 			}
 		}
 	}
+
+	oscar_free_name_data(data);
 }
 
 static void
@@ -3639,8 +3646,13 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	presence = purple_status_get_presence(status);
 	aim_srv_setidle(od, !purple_presence_is_idle(presence) ? 0 : time(NULL) - purple_presence_get_idle_time(presence));
 
+	/* Request offline messages for AIM and ICQ */
+	aim_im_reqofflinemsgs(od);
+
 	if (od->icq) {
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 		aim_icq_reqofflinemsgs(od);
+#endif
 		oscar_set_extendedstatus(gc);
 		aim_icq_setsecurity(od,
 			purple_account_get_bool(account, "authorization", OSCAR_DEFAULT_AUTHORIZATION),
@@ -3664,6 +3676,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	return 1;
 }
 
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 static int purple_offlinemsg(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	va_list ap;
 	struct aim_icq_offlinemsg *msg;
@@ -3692,6 +3705,7 @@ static int purple_offlinemsgdone(OscarData *od, FlapConnection *conn, FlapFrame 
 	aim_icq_ackofflinemsgs(od);
 	return 1;
 }
+#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 
 static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
@@ -4211,13 +4225,15 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	PeerConnection *conn;
 	int ret;
 	char *tmp1, *tmp2;
-	gboolean is_html;
+	gboolean is_sms, is_html;
 
 	od = (OscarData *)gc->proto_data;
 	account = purple_connection_get_account(gc);
 	ret = 0;
 
-	if (od->icq && aim_snvalid_sms(name)) {
+	is_sms = aim_snvalid_sms(name);
+
+	if (od->icq && is_sms) {
 		/*
 		 * We're sending to a phone number and this is ICQ,
 		 * so send the message as an SMS using aim_icq_sendsms()
@@ -4243,6 +4259,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		struct aim_sendimext_args args;
 		PurpleConversation *conv;
 		PurpleStoredImage *img;
+		PurpleBuddy *buddy;
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, account);
 
@@ -4252,6 +4269,8 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			                        "You must be Direct Connected to send IM Images."),
 			                        PURPLE_MESSAGE_ERROR, time(NULL));
 
+		buddy = purple_find_buddy(gc->account, name);
+
 		bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, name));
 		if (!bi) {
 			bi = g_new0(struct buddyinfo, 1);
@@ -4259,6 +4278,10 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		}
 
 		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
+
+		if (!is_sms && (!buddy || !PURPLE_BUDDY_IS_ONLINE(buddy)))
+			args.flags |= AIM_IMFLAGS_OFFLINE;
+
 		if (od->icq) {
 			/* We have to present different "features" (whose meaning
 			   is unclear and are merely a result of protocol inspection)
@@ -4267,7 +4290,6 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			   encoded" (and instead, assumes them to be UTF-8).
 			   For more details, see SF issue 1179452.
 			*/
-			PurpleBuddy *buddy = purple_find_buddy(gc->account, name);
 			if (buddy && PURPLE_BUDDY_IS_ONLINE(buddy)) {
 				args.features = features_icq;
 				args.featureslen = sizeof(features_icq);
@@ -4275,7 +4297,6 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 				args.features = features_icq_offline;
 				args.featureslen = sizeof(features_icq_offline);
 			}
-			args.flags |= AIM_IMFLAGS_OFFLINE;
 		} else {
 			args.features = features_aim;
 			args.featureslen = sizeof(features_aim);

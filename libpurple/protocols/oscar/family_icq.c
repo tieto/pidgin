@@ -25,6 +25,7 @@
 
 #include "oscar.h"
 
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 int aim_icq_reqofflinemsgs(OscarData *od)
 {
 	FlapConnection *conn;
@@ -86,6 +87,7 @@ int aim_icq_ackofflinemsgs(OscarData *od)
 
 	return 0;
 }
+#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 
 int
 aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware)
@@ -559,6 +561,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 	purple_debug_misc("oscar", "icq response: %d bytes, %ld, 0x%04x, 0x%04x\n", cmdlen, ouruin, cmd, reqid);
 
 	if (cmd == 0x0041) { /* offline message */
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 		struct aim_icq_offlinemsg msg;
 		aim_rxcallback_t userfunc;
 
@@ -585,6 +588,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 		if ((userfunc = aim_callhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSGCOMPLETE)))
 			ret = userfunc(od, conn, frame);
+#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 
 	} else if (cmd == 0x07da) { /* information */
 		guint16 subtype;

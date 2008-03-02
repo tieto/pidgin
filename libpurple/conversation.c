@@ -209,11 +209,14 @@ add_message_to_history(PurpleConversation *conv, const char *who, const char *al
 		const char *message, PurpleMessageFlags flags, time_t when)
 {
 	PurpleConvMessage *msg;
+	PurpleConnection *gc;
+
+	gc = purple_account_get_connection(conv->account);
 
 	if (flags & PURPLE_MESSAGE_SEND) {
 		const char *me = NULL;
-		if (conv->account->gc)
-			me = conv->account->gc->display_name;
+		if (gc)
+			me = purple_connection_get_display_name(gc);
 		if (!me)
 			me = conv->account->username;
 		who = me;

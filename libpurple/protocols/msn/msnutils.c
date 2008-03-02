@@ -201,6 +201,7 @@ encode_spaces(const char *str)
 		else
 			*d++ = *c;
 	}
+	*d = '\0';
 
 	return buf;
 }

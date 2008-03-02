@@ -221,7 +221,7 @@ static int aim_im_paraminfo(OscarData *od, FlapConnection *conn, aim_module_t *m
 	params.maxrecverwarn = byte_stream_get16(bs);
 	params.minmsginterval = byte_stream_get32(bs);
 
-	params.flags = 0x0000000b;
+	params.flags = 0x0000000b | AIM_IMPARAM_FLAG_SUPPORT_OFFLINEMSGS;
 	params.maxmsglen = 8000;
 	params.minmsginterval = 0;
 
@@ -372,15 +372,18 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 	if (args->flags & AIM_IMFLAGS_AWAY) {
 		byte_stream_put16(&data, 0x0004);
 		byte_stream_put16(&data, 0x0000);
-	} else if (args->flags & AIM_IMFLAGS_ACK) {
-		/* Set the Request Acknowledge flag */
-		byte_stream_put16(&data, 0x0003);
-		byte_stream_put16(&data, 0x0000);
-	}
+	} else {
+		if (args->flags & AIM_IMFLAGS_ACK) {
+			/* Set the Request Acknowledge flag */
+			byte_stream_put16(&data, 0x0003);
+			byte_stream_put16(&data, 0x0000);
+		}
 
-	if (args->flags & AIM_IMFLAGS_OFFLINE) {
-		byte_stream_put16(&data, 0x0006);
-		byte_stream_put16(&data, 0x0000);
+		if (args->flags & AIM_IMFLAGS_OFFLINE) {
+			/* Allow this message to be queued as an offline message */
+			byte_stream_put16(&data, 0x0006);
+			byte_stream_put16(&data, 0x0000);
+		}
 	}
 
 	/*
@@ -1626,7 +1629,10 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 		} else if (type == 0x0006) { /* Message was received offline. */
 
-			/* XXX - not sure if this actually gets sent. */
+			/*
+			 * This flag is set on incoming offline messages for both
+			 * AIM and ICQ accounts.
+			 */
 			args.icbmflags |= AIM_IMFLAGS_OFFLINE;
 
 		} else if (type == 0x0008) { /* I-HAVE-A-REALLY-PURTY-ICON Flag */
@@ -1656,6 +1662,14 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 		} else if (type == 0x000b) { /* Non-direct connect typing notification */
 
 			args.icbmflags |= AIM_IMFLAGS_TYPINGNOT;
+
+		} else if (type == 0x0016) {
+
+			/*
+			 * UTC timestamp for when the message was sent.  Only
+			 * provided for offline messages.
+			 */
+			args.timestamp = byte_stream_get32(bs);
 
 		} else if (type == 0x0017) {
 
@@ -2586,6 +2600,30 @@ static int msgack(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFr
 	g_free(cookie);
 
 	return ret;
+}
+
+/*
+ * Subtype 0x0010 - Request any offline messages that are waiting for
+ * us.  This is the "new" way of handling offline messages which is
+ * used for both AIM and ICQ.  The old way is to use the ugly
+ * aim_icq_reqofflinemsgs() function, but that is no longer necessary.
+ *
+ * We set the 0x00000100 flag on the ICBM message parameters, which
+ * tells the oscar servers that we support offline messages.  When we
+ * set that flag the servers do not automatically send us offline
+ * messages.  Instead we must request them using this function.  This
+ * should happen after sending the 0x0001/0x0002 "client online" SNAC.
+ */
+int aim_im_reqofflinemsgs(OscarData *od)
+{
+	FlapConnection *conn;
+
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0002)))
+		return -EINVAL;
+
+	aim_genericreq_n(od, conn, 0x0004, 0x0010);
+
+	return 0;
 }
 
 /*
