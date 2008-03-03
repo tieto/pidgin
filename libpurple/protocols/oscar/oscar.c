@@ -6622,7 +6622,7 @@ oscar_normalize(const PurpleAccount *account, const char *str)
 	g_return_val_if_fail(str != NULL, NULL);
 
 	/* copy str to buf and skip all blanks */
-	for (i=0, j=0; str[j] && i < BUF_LEN; i++, j++)
+	for (i=0, j=0; str[j] && i < BUF_LEN - 1; i++, j++)
 	{
 		while (str[j] == ' ')
 			j++;
