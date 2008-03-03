@@ -6640,18 +6640,7 @@ oscar_normalize(const PurpleAccount *account, const char *str)
 gboolean
 oscar_offline_message(const PurpleBuddy *buddy)
 {
-	OscarData *od = NULL;
-	PurpleAccount *account;
-	PurpleConnection *gc = NULL;
-
-	account = purple_buddy_get_account(buddy);
-	if (account != NULL) {
-		gc = purple_account_get_connection(account);
-		if (gc != NULL)
-			od = (OscarData *)gc->proto_data;
-	}
-
-	return (od != NULL && od->icq && aim_snvalid_icq(purple_account_get_username(account)));
+	return TRUE;
 }
 
 /* TODO: Find somewhere to put this instead of including it in a bunch of places.
