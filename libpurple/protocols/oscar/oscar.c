@@ -202,7 +202,7 @@ static void purple_icons_fetch(PurpleConnection *gc);
 void oscar_set_info(PurpleConnection *gc, const char *info);
 static void oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, PurpleStatus *status);
 static void oscar_set_extendedstatus(PurpleConnection *gc);
-static void oscar_format_screenname(PurpleConnection *gc, const char *nick); 
+static void oscar_format_screenname(PurpleConnection *gc, const char *nick);
 static gboolean purple_ssi_rerequestdata(gpointer data);
 
 static void oscar_free_name_data(struct name_data *data) {
@@ -1040,8 +1040,8 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 	if (conn->type == SNAC_FAMILY_AUTH)
 	{
 		aim_request_login(od, conn, purple_account_get_username(account));
-		purple_debug_info("oscar", "Screen name sent, waiting for response\n");
-		purple_connection_update_progress(gc, _("Screen name sent"), 1, OSCAR_CONNECT_STEPS);
+		purple_debug_info("oscar", "Username sent, waiting for response\n");
+		purple_connection_update_progress(gc, _("Username sent"), 1, OSCAR_CONNECT_STEPS);
 		ck[1] = 0x65;
 	}
 	else if (conn->type == SNAC_FAMILY_LOCATE)
@@ -1303,7 +1303,7 @@ oscar_login(PurpleAccount *account)
 
 	if (!aim_snvalid(purple_account_get_username(account))) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
+		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_SETTINGS, buf);
 		g_free(buf);
 		return;
@@ -1382,14 +1382,14 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	va_end(ap);
 
 	purple_debug_info("oscar",
-			   "inside auth_resp (Screen name: %s)\n", info->sn);
+			   "inside auth_resp (Username: %s)\n", info->sn);
 
 	if (info->errorcode || !info->bosip || !info->cookielen || !info->cookie) {
 		char buf[256];
 		switch (info->errorcode) {
 		case 0x01:
 			/* Unregistered screen name */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_USERNAME, _("Invalid screen name."));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_USERNAME, _("Invalid username."));
 			break;
 		case 0x05:
 			/* Incorrect password */
@@ -2953,7 +2953,7 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	va_end(ap);
 
 	user_info = purple_notify_user_info_new();
-	purple_notify_user_info_add_pair(user_info, _("Screen Name"), userinfo->sn);
+	purple_notify_user_info_add_pair(user_info, _("Username"), userinfo->sn);
 
 	tmp = g_strdup_printf("%d", (int)((userinfo->warnlevel/10.0) + 0.5));
 	purple_notify_user_info_add_pair(user_info, _("Warning Level"), tmp);
@@ -3941,12 +3941,12 @@ static int purple_parse_searchreply(OscarData *od, FlapConnection *conn, FlapFra
 	gchar *secondary;
 	int i, num;
 	va_list ap;
-	char *email, *SNs;
+	char *email, *usernames;
 
 	va_start(ap, fr);
 	email = va_arg(ap, char *);
 	num = va_arg(ap, int);
-	SNs = va_arg(ap, char *);
+	usernames = va_arg(ap, char *);
 	va_end(ap);
 
 	results = purple_notify_searchresults_new();
@@ -3961,17 +3961,17 @@ static int purple_parse_searchreply(OscarData *od, FlapConnection *conn, FlapFra
 	}
 
 	secondary = g_strdup_printf(
-					dngettext(PACKAGE, "The following screen name is associated with %s",
-						 "The following screen names are associated with %s",
+					dngettext(PACKAGE, "The following username is associated with %s",
+						 "The following usernames are associated with %s",
 						 num),
 					email);
 
-	column = purple_notify_searchresults_column_new(_("Screen name"));
+	column = purple_notify_searchresults_column_new(_("Username"));
 	purple_notify_searchresults_column_add(results, column);
 
 	for (i = 0; i < num; i++) {
-		GList *row = NULL;
-		row = g_list_append(row, g_strdup(&SNs[i * (MAXSNLEN + 1)]));
+		GList *row;
+		row = g_list_append(NULL, g_strdup(&usernames[i * (MAXSNLEN + 1)]));
 		purple_notify_searchresults_row_add(results, row);
 	}
 	purple_notify_searchresults_button_add(results, PURPLE_NOTIFY_BUTTON_ADD,
@@ -4046,32 +4046,23 @@ static int purple_info_change(OscarData *od, FlapConnection *conn, FlapFrame *fr
 
 	if ((err > 0) && (url != NULL)) {
 		char *dialog_msg;
-		char *dialog_top = g_strdup_printf(_("Error Changing Account Info"));
-		switch (err) {
-			case 0x0001: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because the requested screen name differs from the original."), err);
-			} break;
-			case 0x0006: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because it is invalid."), err);
-			} break;
-			case 0x000b: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because the requested screen name is too long."), err);
-			} break;
-			case 0x001d: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because there is already a request pending for this screen name."), err);
-			} break;
-			case 0x0021: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because the given address has too many screen names associated with it."), err);
-			} break;
-			case 0x0023: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because the given address is invalid."), err);
-			} break;
-			default: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unknown error."), err);
-			} break;
-		}
-		purple_notify_error(gc, NULL, dialog_top, dialog_msg);
-		g_free(dialog_top);
+
+		if (err == 0x0001)
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format username because the requested name differs from the original."), err);
+		else if (err == 0x0006)
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format username because it is invalid."), err);
+		else if (err == 0x00b)
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format username because the requested name is too long."), err);
+		else if (err == 0x001d)
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because there is already a request pending for this username."), err);
+		else if (err == 0x0021)
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because the given address has too many usernames associated with it."), err);
+		else if (err == 0x0023)
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because the given address is invalid."), err);
+		else
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unknown error."), err);
+		purple_notify_error(gc, NULL,
+				_("Error Changing Account Info"), dialog_msg);
 		g_free(dialog_msg);
 		return 1;
 	}
@@ -4680,7 +4671,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 
 	if (!aim_snvalid(buddy->name)) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
+		buf = g_strdup_printf(_("Could not add the buddy %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
 		if (!purple_conv_present_error(buddy->name, account, buf))
 			purple_notify_error(gc, NULL, _("Unable To Add"), buf);
 		g_free(buf);
@@ -6232,7 +6223,7 @@ static void oscar_format_screenname(PurpleConnection *gc, const char *nick) {
 		}
 	} else {
 		purple_notify_error(gc, NULL, _("The new formatting is invalid."),
-						  _("Screen name formatting can change only capitalization and whitespace."));
+						  _("Username formatting can change only capitalization and whitespace."));
 	}
 }
 
