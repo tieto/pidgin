@@ -4505,7 +4505,6 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	OscarData *od = gc->proto_data;
-	PurplePresence *presence;
 	PurpleStatusType *status_type;
 	PurpleStatusPrimitive primitive;
 
@@ -4521,7 +4520,6 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 
 	status_type = purple_status_get_type(status);
 	primitive = purple_status_type_get_primitive(status_type);
-	presence = purple_account_get_presence(account);
 
 	if (!setinfo)
 	{
