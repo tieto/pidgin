@@ -101,8 +101,36 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		if(!jbr && !resource) {
 			jbr = l->data;
 		} else if(!resource) {
-			if(((JabberBuddyResource *)l->data)->priority >= jbr->priority)
+			if(((JabberBuddyResource *)l->data)->priority > jbr->priority)
 				jbr = l->data;
+			else if(((JabberBuddyResource *)l->data)->priority == jbr->priority) {
+				/* Determine if this resource is more available than the one we've currently chosen */
+				switch(((JabberBuddyResource *)l->data)->state) {
+					case JABBER_BUDDY_STATE_ONLINE:
+					case JABBER_BUDDY_STATE_CHAT:
+						/* This resource is online/chatty. Prefer to one which isn't either. */
+						if ((jbr->state != JABBER_BUDDY_STATE_ONLINE) && (jbr->state != JABBER_BUDDY_STATE_CHAT))
+							jbr = l->data;
+						break;
+					case JABBER_BUDDY_STATE_AWAY:
+					case JABBER_BUDDY_STATE_DND:
+					case JABBER_BUDDY_STATE_UNAVAILABLE:
+						/* This resource is away/dnd/unavailable. Prefer to one which is extended away or unknown. */
+						if ((jbr->state == JABBER_BUDDY_STATE_XA) || 
+							(jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
+							jbr = l->data;
+						break;
+					case JABBER_BUDDY_STATE_XA:
+						/* This resource is extended away. That's better than unknown. */
+						if ((jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
+							jbr = l->data;
+						break;
+					case JABBER_BUDDY_STATE_UNKNOWN:
+					case JABBER_BUDDY_STATE_ERROR:
+						/* These are never preferable. */
+						break;
+				}
+			}
 		} else if(((JabberBuddyResource *)l->data)->name) {
 			if(!strcmp(((JabberBuddyResource *)l->data)->name, resource)) {
 				jbr = l->data;
