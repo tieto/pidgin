@@ -121,13 +121,8 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 		}
 	}
 
-	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-		purple_util_write_data_to_file_absolute(path, purple_imgstore_get_data(img),
-							purple_imgstore_get_size(img));	
-	} else 	{
-		purple_debug_error("buddyicon", "Unable to create file %s: %s\n",
-		                   path, "File already exists.");
-	}
+	purple_util_write_data_to_file_absolute(path, purple_imgstore_get_data(img),
+											purple_imgstore_get_size(img));	
 	g_free(path);
 }
 
