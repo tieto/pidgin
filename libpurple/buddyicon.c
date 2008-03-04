@@ -701,6 +701,11 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	}
 	unref_filename(old_icon);
 
+	if (img)
+		g_hash_table_insert(pointer_icon_cache, account, img);
+	else
+		g_hash_table_remove(pointer_icon_cache, account);
+	
 	if (purple_account_is_connected(account))
 	{
 		PurpleConnection *gc;
@@ -723,11 +728,6 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 		purple_buddy_icon_data_uncache_file(old_icon);
 	}
 	g_free(old_icon);
-
-	if (img)
-		g_hash_table_insert(pointer_icon_cache, account, img);
-	else
-		g_hash_table_remove(pointer_icon_cache, account);
 
 	return img;
 }
