@@ -464,7 +464,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	PurpleAccount *account = purple_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
 	GHashTable *ht;
-	char *grp = NULL;
 	char *norm_bud = NULL;
 	YahooFriend *f = NULL; /* It's your friends. They're going to want you to share your StarBursts. */
 	                       /* But what if you had no friends? */
@@ -487,8 +486,8 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 			 */
 			if (pair->value && !strcmp(pair->value, "320")) {
 				/* No longer in any group; this indicates the start of the ignore list. */
-				g_free(grp);
-				grp = NULL;
+				g_free(yd->current_list15_grp);
+				yd->current_list15_grp = NULL;
 			}
 
 			break;
@@ -497,28 +496,30 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 		case 300: /* This is 318 before a group, 319 before any s/n in a group, and 320 before any ignored s/n. */
 			break;
 		case 65: /* This is the group */
-			g_free(grp);
-			grp = yahoo_string_decode(gc, pair->value, FALSE);
+			g_free(yd->current_list15_grp);
+			yd->current_list15_grp = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 7: /* buddy's s/n */
 			g_free(norm_bud);
 			norm_bud = g_strdup(purple_normalize(account, pair->value));
 
-			if (grp) {
+			if (yd->current_list15_grp) {
 				/* This buddy is in a group */
 				f = yahoo_friend_find_or_new(gc, norm_bud);
 				if (!(b = purple_find_buddy(account, norm_bud))) {
-					if (!(g = purple_find_group(grp))) {
-						g = purple_group_new(grp);
+					if (!(g = purple_find_group(yd->current_list15_grp))) {
+						g = purple_group_new(yd->current_list15_grp);
 						purple_blist_add_group(g, NULL);
 					}
 					b = purple_buddy_new(account, norm_bud, NULL);
 					purple_blist_add_buddy(b, NULL, g, NULL);
 				}
-				yahoo_do_group_check(account, ht, norm_bud, grp);
+				yahoo_do_group_check(account, ht, norm_bud, yd->current_list15_grp);
 
 			} else {
 				/* This buddy is on the ignore list (and therefore in no group) */
+				purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found",
+								  account->username, norm_bud);
 				purple_privacy_deny_add(account, norm_bud, 1);
 			}
 			break;
@@ -543,7 +544,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 
 	g_hash_table_foreach(ht, yahoo_do_group_cleanup, NULL);
 	g_hash_table_destroy(ht);
-	g_free(grp);
 	g_free(norm_bud);
 }
 
@@ -3069,6 +3069,8 @@ static void yahoo_close(PurpleConnection *gc) {
 	g_free(yd->pending_chat_id);
 	g_free(yd->pending_chat_topic);
 	g_free(yd->pending_chat_goto);
+
+	g_free(yd->current_list15_grp);
 
 	g_free(yd);
 	gc->proto_data = NULL;
