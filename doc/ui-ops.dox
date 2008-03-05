@@ -10,7 +10,7 @@
    - #PurpleCoreUiOps
    - #PurpleDebugUiOps
    - #PurpleDnsQueryUiOps
-   - #PurpleEventLoopUiOps
+   - #PurpleEventLoopUiOps (without this, nothing will work and you will cry)
    - #PurpleIdleUiOps
    - #PurpleNotifyUiOps
    - #PurplePrivacyUiOps

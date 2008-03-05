@@ -2954,6 +2954,9 @@ static gboolean pidgin_blist_drag_motion_cb(GtkWidget *tv, GdkDragContext *drag_
 	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), x, y, &path, NULL, NULL, NULL);
 	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &rect);
 
+	if (path)
+		gtk_tree_path_free(path);
+
 	/* Only autoexpand when in the middle of the cell to avoid annoying un-intended expands */
 	if (y < rect.y + (rect.height / 3) ||
 	    y > rect.y + (2 * (rect.height /3)))
@@ -2964,8 +2967,6 @@ static gboolean pidgin_blist_drag_motion_cb(GtkWidget *tv, GdkDragContext *drag_
 
 	gtkblist->tip_rect = rect;
 
-	if (path)
-		gtk_tree_path_free(path);
 	gtkblist->drag_timeout = g_timeout_add(delay, (GSourceFunc)pidgin_blist_expand_timeout, tv);
 
 	if (gtkblist->mouseover_contact) {

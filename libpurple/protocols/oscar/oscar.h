@@ -679,8 +679,9 @@ void aim_ads_requestads(OscarData *od, FlapConnection *conn);
 #define AIM_TRANSFER_DENY_DECLINE	0x0001
 #define AIM_TRANSFER_DENY_NOTACCEPTING	0x0002
 
-#define AIM_IMPARAM_FLAG_CHANMSGS_ALLOWED	0x00000001
-#define AIM_IMPARAM_FLAG_MISSEDCALLS_ENABLED	0x00000002
+#define AIM_IMPARAM_FLAG_CHANMSGS_ALLOWED       0x00000001
+#define AIM_IMPARAM_FLAG_MISSEDCALLS_ENABLED    0x00000002
+#define AIM_IMPARAM_FLAG_SUPPORT_OFFLINEMSGS    0x00000100
 
 /* This is what the server will give you if you don't set them yourself. */
 #define AIM_IMPARAM_DEFAULTS { \
@@ -844,6 +845,7 @@ struct aim_incomingim_ch1_args
 	/* Always provided */
 	aim_mpmsg_t mpmsg;
 	guint32 icbmflags; /* some flags apply only to ->msg, not all mpmsg */
+	time_t timestamp; /* Only set for offline messages */
 
 	/* Only provided if message has a human-readable section */
 	gchar *msg;
@@ -948,6 +950,7 @@ struct aim_incomingim_ch4_args
 /* 0x0006 */ int aim_im_sendch4(OscarData *od, const char *sn, guint16 type, const char *message);
 /* 0x0008 */ int aim_im_warn(OscarData *od, FlapConnection *conn, const char *destsn, guint32 flags);
 /* 0x000b */ int aim_im_denytransfer(OscarData *od, const char *sn, const guchar *cookie, guint16 code);
+/* 0x0010 */ int aim_im_reqofflinemsgs(OscarData *od);
 /* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *sn, guint16 type2);
 void aim_icbm_makecookie(guchar* cookie);
 gchar *oscar_encoding_extract(const char *encoding);
@@ -1256,6 +1259,7 @@ int aim_ssi_delicon(OscarData *od);
 #define AIM_ICQ_INFO_UNKNOWN	0x100
 #define AIM_ICQ_INFO_HAVEALL	0x1ff
 
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 struct aim_icq_offlinemsg
 {
 	guint32 sender;
@@ -1266,6 +1270,7 @@ struct aim_icq_offlinemsg
 	char *msg;
 	int msglen;
 };
+#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 
 struct aim_icq_info
 {
@@ -1330,8 +1335,10 @@ struct aim_icq_info
 	char *status_note_title;
 };
 
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 int aim_icq_reqofflinemsgs(OscarData *od);
 int aim_icq_ackofflinemsgs(OscarData *od);
+#endif
 int aim_icq_setsecurity(OscarData *od, gboolean auth_required, gboolean webaware);
 int aim_icq_changepasswd(OscarData *od, const char *passwd);
 int aim_icq_getsimpleinfo(OscarData *od, const char *uin);

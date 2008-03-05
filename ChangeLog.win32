@@ -1,3 +1,11 @@
+version 2.4.0 (02/29/2008):
+	* Updated GTK+ to 2.12.8
+	* Updated include Meanwhile library to include patches referenced at:
+	  https://sourceforge.net/tracker/?func=detail&atid=656718&aid=1626349&group_id=110565
+	* Build the xmpp protocol with SASL support (and include Cyrus SASL
+	  2.1.22).
+
+
 version 2.3.1 (12/7/2007):
 	* No changes
 

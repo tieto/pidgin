@@ -29,6 +29,7 @@
 typedef struct _MsimMessageElement
 {
 	const gchar *name;              /**< Textual name of element. */
+	gboolean dynamic_name;          /**< TRUE if 'name' is a dynamic string to be freed, not static. */
 	guint type;                     /**< MSIM_TYPE_* code. */
 	gpointer data;                  /**< Pointer to data, or GUINT_TO_POINTER for int/bool. */
 } MsimMessageElement;

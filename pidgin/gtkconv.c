@@ -2806,16 +2806,11 @@ icon_menu(GtkObject *obj, GdkEventButton *e, PidginConversation *gtkconv)
 void
 pidgin_conv_present_conversation(PurpleConversation *conv)
 {
-	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+	PidginConversation *gtkconv;
 	GdkModifierType state;
 
-	if (gtkconv == NULL) {
-		pidgin_conv_attach_to_conversation(conv);
-		gtkconv = PIDGIN_CONVERSATION(conv);
-	} else if (gtkconv->win == hidden_convwin) {
-		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
-		pidgin_conv_placement_place(gtkconv);
-	}
+	pidgin_conv_attach_to_conversation(conv);
+	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	pidgin_conv_switch_active_conversation(conv);
 	/* Switch the tab only if the user initiated the event by pressing

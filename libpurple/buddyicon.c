@@ -121,13 +121,8 @@ purple_buddy_icon_data_cache(PurpleStoredImage *img)
 		}
 	}
 
-	if (!g_file_test(path, G_FILE_TEST_EXISTS)) {
-		purple_util_write_data_to_file_absolute(path, purple_imgstore_get_data(img),
-							purple_imgstore_get_size(img));	
-	} else 	{
-		purple_debug_error("buddyicon", "Unable to create file %s: %s\n",
-		                   path, "File already exists.");
-	}
+	purple_util_write_data_to_file_absolute(path, purple_imgstore_get_data(img),
+											purple_imgstore_get_size(img));	
 	g_free(path);
 }
 
@@ -701,6 +696,11 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	}
 	unref_filename(old_icon);
 
+	if (img)
+		g_hash_table_insert(pointer_icon_cache, account, img);
+	else
+		g_hash_table_remove(pointer_icon_cache, account);
+	
 	if (purple_account_is_connected(account))
 	{
 		PurpleConnection *gc;
@@ -723,11 +723,6 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 		purple_buddy_icon_data_uncache_file(old_icon);
 	}
 	g_free(old_icon);
-
-	if (img)
-		g_hash_table_insert(pointer_icon_cache, account, img);
-	else
-		g_hash_table_remove(pointer_icon_cache, account);
 
 	return img;
 }

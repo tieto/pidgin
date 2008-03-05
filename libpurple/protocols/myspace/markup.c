@@ -19,7 +19,7 @@
 
 #include "myspace.h"
 
-typedef void (*MSIM_XMLNODE_CONVERT)(MsimSession *, xmlnode *, gchar **, gchar **);
+typedef int (*MSIM_XMLNODE_CONVERT)(MsimSession *, xmlnode *, gchar **, gchar **);
 
 /* Internal functions */
 
@@ -28,8 +28,8 @@ static guint msim_purple_size_to_point(MsimSession *session, guint size);
 static guint msim_height_to_point(MsimSession *session, guint height);
 static guint msim_point_to_height(MsimSession *session, guint point);
 
-static void msim_markup_tag_to_html(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
-static void html_tag_to_msim_markup(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
+static int msim_markup_tag_to_html(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
+static int html_tag_to_msim_markup(MsimSession *, xmlnode *root, gchar **begin, gchar **end);
 static gchar *msim_convert_xml(MsimSession *, const gchar *raw, MSIM_XMLNODE_CONVERT f);
 static gchar *msim_convert_smileys_to_markup(gchar *before);
 static double msim_round(double round);
@@ -396,11 +396,11 @@ msim_markup_i_to_html(MsimSession *session, xmlnode *root, gchar **begin, gchar 
 }
 
 /** Convert an individual msim markup tag to HTML. */
-static void 
+static int 
 msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin, 
 		gchar **end)
 {
-	g_return_if_fail(root != NULL);
+	g_return_val_if_fail(root != NULL, 0);
 
 	if (g_str_equal(root->name, "f")) {
 		msim_markup_f_to_html(session, root, begin, end);
@@ -421,13 +421,16 @@ msim_markup_tag_to_html(MsimSession *session, xmlnode *root, gchar **begin,
 		*begin = g_strdup("");
 		*end = g_strdup("");
 	}
+	return 0;
 }
 
 /** Convert an individual HTML tag to msim markup. */
-static void 
+static int 
 html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin, 
 		gchar **end)
 {
+	int ret = 0;
+
 	if (!purple_utf8_strcasecmp(root->name, "root") ||
 	    !purple_utf8_strcasecmp(root->name, "html")) {
 		*begin = g_strdup("");
@@ -437,11 +440,39 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 	 * within another one, and only the inner-most formatting will be 
 	 * applied to the text. */
 	} else if (!purple_utf8_strcasecmp(root->name, "b")) {
-		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_BOLD);
-		*end = g_strdup("</f>");
+		if (root->child->type == XMLNODE_TYPE_DATA) {
+			*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_BOLD);
+			*end = g_strdup("</f>");
+		} else {
+			if (!purple_utf8_strcasecmp(root->child->name,"i")) {
+				ret++;
+				if (root->child->child->type == XMLNODE_TYPE_DATA) {
+					*begin = g_strdup_printf("<f s='%d'>", (MSIM_TEXT_BOLD + MSIM_TEXT_ITALIC));
+					*end = g_strdup("</f>");
+				} else {
+					if (!purple_utf8_strcasecmp(root->child->child->name,"u")) {
+						ret++;
+						*begin = g_strdup_printf("<f s='%d'>", (MSIM_TEXT_BOLD + MSIM_TEXT_ITALIC + MSIM_TEXT_UNDERLINE));
+						*end = g_strdup("</f>");
+					}
+				}
+			} else if (!purple_utf8_strcasecmp(root->child->name,"u")) {
+				ret++;
+				*begin = g_strdup_printf("<f s='%d'>", (MSIM_TEXT_BOLD + MSIM_TEXT_UNDERLINE));
+				*end = g_strdup("</f>");
+			}
+		}
 	} else if (!purple_utf8_strcasecmp(root->name, "i")) {
-		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_ITALIC);
-		*end = g_strdup("</f>");
+		if (root->child->type == XMLNODE_TYPE_DATA) {
+			*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_ITALIC);
+			*end = g_strdup("</f>");
+		} else {
+			if (!purple_utf8_strcasecmp(root->child->name,"u")) {
+				ret++;
+				*begin = g_strdup_printf("<f s='%d'>", (MSIM_TEXT_ITALIC + MSIM_TEXT_UNDERLINE));
+				*end = g_strdup("</f>");
+			}
+		}
 	} else if (!purple_utf8_strcasecmp(root->name, "u")) {
 		*begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_UNDERLINE);
 		*end = g_strdup("</f>");
@@ -524,6 +555,7 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
 		msim_unrecognized(NULL, NULL, err);
 		g_free(err);
 	}
+	return ret;
 }
 
 /** Convert an xmlnode of msim markup or HTML to an HTML string or msim markup.
@@ -533,11 +565,12 @@ html_tag_to_msim_markup(MsimSession *session, xmlnode *root, gchar **begin,
  * @return An HTML string. Caller frees.
  */
 static gchar *
-msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f)
+msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f, int nodes_processed)
 {
 	xmlnode *node;
 	gchar *begin, *inner, *end;
 	GString *final;
+	int descended = nodes_processed;
 
 	if (!root || !root->name) {
 		return g_strdup("");
@@ -550,36 +583,37 @@ msim_convert_xmlnode(MsimSession *session, xmlnode *root, MSIM_XMLNODE_CONVERT f
 
 	final = g_string_new("");
 
-	f(session, root, &begin, &end);
+	if (descended == 0) /* We've not formatted this yet.. :) */
+		descended = f(session, root, &begin, &end); /* Get the value that our format function has already descended for us */
 	
 	g_string_append(final, begin);
 
 	/* Loop over all child nodes. */
 	for (node = root->child; node != NULL; node = node->next) {
 		switch (node->type) {
-		case XMLNODE_TYPE_ATTRIB:
-			/* Attributes handled above. */
-			break;
+			case XMLNODE_TYPE_ATTRIB:
+				/* Attributes handled above. */
+				break;
 
-		case XMLNODE_TYPE_TAG:
-			/* A tag or tag with attributes. Recursively descend. */
-			inner = msim_convert_xmlnode(session, node, f);
-			g_return_val_if_fail(inner != NULL, NULL);
-
-			purple_debug_info("msim", " ** node name=%s\n", 
-					(node && node->name) ? node->name : "(NULL)");
-			break;
-	
-		case XMLNODE_TYPE_DATA:
-			/* Literal text. */
-			inner = g_strndup(node->data, node->data_sz);
-			purple_debug_info("msim", " ** node data=%s\n", 
-					inner ? inner : "(NULL)");
-			break;
-			
-		default:
-			purple_debug_info("msim",
-					"msim_convert_xmlnode: strange node\n");
+			case XMLNODE_TYPE_TAG:
+				/* A tag or tag with attributes. Recursively descend. */
+				inner = msim_convert_xmlnode(session, node, f, descended);
+				g_return_val_if_fail(inner != NULL, NULL);
+		
+				purple_debug_info("msim", " ** node name=%s\n", 
+						(node && node->name) ? node->name : "(NULL)");
+				break;
+		
+			case XMLNODE_TYPE_DATA:
+				/* Literal text. */
+				inner = g_strndup(node->data, node->data_sz);
+				purple_debug_info("msim", " ** node data=%s\n", 
+						inner ? inner : "(NULL)");
+				break;
+		
+			default:
+				purple_debug_info("msim",
+						"msim_convert_xmlnode: strange node\n");
 		}
 
 		if (inner) {
@@ -629,7 +663,7 @@ msim_convert_xml(MsimSession *session, const gchar *raw, MSIM_XMLNODE_CONVERT f)
 
 	g_free(enclosed_raw);
 
-	str = msim_convert_xmlnode(session, root, f);
+	str = msim_convert_xmlnode(session, root, f, 0);
 	g_return_val_if_fail(str != NULL, NULL);
 	purple_debug_info("msim", "msim_markup_to_html: returning %s\n", str);
 
