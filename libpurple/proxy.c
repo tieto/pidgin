@@ -211,53 +211,53 @@ static PurpleProxyInfo *
 purple_gnome_proxy_get_info(void)
 {
 	static PurpleProxyInfo info = {0, NULL, 0, NULL, NULL};
-	gchar *path;
-	if ((path = g_find_program_in_path("gconftool-2"))) {
-		gchar *tmp;
+	gchar *tmp;
 
-		g_free(path);
+	tmp = g_find_program_in_path("gconftool-2");
+	if (tmp == NULL)
+		return purple_global_proxy_get_info();
 
-		/* See whether to use a proxy. */
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/mode", &tmp,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		if (!strcmp(tmp, "none\n")) {
-			info.type = PURPLE_PROXY_NONE;
-			g_free(tmp);
-			return &info;
-		} else if (strcmp(tmp, "manual\n")) {
-			g_free(tmp);
-			return purple_global_proxy_get_info();
-		}
+	g_free(tmp);
 
+	/* See whether to use a proxy. */
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/mode", &tmp,
+				       NULL, NULL, NULL))
+		return purple_global_proxy_get_info();
+	if (!strcmp(tmp, "none\n")) {
+		info.type = PURPLE_PROXY_NONE;
 		g_free(tmp);
-		info.type = PURPLE_PROXY_HTTP;
-
-		/* Get the new ones */
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host", &info.host,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		g_strchomp(info.host);
-
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user", &info.username,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		g_strchomp(info.username);
-
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_password", &info.password,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		g_strchomp(info.password);
-
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/port", &tmp,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		info.port = atoi(tmp);
-		g_free(tmp);
-
 		return &info;
+	} else if (strcmp(tmp, "manual\n")) {
+		g_free(tmp);
+		return purple_global_proxy_get_info();
 	}
-	return purple_global_proxy_get_info();
+
+	g_free(tmp);
+	info.type = PURPLE_PROXY_HTTP;
+
+	/* Get the new ones */
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host", &info.host,
+				       NULL, NULL, NULL))
+		return purple_global_proxy_get_info();
+	g_strchomp(info.host);
+
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user", &info.username,
+				       NULL, NULL, NULL))
+		return purple_global_proxy_get_info();
+	g_strchomp(info.username);
+
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_password", &info.password,
+				       NULL, NULL, NULL))
+		return purple_global_proxy_get_info();
+	g_strchomp(info.password);
+
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/port", &tmp,
+				       NULL, NULL, NULL))
+		return purple_global_proxy_get_info();
+	info.port = atoi(tmp);
+	g_free(tmp);
+
+	return &info;
 }
 /**************************************************************************
  * Proxy API
