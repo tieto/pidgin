@@ -233,6 +233,20 @@ purple_gnome_proxy_get_info(void)
 		g_free(tmp);
 		info.type = PURPLE_PROXY_HTTP;
 
+		/* Free the old fields */
+		if (info.host) {
+			g_free(info.host);
+			info.host = NULL;
+		}
+		if (info.username) {
+			g_free(info.username);
+			info.username = NULL;
+		}
+		if (info.password) {
+			g_free(info.password);
+			info.password = NULL;
+		}
+
 		/* Get the new ones */
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host", &info.host,
 					       NULL, NULL, NULL))
