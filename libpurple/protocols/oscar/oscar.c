@@ -180,8 +180,10 @@ static int purple_parse_locerr     (OscarData *, FlapConnection *, FlapFrame *, 
 static int purple_parse_genericerr (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_memrequest       (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_selfinfo         (OscarData *, FlapConnection *, FlapFrame *, ...);
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 static int purple_offlinemsg       (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_offlinemsgdone   (OscarData *, FlapConnection *, FlapFrame *, ...);
+#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 static int purple_icqalias         (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_icqinfo          (OscarData *, FlapConnection *, FlapFrame *, ...);
 static int purple_popup            (OscarData *, FlapConnection *, FlapFrame *, ...);
@@ -200,7 +202,7 @@ static void purple_icons_fetch(PurpleConnection *gc);
 void oscar_set_info(PurpleConnection *gc, const char *info);
 static void oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, PurpleStatus *status);
 static void oscar_set_extendedstatus(PurpleConnection *gc);
-static void oscar_format_screenname(PurpleConnection *gc, const char *nick); 
+static void oscar_format_screenname(PurpleConnection *gc, const char *nick);
 static gboolean purple_ssi_rerequestdata(gpointer data);
 
 static void oscar_free_name_data(struct name_data *data) {
@@ -1038,8 +1040,8 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 	if (conn->type == SNAC_FAMILY_AUTH)
 	{
 		aim_request_login(od, conn, purple_account_get_username(account));
-		purple_debug_info("oscar", "Screen name sent, waiting for response\n");
-		purple_connection_update_progress(gc, _("Screen name sent"), 1, OSCAR_CONNECT_STEPS);
+		purple_debug_info("oscar", "Username sent, waiting for response\n");
+		purple_connection_update_progress(gc, _("Username sent"), 1, OSCAR_CONNECT_STEPS);
 		ck[1] = 0x65;
 	}
 	else if (conn->type == SNAC_FAMILY_LOCATE)
@@ -1275,8 +1277,10 @@ oscar_login(PurpleAccount *account)
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_ERROR, purple_parse_msgerr, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_MTN, purple_parse_mtn, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICBM, SNAC_SUBTYPE_ICBM_ACK, purple_parse_msgack, 0);
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 	oscar_data_addhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSG, purple_offlinemsg, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_OFFLINEMSGCOMPLETE, purple_offlinemsgdone, 0);
+#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 	oscar_data_addhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_ALIAS, purple_icqalias, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_ICQ, SNAC_SUBTYPE_ICQ_INFO, purple_icqinfo, 0);
 	oscar_data_addhandler(od, SNAC_FAMILY_LOCATE, SNAC_SUBTYPE_LOCATE_RIGHTSINFO, purple_parse_locaterights, 0);
@@ -1299,7 +1303,7 @@ oscar_login(PurpleAccount *account)
 
 	if (!aim_snvalid(purple_account_get_username(account))) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
+		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_SETTINGS, buf);
 		g_free(buf);
 		return;
@@ -1378,14 +1382,14 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	va_end(ap);
 
 	purple_debug_info("oscar",
-			   "inside auth_resp (Screen name: %s)\n", info->sn);
+			   "inside auth_resp (Username: %s)\n", info->sn);
 
 	if (info->errorcode || !info->bosip || !info->cookielen || !info->cookie) {
 		char buf[256];
 		switch (info->errorcode) {
 		case 0x01:
 			/* Unregistered screen name */
-			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_USERNAME, _("Invalid screen name."));
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_INVALID_USERNAME, _("Invalid username."));
 			break;
 		case 0x05:
 			/* Incorrect password */
@@ -2079,7 +2083,8 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 		g_datalist_clear(&attribs);
 	}
 
-	serv_got_im(gc, userinfo->sn, tmp, flags, time(NULL));
+	serv_got_im(gc, userinfo->sn, tmp, flags,
+			(args->icbmflags & AIM_IMFLAGS_OFFLINE) ? args->timestamp : time(NULL));
 	g_free(tmp);
 
 	return 1;
@@ -2264,6 +2269,8 @@ purple_auth_request(struct name_data *data, char *msg)
 			}
 		}
 	}
+
+	oscar_free_name_data(data);
 }
 
 static void
@@ -2946,7 +2953,7 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	va_end(ap);
 
 	user_info = purple_notify_user_info_new();
-	purple_notify_user_info_add_pair(user_info, _("Screen Name"), userinfo->sn);
+	purple_notify_user_info_add_pair(user_info, _("Username"), userinfo->sn);
 
 	tmp = g_strdup_printf("%d", (int)((userinfo->warnlevel/10.0) + 0.5));
 	purple_notify_user_info_add_pair(user_info, _("Warning Level"), tmp);
@@ -3639,8 +3646,13 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	presence = purple_status_get_presence(status);
 	aim_srv_setidle(od, !purple_presence_is_idle(presence) ? 0 : time(NULL) - purple_presence_get_idle_time(presence));
 
+	/* Request offline messages for AIM and ICQ */
+	aim_im_reqofflinemsgs(od);
+
 	if (od->icq) {
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 		aim_icq_reqofflinemsgs(od);
+#endif
 		oscar_set_extendedstatus(gc);
 		aim_icq_setsecurity(od,
 			purple_account_get_bool(account, "authorization", OSCAR_DEFAULT_AUTHORIZATION),
@@ -3664,6 +3676,7 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	return 1;
 }
 
+#ifdef OLDSTYLE_ICQ_OFFLINEMSGS
 static int purple_offlinemsg(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	va_list ap;
 	struct aim_icq_offlinemsg *msg;
@@ -3692,6 +3705,7 @@ static int purple_offlinemsgdone(OscarData *od, FlapConnection *conn, FlapFrame 
 	aim_icq_ackofflinemsgs(od);
 	return 1;
 }
+#endif /* OLDSTYLE_ICQ_OFFLINEMSGS */
 
 static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
@@ -3927,12 +3941,12 @@ static int purple_parse_searchreply(OscarData *od, FlapConnection *conn, FlapFra
 	gchar *secondary;
 	int i, num;
 	va_list ap;
-	char *email, *SNs;
+	char *email, *usernames;
 
 	va_start(ap, fr);
 	email = va_arg(ap, char *);
 	num = va_arg(ap, int);
-	SNs = va_arg(ap, char *);
+	usernames = va_arg(ap, char *);
 	va_end(ap);
 
 	results = purple_notify_searchresults_new();
@@ -3947,17 +3961,17 @@ static int purple_parse_searchreply(OscarData *od, FlapConnection *conn, FlapFra
 	}
 
 	secondary = g_strdup_printf(
-					dngettext(PACKAGE, "The following screen name is associated with %s",
-						 "The following screen names are associated with %s",
+					dngettext(PACKAGE, "The following username is associated with %s",
+						 "The following usernames are associated with %s",
 						 num),
 					email);
 
-	column = purple_notify_searchresults_column_new(_("Screen name"));
+	column = purple_notify_searchresults_column_new(_("Username"));
 	purple_notify_searchresults_column_add(results, column);
 
 	for (i = 0; i < num; i++) {
-		GList *row = NULL;
-		row = g_list_append(row, g_strdup(&SNs[i * (MAXSNLEN + 1)]));
+		GList *row;
+		row = g_list_append(NULL, g_strdup(&usernames[i * (MAXSNLEN + 1)]));
 		purple_notify_searchresults_row_add(results, row);
 	}
 	purple_notify_searchresults_button_add(results, PURPLE_NOTIFY_BUTTON_ADD,
@@ -4032,32 +4046,23 @@ static int purple_info_change(OscarData *od, FlapConnection *conn, FlapFrame *fr
 
 	if ((err > 0) && (url != NULL)) {
 		char *dialog_msg;
-		char *dialog_top = g_strdup_printf(_("Error Changing Account Info"));
-		switch (err) {
-			case 0x0001: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because the requested screen name differs from the original."), err);
-			} break;
-			case 0x0006: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because it is invalid."), err);
-			} break;
-			case 0x000b: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because the requested screen name is too long."), err);
-			} break;
-			case 0x001d: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because there is already a request pending for this screen name."), err);
-			} break;
-			case 0x0021: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because the given address has too many screen names associated with it."), err);
-			} break;
-			case 0x0023: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because the given address is invalid."), err);
-			} break;
-			default: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unknown error."), err);
-			} break;
-		}
-		purple_notify_error(gc, NULL, dialog_top, dialog_msg);
-		g_free(dialog_top);
+
+		if (err == 0x0001)
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format username because the requested name differs from the original."), err);
+		else if (err == 0x0006)
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format username because it is invalid."), err);
+		else if (err == 0x00b)
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format username because the requested name is too long."), err);
+		else if (err == 0x001d)
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because there is already a request pending for this username."), err);
+		else if (err == 0x0021)
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because the given address has too many usernames associated with it."), err);
+		else if (err == 0x0023)
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because the given address is invalid."), err);
+		else
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unknown error."), err);
+		purple_notify_error(gc, NULL,
+				_("Error Changing Account Info"), dialog_msg);
 		g_free(dialog_msg);
 		return 1;
 	}
@@ -4211,13 +4216,15 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	PeerConnection *conn;
 	int ret;
 	char *tmp1, *tmp2;
-	gboolean is_html;
+	gboolean is_sms, is_html;
 
 	od = (OscarData *)gc->proto_data;
 	account = purple_connection_get_account(gc);
 	ret = 0;
 
-	if (od->icq && aim_snvalid_sms(name)) {
+	is_sms = aim_snvalid_sms(name);
+
+	if (od->icq && is_sms) {
 		/*
 		 * We're sending to a phone number and this is ICQ,
 		 * so send the message as an SMS using aim_icq_sendsms()
@@ -4243,6 +4250,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		struct aim_sendimext_args args;
 		PurpleConversation *conv;
 		PurpleStoredImage *img;
+		PurpleBuddy *buddy;
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, account);
 
@@ -4252,6 +4260,8 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			                        "You must be Direct Connected to send IM Images."),
 			                        PURPLE_MESSAGE_ERROR, time(NULL));
 
+		buddy = purple_find_buddy(gc->account, name);
+
 		bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, name));
 		if (!bi) {
 			bi = g_new0(struct buddyinfo, 1);
@@ -4259,6 +4269,10 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		}
 
 		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
+
+		if (!is_sms && (!buddy || !PURPLE_BUDDY_IS_ONLINE(buddy)))
+			args.flags |= AIM_IMFLAGS_OFFLINE;
+
 		if (od->icq) {
 			/* We have to present different "features" (whose meaning
 			   is unclear and are merely a result of protocol inspection)
@@ -4267,7 +4281,6 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			   encoded" (and instead, assumes them to be UTF-8).
 			   For more details, see SF issue 1179452.
 			*/
-			PurpleBuddy *buddy = purple_find_buddy(gc->account, name);
 			if (buddy && PURPLE_BUDDY_IS_ONLINE(buddy)) {
 				args.features = features_icq;
 				args.featureslen = sizeof(features_icq);
@@ -4275,7 +4288,6 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 				args.features = features_icq_offline;
 				args.featureslen = sizeof(features_icq_offline);
 			}
-			args.flags |= AIM_IMFLAGS_OFFLINE;
 		} else {
 			args.features = features_aim;
 			args.featureslen = sizeof(features_aim);
@@ -4493,7 +4505,6 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
 	OscarData *od = gc->proto_data;
-	PurplePresence *presence;
 	PurpleStatusType *status_type;
 	PurpleStatusPrimitive primitive;
 
@@ -4509,7 +4520,6 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 
 	status_type = purple_status_get_type(status);
 	primitive = purple_status_type_get_primitive(status_type);
-	presence = purple_account_get_presence(account);
 
 	if (!setinfo)
 	{
@@ -4659,7 +4669,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 
 	if (!aim_snvalid(buddy->name)) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
+		buf = g_strdup_printf(_("Could not add the buddy %s because the username is invalid.  Usernames must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
 		if (!purple_conv_present_error(buddy->name, account, buf))
 			purple_notify_error(gc, NULL, _("Unable To Add"), buf);
 		g_free(buf);
@@ -6211,7 +6221,7 @@ static void oscar_format_screenname(PurpleConnection *gc, const char *nick) {
 		}
 	} else {
 		purple_notify_error(gc, NULL, _("The new formatting is invalid."),
-						  _("Screen name formatting can change only capitalization and whitespace."));
+						  _("Username formatting can change only capitalization and whitespace."));
 	}
 }
 
@@ -6610,7 +6620,7 @@ oscar_normalize(const PurpleAccount *account, const char *str)
 	g_return_val_if_fail(str != NULL, NULL);
 
 	/* copy str to buf and skip all blanks */
-	for (i=0, j=0; str[j] && i < BUF_LEN; i++, j++)
+	for (i=0, j=0; str[j] && i < BUF_LEN - 1; i++, j++)
 	{
 		while (str[j] == ' ')
 			j++;
@@ -6630,18 +6640,7 @@ oscar_normalize(const PurpleAccount *account, const char *str)
 gboolean
 oscar_offline_message(const PurpleBuddy *buddy)
 {
-	OscarData *od = NULL;
-	PurpleAccount *account;
-	PurpleConnection *gc = NULL;
-
-	account = purple_buddy_get_account(buddy);
-	if (account != NULL) {
-		gc = purple_account_get_connection(account);
-		if (gc != NULL)
-			od = (OscarData *)gc->proto_data;
-	}
-
-	return (od != NULL && od->icq && aim_snvalid_icq(purple_account_get_username(account)));
+	return TRUE;
 }
 
 /* TODO: Find somewhere to put this instead of including it in a bunch of places.

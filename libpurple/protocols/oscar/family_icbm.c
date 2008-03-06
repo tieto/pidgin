@@ -221,7 +221,7 @@ static int aim_im_paraminfo(OscarData *od, FlapConnection *conn, aim_module_t *m
 	params.maxrecverwarn = byte_stream_get16(bs);
 	params.minmsginterval = byte_stream_get32(bs);
 
-	params.flags = 0x0000000b;
+	params.flags = 0x0000000b | AIM_IMPARAM_FLAG_SUPPORT_OFFLINEMSGS;
 	params.maxmsglen = 8000;
 	params.minmsginterval = 0;
 
@@ -372,15 +372,18 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 	if (args->flags & AIM_IMFLAGS_AWAY) {
 		byte_stream_put16(&data, 0x0004);
 		byte_stream_put16(&data, 0x0000);
-	} else if (args->flags & AIM_IMFLAGS_ACK) {
-		/* Set the Request Acknowledge flag */
-		byte_stream_put16(&data, 0x0003);
-		byte_stream_put16(&data, 0x0000);
-	}
+	} else {
+		if (args->flags & AIM_IMFLAGS_ACK) {
+			/* Set the Request Acknowledge flag */
+			byte_stream_put16(&data, 0x0003);
+			byte_stream_put16(&data, 0x0000);
+		}
 
-	if (args->flags & AIM_IMFLAGS_OFFLINE) {
-		byte_stream_put16(&data, 0x0006);
-		byte_stream_put16(&data, 0x0000);
+		if (args->flags & AIM_IMFLAGS_OFFLINE) {
+			/* Allow this message to be queued as an offline message */
+			byte_stream_put16(&data, 0x0006);
+			byte_stream_put16(&data, 0x0000);
+		}
 	}
 
 	/*
@@ -1626,7 +1629,10 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 		} else if (type == 0x0006) { /* Message was received offline. */
 
-			/* XXX - not sure if this actually gets sent. */
+			/*
+			 * This flag is set on incoming offline messages for both
+			 * AIM and ICQ accounts.
+			 */
 			args.icbmflags |= AIM_IMFLAGS_OFFLINE;
 
 		} else if (type == 0x0008) { /* I-HAVE-A-REALLY-PURTY-ICON Flag */
@@ -1656,6 +1662,14 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 		} else if (type == 0x000b) { /* Non-direct connect typing notification */
 
 			args.icbmflags |= AIM_IMFLAGS_TYPINGNOT;
+
+		} else if (type == 0x0016) {
+
+			/*
+			 * UTC timestamp for when the message was sent.  Only
+			 * provided for offline messages.
+			 */
+			args.timestamp = byte_stream_get32(bs);
 
 		} else if (type == 0x0017) {
 
@@ -2318,6 +2332,181 @@ int aim_im_denytransfer(OscarData *od, const char *sn, const guchar *cookie, gui
 	return 0;
 }
 
+static void parse_status_note_text(OscarData *od, guchar *cookie, char *sn, ByteStream *bs)
+{
+	struct aim_icq_info *info;
+	struct aim_icq_info *prev_info;
+	char *response;
+	char *encoding;
+	char *stripped_encoding;
+	char *status_note_title;
+	char *status_note_text;
+	char *stripped_status_note_text;
+	char *status_note;
+	guint32 length;
+	guint16 version;
+	guint32 capability;
+	guint8 message_type;
+	guint16 status_code;
+	guint16 text_length;
+	guint32 request_length;
+	guint32 response_length;
+	guint32 encoding_length;
+	PurpleAccount *account;
+	PurpleBuddy *buddy;
+	PurplePresence *presence;
+	PurpleStatus *status;
+
+	for (prev_info = NULL, info = od->icq_info; info != NULL; prev_info = info, info = info->next)
+	{
+		if (memcmp(&info->icbm_cookie, cookie, 8) == 0)
+		{
+			if (prev_info == NULL)
+				od->icq_info = info->next;
+			else
+				prev_info->next = info->next;
+
+			break;
+		}
+	}
+
+	if (info == NULL)
+		return;
+
+	status_note_title = info->status_note_title;
+	g_free(info);
+
+	length = byte_stream_getle16(bs);
+	if (length != 27) {
+		purple_debug_misc("oscar", "clientautoresp: incorrect header "
+				"size; expected 27, received %u.\n", length);
+		g_free(status_note_title);
+		return;
+	}
+
+	version = byte_stream_getle16(bs);
+	if (version != 9) {
+		purple_debug_misc("oscar", "clientautoresp: incorrect version; "
+				"expected 9, received %u.\n", version);
+		g_free(status_note_title);
+		return;
+	}
+
+	capability = aim_locate_getcaps(od, bs, 0x10);
+	if (capability != OSCAR_CAPABILITY_EMPTY) {
+		purple_debug_misc("oscar", "clientautoresp: plugin ID is not null.\n");
+		g_free(status_note_title);
+		return;
+	}
+
+	byte_stream_advance(bs, 2); /* unknown */
+	byte_stream_advance(bs, 4); /* client capabilities flags */
+	byte_stream_advance(bs, 1); /* unknown */
+	byte_stream_advance(bs, 2); /* downcouner? */
+
+	length = byte_stream_getle16(bs);
+	if (length != 14) {
+		purple_debug_misc("oscar", "clientautoresp: incorrect header "
+				"size; expected 14, received %u.\n", length);
+		g_free(status_note_title);
+		return;
+	}
+
+	byte_stream_advance(bs, 2); /* downcounter? */
+	byte_stream_advance(bs, 12); /* unknown */
+
+	message_type = byte_stream_get8(bs);
+	if (message_type != 0x1a) {
+		purple_debug_misc("oscar", "clientautoresp: incorrect message "
+				"type; expected 0x1a, received 0x%x.\n", message_type);
+		g_free(status_note_title);
+		return;
+	}
+
+	byte_stream_advance(bs, 1); /* message flags */
+
+	status_code = byte_stream_getle16(bs);
+	if (status_code != 0) {
+		purple_debug_misc("oscar", "clientautoresp: incorrect status "
+				"code; expected 0, received %u.\n", status_code);
+		g_free(status_note_title);
+		return;
+	}
+
+	byte_stream_advance(bs, 2); /* priority code */
+
+	text_length = byte_stream_getle16(bs);
+	byte_stream_advance(bs, text_length); /* text */
+
+	length = byte_stream_getle16(bs);
+	byte_stream_advance(bs, 18); /* unknown */
+
+	request_length = byte_stream_getle32(bs);
+	if (length != 18 + 4 + request_length + 17) {
+		purple_debug_misc("oscar", "clientautoresp: incorrect block; "
+				"expected length is %u, got %u.\n",
+				18 + 4 + request_length + 17, length);
+		g_free(status_note_title);
+		return;
+	}
+
+	byte_stream_advance(bs, request_length); /* x request */
+	byte_stream_advance(bs, 17); /* unknown */
+
+	length = byte_stream_getle32(bs);
+	response_length = byte_stream_getle32(bs);
+	response = byte_stream_getstr(bs, response_length);
+	encoding_length = byte_stream_getle32(bs);
+	if (length != 4 + response_length + 4 + encoding_length) {
+		purple_debug_misc("oscar", "clientautoresp: incorrect block; "
+				"expected length is %u, got %u.\n",
+				4 + response_length + 4 + encoding_length, length);
+		g_free(status_note_title);
+		g_free(response);
+		return;
+	}
+
+	encoding = byte_stream_getstr(bs, encoding_length);
+
+	account = purple_connection_get_account(od->gc);
+
+	stripped_encoding = oscar_encoding_extract(encoding);
+	status_note_text = oscar_encoding_to_utf8(account, stripped_encoding, response, response_length);
+	stripped_status_note_text = purple_markup_strip_html(status_note_text);
+
+	if (stripped_status_note_text != NULL && stripped_status_note_text[0] != 0)
+		status_note = g_strdup_printf("%s: %s", status_note_title, stripped_status_note_text);
+	else
+		status_note = g_strdup(status_note_title);
+
+	g_free(status_note_title);
+	g_free(response);
+	g_free(encoding);
+	g_free(stripped_encoding);
+	g_free(status_note_text);
+	g_free(stripped_status_note_text);
+
+	buddy = purple_find_buddy(account, sn);
+	if (buddy == NULL)
+	{
+		purple_debug_misc("oscar", "clientautoresp: buddy %s was not found.\n", sn);
+		g_free(status_note);
+		return;
+	}
+
+	purple_debug_misc("oscar", "clientautoresp: setting status "
+			"message to \"%s\".\n", status_note);
+
+	presence = purple_buddy_get_presence(buddy);
+	status = purple_presence_get_active_status(presence);
+
+	purple_prpl_got_user_status(account, sn,
+			purple_status_get_id(status),
+			"message", status_note, NULL);
+
+	g_free(status_note);
+}
+
 /*
  * Subtype 0x000b - Receive the response from an ICQ status message
  * request (in which case this contains the ICQ status message) or
@@ -2340,158 +2529,9 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 	if (channel == 0x0002)
 	{
-		/* parse status note text */
-
-		struct aim_icq_info *info = NULL;
-		struct aim_icq_info *prev_info = NULL;
-		char *response = NULL;
-		char *encoding = NULL;
-		char *stripped_encoding = NULL;
-		char *status_note_text = NULL;
-		char *stripped_status_note_text = NULL;
-		char *status_note = NULL;
-
-		/*
-		 * TODO: Using a while statement here is kind of an ugly hack
-		 *       to be able to use 'break'.  We might as well be using
-		 *       'goto'.  Should probably get rid of this.
-		 */
-		while (reason == 0x0003) /* channel-specific */
-		{
-			guint32 length;
-			guint16 version;
-			guint32 capability;
-			guint8 message_type;
-			guint16 status_code;
-			guint16 text_length;
-			guint32 request_length;
-			guint32 response_length;
-			guint32 encoding_length;
-			PurpleAccount *account;
-			PurpleBuddy *buddy;
-			PurplePresence *presence;
-			PurpleStatus *status;
-
-			for (info = od->icq_info; info != NULL; info = info->next)
-			{
-				if (memcmp(&info->icbm_cookie, cookie, 8) == 0)
-				{
-					if (prev_info == NULL)
-						od->icq_info = info->next;
-					else
-						prev_info->next = info->next;
-
-					break;
-				}
-
-				prev_info = info;
-			}
-
-			if (info == NULL)
-				break;
-
-			if ((length = byte_stream_getle16(bs)) != 27)
-			{
-				purple_debug_misc("oscar", "clientautoresp: incorrect header size; expected 27, received %u.\n", length);
-				break;
-			}
-			if ((version = byte_stream_getle16(bs)) != 9)
-			{
-				purple_debug_misc("oscar", "clientautoresp: incorrect version; expected 9, received %u.\n", version);
-				break;
-			}
-			capability = aim_locate_getcaps(od, bs, 0x10);
-			if (capability != OSCAR_CAPABILITY_EMPTY)
-			{
-				purple_debug_misc("oscar", "clientautoresp: plugin ID is not null.\n");
-				break;
-			}
-			byte_stream_advance(bs, 2); /* unknown */
-			byte_stream_advance(bs, 4); /* client capabilities flags */
-			byte_stream_advance(bs, 1); /* unknown */
-			byte_stream_advance(bs, 2); /* downcouner? */
-
-			if ((length = byte_stream_getle16(bs)) != 14)
-			{
-				purple_debug_misc("oscar", "clientautoresp: incorrect header size; expected 14, received %u.\n", length);
-				break;
-			}
-			byte_stream_advance(bs, 2); /* downcounter? */
-			byte_stream_advance(bs, 12); /* unknown */
-
-			if ((message_type = byte_stream_get8(bs)) != 0x1a)
-			{
-				purple_debug_misc("oscar", "clientautoresp: incorrect message type; expected 0x1a, received 0x%x.\n", message_type);
-				break;
-			}
-			byte_stream_advance(bs, 1); /* message flags */
-			if ((status_code = byte_stream_getle16(bs)) != 0)
-			{
-				purple_debug_misc("oscar", "clientautoresp: incorrect status code; expected 0, received %u.\n", status_code);
-				break;
-			}
-			byte_stream_advance(bs, 2); /* priority code */
-
-			text_length = byte_stream_getle16(bs);
-			byte_stream_advance(bs, text_length); /* text */
-
-			length = byte_stream_getle16(bs);
-			byte_stream_advance(bs, 18); /* unknown */
-			if (length != 18 + 4 + (request_length = byte_stream_getle32(bs)) + 17)
-			{
-				purple_debug_misc("oscar", "clientautoresp: incorrect block; expected length is %u, got %u.\n", 18 + 4 + request_length + 17, length);
-				break;
-			}
-			byte_stream_advance(bs, request_length); /* x request */
-			byte_stream_advance(bs, 17); /* unknown */
-
-			length = byte_stream_getle32(bs);
-			response_length = byte_stream_getle32(bs);
-			response = byte_stream_getstr(bs, response_length);
-			if (length != 4 + response_length + 4 + (encoding_length = byte_stream_getle32(bs)))
-			{
-				purple_debug_misc("oscar", "clientautoresp: incorrect block; expected length is %u, got %u.\n", 4 + response_length + 4 + encoding_length, length);
-				break;
-			}
-			encoding = byte_stream_getstr(bs, encoding_length);
-
-			account = purple_connection_get_account(od->gc);
-			stripped_encoding = oscar_encoding_extract(encoding);
-			status_note_text = oscar_encoding_to_utf8(account, stripped_encoding, response, response_length);
-			stripped_status_note_text = purple_markup_strip_html(status_note_text);
-
-			if (stripped_status_note_text != NULL && stripped_status_note_text[0] != 0)
-				status_note = g_strdup_printf("%s: %s", info->status_note_title, stripped_status_note_text);
-			else
-				status_note = g_strdup(info->status_note_title);
-
-			buddy = purple_find_buddy(account, sn);
-			if (buddy == NULL)
-			{
-				purple_debug_misc("oscar", "clientautoresp: buddy %s was not found.\n", sn);
-				break;
-			}
-
-			purple_debug_misc("oscar", "clientautoresp: setting status message to \"%s\".\n", status_note);
-
-			presence = purple_buddy_get_presence(buddy);
-			status = purple_presence_get_active_status(presence);
-
-			purple_prpl_got_user_status(account, sn,
-					purple_status_get_id(status),
-					"message", status_note, NULL);
-
-			break;
-		}
-
-		g_free(status_note);
-		g_free(stripped_status_note_text);
-		g_free(status_note_text);
-		g_free(stripped_encoding);
-		g_free(encoding);
-		g_free(response);
-		g_free(info->status_note_title);
-		g_free(info);
+		if (reason == 0x0003) /* channel-specific */
+			/* parse status note text */
+			parse_status_note_text(od, cookie, sn, bs);
 
 		byte_stream_get16(bs); /* Unknown */
 		byte_stream_get16(bs); /* Unknown */
@@ -2586,6 +2626,30 @@ static int msgack(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFr
 	g_free(cookie);
 
 	return ret;
+}
+
+/*
+ * Subtype 0x0010 - Request any offline messages that are waiting for
+ * us.  This is the "new" way of handling offline messages which is
+ * used for both AIM and ICQ.  The old way is to use the ugly
+ * aim_icq_reqofflinemsgs() function, but that is no longer necessary.
+ *
+ * We set the 0x00000100 flag on the ICBM message parameters, which
+ * tells the oscar servers that we support offline messages.  When we
+ * set that flag the servers do not automatically send us offline
+ * messages.  Instead we must request them using this function.  This
+ * should happen after sending the 0x0001/0x0002 "client online" SNAC.
+ */
+int aim_im_reqofflinemsgs(OscarData *od)
+{
+	FlapConnection *conn;
+
+	if (!od || !(conn = flap_connection_findbygroup(od, 0x0002)))
+		return -EINVAL;
+
+	aim_genericreq_n(od, conn, 0x0004, 0x0010);
+
+	return 0;
 }
 
 /*

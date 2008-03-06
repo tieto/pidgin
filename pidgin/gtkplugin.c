@@ -559,10 +559,10 @@ pidgin_plugins_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 
 	gtk_tree_model_get(model, &iter, 2, &plugin, -1);
 
-	markup = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>\n<b>Description:</b> %s\n<b>Author:</b> %s",
+	markup = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>\n<b>%s:</b> %s\n<b>%s:</b> %s",
 			name = g_markup_escape_text(purple_plugin_get_name(plugin), -1),
-			desc = g_markup_escape_text(purple_plugin_get_description(plugin), -1),
-			author = g_markup_escape_text(purple_plugin_get_author(plugin), -1));
+			_("Description"), desc = g_markup_escape_text(purple_plugin_get_description(plugin), -1),
+			_("Author"), author = g_markup_escape_text(purple_plugin_get_author(plugin), -1));
 
 	layout = gtk_widget_create_pango_layout(tipwindow, NULL);
 	pango_layout_set_markup(layout, markup, -1);

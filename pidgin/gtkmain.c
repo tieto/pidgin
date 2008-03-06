@@ -301,6 +301,8 @@ debug_init(void)
 static void
 pidgin_ui_init(void)
 {
+	pidgin_stock_init();
+
 	/* Set the UI operation structures. */
 	purple_accounts_set_ui_ops(pidgin_accounts_get_ui_ops());
 	purple_xfers_set_ui_ops(pidgin_xfers_get_ui_ops());
@@ -315,7 +317,6 @@ pidgin_ui_init(void)
 	purple_idle_set_ui_ops(pidgin_idle_get_ui_ops());
 #endif
 
-	pidgin_stock_init();
 	pidgin_account_init();
 	pidgin_connection_init();
 	pidgin_blist_init();
@@ -405,8 +406,9 @@ show_usage(const char *name, gboolean terse)
 		       "  -h, --help          display this help and exit\n"
 		       "  -m, --multiple      do not ensure single instance\n"
 		       "  -n, --nologin       don't automatically login\n"
-		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
-		       "                      account(s) to use, separated by commas)\n"
+		       "  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
+		       "                      specifies account(s) to use, separated by commas.\n"
+		       "                      Without this only the first account will be enabled).\n"
 		       "  --display=DISPLAY   X display to use\n"
 		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
 #else
@@ -417,8 +419,9 @@ show_usage(const char *name, gboolean terse)
 		       "  -h, --help          display this help and exit\n"
 		       "  -m, --multiple      do not ensure single instance\n"
 		       "  -n, --nologin       don't automatically login\n"
-		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
-		       "                      account(s) to use, separated by commas)\n"
+		       "  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
+		       "                      specifies account(s) to use, separated by commas.\n"
+		       "                      Without this only the first account will be enabled).\n"
 		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
 #endif
 	}
@@ -475,6 +478,7 @@ int main(int argc, char *argv[])
 	gboolean opt_help = FALSE;
 	gboolean opt_login = FALSE;
 	gboolean opt_nologin = FALSE;
+	gboolean opt_nocrash = FALSE;
 	gboolean opt_version = FALSE;
 	gboolean opt_si = TRUE;     /* Check for single instance? */
 	char *opt_config_dir_arg = NULL;
@@ -505,6 +509,7 @@ int main(int argc, char *argv[])
 		{"login",    optional_argument, NULL, 'l'},
 		{"multiple", no_argument,       NULL, 'm'},
 		{"nologin",  no_argument,       NULL, 'n'},
+		{"nocrash",  no_argument,       NULL, 'x'},
 		{"session",  required_argument, NULL, 's'},
 		{"version",  no_argument,       NULL, 'v'},
 		{"display",  required_argument, NULL, 'D'},
@@ -653,6 +658,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'm':   /* do not ensure single instance. */
 			opt_si = FALSE;
+			break;
+		case 'x':   /* --nocrash */
+			opt_nocrash = TRUE;
 			break;
 		case 'D':   /* --display */
 		case 'S':   /* --sync */

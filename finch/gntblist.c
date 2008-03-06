@@ -1308,7 +1308,7 @@ finch_blist_rename_node_cb(PurpleBlistNode *selected, PurpleBlistNode *node)
 }
 
 
-static void showlog_cb(PurpleBlistNode *node)
+static void showlog_cb(PurpleBlistNode *sel, PurpleBlistNode *node)
 {
 	PurpleLogType type;
 	PurpleAccount *account;

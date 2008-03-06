@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.4.0 (??/??/????):
+version 2.4.0 (02/29/2008):
 	libpurple:
 		Added:
 		* purple_certificate_add_ca_search_path. (Florian Quèze)

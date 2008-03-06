@@ -2088,7 +2088,7 @@ static PurplePluginProtocolInfo prpl_info =
 	OPT_PROTO_REGISTER_NOSCREENNAME,
 	NULL,				/* user_splits */
 	NULL,				/* protocol_options */
-	NO_BUDDY_ICONS,			/* icon_spec */
+	{"png", 32, 32, 96, 96, 0, PURPLE_ICON_SCALE_DISPLAY},	/* icon_spec */
 	ggp_list_icon,			/* list_icon */
 	NULL,				/* list_emblem */
 	ggp_status_text,		/* status_text */
