@@ -2035,9 +2035,9 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 	PurpleBuddy *b;
 	GSList *l;
 	gchar *who = NULL;
-	gchar *sn = NULL;
+	gchar *me = NULL;
 	gchar buf[BUF_LONG];
-	gint ignore = 0;
+	gboolean ignore = TRUE;
 	gint status = 0;
 
 	for (l = pkt->hash; l; l = l->next) {
@@ -2047,10 +2047,11 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 			who = pair->value;
 			break;
 		case 1:
-			sn = pair->value;
+			me = pair->value;
 			break;
 		case 13:
-			ignore = strtol(pair->value, NULL, 10);
+			/* 1 == ignore, 2 == unignore */
+			ignore = (strtol(pair->value, NULL, 10) == 1);
 			break;
 		case 66:
 			status = strtol(pair->value, NULL, 10);
@@ -2060,23 +2061,40 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 		}
 	}
 
+	/*
+	 * status
+	 * 0  - ok
+	 * 2  - already in ignore list, could not add
+	 * 3  - not in ignore list, could not delete
+	 * 12 - is a buddy, could not add (and possibly also a not-in-ignore list condition?)
+	 */
 	switch (status) {
-	case 12:
-		b = purple_find_buddy(gc->account, who);
-		g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
-					"user is on your buddy list.  Clicking \"Yes\" "
-					"will remove and ignore the buddy."), who);
-		purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
-						gc->account, who, NULL,
-						b,
-						G_CALLBACK(ignore_buddy),
-						G_CALLBACK(keep_buddy));
-		break;
-	case 2:
-	case 3:
-	case 0:
-	default:
-		break;
+		case 12:
+			purple_debug_info("yahoo", "Server reported \"is a buddy\" for %s while %s"
+							  who, (ignore ? "ignoring" : "unignoring"));
+
+			if (ignore) {
+				b = purple_find_buddy(gc->account, who);
+				g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
+											   "user is on your buddy list.  Clicking \"Yes\" "
+											   "will remove and ignore the buddy."), who);
+				purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
+									  gc->account, who, NULL,
+									  b,
+									  G_CALLBACK(ignore_buddy),
+									  G_CALLBACK(keep_buddy));
+				break;
+			}
+		case 2:
+			purple_debug_info("yahoo", "Server reported that %s is already in the ignore list.",
+							  who);
+			break;
+		case 3:
+			purple_debug_info("yahoo", "Server reported that %s is not in the ignore list; could not delete",
+							  who);
+		case 0:
+		default:
+			break;
 	}
 }
 
