@@ -4985,8 +4985,13 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 
 					groupitem = aim_ssi_itemlist_find(od->ssi.local, curitem->gid, 0x0000);
 					gname = groupitem ? groupitem->name : NULL;
-					gname_utf8 = gname ? oscar_utf8_try_convert(gc->account, gname) : NULL;
-					alias = aim_ssi_getalias(od->ssi.local, gname, curitem->name);
+					if (gname != NULL) {
+						if (g_utf8_validate(gname, -1, NULL))
+							gname_utf8 = g_strdup(gname);
+						else
+							gname_utf8 = oscar_utf8_try_convert(gc->account, gname);
+					} else
+						gname_utf8 = NULL;
 
 					g = purple_find_group(gname_utf8 ? gname_utf8 : _("Orphans"));
 					if (g == NULL) {
@@ -4994,15 +4999,14 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 						purple_blist_add_group(g, NULL);
 					}
 
-					if (alias != NULL)
-					{
+					alias = aim_ssi_getalias(od->ssi.local, gname, curitem->name);
+					if (alias != NULL) {
 						if (g_utf8_validate(alias, -1, NULL))
 							alias_utf8 = g_strdup(alias);
 						else
 							alias_utf8 = oscar_utf8_try_convert(account, alias);
 						g_free(alias);
-					}
-					else
+					} else
 						alias_utf8 = NULL;
 
 					b = purple_find_buddy_in_group(gc->account, curitem->name, g);
@@ -5045,7 +5049,14 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 				char *gname_utf8;
 
 				gname = curitem->name;
-				gname_utf8 = gname ? oscar_utf8_try_convert(gc->account, gname) : NULL;
+				if (gname != NULL) {
+					if (g_utf8_validate(gname, -1, NULL))
+						gname_utf8 = g_strdup(gname);
+					else
+						gname_utf8 = oscar_utf8_try_convert(gc->account, gname);
+				} else
+					gname_utf8 = NULL;
+
 				if (gname_utf8 != NULL && purple_find_group(gname_utf8) == NULL) {
 					g = purple_group_new(gname_utf8);
 					purple_blist_add_group(g, NULL);
