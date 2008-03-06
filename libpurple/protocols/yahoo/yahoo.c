@@ -2070,7 +2070,7 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 	 */
 	switch (status) {
 		case 12:
-			purple_debug_info("yahoo", "Server reported \"is a buddy\" for %s while %s"
+			purple_debug_info("yahoo", "Server reported \"is a buddy\" for %s while %s",
 							  who, (ignore ? "ignoring" : "unignoring"));
 
 			if (ignore) {
