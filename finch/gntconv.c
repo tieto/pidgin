@@ -660,8 +660,10 @@ finch_create_conversation(PurpleConversation *conv)
 	PurpleAccount *account;
 	PurpleBlistNode *convnode = NULL;
 
-	if (ggc)
+	if (ggc) {
+		gnt_window_present(ggc->window);
 		return;
+	}
 
 	account = purple_conversation_get_account(conv);
 	cc = find_conv_with_contact(account, purple_conversation_get_name(conv));

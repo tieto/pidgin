@@ -2610,11 +2610,13 @@ send_im_select_cb(gpointer data, PurpleRequestFields *fields)
 {
 	PurpleAccount *account;
 	const char *username;
+	PurpleConversation *conv;
 
 	account  = purple_request_fields_get_account(fields, "account");
 	username = purple_request_fields_get_string(fields,  "screenname");
 
-	purple_conversation_new(PURPLE_CONV_TYPE_IM, account, username);
+	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, username);
+	purple_conversation_present(conv);
 }
 
 static void
