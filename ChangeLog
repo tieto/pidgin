@@ -13,6 +13,7 @@ version 2.4.1 ():
 	* Prefer more available resources on XMPP when priorities are equal
 	* Fix incorrectly marking some Yahoo! contacts as blocked
 	* Improved handling of UTF-8 group names on ICQ (beret)
+	* Fix a crash when starting if you have a Zephyr account
 
 	Pidgin:
 	* Remove a workaround for older versions gstreamer that was causing
