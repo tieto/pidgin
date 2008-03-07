@@ -1,12 +1,32 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.4.1 ():
-	libpurple
+	http://developer.pidgin.im/query?status=closed&milestone=2.4.1
+
+	libpurple:
 	* Treat AIM Unicode messages as UTF-16 rather than UCS-2; this
 	  should have no functional effect, other than continued support
 	  on systems which have dropped UCS-2 conversions.
+	* Add support for setting buddy icons on Gadu-Gadu (Tomasz Salacinski)
+	* Fix a crash when clearing the buddy icon for an account on XMPP
+	* Fix a crash during login for some ICQ accounts
+	* Prefer more available resources on XMPP when priorities are equal
+	* Fix incorrectly marking some Yahoo! contacts as blocked
+	* Improved handling of UTF-8 group names on ICQ (beret)
+
+	Pidgin:
+	* Remove a workaround for older versions gstreamer that was causing
+	  crashes on some non-Linux systems such as HPUX
+	* Fix some cases of the conversation input entry area being 1 pixel high
+
+	Finch:
+	* Fix compiling with Glib older than 2.6
+	* Ensure existing conversations selected from the 'Send IM' dialog are
+	  given focus
 
 version 2.4.0 (02/29/2008):
+	http://developer.pidgin.im/query?status=closed&milestone=2.4.0
+
 	libpurple:
 	* Added support for offline messages for AIM accounts (thanks to
 	  Matthew Goldstein)
