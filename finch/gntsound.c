@@ -358,6 +358,11 @@ finch_sound_init(void)
 	
 #ifdef USE_GSTREAMER
 	purple_debug_info("sound", "Initializing sound output drivers.\n");
+#if (GST_VERSION_MAJOR > 0 || \
+	(GST_VERSION_MAJOR == 0 && GST_VERSION_MINOR > 10) || \
+	 (GST_VERSION_MAJOR == 0 && GST_VERSION_MINOR == 10 && GST_VERSION_MICRO >= 10))
+	gst_registry_fork_set_enabled(FALSE);
+#endif
 	if ((gst_init_failed = !gst_init_check(NULL, NULL, &error))) {
 		purple_notify_error(NULL, _("GStreamer Failure"),
 					_("GStreamer failed to initialize."),

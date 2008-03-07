@@ -241,6 +241,20 @@ purple_gnome_proxy_get_info(void)
 	/* If we get this far then we know we're using an HTTP proxy */
 	info.type = PURPLE_PROXY_HTTP;
 
+	/* Free the old fields */
+	if (info.host) {
+		g_free(info.host);
+		info.host = NULL;
+	}
+	if (info.username) {
+		g_free(info.username);
+		info.username = NULL;
+	}
+	if (info.password) {
+		g_free(info.password);
+		info.password = NULL;
+	}
+
 	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host",
 			&info.host, NULL, NULL, NULL))
 		return purple_global_proxy_get_info();

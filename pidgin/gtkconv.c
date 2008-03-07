@@ -4738,6 +4738,8 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry_buffer), "changed",
 				 G_CALLBACK(resize_imhtml_cb), gtkconv);
+	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "realize",
+				 G_CALLBACK(resize_imhtml_cb), gtkconv);
 
 	default_formatize(gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "format_function_clear",
@@ -5014,7 +5016,6 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		gtk_widget_show(gtkconv->toolbar);
 	else
 		gtk_widget_hide(gtkconv->toolbar);
-	g_idle_add((GSourceFunc)resize_imhtml_cb, gtkconv);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons"))
 		gtk_widget_show(gtkconv->infopane_hbox);

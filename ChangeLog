@@ -1,5 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.4.1 ():
+	libpurple
+	* Treat AIM Unicode messages as UTF-16 rather than UCS-2; this
+	  should have no functional effect, other than continued support
+	  on systems which have dropped UCS-2 conversions.
+
 version 2.4.0 (02/29/2008):
 	libpurple:
 	* Added support for offline messages for AIM accounts (thanks to
