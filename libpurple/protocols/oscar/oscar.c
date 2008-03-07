@@ -245,7 +245,7 @@ oscar_charset_check(const char *utf8)
 	}
 
 	/*
-	 * Must we send this message as UNICODE (in the UCS-2BE encoding)?
+	 * Must we send this message as UNICODE (in the UTF-16BE encoding)?
 	 */
 	while (utf8[i])
 	{
@@ -314,14 +314,14 @@ oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char 
 	} else if (!g_ascii_strcasecmp(encoding, "unicode-2-0")) {
 		/* Some official ICQ clients are apparently total crack,
 		 * and have been known to save a UTF-8 string converted
-		 * from the locale character set to UCS-2 (not from UTF-8
-		 * to UCS-2!) in the away message.  This hack should find
+		 * from the locale character set to UTF-16 (not from UTF-8
+		 * to UTF-16!) in the away message.  This hack should find
 		 * and do something (un)reasonable with that, and not
 		 * mess up too much else. */
 		const gchar *charset = purple_account_get_string(account, "encoding", NULL);
 		if (charset) {
 			gsize len;
-			utf8 = g_convert(text, textlen, charset, "UCS-2BE", &len, NULL, NULL);
+			utf8 = g_convert(text, textlen, charset, "UTF-16BE", &len, NULL, NULL);
 			if (!utf8 || len != textlen || !g_utf8_validate(utf8, -1, NULL)) {
 				g_free(utf8);
 				utf8 = NULL;
@@ -330,7 +330,7 @@ oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char 
 			}
 		}
 		if (!utf8)
-			utf8 = g_convert(text, textlen, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
+			utf8 = g_convert(text, textlen, "UTF-8", "UTF-16BE", NULL, NULL, NULL);
 	} else if (g_ascii_strcasecmp(encoding, "utf-8")) {
 		purple_debug_warning("oscar", "Unrecognized character encoding \"%s\", "
 						   "attempting to convert to UTF-8 anyway\n", encoding);
@@ -423,7 +423,7 @@ purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcesn,
 		return NULL;
 
 	if (charset == AIM_CHARSET_UNICODE) {
-		charsetstr1 = "UCS-2BE";
+		charsetstr1 = "UTF-16BE";
 		charsetstr2 = "UTF-8";
 	} else if (charset == AIM_CHARSET_CUSTOM) {
 		if ((sourcesn != NULL) && aim_snvalid_icq(sourcesn))
@@ -495,7 +495,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	 * If we're sending to an ICQ user, and they are in our
 	 * buddy list, and they are advertising the Unicode
 	 * capability, and they are online, then attempt to send
-	 * as UCS-2BE.
+	 * as UTF-16BE.
 	 */
 	if ((destsn != NULL) && aim_snvalid_icq(destsn))
 		userinfo = aim_locate_finduserinfo(od, destsn);
@@ -506,7 +506,7 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 		b = purple_find_buddy(account, destsn);
 		if ((b != NULL) && (PURPLE_BUDDY_IS_ONLINE(b)))
 		{
-			*msg = g_convert(from, -1, "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
+			*msg = g_convert(from, -1, "UTF-16BE", "UTF-8", NULL, &msglen, NULL);
 			if (*msg != NULL)
 			{
 				*charset = AIM_CHARSET_UNICODE;
@@ -538,9 +538,9 @@ purple_plugin_oscar_convert_to_best_encoding(PurpleConnection *gc,
 	}
 
 	/*
-	 * Nothing else worked, so send as UCS-2BE.
+	 * Nothing else worked, so send as UTF-16BE.
 	 */
-	*msg = g_convert(from, -1, "UCS-2BE", "UTF-8", NULL, &msglen, &err);
+	*msg = g_convert(from, -1, "UTF-16BE", "UTF-8", NULL, &msglen, &err);
 	if (*msg != NULL) {
 		*charset = AIM_CHARSET_UNICODE;
 		*charsubset = 0x0000;
@@ -4436,7 +4436,7 @@ gchar *purple_prpl_oscar_convert_to_infotext(const gchar *str, gsize *ret_len, c
 
 	charset = oscar_charset_check(str);
 	if (charset == AIM_CHARSET_UNICODE) {
-		encoded = g_convert(str, -1, "UCS-2BE", "UTF-8", NULL, ret_len, NULL);
+		encoded = g_convert(str, -1, "UTF-16BE", "UTF-8", NULL, ret_len, NULL);
 		*encoding = "unicode-2-0";
 	} else if (charset == AIM_CHARSET_CUSTOM) {
 		encoded = g_convert(str, -1, "ISO-8859-1", "UTF-8", NULL, ret_len, NULL);
