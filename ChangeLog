@@ -14,6 +14,8 @@ version 2.4.1 ():
 	* Fix incorrectly marking some Yahoo! contacts as blocked
 	* Improved handling of UTF-8 group names on ICQ (beret)
 	* Fix a crash when starting if you have a Zephyr account
+	* Increase XMPP ping timeout to 120 seconds, to prevent poor network
+	  connections from timing out unnecessarily.
 
 	Pidgin:
 	* Remove a workaround for older versions gstreamer that was causing

@@ -411,7 +411,7 @@ void jabber_keepalive(PurpleConnection *gc)
 	xmlnode *ping = xmlnode_new_child(iq->node, "ping");
 	xmlnode_set_namespace(ping, "urn:xmpp:ping");
 
-	js->keepalive_timeout = purple_timeout_add_seconds(20, (GSourceFunc)(jabber_pong_timeout), gc);
+	js->keepalive_timeout = purple_timeout_add_seconds(120, (GSourceFunc)(jabber_pong_timeout), gc);
 	jabber_iq_set_callback(iq, jabber_pong_cb, GINT_TO_POINTER(js->keepalive_timeout));
 	jabber_iq_send(iq);
 }
