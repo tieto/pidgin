@@ -293,7 +293,7 @@ update_buddy_typing(PurpleAccount *account, const char *who, gpointer null)
 		g_free(str);
 
 		scroll = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(ggc->tv));
-		str = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_name(conv));
+		str = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_title(conv));
 		/* Updating is a little buggy. So just remove and add a new one */
 		gnt_text_view_tag_change(GNT_TEXT_VIEW(ggc->tv), "typing", NULL, TRUE);
 		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(ggc->tv),
@@ -879,7 +879,7 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
 			purple_conv_im_get_typing_state(PURPLE_CONV_IM(conv)) == PURPLE_TYPING) {
-		strip = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_name(conv));
+		strip = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_title(conv));
 		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(ggconv->tv),
 					strip, GNT_TEXT_FLAG_DIM, "typing");
 		g_free(strip);
