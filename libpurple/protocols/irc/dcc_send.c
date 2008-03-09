@@ -135,7 +135,7 @@ void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg) {
 		
 		purple_xfer_set_end_fnc(xfer, irc_dccsend_recv_destroy);
 		purple_xfer_set_request_denied_fnc(xfer, irc_dccsend_recv_destroy);
-		purple_xfer_set_cancel_send_fnc(xfer, irc_dccsend_recv_destroy);
+		purple_xfer_set_cancel_recv_fnc(xfer, irc_dccsend_recv_destroy);
 		
 		purple_xfer_request(xfer);
 	}
