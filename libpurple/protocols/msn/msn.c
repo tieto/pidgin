@@ -1774,15 +1774,15 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	purple_notify_user_info_add_section_break(user_info);
 	purple_notify_user_info_add_section_header(user_info, _("Social"));
 
-	MSN_GOT_INFO_GET_FIELD("Marital status", _("Marital Status"));
-	MSN_GOT_INFO_GET_FIELD("Interested in", _("Interests"));
-	MSN_GOT_INFO_GET_FIELD("Pets", _("Pets"));
-	MSN_GOT_INFO_GET_FIELD("Hometown", _("Hometown"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Marital status", _("Marital Status"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Interested in", _("Interests"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Pets", _("Pets"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Hometown", _("Hometown"));
 	MSN_GOT_INFO_GET_FIELD("Places lived", _("Places Lived"));
-	MSN_GOT_INFO_GET_FIELD("Fashion", _("Fashion"));
-	MSN_GOT_INFO_GET_FIELD("Humor", _("Humor"));
-	MSN_GOT_INFO_GET_FIELD("Music", _("Music"));
-	MSN_GOT_INFO_GET_FIELD("Favorite quote", _("Favorite Quote"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Fashion", _("Fashion"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Humor", _("Humor"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Music", _("Music"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Favorite quote", _("Favorite Quote"));
 
 	if (sect_info)
 	{
