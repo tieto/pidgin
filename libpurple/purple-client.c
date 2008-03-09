@@ -1,4 +1,6 @@
+#ifndef DBUS_API_SUBJECT_TO_CHANGE
 #define DBUS_API_SUBJECT_TO_CHANGE
+#endif
 
 #include <dbus/dbus-glib.h>
 #include <stdio.h>
