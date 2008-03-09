@@ -3132,6 +3132,8 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		GList *cur;
 		struct proto_chat_entry *pce;
 		char *name, *value;
+		const char *chat_name;
+		PurpleConversation *conv;
 		PidginBlistNode *bnode = node->ui_data;
 
 		chat = (PurpleChat *)node;
@@ -3145,11 +3147,22 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			g_free(tmp);
 		}
 
-		if (bnode && bnode->conv.conv &&
-				prpl_info && (prpl_info->options & OPT_PROTO_CHAT_TOPIC) &&
-				!purple_conv_chat_has_left(PURPLE_CONV_CHAT(bnode->conv.conv))) {
-			const char *topic = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(bnode->conv.conv));
+		if (bnode && bnode->conv.conv) {
+			conv = bnode->conv.conv;
+		} else {
+			if (prpl_info && prpl_info->get_chat_name)
+				chat_name = prpl_info->get_chat_name(chat->components);
+			else
+				chat_name = purple_chat_get_name(chat);
+
+			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, chat_name,
+					chat->account);
+		}
+		if (conv && prpl_info && (prpl_info->options & OPT_PROTO_CHAT_TOPIC) &&
+				!purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
+			char *topic = g_markup_escape_text(purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv)), -1);
 			g_string_append_printf(str, _("\n<b>Topic:</b> %s"), topic ? topic : _("(no topic set)"));
+			g_free(topic);
 		}
 
 		if (prpl_info->chat_info != NULL)

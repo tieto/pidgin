@@ -4577,14 +4577,12 @@ pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int 
 	conv = gtkconv->active_conv;
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		node = (PurpleBlistNode*)(purple_blist_find_chat(conv->account, conv->name));
-#if 0
-		/* Using the transient blist nodes to show the tooltip doesn't quite work yet. */
 		if (!node)
 			node = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_chat");
-#endif
 	} else {
 		node = (PurpleBlistNode*)(purple_find_buddy(conv->account, conv->name));
 #if 0
+		/* Using the transient blist nodes to show the tooltip doesn't quite work yet. */
 		if (!node)
 			node = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_buddy");
 #endif
