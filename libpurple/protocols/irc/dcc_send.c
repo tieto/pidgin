@@ -179,7 +179,7 @@ static void irc_dccsend_send_read(gpointer data, int source, PurpleInputConditio
 {
 	PurpleXfer *xfer = data;
 	struct irc_xfer_send_data *xd = xfer->data;
-	char *buffer[16];
+	char buffer[64];
 	int len;
 
 	len = read(source, buffer, sizeof(buffer));
