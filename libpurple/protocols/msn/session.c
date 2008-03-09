@@ -91,8 +91,6 @@ msn_session_destroy(MsnSession *session)
 	if (session->nexus != NULL)
 		msn_nexus_destroy(session->nexus);
 
-	if (session->contact != NULL)
-		msn_contact_destroy(session->contact);
 	if (session->oim != NULL)
 		msn_oim_destroy(session->oim);
 

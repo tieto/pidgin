@@ -23,6 +23,7 @@
  */
 #include "msn.h"
 #include "notification.h"
+#include "contact.h"
 #include "state.h"
 #include "error.h"
 #include "msnutils.h"
@@ -770,7 +771,7 @@ adl_cmd_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			if (list_op & MSN_LIST_RL_OP) {
 				/* someone is adding us */
 //				got_new_entry(cmdproc->session->account->gc, passport, decoded_friendly_name);
-				msn_get_contact_list(cmdproc->session->contact, MSN_PS_PENDING_LIST, NULL);
+				msn_get_contact_list(cmdproc->session, MSN_PS_PENDING_LIST, NULL);
 			}
 
 //			g_free(decoded_friendly_name);
@@ -827,9 +828,8 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	purple_debug_info("MSN Notification","FQY payload:\n%s\n", payload);
 	g_return_if_fail(cmdproc->session != NULL);
-	g_return_if_fail(cmdproc->session->contact != NULL);
 //	msn_notification_post_adl(cmdproc, payload, len);
-//	msn_get_address_book(cmdproc->session->contact, MSN_AB_SAVE_CONTACT, NULL, NULL);
+//	msn_get_address_book(cmdproc->session, MSN_AB_SAVE_CONTACT, NULL, NULL);
 }
 
 static void
@@ -1223,7 +1223,7 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			if (!strcmp(type, "MFN")) {
 				friendlyname = purple_url_decode(cmd->params[2]);
 				
-				msn_update_contact(session->contact, friendlyname);
+				msn_update_contact(session, friendlyname);
 
 				purple_connection_set_display_name(
 					purple_account_get_connection(session->account),
@@ -1702,17 +1702,16 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	/*starting retrieve the contact list*/
 	clLastChange = purple_account_get_string(session->account, "CLLastChange", NULL);
-	session->contact = msn_contact_new(session);
 #ifdef MSN_PARTIAL_LISTS
 	/* msn_userlist_load defeats all attempts at trying to detect blist sync issues */
 	msn_userlist_load(session);
-	msn_get_contact_list(session->contact, MSN_PS_INITIAL, clLastChange);
+	msn_get_contact_list(session, MSN_PS_INITIAL, clLastChange);
 #else
 	/* always get the full list? */
-	msn_get_contact_list(session->contact, MSN_PS_INITIAL, NULL);
+	msn_get_contact_list(session, MSN_PS_INITIAL, NULL);
 #endif
 #if 0
-	msn_contact_connect(session->contact);
+	msn_contact_connect(session);
 #endif
 }
 

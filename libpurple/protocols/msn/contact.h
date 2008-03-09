@@ -25,6 +25,8 @@
 #ifndef _MSN_CONTACT_H_
 #define _MSN_CONTACT_H_
 
+#include "session.h"
+
 #define MSN_CONTACT_SERVER	"contacts.msn.com"
 
 /* Get Contact List */
@@ -588,15 +590,6 @@ typedef enum
 	MSN_RENAME_GROUP		= 0x40,
 } MsnCallbackAction;
 
-typedef struct _MsnContact MsnContact;
-
-struct _MsnContact
-{
-	MsnSession *session;
-
-	MsnSoapConn *soapconn;
-};
-
 typedef struct _MsnCallbackState MsnCallbackState;
 
 struct _MsnCallbackState
@@ -623,9 +616,6 @@ typedef enum
 /************************************************
  * function prototype
  ************************************************/
-MsnContact * msn_contact_new(MsnSession *session);
-void msn_contact_destroy(MsnContact *contact);
-
 MsnCallbackState * msn_callback_state_new(MsnSession *session);
 void msn_callback_state_free(MsnCallbackState *state);
 void msn_callback_state_set_who(MsnCallbackState *state, const gchar *who);
@@ -639,24 +629,24 @@ void msn_callback_state_set_list_id(MsnCallbackState *state, MsnListId list_id);
 void msn_callback_state_set_action(MsnCallbackState *state, 
 				   MsnCallbackAction action);
 
-void msn_contact_connect(MsnContact *contact);
-void msn_get_contact_list(MsnContact * contact, 
+void msn_contact_connect(MsnSession *session);
+void msn_get_contact_list(MsnSession *session,
 			  const MsnSoapPartnerScenario partner_scenario,
 			  const char *update);
-void msn_get_address_book(MsnContact *contact, 
+void msn_get_address_book(MsnSession *session, 
 			  const MsnSoapPartnerScenario partner_scenario,
 			  const char * update, const char * gupdate);
 
 /* contact SOAP operations */
-void msn_update_contact(MsnContact *contact, const char* nickname);
+void msn_update_contact(MsnSession *session, const char* nickname);
 
-void msn_add_contact(MsnContact *contact, MsnCallbackState *state, 
+void msn_add_contact(MsnSession *session, MsnCallbackState *state, 
 		     const char *passport);
-void msn_delete_contact(MsnContact *contact, const char *contactId);
+void msn_delete_contact(MsnSession *session, const char *contactId);
 
-void msn_add_contact_to_group(MsnContact *contact, MsnCallbackState *state, 
+void msn_add_contact_to_group(MsnSession *session, MsnCallbackState *state, 
 			      const char *passport, const char *groupId);
-void msn_del_contact_from_group(MsnContact *contact, const char *passport, 
+void msn_del_contact_from_group(MsnSession *session, const char *passport, 
 				const char *group_name);
 /* group operations */
 void msn_add_group(MsnSession *session, MsnCallbackState *state, 
@@ -666,9 +656,9 @@ void msn_contact_rename_group(MsnSession *session, const char *old_group_name,
 						   const char *new_group_name);
 
 /* lists operations */
-void msn_add_contact_to_list(MsnContact *contact, MsnCallbackState *state,
+void msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 			     const gchar *passport, const MsnListId list);
-void msn_del_contact_from_list(MsnContact *contact, MsnCallbackState *state,
+void msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 			       const gchar *passport, const MsnListId list);
 
 void msn_contact_connect_init(MsnSoapConn *soapconn);

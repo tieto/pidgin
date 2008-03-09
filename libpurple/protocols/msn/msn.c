@@ -27,6 +27,7 @@
 
 #include "msn.h"
 #include "accountopt.h"
+#include "contact.h"
 #include "msg.h"
 #include "page.h"
 #include "pluginpref.h"
@@ -1232,10 +1233,10 @@ msn_add_permit(PurpleConnection *gc, const char *who)
 		msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_BL);
 
 		/* delete contact from Block list and add it to Allow in the callback */
-		msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_BL);
+		msn_del_contact_from_list(session, NULL, who, MSN_LIST_BL);
 	} else {
 		/* just add the contact to Allow list */
-		msn_add_contact_to_list(session->contact, NULL, who, MSN_LIST_AL);
+		msn_add_contact_to_list(session, NULL, who, MSN_LIST_AL);
 	}
 
 
@@ -1260,10 +1261,10 @@ msn_add_deny(PurpleConnection *gc, const char *who)
 		msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_AL);
 
 		/* delete contact from Allow list and add it to Block in the callback */
-		msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_AL);
+		msn_del_contact_from_list(session, NULL, who, MSN_LIST_AL);
 	} else {
 		/* just add the contact to Block list */
-		msn_add_contact_to_list(session->contact, NULL, who, MSN_LIST_BL);
+		msn_add_contact_to_list(session, NULL, who, MSN_LIST_BL);
 	}
 
 	msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_BL);
@@ -1286,7 +1287,7 @@ msn_rem_permit(PurpleConnection *gc, const char *who)
 
 	msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_AL);
 
-	msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_AL);
+	msn_del_contact_from_list(session, NULL, who, MSN_LIST_AL);
 
 	if (user != NULL && user->list_op & MSN_LIST_RL_OP)
 		msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_BL);
@@ -1309,7 +1310,7 @@ msn_rem_deny(PurpleConnection *gc, const char *who)
 
 	msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_BL);
 
-	msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_BL);
+	msn_del_contact_from_list(session, NULL, who, MSN_LIST_BL);
 
 	if (user != NULL && user->list_op & MSN_LIST_RL_OP)
 		msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_AL);

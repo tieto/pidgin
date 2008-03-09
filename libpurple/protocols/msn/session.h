@@ -38,7 +38,6 @@ typedef struct _MsnSession MsnSession;
 #include "cmdproc.h"
 #include "nexus.h"
 #include "httpconn.h"
-#include "contact.h"
 #include "oim.h"
 
 #include "userlist.h"
@@ -96,7 +95,6 @@ struct _MsnSession
 
 	MsnNotification *notification;
 	MsnNexus *nexus;
-	MsnContact *contact;
 	MsnOim		*oim;
 	MsnSync *sync;
 
