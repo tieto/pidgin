@@ -705,6 +705,17 @@ static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
 		for (bnode = node->child; bnode != NULL; bnode = bnode->next) {
 			purple_blist_node_set_bool(bnode, "show_offline", setting);
 		}
+	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
+		PurpleBlistNode *cnode, *bnode;
+		gboolean setting = !purple_blist_node_get_bool(node, "show_offline");
+
+		purple_blist_node_set_bool(node, "show_offline", setting);
+		for (cnode = node->child; cnode != NULL; cnode = cnode->next) {
+			purple_blist_node_set_bool(cnode, "show_offline", setting);
+			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
+				purple_blist_node_set_bool(bnode, "show_offline", setting);
+			}
+		}
 	}
 	pidgin_blist_update(purple_get_blist(), node);
 }
@@ -1459,6 +1470,11 @@ create_group_menu (PurpleBlistNode *node, PurpleGroup *g)
 				 G_CALLBACK(pidgin_blist_remove_cb), node, 0, 0, NULL);
 	pidgin_new_item_from_stock(menu, _("_Rename"), NULL,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
+	if (!(purple_blist_node_get_flags(node) & PURPLE_BLIST_NODE_FLAG_NO_SAVE)) {
+		gboolean show_offline = purple_blist_node_get_bool(node, "show_offline");
+		pidgin_new_item_from_stock(menu, show_offline ? _("Hide when offline") : _("Show when offline"),
+				NULL, G_CALLBACK(gtk_blist_menu_showoffline_cb), node, 0, 0, NULL);
+	}
 
 	pidgin_append_blist_node_extended_menu(menu, node);
 
