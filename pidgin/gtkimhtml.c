@@ -440,8 +440,10 @@ gtk_imhtml_tip (gpointer data)
 	gtk_widget_set_app_paintable (imhtml->tip_window, TRUE);
 	gtk_window_set_resizable (GTK_WINDOW (imhtml->tip_window), FALSE);
 	gtk_widget_set_name (imhtml->tip_window, "gtk-tooltips");
+#if GTK_CHECK_VERSION(2,10,0)
 	gtk_window_set_type_hint (GTK_WINDOW (imhtml->tip_window),
 		GDK_WINDOW_TYPE_HINT_TOOLTIP);
+#endif
 	g_signal_connect_swapped (G_OBJECT (imhtml->tip_window), "expose_event",
 							  G_CALLBACK (gtk_imhtml_tip_paint), imhtml);
 
