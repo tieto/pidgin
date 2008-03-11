@@ -852,15 +852,15 @@ ucs2_order(gboolean swap)
 	be = swap ? be : !be;
 
 	if (be)
-		return "UCS-2BE";
+		return "UTF-16BE";
 	else
-		return "UCS-2LE";
+		return "UTF-16LE";
 
 }
 
-/* Convert from UCS-2 to UTF-8, stripping the BOM if one is present.*/
+/* Convert from UTF-16LE to UTF-8, stripping the BOM if one is present.*/
 static gchar *
-ucs2_to_utf8_with_bom_check(gchar *data, guint len) {
+utf16_to_utf8_with_bom_check(gchar *data, guint len) {
 	char *fromcode = NULL;
 	GError *error = NULL;
 	guint16 c;
@@ -883,7 +883,7 @@ ucs2_to_utf8_with_bom_check(gchar *data, guint len) {
 		len -= 2;
 		break;
 	default:
-		fromcode = "UCS-2";
+		fromcode = "UTF-16";
 		break;
 	}
 
@@ -927,7 +927,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		str = g_string_append_unichar(str, 0xfeff);
 		str = g_string_append(str, text);
 		str = g_string_append_unichar(str, 0x0000);
-		selection = g_convert(str->str, str->len, "UCS-2", "UTF-8", NULL, &len, NULL);
+		selection = g_convert(str->str, str->len, "UTF-16", "UTF-8", NULL, &len, NULL);
 		gtk_selection_data_set(selection_data, gdk_atom_intern("text/html", FALSE), 16, (const guchar *)selection, len);
 		g_string_free(str, TRUE);
 #else
@@ -1082,12 +1082,12 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 
 	if (selection_data->length >= 2 &&
 		(*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe)) {
-		/* This is UCS-2 */
-		char *utf8 = ucs2_to_utf8_with_bom_check(text, selection_data->length);
+		/* This is UTF-16 */
+		char *utf8 = utf16_to_utf8_with_bom_check(text, selection_data->length);
 		g_free(text);
 		text = utf8;
 		if (!text) {
-			purple_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in paste_received_cb\n");
+			purple_debug_warning("gtkimhtml", "g_convert from UTF-16 failed in paste_received_cb\n");
 			return;
 		}
 	}
@@ -1784,10 +1784,10 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 			 * http://mail.gnome.org/archives/gtk-devel-list/2001-September/msg00114.html
 			 */
 			if (sd->length >= 2 && !g_utf8_validate(text, sd->length - 1, NULL)) {
-				utf8 = ucs2_to_utf8_with_bom_check(text, sd->length);
+				utf8 = utf16_to_utf8_with_bom_check(text, sd->length);
 
 				if (!utf8) {
-					purple_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in drag_rcv_cb\n");
+					purple_debug_warning("gtkimhtml", "g_convert from UTF-16 failed in drag_rcv_cb\n");
 					return;
 				}
 			} else if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
