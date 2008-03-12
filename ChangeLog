@@ -23,6 +23,7 @@ version 2.4.1 ():
 	* Fix some cases of the conversation input entry area being 1 pixel high
 	* Fix for displaying channel & buddy names in conversation window when
 	  they have '&' in them
+	* Some memory leak fixes, especially in the Text Replacement plugin
 
 	Finch:
 	* Fix compiling with Glib older than 2.6
