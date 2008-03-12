@@ -24,6 +24,8 @@ version 2.4.1 ():
 	* Fix compiling with Glib older than 2.6
 	* Ensure existing conversations selected from the 'Send IM' dialog are
 	  given focus
+	* Move the tooltip on the left of the buddylist if there's not enough room
+	  on the right to show it.
 
 version 2.4.0 (02/29/2008):
 	http://developer.pidgin.im/query?status=closed&milestone=2.4.0

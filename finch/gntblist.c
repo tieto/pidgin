@@ -1742,6 +1742,8 @@ draw_tooltip_real(FinchBlist *ggblist)
 	gnt_text_view_set_flag(GNT_TEXT_VIEW(tv), GNT_TEXT_VIEW_NO_SCROLL);
 	gnt_box_add_widget(GNT_BOX(box), tv);
 
+	if (x + w >= getmaxx(stdscr))
+		x -= w + width + 2;
 	gnt_widget_set_position(box, x, y);
 	GNT_WIDGET_UNSET_FLAGS(box, GNT_WIDGET_CAN_TAKE_FOCUS);
 	GNT_WIDGET_SET_FLAGS(box, GNT_WIDGET_TRANSIENT);
