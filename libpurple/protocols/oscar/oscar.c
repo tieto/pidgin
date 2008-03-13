@@ -6521,7 +6521,7 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 
 	if (od->icq)
 	{
-		act = purple_plugin_action_new(_("Set User Info (URL)..."),
+		act = purple_plugin_action_new(_("Set User Info (web)..."),
 				oscar_show_set_info_icqurl);
 		menu = g_list_prepend(menu, act);
 	}
@@ -6532,11 +6532,11 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 
 	if (od->authinfo->chpassurl != NULL)
 	{
-		act = purple_plugin_action_new(_("Change Password (URL)"),
+		act = purple_plugin_action_new(_("Change Password (web)"),
 				oscar_show_chpassurl);
 		menu = g_list_prepend(menu, act);
 
-		act = purple_plugin_action_new(_("Configure IM Forwarding (URL)"),
+		act = purple_plugin_action_new(_("Configure IM Forwarding (web)"),
 				oscar_show_imforwardingurl);
 		menu = g_list_prepend(menu, act);
 	}
