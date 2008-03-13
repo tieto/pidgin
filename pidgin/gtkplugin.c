@@ -81,9 +81,7 @@ pidgin_plugin_get_config_frame(PurplePlugin *plugin)
 
 		config = pidgin_plugin_pref_create_frame(frame);
 
-		/* XXX According to bug #1407047 this broke saving pluging preferences, I'll look at fixing it correctly later.
-		purple_plugin_pref_frame_destroy(frame);
-		*/
+		plugin->info->prefs_info->frame = frame;
 	}
 
 	return config;
@@ -212,6 +210,12 @@ static void pref_dialog_response_cb(GtkWidget *d, int response, PurplePlugin *pl
 			plugin_pref_dialogs = NULL;
 		}
 		gtk_widget_destroy(d);
+
+		if (plug->info->prefs_info && plug->info->prefs_info->frame) {
+			purple_plugin_pref_frame_destroy(plug->info->prefs_info->frame);
+			plug->info->prefs_info->frame = NULL;
+		}
+
 		break;
 	}
 }
