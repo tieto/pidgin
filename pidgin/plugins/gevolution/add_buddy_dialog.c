@@ -313,9 +313,11 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 		else
 		{
 			add_ims(dialog, contact, name, aims,    "prpl-oscar");
+			add_ims(dialog, contact, name, aims,    "prpl-aim");
 			add_ims(dialog, contact, name, jabbers, "prpl-jabber");
 			add_ims(dialog, contact, name, yahoos,  "prpl-yahoo");
 			add_ims(dialog, contact, name, msns,    "prpl-msn");
+			add_ims(dialog, contact, name, icqs,    "prpl-icq");
 			add_ims(dialog, contact, name, icqs,    "prpl-oscar");
 			add_ims(dialog, contact, name, novells, "prpl-novell");
 		}
@@ -394,10 +396,12 @@ search_changed_cb(GtkEntry *entry, GevoAddBuddyDialog *dialog)
 		}
 		else
 		{
+			add_ims(dialog, contact, name, aims,    "prpl-aim");
 			add_ims(dialog, contact, name, aims,    "prpl-oscar");
 			add_ims(dialog, contact, name, jabbers, "prpl-jabber");
 			add_ims(dialog, contact, name, yahoos,  "prpl-yahoo");
 			add_ims(dialog, contact, name, msns,    "prpl-msn");
+			add_ims(dialog, contact, name, icqs,    "prpl-icq");
 			add_ims(dialog, contact, name, icqs,    "prpl-oscar");
 			add_ims(dialog, contact, name, novells, "prpl-novell");
 		}
