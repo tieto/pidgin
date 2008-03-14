@@ -14,11 +14,16 @@ version 2.4.1 ():
 	* Fix incorrectly marking some Yahoo! contacts as blocked
 	* Improved handling of UTF-8 group names on ICQ (beret)
 	* Fix a crash when starting if you have a Zephyr account
+	* Increase XMPP ping timeout to 120 seconds, to prevent poor network
+	  connections from timing out unnecessarily.
 
 	Pidgin:
 	* Remove a workaround for older versions gstreamer that was causing
 	  crashes on some non-Linux systems such as HPUX
 	* Fix some cases of the conversation input entry area being 1 pixel high
+	* Fix for displaying channel & buddy names in conversation window when
+	  they have '&' in them
+	* Some memory leak fixes, especially in the Text Replacement plugin
 
 	Finch:
 	* Fix compiling with Glib older than 2.6

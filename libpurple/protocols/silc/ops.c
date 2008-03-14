@@ -48,17 +48,32 @@ silc_ask_passphrase(SilcClient client, SilcClientConnection conn,
 void silc_say(SilcClient client, SilcClientConnection conn,
 	      SilcClientMessageType type, char *msg, ...)
 {
-	if (type == SILC_CLIENT_MESSAGE_ERROR) {
-		char tmp[256];
-		va_list va;
+	char tmp[256];
+	va_list va;
+	PurpleConnection *gc = NULL;
+	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
 
-		va_start(va, msg);
-		silc_vsnprintf(tmp, sizeof(tmp), msg, va);
-		purple_notify_error(NULL, _("Error"), _("Error occurred"), tmp);
+	va_start(va, msg);
+	silc_vsnprintf(tmp, sizeof(tmp), msg, va);
+	va_end(va);
 
-		va_end(va);
+	if (type != SILC_CLIENT_MESSAGE_ERROR) {
+		purple_debug_misc("silc", "silc_say (%d) %s\n", type, tmp);
 		return;
 	}
+
+	purple_debug_error("silc", "silc_say error: %s\n", tmp);
+
+	if (!strcmp(tmp, "Authentication failed"))
+		reason = PURPLE_CONNECTION_ERROR_AUTHENTICATION_FAILED;
+
+	if (client != NULL)
+		gc = client->application;
+
+	if (gc != NULL)
+		purple_connection_error_reason (gc, reason, tmp);
+	else
+		purple_notify_error(NULL, _("Error"), _("Error occurred"), tmp);
 }
 
 /* Processes incoming MIME message.  Can be private message or channel

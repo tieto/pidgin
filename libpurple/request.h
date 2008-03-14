@@ -238,6 +238,11 @@ typedef struct
 } PurpleRequestUiOps;
 
 typedef void (*PurpleRequestInputCb)(void *, const char *);
+
+/** The type of callbacks passed to purple_request_action().  The first
+ *  argument is the @a user_data parameter; the second is the index in the list
+ *  of actions of the one chosen.
+ */
 typedef void (*PurpleRequestActionCb)(void *, int);
 typedef void (*PurpleRequestChoiceCb)(void *, int);
 typedef void (*PurpleRequestFieldsCb)(void *, PurpleRequestFields *fields);
@@ -1264,37 +1269,7 @@ void *purple_request_choice(void *handle, const char *title, const char *primary
 	void *user_data, ...) G_GNUC_NULL_TERMINATED;
 
 /**
- * Prompts the user for multiple-choice input.
- *
- * @param handle        The plugin or connection handle.  For some things this
- *                      is <em>extremely</em> important.  See the comments on
- *                      purple_request_input().
- * @param title         The title of the message, or @c NULL if it should have
- *                      no title.
- * @param primary       The main point of the message, or @c NULL if you're
- *                      feeling enigmatic.
- * @param secondary     Secondary information, or @c NULL if there is none.
- * @param default_value The default choice; this should be one of the values
- *                      listed in the varargs.
- * @param ok_text       The text for the @c OK button, which may not be @c NULL.
- * @param ok_cb         The callback for the @c OK button, which may not be @c
- *                      NULL.
- * @param cancel_text   The text for the @c Cancel button, which may not be @c
- *                      NULL.
- * @param cancel_cb     The callback for the @c Cancel button, or @c NULL to do
- *                      nothing.
- * @param account       The #PurpleAccount associated with this request, or @c
- *                      NULL if none is
- * @param who           The username of the buddy associated with this request,
- *                      or @c NULL if none is
- * @param conv          The #PurpleConversation associated with this request, or
- *                      @c NULL if none is
- * @param user_data     The data to pass to the callback.
- * @param choices       The choices, which should be pairs of <tt>char *</tt>
- *                      descriptions and <tt>int</tt> values, terminated with a
- *                      @c NULL parameter.
- *
- * @return A UI-specific handle.
+ * <tt>va_list</tt> version of purple_request_choice(); see its documentation.
  */
 void *purple_request_choice_varg(void *handle, const char *title,
 	const char *primary, const char *secondary, int default_value,
@@ -1330,10 +1305,10 @@ void *purple_request_choice_varg(void *handle, const char *title,
  * @param action_count   The number of actions.
  * @param ...            A list of actions.  These are pairs of
  *                       arguments.  The first of each pair is the
- *                       <tt>char *</tt> that appears on the button.  It should
- *                       have an underscore before the letter you want
- *                       to use as the accelerator key for the button.
- *                       The second of each pair is the <tt>GCallback</tt>
+ *                       <tt>char *</tt> label that appears on the button.  It
+ *                       should have an underscore before the letter you want
+ *                       to use as the accelerator key for the button.  The
+ *                       second of each pair is the #PurpleRequestActionCb
  *                       function to use when the button is clicked.
  *
  * @return A UI-specific handle.
@@ -1344,39 +1319,7 @@ void *purple_request_action(void *handle, const char *title, const char *primary
 	size_t action_count, ...);
 
 /**
- * Prompts the user for an action.
- *
- * This is often represented as a dialog with a button for each action.
- *
- * @param handle         The plugin or connection handle.  For some things this
- *                       is <em>extremely</em> important.  See the comments on
- *                       purple_request_input().
- * @param title          The title of the message, or @c NULL if it should have
- *                       no title.
- * @param primary        The main point of the message, or @c NULL if you're
- *                       feeling enigmatic.
- * @param secondary      Secondary information, or @c NULL if there is none.
- * @param default_action The default action, zero-indexed; if the third action
- *                       supplied should be the default, supply <tt>2</tt>.
- *                       The should be the action that users are most likely
- *                       to select.
- * @param account        The #PurpleAccount associated with this request, or @c
- *                       NULL if none is.
- * @param who            The username of the buddy associated with this request,
- *                       or @c NULL if none is.
- * @param conv           The #PurpleConversation associated with this request, or
- *                       @c NULL if none is.
- * @param user_data      The data to pass to the callback.
- * @param action_count   The number of actions.
- * @param actions        A list of actions.  These are pairs of
- *                       arguments.  The first of each pair is the
- *                       <tt>char *</tt> that appears on the button.  It should
- *                       have an underscore before the letter you want
- *                       to use as the accelerator key for the button.
- *                       The second of each pair is the <tt>GCallback</tt>
- *                       function to use when the button is clicked.
- *
- * @return A UI-specific handle.
+ * <tt>va_list</tt> version of purple_request_action(); see its documentation.
  */
 void *purple_request_action_varg(void *handle, const char *title,
 	const char *primary, const char *secondary, int default_action,

@@ -113,11 +113,8 @@ static CapStatistics * get_stats_for(PurpleBuddy *buddy) {
 
 	stats = g_hash_table_lookup(_buddy_stats, buddy->name);
 	if(!stats) {
-		stats = g_malloc(sizeof(CapStatistics));
+		stats = g_malloc0(sizeof(CapStatistics));
 		stats->last_message = -1;
-		stats->last_message_status_id = NULL;
-		stats->last_status_id = NULL;
-		stats->prediction = NULL;
 		stats->buddy = buddy;
 		stats->last_seen = -1;
 		stats->last_status_id = "";

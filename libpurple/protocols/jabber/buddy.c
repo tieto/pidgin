@@ -1209,6 +1209,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	GString *info_text;
 	char *bare_jid;
 	char *text;
+	char *serverside_alias = NULL;
 	xmlnode *vcard;
 	PurpleBuddy *b;
 	JabberBuddyInfo *jbi = data;
@@ -1247,6 +1248,10 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 			text = xmlnode_get_data(child);
 			if(text && !strcmp(child->name, "FN")) {
+				/* If we havne't found a name yet, use this one as the serverside name */
+				if (!serverside_alias)
+					serverside_alias = g_strdup(text);
+
 				jabber_string_escape_and_append(info_text,
 						_("Full Name"), text, FALSE);
 			} else if(!strcmp(child->name, "N")) {
@@ -1270,11 +1275,11 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					}
 					g_free(text2);
 				}
-			} else if(text && !strcmp(child->name, "NICKNAME")) {
-				serv_got_alias(js->gc, from, text);
-				if(b) {
-					purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", text);
-				}
+			} else if(text && !strcmp(child->name, "NICKNAME")) {				
+				/* Prefer the Nickcname to the Full Name as the serverside alias */
+				g_free(serverside_alias);
+				serverside_alias = g_strdup(text);
+
 				jabber_string_escape_and_append(info_text,
 						_("Nickname"), text, FALSE);
 			} else if(text && !strcmp(child->name, "BDAY")) {
@@ -1432,6 +1437,16 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 			}
 			g_free(text);
 		}
+	}
+
+	if (serverside_alias) {
+		/* If we found a serverside alias, set it and tell the core */
+		serv_got_alias(js->gc, from, serverside_alias);
+		if (b) {
+			purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", serverside_alias);
+		}
+		
+		g_free(serverside_alias);
 	}
 
 	jbi->vcard_text = purple_strdup_withhtml(info_text->str);
