@@ -263,7 +263,6 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		char *msnobj_data;
 		PurpleStoredImage *img;
 		int type;
-		char *path;
 
 		/* Send Ok */
 		content = g_strdup_printf("SessionID: %lu\r\n\r\n",
@@ -288,11 +287,19 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			g_return_if_reached();
 		}
 
-		path = g_build_filename(purple_smileys_get_storing_dir(),
-				obj->location, NULL);
+		if (type == MSN_OBJECT_EMOTICON) {
+			char *path;
+			path = g_build_filename(purple_smileys_get_storing_dir(),
+					obj->location, NULL);
+			img = purple_imgstore_new_from_file(path);
+			g_free(path);
+		} else {
+			img = msn_object_get_image(obj);
+			if (img)
+				purple_imgstore_ref(img);
+		}
 		msn_object_destroy(obj);
-		img = purple_imgstore_new_from_file(path);
-		g_free(path);
+
 		if (img == NULL)
 		{
 			purple_debug_error("msn", "Wrong object.\n");
