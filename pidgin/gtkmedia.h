@@ -62,7 +62,7 @@ struct _PidginMedia
 	PidginMediaPrivate *priv;
 };
 
-GType pidgin_media_get_type();
+GType pidgin_media_get_type(void);
 
 GtkWidget *pidgin_media_new(PurpleMedia *media, GstElement *send_level, GstElement *recv_level);
 

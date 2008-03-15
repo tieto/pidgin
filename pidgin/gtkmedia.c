@@ -74,7 +74,7 @@ enum {
 };
 
 GType
-pidgin_media_get_type()
+pidgin_media_get_type(void)
 {
 	static GType type = 0;
 
@@ -172,7 +172,7 @@ pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
 {
 	g_signal_emit(gtkmedia, pidgin_media_signals[MESSAGE], 0, msg);
 }
-        
+
 static gboolean
 level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 {
@@ -184,8 +184,8 @@ level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 	gdouble rms;
 	const GValue *list;
 	const GValue *value;
-		
-	GstElement *src = GST_MESSAGE_SRC(message);
+
+	GstElement *src = GST_ELEMENT(message);
 
 	if (message->type != GST_MESSAGE_ELEMENT)
 		return TRUE;
@@ -236,6 +236,13 @@ pidgin_media_hangup_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 }
 
 static void
+pidgin_media_got_hangup_cb(PurpleMedia *media, PidginMedia *gtkmedia)
+{
+	pidgin_media_emit_message(gtkmedia, _("The call has been terminated."));
+	gtk_widget_destroy(GTK_WIDGET(gtkmedia));
+}
+
+static void
 pidgin_media_reject_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	pidgin_media_emit_message(gtkmedia, _("You have rejected the call."));
@@ -247,7 +254,7 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 {
 	PidginMedia *media;
 	g_return_if_fail(PIDGIN_IS_MEDIA(object));
-	
+
 	media = PIDGIN_MEDIA(object);
 	switch (prop_id) {
 		case PROP_MEDIA:
@@ -270,6 +277,8 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 				G_CALLBACK(pidgin_media_hangup_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "reject",
 				G_CALLBACK(pidgin_media_reject_cb), media);
+			g_signal_connect(G_OBJECT(media->priv->media), "got-hangup",
+				G_CALLBACK(pidgin_media_got_hangup_cb), media);
 			break;
 		case PROP_SEND_LEVEL:
 			if (media->priv->send_level)
