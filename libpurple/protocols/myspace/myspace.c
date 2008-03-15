@@ -1862,7 +1862,7 @@ msim_error(MsimSession *session, MsimMessage *msg)
 				if (!purple_account_get_remember_password(session->account))
 					purple_account_set_password(session->account, NULL);
 #ifdef MSIM_MAX_PASSWORD_LENGTH
-				if (strlen(session->account->password) > MSIM_MAX_PASSWORD_LENGTH) {
+				if (session->account->password && (strlen(session->account->password) > MSIM_MAX_PASSWORD_LENGTH)) {
 					gchar *suggestion;
 
 					suggestion = g_strdup_printf(_("%s Your password is "
