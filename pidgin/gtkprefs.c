@@ -943,6 +943,8 @@ conv_page(void)
 
 	pidgin_prefs_checkbox(_("Show _formatting on incoming messages"),
 				PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting", vbox);
+	pidgin_prefs_checkbox(_("Close IMs immediately when the tab is closed"),
+				PIDGIN_PREFS_ROOT "/conversations/im/close_immediately", vbox);
 
 	iconpref1 = pidgin_prefs_checkbox(_("Show _detailed information"),
 			PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", vbox);
@@ -977,6 +979,7 @@ conv_page(void)
 
 	font_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
 	font_button = gtk_font_button_new_with_font(font_name ? font_name : NULL);
+
 	gtk_font_button_set_show_style(GTK_FONT_BUTTON(font_button), TRUE);
 	hbox = pidgin_add_widget_to_vbox(GTK_BOX(vbox), _("Conversation _font:"), NULL, font_button, FALSE, NULL);
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font"))
@@ -2194,7 +2197,6 @@ void pidgin_prefs_update_old()
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/show_group_count");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/show_warning_level");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/button_type");
-	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/close_immediately");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/ctrl_enter_sends");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/enter_sends");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/escape_closes");

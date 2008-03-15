@@ -293,7 +293,7 @@ update_buddy_typing(PurpleAccount *account, const char *who, gpointer null)
 		g_free(str);
 
 		scroll = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(ggc->tv));
-		str = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_name(conv));
+		str = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_title(conv));
 		/* Updating is a little buggy. So just remove and add a new one */
 		gnt_text_view_tag_change(GNT_TEXT_VIEW(ggc->tv), "typing", NULL, TRUE);
 		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(ggc->tv),
@@ -660,8 +660,10 @@ finch_create_conversation(PurpleConversation *conv)
 	PurpleAccount *account;
 	PurpleBlistNode *convnode = NULL;
 
-	if (ggc)
+	if (ggc) {
+		gnt_window_present(ggc->window);
 		return;
+	}
 
 	account = purple_conversation_get_account(conv);
 	cc = find_conv_with_contact(account, purple_conversation_get_name(conv));
@@ -805,6 +807,10 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 
 	g_return_if_fail(ggconv != NULL);
 
+	if (flags & PURPLE_MESSAGE_SYSTEM) {
+		flags &= ~(PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV);
+	}
+
 	if (ggconv->active_conv != conv) {
 		if (flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV))
 			finch_conversation_set_active(conv);
@@ -837,7 +843,11 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 
 		if (purple_message_meify((char*)message, -1)) {
 			name = g_strdup_printf("*** %s", who);
-			msgflags = gnt_color_pair(color_message_action);
+			if (!(flags & PURPLE_MESSAGE_SEND) &&
+					(flags & PURPLE_MESSAGE_NICK))
+				msgflags = gnt_color_pair(color_message_highlight);
+			else
+				msgflags = gnt_color_pair(color_message_action);
 			me = TRUE;
 		} else {
 			name =  g_strdup_printf("%s", who);
@@ -869,7 +879,7 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&
 			purple_conv_im_get_typing_state(PURPLE_CONV_IM(conv)) == PURPLE_TYPING) {
-		strip = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_name(conv));
+		strip = g_strdup_printf(_("\n%s is typing..."), purple_conversation_get_title(conv));
 		gnt_text_view_append_text_with_tag(GNT_TEXT_VIEW(ggconv->tv),
 					strip, GNT_TEXT_FLAG_DIM, "typing");
 		g_free(strip);

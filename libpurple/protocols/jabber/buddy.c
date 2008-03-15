@@ -101,8 +101,36 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		if(!jbr && !resource) {
 			jbr = l->data;
 		} else if(!resource) {
-			if(((JabberBuddyResource *)l->data)->priority >= jbr->priority)
+			if(((JabberBuddyResource *)l->data)->priority > jbr->priority)
 				jbr = l->data;
+			else if(((JabberBuddyResource *)l->data)->priority == jbr->priority) {
+				/* Determine if this resource is more available than the one we've currently chosen */
+				switch(((JabberBuddyResource *)l->data)->state) {
+					case JABBER_BUDDY_STATE_ONLINE:
+					case JABBER_BUDDY_STATE_CHAT:
+						/* This resource is online/chatty. Prefer to one which isn't either. */
+						if ((jbr->state != JABBER_BUDDY_STATE_ONLINE) && (jbr->state != JABBER_BUDDY_STATE_CHAT))
+							jbr = l->data;
+						break;
+					case JABBER_BUDDY_STATE_AWAY:
+					case JABBER_BUDDY_STATE_DND:
+					case JABBER_BUDDY_STATE_UNAVAILABLE:
+						/* This resource is away/dnd/unavailable. Prefer to one which is extended away or unknown. */
+						if ((jbr->state == JABBER_BUDDY_STATE_XA) || 
+							(jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
+							jbr = l->data;
+						break;
+					case JABBER_BUDDY_STATE_XA:
+						/* This resource is extended away. That's better than unknown. */
+						if ((jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
+							jbr = l->data;
+						break;
+					case JABBER_BUDDY_STATE_UNKNOWN:
+					case JABBER_BUDDY_STATE_ERROR:
+						/* These are never preferable. */
+						break;
+				}
+			}
 		} else if(((JabberBuddyResource *)l->data)->name) {
 			if(!strcmp(((JabberBuddyResource *)l->data)->name, resource)) {
 				jbr = l->data;
@@ -392,6 +420,7 @@ static xmlnode *insert_tag_to_parent_tag(xmlnode *start, const char *parent_tag,
  */
 void jabber_set_info(PurpleConnection *gc, const char *info)
 {
+	PurpleStoredImage *img;
 	JabberIq *iq;
 	JabberStream *js = gc->proto_data;
 	xmlnode *vc_node;
@@ -410,57 +439,58 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	 */
 	vc_node = info ? xmlnode_from_str(info, -1) : NULL;
 
-	if(!vc_node) {
-		vc_node = xmlnode_new("vCard");
-		for(tag_attr = vcard_tag_attr_list; tag_attr->attr != NULL; ++tag_attr)
-			xmlnode_set_attrib(vc_node, tag_attr->attr, tag_attr->value);
+	if (vc_node && (!vc_node->name ||
+			g_ascii_strncasecmp(vc_node->name, "vCard", 5))) {
+		xmlnode_free(vc_node);
+		vc_node = NULL;
 	}
 
-	if (vc_node->name &&
-			!g_ascii_strncasecmp(vc_node->name, "vCard", 5)) {
-		PurpleStoredImage *img;
+	if ((img = purple_buddy_icons_find_account_icon(gc->account))) {
+		gconstpointer avatar_data;
+		gsize avatar_len;
+		xmlnode *photo, *binval, *type;
+		gchar *enc;
+		int i;
+		unsigned char hashval[20];
+		char *p, hash[41];
 
-		if ((img = purple_buddy_icons_find_account_icon(gc->account))) {
-			gconstpointer avatar_data;
-			gsize avatar_len;
-			xmlnode *photo, *binval, *type;
-			gchar *enc;
-			int i;
-			unsigned char hashval[20];
-			char *p, hash[41];
-
-			avatar_data = purple_imgstore_get_data(img);
-			avatar_len = purple_imgstore_get_size(img);
-			/* have to get rid of the old PHOTO if it exists */
-			if((photo = xmlnode_get_child(vc_node, "PHOTO"))) {
-				xmlnode_free(photo);
-			}
-			photo = xmlnode_new_child(vc_node, "PHOTO");
-			type = xmlnode_new_child(photo, "TYPE");
-			xmlnode_insert_data(type, "image/png", -1);
-			binval = xmlnode_new_child(photo, "BINVAL");
-			enc = purple_base64_encode(avatar_data, avatar_len);
-
-			purple_cipher_digest_region("sha1", avatar_data,
-									  avatar_len, sizeof(hashval),
-									  hashval, NULL);
-
-			purple_imgstore_unref(img);
-
-			p = hash;
-			for(i=0; i<20; i++, p+=2)
-				snprintf(p, 3, "%02x", hashval[i]);
-			js->avatar_hash = g_strdup(hash);
-
-			xmlnode_insert_data(binval, enc, -1);
-			g_free(enc);
+		if(!vc_node) {
+			vc_node = xmlnode_new("vCard");
+			for(tag_attr = vcard_tag_attr_list; tag_attr->attr != NULL; ++tag_attr)
+				xmlnode_set_attrib(vc_node, tag_attr->attr, tag_attr->value);
 		}
 
+		avatar_data = purple_imgstore_get_data(img);
+		avatar_len = purple_imgstore_get_size(img);
+		/* have to get rid of the old PHOTO if it exists */
+		if((photo = xmlnode_get_child(vc_node, "PHOTO"))) {
+			xmlnode_free(photo);
+		}
+		photo = xmlnode_new_child(vc_node, "PHOTO");
+		type = xmlnode_new_child(photo, "TYPE");
+		xmlnode_insert_data(type, "image/png", -1);
+		binval = xmlnode_new_child(photo, "BINVAL");
+		enc = purple_base64_encode(avatar_data, avatar_len);
+
+		purple_cipher_digest_region("sha1", avatar_data,
+								  avatar_len, sizeof(hashval),
+								  hashval, NULL);
+
+		purple_imgstore_unref(img);
+
+		p = hash;
+		for(i=0; i<20; i++, p+=2)
+			snprintf(p, 3, "%02x", hashval[i]);
+		js->avatar_hash = g_strdup(hash);
+
+		xmlnode_insert_data(binval, enc, -1);
+		g_free(enc);
+	}
+
+	if (vc_node != NULL) {
 		iq = jabber_iq_new(js, JABBER_IQ_SET);
 		xmlnode_insert_child(iq->node, vc_node);
 		jabber_iq_send(iq);
-	} else {
-		xmlnode_free(vc_node);
 	}
 }
 
@@ -1179,6 +1209,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	GString *info_text;
 	char *bare_jid;
 	char *text;
+	char *serverside_alias = NULL;
 	xmlnode *vcard;
 	PurpleBuddy *b;
 	JabberBuddyInfo *jbi = data;
@@ -1217,6 +1248,10 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 			text = xmlnode_get_data(child);
 			if(text && !strcmp(child->name, "FN")) {
+				/* If we havne't found a name yet, use this one as the serverside name */
+				if (!serverside_alias)
+					serverside_alias = g_strdup(text);
+
 				jabber_string_escape_and_append(info_text,
 						_("Full Name"), text, FALSE);
 			} else if(!strcmp(child->name, "N")) {
@@ -1240,11 +1275,11 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					}
 					g_free(text2);
 				}
-			} else if(text && !strcmp(child->name, "NICKNAME")) {
-				serv_got_alias(js->gc, from, text);
-				if(b) {
-					purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", text);
-				}
+			} else if(text && !strcmp(child->name, "NICKNAME")) {				
+				/* Prefer the Nickcname to the Full Name as the serverside alias */
+				g_free(serverside_alias);
+				serverside_alias = g_strdup(text);
+
 				jabber_string_escape_and_append(info_text,
 						_("Nickname"), text, FALSE);
 			} else if(text && !strcmp(child->name, "BDAY")) {
@@ -1402,6 +1437,16 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 			}
 			g_free(text);
 		}
+	}
+
+	if (serverside_alias) {
+		/* If we found a serverside alias, set it and tell the core */
+		serv_got_alias(js->gc, from, serverside_alias);
+		if (b) {
+			purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", serverside_alias);
+		}
+		
+		g_free(serverside_alias);
 	}
 
 	jbi->vcard_text = purple_strdup_withhtml(info_text->str);

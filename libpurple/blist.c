@@ -1588,7 +1588,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 					hb->group = gnode;
 					g_hash_table_replace(purplebuddylist->buddies, hb, b);
 
-					if (b->account->gc)
+					if (purple_account_get_connection(b->account))
 						serv_move_buddy(b, (PurpleGroup *)cnode->parent, g);
 				} else {
 					gboolean empty_contact = FALSE;
@@ -1597,7 +1597,7 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 					 * gonna delete it instead */
 					g_free(hb->name);
 					g_free(hb);
-					if (b->account->gc)
+					if (purple_account_get_connection(b->account))
 						purple_account_remove_buddy(b->account, b, (PurpleGroup *)cnode->parent);
 
 					if (!cnode->child->next)
@@ -2087,7 +2087,7 @@ const char *purple_chat_get_name(PurpleChat *chat)
 	prpl = purple_find_prpl(purple_account_get_protocol_id(chat->account));
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-	parts = prpl_info->chat_info(chat->account->gc);
+	parts = prpl_info->chat_info(purple_account_get_connection(chat->account));
 	pce = parts->data;
 	ret = g_hash_table_lookup(chat->components, pce->identifier);
 	g_list_foreach(parts, (GFunc)g_free, NULL);

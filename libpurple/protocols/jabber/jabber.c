@@ -406,14 +406,17 @@ static gboolean jabber_pong_timeout(PurpleConnection *gc)
 void jabber_keepalive(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
-	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
 
-	xmlnode *ping = xmlnode_new_child(iq->node, "ping");
-	xmlnode_set_namespace(ping, "urn:xmpp:ping");
-
-	js->keepalive_timeout = purple_timeout_add_seconds(20, (GSourceFunc)(jabber_pong_timeout), gc);
-	jabber_iq_set_callback(iq, jabber_pong_cb, GINT_TO_POINTER(js->keepalive_timeout));
-	jabber_iq_send(iq);
+	if (js->keepalive_timeout == -1) {
+		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
+		
+		xmlnode *ping = xmlnode_new_child(iq->node, "ping");
+		xmlnode_set_namespace(ping, "urn:xmpp:ping");
+		
+		js->keepalive_timeout = purple_timeout_add_seconds(120, (GSourceFunc)(jabber_pong_timeout), gc);
+		jabber_iq_set_callback(iq, jabber_pong_cb, GINT_TO_POINTER(js->keepalive_timeout));
+		jabber_iq_send(iq);
+	}
 }
 
 static void
@@ -564,9 +567,16 @@ static void tls_init(JabberStream *js)
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->certificate_CN, js->gc);
 }
 
-static void jabber_login_connect(JabberStream *js, const char *fqdn, const char *host, int port)
+static void jabber_login_connect(JabberStream *js, const char *domain, const char *host, int port)
 {
-	js->serverFQDN = g_strdup(fqdn);
+	/* host should be used in preference to domain to
+	 * allow SASL authentication to work with FQDN of the server,
+	 * but we use domain as fallback for when users enter IP address
+	 * in connect server */
+	if (purple_ip_address_is_valid(host))
+		js->serverFQDN = g_strdup(domain);
+	else
+		js->serverFQDN = g_strdup(host);
 
 	if (purple_proxy_connect(js->gc, js->gc->account, host,
 			port, jabber_login_callback, js->gc) == NULL)

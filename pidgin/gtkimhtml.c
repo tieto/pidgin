@@ -440,6 +440,10 @@ gtk_imhtml_tip (gpointer data)
 	gtk_widget_set_app_paintable (imhtml->tip_window, TRUE);
 	gtk_window_set_resizable (GTK_WINDOW (imhtml->tip_window), FALSE);
 	gtk_widget_set_name (imhtml->tip_window, "gtk-tooltips");
+#if GTK_CHECK_VERSION(2,10,0)
+	gtk_window_set_type_hint (GTK_WINDOW (imhtml->tip_window),
+		GDK_WINDOW_TYPE_HINT_TOOLTIP);
+#endif
 	g_signal_connect_swapped (G_OBJECT (imhtml->tip_window), "expose_event",
 							  G_CALLBACK (gtk_imhtml_tip_paint), imhtml);
 
@@ -848,15 +852,15 @@ ucs2_order(gboolean swap)
 	be = swap ? be : !be;
 
 	if (be)
-		return "UCS-2BE";
+		return "UTF-16BE";
 	else
-		return "UCS-2LE";
+		return "UTF-16LE";
 
 }
 
-/* Convert from UCS-2 to UTF-8, stripping the BOM if one is present.*/
+/* Convert from UTF-16LE to UTF-8, stripping the BOM if one is present.*/
 static gchar *
-ucs2_to_utf8_with_bom_check(gchar *data, guint len) {
+utf16_to_utf8_with_bom_check(gchar *data, guint len) {
 	char *fromcode = NULL;
 	GError *error = NULL;
 	guint16 c;
@@ -879,7 +883,7 @@ ucs2_to_utf8_with_bom_check(gchar *data, guint len) {
 		len -= 2;
 		break;
 	default:
-		fromcode = "UCS-2";
+		fromcode = "UTF-16";
 		break;
 	}
 
@@ -923,7 +927,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		str = g_string_append_unichar(str, 0xfeff);
 		str = g_string_append(str, text);
 		str = g_string_append_unichar(str, 0x0000);
-		selection = g_convert(str->str, str->len, "UCS-2", "UTF-8", NULL, &len, NULL);
+		selection = g_convert(str->str, str->len, "UTF-16", "UTF-8", NULL, &len, NULL);
 		gtk_selection_data_set(selection_data, gdk_atom_intern("text/html", FALSE), 16, (const guchar *)selection, len);
 		g_string_free(str, TRUE);
 #else
@@ -1078,12 +1082,12 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 
 	if (selection_data->length >= 2 &&
 		(*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe)) {
-		/* This is UCS-2 */
-		char *utf8 = ucs2_to_utf8_with_bom_check(text, selection_data->length);
+		/* This is UTF-16 */
+		char *utf8 = utf16_to_utf8_with_bom_check(text, selection_data->length);
 		g_free(text);
 		text = utf8;
 		if (!text) {
-			purple_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in paste_received_cb\n");
+			purple_debug_warning("gtkimhtml", "g_convert from UTF-16 failed in paste_received_cb\n");
 			return;
 		}
 	}
@@ -1455,7 +1459,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "SUP", "rise", 5000, NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "PRE", "family", "Monospace", NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "search", "background", "#22ff00", "weight", "bold", NULL);
-#if GTK_CHECK_VERSION(2,10,10)
+#if FALSE && GTK_CHECK_VERSION(2,10,10)
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "comment", "invisible", FALSE, NULL);
 #endif
 
@@ -1780,10 +1784,10 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 			 * http://mail.gnome.org/archives/gtk-devel-list/2001-September/msg00114.html
 			 */
 			if (sd->length >= 2 && !g_utf8_validate(text, sd->length - 1, NULL)) {
-				utf8 = ucs2_to_utf8_with_bom_check(text, sd->length);
+				utf8 = utf16_to_utf8_with_bom_check(text, sd->length);
 
 				if (!utf8) {
-					purple_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in drag_rcv_cb\n");
+					purple_debug_warning("gtkimhtml", "g_convert from UTF-16 failed in drag_rcv_cb\n");
 					return;
 				}
 			} else if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
@@ -2984,7 +2988,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 
-#if GTK_CHECK_VERSION(2,10,10)
+#if FALSE && GTK_CHECK_VERSION(2,10,10)
 					wpos = g_snprintf (ws, len, "%s", tag);
 					gtk_text_buffer_insert_with_tags_by_name(imhtml->text_buffer, iter, ws, wpos, "comment", NULL);
 #else
@@ -3138,7 +3142,7 @@ void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
 void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 					gboolean          show)
 {
-#if GTK_CHECK_VERSION(2,10,10)
+#if FALSE && GTK_CHECK_VERSION(2,10,10)
 	GtkTextTag *tag;
 	tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), "comment");
 	if (tag)

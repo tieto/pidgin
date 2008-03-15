@@ -29,6 +29,9 @@
 
 #include <glib.h>
 
+/** A reference-counted immutable wrapper around an image's data and its
+ *  filename.
+ */
 typedef struct _PurpleStoredImage PurpleStoredImage;
 
 #ifdef __cplusplus

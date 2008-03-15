@@ -211,67 +211,92 @@ static PurpleProxyInfo *
 purple_gnome_proxy_get_info(void)
 {
 	static PurpleProxyInfo info = {0, NULL, 0, NULL, NULL};
-	gchar *path;
-	if ((path = g_find_program_in_path("gconftool-2"))) {
-		gchar *tmp;
+	gchar *tmp;
 
-		g_free(path);
+	tmp = g_find_program_in_path("gconftool-2");
+	if (tmp == NULL)
+		return purple_global_proxy_get_info();
 
-		/* See whether to use a proxy. */
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/mode", &tmp,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		if (!strcmp(tmp, "none\n")) {
-			info.type = PURPLE_PROXY_NONE;
-			g_free(tmp);
-			return &info;
-		} else if (strcmp(tmp, "manual\n")) {
-			g_free(tmp);
-			return purple_global_proxy_get_info();
-		}
+	g_free(tmp);
 
+	/* Check whether to use a proxy. */
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/proxy/mode",
+			&tmp, NULL, NULL, NULL))
+		return purple_global_proxy_get_info();
+
+	if (!strcmp(tmp, "none\n")) {
+		info.type = PURPLE_PROXY_NONE;
 		g_free(tmp);
-		info.type = PURPLE_PROXY_HTTP;
-
-		/* Free the old fields */
-		if (info.host) {
-			g_free(info.host);
-			info.host = NULL;
-		}
-		if (info.username) {
-			g_free(info.username);
-			info.username = NULL;
-		}
-		if (info.password) {
-			g_free(info.password);
-			info.password = NULL;
-		}
-
-		/* Get the new ones */
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host", &info.host,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		g_strchomp(info.host);
-
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user", &info.username,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		g_strchomp(info.username);
-
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_password", &info.password,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		g_strchomp(info.password);
-
-		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/port", &tmp,
-					       NULL, NULL, NULL))
-			return purple_global_proxy_get_info();
-		info.port = atoi(tmp);
-		g_free(tmp);
-
 		return &info;
 	}
-	return purple_global_proxy_get_info();
+
+	if (strcmp(tmp, "manual\n")) {
+		/* Unknown setting.  Fallback to using our global proxy settings. */
+		g_free(tmp);
+		return purple_global_proxy_get_info();
+	}
+
+	g_free(tmp);
+
+	/* If we get this far then we know we're using an HTTP proxy */
+	info.type = PURPLE_PROXY_HTTP;
+
+	/* Free the old fields */
+	if (info.host) {
+		g_free(info.host);
+		info.host = NULL;
+	}
+	if (info.username) {
+		g_free(info.username);
+		info.username = NULL;
+	}
+	if (info.password) {
+		g_free(info.password);
+		info.password = NULL;
+	}
+
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host",
+			&info.host, NULL, NULL, NULL))
+		return purple_global_proxy_get_info();
+	g_strchomp(info.host);
+	if (*info.host == '\0')
+	{
+		purple_debug_info("proxy", "Gnome proxy settings are set to "
+				"'manual' but no proxy server is specified.  Using "
+				"Pidgin's proxy settings instead.\n");
+		g_free(info.host);
+		return purple_global_proxy_get_info();
+	}
+
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user",
+			&info.username, NULL, NULL, NULL))
+	{
+		g_free(info.host);
+		return purple_global_proxy_get_info();
+	}
+	g_strchomp(info.username);
+
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_password",
+			&info.password, NULL, NULL, NULL))
+	{
+		g_free(info.host);
+		g_free(info.username);
+		return purple_global_proxy_get_info();
+	}
+	g_strchomp(info.password);
+
+	if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/port",
+			&tmp, NULL, NULL, NULL))
+	{
+		g_free(info.host);
+		g_free(info.username);
+		g_free(info.password);
+		return purple_global_proxy_get_info();
+	}
+	info.port = atoi(tmp);
+	g_free(tmp);
+
+	return &info;
 }
 /**************************************************************************
  * Proxy API
@@ -737,6 +762,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 				proxy_do_write(connect_data, connect_data->fd, cond);
 				return;
 			} else if((ntlm = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: NTLM"))) { /* Empty message */
+				gchar *ntlm_type1;
 				gchar request[2048];
 				gchar *domain = (gchar*) purple_proxy_info_get_username(connect_data->gpi);
 				gchar *username = NULL;
@@ -759,11 +785,13 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 						connect_data->host, connect_data->port);
 
 				g_return_if_fail(request_len < sizeof(request));
+				ntlm_type1 = purple_ntlm_gen_type1(hostname, domain);
 				request_len += g_snprintf(request + request_len,
 					sizeof(request) - request_len,
 					"Proxy-Authorization: NTLM %s\r\n"
 					"Proxy-Connection: Keep-Alive\r\n\r\n",
-					purple_ntlm_gen_type1(hostname, domain));
+					ntlm_type1);
+				g_free(ntlm_type1);
 				*username = '\\';
 
 				purple_input_remove(connect_data->inpa);
@@ -847,7 +875,7 @@ http_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 
 	if (purple_proxy_info_get_username(connect_data->gpi) != NULL)
 	{
-		char *t1, *t2;
+		char *t1, *t2, *ntlm_type1;
 		char hostname[256];
 
 		ret = gethostname(hostname, sizeof(hostname));
@@ -864,11 +892,14 @@ http_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 		t2 = purple_base64_encode((const guchar *)t1, strlen(t1));
 		g_free(t1);
 
+		ntlm_type1 = purple_ntlm_gen_type1(hostname, "");
+
 		g_string_append_printf(request,
 			"Proxy-Authorization: Basic %s\r\n"
 			"Proxy-Authorization: NTLM %s\r\n"
 			"Proxy-Connection: Keep-Alive\r\n",
-			t2, purple_ntlm_gen_type1(hostname, ""));
+			t2, ntlm_type1);
+		g_free(ntlm_type1);
 		g_free(t2);
 	}
 

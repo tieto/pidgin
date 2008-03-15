@@ -798,7 +798,7 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 	GntTree *tree = GNT_TREE(widget);
 	GntTreeRow *old = tree->current;
 
-	if (text[0] == '\r') {
+	if (text[0] == '\r' || text[0] == '\n') {
 		end_search(tree);
 		gnt_widget_activate(widget);
 	} else if (tree->priv->search) {

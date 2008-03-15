@@ -1,7 +1,43 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.4.0 (??/??/????):
+version 2.4.1 ():
+	http://developer.pidgin.im/query?status=closed&milestone=2.4.1
+
 	libpurple:
+	* Treat AIM Unicode messages as UTF-16 rather than UCS-2; this
+	  should have no functional effect, other than continued support
+	  on systems which have dropped UCS-2 conversions.
+	* Add support for setting buddy icons on Gadu-Gadu (Tomasz Salacinski)
+	* Fix a crash when clearing the buddy icon for an account on XMPP
+	* Fix a crash during login for some ICQ accounts
+	* Prefer more available resources on XMPP when priorities are equal
+	* Fix incorrectly marking some Yahoo! contacts as blocked
+	* Improved handling of UTF-8 group names on ICQ (beret)
+	* Fix a crash when starting if you have a Zephyr account
+	* Increase XMPP ping timeout to 120 seconds, to prevent poor network
+	  connections from timing out unnecessarily.
+
+	Pidgin:
+	* Remove a workaround for older versions gstreamer that was causing
+	  crashes on some non-Linux systems such as HPUX
+	* Fix some cases of the conversation input entry area being 1 pixel high
+	* Fix for displaying channel & buddy names in conversation window when
+	  they have '&' in them
+	* Some memory leak fixes, especially in the Text Replacement plugin
+
+	Finch:
+	* Fix compiling with Glib older than 2.6
+	* Ensure existing conversations selected from the 'Send IM' dialog are
+	  given focus
+	* Move the tooltip on the left of the buddylist if there's not enough room
+	  on the right to show it.
+
+version 2.4.0 (02/29/2008):
+	http://developer.pidgin.im/query?status=closed&milestone=2.4.0
+
+	libpurple:
+	* Added support for offline messages for AIM accounts (thanks to
+	  Matthew Goldstein)
 	* Fixed various problems with loss of status messages when going
 	  or returning from idle on MySpaceIM.
 	* Eliminated unmaintained Howl backend implementation for the
@@ -10,21 +46,30 @@ version 2.4.0 (??/??/????):
 	* Partial support for viewing ICQ status notes (Collin from
 	  ComBOTS GmbH).
 	* Support for /notice on IRC.
-	* Support for Yahoo Messenger 7.0+ file transfer method (Thanumalayan S.)
+	* Support for Yahoo! Messenger 7.0+ file transfer method (Thanumalayan S.)
 	* Support for retrieving full names and addresses from the address book
 	  on Yahoo! Japan (Yusuke Odate)
 	* The AIM/ICQ server-side preference for "allow others to see me
 	  as idle" is no longer unconditionally set to "yes" even when
 	  your libpurple preference is "no."
+	* Fix SSL certificate checks for renewed certificates
+	* Fix the ability to set vCard buddy icons on Google Talk/XMPP
+	* D-Bus fixes on 64bit
+	* Fixed retrieval of buddy icons and setting of server-side aliases on
+	  Yahoo! and Yahoo! Japan when using an HTTP proxy server (Gideon N.
+	  Guillen)
+	* Fixed an MSN bug that would leave you appearing offline when transferred
+	  to different server
 
 	Pidgin:
 	* Added the ability to theme conversation name colors (red and blue)
-	  through your GTK+ theme, and exposed those theme settings to the 
+	  through your GTK+ theme, and exposed those theme settings to the
 	  Pidgin GTK+ Theme Control plugin (Dustin Howett)
 	* Fixed having multiple alias edit areas in the infopane (Elliott Sales
 	  de Andrade)
 	* Save the conversation "Enable Logging" option per-contact (Moos
 	  Heintzen)
+	* Typing notifications are now shown in the conversation area
 
 	Finch:
 	* Color is used in the buddylist to indicate status, and the conversation
@@ -44,13 +89,14 @@ version 2.4.0 (??/??/????):
 	* Added a log viewer
 	* Added the ability to block/unblock buddies - see the buddy context menu
 	  and the menu for the buddy list.
+	* Fixed a bug preventing finch working on x86_64
 
 version 2.3.1 (12/7/2007):
 	http://developer.pidgin.im/query?status=closed&milestone=2.3.1
 		NOTE: Due to the way this release was made, it is possible that
 		      bugs marked as fixed in 2.3.1 will not be fixed until the
 		      next release.
-	
+
 	* Fixed a number of MSN bugs introduced in 2.3.0, resolving problems
 	  connecting to MSN and random local display name changes
 	* Going idle on MySpaceIM will no longer clear your status and message.

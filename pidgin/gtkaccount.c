@@ -2092,8 +2092,10 @@ account_treeview_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, g
 	/* Figure out which node was clicked */
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(dialog->treeview), event->x, event->y, &path, &column, NULL, NULL))
 		return FALSE;
-	if (column == gtk_tree_view_get_column(treeview, 0))
+	if (column == gtk_tree_view_get_column(treeview, 0)) {
+		gtk_tree_path_free(path);
 		return FALSE;
+	}
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
 	gtk_tree_path_free(path);

@@ -464,7 +464,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 	PurpleAccount *account = purple_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
 	GHashTable *ht;
-	char *grp = NULL;
 	char *norm_bud = NULL;
 	YahooFriend *f = NULL; /* It's your friends. They're going to want you to share your StarBursts. */
 	                       /* But what if you had no friends? */
@@ -487,8 +486,8 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 			 */
 			if (pair->value && !strcmp(pair->value, "320")) {
 				/* No longer in any group; this indicates the start of the ignore list. */
-				g_free(grp);
-				grp = NULL;
+				g_free(yd->current_list15_grp);
+				yd->current_list15_grp = NULL;
 			}
 
 			break;
@@ -497,28 +496,30 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 		case 300: /* This is 318 before a group, 319 before any s/n in a group, and 320 before any ignored s/n. */
 			break;
 		case 65: /* This is the group */
-			g_free(grp);
-			grp = yahoo_string_decode(gc, pair->value, FALSE);
+			g_free(yd->current_list15_grp);
+			yd->current_list15_grp = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		case 7: /* buddy's s/n */
 			g_free(norm_bud);
 			norm_bud = g_strdup(purple_normalize(account, pair->value));
 
-			if (grp) {
+			if (yd->current_list15_grp) {
 				/* This buddy is in a group */
 				f = yahoo_friend_find_or_new(gc, norm_bud);
 				if (!(b = purple_find_buddy(account, norm_bud))) {
-					if (!(g = purple_find_group(grp))) {
-						g = purple_group_new(grp);
+					if (!(g = purple_find_group(yd->current_list15_grp))) {
+						g = purple_group_new(yd->current_list15_grp);
 						purple_blist_add_group(g, NULL);
 					}
 					b = purple_buddy_new(account, norm_bud, NULL);
 					purple_blist_add_buddy(b, NULL, g, NULL);
 				}
-				yahoo_do_group_check(account, ht, norm_bud, grp);
+				yahoo_do_group_check(account, ht, norm_bud, yd->current_list15_grp);
 
 			} else {
 				/* This buddy is on the ignore list (and therefore in no group) */
+				purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found",
+								  account->username, norm_bud);
 				purple_privacy_deny_add(account, norm_bud, 1);
 			}
 			break;
@@ -543,7 +544,6 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 
 	g_hash_table_foreach(ht, yahoo_do_group_cleanup, NULL);
 	g_hash_table_destroy(ht);
-	g_free(grp);
 	g_free(norm_bud);
 }
 
@@ -1471,13 +1471,24 @@ static void yahoo_process_auth_old(PurpleConnection *gc, const char *seed)
 	to_y64(result96, digest, 16);
 
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pack, "ssssss",
-					  0, name,
-					  6, result6,
-					  96, result96,
-					  1, name,
-					  244, YAHOO_CLIENT_VERSION_ID,
-					  135, YAHOO_CLIENT_VERSION);
+
+	if(yd->jp) {
+		yahoo_packet_hash(pack, "sssss",
+						  0, name,
+						  6, result6,
+						  96, result96,
+						  1, name,
+						  135, YAHOOJP_CLIENT_VERSION);
+	} else {
+		yahoo_packet_hash(pack, "ssssss",
+						  0, name,
+						  6, result6,
+						  96, result96,
+						  1, name,
+						  244, YAHOO_CLIENT_VERSION_ID,
+						  135, YAHOO_CLIENT_VERSION);
+	}
+
 	yahoo_packet_send_and_free(pack, yd);
 
 	g_free(hash_string_p);
@@ -1923,13 +1934,24 @@ static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 	}
 	purple_debug_info("yahoo", "yahoo status: %d\n", yd->current_status);
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	yd->current_status, 0);
-	yahoo_packet_hash(pack, "ssssss",
-					  0, name,
-					  6, resp_6,
-					  96, resp_96,
-					  1, name,
-					  244, YAHOO_CLIENT_VERSION_ID,
-					  135, YAHOO_CLIENT_VERSION);
+
+	if(yd->jp) {
+		yahoo_packet_hash(pack, "sssss",
+						  0, name,
+						  6, resp_6,
+						  96, resp_96,
+						  1, name,
+						  135, YAHOOJP_CLIENT_VERSION);
+	} else {
+		yahoo_packet_hash(pack, "ssssss",
+						  0, name,
+						  6, resp_6,
+						  96, resp_96,
+						  1, name,
+						  244, YAHOO_CLIENT_VERSION_ID,
+						  135, YAHOO_CLIENT_VERSION);
+	}
+
 	if (yd->picture_checksum)
 		yahoo_packet_hash_int(pack, 192, yd->picture_checksum);
 
@@ -2013,9 +2035,9 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 	PurpleBuddy *b;
 	GSList *l;
 	gchar *who = NULL;
-	gchar *sn = NULL;
+	gchar *me = NULL;
 	gchar buf[BUF_LONG];
-	gint ignore = 0;
+	gboolean ignore = TRUE;
 	gint status = 0;
 
 	for (l = pkt->hash; l; l = l->next) {
@@ -2025,10 +2047,11 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 			who = pair->value;
 			break;
 		case 1:
-			sn = pair->value;
+			me = pair->value;
 			break;
 		case 13:
-			ignore = strtol(pair->value, NULL, 10);
+			/* 1 == ignore, 2 == unignore */
+			ignore = (strtol(pair->value, NULL, 10) == 1);
 			break;
 		case 66:
 			status = strtol(pair->value, NULL, 10);
@@ -2038,23 +2061,40 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 		}
 	}
 
+	/*
+	 * status
+	 * 0  - ok
+	 * 2  - already in ignore list, could not add
+	 * 3  - not in ignore list, could not delete
+	 * 12 - is a buddy, could not add (and possibly also a not-in-ignore list condition?)
+	 */
 	switch (status) {
-	case 12:
-		b = purple_find_buddy(gc->account, who);
-		g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
-					"user is on your buddy list.  Clicking \"Yes\" "
-					"will remove and ignore the buddy."), who);
-		purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
-						gc->account, who, NULL,
-						b,
-						G_CALLBACK(ignore_buddy),
-						G_CALLBACK(keep_buddy));
-		break;
-	case 2:
-	case 3:
-	case 0:
-	default:
-		break;
+		case 12:
+			purple_debug_info("yahoo", "Server reported \"is a buddy\" for %s while %s",
+							  who, (ignore ? "ignoring" : "unignoring"));
+
+			if (ignore) {
+				b = purple_find_buddy(gc->account, who);
+				g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
+											   "user is on your buddy list.  Clicking \"Yes\" "
+											   "will remove and ignore the buddy."), who);
+				purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
+									  gc->account, who, NULL,
+									  b,
+									  G_CALLBACK(ignore_buddy),
+									  G_CALLBACK(keep_buddy));
+				break;
+			}
+		case 2:
+			purple_debug_info("yahoo", "Server reported that %s is already in the ignore list.",
+							  who);
+			break;
+		case 3:
+			purple_debug_info("yahoo", "Server reported that %s is not in the ignore list; could not delete",
+							  who);
+		case 0:
+		default:
+			break;
 	}
 }
 
@@ -3048,6 +3088,8 @@ static void yahoo_close(PurpleConnection *gc) {
 	g_free(yd->pending_chat_topic);
 	g_free(yd->pending_chat_goto);
 
+	g_free(yd->current_list15_grp);
+
 	g_free(yd);
 	gc->proto_data = NULL;
 }
@@ -3487,8 +3529,13 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 		"Host: login.yahoo.com\r\n"
 		"Content-Length: 0\r\n\r\n",
 		yd->cookie_t, yd->cookie_y);
+	gboolean use_whole_url = FALSE;
 
-	url_data = purple_util_fetch_url_request(base_url, FALSE,
+	/* use whole URL if using HTTP Proxy */
+	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+	    use_whole_url = TRUE;
+
+	url_data = purple_util_fetch_url_request(base_url, use_whole_url,
 			"Mozilla/4.0 (compatible; MSIE 5.5)", TRUE, request, FALSE,
 			yahoo_get_inbox_token_cb, gc);
 

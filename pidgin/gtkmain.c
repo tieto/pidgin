@@ -99,7 +99,6 @@ static const int catch_sig_list[] = {
 	SIGTERM,
 	SIGQUIT,
 	SIGCHLD,
-	SIGALRM,
 	-1
 };
 
@@ -140,38 +139,11 @@ dologin_named(const char *name)
 #ifdef HAVE_SIGNAL_H
 static void sighandler(int sig);
 
-/**
- * Reap all our dead children.  Sometimes libpurple forks off a separate
- * process to do some stuff.  When that process exits we are
- * informed about it so that we can call waitpid() and let it
- * stop being a zombie.
- *
- * We used to do this immediately when our signal handler was
- * called, but because of GStreamer we now wait one second before
- * reaping anything.  Why?  For some reason GStreamer fork()s
- * during their initialization process.  I don't understand why...
- * but they do it, and there's nothing we can do about it.
- *
- * Anyway, so then GStreamer waits for its child to die and then
- * it continues with the initialization process.  This means that
- * we have a race condition where GStreamer is waitpid()ing for its
- * child to die and we're catching the SIGCHLD signal.  If GStreamer
- * is awarded the zombied process then everything is ok.  But if libpurple
- * reaps the zombie process then the GStreamer initialization sequence
- * fails.
- *
- * So the ugly solution is to wait a second to give GStreamer time to
- * reap that bad boy.
- *
- * GStreamer 0.10.10 and newer have a gst_register_fork_set_enabled()
- * function that can be called by applications to disable forking
- * during initialization.  But it's not in 0.10.0, so we shouldn't
- * use it.
- *
- * All of this child process reaping stuff is currently only used for
- * processes that were forked to play sounds.  It's not needed for
- * forked DNS child, which have their own waitpid() call.  It might
- * be wise to move this code into gtksound.c.
+/*
+ * This child process reaping stuff is currently only used for processes that
+ * were forked to play sounds.  It's not needed for forked DNS child, which
+ * have their own waitpid() call.  It might be wise to move this code into
+ * gtksound.c.
  */
 static void
 clean_pid(void)
@@ -188,9 +160,6 @@ clean_pid(void)
 		snprintf(errmsg, BUFSIZ, "Warning: waitpid() returned %d", pid);
 		perror(errmsg);
 	}
-
-	/* Restore signal catching */
-	signal(SIGALRM, sighandler);
 }
 
 char *segfault_message;
@@ -220,12 +189,8 @@ sighandler(int sig)
 		abort();
 		break;
 	case SIGCHLD:
-		/* Restore signal catching */
-		signal(SIGCHLD, sighandler);
-		alarm(1);
-		break;
-	case SIGALRM:
 		clean_pid();
+		signal(SIGCHLD, sighandler);    /* restore signal catching on this one! */
 		break;
 	default:
 		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
@@ -301,6 +266,8 @@ debug_init(void)
 static void
 pidgin_ui_init(void)
 {
+	pidgin_stock_init();
+
 	/* Set the UI operation structures. */
 	purple_accounts_set_ui_ops(pidgin_accounts_get_ui_ops());
 	purple_xfers_set_ui_ops(pidgin_xfers_get_ui_ops());
@@ -315,7 +282,6 @@ pidgin_ui_init(void)
 	purple_idle_set_ui_ops(pidgin_idle_get_ui_ops());
 #endif
 
-	pidgin_stock_init();
 	pidgin_account_init();
 	pidgin_connection_init();
 	pidgin_blist_init();
@@ -405,8 +371,9 @@ show_usage(const char *name, gboolean terse)
 		       "  -h, --help          display this help and exit\n"
 		       "  -m, --multiple      do not ensure single instance\n"
 		       "  -n, --nologin       don't automatically login\n"
-		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
-		       "                      account(s) to use, separated by commas)\n"
+		       "  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
+		       "                      specifies account(s) to use, separated by commas.\n"
+		       "                      Without this only the first account will be enabled).\n"
 		       "  --display=DISPLAY   X display to use\n"
 		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
 #else
@@ -417,8 +384,9 @@ show_usage(const char *name, gboolean terse)
 		       "  -h, --help          display this help and exit\n"
 		       "  -m, --multiple      do not ensure single instance\n"
 		       "  -n, --nologin       don't automatically login\n"
-		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
-		       "                      account(s) to use, separated by commas)\n"
+		       "  -l, --login[=NAME]  enable specified account(s) (optional argument NAME\n"
+		       "                      specifies account(s) to use, separated by commas.\n"
+		       "                      Without this only the first account will be enabled).\n"
 		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, DISPLAY_VERSION, name);
 #endif
 	}
@@ -475,6 +443,7 @@ int main(int argc, char *argv[])
 	gboolean opt_help = FALSE;
 	gboolean opt_login = FALSE;
 	gboolean opt_nologin = FALSE;
+	gboolean opt_nocrash = FALSE;
 	gboolean opt_version = FALSE;
 	gboolean opt_si = TRUE;     /* Check for single instance? */
 	char *opt_config_dir_arg = NULL;
@@ -505,6 +474,7 @@ int main(int argc, char *argv[])
 		{"login",    optional_argument, NULL, 'l'},
 		{"multiple", no_argument,       NULL, 'm'},
 		{"nologin",  no_argument,       NULL, 'n'},
+		{"nocrash",  no_argument,       NULL, 'x'},
 		{"session",  required_argument, NULL, 's'},
 		{"version",  no_argument,       NULL, 'v'},
 		{"display",  required_argument, NULL, 'D'},
@@ -653,6 +623,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'm':   /* do not ensure single instance. */
 			opt_si = FALSE;
+			break;
+		case 'x':   /* --nocrash */
+			opt_nocrash = TRUE;
 			break;
 		case 'D':   /* --display */
 		case 'S':   /* --sync */

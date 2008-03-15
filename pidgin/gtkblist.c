@@ -159,6 +159,7 @@ static void redo_buddy_list(PurpleBuddyList *list, gboolean remove, gboolean rer
 static void pidgin_blist_collapse_contact_cb(GtkWidget *w, PurpleBlistNode *node);
 static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded);
 static void pidgin_blist_expand_contact_cb(GtkWidget *w, PurpleBlistNode *node);
+static void set_urgent(void);
 
 typedef enum {
 	PIDGIN_BLIST_NODE_HAS_PENDING_MESSAGE    =  1 << 0,  /* Whether there's pending message in a conversation */
@@ -703,6 +704,17 @@ static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
 		purple_blist_node_set_bool(node, "show_offline", setting);
 		for (bnode = node->child; bnode != NULL; bnode = bnode->next) {
 			purple_blist_node_set_bool(bnode, "show_offline", setting);
+		}
+	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
+		PurpleBlistNode *cnode, *bnode;
+		gboolean setting = !purple_blist_node_get_bool(node, "show_offline");
+
+		purple_blist_node_set_bool(node, "show_offline", setting);
+		for (cnode = node->child; cnode != NULL; cnode = cnode->next) {
+			purple_blist_node_set_bool(cnode, "show_offline", setting);
+			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
+				purple_blist_node_set_bool(bnode, "show_offline", setting);
+			}
 		}
 	}
 	pidgin_blist_update(purple_get_blist(), node);
@@ -1458,6 +1470,11 @@ create_group_menu (PurpleBlistNode *node, PurpleGroup *g)
 				 G_CALLBACK(pidgin_blist_remove_cb), node, 0, 0, NULL);
 	pidgin_new_item_from_stock(menu, _("_Rename"), NULL,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
+	if (!(purple_blist_node_get_flags(node) & PURPLE_BLIST_NODE_FLAG_NO_SAVE)) {
+		gboolean show_offline = purple_blist_node_get_bool(node, "show_offline");
+		pidgin_new_item_from_stock(menu, show_offline ? _("Hide when offline") : _("Show when offline"),
+				NULL, G_CALLBACK(gtk_blist_menu_showoffline_cb), node, 0, 0, NULL);
+	}
 
 	pidgin_append_blist_node_extended_menu(menu, node);
 
@@ -2952,6 +2969,9 @@ static gboolean pidgin_blist_drag_motion_cb(GtkWidget *tv, GdkDragContext *drag_
 	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), x, y, &path, NULL, NULL, NULL);
 	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &rect);
 
+	if (path)
+		gtk_tree_path_free(path);
+
 	/* Only autoexpand when in the middle of the cell to avoid annoying un-intended expands */
 	if (y < rect.y + (rect.height / 3) ||
 	    y > rect.y + (2 * (rect.height /3)))
@@ -2962,8 +2982,6 @@ static gboolean pidgin_blist_drag_motion_cb(GtkWidget *tv, GdkDragContext *drag_
 
 	gtkblist->tip_rect = rect;
 
-	if (path)
-		gtk_tree_path_free(path);
 	gtkblist->drag_timeout = g_timeout_add(delay, (GSourceFunc)pidgin_blist_expand_timeout, tv);
 
 	if (gtkblist->mouseover_contact) {
@@ -3114,6 +3132,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		GList *cur;
 		struct proto_chat_entry *pce;
 		char *name, *value;
+		PurpleConversation *conv;
 		PidginBlistNode *bnode = node->ui_data;
 
 		chat = (PurpleChat *)node;
@@ -3127,11 +3146,24 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 			g_free(tmp);
 		}
 
-		if (bnode && bnode->conv.conv &&
-				prpl_info && (prpl_info->options & OPT_PROTO_CHAT_TOPIC) &&
-				!purple_conv_chat_has_left(PURPLE_CONV_CHAT(bnode->conv.conv))) {
-			const char *topic = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(bnode->conv.conv));
+		if (bnode && bnode->conv.conv) {
+			conv = bnode->conv.conv;
+		} else {
+			char *chat_name;
+			if (prpl_info && prpl_info->get_chat_name)
+				chat_name = prpl_info->get_chat_name(chat->components);
+			else
+				chat_name = g_strdup(purple_chat_get_name(chat));
+
+			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, chat_name,
+					chat->account);
+			g_free(chat_name);
+		}
+		if (conv && prpl_info && (prpl_info->options & OPT_PROTO_CHAT_TOPIC) &&
+				!purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
+			char *topic = g_markup_escape_text(purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv)), -1);
 			g_string_append_printf(str, _("\n<b>Topic:</b> %s"), topic ? topic : _("(no topic set)"));
+			g_free(topic);
 		}
 
 		if (prpl_info->chat_info != NULL)
@@ -4408,6 +4440,7 @@ headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginBuddyList 
 /***********************************/
 
 #define OBJECT_DATA_KEY_ACCOUNT "account"
+#define DO_NOT_CLEAR_ERROR "do-not-clear-error"
 
 static gboolean
 find_account_widget(GObject *widget,
@@ -4442,8 +4475,7 @@ add_error_dialog(PidginBuddyList *gtkblist,
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 	gtk_container_add(GTK_CONTAINER(priv->error_scrollbook), dialog);
 
-	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
-		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+	set_urgent();
 }
 
 static GtkWidget *
@@ -4470,6 +4502,11 @@ remove_child_widget_by_account(GtkContainer *container,
 {
 	GtkWidget *widget = find_child_widget_by_account(container, account);
 	if(widget) {
+		/* Since we are destroying the widget in response to a change in
+		 * error, we should not clear the error.
+		 */
+		g_object_set_data(G_OBJECT(widget), DO_NOT_CLEAR_ERROR,
+			GINT_TO_POINTER(TRUE));
 		gtk_widget_destroy(widget);
 	}
 }
@@ -4495,7 +4532,12 @@ generic_error_destroy_cb(GtkObject *dialog,
                          PurpleAccount *account)
 {
 	g_hash_table_remove(gtkblist->connection_errors, account);
-	purple_account_clear_current_error(account);
+	/* If the error dialog is being destroyed in response to the
+	 * account-error-changed signal, we don't want to clear the current
+	 * error.
+	 */
+	if (g_object_get_data(G_OBJECT(dialog), DO_NOT_CLEAR_ERROR) == NULL)
+		purple_account_clear_current_error(account);
 }
 
 #define SSL_FAQ_URI "http://d.pidgin.im/wiki/FAQssl"
@@ -4568,6 +4610,19 @@ remove_generic_error_dialog(PurpleAccount *account)
 	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 	remove_child_widget_by_account(
 		GTK_CONTAINER(priv->error_scrollbook), account);
+}
+
+
+static void
+update_generic_error_message(PurpleAccount *account,
+                             const char *description)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	GtkWidget *mini_dialog = find_child_widget_by_account(
+		GTK_CONTAINER(priv->error_scrollbook), account);
+	pidgin_mini_dialog_set_description(PIDGIN_MINI_DIALOG(mini_dialog),
+		description);
+	set_urgent();
 }
 
 
@@ -4724,8 +4779,7 @@ add_to_signed_on_elsewhere(PurpleAccount *account)
 
 	update_signed_on_elsewhere_minidialog_title();
 
-	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
-		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+	set_urgent();
 }
 
 static void
@@ -4742,6 +4796,20 @@ remove_from_signed_on_elsewhere(PurpleAccount *account)
 }
 
 
+static void
+update_signed_on_elsewhere_tooltip(PurpleAccount *account,
+                                   const char *description)
+{
+#if GTK_CHECK_VERSION(2,12,0)
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	GtkContainer *c = GTK_CONTAINER(priv->signed_on_elsewhere->contents);
+	GtkWidget *label = find_child_widget_by_account(c, account);
+	gtk_widget_set_tooltip_text(label, description);
+	set_urgent();
+#endif
+}
+
+
 /* Call appropriate error notification code based on error types */
 static void
 update_account_error_state(PurpleAccount *account,
@@ -4749,35 +4817,60 @@ update_account_error_state(PurpleAccount *account,
                            const PurpleConnectionErrorInfo *new,
                            PidginBuddyList *gtkblist)
 {
+	gboolean descriptions_differ;
+	const char *desc;
+
+	if (old == NULL && new == NULL)
+		return;
+
 	/* For backwards compatibility: */
 	if (new)
 		pidgin_blist_update_account_error_state(account, new->description);
 	else
 		pidgin_blist_update_account_error_state(account, NULL);
 
-	pidgin_blist_select_notebook_page(gtkblist);
-	/* Don't bother updating the error if it hasn't changed.  This stops
-	 * URGENT being repeatedly set for network errors whenever they try to
-	 * reconnect.
-	 */
-	if ((old == new) ||
-	    (old != NULL && new != NULL && old->type == new->type
-	     && g_str_equal(old->description, new->description))
-	   )
-		return;
+	if (new != NULL)
+		pidgin_blist_select_notebook_page(gtkblist);
 
-	if (old) {
+	if (old != NULL && new == NULL) {
 		if(old->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE)
 			remove_from_signed_on_elsewhere(account);
 		else
 			remove_generic_error_dialog(account);
+		return;
 	}
 
-	if (new) {
+	if (old == NULL && new != NULL) {
 		if(new->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE)
 			add_to_signed_on_elsewhere(account);
 		else
 			add_generic_error_dialog(account, new);
+		return;
+	}
+
+	/* else, new and old are both non-NULL */
+
+	descriptions_differ = strcmp(old->description, new->description);
+	desc = new->description;
+
+	switch (new->type) {
+	case PURPLE_CONNECTION_ERROR_NAME_IN_USE:
+		if (old->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE
+		    && descriptions_differ) {
+			update_signed_on_elsewhere_tooltip(account, desc);
+		} else {
+			remove_generic_error_dialog(account);
+			add_to_signed_on_elsewhere(account);
+		}
+		break;
+	default:
+		if (old->type == PURPLE_CONNECTION_ERROR_NAME_IN_USE) {
+			remove_from_signed_on_elsewhere(account);
+			add_generic_error_dialog(account, new);
+		} else if (descriptions_differ) {
+			update_generic_error_message(account, desc);
+		}
+		break;
 	}
 }
 
@@ -6740,8 +6833,7 @@ pidgin_blist_visibility_manager_remove()
 void pidgin_blist_add_alert(GtkWidget *widget)
 {
 	gtk_container_add(GTK_CONTAINER(gtkblist->scrollbook), widget);
-	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
-		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+	set_urgent();
 }
 
 void
@@ -6759,12 +6851,19 @@ pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callbac
 	gtkblist->headline_data = user_data;
 	gtkblist->headline_destroy = destroy;
 	if (text != NULL || pixbuf != NULL) {
-		if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
-			pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
+		set_urgent();
 		gtk_widget_show_all(gtkblist->headline_hbox);
 	} else {
 		gtk_widget_hide(gtkblist->headline_hbox);
 	}
+}
+
+
+static void
+set_urgent(void)
+{
+	if (!GTK_WIDGET_HAS_FOCUS(gtkblist->window))
+		pidgin_set_urgent(GTK_WINDOW(gtkblist->window), TRUE);
 }
 
 static PurpleBlistUiOps blist_ui_ops =

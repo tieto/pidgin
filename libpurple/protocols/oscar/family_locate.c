@@ -1031,7 +1031,7 @@ rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame,
  * restricted to a few choices.  I am currently aware of:
  *
  * us-ascii		Just that
- * unicode-2-0		UCS2-BE
+ * unicode-2-0		UTF-16BE
  *
  * profile_len and awaymsg_len MUST be set similarly, and they MUST
  * be the length of their respective strings in bytes.

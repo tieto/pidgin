@@ -240,7 +240,10 @@ close_conv_cb(GtkWidget *w, GdkEventButton *dontuse, PidginConversation *gtkconv
 	switch (purple_conversation_get_type(conv)) {
 		case PURPLE_CONV_TYPE_IM:
 		{
-			hide_conv(gtkconv, TRUE);
+			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/close_immediately"))
+				close_this_sucker(gtkconv);
+			else
+				hide_conv(gtkconv, TRUE);
 			break;
 		}
 		case PURPLE_CONV_TYPE_CHAT:
@@ -2805,16 +2808,11 @@ icon_menu(GtkObject *obj, GdkEventButton *e, PidginConversation *gtkconv)
 void
 pidgin_conv_present_conversation(PurpleConversation *conv)
 {
-	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+	PidginConversation *gtkconv;
 	GdkModifierType state;
 
-	if (gtkconv == NULL) {
-		pidgin_conv_attach_to_conversation(conv);
-		gtkconv = PIDGIN_CONVERSATION(conv);
-	} else if (gtkconv->win == hidden_convwin) {
-		pidgin_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
-		pidgin_conv_placement_place(gtkconv);
-	}
+	pidgin_conv_attach_to_conversation(conv);
+	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	pidgin_conv_switch_active_conversation(conv);
 	/* Switch the tab only if the user initiated the event by pressing
@@ -4581,14 +4579,12 @@ pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int 
 	conv = gtkconv->active_conv;
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		node = (PurpleBlistNode*)(purple_blist_find_chat(conv->account, conv->name));
-#if 0
-		/* Using the transient blist nodes to show the tooltip doesn't quite work yet. */
 		if (!node)
 			node = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_chat");
-#endif
 	} else {
 		node = (PurpleBlistNode*)(purple_find_buddy(conv->account, conv->name));
 #if 0
+		/* Using the transient blist nodes to show the tooltip doesn't quite work yet. */
 		if (!node)
 			node = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_buddy");
 #endif
@@ -4741,6 +4737,8 @@ setup_common_pane(PidginConversation *gtkconv)
 	}
 
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry_buffer), "changed",
+				 G_CALLBACK(resize_imhtml_cb), gtkconv);
+	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "realize",
 				 G_CALLBACK(resize_imhtml_cb), gtkconv);
 
 	default_formatize(gtkconv);
@@ -5018,7 +5016,6 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		gtk_widget_show(gtkconv->toolbar);
 	else
 		gtk_widget_hide(gtkconv->toolbar);
-	g_idle_add((GSourceFunc)resize_imhtml_cb, gtkconv);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons"))
 		gtk_widget_show(gtkconv->infopane_hbox);
@@ -6497,14 +6494,16 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			}
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 			const char *topic = gtkconv->u.chat->topic_text ? gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text)) : NULL;
-			char *esc = NULL;
+			char *esc = NULL, *tmp;
 #if GTK_CHECK_VERSION(2,6,0)
 			esc = topic ? g_markup_escape_text(topic, -1) : NULL;
 #else
 			/* GTK < 2.6 doesn't have auto ellipsization, so we do a crude
 			 * trucation to prevent forcing the window to be as wide as the topic */
 			int len = 0;
-			char *c, *tmp = g_strdup(topic);
+			char *c;
+
+			tmp = g_strdup(topic);
 			c = tmp;
 			while(*c && len < 72) {
 				c = g_utf8_next_char(c);
@@ -6519,11 +6518,12 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			esc = tmp ? g_markup_escape_text(tmp, -1) : NULL;
 			g_free(tmp);
 #endif
+			tmp = g_markup_escape_text(purple_conversation_get_title(conv), -1);
 			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",
-						purple_conversation_get_title(conv),
-						esc  && *esc ? "\n" : "",
+						tmp, esc  && *esc ? "\n" : "",
 						pidgin_get_dim_grey_string(gtkconv->infopane),
 						esc ? esc : "");
+			g_free(tmp);
 			g_free(esc);
 		}
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
@@ -7695,6 +7695,7 @@ pidgin_conversations_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", TRUE);
 
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new", "never");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/im/close_immediately", TRUE);
 
 #ifdef _WIN32
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/win32/minimize_new_convs", FALSE);

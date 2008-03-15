@@ -2368,8 +2368,13 @@ static void
 set_current_error(PurpleAccount *account,
                   PurpleConnectionErrorInfo *new_err)
 {
-	PurpleAccountPrivate *priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
-	PurpleConnectionErrorInfo *old_err = priv->current_error;
+	PurpleAccountPrivate *priv;
+	PurpleConnectionErrorInfo *old_err;
+
+	g_return_if_fail(account != NULL);
+
+	priv = PURPLE_ACCOUNT_GET_PRIVATE(account);
+	old_err = priv->current_error;
 
 	if(new_err == old_err)
 		return;
@@ -2393,8 +2398,14 @@ connection_error_cb(PurpleConnection *gc,
                     const gchar *description,
                     gpointer unused)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleConnectionErrorInfo *err = g_new0(PurpleConnectionErrorInfo, 1);
+	PurpleAccount *account;
+	PurpleConnectionErrorInfo *err;
+
+	account = purple_connection_get_account(gc);
+
+	g_return_if_fail(account != NULL);
+
+	err = g_new0(PurpleConnectionErrorInfo, 1);
 
 	err->type = type;
 	err->description = g_strdup(description);
