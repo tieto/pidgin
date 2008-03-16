@@ -24,6 +24,8 @@ version 2.4.1 ():
 	* Fix for displaying channel & buddy names in conversation window when
 	  they have '&' in them
 	* Some memory leak fixes, especially in the Text Replacement plugin
+	* Rectangular but non-square buddy icons have rounded corners in the buddy
+	  list
 
 	Finch:
 	* Fix compiling with Glib older than 2.6
