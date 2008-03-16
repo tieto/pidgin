@@ -753,7 +753,7 @@ parse_flap(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 		{
 				/* Error! */
 				purple_debug_warning("oscar", "Expecting FLAP version "
-					"0x00000001 but received FLAP version %08lx.  Closing connection.\n",
+					"0x00000001 but received FLAP version %08x.  Closing connection.\n",
 					flap_version);
 				flap_connection_schedule_destroy(conn,
 						OSCAR_DISCONNECT_INVALID_DATA, NULL);

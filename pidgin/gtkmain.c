@@ -240,7 +240,7 @@ ui_main(void)
 			icons = g_list_append(icons,icon);
 		} else {
 			purple_debug_error("ui_main",
-					"Failed to load the default window icon (%spx version)!\n", icon_sizes[i]);
+					"Failed to load the default window icon (%spx version)!\n", icon_sizes[i].dir);
 		}
 	}
 	if(NULL == icons) {

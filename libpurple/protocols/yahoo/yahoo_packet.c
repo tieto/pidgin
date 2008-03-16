@@ -346,7 +346,7 @@ size_t yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
 int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
 {
 	size_t len;
-	int ret;
+	ssize_t ret;
 	guchar *data;
 
 	if (yd->fd < 0)
@@ -365,7 +365,8 @@ int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
 	if (ret < 0 && errno == EAGAIN)
 		ret = 0;
 	else if (ret <= 0) {
-		purple_debug_warning("yahoo", "Only wrote %d of %d bytes!\n", ret, len);
+		purple_debug_warning("yahoo", "Only wrote %" G_GSSIZE_FORMAT
+				" of %" G_GSIZE_FORMAT " bytes!\n", ret, len);
 		g_free(data);
 		return ret;
 	}

@@ -344,10 +344,12 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 
 	purple_connection_update_progress(session->gc, _("Reading challenge"), 1, 4);
 
-	purple_debug_info("msim", "nc is %d bytes, decoded\n", nc_len);
+	purple_debug_info("msim", "nc is %" G_GSIZE_FORMAT
+			" bytes, decoded\n", nc_len);
 
 	if (nc_len != MSIM_AUTH_CHALLENGE_LENGTH) {
-		purple_debug_info("msim", "bad nc length: %x != 0x%x\n", nc_len, MSIM_AUTH_CHALLENGE_LENGTH);
+		purple_debug_info("msim", "bad nc length: %" G_GSIZE_MODIFIER
+				"x != 0x%x\n", nc_len, MSIM_AUTH_CHALLENGE_LENGTH);
 		purple_connection_error_reason (session->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Unexpected challenge length from server"));
@@ -493,8 +495,8 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 
 	if (data_out_len != data_len) {
 		purple_debug_info("msim", "msim_compute_login_response: "
-				"data length mismatch: %d != %d\n",
-				data_out_len, data_len);
+				"data length mismatch: %" G_GSIZE_FORMAT " != %"
+				G_GSIZE_FORMAT "\n", data_out_len, data_len);
 	}
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
@@ -764,7 +766,7 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	username = msim_msg_get_string(msg, "_username");
 	g_return_val_if_fail(username != NULL, FALSE);
 
-	purple_debug_info("msim", "msim_incoming_action: action <%s> from <%d>\n", 
+	purple_debug_info("msim", "msim_incoming_action: action <%s> from <%s>\n",
 			msg_text, username);
 
 	if (g_str_equal(msg_text, "%typing%")) {
@@ -2796,7 +2798,7 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	guint uid;
 
 	contact_info = (MsimMessage *)data;
-	purple_debug_info("msim_add_contact_from_server_cb", "contact_info addr=%X\n", contact_info);
+	purple_debug_info("msim_add_contact_from_server_cb", "contact_info addr=%p\n", contact_info);
 	uid = msim_msg_get_integer(contact_info, "ContactID");
 
 	if (!user_lookup_info) {
@@ -2879,7 +2881,7 @@ msim_add_contact_from_server(MsimSession *session, MsimMessage *contact_info)
 
 		uid_str = g_strdup_printf("%d", uid);
 		purple_debug_info("msim_add_contact_from_server",
-				"contact_info addr=%X\n", contact_info);
+				"contact_info addr=%p\n", contact_info);
 		msim_lookup_user(session, uid_str, msim_add_contact_from_server_cb, (gpointer)msim_msg_clone(contact_info));
 		g_free(uid_str);
 	} else {

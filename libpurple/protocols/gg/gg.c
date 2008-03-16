@@ -390,7 +390,7 @@ static void ggp_callback_register_account_ok(PurpleConnection *gc,
 		goto exit_err;
 	}
 
-	purple_debug_info("gg", "register_account_ok: token_id = %d; t = %s\n",
+	purple_debug_info("gg", "register_account_ok: token_id = %s; t = %s\n",
 			token->id, t);
 	h = gg_register3(email, p1, token->id, t, 0);
 	if (h == NULL || !(s = h->data) || !s->success) {
@@ -1324,7 +1324,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 			break;
 		case GG_EVENT_ACK:
 			purple_debug_info("gg",
-				"message sent to: %ld, delivery status=%d, seq=%d\n",
+				"message sent to: %u, delivery status=%d, seq=%d\n",
 				ev->event.ack.recipient, ev->event.ack.status,
 				ev->event.ack.seq);
 			break;

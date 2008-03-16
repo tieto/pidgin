@@ -1126,7 +1126,8 @@ s5_ensure_buffer_length(PurpleProxyConnectData *connect_data, int len)
 	if(connect_data->read_len < len) {
 		if(connect_data->read_buf_len < len) {
 			/* it's not just that we haven't read enough, it's that we haven't tried to read enough yet */
-			purple_debug_info("s5", "reallocing from %d to %d\n", connect_data->read_buf_len, len);
+			purple_debug_info("s5", "reallocing from %" G_GSIZE_FORMAT
+					" to %d\n", connect_data->read_buf_len, len);
 			connect_data->read_buf_len = len;
 			connect_data->read_buffer = g_realloc(connect_data->read_buffer, connect_data->read_buf_len);
 		}

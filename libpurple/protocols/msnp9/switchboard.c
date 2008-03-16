@@ -1171,7 +1171,7 @@ xfr_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 
 	swboard = trans->data;
 
-	purple_debug_info("msn", "xfr_error %i for %s: trans %x, command %s, reason %i\n",
+	purple_debug_info("msn", "xfr_error %i for %s: trans %p, command %s, reason %i\n",
 					error, (swboard->im_user ? swboard->im_user : "(null)"), trans,
 					(trans->command ? trans->command : "(null)"), reason);
 
