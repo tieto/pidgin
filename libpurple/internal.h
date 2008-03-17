@@ -198,6 +198,14 @@
 #	endif
 #endif
 
+#ifndef G_GSSIZE_FORMAT
+#	if GLIB_SIZEOF_LONG == 8
+#		define G_GSSIZE_FORMAT "li"
+#	else
+#		define G_GSSIZE_FORMAT "i"
+#	endif
+#endif
+
 #ifndef G_GNUC_NULL_TERMINATED
 #	if     __GNUC__ >= 4
 #		define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
