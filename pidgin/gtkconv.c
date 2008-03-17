@@ -4393,7 +4393,7 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 		height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
 	diff = height - gtkconv->entry->allocation.height;
-	if (diff == 0)
+	if (diff == 0 || (diff < 0 && -diff < oneline.height / 2))
 		return FALSE;
 
 	gtk_widget_size_request(gtkconv->lower_hbox, &sr);
