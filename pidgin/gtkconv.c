@@ -4366,9 +4366,9 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	int wrapped_lines;
 	int lines;
 	GdkRectangle oneline;
-	GtkRequisition sr;
 	int height, diff;
 	int pad_top, pad_inside, pad_bottom;
+	int max_height = gtkconv->tab_cont->allocation.height / 2;
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 
@@ -4380,9 +4380,8 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 
 	lines = gtk_text_buffer_get_line_count(buffer);
 
-	/* Show a maximum of 4 lines */
-	lines = MIN(lines, 4);
-	wrapped_lines = MIN(MAX(wrapped_lines, 2), 4);
+	/* Show at least two lines */
+	wrapped_lines = MAX(wrapped_lines, 2);
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
@@ -4392,11 +4391,11 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	if (wrapped_lines > lines)
 		height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
+	height = MIN(height, max_height);
+
 	diff = height - gtkconv->entry->allocation.height;
 	if (diff == 0 || (diff < 0 && -diff < oneline.height / 2))
 		return FALSE;
-
-	gtk_widget_size_request(gtkconv->lower_hbox, &sr);
 
 	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
 		diff + gtkconv->lower_hbox->allocation.height);
