@@ -2100,7 +2100,17 @@ AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
 AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
-AC_CHECK_HEADERS(sys/sysctl.h sys/socket.h)
+
+# sys/sysctl.h on OpenBSD 4.2 requires sys/param.h
+AC_CHECK_HEADERS(sys/param.h)
+AC_CHECK_HEADERS(sys/sysctl.h, [], [],
+	[[
+		#ifdef HAVE_PARAM_H
+		# include <sys/param.h>
+		#endif
+	]])
+
+AC_CHECK_HEADERS(sys/socket.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
 AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
