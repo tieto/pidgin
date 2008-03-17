@@ -87,7 +87,7 @@ gint _qq_send_packet(PurpleConnection *gc, guint8 *buf, gint len, guint16 cmd)
 		if (len > MAX_PACKET_SIZE) {
 			purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 				   "xxx [%05d] %s, %d bytes is too large, do not send\n",
-				   qq_get_cmd_desc(cmd), qd->send_seq, len);
+				   qd->send_seq, qq_get_cmd_desc(cmd), len);
 			return -1;
 		} else {	/* I update the len for TCP packet */
 			cursor = buf;
