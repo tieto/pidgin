@@ -514,8 +514,8 @@ msn_handle_chl(char *input, char *output)
 {
 		PurpleCipher *cipher;
 		PurpleCipherContext *context;
-		char *productKey = MSNP13_WLM_PRODUCT_KEY,
-			 *productID  = MSNP13_WLM_PRODUCT_ID,
+		char *productKey = MSNP15_WLM_PRODUCT_KEY,
+			 *productID  = MSNP15_WLM_PRODUCT_ID,
 			 *hexChars   = "0123456789abcdef",
 			 buf[BUFSIZE];
 		unsigned char md5Hash[16], *newHash;

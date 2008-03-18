@@ -229,6 +229,7 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 				}
 
 				g_free(faultdata);
+				msn_soap_message_destroy(response);
 				return TRUE;
 			} else if (g_str_equal(faultdata, "wsse:FailedAuthentication")) {
 				xmlnode *reason = xmlnode_get_child(body, "faultstring");
@@ -240,6 +241,7 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 
 				g_free(reasondata);
 				g_free(faultdata);
+				msn_soap_message_destroy(response);
 				return FALSE;
 			}
 
@@ -252,6 +254,7 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 		conn->current_request = NULL;
 		request->cb(request->message, response,
 			request->cb_data);
+		msn_soap_message_destroy(response);
 		msn_soap_request_destroy(request);
 	}
 
@@ -464,22 +467,15 @@ msn_soap_connection_run(gpointer data)
 			int len = -1;
 			char *body = xmlnode_to_str(req->message->xml, &len);
 			GSList *iter;
-			char *authstr = NULL;
 
 			g_queue_pop_head(conn->queue);
 
 			conn->buf = g_string_new("");
 
-			if (conn->session->passport_info.mspauth)
-				authstr = g_strdup_printf("Cookie: MSPAuth=%s\r\n",
-					conn->session->passport_info.mspauth);
-
-
 			g_string_append_printf(conn->buf,
 				"POST %s HTTP/1.1\r\n"
 				"SOAPAction: %s\r\n"
 				"Content-Type:text/xml; charset=utf-8\r\n"
-				"%s"
 				"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
 				"Accept: */*\r\n"
 				"Host: %s\r\n"
@@ -487,7 +483,7 @@ msn_soap_connection_run(gpointer data)
 				"Connection: Keep-Alive\r\n"
 				"Cache-Control: no-cache\r\n",
 				req->path, req->message->action ? req->message->action : "",
-				authstr ? authstr : "",	conn->host, len);
+				conn->host, len);
 
 			for (iter = req->message->headers; iter; iter = iter->next) {
 				g_string_append(conn->buf, (char *)iter->data);
@@ -506,7 +502,6 @@ msn_soap_connection_run(gpointer data)
 				PURPLE_INPUT_WRITE, msn_soap_write_cb, conn);
 			msn_soap_write_cb(conn, conn->ssl->fd, PURPLE_INPUT_WRITE);
 
-			g_free(authstr);
 			g_free(body);
 		}		
 	}
@@ -657,23 +652,5 @@ msn_soap_request_destroy(MsnSoapRequest *req)
 	g_free(req->path);
 	msn_soap_message_destroy(req->message);
 	g_free(req);
-}
-
-xmlnode *
-msn_soap_xml_get(xmlnode *parent, const char *node)
-{
-	xmlnode *ret = NULL;
-	char **tokens = g_strsplit(node, "/", -1);
-	int i;
-
-	for (i = 0; tokens[i]; i++) {
-		if ((ret = xmlnode_get_child(parent, tokens[i])) != NULL)
-			parent = ret;
-		else
-			break;
-	}
-
-	g_strfreev(tokens);
-	return ret;
 }
 
