@@ -695,7 +695,7 @@ x509_ca_lazy_init(void)
 	for (iter = x509_ca_paths; iter; iter = iter->next) {
 		certdir = g_dir_open(iter->data, 0, NULL);
 		if (!certdir) {
-			purple_debug_error("certificate/x509/ca", "Couldn't open location '%s'\n", iter->data);
+			purple_debug_error("certificate/x509/ca", "Couldn't open location '%s'\n", (const char *)iter->data);
 			continue;
 		}
 

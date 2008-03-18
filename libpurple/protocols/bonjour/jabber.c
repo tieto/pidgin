@@ -1149,7 +1149,7 @@ check_if_blocked(PurpleBuddy *pb)
 
 	for(l = acc->deny; l != NULL; l = l->next) {
 		if(!purple_utf8_strcasecmp(pb->name, (char *)l->data)) {
-			purple_debug_info("bonjour", "%s has been blocked.\n", pb->name, acc->username);
+			purple_debug_info("bonjour", "%s has been blocked by %s.\n", pb->name, acc->username);
 			blocked = TRUE;
 			break;
 		}

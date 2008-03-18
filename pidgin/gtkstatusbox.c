@@ -1735,6 +1735,10 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	}
 
 	gtk_window_set_resizable (GTK_WINDOW (status_box->popup_window), FALSE);
+#if GTK_CHECK_VERSION(2,10,0)
+	gtk_window_set_type_hint (GTK_WINDOW (status_box->popup_window),
+			GDK_WINDOW_TYPE_HINT_POPUP_MENU);
+#endif
 #if GTK_CHECK_VERSION(2,2,0)
 	gtk_window_set_screen (GTK_WINDOW (status_box->popup_window),
 			gtk_widget_get_screen (GTK_WIDGET (status_box)));

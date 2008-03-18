@@ -2283,7 +2283,7 @@ static void user_search_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 			row = g_list_append(row, node ? xmlnode_get_data(node) : NULL);
 			node = xmlnode_get_child(item, "email");
 			row = g_list_append(row, node ? xmlnode_get_data(node) : NULL);
-			purple_debug_info("jabber", "row=%d\n", row);
+			purple_debug_info("jabber", "row=%p\n", row);
 			purple_notify_searchresults_row_add(results, row);
 		}
 	}

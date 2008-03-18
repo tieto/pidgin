@@ -549,7 +549,7 @@ gtk_blist_auto_personize(PurpleBlistNode *group, const char *alias)
 		char *msg = g_strdup_printf(ngettext("You have %d contact named %s. Would you like to merge them?", "You currently have %d contacts named %s. Would you like to merge them?", i), i, alias);
 		purple_request_action(NULL, NULL, msg, _("Merging these contacts will cause them to share a single entry on the buddy list and use a single conversation window. "
 							 "You can separate them again by choosing 'Expand' from the contact's context menu"), 0, NULL, NULL, NULL,
-				      merges, 2, _("_Merge"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_Cancel"), PURPLE_CALLBACK(g_list_free));
+				      merges, 2, _("_Yes"), PURPLE_CALLBACK(gtk_blist_do_personize), _("_No"), PURPLE_CALLBACK(g_list_free));
 		g_free(msg);
 	} else
 		g_list_free(merges);
@@ -2498,6 +2498,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 			purple_buddy_icon_get_scale_size(&prpl_info->icon_spec, &scale_width, &scale_height);
 
 		if (scaled || scale_height > 200 || scale_width > 200) {
+			GdkPixbuf *tmpbuf;
 			float scale_size = scaled ? 32.0 : 200.0;
 			if(scale_height > scale_width) {
 				scale_width = scale_size * (double)scale_width / (double)scale_height;
@@ -2506,12 +2507,17 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 				scale_height = scale_size * (double)scale_height / (double)scale_width;
 				scale_width = scale_size;
 			}
-
+			/* scale & round before making square, so rectangular (but non-square)
+			 * images get rounded corners too */
+			tmpbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, scale_width, scale_height);
+			gdk_pixbuf_fill(tmpbuf, 0x00000000);
+			gdk_pixbuf_scale(buf, tmpbuf, 0, 0, scale_width, scale_height, 0, 0, (double)scale_width/(double)orig_width, (double)scale_height/(double)orig_height, GDK_INTERP_BILINEAR);
+			if (pidgin_gdk_pixbuf_is_opaque(tmpbuf))
+				pidgin_gdk_pixbuf_make_round(tmpbuf);
 			ret = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, scale_size, scale_size);
 			gdk_pixbuf_fill(ret, 0x00000000);
-			gdk_pixbuf_scale(buf, ret, (scale_size-scale_width)/2, (scale_size-scale_height)/2, scale_width, scale_height, (scale_size-scale_width)/2, (scale_size-scale_height)/2, (double)scale_width/(double)orig_width, (double)scale_height/(double)orig_height, GDK_INTERP_BILINEAR);
-			if (pidgin_gdk_pixbuf_is_opaque(ret))
-				pidgin_gdk_pixbuf_make_round(ret);
+			gdk_pixbuf_copy_area(tmpbuf, 0, 0, scale_width, scale_height, ret, (scale_size-scale_width)/2, (scale_size-scale_height)/2);
+			g_object_unref(G_OBJECT(tmpbuf));
 		} else {
 			ret = gdk_pixbuf_scale_simple(buf,scale_width,scale_height, GDK_INTERP_BILINEAR);
 		}

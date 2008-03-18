@@ -903,8 +903,8 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		}
 
 		dec_in = (char *)purple_base64_decode(enc_in, NULL);
-		purple_debug(PURPLE_DEBUG_MISC, "jabber", "decoded challenge (%d): %s\n",
-				strlen(dec_in), dec_in);
+		purple_debug(PURPLE_DEBUG_MISC, "jabber", "decoded challenge (%"
+				G_GSIZE_FORMAT "): %s\n", strlen(dec_in), dec_in);
 
 		parts = parse_challenge(dec_in);
 
@@ -982,7 +982,9 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 
 				enc_out = purple_base64_encode((guchar *)response->str, response->len);
 
-				purple_debug(PURPLE_DEBUG_MISC, "jabber", "decoded response (%d): %s\n", response->len, response->str);
+				purple_debug_misc("jabber", "decoded response (%"
+						G_GSIZE_FORMAT "): %s\n",
+						response->len, response->str);
 
 				buf = g_strdup_printf("<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>%s</response>", enc_out);
 

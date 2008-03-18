@@ -38,7 +38,7 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	GSList *tlvlist;
 
 	if (!(snac2 = aim_remsnac(od, snac->id))) {
-		purple_debug_warning("oscar", "chatnav error: received response to unknown request (%08lx)\n", snac->id);
+		purple_debug_warning("oscar", "chatnav error: received response to unknown request (%08x)\n", snac->id);
 		return 0;
 	}
 
@@ -455,7 +455,7 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	int ret = 0;
 
 	if (!(snac2 = aim_remsnac(od, snac->id))) {
-		purple_debug_misc("oscar", "faim: chatnav_parse_info: received response to unknown request! (%08lx)\n", snac->id);
+		purple_debug_misc("oscar", "faim: chatnav_parse_info: received response to unknown request! (%08x)\n", snac->id);
 		return 0;
 	}
 

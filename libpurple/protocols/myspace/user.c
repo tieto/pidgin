@@ -543,7 +543,7 @@ msim_downloaded_buddy_icon(PurpleUtilFetchUrlData *url_data,
 	user = (MsimUser *)user_data;
 
 	purple_debug_info("msim_downloaded_buddy_icon",
-			"Downloaded %d bytes\n", len);
+			"Downloaded %" G_GSIZE_FORMAT " bytes\n", len);
 
 	if (!url_text) {
 		purple_debug_info("msim_downloaded_buddy_icon",

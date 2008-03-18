@@ -1051,7 +1051,8 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 			purple_debug_info("yahoo", "Error getting %s: %s\n",
 					photo_url_text, url_text);
 		} else {
-			purple_debug_info("yahoo", "%s is %d bytes\n", photo_url_text, len);
+			purple_debug_info("yahoo", "%s is %" G_GSIZE_FORMAT
+					" bytes\n", photo_url_text, len);
 			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 			
 			tmp = g_strdup_printf("<img id=\"%d\"><br>", id);

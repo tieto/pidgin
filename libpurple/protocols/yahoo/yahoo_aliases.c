@@ -79,7 +79,8 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 			purple_debug_error("yahoo_aliases","Badly formed XML\n");
 			return;
 		}
-		purple_debug_info("yahoo", "Fetched %i bytes of alias data\n", len);
+		purple_debug_info("yahoo", "Fetched %" G_GSIZE_FORMAT
+				" bytes of alias data\n", len);
 
 		/* Loop around and around and around until we have gone through all the received aliases  */
 		for(item = xmlnode_get_child(contacts, "ct"); item; item = xmlnode_get_next_twin(item)) {

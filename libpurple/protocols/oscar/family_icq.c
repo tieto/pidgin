@@ -558,7 +558,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 	cmd = byte_stream_getle16(&qbs);
 	reqid = byte_stream_getle16(&qbs);
 
-	purple_debug_misc("oscar", "icq response: %d bytes, %ld, 0x%04x, 0x%04x\n", cmdlen, ouruin, cmd, reqid);
+	purple_debug_misc("oscar", "icq response: %d bytes, %u, 0x%04x, 0x%04x\n", cmdlen, ouruin, cmd, reqid);
 
 	if (cmd == 0x0041) { /* offline message */
 #ifdef OLDSTYLE_ICQ_OFFLINEMSGS

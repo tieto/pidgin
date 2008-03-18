@@ -922,7 +922,7 @@ memrequest(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 
 	modname = aim_tlv_getstr(tlvlist, 0x0001, 1);
 
-	purple_debug_info("oscar", "Got memory request for data at 0x%08lx (%d bytes) of requested %s\n", offset, len, modname ? modname : "aim.exe");
+	purple_debug_info("oscar", "Got memory request for data at 0x%08x (%u bytes) of requested %s\n", offset, len, modname ? modname : "aim.exe");
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, offset, len, modname);

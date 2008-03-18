@@ -535,9 +535,6 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	account = purple_conversation_get_account(conv);
 
 	if (check_for_and_do_command(conv)) {
-		if (gtkconv->entry_growing) {
-			gtkconv->entry_growing = FALSE;
-		}
 		gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 		return;
 	}
@@ -594,9 +591,6 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	g_free(buf);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
-	if (gtkconv->entry_growing) {
-		gtkconv->entry_growing = FALSE;
-	}
 	gtkconv_set_unseen(gtkconv, PIDGIN_UNSEEN_NONE);
 }
 
@@ -2522,6 +2516,7 @@ update_tab_icon(PurpleConversation *conv)
 	}
 }
 
+#if 0
 /* This gets added as an idle handler when doing something that
  * redraws the icon. It sets the auto_resize gboolean to TRUE.
  * This way, when the size_allocate callback gets triggered, it notices
@@ -2534,6 +2529,7 @@ static gboolean reset_auto_resize_cb(gpointer data)
 	gtkconv->auto_resize = FALSE;
 	return FALSE;
 }
+#endif
 
 static gboolean
 redraw_icon(gpointer data)
@@ -4372,9 +4368,9 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	int wrapped_lines;
 	int lines;
 	GdkRectangle oneline;
-	GtkRequisition sr;
 	int height, diff;
 	int pad_top, pad_inside, pad_bottom;
+	int max_height = gtkconv->tab_cont->allocation.height / 2;
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 
@@ -4386,9 +4382,8 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 
 	lines = gtk_text_buffer_get_line_count(buffer);
 
-	/* Show a maximum of 4 lines */
-	lines = MIN(lines, 4);
-	wrapped_lines = MIN(MAX(wrapped_lines, 2), 4);
+	/* Show at least two lines */
+	wrapped_lines = MAX(wrapped_lines, 2);
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
@@ -4398,16 +4393,15 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	if (wrapped_lines > lines)
 		height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
-	gtkconv->auto_resize = TRUE;
-	g_idle_add(reset_auto_resize_cb, gtkconv);
+	height = MIN(height, max_height);
 
 	diff = height - gtkconv->entry->allocation.height;
-
-	gtk_widget_size_request(gtkconv->lower_hbox, &sr);
-	gtkconv->entry_growing = TRUE;
+	if (diff == 0 || (diff < 0 && -diff < oneline.height / 2))
+		return FALSE;
 
 	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
 		diff + gtkconv->lower_hbox->allocation.height);
+
 	return FALSE;
 }
 
@@ -4738,7 +4732,7 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry_buffer), "changed",
 				 G_CALLBACK(resize_imhtml_cb), gtkconv);
-	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "realize",
+	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "size-allocate",
 				 G_CALLBACK(resize_imhtml_cb), gtkconv);
 
 	default_formatize(gtkconv);

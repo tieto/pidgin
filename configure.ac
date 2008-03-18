@@ -166,7 +166,7 @@ dnl AC_CYGWIN
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(arpa/nameser_compat.h fcntl.h sys/time.h unistd.h locale.h signal.h stdint.h regex.h)
+AC_CHECK_HEADERS_ONCE(arpa/nameser_compat.h fcntl.h sys/time.h unistd.h locale.h signal.h stdint.h regex.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -658,14 +658,21 @@ AM_GCONF_SOURCE_2
 dnl #######################################################################
 dnl # Check for GStreamer
 dnl #######################################################################
+dnl
+dnl TODO: Depend on gstreamer >= 0.10.10, and remove the conditional use of
+dnl       gst_registry_fork_set_enabled.
 AC_ARG_ENABLE(gstreamer,
 	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
 if test "x$enable_gst" != "xno"; then
-	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10 >= 0.10.10], [
+	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], [
 		AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
 		AC_SUBST(GSTREAMER_CFLAGS)
 		AC_SUBST(GSTREAMER_LIBS)
+		AC_CHECK_LIB(gstreamer-0.10, gst_registry_fork_set_enabled,
+			[ AC_DEFINE(GST_CAN_DISABLE_FORKING, [],
+			  [Define if gst_registry_fork_set_enabled exists])],
+			[], [$GSTREAMER_LIBS])
 	], [
 		AC_MSG_RESULT(no)
 		enable_gst="no"
@@ -1063,7 +1070,7 @@ AC_ARG_WITH(krb4, [AC_HELP_STRING([--with-krb4=PREFIX], [compile Zephyr plugin w
 AC_ARG_WITH(zephyr, [AC_HELP_STRING([--with-zephyr=PREFIX], [compile Zephyr plugin against external libzephyr])], zephyr="$withval", zephyr="no")
 AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 
-AC_CHECK_HEADER(sys/utsname.h)
+AC_CHECK_HEADERS_ONCE(sys/utsname.h)
 AC_CHECK_FUNC(uname)
 
 AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
@@ -1391,7 +1398,7 @@ if test "$enable_perl" = yes ; then
 
 		oldCPPFLAGS="$CPPFLAGS"
 		CPPFLAGS="$CPPFLAGS $PERL_CFLAGS"
-		AC_CHECK_HEADERS(EXTERN.h)
+		AC_CHECK_HEADERS_ONCE(EXTERN.h)
 		AC_CHECK_HEADERS(perl.h, [], enable_perl=no,
 		[#if HAVE_EXTERN_H
 		 # include <EXTERN.h>
@@ -2113,11 +2120,21 @@ AC_MSG_CHECKING(for me pot o' gold)
 AC_MSG_RESULT(no)
 AC_CHECK_FUNCS(gethostid lrand48)
 AC_CHECK_FUNCS(memcpy memmove random strchr strerror vprintf)
-AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
-AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
-AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
-AC_CHECK_HEADERS(termios.h)
-AC_CHECK_HEADERS(sys/sysctl.h sys/socket.h)
+AC_CHECK_HEADERS_ONCE(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
+AC_CHECK_HEADERS_ONCE(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
+AC_CHECK_HEADERS_ONCE(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
+AC_CHECK_HEADERS_ONCE(termios.h)
+
+# sys/sysctl.h on OpenBSD 4.2 requires sys/param.h
+AC_CHECK_HEADERS_ONCE(sys/param.h)
+AC_CHECK_HEADERS(sys/sysctl.h, [], [],
+	[[
+		#ifdef HAVE_PARAM_H
+		# include <sys/param.h>
+		#endif
+	]])
+
+AC_CHECK_HEADERS_ONCE(sys/socket.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
 AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,

@@ -99,6 +99,9 @@ static const int catch_sig_list[] = {
 	SIGTERM,
 	SIGQUIT,
 	SIGCHLD,
+#if defined(USE_GSTREAMER) && !defined(GST_CAN_DISABLE_FORKING)
+	SIGALRM,
+#endif
 	-1
 };
 
@@ -188,9 +191,27 @@ sighandler(int sig)
 		fprintf(stderr, "%s", segfault_message);
 		abort();
 		break;
+#if defined(USE_GSTREAMER) && !defined(GST_CAN_DISABLE_FORKING)
+/* By default, gstreamer forks when you initialize it, and waitpids for the
+ * child.  But if libpurple reaps the child rather than leaving it to
+ * gstreamer, gstreamer's initialization fails.  So, we wait a second before
+ * reaping child processes, to give gst a chance to reap it if it wants to.
+ *
+ * This is not needed in later gstreamers, which let us disable the forking.
+ * And, it breaks the world on some Real Unices.
+ */
 	case SIGCHLD:
+		/* Restore signal catching */
+		signal(SIGCHLD, sighandler);
+		alarm(1);
+		break;
+	case SIGALRM:
+#else
+	case SIGCHLD:
+#endif
 		clean_pid();
-		signal(SIGCHLD, sighandler);    /* restore signal catching on this one! */
+		/* Restore signal catching */
+		signal(SIGCHLD, sighandler);
 		break;
 	default:
 		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
@@ -240,7 +261,7 @@ ui_main(void)
 			icons = g_list_append(icons,icon);
 		} else {
 			purple_debug_error("ui_main",
-					"Failed to load the default window icon (%spx version)!\n", icon_sizes[i]);
+					"Failed to load the default window icon (%spx version)!\n", icon_sizes[i].dir);
 		}
 	}
 	if(NULL == icons) {

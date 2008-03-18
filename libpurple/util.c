@@ -3710,7 +3710,7 @@ parse_content_len(const char *data, size_t data_len)
 	 */
 	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
 		sscanf(p, "%" G_GSIZE_FORMAT, &content_len);
-		purple_debug_misc("util", "parsed %u\n", content_len);
+		purple_debug_misc("util", "parsed %" G_GSIZE_FORMAT "\n", content_len);
 	}
 
 	return content_len;
@@ -3787,7 +3787,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 					new_data = g_try_malloc(content_len);
 					if(new_data == NULL) {
 						purple_debug_error("util",
-								"Failed to allocate %u bytes: %s\n",
+								"Failed to allocate %" G_GSIZE_FORMAT " bytes: %s\n",
 								content_len, g_strerror(errno));
 						purple_util_fetch_url_error(gfud,
 								_("Unable to allocate enough memory to hold "

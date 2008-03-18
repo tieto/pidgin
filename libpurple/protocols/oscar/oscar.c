@@ -417,7 +417,7 @@ purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcesn,
 	gchar *ret = NULL;
 	const gchar *charsetstr1, *charsetstr2;
 
-	purple_debug_info("oscar", "Parsing IM part, charset=0x%04hx, charsubset=0x%04hx, datalen=%hd\n", charset, charsubset, datalen);
+	purple_debug_info("oscar", "Parsing IM part, charset=0x%04hx, charsubset=0x%04hx, datalen=%" G_GSIZE_FORMAT "\n", charset, charsubset, datalen);
 
 	if ((datalen == 0) || (data == NULL))
 		return NULL;
@@ -2014,8 +2014,8 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 		gconstpointer data = purple_imgstore_get_data(img);
 		size_t len = purple_imgstore_get_size(img);
 		purple_debug_info("oscar",
-				   "Sending buddy icon to %s (%d bytes)\n",
-				   userinfo->sn, len);
+				"Sending buddy icon to %s (%" G_GSIZE_FORMAT " bytes)\n",
+				userinfo->sn, len);
 		aim_im_sendch2_icon(od, userinfo->sn, data, len,
 			purple_buddy_icons_get_account_icon_timestamp(account),
 			aimutil_iconsum(data, len));
