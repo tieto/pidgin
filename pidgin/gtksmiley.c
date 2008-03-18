@@ -91,11 +91,9 @@ static GtkIMHtmlSmiley *smiley_purple_to_gtkimhtml(PurpleSmiley *smiley)
 
 	filename = g_build_filename(purple_smileys_get_storing_dir(),file, NULL);
 
-	gtksmiley = g_new0(GtkIMHtmlSmiley,1);
-	gtksmiley->smile = g_strdup(purple_smiley_get_shortcut(smiley));
-	gtksmiley->hidden = FALSE;
-	gtksmiley->file = filename;
-	gtksmiley->flags = GTK_IMHTML_SMILEY_CUSTOM;
+	gtksmiley = gtk_imhtml_smiley_create(filename, purple_smiley_get_shortcut(smiley),
+			FALSE, GTK_IMHTML_SMILEY_CUSTOM);
+	g_free(filename);
 
 	return gtksmiley;
 }
@@ -106,14 +104,6 @@ void pidgin_smiley_add_to_list(PurpleSmiley *smiley)
 
 	gtksmiley = smiley_purple_to_gtkimhtml(smiley);
 	add_gtkimhtml_to_list(gtksmiley);
-}
-
-static void destroy_gtksmiley(GtkIMHtmlSmiley *gtksmiley)
-{
-	purple_debug_info("gtksmiley", "destroying %s\n", gtksmiley->smile);
-	g_free(gtksmiley->smile);
-	g_free(gtksmiley->file);
-	g_free(gtksmiley);
 }
 
 void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
@@ -132,7 +122,7 @@ void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
 		if (strcmp(gtksmiley->smile, purple_smiley_get_shortcut(smiley)))
 			continue;
 
-		destroy_gtksmiley(gtksmiley);
+		gtk_imhtml_smiley_destroy(gtksmiley);
 		break;
 	}
 
@@ -169,7 +159,7 @@ void pidgin_smileys_uninit(void)
 
 	for (; list; list = g_slist_delete_link(list, list)) {
 		gtksmiley = (GtkIMHtmlSmiley*)list->data;
-		destroy_gtksmiley(gtksmiley);
+		gtk_imhtml_smiley_destroy(gtksmiley);
 	}
 
 	gtk_smileys = NULL;

@@ -135,7 +135,7 @@ static void _pidgin_themes_smiley_themeize(GtkWidget *imhtml, gboolean custom)
 			gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), sml, icons->data);
 			icons = icons->next;
 		}
-		
+
 		if (custom == TRUE) {
 			icons = pidgin_smileys_get_all();
 
@@ -295,7 +295,6 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 		} else if (load && list) {
 			gboolean hidden = FALSE;
 			char *sfile = NULL;
-			gboolean have_used_sfile = FALSE;
 
 			if (*i == '!' && *(i + 1) == ' ') {
 				hidden = TRUE;
@@ -309,17 +308,12 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 						i++;
 					l[li++] = *(i++);
 				}
+				l[li] = 0;
 				if (!sfile) {
-					l[li] = 0;
 					sfile = g_build_filename(dirname, l, NULL);
 				} else {
-					GtkIMHtmlSmiley *smiley = g_new0(GtkIMHtmlSmiley, 1);
-					l[li] = 0;
-					smiley->file = sfile;
-					smiley->smile = g_strdup(l);
-					smiley->hidden = hidden;
+					GtkIMHtmlSmiley *smiley = gtk_imhtml_smiley_create(sfile, l, hidden, 0);
 					list->smileys = g_slist_prepend(list->smileys, smiley);
-					have_used_sfile = TRUE;
 				}
 				while (isspace(*i))
 					i++;
@@ -327,8 +321,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 			}
 
 
-			if (!have_used_sfile)
-				g_free(sfile);
+			g_free(sfile);
 		}
 	}
 
