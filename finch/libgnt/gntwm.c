@@ -101,6 +101,7 @@ static time_t last_active_time;
 static gboolean idle_update;
 static GList *act = NULL; /* list of WS with unseen activitiy */
 static gboolean ignore_keys = FALSE;
+static gboolean started_python = FALSE;
 
 static GList *
 g_list_bring_to_front(GList *list, gpointer data)
@@ -1342,7 +1343,10 @@ gnt_wm_destroy(GObject *obj)
 		wm->workspaces = g_list_delete_link(wm->workspaces, wm->workspaces);
 	}
 #ifdef USE_PYTHON
-	Py_Finalize();
+	if (started_python) {
+		Py_Finalize();
+		started_python = FALSE;
+	}
 #endif
 }
 
@@ -1523,8 +1527,11 @@ gnt_wm_class_init(GntWMClass *klass)
 #ifdef USE_PYTHON
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "run-python", run_python,
 				GNT_KEY_F3, NULL);
-	Py_SetProgramName("gnt");
-	Py_Initialize();
+	if (!Py_IsInitialized()) {
+		Py_SetProgramName("gnt");
+		Py_Initialize();
+		started_python = TRUE;
+	}
 #endif
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
