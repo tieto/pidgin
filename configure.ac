@@ -1381,7 +1381,7 @@ if test "$enable_perl" = yes ; then
 
 		oldCPPFLAGS="$CPPFLAGS"
 		CPPFLAGS="$CPPFLAGS $PERL_CFLAGS"
-		AC_CHECK_HEADERS_ONCE(EXTERN.h)
+		AC_CHECK_HEADERS(EXTERN.h)
 		AC_CHECK_HEADERS(perl.h, [], enable_perl=no,
 		[#if HAVE_EXTERN_H
 		 # include <EXTERN.h>
