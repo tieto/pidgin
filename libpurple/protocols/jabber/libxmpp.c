@@ -227,7 +227,7 @@ init_plugin(PurplePlugin *plugin)
 #ifdef HAVE_CYRUS_SASL
 	option = purple_account_option_bool_new(
 											_("Use GSSAPI (Kerberos v5) for authentication"),
-											"auth_gssapi", FALSE);
+											"auth_gssapi", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);	
 #endif

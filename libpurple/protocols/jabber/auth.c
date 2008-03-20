@@ -492,7 +492,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 #ifdef HAVE_CYRUS_SASL
 		/* Skip the GSSAPI mechanism unless it's enabled for this account */
 		if (mech_name && !strcmp(mech_name, "GSSAPI") &&
-			!purple_account_get_bool(js->gc->account, "auth_gssapi", FALSE)) {
+			!purple_account_get_bool(js->gc->account, "auth_gssapi", TRUE)) {
 			continue;
 		}
 
