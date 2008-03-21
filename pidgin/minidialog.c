@@ -51,7 +51,7 @@ GType
 pidgin_mini_dialog_get_type (void)
 {
 	static GType g_define_type_id = 0;
-	if (G_UNLIKELY (g_define_type_id == 0))
+	if (g_define_type_id == 0)
 	{
 		static const GTypeInfo g_define_type_info = {
 			sizeof (PidginMiniDialogClass),

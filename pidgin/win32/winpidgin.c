@@ -498,7 +498,7 @@ static void handle_protocol(char *cmd) {
 		return;
 	}
 
-	if (!(msg_win = FindWindowEx(HWND_MESSAGE, NULL, TEXT("WinpidginMsgWinCls"), NULL))) {
+	if (!(msg_win = FindWindowEx(NULL, NULL, TEXT("WinpidginMsgWinCls"), NULL))) {
 		printf("Unable to find an instance of Pidgin to handle protocol message.\n");
 		return;
 	}

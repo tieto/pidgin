@@ -181,7 +181,7 @@ msim_height_to_point(MsimSession *session, guint height)
 {
 	guint dpi;
 
-	dpi = purple_account_get_int(session->account, "port", MSIM_DEFAULT_DPI);
+	dpi = purple_account_get_int(session->account, "dpi", MSIM_DEFAULT_DPI);
 
 	return (guint)msim_round((POINTS_PER_INCH * 1. / dpi) * height);
 
@@ -195,7 +195,7 @@ msim_point_to_height(MsimSession *session, guint point)
 {
 	guint dpi;
 
-	dpi = purple_account_get_int(session->account, "port", MSIM_DEFAULT_DPI);
+	dpi = purple_account_get_int(session->account, "dpi", MSIM_DEFAULT_DPI);
 
 	return (guint)msim_round((dpi * 1. / POINTS_PER_INCH) * point);
 }
