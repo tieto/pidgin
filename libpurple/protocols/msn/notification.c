@@ -1071,9 +1071,61 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 {
-#if 0
+	PurpleConnection *gc;
+	MsnUserList *userlist;
+	char *who = NULL, *text = NULL;
+	xmlnode *payloadNode, *from, *textNode;
+
 	purple_debug_misc("msn", "Incoming Page: {%s}\n", payload);
-#endif
+
+	userlist = cmdproc->session->userlist;
+	gc = purple_account_get_connection(cmdproc->session->account);
+
+	/* payload looks like this:
+	   <?xml version="1.0"?>
+	   <NOTIFICATION id="0" siteid="111100400" siteurl="http://mobile.msn.com/">
+	     <TO name="passport@example.com">
+	       <VIA agent="mobile"/>
+	     </TO>
+	     <FROM name="tel:+XXXXXXXXXXX"/>
+		 <MSG pri="1" id="1">
+		   <CAT Id="110110001"/>
+		   <ACTION url="2wayIM.asp"/>
+		   <SUBSCR url="2wayIM.asp"/>
+		   <BODY lcid="1033">
+		     <TEXT>Message was here</TEXT>
+		   </BODY>
+		 </MSG>
+	   </NOTIFICATION>
+	*/
+
+	if (!(payloadNode = xmlnode_from_str(payload, len)) ||
+		!(from = xmlnode_get_child(payloadNode, "FROM")) ||
+		!(textNode = xmlnode_get_child(payloadNode, "MSG/BODY/TEXT")))
+		return;
+
+	who = g_strdup(xmlnode_get_attrib(from, "name"));
+	if (!who) return;
+
+	text = xmlnode_get_data(textNode);
+
+	/* Match number to user's mobile number, FROM is a phone number if the
+	   other side page you using your phone number */
+	if(!strncmp(who, "tel:+", 5)) {
+		MsnUser *user =
+			msn_userlist_find_user_with_mobile_phone(userlist, who + 4);
+
+		if(user && user->passport) {
+			g_free(who);
+			who = g_strdup(user->passport);
+		}
+	}
+
+	serv_got_im(gc, who, text, 0, time(NULL));
+
+	g_free(text);
+	g_free(who);
+	xmlnode_free(payloadNode);
 }
 
 static void

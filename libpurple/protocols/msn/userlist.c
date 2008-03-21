@@ -518,6 +518,28 @@ msn_userlist_find_user_with_id(MsnUserList *userlist, const char *uid)
 	return NULL;
 }
 
+MsnUser *
+msn_userlist_find_user_with_mobile_phone(MsnUserList *userlist, const char *number)
+{
+	GList *l;
+
+	g_return_val_if_fail(number != NULL, NULL);
+
+	for (l = userlist->users; l != NULL; l = l->next) {
+		MsnUser *user = (MsnUser *)l->data;
+
+		if (user->phone.mobile == NULL) {
+			continue;
+		}
+
+		if (!g_strcasecmp(number, user->phone.mobile)) {
+			return user;
+		}
+	}
+
+	return NULL;
+}
+
 void
 msn_userlist_add_group(MsnUserList *userlist, MsnGroup *group)
 {
