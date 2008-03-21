@@ -461,7 +461,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	passport = msg->remote_user;
 
 	content_type = msn_message_get_content_type(msg);
-	purple_debug_info("MSNP14","type:%d\n",content_type);
+	purple_debug_info("MSNP14", "type:%s\n", content_type);
 	if(!strcmp(content_type,"text/plain")){
 		const char *value;
 		const char *body;

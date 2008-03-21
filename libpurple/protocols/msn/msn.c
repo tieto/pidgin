@@ -236,7 +236,9 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
 	MsnPage *page;
-	char *payload;
+	MsnUser *user;
+	char *payload = NULL;
+	const char *mobile_number = NULL;
 	size_t payload_len;
 
 	session = gc->proto_data;
@@ -247,7 +249,19 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 
 	payload = msn_page_gen_payload(page, &payload_len);
 
-	trans = msn_transaction_new(cmdproc, "PGD", "%s 1 %d", who, payload_len);
+	if ((user = msn_userlist_find_user(session->userlist, who)) &&
+		(mobile_number = msn_user_get_mobile_phone(user)) &&
+		mobile_number[0] == '+') {
+		/* if msn_user_get_mobile_phone() has a + in front, it's a number
+		   that from the buddy's contact card */
+		trans = msn_transaction_new(cmdproc, "PGD", "tel:%s 1 %d",
+			mobile_number, payload_len);
+	} else {
+		/* otherwise we send to whatever phone number the buddy registered
+		   with msn */
+		trans = msn_transaction_new(cmdproc, "PGD", "%s 1 %d", who,
+			payload_len);
+	}
 
 	msn_transaction_set_payload(trans, payload, payload_len);
 	g_free(payload);
