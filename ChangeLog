@@ -16,6 +16,8 @@ version 2.4.1 ():
 	* Fix a crash when starting if you have a Zephyr account
 	* Increase XMPP ping timeout to 120 seconds, to prevent poor network
 	  connections from timing out unnecessarily.
+	* Don't crash on XMPP forms with empty default values.
+	* Fix issues with CHAP authentication for SOCKS5 proxies.
 
 	Pidgin:
 	* Remove a workaround for older versions gstreamer that was causing

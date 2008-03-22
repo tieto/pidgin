@@ -500,17 +500,38 @@ msn_userlist_find_user_with_id(MsnUserList *userlist, const char *uid)
 {
  	GList *l;
 
-        g_return_val_if_fail(uid != NULL, NULL);
+	g_return_val_if_fail(uid != NULL, NULL);
 
-        for (l = userlist->users; l != NULL; l = l->next)
-        {
-                MsnUser *user = (MsnUser *)l->data;
+	for (l = userlist->users; l != NULL; l = l->next) {
+		MsnUser *user = (MsnUser *)l->data;
 
 		if (user->uid == NULL) {
 			continue;
 		}
 
 		if ( !g_strcasecmp(uid, user->uid) ) {
+			return user;
+		}
+	}
+
+	return NULL;
+}
+
+MsnUser *
+msn_userlist_find_user_with_mobile_phone(MsnUserList *userlist, const char *number)
+{
+	GList *l;
+
+	g_return_val_if_fail(number != NULL, NULL);
+
+	for (l = userlist->users; l != NULL; l = l->next) {
+		MsnUser *user = (MsnUser *)l->data;
+
+		if (user->phone.mobile == NULL) {
+			continue;
+		}
+
+		if (!g_strcasecmp(number, user->phone.mobile)) {
 			return user;
 		}
 	}

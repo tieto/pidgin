@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-15 09:48+0100\n"
-"PO-Revision-Date: 2008-03-15 09:48+0100\n"
+"POT-Creation-Date: 2008-03-21 21:24+0100\n"
+"PO-Revision-Date: 2008-03-21 21:23+0100\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -4439,6 +4439,9 @@ msgstr "Erzwinge altes SSL (Port 5223)"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Erlaube Klartext-Authentifikation über einen unverschlüsselten Kanal"
+
+msgid "Use GSSAPI (Kerberos v5) for authentication"
+msgstr "GSSAPI (Kerberos v5) für Authentifizierung benutzen"
 
 msgid "Connect port"
 msgstr "Verbindungsport"
@@ -9988,9 +9991,6 @@ msgstr ""
 "auseinandernehmen, wenn Sie auf 'Expandieren' im Kontextmenü des Kontakts "
 "klicken"
 
-msgid "_Merge"
-msgstr "_Zusammenführen"
-
 msgid "Room _List"
 msgstr "Ra_umliste"
 
@@ -10344,26 +10344,17 @@ msgstr "/Buddys/Anzeigen/Untätigkeitszeiten"
 msgid "/Buddies/Show/Protocol Icons"
 msgstr "/Buddys/Anzeigen/Protokoll-Icons"
 
-msgid ""
-"Please enter the screen name of the person you would like to add to your "
-"buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
-"The alias will be displayed in place of the screen name whenever possible.\n"
-msgstr ""
-"Bitte geben Sie den Benutzernamen der Person ein, die Sie zur Buddy-Liste "
-"hinzufügen möchten. Sie können optional einen Alias oder Spitzname für den "
-"Buddy eingeben. Der Alias wird anstelle des Benutzernamens ausgegeben,  wann "
-"immer es möglich ist.\n"
+msgid "Add a buddy.\n"
+msgstr "Einen Buddy hinzufügen.\n"
 
-#. Set up stuff for the account box
-msgid "A_ccount:"
-msgstr "_Konto:"
+msgid "Buddy's _screen name:"
+msgstr "_Benutzername des Buddys:"
 
-#. End of account box
-msgid "_Screen name:"
-msgstr "_Benutzername:"
+msgid "(Optional) A_lias:"
+msgstr "(Optionaler) A_lias:"
 
-msgid "A_lias:"
-msgstr "A_lias:"
+msgid "Add buddy to _group:"
+msgstr "Buddy zu folgender Gruppe hinzufügen:"
 
 msgid "This protocol does not support chat rooms."
 msgstr "Dieses Protokoll unterstützt keine Chaträume."
@@ -10379,6 +10370,9 @@ msgid ""
 msgstr ""
 "Bitte geben Sie einen Alias und geeignete Informationen über den Chat ein, "
 "den Sie in Ihre Buddy-Liste aufnehmen wollen.\n"
+
+msgid "A_lias:"
+msgstr "A_lias:"
 
 msgid "Auto_join when account becomes online."
 msgstr "Automatisch _beitreten, wenn das Konto online geht."
