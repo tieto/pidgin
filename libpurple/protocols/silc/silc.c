@@ -1997,7 +1997,8 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,				        /* send_attention */
 	NULL,				        /* get_attention_types */
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL				        /* initiate_media */
+	NULL,				        /* initiate_media */
+	NULL                        /* can_do_media */
 };
 
 static PurplePluginInfo info =

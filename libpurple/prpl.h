@@ -403,9 +403,21 @@ struct _PurplePluginProtocolInfo
 	int struct_size;
 
 #ifdef USE_FARSIGHT
+	/* Initiate media with the given buddy */
 	PurpleMedia  *(*initiate_media)(PurpleConnection *conn, const char *who, PurpleMediaStreamType type);
+	
+	gboolean (*can_do_media)(PurpleConnection *conn, const char *who, PurpleMediaStreamType type);
+    
+    /*
+	gboolean (*can_receive_video)(PurpleConnection *conn, const char *who);
+	gboolean (*can_send_video)(PurpleConnection *conn, const char *who);
+	gboolean (*can_receive_audio)(PurpleConnection *conn, const char *who);
+	gboolean (*can_send_audio)(PurpleConnection *conn, const char *who);
+	*/
+    
 #else
 	void (*initiate_media)(void);
+	void (*can_do_media)(void);
 #endif
 };
 

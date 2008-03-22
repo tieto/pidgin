@@ -40,12 +40,15 @@ struct _PidginMediaPrivate
 	GstElement *send_level;
 	GstElement *recv_level;
 
+	GtkWidget *calling;
 	GtkWidget *accept;
 	GtkWidget *reject;
 	GtkWidget *hangup;
-	
+
 	GtkWidget *send_progress;
 	GtkWidget *recv_progress;
+
+	PidginMediaState state;
 };
 
 #define PIDGIN_MEDIA_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PIDGIN_TYPE_MEDIA, PidginMediaPrivate))
@@ -103,7 +106,7 @@ pidgin_media_class_init (PidginMediaClass *klass)
 	GObjectClass *gobject_class = (GObjectClass*)klass;
 	GtkContainerClass *container_class = (GtkContainerClass*)klass;
 	parent_class = g_type_class_peek_parent(klass);
-	
+
 	gobject_class->finalize = pidgin_media_finalize;
 	gobject_class->set_property = pidgin_media_set_property;
 	gobject_class->get_property = pidgin_media_get_property;
@@ -119,7 +122,7 @@ pidgin_media_class_init (PidginMediaClass *klass)
 			"Send level",
 			"The GstElement of this media's send 'level'",
 			GST_TYPE_ELEMENT,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));	
+			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, PROP_RECV_LEVEL,
 			g_param_spec_object("recv-level",
 			"Receive level",
@@ -140,15 +143,17 @@ static void
 pidgin_media_init (PidginMedia *media)
 {
 	media->priv = PIDGIN_MEDIA_GET_PRIVATE(media);
+	media->priv->calling = gtk_label_new_with_mnemonic("Calling...");
 	media->priv->hangup = gtk_button_new_with_label("Hangup");
 	media->priv->accept = gtk_button_new_with_label("Accept");
 	media->priv->reject = gtk_button_new_with_label("Reject");
-	media->priv->send_progress = gtk_progress_bar_new();	
+	media->priv->send_progress = gtk_progress_bar_new();
 	media->priv->recv_progress = gtk_progress_bar_new();
 
 	gtk_widget_set_size_request(media->priv->send_progress, 70, 5);
 	gtk_widget_set_size_request(media->priv->recv_progress, 70, 5);
-	
+
+	gtk_box_pack_start(GTK_BOX(media), media->priv->calling, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(media), media->priv->hangup, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(media), media->priv->accept, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(media), media->priv->reject, FALSE, FALSE, 0);
@@ -158,8 +163,11 @@ pidgin_media_init (PidginMedia *media)
 
 	gtk_widget_show(media->priv->send_progress);
 	gtk_widget_show(media->priv->recv_progress);
-	gtk_widget_show_all(media->priv->accept);
-	gtk_widget_show_all(media->priv->reject);
+
+	/*
+	   gtk_widget_show_all(media->priv->accept);
+	   gtk_widget_show_all(media->priv->reject);
+	   */
 }
 
 static void
@@ -219,13 +227,13 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 	printf("\n\nbus: %p\n", gst_pipeline_get_bus(GST_PIPELINE(element)));
 }
 
+/* maybe we should have different callbacks for when we received the accept
+    and we accepted ourselves */
 static void
 pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
-	gtk_widget_show(gtkmedia->priv->hangup);
-	gtk_widget_hide(gtkmedia->priv->accept);
-	gtk_widget_hide(gtkmedia->priv->reject);
+	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
 }
 
 static void
@@ -279,6 +287,8 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 				G_CALLBACK(pidgin_media_reject_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "got-hangup",
 				G_CALLBACK(pidgin_media_got_hangup_cb), media);
+			g_signal_connect(G_OBJECT(media->priv->media), "got-accept",
+				G_CALLBACK(pidgin_media_accept_cb), media);
 			break;
 		case PROP_SEND_LEVEL:
 			if (media->priv->send_level)
@@ -292,7 +302,7 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 			media->priv->recv_level = g_value_get_object(value);
 			g_object_ref(media->priv->recv_level);
 			break;
-		default:	
+		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
@@ -303,9 +313,9 @@ pidgin_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 {
 	PidginMedia *media;
 	g_return_if_fail(PIDGIN_IS_MEDIA(object));
-	
+
 	media = PIDGIN_MEDIA(object);
-	
+
 	switch (prop_id) {
 		case PROP_MEDIA:
 			g_value_set_object(value, media->priv->media);
@@ -316,16 +326,55 @@ pidgin_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 		case PROP_RECV_LEVEL:
 			g_value_set_object(value, media->priv->recv_level);
 			break;
-		default:	
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
 	}
 }
 
 GtkWidget *
-pidgin_media_new(PurpleMedia *media, GstElement *sendlevel, GstElement *recvlevel)
+pidgin_media_new(PurpleMedia *media, PidginMediaState state,
+                 GstElement *sendlevel, GstElement *recvlevel)
 {
-	return GTK_WIDGET(g_object_new(pidgin_media_get_type(), "media", media, "send-level", sendlevel, "recv-level", recvlevel, NULL));
+	PidginMedia *gtkmedia = g_object_new(pidgin_media_get_type(), "media", media,
+			"send-level", sendlevel,
+			"recv-level", recvlevel, NULL);
+	pidgin_media_set_state(gtkmedia, state);
+	return GTK_WIDGET(gtkmedia);
+}
+
+void
+pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state)
+{
+	gtkmedia->priv->state = state;
+	switch (state) {
+		case PIDGIN_MEDIA_WAITING:
+			gtk_widget_show(gtkmedia->priv->calling);
+			gtk_widget_hide(gtkmedia->priv->accept);
+			gtk_widget_hide(gtkmedia->priv->reject);
+			gtk_widget_hide(gtkmedia->priv->hangup);
+			break;
+		case PIDGIN_MEDIA_REQUESTED:
+			gtk_widget_show(gtkmedia->priv->accept);
+			gtk_widget_show(gtkmedia->priv->reject);
+			gtk_widget_hide(gtkmedia->priv->calling);
+			gtk_widget_hide(gtkmedia->priv->hangup);
+			break;
+		case PIDGIN_MEDIA_ACCEPTED:
+			gtk_widget_show(gtkmedia->priv->hangup);
+			gtk_widget_hide(gtkmedia->priv->calling);
+			gtk_widget_hide(gtkmedia->priv->accept);
+			gtk_widget_hide(gtkmedia->priv->reject);
+			break;
+		case PIDGIN_MEDIA_REJECTED:
+			gtk_widget_hide(gtkmedia->priv->calling);
+			gtk_widget_hide(gtkmedia->priv->hangup);
+			gtk_widget_hide(gtkmedia->priv->accept);
+			gtk_widget_hide(gtkmedia->priv->reject);
+			break;
+		default:
+			break;
+	}
 }
 
 #endif  /* USE_FARSIGHT */

@@ -3125,7 +3125,8 @@ static PurplePluginProtocolInfo prpl_info = {
 	msim_send_attention,   /* send_attention */
 	msim_attention_types,  /* attention_types */
 	sizeof(PurplePluginProtocolInfo), /* struct_size */
-	NULL                   /* initiate_media */
+	NULL,                   /* initiate_media */
+	NULL                    /* can_do_media */
 };
 
 

@@ -30,8 +30,12 @@
 #include "connection.h"
 #include "media.h"
 
-#ifdef USE_FARSIGHT
+#include "debug.h"
 
+#ifdef USE_FARSIGHT
+#ifdef USE_GSTPROPS
+
+#include <gst/interfaces/propertyprobe.h>
 #include <farsight/farsight.h>
 
 struct _PurpleMediaPrivate
@@ -67,6 +71,7 @@ enum {
 	HANGUP,
 	REJECT,
 	GOT_HANGUP,
+	GOT_ACCEPT,
 	LAST_SIGNAL
 };
 static guint purple_media_signals[LAST_SIGNAL] = {0};
@@ -200,6 +205,10 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE, 0);
+	purple_media_signals[GOT_ACCEPT] = g_signal_new("got-accept", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
 
 	g_type_class_add_private(klass, sizeof(PurpleMediaPrivate));
 }
@@ -209,7 +218,7 @@ static void
 purple_media_init (PurpleMedia *media)
 {
 	media->priv = PURPLE_MEDIA_GET_PRIVATE(media);
-	memset(media->priv, 0, sizeof(media->priv));	
+	memset(media->priv, 0, sizeof(media->priv));
 }
 
 static void
@@ -223,7 +232,7 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 {
 	PurpleMedia *media;
 	g_return_if_fail(PURPLE_IS_MEDIA(object));
-	
+
 	media = PURPLE_MEDIA(object);
 
 	switch (prop_id) {
@@ -455,4 +464,161 @@ purple_media_got_hangup(PurpleMedia *media)
 	g_signal_emit(media, purple_media_signals[GOT_HANGUP], 0);
 }
 
+void
+purple_media_got_accept(PurpleMedia *media)
+{
+    g_signal_emit(media, purple_media_signals[GOT_ACCEPT], 0);
+}
+
+gchar*
+purple_media_get_device_name(GstElement *element, GValue *device)
+{
+	gchar *name;
+
+	GstElementFactory *factory = gst_element_get_factory(element);
+	GstElement *temp = gst_element_factory_create(factory, "tmp_src");
+
+	g_object_set_property (G_OBJECT (temp), "device", device);
+	g_object_get (G_OBJECT (temp), "device-name", &name, NULL);
+	gst_object_unref(temp);
+
+	return name;
+}
+
+GList*
+purple_media_get_devices(GstElement *element)
+{
+	GObjectClass *klass;
+	GstPropertyProbe *probe;
+	const GParamSpec *pspec;
+
+	const gchar *longname = NULL;
+
+	GstElementFactory *factory =
+		gst_element_get_factory(element);
+
+	GList *ret = NULL;
+
+	longname = gst_element_factory_get_longname(factory);
+	klass = G_OBJECT_GET_CLASS(element);
+
+	if (!g_object_class_find_property (klass, "device") ||
+			!GST_IS_PROPERTY_PROBE (element) ||
+			!(probe = GST_PROPERTY_PROBE (element)) ||
+			!(pspec = gst_property_probe_get_property (probe, "device"))) {
+		purple_debug_info("Found source '%s' (%s) - no device",
+				longname, GST_PLUGIN_FEATURE (factory)->name);
+	} else {
+		gint n;
+		gchar *name;
+		GValueArray *array;
+
+		purple_debug_info("media", "Found devices\n");
+
+		/* Set autoprobe[-fps] to FALSE to avoid delays when probing. */
+		if (g_object_class_find_property (klass, "autoprobe")) {
+			g_object_set (G_OBJECT (element), "autoprobe", FALSE, NULL);
+			if (g_object_class_find_property (klass, "autoprobe-fps")) {
+				g_object_set (G_OBJECT (element), "autoprobe-fps", FALSE, NULL);
+			}
+		}
+
+		array = gst_property_probe_probe_and_get_values (probe, pspec);
+		if (array != NULL) {
+
+			for (n = 0 ; n < array->n_values ; n++) {
+				GValue *device = g_value_array_get_nth (array, n);
+				gst_element_set_state (element, GST_STATE_NULL);
+
+				ret = g_list_append(ret, device);
+			}
+		}
+	}
+
+	return ret;
+}
+
+void
+purple_media_element_set_device(GstElement *element, GValue *device)
+{
+	g_object_set_property(G_OBJECT(element), "device", device); 
+}
+
+GValue *
+purple_media_element_get_device(GstElement *element)
+{
+	GValue *device;
+	g_object_get(G_OBJECT(element), "device", &device, NULL);
+	return device;
+}
+
+GstElement *
+purple_media_get_element(const gchar *factory_name)
+{
+	GstElementFactory *factory = gst_element_factory_find(factory_name);
+	GstElement *element = gst_element_factory_create(factory, "video_src");
+	gst_object_unref(factory);
+	return element;
+}
+
+void
+purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
+{
+	GstElement *src;
+	GstPad *pad;
+	GstPad *ghost;
+	const gchar *audio_device = purple_prefs_get_string("/purple/media/audio/device");
+
+	purple_debug_info("media", "purple_media_audio_init_src\n");
+
+	*sendbin = gst_bin_new("sendbin");
+	src = gst_element_factory_make("alsasrc", "asrc");
+	*sendlevel = gst_element_factory_make("level", "sendlevel");
+	gst_bin_add_many(GST_BIN(*sendbin), src, *sendlevel, NULL);
+	gst_element_link(src, *sendlevel);
+	pad = gst_element_get_pad(*sendlevel, "src");
+	ghost = gst_ghost_pad_new("ghostsrc", pad);
+	gst_element_add_pad(*sendbin, ghost);
+	g_object_set(G_OBJECT(*sendlevel), "message", TRUE, NULL);
+
+	/* set current audio device on "src"... */
+	if (audio_device) {
+		GList *devices = purple_media_get_devices(src);
+		GList *dev = devices;
+		purple_debug_info("media", "Setting device of GstElement src to %s\n",
+				audio_device);
+		for (; dev ; dev = dev->next) {
+			GValue *device = (GValue *) dev->data;
+			char *name = purple_media_get_device_name(src, device);
+			if (strcmp(name, audio_device) == 0) {
+				purple_media_element_set_device(src, device);
+			}
+			g_free(name);
+		}
+	}
+}
+
+void
+purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
+{
+	GstElement *sink;
+	GstPad *pad, *ghost;
+
+	purple_debug_info("media", "purple_media_audio_init_recv\n");
+
+	*recvbin = gst_bin_new("pidginrecvbin");
+	sink = gst_element_factory_make("alsasink", "asink");
+	g_object_set(G_OBJECT(sink), "sync", FALSE, NULL);
+	*recvlevel = gst_element_factory_make("level", "recvlevel");
+	gst_bin_add_many(GST_BIN(*recvbin), sink, *recvlevel, NULL);
+	gst_element_link(*recvlevel, sink);
+	pad = gst_element_get_pad(*recvlevel, "sink");
+	ghost = gst_ghost_pad_new("ghostsink", pad);
+	gst_element_add_pad(*recvbin, ghost);
+	g_object_set(G_OBJECT(*recvlevel), "message", TRUE, NULL);
+
+	purple_debug_info("media", "purple_media_audio_init_recv end\n");
+}
+
+#endif  /* USE_GSTPROPS */
 #endif  /* USE_FARSIGHT */

@@ -56,6 +56,7 @@ typedef struct _JabberStream JabberStream;
 #include "roomlist.h"
 #include "sslconn.h"
 #include "media.h"
+#include "mediamanager.h"
 
 #include "jutil.h"
 #include "xmlnode.h"
@@ -265,7 +266,16 @@ void jabber_register_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
 
 #ifdef USE_FARSIGHT
-PurpleMedia *jabber_media_initiate(PurpleConnection *gc, const char *who, PurpleMediaStreamType type);
+PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who, PurpleMediaStreamType type);
+gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, PurpleMediaStreamType type);
+
+/* Jingle handle session messages */
+void jabber_handle_session_initiate(JabberStream *js, xmlnode *packet);
+void jabber_handle_session_accept(JabberStream *js, xmlnode *packet);
+void jabber_handle_session_terminate(JabberStream *js, xmlnode *packet);
+void jabber_handle_session_candidates(JabberStream *js, xmlnode *packet);
+void jabber_handle_session_content_replace(JabberStream *js, xmlnode *packet);
+
 #endif
 
 #endif /* _PURPLE_JABBER_H_ */

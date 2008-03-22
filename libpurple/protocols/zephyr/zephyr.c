@@ -2911,7 +2911,9 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,
 	NULL,
 	NULL,
-        sizeof(PurplePluginProtocolInfo)
+        sizeof(PurplePluginProtocolInfo),
+	NULL,					/* initate_media */
+	NULL					/* can_do_media */
 };
 
 static PurplePluginInfo info = {

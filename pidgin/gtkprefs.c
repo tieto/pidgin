@@ -145,12 +145,10 @@ dropdown_set(GObject *w, const char *key)
 
 	if (type == PURPLE_PREF_INT) {
 		int_value = GPOINTER_TO_INT(g_object_get_data(w, "value"));
-
 		purple_prefs_set_int(key, int_value);
 	}
 	else if (type == PURPLE_PREF_STRING) {
 		str_value = (const char *)g_object_get_data(w, "value");
-
 		purple_prefs_set_string(key, str_value);
 	}
 	else if (type == PURPLE_PREF_BOOLEAN) {
@@ -848,7 +846,7 @@ interface_page(void)
 					_("Never"), "never",
 					NULL);
 	gtk_size_group_add_widget(sg, label);
-        gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
 	vbox = pidgin_make_frame(ret, _("Conversation Window Hiding"));
 	label = pidgin_prefs_dropdown(vbox, _("_Hide new IM conversations:"),
@@ -858,7 +856,7 @@ interface_page(void)
 					_("Always"), "always",
 					NULL);
 	gtk_size_group_add_widget(sg, label);
-        gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
 
 	/* All the tab options! */
@@ -893,7 +891,7 @@ interface_page(void)
 #endif
 					NULL);
 	gtk_size_group_add_widget(sg, label);
-        gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 
 	names = pidgin_conv_placement_get_options();
 	label = pidgin_prefs_dropdown_from_list(vbox2, _("N_ew conversations:"),
@@ -1912,6 +1910,105 @@ sound_page(void)
 	return ret;
 }
 
+#ifdef USE_FARSIGHT
+
+/* get a GList of pairs name / device */
+static GList *
+get_device_items(const GstElement *element, 
+		 const GList *devices)
+{
+	GList *ret = NULL;
+
+	for(; devices ; devices = devices->next) {
+		gchar *name = purple_media_get_device_name(element, devices->data);
+		ret = g_list_append(ret, name);
+		ret = g_list_append(ret, name);
+	}
+
+	return ret;
+}
+
+/*
+ * Test functions to run video preview
+ * (this is not really functional right now...)
+ *
+ */
+static void
+preview_button_clicked(GtkWidget *widget, gpointer *data)
+{
+	GstElement *video = (GstElement *) data;
+
+	/* create a preview window... */
+	GstElement *output = gst_element_factory_make("autovideosink", NULL);
+	GstElement *pipeline = NULL;
+	GError *p_err;
+
+	gchar test_pipeline_str[50] = "v4lsrc ! ffmpegcolorspace ! autovideosink";
+	pipeline = gst_parse_launch (test_pipeline_str, &p_err);
+
+	gst_element_set_state(pipeline, GST_STATE_PLAYING);
+}
+
+static GtkWidget *
+media_page()
+{
+	GtkWidget *ret;
+	GtkWidget *sg;
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *dd;
+	GtkWidget *preview_button;
+
+	GstElement *video = purple_media_get_element("v4lsrc");
+	GstElement *audio = purple_media_get_element("alsasrc");
+
+	GList *video_devices = purple_media_get_devices(video);
+	GList *audio_devices = purple_media_get_devices(audio);
+
+	GList *video_items = get_device_items(video, video_devices);
+	GList *audio_items = get_device_items(audio, audio_devices);
+
+	g_list_free(video_devices);
+	g_list_free(audio_devices);
+
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	vbox = pidgin_make_frame (ret, _("Video Input"));
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	dd = pidgin_prefs_dropdown_from_list(hbox, _("_Device:"), PURPLE_PREF_STRING,
+			"/purple/media/video/device",
+			video_items);
+
+	gtk_size_group_add_widget(sg, dd);
+	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
+
+	preview_button = gtk_button_new_with_mnemonic(_("_Preview"));
+	g_signal_connect(G_OBJECT(preview_button), "clicked",
+			G_CALLBACK(preview_button_clicked), video);
+
+	gtk_container_add(hbox, preview_button);
+	gtk_container_add(vbox, hbox);
+
+	vbox = pidgin_make_frame (ret, _("Audio Input"));
+	dd = pidgin_prefs_dropdown_from_list(vbox, _("_Device:"), PURPLE_PREF_STRING,
+			"/purple/media/audio/device",
+			audio_items);
+
+	gtk_size_group_add_widget(sg, dd);
+	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
+
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	gtk_widget_show_all(ret);
+
+	return ret;
+}
+
+#endif
 
 static void
 set_idle_away(PurpleSavedStatus *status)
@@ -2037,6 +2134,10 @@ static void prefs_notebook_init(void) {
 	prefs_notebook_add_page(_("Conversations"), conv_page(), notebook_page++);
 	prefs_notebook_add_page(_("Smiley Themes"), theme_page(), notebook_page++);
 	prefs_notebook_add_page(_("Sounds"), sound_page(), notebook_page++);
+
+#if USE_FARSIGHT
+	prefs_notebook_add_page(_("Media"), media_page(), notebook_page++);
+#endif	
 	prefs_notebook_add_page(_("Network"), network_page(), notebook_page++);
 #ifndef _WIN32
 	/* We use the registered default browser in windows */
@@ -2161,6 +2262,14 @@ pidgin_prefs_init(void)
 	/* Smiley Callbacks */
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
 								smiley_theme_pref_cb, NULL);
+
+#ifdef USE_FARSIGHT
+	purple_prefs_add_none("/purple/media");
+	purple_prefs_add_none("/purple/media/video");
+	purple_prefs_add_string("/purple/media/video/device", "");
+	purple_prefs_add_none("/purple/media/audio");
+	purple_prefs_add_string("/purple/media/audio/device", "");
+#endif /* USE_FARSIGHT */
 
 	pidgin_prefs_update_old();
 }

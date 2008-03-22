@@ -27,6 +27,7 @@
 #define __MEDIA_H_
 
 #ifdef USE_FARSIGHT
+#ifdef USE_GSTPROPS
 
 #include <farsight/farsight.h>
 #include <glib.h>
@@ -89,8 +90,27 @@ void purple_media_accept(PurpleMedia *media);
 void purple_media_reject(PurpleMedia *media);
 void purple_media_hangup(PurpleMedia *media);
 void purple_media_got_hangup(PurpleMedia *media);
+void purple_media_got_accept(PurpleMedia *media);
+
+gchar *purple_media_get_device_name(GstElement *element, 
+										  GValue *device);
+
+GList *purple_media_get_devices(GstElement *element);
+void purple_media_element_set_device(GstElement *element, GValue *device);
+void purple_media_element_set_device_from_name(GstElement *element,
+											   const gchar *name);
+GValue *purple_media_element_get_device(GstElement *element);
+GstElement *purple_media_get_element(const gchar *factory_name);
+
+void purple_media_audio_init_src(GstElement **sendbin,
+                                 GstElement **sendlevel);
+void purple_media_video_init_src(GstElement **sendbin);
+
+void purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel);
+
 G_END_DECLS
 
+#endif  /* USE_GSTPROPS */
 #endif  /* USE_FARSIGHT */
 
 

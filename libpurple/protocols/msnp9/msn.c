@@ -2148,7 +2148,8 @@ static PurplePluginProtocolInfo prpl_info =
 	msn_send_attention,                     /* send_attention */
 	msn_attention_types,                    /* attention_types */
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-	NULL                                    /* initiate_media */
+	NULL,                                    /* initiate_media */
+	NULL                                    /* can_do_media */
 };
 
 static PurplePluginInfo info =

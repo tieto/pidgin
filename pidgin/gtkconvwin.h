@@ -50,6 +50,7 @@ struct _PidginWindow
 
 		GtkWidget *view_log;
 
+		GtkWidget *call;
 		GtkWidget *send_file;
 		GtkWidget *add_pounce;
 		GtkWidget *get_info;

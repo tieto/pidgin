@@ -26,10 +26,6 @@
 #ifndef __GTKMEDIA_H_
 #define __GTKMEDIA_H_
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #ifdef USE_FARSIGHT
 
 #include <farsight/farsight.h>
@@ -50,6 +46,7 @@ G_BEGIN_DECLS
 typedef struct _PidginMedia PidginMedia;
 typedef struct _PidginMediaClass PidginMediaClass;
 typedef struct _PidginMediaPrivate PidginMediaPrivate;
+typedef enum _PidginMediaState PidginMediaState;
 
 struct _PidginMediaClass
 {
@@ -62,9 +59,25 @@ struct _PidginMedia
 	PidginMediaPrivate *priv;
 };
 
+enum _PidginMediaState
+{
+	/* Waiting for response */
+	PIDGIN_MEDIA_WAITING = 1,
+	/* Got request */
+	PIDGIN_MEDIA_REQUESTED,
+	/* Accepted call */
+	PIDGIN_MEDIA_ACCEPTED,
+	/* Rejected call */
+	PIDGIN_MEDIA_REJECTED,
+};
+
 GType pidgin_media_get_type(void);
 
-GtkWidget *pidgin_media_new(PurpleMedia *media, GstElement *send_level, GstElement *recv_level);
+GtkWidget *pidgin_media_new(PurpleMedia *media, PidginMediaState state,
+                            GstElement *send_level, GstElement *recv_level);
+PidginMediaState pidgin_media_get_state(PidginMedia *gtkmedia);
+void pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state);
+
 
 G_END_DECLS
 

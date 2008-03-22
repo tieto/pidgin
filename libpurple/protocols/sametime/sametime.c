@@ -5188,7 +5188,7 @@ static PurplePluginProtocolInfo mw_prpl_info = {
   .offline_message           = NULL,
   .whiteboard_prpl_ops       = NULL,
   .send_raw                  = NULL,
-  .struct_size               = sizeof(PurplePluginProtocolInfo)
+  .struct_size               = sizeof(PurplePluginProtocolInfo)		
 };
 
 

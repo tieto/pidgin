@@ -4378,7 +4378,8 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoo_send_attention,
 	yahoo_attention_types,
 	sizeof(PurplePluginProtocolInfo),
-	NULL
+	NULL,					/* initiate_media */
+	NULL                    /* can_do_media */
 };
 
 static PurplePluginInfo info =

@@ -95,4 +95,7 @@ AM_CPPFLAGS = \
 	-DQQ_BUDDY_ICON_DIR=\"$(datadir)/pixmaps/purple/buddy_icons/qq\" \
 	$(DEBUG_CFLAGS) \
 	$(FARSIGHT_CFLAGS) \
-	$(GLIB_CFLAGS)
+	$(GLIB_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(LIBXML_CFLAGS)
+

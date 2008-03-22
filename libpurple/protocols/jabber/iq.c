@@ -313,7 +313,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	const char *xmlns;
 	const char *type, *id, *from;
 	JabberIqHandler *jih;
-
+	
 	query = xmlnode_get_child(packet, "query");
 	type = xmlnode_get_attrib(packet, "type");
 	from = xmlnode_get_attrib(packet, "from");
@@ -353,12 +353,37 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		return;
 	}
 	
-	purple_debug_info("jabber", "jabber_iq_parse\n");
-
 	if(xmlnode_get_child_with_namespace(packet, "ping", "urn:xmpp:ping")) {
 		jabber_ping_parse(js, packet);
 		return;
 	}
+	
+#ifdef USE_FARSIGHT
+	/* handle session initiate XEP 0167 */
+	if (type && !strcmp(type, "set")) {
+		/* is this a Jingle package? */
+		xmlnode *jingle = xmlnode_get_child(packet, "jingle");
+		if (jingle) {
+			const char *action = xmlnode_get_attrib(jingle, "action");
+			purple_debug_info("jabber", "got Jingle package action = %s\n",
+							  action);
+			if (!strcmp(action, "session-initiate")) {
+				jabber_handle_session_initiate(js, packet);
+			} else if (!strcmp(action, "session-accept")
+					   || !strcmp(action, "content-accept")) {
+				jabber_handle_session_accept(js, packet);
+			} else if (!strcmp(action, "session-terminate")) {
+				jabber_handle_session_terminate(js, packet);
+			} else if (!strcmp(action, "transport-info")) {
+				jabber_handle_session_candidates(js, packet);
+			} else if (!strcmp(action, "content-replace")) {
+				jabber_handle_session_content_replace(js, packet);
+			}
+
+			return;
+		}
+	}
+#endif
 
 	/* If we get here, send the default error reply mandated by XMPP-CORE */
 	if(type && (!strcmp(type, "set") || !strcmp(type, "get"))) {

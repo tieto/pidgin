@@ -197,6 +197,7 @@ pidgin_LDADD = \
 	$(LIBXML_LIBS) \
 	$(GTK_LIBS) \
 	$(FARSIGHT_LIBS) \
+	$(GSTPROPS_LIBS) \
 	$(top_builddir)/libpurple/libpurple.la
 
 if USE_INTERNAL_LIBGADU
@@ -222,5 +223,6 @@ AM_CPPFLAGS = \
 	$(STARTUP_NOTIFICATION_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(INTGG_CFLAGS) \
-	$(FARSIGHT_CFLAGS) 
+	$(FARSIGHT_CFLAGS) \
+	$(GSTPROPS_CFLAGS)
 endif  # ENABLE_GTK

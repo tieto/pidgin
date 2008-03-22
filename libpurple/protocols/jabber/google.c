@@ -214,8 +214,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 	FarsightCodec *codec;
 	const char *id, *encoding_name,  *clock_rate;
 	int res;
-	
-
+		
 	if (session->state != UNINIT) {
 		purple_debug_error("jabber", "Received initiate for active session.\n");
 		return FALSE;
@@ -226,6 +225,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 		purple_debug_error("jabber", "Farsight's rtp plugin not installed");
 		return FALSE;
 	}
+	
 	session->stream = farsight_session_create_stream(fs, FARSIGHT_MEDIA_TYPE_AUDIO, FARSIGHT_STREAM_DIRECTION_BOTH);
 
 	g_object_set(G_OBJECT(session->stream), "transmitter", "libjingle", NULL);
@@ -278,7 +278,7 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 	xmlnode *cand;
 	static int name = 0;
 	char n[4];	
-	
+		
 	for (cand = xmlnode_get_child(sess, "candidate"); cand; cand = xmlnode_get_next_twin(cand)) {
 		FarsightTransportInfo *info = g_new0(FarsightTransportInfo, 1);
 		g_snprintf(n, sizeof(n), "S%d", name++);
