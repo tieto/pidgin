@@ -86,6 +86,7 @@ GstElement *purple_media_get_audio_pipeline(PurpleMedia *media);
 PurpleConnection *purple_media_get_connection(PurpleMedia *media);
 const char *purple_media_get_screenname(PurpleMedia *media);
 void purple_media_ready(PurpleMedia *media);
+void purple_media_wait(PurpleMedia *media);
 void purple_media_accept(PurpleMedia *media);
 void purple_media_reject(PurpleMedia *media);
 void purple_media_hangup(PurpleMedia *media);

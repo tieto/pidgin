@@ -34,6 +34,18 @@
 
 #include <farsight/farsight.h>
 
+typedef enum
+{
+	/* Waiting for response */
+	PIDGIN_MEDIA_WAITING = 1,
+	/* Got request */
+	PIDGIN_MEDIA_REQUESTED,
+	/* Accepted call */
+	PIDGIN_MEDIA_ACCEPTED,
+	/* Rejected call */
+	PIDGIN_MEDIA_REJECTED,
+} PidginMediaState;
+
 struct _PidginMediaPrivate
 {
 	PurpleMedia *media;
@@ -58,6 +70,7 @@ static void pidgin_media_init (PidginMedia *media);
 static void pidgin_media_finalize (GObject *object);
 static void pidgin_media_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec);
 static void pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec);
+static void pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state);
 
 static GtkHBoxClass *parent_class = NULL;
 
@@ -164,15 +177,20 @@ pidgin_media_init (PidginMedia *media)
 	gtk_widget_show(media->priv->send_progress);
 	gtk_widget_show(media->priv->recv_progress);
 
-	/*
-	   gtk_widget_show_all(media->priv->accept);
-	   gtk_widget_show_all(media->priv->reject);
-	   */
+	gtk_widget_show_all(media->priv->accept);
+	gtk_widget_show_all(media->priv->reject);
 }
 
 static void
 pidgin_media_finalize (GObject *media)
 {
+	PidginMedia *gtkmedia = PIDGIN_MEDIA(media);
+	if (gtkmedia->priv->media)
+		g_object_unref(gtkmedia->priv->media);
+	if (gtkmedia->priv->send_level)
+		gst_object_unref(gtkmedia->priv->send_level);
+	if (gtkmedia->priv->recv_level)
+		gst_object_unref(gtkmedia->priv->recv_level);
 }
 
 static void
@@ -225,6 +243,12 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 	gst_bus_add_signal_watch(GST_BUS(gst_pipeline_get_bus(GST_PIPELINE(element))));
 	g_signal_connect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))), "message", G_CALLBACK(level_message_cb), gtkmedia);
 	printf("\n\nbus: %p\n", gst_pipeline_get_bus(GST_PIPELINE(element)));
+}
+
+static void
+pidgin_media_wait_cb(PurpleMedia *media, PidginMedia *gtkmedia)
+{
+	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_WAITING);
 }
 
 /* maybe we should have different callbacks for when we received the accept
@@ -281,6 +305,8 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 				G_CALLBACK(pidgin_media_accept_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media) ,"ready",
 				G_CALLBACK(pidgin_media_ready_cb), media);
+			g_signal_connect(G_OBJECT(media->priv->media) ,"wait",
+				G_CALLBACK(pidgin_media_wait_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "hangup",
 				G_CALLBACK(pidgin_media_hangup_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "reject",
@@ -333,17 +359,15 @@ pidgin_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 }
 
 GtkWidget *
-pidgin_media_new(PurpleMedia *media, PidginMediaState state,
-                 GstElement *sendlevel, GstElement *recvlevel)
+pidgin_media_new(PurpleMedia *media, GstElement *sendlevel, GstElement *recvlevel)
 {
 	PidginMedia *gtkmedia = g_object_new(pidgin_media_get_type(), "media", media,
 			"send-level", sendlevel,
 			"recv-level", recvlevel, NULL);
-	pidgin_media_set_state(gtkmedia, state);
 	return GTK_WIDGET(gtkmedia);
 }
 
-void
+static void
 pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state)
 {
 	gtkmedia->priv->state = state;
@@ -352,23 +376,17 @@ pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state)
 			gtk_widget_show(gtkmedia->priv->calling);
 			gtk_widget_hide(gtkmedia->priv->accept);
 			gtk_widget_hide(gtkmedia->priv->reject);
-			gtk_widget_hide(gtkmedia->priv->hangup);
+			gtk_widget_show(gtkmedia->priv->hangup);
 			break;
 		case PIDGIN_MEDIA_REQUESTED:
+			gtk_widget_hide(gtkmedia->priv->calling);
 			gtk_widget_show(gtkmedia->priv->accept);
 			gtk_widget_show(gtkmedia->priv->reject);
-			gtk_widget_hide(gtkmedia->priv->calling);
 			gtk_widget_hide(gtkmedia->priv->hangup);
 			break;
 		case PIDGIN_MEDIA_ACCEPTED:
 			gtk_widget_show(gtkmedia->priv->hangup);
 			gtk_widget_hide(gtkmedia->priv->calling);
-			gtk_widget_hide(gtkmedia->priv->accept);
-			gtk_widget_hide(gtkmedia->priv->reject);
-			break;
-		case PIDGIN_MEDIA_REJECTED:
-			gtk_widget_hide(gtkmedia->priv->calling);
-			gtk_widget_hide(gtkmedia->priv->hangup);
 			gtk_widget_hide(gtkmedia->priv->accept);
 			gtk_widget_hide(gtkmedia->priv->reject);
 			break;

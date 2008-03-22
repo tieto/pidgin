@@ -67,6 +67,7 @@ static GObjectClass *parent_class = NULL;
 
 enum {
 	READY,
+	WAIT,
 	ACCEPTED,
 	HANGUP,
 	REJECT,
@@ -186,6 +187,10 @@ purple_media_class_init (PurpleMediaClass *klass)
 			G_PARAM_READWRITE));
 
 	purple_media_signals[READY] = g_signal_new("ready", G_TYPE_FROM_CLASS(klass),
+				 	 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
+	purple_media_signals[WAIT] = g_signal_new("wait", G_TYPE_FROM_CLASS(klass),
 				 	 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE, 0);
@@ -438,6 +443,12 @@ void
 purple_media_ready(PurpleMedia *media)
 {
 	g_signal_emit(media, purple_media_signals[READY], 0);
+}
+
+void
+purple_media_wait(PurpleMedia *media)
+{
+	g_signal_emit(media, purple_media_signals[WAIT], 0);
 }
 
 void

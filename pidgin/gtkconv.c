@@ -7629,43 +7629,22 @@ static void
 menu_initiate_voice_call_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = (PidginWindow *)data;
-	GtkWidget *gtkmedia = NULL;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
-	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
-
 	PurpleConnection *gc = purple_conversation_get_gc(conv);
-	PurplePluginProtocolInfo *prpl = gc->prpl;
-	PurpleMediaManager *manager = purple_media_manager_get();
 
 	PurpleMedia *media =
 		serv_initiate_media(gc,
 							purple_conversation_get_name(conv),
 							PURPLE_MEDIA_RECV_AUDIO & PURPLE_MEDIA_SEND_AUDIO);
-	GstElement *sendbin, *src, *sendlevel;
-	GstElement *recvbin, *sink, *recvlevel;
-	GstPad *pad, *ghost;
 
-	purple_media_audio_init_src(&sendbin, &sendlevel);
-	purple_media_audio_init_recv(&recvbin, &recvlevel);
-
-	purple_media_set_audio_src(media, sendbin);
-	purple_media_set_audio_sink(media, recvbin);
-
-	gtkmedia = pidgin_media_new(media, PIDGIN_MEDIA_WAITING, sendlevel, recvlevel);
-
-	gtk_box_pack_start(GTK_BOX(gtkconv->topvbox), gtkmedia, FALSE, FALSE, 0);
-	gtk_widget_show(gtkmedia);
-	g_signal_connect(G_OBJECT(gtkmedia), "message",
-					 G_CALLBACK(pidgin_gtkmedia_message_cb), conv);
-	/* need to setup handler for accept, reject and if we hangup here... */
+	purple_media_wait(media);
 }
 
 static void
 pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpointer nul)
 {
-	GstElement *sendbin, *src, *sendlevel;
-	GstElement *recvbin, *sink, *recvlevel;
-	GstPad *pad, *ghost;
+	GstElement *sendbin, *sendlevel;
+	GstElement *recvbin, *recvlevel;
 
 	GtkWidget *gtkmedia;
 	PurpleConversation *conv;
@@ -7677,14 +7656,20 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpoint
 	purple_media_set_audio_src(media, sendbin);
 	purple_media_set_audio_sink(media, recvbin);
 
-	gtkmedia = pidgin_media_new(media, PIDGIN_MEDIA_REQUESTED, sendlevel, recvlevel);
 	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
 				       purple_connection_get_account(purple_media_get_connection(media)),
 				       purple_media_get_screenname(media));
 	gtkconv = PIDGIN_CONVERSATION(conv);
+	if (gtkconv->gtkmedia)
+		gtk_widget_destroy(gtkconv->gtkmedia);
+
+	gtkmedia = pidgin_media_new(media, sendlevel, recvlevel);
 	gtk_box_pack_start(GTK_BOX(gtkconv->topvbox), gtkmedia, FALSE, FALSE, 0);
 	gtk_widget_show(gtkmedia);
 	g_signal_connect(G_OBJECT(gtkmedia), "message", G_CALLBACK(pidgin_gtkmedia_message_cb), conv);
+
+	gtkconv->gtkmedia = gtkmedia;
+	g_signal_connect(G_OBJECT(gtkmedia), "destroy", G_CALLBACK(gtk_widget_destroyed), &(gtkconv->gtkmedia));
 }
 
 #endif

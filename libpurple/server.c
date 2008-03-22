@@ -1050,12 +1050,12 @@ PurpleMedia *serv_initiate_media(PurpleConnection *gc, const char *who,
 {
 	PurplePlugin *prpl = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
-	
+
 	if (gc)
 		prpl = purple_connection_get_prpl(gc);
 	if (prpl)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	
+
 	if (prpl_info && prpl_info->initiate_media) {
 		/* should check that the protol supports this media type here.... */
 		return prpl_info->initiate_media(gc, who, type);
