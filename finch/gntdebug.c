@@ -348,6 +348,11 @@ void finch_debug_init()
 #ifdef USE_GSTREAMER
 	REGISTER_G_LOG_HANDLER("GStreamer");
 #endif
+#ifdef USE_FARSIGHT
+	REGISTER_G_LOG_HANDLER("farsight");
+	REGISTER_G_LOG_HANDLER("farsight-transmitter");
+	REGISTER_G_LOG_HANDLER("farsight-rtp");
+#endif
 
 	g_set_print_handler(print_stderr);   /* Redirect the debug messages to stderr */
 	if (!purple_debug_is_enabled())
