@@ -276,6 +276,9 @@ init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns", jabber_buzz_isenabled);
 	
 	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
+#ifdef USE_FARSIGHT
+	jabber_add_feature("voice-v1", "http://www.xmpp.org/extensions/xep-0167.html#ns", NULL);
+#endif
 }
 
 
