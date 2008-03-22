@@ -33,6 +33,7 @@
 #include "gnt.h"
 #include "gntbutton.h"
 #include "gntbox.h"
+#include "gntlabel.h"
 
 #include "cmds.h"
 #include "conversation.h"
@@ -54,6 +55,7 @@ struct _FinchMediaPrivate
 	GntWidget *accept;
 	GntWidget *reject;
 	GntWidget *hangup;
+	GntWidget *calling;
 
 	PurpleConversation *conv;
 };
@@ -148,9 +150,10 @@ finch_media_init (FinchMedia *media)
 {
 	media->priv = FINCH_MEDIA_GET_PRIVATE(media);
 
-	media->priv->hangup = gnt_button_new("Hangup");
-	media->priv->accept = gnt_button_new("Accept");
-	media->priv->reject = gnt_button_new("Reject");
+	media->priv->calling = gnt_label_new(_("Calling ... "));
+	media->priv->hangup = gnt_button_new(_("Hangup"));
+	media->priv->accept = gnt_button_new(_("Accept"));
+	media->priv->reject = gnt_button_new(_("Reject"));
 
 	gnt_box_set_alignment(GNT_BOX(media), GNT_ALIGN_MID);
 
@@ -230,6 +233,36 @@ finch_media_accept_cb(PurpleMedia *media, FinchMedia *gntmedia)
 
 	gnt_box_remove(GNT_BOX(gntmedia), gntmedia->priv->accept);
 	gnt_box_remove(GNT_BOX(gntmedia), gntmedia->priv->reject);
+	gnt_box_remove(GNT_BOX(gntmedia), gntmedia->priv->hangup);
+	gnt_box_remove(GNT_BOX(gntmedia), gntmedia->priv->calling);
+
+	gnt_box_add_widget(GNT_BOX(gntmedia), gntmedia->priv->hangup);
+
+	gnt_widget_destroy(gntmedia->priv->accept);
+	gnt_widget_destroy(gntmedia->priv->reject);
+	gnt_widget_destroy(gntmedia->priv->calling);
+	gntmedia->priv->accept = NULL;
+	gntmedia->priv->reject = NULL;
+	gntmedia->priv->calling = NULL;
+
+	parent = GNT_WIDGET(gntmedia);
+	while (parent->parent)
+		parent = parent->parent;
+	gnt_box_readjust(GNT_BOX(parent));
+	gnt_widget_draw(parent);
+}
+
+static void
+finch_media_wait_cb(PurpleMedia *media, FinchMedia *gntmedia)
+{
+	GntWidget *parent;
+
+	gnt_box_remove(GNT_BOX(gntmedia), gntmedia->priv->accept);
+	gnt_box_remove(GNT_BOX(gntmedia), gntmedia->priv->reject);
+	gnt_box_remove(GNT_BOX(gntmedia), gntmedia->priv->hangup);
+	gnt_box_remove(GNT_BOX(gntmedia), gntmedia->priv->calling);
+
+	gnt_box_add_widget(GNT_BOX(gntmedia), gntmedia->priv->calling);
 	gnt_box_add_widget(GNT_BOX(gntmedia), gntmedia->priv->hangup);
 
 	gnt_widget_destroy(gntmedia->priv->accept);
@@ -292,12 +325,16 @@ finch_media_set_property (GObject *object, guint prop_id, const GValue *value, G
 				G_CALLBACK(finch_media_accept_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media) ,"ready",
 				G_CALLBACK(finch_media_ready_cb), media);
+			g_signal_connect(G_OBJECT(media->priv->media), "wait",
+				G_CALLBACK(finch_media_wait_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "hangup",
 				G_CALLBACK(finch_media_hangup_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "reject",
 				G_CALLBACK(finch_media_reject_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "got-hangup",
 				G_CALLBACK(finch_media_got_hangup_cb), media);
+			g_signal_connect(G_OBJECT(media->priv->media), "got-accept",
+				G_CALLBACK(finch_media_accept_cb), media);
 			break;
 		case PROP_SEND_LEVEL:
 			if (media->priv->send_level)
