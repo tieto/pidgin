@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-24 22:31+0100\n"
-"PO-Revision-Date: 2008-03-24 22:25+0100\n"
+"POT-Creation-Date: 2008-03-24 23:05+0100\n"
+"PO-Revision-Date: 2008-03-24 23:02+0100\n"
 "Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -10021,10 +10021,10 @@ msgid "I_M"
 msgstr "I_M"
 
 msgid "_Send File..."
-msgstr "Datei ver_senden..."
+msgstr "_Datei versenden..."
 
 msgid "Add Buddy _Pounce..."
-msgstr "Buddy-_Alarm hinzufügen..."
+msgstr "_Buddy-Alarm hinzufügen..."
 
 msgid "View _Log"
 msgstr "Mi_tschnitt anzeigen"
@@ -10095,7 +10095,7 @@ msgid "/Buddies/Join a _Chat..."
 msgstr "/Buddys/Einen _Chat betreten..."
 
 msgid "/Buddies/Get User _Info..."
-msgstr "/Buddys/B_enutzer-Info abrufen..."
+msgstr "/Buddys/Benu_tzer-Info abrufen..."
 
 msgid "/Buddies/View User _Log..."
 msgstr "/Buddys/Benutzer-_Mitschnitt ansehen..."
@@ -10169,7 +10169,7 @@ msgid "/Tools/System _Log"
 msgstr "/Werkzeuge/_System-Mitschnitt"
 
 msgid "/Tools/Mute _Sounds"
-msgstr "/Werkzeuge/_Stummschalten"
+msgstr "/Werkzeuge/S_tummschalten"
 
 #. Help
 msgid "/_Help"
@@ -10504,7 +10504,7 @@ msgid "/Conversation/View _Log"
 msgstr "/Unterhaltung/Betrachte _Mitschnitt"
 
 msgid "/Conversation/_Save As..."
-msgstr "/Unterhaltung/_Speichern als..."
+msgstr "/Unterhaltung/S_peichern als..."
 
 msgid "/Conversation/Clea_r Scrollback"
 msgstr "/Unterhaltung/_Leeren"
@@ -10513,16 +10513,16 @@ msgid "/Conversation/Se_nd File..."
 msgstr "/Unterhaltung/Datei _senden..."
 
 msgid "/Conversation/Add Buddy _Pounce..."
-msgstr "/Unterhaltung/Buddy-Alar_m hinzufügen..."
+msgstr "/Unterhaltung/_Buddy-Alarm hinzufügen..."
 
 msgid "/Conversation/_Get Info"
-msgstr "/Unterhaltung/B_enutzer-Info abrufen"
+msgstr "/Unterhaltung/Ben_utzer-Info abrufen"
 
 msgid "/Conversation/In_vite..."
 msgstr "/Unterhaltung/_Einladen..."
 
 msgid "/Conversation/M_ore"
-msgstr "/Unterhaltung/M_ehr"
+msgstr "/Unterhaltung/Me_hr"
 
 msgid "/Conversation/Al_ias..."
 msgstr "/Unterhaltung/Al_ias..."
@@ -10562,7 +10562,7 @@ msgid "/Options/Show Formatting _Toolbars"
 msgstr "/Optionen/Zeige _Werkzeugleisten für Formatierung"
 
 msgid "/Options/Show Ti_mestamps"
-msgstr "/Optionen/Zeige Zeitste_mpel"
+msgstr "/Optionen/Zeige _Zeitstempel"
 
 msgid "/Conversation/More"
 msgstr "/Unterhaltung/Mehr"
@@ -10639,7 +10639,7 @@ msgstr ""
 
 #. Build the Send To menu
 msgid "S_end To"
-msgstr "S_enden an"
+msgstr "Se_nden an"
 
 msgid "_Send"
 msgstr "Ab_schicken"
