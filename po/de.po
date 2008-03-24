@@ -7,13 +7,14 @@
 #
 # This file is distributed under the same license as the Pidgin package.
 #
+# Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2008.
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-21 21:24+0100\n"
-"PO-Revision-Date: 2008-03-21 21:23+0100\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2008-03-24 22:31+0100\n"
+"PO-Revision-Date: 2008-03-24 22:25+0100\n"
+"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10354,7 +10355,7 @@ msgid "(Optional) A_lias:"
 msgstr "(Optionaler) A_lias:"
 
 msgid "Add buddy to _group:"
-msgstr "Buddy zu folgender Gruppe hinzufügen:"
+msgstr "Buddy zu folgender _Gruppe hinzufügen:"
 
 msgid "This protocol does not support chat rooms."
 msgstr "Dieses Protokoll unterstützt keine Chaträume."
