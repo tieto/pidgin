@@ -29,6 +29,10 @@
 #include "libc_internal.h"
 #include <glib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #ifdef _MSC_VER
 #define S_IRUSR S_IREAD
 #define S_IWUSR S_IWRITE
@@ -98,6 +102,8 @@ wpurple_gethostbyname( name )
 wpurple_strerror( errno )
 #define strerror( errornum ) \
 wpurple_strerror( errornum )
+#define g_strerror( errornum ) \
+wpurple_strerror( errornum )
 
 /* unistd.h */
 #define read( fd, buf, buflen ) \
@@ -152,5 +158,9 @@ wpurple_localtime_r( time, resultp )
 
 /* helper for purple_utf8_strftime() by way of purple_internal_strftime() in src/util.c */
 const char *wpurple_get_timezone_abbreviation(const struct tm *tm);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _LIBC_INTERFACE_H_ */
