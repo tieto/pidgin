@@ -2956,8 +2956,9 @@ pidgin_utils_get_handle(void)
 
 static void connection_signed_off_cb(PurpleConnection *gc)
 {
-	GSList *list;
-	for (list = minidialogs; list; list = list->next) {
+	GSList *list, *l_next;
+	for (list = minidialogs; list; list = l_next) {
+		l_next = list->next;
 		if (g_object_get_data(G_OBJECT(list->data), "gc") == gc) {
 				gtk_widget_destroy(GTK_WIDGET(list->data));
 		}
@@ -3023,14 +3024,19 @@ pidgin_make_mini_dialog(PurpleConnection *gc,
 
 	va_start(args, user_data);
 	while ((button_text = va_arg(args, char*))) {
+		struct _old_button_clicked_cb_data *data = NULL;
+		PidginMiniDialogCallback wrapper_cb = NULL;
 		PidginUtilMiniDialogCallback callback =
 			va_arg(args, PidginUtilMiniDialogCallback);
-		struct _old_button_clicked_cb_data *data =
-			g_new0(struct _old_button_clicked_cb_data, 1);
-		data->cb = callback;
-		data->data = user_data;
+
+		if (callback != NULL) {
+			data = g_new0(struct _old_button_clicked_cb_data, 1);
+			data->cb = callback;
+			data->data = user_data;
+			wrapper_cb = old_mini_dialog_button_clicked_cb;
+		}
 		pidgin_mini_dialog_add_button(mini_dialog, button_text,
-			old_mini_dialog_button_clicked_cb, data);
+			wrapper_cb, data);
 		cb_datas = g_list_append(cb_datas, data);
 	}
 	va_end(args);
