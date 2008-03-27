@@ -378,7 +378,7 @@ static void write_cb(gpointer data, gint source, PurpleInputCondition cond) {
 static int mw_session_io_write(struct mwSession *session,
 			       const guchar *buf, gsize len) {
   struct mwPurplePluginData *pd;
-  ssize_t ret = 0;
+  gssize ret = 0;
   int err = 0;
 
   pd = mwSession_getClientData(session);
@@ -413,7 +413,7 @@ static int mw_session_io_write(struct mwSession *session,
     pd->outpa = purple_input_add(pd->socket, PURPLE_INPUT_WRITE, write_cb, pd);
 
   } else if(len > 0) {
-    DEBUG_ERROR("write returned %" G_GSIZE_FORMAT ", %" G_GSIZE_FORMAT
+    DEBUG_ERROR("write returned %" G_GSSIZE_FORMAT ", %" G_GSIZE_FORMAT
 			" bytes left unwritten\n", ret, len);
     purple_connection_error_reason(pd->gc,
                                    PURPLE_CONNECTION_ERROR_NETWORK_ERROR,

@@ -947,7 +947,7 @@ static gboolean resend_timeout(struct simple_account_data *sip) {
 	while(tmp) {
 		struct transaction *trans = tmp->data;
 		tmp = tmp->next;
-		purple_debug_info("simple", "have open transaction age: %d\n", currtime- trans->time);
+		purple_debug_info("simple", "have open transaction age: %lu\n", currtime- trans->time);
 		if((currtime - trans->time > 5) && trans->retries >= 1) {
 			/* TODO 408 */
 		} else {

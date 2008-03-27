@@ -321,7 +321,7 @@ static GList *nullprpl_status_types(PurpleAccount *acct)
 }
 
 static void blist_example_menu_item(PurpleBlistNode *node, gpointer userdata) {
-  purple_debug_info("nullprpl", "example menu item clicked on user\n",
+  purple_debug_info("nullprpl", "example menu item clicked on user %s\n",
                     ((PurpleBuddy *)node)->name);
 
   purple_notify_info(NULL,  /* plugin handle or PurpleConnection */
@@ -890,7 +890,7 @@ static void nullprpl_get_cb_info(PurpleConnection *gc, int id, const char *who) 
 
 static void nullprpl_alias_buddy(PurpleConnection *gc, const char *who,
                                  const char *alias) {
- purple_debug_info("nullprpl", "%s sets %'s alias to %s\n",
+ purple_debug_info("nullprpl", "%s sets %s's alias to %s\n",
                    gc->account->username, who, alias);
 }
 
@@ -898,7 +898,7 @@ static void nullprpl_group_buddy(PurpleConnection *gc, const char *who,
                                  const char *old_group,
                                  const char *new_group) {
   purple_debug_info("nullprpl", "%s has moved %s from group %s to group %s\n",
-                    who, old_group, new_group);
+                    gc->account->username, who, old_group, new_group);
 }
 
 static void nullprpl_rename_group(PurpleConnection *gc, const char *old_name,

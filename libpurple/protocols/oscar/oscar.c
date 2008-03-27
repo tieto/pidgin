@@ -1563,7 +1563,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 {
 	struct pieceofcrap *pos = data;
 	gchar *buf;
-	ssize_t result;
+	gssize result;
 
 	if (!PURPLE_CONNECTION_IS_VALID(pos->gc))
 	{
@@ -1597,7 +1597,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 		else
 			purple_debug_error("oscar", "Tried to write %"
 					G_GSIZE_FORMAT " bytes to fetch AIM hash data but "
-					"instead wrote %" G_GSIZE_FORMAT " bytes\n",
+					"instead wrote %" G_GSSIZE_FORMAT " bytes\n",
 					strlen(buf), result);
 	}
 	g_free(buf);
