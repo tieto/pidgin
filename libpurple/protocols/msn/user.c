@@ -97,8 +97,22 @@ msn_user_update(MsnUser *user)
 
 	if (user->status != NULL) {
 		gboolean offline = (strcmp(user->status, "offline") == 0);
-		purple_prpl_got_user_status(account, user->passport, user->status,
-				"message", user->statusline, NULL);
+
+		if (!offline) {
+			purple_prpl_got_user_status(account, user->passport, user->status,
+					"message", user->statusline, NULL);
+		} else {
+			if (user->mobile) {
+				purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
+				purple_prpl_got_user_status(account, user->passport, "available", NULL);
+			} else {
+				purple_prpl_got_user_status(account, user->passport, user->status, NULL);
+			}
+		}
+
+		if (!offline || !user->mobile) {
+			purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
+		}
 
 		if (!offline && user->media.title) {
 			purple_prpl_got_user_status(account, user->passport, "tune",
@@ -108,13 +122,7 @@ msn_user_update(MsnUser *user)
 					NULL);
 		} else {
 			purple_prpl_got_user_status_deactive(account, user->passport, "tune");
-		}
-
-		if (!offline && user->mobile) {
-			purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
-		} else {
-			purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
-		}
+		}			
 	}
 
 	if (user->idle)

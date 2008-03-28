@@ -1039,6 +1039,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
+	unsigned long clientid;
 	int wlmclient;
 	const char *state, *passport, *friendly;
 
@@ -1063,6 +1064,9 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[6]));
 		msn_user_set_object(user, msnobj);
 	}
+
+	clientid = strtoul(cmd->params[5], NULL, 10);
+	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
 
 	msn_user_set_state(user, state);
 	msn_user_update(user);
@@ -1179,7 +1183,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 
 	clientid = strtoul(cmd->params[4], NULL, 10);
-	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE);
+	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
 
 	msn_user_set_state(user, state);
 	msn_user_update(user);
