@@ -1,0 +1,20 @@
+Fix an earlier screwup where we set /pidgin/browsers/command as a string when
+it should've been a path, so it was never recognized properly and prevenedt
+people from using a custom browser if they had run 2.3.1-1.
+This can be removed after lenny is released.
+diff -Nur pidgin-2.4.0/pidgin/gtkprefs.c pidgin-2.4.0.new/pidgin/gtkprefs.c
+--- pidgin-2.4.0/pidgin/gtkprefs.c	2008-02-29 07:09:29.000000000 -0500
++++ pidgin-2.4.0.new/pidgin/gtkprefs.c	2008-03-28 20:02:37.000000000 -0400
+@@ -2246,4 +2246,12 @@
+ 			PIDGIN_PREFS_ROOT "/conversations/im/x");
+ 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/conversations/y",
+ 			PIDGIN_PREFS_ROOT "/conversations/im/y");
++
++	if (purple_prefs_exists(PIDGIN_PREFS_ROOT "/browsers/command") &&
++		purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/command"))
++	{
++		purple_prefs_remove(PIDGIN_PREFS_ROOT "/browsers/command");
++		purple_prefs_add_path(PIDGIN_PREFS_ROOT "/browsers/command",
++							  "sensible-browser");
++	}
+ }

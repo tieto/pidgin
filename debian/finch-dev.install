@@ -2,3 +2,4 @@ debian/tmp/usr/include/finch
 debian/tmp/usr/include/gnt
 debian/tmp/usr/lib/libgnt.so
 debian/tmp/usr/lib/pkgconfig/gnt.pc
+debian/tmp/usr/lib/pkgconfig/finch.pc

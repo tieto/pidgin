@@ -1,3 +1,20 @@
+pidgin (2.4.0-2) unstable; urgency=low
+
+  * Add finch.pc to finch-dev
+  * debian/patches/22_zephyr-crash.patch:
+    - Add patch from upstream to prevent crash in Zephyr when reading
+      accounts.xml file (Closes: #470947)
+  * debian/patches/23_empty-edit.patch:
+    - Add patch from upstream to prevent an invisible edit box in 
+      message windows (Closes: #471365)
+  * debian/patches/24_debian-gconf.patch:
+    - Fix an earlier screwup where we set /pidgin/browsers/command in
+      prefs.xml as a string when it should've been a path, so it was never
+      recognized properly and prevented people from using a custom browser if
+      they had run 2.3.1-1. (Closes: #472929)
+
+ -- Ari Pollak <ari@debian.org>  Fri, 28 Mar 2008 20:39:43 -0400
+
 pidgin (2.4.0-1) unstable; urgency=low
 
   * New upstream release

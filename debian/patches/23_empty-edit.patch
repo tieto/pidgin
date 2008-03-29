@@ -1,0 +1,74 @@
+#
+#
+# patch "pidgin/gtkconv.c"
+#  from [7057bf38b1eb4bf08b1b783e3a81aa95fdd56a8a]
+#    to [06f143168588ce9262f440ad9cf7d3edfed8f844]
+#
+============================================================
+--- pidgin.old/pidgin/gtkconv.c	7057bf38b1eb4bf08b1b783e3a81aa95fdd56a8a
++++ pidgin.new/pidgin/gtkconv.c	06f143168588ce9262f440ad9cf7d3edfed8f844
+@@ -533,9 +533,6 @@
+ 	account = purple_conversation_get_account(conv);
+ 
+ 	if (check_for_and_do_command(conv)) {
+-		if (gtkconv->entry_growing) {
+-			gtkconv->entry_growing = FALSE;
+-		}
+ 		gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+ 		return;
+ 	}
+@@ -592,9 +589,6 @@
+ 	g_free(buf);
+ 
+ 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+-	if (gtkconv->entry_growing) {
+-		gtkconv->entry_growing = FALSE;
+-	}
+ 	gtkconv_set_unseen(gtkconv, PIDGIN_UNSEEN_NONE);
+ }
+ 
+@@ -2520,6 +2514,7 @@
+ 	}
+ }
+ 
++#if 0
+ /* This gets added as an idle handler when doing something that
+  * redraws the icon. It sets the auto_resize gboolean to TRUE.
+  * This way, when the size_allocate callback gets triggered, it notices
+@@ -2532,6 +2527,7 @@
+ 	gtkconv->auto_resize = FALSE;
+ 	return FALSE;
+ }
++#endif
+ 
+ static gboolean
+ redraw_icon(gpointer data)
+@@ -4396,16 +4392,15 @@
+ 	if (wrapped_lines > lines)
+ 		height += (oneline.height + pad_inside) * (wrapped_lines - lines);
+ 
+-	gtkconv->auto_resize = TRUE;
+-	g_idle_add(reset_auto_resize_cb, gtkconv);
+-
+ 	diff = height - gtkconv->entry->allocation.height;
++	if (diff == 0)
++		return FALSE;
+ 
+ 	gtk_widget_size_request(gtkconv->lower_hbox, &sr);
+-	gtkconv->entry_growing = TRUE;
+ 
+ 	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
+ 		diff + gtkconv->lower_hbox->allocation.height);
++
+ 	return FALSE;
+ }
+ 
+@@ -4736,6 +4731,8 @@
+ 
+ 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry_buffer), "changed",
+ 				 G_CALLBACK(resize_imhtml_cb), gtkconv);
++	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "size-allocate",
++				 G_CALLBACK(resize_imhtml_cb), gtkconv);
+ 
+ 	default_formatize(gtkconv);
+ 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "format_function_clear",
