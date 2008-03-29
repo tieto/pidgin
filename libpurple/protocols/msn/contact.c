@@ -525,7 +525,7 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 
 	for(contactNode = xmlnode_get_child(node, "Contact"); contactNode;
 				contactNode = xmlnode_get_next_twin(contactNode)) {
-		xmlnode *contactId, *contactInfo, *contactType, *passportName, *displayName, *guid, *groupIds;
+		xmlnode *contactId, *contactInfo, *contactType, *passportName, *displayName, *guid, *groupIds, *messenger_user;
 		MsnUser *user;
 		MsnUserType usertype;
 
@@ -552,6 +552,18 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 			purple_connection_set_display_name(session->account->gc, friendly ? purple_url_decode(friendly) : NULL);
 			g_free(friendly);
 			continue; /* Not adding own account as buddy to buddylist */
+		}
+
+		/* ignore non-messenger contacts */
+		if((messenger_user = xmlnode_get_child(contactInfo, "isMessengerUser"))) {
+			char *is_messenger_user = xmlnode_get_data(messenger_user);
+
+			if(is_messenger_user && !strcmp(is_messenger_user, "false")) {
+				g_free(is_messenger_user);
+				continue;
+			}
+
+			g_free(is_messenger_user);
 		}
 
 		usertype = msn_get_user_type(type);
