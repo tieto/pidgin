@@ -1,5 +1,5 @@
 #! /bin/sh
-# Guifications - The end-all, be-all notification framework
+# Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 # Copyright (C) 2003-2008 Gary Kramlich <grim@reaperworld.com>
 #
 # This program is free software; you can redistribute it and/or modify it
