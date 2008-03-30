@@ -100,6 +100,8 @@ EXTRA_DIST = \
 	qq_99.png \
 	qq_100.png
 
+if INSTALL_PIXMAPS
 qqbuddyiconspixdir = $(datadir)/pixmaps/purple/buddy_icons/qq
 
 qqbuddyiconspix_DATA = $(EXTRA_DIST)
+endif
