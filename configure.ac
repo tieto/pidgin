@@ -2144,6 +2144,13 @@ AC_SUBST(CHECK_CFLAGS)
 AC_SUBST(CHECK_LIBS)
 
 dnl #######################################################################
+dnl # Disable pixmap installation
+dnl #######################################################################
+AC_ARG_ENABLE(pixmaps-install, AC_HELP_STRING([--enable-pixmaps-install], [enable installation of pixmap files]), enable_pixmaps="$enableval", enable_pixmaps=yes)
+
+AM_CONDITIONAL(INSTALL_PIXMAPS, test "x$enable_pixmaps" = "xyes")
+
+dnl #######################################################################
 dnl # Check for Doxygen and dot (part of GraphViz)
 dnl #######################################################################
 AC_ARG_ENABLE(doxygen,
@@ -2300,6 +2307,7 @@ echo SSL Library/Libraries......... : $msg_ssl
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
+echo Install pixmaps............... : $enable_pixmaps
 echo Has you....................... : yes
 echo
 echo Use XScreenSaver Extension.... : $enable_screensaver
