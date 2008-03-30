@@ -123,7 +123,7 @@ check "autoconf";		AUTOCONF=${BIN};
 ###############################################################################
 run_or_die ${LIBTOOLIZE} -c -f --automake ${LIBTOOLIZE_FLAGS}
 run_or_die ${INTLTOOLIZE} -c -f --automake ${INTLTOOLIZE_FLAGS}
-run_or_die ${ACLOCAL} -I m4 ${ACLOCAL_FLAGS}
+run_or_die ${ACLOCAL} -I m4macros ${ACLOCAL_FLAGS}
 run_or_die ${AUTOHEADER} ${AUTOHEADER_FLAGS}
 run_or_die ${AUTOMAKE} -a -c -f --gnu ${AUTOMAKE_FLAGS}
 run_or_die ${AUTOCONF} -f ${AUTOCONF_FLAGS}
