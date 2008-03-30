@@ -2,17 +2,16 @@
 # Pidgin German translation
 # Copyright (C) 2001, Daniel Seifert <gaim-translation@dseifert.de>
 # Copyright (C) 2002, Karsten Weiss <knweiss@gmx.de>
-# Copyright (C) 2002-2007, Björn Voigt <bjoern@cs.tu-berlin.de>,
+# Copyright (C) 2002-2008, Björn Voigt <bjoern@cs.tu-berlin.de>,
 #                     Jochen Kemnade <jochenkemnade@web.de>
 #
 # This file is distributed under the same license as the Pidgin package.
 #
-# Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2008.
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-24 23:05+0100\n"
+"POT-Creation-Date: 2008-03-30 22:16+0200\n"
 "PO-Revision-Date: 2008-03-24 23:02+0100\n"
 "Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
