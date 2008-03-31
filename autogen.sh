@@ -55,7 +55,7 @@ check () {
 	CMD=$1
 
 	echo -n "checking for ${CMD}... "
-	BIN=`which ${CMD}`
+	BIN=`which ${CMD} 2> /dev/null`
 
 	if [ x"${BIN}" = x"" ] ; then
 		echo "not found."
@@ -87,7 +87,7 @@ run_or_die () { # beotch
 ###############################################################################
 # We really start here, yes, very sneaky!
 ###############################################################################
-FIGLET=`which figlet`
+FIGLET=`which figlet 2> /dev/null`
 if [ x"${FIGLET}" != x"" ] ; then
 	${FIGLET} -f small ${PACKAGE}
 	echo "build system is being generated"
