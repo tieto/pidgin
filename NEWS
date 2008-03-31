@@ -3,6 +3,9 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 2.4.1 (3/31/2008):
 	Stu: We fixed some bugs, this release should be 110% better than 2.4.0
 
+	John: Well, I didn't really do much this release except muck about with
+	the configure script.  Blame me if it worked in 2.4.0 but doesn't now.
+
 2.4.0 (2/29/2008):
 	John: While this release took what seems like forever to get out the
 	door, I think it's well worth the wait, especially for Yahoo! users.
