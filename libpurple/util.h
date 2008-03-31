@@ -702,6 +702,11 @@ const char *
 purple_util_get_image_extension(gconstpointer data, size_t len);
 
 /**
+ * Returns a SHA-1 hash string of the data passed in.
+ */
+char *purple_util_get_image_checksum(gconstpointer image_data, size_t image_len);
+
+/**
  * Returns a SHA-1 hash string of the data passed in with the correct file
  * extention appended.
  */

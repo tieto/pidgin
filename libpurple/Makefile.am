@@ -68,6 +68,7 @@ purple_coresources = \
 	savedstatuses.c \
 	server.c \
 	signals.c \
+	smiley.c \
 	dnsquery.c \
 	dnssrv.c\
 	status.c \
@@ -120,6 +121,7 @@ purple_coreheaders = \
 	savedstatuses.h \
 	server.h \
 	signals.h \
+	smiley.h \
 	dnsquery.h \
 	dnssrv.h \
 	status.h \

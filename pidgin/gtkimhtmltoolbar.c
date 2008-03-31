@@ -36,6 +36,7 @@
 
 #include "gtkdialogs.h"
 #include "gtkimhtmltoolbar.h"
+#include "gtksmiley.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
 
@@ -626,6 +627,34 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *widt
 	image = gtk_image_new_from_file(filename);
 
 	gtk_widget_size_request(image, &size);
+
+	if (size.width > 24) { /* This is a custom smiley, let's scale it */
+		GdkPixbuf *pixbuf = NULL;
+		GdkPixbuf *resized;
+		GtkImageType type;
+
+		type = gtk_image_get_storage_type(GTK_IMAGE(image));
+
+		if (type == GTK_IMAGE_PIXBUF) {
+			pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(image));
+		} 
+		else if (type == GTK_IMAGE_ANIMATION) {
+			GdkPixbufAnimation *animation;
+
+			animation = gtk_image_get_animation(GTK_IMAGE(image));
+
+			pixbuf = gdk_pixbuf_animation_get_static_image(animation);
+		}
+
+		if (pixbuf != NULL) {
+			resized = gdk_pixbuf_scale_simple(pixbuf, 24, 24,
+					GDK_INTERP_HYPER);
+			image = gtk_image_new_from_pixbuf(resized);
+
+			gtk_widget_size_request(image, &size);
+		}
+	}
+
 	(*width) += size.width;
 
 	button = gtk_button_new();
@@ -688,6 +717,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	GtkWidget *dialog;
 	GtkWidget *smiley_table = NULL;
 	GSList *smileys, *unique_smileys = NULL;
+	GSList *custom_smileys = NULL;
 
 	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smiley))) {
 		destroy_smiley_dialog(toolbar);
@@ -707,6 +737,15 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 				unique_smileys = g_slist_append(unique_smileys, smiley);
 		}
 		smileys = smileys->next;
+	}
+
+	custom_smileys = pidgin_smileys_get_all();
+
+	while (custom_smileys) {
+		GtkIMHtmlSmiley *smiley = custom_smileys->data;
+		unique_smileys = g_slist_append(unique_smileys, smiley);
+		
+		custom_smileys = custom_smileys->next;
 	}
 
 	dialog = pidgin_create_dialog(_("Smile!"), 0, "smiley_dialog", FALSE);
