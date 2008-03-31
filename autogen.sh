@@ -33,6 +33,7 @@
 #   AUTOHEADER_FLAGS - command line arguments to pass to autoheader
 #   AUTOMAKE_FLAGS - command line arguments to pass to automake flags
 #   CONFIGURE_FLAGS - command line arguments to pass to configure
+#   GLIB_GETTEXTIZE_FLAGS - command line arguments to pass to glib-gettextize
 #   INTLTOOLIZE_FLAGS - command line arguments to pass to intltoolize
 #   LIBTOOLIZE_FLAGS - command line arguments to pass to libtoolize
 #
@@ -112,6 +113,7 @@ fi
 # Check for our required helpers
 ###############################################################################
 check "libtoolize";		LIBTOOLIZE=${BIN};
+check "glib-gettextize"; GLIB_GETTEXTIZE=${BIN};
 check "intltoolize";	INTLTOOLIZE=${BIN};
 check "aclocal";		ACLOCAL=${BIN};
 check "autoheader";		AUTOHEADER=${BIN};
@@ -121,12 +123,13 @@ check "autoconf";		AUTOCONF=${BIN};
 ###############################################################################
 # Run all of our helpers
 ###############################################################################
-run_or_die ${LIBTOOLIZE} -c -f --automake ${LIBTOOLIZE_FLAGS}
-run_or_die ${INTLTOOLIZE} -c -f --automake ${INTLTOOLIZE_FLAGS}
-run_or_die ${ACLOCAL} -I m4macros ${ACLOCAL_FLAGS}
+run_or_die ${LIBTOOLIZE} ${LIBTOOLIZE_FLAGS-"-c -f --automake"}
+run_or_die ${GLIB_GETTEXTIZE} ${GLIB_GETTEXTIZE_FLAGS-"--force --copy"}
+run_or_die ${INTLTOOLIZE} ${INTLTOOLIZE_FLAGS-"-c -f --automake"}
+run_or_die ${ACLOCAL} ${ACLOCAL_FLAGS-"-I m4macros"}
 run_or_die ${AUTOHEADER} ${AUTOHEADER_FLAGS}
-run_or_die ${AUTOMAKE} -a -c -f --gnu ${AUTOMAKE_FLAGS}
-run_or_die ${AUTOCONF} -f ${AUTOCONF_FLAGS}
+run_or_die ${AUTOMAKE} ${AUTOMAKE_FLAGS-"-a -c --gnu"}
+run_or_die ${AUTOCONF} ${AUTOCONF_FLAGS}
 
 ###############################################################################
 # Run configure
