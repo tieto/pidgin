@@ -2146,14 +2146,14 @@ AC_SUBST(CHECK_LIBS)
 dnl #######################################################################
 dnl # Disable pixmap installation
 dnl #######################################################################
-AC_ARG_ENABLE(pixmaps-install, AC_HELP_STRING([--enable-pixmaps-install], [enable installation of pixmap files]), enable_pixmaps="$enableval", enable_pixmaps=yes)
+AC_ARG_ENABLE(pixmaps-install, AC_HELP_STRING([--disable-pixmaps-install], [disable installation of pixmap files]), enable_pixmaps="$enableval", enable_pixmaps=yes)
 
 AM_CONDITIONAL(INSTALL_PIXMAPS, test "x$enable_pixmaps" = "xyes")
 
 dnl #######################################################################
 dnl # Disable installation of translation files
 dnl #######################################################################
-AC_ARG_ENABLE(nls, AC_HELP_STRING([--enable-nls], [enable installation of translation files]), enable_i18n="$enableval", enable_i18n=yes)
+AC_ARG_ENABLE(nls, AC_HELP_STRING([--disable-nls], [disable installation of translation files]), enable_i18n="$enableval", enable_i18n=yes)
 
 AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 
