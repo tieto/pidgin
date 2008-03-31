@@ -123,12 +123,12 @@ check "autoconf";		AUTOCONF=${BIN};
 ###############################################################################
 # Run all of our helpers
 ###############################################################################
-run_or_die ${LIBTOOLIZE} ${LIBTOOLIZE_FLAGS-"-c -f --automake"}
-run_or_die ${GLIB_GETTEXTIZE} ${GLIB_GETTEXTIZE_FLAGS-"--force --copy"}
-run_or_die ${INTLTOOLIZE} ${INTLTOOLIZE_FLAGS-"-c -f --automake"}
-run_or_die ${ACLOCAL} ${ACLOCAL_FLAGS-"-I m4macros"}
+run_or_die ${LIBTOOLIZE} ${LIBTOOLIZE_FLAGS:-"-c -f --automake"}
+run_or_die ${GLIB_GETTEXTIZE} ${GLIB_GETTEXTIZE_FLAGS:-"--force --copy"}
+run_or_die ${INTLTOOLIZE} ${INTLTOOLIZE_FLAGS:-"-c -f --automake"}
+run_or_die ${ACLOCAL} ${ACLOCAL_FLAGS:-"-I m4macros"}
 run_or_die ${AUTOHEADER} ${AUTOHEADER_FLAGS}
-run_or_die ${AUTOMAKE} ${AUTOMAKE_FLAGS-"-a -c --gnu"}
+run_or_die ${AUTOMAKE} ${AUTOMAKE_FLAGS:-"-a -c --gnu"}
 run_or_die ${AUTOCONF} ${AUTOCONF_FLAGS}
 
 ###############################################################################
