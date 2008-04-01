@@ -336,7 +336,7 @@ static void qq_send_packet_login(PurpleConnection *gc, guint8 token_length, guin
 
 	/* now generate the encrypted data
 	 * 000-015 use pwkey as key to encrypt empty string */
-	qq_crypt(ENCRYPT, (guint8 *) "", 0, qd->pwkey, raw_data, &encrypted_len);
+	qq_encrypt((guint8 *) "", 0, qd->pwkey, raw_data, &encrypted_len);
 	/* 016-016 */
 	raw_data[16] = 0x00;
 	/* 017-020, used to be IP, now zero */
@@ -362,7 +362,7 @@ static void qq_send_packet_login(PurpleConnection *gc, guint8 token_length, guin
 	/* all zero left */
 	memset(raw_data+pos, 0, QQ_LOGIN_DATA_LENGTH - pos);
 
-	qq_crypt(ENCRYPT, raw_data, QQ_LOGIN_DATA_LENGTH, qd->inikey, encrypted_data, &encrypted_len);
+	qq_encrypt(raw_data, QQ_LOGIN_DATA_LENGTH, qd->inikey, encrypted_data, &encrypted_len);
 
 	cursor = buf;
 	bytes = 0;
@@ -437,7 +437,7 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	len = buf_len;
 	data = g_newa(guint8, len);
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->pwkey, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->pwkey, data, &len)) {
 		/* should be able to decrypt with pwkey */
 		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Decrypt login reply packet with pwkey, %d bytes\n", len);
 		if (data[0] == QQ_LOGIN_REPLY_OK) {
@@ -448,7 +448,7 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 		}
 	} else {		/* decrypt with pwkey error */
 		len = buf_len;	/* reset len, decrypt will fail if len is too short */
-		if (qq_crypt(DECRYPT, buf, buf_len, qd->inikey, data, &len)) {
+		if (qq_decrypt(buf, buf_len, qd->inikey, data, &len)) {
 			/* decrypt ok with inipwd, it might be password error */
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ", 
 					"Decrypt login reply packet with inikey, %d bytes\n", len);

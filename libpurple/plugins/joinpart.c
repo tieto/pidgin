@@ -77,7 +77,7 @@ static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
 {
 	PurpleConvChat *chat;
 	int threshold;
-	struct joinpart_key *key;
+	struct joinpart_key key;
 	time_t *last_said;
 
 	g_return_val_if_fail(conv != NULL, FALSE);
@@ -94,10 +94,9 @@ static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
 		return FALSE;
 
 	/* Only show the notice if the user has spoken recently. */
-	key = g_new(struct joinpart_key, 1);
-	key->conv = conv;
-	key->user = g_strdup(name);
-	last_said = g_hash_table_lookup(users, key);
+	key.conv = conv;
+	key.user = (gchar *)name;
+	last_said = g_hash_table_lookup(users, &key);
 	if (last_said != NULL)
 	{
 		int delay = purple_prefs_get_int(DELAY_PREF);

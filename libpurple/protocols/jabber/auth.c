@@ -490,6 +490,12 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	{
 		char *mech_name = xmlnode_get_data(mechnode);
 #ifdef HAVE_CYRUS_SASL
+		/* Skip the GSSAPI mechanism unless it's enabled for this account */
+		if (mech_name && !strcmp(mech_name, "GSSAPI") &&
+			!purple_account_get_bool(js->gc->account, "auth_gssapi", TRUE)) {
+			continue;
+		}
+
 		g_string_append(js->sasl_mechs, mech_name);
 		g_string_append_c(js->sasl_mechs, ' ');
 #else
@@ -903,8 +909,8 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		}
 
 		dec_in = (char *)purple_base64_decode(enc_in, NULL);
-		purple_debug(PURPLE_DEBUG_MISC, "jabber", "decoded challenge (%d): %s\n",
-				strlen(dec_in), dec_in);
+		purple_debug(PURPLE_DEBUG_MISC, "jabber", "decoded challenge (%"
+				G_GSIZE_FORMAT "): %s\n", strlen(dec_in), dec_in);
 
 		parts = parse_challenge(dec_in);
 
@@ -982,7 +988,9 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 
 				enc_out = purple_base64_encode((guchar *)response->str, response->len);
 
-				purple_debug(PURPLE_DEBUG_MISC, "jabber", "decoded response (%d): %s\n", response->len, response->str);
+				purple_debug_misc("jabber", "decoded response (%"
+						G_GSIZE_FORMAT "): %s\n",
+						response->len, response->str);
 
 				buf = g_strdup_printf("<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>%s</response>", enc_out);
 

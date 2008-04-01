@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [4])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [4])
-m4_define([purple_micro_version], [0])
+m4_define([purple_micro_version], [1])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [4])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [4])
-m4_define([gnt_micro_version], [0])
+m4_define([gnt_micro_version], [1])
 m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -658,6 +658,9 @@ AM_GCONF_SOURCE_2
 dnl #######################################################################
 dnl # Check for GStreamer
 dnl #######################################################################
+dnl
+dnl TODO: Depend on gstreamer >= 0.10.10, and remove the conditional use of
+dnl       gst_registry_fork_set_enabled.
 AC_ARG_ENABLE(gstreamer,
 	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
@@ -666,6 +669,10 @@ if test "x$enable_gst" != "xno"; then
 		AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
 		AC_SUBST(GSTREAMER_CFLAGS)
 		AC_SUBST(GSTREAMER_LIBS)
+		AC_CHECK_LIB(gstreamer-0.10, gst_registry_fork_set_enabled,
+			[ AC_DEFINE(GST_CAN_DISABLE_FORKING, [],
+			  [Define if gst_registry_fork_set_enabled exists])],
+			[], [$GSTREAMER_LIBS])
 	], [
 		AC_MSG_RESULT(no)
 		enable_gst="no"
@@ -1046,7 +1053,7 @@ AC_ARG_WITH(krb4, [AC_HELP_STRING([--with-krb4=PREFIX], [compile Zephyr plugin w
 AC_ARG_WITH(zephyr, [AC_HELP_STRING([--with-zephyr=PREFIX], [compile Zephyr plugin against external libzephyr])], zephyr="$withval", zephyr="no")
 AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 
-AC_CHECK_HEADER(sys/utsname.h)
+AC_CHECK_HEADERS(sys/utsname.h)
 AC_CHECK_FUNC(uname)
 
 AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
@@ -2100,7 +2107,17 @@ AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
 AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
-AC_CHECK_HEADERS(sys/sysctl.h sys/socket.h)
+
+# sys/sysctl.h on OpenBSD 4.2 requires sys/param.h
+AC_CHECK_HEADERS(sys/param.h)
+AC_CHECK_HEADERS(sys/sysctl.h, [], [],
+	[[
+		#ifdef HAVE_PARAM_H
+		# include <sys/param.h>
+		#endif
+	]])
+
+AC_CHECK_HEADERS(sys/socket.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
 AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
@@ -2125,6 +2142,20 @@ PKG_CHECK_MODULES(CHECK,[check >= 0.9.4],:,[
 AM_CONDITIONAL(HAVE_CHECK, [test "x$CHECK_LIBS" != "x"])
 AC_SUBST(CHECK_CFLAGS)
 AC_SUBST(CHECK_LIBS)
+
+dnl #######################################################################
+dnl # Disable pixmap installation
+dnl #######################################################################
+AC_ARG_ENABLE(pixmaps-install, AC_HELP_STRING([--disable-pixmaps-install], [disable installation of pixmap files]), enable_pixmaps="$enableval", enable_pixmaps=yes)
+
+AM_CONDITIONAL(INSTALL_PIXMAPS, test "x$enable_pixmaps" = "xyes")
+
+dnl #######################################################################
+dnl # Disable installation of translation files
+dnl #######################################################################
+AC_ARG_ENABLE(nls, AC_HELP_STRING([--disable-nls], [disable installation of translation files]), enable_i18n="$enableval", enable_i18n=yes)
+
+AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 
 dnl #######################################################################
 dnl # Check for Doxygen and dot (part of GraphViz)
@@ -2283,6 +2314,8 @@ echo SSL Library/Libraries......... : $msg_ssl
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
+echo Install pixmaps............... : $enable_pixmaps
+echo Install translations.......... : $enable_i18n
 echo Has you....................... : yes
 echo
 echo Use XScreenSaver Extension.... : $enable_screensaver

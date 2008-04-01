@@ -294,10 +294,10 @@ static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t add
 		 *    The connection is established asynchronously.
 		 */
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Connect in asynchronous mode.\n");
+			purple_debug_warning("QQ", "Connect in asynchronous mode.\n");
 			phb->inpa = purple_input_add(fd, PURPLE_INPUT_WRITE, no_one_calls, phb);
 		} else {
-			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Connection failed: %d\n", g_strerror(errno));
+			purple_debug_error("QQ", "Connection failed: %s\n", g_strerror(errno));
 			close(fd);
 			return -1;
 		}		/* if errno */

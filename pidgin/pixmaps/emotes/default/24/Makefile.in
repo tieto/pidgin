@@ -500,13 +500,13 @@ SMILEYS = act-up.png \
     yawn.png \
     yin-yang.png
 
-pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/default
 pidginsmileypix_in_files = default.theme.in
-pidginsmileypix_DATA = \
-        $(SMILEYS) \
-        theme
+@INSTALL_PIXMAPS_TRUE@pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/default
+@INSTALL_PIXMAPS_TRUE@pidginsmileypix_DATA = \
+@INSTALL_PIXMAPS_TRUE@        $(SMILEYS) \
+@INSTALL_PIXMAPS_TRUE@        theme
 
-EXTRA_DIST = $(pidginsmileypix_DATA) $(pidginsmileypix_in_files)
+EXTRA_DIST = $(SMILEYS) $(pidginsmileypix_in_files) theme
 all: all-am
 
 .SUFFIXES:
@@ -695,11 +695,11 @@ uninstall-am: uninstall-pidginsmileypixDATA
 	ps ps-am uninstall uninstall-am uninstall-pidginsmileypixDATA
 
 
-theme: default.theme.in
-	sed -e 's/^_Name=/Name=/' \
-	    -e 's/^_Description=/Description=/' \
-	    -e 's/^_Author=/Author=/' \
-	$< > $@
+@INSTALL_PIXMAPS_TRUE@theme: default.theme.in
+@INSTALL_PIXMAPS_TRUE@	sed -e 's/^_Name=/Name=/' \
+@INSTALL_PIXMAPS_TRUE@	    -e 's/^_Description=/Description=/' \
+@INSTALL_PIXMAPS_TRUE@	    -e 's/^_Author=/Author=/' \
+@INSTALL_PIXMAPS_TRUE@	$< > $@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

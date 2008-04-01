@@ -541,7 +541,7 @@ void qq_process_modify_info_reply(guint8 *buf, gint buf_len, PurpleConnection *g
 	len = buf_len;
 	data = g_newa(guint8, len);
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		data[len] = '\0';
 		if (qd->uid == atoi((gchar *) data)) {	/* return should be my uid */
 			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Update info ACK OK\n");
@@ -718,7 +718,7 @@ void qq_process_get_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	data = g_newa(guint8, len);
 	info = NULL;
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		if (NULL == (segments = split_data(data, len, "\x1e", QQ_CONTACT_FIELDS)))
 			return;
 
@@ -828,7 +828,7 @@ void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	
 	decr_len = buf_len;
 	decr_buf = g_new0(guint8, buf_len);
-	if (!qq_crypt(DECRYPT, buf, buf_len, qd->session_key, decr_buf, &decr_len)) {
+	if (!qq_decrypt(buf, buf_len, qd->session_key, decr_buf, &decr_len)) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Couldn't decrypt get level packet\n");
 	}
 

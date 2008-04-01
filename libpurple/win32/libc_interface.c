@@ -320,12 +320,16 @@ char* wpurple_strerror(int errornum) {
 		switch(errornum) {
 			case WSAECONNABORTED: /* 10053 */
 				snprintf(errbuf, sizeof(errbuf), _("Connection interrupted by other software on your computer."));
+				break;
 			case WSAECONNRESET: /* 10054 */
 				snprintf(errbuf, sizeof(errbuf), _("Remote host closed connection."));
+				break;
 			case WSAETIMEDOUT: /* 10060 */
 				snprintf(errbuf, sizeof(errbuf), _("Connection timed out."));
+				break;
 			case WSAECONNREFUSED: /*10061 */
 				snprintf(errbuf, sizeof(errbuf), _("Connection refused."));
+				break;
 			default:
 				snprintf(errbuf, sizeof(errbuf), "Windows socket error #%d", errornum);
 		}
@@ -451,6 +455,11 @@ int wpurple_gettimeofday(struct timeval *p, struct timezone *z) {
 
 int wpurple_rename (const char *oldname, const char *newname) {
 	struct stat oldstat, newstat;
+
+	/* As of Glib 2.8.5, g_rename() uses MoveFileEx() with MOVEFILE_REPLACE_EXISTING to behave more sanely */
+	if (glib_check_version(2, 8, 5) == NULL) {
+		return g_rename(oldname, newname);
+	}
 
 	if(g_stat(oldname, &oldstat) == 0) {
 		/* newname exists */

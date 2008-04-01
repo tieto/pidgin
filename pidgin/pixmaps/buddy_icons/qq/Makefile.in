@@ -411,8 +411,8 @@ EXTRA_DIST = \
 	qq_99.png \
 	qq_100.png
 
-qqbuddyiconspixdir = $(datadir)/pixmaps/purple/buddy_icons/qq
-qqbuddyiconspix_DATA = $(EXTRA_DIST)
+@INSTALL_PIXMAPS_TRUE@qqbuddyiconspixdir = $(datadir)/pixmaps/purple/buddy_icons/qq
+@INSTALL_PIXMAPS_TRUE@qqbuddyiconspix_DATA = $(EXTRA_DIST)
 all: all-am
 
 .SUFFIXES:

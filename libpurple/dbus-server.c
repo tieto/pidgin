@@ -21,7 +21,9 @@
  *
  */
 
+#ifndef DBUS_API_SUBJECT_TO_CHANGE
 #define DBUS_API_SUBJECT_TO_CHANGE
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>

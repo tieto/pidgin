@@ -62,8 +62,8 @@
 #ifdef HAVE_LIBNM
 #include <libnm_glib.h>
 
-libnm_glib_ctx *nm_context = NULL;
-guint nm_callback_idx = 0;
+static libnm_glib_ctx *nm_context = NULL;
+static guint nm_callback_idx = 0;
 
 #elif defined _WIN32
 static int current_network_count;
@@ -80,7 +80,7 @@ struct _PurpleNetworkListenData {
 };
 
 #ifdef HAVE_LIBNM
-void nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data);
+static void nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data);
 #endif
 
 const unsigned char *
@@ -611,7 +611,7 @@ purple_network_is_available(void)
 }
 
 #ifdef HAVE_LIBNM
-void
+static void
 nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data)
 {
 	static libnm_glib_state prev = LIBNM_NO_DBUS;

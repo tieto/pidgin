@@ -31,7 +31,9 @@
 #include <glib.h>
 #include <glib-object.h>
 
+/** @copydoc _PurpleAccountUiOps */
 typedef struct _PurpleAccountUiOps PurpleAccountUiOps;
+/** @copydoc _PurpleAccount */
 typedef struct _PurpleAccount      PurpleAccount;
 
 typedef gboolean (*PurpleFilterAccountFunc)(PurpleAccount *account);
@@ -105,6 +107,8 @@ struct _PurpleAccountUiOps
 	void (*_purple_reserved4)(void);
 };
 
+/** Structure representing an account.
+ */
 struct _PurpleAccount
 {
 	char *username;             /**< The username.                          */

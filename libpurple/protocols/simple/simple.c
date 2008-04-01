@@ -947,7 +947,7 @@ static gboolean resend_timeout(struct simple_account_data *sip) {
 	while(tmp) {
 		struct transaction *trans = tmp->data;
 		tmp = tmp->next;
-		purple_debug_info("simple", "have open transaction age: %d\n", currtime- trans->time);
+		purple_debug_info("simple", "have open transaction age: %lu\n", currtime- trans->time);
 		if((currtime - trans->time > 5) && trans->retries >= 1) {
 			/* TODO 408 */
 		} else {
@@ -1209,7 +1209,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 			while (ssparts[i])
 			{
 				g_strchug(ssparts[i]);
-				if (g_str_has_prefix(ssparts[i], "terminated"))
+				if (purple_str_has_prefix(ssparts[i], "terminated"))
 				{
 					purple_debug_info("simple", "Subscription expired!");
 					g_free(b->dialog->ourtag);

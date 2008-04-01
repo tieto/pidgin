@@ -64,7 +64,7 @@ struct _spellchk {
 	GtkTextMark *mark_insert_start;
 	GtkTextMark *mark_insert_end;
 
-	const gchar *word;
+	gchar *word;
 	gboolean inserting;
 	gboolean ignore_correction;
 	gboolean ignore_correction_on_send;
@@ -265,6 +265,7 @@ substitute_word(gchar *word)
 				g_value_unset(&val1);
 				g_value_unset(&val2);
 
+				g_free(lowerword);
 				g_free(foldedword);
 				return outword;
 			}
@@ -274,6 +275,7 @@ substitute_word(gchar *word)
 
 		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter));
 	}
+	g_free(lowerword);
 	g_free(foldedword);
 
 	return NULL;
@@ -292,6 +294,7 @@ spellchk_free(spellchk *spell)
 			G_SIGNAL_MATCH_DATA,
 			0, 0, NULL, NULL,
 			spell);
+	g_free(spell->word);
 	g_free(spell);
 }
 
@@ -440,6 +443,7 @@ check_range(spellchk *spell, GtkTextBuffer *buffer,
 	/* Move backwards to the beginning of the word. */
 	spellchk_backward_word_start(&start);
 
+	g_free(spell->word);
 	spell->word = gtk_text_iter_get_text(&start, &end);
 
 	/* Hack because otherwise typing things like U.S. gets difficult
@@ -484,6 +488,7 @@ check_range(spellchk *spell, GtkTextBuffer *buffer,
 	}
 	g_free(tmp);
 
+	g_free(spell->word);
 	spell->word = NULL;
 
 	return replaced;
@@ -504,6 +509,7 @@ insert_text_before(GtkTextBuffer *buffer, GtkTextIter *iter,
 
 	spell->inserting = TRUE;
 
+	g_free(spell->word);
 	spell->word = NULL;
 
 	gtk_text_buffer_move_mark(buffer, spell->mark_insert_start, iter);
@@ -561,6 +567,7 @@ delete_range_after(GtkTextBuffer *buffer,
 	place = gtk_text_iter_get_offset(&pos);
 
 	if ((place + 1) != spell->pos) {
+		g_free(spell->word);
 		spell->word = NULL;
 		return;
 	}
@@ -574,6 +581,7 @@ delete_range_after(GtkTextBuffer *buffer,
 	spell->ignore_correction_on_send = TRUE;
 
 	spell->inserting = FALSE;
+	g_free(spell->word);
 	spell->word = NULL;
 }
 

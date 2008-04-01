@@ -101,8 +101,36 @@ JabberBuddyResource *jabber_buddy_find_resource(JabberBuddy *jb,
 		if(!jbr && !resource) {
 			jbr = l->data;
 		} else if(!resource) {
-			if(((JabberBuddyResource *)l->data)->priority >= jbr->priority)
+			if(((JabberBuddyResource *)l->data)->priority > jbr->priority)
 				jbr = l->data;
+			else if(((JabberBuddyResource *)l->data)->priority == jbr->priority) {
+				/* Determine if this resource is more available than the one we've currently chosen */
+				switch(((JabberBuddyResource *)l->data)->state) {
+					case JABBER_BUDDY_STATE_ONLINE:
+					case JABBER_BUDDY_STATE_CHAT:
+						/* This resource is online/chatty. Prefer to one which isn't either. */
+						if ((jbr->state != JABBER_BUDDY_STATE_ONLINE) && (jbr->state != JABBER_BUDDY_STATE_CHAT))
+							jbr = l->data;
+						break;
+					case JABBER_BUDDY_STATE_AWAY:
+					case JABBER_BUDDY_STATE_DND:
+					case JABBER_BUDDY_STATE_UNAVAILABLE:
+						/* This resource is away/dnd/unavailable. Prefer to one which is extended away or unknown. */
+						if ((jbr->state == JABBER_BUDDY_STATE_XA) || 
+							(jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
+							jbr = l->data;
+						break;
+					case JABBER_BUDDY_STATE_XA:
+						/* This resource is extended away. That's better than unknown. */
+						if ((jbr->state == JABBER_BUDDY_STATE_UNKNOWN) || (jbr->state == JABBER_BUDDY_STATE_ERROR))
+							jbr = l->data;
+						break;
+					case JABBER_BUDDY_STATE_UNKNOWN:
+					case JABBER_BUDDY_STATE_ERROR:
+						/* These are never preferable. */
+						break;
+				}
+			}
 		} else if(((JabberBuddyResource *)l->data)->name) {
 			if(!strcmp(((JabberBuddyResource *)l->data)->name, resource)) {
 				jbr = l->data;
@@ -1181,6 +1209,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	GString *info_text;
 	char *bare_jid;
 	char *text;
+	char *serverside_alias = NULL;
 	xmlnode *vcard;
 	PurpleBuddy *b;
 	JabberBuddyInfo *jbi = data;
@@ -1219,6 +1248,10 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 			text = xmlnode_get_data(child);
 			if(text && !strcmp(child->name, "FN")) {
+				/* If we havne't found a name yet, use this one as the serverside name */
+				if (!serverside_alias)
+					serverside_alias = g_strdup(text);
+
 				jabber_string_escape_and_append(info_text,
 						_("Full Name"), text, FALSE);
 			} else if(!strcmp(child->name, "N")) {
@@ -1242,11 +1275,11 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					}
 					g_free(text2);
 				}
-			} else if(text && !strcmp(child->name, "NICKNAME")) {
-				serv_got_alias(js->gc, from, text);
-				if(b) {
-					purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", text);
-				}
+			} else if(text && !strcmp(child->name, "NICKNAME")) {				
+				/* Prefer the Nickcname to the Full Name as the serverside alias */
+				g_free(serverside_alias);
+				serverside_alias = g_strdup(text);
+
 				jabber_string_escape_and_append(info_text,
 						_("Nickname"), text, FALSE);
 			} else if(text && !strcmp(child->name, "BDAY")) {
@@ -1404,6 +1437,16 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 			}
 			g_free(text);
 		}
+	}
+
+	if (serverside_alias) {
+		/* If we found a serverside alias, set it and tell the core */
+		serv_got_alias(js->gc, from, serverside_alias);
+		if (b) {
+			purple_blist_node_set_string((PurpleBlistNode*)b, "servernick", serverside_alias);
+		}
+		
+		g_free(serverside_alias);
 	}
 
 	jbi->vcard_text = purple_strdup_withhtml(info_text->str);
@@ -2240,7 +2283,7 @@ static void user_search_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 			row = g_list_append(row, node ? xmlnode_get_data(node) : NULL);
 			node = xmlnode_get_child(item, "email");
 			row = g_list_append(row, node ? xmlnode_get_data(node) : NULL);
-			purple_debug_info("jabber", "row=%d\n", row);
+			purple_debug_info("jabber", "row=%p\n", row);
 			purple_notify_searchresults_row_add(results, row);
 		}
 	}

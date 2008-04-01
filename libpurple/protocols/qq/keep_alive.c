@@ -77,7 +77,7 @@ void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, PurpleConnection *gc
 	len = buf_len;
 	data = g_newa(guint8, len);
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		/* the last one is 60, don't know what it is */
 		if (NULL == (segments = split_data(data, len, "\x1f", 6)))
 			return;

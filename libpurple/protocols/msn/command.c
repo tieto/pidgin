@@ -58,6 +58,7 @@ msn_check_payload_cmd(const char *str)
 		(!strcmp(str,"FQY")) ||
 		(!strcmp(str,"UUN")) ||
 		(!strcmp(str,"UUX")) ||
+		(!strcmp(str,"IPG")) ||
 		(is_num(str))){
 			return TRUE;
 		}

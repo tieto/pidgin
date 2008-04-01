@@ -1064,6 +1064,9 @@ pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 					   COLUMN_REMAINING, remaining_str,
 					   -1);
 
+	g_free(size_str);
+	g_free(remaining_str);
+
 	if (purple_xfer_is_completed(xfer))
 	{
 		GdkPixbuf *pixbuf;

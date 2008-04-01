@@ -195,7 +195,7 @@ void qq_process_change_status_reply(guint8 *buf, gint buf_len, PurpleConnection 
 	len = buf_len;
 	data = g_newa(guint8, len);
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		cursor = data;
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_CHANGE_ONLINE_STATUS_REPLY_OK) {
@@ -232,7 +232,7 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, PurpleConnection
 	data = g_newa(guint8, len);
 	cursor = data;
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		s = g_new0(qq_buddy_status, 1);
 		bytes = 0;
 		/* 000-030: qq_buddy_status */

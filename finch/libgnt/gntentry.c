@@ -419,7 +419,7 @@ move_end(GntBindable *bind, GList *null)
 }
 
 static gboolean
-history_prev(GntBindable *bind, GList *null)
+history_next(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->histlength && entry->history->prev)
@@ -436,7 +436,7 @@ history_prev(GntBindable *bind, GList *null)
 }
 
 static gboolean
-history_next(GntBindable *bind, GList *null)
+history_prev(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->histlength && entry->history->next)
@@ -904,10 +904,12 @@ gnt_entry_class_init(GntEntryClass *klass)
 				GNT_KEY_DOWN, NULL);
 	gnt_bindable_class_register_action(bindable, "suggest-prev", suggest_prev,
 				GNT_KEY_UP, NULL);
-	gnt_bindable_class_register_action(bindable, "history-prev", history_prev,
-				GNT_KEY_CTRL_DOWN, NULL);
 	gnt_bindable_class_register_action(bindable, "history-next", history_next,
+				GNT_KEY_CTRL_DOWN, NULL);
+	gnt_bindable_class_register_action(bindable, "history-prev", history_prev,
 				GNT_KEY_CTRL_UP, NULL);
+	gnt_bindable_register_binding(bindable, "history-prev", GNT_KEY_CTRL_P, NULL);
+	gnt_bindable_register_binding(bindable, "history-next", GNT_KEY_CTRL_N, NULL);
 	gnt_bindable_class_register_action(bindable, "clipboard-paste", clipboard_paste,
 				GNT_KEY_CTRL_V, NULL);
 

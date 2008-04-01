@@ -357,7 +357,7 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 		g_free(hex_dump);
 		encrypted_len = bytes + 16;
 		encrypted_data = g_newa(guint8, encrypted_len);
-		qq_crypt(ENCRYPT, raw_data, bytes, info->file_session_key, encrypted_data, &encrypted_len);
+		qq_encrypt(raw_data, bytes, info->file_session_key, encrypted_data, &encrypted_len);
 		/*debug: try to decrypt it */
 		/*
 		if (QQ_DEBUG) {
@@ -368,7 +368,7 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 			g_free(hex_dump);
 			buf = g_newa(guint8, MAX_PACKET_SIZE);
 			buflen = encrypted_len;
-			if (qq_crypt(DECRYPT, encrypted_data, encrypted_len, info->file_session_key, buf, &buflen)) {
+			if (qq_decrypt(encrypted_data, encrypted_len, info->file_session_key, buf, &buflen)) {
 				purple_debug(PURPLE_DEBUG_INFO, "QQ", "decrypt success\n");
 				if (buflen == bytes && memcmp(raw_data, buf, buflen) == 0)
 					purple_debug(PURPLE_DEBUG_INFO, "QQ", "checksum ok\n");
@@ -534,7 +534,7 @@ static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data,
 	decrypted_data = g_newa(guint8, len);
 	decrypted_len = len;
 
-	if (qq_crypt(DECRYPT, cursor, len - (cursor - data), qd->session_md5, decrypted_data, &decrypted_len)) {
+	if (qq_decrypt(cursor, len - (cursor - data), qd->session_md5, decrypted_data, &decrypted_len)) {
 		gchar *hex_dump;
 		cursor = decrypted_data + 16;	/* skip md5 section */
 		read_packet_w(decrypted_data, &cursor, decrypted_len, &packet_type);

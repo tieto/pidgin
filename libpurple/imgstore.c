@@ -1,5 +1,5 @@
 /**
- * @file imgstore.h IM Image Store API
+ * @file imgstore.c IM Image Store API
  * @ingroup core
  */
 

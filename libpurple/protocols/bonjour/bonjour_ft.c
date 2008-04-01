@@ -489,7 +489,7 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 			else
 				purple_xfer_cancel_remote(xfer);
 		} else
-			purple_debug_info("bonjour", "si offer Message type - Unknown-%d.\n", type);
+			purple_debug_info("bonjour", "si offer Message type - Unknown-%s.\n", type);
 	}
 }
 

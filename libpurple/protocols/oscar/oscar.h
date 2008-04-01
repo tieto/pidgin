@@ -754,7 +754,7 @@ void oscar_chat_destroy(struct chat_connection *cc);
 #define AIM_IMFLAGS_TYPINGNOT			0x1000 /* typing notification */
 
 #define AIM_CHARSET_ASCII		0x0000
-#define AIM_CHARSET_UNICODE	0x0002 /* UCS-2BE */
+#define AIM_CHARSET_UNICODE	0x0002 /* UTF-16BE */
 #define AIM_CHARSET_CUSTOM	0x0003
 
 /*
