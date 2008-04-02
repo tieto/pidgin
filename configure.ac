@@ -1491,7 +1491,7 @@ dnl #######################################################################
 dnl These two are inverses of each other <-- stolen from evolution!
 
 AC_ARG_ENABLE(gnutls,
-	[  --enable-gnutls=[yes,no]  attempt to use GnuTLS for SSL support (preferred) [default=yes]],
+	[  --enable-gnutls=[yes,no]  attempt to use GnuTLS for SSL support [default=yes]],
 	[enable_gnutls="$enableval"],
 	[enable_gnutls="yes"])
 
