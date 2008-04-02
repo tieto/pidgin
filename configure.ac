@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [4])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [4])
-m4_define([purple_micro_version], [1])
+m4_define([purple_micro_version], [2])
 m4_define([purple_version_suffix], [devel])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [4])
 m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [4])
-m4_define([gnt_micro_version], [1])
+m4_define([gnt_micro_version], [2])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -2146,9 +2146,16 @@ AC_SUBST(CHECK_LIBS)
 dnl #######################################################################
 dnl # Disable pixmap installation
 dnl #######################################################################
-AC_ARG_ENABLE(pixmaps-install, AC_HELP_STRING([--enable-pixmaps-install], [enable installation of pixmap files]), enable_pixmaps="$enableval", enable_pixmaps=yes)
+AC_ARG_ENABLE(pixmaps-install, AC_HELP_STRING([--disable-pixmaps-install], [disable installation of pixmap files]), enable_pixmaps="$enableval", enable_pixmaps=yes)
 
 AM_CONDITIONAL(INSTALL_PIXMAPS, test "x$enable_pixmaps" = "xyes")
+
+dnl #######################################################################
+dnl # Disable installation of translation files
+dnl #######################################################################
+AC_ARG_ENABLE(nls, AC_HELP_STRING([--disable-nls], [disable installation of translation files]), enable_i18n="$enableval", enable_i18n=yes)
+
+AM_CONDITIONAL(INSTALL_I18N, test "x$enable_i18n" = "xyes")
 
 dnl #######################################################################
 dnl # Check for Doxygen and dot (part of GraphViz)
@@ -2308,6 +2315,7 @@ echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
 echo Install pixmaps............... : $enable_pixmaps
+echo Install translations.......... : $enable_i18n
 echo Has you....................... : yes
 echo
 echo Use XScreenSaver Extension.... : $enable_screensaver

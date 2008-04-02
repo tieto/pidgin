@@ -1,5 +1,6 @@
 (.*/)?\.svn
 .*/?Makefile(\.in)?$
+.*/?Makefile\.am\.mingw$
 (.*/)?TAGS$
 .*/?.*\.pc$
 .*/perl/common/[^/]+\.c$
