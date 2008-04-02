@@ -404,11 +404,18 @@ If you want to build only Finch then specify --disable-gtkui when running config
 					X11_LIBS="$x_libpath_add"
 					X11_CFLAGS="$x_incpath_add"
 				else
-					with_x=no
+					AC_MSG_ERROR([
+X11 development headers not found.
+Use --without-x if you do not need X11 support.
+])
 				fi
 			])
 		AC_SUBST(X11_LIBS)
 		AC_SUBST(X11_CFLAGS)
+	else
+		enable_screensaver=no
+		enable_sm=no
+		enable_gestures=no
 	fi
 
 	dnl #######################################################################
@@ -438,9 +445,15 @@ If you want to build only Finch then specify --disable-gtkui when running config
 			if test "x$enable_screensaver" = "xyes" ; then
 				AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])
 				AC_SUBST(XSS_LIBS)
+			else
+				AC_MSG_ERROR([
+XScreenSaver extension development headers not found.
+Use --disable-screensaver if you do not need XScreenSaver extension support,
+this is required for detecting idle time by mouse and keyboard usage.
+])
 			fi
 		else
-			enable_screensaver=no
+			AC_MSG_ERROR([X support is required to build with XScreenSaver extensions])
 		fi
 	fi
 
@@ -461,9 +474,14 @@ If you want to build only Finch then specify --disable-gtkui when running config
 			if test "x$enable_sm" = "xyes"; then
 				AC_DEFINE(USE_SM, 1, [Define if we're using X Session Management.])
 				AC_SUBST(SM_LIBS)
+			else
+				AC_MSG_ERROR([
+X session management development headers not found.
+Use --disable-sm if you do not need session management support.
+])
 			fi
 		else
-			enable_sm=no
+			AC_MSG_ERROR([X support is required to build with X session management support])
 		fi
 	fi
 
@@ -482,8 +500,10 @@ If you want to build only Finch then specify --disable-gtkui when running config
 	if test "x$enable_startup_notification" = "xyes"; then
 		PKG_CHECK_MODULES(STARTUP_NOTIFICATION, [libstartup-notification-1.0 >= 0.5], , [
 			AC_MSG_RESULT(no)
-			enable_startup_notification=no
-		])
+			AC_MSG_ERROR([
+Startup notification development headers not found.
+Use --disable-startup-notification if you do not need it.
+])])
 
 		if test "x$enable_startup_notification" = "xyes"; then
 			AC_DEFINE(HAVE_STARTUP_NOTIFICATION, 1, [Define if we're using libstartup-notification.])
@@ -498,8 +518,10 @@ If you want to build only Finch then specify --disable-gtkui when running config
 	if test "x$enable_gtkspell" = "xyes" ; then
 		PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , [
 			AC_MSG_RESULT(no)
-			enable_gtkspell=no
-		])
+			AC_MSG_ERROR([
+GtkSpell development headers not found.
+Use --disable-gtkspell if you do not need it.
+])])
 		if test "x$enable_gtkspell" = "xyes" ; then
 			AC_DEFINE(USE_GTKSPELL, 1, [Define if we're using GtkSpell])
 			AC_SUBST(GTKSPELL_CFLAGS)
@@ -528,6 +550,11 @@ If you want to build only Finch then specify --disable-gtkui when running config
 			AC_DEFINE(HAVE_EVOLUTION_ADDRESSBOOK, 1, [Define if we're using evolution addressbook.])
 			AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
 			AC_SUBST(EVOLUTION_ADDRESSBOOK_LIBS)
+		else
+			AC_MSG_ERROR([
+Evolution development headers not found.
+Use --disable-gevolution if you do not need it.
+])
 		fi
 	fi
 
@@ -537,8 +564,10 @@ If you want to build only Finch then specify --disable-gtkui when running config
 	if test "x$enable_cap" = "xyes"; then
 		PKG_CHECK_MODULES(SQLITE3, sqlite3 >= 3.3,,[
 			AC_MSG_RESULT(no)
-			enable_cap="no"
-			])
+			AC_MSG_ERROR([
+sqlite3 development headers not found.
+Use --disable-cap if you do not need the Contact Availability Prediction plugin.
+])])
 	fi
         
 
@@ -675,24 +704,39 @@ if test "x$enable_gst" != "xno"; then
 			[], [$GSTREAMER_LIBS])
 	], [
 		AC_MSG_RESULT(no)
-		enable_gst="no"
-	])
+		AC_MSG_ERROR([
+GStreamer development headers not found.
+Use --disable-gstreamer if you do not need GStreamer (sound) support.
+])])
 fi
 
 dnl #######################################################################
 dnl # Check for Meanwhile headers (for Sametime)
 dnl #######################################################################
-PKG_CHECK_MODULES(MEANWHILE, [meanwhile >= 1.0.0 meanwhile < 2.0.0], [
-	have_meanwhile="yes"
-], [
-	have_meanwhile="no"
-])
+AC_ARG_ENABLE(meanwhile,
+	[AC_HELP_STRING([--disable-meanwhile],
+		[compile without meanwhile (required for Sametime support)])],
+	enable_meanwhile="$enableval", enable_meanwhile="yes")
+if test "x$enable_meanwhile" = "xyes"; then
+	PKG_CHECK_MODULES(MEANWHILE, [meanwhile >= 1.0.0 meanwhile < 2.0.0], [
+		have_meanwhile="yes"
+	], [
+		have_meanwhile="no"
+		AC_MSG_ERROR([
+Meanwhile development headers not found.
+Use --disable-meanwhile if you do not need meanwhile (Sametime) support.
+])])
+fi
 AC_SUBST(MEANWHILE_CFLAGS)
 AC_SUBST(MEANWHILE_LIBS)
 
 dnl #######################################################################
 dnl # Check for Native Avahi headers (for Bonjour)
 dnl #######################################################################
+AC_ARG_ENABLE(avahi,
+	[AC_HELP_STRING([--disable-avahi],
+		[compile without avahi (required for Bonjour support)])],
+	enable_avahi="$enableval", enable_avahi="yes")
 AC_ARG_WITH(avahi-client-includes, [AC_HELP_STRING([--with-avahi-client-includes=DIR], [compile the Bonjour plugin against the Avahi Client includes in DIR])], [ac_avahi_client_includes="$withval"], [ac_avahi_client_includes="no"])
 AC_ARG_WITH(avahi-client-libs, [AC_HELP_STRING([--with-avahi-client-libs=DIR], [compile the Bonjour plugin against the Avahi Client libs in DIR])], [ac_avahi_client_libs="$withval"], [ac_avahi_client_libs="no"])
 AVAHI_CFLAGS=""
@@ -724,6 +768,12 @@ if test "$ac_avahi_client_libs" != "no"; then
 fi
 AC_CHECK_LIB(avahi-client, avahi_client_new, [avahilibs=yes], [avahilibs=no], $AVAHI_LIBS)
 
+if test "x$enable_avahi" = "xyes" -a \( "x$avahiincludes" = "xno" -o "x$avahilibs" = "xno" \); then
+	AC_MSG_ERROR([
+avahi development headers not found.
+Use --disable-avahi if you do not need avahi (Bonjour) support.
+])
+fi
 AC_SUBST(AVAHI_CFLAGS)
 AC_SUBST(AVAHI_LIBS)
 
@@ -1156,8 +1206,10 @@ if test "x$enable_dbus" = "xyes" ; then
 		AC_SUBST(DBUS_LIBS)
 		enable_dbus=yes
 	], [
-		enable_dbus=no
-	])
+		AC_MSG_ERROR([
+D-Bus development headers not found.
+Use --disable-dbus if you do not need D-Bus support.
+])])
 
 dnl Check for libnm_glib; if we don't have it, oh well
 	if test "x$enable_libnm" = "xyes" ; then
@@ -1170,8 +1222,10 @@ dnl Check for libnm_glib; if we don't have it, oh well
 		],
 		[
 			AC_MSG_RESULT(no)
-			enable_libnm=no
-		])
+			AC_MSG_ERROR([
+NetworkManager development headers not found.
+Use --disable-nm if you do not need NetworkManager support.
+])])
 		AC_SUBST(LIBNM_CFLAGS)
 		AC_SUBST(LIBNM_LIBS)
 	fi
@@ -1319,7 +1373,10 @@ if test x"$enable_mono" = x"yes" ; then
 		enable_mono=yes
 	], [
 		AC_MSG_RESULT(no)
-		enable_mono=no
+		AC_MSG_ERROR([
+Mono development headers not found.
+Use --disable-mono if you do not need Mono support.
+])
 	])
 	if test x"$enable_mono" = x"yes"; then
 		oldLIBS="$LIBS"
@@ -1354,8 +1411,9 @@ AC_ARG_ENABLE(perl, [AC_HELP_STRING([--disable-perl], [compile without perl scri
 if test "$enable_plugins" = no ; then
 	enable_perl=no
 fi
-
+looked_for_perl="no"
 if test "$enable_perl" = yes ; then
+	looked_for_perl="yes"
 	AC_PATH_PROG(perlpath, perl)
 	AC_MSG_CHECKING(for Perl compile flags)
 	PERL_CFLAGS=`$perlpath -MExtUtils::Embed -e ccopts 2>/dev/null`
@@ -1482,6 +1540,13 @@ else
 	AM_CONDITIONAL(USE_PERL, false)
 fi
 
+if test "x$looked_for_perl" = "xyes" -a "x$enable_perl" = "xno"; then
+	AC_MSG_ERROR([
+Perl development headers not found.
+Use --disable-perl if you do not need Perl scripting support.
+])
+fi
+
 dnl #######################################################################
 dnl # SSL support
 dnl #
@@ -1501,13 +1566,14 @@ AC_ARG_ENABLE(nss,
 	[enable_nss="yes"])
 
 msg_ssl="None. MSN, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!"
-
+looked_for_gnutls="no"
 dnl #
 dnl # Check for GnuTLS if it's specified.
 dnl #
 if test "x$enable_gnutls" != "xno"; then
 	enable_gnutls="no"
 	prefix=`eval echo $prefix`
+	looked_for_gnutls="yes"
 
 	AC_ARG_WITH(gnutls-includes,
 		[  --with-gnutls-includes=PREFIX   location of GnuTLS includes.],
@@ -1591,7 +1657,9 @@ AM_CONDITIONAL(USE_GNUTLS, test "x$enable_gnutls" = "xyes")
 dnl #
 dnl # Check for NSS if it's specified, or if GnuTLS checks failed.
 dnl #
+looked_for_nss="no"
 if test "x$enable_nss" != "xno"; then
+	looked_for_nss="yes"
 
 	AC_ARG_WITH(nspr-includes,
 		[AC_HELP_STRING([--with-nspr-includes=PREFIX], [specify location of Mozilla nspr4 includes.])],
@@ -1871,6 +1939,24 @@ elif test "x$msg_nss" != "x"; then
 	msg_ssl=$msg_nss
 elif test "x$msg_gnutls" != "x"; then
 	msg_ssl=$msg_gnutls
+elif test "x$looked_for_gnutls" = "xyes" -a "x$looked_for_nss" = "xyes"; then
+	AC_MSG_ERROR([
+Neither GnuTLS or NSS SSL development headers found.
+Use --disable-nss --disable-gnutls if you do not need SSL support.
+MSN, Novell Groupwise and Google Talk will not work without GnuTLS or NSS. OpenSSL is NOT usable!
+])
+elif test "x$looked_for_gnutls" = "xyes"; then
+	AC_MSG_ERROR([
+GnuTLS SSL development headers not found.
+Use --disable-gnutls if you do not need SSL support.
+MSN, Novell Groupwise and Google Talk will not work without SSL support.
+])
+elif test "x$looked_for_nss" = "xyes"; then
+	AC_MSG_ERROR([
+NSS SSL development headers not found.
+Use --disable-nss if you do not need SSL support.
+MSN, Novell Groupwise and Google Talk will not work without SSL support.
+])
 fi
 
 dnl #######################################################################
@@ -1904,6 +1990,10 @@ if test "$enable_tcl" = yes; then
 	if test "$TCLCONFIG" = "no"; then
 		AC_MSG_RESULT([no])
 		enable_tcl=no
+		AC_MSG_ERROR([
+Tcl development headers not found.
+Use --disable-tcl if you do not need Tcl scripting support.
+])
 	else
 		. $TCLCONFIG
 		AC_MSG_CHECKING([Tcl version compatability])
@@ -1968,6 +2058,10 @@ if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
 	if test "$TKCONFIG" = "no"; then
 		AC_MSG_RESULT([no])
 		enable_tk=no
+		AC_MSG_ERROR([
+Tk development headers not found.
+Use --disable-tk if you do not need Tk scripting support.
+])
 	else
 		. $TKCONFIG
 		eval "TK_LIB_SPEC=\"$TK_LIB_SPEC\""
