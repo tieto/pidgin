@@ -36,9 +36,7 @@
 static GHashTable *imgstore;
 static int nextid = 0;
 
-/**
- * Stored image
- *
+/*
  * NOTE: purple_imgstore_add() creates these without zeroing the memory, so
  * NOTE: make sure to update that function when adding members.
  */
