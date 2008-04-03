@@ -134,5 +134,5 @@ run_or_die ${AUTOCONF} ${AUTOCONF_FLAGS}
 ###############################################################################
 # Run configure
 ###############################################################################
-echo "running ./configure ${CONFIGURE_ARGS} $@"
-./configure ${CONFIGURE_ARGS} $@
+echo "running ./configure ${CONFIGURE_FLAGS} $@"
+./configure ${CONFIGURE_FLAGS} $@
