@@ -3629,7 +3629,11 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	if (purple_account_get_user_info(account) != NULL)
 		serv_set_info(gc, purple_account_get_user_info(account));
 
-	if (!od->icq)
+	if (!od->icq && strcmp(purple_account_get_username(account), purple_connection_get_display_name(gc)) != 0)
+		/*
+		 * Format the screen name for AIM accounts if it's different
+		 * than what's currently set.
+		 */
 		oscar_format_screenname(gc, account->username);
 
 	/* Set our available message based on the current status */
