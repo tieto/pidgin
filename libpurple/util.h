@@ -702,8 +702,11 @@ const char *
 purple_util_get_image_extension(gconstpointer data, size_t len);
 
 /**
- * Returns a SHA-1 hash string of the data passed in with the correct file
- * extention appended.
+ * @return A hex encoded version of the SHA-1 hash of the data passed
+ *         in with the correct file extention appended.  The file
+ *         extension is determined by calling
+ *         purple_util_get_image_extension().  This return value must
+ *         be g_freed by the caller.
  */
 char *purple_util_get_image_filename(gconstpointer image_data, size_t image_len);
 
