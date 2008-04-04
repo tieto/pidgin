@@ -4363,33 +4363,35 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 {
 	GtkTextBuffer *buffer;
 	GtkTextIter iter;
-	int wrapped_lines;
 	int lines;
 	GdkRectangle oneline;
 	int height, diff;
 	int pad_top, pad_inside, pad_bottom;
 	int max_height = gtkconv->tab_cont->allocation.height / 2;
 
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
-
-	wrapped_lines = 1;
-	gtk_text_buffer_get_start_iter(buffer, &iter);
-	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(gtkconv->entry), &iter, &oneline);
-	while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(gtkconv->entry), &iter))
-		wrapped_lines++;
-
-	lines = gtk_text_buffer_get_line_count(buffer);
-
-	/* Show at least two lines */
-	wrapped_lines = MAX(wrapped_lines, 2);
-
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(gtkconv->entry));
 
-	height = (oneline.height + pad_top + pad_bottom) * lines;
-	if (wrapped_lines > lines)
-		height += (oneline.height + pad_inside) * (wrapped_lines - lines);
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
+	gtk_text_buffer_get_start_iter(buffer, &iter);
+	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(gtkconv->entry), &iter, &oneline);
+
+	lines = gtk_text_buffer_get_line_count(buffer);
+
+	height = 0;
+	do {
+		int lineheight = 0;
+		gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(gtkconv->entry), &iter, NULL, &lineheight);
+		height += lineheight;
+		lines--;
+	} while (gtk_text_iter_forward_line(&iter));
+	height += lines * (oneline.height + pad_top + pad_bottom);
+
+	/* Make sure there's enough room for at least two lines. Allocate enough space to
+	 * prevent scrolling when the second line is a continuation of the first line, or
+	 * is the beginning of a new paragraph. */
+	height = MAX(height, 2 * (oneline.height + MAX(pad_inside, pad_top + pad_bottom)));
 
 	height = MIN(height, max_height);
 
