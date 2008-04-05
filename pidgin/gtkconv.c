@@ -3411,9 +3411,13 @@ typing_animation(gpointer data) {
 static void
 update_typing_message(PidginConversation *gtkconv, const char *message)
 {
-	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml));
+	GtkTextBuffer *buffer;
 	GtkTextMark *stmark, *enmark;
 
+	if (g_object_get_data(G_OBJECT(gtkconv->imhtml), "disable-typing-notification"))
+		return;
+
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml));
 	stmark = gtk_text_buffer_get_mark(buffer, "typing-notification-start");
 	enmark = gtk_text_buffer_get_mark(buffer, "typing-notification-end");
 	if (stmark && enmark) {
@@ -4900,6 +4904,40 @@ ignore_middle_click(GtkWidget *widget, GdkEventButton *e, gpointer null)
 	return FALSE;
 }
 
+static void set_typing_font(GtkWidget *widget, GtkStyle *style, PidginConversation *gtkconv)
+{
+	static PangoFontDescription *font_desc = NULL;
+	static GdkColor *color = NULL;
+	static gboolean enable = TRUE;
+
+	if (font_desc == NULL) {
+		char *string = NULL;
+		gtk_widget_style_get(widget,
+				"typing-notification-font", &string,
+				"typing-notification-color", &color,
+				"typing-notification-enable", &enable,
+				NULL);
+		font_desc = pango_font_description_from_string(string);
+		g_free(string);
+		if (color == NULL) {
+			GdkColor def = {0, 0x8888, 0x8888, 0x8888};
+			color = gdk_color_copy(&def);
+		}
+	}
+
+	gtk_text_buffer_create_tag(GTK_IMHTML(widget)->text_buffer, "TYPING-NOTIFICATION",
+			"foreground-gdk", color,
+			"font-desc", font_desc,
+			NULL);
+
+	if (!enable) {
+		g_object_set_data(G_OBJECT(widget), "disable-typing-notification", GINT_TO_POINTER(TRUE));
+		/* or may be 'gtkconv->disable_typing = TRUE;' instead? */
+	}
+
+	g_signal_handlers_disconnect_by_func(G_OBJECT(widget), set_typing_font, gtkconv);
+}
+
 /**************************************************************************
  * Conversation UI operations
  **************************************************************************/
@@ -4981,12 +5019,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
 	                 G_CALLBACK(conv_dnd_recv), gtkconv);
 
-	gtk_text_buffer_create_tag(GTK_IMHTML(gtkconv->imhtml)->text_buffer, "TYPING-NOTIFICATION",
-			"foreground", "#888888",
-			"justification", GTK_JUSTIFY_LEFT,  /* XXX: RTL'ify */
-			"weight", PANGO_WEIGHT_LIGHT,
-			"scale", PANGO_SCALE_SMALL,
-			NULL);
+	g_signal_connect(gtkconv->imhtml, "style-set", G_CALLBACK(set_typing_font), gtkconv);
 
 	/* Setup the container for the tab. */
 	gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);

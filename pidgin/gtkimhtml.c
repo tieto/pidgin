@@ -1416,6 +1416,24 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        _("Color to draw the name of an action message."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 
+	/* Customizable typing notification ... sort of. Example:
+	 *   GtkIMHtml::typing-notification-font = "monospace italic light 8.0"
+	 *   GtkIMHtml::typing-notification-color = "#ff0000"
+	 *   GtkIMHtml::typing-notification-enable = 1
+	 */
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("typing-notification-color",
+	                                        _("Typing notification color"),
+	                                        _("The color to use for the typing notification font"),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_string("typing-notification-font",
+	                                        _("Typing notification font"),
+	                                        _("The font to use for the typing notification"),
+	                                        "light 8.0", G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boolean("typing-notification-enable",
+	                                        _("Enable typing notification"),
+	                                        _("Enable typing notification"),
+	                                        TRUE, G_PARAM_READABLE));
+
 	binding_set = gtk_binding_set_by_class (parent_class);
 	gtk_binding_entry_add_signal (binding_set, GDK_b, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_BOLD);
 	gtk_binding_entry_add_signal (binding_set, GDK_i, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_ITALIC);

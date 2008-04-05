@@ -4,6 +4,10 @@ version 2.x.x:
 	libpurple:
 	* In MySpaceIM, messages from spambots are discarded (Justin Williams)
 
+	Pidgin:
+	* The typing notification in the conversation history can be disabled or
+	  customized (font, color etc.) in .gtkrc-2.0.
+
 version 2.4.1 (03/31/2008):
 	http://developer.pidgin.im/query?status=closed&milestone=2.4.1
 
