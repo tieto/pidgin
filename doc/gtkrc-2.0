@@ -28,12 +28,27 @@ widget "*pidgin_request_imhtml" style "imhtml-fix"
 # Set the widget style for IMHtml widgets in notify dialogs
 widget "*pidgin_notify_imhtml" style "imhtml-fix"
 
-# The following lets you customize the color of hyperlinks
-# and also the text cursors. The link color thing is Pidgin specific
-# but the rest work for any Gtk2 program. You can search the Gtk2
-# docs for other style properties.
+# It is safe to remove any undesired settings from the following
 style "my-style-name" {
+  # Change the color of hyperlinks.
   GtkIMHtml::hyperlink-color = "#000080"
+  # Change the color of the nick in highlighted messages, e.g. messages containing your nick
+  GtkIMHtml::highlight-name-color = "#AF7F00"
+  # Change the color of the nick in received message
+  GtkIMHtml::receive-name-color = "#cc0000"
+  # Change the color of the nick in sent message
+  GtkIMHtml::send-name-color = "#204a87"
+  # Change the color of the nick in action messages, e.g. "/me likes pidgin"
+  GtkIMHtml::action-name-color = "#062585"
+  # Change the font of the typing notification in conversation history.
+  GtkIMHtml::typing-notification-font = "italic light 8.0"
+  # Change the color of the typing notification
+  GtkIMHtml::typing-notification-color = "#ff0000"
+  # Disable the typing notification
+  GtkIMHtml::typing-notification-enable = 1
+
+  # The following settings will change the behaviour in all GTK+ applications
+  # Change the cursor color
   GtkWidget::cursor-color    = "#0000FF"
   GtkWidget::secondary-cursor-color = "#00FF00" #for mixed ltr and rtl
 }
