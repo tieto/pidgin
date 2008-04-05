@@ -171,7 +171,7 @@ static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
 		int width, int height);
 static gboolean pidgin_conv_xy_to_right_infopane(PidginWindow *win, int x, int y);
 
-static GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
+static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
 	static GdkColor col;
 	GtkStyle *style = gtk_widget_get_style(gtkconv->imhtml);
 	float scale;
@@ -5616,8 +5616,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 				if(col) {
 					g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 						col->red >> 8, col->green >> 8, col->blue >> 8);
-				}
-				else {
+					gdk_color_free(col);
+				} else {
 					if (flags & PURPLE_MESSAGE_NICK)
 						strcpy(color, DEFAULT_HIGHLIGHT_COLOR);
 					else
@@ -5640,14 +5640,14 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 					if(col) {
 						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 							col->red >> 8, col->green >> 8, col->blue >> 8);
-					}
-					else {
+						gdk_color_free(col);
+					} else {
 						strcpy(color, DEFAULT_HIGHLIGHT_COLOR);
 					}
 				}
 				else if (flags & PURPLE_MESSAGE_RECV) {
 					if (type == PURPLE_CONV_TYPE_CHAT) {
-						GdkColor *col = get_nick_color(gtkconv, name);
+						const GdkColor *col = get_nick_color(gtkconv, name);
 
 						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 							   col->red >> 8, col->green >> 8, col->blue >> 8);
@@ -5657,8 +5657,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 						if(col) {
 							g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 								col->red >> 8, col->green >> 8, col->blue >> 8);
-						}
-						else {
+							gdk_color_free(col);
+						} else {
 							strcpy(color, DEFAULT_RECV_COLOR);
 						}
 					}
@@ -5669,8 +5669,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 					if(col) {
 						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 							col->red >> 8, col->green >> 8, col->blue >> 8);
-					}
-					else {
+						gdk_color_free(col);
+					} else {
 						strcpy(color, DEFAULT_SEND_COLOR);
 					}
 				}
