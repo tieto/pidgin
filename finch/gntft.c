@@ -403,6 +403,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	double kbps = 0.0;
 	time_t elapsed, now;
 	char *kbsec;
+	gboolean send;
 
 	if ((now = purple_xfer_get_end_time(xfer)) == 0)
 		now = time(NULL);
@@ -429,6 +430,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	}
 	data->last_updated_time = current_time;
 
+	send = (purple_xfer_get_type(xfer) == PURPLE_XFER_SEND);
 	size_str      = purple_str_size_to_units(purple_xfer_get_size(xfer));
 	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
 	kbsec = g_strdup_printf(_("%.2f KiB/s"), kbps);
@@ -442,14 +444,17 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	g_free(remaining_str);
 	g_free(kbsec);
 	if (purple_xfer_is_completed(xfer)) {
-		char *msg = g_strdup_printf(_("The file was saved as %s."), purple_xfer_get_local_filename(xfer));
-		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_STATUS, _("Finished"));
+		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_STATUS, send ? _("Sent") : _("Received"));
 		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_REMAINING, _("Finished"));
-		purple_xfer_conversation_write(xfer, msg, FALSE);
-		g_free(msg);
+		if (!send) {
+			char *msg = g_strdup_printf(_("The file was saved as %s."), purple_xfer_get_local_filename(xfer));
+			purple_xfer_conversation_write(xfer, msg, FALSE);
+			g_free(msg);
+		}
 		data->notified = TRUE;
 	} else {
-		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_STATUS, _("Transferring"));
+		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_STATUS,
+				send ? _("Sending") : _("Receiving"));
 	}
 
 	update_title_progress();
