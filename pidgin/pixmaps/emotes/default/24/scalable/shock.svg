@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,16 +13,23 @@
    height="24"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.45.1"
+   inkscape:version="0.46"
    version="1.0"
    sodipodi:docbase="/home/hbons/Desktop"
-   sodipodi:docname="new-style-shock.svg"
+   sodipodi:docname="shock.svg"
    inkscape:export-filename="/home/hbons/Desktop/newstyle.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 12 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="24 : 12 : 1"
+       inkscape:persp3d-origin="12 : 8 : 1"
+       id="perspective29" />
     <linearGradient
        inkscape:collect="always"
        id="linearGradient3263">
@@ -88,16 +95,26 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="22.4"
-     inkscape:cx="26.558313"
-     inkscape:cy="10.870659"
+     inkscape:cx="13.477956"
+     inkscape:cy="11.67423"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      fill="#fce94f"
      inkscape:window-width="1440"
-     inkscape:window-height="845"
+     inkscape:window-height="846"
      inkscape:window-x="0"
-     inkscape:window-y="0" />
+     inkscape:window-y="25"
+     inkscape:snap-bbox="true"
+     inkscape:snap-nodes="false"
+     objecttolerance="9"
+     gridtolerance="9">
+    <inkscape:grid
+       type="xygrid"
+       visible="true"
+       enabled="true"
+       id="grid2402" />
+  </sodipodi:namedview>
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -155,7 +172,7 @@
        transform="matrix(0.852176,0,0,0.852216,1.93909,2.639626)" />
     <path
        style="fill:#eeeeec;fill-opacity:1;stroke:#fea523;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1"
-       d="M 11.499998,9.5 C 11.499998,11.156 10.156,12.5 8.4999995,12.5 C 6.844,12.5 5.5000002,11.156 5.5000002,9.5 C 5.5000002,7.844 6.844,6.5 8.4999995,6.5 C 10.156,6.5 11.499998,7.844 11.499998,9.5 z "
+       d="M 11.499998,9.0000003 C 11.499998,10.932 10.156,12.5 8.4999995,12.5 C 6.844,12.5 5.5000002,10.932 5.5000002,9.0000003 C 5.5000002,7.0680003 6.844,5.5000002 8.4999995,5.5000002 C 10.156,5.5000002 11.499998,7.0680003 11.499998,9.0000003 z"
        id="path3154" />
     <path
        sodipodi:type="arc"
@@ -169,14 +186,14 @@
        transform="matrix(0.9747196,0,0,0.7726436,0.5384595,3.0419202)" />
     <path
        sodipodi:type="arc"
-       style="opacity:1;fill:#eeeeec;fill-opacity:1;stroke:#fea523;stroke-width:0.47042996;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:#eeeeec;fill-opacity:1;stroke:#fea523;stroke-width:0.43553349;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path3152"
        sodipodi:cx="9.7069349"
        sodipodi:cy="9.6526775"
        sodipodi:rx="1.0259361"
        sodipodi:ry="1.9413869"
-       d="M 10.732871 9.6526775 A 1.0259361 1.9413869 0 1 1  8.6809988,9.6526775 A 1.0259361 1.9413869 0 1 1  10.732871 9.6526775 z"
-       transform="matrix(2.9241589,0,0,1.5452871,-12.884621,-5.4161575)" />
+       d="M 10.732871,9.6526775 A 1.0259361,1.9413869 0 1 1 8.6809988,9.6526775 A 1.0259361,1.9413869 0 1 1 10.732871,9.6526775 z"
+       transform="matrix(2.9241589,0,0,1.802835,-12.884621,-8.4021847)" />
     <path
        sodipodi:type="arc"
        style="opacity:1;fill:#2e3436;fill-opacity:1;stroke:none;stroke-width:0.98640186;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -196,7 +213,7 @@
        sodipodi:rx="1.2276785"
        sodipodi:ry="1.7410715"
        d="M 7.2133909,8.4869402 A 1.2276785,1.7410715 0 0 1 9.288462,8.1425499"
-       transform="matrix(1.8690368,0.3494647,-0.353133,0.9196421,3.0149257,-5.2342213)"
+       transform="matrix(1.8690368,0.3494647,-0.353133,0.9196421,3.0149257,-6.2342213)"
        sodipodi:start="3.5782199"
        sodipodi:end="5.6135639"
        sodipodi:open="true" />
@@ -209,7 +226,7 @@
        sodipodi:rx="1.2276785"
        sodipodi:ry="1.7410715"
        d="M 7.2133909,8.4869402 A 1.2276785,1.7410715 0 0 1 9.288462,8.1425499"
-       transform="matrix(-1.8690368,0.3494647,0.353133,0.9196421,20.985074,-5.2342213)"
+       transform="matrix(-1.8690368,0.3494647,0.353133,0.9196421,20.985074,-6.2342213)"
        sodipodi:start="3.5782199"
        sodipodi:end="5.6135639"
        sodipodi:open="true" />
@@ -221,17 +238,17 @@
        sodipodi:cy="15.741072"
        sodipodi:rx="2.0982144"
        sodipodi:ry="1.7857143"
-       d="M 13.928572 15.741072 A 2.0982144 1.7857143 0 1 1  9.7321432,15.741072 A 2.0982144 1.7857143 0 1 1  13.928572 15.741072 z"
-       transform="matrix(1.4297873,0,0,1.3999999,-4.9148951,-5.5374984)" />
+       d="M 13.928572,15.741072 A 2.0982144,1.7857143 0 1 1 9.7321432,15.741072 A 2.0982144,1.7857143 0 1 1 13.928572,15.741072 z"
+       transform="matrix(1.4297873,0,0,1.3999998,-4.9148951,-5.5374976)" />
     <path
        sodipodi:type="arc"
-       style="opacity:1;fill:url(#linearGradient3269);fill-opacity:1.0;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="opacity:1;fill:url(#linearGradient3269);fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path3261"
        sodipodi:cx="11.830358"
        sodipodi:cy="15.741072"
        sodipodi:rx="2.0982144"
        sodipodi:ry="1.7857143"
-       d="M 13.928572 15.741072 A 2.0982144 1.7857143 0 1 1  9.7321432,15.741072 A 2.0982144 1.7857143 0 1 1  13.928572 15.741072 z"
-       transform="matrix(1.4297873,0,0,1.3999999,-4.9148951,-5.5374984)" />
+       d="M 13.928572,15.741072 A 2.0982144,1.7857143 0 1 1 9.7321432,15.741072 A 2.0982144,1.7857143 0 1 1 13.928572,15.741072 z"
+       transform="matrix(1.4297873,0,0,1.3999998,-4.9148951,-5.5374976)" />
   </g>
 </svg>
