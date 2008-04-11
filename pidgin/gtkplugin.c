@@ -48,6 +48,7 @@ static GtkTextBuffer *plugin_desc = NULL;
 static GtkLabel *plugin_error = NULL;
 static GtkLabel *plugin_author = NULL;
 static GtkLabel *plugin_website = NULL;
+static gchar *plugin_website_uri = NULL;
 static GtkLabel *plugin_filename = NULL;
 
 static GtkWidget *pref_button = NULL;
@@ -424,8 +425,23 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 
 	gtk_text_buffer_set_text(plugin_desc, plug->info->description, -1);
 	gtk_label_set_text(plugin_author, plug->info->author);
-	gtk_label_set_text(plugin_website, plug->info->homepage);
 	gtk_label_set_text(plugin_filename, plug->path);
+
+	g_free(plugin_website_uri);
+	plugin_website_uri = g_strdup(plug->info->homepage);
+	if (plugin_website_uri)
+	{
+		tmp = g_markup_escape_text(plugin_website_uri, -1);
+		buf = g_strdup_printf("<span underline=\"single\" "
+			"foreground=\"blue\">%s</span>", tmp);
+		gtk_label_set_markup(plugin_website, buf);
+		g_free(tmp);
+		g_free(buf);
+	}
+	else
+	{
+		gtk_label_set_text(plugin_website, NULL);
+	}
 
 	if (plug->error == NULL)
 	{
@@ -586,12 +602,20 @@ pidgin_plugins_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 	return TRUE;
 }
 
+static void
+website_button_clicked_cb(GtkButton *button,
+                          gpointer unused)
+{
+	if(plugin_website_uri)
+		purple_notify_uri(NULL, plugin_website_uri);
+}
+
 static GtkWidget *
 create_details()
 {
 	GtkBox *vbox = GTK_BOX(gtk_vbox_new(FALSE, 3));
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	GtkWidget *label, *view;
+	GtkWidget *label, *view, *website_button;
 
 	plugin_name = GTK_LABEL(gtk_label_new(NULL));
 	gtk_misc_set_alignment(GTK_MISC(plugin_name), 0, 0);
@@ -624,14 +648,22 @@ create_details()
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Written by:</b>"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
+	website_button = gtk_button_new();
 	plugin_website = GTK_LABEL(gtk_label_new(NULL));
-	gtk_label_set_line_wrap(plugin_website, FALSE);
+#if GTK_CHECK_VERSION(2,6,0)
+	g_object_set(G_OBJECT(website_button),
+		"ellipsize", PANGO_ELLIPSIZE_MIDDLE, NULL);
+#endif
 	gtk_misc_set_alignment(GTK_MISC(plugin_website), 0, 0);
-	gtk_label_set_selectable(plugin_website, TRUE);
-	pidgin_add_widget_to_vbox(vbox, "", sg,
-		GTK_WIDGET(plugin_website), TRUE, &label);
+	gtk_container_add(GTK_CONTAINER(website_button),
+		GTK_WIDGET(plugin_website));
+	gtk_button_set_relief(GTK_BUTTON(website_button), GTK_RELIEF_NONE);
+	g_signal_connect(website_button, "clicked",
+		(GCallback)website_button_clicked_cb, NULL);
+
+	pidgin_add_widget_to_vbox(vbox, "", sg, website_button, TRUE, &label);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Web site:</b>"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 
 	plugin_filename = GTK_LABEL(gtk_label_new(NULL));
 	gtk_label_set_line_wrap(plugin_filename, FALSE);
