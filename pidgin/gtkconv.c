@@ -1813,6 +1813,22 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 }
 
 static void
+activate_list_cb(GtkTreeView *list, GtkTreePath *path, GtkTreeViewColumn *column, PidginConversation *gtkconv)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	gchar *who;
+	
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(list));
+
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
+	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
+	chat_do_im(gtkconv, who);
+
+	g_free(who);
+}
+
+static void
 move_to_next_unread_tab(PidginConversation *gtkconv, gboolean forward)
 {
 	PidginConversation *next_gtkconv = NULL, *most_active = NULL;
@@ -4525,6 +4541,8 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	g_signal_connect(G_OBJECT(list), "button_press_event",
 					 G_CALLBACK(right_click_chat_cb), gtkconv);
+	g_signal_connect(G_OBJECT(list), "row-activated",
+					 G_CALLBACK(activate_list_cb), gtkconv);
 	g_signal_connect(G_OBJECT(list), "popup-menu",
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), gtkconv);
 	g_signal_connect(G_OBJECT(lbox), "size-allocate", G_CALLBACK(lbox_size_allocate_cb), gtkconv);
