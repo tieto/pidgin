@@ -64,6 +64,14 @@ m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt
 
 AC_INIT([pidgin], [purple_display_version], [devel@pidgin.im])
 
+if test `pwd | wc -w` -ne 1; then
+	AC_MSG_ERROR([
+You are attempting to build in a path that contains spaces.  This
+will fail.  Relocate this source tree to a path that does not contain
+spaces and run configure again.
+])
+fi
+
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
