@@ -358,9 +358,9 @@ AC_ARG_ENABLE(gtkspell,
 		[compile without GtkSpell automatic spell checking])],
 	enable_gtkspell="$enableval", enable_gtkspell="yes")
 AC_ARG_ENABLE(gevolution,
-	[AC_HELP_STRING([--disable-gevolution],
-		[compile without the Evolution plugin])],
-	enable_gevolution="$enableval", enable_gevolution="yes")
+	[AC_HELP_STRING([--enable-gevolution],
+		[compile with the Evolution plugin])],
+	enable_gevolution="$enableval", enable_gevolution="no")
 AC_ARG_ENABLE(cap,
 	[AC_HELP_STRING([--disable-cap],
 		[compile without Contact Availability Prediction plugin])],
