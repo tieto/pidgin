@@ -61,9 +61,11 @@ static char *irc_mask_userhost(const char *mask)
 
 static void irc_chat_remove_buddy(PurpleConversation *convo, char *data[2])
 {
-	char *message;
+	char *message, *stripped;
 
-	message = g_strdup_printf("quit: %s", data[1]);
+	stripped = data[1] ? irc_mirc2txt(data[1]) : NULL;
+	message = g_strdup_printf("quit: %s", stripped);
+	g_free(stripped);
 
 	if (purple_conv_chat_find_user(PURPLE_CONV_CHAT(convo), data[0]))
 		purple_conv_chat_remove_user(PURPLE_CONV_CHAT(convo), data[0], message);
@@ -991,7 +993,9 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 		g_free(msg);
 		serv_got_chat_left(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)));
 	} else {
-		purple_conv_chat_remove_user(PURPLE_CONV_CHAT(convo), nick, args[1]);
+		msg = args[1] ? irc_mirc2txt(args[1]) : NULL;
+		purple_conv_chat_remove_user(PURPLE_CONV_CHAT(convo), nick, msg);
+		g_free(msg);
 	}
 	g_free(nick);
 }
