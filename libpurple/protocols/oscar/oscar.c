@@ -5302,7 +5302,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	else
 		nombre = g_strdup(sn);
 
-	dialog_msg = g_strdup_printf(_("The user %s has given you permission to add you to their buddy list.  Do you want to add them?"), nombre);
+	dialog_msg = g_strdup_printf(_("The user %s has given you permission to add him or her to your buddy list.  Do you want to add this user?"), nombre);
 	g_free(nombre);
 
 	data = g_new(struct name_data, 1);
