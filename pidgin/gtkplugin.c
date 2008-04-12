@@ -602,12 +602,26 @@ pidgin_plugins_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 	return TRUE;
 }
 
-static void
-website_button_clicked_cb(GtkButton *button,
+static gboolean
+website_button_motion_cb(GtkWidget *button, GdkEventCrossing *event,
                           gpointer unused)
 {
-	if(plugin_website_uri)
+	if (plugin_website_uri) {
+		pidgin_set_cursor(button, GDK_HAND2);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
+website_button_clicked_cb(GtkButton *button, GdkEventButton *event,
+                          gpointer unused)
+{
+	if (plugin_website_uri) {
 		purple_notify_uri(NULL, plugin_website_uri);
+		return TRUE;
+	}
+	return FALSE;
 }
 
 static GtkWidget *
@@ -638,7 +652,6 @@ create_details()
 	gtk_label_set_selectable(plugin_error, TRUE);
 	gtk_box_pack_start(vbox, GTK_WIDGET(plugin_error), FALSE, FALSE, 0);
 
-
 	plugin_author = GTK_LABEL(gtk_label_new(NULL));
 	gtk_label_set_line_wrap(plugin_author, FALSE);
 	gtk_misc_set_alignment(GTK_MISC(plugin_author), 0, 0);
@@ -648,18 +661,25 @@ create_details()
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Written by:</b>"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
-	website_button = gtk_button_new();
+	website_button = gtk_event_box_new();
+#if GTK_CHECK_VERSION(2,4,0)
+	gtk_event_box_set_visible_window(GTK_EVENT_BOX(website_button), FALSE);
+#endif
+
 	plugin_website = GTK_LABEL(gtk_label_new(NULL));
 #if GTK_CHECK_VERSION(2,6,0)
-	g_object_set(G_OBJECT(website_button),
+	g_object_set(G_OBJECT(plugin_website),
 		"ellipsize", PANGO_ELLIPSIZE_MIDDLE, NULL);
 #endif
 	gtk_misc_set_alignment(GTK_MISC(plugin_website), 0, 0);
 	gtk_container_add(GTK_CONTAINER(website_button),
 		GTK_WIDGET(plugin_website));
-	gtk_button_set_relief(GTK_BUTTON(website_button), GTK_RELIEF_NONE);
-	g_signal_connect(website_button, "clicked",
-		(GCallback)website_button_clicked_cb, NULL);
+	g_signal_connect(website_button, "button-release-event",
+		G_CALLBACK(website_button_clicked_cb), NULL);
+	g_signal_connect(website_button, "enter-notify-event",
+		G_CALLBACK(website_button_motion_cb), NULL);
+	g_signal_connect(website_button, "leave-notify-event",
+		G_CALLBACK(pidgin_clear_cursor), NULL);
 
 	pidgin_add_widget_to_vbox(vbox, "", sg, website_button, TRUE, &label);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Web site:</b>"));
