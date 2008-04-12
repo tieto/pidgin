@@ -130,14 +130,15 @@ static int primitive_scores[] =
 	-100,   /* away                     */
 	-200,   /* extended away            */
 	-400,   /* mobile                   */
+	0,      /* tune                     */
 	-10,    /* idle, special case.      */
 	-5,     /* idle time, special case. */
 	10      /* Offline messageable      */
 };
 
-#define SCORE_IDLE      8
-#define SCORE_IDLE_TIME 9
-#define SCORE_OFFLINE_MESSAGE 10
+#define SCORE_IDLE      9
+#define SCORE_IDLE_TIME 10
+#define SCORE_OFFLINE_MESSAGE 11
 
 /**************************************************************************
  * PurpleStatusPrimitive API
