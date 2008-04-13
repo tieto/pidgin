@@ -1033,6 +1033,7 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 		g_free(title);
 
 		purple_blist_node_set_bool(node, "collapsed", FALSE);
+		pidgin_blist_tooltip_destroy();
 	}
 }
 
@@ -1070,7 +1071,7 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 				pidgin_blist_update_contact(NULL, cnode);
 			}
 		}
-
+		pidgin_blist_tooltip_destroy();
 	} else if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		pidgin_blist_collapse_contact_cb(NULL, node);
 	}
