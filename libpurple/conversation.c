@@ -862,7 +862,7 @@ purple_conversation_write(PurpleConversation *conv, const char *who,
 		gc = purple_account_get_connection(account);
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
-		(gc == NULL || !g_slist_find(gc->buddy_chats, conv)))
+		(gc != NULL && !g_slist_find(gc->buddy_chats, conv)))
 		return;
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM &&

@@ -5430,7 +5430,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	account = purple_conversation_get_account(conv);
 	g_return_if_fail(account != NULL);
 	gc = purple_account_get_connection(account);
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(gc != NULL || !(flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)));
 
 	/* Make sure URLs are clickable */
 	if(flags & PURPLE_MESSAGE_NO_LINKIFY)
@@ -5463,7 +5463,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	}
 
 	win = gtkconv->win;
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
 
 	line_count = gtk_text_buffer_get_line_count(
 			gtk_text_view_get_buffer(GTK_TEXT_VIEW(
@@ -5702,7 +5702,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		g_free(alias_escaped);
 
 		/* Are we in a chat where we can tell which users are buddies? */
-		if  (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME) &&
+		if  (prpl_info && !(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME) &&
 		     purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 
 			/* Bold buddies to make them stand out from non-buddies. */
