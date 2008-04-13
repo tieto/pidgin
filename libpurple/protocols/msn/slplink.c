@@ -598,7 +598,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	{
 		if ((offset + len) > slpmsg->size)
 		{
-			purple_debug_error("msn", "Oversized slpmsg\n");
+			purple_debug_error("msn", "Oversized slpmsg - msgsize=%lld offset=%d len=%d\n", slpmsg->size, offset, len);
 			g_return_if_reached();
 		}
 		else

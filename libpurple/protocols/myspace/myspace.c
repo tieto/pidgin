@@ -688,6 +688,13 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg)
 	username = msim_msg_get_string(msg, "_username");
 	g_return_val_if_fail(username != NULL, FALSE);
 
+	if (msim_is_userid(username)) {
+		purple_debug_info("msim", "Ignoring message from spambot (%s) on account %s\n",
+				username, purple_account_get_username(session->account));
+		g_free(username);
+		return FALSE;
+	}
+
 	msg_msim_markup = msim_msg_get_string(msg, "msg");
 	g_return_val_if_fail(msg_msim_markup != NULL, FALSE);
 

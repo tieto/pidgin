@@ -299,7 +299,7 @@ pidgin_ui_init(void)
 	purple_sound_set_ui_ops(pidgin_sound_get_ui_ops());
 	purple_connections_set_ui_ops(pidgin_connections_get_ui_ops());
 	purple_whiteboard_set_ui_ops(pidgin_whiteboard_get_ui_ops());
-#ifdef USE_SCREENSAVER
+#if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
 	purple_idle_set_ui_ops(pidgin_idle_get_ui_ops());
 #endif
 

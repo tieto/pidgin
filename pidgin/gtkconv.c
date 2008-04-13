@@ -173,7 +173,7 @@ static void pidgin_conv_set_position_size(PidginWindow *win, int x, int y,
 		int width, int height);
 static gboolean pidgin_conv_xy_to_right_infopane(PidginWindow *win, int x, int y);
 
-static GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
+static const GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
 	static GdkColor col;
 	GtkStyle *style = gtk_widget_get_style(gtkconv->imhtml);
 	float scale;
@@ -1823,6 +1823,22 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 }
 
 static void
+activate_list_cb(GtkTreeView *list, GtkTreePath *path, GtkTreeViewColumn *column, PidginConversation *gtkconv)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	gchar *who;
+	
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(list));
+
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
+	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
+	chat_do_im(gtkconv, who);
+
+	g_free(who);
+}
+
+static void
 move_to_next_unread_tab(PidginConversation *gtkconv, gboolean forward)
 {
 	PidginConversation *next_gtkconv = NULL, *most_active = NULL;
@@ -3432,9 +3448,13 @@ typing_animation(gpointer data) {
 static void
 update_typing_message(PidginConversation *gtkconv, const char *message)
 {
-	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml));
+	GtkTextBuffer *buffer;
 	GtkTextMark *stmark, *enmark;
 
+	if (g_object_get_data(G_OBJECT(gtkconv->imhtml), "disable-typing-notification"))
+		return;
+
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml));
 	stmark = gtk_text_buffer_get_mark(buffer, "typing-notification-start");
 	enmark = gtk_text_buffer_get_mark(buffer, "typing-notification-end");
 	if (stmark && enmark) {
@@ -4384,33 +4404,35 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 {
 	GtkTextBuffer *buffer;
 	GtkTextIter iter;
-	int wrapped_lines;
 	int lines;
 	GdkRectangle oneline;
 	int height, diff;
 	int pad_top, pad_inside, pad_bottom;
 	int max_height = gtkconv->tab_cont->allocation.height / 2;
 
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
-
-	wrapped_lines = 1;
-	gtk_text_buffer_get_start_iter(buffer, &iter);
-	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(gtkconv->entry), &iter, &oneline);
-	while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(gtkconv->entry), &iter))
-		wrapped_lines++;
-
-	lines = gtk_text_buffer_get_line_count(buffer);
-
-	/* Show at least two lines */
-	wrapped_lines = MAX(wrapped_lines, 2);
-
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(gtkconv->entry));
 
-	height = (oneline.height + pad_top + pad_bottom) * lines;
-	if (wrapped_lines > lines)
-		height += (oneline.height + pad_inside) * (wrapped_lines - lines);
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
+	gtk_text_buffer_get_start_iter(buffer, &iter);
+	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(gtkconv->entry), &iter, &oneline);
+
+	lines = gtk_text_buffer_get_line_count(buffer);
+
+	height = 0;
+	do {
+		int lineheight = 0;
+		gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(gtkconv->entry), &iter, NULL, &lineheight);
+		height += lineheight;
+		lines--;
+	} while (gtk_text_iter_forward_line(&iter));
+	height += lines * (oneline.height + pad_top + pad_bottom);
+
+	/* Make sure there's enough room for at least two lines. Allocate enough space to
+	 * prevent scrolling when the second line is a continuation of the first line, or
+	 * is the beginning of a new paragraph. */
+	height = MAX(height, 2 * (oneline.height + MAX(pad_inside, pad_top + pad_bottom)));
 
 	height = MIN(height, max_height);
 
@@ -4540,6 +4562,8 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 
 	g_signal_connect(G_OBJECT(list), "button_press_event",
 					 G_CALLBACK(right_click_chat_cb), gtkconv);
+	g_signal_connect(G_OBJECT(list), "row-activated",
+					 G_CALLBACK(activate_list_cb), gtkconv);
 	g_signal_connect(G_OBJECT(list), "popup-menu",
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), gtkconv);
 	g_signal_connect(G_OBJECT(lbox), "size-allocate", G_CALLBACK(lbox_size_allocate_cb), gtkconv);
@@ -4919,6 +4943,40 @@ ignore_middle_click(GtkWidget *widget, GdkEventButton *e, gpointer null)
 	return FALSE;
 }
 
+static void set_typing_font(GtkWidget *widget, GtkStyle *style, PidginConversation *gtkconv)
+{
+	static PangoFontDescription *font_desc = NULL;
+	static GdkColor *color = NULL;
+	static gboolean enable = TRUE;
+
+	if (font_desc == NULL) {
+		char *string = NULL;
+		gtk_widget_style_get(widget,
+				"typing-notification-font", &string,
+				"typing-notification-color", &color,
+				"typing-notification-enable", &enable,
+				NULL);
+		font_desc = pango_font_description_from_string(string);
+		g_free(string);
+		if (color == NULL) {
+			GdkColor def = {0, 0x8888, 0x8888, 0x8888};
+			color = gdk_color_copy(&def);
+		}
+	}
+
+	gtk_text_buffer_create_tag(GTK_IMHTML(widget)->text_buffer, "TYPING-NOTIFICATION",
+			"foreground-gdk", color,
+			"font-desc", font_desc,
+			NULL);
+
+	if (!enable) {
+		g_object_set_data(G_OBJECT(widget), "disable-typing-notification", GINT_TO_POINTER(TRUE));
+		/* or may be 'gtkconv->disable_typing = TRUE;' instead? */
+	}
+
+	g_signal_handlers_disconnect_by_func(G_OBJECT(widget), set_typing_font, gtkconv);
+}
+
 /**************************************************************************
  * Conversation UI operations
  **************************************************************************/
@@ -5000,12 +5058,7 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
 	                 G_CALLBACK(conv_dnd_recv), gtkconv);
 
-	gtk_text_buffer_create_tag(GTK_IMHTML(gtkconv->imhtml)->text_buffer, "TYPING-NOTIFICATION",
-			"foreground", "#888888",
-			"justification", GTK_JUSTIFY_LEFT,  /* XXX: RTL'ify */
-			"weight", PANGO_WEIGHT_LIGHT,
-			"scale", PANGO_SCALE_SMALL,
-			NULL);
+	g_signal_connect(gtkconv->imhtml, "style-set", G_CALLBACK(set_typing_font), gtkconv);
 
 	/* Setup the container for the tab. */
 	gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -5398,7 +5451,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	account = purple_conversation_get_account(conv);
 	g_return_if_fail(account != NULL);
 	gc = purple_account_get_connection(account);
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(gc != NULL || !(flags & (PURPLE_MESSAGE_SEND | PURPLE_MESSAGE_RECV)));
 
 	/* Make sure URLs are clickable */
 	if(flags & PURPLE_MESSAGE_NO_LINKIFY)
@@ -5431,7 +5484,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	}
 
 	win = gtkconv->win;
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = gc ? PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl) : NULL;
 
 	line_count = gtk_text_buffer_get_line_count(
 			gtk_text_view_get_buffer(GTK_TEXT_VIEW(
@@ -5602,8 +5655,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 				if(col) {
 					g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 						col->red >> 8, col->green >> 8, col->blue >> 8);
-				}
-				else {
+					gdk_color_free(col);
+				} else {
 					if (flags & PURPLE_MESSAGE_NICK)
 						strcpy(color, DEFAULT_HIGHLIGHT_COLOR);
 					else
@@ -5626,14 +5679,14 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 					if(col) {
 						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 							col->red >> 8, col->green >> 8, col->blue >> 8);
-					}
-					else {
+						gdk_color_free(col);
+					} else {
 						strcpy(color, DEFAULT_HIGHLIGHT_COLOR);
 					}
 				}
 				else if (flags & PURPLE_MESSAGE_RECV) {
 					if (type == PURPLE_CONV_TYPE_CHAT) {
-						GdkColor *col = get_nick_color(gtkconv, name);
+						const GdkColor *col = get_nick_color(gtkconv, name);
 
 						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 							   col->red >> 8, col->green >> 8, col->blue >> 8);
@@ -5643,8 +5696,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 						if(col) {
 							g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 								col->red >> 8, col->green >> 8, col->blue >> 8);
-						}
-						else {
+							gdk_color_free(col);
+						} else {
 							strcpy(color, DEFAULT_RECV_COLOR);
 						}
 					}
@@ -5655,8 +5708,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 					if(col) {
 						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 							col->red >> 8, col->green >> 8, col->blue >> 8);
-					}
-					else {
+						gdk_color_free(col);
+					} else {
 						strcpy(color, DEFAULT_SEND_COLOR);
 					}
 				}
@@ -5670,7 +5723,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		g_free(alias_escaped);
 
 		/* Are we in a chat where we can tell which users are buddies? */
-		if  (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME) &&
+		if  (prpl_info && !(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME) &&
 		     purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 
 			/* Bold buddies to make them stand out from non-buddies. */
@@ -6528,7 +6581,9 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				markup = title;
 			}
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-			const char *topic = gtkconv->u.chat->topic_text ? gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text)) : NULL;
+			const char *topic = gtkconv->u.chat->topic_text
+				? gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text))
+				: NULL;
 			char *esc = NULL, *tmp;
 #if GTK_CHECK_VERSION(2,6,0)
 			esc = topic ? g_markup_escape_text(topic, -1) : NULL;
@@ -6538,20 +6593,22 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			int len = 0;
 			char *c;
 
-			tmp = g_strdup(topic);
-			c = tmp;
-			while(*c && len < 72) {
-				c = g_utf8_next_char(c);
-				len++;
-			}
-			if (len == 72) {
-				*c = '\0';
-				c = g_strdup_printf("%s...", tmp);
+			if (topic != NULL) {
+				tmp = g_strdup(topic);
+				c = tmp;
+				while(*c && len < 72) {
+					c = g_utf8_next_char(c);
+					len++;
+				}
+				if (len == 72) {
+					*c = '\0';
+					c = g_strdup_printf("%s...", tmp);
+					g_free(tmp);
+					tmp = c;
+				}
+				esc = g_markup_escape_text(tmp, -1);
 				g_free(tmp);
-				tmp = c;
 			}
-			esc = tmp ? g_markup_escape_text(tmp, -1) : NULL;
-			g_free(tmp);
 #endif
 			tmp = g_markup_escape_text(purple_conversation_get_title(conv), -1);
 			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",

@@ -1354,7 +1354,7 @@ aim_locate_setinterests(OscarData *od, const char *interest1, const char *intere
 }
 
 /*
- * Subtype 0x0015 - Request the info a user using the short method.  This is
+ * Subtype 0x0015 - Request the info of a user using the short method.  This is
  * what iChat uses.  It normally is VERY leniently rate limited.
  *
  * @param sn The screen name whose info you wish to request.

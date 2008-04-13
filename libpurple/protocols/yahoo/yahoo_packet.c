@@ -346,7 +346,7 @@ size_t yahoo_packet_build(struct yahoo_packet *pkt, int pad, gboolean wm,
 int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
 {
 	size_t len;
-	ssize_t ret;
+	gssize ret;
 	guchar *data;
 
 	if (yd->fd < 0)

@@ -25,13 +25,6 @@
  */
 #include "finch.h"
 
-#include "account.h"
-#include "debug.h"
-#include "log.h"
-#include "notify.h"
-#include "request.h"
-#include "util.h"
-
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
@@ -40,6 +33,13 @@
 #include <gnttextview.h>
 #include <gnttree.h>
 #include <gntwindow.h>
+
+#include "account.h"
+#include "debug.h"
+#include "log.h"
+#include "notify.h"
+#include "request.h"
+#include "util.h"
 
 #include "gntlog.h"
 

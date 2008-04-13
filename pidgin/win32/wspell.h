@@ -24,6 +24,10 @@
 #define _WSPELL_H_
 #include <gtkspell/gtkspell.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 void winpidgin_spell_init(void);
 
 extern GtkSpell* (*wpidginspell_new_attach)(GtkTextView*, const gchar*, GError**);
@@ -45,5 +49,9 @@ wpidginspell_set_language( spell, lang, error )
 extern void (*wpidginspell_recheck_all)(GtkSpell*);
 #define gtkspell_recheck_all( spell ) \
 wpidginspell_recheck_all( spell )
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _WSPELL_H_ */

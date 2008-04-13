@@ -51,7 +51,11 @@ extern "C" {
  *                      ownership of and free as appropriate.  If you want a
  *                      copy of the data, make it before calling this function.
  * @param size		Image data's size.
- * @param filename	Filename associated with image.
+ * @param filename	Filename associated with image.  This is for your
+ *                  convenience.  It could be the full path to the
+ *                  image or, more commonly, the filename of the image
+ *                  without any directory information.  It can also be
+ *                  NULL, if you don't need to keep track of a filename.
  *
  * @return The stored image.
  */
@@ -69,9 +73,14 @@ purple_imgstore_add(gpointer data, size_t size, const char *filename);
  *                      ownership of and free as appropriate.  If you want a
  *                      copy of the data, make it before calling this function.
  * @param size		Image data's size.
- * @param filename	Filename associated with image.
+ * @param filename	Filename associated with image.  This is for your
+ *                  convenience.  It could be the full path to the
+ *                  image or, more commonly, the filename of the image
+ *                  without any directory information.  It can also be
+ *                  NULL, if you don't need to keep track of a filename.
 
- * @return ID for the image.
+ * @return ID for the image.  This is a unique number that can be used
+ *         within libpurple to reference the image.
  */
 int purple_imgstore_add_with_id(gpointer data, size_t size, const char *filename);
 
@@ -116,11 +125,13 @@ size_t purple_imgstore_get_size(PurpleStoredImage *img);
 const char *purple_imgstore_get_filename(const PurpleStoredImage *img);
 
 /**
- * Returns an extension corresponding to the image's file type.
+ * Looks at the magic numbers of the image data (the first few bytes)
+ * and returns an extension corresponding to the image's file type.
  *
  * @param img  The image.
  *
- * @return The icon's extension or "icon" if unknown.
+ * @return The image's extension (for example "png") or "icon"
+ *         if unknown.
  */
 const char *purple_imgstore_get_extension(PurpleStoredImage *img);
 

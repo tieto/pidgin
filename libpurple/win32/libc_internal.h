@@ -25,6 +25,10 @@
 #include <glib.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 /* sys/socket.h */
 int wpurple_socket(int namespace, int style, int protocol);
 int wpurple_connect(int socket, struct sockaddr *addr, u_long length);
@@ -136,5 +140,9 @@ int wpurple_g_access(const gchar *filename, int mode);
 
 /* stdio.h */
 int wpurple_rename(const char *oldname, const char *newname);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _LIBC_INTERNAL_ */

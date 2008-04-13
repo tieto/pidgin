@@ -909,7 +909,7 @@ static PurplePluginInfo info =
 	                                                  /**  description    */
 	N_("Provides a variety of ways of notifying you of unread messages."),
 	                                                  /**< author         */
-	"Etan Reisner <deryni@eden.rutgers.edu>\n\t\t\tBrian Tarricone <bjt23@cornell.edu>",
+	"Etan Reisner <deryni@eden.rutgers.edu>,\nBrian Tarricone <bjt23@cornell.edu>",
 	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */

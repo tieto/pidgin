@@ -132,7 +132,7 @@ gint qq_send_cmd(PurpleConnection *gc, guint16 cmd,
 	cursor = buf;
 	bytes_written = 0;
 
-	qq_crypt(ENCRYPT, data, len, qd->session_key, encrypted_data, &encrypted_len);
+	qq_encrypt(data, len, qd->session_key, encrypted_data, &encrypted_len);
 
 	seq_ret = seq;
 	if (_create_packet_head_seq(buf, &cursor, gc, cmd, is_auto_seq, &seq_ret) >= 0) {

@@ -894,7 +894,7 @@ static PurplePluginInfo info = {
 	N_("Contact Availability Prediction"),				/**< name		*/
 	DISPLAY_VERSION,									/**< version		*/
 	N_("Contact Availability Prediction plugin."),	/**  summary		*/
-	N_("The contact availability plugin (cap) is used to display statistical information about buddies in a users contact list."),
+	N_("Displays statistical information about your buddies' availability"),
 	/**  description	*/
 	"Geoffrey Foster <geoffrey.foster@gmail.com>",	/**< author		*/
 	PURPLE_WEBSITE,									/**< homepage		*/

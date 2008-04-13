@@ -464,16 +464,68 @@ msn_parse_addressbook_groups(MsnContact *contact, xmlnode *node)
 	}
 }
 
+static gboolean
+msn_parse_addressbook_mobile(xmlnode *contactInfo, char **inout_mobile_number)
+{
+	xmlnode *phones;
+	char *mobile_number = NULL;
+	gboolean mobile = FALSE;
+
+	*inout_mobile_number = NULL;
+
+	if ((phones = xmlnode_get_child(contactInfo, "phones"))) {
+		xmlnode *contact_phone;
+		char *phone_type = NULL;
+
+		for (contact_phone = xmlnode_get_child(phones, "ContactPhone");
+			 contact_phone;
+			 contact_phone = xmlnode_get_next_twin(contact_phone)) {
+			xmlnode *contact_phone_type;
+
+			if (!(contact_phone_type =
+					xmlnode_get_child(contact_phone, "contactPhoneType")))
+				continue;
+
+			phone_type = xmlnode_get_data(contact_phone_type);
+
+			if (phone_type && !strcmp(phone_type, "ContactPhoneMobile")) {
+				xmlnode *number;
+					
+				if ((number = xmlnode_get_child(contact_phone, "number"))) {
+					xmlnode *messenger_enabled;
+					char *is_messenger_enabled = NULL;
+
+					mobile_number = xmlnode_get_data(number);
+
+					if (mobile_number &&
+						(messenger_enabled = xmlnode_get_child(contact_phone, "isMessengerEnabled")) 
+						&& (is_messenger_enabled = xmlnode_get_data(messenger_enabled)) 
+						&& !strcmp(is_messenger_enabled, "true"))
+						mobile = TRUE;
+
+					g_free(is_messenger_enabled);
+				}
+			}
+
+			g_free(phone_type);
+		}
+	}
+
+	*inout_mobile_number = mobile_number;
+	return mobile;
+}
+
 static void
 msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 {
 	MsnSession *session = contact->session;
 	xmlnode *contactNode;
-	char *passport = NULL, *Name = NULL, *uid = NULL, *type = NULL;
+	char *passport = NULL, *Name = NULL, *uid = NULL, *type = NULL, *mobile_number = NULL;
+	gboolean mobile = FALSE;
 
 	for(contactNode = xmlnode_get_child(node, "Contact"); contactNode;
 				contactNode = xmlnode_get_next_twin(contactNode)) {
-		xmlnode *contactId, *contactInfo, *contactType, *passportName, *displayName, *guid, *groupIds;
+		xmlnode *contactId, *contactInfo, *contactType, *passportName, *displayName, *guid, *groupIds, *messenger_user;
 		MsnUser *user;
 		MsnUserType usertype;
 
@@ -486,7 +538,8 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 		g_free(Name);
 		g_free(uid);
 		g_free(type);
-		passport = Name = uid = type = NULL;
+		passport = Name = uid = type = mobile_number = NULL;
+		mobile = FALSE;
 
 		uid = xmlnode_get_data(contactId);
 		type = xmlnode_get_data(contactType);
@@ -499,6 +552,18 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 			purple_connection_set_display_name(session->account->gc, friendly ? purple_url_decode(friendly) : NULL);
 			g_free(friendly);
 			continue; /* Not adding own account as buddy to buddylist */
+		}
+
+		/* ignore non-messenger contacts */
+		if((messenger_user = xmlnode_get_child(contactInfo, "isMessengerUser"))) {
+			char *is_messenger_user = xmlnode_get_data(messenger_user);
+
+			if(is_messenger_user && !strcmp(is_messenger_user, "false")) {
+				g_free(is_messenger_user);
+				continue;
+			}
+
+			g_free(is_messenger_user);
 		}
 
 		usertype = msn_get_user_type(type);
@@ -554,12 +619,16 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 		else
 			Name = g_strdup(passport);
 
-		purple_debug_misc("MsnAB","passport:{%s} uid:{%s} display:{%s}\n",
-						passport, uid ? uid : "(null)", Name ? Name : "(null)");
+		mobile = msn_parse_addressbook_mobile(contactInfo, &mobile_number);
+
+		purple_debug_misc("MsnAB","passport:{%s} uid:{%s} display:{%s} mobile:{%s} mobile number:{%s}\n",
+			passport, uid ? uid : "(null)", Name ? Name : "(null)",
+			mobile ? "true" : "false", mobile_number ? mobile_number : "(null)");
 
 		user = msn_userlist_find_add_user(session->userlist, passport, Name);
 		msn_user_set_uid(user, uid);
 		msn_user_set_type(user, usertype);
+		msn_user_set_mobile_phone(user, mobile_number);
 
 		groupIds = xmlnode_get_child(contactInfo, "groupIds");
 		if (groupIds) {
@@ -577,6 +646,13 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 		}
 
 		msn_got_lst_user(session, user, MSN_LIST_FL_OP, NULL);
+
+		if(mobile && user)
+		{
+			user->mobile = TRUE;
+			purple_prpl_got_user_status(session->account, user->passport, "mobile", NULL);
+			purple_prpl_got_user_status(session->account, user->passport, "available", NULL);
+		}
 	}
 
 	g_free(passport);

@@ -1,6 +1,27 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.4.1 ():
+version 2.x.x:
+	libpurple:
+	* In MySpaceIM, messages from spambots are discarded (Justin Williams)
+	* Strip mIRC formatting codes from quit and part messages.
+	* IRC now displays ban lists in-channel for joined channels.
+	
+	Pidgin:
+	* The typing notification in the conversation history can be disabled or
+	  customized (font, color etc.) in .gtkrc-2.0.
+
+	General:
+	* The configure script now dies on more absent dependencies.  The
+	  --disable-xxx arguments to configure can be used to bypass unneeded
+	  dependencies.  This will also cause the configure script to die if an
+	  --enable-xxx option is used and the dependencies it requires are
+	  missing.
+	* The Evolution integration plugin must now be explicitly enabled.  Use
+	  the --enable-gevolution argument to configure to enable it.
+	* The Contact Availability Prediction plugin must now be explicitly
+	  enabled.  Use the --enable-cap argument to configure to enable it.
+
+version 2.4.1 (03/31/2008):
 	http://developer.pidgin.im/query?status=closed&milestone=2.4.1
 
 	libpurple:

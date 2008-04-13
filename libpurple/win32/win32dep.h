@@ -28,10 +28,12 @@
 #include "wpurpleerror.h"
 #include "libc_interface.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 /* rpcndr.h defines small as char, causing problems, so we need to undefine it */
-#ifdef _WIN32
 #undef small
-#endif
 
 /*
  *  PROTOS
@@ -50,7 +52,7 @@ GIOChannel *wpurple_g_io_channel_win32_new_socket(int socket); /* Until we get t
 gboolean wpurple_check_for_proxy_changes(void);
 
 /* Determine Purple paths */
-char *wpurple_get_special_folder(int folder_type); /* needs to be g_free'd */
+gchar *wpurple_get_special_folder(int folder_type); /* needs to be g_free'd */
 const char *wpurple_install_dir(void);
 const char *wpurple_lib_dir(void);
 const char *wpurple_locale_dir(void);
@@ -72,6 +74,10 @@ long wpurple_get_tz_offset(void);
 #define DATADIR wpurple_install_dir()
 #define LIBDIR wpurple_lib_dir()
 #define LOCALEDIR wpurple_locale_dir()
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* _WIN32DEP_H_ */
 

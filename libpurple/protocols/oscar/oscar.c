@@ -1563,7 +1563,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 {
 	struct pieceofcrap *pos = data;
 	gchar *buf;
-	ssize_t result;
+	gssize result;
 
 	if (!PURPLE_CONNECTION_IS_VALID(pos->gc))
 	{
@@ -1597,7 +1597,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 		else
 			purple_debug_error("oscar", "Tried to write %"
 					G_GSIZE_FORMAT " bytes to fetch AIM hash data but "
-					"instead wrote %" G_GSIZE_FORMAT " bytes\n",
+					"instead wrote %" G_GSSIZE_FORMAT " bytes\n",
 					strlen(buf), result);
 	}
 	g_free(buf);
@@ -3629,7 +3629,11 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	if (purple_account_get_user_info(account) != NULL)
 		serv_set_info(gc, purple_account_get_user_info(account));
 
-	if (!od->icq)
+	if (!od->icq && strcmp(purple_account_get_username(account), purple_connection_get_display_name(gc)) != 0)
+		/*
+		 * Format the screen name for AIM accounts if it's different
+		 * than what's currently set.
+		 */
 		oscar_format_screenname(gc, account->username);
 
 	/* Set our available message based on the current status */
@@ -5298,7 +5302,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	else
 		nombre = g_strdup(sn);
 
-	dialog_msg = g_strdup_printf(_("The user %s has given you permission to add you to their buddy list.  Do you want to add them?"), nombre);
+	dialog_msg = g_strdup_printf(_("The user %s has given you permission to add him or her to your buddy list.  Do you want to add this user?"), nombre);
 	g_free(nombre);
 
 	data = g_new(struct name_data, 1);

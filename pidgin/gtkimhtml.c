@@ -359,17 +359,17 @@ static void gtk_imhtml_size_allocate(GtkWidget *widget, GtkAllocation *alloc)
 	GtkTextIter iter;
 	gboolean scroll = TRUE;
 
-        gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter);
+	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter);
 
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &rect);
-        gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
+	gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
 
-	if(((y + height) - (rect.y + rect.height)) > height
-           && gtk_text_buffer_get_char_count(imhtml->text_buffer)){
-                scroll = FALSE;
-        }
+	if (((y + height) - (rect.y + rect.height)) > height &&
+			gtk_text_buffer_get_char_count(imhtml->text_buffer)) {
+		scroll = FALSE;
+	}
 
-	if(imhtml->old_rect.width != rect.width || imhtml->old_rect.height != rect.height){
+	if(imhtml->old_rect.width != rect.width || imhtml->old_rect.height != rect.height) {
 		GList *iter = GTK_IMHTML(widget)->scalables;
 
 		xminus = gtk_text_view_get_left_margin(GTK_TEXT_VIEW(widget)) +
@@ -386,11 +386,11 @@ static void gtk_imhtml_size_allocate(GtkWidget *widget, GtkAllocation *alloc)
 
 	imhtml->old_rect = rect;
 	parent_size_allocate(widget, alloc);
-	
+
 	/* Don't scroll here if we're in the middle of a smooth scroll */
 	if (scroll && imhtml->scroll_time == NULL &&
- 	    GTK_WIDGET_REALIZED(imhtml)) 
-		gtk_imhtml_scroll_to_end(imhtml, FALSE);	
+	    GTK_WIDGET_REALIZED(imhtml))
+		gtk_imhtml_scroll_to_end(imhtml, FALSE);
 }
 
 static gint
@@ -576,11 +576,11 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	/* If we don't have a tip from a URL, let's see if we have a tip from a smiley */
 	anchor = gtk_text_iter_get_child_anchor(&iter);
 	if (anchor) {
-		tip = g_object_get_data(G_OBJECT(anchor), "gtkimhtml_plaintext");
+		tip = g_object_get_data(G_OBJECT(anchor), "gtkimhtml_tiptext");
 		hand = FALSE;
 	}
 
-	if (tip){
+	if (tip && *tip) {
 		if (!GTK_IMHTML(imhtml)->editable && hand)
 			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
 		GTK_IMHTML(imhtml)->tip_timer = g_timeout_add (TOOLTIP_TIMEOUT,
@@ -1416,6 +1416,24 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        _("Color to draw the name of an action message."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 
+	/* Customizable typing notification ... sort of. Example:
+	 *   GtkIMHtml::typing-notification-font = "monospace italic light 8.0"
+	 *   GtkIMHtml::typing-notification-color = "#ff0000"
+	 *   GtkIMHtml::typing-notification-enable = 1
+	 */
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("typing-notification-color",
+	                                        _("Typing notification color"),
+	                                        _("The color to use for the typing notification font"),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_string("typing-notification-font",
+	                                        _("Typing notification font"),
+	                                        _("The font to use for the typing notification"),
+	                                        "light 8.0", G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boolean("typing-notification-enable",
+	                                        _("Enable typing notification"),
+	                                        _("Enable typing notification"),
+	                                        TRUE, G_PARAM_READABLE));
+
 	binding_set = gtk_binding_set_by_class (parent_class);
 	gtk_binding_entry_add_signal (binding_set, GDK_b, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_BOLD);
 	gtk_binding_entry_add_signal (binding_set, GDK_i, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_ITALIC);
@@ -2250,8 +2268,7 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 					 GSList *unused)
 {
 	GtkTextIter iter, ins, sel;
-	GdkRectangle rect;
-	int y, height, ins_offset = 0, sel_offset = 0;
+	int ins_offset = 0, sel_offset = 0;
 	gboolean fixins = FALSE, fixsel = FALSE;
 
 	g_return_if_fail (imhtml != NULL);
@@ -2272,13 +2289,17 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 		sel_offset = gtk_text_iter_get_offset(&sel);
 	}
 
-	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
-	gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
+	if (!(options & GTK_IMHTML_NO_SCROLL)) {
+		GdkRectangle rect;
+		int y, height;
 
+		gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
+		gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
 
-	if(((y + height) - (rect.y + rect.height)) > height
-	   && gtk_text_buffer_get_char_count(imhtml->text_buffer)){
-		options |= GTK_IMHTML_NO_SCROLL;
+		if (((y + height) - (rect.y + rect.height)) > height &&
+				gtk_text_buffer_get_char_count(imhtml->text_buffer)) {
+			options |= GTK_IMHTML_NO_SCROLL;
+		}
 	}
 
 	gtk_imhtml_insert_html_at_iter(imhtml, text, options, &iter);
@@ -3296,7 +3317,7 @@ animate_image_cb(gpointer data)
 
 GtkIMHtmlScalable *gtk_imhtml_animation_new(GdkPixbufAnimation *anim, const gchar *filename, int id)
 {
-	GtkIMHtmlImage *im_image = g_malloc(sizeof(GtkIMHtmlAnimation));
+	GtkIMHtmlImage *im_image = (GtkIMHtmlImage *) g_new0(GtkIMHtmlAnimation, 1);
 
 	GTK_IMHTML_SCALABLE(im_image)->scale = gtk_imhtml_image_scale;
 	GTK_IMHTML_SCALABLE(im_image)->add_to = gtk_imhtml_image_add_to;
@@ -3304,10 +3325,8 @@ GtkIMHtmlScalable *gtk_imhtml_animation_new(GdkPixbufAnimation *anim, const gcha
 
 	GTK_IMHTML_ANIMATION(im_image)->anim = anim;
 	if (gdk_pixbuf_animation_is_static_image(anim)) {
-		GTK_IMHTML_ANIMATION(im_image)->iter = NULL;
 		im_image->pixbuf = gdk_pixbuf_animation_get_static_image(anim);
 		g_object_ref(im_image->pixbuf);
-		GTK_IMHTML_ANIMATION(im_image)->timer = 0;
 	} else {
 		int delay;
 		GdkPixbuf *pb;
@@ -3320,10 +3339,8 @@ GtkIMHtmlScalable *gtk_imhtml_animation_new(GdkPixbufAnimation *anim, const gcha
 	im_image->image = GTK_IMAGE(gtk_image_new_from_pixbuf(im_image->pixbuf));
 	im_image->width = gdk_pixbuf_animation_get_width(anim);
 	im_image->height = gdk_pixbuf_animation_get_height(anim);
-	im_image->mark = NULL;
 	im_image->filename = g_strdup(filename);
 	im_image->id = id;
-	im_image->filesel = NULL;
 
 	g_object_ref(anim);
 
@@ -3619,7 +3636,7 @@ static gboolean gtk_imhtml_smiley_clicked(GtkWidget *w, GdkEvent *event, GtkIMHt
 
 	image = gtk_imhtml_animation_new(anim, smiley->smile, 0);
 	ret = gtk_imhtml_image_clicked(w, event, (GtkIMHtmlImage*)image);
-	g_object_set_data_full(G_OBJECT(w), "image-data", image, (GDestroyNotify)gtk_imhtml_image_free);
+	g_object_set_data_full(G_OBJECT(w), "image-data", image, (GDestroyNotify)gtk_imhtml_animation_free);
 	return ret;
 }
 
@@ -4699,8 +4716,11 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	}
 
 	if (icon) {
+		char *text = g_strdup(unescaped); /* Do not g_free 'text'.
+		                                     It will be destroyed when 'anchor' is destroyed. */
 		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
-		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(unescaped), g_free);
+		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", text, g_free);
+		g_object_set_data(G_OBJECT(anchor), "gtkimhtml_tiptext", text);
 		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley), g_free);
 
 		/* This catches the expose events generated by animated
@@ -4718,9 +4738,11 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		imhtml_smiley->anchors = g_slist_append(imhtml_smiley->anchors, anchor);
 		if (ebox) {
 			GtkWidget *img = gtk_image_new_from_stock(GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_MENU);
+			char *text = g_strdup(unescaped);
 			gtk_container_add(GTK_CONTAINER(ebox), img);
 			gtk_widget_show(img);
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(unescaped), g_free);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", text, g_free);
+			g_object_set_data(G_OBJECT(anchor), "gtkimhtml_tiptext", text);
 			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), ebox, anchor);
 		}
 	} else {

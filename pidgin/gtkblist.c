@@ -1033,6 +1033,7 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 		g_free(title);
 
 		purple_blist_node_set_bool(node, "collapsed", FALSE);
+		pidgin_blist_tooltip_destroy();
 	}
 }
 
@@ -1070,7 +1071,7 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 				pidgin_blist_update_contact(NULL, cnode);
 			}
 		}
-
+		pidgin_blist_tooltip_destroy();
 	} else if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		pidgin_blist_collapse_contact_cb(NULL, node);
 	}
@@ -3165,11 +3166,16 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 					chat->account);
 			g_free(chat_name);
 		}
-		if (conv && prpl_info && (prpl_info->options & OPT_PROTO_CHAT_TOPIC) &&
-				!purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
-			char *topic = g_markup_escape_text(purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv)), -1);
-			g_string_append_printf(str, _("\n<b>Topic:</b> %s"), topic ? topic : _("(no topic set)"));
-			g_free(topic);
+
+		if (conv && !purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
+			g_string_append_printf(str, _("\n<b>Occupants:</b> %d"),
+					g_list_length(purple_conv_chat_get_users(PURPLE_CONV_CHAT(conv))));
+
+			if (prpl_info && (prpl_info->options & OPT_PROTO_CHAT_TOPIC)) {
+				char *topic = g_markup_escape_text(purple_conv_chat_get_topic(PURPLE_CONV_CHAT(conv)), -1);
+				g_string_append_printf(str, _("\n<b>Topic:</b> %s"), topic ? topic : _("(no topic set)"));
+				g_free(topic);
+			}
 		}
 
 		if (prpl_info->chat_info != NULL)

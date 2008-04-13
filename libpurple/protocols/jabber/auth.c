@@ -264,7 +264,7 @@ auth_no_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 
 static void jabber_auth_start_cyrus(JabberStream *js)
 {
-	const char *clientout = NULL, *mech = NULL;
+	const char *clientout = NULL;
 	char *enc_out;
 	unsigned coutlen = 0;
 	xmlnode *auth;
@@ -297,7 +297,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 		if (js->sasl_state==SASL_OK) {
 			sasl_setprop(js->sasl, SASL_SEC_PROPS, &secprops);
 			purple_debug_info("sasl", "Mechs found: %s\n", js->sasl_mechs->str);
-			js->sasl_state = sasl_client_start(js->sasl, js->sasl_mechs->str, NULL, &clientout, &coutlen, &mech);
+			js->sasl_state = sasl_client_start(js->sasl, js->sasl_mechs->str, NULL, &clientout, &coutlen, &js->current_mech);
 		}
 		switch (js->sasl_state) {
 			/* Success */
@@ -372,10 +372,10 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 * due to mechanism specific issues, so we want to try one of the other
 				 * supported mechanisms. This code handles that case
 				 */
-				if (mech && strlen(mech) > 0) {
+				if (js->current_mech && strlen(js->current_mech) > 0) {
 					char *pos;
-					if ((pos = strstr(js->sasl_mechs->str, mech))) {
-						g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(mech));
+					if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
+						g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(js->current_mech));
 					}
 					again = TRUE;
 				}
@@ -387,7 +387,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	if (js->sasl_state == SASL_CONTINUE || js->sasl_state == SASL_OK) {
 		auth = xmlnode_new("auth");
 		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
-		xmlnode_set_attrib(auth, "mechanism", mech);
+		xmlnode_set_attrib(auth, "mechanism", js->current_mech);
 		if (clientout) {
 			if (coutlen == 0) {
 				xmlnode_insert_data(auth, "=", -1);
@@ -1101,8 +1101,24 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 {
 	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
-	char *msg = jabber_parse_error(js, packet, &reason);
+	char *msg;
 
+#ifdef HAVE_CYRUS_SASL
+	if(js->auth_fail_count++ < 5) {
+		if (js->current_mech && strlen(js->current_mech) > 0) {
+			char *pos;
+			if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
+				g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(js->current_mech));
+			}
+		}
+
+		sasl_dispose(&js->sasl);
+
+		jabber_auth_start_cyrus(js);
+		return;
+	}
+#endif
+	msg = jabber_parse_error(js, packet, &reason);
 	if(!msg) {
 		purple_connection_error_reason (js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
