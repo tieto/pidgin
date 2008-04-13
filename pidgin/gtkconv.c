@@ -6538,7 +6538,9 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				markup = title;
 			}
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
-			const char *topic = gtkconv->u.chat->topic_text ? gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text)) : NULL;
+			const char *topic = gtkconv->u.chat->topic_text
+				? gtk_entry_get_text(GTK_ENTRY(gtkconv->u.chat->topic_text))
+				: NULL;
 			char *esc = NULL, *tmp;
 #if GTK_CHECK_VERSION(2,6,0)
 			esc = topic ? g_markup_escape_text(topic, -1) : NULL;
@@ -6548,20 +6550,22 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			int len = 0;
 			char *c;
 
-			tmp = g_strdup(topic);
-			c = tmp;
-			while(*c && len < 72) {
-				c = g_utf8_next_char(c);
-				len++;
-			}
-			if (len == 72) {
-				*c = '\0';
-				c = g_strdup_printf("%s...", tmp);
+			if (topic != NULL) {
+				tmp = g_strdup(topic);
+				c = tmp;
+				while(*c && len < 72) {
+					c = g_utf8_next_char(c);
+					len++;
+				}
+				if (len == 72) {
+					*c = '\0';
+					c = g_strdup_printf("%s...", tmp);
+					g_free(tmp);
+					tmp = c;
+				}
+				esc = g_markup_escape_text(tmp, -1);
 				g_free(tmp);
-				tmp = c;
 			}
-			esc = tmp ? g_markup_escape_text(tmp, -1) : NULL;
-			g_free(tmp);
 #endif
 			tmp = g_markup_escape_text(purple_conversation_get_title(conv), -1);
 			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",

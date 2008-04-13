@@ -158,6 +158,11 @@ struct _JabberStream
 	void *sasl;
 	void *sasl_cb;
 #endif
+	/* did someone say something about the end of the struct? */
+#ifdef HAVE_CYRUS_SASL
+	const char *current_mech;
+	int auth_fail_count;
+#endif
 
 	int sasl_state;
 	int sasl_maxbuf;
