@@ -346,7 +346,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			break;
 
 		default:
-			purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
+			purple_debug_warning("yahoo",
 					   "Unknown status key %d\n", pair->key);
 			break;
 		}
