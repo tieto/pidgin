@@ -44,8 +44,8 @@ extern "C" {
 #endif
 
 /* sys/socket.h */
-#define socket( namespace, style, protocol ) \
-wpurple_socket( namespace, style, protocol )
+#define socket( domain, style, protocol ) \
+wpurple_socket( domain, style, protocol )
 
 #define connect( socket, addr, length ) \
 wpurple_connect( socket, addr, length )
