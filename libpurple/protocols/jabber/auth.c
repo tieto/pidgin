@@ -717,13 +717,16 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		} else if(xmlnode_get_child(query, "password")) {
 			if(js->gsc == NULL && !purple_account_get_bool(js->gc->account,
 						"auth_plain_in_clear", FALSE)) {
+				char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+											js->gc->account->username);
 				purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 						_("Plaintext Authentication"),
-						_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+						msg,
 						1,
 						purple_connection_get_account(js->gc), NULL, NULL,
 						purple_connection_get_account(js->gc), allow_plaintext_auth,
 						disallow_plaintext_auth);
+				g_free(msg);
 				return;
 			}
 			finish_plaintext_authentication(js);
