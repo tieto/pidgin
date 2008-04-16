@@ -4436,9 +4436,10 @@ reset_headline(PidginBuddyList *gtkblist)
 }
 
 static gboolean
-headline_click_callback(gpointer data)
+headline_click_callback(gpointer unused)
 {
-	((GSourceFunc)gtkblist->headline_callback)(gtkblist->headline_data);
+	if (gtkblist->headline_callback)
+		((GSourceFunc) gtkblist->headline_callback)(gtkblist->headline_data);
 	reset_headline(gtkblist);
 	return FALSE;
 }
@@ -4448,7 +4449,7 @@ headline_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginBuddyList 
 {
 	gtk_widget_hide(gtkblist->headline_hbox);
 	if (gtkblist->headline_callback && !headline_hover_close((int)event->x, (int)event->y))
-		g_idle_add((GSourceFunc)headline_click_callback, gtkblist->headline_data);
+		g_idle_add(headline_click_callback, NULL);
 	else {
 		if (gtkblist->headline_destroy)
 			gtkblist->headline_destroy(gtkblist->headline_data);
