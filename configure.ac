@@ -2248,7 +2248,7 @@ AC_SUBST(CHECK_LIBS)
 dnl #######################################################################
 dnl # Disable pixmap installation
 dnl #######################################################################
-AC_ARG_ENABLE(pixmaps-install, AC_HELP_STRING([--disable-pixmaps-install], [disable installation of pixmap files]), enable_pixmaps="$enableval", enable_pixmaps=yes)
+AC_ARG_ENABLE(pixmaps-install, AC_HELP_STRING([--disable-pixmaps-install], [disable installation of pixmap files - Pidgin still needs them!]), enable_pixmaps="$enableval", enable_pixmaps=yes)
 
 AM_CONDITIONAL(INSTALL_PIXMAPS, test "x$enable_pixmaps" = "xyes")
 
@@ -2436,6 +2436,11 @@ echo
 eval eval echo Pidgin will be installed in $bindir.
 if test "x$pidginpath" != "x" ; then
 	echo Warning: You have an old copy of Pidgin at $pidginpath.
+fi
+if test "x$enable_pixmaps" = "xno"; then
+	echo
+	echo Warning: You have disabled the installation of pixmap data, but Pidgin
+	echo still requires installed pixmaps!  Be sure you know what you're doing!
 fi
 echo
 echo configure complete, now type \'make\'
