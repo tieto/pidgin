@@ -2437,11 +2437,12 @@ eval eval echo Pidgin will be installed in $bindir.
 if test "x$pidginpath" != "x" ; then
 	echo Warning: You have an old copy of Pidgin at $pidginpath.
 fi
-if test "x$enable_pixmaps" = "xno"; then
+if test "x$enable_pixmaps" = "xno" ; then
 	echo
 	echo Warning: You have disabled the installation of pixmap data, but Pidgin
-	echo still requires installed pixmaps!  Be sure you know what you're doing!
+	echo still requires installed pixmaps.  Be sure you know what you\'re doing.
 fi
 echo
 echo configure complete, now type \'make\'
 echo
+
