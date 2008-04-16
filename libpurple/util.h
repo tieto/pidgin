@@ -476,7 +476,8 @@ void purple_markup_html_to_xhtml(const char *html, char **dest_xhtml,
  *
  * @param str The string to strip HTML from.
  *
- * @return The new string without HTML. This must be freed.
+ * @return The new string without HTML.  You must g_free this string
+ *         when finished with it.
  */
 char *purple_markup_strip_html(const char *str);
 
@@ -485,7 +486,9 @@ char *purple_markup_strip_html(const char *str);
  *
  * @param str The string to linkify.
  *
- * @return The linkified text.
+ * @return The new string with all URIs surrounded in standard
+ *         HTML <a href="whatever"></a> tags.  You must g_free this
+ *         string when finished with it.
  */
 char *purple_markup_linkify(const char *str);
 
@@ -497,7 +500,8 @@ char *purple_markup_linkify(const char *str);
  *
  * @param html The string in which to unescape any HTML entities
  *
- * @return the text with HTML entities literalized
+ * @return The text with HTML entities literalized.  You must g_free
+ *         this string when finished with it.
  */
 char *purple_unescape_html(const char *html);
 
