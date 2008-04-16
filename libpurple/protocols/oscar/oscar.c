@@ -4790,12 +4790,6 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 
 	oscar_set_extendedstatus(gc);
 
-	/* Activate SSI */
-	/* Sending the enable causes other people to be able to see you, and you to see them */
-	/* Make sure your privacy setting/invisibility is set how you want it before this! */
-	purple_debug_info("oscar", "ssi: activating server-stored buddy list\n");
-	aim_ssi_enable(od);
-
 	return 1;
 }
 
