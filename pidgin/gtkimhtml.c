@@ -2697,8 +2697,11 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 						if (sml)
 							font->sml = sml;
-						else if (oldfont && oldfont->sml)
-							font->sml = g_strdup(oldfont->sml);
+						else {
+							g_free(sml);
+							if (oldfont && oldfont->sml)
+								font->sml = g_strdup(oldfont->sml);
+						}
 
 						if (size && !(options & GTK_IMHTML_NO_SIZES) && (imhtml->format_functions & (GTK_IMHTML_GROW|GTK_IMHTML_SHRINK))) {
 							if (*size == '+') {
@@ -2750,7 +2753,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				case 46:	/* IMG (opt) */
 				case 59:	/* IMG */
 					{
-						const char *id;
+						char *id;
 
 						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 						ws[0] = '\0'; wpos = 0;
@@ -2762,6 +2765,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						if (!id)
 							break;
 						gtk_imhtml_insert_image_at_iter(imhtml, atoi(id), iter);
+						g_free(id);
 						break;
 					}
 				case 47:	/* P (opt) */
