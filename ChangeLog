@@ -9,6 +9,9 @@ version 2.x.x:
 	Pidgin:
 	* The typing notification in the conversation history can be disabled or
 	  customized (font, color etc.) in .gtkrc-2.0.
+	* Added a plugin (not built by default) which adds a Send button back
+	  to the conversation window. People without physical keyboards have a
+	  hard time with the lack of the button.
 
 	General:
 	* The configure script now dies on more absent dependencies.  The

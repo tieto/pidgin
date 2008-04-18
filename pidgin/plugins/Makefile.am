@@ -106,6 +106,7 @@ EXTRA_DIST = \
 	mailchk.c \
 	pidgininc.c \
 	raw.c \
+	sendbutton.c \
 	win32/transparency/Makefile.mingw \
 	win32/transparency/win2ktrans.c \
 	win32/winprefs/gtkappbar.c \
