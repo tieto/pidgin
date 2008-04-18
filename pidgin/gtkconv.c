@@ -8575,7 +8575,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 			gtk_window_get_size(GTK_WINDOW(dest_win->window),
 			                    &win_width, &win_height);
-#ifdef WIN32  /* only override window manager placement on Windows */
+#ifdef _WIN32  /* only override window manager placement on Windows */
 			gtk_window_move(GTK_WINDOW(dest_win->window),
 			                e->x_root - (win_width  / 2),
 			                e->y_root - (win_height / 2));
@@ -9011,7 +9011,9 @@ pidgin_conv_set_position_size(PidginWindow *win, int conv_x, int conv_y,
 			conv_y = 100;
 
 		/* ...and move it back. */
+#ifdef _WIN32  /* only override window manager placement on Windows */
 		gtk_window_move(GTK_WINDOW(win->window), conv_x, conv_y);
+#endif
 		gtk_window_resize(GTK_WINDOW(win->window), conv_width, conv_height);
 	}
 }
@@ -9046,7 +9048,13 @@ pidgin_conv_window_new()
 	if (!gtk_get_current_event_state(&state))
 		gtk_window_set_focus_on_map(GTK_WINDOW(win->window), FALSE);
 #endif
+	/* Etan: I really think this entire function call should happen only
+	 * when we are on Windows but I was informed that back before we used
+	 * to save the window position we stored the window size, so I'm
+	 * leaving it for now. */
+#if TRUE || defined(_WIN32)
 	pidgin_conv_restore_position(win);
+#endif
 
 	if (available_list == NULL) {
 		create_icon_lists(win->window);
