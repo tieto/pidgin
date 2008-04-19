@@ -41,6 +41,7 @@ markerline_la_LDFLAGS       = -module -avoid-version
 notify_la_LDFLAGS           = -module -avoid-version
 pidginrc_la_LDFLAGS         = -module -avoid-version
 relnot_la_LDFLAGS           = -module -avoid-version
+sendbutton_la_LDFLAGS       = -module -avoid-version
 spellchk_la_LDFLAGS         = -module -avoid-version
 timestamp_la_LDFLAGS        = -module -avoid-version
 timestamp_format_la_LDFLAGS = -module -avoid-version
@@ -58,6 +59,7 @@ plugin_LTLIBRARIES = \
 	notify.la           \
 	pidginrc.la         \
 	relnot.la           \
+	sendbutton.la       \
 	spellchk.la         \
 	timestamp.la        \
 	timestamp_format.la \
@@ -78,6 +80,7 @@ markerline_la_SOURCES       = markerline.c
 notify_la_SOURCES           = notify.c
 pidginrc_la_SOURCES         = pidginrc.c
 relnot_la_SOURCES           = relnot.c
+sendbutton_la_SOURCES       = sendbutton.c
 spellchk_la_SOURCES         = spellchk.c
 timestamp_la_SOURCES        = timestamp.c
 timestamp_format_la_SOURCES = timestamp_format.c
@@ -94,6 +97,7 @@ markerline_la_LIBADD        = $(GTK_LIBS)
 notify_la_LIBADD            = $(GTK_LIBS)
 pidginrc_la_LIBADD          = $(GTK_LIBS)
 relnot_la_LIBADD            = $(GLIB_LIBS)
+sendbutton_la_LIBADD        = $(GTK_LIBS)
 spellchk_la_LIBADD          = $(GTK_LIBS)
 timestamp_la_LIBADD         = $(GTK_LIBS)
 timestamp_format_la_LIBADD  = $(GTK_LIBS)
@@ -106,7 +110,6 @@ EXTRA_DIST = \
 	mailchk.c \
 	pidgininc.c \
 	raw.c \
-	sendbutton.c \
 	win32/transparency/Makefile.mingw \
 	win32/transparency/win2ktrans.c \
 	win32/winprefs/gtkappbar.c \
