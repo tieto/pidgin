@@ -1201,16 +1201,20 @@ static gboolean gtk_imhtml_button_press_event(GtkIMHtml *imhtml, GdkEventButton 
 }
 
 static void
-gtk_imhtml_undo(GtkIMHtml *imhtml) {
+gtk_imhtml_undo(GtkIMHtml *imhtml)
+{
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	if (imhtml->editable)
+	if (imhtml->editable &&
+			gtk_source_undo_manager_can_undo(imhtml->undo_manager))
 		gtk_source_undo_manager_undo(imhtml->undo_manager);
 }
 
 static void
-gtk_imhtml_redo(GtkIMHtml *imhtml) {
+gtk_imhtml_redo(GtkIMHtml *imhtml)
+{
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	if (imhtml->editable)
+	if (imhtml->editable &&
+			gtk_source_undo_manager_can_redo(imhtml->undo_manager))
 		gtk_source_undo_manager_redo(imhtml->undo_manager);
 
 }
@@ -2425,6 +2429,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	ws = g_malloc(len + 1);
 	ws[0] = 0;
 
+	gtk_text_buffer_begin_user_action(imhtml->text_buffer);
 	while (pos < len) {
 		if (*c == '<' && gtk_imhtml_is_tag (c + 1, &tag, &tlen, &type)) {
 			c++;
@@ -3153,6 +3158,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	g_signal_emit(object, signals[UPDATE_FORMAT], 0);
 	g_object_unref(object);
 
+	gtk_text_buffer_end_user_action(imhtml->text_buffer);
 }
 
 void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
