@@ -4647,6 +4647,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtkconv->infopane_model = gtk_list_store_new(CONV_NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, GDK_TYPE_PIXBUF, GDK_TYPE_PIXBUF);
 	gtk_cell_view_set_model(GTK_CELL_VIEW(gtkconv->infopane), 
 				GTK_TREE_MODEL(gtkconv->infopane_model));
+	g_object_unref(gtkconv->infopane_model);
 	gtk_list_store_append(gtkconv->infopane_model, &(gtkconv->infopane_iter));
 	gtk_box_pack_start(GTK_BOX(gtkconv->infopane_hbox), gtkconv->infopane, TRUE, TRUE, 0);
 	path = gtk_tree_path_new_from_string("0");
