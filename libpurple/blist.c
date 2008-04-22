@@ -2238,6 +2238,8 @@ purple_blist_find_chat(PurpleAccount *account, const char *name)
 				pce = parts->data;
 				chat_name = g_hash_table_lookup(chat->components,
 												pce->identifier);
+				g_list_foreach(parts, (GFunc)g_free, NULL);
+				g_list_free(parts);
 
 				if (chat->account == account && chat_name != NULL &&
 					name != NULL && !strcmp(chat_name, name)) {
