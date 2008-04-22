@@ -74,6 +74,7 @@ static void imhtml_format_changed_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons
 static void remove_typing_cb(PidginStatusBox *box);
 static void update_size (PidginStatusBox *box);
 static gint get_statusbox_index(PidginStatusBox *box, PurpleSavedStatus *saved_status);
+static PurpleAccount* check_active_accounts_for_identical_statuses(void);
 
 static void pidgin_status_box_pulse_typing(PidginStatusBox *status_box);
 static void pidgin_status_box_refresh(PidginStatusBox *status_box);
@@ -497,6 +498,10 @@ pidgin_status_box_set_property(GObject *object, guint param_id,
 		break;
 	case PROP_ACCOUNT:
 		statusbox->account = g_value_get_pointer(value);
+		if (statusbox->account)
+			statusbox->token_status_account = NULL;
+		else
+			statusbox->token_status_account = check_active_accounts_for_identical_statuses();
 
 		pidgin_status_box_regenerate(statusbox);
 
@@ -628,7 +633,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	GdkPixbuf *pixbuf, *emblem = NULL;
 	GtkTreePath *path;
 	gboolean account_status = FALSE;
-	PurpleAccount *acct = (status_box->token_status_account) ? status_box->token_status_account : status_box->account;
+	PurpleAccount *acct = (status_box->account) ? status_box->account : status_box->token_status_account;
 
 	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
@@ -1228,8 +1233,12 @@ cache_pixbufs(PidginStatusBox *status_box)
 								     icon_size, "PidginStatusBox");
 }
 
-static void account_enabled_cb(PurpleAccount *acct, PidginStatusBox *status_box) {
+static void account_enabled_cb(PurpleAccount *acct, PidginStatusBox *status_box)
+{
 	PurpleAccount *initial_token_acct = status_box->token_status_account;
+
+	if (status_box->account)
+		return;
 
 	status_box->token_status_account = check_active_accounts_for_identical_statuses();
 
