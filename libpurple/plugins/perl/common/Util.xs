@@ -257,29 +257,13 @@ purple_util_fetch_url(plugin, url, full, user_agent, http11, cb)
 	gboolean http11
 	SV * cb
 CODE:
-	SV *sv = NULL;
-
-
-	if (SvTYPE(cb) == SVt_RV) {
-		SV *cbsv = SvRV(cb);
-
-		if (SvTYPE(cbsv) == SVt_PVCV) {
-			sv = newSVsv(cb);
-		} else {
-			purple_debug_warning("perl", "Callback not a valid coderef in purple_util_fetch_url.\n");
-		}
-	} else if (SvTYPE(cb) == SVt_PV) {
-		PurplePerlScript *gps;
-
-		gps = (PurplePerlScript *)PURPLE_PLUGIN_LOADER_INFO(plugin);
-		sv = newSVpvf("%s::%s", gps->package, SvPV_nolen(cb));
-	} else {
-		purple_debug_warning("perl", "Callback not a valid type, only strings and coderefs allowed in purple_util_fetch_url.\n");
-	}
+	SV *sv = purple_perl_sv_from_fun(plugin, cb);
 
 	if (sv != NULL) {
 		purple_util_fetch_url(url, full, user_agent, http11,
 		                      purple_perl_util_url_cb, sv);
+	} else {
+		purple_debug_warning("perl", "Callback not a valid type, only strings and coderefs allowed in purple_util_fetch_url.\n");
 	}
 
 void
