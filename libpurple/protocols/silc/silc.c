@@ -433,6 +433,83 @@ silcpurple_login_connected(gpointer data, gint source, const gchar *error_messag
 				      silcpurple_stream_created, gc);
 }
 
+static void silcpurple_continue_running(SilcPurple sg)
+{
+	PurpleConnection *gc = sg->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
+
+	/* Connect to the SILC server */
+	if (purple_proxy_connect(gc, account,
+				 purple_account_get_string(account, "server",
+							   "silc.silcnet.org"),
+				 purple_account_get_int(account, "port", 706),
+				 silcpurple_login_connected, gc) == NULL)
+	{
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+		                             _("Unable to create connection"));
+		gc->proto_data = NULL;
+		silc_free(sg);
+		return;
+	}
+}
+
+static void silcpurple_got_password_cb(PurpleConnection *gc, PurpleRequestFields *fields)
+{
+	SilcPurple sg = (SilcPurple)gc->proto_data;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	char pkd[256], prd[256];
+	const char *password;
+	gboolean remember;
+
+	/* The password prompt dialog doesn't get disposed if the account disconnects */
+	if (!PURPLE_CONNECTION_IS_VALID(gc))
+		return;
+
+	password = purple_request_fields_get_string(fields, "password");
+	remember = purple_request_fields_get_bool(fields, "remember");
+
+	if (!password || !*password)
+	{
+		purple_notify_error(gc, NULL, _("Password is required to sign on."), NULL);
+		gc->proto_data = NULL;
+		silc_free(sg);
+		return;
+	}
+
+	if (remember)
+		purple_account_set_remember_password(account, TRUE);
+
+	purple_account_set_password(account, password);
+
+	/* Load SILC key pair */
+	g_snprintf(pkd, sizeof(pkd), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcpurple_silcdir());
+	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcpurple_silcdir());
+	if (!silc_load_key_pair((char *)purple_account_get_string(account, "public-key", pkd),
+				(char *)purple_account_get_string(account, "private-key", prd),
+				password,
+				&sg->public_key, &sg->private_key)) {
+		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+		                             _("Could not load SILC key pair"));
+		gc->proto_data = NULL;
+		silc_free(sg);
+		return;
+	}
+	silcpurple_continue_running(sg);
+}
+
+static void silcpurple_no_password_cb(PurpleConnection *gc, PurpleRequestFields *fields)
+{
+	SilcPurple sg;
+	/* The password prompt dialog doesn't get disposed if the account disconnects */
+	if (!PURPLE_CONNECTION_IS_VALID(gc))
+		return;
+	sg = gc->proto_data;
+	purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
+			_("Could not load SILC key pair"));
+	gc->proto_data = NULL;
+	silc_free(sg);
+}
+
 static void silcpurple_running(SilcClient client, void *context)
 {
 	SilcPurple sg = context;
@@ -451,26 +528,18 @@ static void silcpurple_running(SilcClient client, void *context)
 				(char *)purple_account_get_string(account, "private-key", prd),
 				(gc->password == NULL) ? "" : gc->password,
 				&sg->public_key, &sg->private_key)) {
+		if (!purple_account_get_password(account)) {
+			purple_account_request_password(account, G_CALLBACK(silcpurple_got_password_cb),
+											G_CALLBACK(silcpurple_no_password_cb), gc);
+			return;
+		}
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 		                             _("Could not load SILC key pair"));
 		gc->proto_data = NULL;
 		silc_free(sg);
 		return;
 	}
-
-	/* Connect to the SILC server */
-	if (purple_proxy_connect(gc, account,
-				 purple_account_get_string(account, "server",
-							   "silc.silcnet.org"),
-				 purple_account_get_int(account, "port", 706),
-				 silcpurple_login_connected, gc) == NULL)
-	{
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-		                             _("Unable to create connection"));
-		gc->proto_data = NULL;
-		silc_free(sg);
-		return;
-	}
+	silcpurple_continue_running(sg);
 }
 
 static void
