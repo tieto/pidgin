@@ -134,8 +134,6 @@ pidgin_menu_tray_init(PidginMenuTray *menu_tray) {
 	if(!GTK_IS_WIDGET(menu_tray->tray))
 		menu_tray->tray = gtk_hbox_new(FALSE, 0);
 
-	menu_tray->tooltips = gtk_tooltips_new();
-
 #if GTK_CHECK_VERSION(2,2,0)
 	settings =
 		gtk_settings_get_for_screen(gtk_widget_get_screen(widget));
@@ -235,7 +233,7 @@ void
 pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
 {
 	if (!menu_tray->tooltips)
-		return;
+		menu_tray->tooltips = gtk_tooltips_new();
 
 	/* Should we check whether widget is a child of menu_tray? */
 
