@@ -380,14 +380,6 @@ silcpurple_stream_created(SilcSocketStreamStatus status, SilcStream stream,
 
 	client = sg->client;
 
-	/* Progress */
-	if (params.detach_data) {
-		purple_connection_update_progress(gc, _("Resuming session"), 2, 5);
-		sg->resuming = TRUE;
-	} else {
-		purple_connection_update_progress(gc, _("Performing key exchange"), 2, 5);
-	}
-
 	/* Get session detachment data, if available */
 	memset(&params, 0, sizeof(params));
 	dfile = silcpurple_session_file(purple_account_get_username(sg->account));
@@ -396,6 +388,14 @@ silcpurple_stream_created(SilcSocketStreamStatus status, SilcStream stream,
 		params.detach_data[params.detach_data_len] = 0;
 	params.ignore_requested_attributes = FALSE;
 	params.pfs = purple_account_get_bool(sg->account, "pfs", FALSE);
+
+	/* Progress */
+	if (params.detach_data) {
+		purple_connection_update_progress(gc, _("Resuming session"), 2, 5);
+		sg->resuming = TRUE;
+	} else {
+		purple_connection_update_progress(gc, _("Performing key exchange"), 2, 5);
+	}
 
 	/* Perform SILC Key Exchange. */
 	silc_client_key_exchange(sg->client, &params, sg->public_key,
@@ -550,8 +550,12 @@ silcpurple_login(PurpleAccount *account)
 		                             _("Cannot initialize SILC protocol"));
 		gc->proto_data = NULL;
 		silc_free(sg);
+		free(hostname);
+		free(username);
 		return;
 	}
+	free(hostname);
+	free(username);
 
 	/* Check the ~/.silc dir and create it, and new key pair if necessary. */
 	if (!silcpurple_check_silc_dir(gc)) {
