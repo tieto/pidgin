@@ -695,6 +695,7 @@ static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
 	{
 		purple_blist_node_set_bool(node, "show_offline",
 		                           !purple_blist_node_get_bool(node, "show_offline"));
+		pidgin_blist_update(purple_get_blist(), node);
 	}
 	else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
 	{
@@ -704,6 +705,7 @@ static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
 		purple_blist_node_set_bool(node, "show_offline", setting);
 		for (bnode = node->child; bnode != NULL; bnode = bnode->next) {
 			purple_blist_node_set_bool(bnode, "show_offline", setting);
+			pidgin_blist_update(purple_get_blist(), bnode);
 		}
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		PurpleBlistNode *cnode, *bnode;
@@ -714,10 +716,10 @@ static void gtk_blist_menu_showoffline_cb(GtkWidget *w, PurpleBlistNode *node)
 			purple_blist_node_set_bool(cnode, "show_offline", setting);
 			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
 				purple_blist_node_set_bool(bnode, "show_offline", setting);
+				pidgin_blist_update(purple_get_blist(), bnode);
 			}
 		}
 	}
-	pidgin_blist_update(purple_get_blist(), node);
 }
 
 static void gtk_blist_show_systemlog_cb(void)
