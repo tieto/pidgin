@@ -48,7 +48,7 @@ peer_proxy_send(PeerConnection *conn, ProxyFrame *frame)
 
 	peer_connection_send(conn, &bs);
 
-	g_free(bs.data);
+	byte_stream_destroy(&bs);
 }
 
 /**

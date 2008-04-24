@@ -413,7 +413,7 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, args->destsn, strlen(args->destsn)+1);
 
 	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &data);
-	g_free(data.data);
+	byte_stream_destroy(&data);
 
 	/* clean out SNACs over 60sec old */
 	aim_cleansnacs(od, 60);
@@ -958,7 +958,7 @@ aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char 
 		byte_stream_put8(&bs, 0x00);
 
 		aim_tlvlist_add_raw(&inner_tlvlist, 0x2711, bs.len, bs.data);
-		g_free(bs.data);
+		byte_stream_destroy(&bs);
 		/* End TLV t(2711) */
 	}
 

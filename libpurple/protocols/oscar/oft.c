@@ -304,7 +304,7 @@ peer_oft_send(PeerConnection *conn, OftFrame *frame)
 
 	peer_connection_send(conn, &bs);
 
-	g_free(bs.data);
+	byte_stream_destroy(&bs);
 }
 
 void
