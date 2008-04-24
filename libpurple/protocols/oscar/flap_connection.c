@@ -988,7 +988,7 @@ sendframe_flap(FlapConnection *conn, FlapFrame *frame)
 	byte_stream_rewind(&bs);
 	flap_connection_send_byte_stream(&bs, conn, bslen);
 
-	g_free(bs.data); /* XXX byte_stream_free */
+	byte_stream_destroy(&bs);
 }
 
 void
