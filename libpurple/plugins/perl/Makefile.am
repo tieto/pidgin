@@ -90,7 +90,7 @@ EXTRA_DIST = \
 common/Makefile: common/Makefile.PL
 	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
 		for f in ${common_sources}; do \
-			${LN_S} -f ../${srcdir}/$$f $$f; \
+			${LN_S} -f ${srcdir}/$$f $$f; \
 		done; \
 	fi
 	@cd common && $(perlpath) Makefile.PL $(PERL_MM_PARAMS)
@@ -148,7 +148,7 @@ distclean-generic:
 
 	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
 		for f in ${common_sources}; do \
-			${LN_S} -f ../${srcdir}/$$f $$f; \
+			${LN_S} -f ${srcdir}/$$f $$f; \
 		done; \
 	fi
 
