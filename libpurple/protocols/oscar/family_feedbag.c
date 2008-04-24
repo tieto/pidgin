@@ -1363,8 +1363,6 @@ static int aim_ssi_addmoddel(OscarData *od)
 
 	byte_stream_new(&bs, bslen);
 
-	aim_putsnac(&bs, SNAC_FAMILY_FEEDBAG, od->ssi.pending->action, 0x0000, snacid);
-
 	for (cur=od->ssi.pending; cur; cur=cur->next) {
 		byte_stream_put16(&bs, cur->item->name ? strlen(cur->item->name) : 0);
 		if (cur->item->name)
@@ -1767,8 +1765,6 @@ int aim_ssi_sendauthrequest(OscarData *od, char *sn, const char *msg)
 		return -EINVAL;
 
 	byte_stream_new(&bs, 1+strlen(sn) + 2+(msg ? (strlen(msg)+1) : 0) + 2);
-
-	aim_putsnac(&bs, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREQ, 0x0000, snacid);
 
 	/* Screen name */
 	byte_stream_put8(&bs, strlen(sn));
