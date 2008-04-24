@@ -758,6 +758,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 
 		
 			rect.height = tag_area.y + tag_area.height - rect.y
+				+ gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(widget))
 				+ gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(widget));
 
 			color = tag->name + 11;
@@ -1463,7 +1464,8 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_get_end_iter (imhtml->text_buffer, &iter);
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->text_buffer);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
-	gtk_text_view_set_pixels_below_lines(GTK_TEXT_VIEW(imhtml), 5);
+	gtk_text_view_set_pixels_above_lines(GTK_TEXT_VIEW(imhtml), 2);
+	gtk_text_view_set_pixels_below_lines(GTK_TEXT_VIEW(imhtml), 3);
 	gtk_text_view_set_left_margin(GTK_TEXT_VIEW(imhtml), 2);
 	gtk_text_view_set_right_margin(GTK_TEXT_VIEW(imhtml), 2);
 	/*gtk_text_view_set_indent(GTK_TEXT_VIEW(imhtml), -15);*/
