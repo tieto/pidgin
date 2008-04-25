@@ -1294,7 +1294,7 @@ purple_plugins_load_saved(const char *key)
 
 		/* Strip the extension */
 		if (basename)
-			basename = purple_plugin_get_basename(filename);
+			basename = purple_plugin_get_basename(basename);
 
 		if (((plugin = purple_plugins_find_with_filename(filename)) != NULL) ||
 				(basename && (plugin = purple_plugins_find_with_basename(basename)) != NULL) ||
