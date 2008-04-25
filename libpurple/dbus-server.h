@@ -28,8 +28,8 @@
 #ifndef _PURPLE_DBUS_SERVER_H_
 #define _PURPLE_DBUS_SERVER_H_
 
+#include "dbus-purple.h"
 #include "value.h"
-
 
 G_BEGIN_DECLS
 
@@ -50,6 +50,8 @@ typedef struct _PurpleDBusType PurpleDBusType;
 struct _PurpleDBusType {
     PurpleDBusType *parent;
 };
+
+#include "dbus-bindings.h"
 
 /* By convention, the PurpleDBusType variable representing each structure
    PurpleSomeStructure has the name PURPLE_DBUS_TYPE_PurpleSomeStructure.
