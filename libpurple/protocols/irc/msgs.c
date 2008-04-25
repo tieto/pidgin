@@ -715,7 +715,7 @@ void irc_msg_invite(struct irc_conn *irc, const char *name, const char *from, ch
 		return;
 	}
 
-	g_hash_table_insert(components, strdup("channel"), strdup(args[1]));
+	g_hash_table_insert(components, g_strdup("channel"), g_strdup(args[1]));
 
 	serv_got_chat_invite(gc, args[1], nick, NULL, components);
 	g_free(nick);
@@ -980,7 +980,7 @@ void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, 
 	if (!args || !args[1])
 		return;
 
-	newnick = strdup(args[1]);
+	newnick = g_strdup(args[1]);
 	end = newnick + strlen(newnick) - 1;
 	/* try fallbacks */
 	if((*end < '9') && (*end >= '1')) {

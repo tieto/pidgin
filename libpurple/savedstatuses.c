@@ -1128,10 +1128,12 @@ purple_savedstatus_activate(PurpleSavedStatus *saved_status)
 
 	g_list_free(accounts);
 
-	purple_savedstatus_set_idleaway(FALSE);
-
-	purple_signal_emit(purple_savedstatuses_get_handle(), "savedstatus-changed",
-					 saved_status, old);
+	if (purple_savedstatus_is_idleaway()) {
+		purple_savedstatus_set_idleaway(FALSE);
+	} else {
+		purple_signal_emit(purple_savedstatuses_get_handle(), "savedstatus-changed",
+					 	   saved_status, old);
+	}
 }
 
 void
@@ -1250,6 +1252,7 @@ purple_savedstatuses_uninit(void)
 	}
 
 	g_hash_table_destroy(creation_times);
+	creation_times = NULL;
 
 	purple_signals_unregister_by_instance(purple_savedstatuses_get_handle());
 }
