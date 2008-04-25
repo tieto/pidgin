@@ -23,22 +23,11 @@
  *
  */
 #define _WIN32_IE 0x500
-#include <windows.h>
-#include <io.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include "internal.h"
 #include <winuser.h>
 
-#include <glib.h>
-#include <glib/gstdio.h>
-
-#include "internal.h"
 #include "debug.h"
 #include "notify.h"
-
-#include <libintl.h>
-
-#include "win32dep.h"
 
 /*
  *  DEFINES & MACROS
