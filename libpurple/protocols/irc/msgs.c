@@ -706,14 +706,14 @@ void irc_msg_notop(struct irc_conn *irc, const char *name, const char *from, cha
 void irc_msg_invite(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
-	GHashTable *components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-	char *nick = irc_mask_nick(from);
+	GHashTable *components;
+	gchar *nick;
 
-	if (!args || !args[1] || !gc) {
-		g_free(nick);
-		g_hash_table_destroy(components);
+	if (!args || !args[1] || !gc)
 		return;
-	}
+
+	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	nick = irc_mask_nick(from);
 
 	g_hash_table_insert(components, g_strdup("channel"), g_strdup(args[1]));
 
