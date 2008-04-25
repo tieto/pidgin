@@ -1212,7 +1212,7 @@ purple_plugins_add_search_path(const char *path)
 	if (g_list_find_custom(search_paths, path, (GCompareFunc)strcmp))
 		return;
 
-	search_paths = g_list_append(search_paths, strdup(path));
+	search_paths = g_list_append(search_paths, g_strdup(path));
 }
 
 void
