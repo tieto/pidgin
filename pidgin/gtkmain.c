@@ -27,7 +27,7 @@
 #include "account.h"
 #include "conversation.h"
 #include "core.h"
-#include "dbus-server.h"
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "eventloop.h"
 #include "ft.h"
