@@ -242,6 +242,7 @@ pidgin/plugins/pidgininc.c
 pidgin/plugins/pidginrc.c
 pidgin/plugins/raw.c
 pidgin/plugins/relnot.c
+pidgin/plugins/sendbutton.c
 pidgin/plugins/spellchk.c
 pidgin/plugins/ticker/ticker.c
 pidgin/plugins/timestamp.c
