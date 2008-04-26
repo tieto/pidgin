@@ -2507,14 +2507,18 @@ update_tab_icon(PurpleConversation *conv)
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_protocol_icons")) {
 		emblem = pidgin_create_prpl_icon(gtkconv->active_conv->account, PIDGIN_PRPL_ICON_SMALL);
-		gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model),
-			&(gtkconv->infopane_iter),
-			CONV_PROTOCOL_ICON_COLUMN, emblem, -1);
-		if (emblem)
-			g_object_unref(emblem);
+	} else {
+		emblem = NULL;
 	}
 
+	gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model),
+			&(gtkconv->infopane_iter),
+			CONV_PROTOCOL_ICON_COLUMN, emblem, -1);
+	if (emblem)
+		g_object_unref(emblem);
+
 	/* XXX seanegan Why do I have to do this? */
+	gtk_widget_queue_resize(gtkconv->infopane);
 	gtk_widget_queue_draw(gtkconv->infopane);
 
 	if (status != NULL)
@@ -7723,7 +7727,7 @@ pidgin_conversations_init(void)
 								animate_buddy_icons_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons",
 								show_buddy_icons_pref_cb, NULL);
-	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/show_protocol_icons",
+	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/blist/show_protocol_icons",
 								show_protocol_icons_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
                                 hide_new_pref_cb, NULL);
