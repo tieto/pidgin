@@ -3640,6 +3640,20 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, PurpleBudd
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 }
 
+static gboolean
+compare_buddy_presence(PurplePresence *p1, PurplePresence *p2)
+{
+	/* This is necessary because multiple PurpleBuddy's don't share the same
+	 * PurplePresence anymore.
+	 */
+	PurpleBuddy *b1 = purple_presence_get_buddy(p1);
+	PurpleBuddy *b2 = purple_presence_get_buddy(p2);
+	if (purple_buddy_get_account(b1) == purple_buddy_get_account(b2) &&
+			strcmp(purple_buddy_get_name(b1), purple_buddy_get_name(b2)) == 0)
+		return FALSE;
+	return TRUE;
+}
+
 static void
 generate_send_to_items(PidginWindow *win)
 {
@@ -3674,8 +3688,7 @@ generate_send_to_items(PidginWindow *win)
 
 		if (buds == NULL)
 		{
-			/* The user isn't on the buddy list. */
-			create_sendto_item(menu, sg, &group, NULL, gtkconv->active_conv->account, gtkconv->active_conv->name);
+			/* The user isn't on the buddy list. So we don't create any sendto menu. */
 		}
 		else
 		{
@@ -3699,20 +3712,22 @@ generate_send_to_items(PidginWindow *win)
 					{
 						/* Use the PurplePresence to get unique buddies. */
 						PurplePresence *presence = purple_buddy_get_presence(buddy);
-						if (!g_list_find(list, presence))
+						if (!g_list_find_custom(list, presence, (GCompareFunc)compare_buddy_presence))
 							list = g_list_prepend(list, presence);
 					}
 				}
 			}
 
-			/* Loop over the list backwards so we get the items in the right order,
-			 * since we did a g_list_prepend() earlier. */
-			for (iter = g_list_last(list); iter != NULL; iter = iter->prev)
-			{
-				PurplePresence *pre = iter->data;
-				PurpleBuddy *buddy = purple_presence_get_buddy(pre);
-				create_sendto_item(menu, sg, &group, buddy,
+			/* Create the sendto menu only if it has more than one item to show */
+			if (list && list->next) {
+				/* Loop over the list backwards so we get the items in the right order,
+				 * since we did a g_list_prepend() earlier. */
+				for (iter = g_list_last(list); iter != NULL; iter = iter->prev) {
+					PurplePresence *pre = iter->data;
+					PurpleBuddy *buddy = purple_presence_get_buddy(pre);
+					create_sendto_item(menu, sg, &group, buddy,
 							purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
+				}
 			}
 			g_list_free(list);
 			g_slist_free(buds);
