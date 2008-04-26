@@ -101,6 +101,9 @@ enum {
 #define DEFAULT_HIGHLIGHT_COLOR "#AF7F00"
 #define DEFAULT_ACTION_COLOR "#062585"
 
+#define BUDDYICON_SIZE_MIN    32
+#define BUDDYICON_SIZE_MAX    96
+
 /* Undef this to turn off "custom-smiley" debug messages */
 #define DEBUG_CUSTOM_SMILEY
 
@@ -2561,6 +2564,7 @@ redraw_icon(gpointer data)
 	GdkPixbuf *scale;
 	gint delay;
 	int scale_width, scale_height;
+	int size;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	account = purple_conversation_get_account(conv);
@@ -2575,17 +2579,22 @@ redraw_icon(gpointer data)
 	gdk_pixbuf_animation_iter_advance(gtkconv->u.im->iter, NULL);
 	buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
 
- 	scale_width = gdk_pixbuf_get_width(buf);
-        scale_height = gdk_pixbuf_get_height(buf);
-        if (scale_width == scale_height) {
-		scale_width = scale_height = 32;
+	scale_width = gdk_pixbuf_get_width(buf);
+	scale_height = gdk_pixbuf_get_height(buf);
+
+	gtk_widget_get_size_request(gtkconv->infopane_hbox, NULL, &size);
+	size = MIN(size, MIN(scale_width, scale_height));
+	size = CLAMP(size, BUDDYICON_SIZE_MIN, BUDDYICON_SIZE_MAX);
+
+	if (scale_width == scale_height) {
+		scale_width = scale_height = size;
 	} else if (scale_height > scale_width) {
-                scale_width = 32 * scale_width / scale_height;
-                scale_height = 32;
-        } else {
-                scale_height = 32 * scale_height / scale_width;
-                scale_width = 32;
-        }
+		scale_width = size * scale_width / scale_height;
+		scale_height = size;
+	} else {
+		scale_height = size * scale_height / scale_width;
+		scale_width = size;
+	}
 
 	scale = gdk_pixbuf_scale_simple(buf, scale_width, scale_height,
 		GDK_INTERP_BILINEAR);
@@ -2705,6 +2714,33 @@ set_custom_icon_cb(GtkWidget *widget, PidginConversation *gtkconv)
 }
 
 static void
+change_size_cb(GtkWidget *widget, PidginConversation *gtkconv)
+{
+	int size = 0;
+	PurpleConversation *conv = gtkconv->active_conv;
+	GSList *buddies;
+
+	gtk_widget_get_size_request(gtkconv->infopane_hbox, NULL, &size);
+
+	if (size == BUDDYICON_SIZE_MAX) {
+		size = BUDDYICON_SIZE_MIN;
+	} else {
+		size = BUDDYICON_SIZE_MAX;
+	}
+
+	gtk_widget_set_size_request(gtkconv->infopane_hbox, -1, size);
+	pidgin_conv_update_buddy_icon(conv);
+
+	buddies = purple_find_buddies(purple_conversation_get_account(conv),
+			purple_conversation_get_name(conv));
+	for (; buddies; buddies = g_slist_delete_link(buddies, buddies)) {
+		PurpleBuddy *buddy = buddies->data;
+		PurpleContact *contact = purple_buddy_get_contact(buddy);
+		purple_blist_node_set_int((PurpleBlistNode*)contact, "pidgin-infopane-iconsize", size);
+	}
+}
+
+static void
 remove_custom_icon_cb(GtkWidget *widget, PidginConversation *gtkconv)
 {
 	PurpleConversation *conv;
@@ -2765,8 +2801,14 @@ icon_menu(GtkObject *obj, GdkEventButton *e, PidginConversation *gtkconv)
 	PurpleConversation *conv;
 	PurpleBuddy *buddy;
 
-	if (e->button != 3 || e->type != GDK_BUTTON_PRESS)
+	if (e->button == 1 && e->type == GDK_BUTTON_PRESS) {
+		change_size_cb(NULL, gtkconv);
+		return TRUE;
+	}
+
+	if (e->button != 3 || e->type != GDK_BUTTON_PRESS) {
 		return FALSE;
+	}
 
 	/*
 	 * If a menu already exists, destroy it before creating a new one,
@@ -2794,6 +2836,10 @@ icon_menu(GtkObject *obj, GdkEventButton *e, PidginConversation *gtkconv)
 
 	pidgin_new_item_from_stock(menu, _("Set Custom Icon..."), NULL,
 							 G_CALLBACK(set_custom_icon_cb), gtkconv,
+							 0, 0, NULL);
+
+	pidgin_new_item_from_stock(menu, _("Change Size"), NULL,
+							 G_CALLBACK(change_size_cb), gtkconv,
 							 0, 0, NULL);
 
 	/* Is there a custom icon for this person? */
@@ -4637,8 +4683,10 @@ setup_common_pane(PidginConversation *gtkconv)
 	GtkCellRenderer *rend;
 	GtkTreePath *path;
 	PurpleConversation *conv = gtkconv->active_conv;
+	PurpleBuddy *buddy;
 	gboolean chat = (conv->type == PURPLE_CONV_TYPE_CHAT);
 	GtkPolicyType imhtml_sw_hscroll;
+	int buddyicon_size = 0;
 
 	/* Setup the top part of the pane */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -4672,7 +4720,16 @@ setup_common_pane(PidginConversation *gtkconv)
 	path = gtk_tree_path_new_from_string("0");
 	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(gtkconv->infopane), path);
 	gtk_tree_path_free(path);
-	gtk_widget_set_size_request(gtkconv->infopane_hbox, -1, 32);
+
+	if ((buddy = purple_find_buddy(purple_conversation_get_account(conv),
+					purple_conversation_get_name(conv))) != NULL) {
+		PurpleContact *contact = purple_buddy_get_contact(buddy);
+		if (contact) {
+			buddyicon_size = purple_blist_node_get_int((PurpleBlistNode*)contact, "pidgin-infopane-iconsize");
+		}
+	}
+	buddyicon_size = CLAMP(buddyicon_size, BUDDYICON_SIZE_MIN, BUDDYICON_SIZE_MAX);
+	gtk_widget_set_size_request(gtkconv->infopane_hbox, -1, buddyicon_size);
 	gtk_widget_show(gtkconv->infopane);
 
 	rend = gtk_cell_renderer_pixbuf_new();
@@ -6783,6 +6840,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	GtkWidget *event;
 	GdkPixbuf *scale;
 	int scale_width, scale_height;
+	int size = 0;
 
 	PurpleAccount *account;
 	PurplePluginProtocolInfo *prpl_info = NULL;
@@ -6895,14 +6953,20 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	scale_width = gdk_pixbuf_get_width(buf);
 	scale_height = gdk_pixbuf_get_height(buf);
+
+	gtk_widget_get_size_request(gtkconv->infopane_hbox, NULL, &size);
+	size = MIN(size, MIN(scale_width, scale_height));
+
+	/* Some sanity checks */
+	size = CLAMP(size, BUDDYICON_SIZE_MIN, BUDDYICON_SIZE_MAX);
 	if (scale_width == scale_height) {
-		scale_width = scale_height = 32;
+		scale_width = scale_height = size;
 	} else if (scale_height > scale_width) {
-		scale_width = 32 * scale_width / scale_height;
-		scale_height = 32;
+		scale_width = size * scale_width / scale_height;
+		scale_height = size;
 	} else {
-		scale_height = 32 * scale_height / scale_width;
-		scale_width = 32;
+		scale_height = size * scale_height / scale_width;
+		scale_width = size;
 	}
 	scale = gdk_pixbuf_scale_simple(buf, scale_width, scale_height,
 				GDK_INTERP_BILINEAR);
@@ -8285,7 +8349,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		} else {
 			page_num = 0;
 			to_right = pidgin_conv_xy_to_right_infopane(dest_win, e->x_root, e->y_root);
-			tab = pidgin_conv_window_get_gtkconv_at_index(dest_win, page_num)->infopane;
+			tab = pidgin_conv_window_get_gtkconv_at_index(dest_win, page_num)->infopane_hbox;
 		}
 
 		if (gtk_notebook_get_tab_pos(dest_notebook) == GTK_POS_TOP ||

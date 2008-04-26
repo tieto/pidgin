@@ -14,6 +14,8 @@ version 2.x.x:
 	* Added a plugin (not built by default) which adds a Send button back
 	  to the conversation window. People without physical keyboards have a
 	  hard time with the lack of the button.
+	* Clicking on the buddyicon in the conversation window toggles the size of
+	  the icon between small and large.
 
 	General:
 	* The configure script now dies on more absent dependencies.  The
