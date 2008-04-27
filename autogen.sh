@@ -111,7 +111,7 @@ printf "%s" "checking for ${ARGS_FILE}: "
 if [ -f ${ARGS_FILE} ] ; then
 	echo "found."
 	printf "%s" "sourcing ${ARGS_FILE}: "
-	. autogen.args
+	. ${ARGS_FILE}
 	echo "done."
 else
 	echo "not found."
