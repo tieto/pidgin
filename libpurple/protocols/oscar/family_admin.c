@@ -120,10 +120,6 @@ infochange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
  * Subtype 0x0004 - Set screenname formatting.
  *
  */
-/*
- * Subtype 0x0004 - Set screenname formatting.
- *
- */
 int
 aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick)
 {
