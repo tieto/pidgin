@@ -556,18 +556,21 @@ purple_smiley_new_from_stream(const char *shortcut, guchar *smiley_data,
 }
 
 PurpleSmiley *
-purple_smiley_new_from_file(const char *shortcut, const char *filepath, const char *filename)
+purple_smiley_new_from_file(const char *shortcut, const char *filepath)
 {
 	PurpleSmiley *smiley = NULL;
 	guchar *smiley_data;
 	size_t smiley_data_len;
+	char *filename;
 
 	g_return_val_if_fail(shortcut  != NULL,  NULL);
 	g_return_val_if_fail(filepath != NULL,  NULL);
 
+	filename = g_path_get_basename(filepath);
 	if (read_smiley_file(filepath, &smiley_data, &smiley_data_len))
 		smiley = purple_smiley_new_from_stream(shortcut, smiley_data,
 				smiley_data_len, filename);
+	g_free(filename);
 
 	return smiley;
 }

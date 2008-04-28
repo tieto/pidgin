@@ -92,8 +92,7 @@ purple_smiley_new_from_stream(const char *shortcut, guchar *smiley_data,
  * @return The custom smiley structure filled up.
  */
 PurpleSmiley *
-purple_smiley_new_from_file(const char *shortcut, const char *filepath,
-                        const char *filename);
+purple_smiley_new_from_file(const char *shortcut, const char *filepath);
 
 /**
  * Destroy the custom smiley and release the associated resources.
