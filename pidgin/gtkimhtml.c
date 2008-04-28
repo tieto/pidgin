@@ -758,6 +758,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 
 		
 			rect.height = tag_area.y + tag_area.height - rect.y
+				+ gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(widget))
 				+ gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(widget));
 
 			color = tag->name + 11;
@@ -1201,16 +1202,20 @@ static gboolean gtk_imhtml_button_press_event(GtkIMHtml *imhtml, GdkEventButton 
 }
 
 static void
-gtk_imhtml_undo(GtkIMHtml *imhtml) {
+gtk_imhtml_undo(GtkIMHtml *imhtml)
+{
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	if (imhtml->editable)
+	if (imhtml->editable &&
+			gtk_source_undo_manager_can_undo(imhtml->undo_manager))
 		gtk_source_undo_manager_undo(imhtml->undo_manager);
 }
 
 static void
-gtk_imhtml_redo(GtkIMHtml *imhtml) {
+gtk_imhtml_redo(GtkIMHtml *imhtml)
+{
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	if (imhtml->editable)
+	if (imhtml->editable &&
+			gtk_source_undo_manager_can_redo(imhtml->undo_manager))
 		gtk_source_undo_manager_redo(imhtml->undo_manager);
 
 }
@@ -1459,7 +1464,8 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_get_end_iter (imhtml->text_buffer, &iter);
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->text_buffer);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
-	gtk_text_view_set_pixels_below_lines(GTK_TEXT_VIEW(imhtml), 5);
+	gtk_text_view_set_pixels_above_lines(GTK_TEXT_VIEW(imhtml), 2);
+	gtk_text_view_set_pixels_below_lines(GTK_TEXT_VIEW(imhtml), 3);
 	gtk_text_view_set_left_margin(GTK_TEXT_VIEW(imhtml), 2);
 	gtk_text_view_set_right_margin(GTK_TEXT_VIEW(imhtml), 2);
 	/*gtk_text_view_set_indent(GTK_TEXT_VIEW(imhtml), -15);*/
@@ -2425,6 +2431,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	ws = g_malloc(len + 1);
 	ws[0] = 0;
 
+	gtk_text_buffer_begin_user_action(imhtml->text_buffer);
 	while (pos < len) {
 		if (*c == '<' && gtk_imhtml_is_tag (c + 1, &tag, &tlen, &type)) {
 			c++;
@@ -2697,8 +2704,11 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 						if (sml)
 							font->sml = sml;
-						else if (oldfont && oldfont->sml)
-							font->sml = g_strdup(oldfont->sml);
+						else {
+							g_free(sml);
+							if (oldfont && oldfont->sml)
+								font->sml = g_strdup(oldfont->sml);
+						}
 
 						if (size && !(options & GTK_IMHTML_NO_SIZES) && (imhtml->format_functions & (GTK_IMHTML_GROW|GTK_IMHTML_SHRINK))) {
 							if (*size == '+') {
@@ -2750,7 +2760,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				case 46:	/* IMG (opt) */
 				case 59:	/* IMG */
 					{
-						const char *id;
+						char *id;
 
 						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 						ws[0] = '\0'; wpos = 0;
@@ -2762,6 +2772,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						if (!id)
 							break;
 						gtk_imhtml_insert_image_at_iter(imhtml, atoi(id), iter);
+						g_free(id);
 						break;
 					}
 				case 47:	/* P (opt) */
@@ -3149,6 +3160,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	g_signal_emit(object, signals[UPDATE_FORMAT], 0);
 	g_object_unref(object);
 
+	gtk_text_buffer_end_user_action(imhtml->text_buffer);
 }
 
 void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)

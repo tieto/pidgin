@@ -40,18 +40,18 @@
 int
 aim_admin_getinfo(OscarData *od, FlapConnection *conn, guint16 info)
 {
-	FlapFrame *fr;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
-	fr = flap_frame_new(od, 0x02, 14);
+	byte_stream_new(&bs, 4);
 
-	snacid = aim_cachesnac(od, 0x0007, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0007, 0x0002, 0x0000, snacid);
+	byte_stream_put16(&bs, info);
+	byte_stream_put16(&bs, 0x0000);
 
-	byte_stream_put16(&fr->data, info);
-	byte_stream_put16(&fr->data, 0x0000);
+	snacid = aim_cachesnac(od, 0x0007, 0x0002, 0x0000, NULL, 0);	
+	flap_connection_send_snac(od, conn, 0x0007, 0x0002, 0x0000, snacid, &bs);	
 
-	flap_connection_send(conn, fr);
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -120,25 +120,28 @@ infochange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
  * Subtype 0x0004 - Set screenname formatting.
  *
  */
+/*
+ * Subtype 0x0004 - Set screenname formatting.
+ *
+ */
 int
 aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick)
 {
-	FlapFrame *fr;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *tlvlist = NULL;
 
-	fr = flap_frame_new(od, 0x02, 10+2+2+strlen(newnick));
-
-	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
+	byte_stream_new(&bs, 2+2+strlen(newnick));
 
 	aim_tlvlist_add_str(&tlvlist, 0x0001, newnick);
 
-	aim_tlvlist_write(&fr->data, &tlvlist);
+	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send(conn, fr);
+	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, 0x0007, 0x0004, 0x0000, snacid, &bs);
 
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -150,14 +153,11 @@ aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick)
 int
 aim_admin_changepasswd(OscarData *od, FlapConnection *conn, const char *newpw, const char *curpw)
 {
-	FlapFrame *fr;
+	ByteStream bs;
 	GSList *tlvlist = NULL;
 	aim_snacid_t snacid;
 
-	fr = flap_frame_new(od, 0x02, 10+4+strlen(curpw)+4+strlen(newpw));
-
-	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
+	byte_stream_new(&bs, 4+strlen(curpw)+4+strlen(newpw));
 
 	/* new password TLV t(0002) */
 	aim_tlvlist_add_str(&tlvlist, 0x0002, newpw);
@@ -165,10 +165,11 @@ aim_admin_changepasswd(OscarData *od, FlapConnection *conn, const char *newpw, c
 	/* current password TLV t(0012) */
 	aim_tlvlist_add_str(&tlvlist, 0x0012, curpw);
 
-	aim_tlvlist_write(&fr->data, &tlvlist);
+	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send(conn, fr);
+	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, 0x0007, 0x0004, 0x0000, snacid, &bs);
 
 	return 0;
 }
@@ -180,21 +181,21 @@ aim_admin_changepasswd(OscarData *od, FlapConnection *conn, const char *newpw, c
 int
 aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail)
 {
-	FlapFrame *fr;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *tlvlist = NULL;
 
-	fr = flap_frame_new(od, 0x02, 10+2+2+strlen(newemail));
-
-	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
+	byte_stream_new(&bs, 2+2+strlen(newemail));
 
 	aim_tlvlist_add_str(&tlvlist, 0x0011, newemail);
 
-	aim_tlvlist_write(&fr->data, &tlvlist);
+	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send(conn, fr);
+	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, 0x0007, 0x0004, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }

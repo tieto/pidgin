@@ -27,6 +27,7 @@
 #include "account.h"
 #include "conversation.h"
 #include "core.h"
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "eventloop.h"
 #include "ft.h"
@@ -783,6 +784,15 @@ int main(int argc, char *argv[])
 	}
 
 	if (opt_si && !purple_core_ensure_single_instance()) {
+#ifdef HAVE_DBUS
+		DBusConnection *conn = purple_dbus_get_connection();
+		DBusMessage *message = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE,
+				DBUS_INTERFACE_PURPLE, "PurpleBlistSetVisible");
+		gboolean tr = TRUE;
+		dbus_message_append_args(message, DBUS_TYPE_UINT32, &tr, DBUS_TYPE_INVALID);
+		dbus_connection_send_with_reply_and_block(conn, message, -1, NULL);
+		dbus_message_unref(message);
+#endif
 		purple_debug_info("main", "exiting because another libpurple client is already running\n");
 		purple_core_quit();
 #ifdef HAVE_SIGNAL_H

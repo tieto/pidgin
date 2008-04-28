@@ -5,10 +5,17 @@ version 2.x.x:
 	* In MySpaceIM, messages from spambots are discarded (Justin Williams)
 	* Strip mIRC formatting codes from quit and part messages.
 	* IRC now displays ban lists in-channel for joined channels.
-	
+	* Fixed a bug where the list of loaded plugins would get removed when
+	  switching between different operating systems.
+
 	Pidgin:
 	* The typing notification in the conversation history can be disabled or
 	  customized (font, color etc.) in .gtkrc-2.0.
+	* Added a plugin (not built by default) which adds a Send button back
+	  to the conversation window. People without physical keyboards have a
+	  hard time with the lack of the button.
+	* Clicking on the buddyicon in the conversation window toggles the size of
+	  the icon between small and large.
 
 	General:
 	* The configure script now dies on more absent dependencies.  The

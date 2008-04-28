@@ -518,7 +518,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 
 			} else {
 				/* This buddy is on the ignore list (and therefore in no group) */
-				purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found",
+				purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found\n",
 								  account->username, norm_bud);
 				purple_privacy_deny_add(account, norm_bud, 1);
 			}
