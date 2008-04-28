@@ -3467,3 +3467,17 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 #endif
 }
 
+GdkPixbuf * pidgin_pixbuf_from_imgstore(PurpleStoredImage *image)
+{
+	GdkPixbuf *pixbuf;
+	GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+	gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(image),
+			purple_imgstore_get_size(image), NULL);
+	gdk_pixbuf_loader_close(loader, NULL);
+	pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+	if (pixbuf)
+		g_object_ref(pixbuf);
+	g_object_unref(loader);
+	return pixbuf;
+}
+
