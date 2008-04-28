@@ -70,10 +70,11 @@ GSList* pidgin_smileys_get_all(void);
 void pidgin_smiley_manager_show(void);
 
 /**
- * Displays the "Add smiley" Dialog Box
+ * Shows an editor for a smiley.
  *
- * @param widget	The parent widget to be linked
+ * @param widget	The parent widget to be linked or @c NULL
+ * @param smiley    The PurpleSmiley to be edited, or @c NULL for a new smiley
  */
-void pidgin_smiley_add(GtkWidget *widget);
+void pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley);
 
 #endif /* _PIDGIN_GTKSMILEY_H_*/

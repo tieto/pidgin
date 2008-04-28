@@ -34,12 +34,15 @@
 
 #include "gtkimhtml.h"
 #include "gtksmiley.h"
+#include "gtkutils.h"
+#include "pidginstock.h"
 
 typedef struct
 {
+	PurpleSmiley *smiley;
 	GtkWidget *parent;
 	GtkWidget *smile;
-	GtkWidget *file_chooser;
+	GtkWidget *smiley_image;
 	gchar *filename;
 } PidginSmiley;
 
@@ -55,7 +58,7 @@ enum
 {
 	ICON,
 	SHORTCUT,
-	DATA,
+	SMILEY,
 	N_COL
 };
 
@@ -184,26 +187,47 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 {
 	const gchar *entry;
 	PurpleSmiley *emoticon;
-	gchar *file;
 
 	entry = gtk_entry_get_text(GTK_ENTRY(s->smile));
-
-	if (s->filename == NULL || *entry == 0) {
+	emoticon = purple_smileys_find_by_shortcut(entry);
+	if (emoticon && emoticon != s->smiley) {
 		purple_notify_error(s->parent, _("Custom Smiley"),
-				_("More Data needed"),
-				s->filename ? _("Please provide a shortcut to associate with the smiley.")
-					: _("Please select an image for the smiley."));
+				_("Duplicate Shortcut"),
+				_("A custom smiley for the selected shortcut already exists. Please specify a different shortcut."));
 		return;
 	}
 
-	purple_debug_info("gtksmiley", "adding a new smiley\n");
-	file = g_path_get_basename(s->filename);
-	emoticon = purple_smiley_new_from_file(entry, s->filename, file);
-	purple_smileys_add(emoticon);
-	g_free(file);
+	if (s->smiley) {
+		if (s->filename) {
+			gchar *data = NULL;
+			size_t len;
+			GError *err = NULL;
 
-	if (gtk_smileys != NULL)
-		pidgin_smiley_add_to_list(emoticon);
+			if (!g_file_get_contents(s->filename, &data, &len, &err)) {
+				purple_debug_error("gtksmiley", "Error reading %s: %s\n",
+						s->filename, err->message);
+				g_error_free(err);
+
+				return;
+			}
+			purple_smiley_set_data(s->smiley, (guchar*)data, len, FALSE);
+		}
+		purple_smiley_set_shortcut(s->smiley, entry);
+	} else {
+		if ((s->filename == NULL || *entry == 0)) {
+			purple_notify_error(s->parent, _("Custom Smiley"),
+					_("More Data needed"),
+					s->filename ? _("Please provide a shortcut to associate with the smiley.")
+					: _("Please select an image for the smiley."));
+			return;
+		}
+
+		purple_debug_info("gtksmiley", "adding a new smiley\n");
+		emoticon = purple_smiley_new_from_file(entry, s->filename);
+		purple_smileys_add(emoticon);
+		if (gtk_smileys != NULL)
+			pidgin_smiley_add_to_list(emoticon);
+	}
 
 	if (smiley_manager != NULL)
 		refresh_list();
@@ -227,27 +251,50 @@ static void do_add_select_cb(GtkWidget *widget, gint resp, PidginSmiley *s)
 	}
 }
 
-static void do_add_file_cb(GtkWidget *widget, gint resp, PidginSmiley *s)
+static void do_add_file_cb(const char *filename, gpointer data)
 {
-	if (resp == GTK_RESPONSE_ACCEPT)
-		s->filename = gtk_file_chooser_get_filename(
-				GTK_FILE_CHOOSER(s->file_chooser));
+	PidginSmiley *s = data;
+	GdkPixbuf *pixbuf;
+
+	if (!filename)
+		return;
+
+	g_free(s->filename);
+	s->filename = g_strdup(filename);
+	pixbuf = gdk_pixbuf_new_from_file_at_scale(filename, 64, 64, FALSE, NULL);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(s->smiley_image), pixbuf);
+	if (pixbuf)
+		gdk_pixbuf_unref(pixbuf);
 }
 
-void pidgin_smiley_add(GtkWidget *widget)
+static void
+open_image_selector(GtkWidget *widget, PidginSmiley *psmiley)
+{
+	GtkWidget *file_chooser;
+	file_chooser = pidgin_buddy_icon_chooser_new(GTK_WINDOW(gtk_widget_get_toplevel(widget)),
+			do_add_file_cb, psmiley);
+	gtk_window_set_title(GTK_WINDOW(file_chooser), _("Custom Smiley"));
+	gtk_window_set_role(GTK_WINDOW(file_chooser), "file-selector-custom-smiley");
+	gtk_widget_show_all(file_chooser);
+}
+
+void pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 {
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *filech;
 	GtkWidget *window;
+	GdkPixbuf *pixbuf = NULL;
+	PurpleStoredImage *stored_img;
 
 	PidginSmiley *s = g_new0(PidginSmiley, 1);
+	s->smiley = smiley;
 
-	window = gtk_dialog_new_with_buttons(_("Add Smiley"),
+	window = gtk_dialog_new_with_buttons(smiley ? _("Edit Smiley") : _("Add Smiley"),
 			GTK_WINDOW(widget),
 			GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
-			GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
+			smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			NULL);
 	s->parent = window;
@@ -265,38 +312,46 @@ void pidgin_smiley_add(GtkWidget *widget)
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_VBOX(vbox)), hbox);
 
-	label = gtk_label_new(_("Select the file:"));
+	label = gtk_label_new_with_mnemonic(_("Smiley _Image"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	s->file_chooser = gtk_file_chooser_dialog_new(_("Custom Smiley"),
-		GTK_WINDOW(window),
-		GTK_FILE_CHOOSER_ACTION_OPEN,
-		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-		GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-		NULL);
+	filech = gtk_button_new();
+	gtk_box_pack_end(GTK_BOX(hbox), filech, FALSE, FALSE, 0);
+	pidgin_set_accessible_label(filech, label);
 
-	g_signal_connect(s->file_chooser, "response", G_CALLBACK(do_add_file_cb), s);
+	s->smiley_image = gtk_image_new();
+	gtk_container_add(GTK_CONTAINER(filech), s->smiley_image);
+	if (smiley && (stored_img = purple_smiley_get_stored_image(smiley))) {
+		pixbuf = pidgin_pixbuf_from_imgstore(stored_img);
+		purple_imgstore_unref(stored_img);
+	} else {
+		GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL);
+		pixbuf = gtk_widget_render_icon(window, PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR,
+				icon_size, "PidginSmiley");
+	}
 
-	filech = gtk_file_chooser_button_new_with_dialog(GTK_WIDGET(s->file_chooser));
+	gtk_image_set_from_pixbuf(GTK_IMAGE(s->smiley_image), pixbuf);
+	if (pixbuf != NULL)
+		g_object_unref(G_OBJECT(pixbuf));
+	g_signal_connect(G_OBJECT(filech), "clicked", G_CALLBACK(open_image_selector), s);
 
-	gtk_box_pack_end(GTK_BOX(hbox), filech, TRUE, TRUE, 0);
-	gtk_widget_show(filech);
-
-	gtk_widget_show(hbox);
+	gtk_widget_show_all(hbox);
 
 	/* info */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_VBOX(vbox)),hbox);
 
 	/* Smiley shortcut */
-	label = gtk_label_new(_("Define Smiley's shortcut"));
+	label = gtk_label_new_with_mnemonic(_("Smiley S_hortcut"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	s->smile = gtk_entry_new();
 	gtk_entry_set_activates_default(GTK_ENTRY(s->smile), TRUE);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(s->smile));
+	pidgin_set_accessible_label(s->smile, label);
+	if (smiley)
+		gtk_entry_set_text(GTK_ENTRY(s->smile), purple_smiley_get_shortcut(smiley));
 
 	g_signal_connect(s->smile, "activate", G_CALLBACK(do_add), s);
 
@@ -388,21 +443,12 @@ static void store_smiley_add(PurpleSmiley *smiley)
 	img = purple_smiley_get_stored_image(smiley);
 
 	if (img != NULL) {
-		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
-		GdkPixbuf *smiley_image = NULL;
-
-		gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(img),
-				purple_imgstore_get_size(img), NULL);
-		gdk_pixbuf_loader_close(loader, NULL);
-		smiley_image = gdk_pixbuf_loader_get_pixbuf(loader);
-
+		GdkPixbuf *smiley_image = pidgin_pixbuf_from_imgstore(img);
 		purple_imgstore_unref(img);
 
 		if (smiley_image != NULL)
 			sized_smiley = gdk_pixbuf_scale_simple(smiley_image,
 					22, 22, GDK_INTERP_HYPER);
-
-		g_object_unref(loader);
 	}
 
 
@@ -411,7 +457,7 @@ static void store_smiley_add(PurpleSmiley *smiley)
 	gtk_list_store_set(smiley_manager->model, &iter,
 			ICON, sized_smiley,
 			SHORTCUT, purple_smiley_get_shortcut(smiley),
-			DATA, NULL,
+			SMILEY, smiley,
 			-1);
 
 	if (sized_smiley != NULL)
@@ -443,6 +489,17 @@ static void smile_selected_cb(GtkTreeSelection *sel, SmileyManager *dialog)
 			GTK_RESPONSE_NO, selected > 0);
 }
 
+static void smiley_edit_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeViewColumn *col, gpointer data)
+{
+	GtkTreeIter iter;
+	SmileyManager *dialog = data;
+	PurpleSmiley *smiley = NULL;
+
+	gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
+	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter, SMILEY, &smiley, -1);
+	pidgin_smiley_edit(gtk_widget_get_toplevel(GTK_WIDGET(treeview)), smiley);
+}
+
 static GtkWidget *smiley_list_create(SmileyManager *dialog)
 {
 	GtkWidget *sw;
@@ -454,14 +511,14 @@ static GtkWidget *smiley_list_create(SmileyManager *dialog)
 			GTK_POLICY_AUTOMATIC,
 			GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-			GTK_SHADOW_NONE);
+			GTK_SHADOW_IN);
 	gtk_widget_show(sw);
 
 	/* Create the list model */
 	dialog->model = gtk_list_store_new(N_COL,
 			GDK_TYPE_PIXBUF,	/* ICON */
 			G_TYPE_STRING,		/* SHORTCUT */
-			G_TYPE_POINTER		/* DATA */
+			G_TYPE_POINTER		/* SMILEY */
 			);
 
 	/* the actual treeview */
@@ -469,12 +526,13 @@ static GtkWidget *smiley_list_create(SmileyManager *dialog)
 	dialog->treeview = treeview;
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
 
+
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 	gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
 
-	g_signal_connect(G_OBJECT(sel), "changed",
-			G_CALLBACK(smile_selected_cb), dialog);
+	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(smile_selected_cb), dialog);
+	g_signal_connect(G_OBJECT(treeview), "row_activated", G_CALLBACK(smiley_edit_cb), dialog);
 
 	gtk_widget_show(treeview);
 
@@ -493,7 +551,7 @@ static void smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager
 {
 	switch (resp) {
 		case GTK_RESPONSE_YES:
-			pidgin_smiley_add(dialog->window);
+			pidgin_smiley_edit(dialog->window, NULL);
 			break;
 		case GTK_RESPONSE_NO:
 			smiley_delete(dialog);
