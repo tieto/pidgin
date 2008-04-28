@@ -238,6 +238,8 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 		char *buf = g_strdup_printf(_("%s is not a valid room handle"), handle);
 		purple_notify_error(gc, _("Invalid Room Handle"),
 				_("Invalid Room Handle"), buf);
+		g_free(buf);
+		return;
 	}
 
 	if(jabber_chat_find(js, room, server))
