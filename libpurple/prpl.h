@@ -186,7 +186,7 @@ typedef enum
  * A protocol plugin information structure.
  *
  * Every protocol plugin initializes this structure. It is the gateway
- * between purple and the protocol plugin.  Many of this callbacks can be
+ * between purple and the protocol plugin.  Many of these callbacks can be
  * NULL.  If a callback must be implemented, it has a comment indicating so.
  */
 struct _PurplePluginProtocolInfo
