@@ -238,8 +238,15 @@ show_suggest_dropdown(GntEntry *entry)
 		destroy_suggest(entry);
 		return FALSE;
 	} else if (count == 1) {
+		char *store = g_strndup(entry->start, entry->end - entry->start);
+		gboolean ret;
+
 		destroy_suggest(entry);
-		return complete_suggest(entry, sgst);
+		complete_suggest(entry, sgst);
+
+		ret = (strncmp(store, entry->start, entry->end - entry->start) != 0);
+		g_free(store);
+		return ret;
 	} else {
 		if (max > 0) {
 			GntWidget *ddown = entry->ddown;

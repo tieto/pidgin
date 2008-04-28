@@ -6,6 +6,10 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	John: Well, I didn't really do much this release except muck about with
 	the configure script.  Blame me if it worked in 2.4.0 but doesn't now.
 
+	Will: We seem to be falling into a nice pattern of releasing on the last
+	day of a month.  Hypothetical AIX users might be pleased to learn that
+	Pidgin might actually run for them now!
+
 2.4.0 (2/29/2008):
 	John: While this release took what seems like forever to get out the
 	door, I think it's well worth the wait, especially for Yahoo! users.

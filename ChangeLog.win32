@@ -1,3 +1,9 @@
+version 2.4.1 (03/31/2008):
+	* Fix an issue preventing the Buddy List being raised when pidgin.exe
+	  is run for a second time.
+	* Fix protocol handlers
+	* Fix AIM/ICQ usage of non-ASCII text with new Glib versions.
+
 version 2.4.0 (02/29/2008):
 	* Updated GTK+ to 2.12.8
 	* Updated include Meanwhile library to include patches referenced at:

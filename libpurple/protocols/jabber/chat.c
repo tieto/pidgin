@@ -137,9 +137,12 @@ JabberChat *jabber_chat_find_by_conv(PurpleConversation *conv)
 {
 	PurpleAccount *account = purple_conversation_get_account(conv);
 	PurpleConnection *gc = purple_account_get_connection(account);
-	JabberStream *js = gc->proto_data;
-	int id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
-
+	JabberStream *js;
+	int id;
+	if (!gc)
+		return NULL;
+	js = gc->proto_data;
+	id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
 	return jabber_chat_find_by_id(js, id);
 }
 

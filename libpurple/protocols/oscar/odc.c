@@ -121,7 +121,7 @@ peer_odc_send(PeerConnection *conn, OdcFrame *frame)
 
 	peer_connection_send(conn, &bs);
 
-	g_free(bs.data);
+	byte_stream_destroy(&bs);
 }
 
 /**

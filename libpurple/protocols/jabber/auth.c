@@ -264,7 +264,7 @@ auth_no_pass_cb(PurpleConnection *conn, PurpleRequestFields *fields)
 
 static void jabber_auth_start_cyrus(JabberStream *js)
 {
-	const char *clientout = NULL, *mech = NULL;
+	const char *clientout = NULL;
 	char *enc_out;
 	unsigned coutlen = 0;
 	xmlnode *auth;
@@ -297,7 +297,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 		if (js->sasl_state==SASL_OK) {
 			sasl_setprop(js->sasl, SASL_SEC_PROPS, &secprops);
 			purple_debug_info("sasl", "Mechs found: %s\n", js->sasl_mechs->str);
-			js->sasl_state = sasl_client_start(js->sasl, js->sasl_mechs->str, NULL, &clientout, &coutlen, &mech);
+			js->sasl_state = sasl_client_start(js->sasl, js->sasl_mechs->str, NULL, &clientout, &coutlen, &js->current_mech);
 		}
 		switch (js->sasl_state) {
 			/* Success */
@@ -372,10 +372,10 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 * due to mechanism specific issues, so we want to try one of the other
 				 * supported mechanisms. This code handles that case
 				 */
-				if (mech && strlen(mech) > 0) {
+				if (js->current_mech && strlen(js->current_mech) > 0) {
 					char *pos;
-					if ((pos = strstr(js->sasl_mechs->str, mech))) {
-						g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(mech));
+					if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
+						g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(js->current_mech));
 					}
 					again = TRUE;
 				}
@@ -387,7 +387,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	if (js->sasl_state == SASL_CONTINUE || js->sasl_state == SASL_OK) {
 		auth = xmlnode_new("auth");
 		xmlnode_set_namespace(auth, "urn:ietf:params:xml:ns:xmpp-sasl");
-		xmlnode_set_attrib(auth, "mechanism", mech);
+		xmlnode_set_attrib(auth, "mechanism", js->current_mech);
 		if (clientout) {
 			if (coutlen == 0) {
 				xmlnode_insert_data(auth, "=", -1);
@@ -490,12 +490,6 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	{
 		char *mech_name = xmlnode_get_data(mechnode);
 #ifdef HAVE_CYRUS_SASL
-		/* Skip the GSSAPI mechanism unless it's enabled for this account */
-		if (mech_name && !strcmp(mech_name, "GSSAPI") &&
-			!purple_account_get_bool(js->gc->account, "auth_gssapi", TRUE)) {
-			continue;
-		}
-
 		g_string_append(js->sasl_mechs, mech_name);
 		g_string_append_c(js->sasl_mechs, ' ');
 #else
@@ -723,13 +717,16 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		} else if(xmlnode_get_child(query, "password")) {
 			if(js->gsc == NULL && !purple_account_get_bool(js->gc->account,
 						"auth_plain_in_clear", FALSE)) {
+				char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+											js->gc->account->username);
 				purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 						_("Plaintext Authentication"),
-						_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+						msg,
 						1,
 						purple_connection_get_account(js->gc), NULL, NULL,
 						purple_connection_get_account(js->gc), allow_plaintext_auth,
 						disallow_plaintext_auth);
+				g_free(msg);
 				return;
 			}
 			finish_plaintext_authentication(js);
@@ -1101,8 +1098,24 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 {
 	PurpleConnectionError reason = PURPLE_CONNECTION_ERROR_NETWORK_ERROR;
-	char *msg = jabber_parse_error(js, packet, &reason);
+	char *msg;
 
+#ifdef HAVE_CYRUS_SASL
+	if(js->auth_fail_count++ < 5) {
+		if (js->current_mech && strlen(js->current_mech) > 0) {
+			char *pos;
+			if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
+				g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(js->current_mech));
+			}
+		}
+
+		sasl_dispose(&js->sasl);
+
+		jabber_auth_start_cyrus(js);
+		return;
+	}
+#endif
+	msg = jabber_parse_error(js, packet, &reason);
 	if(!msg) {
 		purple_connection_error_reason (js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,

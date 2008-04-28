@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-30 22:16+0200\n"
-"PO-Revision-Date: 2008-03-24 23:02+0100\n"
-"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2008-04-12 10:45+0200\n"
+"PO-Revision-Date: 2008-04-12 10:45+0200\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -611,7 +611,7 @@ msgid "Add Buddy Pounce..."
 msgstr "Buddy-Alarm hinzufügen..."
 
 msgid "View Log..."
-msgstr "Mitschnitt anzeigen.."
+msgstr "Mitschnitt anzeigen..."
 
 msgid "Enable Logging"
 msgstr "Mitschnitt einschalten"
@@ -752,17 +752,26 @@ msgstr "Gescheitert"
 
 #, c-format
 msgid "%.2f KiB/s"
-msgstr "%.2f KB/s"
+msgstr "%.2f KiB/s"
+
+msgid "Sent"
+msgstr "Gesendet"
+
+msgid "Received"
+msgstr "Empfangen"
+
+msgid "Finished"
+msgstr "Fertig"
 
 #, c-format
 msgid "The file was saved as %s."
 msgstr "Die Datei wurde unter %s gespeichert."
 
-msgid "Finished"
-msgstr "Fertig"
+msgid "Sending"
+msgstr "Sende"
 
-msgid "Transferring"
-msgstr "Übertragung"
+msgid "Receiving"
+msgstr "Empfange"
 
 #, c-format
 msgid "Conversation in %s on %s"
@@ -4375,8 +4384,8 @@ msgstr "register:  Für einen Chatraum anmelden."
 msgid "topic [new topic]:  View or change the topic."
 msgstr "topic [neues Thema]:  Thema ändern oder anzeigen."
 
-msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
-msgstr "ban &lt;Benutzer&gt; [Raum]:  Verbanne einen Benutzer aus dem Raum."
+msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
+msgstr "ban &lt;Benutzer&gt; [Grund]:  Verbanne einen Benutzer aus dem Raum."
 
 msgid ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
@@ -4396,11 +4405,11 @@ msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr ""
 "invite &lt;Benutzer&gt; [Nachricht]:  Lade einen Benutzer in den Raum ein."
 
-msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
-msgstr "join: &lt;Raum&gt; [Server]:  Betrete einen Chat auf diesem Server."
+msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+msgstr "join: &lt;Raum&gt; [Passwort]:  Betrete einen Chat auf diesem Server."
 
-msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
-msgstr "kick &lt;Benutzer&gt; [Raum]:  Kickt einen Benutzer aus dem Raum."
+msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
+msgstr "kick &lt;Benutzer&gt; [Grund]:  Kickt einen Benutzer aus dem Raum."
 
 msgid ""
 "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
@@ -5212,7 +5221,10 @@ msgstr ""
 "versuchen Sie es später nochmal."
 
 msgid "Handshaking"
-msgstr "Händedruck"
+msgstr "Abgleich"
+
+msgid "Transferring"
+msgstr "Übertrage"
 
 msgid "Starting authentication"
 msgstr "Starte Authentifizierung"
@@ -10190,6 +10202,14 @@ msgstr "<b>Konto:</b> %s"
 #, c-format
 msgid ""
 "\n"
+"<b>Occupants:</b> %d"
+msgstr ""
+"\n"
+"<b>Besucher:</b> %d"
+
+#, c-format
+msgid ""
+"\n"
 "<b>Topic:</b> %s"
 msgstr ""
 "\n"
@@ -11304,6 +11324,23 @@ msgstr "Farbe des Absendernamens für Aktions-Nachrichten"
 msgid "Color to draw the name of an action message."
 msgstr "Farbe, mit der der Name in einer Aktions-Nachricht dargestellt wird."
 
+msgid "Typing notification color"
+msgstr "Farbe der Tipp-Benachrichtigung"
+
+msgid "The color to use for the typing notification font"
+msgstr ""
+"Die Farbe, die für die Tipp-Benachrichtigungsmeldung benutzt werden soll"
+
+msgid "Typing notification font"
+msgstr "Tipp-Benachrichtigungs-Schriftart"
+
+msgid "The font to use for the typing notification"
+msgstr ""
+"Die Schriftart, die für die Tipp-Benachrichtigungsmeldung benutzt werden soll"
+
+msgid "Enable typing notification"
+msgstr "Tipp-Benachrichtigung aktivieren"
+
 msgid "_Copy E-Mail Address"
 msgstr "Kopiere _E-Mail-Adresse"
 
@@ -11702,26 +11739,23 @@ msgstr ""
 
 #, c-format
 msgid ""
-"%s%s<span weight=\"bold\">Written by:</span>\t%s\n"
-"<span weight=\"bold\">Website:</span>\t\t%s\n"
-"<span weight=\"bold\">Filename:</span>\t\t%s"
-msgstr ""
-"%s%s<span weight=\"bold\">Geschrieben von:</span>\t%s\n"
-"<span weight=\"bold\">Webseite: </span>\t\t%s\n"
-"<span weight=\"bold\">Dateiname:</span>\t\t%s"
-
-#, c-format
-msgid ""
-"%s\n"
-"<span foreground=\"#ff0000\" weight=\"bold\">Error: %s\n"
+"<span foreground=\"red\" weight=\"bold\">Error: %s\n"
 "Check the plugin website for an update.</span>"
 msgstr ""
-"%s\n"
-"<span foreground=\"#ff0000\" weight=\"bold\">Fehler: %s\n"
+"<span foreground=\"red\" weight=\"bold\">Fehler: %s\n"
 "Überprüfen Sie die Website des Plugins auf eine neue Version.</span>"
 
 msgid "Author"
 msgstr "Autor"
+
+msgid "<b>Written by:</b>"
+msgstr "<b>Geschrieben von:</b>"
+
+msgid "<b>Web site:</b>"
+msgstr "<b>Webseite:</b>"
+
+msgid "<b>Filename:</b>"
+msgstr "<b>Dateiname:</b>"
 
 msgid "Configure Pl_ugin"
 msgstr "Pl_ugin konfigurieren"
@@ -12473,12 +12507,8 @@ msgid "Contact Availability Prediction plugin."
 msgstr "Kontakt-Verfügbarkeits-Vorhersage-Plugin."
 
 #. *  summary
-msgid ""
-"The contact availability plugin (cap) is used to display statistical "
-"information about buddies in a users contact list."
-msgstr ""
-"Das Kontakt-Verfügbarkeits-Plugin (cap) wird benutzt um statistische "
-"Informationen über Buddys anzuzeigen."
+msgid "Displays statistical information about your buddies' availability"
+msgstr "Statistische Informationen über die Verfügbarkeit Ihrer Buddys zeigen"
 
 msgid "Buddy is idle"
 msgstr "Buddy ist untätig"
@@ -12628,7 +12658,7 @@ msgstr "Rechte Maustaste"
 
 #. "Visual gesture display" checkbox
 msgid "_Visual gesture display"
-msgstr "_Gestiken anzeigen"
+msgstr "_Gesten anzeigen"
 
 #. *< type
 #. *< ui_requirement
@@ -12637,29 +12667,27 @@ msgstr "_Gestiken anzeigen"
 #. *< priority
 #. *< id
 msgid "Mouse Gestures"
-msgstr "Maus-Gestiken"
+msgstr "Maus-Gesten"
 
 #. *< name
 #. *< version
 #. *  summary
 msgid "Provides support for mouse gestures"
-msgstr "Ermöglicht die Bedienung mit Maus-Gestiken"
+msgstr "Ermöglicht die Bedienung mit Maus-Gesten"
 
 #. *  description
 msgid ""
-"Allows support for mouse gestures in conversation windows.\n"
-"Drag the middle mouse button to perform certain actions:\n"
-"\n"
-"Drag down and then to the right to close a conversation.\n"
-"Drag up and then to the left to switch to the previous conversation.\n"
-"Drag up and then to the right to switch to the next conversation."
+"Allows support for mouse gestures in conversation windows. Drag the middle "
+"mouse button to perform certain actions:\n"
+" • Drag down and then to the right to close a conversation.\n"
+" • Drag up and then to the left to switch to the previous conversation.\n"
+" • Drag up and then to the right to switch to the next conversation."
 msgstr ""
-"Ermöglicht das Benutzen von Maus-Gestiken im Gesprächsfenster. Halten Sie "
-"die mittlere Maustaste gedrückt um folgende Aktionen auszuführen:\n"
-"\n"
-"Herunterziehen und dann nach rechts, um ein Gespräch zu beenden. Hochziehen "
-"und dann nach links, um auf ein voriges Gespräch zu wechseln. Hochziehen und "
-"dann nach rechts, um zum nächsten Gespräche zu wechseln."
+"Ermöglicht das Benutzen von Maus-Gesten in Gesprächsfenstern. Halten Sie die "
+"mittlere Maustaste gedrückt um folgende Aktionen auszuführen:\n"
+" • Herunterziehen und dann nach rechts, um ein Gespräch zu beenden.\n"
+" • Hochziehen und dann nach links, um auf ein voriges Gespräch zu wechseln.\n"
+" • Hochziehen und dann nach rechts, um zum nächsten Gespräche zu wechseln."
 
 msgid "Instant Messaging"
 msgstr "Sofortnachrichten"

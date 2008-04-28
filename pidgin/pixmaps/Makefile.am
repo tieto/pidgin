@@ -538,7 +538,9 @@ STATUS_48 = \
 		status/48/person.png
 
 STATUS_48_RTL = \
-		status/48/rtl/extended-away.png
+		status/48/rtl/extended-away.png \
+		status/48/rtl/login.png \
+		status/48/rtl/logout.png
 
 TOOLBAR_11 = \
 		toolbar/11/message-new.png

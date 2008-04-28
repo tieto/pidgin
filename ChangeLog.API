@@ -6,6 +6,18 @@ version 2.5.0 (??/??/2008):
 		* gtk_imhtml_smiley_create, gtk_imhtml_smiley_reload and
 		  gtk_imhtml_smiley_destroy to deal with GtkIMHtmlSmiley's.
 
+version 2.x.x:
+	perl:
+		Added:
+		* Purple::Prefs::get_children_names.
+		* Purple::timeout_remove.
+		Changed:
+		* Purple::timeout_add now returns a handle which can be used
+		  to remove the timeout.
+		* Callbacks to Purple::Util::fetch_url and the
+		  Purple::Request::* functions can now be specified as both
+		  strings (the name of the callback function) and as coderefs.
+
 version 2.4.0 (02/29/2008):
 	libpurple:
 		Added:

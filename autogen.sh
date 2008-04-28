@@ -33,6 +33,7 @@
 #   AUTOHEADER_FLAGS - command line arguments to pass to autoheader
 #   AUTOMAKE_FLAGS - command line arguments to pass to automake flags
 #   CONFIGURE_FLAGS - command line arguments to pass to configure
+#   GLIB_GETTEXTIZE_FLAGS - command line arguments to pass to glib-gettextize
 #   INTLTOOLIZE_FLAGS - command line arguments to pass to intltoolize
 #   LIBTOOLIZE_FLAGS - command line arguments to pass to libtoolize
 #
@@ -48,14 +49,22 @@
 PACKAGE="Pidgin"
 ARGS_FILE="autogen.args"
 
+libtoolize="libtoolize"
+case $(uname -s) in
+	Darwin*)
+		libtoolize="glibtoolize"
+		;;
+	*)
+esac
+
 ###############################################################################
 # Some helper functions
 ###############################################################################
 check () {
 	CMD=$1
 
-	echo -n "checking for ${CMD}... "
-	BIN=`which ${CMD}`
+	printf "%s" "checking for ${CMD}... "
+	BIN=`which ${CMD} 2> /dev/null`
 
 	if [ x"${BIN}" = x"" ] ; then
 		echo "not found."
@@ -70,7 +79,7 @@ run_or_die () { # beotch
 	CMD=$1
 	shift
 
-	echo -n "running ${CMD} ${@}... "
+	printf "%s" "running ${CMD} ${@}... "
 	OUTPUT=`${CMD} ${@} 2>&1`
 	if [ $? != 0 ] ; then
 		echo "failed."
@@ -87,7 +96,7 @@ run_or_die () { # beotch
 ###############################################################################
 # We really start here, yes, very sneaky!
 ###############################################################################
-FIGLET=`which figlet`
+FIGLET=`which figlet 2> /dev/null`
 if [ x"${FIGLET}" != x"" ] ; then
 	${FIGLET} -f small ${PACKAGE}
 	echo "build system is being generated"
@@ -98,11 +107,11 @@ fi
 ###############################################################################
 # Look for our args file
 ###############################################################################
-echo -n "checking for ${ARGS_FILE}: "
+printf "%s" "checking for ${ARGS_FILE}: "
 if [ -f ${ARGS_FILE} ] ; then
 	echo "found."
-	echo -n "sourcing ${ARGS_FILE}: "
-	. autogen.args
+	printf "%s" "sourcing ${ARGS_FILE}: "
+	. ${ARGS_FILE}
 	echo "done."
 else
 	echo "not found."
@@ -111,7 +120,8 @@ fi
 ###############################################################################
 # Check for our required helpers
 ###############################################################################
-check "libtoolize";		LIBTOOLIZE=${BIN};
+check "$libtoolize";		LIBTOOLIZE=${BIN};
+check "glib-gettextize"; GLIB_GETTEXTIZE=${BIN};
 check "intltoolize";	INTLTOOLIZE=${BIN};
 check "aclocal";		ACLOCAL=${BIN};
 check "autoheader";		AUTOHEADER=${BIN};
@@ -121,15 +131,16 @@ check "autoconf";		AUTOCONF=${BIN};
 ###############################################################################
 # Run all of our helpers
 ###############################################################################
-run_or_die ${LIBTOOLIZE} -c -f --automake ${LIBTOOLIZE_FLAGS}
-run_or_die ${INTLTOOLIZE} -c -f --automake ${INTLTOOLIZE_FLAGS}
-run_or_die ${ACLOCAL} -I m4macros ${ACLOCAL_FLAGS}
+run_or_die ${LIBTOOLIZE} ${LIBTOOLIZE_FLAGS:-"-c -f --automake"}
+run_or_die ${GLIB_GETTEXTIZE} ${GLIB_GETTEXTIZE_FLAGS:-"--force --copy"}
+run_or_die ${INTLTOOLIZE} ${INTLTOOLIZE_FLAGS:-"-c -f --automake"}
+run_or_die ${ACLOCAL} ${ACLOCAL_FLAGS:-"-I m4macros"}
 run_or_die ${AUTOHEADER} ${AUTOHEADER_FLAGS}
-run_or_die ${AUTOMAKE} -a -c -f --gnu ${AUTOMAKE_FLAGS}
-run_or_die ${AUTOCONF} -f ${AUTOCONF_FLAGS}
+run_or_die ${AUTOMAKE} ${AUTOMAKE_FLAGS:-"-a -c --gnu"}
+run_or_die ${AUTOCONF} ${AUTOCONF_FLAGS}
 
 ###############################################################################
 # Run configure
 ###############################################################################
-echo "running ./configure ${CONFIGURE_ARGS} $@"
-./configure ${CONFIGURE_ARGS} $@
+echo "running ./configure ${CONFIGURE_FLAGS} $@"
+./configure ${CONFIGURE_FLAGS} $@

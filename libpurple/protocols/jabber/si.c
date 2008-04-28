@@ -664,6 +664,9 @@ jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
 	if(!(jid = xmlnode_get_attrib(streamhost_used, "jid")))
 		return;
 
+	purple_debug_info("jabber", "jabber_si_connect_proxy_cb() will be looking at jsx %p: jsx->streamhosts is %p and jid is %p",
+					  jsx, jsx->streamhosts, jid);
+
 	if(!(matched = g_list_find_custom(jsx->streamhosts, jid, jabber_si_compare_jid)))
 	{
 		gchar *my_jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node,
@@ -780,6 +783,8 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 
 			g_snprintf(port, sizeof(port), "%hu", portnum);
 
+			purple_debug_info("jabber", "jabber_si_xfer_bytestreams_listen_cb() will be looking at jsx %p: jsx->streamhosts %p and ft_proxy_list[%i] %p",
+							  jsx, jsx->streamhosts, i, ft_proxy_list[i]);
 			if(g_list_find_custom(jsx->streamhosts, ft_proxy_list[i], jabber_si_compare_jid) != NULL)
 				continue;
 
@@ -807,6 +812,8 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		if (!(sh->jid && sh->host && sh->port > 0))
 			continue;
 
+		purple_debug_info("jabber", "jabber_si_xfer_bytestreams_listen_cb() will be looking at jsx %p: jsx->streamhosts %p and sh->jid %p",
+						  jsx, jsx->streamhosts, sh->jid);
 		if(g_list_find_custom(jsx->streamhosts, sh->jid, jabber_si_compare_jid) != NULL)
 			continue;
 
@@ -969,6 +976,8 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 	g_free(jsx->rxqueue);
 	g_free(jsx);
 	xfer->data = NULL;
+	
+	purple_debug_info("jabber", "jabber_si_xfer_free(): freeing jsx %p", jsx);
 }
 
 static void jabber_si_xfer_cancel_send(PurpleXfer *xfer)

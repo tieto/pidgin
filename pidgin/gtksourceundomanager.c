@@ -41,10 +41,12 @@
 typedef struct _GtkSourceUndoAction  			GtkSourceUndoAction;
 typedef struct _GtkSourceUndoInsertAction		GtkSourceUndoInsertAction;
 typedef struct _GtkSourceUndoDeleteAction		GtkSourceUndoDeleteAction;
+typedef struct _GtkSourceUndoInsertAnchorAction GtkSourceUndoInsertAnchorAction;
 
 typedef enum {
 	GTK_SOURCE_UNDO_ACTION_INSERT,
-	GTK_SOURCE_UNDO_ACTION_DELETE
+	GTK_SOURCE_UNDO_ACTION_DELETE,
+	GTK_SOURCE_UNDO_ACTION_INSERT_ANCHOR,
 } GtkSourceUndoActionType;
 
 /* 
@@ -68,6 +70,12 @@ struct _GtkSourceUndoDeleteAction
 	gboolean forward;
 };
 
+struct _GtkSourceUndoInsertAnchorAction
+{
+	gint pos;
+	GtkTextChildAnchor *anchor;
+};
+
 struct _GtkSourceUndoAction
 {
 	GtkSourceUndoActionType action_type;
@@ -75,6 +83,7 @@ struct _GtkSourceUndoAction
 	union {
 		GtkSourceUndoInsertAction  insert;
 		GtkSourceUndoDeleteAction  delete;
+		GtkSourceUndoInsertAnchorAction insert_anchor;
 	} action;
 
 	gint order_in_group;
@@ -139,6 +148,10 @@ static void gtk_source_undo_manager_insert_text_handler 	(GtkTextBuffer 			*buff
 		                             		 	 const 	gchar 			*text, 
 							 	 gint 				 length, 
 							 	 GtkSourceUndoManager 		*um);
+static void gtk_source_undo_manager_insert_anchor_handler (GtkTextBuffer *buffer,
+			                   GtkTextIter            *pos,
+			                   GtkTextChildAnchor     *anchor,
+			                   GtkSourceUndoManager   *um);
 static void gtk_source_undo_manager_delete_range_handler 	(GtkTextBuffer 			*buffer, 
 							 	 GtkTextIter 			*start,
                         		      		 	 GtkTextIter 			*end,
@@ -275,6 +288,10 @@ gtk_source_undo_manager_finalize (GObject *object)
 			  um);
 	
 	g_signal_handlers_disconnect_by_func (G_OBJECT (um->priv->document),
+			  G_CALLBACK (gtk_source_undo_manager_insert_anchor_handler), 
+			  um);
+	
+	g_signal_handlers_disconnect_by_func (G_OBJECT (um->priv->document),
 			  G_CALLBACK (gtk_source_undo_manager_begin_user_action_handler), 
 			  um);
 
@@ -295,6 +312,10 @@ gtk_source_undo_manager_new (GtkTextBuffer* buffer)
 
 	g_signal_connect (G_OBJECT (buffer), "insert_text",
 			  G_CALLBACK (gtk_source_undo_manager_insert_text_handler), 
+			  um);
+
+	g_signal_connect (G_OBJECT (buffer), "insert_child_anchor",
+			  G_CALLBACK (gtk_source_undo_manager_insert_anchor_handler), 
 			  um);
 
 	g_signal_connect (G_OBJECT (buffer), "delete_range",
@@ -403,6 +424,15 @@ insert_text (GtkTextBuffer *buffer, gint pos, const gchar *text, gint len)
 }
 
 static void 
+insert_anchor (GtkTextBuffer *buffer, gint pos, GtkTextChildAnchor *anchor)
+{
+	GtkTextIter iter;
+	
+	gtk_text_buffer_get_iter_at_offset (buffer, &iter, pos);
+	gtk_text_buffer_insert_child_anchor (buffer, &iter, anchor);
+}
+
+static void 
 delete_text (GtkTextBuffer *buffer, gint start, gint end)
 {
 	GtkTextIter start_iter;
@@ -497,6 +527,13 @@ gtk_source_undo_manager_undo (GtkSourceUndoManager *um)
 					undo_action->action.insert.pos);
 				break;
 
+			case GTK_SOURCE_UNDO_ACTION_INSERT_ANCHOR:
+				delete_text (
+					um->priv->document,
+					undo_action->action.insert_anchor.pos,
+					undo_action->action.insert_anchor.pos + 1);
+				undo_action->action.insert_anchor.anchor->segment = NULL; /* XXX: This may be a bug in GTK+ */
+				break;
 			default:
 				/* Unknown action type. */
 				g_return_if_reached ();
@@ -588,6 +625,17 @@ gtk_source_undo_manager_redo (GtkSourceUndoManager *um)
 
 				break;
 
+			case GTK_SOURCE_UNDO_ACTION_INSERT_ANCHOR:
+				set_cursor (
+					um->priv->document,
+					undo_action->action.insert_anchor.pos);
+
+				insert_anchor (
+					um->priv->document,
+					undo_action->action.insert_anchor.pos,
+					undo_action->action.insert_anchor.anchor);
+				break;
+
 			default:
 				/* Unknown action type */
 				++um->priv->next_redo;
@@ -633,6 +681,8 @@ gtk_source_undo_action_free (GtkSourceUndoAction *action)
 		g_free (action->action.insert.text);
 	else if (action->action_type == GTK_SOURCE_UNDO_ACTION_DELETE)
 		g_free (action->action.delete.text);
+	else if (action->action_type == GTK_SOURCE_UNDO_ACTION_INSERT_ANCHOR)
+		g_object_unref(action->action.insert_anchor.anchor);
 	else
 		g_return_if_reached ();
 
@@ -690,6 +740,27 @@ gtk_source_undo_manager_insert_text_handler (GtkTextBuffer 		*buffer,
 	else
 		undo_action.mergeable = TRUE;
 
+	undo_action.modified = FALSE;
+
+	gtk_source_undo_manager_add_action (um, &undo_action);
+}
+
+static void gtk_source_undo_manager_insert_anchor_handler (GtkTextBuffer *buffer,
+			                   GtkTextIter            *pos,
+			                   GtkTextChildAnchor     *anchor,
+			                   GtkSourceUndoManager   *um)
+{
+	GtkSourceUndoAction undo_action;
+
+	if (um->priv->running_not_undoable_actions > 0)
+		return;
+
+	undo_action.action_type = GTK_SOURCE_UNDO_ACTION_INSERT_ANCHOR;
+
+	undo_action.action.insert_anchor.pos    = gtk_text_iter_get_offset (pos);
+	undo_action.action.insert_anchor.anchor = g_object_ref (anchor);
+
+	undo_action.mergeable = FALSE;
 	undo_action.modified = FALSE;
 
 	gtk_source_undo_manager_add_action (um, &undo_action);
@@ -775,6 +846,10 @@ gtk_source_undo_manager_add_action (GtkSourceUndoManager 	*um,
 			action->action.insert.text = g_strndup (undo_action->action.insert.text, undo_action->action.insert.length);
 		else if (action->action_type == GTK_SOURCE_UNDO_ACTION_DELETE)
 			action->action.delete.text = g_strdup (undo_action->action.delete.text); 
+		else if (action->action_type == GTK_SOURCE_UNDO_ACTION_INSERT_ANCHOR)
+		{
+			/* Nothing needs to be done */
+		}
 		else
 		{
 			g_free (action);
@@ -997,6 +1072,10 @@ gtk_source_undo_manager_merge_action (GtkSourceUndoManager 	*um,
 		last_action->action.insert.text = str;
 		last_action->action.insert.chars += undo_action->action.insert.chars;
 
+	}
+	else if (undo_action->action_type == GTK_SOURCE_UNDO_ACTION_INSERT_ANCHOR)
+	{
+		/* Nothing needs to be done */
 	}
 	else
 		/* Unknown action inside undo merge encountered */

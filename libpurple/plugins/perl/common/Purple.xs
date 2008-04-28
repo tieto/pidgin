@@ -74,14 +74,24 @@ BOOT:
 	PURPLE_PERL_BOOT(Util);
 	PURPLE_PERL_BOOT(XMLNode);
 
-void
+guint
 timeout_add(plugin, seconds, callback, data = 0)
 	Purple::Plugin plugin
 	int seconds
 	SV *callback
 	SV *data
 CODE:
-	purple_perl_timeout_add(plugin, seconds, callback, data);
+	RETVAL = purple_perl_timeout_add(plugin, seconds, callback, data);
+OUTPUT:
+	RETVAL
+
+gboolean
+timeout_remove(handle)
+	guint handle
+CODE:
+	RETVAL = purple_perl_timeout_remove(handle);
+OUTPUT:
+	RETVAL
 
 void
 deinit()

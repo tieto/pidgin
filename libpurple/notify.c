@@ -586,7 +586,7 @@ purple_notify_user_info_get_text_with_newline(PurpleNotifyUserInfo *user_info, c
 }
 
 
-gchar *
+const gchar *
 purple_notify_user_info_entry_get_label(PurpleNotifyUserInfoEntry *user_info_entry)
 {
 	g_return_val_if_fail(user_info_entry != NULL, NULL);
@@ -603,7 +603,7 @@ purple_notify_user_info_entry_set_label(PurpleNotifyUserInfoEntry *user_info_ent
 	user_info_entry->label = g_strdup(label);
 }
 
-gchar *
+const gchar *
 purple_notify_user_info_entry_get_value(PurpleNotifyUserInfoEntry *user_info_entry)
 {
 	g_return_val_if_fail(user_info_entry != NULL, NULL);

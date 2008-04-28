@@ -962,11 +962,11 @@ silcpurple_change_pass(PurplePluginAction *action)
 static void
 silcpurple_change_passwd(PurpleConnection *gc, const char *old, const char *new)
 {
-        char prd[256];
+	char prd[256];
 	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.pub", silcpurple_silcdir());
 	silc_change_private_key_passphrase(purple_account_get_string(gc->account,
 								   "private-key",
-								   prd), old, new);
+								   prd), old ? old : "", new ? new : "");
 }
 
 static void

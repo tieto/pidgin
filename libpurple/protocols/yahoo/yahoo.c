@@ -346,7 +346,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			break;
 
 		default:
-			purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
+			purple_debug_warning("yahoo",
 					   "Unknown status key %d\n", pair->key);
 			break;
 		}
@@ -518,7 +518,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 
 			} else {
 				/* This buddy is on the ignore list (and therefore in no group) */
-				purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found",
+				purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found\n",
 								  account->username, norm_bud);
 				purple_privacy_deny_add(account, norm_bud, 1);
 			}
