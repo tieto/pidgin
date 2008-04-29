@@ -632,7 +632,11 @@ chat_components_edit_ok(PurpleChat *chat, PurpleRequestFields *allfields)
 			else
 				val = g_strdup(purple_request_field_string_get_value(field));
 
-			g_hash_table_replace(purple_chat_get_components(chat), g_strdup(id), val);  /* val should not be free'd */
+			if (!val) {
+				g_hash_table_remove(purple_chat_get_components(chat), id);
+			} else {
+				g_hash_table_replace(purple_chat_get_components(chat), g_strdup(id), val);  /* val should not be free'd */
+			}
 		}
 	}
 }
@@ -663,7 +667,12 @@ static void chat_components_edit(GtkWidget *w, PurpleBlistNode *node)
 		} else {
 			field = purple_request_field_string_new(pce->identifier, pce->label,
 					g_hash_table_lookup(purple_chat_get_components(chat), pce->identifier), FALSE);
+			if (pce->secret)
+				purple_request_field_string_set_masked(field, TRUE);
 		}
+
+		if (pce->required)
+			purple_request_field_set_required(field, TRUE);
 
 		purple_request_field_group_add_field(group, field);
 		g_free(pce);
