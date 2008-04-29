@@ -27,7 +27,6 @@
   @signal chat-invited-user
   @signal chat-invited
   @signal chat-joined
-  @signal chat-join-failed
   @signal chat-left
   @signal chat-topic-changed
   @signal conversation-extended-menu
@@ -401,16 +400,6 @@ void (*chat_joined)(PurpleConversation *conv);
   @param conv The conversation that joined the chat room.
  @endsignaldef
 
- @signaldef chat-join-failed
-  @signalproto
-void (*chat_join_failed)(PurpleConnection *gc, const char *name);
-  @endsignalproto
-  @signaldesc
-   Emitted when an account fails to join a chat room
-  @param gc The PurpleConnection of the account which failed to join the chat.
-  @param name The name of the chat.
- @endsignaldef
- 
  @signaldef chat-left
   @signalproto
 void (*chat_left)(PurpleConversation *conv);

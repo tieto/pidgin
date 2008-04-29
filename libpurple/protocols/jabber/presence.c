@@ -587,7 +587,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					serv_got_chat_left(js->gc, chat->id);
 			} else {
 				title = g_strdup_printf(_("Error joining chat %s"), from);
-				purple_serv_got_join_chat_failed(js->gc, room_jid);
 			}
 			purple_notify_error(js->gc, title, title, msg);
 			g_free(title);

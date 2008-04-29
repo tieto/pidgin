@@ -166,15 +166,6 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 
 PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
 									   int id, const char *name);
-/**
- * Called by a prpl when an attempt to join a chat via serv_join_chat()
- * fails.
- *
- * @param gc      The connection on which chat joining failed
- * @param name    The name of the chat which we did not join
- */
-void purple_serv_got_join_chat_failed(PurpleConnection *gc, const char *name);
-	
 void serv_got_chat_left(PurpleConnection *g, int id);
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime);
