@@ -369,17 +369,29 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 
 typedef struct _JabberPresenceCapabilities {
 	JabberStream *js;
-	JabberBuddyResource *jbr;
+	JabberBuddy *jb;
 	char *from;
 } JabberPresenceCapabilities;
 
 static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, gpointer user_data) {
 	JabberPresenceCapabilities *userdata = user_data;
+	JabberID *jid;
+	JabberBuddyResource *jbr;
 	GList *iter;
 
-	if(userdata->jbr->caps)
-		jabber_caps_free_clientinfo(userdata->jbr->caps);
-	userdata->jbr->caps = info;
+	jid = jabber_id_new(userdata->from);
+	jbr = jabber_buddy_find_resource(userdata->jb, jid->resource);
+	jabber_id_free(jid);
+
+	if(!jbr) {
+		g_free(userdata->from);
+		g_free(userdata);
+		return;
+	}
+
+	if(jbr->caps)
+		jabber_caps_free_clientinfo(jbr->caps);
+	jbr->caps = info;
 
 	if (info) {
 		for(iter = info->features; iter; iter = g_list_next(iter)) {
@@ -741,7 +753,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				if(node && ver) {
 					JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
 					userdata->js = js;
-					userdata->jbr = jbr;
+					userdata->jb = jb;
 					userdata->from = g_strdup(from);
 					jabber_caps_get_info(js, from, node, ver, ext, jabber_presence_set_capabilities, userdata);
 				}
