@@ -1,9 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.0:
+version 2.x.x:
     libpurple:
         Added:
-        * purple_serv_got_join_chat_failed
+        * serv_got_join_chat_failed
         * chat-join-failed signal (see conversation-signals.dox)
 	perl:
 		Added:

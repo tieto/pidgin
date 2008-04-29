@@ -173,7 +173,7 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
  * @param gc      The connection on which chat joining failed
  * @param name    The name of the chat which we did not join
  */
-void purple_serv_got_join_chat_failed(PurpleConnection *gc, const char *name);
+void serv_got_join_chat_failed(PurpleConnection *gc, const char *name);
 	
 void serv_got_chat_left(PurpleConnection *g, int id);
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
