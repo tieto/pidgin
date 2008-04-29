@@ -230,7 +230,7 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 		char *buf = g_strdup_printf(_("%s is not a valid room name"), room);
 		purple_notify_error(gc, _("Invalid Room Name"), _("Invalid Room Name"),
 				buf);
-		serv_got_join_chat_failed(gc, room_jid);
+		purple_serv_got_join_chat_failed(gc, room_jid);
 		g_free(room_jid);
 		g_free(buf);
 		return;
@@ -238,7 +238,7 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 		char *buf = g_strdup_printf(_("%s is not a valid server name"), server);
 		purple_notify_error(gc, _("Invalid Server Name"),
 				_("Invalid Server Name"), buf);
-		serv_got_join_chat_failed(gc, room_jid);
+		purple_serv_got_join_chat_failed(gc, room_jid);
 		g_free(room_jid);
 		g_free(buf);
 		return;
@@ -246,7 +246,7 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 		char *buf = g_strdup_printf(_("%s is not a valid room handle"), handle);
 		purple_notify_error(gc, _("Invalid Room Handle"),
 				_("Invalid Room Handle"), buf);
-		serv_got_join_chat_failed(gc, room_jid);
+		purple_serv_got_join_chat_failed(gc, room_jid);
 		g_free(buf);
 		g_free(room_jid);
 		return;
