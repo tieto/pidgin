@@ -496,10 +496,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	dialog->password_box = add_pref_box(dialog, vbox, _("_Password:"),
 										  dialog->password_entry);
 
-	/* Alias */
-	dialog->alias_entry = gtk_entry_new();
-	add_pref_box(dialog, vbox, _("_Local alias:"), dialog->alias_entry);
-
 	/* Remember Password */
 	dialog->remember_pass_check =
 		gtk_check_button_new_with_mnemonic(_("Remember pass_word"));
@@ -570,6 +566,10 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
+
+	/* Alias */
+	dialog->alias_entry = gtk_entry_new();
+	add_pref_box(dialog, vbox, _("_Local alias:"), dialog->alias_entry);
 
 	/* New mail notifications */
 	dialog->new_mail_check =
