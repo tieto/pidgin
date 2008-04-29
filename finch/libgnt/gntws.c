@@ -13,7 +13,8 @@ widget_hide(gpointer data, gpointer nodes)
 	GntNode *node = g_hash_table_lookup(nodes, widget);
 	if (GNT_IS_WINDOW(widget))
 		gnt_window_workspace_hiding(GNT_WINDOW(widget));
-	hide_panel(node->panel);
+	if (node)
+		hide_panel(node->panel);
 }
 
 static void
