@@ -581,7 +581,7 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 	PurpleBuddy *buddy;
 
 	if (!username)
-		error = _("You must provide a screename for the buddy.");
+		error = _("You must provide a username for the buddy.");
 	else if (!group)
 		error = _("You must provide a group.");
 	else if (!account)
@@ -619,7 +619,7 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 
 	purple_request_fields_add_group(fields, group);
 
-	field = purple_request_field_string_new("screenname", _("Screen Name"), username, FALSE);
+	field = purple_request_field_string_new("screenname", _("Username"), username, FALSE);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("alias", _("Alias (optional)"), alias, FALSE);
@@ -2627,7 +2627,7 @@ block_select(GntMenuItem *item, gpointer n)
 
 	purple_request_fields(purple_get_blist(), _("Block/Unblock"),
 						NULL,
-						_("Please enter the screen name or alias of the person "
+						_("Please enter the username or alias of the person "
 						  "you would like to Block/Unblock."),
 						fields,
 						_("OK"), G_CALLBACK(block_select_cb),
@@ -2678,7 +2678,7 @@ send_im_select(GntMenuItem *item, gpointer n)
 
 	purple_request_fields(purple_get_blist(), _("New Instant Message"),
 						NULL,
-						_("Please enter the screen name or alias of the person "
+						_("Please enter the username or alias of the person "
 						  "you would like to IM."),
 						fields,
 						_("OK"), G_CALLBACK(send_im_select_cb),

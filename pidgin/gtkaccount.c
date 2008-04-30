@@ -408,7 +408,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	g_object_set(G_OBJECT(dialog->screenname_entry), "truncate-multiline", TRUE, NULL);
 #endif
 
-	add_pref_box(dialog, vbox, _("User_name:"), dialog->screenname_entry);
+	add_pref_box(dialog, vbox, _("_Username:"), dialog->screenname_entry);
 
 	g_signal_connect(G_OBJECT(dialog->screenname_entry), "changed",
 					 G_CALLBACK(screenname_changed_cb), dialog);
@@ -1913,7 +1913,7 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 
 	/* Screen Name column */
 	column = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(column, _("Screen Name"));
+	gtk_tree_view_column_set_title(column, _("Username"));
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 	gtk_tree_view_column_set_resizable(column, TRUE);
 

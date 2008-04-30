@@ -1890,7 +1890,7 @@ static void simple_login(PurpleAccount *account)
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-			_("SIP screen names may not contain whitespaces or @ symbols"));
+			_("SIP usernames may not contain whitespaces or @ symbols"));
 		return;
 	}
 

@@ -2124,7 +2124,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 
 	switch (err) {
 	case 3:
-		msg = g_strdup(_("Invalid screen name."));
+		msg = g_strdup(_("Invalid username."));
 		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 		break;
 	case 13:
