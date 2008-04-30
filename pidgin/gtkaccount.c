@@ -255,16 +255,6 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 	}
 }
 
-static gboolean
-screenname_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
-{
-	if (!strcmp(gtk_entry_get_text(GTK_ENTRY(widget)),dialog->prpl_info->account_login_label())) {
-		gtk_entry_set_text(GTK_ENTRY(widget),"");
-		gtk_widget_modify_text(widget,GTK_STATE_NORMAL,NULL);
-	}
-	return FALSE;
-}
-
 static void
 screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 {
@@ -278,23 +268,6 @@ screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 			gtk_widget_set_sensitive(dialog->register_button,
 					*gtk_entry_get_text(entry) != '\0');
 	}
-}
-
-static gboolean
-screenname_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
-{
-	GdkColor color = {0, 34952, 35466, 34181};
-	if (*gtk_entry_get_text(GTK_ENTRY(widget)) == '\0') {
-		/* We have to avoid hitting the screenname_changed_cb function 
-		 * because it enables buttons we don't want enabled yet ;)
-		 */
-		g_signal_handlers_block_by_func(widget, G_CALLBACK(screenname_changed_cb), dialog);
-		gtk_entry_set_text(GTK_ENTRY(widget),dialog->prpl_info->account_login_label());
-		/* Make sure we can hit it again */
-		g_signal_handlers_unblock_by_func(widget, G_CALLBACK(screenname_changed_cb), dialog);
-		gtk_widget_modify_text(widget,GTK_STATE_NORMAL,&color);
-	}
-	return FALSE;
 }
 
 static void
@@ -391,7 +364,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GList *user_splits;
 	GList *l, *l2;
 	char *username = NULL;
-	GdkColor color = {0, 34952, 35466, 34181};
 
 	if (dialog->protocol_menu != NULL)
 	{
@@ -437,15 +409,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 #endif
 
 	add_pref_box(dialog, vbox, _("Screen _name:"), dialog->screenname_entry);
-
-	if (dialog->prpl_info->account_login_label) {
-		gtk_entry_set_text(dialog->screenname_entry,dialog->prpl_info->account_login_label());
-		g_signal_connect(G_OBJECT(dialog->screenname_entry), "focus-in-event",
-						G_CALLBACK(screenname_focus_cb), dialog);
-		g_signal_connect(G_OBJECT(dialog->screenname_entry), "focus-out-event",
-						G_CALLBACK(screenname_nofocus_cb), dialog);
-		gtk_widget_modify_text(dialog->screenname_entry,GTK_STATE_NORMAL,&color);
-	}
 
 	g_signal_connect(G_OBJECT(dialog->screenname_entry), "changed",
 					 G_CALLBACK(screenname_changed_cb), dialog);

@@ -134,10 +134,6 @@ msn_attention_types(PurpleAccount *account)
 }
 
 
-const char *msn_get_login_label() {
-	return _("E-mail Address...");
-}
-
 static PurpleCmdRet
 msn_cmd_nudge(PurpleConversation *conv, const gchar *cmd, gchar **args, gchar **error, void *data)
 {
@@ -2151,7 +2147,9 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* unregister_user */
 	msn_send_attention,                     /* send_attention */
 	msn_attention_types,                    /* attention_types */
-	msn_get_login_label			/* account_login_label */
+
+	/* padding */
+	NULL
 };
 
 static PurplePluginInfo info =
