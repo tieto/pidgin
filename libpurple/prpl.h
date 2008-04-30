@@ -398,15 +398,7 @@ struct _PurplePluginProtocolInfo
 	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
 	GList *(*get_attention_types)(PurpleAccount *acct);
 
-	/** This allows protocols to specify additional strings to be used for
-	 * various purposes.  The idea is to stuff a bunch of strings in this hash
-	 * table instead of expanding the struct for every addition.  This hash
-	 * table is allocated every call and MUST be unrefed by the caller.
-	 *
-	 * @param account The account to specify.  This can be NULL.
-	 * @return The protocol's string hash table.
-	 */
-	GHashTable *(*get_account_text_table)(PurpleAccount *account);
+	void (*_purple_reserved4)(void);
 };
 
 #define PURPLE_IS_PROTOCOL_PLUGIN(plugin) \

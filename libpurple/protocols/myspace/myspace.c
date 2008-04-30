@@ -2449,18 +2449,6 @@ const char *msim_normalize(const PurpleAccount *account, const char *str) {
 	return normalized;
 }
 
-static GHashTable *
-msim_get_account_text_table()
-{
-	GHashTable *table;
-
-	table = g_hash_table_new(g_str_hash, g_str_equal);
-
-	g_hash_table_insert(table, "login_label", (gpointer)_("E-mail Address..."));
-
-	return table;
-}
-
 /** Return whether the buddy can be messaged while offline.
  *
  * The protocol supports offline messages in just the same way as online
@@ -3143,7 +3131,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                  /* unregister_user */
 	msim_send_attention,   /* send_attention */
 	msim_attention_types,  /* attention_types */
-	msim_get_account_text_table /* get_account_text_table */
+	NULL                /* _purple_reserved4 */
 };
 
 
