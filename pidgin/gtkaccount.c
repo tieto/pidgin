@@ -654,6 +654,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		set_dialog_icon(dialog, NULL, 0, NULL);
 	}
 
+#if 0
 	if (!dialog->prpl_info ||
 			(!(dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK) &&
 			 (dialog->prpl_info->icon_spec.format ==  NULL))) {
@@ -661,6 +662,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		/* Nothing to see :( aww. */
 		gtk_widget_hide(dialog->user_frame);
 	}
+#endif
 }
 
 static void
