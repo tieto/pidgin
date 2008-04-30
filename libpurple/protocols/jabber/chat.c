@@ -201,7 +201,7 @@ char *jabber_get_chat_name(GHashTable *data) {
 static void insert_in_hash_table(gpointer key, gpointer value, gpointer user_data)
 {
 	GHashTable *hash_table = (GHashTable *)user_data;
-	g_hash_table_insert(hash_table, key, value);
+	g_hash_table_insert(hash_table, g_strdup(key), g_strdup(value));
 }
 
 void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
