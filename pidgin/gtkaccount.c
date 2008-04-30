@@ -408,7 +408,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	g_object_set(G_OBJECT(dialog->screenname_entry), "truncate-multiline", TRUE, NULL);
 #endif
 
-	add_pref_box(dialog, vbox, _("Screen _name:"), dialog->screenname_entry);
+	add_pref_box(dialog, vbox, _("User_name:"), dialog->screenname_entry);
 
 	g_signal_connect(G_OBJECT(dialog->screenname_entry), "changed",
 					 G_CALLBACK(screenname_changed_cb), dialog);
