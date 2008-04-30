@@ -222,32 +222,38 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 	if(!handle)
 		handle = js->user->node;
 
+	tmp = g_strdup_printf("%s@%s", room, server);
+	room_jid = g_strdup(jabber_normalize(NULL, tmp));
+	g_free(tmp);
+
 	if(!jabber_nodeprep_validate(room)) {
 		char *buf = g_strdup_printf(_("%s is not a valid room name"), room);
 		purple_notify_error(gc, _("Invalid Room Name"), _("Invalid Room Name"),
 				buf);
+		purple_serv_got_join_chat_failed(gc, room_jid);
+		g_free(room_jid);
 		g_free(buf);
 		return;
 	} else if(!jabber_nameprep_validate(server)) {
 		char *buf = g_strdup_printf(_("%s is not a valid server name"), server);
 		purple_notify_error(gc, _("Invalid Server Name"),
 				_("Invalid Server Name"), buf);
+		purple_serv_got_join_chat_failed(gc, room_jid);
+		g_free(room_jid);
 		g_free(buf);
 		return;
 	} else if(!jabber_resourceprep_validate(handle)) {
 		char *buf = g_strdup_printf(_("%s is not a valid room handle"), handle);
 		purple_notify_error(gc, _("Invalid Room Handle"),
 				_("Invalid Room Handle"), buf);
+		purple_serv_got_join_chat_failed(gc, room_jid);
 		g_free(buf);
+		g_free(room_jid);
 		return;
 	}
 
 	if(jabber_chat_find(js, room, server))
 		return;
-
-	tmp = g_strdup_printf("%s@%s", room, server);
-	room_jid = g_strdup(jabber_normalize(NULL, tmp));
-	g_free(tmp);
 
 	chat = g_new0(JabberChat, 1);
 	chat->js = gc->proto_data;
