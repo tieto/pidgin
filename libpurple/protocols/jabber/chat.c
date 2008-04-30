@@ -198,6 +198,12 @@ char *jabber_get_chat_name(GHashTable *data) {
 	return chat_name;
 }
 
+static void insert_in_hash_table(gpointer key, gpointer value, gpointer user_data)
+{
+	GHashTable *hash_table = (GHashTable *)user_data;
+	g_hash_table_insert(hash_table, key, value);
+}
+
 void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 {
 	JabberChat *chat;
@@ -259,8 +265,11 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 	chat->server = g_strdup(server);
 	chat->handle = g_strdup(handle);
 
-	chat->components = g_hash_table_ref(data);
-										
+	/* Copy the data hash table to chat->components */
+	chat->components = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, g_free);
+	g_hash_table_foreach(data, insert_in_hash_table, chat->components);
+
 	chat->members = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
 			(GDestroyNotify)jabber_chat_member_free);
 
@@ -321,7 +330,7 @@ void jabber_chat_free(JabberChat *chat)
 	g_free(chat->server);
 	g_free(chat->handle);
 	g_hash_table_destroy(chat->members);
-	g_hash_table_unref(chat->components);
+	g_hash_table_destroy(chat->components);
 	g_free(chat);
 }
 
