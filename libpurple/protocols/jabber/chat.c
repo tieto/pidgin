@@ -222,38 +222,35 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 	if(!handle)
 		handle = js->user->node;
 
-	tmp = g_strdup_printf("%s@%s", room, server);
-	room_jid = g_strdup(jabber_normalize(NULL, tmp));
-	g_free(tmp);
-
 	if(!jabber_nodeprep_validate(room)) {
 		char *buf = g_strdup_printf(_("%s is not a valid room name"), room);
 		purple_notify_error(gc, _("Invalid Room Name"), _("Invalid Room Name"),
 				buf);
-		purple_serv_got_join_chat_failed(gc, room_jid);
-		g_free(room_jid);
+		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
 		return;
 	} else if(!jabber_nameprep_validate(server)) {
 		char *buf = g_strdup_printf(_("%s is not a valid server name"), server);
 		purple_notify_error(gc, _("Invalid Server Name"),
 				_("Invalid Server Name"), buf);
-		purple_serv_got_join_chat_failed(gc, room_jid);
-		g_free(room_jid);
+		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
 		return;
 	} else if(!jabber_resourceprep_validate(handle)) {
 		char *buf = g_strdup_printf(_("%s is not a valid room handle"), handle);
 		purple_notify_error(gc, _("Invalid Room Handle"),
 				_("Invalid Room Handle"), buf);
-		purple_serv_got_join_chat_failed(gc, room_jid);
+		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
-		g_free(room_jid);
 		return;
 	}
 
 	if(jabber_chat_find(js, room, server))
 		return;
+
+	tmp = g_strdup_printf("%s@%s", room, server);
+	room_jid = g_strdup(jabber_normalize(NULL, tmp));
+	g_free(tmp);
 
 	chat = g_new0(JabberChat, 1);
 	chat->js = gc->proto_data;
@@ -262,6 +259,8 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 	chat->server = g_strdup(server);
 	chat->handle = g_strdup(handle);
 
+	chat->components = g_hash_table_ref(data);
+										
 	chat->members = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
 			(GDestroyNotify)jabber_chat_member_free);
 
@@ -322,6 +321,7 @@ void jabber_chat_free(JabberChat *chat)
 	g_free(chat->server);
 	g_free(chat->handle);
 	g_hash_table_destroy(chat->members);
+	g_hash_table_unref(chat->components);
 	g_free(chat);
 }
 

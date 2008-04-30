@@ -171,9 +171,11 @@ PurpleConversation *serv_got_joined_chat(PurpleConnection *gc,
  * fails.
  *
  * @param gc      The connection on which chat joining failed
- * @param name    The name of the chat which we did not join
+ * @param data    The components passed to serv_join_chat() originally.
+ *                The hash function should be g_str_hash() and the equal
+ *                function should be g_str_equal().
  */
-void purple_serv_got_join_chat_failed(PurpleConnection *gc, const char *name);
+void purple_serv_got_join_chat_failed(PurpleConnection *gc, GHashTable *data);
 	
 void serv_got_chat_left(PurpleConnection *g, int id);
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,

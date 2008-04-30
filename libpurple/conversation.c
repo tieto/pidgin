@@ -2372,7 +2372,7 @@ purple_conversations_init(void)
 						   purple_marshal_VOID__POINTER_POINTER, NULL, 2,
 						   purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONNECTION),
-						   purple_value_new(PURPLE_TYPE_STRING));
+						   purple_value_new(PURPLE_TYPE_POINTER));
 
 	purple_signal_register(handle, "chat-left",
 						 purple_marshal_VOID__POINTER, NULL, 1,

@@ -41,6 +41,7 @@ typedef struct _JabberChat {
 	char *room;
 	char *server;
 	char *handle;
+	GHashTable *components;
 	int id;
 	PurpleConversation *conv;
 	gboolean muc;
