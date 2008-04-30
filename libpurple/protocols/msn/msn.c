@@ -132,16 +132,8 @@ msn_attention_types(PurpleAccount *account)
 	return list;
 }
 
-static GHashTable *
-msn_get_account_text_table()
-{
-	GHashTable *table;
-	
-	table = g_hash_table_new(g_str_hash, g_str_equal);
-	
-	g_hash_table_insert(table, "login_label", (gpointer)_("E-mail Address..."));
-
-	return table;
+const char *msn_get_login_label() {
+	return _("E-mail Address...");
 }
 
 static PurpleCmdRet
@@ -2317,7 +2309,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* unregister_user */
 	msn_send_attention,                     /* send_attention */
 	msn_attention_types,                    /* attention_types */
-	msn_get_account_text_table			/* get_account_text_table */
+	msn_get_login_label			/* account_login_label */
 };
 
 static PurplePluginInfo info =

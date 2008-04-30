@@ -2449,16 +2449,8 @@ const char *msim_normalize(const PurpleAccount *account, const char *str) {
 	return normalized;
 }
 
-static GHashTable *
-msim_get_account_text_table()
-{
-	GHashTable *table;
-
-	table = g_hash_table_new(g_str_hash, g_str_equal);
-
-	g_hash_table_insert(table, "login_label", (gpointer)_("E-mail Address..."));
-
-	return table;
+const char *msim_get_login_label() {
+	return _("E-mail Address...");
 }
 
 /** Return whether the buddy can be messaged while offline.
@@ -3143,7 +3135,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                  /* unregister_user */
 	msim_send_attention,   /* send_attention */
 	msim_attention_types,  /* attention_types */
-	msim_get_account_text_table /* get_account_text_table */
+	msim_get_login_label /* get screen name field title */
 };
 
 
