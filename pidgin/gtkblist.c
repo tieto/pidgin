@@ -614,6 +614,78 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 	pidgin_blist_refresh(list);
 }
 
+static void
+chat_components_edit_ok(PurpleChat *chat, PurpleRequestFields *allfields)
+{
+	GList *groups, *fields;
+
+	for (groups = purple_request_fields_get_groups(allfields); groups; groups = groups->next) {
+		fields = purple_request_field_group_get_fields(groups->data);
+		for (; fields; fields = fields->next) {
+			PurpleRequestField *field = fields->data;
+			const char *id;
+			char *val;
+
+			id = purple_request_field_get_id(field);
+			if (purple_request_field_get_type(field) == PURPLE_REQUEST_FIELD_INTEGER)
+				val = g_strdup_printf("%d", purple_request_field_int_get_value(field));
+			else
+				val = g_strdup(purple_request_field_string_get_value(field));
+
+			if (!val) {
+				g_hash_table_remove(purple_chat_get_components(chat), id);
+			} else {
+				g_hash_table_replace(purple_chat_get_components(chat), g_strdup(id), val);  /* val should not be free'd */
+			}
+		}
+	}
+}
+
+static void chat_components_edit(GtkWidget *w, PurpleBlistNode *node)
+{
+	PurpleRequestFields *fields = purple_request_fields_new();
+	PurpleRequestFieldGroup *group = purple_request_field_group_new(NULL);
+	PurpleRequestField *field;
+	GList *parts, *iter;
+	struct proto_chat_entry *pce;
+	PurpleConnection *gc;
+	PurpleChat *chat = (PurpleChat*)node;
+
+	purple_request_fields_add_group(fields, group);
+
+	gc = purple_account_get_connection(purple_chat_get_account(chat));
+	parts = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->chat_info(gc);
+
+	for (iter = parts; iter; iter = iter->next) {
+		pce = iter->data;
+		if (pce->is_int) {
+			int val;
+			const char *str = g_hash_table_lookup(purple_chat_get_components(chat), pce->identifier);
+			if (!str || sscanf(str, "%d", &val) != 1)
+				val = pce->min;
+			field = purple_request_field_int_new(pce->identifier, pce->label, val);
+		} else {
+			field = purple_request_field_string_new(pce->identifier, pce->label,
+					g_hash_table_lookup(purple_chat_get_components(chat), pce->identifier), FALSE);
+			if (pce->secret)
+				purple_request_field_string_set_masked(field, TRUE);
+		}
+
+		if (pce->required)
+			purple_request_field_set_required(field, TRUE);
+
+		purple_request_field_group_add_field(group, field);
+		g_free(pce);
+	}
+
+	g_list_free(parts);
+
+	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please Update the necessary fields."),
+			fields, _("Edit"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
+			NULL, NULL, NULL,
+			chat);
+}
+
 static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
 {
 	GtkTreeIter iter;
@@ -1510,6 +1582,8 @@ create_chat_menu(PurpleBlistNode *node, PurpleChat *c)
 
 	pidgin_separator(menu);
 
+	pidgin_new_item_from_stock(menu, _("_Edit Settings..."), NULL,
+				 G_CALLBACK(chat_components_edit), node, 0, 0, NULL);
 	pidgin_new_item_from_stock(menu, _("_Alias..."), PIDGIN_STOCK_ALIAS,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
 	pidgin_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
@@ -3665,13 +3739,13 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 			}
 			return text;
 		}
-		else
-			if (hidden_conv) {
-				char *tmp = esc;
-				esc = g_strdup_printf("<b>%s</b>", esc);
-				g_free(tmp);
-			}
-			return esc;
+		else if (hidden_conv)
+		{
+			char *tmp = esc;
+			esc = g_strdup_printf("<b>%s</b>", esc);
+			g_free(tmp);
+		}
+		return esc;
 	}
 
 	prpl = purple_find_prpl(purple_account_get_protocol_id(b->account));

@@ -16,6 +16,8 @@ version 2.x.x:
 	  hard time with the lack of the button.
 	* Clicking on the buddyicon in the conversation window toggles the size of
 	  the icon between small and large.
+	* The settings of a chat (e.g. Handle in an XMPP chat, or Exchange in an
+	  AIM chat) can be edited from its context menu in the buddy list.
 
 	General:
 	* The configure script now dies on more absent dependencies.  The

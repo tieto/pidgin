@@ -496,10 +496,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	dialog->password_box = add_pref_box(dialog, vbox, _("_Password:"),
 										  dialog->password_entry);
 
-	/* Alias */
-	dialog->alias_entry = gtk_entry_new();
-	add_pref_box(dialog, vbox, _("_Local alias:"), dialog->alias_entry);
-
 	/* Remember Password */
 	dialog->remember_pass_check =
 		gtk_check_button_new_with_mnemonic(_("Remember pass_word"));
@@ -570,6 +566,10 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
+
+	/* Alias */
+	dialog->alias_entry = gtk_entry_new();
+	add_pref_box(dialog, vbox, _("_Local alias:"), dialog->alias_entry);
 
 	/* New mail notifications */
 	dialog->new_mail_check =
@@ -654,6 +654,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		set_dialog_icon(dialog, NULL, 0, NULL);
 	}
 
+#if 0
 	if (!dialog->prpl_info ||
 			(!(dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK) &&
 			 (dialog->prpl_info->icon_spec.format ==  NULL))) {
@@ -661,6 +662,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		/* Nothing to see :( aww. */
 		gtk_widget_hide(dialog->user_frame);
 	}
+#endif
 }
 
 static void
