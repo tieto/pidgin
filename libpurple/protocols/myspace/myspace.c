@@ -2449,6 +2449,10 @@ const char *msim_normalize(const PurpleAccount *account, const char *str) {
 	return normalized;
 }
 
+const char *msim_get_login_label() {
+	return _("E-mail Address...");
+}
+
 /** Return whether the buddy can be messaged while offline.
  *
  * The protocol supports offline messages in just the same way as online
@@ -3131,7 +3135,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                  /* unregister_user */
 	msim_send_attention,   /* send_attention */
 	msim_attention_types,  /* attention_types */
-	NULL                /* _purple_reserved4 */
+	msim_get_login_label /* get screen name field title */
 };
 
 

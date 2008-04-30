@@ -398,7 +398,11 @@ struct _PurplePluginProtocolInfo
 	gboolean (*send_attention)(PurpleConnection *gc, const char *username, guint type);
 	GList *(*get_attention_types)(PurpleAccount *acct);
 
-	void (*_purple_reserved4)(void);
+	/* This allows protocols to specify a more specific term for the "ScreenName" field
+	 * in the add account window. This helps avoid confusion for users using protocols
+	 * such as MySpace or MSN
+	 */
+	const char *(*account_login_label)(void);
 };
 
 #define PURPLE_IS_PROTOCOL_PLUGIN(plugin) \
