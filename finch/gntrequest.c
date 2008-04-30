@@ -295,8 +295,7 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 	 * updating the fields at the end like here, it updates the appropriate field
 	 * instantly whenever a change is made. That allows it to make sure the
 	 * 'required' fields are entered before the user can hit OK. It's not the case
-	 * here, althought it can be done. I am not honouring the 'required' fields
-	 * for the moment. */
+	 * here, althought it can be done. */
 	for (list = purple_request_fields_get_groups(fields); list; list = list->next)
 	{
 		PurpleRequestFieldGroup *group = list->data;
@@ -366,6 +365,15 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 				purple_request_field_account_set_value(field, acc);
 			}
 		}
+	}
+
+	purple_notify_close_with_handle(button);
+
+	if (!purple_request_fields_all_required_filled(fields)) {
+		purple_notify_error(button, _("Error"),
+				_("You must fill all the required fields."),
+				_("The required fields are underlined."));
+		return;
 	}
 
 	if (callback)
@@ -587,7 +595,11 @@ finch_request_fields(const char *title, const char *primary,
 
 			if (type != PURPLE_REQUEST_FIELD_BOOLEAN && label)
 			{
-				GntWidget *l = gnt_label_new(label);
+				GntWidget *l;
+				if (purple_request_field_is_required(field))
+					l = gnt_label_new_with_format(label, GNT_TEXT_FLAG_UNDERLINE);
+				else
+					l = gnt_label_new(label);
 				gnt_widget_set_size(l, 0, 1);
 				gnt_box_add_widget(GNT_BOX(hbox), l);
 			}
