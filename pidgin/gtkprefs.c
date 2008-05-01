@@ -878,8 +878,7 @@ escape_closes_conversation_cb(GtkWidget *w,
 	 * should never arise.
 	 */
 	if(!changed)
-		purple_notify_warning (NULL, NULL,
-			_("IT'S A LION! GET IN THE CAR!"), NULL);
+		purple_debug_warning("gtkprefs", "Escape accel failed to change\n");
 
 	/* TODO: create pidgin_accels_schedule_save */
 	pidgin_save_accels_cb(NULL, 0, 0, NULL, NULL);
