@@ -22,6 +22,8 @@ version 2.x.x:
 	  Notification plugin, the "Raise conversation window" option does not
 	  unminimize windows or draw attention to them when they are on other
 	  workspaces the "Present" option should.
+	* Add a preference to set Escape as the keyboard shortcut for closing
+	  the conversation window.
 
 	General:
 	* The configure script now dies on more absent dependencies.  The
