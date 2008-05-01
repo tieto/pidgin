@@ -54,6 +54,11 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("Server requires TLS/SSL for login.  No TLS/SSL support found."));
 			return TRUE;
+		} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE)) {
+			purple_connection_error_reason (js->gc,
+				 PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+				_("You require encryption, but no TLS/SSL support found."));
+			return TRUE;
 		}
 	}
 
