@@ -3980,11 +3980,10 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 }
 
 static void
-tab_complete_process_item(int *most_matched, char *entered, char **partial, char *nick_partial,
+tab_complete_process_item(int *most_matched, char *entered, gsize entered_bytes, char **partial, char *nick_partial,
 				  GList **matches, gboolean command, char *name)
 {
-	strncpy(nick_partial, name, strlen(entered));
-	nick_partial[strlen(entered)] = '\0';
+	memcpy(nick_partial, name, entered_bytes);
 	if (purple_utf8_strcasecmp(nick_partial, entered))
 		return;
 
@@ -4029,6 +4028,7 @@ tab_complete(PurpleConversation *conv)
 	const char *prefix;
 	GList *matches = NULL;
 	gboolean command = FALSE;
+	gsize entered_bytes = 0;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
@@ -4048,19 +4048,24 @@ tab_complete(PurpleConversation *conv)
 	/* if we're at the end of ": " we need to move back 2 spaces */
 	start = strlen(text) - 1;
 
-	if (strlen(text) >= 2 && !strncmp(&text[start-1], ": ", 2)) {
+	if (start >= 1 && !strncmp(&text[start-1], ": ", 2)) {
 		gtk_text_iter_backward_chars(&word_start, 2);
-		start-=2;
 	}
 
-	/* find the start of the word that we're tabbing */
-	while (start >= 0 && text[start] != ' ') {
-		gtk_text_iter_backward_char(&word_start);
-		start--;
+	/* find the start of the word that we're tabbing.
+	 * Using gtk_text_iter_backward_word_start won't work, because a nick can contain
+	 * characters (e.g. '.', '/' etc.) that Pango may think are word separators. */
+	while (gtk_text_iter_backward_char(&word_start)) {
+		if (gtk_text_iter_get_char(&word_start) == ' ') {
+			/* Reached the whitespace before the start of the word. Move forward once */
+			gtk_text_iter_forward_char(&word_start);
+			break;
+		}
 	}
 
 	prefix = pidgin_get_cmd_prefix();
-	if (start == -1 && (strlen(text) >= strlen(prefix)) && !strncmp(text, prefix, strlen(prefix))) {
+	if (gtk_text_iter_get_offset(&word_start) == 0 &&
+			(strlen(text) >= strlen(prefix)) && !strncmp(text, prefix, strlen(prefix))) {
 		command = TRUE;
 		gtk_text_iter_forward_chars(&word_start, strlen(prefix));
 	}
@@ -4069,13 +4074,14 @@ tab_complete(PurpleConversation *conv)
 
 	entered = gtk_text_buffer_get_text(gtkconv->entry_buffer, &word_start,
 									   &cursor, FALSE);
+	entered_bytes = strlen(entered);
 
 	if (!g_utf8_strlen(entered, -1)) {
 		g_free(entered);
 		return (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) ? TRUE : FALSE;
 	}
 
-	nick_partial = g_malloc(strlen(entered)+1);
+	nick_partial = g_malloc0(entered_bytes + 1);
 
 	if (command) {
 		GList *list = purple_cmd_list(conv);
@@ -4083,7 +4089,7 @@ tab_complete(PurpleConversation *conv)
 
 		/* Commands */
 		for (l = list; l != NULL; l = l->next) {
-			tab_complete_process_item(&most_matched, entered, &partial, nick_partial,
+			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
 									  &matches, TRUE, l->data);
 		}
 		g_list_free(list);
@@ -4096,7 +4102,7 @@ tab_complete(PurpleConversation *conv)
 
 		/* Users */
 		for (; l != NULL; l = l->next) {
-			tab_complete_process_item(&most_matched, entered, &partial, nick_partial,
+			tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
 									  &matches, TRUE, ((PurpleConvChatBuddy *)l->data)->name);
 		}
 
@@ -4114,7 +4120,7 @@ tab_complete(PurpleConversation *conv)
 						   -1);
 
 				if (name && alias && strcmp(name, alias))
-					tab_complete_process_item(&most_matched, entered, &partial, nick_partial,
+					tab_complete_process_item(&most_matched, entered, entered_bytes, &partial, nick_partial,
 										  &matches, FALSE, alias);
 				g_free(name);
 				g_free(alias);
