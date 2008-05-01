@@ -1516,7 +1516,7 @@ gnt_wm_class_init(GntWMClass *klass)
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-window", help_for_window,
 				"\033" "|", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-start", ignore_keys_start,
-				GNT_KEY_CTRL_G, NULL);
+				NULL, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-end", ignore_keys_end,
 				"\033" GNT_KEY_CTRL_G, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-next-urgent", window_next_urgent,
