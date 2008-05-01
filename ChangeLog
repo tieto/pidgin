@@ -16,6 +16,8 @@ version 2.x.x:
 	  hard time with the lack of the button.
 	* Clicking on the buddyicon in the conversation window toggles the
 	  size of the icon between small and large.
+	* The settings of a chat (e.g. Handle in an XMPP chat, or Exchange in
+	  an AIM chat) can be edited from its context menu in the buddy list.
 	* Add a "Present conversation window" preference to the Message
 	  Notification plugin, the "Raise conversation window" option does not
 	  unminimize windows or draw attention to them when they are on other
