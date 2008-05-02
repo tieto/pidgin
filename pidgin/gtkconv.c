@@ -3052,7 +3052,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>", NULL },
 	{ "/Options/sep0", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Options/Show Formatting _Toolbars"), NULL, menu_toolbar_cb, 0, "<CheckItem>", NULL },
-	{ N_("/Options/Show Ti_mestamps"), "F2", menu_timestamps_cb, 0, "<CheckItem>", NULL },
+	{ N_("/Options/Show Ti_mestamps"), NULL, menu_timestamps_cb, 0, "<CheckItem>", NULL },
 };
 
 static const int menu_item_count =
