@@ -1282,6 +1282,7 @@ pidgin_request_fields(const char *title, const char *primary,
 				size_t col_offset = col_num * 2;
 				PurpleRequestFieldType type;
 				GtkWidget *widget = NULL;
+				const char *field_label;
 
 				label = NULL;
 				field = fl->data;
@@ -1292,17 +1293,17 @@ pidgin_request_fields(const char *title, const char *primary,
 				}
 
 				type = purple_request_field_get_type(field);
+				field_label = purple_request_field_get_label(field);
 
-				if (type != PURPLE_REQUEST_FIELD_BOOLEAN &&
-				    purple_request_field_get_label(field))
+				if (type != PURPLE_REQUEST_FIELD_BOOLEAN && field_label)
 				{
-					char *text;
+					char *text = NULL;
 
-					text = g_strdup_printf("%s:",
-						purple_request_field_get_label(field));
+					if (field_label[strlen(field_label) - 1] != ':')
+						text = g_strdup_printf("%s:", field_label);
 
 					label = gtk_label_new(NULL);
-					gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), text);
+					gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), text ? text : field_label);
 					g_free(text);
 
 					gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
