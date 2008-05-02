@@ -680,8 +680,8 @@ static void chat_components_edit(GtkWidget *w, PurpleBlistNode *node)
 
 	g_list_free(parts);
 
-	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please Update the necessary fields."),
-			fields, _("Edit"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
+	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please update the necessary fields."),
+			fields, _("Save"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
 			NULL, NULL, NULL,
 			chat);
 }
