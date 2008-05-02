@@ -4458,7 +4458,9 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	GdkRectangle oneline;
 	int height, diff;
 	int pad_top, pad_inside, pad_bottom;
-	int max_height = (gtkconv->imhtml->allocation.height + gtkconv->entry->allocation.height) / 2;
+	int total_height = (gtkconv->imhtml->allocation.height + gtkconv->entry->allocation.height);
+	int max_height = total_height / 2;
+	int min_height;
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
@@ -4482,12 +4484,11 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	/* Make sure there's enough room for at least two lines. Allocate enough space to
 	 * prevent scrolling when the second line is a continuation of the first line, or
 	 * is the beginning of a new paragraph. */
-	height = MAX(height, 2 * (oneline.height + MAX(pad_inside, pad_top + pad_bottom)));
-
-	height = MIN(height, max_height);
+	min_height = 2 * (oneline.height + MAX(pad_inside, pad_top + pad_bottom));
+	height = CLAMP(height, min_height, max_height);
 
 	diff = height - gtkconv->entry->allocation.height;
-	if (diff == 0 || (diff < 0 && -diff < oneline.height / 2))
+	if (ABS(diff) < oneline.height / 2)
 		return FALSE;
 
 	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
@@ -4764,6 +4765,7 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	/* Setup the gtkimhtml widget */
 	frame = pidgin_create_imhtml(FALSE, &gtkconv->imhtml, NULL, &imhtml_sw);
+	gtk_widget_set_size_request(gtkconv->imhtml, -1, 0);
 	if (chat) {
 		GtkWidget *hpaned;
 
