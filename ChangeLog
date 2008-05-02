@@ -36,6 +36,9 @@ version 2.x.x:
 	* The Contact Availability Prediction plugin must now be explicitly
 	  enabled.  Use the --enable-cap argument to configure to enable it.
 
+	Finch:
+	* New default binding ctrl+x to open context menus.
+
 version 2.4.1 (03/31/2008):
 	http://developer.pidgin.im/query?status=closed&milestone=2.4.1
 
