@@ -267,7 +267,7 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 	}
 	else
 	{
-		label = gtk_label_new(_("Please enter the buddy's screen name and "
+		label = gtk_label_new(_("Please enter the buddy's username and "
 								"account type below."));
 	}
 
@@ -291,7 +291,7 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 
 		/* Screen Name */
 		dialog->screenname = gtk_entry_new();
-		add_pref_box(sg, vbox, _("Screen name:"), dialog->screenname);
+		add_pref_box(sg, vbox, _("Username:"), dialog->screenname);
 
 		if (username != NULL)
 			gtk_entry_set_text(GTK_ENTRY(dialog->screenname), username);

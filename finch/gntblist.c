@@ -380,6 +380,27 @@ get_blist_node_flag(PurpleBlistNode *node)
 		fnode = FINCH_GET_DATA(node);
 		if (fnode && fnode->signed_timer)
 			flag |= GNT_TEXT_FLAG_BLINK;
+	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
+		/* If the node is collapsed, then check to see if any of the priority buddies of
+		 * any of the contacts within this group recently signed on/off, and set the blink
+		 * flag appropriately. */
+		/* XXX: Refs #5444 */
+		/* XXX: there's no way I can ask if the node is expanded or not? *sigh*
+		 * API addition would be necessary */
+#if 0
+		if (!gnt_tree_get_expanded(GNT_TREE(ggblist->tree), node)) {
+			for (node = purple_blist_node_get_first_child(node); node;
+					node = purple_blist_node_get_sibling_next(node)) {
+				PurpleBlistNode *pnode;
+				pnode = purple_contact_get_priority_buddy((PurpleContact*)node);
+				fnode = FINCH_GET_DATA(node);
+				if (fnode && fnode->signed_timer) {
+					flag |= GNT_TEXT_FLAG_BLINK;
+					break;
+				}
+			}
+		}
+#endif
 	}
 
 	return flag;
@@ -560,7 +581,7 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 	PurpleBuddy *buddy;
 
 	if (!username)
-		error = _("You must provide a screename for the buddy.");
+		error = _("You must provide a username for the buddy.");
 	else if (!group)
 		error = _("You must provide a group.");
 	else if (!account)
@@ -598,7 +619,7 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 
 	purple_request_fields_add_group(fields, group);
 
-	field = purple_request_field_string_new("screenname", _("Screen Name"), username, FALSE);
+	field = purple_request_field_string_new("screenname", _("Username"), username, FALSE);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("alias", _("Alias (optional)"), alias, FALSE);
@@ -1034,7 +1055,11 @@ chat_components_edit_ok(PurpleChat *chat, PurpleRequestFields *allfields)
 			else
 				val = g_strdup(purple_request_field_string_get_value(field));
 
-			g_hash_table_replace(purple_chat_get_components(chat), g_strdup(id), val);  /* val should not be free'd */
+			if (!val) {
+				g_hash_table_remove(purple_chat_get_components(chat), id);
+			} else {
+				g_hash_table_replace(purple_chat_get_components(chat), g_strdup(id), val);  /* val should not be free'd */
+			}
 		}
 	}
 }
@@ -1065,7 +1090,12 @@ chat_components_edit(PurpleBlistNode *selected, PurpleChat *chat)
 		} else {
 			field = purple_request_field_string_new(pce->identifier, pce->label,
 					g_hash_table_lookup(purple_chat_get_components(chat), pce->identifier), FALSE);
+			if (pce->secret)
+				purple_request_field_string_set_masked(field, TRUE);
 		}
+
+		if (pce->required)
+			purple_request_field_set_required(field, TRUE);
 
 		purple_request_field_group_add_field(group, field);
 		g_free(pce);
@@ -2597,7 +2627,7 @@ block_select(GntMenuItem *item, gpointer n)
 
 	purple_request_fields(purple_get_blist(), _("Block/Unblock"),
 						NULL,
-						_("Please enter the screen name or alias of the person "
+						_("Please enter the username or alias of the person "
 						  "you would like to Block/Unblock."),
 						fields,
 						_("OK"), G_CALLBACK(block_select_cb),
@@ -2648,7 +2678,7 @@ send_im_select(GntMenuItem *item, gpointer n)
 
 	purple_request_fields(purple_get_blist(), _("New Instant Message"),
 						NULL,
-						_("Please enter the screen name or alias of the person "
+						_("Please enter the username or alias of the person "
 						  "you would like to IM."),
 						fields,
 						_("OK"), G_CALLBACK(send_im_select_cb),

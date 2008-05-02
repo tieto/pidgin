@@ -967,12 +967,6 @@ void serv_got_chat_left(PurpleConnection *g, int id)
 	purple_signal_emit(purple_conversations_get_handle(), "chat-left", conv);
 }
 
-void serv_got_join_chat_failed(PurpleConnection *gc, const char *name)
-{
-	purple_signal_emit(purple_conversations_get_handle(), "chat-join-failed",
-					gc, name);
-}
-
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,
 					  PurpleMessageFlags flags, const char *message, time_t mtime)
 {

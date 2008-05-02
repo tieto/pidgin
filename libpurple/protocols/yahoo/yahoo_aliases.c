@@ -68,7 +68,8 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 		purple_debug_info("yahoo", "No Aliases to process.%s%s\n",
 						  error_message ? " Error:" : "", error_message ? error_message : "");
 	} else {
-		const char *yid, *full_name, *nick_name, *alias, *id, *fn, *ln, *nn;
+		gchar *full_name, *nick_name, *alias;
+		const char *yid, *id, *fn, *ln, *nn;
 		PurpleBuddy *b = NULL;
 		xmlnode *item, *contacts;
 
@@ -92,7 +93,9 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 				nn = xmlnode_get_attrib(item,"nn");
 				id = xmlnode_get_attrib(item,"id");
 
-		                /* Yahoo stores first and last names separately, lets put them together into a full name */
+				full_name = nick_name = alias = NULL;
+
+				/* Yahoo stores first and last names separately, lets put them together into a full name */
 				if (yd->jp)
 					full_name = g_strstrip(g_strdup_printf("%s %s", (ln != NULL ? ln : "") , (fn != NULL ? fn : "")));
 				else
@@ -103,8 +106,6 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 					alias = nick_name;   /* If we have a nickname from Yahoo, let's use it */
 				else if (strlen(full_name) != 0)
 					alias = full_name;  /* If no Yahoo nickname, we can use the full_name created above */
-				else
-					alias = NULL;  /* No nickname, first name or last name, then you get no alias !!  */
 
 				/*  Find the local buddy that matches */
 				b = purple_find_buddy(cb->gc->account, yid);
@@ -118,6 +119,7 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 					yu->firstname = g_strdup(fn);
 					yu->lastname = g_strdup(ln);
 					yu->nickname = g_strdup(nn);
+					/* TODO: Isn't there a possiblity that b->proto_data is already set? */
 					b->proto_data=yu;
 
 					/* Finally, if we received an alias, we better update the buddy list */
@@ -132,6 +134,9 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 				} else {
 					purple_debug_info("yahoo", "Bizarre, received alias for %s, but they are not on your list...\n", yid);
 				}
+
+				g_free(full_name);
+				g_free(nick_name);
 			}
 		}
 		xmlnode_free(contacts);

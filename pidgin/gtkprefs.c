@@ -825,6 +825,106 @@ conversation_usetabs_cb(const char *name, PurplePrefType type,
 		gtk_widget_set_sensitive(GTK_WIDGET(data), FALSE);
 }
 
+
+#define CONVERSATION_CLOSE_ACCEL_PATH "<main>/Conversation/Close"
+
+/* Filled in in keyboard_shortcuts(). */
+static GtkAccelKey ctrl_w = { 0, 0, 0 };
+static GtkAccelKey escape = { 0, 0, 0 };
+
+static guint escape_closes_conversation_cb_id = 0;
+
+static gboolean
+accel_is_escape(GtkAccelKey *k)
+{
+	return (k->accel_key == escape.accel_key
+		&& k->accel_mods == escape.accel_mods);
+}
+
+/* Update the tickybox in Preferences when the keybinding for Conversation ->
+ * Close is changed via Gtk.
+ */
+static void
+conversation_close_accel_changed_cb (GtkAccelMap    *object,
+                                     gchar          *accel_path,
+                                     guint           accel_key,
+                                     GdkModifierType accel_mods,
+                                     gpointer        checkbox_)
+{
+	GtkToggleButton *checkbox = GTK_TOGGLE_BUTTON(checkbox_);
+	GtkAccelKey new = { accel_key, accel_mods, 0 };
+
+	g_signal_handler_block(checkbox, escape_closes_conversation_cb_id);
+	gtk_toggle_button_set_active(checkbox, accel_is_escape(&new));
+	g_signal_handler_unblock(checkbox, escape_closes_conversation_cb_id);
+}
+
+
+static void
+escape_closes_conversation_cb(GtkWidget *w,
+                              gpointer unused)
+{
+	gboolean active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
+	gboolean changed;
+	GtkAccelKey *new_key = active ? &escape : &ctrl_w;
+
+	changed = gtk_accel_map_change_entry(CONVERSATION_CLOSE_ACCEL_PATH,
+		new_key->accel_key, new_key->accel_mods, TRUE);
+
+	/* If another path is already bound to the new accelerator,
+	 * _change_entry tries to delete that binding (because it was passed
+	 * replace=TRUE).  If that other path is locked, then _change_entry
+	 * will fail.  We don't ever lock any accelerator paths, so this case
+	 * should never arise.
+	 */
+	if(!changed)
+		purple_debug_warning("gtkprefs", "Escape accel failed to change\n");
+
+	/* TODO: create pidgin_accels_schedule_save */
+	pidgin_save_accels_cb(NULL, 0, 0, NULL, NULL);
+}
+
+
+/* Creates preferences for keyboard shortcuts that it's hard to change with the
+ * standard Gtk accelerator-changing mechanism.
+ */
+static void
+keyboard_shortcuts(GtkWidget *page)
+{
+	GtkWidget *vbox = pidgin_make_frame(page, _("Keyboard Shortcuts"));
+	GtkWidget *checkbox;
+	GtkAccelKey current = { 0, 0, 0 };
+	GtkAccelMap *map = gtk_accel_map_get();
+
+	/* Maybe it would be better just to hardcode the values?
+	 * -- resiak, 2007-04-30
+	 */
+	if (ctrl_w.accel_key == 0)
+	{
+		gtk_accelerator_parse ("<Control>w", &(ctrl_w.accel_key),
+			&(ctrl_w.accel_mods));
+		g_assert(ctrl_w.accel_key != 0);
+
+		gtk_accelerator_parse ("Escape", &(escape.accel_key),
+			&(escape.accel_mods));
+		g_assert(escape.accel_key != 0);
+	}
+
+	checkbox = gtk_check_button_new_with_mnemonic(
+		_("Cl_ose conversations with the Escape key"));
+	gtk_accel_map_lookup_entry(CONVERSATION_CLOSE_ACCEL_PATH, &current);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox),
+		accel_is_escape(&current));
+
+	escape_closes_conversation_cb_id = g_signal_connect(checkbox,
+		"clicked", G_CALLBACK(escape_closes_conversation_cb), NULL);
+
+	g_signal_connect(map, "changed::" CONVERSATION_CLOSE_ACCEL_PATH,
+		G_CALLBACK(conversation_close_accel_changed_cb), checkbox);
+
+	gtk_box_pack_start(GTK_BOX(vbox), checkbox, FALSE, FALSE, 0);
+}
+
 static GtkWidget *
 interface_page(void)
 {
@@ -903,6 +1003,10 @@ interface_page(void)
 	gtk_size_group_add_widget(sg, label);
 
 	g_list_free(names);
+
+
+	keyboard_shortcuts(ret);
+
 
 	gtk_widget_show_all(ret);
 	g_object_unref(sg);
