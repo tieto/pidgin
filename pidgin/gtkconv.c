@@ -4458,7 +4458,7 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	GdkRectangle oneline;
 	int height, diff;
 	int pad_top, pad_inside, pad_bottom;
-	int max_height = gtkconv->tab_cont->allocation.height / 2;
+	int max_height = (gtkconv->imhtml->allocation.height + gtkconv->entry->allocation.height) / 2;
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(gtkconv->entry));
