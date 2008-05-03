@@ -170,7 +170,6 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 								msg->oim_msg);
 							g_queue_push_head(oim->send_queue, msg);
 							msn_oim_send_msg(oim);
-							return;
 						} else {
 							purple_debug_info("msnoim",
 								"can't find lock key for OIM: %s\n",
@@ -191,9 +190,10 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 						purple_debug_info("MSNP14","resending OIM: %s\n", msg->oim_msg);
 						g_queue_push_head(oim->send_queue, msg);
 						msn_oim_send_msg(oim);
-						return;
 					}
 				}
+
+				g_free(faultcode_str);
 			}
 		}
 	}

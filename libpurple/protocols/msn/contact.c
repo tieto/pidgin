@@ -498,11 +498,12 @@ msn_parse_addressbook_mobile(xmlnode *contactInfo, char **inout_mobile_number)
 					mobile_number = xmlnode_get_data(number);
 
 					if (mobile_number &&
-						(messenger_enabled = xmlnode_get_child(contact_phone, "isMessengerEnabled")) 
-						&& (is_messenger_enabled = xmlnode_get_data(messenger_enabled)) 
-						&& !strcmp(is_messenger_enabled, "true"))
+							(messenger_enabled = xmlnode_get_child(contact_phone, "isMessengerEnabled")) 
+							&& (is_messenger_enabled = xmlnode_get_data(messenger_enabled)) 
+							&& !strcmp(is_messenger_enabled, "true"))
 						mobile = TRUE;
 
+					g_free(mobile_number);
 					g_free(is_messenger_enabled);
 				}
 			}
@@ -691,6 +692,7 @@ msn_parse_addressbook(MsnContact * contact, xmlnode *node)
 				g_free(errorcode);
 				return TRUE;
 			}
+			g_free(errorcode);
 		}
 
 		return FALSE;
