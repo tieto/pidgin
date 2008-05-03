@@ -575,7 +575,7 @@ silcpurple_login(PurpleAccount *account)
 
 	username = (char *)purple_account_get_username(account);
 	up = g_strsplit(username, "@", 2);
-	username = strdup(up[0]);
+	username = g_strdup(up[0]);
 	g_strfreev(up);
 
 	if (!purple_account_get_user_info(account)) {
@@ -619,12 +619,12 @@ silcpurple_login(PurpleAccount *account)
 		                             _("Cannot initialize SILC protocol"));
 		gc->proto_data = NULL;
 		silc_free(sg);
-		free(hostname);
-		free(username);
+		silc_free(hostname);
+		g_free(username);
 		return;
 	}
-	free(hostname);
-	free(username);
+	silc_free(hostname);
+	g_free(username);
 
 	/* Check the ~/.silc dir and create it, and new key pair if necessary. */
 	if (!silcpurple_check_silc_dir(gc)) {
@@ -2111,6 +2111,15 @@ static PurplePluginInfo info =
 	NULL
 };
 
+#if 0
+static SilcBool silcpurple_debug_cb(char *file, char *function, int line,
+		char *message, void *context)
+{
+	purple_debug_info("SILC", "%s:%d:%s - %s\n", file ? file : "(null)", line, function ? function : "(null)", message ? message : "(null)");
+	return TRUE;
+}
+#endif
+
 static void
 init_plugin(PurplePlugin *plugin)
 {
@@ -2189,6 +2198,8 @@ init_plugin(PurplePlugin *plugin)
 #if 0
 silc_log_debug(TRUE);
 silc_log_set_debug_string("*client*");
+silc_log_quick(TRUE);
+silc_log_set_debug_callbacks(silcpurple_debug_cb, NULL, NULL, NULL);
 #endif
 
 }

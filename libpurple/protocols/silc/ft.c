@@ -424,12 +424,12 @@ silcpurple_ftp_send_file_resolved(SilcClient client,
 			   (const char *)context);
 		purple_notify_error(gc, _("Secure File Transfer"),
 				  _("Cannot send file"), tmp);
-		silc_free(context);
+		g_free(context);
 		return;
 	}
 
 	silcpurple_ftp_send_file(client->application, (const char *)context, NULL);
-	silc_free(context);
+	g_free(context);
 }
 
 PurpleXfer *silcpurple_ftp_new_xfer(PurpleConnection *gc, const char *name)
@@ -447,7 +447,7 @@ PurpleXfer *silcpurple_ftp_new_xfer(PurpleConnection *gc, const char *name)
 	if (!clients) {
 		silc_client_get_clients(client, conn, name, NULL,
 					silcpurple_ftp_send_file_resolved,
-					strdup(name));
+					g_strdup(name));
 		return NULL;
 	}
 	silc_dlist_start(clients);

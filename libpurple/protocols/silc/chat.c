@@ -92,7 +92,7 @@ silcpurple_chat_getinfo(PurpleConnection *gc, GHashTable *components)
 {
 	SilcPurple sg = gc->proto_data;
 	const char *chname;
-	char *buf, tmp[256], *tmp2;
+	char tmp[256], *tmp2;
 	GString *s;
 	SilcChannelEntry channel;
 	SilcHashTableList htl;
@@ -173,9 +173,8 @@ silcpurple_chat_getinfo(PurpleConnection *gc, GHashTable *components)
 		}
 	}
 
-	buf = g_string_free(s, FALSE);
-	purple_notify_formatted(gc, NULL, _("Channel Information"), NULL, buf, NULL, NULL);
-	g_free(buf);
+	purple_notify_formatted(gc, NULL, _("Channel Information"), NULL, s->str, NULL, NULL);
+	g_string_free(s, TRUE);
 }
 
 
@@ -689,17 +688,20 @@ silcpurple_chat_ulimit_cb(SilcPurpleChatInput s, const char *limit)
 
 	if (!limit || !(*limit) || *limit == '0') {
 		if (limit && ulimit == channel->user_limit) {
+			g_free(s->channel);
 			silc_free(s);
 			return;
 		}
 		silc_client_command_call(s->sg->client, s->sg->conn, NULL, "CMODE",
 					 s->channel, "-l", NULL);
 
+		g_free(s->channel);
 		silc_free(s);
 		return;
 	}
 
 	if (ulimit == channel->user_limit) {
+		g_free(s->channel);
 		silc_free(s);
 		return;
 	}
@@ -708,6 +710,7 @@ silcpurple_chat_ulimit_cb(SilcPurpleChatInput s, const char *limit)
 	silc_client_command_call(s->sg->client, s->sg->conn, NULL, "CMODE",
 				 s->channel, "+l", limit, NULL);
 
+	g_free(s->channel);
 	silc_free(s);
 }
 
