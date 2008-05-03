@@ -1074,6 +1074,12 @@ conv_page(void)
 	pidgin_prefs_checkbox(_("Minimi_ze new conversation windows"), PIDGIN_PREFS_ROOT "/win32/minimize_new_convs", vbox);
 #endif
 
+	pidgin_prefs_labeled_spin_button(vbox,
+		_("Minimum lines of text to show in message input"),
+		PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines",
+		1, 8, NULL);
+
+
 #if GTK_CHECK_VERSION(2,4,0)
 	vbox = pidgin_make_frame(ret, _("Font"));
 	if (purple_running_gnome())

@@ -4460,6 +4460,7 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	int pad_top, pad_inside, pad_bottom;
 	int total_height = (gtkconv->imhtml->allocation.height + gtkconv->entry->allocation.height);
 	int max_height = total_height / 2;
+	int min_lines = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines");
 	int min_height;
 
 	pad_top = gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(gtkconv->entry));
@@ -4481,10 +4482,10 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	} while (gtk_text_iter_forward_line(&iter));
 	height += lines * (oneline.height + pad_top + pad_bottom);
 
-	/* Make sure there's enough room for at least two lines. Allocate enough space to
+	/* Make sure there's enough room for at least min_lines. Allocate enough space to
 	 * prevent scrolling when the second line is a continuation of the first line, or
 	 * is the beginning of a new paragraph. */
-	min_height = 2 * (oneline.height + MAX(pad_inside, pad_top + pad_bottom));
+	min_height = min_lines * (oneline.height + MAX(pad_inside, pad_top + pad_bottom));
 	height = CLAMP(height, min_height, max_height);
 
 	diff = height - gtkconv->entry->allocation.height;
@@ -4495,6 +4496,25 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 		diff + gtkconv->lower_hbox->allocation.height);
 
 	return FALSE;
+}
+
+static void
+minimum_entry_lines_pref_cb(const char *name,
+                            PurplePrefType type,
+                            gconstpointer value,
+                            gpointer data)
+{
+	GList *l = purple_get_conversations();
+	PurpleConversation *conv;
+	while (l != NULL)
+	{
+		conv = (PurpleConversation *)l->data;
+
+		if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
+			resize_imhtml_cb(PIDGIN_CONVERSATION(conv));
+
+		l = l->next;
+	}
 }
 
 static void
@@ -7745,6 +7765,7 @@ pidgin_conversations_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline", FALSE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck", TRUE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting", TRUE);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines", 2);
 
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/show_timestamps", TRUE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/show_formatting_toolbar", TRUE);
@@ -7808,6 +7829,9 @@ pidgin_conversations_init(void)
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/placement",
 								conv_placement_pref_cb, NULL);
 	purple_prefs_trigger_callback(PIDGIN_PREFS_ROOT "/conversations/placement");
+
+	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines",
+		minimum_entry_lines_pref_cb, NULL);
 
 	/* IM callbacks */
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/animate_buddy_icons",
