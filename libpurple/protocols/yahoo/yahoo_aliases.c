@@ -32,6 +32,7 @@
 #include "version.h"
 #include "yahoo.h"
 #include "yahoo_aliases.h"
+#include "yahoo_friend.h"
 #include "yahoo_packet.h"
 
 /* I hate hardcoding this stuff, but Yahoo never sends us anything to use.  Someone in the know may be able to tweak this URL */
@@ -70,7 +71,8 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 	} else {
 		gchar *full_name, *nick_name, *alias;
 		const char *yid, *id, *fn, *ln, *nn;
-		PurpleBuddy *b = NULL;
+		YahooFriend *f;
+		PurpleBuddy *b;
 		xmlnode *item, *contacts;
 
 		/* Put our web response into a xmlnode for easy management */
@@ -108,19 +110,12 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,cons
 					alias = full_name;  /* If no Yahoo nickname, we can use the full_name created above */
 
 				/*  Find the local buddy that matches */
+				f = yahoo_friend_find(cb->gc, yid);
 				b = purple_find_buddy(cb->gc->account, yid);
 
 				/*  If we don't find a matching buddy, ignore the alias !!  */
-				if (b != NULL) {
-					/* Create an object that we can attach to the buddies proto_data pointer */
-					struct YahooUser *yu;
-					yu = g_new0(struct YahooUser, 1);
-					yu->id = g_strdup(id);
-					yu->firstname = g_strdup(fn);
-					yu->lastname = g_strdup(ln);
-					yu->nickname = g_strdup(nn);
-					/* TODO: Isn't there a possiblity that b->proto_data is already set? */
-					b->proto_data=yu;
+				if (f != NULL && b != NULL) {
+					yahoo_friend_set_alias_id(f, id);
 
 					/* Finally, if we received an alias, we better update the buddy list */
 					if (alias != NULL) {
@@ -237,14 +232,13 @@ void
 yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 {
 	struct yahoo_data *yd;
-	struct YahooUser *yu;
 	char *content, *url, *request, *webpage, *webaddress, *strtmp;
 	char *escaped_alias, *alias_jp, *converted_alias_jp;
 	int inttmp;
 	struct callback_data *cb;
-	PurpleBuddy *buddy;
 	PurpleUtilFetchUrlData *url_data;
 	gboolean use_whole_url = FALSE;
+	YahooFriend *f;
 
 	/* use whole URL if using HTTP Proxy */
 	if ((gc->account->proxy_info) && (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
@@ -254,20 +248,19 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	g_return_if_fail(who != NULL);
 	g_return_if_fail(gc != NULL);
 
-	purple_debug_info("yahoo", "Sending '%s' as new alias for user '%s'.\n",alias, who);
+	purple_debug_info("yahoo", "Sending '%s' as new alias for user '%s'.\n", alias, who);
 
-	buddy = purple_find_buddy(gc->account, who);
-	if (buddy == NULL || buddy->proto_data == NULL) {
+	f = yahoo_friend_find(gc, who);
+	if (f == NULL) {
 		purple_debug_info("yahoo", "Missing proto_data (get_yahoo_aliases must have failed), bailing out\n");
 		return;
 	}
 
 	yd = gc->proto_data;
-	yu = buddy->proto_data;
 
 	/* Using callback_data so I have access to gc in the callback function */
 	cb = g_new0(struct callback_data, 1);
-	cb->id = g_strdup(yu->id);
+	cb->id = g_strdup(yahoo_friend_get_alias_id(f));
 	cb->gc = gc;
 
 	/*  Build all the info to make the web request */
@@ -279,7 +272,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 		converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
 		content = g_strdup_printf("<ab k=\"%s\" cc=\"1\">\n"
 		                          "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-		                          gc->account->username, who, yu->id, converted_alias_jp);
+		                          gc->account->username, who, yahoo_friend_get_alias_id(f), converted_alias_jp);
 		free(converted_alias_jp);
 		g_free(alias_jp);
 	}
@@ -287,7 +280,7 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 		escaped_alias = g_markup_escape_text(alias, strlen(alias));
 		content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
 		                          "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-		                          gc->account->username, who, yu->id, escaped_alias);
+		                          gc->account->username, who, yahoo_friend_get_alias_id(f), escaped_alias);
 		g_free(escaped_alias);
 	}
 
