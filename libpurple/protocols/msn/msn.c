@@ -239,7 +239,7 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 	MsnUser *user;
 	char *payload = NULL;
 	const char *mobile_number = NULL;
-	size_t payload_len;
+	gsize payload_len;
 
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
@@ -254,13 +254,13 @@ send_to_mobile(PurpleConnection *gc, const char *who, const char *entry)
 		mobile_number[0] == '+') {
 		/* if msn_user_get_mobile_phone() has a + in front, it's a number
 		   that from the buddy's contact card */
-		trans = msn_transaction_new(cmdproc, "PGD", "tel:%s 1 %d",
+		trans = msn_transaction_new(cmdproc, "PGD", "tel:%s 1 %" G_GSIZE_FORMAT,
 			mobile_number, payload_len);
 	} else {
 		/* otherwise we send to whatever phone number the buddy registered
 		   with msn */
-		trans = msn_transaction_new(cmdproc, "PGD", "%s 1 %d", who,
-			payload_len);
+		trans = msn_transaction_new(cmdproc, "PGD", "%s 1 %" G_GSIZE_FORMAT,
+			who, payload_len);
 	}
 
 	msn_transaction_set_payload(trans, payload, payload_len);
@@ -2071,7 +2071,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 
 static void
 msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *url_text, size_t len, const gchar *error_message)
+		const gchar *url_text, gsize len, const gchar *error_message)
 {
 	MsnGetInfoStepTwoData *info2_data = (MsnGetInfoStepTwoData *)user_data;
 	int id = -1;
@@ -2113,7 +2113,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		else
 		{
 			char buf[1024];
-			purple_debug_info("msn", "%s is %d bytes\n", photo_url_text, len);
+			purple_debug_info("msn", "%s is %" G_GSIZE_FORMAT " bytes\n", photo_url_text, len);
 			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 			g_snprintf(buf, sizeof(buf), "<img id=\"%d\"><br>", id);
 			purple_notify_user_info_prepend_pair(user_info, NULL, buf);

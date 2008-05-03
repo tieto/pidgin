@@ -250,7 +250,7 @@ msn_set_psm(MsnSession *session)
 
 	payload = session->psm;
 	purple_debug_misc("MSNP14","Sending UUX command with payload: %s\n",payload);
-	trans = msn_transaction_new(cmdproc, "UUX", "%d", strlen(payload));
+	trans = msn_transaction_new(cmdproc, "UUX", "%" G_GSIZE_FORMAT, strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
 
