@@ -27,6 +27,7 @@ version 2.x.x:
 	* Add an option in the context menu to disable smileys in the selected
 	  text in the conversation history/log viewer. This should help people who
 	  regularly paste code in conversations.
+	* Add a preference to choose the minimum size of the text input.
 
 	General:
 	* The configure script now dies on more absent dependencies.  The
