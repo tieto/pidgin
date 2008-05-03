@@ -349,8 +349,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 		GSList *c;
 		for (c = group_ids; c != NULL; c = g_slist_next(c))
 		{
-			char *group_id;
-			group_id = c->data;
+			char *group_id = c->data;
 			msn_user_add_group_id(user, group_id);
 		}
 

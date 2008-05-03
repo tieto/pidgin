@@ -414,7 +414,9 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
-		purple_debug_info("MSNP14", "MSG payload:{%.*s}\n", (guint)(cmd->payload_len), cmd->payload);
+#if 0 /* glib on win32 doesn't correctly support precision modifiers for a string */
+		purple_debug_info("MSNP14", "MSG payload:{%.*s}\n", cmd->payload_len, cmd->payload);
+#endif
 		cmd->payload_cb(cmdproc, cmd, cmd->payload, cmd->payload_len);
 	}
 }
@@ -647,8 +649,8 @@ msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_
 {
 	MsnTransaction *trans;
 	purple_debug_info("MSN Notification","Sending ADL with payload: %s\n", payload);
-	trans = msn_transaction_new(cmdproc, "ADL","%" G_GSIZE_FORMAT, strlen(payload));
-	msn_transaction_set_payload(trans, payload, strlen(payload));
+	trans = msn_transaction_new(cmdproc, "ADL","%" G_GSIZE_FORMAT, payload_len);
+	msn_transaction_set_payload(trans, payload, payload_len);
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
@@ -1705,6 +1707,9 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		msn_user_set_currentmedia(user, &media);
 	else
 		msn_user_set_currentmedia(user, NULL);
+	g_free(media.title);
+	g_free(media.album);
+	g_free(media.artist);
 	g_free(str);
 
 	msn_user_update(user);

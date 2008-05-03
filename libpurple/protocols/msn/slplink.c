@@ -101,11 +101,8 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 
 	session = slplink->session;
 
-	if (slplink->local_user != NULL)
-		g_free(slplink->local_user);
-
-	if (slplink->remote_user != NULL)
-		g_free(slplink->remote_user);
+	g_free(slplink->local_user);
+	g_free(slplink->remote_user);
 
 #if 0
 	if (slplink->directconn != NULL)
