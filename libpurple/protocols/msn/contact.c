@@ -495,6 +495,7 @@ msn_parse_addressbook_mobile(xmlnode *contactInfo, char **inout_mobile_number)
 					xmlnode *messenger_enabled;
 					char *is_messenger_enabled = NULL;
 
+					g_free(mobile_number);
 					mobile_number = xmlnode_get_data(number);
 
 					if (mobile_number &&
@@ -503,7 +504,6 @@ msn_parse_addressbook_mobile(xmlnode *contactInfo, char **inout_mobile_number)
 							&& !strcmp(is_messenger_enabled, "true"))
 						mobile = TRUE;
 
-					g_free(mobile_number);
 					g_free(is_messenger_enabled);
 				}
 			}
