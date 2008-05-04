@@ -710,6 +710,7 @@ finch_request_add_chat(PurpleAccount *account, PurpleGroup *grp, const char *ali
 
 	field = purple_request_field_string_new("group", _("Group"), grp ? purple_group_get_name(grp) : NULL, FALSE);
 	purple_request_field_group_add_field(group, field);
+	purple_request_field_set_type_hint(field, "group");
 
 	field = purple_request_field_bool_new("autojoin", _("Auto-join"), FALSE);
 	purple_request_field_group_add_field(group, field);
