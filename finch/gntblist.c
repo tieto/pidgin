@@ -644,6 +644,32 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 }
 
 static void
+join_chat(PurpleChat *chat)
+{
+	PurpleAccount *account = purple_chat_get_account(chat);
+	const char *name;
+	PurpleConversation *conv;
+	const char *alias;
+
+	/* This hack here is to work around the fact that there's no good way of
+	 * getting the actual name of a chat. I don't understand why we return
+	 * the alias for a chat when all we want is the name. */
+	alias = chat->alias;
+	chat->alias = NULL;
+	name = purple_chat_get_name(chat);
+	conv = purple_find_conversation_with_account(
+			PURPLE_CONV_TYPE_CHAT, name, account);
+	chat->alias = (char *)alias;
+
+	if (!conv || purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
+		serv_join_chat(purple_account_get_connection(account),
+				purple_chat_get_components(chat));
+	} else if (conv) {
+		purple_conversation_present(conv);
+	}
+}
+
+static void
 add_chat_cb(void *data, PurpleRequestFields *allfields)
 {
 	PurpleAccount *account;
@@ -682,8 +708,9 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 		purple_blist_add_chat(chat, grp, NULL);
 		purple_blist_alias_chat(chat, alias);
 		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gnt-autojoin", autojoin);
-		if (autojoin)
-			serv_join_chat(purple_account_get_connection(purple_chat_get_account(chat)), purple_chat_get_components(chat));
+		if (autojoin) {
+			join_chat(chat);
+		}
 	}
 }
 
@@ -945,7 +972,7 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 
 	if (!node)
 		return;
-	
+
 	if (PURPLE_BLIST_NODE_IS_CONTACT(node))
 		node = (PurpleBlistNode*)purple_contact_get_priority_buddy((PurpleContact*)node);
 
@@ -968,8 +995,7 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 	}
 	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
 	{
-		PurpleChat *chat = (PurpleChat*)node;
-		serv_join_chat(purple_account_get_connection(purple_chat_get_account(chat)), purple_chat_get_components(chat));
+		join_chat((PurpleChat*)node);
 	}
 }
 
