@@ -7,6 +7,8 @@ version 2.x.x:
 	* IRC now displays ban lists in-channel for joined channels.
 	* Fixed a bug where the list of loaded plugins would get removed when
 	  switching between different operating systems.
+	* Fix reception of IRC PART without a part message on Undernet
+	  (fixes a problem with litter in the channel user list).
 
 	Pidgin:
 	* The typing notification in the conversation history can be disabled or

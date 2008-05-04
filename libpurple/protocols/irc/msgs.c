@@ -1015,14 +1015,18 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	PurpleConversation *convo;
-	char *nick, *msg;
+	char *nick, *msg, *channel;
 
 	if (!args || !args[0] || !gc)
 		return;
 
-	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[0], irc->account);
+	/* Undernet likes to :-quote the channel name, for no good reason
+         * that I can see.  This catches that. */
+	channel = (args[0][0] == ':') ? &args[0][1] : args[0];
+
+	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, channel, irc->account);
 	if (!convo) {
-		purple_debug(PURPLE_DEBUG_INFO, "irc", "Got a PART on %s, which doesn't exist -- probably closed\n", args[0]);
+		purple_debug(PURPLE_DEBUG_INFO, "irc", "Got a PART on %s, which doesn't exist -- probably closed\n", channel);
 		return;
 	}
 
@@ -1033,7 +1037,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
                                       (args[1] && *args[1]) ? ": " : "",
 									  (escaped && *escaped) ? escaped : "");
 		g_free(escaped);
-		purple_conv_chat_write(PURPLE_CONV_CHAT(convo), args[0], msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conv_chat_write(PURPLE_CONV_CHAT(convo), channel, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 		serv_got_chat_left(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)));
 	} else {
