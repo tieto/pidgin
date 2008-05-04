@@ -511,10 +511,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry),
 							   purple_account_get_password(dialog->account));
 
-		if (purple_account_get_alias(dialog->account))
-			gtk_entry_set_text(GTK_ENTRY(dialog->alias_entry),
-							   purple_account_get_alias(dialog->account));
-
 		gtk_toggle_button_set_active(
 				GTK_TOGGLE_BUTTON(dialog->remember_pass_check),
 				purple_account_get_remember_password(dialog->account));
@@ -634,6 +630,10 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		PurpleStoredImage *img;
 		gpointer data = NULL;
 		size_t len = 0;
+
+		if (purple_account_get_alias(dialog->account))
+			gtk_entry_set_text(GTK_ENTRY(dialog->alias_entry),
+							   purple_account_get_alias(dialog->account));
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->new_mail_check),
 					     purple_account_get_check_mail(dialog->account));
