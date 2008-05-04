@@ -1075,7 +1075,7 @@ conv_page(void)
 #endif
 
 	pidgin_prefs_labeled_spin_button(vbox,
-		_("Minimum lines of text to show in message input"),
+		_("Minimum input area height in lines:"),
 		PIDGIN_PREFS_ROOT "/conversations/minimum_entry_lines",
 		1, 8, NULL);
 
