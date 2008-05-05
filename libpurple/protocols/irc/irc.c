@@ -906,6 +906,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	NULL
 };
 
 static gboolean load_plugin (PurplePlugin *plugin) {

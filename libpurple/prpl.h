@@ -418,6 +418,17 @@ struct _PurplePluginProtocolInfo
 	 * The PURPLE_PROTOCOL_PLUGIN_HAS_FUNC macro can be used for the older member
 	 * functions (e.g. login, send_im etc.) too.
 	 */
+
+	/** This allows protocols to specify additional strings to be used for
+	 * various purposes.  The idea is to stuff a bunch of strings in this hash
+	 * table instead of expanding the struct for every addition.  This hash
+	 * table is allocated every call and MUST be unrefed by the caller.
+	 *
+	 * @param account The account to specify.  This can be NULL.
+	 * @return The protocol's string hash table. The hash table should be
+	 *         destroyed by the caller when it's no longer needed.
+	 */
+	GHashTable *(*get_account_text_table)(PurpleAccount *account);
 };
 
 #define PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl, member) \

@@ -117,6 +117,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_attention_types,			/* attention_types */
 
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
+	NULL
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)
