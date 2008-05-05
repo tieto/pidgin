@@ -435,7 +435,7 @@ aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar
 	flap_connection_send_snac(od, conn, 0x000e, 0x0005, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 

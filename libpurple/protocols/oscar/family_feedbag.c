@@ -1690,7 +1690,7 @@ int aim_ssi_sendauth(OscarData *od, char *sn, char *msg)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !sn)
 		return -EINVAL;
 
-	byte_stream_new(&bs, 1+strlen(sn)+2+(msg ? strlen(msg)+1 : 0)+2);
+	byte_stream_new(&bs, 1+strlen(sn) + 2+(msg ? strlen(msg)+1 : 0) + 2);
 
 	/* Screen name */
 	byte_stream_put8(&bs, strlen(sn));
@@ -1764,7 +1764,7 @@ int aim_ssi_sendauthrequest(OscarData *od, char *sn, const char *msg)
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !sn)
 		return -EINVAL;
 
-	byte_stream_new(&bs, 1+strlen(sn) + 2+(msg ? (strlen(msg)+1) : 0) + 2);
+	byte_stream_new(&bs, 1+strlen(sn) + 2+(msg ? strlen(msg)+1 : 0) + 2);
 
 	/* Screen name */
 	byte_stream_put8(&bs, strlen(sn));
@@ -1864,7 +1864,7 @@ int aim_ssi_sendauthreply(OscarData *od, char *sn, guint8 reply, const char *msg
 	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREP, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 

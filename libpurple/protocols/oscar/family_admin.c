@@ -28,16 +28,15 @@
 
 #include "oscar.h"
 
-/*
+/**
  * Subtype 0x0002 - Request a bit of account info.
  *
  * Info should be one of the following:
  * 0x0001 - Screen name formatting
  * 0x0011 - Email address
  * 0x0013 - Unknown
- *
  */
-int
+void
 aim_admin_getinfo(OscarData *od, FlapConnection *conn, guint16 info)
 {
 	ByteStream bs;
@@ -48,22 +47,19 @@ aim_admin_getinfo(OscarData *od, FlapConnection *conn, guint16 info)
 	byte_stream_put16(&bs, info);
 	byte_stream_put16(&bs, 0x0000);
 
-	snacid = aim_cachesnac(od, 0x0007, 0x0002, 0x0000, NULL, 0);	
-	flap_connection_send_snac(od, conn, 0x0007, 0x0002, 0x0000, snacid, &bs);	
+	snacid = aim_cachesnac(od, 0x0007, 0x0002, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, 0x0007, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-
-	return 0;
 }
 
-/*
+/**
  * Subtypes 0x0003 and 0x0005 - Parse account info.
  *
  * Called in reply to both an information request (subtype 0x0002) and
  * an information change (subtype 0x0004).
- *
  */
-static int
+static void
 infochange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
@@ -112,15 +108,12 @@ infochange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	g_free(sn);
 	g_free(url);
 	g_free(email);
-
-	return 1;
 }
 
-/*
+/**
  * Subtype 0x0004 - Set screenname formatting.
- *
  */
-int
+void
 aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick)
 {
 	ByteStream bs;
@@ -138,15 +131,12 @@ aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick)
 	flap_connection_send_snac(od, conn, 0x0007, 0x0004, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-
-	return 0;
 }
 
-/*
+/**
  * Subtype 0x0004 - Change password.
- *
  */
-int
+void
 aim_admin_changepasswd(OscarData *od, FlapConnection *conn, const char *newpw, const char *curpw)
 {
 	ByteStream bs;
@@ -167,14 +157,13 @@ aim_admin_changepasswd(OscarData *od, FlapConnection *conn, const char *newpw, c
 	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
 	flap_connection_send_snac(od, conn, 0x0007, 0x0004, 0x0000, snacid, &bs);
 
-	return 0;
+	byte_stream_destroy(&bs);
 }
 
-/*
+/**
  * Subtype 0x0004 - Change email address.
- *
  */
-int
+void
 aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail)
 {
 	ByteStream bs;
@@ -192,8 +181,6 @@ aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail)
 	flap_connection_send_snac(od, conn, 0x0007, 0x0004, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-
-	return 0;
 }
 
 /*
@@ -210,9 +197,8 @@ aim_admin_reqconfirm(OscarData *od, FlapConnection *conn)
 	aim_genericreq_n(od, conn, 0x0007, 0x0006);
 }
 
-/*
+/**
  * Subtype 0x0007 - Account confirmation request acknowledgement.
- *
  */
 static int
 accountconfirm(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
@@ -238,9 +224,10 @@ accountconfirm(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 static int
 snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	if ((snac->subtype == 0x0003) || (snac->subtype == 0x0005))
-		return infochange(od, conn, mod, frame, snac, bs);
-	else if (snac->subtype == 0x0007)
+	if ((snac->subtype == 0x0003) || (snac->subtype == 0x0005)) {
+		infochange(od, conn, mod, frame, snac, bs);
+		return 1;
+	} else if (snac->subtype == 0x0007)
 		return accountconfirm(od, conn, mod, frame, snac, bs);
 
 	return 0;

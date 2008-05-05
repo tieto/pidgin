@@ -260,9 +260,9 @@ int aim_icq_getalias(OscarData *od, const char *uin)
 	byte_stream_putle32(&bs, atoi(uin));
 
 	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
-	
+
 	byte_stream_destroy(&bs);
-	
+
 	/* Keep track of this request and the ICQ number and request ID */
 	info = (struct aim_icq_info *)g_new0(struct aim_icq_info, 1);
 	info->reqid = snacid;
@@ -343,9 +343,9 @@ int aim_icq_sendxmlreq(OscarData *od, const char *xml)
 	byte_stream_putraw(&bs, (guint8 *)xml, strlen(xml) + 1);
 
 	flap_connection_send_snac(od, conn, 0x0015, 0x0002, 0x0000, snacid, &bs);
-	
+
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 #endif

@@ -130,7 +130,7 @@ int aim_odir_name(OscarData *od, const char *region, const char *first, const ch
 	flap_connection_send_snac(od, conn, 0x000f, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 
@@ -165,9 +165,9 @@ int aim_odir_interest(OscarData *od, const char *region, const char *interest)
 
 	snacid = aim_cachesnac(od, 0x000f, 0x0002, 0x0000, NULL, 0);
 	flap_connection_send_snac(od, conn, 0x000f, 0x0002, 0x0000, snacid, &bs);
-	
+
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 
