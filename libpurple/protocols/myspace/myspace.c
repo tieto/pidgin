@@ -3131,14 +3131,15 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                  /* unregister_user */
 	msim_send_attention,   /* send_attention */
 	msim_attention_types,  /* attention_types */
-	NULL                /* _purple_reserved4 */
+
+	sizeof(PurplePluginProtocolInfo),  /* struct_size */
 };
 
 
 
 /** Based on MSN's plugin info comments. */
 static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,                                
+	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
 	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */

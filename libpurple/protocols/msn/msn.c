@@ -132,7 +132,6 @@ msn_attention_types(PurpleAccount *account)
 	return list;
 }
 
-
 static PurpleCmdRet
 msn_cmd_nudge(PurpleConversation *conv, const gchar *cmd, gchar **args, gchar **error, void *data)
 {
@@ -2307,8 +2306,7 @@ static PurplePluginProtocolInfo prpl_info =
 	msn_send_attention,                     /* send_attention */
 	msn_attention_types,                    /* attention_types */
 
-	/* padding */
-	NULL
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 };
 
 static PurplePluginInfo info =
