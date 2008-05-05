@@ -4486,7 +4486,7 @@ static gboolean resize_imhtml_cb(PidginConversation *gtkconv)
 	 * prevent scrolling when the second line is a continuation of the first line, or
 	 * is the beginning of a new paragraph. */
 	min_height = min_lines * (oneline.height + MAX(pad_inside, pad_top + pad_bottom));
-	height = CLAMP(height, min_height, max_height);
+	height = CLAMP(height, MIN(min_height, max_height), max_height);
 
 	diff = height - gtkconv->entry->allocation.height;
 	if (ABS(diff) < oneline.height / 2)
