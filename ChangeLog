@@ -9,6 +9,8 @@ version 2.x.x:
 	  switching between different operating systems.
 	* Fix reception of IRC PART without a part message on Undernet
 	  (fixes a problem with litter in the channel user list).
+	* IRC no longer crashes on /list on servers which erroneously omit
+	  RPL_LISTSTART.
 
 	Pidgin:
 	* The typing notification in the conversation history can be disabled or

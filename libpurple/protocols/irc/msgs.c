@@ -422,6 +422,11 @@ void irc_msg_list(struct irc_conn *irc, const char *name, const char *from, char
 		if (!args[0] || !args[1] || !args[2] || !args[3])
 			return;
 
+		if (!purple_roomlist_get_in_progress(irc->roomlist)) {
+			purple_debug_warning("irc", "Buggy server didn't send RPL_LISTSTART.\n");
+			purple_roomlist_set_in_progress(irc->roomlist, TRUE);
+		}
+
 		room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, args[1], NULL);
 		purple_roomlist_room_add_field(irc->roomlist, room, args[1]);
 		purple_roomlist_room_add_field(irc->roomlist, room, GINT_TO_POINTER(strtol(args[2], NULL, 10)));
