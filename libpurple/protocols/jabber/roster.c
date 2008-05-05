@@ -342,6 +342,7 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 	}
 
 	jabber_roster_update(js, who, groups);
+	g_slist_free(groups);
 
 	my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
 	if(!strcmp(who, my_bare_jid)) {
