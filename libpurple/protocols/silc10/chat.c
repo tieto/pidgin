@@ -651,7 +651,7 @@ silcpurple_chat_permanent(PurpleBlistNode *node, gpointer data)
 
 typedef struct {
 	SilcPurple sg;
-	const char *channel;
+	char *channel;
 } *SilcPurpleChatInput;
 
 static void
@@ -700,7 +700,7 @@ silcpurple_chat_ulimit(PurpleBlistNode *node, gpointer data)
 
 	SilcPurpleChatInput s;
 	SilcChannelEntry channel;
-	const char *ch;
+	char *ch;
 	char tmp[32];
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
