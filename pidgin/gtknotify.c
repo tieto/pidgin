@@ -52,6 +52,7 @@ typedef struct
 	GtkWidget *label;
 	GtkTreeIter iter;
 	int count;
+	gboolean purple_has_handle;
 } PidginNotifyMailData;
 
 typedef struct
@@ -100,6 +101,8 @@ static void *pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean d
 									const char **froms, const char **tos,
 									const char **urls);
 
+static void pidgin_close_notify(PurpleNotifyType type, void *ui_handle);
+
 static void
 message_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)
 {
@@ -144,7 +147,10 @@ email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
 				purple_notify_uri(NULL, data->url);
 
 			gtk_tree_store_remove(dialog->treemodel, &iter);
-			purple_notify_close(PURPLE_NOTIFY_EMAILS, data);
+			if (data->purple_has_handle)
+				purple_notify_close(PURPLE_NOTIFY_EMAILS, data);
+			else
+				pidgin_close_notify(PURPLE_NOTIFY_EMAILS, data);
 		}
 	}
 	gtk_widget_destroy(dialog->dialog);
@@ -465,6 +471,7 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 
 	if (new_n) {
 		data = g_new0(PidginNotifyMailData, 1);
+		data->purple_has_handle = TRUE;
 		gtk_tree_store_append(treemodel, &iter, NULL);
 	}
 
@@ -479,6 +486,8 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 	data->iter = iter;              /* XXX: Do we use this for something? */
 	data->account = account;
 	data->count = count;
+
+	/* Why is this necessary?*/
 	gtk_tree_model_get(GTK_TREE_MODEL(treemodel), &iter,
 						PIDGIN_MAIL_DATA, &data, -1);
 	if (icon)
@@ -540,6 +549,9 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 			g_free(from_text);
 			g_free(subject_text);
 
+			/* If we don't keep track of this, will leak "data" for each of the notifications except the last */
+			if (data)
+				data->purple_has_handle = FALSE;
 			data = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, 0, FALSE);
 			g_free(notification);
 
@@ -588,7 +600,7 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 	} else if (!GTK_WIDGET_HAS_FOCUS(dialog))
 		pidgin_set_urgent(GTK_WINDOW(dialog), TRUE);
 
-	return NULL;
+	return data;
 }
 
 static gboolean
@@ -807,6 +819,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 		col_types[i] = G_TYPE_STRING;
 	}
 	model = gtk_list_store_newv(col_num, col_types);
+	g_free(col_types);
 
 	/* Setup the scrolled window containing the treeview */
 	sw = gtk_scrolled_window_new(NULL, NULL);

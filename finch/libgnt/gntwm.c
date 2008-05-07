@@ -101,7 +101,9 @@ static time_t last_active_time;
 static gboolean idle_update;
 static GList *act = NULL; /* list of WS with unseen activitiy */
 static gboolean ignore_keys = FALSE;
+#ifdef USE_PYTHON
 static gboolean started_python = FALSE;
+#endif
 
 static GList *
 g_list_bring_to_front(GList *list, gpointer data)

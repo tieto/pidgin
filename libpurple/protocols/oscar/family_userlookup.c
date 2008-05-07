@@ -78,7 +78,7 @@ int aim_search_address(OscarData *od, const char *address)
 	flap_connection_send_snac(od, conn, 0x000a, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 
