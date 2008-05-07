@@ -630,15 +630,13 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *widt
 
 	if (size.width > 24) { /* This is a custom smiley, let's scale it */
 		GdkPixbuf *pixbuf = NULL;
-		GdkPixbuf *resized;
 		GtkImageType type;
 
 		type = gtk_image_get_storage_type(GTK_IMAGE(image));
 
 		if (type == GTK_IMAGE_PIXBUF) {
 			pixbuf = gtk_image_get_pixbuf(GTK_IMAGE(image));
-		} 
-		else if (type == GTK_IMAGE_ANIMATION) {
+		} else if (type == GTK_IMAGE_ANIMATION) {
 			GdkPixbufAnimation *animation;
 
 			animation = gtk_image_get_animation(GTK_IMAGE(image));
@@ -647,11 +645,14 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *widt
 		}
 
 		if (pixbuf != NULL) {
+			GdkPixbuf *resized;
 			resized = gdk_pixbuf_scale_simple(pixbuf, 24, 24,
 					GDK_INTERP_HYPER);
 			image = gtk_image_new_from_pixbuf(resized);
 
 			gtk_widget_size_request(image, &size);
+			g_object_unref(G_OBJECT(pixbuf));
+			g_object_unref(G_OBJECT(resized));
 		}
 	}
 

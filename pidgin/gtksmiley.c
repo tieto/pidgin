@@ -449,6 +449,7 @@ static void store_smiley_add(PurpleSmiley *smiley)
 		if (smiley_image != NULL)
 			sized_smiley = gdk_pixbuf_scale_simple(smiley_image,
 					22, 22, GDK_INTERP_HYPER);
+		g_object_unref(G_OBJECT(smiley_image));
 	}
 
 
