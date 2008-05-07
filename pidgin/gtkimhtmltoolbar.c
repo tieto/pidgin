@@ -718,7 +718,6 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	GtkWidget *dialog;
 	GtkWidget *smiley_table = NULL;
 	GSList *smileys, *unique_smileys = NULL;
-	GSList *custom_smileys = NULL;
 
 	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smiley))) {
 		destroy_smiley_dialog(toolbar);
@@ -740,13 +739,17 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		smileys = smileys->next;
 	}
 
-	custom_smileys = pidgin_smileys_get_all();
+	if (toolbar->imhtml &&
+			(gtk_imhtml_get_format_functions(GTK_IMHTML(toolbar->imhtml)) & GTK_IMHTML_CUSTOM_SMILEY)) {
+		GSList *custom_smileys = NULL;
+		custom_smileys = pidgin_smileys_get_all();
 
-	while (custom_smileys) {
-		GtkIMHtmlSmiley *smiley = custom_smileys->data;
-		unique_smileys = g_slist_append(unique_smileys, smiley);
-		
-		custom_smileys = custom_smileys->next;
+		while (custom_smileys) {
+			GtkIMHtmlSmiley *smiley = custom_smileys->data;
+			unique_smileys = g_slist_append(unique_smileys, smiley);
+
+			custom_smileys = custom_smileys->next;
+		}
 	}
 
 	dialog = pidgin_create_dialog(_("Smile!"), 0, "smiley_dialog", FALSE);

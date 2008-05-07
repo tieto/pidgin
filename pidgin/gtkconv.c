@@ -6375,6 +6375,11 @@ gray_stuff_out(PidginConversation *gtkconv)
 		if(conv->features & PURPLE_CONNECTION_NO_IMAGES)
 			buttons &= ~GTK_IMHTML_IMAGE;
 
+		if (conv->features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+			buttons |= GTK_IMHTML_CUSTOM_SMILEY;
+		else
+			buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;
+
 		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
 		if (account != NULL)
 			gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(gtkconv->toolbar), purple_account_get_protocol_id(account));

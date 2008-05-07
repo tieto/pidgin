@@ -5263,6 +5263,11 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 	if (flags & PURPLE_CONNECTION_NO_IMAGES)
 		buttons &= ~GTK_IMHTML_IMAGE;
 
+	if (flags & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+		buttons |= GTK_IMHTML_CUSTOM_SMILEY;
+	else
+		buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;
+
 	gtk_imhtml_set_format_functions(imhtml, buttons);
 }
 
