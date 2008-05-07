@@ -1,5 +1,13 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.5.0 (??/??/2008):
+	pidgin:
+		Added:
+		* gtk_imhtml_smiley_create, gtk_imhtml_smiley_reload and
+		  gtk_imhtml_smiley_destroy to deal with GtkIMHtmlSmiley's.
+		* pidgin_pixbuf_from_imgstore to create a GdkPixbuf from a
+		  PurpleStoredImage.
+
 version 2.x.x:
 	perl:
 		Added:

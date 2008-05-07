@@ -176,14 +176,7 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *ne
 	}
 
 	if (dialog->icon_img != NULL) {
-		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
-		gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(dialog->icon_img),
-		                        purple_imgstore_get_size(dialog->icon_img), NULL);
-		gdk_pixbuf_loader_close(loader, NULL);
-		pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
-		if (pixbuf)
-			g_object_ref(pixbuf);
-		g_object_unref(loader);
+		pixbuf = pidgin_pixbuf_from_imgstore(dialog->icon_img);
 	}
 
 	if (pixbuf && dialog->prpl_info &&
@@ -1977,21 +1970,14 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 	}
 
 	if (img != NULL) {
-		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
 		GdkPixbuf *buddyicon_pixbuf;
-
-		gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(img),
-		                        purple_imgstore_get_size(img), NULL);
-		gdk_pixbuf_loader_close(loader, NULL);
-		buddyicon_pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
-
+		buddyicon_pixbuf = pidgin_pixbuf_from_imgstore(img);
 		purple_imgstore_unref(img);
 
 		if (buddyicon_pixbuf != NULL) {
 			buddyicon = gdk_pixbuf_scale_simple(buddyicon_pixbuf, 22, 22, GDK_INTERP_HYPER);
+			g_object_unref(G_OBJECT(buddyicon_pixbuf));
 		}
-
-		g_object_unref(loader);
 	}
 
 	gtk_list_store_set(store, iter,
