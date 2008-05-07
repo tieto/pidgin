@@ -1350,11 +1350,11 @@ int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, gui
 
 /* 0x0017 - family_auth.c */
 void aim_sendcookie(OscarData *, FlapConnection *, const guint16 length, const guint8 *);
-int aim_admin_changepasswd(OscarData *, FlapConnection *, const char *newpw, const char *curpw);
+void aim_admin_changepasswd(OscarData *, FlapConnection *, const char *newpw, const char *curpw);
 void aim_admin_reqconfirm(OscarData *od, FlapConnection *conn);
-int aim_admin_getinfo(OscarData *od, FlapConnection *conn, guint16 info);
-int aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail);
-int aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick);
+void aim_admin_getinfo(OscarData *od, FlapConnection *conn, guint16 info);
+void aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail);
+void aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick);
 
 
 

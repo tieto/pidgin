@@ -115,7 +115,7 @@ static gboolean flap_connection_send_queued(gpointer data)
 	conn = data;
 	gettimeofday(&now, NULL);
 
-	purple_debug_info("oscar", "Attempting to send %i queued SNACs for %p\n", g_queue_get_length(conn->queued_snacs), conn);
+	purple_debug_info("oscar", "Attempting to send %u queued SNACs for %p\n", g_queue_get_length(conn->queued_snacs), conn);
 	while (!g_queue_is_empty(conn->queued_snacs))
 	{
 		QueuedSnac *queued_snac;
@@ -201,7 +201,7 @@ flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, g
 			rateclass->last.tv_usec = now.tv_usec;
 		}
 	} else {
-		purple_debug_warning("oscar", "No rate class found for family %u subtype %u\n", family, subtype);
+		purple_debug_warning("oscar", "No rate class found for family %hu subtype %hu\n", family, subtype);
 	}
 
 	if (enqueue)
