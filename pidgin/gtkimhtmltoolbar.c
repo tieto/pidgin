@@ -648,10 +648,9 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *widt
 			GdkPixbuf *resized;
 			resized = gdk_pixbuf_scale_simple(pixbuf, 24, 24,
 					GDK_INTERP_HYPER);
-			image = gtk_image_new_from_pixbuf(resized);
 
+			gtk_image_set_from_pixbuf(GTK_IMAGE(image), resized); /* This unrefs pixbuf */
 			gtk_widget_size_request(image, &size);
-			g_object_unref(G_OBJECT(pixbuf));
 			g_object_unref(G_OBJECT(resized));
 		}
 	}
