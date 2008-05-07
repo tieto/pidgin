@@ -453,7 +453,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	g_object_set(G_OBJECT(dialog->screenname_entry), "truncate-multiline", TRUE, NULL);
 #endif
 
-	add_pref_box(dialog, vbox, _("Screen _name:"), dialog->screenname_entry);
+	add_pref_box(dialog, vbox, _("_Username:"), dialog->screenname_entry);
 
 	if (dialog->account != NULL)
 		username = g_strdup(purple_account_get_username(dialog->account));
