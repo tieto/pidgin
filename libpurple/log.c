@@ -667,6 +667,18 @@ void
 purple_log_uninit(void)
 {
 	purple_signals_unregister_by_instance(purple_log_get_handle());
+
+	purple_log_logger_remove(html_logger);
+	purple_log_logger_free(html_logger);
+	html_logger = NULL;
+
+	purple_log_logger_remove(txt_logger);
+	purple_log_logger_free(txt_logger);
+	txt_logger = NULL;
+
+	purple_log_logger_remove(old_logger);
+	purple_log_logger_free(old_logger);
+	old_logger = NULL;
 }
 
 /****************************************************************************

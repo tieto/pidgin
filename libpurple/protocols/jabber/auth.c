@@ -54,6 +54,11 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 				PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
 				_("Server requires TLS/SSL for login.  No TLS/SSL support found."));
 			return TRUE;
+		} else if(purple_account_get_bool(js->gc->account, "require_tls", FALSE)) {
+			purple_connection_error_reason (js->gc,
+				 PURPLE_CONNECTION_ERROR_NO_SSL_SUPPORT,
+				_("You require encryption, but no TLS/SSL support found."));
+			return TRUE;
 		}
 	}
 
@@ -376,6 +381,10 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 					char *pos;
 					if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
 						g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(js->current_mech));
+					}
+					/* Remove space which separated this mech from the next */
+					if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
+						g_string_erase(js->sasl_mechs, 0, 1);	
 					}
 					again = TRUE;
 				}
@@ -1107,12 +1116,18 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 			if ((pos = strstr(js->sasl_mechs->str, js->current_mech))) {
 				g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str, strlen(js->current_mech));
 			}
+			/* Remove space which separated this mech from the next */
+			if (strlen(js->sasl_mechs->str) > 0 && ((js->sasl_mechs->str)[0] == ' ')) {
+				g_string_erase(js->sasl_mechs, 0, 1);	
+			}			
 		}
-
-		sasl_dispose(&js->sasl);
-
-		jabber_auth_start_cyrus(js);
-		return;
+		if (strlen(js->sasl_mechs->str)) {
+			/* If we have remaining mechs to try, do so */
+			sasl_dispose(&js->sasl);
+			
+			jabber_auth_start_cyrus(js);
+			return;
+		}
 	}
 #endif
 	msg = jabber_parse_error(js, packet, &reason);

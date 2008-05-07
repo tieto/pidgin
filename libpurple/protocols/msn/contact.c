@@ -100,56 +100,46 @@ msn_callback_state_free(MsnCallbackState *state)
 void
 msn_callback_state_set_who(MsnCallbackState *state, const gchar *who)
 {
-	gchar *nval;
 	g_return_if_fail(state != NULL);
 
-	nval = g_strdup(who);
 	g_free(state->who);
-	state->who = nval;
+	state->who = g_strdup(who);
 }
 
 void
 msn_callback_state_set_uid(MsnCallbackState *state, const gchar *uid)
 {
-	gchar *nval;
 	g_return_if_fail(state != NULL);
 
-	nval = g_strdup(uid);
 	g_free(state->uid);
-	state->uid = nval;
+	state->uid = g_strdup(uid);
 }
 
 void
 msn_callback_state_set_old_group_name(MsnCallbackState *state, const gchar *old_group_name)
 {
-	gchar *nval;
 	g_return_if_fail(state != NULL);
 
-	nval = g_strdup(old_group_name);
 	g_free(state->old_group_name);
-	state->old_group_name = nval;
+	state->old_group_name = g_strdup(old_group_name);
 }
 
 void
 msn_callback_state_set_new_group_name(MsnCallbackState *state, const gchar *new_group_name)
 {
-	gchar *nval;
 	g_return_if_fail(state != NULL);
 
-	nval = g_strdup(new_group_name);
 	g_free(state->new_group_name);
-	state->new_group_name = nval;
+	state->new_group_name = g_strdup(new_group_name);
 }
 
 void
 msn_callback_state_set_guid(MsnCallbackState *state, const gchar *guid)
 {
-	gchar *nval;
 	g_return_if_fail(state != NULL);
 
-	nval = g_strdup(guid);
 	g_free(state->guid);
-	state->guid = nval;
+	state->guid = g_strdup(guid);
 }
 
 
@@ -495,12 +485,13 @@ msn_parse_addressbook_mobile(xmlnode *contactInfo, char **inout_mobile_number)
 					xmlnode *messenger_enabled;
 					char *is_messenger_enabled = NULL;
 
+					g_free(mobile_number);
 					mobile_number = xmlnode_get_data(number);
 
 					if (mobile_number &&
-						(messenger_enabled = xmlnode_get_child(contact_phone, "isMessengerEnabled")) 
-						&& (is_messenger_enabled = xmlnode_get_data(messenger_enabled)) 
-						&& !strcmp(is_messenger_enabled, "true"))
+							(messenger_enabled = xmlnode_get_child(contact_phone, "isMessengerEnabled")) 
+							&& (is_messenger_enabled = xmlnode_get_data(messenger_enabled)) 
+							&& !strcmp(is_messenger_enabled, "true"))
 						mobile = TRUE;
 
 					g_free(is_messenger_enabled);
@@ -538,6 +529,7 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 		g_free(Name);
 		g_free(uid);
 		g_free(type);
+		g_free(mobile_number);
 		passport = Name = uid = type = mobile_number = NULL;
 		mobile = FALSE;
 
@@ -659,6 +651,7 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 	g_free(Name);
 	g_free(uid);
 	g_free(type);
+	g_free(mobile_number);
 }
 
 static gboolean
@@ -691,6 +684,7 @@ msn_parse_addressbook(MsnContact * contact, xmlnode *node)
 				g_free(errorcode);
 				return TRUE;
 			}
+			g_free(errorcode);
 		}
 
 		return FALSE;

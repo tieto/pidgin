@@ -1353,7 +1353,7 @@ aim_locate_setinterests(OscarData *od, const char *interest1, const char *intere
 	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send_snac(od, conn, 0x0002, 0x000f, 0x0000, snacid, &bs);
-	
+
 	byte_stream_destroy(&bs);
 	return 0;
 }

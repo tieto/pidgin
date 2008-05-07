@@ -760,7 +760,7 @@ pidgin_dialogs_im(void)
 
 	purple_request_fields(purple_get_blist(), _("New Instant Message"),
 						NULL,
-						_("Please enter the screen name or alias of the person "
+						_("Please enter the username or alias of the person "
 						  "you would like to IM."),
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_im_cb),
@@ -899,7 +899,7 @@ pidgin_dialogs_info(void)
 
 	purple_request_fields(purple_get_blist(), _("Get User Info"),
 						NULL,
-						_("Please enter the screen name or alias of the person "
+						_("Please enter the username or alias of the person "
 						  "whose info you would like to view."),
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_info_cb),
@@ -991,7 +991,7 @@ pidgin_dialogs_log(void)
 
 	purple_request_fields(purple_get_blist(), _("View User Log"),
 						NULL,
-						_("Please enter the screen name or alias of the person "
+						_("Please enter the username or alias of the person "
 						  "whose log you would like to view."),
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_log_cb),
