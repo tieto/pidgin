@@ -680,8 +680,8 @@ static void chat_components_edit(GtkWidget *w, PurpleBlistNode *node)
 
 	g_list_free(parts);
 
-	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please Update the necessary fields."),
-			fields, _("Edit"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
+	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please update the necessary fields."),
+			fields, _("Save"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
 			NULL, NULL, NULL,
 			chat);
 }
@@ -6467,7 +6467,7 @@ pidgin_blist_request_add_buddy(PurpleAccount *account, const char *username,
 
 	gtk_table_attach_defaults(GTK_TABLE(table), data->account_box, 0, 2, 0, 1);
 
-	label = gtk_label_new_with_mnemonic(_("Buddy's _screen name:"));
+	label = gtk_label_new_with_mnemonic(_("Buddy's _username:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
 

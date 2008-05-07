@@ -652,7 +652,7 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 		{
 			char *str = g_strdup_printf(_("Unable to add \"%s\"."), who);
 			purple_notify_error(NULL, NULL, str,
-							  _("The screen name specified is invalid."));
+							  _("The username specified is invalid."));
 			g_free(str);
 		}
 

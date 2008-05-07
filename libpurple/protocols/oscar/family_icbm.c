@@ -184,9 +184,9 @@ int aim_im_setparams(OscarData *od, struct aim_icbmparameters *params)
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0002, 0x0000, NULL, 0);
 	flap_connection_send_snac(od, conn, 0x0004, 0x0002, 0x0000, snacid, &bs);
-	
+
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 
@@ -520,7 +520,7 @@ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, gu
 	aim_tlvlist_free(outer_tlvlist);
 
 	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
-	
+
 	byte_stream_destroy(&bs);
 
 	return 0;
@@ -592,7 +592,7 @@ int aim_im_sendch2_icon(OscarData *od, const char *sn, const guint8 *icon, int i
 	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 
@@ -685,7 +685,7 @@ int aim_im_sendch2_rtfmsg(OscarData *od, struct aim_sendrtfmsg_args *args)
 	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 
@@ -728,7 +728,7 @@ aim_im_sendch2_cancel(PeerConnection *peer_conn)
 	aim_tlvlist_write(&hdrbs, &inner_tlvlist);
 
 	aim_tlvlist_add_raw(&outer_tlvlist, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
-	g_free(hdrbs.data);
+	byte_stream_destroy(&hdrbs);
 
 	aim_tlvlist_write(&bs, &outer_tlvlist);
 
@@ -772,7 +772,7 @@ aim_im_sendch2_connected(PeerConnection *peer_conn)
 
 	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
 
-	byte_stream_destroy(&bs);	
+	byte_stream_destroy(&bs);
 }
 
 /**
@@ -945,20 +945,20 @@ aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char 
 
 	if (filename != NULL)
 	{
-		ByteStream bs;
+		ByteStream inner_bs;
 
 		/* Begin TLV t(2711) */
-		byte_stream_new(&bs, 2+2+4+strlen(filename)+1);
-		byte_stream_put16(&bs, (numfiles > 1) ? 0x0002 : 0x0001);
-		byte_stream_put16(&bs, numfiles);
-		byte_stream_put32(&bs, size);
+		byte_stream_new(&inner_bs, 2+2+4+strlen(filename)+1);
+		byte_stream_put16(&inner_bs, (numfiles > 1) ? 0x0002 : 0x0001);
+		byte_stream_put16(&inner_bs, numfiles);
+		byte_stream_put32(&inner_bs, size);
 
 		/* Filename - NULL terminated, for some odd reason */
-		byte_stream_putstr(&bs, filename);
-		byte_stream_put8(&bs, 0x00);
+		byte_stream_putstr(&inner_bs, filename);
+		byte_stream_put8(&inner_bs, 0x00);
 
-		aim_tlvlist_add_raw(&inner_tlvlist, 0x2711, bs.len, bs.data);
-		byte_stream_destroy(&bs);
+		aim_tlvlist_add_raw(&inner_tlvlist, 0x2711, inner_bs.len, inner_bs.data);
+		byte_stream_destroy(&inner_bs);
 		/* End TLV t(2711) */
 	}
 
@@ -1163,7 +1163,7 @@ int aim_im_sendch2_geticqaway(OscarData *od, const char *sn, int type)
 	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 
@@ -1232,7 +1232,7 @@ int aim_im_sendch4(OscarData *od, const char *sn, guint16 type, const char *mess
 	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 
@@ -2339,7 +2339,7 @@ int aim_im_denytransfer(OscarData *od, const char *sn, const guchar *cookie, gui
 	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send_snac(od, conn, 0x0004, 0x000b, 0x0000, snacid, &bs);
-	
+
 	byte_stream_destroy(&bs);
 
 	return 0;
@@ -2716,7 +2716,7 @@ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *sn, guint16 type2)
 	flap_connection_send_snac(od, conn, 0x0004, 0x0014, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 

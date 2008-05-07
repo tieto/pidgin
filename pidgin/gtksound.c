@@ -70,7 +70,7 @@ static const struct pidgin_sound_event sounds[PURPLE_NUM_SOUNDS] = {
 	{N_("Others talk in chat"), "chat_msg_recv", "receive.wav"},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
 	{NULL, "pounce_default", "alert.wav"},
-	{N_("Someone says your screen name in chat"), "nick_said", "alert.wav"}
+	{N_("Someone says your username in chat"), "nick_said", "alert.wav"}
 };
 
 static gboolean

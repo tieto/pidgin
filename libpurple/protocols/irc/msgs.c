@@ -422,6 +422,11 @@ void irc_msg_list(struct irc_conn *irc, const char *name, const char *from, char
 		if (!args[0] || !args[1] || !args[2] || !args[3])
 			return;
 
+		if (!purple_roomlist_get_in_progress(irc->roomlist)) {
+			purple_debug_warning("irc", "Buggy server didn't send RPL_LISTSTART.\n");
+			purple_roomlist_set_in_progress(irc->roomlist, TRUE);
+		}
+
 		room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, args[1], NULL);
 		purple_roomlist_room_add_field(irc->roomlist, room, args[1]);
 		purple_roomlist_room_add_field(irc->roomlist, room, GINT_TO_POINTER(strtol(args[2], NULL, 10)));
@@ -1015,14 +1020,18 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
 	PurpleConversation *convo;
-	char *nick, *msg;
+	char *nick, *msg, *channel;
 
 	if (!args || !args[0] || !gc)
 		return;
 
-	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[0], irc->account);
+	/* Undernet likes to :-quote the channel name, for no good reason
+         * that I can see.  This catches that. */
+	channel = (args[0][0] == ':') ? &args[0][1] : args[0];
+
+	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, channel, irc->account);
 	if (!convo) {
-		purple_debug(PURPLE_DEBUG_INFO, "irc", "Got a PART on %s, which doesn't exist -- probably closed\n", args[0]);
+		purple_debug(PURPLE_DEBUG_INFO, "irc", "Got a PART on %s, which doesn't exist -- probably closed\n", channel);
 		return;
 	}
 
@@ -1033,7 +1042,7 @@ void irc_msg_part(struct irc_conn *irc, const char *name, const char *from, char
                                       (args[1] && *args[1]) ? ": " : "",
 									  (escaped && *escaped) ? escaped : "");
 		g_free(escaped);
-		purple_conv_chat_write(PURPLE_CONV_CHAT(convo), args[0], msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conv_chat_write(PURPLE_CONV_CHAT(convo), channel, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(msg);
 		serv_got_chat_left(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo)));
 	} else {

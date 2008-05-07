@@ -103,7 +103,7 @@ static FinchSoundEvent sounds[PURPLE_NUM_SOUNDS] = {
 	{PURPLE_SOUND_CHAT_YOU_SAY, N_("You talk in chat"), "send_chat_msg", "send.wav", NULL},
 	{PURPLE_SOUND_CHAT_SAY,     N_("Others talk in chat"), "chat_msg_recv", "receive.wav", NULL},
 	{PURPLE_SOUND_POUNCE_DEFAULT, NULL, "pounce_default", "alert.wav", NULL},
-	{PURPLE_SOUND_CHAT_NICK,    N_("Someone says your screen name in chat"), "nick_said", "alert.wav", NULL}
+	{PURPLE_SOUND_CHAT_NICK,    N_("Someone says your username in chat"), "nick_said", "alert.wav", NULL}
 };
 
 const char *

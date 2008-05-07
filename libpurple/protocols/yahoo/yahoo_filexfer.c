@@ -998,6 +998,7 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 	url = g_strdup_printf("%ld.%ld.%ld.%ld", d, c, b, a);
 	if (!purple_url_parse(url, &(xd->host), &(xd->port), &(xd->path), NULL, NULL)) {
 		purple_xfer_cancel_remote(xfer);
+		g_free(url);
 		return;
 	}
 	g_free(url);

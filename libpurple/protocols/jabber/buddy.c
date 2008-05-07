@@ -56,8 +56,7 @@ void jabber_buddy_free(JabberBuddy *jb)
 {
 	g_return_if_fail(jb != NULL);
 
-	if(jb->error_msg)
-		g_free(jb->error_msg);
+	g_free(jb->error_msg);
 	while(jb->resources)
 		jabber_buddy_resource_free(jb->resources->data);
 
@@ -498,6 +497,11 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	if(((JabberStream*)gc->proto_data)->pep) {
 		/* XEP-0084: User Avatars */
 		if(img) {
+			/*
+			 * TODO: This is pretty gross.  The Jabber PRPL really shouldn't
+			 *       do voodoo to try to determine the image type, height
+			 *       and width.
+			 */
 			/* A PNG header, including the IHDR, but nothing else */
 			const struct {
 				guchar signature[8]; /* must be hex 89 50 4E 47 0D 0A 1A 0A */

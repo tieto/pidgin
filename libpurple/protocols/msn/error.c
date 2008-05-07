@@ -56,7 +56,7 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 			g_snprintf(msg, sizeof(msg), _("Already logged in"));
 			break;
 		case 208:
-			g_snprintf(msg, sizeof(msg), _("Invalid screen name"));
+			g_snprintf(msg, sizeof(msg), _("Invalid username"));
 			break;
 		case 209:
 			g_snprintf(msg, sizeof(msg), _("Invalid friendly name"));

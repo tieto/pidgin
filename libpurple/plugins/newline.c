@@ -102,11 +102,11 @@ static PurplePluginInfo info =
 
 	"core-plugin_pack-newline",						/**< id				*/
 	N_("New Line"),									/**< name			*/
-	DISPLAY_VERSION,									/**< version		*/
+	DISPLAY_VERSION,								/**< version		*/
 	N_("Prepends a newline to displayed message."),	/**< summary		*/
 	N_("Prepends a newline to messages so that the "
 	   "rest of the message appears below the "
-	   "screen name in the conversation window."),	/**< description	*/
+	   "username in the conversation window."),		/**< description	*/
 	"Stu Tomlinson <stu@nosnilmot.com>",			/**< author			*/
 	PURPLE_WEBSITE,									/**< homepage		*/
 

@@ -57,9 +57,9 @@ aim_bart_upload(OscarData *od, const guint8 *icon, guint16 iconlen)
 
 	snacid = aim_cachesnac(od, 0x0010, 0x0002, 0x0000, NULL, 0);
 	flap_connection_send_snac(od, conn, 0x0010, 0x0002, 0x0000, snacid, &bs);
-	
+
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 

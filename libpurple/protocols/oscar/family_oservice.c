@@ -56,7 +56,7 @@ aim_clientready(OscarData *od, FlapConnection *conn)
 
 	snacid = aim_cachesnac(od, 0x0001, 0x0002, 0x0000, NULL, 0);
 	flap_connection_send_snac(od, conn, 0x0001, 0x0002, 0x0000, snacid, &bs);
-	
+
 	byte_stream_destroy(&bs);
 }
 
@@ -150,7 +150,7 @@ aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 ins
 	flap_connection_send_snac(od, conn, 0x0001, 0x0004, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 
@@ -392,7 +392,7 @@ aim_srv_rates_addparam(OscarData *od, FlapConnection *conn)
 	snacid = aim_cachesnac(od, 0x0001, 0x0008, 0x0000, NULL, 0);
 	flap_connection_send_snac(od, conn, 0x0001, 0x0008, 0x0000, snacid, &bs);
 
-	byte_stream_destroy(&bs);	
+	byte_stream_destroy(&bs);
 }
 
 /* Subtype 0x0009 - Delete Rate Parameter */
@@ -415,7 +415,7 @@ aim_srv_rates_delparam(OscarData *od, FlapConnection *conn)
 	snacid = aim_cachesnac(od, 0x0001, 0x0009, 0x0000, NULL, 0);
 	flap_connection_send_snac(od, conn, 0x0001, 0x0009, 0x0000, snacid, &bs);
 
-	byte_stream_destroy(&bs);	
+	byte_stream_destroy(&bs);
 }
 
 /* Subtype 0x000a - Rate Change */
@@ -865,7 +865,7 @@ aim_srv_setextrainfo(OscarData *od,
 	flap_connection_send_snac(od, conn, 0x0001, 0x001e, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 
@@ -1016,7 +1016,7 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 	flap_connection_send_snac(od, conn, 0x0001, 0x0020, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
-	
+
 	return 0;
 }
 

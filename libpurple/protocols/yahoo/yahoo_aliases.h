@@ -33,18 +33,6 @@
 #include "yahoo.h"
 #include "yahoo_packet.h"
 
-
-/**
- * The additional protocol specific info attached to each buddy.  We need
- * to store the unique numeric id number to allow us to push alias changes.
- */
-struct YahooUser
-{
-    const char *id;             /* The yahoo accountid for this buddy (not YahooID but numeric value) */
-    char *firstname;            /* Storing this information for no real reason, just because */
-    char *lastname;             /* Storing this information for no real reason, just because */
-    char *nickname;             /* Storing this information for no real reason, just because */
-};
-
 void yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias);
 void yahoo_fetch_aliases(PurpleConnection *gc);
+

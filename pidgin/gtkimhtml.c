@@ -814,9 +814,30 @@ static void clear_formatting_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
 	gtk_imhtml_clear_formatting(imhtml);
 }
 
+static void disable_smiley_selected(GtkMenuItem *item, GtkIMHtml *imhtml)
+{
+	GtkTextIter start, end;
+	GtkTextMark *mark;
+	char *text;
+
+	if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
+		return;
+
+	text = gtk_imhtml_get_markup_range(imhtml, &start, &end);
+
+	mark = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
+	gtk_text_buffer_delete_selection(imhtml->text_buffer, FALSE, FALSE);
+
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, mark);
+	gtk_imhtml_insert_html_at_iter(imhtml, text, GTK_IMHTML_NO_NEWLINE | GTK_IMHTML_NO_SMILEY, &start);
+
+	g_free(text);
+}
+
 static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 {
 	GtkWidget *menuitem;
+	GtkTextIter start, end;
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("Paste as Plain _Text"));
 	gtk_widget_show(menuitem);
@@ -842,6 +863,15 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 5);
 
 	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(clear_formatting_cb), imhtml);
+
+	menuitem = gtk_menu_item_new_with_mnemonic(_("Disable _smileys in selected text"));
+	gtk_widget_show(menuitem);
+	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(disable_smiley_selected), imhtml);
+	} else {
+		gtk_widget_set_sensitive(menuitem, FALSE);
+	}
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 6);
 }
 
 static char *
@@ -1458,10 +1488,8 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 
 static void gtk_imhtml_init (GtkIMHtml *imhtml)
 {
-	GtkTextIter iter;
 	imhtml->text_buffer = gtk_text_buffer_new(NULL);
 	imhtml->undo_manager = gtk_source_undo_manager_new(imhtml->text_buffer);
-	gtk_text_buffer_get_end_iter (imhtml->text_buffer, &iter);
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->text_buffer);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
 	gtk_text_view_set_pixels_above_lines(GTK_TEXT_VIEW(imhtml), 2);
