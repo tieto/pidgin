@@ -116,12 +116,14 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 
 		if ((path = g_find_program_in_path("gconftool-2"))) {
 			char *font = NULL;
+			char *err = NULL;
 			g_free(path);
 			if (g_spawn_command_line_sync(
 					"gconftool-2 -g /desktop/gnome/interface/document_font_name",
-					&font, NULL, NULL, NULL)) {
+					&font, &err, NULL, NULL)) {
 				desc = pango_font_description_from_string(font);
 			}
+			g_free(err);
 			g_free(font);
 		}
 	}
