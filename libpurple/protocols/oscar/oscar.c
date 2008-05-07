@@ -4546,7 +4546,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	{
 		/* Do nothing! */
 	}
-	else if (primitive == PURPLE_STATUS_AVAILABLE)
+	else if (primitive == PURPLE_STATUS_AVAILABLE || primitive == PURPLE_STATUS_INVISIBLE)
 	{
 		const char *status_html, *itmsurl;
 		char *status_text = NULL;
