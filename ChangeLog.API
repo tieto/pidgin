@@ -1,12 +1,22 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.5.0 (??/??/2008):
+	libpurple:
+		Added:
+		* Connection flag PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY to indicate
+		  that the connection supports sending and receiving custom smileys.
+		* PurpleSmiley and the Smiley API.
+
 	pidgin:
 		Added:
 		* gtk_imhtml_smiley_create, gtk_imhtml_smiley_reload and
 		  gtk_imhtml_smiley_destroy to deal with GtkIMHtmlSmiley's.
 		* pidgin_pixbuf_from_imgstore to create a GdkPixbuf from a
 		  PurpleStoredImage.
+		* pidgin_themes_smiley_themeize_custom to associate custom smileys to
+		  a GtkIMHtml widget.
+		* GTK_IMHTML_CUSTOM_SMILEY flag for GtkIMHtml.
+		* GTK+ Custom Smiley API.
 
 version 2.x.x:
 	perl:
