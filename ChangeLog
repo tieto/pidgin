@@ -15,7 +15,7 @@ version 2.x.x:
 	Pidgin:
 	* The typing notification in the conversation history can be disabled or
 	  customized (font, color etc.) in .gtkrc-2.0.
-	* Added a plugin (not built by default) which adds a Send button back
+	* Added a plugin (not installed by default) which adds a Send button back
 	  to the conversation window. People without physical keyboards have a
 	  hard time with the lack of the button.
 	* Clicking on the buddyicon in the conversation window toggles the
@@ -23,15 +23,18 @@ version 2.x.x:
 	* The settings of a chat (e.g. Handle in an XMPP chat, or Exchange in
 	  an AIM chat) can be edited from its context menu in the buddy list.
 	* Add a "Present conversation window" preference to the Message
-	  Notification plugin, the "Raise conversation window" option does not
+	  Notification plugin; the "Raise conversation window" option does not
 	  unminimize windows or draw attention to them when they are on other
-	  workspaces the "Present" option should.
+	  workspaces--the "Present" option should.
 	* Add a preference to set Escape as the keyboard shortcut for closing
 	  the conversation window.
 	* Add an option in the context menu to disable smileys in the selected
 	  text in the conversation history/log viewer. This should help people who
 	  regularly paste code in conversations.
-	* Add a preference to choose the minimum size of the text input.
+	* Add a preference to choose the minimum size of the text input area in
+	  lines.
+	* Moved the "Local alias" field in the Modify Account dialog to be below
+	  the "User Options" heading on the "Basic" tab.
 
 	General:
 	* The configure script now dies on more absent dependencies.  The
