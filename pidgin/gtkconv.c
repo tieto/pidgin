@@ -1901,6 +1901,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 				break;
 
 			case GDK_Tab:
+			case GDK_KP_Tab:
 			case GDK_ISO_Left_Tab:
 				if (event->state & GDK_SHIFT_MASK) {
 					move_to_next_unread_tab(gtkconv, FALSE);
@@ -2082,6 +2083,8 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	else {
 		switch (event->keyval) {
 		case GDK_Tab:
+		case GDK_KP_Tab:
+		case GDK_ISO_Left_Tab:
 			if (gtkconv->entry != entry)
 				break;
 			return tab_complete(conv);
@@ -2152,6 +2155,7 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 		(event->keyval == GDK_Home) ||
 		(event->keyval == GDK_End) ||
 		(event->keyval == GDK_Tab) ||
+		(event->keyval == GDK_KP_Tab) ||
 		(event->keyval == GDK_ISO_Left_Tab))
 	{
 		if (event->type == GDK_KEY_PRESS)
