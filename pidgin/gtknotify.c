@@ -425,7 +425,7 @@ pidgin_get_mail_dialog(void)
  * count > 0 mean non-detailed.
  */
 static void *
-pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *notification, const char *url, int count, gboolean clear)
+pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *notification, const char *url, int count, gboolean clear, gboolean *new_data)
 {
 	PidginNotifyMailData *data = NULL;
 	GtkTreeIter iter;
@@ -492,6 +492,9 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *no
 						PIDGIN_MAIL_DATA, &data, -1);
 	if (icon)
 		g_object_unref(icon);
+
+	if (new_data)
+		*new_data = new_n;
 	return data;
 }
 
@@ -503,7 +506,8 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 	GtkWidget *dialog = NULL;
 	char *notification;
 	PurpleAccount *account;
-	PidginNotifyMailData *data = NULL;
+	PidginNotifyMailData *data = NULL, *data2;
+	gboolean new_data;
 
 	/* Don't bother updating if there aren't new emails and we don't have any displayed currently */
 	if (count == 0 && mail_dialog == NULL)
@@ -550,9 +554,12 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 			g_free(subject_text);
 
 			/* If we don't keep track of this, will leak "data" for each of the notifications except the last */
-			if (data)
-				data->purple_has_handle = FALSE;
-			data = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, 0, FALSE);
+			data2 = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, 0, FALSE, &new_data);
+			if (new_data) {
+				if (data)
+					data->purple_has_handle = FALSE;
+				data = data2;
+			}
 			g_free(notification);
 
 			if (urls != NULL)
@@ -564,13 +571,18 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 							   "%s has %d new messages.",
 							   (int)count),
 							   *tos, (int)count);
-			data = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, count, FALSE);
+			data2 = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, count, FALSE, &new_data);
+			if (new_data) {
+				if (data)
+					data->purple_has_handle = FALSE;
+				data = data2;
+			}
 			g_free(notification);
 		} else {
 			GtkTreeIter iter;
 
 			/* Clear out all mails for the account */
-			pidgin_notify_add_mail(mail_dialog->treemodel, account, NULL, NULL, 0, TRUE);
+			pidgin_notify_add_mail(mail_dialog->treemodel, account, NULL, NULL, 0, TRUE, NULL);
 
 			if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mail_dialog->treemodel), &iter)) {
 				/* There is no API to clear the headline specifically */
