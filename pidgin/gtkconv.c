@@ -703,7 +703,10 @@ chat_invite_filter(const PidginBuddyCompletionEntry *entry, gpointer data)
 	PurpleAccount *account = NULL;
 
 	if (entry->is_buddy) {
-		account = purple_buddy_get_account(entry->entry.buddy);
+		if (PURPLE_BUDDY_IS_ONLINE(entry->entry.buddy))
+			account = purple_buddy_get_account(entry->entry.buddy);
+		else
+			return FALSE;
 	} else {
 		account = entry->entry.logged_buddy->account;
 	}
