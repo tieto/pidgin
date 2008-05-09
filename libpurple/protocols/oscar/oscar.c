@@ -1822,7 +1822,9 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		else
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
 	} else {
-		if (buddy_is_away)
+		if (type & AIM_ICQ_STATE_INVISIBLE)
+			status_id = OSCAR_STATUS_ID_INVISIBLE;
+		else if (buddy_is_away)
 			status_id = OSCAR_STATUS_ID_AWAY;
 		else
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
