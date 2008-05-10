@@ -39,9 +39,6 @@ version 2.x.x:
 	  lines.
 	* Moved the "Local alias" field in the Modify Account dialog to be below
 	  the "User Options" heading on the "Basic" tab.
-	* The formatting toolbar will now respect your system-wide GTK+ toolbar
-	  setting (to the extent possible with our two choices).  You can still
-	  override it by right-clicking on the formatting toolbar.
 
 	General:
 	* The configure script now dies on more absent dependencies.  The
