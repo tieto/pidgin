@@ -685,6 +685,9 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar,
 			if (strcmp(face, shortcut) == 0) {
 				/* The smiley of the current button has the same shortcut as
 				this custom smiley, grey it out */
+				gtk_tooltips_set_tip(toolbar->tooltips, button,
+						_("This smiley is disabled because a custom smiley exists for this shortcut."),
+						NULL);
 				gtk_widget_set_sensitive(button, FALSE);
 				break;
 			}
