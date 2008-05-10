@@ -596,9 +596,9 @@ purple_network_is_available(void)
 #ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
 	NMState state = nm_get_network_state();
 	if (state == NM_STATE_UNKNOWN)
- 	{
+	{
 		purple_debug_warning("network", "NetworkManager not active. Assuming connection exists.\n");
- 		return TRUE;
+		return TRUE;
 	}
 	else if (state == NM_STATE_CONNECTED)
 		return TRUE;
