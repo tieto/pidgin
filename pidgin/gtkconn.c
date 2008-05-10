@@ -210,15 +210,7 @@ static void pidgin_connection_network_disconnected (void)
 	while (l) {
 		PurpleAccount *a = (PurpleAccount*)l->data;
 		if (!purple_account_is_disconnected(a)) {
-			gc = purple_account_get_connection(a);
-			if (gc && gc->prpl)
-				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-			if (prpl_info) {
-				if (prpl_info->keepalive)
-					prpl_info->keepalive(gc);
-				else
-					purple_account_disconnect(a);
-			}
+			purple_account_disconnect(a);
 		}
 		l = l->next;
 	}
