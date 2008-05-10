@@ -613,13 +613,17 @@ struct smiley_button_list {
 };
 
 static struct smiley_button_list *
-sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *width, char *filename, char *face)
+sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar,
+			 int *width, const GtkIMHtmlSmiley *smiley,
+			 const GSList *custom_smileys)
 {
 	GtkWidget *image;
 	GtkWidget *button;
 	GtkRequisition size;
 	struct smiley_button_list *cur;
 	struct smiley_button_list *it, *it_last;
+	const gchar *filename = smiley->file;
+	gchar *face = smiley->smile;
 
 	cur = g_new0(struct smiley_button_list, 1);
 	it = ls;
@@ -628,7 +632,8 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *widt
 
 	gtk_widget_size_request(image, &size);
 
-	if (size.width > 24) { /* This is a custom smiley, let's scale it */
+	if (size.width > 24 &&
+			smiley->flags & GTK_IMHTML_SMILEY_CUSTOM) { /* This is a custom smiley, let's scale it */
 		GdkPixbuf *pixbuf = NULL;
 		GtkImageType type;
 
@@ -668,6 +673,24 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *widt
 	/* these look really weird with borders */
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
+	/* If this is a "non-custom" smiley, check to see if its shortcut is
+	  "shadowed" by any custom smiley. This can only happen if the connection
+	  is custom smiley-enabled */
+	if (!(smiley->flags & GTK_IMHTML_SMILEY_CUSTOM)) {
+		/* Perhaps using purple_smileys_find_by_shortcut can be used instead? -- sadrul */
+		for (; custom_smileys ; custom_smileys = g_slist_next(custom_smileys)) {
+			const GtkIMHtmlSmiley *custom_smiley = (GtkIMHtmlSmiley *) custom_smileys->data;
+			const gchar *shortcut = custom_smiley->smile;
+
+			if (strcmp(face, shortcut) == 0) {
+				/* The smiley of the current button has the same shortcut as
+				this custom smiley, grey it out */
+				gtk_widget_set_sensitive(button, FALSE);
+				break;
+			}
+		}
+	}
+
 	/* set current element to add */
 	cur->height = size.height;
 	cur->width = size.width;
@@ -690,7 +713,7 @@ static gboolean
 smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley)
 {
 	while (list) {
-		GtkIMHtmlSmiley *cur = list->data;
+		GtkIMHtmlSmiley *cur = (GtkIMHtmlSmiley *) list->data;
 		if (!strcmp(cur->file, smiley->file))
 			return FALSE;
 		list = list->next;
@@ -717,6 +740,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	GtkWidget *dialog;
 	GtkWidget *smiley_table = NULL;
 	GSList *smileys, *unique_smileys = NULL;
+	const GSList *custom_smileys = NULL;
 
 	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smiley))) {
 		destroy_smiley_dialog(toolbar);
@@ -730,24 +754,24 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		smileys = pidgin_themes_get_proto_smileys(NULL);
 
 	while(smileys) {
-		GtkIMHtmlSmiley *smiley = smileys->data;
+		GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) smileys->data;
 		if(!smiley->hidden) {
-			if(smiley_is_unique(unique_smileys, smiley))
+			if(smiley_is_unique(unique_smileys, smiley)) {
 				unique_smileys = g_slist_append(unique_smileys, smiley);
+			}
 		}
 		smileys = smileys->next;
 	}
 
 	if (toolbar->imhtml &&
 			(gtk_imhtml_get_format_functions(GTK_IMHTML(toolbar->imhtml)) & GTK_IMHTML_CUSTOM_SMILEY)) {
-		GSList *custom_smileys = NULL;
+		const GSList *iterator = NULL;
 		custom_smileys = pidgin_smileys_get_all();
 
-		while (custom_smileys) {
-			GtkIMHtmlSmiley *smiley = custom_smileys->data;
+		for (iterator = custom_smileys ; iterator ;
+			 iterator = g_slist_next(iterator)) {
+			GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) iterator->data;
 			unique_smileys = g_slist_append(unique_smileys, smiley);
-
-			custom_smileys = custom_smileys->next;
 		}
 	}
 
@@ -772,9 +796,9 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 
 		/* create list of smileys sorted by height */
 		while (unique_smileys) {
-			GtkIMHtmlSmiley *smiley = unique_smileys->data;
+			GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) unique_smileys->data;
 			if (!smiley->hidden) {
-				ls = sort_smileys(ls, toolbar, &max_line_width, smiley->file, smiley->smile);
+				ls = sort_smileys(ls, toolbar, &max_line_width, smiley, custom_smileys);
 			}
 			unique_smileys = g_slist_delete_link(unique_smileys, unique_smileys);
 		}
