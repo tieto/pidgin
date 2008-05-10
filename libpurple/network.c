@@ -59,9 +59,9 @@
 #  define HX_SIZE_OF_IFREQ(a) sizeof(a)
 #endif
 
-#ifdef HAVE_LIBNM
+#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
 #include <dbus/dbus-glib.h>
-#include <NetworkManager.h>
+#include <NetworkManager/NetworkManager.h>
 
 static DBusGConnection *nm_conn = NULL;
 static DBusGProxy *nm_proxy = NULL;
@@ -81,7 +81,7 @@ struct _PurpleNetworkListenData {
 	UPnPMappingAddRemove *mapping_data;
 };
 
-#ifdef HAVE_LIBNM
+#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
 static NMState nm_get_network_state(void);
 #endif
 
@@ -593,12 +593,12 @@ static gpointer wpurple_network_change_thread(gpointer data)
 gboolean
 purple_network_is_available(void)
 {
-#ifdef HAVE_LIBNM
+#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
 	/* Try NetworkManager first, maybe we'll get lucky */
 	if (nm_get_network_state() != NM_STATE_CONNECTED)
 	{
 		purple_debug_warning("network", "NetworkManager not active or reports no connection\n");
-		return FALSE;
+		return TRUE;
 	} else
 		return TRUE;
 #elif defined _WIN32
@@ -607,7 +607,7 @@ purple_network_is_available(void)
 	return TRUE;
 }
 
-#ifdef HAVE_LIBNM
+#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
 static void
 nm_update_state(NMState state)
 {
@@ -695,7 +695,7 @@ purple_network_get_handle(void)
 void
 purple_network_init(void)
 {
-#ifdef HAVE_LIBNM
+#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
 	GError *error = NULL;
 #endif
 #ifdef _WIN32
@@ -724,7 +724,7 @@ purple_network_init(void)
 	if(purple_prefs_get_bool("/purple/network/map_ports") || purple_prefs_get_bool("/purple/network/auto_ip"))
 		purple_upnp_discover(NULL, NULL);
 
-#ifdef HAVE_LIBNM
+#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
 	nm_conn = dbus_g_bus_get(DBUS_BUS_SYSTEM, &error);
 	if (!nm_conn) {
 		purple_debug_warning("network", "Error connecting to DBus System service: %s.\n", error->message);
@@ -757,7 +757,7 @@ purple_network_init(void)
 void
 purple_network_uninit(void)
 {
-#ifdef HAVE_LIBNM
+#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
 	if (nm_proxy) {
 		dbus_g_proxy_disconnect_signal(nm_proxy, NM_DBUS_SIGNAL_STATE_CHANGE, G_CALLBACK(nm_state_change_cb), NULL);
 		g_object_unref(G_OBJECT(nm_proxy));
