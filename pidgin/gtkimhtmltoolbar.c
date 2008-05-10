@@ -42,11 +42,48 @@
 #include <gdk/gdkkeysyms.h>
 
 static GtkHBoxClass *parent_class = NULL;
+static GtkSettings *settings = NULL;
 
 static void toggle_button_set_active_block(GtkToggleButton *button,
 										   gboolean is_active,
 										   GtkIMHtmlToolbar *toolbar);
 
+static gboolean get_gtk_wide(void);
+
+/* If we're not overriding GTK+, grab its potentially new default and use that. */
+static void toolbar_style_changed_cb(GObject *obj, GParamSpec *pspec, gpointer data)
+{
+	/* If we're not overriding GTK+, grab its potentially new default and use that.
+	 * Otherwise, if the potentially new default matches the user's setting, we
+	 * no longer want to override. */
+        if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/override_gtk"))
+        {
+                purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
+                                get_gtk_wide());
+        }
+	else
+	{
+		gboolean gtk_wide = get_gtk_wide();
+		gboolean pidgin_wide = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide");
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/override_gtk", (gtk_wide != pidgin_wide));
+	}
+}
+
+static gboolean get_gtk_wide()
+{
+	gint style;
+
+	if (settings == NULL)
+	{
+		settings = gtk_settings_get_default();
+		g_signal_connect(settings, "notify::gtk-toolbar-style",
+		                 G_CALLBACK(toolbar_style_changed_cb), NULL);
+	}
+
+	g_object_get(settings, "gtk-toolbar-style", &style, NULL);
+
+	return (style == GTK_TOOLBAR_ICONS);
+}
 
 static void do_bold(GtkWidget *bold, GtkIMHtmlToolbar *toolbar)
 {
@@ -1033,10 +1070,16 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 }
 
 static void
-switch_toolbar_view(GtkWidget *item, GtkIMHtmlToolbar *toolbar)
+switch_toolbar_view(GtkWidget *item, gpointer data)
 {
-	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
-			!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide"));
+	gboolean gtk_wide;    /* The current GTK+ default. */
+	gboolean pidgin_wide; /* The desired Pidgin setting. */
+
+	gtk_wide = get_gtk_wide();
+	pidgin_wide = !purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide");
+
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/override_gtk", (gtk_wide != pidgin_wide));
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide", pidgin_wide);
 }
 
 static gboolean
@@ -1053,7 +1096,7 @@ gtk_imhtmltoolbar_popup_menu(GtkWidget *widget, GdkEventButton *event, GtkIMHtml
 
 	menu = gtk_menu_new();
 	item = gtk_menu_item_new_with_mnemonic(wide ? _("Group Items") : _("Ungroup Items"));
-	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(switch_toolbar_view), toolbar);
+	g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(switch_toolbar_view), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	gtk_widget_show(item);
 
@@ -1074,6 +1117,7 @@ static void gtk_imhtmltoolbar_class_init (GtkIMHtmlToolbarClass *class)
 
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/toolbar");
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/wide", FALSE);
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/toolbar/override_gtk", FALSE);
 }
 
 static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
@@ -1313,6 +1357,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
 	gtk_widget_show(box);
 
+	toolbar_style_changed_cb(NULL, NULL, NULL);
 	purple_prefs_connect_callback(toolbar, PIDGIN_PREFS_ROOT "/conversations/toolbar/wide",
 			imhtmltoolbar_view_pref_changed, toolbar);
 	g_signal_connect_data(G_OBJECT(toolbar), "realize",
