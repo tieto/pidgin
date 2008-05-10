@@ -76,6 +76,7 @@ pidgin_smiley_destroy(PidginSmiley *smiley)
 /******************************************************************************
  * GtkIMHtmlSmileys stuff
  *****************************************************************************/
+/* Perhaps these should be in gtkimhtml.c instead. -- sadrul */
 static void add_gtkimhtml_to_list(GtkIMHtmlSmiley *gtksmiley)
 {
 	gtk_smileys = g_slist_prepend(gtk_smileys, gtksmiley);
@@ -83,7 +84,13 @@ static void add_gtkimhtml_to_list(GtkIMHtmlSmiley *gtksmiley)
 	purple_debug_info("gtksmiley", "adding %s to gtk_smileys\n", gtksmiley->smile);
 }
 
-/* Perhaps this should be in gtkimhtml.c instead. -- sad */
+static void
+shortcut_changed_cb(PurpleSmiley *smiley, gpointer dontcare, GtkIMHtmlSmiley *gtksmiley)
+{
+	g_free(gtksmiley->smile);
+	gtksmiley->smile = g_strdup(purple_smiley_get_shortcut(smiley));
+}
+
 static GtkIMHtmlSmiley *smiley_purple_to_gtkimhtml(PurpleSmiley *smiley)
 {
 	GtkIMHtmlSmiley *gtksmiley;
@@ -92,21 +99,17 @@ static GtkIMHtmlSmiley *smiley_purple_to_gtkimhtml(PurpleSmiley *smiley)
 
 	file = purple_imgstore_get_filename(purple_smiley_get_stored_image(smiley));
 
-	filename = g_build_filename(purple_smileys_get_storing_dir(),file, NULL);
+	filename = g_build_filename(purple_smileys_get_storing_dir(), file, NULL);
 
 	gtksmiley = gtk_imhtml_smiley_create(filename, purple_smiley_get_shortcut(smiley),
 			FALSE, GTK_IMHTML_SMILEY_CUSTOM);
 	g_free(filename);
 
+	/* Make sure the shortcut for the GtkIMHtmlSmiley is updated with the PurpleSmiley */
+	g_signal_connect(G_OBJECT(smiley), "notify::shortcut",
+			G_CALLBACK(shortcut_changed_cb), gtksmiley);
+
 	return gtksmiley;
-}
-
-void pidgin_smiley_add_to_list(PurpleSmiley *smiley)
-{
-	GtkIMHtmlSmiley *gtksmiley;
-
-	gtksmiley = smiley_purple_to_gtkimhtml(smiley);
-	add_gtkimhtml_to_list(gtksmiley);
 }
 
 void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
@@ -126,11 +129,22 @@ void pidgin_smiley_del_from_list(PurpleSmiley *smiley)
 			continue;
 
 		gtk_imhtml_smiley_destroy(gtksmiley);
+		g_signal_handlers_disconnect_matched(G_OBJECT(smiley), G_SIGNAL_MATCH_DATA,
+				0, 0, NULL, NULL, gtksmiley);
 		break;
 	}
 
 	if (list)
 		gtk_smileys = g_slist_delete_link(gtk_smileys, list);
+}
+
+void pidgin_smiley_add_to_list(PurpleSmiley *smiley)
+{
+	GtkIMHtmlSmiley *gtksmiley;
+
+	gtksmiley = smiley_purple_to_gtkimhtml(smiley);
+	add_gtkimhtml_to_list(gtksmiley);
+	g_signal_connect(G_OBJECT(smiley), "destroy", G_CALLBACK(pidgin_smiley_del_from_list), NULL);
 }
 
 void pidgin_smileys_init(void)
@@ -224,7 +238,6 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 
 		purple_debug_info("gtksmiley", "adding a new smiley\n");
 		emoticon = purple_smiley_new_from_file(entry, s->filename);
-		purple_smileys_add(emoticon);
 		if (gtk_smileys != NULL)
 			pidgin_smiley_add_to_list(emoticon);
 	}
@@ -371,36 +384,45 @@ void pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 static void delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 		GtkTreeIter *iter, gpointer data)
 {
-	PurpleSmiley *smiley;
-	char *shortcut;
+	PurpleSmiley *smiley = NULL;
 	SmileyManager *dialog;
 
 	dialog = (SmileyManager*)data;
 
 	gtk_tree_model_get(model, iter,
-			SHORTCUT, &shortcut,
+			SMILEY, &smiley,
 			-1);
 
-	purple_debug_info("gtksmiley", "delete_foreach shortcut = %s\n", shortcut);
-
-	smiley = purple_smileys_find_by_shortcut(shortcut);
-
-	if(smiley == NULL)
-		purple_debug_error("gtksmiley", "%s not found\n", shortcut);
-	else {
+	if(smiley != NULL) {
+		g_object_unref(G_OBJECT(smiley));
 		pidgin_smiley_del_from_list(smiley);
 		purple_smiley_delete(smiley);
 	}
+}
 
-	g_free(shortcut);
+static void append_to_list(GtkTreeModel *model, GtkTreePath *path,
+		GtkTreeIter *iter, gpointer data)
+{
+	GList **list = data;
+	*list = g_list_prepend(*list, gtk_tree_path_copy(path));
 }
 
 static void smiley_delete(SmileyManager *dialog)
 {
 	GtkTreeSelection *selection;
+	GList *list = NULL;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
 	gtk_tree_selection_selected_foreach(selection, delete_foreach, dialog);
+	gtk_tree_selection_selected_foreach(selection, append_to_list, &list);
+
+	while (list) {
+		GtkTreeIter iter;
+		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, list->data))
+			gtk_list_store_remove(GTK_LIST_STORE(dialog->model), &iter);
+		gtk_tree_path_free(list->data);
+		list = g_list_delete_link(list, list);
+	}
 }
 /******************************************************************************
  * The Smiley Manager
@@ -499,6 +521,7 @@ static void smiley_edit_cb(GtkTreeView *treeview, GtkTreePath *path, GtkTreeView
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter, SMILEY, &smiley, -1);
 	pidgin_smiley_edit(gtk_widget_get_toplevel(GTK_WIDGET(treeview)), smiley);
+	g_object_unref(G_OBJECT(smiley));
 }
 
 static GtkWidget *smiley_list_create(SmileyManager *dialog)
@@ -519,7 +542,7 @@ static GtkWidget *smiley_list_create(SmileyManager *dialog)
 	dialog->model = gtk_list_store_new(N_COL,
 			GDK_TYPE_PIXBUF,	/* ICON */
 			G_TYPE_STRING,		/* SHORTCUT */
-			G_TYPE_POINTER		/* SMILEY */
+			G_TYPE_OBJECT		/* SMILEY */
 			);
 
 	/* the actual treeview */
@@ -557,7 +580,6 @@ static void smiley_manager_select_cb(GtkWidget *widget, gint resp, SmileyManager
 			break;
 		case GTK_RESPONSE_NO:
 			smiley_delete(dialog);
-			refresh_list();
 			break;
 		case GTK_RESPONSE_DELETE_EVENT:
 		case GTK_RESPONSE_CLOSE:

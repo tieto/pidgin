@@ -1,5 +1,5 @@
 /**
- * @file Smiley.h Smiley API
+ * @file smiley.h Smiley API
  * @ingroup core
  */
 
@@ -28,6 +28,8 @@
 #ifndef _PURPLE_SMILEY_H_
 #define _PURPLE_SMILEY_H_
 
+#include <glib-object.h>
+
 #include "imgstore.h"
 #include "util.h"
 
@@ -35,8 +37,18 @@
  * A custom smiley.
  * This contains everything Purple will ever need to know about a custom smiley.
  * Everything.
+ *
+ * PurpleSmiley is a GObject.
  */
-typedef struct _PurpleSmiley PurpleSmiley;
+typedef struct _PurpleSmiley        PurpleSmiley;
+typedef struct _PurpleSmileyClass   PurpleSmileyClass;
+
+#define PURPLE_TYPE_SMILEY             (purple_smiley_get_type ())
+#define PURPLE_SMILEY(smiley)          (G_TYPE_CHECK_INSTANCE_CAST ((smiley), PURPLE_TYPE_SMILEY, PurpleSmiley))
+#define PURPLE_SMILEY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), PURPLE_TYPE_SMILEY, PurpleSmileyClass))
+#define PURPLE_IS_SMILEY(smiley)       (G_TYPE_CHECK_INSTANCE_TYPE ((smiley), PURPLE_TYPE_SMILEY))
+#define PURPLE_IS_SMILEY_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), PURPLE_TYPE_SMILEY))
+#define PURPLE_SMILEY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), PURPLE_TYPE_SMILEY, PurpleSmileyClass))
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,6 +58,12 @@ extern "C" {
 /** @name Custom Smiley API                                               */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * GObject foo.
+ * @internal.
+ */
+GType purple_smiley_get_type(void);
 
 /**
  * Creates a new custom smiley structure and populates it.
@@ -60,22 +78,6 @@ extern "C" {
  */
 PurpleSmiley *
 purple_smiley_new(PurpleStoredImage *img, const char *shortcut);
-
-/**
- * Creates a new custom smiley structure and populates it.
- *
- * If a custom smiley with the informed shortcut already exist, it
- * will be automaticaly returned.
- *
- * @param shortcut           The custom smiley associated shortcut.
- * @param smiley_data        The custom smiley data.
- * @param smiley_data_len    The custom smiley data length.
- *
- * @return The custom smiley structure filled up.
- */
-PurpleSmiley *
-purple_smiley_new_from_stream(const char *shortcut, guchar *smiley_data,
-                        size_t smiley_data_len, const char *filename);
 
 /**
  * Creates a new custom smiley structure and populates it.
@@ -118,7 +120,7 @@ purple_smiley_set_shortcut(PurpleSmiley *smiley, const char *shortcut);
  * Changes the custom smiley's data.
  *
  * When the filename controling is made outside this API, the param
- * @keepfilename must be TRUE.
+ * #keepfilename must be TRUE.
  * Otherwise, the file and filename will be regenerated, and the
  * old one will be removed.
  *
@@ -204,7 +206,7 @@ char *purple_smiley_get_full_path(PurpleSmiley *smiley);
 
 
 /**************************************************************************/
-/** @name Custom Smiley Subsistem API                                     */
+/** @name Custom Smiley Subsystem API                                     */
 /**************************************************************************/
 /*@{*/
 
@@ -215,24 +217,6 @@ char *purple_smiley_get_full_path(PurpleSmiley *smiley);
  */
 GList *
 purple_smileys_get_all(void);
-
-/**
- * Adds the custom smiley to the library persistence.
- *
- * @param smiley   The custom smiley.
- *
- */
-void
-purple_smileys_add(PurpleSmiley *smiley);
-
-/**
- * Remove the custom smiley from persistence.
- *
- * @param smiley   The custom smiley.
- *
- */
-void
-purple_smileys_remove(PurpleSmiley *smiley);
 
 /**
  * Returns the custom smiley given it's shortcut.

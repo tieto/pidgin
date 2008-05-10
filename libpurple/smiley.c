@@ -31,19 +31,24 @@
 #include "smiley.h"
 #include "util.h"
 
-
 /**************************************************************************/
 /* Main structures, members and constants                                 */
 /**************************************************************************/
 
 struct _PurpleSmiley
 {
-        PurpleStoredImage *img;        /**< The id of the stored image with the
-                                        the smiley data.        */
-        char *shortcut;                /**< Shortcut associated with the custom
-                                        smiley. This field will work as a
-                                        unique key by this API. */
-        char *checksum;                /**< The smiley checksum.        */
+	GObject parent;
+	PurpleStoredImage *img;        /**< The id of the stored image with the
+	                                    the smiley data.        */
+	char *shortcut;                /**< Shortcut associated with the custom
+	                                    smiley. This field will work as a
+	                                    unique key by this API. */
+	char *checksum;                /**< The smiley checksum.        */
+};
+
+struct _PurpleSmileyClass
+{
+	GObjectClass parent_class;
 };
 
 static GHashTable *smiley_shortcut_index = NULL; /* shortcut (char *) => smiley (PurpleSmiley*) */
@@ -115,6 +120,11 @@ static void
 purple_smiley_set_data_impl(PurpleSmiley *smiley, guchar *smiley_data,
 		size_t smiley_data_len, const char *filename);
 
+static void
+purple_smiley_data_store(PurpleStoredImage *stored_img);
+
+static void
+purple_smiley_data_unstore(const char *filename);
 
 /*********************************************************************
  * Writing to disk                                                   *
@@ -264,17 +274,174 @@ purple_smileys_load()
 			PurpleSmiley *smiley;
 
 			smiley = parse_smiley(smiley_node);
-
-			purple_smileys_add(smiley);
 		}
 	}
 
 	xmlnode_free(root_node);
 }
 
+/*********************************************************************
+ * GObject Stuff                                                     *
+ *********************************************************************/
+enum
+{
+	PROP_0,
+	PROP_SHORTCUT,
+	PROP_IMGSTORE,
+};
+
+#define PROP_SHORTCUT_S "shortcut"
+#define PROP_IMGSTORE_S "image"
+
+enum
+{
+	SIG_DESTROY,
+	SIG_LAST
+};
+
+static guint signals[SIG_LAST];
+
+static void
+purple_smiley_init(GTypeInstance *instance, gpointer klass)
+{
+}
+
+static void
+purple_smiley_get_property(GObject *object, guint param_id, GValue *value,
+		GParamSpec *spec)
+{
+	PurpleSmiley *smiley = PURPLE_SMILEY(object);
+	switch (param_id) {
+		case PROP_SHORTCUT:
+			g_value_set_string(value, smiley->shortcut);
+			break;
+		case PROP_IMGSTORE:
+			g_value_set_pointer(value, smiley->img);
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, param_id, spec);
+			break;
+	}
+}
+
+static void
+purple_smiley_set_property(GObject *object, guint param_id, const GValue *value,
+		GParamSpec *spec)
+{
+	PurpleSmiley *smiley = PURPLE_SMILEY(object);
+	switch (param_id) {
+		case PROP_SHORTCUT:
+			{
+				const char *shortcut = g_value_get_string(value);
+				purple_smiley_set_shortcut(smiley, shortcut);
+			}
+			break;
+		case PROP_IMGSTORE:
+			{
+				PurpleStoredImage *img = g_value_get_pointer(value);
+
+				purple_imgstore_unref(smiley->img);
+				g_free(smiley->checksum);
+
+				smiley->img = img;
+				if (img) {
+					smiley->checksum = purple_util_get_image_checksum(
+							purple_imgstore_get_data(img),
+							purple_imgstore_get_size(img));
+					purple_smiley_data_store(img);
+				} else {
+					smiley->checksum = NULL;
+				}
+
+				g_object_notify(object, PROP_IMGSTORE_S);
+			}
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, param_id, spec);
+			break;
+	}
+}
+
+static void
+purple_smiley_finalize(GObject *obj)
+{
+	PurpleSmiley *smiley = PURPLE_SMILEY(obj);
+	g_signal_emit(obj, signals[SIG_DESTROY], 0);
+
+	if (g_hash_table_lookup(smiley_shortcut_index, smiley->shortcut)) {
+		g_hash_table_remove(smiley_shortcut_index, smiley->shortcut);
+		g_hash_table_remove(smiley_checksum_index, smiley->checksum);
+	}
+
+	g_free(smiley->shortcut);
+	g_free(smiley->checksum);
+	if (smiley->img)
+		purple_smiley_data_unstore(purple_imgstore_get_filename(smiley->img));
+	purple_imgstore_unref(smiley->img);
+
+	purple_smileys_save();
+}
+
+static void
+purple_smiley_class_init(PurpleSmileyClass *klass)
+{
+	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
+	GParamSpec *pspec;
+
+	gobj_class->get_property = purple_smiley_get_property;
+	gobj_class->set_property = purple_smiley_set_property;
+	gobj_class->finalize = purple_smiley_finalize;
+
+	/* Shortcut */
+	pspec = g_param_spec_string(PROP_SHORTCUT_S, _("Shortcut"),
+			_("The text-shortcut for the smiley"),
+			NULL,
+			G_PARAM_READWRITE);
+	g_object_class_install_property(gobj_class, PROP_SHORTCUT, pspec);
+
+	/* Stored Image */
+	pspec = g_param_spec_pointer(PROP_IMGSTORE_S, _("Stored Image"),
+			_("Stored Image. (that'll have to do for now)"),
+			G_PARAM_READWRITE);
+	g_object_class_install_property(gobj_class, PROP_IMGSTORE, pspec);
+
+	signals[SIG_DESTROY] = g_signal_new("destroy",
+			G_OBJECT_CLASS_TYPE(klass),
+			G_SIGNAL_RUN_LAST,
+			0, NULL, NULL,
+			g_cclosure_marshal_VOID__VOID,
+			G_TYPE_NONE, 0);
+}
+
+GType
+purple_smiley_get_type(void)
+{
+	static GType type = 0;
+
+	if(type == 0) {
+		static const GTypeInfo info = {
+			sizeof(PurpleSmileyClass),
+			NULL,
+			NULL,
+			(GClassInitFunc)purple_smiley_class_init,
+			NULL,
+			NULL,
+			sizeof(PurpleSmiley),
+			0,
+			purple_smiley_init,
+			NULL,
+		};
+
+		type = g_type_register_static(G_TYPE_OBJECT,
+				"PurpleSmiley",
+				&info, 0);
+	}
+
+	return type;
+}
 
 /*********************************************************************
- * Stuff                                                             *
+ * Other Stuff                                                             *
  *********************************************************************/
 
 static char *get_file_full_path(const char *filename)
@@ -437,7 +604,7 @@ static void
 purple_smiley_set_data_impl(PurpleSmiley *smiley, guchar *smiley_data,
 				size_t smiley_data_len, const char *filename)
 {
-	PurpleStoredImage *old_img;
+	PurpleStoredImage *old_img, *new_img;
 	const char *old_filename = NULL;
 	const char *new_filename = NULL;
 
@@ -446,23 +613,19 @@ purple_smiley_set_data_impl(PurpleSmiley *smiley, guchar *smiley_data,
 	g_return_if_fail(smiley_data_len > 0);
 
 	old_img = smiley->img;
-	smiley->img = NULL;
 
 	if (filename)
-		smiley->img = purple_imgstore_add(smiley_data,
-				smiley_data_len, filename);
+		new_img = purple_imgstore_add(smiley_data, smiley_data_len, filename);
 	else
-		smiley->img = purple_smiley_data_new(smiley_data, smiley_data_len);
+		new_img = purple_smiley_data_new(smiley_data, smiley_data_len);
 
-	g_free(smiley->checksum);
-	smiley->checksum = purple_util_get_image_checksum(
-			smiley_data, smiley_data_len);
-
-	if (!old_img)
-		return;
+	g_object_set(G_OBJECT(smiley), PROP_IMGSTORE_S, new_img, NULL);
 
 	/* If the old and new image files have different names we need
 	 * to unstore old image file. */
+	if (!old_img)
+		return;
+
 	old_filename = purple_imgstore_get_filename(old_img);
 	new_filename = purple_imgstore_get_filename(smiley->img);
 
@@ -482,25 +645,9 @@ purple_smiley_create(const char *shortcut)
 {
 	PurpleSmiley *smiley;
 
-	smiley = g_slice_new0(PurpleSmiley);
-	if (!smiley)
-		return NULL;
-
-	smiley->shortcut = g_strdup(shortcut);
+	smiley = PURPLE_SMILEY(g_object_new(PURPLE_TYPE_SMILEY, PROP_SHORTCUT_S, shortcut, NULL));
 
 	return smiley;
-}
-
-static void
-purple_smiley_destroy(PurpleSmiley *smiley)
-{
-	g_return_if_fail(smiley != NULL);
-
-	g_free(smiley->shortcut);
-	g_free(smiley->checksum);
-	purple_imgstore_unref(smiley->img);
-
-	g_slice_free(PurpleSmiley, smiley);
 }
 
 PurpleSmiley *
@@ -519,17 +666,12 @@ purple_smiley_new(PurpleStoredImage *img, const char *shortcut)
 	if (!smiley)
 		return NULL;
 
-	smiley->checksum = purple_util_get_image_checksum(
-				purple_imgstore_get_data(img),
-				purple_imgstore_get_size(img));
-
-	smiley->img = img;
-	purple_smiley_data_store(img);
+	g_object_set(G_OBJECT(smiley), PROP_IMGSTORE_S, img, NULL);
 
 	return smiley;
 }
 
-PurpleSmiley *
+static PurpleSmiley *
 purple_smiley_new_from_stream(const char *shortcut, guchar *smiley_data,
 			size_t smiley_data_len, const char *filename)
 {
@@ -580,11 +722,7 @@ purple_smiley_delete(PurpleSmiley *smiley)
 {
 	g_return_if_fail(smiley != NULL);
 
-	purple_smileys_remove(smiley);
-	if (smiley->img)
-		purple_smiley_data_unstore(purple_imgstore_get_filename(smiley->img));
-
-	purple_smiley_destroy(smiley);
+	g_object_unref(smiley);
 }
 
 gboolean
@@ -598,13 +736,16 @@ purple_smiley_set_shortcut(PurpleSmiley *smiley, const char *shortcut)
 		return FALSE;
 
 	/* Remove the old shortcut. */
-	g_hash_table_remove(smiley_shortcut_index, smiley->shortcut);
+	if (smiley->shortcut)
+		g_hash_table_remove(smiley_shortcut_index, smiley->shortcut);
 
 	/* Insert the new shortcut. */
 	g_hash_table_insert(smiley_shortcut_index, g_strdup(shortcut), smiley);
 
 	g_free(smiley->shortcut);
 	smiley->shortcut = g_strdup(shortcut);
+
+	g_object_notify(G_OBJECT(smiley), PROP_SHORTCUT_S);
 
 	purple_smileys_save();
 
@@ -708,32 +849,6 @@ purple_smileys_get_all(void)
 	g_hash_table_foreach(smiley_shortcut_index, add_smiley_to_list, &returninglist);
 
 	return returninglist;
-}
-
-void
-purple_smileys_add(PurpleSmiley *smiley)
-{
-	g_return_if_fail(smiley != NULL);
-
-	if (!g_hash_table_lookup(smiley_shortcut_index, smiley->shortcut)) {
-		g_hash_table_insert(smiley_shortcut_index, g_strdup(smiley->shortcut), smiley);
-		g_hash_table_insert(smiley_checksum_index, g_strdup(smiley->checksum), smiley);
-
-		purple_smileys_save();
-	}
-}
-
-void
-purple_smileys_remove(PurpleSmiley *smiley)
-{
-	g_return_if_fail(smiley != NULL);
-
-	if (g_hash_table_lookup(smiley_shortcut_index, smiley->shortcut)) {
-		g_hash_table_remove(smiley_shortcut_index, smiley->shortcut);
-		g_hash_table_remove(smiley_checksum_index, smiley->checksum);
-
-		purple_smileys_save();
-	}
 }
 
 PurpleSmiley *
