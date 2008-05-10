@@ -200,8 +200,6 @@ static void pidgin_connection_network_disconnected (void)
 {
 	GList *list, *l;
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
-	PurplePluginProtocolInfo *prpl_info = NULL;
-	PurpleConnection *gc = NULL;
 
 	if(gtkblist)
 		pidgin_status_box_set_network_available(PIDGIN_STATUS_BOX(gtkblist->statusbox), FALSE);
