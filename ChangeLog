@@ -11,13 +11,17 @@ version 2.x.x:
 	  (fixes a problem with litter in the channel user list).
 	* IRC no longer crashes on /list on servers which erroneously omit
 	  RPL_LISTSTART.
+	* Update the NetworkManager support to use D-Bus directly, instead of
+	  libnm-glib.  Hopefully it's stable now.  It will now compile by
+	  default if you have D-Bus support and NetworkManager.h. (Elliott
+	  Sales de Andrade)
 
 	Pidgin:
 	* The typing notification in the conversation history can be disabled or
 	  customized (font, color etc.) in .gtkrc-2.0.
-	* Added a plugin (not installed by default) which adds a Send button back
-	  to the conversation window. People without physical keyboards have a
-	  hard time with the lack of the button.
+	* Added a plugin (not installed by default) which adds a Send button
+	  back to the conversation window. People without physical keyboards
+	  have a hard time with the lack of the button.
 	* Clicking on the buddyicon in the conversation window toggles the
 	  size of the icon between small and large.
 	* The settings of a chat (e.g. Handle in an XMPP chat, or Exchange in
@@ -29,8 +33,8 @@ version 2.x.x:
 	* Add a preference to set Escape as the keyboard shortcut for closing
 	  the conversation window.
 	* Add an option in the context menu to disable smileys in the selected
-	  text in the conversation history/log viewer. This should help people who
-	  regularly paste code in conversations.
+	  text in the conversation history/log viewer. This should help people
+	  who regularly paste code in conversations.
 	* Add a preference to choose the minimum size of the text input area in
 	  lines.
 	* Moved the "Local alias" field in the Modify Account dialog to be below
