@@ -738,8 +738,8 @@ purple_network_init(void)
 		                                     NM_DBUS_SERVICE,
 		                                     NM_DBUS_PATH,
 		                                     NM_DBUS_INTERFACE);
-		dbus_g_proxy_add_signal(nm_proxy, NM_DBUS_SIGNAL_STATE_CHANGE, G_TYPE_UINT, G_TYPE_INVALID);
-		dbus_g_proxy_connect_signal(nm_proxy, NM_DBUS_SIGNAL_STATE_CHANGE,
+		dbus_g_proxy_add_signal(nm_proxy, "StateChange", G_TYPE_UINT, G_TYPE_INVALID);
+		dbus_g_proxy_connect_signal(nm_proxy, "StateChange",
 		                            G_CALLBACK(nm_state_change_cb), NULL, NULL);
 
 		dbus_proxy = dbus_g_proxy_new_for_name(nm_conn,
@@ -764,7 +764,7 @@ purple_network_uninit(void)
 {
 #ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
 	if (nm_proxy) {
-		dbus_g_proxy_disconnect_signal(nm_proxy, NM_DBUS_SIGNAL_STATE_CHANGE, G_CALLBACK(nm_state_change_cb), NULL);
+		dbus_g_proxy_disconnect_signal(nm_proxy, "StateChange", G_CALLBACK(nm_state_change_cb), NULL);
 		g_object_unref(G_OBJECT(nm_proxy));
 	}
 	if (dbus_proxy) {
