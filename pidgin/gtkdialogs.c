@@ -102,6 +102,7 @@ static const struct developer patch_writers[] = {
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
 	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
 	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
+	{"Jorge 'Masca' Villaseñor", 	NULL, 	NULL},
 	{NULL, NULL, NULL}
 };
 
