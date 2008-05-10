@@ -594,17 +594,22 @@ gboolean
 purple_network_is_available(void)
 {
 #ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
-	/* Try NetworkManager first, maybe we'll get lucky */
-	if (nm_get_network_state() != NM_STATE_CONNECTED)
-	{
-		purple_debug_warning("network", "NetworkManager not active or reports no connection\n");
+	NMState state = nm_get_network_state();
+	if (state == NM_STATE_UNKNOWN)
+ 	{
+		purple_debug_warning("network", "NetworkManager not active. Assuming connection exists.\n");
+ 		return TRUE;
+	}
+	else if (state == NM_STATE_CONNECTED)
 		return TRUE;
-	} else
-		return TRUE;
+
+	return FALSE;
+
 #elif defined _WIN32
 	return (current_network_count > 0);
-#endif
+#else
 	return TRUE;
+#endif
 }
 
 #ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
