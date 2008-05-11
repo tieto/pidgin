@@ -59,9 +59,9 @@
 #  define HX_SIZE_OF_IFREQ(a) sizeof(a)
 #endif
 
-#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
+#ifdef HAVE_NETWORKMANAGER
 #include <dbus/dbus-glib.h>
-#include <NetworkManager/NetworkManager.h>
+#include <NetworkManager.h>
 
 static DBusGConnection *nm_conn = NULL;
 static DBusGProxy *nm_proxy = NULL;
@@ -81,7 +81,7 @@ struct _PurpleNetworkListenData {
 	UPnPMappingAddRemove *mapping_data;
 };
 
-#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
+#ifdef HAVE_NETWORKMANAGER
 static NMState nm_get_network_state(void);
 #endif
 
@@ -593,7 +593,7 @@ static gpointer wpurple_network_change_thread(gpointer data)
 gboolean
 purple_network_is_available(void)
 {
-#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
+#ifdef HAVE_NETWORKMANAGER
 	NMState state = nm_get_network_state();
 	if (state == NM_STATE_UNKNOWN)
 	{
@@ -612,7 +612,7 @@ purple_network_is_available(void)
 #endif
 }
 
-#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
+#ifdef HAVE_NETWORKMANAGER
 static void
 nm_update_state(NMState state)
 {
@@ -700,7 +700,7 @@ purple_network_get_handle(void)
 void
 purple_network_init(void)
 {
-#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
+#ifdef HAVE_NETWORKMANAGER
 	GError *error = NULL;
 #endif
 #ifdef _WIN32
@@ -729,7 +729,7 @@ purple_network_init(void)
 	if(purple_prefs_get_bool("/purple/network/map_ports") || purple_prefs_get_bool("/purple/network/auto_ip"))
 		purple_upnp_discover(NULL, NULL);
 
-#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
+#ifdef HAVE_NETWORKMANAGER
 	nm_conn = dbus_g_bus_get(DBUS_BUS_SYSTEM, &error);
 	if (!nm_conn) {
 		purple_debug_warning("network", "Error connecting to DBus System service: %s.\n", error->message);
@@ -762,7 +762,7 @@ purple_network_init(void)
 void
 purple_network_uninit(void)
 {
-#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
+#ifdef HAVE_NETWORKMANAGER
 	if (nm_proxy) {
 		dbus_g_proxy_disconnect_signal(nm_proxy, "StateChange", G_CALLBACK(nm_state_change_cb), NULL);
 		g_object_unref(G_OBJECT(nm_proxy));

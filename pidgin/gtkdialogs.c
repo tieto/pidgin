@@ -629,7 +629,7 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 #endif
 
 #ifndef _WIN32
-#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
+#ifdef HAVE_NETWORKMANAGER
 	g_string_append(str, "    <b>NetworkManager:</b> Enabled<br/>");
 #else
 	g_string_append(str, "    <b>NetworkManager:</b> Disabled<br/>");
