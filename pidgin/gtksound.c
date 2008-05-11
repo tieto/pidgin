@@ -538,7 +538,7 @@ pidgin_sound_play_file(const char *filename)
 	gst_object_unref(bus);
 	g_free(uri);
 
-#else /* USE_GSTREAMER */
+#else /* #ifdef USE_GSTREAMER */
 
 #ifndef _WIN32
 	gdk_beep();
