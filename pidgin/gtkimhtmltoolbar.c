@@ -769,6 +769,8 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	GSList *smileys, *unique_smileys = NULL;
 	const GSList *custom_smileys = NULL;
 	gboolean supports_custom = FALSE;
+	GtkRequisition req;
+	GtkWidget *scrolled, *viewport;
 
 	if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smiley))) {
 		destroy_smiley_dialog(toolbar);
@@ -803,7 +805,6 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	}
 
 	dialog = pidgin_create_dialog(_("Smile!"), 0, "smiley_dialog", FALSE);
-
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
 
 	if (unique_smileys != NULL) {
@@ -859,18 +860,41 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		g_signal_connect(G_OBJECT(dialog), "button-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
 	}
 
-	g_signal_connect(G_OBJECT(dialog), "key-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
-	gtk_container_add(GTK_CONTAINER(pidgin_dialog_get_vbox(GTK_DIALOG(dialog))), smiley_table);
+	scrolled = gtk_scrolled_window_new (NULL, NULL);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW (scrolled), GTK_SHADOW_NONE);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled),
+			GTK_POLICY_NEVER, GTK_POLICY_NEVER);
+	gtk_container_add(GTK_CONTAINER(pidgin_dialog_get_vbox(GTK_DIALOG(dialog))), scrolled);
+	gtk_widget_show(scrolled);
 
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled), smiley_table);
 	gtk_widget_show(smiley_table);
+
+	viewport = gtk_widget_get_parent(smiley_table);
+	gtk_viewport_set_shadow_type(GTK_VIEWPORT(viewport), GTK_SHADOW_NONE);
 
 	/* connect signals */
 	g_signal_connect_swapped(G_OBJECT(dialog), "destroy", G_CALLBACK(close_smiley_dialog), toolbar);
+	g_signal_connect(G_OBJECT(dialog), "key-press-event", G_CALLBACK(smiley_dialog_input_cb), toolbar);
+
+	gtk_window_set_transient_for(GTK_WINDOW(dialog),
+			GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(toolbar))));
 
 	/* show everything */
 	gtk_widget_show_all(dialog);
-	gtk_window_set_transient_for(GTK_WINDOW(dialog),
-			GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(toolbar))));
+
+	gtk_widget_size_request(viewport, &req);
+	gtk_widget_set_size_request(scrolled, req.width, req.height);
+
+	/* The window has to be made resizable, and the scrollbars in the scrolled window
+	 * enabled only after setting the desired size of the window. If we do either of
+	 * these tasks before now, GTK+ miscalculates the required size, and erronously
+	 * makes one or both scrollbars visible (sometimes).
+	 * I too think this hack is gross. But I couldn't find a better way -- sadrul */
+	gtk_window_set_resizable(GTK_WINDOW(dialog), TRUE);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled),
+			GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
 #ifdef _WIN32
 	winpidgin_ensure_onscreen(dialog);
 #endif
