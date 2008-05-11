@@ -53,6 +53,7 @@ version 2.x.x:
 
 	Finch:
 	* New default binding ctrl+x to open context menus.
+	* Menu triggers and other bindings will no longer conflict.
 
 version 2.4.1 (03/31/2008):
 	http://developer.pidgin.im/query?status=closed&milestone=2.4.1
