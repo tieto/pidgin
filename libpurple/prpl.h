@@ -177,6 +177,7 @@ typedef enum
 	/**
 	 * Indicates that slash commands are native to this protocol.
 	 * Used as a hint that unknown commands should not be sent as messages.
+	 * @since 2.1.0
 	 */
 	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400,
 
