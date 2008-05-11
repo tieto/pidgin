@@ -5344,6 +5344,24 @@ static void gtk_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data
 	smiley->loader = NULL;
 }
 
+static void
+gtk_custom_smiley_size_prepared(GdkPixbufLoader *loader, gint width, gint height, gpointer data)
+{
+#define CUSTOM_SMILEY_SIZE 96	/* XXX: Should this be a theme setting? */
+	if (width <= CUSTOM_SMILEY_SIZE && height <= CUSTOM_SMILEY_SIZE)
+		return;
+
+	if (width >= height) {
+		height = height * CUSTOM_SMILEY_SIZE / width;
+		width = CUSTOM_SMILEY_SIZE;
+	} else {
+		width = width * CUSTOM_SMILEY_SIZE / height;
+		height = CUSTOM_SMILEY_SIZE;
+	}
+
+	gdk_pixbuf_loader_set_size(loader, width, height);
+}
+
 void
 gtk_imhtml_smiley_reload(GtkIMHtmlSmiley *smiley)
 {
@@ -5366,6 +5384,7 @@ gtk_imhtml_smiley_reload(GtkIMHtmlSmiley *smiley)
 
 	g_signal_connect(smiley->loader, "area_prepared", G_CALLBACK(gtk_custom_smiley_allocated), smiley);
 	g_signal_connect(smiley->loader, "closed", G_CALLBACK(gtk_custom_smiley_closed), smiley);
+	g_signal_connect(smiley->loader, "size_prepared", G_CALLBACK(gtk_custom_smiley_size_prepared), smiley);
 }
 
 GtkIMHtmlSmiley *gtk_imhtml_smiley_create(const char *file, const char *shortcut, gboolean hide,
