@@ -238,8 +238,7 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 
 		purple_debug_info("gtksmiley", "adding a new smiley\n");
 		emoticon = purple_smiley_new_from_file(entry, s->filename);
-		if (gtk_smileys != NULL)
-			pidgin_smiley_add_to_list(emoticon);
+		pidgin_smiley_add_to_list(emoticon);
 	}
 
 	if (smiley_manager != NULL)
@@ -278,6 +277,7 @@ static void do_add_file_cb(const char *filename, gpointer data)
 	gtk_image_set_from_pixbuf(GTK_IMAGE(s->smiley_image), pixbuf);
 	if (pixbuf)
 		gdk_pixbuf_unref(pixbuf);
+	gtk_widget_grab_focus(s->smile);
 }
 
 static void
@@ -618,7 +618,9 @@ void pidgin_smiley_manager_show(void)
 			NULL);
 
 	gtk_window_set_default_size(GTK_WINDOW(win), 50, 400);
+	gtk_window_set_role(GTK_WINDOW(win), "custom_smiley_manager");
 	gtk_container_set_border_width(GTK_CONTAINER(win),PIDGIN_HIG_BORDER);
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(win), GTK_RESPONSE_NO, FALSE);
 
 	g_signal_connect(win, "response", G_CALLBACK(smiley_manager_select_cb),
 			dialog);
