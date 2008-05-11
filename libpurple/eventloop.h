@@ -141,6 +141,7 @@ struct _PurpleEventLoopUiOps
 	 * #timeout_add.
 	 *
 	 * @see purple_timeout_add_seconds()
+	 * @since 2.1.0
 	 **/
 	guint (*timeout_add_seconds)(guint interval, GSourceFunc function,
 	                             gpointer data);
