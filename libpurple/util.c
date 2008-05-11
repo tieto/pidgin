@@ -831,9 +831,6 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 				tzoff = tzhrs*60*60 + tzmins*60;
 				if (offset_positive)
 					tzoff *= -1;
-				/* We don't want the C library doing DST calculations
-				 * if we know the UTC offset already. */
-				t.tm_isdst = 0;
 			}
 			else if (utc)
 			{
@@ -895,14 +892,11 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 		}
 	}
 
-	if (tm != NULL)
-	{
-		*tm = t;
-		tm->tm_isdst = -1;
-		mktime(tm);
-	}
-
 	retval = mktime(&t);
+
+	if (tm != NULL)
+		*tm = t;
+
 	if (tzoff != PURPLE_NO_TZ_OFF)
 		retval += tzoff;
 
