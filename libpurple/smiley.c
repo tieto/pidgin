@@ -300,6 +300,7 @@ enum
 };
 
 static guint signals[SIG_LAST];
+static GObjectClass *parent_class;
 
 static void
 purple_smiley_init(GTypeInstance *instance, gpointer klass)
@@ -366,7 +367,6 @@ static void
 purple_smiley_finalize(GObject *obj)
 {
 	PurpleSmiley *smiley = PURPLE_SMILEY(obj);
-	g_signal_emit(obj, signals[SIG_DESTROY], 0);
 
 	if (g_hash_table_lookup(smiley_shortcut_index, smiley->shortcut)) {
 		g_hash_table_remove(smiley_shortcut_index, smiley->shortcut);
@@ -383,14 +383,24 @@ purple_smiley_finalize(GObject *obj)
 }
 
 static void
+purple_smiley_dispose(GObject *gobj)
+{
+	g_signal_emit(gobj, signals[SIG_DESTROY], 0);
+	parent_class->dispose(gobj);
+}
+
+static void
 purple_smiley_class_init(PurpleSmileyClass *klass)
 {
 	GObjectClass *gobj_class = G_OBJECT_CLASS(klass);
 	GParamSpec *pspec;
 
+	parent_class = g_type_class_peek_parent(klass);
+
 	gobj_class->get_property = purple_smiley_get_property;
 	gobj_class->set_property = purple_smiley_set_property;
 	gobj_class->finalize = purple_smiley_finalize;
+	gobj_class->dispose = purple_smiley_dispose;
 
 	/* Shortcut */
 	pspec = g_param_spec_string(PROP_SHORTCUT_S, _("Shortcut"),
