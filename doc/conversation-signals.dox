@@ -27,6 +27,7 @@
   @signal chat-invited-user
   @signal chat-invited
   @signal chat-joined
+  @signal chat-join-failed
   @signal chat-left
   @signal chat-topic-changed
   @signal conversation-extended-menu
@@ -300,6 +301,18 @@ void (*chat_buddy_joined)(PurpleConversation *conv, const char *name,
   @param name The name of the user that has joined the conversation.
   @param flags The flags of the user that has joined the conversation.
   @param new_arrival If the buddy is a new arrival.
+ @endsignaldef
+
+ @signaldef chat-join-failed
+  @signalproto
+void (*chat_join_failed)(PurpleConnection *gc, GHashTable *components);
+  @endsignalproto
+  @signaldesc
+   Emitted when an account fails to join a chat room
+  @param gc The PurpleConnection of the account which failed to join the chat.
+  @param data    The components passed to serv_join_chat() originally.
+                 The hash function should be g_str_hash() and the equal
+                 function should be g_str_equal().
  @endsignaldef
 
  @signaldef chat-buddy-flags
