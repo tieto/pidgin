@@ -409,7 +409,7 @@ struct _FlapConnection
 
 	int fd;
 	guint8 header[6];
-	ssize_t header_received;
+	gssize header_received;
 	FlapFrame buffer_incoming;
 	PurpleCircBuffer *buffer_outgoing;
 	guint watcher_incoming;
