@@ -103,7 +103,7 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "url_clicked",
 					 G_CALLBACK(url_clicked_cb), NULL);
 
-	pidgin_themes_smiley_themeize(imhtml);
+	pidgin_themes_smiley_themeize_custom(imhtml);
 
 	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
 
@@ -3467,5 +3467,19 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 #endif
 	return FALSE;
 #endif
+}
+
+GdkPixbuf * pidgin_pixbuf_from_imgstore(PurpleStoredImage *image)
+{
+	GdkPixbuf *pixbuf;
+	GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+	gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(image),
+			purple_imgstore_get_size(image), NULL);
+	gdk_pixbuf_loader_close(loader, NULL);
+	pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+	if (pixbuf)
+		g_object_ref(pixbuf);
+	g_object_unref(loader);
+	return pixbuf;
 }
 

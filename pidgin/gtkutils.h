@@ -689,7 +689,7 @@ typedef void (*PidginUtilMiniDialogCallback)(gpointer user_data, GtkButton *);
  */
 GtkWidget *pidgin_make_mini_dialog(PurpleConnection *handle,
 	const char* stock_id, const char *primary, const char *secondary,
-	void *user_data, ...);
+	void *user_data, ...) G_GNUC_NULL_TERMINATED;
 
 /**
  * This is a callback function to be used for Ctrl+F searching in treeviews.
@@ -808,6 +808,16 @@ gboolean pidgin_auto_parent_window(GtkWidget *window);
  * @since 2.4.0
  */
 GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *sg, GtkWidget *widget, gboolean expand, GtkWidget **p_label);
+
+/**
+ * Create a GdkPixbuf from a PurpleStoredImage.
+ *
+ * @param  image   A PurpleStoredImage.
+ *
+ * @return   A GdkPixbuf created from the stored image.
+ * @since 2.5.0
+ */
+GdkPixbuf * pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
 
 #endif /* _PIDGINUTILS_H_ */
 

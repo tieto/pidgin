@@ -43,6 +43,7 @@
 #include "proxy.h"
 #include "savedstatuses.h"
 #include "signals.h"
+#include "smiley.h"
 #include "sound.h"
 #include "sslconn.h"
 #include "status.h"
@@ -164,6 +165,7 @@ purple_core_init(const char *ui)
 	purple_stun_init();
 	purple_xfers_init();
 	purple_idle_init();
+	purple_smileys_init();
 
 	/*
 	 * Call this early on to try to auto-detect our IP address and
@@ -192,6 +194,7 @@ purple_core_quit(void)
 	purple_connections_disconnect_all();
 
 	/* Save .xml files, remove signals, etc. */
+	purple_smileys_uninit();
 	purple_idle_uninit();
 	purple_ssl_uninit();
 	purple_pounces_uninit();

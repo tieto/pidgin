@@ -33,6 +33,7 @@
 #include "pluginpref.h"
 #include "prefs.h"
 #include "session.h"
+#include "smiley.h"
 #include "state.h"
 #include "util.h"
 #include "cmds.h"
@@ -83,6 +84,12 @@ typedef struct
 	time_t when;
 } MsnIMData;
 
+typedef struct
+{
+	char *smile;
+	MsnObject *obj;
+} MsnEmoticon;
+
 static const char *
 msn_normalize(const PurpleAccount *account, const char *str)
 {
@@ -116,6 +123,7 @@ msn_send_attention(PurpleConnection *gc, const char *username, guint type)
 		return FALSE;
 
 	msn_switchboard_send_msg(swboard, msg, TRUE);
+	msn_message_destroy(msg);
 
 	return TRUE;
 }
@@ -766,7 +774,8 @@ msn_login(PurpleAccount *account)
 	session = msn_session_new(account);
 
 	gc->proto_data = session;
-	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_FORMATTING_WBFO | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_FONTSIZE | PURPLE_CONNECTION_NO_URLDESC;
+	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_FORMATTING_WBFO | PURPLE_CONNECTION_NO_BGCOLOR |
+		PURPLE_CONNECTION_NO_FONTSIZE | PURPLE_CONNECTION_NO_URLDESC | PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY;
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_START);
 
@@ -807,6 +816,97 @@ msn_send_me_im(gpointer data)
 	return FALSE;
 }
 
+static GString*
+msn_msg_emoticon_add(GString *current, MsnEmoticon *emoticon)
+{
+	MsnObject *obj;
+	char *strobj;
+
+	if (emoticon == NULL)
+		return current;
+
+	obj = emoticon->obj;
+
+	if (!obj)
+		return current;
+
+	strobj = msn_object_to_string(obj);
+
+	if (current)
+		g_string_append_printf(current, "\t%s\t%s",
+				emoticon->smile, strobj);
+	else {
+		current = g_string_new("");
+		g_string_printf(current,"%s\t%s",
+					emoticon->smile, strobj);
+	}
+
+	g_free(strobj);
+
+	return current;
+}
+
+static void
+msn_send_emoticons(MsnSwitchBoard *swboard, GString *body)
+{
+	MsnMessage *msg;
+
+	g_return_if_fail(body != NULL);
+
+	msg = msn_message_new(MSN_MSG_SLP);
+	msn_message_set_content_type(msg, "text/x-mms-emoticon");
+	msn_message_set_flag(msg, 'N');
+	msn_message_set_bin_data(msg, body->str, body->len);
+
+	msn_switchboard_send_msg(swboard, msg, TRUE);
+	msn_message_destroy(msg);
+}
+
+static void msn_emoticon_destroy(MsnEmoticon *emoticon)
+{
+	if (emoticon->obj)
+		msn_object_destroy(emoticon->obj);
+	g_free(emoticon->smile);
+	g_free(emoticon);
+}
+
+static GSList* msn_msg_grab_emoticons(const char *msg, const char *username)
+{
+	GSList *list;
+	GList *smileys;
+	PurpleSmiley *smiley;
+	PurpleStoredImage *img;
+	char *ptr;
+	MsnEmoticon *emoticon;
+	int length;
+
+	list = NULL;
+	smileys = purple_smileys_get_all();
+	length = strlen(msg);
+
+	for (; smileys; smileys = g_list_delete_link(smileys, smileys)) {
+		smiley = (PurpleSmiley*)smileys->data;
+
+		ptr = g_strstr_len(msg, length, purple_smiley_get_shortcut(smiley));
+
+		if (!ptr)
+			continue;
+
+		img = purple_smiley_get_stored_image(smiley);
+
+		emoticon = g_new0(MsnEmoticon, 1);
+		emoticon->smile = g_strdup(purple_smiley_get_shortcut(smiley));
+		emoticon->obj = msn_object_new_from_image(img,
+				purple_imgstore_get_filename(img),
+				username, MSN_OBJECT_EMOTICON);
+
+		purple_imgstore_unref(img);
+		list = g_slist_prepend(list, emoticon);
+	}
+
+	return list;
+}
+
 static int
 msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			PurpleMessageFlags flags)
@@ -816,8 +916,10 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	MsnMessage *msg;
 	char *msgformat;
 	char *msgtext;
+	const char *username;
 
 	account = purple_connection_get_account(gc);
+	username = purple_account_get_username(account);
 
 	if (buddy) {
 		PurplePresence *p = purple_buddy_get_presence(buddy);
@@ -845,13 +947,29 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	g_free(msgformat);
 	g_free(msgtext);
 
-	if (g_ascii_strcasecmp(who, purple_account_get_username(account)))
+	if (g_ascii_strcasecmp(who, username))
 	{
 		MsnSession *session;
 		MsnSwitchBoard *swboard;
+		MsnEmoticon *smile;
+		GSList *smileys;
+		GString *emoticons = NULL;
 
 		session = gc->proto_data;
 		swboard = msn_session_get_swboard(session, who, MSN_SB_FLAG_IM);
+		smileys = msn_msg_grab_emoticons(message, username);
+
+		while (smileys) {
+			smile = (MsnEmoticon*)smileys->data;
+			emoticons = msn_msg_emoticon_add(emoticons,smile);
+			msn_emoticon_destroy(smile);
+			smileys = g_slist_delete_link(smileys, smileys);
+		}
+
+		if (emoticons) {
+			msn_send_emoticons(swboard, emoticons);
+			g_string_free(emoticons, TRUE);
+		}
 
 		msn_switchboard_send_msg(swboard, msg, TRUE);
 	}
