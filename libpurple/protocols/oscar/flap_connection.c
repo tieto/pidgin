@@ -159,7 +159,7 @@ static gboolean flap_connection_send_queued(gpointer data)
  *        of this SNAC.  For empty SNACs this should be NULL.
  */
 void
-flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data)
+flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, const guint16 subtype, guint16 flags, aim_snacid_t snacid, ByteStream *data)
 {
 	FlapFrame *frame;
 	guint32 length;
