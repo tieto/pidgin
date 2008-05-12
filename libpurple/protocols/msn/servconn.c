@@ -323,10 +323,10 @@ servconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 	purple_circ_buffer_mark_read(servconn->tx_buf, ret);
 }
 
-ssize_t
+gssize
 msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 {
-	ssize_t ret = 0;
+	gssize ret = 0;
 
 	g_return_val_if_fail(servconn != NULL, 0);
 
