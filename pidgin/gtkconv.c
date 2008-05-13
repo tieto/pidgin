@@ -2875,7 +2875,7 @@ icon_menu(GtkObject *obj, GdkEventButton *e, PidginConversation *gtkconv)
 	if (buddy)
 	{
 		PurpleContact *contact = purple_buddy_get_contact(buddy);
-		if (contact && purple_buddy_icons_has_custom_icon(contact))
+		if (contact && purple_buddy_icons_node_has_custom_icon(contact))
 		{
 			pidgin_new_item_from_stock(menu, _("Remove Custom Icon"), NULL,
 			                           G_CALLBACK(remove_custom_icon_cb), gtkconv,
@@ -6912,7 +6912,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	{
 		PurpleContact *contact = purple_buddy_get_contact(buddy);
 		if (contact) {
-			custom_img = purple_buddy_icons_find_custom_icon(contact);
+			custom_img = purple_buddy_icons_node_find_custom_icon(contact);
 			if (custom_img) {
 				/* There is a custom icon for this user */
 				data = purple_imgstore_get_data(custom_img);

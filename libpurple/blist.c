@@ -1206,7 +1206,7 @@ purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon)
 
 	purple_signal_emit(purple_blist_get_handle(), "buddy-icon-changed", buddy);
 
-	purple_blist_update_buddy_icon(buddy);
+	purple_blist_update_node_icon((PurpleBlistNode*)buddy);
 }
 
 PurpleAccount *

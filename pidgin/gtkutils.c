@@ -2895,7 +2895,7 @@ void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const
 			return;
 	}
 
-	purple_buddy_icons_set_custom_icon(contact, data, len);
+	purple_buddy_icons_node_set_custom_icon(contact, data, len);
 }
 
 char *pidgin_make_pretty_arrows(const char *str)
