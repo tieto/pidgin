@@ -151,6 +151,7 @@ Purple::Ssl::Ops				T_PurpleObj
 
 Purple::Presence				T_PurpleObj
 Purple::PresenceContext			T_IV
+Purple::Smiley				T_PurpleObj
 Purple::Status				T_PurpleObj
 Purple::StatusAttr			T_PurpleObj
 Purple::StatusPrimitive			T_IV
