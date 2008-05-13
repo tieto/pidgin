@@ -14,7 +14,8 @@ struct utsname
   char machine[20];
 };
 
-int uname (struct utsname *);
+int jabber_win32_uname (struct utsname *);
+#define uname(utsname) jabber_win32_uname(utsname)
 
 #ifdef __cplusplus
 }

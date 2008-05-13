@@ -430,7 +430,7 @@ peer_odc_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 	PeerConnection *conn;
 	OdcFrame *frame;
 	ByteStream *bs;
-	ssize_t read;
+	gssize read;
 
 	conn = data;
 	frame = conn->frame;

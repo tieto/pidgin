@@ -409,7 +409,7 @@ struct _FlapConnection
 
 	int fd;
 	guint8 header[6];
-	ssize_t header_received;
+	gssize header_received;
 	FlapFrame buffer_incoming;
 	PurpleCircBuffer *buffer_outgoing;
 	guint watcher_incoming;
@@ -1389,8 +1389,8 @@ typedef struct aim_tlv_s
 /* TLV handling functions */
 char *aim_tlv_getvalue_as_string(aim_tlv_t *tlv);
 
-aim_tlv_t *aim_tlv_gettlv(GSList *list, guint16 type, const int nth);
-int aim_tlv_getlength(GSList *list, guint16 type, const int nth);
+aim_tlv_t *aim_tlv_gettlv(GSList *list, const guint16 type, const int nth);
+int aim_tlv_getlength(GSList *list, const guint16 type, const int nth);
 char *aim_tlv_getstr(GSList *list, const guint16 type, const int nth);
 guint8 aim_tlv_get8(GSList *list, const guint16 type, const int nth);
 guint16 aim_tlv_get16(GSList *list, const guint16 type, const int nth);

@@ -84,6 +84,21 @@ jabber_si_xfer_find(JabberStream *js, const char *sid, const char *from)
 	return NULL;
 }
 
+static void
+jabber_si_free_streamhost(gpointer data, gpointer user_data)
+{
+	JabberBytestreamsStreamhost *sh = data;
+
+	if(!data)
+		return;
+
+	g_free(sh->jid);
+	g_free(sh->host);
+	g_free(sh->zeroconf);
+	g_free(sh);
+}
+
+
 
 static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer);
 
@@ -110,10 +125,7 @@ jabber_si_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_
 				streamhost->jid, streamhost->host,
 				error_message ? error_message : "(null)");
 		jsx->streamhosts = g_list_remove(jsx->streamhosts, streamhost);
-		g_free(streamhost->jid);
-		g_free(streamhost->host);
-		g_free(streamhost->zeroconf);
-		g_free(streamhost);
+		jabber_si_free_streamhost(streamhost, NULL);
 		jabber_si_bytestreams_attempt_connect(xfer);
 		return;
 	}
@@ -245,10 +257,7 @@ static void jabber_si_bytestreams_attempt_connect(PurpleXfer *xfer)
 	if (jsx->connect_data == NULL)
 	{
 		jsx->streamhosts = g_list_remove(jsx->streamhosts, streamhost);
-		g_free(streamhost->jid);
-		g_free(streamhost->host);
-		g_free(streamhost->zeroconf);
-		g_free(streamhost);
+		jabber_si_free_streamhost(streamhost, NULL);
 		jabber_si_bytestreams_attempt_connect(xfer);
 	}
 }
@@ -299,6 +308,7 @@ void jabber_bytestreams_parse(JabberStream *js, xmlnode *packet)
 			sh->host = g_strdup(host);
 			sh->port = portnum;
 			sh->zeroconf = g_strdup(zeroconf);
+			/* If there were a lot of these, it'd be worthwhile to prepend and reverse. */
 			jsx->streamhosts = g_list_append(jsx->streamhosts, sh);
 		}
 	}
@@ -593,21 +603,6 @@ jabber_si_compare_jid(gconstpointer a, gconstpointer b)
 	return strcmp(sh->jid, (char *)b);
 }
 
-
-static void
-jabber_si_free_streamhost(gpointer data, gpointer user_data)
-{
-	JabberBytestreamsStreamhost *sh = data;
-
-	if(!data)
-		return;
-
-	g_free(sh->jid);
-	g_free(sh->host);
-	g_free(sh->zeroconf);
-	g_free(sh);
-}
-
 static void
 jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 		PurpleInputCondition cond)
@@ -826,7 +821,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		sh2 = g_new0(JabberBytestreamsStreamhost, 1);
 		sh2->jid = g_strdup(sh->jid);
 		sh2->host = g_strdup(sh->host);
-		sh2->zeroconf = g_strdup(sh->zeroconf);
+		/*sh2->zeroconf = g_strdup(sh->zeroconf);*/
 		sh2->port = sh->port;
 
 		jsx->streamhosts = g_list_prepend(jsx->streamhosts, sh2);
