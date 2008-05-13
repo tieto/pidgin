@@ -43,7 +43,7 @@ static void historize(PurpleConversation *c)
 	char *header;
 	char *protocol;
 	char *escaped_alias;
-	char *header_date;
+	const char *header_date;
 
 	convtype = purple_conversation_get_type(c);
 	gtkconv = PIDGIN_CONVERSATION(c);
