@@ -2449,6 +2449,18 @@ const char *msim_normalize(const PurpleAccount *account, const char *str) {
 	return normalized;
 }
 
+static GHashTable *
+msim_get_account_text_table(PurpleAccount *unused)
+{
+	GHashTable *table;
+
+	table = g_hash_table_new(g_str_hash, g_str_equal);
+
+	g_hash_table_insert(table, "login_label", (gpointer)_("E-mail Address..."));
+
+	return table;
+}
+
 /** Return whether the buddy can be messaged while offline.
  *
  * The protocol supports offline messages in just the same way as online
@@ -3131,14 +3143,16 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,                  /* unregister_user */
 	msim_send_attention,   /* send_attention */
 	msim_attention_types,  /* attention_types */
-	NULL                /* _purple_reserved4 */
+
+	sizeof(PurplePluginProtocolInfo),  /* struct_size */
+	msim_get_account_text_table,              /* get_account_text_table */
 };
 
 
 
 /** Based on MSN's plugin info comments. */
 static PurplePluginInfo info = {
-	PURPLE_PLUGIN_MAGIC,                                
+	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
 	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */

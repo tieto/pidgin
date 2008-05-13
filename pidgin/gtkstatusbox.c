@@ -1131,7 +1131,7 @@ static gboolean imhtml_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkI
 
 static gboolean imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStatusBox *status_box)
 {
-	if (event->keyval == GDK_Tab || event->keyval == GDK_KP_Tab)
+	if (event->keyval == GDK_Tab || event->keyval == GDK_KP_Tab || event->keyval == GDK_ISO_Left_Tab)
 	{
 		/* If last inserted character is a tab, then remove the focus from here */
 		GtkWidget *top = gtk_widget_get_toplevel(w);
@@ -1458,7 +1458,7 @@ toggle_key_press_cb(GtkWidget *widget, GdkEventKey *event, PidginStatusBox *box)
 			}
 			return TRUE;
 		default:
-			return TRUE;
+			return FALSE;
 	}
 }
 

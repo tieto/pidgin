@@ -1095,7 +1095,7 @@ gboolean purple_email_is_valid(const char *address);
 /**
  * Checks if the given IP address is a syntactically valid IPv4 address.
  *
- * @param address The IP address to validate.
+ * @param ip The IP address to validate.
  *
  * @return True if the IP address is syntactically correct.
  */

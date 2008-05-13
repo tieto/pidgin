@@ -905,6 +905,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL
 };
 

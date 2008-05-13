@@ -1822,7 +1822,9 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		else
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
 	} else {
-		if (buddy_is_away)
+		if (type & AIM_ICQ_STATE_INVISIBLE)
+			status_id = OSCAR_STATUS_ID_INVISIBLE;
+		else if (buddy_is_away)
 			status_id = OSCAR_STATUS_ID_AWAY;
 		else
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
@@ -4546,7 +4548,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	{
 		/* Do nothing! */
 	}
-	else if (primitive == PURPLE_STATUS_AVAILABLE)
+	else if (primitive == PURPLE_STATUS_AVAILABLE || primitive == PURPLE_STATUS_INVISIBLE)
 	{
 		const char *status_html, *itmsurl;
 		char *status_text = NULL;

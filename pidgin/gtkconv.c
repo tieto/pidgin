@@ -150,7 +150,6 @@ static void generate_send_to_items(PidginWindow *win);
 static gboolean infopane_entry_activate(PidginConversation *gtkconv);
 static void got_typing_keypress(PidginConversation *gtkconv, gboolean first);
 static void gray_stuff_out(PidginConversation *gtkconv);
-static GList *generate_invite_user_names(PurpleConnection *gc);
 static void add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const char *old_name);
 static gboolean tab_complete(PurpleConversation *conv);
 static void pidgin_conv_updated(PurpleConversation *conv, PurpleConvUpdateType type);
@@ -695,6 +694,25 @@ unblock_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	gtk_widget_grab_focus(PIDGIN_CONVERSATION(conv)->entry);
 }
 
+static gboolean
+chat_invite_filter(const PidginBuddyCompletionEntry *entry, gpointer data)
+{
+	PurpleAccount *filter_account = data;
+	PurpleAccount *account = NULL;
+
+	if (entry->is_buddy) {
+		if (PURPLE_BUDDY_IS_ONLINE(entry->entry.buddy))
+			account = purple_buddy_get_account(entry->entry.buddy);
+		else
+			return FALSE;
+	} else {
+		account = entry->entry.logged_buddy->account;
+	}
+	if (account == filter_account)
+		return TRUE;
+	return FALSE;
+}
+
 static void
 do_invite(GtkWidget *w, int resp, InviteBuddyInfo *info)
 {
@@ -704,7 +722,7 @@ do_invite(GtkWidget *w, int resp, InviteBuddyInfo *info)
 	gtkconv = PIDGIN_CONVERSATION(info->conv);
 
 	if (resp == GTK_RESPONSE_OK) {
-		buddy   = pidgin_text_combo_box_entry_get_text(info->entry);
+		buddy   = gtk_entry_get_text(GTK_ENTRY(info->entry));
 		message = gtk_entry_get_text(GTK_ENTRY(info->message));
 
 		if (!g_ascii_strcasecmp(buddy, ""))
@@ -727,6 +745,7 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 {
 	InviteBuddyInfo *info = (InviteBuddyInfo *)data;
 	const char *convprotocol;
+	gboolean success = TRUE;
 
 	convprotocol = purple_account_get_protocol_id(purple_conversation_get_account(info->conv));
 
@@ -749,11 +768,12 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			purple_notify_error(PIDGIN_CONVERSATION(info->conv), NULL,
 							  _("That buddy is not on the same protocol as this "
 								"chat."), NULL);
+			success = FALSE;
 		}
 		else
-			pidgin_text_combo_box_entry_set_text(info->entry, buddy->name);
+			gtk_entry_set_text(GTK_ENTRY(info->entry), purple_buddy_get_name(buddy));
 
-		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+		gtk_drag_finish(dc, success, (dc->action == GDK_ACTION_MOVE), t);
 	}
 	else if (sd->target == gdk_atom_intern("application/x-im-contact", FALSE))
 	{
@@ -775,17 +795,18 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 				purple_notify_error(PIDGIN_CONVERSATION(info->conv), NULL,
 								  _("That buddy is not on the same protocol as this "
 									"chat."), NULL);
+				success = FALSE;
 			}
 			else
 			{
-				pidgin_text_combo_box_entry_set_text(info->entry, username);
+				gtk_entry_set_text(GTK_ENTRY(info->entry), username);
 			}
 		}
 
 		g_free(username);
 		g_free(protocol);
 
-		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
+		gtk_drag_finish(dc, success, (dc->action == GDK_ACTION_MOVE), t);
 	}
 }
 
@@ -876,7 +897,9 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 
 		/* Now the Buddy drop-down entry field. */
-		info->entry = pidgin_text_combo_box_entry_new(NULL, generate_invite_user_names(gc));
+		info->entry = gtk_entry_new();
+		pidgin_setup_screenname_autocomplete_with_filter(info->entry, NULL, chat_invite_filter,
+				purple_conversation_get_account(conv));
 		gtk_table_attach_defaults(GTK_TABLE(table), info->entry, 1, 2, 0, 1);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), info->entry);
 
@@ -915,13 +938,12 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 						 G_CALLBACK(invite_dnd_recv), info);
 		g_signal_connect(G_OBJECT(info->entry), "drag_data_received",
 						 G_CALLBACK(invite_dnd_recv), info);
-
 	}
 
 	gtk_widget_show_all(invite_dialog);
 
 	if (info != NULL)
-		gtk_widget_grab_focus(GTK_BIN(info->entry)->child);
+		gtk_widget_grab_focus(info->entry);
 }
 
 static void
@@ -1899,6 +1921,7 @@ conv_keypress_common(PidginConversation *gtkconv, GdkEventKey *event)
 				break;
 
 			case GDK_Tab:
+			case GDK_KP_Tab:
 			case GDK_ISO_Left_Tab:
 				if (event->state & GDK_SHIFT_MASK) {
 					move_to_next_unread_tab(gtkconv, FALSE);
@@ -2080,6 +2103,8 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	else {
 		switch (event->keyval) {
 		case GDK_Tab:
+		case GDK_KP_Tab:
+		case GDK_ISO_Left_Tab:
 			if (gtkconv->entry != entry)
 				break;
 			return tab_complete(conv);
@@ -2150,6 +2175,7 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 		(event->keyval == GDK_Home) ||
 		(event->keyval == GDK_End) ||
 		(event->keyval == GDK_Tab) ||
+		(event->keyval == GDK_KP_Tab) ||
 		(event->keyval == GDK_ISO_Left_Tab))
 	{
 		if (event->type == GDK_KEY_PRESS)
@@ -3785,42 +3811,6 @@ generate_send_to_items(PidginWindow *win)
 	if (!group)
 		gtk_widget_set_sensitive(win->menu.send_to, FALSE);
 	update_send_to_selection(win);
-}
-
-static GList *
-generate_invite_user_names(PurpleConnection *gc)
-{
-	PurpleBlistNode *gnode,*cnode,*bnode;
-	static GList *tmp = NULL;
-
-	g_list_free(tmp);
-	tmp = NULL;
-
-	if (gc != NULL) {
-		for(gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
-			if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-				continue;
-			for(cnode = gnode->child; cnode; cnode = cnode->next) {
-				if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-					continue;
-				for(bnode = cnode->child; bnode; bnode = bnode->next) {
-					PurpleBuddy *buddy;
-
-					if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-						continue;
-
-					buddy = (PurpleBuddy *)bnode;
-
-					if (buddy->account == gc->account &&
-							PURPLE_BUDDY_IS_ONLINE(buddy))
-						tmp = g_list_insert_sorted(tmp, buddy->name,
-												   (GCompareFunc)g_utf8_collate);
-				}
-			}
-		}
-	}
-
-	return tmp;
 }
 
 static GdkPixbuf *

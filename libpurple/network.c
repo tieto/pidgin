@@ -59,11 +59,13 @@
 #  define HX_SIZE_OF_IFREQ(a) sizeof(a)
 #endif
 
-#ifdef HAVE_LIBNM
-#include <libnm_glib.h>
+#ifdef HAVE_NETWORKMANAGER
+#include <dbus/dbus-glib.h>
+#include <NetworkManager.h>
 
-static libnm_glib_ctx *nm_context = NULL;
-static guint nm_callback_idx = 0;
+static DBusGConnection *nm_conn = NULL;
+static DBusGProxy *nm_proxy = NULL;
+static DBusGProxy *dbus_proxy = NULL;
 
 #elif defined _WIN32
 static int current_network_count;
@@ -79,8 +81,8 @@ struct _PurpleNetworkListenData {
 	UPnPMappingAddRemove *mapping_data;
 };
 
-#ifdef HAVE_LIBNM
-static void nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data);
+#ifdef HAVE_NETWORKMANAGER
+static NMState nm_get_network_state(void);
 #endif
 
 const unsigned char *
@@ -591,61 +593,100 @@ static gpointer wpurple_network_change_thread(gpointer data)
 gboolean
 purple_network_is_available(void)
 {
-#ifdef HAVE_LIBNM
-	/* Try NetworkManager first, maybe we'll get lucky */
-	int libnm_retval = -1;
-
-	if (nm_context)
+#ifdef HAVE_NETWORKMANAGER
+	NMState state = nm_get_network_state();
+	if (state == NM_STATE_UNKNOWN)
 	{
-		if ((libnm_retval = libnm_glib_get_network_state(nm_context)) == LIBNM_NO_NETWORK_CONNECTION)
-		{
-			purple_debug_warning("network", "NetworkManager not active or reports no connection (retval = %i)\n", libnm_retval);
-			return FALSE;
-		}
-		if (libnm_retval == LIBNM_ACTIVE_NETWORK_CONNECTION)	return TRUE;
+		purple_debug_warning("network", "NetworkManager not active. Assuming connection exists.\n");
+		return TRUE;
 	}
+	else if (state == NM_STATE_CONNECTED)
+		return TRUE;
+
+	return FALSE;
+
 #elif defined _WIN32
 	return (current_network_count > 0);
-#endif
+#else
 	return TRUE;
+#endif
 }
 
-#ifdef HAVE_LIBNM
+#ifdef HAVE_NETWORKMANAGER
 static void
-nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data)
+nm_update_state(NMState state)
 {
-	static libnm_glib_state prev = LIBNM_NO_DBUS;
-	libnm_glib_state current;
+	static NMState prev = NM_STATE_UNKNOWN;
 	PurpleConnectionUiOps *ui_ops = purple_connections_get_ui_ops();
-
-	current = libnm_glib_get_network_state(ctx);
-	purple_debug_info("network","Entering nm_callback_func!\n");
 
 	purple_signal_emit(purple_network_get_handle(), "network-configuration-changed", NULL);
 
-	switch(current)
+	switch(state)
 	{
-	case LIBNM_ACTIVE_NETWORK_CONNECTION:
-		/* Call res_init in case DNS servers have changed */
-		res_init();
-		if (ui_ops != NULL && ui_ops->network_connected != NULL)
-			ui_ops->network_connected();
-		prev = current;
-		break;
-	case LIBNM_NO_NETWORK_CONNECTION:
-		if (prev != LIBNM_ACTIVE_NETWORK_CONNECTION)
+		case NM_STATE_CONNECTED:
+			/* Call res_init in case DNS servers have changed */
+			res_init();
+			if (ui_ops != NULL && ui_ops->network_connected != NULL)
+				ui_ops->network_connected();
+			prev = state;
 			break;
-		if (ui_ops != NULL && ui_ops->network_disconnected != NULL)
-			ui_ops->network_disconnected();
-		prev = current;
-		break;
-	case LIBNM_NO_DBUS:
-	case LIBNM_NO_NETWORKMANAGER:
-	case LIBNM_INVALID_CONTEXT:
-	default:
-		break;
+		case NM_STATE_ASLEEP:
+		case NM_STATE_CONNECTING:
+		case NM_STATE_DISCONNECTED:
+			if (prev != NM_STATE_CONNECTED)
+				break;
+			if (ui_ops != NULL && ui_ops->network_disconnected != NULL)
+				ui_ops->network_disconnected();
+			prev = state;
+			break;
+		case NM_STATE_UNKNOWN:
+		default:
+			break;
 	}
 }
+
+static void
+nm_state_change_cb(DBusGProxy *proxy, NMState state, gpointer user_data)
+{
+	purple_debug_info("network", "Got StateChange from NetworkManager: %d.\n", state);
+	nm_update_state(state);
+}
+
+static NMState
+nm_get_network_state(void)
+{
+	GError *err = NULL;
+	NMState state = NM_STATE_UNKNOWN;
+
+	if (!nm_proxy)
+		return NM_STATE_UNKNOWN;
+
+	if (!dbus_g_proxy_call(nm_proxy, "state", &err, G_TYPE_INVALID, G_TYPE_UINT, &state, G_TYPE_INVALID)) {
+		/* XXX: Print an error? */
+		return NM_STATE_UNKNOWN;
+	}
+
+	return state;
+}
+
+static void
+nm_dbus_name_owner_changed_cb(DBusGProxy *proxy, char *service, char *old_owner, char *new_owner, gpointer user_data)
+{
+	if (g_str_equal(service, NM_DBUS_SERVICE)) {
+		gboolean old_owner_good = old_owner && (old_owner[0] != '\0');
+		gboolean new_owner_good = new_owner && (new_owner[0] != '\0');
+
+		purple_debug_info("network", "Got NameOwnerChanged signal, service = '%s', old_owner = '%s', new_owner = '%s'\n", service, old_owner, new_owner);
+		if (!old_owner_good && new_owner_good) {	/* Equivalent to old ServiceCreated signal */
+			purple_debug_info("network", "NetworkManager has started.\n");
+			nm_update_state(nm_get_network_state());
+		} else if (old_owner_good && !new_owner_good) {	/* Equivalent to old ServiceDeleted signal */
+			purple_debug_info("network", "NetworkManager has gone away.\n");
+			nm_update_state(NM_STATE_UNKNOWN);
+		}
+	}
+}
+
 #endif
 
 void *
@@ -659,6 +700,9 @@ purple_network_get_handle(void)
 void
 purple_network_init(void)
 {
+#ifdef HAVE_NETWORKMANAGER
+	GError *error = NULL;
+#endif
 #ifdef _WIN32
 	GError *err = NULL;
 	gint cnt = wpurple_get_connected_network_count();
@@ -685,10 +729,27 @@ purple_network_init(void)
 	if(purple_prefs_get_bool("/purple/network/map_ports") || purple_prefs_get_bool("/purple/network/auto_ip"))
 		purple_upnp_discover(NULL, NULL);
 
-#ifdef HAVE_LIBNM
-	nm_context = libnm_glib_init();
-	if(nm_context)
-		nm_callback_idx = libnm_glib_register_callback(nm_context, nm_callback_func, NULL, g_main_context_default());
+#ifdef HAVE_NETWORKMANAGER
+	nm_conn = dbus_g_bus_get(DBUS_BUS_SYSTEM, &error);
+	if (!nm_conn) {
+		purple_debug_warning("network", "Error connecting to DBus System service: %s.\n", error->message);
+	} else {
+		nm_proxy = dbus_g_proxy_new_for_name(nm_conn,
+		                                     NM_DBUS_SERVICE,
+		                                     NM_DBUS_PATH,
+		                                     NM_DBUS_INTERFACE);
+		dbus_g_proxy_add_signal(nm_proxy, "StateChange", G_TYPE_UINT, G_TYPE_INVALID);
+		dbus_g_proxy_connect_signal(nm_proxy, "StateChange",
+		                            G_CALLBACK(nm_state_change_cb), NULL, NULL);
+
+		dbus_proxy = dbus_g_proxy_new_for_name(nm_conn,
+		                                       DBUS_SERVICE_DBUS,
+		                                       DBUS_PATH_DBUS,
+		                                       DBUS_INTERFACE_DBUS);
+		dbus_g_proxy_add_signal(dbus_proxy, "NameOwnerChanged", G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INVALID);
+		dbus_g_proxy_connect_signal(dbus_proxy, "NameOwnerChanged",
+		                            G_CALLBACK(nm_dbus_name_owner_changed_cb), NULL, NULL);
+	}
 #endif
 
 	purple_signal_register(purple_network_get_handle(), "network-configuration-changed",
@@ -701,14 +762,17 @@ purple_network_init(void)
 void
 purple_network_uninit(void)
 {
-#ifdef HAVE_LIBNM
-	/* FIXME: If anyone can think of a more clever way to shut down libnm without
-	 * using a global variable + this function, please do. */
-	if(nm_context && nm_callback_idx)
-		libnm_glib_unregister_callback(nm_context, nm_callback_idx);
-
-	if(nm_context)
-		libnm_glib_shutdown(nm_context);
+#ifdef HAVE_NETWORKMANAGER
+	if (nm_proxy) {
+		dbus_g_proxy_disconnect_signal(nm_proxy, "StateChange", G_CALLBACK(nm_state_change_cb), NULL);
+		g_object_unref(G_OBJECT(nm_proxy));
+	}
+	if (dbus_proxy) {
+		dbus_g_proxy_disconnect_signal(dbus_proxy, "NameOwnerChanged", G_CALLBACK(nm_dbus_name_owner_changed_cb), NULL);
+		g_object_unref(G_OBJECT(dbus_proxy));
+	}
+	if (nm_conn)
+		dbus_g_connection_unref(nm_conn);
 #endif
 
 	purple_signal_unregister(purple_network_get_handle(),

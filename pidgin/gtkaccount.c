@@ -248,6 +248,25 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 	}
 }
 
+static gboolean
+screenname_focus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
+{
+	GHashTable *table;
+	const char *label;
+
+	table = dialog->prpl_info->get_account_text_table(NULL);
+	label = g_hash_table_lookup(table, "login_label");
+
+	if(!strcmp(gtk_entry_get_text(GTK_ENTRY(widget)), label)) {
+		gtk_entry_set_text(GTK_ENTRY(widget), "");
+		gtk_widget_modify_text(widget, GTK_STATE_NORMAL,NULL);
+	}
+
+	g_hash_table_destroy(table);
+
+	return FALSE;
+}
+
 static void
 screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 {
@@ -261,6 +280,32 @@ screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 			gtk_widget_set_sensitive(dialog->register_button,
 					*gtk_entry_get_text(entry) != '\0');
 	}
+}
+
+static gboolean
+screenname_nofocus_cb(GtkWidget *widget, GdkEventFocus *event, AccountPrefsDialog *dialog)
+{
+	GdkColor color = {0, 34952, 35466, 34181};
+	GHashTable *table;
+	const char *label;
+
+	table = dialog->prpl_info->get_account_text_table(NULL);
+	label = g_hash_table_lookup(table, "login_label");
+
+	if (*gtk_entry_get_text(GTK_ENTRY(widget)) == '\0') {
+		/* We have to avoid hitting the screenname_changed_cb function 
+		 * because it enables buttons we don't want enabled yet ;)
+		 */
+		g_signal_handlers_block_by_func(widget, G_CALLBACK(screenname_changed_cb), dialog);
+		gtk_entry_set_text(GTK_ENTRY(widget), label);
+		/* Make sure we can hit it again */
+		g_signal_handlers_unblock_by_func(widget, G_CALLBACK(screenname_changed_cb), dialog);
+		gtk_widget_modify_text(widget, GTK_STATE_NORMAL, &color);
+	}
+
+	g_hash_table_destroy(table);
+
+	return FALSE;
 }
 
 static void
@@ -403,6 +448,25 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	add_pref_box(dialog, vbox, _("_Username:"), dialog->screenname_entry);
 
+	if (dialog->account != NULL)
+		username = g_strdup(purple_account_get_username(dialog->account));
+
+	if (!username && PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(dialog->prpl_info, get_account_text_table)) {
+		GdkColor color = {0, 34952, 35466, 34181};
+		GHashTable *table;
+		const char *label;
+		table = dialog->prpl_info->get_account_text_table(NULL);
+		label = g_hash_table_lookup(table, "login_label");
+
+		gtk_entry_set_text(GTK_ENTRY(dialog->screenname_entry), label);
+		g_signal_connect(G_OBJECT(dialog->screenname_entry), "focus-in-event",
+				G_CALLBACK(screenname_focus_cb), dialog);
+		g_signal_connect(G_OBJECT(dialog->screenname_entry), "focus-out-event",
+				G_CALLBACK(screenname_nofocus_cb), dialog);
+		gtk_widget_modify_text(dialog->screenname_entry, GTK_STATE_NORMAL, &color);
+		g_hash_table_destroy(table);
+	}
+
 	g_signal_connect(G_OBJECT(dialog->screenname_entry), "changed",
 					 G_CALLBACK(screenname_changed_cb), dialog);
 
@@ -411,9 +475,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		user_splits = NULL;
 	else
 		user_splits = dialog->prpl_info->user_splits;
-
-	if (dialog->account != NULL)
-		username = g_strdup(purple_account_get_username(dialog->account));
 
 	if (dialog->user_split_entries != NULL) {
 		g_list_free(dialog->user_split_entries);
@@ -1506,6 +1567,8 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 
 	/* Show the window. */
 	gtk_widget_show(win);
+	if (!account)
+		gtk_widget_grab_focus(dialog->protocol_menu);
 }
 
 /**************************************************************************
