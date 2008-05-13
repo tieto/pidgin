@@ -824,15 +824,24 @@ purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status)
 		ops->update(purplebuddylist, (PurpleBlistNode *)buddy);
 }
 
-void purple_blist_update_buddy_icon(PurpleBuddy *buddy)
+void
+purple_blist_update_node_icon(PurpleBlistNode *node)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
-	g_return_if_fail(buddy != NULL);
+	g_return_if_fail(node != NULL);
 
 	if (ops && ops->update)
-		ops->update(purplebuddylist, (PurpleBlistNode *)buddy);
+		ops->update(purplebuddylist, node);
 }
+
+#ifndef PURPLE_DISABLE_DEPRECATED
+void
+purple_blist_update_buddy_icon(PurpleBuddy *buddy)
+{
+	purple_blist_update_node_icon((PurpleBlistNode *)buddy);
+}
+#endif
 
 /*
  * TODO: Maybe remove the call to this from server.c and call it
