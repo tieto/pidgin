@@ -2193,7 +2193,7 @@ PurpleGroup *purple_find_group(const char *name)
 	g_return_val_if_fail((name != NULL) && (*name != '\0'), NULL);
 
 	for (node = purplebuddylist->root; node != NULL; node = node->next) {
-		if (!strcmp(((PurpleGroup *)node)->name, name))
+		if (!purple_utf8_strcasecmp(((PurpleGroup *)node)->name, name))
 			return (PurpleGroup *)node;
 	}
 
