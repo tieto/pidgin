@@ -6,9 +6,15 @@ version 2.5.0:
 		* purple_serv_got_join_chat_failed
 		* chat-join-failed signal (see conversation-signals.dox)
 		* purple_blist_update_node_icon
+		* purple_buddy_icons_node_has_custom_icon
+		* purple_buddy_icons_node_find_custom_icon
+		* purple_buddy_icons_node_set_custom_icon
 
 		Deprecated:
 		* purple_blist_update_buddy_icon
+		* purple_buddy_icons_has_custom_icon
+		* purple_buddy_icons_find_custom_icon
+		* purple_buddy_icons_set_custom_icon
 
 	perl:
 		Added:

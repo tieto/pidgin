@@ -218,16 +218,6 @@ PurpleBuddyIcon *
 purple_buddy_icons_find(PurpleAccount *account, const char *username);
 
 /**
- * Returns a boolean indicating if a given contact has a custom buddy icon.
- *
- * @param contact The contact
- *
- * @return A boolean indicating if @a contact has a custom buddy icon.
- */
-gboolean
-purple_buddy_icons_has_custom_icon(PurpleContact *contact);
-
-/**
  * Returns the buddy icon image for an account.
  *
  * The caller owns a reference to the image in the store, and must dereference
@@ -277,7 +267,18 @@ time_t
 purple_buddy_icons_get_account_icon_timestamp(PurpleAccount *account);
 
 /**
- * Returns the custom buddy icon image for a contact.
+ * Returns a boolean indicating if a given blist node has a custom buddy icon.
+ *
+ * @param node The blist node.
+ *
+ * @return A boolean indicating if @a node has a custom buddy icon.
+ * @since 2.5.0
+ */
+gboolean
+purple_buddy_icons_node_has_custom_icon(PurpleBlistNode *node);
+
+/**
+ * Returns the custom buddy icon image for a blist node.
  *
  * The caller owns a reference to the image in the store, and must dereference
  * the image with purple_imgstore_unref() for it to be freed.
@@ -286,31 +287,65 @@ purple_buddy_icons_get_account_icon_timestamp(PurpleAccount *account);
  * needed, so it should be called in any case where you want the
  * appropriate icon.
  *
- * @param contact The contact
+ * @param node The node.
  *
- * @return The custom buddy icon image.
+ * @return The custom buddy icon.
+ * @since 2.5.0
+ */
+PurpleStoredImage *
+purple_buddy_icons_node_find_custom_icon(PurpleBlistNode *node);
+
+/**
+ * Sets a custom buddy icon for a blist node.
+ *
+ * This function will deal with saving a record of the icon, caching the data,
+ * etc.
+ *
+ * @param node      The blist node for which to set a custom icon.
+ * @param icon_data The image data of the icon, which the buddy icon code will
+ *                  free.
+ * @param icon_len  The length of the data in @a icon_data.
+ *
+ * @return The icon that was set. The caller does NOT own a reference to this,
+ *         and must call purple_imgstore_ref() if it wants one.
+ * @since 2.5.0
+ */
+PurpleStoredImage *
+purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
+                                        guchar *icon_data, size_t icon_len);
+
+#ifndef PURPLE_DISABLE_DEPRECATED
+/**
+ * PurpleContact version of purple_buddy_icons_node_has_custom_icon.
+ *
+ * @copydoc purple_buddy_icons_node_has_custom_icon()
+ *
+ * @deprecated Use purple_buddy_icons_node_has_custom_icon instead.
+ */
+gboolean
+purple_buddy_icons_has_custom_icon(PurpleContact *contact);
+
+/**
+ * PurpleContact version of purple_buddy_icons_node_find_custom_icon.
+ *
+ * @copydoc purple_buddy_icons_node_find_custom_icon()
+ *
+ * @deprecated Use purple_buddy_icons_node_find_custom_icon instead.
  */
 PurpleStoredImage *
 purple_buddy_icons_find_custom_icon(PurpleContact *contact);
 
 /**
- * Sets a custom buddy icon for a user.
+ * PurpleContact version of purple_buddy_icons_node_set_custom_icon.
  *
- * This function will deal with saving a record of the icon,
- * caching the data, etc.
+ * @copydoc purple_buddy_icons_node_set_custom_icon()
  *
- * @param contact   The contact for which to set a custom icon.
- * @param icon_data The image data of the icon, which the
- *                  buddy icon code will free.
- * @param icon_len  The length of the data in @a icon_data.
- *
- * @return The icon that was set.  The caller does NOT own
- *         a reference to this, and must call purple_imgstore_ref()
- *         if it wants one.
+ * @deprecated Use purple_buddy_icons_node_set_custom_icon instead.
  */
 PurpleStoredImage *
 purple_buddy_icons_set_custom_icon(PurpleContact *contact,
                                    guchar *icon_data, size_t icon_len);
+#endif
 
 /**
  * Sets whether or not buddy icon caching is enabled.
