@@ -1006,6 +1006,7 @@ qng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	passport = purple_normalize(account, purple_account_get_username(account));
 
 	if ((strstr(passport, "@hotmail.") == NULL) &&
+		(strstr(passport, "@live.com") == NULL) &&
 		(strstr(passport, "@msn.com") == NULL))
 		return;
 
