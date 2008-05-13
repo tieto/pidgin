@@ -18,7 +18,11 @@ version 2.5.0 (??/??/2008):
 		* GTK_IMHTML_CUSTOM_SMILEY flag for GtkIMHtml.
 		* GTK+ Custom Smiley API.
 
-version 2.x.x:
+version 2.5.0:
+    libpurple:
+        Added:
+        * purple_serv_got_join_chat_failed
+        * chat-join-failed signal (see conversation-signals.dox)
 	perl:
 		Added:
 		* Purple::Prefs::get_children_names.
@@ -29,6 +33,9 @@ version 2.x.x:
 		* Callbacks to Purple::Util::fetch_url and the
 		  Purple::Request::* functions can now be specified as both
 		  strings (the name of the callback function) and as coderefs.
+	Finch:
+		libgnt:
+		* Added gnt_bindable_check_key to check if a keystroke is bound.
 
 version 2.4.0 (02/29/2008):
 	libpurple:
