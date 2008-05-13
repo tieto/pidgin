@@ -25,11 +25,12 @@
  */
 
 #include "internal.h"
-#include "xmlnode.h"
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "imgstore.h"
 #include "smiley.h"
 #include "util.h"
+#include "xmlnode.h"
 
 /**************************************************************************/
 /* Main structures, members and constants                                 */
@@ -305,6 +306,8 @@ static GObjectClass *parent_class;
 static void
 purple_smiley_init(GTypeInstance *instance, gpointer klass)
 {
+	PurpleSmiley *smiley = PURPLE_SMILEY(instance);
+	PURPLE_DBUS_REGISTER_POINTER(smiley, PurpleSmiley);
 }
 
 static void
@@ -378,6 +381,8 @@ purple_smiley_finalize(GObject *obj)
 	if (smiley->img)
 		purple_smiley_data_unstore(purple_imgstore_get_filename(smiley->img));
 	purple_imgstore_unref(smiley->img);
+
+	PURPLE_DBUS_UNREGISTER_POINTER(smiley);
 
 	purple_smileys_save();
 }
