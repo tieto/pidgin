@@ -15,9 +15,9 @@ version 2.x.x:
 	  libnm-glib.  Hopefully it's stable now.  It will now compile by
 	  default if you have D-Bus support and NetworkManager.h. (Elliott
 	  Sales de Andrade)
-	* Make MSN buddy list synchronization more forgiving, only ask about
-	  buddies who appear to have disappeared completely from the server list
-	  instead of those that have simply moved groups.
+	* MSN buddy list synchronization is now more forgiving, only asking about
+	  buddies who have disappeared completely from the server list and not
+	  those that have simply moved groups.
 
 	Pidgin:
 	* The typing notification in the conversation history can be disabled or
