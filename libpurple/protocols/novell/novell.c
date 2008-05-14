@@ -2506,7 +2506,7 @@ novell_chat_send(PurpleConnection * gc, int id, const char *text, PurpleMessageF
 						}
 					}
 
-					serv_got_chat_in(gc, id, name, 0, text, time(NULL));
+					serv_got_chat_in(gc, id, name, flags, text, time(NULL));
 					return 0;
 				} else
 					return -1;

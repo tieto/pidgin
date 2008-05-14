@@ -1043,7 +1043,7 @@ int yahoo_c_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFl
 						purple_conversation_get_name(c), what, flags);
 		if (!ret)
 			serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(c)),
-					purple_connection_get_display_name(gc), 0, what, time(NULL));
+					purple_connection_get_display_name(gc), flags, what, time(NULL));
 	}
 	return ret;
 }
