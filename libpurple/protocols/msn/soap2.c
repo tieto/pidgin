@@ -82,6 +82,7 @@ static void msn_soap_message_send_internal(MsnSession *session,
 
 static void msn_soap_request_destroy(MsnSoapRequest *req);
 static void msn_soap_connection_sanitize(MsnSoapConnection *conn, gboolean disconnect);
+static gboolean msn_soap_write_cb_internal(gpointer data, gint fd, PurpleInputCondition cond, gboolean initial);
 
 static gboolean
 msn_soap_cleanup_each(gpointer key, gpointer value, gpointer data)
@@ -420,27 +421,34 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 static void
 msn_soap_write_cb(gpointer data, gint fd, PurpleInputCondition cond)
 {
+	msn_soap_write_cb_internal(data, fd, cond, FALSE);
+}
+
+static gboolean
+msn_soap_write_cb_internal(gpointer data, gint fd, PurpleInputCondition cond,
+		gboolean initial)
+{
 	MsnSoapConnection *conn = data;
 	int written;
 
-	g_return_if_fail(cond == PURPLE_INPUT_WRITE);
+	if (cond != PURPLE_INPUT_WRITE) return TRUE;
 
 	written = purple_ssl_write(conn->ssl, conn->buf->str + conn->handled_len,
 		conn->buf->len - conn->handled_len);
 
 	if (written < 0 && errno == EAGAIN)
-		return;
+		return TRUE;
 	else if (written <= 0) {
 		purple_ssl_close(conn->ssl);
 		conn->ssl = NULL;
-		msn_soap_connection_handle_next(conn);
-		return;
+		if (!initial) msn_soap_connection_handle_next(conn);
+		return FALSE;
 	}
 
 	conn->handled_len += written;
 
 	if (conn->handled_len < conn->buf->len)
-		return;
+		return TRUE;
 
 	/* we are done! */
 	g_string_free(conn->buf, TRUE);
@@ -454,6 +462,7 @@ msn_soap_write_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	purple_input_remove(conn->event_handle);
 	conn->event_handle = purple_input_add(conn->ssl->fd, PURPLE_INPUT_READ,
 		msn_soap_read_cb, conn);
+	return TRUE;
 }
 
 static gboolean
@@ -505,7 +514,17 @@ msn_soap_connection_run(gpointer data)
 
 			conn->event_handle = purple_input_add(conn->ssl->fd,
 				PURPLE_INPUT_WRITE, msn_soap_write_cb, conn);
-			msn_soap_write_cb(conn, conn->ssl->fd, PURPLE_INPUT_WRITE);
+			if (!msn_soap_write_cb_internal(conn, conn->ssl->fd, PURPLE_INPUT_WRITE, TRUE)) {
+				/* Not connected => reconnect and retry */
+				purple_debug_info("soap", "not connected, reconnecting");
+				
+				conn->connected = FALSE;
+				conn->current_request = NULL;
+				msn_soap_connection_sanitize(conn, FALSE);
+				
+				g_queue_push_head(conn->queue, req);
+				conn->event_handle = purple_timeout_add(0, msn_soap_connection_run, conn);
+			}
 
 			g_free(body);
 		}
