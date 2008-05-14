@@ -2716,7 +2716,8 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 		 * above node types first. */
 		tmp = g_strdup(_("Unknown node type"));
 	}
-	node_name = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>", tmp);
+	node_name = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>",
+								tmp ? tmp : "");
 	g_free(tmp);
 
 	td->name_layout = create_pango_layout(node_name, &td->name_width, &td->name_height);
