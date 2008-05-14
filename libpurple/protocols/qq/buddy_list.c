@@ -166,7 +166,7 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConnec
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "processing get_buddies_online_reply\n");
 	
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 
 		_qq_show_packet("Get buddies online reply packet", data, len);
 
@@ -262,7 +262,7 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, PurpleConnecti
 	data = g_newa(guint8, len);
 	cursor = data;
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		read_packet_w(data, &cursor, len, &position);
 		/* the following data is buddy list in this packet */
 		i = 0;
@@ -356,7 +356,7 @@ void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, PurpleC
 	data = g_newa(guint8, len);
 	cursor = data;
 
-	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
+	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		read_packet_b(data, &cursor, len, &sub_cmd);
 		g_return_if_fail(sub_cmd == 0x01);
 		read_packet_b(data, &cursor, len, &reply_code);

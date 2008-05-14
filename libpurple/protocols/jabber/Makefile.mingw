@@ -83,9 +83,9 @@ LIBS = \
 			-lpurple
 
 ifeq ($(CYRUS_SASL), 1)
-CYRUS_SASL_TOP := $(WIN32_DEV_TOP)/cyrus-sasl-2.1.22
+CYRUS_SASL_TOP := $(WIN32_DEV_TOP)/cyrus-sasl-2.1.22-daa1
 INCLUDE_PATHS += -I$(CYRUS_SASL_TOP)/include
-LIB_PATHS += -L$(CYRUS_SASL_TOP)/lib
+LIB_PATHS += -L$(CYRUS_SASL_TOP)/bin
 LIBS += -llibsasl
 CYRUS_SASL_DLLS = \
 			$(CYRUS_SASL_TOP)/bin/comerr32.dll \

@@ -177,6 +177,7 @@ typedef enum
 	/**
 	 * Indicates that slash commands are native to this protocol.
 	 * Used as a hint that unknown commands should not be sent as messages.
+	 * @since 2.1.0
 	 */
 	OPT_PROTO_SLASH_COMMANDS_NATIVE = 0x00000400,
 
@@ -186,7 +187,7 @@ typedef enum
  * A protocol plugin information structure.
  *
  * Every protocol plugin initializes this structure. It is the gateway
- * between purple and the protocol plugin.  Many of this callbacks can be
+ * between purple and the protocol plugin.  Many of these callbacks can be
  * NULL.  If a callback must be implemented, it has a comment indicating so.
  */
 struct _PurplePluginProtocolInfo

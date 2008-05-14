@@ -1120,6 +1120,16 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_widget_show(img);
 
+	/* Cancel button */
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(cancel_text), G_CALLBACK(multifield_cancel_cb), data);
+	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+
+	/* OK button */
+	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(ok_text), G_CALLBACK(multifield_ok_cb), data);
+	data->ok_button = button;
+	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
+	gtk_window_set_default(GTK_WINDOW(win), button);
+
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
@@ -1272,6 +1282,7 @@ pidgin_request_fields(const char *title, const char *primary,
 				size_t col_offset = col_num * 2;
 				PurpleRequestFieldType type;
 				GtkWidget *widget = NULL;
+				const char *field_label;
 
 				label = NULL;
 				field = fl->data;
@@ -1282,17 +1293,17 @@ pidgin_request_fields(const char *title, const char *primary,
 				}
 
 				type = purple_request_field_get_type(field);
+				field_label = purple_request_field_get_label(field);
 
-				if (type != PURPLE_REQUEST_FIELD_BOOLEAN &&
-				    purple_request_field_get_label(field))
+				if (type != PURPLE_REQUEST_FIELD_BOOLEAN && field_label)
 				{
-					char *text;
+					char *text = NULL;
 
-					text = g_strdup_printf("%s:",
-						purple_request_field_get_label(field));
+					if (field_label[strlen(field_label) - 1] != ':')
+						text = g_strdup_printf("%s:", field_label);
 
 					label = gtk_label_new(NULL);
-					gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), text);
+					gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), text ? text : field_label);
 					g_free(text);
 
 					gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -1393,18 +1404,8 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	g_object_unref(sg);
 
-	/* Cancel button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(cancel_text), G_CALLBACK(multifield_cancel_cb), data);
-	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
-
-	/* OK button */
-	button = pidgin_dialog_add_button(GTK_DIALOG(win), text_to_stock(ok_text), G_CALLBACK(multifield_ok_cb), data);
-	data->ok_button = button;
-	GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
-	gtk_window_set_default(GTK_WINDOW(win), button);
-
 	if (!purple_request_fields_all_required_filled(fields))
-		gtk_widget_set_sensitive(button, FALSE);
+		gtk_widget_set_sensitive(data->ok_button, FALSE);
 
 	pidgin_auto_parent_window(win);
 

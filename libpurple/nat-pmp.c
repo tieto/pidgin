@@ -182,7 +182,7 @@ default_gw()
 
     if (!(buf = malloc(needed)))
 	{
-		purple_debug_warning("nat-pmp", "malloc\n");
+		purple_debug_warning("nat-pmp", "Failed to malloc %i\n", needed);
 		return NULL;
     }
 
@@ -232,7 +232,7 @@ default_gw()
 						sin->sin_addr.s_addr = rti_sin->sin_addr.s_addr;
 						memcpy(sin, rti_info[RTAX_GATEWAY], sizeof(struct sockaddr_in));
 
-						purple_debug_info("nat-pmp", "found a default gateway\n");
+						purple_debug_info("nat-pmp", "Found a default gateway\n");
 						found = TRUE;
 						break;
 					}
@@ -455,7 +455,8 @@ purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned s
 	{
 		success = (resp->opcode == (req.opcode + 128));
 		if (!success)
-			purple_debug_info("nat-pmp", "The opcode for the response from the NAT device does not match the request opcode!\n");
+			purple_debug_info("nat-pmp", "The opcode for the response from the NAT device (%i) does not match the request opcode (%i + 128 = %i)!\n",
+							  resp->opcode, req.opcode, req.opcode + 128);
 	}
 
 #ifdef PMP_DEBUG
@@ -492,7 +493,8 @@ purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport)
 	success = purple_pmp_create_map(((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP),
 							privateport, 0, 0);
 	if (!success)
-		purple_debug_warning("nat-pmp", "Failed to properly destroy mapping for %d!\n", privateport);
+		purple_debug_warning("nat-pmp", "Failed to properly destroy mapping for %s port %d!\n",
+							 ((type == PURPLE_PMP_TYPE_UDP) ? "UDP" : "TCP"), privateport);
 
 	return success;
 }

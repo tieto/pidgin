@@ -58,6 +58,7 @@ msn_check_payload_cmd(const char *str)
 		(!strcmp(str,"FQY")) ||
 		(!strcmp(str,"UUN")) ||
 		(!strcmp(str,"UUX")) ||
+		(!strcmp(str,"IPG")) ||
 		(is_num(str))){
 			return TRUE;
 		}
@@ -120,7 +121,7 @@ msn_command_from_string(const char *string)
 	/* khc: Huh! */
 	/*add payload Length checking*/
 	msn_set_payload_len(cmd);
-	purple_debug_info("MSNP14","get payload len:%d\n",cmd->payload_len);
+	purple_debug_info("MSNP14","get payload len:%" G_GSIZE_FORMAT "\n", cmd->payload_len);
 
 	msn_command_ref(cmd);
 

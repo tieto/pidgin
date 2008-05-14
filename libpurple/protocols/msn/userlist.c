@@ -351,8 +351,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 		GSList *c;
 		for (c = group_ids; c != NULL; c = g_slist_next(c))
 		{
-			char *group_id;
-			group_id = c->data;
+			char *group_id = c->data;
 			msn_user_add_group_id(user, group_id);
 		}
 
@@ -502,17 +501,38 @@ msn_userlist_find_user_with_id(MsnUserList *userlist, const char *uid)
 {
  	GList *l;
 
-        g_return_val_if_fail(uid != NULL, NULL);
+	g_return_val_if_fail(uid != NULL, NULL);
 
-        for (l = userlist->users; l != NULL; l = l->next)
-        {
-                MsnUser *user = (MsnUser *)l->data;
+	for (l = userlist->users; l != NULL; l = l->next) {
+		MsnUser *user = (MsnUser *)l->data;
 
 		if (user->uid == NULL) {
 			continue;
 		}
 
 		if ( !g_strcasecmp(uid, user->uid) ) {
+			return user;
+		}
+	}
+
+	return NULL;
+}
+
+MsnUser *
+msn_userlist_find_user_with_mobile_phone(MsnUserList *userlist, const char *number)
+{
+	GList *l;
+
+	g_return_val_if_fail(number != NULL, NULL);
+
+	for (l = userlist->users; l != NULL; l = l->next) {
+		MsnUser *user = (MsnUser *)l->data;
+
+		if (user->phone.mobile == NULL) {
+			continue;
+		}
+
+		if (!g_strcasecmp(number, user->phone.mobile)) {
 			return user;
 		}
 	}
@@ -694,7 +714,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 		char *str = g_strdup_printf(_("Unable to add \"%s\"."), who);
 		
 		purple_notify_error(NULL, NULL, str,
-				  _("The screen name specified is invalid."));
+				  _("The username specified is invalid."));
 		g_free(str);
 
 		return;

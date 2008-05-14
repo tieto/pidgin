@@ -1,6 +1,66 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.4.1 ():
+version 2.x.x:
+	libpurple:
+	* In MySpaceIM, messages from spambots are discarded (Justin Williams)
+	* Strip mIRC formatting codes from quit and part messages.
+	* IRC now displays ban lists in-channel for joined channels.
+	* Fixed a bug where the list of loaded plugins would get removed when
+	  switching between different operating systems.
+	* Fix reception of IRC PART without a part message on Undernet
+	  (fixes a problem with litter in the channel user list).
+	* IRC no longer crashes on /list on servers which erroneously omit
+	  RPL_LISTSTART.
+	* Update the NetworkManager support to use D-Bus directly, instead of
+	  libnm-glib.  Hopefully it's stable now.  It will now compile by
+	  default if you have D-Bus support and NetworkManager.h. (Elliott
+	  Sales de Andrade)
+	* MSN buddy list synchronization is now more forgiving, only asking about
+	  buddies who have disappeared completely from the server list and not
+	  those that have simply moved groups.
+
+	Pidgin:
+	* The typing notification in the conversation history can be disabled or
+	  customized (font, color etc.) in .gtkrc-2.0.
+	* Added a plugin (not installed by default) which adds a Send button
+	  back to the conversation window. People without physical keyboards
+	  have a hard time with the lack of the button.
+	* Clicking on the buddyicon in the conversation window toggles the
+	  size of the icon between small and large.
+	* The settings of a chat (e.g. Handle in an XMPP chat, or Exchange in
+	  an AIM chat) can be edited from its context menu in the buddy list.
+	* Add a "Present conversation window" preference to the Message
+	  Notification plugin; the "Raise conversation window" option does not
+	  unminimize windows or draw attention to them when they are on other
+	  workspaces--the "Present" option should.
+	* Add a preference to set Escape as the keyboard shortcut for closing
+	  the conversation window.
+	* Add an option in the context menu to disable smileys in the selected
+	  text in the conversation history/log viewer. This should help people
+	  who regularly paste code in conversations.
+	* Add a preference to choose the minimum size of the text input area in
+	  lines.
+	* Moved the "Local alias" field in the Modify Account dialog to be below
+	  the "User Options" heading on the "Basic" tab.
+
+	General:
+	* The configure script now dies on more absent dependencies.  The
+	  --disable-xxx arguments to configure can be used to bypass unneeded
+	  dependencies.  This will also cause the configure script to die if an
+	  --enable-xxx option is used and the dependencies it requires are
+	  missing.
+	* The Evolution integration plugin must now be explicitly enabled.  Use
+	  the --enable-gevolution argument to configure to enable it.
+	* The Contact Availability Prediction plugin must now be explicitly
+	  enabled.  Use the --enable-cap argument to configure to enable it.
+
+	Finch:
+	* New default binding ctrl+x to open context menus.
+	* Menu triggers and other bindings will no longer conflict.
+	* Middle click pastes the internal clipboard (when mouse support is
+	  enabled).
+
+version 2.4.1 (03/31/2008):
 	http://developer.pidgin.im/query?status=closed&milestone=2.4.1
 
 	libpurple:
@@ -16,6 +76,8 @@ version 2.4.1 ():
 	* Fix a crash when starting if you have a Zephyr account
 	* Increase XMPP ping timeout to 120 seconds, to prevent poor network
 	  connections from timing out unnecessarily.
+	* Don't crash on XMPP forms with empty default values.
+	* Fix issues with CHAP authentication for SOCKS5 proxies.
 
 	Pidgin:
 	* Remove a workaround for older versions gstreamer that was causing

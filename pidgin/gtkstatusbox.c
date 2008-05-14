@@ -74,6 +74,7 @@ static void imhtml_format_changed_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons
 static void remove_typing_cb(PidginStatusBox *box);
 static void update_size (PidginStatusBox *box);
 static gint get_statusbox_index(PidginStatusBox *box, PurpleSavedStatus *saved_status);
+static PurpleAccount* check_active_accounts_for_identical_statuses(void);
 
 static void pidgin_status_box_pulse_typing(PidginStatusBox *status_box);
 static void pidgin_status_box_refresh(PidginStatusBox *status_box);
@@ -497,6 +498,10 @@ pidgin_status_box_set_property(GObject *object, guint param_id,
 		break;
 	case PROP_ACCOUNT:
 		statusbox->account = g_value_get_pointer(value);
+		if (statusbox->account)
+			statusbox->token_status_account = NULL;
+		else
+			statusbox->token_status_account = check_active_accounts_for_identical_statuses();
 
 		pidgin_status_box_regenerate(statusbox);
 
@@ -628,7 +633,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	GdkPixbuf *pixbuf, *emblem = NULL;
 	GtkTreePath *path;
 	gboolean account_status = FALSE;
-	PurpleAccount *acct = (status_box->token_status_account) ? status_box->token_status_account : status_box->account;
+	PurpleAccount *acct = (status_box->account) ? status_box->account : status_box->token_status_account;
 
 	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
@@ -1126,7 +1131,7 @@ static gboolean imhtml_scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkI
 
 static gboolean imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStatusBox *status_box)
 {
-	if (event->keyval == GDK_Tab || event->keyval == GDK_KP_Tab)
+	if (event->keyval == GDK_Tab || event->keyval == GDK_KP_Tab || event->keyval == GDK_ISO_Left_Tab)
 	{
 		/* If last inserted character is a tab, then remove the focus from here */
 		GtkWidget *top = gtk_widget_get_toplevel(w);
@@ -1135,7 +1140,7 @@ static gboolean imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStat
 				                  GTK_DIR_TAB_BACKWARD: GTK_DIR_TAB_FORWARD);
 		return TRUE;
 	}
-	if (!status_box->typing != 0)
+	if (status_box->typing == 0)
 		return FALSE;
 
 	/* Reset the status if Escape was pressed */
@@ -1228,8 +1233,12 @@ cache_pixbufs(PidginStatusBox *status_box)
 								     icon_size, "PidginStatusBox");
 }
 
-static void account_enabled_cb(PurpleAccount *acct, PidginStatusBox *status_box) {
+static void account_enabled_cb(PurpleAccount *acct, PidginStatusBox *status_box)
+{
 	PurpleAccount *initial_token_acct = status_box->token_status_account;
+
+	if (status_box->account)
+		return;
 
 	status_box->token_status_account = check_active_accounts_for_identical_statuses();
 
@@ -1449,7 +1458,7 @@ toggle_key_press_cb(GtkWidget *widget, GdkEventKey *event, PidginStatusBox *box)
 			}
 			return TRUE;
 		default:
-			return TRUE;
+			return FALSE;
 	}
 }
 
@@ -1686,6 +1695,17 @@ treeview_key_press_event(GtkWidget *widget,
 }
 
 static void
+imhtml_cursor_moved_cb(gpointer data, GtkMovementStep step, gint count, gboolean extend,
+		GtkWidget *widget)
+{
+	/* Restart the typing timeout if arrow keys are pressed while editing the message */
+	PidginStatusBox *status_box = data;
+	if (status_box->typing == 0)
+		return;
+	imhtml_changed_cb(NULL, status_box);
+}
+
+static void
 pidgin_status_box_init (PidginStatusBox *status_box)
 {
 	GtkCellRenderer *text_rend;
@@ -1713,6 +1733,8 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 
 	gtk_cell_view_set_model(GTK_CELL_VIEW(status_box->cell_view), GTK_TREE_MODEL(status_box->store));
 	gtk_list_store_append(status_box->store, &(status_box->iter));
+
+	atk_object_set_name(gtk_widget_get_accessible(status_box->toggle_button), _("Status Selector"));
 
 	gtk_container_add(GTK_CONTAINER(status_box->toggle_button), status_box->hbox);
 	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->cell_view, TRUE, TRUE, 0);
@@ -1825,6 +1847,8 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	g_signal_connect(G_OBJECT(buffer), "changed", G_CALLBACK(imhtml_changed_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->imhtml), "format_function_toggle",
 			 G_CALLBACK(imhtml_format_changed_cb), status_box);
+	g_signal_connect_swapped(G_OBJECT(status_box->imhtml), "move_cursor",
+			 G_CALLBACK(imhtml_cursor_moved_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->imhtml), "key_press_event",
 			 G_CALLBACK(imhtml_remove_focus), status_box);
 	g_signal_connect_swapped(G_OBJECT(status_box->imhtml), "message_send", G_CALLBACK(remove_typing_cb), status_box);

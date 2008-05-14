@@ -223,7 +223,7 @@ init_plugin(PurplePlugin *plugin)
 						"auth_plain_in_clear", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						   option);
-
+	
 	option = purple_account_option_int_new(_("Connect port"), "port", 5222);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						   option);

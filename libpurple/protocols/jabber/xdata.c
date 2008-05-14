@@ -285,7 +285,10 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 
 			for(valuenode = xmlnode_get_child(fn, "value"); valuenode;
 					valuenode = xmlnode_get_next_twin(valuenode)) {
-				selected = g_list_prepend(selected, xmlnode_get_data(valuenode));
+				char *data = xmlnode_get_data(valuenode);
+				if (data != NULL) {
+					selected = g_list_prepend(selected, data);
+				}
 			}
 
 			for(optnode = xmlnode_get_child(fn, "option"); optnode;

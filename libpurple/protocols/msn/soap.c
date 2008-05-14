@@ -273,7 +273,7 @@ msn_soap_read(MsnSoapConn *soapconn)
 			case EAGAIN: return len;
 
 			default : purple_debug_error("MSN SOAP", "Read error!"
-						"read len: %d, error = %s\n",
+						"read len: %" G_GSSIZE_FORMAT ", error = %s\n",
 						len, g_strerror(errno));
 				  purple_input_remove(soapconn->input_handler);
 				  //soapconn->input_handler = 0;
@@ -293,7 +293,9 @@ msn_soap_read(MsnSoapConn *soapconn)
 			soapconn->read_buf[soapconn->read_len] = '\0';
 		}
 		else {
-			purple_debug_error("MSN SOAP", "Failure re-allocating %d bytes of memory!\n", soapconn->read_len + len + 1);
+			purple_debug_error("MSN SOAP",
+				"Failure re-allocating %" G_GSIZE_FORMAT " bytes of memory!\n",
+				soapconn->read_len + len + 1);
 			exit(EXIT_FAILURE);
 		}
 			
@@ -301,7 +303,9 @@ msn_soap_read(MsnSoapConn *soapconn)
 
 #if defined(MSN_SOAP_DEBUG)
 	if (len > 0)
-		purple_debug_info("MSN SOAP","Read %d bytes from SOAP server:\n%s\n", len, soapconn->read_buf + soapconn->read_len - len);
+		purple_debug_info("MSN SOAP",
+			"Read %" G_GSIZE_FORMAT " bytes from SOAP server:\n%s\n", len,
+			soapconn->read_buf + soapconn->read_len - len);
 #endif
 
 	return len;
@@ -523,7 +527,9 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 		soapconn->body_len	= atoi(body_len);
 		g_free(body_len);
 #ifdef MSN_SOAP_DEBUG
-		purple_debug_misc("MSN SOAP","SOAP bytes read so far: %d, Content-Length: %d\n", soapconn->read_len, soapconn->body_len);
+		purple_debug_misc("MSN SOAP",
+			"SOAP bytes read so far: %" G_GSIZE_FORMAT ", Content-Length: %d\n",
+			soapconn->read_len, soapconn->body_len);
 #endif
 		soapconn->need_to_read = (body_start - soapconn->read_buf + soapconn->body_len) - soapconn->read_len;
 		if ( soapconn->need_to_read > 0 ) {

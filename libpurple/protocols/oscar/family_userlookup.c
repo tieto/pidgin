@@ -62,7 +62,7 @@ static int error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 int aim_search_address(OscarData *od, const char *address)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_USERLOOKUP);
@@ -70,14 +70,14 @@ int aim_search_address(OscarData *od, const char *address)
 	if (!conn || !address)
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, 10+strlen(address));
+	byte_stream_new(&bs, strlen(address));
+
+	byte_stream_putstr(&bs, address);
 
 	snacid = aim_cachesnac(od, 0x000a, 0x0002, 0x0000, address, strlen(address)+1);
-	aim_putsnac(&frame->data, 0x000a, 0x0002, 0x0000, snacid);
+	flap_connection_send_snac(od, conn, 0x000a, 0x0002, 0x0000, snacid, &bs);
 
-	byte_stream_putstr(&frame->data, address);
-
-	flap_connection_send(conn, frame);
+	byte_stream_destroy(&bs);
 
 	return 0;
 }

@@ -346,7 +346,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			break;
 
 		default:
-			purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
+			purple_debug_warning("yahoo",
 					   "Unknown status key %d\n", pair->key);
 			break;
 		}
@@ -518,7 +518,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 
 			} else {
 				/* This buddy is on the ignore list (and therefore in no group) */
-				purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found",
+				purple_debug_info("yahoo", "%s adding %s to the deny list because of the ignore list / no group was found\n",
 								  account->username, norm_bud);
 				purple_privacy_deny_add(account, norm_bud, 1);
 			}
@@ -2124,7 +2124,7 @@ static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pk
 
 	switch (err) {
 	case 3:
-		msg = g_strdup(_("Invalid screen name."));
+		msg = g_strdup(_("Invalid username."));
 		reason = PURPLE_CONNECTION_ERROR_INVALID_USERNAME;
 		break;
 	case 13:
@@ -3483,9 +3483,12 @@ yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 {
 	PurpleConnection *gc = user_data;
 	gboolean set_cookie = FALSE;
-	char *url;
+	gchar *url;
+	struct yahoo_data *yd = gc->proto_data;
 
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
+	
+	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	if (error_message != NULL)
 		purple_debug_error("yahoo", "Requesting mail login token failed: %s\n", error_message);
@@ -3500,7 +3503,6 @@ yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	}
 
 	if (!set_cookie) {
-		struct yahoo_data *yd = gc->proto_data;
 		purple_debug_error("yahoo", "No mail login token; forwarding to login screen.\n");
 		url = g_strdup(yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
 	}
@@ -3541,7 +3543,9 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 
 	g_free(request);
 
-	if (url_data == NULL) {
+	if (url_data != NULL)
+		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
+	else {
 		const char *yahoo_mail_url = (yd->jp ? YAHOOJP_MAIL_URL : YAHOO_MAIL_URL);
 		purple_debug_error("yahoo",
 				   "Unable to request mail login token; forwarding to login screen.");

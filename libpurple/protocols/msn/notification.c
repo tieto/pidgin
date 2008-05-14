@@ -398,7 +398,9 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
-		purple_debug_info("MSNP14","MSG payload:{%.*s}\n",cmd->payload_len, cmd->payload);
+#if 0 /* glib on win32 doesn't correctly support precision modifiers for a string */
+		purple_debug_info("MSNP14", "MSG payload:{%.*s}\n", cmd->payload_len, cmd->payload);
+#endif
 		cmd->payload_cb(cmdproc, cmd, cmd->payload, cmd->payload_len);
 	}
 }
@@ -416,10 +418,12 @@ uum_send_msg(MsnSession *session,MsnMessage *msg)
 	cmdproc = session->notification->cmdproc;
 	g_return_if_fail(msg     != NULL);
 	payload = msn_message_gen_payload(msg, &payload_len);
-	purple_debug_info("MSNP14","send UUM,payload{%s},strlen:%d,len:%d\n",
-		payload,strlen(payload),payload_len);
+	purple_debug_info("MSNP14",
+		"send UUM, payload{%s}, strlen:%" G_GSIZE_FORMAT ", len:%" G_GSIZE_FORMAT "\n",
+		payload, strlen(payload), payload_len);
 	type = msg->type;
-	trans = msn_transaction_new(cmdproc, "UUM","%s 32 %d %d",msg->remote_user,type,payload_len);
+	trans = msn_transaction_new(cmdproc, "UUM", "%s 32 %d %" G_GSIZE_FORMAT,
+		msg->remote_user, type, payload_len);
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
@@ -433,7 +437,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	const char *passport;
 	const char *content_type;
 
-	purple_debug_info("MSNP14","Process UBM payload:%.*s\n", len, payload);
+	purple_debug_info("MSNP14","Process UBM payload:%.*s\n", (guint)len, payload);
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
 	msn_message_parse_payload(msg, payload, len,MSG_LINE_DEM,MSG_BODY_DEM);
@@ -445,7 +449,7 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	passport = msg->remote_user;
 
 	content_type = msn_message_get_content_type(msg);
-	purple_debug_info("MSNP14","type:%d\n",content_type);
+	purple_debug_info("MSNP14", "type:%s\n", content_type);
 	if(!strcmp(content_type,"text/plain")){
 		const char *value;
 		const char *body;
@@ -514,7 +518,7 @@ ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}else{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
-		purple_debug_info("MSNP14","UBM payload:{%.*s}\n", cmd->payload_len, cmd->payload);
+		purple_debug_info("MSNP14", "UBM payload:{%.*s}\n", (guint)(cmd->payload_len), cmd->payload);
 		ubm_cmd_post(cmdproc, cmd, cmd->payload, cmd->payload_len);
 	}
 }
@@ -629,8 +633,8 @@ msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_
 {
 	MsnTransaction *trans;
 	purple_debug_info("MSN Notification","Sending ADL with payload: %s\n", payload);
-	trans = msn_transaction_new(cmdproc, "ADL","%d", strlen(payload));
-	msn_transaction_set_payload(trans, payload, strlen(payload));
+	trans = msn_transaction_new(cmdproc, "ADL","%" G_GSIZE_FORMAT, payload_len);
+	msn_transaction_set_payload(trans, payload, payload_len);
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
@@ -713,7 +717,7 @@ msn_notification_send_fqy(MsnSession *session, const char *passport)
 	domain = tokens[1];
 
 	payload = g_strdup_printf("<ml><d n=\"%s\"><c n=\"%s\"/></d></ml>", domain, email);
-	trans = msn_transaction_new(cmdproc, "FQY","%d", strlen(payload));
+	trans = msn_transaction_new(cmdproc, "FQY","%" G_GSIZE_FORMAT, strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
 
@@ -984,8 +988,9 @@ qng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	passport = purple_normalize(account, purple_account_get_username(account));
 
-	if ((strstr(passport, "@hotmail.") != NULL) ||
-		(strstr(passport, "@msn.com") != NULL))
+	if ((strstr(passport, "@hotmail.") == NULL) &&
+		(strstr(passport, "@live.com") == NULL) &&
+		(strstr(passport, "@msn.com") == NULL))
 		return;
 
 	if (count++ < 26)
@@ -1022,6 +1027,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
+	unsigned long clientid;
 	int wlmclient;
 	const char *state, *passport, *friendly;
 
@@ -1047,6 +1053,9 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_user_set_object(user, msnobj);
 	}
 
+	clientid = strtoul(cmd->params[5], NULL, 10);
+	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
+
 	msn_user_set_state(user, state);
 	msn_user_update(user);
 }
@@ -1054,9 +1063,61 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 {
-#if 0
+	PurpleConnection *gc;
+	MsnUserList *userlist;
+	char *who = NULL, *text = NULL;
+	xmlnode *payloadNode, *from, *textNode;
+
 	purple_debug_misc("msn", "Incoming Page: {%s}\n", payload);
-#endif
+
+	userlist = cmdproc->session->userlist;
+	gc = purple_account_get_connection(cmdproc->session->account);
+
+	/* payload looks like this:
+	   <?xml version="1.0"?>
+	   <NOTIFICATION id="0" siteid="111100400" siteurl="http://mobile.msn.com/">
+	     <TO name="passport@example.com">
+	       <VIA agent="mobile"/>
+	     </TO>
+	     <FROM name="tel:+XXXXXXXXXXX"/>
+		 <MSG pri="1" id="1">
+		   <CAT Id="110110001"/>
+		   <ACTION url="2wayIM.asp"/>
+		   <SUBSCR url="2wayIM.asp"/>
+		   <BODY lcid="1033">
+		     <TEXT>Message was here</TEXT>
+		   </BODY>
+		 </MSG>
+	   </NOTIFICATION>
+	*/
+
+	if (!(payloadNode = xmlnode_from_str(payload, len)) ||
+		!(from = xmlnode_get_child(payloadNode, "FROM")) ||
+		!(textNode = xmlnode_get_child(payloadNode, "MSG/BODY/TEXT")))
+		return;
+
+	who = g_strdup(xmlnode_get_attrib(from, "name"));
+	if (!who) return;
+
+	text = xmlnode_get_data(textNode);
+
+	/* Match number to user's mobile number, FROM is a phone number if the
+	   other side page you using your phone number */
+	if(!strncmp(who, "tel:+", 5)) {
+		MsnUser *user =
+			msn_userlist_find_user_with_mobile_phone(userlist, who + 4);
+
+		if(user && user->passport) {
+			g_free(who);
+			who = g_strdup(user->passport);
+		}
+	}
+
+	serv_got_im(gc, who, text, 0, time(NULL));
+
+	g_free(text);
+	g_free(who);
+	xmlnode_free(payloadNode);
 }
 
 static void
@@ -1110,7 +1171,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 
 	clientid = strtoul(cmd->params[4], NULL, 10);
-	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE);
+	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
 
 	msn_user_set_state(user, state);
 	msn_user_update(user);
@@ -1630,6 +1691,9 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		msn_user_set_currentmedia(user, &media);
 	else
 		msn_user_set_currentmedia(user, NULL);
+	g_free(media.title);
+	g_free(media.album);
+	g_free(media.artist);
 	g_free(str);
 
 	msn_user_update(user);
@@ -1996,7 +2060,7 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 	xmlnode_free(rml_node);
 
 	purple_debug_info("MSN Notification","Send RML with payload:\n%s\n", payload);
-	trans = msn_transaction_new(cmdproc, "RML","%d", strlen(payload));
+	trans = msn_transaction_new(cmdproc, "RML","%" G_GSIZE_FORMAT, strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
 	g_free(payload);

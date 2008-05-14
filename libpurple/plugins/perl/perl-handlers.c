@@ -207,13 +207,15 @@ purple_perl_get_plugin_frame(PurplePlugin *plugin)
 	return ret_frame;
 }
 
-static void
+static gboolean
 destroy_timeout_handler(PurplePerlTimeoutHandler *handler)
 {
+	gboolean ret = FALSE;
+
 	timeout_handlers = g_list_remove(timeout_handlers, handler);
 
 	if (handler->iotag > 0)
-		purple_timeout_remove(handler->iotag);
+		ret = purple_timeout_remove(handler->iotag);
 
 	if (handler->callback != NULL)
 		SvREFCNT_dec(handler->callback);
@@ -222,6 +224,8 @@ destroy_timeout_handler(PurplePerlTimeoutHandler *handler)
 		SvREFCNT_dec(handler->data);
 
 	g_free(handler);
+
+	return ret;
 }
 
 static void
@@ -301,8 +305,8 @@ perl_signal_cb(va_list args, void *data)
 
 	for (i = 0; i < value_count; i++) {
 		sv_args[i] = purple_perl_sv_from_vargs(values[i],
-		                                     (va_list*)&args,
-		                                     &copy_args[i]);
+		                                       (va_list*)&args,
+		                                       &copy_args[i]);
 
 		XPUSHs(sv_args[i]);
 	}
@@ -422,14 +426,14 @@ find_signal_handler(PurplePlugin *plugin, void *instance, const char *signal)
 	return NULL;
 }
 
-void
+guint
 purple_perl_timeout_add(PurplePlugin *plugin, int seconds, SV *callback, SV *data)
 {
 	PurplePerlTimeoutHandler *handler;
 
 	if (plugin == NULL) {
 		croak("Invalid handle in adding perl timeout handler.\n");
-		return;
+		return 0;
 	}
 
 	handler = g_new0(PurplePerlTimeoutHandler, 1);
@@ -443,15 +447,39 @@ purple_perl_timeout_add(PurplePlugin *plugin, int seconds, SV *callback, SV *dat
 	timeout_handlers = g_list_append(timeout_handlers, handler);
 
 	handler->iotag = purple_timeout_add(seconds * 1000, perl_timeout_cb, handler);
+
+	return handler->iotag;
+}
+
+gboolean
+purple_perl_timeout_remove(guint handle)
+{
+	GList *l, *l_next;
+
+	for (l = timeout_handlers; l != NULL; l = l_next) {
+		PurplePerlTimeoutHandler *handler;
+
+		l_next = l->next;
+
+		handler = (PurplePerlTimeoutHandler *)l->data;
+
+		if (handler->iotag == handle)
+			return destroy_timeout_handler(handler);
+	}
+
+	purple_debug_info("perl", "No timeout handler found with handle %u.\n",
+	                  handle);
+	return FALSE;
 }
 
 void
 purple_perl_timeout_clear_for_plugin(PurplePlugin *plugin)
 {
-	PurplePerlTimeoutHandler *handler;
 	GList *l, *l_next;
 
 	for (l = timeout_handlers; l != NULL; l = l_next) {
+		PurplePerlTimeoutHandler *handler;
+
 		l_next = l->next;
 
 		handler = (PurplePerlTimeoutHandler *)l->data;

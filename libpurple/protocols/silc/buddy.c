@@ -52,13 +52,13 @@ silcpurple_buddy_keyagr_resolved(SilcClient client,
 			   _("User %s is not present in the network"), r->nick);
 		purple_notify_error(gc, _("Key Agreement"),
 				  _("Cannot perform the key agreement"), tmp);
-		silc_free(r->nick);
+		g_free(r->nick);
 		silc_free(r);
 		return;
 	}
 
 	silcpurple_buddy_keyagr_do(gc, r->nick, FALSE);
-	silc_free(r->nick);
+	g_free(r->nick);
 	silc_free(r);
 }
 
@@ -276,7 +276,7 @@ silcpurple_buddy_keyagr_request_cb(SilcPurpleKeyAgrAsk a, gint id)
 	}
 
  out:
-	silc_free(a->hostname);
+	g_free(a->hostname);
 	silc_free(a);
 }
 
@@ -309,7 +309,7 @@ void silcpurple_buddy_keyagr_request(SilcClient client,
 	a->conn = conn;
 	a->client_id = client_entry->id;
 	if (hostname)
-		a->hostname = strdup(hostname);
+		a->hostname = g_strdup(hostname);
 	a->port = port;
 
 	purple_request_action(client->application, _("Key Agreement Request"), tmp,
@@ -416,7 +416,7 @@ silcpurple_buddy_privkey_resolved(SilcClient client,
 	}
 
 	silcpurple_buddy_privkey(client->application, context);
-	silc_free(context);
+	g_free(context);
 }
 
 static void
@@ -544,7 +544,7 @@ silcpurple_buddy_getkey_resolved(SilcClient client,
 	}
 
 	silcpurple_buddy_getkey(client->application, context);
-	silc_free(context);
+	g_free(context);
 }
 
 static void

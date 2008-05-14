@@ -102,6 +102,7 @@ static const struct developer patch_writers[] = {
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
 	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
 	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
+	{"Jorge 'Masca' Villaseñor", 	NULL, 	NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -144,7 +145,7 @@ static const struct translator current_translators[] = {
 	{N_("Catalan"),             "ca", "Josep Puigdemont", "josep.puigdemont@gmail.com"},
 	{N_("Valencian-Catalan"),   "ca@valencia", "Toni Hermoso", "toniher@softcatala.org"},
 	{N_("Valencian-Catalan"),   "ca@valencia", "Josep Puigdemont", "tradgnome@softcatala.org"},
-	{N_("Czech"),               "cs", "Miloslav Trmac", "mitr@volny.cz"},
+	{N_("Czech"),               "cs", "David Vachulka", "david@konstrukce-cad.com"},
 	{N_("Danish"),              "da", "Morten Brix Pedersen", "morten@wtf.dk"},
 	{N_("Danish"),              "da", "Peter Bach", "bach.peter@gmail.com"},
 	{N_("German"),              "de", "Björn Voigt", "bjoern@cs.tu-berlin.de"},
@@ -232,6 +233,7 @@ static const struct translator past_translators[] = {
 	{N_("Catalan"),             "ca", "JM Pérez Cáncer", NULL},
 	{N_("Catalan"),             "ca", "Robert Millan", NULL},
 	{N_("Czech"),               "cs", "Honza Král", NULL},
+	{N_("Czech"),               "cs", "Miloslav Trmac", "mitr@volny.cz"},
 	{N_("German"),              "de", "Daniel Seifert, Karsten Weiss", NULL},
 	{N_("Spanish"),             "es", "JM Pérez Cáncer", NULL},
 	{N_("Spanish"),             "es", "Nicolás Lichtmaier", NULL},
@@ -627,7 +629,7 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 #endif
 
 #ifndef _WIN32
-#ifdef HAVE_LIBNM
+#ifdef HAVE_NETWORKMANAGER
 	g_string_append(str, "    <b>NetworkManager:</b> Enabled<br/>");
 #else
 	g_string_append(str, "    <b>NetworkManager:</b> Disabled<br/>");
@@ -759,7 +761,7 @@ pidgin_dialogs_im(void)
 
 	purple_request_fields(purple_get_blist(), _("New Instant Message"),
 						NULL,
-						_("Please enter the screen name or alias of the person "
+						_("Please enter the username or alias of the person "
 						  "you would like to IM."),
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_im_cb),
@@ -898,7 +900,7 @@ pidgin_dialogs_info(void)
 
 	purple_request_fields(purple_get_blist(), _("Get User Info"),
 						NULL,
-						_("Please enter the screen name or alias of the person "
+						_("Please enter the username or alias of the person "
 						  "whose info you would like to view."),
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_info_cb),
@@ -990,7 +992,7 @@ pidgin_dialogs_log(void)
 
 	purple_request_fields(purple_get_blist(), _("View User Log"),
 						NULL,
-						_("Please enter the screen name or alias of the person "
+						_("Please enter the username or alias of the person "
 						  "whose log you would like to view."),
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_log_cb),

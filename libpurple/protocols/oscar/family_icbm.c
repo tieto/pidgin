@@ -161,7 +161,7 @@ guint16 aim_im_fingerprint(const guint8 *msghdr, int len)
 int aim_im_setparams(OscarData *od, struct aim_icbmparameters *params)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0004)))
@@ -170,22 +170,22 @@ int aim_im_setparams(OscarData *od, struct aim_icbmparameters *params)
 	if (!params)
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, 10+16);
-
-	snacid = aim_cachesnac(od, 0x0004, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x0002, 0x0000, snacid);
+	byte_stream_new(&bs, 16);
 
 	/* This is read-only (see Parameter Reply). Must be set to zero here. */
-	byte_stream_put16(&frame->data, 0x0000);
+	byte_stream_put16(&bs, 0x0000);
 
 	/* These are all read-write */
-	byte_stream_put32(&frame->data, params->flags);
-	byte_stream_put16(&frame->data, params->maxmsglen);
-	byte_stream_put16(&frame->data, params->maxsenderwarn);
-	byte_stream_put16(&frame->data, params->maxrecverwarn);
-	byte_stream_put32(&frame->data, params->minmsginterval);
+	byte_stream_put32(&bs, params->flags);
+	byte_stream_put16(&bs, params->maxmsglen);
+	byte_stream_put16(&bs, params->maxsenderwarn);
+	byte_stream_put16(&bs, params->maxrecverwarn);
+	byte_stream_put32(&bs, params->minmsginterval);
 
-	flap_connection_send(conn, frame);
+	snacid = aim_cachesnac(od, 0x0004, 0x0002, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0002, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -413,7 +413,7 @@ int aim_im_sendch1_ext(OscarData *od, struct aim_sendimext_args *args)
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, args->destsn, strlen(args->destsn)+1);
 
 	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &data);
-	g_free(data.data);
+	byte_stream_destroy(&data);
 
 	/* clean out SNACs over 60sec old */
 	aim_cleansnacs(od, 60);
@@ -454,7 +454,7 @@ int aim_im_sendch1(OscarData *od, const char *sn, guint16 flags, const char *msg
 int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, guint16 exchange, const char *roomname, guint16 instance)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	IcbmCookie *msgcookie;
 	struct aim_invite_priv *priv;
@@ -470,10 +470,9 @@ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, gu
 
 	aim_icbm_makecookie(cookie);
 
-	frame = flap_frame_new(od, 0x02, 1152+strlen(sn)+strlen(roomname)+strlen(msg));
+	byte_stream_new(&bs, 1142+strlen(sn)+strlen(roomname)+strlen(msg));
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, sn, strlen(sn)+1);
-	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* XXX should be uncached by an unwritten 'invite accept' handler */
 	priv = g_malloc(sizeof(struct aim_invite_priv));
@@ -488,7 +487,7 @@ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, gu
 		g_free(priv);
 
 	/* ICBM Header */
-	aim_im_puticbm(&frame->data, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, sn);
 
 	/*
 	 * TLV t(0005)
@@ -513,14 +512,16 @@ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, gu
 	aim_tlvlist_write(&hdrbs, &inner_tlvlist);
 
 	aim_tlvlist_add_raw(&outer_tlvlist, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
-	g_free(hdrbs.data);
+	byte_stream_destroy(&hdrbs);
 
-	aim_tlvlist_write(&frame->data, &outer_tlvlist);
+	aim_tlvlist_write(&bs, &outer_tlvlist);
 
 	aim_tlvlist_free(inner_tlvlist);
 	aim_tlvlist_free(outer_tlvlist);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -534,7 +535,7 @@ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, gu
 int aim_im_sendch2_icon(OscarData *od, const char *sn, const guint8 *icon, int iconlen, time_t stamp, guint16 iconsum)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	guchar cookie[8];
 
@@ -546,50 +547,51 @@ int aim_im_sendch2_icon(OscarData *od, const char *sn, const guint8 *icon, int i
 
 	aim_icbm_makecookie(cookie);
 
-	frame = flap_frame_new(od, 0x02, 10+8+2+1+strlen(sn)+2+2+2+8+16+2+2+2+2+2+2+2+4+4+4+iconlen+strlen(AIM_ICONIDENT)+2+2);
+	byte_stream_new(&bs, 8+2+1+strlen(sn)+2+2+2+8+16+2+2+2+2+2+2+2+4+4+4+iconlen+strlen(AIM_ICONIDENT)+2+2);
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* ICBM header */
-	aim_im_puticbm(&frame->data, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, sn);
 
 	/*
 	 * TLV t(0005)
 	 *
 	 * Encompasses everything below.
 	 */
-	byte_stream_put16(&frame->data, 0x0005);
-	byte_stream_put16(&frame->data, 2+8+16+6+4+4+iconlen+4+4+4+strlen(AIM_ICONIDENT));
+	byte_stream_put16(&bs, 0x0005);
+	byte_stream_put16(&bs, 2+8+16+6+4+4+iconlen+4+4+4+strlen(AIM_ICONIDENT));
 
-	byte_stream_put16(&frame->data, 0x0000);
-	byte_stream_putraw(&frame->data, cookie, 8);
-	byte_stream_putcaps(&frame->data, OSCAR_CAPABILITY_BUDDYICON);
+	byte_stream_put16(&bs, 0x0000);
+	byte_stream_putraw(&bs, cookie, 8);
+	byte_stream_putcaps(&bs, OSCAR_CAPABILITY_BUDDYICON);
 
 	/* TLV t(000a) */
-	byte_stream_put16(&frame->data, 0x000a);
-	byte_stream_put16(&frame->data, 0x0002);
-	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&bs, 0x000a);
+	byte_stream_put16(&bs, 0x0002);
+	byte_stream_put16(&bs, 0x0001);
 
 	/* TLV t(000f) */
-	byte_stream_put16(&frame->data, 0x000f);
-	byte_stream_put16(&frame->data, 0x0000);
+	byte_stream_put16(&bs, 0x000f);
+	byte_stream_put16(&bs, 0x0000);
 
 	/* TLV t(2711) */
-	byte_stream_put16(&frame->data, 0x2711);
-	byte_stream_put16(&frame->data, 4+4+4+iconlen+strlen(AIM_ICONIDENT));
-	byte_stream_put16(&frame->data, 0x0000);
-	byte_stream_put16(&frame->data, iconsum);
-	byte_stream_put32(&frame->data, iconlen);
-	byte_stream_put32(&frame->data, stamp);
-	byte_stream_putraw(&frame->data, icon, iconlen);
-	byte_stream_putstr(&frame->data, AIM_ICONIDENT);
+	byte_stream_put16(&bs, 0x2711);
+	byte_stream_put16(&bs, 4+4+4+iconlen+strlen(AIM_ICONIDENT));
+	byte_stream_put16(&bs, 0x0000);
+	byte_stream_put16(&bs, iconsum);
+	byte_stream_put32(&bs, iconlen);
+	byte_stream_put32(&bs, stamp);
+	byte_stream_putraw(&bs, icon, iconlen);
+	byte_stream_putstr(&bs, AIM_ICONIDENT);
 
 	/* TLV t(0003) */
-	byte_stream_put16(&frame->data, 0x0003);
-	byte_stream_put16(&frame->data, 0x0000);
+	byte_stream_put16(&bs, 0x0003);
+	byte_stream_put16(&bs, 0x0000);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -612,7 +614,7 @@ int aim_im_sendch2_icon(OscarData *od, const char *sn, const guint8 *icon, int i
 int aim_im_sendch2_rtfmsg(OscarData *od, struct aim_sendrtfmsg_args *args)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	guchar cookie[8];
 	const char rtfcap[] = {"{97B12751-243C-4334-AD22-D6ABF73F1492}"}; /* OSCAR_CAPABILITY_ICQRTF capability in string form */
@@ -628,60 +630,61 @@ int aim_im_sendch2_rtfmsg(OscarData *od, struct aim_sendrtfmsg_args *args)
 
 	aim_icbm_makecookie(cookie);
 
-	frame = flap_frame_new(od, 0x02, 10+128+servdatalen);
+	byte_stream_new(&bs, 128+servdatalen);
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* ICBM header */
-	aim_im_puticbm(&frame->data, cookie, 0x0002, args->destsn);
+	aim_im_puticbm(&bs, cookie, 0x0002, args->destsn);
 
 	/* TLV t(0005) - Encompasses everything below. */
-	byte_stream_put16(&frame->data, 0x0005);
-	byte_stream_put16(&frame->data, 2+8+16  +  2+2+2  +  2+2  +  2+2+servdatalen);
+	byte_stream_put16(&bs, 0x0005);
+	byte_stream_put16(&bs, 2+8+16  +  2+2+2  +  2+2  +  2+2+servdatalen);
 
-	byte_stream_put16(&frame->data, 0x0000);
-	byte_stream_putraw(&frame->data, cookie, 8);
-	byte_stream_putcaps(&frame->data, OSCAR_CAPABILITY_ICQSERVERRELAY);
+	byte_stream_put16(&bs, 0x0000);
+	byte_stream_putraw(&bs, cookie, 8);
+	byte_stream_putcaps(&bs, OSCAR_CAPABILITY_ICQSERVERRELAY);
 
 	/* t(000a) l(0002) v(0001) */
-	byte_stream_put16(&frame->data, 0x000a);
-	byte_stream_put16(&frame->data, 0x0002);
-	byte_stream_put16(&frame->data, 0x0001);
+	byte_stream_put16(&bs, 0x000a);
+	byte_stream_put16(&bs, 0x0002);
+	byte_stream_put16(&bs, 0x0001);
 
 	/* t(000f) l(0000) v() */
-	byte_stream_put16(&frame->data, 0x000f);
-	byte_stream_put16(&frame->data, 0x0000);
+	byte_stream_put16(&bs, 0x000f);
+	byte_stream_put16(&bs, 0x0000);
 
 	/* Service Data TLV */
-	byte_stream_put16(&frame->data, 0x2711);
-	byte_stream_put16(&frame->data, servdatalen);
+	byte_stream_put16(&bs, 0x2711);
+	byte_stream_put16(&bs, servdatalen);
 
-	byte_stream_putle16(&frame->data, 11 + 16 /* 11 + (sizeof CLSID) */);
-	byte_stream_putle16(&frame->data, 9);
-	byte_stream_putcaps(&frame->data, OSCAR_CAPABILITY_EMPTY);
-	byte_stream_putle16(&frame->data, 0);
-	byte_stream_putle32(&frame->data, 0);
-	byte_stream_putle8(&frame->data, 0);
-	byte_stream_putle16(&frame->data, 0x03ea); /* trid1 */
+	byte_stream_putle16(&bs, 11 + 16 /* 11 + (sizeof CLSID) */);
+	byte_stream_putle16(&bs, 9);
+	byte_stream_putcaps(&bs, OSCAR_CAPABILITY_EMPTY);
+	byte_stream_putle16(&bs, 0);
+	byte_stream_putle32(&bs, 0);
+	byte_stream_putle8(&bs, 0);
+	byte_stream_putle16(&bs, 0x03ea); /* trid1 */
 
-	byte_stream_putle16(&frame->data, 14);
-	byte_stream_putle16(&frame->data, 0x03eb); /* trid2 */
-	byte_stream_putle32(&frame->data, 0);
-	byte_stream_putle32(&frame->data, 0);
-	byte_stream_putle32(&frame->data, 0);
+	byte_stream_putle16(&bs, 14);
+	byte_stream_putle16(&bs, 0x03eb); /* trid2 */
+	byte_stream_putle32(&bs, 0);
+	byte_stream_putle32(&bs, 0);
+	byte_stream_putle32(&bs, 0);
 
-	byte_stream_putle16(&frame->data, 0x0001);
-	byte_stream_putle32(&frame->data, 0);
-	byte_stream_putle16(&frame->data, strlen(args->rtfmsg)+1);
-	byte_stream_putraw(&frame->data, (const guint8 *)args->rtfmsg, strlen(args->rtfmsg)+1);
+	byte_stream_putle16(&bs, 0x0001);
+	byte_stream_putle32(&bs, 0);
+	byte_stream_putle16(&bs, strlen(args->rtfmsg)+1);
+	byte_stream_putraw(&bs, (const guint8 *)args->rtfmsg, strlen(args->rtfmsg)+1);
 
-	byte_stream_putle32(&frame->data, args->fgcolor);
-	byte_stream_putle32(&frame->data, args->bgcolor);
-	byte_stream_putle32(&frame->data, strlen(rtfcap)+1);
-	byte_stream_putraw(&frame->data, (const guint8 *)rtfcap, strlen(rtfcap)+1);
+	byte_stream_putle32(&bs, args->fgcolor);
+	byte_stream_putle32(&bs, args->bgcolor);
+	byte_stream_putle32(&bs, strlen(rtfcap)+1);
+	byte_stream_putraw(&bs, (const guint8 *)rtfcap, strlen(rtfcap)+1);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -695,7 +698,7 @@ aim_im_sendch2_cancel(PeerConnection *peer_conn)
 {
 	OscarData *od;
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *outer_tlvlist = NULL, *inner_tlvlist = NULL;
 	ByteStream hdrbs;
@@ -705,13 +708,12 @@ aim_im_sendch2_cancel(PeerConnection *peer_conn)
 	if (conn == NULL)
 		return;
 
-	frame = flap_frame_new(od, 0x02, 128+strlen(peer_conn->sn));
+	byte_stream_new(&bs, 118+strlen(peer_conn->sn));
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* ICBM header */
-	aim_im_puticbm(&frame->data, peer_conn->cookie, 0x0002, peer_conn->sn);
+	aim_im_puticbm(&bs, peer_conn->cookie, 0x0002, peer_conn->sn);
 
 	aim_tlvlist_add_noval(&outer_tlvlist, 0x0003);
 
@@ -726,14 +728,16 @@ aim_im_sendch2_cancel(PeerConnection *peer_conn)
 	aim_tlvlist_write(&hdrbs, &inner_tlvlist);
 
 	aim_tlvlist_add_raw(&outer_tlvlist, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
-	g_free(hdrbs.data);
+	byte_stream_destroy(&hdrbs);
 
-	aim_tlvlist_write(&frame->data, &outer_tlvlist);
+	aim_tlvlist_write(&bs, &outer_tlvlist);
 
 	aim_tlvlist_free(inner_tlvlist);
 	aim_tlvlist_free(outer_tlvlist);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 }
 
 /**
@@ -745,7 +749,7 @@ aim_im_sendch2_connected(PeerConnection *peer_conn)
 {
 	OscarData *od;
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	od = peer_conn->od;
@@ -753,21 +757,22 @@ aim_im_sendch2_connected(PeerConnection *peer_conn)
 	if (conn == NULL)
 		return;
 
-	frame = flap_frame_new(od, 0x02, 10 + 11+strlen(peer_conn->sn) + 4+2+8+16);
+	byte_stream_new(&bs, 11+strlen(peer_conn->sn) + 4+2+8+16);
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* ICBM header */
-	aim_im_puticbm(&frame->data, peer_conn->cookie, 0x0002, peer_conn->sn);
+	aim_im_puticbm(&bs, peer_conn->cookie, 0x0002, peer_conn->sn);
 
-	byte_stream_put16(&frame->data, 0x0005);
-	byte_stream_put16(&frame->data, 0x001a);
-	byte_stream_put16(&frame->data, AIM_RENDEZVOUS_CONNECTED);
-	byte_stream_putraw(&frame->data, peer_conn->cookie, 8);
-	byte_stream_putcaps(&frame->data, peer_conn->type);
+	byte_stream_put16(&bs, 0x0005);
+	byte_stream_put16(&bs, 0x001a);
+	byte_stream_put16(&bs, AIM_RENDEZVOUS_CONNECTED);
+	byte_stream_putraw(&bs, peer_conn->cookie, 8);
+	byte_stream_putcaps(&bs, peer_conn->type);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 }
 
 /**
@@ -781,7 +786,7 @@ void
 aim_im_sendch2_odc_requestdirect(OscarData *od, guchar *cookie, const char *sn, const guint8 *ip, guint16 port, guint16 requestnumber)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *outer_tlvlist = NULL, *inner_tlvlist = NULL;
 	ByteStream hdrbs;
@@ -790,13 +795,12 @@ aim_im_sendch2_odc_requestdirect(OscarData *od, guchar *cookie, const char *sn, 
 	if (conn == NULL)
 		return;
 
-	frame = flap_frame_new(od, 0x02, 256+strlen(sn));
+	byte_stream_new(&bs, 246+strlen(sn));
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* ICBM header */
-	aim_im_puticbm(&frame->data, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, sn);
 
 	aim_tlvlist_add_noval(&outer_tlvlist, 0x0003);
 
@@ -814,14 +818,16 @@ aim_im_sendch2_odc_requestdirect(OscarData *od, guchar *cookie, const char *sn, 
 	aim_tlvlist_write(&hdrbs, &inner_tlvlist);
 
 	aim_tlvlist_add_raw(&outer_tlvlist, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
-	g_free(hdrbs.data);
+	byte_stream_destroy(&hdrbs);
 
-	aim_tlvlist_write(&frame->data, &outer_tlvlist);
+	aim_tlvlist_write(&bs, &outer_tlvlist);
 
 	aim_tlvlist_free(inner_tlvlist);
 	aim_tlvlist_free(outer_tlvlist);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 }
 
 /**
@@ -832,7 +838,7 @@ void
 aim_im_sendch2_odc_requestproxy(OscarData *od, guchar *cookie, const char *sn, const guint8 *ip, guint16 pin, guint16 requestnumber)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *outer_tlvlist = NULL, *inner_tlvlist = NULL;
 	ByteStream hdrbs;
@@ -842,13 +848,12 @@ aim_im_sendch2_odc_requestproxy(OscarData *od, guchar *cookie, const char *sn, c
 	if (conn == NULL)
 		return;
 
-	frame = flap_frame_new(od, 0x02, 256+strlen(sn));
+	byte_stream_new(&bs, 246+strlen(sn));
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* ICBM header */
-	aim_im_puticbm(&frame->data, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, sn);
 
 	aim_tlvlist_add_noval(&outer_tlvlist, 0x0003);
 
@@ -876,14 +881,16 @@ aim_im_sendch2_odc_requestproxy(OscarData *od, guchar *cookie, const char *sn, c
 	aim_tlvlist_write(&hdrbs, &inner_tlvlist);
 
 	aim_tlvlist_add_raw(&outer_tlvlist, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
-	g_free(hdrbs.data);
+	byte_stream_destroy(&hdrbs);
 
-	aim_tlvlist_write(&frame->data, &outer_tlvlist);
+	aim_tlvlist_write(&bs, &outer_tlvlist);
 
 	aim_tlvlist_free(inner_tlvlist);
 	aim_tlvlist_free(outer_tlvlist);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 }
 
 /**
@@ -894,7 +901,7 @@ void
 aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char *sn, const guint8 *ip, guint16 port, guint16 requestnumber, const gchar *filename, guint32 size, guint16 numfiles)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *outer_tlvlist = NULL, *inner_tlvlist = NULL;
 	ByteStream hdrbs;
@@ -903,13 +910,12 @@ aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char 
 	if (conn == NULL)
 		return;
 
-	frame = flap_frame_new(od, 0x02, 1024);
+	byte_stream_new(&bs, 1014);
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* ICBM header */
-	aim_im_puticbm(&frame->data, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, sn);
 
 	aim_tlvlist_add_noval(&outer_tlvlist, 0x0003);
 
@@ -939,33 +945,35 @@ aim_im_sendch2_sendfile_requestdirect(OscarData *od, guchar *cookie, const char 
 
 	if (filename != NULL)
 	{
-		ByteStream bs;
+		ByteStream inner_bs;
 
 		/* Begin TLV t(2711) */
-		byte_stream_new(&bs, 2+2+4+strlen(filename)+1);
-		byte_stream_put16(&bs, (numfiles > 1) ? 0x0002 : 0x0001);
-		byte_stream_put16(&bs, numfiles);
-		byte_stream_put32(&bs, size);
+		byte_stream_new(&inner_bs, 2+2+4+strlen(filename)+1);
+		byte_stream_put16(&inner_bs, (numfiles > 1) ? 0x0002 : 0x0001);
+		byte_stream_put16(&inner_bs, numfiles);
+		byte_stream_put32(&inner_bs, size);
 
 		/* Filename - NULL terminated, for some odd reason */
-		byte_stream_putstr(&bs, filename);
-		byte_stream_put8(&bs, 0x00);
+		byte_stream_putstr(&inner_bs, filename);
+		byte_stream_put8(&inner_bs, 0x00);
 
-		aim_tlvlist_add_raw(&inner_tlvlist, 0x2711, bs.len, bs.data);
-		g_free(bs.data);
+		aim_tlvlist_add_raw(&inner_tlvlist, 0x2711, inner_bs.len, inner_bs.data);
+		byte_stream_destroy(&inner_bs);
 		/* End TLV t(2711) */
 	}
 
 	aim_tlvlist_write(&hdrbs, &inner_tlvlist);
 	aim_tlvlist_add_raw(&outer_tlvlist, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
-	g_free(hdrbs.data);
+	byte_stream_destroy(&hdrbs);
 
-	aim_tlvlist_write(&frame->data, &outer_tlvlist);
+	aim_tlvlist_write(&bs, &outer_tlvlist);
 
 	aim_tlvlist_free(inner_tlvlist);
 	aim_tlvlist_free(outer_tlvlist);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 }
 
 /**
@@ -976,7 +984,7 @@ void
 aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *sn, const guint8 *ip, guint16 pin, guint16 requestnumber, const gchar *filename, guint32 size, guint16 numfiles)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *outer_tlvlist = NULL, *inner_tlvlist = NULL;
 	ByteStream hdrbs;
@@ -986,13 +994,12 @@ aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *
 	if (conn == NULL)
 		return;
 
-	frame = flap_frame_new(od, 0x02, 1024);
+	byte_stream_new(&bs, 1014);
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* ICBM header */
-	aim_im_puticbm(&frame->data, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, sn);
 
 	aim_tlvlist_add_noval(&outer_tlvlist, 0x0003);
 
@@ -1030,34 +1037,36 @@ aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *
 
 	if (filename != NULL)
 	{
-		ByteStream bs;
+		ByteStream filename_bs;
 
 		/* Begin TLV t(2711) */
-		byte_stream_new(&bs, 2+2+4+strlen(filename)+1);
-		byte_stream_put16(&bs, (numfiles > 1) ? 0x0002 : 0x0001);
-		byte_stream_put16(&bs, numfiles);
-		byte_stream_put32(&bs, size);
+		byte_stream_new(&filename_bs, 2+2+4+strlen(filename)+1);
+		byte_stream_put16(&filename_bs, (numfiles > 1) ? 0x0002 : 0x0001);
+		byte_stream_put16(&filename_bs, numfiles);
+		byte_stream_put32(&filename_bs, size);
 
 		/* Filename - NULL terminated, for some odd reason */
-		byte_stream_putstr(&bs, filename);
-		byte_stream_put8(&bs, 0x00);
+		byte_stream_putstr(&filename_bs, filename);
+		byte_stream_put8(&filename_bs, 0x00);
 
-		aim_tlvlist_add_raw(&inner_tlvlist, 0x2711, bs.len, bs.data);
-		g_free(bs.data);
+		aim_tlvlist_add_raw(&inner_tlvlist, 0x2711, filename_bs.len, filename_bs.data);
+		byte_stream_destroy(&filename_bs);
 		/* End TLV t(2711) */
 	}
 
 	aim_tlvlist_write(&hdrbs, &inner_tlvlist);
 
 	aim_tlvlist_add_raw(&outer_tlvlist, 0x0005, byte_stream_curpos(&hdrbs), hdrbs.data);
-	g_free(hdrbs.data);
+	byte_stream_destroy(&hdrbs);
 
-	aim_tlvlist_write(&frame->data, &outer_tlvlist);
+	aim_tlvlist_write(&bs, &outer_tlvlist);
 
 	aim_tlvlist_free(inner_tlvlist);
 	aim_tlvlist_free(outer_tlvlist);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 }
 
 /**
@@ -1072,7 +1081,7 @@ aim_im_sendch2_sendfile_requestproxy(OscarData *od, guchar *cookie, const char *
 int aim_im_sendch2_geticqaway(OscarData *od, const char *sn, int type)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	guchar cookie[8];
 
@@ -1081,78 +1090,79 @@ int aim_im_sendch2_geticqaway(OscarData *od, const char *sn, int type)
 
 	aim_icbm_makecookie(cookie);
 
-	frame = flap_frame_new(od, 0x02, 10+8+2+1+strlen(sn) + 4+0x5e + 4);
+	byte_stream_new(&bs, 8+2+1+strlen(sn) + 4+0x5e + 4);
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* ICBM header */
-	aim_im_puticbm(&frame->data, cookie, 0x0002, sn);
+	aim_im_puticbm(&bs, cookie, 0x0002, sn);
 
 	/* TLV t(0005) - Encompasses almost everything below. */
-	byte_stream_put16(&frame->data, 0x0005); /* T */
-	byte_stream_put16(&frame->data, 0x005e); /* L */
+	byte_stream_put16(&bs, 0x0005); /* T */
+	byte_stream_put16(&bs, 0x005e); /* L */
 	{ /* V */
-		byte_stream_put16(&frame->data, 0x0000);
+		byte_stream_put16(&bs, 0x0000);
 
 		/* Cookie */
-		byte_stream_putraw(&frame->data, cookie, 8);
+		byte_stream_putraw(&bs, cookie, 8);
 
 		/* Put the 16 byte server relay capability */
-		byte_stream_putcaps(&frame->data, OSCAR_CAPABILITY_ICQSERVERRELAY);
+		byte_stream_putcaps(&bs, OSCAR_CAPABILITY_ICQSERVERRELAY);
 
 		/* TLV t(000a) */
-		byte_stream_put16(&frame->data, 0x000a);
-		byte_stream_put16(&frame->data, 0x0002);
-		byte_stream_put16(&frame->data, 0x0001);
+		byte_stream_put16(&bs, 0x000a);
+		byte_stream_put16(&bs, 0x0002);
+		byte_stream_put16(&bs, 0x0001);
 
 		/* TLV t(000f) */
-		byte_stream_put16(&frame->data, 0x000f);
-		byte_stream_put16(&frame->data, 0x0000);
+		byte_stream_put16(&bs, 0x000f);
+		byte_stream_put16(&bs, 0x0000);
 
 		/* TLV t(2711) */
-		byte_stream_put16(&frame->data, 0x2711);
-		byte_stream_put16(&frame->data, 0x0036);
+		byte_stream_put16(&bs, 0x2711);
+		byte_stream_put16(&bs, 0x0036);
 		{ /* V */
-			byte_stream_putle16(&frame->data, 0x001b); /* L */
-			byte_stream_putle16(&frame->data, 0x0009); /* Protocol version */
-			byte_stream_putcaps(&frame->data, OSCAR_CAPABILITY_EMPTY);
-			byte_stream_putle16(&frame->data, 0x0000); /* Unknown */
-			byte_stream_putle16(&frame->data, 0x0001); /* Client features? */
-			byte_stream_putle16(&frame->data, 0x0000); /* Unknown */
-			byte_stream_putle8(&frame->data, 0x00); /* Unkizown */
-			byte_stream_putle16(&frame->data, 0xffff); /* Sequence number?  XXX - This should decrement by 1 with each request */
+			byte_stream_putle16(&bs, 0x001b); /* L */
+			byte_stream_putle16(&bs, 0x0009); /* Protocol version */
+			byte_stream_putcaps(&bs, OSCAR_CAPABILITY_EMPTY);
+			byte_stream_putle16(&bs, 0x0000); /* Unknown */
+			byte_stream_putle16(&bs, 0x0001); /* Client features? */
+			byte_stream_putle16(&bs, 0x0000); /* Unknown */
+			byte_stream_putle8(&bs, 0x00); /* Unkizown */
+			byte_stream_putle16(&bs, 0xffff); /* Sequence number?  XXX - This should decrement by 1 with each request */
 
-			byte_stream_putle16(&frame->data, 0x000e); /* L */
-			byte_stream_putle16(&frame->data, 0xffff); /* Sequence number?  XXX - This should decrement by 1 with each request */
-			byte_stream_putle32(&frame->data, 0x00000000); /* Unknown */
-			byte_stream_putle32(&frame->data, 0x00000000); /* Unknown */
-			byte_stream_putle32(&frame->data, 0x00000000); /* Unknown */
+			byte_stream_putle16(&bs, 0x000e); /* L */
+			byte_stream_putle16(&bs, 0xffff); /* Sequence number?  XXX - This should decrement by 1 with each request */
+			byte_stream_putle32(&bs, 0x00000000); /* Unknown */
+			byte_stream_putle32(&bs, 0x00000000); /* Unknown */
+			byte_stream_putle32(&bs, 0x00000000); /* Unknown */
 
 			/* The type of status message being requested */
 			if (type & AIM_ICQ_STATE_CHAT)
-				byte_stream_putle16(&frame->data, 0x03ec);
+				byte_stream_putle16(&bs, 0x03ec);
 			else if(type & AIM_ICQ_STATE_DND)
-				byte_stream_putle16(&frame->data, 0x03eb);
+				byte_stream_putle16(&bs, 0x03eb);
 			else if(type & AIM_ICQ_STATE_OUT)
-				byte_stream_putle16(&frame->data, 0x03ea);
+				byte_stream_putle16(&bs, 0x03ea);
 			else if(type & AIM_ICQ_STATE_BUSY)
-				byte_stream_putle16(&frame->data, 0x03e9);
+				byte_stream_putle16(&bs, 0x03e9);
 			else if(type & AIM_ICQ_STATE_AWAY)
-				byte_stream_putle16(&frame->data, 0x03e8);
+				byte_stream_putle16(&bs, 0x03e8);
 
-			byte_stream_putle16(&frame->data, 0x0001); /* Status? */
-			byte_stream_putle16(&frame->data, 0x0001); /* Priority of this message? */
-			byte_stream_putle16(&frame->data, 0x0001); /* L */
-			byte_stream_putle8(&frame->data, 0x00); /* String of length L */
+			byte_stream_putle16(&bs, 0x0001); /* Status? */
+			byte_stream_putle16(&bs, 0x0001); /* Priority of this message? */
+			byte_stream_putle16(&bs, 0x0001); /* L */
+			byte_stream_putle8(&bs, 0x00); /* String of length L */
 		} /* End TLV t(2711) */
 	} /* End TLV t(0005) */
 
 	/* TLV t(0003) */
-	byte_stream_put16(&frame->data, 0x0003);
-	byte_stream_put16(&frame->data, 0x0000);
+	byte_stream_put16(&bs, 0x0003);
+	byte_stream_put16(&bs, 0x0000);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -1174,7 +1184,7 @@ int aim_im_sendch2_geticqaway(OscarData *od, const char *sn, int type)
 int aim_im_sendch4(OscarData *od, const char *sn, guint16 type, const char *message)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	guchar cookie[8];
 
@@ -1184,43 +1194,44 @@ int aim_im_sendch4(OscarData *od, const char *sn, guint16 type, const char *mess
 	if (!sn || !type || !message)
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, 10+8+3+strlen(sn)+12+strlen(message)+1+4);
+	byte_stream_new(&bs, 8+3+strlen(sn)+12+strlen(message)+1+4);
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	aim_icbm_makecookie(cookie);
 
 	/* ICBM header */
-	aim_im_puticbm(&frame->data, cookie, 0x0004, sn);
+	aim_im_puticbm(&bs, cookie, 0x0004, sn);
 
 	/*
 	 * TLV t(0005)
 	 *
 	 * ICQ data (the UIN and the message).
 	 */
-	byte_stream_put16(&frame->data, 0x0005);
-	byte_stream_put16(&frame->data, 4 + 2+2+strlen(message)+1);
+	byte_stream_put16(&bs, 0x0005);
+	byte_stream_put16(&bs, 4 + 2+2+strlen(message)+1);
 
 	/*
 	 * Your UIN
 	 */
-	byte_stream_putle32(&frame->data, atoi(od->sn));
+	byte_stream_putle32(&bs, atoi(od->sn));
 
 	/*
 	 * TLV t(type) l(strlen(message)+1) v(message+NULL)
 	 */
-	byte_stream_putle16(&frame->data, type);
-	byte_stream_putle16(&frame->data, strlen(message)+1);
-	byte_stream_putraw(&frame->data, (const guint8 *)message, strlen(message)+1);
+	byte_stream_putle16(&bs, type);
+	byte_stream_putle16(&bs, strlen(message)+1);
+	byte_stream_putraw(&bs, (const guint8 *)message, strlen(message)+1);
 
 	/*
 	 * TLV t(0006) l(0000) v()
 	 */
-	byte_stream_put16(&frame->data, 0x0006);
-	byte_stream_put16(&frame->data, 0x0000);
+	byte_stream_put16(&bs, 0x0006);
+	byte_stream_put16(&bs, 0x0000);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -2249,22 +2260,23 @@ static int incomingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
  */
 int aim_im_warn(OscarData *od, FlapConnection *conn, const char *sn, guint32 flags)
 {
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !conn || !sn)
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, strlen(sn)+13);
+	byte_stream_new(&bs, strlen(sn)+3);
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0008, 0x0000, sn, strlen(sn)+1);
-	aim_putsnac(&frame->data, 0x0004, 0x0008, 0x0000, snacid);
 
-	byte_stream_put16(&frame->data, (flags & AIM_WARN_ANON) ? 0x0001 : 0x0000);
-	byte_stream_put8(&frame->data, strlen(sn));
-	byte_stream_putstr(&frame->data, sn);
+	byte_stream_put16(&bs, (flags & AIM_WARN_ANON) ? 0x0001 : 0x0000);
+	byte_stream_put8(&bs, strlen(sn));
+	byte_stream_putstr(&bs, sn);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0008, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -2305,29 +2317,30 @@ static int missedcall(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
 int aim_im_denytransfer(OscarData *od, const char *sn, const guchar *cookie, guint16 code)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 	GSList *tlvlist = NULL;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0004)))
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, 10+8+2+1+strlen(sn)+6);
+	byte_stream_new(&bs, 8+2+1+strlen(sn)+6);
 
 	snacid = aim_cachesnac(od, 0x0004, 0x000b, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x000b, 0x0000, snacid);
 
-	byte_stream_putraw(&frame->data, cookie, 8);
+	byte_stream_putraw(&bs, cookie, 8);
 
-	byte_stream_put16(&frame->data, 0x0002); /* channel */
-	byte_stream_put8(&frame->data, strlen(sn));
-	byte_stream_putstr(&frame->data, sn);
+	byte_stream_put16(&bs, 0x0002); /* channel */
+	byte_stream_put8(&bs, strlen(sn));
+	byte_stream_putstr(&bs, sn);
 
 	aim_tlvlist_add_16(&tlvlist, 0x0003, code);
-	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_write(&bs, &tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x000b, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -2662,7 +2675,7 @@ int aim_im_reqofflinemsgs(OscarData *od)
 int aim_im_sendmtn(OscarData *od, guint16 type1, const char *sn, guint16 type2)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0002)))
@@ -2671,37 +2684,38 @@ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *sn, guint16 type2)
 	if (!sn)
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, 10+11+strlen(sn)+2);
+	byte_stream_new(&bs, 11+strlen(sn)+2);
 
 	snacid = aim_cachesnac(od, 0x0004, 0x0014, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0004, 0x0014, 0x0000, snacid);
 
 	/*
 	 * 8 days of light
 	 * Er, that is to say, 8 bytes of 0's
 	 */
-	byte_stream_put16(&frame->data, 0x0000);
-	byte_stream_put16(&frame->data, 0x0000);
-	byte_stream_put16(&frame->data, 0x0000);
-	byte_stream_put16(&frame->data, 0x0000);
+	byte_stream_put16(&bs, 0x0000);
+	byte_stream_put16(&bs, 0x0000);
+	byte_stream_put16(&bs, 0x0000);
+	byte_stream_put16(&bs, 0x0000);
 
 	/*
 	 * Type 1 (should be 0x0001 for mtn)
 	 */
-	byte_stream_put16(&frame->data, type1);
+	byte_stream_put16(&bs, type1);
 
 	/*
 	 * Dest sn
 	 */
-	byte_stream_put8(&frame->data, strlen(sn));
-	byte_stream_putstr(&frame->data, sn);
+	byte_stream_put8(&bs, strlen(sn));
+	byte_stream_putstr(&bs, sn);
 
 	/*
 	 * Type 2 (should be 0x0000, 0x0001, or 0x0002 for mtn)
 	 */
-	byte_stream_put16(&frame->data, type2);
+	byte_stream_put16(&bs, type2);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x0004, 0x0014, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }

@@ -40,24 +40,25 @@ int
 aim_bart_upload(OscarData *od, const guint8 *icon, guint16 iconlen)
 {
 	FlapConnection *conn;
-	FlapFrame *fr;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0010)) || !icon || !iconlen)
 		return -EINVAL;
 
-	fr = flap_frame_new(od, 0x02, 10 + 2 + 2+iconlen);
-	snacid = aim_cachesnac(od, 0x0010, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0010, 0x0002, 0x0000, snacid);
+	byte_stream_new(&bs, 2 + 2 + iconlen);
 
 	/* The reference number for the icon */
-	byte_stream_put16(&fr->data, 1);
+	byte_stream_put16(&bs, 1);
 
 	/* The icon */
-	byte_stream_put16(&fr->data, iconlen);
-	byte_stream_putraw(&fr->data, icon, iconlen);
+	byte_stream_put16(&bs, iconlen);
+	byte_stream_putraw(&bs, icon, iconlen);
 
-	flap_connection_send(conn, fr);
+	snacid = aim_cachesnac(od, 0x0010, 0x0002, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, 0x0010, 0x0002, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -98,30 +99,31 @@ int
 aim_bart_request(OscarData *od, const char *sn, guint8 iconcsumtype, const guint8 *iconcsum, guint16 iconcsumlen)
 {
 	FlapConnection *conn;
-	FlapFrame *fr;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x0010)) || !sn || !strlen(sn) || !iconcsum || !iconcsumlen)
 		return -EINVAL;
 
-	fr = flap_frame_new(od, 0x02, 10 + 1+strlen(sn) + 4 + 1+iconcsumlen);
-	snacid = aim_cachesnac(od, 0x0010, 0x0004, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0010, 0x0004, 0x0000, snacid);
+	byte_stream_new(&bs, 1+strlen(sn) + 4 + 1+iconcsumlen);
 
 	/* Screen name */
-	byte_stream_put8(&fr->data, strlen(sn));
-	byte_stream_putstr(&fr->data, sn);
+	byte_stream_put8(&bs, strlen(sn));
+	byte_stream_putstr(&bs, sn);
 
 	/* Some numbers.  You like numbers, right? */
-	byte_stream_put8(&fr->data, 0x01);
-	byte_stream_put16(&fr->data, 0x0001);
-	byte_stream_put8(&fr->data, iconcsumtype);
+	byte_stream_put8(&bs, 0x01);
+	byte_stream_put16(&bs, 0x0001);
+	byte_stream_put8(&bs, iconcsumtype);
 
 	/* Icon string */
-	byte_stream_put8(&fr->data, iconcsumlen);
-	byte_stream_putraw(&fr->data, iconcsum, iconcsumlen);
+	byte_stream_put8(&bs, iconcsumlen);
+	byte_stream_putraw(&bs, iconcsum, iconcsumlen);
 
-	flap_connection_send(conn, fr);
+	snacid = aim_cachesnac(od, 0x0010, 0x0004, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, 0x0010, 0x0004, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }

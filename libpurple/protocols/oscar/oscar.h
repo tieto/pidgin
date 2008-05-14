@@ -409,7 +409,7 @@ struct _FlapConnection
 
 	int fd;
 	guint8 header[6];
-	ssize_t header_received;
+	gssize header_received;
 	FlapFrame buffer_incoming;
 	PurpleCircBuffer *buffer_outgoing;
 	guint watcher_incoming;
@@ -1350,11 +1350,11 @@ int aim_icq_getstatusnote(OscarData *od, const char *uin, guint8 *note_hash, gui
 
 /* 0x0017 - family_auth.c */
 void aim_sendcookie(OscarData *, FlapConnection *, const guint16 length, const guint8 *);
-int aim_admin_changepasswd(OscarData *, FlapConnection *, const char *newpw, const char *curpw);
+void aim_admin_changepasswd(OscarData *, FlapConnection *, const char *newpw, const char *curpw);
 void aim_admin_reqconfirm(OscarData *od, FlapConnection *conn);
-int aim_admin_getinfo(OscarData *od, FlapConnection *conn, guint16 info);
-int aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail);
-int aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick);
+void aim_admin_getinfo(OscarData *od, FlapConnection *conn, guint16 info);
+void aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail);
+void aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick);
 
 
 
@@ -1389,8 +1389,8 @@ typedef struct aim_tlv_s
 /* TLV handling functions */
 char *aim_tlv_getvalue_as_string(aim_tlv_t *tlv);
 
-aim_tlv_t *aim_tlv_gettlv(GSList *list, guint16 type, const int nth);
-int aim_tlv_getlength(GSList *list, guint16 type, const int nth);
+aim_tlv_t *aim_tlv_gettlv(GSList *list, const guint16 type, const int nth);
+int aim_tlv_getlength(GSList *list, const guint16 type, const int nth);
 char *aim_tlv_getstr(GSList *list, const guint16 type, const int nth);
 guint8 aim_tlv_get8(GSList *list, const guint16 type, const int nth);
 guint16 aim_tlv_get16(GSList *list, const guint16 type, const int nth);
@@ -1549,6 +1549,7 @@ void aim_genericreq_s(OscarData *od, FlapConnection *conn, guint16 family, guint
 /* bstream.c */
 int byte_stream_new(ByteStream *bs, guint32 len);
 int byte_stream_init(ByteStream *bs, guint8 *data, int len);
+void byte_stream_destroy(ByteStream *bs);
 int byte_stream_empty(ByteStream *bs);
 int byte_stream_curpos(ByteStream *bs);
 int byte_stream_setpos(ByteStream *bs, unsigned int off);

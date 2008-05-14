@@ -476,7 +476,8 @@ void purple_markup_html_to_xhtml(const char *html, char **dest_xhtml,
  *
  * @param str The string to strip HTML from.
  *
- * @return The new string without HTML. This must be freed.
+ * @return The new string without HTML.  You must g_free this string
+ *         when finished with it.
  */
 char *purple_markup_strip_html(const char *str);
 
@@ -485,7 +486,9 @@ char *purple_markup_strip_html(const char *str);
  *
  * @param str The string to linkify.
  *
- * @return The linkified text.
+ * @return The new string with all URIs surrounded in standard
+ *         HTML <a href="whatever"></a> tags.  You must g_free this
+ *         string when finished with it.
  */
 char *purple_markup_linkify(const char *str);
 
@@ -497,7 +500,8 @@ char *purple_markup_linkify(const char *str);
  *
  * @param html The string in which to unescape any HTML entities
  *
- * @return the text with HTML entities literalized
+ * @return The text with HTML entities literalized.  You must g_free
+ *         this string when finished with it.
  */
 char *purple_unescape_html(const char *html);
 
@@ -702,8 +706,11 @@ const char *
 purple_util_get_image_extension(gconstpointer data, size_t len);
 
 /**
- * Returns a SHA-1 hash string of the data passed in with the correct file
- * extention appended.
+ * @return A hex encoded version of the SHA-1 hash of the data passed
+ *         in with the correct file extention appended.  The file
+ *         extension is determined by calling
+ *         purple_util_get_image_extension().  This return value must
+ *         be g_freed by the caller.
  */
 char *purple_util_get_image_filename(gconstpointer image_data, size_t image_len);
 
@@ -1083,7 +1090,7 @@ gboolean purple_email_is_valid(const char *address);
 /**
  * Checks if the given IP address is a syntactically valid IPv4 address.
  *
- * @param address The IP address to validate.
+ * @param ip The IP address to validate.
  *
  * @return True if the IP address is syntactically correct.
  */

@@ -14695,9 +14695,8 @@ msgstr "L'utente ha scritto qualcosa ed ora è in pausa"
 #. Build the Send To menu
 #: ../pidgin/gtkconv.c:3648
 #: ../pidgin/gtkconv.c:8248
-#, fuzzy
 msgid "S_end To"
-msgstr "Invia a"
+msgstr "_Invia a"
 
 #: ../pidgin/gtkconv.c:4360
 msgid "_Send"

@@ -66,34 +66,26 @@ purple_notify_message(void *handle, PurpleNotifyMsgType type,
 	ops = purple_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_message != NULL) {
-		PurpleNotifyInfo *info;
-
-		info            = g_new0(PurpleNotifyInfo, 1);
-		info->type      = PURPLE_NOTIFY_MESSAGE;
-		info->handle    = handle;
-		info->ui_handle = ops->notify_message(type, title, primary,
+		void *ui_handle = ops->notify_message(type, title, primary,
 											  secondary);
-		info->cb = cb;
-		info->cb_user_data = user_data;
+		if (ui_handle != NULL) {
 
-		if (info->ui_handle != NULL) {
+			PurpleNotifyInfo *info = g_new0(PurpleNotifyInfo, 1);
+			info->type = PURPLE_NOTIFY_MESSAGE;
+			info->handle = handle;
+			info->ui_handle = ui_handle;
+			info->cb = cb;
+			info->cb_user_data = user_data;
+
 			handles = g_list_append(handles, info);
 
 			return info->ui_handle;
-
-		} else {
-			if (info->cb != NULL)
-				info->cb(info->cb_user_data);
-
-			g_free(info);
-
-			return NULL;
 		}
 
-	} else {
-		if (cb != NULL)
-			cb(user_data);
 	}
+
+	if (cb != NULL)
+		cb(user_data);
 
 	return NULL;
 }
@@ -108,36 +100,30 @@ purple_notify_email(void *handle, const char *subject, const char *from,
 	ops = purple_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_email != NULL) {
-		PurpleNotifyInfo *info;
-
-		info            = g_new0(PurpleNotifyInfo, 1);
-		info->type      = PURPLE_NOTIFY_EMAIL;
-		info->handle    = handle;
+		void *ui_handle;
 
 		purple_signal_emit(purple_notify_get_handle(), "displaying-email-notification",
-							subject, from, to, url);
+						   subject, from, to, url);
 
-		info->ui_handle = ops->notify_email(handle, subject, from, to, url);
-		info->cb = cb;
-		info->cb_user_data = user_data;
+		ui_handle = ops->notify_email(handle, subject, from, to, url);
 
-		if (info->ui_handle != NULL) {
+		if (ui_handle != NULL) {
+
+			PurpleNotifyInfo *info = g_new0(PurpleNotifyInfo, 1);
+			info->type = PURPLE_NOTIFY_EMAIL;
+			info->handle = handle;
+			info->ui_handle = ui_handle;
+			info->cb = cb;
+			info->cb_user_data = user_data;
+
 			handles = g_list_append(handles, info);
 
 			return info->ui_handle;
-
-		} else {
-			if (info->cb != NULL)
-				info->cb(info->cb_user_data);
-
-			g_free(info);
-
-			return NULL;
 		}
-	} else {
-		if (cb != NULL)
-			cb(user_data);
 	}
+
+	if (cb != NULL)
+		cb(user_data);
 
 	return NULL;
 }
@@ -162,38 +148,31 @@ purple_notify_emails(void *handle, size_t count, gboolean detailed,
 	ops = purple_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_emails != NULL) {
-		PurpleNotifyInfo *info;
-
-		info            = g_new0(PurpleNotifyInfo, 1);
-		info->type      = PURPLE_NOTIFY_EMAILS;
-		info->handle    = handle;
+		void *ui_handle;
 
 		purple_signal_emit(purple_notify_get_handle(), "displaying-emails-notification",
 							subjects, froms, tos, urls, count);
 
-		info->ui_handle = ops->notify_emails(handle, count, detailed, subjects,
+		ui_handle = ops->notify_emails(handle, count, detailed, subjects,
 											 froms, tos, urls);
-		info->cb = cb;
-		info->cb_user_data = user_data;
 
-		if (info->ui_handle != NULL) {
+		if (ui_handle != NULL) {
+			PurpleNotifyInfo *info = g_new0(PurpleNotifyInfo, 1);
+			info->type = PURPLE_NOTIFY_EMAILS;
+			info->handle = handle;
+			info->ui_handle = ui_handle;
+			info->cb = cb;
+			info->cb_user_data = user_data;
+
 			handles = g_list_append(handles, info);
 
 			return info->ui_handle;
-
-		} else {
-			if (info->cb != NULL)
-				info->cb(info->cb_user_data);
-
-			g_free(info);
-
-			return NULL;
 		}
 
-	} else {
-		if (cb != NULL)
-			cb(user_data);
 	}
+
+	if (cb != NULL)
+		cb(user_data);
 
 	return NULL;
 }
@@ -210,34 +189,25 @@ purple_notify_formatted(void *handle, const char *title, const char *primary,
 	ops = purple_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_formatted != NULL) {
-		PurpleNotifyInfo *info;
+		void *ui_handle = ops->notify_formatted(title, primary, secondary, text);
 
-		info            = g_new0(PurpleNotifyInfo, 1);
-		info->type      = PURPLE_NOTIFY_FORMATTED;
-		info->handle    = handle;
-		info->ui_handle = ops->notify_formatted(title, primary, secondary, text);
-		info->cb = cb;
-		info->cb_user_data = user_data;
+		if (ui_handle != NULL) {
 
-		if (info->ui_handle != NULL) {
+			PurpleNotifyInfo *info = g_new0(PurpleNotifyInfo, 1);
+			info->type = PURPLE_NOTIFY_FORMATTED;
+			info->handle = handle;
+			info->ui_handle = ui_handle;
+			info->cb = cb;
+			info->cb_user_data = user_data;
+
 			handles = g_list_append(handles, info);
 
 			return info->ui_handle;
-
-		} else {
-			if (info->cb != NULL)
-				info->cb(info->cb_user_data);
-
-			g_free(info);
-
-			return NULL;
 		}
-
-	} else {
-		if (cb != NULL)
-			cb(user_data);
 	}
 
+	if (cb != NULL)
+		cb(user_data);
 	return NULL;
 }
 
@@ -252,34 +222,25 @@ purple_notify_searchresults(PurpleConnection *gc, const char *title,
 	ops = purple_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_searchresults != NULL) {
-		PurpleNotifyInfo *info;
-
-		info            = g_new0(PurpleNotifyInfo, 1);
-		info->type      = PURPLE_NOTIFY_SEARCHRESULTS;
-		info->handle    = gc;
-		info->ui_handle = ops->notify_searchresults(gc, title, primary,
+		void *ui_handle = ops->notify_searchresults(gc, title, primary,
 													secondary, results, user_data);
-		info->cb = cb;
-		info->cb_user_data = user_data;
+		if (ui_handle != NULL) {
 
-		if (info->ui_handle != NULL) {
+			PurpleNotifyInfo *info = g_new0(PurpleNotifyInfo, 1);
+			info->type      = PURPLE_NOTIFY_SEARCHRESULTS;
+			info->handle    = gc;
+			info->ui_handle = ui_handle;
+			info->cb = cb;
+			info->cb_user_data = user_data;
+
 			handles = g_list_append(handles, info);
 
 			return info->ui_handle;
-
-		} else {
-			if (info->cb != NULL)
-				info->cb(info->cb_user_data);
-
-			g_free(info);
-
-			return NULL;
 		}
-
-	} else {
-		if (cb != NULL)
-			cb(user_data);
 	}
+
+	if (cb != NULL)
+		cb(user_data);
 
 	return NULL;
 }
@@ -449,37 +410,30 @@ purple_notify_userinfo(PurpleConnection *gc, const char *who,
 	ops = purple_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_userinfo != NULL) {
-		PurpleNotifyInfo *info;
-
-		info            = g_new0(PurpleNotifyInfo, 1);
-		info->type      = PURPLE_NOTIFY_USERINFO;
-		info->handle    = gc;
+		void *ui_handle;
 
 		purple_signal_emit(purple_notify_get_handle(), "displaying-userinfo",
 						 purple_connection_get_account(gc), who, user_info);
 
-		info->ui_handle = ops->notify_userinfo(gc, who, user_info);
-		info->cb = cb;
-		info->cb_user_data = user_data;
+		ui_handle = ops->notify_userinfo(gc, who, user_info);
 
-		if (info->ui_handle != NULL) {
+		if (ui_handle != NULL) {
+
+			PurpleNotifyInfo *info = g_new0(PurpleNotifyInfo, 1);
+			info->type = PURPLE_NOTIFY_USERINFO;
+			info->handle = gc;
+			info->ui_handle = ui_handle;
+			info->cb = cb;
+			info->cb_user_data = user_data;
+
 			handles = g_list_append(handles, info);
 
 			return info->ui_handle;
-
-		} else {
-			if (info->cb != NULL)
-				info->cb(info->cb_user_data);
-
-			g_free(info);
-
-			return NULL;
 		}
-
-	} else {
-		if (cb != NULL)
-			cb(user_data);
 	}
+
+	if (cb != NULL)
+		cb(user_data);
 
 	return NULL;
 }
@@ -586,7 +540,7 @@ purple_notify_user_info_get_text_with_newline(PurpleNotifyUserInfo *user_info, c
 }
 
 
-gchar *
+const gchar *
 purple_notify_user_info_entry_get_label(PurpleNotifyUserInfoEntry *user_info_entry)
 {
 	g_return_val_if_fail(user_info_entry != NULL, NULL);
@@ -603,7 +557,7 @@ purple_notify_user_info_entry_set_label(PurpleNotifyUserInfoEntry *user_info_ent
 	user_info_entry->label = g_strdup(label);
 }
 
-gchar *
+const gchar *
 purple_notify_user_info_entry_get_value(PurpleNotifyUserInfoEntry *user_info_entry)
 {
 	g_return_val_if_fail(user_info_entry != NULL, NULL);
@@ -705,22 +659,19 @@ purple_notify_uri(void *handle, const char *uri)
 	ops = purple_notify_get_ui_ops();
 
 	if (ops != NULL && ops->notify_uri != NULL) {
-		PurpleNotifyInfo *info;
 
-		info            = g_new0(PurpleNotifyInfo, 1);
-		info->type      = PURPLE_NOTIFY_URI;
-		info->handle    = handle;
-		info->ui_handle = ops->notify_uri(uri);
+		void *ui_handle = ops->notify_uri(uri);
 
-		if (info->ui_handle != NULL) {
+		if (ui_handle != NULL) {
+
+			PurpleNotifyInfo *info = g_new0(PurpleNotifyInfo, 1);
+			info->type = PURPLE_NOTIFY_URI;
+			info->handle = handle;
+			info->ui_handle = ui_handle;
+
 			handles = g_list_append(handles, info);
 
 			return info->ui_handle;
-
-		} else {
-			g_free(info);
-
-			return NULL;
 		}
 	}
 

@@ -338,7 +338,6 @@ void silcpurple_show_public_key(SilcPurple sg,
 	unsigned char *pk;
 	SilcUInt32 pk_len, key_len = 0;
 	GString *s;
-	char *buf;
 
 	/* We support showing only SILC public keys for now */
 	if (silc_pkcs_get_type(public_key) != SILC_PKCS_SILC)
@@ -380,14 +379,12 @@ void silcpurple_show_public_key(SilcPurple sg,
 	g_string_append_printf(s, _("Public Key Fingerprint:\n%s\n\n"), fingerprint);
 	g_string_append_printf(s, _("Public Key Babbleprint:\n%s"), babbleprint);
 
-	buf = g_string_free(s, FALSE);
-
 	purple_request_action(sg->gc, _("Public Key Information"),
 			      _("Public Key Information"),
-			      buf, 0, purple_connection_get_account(sg->gc),
+			      s->str, 0, purple_connection_get_account(sg->gc),
 			      NULL, NULL, context, 1, _("Close"), callback);
 
-	g_free(buf);
+	g_string_free(s, TRUE);
 	silc_free(fingerprint);
 	silc_free(babbleprint);
 	silc_free(pk);
@@ -545,8 +542,7 @@ silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 			g_string_append_printf(s, "[%s] ", _("Anxious"));
 	}
 	if (strlen(s->str)) {
-		*moodstr = s->str;
-		g_string_free(s, FALSE);
+		*moodstr = g_string_free(s, FALSE);
 		g_strchomp(*moodstr);
 	} else
 		g_string_free(s, TRUE);
@@ -575,8 +571,7 @@ silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 			g_string_append_printf(s, "[%s] ", _("Video Conferencing"));
 	}
 	if (strlen(s->str)) {
-		*contactstr = s->str;
-		g_string_free(s, FALSE);
+		*contactstr = g_string_free(s, FALSE);
 		g_strchomp(*contactstr);
 	} else
 		g_string_free(s, TRUE);
@@ -604,10 +599,9 @@ silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 				device.model ? device.model : "",
 				device.language ? device.language : "");
 	}
-	if (strlen(s->str)) {
-		*devicestr = s->str;
-		g_string_free(s, FALSE);
-	} else
+	if (strlen(s->str))
+		*devicestr = g_string_free(s, FALSE);
+	else
 		g_string_free(s, TRUE);
 
 	attr = silcpurple_get_attr(attrs, SILC_ATTRIBUTE_TIMEZONE);
@@ -635,15 +629,15 @@ char *silcpurple_file2mime(const char *filename)
 	if (!ct)
 		return NULL;
 	else if (!g_ascii_strcasecmp(".png", ct))
-		return strdup("image/png");
+		return g_strdup("image/png");
 	else if (!g_ascii_strcasecmp(".jpg", ct))
-		return strdup("image/jpeg");
+		return g_strdup("image/jpeg");
 	else if (!g_ascii_strcasecmp(".jpeg", ct))
-		return strdup("image/jpeg");
+		return g_strdup("image/jpeg");
 	else if (!g_ascii_strcasecmp(".gif", ct))
-		return strdup("image/gif");
+		return g_strdup("image/gif");
 	else if (!g_ascii_strcasecmp(".tiff", ct))
-		return strdup("image/tiff");
+		return g_strdup("image/tiff");
 
 	return NULL;
 }
@@ -705,7 +699,7 @@ SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
 				continue;
 			}
 			silc_mime_add_field(p, "Content-Type", type);
-			silc_free(type);
+			g_free(type);
 
 			/* Add content transfer encoding */
 			silc_mime_add_field(p, "Content-Transfer-Encoding", "binary");

@@ -634,6 +634,9 @@ static void winpidgin_tray_create() {
 static void winpidgin_tray_destroy() {
 	int cached_cnt = sizeof(cached_icons) / sizeof(HICON);
 	systray_remove_nid();
+
+	purple_signals_disconnect_by_handle(pidgin_docklet_get_handle());
+
 	DestroyWindow(systray_hwnd);
 	pidgin_docklet_remove();
 

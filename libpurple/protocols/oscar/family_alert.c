@@ -41,40 +41,41 @@ int
 aim_email_sendcookies(OscarData *od)
 {
 	FlapConnection *conn;
-	FlapFrame *fr;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ALERT)))
 		return -EINVAL;
 
-	fr = flap_frame_new(od, 0x02, 10+2+16+16);
-	snacid = aim_cachesnac(od, 0x0018, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0018, 0x0006, 0x0000, snacid);
+	byte_stream_new(&bs, 2+16+16);
 
 	/* Number of cookies to follow */
-	byte_stream_put16(&fr->data, 0x0002);
+	byte_stream_put16(&bs, 0x0002);
 
 	/* Cookie */
-	byte_stream_put16(&fr->data, 0x5d5e);
-	byte_stream_put16(&fr->data, 0x1708);
-	byte_stream_put16(&fr->data, 0x55aa);
-	byte_stream_put16(&fr->data, 0x11d3);
-	byte_stream_put16(&fr->data, 0xb143);
-	byte_stream_put16(&fr->data, 0x0060);
-	byte_stream_put16(&fr->data, 0xb0fb);
-	byte_stream_put16(&fr->data, 0x1ecb);
+	byte_stream_put16(&bs, 0x5d5e);
+	byte_stream_put16(&bs, 0x1708);
+	byte_stream_put16(&bs, 0x55aa);
+	byte_stream_put16(&bs, 0x11d3);
+	byte_stream_put16(&bs, 0xb143);
+	byte_stream_put16(&bs, 0x0060);
+	byte_stream_put16(&bs, 0xb0fb);
+	byte_stream_put16(&bs, 0x1ecb);
 
 	/* Cookie */
-	byte_stream_put16(&fr->data, 0xb380);
-	byte_stream_put16(&fr->data, 0x9ad8);
-	byte_stream_put16(&fr->data, 0x0dba);
-	byte_stream_put16(&fr->data, 0x11d5);
-	byte_stream_put16(&fr->data, 0x9f8a);
-	byte_stream_put16(&fr->data, 0x0060);
-	byte_stream_put16(&fr->data, 0xb0ee);
-	byte_stream_put16(&fr->data, 0x0631);
+	byte_stream_put16(&bs, 0xb380);
+	byte_stream_put16(&bs, 0x9ad8);
+	byte_stream_put16(&bs, 0x0dba);
+	byte_stream_put16(&bs, 0x11d5);
+	byte_stream_put16(&bs, 0x9f8a);
+	byte_stream_put16(&bs, 0x0060);
+	byte_stream_put16(&bs, 0xb0ee);
+	byte_stream_put16(&bs, 0x0631);
 
-	flap_connection_send(conn, fr);
+	snacid = aim_cachesnac(od, 0x0018, 0x0006, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, 0x0018, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -171,25 +172,26 @@ int
 aim_email_activate(OscarData *od)
 {
 	FlapConnection *conn;
-	FlapFrame *fr;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ALERT)))
 		return -EINVAL;
 
-	fr = flap_frame_new(od, 0x02, 10+1+16);
-	snacid = aim_cachesnac(od, 0x0018, 0x0016, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0018, 0x0016, 0x0000, snacid);
+	byte_stream_new(&bs, 1+16);
 
 	/* I would guess this tells AIM that you want updates for your mail accounts */
 	/* ...but I really have no idea */
-	byte_stream_put8(&fr->data, 0x02);
-	byte_stream_put32(&fr->data, 0x04000000);
-	byte_stream_put32(&fr->data, 0x04000000);
-	byte_stream_put32(&fr->data, 0x04000000);
-	byte_stream_put32(&fr->data, 0x00000000);
+	byte_stream_put8(&bs, 0x02);
+	byte_stream_put32(&bs, 0x04000000);
+	byte_stream_put32(&bs, 0x04000000);
+	byte_stream_put32(&bs, 0x04000000);
+	byte_stream_put32(&bs, 0x00000000);
 
-	flap_connection_send(conn, fr);
+	snacid = aim_cachesnac(od, 0x0018, 0x0016, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, 0x0018, 0x0006, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }

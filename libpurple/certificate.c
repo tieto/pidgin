@@ -589,7 +589,7 @@ x509_singleuse_destroy_request (PurpleCertificateVerificationRequest *vrq)
 	/* I don't do anything! */
 }
 
-PurpleCertificateVerifier x509_singleuse = {
+static PurpleCertificateVerifier x509_singleuse = {
 	"x509",                         /* Scheme name */
 	"singleuse",                    /* Verifier name */
 	x509_singleuse_start_verify,    /* start_verification function */

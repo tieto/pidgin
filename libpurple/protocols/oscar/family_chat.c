@@ -353,7 +353,7 @@ int
 aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar *msg, int msglen, const char *encoding, const char *language)
 {
 	int i;
-	FlapFrame *frame;
+	ByteStream bs;
 	IcbmCookie *cookie;
 	aim_snacid_t snacid;
 	guint8 ckstr[8];
@@ -362,10 +362,9 @@ aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar
 	if (!od || !conn || !msg || (msglen <= 0))
 		return 0;
 
-	frame = flap_frame_new(od, 0x02, 1152);
+	byte_stream_new(&bs, 1142);
 
 	snacid = aim_cachesnac(od, 0x000e, 0x0005, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x000e, 0x0005, 0x0000, snacid);
 
 	/*
 	 * Cookie
@@ -382,8 +381,8 @@ aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar
 	aim_cachecookie(od, cookie);
 
 	/* ICBM Header */
-	byte_stream_putraw(&frame->data, ckstr, 8); /* Cookie */
-	byte_stream_put16(&frame->data, 0x0003); /* Channel */
+	byte_stream_putraw(&bs, ckstr, 8); /* Cookie */
+	byte_stream_put16(&bs, 0x0003); /* Channel */
 
 	/*
 	 * Type 1: Flag meaning this message is destined to the room.
@@ -428,12 +427,14 @@ aim_chat_send_im(OscarData *od, FlapConnection *conn, guint16 flags, const gchar
 	 */
 	aim_tlvlist_add_frozentlvlist(&tlvlist, 0x0005, &inner_tlvlist);
 
-	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_write(&bs, &tlvlist);
 
 	aim_tlvlist_free(inner_tlvlist);
 	aim_tlvlist_free(tlvlist);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, 0x000e, 0x0005, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }

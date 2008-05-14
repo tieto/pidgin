@@ -39,16 +39,17 @@ typedef enum {
  */
 typedef struct _YahooFriend {
 	enum yahoo_status status;
-	char *msg;
-	char *game;
+	gchar *msg;
+	gchar *game;
 	int idle;
 	int away;
 	gboolean sms;
-	char *ip;
+	gchar *ip;
 	gboolean bicon_sent_request;
 	YahooPresenceVisibility presence;
 	int protocol; /* 1=LCS, 2=MSN*/
 	long int version_id;
+	gchar *alias_id;
 } YahooFriend;
 
 YahooFriend *yahoo_friend_find(PurpleConnection *gc, const char *name);
@@ -62,6 +63,9 @@ const char *yahoo_friend_get_game(YahooFriend *f);
 
 void yahoo_friend_set_status_message(YahooFriend *f, char *msg);
 const char *yahoo_friend_get_status_message(YahooFriend *f);
+
+void yahoo_friend_set_alias_id(YahooFriend *f, const char *alias_id);
+const char *yahoo_friend_get_alias_id(YahooFriend *f);
 
 void yahoo_friend_set_buddy_icon_need_request(YahooFriend *f, gboolean needs);
 gboolean yahoo_friend_get_buddy_icon_need_request(YahooFriend *f);

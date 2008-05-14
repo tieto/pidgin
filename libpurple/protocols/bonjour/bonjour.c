@@ -24,6 +24,7 @@
 #include <pwd.h>
 #else
 #define UNICODE
+#include <winsock2.h>
 #include <windows.h>
 #include <lm.h>
 #include "dns_sd_proxy.h"

@@ -121,7 +121,7 @@ peer_odc_send(PeerConnection *conn, OdcFrame *frame)
 
 	peer_connection_send(conn, &bs);
 
-	g_free(bs.data);
+	byte_stream_destroy(&bs);
 }
 
 /**
@@ -430,7 +430,7 @@ peer_odc_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 	PeerConnection *conn;
 	OdcFrame *frame;
 	ByteStream *bs;
-	ssize_t read;
+	gssize read;
 
 	conn = data;
 	frame = conn->frame;

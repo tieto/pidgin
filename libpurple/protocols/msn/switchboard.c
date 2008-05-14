@@ -544,7 +544,7 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	msn_message_show_readable(msg, "SB SEND", FALSE);
 #endif
 
-	trans = msn_transaction_new(cmdproc, "MSG", "%c %d",
+	trans = msn_transaction_new(cmdproc, "MSG", "%c %" G_GSIZE_FORMAT,
 								msn_message_get_flag(msg), payload_len);
 
 	/* Data for callbacks */
@@ -1194,9 +1194,10 @@ xfr_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 
 	swboard = trans->data;
 
-	purple_debug_info("msn", "xfr_error %i for %s: trans %x, command %s, reason %i\n",
-					error, (swboard->im_user ? swboard->im_user : "(null)"), trans,
-					(trans->command ? trans->command : "(null)"), reason);
+	purple_debug_info("msn",
+		"xfr_error %i for %s: trans %p, command %s, reason %i\n",
+		error, (swboard->im_user ? swboard->im_user : "(null)"), trans,
+		(trans->command ? trans->command : "(null)"), reason);
 
 	swboard_error_helper(swboard, reason, swboard->im_user);
 }

@@ -705,7 +705,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 	if (conv == NULL)
 		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
 
-	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, message, flags, mtime);
+	purple_conv_im_write(PURPLE_CONV_IM(conv), name, message, flags, mtime);
 	g_free(message);
 
 	/*

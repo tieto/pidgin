@@ -111,6 +111,9 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	for (l = swboard->users; l != NULL; l = l->next)
 		g_free(l->data);
 
+	if (swboard->users != NULL)
+		g_list_free(swboard->users);
+
 	session = swboard->session;
 	session->switches = g_list_remove(session->switches, swboard);
 

@@ -48,7 +48,7 @@ peer_proxy_send(PeerConnection *conn, ProxyFrame *frame)
 
 	peer_connection_send(conn, &bs);
 
-	g_free(bs.data);
+	byte_stream_destroy(&bs);
 }
 
 /**
@@ -202,7 +202,7 @@ static void
 peer_proxy_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PeerConnection *conn;
-	ssize_t read;
+	gssize read;
 	ProxyFrame *frame;
 
 	conn = data;

@@ -291,7 +291,7 @@ void
 peer_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PeerConnection *conn;
-	ssize_t read;
+	gssize read;
 
 	conn = data;
 
@@ -407,7 +407,7 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PeerConnection *conn;
 	gsize writelen;
-	ssize_t wrotelen;
+	gssize wrotelen;
 
 	conn = data;
 	writelen = purple_circ_buffer_get_max_read(conn->buffer_outgoing);
