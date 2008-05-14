@@ -199,8 +199,6 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 			}
 		}
 	}
-
-	msn_oim_free_send_req(msg);
 }
 
 void
