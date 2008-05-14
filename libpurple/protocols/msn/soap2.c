@@ -401,10 +401,8 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 				message->xml = node;
 
 				if (!msn_soap_handle_body(conn, message)) {
-					msn_soap_message_destroy(message);
 					return;
 				}
-				msn_soap_message_destroy(message);
 			}
 
 			msn_soap_connection_handle_next(conn);
