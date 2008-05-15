@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-11 23:23+0200\n"
-"PO-Revision-Date: 2008-05-11 23:22+0200\n"
+"POT-Creation-Date: 2008-05-15 21:09+0200\n"
+"PO-Revision-Date: 2008-05-15 17:38+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2482,10 +2482,10 @@ msgid ""
 "at your own risk!"
 msgstr ""
 "Dieses Plugin zeigt auch die Mitschnitte anderer Sofortnachrichtenprogramme "
-"im Mitschnittsbetrachter an. Momentan sind das Adium, Fire, Messenger Plus!, "
-"MSN Messenger und Trillian.\n"
-"WARNUNG: Dieses Plugin befindet sich noch im Entwicklungsstadium und kann "
-"oft Abstürzen. Benutzung auf eigene Gefahr!"
+"im Mitschnittsbetrachter an. Momentan sind das Adium, MSN Messenger und "
+"Trillian.\n"
+"WARNUNG: Dieses Plugin ist immer noch im Alpha-Stadium und kann oft "
+"abstürzen. Benutzung auf eigene Gefahr!"
 
 msgid "Mono Plugin Loader"
 msgstr "Mono-Plugin-Lader"
@@ -12963,7 +12963,7 @@ msgstr "Füge _Anzahl der neuen Nachrichten in den Fenstertitel ein"
 
 #. Count xprop method button
 msgid "Insert count of new message into _X property"
-msgstr "Füge _Anzahl der neuen Nachrichten in den Fenstertitel ein"
+msgstr "Füge Anzahl der neuen Nachrichten in die _X-Eigenschaft ein"
 
 #. Urgent method button
 msgid "Set window manager \"_URGENT\" hint"
@@ -12975,7 +12975,7 @@ msgstr "G_esprächsfenster in den Vordergrund bringen"
 
 #. Present conversation method button
 msgid "_Present conversation window"
-msgstr "G_esprächsfenster anzeigen"
+msgstr "Ges_prächsfenster anzeigen"
 
 #. ---------- "Notification Removals" ----------
 msgid "Notification Removal"
@@ -12995,7 +12995,7 @@ msgstr "Entferne, wenn im Gesprächsfenster ge_tippt wird"
 
 #. Remove on message send button
 msgid "Remove when a _message gets sent"
-msgstr "Entferne, wenn eine _Nachricht gesendet wird"
+msgstr "Entferne, wenn eine Nachricht ge_sendet wird"
 
 #. Remove on conversation switch button
 msgid "Remove on switch to conversation ta_b"
