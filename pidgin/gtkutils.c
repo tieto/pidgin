@@ -2873,8 +2873,6 @@ void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const
 {
 	PurpleBuddy *buddy;
 	PurpleContact *contact;
-	gpointer data = NULL;
-	size_t len = 0;
 
 	buddy = purple_find_buddy(account, who);
 	if (!buddy) {
@@ -2883,19 +2881,7 @@ void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const
 	}
 
 	contact = purple_buddy_get_contact(buddy);
-
-	if (filename) {
-		const char *prpl_id = purple_account_get_protocol_id(account);
-		PurplePlugin *prpl = purple_find_prpl(prpl_id);
-
-		data = pidgin_convert_buddy_icon(prpl, filename, &len);
-
-		/* We don't want to delete the old icon if the new one didn't load. */
-		if (data == NULL)
-			return;
-	}
-
-	purple_buddy_icons_node_set_custom_icon(contact, data, len);
+	purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, filename);
 }
 
 char *pidgin_make_pretty_arrows(const char *str)
