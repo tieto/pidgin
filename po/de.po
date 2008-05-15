@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-15 21:09+0200\n"
-"PO-Revision-Date: 2008-05-15 17:38+0200\n"
+"POT-Creation-Date: 2008-05-15 22:36+0200\n"
+"PO-Revision-Date: 2008-05-15 22:35+0200\n"
 "Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12963,7 +12963,7 @@ msgstr "Füge _Anzahl der neuen Nachrichten in den Fenstertitel ein"
 
 #. Count xprop method button
 msgid "Insert count of new message into _X property"
-msgstr "Füge Anzahl der neuen Nachrichten in die _X-Eigenschaft ein"
+msgstr "Füge Anzahl der neuen Nachrichten in die _X-Window-Eigenschaften ein"
 
 #. Urgent method button
 msgid "Set window manager \"_URGENT\" hint"
