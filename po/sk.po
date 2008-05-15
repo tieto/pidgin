@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pidgin-1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-30 21:51-0400\n"
+"POT-Creation-Date: 2008-05-15 08:57-0400\n"
 "PO-Revision-Date: 2008-02-20 13:56+0000\n"
 "Last-Translator: loptosko <loptosko@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -63,7 +63,7 @@ msgstr "Chyba"
 msgid "Account was not added"
 msgstr "Účet sa nepridal do zoznamu"
 
-msgid "Screenname of an account must be non-empty."
+msgid "Username of an account must be non-empty."
 msgstr "Používateľské meno účtu nesmie byť prázdne."
 
 msgid "New mail notifications"
@@ -87,7 +87,7 @@ msgstr "Nový účet"
 msgid "Protocol:"
 msgstr "Protokol:"
 
-msgid "Screen name:"
+msgid "Username:"
 msgstr "Používateľské meno:"
 
 msgid "Password:"
@@ -176,8 +176,8 @@ msgstr ""
 msgid "Default"
 msgstr "Predvolená"
 
-msgid "You must provide a screename for the buddy."
-msgstr "Je potrebné zadať používateľské meno účtu."
+msgid "You must provide a username for the buddy."
+msgstr "Je potrebné zadať používateľské meno priateľa."
 
 msgid "You must provide a group."
 msgstr "Je potrebné zadať skupinu."
@@ -191,8 +191,8 @@ msgstr "Vybraný účet nie je pripojený."
 msgid "Error adding buddy"
 msgstr "Chyba počas pridávania priateľa"
 
-msgid "Screen Name"
-msgstr "Používateľské meno"
+msgid "Username"
+msgstr "Prihlasovacie meno"
 
 msgid "Alias (optional)"
 msgstr "Prezývka (voliteľná)"
@@ -352,11 +352,11 @@ msgid "Unblock"
 msgstr "Odblokovať"
 
 msgid ""
-"Please enter the screen name or alias of the person you would like to Block/"
+"Please enter the username or alias of the person you would like to Block/"
 "Unblock."
 msgstr ""
 "Zadajte, prosím, používateľské meno alebo prezývku osoby, ktorú chcete "
-"zablokovať alebo odblokovať."
+"zablokovať/odblokovať."
 
 #. Not multiline
 #. Not masked?
@@ -367,8 +367,7 @@ msgstr "OK"
 msgid "New Instant Message"
 msgstr "Nová správa"
 
-msgid ""
-"Please enter the screen name or alias of the person you would like to IM."
+msgid "Please enter the username or alias of the person you would like to IM."
 msgstr ""
 "Zadajte, prosím, používateľské meno alebo prezývku osoby, ktorej chcete "
 "odoslať správu."
@@ -385,6 +384,13 @@ msgstr "Prosím, zadajte názov chatu na ktorý sa chcete pripojiť."
 msgid "Join"
 msgstr "Pripojiť"
 
+msgid ""
+"Please enter the username or alias of the person whose log you would like to "
+"view."
+msgstr ""
+"Zadajte, prosím, používateľské meno alebo prezývku osoby, ktorej záznam "
+"chcete zobraziť."
+
 #. Create the "Options" frame.
 msgid "Options"
 msgstr "Voľby"
@@ -397,6 +403,9 @@ msgstr "Zablokovať/odblokovať..."
 
 msgid "Join Chat..."
 msgstr "Pripojiť sa na chat..."
+
+msgid "View Log..."
+msgstr "Zobraziť záznam..."
 
 msgid "Show"
 msgstr "Zobraziť"
@@ -607,9 +616,6 @@ msgstr "Zobrazovať časové značky"
 msgid "Add Buddy Pounce..."
 msgstr "Pridať sledovanie priateľa..."
 
-msgid "View Log..."
-msgstr "Zobraziť záznam..."
-
 msgid "Enable Logging"
 msgstr "Zapnúť zaznamenávanie"
 
@@ -745,15 +751,24 @@ msgstr "Zlyhalo"
 msgid "%.2f KiB/s"
 msgstr "%.2f KiB/s"
 
-#, c-format
-msgid "The file was saved as %s."
-msgstr "Súbor bol uložený ako %s."
+msgid "Sent"
+msgstr "Odoslané"
+
+msgid "Received"
+msgstr "Prijaté"
 
 msgid "Finished"
 msgstr "Dokončené"
 
-msgid "Transferring"
-msgstr "Prenáša sa"
+#, c-format
+msgid "The file was saved as %s."
+msgstr "Súbor bol uložený ako %s."
+
+msgid "Sending"
+msgstr "Odosiela sa"
+
+msgid "Receiving"
+msgstr "Prijíma sa"
 
 #, c-format
 msgid "Conversation in %s on %s"
@@ -822,9 +837,9 @@ msgstr "Predmet"
 #, c-format
 msgid "%s (%s) has %d new message."
 msgid_plural "%s (%s) has %d new messages."
-msgstr[0] "%s (%s) má %d novú správu."
-msgstr[1] "%s (%s) má %d nové správy."
-msgstr[2] "%s (%s) má %d nových správ."
+msgstr[0] "%s (%s) má %d nových správ."
+msgstr[1] "%s (%s) má %d novú správu."
+msgstr[2] "%s (%s) má %d nové správy."
 
 msgid "New Mail"
 msgstr "Nová pošta"
@@ -847,6 +862,9 @@ msgstr "Pozvať"
 
 msgid "(none)"
 msgstr "(žiadne)"
+
+msgid "URI"
+msgstr "URI"
 
 msgid "ERROR"
 msgstr "CHYBA"
@@ -1097,6 +1115,12 @@ msgstr "Rozhovory"
 msgid "Logging"
 msgstr "Zaznamenávanie"
 
+msgid "You must fill all the required fields."
+msgstr "Musíte vyplniť všetky potrebné políčka."
+
+msgid "The required fields are underlined."
+msgstr "Povinné políčka sú podčiarknuté."
+
 msgid "Not implemented yet."
 msgstr "Zatiaľ nie je implementované."
 
@@ -1146,8 +1170,8 @@ msgstr "Vy hovoríte v chate"
 msgid "Others talk in chat"
 msgstr "Ostatní hovoria v chate"
 
-msgid "Someone says your screen name in chat"
-msgstr "Niekto v chate napíše vaše meno"
+msgid "Someone says your username in chat"
+msgstr "Niekto napísal vaše meno v chate"
 
 msgid "GStreamer Failure"
 msgstr "Zlyhanie rozhrania GStreamer"
@@ -1156,7 +1180,7 @@ msgid "GStreamer failed to initialize."
 msgstr "Nepodarilo sa inicializovať rozhranie GStreamer"
 
 msgid "(default)"
-msgstr "(štandardné)"
+msgstr "(predvolené)"
 
 msgid "Select Sound File ..."
 msgstr "Vyberte zvukový súbor..."
@@ -2467,10 +2491,10 @@ msgstr "Pridať nový riadok pred zobrazenú správu."
 #. *< summary
 msgid ""
 "Prepends a newline to messages so that the rest of the message appears below "
-"the screen name in the conversation window."
+"the username in the conversation window."
 msgstr ""
-"Pridáva entery pred správy, čo spôsobí že správy sa zobrazujú pod "
-"používateľským menom priateľa"
+"Pridáva entery pred správy, čo spôsobí že správy v okne rozhovoru sa "
+"zobrazujú pod používateľským menom."
 
 msgid "Offline Message Emulation"
 msgstr "Emulácia offline správ"
@@ -2536,9 +2560,8 @@ msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
 "This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
 msgstr ""
-"Spôsobí, že okná konverzácie sa objavia v momente, keď vám ostatní "
-"používatelia začnú písať správu.  Funguje na AIM, ICQ, XMPP, Sametime, and "
-"Yahoo!"
+"Spôsobí, že okno rozhovoru sa objaví v momente, keď vám ostatní používatelia "
+"začnú písať správu.  Funguje na AIM, ICQ, XMPP, Sametime, and Yahoo!"
 
 msgid "You feel a disturbance in the force..."
 msgstr "Cítite narušenie vašej moci..."
@@ -2550,10 +2573,10 @@ msgid "Disable when away"
 msgstr "Zakázať pri neprítomnosti"
 
 msgid "Display notification message in conversations"
-msgstr "Zobraziť oznamujúcu správu v konverzáciách"
+msgstr "Zobraziť oznamujúcu správu v rozhovoroch"
 
 msgid "Raise psychic conversations"
-msgstr "Prenášať psychické konverzácie navrch"
+msgstr "Prenášať psychické rozhovory navrch"
 
 #. *< type
 #. *< ui_requirement
@@ -2688,7 +2711,7 @@ msgid ""
 "Notifies in a conversation window when a buddy goes or returns from away or "
 "idle."
 msgstr ""
-"Upozorní v okne konverzácie, keď priateľ je alebo prestane byť neprítomný "
+"Upozorní v okne rozhovoru, keď priateľ je alebo prestane byť neprítomný "
 "alebo nečinný."
 
 msgid "Tcl Plugin Loader"
@@ -3112,9 +3135,6 @@ msgstr "Port"
 msgid "Encodings"
 msgstr "Kódovania"
 
-msgid "Username"
-msgstr "Prihlasovacie meno"
-
 msgid "Real name"
 msgstr "Skutočné meno"
 
@@ -3126,7 +3146,18 @@ msgid "Use SSL"
 msgstr "Používať SSL"
 
 msgid "Bad mode"
-msgstr "Nesprávny režim"
+msgstr "Zlý režim"
+
+#, c-format
+msgid "Ban on %s by %s, set %ld seconds ago"
+msgstr "Ban na %s od %s, daný pred %ld sekundami"
+
+#, c-format
+msgid "Ban on %s"
+msgstr "Ban na %s"
+
+msgid "End of ban list"
+msgstr "Koniec zoznamu blokovaných"
 
 #, c-format
 msgid "You are banned from %s."
@@ -3489,6 +3520,9 @@ msgstr ""
 "Server vyžaduje na prihlásenie TLS/SSL, ale podpora pre TLS/SSL nebola "
 "nájdená."
 
+msgid "You require encryption, but no TLS/SSL support found."
+msgstr "Požadujete šifrovanie, ale podpora pre TLS/SSL nebola nájdená."
+
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "Server vyžaduje plaintextovú autentifikáciu cez nezašifrovaný prúd"
 
@@ -3508,13 +3542,6 @@ msgstr "Chybná odpoveď zo servera."
 
 msgid "Server does not use any supported authentication method"
 msgstr "Server nepoužíva žiadny z podporovaných spôsobov autentifikácie"
-
-msgid ""
-"This server requires plaintext authentication over an unencrypted "
-"connection.  Allow this and continue authentication?"
-msgstr ""
-"Server vyžaduje plaintextovú autentifikáciu cez nezašifrované pripojenie.  "
-"Chcete ju povoliť a pokračovať v autentifikácii?"
 
 msgid "Invalid challenge from server"
 msgstr "Chybná výzva zo servera."
@@ -4336,8 +4363,9 @@ msgstr "register:  Zaregistrovať sa v chatovacej miestnosti."
 msgid "topic [new topic]:  View or change the topic."
 msgstr "topic [nová téma]:  Zobrazí alebo zmení tému."
 
-msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
-msgstr "ban &lt;používateľ&gt; [miestnosť]:  Vykázať používateľa z miestnosti."
+msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
+msgstr ""
+"ban &lt;používateľ&gt; [miestnosť]:  Zablokovať používateľa v miestnosti."
 
 msgid ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
@@ -4356,12 +4384,11 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;user&gt; [správa]: Pozve používateľa do miestnosti."
 
-msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
-msgstr "join: &lt;room&gt; [server]: Pripojí sa na chat na tomto serveri."
+msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+msgstr "join: &lt;miestnosť&gt; [server]: Pripojí sa na chat na tomto serveri."
 
-msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
-msgstr ""
-"kick &lt;používateľ&gt; [miestnosť]:  Vykopne používateľa z miestnosti."
+msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
+msgstr "kick &lt;používateľ&gt; [dôvod]:  Vykopne používateľa z miestnosti."
 
 msgid ""
 "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
@@ -4400,9 +4427,6 @@ msgstr "Vynútiť staré SSL (port 5223)"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Povoliť plaintextovú autentifikáciu cez nezašifrované spojenia"
-
-msgid "Use GSSAPI (Kerberos v5) for authentication"
-msgstr "Na autentifikáciu použiť GSSAPI (Kerberos v5)"
 
 msgid "Connect port"
 msgstr "Port pripojenia"
@@ -4576,8 +4600,8 @@ msgstr "Chýba plne kvalifikované doménové meno"
 msgid "Already logged in"
 msgstr "Už je prihlásený"
 
-msgid "Invalid screen name"
-msgstr "Používateľské meno je chybné"
+msgid "Invalid username"
+msgstr "Chybné prihlasovacie meno."
 
 msgid "Invalid friendly name"
 msgstr "Priateľské meno je chybné"
@@ -5110,18 +5134,18 @@ msgid_plural ""
 "After the maintenance has been completed, you will be able to successfully "
 "sign in."
 msgstr[0] ""
-"MSN server bude o %d minútu vypnutý z dôvodu údržby. Budete automaticky "
-"odhlásení. Prosím, ukončite všetky práve prebiehajúce konverzácie.\n"
+"MSN server bude o %d minút vypnutý z dôvodu údržby. Budete automaticky "
+"odhlásení. Prosím, ukončite všetky práve prebiehajúce rozhovory.\n"
 "\n"
 "Keď bude údržba dokončená, budete sa môcť znovu prihlásiť."
 msgstr[1] ""
-"MSN server bude o %d minúty vypnutý z dôvodu údržby. Budete automaticky "
-"odhlásení. Prosím, ukončite všetky práve prebiehajúce konverzácie.\n"
+"MSN server bude o %d minútu vypnutý z dôvodu údržby. Budete automaticky "
+"odhlásení. Prosím, ukončite všetky práve prebiehajúce rozhovory.\n"
 "\n"
 "Keď bude údržba dokončená, budete sa môcť znovu prihlásiť."
 msgstr[2] ""
-"MSN server bude o %d minút vypnutý z dôvodu údržby. Budete automaticky "
-"odhlásení. Prosím, ukončite všetky práve prebiehajúce konverzácie.\n"
+"MSN server bude o %d minúty vypnutý z dôvodu údržby. Budete automaticky "
+"odhlásení. Prosím, ukončite všetky práve prebiehajúce rozhovory.\n"
 "\n"
 "Keď bude údržba dokončená, budete sa môcť znovu prihlásiť."
 
@@ -5169,6 +5193,9 @@ msgstr ""
 
 msgid "Handshaking"
 msgstr "Prevzatie"
+
+msgid "Transferring"
+msgstr "Prenáša sa"
 
 msgid "Starting authentication"
 msgstr "Začína sa autentifikácia"
@@ -5235,8 +5262,8 @@ msgstr "Používateľ %s vás odstránil zo svojho zoznamu priateľov."
 msgid "Unable to add \"%s\"."
 msgstr "Nepodarilo sa pridať „%s“."
 
-msgid "The screen name specified is invalid."
-msgstr "Zadané používateľské meno je chybné."
+msgid "The username specified is invalid."
+msgstr "Zadané prihlasovacie meno je chybné."
 
 msgid "Has you"
 msgstr "Vás má"
@@ -5658,11 +5685,11 @@ msgstr "Nemôžete pridať samého seba"
 msgid "Master archive is misconfigured"
 msgstr "Hlavný archív je nesprávne nastavený"
 
-msgid "Incorrect screen name or password"
-msgstr "Nesprávne používateľské meno alebo heslo"
+msgid "Incorrect username or password"
+msgstr "Nesprávne prihlasovacie meno alebo heslo"
 
-msgid "Could not recognize the host of the screen name you entered"
-msgstr "Nepodarilo sa rozoznať hostiteľa zadaného zobrazovaného mena"
+msgid "Could not recognize the host of the username you entered"
+msgstr "Nedalo sa zistiť hostiteľa prihlasovacieho mena ktoré ste zadali"
 
 msgid ""
 "Your account has been disabled because too many incorrect passwords were "
@@ -5671,12 +5698,12 @@ msgstr ""
 "Váš účet bol zablokovaný, pretože ste príliš veľa krát zadali nesprávne heslo"
 
 msgid "You cannot add the same person twice to a conversation"
-msgstr "Nemôžete pridať tú istú osobu dva krát do konverzácie"
+msgstr "Nemôžete pridať tú istú osobu dva krát do rozhovoru"
 
 msgid "You have reached your limit for the number of contacts allowed"
 msgstr "Dosiahli ste limit najvyššieho povoleného počtu kontaktov"
 
-msgid "You have entered an incorrect screen name"
+msgid "You have entered an incorrect username"
 msgstr "Zadali ste nesprávne používateľské meno"
 
 msgid "An error occurred while updating the directory"
@@ -5817,10 +5844,10 @@ msgstr "Čaká sa na odpoveď..."
 
 #, c-format
 msgid "%s has been invited to this conversation."
-msgstr "Používateľ %s bol pozvaný na konferenciu."
+msgstr "Používateľ %s bol pozvaný do tohoto rozhovoru."
 
 msgid "Invitation to Conversation"
-msgstr "Prozvánka na konferenciu"
+msgstr "Prozvánka do rozhovoru"
 
 #, c-format
 msgid ""
@@ -5833,7 +5860,7 @@ msgstr ""
 "Odoslal: %s"
 
 msgid "Would you like to join the conversation?"
-msgstr "Chcete sa pripojiť do tejto konverzácie?"
+msgstr "Chcete sa pripojiť do tohoto rozhovoru?"
 
 msgid "You have been logged out because you logged in at another workstation."
 msgstr ""
@@ -6336,16 +6363,16 @@ msgstr "Odmietnuť"
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
-msgstr[0] "Prišli ste o %hu správu od používateľa %s, pretože bola chybná."
-msgstr[1] "Prišli ste o %hu správy od používateľa %s, pretože boli chybné."
-msgstr[2] "Prišli ste o %hu správ od používateľa %s, pretože boli chybné."
+msgstr[0] "Prišli ste o %hu správ od používateľa %s, pretože boli chybné."
+msgstr[1] "Prišli ste o %hu správu od používateľa %s, pretože bola chybná."
+msgstr[2] "Prišli ste o %hu správy od používateľa %s, pretože boli chybné."
 
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
-msgstr[0] "%hu správa od %s nebola prijatá, pretože bola príliš veľká."
-msgstr[1] "%hu správy od %s neboli prijaté, pretože boli príliš veľké."
-msgstr[2] "%hu správ od %s nebolo prijatých, pretože boli príliš veľké."
+msgstr[0] "%hu správ od %s nebolo prijatých, pretože boli príliš veľké."
+msgstr[1] "%hu správa od %s nebola prijatá, pretože bola príliš veľká."
+msgstr[2] "%hu správy od %s neboli prijaté, pretože boli príliš veľké."
 
 #, c-format
 msgid ""
@@ -6353,35 +6380,35 @@ msgid ""
 msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] ""
-"Prišli ste o %hu správu od používateľa %s, pretože bol prekročený limit "
+"Prišli ste o %hu správ od používateľa %s, pretože bol prekročený limit "
 "hodnotenia."
 msgstr[1] ""
-"Prišli ste o %hu správy od používateľa %s, pretože bol prekročený limit "
+"Prišli ste o %hu správu od používateľa %s, pretože bol prekročený limit "
 "hodnotenia."
 msgstr[2] ""
-"Prišli ste o %hu správ od používateľa %s, pretože bol prekročený limit "
+"Prišli ste o %hu správy od používateľa %s, pretože bol prekročený limit "
 "hodnotenia."
 
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
-msgstr[0] "Prišli ste o %hu správu od používateľa %s, pretože je príliš zlý."
-msgstr[1] "Prišli ste o %hu správy od používateľa %s, pretože je príliš zlý."
-msgstr[2] "Prišli ste o %hu správ od používateľa %s, pretože je príliš zlý."
+msgstr[0] "Prišli ste o %hu správ od používateľa %s, pretože je príliš zlý."
+msgstr[1] "Prišli ste o %hu správu od používateľa %s, pretože je príliš zlý."
+msgstr[2] "Prišli ste o %hu správy od používateľa %s, pretože je príliš zlý."
 
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
-msgstr[0] "Prišli ste o %hu správu od používateľa %s, pretože ste príliš zlý."
-msgstr[1] "Prišli ste o %hu správy od používateľa %s, pretože ste príliš zlý."
-msgstr[2] "Prišli ste o %hu správ od používateľa %s, pretože ste príliš zlý."
+msgstr[0] "Prišli ste o %hu správ od používateľa %s, pretože ste príliš zlý."
+msgstr[1] "Prišli ste o %hu správu od používateľa %s, pretože ste príliš zlý."
+msgstr[2] "Prišli ste o %hu správy od používateľa %s, pretože ste príliš zlý."
 
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
-msgstr[0] "Z neznámeho dôvodu ste prišli o %hu správu od používateľa %s."
-msgstr[1] "Z neznámeho dôvodu ste prišli o %hu správy od používateľa %s."
-msgstr[2] "Z neznámeho dôvodu ste prišli o %hu správ od používateľa %s."
+msgstr[0] "Z neznámeho dôvodu ste prišli o %hu správ od používateľa %s."
+msgstr[1] "Z neznámeho dôvodu ste prišli o %hu správu od používateľa %s."
+msgstr[2] "Z neznámeho dôvodu ste prišli o %hu správy od používateľa %s."
 
 #. Data is assumed to be the destination sn
 #, c-format
@@ -6460,8 +6487,8 @@ msgstr "Vyskakovacia správa"
 #, c-format
 msgid "The following username is associated with %s"
 msgid_plural "The following usernames are associated with %s"
-msgstr[0] "Nasledujúce používateľské meno je asociované s %s"
-msgstr[1] "Nasledujúce používateľské mená sú asociované s %s"
+msgstr[0] "Nasledujúce používateľské mená sú asociované s %s"
+msgstr[1] "Nasledujúce používateľské meno je asociované s %s"
 msgstr[2] "Nasledujúce používateľské mená sú asociované s %s"
 
 #, c-format
@@ -6560,13 +6587,13 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
-"Maximálna dĺžka profilu, %d bajt, bola prekročená.  Profil bol automaticky "
+"Maximálna dĺžka profilu, %d bajtov, bola prekročená.  Profil bol automaticky "
 "skrátený."
 msgstr[1] ""
-"Maximálna dĺžka profilu, %d bajty, bola prekročená.  Profil bol automaticky "
+"Maximálna dĺžka profilu, %d bajt, bola prekročená.  Profil bol automaticky "
 "skrátený."
 msgstr[2] ""
-"Maximálna dĺžka profilu, %d bajtov, bola prekročená.  Profil bol automaticky "
+"Maximálna dĺžka profilu, %d bajty, bola prekročená.  Profil bol automaticky "
 "skrátený."
 
 msgid "Profile too long."
@@ -6580,13 +6607,13 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
 msgstr[0] ""
+"Maximálna dĺžka správy neprítomnosti, %d bajtov, bola prekročená.  Správa "
+"bola automaticky skrátená."
+msgstr[1] ""
 "Maximálna dĺžka správy neprítomnosti, %d bajt, bola prekročená.  Správa bola "
 "automaticky skrátená."
-msgstr[1] ""
-"Maximálna dĺžka správy neprítomnosti, %d bajty, bola prekročená.  Správa "
-"bola automaticky skrátená."
 msgstr[2] ""
-"Maximálna dĺžka správy neprítomnosti, %d bajtov, bola prekročená.  Správa "
+"Maximálna dĺžka správy neprítomnosti, %d bajty, bola prekročená.  Správa "
 "bola automaticky skrátená."
 
 msgid "Away message too long."
@@ -6623,8 +6650,8 @@ msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
 "list.  Please remove one and try again."
 msgstr ""
-"Nepodarilo sa pridať priateľa %s, pretože vo vašom zozname priateľov máte "
-"príliš veľa priateľov.  Odstránte, prosím, jedného a skúste to znovu"
+"Nepodarilo sa pridať priateľa %s, pretože vo vašom zozname máte príliš veľa "
+"priateľov.  Odstránte, prosím, jedného a skúste to znovu"
 
 msgid "(no name)"
 msgstr "(bez názvu)"
@@ -6635,11 +6662,11 @@ msgstr "Nebolo možné pridať priateľa %s z neznámeho dôvodu."
 
 #, c-format
 msgid ""
-"The user %s has given you permission to add you to their buddy list.  Do you "
-"want to add them?"
+"The user %s has given you permission to add him or her to your buddy list.  "
+"Do you want to add this user?"
 msgstr ""
-"Používateľ %s vám udelil oprávnenie, aby si vás mohol pridať do svojho "
-"zoznamu kamarátov. Chcete pridať jeho do svojho?"
+"Používateľ %s vám udelil oprávnenie, aby ste si ho mohli pridať do svojho "
+"zoznamu priateľov. Chcete ho pridať?"
 
 msgid "Authorization Given"
 msgstr "Autorizácia udelená"
@@ -8749,7 +8776,7 @@ msgstr "Nebolo možné preložiť názov hostiteľa"
 msgid "Could not resolve hostname"
 msgstr "Nebolo možné previesť názov hostiteľa na IP"
 
-msgid "SIP screen names may not contain whitespaces or @ symbols"
+msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Používateľské mená SIP nemôžu obsahovať medzery alebo znaky @"
 
 #. *< type
@@ -8868,7 +8895,7 @@ msgstr "Krajina nie je podporovaná."
 msgid "Failure unknown: %s."
 msgstr "Neznáme zlyhanie: %s."
 
-msgid "Incorrect screen name or password."
+msgid "Incorrect username or password."
 msgstr "Nesprávne používateľské meno alebo heslo."
 
 msgid "The service is temporarily unavailable."
@@ -8938,11 +8965,11 @@ msgstr "Uložiť ako..."
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
 msgstr[0] ""
-"Používateľ %s vyžaduje od používateľa %s potvrdenie %d súboru: %s (%.2f %s)%s"
-"%s"
-msgstr[1] ""
 "Používateľ %s vyžaduje od používateľa %s potvrdenie %d súborov: %s (%.2f %s)%"
 "s%s"
+msgstr[1] ""
+"Používateľ %s vyžaduje od používateľa %s potvrdenie %d súboru: %s (%.2f %s)%s"
+"%s"
 msgstr[2] ""
 "Používateľ %s vyžaduje od používateľa %s potvrdenie %d súborov: %s (%.2f %s)%"
 "s%s"
@@ -9018,9 +9045,6 @@ msgstr ""
 
 msgid "Ignore buddy?"
 msgstr "Ignorovať priateľa?"
-
-msgid "Invalid screen name."
-msgstr "Chybné používateľské meno."
 
 msgid "Your account is locked, please log in to the Yahoo! website."
 msgstr "Váš účet je uzamknutý, prihláste sa, prosím, na webstránke Yahoo!."
@@ -9628,44 +9652,44 @@ msgstr "Neznáme."
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
-msgstr[0] "%d sekunda"
-msgstr[1] "%d sekundy"
-msgstr[2] "%d sekúnd"
+msgstr[0] "%d sekúnd"
+msgstr[1] "%d sekunda"
+msgstr[2] "%d sekundy"
 
 #, c-format
 msgid "%d day"
 msgid_plural "%d days"
-msgstr[0] "%d deň"
-msgstr[1] "%d dni"
-msgstr[2] "%d dní"
+msgstr[0] "%d dní"
+msgstr[1] "%d deň"
+msgstr[2] "%d dni"
 
 #, c-format
 msgid "%s, %d hour"
 msgid_plural "%s, %d hours"
-msgstr[0] "%s, %d hodina"
-msgstr[1] "%s, %d hodiny"
-msgstr[2] "%s, %d hodín"
+msgstr[0] "%s, %d hodín"
+msgstr[1] "%s, %d hodina"
+msgstr[2] "%s, %d hodiny"
 
 #, c-format
 msgid "%d hour"
 msgid_plural "%d hours"
-msgstr[0] "%d hodina"
-msgstr[1] "%d hodiny"
-msgstr[2] "%d hodín"
+msgstr[0] "%d hodín"
+msgstr[1] "%d hodina"
+msgstr[2] "%d hodiny"
 
 #, c-format
 msgid "%s, %d minute"
 msgid_plural "%s, %d minutes"
-msgstr[0] "%s, %d minúta"
-msgstr[1] "%s, %d minúty"
-msgstr[2] "%s, %d minút"
+msgstr[0] "%s, %d minút"
+msgstr[1] "%s, %d minúta"
+msgstr[2] "%s, %d minúty"
 
 #, c-format
 msgid "%d minute"
 msgid_plural "%d minutes"
-msgstr[0] "%d minúta"
-msgstr[1] "%d minúty"
-msgstr[2] "%d minút"
+msgstr[0] "%d minút"
+msgstr[1] "%d minúta"
+msgstr[2] "%d minúty"
 
 #, c-format
 msgid "Could not open %s: Redirected too many times"
@@ -9704,22 +9728,18 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Pripojenie prerušené iným programom na vašom počítači."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Vzdialený hostiteľ zavrel pripojenie."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Časový interval vypršal"
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Pripojenie odmietnuté."
 
@@ -9746,11 +9766,8 @@ msgstr "Možnosti prihlásenia"
 msgid "Pro_tocol:"
 msgstr "Pro_tokol:"
 
-msgid "Screen _name:"
-msgstr "Používateľské meno:"
-
-msgid "_Local alias:"
-msgstr "Lokálna prezývka:"
+msgid "_Username:"
+msgstr "Po_užívateľské meno:"
 
 msgid "Remember pass_word"
 msgstr "Zapamätať heslo"
@@ -9758,6 +9775,9 @@ msgstr "Zapamätať heslo"
 #. Build the user options frame.
 msgid "User Options"
 msgstr "Možnosti používateľa"
+
+msgid "_Local alias:"
+msgstr "Lokálna prezývka:"
 
 msgid "New _mail notifications"
 msgstr "Upozornenia na nové správy"
@@ -9816,9 +9836,6 @@ msgstr "_Hostiteľ:"
 msgid "_Port:"
 msgstr "_Port:"
 
-msgid "_Username:"
-msgstr "Po_užívateľské meno:"
-
 msgid "Pa_ssword:"
 msgstr "He_slo:"
 
@@ -9860,31 +9877,35 @@ msgid ""
 msgstr ""
 "<span size='larger' weight='bold'>Vitajte v programe %s!</span>\n"
 "\n"
-"Ešte nemáte nastavené žiadne IM účty. Ak sa chcete pripojiť pomocou programu "
-"%s, stlačte tlačidlo <b>Pridať</b> a vyplňte príslušné údaje o vašom "
-"internetovom účte. Ak sa chcete cez program %s pripájať na viaceré "
-"komunikačné účty, kliknite znovu <b>Pridať</b> a nakonfigurujte aj ďalšie.\n"
+"Nemáte nastavené žiadne komunikačné účty. Ak sa chcete pripojiť pomocou "
+"programu %s, stlačte tlačidlo <b>Pridať</b> a vyplňte príslušné údaje o "
+"vašom internetovom účte. Ak sa chcete pomocou programu %s pripájať na "
+"viacero komunikačných účtov naraz, kliknite znovu <b>Pridať</b> a nastavte "
+"aj ďalší.\n"
 "\n"
 "Ak budete chcieť neskôr pridať, upravovať alebo odstrániť niektoré účty, "
-"toto okno otvoríte v ponuke <b>Účty->Pridať/Upraviť</b> v okne Zoznam "
+"toto okno nájdete v ponuke <b>Účty->Pridať/Upraviť</b> v okne Zoznam "
 "priateľov"
 
 #, c-format
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
 "You currently have %d contacts named %s. Would you like to merge them?"
-msgstr[0] "Máte %d kontakt pomenovaný %s. Chceli by ste ich spojiť?"
-msgstr[1] "Máte %d kontakty pomenované %s. Chceli by ste ich spojiť?"
-msgstr[2] "Máte %d kontaktov pomenovaných %s. Chceli by ste ich spojiť?"
+msgstr[0] "Máte %d kontaktov pomenovaných %s. Želáte si ich zlúčiť?"
+msgstr[1] "Máte %d kontakt pomenovaný %s. Želáte si ich zlúčiť?"
+msgstr[2] "Máte %d kontakty pomenované %s. Želáte si ich zlúčiť?"
 
 msgid ""
 "Merging these contacts will cause them to share a single entry on the buddy "
 "list and use a single conversation window. You can separate them again by "
 "choosing 'Expand' from the contact's context menu"
 msgstr ""
-"Po spojení budú zaberať jedno miesto v zozname kontaktov a budú využívať "
-"rovnaké okno konverzácie. Môžete ich znovu oddeliť tak, že vyberiete možnosť "
+"Po spojení budú zaberať iba jedno miesto v zozname kontaktov a budú využívať "
+"rovnaké okno rozhovoru. Môžete ich znovu oddeliť tak, že vyberiete možnosť "
 "'Rozbaliť' z kontextovej ponuky"
+
+msgid "Please update the necessary fields."
+msgstr "Prosím, aktualizujte potrebné políčka."
 
 msgid "Room _List"
 msgstr "_Zoznam miestností"
@@ -9942,10 +9963,10 @@ msgid "Add C_hat..."
 msgstr "Pridať c_hat..."
 
 msgid "_Delete Group"
-msgstr "Odstrániť skupinu"
+msgstr "_Odstrániť skupinu"
 
 msgid "_Rename"
-msgstr "Premenovať"
+msgstr "_Premenovať"
 
 #. join button
 msgid "_Join"
@@ -9956,6 +9977,9 @@ msgstr "Automatické prihlasovanie"
 
 msgid "Persistent"
 msgstr "Trvalé"
+
+msgid "_Edit Settings..."
+msgstr "_Upraviť nastavenia..."
 
 msgid "_Collapse"
 msgstr "_Zbaliť"
@@ -10085,6 +10109,14 @@ msgstr "<b>Účet:</b> %s"
 #, c-format
 msgid ""
 "\n"
+"<b>Occupants:</b> %d"
+msgstr ""
+"\n"
+"<b>Účastníci:</b> %d"
+
+#, c-format
+msgid ""
+"\n"
 "<b>Topic:</b> %s"
 msgstr ""
 "\n"
@@ -10153,9 +10185,9 @@ msgstr "/Nástroje/Zoznam _miestností"
 #, c-format
 msgid "%d unread message from %s\n"
 msgid_plural "%d unread messages from %s\n"
-msgstr[0] "%d neprečítaná správa od používateľa %s\n"
-msgstr[1] "%d neprečítané správy od používateľa %s\n"
-msgstr[2] "%d neprečítaných správ od používateľa %s\n"
+msgstr[0] "%d neprečítaných správ od používateľa %s\n"
+msgstr[1] "%d neprečítaná správa od používateľa %s\n"
+msgstr[2] "%d neprečítané správy od používateľa %s\n"
 
 msgid "Manually"
 msgstr "Ručne"
@@ -10187,9 +10219,9 @@ msgstr "Vitajte späť!"
 msgid "%d account was disabled because you signed on from another location:"
 msgid_plural ""
 "%d accounts were disabled because you signed on from another location:"
-msgstr[0] "%d účet bol vypnutý, lebo ste sa prihlásili z iného miesta:"
-msgstr[1] "%d účty boli vypnuté, lebo ste sa prihlásili z iného miesta:"
-msgstr[2] "%d účtov bolo vypnutých, lebo ste sa prihlásili z iného miesta:"
+msgstr[0] "%d účtov bolo vypnutých, lebo ste sa prihlásili z iného miesta:"
+msgstr[1] "%d účet bol vypnutý, lebo ste sa prihlásili z iného miesta:"
+msgstr[2] "%d účty boli vypnuté, lebo ste sa prihlásili z iného miesta:"
 
 msgid "<b>Username:</b>"
 msgstr "<b>Prihlasovacie meno:</b>"
@@ -10241,8 +10273,8 @@ msgstr "/Priatelia/Zobraziť/Ikony protokolov"
 msgid "Add a buddy.\n"
 msgstr "Pridať priateľa.\n"
 
-msgid "Buddy's _screen name:"
-msgstr "_Používateľské meno:"
+msgid "Buddy's _username:"
+msgstr "_Používateľské meno priateľa:"
 
 msgid "(Optional) A_lias:"
 msgstr "(Voliteľné) _Prezývka:"
@@ -10338,7 +10370,7 @@ msgid "<h1>Conversation with %s</h1>\n"
 msgstr "<h1>Rozhovor s %s</h1>\n"
 
 msgid "Save Conversation"
-msgstr "Uložiť konverzáciu"
+msgstr "Uložiť rozhovor"
 
 msgid "Find"
 msgstr "Nájsť"
@@ -10375,6 +10407,9 @@ msgstr "Uložiť ikonu ako..."
 
 msgid "Set Custom Icon..."
 msgstr "Nastaviť vlastnú ikonu..."
+
+msgid "Change Size"
+msgstr "Zmeniť veľkosť"
 
 msgid "Remove Custom Icon"
 msgstr "Odstrániť vlastnú ikonu"
@@ -10543,9 +10578,9 @@ msgstr "V miestnosti je 0 osôb"
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
-msgstr[0] "V miestnosti je %d osoba"
-msgstr[1] "V miestnosti sú %d osoby"
-msgstr[2] "V miestnosti je %d osôb"
+msgstr[0] "V miestnosti je %d osôb"
+msgstr[1] "V miestnosti je %d osoba"
+msgstr[2] "V miestnosti sú %d osoby"
 
 msgid "Typing"
 msgstr "Píše"
@@ -10953,21 +10988,14 @@ msgid "Get User Info"
 msgstr "Zobraziť podrobnosti o používateľovi"
 
 msgid ""
-"Please enter the screen name or alias of the person whose info you would "
-"like to view."
+"Please enter the username or alias of the person whose info you would like "
+"to view."
 msgstr ""
-"Zadajte, prosím, meno používateľa alebo prezývku osoby, ktorej chcete poslať "
-"správu."
+"Zadajte, prosím, prihlasovacie meno alebo prezývku osoby, ktorej chcete "
+"poslať správu."
 
 msgid "View User Log"
 msgstr "Zobraziť záznam používateľa"
-
-msgid ""
-"Please enter the screen name or alias of the person whose log you would like "
-"to view."
-msgstr ""
-"Zadajte, prosím, meno používateľa alebo prezývku osoby, ktorej záznam chcete "
-"zobraziť."
 
 msgid "Alias Contact"
 msgstr "Prezývka kontaktu"
@@ -10997,10 +11025,10 @@ msgid_plural ""
 "your buddy list.  Do you want to continue?"
 msgstr[0] ""
 "Z vášho zoznamu priateľov sa chystáte odstrániť kontakt, ktorý obsahuje %s a "
-"%d ďalšieho priateľa. Chcete pokračovať?"
+"%d ďalších priateľov. Chcete pokračovať?"
 msgstr[1] ""
 "Z vášho zoznamu priateľov sa chystáte odstrániť kontakt, ktorý obsahuje %s a "
-"%d ďalších priateľov. Chcete pokračovať?"
+"%d ďalšieho priateľa. Chcete pokračovať?"
 msgstr[2] ""
 "Z vášho zoznamu priateľov sa chystáte odstrániť kontakt, ktorý obsahuje %s a "
 "%d ďalších priateľov. Chcete pokračovať?"
@@ -11142,19 +11170,14 @@ msgstr "_Vymazať dokončené prenosy"
 msgid "File transfer _details"
 msgstr "_Detaily o prenose súboru"
 
-#. Pause button
-msgid "_Pause"
-msgstr "_Pozastaviť"
-
-#. Resume button
-msgid "_Resume"
-msgstr "_Pokračovať"
-
 msgid "Paste as Plain _Text"
 msgstr "_Vložiť ako čistý text"
 
 msgid "_Reset formatting"
 msgstr "Vymazať formátovanie"
+
+msgid "Disable _smileys in selected text"
+msgstr "Vypnúť _smajlíkov vo vybranom texte"
 
 msgid "Hyperlink color"
 msgstr "Farba odkazu"
@@ -11191,6 +11214,21 @@ msgstr "Farba mena pri správe s akciou"
 
 msgid "Color to draw the name of an action message."
 msgstr "Farba mena pri správe s akciou."
+
+msgid "Typing notification color"
+msgstr "Farba informácie o písaní"
+
+msgid "The color to use for the typing notification font"
+msgstr "Farba, ktorú použiť pre text informácie o písaní"
+
+msgid "Typing notification font"
+msgstr "Písmo informácie o písaní"
+
+msgid "The font to use for the typing notification"
+msgstr "Písmo, ktoré použiť pre informáciu o písaní"
+
+msgid "Enable typing notification"
+msgstr "Povoliť informáciu o písaní"
 
 msgid "_Copy E-Mail Address"
 msgstr "_Kopírovať e-mailovu adresu"
@@ -11535,16 +11573,16 @@ msgstr "<span weight=\"bold\" size=\"larger\">Máte poštu!</span>"
 #, c-format
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
-msgstr[0] "Používateľ %s má %d novú správu."
-msgstr[1] "Používateľ %s má %d nové správy."
-msgstr[2] "Používateľ %s má %d nových správ."
+msgstr[0] "Používateľ %s má %d nových správ."
+msgstr[1] "Používateľ %s má %d novú správu."
+msgstr[2] "Používateľ %s má %d nové správy."
 
 #, c-format
 msgid "<b>%d new e-mail.</b>"
 msgid_plural "<b>%d new e-mails.</b>"
-msgstr[0] "<b>%d nový e-mail.</b>"
-msgstr[1] "<b>%d nové e-maily.</b>"
-msgstr[2] "<b>%d nových e-mailov.</b>"
+msgstr[0] "<b>%d nových e-mailov.</b>"
+msgstr[1] "<b>%d nový e-mail.</b>"
+msgstr[2] "<b>%d nové e-maily.</b>"
 
 #, c-format
 msgid "The browser command \"%s\" is invalid."
@@ -11580,26 +11618,23 @@ msgstr "Plugin nebol vypnutý teraz, ale bude vypnutý po najbližšom spustení
 
 #, c-format
 msgid ""
-"%s%s<span weight=\"bold\">Written by:</span>\t%s\n"
-"<span weight=\"bold\">Website:</span>\t\t%s\n"
-"<span weight=\"bold\">Filename:</span>\t\t%s"
-msgstr ""
-"%s%s<span weight=\"bold\">Autor:</span>\t%s\n"
-"<span weight=\"bold\">Domovská stránka:</span>\t\t%s\n"
-"<span weight=\"bold\">Názov súboru:</span>\t\t%s"
-
-#, c-format
-msgid ""
-"%s\n"
-"<span foreground=\"#ff0000\" weight=\"bold\">Error: %s\n"
+"<span foreground=\"red\" weight=\"bold\">Error: %s\n"
 "Check the plugin website for an update.</span>"
 msgstr ""
-"%s\n"
-"<span foreground=\"#ff0000\" weight=\"bold\">Chyba: %s\n"
-"Na stránke modulu nájdite novšiu verziu.</span>"
+"<span foreground=\"red\" weight=\"bold\">Chyba: %s\n"
+"Skontrolujte stránku modulu, či je dostupná nová verzia.</span>"
 
 msgid "Author"
 msgstr "Autor"
+
+msgid "<b>Written by:</b>"
+msgstr "<b>Autor:</b>"
+
+msgid "<b>Web site:</b>"
+msgstr "<b>Webstránka:</b>"
+
+msgid "<b>Filename:</b>"
+msgstr "<b>Súbor:</b>"
 
 msgid "Configure Pl_ugin"
 msgstr "Nastaviť Mod_ul"
@@ -11697,6 +11732,12 @@ msgstr ""
 msgid "Icon"
 msgstr "Ikona"
 
+msgid "Keyboard Shortcuts"
+msgstr "Klávesové skratky"
+
+msgid "Cl_ose conversations with the Escape key"
+msgstr "Zatvárať rozhovory klávesom Esc"
+
 msgid "System Tray Icon"
 msgstr "Ikona v oznamovacej oblasti"
 
@@ -11707,7 +11748,7 @@ msgid "On unread messages"
 msgstr "Pri neprečítaných správach"
 
 msgid "Conversation Window Hiding"
-msgstr "Skrývanie okna konverzácie"
+msgstr "Skrývanie oken rozhovorov"
 
 msgid "_Hide new IM conversations:"
 msgstr "_Skrývať nové rozhovory:"
@@ -11774,7 +11815,10 @@ msgid "F_lash window when IMs are received"
 msgstr "Blikanie okna po prijatí správy"
 
 msgid "Minimi_ze new conversation windows"
-msgstr "Minimali_zovať nové konverzácie"
+msgstr "Minimali_zovať nové rozohovory"
+
+msgid "Minimum input area height in lines:"
+msgstr "Minimálny počet riadkov textového políčka:"
 
 msgid "Font"
 msgstr "Písmo"
@@ -11786,10 +11830,10 @@ msgid "Use font from _theme"
 msgstr "Použiť písmo _témy"
 
 msgid "Conversation _font:"
-msgstr "Písmo konverzácie:"
+msgstr "Písmo rozhovoru:"
 
 msgid "Default Formatting"
-msgstr "Štandardné formátovanie"
+msgstr "Predvolené formátovanie"
 
 msgid ""
 "This is how your outgoing message text will appear when you use protocols "
@@ -12165,6 +12209,9 @@ msgstr "Nový stav..."
 msgid "Saved statuses..."
 msgstr "Uložené stavy..."
 
+msgid "Status Selector"
+msgstr "Prepínač stavu"
+
 msgid "Google Talk"
 msgstr "Google Talk"
 
@@ -12293,6 +12340,9 @@ msgstr "_Upraviť"
 msgid "_Open Mail"
 msgstr "_Otvoriť poštu"
 
+msgid "_Pause"
+msgstr "_Pozastaviť"
+
 msgid "Pidgin Tooltip"
 msgstr "Pidgin bublina"
 
@@ -12347,12 +12397,8 @@ msgid "Contact Availability Prediction plugin."
 msgstr "Modul predpovedania dostupnosti kontaktu."
 
 #. *  summary
-msgid ""
-"The contact availability plugin (cap) is used to display statistical "
-"information about buddies in a users contact list."
-msgstr ""
-"Modul dostupnosti kontaktu zobrazuje štatistické informácie o priateľoch v "
-"zozname kontaktov."
+msgid "Displays statistical information about your buddies' availability"
+msgstr "Zobrazuje štatistické informácie o prítomnosti vašich priateľov"
 
 msgid "Buddy is idle"
 msgstr "Priateľ je nečinný"
@@ -12517,19 +12563,19 @@ msgstr "Poskytuje podporu pre ovládanie pomocou pohybov kurzoru myši"
 
 #. *  description
 msgid ""
-"Allows support for mouse gestures in conversation windows.\n"
-"Drag the middle mouse button to perform certain actions:\n"
-"\n"
-"Drag down and then to the right to close a conversation.\n"
-"Drag up and then to the left to switch to the previous conversation.\n"
-"Drag up and then to the right to switch to the next conversation."
+"Allows support for mouse gestures in conversation windows. Drag the middle "
+"mouse button to perform certain actions:\n"
+" • Drag down and then to the right to close a conversation.\n"
+" • Drag up and then to the left to switch to the previous conversation.\n"
+" • Drag up and then to the right to switch to the next conversation."
 msgstr ""
 "Umožňuje ovládanie pomocou pohybov myši v okne konverzácie.\n"
 "Tieto akcie vykonáte posunom myši so stlačeným prostredným tlačidlom:\n"
 "\n"
-"Ťahajte dole a potom doprava pre zatvorenie konverzácie.\n"
-"Ťahajte hore a potom doľava pre prepnutie sa na predchádzajúcu konverzáciu.\n"
-"Ťahajte hore a potom doprava na prepnutie sa na nasledujúcu konverzáciu."
+" • Ťahajte dole a potom doprava pre zatvorenie konverzácie.\n"
+" • Ťahajte hore a potom doľava pre prepnutie sa na predchádzajúcu "
+"konverzáciu.\n"
+" • Ťahajte hore a potom doprava na prepnutie sa na nasledujúcu konverzáciu."
 
 msgid "Instant Messaging"
 msgstr "Instant Messaging"
@@ -12607,8 +12653,8 @@ msgstr "Umožňuje integráciu s programom Evolution."
 msgid "Please enter the person's information below."
 msgstr "Zadajte, prosím, informácie o osobe."
 
-msgid "Please enter the buddy's screen name and account type below."
-msgstr "Zadajte, prosím, používateľské meno priateľa a typ jeho účtu."
+msgid "Please enter the buddy's username and account type below."
+msgstr "Zadajte, prosím, priateľove prihlasovacie meno a typ jeho účtu."
 
 msgid "Account type:"
 msgstr "Typ účtu:"
@@ -12689,6 +12735,9 @@ msgstr "Deliaca čiara"
 msgid "Draw a line to indicate new messages in a conversation."
 msgstr "Nakresliť čiaru za novými správami v rozhovore"
 
+msgid "Jump to markerline"
+msgstr "Skočiť na deliacu čiaru"
+
 msgid "Draw Markerline in "
 msgstr "Vykreslovať oddeľovaciu čiaru "
 
@@ -12753,8 +12802,8 @@ msgstr ""
 msgid "Notify For"
 msgstr "Upozorňovať na"
 
-msgid "\t_Only when someone says your screen name"
-msgstr "\t_Len keď niekto vysloví vašu prezývku"
+msgid "\t_Only when someone says your username"
+msgstr "\t_Len keď niekto vysloví vaše prihlasovacie meno"
 
 msgid "_Focused windows"
 msgstr "_Aktívné okná"
@@ -12781,6 +12830,10 @@ msgstr "Nastavať správcovi okien príznak „_URGENT“"
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr "_Zdvihnúť okno konverzácie"
+
+#. Present conversation method button
+msgid "_Present conversation window"
+msgstr "_Ukázať okno konverzácie"
 
 #. ---------- "Notification Removals" ----------
 msgid "Notification Removal"
@@ -12985,6 +13038,30 @@ msgid ""
 msgstr ""
 "Pravidelne kontroluje dostupnosť novej verzie a upozorní používateľa "
 "zoznamom zmien."
+
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Send Button"
+msgstr "Tlačidlo Odoslať"
+
+#. *< name
+#. *< version
+msgid "Conversation Window Send Button."
+msgstr "Tlačidlo Odoslať v okne konverzácie."
+
+#. *< summary
+msgid ""
+"Adds a Send button to the entry area of the conversation window. Intended "
+"for when no physical keyboard is present."
+msgstr ""
+"Ku textovému políčku v okne rozhovoru pridá tlačidlo Odoslať. Vhodné ak nie "
+"je pripojená klávesnica."
 
 msgid "Duplicate Correction"
 msgstr "Duplikátna oprava"
@@ -13249,6 +13326,53 @@ msgstr "Odosielať a prijímať nespracované XMPP slohy."
 #. *  description
 msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Tento plugin je vhodný pre ladenie XMPP serverov alebo klientov."
+
+#~ msgid "_Resume"
+#~ msgstr "_Pokračovať"
+
+#~ msgid "Screen name:"
+#~ msgstr "Používateľské meno:"
+
+#~ msgid "Screen Name"
+#~ msgstr "Používateľské meno"
+
+#~ msgid "Someone says your screen name in chat"
+#~ msgstr "Niekto v chate napíše vaše meno"
+
+#~ msgid ""
+#~ "This server requires plaintext authentication over an unencrypted "
+#~ "connection.  Allow this and continue authentication?"
+#~ msgstr ""
+#~ "Server vyžaduje plaintextovú autentifikáciu cez nezašifrované "
+#~ "pripojenie.  Chcete ju povoliť a pokračovať v autentifikácii?"
+
+#~ msgid "Use GSSAPI (Kerberos v5) for authentication"
+#~ msgstr "Na autentifikáciu použiť GSSAPI (Kerberos v5)"
+
+#~ msgid "Invalid screen name"
+#~ msgstr "Používateľské meno je chybné"
+
+#~ msgid "Invalid screen name."
+#~ msgstr "Chybné používateľské meno."
+
+#~ msgid "Screen _name:"
+#~ msgstr "Používateľské meno:"
+
+#~ msgid ""
+#~ "%s%s<span weight=\"bold\">Written by:</span>\t%s\n"
+#~ "<span weight=\"bold\">Website:</span>\t\t%s\n"
+#~ "<span weight=\"bold\">Filename:</span>\t\t%s"
+#~ msgstr ""
+#~ "%s%s<span weight=\"bold\">Autor:</span>\t%s\n"
+#~ "<span weight=\"bold\">Domovská stránka:</span>\t\t%s\n"
+#~ "<span weight=\"bold\">Názov súboru:</span>\t\t%s"
+
+#~ msgid ""
+#~ "The contact availability plugin (cap) is used to display statistical "
+#~ "information about buddies in a users contact list."
+#~ msgstr ""
+#~ "Modul dostupnosti kontaktu zobrazuje štatistické informácie o priateľoch "
+#~ "v zozname kontaktov."
 
 #~ msgid "Screen name sent"
 #~ msgstr "Používateľské meno odoslané"
