@@ -930,6 +930,28 @@ purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
 	return img;
 }
 
+PurpleStoredImage *
+purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
+                                                  const gchar *filename)
+{
+	size_t len;
+	guchar *data;
+
+	g_return_val_if_fail(node != NULL, NULL);
+
+	if (!PURPLE_BLIST_NODE_IS_CONTACT(node) &&
+	    !PURPLE_BLIST_NODE_IS_CHAT(node) &&
+	    !PURPLE_BLIST_NODE_IS_GROUP(node)) {
+		return NULL;
+	}
+
+	if (!read_icon_file(filename, &data, &len)) {
+		return NULL;
+	}
+
+	return purple_buddy_icons_node_set_custom_icon(node, data, len);
+}
+
 #ifndef PURPLE_DISABLE_DEPRECATED
 gboolean
 purple_buddy_icons_has_custom_icon(PurpleContact *contact)

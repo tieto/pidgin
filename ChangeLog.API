@@ -9,6 +9,7 @@ version 2.5.0:
 		* purple_buddy_icons_node_has_custom_icon
 		* purple_buddy_icons_node_find_custom_icon
 		* purple_buddy_icons_node_set_custom_icon
+		* purple_buddy_icons_node_set_custom_icon_from_file
 
 		Deprecated:
 		* purple_blist_update_buddy_icon
