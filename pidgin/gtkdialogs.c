@@ -193,6 +193,7 @@ static const struct translator current_translators[] = {
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
 	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "nynorsk@strilen.net"},
+	{"Occitan",					"oc", "Yannig Marchegay", "yannig@marchegay.org"},
 	{N_("Punjabi"),             "pa", "Amanpreet Singh Alam", "aalam@users.sf.net"},
 	{N_("Polish"),              "pl", "Emil Nowak", "emil5@go2.pl"},
 	{N_("Polish"),              "pl", "Paweł Godlewski", "pawel@bajk.pl"},
