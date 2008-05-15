@@ -1436,7 +1436,7 @@ typedef struct {
 
 static void dnd_image_ok_callback(_DndData *data, int choice)
 {
-	char *filedata;
+	gchar *filedata;
 	size_t size;
 	struct stat st;
 	GError *err = NULL;
@@ -1444,6 +1444,8 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 	PidginConversation *gtkconv;
 	GtkTextIter iter;
 	int id;
+	PurpleBuddy *buddy;
+	PurpleContact *contact;
 	switch (choice) {
 	case DND_BUDDY_ICON:
 		if (g_stat(data->filename, &st)) {
@@ -1459,7 +1461,13 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			return;
 		}
 
-		pidgin_set_custom_buddy_icon(data->account, data->who, data->filename);
+		buddy = purple_buddy_find(account, data->who);
+		if (!buddy) {
+			purple_debug_info("custom-icon", "You can only set custom icons for people on your buddylist.\n");
+			break;
+		}
+		contact = purple_buddy_get_contact(buddy);
+		purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, data->filename);
 		break;
 	case DND_FILE_TRANSFER:
 		serv_send_file(purple_account_get_connection(data->account), data->who, data->filename);
@@ -2869,6 +2877,7 @@ gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
 }
 #endif /* ! Gtk 2.6.0 */
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename)
 {
 	PurpleBuddy *buddy;
@@ -2883,6 +2892,7 @@ void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const
 	contact = purple_buddy_get_contact(buddy);
 	purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, filename);
 }
+#endif
 
 char *pidgin_make_pretty_arrows(const char *str)
 {

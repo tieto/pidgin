@@ -16,6 +16,7 @@ version 2.5.0:
 		* purple_buddy_icons_has_custom_icon
 		* purple_buddy_icons_find_custom_icon
 		* purple_buddy_icons_set_custom_icon
+		* pidgin_set_custom_buddy_icon
 
 	perl:
 		Added:
