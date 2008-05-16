@@ -19,7 +19,7 @@ version 2.x.x:
 	  buddies who have disappeared completely from the server list and not
 	  those that have simply moved groups.
 	* IRC will now try to append 1-9 to your nick if it is in use, instead
-	  of substituting the last character with 1-9 where possiblea.
+	  of substituting the last character with 1-9 where possible.
 
 	Pidgin:
 	* The typing notification in the conversation history can be disabled or
