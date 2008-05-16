@@ -15,9 +15,9 @@ version 2.x.x:
 	  libnm-glib.  Hopefully it's stable now.  It will now compile by
 	  default if you have D-Bus support and NetworkManager.h. (Elliott
 	  Sales de Andrade)
-	* MSN buddy list synchronization is now more forgiving, only asking about
-	  buddies who have disappeared completely from the server list and not
-	  those that have simply moved groups.
+	* MSN buddy list synchronization is now more forgiving, only asking
+	  about buddies who have disappeared completely from the server list
+	  and not those that have simply moved groups.
 	* IRC will now try to append 1-9 to your nick if it is in use, instead
 	  of substituting the last character with 1-9 where possible.
 
