@@ -42,6 +42,7 @@ version 2.x.x:
 	  lines.
 	* Moved the "Local alias" field in the Modify Account dialog to be below
 	  the "User Options" heading on the "Basic" tab.
+	* Number of room occupants is now shown in chat tooltips where possible
 
 	General:
 	* The configure script now dies on more absent dependencies.  The

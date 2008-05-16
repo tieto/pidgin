@@ -88,6 +88,8 @@ struct irc_conn {
 	time_t recv_time;
 
 	char *mode_chars;
+	char *reqnick;
+	gboolean nickused;
 };
 
 struct irc_buddy {
