@@ -20,6 +20,8 @@ version 2.x.x:
 	  and not those that have simply moved groups.
 	* IRC will now try to append 1-9 to your nick if it is in use, instead
 	  of substituting the last character with 1-9 where possible.
+	* Bonjour buddies will be saved persistently if they're moved out of
+	  the "Bonjour" group. (Eion Robb)
 
 	Pidgin:
 	* The typing notification in the conversation history can be disabled or

@@ -144,10 +144,8 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 					_cleanup_resolver_data(rd);
 
 					/* If this was the last resolver, remove the buddy */
-					if (b_impl->resolvers == NULL) {
-						purple_account_remove_buddy(account, pb, NULL);
-						purple_blist_remove_buddy(pb);
-					}
+					if (b_impl->resolvers == NULL)
+						bonjour_buddy_signed_off(pb);
 				}
 			}
 			break;
@@ -206,10 +204,9 @@ _resolver_callback(AvahiServiceResolver *r, AvahiIfIndex interface, AvahiProtoco
 				b_impl->resolvers = g_slist_remove(b_impl->resolvers, rd);
 				/* If this was the last resolver, remove the buddy */
 				if (b_impl->resolvers == NULL) {
-					if (pb != NULL) {
-						purple_account_remove_buddy(account, pb, NULL);
-						purple_blist_remove_buddy(pb);
-					} else
+					if (pb != NULL)
+						bonjour_buddy_signed_off(pb);
+					else
 						bonjour_buddy_delete(bb);
 				}
 			} else
@@ -288,10 +285,8 @@ _browser_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 					_cleanup_resolver_data(rd);
 
 					/* If this was the last resolver, remove the buddy */
-					if (b_impl->resolvers == NULL) {
-						purple_account_remove_buddy(account, pb, NULL);
-						purple_blist_remove_buddy(pb);
-					}
+					if (b_impl->resolvers == NULL)
+						bonjour_buddy_signed_off(pb);
 				}
 			}
 			break;
