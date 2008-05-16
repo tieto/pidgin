@@ -1718,6 +1718,8 @@ pidgin_blist_show_context_menu(PurpleBlistNode *node,
 	}
 
 #ifdef _WIN32
+	pidgin_blist_tooltip_destroy();
+
 	/* Unhook the tooltip-timeout since we don't want a tooltip
 	 * to appear and obscure the context menu we are about to show
 	   This is a workaround for GTK+ bug 107320. */
