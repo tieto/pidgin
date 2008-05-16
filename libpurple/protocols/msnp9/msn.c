@@ -1392,7 +1392,7 @@ msn_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFl
 	g_free(msgformat);
 	g_free(msgtext);
 
-	serv_got_chat_in(gc, id, purple_account_get_username(account), 0,
+	serv_got_chat_in(gc, id, purple_account_get_username(account), flags,
 					 message, time(NULL));
 
 	return 0;

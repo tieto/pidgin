@@ -1998,7 +1998,7 @@ static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, Purp
 
 	serv_got_chat_in(gc, id,
 			 purple_account_get_username(purple_connection_get_account(gc)),
-			 0, message, time(NULL));
+			 flags, message, time(NULL));
 
 	return 0;
 }
