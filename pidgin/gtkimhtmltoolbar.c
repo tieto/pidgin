@@ -764,7 +764,7 @@ add_smiley_list(GtkWidget *container, struct smiley_button_list *list,
 static void
 insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 {
-	GtkWidget *dialog;
+	GtkWidget *dialog, *vbox;
 	GtkWidget *smiley_table = NULL;
 	GSList *smileys, *unique_smileys = NULL;
 	const GSList *custom_smileys = NULL;
@@ -806,6 +806,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 
 	dialog = pidgin_create_dialog(_("Smile!"), 0, "smiley_dialog", FALSE);
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
+	vbox = pidgin_dialog_get_vbox_with_properties(GTK_DIALOG(dialog), FALSE, 0);
 
 	if (unique_smileys != NULL) {
 		struct smiley_button_list *ls;
@@ -824,7 +825,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 					G_CALLBACK(pidgin_smiley_manager_show), NULL);
 			g_signal_connect_swapped(G_OBJECT(manage), "clicked",
 					G_CALLBACK(gtk_widget_destroy), dialog);
-			gtk_box_pack_end(GTK_BOX(smiley_table), manage, TRUE, FALSE, 0);
+			gtk_box_pack_end(GTK_BOX(vbox), manage, FALSE, TRUE, 0);
 			gtk_widget_size_request(manage, &req);
 			button_width = req.width;
 		}
@@ -864,7 +865,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW (scrolled), GTK_SHADOW_NONE);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (scrolled),
 			GTK_POLICY_NEVER, GTK_POLICY_NEVER);
-	gtk_container_add(GTK_CONTAINER(pidgin_dialog_get_vbox(GTK_DIALOG(dialog))), scrolled);
+	gtk_box_pack_start(GTK_BOX(vbox), scrolled, TRUE, TRUE, 0);
 	gtk_widget_show(scrolled);
 
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scrolled), smiley_table);
@@ -884,7 +885,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show_all(dialog);
 
 	gtk_widget_size_request(viewport, &req);
-	gtk_widget_set_size_request(scrolled, req.width, req.height);
+	gtk_widget_set_size_request(scrolled, MIN(300, req.width), MIN(290, req.height));
 
 	/* The window has to be made resizable, and the scrollbars in the scrolled window
 	 * enabled only after setting the desired size of the window. If we do either of
