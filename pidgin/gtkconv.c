@@ -2722,10 +2722,22 @@ static void
 custom_icon_sel_cb(const char *filename, gpointer data)
 {
 	if (filename) {
+		const gchar *name;
+		PurpleBuddy *buddy;
+		PurpleContact *contact;
 		PidginConversation *gtkconv = data;
 		PurpleConversation *conv = gtkconv->active_conv;
 		PurpleAccount *account = purple_conversation_get_account(conv);
-		pidgin_set_custom_buddy_icon(account, purple_conversation_get_name(conv), filename);
+
+		name = purple_conversation_get_name(conv);
+		buddy = purple_find_buddy(account, name);
+		if (!buddy) {
+			purple_debug_info("custom-icon", "You can only set custom icons for people on your buddylist.\n");
+			return;
+		}
+		contact = purple_buddy_get_contact(buddy);
+
+		purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, filename);
 	}
 }
 
@@ -2767,12 +2779,21 @@ change_size_cb(GtkWidget *widget, PidginConversation *gtkconv)
 static void
 remove_custom_icon_cb(GtkWidget *widget, PidginConversation *gtkconv)
 {
-	PurpleConversation *conv;
+	const gchar *name;
+	PurpleBuddy *buddy;
 	PurpleAccount *account;
+	PurpleContact *contact;
+	PurpleConversation *conv = gtkconv->active_conv;
 
-	conv = gtkconv->active_conv;
 	account = purple_conversation_get_account(conv);
-	pidgin_set_custom_buddy_icon(account, purple_conversation_get_name(conv), NULL);
+	name = purple_conversation_get_name(conv);
+	buddy = purple_find_buddy(account, name);
+	if (!buddy) {
+		return;
+	}
+	contact = purple_buddy_get_contact(buddy);
+
+	purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, NULL);
 }
 
 static void
@@ -2873,7 +2894,7 @@ icon_menu(GtkObject *obj, GdkEventButton *e, PidginConversation *gtkconv)
 	if (buddy)
 	{
 		PurpleContact *contact = purple_buddy_get_contact(buddy);
-		if (contact && purple_buddy_icons_has_custom_icon(contact))
+		if (contact && purple_buddy_icons_node_has_custom_icon((PurpleBlistNode*)contact))
 		{
 			pidgin_new_item_from_stock(menu, _("Remove Custom Icon"), NULL,
 			                           G_CALLBACK(remove_custom_icon_cb), gtkconv,
@@ -6817,7 +6838,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	{
 		PurpleContact *contact = purple_buddy_get_contact(buddy);
 		if (contact) {
-			custom_img = purple_buddy_icons_find_custom_icon(contact);
+			custom_img = purple_buddy_icons_node_find_custom_icon((PurpleBlistNode*)contact);
 			if (custom_img) {
 				/* There is a custom icon for this user */
 				data = purple_imgstore_get_data(custom_img);
