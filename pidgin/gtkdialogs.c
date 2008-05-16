@@ -132,6 +132,7 @@ static const struct developer retired_patch_writers[] = {
 
 /* Order: Code, then Alphabetical by Last Name */
 static const struct translator current_translators[] = {
+	{N_("Afrikaans"),           "af", "Samuel Murray", "afrikaans@gmail.com"},
 	{N_("Afrikaans"),           "af", "Friedel Wolff", "friedel@translate.org.za"},
 	{N_("Arabic"),              "ar", "Khaled Hosny", "khaledhosny@eglug.org"},
 	{N_("Belarusian Latin"),    "be@latin", "Ihar Hrachyshka", "ihar.hrachyshka@gmail.com"},
