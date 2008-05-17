@@ -41,6 +41,7 @@ BuildRequires: gtk2-devel
 %{!?_without_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
 %{!?_without_text:BuildRequires: ncurses-devel}
 %{!?_without_nm:BuildRequires: NetworkManager-devel}
+%{!?_without_gevolution:BuildRequires: evolution-data-server-devel}
 
 %if "%{_vendor}" == "suse"
 # For SuSE:
@@ -230,6 +231,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_without_gstreamer:--disable-gstreamer} \
                                     %{?_without_gtkspell:--disable-gtkspell} \
                                     %{?_without_nm:--disable-nm} \
+                                    %{!?_without_gevolution:--enable-gevolution} \
                                     %{?_with_mono:--enable-mono} \
                                     %{?_with_perlmakehack:--with-perl-lib=%{buildroot}%{_prefix}} \
                                     %{!?_with_perlmakehack:--with-perl-lib=%{_prefix}} \
