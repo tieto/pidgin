@@ -2511,10 +2511,6 @@ update_tab_icon(PurpleConversation *conv)
 		PurpleBuddy *b = purple_find_buddy(conv->account, conv->name);
 		if (b)
 			emblem = pidgin_blist_get_emblem((PurpleBlistNode*)b);
-	} else {
-		PurpleChat *c = purple_blist_find_chat(conv->account, conv->name);
-		if (c)
-			emblem = pidgin_blist_get_emblem((PurpleBlistNode*)c);
 	}
 
 	g_return_if_fail(status != NULL);
