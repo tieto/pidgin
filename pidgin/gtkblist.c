@@ -2622,7 +2622,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	}
 
 	if (greyed) {
-		gboolean offline = FALSE, idle = TRUE;
+		gboolean offline = FALSE, idle = FALSE;
 
 		if (buddy) {
 			PurplePresence *presence = purple_buddy_get_presence(buddy);
