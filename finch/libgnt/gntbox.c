@@ -272,7 +272,8 @@ find_next_focus(GntBox *box)
 			box->active = iter->next->data;
 		else if (box->focus)
 			box->active = box->focus->data;
-		if (!GNT_WIDGET_IS_FLAG_SET(box->active, GNT_WIDGET_INVISIBLE))
+		if (!GNT_WIDGET_IS_FLAG_SET(box->active, GNT_WIDGET_INVISIBLE) &&
+				GNT_WIDGET_IS_FLAG_SET(box->active, GNT_WIDGET_CAN_TAKE_FOCUS))
 			break;
 	} while (box->active != last);
 }
