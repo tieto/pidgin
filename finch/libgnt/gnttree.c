@@ -812,11 +812,11 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 			changed = FALSE;
 		if (changed) {
 			redraw_tree(tree);
-			g_source_remove(tree->priv->search_timeout);
-			tree->priv->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
 		} else {
 			gnt_bindable_perform_action_key(GNT_BINDABLE(tree), text);
 		}
+		g_source_remove(tree->priv->search_timeout);
+		tree->priv->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
 		return TRUE;
 	} else if (text[0] == ' ' && text[1] == 0) {
 		/* Space pressed */
