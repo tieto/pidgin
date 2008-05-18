@@ -70,7 +70,7 @@ static const struct pidgin_sound_event sounds[PURPLE_NUM_SOUNDS] = {
 	{N_("Others talk in chat"), "chat_msg_recv", "receive.wav"},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
 	{NULL, "pounce_default", "alert.wav"},
-	{N_("Someone says your screen name in chat"), "nick_said", "alert.wav"}
+	{N_("Someone says your username in chat"), "nick_said", "alert.wav"}
 };
 
 static gboolean
@@ -384,6 +384,26 @@ bus_call (GstBus     *bus,
 }
 #endif
 
+#ifndef _WIN32
+static gboolean
+expire_old_child(gpointer data)
+{
+	pid_t pid = GPOINTER_TO_INT(data);
+
+	if (waitpid(pid, NULL, WNOHANG | WUNTRACED) < 0) {
+		if (errno == ECHILD)
+			return FALSE;
+		else
+			purple_debug_warning("gtksound", "Child is ill, pid: %d (%s)\n", pid, strerror(errno));
+	}
+
+	if (kill(pid, SIGKILL) < 0)
+		purple_debug_error("gtksound", "Killing process %d failed (%s)\n", pid, strerror(errno));
+
+	return FALSE;
+}
+#endif
+
 static void
 pidgin_sound_play_file(const char *filename)
 {
@@ -418,7 +438,9 @@ pidgin_sound_play_file(const char *filename)
 		const char *sound_cmd;
 		char *command;
 		char *esc_filename;
+		char **argv = NULL;
 		GError *error = NULL;
+		GPid pid;
 
 		sound_cmd = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/sound/command");
 
@@ -436,11 +458,25 @@ pidgin_sound_play_file(const char *filename)
 		else
 			command = g_strdup_printf("%s %s", sound_cmd, esc_filename);
 
-		if(!g_spawn_command_line_async(command, &error)) {
-			purple_debug_error("gtksound", "sound command could not be launched: %s\n", error->message);
+		if (!g_shell_parse_argv(command, NULL, &argv, &error)) {
+			purple_debug_error("gtksound", "error parsing command %s (%s)\n",
+							   command, error->message);
 			g_error_free(error);
+			g_free(esc_filename);
+			g_free(command);
+			return;
 		}
 
+		if (!g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH | G_SPAWN_DO_NOT_REAP_CHILD,
+						  NULL, NULL, &pid, &error)) {
+			purple_debug_error("gtksound", "sound command could not be launched: %s\n",
+							   error->message);
+			g_error_free(error);
+		} else {
+			purple_timeout_add_seconds(15, expire_old_child, GINT_TO_POINTER(pid));
+		}
+
+		g_strfreev(argv);
 		g_free(esc_filename);
 		g_free(command);
 		return;
@@ -502,7 +538,7 @@ pidgin_sound_play_file(const char *filename)
 	gst_object_unref(bus);
 	g_free(uri);
 
-#else /* USE_GSTREAMER */
+#else /* #ifdef USE_GSTREAMER */
 
 #ifndef _WIN32
 	gdk_beep();

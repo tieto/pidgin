@@ -1003,7 +1003,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	purple_debug_misc("yahoo", "url_buffer = %p\n", url_buffer);
 
 	/* convert to utf8 */
-	if (strings && strings->charset != XX) {
+	if (strings && strings->charset) {
 		p = g_convert(stripped, -1, "utf-8", strings->charset,
 				NULL, NULL, NULL);
 		if (!p) {
@@ -1023,7 +1023,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	p = NULL;
 
 	/* "Last updated" should also be converted to utf8 and with &nbsp; killed */
-	if (strings && strings->charset != XX) {
+	if (strings && strings->charset) {
 		last_updated_utf8_string = g_convert(last_updated_string, -1, "utf-8",
 				strings->charset, NULL, NULL, NULL);
 		yahoo_remove_nonbreaking_spaces(last_updated_utf8_string);

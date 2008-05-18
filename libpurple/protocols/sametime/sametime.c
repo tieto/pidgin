@@ -1233,6 +1233,7 @@ static void fetch_blist_cb(struct mwServiceStorage *srvc,
   }
 
   mwSametimeList_free(stlist);
+  mwGetBuffer_free(b);
 }
 
 

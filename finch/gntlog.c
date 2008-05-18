@@ -23,7 +23,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
-#include "internal.h"
+#include "finch.h"
 
 #include <gnt.h>
 #include <gntbox.h>
@@ -139,7 +139,8 @@ static void search_cb(GntWidget *button, FinchLogViewer *lv)
 
 }
 
-static void destroy_cb(GntWidget *w, struct log_viewer_hash_t *ht) {
+static void destroy_cb(GntWidget *w, struct log_viewer_hash_t *ht)
+{
 	FinchLogViewer *lv = syslog_viewer;
 
 	if (ht != NULL) {
@@ -162,12 +163,12 @@ static void destroy_cb(GntWidget *w, struct log_viewer_hash_t *ht) {
 	gnt_widget_destroy(w);
 }
 
-static void log_select_cb(GntWidget *w, gpointer old, gpointer new, FinchLogViewer *viewer) {
+static void log_select_cb(GntWidget *w, gpointer old, gpointer new, FinchLogViewer *viewer)
+{
 	GntTree *tree = GNT_TREE(w);
 	PurpleLog *log = NULL;
 	PurpleLogReadFlags flags;
 	char *read = NULL, *strip, *newline;
-	int h;
 
 	if (!viewer->search && !gnt_tree_get_parent_key(tree, new))
 		return;
@@ -204,8 +205,6 @@ static void log_select_cb(GntWidget *w, gpointer old, gpointer new, FinchLogView
 
 	gnt_text_view_clear(GNT_TEXT_VIEW(viewer->text));
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(viewer->text), strip, GNT_TEXT_FLAG_NORMAL);
-	gnt_widget_get_size(viewer->text, NULL, &h);
-	gnt_text_view_scroll(GNT_TEXT_VIEW(viewer->text), h - 2);
 	g_free(read);
 	g_free(strip);
 }
@@ -321,6 +320,7 @@ static FinchLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *l
 	/* Viewer ************/
 	lv->text = gnt_text_view_new();
 	gnt_box_add_widget(GNT_BOX(hbox), lv->text);
+	gnt_text_view_set_flag(GNT_TEXT_VIEW(lv->text), GNT_TEXT_VIEW_TOP_ALIGN);
 
 	hbox = gnt_hbox_new(FALSE);
 	gnt_box_add_widget(GNT_BOX(vbox), hbox);

@@ -309,6 +309,12 @@ static char *parse_attribute(const char *attrname, const char *source) {
 	char *retval = NULL;
 	int len = strlen(attrname);
 
+	/* we know that source is NULL-terminated.
+	 * Therefore this loop won't be infinite.
+	 */
+	while (source[0] == ' ')
+ 		source++;
+
 	if(!strncmp(source, attrname, len)) {
 		tmp = source + len;
 		tmp2 = g_strstr_len(tmp, strlen(tmp), "\"");
@@ -341,7 +347,7 @@ static void fill_auth(struct simple_account_data *sip, const gchar *hdr, struct 
 	if(!g_ascii_strncasecmp(hdr, "NTLM", 4)) {
 		purple_debug_info("simple", "found NTLM\n");
 		auth->type = 2;
-		parts = g_strsplit(hdr+5, "\", ", 0);
+		parts = g_strsplit(hdr+5, "\",", 0);
 		i = 0;
 		while(parts[i]) {
 			purple_debug_info("simple", "parts[i] %s\n", parts[i]);
@@ -368,30 +374,40 @@ static void fill_auth(struct simple_account_data *sip, const gchar *hdr, struct 
 			auth->nc = 1;
 		} else {
 			auth->nc = 3;
-                }
+		}
+
 		return;
-	}
+	} else if(!g_ascii_strncasecmp(hdr, "DIGEST", 6)) {
 
-	auth->type = 1;
-	parts = g_strsplit(hdr, " ", 0);
-	while(parts[i]) {
-		if((tmp = parse_attribute("nonce=\"", parts[i]))) {
-			auth->nonce = tmp;
-		}
-		else if((tmp = parse_attribute("realm=\"", parts[i]))) {
-			auth->realm = tmp;
-		}
-		i++;
-	}
-	g_strfreev(parts);
+		purple_debug_info("simple", "found DIGEST\n");
 
-	purple_debug(PURPLE_DEBUG_MISC, "simple", "nonce: %s realm: %s\n", auth->nonce ? auth->nonce : "(null)", auth->realm ? auth->realm : "(null)");
-	if(auth->realm) {
-		auth->digest_session_key = purple_cipher_http_digest_calculate_session_key(
+		auth->type = 1;
+		parts = g_strsplit(hdr+7, ",", 0);
+		while(parts[i]) {
+			if((tmp = parse_attribute("nonce=\"", parts[i]))) {
+				auth->nonce = tmp;
+			}
+			else if((tmp = parse_attribute("realm=\"", parts[i]))) {
+				auth->realm = tmp;
+			}
+			i++;
+		}
+		g_strfreev(parts);
+		purple_debug(PURPLE_DEBUG_MISC, "simple", "nonce: %s realm: %s\n",
+					 auth->nonce ? auth->nonce : "(null)",
+					 auth->realm ? auth->realm : "(null)"); 
+
+		if(auth->realm) {
+			auth->digest_session_key = purple_cipher_http_digest_calculate_session_key(
 				"md5", authuser, auth->realm, sip->password, auth->nonce, NULL);
 
-		auth->nc = 1;
+			auth->nc = 1;
+		}
+
+	} else {
+		purple_debug_error("simple", "Unsupported or bad WWW-Authenticate header (%s).\n", hdr);
 	}
+
 }
 
 static void simple_canwrite_cb(gpointer data, gint source, PurpleInputCondition cond) {
@@ -1890,7 +1906,7 @@ static void simple_login(PurpleAccount *account)
 	if (strpbrk(username, " \t\v\r\n") != NULL) {
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
-			_("SIP screen names may not contain whitespaces or @ symbols"));
+			_("SIP usernames may not contain whitespaces or @ symbols"));
 		return;
 	}
 

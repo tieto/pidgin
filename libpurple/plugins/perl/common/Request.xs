@@ -15,9 +15,19 @@ purple_request_action_varg(handle, title, primary, secondary, default_action, us
 
 
 typedef struct {
-	char *cancel_cb;
-	char *ok_cb;
+	SV *ok_fun;
+	SV *cancel_fun;
 } PurplePerlRequestData;
+
+static void
+purple_perl_request_data_free(PurplePerlRequestData *ppr)
+{
+	if (ppr->ok_fun)
+		SvREFCNT_dec(ppr->ok_fun);
+	if (ppr->cancel_fun)
+		SvREFCNT_dec(ppr->cancel_fun);
+	g_free(ppr);
+}
 
 /********************************************************/
 /*                                                      */
@@ -39,23 +49,19 @@ purple_perl_request_ok_cb(void * data, PurpleRequestFields *fields)
 
 	XPUSHs(purple_perl_bless_object(fields, "Purple::Request::Fields"));
 	PUTBACK;
-
-	call_pv(gpr->ok_cb, G_EVAL | G_SCALAR);
+	call_sv(gpr->ok_fun, G_EVAL | G_SCALAR);
 	SPAGAIN;
 
 	PUTBACK;
 	FREETMPS;
 	LEAVE;
 
-	g_free(gpr->ok_cb);
-	g_free(gpr->cancel_cb);
-	g_free(gpr);
+	purple_perl_request_data_free(gpr);
 }
 
 static void
 purple_perl_request_cancel_cb(void * data, PurpleRequestFields *fields)
 {
-
 	PurplePerlRequestData *gpr = (PurplePerlRequestData *)data;
 
 	dSP;
@@ -65,16 +71,14 @@ purple_perl_request_cancel_cb(void * data, PurpleRequestFields *fields)
 
 	XPUSHs(purple_perl_bless_object(fields, "Purple::Request::Fields"));
 	PUTBACK;
-	call_pv(gpr->cancel_cb, G_EVAL | G_SCALAR);
+	call_sv(gpr->cancel_fun, G_EVAL | G_SCALAR);
 	SPAGAIN;
 
 	PUTBACK;
 	FREETMPS;
 	LEAVE;
 
-	g_free(gpr->ok_cb);
-	g_free(gpr->cancel_cb);
-	g_free(gpr);
+	purple_perl_request_data_free(gpr);
 }
 
 MODULE = Purple::Request  PACKAGE = Purple::Request  PREFIX = purple_request_
@@ -131,14 +135,13 @@ purple_request_input(handle, title, primary, secondary, default_value, multiline
 	SV * cancel_cb
 CODE:
 	PurplePerlRequestData *gpr;
-	STRLEN len;
 	char *basename;
 
 	basename = g_path_get_basename(handle->path);
 	purple_perl_normalize_script_name(basename);
 	gpr = g_new(PurplePerlRequestData, 1);
-	gpr->ok_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(ok_cb, len));
-	gpr->cancel_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cancel_cb, len));
+	gpr->ok_fun = purple_perl_sv_from_fun(handle, ok_cb);
+	gpr->cancel_fun = purple_perl_sv_from_fun(handle, cancel_cb);
 	g_free(basename);
 
 	RETVAL = purple_request_input(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, G_CALLBACK(purple_perl_request_ok_cb), cancel_text, G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, gpr);
@@ -155,14 +158,13 @@ purple_request_file(handle, title, filename, savedialog, ok_cb, cancel_cb)
 	SV * cancel_cb
 CODE:
 	PurplePerlRequestData *gpr;
-	STRLEN len;
 	char *basename;
 
 	basename = g_path_get_basename(handle->path);
 	purple_perl_normalize_script_name(basename);
 	gpr = g_new(PurplePerlRequestData, 1);
-	gpr->ok_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(ok_cb, len));
-	gpr->cancel_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cancel_cb, len));
+	gpr->ok_fun = purple_perl_sv_from_fun(handle, ok_cb);
+	gpr->cancel_fun = purple_perl_sv_from_fun(handle, cancel_cb);
 	g_free(basename);
 
 	RETVAL = purple_request_file(handle, title, filename, savedialog, G_CALLBACK(purple_perl_request_ok_cb), G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, gpr);
@@ -182,14 +184,13 @@ purple_request_fields(handle, title, primary, secondary, fields, ok_text, ok_cb,
 	SV * cancel_cb
 CODE:
 	PurplePerlRequestData *gpr;
-	STRLEN len;
 	char *basename;
 
 	basename = g_path_get_basename(handle->path);
 	purple_perl_normalize_script_name(basename);
 	gpr = g_new(PurplePerlRequestData, 1);
-	gpr->ok_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(ok_cb, len));
-	gpr->cancel_cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cancel_cb, len));
+	gpr->ok_fun = purple_perl_sv_from_fun(handle, ok_cb);
+	gpr->cancel_fun = purple_perl_sv_from_fun(handle, cancel_cb);
 	g_free(basename);
 
 	RETVAL = purple_request_fields(handle, title, primary, secondary, fields, ok_text, G_CALLBACK(purple_perl_request_ok_cb), cancel_text, G_CALLBACK(purple_perl_request_cancel_cb), NULL, NULL, NULL, gpr);

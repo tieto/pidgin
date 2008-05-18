@@ -143,6 +143,14 @@ relnot_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(relnot_la_LDFLAGS) $(LDFLAGS) -o $@
 @PLUGINS_TRUE@am_relnot_la_rpath = -rpath $(plugindir)
+@PLUGINS_TRUE@sendbutton_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am__sendbutton_la_SOURCES_DIST = sendbutton.c
+@PLUGINS_TRUE@am_sendbutton_la_OBJECTS = sendbutton.lo
+sendbutton_la_OBJECTS = $(am_sendbutton_la_OBJECTS)
+sendbutton_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(sendbutton_la_LDFLAGS) $(LDFLAGS) -o $@
+@PLUGINS_TRUE@am_sendbutton_la_rpath = -rpath $(plugindir)
 @PLUGINS_TRUE@spellchk_la_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__spellchk_la_SOURCES_DIST = spellchk.c
 @PLUGINS_TRUE@am_spellchk_la_OBJECTS = spellchk.lo
@@ -193,9 +201,9 @@ SOURCES = $(contact_priority_la_SOURCES) $(convcolors_la_SOURCES) \
 	$(gtkbuddynote_la_SOURCES) $(history_la_SOURCES) \
 	$(iconaway_la_SOURCES) $(markerline_la_SOURCES) \
 	$(notify_la_SOURCES) $(pidginrc_la_SOURCES) \
-	$(relnot_la_SOURCES) $(spellchk_la_SOURCES) \
-	$(timestamp_la_SOURCES) $(timestamp_format_la_SOURCES) \
-	$(xmppconsole_la_SOURCES)
+	$(relnot_la_SOURCES) $(sendbutton_la_SOURCES) \
+	$(spellchk_la_SOURCES) $(timestamp_la_SOURCES) \
+	$(timestamp_format_la_SOURCES) $(xmppconsole_la_SOURCES)
 DIST_SOURCES = $(am__contact_priority_la_SOURCES_DIST) \
 	$(am__convcolors_la_SOURCES_DIST) \
 	$(am__extplacement_la_SOURCES_DIST) \
@@ -204,7 +212,9 @@ DIST_SOURCES = $(am__contact_priority_la_SOURCES_DIST) \
 	$(am__history_la_SOURCES_DIST) $(am__iconaway_la_SOURCES_DIST) \
 	$(am__markerline_la_SOURCES_DIST) \
 	$(am__notify_la_SOURCES_DIST) $(am__pidginrc_la_SOURCES_DIST) \
-	$(am__relnot_la_SOURCES_DIST) $(am__spellchk_la_SOURCES_DIST) \
+	$(am__relnot_la_SOURCES_DIST) \
+	$(am__sendbutton_la_SOURCES_DIST) \
+	$(am__spellchk_la_SOURCES_DIST) \
 	$(am__timestamp_la_SOURCES_DIST) \
 	$(am__timestamp_format_la_SOURCES_DIST) \
 	$(am__xmppconsole_la_SOURCES_DIST)
@@ -302,14 +312,12 @@ INTLTOOL_CAVES_RULE = @INTLTOOL_CAVES_RULE@
 INTLTOOL_DESKTOP_RULE = @INTLTOOL_DESKTOP_RULE@
 INTLTOOL_DIRECTORY_RULE = @INTLTOOL_DIRECTORY_RULE@
 INTLTOOL_EXTRACT = @INTLTOOL_EXTRACT@
-INTLTOOL_ICONV = @INTLTOOL_ICONV@
 INTLTOOL_KBD_RULE = @INTLTOOL_KBD_RULE@
 INTLTOOL_KEYS_RULE = @INTLTOOL_KEYS_RULE@
 INTLTOOL_MERGE = @INTLTOOL_MERGE@
-INTLTOOL_MSGFMT = @INTLTOOL_MSGFMT@
-INTLTOOL_MSGMERGE = @INTLTOOL_MSGMERGE@
 INTLTOOL_OAF_RULE = @INTLTOOL_OAF_RULE@
 INTLTOOL_PERL = @INTLTOOL_PERL@
+INTLTOOL_POLICY_RULE = @INTLTOOL_POLICY_RULE@
 INTLTOOL_PONG_RULE = @INTLTOOL_PONG_RULE@
 INTLTOOL_PROP_RULE = @INTLTOOL_PROP_RULE@
 INTLTOOL_SCHEMAS_RULE = @INTLTOOL_SCHEMAS_RULE@
@@ -321,7 +329,6 @@ INTLTOOL_THEME_RULE = @INTLTOOL_THEME_RULE@
 INTLTOOL_UI_RULE = @INTLTOOL_UI_RULE@
 INTLTOOL_UPDATE = @INTLTOOL_UPDATE@
 INTLTOOL_XAM_RULE = @INTLTOOL_XAM_RULE@
-INTLTOOL_XGETTEXT = @INTLTOOL_XGETTEXT@
 INTLTOOL_XML_NOMERGE_RULE = @INTLTOOL_XML_NOMERGE_RULE@
 INTLTOOL_XML_RULE = @INTLTOOL_XML_RULE@
 KRB4_CFLAGS = @KRB4_CFLAGS@
@@ -329,8 +336,6 @@ KRB4_LDFLAGS = @KRB4_LDFLAGS@
 KRB4_LIBS = @KRB4_LIBS@
 LDADD = @LDADD@
 LDFLAGS = @LDFLAGS@
-LIBNM_CFLAGS = @LIBNM_CFLAGS@
-LIBNM_LIBS = @LIBNM_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBPERL_A = @LIBPERL_A@
 LIBS = @LIBS@
@@ -348,6 +353,8 @@ MONO_CFLAGS = @MONO_CFLAGS@
 MONO_LIBS = @MONO_LIBS@
 MSGFMT = @MSGFMT@
 MSGFMT_OPTS = @MSGFMT_OPTS@
+NETWORKMANAGER_CFLAGS = @NETWORKMANAGER_CFLAGS@
+NETWORKMANAGER_LIBS = @NETWORKMANAGER_LIBS@
 NSS_CFLAGS = @NSS_CFLAGS@
 NSS_LIBS = @NSS_LIBS@
 OBJEXT = @OBJEXT@
@@ -500,6 +507,7 @@ markerline_la_LDFLAGS = -module -avoid-version
 notify_la_LDFLAGS = -module -avoid-version
 pidginrc_la_LDFLAGS = -module -avoid-version
 relnot_la_LDFLAGS = -module -avoid-version
+sendbutton_la_LDFLAGS = -module -avoid-version
 spellchk_la_LDFLAGS = -module -avoid-version
 timestamp_la_LDFLAGS = -module -avoid-version
 timestamp_format_la_LDFLAGS = -module -avoid-version
@@ -514,6 +522,7 @@ xmppconsole_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@	notify.la           \
 @PLUGINS_TRUE@	pidginrc.la         \
 @PLUGINS_TRUE@	relnot.la           \
+@PLUGINS_TRUE@	sendbutton.la       \
 @PLUGINS_TRUE@	spellchk.la         \
 @PLUGINS_TRUE@	timestamp.la        \
 @PLUGINS_TRUE@	timestamp_format.la \
@@ -534,6 +543,7 @@ xmppconsole_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@notify_la_SOURCES = notify.c
 @PLUGINS_TRUE@pidginrc_la_SOURCES = pidginrc.c
 @PLUGINS_TRUE@relnot_la_SOURCES = relnot.c
+@PLUGINS_TRUE@sendbutton_la_SOURCES = sendbutton.c
 @PLUGINS_TRUE@spellchk_la_SOURCES = spellchk.c
 @PLUGINS_TRUE@timestamp_la_SOURCES = timestamp.c
 @PLUGINS_TRUE@timestamp_format_la_SOURCES = timestamp_format.c
@@ -549,6 +559,7 @@ xmppconsole_la_LDFLAGS = -module -avoid-version
 @PLUGINS_TRUE@notify_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@pidginrc_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@relnot_la_LIBADD = $(GLIB_LIBS)
+@PLUGINS_TRUE@sendbutton_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@spellchk_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@timestamp_la_LIBADD = $(GTK_LIBS)
 @PLUGINS_TRUE@timestamp_format_la_LIBADD = $(GTK_LIBS)
@@ -671,6 +682,8 @@ pidginrc.la: $(pidginrc_la_OBJECTS) $(pidginrc_la_DEPENDENCIES)
 	$(pidginrc_la_LINK) $(am_pidginrc_la_rpath) $(pidginrc_la_OBJECTS) $(pidginrc_la_LIBADD) $(LIBS)
 relnot.la: $(relnot_la_OBJECTS) $(relnot_la_DEPENDENCIES) 
 	$(relnot_la_LINK) $(am_relnot_la_rpath) $(relnot_la_OBJECTS) $(relnot_la_LIBADD) $(LIBS)
+sendbutton.la: $(sendbutton_la_OBJECTS) $(sendbutton_la_DEPENDENCIES) 
+	$(sendbutton_la_LINK) $(am_sendbutton_la_rpath) $(sendbutton_la_OBJECTS) $(sendbutton_la_LIBADD) $(LIBS)
 spellchk.la: $(spellchk_la_OBJECTS) $(spellchk_la_DEPENDENCIES) 
 	$(spellchk_la_LINK) $(am_spellchk_la_rpath) $(spellchk_la_OBJECTS) $(spellchk_la_LIBADD) $(LIBS)
 timestamp.la: $(timestamp_la_OBJECTS) $(timestamp_la_DEPENDENCIES) 
@@ -697,6 +710,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/notify.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pidginrc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/relnot.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sendbutton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spellchk.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timestamp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timestamp_format.Plo@am__quote@

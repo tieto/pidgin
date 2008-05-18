@@ -1241,21 +1241,21 @@ int aim_ssi_reqdata(OscarData *od)
 int aim_ssi_reqifchanged(OscarData *od, time_t timestamp, guint16 numitems)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)))
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, 10+4+2);
+	byte_stream_new(&bs, 4+2);
+
+	byte_stream_put32(&bs, timestamp);
+	byte_stream_put16(&bs, numitems);
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_REQIFCHANGED, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_REQIFCHANGED, 0x0000, snacid, &bs);
 
-	aim_putsnac(&frame->data, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_REQIFCHANGED, 0x0000, snacid);
-	byte_stream_put32(&frame->data, timestamp);
-	byte_stream_put16(&frame->data, numitems);
-
-	flap_connection_send(conn, frame);
+	byte_stream_destroy(&bs);
 
 	/* Free any current data, just in case */
 	aim_ssi_freelist(od);
@@ -1343,42 +1343,42 @@ int aim_ssi_enable(OscarData *od)
 static int aim_ssi_addmoddel(OscarData *od)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
-	int snaclen;
+	int bslen;
 	struct aim_ssi_tmp *cur;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !od->ssi.pending || !od->ssi.pending->item)
 		return -EINVAL;
 
 	/* Calculate total SNAC size */
-	snaclen = 10; /* For family, subtype, flags, and SNAC ID */
+	bslen = 0;
 	for (cur=od->ssi.pending; cur; cur=cur->next) {
-		snaclen += 10; /* For length, GID, BID, type, and length */
+		bslen += 10; /* For length, GID, BID, type, and length */
 		if (cur->item->name)
-			snaclen += strlen(cur->item->name);
+			bslen += strlen(cur->item->name);
 		if (cur->item->data)
-			snaclen += aim_tlvlist_size(cur->item->data);
+			bslen += aim_tlvlist_size(cur->item->data);
 	}
 
-	frame = flap_frame_new(od, 0x02, snaclen);
+	byte_stream_new(&bs, bslen);
+
+	for (cur=od->ssi.pending; cur; cur=cur->next) {
+		byte_stream_put16(&bs, cur->item->name ? strlen(cur->item->name) : 0);
+		if (cur->item->name)
+			byte_stream_putstr(&bs, cur->item->name);
+		byte_stream_put16(&bs, cur->item->gid);
+		byte_stream_put16(&bs, cur->item->bid);
+		byte_stream_put16(&bs, cur->item->type);
+		byte_stream_put16(&bs, cur->item->data ? aim_tlvlist_size(cur->item->data) : 0);
+		if (cur->item->data)
+			aim_tlvlist_write(&bs, &cur->item->data);
+	}
 
 	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, od->ssi.pending->action, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_FEEDBAG, od->ssi.pending->action, 0x0000, snacid);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, od->ssi.pending->action, 0x0000, snacid, &bs);
 
-	for (cur=od->ssi.pending; cur; cur=cur->next) {
-		byte_stream_put16(&frame->data, cur->item->name ? strlen(cur->item->name) : 0);
-		if (cur->item->name)
-			byte_stream_putstr(&frame->data, cur->item->name);
-		byte_stream_put16(&frame->data, cur->item->gid);
-		byte_stream_put16(&frame->data, cur->item->bid);
-		byte_stream_put16(&frame->data, cur->item->type);
-		byte_stream_put16(&frame->data, cur->item->data ? aim_tlvlist_size(cur->item->data) : 0);
-		if (cur->item->data)
-			aim_tlvlist_write(&frame->data, &cur->item->data);
-	}
-
-	flap_connection_send(conn, frame);
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -1684,32 +1684,32 @@ int aim_ssi_modend(OscarData *od)
 int aim_ssi_sendauth(OscarData *od, char *sn, char *msg)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !sn)
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, 10+1+strlen(sn)+2+(msg ? strlen(msg)+1 : 0)+2);
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTH, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTH, 0x0000, snacid);
+	byte_stream_new(&bs, 1+strlen(sn) + 2+(msg ? strlen(msg)+1 : 0) + 2);
 
 	/* Screen name */
-	byte_stream_put8(&frame->data, strlen(sn));
-	byte_stream_putstr(&frame->data, sn);
+	byte_stream_put8(&bs, strlen(sn));
+	byte_stream_putstr(&bs, sn);
 
 	/* Message (null terminated) */
-	byte_stream_put16(&frame->data, msg ? strlen(msg) : 0);
+	byte_stream_put16(&bs, msg ? strlen(msg) : 0);
 	if (msg) {
-		byte_stream_putstr(&frame->data, msg);
-		byte_stream_put8(&frame->data, 0x00);
+		byte_stream_putstr(&bs, msg);
+		byte_stream_put8(&bs, 0x00);
 	}
 
 	/* Unknown */
-	byte_stream_put16(&frame->data, 0x0000);
+	byte_stream_put16(&bs, 0x0000);
 
-	flap_connection_send(conn, frame);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTH, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTH, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -1758,32 +1758,32 @@ static int receiveauthgrant(OscarData *od, FlapConnection *conn, aim_module_t *m
 int aim_ssi_sendauthrequest(OscarData *od, char *sn, const char *msg)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !sn)
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, 10+1+strlen(sn)+2+(msg ? strlen(msg)+1 : 0)+2);
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREQ, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREQ, 0x0000, snacid);
+	byte_stream_new(&bs, 1+strlen(sn) + 2+(msg ? strlen(msg)+1 : 0) + 2);
 
 	/* Screen name */
-	byte_stream_put8(&frame->data, strlen(sn));
-	byte_stream_putstr(&frame->data, sn);
+	byte_stream_put8(&bs, strlen(sn));
+	byte_stream_putstr(&bs, sn);
 
 	/* Message (null terminated) */
-	byte_stream_put16(&frame->data, msg ? strlen(msg) : 0);
+	byte_stream_put16(&bs, msg ? strlen(msg) : 0);
 	if (msg) {
-		byte_stream_putstr(&frame->data, msg);
-		byte_stream_put8(&frame->data, 0x00);
+		byte_stream_putstr(&bs, msg);
+		byte_stream_put8(&bs, 0x00);
 	}
 
 	/* Unknown */
-	byte_stream_put16(&frame->data, 0x0000);
+	byte_stream_put16(&bs, 0x0000);
 
-	flap_connection_send(conn, frame);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREQ, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREQ, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }
@@ -1835,35 +1835,35 @@ static int receiveauthrequest(OscarData *od, FlapConnection *conn, aim_module_t 
 int aim_ssi_sendauthreply(OscarData *od, char *sn, guint8 reply, const char *msg)
 {
 	FlapConnection *conn;
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_FEEDBAG)) || !sn)
 		return -EINVAL;
 
-	frame = flap_frame_new(od, 0x02, 10 + 1+strlen(sn) + 1 + 2+(msg ? strlen(msg)+1 : 0) + 2);
-
-	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREP, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREP, 0x0000, snacid);
+	byte_stream_new(&bs, 1+strlen(sn) + 1 + 2+(msg ? (strlen(msg)+1) : 0) + 2);
 
 	/* Screen name */
-	byte_stream_put8(&frame->data, strlen(sn));
-	byte_stream_putstr(&frame->data, sn);
+	byte_stream_put8(&bs, strlen(sn));
+	byte_stream_putstr(&bs, sn);
 
 	/* Grant or deny */
-	byte_stream_put8(&frame->data, reply);
+	byte_stream_put8(&bs, reply);
 
 	/* Message (null terminated) */
-	byte_stream_put16(&frame->data, msg ? (strlen(msg)+1) : 0);
+	byte_stream_put16(&bs, msg ? (strlen(msg)+1) : 0);
 	if (msg) {
-		byte_stream_putstr(&frame->data, msg);
-		byte_stream_put8(&frame->data, 0x00);
+		byte_stream_putstr(&bs, msg);
+		byte_stream_put8(&bs, 0x00);
 	}
 
 	/* Unknown */
-	byte_stream_put16(&frame->data, 0x0000);
+	byte_stream_put16(&bs, 0x0000);
 
-	flap_connection_send(conn, frame);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREP, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_FEEDBAG, SNAC_SUBTYPE_FEEDBAG_SENDAUTHREP, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 
 	return 0;
 }

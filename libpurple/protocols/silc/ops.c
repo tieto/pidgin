@@ -462,7 +462,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			client_entry = va_arg(va, SilcClientEntry);
 
 			components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
-			g_hash_table_insert(components, strdup("channel"), strdup(name));
+			g_hash_table_insert(components, g_strdup("channel"), g_strdup(name));
 			serv_got_chat_invite(gc, name, client_entry->nickname, NULL, components);
 		}
 		break;
@@ -484,7 +484,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		g_snprintf(buf, sizeof(buf), "%s@%s",
 			   client_entry->username, client_entry->hostname);
 		purple_conv_chat_add_user(PURPLE_CONV_CHAT(convo),
-					  g_strdup(client_entry->nickname), buf, PURPLE_CBFLAGS_NONE, TRUE);
+					  client_entry->nickname, buf, PURPLE_CBFLAGS_NONE, TRUE);
 
 		break;
 
@@ -974,7 +974,6 @@ silcpurple_whois_more(SilcClientEntry client_entry, gint id)
 {
 	SilcAttributePayload attr;
 	SilcAttribute attribute;
-	char *buf;
 	GString *s;
 	SilcVCardStruct vcard;
 	int i;
@@ -1064,10 +1063,9 @@ silcpurple_whois_more(SilcClientEntry client_entry, gint id)
 		}
 	}
 
-	buf = g_string_free(s, FALSE);
 	purple_notify_info(NULL, _("User Information"), _("User Information"),
-			 buf);
-	g_free(buf);
+			 s->str);
+	g_string_free(s, TRUE);
 }
 #endif
 
@@ -1133,7 +1131,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			    f |= PURPLE_CBFLAGS_FOUNDER;
 			  if (chu->mode & SILC_CHANNEL_UMODE_CHANOP)
 			    f |= PURPLE_CBFLAGS_OP;
-			  users = g_list_append(users, g_strdup(chu->client->nickname));
+			  users = g_list_append(users, chu->client->nickname);
 			  flags = g_list_append(flags, GINT_TO_POINTER(f));
 
 			  if (chu->mode & SILC_CHANNEL_UMODE_CHANFO) {

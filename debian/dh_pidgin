@@ -16,7 +16,7 @@ B<dh_pidgin> [S<I<debhelper options>>]
 =head1 DESCRIPTION
 
 dh_pidgin is a debhelper program that is responsible for generating 
-the ${misc:Depends} substutions that depend on the correct versions of pidgin,
+the ${misc:Depends} substitutions that depend on the correct versions of pidgin,
 and adding them to substvars files.
 
 To use this program, make sure it is executed in debian/rules at some point

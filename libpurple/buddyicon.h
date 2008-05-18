@@ -45,7 +45,7 @@ extern "C" {
 /*@{*/
 
 /**
- * Creates a new buddy icon structure and populate it.
+ * Creates a new buddy icon structure and populates it.
  *
  * If the buddy icon already exists, you'll get a reference to that structure,
  * which will have been updated with the data supplied.

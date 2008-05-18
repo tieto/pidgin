@@ -58,7 +58,7 @@ msn_oim_new(MsnSession *session)
 
 	oim = g_new0(MsnOim, 1);
 	oim->session = session;
-	oim->oim_list	= NULL;
+	oim->oim_list = NULL;
 	oim->run_id = rand_guid();
 	oim->challenge = NULL;
 	oim->send_queue = g_queue_new();
@@ -71,16 +71,18 @@ void
 msn_oim_destroy(MsnOim *oim)
 {
 	MsnOimSendReq *request;
-	
-	purple_debug_info("OIM","destroy the OIM \n");
+
+	purple_debug_info("OIM", "destroy the OIM %p\n", oim);
 	g_free(oim->run_id);
 	g_free(oim->challenge);
-	
+
 	while((request = g_queue_pop_head(oim->send_queue)) != NULL){
 		msn_oim_free_send_req(request);
 	}
+
 	g_queue_free(oim->send_queue);
-	
+	g_list_free(oim->oim_list);
+
 	g_free(oim);
 }
 
@@ -91,7 +93,7 @@ msn_oim_new_send_req(const char *from_member, const char*friendname,
 	MsnOimSendReq *request;
 	
 	request = g_new0(MsnOimSendReq, 1);
-	request->from_member	=g_strdup(from_member);
+	request->from_member	= g_strdup(from_member);
 	request->friendname		= g_strdup(friendname);
 	request->to_member		= g_strdup(to_member);
 	request->oim_msg		= g_strdup(msg);
@@ -170,7 +172,6 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 								msg->oim_msg);
 							g_queue_push_head(oim->send_queue, msg);
 							msn_oim_send_msg(oim);
-							return;
 						} else {
 							purple_debug_info("msnoim",
 								"can't find lock key for OIM: %s\n",
@@ -191,14 +192,13 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 						purple_debug_info("MSNP14","resending OIM: %s\n", msg->oim_msg);
 						g_queue_push_head(oim->send_queue, msg);
 						msn_oim_send_msg(oim);
-						return;
 					}
 				}
+
+				g_free(faultcode_str);
 			}
 		}
 	}
-
-	msn_oim_free_send_req(msg);
 }
 
 void
@@ -472,7 +472,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 	xmlnode *iu_node;
 	MsnSession *session = oim->session;
 
-	purple_debug_info("MSNP14:OIM", "%s", xmlmsg);
+	purple_debug_info("MSNP14:OIM", "%s\n", xmlmsg);
 
 	node = xmlnode_from_str(xmlmsg, -1);
 	if (strcmp(node->name, "MD") != 0) {

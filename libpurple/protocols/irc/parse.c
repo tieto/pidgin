@@ -75,6 +75,8 @@ static struct _irc_msg {
 	{ "333", "*", irc_msg_ignore },		/* Topic setter stuff		*/
 	{ "353", "nvc:", irc_msg_names },	/* Names list			*/
 	{ "366", "nc:", irc_msg_names },	/* End of names			*/
+	{ "367", "ncnnv", irc_msg_ban },	/* Ban list			*/
+	{ "368", "nc:", irc_msg_ban },		/* End of ban list		*/
 	{ "372", "n:", irc_msg_motd },		/* MOTD				*/
 	{ "375", "n:", irc_msg_motd },		/* Start MOTD			*/
 	{ "376", "n:", irc_msg_motd },		/* End of MOTD			*/

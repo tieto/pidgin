@@ -96,7 +96,8 @@ typedef enum
  */
 /*
  * If you add a value to this enum, make sure you update
- * the status_primitive_map array in status.c.
+ * the status_primitive_map array in status.c and the special-cases for idle
+ * and offline-messagable just below it.
  */
 typedef enum
 {
@@ -110,7 +111,6 @@ typedef enum
 	PURPLE_STATUS_MOBILE,
 	PURPLE_STATUS_TUNE,
 	PURPLE_STATUS_NUM_PRIMITIVES
-
 } PurpleStatusPrimitive;
 
 #include "account.h"

@@ -88,6 +88,8 @@ struct irc_conn {
 	time_t recv_time;
 
 	char *mode_chars;
+	char *reqnick;
+	gboolean nickused;
 };
 
 struct irc_buddy {
@@ -118,6 +120,7 @@ void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, c
 void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_badmode(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_badnick(struct irc_conn *irc, const char *name, const char *from, char **args);
+void irc_msg_ban(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_banfull(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_banned(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, char **args);

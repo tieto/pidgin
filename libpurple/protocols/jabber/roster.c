@@ -329,11 +329,20 @@ void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
 
 	jb = jabber_buddy_find(js, buddy->name, FALSE);
 
+	/*
+	 * For some reason if we're waiting for our subscription request
+	 * to be approved and we try to add the buddy to another group
+	 * then we remove the buddy from the old group.  I don't understand
+	 * the rationale for this, can someone please explain it?  It seems
+	 * like we should pass NULL as the groups parameter to
+	 * jabber_roster_update().
+	 */
 	if(!jb || !(jb->subscription & JABBER_SUB_TO)) {
 		groups = g_slist_append(groups, group->name);
 	}
 
 	jabber_roster_update(js, who, groups);
+	g_slist_free(groups);
 
 	my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
 	if(!strcmp(who, my_bare_jid)) {

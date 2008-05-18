@@ -1212,7 +1212,7 @@ purple_plugins_add_search_path(const char *path)
 	if (g_list_find_custom(search_paths, path, (GCompareFunc)strcmp))
 		return;
 
-	search_paths = g_list_append(search_paths, strdup(path));
+	search_paths = g_list_append(search_paths, g_strdup(path));
 }
 
 void
@@ -1294,7 +1294,7 @@ purple_plugins_load_saved(const char *key)
 
 		/* Strip the extension */
 		if (basename)
-			basename = purple_plugin_get_basename(filename);
+			basename = purple_plugin_get_basename(basename);
 
 		if (((plugin = purple_plugins_find_with_filename(filename)) != NULL) ||
 				(basename && (plugin = purple_plugins_find_with_basename(basename)) != NULL) ||

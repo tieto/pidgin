@@ -682,7 +682,7 @@ finch_create_conversation(PurpleConversation *conv)
 	ggc->active_conv = conv;
 	FINCH_SET_DATA(conv, ggc);
 
-	if (cc && FINCH_GET_DATA(cc)) {
+	if (cc && FINCH_GET_DATA(cc) && cc != conv) {
 		finch_conversation_set_active(conv);
 		return;
 	}

@@ -1,5 +1,5 @@
 /**
- * @file icon.c Buddy Icon API
+ * @file buddyicon.c Buddy Icon API
  * @ingroup core
  */
 
@@ -31,35 +31,84 @@
 #include "imgstore.h"
 #include "util.h"
 
-typedef struct _PurpleBuddyIconData PurpleBuddyIconData;
-
 /* NOTE: Instances of this struct are allocated without zeroing the memory, so
  * NOTE: be sure to update purple_buddy_icon_new() if you add members. */
 struct _PurpleBuddyIcon
 {
 	PurpleAccount *account;    /**< The account the user is on.          */
-	PurpleStoredImage *img;    /**< The id of the stored image with the
+	PurpleStoredImage *img;    /**< The stored image containing
 	                                the icon data.                       */
 	char *username;            /**< The username the icon belongs to.    */
 	char *checksum;            /**< The protocol checksum.               */
 	int ref_count;             /**< The buddy icon reference count.      */
 };
 
+/**
+ * This is the big grand daddy hash table that contains references to
+ * everybody's buddy icons.
+ *
+ * Key is a PurpleAccount.
+ * Value is another hash table, usually referred to as "icon_cache."
+ * For this inner hash table:
+ *    Key is the username of the buddy whose icon is being stored.
+ *    Value is the PurpleBuddyIcon for this buddy.
+ */
 static GHashTable *account_cache = NULL;
-static GHashTable *icon_data_cache = NULL;
-static GHashTable *icon_file_cache = NULL;
 
-static void delete_buddy_icon_settings(PurpleBlistNode *node, const char *setting_name);
+/**
+ * This hash table contains a bunch of PurpleStoredImages that are
+ * shared across all accounts.
+ *
+ * Key is the filename for this image as constructed by
+ * purple_util_get_image_filename().  So it is the base16 encoded
+ * sha-1 hash plus an appropriate file extension.  For example:
+ *   "0f4972d17d1e70e751c43c90c948e72efbff9796.gif"
+ *
+ * The value is a PurpleStoredImage containing the icon data.  These
+ * images are reference counted, and when the count reaches 0
+ * imgstore.c emits the image-deleting signal and we remove the image
+ * from the hash table (but it might still be saved on disk, if the
+ * icon is being used by offline accounts or some such).
+ */
+static GHashTable *icon_data_cache = NULL;
+
+/**
+ * This hash table contains references counts for how many times each
+ * icon in the ~/.purple/icons/ directory is being used.  It's pretty
+ * crazy.  It maintains the reference count across sessions, too, so
+ * if you exit Pidgin then this hash table is reconstructed the next
+ * time Pidgin starts.
+ *
+ * Key is the filename for this image as constructed by
+ * purple_util_get_image_filename().  So it is the base16 encoded
+ * sha-1 hash plus an appropriate file extension.  For example:
+ *   "0f4972d17d1e70e751c43c90c948e72efbff9796.gif"
+ *
+ * The value is a GINT_TO_POINTER count of the number of times this
+ * icon is used.  So if four of your buddies are using an icon, and
+ * you have the icon set for two of your accounts, then this number
+ * will be six.  When this reference count reaches 0 the icon will
+ * be deleted from disk.
+ */
+static GHashTable *icon_file_cache = NULL;
 
 /* This one is used for both custom buddy icons
  * on PurpleContacts and account icons. */
 static GHashTable *pointer_icon_cache = NULL;
 
 static char       *cache_dir     = NULL;
+
+/** "Should icons be cached to disk?" */
 static gboolean    icon_caching  = TRUE;
 
 /* For ~/.gaim to ~/.purple migration. */
 static char *old_icons_dir = NULL;
+
+static void delete_buddy_icon_settings(PurpleBlistNode *node, const char *setting_name);
+
+/*
+ * Begin functions for dealing with the on-disk icon cache
+ */
 
 static void
 ref_filename(const char *filename)
@@ -158,6 +207,14 @@ purple_buddy_icon_data_uncache_file(const char *filename)
 	g_free(path);
 }
 
+/*
+ * End functions for dealing with the on-disk icon cache
+ */
+
+/*
+ * Begin functions for dealing with the in-memory icon cache
+ */
+
 static gboolean
 value_equals(gpointer key, gpointer value, gpointer user_data)
 {
@@ -221,6 +278,10 @@ purple_buddy_icon_data_new(guchar *icon_data, size_t icon_len, const char *filen
 
 	return img;
 }
+
+/*
+ * End functions for dealing with the in-memory icon cache
+ */
 
 static PurpleBuddyIcon *
 purple_buddy_icon_create(PurpleAccount *account, const char *username)

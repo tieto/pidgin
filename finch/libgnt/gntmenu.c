@@ -168,7 +168,8 @@ assign_triggers(GntMenu *menu)
 			continue;
 		while (*text) {
 			char ch = tolower(*text++);
-			if (ch == ' ' || bools[(int)GET_VAL(ch)])
+			char t[2] = {ch, '\0'};
+			if (ch == ' ' || bools[(int)GET_VAL(ch)] || gnt_bindable_check_key(GNT_BINDABLE(menu), t))
 				continue;
 			trigger = ch;
 			break;

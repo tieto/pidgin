@@ -39,6 +39,8 @@ static void
 purple_check_init(void) {
 	gchar *home_dir;
 
+	g_type_init();
+
 	purple_eventloop_set_ui_ops(&eventloop_ui_ops);
 
 	/* build our fake home directory */

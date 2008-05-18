@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Pidgin 2.4.1\n"
+"Project-Id-Version: Pidgin 2.4.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-31 13:18-0400\n"
-"PO-Revision-Date: 2008-03-31 17:31+0100\n"
+"POT-Creation-Date: 2008-05-15 08:57-0400\n"
+"PO-Revision-Date: 2008-05-07 12:03+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
@@ -66,8 +66,8 @@ msgstr "Napaka"
 msgid "Account was not added"
 msgstr "Račun ni bil dodan"
 
-msgid "Screenname of an account must be non-empty."
-msgstr "Pojavno ime računa ne sme biti prazno."
+msgid "Username of an account must be non-empty."
+msgstr "Uporabniško ime računa ne sme biti prazno."
 
 msgid "New mail notifications"
 msgstr "Obveščanje o prispeli pošti"
@@ -90,8 +90,8 @@ msgstr "Nov račun"
 msgid "Protocol:"
 msgstr "Protokol:"
 
-msgid "Screen name:"
-msgstr "Zaslonsko ime:"
+msgid "Username:"
+msgstr "Uporabniško ime:"
 
 msgid "Password:"
 msgstr "Geslo:"
@@ -177,8 +177,8 @@ msgstr ""
 msgid "Default"
 msgstr "Privzeto"
 
-msgid "You must provide a screename for the buddy."
-msgstr "Za prijatelja morate vnesti pojavno ime."
+msgid "You must provide a username for the buddy."
+msgstr "Za prijatelja morate vnesti uporabniško ime."
 
 msgid "You must provide a group."
 msgstr "Vnesti morate skupino."
@@ -192,8 +192,8 @@ msgstr "Izbrani račun ni povezan."
 msgid "Error adding buddy"
 msgstr "Napaka pri dodajanju prijatelja"
 
-msgid "Screen Name"
-msgstr "Ime"
+msgid "Username"
+msgstr "Uporabniško ime"
 
 msgid "Alias (optional)"
 msgstr "Psevdonim (neobvezno)"
@@ -353,11 +353,11 @@ msgid "Unblock"
 msgstr "Prekliči zavrnitev"
 
 msgid ""
-"Please enter the screen name or alias of the person you would like to Block/"
+"Please enter the username or alias of the person you would like to Block/"
 "Unblock."
 msgstr ""
-"Vnesite pojavno ime ali psevdonim osebe, ki jo želite zavrniti/preklicati "
-"njeno zavrnitev."
+"Vnesite uporabniško ime ali psevdonim osebe, ki jo želite zavrniti/"
+"preklicati njeno zavrnitev."
 
 #. Not multiline
 #. Not masked?
@@ -368,10 +368,9 @@ msgstr "V redu"
 msgid "New Instant Message"
 msgstr "Novo neposredno sporočilo"
 
-msgid ""
-"Please enter the screen name or alias of the person you would like to IM."
+msgid "Please enter the username or alias of the person you would like to IM."
 msgstr ""
-"Vnesite pojavno ime ali psevdonim osebe, ki ji želite poslati neposredno "
+"Vnesite uporabniško ime ali psevdonim osebe, ki ji želite poslati neposredno "
 "sporočilo."
 
 msgid "Channel"
@@ -386,6 +385,13 @@ msgstr "Vnesite ime klepeta, ki se mu želite pridružiti."
 msgid "Join"
 msgstr "Pridruži se"
 
+msgid ""
+"Please enter the username or alias of the person whose log you would like to "
+"view."
+msgstr ""
+"Vnesite uporabniško ime ali psevdonim osebe, o kateri želite pridobiti "
+"dnevnik."
+
 #. Create the "Options" frame.
 msgid "Options"
 msgstr "Možnosti"
@@ -398,6 +404,9 @@ msgstr "Zavrni/Prekliči zavrnitev ..."
 
 msgid "Join Chat..."
 msgstr "Pridruži se klepetu ..."
+
+msgid "View Log..."
+msgstr "Pokaži dnevnik ..."
 
 msgid "Show"
 msgstr "Pokaži"
@@ -609,9 +618,6 @@ msgstr "Pokaži časovne žige"
 msgid "Add Buddy Pounce..."
 msgstr "Dodaj opozorilo prijatelju ..."
 
-msgid "View Log..."
-msgstr "Pokaži dnevnik ..."
-
 msgid "Enable Logging"
 msgstr "Vključi dnevnik"
 
@@ -751,15 +757,24 @@ msgstr "Neuspeh"
 msgid "%.2f KiB/s"
 msgstr "%.2f KiB/s"
 
-#, c-format
-msgid "The file was saved as %s."
-msgstr "Datoteka je bila shranjena kot %s."
+msgid "Sent"
+msgstr "Poslano"
+
+msgid "Received"
+msgstr "Prejeto"
 
 msgid "Finished"
 msgstr "Končano"
 
-msgid "Transferring"
-msgstr "Prenos je v teku"
+#, c-format
+msgid "The file was saved as %s."
+msgstr "Datoteka je bila shranjena kot %s."
+
+msgid "Sending"
+msgstr "Pošiljanje"
+
+msgid "Receiving"
+msgstr "Sprejemanje"
 
 #, c-format
 msgid "Conversation in %s on %s"
@@ -854,6 +869,9 @@ msgstr "Povabi"
 
 msgid "(none)"
 msgstr "(brez)"
+
+msgid "URI"
+msgstr "URI"
 
 msgid "ERROR"
 msgstr "NAPAKA"
@@ -1104,6 +1122,12 @@ msgstr "Pogovori"
 msgid "Logging"
 msgstr "Beleženje v dnevnik"
 
+msgid "You must fill all the required fields."
+msgstr "Izpolniti morate vsa obvezna polja."
+
+msgid "The required fields are underlined."
+msgstr "Obvezna polja so podčrtana."
+
 msgid "Not implemented yet."
 msgstr "Še ni podprto."
 
@@ -1153,8 +1177,8 @@ msgstr "Vi govorite v sobi"
 msgid "Others talk in chat"
 msgstr "Drugi govorijo v sobi"
 
-msgid "Someone says your screen name in chat"
-msgstr "Nekdo omeni vaše pojavno ime v sobi"
+msgid "Someone says your username in chat"
+msgstr "Nekdo omeni vaše uporabniško ime v klepetu"
 
 msgid "GStreamer Failure"
 msgstr "Napaka GStreamer"
@@ -2503,10 +2527,10 @@ msgstr "Prikazanemu sporočilu na začetek pripne prazno vrstico."
 #. *< summary
 msgid ""
 "Prepends a newline to messages so that the rest of the message appears below "
-"the screen name in the conversation window."
+"the username in the conversation window."
 msgstr ""
 "Sporočilom na začetek doda prazno vrstico, tako da se preostanek sporočila v "
-"oknu pogovora izpiše pod pojavnim imenom."
+"oknu pogovora izpiše pod uporabniškim imenom."
 
 msgid "Offline Message Emulation"
 msgstr "Emulacija nepovezovalnega sporočila"
@@ -3150,9 +3174,6 @@ msgstr "Vrata"
 msgid "Encodings"
 msgstr "Kodiranje znakov"
 
-msgid "Username"
-msgstr "Uporabniško ime"
-
 msgid "Real name"
 msgstr "Resnično ime"
 
@@ -3165,6 +3186,17 @@ msgstr "Uporabi SSL"
 
 msgid "Bad mode"
 msgstr "Neveljaven način"
+
+#, c-format
+msgid "Ban on %s by %s, set %ld seconds ago"
+msgstr "Prepoved za %s s strani %s, nastavljeno %ld sekund nazaj"
+
+#, c-format
+msgid "Ban on %s"
+msgstr "Prepovej za %s"
+
+msgid "End of ban list"
+msgstr "Konec seznama prepovedi"
 
 #, c-format
 msgid "You are banned from %s."
@@ -3525,6 +3557,9 @@ msgid "Server requires TLS/SSL for login.  No TLS/SSL support found."
 msgstr ""
 "Strežnik zahteva TLS/SSL za prijavo. Podpore za TLS/SSL ni mogoče najti."
 
+msgid "You require encryption, but no TLS/SSL support found."
+msgstr "Vi zahtevate šifriranje, podpore za TLS/SSL pa ni mogoče najti."
+
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr ""
 "Strežnik zahteva overovitev z navadnim besedilom preko nešifriranega toka"
@@ -3545,13 +3580,6 @@ msgstr "Neveljaven odgovor strežnika."
 
 msgid "Server does not use any supported authentication method"
 msgstr "Strežnik ne uporablja nobene podprte metode overovitve"
-
-msgid ""
-"This server requires plaintext authentication over an unencrypted "
-"connection.  Allow this and continue authentication?"
-msgstr ""
-"Strežnik zahteva overovitev z navadnim besedilom preko nešifrirane povezave. "
-"Se strinjate s tem in želite nadaljevati z overovitvijo?"
 
 msgid "Invalid challenge from server"
 msgstr "Neveljaven poziv strežnika"
@@ -4368,8 +4396,8 @@ msgstr "register:  Registriraj se v pogovorno sobo."
 msgid "topic [new topic]:  View or change the topic."
 msgstr "topic [nova tema]:  Oglej si ali spremeni temo."
 
-msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
-msgstr "ban &lt;uporabnik&gt; [soba]:  Prepovej uporabnika v sobi."
+msgid "ban &lt;user&gt; [reason]:  Ban a user from the room."
+msgstr "ban &lt;uporabnik&gt; [razlog]:  Prepovej uporabnika v sobi."
 
 msgid ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
@@ -4388,11 +4416,11 @@ msgstr ""
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;uporabnik&gt; [soba]:  Povabite uporabnika v sobo."
 
-msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
-msgstr "join: &lt;soba&gt; [strežnik]:  Pridruži se pomenku na tem strežniku."
+msgid "join: &lt;room&gt; [password]:  Join a chat on this server."
+msgstr "join: &lt;soba&gt; [geslo]:  Pridruži se pomenku na tem strežniku."
 
-msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
-msgstr "kick &lt;uporabnik&gt; [soba]:  Brcni uporabnika iz sobe."
+msgid "kick &lt;user&gt; [reason]:  Kick a user from the room."
+msgstr "kick &lt;uporabnik&gt; [razlog]:  Brcni uporabnika iz sobe."
 
 msgid ""
 "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
@@ -4431,9 +4459,6 @@ msgstr "Vsili star SSL (vrata 5223)"
 
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Dovoli overovitev z navadnim besedilom preko nešifriranih toka"
-
-msgid "Use GSSAPI (Kerberos v5) for authentication"
-msgstr "Uporabi avtentikacijo GSSAPI (Kerberos v5)"
 
 msgid "Connect port"
 msgstr "Poveži vrata"
@@ -4608,8 +4633,8 @@ msgstr "Manjka povsem veljavno ime domene"
 msgid "Already logged in"
 msgstr "Že prijavljeni"
 
-msgid "Invalid screen name"
-msgstr "Neveljavno pojavno ime"
+msgid "Invalid username"
+msgstr "Neveljavno uporabniško ime"
 
 msgid "Invalid friendly name"
 msgstr "Neveljavno prijateljsko ime"
@@ -5215,6 +5240,9 @@ msgstr ""
 msgid "Handshaking"
 msgstr "Rokovanje"
 
+msgid "Transferring"
+msgstr "Prenos je v teku"
+
 msgid "Starting authentication"
 msgstr "Pričetek overovitve"
 
@@ -5282,8 +5310,8 @@ msgstr "%s vas je odstranil(a) s svojega seznama prijateljev."
 msgid "Unable to add \"%s\"."
 msgstr "\"%s\" ni bilo mogoče dodati."
 
-msgid "The screen name specified is invalid."
-msgstr "Navedeno pojavno ime ni veljavno."
+msgid "The username specified is invalid."
+msgstr "Navedeno uporabniško ime ni veljavno."
 
 msgid "Has you"
 msgstr "Vas ima"
@@ -5704,11 +5732,11 @@ msgstr "Vas ni mogoče dodati"
 msgid "Master archive is misconfigured"
 msgstr "Glavni arhiv je narobe nastavljen"
 
-msgid "Incorrect screen name or password"
-msgstr "Neveljavno pojavno ime ali geslo"
+msgid "Incorrect username or password"
+msgstr "Neveljavno uporabniško ime ali geslo"
 
-msgid "Could not recognize the host of the screen name you entered"
-msgstr "Gostitelja pojavnega imena, ki ste ga vnesli, ni mogoče prepoznati"
+msgid "Could not recognize the host of the username you entered"
+msgstr "Gostitelja uporabniškega imena, ki ste ga vnesli, ni mogoče prepoznati"
 
 msgid ""
 "Your account has been disabled because too many incorrect passwords were "
@@ -5721,8 +5749,8 @@ msgstr "Iste osebe ne morete dvakrat dodati pomenku"
 msgid "You have reached your limit for the number of contacts allowed"
 msgstr "Dosegli ste mejo števila dovoljenih stikovstikov"
 
-msgid "You have entered an incorrect screen name"
-msgstr "Vnesli ste napačno pojavno ime"
+msgid "You have entered an incorrect username"
+msgstr "Vnesli ste napačno uporabniško ime"
 
 msgid "An error occurred while updating the directory"
 msgstr "Med posodabljanjem mape je prišlo do napake"
@@ -6682,8 +6710,8 @@ msgstr "Iz neznanega razloga prijatelja %s ni mogoče dodati."
 
 #, c-format
 msgid ""
-"The user %s has given you permission to add you to their buddy list.  Do you "
-"want to add them?"
+"The user %s has given you permission to add him or her to your buddy list.  "
+"Do you want to add this user?"
 msgstr ""
 "Uporabnik %s vam je dovolil, da ga dodate na svoj seznam prijateljev. Ali ga "
 "želite dodati?"
@@ -8333,15 +8361,15 @@ msgstr "Povezava ni uspela"
 msgid "Performing key exchange"
 msgstr "Izvajanje izmenjave ključev"
 
-#. Progress
-msgid "Connecting to SILC Server"
-msgstr "Povezovanjes strežnikom SILC"
+msgid "Unable to create connection"
+msgstr "Ni bilo mogoče ustvariti povezave"
 
 msgid "Could not load SILC key pair"
 msgstr "Para ključev SILC ni mogoče naložiti"
 
-msgid "Unable to create connection"
-msgstr "Ni bilo mogoče ustvariti povezave"
+#. Progress
+msgid "Connecting to SILC Server"
+msgstr "Povezovanjes strežnikom SILC"
 
 msgid "Out of memory"
 msgstr "Zmanjkalo je pomnilnika"
@@ -8790,8 +8818,8 @@ msgstr "Gostitelja ni mogoče razbrati"
 msgid "Could not resolve hostname"
 msgstr "Imena strežnika ni mogoče razločiti"
 
-msgid "SIP screen names may not contain whitespaces or @ symbols"
-msgstr "Pojavna imena SIP ne smejo vsebovati presledka ali simbola @"
+msgid "SIP usernames may not contain whitespaces or @ symbols"
+msgstr "Uporabniška imena SIP ne smejo vsebovati presledka ali simbola @"
 
 #. *< type
 #. *< ui_requirement
@@ -8909,8 +8937,8 @@ msgstr "Država ni podprta."
 msgid "Failure unknown: %s."
 msgstr "Neznan vzrok neuspeha: %s."
 
-msgid "Incorrect screen name or password."
-msgstr "Neveljavno pojavno ime ali geslo."
+msgid "Incorrect username or password."
+msgstr "Neveljavno uporabniško ime ali geslo."
 
 msgid "The service is temporarily unavailable."
 msgstr "Storitev je trenutno nedostopna."
@@ -9051,9 +9079,6 @@ msgstr ""
 
 msgid "Ignore buddy?"
 msgstr "Prezrem prijatelja?"
-
-msgid "Invalid screen name."
-msgstr "Neveljavno pojavno ime."
 
 msgid "Your account is locked, please log in to the Yahoo! website."
 msgstr "Vaš račun je zaklenjen. Prijavite se na spletno stran Yahoo!"
@@ -9745,22 +9770,18 @@ msgid " (%s)"
 msgstr " (%s)"
 
 #. 10053
-#, c-format
 msgid "Connection interrupted by other software on your computer."
 msgstr "Povezavo je prekinil nek program vašega računalnika."
 
 #. 10054
-#, c-format
 msgid "Remote host closed connection."
 msgstr "Oddaljeni gostitelj je zaprl povezavo."
 
 #. 10060
-#, c-format
 msgid "Connection timed out."
 msgstr "Časovna omejitev povezave potekla."
 
 #. 10061
-#, c-format
 msgid "Connection refused."
 msgstr "Povezava zavrnjena."
 
@@ -9786,11 +9807,8 @@ msgstr "Možnosti prijave"
 msgid "Pro_tocol:"
 msgstr "Pro_tokol:"
 
-msgid "Screen _name:"
-msgstr "Pojavno _ime:"
-
-msgid "_Local alias:"
-msgstr "_Krajevni psevdonim:"
+msgid "_Username:"
+msgstr "_Uporabniško ime:"
 
 msgid "Remember pass_word"
 msgstr "Zapomni si _geslo"
@@ -9798,6 +9816,9 @@ msgstr "Zapomni si _geslo"
 #. Build the user options frame.
 msgid "User Options"
 msgstr "Možnosti uporabnika"
+
+msgid "_Local alias:"
+msgstr "_Krajevni psevdonim:"
 
 msgid "New _mail notifications"
 msgstr "_Obveščanje o prispeli pošti"
@@ -9855,9 +9876,6 @@ msgstr "_Strežnik:"
 
 msgid "_Port:"
 msgstr "_Vrata:"
-
-msgid "_Username:"
-msgstr "_Uporabniško ime:"
 
 msgid "Pa_ssword:"
 msgstr "Ge_slo:"
@@ -9925,6 +9943,9 @@ msgstr ""
 "Spajanje teh stikov bo povzročilo, da si bodo delili en sam vnos na seznamu "
 "prijateljev in eno samo pogovorno okno. Znova jih lahko ločite z izbiro "
 "'Razširi' v kontekstnem meniju stika."
+
+msgid "Please update the necessary fields."
+msgstr "Prosimo, posodobite potrebna polja."
 
 msgid "Room _List"
 msgstr "Se_znam sob"
@@ -9994,6 +10015,9 @@ msgstr "Samodejno-pridruži"
 
 msgid "Persistent"
 msgstr "Vztrajno"
+
+msgid "_Edit Settings..."
+msgstr "_Uredi nastavitve ..."
 
 msgid "_Collapse"
 msgstr "_Strni"
@@ -10118,6 +10142,14 @@ msgstr "/Pomoč/_O programu"
 #, c-format
 msgid "<b>Account:</b> %s"
 msgstr "<b>Račun:</b> %s"
+
+#, c-format
+msgid ""
+"\n"
+"<b>Occupants:</b> %d"
+msgstr ""
+"\n"
+"<b>Prebivalci:</b> %d"
 
 #, c-format
 msgid ""
@@ -10282,8 +10314,8 @@ msgstr "/Prijatelji/Pokaži/Ikone protokolov"
 msgid "Add a buddy.\n"
 msgstr "Dodaj prijatelja.\n"
 
-msgid "Buddy's _screen name:"
-msgstr "_Pojavno ime prijatelja:"
+msgid "Buddy's _username:"
+msgstr "_Uporabniško ime prijatelja:"
 
 msgid "(Optional) A_lias:"
 msgstr "(Dodatni) _psevdonimi:"
@@ -10417,6 +10449,9 @@ msgstr "Shrani ikono kot ..."
 
 msgid "Set Custom Icon..."
 msgstr "Nastavi ikono po meri ..."
+
+msgid "Change Size"
+msgstr "Spremeni velikost"
 
 msgid "Remove Custom Icon"
 msgstr "Odstrani ikono po meri"
@@ -10996,19 +11031,14 @@ msgid "Get User Info"
 msgstr "Informacije o uporabniku"
 
 msgid ""
-"Please enter the screen name or alias of the person whose info you would "
-"like to view."
+"Please enter the username or alias of the person whose info you would like "
+"to view."
 msgstr ""
-"Vnesite pojavno ime ali psevdonim osebe, o kateri si želite ogledati podatke."
+"Vnesite uporabniško ime ali psevdonim osebe, o kateri si želite ogledati "
+"podatke."
 
 msgid "View User Log"
 msgstr "Prikaži uporabniški dnevnik"
-
-msgid ""
-"Please enter the screen name or alias of the person whose log you would like "
-"to view."
-msgstr ""
-"Vnesite pojavno ime ali psevdonim osebe, o kateri želite pridobiti dnevnik."
 
 msgid "Alias Contact"
 msgstr "Psevdonim stika"
@@ -11183,19 +11213,14 @@ msgstr "_Počisti dokončane prenose"
 msgid "File transfer _details"
 msgstr "Po_drobnosti o prenosu"
 
-#. Pause button
-msgid "_Pause"
-msgstr "_Premor"
-
-#. Resume button
-msgid "_Resume"
-msgstr "_Nadaljuj"
-
 msgid "Paste as Plain _Text"
 msgstr "Prilepi kot navadno be_sedilo"
 
 msgid "_Reset formatting"
 msgstr "_Počisti oblikovanje"
+
+msgid "Disable _smileys in selected text"
+msgstr "Onemogoči _smeške v izbranem besedilu"
 
 msgid "Hyperlink color"
 msgstr "Barva povezave"
@@ -11233,6 +11258,21 @@ msgstr "Ime barve sporočila dejanja"
 
 msgid "Color to draw the name of an action message."
 msgstr "Barva izrisa imena na sporočilo dejanja."
+
+msgid "Typing notification color"
+msgstr "Barva obvestila o tipkanju"
+
+msgid "The color to use for the typing notification font"
+msgstr "Barva pisave za obvestilo o tipkanju"
+
+msgid "Typing notification font"
+msgstr "Pisava obvestila o tipkanju"
+
+msgid "The font to use for the typing notification"
+msgstr "Pisava za obvestilo o tipkanju"
+
+msgid "Enable typing notification"
+msgstr "Omogoči obveščanje o tipkanju"
 
 msgid "_Copy E-Mail Address"
 msgstr "_Kopiraj naslov e-pošte"
@@ -11631,26 +11671,23 @@ msgstr ""
 
 #, c-format
 msgid ""
-"%s%s<span weight=\"bold\">Written by:</span>\t%s\n"
-"<span weight=\"bold\">Website:</span>\t\t%s\n"
-"<span weight=\"bold\">Filename:</span>\t\t%s"
-msgstr ""
-"%s%s<span weight=\"bold\">Avtor:</span>\t%s\n"
-"<span weight=\"bold\">Spletna stran:</span>\t\t%s\n"
-"<span weight=\"bold\">Ime datoteke:</span>\t\t%s"
-
-#, c-format
-msgid ""
-"%s\n"
-"<span foreground=\"#ff0000\" weight=\"bold\">Error: %s\n"
+"<span foreground=\"red\" weight=\"bold\">Error: %s\n"
 "Check the plugin website for an update.</span>"
 msgstr ""
-"%s\n"
 "<span foreground=\"#ff0000\" weight=\"bold\">Napaka: %s\n"
 "Preverite spletno stran vtičnika za posodobitev.</span>"
 
 msgid "Author"
 msgstr "Avtor"
+
+msgid "<b>Written by:</b>"
+msgstr "<b>Spisal:</b>"
+
+msgid "<b>Web site:</b>"
+msgstr "<b>Spletni naslov:</b>"
+
+msgid "<b>Filename:</b>"
+msgstr "<b>Datoteka:</b>"
 
 msgid "Configure Pl_ugin"
 msgstr "_Nastavi vtičnik"
@@ -11747,6 +11784,12 @@ msgstr ""
 msgid "Icon"
 msgstr "Ikona"
 
+msgid "Keyboard Shortcuts"
+msgstr "Tipke za bližnjice"
+
+msgid "Cl_ose conversations with the Escape key"
+msgstr "Zapr_i pomenke s tipko Esc"
+
 msgid "System Tray Icon"
 msgstr "Ikona na pladnju"
 
@@ -11825,6 +11868,9 @@ msgstr "Utripaj z _oknom, ko prispe novo sporočilo"
 
 msgid "Minimi_ze new conversation windows"
 msgstr "Poman_jšaj pogovorna okna"
+
+msgid "Minimum input area height in lines:"
+msgstr "Najmanjša višina vnosne površine v vrsticah:"
 
 msgid "Font"
 msgstr "Pisava"
@@ -12216,6 +12262,9 @@ msgstr "Novo stanje ..."
 msgid "Saved statuses..."
 msgstr "Shranjena stanja ..."
 
+msgid "Status Selector"
+msgstr "Izbirnik stanja"
+
 msgid "Google Talk"
 msgstr "Google Talk"
 
@@ -12342,6 +12391,9 @@ msgstr "_Spremeni"
 msgid "_Open Mail"
 msgstr "_Odpri pošto"
 
+msgid "_Pause"
+msgstr "_Premor"
+
 msgid "Pidgin Tooltip"
 msgstr "Nasvet Pidgin"
 
@@ -12356,6 +12408,9 @@ msgstr "S to izbiro onemogočite grafične smejčke."
 
 msgid "none"
 msgstr "brez"
+
+msgid "Display Statistics"
+msgstr "Pokaži statistiko"
 
 msgid "Response Probability:"
 msgstr "Verjetnost odgovora:"
@@ -12393,12 +12448,8 @@ msgid "Contact Availability Prediction plugin."
 msgstr "Vtičnik za napovedovanje dosegljivosti stika."
 
 #. *  summary
-msgid ""
-"The contact availability plugin (cap) is used to display statistical "
-"information about buddies in a users contact list."
-msgstr ""
-"Vtičnik dosegljivosti stika (cap) se uporablja za prikaz statističnih "
-"podatkov o prijateljih v seznamu stikov."
+msgid "Displays statistical information about your buddies' availability"
+msgstr "Prikaže statistične podatke o dostopnosti vašega prijatelja"
 
 msgid "Buddy is idle"
 msgstr "Prijatelj je nedejaven"
@@ -12565,19 +12616,17 @@ msgstr "Omogoča podporo za geste miške"
 
 #. *  description
 msgid ""
-"Allows support for mouse gestures in conversation windows.\n"
-"Drag the middle mouse button to perform certain actions:\n"
-"\n"
-"Drag down and then to the right to close a conversation.\n"
-"Drag up and then to the left to switch to the previous conversation.\n"
-"Drag up and then to the right to switch to the next conversation."
+"Allows support for mouse gestures in conversation windows. Drag the middle "
+"mouse button to perform certain actions:\n"
+" • Drag down and then to the right to close a conversation.\n"
+" • Drag up and then to the left to switch to the previous conversation.\n"
+" • Drag up and then to the right to switch to the next conversation."
 msgstr ""
-"Omogoča podporo za geste miške v pogovornih oknih.\n"
-"Povlecite s srednjo miškino tipko, da storite naslednje:\n"
-"\n"
-"Povlecite navzdol in zatem desno, da končate pogovor.\n"
-"Povlecite navzgor in zatem levo, da se vrnete k prejšnjemu pogovoru.\n"
-"Povlecite navzgor in zatem desno, da se premaknete k naslednjemu pogovoru."
+"Omogoča podporo za geste miške v pogovornih oknih. Povlecite s srednjo "
+"miškino tipko, da storite naslednje:\n"
+" • Povlecite navzdol in zatem desno, da končate pogovor.\n"
+" • Povlecite navzgor in zatem levo, da se vrnete k prejšnjemu pogovoru.\n"
+" Povlecite navzgor in zatem desno, da se premaknete k naslednjemu pogovoru."
 
 msgid "Instant Messaging"
 msgstr "Neposredno sporočanje"
@@ -12655,8 +12704,8 @@ msgstr "Omogoča integracijo z Evolutionom."
 msgid "Please enter the person's information below."
 msgstr "Spodaj vnesite podatke o osebi."
 
-msgid "Please enter the buddy's screen name and account type below."
-msgstr "Spodaj vnesite prijateljevo pojavno ime in vrsto računa."
+msgid "Please enter the buddy's username and account type below."
+msgstr "Spodaj vnesite prijateljevo uporabniško ime in vrsto računa."
 
 msgid "Account type:"
 msgstr "Vrsta računa:"
@@ -12733,6 +12782,9 @@ msgstr "Označevalna črta"
 msgid "Draw a line to indicate new messages in a conversation."
 msgstr "Nariši črto, ki prikazuje nova sporočila pogovora."
 
+msgid "Jump to markerline"
+msgstr "Skoči na označevalno črto"
+
 msgid "Draw Markerline in "
 msgstr "Nariši označevalno črto v "
 
@@ -12797,8 +12849,8 @@ msgstr ""
 msgid "Notify For"
 msgstr "Obveščaj o"
 
-msgid "\t_Only when someone says your screen name"
-msgstr "\t_Le ko nekdo omeni vaše pojavno ime v sobi"
+msgid "\t_Only when someone says your username"
+msgstr "\t_Le ko nekdo omeni vaše uporabniško ime v sobi"
 
 msgid "_Focused windows"
 msgstr "Okna, ki imajo _fokus"
@@ -12826,6 +12878,10 @@ msgstr "V upravljalniku oken nastavi namig \"N_UJNO\""
 #. Raise window method button
 msgid "R_aise conversation window"
 msgstr "Povzdigni pogovorna okn_a"
+
+#. Present conversation method button
+msgid "_Present conversation window"
+msgstr "_Predstavi okno pogovora"
 
 #. ---------- "Notification Removals" ----------
 msgid "Notification Removal"
@@ -13037,6 +13093,30 @@ msgid ""
 msgstr ""
 "Preverja, ali je na voljo nova različica in uporabika seznanja z dnevnikom "
 "sprememb."
+
+#. *< major version
+#. *< minor version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+msgid "Send Button"
+msgstr "Gumb Pošlji"
+
+#. *< name
+#. *< version
+msgid "Conversation Window Send Button."
+msgstr "Gumb Pošlji okna pogovora"
+
+#. *< summary
+msgid ""
+"Adds a Send button to the entry area of the conversation window. Intended "
+"for when no physical keyboard is present."
+msgstr ""
+"Doda gumb Pošlji v vnosno območje pogovornega okna. Namenjeno za primere, ko "
+"fizična tipkovnica ni prisotna."
 
 msgid "Duplicate Correction"
 msgstr "Popravek dvojnikov"
@@ -13302,6 +13382,53 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr ""
 "Ta vtičnik je uporaben za razhroščevanje strežnikov ali odjemalcev XMPP."
 
+#~ msgid "_Resume"
+#~ msgstr "_Nadaljuj"
+
+#~ msgid "Screen name:"
+#~ msgstr "Zaslonsko ime:"
+
+#~ msgid "Screen Name"
+#~ msgstr "Ime"
+
+#~ msgid "Someone says your screen name in chat"
+#~ msgstr "Nekdo omeni vaše pojavno ime v sobi"
+
+#~ msgid "Invalid screen name"
+#~ msgstr "Neveljavno pojavno ime"
+
+#~ msgid "Invalid screen name."
+#~ msgstr "Neveljavno pojavno ime."
+
+#~ msgid "Screen _name:"
+#~ msgstr "Pojavno _ime:"
+
+#~ msgid ""
+#~ "This server requires plaintext authentication over an unencrypted "
+#~ "connection.  Allow this and continue authentication?"
+#~ msgstr ""
+#~ "Strežnik zahteva overovitev z navadnim besedilom preko nešifrirane "
+#~ "povezave. Se strinjate s tem in želite nadaljevati z overovitvijo?"
+
+#~ msgid "Use GSSAPI (Kerberos v5) for authentication"
+#~ msgstr "Uporabi avtentikacijo GSSAPI (Kerberos v5)"
+
+#~ msgid ""
+#~ "%s%s<span weight=\"bold\">Written by:</span>\t%s\n"
+#~ "<span weight=\"bold\">Website:</span>\t\t%s\n"
+#~ "<span weight=\"bold\">Filename:</span>\t\t%s"
+#~ msgstr ""
+#~ "%s%s<span weight=\"bold\">Avtor:</span>\t%s\n"
+#~ "<span weight=\"bold\">Spletna stran:</span>\t\t%s\n"
+#~ "<span weight=\"bold\">Ime datoteke:</span>\t\t%s"
+
+#~ msgid ""
+#~ "The contact availability plugin (cap) is used to display statistical "
+#~ "information about buddies in a users contact list."
+#~ msgstr ""
+#~ "Vtičnik dosegljivosti stika (cap) se uporablja za prikaz statističnih "
+#~ "podatkov o prijateljih v seznamu stikov."
+
 #~ msgid "Screen name sent"
 #~ msgstr "Pojavno ime poslano"
 
@@ -13398,6 +13525,3 @@ msgstr ""
 
 #~ msgid "User has typed something and stopped"
 #~ msgstr "Uporabnik je napisal nekaj in se ustavil."
-
-#~ msgid "Display Statistics"
-#~ msgstr "Pokaži statistiko"

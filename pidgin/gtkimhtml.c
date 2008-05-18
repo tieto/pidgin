@@ -359,17 +359,17 @@ static void gtk_imhtml_size_allocate(GtkWidget *widget, GtkAllocation *alloc)
 	GtkTextIter iter;
 	gboolean scroll = TRUE;
 
-        gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter);
+	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter);
 
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &rect);
-        gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
+	gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
 
-	if(((y + height) - (rect.y + rect.height)) > height
-           && gtk_text_buffer_get_char_count(imhtml->text_buffer)){
-                scroll = FALSE;
-        }
+	if (((y + height) - (rect.y + rect.height)) > height &&
+			gtk_text_buffer_get_char_count(imhtml->text_buffer)) {
+		scroll = FALSE;
+	}
 
-	if(imhtml->old_rect.width != rect.width || imhtml->old_rect.height != rect.height){
+	if(imhtml->old_rect.width != rect.width || imhtml->old_rect.height != rect.height) {
 		GList *iter = GTK_IMHTML(widget)->scalables;
 
 		xminus = gtk_text_view_get_left_margin(GTK_TEXT_VIEW(widget)) +
@@ -386,11 +386,11 @@ static void gtk_imhtml_size_allocate(GtkWidget *widget, GtkAllocation *alloc)
 
 	imhtml->old_rect = rect;
 	parent_size_allocate(widget, alloc);
-	
+
 	/* Don't scroll here if we're in the middle of a smooth scroll */
 	if (scroll && imhtml->scroll_time == NULL &&
- 	    GTK_WIDGET_REALIZED(imhtml)) 
-		gtk_imhtml_scroll_to_end(imhtml, FALSE);	
+	    GTK_WIDGET_REALIZED(imhtml))
+		gtk_imhtml_scroll_to_end(imhtml, FALSE);
 }
 
 static gint
@@ -576,11 +576,11 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	/* If we don't have a tip from a URL, let's see if we have a tip from a smiley */
 	anchor = gtk_text_iter_get_child_anchor(&iter);
 	if (anchor) {
-		tip = g_object_get_data(G_OBJECT(anchor), "gtkimhtml_plaintext");
+		tip = g_object_get_data(G_OBJECT(anchor), "gtkimhtml_tiptext");
 		hand = FALSE;
 	}
 
-	if (tip){
+	if (tip && *tip) {
 		if (!GTK_IMHTML(imhtml)->editable && hand)
 			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
 		GTK_IMHTML(imhtml)->tip_timer = g_timeout_add (TOOLTIP_TIMEOUT,
@@ -758,6 +758,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 
 		
 			rect.height = tag_area.y + tag_area.height - rect.y
+				+ gtk_text_view_get_pixels_above_lines(GTK_TEXT_VIEW(widget))
 				+ gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(widget));
 
 			color = tag->name + 11;
@@ -813,9 +814,30 @@ static void clear_formatting_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
 	gtk_imhtml_clear_formatting(imhtml);
 }
 
+static void disable_smiley_selected(GtkMenuItem *item, GtkIMHtml *imhtml)
+{
+	GtkTextIter start, end;
+	GtkTextMark *mark;
+	char *text;
+
+	if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
+		return;
+
+	text = gtk_imhtml_get_markup_range(imhtml, &start, &end);
+
+	mark = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
+	gtk_text_buffer_delete_selection(imhtml->text_buffer, FALSE, FALSE);
+
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, mark);
+	gtk_imhtml_insert_html_at_iter(imhtml, text, GTK_IMHTML_NO_NEWLINE | GTK_IMHTML_NO_SMILEY, &start);
+
+	g_free(text);
+}
+
 static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 {
 	GtkWidget *menuitem;
+	GtkTextIter start, end;
 
 	menuitem = gtk_menu_item_new_with_mnemonic(_("Paste as Plain _Text"));
 	gtk_widget_show(menuitem);
@@ -841,6 +863,15 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 5);
 
 	g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(clear_formatting_cb), imhtml);
+
+	menuitem = gtk_menu_item_new_with_mnemonic(_("Disable _smileys in selected text"));
+	gtk_widget_show(menuitem);
+	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		g_signal_connect(G_OBJECT(menuitem), "activate", G_CALLBACK(disable_smiley_selected), imhtml);
+	} else {
+		gtk_widget_set_sensitive(menuitem, FALSE);
+	}
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 6);
 }
 
 static char *
@@ -1201,16 +1232,20 @@ static gboolean gtk_imhtml_button_press_event(GtkIMHtml *imhtml, GdkEventButton 
 }
 
 static void
-gtk_imhtml_undo(GtkIMHtml *imhtml) {
+gtk_imhtml_undo(GtkIMHtml *imhtml)
+{
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	if (imhtml->editable)
+	if (imhtml->editable &&
+			gtk_source_undo_manager_can_undo(imhtml->undo_manager))
 		gtk_source_undo_manager_undo(imhtml->undo_manager);
 }
 
 static void
-gtk_imhtml_redo(GtkIMHtml *imhtml) {
+gtk_imhtml_redo(GtkIMHtml *imhtml)
+{
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
-	if (imhtml->editable)
+	if (imhtml->editable &&
+			gtk_source_undo_manager_can_redo(imhtml->undo_manager))
 		gtk_source_undo_manager_redo(imhtml->undo_manager);
 
 }
@@ -1416,6 +1451,24 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        _("Color to draw the name of an action message."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 
+	/* Customizable typing notification ... sort of. Example:
+	 *   GtkIMHtml::typing-notification-font = "monospace italic light 8.0"
+	 *   GtkIMHtml::typing-notification-color = "#ff0000"
+	 *   GtkIMHtml::typing-notification-enable = 1
+	 */
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("typing-notification-color",
+	                                        _("Typing notification color"),
+	                                        _("The color to use for the typing notification font"),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_string("typing-notification-font",
+	                                        _("Typing notification font"),
+	                                        _("The font to use for the typing notification"),
+	                                        "light 8.0", G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boolean("typing-notification-enable",
+	                                        _("Enable typing notification"),
+	                                        _("Enable typing notification"),
+	                                        TRUE, G_PARAM_READABLE));
+
 	binding_set = gtk_binding_set_by_class (parent_class);
 	gtk_binding_entry_add_signal (binding_set, GDK_b, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_BOLD);
 	gtk_binding_entry_add_signal (binding_set, GDK_i, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_ITALIC);
@@ -1435,13 +1488,12 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 
 static void gtk_imhtml_init (GtkIMHtml *imhtml)
 {
-	GtkTextIter iter;
 	imhtml->text_buffer = gtk_text_buffer_new(NULL);
 	imhtml->undo_manager = gtk_source_undo_manager_new(imhtml->text_buffer);
-	gtk_text_buffer_get_end_iter (imhtml->text_buffer, &iter);
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->text_buffer);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
-	gtk_text_view_set_pixels_below_lines(GTK_TEXT_VIEW(imhtml), 5);
+	gtk_text_view_set_pixels_above_lines(GTK_TEXT_VIEW(imhtml), 2);
+	gtk_text_view_set_pixels_below_lines(GTK_TEXT_VIEW(imhtml), 3);
 	gtk_text_view_set_left_margin(GTK_TEXT_VIEW(imhtml), 2);
 	gtk_text_view_set_right_margin(GTK_TEXT_VIEW(imhtml), 2);
 	/*gtk_text_view_set_indent(GTK_TEXT_VIEW(imhtml), -15);*/
@@ -2250,8 +2302,7 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 					 GSList *unused)
 {
 	GtkTextIter iter, ins, sel;
-	GdkRectangle rect;
-	int y, height, ins_offset = 0, sel_offset = 0;
+	int ins_offset = 0, sel_offset = 0;
 	gboolean fixins = FALSE, fixsel = FALSE;
 
 	g_return_if_fail (imhtml != NULL);
@@ -2272,13 +2323,17 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 		sel_offset = gtk_text_iter_get_offset(&sel);
 	}
 
-	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
-	gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
+	if (!(options & GTK_IMHTML_NO_SCROLL)) {
+		GdkRectangle rect;
+		int y, height;
 
+		gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
+		gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
 
-	if(((y + height) - (rect.y + rect.height)) > height
-	   && gtk_text_buffer_get_char_count(imhtml->text_buffer)){
-		options |= GTK_IMHTML_NO_SCROLL;
+		if (((y + height) - (rect.y + rect.height)) > height &&
+				gtk_text_buffer_get_char_count(imhtml->text_buffer)) {
+			options |= GTK_IMHTML_NO_SCROLL;
+		}
 	}
 
 	gtk_imhtml_insert_html_at_iter(imhtml, text, options, &iter);
@@ -2404,6 +2459,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	ws = g_malloc(len + 1);
 	ws[0] = 0;
 
+	gtk_text_buffer_begin_user_action(imhtml->text_buffer);
 	while (pos < len) {
 		if (*c == '<' && gtk_imhtml_is_tag (c + 1, &tag, &tlen, &type)) {
 			c++;
@@ -2676,8 +2732,11 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 						if (sml)
 							font->sml = sml;
-						else if (oldfont && oldfont->sml)
-							font->sml = g_strdup(oldfont->sml);
+						else {
+							g_free(sml);
+							if (oldfont && oldfont->sml)
+								font->sml = g_strdup(oldfont->sml);
+						}
 
 						if (size && !(options & GTK_IMHTML_NO_SIZES) && (imhtml->format_functions & (GTK_IMHTML_GROW|GTK_IMHTML_SHRINK))) {
 							if (*size == '+') {
@@ -2729,7 +2788,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				case 46:	/* IMG (opt) */
 				case 59:	/* IMG */
 					{
-						const char *id;
+						char *id;
 
 						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 						ws[0] = '\0'; wpos = 0;
@@ -2741,6 +2800,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						if (!id)
 							break;
 						gtk_imhtml_insert_image_at_iter(imhtml, atoi(id), iter);
+						g_free(id);
 						break;
 					}
 				case 47:	/* P (opt) */
@@ -3128,6 +3188,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	g_signal_emit(object, signals[UPDATE_FORMAT], 0);
 	g_object_unref(object);
 
+	gtk_text_buffer_end_user_action(imhtml->text_buffer);
 }
 
 void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
@@ -4695,8 +4756,11 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	}
 
 	if (icon) {
+		char *text = g_strdup(unescaped); /* Do not g_free 'text'.
+		                                     It will be destroyed when 'anchor' is destroyed. */
 		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
-		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(unescaped), g_free);
+		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", text, g_free);
+		g_object_set_data(G_OBJECT(anchor), "gtkimhtml_tiptext", text);
 		g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley), g_free);
 
 		/* This catches the expose events generated by animated
@@ -4714,9 +4778,11 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		imhtml_smiley->anchors = g_slist_append(imhtml_smiley->anchors, anchor);
 		if (ebox) {
 			GtkWidget *img = gtk_image_new_from_stock(GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_MENU);
+			char *text = g_strdup(unescaped);
 			gtk_container_add(GTK_CONTAINER(ebox), img);
 			gtk_widget_show(img);
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(unescaped), g_free);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", text, g_free);
+			g_object_set_data(G_OBJECT(anchor), "gtkimhtml_tiptext", text);
 			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), ebox, anchor);
 		}
 	} else {

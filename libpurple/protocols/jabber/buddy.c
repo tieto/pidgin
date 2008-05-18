@@ -56,8 +56,7 @@ void jabber_buddy_free(JabberBuddy *jb)
 {
 	g_return_if_fail(jb != NULL);
 
-	if(jb->error_msg)
-		g_free(jb->error_msg);
+	g_free(jb->error_msg);
 	while(jb->resources)
 		jabber_buddy_resource_free(jb->resources->data);
 
@@ -155,12 +154,8 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 	}
 	jbr->priority = priority;
 	jbr->state = state;
-	if(jbr->status)
-		g_free(jbr->status);
-	if (status)
-		jbr->status = g_markup_escape_text(status, -1);
-	else
-		jbr->status = NULL;
+	g_free(jbr->status);
+	jbr->status = status != NULL ? g_markup_escape_text(status, -1) : NULL;
 
 	return jbr;
 }
@@ -502,6 +497,11 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	if(((JabberStream*)gc->proto_data)->pep) {
 		/* XEP-0084: User Avatars */
 		if(img) {
+			/*
+			 * TODO: This is pretty gross.  The Jabber PRPL really shouldn't
+			 *       do voodoo to try to determine the image type, height
+			 *       and width.
+			 */
 			/* A PNG header, including the IHDR, but nothing else */
 			const struct {
 				guchar signature[8]; /* must be hex 89 50 4E 47 0D 0A 1A 0A */
@@ -547,6 +547,7 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 				ctx = purple_cipher_context_new_by_name("sha1", NULL);
 				purple_cipher_context_append(ctx, purple_imgstore_get_data(img), purple_imgstore_get_size(img));
 				purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
+				purple_cipher_context_destroy(ctx);
 				
 				/* convert digest to a string */
 				hash = g_strdup_printf("%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x",digest[0],digest[1],digest[2],digest[3],digest[4],digest[5],digest[6],digest[7],digest[8],digest[9],digest[10],digest[11],digest[12],digest[13],digest[14],digest[15],digest[16],digest[17],digest[18],digest[19]);

@@ -413,7 +413,7 @@ static void yahoo_buddy_icon_upload_pending(gpointer data, gint source, PurpleIn
 {
 	struct yahoo_buddy_icon_upload_data *d = data;
 	PurpleConnection *gc = d->gc;
-	ssize_t wrote;
+	gssize wrote;
 
 	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
 		yahoo_buddy_icon_upload_data_free(d);

@@ -349,8 +349,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 		GSList *c;
 		for (c = group_ids; c != NULL; c = g_slist_next(c))
 		{
-			char *group_id;
-			group_id = c->data;
+			char *group_id = c->data;
 			msn_user_add_group_id(user, group_id);
 		}
 
@@ -714,7 +713,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 		char *str = g_strdup_printf(_("Unable to add \"%s\"."), who);
 		
 		purple_notify_error(NULL, NULL, str,
-				  _("The screen name specified is invalid."));
+				  _("The username specified is invalid."));
 		g_free(str);
 
 		return;

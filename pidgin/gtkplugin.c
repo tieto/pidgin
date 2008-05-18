@@ -42,7 +42,15 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model,
 
 static GtkWidget *expander = NULL;
 static GtkWidget *plugin_dialog = NULL;
-static GtkWidget *plugin_details = NULL;
+
+static GtkLabel *plugin_name = NULL;
+static GtkTextBuffer *plugin_desc = NULL;
+static GtkLabel *plugin_error = NULL;
+static GtkLabel *plugin_author = NULL;
+static GtkLabel *plugin_website = NULL;
+static gchar *plugin_website_uri = NULL;
+static GtkLabel *plugin_filename = NULL;
+
 static GtkWidget *pref_button = NULL;
 static GHashTable *plugin_pref_dialogs = NULL;
 
@@ -128,8 +136,8 @@ update_plugin_list(void *data)
 		gtk_list_store_append (ls, &iter);
 
 		name = g_markup_escape_text(plug->info->name ? _(plug->info->name) : g_basename(plug->path), -1);
-		version = g_markup_escape_text(plug->info->version, -1);
-		summary = g_markup_escape_text(_(plug->info->summary), -1);
+		version = g_markup_escape_text(purple_plugin_get_version(plug), -1);
+		summary = g_markup_escape_text(purple_plugin_get_summary(plug), -1);
 
 		desc = g_strdup_printf("<b>%s</b> %s\n%s", name,
 				       version,
@@ -277,7 +285,7 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 				PurplePlugin *dep_plugin = purple_plugins_find_with_id(dep_name);
 				g_return_if_fail(dep_plugin != NULL);
 
-				g_string_append_printf(tmp, "\n\t%s\n", _(dep_plugin->info->name));
+				g_string_append_printf(tmp, "\n\t%s\n", purple_plugin_get_name(dep_plugin));
 			}
 
 			cb_data = g_new(gpointer, 3);
@@ -301,9 +309,6 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 
 static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, GtkTreeIter *iter, gboolean unload)
 {
-	gchar *name = NULL;
-	gchar *description = NULL;
-
 	if (unload)
 	{
 		pidgin_set_cursor(plugin_dialog, GDK_WATCH);
@@ -337,30 +342,30 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 		 || (plug->info->prefs_info
 			&& plug->info->prefs_info->get_plugin_pref_frame)));
 
-	name = g_markup_escape_text(_(plug->info->name), -1);
-	description = g_markup_escape_text(_(plug->info->description), -1);
+	if (plug->error != NULL)
+	{
+		gchar *name = g_markup_escape_text(purple_plugin_get_name(plug), -1);
 
-	if (plug->error != NULL) {
 		gchar *error = g_markup_escape_text(plug->error, -1);
-		gchar *desc;
-		gchar *text = g_strdup_printf(
-				   "<span size=\"larger\">%s %s</span>\n\n"
-				   "<span weight=\"bold\" color=\"red\">%s</span>\n\n"
-				   "%s",
-				   name, plug->info->version, error, description);
-		desc = g_strdup_printf("<b>%s</b> %s\n<span weight=\"bold\" color=\"red\"%s</span>",
-			       plug->info->name, plug->info->version, error);
-		gtk_list_store_set(GTK_LIST_STORE (model), iter,
-				   1, desc,
-				   -1);
-		g_free(desc);
-		g_free(error);
-		gtk_label_set_markup(GTK_LABEL(plugin_details), text);
-		g_free(text);
-	}
-	g_free(name);
-	g_free(description);
+		gchar *text;
 
+		text = g_strdup_printf(
+			"<b>%s</b> %s\n<span weight=\"bold\" color=\"red\"%s</span>",
+			purple_plugin_get_name(plug), purple_plugin_get_version(plug), error);
+		gtk_list_store_set(GTK_LIST_STORE (model), iter,
+				   1, text,
+				   -1);
+		g_free(text);
+
+		text = g_strdup_printf(
+			"<span weight=\"bold\" color=\"red\">%s</span>",
+			error);
+		gtk_label_set_markup(plugin_error, text);
+		g_free(text);
+
+		g_free(error);
+		g_free(name);
+	}
 
 	gtk_list_store_set(GTK_LIST_STORE (model), iter,
 	                   0, purple_plugin_is_loaded(plug),
@@ -387,15 +392,13 @@ static gboolean ensure_plugin_visible(void *data)
 
 static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 {
-	gchar *buf, *pname, *pdesc, *pauth, *pweb;
+	gchar *buf, *tmp, *name, *version;
 	GtkTreeIter  iter;
 	GValue val;
 	PurplePlugin *plug;
 
 	if (!gtk_tree_selection_get_selected (sel, &model, &iter))
 	{
-		/* Clear the old plugin details */
-		gtk_label_set_markup(GTK_LABEL(plugin_details), "");
 		gtk_widget_set_sensitive(pref_button, FALSE);
 
 		/* Collapse and disable the expander widget */
@@ -411,32 +414,51 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	plug = g_value_get_pointer(&val);
 
-	pname = g_markup_escape_text(_(plug->info->name), -1);
-	pdesc = (plug->info->description) ?
-			g_markup_escape_text(_(plug->info->description), -1) : NULL;
-	pauth = (plug->info->author) ?
-			g_markup_escape_text(_(plug->info->author), -1) : NULL;
-	pweb = (plug->info->homepage) ?
-		   g_markup_escape_text(_(plug->info->homepage), -1) : NULL;
+	name = g_markup_escape_text(purple_plugin_get_name(plug), -1);
+	version = g_markup_escape_text(purple_plugin_get_version(plug), -1);
 	buf = g_strdup_printf(
-		   _("%s%s"
-		     "<span weight=\"bold\">Written by:</span>\t%s\n"
-		     "<span weight=\"bold\">Website:</span>\t\t%s\n"
-		     "<span weight=\"bold\">Filename:</span>\t\t%s"),
-		   pdesc ? pdesc : "", pdesc ? "\n\n" : "",
-		   pauth ? pauth : "", pweb ? pweb : "", plug->path);
+		"<span size=\"larger\" weight=\"bold\">%s</span> "
+		"<span size=\"smaller\">%s</span>",
+		name, version);
+	gtk_label_set_markup(plugin_name, buf);
+	g_free(buf);
 
-	if (plug->error != NULL)
+	gtk_text_buffer_set_text(plugin_desc, purple_plugin_get_description(plug), -1);
+	gtk_label_set_text(plugin_author, purple_plugin_get_author(plug));
+	gtk_label_set_text(plugin_filename, plug->path);
+
+	g_free(plugin_website_uri);
+	plugin_website_uri = g_strdup(purple_plugin_get_homepage(plug));
+	if (plugin_website_uri)
 	{
-		char *tmp = g_strdup_printf(
-			_("%s\n"
-			  "<span foreground=\"#ff0000\" weight=\"bold\">"
+		tmp = g_markup_escape_text(plugin_website_uri, -1);
+		buf = g_strdup_printf("<span underline=\"single\" "
+			"foreground=\"blue\">%s</span>", tmp);
+		gtk_label_set_markup(plugin_website, buf);
+		g_free(tmp);
+		g_free(buf);
+	}
+	else
+	{
+		gtk_label_set_text(plugin_website, NULL);
+	}
+
+	if (plug->error == NULL)
+	{
+		gtk_label_set_text(plugin_error, NULL);
+	}
+	else
+	{
+		tmp = g_markup_escape_text(plug->error, -1);
+		buf = g_strdup_printf(
+			_("<span foreground=\"red\" weight=\"bold\">"
 			  "Error: %s\n"
 			  "Check the plugin website for an update."
 			  "</span>"),
-			buf, plug->error);
+			tmp);
+		gtk_label_set_markup(plugin_error, buf);
 		g_free(buf);
-		buf = tmp;
+		g_free(tmp);
 	}
 
 	gtk_widget_set_sensitive(pref_button,
@@ -446,18 +468,10 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		 || (plug->info->prefs_info
 			&& plug->info->prefs_info->get_plugin_pref_frame)));
 
-	gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
-
 	/* Make sure the selected plugin is still visible */
 	g_idle_add(ensure_plugin_visible, sel);
 
-
 	g_value_unset(&val);
-	g_free(buf);
-	g_free(pname);
-	g_free(pdesc);
-	g_free(pauth);
-	g_free(pweb);
 }
 
 static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelection *sel)
@@ -588,6 +602,102 @@ pidgin_plugins_create_tooltip(GtkWidget *tipwindow, GtkTreePath *path,
 	return TRUE;
 }
 
+static gboolean
+website_button_motion_cb(GtkWidget *button, GdkEventCrossing *event,
+                          gpointer unused)
+{
+	if (plugin_website_uri) {
+		pidgin_set_cursor(button, GDK_HAND2);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
+website_button_clicked_cb(GtkButton *button, GdkEventButton *event,
+                          gpointer unused)
+{
+	if (plugin_website_uri) {
+		purple_notify_uri(NULL, plugin_website_uri);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static GtkWidget *
+create_details()
+{
+	GtkBox *vbox = GTK_BOX(gtk_vbox_new(FALSE, 3));
+	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	GtkWidget *label, *view, *website_button;
+
+	plugin_name = GTK_LABEL(gtk_label_new(NULL));
+	gtk_misc_set_alignment(GTK_MISC(plugin_name), 0, 0);
+	gtk_label_set_line_wrap(plugin_name, FALSE);
+	gtk_label_set_selectable(plugin_name, TRUE);
+	gtk_box_pack_start(vbox, GTK_WIDGET(plugin_name), FALSE, FALSE, 0);
+
+	view = gtk_text_view_new();
+	plugin_desc = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+	g_object_set(view, "wrap-mode", GTK_WRAP_WORD,
+	                   "editable",  FALSE,
+	                   "left-margin",  PIDGIN_HIG_CAT_SPACE,
+	                   "right-margin", PIDGIN_HIG_CAT_SPACE,
+	                   NULL);
+	gtk_box_pack_start(vbox, view, TRUE, TRUE, 0);
+
+	plugin_error = GTK_LABEL(gtk_label_new(NULL));
+	gtk_misc_set_alignment(GTK_MISC(plugin_error), 0, 0);
+	gtk_label_set_line_wrap(plugin_error, FALSE);
+	gtk_label_set_selectable(plugin_error, TRUE);
+	gtk_box_pack_start(vbox, GTK_WIDGET(plugin_error), FALSE, FALSE, 0);
+
+	plugin_author = GTK_LABEL(gtk_label_new(NULL));
+	gtk_label_set_line_wrap(plugin_author, FALSE);
+	gtk_misc_set_alignment(GTK_MISC(plugin_author), 0, 0);
+	gtk_label_set_selectable(plugin_author, TRUE);
+	pidgin_add_widget_to_vbox(vbox, "", sg,
+		GTK_WIDGET(plugin_author), TRUE, &label);
+	gtk_label_set_markup(GTK_LABEL(label), _("<b>Written by:</b>"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+
+	website_button = gtk_event_box_new();
+#if GTK_CHECK_VERSION(2,4,0)
+	gtk_event_box_set_visible_window(GTK_EVENT_BOX(website_button), FALSE);
+#endif
+
+	plugin_website = GTK_LABEL(gtk_label_new(NULL));
+#if GTK_CHECK_VERSION(2,6,0)
+	g_object_set(G_OBJECT(plugin_website),
+		"ellipsize", PANGO_ELLIPSIZE_MIDDLE, NULL);
+#endif
+	gtk_misc_set_alignment(GTK_MISC(plugin_website), 0, 0);
+	gtk_container_add(GTK_CONTAINER(website_button),
+		GTK_WIDGET(plugin_website));
+	g_signal_connect(website_button, "button-release-event",
+		G_CALLBACK(website_button_clicked_cb), NULL);
+	g_signal_connect(website_button, "enter-notify-event",
+		G_CALLBACK(website_button_motion_cb), NULL);
+	g_signal_connect(website_button, "leave-notify-event",
+		G_CALLBACK(pidgin_clear_cursor), NULL);
+
+	pidgin_add_widget_to_vbox(vbox, "", sg, website_button, TRUE, &label);
+	gtk_label_set_markup(GTK_LABEL(label), _("<b>Web site:</b>"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+
+	plugin_filename = GTK_LABEL(gtk_label_new(NULL));
+	gtk_label_set_line_wrap(plugin_filename, FALSE);
+	gtk_misc_set_alignment(GTK_MISC(plugin_filename), 0, 0);
+	gtk_label_set_selectable(plugin_filename, TRUE);
+	pidgin_add_widget_to_vbox(vbox, "", sg,
+		GTK_WIDGET(plugin_filename), TRUE, &label);
+	gtk_label_set_markup(GTK_LABEL(label), _("<b>Filename:</b>"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+
+	return GTK_WIDGET(vbox);
+}
+
+
 void pidgin_plugin_dialog_show()
 {
 	GtkWidget *sw;
@@ -674,16 +784,17 @@ void pidgin_plugin_dialog_show()
 			pidgin_plugins_create_tooltip,
 			pidgin_plugins_paint_tooltip);
 
+
 	expander = gtk_expander_new(_("<b>Plugin Details</b>"));
 	gtk_expander_set_use_markup(GTK_EXPANDER(expander), TRUE);
-	plugin_details = gtk_label_new(NULL);
-	gtk_label_set_line_wrap(GTK_LABEL(plugin_details), TRUE);
-	gtk_container_add(GTK_CONTAINER(expander), plugin_details);
 	gtk_widget_set_sensitive(expander, FALSE);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(plugin_dialog)->vbox), expander, FALSE, FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(expander), create_details());
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(plugin_dialog)->vbox), expander,
+		FALSE, FALSE, 0);
+
 
 	g_signal_connect (G_OBJECT (sel), "changed", G_CALLBACK (prefs_plugin_sel), NULL);
 	g_signal_connect(G_OBJECT(plugin_dialog), "response", G_CALLBACK(plugin_dialog_response_cb), sel);
-	gtk_window_set_default_size(GTK_WINDOW(plugin_dialog), 430, 430);
+	gtk_window_set_default_size(GTK_WINDOW(plugin_dialog), 430, 530);
 	gtk_widget_show_all(plugin_dialog);
 }

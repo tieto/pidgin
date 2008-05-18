@@ -2789,14 +2789,34 @@ plugin_unload(PurplePlugin *plugin)
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	purple_log_logger_remove(adium_logger);
+	purple_log_logger_free(adium_logger);
+	adium_logger = NULL;
+
 #if 0
 	purple_log_logger_remove(fire_logger);
+	purple_log_logger_free(fire_logger);
+	fire_logger = NULL;
+
 	purple_log_logger_remove(messenger_plus_logger);
+	purple_log_logger_free(messenger_plus_logger);
+	messenger_plus_logger = NULL;
 #endif
+
 	purple_log_logger_remove(msn_logger);
+	purple_log_logger_free(msn_logger);
+	msn_logger = NULL;
+
 	purple_log_logger_remove(trillian_logger);
+	purple_log_logger_free(trillian_logger);
+	trillian_logger = NULL;
+
 	purple_log_logger_remove(qip_logger);
+	purple_log_logger_free(qip_logger);
+	qip_logger = NULL;
+
 	purple_log_logger_remove(amsn_logger);
+	purple_log_logger_free(amsn_logger);
+	amsn_logger = NULL;
 
 	return TRUE;
 }

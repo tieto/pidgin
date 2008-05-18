@@ -9,13 +9,13 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.4.1"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.4.2"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.4.1
+%define pidginver 2.4.2
 %endif
 
 # define the minimum API version required, so we can use it for plugin deps
-%define apiver %(echo "2.4.1"|awk -F. '{print $1"."$2}')
+%define apiver %(echo "2.4.2"|awk -F. '{print $1"."$2}')
 
 Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       pidgin
@@ -24,7 +24,7 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.4.1.tar.bz2
+Source:     %{name}-2.4.2.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
@@ -40,6 +40,8 @@ BuildRequires: gtk2-devel
 %{!?_without_silc:BuildRequires: /usr/include/silc/silcclient.h}
 %{!?_without_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
 %{!?_without_text:BuildRequires: ncurses-devel}
+%{!?_without_nm:BuildRequires: NetworkManager-devel}
+%{!?_without_gevolution:BuildRequires: evolution-data-server-devel}
 
 %if "%{_vendor}" == "suse"
 # For SuSE:
@@ -213,7 +215,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.4.1
+%setup -q -n %{name}-2.4.2
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -225,8 +227,11 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --sysconfdir=%{_sysconfdir} \
                                     --disable-schemas-install \
                                     %{!?_with_dbus:--disable-dbus} \
+                                    %{!?_with_avahi:--disable-avahi} \
                                     %{?_without_gstreamer:--disable-gstreamer} \
                                     %{?_without_gtkspell:--disable-gtkspell} \
+                                    %{?_without_nm:--disable-nm} \
+                                    %{!?_without_gevolution:--enable-gevolution} \
                                     %{?_with_mono:--enable-mono} \
                                     %{?_with_perlmakehack:--with-perl-lib=%{buildroot}%{_prefix}} \
                                     %{!?_with_perlmakehack:--with-perl-lib=%{_prefix}} \
@@ -468,6 +473,9 @@ fi
 %endif
 
 %changelog
+* Fri May 16 2008 Stu Tomlinson <stu@nosnilmot.com>
+- Add "--without nm" support to build without NetworkManager
+
 * Thu Feb 28 2008 Stu Tomlinson <stu@nosnilmot.com>
 - Remove --with-howl options as we no longer support using howl for bonjour
 

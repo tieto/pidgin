@@ -16,7 +16,7 @@ nextmicro=$(shell expr ${micro} + 1)
 DEB_BUILDDIR = $(DEB_SRCDIR)/build
 DEB_CONFIGURE_SCRIPT = $(CURDIR)/configure
 DEB_CONFIGURE_INVOKE = cd "$(DEB_BUILDDIR)"; $(DEB_CONFIGURE_SCRIPT_ENV) \
-	../configure $(DEB_CONFIGURE_NORMAL_ARGS)
+	../configure $(DEB_CONFIGURE_NORMAL_ARGS) --enable-gevolution --enable-cap
 LDFLAGS = -Wl,--as-needed
 CFLAGS = -fstack-protector
 
@@ -26,6 +26,7 @@ DEB_DH_SHLIBDEPS_ARGS_pidgin := -X/usr/lib/pidgin/gevolution.so -X/usr/lib/pidgi
 
 # finch package
 DEB_DH_MAKESHLIBS_ARGS_finch := -V -X/usr/lib/finch
+DEB_DH_SHLIBDEPS_ARGS_finch := -X/usr/lib/finch/gntclipboard.so -X/usr/lib/finch/gntgf.so -- -dSuggests debian/finch/usr/lib/finch/gntclipboard.so debian/finch/usr/lib/finch/gntgf.so -dDepends
 
 # libpurple package
 DEB_DH_MAKESHLIBS_ARGS_libpurple0 := -V "libpurple0 (>= $(major).0)" -X/usr/lib/purple-2

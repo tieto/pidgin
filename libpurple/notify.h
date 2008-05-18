@@ -596,7 +596,7 @@ void purple_notify_user_info_remove_last_item(PurpleNotifyUserInfo *user_info);
  *
  * @result                    The label
  */
-gchar *purple_notify_user_info_entry_get_label(PurpleNotifyUserInfoEntry *user_info_entry);
+const gchar *purple_notify_user_info_entry_get_label(PurpleNotifyUserInfoEntry *user_info_entry);
 
 /**
  * Set the label for a PurpleNotifyUserInfoEntry
@@ -613,7 +613,7 @@ void purple_notify_user_info_entry_set_label(PurpleNotifyUserInfoEntry *user_inf
  *
  * @result                    The value
  */
-gchar *purple_notify_user_info_entry_get_value(PurpleNotifyUserInfoEntry *user_info_entry);
+const gchar *purple_notify_user_info_entry_get_value(PurpleNotifyUserInfoEntry *user_info_entry);
 
 /**
  * Set the value for a PurpleNotifyUserInfoEntry

@@ -11,7 +11,7 @@ Build-Depends: cdbs (>= 0.4.37), debhelper (>= 5.0.0),
  libebook1.2-dev, libedata-book1.2-dev, libcamel1.2-dev,
  libdbus-glib-1-dev, dbus, python (>= 2.4), libavahi-client-dev,
  libavahi-glib-dev, libxml-parser-perl, libncursesw5-dev, libsasl2-dev,
- xsltproc, doxygen,
+ xsltproc, doxygen, network-manager-dev
  libsilc-1.1-2-dev | libsilc-dev (>= 1.1.1), libsqlite3-dev (>= 3.3)
 Standards-Version: 3.7.2
 XS-Vcs-Svn: svn://svn.debian.org/svn/collab-maint/deb-maint/pidgin/
@@ -101,6 +101,7 @@ Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:U
 Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
 Replaces: gaim (<< 1:2.0.0+beta6-3), pidgin (<< 2.1.1-2), pidgin-data (<< 2.4.0-1)
 Conflicts: gaim (<< 1:2.0.0+beta6-3), pidgin (<< 2.1.1-2), pidgin-data (<< 2.4.0-1)
+Suggests:  ${shlibs:Suggests}
 Description: text-based multi-protocol instant messaging client
  Finch is a text/console-based, modular instant messaging client capable of
  using AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, Gadu-Gadu, Bonjour,
@@ -110,6 +111,10 @@ Description: text-based multi-protocol instant messaging client
  in most finch installations:
   * gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
     - Sound support.
+ .
+ More extra packages are suggested to use increased functionality:
+  * libx11-6
+    - To use the Clipboard and/or Toaster plugins.
 
 Package: finch-dev
 Section: devel

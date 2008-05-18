@@ -620,7 +620,7 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *widt
 	struct smiley_button_list *cur;
 	struct smiley_button_list *it, *it_last;
 
-	cur = malloc(sizeof(struct smiley_button_list));
+	cur = g_new0(struct smiley_button_list, 1);
 	it = ls;
 	it_last = ls; /* list iterators*/
 	image = gtk_image_new_from_file(filename);
@@ -732,10 +732,9 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		while (unique_smileys) {
 			GtkIMHtmlSmiley *smiley = unique_smileys->data;
 			if (!smiley->hidden) {
-				fflush(stdout);
 				ls = sort_smileys(ls, toolbar, &max_line_width, smiley->file, smiley->smile);
 			}
-			unique_smileys = unique_smileys->next;
+			unique_smileys = g_slist_delete_link(unique_smileys, unique_smileys);
 		}
 		/* pack buttons of the list */
 		max_line_width = max_line_width / num_lines;
@@ -754,7 +753,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 			}
 			col++;
 			it = it->next;
-			free(it_tmp);
+			g_free(it_tmp);
 		}
 		gtk_box_pack_start(GTK_BOX(smiley_table), line, FALSE, TRUE, 0);
 

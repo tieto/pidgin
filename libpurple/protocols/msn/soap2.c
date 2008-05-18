@@ -33,7 +33,9 @@
 #include "xmlnode.h"
 
 #include <glib.h>
+#if !defined(_WIN32) || !defined(_WINERROR_)
 #include <error.h>
+#endif
 
 #define SOAP_TIMEOUT (5 * 60)
 
@@ -261,7 +263,7 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 static void
 msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 {
-    MsnSoapConnection *conn = data;
+	MsnSoapConnection *conn = data;
 	int count = 0, cnt;
 	char buf[8192];
 	char *linebreak;
@@ -382,7 +384,7 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	}
 
 	if (!handled && conn->headers_done) {
-		if (conn->buf->len - conn->handled_len >= 
+		if (conn->buf->len - conn->handled_len >=
 			conn->body_len) {
 			xmlnode *node = xmlnode_from_str(cursor, conn->body_len);
 
@@ -394,8 +396,11 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 				conn->message = NULL;
 				message->xml = node;
 
-				if (!msn_soap_handle_body(conn, message))
+				if (!msn_soap_handle_body(conn, message)) {
+					msn_soap_message_destroy(message);
 					return;
+				}
+				msn_soap_message_destroy(message);
 			}
 
 			msn_soap_connection_handle_next(conn);
@@ -508,7 +513,7 @@ msn_soap_connection_run(gpointer data)
 
 			g_free(authstr);
 			g_free(body);
-		}		
+		}
 	}
 
 	return FALSE;
@@ -643,12 +648,12 @@ msn_soap_message_destroy(MsnSoapMessage *message)
 }
 
 void
-msn_soap_message_add_header(MsnSoapMessage *req,
+msn_soap_message_add_header(MsnSoapMessage *message,
 		const char *name, const char *value)
 {
 	char *header = g_strdup_printf("%s: %s\r\n", name, value);
 
-	req->headers = g_slist_prepend(req->headers, header);
+	message->headers = g_slist_prepend(message->headers, header);
 }
 
 static void

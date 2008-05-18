@@ -544,7 +544,7 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	msn_message_show_readable(msg, "SB SEND", FALSE);
 #endif
 
-	trans = msn_transaction_new(cmdproc, "MSG", "%c %d",
+	trans = msn_transaction_new(cmdproc, "MSG", "%c %" G_GSIZE_FORMAT,
 								msn_message_get_flag(msg), payload_len);
 
 	/* Data for callbacks */

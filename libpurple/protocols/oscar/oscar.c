@@ -1822,7 +1822,9 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		else
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
 	} else {
-		if (buddy_is_away)
+		if (type & AIM_ICQ_STATE_INVISIBLE)
+			status_id = OSCAR_STATUS_ID_INVISIBLE;
+		else if (buddy_is_away)
 			status_id = OSCAR_STATUS_ID_AWAY;
 		else
 			status_id = OSCAR_STATUS_ID_AVAILABLE;
@@ -2274,19 +2276,6 @@ purple_auth_request(struct name_data *data, char *msg)
 }
 
 static void
-purple_auth_dontrequest(struct name_data *data)
-{
-	PurpleConnection *gc = data->gc;
-	PurpleBuddy *b = purple_find_buddy(purple_connection_get_account(gc), data->name);
-
-	/* Remove from local list */
-	purple_blist_remove_buddy(b);
-
-	oscar_free_name_data(data);
-}
-
-
-static void
 purple_auth_sendrequest(PurpleConnection *gc, const char *name)
 {
 	struct name_data *data;
@@ -2298,11 +2287,10 @@ purple_auth_sendrequest(PurpleConnection *gc, const char *name)
 	purple_request_input(data->gc, NULL, _("Authorization Request Message:"),
 					   NULL, _("Please authorize me!"), TRUE, FALSE, NULL,
 					   _("_OK"), G_CALLBACK(purple_auth_request),
-					   _("_Cancel"), G_CALLBACK(purple_auth_dontrequest),
+					   _("_Cancel"), G_CALLBACK(oscar_free_name_data),
 					   purple_connection_get_account(gc), name, NULL,
 					   data);
 }
-
 
 static void
 purple_auth_sendrequest_menu(PurpleBlistNode *node, gpointer ignored)
@@ -3629,7 +3617,11 @@ static int purple_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 	if (purple_account_get_user_info(account) != NULL)
 		serv_set_info(gc, purple_account_get_user_info(account));
 
-	if (!od->icq)
+	if (!od->icq && strcmp(purple_account_get_username(account), purple_connection_get_display_name(gc)) != 0)
+		/*
+		 * Format the screen name for AIM accounts if it's different
+		 * than what's currently set.
+		 */
 		oscar_format_screenname(gc, account->username);
 
 	/* Set our available message based on the current status */
@@ -4556,7 +4548,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 	{
 		/* Do nothing! */
 	}
-	else if (primitive == PURPLE_STATUS_AVAILABLE)
+	else if (primitive == PURPLE_STATUS_AVAILABLE || primitive == PURPLE_STATUS_INVISIBLE)
 	{
 		const char *status_html, *itmsurl;
 		char *status_text = NULL;
@@ -4799,12 +4791,6 @@ static int purple_ssi_parseerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	}
 
 	oscar_set_extendedstatus(gc);
-
-	/* Activate SSI */
-	/* Sending the enable causes other people to be able to see you, and you to see them */
-	/* Make sure your privacy setting/invisibility is set how you want it before this! */
-	purple_debug_info("oscar", "ssi: activating server-stored buddy list\n");
-	aim_ssi_enable(od);
 
 	return 1;
 }
@@ -5298,7 +5284,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	else
 		nombre = g_strdup(sn);
 
-	dialog_msg = g_strdup_printf(_("The user %s has given you permission to add you to their buddy list.  Do you want to add them?"), nombre);
+	dialog_msg = g_strdup_printf(_("The user %s has given you permission to add him or her to your buddy list.  Do you want to add this user?"), nombre);
 	g_free(nombre);
 
 	data = g_new(struct name_data, 1);

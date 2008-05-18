@@ -616,3 +616,26 @@ purple_perl_sv_from_vargs(const PurpleValue *value, va_list *args, void ***copy_
 
 	return NULL;
 }
+
+SV *purple_perl_sv_from_fun(PurplePlugin *plugin, SV *callback)
+{
+	SV *sv = NULL;
+
+	if (SvTYPE(callback) == SVt_RV) {
+		SV *cbsv = SvRV(callback);
+
+		if (SvTYPE(cbsv) == SVt_PVCV) {
+			sv = newSVsv(callback);
+		}
+	} else if (SvTYPE(callback) == SVt_PV) {
+		PurplePerlScript *gps;
+
+		gps = (PurplePerlScript *)PURPLE_PLUGIN_LOADER_INFO(plugin);
+		sv = newSVpvf("%s::%s", gps->package, SvPV_nolen(callback));
+	} else {
+		purple_debug_warning("perl", "Callback not a valid type, only strings and coderefs allowed.\n");
+	}
+
+	return sv;
+}
+

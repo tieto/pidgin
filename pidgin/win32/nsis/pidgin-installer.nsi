@@ -49,6 +49,7 @@ SetDateSave on
 !include "WordFunc.nsh"
 !insertmacro VersionCompare
 !insertmacro WordFind
+!insertmacro un.WordFind
 
 ;--------------------------------
 ;Defines
@@ -549,23 +550,18 @@ SectionGroupEnd
 
 ;--------------------------------
 ;URI Handling
+
+!macro URI_SECTION proto
+  Section /o "${proto}:" SecURI_${proto}
+    Push "${proto}"
+    Call RegisterURIHandler
+  SectionEnd
+!macroend
 SectionGroup /e $(URI_HANDLERS_SECTION_TITLE) SecURIHandlers
-  Section /o "aim:" SecURI_AIM
-    Push "aim"
-    Call RegisterURIHandler
-  SectionEnd
-  Section /o "msnim:" SecURI_MSNIM
-    Push "msnim"
-    Call RegisterURIHandler
-  SectionEnd
-  Section /o "myim:" SecURI_MYIM
-    Push "myim"
-    Call RegisterURIHandler
-  SectionEnd
-  Section /o "ymsgr:" SecURI_YMSGR
-    Push "ymsgr"
-    Call RegisterURIHandler
-  SectionEnd
+  !insertmacro URI_SECTION "aim"
+  !insertmacro URI_SECTION "msnim"
+  !insertmacro URI_SECTION "myim"
+  !insertmacro URI_SECTION "ymsgr"
 SectionGroupEnd
 
 ;--------------------------------
@@ -694,7 +690,19 @@ Section Uninstall
     ; The WinPrefs plugin may have left this behind..
     DeleteRegValue HKCU "${STARTUP_RUN_KEY}" "Pidgin"
     DeleteRegValue HKLM "${STARTUP_RUN_KEY}" "Pidgin"
-    ; Remove Language preference info (TODO: check if NSIS removes this)
+    ; Remove Language preference info
+    DeleteRegValue HKCU "${PIDGIN_REG_KEY}" "Installer Language"
+
+    ; Remove any URI handlers
+    ; I can't think of an easy way to maintain a list in a single place
+    Push "aim"
+    Call un.UnregisterURIHandler
+    Push "msnim"
+    Call un.UnregisterURIHandler
+    Push "myim"
+    Call un.UnregisterURIHandler
+    Push "ymsgr"
+    Call un.UnregisterURIHandler
 
     Delete "$INSTDIR\ca-certs\Equifax_Secure_CA.pem"
     Delete "$INSTDIR\ca-certs\GTE_CyberTrust_Global_Root.pem"
@@ -903,12 +911,12 @@ Function SelectURIHandlerSelections
   ReadRegStr $R3 HKCR "$R2" ""
   IfErrors default_on ;there is no current handler
 
-  ; Check if Pidgin is the current handler
-  ClearErrors
-  ReadRegStr $R3 HKCR "$R2\shell\Open\command" ""
-  IfErrors end_loop
-  ${WordFind} "$R3" "pidgin.exe" "E+1{" $R3
-  IfErrors end_loop default_on
+  Push $R2
+  Call CheckIfPidginIsCurrentURIHandler
+  Pop $R3
+
+  ; If Pidgin isn't the current handler, we don't steal it automatically
+  IntCmp $R3 0 end_loop
 
   ;We default the URI handler checkbox on
   default_on:
@@ -926,9 +934,58 @@ Function SelectURIHandlerSelections
   Pop $R0
 FunctionEnd ;SelectURIHandlerSections
 
+; Check if Pidgin is the current handler
+; Returns a boolean on the stack
+!macro CheckIfPidginIsCurrentURIHandlerMacro UN
+Function ${UN}CheckIfPidginIsCurrentURIHandler
+  Exch $R0
+  ClearErrors
+
+  ReadRegStr $R0 HKCR "$R0\shell\Open\command" ""
+  IfErrors 0 +3
+    IntOp $R0 0 + 0
+    Goto done
+
+  !ifdef __UNINSTALL__
+  ${un.WordFind} "$R0" "pidgin.exe" "E+1{" $R0
+  !else
+  ${WordFind} "$R0" "pidgin.exe" "E+1{" $R0
+  !endif
+  IntOp $R0 0 + 1
+  IfErrors 0 +2
+    IntOp $R0 0 + 0
+
+  done:
+  Exch $R0
+FunctionEnd
+!macroend
+!insertmacro CheckIfPidginIsCurrentURIHandlerMacro ""
+!insertmacro CheckIfPidginIsCurrentURIHandlerMacro "un."
+
+; If Pidgin is the current URI handler for the specified protocol, remove it.
+Function un.UnregisterURIHandler
+  Exch $R0
+  Push $R1
+
+  Push $R0
+  Call un.CheckIfPidginIsCurrentURIHandler
+  Pop $R1
+
+  ; If Pidgin isn't the current handler, leave it as-is
+  IntCmp $R1 0 done
+
+  ;Unregister the URI handler
+  DetailPrint "Unregistering $R0 URI Handler"
+  DeleteRegKey HKCR "$R0"
+
+  done:
+  Pop $R1
+  Pop $R0
+FunctionEnd
 
 Function RegisterURIHandler
   Exch $R0
+  DetailPrint "Registering $R0 URI Handler"
   DeleteRegKey HKCR "$R0"
   WriteRegStr HKCR "$R0" "" "URL:$R0"
   WriteRegStr HKCR "$R0" "URL Protocol" ""
@@ -1198,12 +1255,14 @@ Function .onInit
   StrCpy $SPELLCHECK_SEL ""
 
   ;Try to copy the old Gaim installer Lang Reg. key
+  ;(remove it after we're done to prevent this being done more than once)
   ClearErrors
   ReadRegStr $R0 HKCU "${PIDGIN_REG_KEY}" "Installer Language"
   IfErrors 0 +5
   ClearErrors
-  ReadRegStr $R0 HKCU "SOFTWARE\gaim" "Installer Language"
-  IfErrors +2
+  ReadRegStr $R0 HKCU "${OLD_GAIM_REG_KEY}" "Installer Language"
+  IfErrors +3
+  DeleteRegValue HKCU "${OLD_GAIM_REG_KEY}" "Installer Language"
   WriteRegStr HKCU "${PIDGIN_REG_KEY}" "Installer Language" "$R0"
 
   !insertmacro SetSectionFlag ${SecSpellCheck} ${SF_RO}
@@ -1321,6 +1380,7 @@ FunctionEnd
 Function un.onInit
   Call un.RunCheck
   StrCpy $name "Pidgin ${PIDGIN_VERSION}"
+;LogSet on
 
   ; Get stored language preference
   !insertmacro MUI_UNGETLANGUAGE

@@ -133,38 +133,38 @@ jabber_parser_element_text_libxml(void *user_data, const xmlChar *text, int text
 }
 
 static xmlSAXHandler jabber_parser_libxml = {
-	.internalSubset         = NULL,
-	.isStandalone           = NULL,
-	.hasInternalSubset      = NULL,
-	.hasExternalSubset      = NULL,
-	.resolveEntity          = NULL,
-	.getEntity              = NULL,
-	.entityDecl             = NULL,
-	.notationDecl           = NULL,
-	.attributeDecl          = NULL,
-	.elementDecl            = NULL,
-	.unparsedEntityDecl     = NULL,
-	.setDocumentLocator     = NULL,
-	.startDocument          = NULL,
-	.endDocument            = NULL,
-	.startElement           = NULL,
-	.endElement             = NULL,
-	.reference              = NULL,
-	.characters             = jabber_parser_element_text_libxml,
-	.ignorableWhitespace    = NULL,
-	.processingInstruction  = NULL,
-	.comment                = NULL,
-	.warning                = NULL,
-	.error                  = NULL,
-	.fatalError             = NULL,
-	.getParameterEntity     = NULL,
-	.cdataBlock             = NULL,
-	.externalSubset         = NULL,
-	.initialized            = XML_SAX2_MAGIC,
-	._private               = NULL,
-	.startElementNs         = jabber_parser_element_start_libxml,
-	.endElementNs           = jabber_parser_element_end_libxml,
-	.serror                 = NULL
+	NULL,									/*internalSubset*/
+	NULL,									/*isStandalone*/
+	NULL,									/*hasInternalSubset*/
+	NULL,									/*hasExternalSubset*/
+	NULL,									/*resolveEntity*/
+	NULL,									/*getEntity*/
+	NULL,									/*entityDecl*/
+	NULL,									/*notationDecl*/
+	NULL,									/*attributeDecl*/
+	NULL,									/*elementDecl*/
+	NULL,									/*unparsedEntityDecl*/
+	NULL,									/*setDocumentLocator*/
+	NULL,									/*startDocument*/
+	NULL,									/*endDocument*/
+	NULL,									/*startElement*/
+	NULL,									/*endElement*/
+	NULL,									/*reference*/
+	jabber_parser_element_text_libxml,		/*characters*/
+	NULL,									/*ignorableWhitespace*/
+	NULL,									/*processingInstruction*/
+	NULL,									/*comment*/
+	NULL,									/*warning*/
+	NULL,									/*error*/
+	NULL,									/*fatalError*/
+	NULL,									/*getParameterEntity*/
+	NULL,									/*cdataBlock*/
+	NULL,									/*externalSubset*/
+	XML_SAX2_MAGIC,							/*initialized*/
+	NULL,									/*_private*/
+	jabber_parser_element_start_libxml,		/*startElementNs*/
+	jabber_parser_element_end_libxml,		/*endElementNs*/
+	NULL									/*serror*/
 };
 
 void

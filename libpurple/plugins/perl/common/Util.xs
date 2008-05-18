@@ -1,11 +1,11 @@
 #include "module.h"
 
-typedef struct {
-	char *cb;
-} PurplePerlUrlData;
-
-static void purple_perl_util_url_cb(PurpleUtilFetchUrlData *url_data, void *user_data, const gchar *url_text, size_t size, const gchar *error_message) {
-	PurplePerlUrlData *gpr = (PurplePerlUrlData *)user_data;
+static void
+purple_perl_util_url_cb(PurpleUtilFetchUrlData *url_data, void *user_data,
+                        const gchar *url_text, size_t size,
+                        const gchar *error_message)
+{
+	SV *sv = (SV *)user_data;
 	dSP;
 	ENTER;
 	SAVETMPS;
@@ -14,11 +14,12 @@ static void purple_perl_util_url_cb(PurpleUtilFetchUrlData *url_data, void *user
 	XPUSHs(sv_2mortal(newSVpvn(url_text, size)));
 	PUTBACK;
 
-	call_pv(gpr->cb, G_EVAL | G_SCALAR);
+	call_sv(sv, G_EVAL | G_SCALAR);
 	SPAGAIN;
 
-	g_free(gpr->cb);
-	g_free(gpr);
+	/* XXX Make sure this destroys it correctly and that we don't want
+	 * something like sv_2mortal(sv) or something else here instead. */
+	SvREFCNT_dec(sv);
 
 	PUTBACK;
 	FREETMPS;
@@ -248,25 +249,22 @@ MODULE = Purple::Util  PACKAGE = Purple::Util  PREFIX = purple_util_
 PROTOTYPES: ENABLE
 
 void
-purple_util_fetch_url(handle, url, full, user_agent, http11, cb)
-	Purple::Plugin handle
+purple_util_fetch_url(plugin, url, full, user_agent, http11, cb)
+	Purple::Plugin plugin
 	const char *url
 	gboolean full
 	const char *user_agent
 	gboolean http11
 	SV * cb
 CODE:
-	PurplePerlUrlData *gpr;
-	STRLEN len;
-	char *basename;
+	SV *sv = purple_perl_sv_from_fun(plugin, cb);
 
-	basename = g_path_get_basename(handle->path);
-	purple_perl_normalize_script_name(basename);
-	gpr = g_new(PurplePerlUrlData, 1);
-
-	gpr->cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cb, len));
-	g_free(basename);
-	purple_util_fetch_url(url, full, user_agent, http11, purple_perl_util_url_cb, gpr);
+	if (sv != NULL) {
+		purple_util_fetch_url(url, full, user_agent, http11,
+		                      purple_perl_util_url_cb, sv);
+	} else {
+		purple_debug_warning("perl", "Callback not a valid type, only strings and coderefs allowed in purple_util_fetch_url.\n");
+	}
 
 void
 purple_util_set_user_dir(dir)

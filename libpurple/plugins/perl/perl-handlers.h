@@ -48,8 +48,9 @@ PurplePluginPrefFrame *purple_perl_get_plugin_frame(PurplePlugin *plugin);
 GtkWidget *purple_perl_gtk_get_plugin_frame(PurplePlugin *plugin);
 #endif
 
-void purple_perl_timeout_add(PurplePlugin *plugin, int seconds, SV *callback,
-                           SV *data);
+guint purple_perl_timeout_add(PurplePlugin *plugin, int seconds, SV *callback,
+                              SV *data);
+gboolean purple_perl_timeout_remove(guint handle);
 void purple_perl_timeout_clear_for_plugin(PurplePlugin *plugin);
 void purple_perl_timeout_clear(void);
 

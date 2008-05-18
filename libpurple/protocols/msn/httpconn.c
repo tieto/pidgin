@@ -438,7 +438,7 @@ httpconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 static gboolean
 write_raw(MsnHttpConn *httpconn, const char *data, size_t data_len)
 {
-	ssize_t res; /* result of the write operation */
+	gssize res; /* result of the write operation */
 
 	if (httpconn->tx_handler == 0)
 		res = write(httpconn->fd, data, data_len);
@@ -551,7 +551,7 @@ msn_httpconn_poll(gpointer data)
 	return TRUE;
 }
 
-ssize_t
+gssize
 msn_httpconn_write(MsnHttpConn *httpconn, const char *body, size_t body_len)
 {
 	char *params;

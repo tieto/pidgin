@@ -87,6 +87,8 @@ purple_core_init(const char *ui)
 	wpurple_init();
 #endif
 
+	g_type_init();
+
 	_core = core = g_new0(PurpleCore, 1);
 	core->ui = g_strdup(ui);
 	core->reserved = NULL;
@@ -323,25 +325,6 @@ static char *purple_dbus_owner_user_dir(void)
 	return remote_user_dir;
 }
 
-static void purple_dbus_owner_show_buddy_list(void)
-{
-	DBusError dbus_error;
-	DBusMessage *msg = NULL, *reply = NULL;
-	DBusConnection *dbus_connection = NULL;
-
-	if ((dbus_connection = purple_dbus_get_connection()) == NULL)
-		return;
-
-	if ((msg = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "PurpleBlistShow")) == NULL)
-		return;
-
-	dbus_error_init(&dbus_error);
-	if ((reply = dbus_connection_send_with_reply_and_block(dbus_connection, msg, 5000, &dbus_error)) != NULL)
-	{
-		dbus_message_unref(msg);
-	}
-	dbus_error_free(&dbus_error);
-}
 #endif /* HAVE_DBUS */
 
 gboolean
@@ -365,9 +348,6 @@ purple_core_ensure_single_instance()
 				is_single_instance = FALSE;
 			else
 				is_single_instance = strcmp(dbus_owner_user_dir, user_dir);
-
-			if (!is_single_instance)
-				purple_dbus_owner_show_buddy_list();
 
 			g_free(dbus_owner_user_dir);
 		}

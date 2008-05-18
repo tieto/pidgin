@@ -157,7 +157,7 @@ void msn_servconn_set_destroy_cb(MsnServConn *servconn,
  * @param buf The data to write.
  * @param size The size of the data.
  */
-ssize_t msn_servconn_write(MsnServConn *servconn, const char *buf,
+gssize msn_servconn_write(MsnServConn *servconn, const char *buf,
 						  size_t size);
 
 /**

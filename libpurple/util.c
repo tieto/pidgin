@@ -831,9 +831,6 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 				tzoff = tzhrs*60*60 + tzmins*60;
 				if (offset_positive)
 					tzoff *= -1;
-				/* We don't want the C library doing DST calculations
-				 * if we know the UTC offset already. */
-				t.tm_isdst = 0;
 			}
 			else if (utc)
 			{
@@ -895,14 +892,11 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 		}
 	}
 
-	if (tm != NULL)
-	{
-		*tm = t;
-		tm->tm_isdst = -1;
-		mktime(tm);
-	}
-
 	retval = mktime(&t);
+
+	if (tm != NULL)
+		*tm = t;
+
 	if (tzoff != PURPLE_NO_TZ_OFF)
 		retval += tzoff;
 
@@ -1525,6 +1519,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					while(*p && *p != '>') {
 						if(!g_ascii_strncasecmp(p, "src=", strlen("src="))) {
 							const char *q = p + strlen("src=");
+							if (src)
+								g_string_free(src, TRUE);
 							src = g_string_new("");
 							if(*q == '\'' || *q == '\"')
 								q++;
@@ -1535,6 +1531,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							p = q;
 						} else if(!g_ascii_strncasecmp(p, "alt=", strlen("alt="))) {
 							const char *q = p + strlen("alt=");
+							if (alt)
+								g_string_free(alt, TRUE);
 							alt = g_string_new("");
 							if(*q == '\'' || *q == '\"')
 								q++;
@@ -1572,6 +1570,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							if (url)
 								g_string_free(url, TRUE);
 							url = g_string_new("");
+							if (cdata)
+								g_string_free(cdata, TRUE);
 							cdata = g_string_new("");
 							if(*q == '\'' || *q == '\"')
 								q++;
@@ -4209,8 +4209,7 @@ purple_uri_list_extract_filenames(const gchar *uri_list)
 			/* not sure if this fallback is useful at all */
 			if (!node->data) node->data = g_strdup (s+5);
 		} else {
-			result = g_list_remove_link(result, node);
-			g_list_free_1 (node);
+			result = g_list_delete_link(result, node);
 		}
 		g_free (s);
 	}

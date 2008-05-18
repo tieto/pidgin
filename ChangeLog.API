@@ -1,5 +1,20 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.x.x:
+	perl:
+		Added:
+		* Purple::Prefs::get_children_names.
+		* Purple::timeout_remove.
+		Changed:
+		* Purple::timeout_add now returns a handle which can be used
+		  to remove the timeout.
+		* Callbacks to Purple::Util::fetch_url and the
+		  Purple::Request::* functions can now be specified as both
+		  strings (the name of the callback function) and as coderefs.
+	Finch:
+		libgnt:
+		* Added gnt_bindable_check_key to check if a keystroke is bound.
+
 version 2.4.0 (02/29/2008):
 	libpurple:
 		Added:

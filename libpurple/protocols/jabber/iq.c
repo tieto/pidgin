@@ -374,7 +374,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	}
 }
 
-void jabber_iq_register_handler(const char *xmlns, JabberIqHandler handlerfunc)
+void jabber_iq_register_handler(const char *xmlns, JabberIqHandler *handlerfunc)
 {
 	g_hash_table_replace(iq_handlers, g_strdup(xmlns), handlerfunc);
 }

@@ -39,34 +39,25 @@
 void
 aim_genericreq_n(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype)
 {
-	FlapFrame *frame;
 	aim_snacid_t snacid = 0x00000000;
 
-	frame = flap_frame_new(od, 0x02, 10);
-
-	aim_putsnac(&frame->data, family, subtype, 0x0000, snacid);
-
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, family, subtype, 0x0000, snacid, NULL);
 }
 
 void
 aim_genericreq_n_snacid(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype)
 {
-	FlapFrame *frame;
 	aim_snacid_t snacid;
 
-	frame = flap_frame_new(od, 0x02, 10);
-
 	snacid = aim_cachesnac(od, family, subtype, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, family, subtype, 0x0000, snacid);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, family, subtype, 0x0000, snacid, NULL);
 }
 
 void
 aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint32 *longdata)
 {
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!longdata)
@@ -75,20 +66,21 @@ aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint16 su
 		return;
 	}
 
-	frame = flap_frame_new(od, 0x02, 10+4);
+	byte_stream_new(&bs, 4);
 
 	snacid = aim_cachesnac(od, family, subtype, 0x0000, NULL, 0);
 
-	aim_putsnac(&frame->data, family, subtype, 0x0000, snacid);
-	byte_stream_put32(&frame->data, *longdata);
+	byte_stream_put32(&bs, *longdata);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, family, subtype, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 }
 
 void
 aim_genericreq_s(OscarData *od, FlapConnection *conn, guint16 family, guint16 subtype, guint16 *shortdata)
 {
-	FlapFrame *frame;
+	ByteStream bs;
 	aim_snacid_t snacid;
 
 	if (!shortdata)
@@ -97,14 +89,15 @@ aim_genericreq_s(OscarData *od, FlapConnection *conn, guint16 family, guint16 su
 		return;
 	}
 
-	frame = flap_frame_new(od, 0x02, 10+2);
+	byte_stream_new(&bs, 2);
 
 	snacid = aim_cachesnac(od, family, subtype, 0x0000, NULL, 0);
 
-	aim_putsnac(&frame->data, family, subtype, 0x0000, snacid);
-	byte_stream_put16(&frame->data, *shortdata);
+	byte_stream_put16(&bs, *shortdata);
 
-	flap_connection_send(conn, frame);
+	flap_connection_send_snac(od, conn, family, subtype, 0x0000, snacid, &bs);
+
+	byte_stream_destroy(&bs);
 }
 
 /*

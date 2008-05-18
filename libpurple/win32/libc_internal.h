@@ -30,7 +30,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 /* sys/socket.h */
-int wpurple_socket(int namespace, int style, int protocol);
+int wpurple_socket(int domain, int style, int protocol);
 int wpurple_connect(int socket, struct sockaddr *addr, u_long length);
 int wpurple_getsockopt(int socket, int level, int optname, void *optval, socklen_t *optlenptr);
 int wpurple_setsockopt(int socket, int level, int optname, const void *optval, socklen_t optlen);

@@ -404,7 +404,10 @@ static gboolean do_login(PurpleConnection *gc) {
 		return FALSE;
 	}
 	g_free(buf);
-	buf = irc_format(irc, "vn", "NICK", purple_connection_get_display_name(gc));
+	username = purple_connection_get_display_name(gc);
+	buf = irc_format(irc, "vn", "NICK", username);
+	irc->reqnick = g_strdup(username);
+	irc->nickused = FALSE;
 	if (irc_send(irc, buf) < 0) {
 		g_free(buf);
 		return FALSE;
@@ -491,6 +494,7 @@ static void irc_close(PurpleConnection *gc)
 	purple_circ_buffer_destroy(irc->outbuf);
 
 	g_free(irc->mode_chars);
+	g_free(irc->reqnick);
 
 	g_free(irc);
 }

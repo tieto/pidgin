@@ -95,11 +95,10 @@ JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 		const char *server)
 {
 	JabberChat *chat = NULL;
-	char *room_jid;
 
 	if(NULL != js->chats)
 	{
-		room_jid = g_strdup_printf("%s@%s", room, server);
+		char *room_jid = g_strdup_printf("%s@%s", room, server);
 
 		chat = g_hash_table_lookup(js->chats, jabber_normalize(NULL, room_jid));
 		g_free(room_jid);
@@ -137,9 +136,12 @@ JabberChat *jabber_chat_find_by_conv(PurpleConversation *conv)
 {
 	PurpleAccount *account = purple_conversation_get_account(conv);
 	PurpleConnection *gc = purple_account_get_connection(account);
-	JabberStream *js = gc->proto_data;
-	int id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
-
+	JabberStream *js;
+	int id;
+	if (!gc)
+		return NULL;
+	js = gc->proto_data;
+	id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
 	return jabber_chat_find_by_id(js, id);
 }
 
@@ -235,6 +237,8 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 		char *buf = g_strdup_printf(_("%s is not a valid room handle"), handle);
 		purple_notify_error(gc, _("Invalid Room Handle"),
 				_("Invalid Room Handle"), buf);
+		g_free(buf);
+		return;
 	}
 
 	if(jabber_chat_find(js, room, server))

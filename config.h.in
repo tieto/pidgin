@@ -118,9 +118,6 @@
 /* Define to 1 if you have libgadu. */
 #undef HAVE_LIBGADU
 
-/* Define if you have NetworkManager */
-#undef HAVE_LIBNM
-
 /* Define to 1 if you have the `nsl' library (-lnsl). */
 #undef HAVE_LIBNSL
 
@@ -162,6 +159,9 @@
 
 /* Define to 1 if you have the <mono/metadata/object.h> header file. */
 #undef HAVE_MONO_METADATA_OBJECT_H
+
+/* Define if we have NetworkManager. */
+#undef HAVE_NETWORKMANAGER
 
 /* Define to 1 if you have the <nspr.h> header file. */
 #undef HAVE_NSPR_H

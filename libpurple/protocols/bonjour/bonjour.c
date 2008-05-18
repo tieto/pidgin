@@ -24,6 +24,7 @@
 #include <pwd.h>
 #else
 #define UNICODE
+#include <winsock2.h>
 #include <windows.h>
 #include <lm.h>
 #include "dns_sd_proxy.h"
@@ -48,48 +49,39 @@ static char *default_lastname;
 static char *default_hostname;
 
 static void
-bonjour_removeallfromlocal(PurpleConnection *gc)
+bonjour_removeallfromlocal(PurpleConnection *conn, PurpleGroup *bonjour_group)
 {
-	PurpleAccount *account = purple_connection_get_account(gc);
-	PurpleBuddyList *blist;
-	PurpleBlistNode *gnode, *cnode, *cnodenext, *bnode, *bnodenext;
+	PurpleAccount *account = purple_connection_get_account(conn);
+	PurpleBlistNode *cnode, *cnodenext, *bnode, *bnodenext;
 	PurpleBuddy *buddy;
 
-	blist = purple_get_blist();
-	if (blist == NULL)
+	if (bonjour_group == NULL)
 		return;
 
 	/* Go through and remove all buddies that belong to this account */
-	for (gnode = blist->root; gnode; gnode = gnode->next)
-	{
-		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
+	for (cnode = ((PurpleBlistNode *) bonjour_group)->child; cnode; cnode = cnodenext) {
+		cnodenext = cnode->next;
+		if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 			continue;
-		for (cnode = gnode->child; cnode; cnode = cnodenext)
-		{
-			cnodenext = cnode->next;
-			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+		for (bnode = cnode->child; bnode; bnode = bnodenext) {
+			bnodenext = bnode->next;
+			if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 				continue;
-			for (bnode = cnode->child; bnode; bnode = bnodenext)
-			{
-				bnodenext = bnode->next;
-				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				buddy = (PurpleBuddy *)bnode;
-				if (buddy->account != account)
-					continue;
-				purple_prpl_got_user_status(account, buddy->name, "offline", NULL);
-				purple_account_remove_buddy(account, buddy, NULL);
-				purple_blist_remove_buddy(buddy);
-			}
+			buddy = (PurpleBuddy *) bnode;
+			if (buddy->account != account)
+				continue;
+			purple_prpl_got_user_status(account, buddy->name, "offline", NULL);
+			purple_account_remove_buddy(account, buddy, NULL);
+			purple_blist_remove_buddy(buddy);
 		}
 	}
+
 }
 
 static void
 bonjour_login(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	PurpleGroup *bonjour_group;
 	BonjourData *bd;
 	PurpleStatus *status;
 	PurplePresence *presence;
@@ -150,10 +142,6 @@ bonjour_login(PurpleAccount *account)
 
 	bonjour_dns_sd_update_buddy_icon(bd->dns_sd_data);
 
-	/* Create a group for bonjour buddies */
-	bonjour_group = purple_group_new(BONJOUR_GROUP_NAME);
-	purple_blist_add_group(bonjour_group, NULL);
-
 	/* Show the buddy list by telling Purple we have already connected */
 	purple_connection_set_state(gc, PURPLE_CONNECTED);
 }
@@ -164,8 +152,10 @@ bonjour_close(PurpleConnection *connection)
 	PurpleGroup *bonjour_group;
 	BonjourData *bd = connection->proto_data;
 
+	bonjour_group = purple_find_group(BONJOUR_GROUP_NAME);
+
 	/* Remove all the bonjour buddies */
-	bonjour_removeallfromlocal(connection);
+	bonjour_removeallfromlocal(connection, bonjour_group);
 
 	/* Stop looking for buddies in the LAN */
 	if (bd != NULL && bd->dns_sd_data != NULL)
@@ -182,7 +172,6 @@ bonjour_close(PurpleConnection *connection)
 	}
 
 	/* Delete the bonjour group */
-	bonjour_group = purple_find_group(BONJOUR_GROUP_NAME);
 	if (bonjour_group != NULL)
 		purple_blist_remove_group(bonjour_group);
 
@@ -404,6 +393,25 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 		purple_notify_user_info_add_pair(user_info, _("XMPP Account"), bb->jid);
 }
 
+static void
+bonjour_group_buddy(PurpleConnection *connection, const char *who, const char *old_group, const char *new_group)
+{
+	PurpleBlistNodeFlags oldflags;
+	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+
+	if (buddy == NULL)
+		return;
+
+	oldflags = purple_blist_node_get_flags((PurpleBlistNode *)buddy);
+
+	/* If we're moving them out of the bonjour group, make them persistent */
+	if (strcmp(new_group, BONJOUR_GROUP_NAME) == 0)
+		purple_blist_node_set_flags((PurpleBlistNode *)buddy, oldflags | PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+	else
+		purple_blist_node_set_flags((PurpleBlistNode *)buddy, oldflags ^ PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+
+}
+
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
@@ -462,7 +470,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* get_cb_info */
 	NULL,                                                    /* get_cb_away */
 	NULL,                                                    /* alias_buddy */
-	NULL,                                                    /* group_buddy */
+	bonjour_group_buddy,                                     /* group_buddy */
 	NULL,                                                    /* rename_group */
 	NULL,                                                    /* buddy_free */
 	bonjour_convo_closed,                                    /* convo_closed */

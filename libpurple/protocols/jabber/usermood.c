@@ -147,7 +147,7 @@ void jabber_mood_init(void) {
 
 static void do_mood_set_from_fields(PurpleConnection *gc, PurpleRequestFields *fields) {
 	JabberStream *js;
-	int max_mood_idx;
+	const int max_mood_idx = sizeof(moodstrings) / sizeof(moodstrings[0]) - 1;
 	int selected_mood = purple_request_fields_get_choice(fields, "mood");
 
 	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
@@ -156,9 +156,6 @@ static void do_mood_set_from_fields(PurpleConnection *gc, PurpleRequestFields *f
 	}
 
 	js = gc->proto_data;
-
-	/* This is ugly, but protects us from unexpected values. */
-	for (max_mood_idx = 0; moodstrings[max_mood_idx]; max_mood_idx++);
 
 	if (selected_mood < 0 || selected_mood >= max_mood_idx) {
 		purple_debug_error("jabber", "Invalid mood index (%d) selected.\n", selected_mood);
