@@ -301,7 +301,7 @@ const char *purple_prefs_get_path(const char *name);
  */
 GList *purple_prefs_get_path_list(const char *name);
 
-/*
+/**
  * Returns a list of children for a pref
  *
  * @param name The parent pref

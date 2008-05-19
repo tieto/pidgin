@@ -40,6 +40,8 @@ BuildRequires: gtk2-devel
 %{!?_without_silc:BuildRequires: /usr/include/silc/silcclient.h}
 %{!?_without_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
 %{!?_without_text:BuildRequires: ncurses-devel}
+%{!?_without_nm:BuildRequires: NetworkManager-devel}
+%{!?_without_gevolution:BuildRequires: evolution-data-server-devel}
 
 %if "%{_vendor}" == "suse"
 # For SuSE:
@@ -225,8 +227,12 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --sysconfdir=%{_sysconfdir} \
                                     --disable-schemas-install \
                                     %{!?_with_dbus:--disable-dbus} \
+                                    %{!?_with_avahi:--disable-avahi} \
+                                    %{!?_with_meanwhile:--disable-meanwhile} \
                                     %{?_without_gstreamer:--disable-gstreamer} \
                                     %{?_without_gtkspell:--disable-gtkspell} \
+                                    %{?_without_nm:--disable-nm} \
+                                    %{!?_without_gevolution:--enable-gevolution} \
                                     %{?_with_mono:--enable-mono} \
                                     %{?_with_perlmakehack:--with-perl-lib=%{buildroot}%{_prefix}} \
                                     %{!?_with_perlmakehack:--with-perl-lib=%{_prefix}} \
@@ -468,6 +474,12 @@ fi
 %endif
 
 %changelog
+* Mon May 19 2008 Stu Tomlinson <stu@nosnilmot.com>
+- Fix building without meanwhile support
+
+* Fri May 16 2008 Stu Tomlinson <stu@nosnilmot.com>
+- Add "--without nm" support to build without NetworkManager
+
 * Thu Feb 28 2008 Stu Tomlinson <stu@nosnilmot.com>
 - Remove --with-howl options as we no longer support using howl for bonjour
 

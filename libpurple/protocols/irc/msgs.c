@@ -937,6 +937,8 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 	GSList *chats;
 	char *nick = irc_mask_nick(from);
 
+	irc->nickused = FALSE;
+
 	if (!gc) {
 		g_free(nick);
 		return;
@@ -985,17 +987,23 @@ void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, 
 	if (!args || !args[1])
 		return;
 
-	newnick = g_strdup(args[1]);
+	if (strlen(args[1]) < strlen(irc->reqnick) || irc->nickused)
+		newnick = g_strdup(args[1]);
+	else
+		newnick = g_strdup_printf("%s0", args[1]);
 	end = newnick + strlen(newnick) - 1;
 	/* try fallbacks */
 	if((*end < '9') && (*end >= '1')) {
 			*end = *end + 1;
 	} else *end = '1';
 
+	g_free(irc->reqnick);
+	irc->reqnick = newnick;
+	irc->nickused = TRUE;
+
 	buf = irc_format(irc, "vn", "NICK", newnick);
 	irc_send(irc, buf);
 	g_free(buf);
-	g_free(newnick);
 }
 
 void irc_msg_notice(struct irc_conn *irc, const char *name, const char *from, char **args)

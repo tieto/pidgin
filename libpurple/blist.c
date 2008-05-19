@@ -1233,16 +1233,13 @@ void purple_blist_add_chat(PurpleChat *chat, PurpleGroup *group, PurpleBlistNode
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT((PurpleBlistNode *)chat));
 
 	if (node == NULL) {
-		if (group == NULL) {
+		if (group == NULL)
 			group = purple_group_new(_("Chats"));
+
+		/* Add group to blist if isn't already on it. Fixes #2752. */
+		if (!purple_find_group(group->name)) {
 			purple_blist_add_group(group,
 					purple_blist_get_last_sibling(purplebuddylist->root));
-		} else {
-			/* Add group to blist if isn't already on it. Fixes #2752. */
-			if (!purple_find_group(group->name)) {
-				purple_blist_add_group(group,
-						purple_blist_get_last_sibling(purplebuddylist->root));
-			}
 		}
 	} else {
 		group = (PurpleGroup*)node->parent;
@@ -1336,16 +1333,11 @@ void purple_blist_add_buddy(PurpleBuddy *buddy, PurpleContact *contact, PurpleGr
 		c = contact;
 		g = (PurpleGroup *)((PurpleBlistNode *)c)->parent;
 	} else {
-		if (group) {
-			/* Add group to blist if isn't already on it. Fixes #2752. */
-			if (!purple_find_group(group->name)) {
-				purple_blist_add_group(group,
-						purple_blist_get_last_sibling(purplebuddylist->root));
-			}
-
-			g = group;
-		} else {
+		g = group;
+		if (g == NULL)
 			g = purple_group_new(_("Buddies"));
+		/* Add group to blist if isn't already on it. Fixes #2752. */
+		if (!purple_find_group(g->name)) {
 			purple_blist_add_group(g,
 					purple_blist_get_last_sibling(purplebuddylist->root));
 		}
@@ -1555,9 +1547,12 @@ void purple_blist_add_contact(PurpleContact *contact, PurpleGroup *group, Purple
 	else if (group)
 		g = group;
 	else {
-		g = purple_group_new(_("Buddies"));
-		purple_blist_add_group(g,
-				purple_blist_get_last_sibling(purplebuddylist->root));
+		g = purple_find_group(_("Buddies"));
+		if (g == NULL) {
+			g = purple_group_new(_("Buddies"));
+			purple_blist_add_group(g,
+					purple_blist_get_last_sibling(purplebuddylist->root));
+		}
 	}
 
 	gnode = (PurpleBlistNode*)g;

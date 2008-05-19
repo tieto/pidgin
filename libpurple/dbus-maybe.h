@@ -8,6 +8,10 @@
 
 #ifdef HAVE_DBUS
 
+#ifndef DBUS_API_SUBJECT_TO_CHANGE
+#define DBUS_API_SUBJECT_TO_CHANGE
+#endif
+
 #include "dbus-server.h"
 
 /* this provides a type check */

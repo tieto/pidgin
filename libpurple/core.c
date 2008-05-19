@@ -87,6 +87,8 @@ purple_core_init(const char *ui)
 	wpurple_init();
 #endif
 
+	g_type_init();
+
 	_core = core = g_new0(PurpleCore, 1);
 	core->ui = g_strdup(ui);
 	core->reserved = NULL;

@@ -2824,21 +2824,18 @@ msim_add_contact_from_server_cb(MsimSession *session, MsimMessage *user_lookup_i
 	/* 1. Creates a new group, or gets existing group if it exists (or so
 	 * the documentation claims). */
 	group_name = msim_msg_get_string(contact_info, "GroupName");
-	if (group_name) {
-		group = purple_find_group(group_name);
-		if (!group) {
-			group = purple_group_new(group_name);
-			/* Add group to beginning. See #2752. */
-			purple_blist_add_group(group, NULL);
-
-		}
-
-		purple_debug_info("msim_add_contact_from_server_cb",
-				"adding to GroupName: %s\n", group_name);
+	if (!group_name || (*group_name == '\0')) {
 		g_free(group_name);
-	} else {
-		group = purple_group_new(_("IM Friends"));
+		group_name = g_strdup(_("IM Friends"));
+		purple_debug_info("myspace", "No GroupName specified, defaulting to '%s'.\n", group_name);
 	}
+	group = purple_find_group(group_name);
+	if (!group) {
+		group = purple_group_new(group_name);
+		/* Add group to beginning. See #2752. */
+		purple_blist_add_group(group, NULL);
+	}
+	g_free(group_name);
 
 	/* 2. Get or create buddy */
 	buddy = purple_find_buddy(session->account, username);

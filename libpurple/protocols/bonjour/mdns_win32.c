@@ -222,10 +222,9 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 
 		/* If this was the last resolver, remove the buddy */
 		if (idata->resolvers == NULL) {
-			if (pb) {
-				purple_account_remove_buddy(args->account, pb, NULL);
-				purple_blist_remove_buddy(pb);
-			} else
+			if (pb)
+				bonjour_buddy_signed_off(pb);
+			else
 				bonjour_buddy_delete(args->bb);
 
 			/* Remove from the pending list */
@@ -282,10 +281,9 @@ _mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint3
 	if (idata->resolvers == NULL) {
 		PurpleBuddy *pb;
 		/* See if this is now attached to a PurpleBuddy */
-		if ((pb = purple_find_buddy(args->account, args->bb->name))) {
-			purple_account_remove_buddy(args->account, pb, NULL);
-			purple_blist_remove_buddy(pb);
-		} else {
+		if ((pb = purple_find_buddy(args->account, args->bb->name)))
+			bonjour_buddy_signed_off(pb);
+		else {
 			/* Remove from the pending list */
 			pending_buddies = g_slist_remove(pending_buddies, args->bb);
 			bonjour_buddy_delete(args->bb);
@@ -427,9 +425,9 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 
 				/* If this was the last resolver, remove the buddy */
 				if (idata->resolvers == NULL) {
-					purple_debug_info("bonjour", "Removed last presence for buddy '%s'; removing buddy.\n", serviceName);
-					purple_account_remove_buddy(account, pb, NULL);
-					purple_blist_remove_buddy(pb);
+					purple_debug_info("bonjour", "Removed last presence for buddy '%s'; signing off buddy.\n",
+							  serviceName);
+					bonjour_buddy_signed_off(pb);
 				}
 			}
 		} else {

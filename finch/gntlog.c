@@ -302,7 +302,7 @@ static FinchLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *l
 
 	/* Label ************/
 	text = g_strdup_printf("%s", title);
-	lv->label = gnt_label_new(text);
+	lv->label = gnt_label_new_with_format(text, GNT_TEXT_FLAG_BOLD);
 	g_free(text);
 	gnt_box_add_widget(GNT_BOX(vbox), lv->label);
 

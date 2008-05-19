@@ -132,6 +132,7 @@ static const struct developer retired_patch_writers[] = {
 
 /* Order: Code, then Alphabetical by Last Name */
 static const struct translator current_translators[] = {
+	{N_("Afrikaans"),           "af", "Samuel Murray", "afrikaans@gmail.com"},
 	{N_("Afrikaans"),           "af", "Friedel Wolff", "friedel@translate.org.za"},
 	{N_("Arabic"),              "ar", "Khaled Hosny", "khaledhosny@eglug.org"},
 	{N_("Belarusian Latin"),    "be@latin", "Ihar Hrachyshka", "ihar.hrachyshka@gmail.com"},
@@ -193,12 +194,13 @@ static const struct translator current_translators[] = {
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
 	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "nynorsk@strilen.net"},
+	{N_("Occitan"),             "oc", "Yannig Marchegay", "yannig@marchegay.org"},
 	{N_("Punjabi"),             "pa", "Amanpreet Singh Alam", "aalam@users.sf.net"},
 	{N_("Polish"),              "pl", "Emil Nowak", "emil5@go2.pl"},
 	{N_("Polish"),              "pl", "Paweł Godlewski", "pawel@bajk.pl"},
 	{N_("Polish"),              "pl", "Krzysztof Foltman", "krzysztof@foltman.com"},
 	{N_("Portuguese"),          "pt", "Duarte Henriques", "duarte_henriques@myrealbox.com"},
-	{N_("Portuguese-Brazil"),   "pt_BR", "Maurício de Lemos Rodrigues Collares Neto", "mauricioc@gmail.com"},
+	{N_("Portuguese-Brazil"),   "pt_BR", "Rodrigo Luiz Marques Flores", "rodrigomarquesflores@gmail.com"},
 	{N_("Pashto"),              "ps", "Kashif Masood", "masudmails@yahoo.com"},
 	{N_("Romanian"),            "ro", "Mişu Moldovan", "dumol@gnome.ro"},
 	{N_("Russian"),             "ru", "Dmitry Beloglazov", "dmaa@users.sf.net"},
@@ -261,6 +263,7 @@ static const struct translator past_translators[] = {
 	{N_("Bokmål Norwegian"),    "nb", "Hallvard Glad", "hallvard.glad@gmail.com"},
 	{N_("Bokmål Norwegian"),    "nb", "Petter Johan Olsen", NULL},
 	{N_("Polish"),              "pl", "Przemysław Sułek", NULL},
+	{N_("Portuguese-Brazil"),   "pt_BR", "Maurício de Lemos Rodrigues Collares Neto", "mauricioc@gmail.com"},
 	{N_("Russian"),             "ru", "Alexandre Prokoudine", NULL},
 	{N_("Russian"),             "ru", "Sergey Volozhanin", NULL},
 	{N_("Slovak"),              "sk", "Daniel Režný", NULL},
