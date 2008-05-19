@@ -5724,7 +5724,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 				if (flags & PURPLE_MESSAGE_NICK) {
 					tagname = "highlight-name";
 				} else if (flags & PURPLE_MESSAGE_RECV) {
-					/* The tagname and color is handled by get_buddy_tag */
+					/* The tagname for chats is handled by get_buddy_tag */
 					if (type == PURPLE_CONV_TYPE_IM) {
 						tagname = "receive-name";
 					}
