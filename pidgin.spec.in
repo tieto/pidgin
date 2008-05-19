@@ -228,6 +228,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --disable-schemas-install \
                                     %{!?_with_dbus:--disable-dbus} \
                                     %{!?_with_avahi:--disable-avahi} \
+                                    %{!?_with_meanwhile:--disable-meanwhile} \
                                     %{?_without_gstreamer:--disable-gstreamer} \
                                     %{?_without_gtkspell:--disable-gtkspell} \
                                     %{?_without_nm:--disable-nm} \
@@ -473,6 +474,9 @@ fi
 %endif
 
 %changelog
+* Mon May 19 2008 Stu Tomlinson <stu@nosnilmot.com>
+- Fix building without meanwhile support
+
 * Fri May 16 2008 Stu Tomlinson <stu@nosnilmot.com>
 - Add "--without nm" support to build without NetworkManager
 
