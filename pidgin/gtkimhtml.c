@@ -393,6 +393,55 @@ static void gtk_imhtml_size_allocate(GtkWidget *widget, GtkAllocation *alloc)
 		gtk_imhtml_scroll_to_end(imhtml, FALSE);
 }
 
+#define DEFAULT_SEND_COLOR "#204a87"
+#define DEFAULT_RECV_COLOR "#cc0000"
+#define DEFAULT_HIGHLIGHT_COLOR "#AF7F00"
+#define DEFAULT_ACTION_COLOR "#062585"
+#define DEFAULT_WHISPER_ACTION_COLOR "#6C2585"
+#define DEFAULT_WHISPER_COLOR "#00FF00"
+
+static void (*parent_style_set)(GtkWidget *widget, GtkStyle *prev_style);
+
+static void
+gtk_imhtml_style_set(GtkWidget *widget, GtkStyle *prev_style)
+{
+	int i;
+	struct {
+		const char *tag;
+		const char *color;
+		const char *def;
+	} styles[] = {
+		{"send-name", "send-name-color", DEFAULT_SEND_COLOR},
+		{"receive-name", "receive-name-color", DEFAULT_RECV_COLOR},
+		{"highlight-name", "highlight-name-color", DEFAULT_HIGHLIGHT_COLOR},
+		{"action-name", "action-name-color", DEFAULT_ACTION_COLOR},
+		{"whisper-action-name", "whisper-action-name-color", DEFAULT_WHISPER_ACTION_COLOR},
+		{"whisper-name", "whisper-name-color", DEFAULT_WHISPER_COLOR},
+		{NULL, NULL, NULL}
+	};
+	GtkIMHtml *imhtml = GTK_IMHTML(widget);
+	GtkTextTagTable *table = gtk_text_buffer_get_tag_table(imhtml->text_buffer);
+
+	for (i = 0; styles[i].tag; i++) {
+		GdkColor *color = NULL;
+		GtkTextTag *tag = gtk_text_tag_table_lookup(table, styles[i].tag);
+		if (!tag) {
+			purple_debug_warning("gtkimhtml", "Cannot find tag '%s'. This should never happen. Please file a bug.\n", styles[i].tag);
+			continue;
+		}
+		gtk_widget_style_get(widget, styles[i].color, &color, NULL);
+		if (color) {
+			g_object_set(tag, "foreground-gdk", color, NULL);
+			gdk_color_free(color);
+		} else {
+			GdkColor defcolor;
+			gdk_color_parse(styles[i].def, &defcolor);
+			g_object_set(tag, "foreground-gdk", &defcolor, NULL);
+		}
+	}
+	parent_style_set(widget, prev_style);
+}
+
 static gint
 gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 {
@@ -1425,6 +1474,8 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	widget_class->expose_event = gtk_imhtml_expose_event;
 	parent_size_allocate = widget_class->size_allocate;
 	widget_class->size_allocate = gtk_imhtml_size_allocate;
+	parent_style_set = widget_class->style_set;
+	widget_class->style_set = gtk_imhtml_style_set;
 
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-color",
 	                                        _("Hyperlink color"),
@@ -1448,6 +1499,14 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("action-name-color",
 	                                        _("Action Message Name Color"),
+	                                        _("Color to draw the name of an action message."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("whisper-action-name-color",
+	                                        _("Action Message Name Color for Whispered Message"),
+	                                        _("Color to draw the name of an action message."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("whisper-name-color",
+	                                        _("Whisper Message Name Color"),
 	                                        _("Color to draw the name of an action message."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 
@@ -1514,6 +1573,13 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 #if FALSE && GTK_CHECK_VERSION(2,10,10)
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "comment", "invisible", FALSE, NULL);
 #endif
+
+	gtk_text_buffer_create_tag(imhtml->text_buffer, "send-name", "weight", PANGO_WEIGHT_BOLD, NULL);
+	gtk_text_buffer_create_tag(imhtml->text_buffer, "receive-name", "weight", PANGO_WEIGHT_BOLD, NULL);
+	gtk_text_buffer_create_tag(imhtml->text_buffer, "highlight-name", "weight", PANGO_WEIGHT_BOLD, NULL);
+	gtk_text_buffer_create_tag(imhtml->text_buffer, "action-name", "weight", PANGO_WEIGHT_BOLD, NULL);
+	gtk_text_buffer_create_tag(imhtml->text_buffer, "whisper-action-name", "weight", PANGO_WEIGHT_BOLD, NULL);
+	gtk_text_buffer_create_tag(imhtml->text_buffer, "whisper-name", "weight", PANGO_WEIGHT_BOLD, NULL);
 
 	/* When hovering over a link, we show the hand cursor--elsewhere we show the plain ol' pointer cursor */
 	imhtml->hand_cursor = gdk_cursor_new (GDK_HAND2);
