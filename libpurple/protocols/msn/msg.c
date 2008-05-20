@@ -151,6 +151,7 @@ msn_message_new_nudge(void)
 	MsnMessage *msg;
 
 	msg = msn_message_new(MSN_MSG_NUDGE);
+	/* TODO: This shouldn't have a \r\n in it, should it?? */
 	msn_message_set_content_type(msg, "text/x-msnmsgr-datacast\r\n");
 	msn_message_set_flag(msg, 'N');
 	msn_message_set_attr(msg,"ID","1\r\n");
