@@ -1145,7 +1145,7 @@ s5_canread_again(gpointer data, gint source, PurpleInputCondition cond)
 	int len;
 
 	if (connect_data->read_buffer == NULL) {
-		connect_data->read_buf_len = 4;
+		connect_data->read_buf_len = 5;
 		connect_data->read_buffer = g_malloc(connect_data->read_buf_len);
 		connect_data->read_len = 0;
 	}
@@ -1214,6 +1214,11 @@ s5_canread_again(gpointer data, gint source, PurpleInputCondition cond)
 				return;
 			buf += 4 + 16;
 			break;
+		default:
+			purple_debug_error("socks5 proxy", "Invalid ATYP received (0x%X)\n", buf[3]);
+			purple_proxy_connect_data_disconnect(connect_data,
+					_("Received invalid data on connection with server."));
+			return;
 	}
 
 	/* Skip past BND.PORT */
