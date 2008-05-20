@@ -1,21 +1,22 @@
+pidgin (2.4.2-2) unstable; urgency=low
+
+  * Fix broken Build-Depends line that was causing a lack of SILC support
+
+ -- Ari Pollak <ari@debian.org>  Mon, 19 May 2008 20:58:04 -0400
+
 pidgin (2.4.2-1) unstable; urgency=low
 
   * New upstream release
   * Enable NetworkManager support now that it doesn't add an extra dependency
   * Remove 11_reread-resolvconf.patch since we have NM support and it didn't
     apply cleanly anyway
-
- -- Ari Pollak <ari@debian.org>  Sun, 18 May 2008 01:02:08 -0400
-
-pidgin (2.4.1-2) UNRELEASED; urgency=low
-
   * Fix spelling error in dh_pidgin man page (Closes: #474681)
   * Apply modified patch from Adrien Cunin to move finch dependency on libx11-6
     to a suggests, and add an entry in the description about it
     (Closes: #473997)
   * Update libpurple0.symbols for 2.4.0
 
- -- Ari Pollak <ari@debian.org>  Sun, 13 Apr 2008 22:19:59 -0400
+ -- Ari Pollak <ari@debian.org>  Sun, 18 May 2008 01:02:08 -0400
 
 pidgin (2.4.1-1) unstable; urgency=low
 
