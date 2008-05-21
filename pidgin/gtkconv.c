@@ -159,8 +159,6 @@ static void update_typing_icon(PidginConversation *gtkconv);
 static void update_typing_message(PidginConversation *gtkconv, const char *message);
 static const char *item_factory_translate_func (const char *path, gpointer func_data);
 gboolean pidgin_conv_has_focus(PurpleConversation *conv);
-static void pidgin_conv_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data);
-static void pidgin_conv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data);
 static GdkColor* generate_nick_colors(guint *numcolors, GdkColor background);
 static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
 static GtkTextTag *get_buddy_tag(PurpleConversation *conv, const char *who, gboolean create);
@@ -2514,10 +2512,6 @@ update_tab_icon(PurpleConversation *conv)
 		PurpleBuddy *b = purple_find_buddy(conv->account, conv->name);
 		if (b)
 			emblem = pidgin_blist_get_emblem((PurpleBlistNode*)b);
-	} else {
-		PurpleChat *c = purple_blist_find_chat(conv->account, conv->name);
-		if (c)
-			emblem = pidgin_blist_get_emblem((PurpleBlistNode*)c);
 	}
 
 	g_return_if_fail(status != NULL);
@@ -2725,10 +2719,22 @@ static void
 custom_icon_sel_cb(const char *filename, gpointer data)
 {
 	if (filename) {
+		const gchar *name;
+		PurpleBuddy *buddy;
+		PurpleContact *contact;
 		PidginConversation *gtkconv = data;
 		PurpleConversation *conv = gtkconv->active_conv;
 		PurpleAccount *account = purple_conversation_get_account(conv);
-		pidgin_set_custom_buddy_icon(account, purple_conversation_get_name(conv), filename);
+
+		name = purple_conversation_get_name(conv);
+		buddy = purple_find_buddy(account, name);
+		if (!buddy) {
+			purple_debug_info("custom-icon", "You can only set custom icons for people on your buddylist.\n");
+			return;
+		}
+		contact = purple_buddy_get_contact(buddy);
+
+		purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, filename);
 	}
 }
 
@@ -2770,12 +2776,21 @@ change_size_cb(GtkWidget *widget, PidginConversation *gtkconv)
 static void
 remove_custom_icon_cb(GtkWidget *widget, PidginConversation *gtkconv)
 {
-	PurpleConversation *conv;
+	const gchar *name;
+	PurpleBuddy *buddy;
 	PurpleAccount *account;
+	PurpleContact *contact;
+	PurpleConversation *conv = gtkconv->active_conv;
 
-	conv = gtkconv->active_conv;
 	account = purple_conversation_get_account(conv);
-	pidgin_set_custom_buddy_icon(account, purple_conversation_get_name(conv), NULL);
+	name = purple_conversation_get_name(conv);
+	buddy = purple_find_buddy(account, name);
+	if (!buddy) {
+		return;
+	}
+	contact = purple_buddy_get_contact(buddy);
+
+	purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, NULL);
 }
 
 static void
@@ -2876,7 +2891,7 @@ icon_menu(GtkObject *obj, GdkEventButton *e, PidginConversation *gtkconv)
 	if (buddy)
 	{
 		PurpleContact *contact = purple_buddy_get_contact(buddy);
-		if (contact && purple_buddy_icons_has_custom_icon(contact))
+		if (contact && purple_buddy_icons_node_has_custom_icon((PurpleBlistNode*)contact))
 		{
 			pidgin_new_item_from_stock(menu, _("Remove Custom Icon"), NULL,
 			                           G_CALLBACK(remove_custom_icon_cb), gtkconv,
@@ -5167,6 +5182,12 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		nbr_nick_colors = NUM_NICK_COLORS;
 		nick_colors = generate_nick_colors(&nbr_nick_colors, gtk_widget_get_style(gtkconv->imhtml)->base[GTK_STATE_NORMAL]);
 	}
+
+	/* We don't want to see the custom smileys if our buddy send us the
+	 * defined shortcut. */
+	pidgin_themes_smiley_themeize(gtkconv->imhtml);
+	/* We want to see our smileys in the entry */
+	pidgin_themes_smiley_themeize_custom(gtkconv->entry);
 }
 
 static void
@@ -5476,8 +5497,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	char *bracket;
 	int tag_count = 0;
 	gboolean is_rtl_message = FALSE;
-	GtkSmileyTree *tree = NULL;
-	GHashTable *smiley_data = NULL;
 
 	g_return_if_fail(conv != NULL);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -5636,14 +5655,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 	if (!(flags & PURPLE_MESSAGE_RECV))
 	{
-		/* Temporarily revert to the original smiley-data to avoid showing up
-		 * custom smileys of the buddy when sending message
-		 */
-		tree = GTK_IMHTML(gtkconv->imhtml)->default_smilies;
-		GTK_IMHTML(gtkconv->imhtml)->default_smilies =
-								GTK_IMHTML(gtkconv->entry)->default_smilies;
-		smiley_data = GTK_IMHTML(gtkconv->imhtml)->smiley_data;
-		GTK_IMHTML(gtkconv->imhtml)->smiley_data = GTK_IMHTML(gtkconv->entry)->smiley_data;
+		/* We want to see our own smileys. Need to revert it after send*/
+		pidgin_themes_smiley_themeize_custom(gtkconv->imhtml);
 	}
 
 	/* TODO: These colors should not be hardcoded so log.c can use them */
@@ -5814,8 +5827,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	if (!(flags & PURPLE_MESSAGE_RECV))
 	{
 		/* Restore the smiley-data */
-		GTK_IMHTML(gtkconv->imhtml)->default_smilies = tree;
-		GTK_IMHTML(gtkconv->imhtml)->smiley_data = smiley_data;
+		pidgin_themes_smiley_themeize(gtkconv->imhtml);
 	}
 
 	purple_signal_emit(pidgin_conversations_get_handle(),
@@ -6043,119 +6055,24 @@ pidgin_conv_has_focus(PurpleConversation *conv)
 	return FALSE;
 }
 
-static void pidgin_conv_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data)
-{
-	GtkIMHtmlSmiley *smiley;
-
-	smiley = (GtkIMHtmlSmiley *)user_data;
-	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
-
-	if (smiley->icon)
-		g_object_ref(G_OBJECT(smiley->icon));
-#ifdef DEBUG_CUSTOM_SMILEY
-	purple_debug_info("custom-smiley", "pidgin_conv_custom_smiley_allocated(): got GdkPixbufAnimation %p for smiley '%s'\n", smiley->icon, smiley->smile);
-#endif
-}
-
-static void pidgin_conv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data)
-{
-	GtkIMHtmlSmiley *smiley;
-	GtkWidget *icon = NULL;
-	GtkTextChildAnchor *anchor = NULL;
-	GSList *current = NULL;
-
-	smiley = (GtkIMHtmlSmiley *)user_data;
-	if (!smiley->imhtml) {
-#ifdef DEBUG_CUSTOM_SMILEY
-		purple_debug_error("custom-smiley", "pidgin_conv_custom_smiley_closed(): orphan smiley found: %p\n", smiley);
-#endif
-		g_object_unref(G_OBJECT(loader));
-		smiley->loader = NULL;
-		return;
-	}
-
-	for (current = smiley->anchors; current; current = g_slist_next(current)) {
-
-		icon = gtk_image_new_from_animation(smiley->icon);
-
-#ifdef DEBUG_CUSTOM_SMILEY
-		purple_debug_info("custom-smiley", "pidgin_conv_custom_smiley_closed(): got GtkImage %p from GtkPixbufAnimation %p for smiley '%s'\n",
-				icon, smiley->icon, smiley->smile);
-#endif
-		if (icon) {
-			GList *wids;
-			gtk_widget_show(icon);
-
-			anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
-			wids = gtk_text_child_anchor_get_widgets(anchor);
-
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", purple_unescape_html(smiley->smile), g_free);
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley->smile), g_free);
-
-			if (smiley->imhtml) {
-				if (wids) {
-					GList *children = gtk_container_get_children(GTK_CONTAINER(wids->data));
-					g_list_foreach(children, (GFunc)gtk_widget_destroy, NULL);
-					g_list_free(children);
-					gtk_container_add(GTK_CONTAINER(wids->data), icon);
-				} else
-					gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(smiley->imhtml), icon, anchor);
-			}
-			g_list_free(wids);
-		}
-
-	}
-
-	g_slist_free(smiley->anchors);
-	smiley->anchors = NULL;
-
-	g_object_unref(G_OBJECT(loader));
-	smiley->loader = NULL;
-}
-
 static gboolean
 add_custom_smiley_for_imhtml(GtkIMHtml *imhtml, const char *sml, const char *smile)
 {
 	GtkIMHtmlSmiley *smiley;
-	GdkPixbufLoader *loader;
 
 	smiley = gtk_imhtml_smiley_get(imhtml, sml, smile);
 
 	if (smiley) {
-
 		if (!(smiley->flags & GTK_IMHTML_SMILEY_CUSTOM)) {
 			return FALSE;
 		}
-
-		/* Close the old GdkPixbufAnimation, then create a new one for
-		 * the smiley we are about to receive */
-		g_object_unref(G_OBJECT(smiley->icon));
-
-		/* XXX: Is it necessary to _unref the loader first? */
-		smiley->loader = gdk_pixbuf_loader_new();
-		smiley->icon = NULL;
-
-		g_signal_connect(smiley->loader, "area_prepared", G_CALLBACK(pidgin_conv_custom_smiley_allocated), smiley);
-		g_signal_connect(smiley->loader, "closed", G_CALLBACK(pidgin_conv_custom_smiley_closed), smiley);
-
+		gtk_imhtml_smiley_reload(smiley);
 		return TRUE;
 	}
 
-	loader = gdk_pixbuf_loader_new();
-
-	/* this is wrong, this file ought not call g_new on GtkIMHtmlSmiley */
-	/* Let gtk_imhtml have a gtk_imhtml_smiley_new function, and let
-	   GtkIMHtmlSmiley by opaque */
-	smiley = g_new0(GtkIMHtmlSmiley, 1);
-	smiley->file   = NULL;
-	smiley->smile  = g_strdup(smile);
-	smiley->loader = loader;
-	smiley->flags  = smiley->flags | GTK_IMHTML_SMILEY_CUSTOM;
-
-	g_signal_connect(smiley->loader, "area_prepared", G_CALLBACK(pidgin_conv_custom_smiley_allocated), smiley);
-	g_signal_connect(smiley->loader, "closed", G_CALLBACK(pidgin_conv_custom_smiley_closed), smiley);
-
+	smiley = gtk_imhtml_smiley_create(NULL, smile, FALSE, GTK_IMHTML_SMILEY_CUSTOM);
 	gtk_imhtml_associate_smiley(imhtml, sml, smiley);
+	g_signal_connect_swapped(imhtml, "destroy", G_CALLBACK(gtk_imhtml_smiley_destroy), smiley);
 
 	return TRUE;
 }
@@ -6379,6 +6296,11 @@ gray_stuff_out(PidginConversation *gtkconv)
 
 		if(conv->features & PURPLE_CONNECTION_NO_IMAGES)
 			buttons &= ~GTK_IMHTML_IMAGE;
+
+		if (conv->features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+			buttons |= GTK_IMHTML_CUSTOM_SMILEY;
+		else
+			buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;
 
 		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
 		if (account != NULL)
@@ -6827,7 +6749,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	{
 		PurpleContact *contact = purple_buddy_get_contact(buddy);
 		if (contact) {
-			custom_img = purple_buddy_icons_find_custom_icon(contact);
+			custom_img = purple_buddy_icons_node_find_custom_icon((PurpleBlistNode*)contact);
 			if (custom_img) {
 				/* There is a custom icon for this user */
 				data = purple_imgstore_get_data(custom_img);

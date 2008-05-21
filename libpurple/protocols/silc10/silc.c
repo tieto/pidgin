@@ -1800,10 +1800,10 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                       /* send_raw */
 	NULL,                       /* roomlist_room_serialize */
 
-	/* padding */
 	NULL,
 	NULL,
 	NULL,
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL
 };
 

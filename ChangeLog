@@ -1,5 +1,14 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.5.0:
+	Pidgin:
+	* Custom buddy icons can now be added and removed to buddy list
+	  entries via the buddy list entry right-click menu.
+
+	General:
+	* Group and Chat buddy list entries can now be given custom buddy
+	  icons.
+
 version 2.4.3 (??/??/2008):
 
 version 2.4.2 (05/17/2008):
