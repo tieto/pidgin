@@ -1558,13 +1558,17 @@ remove_node_custom_icon(GtkWidget *w, PurpleBlistNode *node)
 static void
 add_buddy_icon_menu_items(GtkWidget *menu, PurpleBlistNode *node)
 {
+	GtkWidget *item;
+
 	pidgin_new_item_from_stock(menu, _("Set Custom Icon"), NULL,
 	                           G_CALLBACK(set_node_custom_icon), node, 0,
 	                           0, NULL);
 
-	pidgin_new_item_from_stock(menu, _("Remove Custom Icon"), NULL,
+	item = pidgin_new_item_from_stock(menu, _("Remove Custom Icon"), NULL,
 	                           G_CALLBACK(remove_node_custom_icon), node,
 	                           0, 0, NULL);
+	if (!purple_buddy_icons_node_has_custom_icon(node))
+		gtk_widget_set_sensitive(item, FALSE);
 }
 
 static GtkWidget *
