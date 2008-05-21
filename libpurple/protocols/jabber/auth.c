@@ -499,6 +499,13 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	{
 		char *mech_name = xmlnode_get_data(mechnode);
 #ifdef HAVE_CYRUS_SASL
+		/* Don't include Google Talk's X-GOOGLE-TOKEN mechanism, as we will not
+		 * support it and including it gives a false fall-back to other mechs offerred,
+		 * leading to incorrect error handling.
+		 */
+		if (mech_name && !strcmp(mech_name, "X-GOOGLE-TOKEN"))
+			continue;
+
 		g_string_append(js->sasl_mechs, mech_name);
 		g_string_append_c(js->sasl_mechs, ' ');
 #else
