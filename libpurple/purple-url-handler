@@ -295,10 +295,14 @@ def ymsgr(uri):
 
 
 def main(argv=sys.argv):
-    if len(argv) != 2:
+    if len(argv) != 2 or argv[1] == "--help" or argv[1] == "-h":
         print "Usage: %s URI" % argv[0]
         print "Example: %s \"xmpp:romeo@montague.net?message\"" % argv[0]
-        return
+
+        if len(argv) != 2:
+            sys.exit(1)
+        else:
+            return 0
 
     uri = argv[1]
     type = uri.split(":")[0]
