@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-17 21:01+0200\n"
-"PO-Revision-Date: 2008-05-17 19:31+0200\n"
-"Last-Translator: Björn Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2008-05-21 17:46+0200\n"
+"PO-Revision-Date: 2008-05-21 17:46+0200\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -99,6 +99,10 @@ msgstr "Passwort:"
 
 msgid "Alias:"
 msgstr "Alias:"
+
+#. Register checkbox
+msgid "Create this account on the server"
+msgstr "Dieses Konto auf dem Server anlegen"
 
 #. Cancel button
 #. Cancel
@@ -2092,8 +2096,10 @@ msgstr "Keine Übereinstimmung der Plugin-Magic-Nummer %d (brauche %d)"
 msgid "ABI version mismatch %d.%d.x (need %d.%d.x)"
 msgstr "ABI Versionskonflikt %d.%d.x (brauche %d.%d.x)"
 
-msgid "Plugin does not implement all required functions"
-msgstr "Plugin enthält nicht alle benötigten Funktionen"
+msgid ""
+"Plugin does not implement all required functions (list_icon, login and close)"
+msgstr ""
+"Plugin enthält nicht alle benötigten Funktionen (list_icon, login und close)"
 
 #, c-format
 msgid ""
@@ -2757,13 +2763,11 @@ msgstr ""
 "dann installieren Sie ActiveTCL von http://www.activestate.com\n"
 
 msgid ""
-"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://"
-"developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-"
-"LocalMessaging for more information."
+"The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d."
+"pidgin.im/BonjourWindows for more information."
 msgstr ""
 "Apples Bonjour-Toolkit für Windows konnte nicht gefunden werden, für weitere "
-"Informationen besuchen Sie die FAQ unter: http://developer.pidgin.im/wiki/"
-"Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging."
+"Informationen besuchen Sie die FAQ unter: http://d.pidgin.im/BonjourWindows"
 
 msgid "Unable to listen for incoming IM connections\n"
 msgstr "Kann nicht auf eingehende IM-Verbindungen hören\n"
@@ -4507,8 +4511,8 @@ msgid "XMPP Message Error"
 msgstr "XMPP-Nachrichtenfehler"
 
 #, c-format
-msgid " (Code %s)"
-msgstr " (Code %s)"
+msgid "(Code %s)"
+msgstr "(Code %s)"
 
 msgid "XML Parse error"
 msgstr "Fehler bei Einlesen von XML-Daten"
@@ -10963,6 +10967,9 @@ msgstr "Niederländisch, Flämisch"
 msgid "Norwegian Nynorsk"
 msgstr "Norwegisch (Nynorsk)"
 
+msgid "Occitan"
+msgstr "Okzitanisch"
+
 msgid "Punjabi"
 msgstr "Pandschabi"
 
@@ -11337,6 +11344,13 @@ msgstr "Farbe des Absendernamens für Aktions-Nachrichten"
 
 msgid "Color to draw the name of an action message."
 msgstr "Farbe, mit der der Name in einer Aktions-Nachricht dargestellt wird."
+
+#, fuzzy
+msgid "Action Message Name Color for Whispered Message"
+msgstr "Farbe des Absendernamens für Aktions-Nachrichten"
+
+msgid "Whisper Message Name Color"
+msgstr "Farbe des Absendernamens für Flüster-Nachrichten"
 
 msgid "Typing notification color"
 msgstr "Farbe der Tipp-Benachrichtigung"
