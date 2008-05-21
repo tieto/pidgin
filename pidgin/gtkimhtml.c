@@ -5329,7 +5329,150 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 	if (flags & PURPLE_CONNECTION_NO_IMAGES)
 		buttons &= ~GTK_IMHTML_IMAGE;
 
+	if (flags & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+		buttons |= GTK_IMHTML_CUSTOM_SMILEY;
+	else
+		buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;
+
 	gtk_imhtml_set_format_functions(imhtml, buttons);
 }
 
+/*******
+ * GtkIMHtmlSmiley functions
+ *******/
+static void gtk_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data)
+{
+	GtkIMHtmlSmiley *smiley;
+
+	smiley = (GtkIMHtmlSmiley *)user_data;
+	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
+
+	if (smiley->icon)
+		g_object_ref(G_OBJECT(smiley->icon));
+#ifdef DEBUG_CUSTOM_SMILEY
+	purple_debug_info("custom-smiley", "gtk_custom_smiley_allocated(): got GdkPixbufAnimation %p for smiley '%s'\n", smiley->icon, smiley->smile);
+#endif
+}
+
+static void gtk_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data)
+{
+	GtkIMHtmlSmiley *smiley;
+	GtkWidget *icon = NULL;
+	GtkTextChildAnchor *anchor = NULL;
+	GSList *current = NULL;
+
+	smiley = (GtkIMHtmlSmiley *)user_data;
+	if (!smiley->imhtml) {
+#ifdef DEBUG_CUSTOM_SMILEY
+		purple_debug_error("custom-smiley", "gtk_custom_smiley_closed(): orphan smiley found: %p\n", smiley);
+#endif
+		g_object_unref(G_OBJECT(loader));
+		smiley->loader = NULL;
+		return;
+	}
+
+	for (current = smiley->anchors; current; current = g_slist_next(current)) {
+
+		icon = gtk_image_new_from_animation(smiley->icon);
+
+#ifdef DEBUG_CUSTOM_SMILEY
+		purple_debug_info("custom-smiley", "gtk_custom_smiley_closed(): got GtkImage %p from GtkPixbufAnimation %p for smiley '%s'\n",
+				icon, smiley->icon, smiley->smile);
+#endif
+		if (icon) {
+			GList *wids;
+			gtk_widget_show(icon);
+
+			anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
+			wids = gtk_text_child_anchor_get_widgets(anchor);
+
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", purple_unescape_html(smiley->smile), g_free);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley->smile), g_free);
+
+			if (smiley->imhtml) {
+				if (wids) {
+					GList *children = gtk_container_get_children(GTK_CONTAINER(wids->data));
+					g_list_foreach(children, (GFunc)gtk_widget_destroy, NULL);
+					g_list_free(children);
+					gtk_container_add(GTK_CONTAINER(wids->data), icon);
+				} else
+					gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(smiley->imhtml), icon, anchor);
+			}
+			g_list_free(wids);
+		}
+
+	}
+
+	g_slist_free(smiley->anchors);
+	smiley->anchors = NULL;
+
+	g_object_unref(G_OBJECT(loader));
+	smiley->loader = NULL;
+}
+
+static void
+gtk_custom_smiley_size_prepared(GdkPixbufLoader *loader, gint width, gint height, gpointer data)
+{
+#define CUSTOM_SMILEY_SIZE 96	/* XXX: Should this be a theme setting? */
+	if (width <= CUSTOM_SMILEY_SIZE && height <= CUSTOM_SMILEY_SIZE)
+		return;
+
+	if (width >= height) {
+		height = height * CUSTOM_SMILEY_SIZE / width;
+		width = CUSTOM_SMILEY_SIZE;
+	} else {
+		width = width * CUSTOM_SMILEY_SIZE / height;
+		height = CUSTOM_SMILEY_SIZE;
+	}
+
+	gdk_pixbuf_loader_set_size(loader, width, height);
+}
+
+void
+gtk_imhtml_smiley_reload(GtkIMHtmlSmiley *smiley)
+{
+	if (smiley->icon)
+		g_object_unref(smiley->icon);
+	if (smiley->loader)
+		g_object_unref(smiley->loader);  /* XXX: does this crash? */
+
+	smiley->icon = NULL;
+	smiley->loader = NULL;
+
+	if (smiley->file) {
+		/* We do not use the pixbuf loader for a smiley that can be loaded
+		 * from a file. (e.g., local custom smileys)
+		 */
+		return;
+	}
+
+	smiley->loader = gdk_pixbuf_loader_new();
+
+	g_signal_connect(smiley->loader, "area_prepared", G_CALLBACK(gtk_custom_smiley_allocated), smiley);
+	g_signal_connect(smiley->loader, "closed", G_CALLBACK(gtk_custom_smiley_closed), smiley);
+	g_signal_connect(smiley->loader, "size_prepared", G_CALLBACK(gtk_custom_smiley_size_prepared), smiley);
+}
+
+GtkIMHtmlSmiley *gtk_imhtml_smiley_create(const char *file, const char *shortcut, gboolean hide,
+		GtkIMHtmlSmileyFlags flags)
+{
+	GtkIMHtmlSmiley *smiley = g_new0(GtkIMHtmlSmiley, 1);
+	smiley->file = g_strdup(file);
+	smiley->smile = g_strdup(shortcut);
+	smiley->hidden = hide;
+	smiley->flags = flags;
+	gtk_imhtml_smiley_reload(smiley);
+	return smiley;
+}
+
+void gtk_imhtml_smiley_destroy(GtkIMHtmlSmiley *smiley)
+{
+	g_free(smiley->smile);
+	g_free(smiley->file);
+	if (smiley->icon)
+		g_object_unref(smiley->icon);
+	if (smiley->loader)
+		g_object_unref(smiley->loader);
+	g_free(smiley);
+}
 
