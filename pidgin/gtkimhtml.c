@@ -32,10 +32,14 @@
 #include "internal.h"
 #include "pidgin.h"
 #include "pidginstock.h"
+#include "gtkutils.h"
+#include "smiley.h"
+#include "imgstore.h"
 
 #include "debug.h"
 #include "util.h"
 #include "gtkimhtml.h"
+#include "gtksmiley.h"
 #include "gtksourceiter.h"
 #include "gtksourceundomanager.h"
 #include "gtksourceview-marshal.h"
@@ -3687,6 +3691,15 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImage *image)
 	gtk_widget_show(image->filesel);
 }
 
+static void
+gtk_imhtml_custom_smiley_save(GtkWidget *w, GtkIMHtmlImage *image)
+{
+	/* Create an add dialog */
+	PidginSmiley *editor = pidgin_smiley_edit(NULL, NULL);
+	pidgin_smiley_editor_set_shortcut(editor, image->filename);
+	pidgin_smiley_editor_set_image(editor, image->pixbuf);
+}
+
 /*
  * So, um, AIM Direct IM lets you send any file, not just images.  You can
  * just insert a sound or a file or whatever in a conversation.  It's
@@ -3711,6 +3724,19 @@ static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtm
 			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(gtk_imhtml_image_save), image);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 
+			/* Add menu item for adding custom smiley to local smileys */
+			/* we only add the menu if the image is of "custom smiley size"
+			  <= 96x96 pixels */
+			if (image->width <= 96 && image->height <= 96) {
+				text = g_strdup_printf(_("_Add Custom Smiley..."));
+				img = gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_MENU);
+				item = gtk_image_menu_item_new_with_mnemonic(text);
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
+				g_signal_connect(G_OBJECT(item), "activate",
+								 G_CALLBACK(gtk_imhtml_custom_smiley_save), image);
+				gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+			}
+
 			gtk_widget_show_all(menu);
 			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 							event_button->button, event_button->time);
@@ -3732,7 +3758,7 @@ static gboolean gtk_imhtml_smiley_clicked(GtkWidget *w, GdkEvent *event, GtkIMHt
 	GdkPixbufAnimation *anim = NULL;
 	GtkIMHtmlScalable *image = NULL;
 	gboolean ret;
-	
+
 	if (event->type != GDK_BUTTON_RELEASE || ((GdkEventButton*)event)->button != 3)
 		return FALSE;
 

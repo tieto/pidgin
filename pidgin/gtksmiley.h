@@ -1,6 +1,7 @@
 /**
  * @file gtksmiley.h GTK+ Custom Smiley API
  * @ingroup pidgin
+ * @since 2.5.0
  */
 
 /* pidgin
@@ -28,6 +29,8 @@
 #define _PIDGIN_GTKSMILEY_H_
 
 #include "smiley.h"
+
+typedef struct _PidginSmiley PidginSmiley;
 
 /**
  * Add a PurpleSmiley to the GtkIMHtmlSmiley's list to be able to use it
@@ -72,9 +75,29 @@ void pidgin_smiley_manager_show(void);
 /**
  * Shows an editor for a smiley.
  *
- * @param widget	The parent widget to be linked or @c NULL
- * @param smiley    The PurpleSmiley to be edited, or @c NULL for a new smiley
+ * @param widget The parent widget to be linked or @c NULL
+ * @param smiley The PurpleSmiley to be edited, or @c NULL for a new smiley
+ * @return The smiley add dialog
+ *
+ * @see pidgin_smiley_editor_set_shortcut
+ * @see pidgin_smiley_editor_set_image
  */
-void pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley);
+PidginSmiley *pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley);
+
+/**
+ * Set the shortcut in a smiley add dialog
+ *
+ * @param editor A smiley editor dialog (created by pidgin_smiley_edit)
+ * @param shortcut The shortcut to set
+ */
+void pidgin_smiley_editor_set_shortcut(PidginSmiley *editor, const gchar *shortcut);
+
+/**
+ * Set the image in a smiley add dialog
+ *
+ * @param editor A smiley editor dialog
+ * @param image A GdkPixbuf image
+ */
+void pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image);
 
 #endif /* _PIDGIN_GTKSMILEY_H_*/

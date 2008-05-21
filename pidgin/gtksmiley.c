@@ -39,14 +39,15 @@
 
 #define PIDGIN_RESPONSE_EDIT 1000
 
-typedef struct
+struct _PidginSmiley
 {
 	PurpleSmiley *smiley;
 	GtkWidget *parent;
 	GtkWidget *smile;
 	GtkWidget *smiley_image;
 	gchar *filename;
-} PidginSmiley;
+	GdkPixbuf *custom_pixbuf;
+};
 
 typedef struct
 {
@@ -72,6 +73,8 @@ pidgin_smiley_destroy(PidginSmiley *smiley)
 {
 	gtk_widget_destroy(smiley->parent);
 	g_free(smiley->filename);
+	if (smiley->custom_pixbuf)
+		gdk_pixbuf_unref(smiley->custom_pixbuf);
 	g_free(smiley);
 }
 
@@ -230,7 +233,8 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 		}
 		purple_smiley_set_shortcut(s->smiley, entry);
 	} else {
-		if ((s->filename == NULL || *entry == 0)) {
+		if ((s->filename == NULL && s->custom_pixbuf == NULL)
+				|| *entry == 0) {
 			purple_notify_error(s->parent, _("Custom Smiley"),
 					_("More Data needed"),
 					s->filename ? _("Please provide a shortcut to associate with the smiley.")
@@ -239,6 +243,21 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 		}
 
 		purple_debug_info("gtksmiley", "adding a new smiley\n");
+
+		if (s->filename == NULL) {
+			/* Get the smiley from the custom pixbuf */
+			gchar *buffer = NULL;
+			gsize size = 0;
+			gchar *filename;
+
+			gdk_pixbuf_save_to_bufferv(s->custom_pixbuf, &buffer, &size,
+									   "png", NULL, NULL, NULL);
+			filename = purple_util_get_image_filename(buffer, size);
+			s->filename = g_build_filename(purple_smileys_get_storing_dir(), filename, NULL);
+			purple_util_write_data_to_file_absolute(s->filename, buffer, size);
+			g_free(filename);
+			g_free(buffer);
+		}
 		emoticon = purple_smiley_new_from_file(entry, s->filename);
 		pidgin_smiley_add_to_list(emoticon);
 	}
@@ -293,7 +312,8 @@ open_image_selector(GtkWidget *widget, PidginSmiley *psmiley)
 	gtk_widget_show_all(file_chooser);
 }
 
-void pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
+PidginSmiley *
+pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 {
 	GtkWidget *vbox;
 	GtkWidget *hbox;
@@ -307,7 +327,7 @@ void pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	s->smiley = smiley;
 
 	window = gtk_dialog_new_with_buttons(smiley ? _("Edit Smiley") : _("Add Smiley"),
-			GTK_WINDOW(widget),
+			widget ? GTK_WINDOW(widget) : NULL,
 			GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
 			smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -378,6 +398,24 @@ void pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	gtk_widget_show(GTK_WIDGET(window));
 	g_signal_connect_swapped(G_OBJECT(window), "destroy", G_CALLBACK(pidgin_smiley_destroy), s);
 	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(purple_notify_close_with_handle), s);
+
+	return s;
+}
+
+void
+pidgin_smiley_editor_set_shortcut(PidginSmiley *editor, const gchar *shortcut)
+{
+	gtk_entry_set_text(GTK_ENTRY(editor->smile), shortcut ? shortcut : "");
+}
+
+void
+pidgin_smiley_editor_set_image(PidginSmiley *editor, GdkPixbuf *image)
+{
+	if (editor->custom_pixbuf)
+		gdk_pixbuf_unref(editor->custom_pixbuf);
+	editor->custom_pixbuf = image ? gdk_pixbuf_ref(image) : NULL;
+	if (image)
+		gtk_image_set_from_pixbuf(GTK_IMAGE(editor->smiley_image), image);
 }
 
 /******************************************************************************
@@ -648,7 +686,7 @@ void pidgin_smiley_manager_show(void)
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(win), GTK_RESPONSE_NO, FALSE);
 	gtk_dialog_set_response_sensitive(GTK_DIALOG(win), PIDGIN_RESPONSE_EDIT,
 									  FALSE);
-	
+
 	g_signal_connect(win, "response", G_CALLBACK(smiley_manager_select_cb),
 			dialog);
 
