@@ -503,8 +503,10 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		 * support it and including it gives a false fall-back to other mechs offerred,
 		 * leading to incorrect error handling.
 		 */
-		if (mech_name && !strcmp(mech_name, "X-GOOGLE-TOKEN"))
+		if (mech_name && !strcmp(mech_name, "X-GOOGLE-TOKEN")) {
+			g_free(mech_name);
 			continue;
+		}
 
 		g_string_append(js->sasl_mechs, mech_name);
 		g_string_append_c(js->sasl_mechs, ' ');
