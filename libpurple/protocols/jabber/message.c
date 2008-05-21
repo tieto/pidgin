@@ -411,10 +411,12 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			}
 
 			if(code)
-				code_txt = g_strdup_printf(_("%s(Code %s)"), (text ? " " : ""), code);
+				code_txt = g_strdup_printf(_("(Code %s)"), code);
 
 			if(!jm->error)
-				jm->error = g_strdup_printf("%s%s", text ? text : "",
+				jm->error = g_strdup_printf("%s%s%s",
+						text ? text : "",
+						text && code_text ? " " : "",
 						code_txt ? code_txt : "");
 
 			g_free(code_txt);
