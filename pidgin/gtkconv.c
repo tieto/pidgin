@@ -5687,9 +5687,13 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		char *alias_escaped = (alias ? g_markup_escape_text(alias, strlen(alias)) : g_strdup(""));
 		/* The initial offset is to deal with
 		 * escaped entities making the string longer */
-		int tag_start_offset = alias ? (strlen(alias_escaped) - strlen(alias)) : 0;
+		int tag_start_offset = 0;
 		int tag_end_offset = 0;
 		const char *tagname = NULL;
+
+		GtkTextIter start, end;
+		GtkTextTag *tag;
+		GtkTextBuffer *buffer = GTK_IMHTML(gtkconv->imhtml)->text_buffer;
 
 		/* Enforce direction on alias */
 		if (is_rtl_message)
@@ -5713,8 +5717,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			if (purple_message_meify(new_message, -1)) {
 				if (flags & PURPLE_MESSAGE_AUTO_RESP) {
 					g_snprintf(str, 1024, "%s ***%s", AUTO_RESPONSE, alias_escaped);
-					tag_start_offset += 4
-						+ strlen(AUTO_RESPONSE);
+					tag_start_offset += strlen(AUTO_RESPONSE) - 6 + 4;
 				} else {
 					g_snprintf(str, 1024, "***%s", alias_escaped);
 					tag_start_offset += 3;
@@ -5727,8 +5730,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			} else {
 				if (flags & PURPLE_MESSAGE_AUTO_RESP) {
 					g_snprintf(str, 1024, "%s %s", alias_escaped, AUTO_RESPONSE);
-					tag_start_offset += 1
-						+ strlen(AUTO_RESPONSE);
+					tag_start_offset += strlen(AUTO_RESPONSE) - 6 + 1;
 				} else {
 					g_snprintf(str, 1024, "%s:", alias_escaped);
 					tag_end_offset = 1;
@@ -5756,26 +5758,19 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 				sml_attrib ? sml_attrib : "", mdate, str);
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all | GTK_IMHTML_NO_SCROLL);
 
-		if (tagname ||
-				(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT &&
-				 !(flags & PURPLE_MESSAGE_SEND))) {
-			GtkTextIter start, end;
-			GtkTextTag *tag;
-			GtkTextBuffer *buffer = GTK_IMHTML(gtkconv->imhtml)->text_buffer;
+		gtk_text_buffer_get_end_iter(buffer, &end);
+		gtk_text_iter_backward_chars(&end, tag_end_offset + 1);
 
-			if (tagname)
-				tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(buffer), tagname);
-			else
-				tag = get_buddy_tag(conv, name, TRUE);
+		start = end;
+		gtk_text_iter_backward_chars(&start, tag_start_offset +
+				(alias ? g_utf8_strlen(alias, -1) : 0) + strlen(mdate) + 1);
 
-			gtk_text_buffer_get_end_iter(buffer, &end);
-			gtk_text_iter_backward_chars(&end, tag_end_offset + 1);
+		if (tagname)
+			tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(buffer), tagname);
+		else
+			tag = get_buddy_tag(conv, name, TRUE);
 
-			gtk_text_buffer_get_end_iter(buffer, &start);
-			gtk_text_iter_backward_chars(&start, strlen(str) + 1 - tag_start_offset);
-
-			gtk_text_buffer_apply_tag(buffer, tag, &start, &end);
-		}
+		gtk_text_buffer_apply_tag(buffer, tag, &start, &end);
 
 		g_free(str);
 
