@@ -218,7 +218,7 @@ def execute(uri):
                     return purple.__getattr__(command)(*methodparams)
             show_help()
 
-if len(sys.argv) == 1 or sys.argv[1] == "--help" or sys.argv == "-h":
+if len(sys.argv) == 1:
     show_help()
 elif (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     show_help(True)
