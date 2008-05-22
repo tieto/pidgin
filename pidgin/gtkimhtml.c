@@ -5003,7 +5003,7 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 		GObject *obj = G_OBJECT(tag);
 		gboolean empty = TRUE;
 
-		str += g_snprintf(str, sizeof(buf) - (str - buf), "<font style='");
+		str += g_snprintf(str, sizeof(buf) - (str - buf), "<span style='");
 
 		/* Weight */
 		g_object_get(obj, "weight-set", &isset, "weight", &ivalue, NULL);
@@ -5095,7 +5095,7 @@ static const gchar *tag_to_html_end(GtkTextTag *tag)
 			gboolean set = FALSE;
 			g_object_get(G_OBJECT(tag), props[i], &set, NULL);
 			if (set)
-				return "</font>";
+				return "</span>";
 		}
 
 		return "";

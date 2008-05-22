@@ -5692,6 +5692,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		const char *tagname = NULL;
 
 		GtkTextIter start, end;
+		GtkTextMark *mark;
 		GtkTextTag *tag;
 		GtkTextBuffer *buffer = GTK_IMHTML(gtkconv->imhtml)->text_buffer;
 
@@ -5753,24 +5754,42 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 		g_free(alias_escaped);
 
-		g_snprintf(buf2, BUF_LONG,
-				"<FONT %s><FONT SIZE=\"2\"><!--%s --></FONT>%s</FONT> ",
-				sml_attrib ? sml_attrib : "", mdate, str);
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all | GTK_IMHTML_NO_SCROLL);
-
-		gtk_text_buffer_get_end_iter(buffer, &end);
-		gtk_text_iter_backward_chars(&end, tag_end_offset + 1);
-
-		start = end;
-		gtk_text_iter_backward_chars(&start, tag_start_offset +
-				(alias ? g_utf8_strlen(alias, -1) : 0) + strlen(mdate) + 1);
-
 		if (tagname)
 			tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(buffer), tagname);
 		else
 			tag = get_buddy_tag(conv, name, TRUE);
 
+		if (GTK_IMHTML(gtkconv->imhtml)->show_comments) {
+			/* The color for the timestamp has to be set in the font-tags, unfortunately.
+			 * Applying the nick-tag to timestamps would work, but that can make it
+			 * bold. I thought applying the "comment" tag again, which has "weight" set
+			 * to PANGO_WEIGHT_NORMAL, would remove the boldness. But it doesn't. So
+			 * this will have to do. I don't terribly like it.  -- sadrul */
+			GdkColor *color = NULL;
+			gboolean set = FALSE;
+			char colcode[] = "COLOR=\"#XXXXXX\"";
+			g_object_get(G_OBJECT(tag), "foreground-set", &set, "foreground-gdk", &color, NULL);
+			if (set && color)
+				g_snprintf(colcode, sizeof(colcode), "COLOR=\"#%02x%02x%02x\"",
+						color->red >> 8, color->green >> 8, color->blue >> 8);
+			else
+				colcode[0] = '\0';
+			g_snprintf(buf2, BUF_LONG, "<FONT %s SIZE=\"2\"><!--%s --></FONT>", colcode, mdate);
+			gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all | GTK_IMHTML_NO_SCROLL);
+			if (color)
+				gdk_color_free(color);
+		}
+
+		gtk_text_buffer_get_end_iter(buffer, &end);
+		mark = gtk_text_buffer_create_mark(buffer, NULL, &end, TRUE);
+
+		g_snprintf(buf2, BUF_LONG, "<FONT %s>%s</FONT> ", sml_attrib ? sml_attrib : "", str);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all | GTK_IMHTML_NO_SCROLL);
+
+		gtk_text_buffer_get_end_iter(buffer, &end);
+		gtk_text_buffer_get_iter_at_mark(buffer, &start, mark);
 		gtk_text_buffer_apply_tag(buffer, tag, &start, &end);
+		gtk_text_buffer_delete_mark(buffer, mark);
 
 		g_free(str);
 
