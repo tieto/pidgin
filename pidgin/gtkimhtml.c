@@ -1574,9 +1574,11 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "SUP", "rise", 5000, NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "PRE", "family", "Monospace", NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "search", "background", "#22ff00", "weight", "bold", NULL);
+	gtk_text_buffer_create_tag(imhtml->text_buffer, "comment", "weight", PANGO_WEIGHT_NORMAL,
 #if FALSE && GTK_CHECK_VERSION(2,10,10)
-	gtk_text_buffer_create_tag(imhtml->text_buffer, "comment", "invisible", FALSE, NULL);
+			"invisible", FALSE,
 #endif
+			NULL);
 
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "send-name", "weight", PANGO_WEIGHT_BOLD, NULL);
 	gtk_text_buffer_create_tag(imhtml->text_buffer, "receive-name", "weight", PANGO_WEIGHT_BOLD, NULL);
@@ -3124,7 +3126,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 #else
 					if (imhtml->show_comments && !(options & GTK_IMHTML_NO_COMMENTS)) {
 						wpos = g_snprintf (ws, len, "%s", tag);
-						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+						gtk_text_buffer_insert_with_tags_by_name(imhtml->text_buffer, iter, ws, wpos, "comment", NULL);
 					}
 #endif
 					ws[0] = '\0'; wpos = 0;
@@ -4994,7 +4996,67 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 		g_snprintf(buf, sizeof(buf), "<font size=\"%s\">", &name[10]);
 		return buf;
 	} else {
-		return "";
+		char *str = buf;
+		gboolean isset;
+		int ivalue = 0;
+		GdkColor *color = NULL;
+		GObject *obj = G_OBJECT(tag);
+		gboolean empty = TRUE;
+
+		str += g_snprintf(str, sizeof(buf) - (str - buf), "<font style='");
+
+		/* Weight */
+		g_object_get(obj, "weight-set", &isset, "weight", &ivalue, NULL);
+		if (isset) {
+			const char *weight = "";
+			if (ivalue >= PANGO_WEIGHT_ULTRABOLD)
+				weight = "bolder";
+			else if (ivalue >= PANGO_WEIGHT_BOLD)
+				weight = "bold";
+			else if (ivalue >= PANGO_WEIGHT_NORMAL)
+				weight = "normal";
+			else
+				weight = "lighter";
+
+			str += g_snprintf(str, sizeof(buf) - (str - buf), "font-weight: %s;", weight);
+			empty = FALSE;
+		}
+
+		/* Foreground color */
+		g_object_get(obj, "foreground-set", &isset, "foreground-gdk", &color, NULL);
+		if (isset && color) {
+			str += g_snprintf(str, sizeof(buf) - (str - buf),
+					"color: #%02x%02x%02x;",
+					color->red >> 8, color->green >> 8, color->blue >> 8);
+			gdk_color_free(color);
+			empty = FALSE;
+		}
+
+		/* Background color */
+		g_object_get(obj, "background-set", &isset, "background-gdk", &color, NULL);
+		if (isset && color) {
+			str += g_snprintf(str, sizeof(buf) - (str - buf),
+					"background: #%02x%02x%02x;",
+					color->red >> 8, color->green >> 8, color->blue >> 8);
+			gdk_color_free(color);
+			empty = FALSE;
+		}
+
+		/* Underline */
+		g_object_get(obj, "underline-set", &isset, "underline", &ivalue, NULL);
+		if (isset) {
+			switch (ivalue) {
+				case PANGO_UNDERLINE_NONE:
+				case PANGO_UNDERLINE_ERROR:
+					break;
+				default:
+					str += g_snprintf(str, sizeof(buf) - (str - buf), "text-decoration: underline;");
+			}
+		}
+
+		g_snprintf(str, sizeof(buf) - (str - buf), "'>");
+
+		return (empty ? "" : buf);
 	}
 }
 
@@ -5026,6 +5088,16 @@ static const gchar *tag_to_html_end(GtkTextTag *tag)
 	} else if (strncmp(name, "FONT SIZE ", 10) == 0) {
 		return "</font>";
 	} else {
+		const char *props[] = {"weight-set", "foreground-set", "background-set",
+			"size-set", "underline-set", NULL};
+		int i;
+		for (i = 0; props[i]; i++) {
+			gboolean set = FALSE;
+			g_object_get(G_OBJECT(tag), props[i], &set, NULL);
+			if (set)
+				return "</font>";
+		}
+
 		return "";
 	}
 }
