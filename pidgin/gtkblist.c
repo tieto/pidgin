@@ -1682,6 +1682,8 @@ create_buddy_menu(PurpleBlistNode *node, PurpleBuddy *b)
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		pidgin_separator(menu);
 
+		add_buddy_icon_menu_items(menu, node);
+
 		if(gtknode->contact_expanded) {
 			pidgin_new_item_from_stock(menu, _("_Collapse"),
 						 GTK_STOCK_ZOOM_OUT,
