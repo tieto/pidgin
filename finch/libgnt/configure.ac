@@ -24,10 +24,10 @@ AC_PREREQ([2.50])
 # Make sure to update ../../configure.ac with libgnt version changes.
 #
 
-m4_define([gnt_lt_current], [4])
+m4_define([gnt_lt_current], [5])
 m4_define([gnt_major_version], [2])
-m4_define([gnt_minor_version], [4])
-m4_define([gnt_micro_version], [2])
+m4_define([gnt_minor_version], [5])
+m4_define([gnt_micro_version], [0])
 m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])

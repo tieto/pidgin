@@ -1,15 +1,20 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.5.0:
+version 2.5.0 (??/??/2008):
+	libpurple:
+	* Ability to create custom smileys (currently only the MSN protocol
+	  utilizes the feature). (Thanks to Mauro Sérgio Ferreira Brasil,
+	  Marcus Lundblad, Jorge Villaseñor and other contributors)
+
 	Pidgin:
 	* Custom buddy icons can now be added and removed to buddy list
 	  entries via the buddy list entry right-click menu.
+	* Resize large incoming custom smileys to a maximum of 96px on either
+	  side.
 
 	General:
 	* Group and Chat buddy list entries can now be given custom buddy
 	  icons.
-
-version 2.4.3 (??/??/2008):
 
 version 2.4.2 (05/17/2008):
 	libpurple:

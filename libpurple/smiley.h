@@ -1,6 +1,7 @@
 /**
  * @file smiley.h Smiley API
  * @ingroup core
+ * @since 2.5.0
  */
 
 /* purple
