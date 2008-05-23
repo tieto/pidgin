@@ -8,6 +8,8 @@ version 2.5.0 (??/??/2008):
 		* PurpleSmiley and the Smiley API.
 		* purple_serv_got_join_chat_failed
 		* chat-join-failed signal (see conversation-signals.dox)
+		* chat-invite-blocked and blocked-im-msg signals (see
+		  converation-signals.dox) (Thanks to Stefan Ott)
 		* purple_blist_update_node_icon
 		* purple_buddy_icons_node_has_custom_icon
 		* purple_buddy_icons_node_find_custom_icon
