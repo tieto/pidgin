@@ -19,9 +19,9 @@
 .\" License along with this manual; if not, write to the Free
 .\" Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 .\" Boston, MA  02111-1301  USA.
-.TH pidgin 1
+.TH pidgin 1 "" "Pidgin v@VERSION@"
 .SH NAME
-Pidgin v@VERSION@ \- Instant Messaging client
+pidgin \- Instant Messaging client
 .SH SYNOPSIS
 .TP 5
 \fBpidgin \fI[options]\fR

@@ -385,7 +385,7 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 			purple_debug_warning("bonjour", "receive error: %s\n", err ? err : "(null)");
 
 			bonjour_jabber_close_conversation(bconv);
-			if (bconv->pb != NULL) {
+			if (bconv->pb != NULL && bconv->pb->proto_data != NULL) {
 				BonjourBuddy *bb = bconv->pb->proto_data;
 				bb->conversation = NULL;
 			}
@@ -957,7 +957,7 @@ bonjour_jabber_send_message(BonjourJabber *jdata, const gchar *to, const gchar *
 	int ret;
 
 	pb = _find_or_start_conversation(jdata, to);
-	if (pb == NULL) {
+	if (pb == NULL || pb->proto_data == NULL) {
 		purple_debug_info("bonjour", "Can't send a message to an offline buddy (%s).\n", to);
 		/* You can not send a message to an offline buddy */
 		return -10000;
@@ -1103,8 +1103,10 @@ bonjour_jabber_stop(BonjourJabber *jdata)
 		buddies = purple_find_buddies(jdata->account, NULL);
 		for (l = buddies; l; l = l->next) {
 			BonjourBuddy *bb = ((PurpleBuddy*) l->data)->proto_data;
-			bonjour_jabber_close_conversation(bb->conversation);
-			bb->conversation = NULL;
+			if (bb != NULL) {
+				bonjour_jabber_close_conversation(bb->conversation);
+				bb->conversation = NULL;
+			}
 		}
 
 		g_slist_free(buddies);

@@ -491,30 +491,21 @@ pidgin_sound_play_file(const char *filename)
 		if (purple_running_gnome()) {
 			sink = gst_element_factory_make("gconfaudiosink", "sink");
 		}
-		if (!sink)
-			sink = gst_element_factory_make("autoaudiosink", "sink");
-		if (!sink) {
-			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
-			return;
-		}
 	}
 #ifndef _WIN32
 	else if (!strcmp(method, "esd")) {
 		sink = gst_element_factory_make("esdsink", "sink");
-		if (!sink) {
-			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
-			return;
-		}
 	} else if (!strcmp(method, "alsa")) {
 		sink = gst_element_factory_make("alsasink", "sink");
-		if (!sink) {
-			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
-			return;
-		}
 	}
 #endif
 	else {
 		purple_debug_error("sound", "Unknown sound method '%s'\n", method);
+		return;
+	}
+
+	if (strcmp(method, "automatic") != 0 && !sink) {
+		purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 		return;
 	}
 
