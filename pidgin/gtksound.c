@@ -488,9 +488,7 @@ pidgin_sound_play_file(const char *filename)
 		return;
 	volume = (float)(CLAMP(purple_prefs_get_int(PIDGIN_PREFS_ROOT "/sound/volume"),0,100)) / 50;
 	if (!strcmp(method, "automatic")) {
-		if (purple_running_gnome()) {
-			sink = gst_element_factory_make("gconfaudiosink", "sink");
-		}
+		sink = gst_element_factory_make("gconfaudiosink", "sink");
 	}
 #ifndef _WIN32
 	else if (!strcmp(method, "esd")) {
