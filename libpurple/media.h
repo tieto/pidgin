@@ -29,7 +29,9 @@
 #ifdef USE_FARSIGHT
 #ifdef USE_GSTPROPS
 
-#include <farsight/farsight.h>
+#include <gst/gst.h>
+#include <gst/farsight/fs-stream.h>
+#include <gst/farsight/fs-session.h>
 #include <glib.h>
 #include <glib-object.h>
 
@@ -53,6 +55,8 @@ typedef enum {
 	PURPLE_MEDIA_SEND_AUDIO = 1 << 1,
 	PURPLE_MEDIA_RECV_VIDEO = 1 << 2,
 	PURPLE_MEDIA_SEND_VIDEO = 1 << 3,
+	PURPLE_MEDIA_AUDIO = PURPLE_MEDIA_RECV_AUDIO | PURPLE_MEDIA_SEND_AUDIO,
+	PURPLE_MEDIA_VIDEO = PURPLE_MEDIA_RECV_VIDEO | PURPLE_MEDIA_SEND_VIDEO
 } PurpleMediaStreamType;
 
 struct _PurpleMediaClass
@@ -108,6 +112,20 @@ void purple_media_audio_init_src(GstElement **sendbin,
 void purple_media_video_init_src(GstElement **sendbin);
 
 void purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel);
+
+void purple_media_add_stream(PurpleMedia *media, const gchar *who,
+			     PurpleMediaStreamType type, const gchar *transmitter);
+void purple_media_remove_stream(PurpleMedia *media, const gchar *who, PurpleMediaStreamType type);
+
+GList *purple_media_get_local_audio_candidates(PurpleMedia *media);
+GList *purple_media_get_negotiated_audio_codecs(PurpleMedia *media);
+
+GList *purple_media_get_local_audio_codecs(PurpleMedia *media);
+void purple_media_add_remote_audio_candidates(PurpleMedia *media, const gchar *name,	
+					       GList *remote_candidates);
+FsCandidate *purple_media_get_local_candidate(PurpleMedia *media);
+FsCandidate *purple_media_get_remote_candidate(PurpleMedia *media);
+void purple_media_set_remote_audio_codecs(PurpleMedia *media, const gchar *name, GList *codecs);
 
 G_END_DECLS
 

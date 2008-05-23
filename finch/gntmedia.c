@@ -42,8 +42,6 @@
 /* An incredibly large part of the following is from gtkmedia.c */
 #ifdef USE_FARSIGHT
 
-#include <farsight/farsight.h>
-
 #undef hangup
 
 struct _FinchMediaPrivate

@@ -58,6 +58,8 @@
 #include "adhoccommands.h"
 #include "jingle.h"
 
+#include <gst/farsight/fs-conference-iface.h>
+
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
 static PurplePlugin *my_protocol = NULL;
@@ -1240,6 +1242,16 @@ void jabber_close(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 
+#ifdef USE_FARSIGHT
+	/* Close all of the open media sessions on this stream */
+	GList *iter = jabber_jingle_session_find_by_js(js);
+
+	for (; iter; iter = iter->next) {
+		JingleSession *session = (JingleSession *)iter->data;
+		purple_media_hangup(session->media);
+	}
+#endif
+
 	/* Don't perform any actions on the ssl connection
 	 * if we were forcibly disconnected because it will crash
 	 * on some SSL backends.
@@ -1862,10 +1874,20 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 	JabberID *jid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-
+#ifdef USE_FARSIGHT
+	JingleSession *session;
+#endif
 	if(!(jid = jabber_id_new(who)))
 		return;
 
+#ifdef USE_FARSIGHT
+	session = jabber_jingle_session_find_by_jid(js, who);
+
+	if (session) {
+		purple_media_hangup(session->media);
+	}
+
+#endif
 	if((jb = jabber_buddy_find(js, who, TRUE)) &&
 			(jbr = jabber_buddy_find_resource(jb, jid->resource))) {
 		if(jbr->thread_id) {
@@ -2357,11 +2379,9 @@ jabber_session_send_accept(JingleSession *session)
 	xmlnode_insert_child(result->node, jingle);
 	jabber_iq_send(result);
 	purple_debug_info("jabber", "Sent session accept, starting stream\n");
-	farsight_stream_start(jabber_jingle_session_get_stream(session));
-	farsight_stream_set_remote_codecs(
-			jabber_jingle_session_get_stream(session),
-			jabber_jingle_session_get_remote_codecs(session));
+	gst_element_set_state(purple_media_get_audio_pipeline(session->media), GST_STATE_PLAYING);
 
+	session->session_started = TRUE;
 }
 
 static void
@@ -2388,7 +2408,6 @@ jabber_session_send_reject(JingleSession *session)
 					   jabber_jingle_session_get_remote_jid(session));
 	xmlnode_insert_child(result->node, jingle);
 	jabber_iq_send(result);
-	farsight_stream_stop(jabber_jingle_session_get_stream(session));
 	jabber_jingle_session_destroy(session);
 }
 
@@ -2403,117 +2422,135 @@ jabber_session_send_terminate(JingleSession *session)
 					   jabber_jingle_session_get_remote_jid(session));
 	xmlnode_insert_child(result->node, jingle);
 	jabber_iq_send(result);
-	farsight_stream_stop(jabber_jingle_session_get_stream(session));
 	jabber_jingle_session_destroy(session);
 }
 
 /* callback called when new local transport candidate(s) are available on the
 	Farsight stream */
 static void
-jabber_session_candidates_prepared(FarsightStream *stream, gchar *candidate_id, 
-								   JingleSession *session)
+jabber_session_candidates_prepared(PurpleMedia *media, JingleSession *session)
 {
-	/* create transport-info package */
-	JabberIq *result = jabber_iq_new(jabber_jingle_session_get_js(session),
-									 JABBER_IQ_SET);
-	xmlnode *jingle = jabber_jingle_session_create_transport_info(session,
-																  candidate_id);
-	purple_debug_info("jabber", "jabber_session_candidates_prepared called for candidate_id = %s\n",
-					  candidate_id);
-	xmlnode_set_attrib(result->node, "to",
-					   jabber_jingle_session_get_remote_jid(session));
-	
-	xmlnode_insert_child(result->node, jingle);
-	jabber_iq_send(result);
+	if (!jabber_jingle_session_is_initiator(session)) {
+		/* create transport-info package */
+		JabberIq *result = jabber_iq_new(jabber_jingle_session_get_js(session),
+						 JABBER_IQ_SET);
+		xmlnode *jingle = jabber_jingle_session_create_transport_info(session);
+		purple_debug_info("jabber", "jabber_session_candidates_prepared: %d candidates\n",
+				  g_list_length(purple_media_get_local_audio_candidates(session->media)));
+		xmlnode_set_attrib(result->node, "to",
+				   jabber_jingle_session_get_remote_jid(session));
+
+		xmlnode_insert_child(result->node, jingle);
+		jabber_iq_send(result);
+	}
 }
 
 /* callback called when a pair of transport candidates (local and remote)
 	has been established */
 static void
-jabber_session_candidate_pair_established(FarsightStream *stream,
-										  gchar *native_candidate_id,
-										  gchar *remote_candidate_id,
-										  JingleSession *session)
+jabber_session_candidate_pair_established(PurpleMedia *media,
+					  FsCandidate *native_candidate,
+					  FsCandidate *remote_candidate,
+					  JingleSession *session)
 {	
-	purple_debug_info("jabber", "jabber_candidate_pair_established called");
+	purple_debug_info("jabber", "jabber_candidate_pair_established called\n");
 	/* if we are the initiator, we should send a content-modify message */
 	if (jabber_jingle_session_is_initiator(session)) {
-		purple_debug_info("jabber", 
-						  "we are the initiator, let's send conten-modify\n");
-		JabberIq *result = jabber_iq_new(jabber_jingle_session_get_js(session),
-										 JABBER_IQ_SET);
+		JabberIq *result;
+		xmlnode *jingle;
+		
+		purple_debug_info("jabber", "we are the initiator, let's send content-modify\n");
+
+		result = jabber_iq_new(jabber_jingle_session_get_js(session), JABBER_IQ_SET);
+
 		/* shall change this to a "content-replace" */
-		xmlnode *jingle = 
+		jingle =
 			jabber_jingle_session_create_content_replace(session,
-														 native_candidate_id,
-														 remote_candidate_id);
+								     native_candidate,
+								     remote_candidate);
 		xmlnode_set_attrib(result->node, "to",
 						   jabber_jingle_session_get_remote_jid(session));
 		xmlnode_insert_child(result->node, jingle);
 		jabber_iq_send(result);
 	}
-	/*
-	farsight_stream_set_active_candidate_pair(stream, native_candidate_id,
-											  remote_candidate_id);
-	*/
 }
 
+static void
+jabber_initiate_media_internal(JingleSession *session, const char *initiator, const char *remote_jid)
+{
+	PurpleMedia *media = NULL;
 
-PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who, 
+	media = purple_media_manager_create_media(purple_media_manager_get(), 
+						  session->js->gc, "fsrtpconference", remote_jid);
+	/* this will need to be changed to "nice" once the libnice transmitter is finished */
+	purple_media_add_stream(media, remote_jid, PURPLE_MEDIA_AUDIO, "rawudp");
+
+	jabber_jingle_session_set_remote_jid(session, remote_jid);
+	jabber_jingle_session_set_initiator(session, initiator);
+	jabber_jingle_session_set_media(session, media);
+	
+	/* connect callbacks */
+	g_signal_connect_swapped(G_OBJECT(media), "accepted", 
+				 G_CALLBACK(jabber_session_send_accept), session);
+	g_signal_connect_swapped(G_OBJECT(media), "reject", 
+				 G_CALLBACK(jabber_session_send_reject), session);
+	g_signal_connect_swapped(G_OBJECT(media), "hangup", 
+				 G_CALLBACK(jabber_session_send_terminate), session);
+	g_signal_connect(G_OBJECT(media), "candidates-prepared", 
+				 G_CALLBACK(jabber_session_candidates_prepared), session);
+	g_signal_connect(G_OBJECT(media), "candidate-pair", 
+				 G_CALLBACK(jabber_session_candidate_pair_established), session);
+
+	purple_media_ready(media);
+}
+
+static void
+jabber_session_initiate_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	const char *from = xmlnode_get_attrib(packet, "from");
+	JingleSession *session = jabber_jingle_session_find_by_jid(js, from);
+	PurpleMedia *media = session->media;
+	JabberIq *result;
+	xmlnode *jingle;
+
+	if (!strcmp(xmlnode_get_attrib(packet, "type"), "error")) {
+		purple_media_got_hangup(media);
+		return;
+	}
+
+	/* catch errors */
+	if (xmlnode_get_child(packet, "error")) {
+		purple_media_got_hangup(media);
+		return;
+	}
+
+	/* create transport-info package */
+	result = jabber_iq_new(jabber_jingle_session_get_js(session), JABBER_IQ_SET);
+	jingle = jabber_jingle_session_create_transport_info(session);
+	purple_debug_info("jabber", "jabber_session_candidates_prepared: %d candidates\n",
+			  g_list_length(purple_media_get_local_audio_candidates(session->media)));
+	xmlnode_set_attrib(result->node, "to",
+			   jabber_jingle_session_get_remote_jid(session));
+
+	xmlnode_insert_child(result->node, jingle);
+	jabber_iq_send(result);
+}
+
+PurpleMedia *
+jabber_initiate_media(PurpleConnection *gc, const char *who, 
 								   PurpleMediaStreamType type)
 {
 	/* create content negotiation */
 	JabberStream *js = gc->proto_data;
 	JabberIq *request = jabber_iq_new(js, JABBER_IQ_SET);
-	xmlnode *jingle, *content, *description, *payload_type, *transport;
-	FarsightSession *fs = NULL;
-	FarsightStream *audio = NULL; /* only audio for now... */
+	xmlnode *jingle, *content, *description, *transport;
 	GList *codecs;
-	GList *codec_iter = NULL;
-	FarsightCodec *codec = NULL;
-	PurpleMedia *media = NULL;
 	JingleSession *session;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
 	
-	char id[10];
-	char clock_rate[10];
-	char channels[10];
-	char jid[256];
-	char me[256];
-	
-	/* for debug */
-	char *output;
-	int len;
-		
-	/* setup stream */
-	fs = farsight_session_factory_make("rtp");
-	if (fs == NULL) {
-		purple_debug_error("jabber", "Farsight's rtp plugin not installed");
-		return NULL;
-	}
-	
-	/* check media stream type, and so on... */
-	/* only do audio for now... */
-	
-	/* get stuff from Farsight... */
-	audio = farsight_session_create_stream(fs, FARSIGHT_MEDIA_TYPE_AUDIO, 
-										   FARSIGHT_STREAM_DIRECTION_BOTH);
-	g_object_set(G_OBJECT(audio), "transmitter", "libjingle", NULL);
-	
-	purple_debug_info("jabber", "Getting local codecs\n");
-	codecs = farsight_stream_get_local_codecs(audio);
-	purple_debug_info("jabber", "number of codecs: %d\n", g_list_length(codecs));
-	
- 	if (audio == NULL) {
-		purple_debug_error("jabber", "Unable to create Farsight stream for audio");
-		/* destroy FarsightSession? */
-		return NULL;
-	}
-	
-	media = purple_media_manager_create_media(purple_media_manager_get(),
-											  gc, who, audio, NULL);
-	purple_debug_info("jabber", "After purple_media_manager_create_media\n");
+	char *jid = NULL, *me = NULL;
+
 	/* construct JID to send to */
 	jb = jabber_buddy_find(js, who, FALSE);
 	if (!jb) {
@@ -2524,42 +2561,24 @@ PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who,
 	if (!jbr) {
 		purple_debug_error("jabber", "Could not find buddy's resource\n");
 	}
-	
-	g_snprintf(jid, 255, "%s/%s", who, jbr->name);
+
+	if ((strchr(who, '/') == NULL) && jbr && (jbr->name != NULL)) {
+		jid = g_strdup_printf("%s/%s", who, jbr->name);
+	} else {
+		jid = g_strdup(who);
+	}
 	
 	session = jabber_jingle_session_create(js);
-	jabber_jingle_session_set_remote_jid(session, jid);
 	/* set ourselves as initiator */
-	g_snprintf(me, sizeof(me), "%s@%s/%s", js->user->node, js->user->domain,
-			   js->user->resource);
-	jabber_jingle_session_set_initiator(session, me);
-	
-	jabber_jingle_session_set_stream(session, audio);
-	jabber_jingle_session_set_media(session, media);
-	
-	g_signal_connect_swapped(G_OBJECT(media), "accepted", 
-							 G_CALLBACK(jabber_session_send_accept), session);
-	g_signal_connect_swapped(G_OBJECT(media), "reject", 
-							 G_CALLBACK(jabber_session_send_reject), session);
-	g_signal_connect_swapped(G_OBJECT(media), "hangup", 
-							 G_CALLBACK(jabber_session_send_terminate), session);
-	
-	GstElement *e = purple_media_get_audio_src(media);
-	farsight_stream_set_source(jabber_jingle_session_get_stream(session), e);	
-	e = purple_media_get_audio_sink(media);
-	farsight_stream_set_sink(jabber_jingle_session_get_stream(session), e);
-	
-	farsight_stream_prepare_transports(audio);
-	/* callback for new native (local) transport candidates for the stream */
-	g_signal_connect(G_OBJECT(audio), 
-					 "new-native-candidate", 
-					 G_CALLBACK(jabber_session_candidates_prepared), session);
-	/* callback for new active candidate pair (established connection) */
-	g_signal_connect(G_OBJECT(audio),
-					 "new-active-candidate-pair",
-					 G_CALLBACK(jabber_session_candidate_pair_established),
-					 session);
-	
+	me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain, js->user->resource);
+
+	jabber_initiate_media_internal(session, me, jid);
+
+	g_free(jid);
+	g_free(me);
+
+	codecs = purple_media_get_local_audio_codecs(session->media);
+
 	/* create request */
 	
 	xmlnode_set_attrib(request->node, "to", 
@@ -2568,40 +2587,27 @@ PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who,
 	xmlnode_set_namespace(jingle, "urn:xmpp:tmp:jingle");
 	xmlnode_set_attrib(jingle, "action", "session-initiate");
 	/* get our JID and a session id... */
-	xmlnode_set_attrib(jingle, "initiator", me);
+	xmlnode_set_attrib(jingle, "initiator", jabber_jingle_session_get_initiator(session));
 	xmlnode_set_attrib(jingle, "sid", jabber_jingle_session_get_id(session));
 	
 	content = xmlnode_new_child(jingle, "content");
 	xmlnode_set_attrib(content, "name", "audio-content");
 	xmlnode_set_attrib(content, "profile", "RTP/AVP");
-	
-	description = xmlnode_new_child(content, "description");
-	xmlnode_set_namespace(description, "urn:xmpp:tmp:jingle:apps:audio-rtp");
-	
-	/* create payload-type nodes */
-	purple_debug_info("jabber", "Generating payload_type elements\n");
-	for (; codecs ; codecs = codecs->next) {
-		codec = (FarsightCodec *) codecs->data;
-		purple_debug_info("jabber", "Generating payload_type for (%d) %s\n",
-						  codec->id, codec->encoding_name);
-		sprintf(id, "%d", codec->id);
-		sprintf(clock_rate, "%d", codec->clock_rate);
-		sprintf(channels, "%d", codec->channels);
-		
-		payload_type = xmlnode_new_child(description, "payload-type");
-		xmlnode_set_attrib(payload_type, "id", id);
-		xmlnode_set_attrib(payload_type, "name", codec->encoding_name);
-		xmlnode_set_attrib(payload_type, "clockrate", clock_rate);
-		xmlnode_set_attrib(payload_type, "channels", channels);
-	}
-		
+
+	description = jabber_jingle_session_create_description(session);
+	xmlnode_insert_child(content, description);
+
 	transport = xmlnode_new_child(content, "transport");
-	xmlnode_set_namespace(transport, "urn:xmpp:tmp:jingle:transports:ice-tcp");
-	
+	xmlnode_set_namespace(transport, "urn:xmpp:tmp:jingle:transports:ice-udp");
+
+	jabber_iq_set_callback(request, jabber_session_initiate_result_cb, NULL);
+
 	/* send request to other part */	
 	jabber_iq_send(request);
 
-	return media;
+	fs_codec_list_destroy(codecs);
+
+	return session->media;
 }
 
 gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, 
@@ -2620,11 +2626,10 @@ jabber_handle_session_accept(JabberStream *js, xmlnode *packet)
 	const char *sid = xmlnode_get_attrib(jingle, "sid");
 	const char *action = xmlnode_get_attrib(jingle, "action");
 	JingleSession *session = jabber_jingle_session_find_by_id(sid);
-	FarsightStream *stream = jabber_jingle_session_get_stream(session);
 	GList *remote_codecs = NULL;
 	GList *remote_transports = NULL;
-	GList *codec_intersection = NULL;
-	FarsightCodec *top = NULL;
+	GList *codec_intersection;
+	FsCodec *top = NULL;
 	xmlnode *description = NULL;
 	xmlnode *transport = NULL;
 
@@ -2634,7 +2639,7 @@ jabber_handle_session_accept(JabberStream *js, xmlnode *packet)
 			jabber_jingle_session_get_remote_jid(session));
 	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
 
-	description = xmlnode_get_child(jingle, "description");
+	description = xmlnode_get_child(content, "description");
 	transport = xmlnode_get_child(content, "transport");
 
 	/* fetch codecs from remote party */
@@ -2650,27 +2655,29 @@ jabber_handle_session_accept(JabberStream *js, xmlnode *packet)
 
 	purple_debug_info("jabber", "Setting remote codecs on stream\n");
 
-	farsight_stream_set_remote_codecs(stream, remote_codecs);
-	if (!strcmp(action, "session-accept")) {
-		jabber_jingle_session_set_remote_codecs(session, remote_codecs);
-	}
+	purple_media_set_remote_audio_codecs(session->media, 
+					     jabber_jingle_session_get_remote_jid(session),
+					     remote_codecs);
 
-	codec_intersection = farsight_stream_get_codec_intersection(stream);
+	codec_intersection = purple_media_get_negotiated_audio_codecs(session->media);
 	purple_debug_info("jabber", "codec_intersection contains %d elems\n",
 			g_list_length(codec_intersection));
 	/* get the top codec */
 	if (g_list_length(codec_intersection) > 0) {
-		top = (FarsightCodec *) codec_intersection->data;
-		purple_debug_info("jabber", "setting active codec on stream = %d\n",
+		top = (FsCodec *) codec_intersection->data;
+		purple_debug_info("jabber", "Found a suitable codec on stream = %d\n",
 				top->id);
-		farsight_stream_set_active_codec(stream, top->id);
+
 		/* we have found a suitable codec, but we will not start the stream
 		   just yet, wait for transport negotiation to complete... */
 	}
 	/* if we also got transport candidates, add them to our streams
 	   list of known remote candidates */
 	if (g_list_length(remote_transports) > 0) {
-		farsight_stream_set_remote_candidate_list(stream, remote_transports);
+		purple_media_add_remote_audio_candidates(session->media,
+							 jabber_jingle_session_get_remote_jid(session),
+							 remote_transports);
+		fs_candidate_list_destroy(remote_transports);
 	}
 	if (g_list_length(codec_intersection) == 0 &&
 			g_list_length(remote_transports)) {
@@ -2685,10 +2692,12 @@ jabber_handle_session_accept(JabberStream *js, xmlnode *packet)
 	if (!strcmp(action, "session-accept")) {
 		purple_media_got_accept(jabber_jingle_session_get_media(session));
 		purple_debug_info("jabber", "Got session-accept, starting stream\n");
-		farsight_stream_start(jabber_jingle_session_get_stream(session));
+		gst_element_set_state(purple_media_get_audio_pipeline(session->media), GST_STATE_PLAYING);
 	}
 
 	jabber_iq_send(result);
+
+	session->session_started = TRUE;
 }
 
 void
@@ -2707,11 +2716,10 @@ jabber_handle_session_terminate(JabberStream *js, xmlnode *packet)
 
 	/* maybe we should look at the reasoncode to determine if it was
 	   a hangup or a reject, and call different callbacks to purple_media */
-
+	gst_element_set_state(purple_media_get_audio_pipeline(session->media), GST_STATE_NULL);
 
 	purple_media_got_hangup(jabber_jingle_session_get_media(session));
 	jabber_iq_send(result);
-	farsight_stream_stop(jabber_jingle_session_get_stream(session));
 	jabber_jingle_session_destroy(session);
 }
 
@@ -2726,6 +2734,9 @@ jabber_handle_session_candidates(JabberStream *js, xmlnode *packet)
 	const char *sid = xmlnode_get_attrib(jingle, "sid");
 	JingleSession *session = jabber_jingle_session_find_by_id(sid);
 
+	if(!session)
+		purple_debug_error("jabber", "jabber_handle_session_candidates couldn't find session\n");
+
 	/* send acknowledement */
 	xmlnode_set_attrib(result->node, "id", xmlnode_get_attrib(packet, "id"));
 	xmlnode_set_attrib(result->node, "to", xmlnode_get_attrib(packet, "from"));
@@ -2733,10 +2744,10 @@ jabber_handle_session_candidates(JabberStream *js, xmlnode *packet)
 
 	/* add candidates to our list of remote candidates */
 	if (g_list_length(remote_candidates) > 0) {
-		farsight_stream_add_remote_candidate(
-				jabber_jingle_session_get_stream(session),
-				remote_candidates);
-		jabber_jingle_session_add_remote_candidate(session, remote_candidates);
+		purple_media_add_remote_audio_candidates(session->media,
+							 xmlnode_get_attrib(packet, "from"),
+							 remote_candidates);
+		fs_candidate_list_destroy(remote_candidates);
 	}
 }
 
@@ -2744,25 +2755,28 @@ jabber_handle_session_candidates(JabberStream *js, xmlnode *packet)
 void
 jabber_handle_session_content_replace(JabberStream *js, xmlnode *packet)
 {
-	JabberIq *result = jabber_iq_new(js, JABBER_IQ_RESULT);
-	JabberIq *accept = jabber_iq_new(js, JABBER_IQ_SET);
-	xmlnode *content_accept = NULL;
 	xmlnode *jingle = xmlnode_get_child(packet, "jingle");
 	const char *sid = xmlnode_get_attrib(jingle, "sid");
 	JingleSession *session = jabber_jingle_session_find_by_id(sid);
 
-	/* send acknowledement */
-	xmlnode_set_attrib(result->node, "id", xmlnode_get_attrib(packet, "id"));
-	xmlnode_set_attrib(result->node, "to", xmlnode_get_attrib(packet, "from"));
-	jabber_iq_send(result);
+	if (!jabber_jingle_session_is_initiator(session) && session->session_started) {
+		JabberIq *result = jabber_iq_new(js, JABBER_IQ_RESULT);
+		JabberIq *accept = jabber_iq_new(js, JABBER_IQ_SET);
+		xmlnode *content_accept = NULL;
 
-	/* send content-accept */
-	content_accept = jabber_jingle_session_create_content_accept(session);
-	xmlnode_set_attrib(accept->node, "id", xmlnode_get_attrib(packet, "id"));
-	xmlnode_set_attrib(accept->node, "to", xmlnode_get_attrib(packet, "from"));
-	xmlnode_insert_child(accept->node, content_accept);
+		/* send acknowledement */
+		xmlnode_set_attrib(result->node, "id", xmlnode_get_attrib(packet, "id"));
+		xmlnode_set_attrib(result->node, "to", xmlnode_get_attrib(packet, "from"));
+		jabber_iq_send(result);
 
-	jabber_iq_send(accept);
+		/* send content-accept */
+		content_accept = jabber_jingle_session_create_content_accept(session);
+		xmlnode_set_attrib(accept->node, "id", xmlnode_get_attrib(packet, "id"));
+		xmlnode_set_attrib(accept->node, "to", xmlnode_get_attrib(packet, "from"));
+		xmlnode_insert_child(accept->node, content_accept);
+
+		jabber_iq_send(accept);
+	}
 }
 
 void 
@@ -2772,18 +2786,10 @@ jabber_handle_session_initiate(JabberStream *js, xmlnode *packet)
 	xmlnode *jingle = xmlnode_get_child(packet, "jingle");
 	xmlnode *content = NULL;
 	xmlnode *description = NULL;
-	char *sid = NULL;
-	char *initiator = NULL;
+	const char *sid = NULL;
+	const char *initiator = NULL;
 	GList *codecs = NULL;
-	FarsightSession *fs = NULL;
-	FarsightStream *audio = NULL;
-	PurpleMedia *media = NULL;
 	JabberIq *result = NULL;
-	JabberIq *content_accept = NULL;
-	xmlnode *content_accept_jingle = NULL;
-	GList *codec_intersection = NULL;
-
-	int res;
 
 	if (!jingle) {
 		purple_debug_error("jabber", "Malformed request");
@@ -2791,14 +2797,14 @@ jabber_handle_session_initiate(JabberStream *js, xmlnode *packet)
 	}
 
 	sid = xmlnode_get_attrib(jingle, "sid");
-	//initiator = xmlnode_get_attrib(jingle, "initiator");
-	initiator = xmlnode_get_attrib(packet, "from");
+	initiator = xmlnode_get_attrib(jingle, "initiator");
+
+	if (jabber_jingle_session_find_by_id(sid)) {
+		/* This should only happen if you start a session with yourself */
+		purple_debug_error("jabber", "Jingle session with id={%s} already exists\n", sid);
+		return;
+	}
 	session = jabber_jingle_session_create_by_id(js, sid);
-	jabber_jingle_session_set_remote_jid(session,
-			xmlnode_get_attrib(packet, "from"));
-	/* set "from" as iniator (we are responder) */
-	jabber_jingle_session_set_initiator(session,
-			xmlnode_get_attrib(packet, "from"));
 
 	/* init media */
 	content = xmlnode_get_child(jingle, "content");
@@ -2811,92 +2817,21 @@ jabber_handle_session_initiate(JabberStream *js, xmlnode *packet)
 	description = xmlnode_get_child(content, "description");
 
 	if (!description) {
-		purple_debug_error("jabber", "content tag must contain description tag");
+		purple_debug_error("jabber", "content tag must contain description tag\n");
 		/* we should create an error iq here */
 		return;
 	}
 
+	jabber_initiate_media_internal(session, initiator, initiator);
+
 	codecs = jabber_jingle_get_codecs(description);
 
-	fs = farsight_session_factory_make("rtp");
-	if (!fs) {
-		purple_debug_error("jabber", 
-				"Could not initialize Farsight's RTP plugin");
-		return;
-	}
-
-	audio = farsight_session_create_stream(fs, 
-			FARSIGHT_MEDIA_TYPE_AUDIO, 
-			FARSIGHT_STREAM_DIRECTION_BOTH);
-
-	g_object_set(G_OBJECT(audio), "transmitter", "libjingle", NULL);
-
-	media = purple_media_manager_create_media(purple_media_manager_get(), 
-			js->gc, initiator, audio, NULL);
-	jabber_jingle_session_set_media(session, media);
-	jabber_jingle_session_set_stream(session, audio);
-
-
-	g_signal_connect_swapped(G_OBJECT(media), "accepted", 
-			G_CALLBACK(jabber_session_send_accept), session);
-	g_signal_connect_swapped(G_OBJECT(media), "reject", 
-			G_CALLBACK(jabber_session_send_reject), session);
-	g_signal_connect_swapped(G_OBJECT(media), "hangup", 
-			G_CALLBACK(jabber_session_send_terminate), session);
-
-
-	GstElement *e = purple_media_get_audio_src(media);
-	farsight_stream_set_source(jabber_jingle_session_get_stream(session), e);	
-
-	e = purple_media_get_audio_sink(media);
-	farsight_stream_set_sink(jabber_jingle_session_get_stream(session), e);
-
-	farsight_stream_prepare_transports(jabber_jingle_session_get_stream(session));
-	/* For some reason Farsight starts the stream immediatly when calling
-	   farsight_stream_set_remote_codecs, before having called farsight_stream_start
-	   As a "workaround" (maybe this gets fixed in FS2) I'll store the list in
-	   the session to call it later when accepting the call */
-	/*
-	   res = 
-	   farsight_stream_set_remote_codecs(jabber_jingle_session_get_stream(session), 
-	   codecs);
-	   */
-	jabber_jingle_session_set_remote_codecs(session, codecs);
-
-	purple_media_ready(media);
-
-	/* We store the remote candidates in the session object... */
-	/*
-	   farsight_codec_list_destroy(codecs);
-	   */
-
-	/* callback for new native (local) transport candidates for the stream */
-	g_signal_connect(G_OBJECT(jabber_jingle_session_get_stream(session)),
-			"new-native-candidate",
-			G_CALLBACK(jabber_session_candidates_prepared), session);
-	/* callback for new active candidate pair (established connection) */
-	g_signal_connect(G_OBJECT(jabber_jingle_session_get_stream(session)),
-			"new-active-candidate-pair",
-			G_CALLBACK(jabber_session_candidate_pair_established),
-			session);
+	purple_media_set_remote_audio_codecs(session->media, initiator, codecs);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);
 	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
 	xmlnode_set_attrib(result->node, "to", xmlnode_get_attrib(packet, "from"));
 	jabber_iq_send(result);
-
-	/* should send a content-accept */
-	/* It crashes after this gets sent, also the id of this iq is set to
-	   "purple0", that seems odd... maybe I'm making some mistake here... */
-	/*
-	   content_accept = jabber_iq_new(jabber_jingle_session_get_stream(session),
-	   JABBER_IQ_SET);
-	   content_accept_jingle = jabber_jingle_session_create_content_accept(session);
-	   xmlnode_set_attrib(content_accept->node, "to", 
-	   jabber_jingle_session_get_remote_jid(session));
-	   xmlnode_insert_child(content_accept->node, content_accept_jingle);
-	   jabber_iq_send(content_accept);
-	   */
 }
 
 #endif

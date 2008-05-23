@@ -1,6 +1,7 @@
 EXTRA_DIST = \
 		dbus-analyze-functions.py \
 		dbus-analyze-types.py \
+		marshallers.list \
 		purple-notifications-example \
 		purple-remote \
 		purple-send \
@@ -51,6 +52,7 @@ purple_coresources = \
 	idle.c \
 	imgstore.c \
 	log.c \
+	marshallers.c \
 	media.c \
 	mediamanager.c \
 	mime.c \
@@ -105,6 +107,7 @@ purple_coreheaders = \
 	idle.h \
 	imgstore.h \
 	log.h \
+	marshallers.h \
 	media.h \
 	mediamanager.h \
 	mime.h \
@@ -139,6 +142,14 @@ purple_coreheaders = \
 
 purple_builtheaders = purple.h version.h
 
+marshallers.h: marshallers.list
+	@echo "Generating marshallers.h"
+	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --header > marshallers.h
+
+marshallers.c: marshallers.list
+	@echo "Generating marshallers.c"
+	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body > marshallers.c
+
 if ENABLE_DBUS
 
 CLEANFILES = \
@@ -147,6 +158,8 @@ CLEANFILES = \
 	dbus-client-binding.h \
 	dbus-types.c \
 	dbus-types.h \
+	marshallers.c \
+	marshallers.h \
 	purple-client-bindings.c \
 	purple-client-bindings.h \
 	purple.service
@@ -217,6 +230,8 @@ BUILT_SOURCES = $(purple_builtheaders) \
 	dbus-types.c \
 	dbus-types.h \
 	dbus-bindings.c \
+	marshallers.c \
+	marshallers.h \
 	purple-client-bindings.c \
 	purple-client-bindings.h
 

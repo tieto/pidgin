@@ -33,7 +33,6 @@
 
 #ifdef USE_FARSIGHT
 
-#include <farsight/farsight.h>
 #include <glib-object.h>
 #include "gntbox.h"
 

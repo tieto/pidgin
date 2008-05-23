@@ -26,20 +26,16 @@
 
 #ifdef USE_FARSIGHT
 
-#include <farsight/farsight.h>
-
 G_BEGIN_DECLS
 
 typedef struct {
 	char *id;
 	JabberStream *js;
-	FarsightStream *stream;
 	PurpleMedia *media;
 	char *remote_jid;
 	char *initiator;
 	gboolean is_initiator;
-	GList *remote_candidates;
-    GList *remote_codecs;
+	gboolean session_started;
 } JingleSession;
 
 JingleSession *jabber_jingle_session_create(JabberStream *js);
@@ -52,9 +48,8 @@ JabberStream *jabber_jingle_session_get_js(const JingleSession *sess);
 void jabber_jingle_session_destroy(JingleSession *sess);
 
 JingleSession *jabber_jingle_session_find_by_id(const char *id);
-
-FarsightStream *jabber_jingle_session_get_stream(const JingleSession *sess);
-void jabber_jingle_session_set_stream(JingleSession *sess, FarsightStream *stream);
+GList *jabber_jingle_session_find_by_js(JabberStream *js);
+JingleSession *jabber_jingle_session_find_by_jid(JabberStream *js, const char *jid);
 
 PurpleMedia *jabber_jingle_session_get_media(const JingleSession *sess);
 void jabber_jingle_session_set_media(JingleSession *sess, PurpleMedia *media);
@@ -70,20 +65,16 @@ const char *jabber_jingle_session_get_initiator(const JingleSession *sess);
 void jabber_jingle_session_set_initiator(JingleSession *sess, 
 										 const char *initiator);
 
-void jabber_jingle_session_add_remote_candidate(JingleSession *sess,
-												const GList *candidate);
-
 xmlnode *jabber_jingle_session_create_terminate(const JingleSession *sess,
 												const char *reasoncode,
 												const char *reasontext);
-
 xmlnode *jabber_jingle_session_create_session_accept(const JingleSession *sess);
-xmlnode *jabber_jingle_session_create_transport_info(const JingleSession *sess,
-													 gchar *candidate_id);
+xmlnode *jabber_jingle_session_create_transport_info(const JingleSession *sess);
 xmlnode *jabber_jingle_session_create_content_replace(const JingleSession *sess,
-													  gchar *native_candidate_id,
-													  gchar *remote_candidate_id);
+						      FsCandidate *native_candidate,
+						      FsCandidate *remote_candidate);
 xmlnode *jabber_jingle_session_create_content_accept(const JingleSession *sess);
+xmlnode *jabber_jingle_session_create_description(const JingleSession *sess);
 
 /**
  * Gets a list of Farsight codecs from a Jingle <description> tag
@@ -94,10 +85,6 @@ xmlnode *jabber_jingle_session_create_content_accept(const JingleSession *sess);
 GList *jabber_jingle_get_codecs(const xmlnode *description);
 
 GList *jabber_jingle_get_candidates(const xmlnode *transport);
-
-void jabber_jingle_session_set_remote_codecs(JingleSession *sess,
-                                             GList *codecs);
-GList *jabber_jingle_session_get_remote_codecs(const JingleSession *sess);
 
 G_END_DECLS
 

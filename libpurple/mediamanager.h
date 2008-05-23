@@ -28,7 +28,7 @@
 
 #ifdef USE_FARSIGHT
 
-#include <farsight/farsight.h>
+#include <gst/farsight/fs-session.h>
 #include <glib.h>
 #include <glib-object.h>
 
@@ -61,12 +61,10 @@ struct _PurpleMediaManager
 
 GType purple_media_manager_get_type(void);
 PurpleMediaManager *purple_media_manager_get(void);
-
 PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
-					       PurpleConnection *gc,
-					       const char *screenname,
-					       FarsightStream *audio_stream,
-					       FarsightStream *video_stream);
+						PurpleConnection *gc,
+						const char *conference_type,
+						const char *remote_user);
 
 G_END_DECLS
 

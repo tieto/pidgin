@@ -31,7 +31,7 @@
 
 #ifdef USE_FARSIGHT
 
-#include <farsight/farsight.h>
+#include <gst/farsight/fs-conference-iface.h>
 
 struct _PurpleMediaManagerPrivate
 {
@@ -127,18 +127,19 @@ purple_media_manager_get()
 	return manager;
 }
 
-PurpleMedia*
-purple_media_manager_create_media(PurpleMediaManager *manager, 
+PurpleMedia *
+purple_media_manager_create_media(PurpleMediaManager *manager,
 				  PurpleConnection *gc,
-				  const char *screenname,
-				  FarsightStream *audio_stream,
-				  FarsightStream *video_stream)
+				  const char *conference_type,
+				  const char *remote_user)
 {
+	FsConference *conference = FS_CONFERENCE(gst_element_factory_make(conference_type, NULL));
+
 	PurpleMedia *media = PURPLE_MEDIA(g_object_new(purple_media_get_type(),
-					  "screenname", screenname,
+					  "screenname", remote_user,
 					  "connection", gc, 
-					  "audio-stream", audio_stream,
-					  "video-stream", video_stream, NULL));
+					  "farsight-conference", conference,
+					  NULL));
 	manager->priv->medias = g_list_append(manager->priv->medias, media);
 	g_signal_emit(manager, purple_media_manager_signals[INIT_MEDIA], 0, media);
 	return media;

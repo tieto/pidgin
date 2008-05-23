@@ -32,8 +32,6 @@
 
 #ifdef USE_FARSIGHT
 
-#include <farsight/farsight.h>
-
 typedef enum
 {
 	/* Waiting for response */
@@ -181,37 +179,18 @@ pidgin_media_init (PidginMedia *media)
 	gtk_widget_show_all(media->priv->reject);
 }
 
-static void
-pidgin_media_finalize (GObject *media)
-{
-	PidginMedia *gtkmedia = PIDGIN_MEDIA(media);
-	if (gtkmedia->priv->media)
-		g_object_unref(gtkmedia->priv->media);
-	if (gtkmedia->priv->send_level)
-		gst_object_unref(gtkmedia->priv->send_level);
-	if (gtkmedia->priv->recv_level)
-		gst_object_unref(gtkmedia->priv->recv_level);
-}
-
-static void
-pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
-{
-	g_signal_emit(gtkmedia, pidgin_media_signals[MESSAGE], 0, msg);
-}
-
 static gboolean
 level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 {
 	const GstStructure *s;
 	const gchar *name;
 
-	int channels;
-	gdouble rms_db, peak_db, decay_db;
-	gdouble rms;
+	gdouble rms_db;
+	gdouble percent;
 	const GValue *list;
 	const GValue *value;
 
-	GstElement *src = GST_ELEMENT(message);
+	GstElement *src = GST_ELEMENT(GST_MESSAGE_SRC(message));
 
 	if (message->type != GST_MESSAGE_ELEMENT)
 		return TRUE;
@@ -228,12 +207,48 @@ level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 	value = gst_value_list_get_value(list, 0);
 	rms_db = g_value_get_double(value);
 
+	percent = pow(10, rms_db / 20) * 5;
+
+	if(percent > 1.0)
+		percent = 1.0;
+
 	if (!strcmp(gst_element_get_name(src), "sendlevel"))	
-		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtkmedia->priv->send_progress), pow(10, rms_db / 20) * 5);
+		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtkmedia->priv->send_progress), percent);
 	else
-		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtkmedia->priv->recv_progress), pow(10, rms_db / 20) * 5);
+		gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(gtkmedia->priv->recv_progress), percent);
 
 	return TRUE;
+}
+
+
+static void
+pidgin_media_disconnect_levels(PurpleMedia *media, PidginMedia *gtkmedia)
+{
+	GstElement *element = purple_media_get_audio_pipeline(media);
+	gulong handler_id = g_signal_handler_find(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))),
+						  G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA, 0, 0, 
+						  NULL, G_CALLBACK(level_message_cb), gtkmedia);
+	g_signal_handler_disconnect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))), handler_id);
+}
+
+static void
+pidgin_media_finalize (GObject *media)
+{
+	PidginMedia *gtkmedia = PIDGIN_MEDIA(media);
+	if (gtkmedia->priv->media) {
+		pidgin_media_disconnect_levels(gtkmedia->priv->media, gtkmedia);
+		g_object_unref(gtkmedia->priv->media);
+	}
+	if (gtkmedia->priv->send_level)
+		gst_object_unref(gtkmedia->priv->send_level);
+	if (gtkmedia->priv->recv_level)
+		gst_object_unref(gtkmedia->priv->recv_level);
+}
+
+static void
+pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
+{
+	g_signal_emit(gtkmedia, pidgin_media_signals[MESSAGE], 0, msg);
 }
 
 static void

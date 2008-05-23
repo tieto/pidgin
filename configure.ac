@@ -318,6 +318,9 @@ I can find them.
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 
+GLIB_GENMARSHAL=`pkg-config --variable=glib_genmarshal glib-2.0`
+AC_SUBST(GLIB_GENMARSHAL)
+
 AC_ARG_WITH([extraversion],
 			AC_HELP_STRING([--with-extraversion=STRING],
 						   [extra version number to be displayed in Help->About and --help (for packagers)]),
@@ -721,11 +724,11 @@ fi
 dnl #######################################################################
 dnl # Check for Farsight
 dnl #######################################################################
-AC_ARG_ENABLE(farsight,
+AC_ARG_ENABLE(farsight2,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
 	enable_farsight="$enableval", enable_farsight="yes")
 if test "x$enable_farsight" != "xno"; then
-	PKG_CHECK_MODULES(FARSIGHT, [farsight-0.1], [
+	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10], [
 		AC_DEFINE(USE_FARSIGHT, 1, [Use Farsight for voice and video])
 		AC_SUBST(FARSIGHT_CFLAGS)
 		AC_SUBST(FARSIGHT_LIBS)
