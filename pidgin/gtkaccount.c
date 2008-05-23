@@ -1524,7 +1524,8 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	add_login_options(dialog, vbox);
 	add_user_options(dialog, vbox);
 
-	button = gtk_check_button_new_with_label(_("Create this new account on the server"));
+	button = gtk_check_button_new_with_mnemonic(
+		_("Create _this new account on the server"));
 	gtk_box_pack_start(GTK_BOX(main_vbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 	dialog->register_button = button;

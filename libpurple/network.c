@@ -663,6 +663,7 @@ nm_get_network_state(void)
 
 	if (!dbus_g_proxy_call(nm_proxy, "state", &err, G_TYPE_INVALID, G_TYPE_UINT, &state, G_TYPE_INVALID)) {
 		/* XXX: Print an error? */
+		g_error_free(err);
 		return NM_STATE_UNKNOWN;
 	}
 

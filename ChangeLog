@@ -5,6 +5,8 @@ version 2.5.0 (??/??/2008):
 	* Ability to create custom smileys (currently only the MSN protocol
 	  utilizes the feature). (Thanks to Mauro Sérgio Ferreira Brasil,
 	  Marcus Lundblad, Jorge Villaseñor and other contributors)
+	* Yahoo! Japan now uses UTF-8, matching the behavior of official clients
+	  and restoring compatibility with the web messenger (Yusuke Odate)
 
 	Pidgin:
 	* Custom buddy icons can now be added and removed to buddy list
