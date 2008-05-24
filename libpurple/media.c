@@ -546,7 +546,7 @@ purple_media_get_devices(GstElement *element)
 			!GST_IS_PROPERTY_PROBE (element) ||
 			!(probe = GST_PROPERTY_PROBE (element)) ||
 			!(pspec = gst_property_probe_get_property (probe, "device"))) {
-		purple_debug_info("Found source '%s' (%s) - no device",
+		purple_debug_info("media", "Found source '%s' (%s) - no device\n",
 				longname, GST_PLUGIN_FEATURE (factory)->name);
 	} else {
 		gint n;
@@ -571,6 +571,12 @@ purple_media_get_devices(GstElement *element)
 				gst_element_set_state (element, GST_STATE_NULL);
 
 				ret = g_list_append(ret, device);
+
+				name = purple_media_get_device_name(GST_ELEMENT(element), device);
+				purple_debug_info("media", "Found source '%s' (%s) - device '%s' (%s)\n",
+						  longname, GST_PLUGIN_FEATURE (factory)->name,
+						  name, g_value_get_string(device));
+				g_free(name);
 			}
 		}
 	}
