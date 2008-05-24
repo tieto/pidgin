@@ -632,6 +632,10 @@ jabber_login(PurpleAccount *account)
 	js->keepalive_timeout = -1;
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
+#ifdef USE_FARSIGHT
+	js->sessions = NULL;
+#endif
+
 	if(!js->user) {
 		purple_connection_error_reason (gc,
 			PURPLE_CONNECTION_ERROR_INVALID_SETTINGS,
@@ -1244,12 +1248,15 @@ void jabber_close(PurpleConnection *gc)
 
 #ifdef USE_FARSIGHT
 	/* Close all of the open media sessions on this stream */
-	GList *iter = jabber_jingle_session_find_by_js(js);
+	GList *values = g_hash_table_get_values(js->sessions);
+	GList *iter = values;
 
 	for (; iter; iter = iter->next) {
 		JingleSession *session = (JingleSession *)iter->data;
 		purple_media_hangup(session->media);
 	}
+
+	g_list_free(values);
 #endif
 
 	/* Don't perform any actions on the ssl connection
@@ -2625,7 +2632,7 @@ jabber_handle_session_accept(JabberStream *js, xmlnode *packet)
 	xmlnode *content = xmlnode_get_child(jingle, "content");
 	const char *sid = xmlnode_get_attrib(jingle, "sid");
 	const char *action = xmlnode_get_attrib(jingle, "action");
-	JingleSession *session = jabber_jingle_session_find_by_id(sid);
+	JingleSession *session = jabber_jingle_session_find_by_id(js, sid);
 	GList *remote_codecs = NULL;
 	GList *remote_transports = NULL;
 	GList *codec_intersection;
@@ -2706,7 +2713,7 @@ jabber_handle_session_terminate(JabberStream *js, xmlnode *packet)
 	JabberIq *result = jabber_iq_new(js, JABBER_IQ_SET);
 	xmlnode *jingle = xmlnode_get_child(packet, "jingle");
 	const char *sid = xmlnode_get_attrib(jingle, "sid");
-	JingleSession *session = jabber_jingle_session_find_by_id(sid);
+	JingleSession *session = jabber_jingle_session_find_by_id(js, sid);
 
 	xmlnode_set_attrib(result->node, "to",
 			jabber_jingle_session_get_remote_jid(session));
@@ -2732,7 +2739,7 @@ jabber_handle_session_candidates(JabberStream *js, xmlnode *packet)
 	xmlnode *transport = xmlnode_get_child(content, "transport");
 	GList *remote_candidates = jabber_jingle_get_candidates(transport);
 	const char *sid = xmlnode_get_attrib(jingle, "sid");
-	JingleSession *session = jabber_jingle_session_find_by_id(sid);
+	JingleSession *session = jabber_jingle_session_find_by_id(js, sid);
 
 	if(!session)
 		purple_debug_error("jabber", "jabber_handle_session_candidates couldn't find session\n");
@@ -2757,7 +2764,7 @@ jabber_handle_session_content_replace(JabberStream *js, xmlnode *packet)
 {
 	xmlnode *jingle = xmlnode_get_child(packet, "jingle");
 	const char *sid = xmlnode_get_attrib(jingle, "sid");
-	JingleSession *session = jabber_jingle_session_find_by_id(sid);
+	JingleSession *session = jabber_jingle_session_find_by_id(js, sid);
 
 	if (!jabber_jingle_session_is_initiator(session) && session->session_started) {
 		JabberIq *result = jabber_iq_new(js, JABBER_IQ_RESULT);
@@ -2799,7 +2806,7 @@ jabber_handle_session_initiate(JabberStream *js, xmlnode *packet)
 	sid = xmlnode_get_attrib(jingle, "sid");
 	initiator = xmlnode_get_attrib(jingle, "initiator");
 
-	if (jabber_jingle_session_find_by_id(sid)) {
+	if (jabber_jingle_session_find_by_id(js, sid)) {
 		/* This should only happen if you start a session with yourself */
 		purple_debug_error("jabber", "Jingle session with id={%s} already exists\n", sid);
 		return;
