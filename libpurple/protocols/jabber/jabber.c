@@ -58,7 +58,9 @@
 #include "adhoccommands.h"
 #include "jingle.h"
 
+#ifdef USE_FARSIGHT
 #include <gst/farsight/fs-conference-iface.h>
+#endif
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 

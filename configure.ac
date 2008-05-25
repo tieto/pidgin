@@ -724,7 +724,7 @@ fi
 dnl #######################################################################
 dnl # Check for Farsight
 dnl #######################################################################
-AC_ARG_ENABLE(farsight2,
+AC_ARG_ENABLE(vv,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
 	enable_farsight="$enableval", enable_farsight="yes")
 if test "x$enable_farsight" != "xno"; then

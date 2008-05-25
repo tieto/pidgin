@@ -7827,9 +7827,10 @@ pidgin_conversations_init(void)
 								show_protocol_icons_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
                                 hide_new_pref_cb, NULL);
-
+#ifdef USE_FARSIGHT
 	g_signal_connect(G_OBJECT(purple_media_manager_get()), "init-media",
 			 G_CALLBACK(pidgin_conv_new_media_cb), NULL);
+#endif
 
 
 	/**********************************************************************

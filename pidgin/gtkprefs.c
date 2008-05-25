@@ -2260,7 +2260,7 @@ static void prefs_notebook_init(void) {
 	prefs_notebook_add_page(_("Smiley Themes"), theme_page(), notebook_page++);
 	prefs_notebook_add_page(_("Sounds"), sound_page(), notebook_page++);
 
-#if USE_FARSIGHT
+#ifdef USE_FARSIGHT
 	prefs_notebook_add_page(_("Media"), media_page(), notebook_page++);
 #endif	
 	prefs_notebook_add_page(_("Network"), network_page(), notebook_page++);
