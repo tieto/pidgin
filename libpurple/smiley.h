@@ -128,12 +128,10 @@ purple_smiley_set_shortcut(PurpleSmiley *smiley, const char *shortcut);
  * @param smiley             The custom smiley.
  * @param smiley_data        The custom smiley data.
  * @param smiley_data_len    The custom smiley data length.
- * @param keepfilename      The current custom smiley's filename must be
- *                           kept.
  */
 void
 purple_smiley_set_data(PurpleSmiley *smiley, guchar *smiley_data,
-                                           size_t smiley_data_len, gboolean keepfilename);
+                                           size_t smiley_data_len);
 
 /**
  * Returns the custom smiley's associated shortcut.
