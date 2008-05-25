@@ -119,7 +119,7 @@ static PurpleSmiley *purple_smiley_load_file(const char *shortcut, const char *c
 
 static void
 purple_smiley_set_data_impl(PurpleSmiley *smiley, guchar *smiley_data,
-		size_t smiley_data_len, const char *filename);
+		size_t smiley_data_len);
 
 static void
 purple_smiley_data_store(PurpleStoredImage *stored_img);
@@ -499,7 +499,7 @@ purple_smiley_load_file(const char *shortcut, const char *checksum, const char *
 
 	if (read_smiley_file(fullpath, &smiley_data, &smiley_data_len))
 		purple_smiley_set_data_impl(smiley, smiley_data,
-				smiley_data_len, filename);
+				smiley_data_len);
 	else
 		purple_smiley_delete(smiley);
 
@@ -617,7 +617,7 @@ purple_smiley_data_new(guchar *smiley_data, size_t smiley_data_len)
 
 static void
 purple_smiley_set_data_impl(PurpleSmiley *smiley, guchar *smiley_data,
-				size_t smiley_data_len, const char *filename)
+				size_t smiley_data_len)
 {
 	PurpleStoredImage *old_img, *new_img;
 	const char *old_filename = NULL;
@@ -629,10 +629,7 @@ purple_smiley_set_data_impl(PurpleSmiley *smiley, guchar *smiley_data,
 
 	old_img = smiley->img;
 
-	if (filename)
-		new_img = purple_imgstore_add(smiley_data, smiley_data_len, filename);
-	else
-		new_img = purple_smiley_data_new(smiley_data, smiley_data_len);
+	new_img = purple_smiley_data_new(smiley_data, smiley_data_len);
 
 	g_object_set(G_OBJECT(smiley), PROP_IMGSTORE_S, new_img, NULL);
 
@@ -688,7 +685,7 @@ purple_smiley_new(PurpleStoredImage *img, const char *shortcut)
 
 static PurpleSmiley *
 purple_smiley_new_from_stream(const char *shortcut, guchar *smiley_data,
-			size_t smiley_data_len, const char *filename)
+			size_t smiley_data_len)
 {
 	PurpleSmiley *smiley;
 
@@ -705,7 +702,7 @@ purple_smiley_new_from_stream(const char *shortcut, guchar *smiley_data,
 	if (!smiley)
 		return NULL;
 
-	purple_smiley_set_data_impl(smiley, smiley_data, smiley_data_len, filename);
+	purple_smiley_set_data_impl(smiley, smiley_data, smiley_data_len);
 
 	purple_smiley_data_store(smiley->img);
 
@@ -718,17 +715,15 @@ purple_smiley_new_from_file(const char *shortcut, const char *filepath)
 	PurpleSmiley *smiley = NULL;
 	guchar *smiley_data;
 	size_t smiley_data_len;
-	char *filename;
 
 	g_return_val_if_fail(shortcut  != NULL,  NULL);
 	g_return_val_if_fail(filepath != NULL,  NULL);
 
-	filename = g_path_get_basename(filepath);
-	if (read_smiley_file(filepath, &smiley_data, &smiley_data_len))
+	if (read_smiley_file(filepath, &smiley_data, &smiley_data_len)) {
 		smiley = purple_smiley_new_from_stream(shortcut, smiley_data,
-				smiley_data_len, filename);
-	g_free(filename);
-
+				smiley_data_len);
+	}
+	
 	return smiley;
 }
 
@@ -769,7 +764,7 @@ purple_smiley_set_shortcut(PurpleSmiley *smiley, const char *shortcut)
 
 void
 purple_smiley_set_data(PurpleSmiley *smiley, guchar *smiley_data,
-			   size_t smiley_data_len, gboolean keepfilename)
+			   size_t smiley_data_len)
 {
 	g_return_if_fail(smiley     != NULL);
 	g_return_if_fail(smiley_data != NULL);
@@ -779,14 +774,7 @@ purple_smiley_set_data(PurpleSmiley *smiley, guchar *smiley_data,
 	g_hash_table_remove(smiley_checksum_index, smiley->checksum);
 
 	/* Update the file data. This also updates the checksum. */
-	if ((keepfilename) && (smiley->img) &&
-			(purple_imgstore_get_filename(smiley->img)))
-		purple_smiley_set_data_impl(smiley, smiley_data,
-				smiley_data_len,
-				purple_imgstore_get_filename(smiley->img));
-	else
-		purple_smiley_set_data_impl(smiley, smiley_data,
-				smiley_data_len, NULL);
+	purple_smiley_set_data_impl(smiley, smiley_data, smiley_data_len);
 
 	/* Reinsert the index item. */
 	g_hash_table_insert(smiley_checksum_index, g_strdup(smiley->checksum), smiley);
