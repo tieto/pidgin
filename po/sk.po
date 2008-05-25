@@ -823,7 +823,7 @@ msgid "System Log"
 msgstr "Systémový záznam"
 
 msgid "Emails"
-msgstr "E-maily"
+msgstr "Emaily"
 
 msgid "You have mail!"
 msgstr "Máte poštu!"
@@ -2750,8 +2750,8 @@ msgstr "Krstné meno"
 msgid "Last name"
 msgstr "Priezvisko"
 
-msgid "E-Mail"
-msgstr "E-mail"
+msgid "Email"
+msgstr "Email"
 
 msgid "AIM Account"
 msgstr "AIM účet"
@@ -2774,9 +2774,6 @@ msgstr "Modul protokolu Bonjour"
 
 msgid "Purple Person"
 msgstr "Fialová osoba"
-
-msgid "E-mail"
-msgstr "E-mail"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3854,8 +3851,8 @@ msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 "Vyplňte jedno alebo viac políčok na hľadanie vyhovujúcich XMPP používateľov."
 
-msgid "E-Mail Address"
-msgstr "E-mailová adresa"
+msgid "Email Address"
+msgstr "Emailová adresa"
 
 msgid "Search for XMPP users"
 msgstr "Vyhľadávanie používateľov XMPP"
@@ -4588,8 +4585,8 @@ msgstr "Správa sa nedá spracovať"
 msgid "Syntax Error (probably a client bug)"
 msgstr "Chyba syntaxe (pravdepodobne chyba v klientovi)"
 
-msgid "Invalid e-mail address"
-msgstr "Chybná e-mailová adresa"
+msgid "Invalid email address"
+msgstr "Chybná emailová adresa"
 
 msgid "User does not exist"
 msgstr "Používateľ neexistuje"
@@ -4946,8 +4943,8 @@ msgstr "Osobný mobil"
 msgid "Home Fax"
 msgstr "Fax domov"
 
-msgid "Personal E-Mail"
-msgstr "Osobný e-mail"
+msgid "Personal Email"
+msgstr "Osobný email"
 
 msgid "Personal IM"
 msgstr "Osobné IM"
@@ -4989,8 +4986,8 @@ msgstr "Služobný pager"
 msgid "Work Fax"
 msgstr "Služobný fax"
 
-msgid "Work E-Mail"
-msgstr "Pracovný e-mail"
+msgid "Work Email"
+msgstr "Pracovný email"
 
 msgid "Work IM"
 msgstr "Pracovné IM"
@@ -6337,12 +6334,12 @@ msgstr ""
 
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"Prišiel vám e-mail od používateľa %s [%s]\n"
+"Prišiel vám email od používateľa %s [%s]\n"
 "\n"
 "Správa je:\n"
 "%s"
@@ -6492,12 +6489,12 @@ msgstr[1] "Nasledujúce používateľské meno je asociované s %s"
 msgstr[2] "Nasledujúce používateľské mená sú asociované s %s"
 
 #, c-format
-msgid "No results found for e-mail address %s"
-msgstr "Pre e-mailovú %s adresu neboli nájdené žiadne výsledky"
+msgid "No results found for email address %s"
+msgstr "Pre emailovú %s adresu neboli nájdené žiadne výsledky"
 
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
-msgstr "Mali by ste prijať e-mail so žiadosťou o potvrdenie %s."
+msgid "You should receive an email asking to confirm %s."
+msgstr "Mali by ste prijať email so žiadosťou o potvrdenie %s."
 
 msgid "Account Confirmation Requested"
 msgstr "Bolo vyžiadané podvrdenie účtu"
@@ -6525,26 +6522,26 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
-"Chyba 0x%04x: Nepodarilo sa zmeniť e-mailovú adresu, pretože o toto "
+"Chyba 0x%04x: Nepodarilo sa zmeniť emailovú adresu, pretože o toto "
 "používateľské meno je daná žiadosť."
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
-"Chyba 0x%04x: E-mailová adresa sa nedá zmeniť, pretože táto adresa má so "
+"Chyba 0x%04x: Emailová adresa sa nedá zmeniť, pretože táto adresa má so "
 "sebou asociovaných veľmi veľa používateľských mien."
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
-"Chyba 0x%04x: Nepodarilo sa zmeniť e-mailovú adresu, pretože zadaná adresa "
+"Chyba 0x%04x: Nepodarilo sa zmeniť emailovú adresu, pretože zadaná adresa "
 "je chybná."
 
 #, c-format
@@ -6555,8 +6552,8 @@ msgid "Error Changing Account Info"
 msgstr "Chyba pri zmene podrobností účtu"
 
 #, c-format
-msgid "The e-mail address for %s is %s"
-msgstr "E-mailová adresa používateľa %s je %s"
+msgid "The email address for %s is %s"
+msgstr "Emailová adresa používateľa %s je %s"
 
 msgid "Account Info"
 msgstr "Podrobnosti o účte"
@@ -6626,7 +6623,7 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 "Nepodarilo sa pridať priateľa %s, pretože používateľské meno je chybné.  "
-"Používateľské mená musia byť v tvare e-mailovej adresy, čísla, alebo musí "
+"Používateľské mená musia byť v tvare emailovej adresy, čísla, alebo musí "
 "byť prvý znak písmeno a ostatné znaky sú písmená, čísla a medzery."
 
 msgid "Unable To Add"
@@ -6778,14 +6775,14 @@ msgstr ""
 "Týchto priateľov môžete znovu požiadať o autorizáciu, keď na nich kliknete "
 "pravým tlačidlom a vyberiete možnosť „Znovu požiadať o autorizáciu“."
 
-msgid "Find Buddy by E-Mail"
-msgstr "Nájsť priateľa podľa E-mailu"
+msgid "Find Buddy by Email"
+msgstr "Nájsť priateľa podľa Emailu"
 
-msgid "Search for a buddy by e-mail address"
-msgstr "Vyhľadávať priateľov podľa e-mailovej adresy"
+msgid "Search for a buddy by email address"
+msgstr "Vyhľadávať priateľov podľa emailovej adresy"
 
-msgid "Type the e-mail address of the buddy you are searching for."
-msgstr "Zadajte e-mailovú adresu priateľa, ktorého hľadáte."
+msgid "Type the email address of the buddy you are searching for."
+msgstr "Zadajte emailovú adresu priateľa, ktorého hľadáte."
 
 msgid "_Search"
 msgstr "_Hľadať"
@@ -6807,16 +6804,16 @@ msgstr "Nastaviť možnosti súkromia..."
 msgid "Confirm Account"
 msgstr "Potvrdiť účet"
 
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Zobraziť momentálne registrovanú e-maiovú adresu"
 
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Zmeniť momentálne registrovanú e-maiovú adresu..."
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Zobraziť priateľov, ktorí čakajú na autorizáciu"
 
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Hľadať priateľa podľa e-maiovej adresy..."
 
 msgid "Search for Buddy by Information"
@@ -6880,9 +6877,6 @@ msgstr "Krvná skupina"
 
 msgid "College"
 msgstr "Škola"
-
-msgid "Email"
-msgstr "E-mail"
 
 msgid "Zipcode"
 msgstr "PSČ"
@@ -8637,8 +8631,8 @@ msgid "User Name: \t%s\n"
 msgstr "Prihlasovacie meno: \t%s\n"
 
 #, c-format
-msgid "E-Mail: \t\t%s\n"
-msgstr "E-mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
+msgstr "Email: \t\t%s\n"
 
 #, c-format
 msgid "Host Name: \t%s\n"
@@ -8876,8 +8870,8 @@ msgstr "Vyžaduje viac parametrov."
 msgid "Dir service temporarily unavailable."
 msgstr "Služba dir je dočasne nedostupná"
 
-msgid "E-mail lookup restricted."
-msgstr "Vyhľadávanie e-mailu obmedzené."
+msgid "Email lookup restricted."
+msgstr "Vyhľadávanie emailu obmedzené."
 
 msgid "Keyword ignored."
 msgstr "Kľúčové slovo bolo ignorované."
@@ -11230,8 +11224,8 @@ msgstr "Písmo, ktoré použiť pre informáciu o písaní"
 msgid "Enable typing notification"
 msgstr "Povoliť informáciu o písaní"
 
-msgid "_Copy E-Mail Address"
-msgstr "_Kopírovať e-mailovu adresu"
+msgid "_Copy Email Address"
+msgstr "_Kopírovať emailovu adresu"
 
 msgid "_Open Link in Browser"
 msgstr "_Otvoriť odkaz v prehliadači"
@@ -11578,11 +11572,11 @@ msgstr[1] "Používateľ %s má %d novú správu."
 msgstr[2] "Používateľ %s má %d nové správy."
 
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
-msgstr[0] "<b>%d nových e-mailov.</b>"
-msgstr[1] "<b>%d nový e-mail.</b>"
-msgstr[2] "<b>%d nové e-maily.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
+msgstr[0] "<b>%d nových emailov.</b>"
+msgstr[1] "<b>%d nový email.</b>"
+msgstr[2] "<b>%d nové emaily.</b>"
 
 #, c-format
 msgid "The browser command \"%s\" is invalid."
@@ -12611,20 +12605,20 @@ msgstr "_Detaily o používateľovi"
 msgid "_Associate Buddy"
 msgstr "_Priradiť priateľa"
 
-msgid "Unable to send e-mail"
-msgstr "Nepodarilo sa odoslať e-mail"
+msgid "Unable to send email"
+msgstr "Nepodarilo sa odoslať email"
 
 msgid "The evolution executable was not found in the PATH."
 msgstr "Spúšťač programu evolution nebol nájdený v premennej PATH."
 
-msgid "An e-mail address was not found for this buddy."
-msgstr "Nebola nájdená e-mailová adresa tohoto priateľa."
+msgid "An email address was not found for this buddy."
+msgstr "Nebola nájdená emailová adresa tohoto priateľa."
 
 msgid "Add to Address Book"
 msgstr "Pridať do adresára"
 
-msgid "Send E-Mail"
-msgstr "Odoslať E-mail"
+msgid "Send Email"
+msgstr "Odoslať Email"
 
 #. Configuration frame
 msgid "Evolution Integration Configuration"
@@ -12669,8 +12663,8 @@ msgstr "Krstné meno"
 msgid "Last name:"
 msgstr "Priezvisko:"
 
-msgid "E-mail:"
-msgstr "E-mail:"
+msgid "Email:"
+msgstr "Email:"
 
 #. *< type
 #. *< ui_requirement

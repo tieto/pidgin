@@ -315,7 +315,7 @@ struct vcard_template {
 	{N_("Postal Code"),        NULL, TRUE, TRUE, "PCODE",     "ADR", NULL},
 	{N_("Country"),            NULL, TRUE, TRUE, "CTRY",      "ADR", NULL},
 	{N_("Telephone"),          NULL, TRUE, TRUE, "NUMBER",    "TEL",  NULL},
-	{N_("E-Mail"),             NULL, TRUE, TRUE, "USERID",    "EMAIL",  "<A HREF=\"mailto:%s\">%s</A>"},
+	{N_("Email"),             NULL, TRUE, TRUE, "USERID",    "EMAIL",  "<A HREF=\"mailto:%s\">%s</A>"},
 	{N_("Organization Name"),  NULL, TRUE, TRUE, "ORGNAME",   "ORG", NULL},
 	{N_("Organization Unit"),  NULL, TRUE, TRUE, "ORGUNIT",   "ORG", NULL},
 	{N_("Title"),              NULL, TRUE, TRUE, "TITLE",     NULL,  NULL},
@@ -1360,7 +1360,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 						escaped = g_markup_escape_text(userid, -1);
 						g_string_append_printf(info_text,
 								"<b>%s:</b> <a href=\"mailto:%s\">%s</a><br/>",
-								_("E-Mail"), escaped, escaped);
+								_("Email"), escaped, escaped);
 						g_free(escaped);
 						g_free(userid);
 					}
@@ -1370,7 +1370,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					escaped = g_markup_escape_text(userid, -1);
 					g_string_append_printf(info_text,
 							"<b>%s:</b> <a href=\"mailto:%s\">%s</a><br/>",
-							_("E-Mail"), escaped, escaped);
+							_("Email"), escaped, escaped);
 					g_free(escaped);
 					g_free(userid);
 				}
@@ -2264,7 +2264,7 @@ static void user_search_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 		purple_notify_searchresults_column_add(results, column);
 		column = purple_notify_searchresults_column_new(_("Nickname"));
 		purple_notify_searchresults_column_add(results, column);
-		column = purple_notify_searchresults_column_new(_("E-Mail"));
+		column = purple_notify_searchresults_column_new(_("Email"));
 		purple_notify_searchresults_column_add(results, column);
 
 		for(item = xmlnode_get_child(query, "item"); item; item = xmlnode_get_next_twin(item)) {
@@ -2459,7 +2459,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 			purple_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "email")) {
-			field = purple_request_field_string_new("email", _("E-Mail Address"),
+			field = purple_request_field_string_new("email", _("Email Address"),
 					NULL, FALSE);
 			purple_request_field_group_add_field(group, field);
 		}

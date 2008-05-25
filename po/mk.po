@@ -2769,7 +2769,7 @@ msgstr "Име"
 msgid "Last name"
 msgstr "Презиме"
 
-msgid "E-Mail"
+msgid "Email"
 msgstr "Е-пошта"
 
 msgid "AIM Account"
@@ -2793,9 +2793,6 @@ msgstr "Приклучок за Bonjour протоколот"
 
 msgid "Purple Person"
 msgstr "Лилакова личност"
-
-msgid "E-mail"
-msgstr "E-пошта"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3874,7 +3871,7 @@ msgstr ""
 "Пополнете едно или повеќе полиња за да барате корисници на XMPP кои се "
 "совпаѓаат."
 
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "Адреса за е-пошта"
 
 msgid "Search for XMPP users"
@@ -4607,7 +4604,7 @@ msgstr "Не можам да ја анализирам пораката"
 msgid "Syntax Error (probably a client bug)"
 msgstr "Синтаксна грешка (најверојатно грешка во клиентот)"
 
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Невалидна адреса за е-пошта"
 
 msgid "User does not exist"
@@ -4965,7 +4962,7 @@ msgstr "Личен мобилен"
 msgid "Home Fax"
 msgstr "Домашен факс"
 
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Лична е-пошта"
 
 msgid "Personal IM"
@@ -5008,7 +5005,7 @@ msgstr "Пејџер"
 msgid "Work Fax"
 msgstr "Факс на работа"
 
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Е-пошта на работа"
 
 msgid "Work IM"
@@ -6351,7 +6348,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -6507,12 +6504,12 @@ msgstr[1] "Следниве имиња од екранот се поврзани
 msgstr[2] "Следниве имиња од екранот се поврзани со %s"
 
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "Не се пронајдени резултати за адресата за е-пошта %s"
 
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
-msgstr "Ќе добиете e-mail за потврда на %s"
+msgid "You should receive an email asking to confirm %s."
+msgstr "Ќе добиете email за потврда на %s"
 
 msgid "Account Confirmation Requested"
 msgstr "Побарана е потврда за сметката"
@@ -6541,7 +6538,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
 "Грешка 0x%04x: Не можам да ја променам адресата за е-пошта, бидејќи за ова "
@@ -6549,7 +6546,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
 "Грешка 0x%04x: Не можам да ја променам адресата за е-пошта, бидејќи дадената "
@@ -6557,7 +6554,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Грешка 0x%04x: Не можам да ја променам адресата за е-пошта, бидејќи дадената "
@@ -6571,7 +6568,7 @@ msgid "Error Changing Account Info"
 msgstr "Грешка при менување на информации за сметката"
 
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "Адресата за е-пошта за %s е %s"
 
 msgid "Account Info"
@@ -6799,13 +6796,13 @@ msgstr ""
 "Можете одново да побарате авторизација од овие пријатели со десен клик врз "
 "нив и одбирање на \"Повторно побарај авторизација\""
 
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Барај пријател по е-поштата"
 
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Барај пријател преку адресата за е-пошта"
 
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Внесете ја адресата за е-пошта за пријателот кој го барате."
 
 msgid "_Search"
@@ -6828,16 +6825,16 @@ msgstr "Постави опции за приватност..."
 msgid "Confirm Account"
 msgstr "Потврди ја сметката"
 
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Прикажи ги тековно регистрираните адреси"
 
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Промени ги тековно регистрираните адреси..."
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Прикажи ги пријателите кои чекаат авторизација"
 
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Барај пријател преку е-пошта..."
 
 msgid "Search for Buddy by Information"
@@ -6902,9 +6899,6 @@ msgstr "Крвна група"
 
 msgid "College"
 msgstr "Колеџ"
-
-msgid "Email"
-msgstr "Е-пошта"
 
 msgid "Zipcode"
 msgstr "Поштенски код"
@@ -8667,7 +8661,7 @@ msgid "User Name: \t%s\n"
 msgstr "Корисничко име: \t%s\n"
 
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "Е-пошта: \t\t%s\n"
 
 #, c-format
@@ -8907,7 +8901,7 @@ msgstr "Требаат повеќе квалификатори."
 msgid "Dir service temporarily unavailable."
 msgstr "Сервисот за директориуми е привремено недостапен."
 
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "Барањето на е-пошта е ограничено."
 
 msgid "Keyword ignored."
@@ -11253,7 +11247,7 @@ msgstr "Фонтот кој што ќе се користи за известу�
 msgid "Enable typing notification"
 msgstr "Вклучи известување при куцање"
 
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Копирај е-пошта"
 
 msgid "_Open Link in Browser"
@@ -11607,8 +11601,8 @@ msgstr[1] "%s има %d нови пораки."
 msgstr[2] "%s има %d нови пораки."
 
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d нова порака.</b>"
 msgstr[1] "<b>%d нови пораки.</b>"
 msgstr[2] "<b>%d нови пораки.</b>"
@@ -12647,19 +12641,19 @@ msgstr "Кориснички _детали"
 msgid "_Associate Buddy"
 msgstr "_Асоцирај пријател"
 
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Не успеав да испратам е-пошта"
 
 msgid "The evolution executable was not found in the PATH."
 msgstr "Извршливата датотека за Evolution не беше пронајдена на патеката."
 
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "Не беше пронајдена адреса за е-пошта за овој пријател."
 
 msgid "Add to Address Book"
 msgstr "Додај во адресар"
 
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Испрати е-пошта"
 
 #. Configuration frame
@@ -12705,7 +12699,7 @@ msgstr "Име:"
 msgid "Last name:"
 msgstr "Презиме:"
 
-msgid "E-mail:"
+msgid "Email:"
 msgstr "E-пошта:"
 
 #. *< type

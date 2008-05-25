@@ -3916,7 +3916,7 @@ msgstr "Nume de familie"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:555
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1068
-msgid "E-Mail"
+msgid "Email"
 msgstr "Mail"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:402
@@ -3947,16 +3947,6 @@ msgstr "Modul de protocol Bonjour"
 #: ../libpurple/protocols/bonjour/bonjour.c:652
 msgid "Purple Person"
 msgstr "Persoană Purple"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:705
-#: ../libpurple/protocols/gg/gg.c:478
-#: ../libpurple/protocols/jabber/jabber.c:998
-#: ../libpurple/protocols/silc/silc.c:986
-#: ../libpurple/protocols/silc/silc.c:1227
-#: ../libpurple/protocols/silc10/silc.c:687
-#: ../libpurple/protocols/silc10/silc.c:928
-msgid "E-mail"
-msgstr "Mail"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5626,7 +5616,7 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3753
 #: ../libpurple/protocols/oscar/oscar.c:3762
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "Adresă de mail"
 
 #: ../libpurple/protocols/jabber/buddy.c:2471
@@ -6680,7 +6670,7 @@ msgstr "Eroare de sintaxă (probabil o eroare de client)"
 
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Adresă de mail invalidă"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7291,7 +7281,7 @@ msgstr "Fax acasă"
 
 #: ../libpurple/protocols/msn/msn.c:1826
 #: ../libpurple/protocols/msnp9/msn.c:1667
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Mail privat"
 
 #: ../libpurple/protocols/msn/msn.c:1827
@@ -7367,7 +7357,7 @@ msgstr "Fax serviciu"
 
 #: ../libpurple/protocols/msn/msn.c:1857
 #: ../libpurple/protocols/msnp9/msn.c:1698
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Mail serviciu"
 
 #: ../libpurple/protocols/msn/msn.c:1858
@@ -9229,7 +9219,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2495
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9424,12 +9414,12 @@ msgstr[2] "Următoarele nume de utilizatori sunt asociate cu %s:"
 
 #: ../libpurple/protocols/oscar/oscar.c:3987
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "Nu s-a găsit nici un rezultat pentru adresa de mail %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4008
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Ar trebui să primiţi un mail care să vă ceară confirmarea %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:4010
@@ -9464,7 +9454,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4049
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
 "Eroare 0x%04x: Nu se poate schimba adresa de mail pentru că există deja o "
@@ -9473,7 +9463,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4051
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
 "Eroare 0x%04x: Nu se poate schimba adresa de mail pentru că adresa introdusă "
@@ -9482,7 +9472,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4053
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Eroare 0x%04x: Nu se poate schimba adresa de mail pentru că adresa introdusă "
@@ -9499,7 +9489,7 @@ msgstr "Eroare la schimbarea detaliilor contului"
 
 #: ../libpurple/protocols/oscar/oscar.c:4063
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "Adresa de mail pentru %s este %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4065
@@ -9781,15 +9771,15 @@ msgstr ""
 "din nou autorizare” după un click dreapta pe nume în lista contactelor."
 
 #: ../libpurple/protocols/oscar/oscar.c:6347
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Căutare contact după adresa de mail"
 
 #: ../libpurple/protocols/oscar/oscar.c:6348
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Căutare contact după adresa de mail"
 
 #: ../libpurple/protocols/oscar/oscar.c:6349
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Introduceţi adresa de mail a contactului căutat:"
 
 #: ../libpurple/protocols/oscar/oscar.c:6352
@@ -9819,11 +9809,11 @@ msgid "Confirm Account"
 msgstr "Confirmare cont"
 
 #: ../libpurple/protocols/oscar/oscar.c:6546
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Afişare adresă de mail înregistrată curent"
 
 #: ../libpurple/protocols/oscar/oscar.c:6550
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Schimbare adresă de mail înregistrată curent..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6557
@@ -9831,7 +9821,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Afişare contacte ce aşteaptă autorizarea"
 
 #: ../libpurple/protocols/oscar/oscar.c:6563
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Căutare contact după adresa de mail..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6568
@@ -9912,10 +9902,6 @@ msgstr "Grupă sanguină"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "Colegiu"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "Mail"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12656,7 +12642,7 @@ msgstr "Nume utilizator: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:367
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "Adresă de mail: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:369
@@ -12981,7 +12967,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Serviciul „Dir” este temporar indisponibil."
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "Căutarea după adresa de mail este restricţionată."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -16069,7 +16055,7 @@ msgid "Enable typing notification"
 msgstr "Activează mesajele de notificare"
 
 #: ../pidgin/gtkimhtml.c:1688
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "C_opiază adresa de mail"
 
 #: ../pidgin/gtkimhtml.c:1700
@@ -16493,8 +16479,8 @@ msgstr[2] "%s are %d de mesaje noi."
 
 #: ../pidgin/gtknotify.c:599
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>un mail nou.</b>"
 msgstr[1] "<b>%d mailuri noi.</b>"
 msgstr[2] "<b>%d de mailuri noi.</b>"
@@ -17814,7 +17800,7 @@ msgstr "_Asociere contact"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:242
 #: ../pidgin/plugins/gevolution/gevolution.c:248
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Trimiterea mailului a eşuat."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:243
@@ -17822,7 +17808,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "Executabilul „evolution” nu a fost găsit în PATH."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:249
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "Nu s-a găsit o adresă de mail pentru acest contact."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:275
@@ -17830,7 +17816,7 @@ msgid "Add to Address Book"
 msgstr "Adaugă în agendă"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:287
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Trimite mail"
 
 #. Configuration frame
@@ -17889,7 +17875,7 @@ msgid "Last name:"
 msgstr "Nume de familie:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:380
-msgid "E-mail:"
+msgid "Email:"
 msgstr "Mail:"
 
 #. *< type

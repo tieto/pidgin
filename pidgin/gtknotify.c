@@ -596,8 +596,8 @@ pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 	if (!GTK_WIDGET_VISIBLE(dialog)) {
 		GdkPixbuf *pixbuf = gtk_widget_render_icon(dialog, PIDGIN_STOCK_DIALOG_MAIL,
 							   gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL), NULL);
-		char *label_text = g_strdup_printf(ngettext("<b>%d new e-mail.</b>",
-							    "<b>%d new e-mails.</b>",
+		char *label_text = g_strdup_printf(ngettext("<b>%d new email.</b>",
+							    "<b>%d new emails.</b>",
 							    mail_dialog->total_count), mail_dialog->total_count);
 		mail_dialog->in_use = TRUE;     /* So that _set_headline doesn't accidentally
 										   remove the notifications when replacing an

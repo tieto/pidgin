@@ -475,7 +475,7 @@ static void ggp_register_user_dialog(PurpleConnection *gc)
 	purple_request_fields_add_group(fields, group);
 
 	field = purple_request_field_string_new("email",
-			_("E-mail"), "", FALSE);
+			_("Email"), "", FALSE);
 	purple_request_field_string_set_masked(field, FALSE);
 	purple_request_field_group_add_field(group, field);
 
@@ -718,7 +718,7 @@ static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFie
 
 	purple_debug_info("gg", "Changing password\n");
 
-	/* XXX: this e-mail should be a pref... */
+	/* XXX: this email should be a pref... */
 	h = gg_change_passwd4(ggp_get_uin(account),
 			      "user@example.net", purple_account_get_password(account),
 			      p1, info->token->id, t, 0);

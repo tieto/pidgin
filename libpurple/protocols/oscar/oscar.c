@@ -1106,12 +1106,12 @@ flap_connection_established_admin(OscarData *od, FlapConnection *conn)
 		od->conf = FALSE;
 	}
 	if (od->reqemail) {
-		purple_debug_info("oscar", "requesting e-mail address\n");
+		purple_debug_info("oscar", "requesting email address\n");
 		aim_admin_getinfo(od, conn, 0x0011);
 		od->reqemail = FALSE;
 	}
 	if (od->setemail) {
-		purple_debug_info("oscar", "setting e-mail address\n");
+		purple_debug_info("oscar", "setting email address\n");
 		aim_admin_setemail(od, conn, od->email);
 		g_free(od->email);
 		od->email = NULL;
@@ -1428,7 +1428,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	}
 
 	purple_debug_misc("oscar", "Reg status: %hu\n", info->regstatus);
-	purple_debug_misc("oscar", "E-mail: %s\n",
+	purple_debug_misc("oscar", "Email: %s\n",
 					(info->email != NULL) ? info->email : "null");
 	purple_debug_misc("oscar", "BOSIP: %s\n", info->bosip);
 	purple_debug_info("oscar", "Closing auth connection...\n");
@@ -2492,8 +2492,8 @@ incomingim_chan4(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 
 		case 0x0e: { /* Someone has emailed you at your_uin@pager.icq.com */
 			if (i >= 6) {
-				gchar *dialog_msg = g_strdup_printf(_("You have received an ICQ e-mail from %s [%s]\n\nMessage is:\n%s"), msg2[0], msg2[3], msg2[5]);
-				purple_notify_info(gc, NULL, "ICQ E-Mail", dialog_msg);
+				gchar *dialog_msg = g_strdup_printf(_("You have received an ICQ email from %s [%s]\n\nMessage is:\n%s"), msg2[0], msg2[3], msg2[5]);
+				purple_notify_info(gc, NULL, "ICQ Email", dialog_msg);
 				g_free(dialog_msg);
 			}
 		} break;
@@ -3750,7 +3750,7 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	oscar_user_info_convert_and_add(account, user_info, _("Last Name"), info->last);
 	if (info->email && info->email[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->email))) {
 		buf = g_strdup_printf("<a href=\"mailto:%s\">%s</a>", utf8, utf8);
-		purple_notify_user_info_add_pair(user_info, _("E-Mail Address"), buf);
+		purple_notify_user_info_add_pair(user_info, _("Email Address"), buf);
 		g_free(buf);
 		g_free(utf8);
 	}
@@ -3759,7 +3759,7 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 		for (i = 0; i < info->numaddresses; i++) {
 			if (info->email2[i] && info->email2[i][0] && (utf8 = oscar_utf8_try_convert(gc->account, info->email2[i]))) {
 				buf = g_strdup_printf("<a href=\"mailto:%s\">%s</a>", utf8, utf8);
-				purple_notify_user_info_add_pair(user_info, _("E-Mail Address"), buf);
+				purple_notify_user_info_add_pair(user_info, _("Email Address"), buf);
 				g_free(buf);
 				g_free(utf8);
 			}
@@ -3984,7 +3984,7 @@ static int purple_parse_searcherror(OscarData *od, FlapConnection *conn, FlapFra
 	email = va_arg(ap, char *);
 	va_end(ap);
 
-	buf = g_strdup_printf(_("No results found for e-mail address %s"), email);
+	buf = g_strdup_printf(_("No results found for email address %s"), email);
 	purple_notify_error(od->gc, NULL, buf, NULL);
 	g_free(buf);
 
@@ -4003,9 +4003,9 @@ static int purple_account_confirm(OscarData *od, FlapConnection *conn, FlapFrame
 
 	purple_debug_info("oscar",
 			   "account confirmation returned status 0x%04x (%s)\n", status,
-			status ? "unknown" : "e-mail sent");
+			status ? "unknown" : "email sent");
 	if (!status) {
-		g_snprintf(msg, sizeof(msg), _("You should receive an e-mail asking to confirm %s."),
+		g_snprintf(msg, sizeof(msg), _("You should receive an email asking to confirm %s."),
 				purple_account_get_username(purple_connection_get_account(gc)));
 		purple_notify_info(gc, NULL, _("Account Confirmation Requested"), msg);
 	}
@@ -4046,11 +4046,11 @@ static int purple_info_change(OscarData *od, FlapConnection *conn, FlapFrame *fr
 		else if (err == 0x00b)
 			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format username because the requested name is too long."), err);
 		else if (err == 0x001d)
-			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because there is already a request pending for this username."), err);
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change email address because there is already a request pending for this username."), err);
 		else if (err == 0x0021)
-			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because the given address has too many usernames associated with it."), err);
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change email address because the given address has too many usernames associated with it."), err);
 		else if (err == 0x0023)
-			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change e-mail address because the given address is invalid."), err);
+			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to change email address because the given address is invalid."), err);
 		else
 			dialog_msg = g_strdup_printf(_("Error 0x%04x: Unknown error."), err);
 		purple_notify_error(gc, NULL,
@@ -4060,7 +4060,7 @@ static int purple_info_change(OscarData *od, FlapConnection *conn, FlapFrame *fr
 	}
 
 	if (email != NULL) {
-		char *dialog_msg = g_strdup_printf(_("The e-mail address for %s is %s"),
+		char *dialog_msg = g_strdup_printf(_("The email address for %s is %s"),
 						   purple_account_get_username(purple_connection_get_account(gc)), email);
 		purple_notify_info(gc, NULL, _("Account Info"), dialog_msg);
 		g_free(dialog_msg);
@@ -6344,9 +6344,9 @@ static void search_by_email_cb(PurpleConnection *gc, const char *email)
 static void oscar_show_find_email(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
-	purple_request_input(gc, _("Find Buddy by E-Mail"),
-					   _("Search for a buddy by e-mail address"),
-					   _("Type the e-mail address of the buddy you are "
+	purple_request_input(gc, _("Find Buddy by Email"),
+					   _("Search for a buddy by email address"),
+					   _("Type the email address of the buddy you are "
 						 "searching for."),
 					   NULL, FALSE, FALSE, NULL,
 					   _("_Search"), G_CALLBACK(search_by_email_cb),
@@ -6543,11 +6543,11 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 				oscar_confirm_account);
 		menu = g_list_prepend(menu, act);
 
-		act = purple_plugin_action_new(_("Display Currently Registered E-Mail Address"),
+		act = purple_plugin_action_new(_("Display Currently Registered Email Address"),
 				oscar_show_email);
 		menu = g_list_prepend(menu, act);
 
-		act = purple_plugin_action_new(_("Change Currently Registered E-Mail Address..."),
+		act = purple_plugin_action_new(_("Change Currently Registered Email Address..."),
 				oscar_show_change_email);
 		menu = g_list_prepend(menu, act);
 	}
@@ -6560,7 +6560,7 @@ oscar_actions(PurplePlugin *plugin, gpointer context)
 
 	menu = g_list_prepend(menu, NULL);
 
-	act = purple_plugin_action_new(_("Search for Buddy by E-Mail Address..."),
+	act = purple_plugin_action_new(_("Search for Buddy by Email Address..."),
 			oscar_show_find_email);
 	menu = g_list_prepend(menu, act);
 

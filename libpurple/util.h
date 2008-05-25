@@ -229,7 +229,7 @@ guchar *purple_base64_decode(const char *str, gsize *ret_len);
  * Converts a quoted printable string back to its readable equivalent.
  * What is a quoted printable string, you ask?  It's an encoding used
  * to transmit binary data as ASCII.  It's intended purpose is to send
- * e-mails containing non-ASCII characters.  Wikipedia has a pretty good
+ * emails containing non-ASCII characters.  Wikipedia has a pretty good
  * explanation.  Also see RFC 2045.
  *
  * @param str     The quoted printable ASCII string to convert to raw data.

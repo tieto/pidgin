@@ -2456,7 +2456,7 @@ msim_get_account_text_table(PurpleAccount *unused)
 
 	table = g_hash_table_new(g_str_hash, g_str_equal);
 
-	g_hash_table_insert(table, "login_label", (gpointer)_("E-mail Address..."));
+	g_hash_table_insert(table, "login_label", (gpointer)_("Email Address..."));
 
 	return table;
 }

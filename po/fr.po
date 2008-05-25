@@ -2801,7 +2801,7 @@ msgstr "Prénom :"
 msgid "Last name"
 msgstr "Nom :"
 
-msgid "E-Mail"
+msgid "Email"
 msgstr "Courriel"
 
 msgid "AIM Account"
@@ -2825,9 +2825,6 @@ msgstr "Plugin pour le protocole Bonjour"
 
 msgid "Purple Person"
 msgstr "Personne Purple"
-
-msgid "E-mail"
-msgstr "Adresse électronique"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3915,7 +3912,7 @@ msgstr "Instructions du serveur : %s"
 msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr "Saisissez un ou plusieurs critères de recherche d'utilisateurs XMPP."
 
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "Adresse électronique"
 
 msgid "Search for XMPP users"
@@ -4659,7 +4656,7 @@ msgid "Syntax Error (probably a client bug)"
 msgstr "Erreur de syntaxe (probablement un bug de l'application)"
 
 #, c-format
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Adresse de courrier électronique non valide"
 
 #, c-format
@@ -5067,7 +5064,7 @@ msgstr "Téléphone portable personnel"
 msgid "Home Fax"
 msgstr "Télécopie personnelle"
 
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Adresse électronique personnelle"
 
 msgid "Personal IM"
@@ -5110,7 +5107,7 @@ msgstr "Bippeur professionnel"
 msgid "Work Fax"
 msgstr "Télécopie professionnelle"
 
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Adresse électronique professionnelle"
 
 msgid "Work IM"
@@ -6473,7 +6470,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -6618,11 +6615,11 @@ msgstr[0] "Le nom d'utilisateur suivant est associé à %s"
 msgstr[1] "Les noms d'utilisateur suivants sont associés à %s"
 
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "Aucun résultat pour l'adresse électronique %s"
 
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Vous devriez recevoir un courrier électronique pour confirmer %s"
 
 msgid "Account Confirmation Requested"
@@ -6652,7 +6649,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
 "Erreur 0x%04x : Impossible de changer l'adresse électronique parce qu'il y a "
@@ -6660,7 +6657,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
 "Erreur 0x%04x : Impossible de changer l'adresse électronique parce qu'il y a "
@@ -6668,7 +6665,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Erreur 0x%04x : Impossible de changer l'adresse électronique parce qu'elle "
@@ -6682,7 +6679,7 @@ msgid "Error Changing Account Info"
 msgstr "Erreur en changeant les informations du compte"
 
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "L'adresse électronique de %s est %s"
 
 msgid "Account Info"
@@ -6904,13 +6901,13 @@ msgstr ""
 "Vous pouvez redemander une autorisation de ces contacts en choisissant "
 "« Redemander autorisation » sur un clic droit du contact."
 
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Chercher un contact par adresse électronique"
 
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Rechercher par adresse électronique"
 
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Saisissez l'adresse électronique du contact que vous cherchez"
 
 msgid "_Search"
@@ -6933,16 +6930,16 @@ msgstr "Changer les options de confidentialité..."
 msgid "Confirm Account"
 msgstr "Confirmer le compte"
 
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Afficher l'adresse courante enregistrée"
 
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Changer l'adresse courante enregistrée..."
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Afficher les demandes d'autorisation"
 
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Chercher un contact par adresse électronique..."
 
 msgid "Search for Buddy by Information"
@@ -7008,9 +7005,6 @@ msgstr "Groupe sanguin"
 
 msgid "College"
 msgstr "Éducation"
-
-msgid "Email"
-msgstr "Courrier électronique"
 
 msgid "Zipcode"
 msgstr "Code postal"
@@ -8776,7 +8770,7 @@ msgid "User Name: \t%s\n"
 msgstr "Nom d'utilisateur : %s\n"
 
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "Adresse électronique : %s\n"
 
 #, c-format
@@ -9035,7 +9029,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "L'annuaire est temporairement indisponible."
 
 #, c-format
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "La recherche par adresse électronique est restreinte."
 
 #, c-format
@@ -11409,7 +11403,7 @@ msgstr ""
 msgid "Enable typing notification"
 msgstr "Activer la notification de saise"
 
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Copier l'adresse électronique"
 
 msgid "_Open Link in Browser"
@@ -11770,8 +11764,8 @@ msgstr[0] "%s a reçu %d nouveau message."
 msgstr[1] "%s a reçu %d nouveaux messages."
 
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d nouveau courrier.</b>"
 msgstr[1] "<b>%d nouveaux courriers.</b>"
 
@@ -12818,7 +12812,7 @@ msgstr "_Détails du contact"
 msgid "_Associate Buddy"
 msgstr "_Associer un contact"
 
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Impossible d'envoyer un courrier électronique"
 
 msgid "The evolution executable was not found in the PATH."
@@ -12826,13 +12820,13 @@ msgstr ""
 "Le binaire « evolution » n'a pas été trouvé dans les dossiers par défaut du "
 "PATH."
 
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "L'adresse électronique du contact n'a pas été trouvée."
 
 msgid "Add to Address Book"
 msgstr "Ajouter au carnet d'adresses"
 
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Envoyer un courrier"
 
 #. Configuration frame
@@ -12879,7 +12873,7 @@ msgstr "Prénom :"
 msgid "Last name:"
 msgstr "Nom :"
 
-msgid "E-mail:"
+msgid "Email:"
 msgstr "Adresse électronique :"
 
 #. *< type

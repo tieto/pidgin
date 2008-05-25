@@ -3832,7 +3832,7 @@ msgstr "Perekonnanimi"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "E-post"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:401
@@ -3863,16 +3863,6 @@ msgstr "Bonjour protokolli plugin"
 #: ../libpurple/protocols/bonjour/bonjour.c:651
 msgid "Purple Person"
 msgstr ""
-
-#: ../libpurple/protocols/bonjour/bonjour.c:704
-#: ../libpurple/protocols/gg/gg.c:478
-#: ../libpurple/protocols/jabber/jabber.c:988
-#: ../libpurple/protocols/silc/silc.c:913
-#: ../libpurple/protocols/silc/silc.c:1154
-#: ../libpurple/protocols/silc10/silc.c:687
-#: ../libpurple/protocols/silc10/silc.c:928
-msgid "E-mail"
-msgstr "E-post"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5500,7 +5490,7 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3747
 #: ../libpurple/protocols/oscar/oscar.c:3756
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "E-posti aadress"
 
 #: ../libpurple/protocols/jabber/buddy.c:2427
@@ -6542,7 +6532,7 @@ msgstr "Süntaksi viga (arvatavasti kliendi viga)"
 
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Vigane e-posti aadress"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7150,7 +7140,7 @@ msgstr "Kodufaks"
 
 #: ../libpurple/protocols/msn/msn.c:1812
 #: ../libpurple/protocols/msnp9/msn.c:1668
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Isiklik e-post"
 
 #: ../libpurple/protocols/msn/msn.c:1813
@@ -7226,7 +7216,7 @@ msgstr "Tööfaks"
 
 #: ../libpurple/protocols/msn/msn.c:1843
 #: ../libpurple/protocols/msnp9/msn.c:1699
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Töö e-post"
 
 #: ../libpurple/protocols/msn/msn.c:1844
@@ -9005,7 +8995,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2500
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9184,12 +9174,12 @@ msgstr "Ekraaninimi"
 
 #: ../libpurple/protocols/oscar/oscar.c:3981
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:4002
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:4004
@@ -9225,7 +9215,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4047
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "Viga 0x%04x: E-postiaadressi pole võimalik muuta kuna selle ekraaninime alt "
@@ -9234,7 +9224,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4050
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "Viga 0x%04x: E-posti aadressi pole võimalik muuta kuna määratud aadressiga "
@@ -9243,7 +9233,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4053
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Viga 0x%04x: E-posti aadressi pole võimalik muuta kuna määratud aadress on "
@@ -9256,7 +9246,7 @@ msgstr "Viga 0x%04x: Tundmatu viga."
 
 #: ../libpurple/protocols/oscar/oscar.c:4066
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "Kasutaja %s e-posti aadress on %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4068
@@ -9502,15 +9492,15 @@ msgid ""
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:6334
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:6335
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Sõbra otsimine e-posti aadressi järgi"
 
 #: ../libpurple/protocols/oscar/oscar.c:6336
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Sisesta otsitava sõbra e-posti aadress."
 
 #: ../libpurple/protocols/oscar/oscar.c:6339
@@ -9540,11 +9530,11 @@ msgid "Confirm Account"
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:6533
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:6537
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:6544
@@ -9552,7 +9542,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:6550
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:6555
@@ -9630,10 +9620,6 @@ msgstr "Veregrupp"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr ""
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "E-post"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12302,7 +12288,7 @@ msgstr "Kasutajanimi: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:368
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "E-post: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:370
@@ -12619,7 +12605,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Kataloogiteenus pole ajutiselt saadaval."
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr ""
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15592,7 +15578,7 @@ msgid "Color to draw the name of an action message."
 msgstr ""
 
 #: ../pidgin/gtkimhtml.c:1632
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Kopeeri e-posti aadress"
 
 #: ../pidgin/gtkimhtml.c:1644
@@ -15993,8 +15979,8 @@ msgstr[1] "%s sai %d uut sõnumit."
 
 #: ../pidgin/gtknotify.c:575
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d uus e-sõnum.</b>"
 msgstr[1] "<b>%d uut e-sõnumit.</b>"
 
@@ -17268,7 +17254,7 @@ msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "E-kirja pole võimalik saata"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -17276,7 +17262,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "Evolutioni programmi pole võimalik PATH radadel leida."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "Selle sõbra e-posti aadressi ei leitud."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -17284,7 +17270,7 @@ msgid "Add to Address Book"
 msgstr "Lisa aadressiraamatusse"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Saada e-kiri"
 
 #. Configuration frame
@@ -17342,7 +17328,7 @@ msgid "Last name:"
 msgstr "Perekonnanimi:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "E-post:"
 
 #. *< type

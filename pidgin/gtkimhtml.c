@@ -1753,11 +1753,11 @@ static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, Gtk
 
 			if (!strncmp(tempdata->url, "mailto:", 7))
 			{
-				/* Copy E-Mail Address */
+				/* Copy Email Address */
 				img = gtk_image_new_from_stock(GTK_STOCK_COPY,
 											   GTK_ICON_SIZE_MENU);
 				item = gtk_image_menu_item_new_with_mnemonic(
-					_("_Copy E-Mail Address"));
+					_("_Copy Email Address"));
 				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), img);
 				g_signal_connect(G_OBJECT(item), "activate",
 								 G_CALLBACK(url_copy), tempdata->url + 7);

@@ -147,7 +147,7 @@ msn_get_account_text_table(PurpleAccount *unused)
 
 	table = g_hash_table_new(g_str_hash, g_str_equal);
 
-	g_hash_table_insert(table, "login_label", (gpointer)_("E-mail Address..."));
+	g_hash_table_insert(table, "login_label", (gpointer)_("Email Address..."));
 
 	return table;
 }
@@ -1952,7 +1952,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	MSN_GOT_INFO_GET_FIELD("Home address", _("Home Address"));
 	MSN_GOT_INFO_GET_FIELD("Personal Mobile", _("Personal Mobile"));
 	MSN_GOT_INFO_GET_FIELD("Home fax", _("Home Fax"));
-	MSN_GOT_INFO_GET_FIELD("Personal e-mail", _("Personal E-Mail"));
+	MSN_GOT_INFO_GET_FIELD("Personal email", _("Personal Email"));
 	MSN_GOT_INFO_GET_FIELD("Personal IM", _("Personal IM"));
 	MSN_GOT_INFO_GET_FIELD("Birthday", _("Birthday"));
 	MSN_GOT_INFO_GET_FIELD("Anniversary", _("Anniversary"));
@@ -1983,7 +1983,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	MSN_GOT_INFO_GET_FIELD("Work mobile", _("Work Mobile"));
 	MSN_GOT_INFO_GET_FIELD("Work pager", _("Work Pager"));
 	MSN_GOT_INFO_GET_FIELD("Work fax", _("Work Fax"));
-	MSN_GOT_INFO_GET_FIELD("Work e-mail", _("Work E-Mail"));
+	MSN_GOT_INFO_GET_FIELD("Work email", _("Work Email"));
 	MSN_GOT_INFO_GET_FIELD("Work IM", _("Work IM"));
 	MSN_GOT_INFO_GET_FIELD("Start date", _("Start Date"));
 	MSN_GOT_INFO_GET_FIELD("Notes", _("Notes"));

@@ -995,7 +995,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		purple_request_field_group_add_field(group, field);
 	}
 	if(xmlnode_get_child(query, "email")) {
-		field = purple_request_field_string_new("email", _("E-mail"), NULL, FALSE);
+		field = purple_request_field_string_new("email", _("Email"), NULL, FALSE);
 		purple_request_field_group_add_field(group, field);
 	}
 	if(xmlnode_get_child(query, "nick")) {

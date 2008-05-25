@@ -48,8 +48,8 @@ typedef void  (*PurpleNotifyCloseCallback) (gpointer user_data);
 typedef enum
 {
 	PURPLE_NOTIFY_MESSAGE = 0,   /**< Message notification.         */
-	PURPLE_NOTIFY_EMAIL,         /**< Single e-mail notification.   */
-	PURPLE_NOTIFY_EMAILS,        /**< Multiple e-mail notification. */
+	PURPLE_NOTIFY_EMAIL,         /**< Single email notification.   */
+	PURPLE_NOTIFY_EMAILS,        /**< Multiple email notification. */
 	PURPLE_NOTIFY_FORMATTED,     /**< Formatted text.               */
 	PURPLE_NOTIFY_SEARCHRESULTS, /**< Buddy search results.         */
 	PURPLE_NOTIFY_USERINFO,      /**< Formatted userinfo text.      */
@@ -402,10 +402,10 @@ void *purple_notify_message(void *handle, PurpleNotifyMsgType type,
 						  gpointer user_data);
 
 /**
- * Displays a single e-mail notification to the user.
+ * Displays a single email notification to the user.
  *
  * @param handle    The plugin or connection handle.
- * @param subject   The subject of the e-mail.
+ * @param subject   The subject of the email.
  * @param from      The from address.
  * @param to        The destination address.
  * @param url       The URL where the message can be read.
@@ -421,11 +421,11 @@ void *purple_notify_email(void *handle, const char *subject,
 						gpointer user_data);
 
 /**
- * Displays a notification for multiple e-mails to the user.
+ * Displays a notification for multiple emails to the user.
  *
  * @param handle    The plugin or connection handle.
- * @param count     The number of e-mails.
- * @param detailed  @c TRUE if there is information for each e-mail in the
+ * @param count     The number of emails.
+ * @param detailed  @c TRUE if there is information for each email in the
  *                  arrays.
  * @param subjects  The array of subjects.
  * @param froms     The array of from addresses.
