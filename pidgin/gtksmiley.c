@@ -229,7 +229,7 @@ static void do_add(GtkWidget *widget, PidginSmiley *s)
 
 				return;
 			}
-			purple_smiley_set_data(s->smiley, (guchar*)data, len, FALSE);
+			purple_smiley_set_data(s->smiley, (guchar*)data, len);
 		}
 		purple_smiley_set_shortcut(s->smiley, entry);
 	} else {
@@ -329,8 +329,8 @@ pidgin_smiley_edit(GtkWidget *widget, PurpleSmiley *smiley)
 	window = gtk_dialog_new_with_buttons(smiley ? _("Edit Smiley") : _("Add Smiley"),
 			widget ? GTK_WINDOW(widget) : NULL,
 			GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_NO_SEPARATOR,
+			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,							 
 			smiley ? GTK_STOCK_SAVE : GTK_STOCK_ADD, GTK_RESPONSE_ACCEPT,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 			NULL);
 	s->parent = window;
 

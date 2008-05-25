@@ -3153,10 +3153,18 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 
 		if ((chat == NULL) && (gtkconv->imhtml != NULL)) {
 			GHashTable *components;
-			components = g_hash_table_new_full(g_str_hash, g_str_equal,
-					g_free, g_free);
-			g_hash_table_replace(components, g_strdup("channel"),
-					g_strdup(conv->name));
+			PurpleAccount *account = purple_conversation_get_account(conv);
+			PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+			PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, chat_info_defaults)) {
+				components = prpl_info->chat_info_defaults(purple_account_get_connection(account),
+						purple_conversation_get_name(conv));
+			} else {
+				components = g_hash_table_new_full(g_str_hash, g_str_equal,
+						g_free, g_free);
+				g_hash_table_replace(components, g_strdup("channel"),
+						g_strdup(purple_conversation_get_name(conv)));
+			}
 			chat = purple_chat_new(conv->account, NULL, components);
 			purple_blist_node_set_flags((PurpleBlistNode *)chat,
 					PURPLE_BLIST_NODE_FLAG_NO_SAVE);
