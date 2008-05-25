@@ -38,7 +38,6 @@
 #include "privacy.h"
 #include "version.h"
 
-#include "zephyr.h"
 #include "internal.h"
 
 #include <strings.h>

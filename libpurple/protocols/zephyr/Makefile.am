@@ -59,9 +59,9 @@ ZEPHYRSOURCES = \
 	mit-copyright.h \
 	mit-sipb-copyright.h \
 	sysdep.h \
-	zephyr.h \
 	zephyr_err.c \
 	zephyr_err.h \
+	zephyr_internal.h \
 	\
 	zephyr.c
 
