@@ -67,9 +67,8 @@ struct artist {
 	char *email;
 };
 
-/* Order: Lead Developer, then Alphabetical by Last Name */
+/* Order: Alphabetical by Last Name */
 static const struct developer developers[] = {
-	{"Sean Egan",					N_("lead developer"), "sean.egan@gmail.com"},
 	{"Daniel 'datallah' Atallah",	N_("developer"), NULL},
 	{"John 'rekkanoryo' Bailey",	N_("developer"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
@@ -77,6 +76,7 @@ static const struct developer developers[] = {
 	{"Ka-Hing Cheung",				N_("developer"), NULL},
 	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
 	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
+	{"Sean Egan",					N_("developer"), "sean.egan@gmail.com"},
 	{"Casey Harkins",               N_("developer"),   NULL},
 	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
 	{"Richard 'rlaager' Laager",	N_("developer"), NULL},
