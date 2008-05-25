@@ -686,7 +686,7 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 #ifdef LIBZEPHYR_EXT
 	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> External<br/>");
 #else
-	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> Not External<br/>");
+	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> Internal<br/>");
 #endif
 
 #ifdef ZEPHYR_USES_KERBEROS
