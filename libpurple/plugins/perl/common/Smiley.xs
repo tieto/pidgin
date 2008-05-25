@@ -23,11 +23,10 @@ purple_smiley_set_shortcut(smiley, shortcut)
 	const char * shortcut
 
 void
-purple_smiley_set_data(smiley, data, data_len, keepfilename)
+purple_smiley_set_data(smiley, data, data_len)
 	Purple::Smiley  smiley
 	guchar * data
 	size_t  data_len
-	gboolean keepfilename
 
 const char *
 purple_smiley_get_shortcut(smiley)
