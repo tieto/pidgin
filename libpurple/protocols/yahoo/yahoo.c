@@ -3479,11 +3479,13 @@ static void yahoo_act_id(PurpleConnection *gc, const char *entry)
 
 static void
 yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-		const gchar *token, size_t len, const gchar *error_message)
+		const gchar *webdata, size_t len, const gchar *error_message)
 {
 	PurpleConnection *gc = user_data;
 	gboolean set_cookie = FALSE;
 	gchar *url;
+	gchar *token = NULL;
+	int token_size;
 	struct yahoo_data *yd = gc->proto_data;
 
 	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
@@ -3492,8 +3494,14 @@ yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	if (error_message != NULL)
 		purple_debug_error("yahoo", "Requesting mail login token failed: %s\n", error_message);
-	else if (len > 0 && token && *token) {
-	 	/* Should we not be hardcoding the rd url? */
+	else if (len > 0 && webdata && *webdata) {
+		/*Extract token from the chunked webdata*/
+		sscanf(webdata,"%x",&token_size);
+		token = g_malloc(token_size);
+		strncpy(token, strstr(webdata,"\r\n")+2, token_size);
+		token[token_size-1]='\0';
+
+		/* Should we not be hardcoding the rd url? */
 		url = g_strdup_printf(
 			"http://login.yahoo.com/config/reset_cookies_token?"
 			".token=%s"
@@ -3511,6 +3519,7 @@ yahoo_get_inbox_token_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	purple_notify_uri(gc, url);
 
 	g_free(url);
+	g_free(token);
 }
 
 
@@ -3525,12 +3534,13 @@ static void yahoo_show_inbox(PurplePluginAction *action)
 	PurpleUtilFetchUrlData *url_data;
 	const char* base_url = "http://login.yahoo.com";
 	char *request = g_strdup_printf(
-		"POST /config/cookie_token HTTP/1.0\r\n"
-		"Cookie: T=%s; path=/; domain=.yahoo.com; Y=%s;\r\n"
+		"POST /config/cookie_token HTTP/1.1\r\n"
+		"Cookie: Y=%s; path=/; domain=.yahoo.com; T=%s; path=/; domain=.yahoo.com;\r\n"
 		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
 		"Host: login.yahoo.com\r\n"
-		"Content-Length: 0\r\n\r\n",
-		yd->cookie_t, yd->cookie_y);
+		"Content-Length: 0\r\n"
+		"Cache-Control: no-cache\r\n\r\n",
+		yd->cookie_y, yd->cookie_t);
 	gboolean use_whole_url = FALSE;
 
 	/* use whole URL if using HTTP Proxy */
