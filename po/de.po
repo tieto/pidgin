@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-21 17:46+0200\n"
-"PO-Revision-Date: 2008-05-21 17:46+0200\n"
+"POT-Creation-Date: 2008-05-24 10:32+0200\n"
+"PO-Revision-Date: 2008-05-24 10:31+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -4809,6 +4809,9 @@ msgstr "%s hat Sie angestoßen!"
 #, c-format
 msgid "Nudging %s..."
 msgstr "%s anstoßen..."
+
+msgid "E-mail Address..."
+msgstr "E-Mail-Adresse..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Ihr neuer MSN-Benutzername zu lang."
@@ -9687,6 +9690,21 @@ msgstr "%s hat %s in den Chatraum %s eingeladen\n"
 msgid "Accept chat invitation?"
 msgstr "Akzeptieren Sie die Chat-Einladung?"
 
+#. Shortcut
+msgid "Shortcut"
+msgstr "Tastenkombination"
+
+msgid "The text-shortcut for the smiley"
+msgstr "Die Tastenkombination für den Smiley"
+
+#. Stored Image
+msgid "Stored Image"
+msgstr "Gespeichertes Bild"
+
+#, fuzzy
+msgid "Stored Image. (that'll have to do for now)"
+msgstr "Gespeichertes Bild. (Das muss erstmal reichen)"
+
 msgid "SSL Connection Failed"
 msgstr "SSL-Verbindung gescheitert"
 
@@ -9961,8 +9979,8 @@ msgstr "Konto hinzufügen"
 msgid "_Basic"
 msgstr "_Einfach"
 
-msgid "Create this new account on the server"
-msgstr "Dieses neue Konto auf dem Server anlegen"
+msgid "Create _this new account on the server"
+msgstr "Dieses _neue Konto auf dem Server anlegen"
 
 msgid "_Advanced"
 msgstr "_Erweitert"
@@ -10067,6 +10085,12 @@ msgstr "_Alias..."
 
 msgid "_Remove"
 msgstr "_Entfernen"
+
+msgid "Set Custom Icon"
+msgstr "Setze benutzerdefiniertes Icon"
+
+msgid "Remove Custom Icon"
+msgstr "Benutzerdefiniertes Icon entfernen"
 
 msgid "Add _Buddy..."
 msgstr "_Buddy hinzufügen..."
@@ -10179,6 +10203,9 @@ msgstr "/Werkzeuge/Buddy-_Alarm"
 
 msgid "/Tools/_Certificates"
 msgstr "/Werkzeuge/_Zertifikate"
+
+msgid "/Tools/Smile_y"
+msgstr "/Werkzeuge/Smile_y"
 
 msgid "/Tools/Plu_gins"
 msgstr "/Werkzeuge/Plu_gins"
@@ -10524,9 +10551,6 @@ msgstr "Setze benutzerdefiniertes Icon..."
 
 msgid "Change Size"
 msgstr "Ändere Größe"
-
-msgid "Remove Custom Icon"
-msgstr "Benutzerdefiniertes Icon entfernen"
 
 msgid "Show All"
 msgstr "Alle anzeigen"
@@ -11422,6 +11446,10 @@ msgstr "Bild speichern"
 msgid "_Save Image..."
 msgstr "Bild _speichern..."
 
+#, fuzzy
+msgid "_Add Custom Smiley..."
+msgstr "Benutzerdefinierten Smiley _hinzufügen..."
+
 msgid "Select Font"
 msgstr "Schriftart wählen"
 
@@ -11460,8 +11488,18 @@ msgstr "Speichern des Bildes fehlgeschlagen: %s\n"
 msgid "Insert Image"
 msgstr "Bild einfügen"
 
+msgid ""
+"This smiley is disabled because a custom smiley exists for this shortcut."
+msgstr ""
+"Dieser Smiley ist deaktiviert, da ein benutzerdefinierter Smiley für diese "
+"Tastenkombination existiert."
+
 msgid "Smile!"
 msgstr "Lächeln!"
+
+#, fuzzy
+msgid "_Manage custom smileys"
+msgstr "Benutzerdefinierte Smileys _verwalten"
 
 msgid "This theme has no available smileys."
 msgstr "Dieses Thema verfügt über keine Smileys."
@@ -12178,6 +12216,12 @@ msgstr "Lautstärke:"
 msgid "Play"
 msgstr "Abspielen"
 
+msgid "_Browse..."
+msgstr "Aus_wählen..."
+
+msgid "_Reset"
+msgstr "_Zurücksetzen"
+
 msgid "_Report idle time:"
 msgstr "Inaktivitätszei_ten anzeigen:"
 
@@ -12355,6 +12399,47 @@ msgstr "S_peichern & Übernehmen"
 #, c-format
 msgid "Status for %s"
 msgstr "Status für %s"
+
+msgid "Custom Smiley"
+msgstr "Benutzerdefinierter Smiley"
+
+msgid "Duplicate Shortcut"
+msgstr "Doppelte Tastenkombination"
+
+msgid ""
+"A custom smiley for the selected shortcut already exists. Please specify a "
+"different shortcut."
+msgstr ""
+"Für diese Tastenkombination existiert bereits ein benutzerdefinierter "
+"Smiley. Bitten wählen Sie eine andere Tastenkombination."
+
+msgid "More Data needed"
+msgstr "Weitere Daten benötigt"
+
+msgid "Please provide a shortcut to associate with the smiley."
+msgstr "Bitte geben Sie eine Tastenkombination für den Smiley an."
+
+msgid "Please select an image for the smiley."
+msgstr "Bitte wählen Sie ein Bild für den Smiley."
+
+msgid "Edit Smiley"
+msgstr "Smiley bearbeiten"
+
+msgid "Add Smiley"
+msgstr "Smiley hinzufügen"
+
+msgid "Smiley _Image"
+msgstr "Smiley-_Bild"
+
+#. Smiley shortcut
+msgid "Smiley S_hortcut"
+msgstr "_Tastenkombination"
+
+msgid "Smiley"
+msgstr "Smiley"
+
+msgid "Custom Smiley Manager"
+msgstr "Verwaltung für benutzerdefinierte Smileys"
 
 msgid "Waiting for network connection"
 msgstr "Warte auf Netzwerkverbindung"
