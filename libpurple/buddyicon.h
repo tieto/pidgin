@@ -26,6 +26,11 @@
 #ifndef _PURPLE_BUDDYICON_H_
 #define _PURPLE_BUDDYICON_H_
 
+/** An opaque structure representing a buddy icon for a particular user on a
+ *  particular #PurpleAccount.  Instances are reference-counted; use
+ *  purple_buddy_icon_ref() and purple_buddy_icon_unref() to take and release
+ *  references.
+ */
 typedef struct _PurpleBuddyIcon PurpleBuddyIcon;
 
 #include "account.h"
