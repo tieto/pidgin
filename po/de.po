@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-24 10:32+0200\n"
-"PO-Revision-Date: 2008-05-24 10:31+0200\n"
+"POT-Creation-Date: 2008-05-26 21:14+0200\n"
+"PO-Revision-Date: 2008-05-26 21:14+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -10813,9 +10813,6 @@ msgstr "Fehler "
 msgid "Fatal Error"
 msgstr "Schwerer Fehler"
 
-msgid "lead developer"
-msgstr "Hauptentwickler"
-
 msgid "developer"
 msgstr "Entwickler"
 
@@ -10849,6 +10846,9 @@ msgstr "XMPP-Entwickler"
 
 msgid "original author"
 msgstr "Originalautor"
+
+msgid "lead developer"
+msgstr "Hauptentwickler"
 
 msgid "Afrikaans"
 msgstr "Afrikaans"
@@ -11229,23 +11229,35 @@ msgstr "Chat _entfernen"
 msgid "Right-click for more unread messages...\n"
 msgstr "Rechtsklicken für weitere ungelesene Nachrichten...\n"
 
-msgid "Change Status"
-msgstr "Ändere Status"
+msgid "_Change Status"
+msgstr "Ändere _Status"
 
-msgid "Show Buddy List"
-msgstr "Buddy-Liste anzeigen"
+msgid "Show Buddy _List"
+msgstr "Buddy-_Liste anzeigen"
 
-msgid "New Message..."
-msgstr "Neue Nachricht..."
+msgid "_Unread Messages"
+msgstr "_Ungelesene Nachrichten"
 
-msgid "Mute Sounds"
-msgstr "Stummschalten"
+msgid "New _Message..."
+msgstr "_Neue Nachricht..."
 
-msgid "Blink on New Message"
-msgstr "Bei neuen Nachrichten blinken"
+msgid "_Accounts"
+msgstr "_Konten"
 
-msgid "Quit"
-msgstr "Beenden"
+msgid "Plu_gins"
+msgstr "_Plugins"
+
+msgid "Pr_eferences"
+msgstr "_Einstellungen"
+
+msgid "Mute _Sounds"
+msgstr "Stu_mmschalten"
+
+msgid "_Blink on New Message"
+msgstr "Be_i neuen Nachrichten blinken"
+
+msgid "_Quit"
+msgstr "_Beenden"
 
 msgid "Not started"
 msgstr "Nicht gestartet"
