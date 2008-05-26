@@ -131,13 +131,14 @@ purple_core_init(const char *ui)
 
 	purple_ciphers_init();
 
-	/* Initialize all static protocols. */
-	static_proto_init();
-
 	/* Since plugins get probed so early we should probably initialize their
 	 * subsystem right away too.
 	 */
 	purple_plugins_init();
+	
+	/* Initialize all static protocols. */
+	static_proto_init();
+
 	purple_plugins_probe(G_MODULE_SUFFIX);
 
 	/* The buddy icon code uses the imgstore, so init it early. */
