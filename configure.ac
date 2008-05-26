@@ -1622,14 +1622,14 @@ if test "x$enable_gnutls" != "xno"; then
 			*) with_gnutls_libs="-L$with_gnutls_libs" ;;
 		esac
 
-		AC_CACHE_CHECK([for GnuTLS libraries], gnutls_libs,
+		AC_CACHE_CHECK([for GnuTLS libraries], ac_cv_gnutls_libs,
 		[
 			LIBS="$LIBS $with_gnutls_libs -lgnutls -lgcrypt"
-			AC_TRY_LINK_FUNC(gnutls_init, gnutls_libs="yes", gnutls_libs="no")
+			AC_TRY_LINK_FUNC(gnutls_init, ac_cv_gnutls_libs="yes", ac_cv_gnutls_libs="no")
 			LIBS="$LIBS_save"
 		])
 
-		if test "x$gnutls_libs" != "xno"; then
+		if test "x$ac_cv_gnutls_libs" != "xno"; then
 			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GnuTLS])
 			AC_DEFINE(HAVE_SSL)
 			msg_gnutls="GnuTLS"
@@ -1782,7 +1782,7 @@ if test "x$enable_nss" != "xno"; then
 				nsprlibs="$LIBDL -lplc4 -lplds4 -lnspr4 $PTHREAD_LIB"
 			fi
 
-			AC_CACHE_CHECK([for Mozilla nspr libraries], moz_nspr_libs,
+			AC_CACHE_CHECK([for Mozilla nspr libraries], ac_cv_moz_nspr_libs,
 			[
 				LIBS_save=$LIBS
 				CFLAGS="$CFLAGS $NSPR_CFLAGS"
@@ -1796,15 +1796,15 @@ if test "x$enable_nss" != "xno"; then
 				fi
 
 				AC_TRY_LINK_FUNC(PR_Init,
-					[moz_nspr_libs="yes"],
-					[moz_nspr_libs="no"])
+					[ac_cv_moz_nspr_libs="yes"],
+					[ac_cv_moz_nspr_libs="no"])
 
 				CFLAGS=$CFLAGS_save
 				LDFLAGS=$LDFLAGS_save
 				LIBS=$LIBS_save
 			])
 
-			if test "x$moz_nspr_libs" != "xno"; then
+			if test "x$ac_cv_moz_nspr_libs" != "xno"; then
 				have_nspr_libs="yes"
 				NSPR_LIBS="-L$with_nspr_libs $nsprlibs"
 			else
@@ -1877,30 +1877,30 @@ if test "x$enable_nss" != "xno"; then
 				nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
 			fi
 
-			AC_CACHE_CHECK([for Mozilla nss libraries], moz_nss_libs,
+			AC_CACHE_CHECK([for Mozilla nss libraries], ac_cv_moz_nss_libs,
 			[
 				LIBS_save=$LIBS
 				LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs"
 				LIBS="$nsslibs $nsprlibs"
 
 				AC_TRY_LINK_FUNC(NSS_Init,
-					[moz_nss_libs="yes"],
-					[moz_nss_libs="no"])
+					[ac_cv_moz_nss_libs="yes"],
+					[ac_cv_moz_nss_libs="no"])
 
-				if test "x$moz_nss_libs" = "xno"; then
+				if test "x$ac_cv_moz_nss_libs" = "xno"; then
 					nsslibs="-lssl3 -lsmime3 -lnss3 -lsoftokn3"
 					LDFLAGS="$LDFLAGS -L$with_nspr_libs -L$with_nss_libs" 
 					LIBS="$LIBS $nsslibs"
 					AC_TRY_LINK_FUNC(NSS_Init,
-						[moz_nss_libs="yes"],
-						[moz_nss_libs="no"])
+						[ac_cv_moz_nss_libs="yes"],
+						[ac_cv_moz_nss_libs="no"])
 				fi
 
 				LDFLAGS=$LDFLAGS_save
 				LIBS=$LIBS_save
 			])
 
-			if test "x$moz_nss_libs" != "xno"; then
+			if test "x$ac_cv_moz_nss_libs" != "xno"; then
 				AC_DEFINE(HAVE_NSS)
 				AC_DEFINE(HAVE_SSL)
 
