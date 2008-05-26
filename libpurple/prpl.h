@@ -71,16 +71,22 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 #include "status.h"
 #include "whiteboard.h"
 
+
+/** @copydoc PurpleBuddyIconSpec */
 struct _PurpleBuddyIconSpec {
-	char *format;                       /**< This is a comma-delimited list of image formats or NULL if icons are not supported.
-					     * Neither the core nor the prpl will actually check to see if the data it's given matches this; it's
-					     * entirely up to the UI to do what it wants */
-	int min_width;                          /**< The minimum width of this icon  */
-	int min_height;                         /**< The minimum height of this icon */
-	int max_width;                          /**< The maximum width of this icon  */
-	int max_height;                         /**< The maximum height of this icon */
-	size_t max_filesize;                     /**< The maximum number of bytes    */
-	PurpleIconScaleRules scale_rules;		/**< How to stretch this icon */
+	/** This is a comma-delimited list of image formats or @c NULL if icons
+	 *  are not supported.  Neither the core nor the prpl will actually
+	 *  check to see if the data it's given matches this; it's entirely up
+	 *  to the UI to do what it wants
+	 */
+	char *format;
+
+	int min_width;                     /**< Minimum width of this icon  */
+	int min_height;                    /**< Minimum height of this icon */
+	int max_width;                     /**< Maximum width of this icon  */
+	int max_height;                    /**< Maximum height of this icon */
+	size_t max_filesize;               /**< Maximum size in bytes */
+	PurpleIconScaleRules scale_rules;  /**< How to stretch this icon */
 };
 
 struct proto_chat_entry {
