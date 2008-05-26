@@ -678,7 +678,7 @@ docklet_menu(void)
 
 	menu = gtk_menu_new();
 
-	menuitem = gtk_check_menu_item_new_with_mnemonic(_("_Show Buddy List"));
+	menuitem = gtk_check_menu_item_new_with_mnemonic(_("Show Buddy _List"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/list_visible"));
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blist), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -704,7 +704,7 @@ docklet_menu(void)
 
 	pidgin_separator(menu);
 
-	menuitem = pidgin_new_item_from_stock(menu, _("_New Message..."), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, G_CALLBACK(pidgin_dialogs_im), NULL, 0, 0, NULL);
+	menuitem = pidgin_new_item_from_stock(menu, _("New _Message..."), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, G_CALLBACK(pidgin_dialogs_im), NULL, 0, 0, NULL);
 	if (status == PURPLE_STATUS_OFFLINE)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
@@ -715,11 +715,11 @@ docklet_menu(void)
 
 	pidgin_new_item_from_stock(menu, _("_Accounts"), NULL, G_CALLBACK(pidgin_accounts_window_show), NULL, 0, 0, NULL);
 	pidgin_new_item_from_stock(menu, _("Plu_gins"), PIDGIN_STOCK_TOOLBAR_PLUGINS, G_CALLBACK(pidgin_plugin_dialog_show), NULL, 0, 0, NULL);
-	pidgin_new_item_from_stock(menu, _("_Preferences"), GTK_STOCK_PREFERENCES, G_CALLBACK(pidgin_prefs_show), NULL, 0, 0, NULL);
+	pidgin_new_item_from_stock(menu, _("Pr_eferences"), GTK_STOCK_PREFERENCES, G_CALLBACK(pidgin_prefs_show), NULL, 0, 0, NULL);
 
 	pidgin_separator(menu);
 
-	menuitem = gtk_check_menu_item_new_with_mnemonic(_("_Mute Sounds"));
+	menuitem = gtk_check_menu_item_new_with_mnemonic(_("Mute _Sounds"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/sound/mute"));
 	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"))
 		gtk_widget_set_sensitive(GTK_WIDGET(menuitem), FALSE);
