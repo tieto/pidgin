@@ -5191,11 +5191,8 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 		nick_colors = generate_nick_colors(&nbr_nick_colors, gtk_widget_get_style(gtkconv->imhtml)->base[GTK_STATE_NORMAL]);
 	}
 
-	/* We don't want to see the custom smileys if our buddy send us the
-	 * defined shortcut. */
-	pidgin_themes_smiley_themeize(gtkconv->imhtml);
-	/* We want to see our smileys in the entry */
-	pidgin_themes_smiley_themeize_custom(gtkconv->entry);
+	if (conv->features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY)
+		pidgin_themes_smiley_themeize_custom(gtkconv->entry);
 }
 
 static void
@@ -5661,7 +5658,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtk_font_options |= GTK_IMHTML_USE_POINTSIZE;
 	}
 
-	if (!(flags & PURPLE_MESSAGE_RECV))
+	if (!(flags & PURPLE_MESSAGE_RECV) && (conv->features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY))
 	{
 		/* We want to see our own smileys. Need to revert it after send*/
 		pidgin_themes_smiley_themeize_custom(gtkconv->imhtml);
@@ -5846,7 +5843,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtkconv_set_unseen(gtkconv, unseen);
 	}
 
-	if (!(flags & PURPLE_MESSAGE_RECV))
+	if (!(flags & PURPLE_MESSAGE_RECV) && (conv->features & PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY))
 	{
 		/* Restore the smiley-data */
 		pidgin_themes_smiley_themeize(gtkconv->imhtml);
