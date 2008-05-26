@@ -185,6 +185,9 @@ static void
 sighandler(int sig)
 {
 	switch (sig) {
+	case SIGHUP:
+		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
+		break;
 	case SIGSEGV:
 		fprintf(stderr, "%s", segfault_message);
 		abort();
