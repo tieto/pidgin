@@ -3001,8 +3001,7 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 		g_free(tmp);
 		if (away_utf8 != NULL) {
 			tmp = purple_str_sub_away_formatters(away_utf8, purple_account_get_username(account));
-			purple_notify_user_info_add_section_break(user_info);
-			oscar_user_info_add_pair(user_info, NULL, tmp);
+			oscar_user_info_add_pair(user_info, _("Away Message"), tmp);
 			g_free(tmp);
 			g_free(away_utf8);
 		}
