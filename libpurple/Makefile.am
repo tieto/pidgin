@@ -148,7 +148,8 @@ marshallers.h: marshallers.list
 
 marshallers.c: marshallers.list
 	@echo "Generating marshallers.c"
-	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body > marshallers.c
+	echo "#include \"marshallers.h\"" > marshallers.c
+	$(GLIB_GENMARSHAL) --prefix=purple_smarshal $(srcdir)/marshallers.list --body >> marshallers.c
 
 if ENABLE_DBUS
 
