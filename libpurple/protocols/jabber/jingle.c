@@ -30,9 +30,6 @@
 
 #include <gst/farsight/fs-candidate.h>
 
-/* keep a hash table of JingleSessions */
-static GHashTable *sessions = NULL;
-
 static gboolean
 jabber_jingle_session_equal(gconstpointer a, gconstpointer b)
 {
@@ -58,13 +55,13 @@ jabber_jingle_session_create_internal(JabberStream *js,
 	}
 	
 	/* insert it into the hash table */
-	if (!sessions) {
+	if (!js->sessions) {
 		purple_debug_info("jingle", "Creating hash table for sessions\n");
-		sessions = g_hash_table_new(g_str_hash, g_str_equal);
+		js->sessions = g_hash_table_new(g_str_hash, g_str_equal);
 	}
 	purple_debug_info("jingle", "inserting session with key: %s into table\n",
 					  sess->id);
-	g_hash_table_insert(sessions, sess->id, sess);
+	g_hash_table_insert(js->sessions, sess->id, sess);
 
 	sess->session_started = FALSE;
 
@@ -102,43 +99,25 @@ jabber_jingle_session_get_id(const JingleSession *sess)
 void
 jabber_jingle_session_destroy(JingleSession *sess)
 {
-	g_hash_table_remove(sessions, sess->id);
+	g_hash_table_remove(sess->js->sessions, sess->id);
 	g_free(sess->id);
 	g_free(sess);
 }
 
 JingleSession *
-jabber_jingle_session_find_by_id(const char *id)
+jabber_jingle_session_find_by_id(JabberStream *js, const char *id)
 {
 	purple_debug_info("jingle", "find_by_id %s\n", id);
-	purple_debug_info("jingle", "hash table: %p\n", sessions);
+	purple_debug_info("jingle", "hash table: %p\n", js->sessions);
 	purple_debug_info("jingle", "hash table size %d\n",
-					  g_hash_table_size(sessions));
-	purple_debug_info("jingle", "lookup: %p\n", g_hash_table_lookup(sessions, id));  
-	return (JingleSession *) g_hash_table_lookup(sessions, id);
-}
-
-GList *
-jabber_jingle_session_find_by_js(JabberStream *js)
-{
-	GList *values = g_hash_table_get_values(sessions);
-	GList *iter = values;
-	GList *found = NULL;
-
-	for (; iter; iter = iter->next) {
-		JingleSession *session = (JingleSession *)iter->data;
-		if (session->js == js) {
-			found = g_list_prepend(found, session);
-		}
-	}
-
-	g_list_free(values);
-	return found;
+					  g_hash_table_size(js->sessions));
+	purple_debug_info("jingle", "lookup: %p\n", g_hash_table_lookup(js->sessions, id));  
+	return (JingleSession *) g_hash_table_lookup(js->sessions, id);
 }
 
 JingleSession *jabber_jingle_session_find_by_jid(JabberStream *js, const char *jid)
 {
-	GList *values = g_hash_table_get_values(sessions);
+	GList *values = g_hash_table_get_values(js->sessions);
 	GList *iter = values;
 
 	for (; iter; iter = iter->next) {

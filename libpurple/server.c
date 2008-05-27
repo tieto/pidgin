@@ -1083,5 +1083,18 @@ serv_can_do_media(PurpleConnection *gc, const char *who,
 		return FALSE;
 	}
 }
-    
-#endif
+#else
+void *
+serv_initiate_media(void *gc, void *who, void *type)
+{
+	purple_debug_info("serv", "Blank serv_initiate_media called\n");
+	return NULL;
+}
+
+void *
+serv_can_do_media(void *gc, void *who, void *type)
+{
+	purple_debug_info("serv", "Blank serv_can_do_media called\n");
+	return NULL;
+}
+#endif /* USE_FARSIGHT */

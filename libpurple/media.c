@@ -546,7 +546,7 @@ purple_media_get_devices(GstElement *element)
 			!GST_IS_PROPERTY_PROBE (element) ||
 			!(probe = GST_PROPERTY_PROBE (element)) ||
 			!(pspec = gst_property_probe_get_property (probe, "device"))) {
-		purple_debug_info("Found source '%s' (%s) - no device",
+		purple_debug_info("media", "Found source '%s' (%s) - no device\n",
 				longname, GST_PLUGIN_FEATURE (factory)->name);
 	} else {
 		gint n;
@@ -571,6 +571,12 @@ purple_media_get_devices(GstElement *element)
 				gst_element_set_state (element, GST_STATE_NULL);
 
 				ret = g_list_append(ret, device);
+
+				name = purple_media_get_device_name(GST_ELEMENT(element), device);
+				purple_debug_info("media", "Found source '%s' (%s) - device '%s' (%s)\n",
+						  longname, GST_PLUGIN_FEATURE (factory)->name,
+						  name, g_value_get_string(device));
+				g_free(name);
 			}
 		}
 	}
@@ -704,7 +710,7 @@ purple_media_src_pad_added(FsStream *stream, GstPad *srcpad,
 	gst_element_set_state(pipeline, GST_STATE_PLAYING);
 }
 
-static void
+static gboolean
 purple_media_add_stream_internal(PurpleMedia *media, FsSession **session, GList **streams,
 				 GstElement *src, const gchar *who, FsMediaType type,
 				 FsStreamDirection type_direction, const gchar *transmitter)
@@ -718,7 +724,18 @@ purple_media_add_stream_internal(PurpleMedia *media, FsSession **session, GList 
 	FsSession *s = NULL;
 
 	if (!*session) {
-		*session = fs_conference_new_session(media->priv->conference, type, NULL);
+		GError *err = NULL;
+		*session = fs_conference_new_session(media->priv->conference, type, &err);
+
+		if (err != NULL) {
+			purple_debug_error("media", "Error creating session: %s\n", err->message);
+			g_error_free(err);
+			purple_conv_present_error(who,
+						  purple_connection_get_account(purple_media_get_connection(media)),
+						  _("Error creating session."));
+			return FALSE;
+		}
+
 		if (src) {
 			GstPad *sinkpad;
 			GstPad *srcpad;
@@ -776,9 +793,11 @@ purple_media_add_stream_internal(PurpleMedia *media, FsSession **session, GList 
 		/* change direction */
 		g_object_set(stream, "direction", type_direction, NULL);
 	}
+
+	return TRUE;
 }
 
-void
+gboolean
 purple_media_add_stream(PurpleMedia *media, const gchar *who,
 			PurpleMediaStreamType type,
 			const gchar *transmitter)
@@ -795,11 +814,13 @@ purple_media_add_stream(PurpleMedia *media, const gchar *who,
 		else
 			type_direction = FS_DIRECTION_NONE;
 
-		purple_media_add_stream_internal(media, &media->priv->audio_session,
-						 &media->priv->audio_streams,
-				 		 media->priv->audio_src, who,
-						 FS_MEDIA_TYPE_AUDIO, type_direction,
-						 transmitter);
+		if (!purple_media_add_stream_internal(media, &media->priv->audio_session,
+						      &media->priv->audio_streams,
+				 		      media->priv->audio_src, who,
+						      FS_MEDIA_TYPE_AUDIO, type_direction,
+						      transmitter)) {
+			return FALSE;
+		}
 	}
 	if (type & PURPLE_MEDIA_VIDEO) {
 		if (type & PURPLE_MEDIA_SEND_VIDEO && type & PURPLE_MEDIA_RECV_VIDEO)
@@ -811,12 +832,15 @@ purple_media_add_stream(PurpleMedia *media, const gchar *who,
 		else
 			type_direction = FS_DIRECTION_NONE;
 
-		purple_media_add_stream_internal(media, &media->priv->video_session,
-						 &media->priv->video_streams,
-				 		 media->priv->video_src, who,
-						 FS_MEDIA_TYPE_VIDEO, type_direction,
-						 transmitter);
+		if (!purple_media_add_stream_internal(media, &media->priv->video_session,
+						      &media->priv->video_streams,
+				 		      media->priv->video_src, who,
+						      FS_MEDIA_TYPE_VIDEO, type_direction,
+						      transmitter)) {
+			return FALSE;
+		}
 	}
+	return TRUE;
 }
 
 void

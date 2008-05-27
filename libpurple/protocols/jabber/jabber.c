@@ -58,7 +58,9 @@
 #include "adhoccommands.h"
 #include "jingle.h"
 
+#ifdef USE_FARSIGHT
 #include <gst/farsight/fs-conference-iface.h>
+#endif
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
@@ -631,6 +633,10 @@ jabber_login(PurpleAccount *account)
 	js->old_length = 0;
 	js->keepalive_timeout = -1;
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
+
+#ifdef USE_FARSIGHT
+	js->sessions = NULL;
+#endif
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,
@@ -1244,12 +1250,15 @@ void jabber_close(PurpleConnection *gc)
 
 #ifdef USE_FARSIGHT
 	/* Close all of the open media sessions on this stream */
-	GList *iter = jabber_jingle_session_find_by_js(js);
+	GList *values = g_hash_table_get_values(js->sessions);
+	GList *iter = values;
 
 	for (; iter; iter = iter->next) {
 		JingleSession *session = (JingleSession *)iter->data;
 		purple_media_hangup(session->media);
 	}
+
+	g_list_free(values);
 #endif
 
 	/* Don't perform any actions on the ssl connection
@@ -2475,15 +2484,25 @@ jabber_session_candidate_pair_established(PurpleMedia *media,
 	}
 }
 
-static void
+static gboolean
 jabber_initiate_media_internal(JingleSession *session, const char *initiator, const char *remote_jid)
 {
 	PurpleMedia *media = NULL;
 
 	media = purple_media_manager_create_media(purple_media_manager_get(), 
 						  session->js->gc, "fsrtpconference", remote_jid);
+
+	if (!media) {
+		purple_debug_error("jabber", "Couldn't create fsrtpconference\n");
+		return FALSE;
+	}
+
 	/* this will need to be changed to "nice" once the libnice transmitter is finished */
-	purple_media_add_stream(media, remote_jid, PURPLE_MEDIA_AUDIO, "rawudp");
+	if (!purple_media_add_stream(media, remote_jid, PURPLE_MEDIA_AUDIO, "rawudp")) {
+		purple_debug_error("jabber", "Couldn't create audio stream\n");
+		purple_media_reject(media);
+		return FALSE;
+	}
 
 	jabber_jingle_session_set_remote_jid(session, remote_jid);
 	jabber_jingle_session_set_initiator(session, initiator);
@@ -2502,6 +2521,8 @@ jabber_initiate_media_internal(JingleSession *session, const char *initiator, co
 				 G_CALLBACK(jabber_session_candidate_pair_established), session);
 
 	purple_media_ready(media);
+
+	return TRUE;
 }
 
 static void
@@ -2572,7 +2593,12 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 	/* set ourselves as initiator */
 	me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain, js->user->resource);
 
-	jabber_initiate_media_internal(session, me, jid);
+	if (!jabber_initiate_media_internal(session, me, jid)) {
+		g_free(jid);
+		g_free(me);
+		jabber_jingle_session_destroy(session);
+		return NULL;
+	}
 
 	g_free(jid);
 	g_free(me);
@@ -2625,7 +2651,7 @@ jabber_handle_session_accept(JabberStream *js, xmlnode *packet)
 	xmlnode *content = xmlnode_get_child(jingle, "content");
 	const char *sid = xmlnode_get_attrib(jingle, "sid");
 	const char *action = xmlnode_get_attrib(jingle, "action");
-	JingleSession *session = jabber_jingle_session_find_by_id(sid);
+	JingleSession *session = jabber_jingle_session_find_by_id(js, sid);
 	GList *remote_codecs = NULL;
 	GList *remote_transports = NULL;
 	GList *codec_intersection;
@@ -2706,7 +2732,12 @@ jabber_handle_session_terminate(JabberStream *js, xmlnode *packet)
 	JabberIq *result = jabber_iq_new(js, JABBER_IQ_SET);
 	xmlnode *jingle = xmlnode_get_child(packet, "jingle");
 	const char *sid = xmlnode_get_attrib(jingle, "sid");
-	JingleSession *session = jabber_jingle_session_find_by_id(sid);
+	JingleSession *session = jabber_jingle_session_find_by_id(js, sid);
+
+	if(!session) {
+		purple_debug_error("jabber", "jabber_handle_session_terminate couldn't find session\n");
+		return;
+	}
 
 	xmlnode_set_attrib(result->node, "to",
 			jabber_jingle_session_get_remote_jid(session));
@@ -2732,7 +2763,7 @@ jabber_handle_session_candidates(JabberStream *js, xmlnode *packet)
 	xmlnode *transport = xmlnode_get_child(content, "transport");
 	GList *remote_candidates = jabber_jingle_get_candidates(transport);
 	const char *sid = xmlnode_get_attrib(jingle, "sid");
-	JingleSession *session = jabber_jingle_session_find_by_id(sid);
+	JingleSession *session = jabber_jingle_session_find_by_id(js, sid);
 
 	if(!session)
 		purple_debug_error("jabber", "jabber_handle_session_candidates couldn't find session\n");
@@ -2757,7 +2788,7 @@ jabber_handle_session_content_replace(JabberStream *js, xmlnode *packet)
 {
 	xmlnode *jingle = xmlnode_get_child(packet, "jingle");
 	const char *sid = xmlnode_get_attrib(jingle, "sid");
-	JingleSession *session = jabber_jingle_session_find_by_id(sid);
+	JingleSession *session = jabber_jingle_session_find_by_id(js, sid);
 
 	if (!jabber_jingle_session_is_initiator(session) && session->session_started) {
 		JabberIq *result = jabber_iq_new(js, JABBER_IQ_RESULT);
@@ -2799,7 +2830,7 @@ jabber_handle_session_initiate(JabberStream *js, xmlnode *packet)
 	sid = xmlnode_get_attrib(jingle, "sid");
 	initiator = xmlnode_get_attrib(jingle, "initiator");
 
-	if (jabber_jingle_session_find_by_id(sid)) {
+	if (jabber_jingle_session_find_by_id(js, sid)) {
 		/* This should only happen if you start a session with yourself */
 		purple_debug_error("jabber", "Jingle session with id={%s} already exists\n", sid);
 		return;
@@ -2822,7 +2853,12 @@ jabber_handle_session_initiate(JabberStream *js, xmlnode *packet)
 		return;
 	}
 
-	jabber_initiate_media_internal(session, initiator, initiator);
+	if (!jabber_initiate_media_internal(session, initiator, initiator)) {
+		purple_debug_error("jabber", "Couldn't start media session with %s\n", initiator);
+		jabber_jingle_session_destroy(session);
+		/* we should create an error iq here */
+		return;
+	}
 
 	codecs = jabber_jingle_get_codecs(description);
 

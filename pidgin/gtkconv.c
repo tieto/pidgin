@@ -7694,7 +7694,8 @@ menu_initiate_voice_call_cb(gpointer data, guint action, GtkWidget *widget)
 							purple_conversation_get_name(conv),
 							PURPLE_MEDIA_RECV_AUDIO & PURPLE_MEDIA_SEND_AUDIO);
 
-	purple_media_wait(media);
+	if (media)
+		purple_media_wait(media);
 }
 
 static void
@@ -7827,9 +7828,10 @@ pidgin_conversations_init(void)
 								show_protocol_icons_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
                                 hide_new_pref_cb, NULL);
-
+#ifdef USE_FARSIGHT
 	g_signal_connect(G_OBJECT(purple_media_manager_get()), "init-media",
 			 G_CALLBACK(pidgin_conv_new_media_cb), NULL);
+#endif
 
 
 	/**********************************************************************

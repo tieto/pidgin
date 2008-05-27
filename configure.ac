@@ -724,16 +724,15 @@ fi
 dnl #######################################################################
 dnl # Check for Farsight
 dnl #######################################################################
-AC_ARG_ENABLE(farsight2,
+AC_ARG_ENABLE(vv,
 	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
 	enable_farsight="$enableval", enable_farsight="yes")
 if test "x$enable_farsight" != "xno"; then
-	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10], [
+	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 gstreamer-0.10 gstreamer-plugins-base-0.10 libxml-2.0], [
 		AC_DEFINE(USE_FARSIGHT, 1, [Use Farsight for voice and video])
 		AC_SUBST(FARSIGHT_CFLAGS)
 		AC_SUBST(FARSIGHT_LIBS)
 	], [
-		AC_MSG_RESULT(no)
 		enable_farsight="no"
 	])
 fi
@@ -755,7 +754,6 @@ then
   		AC_SUBST(GSTPROPS_LIBS)
   		AC_SUBST(GSTPROPS_CFLAGS)
   ], [
-		AC_MSG_RESULT(no)
 		enable_gstprops="no"
   ])
 fi

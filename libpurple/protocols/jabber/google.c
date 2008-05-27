@@ -18,8 +18,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include <gst/farsight/fs-conference-iface.h>
-
 #include "internal.h"
 #include "debug.h"
 #include "mediamanager.h"
@@ -31,6 +29,9 @@
 #include "jabber.h"
 #include "presence.h"
 #include "iq.h"
+
+#ifdef USE_FARSIGHT
+#include <gst/farsight/fs-conference-iface.h>
 
 typedef struct {
 	char *id;
@@ -323,10 +324,12 @@ google_session_parse_iq(JabberStream *js, GoogleSession *session, xmlnode *packe
 		google_session_handle_candidates(js, session, packet, sess);
 	}
 }
+#endif /* USE_FARSIGHT */
 
 void
 jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 {
+#ifdef USE_FARSIGHT
 	GoogleSession *session;
 	GoogleSessionId id;
 
@@ -372,6 +375,9 @@ jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 	g_hash_table_insert(sessions, &(session->id), session);
 
 	google_session_parse_iq(js, session, packet);
+#else
+	/* TODO: send proper error response */
+#endif /* USE_FARSIGHT */
 }
 
 static void

@@ -47,8 +47,7 @@ JabberStream *jabber_jingle_session_get_js(const JingleSession *sess);
 
 void jabber_jingle_session_destroy(JingleSession *sess);
 
-JingleSession *jabber_jingle_session_find_by_id(const char *id);
-GList *jabber_jingle_session_find_by_js(JabberStream *js);
+JingleSession *jabber_jingle_session_find_by_id(JabberStream *js, const char *id);
 JingleSession *jabber_jingle_session_find_by_jid(JabberStream *js, const char *jid);
 
 PurpleMedia *jabber_jingle_session_get_media(const JingleSession *sess);
