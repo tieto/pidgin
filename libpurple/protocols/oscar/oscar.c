@@ -3773,8 +3773,7 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	if ((info->age > 0) && (info->age < 255)) {
 		char age[5];
 		snprintf(age, sizeof(age), "%hhd", info->age);
-		purple_notify_user_info_add_pair(user_info,
-													_("Age"), age);
+		purple_notify_user_info_add_pair(user_info, _("Age"), age);
 	}
 	if (info->personalwebpage && info->personalwebpage[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->personalwebpage))) {
 		buf = g_strdup_printf("<a href=\"%s\">%s</a>", utf8, utf8);
@@ -3798,8 +3797,8 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 				utf8 && *utf8 ? utf8 : "");
 		g_free(utf8);
 
-		oscar_user_info_convert_and_add(account,
-				user_info, _("Status"), tmp);
+		purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
+		g_free(tmp);
 	}
 
 	oscar_user_info_convert_and_add(account, user_info, _("Additional Information"), info->info);
@@ -3830,8 +3829,9 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 		
 		if (info->workwebpage && info->workwebpage[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->workwebpage))) {
 			char *webpage = g_strdup_printf("<a href=\"%s\">%s</a>", utf8, utf8);
-			oscar_user_info_convert_and_add(account, user_info, _("Web Page"), webpage);
+			purple_notify_user_info_add_pair(user_info, _("Web Page"), webpage);
 			g_free(webpage);
+			g_free(utf8);
 		}
 	}
 
