@@ -228,7 +228,9 @@ pidgin_media_disconnect_levels(PurpleMedia *media, PidginMedia *gtkmedia)
 	gulong handler_id = g_signal_handler_find(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))),
 						  G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA, 0, 0, 
 						  NULL, G_CALLBACK(level_message_cb), gtkmedia);
-	g_signal_handler_disconnect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))), handler_id);
+	if (handler_id)
+		g_signal_handler_disconnect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))),
+					    handler_id);
 }
 
 static void

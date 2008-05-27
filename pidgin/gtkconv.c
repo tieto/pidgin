@@ -7694,7 +7694,8 @@ menu_initiate_voice_call_cb(gpointer data, guint action, GtkWidget *widget)
 							purple_conversation_get_name(conv),
 							PURPLE_MEDIA_RECV_AUDIO & PURPLE_MEDIA_SEND_AUDIO);
 
-	purple_media_wait(media);
+	if (media)
+		purple_media_wait(media);
 }
 
 static void

@@ -113,7 +113,7 @@ void purple_media_video_init_src(GstElement **sendbin);
 
 void purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel);
 
-void purple_media_add_stream(PurpleMedia *media, const gchar *who,
+gboolean purple_media_add_stream(PurpleMedia *media, const gchar *who,
 			     PurpleMediaStreamType type, const gchar *transmitter);
 void purple_media_remove_stream(PurpleMedia *media, const gchar *who, PurpleMediaStreamType type);
 
