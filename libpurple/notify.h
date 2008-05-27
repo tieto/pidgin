@@ -580,6 +580,7 @@ void purple_notify_user_info_add_section_break(PurpleNotifyUserInfo *user_info);
  * Prepend a section break.  A UI might display this as a horizontal line.
  *
  * @param user_info          The PurpleNotifyUserInfo
+ * @since 2.5.0
  */
 void purple_notify_user_info_prepend_section_break(PurpleNotifyUserInfo *user_info);
 	
@@ -596,6 +597,7 @@ void purple_notify_user_info_add_section_header(PurpleNotifyUserInfo *user_info,
  *
  * @param user_info          The PurpleNotifyUserInfo
  * @param label              The name of the section
+ * @since 2.5.0
  */
 void purple_notify_user_info_prepend_section_header(PurpleNotifyUserInfo *user_info, const char *label);
 	

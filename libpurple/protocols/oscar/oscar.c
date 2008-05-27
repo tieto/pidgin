@@ -2943,10 +2943,6 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	user_info = purple_notify_user_info_new();
 	purple_notify_user_info_add_pair(user_info, _("Username"), userinfo->sn);
 
-	tmp = g_strdup_printf("%d", (int)((userinfo->warnlevel/10.0) + 0.5));
-	purple_notify_user_info_add_pair(user_info, _("Warning Level"), tmp);
-	g_free(tmp);
-
 	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
 		time_t t = userinfo->onlinesince;
 		oscar_user_info_add_pair(user_info, _("Online Since"), purple_date_format_full(localtime(&t)));
