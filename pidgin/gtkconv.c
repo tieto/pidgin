@@ -46,6 +46,7 @@
 #include "idle.h"
 #include "imgstore.h"
 #include "log.h"
+#include "mediamanager.h"
 #include "notify.h"
 #include "prpl.h"
 #include "request.h"
@@ -60,6 +61,7 @@
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
+#include "gtkmedia.h"
 #include "gtkmenutray.h"
 #include "gtkpounce.h"
 #include "gtkprefs.h"
@@ -1193,6 +1195,14 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 	gtk_widget_show_all(gtkwin->dialogs.search);
 	gtk_widget_grab_focus(s->entry);
 }
+
+#ifdef USE_FARSIGHT
+/* Forward declare this here, because I want to keep VV-related stuff together
+for now */
+static void 
+menu_initiate_voice_call_cb(gpointer data, guint action, GtkWidget *widget);
+
+#endif
 
 static void
 menu_send_file_cb(gpointer data, guint action, GtkWidget *widget)
@@ -3053,6 +3063,11 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>", NULL },
 
+#ifdef USE_FARSIGHT
+	{ N_("/Conversation/_Voice Call..."), NULL, menu_initiate_voice_call_cb, 0,
+		"<StockItem>", PIDGIN_STOCK_TOOLBAR_CALL},
+#endif
+
 	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_SEND_FILE },
 	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
 			0, "<Item>", NULL },
@@ -3362,6 +3377,12 @@ setup_menubar(PidginWindow *win)
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Conversation/View Log"));
 
+#ifdef USE_FARSIGHT
+	win->menu.call =
+		gtk_item_factory_get_widget(win->menu.item_factory,
+									N_("/Conversation/Voice Call..."));
+#endif
+	
 	/* --- */
 
 	win->menu.send_file =
@@ -4716,7 +4737,7 @@ setup_common_pane(PidginConversation *gtkconv)
 	int buddyicon_size = 0;
 
 	/* Setup the top part of the pane */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtkconv->topvbox = vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(vbox);
 
 	/* Setup the info pane */
@@ -6321,6 +6342,28 @@ gray_stuff_out(PidginConversation *gtkconv)
 		else
 			buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;
 
+#ifdef USE_FARSIGHT
+		/* check if account support voice calls, and if the current buddy
+			supports it */
+		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+			if (serv_can_do_media(gc, purple_conversation_get_name(conv), 
+						PURPLE_MEDIA_RECV_AUDIO & PURPLE_MEDIA_SEND_AUDIO)) {
+				buttons |= GTK_IMHTML_CALL;
+				gtk_widget_set_sensitive(win->menu.call, TRUE);
+			} else {
+				buttons &= ~GTK_IMHTML_CALL;
+				gtk_widget_set_sensitive(win->menu.call, FALSE);
+			}
+		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+			/* for now, don't care about chats... */
+			buttons &= ~GTK_IMHTML_CALL;
+			gtk_widget_set_sensitive(win->menu.call, FALSE);
+		} else {
+			buttons &= ~GTK_IMHTML_CALL;
+			gtk_widget_set_sensitive(win->menu.call, FALSE);
+		}							
+#endif
+		
 		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
 		if (account != NULL)
 			gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(gtkconv->toolbar), purple_account_get_protocol_id(account));
@@ -6855,7 +6898,7 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(event), FALSE);
 #endif
 	gtk_widget_add_events(event,
-                              GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
+			GDK_POINTER_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
 	g_signal_connect(G_OBJECT(event), "button-press-event",
 					 G_CALLBACK(icon_menu), gtkconv);
 
@@ -7588,6 +7631,64 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 	return TRUE;
 }
 
+
+#ifdef USE_FARSIGHT
+
+static void
+pidgin_gtkmedia_message_cb(PidginMedia *media, const char *msg, PurpleConversation *conv)
+{
+	purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, msg, PURPLE_MESSAGE_SYSTEM, time(NULL));
+}
+
+static void
+menu_initiate_voice_call_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	PidginWindow *win = (PidginWindow *)data;
+	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
+	PurpleConnection *gc = purple_conversation_get_gc(conv);
+
+	PurpleMedia *media =
+		serv_initiate_media(gc,
+							purple_conversation_get_name(conv),
+							PURPLE_MEDIA_RECV_AUDIO & PURPLE_MEDIA_SEND_AUDIO);
+
+	purple_media_wait(media);
+}
+
+static void
+pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpointer nul)
+{
+	GstElement *sendbin, *sendlevel;
+	GstElement *recvbin, *recvlevel;
+
+	GtkWidget *gtkmedia;
+	PurpleConversation *conv;
+	PidginConversation *gtkconv;
+
+	purple_media_audio_init_src(&sendbin, &sendlevel);
+	purple_media_audio_init_recv(&recvbin, &recvlevel);
+
+	purple_media_set_audio_src(media, sendbin);
+	purple_media_set_audio_sink(media, recvbin);
+
+	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
+				       purple_connection_get_account(purple_media_get_connection(media)),
+				       purple_media_get_screenname(media));
+	gtkconv = PIDGIN_CONVERSATION(conv);
+	if (gtkconv->gtkmedia)
+		gtk_widget_destroy(gtkconv->gtkmedia);
+
+	gtkmedia = pidgin_media_new(media, sendlevel, recvlevel);
+	gtk_box_pack_start(GTK_BOX(gtkconv->topvbox), gtkmedia, FALSE, FALSE, 0);
+	gtk_widget_show(gtkmedia);
+	g_signal_connect(G_OBJECT(gtkmedia), "message", G_CALLBACK(pidgin_gtkmedia_message_cb), conv);
+
+	gtkconv->gtkmedia = gtkmedia;
+	g_signal_connect(G_OBJECT(gtkmedia), "destroy", G_CALLBACK(gtk_widget_destroyed), &(gtkconv->gtkmedia));
+}
+
+#endif
+
 void *
 pidgin_conversations_get_handle(void)
 {
@@ -7689,6 +7790,8 @@ pidgin_conversations_init(void)
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
                                 hide_new_pref_cb, NULL);
 
+	g_signal_connect(G_OBJECT(purple_media_manager_get()), "init-media",
+			 G_CALLBACK(pidgin_conv_new_media_cb), NULL);
 
 
 	/**********************************************************************

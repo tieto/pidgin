@@ -129,6 +129,9 @@
 #define PIDGIN_STOCK_TOOLBAR_UNBLOCK      "pidgin-unblock"
 #define PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR "pidgin-select-avatar"
 #define PIDGIN_STOCK_TOOLBAR_SEND_FILE    "pidgin-send-file"
+#ifdef USE_FARSIGHT
+#define PIDGIN_STOCK_TOOLBAR_CALL			"pidgin-call"
+#endif
 
 /* Tray icons */
 #define PIDGIN_STOCK_TRAY_AVAILABLE       "pidgin-tray-available"

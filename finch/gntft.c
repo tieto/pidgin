@@ -25,18 +25,18 @@
  */
 #include "finch.h"
 
+#include "debug.h"
+#include "notify.h"
+#include "ft.h"
+#include "prpl.h"
+#include "util.h"
+
 #include <gnt.h>
 #include <gntbox.h>
 #include <gntbutton.h>
 #include <gntcheckbox.h>
 #include <gntlabel.h>
 #include <gnttree.h>
-
-#include "debug.h"
-#include "notify.h"
-#include "ft.h"
-#include "prpl.h"
-#include "util.h"
 
 #include "gntft.h"
 #include "prefs.h"
