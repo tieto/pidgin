@@ -2915,7 +2915,7 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,
 	NULL,
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-        sizeof(PurplePluginProtocolInfo),
+	NULL,					/* get_account_text_table */
 	NULL,					/* initate_media */
 	NULL					/* can_do_media */
 };
