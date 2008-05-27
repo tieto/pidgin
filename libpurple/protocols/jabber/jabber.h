@@ -203,6 +203,11 @@ struct _JabberStream
 	
 	/* A purple timeout tag for the keepalive */
 	int keepalive_timeout;
+
+#ifdef USE_FARSIGHT
+	/* keep a hash table of JingleSessions */
+	GHashTable *sessions;
+#endif
 };
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *shortname, const gchar *namespace);

@@ -28,7 +28,6 @@
 
 #ifdef USE_FARSIGHT
 
-#include <farsight/farsight.h>
 #include <gtk/gtk.h>
 #include <glib-object.h>
 

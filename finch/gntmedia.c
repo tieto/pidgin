@@ -42,8 +42,6 @@
 /* An incredibly large part of the following is from gtkmedia.c */
 #ifdef USE_FARSIGHT
 
-#include <farsight/farsight.h>
-
 #undef hangup
 
 struct _FinchMediaPrivate
@@ -390,8 +388,6 @@ finch_media_new(PurpleMedia *media, GstElement *sendlevel, GstElement *recvlevel
 				NULL));
 }
 
-#endif  /* USE_FARSIGHT */
-
 static void
 gntmedia_message_cb(FinchMedia *gntmedia, const char *msg, PurpleConversation *conv)
 {
@@ -457,4 +453,6 @@ void finch_media_manager_uninit(void)
 	g_signal_handlers_disconnect_by_func(G_OBJECT(manager),
 			G_CALLBACK(finch_new_media), NULL);
 }
+
+#endif  /* USE_FARSIGHT */
 

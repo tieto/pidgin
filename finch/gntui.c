@@ -92,8 +92,10 @@ void gnt_ui_init()
 	finch_roomlist_init();
 	purple_roomlist_set_ui_ops(finch_roomlist_get_ui_ops());
 
+#ifdef USE_FARSIGHT
 	/* Media */
 	finch_media_manager_init();
+#endif
 
 	gnt_register_action(_("Accounts"), finch_accounts_show_all);
 	gnt_register_action(_("Buddy List"), finch_blist_show);
@@ -140,7 +142,9 @@ void gnt_ui_uninit()
 	finch_roomlist_uninit();
 	purple_roomlist_set_ui_ops(NULL);
 
+#ifdef USE_FARSIGHT
 	finch_media_manager_uninit();
+#endif
 
 	gnt_quit();
 #endif
