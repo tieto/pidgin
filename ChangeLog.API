@@ -15,6 +15,8 @@ version 2.5.0 (??/??/2008):
 		* purple_buddy_icons_node_find_custom_icon
 		* purple_buddy_icons_node_set_custom_icon
 		* purple_buddy_icons_node_set_custom_icon_from_file
+		* purple_notify_user_info_prepend_section_break
+		* purple_notify_user_info_prepend_section_header
 
 		Deprecated:
 		* purple_blist_update_buddy_icon
