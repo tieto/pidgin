@@ -892,11 +892,16 @@ static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 			gconv1 = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
 														 zt2->name, gc->account);
 			gcc = purple_conversation_get_chat_data(gconv1);
-
+#ifndef INET_ADDRSTRLEN
+#define INET_ADDRSTRLEN 16
+#endif
 			if (!purple_conv_chat_find_user(gcc, sendertmp)) {
 				gchar ipaddr[INET_ADDRSTRLEN];
+#ifdef HAVE_INET_NTOP
 				inet_ntop(AF_INET, &notice.z_sender_addr.s_addr, ipaddr, sizeof(ipaddr));
-
+#else
+				memcpy(ipaddr,inet_ntoa(notice.z_sender_addr),sizeof(ipaddr));
+#endif
 				purple_conv_chat_add_user(gcc, sendertmp, ipaddr, PURPLE_CBFLAGS_NONE, TRUE);
 			}
 			g_free(sendertmp);
