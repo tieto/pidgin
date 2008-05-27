@@ -577,13 +577,28 @@ PurpleNotifyUserInfoEntry *purple_notify_user_info_entry_new(const char *label, 
 void purple_notify_user_info_add_section_break(PurpleNotifyUserInfo *user_info);
 
 /**
+ * Prepend a section break.  A UI might display this as a horizontal line.
+ *
+ * @param user_info          The PurpleNotifyUserInfo
+ */
+void purple_notify_user_info_prepend_section_break(PurpleNotifyUserInfo *user_info);
+	
+/**
  * Add a section header.  A UI might display this in a different font from other text.
  *
  * @param user_info          The PurpleNotifyUserInfo
  * @param label              The name of the section
  */
 void purple_notify_user_info_add_section_header(PurpleNotifyUserInfo *user_info, const char *label);
-
+	
+/**
+ * Prepend a section header.  A UI might display this in a different font from other text.
+ *
+ * @param user_info          The PurpleNotifyUserInfo
+ * @param label              The name of the section
+ */
+void purple_notify_user_info_prepend_section_header(PurpleNotifyUserInfo *user_info, const char *label);
+	
 /**
  * Remove the last item which was added to a PurpleNotifyUserInfo. This could be used to remove a section header which is not needed.
  */
