@@ -761,18 +761,6 @@ oscar_user_info_convert_and_add_pair(PurpleAccount *account, PurpleNotifyUserInf
 }
 
 static void
-oscar_string_convert_and_append(PurpleAccount *account, GString *str, const char *newline,
-					const char *name, const char *value)
-{
-	gchar *utf8;
-
-	if (value && value[0] && (utf8 = oscar_utf8_try_convert(account, value))) {
-		g_string_append_printf(str, "%s<b>%s:</b> %s", newline, name, utf8);
-		g_free(utf8);
-	}
-}
-
-static void
 oscar_user_info_convert_and_add(PurpleAccount *account, PurpleNotifyUserInfo *user_info,
 								const char *name, const char *value)
 {
@@ -3818,42 +3806,33 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	purple_notify_user_info_add_section_break(user_info);
 
 	if ((info->homeaddr && (info->homeaddr[0])) || (info->homecity && info->homecity[0]) || (info->homestate && info->homestate[0]) || (info->homezip && info->homezip[0])) {
-		tmp = g_string_sized_new(100);
-		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Address"), info->homeaddr);
-		oscar_string_convert_and_append(account, tmp, "\n<br>", _("City"), info->homecity);
-		oscar_string_convert_and_append(account, tmp, "\n<br>", _("State"), info->homestate);
-		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Zip Code"), info->homezip);
-		
-		purple_notify_user_info_add_pair(user_info, _("Home Address"), tmp->str);
-		purple_notify_user_info_add_section_break(user_info);
+		purple_notify_user_info_add_section_header(user_info, _("Home Address"));
 
-		g_string_free(tmp, TRUE);
+		oscar_user_info_convert_and_add(account, user_info, _("Address"), info->homeaddr);
+		oscar_user_info_convert_and_add(account, user_info, _("City"), info->homecity);
+		oscar_user_info_convert_and_add(account, user_info, _("State"), info->homestate);
+		oscar_user_info_convert_and_add(account, user_info, _("Zip Code"), info->homezip);
 	}
 	if ((info->workaddr && info->workaddr[0]) || (info->workcity && info->workcity[0]) || (info->workstate && info->workstate[0]) || (info->workzip && info->workzip[0])) {
-		tmp = g_string_sized_new(100);
-
-		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Address"), info->workaddr);
-		oscar_string_convert_and_append(account, tmp, "\n<br>", _("City"), info->workcity);
-		oscar_string_convert_and_append(account, tmp, "\n<br>", _("State"), info->workstate);
-		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Zip Code"), info->workzip);
-
-		purple_notify_user_info_add_pair(user_info, _("Work Address"), tmp->str);
-		purple_notify_user_info_add_section_break(user_info);
-
-		g_string_free(tmp, TRUE);
+		purple_notify_user_info_add_section_header(user_info, _("Work Address"));
+		
+		oscar_user_info_convert_and_add(account, user_info, _("Address"), info->workaddr);
+		oscar_user_info_convert_and_add(account, user_info, _("City"), info->workcity);
+		oscar_user_info_convert_and_add(account, user_info, _("State"), info->workstate);
+		oscar_user_info_convert_and_add(account, user_info, _("Zip Code"), info->workzip);
 	}
 	if ((info->workcompany && info->workcompany[0]) || (info->workdivision && info->workdivision[0]) || (info->workposition && info->workposition[0]) || (info->workwebpage && info->workwebpage[0])) {
-		tmp = g_string_sized_new(100);
+		purple_notify_user_info_add_section_header(user_info, _("Work Information"));
 		
-		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Company"), info->workcompany);
-		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Division"), info->workdivision);
-		oscar_string_convert_and_append(account, tmp, "\n<br>", _("Position"), info->workposition);
+		oscar_user_info_convert_and_add(account, user_info, _("Company"), info->workcompany);
+		oscar_user_info_convert_and_add(account, user_info, _("Division"), info->workdivision);
+		oscar_user_info_convert_and_add(account, user_info, _("Position"), info->workposition);
+		
 		if (info->workwebpage && info->workwebpage[0] && (utf8 = oscar_utf8_try_convert(gc->account, info->workwebpage))) {
-			g_string_append_printf(tmp, "\n<br><b>%s:</b> <a href=\"%s\">%s</a>", _("Web Page"), utf8, utf8);
-			g_free(utf8);
+			char *webpage = g_strdup_printf("<a href=\"%s\">%s</a>", utf8, utf8);
+			oscar_user_info_convert_and_add(account, user_info, _("Web Page"), webpage);
+			g_free(webpage);
 		}
-		purple_notify_user_info_add_pair(user_info, _("Work Information"), tmp->str);
-		g_string_free(tmp, TRUE);
 	}
 
 	if (buddy != NULL)
