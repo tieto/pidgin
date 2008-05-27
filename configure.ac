@@ -108,13 +108,14 @@ AC_DEFINE_UNQUOTED(CONFIG_ARGS, "$ac_configure_args", [configure arguments])
 
 dnl Checks for programs.
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_DISABLE_STATIC
-AM_PROG_LIBTOOL
+AC_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
 AC_PROG_INSTALL
 AC_PROG_INTLTOOL
 PKG_PROG_PKG_CONFIG
-
+AC_FUNC_ALLOCA
 GETTEXT_PACKAGE=pidgin
 AC_SUBST(GETTEXT_PACKAGE)
 
@@ -210,7 +211,7 @@ AC_CHECK_FUNC(getaddrinfo,
 		[Define to 1 if you have the getaddrinfo function.])],
 	[AC_CHECK_LIB(socket, getaddrinfo,
 		[AC_DEFINE([HAVE_GETADDRINFO]) LIBS="-lsocket -lsnl $LIBS"], , , -lnsl)])
-
+AC_CHECK_FUNCS(inet_ntop)
 dnl Check for socklen_t (in Unix98)
 AC_MSG_CHECKING(for socklen_t)
 AC_TRY_COMPILE([
@@ -233,6 +234,12 @@ AC_TRY_COMPILE([
 		AC_DEFINE(socklen_t, int, [socklen_t size])
 	])
 ])
+
+dnl Some systems do not have sa_len field for struct sockaddr.
+AC_CHECK_MEMBER([struct sockaddr.sa_len],
+	[AC_DEFINE([HAVE_STRUCT_SOCKADDR_SA_LEN],[1],
+	[Define if struct sockaddr has an sa_len member])],[:],
+	[#include <sys/socket.h>])
 
 dnl to prevent the g_stat()/g_unlink() crash,
 dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac

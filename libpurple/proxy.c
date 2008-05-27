@@ -1726,6 +1726,10 @@ proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr
  * resolved, and each time a connection attempt fails (assuming there
  * is another IP address to try).
  */
+#ifndef INET6_ADDRSTRLEN
+#define INET6_ADDRSTRLEN 46
+#endif
+
 static void try_connect(PurpleProxyConnectData *connect_data)
 {
 	size_t addrlen;
@@ -1736,9 +1740,13 @@ static void try_connect(PurpleProxyConnectData *connect_data)
 	connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
 	addr = connect_data->hosts->data;
 	connect_data->hosts = g_slist_remove(connect_data->hosts, connect_data->hosts->data);
-
+#ifdef HAVE_INET_NTOP
 	inet_ntop(addr->sa_family, &((struct sockaddr_in *)addr)->sin_addr,
 			ipaddr, sizeof(ipaddr));
+#else
+	memcpy(ipaddr,inet_ntoa(((struct sockaddr_in *)addr)->sin_addr),
+			sizeof(ipaddr));
+#endif
 	purple_debug_info("proxy", "Attempting connection to %s\n", ipaddr);
 
 	switch (purple_proxy_info_get_type(connect_data->gpi)) {
