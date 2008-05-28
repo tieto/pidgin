@@ -641,10 +641,9 @@ purple_smiley_set_data_impl(PurpleSmiley *smiley, guchar *smiley_data,
 	old_filename = purple_imgstore_get_filename(old_img);
 	new_filename = purple_imgstore_get_filename(smiley->img);
 
-	if (g_ascii_strcasecmp(old_filename, new_filename)) {
+	if (g_ascii_strcasecmp(old_filename, new_filename))
 		purple_smiley_data_unstore(old_filename);
-		purple_imgstore_unref(old_img);
-	}
+	purple_imgstore_unref(old_img);
 }
 
 
