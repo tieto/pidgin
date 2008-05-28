@@ -724,8 +724,8 @@ fi
 dnl #######################################################################
 dnl # Check for Farsight
 dnl #######################################################################
-AC_ARG_ENABLE(vv,
-	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
+AC_ARG_ENABLE(farsight,
+	[AC_HELP_STRING([--disable-farsight], [compile without farsight support])],
 	enable_farsight="$enableval", enable_farsight="yes")
 if test "x$enable_farsight" != "xno"; then
 	PKG_CHECK_MODULES(FARSIGHT, [farsight2-0.10 gstreamer-0.10 gstreamer-plugins-base-0.10 libxml-2.0], [
@@ -758,6 +758,19 @@ then
   ])
 fi
 
+dnl #######################################################################
+dnl # Check for Voice and Video support
+dnl #######################################################################
+AC_ARG_ENABLE(vv,
+	[AC_HELP_STRING([--disable-vv], [compile without voice and video support])],
+	enable_vv="$enableval", enable_vv="yes")
+if test "x$enable_vv" != "xno"; then
+	if test "x$enable_farsight" != "xno" -a "x$enable_gstprops" != "xno"; then
+		AC_DEFINE(USE_VV, 1, [Use voice and video])
+	else
+		enable_vv="no"
+	fi
+fi
 
 dnl #######################################################################
 dnl # Check for Meanwhile headers (for Sametime)
@@ -2448,7 +2461,7 @@ echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo
 echo Build with GStreamer support.. : $enable_gst
-echo Build with voice and video.... : $enable_farsight
+echo Build with voice and video.... : $enable_vv
 echo Build with D-Bus support...... : $enable_dbus
 if test "x$enable_dbus" = "xyes" ; then
 	eval eval echo D-Bus services directory...... : $DBUS_SERVICES_DIR
