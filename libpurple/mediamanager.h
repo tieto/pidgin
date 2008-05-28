@@ -26,7 +26,7 @@
 #ifndef __MEDIA_MANAGER_H_
 #define __MEDIA_MANAGER_H_
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 
 #include <gst/farsight/fs-session.h>
 #include <glib.h>
@@ -68,7 +68,7 @@ PurpleMedia *purple_media_manager_create_media(PurpleMediaManager *manager,
 
 G_END_DECLS
 
-#endif  /* USE_FARSIGHT */
+#endif  /* USE_VV */
 
 
 #endif  /* __MEDIA_MANAGER_H_ */

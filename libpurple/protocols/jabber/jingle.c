@@ -26,7 +26,7 @@
 #include <string.h>
 #include <glib.h>
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 
 #include <gst/farsight/fs-candidate.h>
 
@@ -481,4 +481,4 @@ jabber_jingle_session_create_content_accept(const JingleSession *sess)
 	return jingle;
 }
 
-#endif /* USE_FARSIGHT */
+#endif /* USE_VV */

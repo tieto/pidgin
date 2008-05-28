@@ -24,7 +24,7 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 
 G_BEGIN_DECLS
 
@@ -87,6 +87,6 @@ GList *jabber_jingle_get_candidates(const xmlnode *transport);
 
 G_END_DECLS
 
-#endif /* USE_FARSIGHT */
+#endif /* USE_VV */
 
 #endif /* JINGLE_H */

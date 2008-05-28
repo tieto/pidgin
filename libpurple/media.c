@@ -33,8 +33,7 @@
 
 #include "debug.h"
 
-#ifdef USE_FARSIGHT
-#ifdef USE_GSTPROPS
+#ifdef USE_VV
 
 #include <gst/interfaces/propertyprobe.h>
 #include <gst/farsight/fs-conference-iface.h>
@@ -916,5 +915,4 @@ purple_media_set_remote_audio_codecs(PurpleMedia *media, const gchar *name, GLis
 	fs_stream_set_remote_codecs(purple_media_get_audio_stream(media, name), codecs, NULL);
 }
 
-#endif  /* USE_GSTPROPS */
-#endif  /* USE_FARSIGHT */
+#endif  /* USE_VV */

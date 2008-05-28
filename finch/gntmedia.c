@@ -40,7 +40,7 @@
 #include "debug.h"
 
 /* An incredibly large part of the following is from gtkmedia.c */
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 
 #undef hangup
 
@@ -454,5 +454,5 @@ void finch_media_manager_uninit(void)
 			G_CALLBACK(finch_new_media), NULL);
 }
 
-#endif  /* USE_FARSIGHT */
+#endif  /* USE_VV */
 

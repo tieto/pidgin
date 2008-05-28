@@ -30,7 +30,7 @@
 #include "presence.h"
 #include "iq.h"
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 #include <gst/farsight/fs-conference-iface.h>
 
 typedef struct {
@@ -324,12 +324,12 @@ google_session_parse_iq(JabberStream *js, GoogleSession *session, xmlnode *packe
 		google_session_handle_candidates(js, session, packet, sess);
 	}
 }
-#endif /* USE_FARSIGHT */
+#endif /* USE_VV */
 
 void
 jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 {
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	GoogleSession *session;
 	GoogleSessionId id;
 
@@ -377,7 +377,7 @@ jabber_google_session_parse(JabberStream *js, xmlnode *packet)
 	google_session_parse_iq(js, session, packet);
 #else
 	/* TODO: send proper error response */
-#endif /* USE_FARSIGHT */
+#endif /* USE_VV */
 }
 
 static void

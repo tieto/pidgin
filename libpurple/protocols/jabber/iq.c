@@ -358,7 +358,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		return;
 	}
 	
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	/* handle session initiate XEP 0167 */
 	if (type && !strcmp(type, "set")) {
 		/* is this a Jingle package? */

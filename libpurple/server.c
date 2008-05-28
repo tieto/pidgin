@@ -37,7 +37,7 @@
 #include "server.h"
 #include "status.h"
 #include "util.h"
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 #include "media.h"
 #endif
 
@@ -1044,7 +1044,7 @@ void serv_send_file(PurpleConnection *gc, const char *who, const char *file)
 	}
 }
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 PurpleMedia *serv_initiate_media(PurpleConnection *gc, const char *who,
 								 PurpleMediaStreamType type)
 {
@@ -1097,4 +1097,4 @@ serv_can_do_media(void *gc, void *who, void *type)
 	purple_debug_info("serv", "Blank serv_can_do_media called\n");
 	return NULL;
 }
-#endif /* USE_FARSIGHT */
+#endif /* USE_VV */

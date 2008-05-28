@@ -26,8 +26,7 @@
 #ifndef __MEDIA_H_
 #define __MEDIA_H_
 
-#ifdef USE_FARSIGHT
-#ifdef USE_GSTPROPS
+#ifdef USE_VV
 
 #include <gst/gst.h>
 #include <gst/farsight/fs-stream.h>
@@ -129,8 +128,7 @@ void purple_media_set_remote_audio_codecs(PurpleMedia *media, const gchar *name,
 
 G_END_DECLS
 
-#endif  /* USE_GSTPROPS */
-#endif  /* USE_FARSIGHT */
+#endif  /* USE_VV */
 
 
 #endif  /* __MEDIA_H_ */

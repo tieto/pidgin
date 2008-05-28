@@ -1910,7 +1910,7 @@ sound_page(void)
 	return ret;
 }
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 
 /* get a GList of pairs name / device */
 static GList *
@@ -2133,7 +2133,7 @@ media_page()
 	return ret;
 }
 
-#endif
+#endif	/* USE_VV */
 
 static void
 set_idle_away(PurpleSavedStatus *status)
@@ -2260,7 +2260,7 @@ static void prefs_notebook_init(void) {
 	prefs_notebook_add_page(_("Smiley Themes"), theme_page(), notebook_page++);
 	prefs_notebook_add_page(_("Sounds"), sound_page(), notebook_page++);
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	prefs_notebook_add_page(_("Media"), media_page(), notebook_page++);
 #endif	
 	prefs_notebook_add_page(_("Network"), network_page(), notebook_page++);
@@ -2388,14 +2388,14 @@ pidgin_prefs_init(void)
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
 								smiley_theme_pref_cb, NULL);
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	purple_prefs_add_none("/purple/media");
 	purple_prefs_add_none("/purple/media/video");
 	purple_prefs_add_string("/purple/media/video/plugin", "gconfvideosrc");
 	purple_prefs_add_string("/purple/media/video/device", "");
 	purple_prefs_add_none("/purple/media/audio");
 	purple_prefs_add_string("/purple/media/audio/device", "");
-#endif /* USE_FARSIGHT */
+#endif /* USE_VV */
 
 	pidgin_prefs_update_old();
 }

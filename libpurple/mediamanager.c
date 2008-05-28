@@ -29,7 +29,7 @@
 #include "mediamanager.h"
 #include "media.h"
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 
 #include <gst/farsight/fs-conference-iface.h>
 
@@ -154,4 +154,4 @@ purple_media_manager_create_media(PurpleMediaManager *manager,
 	return media;
 }
 
-#endif  /* USE_FARSIGHT */
+#endif  /* USE_VV */

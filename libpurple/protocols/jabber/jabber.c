@@ -58,7 +58,7 @@
 #include "adhoccommands.h"
 #include "jingle.h"
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 #include <gst/farsight/fs-conference-iface.h>
 #endif
 
@@ -634,7 +634,7 @@ jabber_login(PurpleAccount *account)
 	js->keepalive_timeout = -1;
 	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	js->sessions = NULL;
 #endif
 
@@ -1248,7 +1248,7 @@ void jabber_close(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	/* Close all of the open media sessions on this stream */
 	GList *values = g_hash_table_get_values(js->sessions);
 	GList *iter = values;
@@ -1883,13 +1883,13 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 	JabberID *jid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	JingleSession *session;
 #endif
 	if(!(jid = jabber_id_new(who)))
 		return;
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	session = jabber_jingle_session_find_by_jid(js, who);
 
 	if (session) {
@@ -2374,7 +2374,7 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 	return TRUE;
 }
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 
 static void
 jabber_session_send_accept(JingleSession *session)

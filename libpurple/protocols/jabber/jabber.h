@@ -204,7 +204,7 @@ struct _JabberStream
 	/* A purple timeout tag for the keepalive */
 	int keepalive_timeout;
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	/* keep a hash table of JingleSessions */
 	GHashTable *sessions;
 #endif
@@ -275,7 +275,7 @@ GList *jabber_actions(PurplePlugin *plugin, gpointer context);
 void jabber_register_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 PurpleMedia *jabber_initiate_media(PurpleConnection *gc, const char *who, PurpleMediaStreamType type);
 gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, PurpleMediaStreamType type);
 

@@ -116,7 +116,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_send_attention,			/* send_attention */
 	jabber_attention_types,			/* attention_types */
 	sizeof(PurplePluginProtocolInfo),       /* struct_size */
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	jabber_initiate_media,          /* initiate_media */
 	jabber_can_do_media             /* can_do_media */
 #else
@@ -281,7 +281,7 @@ init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns", jabber_buzz_isenabled);
 	
 	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	jabber_add_feature("voice-v1", "http://www.xmpp.org/extensions/xep-0167.html#ns", NULL);
 #endif
 }

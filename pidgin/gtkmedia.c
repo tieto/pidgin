@@ -30,7 +30,7 @@
 
 #include "gtkmedia.h"
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 
 typedef enum
 {
@@ -412,4 +412,4 @@ pidgin_media_set_state(PidginMedia *gtkmedia, PidginMediaState state)
 	}
 }
 
-#endif  /* USE_FARSIGHT */
+#endif  /* USE_VV */
