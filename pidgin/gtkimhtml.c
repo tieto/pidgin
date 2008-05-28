@@ -5046,6 +5046,7 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 					break;
 				default:
 					str += g_snprintf(str, sizeof(buf) - (str - buf), "text-decoration: underline;");
+					empty = FALSE;
 			}
 		}
 
@@ -5097,6 +5098,38 @@ static const gchar *tag_to_html_end(GtkTextTag *tag)
 	}
 }
 
+typedef struct {
+	GtkTextTag *tag;
+	char *end;
+	char *start;
+} PidginTextTagData;
+
+static PidginTextTagData *text_tag_data_new(GtkTextTag *tag)
+{
+	const char *start, *end;
+	PidginTextTagData *ret = NULL;
+
+	start = tag_to_html_start(tag);
+	if (!start || !*start)
+		return NULL;
+	end = tag_to_html_end(tag);
+	if (!end || !*end)
+		return NULL;
+
+	ret = g_new0(PidginTextTagData, 1);
+	ret->start = g_strdup(start);
+	ret->end = g_strdup(end);
+	ret->tag = tag;
+	return ret;
+}
+
+static void text_tag_data_destroy(PidginTextTagData *data)
+{
+	g_free(data->start);
+	g_free(data->end);
+	g_free(data);
+}
+
 static gboolean tag_ends_here(GtkTextTag *tag, GtkTextIter *iter, GtkTextIter *niter)
 {
 	return ((gtk_text_iter_has_tag(iter, GTK_TEXT_TAG(tag)) &&
@@ -5117,12 +5150,11 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 	gboolean is_rtl_message = FALSE;
 	GString *str = g_string_new("");
 	GSList *tags, *sl;
-	GQueue *q, *r;
+	GQueue *q;
 	GtkTextTag *tag;
+	PidginTextTagData *tagdata;
 
 	q = g_queue_new();
-	r = g_queue_new();
-
 
 	gtk_text_iter_order(start, end);
 	non_neutral_iter = next_iter = iter = *start;
@@ -5145,9 +5177,11 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 	for (sl = tags; sl; sl = sl->next) {
 		tag = sl->data;
 		if (!gtk_text_iter_toggles_tag(start, GTK_TEXT_TAG(tag))) {
-			if (strlen(tag_to_html_end(tag)) > 0)
-				g_string_append(str, tag_to_html_start(tag));
-			g_queue_push_tail(q, tag);
+			PidginTextTagData *data = text_tag_data_new(tag);
+			if (data) {
+				g_string_append(str, data->start);
+				g_queue_push_tail(q, data);
+			}
 		}
 	}
 	g_slist_free(tags);
@@ -5159,12 +5193,13 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		for (sl = tags; sl; sl = sl->next) {
 			tag = sl->data;
 			if (gtk_text_iter_begins_tag(&iter, GTK_TEXT_TAG(tag))) {
-				if (strlen(tag_to_html_end(tag)) > 0)
-					g_string_append(str, tag_to_html_start(tag));
-				g_queue_push_tail(q, tag);
+				PidginTextTagData *data = text_tag_data_new(tag);
+				if (data) {
+					g_string_append(str, data->start);
+					g_queue_push_tail(q, data);
+				}
 			}
 		}
-
 
 		if (c == 0xFFFC) {
 			GtkTextChildAnchor* anchor = gtk_text_iter_get_child_anchor(&iter);
@@ -5191,28 +5226,31 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		for (sl = tags; sl; sl = sl->next) {
 			tag = sl->data;
 			/** don't worry about non-printing tags ending */
-			if (tag_ends_here(tag, &iter, &next_iter) && strlen(tag_to_html_end(tag)) > 0) {
+			if (tag_ends_here(tag, &iter, &next_iter) &&
+					strlen(tag_to_html_end(tag)) > 0 &&
+					strlen(tag_to_html_start(tag)) > 0) {
 
-				GtkTextTag *tmp;
+				PidginTextTagData *tmp;
+				GQueue *r = g_queue_new();
 
-				while ((tmp = g_queue_pop_tail(q)) != tag) {
-					if (tmp == NULL)
-						break;
-
-					if (!tag_ends_here(tmp, &iter, &next_iter) && strlen(tag_to_html_end(tmp)) > 0)
+				while ((tmp = g_queue_pop_tail(q)) && tmp->tag != tag) {
+					g_string_append(str, tmp->end);
+					if (!tag_ends_here(tmp->tag, &iter, &next_iter))
 						g_queue_push_tail(r, tmp);
-					g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tmp)));
+					else
+						text_tag_data_destroy(tmp);
 				}
 
 				if (tmp == NULL)
 					purple_debug_warning("gtkimhtml", "empty queue, more closing tags than open tags!\n");
 				else
-					g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tag)));
+					g_string_append(str, tmp->end);
 
 				while ((tmp = g_queue_pop_head(r))) {
-					g_string_append(str, tag_to_html_start(GTK_TEXT_TAG(tmp)));
+					g_string_append(str, tmp->start);
 					g_queue_push_tail(q, tmp);
 				}
+				g_queue_free(r);
 			}
 		}
 
@@ -5221,15 +5259,16 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		gtk_text_iter_forward_char(&next_iter);
 	}
 
-	while ((tag = g_queue_pop_tail(q)))
-		g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tag)));
+	while ((tagdata = g_queue_pop_tail(q))) {
+		g_string_append(str, tagdata->end);
+		text_tag_data_destroy(tagdata);
+	}
 
 	/* Bi-directional text support - close tags */
 	if (is_rtl_message)
 		g_string_append(str, "</SPAN>");
 
 	g_queue_free(q);
-	g_queue_free(r);
 	return g_string_free(str, FALSE);
 }
 
