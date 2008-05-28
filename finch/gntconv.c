@@ -38,10 +38,11 @@
 #include "gntdebug.h"
 #include "gntlog.h"
 #include "gntplugin.h"
+#include "gntpounce.h"
 #include "gntprefs.h"
+#include "gntrequest.h"
 #include "gntsound.h"
 #include "gntstatus.h"
-#include "gntpounce.h"
 
 #include "gnt.h"
 #include "gntbox.h"
@@ -557,6 +558,47 @@ generate_send_to_menu(FinchConv *ggc)
 }
 
 static void
+invite_select_cb(FinchConv *fc, PurpleRequestFields *fields)
+{
+	PurpleConversation *conv = fc->active_conv;
+	const char *buddy = purple_request_fields_get_string(fields,  "screenname");
+	const char *message = purple_request_fields_get_string(fields,  "message");
+	serv_chat_invite(purple_conversation_get_gc(conv),
+		purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)),
+		message, buddy);
+
+}
+
+static void
+invite_cb(GntMenuItem *item, gpointer ggconv)
+{
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+
+	fields = purple_request_fields_new();
+
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_string_new("screenname", _("Name"), NULL, FALSE);
+	purple_request_field_set_type_hint(field, "screenname");
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+	field = purple_request_field_string_new("message", _("Invite message"), NULL, FALSE);
+	purple_request_field_group_add_field(group, field);
+	purple_request_fields(finch_conv_get_handle(), _("Invite"),
+						NULL,
+						_("Please enter the name of the user "
+						  "you wish to invite,\nalong with an optional invite message."),
+						fields,
+						_("OK"), G_CALLBACK(invite_select_cb),
+						_("Cancel"), NULL,
+						NULL, NULL, NULL,
+						ggconv);
+}
+
+static void
 gg_create_menu(FinchConv *ggc)
 {
 	GntWidget *menu, *sub;
@@ -606,6 +648,10 @@ gg_create_menu(FinchConv *ggc)
 		}
 
 		generate_send_to_menu(ggc);
+	} else if (purple_conversation_get_type(ggc->active_conv) == PURPLE_CONV_TYPE_CHAT) {
+		item = gnt_menuitem_new(_("Invite..."));
+		gnt_menu_add_item(GNT_MENU(sub), item);
+		gnt_menuitem_set_callback(item, invite_cb, ggc);
 	}
 
 	item = gnt_menuitem_new(_("View Log..."));

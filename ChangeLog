@@ -18,6 +18,9 @@ version 2.5.0 (??/??/2008):
 	* Group and Chat buddy list entries can now be given custom buddy
 	  icons.
 
+	Finch:
+	* Added "Invite..." menu to chats.
+
 version 2.4.2 (05/17/2008):
 	libpurple:
 	* In MySpaceIM, messages from spambots are discarded (Justin Williams)
