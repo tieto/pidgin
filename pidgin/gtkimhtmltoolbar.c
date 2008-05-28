@@ -907,7 +907,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 static void
 init_voice_call_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 {
@@ -943,7 +943,7 @@ static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIM
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->image), buttons & GTK_IMHTML_IMAGE);
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->link), buttons & GTK_IMHTML_LINK);
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->smiley), buttons & GTK_IMHTML_SMILEY);
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->call), buttons & GTK_IMHTML_CALL);
 #endif
 }
@@ -1234,7 +1234,7 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
 		{PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, insert_image_cb, &toolbar->image, _("Insert IM Image")},
 		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 		{"", NULL, NULL, NULL},
 		{PIDGIN_STOCK_TOOLBAR_CALL, init_voice_call_cb, &toolbar->call, _("Call")},
 #endif
@@ -1304,9 +1304,9 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *font_button;
 	GtkWidget *smiley_button;
 	
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	GtkWidget *call_button;
-#endif /* USE_FARSIGHT */
+#endif /* USE_VV */
 	
 	GtkWidget *font_menu;
 	GtkWidget *insert_menu;
@@ -1449,7 +1449,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	g_signal_connect_swapped(G_OBJECT(smiley_button), "clicked", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
 	gtk_widget_show_all(smiley_button);
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	/* Sep */
 	sep = gtk_vseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);
@@ -1469,7 +1469,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	g_signal_connect_swapped(G_OBJECT(call_button), "clicked", G_CALLBACK(gtk_button_clicked), toolbar->call);
 	gtk_widget_show_all(call_button);
 
-#endif /* USE_FARSIGHT */
+#endif /* USE_VV */
 
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);

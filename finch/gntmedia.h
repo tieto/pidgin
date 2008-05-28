@@ -31,7 +31,7 @@
 #include "config.h"
 #endif
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 
 #include <glib-object.h>
 #include "gntbox.h"
@@ -71,7 +71,7 @@ void finch_media_manager_uninit(void);
 
 G_END_DECLS
 
-#endif /* USE_FARSIGHT */
+#endif /* USE_VV */
 
 #endif /* GNT_MEDIA_H */
 

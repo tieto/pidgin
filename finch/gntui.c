@@ -92,7 +92,7 @@ void gnt_ui_init()
 	finch_roomlist_init();
 	purple_roomlist_set_ui_ops(finch_roomlist_get_ui_ops());
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	/* Media */
 	finch_media_manager_init();
 #endif
@@ -142,7 +142,7 @@ void gnt_ui_uninit()
 	finch_roomlist_uninit();
 	purple_roomlist_set_ui_ops(NULL);
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	finch_media_manager_uninit();
 #endif
 

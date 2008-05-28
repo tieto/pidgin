@@ -438,7 +438,7 @@ struct _PurplePluginProtocolInfo
 	 */
 	GHashTable *(*get_account_text_table)(PurpleAccount *account);
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	/** Initiate media with the given buddy */
 	PurpleMedia  *(*initiate_media)(PurpleConnection *conn, const char *who, PurpleMediaStreamType type);
 

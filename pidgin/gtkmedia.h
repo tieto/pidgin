@@ -26,7 +26,7 @@
 #ifndef __GTKMEDIA_H_
 #define __GTKMEDIA_H_
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 
 #include <gtk/gtk.h>
 #include <glib-object.h>
@@ -63,7 +63,7 @@ GtkWidget *pidgin_media_new(PurpleMedia *media, GstElement *send_level, GstEleme
 
 G_END_DECLS
 
-#endif  /* USE_FARSIGHT */
+#endif  /* USE_VV */
 
 
 #endif  /* __GTKMEDIA_H_ */

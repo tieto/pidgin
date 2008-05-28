@@ -1196,7 +1196,7 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 	gtk_widget_grab_focus(s->entry);
 }
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 /* Forward declare this here, because I want to keep VV-related stuff together
 for now */
 static void 
@@ -3063,7 +3063,7 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>", NULL },
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	{ N_("/Conversation/_Voice Call..."), NULL, menu_initiate_voice_call_cb, 0,
 		"<StockItem>", PIDGIN_STOCK_TOOLBAR_CALL},
 #endif
@@ -3377,7 +3377,7 @@ setup_menubar(PidginWindow *win)
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Conversation/View Log"));
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	win->menu.call =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 									N_("/Conversation/Voice Call..."));
@@ -6342,7 +6342,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 		else
 			buttons &= ~GTK_IMHTML_CUSTOM_SMILEY;
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 		/* check if account support voice calls, and if the current buddy
 			supports it */
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
@@ -7632,7 +7632,7 @@ gboolean pidgin_conv_attach_to_conversation(PurpleConversation *conv)
 }
 
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 
 static void
 pidgin_gtkmedia_message_cb(PidginMedia *media, const char *msg, PurpleConversation *conv)
@@ -7790,7 +7790,7 @@ pidgin_conversations_init(void)
 								show_protocol_icons_pref_cb, NULL);
 	purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
                                 hide_new_pref_cb, NULL);
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	g_signal_connect(G_OBJECT(purple_media_manager_get()), "init-media",
 			 G_CALLBACK(pidgin_conv_new_media_cb), NULL);
 #endif

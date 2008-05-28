@@ -169,7 +169,7 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR, "toolbar", "select-avatar.png", FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_TOOLBAR_SEND_FILE, "toolbar", "send-file.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 
-#ifdef USE_FARSIGHT
+#ifdef USE_VV
 	{ PIDGIN_STOCK_TOOLBAR_CALL, "toolbar", "call.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 #endif
 
