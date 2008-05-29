@@ -772,7 +772,114 @@ oscar_user_info_convert_and_add(PurpleAccount *account, PurpleNotifyUserInfo *us
 	}
 }
 
-static void oscar_string_append_info(PurpleConnection *gc, PurpleNotifyUserInfo *user_info, PurpleBuddy *b, aim_userinfo_t *userinfo)
+static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_info, PurpleBuddy *b, aim_userinfo_t *userinfo)
+{
+	PurpleAccount *account = purple_connection_get_account(gc);
+	OscarData *od;
+	PurplePresence *presence = NULL;
+	PurpleStatus *status = NULL;
+	gchar *message, *itmsurl, *tmp;
+
+	od = gc->proto_data;
+
+	if (userinfo == NULL)
+		userinfo = aim_locate_finduserinfo(od, b->name);
+
+	if ((user_info == NULL) || ((b == NULL) && (userinfo == NULL)))
+		return;
+
+	if (b == NULL)
+		b = purple_find_buddy(purple_connection_get_account(gc), userinfo->sn);
+	
+	if (b) {
+		presence = purple_buddy_get_presence(b);
+		status = purple_presence_get_active_status(presence);
+		
+		message = g_strdup(purple_status_get_attr_string(status, "message"));
+		itmsurl = g_strdup(purple_status_get_attr_string(status, "itmsurl"));
+
+	} else {
+		/* This is an OSCAR contact for whom we don't have a PurpleBuddy but do have information. */
+		if ((userinfo->flags & AIM_FLAG_AWAY)) {
+			/* Away message? */
+			if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
+				gchar *away_utf8;
+				
+				tmp = oscar_encoding_extract(userinfo->away_encoding);
+				away_utf8 = oscar_encoding_to_utf8(account, tmp, userinfo->away,
+												   userinfo->away_len);
+				g_free(tmp);
+				if (away_utf8 != NULL) {
+					message = purple_str_sub_away_formatters(away_utf8, purple_account_get_username(account));
+					g_free(away_utf8);
+				}
+			}
+		} else {
+			/* Available message? */
+			if ((userinfo->status != NULL) && userinfo->status[0] != '\0') {
+				tmp = oscar_encoding_to_utf8(account, userinfo->status_encoding,
+											 userinfo->status, userinfo->status_len);
+				/* Available messages are plain text */
+				message = g_markup_escape_text(tmp, -1);
+				g_free(tmp);
+			}
+#if defined (_WIN32) || defined (__APPLE__)
+			if (userinfo->itmsurl && (userinfo->itmsurl[0] != '\0'))
+				itmsurl = oscar_encoding_to_utf8(account, userinfo->itmsurl_encoding,
+												 userinfo->itmsurl, userinfo->itmsurl_len);
+#endif
+		}
+	}
+	
+	if (itmsurl) {
+		tmp = g_strdup_printf("<a href=\"%s\">%s</a>",
+							  itmsurl, message);
+		g_free(itmsurl);
+		g_free(message);
+		message = tmp;
+	}
+
+	if (b) {
+		if (purple_presence_is_online(presence)) {
+			if (aim_snvalid_icq(b->name) || !message || !(*message)) {
+				/* Append the status name for online ICQ statuses and for all buddies with no message.
+				 * If the status name and the message are the same, only show one. */
+				const char *status_name = purple_status_get_name(status);
+				if (status_name && message && !strcmp(status_name, message))
+					status_name = NULL;
+
+				tmp = g_strdup_printf("%s%s%s",
+									   status_name,
+									   ((status_name && message) && *message) ? ": " : "",
+									   (message && *message) ? message : "");
+				g_free(message);
+				message = tmp;
+			}
+
+		} else {
+			if (aim_ssi_waitingforauth(od->ssi.local,
+									   aim_ssi_itemlist_findparentname(od->ssi.local, b->name),
+									   b->name)) {
+				/* Note if an offline buddy is not authorized */
+				tmp = g_strdup_printf("%s%s%s",
+									  _("Not Authorized"),
+									  (message && *message) ? ": " : "",
+									  (message && *message) ? message : "");
+				g_free(message);
+				message = tmp;
+			} else {
+				g_free(message);
+				message = g_strdup(_("Offline"));
+			}
+		}
+
+	}
+
+	purple_notify_user_info_add_pair(user_info, _("Status"), message);
+	g_free(message);
+}
+
+static void oscar_user_info_append_extra_info(PurpleConnection *gc, PurpleNotifyUserInfo *user_info, PurpleBuddy *b, aim_userinfo_t *userinfo)
 {
 	OscarData *od;
 	PurpleAccount *account;
@@ -802,22 +909,7 @@ static void oscar_string_append_info(PurpleConnection *gc, PurpleNotifyUserInfo 
 
 	if (userinfo != NULL)
 		bi = g_hash_table_lookup(od->buddyinfo, purple_normalize(account, userinfo->sn));
-
-	if (b != NULL) {
-		if (purple_presence_is_online(presence)) {
-			if (aim_snvalid_icq(b->name)) {
-				PurpleStatus *status = purple_presence_get_active_status(presence);
-				oscar_user_info_add_pair(user_info, _("Status"),	purple_status_get_name(status));
-			}
-		} else {
-			tmp = aim_ssi_itemlist_findparentname(od->ssi.local, b->name);
-			if (aim_ssi_waitingforauth(od->ssi.local, tmp, b->name))
-				oscar_user_info_add_pair(user_info, _("Status"),	_("Not Authorized"));
-			else
-				oscar_user_info_add_pair(user_info, _("Status"),	_("Offline"));
-		}
-	}
-
+								  
 	if ((bi != NULL) && (bi->ipaddr != 0)) {
 		tmp =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
 						(bi->ipaddr & 0xff000000) >> 24,
@@ -827,7 +919,6 @@ static void oscar_string_append_info(PurpleConnection *gc, PurpleNotifyUserInfo 
 		oscar_user_info_add_pair(user_info, _("IP Address"), tmp);
 		g_free(tmp);
 	}
-
 
 	if ((userinfo != NULL) && (userinfo->warnlevel != 0)) {
 		tmp = g_strdup_printf("%d", (int)(userinfo->warnlevel/10.0 + .5));
@@ -2920,7 +3011,7 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	PurpleConnection *gc = od->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleNotifyUserInfo *user_info;
-	gchar *tmp = NULL, *info_utf8 = NULL, *away_utf8 = NULL;
+	gchar *tmp = NULL, *info_utf8 = NULL;
 	va_list ap;
 	aim_userinfo_t *userinfo;
 
@@ -2929,23 +3020,8 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	va_end(ap);
 
 	user_info = purple_notify_user_info_new();
-	purple_notify_user_info_add_pair(user_info, _("Username"), userinfo->sn);
 
-	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
-		time_t t = userinfo->onlinesince;
-		oscar_user_info_add_pair(user_info, _("Online Since"), purple_date_format_full(localtime(&t)));
-	}
-
-	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
-		time_t t = userinfo->membersince;
-		oscar_user_info_add_pair(user_info, _("Member Since"), purple_date_format_full(localtime(&t)));
-	}
-
-	if (userinfo->capabilities != 0) {
-		tmp = oscar_caps_to_string(userinfo->capabilities);
-		oscar_user_info_add_pair(user_info, _("Capabilities"), tmp);
-		g_free(tmp);
-	}
+	oscar_user_info_append_status(gc, user_info, NULL, userinfo);
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_IDLE) {
 		tmp = purple_str_seconds_to_string(userinfo->idletime*60);
@@ -2953,42 +3029,23 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 		g_free(tmp);
 	}
 
-	oscar_string_append_info(gc, user_info, NULL, userinfo);
+	oscar_user_info_append_extra_info(gc, user_info, NULL, userinfo);
 
-	/* Available message */
-	if ((userinfo->status != NULL) && !(userinfo->flags & AIM_FLAG_AWAY))
-	{
-		if (userinfo->status[0] != '\0')
-			tmp = oscar_encoding_to_utf8(account, userinfo->status_encoding,
-											 userinfo->status, userinfo->status_len);
-#if defined (_WIN32) || defined (__APPLE__)
-		if (userinfo->itmsurl && (userinfo->itmsurl[0] != '\0')) {
-			gchar *itmsurl, *tmp2;
-			itmsurl = oscar_encoding_to_utf8(account, userinfo->itmsurl_encoding,
-					userinfo->itmsurl, userinfo->itmsurl_len);
-			tmp2 = g_strdup_printf("<a href=\"%s\">%s</a>",
-					itmsurl, tmp);
-			g_free(tmp);
-			tmp = tmp2;
-			g_free(itmsurl);
-		}
-#endif
-		oscar_user_info_add_pair(user_info, _("Available Message"), tmp);
-		g_free(tmp);
+	if ((userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) && !aim_snvalid_sms(userinfo->sn)) {
+		/* An SMS contact is always online; its Online Since valid is not useful */
+		time_t t = userinfo->onlinesince;
+		oscar_user_info_add_pair(user_info, _("Online Since"), purple_date_format_full(localtime(&t)));
 	}
-
-	/* Away message */
-	if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
-		tmp = oscar_encoding_extract(userinfo->away_encoding);
-		away_utf8 = oscar_encoding_to_utf8(account, tmp, userinfo->away,
-		                                   userinfo->away_len);
+	
+	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
+		time_t t = userinfo->membersince;
+		oscar_user_info_add_pair(user_info, _("Member Since"), purple_date_format_full(localtime(&t)));
+	}
+	
+	if (userinfo->capabilities != 0) {
+		tmp = oscar_caps_to_string(userinfo->capabilities);
+		oscar_user_info_add_pair(user_info, _("Capabilities"), tmp);
 		g_free(tmp);
-		if (away_utf8 != NULL) {
-			tmp = purple_str_sub_away_formatters(away_utf8, purple_account_get_username(account));
-			oscar_user_info_add_pair(user_info, _("Away Message"), tmp);
-			g_free(tmp);
-			g_free(away_utf8);
-		}
 	}
 
 	/* Info */
@@ -3687,8 +3744,6 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
-	PurplePresence *presence;
-	PurpleStatus *status;
 	struct buddyinfo *bi;
 	gchar who[16];
 	PurpleNotifyUserInfo *user_info;
@@ -3781,24 +3836,8 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 		g_free(utf8);
 	}
 
-	if (buddy != NULL) {
-		const gchar *message;
-		gchar *utf8, *tmp;
-
-		presence = purple_buddy_get_presence(buddy);
-		status = purple_presence_get_active_status(presence);
-		message = purple_status_get_attr_string(status, "message");
-
-		utf8 = message && message[0] ? oscar_utf8_try_convert(account, message) : NULL;
-		tmp = g_strdup_printf("%s%s%s",
-				purple_status_get_name(status),
-				utf8 && *utf8 ? ": " : "",
-				utf8 && *utf8 ? utf8 : "");
-		g_free(utf8);
-
-		purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
-		g_free(tmp);
-	}
+	if (buddy != NULL)
+		oscar_user_info_append_status(gc, user_info, buddy, NULL);
 
 	oscar_user_info_convert_and_add(account, user_info, _("Additional Information"), info->info);
 	purple_notify_user_info_add_section_break(user_info);
@@ -5621,47 +5660,10 @@ void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	aim_userinfo_t *userinfo = aim_locate_finduserinfo(od, b->name);
 
 	if (PURPLE_BUDDY_IS_ONLINE(b)) {
-		PurplePresence *presence;
-		PurpleStatus *status;
-		const char *message;
+		oscar_user_info_append_status(gc, user_info, b, userinfo);
 
 		if (full)
-			oscar_string_append_info(gc, user_info, b, userinfo);
-
-		presence = purple_buddy_get_presence(b);
-		status = purple_presence_get_active_status(presence);
-		message = purple_status_get_attr_string(status, "message");
-
-		if (purple_status_is_available(status))
-		{
-			if (message != NULL)
-			{
-				/* Available status messages are plain text */
-				gchar *tmp;
-				tmp = g_markup_escape_text(message, -1);
-				purple_notify_user_info_add_pair(user_info, _("Message"), tmp);
-				g_free(tmp);
-			}
-		}
-		else
-		{
-			if (message != NULL)
-			{
-				/* Away messages are HTML */
-				gchar *tmp1, *tmp2;
-				tmp2 = purple_markup_strip_html(message);
-				tmp1 = g_markup_escape_text(tmp2, -1);
-				g_free(tmp2);
-				tmp2 = purple_str_sub_away_formatters(tmp1, purple_account_get_username(purple_connection_get_account(gc)));
-				g_free(tmp1);
-				purple_notify_user_info_add_pair(user_info, _("Away Message"), tmp2);
-				g_free(tmp2);
-			}
-			else
-			{
-				purple_notify_user_info_add_pair(user_info, _("Away Message"), _("<i>(retrieving)</i>"));
-			}
-		}
+			oscar_user_info_append_extra_info(gc, user_info, b, userinfo);
 	}
 }
 
