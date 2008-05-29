@@ -343,7 +343,8 @@ static void ggp_action_buddylist_load(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-	purple_request_file(action, "Load buddylist from file...", NULL, FALSE,
+	purple_request_file(action, _("Load buddylist from file..."), NULL,
+			FALSE,
 			G_CALLBACK(ggp_callback_buddylist_load_ok), NULL,
 			purple_connection_get_account(gc), NULL, NULL,
 			gc);
