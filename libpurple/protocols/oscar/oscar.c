@@ -778,7 +778,7 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 	OscarData *od;
 	PurplePresence *presence = NULL;
 	PurpleStatus *status = NULL;
-	gchar *message, *itmsurl, *tmp;
+	gchar *message = NULL, *itmsurl = NULL, *tmp;
 
 	od = gc->proto_data;
 
