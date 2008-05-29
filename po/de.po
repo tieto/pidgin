@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-26 21:14+0200\n"
-"PO-Revision-Date: 2008-05-26 21:14+0200\n"
+"POT-Creation-Date: 2008-05-29 17:29+0200\n"
+"PO-Revision-Date: 2008-05-29 17:28+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -612,6 +612,20 @@ msgstr ""
 msgid "Send To"
 msgstr "Senden an"
 
+msgid "Invite message"
+msgstr "Einladungsnachricht"
+
+msgid "Invite"
+msgstr "Einladen"
+
+#, fuzzy
+msgid ""
+"Please enter the name of the user you wish to invite,\n"
+"along with an optional invite message."
+msgstr ""
+"Bitte geben Sie den Benutzernamen der Person ein, die Sie einladen möchten "
+"zusammen mit einer optionalen Einladungsnachricht."
+
 msgid "Conversation"
 msgstr "Unterhaltung"
 
@@ -623,6 +637,9 @@ msgstr "Zeige Zeitstempel"
 
 msgid "Add Buddy Pounce..."
 msgstr "Buddy-Alarm hinzufügen..."
+
+msgid "Invite..."
+msgstr "Einladen..."
 
 msgid "Enable Logging"
 msgstr "Mitschnitt einschalten"
@@ -869,9 +886,6 @@ msgstr "Fortfahren"
 
 msgid "IM"
 msgstr "Nachricht"
-
-msgid "Invite"
-msgstr "Einladen"
 
 msgid "(none)"
 msgstr "(kein)"
@@ -2875,6 +2889,9 @@ msgstr "Buddy-Liste erfolgreich geladen!"
 msgid "Save buddylist..."
 msgstr "Buddy-Liste speichern..."
 
+msgid "Load buddylist from file..."
+msgstr "Buddy-Liste aus Datei laden..."
+
 msgid "Fill in the registration fields."
 msgstr "Füllen Sie die Registrierungsfelder aus."
 
@@ -3050,9 +3067,6 @@ msgstr "Löschen der Buddy-Liste vom Server"
 
 msgid "Save buddylist to file..."
 msgstr "Buddy-Liste in Datei speichern..."
-
-msgid "Load buddylist from file..."
-msgstr "Buddy-Liste aus Datei laden..."
 
 #. magic
 #. major_version
@@ -3620,6 +3634,8 @@ msgstr "Postleitzahl"
 msgid "Country"
 msgstr "Land"
 
+#. lots of clients (including purple) do this, but it's
+#. * out of spec
 msgid "Telephone"
 msgstr "Telefon"
 
@@ -3807,11 +3823,11 @@ msgstr "Hop-Überprüfung"
 msgid "Capabilities"
 msgstr "Fähigkeiten"
 
-msgid "Resource"
-msgstr "Ressource"
-
 msgid "Priority"
 msgstr "Priorität"
+
+msgid "Resource"
+msgstr "Ressource"
 
 msgid "Middle Name"
 msgstr "Zweiter Name"
@@ -6514,9 +6530,6 @@ msgstr "Online seit"
 msgid "Member Since"
 msgstr "Mitglied seit"
 
-msgid "Available Message"
-msgstr "Verfügbarkeitsnachricht"
-
 msgid "Your AIM connection may be lost."
 msgstr "Ihre AIM-Verbindung könnte unterbrochen sein."
 
@@ -6552,6 +6565,9 @@ msgstr "Zusätzliche Informationen"
 msgid "Zip Code"
 msgstr "PLZ"
 
+msgid "Work Information"
+msgstr "Information (Arbeit)"
+
 msgid "Division"
 msgstr "Abteilung"
 
@@ -6560,9 +6576,6 @@ msgstr "Position"
 
 msgid "Web Page"
 msgstr "Webseite"
-
-msgid "Work Information"
-msgstr "Information (Arbeit)"
 
 msgid "Pop-Up Message"
 msgstr "Pop-Up Nachricht"
@@ -6783,12 +6796,6 @@ msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
 msgstr ""
 "Ihr IM-Bild wurde nicht gesendet. Sie können keine IM-Bilder in AIM-Chats "
 "senden."
-
-msgid "Away Message"
-msgstr "Abwesenheitsnachricht"
-
-msgid "<i>(retrieving)</i>"
-msgstr "<i>(empfange)</i>"
 
 msgid "iTunes Music Store Link"
 msgstr "iTunes Music Store Link"
