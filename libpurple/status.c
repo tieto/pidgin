@@ -107,8 +107,6 @@ struct _PurpleStatus
 	PurpleStatusType *type;
 	PurplePresence *presence;
 
-	const char *title;
-
 	gboolean active;
 
 	/*
