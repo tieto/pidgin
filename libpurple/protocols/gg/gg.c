@@ -1827,22 +1827,15 @@ static void ggp_get_info(PurpleConnection *gc, const char *name)
 /* }}} */
 
 /* static void ggp_set_status(PurpleAccount *account, PurpleStatus *status) {{{ */
-static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
+static int ggp_to_gg_status(PurpleStatus *status, char **msg)
 {
-	PurpleConnection *gc;
-	GGPInfo *info;
-	const char *status_id, *msg;
+	const char *status_id = purple_status_get_id(status);
 	int new_status, new_status_descr;
+	const char *new_msg;
 
-	if (!purple_status_is_active(status))
-		return;
+	g_return_val_if_fail(msg == NULL, 0);
 
-	gc = purple_account_get_connection(account);
-	info = gc->proto_data;
-
-	status_id = purple_status_get_id(status);
-
-	purple_debug_info("gg", "ggp_set_status: Requested status = %s\n",
+	purple_debug_info("gg", "ggp_to_gg_status: Requested status = %s\n",
 			status_id);
 
 	if (strcmp(status_id, "available") == 0) {
@@ -1861,22 +1854,45 @@ static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 		new_status = GG_STATUS_AVAIL;
 		new_status_descr = GG_STATUS_AVAIL_DESCR;
 		purple_debug_info("gg",
-			"ggp_set_status: uknown status requested (status_id=%s)\n",
+			"ggp_set_status: unknown status requested (status_id=%s)\n",
 			status_id);
 	}
 
-	msg = purple_status_get_attr_string(status, "message");
+	new_msg = purple_status_get_attr_string(status, "message");
 
-	if (msg == NULL) {
-		gg_change_status(info->session, new_status);
-	} else {
-		gchar *tmp, *new_msg;
-
-		tmp = charset_convert(msg, "UTF-8", "CP1250");
-		new_msg = purple_markup_strip_html(tmp);
+	if(new_msg) {
+		char *tmp = purple_markup_strip_html(new_msg);
+		*msg = charset_convert(tmp, "UTF-8", "CP1250");
 		g_free(tmp);
 
-		gg_change_status_descr(info->session, new_status_descr, new_msg);
+		return new_status_descr;
+	} else {
+		*msg = NULL;
+		return new_status;
+	}
+}
+/* }}} */
+
+/* static void ggp_set_status(PurpleAccount *account, PurpleStatus *status) {{{ */
+static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
+{
+	PurpleConnection *gc;
+	GGPInfo *info;
+	int new_status;
+	char *new_msg = NULL;
+
+	if (!purple_status_is_active(status))
+		return;
+
+	gc = purple_account_get_connection(account);
+	info = gc->proto_data;
+
+	new_status = ggp_to_gg_status(status, &new_msg);
+
+	if (new_msg == NULL) {
+		gg_change_status(info->session, new_status);
+	} else {
+		gg_change_status_descr(info->session, new_status, new_msg);
 		g_free(new_msg);
 	}
 
