@@ -14558,7 +14558,7 @@ msgid ""
 "<b>Occupants:</b> %d"
 msgstr ""
 "\n"
-"<b>Deelnemers:</b> %s"
+"<b>Deelnemers:</b> %d"
 
 #: ../pidgin/gtkblist.c:3253
 #, c-format
