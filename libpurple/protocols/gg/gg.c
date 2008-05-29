@@ -927,8 +927,10 @@ static void ggp_bmenu_block(PurpleBlistNode *node, gpointer ignored)
 /* ----- INTERNAL CALLBACKS --------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-/* just a prototype */
+/* Prototypes */
 static void ggp_set_status(PurpleAccount *account, PurpleStatus *status);
+static int ggp_to_gg_status(PurpleStatus *status, char **msg);
+
 
 /**
  * Handle change of the status of the buddy.
