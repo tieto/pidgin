@@ -1491,23 +1491,12 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition 
 			break;
 		case GG_EVENT_CONN_SUCCESS:
 			{
-				PurpleAccount *account;
-				PurplePresence *presence;
-				PurpleStatus *status;
-
 				purple_debug_info("gg", "GG_EVENT_CONN_SUCCESS\n");
 				purple_input_remove(gc->inpa);
 				gc->inpa = purple_input_add(info->session->fd,
 							  PURPLE_INPUT_READ,
 							  ggp_callback_recv, gc);
 
-				/* gg_change_status(info->session, GG_STATUS_AVAIL); */
-
-				account = purple_connection_get_account(gc);
-				presence = purple_account_get_presence(account);
-				status = purple_presence_get_active_status(presence);
-
-				ggp_set_status(account, status);
 				purple_connection_set_state(gc, PURPLE_CONNECTED);
 				ggp_buddylist_send(gc);
 			}
@@ -1695,6 +1684,8 @@ static GList *ggp_chat_info(PurpleConnection *gc)
 static void ggp_login(PurpleAccount *account)
 {
 	PurpleConnection *gc;
+	PurplePresence *presence;
+	PurpleStatus *status;
 	struct gg_login_params *glp;
 	GGPInfo *info;
 
@@ -1717,8 +1708,11 @@ static void ggp_login(PurpleAccount *account)
 	glp->uin = ggp_get_uin(account);
 	glp->password = (char *)purple_account_get_password(account);
 
+	presence = purple_account_get_presence(account);
+	status = purple_presence_get_active_status(presence);
+
 	glp->async = 1;
-	glp->status = GG_STATUS_AVAIL;
+	glp->status = ggp_to_gg_status(status, &glp->status_descr);
 	glp->tls = 0;
 
 	info->session = gg_login(glp);
