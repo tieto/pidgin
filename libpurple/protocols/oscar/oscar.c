@@ -976,8 +976,8 @@ connection_established_cb(gpointer data, gint source, const gchar *error_message
 
 	if (source < 0)
 	{
-		purple_debug_error("oscar", "unable to connect FLAP server "
-				"of type 0x%04hx\n", conn->type);
+		purple_debug_error("oscar", "unable to connect to FLAP "
+				"server of type 0x%04hx\n", conn->type);
 		if (conn->type == SNAC_FAMILY_AUTH)
 		{
 			gchar *msg;
