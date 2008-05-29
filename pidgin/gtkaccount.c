@@ -2191,8 +2191,7 @@ create_accounts_list(AccountsWindow *dialog)
 					G_TYPE_STRING,     /* COLUMN_SCREENNAME */
 					G_TYPE_BOOLEAN,    /* COLUMN_ENABLED */
 					G_TYPE_STRING,     /* COLUMN_PROTOCOL */
-					G_TYPE_POINTER,    /* COLUMN_DATA */
-					G_TYPE_POINTER     /* COLUMN_PULSE_DATA */
+					G_TYPE_POINTER     /* COLUMN_DATA */
 					);
 
 	/* And now the actual treeview */
