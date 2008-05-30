@@ -824,10 +824,14 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 		}		
 		if(jbr) {
 			char *purdy = NULL;
+			char *status_name = jabber_buddy_state_get_name(jbr->state);
 			if(jbr->status)
 				purdy = purple_strdup_withhtml(jbr->status);
-			tmp = g_strdup_printf("%s%s%s", jabber_buddy_state_get_name(jbr->state),
-							(purdy ? ": " : ""),
+			if(status_name && purdy && !strcmp(status_name, purdy))
+				status_name = NULL;
+
+			tmp = g_strdup_printf("%s%s%s", (status_name ? status_name : ""),
+							((status_name && purdy) ? ": " : ""),
 							(purdy ? purdy : ""));
 			purple_notify_user_info_prepend_pair(user_info, _("Status"), tmp);
 			g_free(tmp);
@@ -963,7 +967,8 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 		gboolean multiple_resources = jbi->jb->resources && (g_list_length(jbi->jb->resources) > 1);
 
 		for(resources = jbi->jb->resources; resources; resources = resources->next) {
-			char *purdy = NULL;
+			char *purdy = NULL, *status_name = NULL;
+			
 			jbr = resources->data;
 
 			if(jbr->client.name) {
@@ -987,10 +992,14 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				}
 			}
 
+			status_name = jabber_buddy_state_get_name(jbr->state);
 			if(jbr->status)
 				purdy = purple_strdup_withhtml(jbr->status);
-			tmp = g_strdup_printf("%s%s%s", jabber_buddy_state_get_name(jbr->state),
-								  (purdy ? ": " : ""),
+			if(status_name && purdy && !strcmp(status_name, purdy))
+				status_name = NULL;
+			
+			tmp = g_strdup_printf("%s%s%s", (status_name ? status_name : ""),
+								  ((status_name && purdy) ? ": " : ""),
 								  (purdy ? purdy : ""));
 			purple_notify_user_info_prepend_pair(user_info, _("Status"), tmp);
 			g_free(tmp);
