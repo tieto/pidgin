@@ -7,13 +7,14 @@
 #
 # This file is distributed under the same license as the Pidgin package.
 #
+# Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2008.
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-29 17:29+0200\n"
-"PO-Revision-Date: 2008-05-29 17:28+0200\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2008-05-31 00:16+0200\n"
+"PO-Revision-Date: 2008-05-31 00:15+0200\n"
+"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -854,7 +855,7 @@ msgid "System Log"
 msgstr "System-Mitschnitt"
 
 msgid "Emails"
-msgstr "Emails"
+msgstr "E-Mails"
 
 msgid "You have mail!"
 msgstr "Sie haben Post!"
@@ -2799,7 +2800,7 @@ msgid "Last name"
 msgstr "Nachname"
 
 msgid "Email"
-msgstr "Email"
+msgstr "E-Mail"
 
 msgid "AIM Account"
 msgstr "AIM-Konto"
@@ -3913,7 +3914,7 @@ msgstr ""
 "Benutzern zu suchen."
 
 msgid "Email Address"
-msgstr "Email-Adresse"
+msgstr "E-Mail-Adresse"
 
 msgid "Search for XMPP users"
 msgstr "Suche nach XMPP-Benutzern"
@@ -4651,7 +4652,7 @@ msgid "Syntax Error (probably a client bug)"
 msgstr "Syntaxfehler (wahrscheinlich ein Client-Bug)"
 
 msgid "Invalid email address"
-msgstr "Ungültige Email-Adresse"
+msgstr "Ungültige E-Mail-Adresse"
 
 msgid "User does not exist"
 msgstr "Benutzer existiert nicht"
@@ -4824,7 +4825,7 @@ msgid "Nudging %s..."
 msgstr "%s anstoßen..."
 
 msgid "Email Address..."
-msgstr "Email-Adresse..."
+msgstr "E-Mail-Adresse..."
 
 msgid "Your new MSN friendly name is too long."
 msgstr "Ihr neuer MSN-Benutzername zu lang."
@@ -5013,7 +5014,7 @@ msgid "Home Fax"
 msgstr "Fax (privat)"
 
 msgid "Personal Email"
-msgstr "Email (privat)"
+msgstr "E-Mail (privat)"
 
 msgid "Personal IM"
 msgstr "IM (privat)"
@@ -5056,7 +5057,7 @@ msgid "Work Fax"
 msgstr "Fax (geschäftlich)"
 
 msgid "Work Email"
-msgstr "Email (geschäftlich)"
+msgstr "E-Mail (geschäftlich)"
 
 msgid "Work IM"
 msgstr "IM (geschäftlich)"
@@ -6291,7 +6292,7 @@ msgid ""
 "only letters, numbers and spaces, or contain only numbers."
 msgstr ""
 "Anmeldung fehlgeschlagen: Sie konnten nicht als %s angemeldet werden, da der "
-"Benutzername fehlerhaft ist.  Benutzernamen müssen gültige Email-Adressen "
+"Benutzername fehlerhaft ist.  Benutzernamen müssen gültige E-Mail-Adressen "
 "sein oder mit einem Buchstaben beginnen und nur Buchstaben, Ziffern und "
 "Leerzeichen enthalten oder nur aus Ziffern bestehen."
 
@@ -6440,7 +6441,7 @@ msgid ""
 "Message is:\n"
 "%s"
 msgstr ""
-"Sie haben eine ICQ-Email empfangen von %s [%s]\n"
+"Sie haben eine ICQ-E-Mail empfangen von %s [%s]\n"
 "\n"
 "Nachricht:\n"
 "%s"
@@ -6588,12 +6589,12 @@ msgstr[1] "Die folgenden Benutzernamen sind verbunden mit %s"
 
 #, c-format
 msgid "No results found for email address %s"
-msgstr "Keine Ergebnisse für die Email-Adresse %s gefunden"
+msgstr "Keine Ergebnisse für die E-Mail-Adresse %s gefunden"
 
 #, c-format
 msgid "You should receive an email asking to confirm %s."
 msgstr ""
-"Sie sollten eine Email erhalten, in der Sie aufgefordert werden, %s zu "
+"Sie sollten eine E-Mail erhalten, in der Sie aufgefordert werden, %s zu "
 "bestätigen."
 
 msgid "Account Confirmation Requested"
@@ -6626,7 +6627,7 @@ msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
-"Error 0x%04x: Kann die Email-Adresse nicht ändern, weil es schon eine "
+"Error 0x%04x: Kann die E-Mail-Adresse nicht ändern, weil es schon eine "
 "laufende Anfrage für diesen Benutzernamen gibt."
 
 #, c-format
@@ -6634,7 +6635,7 @@ msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
-"Fehler 0x%04x: Kann die Email-Adresse nicht ändern, weil zu dieser Adresse "
+"Fehler 0x%04x: Kann die E-Mail-Adresse nicht ändern, weil zu dieser Adresse "
 "schon zu viele Benutzernamen gehören."
 
 #, c-format
@@ -6642,7 +6643,7 @@ msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
-"Fehler 0x%04x: Kann die Email-Adresse nicht ändern, weil die angegebene "
+"Fehler 0x%04x: Kann die E-Mail-Adresse nicht ändern, weil die angegebene "
 "Adresse falsch ist."
 
 #, c-format
@@ -6654,7 +6655,7 @@ msgstr "Fehler beim Ändern der Konten-Information"
 
 #, c-format
 msgid "The email address for %s is %s"
-msgstr "Die Email-Adresse für %s ist %s"
+msgstr "Die E-Mail-Adresse für %s ist %s"
 
 msgid "Account Info"
 msgstr "Konto-Info"
@@ -6718,7 +6719,7 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 "Konnte den Buddy %s nicht hinzufügen, da der Benutzername falsch ist.  "
-"Benutzernamen müssen gültige Email-Adressen sein oder mit einem Buchstaben "
+"Benutzernamen müssen gültige E-Mail-Adressen sein oder mit einem Buchstaben "
 "beginnen und nur Buchstaben, Ziffern und Leerzeichen enthalten oder nur aus "
 "Ziffern bestehen."
 
@@ -6871,13 +6872,13 @@ msgstr ""
 "fragen“ auswählen."
 
 msgid "Find Buddy by Email"
-msgstr "Suche Buddys nach Email-Adresse"
+msgstr "Suche Buddys nach E-Mail-Adresse"
 
 msgid "Search for a buddy by email address"
-msgstr "Suche nach einem Buddy mit einer bestimmten Email-Adresse"
+msgstr "Suche nach einem Buddy mit einer bestimmten E-Mail-Adresse"
 
 msgid "Type the email address of the buddy you are searching for."
-msgstr "Geben Sie die Email-Adresse des Buddys ein, nach dem Sie suchen."
+msgstr "Geben Sie die E-Mail-Adresse des Buddys ein, nach dem Sie suchen."
 
 msgid "_Search"
 msgstr "_Suchen"
@@ -6900,16 +6901,16 @@ msgid "Confirm Account"
 msgstr "Konto bestätigen"
 
 msgid "Display Currently Registered Email Address"
-msgstr "Zeige die aktuell registrierte Email-Adresse"
+msgstr "Zeige die aktuell registrierte E-Mail-Adresse"
 
 msgid "Change Currently Registered Email Address..."
-msgstr "Ändere die aktuell registrierte Email-Adresse..."
+msgstr "Ändere die aktuell registrierte E-Mail-Adresse..."
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Zeige Buddys, von denen Sie Autorisierung erwarten"
 
 msgid "Search for Buddy by Email Address..."
-msgstr "Suche Buddys nach Email-Adresse..."
+msgstr "Suche Buddys nach E-Mail-Adresse..."
 
 msgid "Search for Buddy by Information"
 msgstr "Suche Buddy nach Information"
@@ -8747,7 +8748,7 @@ msgstr "Benutzername: \t%s\n"
 
 #, c-format
 msgid "Email: \t\t%s\n"
-msgstr "Email: \t\t%s\n"
+msgstr "E-Mail: \t\t%s\n"
 
 #, c-format
 msgid "Host Name: \t%s\n"
@@ -8995,7 +8996,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Verzeichnis-Dienst ist zur Zeit nicht verfügbar."
 
 msgid "Email lookup restricted."
-msgstr "Email-Suche eingeschränkt."
+msgstr "E-Mail-Suche eingeschränkt."
 
 msgid "Keyword ignored."
 msgstr "Stichwort ignoriert."
@@ -11407,7 +11408,7 @@ msgid "Enable typing notification"
 msgstr "Tipp-Benachrichtigung aktivieren"
 
 msgid "_Copy Email Address"
-msgstr "Kopiere _Email-Adresse"
+msgstr "Kopiere _E-Mail-Adresse"
 
 msgid "_Open Link in Browser"
 msgstr "Ö_ffne Link im Browser"
@@ -11778,8 +11779,8 @@ msgstr[1] "%s hat %d neue Nachrichten."
 #, c-format
 msgid "<b>%d new email.</b>"
 msgid_plural "<b>%d new emails.</b>"
-msgstr[0] "<b>%d neue Email.</b>"
-msgstr[1] "<b>%d neue Emails.</b>"
+msgstr[0] "<b>%d neue E-Mail.</b>"
+msgstr[1] "<b>%d neue E-Mails.</b>"
 
 #, c-format
 msgid "The browser command \"%s\" is invalid."
@@ -12864,19 +12865,19 @@ msgid "_Associate Buddy"
 msgstr "_Assoziiere den Buddy"
 
 msgid "Unable to send email"
-msgstr "Email konnte nicht gesendet werden"
+msgstr "E-Mail konnte nicht gesendet werden"
 
 msgid "The evolution executable was not found in the PATH."
 msgstr "Die ausführbare Evolution-Datei wurde nicht im Pfad (PATH) gefunden."
 
 msgid "An email address was not found for this buddy."
-msgstr "Für diesen Buddy wurde keine Email-Adresse gefunden."
+msgstr "Für diesen Buddy wurde keine E-Mail-Adresse gefunden."
 
 msgid "Add to Address Book"
 msgstr "Zum Adressbuch hinzufügen"
 
 msgid "Send Email"
-msgstr "Email senden"
+msgstr "E-Mail senden"
 
 #. Configuration frame
 msgid "Evolution Integration Configuration"
@@ -12926,7 +12927,7 @@ msgid "Last name:"
 msgstr "Nachname:"
 
 msgid "Email:"
-msgstr "Email:"
+msgstr "E-Mail:"
 
 #. *< type
 #. *< ui_requirement
@@ -12979,7 +12980,7 @@ msgstr "Überprüft, ob es neue lokale Mails gibt."
 
 msgid "Adds a small box to the buddy list that shows if you have new mail."
 msgstr ""
-"Fügt eine kleine Box zur Buddy-Liste hinzu, die zeigt, ob Sie neue Emails "
+"Fügt eine kleine Box zur Buddy-Liste hinzu, die zeigt, ob Sie neue E-Mails "
 "haben."
 
 msgid "Markerline"
