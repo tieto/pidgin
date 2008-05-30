@@ -232,7 +232,7 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 
 	if (encodings[0] == NULL || !g_ascii_strcasecmp("UTF-8", encodings[0])) {
 		g_strfreev(encodings);
-		return g_strdup(string);
+		return NULL;
 	}
 
 	utf8 = g_convert(string, strlen(string), encodings[0], "UTF-8", NULL, NULL, &err);
@@ -597,7 +597,7 @@ char *irc_format(struct irc_conn *irc, const char *format, ...)
 		case 'n':
 		case 'c':
 			tmp = irc_send_convert(irc, tok);
-			g_string_append(string, tmp);
+			g_string_append(string, tmp ? tmp : tok);
 			g_free(tmp);
 			break;
 		default:
