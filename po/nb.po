@@ -10311,7 +10311,7 @@ msgstr "Ønsker du å legge denne kontakten?"
 #: ../libpurple/protocols/qq/sys_msg.c:166
 #, c-format
 msgid "You have been added by %s"
-msgstr "Du har blitt lagt til av %s (%s)"
+msgstr "Du har blitt lagt til av %s"
 
 #: ../libpurple/protocols/qq/sys_msg.c:169
 #: ../libpurple/protocols/qq/sys_msg.c:263
