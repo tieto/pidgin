@@ -1357,6 +1357,14 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 	GString *cdata = NULL;
 	GList *tags = NULL, *tag;
 	const char *c = html;
+	char quote = '\0';
+
+#define CHECK_QUOTE(ptr) if (*(ptr) == '\'' || *(ptr) == '\"') \
+			quote = *(ptr++); \
+		else \
+			quote = '\0';
+
+#define VALID_CHAR(ptr) (*(ptr) && *(ptr) != quote && (quote || (*(ptr) != ' ' && *(ptr) != '>')))
 
 	g_return_if_fail(xhtml_out != NULL || plain_out != NULL);
 
@@ -1514,38 +1522,37 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						xhtml = g_string_append(xhtml, "<span style='vertical-align:super;'>");
 					continue;
 				}
-				if(!g_ascii_strncasecmp(c, "<img", 4) && (*(c+4) == '>' || *(c+4) == ' ')) {
-					const char *p = c;
+				if (!g_ascii_strncasecmp(c, "<img", 4) && (*(c+4) == '>' || *(c+4) == ' ')) {
+					const char *p = c + 4;
 					GString *src = NULL, *alt = NULL;
-					while(*p && *p != '>') {
-						if(!g_ascii_strncasecmp(p, "src=", strlen("src="))) {
-							const char *q = p + strlen("src=");
+					while (*p && *p != '>') {
+						if (!g_ascii_strncasecmp(p, "src=", 4)) {
+							const char *q = p + 4;
 							if (src)
 								g_string_free(src, TRUE);
 							src = g_string_new("");
-							if(*q == '\'' || *q == '\"')
-								q++;
-							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+							CHECK_QUOTE(q);
+							while (VALID_CHAR(q)) {
 								src = g_string_append_c(src, *q);
 								q++;
 							}
 							p = q;
-						} else if(!g_ascii_strncasecmp(p, "alt=", strlen("alt="))) {
-							const char *q = p + strlen("alt=");
+						} else if (!g_ascii_strncasecmp(p, "alt=", 4)) {
+							const char *q = p + 4;
 							if (alt)
 								g_string_free(alt, TRUE);
 							alt = g_string_new("");
-							if(*q == '\'' || *q == '\"')
-								q++;
-							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+							CHECK_QUOTE(q);
+							while (VALID_CHAR(q)) {
 								alt = g_string_append_c(alt, *q);
 								q++;
 							}
 							p = q;
+						} else {
+							p++;
 						}
-						p++;
 					}
-					if ((c = strchr(c, '>')) != NULL)
+					if ((c = strchr(p, '>')) != NULL)
 						c++;
 					else
 						c = p;
@@ -1562,21 +1569,20 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					g_string_free(src, TRUE);
 					continue;
 				}
-				if(!g_ascii_strncasecmp(c, "<a", 2) && (*(c+2) == '>' || *(c+2) == ' ')) {
-					const char *p = c;
+				if (!g_ascii_strncasecmp(c, "<a", 2) && (*(c+2) == '>' || *(c+2) == ' ')) {
+					const char *p = c + 2;
 					struct purple_parse_tag *pt;
-					while(*p && *p != '>') {
-						if(!g_ascii_strncasecmp(p, "href=", strlen("href="))) {
-							const char *q = p + strlen("href=");
+					while (*p && *p != '>') {
+						if (!g_ascii_strncasecmp(p, "href=", 5)) {
+							const char *q = p + 5;
 							if (url)
 								g_string_free(url, TRUE);
 							url = g_string_new("");
 							if (cdata)
 								g_string_free(cdata, TRUE);
 							cdata = g_string_new("");
-							if(*q == '\'' || *q == '\"')
-								q++;
-							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+							CHECK_QUOTE(q);
+							while (VALID_CHAR(q)) {
 								int len;
 								if ((*q == '&') && (purple_markup_unescape_entity(q, &len) == NULL))
 									url = g_string_append(url, "&amp;");
@@ -1585,10 +1591,11 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 								q++;
 							}
 							p = q;
+						} else {
+							p++;
 						}
-						p++;
 					}
-					if ((c = strchr(c, '>')) != NULL)
+					if ((c = strchr(p, '>')) != NULL)
 						c++;
 					else
 						c = p;
@@ -1601,55 +1608,48 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
-					const char *p = c;
+					const char *p = c + 5;
 					GString *style = g_string_new("");
 					struct purple_parse_tag *pt;
-					while(*p && *p != '>') {
-						if(!g_ascii_strncasecmp(p, "back=", strlen("back="))) {
-							const char *q = p + strlen("back=");
+					while (*p && *p != '>') {
+						if (!g_ascii_strncasecmp(p, "back=", 5)) {
+							const char *q = p + 5;
 							GString *color = g_string_new("");
-							if(*q == '\'' || *q == '\"')
-								q++;
-							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+							CHECK_QUOTE(q);
+							while (VALID_CHAR(q)) {
 								color = g_string_append_c(color, *q);
 								q++;
 							}
 							g_string_append_printf(style, "background: %s; ", color->str);
 							g_string_free(color, TRUE);
 							p = q;
-						} else if(!g_ascii_strncasecmp(p, "color=", strlen("color="))) {
-							const char *q = p + strlen("color=");
+						} else if (!g_ascii_strncasecmp(p, "color=", 6)) {
+							const char *q = p + 6;
 							GString *color = g_string_new("");
-							if(*q == '\'' || *q == '\"')
-								q++;
-							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+							CHECK_QUOTE(q);
+							while (VALID_CHAR(q)) {
 								color = g_string_append_c(color, *q);
 								q++;
 							}
 							g_string_append_printf(style, "color: %s; ", color->str);
 							g_string_free(color, TRUE);
 							p = q;
-						} else if(!g_ascii_strncasecmp(p, "face=", strlen("face="))) {
-							const char *q = p + strlen("face=");
-							gboolean space_allowed = FALSE;
+						} else if (!g_ascii_strncasecmp(p, "face=", 5)) {
+							const char *q = p + 5;
 							GString *face = g_string_new("");
-							if(*q == '\'' || *q == '\"') {
-								space_allowed = TRUE;
-								q++;
-							}
-							while(*q && *q != '\"' && *q != '\'' && (space_allowed || *q != ' ')) {
+							CHECK_QUOTE(q);
+							while (VALID_CHAR(q)) {
 								face = g_string_append_c(face, *q);
 								q++;
 							}
 							g_string_append_printf(style, "font-family: %s; ", g_strstrip(face->str));
 							g_string_free(face, TRUE);
 							p = q;
-						} else if(!g_ascii_strncasecmp(p, "size=", strlen("size="))) {
-							const char *q = p + strlen("size=");
+						} else if (!g_ascii_strncasecmp(p, "size=", 5)) {
+							const char *q = p + 5;
 							int sz;
 							const char *size = "medium";
-							if(*q == '\'' || *q == '\"')
-								q++;
+							CHECK_QUOTE(q);
 							sz = atoi(q);
 							switch (sz)
 							{
@@ -1679,10 +1679,11 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							}
 							g_string_append_printf(style, "font-size: %s; ", size);
 							p = q;
+						} else {
+							p++;
 						}
-						p++;
 					}
-					if ((c = strchr(c, '>')) != NULL)
+					if ((c = strchr(p, '>')) != NULL)
 						c++;
 					else
 						c = p;
@@ -1697,24 +1698,23 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					g_string_free(style, TRUE);
 					continue;
 				}
-				if(!g_ascii_strncasecmp(c, "<body ", 6)) {
-					const char *p = c;
+				if (!g_ascii_strncasecmp(c, "<body ", 6)) {
+					const char *p = c + 6;
 					gboolean did_something = FALSE;
-					while(*p && *p != '>') {
-						if(!g_ascii_strncasecmp(p, "bgcolor=", strlen("bgcolor="))) {
-							const char *q = p + strlen("bgcolor=");
+					while (*p && *p != '>') {
+						if (!g_ascii_strncasecmp(p, "bgcolor=", 8)) {
+							const char *q = p + 8;
 							struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1);
 							GString *color = g_string_new("");
-							if(*q == '\'' || *q == '\"')
-								q++;
-							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+							CHECK_QUOTE(q);
+							while (VALID_CHAR(q)) {
 								color = g_string_append_c(color, *q);
 								q++;
 							}
-							if(xhtml)
+							if (xhtml)
 								g_string_append_printf(xhtml, "<span style='background: %s;'>", g_strstrip(color->str));
 							g_string_free(color, TRUE);
-							if ((c = strchr(c, '>')) != NULL)
+							if ((c = strchr(p, '>')) != NULL)
 								c++;
 							else
 								c = p;
@@ -1726,7 +1726,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						}
 						p++;
 					}
-					if(did_something) continue;
+					if (did_something) continue;
 				}
 				/* this has to come after the special case for bgcolor */
 				ALLOW_TAG("body");
@@ -1789,6 +1789,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 		g_string_free(url, TRUE);
 	if (cdata)
 		g_string_free(cdata, TRUE);
+#undef CHECK_QUOTE
+#undef VALID_CHAR
 }
 
 /* The following are probably reasonable changes:
