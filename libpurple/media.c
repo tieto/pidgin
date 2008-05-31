@@ -253,6 +253,62 @@ purple_media_init (PurpleMedia *media)
 static void
 purple_media_finalize (GObject *media)
 {
+	PurpleMediaPrivate *priv = PURPLE_MEDIA_GET_PRIVATE(media);
+	GList *iter;
+	purple_debug_info("media","purple_media_finalize\n");
+
+	g_free(priv->name);
+
+	if (priv->audio_pipeline) {
+		gst_element_set_state(priv->audio_pipeline, GST_STATE_NULL);
+		gst_object_unref(priv->audio_pipeline);
+	}
+	if (priv->video_pipeline) {
+		gst_element_set_state(priv->video_pipeline, GST_STATE_NULL);
+		gst_object_unref(priv->video_pipeline);
+	}
+
+	if (priv->audio_src)
+		gst_object_unref(priv->audio_src);
+	if (priv->audio_sink)
+		gst_object_unref(priv->audio_sink);
+	if (priv->video_src)
+		gst_object_unref(priv->video_src);
+	if (priv->video_sink)
+		gst_object_unref(priv->video_sink);
+
+	for (iter = priv->audio_streams; iter; iter = g_list_next(iter)) {
+		g_object_unref(iter->data);
+	}
+	g_list_free(priv->audio_streams);
+
+	for (iter = priv->video_streams; iter; iter = g_list_next(iter)) {
+		g_object_unref(iter->data);
+	}
+	g_list_free(priv->video_streams);
+
+	if (priv->audio_session)
+		g_object_unref(priv->audio_session);
+	if (priv->video_session)
+		g_object_unref(priv->video_session);
+
+	for (iter = priv->participants; iter; iter = g_list_next(iter)) {
+		g_object_unref(iter->data);
+	}
+	g_list_free(priv->participants);
+
+	for (iter = priv->local_candidates; iter; iter = g_list_next(iter)) {
+		g_free(iter->data);
+	}
+	g_list_free(priv->local_candidates);
+
+	if (priv->local_candidate)
+		g_free(priv->local_candidate);
+	if (priv->remote_candidate)
+		g_free(priv->remote_candidate);
+
+	gst_object_unref(priv->conference);
+
 	parent_class->finalize(media);
 }
 

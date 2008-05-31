@@ -101,6 +101,7 @@ jabber_jingle_session_destroy(JingleSession *sess)
 {
 	g_hash_table_remove(sess->js->sessions, sess->id);
 	g_free(sess->id);
+	g_object_unref(sess->media);
 	g_free(sess);
 }
 
@@ -119,13 +120,18 @@ JingleSession *jabber_jingle_session_find_by_jid(JabberStream *js, const char *j
 {
 	GList *values = g_hash_table_get_values(js->sessions);
 	GList *iter = values;
+	gboolean use_bare = strchr(jid, '/') == NULL;
 
 	for (; iter; iter = iter->next) {
 		JingleSession *session = (JingleSession *)iter->data;
-		if (session->js == js && !strcmp(jid, session->remote_jid)) {
+		gchar *cmp_jid = use_bare ? jabber_get_bare_jid(session->remote_jid)
+					  : g_strdup(session->remote_jid);
+		if (!strcmp(jid, cmp_jid)) {
+			g_free(cmp_jid);
 			g_list_free(values);
 			return session;
 		}
+		g_free(cmp_jid);
 	}
 
 	g_list_free(values);
