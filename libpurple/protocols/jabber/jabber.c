@@ -2640,7 +2640,10 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, 
                              PurpleMediaStreamType type)
 {
-	return TRUE;
+	if (type == PURPLE_MEDIA_AUDIO)
+		return TRUE;
+	else
+		return FALSE;
 }
 
 

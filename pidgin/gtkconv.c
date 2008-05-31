@@ -1200,7 +1200,11 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 /* Forward declare this here, because I want to keep VV-related stuff together
 for now */
 static void 
-menu_initiate_voice_call_cb(gpointer data, guint action, GtkWidget *widget);
+menu_initiate_audio_call_cb(gpointer data, guint action, GtkWidget *widget);
+static void 
+menu_initiate_video_call_cb(gpointer data, guint action, GtkWidget *widget);
+static void 
+menu_initiate_audio_video_call_cb(gpointer data, guint action, GtkWidget *widget);
 
 #endif
 
@@ -3064,8 +3068,14 @@ static GtkItemFactoryEntry menu_items[] =
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>", NULL },
 
 #ifdef USE_VV
-	{ N_("/Conversation/_Voice Call..."), NULL, menu_initiate_voice_call_cb, 0,
-		"<StockItem>", PIDGIN_STOCK_TOOLBAR_CALL},
+	{ N_("/Conversation/M_edia"), NULL, NULL, 0, "<Branch>", NULL },
+
+	{ N_("/Conversation/Media/_Audio Call"), NULL, menu_initiate_audio_call_cb, 0,
+		"<StockItem>", PIDGIN_STOCK_TOOLBAR_AUDIO_CALL },
+	{ N_("/Conversation/Media/_Video Call"), NULL, menu_initiate_video_call_cb, 0,
+		"<StockItem>", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL },
+	{ N_("/Conversation/Media/Audio\\/Video _Call"), NULL, menu_initiate_audio_video_call_cb, 0,
+		"<StockItem>", PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL },
 #endif
 
 	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_SEND_FILE },
@@ -3378,9 +3388,15 @@ setup_menubar(PidginWindow *win)
 		                            N_("/Conversation/View Log"));
 
 #ifdef USE_VV
-	win->menu.call =
+	win->menu.audio_call =
 		gtk_item_factory_get_widget(win->menu.item_factory,
-									N_("/Conversation/Voice Call..."));
+					    N_("/Conversation/Media/Audio Call"));
+	win->menu.video_call =
+		gtk_item_factory_get_widget(win->menu.item_factory,
+					    N_("/Conversation/Media/Video Call"));
+	win->menu.audio_video_call =
+		gtk_item_factory_get_widget(win->menu.item_factory,
+					    N_("/Conversation/Media/Audio\\/Video Call"));
 #endif
 	
 	/* --- */
@@ -6346,21 +6362,33 @@ gray_stuff_out(PidginConversation *gtkconv)
 		/* check if account support voice calls, and if the current buddy
 			supports it */
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-			if (serv_can_do_media(gc, purple_conversation_get_name(conv), 
-						PURPLE_MEDIA_RECV_AUDIO & PURPLE_MEDIA_SEND_AUDIO)) {
+			gboolean audio = serv_can_do_media(gc, purple_conversation_get_name(conv), 
+							   PURPLE_MEDIA_AUDIO);
+			gboolean video = serv_can_do_media(gc, purple_conversation_get_name(conv), 
+							   PURPLE_MEDIA_VIDEO);
+			gboolean av = serv_can_do_media(gc, purple_conversation_get_name(conv),
+							PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
+			if (audio) {
 				buttons |= GTK_IMHTML_CALL;
-				gtk_widget_set_sensitive(win->menu.call, TRUE);
+				gtk_widget_set_sensitive(win->menu.audio_call, TRUE);
 			} else {
 				buttons &= ~GTK_IMHTML_CALL;
-				gtk_widget_set_sensitive(win->menu.call, FALSE);
+				gtk_widget_set_sensitive(win->menu.audio_call, FALSE);
 			}
+
+			gtk_widget_set_sensitive(win->menu.video_call, video ? TRUE : FALSE);
+			gtk_widget_set_sensitive(win->menu.audio_video_call, av ? TRUE : FALSE);
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 			/* for now, don't care about chats... */
 			buttons &= ~GTK_IMHTML_CALL;
-			gtk_widget_set_sensitive(win->menu.call, FALSE);
+			gtk_widget_set_sensitive(win->menu.audio_call, FALSE);
+			gtk_widget_set_sensitive(win->menu.video_call, FALSE);
+			gtk_widget_set_sensitive(win->menu.audio_video_call, FALSE);
 		} else {
 			buttons &= ~GTK_IMHTML_CALL;
-			gtk_widget_set_sensitive(win->menu.call, FALSE);
+			gtk_widget_set_sensitive(win->menu.audio_call, FALSE);
+			gtk_widget_set_sensitive(win->menu.video_call, FALSE);
+			gtk_widget_set_sensitive(win->menu.audio_video_call, FALSE);
 		}							
 #endif
 		
@@ -7641,7 +7669,7 @@ pidgin_gtkmedia_message_cb(PidginMedia *media, const char *msg, PurpleConversati
 }
 
 static void
-menu_initiate_voice_call_cb(gpointer data, guint action, GtkWidget *widget)
+menu_initiate_audio_call_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = (PidginWindow *)data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
@@ -7649,11 +7677,41 @@ menu_initiate_voice_call_cb(gpointer data, guint action, GtkWidget *widget)
 
 	PurpleMedia *media =
 		serv_initiate_media(gc,
-							purple_conversation_get_name(conv),
-							PURPLE_MEDIA_RECV_AUDIO & PURPLE_MEDIA_SEND_AUDIO);
+				    purple_conversation_get_name(conv),
+				    PURPLE_MEDIA_AUDIO);
 
 	if (media)
 		purple_media_wait(media);
+}
+
+static void
+menu_initiate_video_call_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	PidginWindow *win = (PidginWindow *)data;
+	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
+	PurpleConnection *gc = purple_conversation_get_gc(conv);
+
+	PurpleMedia *media =
+		serv_initiate_media(gc,
+				    purple_conversation_get_name(conv),
+				    PURPLE_MEDIA_VIDEO);
+
+	purple_media_wait(media);
+}
+
+static void
+menu_initiate_audio_video_call_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	PidginWindow *win = (PidginWindow *)data;
+	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
+	PurpleConnection *gc = purple_conversation_get_gc(conv);
+
+	PurpleMedia *media =
+		serv_initiate_media(gc,
+				    purple_conversation_get_name(conv),
+				    PURPLE_MEDIA_AUDIO & PURPLE_MEDIA_VIDEO);
+
+	purple_media_wait(media);
 }
 
 static void

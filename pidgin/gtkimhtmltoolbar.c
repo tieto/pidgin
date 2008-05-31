@@ -1236,7 +1236,7 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
 #ifdef USE_VV
 		{"", NULL, NULL, NULL},
-		{PIDGIN_STOCK_TOOLBAR_CALL, init_voice_call_cb, &toolbar->call, _("Call")},
+		{PIDGIN_STOCK_TOOLBAR_AUDIO_CALL, init_voice_call_cb, &toolbar->call, _("Call")},
 #endif
 		{NULL, NULL, NULL, NULL}
 	};
@@ -1460,7 +1460,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_button_set_relief(GTK_BUTTON(call_button), GTK_RELIEF_NONE);
 	bbox = gtk_hbox_new(FALSE, 3);
 	gtk_container_add(GTK_CONTAINER(call_button), bbox);
-	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_CALL,
+	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_AUDIO_CALL,
 			gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
 	label = gtk_label_new_with_mnemonic(_("Call"));
