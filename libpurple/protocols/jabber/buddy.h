@@ -99,6 +99,8 @@ void jabber_buddy_get_info(PurpleConnection *gc, const char *who);
 void jabber_buddy_get_info_chat(PurpleConnection *gc, int id,
 		const char *resource);
 
+gboolean jabber_buddy_has_capability(JabberBuddy *jb, const gchar *cap);
+
 GList *jabber_blist_node_menu(PurpleBlistNode *node);
 
 void jabber_set_info(PurpleConnection *gc, const char *info);

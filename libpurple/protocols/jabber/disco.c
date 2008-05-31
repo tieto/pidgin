@@ -142,6 +142,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 						SUPPORT_FEATURE(feat->namespace);
 				}
 			}
+#ifdef USE_VV
 		} else if (node && !strcmp(node, CAPS0115_NODE "#voice-v1")) {
 			SUPPORT_FEATURE("http://www.google.com/session");
 			SUPPORT_FEATURE("http://www.google.com/transport/p2p");
@@ -150,7 +151,9 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0166.html");
 			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0180.html");
 			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0167.html");
+			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0176.html");
 			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0177.html");
+#endif
 		} else {
 			const char *ext = NULL;
 			unsigned pos;

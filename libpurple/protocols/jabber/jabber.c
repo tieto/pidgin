@@ -60,6 +60,11 @@
 
 #ifdef USE_VV
 #include <gst/farsight/fs-conference-iface.h>
+
+#define XEP_0167_CAP "http://www.xmpp.org/extensions/xep-0167.html"
+#define XEP_0180_CAP "http://www.xmpp.org/extensions/xep-0180.html"
+#define GTALK_CAP "http://www.google.com/session/phone"
+
 #endif
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
@@ -2640,10 +2645,37 @@ jabber_initiate_media(PurpleConnection *gc, const char *who,
 gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, 
                              PurpleMediaStreamType type)
 {
-	if (type == PURPLE_MEDIA_AUDIO)
-		return TRUE;
-	else
+	JabberStream *js = (JabberStream *) gc->proto_data;
+	JabberBuddy *jb = jabber_buddy_find(js, who, FALSE);
+	
+	if (!jb) {
+		purple_debug_error("jabber", "Could not find buddy\n");
 		return FALSE;
+	}
+#if 0	/* These can be added once we support video */
+	/* XMPP will only support two-way media, AFAIK... */
+	if (type == (PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO)) {
+		purple_debug_info("jabber", 
+				  "Checking audio/video XEP support for %s\n", who);
+		return (jabber_buddy_has_capability(jb, XEP_0167_CAP) ||
+				jabber_buddy_has_capability(jb, GTALK_CAP)) && 
+				jabber_buddy_has_capability(jb, XEP_0180_CAP);
+	} else 
+#endif
+	if (type == (PURPLE_MEDIA_AUDIO)) {
+		purple_debug_info("jabber", 
+				  "Checking audio XEP support for %s\n", who);
+		return jabber_buddy_has_capability(jb, XEP_0167_CAP) ||
+				jabber_buddy_has_capability(jb, GTALK_CAP);
+	}
+#if 0
+	 else if (type == (PURPLE_MEDIA_VIDEO)) {
+		purple_debug_info("jabber", 
+				  "Checking video XEP support for %s\n", who);
+		return jabber_buddy_has_capability(jb, XEP_0180_CAP);
+	}
+#endif
+	return FALSE;
 }
 
 
