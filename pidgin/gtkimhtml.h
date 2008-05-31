@@ -78,7 +78,6 @@ typedef enum {
 	GTK_IMHTML_STRIKE =     1 << 13,
 	/** Show custom smileys when appropriate. @since 2.5.0 */
 	GTK_IMHTML_CUSTOM_SMILEY = 1 << 14,
-	GTK_IMHTML_CALL =       1 << 15,
 	GTK_IMHTML_ALL =       -1
 } GtkIMHtmlButtons;
 

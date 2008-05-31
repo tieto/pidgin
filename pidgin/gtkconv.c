@@ -6368,24 +6368,16 @@ gray_stuff_out(PidginConversation *gtkconv)
 							   PURPLE_MEDIA_VIDEO);
 			gboolean av = serv_can_do_media(gc, purple_conversation_get_name(conv),
 							PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
-			if (audio) {
-				buttons |= GTK_IMHTML_CALL;
-				gtk_widget_set_sensitive(win->menu.audio_call, TRUE);
-			} else {
-				buttons &= ~GTK_IMHTML_CALL;
-				gtk_widget_set_sensitive(win->menu.audio_call, FALSE);
-			}
 
+			gtk_widget_set_sensitive(win->menu.audio_call, audio ? TRUE : FALSE);
 			gtk_widget_set_sensitive(win->menu.video_call, video ? TRUE : FALSE);
 			gtk_widget_set_sensitive(win->menu.audio_video_call, av ? TRUE : FALSE);
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 			/* for now, don't care about chats... */
-			buttons &= ~GTK_IMHTML_CALL;
 			gtk_widget_set_sensitive(win->menu.audio_call, FALSE);
 			gtk_widget_set_sensitive(win->menu.video_call, FALSE);
 			gtk_widget_set_sensitive(win->menu.audio_video_call, FALSE);
 		} else {
-			buttons &= ~GTK_IMHTML_CALL;
 			gtk_widget_set_sensitive(win->menu.audio_call, FALSE);
 			gtk_widget_set_sensitive(win->menu.video_call, FALSE);
 			gtk_widget_set_sensitive(win->menu.audio_video_call, FALSE);

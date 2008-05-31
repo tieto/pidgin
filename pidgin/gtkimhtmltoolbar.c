@@ -907,14 +907,6 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
-#ifdef USE_VV
-static void
-init_voice_call_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
-{
-	purple_debug_info("gtkimhtmltoolbar", "Call clicked!\n");
-}
-#endif
-
 static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMHtmlToolbar *toolbar)
 {
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->bold), buttons & GTK_IMHTML_BOLD);
@@ -943,9 +935,6 @@ static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIM
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->image), buttons & GTK_IMHTML_IMAGE);
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->link), buttons & GTK_IMHTML_LINK);
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->smiley), buttons & GTK_IMHTML_SMILEY);
-#ifdef USE_VV
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->call), buttons & GTK_IMHTML_CALL);
-#endif
 }
 
 /* we call this when we want to _set_active the toggle button, it'll
@@ -1234,10 +1223,6 @@ static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
 		{PIDGIN_STOCK_TOOLBAR_INSERT_LINK, insert_link_cb, &toolbar->link, _("Insert Link")},
 		{PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, insert_image_cb, &toolbar->image, _("Insert IM Image")},
 		{PIDGIN_STOCK_TOOLBAR_SMILEY, insert_smiley_cb, &toolbar->smiley, _("Insert Smiley")},
-#ifdef USE_VV
-		{"", NULL, NULL, NULL},
-		{PIDGIN_STOCK_TOOLBAR_AUDIO_CALL, init_voice_call_cb, &toolbar->call, _("Call")},
-#endif
 		{NULL, NULL, NULL, NULL}
 	};
 	int iter;
@@ -1303,11 +1288,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *insert_button;
 	GtkWidget *font_button;
 	GtkWidget *smiley_button;
-	
-#ifdef USE_VV
-	GtkWidget *call_button;
-#endif /* USE_VV */
-	
+
 	GtkWidget *font_menu;
 	GtkWidget *insert_menu;
 	GtkWidget *menuitem;
@@ -1448,28 +1429,6 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_box_pack_start(GTK_BOX(box), smiley_button, FALSE, FALSE, 0);
 	g_signal_connect_swapped(G_OBJECT(smiley_button), "clicked", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
 	gtk_widget_show_all(smiley_button);
-
-#ifdef USE_VV
-	/* Sep */
-	sep = gtk_vseparator_new();
-	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 0);
-	gtk_widget_show_all(sep);
-
-	/* Call */
-	call_button = gtk_button_new();
-	gtk_button_set_relief(GTK_BUTTON(call_button), GTK_RELIEF_NONE);
-	bbox = gtk_hbox_new(FALSE, 3);
-	gtk_container_add(GTK_CONTAINER(call_button), bbox);
-	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_AUDIO_CALL,
-			gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
-	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
-	label = gtk_label_new_with_mnemonic(_("Call"));
-	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box), call_button, FALSE, FALSE, 0);
-	g_signal_connect_swapped(G_OBJECT(call_button), "clicked", G_CALLBACK(gtk_button_clicked), toolbar->call);
-	gtk_widget_show_all(call_button);
-
-#endif /* USE_VV */
 
 	gtk_box_pack_start(GTK_BOX(hbox), box, FALSE, FALSE, 0);
 	g_object_set_data(G_OBJECT(hbox), "lean-view", box);
