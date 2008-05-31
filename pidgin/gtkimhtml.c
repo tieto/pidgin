@@ -4866,7 +4866,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), ebox ? ebox : icon, anchor);
 	} else if (imhtml_smiley != NULL && (imhtml->format_functions & GTK_IMHTML_SMILEY)) {
 		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
-		imhtml_smiley->anchors = g_slist_append(imhtml_smiley->anchors, anchor);
+		imhtml_smiley->anchors = g_slist_append(imhtml_smiley->anchors, g_object_ref(anchor));
 		if (ebox) {
 			GtkWidget *img = gtk_image_new_from_stock(GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_MENU);
 			char *text = g_strdup(unescaped);
@@ -5506,8 +5506,11 @@ static void gtk_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data
 	}
 
 	for (current = smiley->anchors; current; current = g_slist_next(current)) {
-
-		icon = gtk_image_new_from_animation(smiley->icon);
+		anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
+		if (gtk_text_child_anchor_get_deleted(anchor))
+			icon = NULL;
+		else
+			icon = gtk_image_new_from_animation(smiley->icon);
 
 #ifdef DEBUG_CUSTOM_SMILEY
 		purple_debug_info("custom-smiley", "gtk_custom_smiley_closed(): got GtkImage %p from GtkPixbufAnimation %p for smiley '%s'\n",
@@ -5517,7 +5520,6 @@ static void gtk_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data
 			GList *wids;
 			gtk_widget_show(icon);
 
-			anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
 			wids = gtk_text_child_anchor_get_widgets(anchor);
 
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", purple_unescape_html(smiley->smile), g_free);
@@ -5534,7 +5536,7 @@ static void gtk_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data
 			}
 			g_list_free(wids);
 		}
-
+		g_object_unref(anchor);
 	}
 
 	g_slist_free(smiley->anchors);
