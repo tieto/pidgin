@@ -795,7 +795,7 @@ jabber_message_xhtml_find_smileys(const char *xhtml)
 	GList *smileys = purple_smileys_get_all();
 	GList *found_smileys = NULL;
 
-	for (; smileys ; smileys = g_list_next(smileys)) {
+	for (; smileys ; smileys = g_list_delete_link(smileys)) {
 		PurpleSmiley *smiley = (PurpleSmiley *) smileys->data;
 		const gchar *shortcut = purple_smiley_get_shortcut(smiley);
 		const gssize len = strlen(shortcut);
@@ -815,7 +815,7 @@ jabber_message_xhtml_find_smileys(const char *xhtml)
 
 static gchar *
 jabber_message_get_smileyfied_xhtml(const PurpleConversation *conv,
-									const gchar *xhtml, const GList *smileys)
+	const gchar *xhtml, const GList *smileys)
 {
 	/* create XML element for all smileys (img tags) */
 	GString *result = g_string_new(NULL);
@@ -973,48 +973,48 @@ void jabber_message_send(JabberMessage *jm)
 
 	if(jm->xhtml) {
 		PurpleAccount *account = purple_connection_get_account(jm->js->gc);
-		PurpleConversation *conv = 
+		PurpleConversation *conv =
 			purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, jm->to,
-												  account);
-		
+				account);
+
 		if (jabber_conv_support_custom_smileys(jm->js->gc, conv, jm->to)) {
-			const GList *found_smileys = 
-				jabber_message_xhtml_find_smileys(jm->xhtml);
-				
+			GList *found_smileys = jabber_message_xhtml_find_smileys(jm->xhtml);
+
 			if (found_smileys) {
 				gchar *smileyfied_xhtml = NULL;
 				const GList *iterator;
-				
-				for (iterator = found_smileys; iterator ; 
+
+				for (iterator = found_smileys; iterator ;
 					iterator = g_list_next(iterator)) {
-					const PurpleSmiley *smiley = 
+					const PurpleSmiley *smiley =
 							(PurpleSmiley *) iterator->data;
 					const gchar *shortcut = purple_smiley_get_shortcut(smiley);
-					const JabberData *data = 
+					const JabberData *data =
 							jabber_data_find_local_by_alt(conv, shortcut);
-					
+
 					/* if data has not been sent before, include data */
 					if (!data) {
-						PurpleStoredImage *image = 
+						PurpleStoredImage *image =
 								purple_smiley_get_stored_image(smiley);
 						const gchar *ext = purple_imgstore_get_extension(image);
-					
-						JabberData *new_data = 
+
+						JabberData *new_data =
 							jabber_data_create_from_data(purple_imgstore_get_data(image),
 														purple_imgstore_get_size(image),
 														jabber_message_get_mimetype_from_ext(ext),
 														shortcut);
 						jabber_data_associate_local_with_conv(new_data, conv);
-						xmlnode_insert_child(message, 
-											jabber_data_get_xml_definition(new_data));
+						xmlnode_insert_child(message,
+							jabber_data_get_xml_definition(new_data));
 					}
-				}			
-				
-				smileyfied_xhtml = 
-					jabber_message_get_smileyfied_xhtml(conv, jm->xhtml, 
-														found_smileys);
+				}
+
+				smileyfied_xhtml =
+					jabber_message_get_smileyfied_xhtml(conv, jm->xhtml,
+						found_smileys);
 				child = xmlnode_from_str(smileyfied_xhtml, -1);
 				g_free(smileyfied_xhtml);
+				g_list_free(found_smileys);
 			} else {
 				child = xmlnode_from_str(jm->xhtml, -1);
 			}
@@ -1199,6 +1199,6 @@ gboolean jabber_custom_smileys_isenabled(JabberStream *js, const gchar *shortnam
 {
 	const PurpleConnection *gc = js->gc;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	
+
 	return purple_account_get_bool(account, "custom_smileys", TRUE);
 }
