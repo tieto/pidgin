@@ -308,7 +308,7 @@ void jabber_chat_leave(PurpleConnection *gc, int id)
 
 	jabber_chat_part(chat, NULL);
 
-	chat->conv = NULL;
+	chat->left = TRUE;
 }
 
 void jabber_chat_destroy(JabberChat *chat)
