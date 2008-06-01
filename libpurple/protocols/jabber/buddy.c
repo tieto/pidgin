@@ -2500,5 +2500,38 @@ void jabber_user_search_begin(PurplePluginAction *action)
 			js);
 }
 
+gboolean
+jabber_resource_has_capability(const JabberBuddyResource *jbr, const gchar *cap)
+{
+	const GList *iter = NULL;
 
+	if (!jbr->caps) {
+		purple_debug_error("jabber",
+			"Unable to find caps: nothing known about buddy\n");
+		return FALSE;
+	}
+
+	for (iter = jbr->caps->features ; iter ; iter = g_list_next(iter)) {
+		purple_debug_info("jabber", "Found cap: %s\n", (char *)iter->data);
+		if (strcmp(iter->data, cap) == 0) {
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+gboolean
+jabber_buddy_has_capability(const JabberBuddy *jb, const gchar *cap)
+{
+	JabberBuddyResource *jbr = jabber_buddy_find_resource((JabberBuddy*)jb, NULL);
+
+	if (!jbr) {
+		purple_debug_error("jabber",
+			"Unable to find caps: buddy might be offline\n");
+		return FALSE;
+	}
+
+	return jabber_resource_has_capability(jbr, cap);
+}
 
