@@ -1679,6 +1679,96 @@ static gboolean pidgin_status_menu_add_primitive(GtkListStore *model, GtkWidget 
 	return currently_selected;
 }
 
+static void
+pidgin_status_menu_update_iter(GtkWidget *combobox, GtkListStore *store, GtkTreeIter *iter,
+		PurpleSavedStatus *status)
+{
+	GdkPixbuf *pixbuf;
+
+	if (store == NULL)
+		store = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(combobox)));
+
+	pixbuf = pidgin_create_status_icon(purple_savedstatus_get_type(status),
+			combobox, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+	gtk_list_store_set(store, iter,
+			SS_MENU_TYPE_COLUMN, SS_MENU_ENTRY_TYPE_SAVEDSTATUS,
+			SS_MENU_ICON_COLUMN, pixbuf,
+			SS_MENU_TEXT_COLUMN, purple_savedstatus_get_title(status),
+			SS_MENU_DATA_COLUMN, GINT_TO_POINTER(purple_savedstatus_get_creation_time(status)),
+			SS_MENU_EMBLEM_COLUMN, GTK_STOCK_SAVE,
+			SS_MENU_EMBLEM_VISIBLE_COLUMN, TRUE,
+			-1);
+	if (pixbuf)
+		g_object_unref(G_OBJECT(pixbuf));
+}
+
+static gboolean
+pidgin_status_menu_find_iter(GtkListStore *store, GtkTreeIter *iter, PurpleSavedStatus *find)
+{
+	int type;
+	gpointer data;
+	time_t creation_time = purple_savedstatus_get_creation_time(find);
+	GtkTreeModel *model = GTK_TREE_MODEL(store);
+
+	if (!gtk_tree_model_get_iter_first(model, iter))
+		return FALSE;
+
+	do {
+		gtk_tree_model_get(model, iter,
+				SS_MENU_TYPE_COLUMN, &type,
+				SS_MENU_DATA_COLUMN, &data,
+				-1);
+		if (type == SS_MENU_ENTRY_TYPE_PRIMITIVE)
+			continue;
+		if (GPOINTER_TO_INT(data) == creation_time)
+			return TRUE;
+	} while (gtk_tree_model_iter_next(model, iter));
+
+	return FALSE;
+}
+
+static void
+savedstatus_added_cb(PurpleSavedStatus *status, GtkWidget *combobox)
+{
+	GtkListStore *store;
+	GtkTreeIter iter;
+
+	if (purple_savedstatus_is_transient(status))
+		return;
+
+	store = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(combobox)));
+	gtk_list_store_append(store, &iter);
+	pidgin_status_menu_update_iter(combobox, store, &iter, status);
+}
+
+static void
+savedstatus_deleted_cb(PurpleSavedStatus *status, GtkWidget *combobox)
+{
+	GtkListStore *store;
+	GtkTreeIter iter;
+
+	if (purple_savedstatus_is_transient(status))
+		return;
+
+	store = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(combobox)));
+	if (pidgin_status_menu_find_iter(store, &iter, status))
+		gtk_list_store_remove(store, &iter);
+}
+
+static void
+savedstatus_modified_cb(PurpleSavedStatus *status, GtkWidget *combobox)
+{
+	GtkListStore *store;
+	GtkTreeIter iter;
+
+	if (purple_savedstatus_is_transient(status))
+		return;
+
+	store = GTK_LIST_STORE(gtk_combo_box_get_model(GTK_COMBO_BOX(combobox)));
+	if (pidgin_status_menu_find_iter(store, &iter, status))
+		pidgin_status_menu_update_iter(combobox, store, &iter, status);
+}
+
 GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callback)
 {
 	GtkWidget *combobox;
@@ -1686,7 +1776,6 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callb
 	GList *sorted, *cur;
 	int i = 0;
 	int index = -1;
-	GdkPixbuf *pixbuf;
 	GtkTreeIter iter;
 	GtkCellRenderer *text_rend;
 	GtkCellRenderer *icon_rend;
@@ -1720,18 +1809,9 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callb
 		PurpleSavedStatus *status = (PurpleSavedStatus *) cur->data;
 		if (!purple_savedstatus_is_transient(status))
 		{
-			pixbuf = pidgin_create_status_icon(purple_savedstatus_get_type(status),
-							combobox, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 			gtk_list_store_append(model, &iter);
-			gtk_list_store_set(model, &iter,
-				SS_MENU_TYPE_COLUMN, SS_MENU_ENTRY_TYPE_SAVEDSTATUS,
-				SS_MENU_ICON_COLUMN, pixbuf,
-				SS_MENU_TEXT_COLUMN, purple_savedstatus_get_title(status),
-				SS_MENU_DATA_COLUMN, GINT_TO_POINTER(purple_savedstatus_get_creation_time(status)),
-				SS_MENU_EMBLEM_COLUMN, GTK_STOCK_SAVE,
-				SS_MENU_EMBLEM_VISIBLE_COLUMN, TRUE,
-				-1);
-			g_object_unref(G_OBJECT(pixbuf));
+
+			pidgin_status_menu_update_iter(combobox, model, &iter, status);
 
 			if (status == current_status)
 				index = i;
@@ -1755,6 +1835,17 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callb
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combobox), index);
 	g_signal_connect(G_OBJECT(combobox), "changed", G_CALLBACK(status_menu_cb), callback);
+
+	/* Make sure the list is updated dynamically when a substatus is changed/deleted
+	 * or a new one is added. */
+	purple_signal_connect(purple_savedstatuses_get_handle(), "savedstatus-added",
+			combobox, G_CALLBACK(savedstatus_added_cb), combobox);
+	purple_signal_connect(purple_savedstatuses_get_handle(), "savedstatus-deleted",
+			combobox, G_CALLBACK(savedstatus_deleted_cb), combobox);
+	purple_signal_connect(purple_savedstatuses_get_handle(), "savedstatus-modified",
+			combobox, G_CALLBACK(savedstatus_modified_cb), combobox);
+	g_signal_connect(G_OBJECT(combobox), "destroy",
+			G_CALLBACK(purple_signals_disconnect_by_handle), NULL);
 
 	return combobox;
 }
