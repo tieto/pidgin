@@ -1706,6 +1706,48 @@ imhtml_cursor_moved_cb(gpointer data, GtkMovementStep step, gint count, gboolean
 }
 
 static void
+treeview_cursor_changed_cb(GtkTreeView *treeview, gpointer data)
+{
+	GtkTreeSelection *sel = gtk_tree_view_get_selection (treeview);
+	GtkTreeModel *model = GTK_TREE_MODEL (data);
+	GtkTreeIter iter;
+	GtkTreePath *cursor;
+	GtkTreePath *selection;
+	gint cmp;
+
+	if (gtk_tree_selection_get_selected (sel, NULL, &iter)) {
+		if ((selection = gtk_tree_model_get_path (model, &iter)) == NULL) {
+			/* Shouldn't happen, but ignore anyway */
+			return;
+		}
+	} else {
+		/* I don't think this can happen, but we'll just ignore it */
+		return;
+	}
+
+	gtk_tree_view_get_cursor (treeview, &cursor, NULL);
+	if (cursor == NULL) {
+		/* Probably won't happen in a 'cursor-changed' event? */
+		gtk_tree_path_free (selection);
+		return;
+	}
+
+	cmp = gtk_tree_path_compare (cursor, selection);
+	if (cmp < 0) {
+		/* The cursor moved up without moving the selection, so move it up again */
+		gtk_tree_path_prev (cursor);
+		gtk_tree_view_set_cursor (treeview, cursor, NULL, FALSE);
+	} else if (cmp > 0) {
+		/* The cursor moved down without moving the selection, so move it down again */
+		gtk_tree_path_next (cursor);
+		gtk_tree_view_set_cursor (treeview, cursor, NULL, FALSE);
+	}
+
+	gtk_tree_path_free (selection);
+	gtk_tree_path_free (cursor);
+}
+
+static void
 pidgin_status_box_init (PidginStatusBox *status_box)
 {
 	GtkCellRenderer *text_rend;
@@ -1869,6 +1911,8 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 					G_CALLBACK(imhtml_scroll_event_cb), status_box->imhtml);
 	g_signal_connect(G_OBJECT(status_box->popup_window), "button_release_event", G_CALLBACK(treeview_button_release_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->popup_window), "key_press_event", G_CALLBACK(treeview_key_press_event), status_box);
+	g_signal_connect(G_OBJECT(status_box->tree_view), "cursor-changed",
+					 G_CALLBACK(treeview_cursor_changed_cb), status_box->dropdown_store);
 
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_set_row_separator_func(GTK_TREE_VIEW(status_box->tree_view), dropdown_store_row_separator_func, NULL, NULL);
