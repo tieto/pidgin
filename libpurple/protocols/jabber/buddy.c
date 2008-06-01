@@ -824,7 +824,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 		}		
 		if(jbr) {
 			char *purdy = NULL;
-			char *status_name = jabber_buddy_state_get_name(jbr->state);
+			const char *status_name = jabber_buddy_state_get_name(jbr->state);
 			if(jbr->status)
 				purdy = purple_strdup_withhtml(jbr->status);
 			if(status_name && purdy && !strcmp(status_name, purdy))
@@ -967,8 +967,9 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 		gboolean multiple_resources = jbi->jb->resources && (g_list_length(jbi->jb->resources) > 1);
 
 		for(resources = jbi->jb->resources; resources; resources = resources->next) {
-			char *purdy = NULL, *status_name = NULL;
-			
+			char *purdy = NULL;
+			const char *status_name = NULL;
+
 			jbr = resources->data;
 
 			if(jbr->client.name) {
