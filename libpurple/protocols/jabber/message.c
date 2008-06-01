@@ -795,7 +795,7 @@ jabber_message_xhtml_find_smileys(const char *xhtml)
 	GList *smileys = purple_smileys_get_all();
 	GList *found_smileys = NULL;
 
-	for (; smileys ; smileys = g_list_delete_link(smileys)) {
+	for (; smileys ; smileys = g_list_delete_link(smileys, smileys)) {
 		PurpleSmiley *smiley = (PurpleSmiley *) smileys->data;
 		const gchar *shortcut = purple_smiley_get_shortcut(smiley);
 		const gssize len = strlen(shortcut);
