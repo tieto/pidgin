@@ -232,10 +232,6 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 		if(!label)
 			label = var;
 
-		if((valuenode = xmlnode_get_child(fn, "value")))
-			value = xmlnode_get_data(valuenode);
-
-
 		if(!strcmp(type, "text-private")) {
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
@@ -333,14 +329,16 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_BOOLEAN));
 
 			g_free(value);
-		} else if(!strcmp(type, "fixed") && value) {
+		} else if(!strcmp(type, "fixed")) {
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
 
-			field = purple_request_field_label_new("", value);
-			purple_request_field_group_add_field(group, field);
+			if(value != NULL) {
+				field = purple_request_field_label_new("", value);
+				purple_request_field_group_add_field(group, field);
 
-			g_free(value);
+				g_free(value);
+			}
 		} else if(!strcmp(type, "hidden")) {
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
