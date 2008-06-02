@@ -2646,8 +2646,15 @@ gboolean jabber_can_do_media(PurpleConnection *gc, const char *who,
                              PurpleMediaStreamType type)
 {
 	JabberStream *js = (JabberStream *) gc->proto_data;
-	JabberBuddy *jb = jabber_buddy_find(js, who, FALSE);
-	
+	JabberBuddy *jb;
+
+	if (!js) {
+		purple_debug_error("jabber", "jabber_can_do_media: NULL stream\n");
+		return FALSE;
+	}
+
+	jb = jabber_buddy_find(js, who, FALSE);
+
 	if (!jb) {
 		purple_debug_error("jabber", "Could not find buddy\n");
 		return FALSE;
