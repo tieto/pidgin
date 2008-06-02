@@ -772,13 +772,25 @@ oscar_user_info_convert_and_add(PurpleAccount *account, PurpleNotifyUserInfo *us
 	}
 }
 
-static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_info, PurpleBuddy *b, aim_userinfo_t *userinfo)
+/**
+ * @brief Append the status information to a user_info struct
+ *
+ * The returned information is HTML-ready, appropriately escaped, as all information in a user_info struct should be HTML.
+ *
+ * @param gc The PurpleConnection
+ * @param user_info A PurpleNotifyUserInfo object to which status information will be added
+ * @param b The PurpleBuddy whose status is desired. This or the aim_userinfo_t (or both) must be passed to oscar_user_info_append_status().
+ * @param userinfo The aim_userinfo_t of the buddy whose status is desired. This or the PurpleBuddy (or both) must be passed to oscar_user_info_append_status().
+ * @param strip_html_tags If strip_html_tags is TRUE, tags embedded in the status message will be stripped, returning a non-formatted string. The string will still be HTML escaped.
+ */
+static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUserInfo *user_info, PurpleBuddy *b, aim_userinfo_t *userinfo, gboolean strip_html_tags)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	OscarData *od;
 	PurplePresence *presence = NULL;
 	PurpleStatus *status = NULL;
 	gchar *message = NULL, *itmsurl = NULL, *tmp;
+	gboolean is_away;
 
 	od = gc->proto_data;
 
@@ -803,25 +815,16 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 		if ((userinfo->flags & AIM_FLAG_AWAY)) {
 			/* Away message? */
 			if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
-				gchar *away_utf8;
-
 				tmp = oscar_encoding_extract(userinfo->away_encoding);
-				away_utf8 = oscar_encoding_to_utf8(account, tmp, userinfo->away,
+				message = oscar_encoding_to_utf8(account, tmp, userinfo->away,
 												   userinfo->away_len);
 				g_free(tmp);
-				if (away_utf8 != NULL) {
-					message = purple_str_sub_away_formatters(away_utf8, purple_account_get_username(account));
-					g_free(away_utf8);
 				}
-			}
 		} else {
 			/* Available message? */
 			if ((userinfo->status != NULL) && userinfo->status[0] != '\0') {
-				tmp = oscar_encoding_to_utf8(account, userinfo->status_encoding,
+				message = oscar_encoding_to_utf8(account, userinfo->status_encoding,
 											 userinfo->status, userinfo->status_len);
-				/* Available messages are plain text */
-				message = g_markup_escape_text(tmp, -1);
-				g_free(tmp);
 			}
 #if defined (_WIN32) || defined (__APPLE__)
 			if (userinfo->itmsurl && (userinfo->itmsurl[0] != '\0'))
@@ -831,10 +834,34 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 		}
 	}
 
+	is_away = ((status && !purple_status_is_available(status)) ||
+			   (userinfo && (userinfo->flags & AIM_FLAG_AWAY)));
+
+	if (strip_html_tags) {
+		/* Away messges are HTML, but available messages were originally plain text.
+		 * We therefore need to strip away messages but not available messages if we're asked to remove HTML tags.
+		 */
+		if (is_away) {
+			gchar *tmp2;
+			tmp = purple_markup_strip_html(message);
+			g_free(message);
+			tmp2 = g_markup_escape_text(tmp, -1);
+			g_free(tmp);
+			message = tmp2;
+		}
+
+	} else {
 	if (itmsurl) {
 		tmp = g_strdup_printf("<a href=\"%s\">%s</a>",
 							  itmsurl, message);
 		g_free(itmsurl);
+		g_free(message);
+		message = tmp;
+	}
+	}
+
+	if (is_away) {
+		tmp = purple_str_sub_away_formatters(message, purple_account_get_username(account));
 		g_free(message);
 		message = tmp;
 	}
@@ -3024,7 +3051,7 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	user_info = purple_notify_user_info_new();
 
-	oscar_user_info_append_status(gc, user_info, NULL, userinfo);
+	oscar_user_info_append_status(gc, user_info, /* PurpleBuddy */ NULL, userinfo, /* strip_html_tags */ FALSE);
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_IDLE) {
 		tmp = purple_str_seconds_to_string(userinfo->idletime*60);
@@ -3840,7 +3867,7 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	}
 
 	if (buddy != NULL)
-		oscar_user_info_append_status(gc, user_info, buddy, NULL);
+		oscar_user_info_append_status(gc, user_info, buddy, /* aim_userinfo_t */ NULL, /* strip_html_tags */ FALSE);
 
 	oscar_user_info_convert_and_add(account, user_info, _("Additional Information"), info->info);
 	purple_notify_user_info_add_section_break(user_info);
@@ -5670,7 +5697,7 @@ void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	od = gc->proto_data;
 	userinfo = aim_locate_finduserinfo(od, b->name);
 
-	oscar_user_info_append_status(gc, user_info, b, userinfo);
+	oscar_user_info_append_status(gc, user_info, b, userinfo, /* strip_html_tags */ TRUE);
 
 	if (full)
 		oscar_user_info_append_extra_info(gc, user_info, b, userinfo);
