@@ -28,6 +28,7 @@
 #include "disco.h"
 #include "google.h"
 #include "iq.h"
+#include "jingle.h"
 #include "oob.h"
 #include "roster.h"
 #include "si.h"
@@ -368,16 +369,16 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 			purple_debug_info("jabber", "got Jingle package action = %s\n",
 							  action);
 			if (!strcmp(action, "session-initiate")) {
-				jabber_handle_session_initiate(js, packet);
+				jabber_jingle_session_handle_session_initiate(js, packet);
 			} else if (!strcmp(action, "session-accept")
 					   || !strcmp(action, "content-accept")) {
-				jabber_handle_session_accept(js, packet);
+				jabber_jingle_session_handle_session_accept(js, packet);
 			} else if (!strcmp(action, "session-terminate")) {
-				jabber_handle_session_terminate(js, packet);
+				jabber_jingle_session_handle_session_terminate(js, packet);
 			} else if (!strcmp(action, "transport-info")) {
-				jabber_handle_session_candidates(js, packet);
+				jabber_jingle_session_handle_transport_info(js, packet);
 			} else if (!strcmp(action, "content-replace")) {
-				jabber_handle_session_content_replace(js, packet);
+				jabber_jingle_session_handle_content_replace(js, packet);
 			}
 
 			return;

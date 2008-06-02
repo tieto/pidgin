@@ -85,6 +85,17 @@ GList *jabber_jingle_get_codecs(const xmlnode *description);
 
 GList *jabber_jingle_get_candidates(const xmlnode *transport);
 
+PurpleMedia *jabber_jingle_session_initiate_media(PurpleConnection *gc,
+						  const char *who,
+						  PurpleMediaStreamType type);
+
+/* Jingle message handlers */
+void jabber_jingle_session_handle_content_replace(JabberStream *js, xmlnode *packet);
+void jabber_jingle_session_handle_session_accept(JabberStream *js, xmlnode *packet);
+void jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet);
+void jabber_jingle_session_handle_session_terminate(JabberStream *js, xmlnode *packet);
+void jabber_jingle_session_handle_transport_info(JabberStream *js, xmlnode *packet);
+
 G_END_DECLS
 
 #endif /* USE_VV */
