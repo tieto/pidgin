@@ -1920,6 +1920,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	{
 		char *message = NULL;
 		char *itmsurl = NULL;
+		char *tmp;
 
 		if (info->status != NULL && info->status[0] != '\0')
 			/* Grab the available message */
@@ -1931,8 +1932,10 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
 					info->itmsurl, info->itmsurl_len);
 
+		tmp = g_markup_escape_text(message, -1);
 		purple_prpl_got_user_status(account, info->sn, status_id,
-				"message", message, "itmsurl", itmsurl, NULL);
+				"message", tmp, "itmsurl", itmsurl, NULL);
+		g_free(tmp);
 
 		g_free(message);
 		g_free(itmsurl);
@@ -5705,7 +5708,7 @@ char *oscar_status_text(PurpleBuddy *b)
 		message = purple_status_get_attr_string(status, "message");
 		if (message != NULL)
 		{
-			ret = g_markup_escape_text(message, -1);
+			ret = g_strdup(message);
 			purple_util_chrreplace(ret, '\n', ' ');
 		}
 	}
