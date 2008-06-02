@@ -5660,7 +5660,7 @@ void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolea
 	OscarData *od;
 	aim_userinfo_t *userinfo;
 
-	if (PURPLE_BUDDY_IS_ONLINE(b))
+	if (!PURPLE_BUDDY_IS_ONLINE(b))
 		return;
 
 	gc = b->account->gc;
