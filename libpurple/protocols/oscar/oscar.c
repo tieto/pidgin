@@ -5654,17 +5654,23 @@ const char* oscar_list_emblem(PurpleBuddy *b)
 	return NULL;
 }
 
-void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full) {
-	PurpleConnection *gc = b->account->gc;
-	OscarData *od = gc->proto_data;
-	aim_userinfo_t *userinfo = aim_locate_finduserinfo(od, b->name);
+void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
+{
+	PurpleConnection *gc;
+	OscarData *od;
+	aim_userinfo_t *userinfo;
 
-	if (PURPLE_BUDDY_IS_ONLINE(b)) {
-		oscar_user_info_append_status(gc, user_info, b, userinfo);
+	if (PURPLE_BUDDY_IS_ONLINE(b))
+		return;
 
-		if (full)
-			oscar_user_info_append_extra_info(gc, user_info, b, userinfo);
-	}
+	gc = b->account->gc;
+	od = gc->proto_data;
+	userinfo = aim_locate_finduserinfo(od, b->name);
+
+	oscar_user_info_append_status(gc, user_info, b, userinfo);
+
+	if (full)
+		oscar_user_info_append_extra_info(gc, user_info, b, userinfo);
 }
 
 char *oscar_status_text(PurpleBuddy *b)
