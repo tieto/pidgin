@@ -1254,16 +1254,8 @@ void jabber_close(PurpleConnection *gc)
 	JabberStream *js = gc->proto_data;
 
 #ifdef USE_VV
-	/* Close all of the open media sessions on this stream */
-	GList *values = g_hash_table_get_values(js->sessions);
-	GList *iter = values;
-
-	for (; iter; iter = iter->next) {
-		JingleSession *session = (JingleSession *)iter->data;
-		purple_media_hangup(session->media);
-	}
-
-	g_list_free(values);
+	/* Close all of the open Jingle sessions on this stream */
+	jabber_jingle_session_terminate_sessions(js);
 #endif
 
 	/* Don't perform any actions on the ssl connection
@@ -1889,19 +1881,12 @@ void jabber_convo_closed(PurpleConnection *gc, const char *who)
 	JabberID *jid;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr;
-#ifdef USE_VV
-	JingleSession *session;
-#endif
+
 	if(!(jid = jabber_id_new(who)))
 		return;
 
 #ifdef USE_VV
-	session = jabber_jingle_session_find_by_jid(js, who);
-
-	if (session) {
-		purple_media_hangup(session->media);
-	}
-
+	jabber_jingle_session_terminate_session_media(js, who);
 #endif
 	if((jb = jabber_buddy_find(js, who, TRUE)) &&
 			(jbr = jabber_buddy_find_resource(jb, jid->resource))) {

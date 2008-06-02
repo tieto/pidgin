@@ -31,6 +31,16 @@
 
 #include <gst/farsight/fs-candidate.h>
 
+typedef struct {
+	char *id;
+	JabberStream *js;
+	PurpleMedia *media;
+	char *remote_jid;
+	char *initiator;
+	gboolean is_initiator;
+	gboolean session_started;
+} JingleSession;
+
 static gboolean
 jabber_jingle_session_equal(gconstpointer a, gconstpointer b)
 {
@@ -69,13 +79,13 @@ jabber_jingle_session_create_internal(JabberStream *js,
 	return sess;
 }
 
-JabberStream *
+static JabberStream *
 jabber_jingle_session_get_js(const JingleSession *sess)
 {
 	return sess->js;
 }
 
-JingleSession *
+static JingleSession *
 jabber_jingle_session_create(JabberStream *js)
 {
 	JingleSession *sess = jabber_jingle_session_create_internal(js, NULL);
@@ -83,7 +93,7 @@ jabber_jingle_session_create(JabberStream *js)
 	return sess;
 }
 
-JingleSession *
+static JingleSession *
 jabber_jingle_session_create_by_id(JabberStream *js, const char *id)
 {
 	JingleSession *sess = jabber_jingle_session_create_internal(js, id);
@@ -91,13 +101,13 @@ jabber_jingle_session_create_by_id(JabberStream *js, const char *id)
 	return sess;
 }
 
-const char *
+static const char *
 jabber_jingle_session_get_id(const JingleSession *sess)
 {
 	return sess->id;
 }
 
-void
+static void
 jabber_jingle_session_destroy(JingleSession *sess)
 {
 	g_hash_table_remove(sess->js->sessions, sess->id);
@@ -106,7 +116,7 @@ jabber_jingle_session_destroy(JingleSession *sess)
 	g_free(sess);
 }
 
-JingleSession *
+static JingleSession *
 jabber_jingle_session_find_by_id(JabberStream *js, const char *id)
 {
 	purple_debug_info("jingle", "find_by_id %s\n", id);
@@ -117,7 +127,8 @@ jabber_jingle_session_find_by_id(JabberStream *js, const char *id)
 	return (JingleSession *) g_hash_table_lookup(js->sessions, id);
 }
 
-JingleSession *jabber_jingle_session_find_by_jid(JabberStream *js, const char *jid)
+static JingleSession *
+jabber_jingle_session_find_by_jid(JabberStream *js, const char *jid)
 {
 	GList *values = g_hash_table_get_values(js->sessions);
 	GList *iter = values;
@@ -139,7 +150,7 @@ JingleSession *jabber_jingle_session_find_by_jid(JabberStream *js, const char *j
 	return NULL;	
 }
 
-GList *
+static GList *
 jabber_jingle_get_codecs(const xmlnode *description)
 {
 	GList *codecs = NULL;
@@ -162,7 +173,7 @@ jabber_jingle_get_codecs(const xmlnode *description)
 	return codecs;
 }
 
-GList *
+static GList *
 jabber_jingle_get_candidates(const xmlnode *transport)
 {
 	GList *candidates = NULL;
@@ -192,45 +203,45 @@ jabber_jingle_get_candidates(const xmlnode *transport)
 	return candidates;
 }
 
-PurpleMedia *
+static PurpleMedia *
 jabber_jingle_session_get_media(const JingleSession *sess)
 {
 	return sess->media;
 }
 
-void
+static void
 jabber_jingle_session_set_media(JingleSession *sess, PurpleMedia *media)
 {
 	sess->media = media;
 }
 
-const char *
+static const char *
 jabber_jingle_session_get_remote_jid(const JingleSession *sess)
 {
 	return sess->remote_jid;
 }
 
-void
+static void
 jabber_jingle_session_set_remote_jid(JingleSession *sess, 
 									 const char *remote_jid)
 {
 	sess->remote_jid = strdup(remote_jid);
 }
 
-const char *
+static const char *
 jabber_jingle_session_get_initiator(const JingleSession *sess)
 {
 	return sess->initiator;
 }
 
-void
+static void
 jabber_jingle_session_set_initiator(JingleSession *sess,
 									const char *initiator)
 {
 	sess->initiator = g_strdup(initiator);
 }
 
-gboolean
+static gboolean
 jabber_jingle_session_is_initiator(const JingleSession *sess)
 {
 	return sess->is_initiator;
@@ -254,7 +265,7 @@ jabber_jingle_session_create_jingle_element(const JingleSession *sess,
 	return jingle;
 }
 
-xmlnode *
+static xmlnode *
 jabber_jingle_session_create_terminate(const JingleSession *sess,
 									   const char *reasoncode,
 									   const char *reasontext)
@@ -270,7 +281,7 @@ jabber_jingle_session_create_terminate(const JingleSession *sess,
 	return jingle;
 }
 
-xmlnode *
+static xmlnode *
 jabber_jingle_session_create_description(const JingleSession *sess)
 {
     GList *codecs = purple_media_get_local_audio_codecs(sess->media);
@@ -372,7 +383,7 @@ jabber_jingle_session_create_candidate_info(FsCandidate *c, FsCandidate *remote)
 /* split into two separate methods, one to generate session-accept
 	(includes codecs) and one to generate transport-info (includes transports
 	candidates) */
-xmlnode *
+static xmlnode *
 jabber_jingle_session_create_session_accept(const JingleSession *sess)
 {
 	xmlnode *jingle = 
@@ -401,8 +412,7 @@ jabber_jingle_session_create_session_accept(const JingleSession *sess)
 	return jingle;
 }
 
-
-xmlnode *
+static xmlnode *
 jabber_jingle_session_create_transport_info(const JingleSession *sess)
 {
 	xmlnode *jingle = 
@@ -435,7 +445,7 @@ jabber_jingle_session_create_transport_info(const JingleSession *sess)
 	return jingle;
 }
 
-xmlnode *
+static xmlnode *
 jabber_jingle_session_create_content_replace(const JingleSession *sess,
 					     FsCandidate *native_candidate,
 					     FsCandidate *remote_candidate)
@@ -470,7 +480,7 @@ jabber_jingle_session_create_content_replace(const JingleSession *sess,
 	return jingle;
 }
 
-xmlnode *
+static xmlnode *
 jabber_jingle_session_create_content_accept(const JingleSession *sess)
 {
 	xmlnode *jingle = 
@@ -747,6 +757,30 @@ jabber_jingle_session_initiate_media(PurpleConnection *gc, const char *who,
 	fs_codec_list_destroy(codecs);
 
 	return session->media;
+}
+
+void
+jabber_jingle_session_terminate_session_media(JabberStream *js, const gchar *who)
+{
+	JingleSession *session;
+
+	session = jabber_jingle_session_find_by_jid(js, who);
+
+	if (session)
+		purple_media_hangup(session->media);
+}
+
+void
+jabber_jingle_session_terminate_sessions(JabberStream *js)
+{
+	GList *values = g_hash_table_get_values(js->sessions);
+
+	for (; values; values = values->next) {
+		JingleSession *session = (JingleSession *)values->data;
+		purple_media_hangup(session->media);
+	}
+
+	g_list_free(values);
 }
 
 void

@@ -24,70 +24,21 @@
 #include <glib.h>
 #include <glib-object.h>
 
+/*
+ * When Jingle content types other than voice and video are implemented,
+ * this #ifdef others surrounding Jingle code should be changed to just
+ * be around the voice and video specific parts.
+ */
 #ifdef USE_VV
 
 G_BEGIN_DECLS
 
-typedef struct {
-	char *id;
-	JabberStream *js;
-	PurpleMedia *media;
-	char *remote_jid;
-	char *initiator;
-	gboolean is_initiator;
-	gboolean session_started;
-} JingleSession;
-
-JingleSession *jabber_jingle_session_create(JabberStream *js);
-JingleSession *jabber_jingle_session_create_by_id(JabberStream *js, 
-												  const char *id);
-
-const char *jabber_jingle_session_get_id(const JingleSession *sess);
-JabberStream *jabber_jingle_session_get_js(const JingleSession *sess);
-
-void jabber_jingle_session_destroy(JingleSession *sess);
-
-JingleSession *jabber_jingle_session_find_by_id(JabberStream *js, const char *id);
-JingleSession *jabber_jingle_session_find_by_jid(JabberStream *js, const char *jid);
-
-PurpleMedia *jabber_jingle_session_get_media(const JingleSession *sess);
-void jabber_jingle_session_set_media(JingleSession *sess, PurpleMedia *media);
-
-const char *jabber_jingle_session_get_remote_jid(const JingleSession *sess);
-
-gboolean jabber_jingle_session_is_initiator(const JingleSession *sess);
-
-void jabber_jingle_session_set_remote_jid(JingleSession *sess, 
-										  const char *remote_jid);
-
-const char *jabber_jingle_session_get_initiator(const JingleSession *sess);
-void jabber_jingle_session_set_initiator(JingleSession *sess, 
-										 const char *initiator);
-
-xmlnode *jabber_jingle_session_create_terminate(const JingleSession *sess,
-												const char *reasoncode,
-												const char *reasontext);
-xmlnode *jabber_jingle_session_create_session_accept(const JingleSession *sess);
-xmlnode *jabber_jingle_session_create_transport_info(const JingleSession *sess);
-xmlnode *jabber_jingle_session_create_content_replace(const JingleSession *sess,
-						      FsCandidate *native_candidate,
-						      FsCandidate *remote_candidate);
-xmlnode *jabber_jingle_session_create_content_accept(const JingleSession *sess);
-xmlnode *jabber_jingle_session_create_description(const JingleSession *sess);
-
-/**
- * Gets a list of Farsight codecs from a Jingle <description> tag
- *
- * @param description
- * @return A GList of FarsightCodecS
-*/
-GList *jabber_jingle_get_codecs(const xmlnode *description);
-
-GList *jabber_jingle_get_candidates(const xmlnode *transport);
-
 PurpleMedia *jabber_jingle_session_initiate_media(PurpleConnection *gc,
 						  const char *who,
 						  PurpleMediaStreamType type);
+
+void jabber_jingle_session_terminate_session_media(JabberStream *js, const gchar *who);
+void jabber_jingle_session_terminate_sessions(JabberStream *js);
 
 /* Jingle message handlers */
 void jabber_jingle_session_handle_content_replace(JabberStream *js, xmlnode *packet);
