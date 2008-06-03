@@ -39,7 +39,101 @@ typedef struct {
 	char *initiator;
 	gboolean is_initiator;
 	gboolean session_started;
+	GHashTable *contents;	/* JingleSessionContent table */
 } JingleSession;
+
+typedef struct {
+	gchar *name;
+	JingleSession *session;
+	gchar *creator;
+	gchar *sender;
+	gchar *transport_type;
+	gchar *type;
+} JingleSessionContent;
+
+static void
+jabber_jingle_session_content_create_internal(JingleSession *session,
+					      const gchar *name,
+					      const gchar *creator,
+					      const gchar *sender,
+					      const gchar *transport_type,
+					      const gchar *type)
+{
+	JingleSessionContent *content = g_new0(JingleSessionContent, 1);
+	content->session = session;
+	content->name = g_strdup(name);
+	content->creator = g_strdup(creator);
+	content->sender = g_strdup(sender);
+	content->transport_type = g_strdup(transport_type);
+	content->type = g_strdup(type);
+
+	if (!session->contents) {
+		purple_debug_info("jingle", "Creating hash table for contents\n");
+		session->contents = g_hash_table_new(g_str_hash, g_str_equal);
+	}
+	purple_debug_info("jingle", "inserting content with name == \"%s\" into table\n",
+			  content->name);
+	g_hash_table_insert(session->contents, content->name, content);
+}
+
+static void
+jabber_jingle_session_destroy_content(JingleSessionContent *content)
+{
+	purple_debug_info("jingle", "destroying content with name == \"%s\"\n",
+			  content->name);
+	g_hash_table_remove(content->session->contents, content->name);
+	g_free(content->name);
+	g_free(content->creator);
+	g_free(content->sender);
+	g_free(content->transport_type);
+	g_free(content->type);
+	g_free(content);
+}
+
+static const gchar *
+jabber_jingle_session_content_get_name(const JingleSessionContent *jsc)
+{
+	return jsc->name;
+}
+
+static JingleSession *
+jabber_jingle_session_content_get_session(const JingleSessionContent *jsc)
+{
+	return jsc->session;
+}
+
+static const gchar *
+jabber_jingle_session_content_get_creator(const JingleSessionContent *jsc)
+{
+	return jsc->creator;
+}
+
+static const gchar *
+jabber_jingle_session_content_get_sender(const JingleSessionContent *jsc)
+{
+	return jsc->sender;
+}
+
+static const gchar *
+jabber_jingle_session_content_get_transport_type(const JingleSessionContent *jsc)
+{
+	return jsc->transport_type;
+}
+
+static const gchar *
+jabber_jingle_session_content_get_type(const JingleSessionContent *jsc)
+{
+	return jsc->type;
+}
+
+static void
+jabber_jingle_session_content_set_sender(JingleSessionContent *jsc,
+					    const char *sender)
+{
+	if (jsc->sender)
+		g_free(jsc->sender);
+	jsc->sender = g_strdup(sender);
+}
 
 static gboolean
 jabber_jingle_session_equal(gconstpointer a, gconstpointer b)
@@ -110,9 +204,15 @@ jabber_jingle_session_get_id(const JingleSession *sess)
 static void
 jabber_jingle_session_destroy(JingleSession *sess)
 {
+	GList *contents = g_hash_table_get_values(sess->contents);
 	g_hash_table_remove(sess->js->sessions, sess->id);
 	g_free(sess->id);
 	g_object_unref(sess->media);
+
+	for (; contents; contents = contents->next)
+		jabber_jingle_session_destroy_content(contents->data);
+
+	g_list_free(contents);
 	g_free(sess);
 }
 
@@ -201,6 +301,12 @@ jabber_jingle_get_candidates(const xmlnode *transport)
 	}
 	
 	return candidates;
+}
+
+static JingleSessionContent *
+jabber_jingle_session_get_content(JingleSession *session, const char *name)
+{
+	return (JingleSession *) name ? g_hash_table_lookup(session->contents, name) : NULL;
 }
 
 static PurpleMedia *
@@ -556,6 +662,56 @@ jabber_jingle_session_send_session_terminate(JingleSession *session)
 	jabber_jingle_session_destroy(session);
 }
 
+static void
+jabber_jingle_session_content_create_media(JingleSession *session,
+					     PurpleMediaStreamType type)
+{
+	gchar sender[10] = "";
+
+	if (type & PURPLE_MEDIA_AUDIO) {
+		if (type & PURPLE_MEDIA_SEND_AUDIO)
+			strcpy(sender, "initiator");
+		else if (type & PURPLE_MEDIA_RECV_AUDIO)
+			strcpy(sender, "responder");
+		else
+			strcpy(sender, "both");
+		jabber_jingle_session_content_create_internal(session,
+				"audio-content", "initiator", sender,
+				"urn:xmpp:tmp:jingle:transports:ice-udp",
+				"urn:xmpp:tmp:jingle:apps:audio-rtp");
+	} else if (type & PURPLE_MEDIA_VIDEO) {
+		if (type == PURPLE_MEDIA_SEND_VIDEO)
+			strcpy(sender, "initiator");
+		else if (type == PURPLE_MEDIA_RECV_VIDEO)
+			strcpy(sender, "responder");
+		else
+			strcpy(sender, "both");
+		jabber_jingle_session_content_create_internal(session,
+				"video-content", "initiator", sender,
+				"urn:xmpp:tmp:jingle:transports:ice-udp",
+				"urn:xmpp:tmp:jingle:apps:video-rtp");
+	}
+}
+
+static void
+jabber_jingle_session_content_create_parse(JingleSession *session,
+					   xmlnode *jingle)
+{
+	xmlnode *content = xmlnode_get_child(jingle, "content");
+	xmlnode *description = xmlnode_get_child(content, "description");
+	xmlnode *transport = xmlnode_get_child(content, "transport");
+
+	const gchar *creator = xmlnode_get_attrib(content, "creator");
+	const gchar *sender = xmlnode_get_attrib(content, "sender");
+
+	jabber_jingle_session_content_create_internal(session,
+						      xmlnode_get_attrib(content, "name"),
+						      creator ? creator : "initiator",
+						      sender ? sender : "both",
+						      xmlnode_get_namespace(transport),
+						      xmlnode_get_namespace(description));
+}
+
 /* callback called when new local transport candidate(s) are available on the
 	Farsight stream */
 static void
@@ -725,6 +881,8 @@ jabber_jingle_session_initiate_media(PurpleConnection *gc, const char *who,
 
 	g_free(jid);
 	g_free(me);
+
+	jabber_jingle_session_content_create_media(session, type);
 
 	codecs = purple_media_get_local_audio_codecs(session->media);
 
@@ -901,6 +1059,7 @@ jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet)
 	xmlnode *jingle = xmlnode_get_child(packet, "jingle");
 	xmlnode *content = NULL;
 	xmlnode *description = NULL;
+	xmlnode *transport = NULL;
 	const char *sid = NULL;
 	const char *initiator = NULL;
 	GList *codecs = NULL;
@@ -937,12 +1096,22 @@ jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet)
 		return;
 	}
 
+	transport = xmlnode_get_child(content, "transport");
+
+	if (!transport) {
+		purple_debug_error("jingle", "content tag must contain transport tag\n");
+		/* we should create an error iq here */
+		return;
+	}
+
 	if (!jabber_jingle_session_initiate_media_internal(session, initiator, initiator)) {
 		purple_debug_error("jabber", "Couldn't start media session with %s\n", initiator);
 		jabber_jingle_session_destroy(session);
 		/* we should create an error iq here */
 		return;
 	}
+
+	jabber_jingle_session_content_create_parse(session, jingle);
 
 	codecs = jabber_jingle_get_codecs(description);
 
