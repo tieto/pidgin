@@ -287,10 +287,13 @@ jabber_jingle_get_candidates(const xmlnode *transport)
 		c = fs_candidate_new(xmlnode_get_attrib(candidate, "component"), 
 							atoi(xmlnode_get_attrib(candidate, "component")),
 							strcmp(type, "host") == 0 ?
-								FS_CANDIDATE_TYPE_HOST :
-								strcmp(type, "prflx") == 0 ?
-									FS_CANDIDATE_TYPE_PRFLX :
-									FS_CANDIDATE_TYPE_RELAY,
+							FS_CANDIDATE_TYPE_HOST :
+							strcmp(type, "prflx") == 0 ?
+							FS_CANDIDATE_TYPE_PRFLX :
+							strcmp(type, "relay") == 0 ?
+							FS_CANDIDATE_TYPE_RELAY :
+							strcmp(type, "srflx") == 0 ?
+							FS_CANDIDATE_TYPE_SRFLX : 0,
 							strcmp(xmlnode_get_attrib(candidate, "protocol"),
 							  "udp") == 0 ? 
 				 				FS_NETWORK_PROTOCOL_UDP :
@@ -353,31 +356,171 @@ jabber_jingle_session_is_initiator(const JingleSession *sess)
 	return sess->is_initiator;
 }
 
-static xmlnode *
-jabber_jingle_session_create_jingle_element(const JingleSession *sess,
-											const char *action)
+static void
+jabber_jingle_session_add_payload_types(const JingleSessionContent *jsc,
+					xmlnode *description,
+					const GList *codecs)
 {
-	xmlnode *jingle = xmlnode_new("jingle");
+	for (; codecs ; codecs = codecs->next) {
+		FsCodec *codec = (FsCodec*)codecs->data;
+		char id[8], clockrate[10], channels[10];
+		xmlnode *payload = xmlnode_new_child(description, "payload-type");
+		
+		g_snprintf(id, sizeof(id), "%d", codec->id);
+		g_snprintf(clockrate, sizeof(clockrate), "%d", codec->clock_rate);
+		g_snprintf(channels, sizeof(channels), "%d",
+			   codec->channels == 0 ? 1 : codec->channels);
+		
+		xmlnode_set_attrib(payload, "name", codec->encoding_name);
+		xmlnode_set_attrib(payload, "id", id);
+		xmlnode_set_attrib(payload, "clockrate", clockrate);
+		xmlnode_set_attrib(payload, "channels", channels);
+	}
+}
+
+static xmlnode *
+jabber_jingle_session_add_description_vv(const JingleSessionContent *jsc,
+					 xmlnode *description)
+{
+	xmlnode_set_attrib(description, "profile", "RTP/AVP");
+	return description;
+}
+
+static xmlnode *
+jabber_jingle_session_add_description(const JingleSessionContent *jsc,
+				      xmlnode *content)
+{
+	xmlnode *description = xmlnode_new_child(content, "description");
+	const gchar *type = jabber_jingle_session_content_get_type(jsc);
+	xmlnode_set_namespace(description, type);
+
+	if (!strcmp(type, "urn:xmpp:tmp:jingle:apps:audio-rtp") ||
+			!strcmp(type, "urn:xmpp:tmp:jingle:apps:video-rtp"))
+		return jabber_jingle_session_add_description_vv(jsc, description);
+	else
+		return description;
+}
+
+static xmlnode *
+jabber_jingle_session_add_candidate_iceudp(xmlnode *transport,
+					   FsCandidate *c,
+					   FsCandidate *remote)
+{
+	char port[8];
+	char prio[8];
+	char component[8];
+	xmlnode *candidate = xmlnode_new_child(transport, "candidate");
+	
+	g_snprintf(port, sizeof(port), "%d", c->port);
+	g_snprintf(prio, sizeof(prio), "%d", c->priority);
+	g_snprintf(component, sizeof(component), "%d", c->component_id);
+	
+	xmlnode_set_attrib(candidate, "component", component);
+	xmlnode_set_attrib(candidate, "foundation", "1"); /* what about this? */
+	xmlnode_set_attrib(candidate, "generation", "0"); /* ? */
+	xmlnode_set_attrib(candidate, "ip", c->ip);
+	xmlnode_set_attrib(candidate, "network", "0"); /* ? */
+	xmlnode_set_attrib(candidate, "port", port);
+	xmlnode_set_attrib(candidate, "priority", prio); /* Is this correct? */
+	xmlnode_set_attrib(candidate, "protocol",
+			   c->proto == FS_NETWORK_PROTOCOL_UDP ?
+			   "udp" : "tcp");
+	if (c->username)
+		xmlnode_set_attrib(transport, "ufrag", c->username);
+	if (c->password)
+		xmlnode_set_attrib(transport, "pwd", c->password);
+	
+	xmlnode_set_attrib(candidate, "type", 
+			   c->type == FS_CANDIDATE_TYPE_HOST ? 
+			   "host" :
+			   c->type == FS_CANDIDATE_TYPE_PRFLX ? 
+			   "prflx" :
+		       	   c->type == FS_CANDIDATE_TYPE_RELAY ? 
+			   "relay" :
+			   c->type == FS_CANDIDATE_TYPE_SRFLX ?
+			   "srflx" : NULL);
+
+	/* relay */
+	if (c->type == FS_CANDIDATE_TYPE_RELAY) {
+		/* set rel-addr and rel-port? How? */
+	}
+
+	if (remote) {
+		char remote_port[8];
+		g_snprintf(remote_port, sizeof(remote_port), "%d", remote->port);
+		xmlnode_set_attrib(candidate, "rem-addr", remote->ip);
+		xmlnode_set_attrib(candidate, "rem-port", remote_port);
+	}
+
+	return candidate;
+}
+
+static xmlnode *
+jabber_jingle_session_add_transport(const JingleSessionContent *jsc,
+				    xmlnode *content)
+{
+	xmlnode *transport = xmlnode_new_child(content, "transport");
+	const gchar *transport_type = jabber_jingle_session_content_get_transport_type(jsc);
+	xmlnode_set_namespace(transport, transport_type);
+	return transport;
+}
+
+static xmlnode *
+jabber_jingle_session_add_content(const JingleSessionContent *jsc,
+				  xmlnode *jingle)
+{
+	xmlnode *content = xmlnode_new_child(jingle, "content");
+	xmlnode_set_attrib(content, "creator",
+			   jabber_jingle_session_content_get_creator(jsc));
+	xmlnode_set_attrib(content, "name",
+			   jabber_jingle_session_content_get_name(jsc));
+	xmlnode_set_attrib(content, "sender",
+			   jabber_jingle_session_content_get_sender(jsc));
+	return content;
+}
+
+
+static xmlnode *
+jabber_jingle_session_add_jingle(const JingleSession *sess,
+				 JabberIq *iq, const char *action)
+{
+	xmlnode *jingle = iq ? xmlnode_new_child(iq->node, "jingle") : 
+				xmlnode_new("jingle");
 	xmlnode_set_namespace(jingle, "urn:xmpp:tmp:jingle");
 	xmlnode_set_attrib(jingle, "action", action);
 	xmlnode_set_attrib(jingle, "initiator", 
-					   jabber_jingle_session_get_initiator(sess));
+			   jabber_jingle_session_get_initiator(sess));
 	xmlnode_set_attrib(jingle, "responder", 
-					   jabber_jingle_session_is_initiator(sess) ?
-					   jabber_jingle_session_get_remote_jid(sess) :
-					   jabber_jingle_session_get_initiator(sess));
-	xmlnode_set_attrib(jingle, "sid", sess->id);
+			   jabber_jingle_session_is_initiator(sess) ?
+			   jabber_jingle_session_get_remote_jid(sess) :
+			   jabber_jingle_session_get_initiator(sess));
+	xmlnode_set_attrib(jingle, "sid", jabber_jingle_session_get_id(sess));
 	
 	return jingle;
 }
 
+static JabberIq *
+jabber_jingle_session_create_iq(const JingleSession *session)
+{
+	JabberIq *result = jabber_iq_new(jabber_jingle_session_get_js(session),
+					 JABBER_IQ_SET);
+	gchar *from = g_strdup_printf("%s@%s/%s", session->js->user->node,
+				      session->js->user->domain,
+				      session->js->user->resource);
+	xmlnode_set_attrib(result->node, "from", from);
+	g_free(from);
+	xmlnode_set_attrib(result->node, "to",
+			   jabber_jingle_session_get_remote_jid(session));
+	return result;
+}
+
 static xmlnode *
 jabber_jingle_session_create_terminate(const JingleSession *sess,
-									   const char *reasoncode,
-									   const char *reasontext)
+				       const char *reasoncode,
+				       const char *reasontext)
 {
 	xmlnode *jingle = 
-		jabber_jingle_session_create_jingle_element(sess, "session-terminate");
+		jabber_jingle_session_add_jingle(sess, NULL, "session-terminate");
 	xmlnode_set_attrib(jingle, "resoncode", reasoncode);
 	if (reasontext) {
 		xmlnode_set_attrib(jingle, "reasontext", reasontext);
@@ -414,77 +557,6 @@ jabber_jingle_session_create_description(const JingleSession *sess)
     fs_codec_list_destroy(codecs);
     return description;
 }
-    
-static guint
-jabber_jingle_get_priority(guint type, guint network)
-{
-	switch (type) {
-		case FS_CANDIDATE_TYPE_HOST:
-			return network == 0 ? 4096 : network == 1 ? 2048 : 1024;
-			break;
-		case FS_CANDIDATE_TYPE_PRFLX:
-			return 126;
-			break;
-		case FS_CANDIDATE_TYPE_RELAY:
-			return 100;
-			break;
-		default:
-			return 0; /* unknown type, should not happen */
-	}
-}
-
-static xmlnode *
-jabber_jingle_session_create_candidate_info(FsCandidate *c, FsCandidate *remote)
-{
-	char port[8];
-	char prio[8];
-	char component[8];
-	xmlnode *candidate = NULL;
-	
-	candidate = xmlnode_new("candidate");
-	
-	g_snprintf(port, sizeof(port), "%d", c->port);
-	g_snprintf(prio, sizeof(prio), "%d", 
-		   jabber_jingle_get_priority(c->type, 0));
-	g_snprintf(component, sizeof(component), "%d", c->component_id);
-	
-	xmlnode_set_attrib(candidate, "component", component);
-	xmlnode_set_attrib(candidate, "foundation", "1"); /* what about this? */
-	xmlnode_set_attrib(candidate, "generation", "0"); /* ? */
-	xmlnode_set_attrib(candidate, "ip", c->ip);
-	xmlnode_set_attrib(candidate, "network", "0"); /* ? */
-	xmlnode_set_attrib(candidate, "port", port);
-	xmlnode_set_attrib(candidate, "priority", prio); /* Is this correct? */
-	xmlnode_set_attrib(candidate, "protocol",
-			   c->proto == FS_NETWORK_PROTOCOL_UDP ?
-			   "udp" : "tcp");
-	if (c->username)
-		xmlnode_set_attrib(candidate, "ufrag", c->username);
-	if (c->password)
-		xmlnode_set_attrib(candidate, "pwd", c->password);
-	
-	xmlnode_set_attrib(candidate, "type", 
-			   c->type == FS_CANDIDATE_TYPE_HOST ? 
-			   "host" :
-			   c->type == FS_CANDIDATE_TYPE_PRFLX ? 
-			   "prflx" :
-		       	   c->type == FS_CANDIDATE_TYPE_RELAY ? 
-			   "relay" : NULL);
-
-	/* relay */
-	if (c->type == FS_CANDIDATE_TYPE_RELAY) {
-		/* set rel-addr and rel-port? How? */
-	}
-
-	if (remote) {
-		char remote_port[8];
-		g_snprintf(remote_port, sizeof(remote_port), "%d", remote->port);
-		xmlnode_set_attrib(candidate, "rem-addr", remote->ip);
-		xmlnode_set_attrib(candidate, "rem-port", remote_port);
-	}
-
-	return candidate;
-}
 
 /* split into two separate methods, one to generate session-accept
 	(includes codecs) and one to generate transport-info (includes transports
@@ -492,8 +564,8 @@ jabber_jingle_session_create_candidate_info(FsCandidate *c, FsCandidate *remote)
 static xmlnode *
 jabber_jingle_session_create_session_accept(const JingleSession *sess)
 {
-	xmlnode *jingle = 
-		jabber_jingle_session_create_jingle_element(sess, "session-accept");
+	xmlnode *jingle =
+		jabber_jingle_session_add_jingle(sess, NULL, "session-accept");
 	xmlnode *content = NULL;
 	xmlnode *description = NULL;
 	xmlnode *transport = NULL;
@@ -510,10 +582,9 @@ jabber_jingle_session_create_session_accept(const JingleSession *sess)
 
 	transport = xmlnode_new_child(content, "transport");
 	xmlnode_set_namespace(transport, "urn:xmpp:tmp:jingle:transports:ice-udp");
-	candidate = jabber_jingle_session_create_candidate_info(
+	candidate = jabber_jingle_session_add_candidate_iceudp(transport,
 			purple_media_get_local_candidate(sess->media),
 			purple_media_get_remote_candidate(sess->media));
-	xmlnode_insert_child(transport, candidate);
 
 	return jingle;
 }
@@ -521,8 +592,8 @@ jabber_jingle_session_create_session_accept(const JingleSession *sess)
 static xmlnode *
 jabber_jingle_session_create_transport_info(const JingleSession *sess)
 {
-	xmlnode *jingle = 
-		jabber_jingle_session_create_jingle_element(sess, "transport-info");
+	xmlnode *jingle =
+		jabber_jingle_session_add_jingle(sess, NULL, "transport-info");
 	xmlnode *content = NULL;
 	xmlnode *transport = NULL;
 	GList *candidates = purple_media_get_local_audio_candidates(sess->media);
@@ -543,8 +614,7 @@ jabber_jingle_session_create_transport_info(const JingleSession *sess)
 			continue;
 		}
 
-		xmlnode_insert_child(transport,
-				     jabber_jingle_session_create_candidate_info(c, NULL));
+		jabber_jingle_session_add_candidate_iceudp(transport, c, NULL);
 	}
 	fs_candidate_list_destroy(candidates);
 	
@@ -557,7 +627,7 @@ jabber_jingle_session_create_content_replace(const JingleSession *sess,
 					     FsCandidate *remote_candidate)
 {
 	xmlnode *jingle = 
-		jabber_jingle_session_create_jingle_element(sess, "content-replace");
+		jabber_jingle_session_add_jingle(sess, NULL, "content-replace");
 	xmlnode *content = NULL;
 	xmlnode *transport = NULL;
 
@@ -577,9 +647,8 @@ jabber_jingle_session_create_content_replace(const JingleSession *sess,
 
 	transport = xmlnode_new_child(content, "transport");
 	xmlnode_set_namespace(transport, "urn:xmpp:tmp:jingle:transports:ice-udp");
-	xmlnode_insert_child(transport,
-			     jabber_jingle_session_create_candidate_info(native_candidate,
-									 remote_candidate));
+	jabber_jingle_session_add_candidate_iceudp(transport, native_candidate,
+						   remote_candidate);
 
 	purple_debug_info("jingle", "End create content modify\n");
 	
@@ -590,7 +659,7 @@ static xmlnode *
 jabber_jingle_session_create_content_accept(const JingleSession *sess)
 {
 	xmlnode *jingle = 
-		jabber_jingle_session_create_jingle_element(sess, "content-accept");
+		jabber_jingle_session_add_jingle(sess, NULL, "content-accept");
 	
     xmlnode *content = xmlnode_new_child(jingle, "content");
 	xmlnode *description = jabber_jingle_session_create_description(sess);
@@ -669,9 +738,9 @@ jabber_jingle_session_content_create_media(JingleSession *session,
 	gchar sender[10] = "";
 
 	if (type & PURPLE_MEDIA_AUDIO) {
-		if (type & PURPLE_MEDIA_SEND_AUDIO)
+		if (type == PURPLE_MEDIA_SEND_AUDIO)
 			strcpy(sender, "initiator");
-		else if (type & PURPLE_MEDIA_RECV_AUDIO)
+		else if (type == PURPLE_MEDIA_RECV_AUDIO)
 			strcpy(sender, "responder");
 		else
 			strcpy(sender, "both");
