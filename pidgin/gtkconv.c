@@ -3156,7 +3156,8 @@ populate_menu_with_options(GtkWidget *menu, PidginConversation *gtkconv, gboolea
 			PurpleAccount *account = purple_conversation_get_account(conv);
 			PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 			PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-			if (PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, chat_info_defaults)) {
+			if (purple_account_get_connection(account) != NULL &&
+					PURPLE_PROTOCOL_PLUGIN_HAS_FUNC(prpl_info, chat_info_defaults)) {
 				components = prpl_info->chat_info_defaults(purple_account_get_connection(account),
 						purple_conversation_get_name(conv));
 			} else {
