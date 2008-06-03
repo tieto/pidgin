@@ -171,7 +171,7 @@ void purple_cmd_unregister(PurpleCmdId id);
  *               include both the default formatting and any extra manual formatting.
  * @param errormsg If the command failed errormsg is filled in with the appropriate error
  *                 message. It must be freed by the caller with g_free().
- * @return A #PurpleCmdStatus indicated if the command succeeded or failed.
+ * @return A #PurpleCmdStatus indicating if the command succeeded or failed.
  */
 PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmdline,
                                   const gchar *markup, gchar **errormsg);
