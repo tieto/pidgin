@@ -265,6 +265,7 @@ purple_gnome_proxy_get_info(void)
 				"'manual' but no proxy server is specified.  Using "
 				"Pidgin's proxy settings instead.\n");
 		g_free(info.host);
+		info.host = NULL;
 		return purple_global_proxy_get_info();
 	}
 
@@ -272,6 +273,7 @@ purple_gnome_proxy_get_info(void)
 			&info.username, NULL, NULL, NULL))
 	{
 		g_free(info.host);
+		info.host = NULL;
 		return purple_global_proxy_get_info();
 	}
 	g_strchomp(info.username);
@@ -280,7 +282,9 @@ purple_gnome_proxy_get_info(void)
 			&info.password, NULL, NULL, NULL))
 	{
 		g_free(info.host);
+		info.host = NULL;
 		g_free(info.username);
+		info.username = NULL;
 		return purple_global_proxy_get_info();
 	}
 	g_strchomp(info.password);
@@ -289,8 +293,11 @@ purple_gnome_proxy_get_info(void)
 			&tmp, NULL, NULL, NULL))
 	{
 		g_free(info.host);
+		info.host = NULL;
 		g_free(info.username);
+		info.username = NULL;
 		g_free(info.password);
+		info.password = NULL;
 		return purple_global_proxy_get_info();
 	}
 	info.port = atoi(tmp);
