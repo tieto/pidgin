@@ -209,7 +209,8 @@ update_to_reflect_account_status(PidginStatusBox *status_box, PurpleAccount *acc
 	for (l = purple_account_get_status_types(account); l != NULL; l = l->next) {
 		PurpleStatusType *status_type = (PurpleStatusType *)l->data;
 
-		if (!purple_status_type_is_user_settable(status_type))
+		if (!purple_status_type_is_user_settable(status_type) ||
+				purple_status_type_is_independent(status_type))
 			continue;
 		status_no++;
 		if (statustype == status_type)
@@ -769,7 +770,8 @@ find_status_type_by_index(const PurpleAccount *account, gint active)
 
 	for (i = 0; l; l = l->next) {
 		PurpleStatusType *status_type = l->data;
-		if (!purple_status_type_is_user_settable(status_type))
+		if (!purple_status_type_is_user_settable(status_type) ||
+				purple_status_type_is_independent(status_type))
 			continue;
 
 		if (active == i)
@@ -1030,12 +1032,13 @@ add_account_statuses(PidginStatusBox *status_box, PurpleAccount *account)
 		PurpleStatusType *status_type = (PurpleStatusType *)l->data;
 		PurpleStatusPrimitive prim;
 
-		if (!purple_status_type_is_user_settable(status_type))
+		if (!purple_status_type_is_user_settable(status_type) ||
+				purple_status_type_is_independent(status_type))
 			continue;
 
-            	prim = purple_status_type_get_primitive(status_type);
+		prim = purple_status_type_get_primitive(status_type);
 
-                pixbuf = pidgin_status_box_get_pixbuf(status_box, prim);
+		pixbuf = pidgin_status_box_get_pixbuf(status_box, prim);
 
 		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box),
 					PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf,
