@@ -14896,7 +14896,7 @@ msgstr "0 people in room"
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d person in room"
-msgstr[1] "%d person in room"
+msgstr[1] "%d people in room"
 
 #: ../pidgin/gtkconv.c:6486 ../pidgin/gtkstatusbox.c:660
 #, fuzzy
