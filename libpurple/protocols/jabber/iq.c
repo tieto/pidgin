@@ -373,6 +373,8 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 			} else if (!strcmp(action, "session-accept")
 					   || !strcmp(action, "content-accept")) {
 				jabber_jingle_session_handle_session_accept(js, packet);
+			} else if (!strcmp(action, "session-info")) {
+				jabber_jingle_session_handle_session_info(js, packet);
 			} else if (!strcmp(action, "session-terminate")) {
 				jabber_jingle_session_handle_session_terminate(js, packet);
 			} else if (!strcmp(action, "transport-info")) {

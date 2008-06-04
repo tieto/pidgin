@@ -33,7 +33,7 @@
 
 G_BEGIN_DECLS
 
-PurpleMedia *jabber_jingle_session_initiate_media(PurpleConnection *gc,
+PurpleMedia *jabber_jingle_session_initiate_media(JabberStream *js,
 						  const char *who,
 						  PurpleMediaStreamType type);
 
@@ -43,6 +43,7 @@ void jabber_jingle_session_terminate_sessions(JabberStream *js);
 /* Jingle message handlers */
 void jabber_jingle_session_handle_content_replace(JabberStream *js, xmlnode *packet);
 void jabber_jingle_session_handle_session_accept(JabberStream *js, xmlnode *packet);
+void jabber_jingle_session_handle_session_info(JabberStream *js, xmlnode *packet);
 void jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet);
 void jabber_jingle_session_handle_session_terminate(JabberStream *js, xmlnode *packet);
 void jabber_jingle_session_handle_transport_info(JabberStream *js, xmlnode *packet);

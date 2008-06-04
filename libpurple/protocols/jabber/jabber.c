@@ -2371,7 +2371,7 @@ PurpleMedia *
 jabber_initiate_media(PurpleConnection *gc, const char *who, 
 		      PurpleMediaStreamType type)
 {
-	return jabber_jingle_session_initiate_media(gc, who, type);
+	return jabber_jingle_session_initiate_media(gc->proto_data, who, type);
 }
 
 gboolean jabber_can_do_media(PurpleConnection *gc, const char *who, 
