@@ -2722,6 +2722,7 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 	PurpleConnection *gc;
 	PurpleChat *chat;
 	GHashTable *hash = NULL;
+	PurpleConversation *conv;
 
 	account = purple_request_fields_get_account(fields, "account");
 	name = purple_request_fields_get_string(fields,  "chat");
@@ -2730,7 +2731,16 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 		return;
 
 	gc = purple_account_get_connection(account);
-	purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
+	/* Create a new conversation now. This will give focus to the new window.
+	 * But it's necessary to pretend that we left the chat, because otherwise
+	 * a new conversation window will pop up when we finally join the chat. */
+	if (!(conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name, account))) {
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
+		purple_conv_chat_left(PURPLE_CONV_CHAT(conv));
+	} else {
+		purple_conversation_present(conv);
+	}
+
 	chat = purple_blist_find_chat(account, name);
 	if (chat == NULL) {
 		PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
