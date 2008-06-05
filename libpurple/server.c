@@ -151,7 +151,6 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 	 */
 	auto_reply_pref = purple_prefs_get_string("/purple/away/auto_reply");
 	if((gc->flags & PURPLE_CONNECTION_AUTO_RESP) &&
-			flags & PURPLE_MESSAGE_AUTO_RESP &&
 			!purple_presence_is_available(presence) &&
 			strcmp(auto_reply_pref, "never")) {
 
