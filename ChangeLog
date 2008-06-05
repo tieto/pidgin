@@ -20,6 +20,8 @@ version 2.5.0 (??/??/2008):
 
 	Finch:
 	* Added "Invite..." menu to chats.
+	* Added "View All Logs" menu in the buddylist to display a list of all IM
+	  logs.
 
 version 2.4.2 (05/17/2008):
 	libpurple:

@@ -2851,6 +2851,12 @@ view_log_cb(GntMenuItem *item, gpointer n)
 }
 
 static void
+view_all_logs_cb(GntMenuItem *item, gpointer n)
+{
+	finch_log_show(PURPLE_LOG_IM, NULL, NULL);
+}
+
+static void
 menu_add_buddy_cb(GntMenuItem *item, gpointer null)
 {
 	purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
@@ -2914,6 +2920,11 @@ create_menu(void)
 	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "view-log");
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), view_log_cb, NULL);
+
+	item = gnt_menuitem_new(_("View All Logs"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "view-all-logs");
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), view_all_logs_cb, NULL);
 
 	item = gnt_menuitem_new(_("Show"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
