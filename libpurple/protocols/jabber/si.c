@@ -63,6 +63,7 @@ typedef struct _JabberSIXfer {
 	char *rxqueue;
 	size_t rxlen;
 	gsize rxmaxlen;
+	int local_streamhost_fd;
 } JabberSIXfer;
 
 static PurpleXfer*
@@ -347,7 +348,11 @@ jabber_si_xfer_bytestreams_send_read_again_resp_cb(gpointer data, gint source,
 	g_free(jsx->rxqueue);
 	jsx->rxqueue = NULL;
 
-	purple_xfer_start(xfer, source, NULL, -1);
+	/* Before actually starting sending the file, we need to wait until the
+	 * recipient sends the IQ result with <streamhost-used/>
+	 */
+	purple_debug_info("jabber", "SOCKS5 connection negotiation completed. "
+					  "Waiting for IQ result to start file transfer.\n");
 }
 
 static void
@@ -608,6 +613,7 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 		PurpleInputCondition cond)
 {
 	PurpleXfer *xfer = data;
+	JabberSIXfer *jsx = xfer->data;
 	int acceptfd;
 
 	purple_debug_info("jabber", "in jabber_si_xfer_bytestreams_send_connected_cb\n");
@@ -623,6 +629,7 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 
 	purple_input_remove(xfer->watcher);
 	close(source);
+	jsx->local_streamhost_fd = -1;
 
 	xfer->watcher = purple_input_add(acceptfd, PURPLE_INPUT_READ,
 					 jabber_si_xfer_bytestreams_send_read_cb, xfer);
@@ -633,16 +640,24 @@ jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
 		gpointer data)
 {
 	PurpleXfer *xfer = data;
-	JabberSIXfer *jsx = xfer->data;
+	JabberSIXfer *jsx;
 	xmlnode *query, *streamhost_used;
 	const char *from, *type, *jid;
 	GList *matched;
 
 	/* TODO: This need to send errors if we don't see what we're looking for */
 
-	/* In the case of a direct file transfer, this is expected to return */
-	if(!jsx)
+	/* Make sure that the xfer is actually still valid and we're not just receiving an old iq response */
+	if (!g_list_find(js->file_transfers, xfer)) {
+		purple_debug_error("jabber", "Got bytestreams response for no longer existing xfer (%p)\n", xfer);
 		return;
+	}
+
+	/* In the case of a direct file transfer, this is expected to return */
+	if(!xfer->data)
+		return;
+
+	jsx = xfer->data;
 
 	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result"))
 		return;
@@ -659,22 +674,33 @@ jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
 	if(!(jid = xmlnode_get_attrib(streamhost_used, "jid")))
 		return;
 
-	purple_debug_info("jabber", "jabber_si_connect_proxy_cb() will be looking at jsx %p: jsx->streamhosts is %p and jid is %p",
+	purple_debug_info("jabber", "jabber_si_connect_proxy_cb() will be looking at jsx %p: jsx->streamhosts is %p and jid is %s\n",
 					  jsx, jsx->streamhosts, jid);
 
 	if(!(matched = g_list_find_custom(jsx->streamhosts, jid, jabber_si_compare_jid)))
 	{
 		gchar *my_jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node,
 			jsx->js->user->domain, jsx->js->user->resource);
-		if (!strcmp(jid, my_jid))
+		if (!strcmp(jid, my_jid)) {
 			purple_debug_info("jabber", "Got local SOCKS5 streamhost-used.\n");
-		else
+			purple_xfer_start(xfer, xfer->fd, NULL, -1);
+		} else {
 			purple_debug_info("jabber", "streamhost-used does not match any proxy that was offered to target\n");
+			purple_xfer_cancel_local(xfer);
+		}
 		g_free(my_jid);
 		return;
 	}
 
-	/* TODO: Clean up the local SOCKS5 proxy - it isn't going to be used.*/
+	/* Clean up the local streamhost - it isn't going to be used.*/
+	if (xfer->watcher > 0) {
+		purple_input_remove(xfer->watcher);
+		xfer->watcher = 0;
+	}
+	if (jsx->local_streamhost_fd >= 0) {
+		close(jsx->local_streamhost_fd);
+		jsx->local_streamhost_fd = -1;
+	}
 
 	jsx->streamhosts = g_list_remove_link(jsx->streamhosts, matched);
 	g_list_foreach(jsx->streamhosts, jabber_si_free_streamhost, NULL);
@@ -711,6 +737,8 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		purple_xfer_cancel_local(xfer);
 		return;
 	}
+
+	jsx->local_streamhost_fd = sock;
 
 	iq = jabber_iq_new_query(jsx->js, JABBER_IQ_SET,
 			"http://jabber.org/protocol/bytestreams");
@@ -956,7 +984,8 @@ static void jabber_si_xfer_free(PurpleXfer *xfer)
 		purple_network_listen_cancel(jsx->listen_data);
 	if (jsx->iq_id != NULL)
 		jabber_iq_remove_callback_by_id(js, jsx->iq_id);
-
+	if (jsx->local_streamhost_fd >= 0)
+		close(jsx->local_streamhost_fd);
 	if (jsx->connect_timeout > 0)
 		purple_timeout_remove(jsx->connect_timeout);
 
@@ -1164,6 +1193,7 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 	{
 		xfer->data = jsx = g_new0(JabberSIXfer, 1);
 		jsx->js = js;
+		jsx->local_streamhost_fd = -1;
 
 		purple_xfer_set_init_fnc(xfer, jabber_si_xfer_init);
 		purple_xfer_set_cancel_send_fnc(xfer, jabber_si_xfer_cancel_send);
@@ -1237,6 +1267,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 		return;
 
 	jsx = g_new0(JabberSIXfer, 1);
+	jsx->local_streamhost_fd = -1;
 
 	for(field = xmlnode_get_child(x, "field"); field; field = xmlnode_get_next_twin(field)) {
 		const char *var = xmlnode_get_attrib(field, "var");
