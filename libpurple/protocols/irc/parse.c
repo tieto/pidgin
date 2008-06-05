@@ -710,5 +710,10 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 
 static void irc_parse_error_cb(struct irc_conn *irc, char *input)
 {
-	purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unrecognized string: %s\n", input);
+	char *clean;
+        /* This really should be escaped somehow that you can tell what
+         * the junk was -- but as it is, it can crash glib. */
+        clean = purple_utf8_salvage(input);
+	purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unrecognized string: %s\n", clean);
+        g_free(clean);
 }

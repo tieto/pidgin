@@ -122,7 +122,11 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	purple_debug(PURPLE_DEBUG_INFO, "irc", "Unrecognized message: %s\n", args[0]);
+	char *clean;
+        /* This, too, should be escaped somehow (smarter) */
+        clean = purple_utf8_salvage(args[0]);
+	purple_debug(PURPLE_DEBUG_INFO, "irc", "Unrecognized message: %s\n", clean);
+        g_free(clean);
 }
 
 void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, char **args)
