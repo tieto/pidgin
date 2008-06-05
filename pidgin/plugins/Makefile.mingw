@@ -84,6 +84,7 @@ plugins: \
 		notify.dll \
 		pidginrc.dll \
 		relnot.dll \
+		sendbutton.dll \
 		spellchk.dll \
 		timestamp_format.dll \
 		timestamp.dll
