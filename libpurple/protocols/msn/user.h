@@ -57,9 +57,6 @@ typedef struct _CurrentMedia
  */
 struct _MsnUser
 {
-#if 0
-	MsnSession *session;    /**< The MSN session.               */
-#endif
 	MsnUserList *userlist;
 
 	char *passport;         /**< The passport account.          */
