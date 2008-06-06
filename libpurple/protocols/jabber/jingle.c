@@ -750,7 +750,7 @@ jabber_jingle_session_send_session_accept(JingleSession *session)
 				media,
 				jabber_jingle_session_content_get_name(jsc),
 				jabber_jingle_session_get_remote_jid(session));
-		purple_debug_info("jabber",
+		purple_debug_info("jingle",
 				  "jabber_session_candidates_prepared: %d candidates\n",
 				  g_list_length(candidates));
 		for (; candidates; candidates = candidates->next) {
@@ -773,7 +773,7 @@ jabber_jingle_session_send_session_accept(JingleSession *session)
 	}
 
 
-	purple_debug_info("jabber", "Sent session accept, starting stream\n");
+	purple_debug_info("jingle", "Sent session accept, starting stream\n");
 	gst_element_set_state(purple_media_get_pipeline(session->media), GST_STATE_PLAYING);
 
 	session->session_started = TRUE;
@@ -856,7 +856,7 @@ jabber_jingle_session_candidates_prepared(PurpleMedia *media, JingleSession *ses
 			JingleSessionContent *jsc = contents->data;
 			GList *candidates = purple_media_get_local_audio_candidates(
 					jabber_jingle_session_get_media(session));
-			purple_debug_info("jabber",
+			purple_debug_info("jingle",
 					  "jabber_session_candidates_prepared: %d candidates\n",
 					  g_list_length(candidates));
 			for (; candidates; candidates = candidates->next) {
@@ -880,7 +880,7 @@ jabber_jingle_session_candidate_pair_established(PurpleMedia *media,
 						 JingleSession *session)
 {
 #if 0
-	purple_debug_info("jabber", "jabber_candidate_pair_established called\n");
+	purple_debug_info("jingle", "jabber_candidate_pair_established called\n");
 	/* if we are the responder, we should send a sesson-accept message */
 	if (!jabber_jingle_session_is_initiator(session) &&
 			!session->session_started) {
@@ -902,7 +902,7 @@ jabber_jingle_session_initiate_media_internal(JingleSession *session,
 						  session->js->gc, "fsrtpconference", remote_jid);
 
 	if (!media) {
-		purple_debug_error("jabber", "Couldn't create fsrtpconference\n");
+		purple_debug_error("jingle", "Couldn't create fsrtpconference\n");
 		return FALSE;
 	}
 
@@ -923,7 +923,7 @@ jabber_jingle_session_initiate_media_internal(JingleSession *session,
 		}
 
 		if (!result) {
-			purple_debug_error("jabber", "Couldn't create stream\n");
+			purple_debug_error("jingle", "Couldn't create stream\n");
 			purple_media_reject(media);
 			return FALSE;
 		}
@@ -978,7 +978,7 @@ jabber_jingle_session_initiate_result_cb(JabberStream *js, xmlnode *packet, gpoi
 				jabber_jingle_session_get_media(session),
 				jabber_jingle_session_content_get_name(jsc),
 				jabber_jingle_session_get_remote_jid(session));
-		purple_debug_info("jabber",
+		purple_debug_info("jingle",
 				  "jabber_session_candidates_prepared: %d candidates\n",
 				  g_list_length(candidates));
 		for (; candidates; candidates = candidates->next) {
@@ -1006,12 +1006,12 @@ jabber_jingle_session_initiate_media(JabberStream *js, const char *who,
 	/* construct JID to send to */
 	jb = jabber_buddy_find(js, who, FALSE);
 	if (!jb) {
-		purple_debug_error("jabber", "Could not find Jabber buddy\n");
+		purple_debug_error("jingle", "Could not find Jabber buddy\n");
 		return NULL;
 	}
 	jbr = jabber_buddy_find_resource(jb, NULL);
 	if (!jbr) {
-		purple_debug_error("jabber", "Could not find buddy's resource\n");
+		purple_debug_error("jingle", "Could not find buddy's resource\n");
 	}
 
 	if ((strchr(who, '/') == NULL) && jbr && (jbr->name != NULL)) {
@@ -1127,17 +1127,17 @@ jabber_jingle_session_handle_session_accept(JabberStream *js, xmlnode *packet)
 		transport = xmlnode_get_child(content, "transport");
 
 		/* fetch codecs from remote party */
-		purple_debug_info("jabber", "get codecs from session-accept\n");
+		purple_debug_info("jingle", "get codecs from session-accept\n");
 		remote_codecs = jabber_jingle_get_codecs(description);
-		purple_debug_info("jabber", "get transport candidates from session accept\n");
+		purple_debug_info("jingle", "get transport candidates from session accept\n");
 		remote_transports = jabber_jingle_get_candidates(transport);
 
-		purple_debug_info("jabber", "Got %d codecs from responder\n",
+		purple_debug_info("jingle", "Got %d codecs from responder\n",
 				  g_list_length(remote_codecs));
-		purple_debug_info("jabber", "Got %d transport candidates from responder\n",
+		purple_debug_info("jingle", "Got %d transport candidates from responder\n",
 				  g_list_length(remote_transports));
 
-		purple_debug_info("jabber", "Setting remote codecs on stream\n");
+		purple_debug_info("jingle", "Setting remote codecs on stream\n");
 
 		purple_media_set_remote_codecs(session->media,
 					       xmlnode_get_attrib(content, "name"),
@@ -1146,12 +1146,12 @@ jabber_jingle_session_handle_session_accept(JabberStream *js, xmlnode *packet)
 
 		codec_intersection = purple_media_get_negotiated_codecs(session->media,
 									xmlnode_get_attrib(content, "name"));
-		purple_debug_info("jabber", "codec_intersection contains %d elems\n",
+		purple_debug_info("jingle", "codec_intersection contains %d elems\n",
 				  g_list_length(codec_intersection));
 		/* get the top codec */
 		if (g_list_length(codec_intersection) > 0) {
 			top = (FsCodec *) codec_intersection->data;
-			purple_debug_info("jabber", "Found a suitable codec on stream = %d\n",
+			purple_debug_info("jingle", "Found a suitable codec on stream = %d\n",
 					  top->id);
 
 			/* we have found a suitable codec, but we will not start the stream
@@ -1180,7 +1180,7 @@ jabber_jingle_session_handle_session_accept(JabberStream *js, xmlnode *packet)
 
 	if (!strcmp(action, "session-accept")) {
 		purple_media_got_accept(jabber_jingle_session_get_media(session));
-		purple_debug_info("jabber", "Got session-accept, starting stream\n");
+		purple_debug_info("jingle", "Got session-accept, starting stream\n");
 		gst_element_set_state(purple_media_get_pipeline(session->media),
 				      GST_STATE_PLAYING);
 	}
@@ -1210,7 +1210,7 @@ jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet)
 	GList *codecs = NULL;
 
 	if (!jingle) {
-		purple_debug_error("jabber", "Malformed request");
+		purple_debug_error("jingle", "Malformed request");
 		return;
 	}
 
@@ -1219,7 +1219,7 @@ jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet)
 
 	if (jabber_jingle_session_find_by_id(js, sid)) {
 		/* This should only happen if you start a session with yourself */
-		purple_debug_error("jabber", "Jingle session with id={%s} already exists\n", sid);
+		purple_debug_error("jingle", "Jingle session with id={%s} already exists\n", sid);
 		return;
 	}
 
@@ -1229,7 +1229,7 @@ jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet)
 			content = xmlnode_get_next_twin(content)) {
 		/* init media */
 		if (!content) {
-			purple_debug_error("jabber", "jingle tag must contain content tag\n");
+			purple_debug_error("jingle", "jingle tag must contain content tag\n");
 			/* should send error here */
 			return;
 		}
@@ -1237,7 +1237,7 @@ jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet)
 		description = xmlnode_get_child(content, "description");
 
 		if (!description) {
-			purple_debug_error("jabber", "content tag must contain description tag\n");
+			purple_debug_error("jingle", "content tag must contain description tag\n");
 			/* we should create an error iq here */
 			return;
 		}
@@ -1254,7 +1254,7 @@ jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet)
 	}
 
 	if (!jabber_jingle_session_initiate_media_internal(session, initiator, initiator)) {
-		purple_debug_error("jabber", "Couldn't start media session with %s\n", initiator);
+		purple_debug_error("jingle", "Couldn't start media session with %s\n", initiator);
 		jabber_jingle_session_destroy(session);
 		/* we should create an error iq here */
 		return;
@@ -1264,7 +1264,7 @@ jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet)
 			content = xmlnode_get_next_twin(content)) {
 		/* init media */
 		if (!content) {
-			purple_debug_error("jabber", "jingle tag must contain content tag\n");
+			purple_debug_error("jingle", "jingle tag must contain content tag\n");
 			/* should send error here */
 			return;
 		}
@@ -1272,7 +1272,7 @@ jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet)
 		description = xmlnode_get_child(content, "description");
 
 		if (!description) {
-			purple_debug_error("jabber", "content tag must contain description tag\n");
+			purple_debug_error("jingle", "content tag must contain description tag\n");
 			/* we should create an error iq here */
 			return;
 		}
@@ -1297,7 +1297,7 @@ jabber_jingle_session_handle_session_terminate(JabberStream *js, xmlnode *packet
 	JingleSession *session = jabber_jingle_session_find_by_id(js, sid);
 
 	if (!session) {
-		purple_debug_error("jabber", "jabber_handle_session_terminate couldn't find session\n");
+		purple_debug_error("jingle", "jabber_handle_session_terminate couldn't find session\n");
 		return;
 	}
 
@@ -1322,7 +1322,7 @@ jabber_jingle_session_handle_transport_info(JabberStream *js, xmlnode *packet)
 	JingleSession *session = jabber_jingle_session_find_by_id(js, sid);
 
 	if (!session)
-		purple_debug_error("jabber", "jabber_handle_session_candidates couldn't find session\n");
+		purple_debug_error("jingle", "jabber_handle_session_candidates couldn't find session\n");
 
 	/* send acknowledement */
 	xmlnode_set_attrib(result->node, "id", xmlnode_get_attrib(packet, "id"));
