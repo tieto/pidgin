@@ -640,7 +640,7 @@ msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_
 {
 	MsnTransaction *trans;
 	purple_debug_info("MSN Notification","Sending ADL with payload: %s\n", payload);
-	trans = msn_transaction_new(cmdproc, "ADL","%" G_GSIZE_FORMAT, payload_len);
+	trans = msn_transaction_new(cmdproc, "ADL", "%i", payload_len);
 	msn_transaction_set_payload(trans, payload, payload_len);
 	msn_cmdproc_send_trans(cmdproc, trans);
 }

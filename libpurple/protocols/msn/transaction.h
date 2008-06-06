@@ -62,7 +62,7 @@ struct _MsnTransaction
 };
 
 MsnTransaction *msn_transaction_new(MsnCmdProc *cmdproc, const char *command,
- 	const char *format, ...) G_GNUC_PRINTF(3, 4);
+	const char *format, ...) G_GNUC_PRINTF(3, 4);
 void msn_transaction_destroy(MsnTransaction *trans);
 
 char *msn_transaction_to_string(MsnTransaction *trans);
