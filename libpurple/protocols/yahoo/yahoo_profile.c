@@ -745,6 +745,7 @@ static char *yahoo_get_photo_url(const char *url_text, const char *name) {
 				p += 1; /* skip only the ' ' */
 				q = strchr(p, ' ');
 				if (q) {
+					g_free(it);
 					it = g_strndup(p, q - p);
 				}
 			}
