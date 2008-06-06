@@ -61,8 +61,8 @@
 #ifdef USE_VV
 #include <gst/farsight/fs-conference-iface.h>
 
-#define XEP_0167_CAP "http://www.xmpp.org/extensions/xep-0167.html"
-#define XEP_0180_CAP "http://www.xmpp.org/extensions/xep-0180.html"
+#define XEP_0167_AUDIO_CAP "urn:xmpp:tmp:jingle:apps:rtp#audio"
+#define XEP_0167_VIDEO_CAP "urn:xmpp:tmp:jingle:apps:rtp#video"
 #define GTALK_CAP "http://www.google.com/session/phone"
 
 #endif
@@ -2395,18 +2395,18 @@ gboolean jabber_can_do_media(PurpleConnection *gc, const char *who,
 	if (type == (PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO)) {
 		purple_debug_info("jabber", 
 				  "Checking audio/video XEP support for %s\n", who);
-		return (jabber_buddy_has_capability(jb, XEP_0167_CAP) ||
+		return (jabber_buddy_has_capability(jb, XEP_0167_AUDIO_CAP) ||
 				jabber_buddy_has_capability(jb, GTALK_CAP)) && 
-				jabber_buddy_has_capability(jb, XEP_0180_CAP);
+				jabber_buddy_has_capability(jb, XEP_0167_VIDEO_CAP);
 	} else if (type == (PURPLE_MEDIA_AUDIO)) {
 		purple_debug_info("jabber", 
 				  "Checking audio XEP support for %s\n", who);
-		return jabber_buddy_has_capability(jb, XEP_0167_CAP) ||
+		return jabber_buddy_has_capability(jb, XEP_0167_AUDIO_CAP) ||
 				jabber_buddy_has_capability(jb, GTALK_CAP);
 	} else if (type == (PURPLE_MEDIA_VIDEO)) {
 		purple_debug_info("jabber", 
 				  "Checking video XEP support for %s\n", who);
-		return jabber_buddy_has_capability(jb, XEP_0180_CAP);
+		return jabber_buddy_has_capability(jb, XEP_0167_VIDEO_CAP);
 	}
 
 	return FALSE;

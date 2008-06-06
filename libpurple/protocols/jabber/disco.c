@@ -148,11 +148,10 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://www.google.com/transport/p2p");
 			SUPPORT_FEATURE("http://www.google.com/transport/raw-udp");
 			SUPPORT_FEATURE("http://www.google.com/session/phone");
-			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0166.html");
-			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0180.html");
-			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0167.html");
-			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0176.html");
-			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0177.html");
+			SUPPORT_FEATURE("urn:xmpp:tmp:jingle");
+			SUPPORT_FEATURE("urn:xmpp:tmp:jingle:apps:rtp#audio");
+			SUPPORT_FEATURE("urn:xmpp:tmp:jingle:apps:rtp#video");
+			SUPPORT_FEATURE("urn:xmpp:tmp:jingle:transports:ice-udp");
 #endif
 		} else {
 			const char *ext = NULL;
