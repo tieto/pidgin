@@ -45,11 +45,8 @@ struct _MsnUserList
 {
 	MsnSession *session;
 
-	/* MsnUsers *users; */
-	/* MsnGroups *groups; */
-
-	GList *users;
-	GList *groups;
+	GList *users; /* Contains MsnUsers */
+	GList *groups; /* Contains MsnGroups */
 
 	GQueue *buddy_icon_requests;
 	int buddy_icon_window;

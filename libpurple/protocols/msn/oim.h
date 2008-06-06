@@ -1,7 +1,7 @@
 /**
  * @file oim.h			Header file for oim.c
  *	Author
- * 		MaYuan<mayuan2006@gmail.com>
+ *		MaYuan<mayuan2006@gmail.com>
  * purple
  *
  * Purple is the legal property of its developers, whose names are too numerous
@@ -127,4 +127,3 @@ void msn_oim_prep_send_msg_info(MsnOim *oim, const char *membername,
 void msn_oim_send_msg(MsnOim *oim);
 
 #endif/* _MSN_OIM_H_*/
-/*endof oim.h*/
