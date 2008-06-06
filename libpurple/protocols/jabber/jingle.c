@@ -1340,3 +1340,4 @@ jabber_jingle_session_handle_transport_info(JabberStream *js, xmlnode *packet)
 }
 
 #endif /* USE_VV */
+

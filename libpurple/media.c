@@ -46,7 +46,7 @@ struct _PurpleMediaSession
 	GstElement *sink;
 	FsSession *session;
 	GHashTable *streams;		/* FsStream list map to participant's name */
-	FsMediaType type;
+	PurpleMediaStreamType type;
 	GHashTable *local_candidates;	/* map to participant's name? */
 	FsCandidate *local_candidate;
 	FsCandidate *remote_candidate;
@@ -274,6 +274,51 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 			break;
 	}
 
+}
+
+FsMediaType
+purple_media_to_fs_media_type(PurpleMediaStreamType type)
+{
+	if (type & PURPLE_MEDIA_AUDIO)
+		return FS_MEDIA_TYPE_AUDIO;
+	else if (type & PURPLE_MEDIA_VIDEO)
+		return FS_MEDIA_TYPE_VIDEO;
+	else
+		return FS_MEDIA_TYPE_APPLICATION;
+}
+
+FsStreamDirection
+purple_media_to_fs_stream_direction(PurpleMediaStreamType type)
+{
+	if ((type & PURPLE_MEDIA_AUDIO) == PURPLE_MEDIA_AUDIO ||
+			(type & PURPLE_MEDIA_VIDEO) == PURPLE_MEDIA_VIDEO)
+		return FS_DIRECTION_BOTH;
+	else if ((type & PURPLE_MEDIA_SEND_AUDIO) ||
+			(type & PURPLE_MEDIA_SEND_VIDEO))
+		return FS_DIRECTION_SEND;
+	else if ((type & PURPLE_MEDIA_RECV_AUDIO) ||
+			(type & PURPLE_MEDIA_RECV_VIDEO))
+		return FS_DIRECTION_RECV;
+	else
+		return FS_DIRECTION_NONE;
+}
+
+PurpleMediaStreamType
+purple_media_from_fs(FsMediaType type, FsStreamDirection direction)
+{
+	PurpleMediaStreamType result = PURPLE_MEDIA_NONE;
+	if (type == FS_MEDIA_TYPE_AUDIO) {
+		if (direction & FS_DIRECTION_SEND)
+			result |= PURPLE_MEDIA_SEND_AUDIO;
+		if (direction & FS_DIRECTION_RECV)
+			result |= PURPLE_MEDIA_RECV_AUDIO;
+	} else if (type == FS_MEDIA_TYPE_VIDEO) {
+		if (direction & FS_DIRECTION_SEND)
+			result |= PURPLE_MEDIA_SEND_VIDEO;
+		if (direction & FS_DIRECTION_RECV)
+			result |= PURPLE_MEDIA_RECV_VIDEO;
+	}
+	return result;
 }
 
 static PurpleMediaSession*
@@ -824,7 +869,7 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 
 		session->id = g_strdup(sess_id);
 		session->media = media;
-		session->type = type;
+		session->type = purple_media_from_fs(type, type_direction);
 
 		purple_media_add_session(media, session);
 	}
@@ -867,14 +912,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *w
 	FsStreamDirection type_direction;
 
 	if (type & PURPLE_MEDIA_AUDIO) {
-		if (type & PURPLE_MEDIA_SEND_AUDIO && type & PURPLE_MEDIA_RECV_AUDIO)
-			type_direction = FS_DIRECTION_BOTH;
-		else if (type & PURPLE_MEDIA_SEND_AUDIO)
-			type_direction = FS_DIRECTION_SEND;
-		else if (type & PURPLE_MEDIA_RECV_AUDIO)
-			type_direction = FS_DIRECTION_RECV;
-		else
-			type_direction = FS_DIRECTION_NONE;
+		type_direction = purple_media_to_fs_stream_direction(type & PURPLE_MEDIA_AUDIO);
 
 		if (!purple_media_add_stream_internal(media, sess_id, who,
 						      FS_MEDIA_TYPE_AUDIO, type_direction,
@@ -883,14 +921,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *w
 		}
 	}
 	if (type & PURPLE_MEDIA_VIDEO) {
-		if (type & PURPLE_MEDIA_SEND_VIDEO && type & PURPLE_MEDIA_RECV_VIDEO)
-			type_direction = FS_DIRECTION_BOTH;
-		else if (type & PURPLE_MEDIA_SEND_VIDEO)
-			type_direction = FS_DIRECTION_SEND;
-		else if (type & PURPLE_MEDIA_RECV_VIDEO)
-			type_direction = FS_DIRECTION_RECV;
-		else
-			type_direction = FS_DIRECTION_NONE;
+		type_direction = purple_media_to_fs_stream_direction(type & PURPLE_MEDIA_VIDEO);
 
 		if (!purple_media_add_stream_internal(media, sess_id, who,
 						      FS_MEDIA_TYPE_VIDEO, type_direction,

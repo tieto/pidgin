@@ -272,10 +272,10 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 	purple_media_video_init_recv(&videorecvbin);
 
 	for (; sessions; sessions = sessions->next) {
-		if (purple_media_get_session_type(media, sessions->data) == FS_MEDIA_TYPE_AUDIO) {
+		if (purple_media_get_session_type(media, sessions->data) & PURPLE_MEDIA_AUDIO) {
 			purple_media_set_src(media, sessions->data, audiosendbin);
 			purple_media_set_sink(media, sessions->data, audiorecvbin);
-		} else if (purple_media_get_session_type(media, sessions->data) == FS_MEDIA_TYPE_VIDEO) {
+		} else if (purple_media_get_session_type(media, sessions->data) & PURPLE_MEDIA_VIDEO) {
 			purple_media_set_src(media, sessions->data, videosendbin);
 			purple_media_set_sink(media, sessions->data, videorecvbin);
 		}

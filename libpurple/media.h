@@ -51,6 +51,7 @@ typedef struct _PurpleMediaPrivate PurpleMediaPrivate;
 typedef struct _PurpleMediaSession PurpleMediaSession;
 
 typedef enum {
+	PURPLE_MEDIA_NONE	= 0,
 	PURPLE_MEDIA_RECV_AUDIO = 1 << 0,
 	PURPLE_MEDIA_SEND_AUDIO = 1 << 1,
 	PURPLE_MEDIA_RECV_VIDEO = 1 << 2,
@@ -71,6 +72,10 @@ struct _PurpleMedia
 };
 
 GType purple_media_get_type(void);
+
+FsMediaType purple_media_to_fs_media_type(PurpleMediaStreamType type);
+FsStreamDirection purple_media_to_fs_stream_direction(PurpleMediaStreamType type);
+PurpleMediaStreamType purple_media_from_fs(FsMediaType type, FsStreamDirection direction);
 
 GList *purple_media_get_session_names(PurpleMedia *media);
 
