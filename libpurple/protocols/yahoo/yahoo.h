@@ -30,6 +30,7 @@
 
 #define YAHOO_PAGER_HOST "scs.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
+#define YAHOO_PAGER_PORT_P2P 5101
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 #define YAHOO_MAIL_URL "https://login.yahoo.com/config/login?.src=ym"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
@@ -111,6 +112,14 @@ struct yahoo_buddy_icon_upload_data {
 	int pos;
 	int fd;
 	guint watcher;
+};
+
+struct yahoo_p2p_data	{
+	PurpleConnection *gc;
+	char *host_ip;		/*also we use it as a handle*/
+	int session_id;
+	char *host_username;
+	int val_13;
 };
 
 struct _YchtConn;
