@@ -133,13 +133,13 @@ pidgin_media_class_init (PidginMediaClass *klass)
 			"Send level",
 			"The GstElement of this media's send 'level'",
 			GST_TYPE_ELEMENT,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, PROP_RECV_LEVEL,
 			g_param_spec_object("recv-level",
 			"Receive level",
 			"The GstElement of this media's recv 'level'",
 			GST_TYPE_ELEMENT,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_READWRITE));
 
 	pidgin_media_signals[MESSAGE] = g_signal_new("message", G_TYPE_FROM_CLASS(klass),
 					G_SIGNAL_RUN_LAST, 0, NULL, NULL,
@@ -224,7 +224,7 @@ level_message_cb(GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 static void
 pidgin_media_disconnect_levels(PurpleMedia *media, PidginMedia *gtkmedia)
 {
-	GstElement *element = purple_media_get_audio_pipeline(media);
+	GstElement *element = purple_media_get_pipeline(media);
 	gulong handler_id = g_signal_handler_find(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))),
 						  G_SIGNAL_MATCH_FUNC | G_SIGNAL_MATCH_DATA, 0, 0, 
 						  NULL, G_CALLBACK(level_message_cb), gtkmedia);
@@ -256,10 +256,40 @@ pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
 static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
-	GstElement *element = purple_media_get_audio_pipeline(media);
+	GstElement *element = purple_media_get_pipeline(media);
+
+	GstElement *audiosendbin, *audiosendlevel;
+	GstElement *audiorecvbin, *audiorecvlevel;
+	GstElement *videosendbin;
+	GstElement *videorecvbin;
+
+	GList *sessions = purple_media_get_session_names(media);
+
+	purple_media_audio_init_src(&audiosendbin, &audiosendlevel);
+	purple_media_audio_init_recv(&audiorecvbin, &audiorecvlevel);
+
+	purple_media_video_init_src(&videosendbin);
+	purple_media_video_init_recv(&videorecvbin);
+
+	for (; sessions; sessions = sessions->next) {
+		if (purple_media_get_session_type(media, sessions->data) == FS_MEDIA_TYPE_AUDIO) {
+			purple_media_set_src(media, sessions->data, audiosendbin);
+			purple_media_set_sink(media, sessions->data, audiorecvbin);
+		} else if (purple_media_get_session_type(media, sessions->data) == FS_MEDIA_TYPE_VIDEO) {
+			purple_media_set_src(media, sessions->data, videosendbin);
+			purple_media_set_sink(media, sessions->data, videorecvbin);
+		}
+	}
+	g_list_free(sessions);
+
+	if (audiosendlevel && audiorecvlevel) {
+		g_object_set(gtkmedia, "send-level", audiosendlevel,
+				       "recv-level", audiorecvlevel,
+				       NULL);
+	}
+
 	gst_bus_add_signal_watch(GST_BUS(gst_pipeline_get_bus(GST_PIPELINE(element))));
 	g_signal_connect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))), "message", G_CALLBACK(level_message_cb), gtkmedia);
-	printf("\n\nbus: %p\n", gst_pipeline_get_bus(GST_PIPELINE(element)));
 }
 
 static void
@@ -376,11 +406,10 @@ pidgin_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 }
 
 GtkWidget *
-pidgin_media_new(PurpleMedia *media, GstElement *sendlevel, GstElement *recvlevel)
+pidgin_media_new(PurpleMedia *media)
 {
-	PidginMedia *gtkmedia = g_object_new(pidgin_media_get_type(), "media", media,
-			"send-level", sendlevel,
-			"recv-level", recvlevel, NULL);
+	PidginMedia *gtkmedia = g_object_new(pidgin_media_get_type(),
+					     "media", media, NULL);
 	return GTK_WIDGET(gtkmedia);
 }
 

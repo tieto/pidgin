@@ -48,6 +48,7 @@ G_BEGIN_DECLS
 typedef struct _PurpleMedia PurpleMedia;
 typedef struct _PurpleMediaClass PurpleMediaClass;
 typedef struct _PurpleMediaPrivate PurpleMediaPrivate;
+typedef struct _PurpleMediaSession PurpleMediaSession;
 
 typedef enum {
 	PURPLE_MEDIA_RECV_AUDIO = 1 << 0,
@@ -71,20 +72,18 @@ struct _PurpleMedia
 
 GType purple_media_get_type(void);
 
+GList *purple_media_get_session_names(PurpleMedia *media);
+
 void purple_media_get_elements(PurpleMedia *media, GstElement **audio_src, GstElement **audio_sink,
 						  GstElement **video_src, GstElement **video_sink);
 
-void purple_media_set_audio_src(PurpleMedia *media, GstElement *video_src);
-void purple_media_set_audio_sink(PurpleMedia *media, GstElement *video_src);
-void purple_media_set_video_src(PurpleMedia *media, GstElement *video_src);
-void purple_media_set_video_sink(PurpleMedia *media, GstElement *video_src);
+void purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src);
+void purple_media_set_sink(PurpleMedia *media, const gchar *sess_id, GstElement *src);
 
-GstElement *purple_media_get_audio_src(PurpleMedia *media);
-GstElement *purple_media_get_audio_sink(PurpleMedia *media);
-GstElement *purple_media_get_video_src(PurpleMedia *media);
-GstElement *purple_media_get_video_sink(PurpleMedia *media);
+GstElement *purple_media_get_src(PurpleMedia *media, const gchar *sess_id);
+GstElement *purple_media_get_sink(PurpleMedia *media, const gchar *sess_id);
 
-GstElement *purple_media_get_audio_pipeline(PurpleMedia *media);
+GstElement *purple_media_get_pipeline(PurpleMedia *media);
 
 PurpleConnection *purple_media_get_connection(PurpleMedia *media);
 const char *purple_media_get_screenname(PurpleMedia *media);
@@ -111,20 +110,23 @@ void purple_media_audio_init_src(GstElement **sendbin,
 void purple_media_video_init_src(GstElement **sendbin);
 
 void purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel);
+void purple_media_video_init_recv(GstElement **sendbin);
 
-gboolean purple_media_add_stream(PurpleMedia *media, const gchar *who,
+gboolean purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who,
 			     PurpleMediaStreamType type, const gchar *transmitter);
-void purple_media_remove_stream(PurpleMedia *media, const gchar *who, PurpleMediaStreamType type);
+void purple_media_remove_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who);
 
-GList *purple_media_get_local_audio_candidates(PurpleMedia *media);
-GList *purple_media_get_negotiated_audio_codecs(PurpleMedia *media);
+PurpleMediaStreamType purple_media_get_session_type(PurpleMedia *media, const gchar *sess_id);
 
-GList *purple_media_get_local_audio_codecs(PurpleMedia *media);
-void purple_media_add_remote_audio_candidates(PurpleMedia *media, const gchar *name,	
-					       GList *remote_candidates);
-FsCandidate *purple_media_get_local_candidate(PurpleMedia *media);
-FsCandidate *purple_media_get_remote_candidate(PurpleMedia *media);
-void purple_media_set_remote_audio_codecs(PurpleMedia *media, const gchar *name, GList *codecs);
+GList *purple_media_get_negotiated_codecs(PurpleMedia *media, const gchar *sess_id);
+
+GList *purple_media_get_local_codecs(PurpleMedia *media, const gchar *sess_id);
+void purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
+					const gchar *name, GList *remote_candidates);
+GList *purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, const gchar *name);
+FsCandidate *purple_media_get_local_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name);
+FsCandidate *purple_media_get_remote_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name);
+void purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id, const gchar *name, GList *codecs);
 
 G_END_DECLS
 

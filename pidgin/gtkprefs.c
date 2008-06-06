@@ -2198,6 +2198,7 @@ media_page()
 				   _("Default"), "gconfvideosrc",
 				   _("Video4Linux"), "v4lsrc",
 				   _("Video4Linux2"), "v4l2src",
+				   _("Video Test Source"), "videotestsrc",
 				   NULL);
 
 	gtk_size_group_add_widget(sg, dd);

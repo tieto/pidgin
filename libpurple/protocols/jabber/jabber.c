@@ -2391,7 +2391,6 @@ gboolean jabber_can_do_media(PurpleConnection *gc, const char *who,
 		purple_debug_error("jabber", "Could not find buddy\n");
 		return FALSE;
 	}
-#if 0	/* These can be added once we support video */
 	/* XMPP will only support two-way media, AFAIK... */
 	if (type == (PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO)) {
 		purple_debug_info("jabber", 
@@ -2399,21 +2398,17 @@ gboolean jabber_can_do_media(PurpleConnection *gc, const char *who,
 		return (jabber_buddy_has_capability(jb, XEP_0167_CAP) ||
 				jabber_buddy_has_capability(jb, GTALK_CAP)) && 
 				jabber_buddy_has_capability(jb, XEP_0180_CAP);
-	} else 
-#endif
-	if (type == (PURPLE_MEDIA_AUDIO)) {
+	} else if (type == (PURPLE_MEDIA_AUDIO)) {
 		purple_debug_info("jabber", 
 				  "Checking audio XEP support for %s\n", who);
 		return jabber_buddy_has_capability(jb, XEP_0167_CAP) ||
 				jabber_buddy_has_capability(jb, GTALK_CAP);
-	}
-#if 0
-	 else if (type == (PURPLE_MEDIA_VIDEO)) {
+	} else if (type == (PURPLE_MEDIA_VIDEO)) {
 		purple_debug_info("jabber", 
 				  "Checking video XEP support for %s\n", who);
 		return jabber_buddy_has_capability(jb, XEP_0180_CAP);
 	}
-#endif
+
 	return FALSE;
 }
 

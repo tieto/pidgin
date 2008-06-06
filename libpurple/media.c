@@ -38,34 +38,31 @@
 #include <gst/interfaces/propertyprobe.h>
 #include <gst/farsight/fs-conference-iface.h>
 
+struct _PurpleMediaSession
+{
+	gchar *id;
+	PurpleMedia *media;
+	GstElement *src;
+	GstElement *sink;
+	FsSession *session;
+	GHashTable *streams;		/* FsStream list map to participant's name */
+	FsMediaType type;
+	GHashTable *local_candidates;	/* map to participant's name? */
+	FsCandidate *local_candidate;
+	FsCandidate *remote_candidate;
+};
+
 struct _PurpleMediaPrivate
 {
 	FsConference *conference;
 
 	char *name;
 	PurpleConnection *connection;
-	GstElement *audio_src;
-	GstElement *audio_sink;
-	GstElement *video_src;
-	GstElement *video_sink;
 
-	FsSession *audio_session;
-	FsSession *video_session;
+	GHashTable *sessions;	/* PurpleMediaSession table */
+	GHashTable *participants; /* FsParticipant table */
 
-	GList *participants; 	/* FsParticipant list */
-	GList *audio_streams;	/* FsStream list */
-	GList *video_streams;	/* FsStream list */
-
-	/* might be able to just combine these two */
-	GstElement *audio_pipeline;
-	GstElement *video_pipeline;
-
-	/* this will need to be stored/handled per stream
-	 * once having multiple streams is supported */
-	GList *local_candidates;
-
-	FsCandidate *local_candidate;
-	FsCandidate *remote_candidate;
+	GstElement *pipeline;
 };
 
 #define PURPLE_MEDIA_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PURPLE_TYPE_MEDIA, PurpleMediaPrivate))
@@ -88,6 +85,7 @@ enum {
 	REJECT,
 	GOT_HANGUP,
 	GOT_ACCEPT,
+	NEW_CANDIDATE,
 	CANDIDATES_PREPARED,
 	CANDIDATE_PAIR,
 	LAST_SIGNAL
@@ -99,12 +97,6 @@ enum {
 	PROP_FS_CONFERENCE,
 	PROP_NAME,
 	PROP_CONNECTION,
-	PROP_AUDIO_SRC,
-	PROP_AUDIO_SINK,
-	PROP_VIDEO_SRC,
-	PROP_VIDEO_SINK,
-	PROP_VIDEO_SESSION,
-	PROP_AUDIO_SESSION
 };
 
 GType
@@ -160,48 +152,6 @@ purple_media_class_init (PurpleMediaClass *klass)
 			"The PurpleConnection associated with this session",
 			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
 
-	g_object_class_install_property(gobject_class, PROP_AUDIO_SRC,
-			g_param_spec_object("audio-src",
-			"Audio source",
-			"The GstElement used to source audio",
-			GST_TYPE_ELEMENT,
-			G_PARAM_READWRITE));
-
-	g_object_class_install_property(gobject_class, PROP_AUDIO_SINK,
-			g_param_spec_object("audio-sink",
-			"Audio sink",
-			"The GstElement used to sink audio",
-			GST_TYPE_ELEMENT,
-			G_PARAM_READWRITE));
-
-	g_object_class_install_property(gobject_class, PROP_VIDEO_SRC,
-			g_param_spec_object("video-src",
-			"Video source",
-			"The GstElement used to source video",
-			GST_TYPE_ELEMENT,
-			G_PARAM_READWRITE));
-
-	g_object_class_install_property(gobject_class, PROP_VIDEO_SINK,
-			g_param_spec_object("video-sink",
-			"Audio source",
-			"The GstElement used to sink video",
-			GST_TYPE_ELEMENT,
-			G_PARAM_READWRITE));
-
-	g_object_class_install_property(gobject_class, PROP_VIDEO_SESSION,
-			g_param_spec_object("video-session",
-			"Video stream",
-			"The FarsightStream used for video",
-			FS_TYPE_SESSION,
-			G_PARAM_READWRITE));
-
-	g_object_class_install_property(gobject_class, PROP_AUDIO_SESSION,
-			g_param_spec_object("audio-session",
-			"Audio stream",
-			"The FarsightStream used for audio",
-			FS_TYPE_SESSION,
-			G_PARAM_READWRITE));
-
 	purple_media_signals[READY] = g_signal_new("ready", G_TYPE_FROM_CLASS(klass),
 				 	 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__VOID,
@@ -230,6 +180,11 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE, 0);
+	purple_media_signals[NEW_CANDIDATE] = g_signal_new("new-candidate", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 purple_smarshal_VOID__POINTER_POINTER_OBJECT,
+					 G_TYPE_NONE, 3, G_TYPE_POINTER,
+					 G_TYPE_POINTER, FS_TYPE_CANDIDATE);
 	purple_media_signals[CANDIDATES_PREPARED] = g_signal_new("candidates-prepared", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__VOID,
@@ -254,58 +209,14 @@ static void
 purple_media_finalize (GObject *media)
 {
 	PurpleMediaPrivate *priv = PURPLE_MEDIA_GET_PRIVATE(media);
-	GList *iter;
 	purple_debug_info("media","purple_media_finalize\n");
 
 	g_free(priv->name);
 
-	if (priv->audio_pipeline) {
-		gst_element_set_state(priv->audio_pipeline, GST_STATE_NULL);
-		gst_object_unref(priv->audio_pipeline);
+	if (priv->pipeline) {
+		gst_element_set_state(priv->pipeline, GST_STATE_NULL);
+		gst_object_unref(priv->pipeline);
 	}
-	if (priv->video_pipeline) {
-		gst_element_set_state(priv->video_pipeline, GST_STATE_NULL);
-		gst_object_unref(priv->video_pipeline);
-	}
-
-	if (priv->audio_src)
-		gst_object_unref(priv->audio_src);
-	if (priv->audio_sink)
-		gst_object_unref(priv->audio_sink);
-	if (priv->video_src)
-		gst_object_unref(priv->video_src);
-	if (priv->video_sink)
-		gst_object_unref(priv->video_sink);
-
-	for (iter = priv->audio_streams; iter; iter = g_list_next(iter)) {
-		g_object_unref(iter->data);
-	}
-	g_list_free(priv->audio_streams);
-
-	for (iter = priv->video_streams; iter; iter = g_list_next(iter)) {
-		g_object_unref(iter->data);
-	}
-	g_list_free(priv->video_streams);
-
-	if (priv->audio_session)
-		g_object_unref(priv->audio_session);
-	if (priv->video_session)
-		g_object_unref(priv->video_session);
-
-	for (iter = priv->participants; iter; iter = g_list_next(iter)) {
-		g_object_unref(iter->data);
-	}
-	g_list_free(priv->participants);
-
-	for (iter = priv->local_candidates; iter; iter = g_list_next(iter)) {
-		g_free(iter->data);
-	}
-	g_list_free(priv->local_candidates);
-
-	if (priv->local_candidate)
-		g_free(priv->local_candidate);
-	if (priv->remote_candidate)
-		g_free(priv->remote_candidate);
 
 	gst_object_unref(priv->conference);
 
@@ -334,47 +245,6 @@ purple_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 		case PROP_CONNECTION:
 			media->priv->connection = g_value_get_pointer(value);
 			break;
-		case PROP_AUDIO_SRC:
-			if (media->priv->audio_src)
-				gst_object_unref(media->priv->audio_src);
-			media->priv->audio_src = g_value_get_object(value);
-			gst_object_ref(media->priv->audio_src);
-			gst_bin_add(GST_BIN(purple_media_get_audio_pipeline(media)),
-				    media->priv->audio_src);
-			break;
-		case PROP_AUDIO_SINK:
-			if (media->priv->audio_sink)
-				gst_object_unref(media->priv->audio_sink);
-			media->priv->audio_sink = g_value_get_object(value);
-			gst_object_ref(media->priv->audio_sink);
-			gst_bin_add(GST_BIN(purple_media_get_audio_pipeline(media)),
-				    media->priv->audio_sink);
-			break;
-		case PROP_VIDEO_SRC:
-			if (media->priv->video_src)
-				gst_object_unref(media->priv->video_src);
-			media->priv->video_src = g_value_get_object(value);
-			gst_object_ref(media->priv->video_src);
-			break;
-		case PROP_VIDEO_SINK:
-			if (media->priv->video_sink)
-				gst_object_unref(media->priv->video_sink);
-			media->priv->video_sink = g_value_get_object(value);
-			gst_object_ref(media->priv->video_sink);
-			break;
-		case PROP_VIDEO_SESSION:
-			if (media->priv->video_session)
-				g_object_unref(media->priv->video_session);
-			media->priv->video_session = g_value_get_object(value);
-			gst_object_ref(media->priv->video_session);
-			break;
-		case PROP_AUDIO_SESSION:
-			if (media->priv->audio_session)
-				g_object_unref(media->priv->audio_session);
-			media->priv->audio_session = g_value_get_object(value);
-			gst_object_ref(media->priv->audio_session);
-			break;
-
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 			break;
@@ -399,30 +269,102 @@ purple_media_get_property (GObject *object, guint prop_id, GValue *value, GParam
 		case PROP_CONNECTION:
 			g_value_set_pointer(value, media->priv->connection);
 			break;
-		case PROP_AUDIO_SRC:
-			g_value_set_object(value, media->priv->audio_src);
-			break;
-		case PROP_AUDIO_SINK:
-			g_value_set_object(value, media->priv->audio_sink);
-			break;
-		case PROP_VIDEO_SRC:
-			g_value_set_object(value, media->priv->video_src);
-			break;
-		case PROP_VIDEO_SINK:
-			g_value_set_object(value, media->priv->video_sink);
-			break;
-		case PROP_VIDEO_SESSION:
-			g_value_set_object(value, media->priv->video_session);
-			break;
-		case PROP_AUDIO_SESSION:
-			g_value_set_object(value, media->priv->audio_session);
-			break;
-
 		default:	
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);	
 			break;
 	}
 
+}
+
+static PurpleMediaSession*
+purple_media_get_session(PurpleMedia *media, const gchar *sess_id)
+{
+	return (PurpleMediaSession*) (media->priv->sessions) ?
+			g_hash_table_lookup(media->priv->sessions, sess_id) : NULL;
+}
+
+static FsParticipant*
+purple_media_get_participant(PurpleMedia *media, const gchar *name)
+{
+	return (FsParticipant*) (media->priv->participants) ?
+			g_hash_table_lookup(media->priv->participants, name) : NULL;
+}
+
+static FsStream*
+purple_media_session_get_stream(PurpleMediaSession *session, const gchar *name)
+{
+	return (FsStream*) (session->streams) ?
+			g_hash_table_lookup(session->streams, name) : NULL;
+}
+
+static GList*
+purple_media_session_get_local_candidates(PurpleMediaSession *session, const gchar *name)
+{
+	return (GList*) (session->local_candidates) ?
+			g_hash_table_lookup(session->local_candidates, name) : NULL;
+}
+
+static void
+purple_media_add_session(PurpleMedia *media, PurpleMediaSession *session)
+{
+	if (!media->priv->sessions) {
+		purple_debug_info("media", "Creating hash table for sessions\n");
+		media->priv->sessions = g_hash_table_new(g_str_hash, g_str_equal);
+	}
+	g_hash_table_insert(media->priv->sessions, g_strdup(session->id), session);
+}
+
+static FsParticipant *
+purple_media_add_participant(PurpleMedia *media, const gchar *name)
+{
+	FsParticipant *participant = purple_media_get_participant(media, name);
+
+	if (participant)
+		return participant;
+
+	participant = fs_conference_new_participant(media->priv->conference, g_strdup(name), NULL);
+
+	if (!media->priv->participants) {
+		purple_debug_info("media", "Creating hash table for participants\n");
+		media->priv->participants = g_hash_table_new(g_str_hash, g_str_equal);
+	}
+
+	g_hash_table_insert(media->priv->participants, g_strdup(name), participant);
+
+	return participant;
+}
+
+static void
+purple_media_insert_stream(PurpleMediaSession *session, const gchar *name, FsStream *stream)
+{
+	if (!session->streams) {
+		purple_debug_info("media", "Creating hash table for streams\n");
+		session->streams = g_hash_table_new(g_str_hash, g_str_equal);
+	}
+
+	g_hash_table_insert(session->streams, g_strdup(name), stream);
+}
+
+static void
+purple_media_insert_local_candidate(PurpleMediaSession *session, const gchar *name,
+				     FsCandidate *candidate)
+{
+	GList *candidates = purple_media_session_get_local_candidates(session, name);
+
+	candidates = g_list_append(candidates, candidate);
+
+	if (!session->local_candidates) {
+		purple_debug_info("media", "Creating hash table for local candidates\n");
+		session->local_candidates = g_hash_table_new(g_str_hash, g_str_equal);
+	}
+
+	g_hash_table_insert(session->local_candidates, g_strdup(name), candidates);
+}
+
+GList *
+purple_media_get_session_names(PurpleMedia *media)
+{
+	return g_hash_table_get_keys(media->priv->sessions);
 }
 
 void 
@@ -441,70 +383,57 @@ purple_media_get_elements(PurpleMedia *media, GstElement **audio_src, GstElement
 }
 
 void 
-purple_media_set_audio_src(PurpleMedia *media, GstElement *audio_src)
+purple_media_set_src(PurpleMedia *media, const gchar *sess_id, GstElement *src)
 {
-	g_object_set(G_OBJECT(media), "audio-src", audio_src, NULL);
+	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
+	GstPad *sinkpad;
+	GstPad *srcpad;
+	
+	if (session->src)
+		gst_object_unref(session->src);
+	session->src = src;
+	gst_bin_add(GST_BIN(purple_media_get_pipeline(media)),
+		    session->src);
+
+	g_object_get(session->session, "sink-pad", &sinkpad, NULL);
+	srcpad = gst_element_get_static_pad(src, "ghostsrc");
+	purple_debug_info("media", "connecting pad: %s\n", 
+			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK
+			  ? "success" : "failure");
 }
 
 void 
-purple_media_set_audio_sink(PurpleMedia *media, GstElement *audio_sink)
+purple_media_set_sink(PurpleMedia *media, const gchar *sess_id, GstElement *sink)
 {
-	g_object_set(G_OBJECT(media), "audio-sink", audio_sink, NULL);
-}
-
-void 
-purple_media_set_video_src(PurpleMedia *media, GstElement *video_src)
-{
-	g_object_set(G_OBJECT(media), "video-src", video_src, NULL);
-}
-
-void 
-purple_media_set_video_sink(PurpleMedia *media, GstElement *video_sink)
-{
-	g_object_set(G_OBJECT(media), "video-sink", video_sink, NULL);
+	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
+	if (session->sink)
+		gst_object_unref(session->sink);
+	session->sink = sink;
+	gst_bin_add(GST_BIN(purple_media_get_pipeline(media)),
+		    session->sink);
 }
 
 GstElement *
-purple_media_get_audio_src(PurpleMedia *media)
+purple_media_get_src(PurpleMedia *media, const gchar *sess_id)
 {
-	GstElement *ret;
-	g_object_get(G_OBJECT(media), "audio-src", &ret, NULL);
-	return ret;
+	return purple_media_get_session(media, sess_id)->src;
 }
 
 GstElement *
-purple_media_get_audio_sink(PurpleMedia *media)
+purple_media_get_sink(PurpleMedia *media, const gchar *sess_id)
 {
-	GstElement *ret;
-	g_object_get(G_OBJECT(media), "audio-sink", &ret, NULL);
-	return ret;
+	return purple_media_get_session(media, sess_id)->src;
 }
 
 GstElement *
-purple_media_get_video_src(PurpleMedia *media)
+purple_media_get_pipeline(PurpleMedia *media)
 {
-	GstElement *ret;
-	g_object_get(G_OBJECT(media), "video-src", &ret, NULL);
-	return ret;
-}
-
-GstElement *
-purple_media_get_video_sink(PurpleMedia *media)
-{
-	GstElement *ret;
-	g_object_get(G_OBJECT(media), "video-sink", &ret, NULL);
-	return ret;
-}
-
-GstElement *
-purple_media_get_audio_pipeline(PurpleMedia *media)
-{
-	if (!media->priv->audio_pipeline) {
-		media->priv->audio_pipeline = gst_pipeline_new(media->priv->name);
-		gst_bin_add(GST_BIN(media->priv->audio_pipeline), GST_ELEMENT(media->priv->conference));
+	if (!media->priv->pipeline) {
+		media->priv->pipeline = gst_pipeline_new(media->priv->name);
+		gst_bin_add(GST_BIN(media->priv->pipeline), GST_ELEMENT(media->priv->conference));
 	}
 
-	return media->priv->audio_pipeline;
+	return media->priv->pipeline;
 }
 
 PurpleConnection *
@@ -672,7 +601,7 @@ purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
 
 	purple_debug_info("media", "purple_media_audio_init_src\n");
 
-	*sendbin = gst_bin_new("sendbin");
+	*sendbin = gst_bin_new("purplesendaudiobin");
 	src = gst_element_factory_make("alsasrc", "asrc");
 	*sendlevel = gst_element_factory_make("level", "sendlevel");
 	gst_bin_add_many(GST_BIN(*sendbin), src, *sendlevel, NULL);
@@ -700,6 +629,46 @@ purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
 }
 
 void
+purple_media_video_init_src(GstElement **sendbin)
+{
+	GstElement *src;
+	GstPad *pad;
+	GstPad *ghost;
+	const gchar *video_plugin = purple_prefs_get_string("/purple/media/video/plugin");
+	const gchar *video_device = purple_prefs_get_string("/purple/media/video/device");
+
+	purple_debug_info("media", "purple_media_video_init_src\n");
+
+	*sendbin = gst_bin_new("purplesendvideobin");
+	src = gst_element_factory_make(video_plugin, "videosrc");
+	gst_bin_add(GST_BIN(*sendbin), src);
+
+	if (!strcmp(video_plugin, "videotestsrc")) {
+		/* unless is-live is set to true it doesn't throttle videotestsrc */
+		g_object_set (G_OBJECT(src), "is-live", TRUE, NULL);
+	}
+	pad = gst_element_get_pad(src, "src");
+	ghost = gst_ghost_pad_new("ghostsrc", pad);
+	gst_element_add_pad(*sendbin, ghost);
+
+	/* set current video device on "src"... */
+	if (video_device) {
+		GList *devices = purple_media_get_devices(src);
+		GList *dev = devices;
+		purple_debug_info("media", "Setting device of GstElement src to %s\n",
+				video_device);
+		for (; dev ; dev = dev->next) {
+			GValue *device = (GValue *) dev->data;
+			char *name = purple_media_get_device_name(src, device);
+			if (strcmp(name, video_device) == 0) {
+				purple_media_element_set_device(src, device);
+			}
+			g_free(name);
+		}
+	}
+}
+
+void
 purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
 {
 	GstElement *sink;
@@ -707,7 +676,7 @@ purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
 
 	purple_debug_info("media", "purple_media_audio_init_recv\n");
 
-	*recvbin = gst_bin_new("pidginrecvbin");
+	*recvbin = gst_bin_new("pidginrecvaudiobin");
 	sink = gst_element_factory_make("alsasink", "asink");
 	g_object_set(G_OBJECT(sink), "sync", FALSE, NULL);
 	*recvlevel = gst_element_factory_make("level", "recvlevel");
@@ -721,20 +690,54 @@ purple_media_audio_init_recv(GstElement **recvbin, GstElement **recvlevel)
 	purple_debug_info("media", "purple_media_audio_init_recv end\n");
 }
 
-static void
-purple_media_new_local_candidate(FsStream *stream,
-				  FsCandidate *local_candidate,
-				  PurpleMedia *media)
+void
+purple_media_video_init_recv(GstElement **recvbin)
 {
-	purple_debug_info("media", "got new local candidate: %s\n", local_candidate->candidate_id);
-	media->priv->local_candidates = g_list_append(media->priv->local_candidates, 
-						      fs_candidate_copy(local_candidate));
+	GstElement *sink;
+	GstPad *pad, *ghost;
+
+	purple_debug_info("media", "purple_media_video_init_recv\n");
+
+	*recvbin = gst_bin_new("pidginrecvvideobin");
+	sink = gst_element_factory_make("autovideosink", "purplevideosink");
+	gst_bin_add(GST_BIN(*recvbin), sink);
+	pad = gst_element_get_pad(sink, "sink");
+	ghost = gst_ghost_pad_new("ghostsink", pad);
+	gst_element_add_pad(*recvbin, ghost);
+
+	purple_debug_info("media", "purple_media_video_init_recv end\n");
 }
 
 static void
-purple_media_candidates_prepared(FsStream *stream, PurpleMedia *media)
+purple_media_new_local_candidate(FsStream *stream,
+				  FsCandidate *local_candidate,
+				  PurpleMediaSession *session)
 {
-	g_signal_emit(media, purple_media_signals[CANDIDATES_PREPARED], 0);
+	gchar *name;
+	FsParticipant *participant;
+	purple_debug_info("media", "got new local candidate: %s\n", local_candidate->candidate_id);
+	g_object_get(stream, "participant", &participant, NULL);
+	g_object_get(participant, "cname", &name, NULL);
+	g_object_unref(participant);
+
+	purple_media_insert_local_candidate(session, name, fs_candidate_copy(local_candidate));
+
+	g_signal_emit(session->media, purple_media_signals[NEW_CANDIDATE],
+		      0, session->id, name, fs_candidate_copy(local_candidate));
+
+	g_free(name);
+}
+
+static void
+purple_media_candidates_prepared(FsStream *stream, PurpleMediaSession *session)
+{
+	gchar *name;
+	FsParticipant *participant;
+	g_object_get(stream, "participant", &participant, NULL);
+	g_object_get(participant, "cname", &name, NULL);
+	g_object_unref(participant);
+	g_signal_emit(session->media, purple_media_signals[CANDIDATES_PREPARED], 0);
+	g_free(name);
 }
 
 /* callback called when a pair of transport candidates (local and remote)
@@ -743,44 +746,46 @@ static void
 purple_media_candidate_pair_established(FsStream *stream,
 					 FsCandidate *native_candidate,
 					 FsCandidate *remote_candidate,
-					 PurpleMedia *media)
+					 PurpleMediaSession *session)
 {
-	media->priv->local_candidate = fs_candidate_copy(native_candidate);
-	media->priv->remote_candidate = fs_candidate_copy(remote_candidate);
+	session->local_candidate = fs_candidate_copy(native_candidate);
+	session->remote_candidate = fs_candidate_copy(remote_candidate);
 
 	purple_debug_info("media", "candidate pair established\n");
-	g_signal_emit(media, purple_media_signals[CANDIDATE_PAIR], 0,
-		      media->priv->local_candidate,
-		      media->priv->remote_candidate);
+	g_signal_emit(session->media, purple_media_signals[CANDIDATE_PAIR], 0,
+		      session->local_candidate,
+		      session->remote_candidate);
 }
 
 static void
 purple_media_src_pad_added(FsStream *stream, GstPad *srcpad,
-			    FsCodec *codec, PurpleMedia *media)
+			    FsCodec *codec, PurpleMediaSession *session)
 {
-	GstElement *pipeline = purple_media_get_audio_pipeline(media);
-	GstPad *sinkpad = gst_element_get_static_pad(purple_media_get_audio_sink(media), "ghostsink");
+	GstElement *pipeline = purple_media_get_pipeline(session->media);
+	GstPad *sinkpad = gst_element_get_static_pad(session->sink, "ghostsink");
 	purple_debug_info("media", "connecting new src pad: %s\n", 
 			  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK ? "success" : "failure");
 	gst_element_set_state(pipeline, GST_STATE_PLAYING);
 }
 
 static gboolean
-purple_media_add_stream_internal(PurpleMedia *media, FsSession **session, GList **streams,
-				 GstElement *src, const gchar *who, FsMediaType type,
-				 FsStreamDirection type_direction, const gchar *transmitter)
+purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
+				 const gchar *who, FsMediaType type,
+				 FsStreamDirection type_direction,
+				 const gchar *transmitter)
 {
-	char *cname = NULL;
+	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
 	FsParticipant *participant = NULL;
-	GList *l = NULL;
 	FsStream *stream = NULL;
-	FsParticipant *p = NULL;
 	FsStreamDirection *direction = NULL;
-	FsSession *s = NULL;
 
-	if (!*session) {
+	if (!session) {
 		GError *err = NULL;
-		*session = fs_conference_new_session(media->priv->conference, type, &err);
+		GList *codec_conf;
+
+		session = g_new0(PurpleMediaSession, 1);
+
+		session->session = fs_conference_new_session(media->priv->conference, type, &err);
 
 		if (err != NULL) {
 			purple_debug_error("media", "Error creating session: %s\n", err->message);
@@ -788,62 +793,64 @@ purple_media_add_stream_internal(PurpleMedia *media, FsSession **session, GList 
 			purple_conv_present_error(who,
 						  purple_connection_get_account(purple_media_get_connection(media)),
 						  _("Error creating session."));
+			g_free(session);
 			return FALSE;
 		}
 
-		if (src) {
-			GstPad *sinkpad;
-			GstPad *srcpad;
-			g_object_get(*session, "sink-pad", &sinkpad, NULL);
-			srcpad = gst_element_get_static_pad(src, "ghostsrc");
-			purple_debug_info("media", "connecting pad: %s\n", 
-					  gst_pad_link(srcpad, sinkpad) == GST_PAD_LINK_OK
-					  ? "success" : "failure");
-		}
-	}
-	
-	for (l = media->priv->participants; l != NULL; l = g_list_next(l)) {
-		g_object_get(l->data, "cname", cname, NULL);
-		if (!strcmp(cname, who)) {
-			g_free(cname);
-			participant = l->data;
-			break;
-		}
-		g_free(cname);
+	/*
+	 * None of these three worked for me. THEORA is known to
+	 * not work as of at least Farsight2 0.0.2
+	 */
+		codec_conf = g_list_prepend(NULL, fs_codec_new(FS_CODEC_ID_DISABLE,
+				"THEORA", FS_MEDIA_TYPE_VIDEO, 90000));
+		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_DISABLE,
+				"MPV", FS_MEDIA_TYPE_VIDEO, 90000));
+		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_DISABLE,
+				"H264", FS_MEDIA_TYPE_VIDEO, 90000));
+
+	/* XXX: SPEEX has a latency of 5 or 6 seconds for me */
+#if 0
+	/* SPEEX is added through the configuration */
+		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_ANY,
+				"SPEEX", FS_MEDIA_TYPE_AUDIO, 8000));
+		codec_conf = g_list_prepend(codec_conf, fs_codec_new(FS_CODEC_ID_ANY,
+				"SPEEX", FS_MEDIA_TYPE_AUDIO, 16000));
+#endif
+
+		g_object_set(G_OBJECT(session->session), "local-codecs-config",
+			     codec_conf, NULL);
+
+		fs_codec_list_destroy(codec_conf);
+
+		session->id = g_strdup(sess_id);
+		session->media = media;
+		session->type = type;
+
+		purple_media_add_session(media, session);
 	}
 
-	if (!participant) {
-		participant = fs_conference_new_participant(media->priv->conference, (gchar*)who, NULL);
-		media->priv->participants = g_list_prepend(media->priv->participants, participant);
-	}
-	
-	for (l = *streams; l != NULL; l = g_list_next(l)) {
-		g_object_get(l->data, "participant", &p, "direction", &direction, "session", &s, NULL);
+	participant = purple_media_add_participant(media, who);
 
-		if (participant == p && *session == s) {
-			stream = l->data;
-			break;
-		}
-	}
+	stream = purple_media_session_get_stream(session, who);
 
 	if (!stream) {
-		stream = fs_session_new_stream(*session, participant, 
+		stream = fs_session_new_stream(session->session, participant, 
 					       type_direction, transmitter, 0, NULL, NULL);
-		*streams = g_list_prepend(*streams, stream);
+		purple_media_insert_stream(session, who, stream);
 		/* callback for new local candidate (new local candidate retreived) */
 		g_signal_connect(G_OBJECT(stream),
-				 "new-local-candidate", G_CALLBACK(purple_media_new_local_candidate), media);
+				 "new-local-candidate", G_CALLBACK(purple_media_new_local_candidate), session);
 		/* callback for source pad added (new stream source ready) */
 		g_signal_connect(G_OBJECT(stream),
-				 "src-pad-added", G_CALLBACK(purple_media_src_pad_added), media);
+				 "src-pad-added", G_CALLBACK(purple_media_src_pad_added), session);
 		/* callback for local candidates prepared (local candidates ready to send) */
 		g_signal_connect(G_OBJECT(stream), 
 				 "local-candidates-prepared", 
-				 G_CALLBACK(purple_media_candidates_prepared), media);
+				 G_CALLBACK(purple_media_candidates_prepared), session);
 		/* callback for new active candidate pair (established connection) */
 		g_signal_connect(G_OBJECT(stream),
 				 "new-active-candidate-pair", 
-				 G_CALLBACK(purple_media_candidate_pair_established), media);
+				 G_CALLBACK(purple_media_candidate_pair_established), session);
 	} else if (*direction != type_direction) {	
 		/* change direction */
 		g_object_set(stream, "direction", type_direction, NULL);
@@ -853,7 +860,7 @@ purple_media_add_stream_internal(PurpleMedia *media, FsSession **session, GList 
 }
 
 gboolean
-purple_media_add_stream(PurpleMedia *media, const gchar *who,
+purple_media_add_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who,
 			PurpleMediaStreamType type,
 			const gchar *transmitter)
 {
@@ -869,9 +876,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *who,
 		else
 			type_direction = FS_DIRECTION_NONE;
 
-		if (!purple_media_add_stream_internal(media, &media->priv->audio_session,
-						      &media->priv->audio_streams,
-				 		      media->priv->audio_src, who,
+		if (!purple_media_add_stream_internal(media, sess_id, who,
 						      FS_MEDIA_TYPE_AUDIO, type_direction,
 						      transmitter)) {
 			return FALSE;
@@ -887,9 +892,7 @@ purple_media_add_stream(PurpleMedia *media, const gchar *who,
 		else
 			type_direction = FS_DIRECTION_NONE;
 
-		if (!purple_media_add_stream_internal(media, &media->priv->video_session,
-						      &media->priv->video_streams,
-				 		      media->priv->video_src, who,
+		if (!purple_media_add_stream_internal(media, sess_id, who,
 						      FS_MEDIA_TYPE_VIDEO, type_direction,
 						      transmitter)) {
 			return FALSE;
@@ -899,76 +902,74 @@ purple_media_add_stream(PurpleMedia *media, const gchar *who,
 }
 
 void
-purple_media_remove_stream(PurpleMedia *media, const gchar *who, PurpleMediaStreamType type)
+purple_media_remove_stream(PurpleMedia *media, const gchar *sess_id, const gchar *who)
 {
 	
 }
 
-static FsStream *
-purple_media_get_audio_stream(PurpleMedia *media, const gchar *name)
+PurpleMediaStreamType
+purple_media_get_session_type(PurpleMedia *media, const gchar *sess_id)
 {
-	GList *streams = media->priv->audio_streams;
-	for (; streams; streams = streams->next) {
-		FsParticipant *participant;
-		gchar *cname;
-		g_object_get(streams->data, "participant", &participant, NULL);
-		g_object_get(participant, "cname", &cname, NULL);
-
-		if (!strcmp(cname, name)) {
-			return streams->data;
-		}
-	}
-
-	return NULL;
+	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
+	return session->type;
 }
 
 GList *
-purple_media_get_local_audio_codecs(PurpleMedia *media)
+purple_media_get_local_codecs(PurpleMedia *media, const gchar *sess_id)
 {
 	GList *codecs;
-	g_object_get(G_OBJECT(media->priv->audio_session), "local-codecs", &codecs, NULL);
+	g_object_get(G_OBJECT(purple_media_get_session(media, sess_id)->session),
+		     "local-codecs", &codecs, NULL);
 	return codecs;
 }
 
 GList *
-purple_media_get_local_audio_candidates(PurpleMedia *media)
+purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
-	return media->priv->local_candidates;
+	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
+	return purple_media_session_get_local_candidates(session, name);
 }
 
 GList *
-purple_media_get_negotiated_audio_codecs(PurpleMedia *media)
+purple_media_get_negotiated_codecs(PurpleMedia *media, const gchar *sess_id)
 {
+	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
 	GList *codec_intersection;
-	g_object_get(media->priv->audio_session, "negotiated-codecs", &codec_intersection, NULL);
+	g_object_get(session->session, "negotiated-codecs", &codec_intersection, NULL);
 	return codec_intersection;
 }
 
 void
-purple_media_add_remote_audio_candidates(PurpleMedia *media, const gchar *name, GList *remote_candidates)
+purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
+				   const gchar *name, GList *remote_candidates)
 {
-	FsStream *stream = purple_media_get_audio_stream(media, name);
+	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
+	FsStream *stream = purple_media_session_get_stream(session, name);
 	GList *candidates = remote_candidates;
 	for (; candidates; candidates = candidates->next)
 		fs_stream_add_remote_candidate(stream, candidates->data, NULL);
 }
 
 FsCandidate *
-purple_media_get_local_candidate(PurpleMedia *media)
+purple_media_get_local_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
-	return media->priv->local_candidate;
+	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
+	return session->local_candidate;
 }
 
 FsCandidate *
-purple_media_get_remote_candidate(PurpleMedia *media)
+purple_media_get_remote_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name)
 {
-	return media->priv->remote_candidate;
+	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
+	return session->remote_candidate;
 }
 
 void
-purple_media_set_remote_audio_codecs(PurpleMedia *media, const gchar *name, GList *codecs)
+purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id, const gchar *name, GList *codecs)
 {
-	fs_stream_set_remote_codecs(purple_media_get_audio_stream(media, name), codecs, NULL);
+	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
+	FsStream *stream = purple_media_session_get_stream(session, name);
+	fs_stream_set_remote_codecs(stream, codecs, NULL);
 }
 
 #endif  /* USE_VV */

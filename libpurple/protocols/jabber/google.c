@@ -102,7 +102,7 @@ static void
 google_session_send_accept(GoogleSession *session)
 {
 	xmlnode *sess, *desc, *payload;
-	GList *codecs = purple_media_get_negotiated_audio_codecs(session->media);
+	GList *codecs = purple_media_get_negotiated_codecs(session->media, "google-voice");
 	JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
 
 	xmlnode_set_attrib(iq->node, "to", session->remote_jid);
@@ -124,7 +124,7 @@ google_session_send_accept(GoogleSession *session)
 
 	fs_codec_list_destroy(codecs);
 	jabber_iq_send(iq);
-	gst_element_set_state(purple_media_get_audio_pipeline(session->media), GST_STATE_PLAYING);
+	gst_element_set_state(purple_media_get_pipeline(session->media), GST_STATE_PLAYING);
 }
 
 static void
@@ -160,7 +160,8 @@ static void
 google_session_candidates_prepared (PurpleMedia *media, GoogleSession *session)
 {
 	JabberIq *iq = jabber_iq_new(session->js, JABBER_IQ_SET);
-	GList *candidates = purple_media_get_local_audio_candidates(session->media);
+	GList *candidates = purple_media_get_local_candidates(session->media, "google-voice",
+							      session->remote_jid);
 	FsCandidate *transport;
 	xmlnode *sess;
 	xmlnode *candidate;
@@ -217,7 +218,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 							   "fsrtpconference", session->remote_jid);
 
 	/* "rawudp" will need to be changed to "nice" when libnice is finished */
-	purple_media_add_stream(session->media, session->remote_jid, 
+	purple_media_add_stream(session->media, "google-voice", session->remote_jid, 
 				PURPLE_MEDIA_AUDIO, "rawudp");
 
 	desc_element = xmlnode_get_child(sess, "description");
@@ -234,7 +235,7 @@ google_session_handle_initiate(JabberStream *js, GoogleSession *session, xmlnode
 		codecs = g_list_append(codecs, codec);
 	}
 
-	purple_media_set_remote_audio_codecs(session->media, session->remote_jid, codecs);
+	purple_media_set_remote_codecs(session->media, "google-voice", session->remote_jid, codecs);
 
 	g_signal_connect_swapped(G_OBJECT(session->media), "accepted",
 				 G_CALLBACK(google_session_send_accept), session);
@@ -282,7 +283,7 @@ google_session_handle_candidates(JabberStream  *js, GoogleSession *session, xmln
 		list = g_list_append(list, info);
 	}
 
-	purple_media_add_remote_audio_candidates(session->media, session->remote_jid, list);
+	purple_media_add_remote_candidates(session->media, "google-voice", session->remote_jid, list);
 	fs_candidate_list_destroy(list);
 
 	result = jabber_iq_new(js, JABBER_IQ_RESULT);

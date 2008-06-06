@@ -63,7 +63,7 @@ struct _FinchMedia
 
 GType finch_media_get_type(void);
 
-GntWidget *finch_media_new(PurpleMedia *media, GstElement *send_level, GstElement *recv_level);
+GntWidget *finch_media_new(PurpleMedia *media);
 
 void finch_media_manager_init(void);
 

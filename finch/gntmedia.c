@@ -126,13 +126,13 @@ finch_media_class_init (FinchMediaClass *klass)
 			"Send level",
 			"The GstElement of this media's send 'level'",
 			GST_TYPE_ELEMENT,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_READWRITE));
 	g_object_class_install_property(gobject_class, PROP_RECV_LEVEL,
 			g_param_spec_object("recv-level",
 			"Receive level",
 			"The GstElement of this media's recv 'level'",
 			GST_TYPE_ELEMENT,
-			G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+			G_PARAM_READWRITE));
 
 	finch_media_signals[MESSAGE] = g_signal_new("message", G_TYPE_FROM_CLASS(klass),
 					G_SIGNAL_RUN_LAST, 0, NULL, NULL,
@@ -217,7 +217,26 @@ level_message_cb(GstBus *bus, GstMessage *message, FinchMedia *gntmedia)
 static void
 finch_media_ready_cb(PurpleMedia *media, FinchMedia *gntmedia)
 {
-	GstElement *element = purple_media_get_audio_pipeline(media);
+	GstElement *element = purple_media_get_pipeline(media);
+
+	GstElement *sendbin, *sendlevel;
+	GstElement *recvbin, *recvlevel;
+
+	GList *sessions = purple_media_get_session_names(media);
+
+	purple_media_audio_init_src(&sendbin, &sendlevel);
+	purple_media_audio_init_recv(&recvbin, &recvlevel);
+
+	for (; sessions; sessions = sessions->next) {
+		purple_media_set_src(media, sessions->data, sendbin);
+		purple_media_set_sink(media, sessions->data, recvbin);
+	}
+	g_list_free(sessions);
+
+	g_object_set(gntmedia, "send-level", &sendlevel,
+		     "recv-level", &recvlevel,
+		     NULL);
+
 	gst_bus_add_signal_watch(GST_BUS(gst_pipeline_get_bus(GST_PIPELINE(element))));
 	g_signal_connect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))), "message", G_CALLBACK(level_message_cb), gntmedia);
 }
@@ -377,12 +396,10 @@ finch_media_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 }
 
 GntWidget *
-finch_media_new(PurpleMedia *media, GstElement *sendlevel, GstElement *recvlevel)
+finch_media_new(PurpleMedia *media)
 {
 	return GNT_WIDGET(g_object_new(finch_media_get_type(),
 				"media", media,
-				"send-level", sendlevel,
-				"recv-level", recvlevel,
 				"vertical", FALSE,
 				"homogeneous", FALSE,
 				NULL));
@@ -399,22 +416,14 @@ gntmedia_message_cb(FinchMedia *gntmedia, const char *msg, PurpleConversation *c
 static void
 finch_new_media(PurpleMediaManager *manager, PurpleMedia *media, gpointer null)
 {
-	GstElement *sendbin, *sendlevel;
-	GstElement *recvbin, *recvlevel;
 	GntWidget *gntmedia;
 	PurpleConversation *conv;
-
-	purple_media_audio_init_src(&sendbin, &sendlevel);
-	purple_media_audio_init_recv(&recvbin, &recvlevel);
-
-	purple_media_set_audio_src(media, sendbin);
-	purple_media_set_audio_sink(media, recvbin);
 
 	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
 			purple_connection_get_account(purple_media_get_connection(media)),
 			purple_media_get_screenname(media));
 
-	gntmedia = finch_media_new(media, sendlevel, recvlevel);
+	gntmedia = finch_media_new(media);
 	g_signal_connect(G_OBJECT(gntmedia), "message", G_CALLBACK(gntmedia_message_cb), conv);
 	FINCH_MEDIA(gntmedia)->priv->conv = conv;
 	finch_conversation_set_info_widget(conv, gntmedia);

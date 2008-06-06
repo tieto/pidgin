@@ -7701,7 +7701,7 @@ menu_initiate_audio_video_call_cb(gpointer data, guint action, GtkWidget *widget
 	PurpleMedia *media =
 		serv_initiate_media(gc,
 				    purple_conversation_get_name(conv),
-				    PURPLE_MEDIA_AUDIO & PURPLE_MEDIA_VIDEO);
+				    PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
 
 	purple_media_wait(media);
 }
@@ -7709,18 +7709,9 @@ menu_initiate_audio_video_call_cb(gpointer data, guint action, GtkWidget *widget
 static void
 pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpointer nul)
 {
-	GstElement *sendbin, *sendlevel;
-	GstElement *recvbin, *recvlevel;
-
 	GtkWidget *gtkmedia;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
-
-	purple_media_audio_init_src(&sendbin, &sendlevel);
-	purple_media_audio_init_recv(&recvbin, &recvlevel);
-
-	purple_media_set_audio_src(media, sendbin);
-	purple_media_set_audio_sink(media, recvbin);
 
 	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
 				       purple_connection_get_account(purple_media_get_connection(media)),
@@ -7729,7 +7720,7 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpoint
 	if (gtkconv->gtkmedia)
 		gtk_widget_destroy(gtkconv->gtkmedia);
 
-	gtkmedia = pidgin_media_new(media, sendlevel, recvlevel);
+	gtkmedia = pidgin_media_new(media);
 	gtk_box_pack_start(GTK_BOX(gtkconv->topvbox), gtkmedia, FALSE, FALSE, 0);
 	gtk_widget_show(gtkmedia);
 	g_signal_connect(G_OBJECT(gtkmedia), "message", G_CALLBACK(pidgin_gtkmedia_message_cb), conv);
