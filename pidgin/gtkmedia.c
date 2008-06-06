@@ -116,7 +116,7 @@ static void
 pidgin_media_class_init (PidginMediaClass *klass)
 {
 	GObjectClass *gobject_class = (GObjectClass*)klass;
-	GtkContainerClass *container_class = (GtkContainerClass*)klass;
+/*	GtkContainerClass *container_class = (GtkContainerClass*)klass; */
 	parent_class = g_type_class_peek_parent(klass);
 
 	gobject_class->finalize = pidgin_media_finalize;
