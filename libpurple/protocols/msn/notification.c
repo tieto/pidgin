@@ -34,15 +34,6 @@
 
 static MsnTable *cbs_table;
 
-/****************************************************************************
- * 	Local Function Prototype
- ****************************************************************************/
-
-static void msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_len);
-static void
-msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport,
-					 MsnListOp list_op, MsnUserType type);
-
 /**************************************************************************
  * Main
  **************************************************************************/
@@ -2032,7 +2023,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 void
 msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list_id,
-						   	  const char *who)
+							  const char *who)
 {
 	MsnCmdProc *cmdproc;
 	MsnListOp list_op = 1 << list_id;
