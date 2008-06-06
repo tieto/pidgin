@@ -98,7 +98,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	char *displayed = NULL, *sent = NULL;
 	int err = 0;
 
-	if (strlen(message) == 0)
+	if (*message == '\0')
 		return;
 
 	account = purple_conversation_get_account(conv);
