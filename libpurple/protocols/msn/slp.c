@@ -947,15 +947,15 @@ static gboolean
 msn_release_buddy_icon_request_timeout(gpointer data)
 {
 	MsnUserList *userlist = (MsnUserList *)data;
-	
+
 	/* Free one window slot */
-	userlist->buddy_icon_window++;	
-	
+	userlist->buddy_icon_window++;
+
 	/* Clear the tag for our former request timer */
 	userlist->buddy_icon_request_timer = 0;
-	
+
 	msn_release_buddy_icon_request(userlist);
-	
+
 	return FALSE;
 }
 
@@ -1062,7 +1062,7 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 	}
 
 	/* Wait BUDDY_ICON_DELAY ms before freeing our window slot and requesting the next icon. */
-	userlist->buddy_icon_request_timer = purple_timeout_add(BUDDY_ICON_DELAY, 
+	userlist->buddy_icon_request_timer = purple_timeout_add(BUDDY_ICON_DELAY,
 														  msn_release_buddy_icon_request_timeout, userlist);
 }
 

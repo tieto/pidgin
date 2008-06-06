@@ -172,7 +172,7 @@ msn_object_new_from_image(PurpleStoredImage *img, const char *location,
 	base64 = purple_base64_encode(digest, sizeof(digest));
 	msn_object_set_sha1c(msnobj, base64);
 	g_free(base64);
-	
+
 	return msnobj;
 }
 

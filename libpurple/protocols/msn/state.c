@@ -150,7 +150,7 @@ msn_get_currentmedia(char *xml_str, gsize len)
 {
 	xmlnode *payloadNode, *currentmediaNode;
 	char *currentmedia;
-	
+
 	purple_debug_info("msn","msn get CurrentMedia\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
 	if (!payloadNode){
@@ -176,7 +176,7 @@ msn_get_psm(char *xml_str, gsize len)
 {
 	xmlnode *payloadNode, *psmNode;
 	char *psm;
-	
+
 	purple_debug_info("MSNP14","msn get PSM\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
 	if (!payloadNode){
@@ -217,7 +217,7 @@ create_media_string(PurplePresence *presence)
 	return ret;
 }
 
-/* set the MSN's PSM info,Currently Read from the status Line 
+/* set the MSN's PSM info,Currently Read from the status Line
  * Thanks for Cris Code
  */
 void

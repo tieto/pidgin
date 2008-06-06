@@ -122,7 +122,7 @@ msn_user_update(MsnUser *user)
 					NULL);
 		} else {
 			purple_prpl_got_user_status_deactive(account, user->passport, "tune");
-		}			
+		}
 	}
 
 	if (user->idle)
@@ -239,7 +239,7 @@ void
 msn_user_unset_op(MsnUser *user, int list_op)
 {
 	g_return_if_fail(user != NULL);
-	
+
 	user->list_op &= ~list_op;
 }
 

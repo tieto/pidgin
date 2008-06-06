@@ -1594,10 +1594,10 @@ msn_rename_group(PurpleConnection *gc, const char *old_name,
 	MsnSession *session;
 
 	session = gc->proto_data;
-	
+
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->userlist != NULL);
-	
+
 	if (msn_userlist_find_group_with_name(session->userlist, old_name) != NULL)
 	{
 		msn_contact_rename_group(session, old_name, group->name);
@@ -1677,7 +1677,7 @@ msn_remove_group(PurpleConnection *gc, PurpleGroup *group)
 		purple_debug_info("MSN", "This group can't be removed, returning.\n");
 		return ;
 	}
-	
+
 	msn_del_group(session, group->name);
 }
 

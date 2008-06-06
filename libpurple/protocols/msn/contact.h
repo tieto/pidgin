@@ -349,7 +349,7 @@
 #define MSN_GROUP_RENAME_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/ABGroupUpdate"
 #define MSN_GROUP_RENAME_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"><soap:Header><ABApplicationHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ApplicationId>09607671-1C32-421F-A6A6-CBFAA51AB5F4</ApplicationId><IsMigration>false</IsMigration><PartnerScenario>Timer</PartnerScenario></ABApplicationHeader><ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\"><ManagedGroupRequest>false</ManagedGroupRequest></ABAuthHeader></soap:Header><soap:Body><ABGroupUpdate xmlns=\"http://www.msn.com/webservices/AddressBook\"><abId>00000000-0000-0000-0000-000000000000</abId><groups><Group><groupId>%s</groupId><groupInfo><name>%s</name></groupInfo><propertiesChanged>GroupName </propertiesChanged></Group></groups></ABGroupUpdate></soap:Body></soap:Envelope>"
 
-typedef enum 
+typedef enum
 {
 	MSN_ADD_BUDDY			= 0x01,
 	MSN_MOVE_BUDDY			= 0x02,
@@ -383,7 +383,7 @@ struct _MsnCallbackState
 	MsnSession *session;
 };
 
-typedef enum 
+typedef enum
 {
 	MSN_PS_INITIAL,
 	MSN_PS_SAVE_CONTACT,
@@ -404,34 +404,34 @@ void msn_callback_state_set_who(MsnCallbackState *state, const gchar *who);
 void msn_callback_state_set_uid(MsnCallbackState *state, const gchar *uid);
 void msn_callback_state_set_old_group_name(MsnCallbackState *state,
 					   const gchar *old_group_name);
-void msn_callback_state_set_new_group_name(MsnCallbackState *state, 
+void msn_callback_state_set_new_group_name(MsnCallbackState *state,
 					   const gchar *new_group_name);
 void msn_callback_state_set_guid(MsnCallbackState *state, const gchar *guid);
 void msn_callback_state_set_list_id(MsnCallbackState *state, MsnListId list_id);
-void msn_callback_state_set_action(MsnCallbackState *state, 
+void msn_callback_state_set_action(MsnCallbackState *state,
 				   MsnCallbackAction action);
 
 void msn_contact_connect(MsnContact *contact);
-void msn_get_contact_list(MsnContact * contact, 
+void msn_get_contact_list(MsnContact * contact,
 			  const MsnSoapPartnerScenario partner_scenario,
 			  const char *update);
-void msn_get_address_book(MsnContact *contact, 
+void msn_get_address_book(MsnContact *contact,
 			  const MsnSoapPartnerScenario partner_scenario,
 			  const char * update, const char * gupdate);
 
 /* contact SOAP operations */
 void msn_update_contact(MsnContact *contact, const char* nickname);
 
-void msn_add_contact(MsnContact *contact, MsnCallbackState *state, 
+void msn_add_contact(MsnContact *contact, MsnCallbackState *state,
 		     const char *passport);
 void msn_delete_contact(MsnContact *contact, const char *contactId);
 
-void msn_add_contact_to_group(MsnContact *contact, MsnCallbackState *state, 
+void msn_add_contact_to_group(MsnContact *contact, MsnCallbackState *state,
 			      const char *passport, const char *groupId);
-void msn_del_contact_from_group(MsnContact *contact, const char *passport, 
+void msn_del_contact_from_group(MsnContact *contact, const char *passport,
 				const char *group_name);
 /* group operations */
-void msn_add_group(MsnSession *session, MsnCallbackState *state, 
+void msn_add_group(MsnSession *session, MsnCallbackState *state,
 					const char* group_name);
 void msn_del_group(MsnSession *session, const gchar *group_name);
 void msn_contact_rename_group(MsnSession *session, const char *old_group_name,

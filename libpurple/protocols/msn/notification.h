@@ -30,7 +30,7 @@
 #define MSNP13_WLM_PRODUCT_ID	"PROD01065C%ZFN6F"
 
 #define MSNP10_PRODUCT_KEY		"VT6PX?UQTM4WM%YR"
-#define MSNP10_PRODUCT_ID		"PROD0038W!61ZTF9" 
+#define MSNP10_PRODUCT_ID		"PROD0038W!61ZTF9"
 
 typedef struct _MsnNotification MsnNotification;
 
@@ -71,7 +71,7 @@ void msn_notification_dump_contact(MsnSession *session);
  * Closes a notification.
  *
  * It's first closed, and then disconnected.
- * 
+ *
  * @param notification The notification object to close.
  */
 void msn_notification_close(MsnNotification *notification);
