@@ -24,6 +24,7 @@
  */
 
 #include <string.h>
+#include "debug.h"
 #include "internal.h"
 #include "connection.h"
 #include "media.h"
@@ -253,6 +254,36 @@ pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
 	g_signal_emit(gtkmedia, pidgin_media_signals[MESSAGE], 0, msg);
 }
 
+static gboolean
+media_bus_call(GstBus *bus, GstMessage *msg, gpointer gtkmedia)
+{
+	switch(GST_MESSAGE_TYPE(msg)) {
+		case GST_MESSAGE_EOS:
+			purple_debug_info("gtkmedia", "End of Stream\n");
+			break;
+		case GST_MESSAGE_ERROR: {
+			gchar *debug = NULL;
+			GError *err = NULL;
+
+			gst_message_parse_error(msg, &err, &debug);
+
+			purple_debug_error("gtkmedia", "gst pipeline error: %s\n", err->message);
+			g_error_free(err);
+
+			if (debug) {
+				purple_debug_error("gtkmedia", "Debug details: %s\n", debug);
+				g_free (debug);
+			}
+			break;
+		}
+		default:
+			purple_debug_info("gtkmedia", "gst message type: %i\n", GST_MESSAGE_TYPE(msg));
+			return TRUE;
+	}
+
+	return TRUE;
+}
+
 static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
@@ -264,6 +295,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 	GstElement *videorecvbin;
 
 	GList *sessions = purple_media_get_session_names(media);
+	GstBus *bus;
 
 	purple_media_audio_init_src(&audiosendbin, &audiosendlevel);
 	purple_media_audio_init_recv(&audiorecvbin, &audiorecvlevel);
@@ -288,8 +320,11 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 				       NULL);
 	}
 
-	gst_bus_add_signal_watch(GST_BUS(gst_pipeline_get_bus(GST_PIPELINE(element))));
+	bus = gst_pipeline_get_bus(GST_PIPELINE(element));
+	gst_bus_add_signal_watch(GST_BUS(bus));
 	g_signal_connect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))), "message", G_CALLBACK(level_message_cb), gtkmedia);
+	gst_bus_add_watch(bus, media_bus_call, gtkmedia);
+	gst_object_unref(bus);
 }
 
 static void
