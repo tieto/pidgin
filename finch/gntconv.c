@@ -1241,6 +1241,47 @@ cmd_show_window(PurpleConversation *conv, const char *cmd, char **args, char **e
 }
 
 static PurpleCmdRet
+cmd_message_color(PurpleConversation *conv, const char *cmd, char **args, char **error, gpointer data)
+{
+	int *msgclass  = NULL;
+	int fg, bg;
+
+	if (strcmp(args[0], "receive") == 0)
+		msgclass = &color_message_receive;
+	else if (strcmp(args[0], "send") == 0)
+		msgclass = &color_message_send;
+	else if (strcmp(args[0], "highlight") == 0)
+		msgclass = &color_message_highlight;
+	else if (strcmp(args[0], "action") == 0)
+		msgclass = &color_message_action;
+	else if (strcmp(args[0], "timestamp") == 0)
+		msgclass = &color_timestamp;
+	else {
+		if (error)
+			*error = g_strdup_printf(_("%s is not a valid message class. See '/help msgcolor' for valid message classes."), args[0]);
+		return PURPLE_CMD_STATUS_FAILED;
+	}
+
+	fg = gnt_colors_get_color(args[1]);
+	if (fg == -EINVAL) {
+		if (error)
+			*error = g_strdup_printf(_("%s is not a valid color. See '/help msgcolor' for valid colors."), args[1]);
+		return PURPLE_CMD_STATUS_FAILED;
+	}
+
+	bg = gnt_colors_get_color(args[2]);
+	if (bg == -EINVAL) {
+		if (error)
+			*error = g_strdup_printf(_("%s is not a valid color. See '/help msgcolor' for valid colors."), args[2]);
+		return PURPLE_CMD_STATUS_FAILED;
+	}
+
+	init_pair(*msgclass, fg, bg);
+
+	return PURPLE_CMD_STATUS_OK;
+}
+
+static PurpleCmdRet
 users_command_cb(PurpleConversation *conv, const char *cmd, char **args, char **error, gpointer data)
 {
 	FinchConv *fc = FINCH_GET_DATA(conv);
@@ -1323,6 +1364,16 @@ void finch_conversation_init()
 	purple_cmd_register("status", "", PURPLE_CMD_P_DEFAULT,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
 	                  cmd_show_window, _("statuses: Show the savedstatuses window."), finch_savedstatus_show_all);
+
+	/* Allow customizing the message colors using a command during run-time */
+	purple_cmd_register("msgcolor", "www", PURPLE_CMD_P_DEFAULT,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
+			cmd_message_color, _("msgcolor &lt;class&gt; &lt;foreground&gt; &lt;background&gt;: "
+				                 "Set the color for different classes of messages in the conversation window.<br>"
+				                 "    &lt;class&gt;: receive, send, highlight, action, timestamp<br>"
+				                 "    &lt;foreground/background&gt;: black, red, green, blue, white, gray, darkgray, magenta, cyan, default<br><br>"
+								 "EXAMPLE:<br>    msgcolor send cyan default"),
+			NULL);
 
 	purple_signal_connect(purple_conversations_get_handle(), "buddy-typing", finch_conv_get_handle(),
 					PURPLE_CALLBACK(update_buddy_typing), NULL);
