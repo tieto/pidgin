@@ -553,6 +553,7 @@ TOOLBAR_16_SCALABLE = \
 		toolbar/16/scalable/font-size-up.svg
 
 TOOLBAR_16 = \
+		toolbar/16/audio-call.png \
 		toolbar/16/change-bgcolor.png \
 		toolbar/16/change-fgcolor.png \
 		toolbar/16/emote-select.png \
@@ -565,7 +566,8 @@ TOOLBAR_16 = \
 		toolbar/16/message-new.png \
 		toolbar/16/plugins.png \
 		toolbar/16/send-file.png \
-		toolbar/16/unblock.png
+		toolbar/16/unblock.png \
+		toolbar/16/video-call.png
 
 TOOLBAR_22_SCALABLE = \
 		toolbar/22/scalable/select-avatar.svg

@@ -3075,7 +3075,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Conversation/Media/_Video Call"), NULL, menu_initiate_video_call_cb, 0,
 		"<StockItem>", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL },
 	{ N_("/Conversation/Media/Audio\\/Video _Call"), NULL, menu_initiate_audio_video_call_cb, 0,
-		"<StockItem>", PIDGIN_STOCK_TOOLBAR_AUDIO_VIDEO_CALL },
+		"<StockItem>", PIDGIN_STOCK_TOOLBAR_VIDEO_CALL },
 #endif
 
 	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_SEND_FILE },
