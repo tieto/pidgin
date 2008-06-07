@@ -115,6 +115,120 @@ msn_oim_free_send_req(MsnOimSendReq *req)
 }
 
 /****************************************
+ * Manage OIM Tokens
+ ****************************************/
+typedef struct _MsnOimRequestData {
+	MsnOim *oim;
+	gboolean send;
+	const char *action;
+	const char *host;
+	const char *url;
+	xmlnode *body;
+	MsnSoapCallback cb;
+	gpointer cb_data;
+} MsnOimRequestData;
+
+static void msn_oim_request_helper(MsnOimRequestData *data);
+
+static void
+msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
+	gpointer req_data)
+{
+	MsnOimRequestData *data = (MsnOimRequestData *)req_data;
+	xmlnode *xml;
+	xmlnode *faultcode;
+	gchar *faultcode_str;
+
+	xml = response->xml;
+	faultcode = xmlnode_get_child(xml, "Body/Fault/faultcode");
+
+	if (faultcode != NULL) {
+		faultcode_str = xmlnode_get_data(faultcode);
+
+		if (faultcode_str && g_str_equal(faultcode_str, "q0:BadContextToken")) {
+			purple_debug_error("msnp15", "OIM Request Error, Updating token now.");
+			msn_nexus_update_token(data->oim->session->nexus,
+				data->send ? MSN_AUTH_LIVE_SECURE : MSN_AUTH_MESSENGER_WEB,
+				(GSourceFunc)msn_oim_request_helper, data);
+			g_free(faultcode_str);
+			return;
+		}
+		g_free(faultcode_str);
+	}
+
+	if (data->cb)
+		data->cb(request, response, data->cb_data);
+	xmlnode_free(data->body);
+	g_free(data);
+}
+
+static void
+msn_oim_request_helper(MsnOimRequestData *data)
+{
+	MsnSession *session = data->oim->session;
+
+	if (data->send) {
+		/* The Sending of OIM's uses a different token for some reason. */
+		xmlnode *ticket;
+		ticket = xmlnode_get_child(data->body, "Header/Ticket");
+		xmlnode_set_attrib(ticket, "passport",
+			msn_nexus_get_token_str(session->nexus, MSN_AUTH_LIVE_SECURE));
+	}
+	else
+	{
+		xmlnode *passport;
+		xmlnode *xml_t;
+		xmlnode *xml_p;
+		GHashTable *token;
+		const char *msn_t;
+		const char *msn_p;
+
+		token = msn_nexus_get_token(session->nexus, MSN_AUTH_MESSENGER_WEB);
+		g_return_if_fail(token != NULL);
+
+		msn_t = g_hash_table_lookup(token, "t");
+		msn_p = g_hash_table_lookup(token, "p");
+
+		g_return_if_fail(msn_t != NULL);
+		g_return_if_fail(msn_p != NULL);
+
+		passport = xmlnode_get_child(data->body, "Header/PassportCookie");
+		xml_t = xmlnode_get_child(passport, "t");
+		xml_p = xmlnode_get_child(passport, "p");
+
+		/* frees old token text, or the 'EMPTY' text if first time */
+		xmlnode_free(xml_t->child);
+		xmlnode_free(xml_p->child);
+
+		xmlnode_insert_data(xml_t, msn_t, -1);
+		xmlnode_insert_data(xml_p, msn_p, -1);
+	}
+
+	msn_soap_message_send(session,
+		msn_soap_message_new(data->action, xmlnode_copy(data->body)),
+		data->host, data->url, msn_oim_request_cb, data);
+}
+
+
+static void
+msn_oim_make_request(MsnOim *oim, gboolean send, const char *action,
+	const char *host, const char *url, xmlnode *body, MsnSoapCallback cb,
+	gpointer cb_data)
+{
+	MsnOimRequestData *data = g_new0(MsnOimRequestData, 1);
+	data->oim = oim;
+	data->send = send;
+	data->action = action;
+	data->host = host;
+	data->url = url;
+	data->body = body;
+	data->cb = cb;
+	data->cb_data = cb_data;
+
+	msn_oim_request_helper(data);
+}
+
+/****************************************
  * OIM GetMetadata request
  * **************************************/
 static void
@@ -133,29 +247,10 @@ msn_oim_get_metadata_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 static void
 msn_oim_get_metadata(MsnOim *oim)
 {
-	char *soap_body;
-	GHashTable *token;
-	const char *msn_t;
-	const char *msn_p;
-
-	token = msn_nexus_get_token(oim->session->nexus, MSN_AUTH_MESSENGER_WEB);
-	g_return_if_fail(token != NULL);
-
-	msn_t = g_hash_table_lookup(token, "t");
-	msn_p = g_hash_table_lookup(token, "p");
-
-	g_return_if_fail(msn_t != NULL);
-	g_return_if_fail(msn_p != NULL);
-
-	soap_body = g_strdup_printf(MSN_OIM_GET_METADATA_TEMPLATE, msn_t, msn_p);
-
-	msn_soap_message_send(oim->session,
-		msn_soap_message_new(MSN_OIM_GET_METADATA_ACTION,
-			xmlnode_from_str(soap_body, -1)),
+	msn_oim_make_request(oim, FALSE, MSN_OIM_GET_METADATA_ACTION,
 		MSN_OIM_RETRIEVE_HOST, MSN_OIM_RETRIEVE_URL,
+		xmlnode_from_str(MSN_OIM_GET_METADATA_TEMPLATE, -1),
 		msn_oim_get_metadata_cb, oim);
-
-	g_free(soap_body);
 }
 
 /****************************************
@@ -207,8 +302,6 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 				if (g_str_equal(faultcode_str, "q0:AuthenticationFailed")) {
 					xmlnode *challengeNode = xmlnode_get_child(faultNode,
 						"detail/LockKeyChallenge");
-
-					g_free(faultcode_str);
 
 					if (challengeNode == NULL) {
 						if (oim->challenge) {
@@ -285,16 +378,14 @@ msn_oim_send_msg(MsnOim *oim)
 					oim_request->from_member,
 					oim_request->friendname,
 					oim_request->to_member,
-		msn_nexus_get_token_str(oim->session->nexus, MSN_AUTH_LIVE_SECURE),
 					MSNP15_WLM_PRODUCT_ID,
 					oim->challenge ? oim->challenge : "",
 					oim->send_seq,
 					msg_body);
 
-	msn_soap_message_send(oim->session,
-		msn_soap_message_new(MSN_OIM_SEND_SOAP_ACTION,
-			xmlnode_from_str(soap_body, -1)),
-		MSN_OIM_SEND_HOST, MSN_OIM_SEND_URL, msn_oim_send_read_cb, oim);
+	msn_oim_make_request(oim, TRUE, MSN_OIM_SEND_SOAP_ACTION, MSN_OIM_SEND_HOST,
+		MSN_OIM_SEND_URL, xmlnode_from_str(soap_body, -1), msn_oim_send_read_cb,
+		oim);
 
 	/*increase the offline Sequence control*/
 	if (oim->challenge != NULL) {
@@ -333,28 +424,13 @@ msn_oim_post_delete_msg(MsnOimRecvData *rdata)
 	MsnOim *oim = rdata->oim;
 	char *msgid = rdata->msg_id;
 	char *soap_body;
-	GHashTable *token;
-	const char *msn_t;
-	const char *msn_p;
 
 	purple_debug_info("MSNP14","Delete single OIM Message {%s}\n",msgid);
 
-	token = msn_nexus_get_token(oim->session->nexus, MSN_AUTH_MESSENGER_WEB);
-	g_return_if_fail(token != NULL);
+	soap_body = g_strdup_printf(MSN_OIM_DEL_TEMPLATE, msgid);
 
-	msn_t = g_hash_table_lookup(token, "t");
-	msn_p = g_hash_table_lookup(token, "p");
-
-	g_return_if_fail(msn_t != NULL);
-	g_return_if_fail(msn_p != NULL);
-
-	soap_body = g_strdup_printf(MSN_OIM_DEL_TEMPLATE, msn_t, msn_p, msgid);
-
-	msn_soap_message_send(oim->session,
-		msn_soap_message_new(MSN_OIM_DEL_SOAP_ACTION,
-			xmlnode_from_str(soap_body, -1)),
-		MSN_OIM_RETRIEVE_HOST, MSN_OIM_RETRIEVE_URL,
-		msn_oim_delete_read_cb, rdata);
+	msn_oim_make_request(oim, FALSE, MSN_OIM_DEL_SOAP_ACTION, MSN_OIM_RETRIEVE_HOST,
+		MSN_OIM_RETRIEVE_URL, xmlnode_from_str(soap_body, -1), msn_oim_delete_read_cb, rdata);
 
 	g_free(soap_body);
 }
@@ -606,30 +682,17 @@ msn_oim_post_single_get_msg(MsnOim *oim, char *msgid)
 {
 	char *soap_body;
 	MsnOimRecvData *data = g_new0(MsnOimRecvData, 1);
-	GHashTable *token;
-	const char *msn_t;
-	const char *msn_p;
 
 	purple_debug_info("MSNP14","Get single OIM Message\n");
-
-	token = msn_nexus_get_token(oim->session->nexus, MSN_AUTH_MESSENGER_WEB);
-	g_return_if_fail(token != NULL);
-
-	msn_t = g_hash_table_lookup(token, "t");
-	msn_p = g_hash_table_lookup(token, "p");
-	g_return_if_fail(msn_t != NULL);
-	g_return_if_fail(msn_p != NULL);
 
 	data->oim = oim;
 	data->msg_id = msgid;
 
-	soap_body = g_strdup_printf(MSN_OIM_GET_TEMPLATE, msn_t, msn_p, msgid);
+	soap_body = g_strdup_printf(MSN_OIM_GET_TEMPLATE, msgid);
 
-	msn_soap_message_send(oim->session,
-		msn_soap_message_new(MSN_OIM_GET_SOAP_ACTION,
-			xmlnode_from_str(soap_body, -1)),
-		MSN_OIM_RETRIEVE_HOST, MSN_OIM_RETRIEVE_URL,
-		msn_oim_get_read_cb, data);
+	msn_oim_make_request(oim, FALSE, MSN_OIM_GET_SOAP_ACTION, MSN_OIM_RETRIEVE_HOST,
+		MSN_OIM_RETRIEVE_URL, xmlnode_from_str(soap_body, -1), msn_oim_get_read_cb,
+		data);
 
 	g_free(soap_body);
 }

@@ -39,8 +39,8 @@
 	" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 	"<soap:Header>"\
 		"<PassportCookie xmlns=\"http://www.hotmail.msn.com/ws/2004/09/oim/rsi\">"\
-			"<t>%s</t>"\
-			"<p>%s</p>"\
+			"<t>EMPTY</t>"\
+			"<p>EMPTY</p>"\
 		"</PassportCookie>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -58,8 +58,8 @@
 	" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 	"<soap:Header>"\
 		"<PassportCookie xmlns=\"http://www.hotmail.msn.com/ws/2004/09/oim/rsi\">"\
-			"<t>%s</t>"\
-			"<p>%s</p>"\
+			"<t>EMPTY</t>"\
+			"<p>EMPTY</p>"\
 		"</PassportCookie>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -80,8 +80,8 @@
 	" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"\
 	"<soap:Header>"\
 		"<PassportCookie xmlns=\"http://www.hotmail.msn.com/ws/2004/09/oim/rsi\">"\
-			"<t>%s</t>"\
-			"<p>%s</p>"\
+			"<t>EMPTY</t>"\
+			"<p>EMPTY</p>"\
 		"</PassportCookie>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -120,7 +120,7 @@
 			" msnpVer=\"MSNP15\""\
 			" buildVer=\"8.5.1288\"/>"\
 		"<To memberName=\"%s\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\"/>"\
-		"<Ticket passport=\"%s\" appid=\"%s\" lockkey=\"%s\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\"/>"\
+		"<Ticket passport=\"EMPTY\" appid=\"%s\" lockkey=\"%s\" xmlns=\"http://messenger.msn.com/ws/2004/09/oim/\"/>"\
 		"<Sequence xmlns=\"http://schemas.xmlsoap.org/ws/2003/03/rm\">"\
 			"<Identifier xmlns=\"http://schemas.xmlsoap.org/ws/2002/07/utility\">http://messenger.msn.com</Identifier>"\
 			"<MessageNumber>%d</MessageNumber>"\
