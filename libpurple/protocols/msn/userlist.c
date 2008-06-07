@@ -24,6 +24,8 @@
 #include "msn.h"
 #include "userlist.h"
 
+#include "contact.h"
+
 const char *lists[] = { "FL", "AL", "BL", "RL" };
 
 typedef struct
@@ -51,7 +53,7 @@ msn_accept_add_cb(gpointer data)
 
 		msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_AL);
 
-		msn_del_contact_from_list(session->contact, NULL, pa->who, MSN_LIST_PL);
+		msn_del_contact_from_list(session, NULL, pa->who, MSN_LIST_PL);
 	}
 
 	g_free(pa->who);
@@ -75,7 +77,7 @@ msn_cancel_add_cb(gpointer data)
 		msn_callback_state_set_action(state, MSN_DENIED_BUDDY);
 
 		msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_BL);
-		msn_del_contact_from_list(session->contact, state, pa->who, MSN_LIST_PL);
+		msn_del_contact_from_list(session, state, pa->who, MSN_LIST_PL);
 	}
 
 	g_free(pa->who);
@@ -647,7 +649,6 @@ msn_userlist_rem_buddy(MsnUserList *userlist, const char *who)
 
 	g_return_if_fail(userlist != NULL);
 	g_return_if_fail(userlist->session != NULL);
-	g_return_if_fail(userlist->session->contact != NULL);
 	g_return_if_fail(who != NULL);
 
 	user = msn_userlist_find_user(userlist, who);
@@ -656,7 +657,7 @@ msn_userlist_rem_buddy(MsnUserList *userlist, const char *who)
 
 	/* delete the contact from address book via soap action */
 	if (user != NULL) {
-		msn_delete_contact(userlist->session->contact, user->uid);
+		msn_delete_contact(userlist->session, user->uid);
 	}
 }
 
@@ -758,7 +759,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 
 	/* Add contact in the Contact server with a SOAP request and if
 	   successful, send ADL with MSN_LIST_AL and MSN_LIST_FL and a FQY */
-	msn_add_contact_to_group(userlist->session->contact, state, who, group_id);
+	msn_add_contact_to_group(userlist->session, state, who, group_id);
 }
 
 void
@@ -859,7 +860,6 @@ msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 
 	g_return_if_fail(userlist != NULL);
 	g_return_if_fail(userlist->session != NULL);
-	g_return_if_fail(userlist->session->contact != NULL);
 
 	state = msn_callback_state_new(userlist->session);
 	msn_callback_state_set_who(state, who);
@@ -878,7 +878,7 @@ msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 	/* add the contact to the new group, and remove it from the old one in
 	 * the callback
 	*/
-	msn_add_contact_to_group(userlist->session->contact, state, who, new_group_id);
+	msn_add_contact_to_group(userlist->session, state, who, new_group_id);
 }
 
 /*load userlist from the Blist file cache*/
