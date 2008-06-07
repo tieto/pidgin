@@ -200,9 +200,13 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
  *        usually happens for AOL accounts.  We are told that we
  *        should truncate it if the 0x0017/0x0007 SNAC contains
  *        a TLV of type 0x0026 with data 0x0000.
+ * @param allow_multiple_logins Allow multiple logins? If TRUE, the AIM
+ *        server will prompt the user when multiple logins occur. If
+ *        FALSE, existing connections (on other clients) will be
+ *        disconnected automatically as we connect.
  */
 int
-aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key)
+aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key, gboolean allow_multiple_logins)
 {
 	FlapFrame *frame;
 	GSList *tlvlist = NULL;
@@ -256,7 +260,7 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	 * If set, old-fashioned buddy lists will not work. You will need
 	 * to use SSI.
 	 */
-	aim_tlvlist_add_8(&tlvlist, 0x004a, 0x01);
+	aim_tlvlist_add_8(&tlvlist, 0x004a, (allow_multiple_logins ? 0x01 : 0x02));
 
 	aim_tlvlist_write(&frame->data, &tlvlist);
 

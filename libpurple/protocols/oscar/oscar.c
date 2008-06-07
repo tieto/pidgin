@@ -1811,7 +1811,8 @@ purple_parse_login(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 
 	aim_send_login(od, conn, purple_account_get_username(account),
 			purple_connection_get_password(gc), truncate_pass,
-			od->icq ? &icqinfo : &aiminfo, key);
+			od->icq ? &icqinfo : &aiminfo, key,
+			/* allow multple logins? */ OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS);
 
 	purple_connection_update_progress(gc, _("Password sent"), 2, OSCAR_CONNECT_STEPS);
 	ck[2] = 0x6c;

@@ -41,6 +41,7 @@
 #define OSCAR_DEFAULT_HIDE_IP TRUE
 #define OSCAR_DEFAULT_WEB_AWARE FALSE
 #define OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY FALSE
+#define OSCAR_DEFAULT_ALLOW_MULTIPLE_LOGINS TRUE
 
 #ifdef _WIN32
 const char *oscar_get_locale_charset(void);
