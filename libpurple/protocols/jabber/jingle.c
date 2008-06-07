@@ -266,11 +266,10 @@ static JingleSession *
 jabber_jingle_session_find_by_id(JabberStream *js, const char *id)
 {
 	purple_debug_info("jingle", "find_by_id %s\n", id);
-	purple_debug_info("jingle", "hash table: %p\n", js->sessions);
-	purple_debug_info("jingle", "hash table size %d\n",
-					  g_hash_table_size(js->sessions));
-	purple_debug_info("jingle", "lookup: %p\n", g_hash_table_lookup(js->sessions, id));  
-	return (JingleSession *) g_hash_table_lookup(js->sessions, id);
+	purple_debug_info("jingle", "lookup: %p\n", (js->sessions) ?
+			  g_hash_table_lookup(js->sessions, id) : NULL);  
+	return (JingleSession *) (js->sessions) ?
+			  g_hash_table_lookup(js->sessions, id) : NULL;
 }
 
 static JingleSession *
