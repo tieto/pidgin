@@ -331,7 +331,7 @@
 "</soap:Envelope>"
 
 
-/* Update Contact Nickname */
+/* Update Contact Information */
 #define MSN_CONTACT_UPDATE_SOAP_ACTION	"http://www.msn.com/webservices/AddressBook/ABContactUpdate"
 #define MSN_CONTACT_UPDATE_TEMPLATE	"<?xml version=\"1.0\" encoding=\"utf-8\"?>"\
 "<soap:Envelope"\
@@ -355,11 +355,7 @@
 			"<abId>00000000-0000-0000-0000-000000000000</abId>"\
 			"<contacts>"\
 				"<Contact xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
-					"<contactInfo>"\
-						"<contactType>Me</contactType>"\
-						"<displayName>%s</displayName>"\
-					"</contactInfo>"\
-					"<propertiesChanged>DisplayName</propertiesChanged>"\
+					""\
 				"</Contact>"\
 			"</contacts>"\
 		"</ABContactUpdate>"\
@@ -618,6 +614,13 @@ typedef enum
 	MSN_PS_BLOCK_UNBLOCK
 } MsnSoapPartnerScenario;
 
+typedef enum
+{
+	MSN_UPDATE_DISPLAY,	/* Real display name */
+	MSN_UPDATE_ALIAS,	/* Aliased display name */
+	MSN_UPDATE_COMMENT
+} MsnContactUpdateType;
+
 /************************************************
  * function prototype
  ************************************************/
@@ -644,7 +647,7 @@ void msn_get_address_book(MsnSession *session,
 			  const char * update, const char * gupdate);
 
 /* contact SOAP operations */
-void msn_update_contact(MsnSession *session, const char* nickname);
+void msn_update_contact(MsnSession *session, const char *passport, MsnContactUpdateType type, const char* value);
 
 void msn_add_contact(MsnSession *session, MsnCallbackState *state,
 		     const char *passport);

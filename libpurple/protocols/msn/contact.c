@@ -510,12 +510,14 @@ static void
 msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 {
 	xmlnode *contactNode;
-	char *passport = NULL, *Name = NULL, *uid = NULL, *type = NULL, *mobile_number = NULL;
+	char *passport = NULL, *Name = NULL, *uid = NULL, *type = NULL, *mobile_number = NULL, *alias = NULL;
 	gboolean mobile = FALSE;
+	PurpleConnection *pc = purple_account_get_connection(session->account);
 
 	for(contactNode = xmlnode_get_child(node, "Contact"); contactNode;
 				contactNode = xmlnode_get_next_twin(contactNode)) {
 		xmlnode *contactId, *contactInfo, *contactType, *passportName, *displayName, *guid, *groupIds, *messenger_user;
+		xmlnode *annotation;
 		MsnUser *user;
 		MsnUserType usertype;
 
@@ -526,10 +528,11 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 
 		g_free(passport);
 		g_free(Name);
+		g_free(alias);
 		g_free(uid);
 		g_free(type);
 		g_free(mobile_number);
-		passport = Name = uid = type = mobile_number = NULL;
+		passport = Name = uid = type = mobile_number = alias = NULL;
 		mobile = FALSE;
 
 		uid = xmlnode_get_data(contactId);
@@ -610,10 +613,19 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		else
 			Name = g_strdup(passport);
 
+		for (annotation = xmlnode_get_child(contactInfo, "annotations/Annotation");
+				annotation; annotation = xmlnode_get_next_twin(annotation)) {
+			char *name;
+			name = xmlnode_get_data(xmlnode_get_child(annotation, "Name"));
+			if (!strcmp(name, "AB.NickName"))
+				alias = xmlnode_get_data(xmlnode_get_child(annotation, "Value"));
+			g_free(name);
+		}
+
 		mobile = msn_parse_addressbook_mobile(contactInfo, &mobile_number);
 
-		purple_debug_misc("MsnAB","passport:{%s} uid:{%s} display:{%s} mobile:{%s} mobile number:{%s}\n",
-			passport, uid ? uid : "(null)", Name ? Name : "(null)",
+		purple_debug_misc("MsnAB","passport:{%s} uid:{%s} display:{%s} alias: {%s} mobile:{%s} mobile number:{%s}\n",
+			passport, uid ? uid : "(null)", Name ? Name : "(null)", alias ? alias : "(null)",
 			mobile ? "true" : "false", mobile_number ? mobile_number : "(null)");
 
 		user = msn_userlist_find_add_user(session->userlist, passport, Name);
@@ -644,6 +656,8 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 			purple_prpl_got_user_status(session->account, user->passport, "mobile", NULL);
 			purple_prpl_got_user_status(session->account, user->passport, "available", NULL);
 		}
+		if (alias)
+			purple_serv_got_private_alias(pc, passport, alias);
 	}
 
 	g_free(passport);
@@ -1185,28 +1199,72 @@ msn_update_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 	purple_debug_info("MSN CL","Contact updated successfully\n");
 }
 
-/* Update a contact's nickname */
+/* Update a contact's info */
 void
-msn_update_contact(MsnSession *session, const char* nickname)
+msn_update_contact(MsnSession *session, const char *passport, MsnContactUpdateType type, const char* value)
 {
 	MsnCallbackState *state;
-	gchar *body = NULL, *escaped_nickname;
+	xmlnode *contact;
+	xmlnode *contact_info;
+	xmlnode *changes;
 
-	purple_debug_info("MSN CL","Update contact information with new friendly name: %s\n", nickname);
+	purple_debug_info("MSN CL","Update contact information with new %s: %s\n",
+		type==MSN_UPDATE_DISPLAY ? "display name" : "alias", value);
+	purple_debug_info("msncl", "passport=%s\n", passport);
+	g_return_if_fail(passport != NULL);
+	contact_info = xmlnode_new("contactInfo");
+	changes = xmlnode_new("propertiesChanged");
 
-	escaped_nickname = g_markup_escape_text(nickname, -1);
+	switch (type) {
+		xmlnode *annotations;
+		xmlnode *display;
+		xmlnode *a, *n, *v;
+		case MSN_UPDATE_DISPLAY:
+			display = xmlnode_new_child(contact_info, "displayName");
+			xmlnode_insert_data(display, value, -1);
+			xmlnode_insert_data(changes, "DisplayName", -1);
+			break;
 
-	body = g_strdup_printf(MSN_CONTACT_UPDATE_TEMPLATE, escaped_nickname);
+		case MSN_UPDATE_ALIAS:
+			annotations = xmlnode_new_child(contact_info, "annotations");
+			xmlnode_insert_data(changes, "Annotation ", -1);
+
+			a = xmlnode_new_child(annotations, "Annotation");
+			n = xmlnode_new_child(a, "Name");
+			xmlnode_insert_data(n, "AB.NickName", -1);
+			v = xmlnode_new_child(a, "Value");
+			xmlnode_insert_data(v, value, -1);
+			break;
+
+		default:
+			g_return_if_reached();
+	}
+
+
 
 	state = msn_callback_state_new(session);
-	state->body = xmlnode_from_str(body, -1);
+
+	state->body = xmlnode_from_str(MSN_CONTACT_UPDATE_TEMPLATE, -1);
 	state->action = MSN_UPDATE_INFO;
 	state->post_action = MSN_CONTACT_UPDATE_SOAP_ACTION;
 	state->post_url = MSN_ADDRESS_BOOK_POST_URL;
 	state->cb = msn_update_contact_read_cb;
 
-	g_free(escaped_nickname);
-	g_free(body);
+	contact = xmlnode_get_child(state->body, "Body/ABContactUpdate/contacts/Contact");
+	xmlnode_insert_child(contact, contact_info);
+	xmlnode_insert_child(contact, changes);
+
+	if (!strcmp(passport, "Me")) {
+		xmlnode *contactType = xmlnode_new_child(contact_info, "contactType");
+		xmlnode_insert_data(contactType, "Me", -1);
+	} else {
+		MsnUser *user = msn_userlist_find_user(session->userlist, passport);
+		xmlnode *contactId = xmlnode_new_child(contact, "contactId");
+		msn_callback_state_set_uid(state, user->uid);
+		xmlnode_insert_data(contactId, state->uid, -1);
+	}
+
+	msn_contact_request(state);
 }
 
 static void

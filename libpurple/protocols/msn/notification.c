@@ -1284,7 +1284,7 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			if (!strcmp(type, "MFN")) {
 				friendlyname = purple_url_decode(cmd->params[2]);
 
-				msn_update_contact(session, friendlyname);
+				msn_update_contact(session, "Me", MSN_UPDATE_DISPLAY, friendlyname);
 
 				purple_connection_set_display_name(
 					purple_account_get_connection(session->account),

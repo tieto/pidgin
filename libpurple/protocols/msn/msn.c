@@ -1581,6 +1581,15 @@ msn_keepalive(PurpleConnection *gc)
 	}
 }
 
+static void msn_alias_buddy(PurpleConnection *pc, const char *name, const char *alias)
+{
+	MsnSession *session;
+
+	session = pc->proto_data;
+
+	msn_update_contact(session, name, MSN_UPDATE_ALIAS, alias);
+}
+
 static void
 msn_group_buddy(PurpleConnection *gc, const char *who,
 				const char *old_group_name, const char *new_group_name)
@@ -2418,7 +2427,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* register_user */
 	NULL,					/* get_cb_info */
 	NULL,					/* get_cb_away */
-	NULL,					/* alias_buddy */
+	msn_alias_buddy,		/* alias_buddy */
 	msn_group_buddy,		/* group_buddy */
 	msn_rename_group,		/* rename_group */
 	NULL,					/* buddy_free */
