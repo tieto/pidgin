@@ -22,6 +22,8 @@ version 2.5.0 (??/??/2008):
 	* Added "Invite..." menu to chats.
 	* Added "View All Logs" menu in the buddylist to display a list of all IM
 	  logs.
+	* Added '/msgcolor' command to change colors of different classes of
+	  messages in a conversation. See '/help msgcolor' for details.
 
 version 2.4.2 (05/17/2008):
 	libpurple:
