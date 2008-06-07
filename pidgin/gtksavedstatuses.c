@@ -717,8 +717,8 @@ status_editor_remove_dialog(StatusEditor *dialog)
 }
 
 
-static gboolean
-status_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+static void
+status_editor_destroy_cb(GtkWidget *widget, gpointer user_data)
 {
 	StatusEditor *dialog = user_data;
 
@@ -726,19 +726,13 @@ status_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 	g_free(dialog->original_title);
 	g_object_unref(G_OBJECT(dialog->model));
 	g_free(dialog);
-
-	return FALSE;
 }
 
 static void
 status_editor_cancel_cb(GtkButton *button, gpointer user_data)
 {
 	StatusEditor *dialog = user_data;
-
-	status_editor_remove_dialog(dialog);
 	gtk_widget_destroy(dialog->window);
-	g_free(dialog->original_title);
-	g_free(dialog);
 }
 
 static void
@@ -842,20 +836,11 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 	g_free(message);
 	g_free(unformatted);
 
-	status_editor_remove_dialog(dialog);
-	gtk_widget_destroy(dialog->window);
-	g_free(dialog->original_title);
-
-/*
-	if (status_window != NULL)
-	  add_status_to_saved_status_list(status_window->model, saved_status);
-*/
-
 	/* If they clicked on "Save & Use" or "Use," then activate the status */
 	if (button != dialog->save_button)
 		purple_savedstatus_activate(saved_status);
 
-	g_free(dialog);
+	gtk_widget_destroy(dialog->window);
 }
 
 static void
@@ -1133,7 +1118,7 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 
 	dialog->window = win = pidgin_create_dialog(_("Status"), PIDGIN_HIG_BORDER, "status", TRUE);
 
-	g_signal_connect(G_OBJECT(win), "delete_event",
+	g_signal_connect(G_OBJECT(win), "destroy",
 					 G_CALLBACK(status_editor_destroy_cb), dialog);
 
 	/* Setup the vbox */
@@ -1325,25 +1310,20 @@ substatus_editor_remove_dialog(SubStatusEditor *dialog)
 	}
 }
 
-static gboolean
-substatus_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+static void
+substatus_editor_destroy_cb(GtkWidget *widget, gpointer user_data)
 {
 	SubStatusEditor *dialog = user_data;
 
 	substatus_editor_remove_dialog(dialog);
 	g_free(dialog);
-
-	return FALSE;
 }
 
 static void
 substatus_editor_cancel_cb(GtkButton *button, gpointer user_data)
 {
 	SubStatusEditor *dialog = user_data;
-
-	substatus_editor_remove_dialog(dialog);
 	gtk_widget_destroy(dialog->window);
-	g_free(dialog);
 }
 
 
@@ -1361,7 +1341,6 @@ substatus_editor_ok_cb(GtkButton *button, gpointer user_data)
 	if (!gtk_combo_box_get_active_iter(dialog->box, &iter))
 	{
 		gtk_widget_destroy(dialog->window);
-		g_free(dialog);
 		return;
 	}
 
@@ -1389,7 +1368,6 @@ substatus_editor_ok_cb(GtkButton *button, gpointer user_data)
 	gtk_widget_destroy(dialog->window);
 	g_free(id);
 	g_free(message);
-	g_free(dialog);
 }
 
 static void
@@ -1438,7 +1416,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	dialog->window = win = pidgin_create_dialog(tmp, PIDGIN_HIG_BORDER, "substatus", TRUE);
 	g_free(tmp);
 
-	g_signal_connect(G_OBJECT(win), "delete_event",
+	g_signal_connect(G_OBJECT(win), "destroy",
 					 G_CALLBACK(substatus_editor_destroy_cb), dialog);
 
 	/* Setup the vbox */
