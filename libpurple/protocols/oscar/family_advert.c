@@ -28,7 +28,7 @@
 void
 aim_ads_requestads(OscarData *od, FlapConnection *conn)
 {
-	aim_genericreq_n(od, conn, 0x0005, 0x0002);
+	aim_genericreq_n(od, conn, SNAC_FAMILY_ADVERT, 0x0002);
 }
 
 static int snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *rx, aim_modsnac_t *snac, ByteStream *bs)
@@ -39,7 +39,7 @@ static int snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 int adverts_modfirst(OscarData *od, aim_module_t *mod)
 {
 
-	mod->family = 0x0005;
+	mod->family = SNAC_FAMILY_ADVERT;
 	mod->version = 0x0001;
 	mod->toolid = 0x0001;
 	mod->toolversion = 0x0001;
