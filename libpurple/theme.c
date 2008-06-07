@@ -69,23 +69,23 @@ static void
 purple_theme_get_property(GObject *obj, guint param_id, GValue *value,
 						 GParamSpec *psec)
 {
-	PurpleThemePrivate *priv = PURPLE_THEME_GET_PRIVATE(PURPLE_THEME(obj));
+	PurpleTheme *theme = PURPLE_THEME(obj);
 
 	switch(param_id) {
 		case PROP_NAME:
-			g_value_set_string(value, priv->name);
+			g_value_set_string(value, purple_theme_get_name(theme));
 			break;
 		case PROP_AUTHOR:
-			g_value_set_string(value, priv->author);
+			g_value_set_string(value, purple_theme_get_author(theme));
 			break;
 		case PROP_TYPE:
-			g_value_set_string(value, priv->type);
+			g_value_set_string(value, purple_theme_get_type_string(theme));
 			break;
 		case PROP_DIR:
-			g_value_set_string(value, priv->dir);
+			g_value_set_string(value, purple_theme_get_dir(theme));
 			break;
 		case PROP_IMAGE:
-			g_value_set_pointer(value, priv->img);
+			g_value_set_pointer(value, purple_theme_get_image(theme));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, psec);
@@ -97,31 +97,20 @@ static void
 purple_theme_set_property(GObject *obj, guint param_id, const GValue *value,
 						 GParamSpec *psec)
 {
-	PurpleThemePrivate *priv = PURPLE_THEME_GET_PRIVATE(PURPLE_THEME(obj));
-	PurpleStoredImage *img;
+	PurpleTheme *theme = PURPLE_THEME(obj);
 
 	switch(param_id) {
 		case PROP_NAME:
-			if(priv->name)
-				g_free(priv->name);
-			priv->name = g_value_dup_string(value);
+			purple_theme_set_name(theme, g_value_get_string(value));
 			break;
 		case PROP_AUTHOR:
-			if(priv->author)
-				g_free(priv->author);
-			priv->author = g_value_dup_string(value);
+			purple_theme_set_author(theme, g_value_get_string(value));
 			break;
 		case PROP_DIR:
-			if(priv->dir)
-				g_free(priv->dir);
-			priv->dir = g_value_dup_string(value);
+			purple_theme_set_dir(theme, g_value_get_string(value));
 			break;
 		case PROP_IMAGE:
-			img = g_value_get_pointer(value);
-
-			purple_imgstore_unref(priv->img);
-			if (img) 
-				priv->img = img;
+			purple_theme_set_image(theme, g_value_get_pointer(value));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, psec);
@@ -206,7 +195,9 @@ gchar *
 purple_theme_get_name(PurpleTheme *theme)
 {
 	PurpleThemePrivate *priv = NULL;
+
 	g_return_val_if_fail(PURPLE_IS_THEME(theme), NULL);
+
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
 	return priv->name;
 }
@@ -215,10 +206,12 @@ void
 purple_theme_set_name(PurpleTheme *theme, const gchar *name)
 {
 	PurpleThemePrivate *priv = NULL;
+
 	g_return_if_fail(PURPLE_IS_THEME(theme));
+
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
-	if(priv->name)
-		g_free(priv->name);
+
+	g_free(priv->name);
 	priv->name = g_strdup (name);
 }
 
@@ -226,7 +219,9 @@ gchar *
 purple_theme_get_author(PurpleTheme *theme)
 {
 	PurpleThemePrivate *priv = NULL;
+
 	g_return_val_if_fail(PURPLE_IS_THEME(theme), NULL);
+
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
 	return priv->author;
 }
@@ -235,10 +230,12 @@ void
 purple_theme_set_author(PurpleTheme *theme, const gchar *author)
 {
 	PurpleThemePrivate *priv = NULL;
+
 	g_return_if_fail(PURPLE_IS_THEME(theme));
+
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
-	if(priv->author)
-		g_free(priv->author);
+
+	g_free(priv->author);
 	priv->author = g_strdup (author);
 }
 
@@ -246,7 +243,9 @@ gchar *
 purple_theme_get_type_string(PurpleTheme *theme)
 {
 	PurpleThemePrivate *priv = NULL;
+
 	g_return_val_if_fail(PURPLE_IS_THEME(theme), NULL);
+
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
 	return priv->type;
 }
@@ -255,7 +254,9 @@ gchar *
 purple_theme_get_dir(PurpleTheme *theme) 
 {
 	PurpleThemePrivate *priv = NULL;
+
 	g_return_val_if_fail(PURPLE_IS_THEME(theme), NULL);
+
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
 	return priv->dir;
 }
@@ -264,10 +265,12 @@ void
 purple_theme_set_dir(PurpleTheme *theme, const gchar *dir)
 {
 	PurpleThemePrivate *priv = NULL;
+
 	g_return_if_fail(PURPLE_IS_THEME(theme));
+
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
-	if(priv->dir)
-		g_free(priv->dir);
+
+	g_free(priv->dir);
 	priv->dir = g_strdup (dir);
 }
 
@@ -275,8 +278,11 @@ PurpleStoredImage *
 purple_theme_get_image(PurpleTheme *theme)
 {
 	PurpleThemePrivate *priv = NULL;
+
 	g_return_val_if_fail(PURPLE_IS_THEME(theme), NULL);
+
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
+
 	return purple_imgstore_ref(priv->img);
 }
 
@@ -284,8 +290,11 @@ void
 purple_theme_set_image(PurpleTheme *theme, PurpleStoredImage *img)
 {	
 	PurpleThemePrivate *priv = NULL;
+
 	g_return_if_fail(PURPLE_IS_THEME(theme));
+
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
+
 	purple_imgstore_unref(priv->img);
 	priv->img = img;
 }
