@@ -140,18 +140,18 @@ msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id)
 
 #if 0
 static const char*
-get_store_name(MsnUser *user)
+get_friendly_name(MsnUser *user)
 {
-	const char *store_name;
+	const char *friendly_name;
 
 	g_return_val_if_fail(user != NULL, NULL);
 
-	store_name = msn_user_get_store_name(user);
+	friendly_name = msn_user_get_friendly_name(user);
 
-	if (store_name != NULL)
-		store_name = purple_url_encode(store_name);
+	if (friendly_name != NULL)
+		friendly_name = purple_url_encode(friendly_name);
 	else
-		store_name = msn_user_get_passport(user);
+		friendly_name = msn_user_get_passport(user);
 
 	/* this might be a bit of a hack, but it should prevent notification server
 	 * disconnections for people who have buddies with insane friendly names
@@ -161,10 +161,10 @@ get_store_name(MsnUser *user)
 	/* Stu: yeah, that's why it's a bit of a hack, as you pointed out, we're
 	 * probably decoding the incoming store_name wrong, or something. bleh. */
 
-	if (strlen(store_name) > BUDDY_ALIAS_MAXLEN)
-		store_name = msn_user_get_passport(user);
+	if (strlen(friendly_name) > BUDDY_ALIAS_MAXLEN)
+		friendly_name = msn_user_get_passport(user);
 
-	return store_name;
+	return friendly_name;
 }
 #endif
 
@@ -342,7 +342,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	gc = purple_account_get_connection(account);
 
 	passport = msn_user_get_passport(user);
-	store = msn_user_get_store_name(user);
+	store = msn_user_get_friendly_name(user);
 
 	msn_user_set_op(user, list_op);
 
@@ -456,7 +456,7 @@ msn_userlist_find_add_user(MsnUserList *userlist,const char *passport,const char
 		user = msn_user_new(userlist, passport, userName);
 		msn_userlist_add_user(userlist, user);
 	} else {
-		msn_user_set_store_name(user, userName);
+		msn_user_set_friendly_name(user, userName);
 	}
 	return user;
 }
@@ -781,7 +781,7 @@ msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who,
 		return;
 	}
 
-	//store_name = (user != NULL) ? get_store_name(user) : who;
+	//friendly_name = (user != NULL) ? get_friendly_name(user) : who;
 
 	//purple_debug_info("MSN Userlist", "store_name = %s\n", store_name);
 
