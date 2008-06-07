@@ -110,10 +110,6 @@ struct _MsnSession
 
 	struct
 	{
-		/*t and p, get via USR TWN*/
-		char *t;
-		char *p;
-
 		char *kv;
 		char *sid;
 		char *mspauth;
