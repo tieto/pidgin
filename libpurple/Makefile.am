@@ -77,6 +77,7 @@ purple_coresources = \
 	sound.c \
 	sslconn.c \
 	upnp.c \
+	theme.c \
 	util.c \
 	value.c \
 	version.c \
@@ -130,6 +131,7 @@ purple_coreheaders = \
 	sound.h \
 	sslconn.h \
 	upnp.h \
+	theme.h \
 	util.h \
 	value.h \
 	xmlnode.h \
