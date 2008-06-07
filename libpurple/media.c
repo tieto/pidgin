@@ -754,9 +754,9 @@ purple_media_video_init_recv(GstElement **recvbin)
 }
 
 static void
-purple_media_new_local_candidate(FsStream *stream,
-				  FsCandidate *local_candidate,
-				  PurpleMediaSession *session)
+purple_media_new_local_candidate_cb(FsStream *stream,
+				    FsCandidate *local_candidate,
+				    PurpleMediaSession *session)
 {
 	gchar *name;
 	FsParticipant *participant;
@@ -774,7 +774,7 @@ purple_media_new_local_candidate(FsStream *stream,
 }
 
 static void
-purple_media_candidates_prepared(FsStream *stream, PurpleMediaSession *session)
+purple_media_candidates_prepared_cb(FsStream *stream, PurpleMediaSession *session)
 {
 	gchar *name;
 	FsParticipant *participant;
@@ -788,10 +788,10 @@ purple_media_candidates_prepared(FsStream *stream, PurpleMediaSession *session)
 /* callback called when a pair of transport candidates (local and remote)
  * has been established */
 static void
-purple_media_candidate_pair_established(FsStream *stream,
-					 FsCandidate *native_candidate,
-					 FsCandidate *remote_candidate,
-					 PurpleMediaSession *session)
+purple_media_candidate_pair_established_cb(FsStream *stream,
+					   FsCandidate *native_candidate,
+					   FsCandidate *remote_candidate,
+					   PurpleMediaSession *session)
 {
 	session->local_candidate = fs_candidate_copy(native_candidate);
 	session->remote_candidate = fs_candidate_copy(remote_candidate);
@@ -803,8 +803,8 @@ purple_media_candidate_pair_established(FsStream *stream,
 }
 
 static void
-purple_media_src_pad_added(FsStream *stream, GstPad *srcpad,
-			    FsCodec *codec, PurpleMediaSession *session)
+purple_media_src_pad_added_cb(FsStream *stream, GstPad *srcpad,
+			      FsCodec *codec, PurpleMediaSession *session)
 {
 	GstElement *pipeline = purple_media_get_pipeline(session->media);
 	GstPad *sinkpad = gst_element_get_static_pad(session->sink, "ghostsink");
@@ -893,18 +893,18 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		purple_media_insert_stream(session, who, stream);
 		/* callback for new local candidate (new local candidate retreived) */
 		g_signal_connect(G_OBJECT(stream),
-				 "new-local-candidate", G_CALLBACK(purple_media_new_local_candidate), session);
+				 "new-local-candidate", G_CALLBACK(purple_media_new_local_candidate_cb), session);
 		/* callback for source pad added (new stream source ready) */
 		g_signal_connect(G_OBJECT(stream),
-				 "src-pad-added", G_CALLBACK(purple_media_src_pad_added), session);
+				 "src-pad-added", G_CALLBACK(purple_media_src_pad_added_cb), session);
 		/* callback for local candidates prepared (local candidates ready to send) */
 		g_signal_connect(G_OBJECT(stream), 
 				 "local-candidates-prepared", 
-				 G_CALLBACK(purple_media_candidates_prepared), session);
+				 G_CALLBACK(purple_media_candidates_prepared_cb), session);
 		/* callback for new active candidate pair (established connection) */
 		g_signal_connect(G_OBJECT(stream),
 				 "new-active-candidate-pair", 
-				 G_CALLBACK(purple_media_candidate_pair_established), session);
+				 G_CALLBACK(purple_media_candidate_pair_established_cb), session);
 	} else if (*direction != type_direction) {	
 		/* change direction */
 		g_object_set(stream, "direction", type_direction, NULL);
@@ -1010,6 +1010,21 @@ purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id, const g
 	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
 	FsStream *stream = purple_media_session_get_stream(session, name);
 	fs_stream_set_remote_codecs(stream, codecs, NULL);
+}
+
+gboolean
+purple_media_candidates_prepared(PurpleMedia *media, const gchar *name)
+{
+	GList *sessions = purple_media_get_session_names(media);
+
+	for (; sessions; sessions = sessions->next) {
+		const gchar *session = sessions->data;
+		if (!purple_media_get_local_candidate(media, session, name) ||
+				!purple_media_get_remote_candidate(media, session, name))
+			return FALSE;
+	}
+
+	return TRUE;
 }
 
 #endif  /* USE_VV */

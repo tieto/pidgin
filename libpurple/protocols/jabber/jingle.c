@@ -36,6 +36,13 @@
 #define JINGLE_RTP_INFO "urn:xmpp:tmp:jingle:apps:rtp:info"
 #define TRANSPORT_ICEUDP "urn:xmpp:tmp:jingle:transports:ice-udp"
 
+typedef enum {
+	PENDING,
+	GOT_ACK,
+	ACCEPTED,
+	ACTIVE
+} JingleSessionState;
+
 typedef struct {
 	char *id;
 	JabberStream *js;
@@ -43,7 +50,7 @@ typedef struct {
 	char *remote_jid;
 	char *initiator;
 	gboolean is_initiator;
-	gboolean session_started;
+	JingleSessionState state;
 	GHashTable *contents;	/* JingleSessionContent table */
 } JingleSession;
 
@@ -207,7 +214,7 @@ jabber_jingle_session_create_internal(JabberStream *js,
 					  sess->id);
 	g_hash_table_insert(js->sessions, sess->id, sess);
 
-	sess->session_started = FALSE;
+	sess->state = PENDING;
 
 	return sess;
 }
@@ -392,6 +399,20 @@ jabber_jingle_session_set_remote_jid(JingleSession *sess,
 {
 	sess->remote_jid = strdup(remote_jid);
 }
+
+static JingleSessionState
+jabber_jingle_session_get_state(JingleSession *sess)
+{
+	return sess->state;
+}
+
+static void
+jabber_jingle_session_set_state(JingleSession *sess,
+				JingleSessionState state)
+{
+	sess->state = state;
+}
+				
 
 static const char *
 jabber_jingle_session_get_initiator(const JingleSession *sess)
@@ -647,10 +668,10 @@ jabber_jingle_session_create_content_replace(const JingleSession *sess,
 #endif
 
 static JabberIq *
-jabber_jingle_session_create_session_accept(const JingleSession *session,
-					    FsCandidate *local,
-					    FsCandidate *remote)
+jabber_jingle_session_create_session_accept(const JingleSession *session)
 {
+	PurpleMedia *media = jabber_jingle_session_get_media(session);
+	const gchar *remote_jid = jabber_jingle_session_get_remote_jid(session);
 	JabberIq *request = jabber_jingle_session_create_iq(session);
 	xmlnode *jingle =
 		jabber_jingle_session_add_jingle(session, request,
@@ -659,13 +680,19 @@ jabber_jingle_session_create_session_accept(const JingleSession *session,
 
 	for (; contents; contents = contents->next) {
 		JingleSessionContent *jsc = contents->data;
+		const gchar *session_name = jabber_jingle_session_content_get_name(jsc);
 		xmlnode *content = jabber_jingle_session_add_content(jsc, jingle);
 		xmlnode *description = jabber_jingle_session_add_description(jsc, content);
 		xmlnode *transport = jabber_jingle_session_add_transport(jsc, content);
 		if (jabber_jingle_session_content_is_type(jsc, JINGLE_RTP))
 			jabber_jingle_session_add_payload_types(jsc, description);
-		if (jabber_jingle_session_content_is_transport_type(jsc, TRANSPORT_ICEUDP))
-			jabber_jingle_session_add_candidate_iceudp(transport, local, remote);
+		if (jabber_jingle_session_content_is_transport_type(jsc, TRANSPORT_ICEUDP)) {
+			jabber_jingle_session_add_candidate_iceudp(transport, 
+					purple_media_get_local_candidate(media, session_name,
+									 remote_jid),
+					purple_media_get_remote_candidate(media, session_name,
+									  remote_jid));
+		}
 	}
 
 	return request;
@@ -760,12 +787,13 @@ jabber_jingle_session_send_session_accept(JingleSession *session)
 	/* create transport-info packages */
 	PurpleMedia *media = jabber_jingle_session_get_media(session);
 	GList *contents = jabber_jingle_session_get_contents(session);
+	const gchar *remote_jid = jabber_jingle_session_get_remote_jid(session);
 	for (; contents; contents = contents->next) {
 		JingleSessionContent *jsc = contents->data;
 		GList *candidates = purple_media_get_local_candidates(
 				media,
 				jabber_jingle_session_content_get_name(jsc),
-				jabber_jingle_session_get_remote_jid(session));
+				remote_jid);
 		purple_debug_info("jingle",
 				  "jabber_session_candidates_prepared: %d candidates\n",
 				  g_list_length(candidates));
@@ -776,23 +804,20 @@ jabber_jingle_session_send_session_accept(JingleSession *session)
 			jabber_iq_send(result);
 		}
 		fs_candidate_list_destroy(candidates);
+
 		purple_debug_info("jingle", "codec intersection: %i\n",
 				g_list_length(purple_media_get_negotiated_codecs(media,
 				jabber_jingle_session_content_get_name(jsc))));
-		jabber_iq_send(jabber_jingle_session_create_session_accept(session, 
-				purple_media_get_local_candidate(media,
-					jabber_jingle_session_content_get_name(jsc),
-					jabber_jingle_session_get_remote_jid(session)),
-				purple_media_get_remote_candidate(media,
-					jabber_jingle_session_content_get_name(jsc),
-					jabber_jingle_session_get_remote_jid(session))));
 	}
 
+	if (purple_media_candidates_prepared(media, remote_jid)) {
+		jabber_iq_send(jabber_jingle_session_create_session_accept(session));
 
-	purple_debug_info("jingle", "Sent session accept, starting stream\n");
-	gst_element_set_state(purple_media_get_pipeline(session->media), GST_STATE_PLAYING);
-
-	session->session_started = TRUE;
+		purple_debug_info("jingle", "Sent session accept, starting stream\n");
+		gst_element_set_state(purple_media_get_pipeline(session->media), GST_STATE_PLAYING);
+		jabber_jingle_session_set_state(session, ACTIVE);
+	} else
+		jabber_jingle_session_set_state(session, ACCEPTED);
 }
 
 static void
@@ -861,51 +886,41 @@ jabber_jingle_session_content_create_parse(JingleSession *session,
 						      subtype);
 }
 
-/* callback called when new local transport candidate(s) are available on the
-	Farsight stream */
 static void
-jabber_jingle_session_candidates_prepared(PurpleMedia *media, JingleSession *session)
+jabber_jingle_session_new_candidate_cb(PurpleMedia *media,
+				       const gchar *session_id,
+				       const gchar *name,
+				       FsCandidate *candidate,
+				       JingleSession *session)
 {
-#if 0
-	if (!jabber_jingle_session_is_initiator(session)) {
-		/* create transport-info packages */
-		GList *contents = jabber_jingle_session_get_contents(session);
-		for (; contents; contents = contents->next) {
-			JingleSessionContent *jsc = contents->data;
-			GList *candidates = purple_media_get_local_audio_candidates(
-					jabber_jingle_session_get_media(session));
-			purple_debug_info("jingle",
-					  "jabber_session_candidates_prepared: %d candidates\n",
-					  g_list_length(candidates));
-			for (; candidates; candidates = candidates->next) {
-				FsCandidate *candidate = candidates->data;
-				JabberIq *result = jabber_jingle_session_create_transport_info(jsc,
-						candidate);
-				jabber_iq_send(result);
-			}
-			fs_candidate_list_destroy(candidates);
-		}
+	if (jabber_jingle_session_get_state(session) == GOT_ACK ||
+			jabber_jingle_session_get_state(session) == ACTIVE) {
+		JingleSessionContent *jsc = jabber_jingle_session_get_content(session,
+									      session_id);
+		jabber_iq_send(jabber_jingle_session_create_transport_info(jsc,
+				candidate));
 	}
-#endif
 }
 
 /* callback called when a pair of transport candidates (local and remote)
 	has been established */
 static void
-jabber_jingle_session_candidate_pair_established(PurpleMedia *media,
-						 FsCandidate *native_candidate,
-						 FsCandidate *remote_candidate,
-						 JingleSession *session)
+jabber_jingle_session_candidate_pair_established_cb(PurpleMedia *media,
+						    FsCandidate *native_candidate,
+						    FsCandidate *remote_candidate,
+						    JingleSession *session)
 {
-#if 0
-	purple_debug_info("jingle", "jabber_candidate_pair_established called\n");
-	/* if we are the responder, we should send a sesson-accept message */
 	if (!jabber_jingle_session_is_initiator(session) &&
-			!session->session_started) {
-		jabber_iq_send(jabber_jingle_session_create_session_accept(session, 
-				native_candidate, remote_candidate));
+			jabber_jingle_session_get_state(session) == ACCEPTED &&
+			purple_media_candidates_prepared(media,
+				jabber_jingle_session_get_remote_jid(session))) {
+		jabber_iq_send(jabber_jingle_session_create_session_accept(session));
+		
+		purple_debug_info("jingle", "Sent session accept, starting stream\n");
+		gst_element_set_state(purple_media_get_pipeline(session->media),
+				      GST_STATE_PLAYING);
+		jabber_jingle_session_set_state(session, ACTIVE);
 	}
-#endif
 }
 
 static gboolean
@@ -959,10 +974,10 @@ jabber_jingle_session_initiate_media_internal(JingleSession *session,
 				 G_CALLBACK(jabber_jingle_session_send_session_reject), session);
 	g_signal_connect_swapped(G_OBJECT(media), "hangup", 
 				 G_CALLBACK(jabber_jingle_session_send_session_terminate), session);
-	g_signal_connect(G_OBJECT(media), "candidates-prepared", 
-				 G_CALLBACK(jabber_jingle_session_candidates_prepared), session);
+	g_signal_connect(G_OBJECT(media), "new-candidate", 
+				 G_CALLBACK(jabber_jingle_session_new_candidate_cb), session);
 	g_signal_connect(G_OBJECT(media), "candidate-pair", 
-				 G_CALLBACK(jabber_jingle_session_candidate_pair_established), session);
+				 G_CALLBACK(jabber_jingle_session_candidate_pair_established_cb), session);
 
 	purple_media_ready(media);
 
@@ -1007,6 +1022,8 @@ jabber_jingle_session_initiate_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		}
 		fs_candidate_list_destroy(candidates);
 	}
+
+	jabber_jingle_session_set_state(session, GOT_ACK);
 }
 
 PurpleMedia *
@@ -1205,7 +1222,7 @@ jabber_jingle_session_handle_session_accept(JabberStream *js, xmlnode *packet)
 
 	jabber_iq_send(result);
 
-	session->session_started = TRUE;
+	jabber_jingle_session_set_state(session, ACTIVE);
 }
 
 void
