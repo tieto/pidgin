@@ -59,7 +59,6 @@ struct _MsnSlpLink
 	GQueue *slp_msg_queue;
 };
 
-MsnSlpLink *msn_slplink_new(MsnSession *session, const char *username);
 void msn_slplink_destroy(MsnSlpLink *slplink);
 MsnSlpLink *msn_session_find_slplink(MsnSession *session,
 									 const char *who);
