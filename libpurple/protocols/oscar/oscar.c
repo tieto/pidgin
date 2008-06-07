@@ -707,6 +707,9 @@ static gchar *oscar_caps_to_string(OscarCapability caps)
 			case OSCAR_CAPABILITY_CAMERA:
 				tmp = _("Camera");
 				break;
+			case OSCAR_CAPABILITY_ICHAT_SCREENSHARE:
+				tmp = _("Screen Sharing");
+				break;
 			default:
 				tmp = NULL;
 				break;
