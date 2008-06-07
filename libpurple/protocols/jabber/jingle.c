@@ -992,8 +992,17 @@ jabber_jingle_session_initiate_result_cb(JabberStream *js, xmlnode *packet, gpoi
 {
 	const char *from = xmlnode_get_attrib(packet, "from");
 	JingleSession *session = jabber_jingle_session_find_by_jid(js, from);
-	PurpleMedia *media = session->media;
+	PurpleMedia *media;
 	GList *contents;
+
+	if (!session) {
+		/* respond with an error here */
+		purple_debug_error("jingle", "Received session-initiate ack"
+				   " to nonexistent session\n");
+		return;
+	}
+
+	media = session->media;
 
 	if (!strcmp(xmlnode_get_attrib(packet, "type"), "error")) {
 		purple_media_got_hangup(media);
