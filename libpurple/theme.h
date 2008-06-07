@@ -69,17 +69,6 @@ G_BEGIN_DECLS
 GType purple_theme_get_type(void);
 
 /**
- * Creates a new PurpleTheme object
- * 
- * @param name 		the purple theme name
- * @param author 	the purple theme author
- * @param type 		the purple theme type
- *
- * @return a new PurpleTheme object
- */
-PurpleTheme *purple_theme_new(const gchar *name, const gchar *author, const gchar *type);
-
-/**
  * Returns the name of the PurpleTheme object
  * 
  * @param theme 	the purple theme

@@ -78,6 +78,7 @@ purple_coresources = \
 	sslconn.c \
 	upnp.c \
 	theme.c \
+	theme-loader.c \
 	util.c \
 	value.c \
 	version.c \
@@ -132,6 +133,7 @@ purple_coreheaders = \
 	sslconn.h \
 	upnp.h \
 	theme.h \
+	theme-loader.h \
 	util.h \
 	value.h \
 	xmlnode.h \
