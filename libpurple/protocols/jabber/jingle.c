@@ -435,14 +435,9 @@ jabber_jingle_session_is_initiator(const JingleSession *sess)
 
 static void
 jabber_jingle_session_add_payload_types(const JingleSessionContent *jsc,
-					xmlnode *description)
+					xmlnode *description,
+					GList *codecs)
 {
-	JingleSession *session = jabber_jingle_session_content_get_session(jsc);
-	PurpleMedia *media = jabber_jingle_session_get_media(session);
-	/* should this be local_codecs or negotiated-codecs? */
-	GList *codecs = purple_media_get_local_codecs(media,
-			jabber_jingle_session_content_get_name(jsc));
-
 	for (; codecs ; codecs = codecs->next) {
 		FsCodec *codec = (FsCodec*)codecs->data;
 		char id[8], clockrate[10], channels[10];
@@ -457,7 +452,6 @@ jabber_jingle_session_add_payload_types(const JingleSessionContent *jsc,
 		xmlnode_set_attrib(payload, "clockrate", clockrate);
 		xmlnode_set_attrib(payload, "channels", channels);
 	}
-	fs_codec_list_destroy(codecs);
 }
 
 static xmlnode *
@@ -680,17 +674,21 @@ jabber_jingle_session_create_session_accept(const JingleSession *session)
 
 	for (; contents; contents = contents->next) {
 		JingleSessionContent *jsc = contents->data;
-		const gchar *session_name = jabber_jingle_session_content_get_name(jsc);
+		const gchar *content_name = jabber_jingle_session_content_get_name(jsc);
 		xmlnode *content = jabber_jingle_session_add_content(jsc, jingle);
 		xmlnode *description = jabber_jingle_session_add_description(jsc, content);
 		xmlnode *transport = jabber_jingle_session_add_transport(jsc, content);
-		if (jabber_jingle_session_content_is_type(jsc, JINGLE_RTP))
-			jabber_jingle_session_add_payload_types(jsc, description);
+		if (jabber_jingle_session_content_is_type(jsc, JINGLE_RTP)) {
+			GList *codecs = purple_media_get_negotiated_codecs(media,
+									   content_name);
+			jabber_jingle_session_add_payload_types(jsc, description, codecs);
+			fs_codec_list_destroy(codecs);
+		}
 		if (jabber_jingle_session_content_is_transport_type(jsc, TRANSPORT_ICEUDP)) {
 			jabber_jingle_session_add_candidate_iceudp(transport, 
-					purple_media_get_local_candidate(media, session_name,
+					purple_media_get_local_candidate(media, content_name,
 									 remote_jid),
-					purple_media_get_remote_candidate(media, session_name,
+					purple_media_get_remote_candidate(media, content_name,
 									  remote_jid));
 		}
 	}
@@ -724,8 +722,14 @@ jabber_jingle_session_create_session_initiate(const JingleSession *session)
 		JingleSessionContent *jsc = contents->data;
 		xmlnode *content = jabber_jingle_session_add_content(jsc, jingle);
 		xmlnode *description = jabber_jingle_session_add_description(jsc, content);
-		if (jabber_jingle_session_content_is_type(jsc, JINGLE_RTP))
-			jabber_jingle_session_add_payload_types(jsc, description);
+		if (jabber_jingle_session_content_is_type(jsc, JINGLE_RTP)) {
+			PurpleMedia *media = jabber_jingle_session_get_media(session);
+			const gchar *content_name =
+					jabber_jingle_session_content_get_name(jsc);
+			GList *codecs = purple_media_get_local_codecs(media, content_name);
+			jabber_jingle_session_add_payload_types(jsc, description, codecs);
+			fs_codec_list_destroy(codecs);
+		}
 		jabber_jingle_session_add_transport(jsc, content);
 	}
 
