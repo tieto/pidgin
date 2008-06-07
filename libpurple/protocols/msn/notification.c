@@ -633,7 +633,7 @@ msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_
 {
 	MsnTransaction *trans;
 	purple_debug_info("MSN Notification","Sending ADL with payload: %s\n", payload);
-	trans = msn_transaction_new(cmdproc, "ADL","%" G_GSIZE_FORMAT, payload_len);
+	trans = msn_transaction_new(cmdproc, "ADL", "%i", payload_len);
 	msn_transaction_set_payload(trans, payload, payload_len);
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
@@ -2145,24 +2145,6 @@ msn_notification_init(void)
 	msn_table_add_msg_type(cbs_table,
 						   "text/x-msmsgsinitialemailnotification",
 						   initial_email_msg);
-	msn_table_add_msg_type(cbs_table,
-						   "text/x-msmsgsemailnotification",
-						   email_msg);
-	/*delete an offline Message notification*/
-	msn_table_add_msg_type(cbs_table,
-							"text/x-msmsgsactivemailnotification",
-						   delete_oim_msg);
-	msn_table_add_msg_type(cbs_table,
-						   "application/x-msmsgssystemmessage",
-						   system_msg);
-}
-
-void
-msn_notification_end(void)
-{
-	msn_table_destroy(cbs_table);
-}
-
 	msn_table_add_msg_type(cbs_table,
 						   "text/x-msmsgsemailnotification",
 						   email_msg);
