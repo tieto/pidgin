@@ -161,7 +161,7 @@
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
-			"<TicketToken>%s</TicketToken>"\
+			"<TicketToken>EMPTY</TicketToken>"\
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -221,7 +221,7 @@
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
-			"<TicketToken>%s</TicketToken>"\
+			"<TicketToken>EMPTY</TicketToken>"\
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -250,7 +250,7 @@
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
-			"<TicketToken>%s</TicketToken>"\
+			"<TicketToken>EMPTY</TicketToken>"\
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -287,7 +287,7 @@
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
-			"<TicketToken>%s</TicketToken>"\
+			"<TicketToken>EMPTY</TicketToken>"\
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -314,7 +314,7 @@
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
-			"<TicketToken>%s</TicketToken>"\
+			"<TicketToken>EMPTY</TicketToken>"\
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -347,7 +347,7 @@
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
-			"<TicketToken>%s</TicketToken>"\
+			"<TicketToken>EMPTY</TicketToken>"\
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -365,7 +365,6 @@
 		"</ABContactUpdate>"\
 	"</soap:Body>"\
 "</soap:Envelope>"
-
 
 /*******************************************************
  * Add/Delete contact from lists SOAP actions
@@ -407,7 +406,7 @@
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
-			"<TicketToken>%s</TicketToken>"\
+			"<TicketToken>EMPTY</TicketToken>"\
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -443,7 +442,7 @@
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
-			"<TicketToken>%s</TicketToken>"\
+			"<TicketToken>EMPTY</TicketToken>"\
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -487,7 +486,7 @@
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
-			"<TicketToken>%s</TicketToken>"\
+			"<TicketToken>EMPTY</TicketToken>"\
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -529,7 +528,7 @@
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
-			"<TicketToken>%s</TicketToken>"\
+			"<TicketToken>EMPTY</TicketToken>"\
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -560,7 +559,7 @@
 		"</ABApplicationHeader>"\
 		"<ABAuthHeader xmlns=\"http://www.msn.com/webservices/AddressBook\">"\
 			"<ManagedGroupRequest>false</ManagedGroupRequest>"\
-			"<TicketToken>%s</TicketToken>"\
+			"<TicketToken>EMPTY</TicketToken>"\
 		"</ABAuthHeader>"\
 	"</soap:Header>"\
 	"<soap:Body>"\
@@ -581,13 +580,14 @@
 
 typedef enum
 {
-	MSN_ADD_BUDDY			= 0x01,
-	MSN_MOVE_BUDDY			= 0x02,
-	MSN_ACCEPTED_BUDDY		= 0x04,
-	MSN_DENIED_BUDDY		= 0x08,
-	MSN_ADD_GROUP			= 0x10,
-	MSN_DEL_GROUP			= 0x20,
-	MSN_RENAME_GROUP		= 0x40,
+	MSN_ADD_BUDDY       = 0x01,
+	MSN_MOVE_BUDDY      = 0x02,
+	MSN_ACCEPTED_BUDDY  = 0x04,
+	MSN_DENIED_BUDDY    = 0x08,
+	MSN_ADD_GROUP       = 0x10,
+	MSN_DEL_GROUP       = 0x20,
+	MSN_RENAME_GROUP    = 0x40,
+	MSN_UPDATE_INFO     = 0x80,
 } MsnCallbackAction;
 
 typedef struct _MsnCallbackState MsnCallbackState;
@@ -602,6 +602,11 @@ struct _MsnCallbackState
 	MsnListId list_id;
 	MsnCallbackAction action;
 	MsnSession *session;
+	xmlnode *body;
+	xmlnode *token;
+	const gchar *post_action;
+	const gchar *post_url;
+	/* MsnSoapCallback */ void *cb;
 };
 
 typedef enum
@@ -617,6 +622,7 @@ typedef enum
  * function prototype
  ************************************************/
 MsnCallbackState * msn_callback_state_new(MsnSession *session);
+MsnCallbackState * msn_callback_state_dup(MsnCallbackState *state);
 void msn_callback_state_free(MsnCallbackState *state);
 void msn_callback_state_set_who(MsnCallbackState *state, const gchar *who);
 void msn_callback_state_set_uid(MsnCallbackState *state, const gchar *uid);

@@ -694,16 +694,10 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 
 	new_group_name = group_name == NULL ? MSN_INDIVIDUALS_GROUP_NAME : group_name;
 
-
 	g_return_if_fail(userlist != NULL);
 	g_return_if_fail(userlist->session != NULL);
 
-
 	purple_debug_info("MSN Userlist", "Add user: %s to group: %s\n", who, new_group_name);
-
-	state = msn_callback_state_new(userlist->session);
-	msn_callback_state_set_who(state, who);
-	msn_callback_state_set_new_group_name(state, new_group_name);
 
 	if (!purple_email_is_valid(who))
 	{
@@ -719,6 +713,10 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 
 		return;
 	}
+
+	state = msn_callback_state_new(userlist->session);
+	msn_callback_state_set_who(state, who);
+	msn_callback_state_set_new_group_name(state, new_group_name);
 
 	group_id = msn_userlist_find_group_id(userlist, new_group_name);
 
@@ -749,6 +747,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 
 		if (msn_userlist_user_is_in_group(user, group_id)) {
 			purple_debug_info("MSN Userlist", "User %s is already in group %s, returning\n", who, new_group_name);
+			msn_callback_state_free(state);
 			return;
 		}
 	}
