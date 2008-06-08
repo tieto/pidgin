@@ -1107,7 +1107,8 @@ jabber_jingle_session_terminate_session_media(JabberStream *js, const gchar *who
 void
 jabber_jingle_session_terminate_sessions(JabberStream *js)
 {
-	GList *values = g_hash_table_get_values(js->sessions);
+	GList *values = js->sessions ?
+			g_hash_table_get_values(js->sessions) : NULL;
 
 	for (; values; values = values->next) {
 		JingleSession *session = (JingleSession *)values->data;
