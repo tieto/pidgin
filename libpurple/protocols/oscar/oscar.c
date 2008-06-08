@@ -871,8 +871,8 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 
 	if (b) {
 		if (purple_presence_is_online(presence)) {
-			if (aim_snvalid_icq(b->name) || !message || !(*message)) {
-				/* Append the status name for online ICQ statuses and for all buddies with no message.
+			if (aim_snvalid_icq(b->name) || is_away || !message || !(*message)) {
+				/* Append the status name for online ICQ statuses, away AIM statuses, and for all buddies with no message.
 				 * If the status name and the message are the same, only show one. */
 				const char *status_name = purple_status_get_name(status);
 				if (status_name && message && !strcmp(status_name, message))
