@@ -13,8 +13,8 @@ version 2.5.0 (??/??/2008):
 	  entries via the buddy list entry right-click menu.
 	* Resize large incoming custom smileys to a maximum of 96px on either
 	  side.
-	* Automatically offer to merge buddies into the same contact if the
-	  alias given matches that of existing buddies in the same group.
+	* Offer to add new buddies into the same contact as existing buddies
+          in the same group if the alias given is the same.
 
 	General:
 	* Group and Chat buddy list entries can now be given custom buddy
