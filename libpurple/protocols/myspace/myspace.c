@@ -2404,7 +2404,7 @@ const char *msim_normalize(const PurpleAccount *account, const char *str) {
 		const char *username;
 
 		/* If the account does not exist, we can't look up the user. */
-		if (!account)
+		if (!account || !account->gc)
 			return str;
 
 		id = atol(str);
