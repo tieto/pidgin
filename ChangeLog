@@ -9,10 +9,12 @@ version 2.5.0 (??/??/2008):
 	  and restoring compatibility with the web messenger (Yusuke Odate)
 
 	Pidgin:
-	* Custom buddy icons can now be added and removed to buddy list
+	* Custom buddy icons can now be added to and removed from buddy list
 	  entries via the buddy list entry right-click menu.
 	* Resize large incoming custom smileys to a maximum of 96px on either
 	  side.
+	* Automatically offer to merge buddies into the same contact if the
+	  alias given matches that of existing buddies in the same group.
 
 	General:
 	* Group and Chat buddy list entries can now be given custom buddy

@@ -6474,6 +6474,10 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 		purple_blist_add_buddy(b, NULL, g, NULL);
 		purple_account_add_buddy(data->account, b);
 
+		/* Offer to merge people with the same alias. */
+		if (whoalias != NULL)
+			gtk_blist_auto_personize(g, whoalias);
+
 		/*
 		 * XXX
 		 * It really seems like it would be better if the call to
