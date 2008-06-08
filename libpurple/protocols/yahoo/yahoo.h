@@ -116,7 +116,7 @@ struct yahoo_buddy_icon_upload_data {
 
 struct yahoo_p2p_data	{
 	PurpleConnection *gc;
-	char *host_ip;		/*also we use it as a handle*/
+	char *host_ip;
 	int session_id;
 	char *host_username;
 	int val_13;
