@@ -5025,9 +5025,9 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 			str += g_snprintf(str, sizeof(buf) - (str - buf),
 					"color: #%02x%02x%02x;",
 					color->red >> 8, color->green >> 8, color->blue >> 8);
-			gdk_color_free(color);
 			empty = FALSE;
 		}
+		gdk_color_free(color);
 
 		/* Background color */
 		g_object_get(obj, "background-set", &isset, "background-gdk", &color, NULL);
@@ -5035,9 +5035,9 @@ static const gchar *tag_to_html_start(GtkTextTag *tag)
 			str += g_snprintf(str, sizeof(buf) - (str - buf),
 					"background: #%02x%02x%02x;",
 					color->red >> 8, color->green >> 8, color->blue >> 8);
-			gdk_color_free(color);
 			empty = FALSE;
 		}
+		gdk_color_free(color);
 
 		/* Underline */
 		g_object_get(obj, "underline-set", &isset, "underline", &ivalue, NULL);
