@@ -215,7 +215,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (f->status == YAHOO_STATUS_IDLE) {
 				/* Idle may have already been set in a more precise way in case 137 */
 				if (f->idle == 0)
-					f->idle = time(NULL);
+					f->idle = time(NULL) - 60;	/*Start idle at 1 min*/
 			} else
 				f->idle = 0;
 
