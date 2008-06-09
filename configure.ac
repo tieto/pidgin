@@ -1561,6 +1561,18 @@ dnl #
 dnl # Thanks go to Evolution for the checks.
 dnl #######################################################################
 
+AC_ARG_WITH(ssl-certificates, [AC_HELP_STRING([--with-ssl-certificates=<dir>], [directory containing system-wide SSL CA certificates])])
+
+SSL_CERTIFICATES_DIR=""
+if ! test -z "$with_ssl_certificates" ; then
+	if ! test -d "$with_ssl_certificates" ; then
+		AC_MSG_ERROR([$with_ssl_certificates does not exist, if this is the correct location please make sure that it exists.])
+	fi
+	SSL_CERTIFICATES_DIR="$with_ssl_certificates"
+fi
+AC_SUBST(SSL_CERTIFICATES_DIR)
+AM_CONDITIONAL(INSTALL_SSL_CERTIFICATES, test "x$SSL_CERTIFICATES_DIR" = "x")
+
 dnl These two are inverses of each other <-- stolen from evolution!
 
 AC_ARG_ENABLE(gnutls,
@@ -2409,6 +2421,9 @@ if test "x$enable_dbus" = "xyes" ; then
 fi
 echo Build with NetworkManager..... : $enable_nm
 echo SSL Library/Libraries......... : $msg_ssl
+if test "x$SSL_CERTIFICATES_DIR" != "x" ; then
+	eval eval echo SSL CA certificates directory. : $SSL_CERTIFICATES_DIR
+fi
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
