@@ -614,8 +614,7 @@ struct smiley_button_list {
 
 static struct smiley_button_list *
 sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar,
-			 int *width, const GtkIMHtmlSmiley *smiley,
-			 const GSList *custom_smileys)
+			 int *width, const GtkIMHtmlSmiley *smiley)
 {
 	GtkWidget *image;
 	GtkWidget *button;
@@ -625,6 +624,7 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar,
 	const gchar *filename = smiley->file;
 	gchar *face = smiley->smile;
 	PurpleSmiley *psmiley = NULL;
+	gboolean supports_custom = (gtk_imhtml_get_format_functions(GTK_IMHTML(toolbar->imhtml)) & GTK_IMHTML_CUSTOM_SMILEY);
 
 	cur = g_new0(struct smiley_button_list, 1);
 	it = ls;
@@ -678,10 +678,12 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar,
 	/* If this is a "non-custom" smiley, check to see if its shortcut is
 	  "shadowed" by any custom smiley. This can only happen if the connection
 	  is custom smiley-enabled */
-	if (psmiley && !(smiley->flags & GTK_IMHTML_SMILEY_CUSTOM)) {
-		gtk_tooltips_set_tip(toolbar->tooltips, button,
-				_("This smiley is disabled because a custom smiley exists for this shortcut."),
-				NULL);
+	if (supports_custom && psmiley && !(smiley->flags & GTK_IMHTML_SMILEY_CUSTOM)) {
+		gchar tip[128];
+		g_snprintf(tip, sizeof(tip), 
+			_("This smiley is disabled because a custom smiley exists for this shortcut:\n %s"),
+			face);
+		gtk_tooltips_set_tip(toolbar->tooltips, button, tip, NULL);
 		gtk_widget_set_sensitive(button, FALSE);
 	} else if (psmiley) {
 		/* Remove the button if the smiley is destroyed */
@@ -783,11 +785,14 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	else
 		smileys = pidgin_themes_get_proto_smileys(NULL);
 
+	/* Note: prepend smileys to list to avoid O(n^2) overhead when there is
+	  a large number of smileys... need to revers the list after for the dialog
+	  work... */
 	while(smileys) {
 		GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) smileys->data;
 		if(!smiley->hidden) {
 			if(smiley_is_unique(unique_smileys, smiley)) {
-				unique_smileys = g_slist_append(unique_smileys, smiley);
+				unique_smileys = g_slist_prepend(unique_smileys, smiley);
 			}
 		}
 		smileys = smileys->next;
@@ -800,9 +805,12 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		for (iterator = custom_smileys ; iterator ;
 			 iterator = g_slist_next(iterator)) {
 			GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) iterator->data;
-			unique_smileys = g_slist_append(unique_smileys, smiley);
+			unique_smileys = g_slist_prepend(unique_smileys, smiley);
 		}
 	}
+	
+	/* we need to reverse the list to get the smileys in the correct order */
+	unique_smileys = g_slist_reverse(unique_smileys);
 
 	dialog = pidgin_create_dialog(_("Smile!"), 0, "smiley_dialog", FALSE);
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
@@ -834,7 +842,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		while (unique_smileys) {
 			GtkIMHtmlSmiley *smiley = (GtkIMHtmlSmiley *) unique_smileys->data;
 			if (!smiley->hidden) {
-				ls = sort_smileys(ls, toolbar, &max_line_width, smiley, custom_smileys);
+				ls = sort_smileys(ls, toolbar, &max_line_width, smiley);
 			}
 			unique_smileys = g_slist_delete_link(unique_smileys, unique_smileys);
 		}
