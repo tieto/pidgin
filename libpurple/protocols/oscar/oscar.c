@@ -1963,7 +1963,11 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
 					info->itmsurl, info->itmsurl_len);
 
-		tmp = g_markup_escape_text(message, -1);
+		tmp = (message ? g_markup_escape_text(message, -1) : NULL);
+
+		if (message == NULL && itmsurl != NULL)
+			message = "";
+
 		purple_prpl_got_user_status(account, info->sn, status_id,
 				"message", tmp, "itmsurl", itmsurl, NULL);
 		g_free(tmp);
