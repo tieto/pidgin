@@ -3033,9 +3033,6 @@ blist_show(PurpleBuddyList *list)
 	gnt_widget_set_position(ggblist->window, purple_prefs_get_int(PREF_ROOT "/position/x"),
 			purple_prefs_get_int(PREF_ROOT "/position/y"));
 
-	gnt_tree_set_col_width(GNT_TREE(ggblist->tree), 0,
-			purple_prefs_get_int(PREF_ROOT "/size/width") - 1);
-
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->tree);
 
 	ggblist->status = gnt_combo_box_new();
