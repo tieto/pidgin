@@ -12,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-05-31 00:16+0200\n"
-"PO-Revision-Date: 2008-05-31 00:15+0200\n"
-"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
+"POT-Creation-Date: 2008-06-09 20:56+0200\n"
+"PO-Revision-Date: 2008-06-09 20:55+0200\n"
+"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -414,6 +414,9 @@ msgstr "Chat betreten..."
 msgid "View Log..."
 msgstr "Mitschnitt anzeigen..."
 
+msgid "View All Logs"
+msgstr "Alle Mitschnitte anzeigen"
+
 msgid "Show"
 msgstr "Anzeigen"
 
@@ -669,6 +672,20 @@ msgstr ""
 "zu erhalten.\n"
 "Die folgenden Kommandos sind in diesem Kontext verfügbar:\n"
 
+#, c-format
+msgid ""
+"%s is not a valid message class. See '/help msgcolor' for valid message "
+"classes."
+msgstr ""
+"%s ist keine gültige Nachrichtenklasse. Die gültigen Nachrichtenklassen "
+"finden Sie unter '/help msgcolor'."
+
+#, c-format
+msgid "%s is not a valid color. See '/help msgcolor' for valid colors."
+msgstr ""
+"%s ist keine gültige Farbe. Die gültigen Farben finden Sie unter '/help "
+"msgcolor'."
+
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
@@ -715,6 +732,20 @@ msgstr "prefs: Das Einstellungs-Fenster anzeigen."
 msgid "statuses: Show the savedstatuses window."
 msgstr "statuses: Das Fenster mit gespeicherten Status-Infos anzeigen."
 
+msgid ""
+"msgcolor &lt;class&gt; &lt;foreground&gt; &lt;background&gt;: Set the color "
+"for different classes of messages in the conversation window.<br>    &lt;"
+"class&gt;: receive, send, highlight, action, timestamp<br>    &lt;foreground/"
+"background&gt;: black, red, green, blue, white, gray, darkgray, magenta, "
+"cyan, default<br><br>EXAMPLE:<br>    msgcolor send cyan default"
+msgstr ""
+"msgcolor &lt;Klasse&gt; &lt;Vordergrund&gt; &lt;Hintergrund&gt;: Die Farbe "
+"für verschiedene Klassen von Nachrichten im Gesprächsfenster festlegen."
+"<br>    &lt;Klasse&gt;: receive, send, highlight, action, timestamp<br>    "
+"&lt;Vordergrund/Hintergrund&gt;: black, red, green, blue, white, gray, "
+"darkgray, magenta, cyan, default<br><br>BEISPIEL:<br>    msgcolor send cyan "
+"default"
+
 msgid "Unable to open file."
 msgstr "Konnte die Datei nicht öffnen."
 
@@ -735,8 +766,10 @@ msgid "Pause"
 msgstr "Pause"
 
 #, c-format
-msgid "File Transfers - %d%% of %d files"
-msgstr "Dateiübertragungen - %d%% von %d Dateien"
+msgid "File Transfers - %d%% of %d file"
+msgid_plural "File Transfers - %d%% of %d files"
+msgstr[0] "Dateiübertragungen - %d%% von %d Datei"
+msgstr[1] "Dateiübertragungen - %d%% von %d Dateien"
 
 #. Create the window.
 msgid "File Transfers"
@@ -850,6 +883,9 @@ msgstr "Unterhaltung in %s"
 #, c-format
 msgid "Conversations with %s"
 msgstr "Unterhaltung mit %s"
+
+msgid "All Conversations"
+msgstr "Alle Unterhaltungen"
 
 msgid "System Log"
 msgstr "System-Mitschnitt"
@@ -3198,8 +3234,10 @@ msgid "Bad mode"
 msgstr "Falscher Modus"
 
 #, c-format
-msgid "Ban on %s by %s, set %ld seconds ago"
-msgstr "Verbot zu %s von %s, gesetzt vor %ld Sekunden"
+msgid "Ban on %s by %s, set %ld second ago"
+msgid_plural "Ban on %s by %s, set %ld seconds ago"
+msgstr[0] "Verbot zu %s von %s, gesetzt vor %ld Sekunde"
+msgstr[1] "Verbot zu %s von %s, gesetzt vor %ld Sekunden"
 
 #, c-format
 msgid "Ban on %s"
@@ -4551,12 +4589,12 @@ msgid "_Accept Defaults"
 msgstr "Standards _akzeptieren"
 
 #, c-format
-msgid "Error in chat %s"
-msgstr "Fehler im Chat %s"
-
-#, c-format
 msgid "Error joining chat %s"
 msgstr "Fehler beim Betreten des Chats %s"
+
+#, c-format
+msgid "Error in chat %s"
+msgstr "Fehler im Chat %s"
 
 #, c-format
 msgid "Unable to send file to %s, user does not support file transfers"
@@ -5384,8 +5422,11 @@ msgid "Logging in"
 msgstr "Logge ein"
 
 #, c-format
-msgid "Connection to server lost (no data received within %d seconds)"
-msgstr ""
+msgid "Connection to server lost (no data received within %d second)"
+msgid_plural "Connection to server lost (no data received within %d seconds)"
+msgstr[0] ""
+"Verbindung zum Server verloren (seit %d Sekunde keine Daten empfangen)"
+msgstr[1] ""
 "Verbindung zum Server verloren (seit %d Sekunden keine Daten empfangen)"
 
 #. Can't write _()'d strings in array initializers. Workaround.
@@ -5485,9 +5526,15 @@ msgstr "IM-Freunde"
 
 #, c-format
 msgid ""
+"%d buddy was added or updated from the server (including buddies already on "
+"the server-side list)"
+msgid_plural ""
 "%d buddies were added or updated from the server (including buddies already "
 "on the server-side list)"
-msgstr ""
+msgstr[0] ""
+"%d Buddy wurde vom Server hinzugefügt oder aktualisiert (inklusive der "
+"Buddys, die schon auf der Serverliste sind)"
+msgstr[1] ""
 "%d Buddys wurden vom Server hinzugefügt oder aktualisiert (inklusive der "
 "Buddys, die schon auf der Serverliste sind)"
 
@@ -6235,6 +6282,10 @@ msgstr "Live-Video"
 msgid "Camera"
 msgstr "Kamera"
 
+#, fuzzy
+msgid "Screen Sharing"
+msgstr "Screen Sharing"
+
 msgid "Free For Chat"
 msgstr "Bereit zum Chatten"
 
@@ -6367,6 +6418,7 @@ msgstr ""
 msgid "Unable to get a valid login hash."
 msgstr "Konnte keinen gültigen Login-Hash bekommen."
 
+#. allow multple logins?
 msgid "Password sent"
 msgstr "Passwort gesendet"
 
@@ -6560,6 +6612,8 @@ msgstr "Handynummer"
 msgid "Personal Web Page"
 msgstr "Persönliche Webseite"
 
+#. aim_userinfo_t
+#. strip_html_tags
 msgid "Additional Information"
 msgstr "Zusätzliche Informationen"
 
@@ -6923,6 +6977,9 @@ msgstr ""
 "Benutze immer den AIM/ICQ-Proxyserver für\n"
 "Dateiübertragungen und Direkt-IM (langsamer,\n"
 "aber zeigt Ihre IP-Adresse nicht)"
+
+msgid "Allow multiple simultaneous logins"
+msgstr "Mehrere gleichzeitige Logins erlauben"
 
 #, c-format
 msgid "Asking %s to connect to us at %s:%hu for Direct IM."
@@ -10193,8 +10250,8 @@ msgstr "/Buddys/_Beenden"
 msgid "/_Accounts"
 msgstr "/_Konten"
 
-msgid "/Accounts/Manage"
-msgstr "/Konten/Verwalten"
+msgid "/Accounts/Manage Accounts"
+msgstr "/Konten/Konten verwalten"
 
 #. Tools
 msgid "/_Tools"
@@ -10384,13 +10441,13 @@ msgid ""
 "<span weight='bold' size='larger'>Welcome to %s!</span>\n"
 "\n"
 "You have no accounts enabled. Enable your IM accounts from the <b>Accounts</"
-"b> window at <b>Accounts->Manage</b>. Once you enable accounts, you'll be "
-"able to sign on, set your status, and talk to your friends."
+"b> window at <b>Accounts->Manage Accounts</b>. Once you enable accounts, "
+"you'll be able to sign on, set your status, and talk to your friends."
 msgstr ""
 "<span weight='bold' size='larger'>Willkommen bei %s!</span>\n"
 "\n"
 "Sie haben keine Konten aktiviert. Aktivieren Sie Ihre IM-Konten vom "
-"<b>Konten</b>-Fenster über <b>Konten->Verwalten</b>. Wenn Sie Konten "
+"<b>Konten</b>-Fenster über <b>Konten->Konten verwalten</b>. Wenn Sie Konten "
 "aktiviert haben, können Sie sich anmelden, Ihren Status setzen und mit Ihren "
 "Freunden reden."
 
