@@ -844,7 +844,7 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 		/* Away messges are HTML, but available messages were originally plain text.
 		 * We therefore need to strip away messages but not available messages if we're asked to remove HTML tags.
 		 */
-		if (is_away) {
+		if (is_away && message) {
 			gchar *tmp2;
 			tmp = purple_markup_strip_html(message);
 			g_free(message);
@@ -854,16 +854,16 @@ static void oscar_user_info_append_status(PurpleConnection *gc, PurpleNotifyUser
 		}
 
 	} else {
-	if (itmsurl) {
-		tmp = g_strdup_printf("<a href=\"%s\">%s</a>",
-							  itmsurl, message);
-		g_free(itmsurl);
-		g_free(message);
-		message = tmp;
-	}
+		if (itmsurl) {
+			tmp = g_strdup_printf("<a href=\"%s\">%s</a>",
+								  itmsurl, message);
+			g_free(itmsurl);
+			g_free(message);
+			message = tmp;
+		}
 	}
 
-	if (is_away) {
+	if (is_away && message) {
 		tmp = purple_str_sub_away_formatters(message, purple_account_get_username(account));
 		g_free(message);
 		message = tmp;
@@ -1963,7 +1963,11 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
 					info->itmsurl, info->itmsurl_len);
 
-		tmp = g_markup_escape_text(message, -1);
+		tmp = (message ? g_markup_escape_text(message, -1) : NULL);
+
+		if (message == NULL && itmsurl != NULL)
+			message = "";
+
 		purple_prpl_got_user_status(account, info->sn, status_id,
 				"message", tmp, "itmsurl", itmsurl, NULL);
 		g_free(tmp);
