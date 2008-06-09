@@ -721,8 +721,11 @@ msgid "Pause"
 msgstr "Pristabdyti"
 
 #, c-format
-msgid "File Transfers - %d%% of %d files"
-msgstr "Failų perdavimai – %d%% iš %d"
+msgid "File Transfers - %d%% of %d file"
+msgid_plural "File Transfers - %d%% of %d files"
+msgstr[0] "Failų perdavimai – %d%% iš %d failo"
+msgstr[1] "Failų perdavimai – %d%% iš %d failų"
+msgstr[2] "Failų perdavimai – %d%% iš %d failų"
 
 #. Create the window.
 msgid "File Transfers"
@@ -3258,8 +3261,11 @@ msgid "Bad mode"
 msgstr "Bloga būsena"
 
 #, c-format
-msgid "Ban on %s by %s, set %ld seconds ago"
-msgstr "Vartotojui %s uždraudė prisijungti %s prieš %ld sekundžių"
+msgid "Ban on %s by %s, set %ld second ago"
+msgid_plural "Ban on %s by %s, set %ld seconds ago"
+msgstr[0] "Vartotojui %s uždraudė prisijungti %s prieš %ld sekundę"
+msgstr[1] "Vartotojui %s uždraudė prisijungti %s prieš %ld sekundes"
+msgstr[2] "Vartotojui %s uždraudė prisijungti %s prieš %ld sekundžių"
 
 #, c-format
 msgid "Ban on %s"
@@ -5439,8 +5445,11 @@ msgid "Logging in"
 msgstr "Prisijungiama"
 
 #, c-format
-msgid "Connection to server lost (no data received within %d seconds)"
-msgstr "Nutrūko ryšys su serveriu (negauta jokių duomenų per %d sekundžių)"
+msgid "Connection to server lost (no data received within %d second)"
+msgid_plural "Connection to server lost (no data received within %d seconds)"
+msgstr[0] "Nutrūko ryšys su serveriu (negauta jokių duomenų per %d sekundę)"
+msgstr[1] "Nutrūko ryšys su serveriu (negauta jokių duomenų per %d sekundes)"
+msgstr[2] "Nutrūko ryšys su serveriu (negauta jokių duomenų per %d sekundžių)"
 
 #. Can't write _()'d strings in array initializers. Workaround.
 msgid "New mail messages"
@@ -5538,9 +5547,18 @@ msgstr "IM draugai"
 
 #, c-format
 msgid ""
+"%d buddy was added or updated from the server (including buddies already on "
+"the server-side list)"
+msgid_plural ""
 "%d buddies were added or updated from the server (including buddies already "
 "on the server-side list)"
-msgstr ""
+msgstr[0] ""
+"%d bičiulis buvo pridėtas ar atnaujintas iš serverio (įskaitant ir "
+"bičiulius, jau esančius serverio sąraše)"
+msgstr[1] ""
+"%d bičiuliai buvo pridėti ar atnaujinti iš serverio (įskaitant ir bičiulius, "
+"jau esančius serverio sąraše)"
+msgstr[2] ""
 "%d bičiulių buvo pridėta ar atnaujinta iš serverio (įskaitant ir bičiulius, "
 "jau esančius serverio sąraše)"
 
