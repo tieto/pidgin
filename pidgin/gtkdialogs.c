@@ -75,7 +75,7 @@ static const struct developer developers[] = {
 	{"Thomas Butter",				N_("developer"), NULL},
 	{"Ka-Hing Cheung",				N_("developer"), NULL},
 	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
-	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
+	{"Mark 'KingAnt' Doliner",		N_("developer"), "mark@kingant.net"},
 	{"Sean Egan",					N_("developer"), "sean.egan@gmail.com"},
 	{"Casey Harkins",               N_("developer"),   NULL},
 	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
