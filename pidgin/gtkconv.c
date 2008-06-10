@@ -4743,7 +4743,7 @@ pidgin_conv_create_tooltip(GtkWidget *tipwindow, gpointer userdata, int *w, int 
 static GtkWidget *
 setup_common_pane(PidginConversation *gtkconv)
 {
-	GtkWidget *vbox, *frame, *imhtml_sw, *event_box;
+	GtkWidget *vbox, *hpaned, *frame, *imhtml_sw, *event_box;
 	GtkCellRenderer *rend;
 	GtkTreePath *path;
 	PurpleConversation *conv = gtkconv->active_conv;
@@ -4823,23 +4823,21 @@ setup_common_pane(PidginConversation *gtkconv)
 	/* Setup the gtkimhtml widget */
 	frame = pidgin_create_imhtml(FALSE, &gtkconv->imhtml, NULL, &imhtml_sw);
 	gtk_widget_set_size_request(gtkconv->imhtml, -1, 0);
-	if (chat) {
-		GtkWidget *hpaned;
 
+	/* Add the gtkimhtml frame */
+	gtkconv->middle_hpaned = hpaned = gtk_hpaned_new();
+	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
+	gtk_widget_show(hpaned);
+	gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
+
+	if (chat) {
 		/* Add the topic */
 		setup_chat_topic(gtkconv, vbox);
 
-		/* Add the gtkimhtml frame */
-		hpaned = gtk_hpaned_new();
-		gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
-		gtk_widget_show(hpaned);
-		gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
-
 		/* Now add the userlist */
 		setup_chat_userlist(gtkconv, hpaned);
-	} else {
-		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	}
+
 	gtk_widget_show(frame);
 
 	gtk_widget_set_name(gtkconv->imhtml, "pidgin_conv_imhtml");
@@ -7727,6 +7725,9 @@ pidgin_conv_new_media_cb(PurpleMediaManager *manager, PurpleMedia *media, gpoint
 
 	gtkconv->gtkmedia = gtkmedia;
 	g_signal_connect(G_OBJECT(gtkmedia), "destroy", G_CALLBACK(gtk_widget_destroyed), &(gtkconv->gtkmedia));
+
+	gtk_paned_pack2(GTK_PANED(gtkconv->middle_hpaned),
+			pidgin_media_get_display_widget(gtkmedia), FALSE, TRUE);
 }
 
 #endif

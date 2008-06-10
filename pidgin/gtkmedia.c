@@ -28,10 +28,13 @@
 #include "internal.h"
 #include "connection.h"
 #include "media.h"
+#include "pidgin.h"
 
 #include "gtkmedia.h"
 
 #ifdef USE_VV
+
+#include <gst/interfaces/xoverlay.h>
 
 typedef enum
 {
@@ -60,6 +63,10 @@ struct _PidginMediaPrivate
 	GtkWidget *recv_progress;
 
 	PidginMediaState state;
+
+	GtkWidget *display;
+	GtkWidget *local_video;
+	GtkWidget *remote_video;
 };
 
 #define PIDGIN_MEDIA_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), PIDGIN_TYPE_MEDIA, PidginMediaPrivate))
@@ -178,6 +185,8 @@ pidgin_media_init (PidginMedia *media)
 
 	gtk_widget_show_all(media->priv->accept);
 	gtk_widget_show_all(media->priv->reject);
+
+	media->priv->display = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 }
 
 static gboolean
@@ -246,12 +255,20 @@ pidgin_media_finalize (GObject *media)
 		gst_object_unref(gtkmedia->priv->send_level);
 	if (gtkmedia->priv->recv_level)
 		gst_object_unref(gtkmedia->priv->recv_level);
+	if (gtkmedia->priv->display)
+		gtk_widget_destroy(gtkmedia->priv->display);
 }
 
 static void
 pidgin_media_emit_message(PidginMedia *gtkmedia, const char *msg)
 {
 	g_signal_emit(gtkmedia, pidgin_media_signals[MESSAGE], 0, msg);
+}
+
+GtkWidget *
+pidgin_media_get_display_widget(GtkWidget *gtkmedia)
+{
+	return PIDGIN_MEDIA_GET_PRIVATE(gtkmedia)->display;
 }
 
 static gboolean
@@ -284,30 +301,57 @@ media_bus_call(GstBus *bus, GstMessage *msg, gpointer gtkmedia)
 	return TRUE;
 }
 
+static gboolean
+create_window (GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
+{
+	char *name;
+
+	if (GST_MESSAGE_TYPE(message) != GST_MESSAGE_ELEMENT)
+		return TRUE;
+
+	if (!gst_structure_has_name(message->structure, "prepare-xwindow-id"))
+		return TRUE;
+
+	name = gst_object_get_name(GST_MESSAGE_SRC (message));
+	purple_debug_info("gtkmedia", "prepare-xwindow-id object name: %s\n", name);
+
+	/* The XOverlay's name is the sink's name with a suffix */
+	if (!strncmp(name, "purplevideosink", strlen("purplevideosink")))
+		gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(GST_MESSAGE_SRC(message)),
+					     GDK_WINDOW_XWINDOW(gtkmedia->priv->remote_video->window));
+	else if (!strncmp(name, "purplelocalvideosink", strlen("purplelocalvideosink")))
+		gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(GST_MESSAGE_SRC(message)),
+					     GDK_WINDOW_XWINDOW(gtkmedia->priv->local_video->window));
+	g_free(name);
+	return TRUE;
+}
+
 static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	GstElement *element = purple_media_get_pipeline(media);
 
-	GstElement *audiosendbin, *audiosendlevel;
-	GstElement *audiorecvbin, *audiorecvlevel;
-	GstElement *videosendbin;
-	GstElement *videorecvbin;
+	GstElement *audiosendbin = NULL, *audiosendlevel = NULL;
+	GstElement *audiorecvbin = NULL, *audiorecvlevel = NULL;
+	GstElement *videosendbin = NULL;
+	GstElement *videorecvbin = NULL;
 
 	GList *sessions = purple_media_get_session_names(media);
 	GstBus *bus;
 
-	purple_media_audio_init_src(&audiosendbin, &audiosendlevel);
-	purple_media_audio_init_recv(&audiorecvbin, &audiorecvlevel);
-
-	purple_media_video_init_src(&videosendbin);
-	purple_media_video_init_recv(&videorecvbin);
-
 	for (; sessions; sessions = sessions->next) {
 		if (purple_media_get_session_type(media, sessions->data) & PURPLE_MEDIA_AUDIO) {
+			if (!audiosendbin)
+				purple_media_audio_init_src(&audiosendbin, &audiosendlevel);
+			if (!audiorecvbin)
+				purple_media_audio_init_recv(&audiorecvbin, &audiorecvlevel);
 			purple_media_set_src(media, sessions->data, audiosendbin);
 			purple_media_set_sink(media, sessions->data, audiorecvbin);
 		} else if (purple_media_get_session_type(media, sessions->data) & PURPLE_MEDIA_VIDEO) {
+			if (!videosendbin)
+				purple_media_video_init_src(&videosendbin);
+			if (!videorecvbin)
+				purple_media_video_init_recv(&videorecvbin);
 			purple_media_set_src(media, sessions->data, videosendbin);
 			purple_media_set_sink(media, sessions->data, videorecvbin);
 		}
@@ -320,9 +364,42 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 				       NULL);
 	}
 
+	if (videorecvbin || videosendbin) {
+		GtkWidget *aspect;
+		GtkWidget *remote_video;
+		GtkWidget *local_video;
+
+		gtk_widget_show(gtkmedia->priv->display);
+
+		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
+		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
+		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display), aspect, TRUE, TRUE, 0);
+
+		remote_video = gtk_drawing_area_new();
+		gtk_container_add(GTK_CONTAINER(aspect), remote_video);
+		gtk_widget_set_size_request (GTK_WIDGET(remote_video), 100, -1);
+		gtk_widget_show(remote_video);
+		gtk_widget_show(aspect);
+
+		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
+		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
+		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display), aspect, TRUE, TRUE, 0);
+
+		local_video = gtk_drawing_area_new();
+		gtk_container_add(GTK_CONTAINER(aspect), local_video);
+		gtk_widget_show(local_video);
+		gtk_widget_show(aspect);
+
+		gtkmedia->priv->local_video = local_video;
+		gtkmedia->priv->remote_video = remote_video;
+	}
+
 	bus = gst_pipeline_get_bus(GST_PIPELINE(element));
 	gst_bus_add_signal_watch(GST_BUS(bus));
-	g_signal_connect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))), "message", G_CALLBACK(level_message_cb), gtkmedia);
+	g_signal_connect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))),
+			 "message", G_CALLBACK(level_message_cb), gtkmedia);
+	if (videorecvbin || videosendbin)
+		gst_bus_set_sync_handler(bus, (GstBusSyncHandler)create_window, gtkmedia);
 	gst_bus_add_watch(bus, media_bus_call, gtkmedia);
 	gst_object_unref(bus);
 }

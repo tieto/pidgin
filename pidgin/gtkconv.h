@@ -150,6 +150,7 @@ struct _PidginConversation
 	gpointer depr1;
 #endif
 
+	GtkWidget *middle_hpaned;
 	GtkWidget *lower_hbox;
 
 	GtkWidget *toolbar;

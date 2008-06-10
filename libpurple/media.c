@@ -676,7 +676,7 @@ purple_media_audio_init_src(GstElement **sendbin, GstElement **sendlevel)
 void
 purple_media_video_init_src(GstElement **sendbin)
 {
-	GstElement *src;
+	GstElement *src, *tee, *queue, *local_sink;
 	GstPad *pad;
 	GstPad *ghost;
 	const gchar *video_plugin = purple_prefs_get_string("/purple/media/video/plugin");
@@ -685,16 +685,33 @@ purple_media_video_init_src(GstElement **sendbin)
 	purple_debug_info("media", "purple_media_video_init_src\n");
 
 	*sendbin = gst_bin_new("purplesendvideobin");
-	src = gst_element_factory_make(video_plugin, "videosrc");
+	src = gst_element_factory_make(video_plugin, "purplevideosource");
 	gst_bin_add(GST_BIN(*sendbin), src);
+
+	tee = gst_element_factory_make("tee", NULL);
+	gst_bin_add(GST_BIN(*sendbin), tee);
+	gst_element_link(src, tee);
+
+	queue = gst_element_factory_make("queue", NULL);
+	gst_bin_add(GST_BIN(*sendbin), queue);
+	gst_element_link(tee, queue);
 
 	if (!strcmp(video_plugin, "videotestsrc")) {
 		/* unless is-live is set to true it doesn't throttle videotestsrc */
 		g_object_set (G_OBJECT(src), "is-live", TRUE, NULL);
 	}
-	pad = gst_element_get_pad(src, "src");
+
+	pad = gst_element_get_pad(queue, "src");
 	ghost = gst_ghost_pad_new("ghostsrc", pad);
 	gst_element_add_pad(*sendbin, ghost);
+
+	queue = gst_element_factory_make("queue", NULL);
+	gst_bin_add(GST_BIN(*sendbin), queue);
+	gst_element_link(tee, queue);
+
+	local_sink = gst_element_factory_make("autovideosink", "purplelocalvideosink");
+	gst_bin_add(GST_BIN(*sendbin), local_sink);
+	gst_element_link(queue, local_sink);
 
 	/* set current video device on "src"... */
 	if (video_device) {
