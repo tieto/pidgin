@@ -7,9 +7,10 @@ version 2.5.0 (??/??/2008):
 	  Marcus Lundblad, Jorge Villaseñor and other contributors)
 	* Yahoo! Japan now uses UTF-8, matching the behavior of official clients
 	  and restoring compatibility with the web messenger (Yusuke Odate)
-	* Add a configure option, --with-ssl-certificates to allow packagers
-	  to specify a system-wide SSL CA certificates directory.  Also, when
-	  set, we don't install our SSL CA certs.
+	* Add a configure option, --with-system-ssl-certs to allow packagers
+	  to specify a system-wide SSL CA certificates directory.  When set,
+	  we don't install our SSL CA certs, so it's important that the
+	  libpurple package depend on the CA certificates.
 
 	Pidgin:
 	* Custom buddy icons can now be added to and removed from buddy list

@@ -1561,14 +1561,14 @@ dnl #
 dnl # Thanks go to Evolution for the checks.
 dnl #######################################################################
 
-AC_ARG_WITH(ssl-certificates, [AC_HELP_STRING([--with-ssl-certificates=<dir>], [directory containing system-wide SSL CA certificates])])
+AC_ARG_WITH(with-system-ssl-certs, [AC_HELP_STRING([--with-system-ssl-certs=<dir>], [directory containing system-wide SSL CA certificates])])
 
 SSL_CERTIFICATES_DIR=""
-if ! test -z "$with_ssl_certificates" ; then
-	if ! test -d "$with_ssl_certificates" ; then
-		AC_MSG_ERROR([$with_ssl_certificates does not exist, if this is the correct location please make sure that it exists.])
+if ! test -z "$with_system_ssl_certs" ; then
+	if ! test -d "$with_system_ssl_certs" ; then
+		AC_MSG_ERROR([$with_system_ssl_certs does not exist, if this is the correct location please make sure that it exists.])
 	fi
-	SSL_CERTIFICATES_DIR="$with_ssl_certificates"
+	SSL_CERTIFICATES_DIR="$with_system_ssl_certs"
 fi
 AC_SUBST(SSL_CERTIFICATES_DIR)
 AM_CONDITIONAL(INSTALL_SSL_CERTIFICATES, test "x$SSL_CERTIFICATES_DIR" = "x")
