@@ -79,6 +79,7 @@ purple_coresources = \
 	upnp.c \
 	theme.c \
 	theme-loader.c \
+	theme-manager.c \
 	util.c \
 	value.c \
 	version.c \
@@ -134,6 +135,7 @@ purple_coreheaders = \
 	upnp.h \
 	theme.h \
 	theme-loader.h \
+	theme-manager.h \
 	util.h \
 	value.h \
 	xmlnode.h \

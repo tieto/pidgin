@@ -75,6 +75,7 @@ purple_theme_loader_class_init (PurpleThemeLoaderClass *klass)
 
 	/* 2.4
 	 * g_type_class_add_private(klass, sizeof(PurpleThemePrivate)); */
+	
 
 	obj_class->get_property = purple_theme_loader_get_property;
 	
