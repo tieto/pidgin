@@ -6476,7 +6476,7 @@ add_buddy_cb(GtkWidget *w, int resp, PidginAddBuddyData *data)
 
 		/* Offer to merge people with the same alias. */
 		if (whoalias != NULL)
-			gtk_blist_auto_personize(g, whoalias);
+			gtk_blist_auto_personize((PurpleBlistNode *)g, whoalias);
 
 		/*
 		 * XXX
