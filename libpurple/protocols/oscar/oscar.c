@@ -131,8 +131,8 @@ static const char * const msgerrreason[] = {
 	N_("Busted SNAC payload"),
 	N_("Insufficient rights"),
 	N_("In local permit/deny"),
-	N_("Too evil (sender)"),
-	N_("Too evil (receiver)"),
+	N_("Warning level too high (sender)"),
+	N_("Warning level too high (receiver)"),
 	N_("User temporarily unavailable"),
 	N_("No match"),
 	N_("List overflow"),
@@ -2793,8 +2793,8 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 		case 3: /* Evil Sender */
 			buf = g_strdup_printf(
 				   dngettext(PACKAGE,
-				   "You missed %hu message from %s because he/she was too evil.",
-				   "You missed %hu messages from %s because he/she was too evil.",
+				   "You missed %hu message from %s because his/her warning level is too high.",
+				   "You missed %hu messages from %s because his/her warning level is too high.",
 				   nummissed),
 				   nummissed,
 				   userinfo->sn);
@@ -2802,8 +2802,8 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 		case 4: /* Evil Receiver */
 			buf = g_strdup_printf(
 				   dngettext(PACKAGE,
-				   "You missed %hu message from %s because you are too evil.",
-				   "You missed %hu messages from %s because you are too evil.",
+				   "You missed %hu message from %s because your warning level is too high.",
+				   "You missed %hu messages from %s because your warning level is too high.",
 				   nummissed),
 				   nummissed,
 				   userinfo->sn);
