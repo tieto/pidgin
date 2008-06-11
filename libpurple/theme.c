@@ -32,6 +32,7 @@
  *****************************************************************************/
 typedef struct {
 	gchar *name;
+	gchar *description;
 	gchar *author;
 	gchar *type;
 	gchar *dir;
@@ -46,6 +47,7 @@ typedef struct {
  * Enums
  *****************************************************************************/
 #define PROP_NAME_S "name"
+#define PROP_DESCRIPION_S "description"
 #define PROP_AUTHOR_S "author"
 #define PROP_TYPE_S "type"
 #define PROP_DIR_S "dir"
@@ -54,6 +56,7 @@ typedef struct {
 enum {
 	PROP_ZERO = 0,
 	PROP_NAME,
+	PROP_DESCRIPION,
 	PROP_AUTHOR,
 	PROP_TYPE,
 	PROP_DIR,
@@ -74,6 +77,9 @@ purple_theme_get_property(GObject *obj, guint param_id, GValue *value,
 	switch(param_id) {
 		case PROP_NAME:
 			g_value_set_string(value, purple_theme_get_name(theme));
+			break;
+		case PROP_DESCRIPION:
+			g_value_set_string(value, purple_theme_get_description(theme));
 			break;
 		case PROP_AUTHOR:
 			g_value_set_string(value, purple_theme_get_author(theme));
@@ -102,6 +108,9 @@ purple_theme_set_property(GObject *obj, guint param_id, const GValue *value,
 	switch(param_id) {
 		case PROP_NAME:
 			purple_theme_set_name(theme, g_value_get_string(value));
+			break;
+		case PROP_DESCRIPION:
+			purple_theme_set_description(theme, g_value_get_string(value));
 			break;
 		case PROP_AUTHOR:
 			purple_theme_set_author(theme, g_value_get_string(value));
@@ -136,6 +145,12 @@ purple_theme_class_init (PurpleThemeClass *klass)
 				    NULL,
 				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 	g_object_class_install_property(obj_class, PROP_NAME, pspec);
+	/* DESCRIPION */
+	pspec = g_param_spec_string(PROP_DESCRIPION_S, "Description",
+				    "The description of the theme",
+				    NULL,
+				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+	g_object_class_install_property(obj_class, PROP_DESCRIPION, pspec);
 	/* AUTHOR */
 	pspec = g_param_spec_string(PROP_AUTHOR_S, "Author",
 				    "The author of the theme",
@@ -213,6 +228,30 @@ purple_theme_set_name(PurpleTheme *theme, const gchar *name)
 
 	g_free(priv->name);
 	priv->name = g_strdup (name);
+}
+
+gchar *
+purple_theme_get_description(PurpleTheme *theme)
+{
+	PurpleThemePrivate *priv = NULL;
+
+	g_return_val_if_fail(PURPLE_IS_THEME(theme), NULL);
+
+	priv = PURPLE_THEME_GET_PRIVATE(theme);
+	return priv->description;
+}
+
+void
+purple_theme_set_description(PurpleTheme *theme, const gchar *description)
+{
+	PurpleThemePrivate *priv = NULL;
+
+	g_return_if_fail(PURPLE_IS_THEME(theme));
+
+	priv = PURPLE_THEME_GET_PRIVATE(theme);
+
+	g_free(priv->description);
+	priv->description = g_strdup (description);
 }
 
 gchar *

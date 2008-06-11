@@ -1,5 +1,5 @@
 /**
- * @file purpletheme.h  Purple Theme Abstact Class API
+ * @file theme.h  Purple Theme Abstact Class API
  */
 
 /* purple
@@ -84,6 +84,23 @@ gchar *purple_theme_get_name(PurpleTheme *theme);
  * @param name 		the name of the PurpleTheme object
  */
 void purple_theme_set_name(PurpleTheme *theme, const gchar *name);
+
+/**
+ * Returns the description of the PurpleTheme object
+ * 
+ * @param theme 	the purple theme
+ *
+ * @return A short description of the theme
+ */
+gchar *purple_theme_get_description(PurpleTheme *theme);
+
+/**
+ * Sets the description of the PurpleTheme object
+ * 
+ * @param theme 	the purple theme
+ * @param description	the description of the PurpleTheme object
+ */
+void purple_theme_set_description(PurpleTheme *theme, const gchar *description);
 
 /**
  * Returns the author of the PurpleTheme object
