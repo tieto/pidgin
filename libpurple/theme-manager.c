@@ -24,15 +24,12 @@
 #include <stdarg.h>
 #include "theme-manager.h"
 
-#define PURPLE_THEME_MANAGER_GET_PRIVATE(Gobject) \
-	((PurpleThemeManagerPrivate *) ((PURPLE_THEME_MANAGER(Gobject))->priv))
-
 /******************************************************************************
- * Structs
+ * Globals
  *****************************************************************************/
-typedef struct {
-	GHashTable *theme_table;
-} PurpleThemeManagerPrivate;
+
+static GHashTable *theme_table;
+
 
 /*****************************************************************************
  * GObject Stuff                                                     
@@ -41,10 +38,7 @@ typedef struct {
 static void 
 purple_theme_manager_finalize (GObject *obj)
 {
-	PurpleThemeManagerPrivate *priv;
-	priv = PURPLE_THEME_MANAGER_GET_PRIVATE(obj);	
-
-	g_hash_table_destroy(priv->theme_table);
+	g_hash_table_destroy(theme_table);
 }
 
 static void
@@ -122,21 +116,19 @@ purple_theme_manager_function_wrapper(gchar *key,
 }
 
 static void
-purple_theme_manager_build(PurpleThemeManager *self, const gchar *root)
+purple_theme_manager_build(const gchar *root)
 {
-	PurpleThemeManagerPrivate *priv;
+
 	GDir *rdir;
 	gchar *name, *type;
 	GDir *dir;
 	PurpleThemeLoader *loader;
-	
-	priv = PURPLE_THEME_MANAGER_GET_PRIVATE(self);
 
 	rdir =  g_dir_open(root, 0, NULL);/*TODO: should have debug error?*/
 
 	g_return_if_fail(rdir);
 
-	/*TODO: This looks messy*/
+	/*TODO: This looks messy, leaks*/
 	/* Parses directory by root/name/purple/type */
 	while((name = g_strdup(g_dir_read_name (rdir)))){
 
@@ -145,9 +137,8 @@ purple_theme_manager_build(PurpleThemeManager *self, const gchar *root)
 	
 		if(dir) {
 			while((type = g_strdup(g_dir_read_name (dir)))) {
-				if((loader = g_hash_table_lookup (priv->theme_table, type)))
-					purple_theme_manager_add_theme(self,
-								       purple_theme_loader_build(loader,  g_strconcat(root, '/', name, '/',
+				if((loader = g_hash_table_lookup (theme_table, type)))
+					purple_theme_manager_add_theme(purple_theme_loader_build(loader,  g_strconcat(root, '/', name, '/',
 												              "purple", '/', type, NULL)));
 
 				g_free(type);
@@ -167,75 +158,59 @@ purple_theme_manager_build(PurpleThemeManager *self, const gchar *root)
  * Public API functions                                                      *
  *****************************************************************************/
 
-PurpleThemeManager * 
-purple_theme_manager_new (PurpleThemeLoader *loader1, ...)
+void
+purple_theme_manager_init (PurpleThemeLoader *loader1, ...)
 {
-	PurpleThemeManager *self;
-	PurpleThemeManagerPrivate *priv;
 	va_list args;
 	PurpleThemeLoader *loader;
 
-	self = g_object_new(PURPLE_TYPE_THEME_MANAGER, NULL, NULL, NULL);
-	priv = PURPLE_THEME_MANAGER_GET_PRIVATE(self);
-
-	priv->theme_table = g_hash_table_new_full (g_str_hash,
-                                                   g_str_equal,
-                                                   g_free,
-                                                   g_object_unref); /* purple_theme_finalize() ?*/
+	theme_table = g_hash_table_new_full (g_str_hash,
+                                             g_str_equal,
+                                             g_free,
+                                             g_object_unref);
 
 	va_start(args, loader1);
 	for (loader = loader1; loader != NULL; loader = va_arg(args, PurpleThemeLoader *))
-		purple_theme_manager_register_type(self, loader);
+		purple_theme_manager_register_type(loader);
 	va_end(args);
 
 	/* TODO: add themes properly */
-	purple_theme_manager_build(self, NULL);
-	return self;
+	purple_theme_manager_build(NULL);
 }
 
 
 void
-purple_theme_manager_register_type(PurpleThemeManager *self,
-				   PurpleThemeLoader *loader)
+purple_theme_manager_register_type(PurpleThemeLoader *loader)
 {
-	PurpleThemeManagerPrivate *priv = NULL;
 	gchar *type;
 
-	g_return_if_fail(PURPLE_IS_THEME_MANAGER(self));
 	g_return_if_fail(PURPLE_IS_THEME_LOADER(loader));
-		
-	priv = PURPLE_THEME_MANAGER_GET_PRIVATE(self);
 
 	type = purple_theme_loader_get_type_string(loader);
 	g_return_if_fail(type);
 
 	/* if something is already there do nothing */
-	if(! g_hash_table_lookup (priv->theme_table, type)) 
-		g_hash_table_insert(priv->theme_table, type, loader);
+	if(! g_hash_table_lookup (theme_table, type)) 
+		g_hash_table_insert(theme_table, type, loader);
 	
 	g_free(type);
 }
 
 void
-purple_theme_manager_unregister_type(PurpleThemeManager *self,
-				   PurpleThemeLoader *loader)
+purple_theme_manager_unregister_type(PurpleThemeLoader *loader)
 {
-	PurpleThemeManagerPrivate *priv = NULL;
 	gchar *type;
 
-	g_return_if_fail(PURPLE_IS_THEME_MANAGER(self));
 	g_return_if_fail(PURPLE_IS_THEME_LOADER(loader));
-	
-	priv = PURPLE_THEME_MANAGER_GET_PRIVATE(self);
 
 	type = purple_theme_loader_get_type_string(loader);
 	g_return_if_fail(type);
 
-	if(g_hash_table_lookup (priv->theme_table, type) == loader){
+	if(g_hash_table_lookup (theme_table, type) == loader){
 
-		g_hash_table_remove (priv->theme_table, type);
+		g_hash_table_remove (theme_table, type);
 
-		g_hash_table_foreach_remove (priv->theme_table,
+		g_hash_table_foreach_remove (theme_table,
                 	                     (GHRFunc) purple_theme_manager_is_theme_type,
                 	                     type);		
 	}/* only free if given registered loader */
@@ -244,95 +219,71 @@ purple_theme_manager_unregister_type(PurpleThemeManager *self,
 }
 
 PurpleTheme *
-purple_theme_manager_find_theme(PurpleThemeManager *self,
-				const gchar *name,
+purple_theme_manager_find_theme(const gchar *name,
 				const gchar *type)
 {
-	PurpleThemeManagerPrivate *priv = NULL;
-	g_return_val_if_fail(PURPLE_IS_THEME_MANAGER(self), NULL);
 	g_return_val_if_fail(name, NULL);
 	g_return_val_if_fail(type, NULL);
 
-	priv = PURPLE_THEME_MANAGER_GET_PRIVATE(self);
-	return g_hash_table_lookup (priv->theme_table,
+	return g_hash_table_lookup (theme_table,
 				    purple_theme_manager_make_key(name, type));
 }
 
 
 void 
-purple_theme_manager_add_theme(PurpleThemeManager *self,
-			       PurpleTheme *theme)
+purple_theme_manager_add_theme(PurpleTheme *theme)
 {
-	PurpleThemeManagerPrivate *priv;
 	gchar *key;
 
-	g_return_if_fail(PURPLE_IS_THEME_MANAGER(self));
 	g_return_if_fail(PURPLE_IS_THEME(theme));
-	
-	priv = PURPLE_THEME_MANAGER_GET_PRIVATE(self);
 
 	key = purple_theme_manager_make_key(purple_theme_get_name(theme),
-			   purple_theme_get_type_string(theme));
+			  		    purple_theme_get_type_string(theme));
 
 	g_return_if_fail(key);
 	
 	/* if something is already there do nothing */
-	if(! g_hash_table_lookup (priv->theme_table, key)) 
-		g_hash_table_insert(priv->theme_table, key, theme);
+	if(! g_hash_table_lookup (theme_table, key)) 
+		g_hash_table_insert(theme_table, key, theme);
 	
 	g_free(key);	
 }
 
 void
-purple_theme_manager_remove_theme(PurpleThemeManager *self,
-				  PurpleTheme *theme)
+purple_theme_manager_remove_theme(PurpleTheme *theme)
 {
-	PurpleThemeManagerPrivate *priv = NULL;
 	gchar *key;
 
-	g_return_if_fail(PURPLE_IS_THEME_MANAGER(self));
 	g_return_if_fail(PURPLE_IS_THEME(theme));
-	
-	priv = PURPLE_THEME_MANAGER_GET_PRIVATE(self);
 
 	key = purple_theme_manager_make_key(purple_theme_get_name(theme),
-				  purple_theme_get_type_string(theme));
+				  	    purple_theme_get_type_string(theme));
 
 	g_return_if_fail(key);
 
-	g_hash_table_remove(priv->theme_table, key);	
+	g_hash_table_remove(theme_table, key);	
 
 	g_free(key);	
 }
 
 void 
-purple_theme_manager_rebuild(PurpleThemeManager *self)
+purple_theme_manager_refresh()
 {
-	PurpleThemeManagerPrivate *priv;
-
-	g_return_if_fail(PURPLE_IS_THEME_MANAGER(self));
-	priv = PURPLE_THEME_MANAGER_GET_PRIVATE(self);
-	
-	g_hash_table_foreach_remove (priv->theme_table,
+	g_hash_table_foreach_remove (theme_table,
                 	             (GHRFunc) purple_theme_manager_is_theme,
                 	             NULL);	
 	
 	/* TODO: this also needs to be fixed the same as new */
-	purple_theme_manager_build(self, NULL);
+	purple_theme_manager_build(NULL);
 
 }
 
 void 
-purple_theme_manager_for_each_theme(PurpleThemeManager *self, PTFunc func)
+purple_theme_manager_for_each_theme(PTFunc func)
 {
-	PurpleThemeManagerPrivate *priv;
-
-	g_return_if_fail(PURPLE_IS_THEME_MANAGER(self));
 	g_return_if_fail(func);
 
-	priv = PURPLE_THEME_MANAGER_GET_PRIVATE(self);	
-
-	g_hash_table_foreach(priv->theme_table,
+	g_hash_table_foreach(theme_table,
 			     (GHFunc) purple_theme_manager_function_wrapper,
 			     func);
 }

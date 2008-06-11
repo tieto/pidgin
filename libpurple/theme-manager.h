@@ -45,7 +45,6 @@ typedef struct _PurpleThemeManagerClass PurpleThemeManagerClass;
 
 struct _PurpleThemeManager {
 	GObject parent;
-	gpointer priv;
 };
 
 struct _PurpleThemeManagerClass {
@@ -69,7 +68,7 @@ GType purple_theme_manager_get_type (void);
  *
  * @returns a new ThemeManager object 
  */
-PurpleThemeManager* purple_theme_manager_new (PurpleThemeLoader *loader1, ...);
+void purple_theme_manager_init (PurpleThemeLoader *loader1, ...);
 
 /**
  * Finds the PurpleTheme object stored by the theme manager
@@ -79,44 +78,44 @@ PurpleThemeManager* purple_theme_manager_new (PurpleThemeLoader *loader1, ...);
  *
  * @returns 	The PurpleTheme or NULL if it wasn't found
  */
-PurpleTheme *purple_theme_manager_find_theme(PurpleThemeManager *self, const gchar *name, const gchar *type);
+PurpleTheme *purple_theme_manager_find_theme(const gchar *name, const gchar *type);
 
 /**
  * Adds a PurpleTheme to the theme manager, if the theme already exits it does nothing
  *
  * @param theme 	the PurpleTheme to add to the manager
  */
-void purple_theme_manager_add_theme(PurpleThemeManager *self, PurpleTheme *theme);
+void purple_theme_manager_add_theme(PurpleTheme *theme);
 
 /**
  * Removes a PurpleTheme from the theme manager, and frees the theme
  * @param theme 	the PurpleTheme to remove from the manager
  */
-void purple_theme_manager_remove_theme(PurpleThemeManager *self, PurpleTheme *theme);
+void purple_theme_manager_remove_theme(PurpleTheme *theme);
 
 /**
  * Addes a Loader to the theme manager so it knows how to build themes
  * @param loader 	the PurpleThemeLoader to add
  */
-void purple_theme_manager_register_type(PurpleThemeManager *self, PurpleThemeLoader *loader);
+void purple_theme_manager_register_type(PurpleThemeLoader *loader);
 
 /**
  * Removes the loader and all themes of the same type from the loader
  * @param loader 	the PurpleThemeLoader to be removed
  */
-void purple_theme_manager_unregister_type(PurpleThemeManager *self, PurpleThemeLoader *loader);
+void purple_theme_manager_unregister_type(PurpleThemeLoader *loader);
 
 /**
  * Rebuilds all the themes in the theme manaer
  */
-void purple_theme_manager_rebuild(PurpleThemeManager *self);
+void purple_theme_manager_refresh(void);
 
 /**
  * Calles the given function on each purple theme
  *
  * @param func 		the PTFunc to be applied to each theme
  */
-void purple_theme_manager_for_each_theme(PurpleThemeManager *self, PTFunc func); 
+void purple_theme_manager_for_each_theme(PTFunc func); 
 
 G_END_DECLS
 #endif /* __PURPLE_THEME_MANAGER_H__ */
