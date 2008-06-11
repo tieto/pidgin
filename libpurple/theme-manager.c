@@ -111,7 +111,7 @@ purple_theme_manager_function_wrapper(gchar *key,
                   		      gpointer value,
                 		      PTFunc user_data)
 {
-	if(PURPLE_IS_THEME(value))
+	if (PURPLE_IS_THEME(value))
 		(* user_data) (value);
 }
 
@@ -120,36 +120,38 @@ purple_theme_manager_build(const gchar *root)
 {
 
 	GDir *rdir;
-	gchar *name, *type;
+	gchar *name, *type, *purple_dir, *theme_dir;
 	GDir *dir;
 	PurpleThemeLoader *loader;
 
-	rdir =  g_dir_open(root, 0, NULL);/*TODO: should have debug error?*/
+	rdir =  g_dir_open(root, 0, NULL);
 
 	g_return_if_fail(rdir);
 
-	/*TODO: This looks messy, leaks*/
 	/* Parses directory by root/name/purple/type */
-	while((name = g_strdup(g_dir_read_name (rdir)))){
-
-		dir =  g_dir_open(g_strconcat(root, '/', name,
-				  '/', "purple", NULL), 0, NULL);	
+	while ((name = g_strdup(g_dir_read_name (rdir)))){
+		
+		purple_dir = g_strconcat(root, '/', name, '/', "purple", NULL);
+		dir =  g_dir_open(purple_dir, 0, NULL);	
 	
-		if(dir) {
-			while((type = g_strdup(g_dir_read_name (dir)))) {
-				if((loader = g_hash_table_lookup (theme_table, type)))
-					purple_theme_manager_add_theme(purple_theme_loader_build(loader,  g_strconcat(root, '/', name, '/',
-												              "purple", '/', type, NULL)));
+		if (dir) {
+			while ((type = g_strdup(g_dir_read_name (dir)))) {
+				if ((loader = g_hash_table_lookup (theme_table, type))){
 
+					theme_dir = g_strconcat(purple_dir, '/', type, NULL);
+					purple_theme_manager_add_theme(purple_theme_loader_build(loader, theme_dir));
+
+				}
 				g_free(type);
+
 			}
-
 			g_dir_close(dir);
+
 		}
-
-		g_free(name);		
+		g_free(purple_dir);
+		g_free(name);	
+	
 	}
-
 	g_dir_close(rdir);
 	
 }
@@ -190,7 +192,7 @@ purple_theme_manager_register_type(PurpleThemeLoader *loader)
 	g_return_if_fail(type);
 
 	/* if something is already there do nothing */
-	if(! g_hash_table_lookup (theme_table, type)) 
+	if (! g_hash_table_lookup (theme_table, type)) 
 		g_hash_table_insert(theme_table, type, loader);
 	
 	g_free(type);
@@ -206,7 +208,7 @@ purple_theme_manager_unregister_type(PurpleThemeLoader *loader)
 	type = purple_theme_loader_get_type_string(loader);
 	g_return_if_fail(type);
 
-	if(g_hash_table_lookup (theme_table, type) == loader){
+	if (g_hash_table_lookup (theme_table, type) == loader){
 
 		g_hash_table_remove (theme_table, type);
 
@@ -243,7 +245,7 @@ purple_theme_manager_add_theme(PurpleTheme *theme)
 	g_return_if_fail(key);
 	
 	/* if something is already there do nothing */
-	if(! g_hash_table_lookup (theme_table, key)) 
+	if (! g_hash_table_lookup (theme_table, key)) 
 		g_hash_table_insert(theme_table, key, theme);
 	
 	g_free(key);	
