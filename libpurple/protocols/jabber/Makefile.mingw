@@ -48,6 +48,7 @@ C_SRC =	\
 			buddy.c \
 			caps.c \
 			chat.c \
+			data.c \
 			disco.c \
 			google.c \
 			iq.c \
