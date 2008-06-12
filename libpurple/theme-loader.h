@@ -1,5 +1,5 @@
 /**
- * @file purpletheme.h  Purple Theme Loader Abstact Class API
+ * @file theme-loader.h  Purple Theme Loader Abstact Class API
  */
 
 /* purple
