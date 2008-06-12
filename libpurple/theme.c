@@ -209,7 +209,7 @@ purple_theme_get_type (void)
 gchar *
 purple_theme_get_name(PurpleTheme *theme)
 {
-	PurpleThemePrivate *priv = NULL;
+	PurpleThemePrivate *priv;
 
 	g_return_val_if_fail(PURPLE_IS_THEME(theme), NULL);
 
@@ -220,7 +220,7 @@ purple_theme_get_name(PurpleTheme *theme)
 void
 purple_theme_set_name(PurpleTheme *theme, const gchar *name)
 {
-	PurpleThemePrivate *priv = NULL;
+	PurpleThemePrivate *priv;
 
 	g_return_if_fail(PURPLE_IS_THEME(theme));
 
@@ -233,7 +233,7 @@ purple_theme_set_name(PurpleTheme *theme, const gchar *name)
 gchar *
 purple_theme_get_description(PurpleTheme *theme)
 {
-	PurpleThemePrivate *priv = NULL;
+	PurpleThemePrivate *priv;
 
 	g_return_val_if_fail(PURPLE_IS_THEME(theme), NULL);
 
@@ -244,7 +244,7 @@ purple_theme_get_description(PurpleTheme *theme)
 void
 purple_theme_set_description(PurpleTheme *theme, const gchar *description)
 {
-	PurpleThemePrivate *priv = NULL;
+	PurpleThemePrivate *priv;
 
 	g_return_if_fail(PURPLE_IS_THEME(theme));
 
@@ -257,7 +257,7 @@ purple_theme_set_description(PurpleTheme *theme, const gchar *description)
 gchar *
 purple_theme_get_author(PurpleTheme *theme)
 {
-	PurpleThemePrivate *priv = NULL;
+	PurpleThemePrivate *priv;
 
 	g_return_val_if_fail(PURPLE_IS_THEME(theme), NULL);
 
@@ -268,7 +268,7 @@ purple_theme_get_author(PurpleTheme *theme)
 void
 purple_theme_set_author(PurpleTheme *theme, const gchar *author)
 {
-	PurpleThemePrivate *priv = NULL;
+	PurpleThemePrivate *priv;
 
 	g_return_if_fail(PURPLE_IS_THEME(theme));
 
@@ -281,7 +281,7 @@ purple_theme_set_author(PurpleTheme *theme, const gchar *author)
 gchar *
 purple_theme_get_type_string(PurpleTheme *theme)
 {
-	PurpleThemePrivate *priv = NULL;
+	PurpleThemePrivate *priv;
 
 	g_return_val_if_fail(PURPLE_IS_THEME(theme), NULL);
 
@@ -292,7 +292,7 @@ purple_theme_get_type_string(PurpleTheme *theme)
 gchar *
 purple_theme_get_dir(PurpleTheme *theme) 
 {
-	PurpleThemePrivate *priv = NULL;
+	PurpleThemePrivate *priv;
 
 	g_return_val_if_fail(PURPLE_IS_THEME(theme), NULL);
 
@@ -303,7 +303,7 @@ purple_theme_get_dir(PurpleTheme *theme)
 void
 purple_theme_set_dir(PurpleTheme *theme, const gchar *dir)
 {
-	PurpleThemePrivate *priv = NULL;
+	PurpleThemePrivate *priv;
 
 	g_return_if_fail(PURPLE_IS_THEME(theme));
 
@@ -316,7 +316,7 @@ purple_theme_set_dir(PurpleTheme *theme, const gchar *dir)
 PurpleStoredImage *
 purple_theme_get_image(PurpleTheme *theme)
 {
-	PurpleThemePrivate *priv = NULL;
+	PurpleThemePrivate *priv;
 
 	g_return_val_if_fail(PURPLE_IS_THEME(theme), NULL);
 
@@ -328,7 +328,7 @@ purple_theme_get_image(PurpleTheme *theme)
 void 
 purple_theme_set_image(PurpleTheme *theme, PurpleStoredImage *img)
 {	
-	PurpleThemePrivate *priv = NULL;
+	PurpleThemePrivate *priv;
 
 	g_return_if_fail(PURPLE_IS_THEME(theme));
 
