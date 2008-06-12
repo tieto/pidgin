@@ -77,6 +77,8 @@ FsMediaType purple_media_to_fs_media_type(PurpleMediaStreamType type);
 FsStreamDirection purple_media_to_fs_stream_direction(PurpleMediaStreamType type);
 PurpleMediaStreamType purple_media_from_fs(FsMediaType type, FsStreamDirection direction);
 
+PurpleMediaStreamType purple_media_get_overall_type(PurpleMedia *media);
+
 GList *purple_media_get_session_names(PurpleMedia *media);
 
 void purple_media_get_elements(PurpleMedia *media, GstElement **audio_src, GstElement **audio_sink,
@@ -97,6 +99,7 @@ void purple_media_wait(PurpleMedia *media);
 void purple_media_accept(PurpleMedia *media);
 void purple_media_reject(PurpleMedia *media);
 void purple_media_hangup(PurpleMedia *media);
+void purple_media_got_request(PurpleMedia *media);
 void purple_media_got_hangup(PurpleMedia *media);
 void purple_media_got_accept(PurpleMedia *media);
 

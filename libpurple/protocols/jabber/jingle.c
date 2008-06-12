@@ -1335,6 +1335,8 @@ jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet)
 	}
 	jabber_iq_send(jabber_jingle_session_create_ack(js, packet));
 	jabber_iq_send(jabber_jingle_session_create_session_info(session, "ringing"));
+
+	purple_media_got_request(jabber_jingle_session_get_media(session));
 }
 
 void

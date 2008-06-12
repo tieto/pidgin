@@ -427,6 +427,29 @@ pidgin_media_hangup_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 }
 
 static void
+pidgin_media_got_request_cb(PurpleMedia *media, PidginMedia *gtkmedia)
+{
+	PurpleMediaStreamType type = purple_media_get_overall_type(media);
+	gchar *message;
+
+	if (type & PURPLE_MEDIA_AUDIO && type & PURPLE_MEDIA_VIDEO) {
+		message = g_strdup_printf(_("%s wishes to start an audio/video session with you."),
+					  purple_media_get_screenname(media));
+	} else if (type & PURPLE_MEDIA_AUDIO) {
+		message = g_strdup_printf(_("%s wishes to start an audio session with you."),
+					  purple_media_get_screenname(media));
+	} else if (type & PURPLE_MEDIA_VIDEO) {
+		message = g_strdup_printf(_("%s wishes to start a video session with you."),
+					  purple_media_get_screenname(media));
+	} else {
+		return;
+	}
+
+	pidgin_media_emit_message(gtkmedia, message);
+	g_free(message);
+}
+
+static void
 pidgin_media_got_hangup_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	pidgin_media_emit_message(gtkmedia, _("The call has been terminated."));
@@ -470,6 +493,8 @@ pidgin_media_set_property (GObject *object, guint prop_id, const GValue *value, 
 				G_CALLBACK(pidgin_media_hangup_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "reject",
 				G_CALLBACK(pidgin_media_reject_cb), media);
+			g_signal_connect(G_OBJECT(media->priv->media), "got-request",
+				G_CALLBACK(pidgin_media_got_request_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "got-hangup",
 				G_CALLBACK(pidgin_media_got_hangup_cb), media);
 			g_signal_connect(G_OBJECT(media->priv->media), "got-accept",

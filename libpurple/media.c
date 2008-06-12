@@ -83,6 +83,7 @@ enum {
 	ACCEPTED,
 	HANGUP,
 	REJECT,
+	GOT_REQUEST,
 	GOT_HANGUP,
 	GOT_ACCEPT,
 	NEW_CANDIDATE,
@@ -169,6 +170,10 @@ purple_media_class_init (PurpleMediaClass *klass)
 					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE, 0);
 	purple_media_signals[REJECT] = g_signal_new("reject", G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
+	purple_media_signals[GOT_REQUEST] = g_signal_new("got-request", G_TYPE_FROM_CLASS(klass),
 					 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
 					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE, 0);
@@ -319,6 +324,21 @@ purple_media_from_fs(FsMediaType type, FsStreamDirection direction)
 			result |= PURPLE_MEDIA_RECV_VIDEO;
 	}
 	return result;
+}
+
+PurpleMediaStreamType
+purple_media_get_overall_type(PurpleMedia *media)
+{
+	GList *values = g_hash_table_get_values(media->priv->sessions);
+	PurpleMediaStreamType type = PURPLE_MEDIA_NONE;
+
+	for (; values; values = values->next) {
+		PurpleMediaSession *session = values->data;
+		type |= session->type;
+	}
+
+	g_list_free(values);
+	return type;
 }
 
 static PurpleMediaSession*
@@ -525,6 +545,12 @@ void
 purple_media_reject(PurpleMedia *media)
 {
 	g_signal_emit(media, purple_media_signals[REJECT], 0);
+}
+
+void
+purple_media_got_request(PurpleMedia *media)
+{
+	g_signal_emit(media, purple_media_signals[GOT_REQUEST], 0);
 }
 
 void
