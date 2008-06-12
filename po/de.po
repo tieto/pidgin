@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-09 20:56+0200\n"
-"PO-Revision-Date: 2008-06-09 20:55+0200\n"
+"POT-Creation-Date: 2008-06-12 18:33+0200\n"
+"PO-Revision-Date: 2008-06-12 18:32+0200\n"
 "Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -6174,11 +6174,11 @@ msgstr "Ungenügende Rechte"
 msgid "In local permit/deny"
 msgstr "In lokaler erlaubt/verboten-Liste"
 
-msgid "Too evil (sender)"
-msgstr "Zu boshaft (Sender)"
+msgid "Warning level too high (sender)"
+msgstr "Warnstufe zu hoch (Absender)"
 
-msgid "Too evil (receiver)"
-msgstr "Zu boshaft (Empfänger)"
+msgid "Warning level too high (receiver)"
+msgstr "Warnstufe zu hoch (Empfänger)"
 
 msgid "User temporarily unavailable"
 msgstr "Benutzer ist temporär nicht verfügbar"
@@ -6538,20 +6538,26 @@ msgstr[1] ""
 "überschritten wurde."
 
 #, c-format
-msgid "You missed %hu message from %s because he/she was too evil."
-msgid_plural "You missed %hu messages from %s because he/she was too evil."
+msgid ""
+"You missed %hu message from %s because his/her warning level is too high."
+msgid_plural ""
+"You missed %hu messages from %s because his/her warning level is too high."
 msgstr[0] ""
-"Sie haben %hu Nachricht von %s nicht erhalten, da er/sie zu boshaft war."
+"Sie haben %hu Nachricht von %s nicht erhalten, da seine/ihre Warnstufe zu "
+"hoch ist."
 msgstr[1] ""
-"Sie haben %hu Nachrichten von %s nicht erhalten,/sie zu boshaft war."
+"Sie haben %hu Nachrichten von %s nicht erhalten, da seine/ihre Warnstufe zu "
+"hoch ist."
 
 #, c-format
-msgid "You missed %hu message from %s because you are too evil."
-msgid_plural "You missed %hu messages from %s because you are too evil."
+msgid "You missed %hu message from %s because your warning level is too high."
+msgid_plural ""
+"You missed %hu messages from %s because your warning level is too high."
 msgstr[0] ""
-"Sie haben %hu Nachricht von %s nicht erhalten, da Sie zu boshaft sind."
+"Sie haben %hu Nachricht von %s nicht erhalten, da Ihre Warnstufe zu hoch ist."
 msgstr[1] ""
-"Sie haben %hu Nachrichten von %s nicht erhalten, da Sie zu boshaft sind."
+"Sie haben %hu Nachrichten von %s nicht erhalten, da Ihre Warnstufe zu hoch "
+"ist."
 
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
@@ -10263,9 +10269,6 @@ msgstr "/Werkzeuge/Buddy-_Alarm"
 msgid "/Tools/_Certificates"
 msgstr "/Werkzeuge/_Zertifikate"
 
-msgid "/Tools/Smile_y"
-msgstr "/Werkzeuge/Smile_y"
-
 msgid "/Tools/Plu_gins"
 msgstr "/Werkzeuge/Plu_gins"
 
@@ -10274,6 +10277,9 @@ msgstr "/Werkzeuge/_Einstellungen"
 
 msgid "/Tools/Pr_ivacy"
 msgstr "/Werkzeuge/Pri_vatsphäre"
+
+msgid "/Tools/Smile_y"
+msgstr "/Werkzeuge/Smile_y"
 
 msgid "/Tools/_File Transfers"
 msgstr "/Werkzeuge/_Dateiübertragungen"
@@ -10508,6 +10514,12 @@ msgstr "_Chat verstecken, wenn das Fenster geschlossen wird."
 msgid "Please enter the name of the group to be added."
 msgstr "Bitte geben Sie den Namen der Gruppe ein, die hinzugefügt werden soll."
 
+msgid "Enable Account"
+msgstr "Konten aktivieren"
+
+msgid "<PurpleMain>/Accounts/Enable Account"
+msgstr "<PurpleMain>/Konten/Konto aktivieren"
+
 msgid "<PurpleMain>/Accounts/"
 msgstr "<PurpleMain>/Konten/"
 
@@ -10519,12 +10531,6 @@ msgstr "Keine Aktionen verfügbar"
 
 msgid "_Disable"
 msgstr "_Deaktivieren"
-
-msgid "Enable Account"
-msgstr "Konten aktivieren"
-
-msgid "<PurpleMain>/Accounts/Enable Account"
-msgstr "<PurpleMain>/Konten/Konto aktivieren"
 
 msgid "/Tools"
 msgstr "/Werkzeuge"
@@ -11559,11 +11565,14 @@ msgstr "Speichern des Bildes fehlgeschlagen: %s\n"
 msgid "Insert Image"
 msgstr "Bild einfügen"
 
+#, c-format
 msgid ""
-"This smiley is disabled because a custom smiley exists for this shortcut."
+"This smiley is disabled because a custom smiley exists for this shortcut:\n"
+" %s"
 msgstr ""
 "Dieser Smiley ist deaktiviert, da ein benutzerdefinierter Smiley für diese "
-"Tastenkombination existiert."
+"Tastenkombination existiert:\n"
+" %s"
 
 msgid "Smile!"
 msgstr "Lächeln!"
