@@ -76,9 +76,9 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_roster_remove_buddy,		/* remove_buddy */
 	NULL,							/* remove_buddies */
 	NULL,							/* add_permit */
-	jabber_google_roster_add_deny,				/* add_deny */
+	jabber_google_roster_add_deny,	/* add_deny */
 	NULL,							/* rem_permit */
-	jabber_google_roster_rem_deny,				/* rem_deny */
+	jabber_google_roster_rem_deny,	/* rem_deny */
 	NULL,							/* set_permit_deny */
 	jabber_chat_join,				/* join_chat */
 	NULL,							/* reject_chat */
@@ -89,7 +89,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_message_send_chat,		/* chat_send */
 	jabber_keepalive,				/* keepalive */
 	jabber_register_account,		/* register_user */
-	jabber_buddy_get_info_chat,		/* get_cb_info */
+	NULL,							/* get_cb_info */
 	NULL,							/* get_cb_away */
 	jabber_roster_alias_change,		/* alias_buddy */
 	jabber_roster_group_change,		/* group_buddy */
@@ -105,7 +105,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_roomlist_get_list,		/* roomlist_get_list */
 	jabber_roomlist_cancel,			/* roomlist_cancel */
 	NULL,							/* roomlist_expand_category */
-	NULL,							/* can_receive_file */
+	jabber_si_xfer_can_receive_file,/* can_receive_file */
 	jabber_si_xfer_send,			/* send_file */
 	jabber_si_new_xfer,				/* new_xfer */
 	jabber_offline_message,			/* offline_message */
