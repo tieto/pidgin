@@ -131,7 +131,7 @@ purple_theme_manager_build(const gchar *root)
 	/* Parses directory by root/name/purple/type */
 	while ((name = g_strdup(g_dir_read_name (rdir)))){
 		
-		purple_dir = g_strconcat(root, '/', name, '/', "purple", NULL);
+		purple_dir = g_build_filename(root, name, "purple", NULL);
 		dir =  g_dir_open(purple_dir, 0, NULL);	
 	
 		if (dir) {
