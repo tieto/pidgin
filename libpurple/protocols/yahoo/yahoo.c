@@ -246,7 +246,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (f->away == 2) {
 				/* Idle may have already been set in a more precise way in case 137 */
 				if (f->idle == 0)
-					f->idle = time(NULL);
+					f->idle = time(NULL) - 60;	/*start idle at 1 min*/
 			}
 
 			break;
@@ -2296,13 +2296,22 @@ static void yahoo_p2p_read_pkt_cb(gpointer data, gint source, PurpleInputConditi
 	guchar *start = NULL;
 	struct yahoo_p2p_data *user_data;
 
-	user_data = data;
+	if(!(user_data = data))
+		return ;
 
-	if((len = read(source, buf, sizeof(buf))) <= 0 )
-		purple_debug_warning("yahoo","p2p: Error in connection to p2p host\n");
+	if((len = read(source, buf, sizeof(buf))) <= 0 )	{
+		purple_debug_warning("yahoo","p2p: Error in connection to p2p host or host disconnected\n");
+		purple_input_remove(user_data->input_event);
+		close(source);
+		/*free user data*/
+		g_free(user_data->host_ip);
+		g_free(user_data->host_username);
+		g_free(user_data);
+	}
 
 	if(len < YAHOO_PACKET_HDRLEN)
 		return;
+
 	if(strncmp((char *)buf, "YMSG", MIN(4, len)) != 0) {
 		/* Not a YMSG packet */
 		purple_debug_warning("yahoo","p2p: Got something other than YMSG packet\n");
@@ -2361,11 +2370,11 @@ static void yahoo_p2p_init_cb(gpointer data, gint source, const gchar *error_mes
 		purple_debug_warning("yahoo","p2p: %s\n",error_message);
 		return;
 	}
-	/*Add an Input Read event to the file descriptor*/
-	purple_input_add(source, PURPLE_INPUT_READ, yahoo_p2p_read_pkt_cb, data);
-
 	if(!(user_data = data))
 		return ;
+
+	/*Add an Input Read event to the file descriptor*/
+	user_data->input_event = purple_input_add(source, PURPLE_INPUT_READ, yahoo_p2p_read_pkt_cb, data);
 
 	account = purple_connection_get_account(user_data->gc);
 

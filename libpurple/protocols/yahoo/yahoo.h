@@ -120,6 +120,7 @@ struct yahoo_p2p_data	{
 	int session_id;
 	char *host_username;
 	int val_13;
+	guint input_event;
 };
 
 struct _YchtConn;
