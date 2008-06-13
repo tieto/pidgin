@@ -1793,22 +1793,6 @@ void jabber_buddy_get_info(PurpleConnection *gc, const char *who)
 	}
 }
 
-void jabber_buddy_get_info_chat(PurpleConnection *gc, int id,
-		const char *resource)
-{
-	JabberStream *js = gc->proto_data;
-	JabberChat *chat = jabber_chat_find_by_id(js, id);
-	char *full_jid;
-
-	if(!chat)
-		return;
-
-	full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server, resource);
-	jabber_buddy_get_info_for_jid(js, full_jid);
-	g_free(full_jid);
-}
-
-
 static void jabber_buddy_set_invisibility(JabberStream *js, const char *who,
 		gboolean invisible)
 {

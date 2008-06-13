@@ -89,7 +89,7 @@ static PurplePluginProtocolInfo prpl_info =
 	jabber_message_send_chat,		/* chat_send */
 	jabber_keepalive,				/* keepalive */
 	jabber_register_account,		/* register_user */
-	jabber_buddy_get_info_chat,		/* get_cb_info */
+	NULL,							/* get_cb_info */
 	NULL,							/* get_cb_away */
 	jabber_roster_alias_change,		/* alias_buddy */
 	jabber_roster_group_change,		/* group_buddy */
