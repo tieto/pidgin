@@ -1205,13 +1205,6 @@ PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who)
 	return xfer;
 }
 
-gboolean jabber_si_xfer_can_receive_file(PurpleConnection *conn, const char *who)
-{
-	JabberStream *js = conn->proto_data;
-
-	return purple_find_buddy(conn->account, who) && jabber_buddy_find(js, who, FALSE);
-}
-	
 void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file)
 {
 	JabberStream *js;
@@ -1220,7 +1213,7 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 
 	js = gc->proto_data;
 
-	if (!jabber_si_xfer_can_receive_file(gc, who))
+	if(!purple_find_buddy(gc->account, who) || !jabber_buddy_find(js, who, FALSE))
 		return;
 
 	xfer = jabber_si_new_xfer(gc, who);

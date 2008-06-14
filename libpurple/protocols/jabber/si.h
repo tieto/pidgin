@@ -28,7 +28,6 @@
 
 void jabber_bytestreams_parse(JabberStream *js, xmlnode *packet);
 void jabber_si_parse(JabberStream *js, xmlnode *packet);
-gboolean jabber_si_xfer_can_receive_file(PurpleConnection *conn, const char *who);
 PurpleXfer *jabber_si_new_xfer(PurpleConnection *gc, const char *who);
 void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file);
 
