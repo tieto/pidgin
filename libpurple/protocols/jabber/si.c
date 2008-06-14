@@ -806,7 +806,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 
 			g_snprintf(port, sizeof(port), "%hu", portnum);
 
-			purple_debug_info("jabber", "jabber_si_xfer_bytestreams_listen_cb() will be looking at jsx %p: jsx->streamhosts %p and ft_proxy_list[%i] %p",
+			purple_debug_info("jabber", "jabber_si_xfer_bytestreams_listen_cb() will be looking at jsx %p: jsx->streamhosts %p and ft_proxy_list[%i] %p\n",
 							  jsx, jsx->streamhosts, i, ft_proxy_list[i]);
 			if(g_list_find_custom(jsx->streamhosts, ft_proxy_list[i], jabber_si_compare_jid) != NULL)
 				continue;
@@ -1212,9 +1212,6 @@ void jabber_si_xfer_send(PurpleConnection *gc, const char *who, const char *file
 	PurpleXfer *xfer;
 
 	js = gc->proto_data;
-
-	if(!purple_find_buddy(gc->account, who) || !jabber_buddy_find(js, who, FALSE))
-		return;
 
 	xfer = jabber_si_new_xfer(gc, who);
 
