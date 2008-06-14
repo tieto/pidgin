@@ -141,7 +141,7 @@ static void
 entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 {
 	const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
-	if (*text == '/')
+	if (*text == '/' && *(text + 1) != '/')
 	{
 		PurpleConversation *conv = ggconv->active_conv;
 		PurpleCmdStatus status;
@@ -191,7 +191,7 @@ entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 	}
 	else
 	{
-		char *escape = g_markup_escape_text(text, -1);
+		char *escape = g_markup_escape_text((*text == '/' ? text + 1 : text), -1);
 		char *apos = purple_strreplace(escape, "&apos;", "'");
 		g_free(escape);
 		escape = apos;
