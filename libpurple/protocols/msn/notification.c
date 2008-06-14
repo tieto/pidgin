@@ -23,6 +23,7 @@
  */
 #include "msn.h"
 #include "notification.h"
+#include "contact.h"
 #include "state.h"
 #include "error.h"
 #include "msnutils.h"
@@ -195,7 +196,7 @@ group_error_helper(MsnSession *session, const char *msg, const char *group_id, i
  **************************************************************************/
 
 void
-msn_got_login_params(MsnSession *session, const char *login_params)
+msn_got_login_params(MsnSession *session, const char *ticket, const char *response)
 {
 	MsnCmdProc *cmdproc;
 
@@ -203,7 +204,7 @@ msn_got_login_params(MsnSession *session, const char *login_params)
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_END);
 
-	msn_cmdproc_send(cmdproc, "USR", "TWN S %s", login_params);
+	msn_cmdproc_send(cmdproc, "USR", "SSO S %s %s", ticket, response);
 }
 
 static void
@@ -212,8 +213,8 @@ cvr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleAccount *account;
 
 	account = cmdproc->session->account;
-	msn_cmdproc_send(cmdproc, "USR", "TWN I %s",
-					 purple_account_get_username(account));
+
+	msn_cmdproc_send(cmdproc, "USR", "SSO I %s", purple_account_get_username(account));
 }
 
 static void
@@ -239,32 +240,14 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 //		msn_cmdproc_send(cmdproc, "SYN", "%s", "0");
 		//TODO we should use SOAP contact to fetch contact list
 	}
-	else if (!g_ascii_strcasecmp(cmd->params[1], "TWN"))
+	else if (!g_ascii_strcasecmp(cmd->params[1], "SSO"))
 	{
-		/* Passport authentication */
-		char **elems, **cur, **tokens;
+		/* RPS authentication */
 
 		session->nexus = msn_nexus_new(session);
 
-		/* Parse the challenge data. */
-		session->nexus->challenge_data_str = g_strdup(cmd->params[3]);
-		elems = g_strsplit(cmd->params[3], ",", 0);
-
-		for (cur = elems; *cur != NULL; cur++)
-		{
-			tokens = g_strsplit(*cur, "=", 2);
-			if(tokens[0] && tokens[1])
-			{
-				purple_debug_info("MSNP14","challenge %p,key:%s,value:%s\n",
-									session->nexus->challenge_data,tokens[0],tokens[1]);
-				g_hash_table_insert(session->nexus->challenge_data, tokens[0], tokens[1]);
-				/* Don't free each of the tokens, only the array. */
-				g_free(tokens);
-			} else
-				g_strfreev(tokens);
-		}
-
-		g_strfreev(elems);
+		session->nexus->policy = g_strdup(cmd->params[3]);
+		session->nexus->nonce = g_strdup(cmd->params[4]);
 
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_START);
 
@@ -327,14 +310,15 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 
 	/*
-	 * Windows Live Messenger 8.0
+	 * Windows Live Messenger 8.5
 	 * Notice :CVR String discriminate!
 	 * reference of http://www.microsoft.com/globaldev/reference/oslocversion.mspx
 	 * to see the Local ID
 	 */
 	msn_cmdproc_send(cmdproc, "CVR",
 //					 "0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %s",
-					"0x0804 winnt 5.1 i386 MSNMSGR 8.0.0792 msmsgs %s",
+//					"0x0804 winnt 5.1 i386 MSNMSGR 8.0.0792 msmsgs %s",
+					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1288 msmsgs %s",
 					 purple_account_get_username(account));
 }
 
@@ -545,7 +529,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	context = purple_cipher_context_new(cipher, NULL);
 	purple_cipher_context_append(context, (const guchar *)cmd->params[1],
 							   strlen(cmd->params[1]));
-	challenge_resp = MSNP13_WLM_PRODUCT_KEY;
+	challenge_resp = MSNP15_WLM_PRODUCT_KEY;
 
 	purple_cipher_context_append(context, (const guchar *)challenge_resp,
 							   strlen(challenge_resp));
@@ -560,7 +544,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	msn_handle_chl(cmd->params[1], buf);
 #endif
 //	purple_debug_info("MSNP14","<<challenge:{%s}:{%s}\n",cmd->params[1],buf);
-	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", MSNP13_WLM_PRODUCT_ID);
+	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", MSNP15_WLM_PRODUCT_ID);
 
 	msn_transaction_set_payload(trans, buf, 32);
 
@@ -782,7 +766,7 @@ adl_cmd_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			if (list_op & MSN_LIST_RL_OP) {
 				/* someone is adding us */
 //				got_new_entry(cmdproc->session->account->gc, passport, decoded_friendly_name);
-				msn_get_contact_list(cmdproc->session->contact, MSN_PS_PENDING_LIST, NULL);
+				msn_get_contact_list(cmdproc->session, MSN_PS_PENDING_LIST, NULL);
 			}
 
 //			g_free(decoded_friendly_name);
@@ -839,9 +823,8 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	purple_debug_info("MSN Notification","FQY payload:\n%s\n", payload);
 	g_return_if_fail(cmdproc->session != NULL);
-	g_return_if_fail(cmdproc->session->contact != NULL);
 //	msn_notification_post_adl(cmdproc, payload, len);
-//	msn_get_address_book(cmdproc->session->contact, MSN_AB_SAVE_CONTACT, NULL, NULL);
+//	msn_get_address_book(cmdproc->session, MSN_AB_SAVE_CONTACT, NULL, NULL);
 }
 
 static void
@@ -1292,7 +1275,7 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			if (!strcmp(type, "MFN")) {
 				friendlyname = purple_url_decode(cmd->params[2]);
 
-				msn_update_contact(session->contact, friendlyname);
+				msn_update_contact(session, "Me", MSN_UPDATE_DISPLAY, friendlyname);
 
 				purple_connection_set_display_name(
 					purple_account_get_connection(session->account),
@@ -1774,17 +1757,16 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	/*starting retrieve the contact list*/
 	clLastChange = purple_account_get_string(session->account, "CLLastChange", NULL);
-	session->contact = msn_contact_new(session);
 #ifdef MSN_PARTIAL_LISTS
 	/* msn_userlist_load defeats all attempts at trying to detect blist sync issues */
 	msn_userlist_load(session);
-	msn_get_contact_list(session->contact, MSN_PS_INITIAL, clLastChange);
+	msn_get_contact_list(session, MSN_PS_INITIAL, clLastChange);
 #else
 	/* always get the full list? */
-	msn_get_contact_list(session->contact, MSN_PS_INITIAL, NULL);
+	msn_get_contact_list(session, MSN_PS_INITIAL, NULL);
 #endif
 #if 0
-	msn_contact_connect(session->contact);
+	msn_contact_connect(session);
 #endif
 }
 

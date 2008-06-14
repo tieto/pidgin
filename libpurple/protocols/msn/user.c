@@ -28,7 +28,7 @@
 /*new a user object*/
 MsnUser *
 msn_user_new(MsnUserList *userlist, const char *passport,
-			 const char *store_name)
+			 const char *friendly_name)
 {
 	MsnUser *user;
 
@@ -37,16 +37,7 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	user->userlist = userlist;
 
 	msn_user_set_passport(user, passport);
-	msn_user_set_store_name(user, store_name);
-
-	/*
-	 * XXX This seems to reset the friendly name from what it should be
-	 *     to the passport when moving users. So, screw it :)
-	 */
-#if 0
-	if (name != NULL)
-		msn_user_set_name(user, name);
-#endif
+	msn_user_set_friendly_name(user, friendly_name);
 
 	return user;
 }
@@ -75,7 +66,6 @@ msn_user_destroy(MsnUser *user)
 
 	g_free(user->passport);
 	g_free(user->friendly_name);
-	g_free(user->store_name);
 	g_free(user->uid);
 	g_free(user->phone.home);
 	g_free(user->phone.work);
@@ -196,18 +186,6 @@ msn_user_set_currentmedia(MsnUser *user, const CurrentMedia *media)
 	user->media.title  = media ? g_strdup(media->title) : NULL;
 	user->media.artist = media ? g_strdup(media->artist) : NULL;
 	user->media.album  = media ? g_strdup(media->album) : NULL;
-}
-
-void
-msn_user_set_store_name(MsnUser *user, const char *name)
-{
-	g_return_if_fail(user != NULL);
-
-	if (name != NULL)
-	{
-		g_free(user->store_name);
-		user->store_name = g_strdup(name);
-	}
 }
 
 void
@@ -419,14 +397,6 @@ msn_user_get_friendly_name(const MsnUser *user)
 	g_return_val_if_fail(user != NULL, NULL);
 
 	return user->friendly_name;
-}
-
-const char *
-msn_user_get_store_name(const MsnUser *user)
-{
-	g_return_val_if_fail(user != NULL, NULL);
-
-	return user->store_name;
 }
 
 const char *

@@ -60,7 +60,6 @@ struct _MsnUser
 	MsnUserList *userlist;
 
 	char *passport;         /**< The passport account.          */
-	char *store_name;       /**< The name stored in the server. */
 	char *friendly_name;    /**< The friendly name.             */
 
 	char * uid;				/*< User Id							*/
@@ -111,7 +110,7 @@ struct _MsnUser
  * @return A new user structure.
  */
 MsnUser *msn_user_new(MsnUserList *userlist, const char *passport,
-					  const char *store_name);
+					  const char *friendly_name);
 
 /**
  * Destroys a user structure.
@@ -169,14 +168,6 @@ void msn_user_set_passport(MsnUser *user, const char *passport);
  * @param name The friendly name.
  */
 void msn_user_set_friendly_name(MsnUser *user, const char *name);
-
-/**
- * Sets the store name for a user.
- *
- * @param user The user.
- * @param name The store name.
- */
-void msn_user_set_store_name(MsnUser *user, const char *name);
 
 /**
  * Sets the buddy icon for a local user.
@@ -271,15 +262,6 @@ const char *msn_user_get_passport(const MsnUser *user);
  * @return The friendly name.
  */
 const char *msn_user_get_friendly_name(const MsnUser *user);
-
-/**
- * Returns the store name for a user.
- *
- * @param user The user.
- *
- * @return The store name.
- */
-const char *msn_user_get_store_name(const MsnUser *user);
 
 /**
  * Returns the home phone number for a user.

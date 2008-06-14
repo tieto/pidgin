@@ -27,6 +27,7 @@
 
 #include "msn.h"
 #include "accountopt.h"
+#include "contact.h"
 #include "msg.h"
 #include "page.h"
 #include "pluginpref.h"
@@ -1062,7 +1063,10 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	}
 
 	msn_import_html(message, &msgformat, &msgtext);
-	if(msn_user_is_online(account, who)||
+	/* this is incorrect, we should try to initiate a connection to the
+	   buddy first, and only falls back if that fails. Otherwise we can
+	   only send offline message to invisible buddies */
+	if (msn_user_is_online(account, who)||
 		msn_user_is_yahoo(account, who)){
 		/*User online,then send Online Instant Message*/
 
@@ -1145,7 +1149,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		}
 
 		msn_message_destroy(msg);
-	}else	{
+	} else {
 		/*send Offline Instant Message,only to MSN Passport User*/
 		MsnSession *session;
 		char *friendname;
@@ -1156,8 +1160,11 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		friendname = msn_encode_mime(account->username);
 		msn_oim_prep_send_msg_info(session->oim,
 			purple_account_get_username(account),
-			friendname, who,	message);
+			friendname, who, msgtext);
 		msn_oim_send_msg(session->oim);
+
+		g_free(msgformat);
+		g_free(msgtext);
 		g_free(friendname);
 	}
 
@@ -1369,10 +1376,10 @@ msn_add_permit(PurpleConnection *gc, const char *who)
 		msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_BL);
 
 		/* delete contact from Block list and add it to Allow in the callback */
-		msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_BL);
+		msn_del_contact_from_list(session, NULL, who, MSN_LIST_BL);
 	} else {
 		/* just add the contact to Allow list */
-		msn_add_contact_to_list(session->contact, NULL, who, MSN_LIST_AL);
+		msn_add_contact_to_list(session, NULL, who, MSN_LIST_AL);
 	}
 
 
@@ -1397,10 +1404,10 @@ msn_add_deny(PurpleConnection *gc, const char *who)
 		msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_AL);
 
 		/* delete contact from Allow list and add it to Block in the callback */
-		msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_AL);
+		msn_del_contact_from_list(session, NULL, who, MSN_LIST_AL);
 	} else {
 		/* just add the contact to Block list */
-		msn_add_contact_to_list(session->contact, NULL, who, MSN_LIST_BL);
+		msn_add_contact_to_list(session, NULL, who, MSN_LIST_BL);
 	}
 
 	msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_BL);
@@ -1423,7 +1430,7 @@ msn_rem_permit(PurpleConnection *gc, const char *who)
 
 	msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_AL);
 
-	msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_AL);
+	msn_del_contact_from_list(session, NULL, who, MSN_LIST_AL);
 
 	if (user != NULL && user->list_op & MSN_LIST_RL_OP)
 		msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_BL);
@@ -1446,7 +1453,7 @@ msn_rem_deny(PurpleConnection *gc, const char *who)
 
 	msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_BL);
 
-	msn_del_contact_from_list(session->contact, NULL, who, MSN_LIST_BL);
+	msn_del_contact_from_list(session, NULL, who, MSN_LIST_BL);
 
 	if (user != NULL && user->list_op & MSN_LIST_RL_OP)
 		msn_userlist_add_buddy_to_list(userlist, who, MSN_LIST_AL);
@@ -1572,6 +1579,15 @@ msn_keepalive(PurpleConnection *gc)
 
 		msn_cmdproc_send_quick(cmdproc, "PNG", NULL, NULL);
 	}
+}
+
+static void msn_alias_buddy(PurpleConnection *pc, const char *name, const char *alias)
+{
+	MsnSession *session;
+
+	session = pc->proto_data;
+
+	msn_update_contact(session, name, MSN_UPDATE_ALIAS, alias);
 }
 
 static void
@@ -2411,7 +2427,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* register_user */
 	NULL,					/* get_cb_info */
 	NULL,					/* get_cb_away */
-	NULL,					/* alias_buddy */
+	msn_alias_buddy,		/* alias_buddy */
 	msn_group_buddy,		/* group_buddy */
 	msn_rename_group,		/* rename_group */
 	NULL,					/* buddy_free */

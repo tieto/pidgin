@@ -45,8 +45,6 @@ msn_session_new(PurpleAccount *account)
 								 purple_account_get_username(account), NULL);
 	session->oim = msn_oim_new(session);
 
-	/*if you want to chat with Yahoo Messenger*/
-	//session->protocol_ver = WLM_YAHOO_PROT_VER;
 	session->protocol_ver = WLM_PROT_VER;
 
 	return session;
@@ -74,8 +72,6 @@ msn_session_destroy(MsnSession *session)
 	msn_userlist_destroy(session->userlist);
 
 	g_free(session->psm);
-	g_free(session->passport_info.t);
-	g_free(session->passport_info.p);
 	g_free(session->passport_info.kv);
 	g_free(session->passport_info.sid);
 	g_free(session->passport_info.mspauth);
@@ -93,15 +89,13 @@ msn_session_destroy(MsnSession *session)
 	if (session->nexus != NULL)
 		msn_nexus_destroy(session->nexus);
 
-	if (session->contact != NULL)
-		msn_contact_destroy(session->contact);
 	if (session->oim != NULL)
 		msn_oim_destroy(session->oim);
 
 	if (session->user != NULL)
 		msn_user_destroy(session->user);
 
-	if (session->soap_table)
+	if (session->soap_table != NULL)
 		g_hash_table_destroy(session->soap_table);
 
 	if (session->soap_cleanup_handle)
