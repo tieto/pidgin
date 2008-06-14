@@ -2299,16 +2299,23 @@ static void yahoo_p2p_read_pkt_cb(gpointer data, gint source, PurpleInputConditi
 	if(!(user_data = data))
 		return ;
 
-	if((len = read(source, buf, sizeof(buf))) <= 0 )	{
-		purple_debug_warning("yahoo","p2p: Error in connection to p2p host or host disconnected\n");
+	len = read(source, buf, sizeof(buf));
+
+	if ((len < 0) && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
+		return ; /* No Worries*/
+
+	else if (len <= 0)
+	{
+		purple_debug_warning("yahoo","p2p: Error in connection, or host disconnected\n");
 		purple_input_remove(user_data->input_event);
 		close(source);
 		/*free user data*/
 		g_free(user_data->host_ip);
 		g_free(user_data->host_username);
 		g_free(user_data);
+		return;
 	}
-
+	
 	if(len < YAHOO_PACKET_HDRLEN)
 		return;
 
