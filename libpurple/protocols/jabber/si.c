@@ -623,7 +623,7 @@ jabber_si_xfer_bytestreams_send_connected_cb(gpointer data, gint source,
 		return;
 	else if(acceptfd == -1) {
 		purple_debug_warning("jabber", "accept: %s\n", g_strerror(errno));
-		/* TODO: This should cancel the ft */
+		/* Don't cancel the ft - allow it to fall to the next streamhost.*/
 		return;
 	}
 
@@ -659,8 +659,11 @@ jabber_si_connect_proxy_cb(JabberStream *js, xmlnode *packet,
 
 	jsx = xfer->data;
 
-	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result"))
+	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result")) {
+		if (type && !strcmp(type, "error"))
+			purple_xfer_cancel_remote(xfer);
 		return;
+	}
 
 	if(!(from = xmlnode_get_attrib(packet, "from")))
 		return;
@@ -718,27 +721,23 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 	JabberSIXfer *jsx;
 	JabberIq *iq;
 	xmlnode *query, *streamhost;
-	char *jid, port[6];
-	const char *local_ip, *public_ip, *ft_proxies;
+	const char *ft_proxies;
+	char port[6];
 	GList *tmp;
 	JabberBytestreamsStreamhost *sh, *sh2;
+	int streamhost_count = 0;
 
 	jsx = xfer->data;
 	jsx->listen_data = NULL;
 
+	/* I'm not sure under which conditions this can happen
+	 * (it seems like it shouldn't be possible */
 	if (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL) {
 		purple_xfer_unref(xfer);
 		return;
 	}
 
 	purple_xfer_unref(xfer);
-
-	if (sock < 0) {
-		purple_xfer_cancel_local(xfer);
-		return;
-	}
-
-	jsx->local_streamhost_fd = sock;
 
 	iq = jabber_iq_new_query(jsx->js, JABBER_IQ_SET,
 			"http://jabber.org/protocol/bytestreams");
@@ -747,40 +746,44 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 
 	xmlnode_set_attrib(query, "sid", jsx->stream_id);
 
-	jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node,
+	/* If we successfully started listening locally */
+	if (sock >= 0) {
+		gchar *jid;
+		const char *local_ip, *public_ip;
+
+		jsx->local_streamhost_fd = sock;
+
+		jid = g_strdup_printf("%s@%s/%s", jsx->js->user->node,
 			jsx->js->user->domain, jsx->js->user->resource);
-	xfer->local_port = purple_network_get_port_from_fd(sock);
-	g_snprintf(port, sizeof(port), "%hu", xfer->local_port);
+		xfer->local_port = purple_network_get_port_from_fd(sock);
+		g_snprintf(port, sizeof(port), "%hu", xfer->local_port);
 
-	/* TODO: Should there be an option to not use the local host as a ft proxy?
-	 *       (to prevent revealing IP address, etc.) */
+		/* Include the localhost's IP (for in-network transfers) */
+		local_ip = purple_network_get_local_system_ip(jsx->js->fd);
+		if (strcmp(local_ip, "0.0.0.0") != 0) {
+			streamhost_count++;
+			streamhost = xmlnode_new_child(query, "streamhost");
+			xmlnode_set_attrib(streamhost, "jid", jid);
+			xmlnode_set_attrib(streamhost, "host", local_ip);
+			xmlnode_set_attrib(streamhost, "port", port);
+		}
 
-	/* Include the localhost's IP (for in-network transfers) */
-	local_ip = purple_network_get_local_system_ip(jsx->js->fd);
-	if (strcmp(local_ip, "0.0.0.0") != 0)
-	{
-		streamhost = xmlnode_new_child(query, "streamhost");
-		xmlnode_set_attrib(streamhost, "jid", jid);
-		xmlnode_set_attrib(streamhost, "host", local_ip);
-		xmlnode_set_attrib(streamhost, "port", port);
+		/* Include the public IP (assuming that there is a port mapped somehow) */
+		public_ip = purple_network_get_my_ip(jsx->js->fd);
+		if (strcmp(public_ip, local_ip) != 0 && strcmp(public_ip, "0.0.0.0") != 0) {
+			streamhost_count++;
+			streamhost = xmlnode_new_child(query, "streamhost");
+			xmlnode_set_attrib(streamhost, "jid", jid);
+			xmlnode_set_attrib(streamhost, "host", public_ip);
+			xmlnode_set_attrib(streamhost, "port", port);
+		}
+
+		g_free(jid);
+
+		/* The listener for the local proxy */
+		xfer->watcher = purple_input_add(sock, PURPLE_INPUT_READ,
+				jabber_si_xfer_bytestreams_send_connected_cb, xfer);
 	}
-
-	/* Include the public IP (assuming that there is a port mapped somehow) */
-	/* TODO: Check that it isn't the same as above and is a valid IP */
-	public_ip = purple_network_get_my_ip(jsx->js->fd);
-	if (strcmp(public_ip, local_ip) != 0)
-	{
-		streamhost = xmlnode_new_child(query, "streamhost");
-		xmlnode_set_attrib(streamhost, "jid", jid);
-		xmlnode_set_attrib(streamhost, "host", public_ip);
-		xmlnode_set_attrib(streamhost, "port", port);
-	}
-
-	g_free(jid);
-
-	/* The listener for the local proxy */
-	xfer->watcher = purple_input_add(sock, PURPLE_INPUT_READ,
-			jabber_si_xfer_bytestreams_send_connected_cb, xfer);
 
 	/* insert proxies here */
 	ft_proxies = purple_account_get_string(xfer->account, "ft_proxies", NULL);
@@ -811,6 +814,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 			if(g_list_find_custom(jsx->streamhosts, ft_proxy_list[i], jabber_si_compare_jid) != NULL)
 				continue;
 
+			streamhost_count++;
 			streamhost = xmlnode_new_child(query, "streamhost");
 			xmlnode_set_attrib(streamhost, "jid", ft_proxy_list[i]);
 			xmlnode_set_attrib(streamhost, "host", ft_proxy_list[i]);
@@ -840,6 +844,7 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		if(g_list_find_custom(jsx->streamhosts, sh->jid, jabber_si_compare_jid) != NULL)
 			continue;
 
+		streamhost_count++;
 		streamhost = xmlnode_new_child(query, "streamhost");
 		xmlnode_set_attrib(streamhost, "jid", sh->jid);
 		xmlnode_set_attrib(streamhost, "host", sh->host);
@@ -853,6 +858,14 @@ jabber_si_xfer_bytestreams_listen_cb(int sock, gpointer data)
 		sh2->port = sh->port;
 
 		jsx->streamhosts = g_list_prepend(jsx->streamhosts, sh2);
+	}
+
+	/* We have no way of transferring, cancel the transfer */
+	if (streamhost_count == 0) {
+		jabber_iq_free(iq);
+		/* We should probably notify the target, but this really shouldn't ever happen */
+		purple_xfer_cancel_local(xfer);
+		return;
 	}
 
 	jabber_iq_set_callback(iq, jabber_si_connect_proxy_cb, xfer);
@@ -869,13 +882,14 @@ jabber_si_xfer_bytestreams_send_init(PurpleXfer *xfer)
 	purple_xfer_ref(xfer);
 
 	jsx = xfer->data;
+
+	/* TODO: Should there be an option to not use the local host as a ft proxy?
+	 *       (to prevent revealing IP address, etc.) */
 	jsx->listen_data = purple_network_listen_range(0, 0, SOCK_STREAM,
 				jabber_si_xfer_bytestreams_listen_cb, xfer);
 	if (jsx->listen_data == NULL) {
-		purple_xfer_unref(xfer);
-		/* XXX: couldn't open a port, we're fscked */
-		purple_xfer_cancel_local(xfer);
-		return;
+		/* We couldn't open a local port.  Perhaps we can use a proxy. */
+		jabber_si_xfer_bytestreams_listen_cb(-1, xfer);
 	}
 
 }
