@@ -176,23 +176,26 @@ msn_get_memberrole(const char *role)
 	return 0;
 }
 
-/*get User Type*/
-static int
-msn_get_user_type(char *type)
+/* get Network */
+/* QuLogic: These names don't really refer to the MsnNetwork,
+ *          but I haven't yet written the code to properly use them.
+ */
+static MsnNetwork
+msn_get_network(char *type)
 {
 	g_return_val_if_fail(type != NULL, 0);
 
 	if (!strcmp(type,"Regular")) {
-		return MSN_USER_TYPE_PASSPORT;
+		return MSN_NETWORK_PASSPORT;
 	}
 	if (!strcmp(type,"Live")) {
-		return MSN_USER_TYPE_PASSPORT;
+		return MSN_NETWORK_PASSPORT;
 	}
 	if (!strcmp(type,"LivePending")) {
-		return MSN_USER_TYPE_PASSPORT;
+		return MSN_NETWORK_PASSPORT;
 	}
 
-	return MSN_USER_TYPE_UNKNOWN;
+	return MSN_NETWORK_UNKNOWN;
 }
 
 /* Create the AddressBook in the server, if we don't have one */
@@ -519,7 +522,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 		xmlnode *contactId, *contactInfo, *contactType, *passportName, *displayName, *guid, *groupIds, *messenger_user;
 		xmlnode *annotation;
 		MsnUser *user;
-		MsnUserType usertype;
+		MsnNetwork networkId;
 
 		if (!(contactId = xmlnode_get_child(contactNode,"contactId"))
 				|| !(contactInfo = xmlnode_get_child(contactNode, "contactInfo"))
@@ -560,7 +563,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 			g_free(is_messenger_user);
 		}
 
-		usertype = msn_get_user_type(type);
+		networkId = msn_get_network(type);
 		passportName = xmlnode_get_child(contactInfo, "passportName");
 		if (passportName == NULL) {
 			xmlnode *emailsNode, *contactEmailNode, *emailNode;
@@ -591,7 +594,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 				if(msnEnabled && !strcmp(msnEnabled, "true")) {
 					/*Messenger enabled, Get the Passport*/
 					purple_debug_info("MsnAB", "Yahoo User %s\n", passport ? passport : "(null)");
-					usertype = MSN_USER_TYPE_YAHOO;
+					networkId = MSN_NETWORK_YAHOO;
 					g_free(msnEnabled);
 					break;
 				} else {
@@ -630,7 +633,7 @@ msn_parse_addressbook_contacts(MsnSession *session, xmlnode *node)
 
 		user = msn_userlist_find_add_user(session->userlist, passport, Name);
 		msn_user_set_uid(user, uid);
-		msn_user_set_type(user, usertype);
+		msn_user_set_network(user, networkId);
 		msn_user_set_mobile_phone(user, mobile_number);
 
 		groupIds = xmlnode_get_child(contactInfo, "groupIds");

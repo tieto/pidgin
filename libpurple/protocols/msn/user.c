@@ -198,14 +198,6 @@ msn_user_set_uid(MsnUser *user, const char *uid)
 }
 
 void
-msn_user_set_type(MsnUser *user, MsnUserType type)
-{
-	g_return_if_fail(user != NULL);
-
-	user->type = type;
-}
-
-void
 msn_user_set_op(MsnUser *user, int list_op)
 {
 	g_return_if_fail(user != NULL);
@@ -308,7 +300,7 @@ msn_user_is_yahoo(PurpleAccount *account, const char *name)
 
 	if ((session != NULL) && (user = msn_userlist_find_user(session->userlist, name)) != NULL)
 	{
-		return (user->type == MSN_USER_TYPE_YAHOO);
+		return (user->networkid == MSN_NETWORK_YAHOO);
 	}
 	return (strstr(name,"@yahoo.") != NULL);
 }
@@ -355,6 +347,22 @@ msn_user_set_mobile_phone(MsnUser *user, const char *number)
 
 	g_free(user->phone.mobile);
 	user->phone.mobile = g_strdup(number);
+}
+
+void
+msn_user_set_clientid(MsnUser *user, guint clientid)
+{
+	g_return_if_fail(user != NULL);
+
+	user->clientid = clientid;
+}
+
+void
+msn_user_set_network(MsnUser *user, MsnNetwork network)
+{
+	g_return_if_fail(user != NULL);
+
+	user->networkid = network;
 }
 
 void
@@ -421,6 +429,14 @@ msn_user_get_mobile_phone(const MsnUser *user)
 	g_return_val_if_fail(user != NULL, NULL);
 
 	return user->phone.mobile;
+}
+
+guint
+msn_user_get_clientid(const MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, 0);
+
+	return user->clientid;
 }
 
 MsnObject *

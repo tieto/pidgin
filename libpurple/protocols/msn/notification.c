@@ -556,7 +556,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
  **************************************************************************/
 /* add contact to xmlnode */
 static void
-msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, MsnListOp list_op, MsnUserType type)
+msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, MsnListOp list_op, MsnNetwork networkId)
 {
 	xmlnode *d_node,*c_node;
 	char **tokens;
@@ -565,7 +565,7 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, M
 
 	g_return_if_fail(passport != NULL);
 
-	purple_debug_info("MSNP14","Passport: %s, type: %d\n", passport, type);
+	purple_debug_info("MSNP14","Passport: %s, type: %d\n", passport, networkId);
 	tokens = g_strsplit(passport, "@", 2);
 	email = tokens[0];
 	domain = tokens[1];
@@ -603,12 +603,12 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, M
 	g_snprintf(fmt_str, sizeof(fmt_str), "%d", list_op);
 	xmlnode_set_attrib(c_node, "l", fmt_str);
 
-	if (type != MSN_USER_TYPE_UNKNOWN)
-		g_snprintf(fmt_str, sizeof(fmt_str), "%d", type);
+	if (networkId != MSN_NETWORK_UNKNOWN)
+		g_snprintf(fmt_str, sizeof(fmt_str), "%d", networkId);
 	else if (msn_user_is_yahoo(session->account, passport))
-		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_USER_TYPE_YAHOO);
+		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_NETWORK_YAHOO);
 	else
-		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_USER_TYPE_PASSPORT);
+		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_NETWORK_PASSPORT);
 
 	/*mobile*/
 	//type_str = g_strdup_printf("4");
@@ -654,7 +654,7 @@ msn_notification_dump_contact(MsnSession *session)
 			continue;
 
 		msn_add_contact_xml(session, adl_node, user->passport,
-			user->list_op & MSN_LIST_OP_MASK, user->type);
+			user->list_op & MSN_LIST_OP_MASK, user->networkid);
 
 		/* each ADL command may contain up to 150 contacts */
 		if (++adl_count % 150 == 0 || l->next == NULL) {
@@ -1019,7 +1019,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnUser *user;
 	MsnObject *msnobj;
 	unsigned long clientid;
-	int wlmclient;
+	int networkid;
 	const char *state, *passport, *friendly;
 
 	session = cmdproc->session;
@@ -1029,7 +1029,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	state    = cmd->params[1];
 	passport = cmd->params[2];
 	/*if a contact is actually on the WLM part or the yahoo part*/
-	wlmclient = atoi(cmd->params[3]);
+	networkid = atoi(cmd->params[3]);
 	friendly = purple_url_decode(cmd->params[4]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
@@ -1046,6 +1046,8 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	clientid = strtoul(cmd->params[5], NULL, 10);
 	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
+	msn_user_set_clientid(user, clientid);
+	msn_user_set_network(user, networkid);
 
 	msn_user_set_state(user, state);
 	msn_user_update(user);
@@ -1127,7 +1129,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnUser *user;
 	MsnObject *msnobj;
 	unsigned long clientid;
-	int wlmclient;
+	int networkid;
 	const char *state, *passport, *friendly, *old_friendly;
 
 	session = cmdproc->session;
@@ -1136,7 +1138,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	state    = cmd->params[0];
 	passport = cmd->params[1];
-	wlmclient = atoi(cmd->params[2]);
+	networkid = atoi(cmd->params[2]);
 	friendly = purple_url_decode(cmd->params[3]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
@@ -1163,6 +1165,9 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	clientid = strtoul(cmd->params[4], NULL, 10);
 	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
+
+	msn_user_set_clientid(user, clientid);
+	msn_user_set_network(user, networkid);
 
 	msn_user_set_state(user, state);
 	msn_user_update(user);
@@ -2038,7 +2043,7 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 	adl_node->child = NULL;
 
 	msn_add_contact_xml(notification->session, adl_node, who, list_op,
-						MSN_USER_TYPE_PASSPORT);
+						MSN_NETWORK_PASSPORT);
 
 	payload = xmlnode_to_str(adl_node,&payload_len);
 	xmlnode_free(adl_node);
@@ -2064,7 +2069,7 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 	rml_node = xmlnode_new("ml");
 	rml_node->child = NULL;
 
-	msn_add_contact_xml(notification->session, rml_node, who, list_op, MSN_USER_TYPE_PASSPORT);
+	msn_add_contact_xml(notification->session, rml_node, who, list_op, MSN_NETWORK_PASSPORT);
 
 	payload = xmlnode_to_str(rml_node, &payload_len);
 	xmlnode_free(rml_node);
