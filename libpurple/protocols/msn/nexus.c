@@ -239,31 +239,70 @@ struct _MsnNexusUpdateData {
 	gpointer data;
 };
 
-static void
-save_tokens(GHashTable *table, const char *str)
+static gboolean
+nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 {
+	char *token_str, *expiry_str;
+	const char *id_str;
 	char **elems, **cur, **tokens;
+	xmlnode *token = xmlnode_get_child(node, "RequestedSecurityToken/BinarySecurityToken");
+	xmlnode *secret = xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
+	xmlnode *expires = xmlnode_get_child(node, "LifeTime/Expires");
 
-	elems = g_strsplit(str, "&", 0);
+	if (!token)
+		return FALSE;
+
+	/* Use the ID that the server sent us */
+	if (id == -1) {
+		id_str = xmlnode_get_attrib(token, "Id");
+		if (id_str == NULL)
+			return FALSE;
+
+		id = atol(id_str + 7) - 1;	/* 'Compact#' or 'PPToken#' */
+		if (id >= nexus->token_len)
+			return FALSE;	/* Where did this come from? */
+	}
+
+	token_str = xmlnode_get_data(token);
+	if (token_str == NULL)
+		return FALSE;
+
+	elems = g_strsplit(token_str, "&", 0);
 
 	for (cur = elems; *cur != NULL; cur++) {
 		tokens = g_strsplit(*cur, "=", 2);
-		g_hash_table_insert(table, tokens[0], tokens[1]);
+		g_hash_table_insert(nexus->tokens[id].token, tokens[0], tokens[1]);
 		/* Don't free each of the tokens, only the array. */
 		g_free(tokens);
 	}
 	g_strfreev(elems);
+	g_free(token_str);
+
+	if (secret)
+		nexus->tokens[id].secret = xmlnode_get_data(secret);
+	else
+		nexus->tokens[id].secret = NULL;
+
+	/* Yay for MS using ISO-8601 */
+	expiry_str = xmlnode_get_data(expires);
+	nexus->tokens[id].expiry = purple_str_to_time(expiry_str,
+		FALSE, NULL, NULL, NULL);
+	g_free(expiry_str);
+
+	purple_debug_info("msnp15", "Updated ticket for domain '%s', expires at %" G_GINT64_FORMAT ".\n",
+	                  ticket_domains[id][SSO_VALID_TICKET_DOMAIN],
+	                  (gint64)nexus->tokens[id].expiry);
+	return TRUE;
 }
 
 static gboolean
-nexus_parse_response(MsnNexus *nexus, int id, xmlnode *xml)
+nexus_parse_response(MsnNexus *nexus, xmlnode *xml)
 {
 	xmlnode *node;
 	xmlnode *cipher;
 	xmlnode *secret;
 	char *data;
-	gboolean result = FALSE;
-	gboolean parse_all = (id == -1);
+	gboolean result;
 
 	node = xmlnode_get_child(xml, "Body/RequestSecurityTokenResponseCollection/RequestSecurityTokenResponse");
 
@@ -278,46 +317,9 @@ nexus_parse_response(MsnNexus *nexus, int id, xmlnode *xml)
 	nexus->secret = (char *)purple_base64_decode(data, NULL);
 	g_free(data);
 
-	for (node = node->next; node; node = node->next) {
-		xmlnode *token = xmlnode_get_child(node, "RequestedSecurityToken/BinarySecurityToken");
-		xmlnode *secret = xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
-		xmlnode *expires = xmlnode_get_child(node, "LifeTime/Expires");
-
-		if (token) {
-			char *token_str, *expiry_str;
-			const char *id_str = xmlnode_get_attrib(token, "Id");
-
-			if (id_str == NULL) continue;
-
-			if (parse_all)
-				id = atol(id_str + 7) - 1;	/* 'Compact#' or 'PPToken#' */
-			if (id >= nexus->token_len)
-				continue;	/* Where did this come from? */
-
-			token_str = xmlnode_get_data(token);
-			if (token_str == NULL) continue;
-
-			save_tokens(nexus->tokens[id].token, token_str);
-			g_free(token_str);
-
-			if (secret)
-				nexus->tokens[id].secret = xmlnode_get_data(secret);
-			else
-				nexus->tokens[id].secret = NULL;
-
-			/* Yay for MS using ISO-8601 */
-			expiry_str = xmlnode_get_data(expires);
-
-			nexus->tokens[id].expiry = purple_str_to_time(expiry_str,
-				FALSE, NULL, NULL, NULL);
-
-			g_free(expiry_str);
-
-			purple_debug_info("msnp15", "Updated ticket for domain '%s'\n",
-			                  ticket_domains[id][SSO_VALID_TICKET_DOMAIN]);
-			result = TRUE;
-		}
-	}
+	result = TRUE;
+	for (node = node->next; node && result; node = node->next)
+		result = nexus_parse_token(nexus, -1, node);
 
 	return result;
 }
@@ -335,7 +337,7 @@ nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		return;
 	}
 
-	if (!nexus_parse_response(nexus, -1, resp->xml)) {
+	if (!nexus_parse_response(nexus, resp->xml)) {
 		msn_session_set_error(session, MSN_ERROR_SERVCONN, _("Windows Live ID authentication:Invalid response"));
 		return;
 	}
@@ -400,7 +402,9 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	gsize len;
 	char *key;
 
+#if 0
 	char *decrypted_pp;
+#endif
 	char *decrypted_data;
 
 	purple_debug_info("msnp15", "Got Update Response for %s.\n", ticket_domains[ud->id][SSO_VALID_TICKET_DOMAIN]);
@@ -422,31 +426,34 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	g_free(tmp);
 	g_free(nonce);
 
+#if 0
+	/* Don't know what this is for yet */
 	tmp = xmlnode_get_data(xmlnode_get_child(resp->xml,
 		"Header/EncryptedPP/EncryptedData/CipherData/CipherValue"));
 	if (tmp) {
-		/* Don't know what this is for yet */
 		decrypted_pp = des3_cbc(key, iv, tmp, len, TRUE);
 		g_free(tmp);
 		purple_debug_info("msnp15", "Got Response Header EncryptedPP: %s\n", decrypted_pp);
 		g_free(decrypted_pp);
 	}
+#endif
 
 	tmp = xmlnode_get_data(xmlnode_get_child(resp->xml,
 		"Body/EncryptedData/CipherData/CipherValue"));
 	if (tmp) {
 		char *unescaped;
 		xmlnode *rstresponse;
+
 		unescaped = (char *)purple_base64_decode(tmp, &len);
 		g_free(tmp);
+
 		decrypted_data = des3_cbc(key, iv, unescaped, len, TRUE);
 		g_free(unescaped);
+		purple_debug_info("msnp15", "Got Response Body EncryptedData: %s\n", decrypted_data);
+
 		rstresponse = xmlnode_from_str(decrypted_data, -1);
 		g_hash_table_remove_all(nexus->tokens[ud->id].token);
-		save_tokens(nexus->tokens[ud->id].token,
-			xmlnode_get_data(xmlnode_get_child(rstresponse,
-				"RequestSecurityTokenResponse/RequestedSecurityToken/BinarySecurityToken")));
-		purple_debug_info("msnp15", "Got Response Body EncryptedData: %s\n", decrypted_data);
+		nexus_parse_token(nexus, ud->id, rstresponse);
 		g_free(decrypted_data);
 	}
 
@@ -501,7 +508,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	sha1 = purple_cipher_context_new_by_name("sha1", NULL);
 
 	domain = g_strdup_printf(MSN_SSO_RST_TEMPLATE,
-	                         0,
+	                         id,
 	                         ticket_domains[id][SSO_VALID_TICKET_DOMAIN],
 	                         ticket_domains[id][SSO_VALID_TICKET_POLICY] != NULL ?
 	                             ticket_domains[id][SSO_VALID_TICKET_POLICY] :
@@ -527,6 +534,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	purple_cipher_context_destroy(sha1);
 
 	signedinfo = g_strdup_printf(MSN_SSO_SIGNEDINFO_TEMPLATE,
+	                             id,
 	                             domain_b64,
 	                             timestamp_b64);
 

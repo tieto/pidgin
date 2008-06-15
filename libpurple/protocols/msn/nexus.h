@@ -42,14 +42,14 @@ typedef enum
 #define SSO_POST_URL	"/RST.srf"
 
 #define MSN_SSO_RST_TEMPLATE \
-"<wst:RequestSecurityToken Id=\"RST%d\">"\
+"<wst:RequestSecurityToken xmlns=\"http://schemas.xmlsoap.org/ws/2004/04/trust\" Id=\"RST%d\">"\
 	"<wst:RequestType>http://schemas.xmlsoap.org/ws/2004/04/security/trust/Issue</wst:RequestType>"\
-	"<wsp:AppliesTo>"\
-		"<wsa:EndpointReference>"\
+	"<wsp:AppliesTo xmlns=\"http://schemas.xmlsoap.org/ws/2002/12/policy\">"\
+		"<wsa:EndpointReference xmlns=\"http://schemas.xmlsoap.org/ws/2004/03/addressing\">"\
 			"<wsa:Address>%s</wsa:Address>"\
 		"</wsa:EndpointReference>"\
 	"</wsp:AppliesTo>"\
-	"<wsse:PolicyReference URI=\"%s\"></wsse:PolicyReference>"\
+	"<wsse:PolicyReference xmlns=\"http://schemas.xmlsoap.org/ws/2003/06/secext\" URI=\"%s\"></wsse:PolicyReference>"\
 "</wst:RequestSecurityToken>"
 
 #define MSN_SSO_TEMPLATE "<?xml version='1.0' encoding='utf-8'?>"\
@@ -107,7 +107,7 @@ typedef enum
 #define MSN_SSO_AUTHINFO_SHA1_BASE64 "d2IeTF4DAkPEa/tVETHznsivEpc="
 
 #define MSN_SSO_TIMESTAMP_TEMPLATE \
-"<wsu:Timestamp Id=\"Timestamp\">"\
+"<wsu:Timestamp xmlns=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\" Id=\"Timestamp\">"\
 	"<wsu:Created>%s</wsu:Created>"\
 	"<wsu:Expires>%s</wsu:Expires>"\
 "</wsu:Timestamp>"
@@ -116,7 +116,7 @@ typedef enum
 "<SignedInfo xmlns=\"http://www.w3.org/2000/09/xmldsig#\">"\
 	"<CanonicalizationMethod Algorithm=\"http://www.w3.org/2001/10/xml-exc-c14n#\"></CanonicalizationMethod>"\
 	"<SignatureMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#hmac-sha1\"></SignatureMethod>"\
-	"<Reference URI=\"#RST0\">"\
+	"<Reference URI=\"#RST%d\">"\
 		"<Transforms>"\
 			"<Transform Algorithm=\"http://www.w3.org/2001/10/xml-exc-c14n#\"></Transform>"\
 		"</Transforms>"\
