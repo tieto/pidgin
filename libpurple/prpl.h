@@ -31,6 +31,7 @@
 #define _PURPLE_PRPL_H_
 
 typedef struct _PurplePluginProtocolInfo PurplePluginProtocolInfo;
+/** @copydoc _PurpleAttentionType */
 typedef struct _PurpleAttentionType PurpleAttentionType;
 
 /**************************************************************************/
@@ -99,6 +100,9 @@ struct proto_chat_entry {
 	gboolean secret;
 };
 
+/** Represents "nudges" and "buzzes" that you may send to a buddy to attract
+ *  their attention (or vice-versa).
+ */
 struct _PurpleAttentionType
 {
 	const char *name;                  /**< Shown in GUI elements */
