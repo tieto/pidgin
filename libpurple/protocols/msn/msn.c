@@ -591,6 +591,30 @@ msn_list_icon(PurpleAccount *a, PurpleBuddy *b)
 	return "msn";
 }
 
+static const char *
+msn_list_emblems(PurpleBuddy *b)
+{
+	MsnUser *user = b->proto_data;
+
+	if (user != NULL) {
+		if (user->clientid & MSN_CLIENT_CAP_BOT)
+			return "bot";
+		if (user->clientid & MSN_CLIENT_CAP_WIN_MOBILE)
+			return "hiptop"; /* XXX: Rename to Mobile / Use different icon? */
+#if 0
+		/* XXX: Since we don't support this, there's no point in showing it just yet */
+		if (user->clientid & MSN_CLIENT_CAP_SCHANNEL)
+			return "secure";
+#endif
+		if (user->clientid & MSN_CLIENT_CAP_WEBMSGR)
+			return "web";
+		if (user->networkid == MSN_NETWORK_YAHOO)
+			return "yahoo";
+	}
+
+	return NULL;
+}
+
 /*
  * Set the User status text
  */
@@ -2419,7 +2443,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* protocol_options */
 	{"png", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_SEND},	/* icon_spec */
 	msn_list_icon,			/* list_icon */
-	NULL,				/* list_emblems */
+	msn_list_emblems,		/* list_emblems */
 	msn_status_text,		/* status_text */
 	msn_tooltip_text,		/* tooltip_text */
 	msn_status_types,		/* away_states */
