@@ -28,7 +28,7 @@
 /*new a user object*/
 MsnUser *
 msn_user_new(MsnUserList *userlist, const char *passport,
-			 const char *store_name)
+			 const char *friendly_name)
 {
 	MsnUser *user;
 
@@ -37,16 +37,7 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	user->userlist = userlist;
 
 	msn_user_set_passport(user, passport);
-	msn_user_set_store_name(user, store_name);
-
-	/*
-	 * XXX This seems to reset the friendly name from what it should be
-	 *     to the passport when moving users. So, screw it :)
-	 */
-#if 0
-	if (name != NULL)
-		msn_user_set_name(user, name);
-#endif
+	msn_user_set_friendly_name(user, friendly_name);
 
 	return user;
 }
@@ -75,7 +66,6 @@ msn_user_destroy(MsnUser *user)
 
 	g_free(user->passport);
 	g_free(user->friendly_name);
-	g_free(user->store_name);
 	g_free(user->uid);
 	g_free(user->phone.home);
 	g_free(user->phone.work);
@@ -199,32 +189,12 @@ msn_user_set_currentmedia(MsnUser *user, const CurrentMedia *media)
 }
 
 void
-msn_user_set_store_name(MsnUser *user, const char *name)
-{
-	g_return_if_fail(user != NULL);
-
-	if (name != NULL)
-	{
-		g_free(user->store_name);
-		user->store_name = g_strdup(name);
-	}
-}
-
-void
 msn_user_set_uid(MsnUser *user, const char *uid)
 {
 	g_return_if_fail(user != NULL);
 
 	g_free(user->uid);
 	user->uid = g_strdup(uid);
-}
-
-void
-msn_user_set_type(MsnUser *user, MsnUserType type)
-{
-	g_return_if_fail(user != NULL);
-
-	user->type = type;
 }
 
 void
@@ -330,7 +300,7 @@ msn_user_is_yahoo(PurpleAccount *account, const char *name)
 
 	if ((session != NULL) && (user = msn_userlist_find_user(session->userlist, name)) != NULL)
 	{
-		return (user->type == MSN_USER_TYPE_YAHOO);
+		return (user->networkid == MSN_NETWORK_YAHOO);
 	}
 	return (strstr(name,"@yahoo.") != NULL);
 }
@@ -380,6 +350,22 @@ msn_user_set_mobile_phone(MsnUser *user, const char *number)
 }
 
 void
+msn_user_set_clientid(MsnUser *user, guint clientid)
+{
+	g_return_if_fail(user != NULL);
+
+	user->clientid = clientid;
+}
+
+void
+msn_user_set_network(MsnUser *user, MsnNetwork network)
+{
+	g_return_if_fail(user != NULL);
+
+	user->networkid = network;
+}
+
+void
 msn_user_set_object(MsnUser *user, MsnObject *obj)
 {
 	g_return_if_fail(user != NULL);
@@ -422,14 +408,6 @@ msn_user_get_friendly_name(const MsnUser *user)
 }
 
 const char *
-msn_user_get_store_name(const MsnUser *user)
-{
-	g_return_val_if_fail(user != NULL, NULL);
-
-	return user->store_name;
-}
-
-const char *
 msn_user_get_home_phone(const MsnUser *user)
 {
 	g_return_val_if_fail(user != NULL, NULL);
@@ -451,6 +429,14 @@ msn_user_get_mobile_phone(const MsnUser *user)
 	g_return_val_if_fail(user != NULL, NULL);
 
 	return user->phone.mobile;
+}
+
+guint
+msn_user_get_clientid(const MsnUser *user)
+{
+	g_return_val_if_fail(user != NULL, 0);
+
+	return user->clientid;
 }
 
 MsnObject *

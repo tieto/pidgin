@@ -53,6 +53,4 @@ void msn_soap_message_send(MsnSession *session,
 
 void msn_soap_message_destroy(MsnSoapMessage *message);
 
-xmlnode *msn_soap_xml_get(xmlnode *parent, const char *node);
-
 #endif

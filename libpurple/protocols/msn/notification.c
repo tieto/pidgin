@@ -23,6 +23,7 @@
  */
 #include "msn.h"
 #include "notification.h"
+#include "contact.h"
 #include "state.h"
 #include "error.h"
 #include "msnutils.h"
@@ -195,7 +196,7 @@ group_error_helper(MsnSession *session, const char *msg, const char *group_id, i
  **************************************************************************/
 
 void
-msn_got_login_params(MsnSession *session, const char *login_params)
+msn_got_login_params(MsnSession *session, const char *ticket, const char *response)
 {
 	MsnCmdProc *cmdproc;
 
@@ -203,7 +204,7 @@ msn_got_login_params(MsnSession *session, const char *login_params)
 
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_END);
 
-	msn_cmdproc_send(cmdproc, "USR", "TWN S %s", login_params);
+	msn_cmdproc_send(cmdproc, "USR", "SSO S %s %s", ticket, response);
 }
 
 static void
@@ -212,8 +213,8 @@ cvr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	PurpleAccount *account;
 
 	account = cmdproc->session->account;
-	msn_cmdproc_send(cmdproc, "USR", "TWN I %s",
-					 purple_account_get_username(account));
+
+	msn_cmdproc_send(cmdproc, "USR", "SSO I %s", purple_account_get_username(account));
 }
 
 static void
@@ -239,32 +240,14 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 //		msn_cmdproc_send(cmdproc, "SYN", "%s", "0");
 		//TODO we should use SOAP contact to fetch contact list
 	}
-	else if (!g_ascii_strcasecmp(cmd->params[1], "TWN"))
+	else if (!g_ascii_strcasecmp(cmd->params[1], "SSO"))
 	{
-		/* Passport authentication */
-		char **elems, **cur, **tokens;
+		/* RPS authentication */
 
 		session->nexus = msn_nexus_new(session);
 
-		/* Parse the challenge data. */
-		session->nexus->challenge_data_str = g_strdup(cmd->params[3]);
-		elems = g_strsplit(cmd->params[3], ",", 0);
-
-		for (cur = elems; *cur != NULL; cur++)
-		{
-			tokens = g_strsplit(*cur, "=", 2);
-			if(tokens[0] && tokens[1])
-			{
-				purple_debug_info("MSNP14","challenge %p,key:%s,value:%s\n",
-									session->nexus->challenge_data,tokens[0],tokens[1]);
-				g_hash_table_insert(session->nexus->challenge_data, tokens[0], tokens[1]);
-				/* Don't free each of the tokens, only the array. */
-				g_free(tokens);
-			} else
-				g_strfreev(tokens);
-		}
-
-		g_strfreev(elems);
+		session->nexus->policy = g_strdup(cmd->params[3]);
+		session->nexus->nonce = g_strdup(cmd->params[4]);
 
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH_START);
 
@@ -327,14 +310,15 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 
 	/*
-	 * Windows Live Messenger 8.0
+	 * Windows Live Messenger 8.5
 	 * Notice :CVR String discriminate!
 	 * reference of http://www.microsoft.com/globaldev/reference/oslocversion.mspx
 	 * to see the Local ID
 	 */
 	msn_cmdproc_send(cmdproc, "CVR",
 //					 "0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %s",
-					"0x0804 winnt 5.1 i386 MSNMSGR 8.0.0792 msmsgs %s",
+//					"0x0804 winnt 5.1 i386 MSNMSGR 8.0.0792 msmsgs %s",
+					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1288 msmsgs %s",
 					 purple_account_get_username(account));
 }
 
@@ -545,7 +529,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	context = purple_cipher_context_new(cipher, NULL);
 	purple_cipher_context_append(context, (const guchar *)cmd->params[1],
 							   strlen(cmd->params[1]));
-	challenge_resp = MSNP13_WLM_PRODUCT_KEY;
+	challenge_resp = MSNP15_WLM_PRODUCT_KEY;
 
 	purple_cipher_context_append(context, (const guchar *)challenge_resp,
 							   strlen(challenge_resp));
@@ -560,7 +544,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	msn_handle_chl(cmd->params[1], buf);
 #endif
 //	purple_debug_info("MSNP14","<<challenge:{%s}:{%s}\n",cmd->params[1],buf);
-	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", MSNP13_WLM_PRODUCT_ID);
+	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", MSNP15_WLM_PRODUCT_ID);
 
 	msn_transaction_set_payload(trans, buf, 32);
 
@@ -572,7 +556,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
  **************************************************************************/
 /* add contact to xmlnode */
 static void
-msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, MsnListOp list_op, MsnUserType type)
+msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, MsnListOp list_op, MsnNetwork networkId)
 {
 	xmlnode *d_node,*c_node;
 	char **tokens;
@@ -581,7 +565,7 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, M
 
 	g_return_if_fail(passport != NULL);
 
-	purple_debug_info("MSNP14","Passport: %s, type: %d\n", passport, type);
+	purple_debug_info("MSNP14","Passport: %s, type: %d\n", passport, networkId);
 	tokens = g_strsplit(passport, "@", 2);
 	email = tokens[0];
 	domain = tokens[1];
@@ -619,12 +603,12 @@ msn_add_contact_xml(MsnSession *session, xmlnode *mlNode,const char *passport, M
 	g_snprintf(fmt_str, sizeof(fmt_str), "%d", list_op);
 	xmlnode_set_attrib(c_node, "l", fmt_str);
 
-	if (type != MSN_USER_TYPE_UNKNOWN)
-		g_snprintf(fmt_str, sizeof(fmt_str), "%d", type);
+	if (networkId != MSN_NETWORK_UNKNOWN)
+		g_snprintf(fmt_str, sizeof(fmt_str), "%d", networkId);
 	else if (msn_user_is_yahoo(session->account, passport))
-		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_USER_TYPE_YAHOO);
+		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_NETWORK_YAHOO);
 	else
-		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_USER_TYPE_PASSPORT);
+		g_snprintf(fmt_str, sizeof(fmt_str), "%d", MSN_NETWORK_PASSPORT);
 
 	/*mobile*/
 	//type_str = g_strdup_printf("4");
@@ -670,7 +654,7 @@ msn_notification_dump_contact(MsnSession *session)
 			continue;
 
 		msn_add_contact_xml(session, adl_node, user->passport,
-			user->list_op & MSN_LIST_OP_MASK, user->type);
+			user->list_op & MSN_LIST_OP_MASK, user->networkid);
 
 		/* each ADL command may contain up to 150 contacts */
 		if (++adl_count % 150 == 0 || l->next == NULL) {
@@ -782,7 +766,7 @@ adl_cmd_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			if (list_op & MSN_LIST_RL_OP) {
 				/* someone is adding us */
 //				got_new_entry(cmdproc->session->account->gc, passport, decoded_friendly_name);
-				msn_get_contact_list(cmdproc->session->contact, MSN_PS_PENDING_LIST, NULL);
+				msn_get_contact_list(cmdproc->session, MSN_PS_PENDING_LIST, NULL);
 			}
 
 //			g_free(decoded_friendly_name);
@@ -839,9 +823,8 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	purple_debug_info("MSN Notification","FQY payload:\n%s\n", payload);
 	g_return_if_fail(cmdproc->session != NULL);
-	g_return_if_fail(cmdproc->session->contact != NULL);
 //	msn_notification_post_adl(cmdproc, payload, len);
-//	msn_get_address_book(cmdproc->session->contact, MSN_AB_SAVE_CONTACT, NULL, NULL);
+//	msn_get_address_book(cmdproc->session, MSN_AB_SAVE_CONTACT, NULL, NULL);
 }
 
 static void
@@ -1036,7 +1019,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnUser *user;
 	MsnObject *msnobj;
 	unsigned long clientid;
-	int wlmclient;
+	int networkid;
 	const char *state, *passport, *friendly;
 
 	session = cmdproc->session;
@@ -1046,7 +1029,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	state    = cmd->params[1];
 	passport = cmd->params[2];
 	/*if a contact is actually on the WLM part or the yahoo part*/
-	wlmclient = atoi(cmd->params[3]);
+	networkid = atoi(cmd->params[3]);
 	friendly = purple_url_decode(cmd->params[4]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
@@ -1063,6 +1046,8 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	clientid = strtoul(cmd->params[5], NULL, 10);
 	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
+	msn_user_set_clientid(user, clientid);
+	msn_user_set_network(user, networkid);
 
 	msn_user_set_state(user, state);
 	msn_user_update(user);
@@ -1144,7 +1129,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnUser *user;
 	MsnObject *msnobj;
 	unsigned long clientid;
-	int wlmclient;
+	int networkid;
 	const char *state, *passport, *friendly, *old_friendly;
 
 	session = cmdproc->session;
@@ -1153,7 +1138,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	state    = cmd->params[0];
 	passport = cmd->params[1];
-	wlmclient = atoi(cmd->params[2]);
+	networkid = atoi(cmd->params[2]);
 	friendly = purple_url_decode(cmd->params[3]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
@@ -1180,6 +1165,9 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	clientid = strtoul(cmd->params[4], NULL, 10);
 	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE) || (user->phone.mobile && user->phone.mobile[0] == '+');
+
+	msn_user_set_clientid(user, clientid);
+	msn_user_set_network(user, networkid);
 
 	msn_user_set_state(user, state);
 	msn_user_update(user);
@@ -1292,7 +1280,7 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			if (!strcmp(type, "MFN")) {
 				friendlyname = purple_url_decode(cmd->params[2]);
 
-				msn_update_contact(session->contact, friendlyname);
+				msn_update_contact(session, "Me", MSN_UPDATE_DISPLAY, friendlyname);
 
 				purple_connection_set_display_name(
 					purple_account_get_connection(session->account),
@@ -1629,9 +1617,8 @@ static void
 gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
-	xmlnode * root;
-	gchar * buf;
-	int xmllen;
+	xmlnode *root;
+	xmlnode *policy;
 
 	g_return_if_fail(cmd->payload != NULL);
 
@@ -1641,12 +1628,32 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		return;
 	}
 
-	buf = xmlnode_to_formatted_str(root, &xmllen);
 
-	/* get the payload content */
-	purple_debug_info("MSNP14","GCF command payload:\n%.*s\n", xmllen, buf);
+	g_free(cmdproc->session->blocked_text);
+	cmdproc->session->blocked_text = NULL;
 
-	g_free(buf);
+	/* We need a get_child with attrib... */
+	policy = xmlnode_get_child(root, "Policy");
+	while (policy) {
+		if (g_str_equal(xmlnode_get_attrib(policy, "type"), "SHIELDS"))
+			break;
+		policy = xmlnode_get_next_twin(policy);
+	}
+
+	if (policy) {
+		GString *blocked = g_string_new(NULL);
+		xmlnode *imtext = xmlnode_get_child(policy,
+		                                    "config/block/regexp/imtext");
+		while (imtext) {
+			const char *value = xmlnode_get_attrib(imtext, "value");
+			g_string_append_printf(blocked, "%s<br/>\n",
+			                       purple_base64_decode(value, NULL));
+			imtext = xmlnode_get_next_twin(imtext);
+		}
+
+		cmdproc->session->blocked_text = g_string_free(blocked, FALSE);
+	}
+
 	xmlnode_free(root);
 }
 
@@ -1774,17 +1781,16 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	/*starting retrieve the contact list*/
 	clLastChange = purple_account_get_string(session->account, "CLLastChange", NULL);
-	session->contact = msn_contact_new(session);
 #ifdef MSN_PARTIAL_LISTS
 	/* msn_userlist_load defeats all attempts at trying to detect blist sync issues */
 	msn_userlist_load(session);
-	msn_get_contact_list(session->contact, MSN_PS_INITIAL, clLastChange);
+	msn_get_contact_list(session, MSN_PS_INITIAL, clLastChange);
 #else
 	/* always get the full list? */
-	msn_get_contact_list(session->contact, MSN_PS_INITIAL, NULL);
+	msn_get_contact_list(session, MSN_PS_INITIAL, NULL);
 #endif
 #if 0
-	msn_contact_connect(session->contact);
+	msn_contact_connect(session);
 #endif
 }
 
@@ -2037,7 +2043,7 @@ msn_notification_add_buddy_to_list(MsnNotification *notification, MsnListId list
 	adl_node->child = NULL;
 
 	msn_add_contact_xml(notification->session, adl_node, who, list_op,
-						MSN_USER_TYPE_PASSPORT);
+						MSN_NETWORK_PASSPORT);
 
 	payload = xmlnode_to_str(adl_node,&payload_len);
 	xmlnode_free(adl_node);
@@ -2063,7 +2069,7 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 	rml_node = xmlnode_new("ml");
 	rml_node->child = NULL;
 
-	msn_add_contact_xml(notification->session, rml_node, who, list_op, MSN_USER_TYPE_PASSPORT);
+	msn_add_contact_xml(notification->session, rml_node, who, list_op, MSN_NETWORK_PASSPORT);
 
 	payload = xmlnode_to_str(rml_node, &payload_len);
 	xmlnode_free(rml_node);
