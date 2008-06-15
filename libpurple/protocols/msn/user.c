@@ -295,9 +295,6 @@ msn_user_is_yahoo(PurpleAccount *account, const char *name)
 	if (gc != NULL)
 		session = gc->proto_data;
 
-	if ((session != NULL) && (session->protocol_ver == WLM_PROT_VER))
-		return FALSE;
-
 	if ((session != NULL) && (user = msn_userlist_find_user(session->userlist, name)) != NULL)
 	{
 		return (user->networkid == MSN_NETWORK_YAHOO);
