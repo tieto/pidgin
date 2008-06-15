@@ -394,6 +394,29 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 }
 
 static void
+msn_show_blocked_text(PurplePluginAction *action)
+{
+	PurpleConnection *pc = (PurpleConnection *) action->context;
+	MsnSession *session;
+	char *title;
+
+	session = pc->proto_data;
+
+	title = g_strdup_printf(_("Blocked Text for %s"), session->account->username);
+	if (session->blocked_text == NULL) {
+		purple_notify_formatted(pc, title, title, NULL, _("No text is blocked for this account."), NULL, NULL);
+	} else {
+		char *blocked_text;
+		blocked_text = g_strdup_printf(_("MSN servers are currently blocking the following regular expressions:<br/>%s"),
+		                               session->blocked_text);
+		
+		purple_notify_formatted(pc, title, title, NULL, blocked_text, NULL, NULL);
+		g_free(blocked_text);
+	}
+	g_free(title);
+}
+
+static void
 msn_show_hotmail_inbox(PurplePluginAction *action)
 {
 	PurpleConnection *gc;
@@ -807,6 +830,11 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 
 	act = purple_plugin_action_new(_("Allow/Disallow Mobile Pages..."),
 			msn_show_set_mobile_pages);
+	m = g_list_append(m, act);
+
+	m = g_list_append(m, NULL);
+	act = purple_plugin_action_new(_("View Blocked Text..."),
+			msn_show_blocked_text);
 	m = g_list_append(m, act);
 
 	account = purple_connection_get_account(gc);

@@ -107,6 +107,8 @@ struct _MsnSession
 	/*psm info*/
 	char *psm;
 
+	char *blocked_text;
+
 	struct
 	{
 		char *kv;

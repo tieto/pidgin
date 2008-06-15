@@ -1612,9 +1612,8 @@ static void
 gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
 {
-	xmlnode * root;
-	gchar * buf;
-	int xmllen;
+	xmlnode *root;
+	xmlnode *policy;
 
 	g_return_if_fail(cmd->payload != NULL);
 
@@ -1624,12 +1623,32 @@ gcf_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		return;
 	}
 
-	buf = xmlnode_to_formatted_str(root, &xmllen);
 
-	/* get the payload content */
-	purple_debug_info("MSNP14","GCF command payload:\n%.*s\n", xmllen, buf);
+	g_free(cmdproc->session->blocked_text);
+	cmdproc->session->blocked_text = NULL;
 
-	g_free(buf);
+	/* We need a get_child with attrib... */
+	policy = xmlnode_get_child(root, "Policy");
+	while (policy) {
+		if (g_str_equal(xmlnode_get_attrib(policy, "type"), "SHIELDS"))
+			break;
+		policy = xmlnode_get_next_twin(policy);
+	}
+
+	if (policy) {
+		GString *blocked = g_string_new(NULL);
+		xmlnode *imtext = xmlnode_get_child(policy,
+		                                    "config/block/regexp/imtext");
+		while (imtext) {
+			const char *value = xmlnode_get_attrib(imtext, "value");
+			g_string_append_printf(blocked, "%s<br/>\n",
+			                       purple_base64_decode(value, NULL));
+			imtext = xmlnode_get_next_twin(imtext);
+		}
+
+		cmdproc->session->blocked_text = g_string_free(blocked, FALSE);
+	}
+
 	xmlnode_free(root);
 }
 
