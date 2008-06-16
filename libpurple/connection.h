@@ -122,7 +122,7 @@ typedef enum
 	 */
 	PURPLE_CONNECTION_ERROR_CERT_OTHER_ERROR = 15,
 
-	/** Some other error occured which fits into none of the other
+	/** Some other error occurred which fits into none of the other
 	 *  categories.
 	 */
 	/* purple_connection_error_reason() in connection.c uses the fact that

@@ -155,7 +155,7 @@ static void _qq_xfer_recv_packet(gpointer data, gint source, PurpleInputConditio
 	gint size;
 	/* FIXME: It seems that the transfer never use a packet
 	 * larger than 1500 bytes, so if it happened to be a
-	 * larger packet, either error occured or protocol should
+	 * larger packet, either error occurred or protocol should
 	 * be modified
 	 */
 	ft_info *info;

@@ -333,7 +333,7 @@ static void insert_cap_failure(CapStatistics *stats) {
 
 static gboolean max_message_difference_cb(gpointer data) {
 	CapStatistics *stats = data;
-	purple_debug_info("cap", "Max Message Difference timeout occured\n");
+	purple_debug_info("cap", "Max Message Difference timeout occurred\n");
 	insert_cap_failure(stats);
 	stats->timeout_source_id = 0;
 	return FALSE;
