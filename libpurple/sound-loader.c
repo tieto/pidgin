@@ -43,13 +43,6 @@ static PurpleThemeLoaderClass *parent_class = NULL;
 #define THEME_EVENT_NAME	"name"
 #define THEME_EVENT_FILE	"file"
 
-static xmlnode *
-purple_sound_read_xml_from_file(const char *filename)
-{
-	return NULL;
-}
-
-
 static PurpleSoundTheme *
 purple_sound_loader_build(const gchar *dir)
 {
@@ -70,7 +63,7 @@ purple_sound_loader_build(const gchar *dir)
 	/* Build the xml tree */
 	filename_full = g_build_filename(dir, filename, NULL);
 	
-	root_node = purple_sound_read_xml_from_file(filename_full);
+	root_node = xmlnode_from_file(dir, filename, "sound themes", "sound-loader");
 	g_return_val_if_fail(root_node != NULL, NULL);
 
 	/* Parse the tree */
