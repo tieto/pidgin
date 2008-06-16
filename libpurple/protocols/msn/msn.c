@@ -1807,7 +1807,7 @@ msn_get_photo_url(const char *url_text)
 }
 
 static void msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
-		const gchar *url_text, size_t len, const gchar *error_message);
+		const gchar *url_text, gsize len, const gchar *error_message);
 
 #endif
 
