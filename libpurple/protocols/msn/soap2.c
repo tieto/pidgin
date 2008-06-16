@@ -224,7 +224,7 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 			char *faultdata = xmlnode_get_data(faultcode);
 
 			if (g_str_equal(faultdata, "psf:Redirect")) {
-				xmlnode *url = xmlnode_get_child(body, "redirectUrl");
+				xmlnode *url = xmlnode_get_child(fault, "redirectUrl");
 
 				if (url) {
 					char *urldata = xmlnode_get_data(url);
@@ -236,7 +236,7 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 				msn_soap_message_destroy(response);
 				return TRUE;
 			} else if (g_str_equal(faultdata, "wsse:FailedAuthentication")) {
-				xmlnode *reason = xmlnode_get_child(body, "faultstring");
+				xmlnode *reason = xmlnode_get_child(fault, "faultstring");
 				char *reasondata = xmlnode_get_data(reason);
 
 				msn_soap_connection_sanitize(conn, TRUE);
