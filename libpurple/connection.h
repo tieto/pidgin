@@ -27,6 +27,7 @@
 #ifndef _PURPLE_CONNECTION_H_
 #define _PURPLE_CONNECTION_H_
 
+/** @copydoc _PurpleConnection */
 typedef struct _PurpleConnection PurpleConnection;
 
 /**
@@ -223,6 +224,8 @@ typedef struct
 	void (*_purple_reserved3)(void);
 } PurpleConnectionUiOps;
 
+
+/* Represents an active connection on an account. */
 struct _PurpleConnection
 {
 	PurplePlugin *prpl;            /**< The protocol plugin.               */

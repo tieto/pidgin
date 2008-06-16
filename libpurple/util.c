@@ -832,6 +832,11 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 				if (offset_positive)
 					tzoff *= -1;
 			}
+			else if ((*c == 'Z') && (c = c + 1))
+			{
+				/* 'Z' = Zulu = UTC */
+				tzoff = 0;
+			}
 			else if (utc)
 			{
 				static struct tm tmptm;

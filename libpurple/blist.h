@@ -31,13 +31,20 @@
 
 #include <glib.h>
 
+/** @copydoc _PurpleBuddyList */
 typedef struct _PurpleBuddyList PurpleBuddyList;
+/** @copydoc _PurpleBlistUiOps */
 typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
+/** @copydoc _PurpleBlistNode */
 typedef struct _PurpleBlistNode PurpleBlistNode;
 
+/** @copydoc _PurpleChat */
 typedef struct _PurpleChat PurpleChat;
+/** @copydoc _PurpleGroup */
 typedef struct _PurpleGroup PurpleGroup;
+/** @copydoc _PurpleContact */
 typedef struct _PurpleContact PurpleContact;
+/** @copydoc _PurpleBuddy */
 typedef struct _PurpleBuddy PurpleBuddy;
 
 /**************************************************************************/
