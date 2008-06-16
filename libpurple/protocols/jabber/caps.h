@@ -46,4 +46,12 @@ void jabber_caps_init(void);
 void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *ext, jabber_caps_get_info_cb cb, gpointer user_data);
 void jabber_caps_free_clientinfo(JabberCapsClientInfo *clientinfo);
 
+
+void jabber_caps_calculate_hash();
+
+/** Get the current caps hash.
+ * 	@ret hash
+**/
+const gchar* jabber_caps_get_hash();
+
 #endif /* _PURPLE_JABBER_CAPS_H_ */

@@ -263,11 +263,13 @@ init_plugin(PurplePlugin *plugin)
 	jabber_tune_init();
 	jabber_caps_init();
 
-	jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("buzz", "http://www.xmpp.org/extensions/xep-0224.html#ns", jabber_buzz_isenabled);
+	#warning implement adding and retrieving own features via IPC API
+
+	jabber_add_feature(AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_add_feature(AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
+	jabber_add_feature("http://www.xmpp.org/extensions/xep-0224.html#ns", jabber_buzz_isenabled);
 	
-	jabber_pep_register_handler("avatar", AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
+	jabber_pep_register_handler(AVATARNAMESPACEMETA, jabber_buddy_avatar_update_metadata);
 }
 
 

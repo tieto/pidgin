@@ -264,8 +264,10 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 	c = xmlnode_new_child(presence, "c");
 	xmlnode_set_namespace(c, "http://jabber.org/protocol/caps");
 	xmlnode_set_attrib(c, "node", CAPS0115_NODE);
-	xmlnode_set_attrib(c, "ver", VERSION);
-	
+	xmlnode_set_attrib(c, "hash", "sha-1");
+	xmlnode_set_attrib(c, "ver", jabber_caps_get_hash());
+
+#if 0
 	if(js != NULL) {
 		/* add the extensions */
 		char extlist[1024];
@@ -277,7 +279,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 			JabberFeature *feat = (JabberFeature*)feature->data;
 			unsigned featlen;
 			
-			if(feat->is_enabled != NULL && feat->is_enabled(js, feat->shortname, feat->namespace) == FALSE)
+			if(feat->is_enabled != NULL && feat->is_enabled(js, feat->namespace) == FALSE)
 				continue; /* skip this feature */
 			
 			featlen = strlen(feat->shortname);
@@ -297,7 +299,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
 		if(remaining < 1023)
 			xmlnode_set_attrib(c, "ext", extlist);
 	}
-	
+#endif
 	return presence;
 }
 

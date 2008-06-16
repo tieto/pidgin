@@ -758,7 +758,7 @@ void jabber_message_conv_closed(JabberStream *js, const char *who)
 	jabber_message_free(jm);
 }
 
-gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *shortname, const gchar *namespace) {
+gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *namespace) {
 	return js->allowBuzz;
 }
 

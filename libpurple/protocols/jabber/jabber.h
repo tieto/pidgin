@@ -203,14 +203,20 @@ struct _JabberStream
 	int keepalive_timeout;
 };
 
-typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *shortname, const gchar *namespace);
+typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *namespace);
 
 typedef struct _JabberFeature
 {
-	gchar *shortname;
 	gchar *namespace;
 	JabberFeatureEnabled *is_enabled;
 } JabberFeature;
+
+typedef struct _JabberIdentity
+{
+	gchar *category;
+	gchar *type;
+	gchar *name;
+} JabberIdentity;
 
 typedef struct _JabberBytestreamsStreamhost {
 	char *jid;
@@ -221,6 +227,7 @@ typedef struct _JabberBytestreamsStreamhost {
 
 /* what kind of additional features as returned from disco#info are supported? */
 extern GList *jabber_features;
+extern GList *jabber_identities;
 
 void jabber_process_packet(JabberStream *js, xmlnode **packet);
 void jabber_send(JabberStream *js, xmlnode *data);
@@ -242,8 +249,16 @@ char *jabber_get_next_id(JabberStream *js);
  */
 char *jabber_parse_error(JabberStream *js, xmlnode *packet, PurpleConnectionError *reason);
 
-void jabber_add_feature(const gchar *shortname, const gchar *namespace, JabberFeatureEnabled cb); /* cb may be NULL */
-void jabber_remove_feature(const gchar *shortname);
+void jabber_add_feature(const gchar *namespace, JabberFeatureEnabled cb); /* cb may be NULL */
+void jabber_remove_feature(const gchar *namespace);
+
+/** Adds an identitiy to this jabber library instance. For list of valid values vistit the 
+ *	webiste of the XMPP Registrar ( http://www.xmpp.org/registrar/disco-categories.html#client ).
+ *  @param category the category of the identity.
+ *	@param type the type of the identity.
+ *	@param name the name of the identity.
+ */
+void jabber_add_identity(const gchar *category, const gchar *type, const gchar *name); 
 
 /** PRPL functions */
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);

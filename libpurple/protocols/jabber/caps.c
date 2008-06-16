@@ -21,7 +21,9 @@
 
 #include "internal.h"
 
+#include <glib.h>
 #include "caps.h"
+#include "cipher.h"
 #include <string.h>
 #include "internal.h"
 #include "util.h"
@@ -30,6 +32,7 @@
 #define JABBER_CAPS_FILENAME "xmpp-caps.xml"
 
 static GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsValue */
+static gchar *caps_hash = NULL;
 
 typedef struct _JabberCapsKey {
 	char *node;
@@ -111,6 +114,7 @@ static void jabber_caps_load(void);
 void jabber_caps_init(void) {
 	capstable = g_hash_table_new_full(jabber_caps_hash, jabber_caps_compare, jabber_caps_destroy_key, jabber_caps_destroy_value);
 	jabber_caps_load();
+	jabber_caps_calculate_hash();
 }
 
 static void jabber_caps_load(void) {
@@ -499,24 +503,12 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *ext, jabber_caps_get_info_cb cb, gpointer user_data) {
 	JabberCapsValue *client;
 	JabberCapsKey *key = g_new0(JabberCapsKey, 1);
-	char *originalext = g_strdup(ext);
 	jabber_caps_cbplususerdata *userdata = g_new0(jabber_caps_cbplususerdata, 1);
 	userdata->cb = cb;
 	userdata->user_data = user_data;
 	userdata->who = g_strdup(who);
 	userdata->node = g_strdup(node);
 	userdata->ver = g_strdup(ver);
-
-	if(originalext) {
-		int i;
-		gchar **splat = g_strsplit(originalext, " ", 0);
-		for(i =0; splat[i]; i++) {
-			userdata->ext = g_list_append(userdata->ext, splat[i]);
-			++userdata->extOutstanding;
-		}
-		g_free(splat);
-	}
-	g_free(originalext);
 
 	key->node = (char *)node;
 	key->ver = (char *)ver;
@@ -568,5 +560,97 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, c
 		/* maybe we have all data available anyways? This is the ideal case where no network traffic is necessary */
 		jabber_caps_get_info_check_completion(userdata);
 	}
+}
+
+static gint jabber_caps_jabber_identity_compare(gconstpointer a, gconstpointer b) {
+	const JabberIdentity *ac;
+	const JabberIdentity *bc;
+	gint cat_cmp;
+	
+	ac = a;
+	bc = b;
+	
+	if ((cat_cmp = strcmp(ac->category, bc->category)) == 0) {
+		return strcmp(ac->type, bc->type);
+	} else {
+		return cat_cmp;
+	}
+}
+
+static gint jabber_caps_jabber_feature_compare(gconstpointer a, gconstpointer b) {
+	const JabberFeature *ac;
+	const JabberFeature *bc;
+	
+	ac = a;
+	bc = b;
+	
+	return strcmp(ac->namespace, bc->namespace);
+}
+
+
+void jabber_caps_calculate_hash() {
+	gchar *verification = 0;
+	gchar *free_verification;
+	gchar *identity_string, *feature_string;
+	GList *identities, *features;
+	PurpleCipherContext *context;
+	guint8 checksum[20];
+	gsize checksum_size = 20;
+
+	/* sort identities */
+	jabber_identities = g_list_sort(jabber_identities, jabber_caps_jabber_identity_compare);
+	
+	/* concat identities to the verification string */
+	for(identities = jabber_identities; identities; identities = identities->next) {
+		JabberIdentity *ident = (JabberIdentity*)identities->data;
+		identity_string = g_strdup_printf("%s/%s//%s<", ident->category, ident->type, ident->name);
+		free_verification = verification;
+		if(verification == 0) verification = g_strdup(identity_string);
+		 	else verification = g_strconcat(verification, identity_string, NULL);
+		g_free(identity_string);
+		if(free_verification) g_free(free_verification);
+	}
+	
+	/* sort features */
+	jabber_features = g_list_sort(jabber_features, jabber_caps_jabber_feature_compare);
+	
+	/* concat features to the verification string */
+	for(features = jabber_features; features; features = features->next) {
+		JabberFeature *feat = (JabberFeature*)features->data;
+		feature_string = g_strdup_printf("%s<", feat->namespace);
+		free_verification = verification;
+		if(verification == 0) g_strdup(feature_string);
+			else verification = g_strconcat(verification, feature_string, NULL);
+		g_free(feature_string);
+		if(free_verification) g_free(free_verification);
+	}
+	printf("\n%s", verification);
+	
+	
+	/* generate SHA-1 hash */
+	context = purple_cipher_context_new_by_name("sha1", NULL);
+	if (context == NULL) {
+		purple_debug_error("jabber", "Could not find sha1 cipher\n");
+		return;
+	}
+	purple_cipher_context_append(context, verification, strlen(verification));
+	
+	if (!purple_cipher_context_digest(context, strlen(verification), checksum, &checksum_size)) {
+		purple_debug_error("util", "Failed to get SHA-1 digest.\n");
+	}
+	purple_cipher_context_destroy(context);
+	
+	/* apply Base64 on hash */
+	
+	g_free(verification);
+	verification = purple_base64_encode(checksum, checksum_size); // for 2.0 compability
+	printf("\n%s", verification);
+	
+	if (caps_hash != 0) g_free(caps_hash);
+	caps_hash = verification;
+}
+
+const gchar* jabber_caps_get_hash() {
+	return caps_hash;
 }
 

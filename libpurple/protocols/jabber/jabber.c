@@ -60,7 +60,9 @@
 #define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
 static PurplePlugin *my_protocol = NULL;
+
 GList *jabber_features = NULL;
+GList *jabber_identities = NULL;
 
 static void jabber_unregister_account_cb(JabberStream *js);
 
@@ -1394,36 +1396,53 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	js->idle = idle ? time(NULL) - idle : idle;
 }
 
-void jabber_add_feature(const char *shortname, const char *namespace, JabberFeatureEnabled cb) {
+void jabber_add_feature(const char *namespace, JabberFeatureEnabled cb) {
 	JabberFeature *feat;
 
-	g_return_if_fail(shortname != NULL);
 	g_return_if_fail(namespace != NULL);
 
 	feat = g_new0(JabberFeature,1);
-	feat->shortname = g_strdup(shortname);
 	feat->namespace = g_strdup(namespace);
 	feat->is_enabled = cb;
 	
 	/* try to remove just in case it already exists in the list */
-	jabber_remove_feature(shortname);
+	jabber_remove_feature(namespace);
 	
 	jabber_features = g_list_append(jabber_features, feat);
 }
 
-void jabber_remove_feature(const char *shortname) {
+void jabber_remove_feature(const char *namespace) {
 	GList *feature;
 	for(feature = jabber_features; feature; feature = feature->next) {
 		JabberFeature *feat = (JabberFeature*)feature->data;
-		if(!strcmp(feat->shortname, shortname)) {
-			g_free(feat->shortname);
+		if(!strcmp(feat->namespace, namespace)) {
 			g_free(feat->namespace);
-			
 			g_free(feature->data);
 			jabber_features = g_list_delete_link(jabber_features, feature);
 			break;
 		}
 	}
+}
+
+void jabber_add_identity(const gchar *category, const gchar *type, const gchar *name) {
+	GList *identity;
+	JabberIdentity *ident;
+	/* both required according to XEP-0030 */
+	g_return_if_fail(category != NULL);
+	g_return_if_fail(type != NULL);
+	
+	for(identity = jabber_identities; identity; identity = identity->next) {
+		JabberIdentity *ident = (JabberIdentity*)identity->data;
+		if(!strcmp(ident->category, category)) {
+			if (!strcmp(ident->type, type)) return;
+		}	
+	}
+	
+	ident = g_new0(JabberIdentity, 1);
+	ident->category = g_strdup(category);
+	ident->type = g_strdup(type);
+	ident->name = g_strdup(name);
+	jabber_identities = g_list_append(jabber_identities, ident);
 }
 
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b)
@@ -2429,5 +2448,27 @@ void jabber_register_commands(void)
 void
 jabber_init_plugin(PurplePlugin *plugin)
 {
-        my_protocol = plugin;
+	my_protocol = plugin;
+
+	jabber_add_identity("client", "pc", PACKAGE);
+
+	// initialize jabber_features list
+	jabber_add_feature("jabber:iq:last", 0);
+	jabber_add_feature("jabber:iq:oob", 0);
+	jabber_add_feature("jabber:iq:time", 0);
+	jabber_add_feature("xmpp:urn:time", 0);
+	jabber_add_feature("jabber:iq:version", 0);
+	jabber_add_feature("jabber:x:conference", 0);
+	jabber_add_feature("http://jabber.org/protocol/bytestreams", 0);
+	jabber_add_feature("http://jabber.org/protocol/disco#info", 0);
+	jabber_add_feature("http://jabber.org/protocol/disco#items", 0);
+#if 0
+	jabber_add_feature("http://jabber.org/protocol/ibb", 0);
+#endif
+	jabber_add_feature("http://jabber.org/protocol/muc", 0);
+	jabber_add_feature("http://jabber.org/protocol/muc#user", 0);
+	jabber_add_feature("http://jabber.org/protocol/si", 0);
+	jabber_add_feature("http://jabber.org/protocol/si/profile/file-transfer", 0);
+	jabber_add_feature("http://jabber.org/protocol/xhtml-im", 0);
+	jabber_add_feature("urn:xmpp:ping", 0);
 }
