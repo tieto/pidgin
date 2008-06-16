@@ -30,28 +30,9 @@
 
 static GHashTable *theme_table;
 
-
 /*****************************************************************************
  * GObject Stuff                                                     
  ****************************************************************************/
-
-static void 
-purple_theme_manager_finalize (GObject *obj)
-{
-	g_hash_table_destroy(theme_table);
-}
-
-static void
-purple_theme_manager_class_init (PurpleThemeManagerClass *klass)
-{
-	/*PurpleThemeManagerClass *theme_manager_class = PURPLE_THEME_MANAGER_CLASS(klass);*/
-	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
-
-	/* 2.4 g_type_class_add_private(klass, sizeof(PurpleThemeManagerPrivate));*/
-
-        obj_class->finalize = purple_theme_manager_finalize;
-	
-}
 
 GType 
 purple_theme_manager_get_type (void)
@@ -62,7 +43,7 @@ purple_theme_manager_get_type (void)
       sizeof (PurpleThemeManagerClass),
       NULL,   /* base_init */
       NULL,   /* base_finalize */
-      (GClassInitFunc)purple_theme_manager_class_init,   /* class_init */
+      NULL,   /* class_init */
       NULL,   /* class_finalize */
       NULL,   /* class_data */
       sizeof (PurpleThemeManager),
@@ -116,7 +97,7 @@ purple_theme_manager_function_wrapper(gchar *key,
 }
 
 static void
-purple_theme_manager_build(const gchar *root)
+purple_theme_manager_build_dir(const gchar *root)
 {
 
 	GDir *rdir;
@@ -166,10 +147,12 @@ purple_theme_manager_init (PurpleThemeLoader *loader1, ...)
 	va_list args;
 	PurpleThemeLoader *loader;
 
+	g_return_if_fail(theme_table != NULL);
+
 	theme_table = g_hash_table_new_full (g_str_hash,
-                                             g_str_equal,
-                                             g_free,
-                                             g_object_unref);
+               	                             g_str_equal,
+               	                             g_free,
+               	                             g_object_unref);
 
 	va_start(args, loader1);
 	for (loader = loader1; loader != NULL; loader = va_arg(args, PurpleThemeLoader *))
@@ -177,7 +160,25 @@ purple_theme_manager_init (PurpleThemeLoader *loader1, ...)
 	va_end(args);
 
 	/* TODO: add themes properly */
-	purple_theme_manager_build(NULL);
+	purple_theme_manager_build_dir(NULL);
+}
+
+void 
+purple_theme_manager_refresh()
+{
+	g_hash_table_foreach_remove (theme_table,
+                	             (GHRFunc) purple_theme_manager_is_theme,
+                	             NULL);	
+	
+	/* TODO: this also needs to be fixed the same as new */
+	purple_theme_manager_build_dir(NULL);
+
+}
+
+void 
+purple_theme_manager_uninit ()
+{
+	g_hash_table_destroy(theme_table);
 }
 
 
@@ -266,18 +267,6 @@ purple_theme_manager_remove_theme(PurpleTheme *theme)
 	g_hash_table_remove(theme_table, key);	
 
 	g_free(key);	
-}
-
-void 
-purple_theme_manager_refresh()
-{
-	g_hash_table_foreach_remove (theme_table,
-                	             (GHRFunc) purple_theme_manager_is_theme,
-                	             NULL);	
-	
-	/* TODO: this also needs to be fixed the same as new */
-	purple_theme_manager_build(NULL);
-
 }
 
 void 

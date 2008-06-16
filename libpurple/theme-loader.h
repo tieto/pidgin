@@ -56,7 +56,7 @@ struct _PurpleThemeLoader
 struct _PurpleThemeLoaderClass
 {
 	GObjectClass parent_class;
-	PurpleTheme *(*_purple_theme_loader_build)(const gchar);
+	PurpleTheme *(*purple_theme_loader_build)(const gchar);
 };
 
 /**************************************************************************/

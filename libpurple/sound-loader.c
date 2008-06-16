@@ -25,6 +25,12 @@
 #include "util.h"
 #include "xmlnode.h"
 
+/******************************************************************************
+ * Globals
+ *****************************************************************************/
+
+static PurpleThemeLoaderClass *parent_class = NULL;
+
 /*****************************************************************************
  * Sound Theme Builder                                                      
  *****************************************************************************/
@@ -68,7 +74,7 @@ purple_sound_loader_build(const gchar *dir)
 	g_return_val_if_fail(root_node != NULL, NULL);
 
 	/* Parse the tree */
-	theme = purple_sound_theme_new();
+	theme = g_object_new(PURPLE_TYPE_SOUND_THEME, "type", "sound", NULL);
 		
 	purple_theme_set_name(theme->parent, xmlnode_get_attrib(root_node, THEME_NAME));
 	purple_theme_set_author(theme->parent, xmlnode_get_attrib(root_node, THEME_AUTHOR));
@@ -103,9 +109,10 @@ purple_sound_loader_build(const gchar *dir)
 static void
 purple_sound_theme_loader_class_init (PurpleSoundThemeLoaderClass *klass)
 {
-	PurpleSoundThemeLoaderClass *loader_class = PURPLE_SOUND_THEME_LOADER_CLASS(klass);
+	parent_class = g_type_class_peek_parent (klass);
 	
-	loader_class->parent_class._purple_theme_loader_build = purple_sound_loader_build;
+	/* TODO: fix warning */
+	parent_class->purple_theme_loader_build = purple_sound_loader_build;
 }
 
 

@@ -71,13 +71,6 @@ G_BEGIN_DECLS
 GType purple_sound_theme_get_type(void);
 
 /**
- * Creates a new purple sound theme
- *
- * @returns a new purple sound theme object
- */
-PurpleSoundTheme *purple_sound_theme_new(void);
-
-/**
  * Returns a copy of the filename for the sound event
  *
  * @param event		the purple sound event to look up

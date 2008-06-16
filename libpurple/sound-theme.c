@@ -39,6 +39,8 @@ typedef struct {
  * Globals
  *****************************************************************************/
 
+static GObjectClass *parent_class = NULL;
+
 /******************************************************************************
  * Enums
  *****************************************************************************/
@@ -46,6 +48,21 @@ typedef struct {
 /******************************************************************************
  * GObject Stuff                                                              
  *****************************************************************************/
+
+static void
+purple_sound_theme_init(GTypeInstance *instance,
+			gpointer klass)
+{
+	PurpleSoundThemePrivate *priv;
+	GObject *obj = (GObject *)instance;
+
+	priv = PURPLE_SOUND_THEME_GET_PRIVATE(obj);
+
+	priv->sound_files = g_hash_table_new_full (g_str_hash,
+						   g_str_equal,
+						   g_free,
+						   g_free);
+}
 
 static void 
 purple_sound_theme_finalize (GObject *obj)
@@ -55,12 +72,16 @@ purple_sound_theme_finalize (GObject *obj)
 	priv = PURPLE_SOUND_THEME_GET_PRIVATE(obj);
 	
 	g_hash_table_destroy(priv->sound_files);
+
+	parent_class->finalize (obj);
 }
 
 static void
 purple_sound_theme_class_init (PurpleSoundThemeClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
+
+	parent_class = g_type_class_peek_parent (klass);
 
         obj_class->finalize = purple_sound_theme_finalize;
 }
@@ -79,7 +100,7 @@ purple_sound_theme_get_type (void)
       NULL,   /* class_data */
       sizeof (PurpleSoundTheme),
       0,      /* n_preallocs */
-      NULL,    /* instance_init */
+      purple_sound_theme_init,    /* instance_init */
       NULL,   /* value table */
     };
     type = g_type_register_static (G_TYPE_OBJECT,
@@ -93,23 +114,6 @@ purple_sound_theme_get_type (void)
 /*****************************************************************************
  * Public API functions                                                      
  *****************************************************************************/
-
-PurpleSoundTheme *
-purple_sound_theme_new()
-{
-	PurpleSoundTheme *theme;
-	PurpleSoundThemePrivate *priv;
-	
-	theme = g_object_new(PURPLE_TYPE_SOUND_THEME, NULL);
-	priv = PURPLE_SOUND_THEME_GET_PRIVATE(theme);
-
-	priv->sound_files = g_hash_table_new_full (g_str_hash,
-						   g_str_equal,
-						   g_free,
-						   g_free);
-
-	return theme;
-}
 
 gchar *
 purple_sound_theme_get_file(PurpleSoundTheme *theme,

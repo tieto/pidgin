@@ -63,12 +63,22 @@ G_BEGIN_DECLS
 GType purple_theme_manager_get_type (void);
 
 /**
- * Creates a new ThemeManager object
- * @param 	the loaders to initalize the manager with and use for first build  
- *
- * @returns a new ThemeManager object 
+ * Initalizes the manager then add the loaders to the theme manager 
+ * and builds with the given loaders 
+ * @param 	the loaders to build with 
  */
 void purple_theme_manager_init (PurpleThemeLoader *loader1, ...);
+
+/**
+ * Rebuilds all the themes in the theme manager
+ * (removes all current themes but keeps the added loaders)
+ */
+void purple_theme_manager_refresh(void);
+
+/**
+ * Uninitalizes the manager then frees all the themes an loaders it is responsible for 
+ */
+void purple_theme_manager_uninit (void);
 
 /**
  * Finds the PurpleTheme object stored by the theme manager
@@ -104,11 +114,6 @@ void purple_theme_manager_register_type(PurpleThemeLoader *loader);
  * @param loader 	the PurpleThemeLoader to be removed
  */
 void purple_theme_manager_unregister_type(PurpleThemeLoader *loader);
-
-/**
- * Rebuilds all the themes in the theme manaer
- */
-void purple_theme_manager_refresh(void);
 
 /**
  * Calles the given function on each purple theme

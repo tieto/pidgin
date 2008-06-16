@@ -26,7 +26,7 @@
 #define PURPLE_THEME_LOADER_GET_PRIVATE(PurpleThemeLoader) \
 	((PurpleThemeLoaderPrivate *) ((PurpleThemeLoader)->priv))
 
-
+void purple_theme_loader_set_type_string(PurpleThemeLoader *loader, const gchar *type);
 /******************************************************************************
  * Structs
  *****************************************************************************/
@@ -37,6 +37,8 @@ typedef struct {
 /******************************************************************************
  * Globals
  *****************************************************************************/
+
+static GObjectClass *parent_class = NULL;
 
 /******************************************************************************
  * Enums
@@ -68,16 +70,43 @@ purple_theme_loader_get_property(GObject *obj, guint param_id, GValue *value,
 }
 
 static void
+purple_theme_loader_set_property(GObject *obj, guint param_id, const GValue *value,
+						 GParamSpec *psec)
+{
+	PurpleThemeLoader *loader = PURPLE_THEME_LOADER(obj);
+
+	switch(param_id) {
+		case PROP_TYPE:
+			purple_theme_loader_set_type_string(loader, g_value_get_string(value));
+			break;
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, psec);
+			break;
+	}
+}
+
+static void
+purple_theme_loader_finalize(GObject *obj)
+{
+	PurpleThemeLoader *loader = PURPLE_THEME_LOADER(obj);	
+	PurpleThemeLoaderPrivate *priv = PURPLE_THEME_LOADER_GET_PRIVATE(loader);
+	
+	g_free(priv->type);
+
+	parent_class->finalize (obj);
+}
+
+static void
 purple_theme_loader_class_init (PurpleThemeLoaderClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 	GParamSpec *pspec;
 
-	/* 2.4
-	 * g_type_class_add_private(klass, sizeof(PurpleThemePrivate)); */
-	
+	parent_class = g_type_class_peek_parent (klass);
 
 	obj_class->get_property = purple_theme_loader_get_property;
+	obj_class->set_property = purple_theme_loader_set_property;
+	obj_class->finalize = purple_theme_loader_finalize;
 	
 	/* TYPE STRING (read only) */
 	pspec = g_param_spec_string(PROP_TYPE_S, "Type",
@@ -129,8 +158,23 @@ purple_theme_loader_get_type_string (PurpleThemeLoader *theme_loader)
 	return priv->type;
 }
 
+/* < private > */
+void
+purple_theme_loader_set_type_string(PurpleThemeLoader *loader, const gchar *type)
+{
+	PurpleThemeLoaderPrivate *priv;
+
+	g_return_if_fail(PURPLE_IS_THEME_LOADER(loader));
+
+	priv = PURPLE_THEME_LOADER_GET_PRIVATE(loader);
+
+	g_free(priv->type);
+	priv->type = g_strdup (type);
+}
+
 PurpleTheme *
 purple_theme_loader_build (PurpleThemeLoader *loader, const gchar *dir)
 {
-	return PURPLE_THEME_LOADER_GET_CLASS(loader)->_purple_theme_loader_build(dir);
+	/* TODO: fix warning */	
+	return PURPLE_THEME_LOADER_GET_CLASS(loader)->purple_theme_loader_build(dir);
 }

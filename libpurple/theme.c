@@ -26,6 +26,7 @@
 #define PURPLE_THEME_GET_PRIVATE(PurpleTheme) \
 	((PurpleThemePrivate *) ((PurpleTheme)->priv))
 
+void purple_theme_set_type_string(PurpleTheme *theme, const gchar *type);
 
 /******************************************************************************
  * Structs
@@ -42,6 +43,8 @@ typedef struct {
 /******************************************************************************
  * Globals
  *****************************************************************************/
+
+static GObjectClass *parent_class = NULL;
 
 /******************************************************************************
  * Enums
@@ -115,6 +118,9 @@ purple_theme_set_property(GObject *obj, guint param_id, const GValue *value,
 		case PROP_AUTHOR:
 			purple_theme_set_author(theme, g_value_get_string(value));
 			break;
+		case PROP_TYPE:
+			purple_theme_set_type_string(theme, g_value_get_string(value));
+			break;
 		case PROP_DIR:
 			purple_theme_set_dir(theme, g_value_get_string(value));
 			break;
@@ -128,16 +134,32 @@ purple_theme_set_property(GObject *obj, guint param_id, const GValue *value,
 }
 
 static void
+purple_theme_finalize(GObject *obj)
+{
+	PurpleTheme *theme = PURPLE_THEME(obj);	
+	PurpleThemePrivate *priv = PURPLE_THEME_GET_PRIVATE(theme);
+	
+	g_free(priv->name);
+	g_free(priv->description);
+	g_free(priv->author);
+	g_free(priv->type);
+	g_free(priv->dir);
+	purple_imgstore_unref(priv->img);
+
+	G_OBJECT_CLASS (parent_class)->finalize (obj);
+}
+
+static void
 purple_theme_class_init (PurpleThemeClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 	GParamSpec *pspec;
 
-	/* 2.4
-	 * g_type_class_add_private(klass, sizeof(PurpleThemePrivate)); */
+	parent_class = g_type_class_peek_parent(klass);
 
 	obj_class->get_property = purple_theme_get_property;
 	obj_class->set_property = purple_theme_set_property;
+	obj_class->finalize = purple_theme_finalize;
 	
 	/* NAME */
 	pspec = g_param_spec_string(PROP_NAME_S, "Name",
@@ -287,6 +309,20 @@ purple_theme_get_type_string(PurpleTheme *theme)
 
 	priv = PURPLE_THEME_GET_PRIVATE(theme);
 	return priv->type;
+}
+
+/* < private > */
+void
+purple_theme_set_type_string(PurpleTheme *theme, const gchar *type)
+{
+	PurpleThemePrivate *priv;
+
+	g_return_if_fail(PURPLE_IS_THEME(theme));
+
+	priv = PURPLE_THEME_GET_PRIVATE(theme);
+
+	g_free(priv->type);
+	priv->type = g_strdup (type);
 }
 
 gchar *
