@@ -80,7 +80,7 @@ static void msn_soap_message_send_internal(MsnSession *session,
 	MsnSoapMessage *message, const char *host, const char *path,
 	MsnSoapCallback cb, gpointer cb_data, gboolean first);
 
-static void msn_soap_request_destroy(MsnSoapRequest *req);
+static void msn_soap_request_destroy(MsnSoapRequest *req, gboolean keep_message);
 static void msn_soap_connection_sanitize(MsnSoapConnection *conn, gboolean disconnect);
 static gboolean msn_soap_write_cb_internal(gpointer data, gint fd, PurpleInputCondition cond, gboolean initial);
 static void msn_soap_process(MsnSoapConnection *conn);
@@ -191,7 +191,7 @@ msn_soap_handle_redirect(MsnSoapConnection *conn, const char *url)
 			conn->current_request->message,	host, path,
 			conn->current_request->cb, conn->current_request->cb_data, TRUE);
 
-		msn_soap_request_destroy(conn->current_request);
+		msn_soap_request_destroy(conn->current_request, TRUE);
 		conn->current_request = NULL;
 
 		g_free(host);
@@ -251,7 +251,7 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 		request->cb(request->message, response,
 			request->cb_data);
 		msn_soap_message_destroy(response);
-		msn_soap_request_destroy(request);
+		msn_soap_request_destroy(request, FALSE);
 	}
 
 	return TRUE;
@@ -486,7 +486,7 @@ msn_soap_connection_run(gpointer data)
 			conn->buf = g_string_new("");
 
 			g_string_append_printf(conn->buf,
-				"POST %s HTTP/1.1\r\n"
+				"POST /%s HTTP/1.1\r\n"
 				"SOAPAction: %s\r\n"
 				"Content-Type:text/xml; charset=utf-8\r\n"
 				"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
@@ -589,7 +589,7 @@ msn_soap_connection_sanitize(MsnSoapConnection *conn, gboolean disconnect)
 	}
 
 	if (conn->current_request) {
-		msn_soap_request_destroy(conn->current_request);
+		msn_soap_request_destroy(conn->current_request, FALSE);
 		conn->current_request = NULL;
 	}
 }
@@ -616,7 +616,7 @@ msn_soap_connection_destroy_foreach_cb(gpointer item, gpointer data)
 	if (req->cb)
 		req->cb(req->message, NULL, req->cb_data);
 
-	msn_soap_request_destroy(req);
+	msn_soap_request_destroy(req, FALSE);
 }
 
 static void
@@ -670,10 +670,11 @@ msn_soap_message_add_header(MsnSoapMessage *message,
 }
 
 static void
-msn_soap_request_destroy(MsnSoapRequest *req)
+msn_soap_request_destroy(MsnSoapRequest *req, gboolean keep_message)
 {
 	g_free(req->path);
-	msn_soap_message_destroy(req->message);
+	if (!keep_message)
+		msn_soap_message_destroy(req->message);
 	g_free(req);
 }
 
