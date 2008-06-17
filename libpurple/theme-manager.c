@@ -119,7 +119,7 @@ purple_theme_manager_build_dir(const gchar *root)
 			while ((type = g_strdup(g_dir_read_name (dir)))) {
 				if ((loader = g_hash_table_lookup (theme_table, type))){
 
-					theme_dir = g_strconcat(purple_dir, '/', type, NULL);
+					theme_dir = g_build_filename(purple_dir, type, NULL);
 					purple_theme_manager_add_theme(purple_theme_loader_build(loader, theme_dir));
 
 				}

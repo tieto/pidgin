@@ -56,7 +56,7 @@ struct _PurpleThemeLoader
 struct _PurpleThemeLoaderClass
 {
 	GObjectClass parent_class;
-	PurpleTheme *(*purple_theme_loader_build)(const gchar);
+	gpointer (*purple_theme_loader_build)(const gchar*);
 };
 
 /**************************************************************************/
@@ -86,7 +86,7 @@ gchar *purple_theme_loader_get_type_string(PurpleThemeLoader *self);
  *
  * @returns 		PurpleTheme containing the information from the directory
  */
-PurpleTheme *purple_theme_loader_build(PurpleThemeLoader *loader, const gchar *dir);
+gpointer purple_theme_loader_build(PurpleThemeLoader *loader, const gchar *dir);
 
 G_END_DECLS
 #endif /* _PURPLE_THEME_LOADER_H_ */

@@ -43,7 +43,7 @@ static PurpleThemeLoaderClass *parent_class = NULL;
 #define THEME_EVENT_NAME	"name"
 #define THEME_EVENT_FILE	"file"
 
-static PurpleSoundTheme *
+static gpointer
 purple_sound_loader_build(const gchar *dir)
 {
 	xmlnode *root_node, *sub_node;
@@ -104,7 +104,6 @@ purple_sound_theme_loader_class_init (PurpleSoundThemeLoaderClass *klass)
 {
 	parent_class = g_type_class_peek_parent (klass);
 	
-	/* TODO: fix warning */
 	parent_class->purple_theme_loader_build = purple_sound_loader_build;
 }
 
