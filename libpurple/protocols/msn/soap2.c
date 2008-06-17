@@ -183,18 +183,10 @@ msn_soap_error_cb(PurpleSslConnection *ssl, PurpleSslErrorType error,
 static gboolean
 msn_soap_handle_redirect(MsnSoapConnection *conn, const char *url)
 {
-	char *c;
+	char *host;
+	char *path;
 
-	/* Skip the http:// */
-	if ((c = strchr(url, '/')) != NULL)
-		url += 2;
-
-	if ((c = strchr(url, '/')) != NULL) {
-		char *host, *path;
-
-		host = g_strndup(url, c - url);
-		path = g_strdup(c);
-
+	if (purple_url_parse(url, &host, NULL, &path, NULL, NULL)) {
 		msn_soap_message_send_internal(conn->session,
 			conn->current_request->message,	host, path,
 			conn->current_request->cb, conn->current_request->cb_data, TRUE);
