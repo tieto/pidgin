@@ -30,6 +30,7 @@
 
 #define YAHOO_PAGER_HOST "scs.msg.yahoo.com"
 #define YAHOO_PAGER_PORT 5050
+#define YAHOO_PAGER_PORT_P2P 5101
 #define YAHOO_PROFILE_URL "http://profiles.yahoo.com/"
 #define YAHOO_MAIL_URL "https://login.yahoo.com/config/login?.src=ym"
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
@@ -113,6 +114,17 @@ struct yahoo_buddy_icon_upload_data {
 	guint watcher;
 };
 
+struct yahoo_p2p_data	{
+	PurpleConnection *gc;
+	char *host_ip;
+	int session_id;
+	char *host_username;
+	int val_13;
+	guint input_event;
+	gint source;
+	int val_11;
+};
+
 struct _YchtConn;
 
 struct yahoo_data {
@@ -176,6 +188,7 @@ struct yahoo_data {
 	 * the server expects us to keep track of the group for which it is sending us contact names.
 	 */
 	char *current_list15_grp;
+	GHashTable *peers;	/*information about p2p data*/
 };
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (255)

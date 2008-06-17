@@ -1213,21 +1213,35 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 		}
 		else if(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE && xd->status_15 == STARTED)
 		{	
-			xd->txbuf = g_strdup_printf("HEAD /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nAccept:*/*\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost:%s\r\nContent-Length: 0\r\nCache-Control: no-cache\r\n\r\n",
+			if(xd->info_val_249 == 1)	/*receiving file via p2p, if xd->info_val_249 is 1*/
+				{
+				xd->txbuf = g_strdup_printf("HEAD /%s HTTP/1.1\r\nAccept:*/*\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nContent-Length: 0\r\nCache-Control: no-cache\r\n\r\n",xd->path,xd->host);
+			}
+			else	/*receiving file via relaying*/
+				{
+				xd->txbuf = g_strdup_printf("HEAD /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nAccept:*/*\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost:%s\r\nContent-Length: 0\r\nCache-Control: no-cache\r\n\r\n",
 										purple_url_encode(xd->xfer_idstring_for_relay),
 										purple_normalize(account, purple_account_get_username(account)),
 										xfer->who,
 										cookies,
 										xd->host);
+			}
 		}
 		else if(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE && xd->status_15 == HEAD_REPLY_RECEIVED)
 		{
-			xd->txbuf = g_strdup_printf("GET /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost:%s\r\nConnection: Keep-Alive\r\n\r\n",
+			if(xd->info_val_249 == 1)	/*receiving file via p2p*/
+				{
+				xd->txbuf = g_strdup_printf("GET /%s HTTP/1.1\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nConnection: Keep-Alive\r\n\r\n",xd->path,xd->host);
+			}
+			else		/*receiving file via relaying*/
+				{
+				xd->txbuf = g_strdup_printf("GET /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost:%s\r\nConnection: Keep-Alive\r\n\r\n",
 										purple_url_encode(xd->xfer_idstring_for_relay),
 										purple_normalize(account, purple_account_get_username(account)),
 										xfer->who,
 										cookies,
 										xd->host);
+			}
 		}
 		else
 		{
@@ -1455,13 +1469,8 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 			val_66 = strtol(pair->value, NULL, 10);
 			break;
 		case 249:
-			val_249 = strtol(pair->value, NULL, 10); /*
-					* really pissed off with this- i hv seen 2 occurences of this
-					* being 1(its normally 3) - and in those cases, the url
-					* format and corresponding processing seems to be different
-					* (i havent tested - couldnt reproduce a 1), although i 
-					* guess its easier.
-					*/
+			val_249 = strtol(pair->value, NULL, 10);
+			/* 249 has value 1 when doing p2p transfer and value 3 when relaying through yahoo server */
 			break;
 		case 250:
 			url = pair->value;
