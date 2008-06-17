@@ -69,18 +69,22 @@ msn_check_payload_cmd(const char *str)
 /*
  * set command Payload length
  */
-static void
+static gboolean
 msn_set_payload_len(MsnCommand *cmd)
 {
 	char *param;
 	int len = 0;
+	gboolean has_payload = FALSE;
 
 	if (msn_check_payload_cmd(cmd->command) && (cmd->param_count > 0)){
 		param = cmd->params[cmd->param_count - 1];
 		len = is_num(param) ? atoi(param) : 0;
+		has_payload = TRUE;
 	}
 
 	cmd->payload_len = len;
+
+	return has_payload;
 }
 
 MsnCommand *
@@ -120,8 +124,8 @@ msn_command_from_string(const char *string)
 
 	/* khc: Huh! */
 	/*add payload Length checking*/
-	msn_set_payload_len(cmd);
-	purple_debug_info("MSNP14","get payload len:%" G_GSIZE_FORMAT "\n", cmd->payload_len);
+	if (msn_set_payload_len(cmd))
+		purple_debug_info("MSNP14","get payload len:%" G_GSIZE_FORMAT "\n", cmd->payload_len);
 
 	msn_command_ref(cmd);
 
