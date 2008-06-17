@@ -121,6 +121,8 @@ struct yahoo_p2p_data	{
 	char *host_username;
 	int val_13;
 	guint input_event;
+	gint source;
+	int val_11;
 };
 
 struct _YchtConn;
@@ -186,6 +188,7 @@ struct yahoo_data {
 	 * the server expects us to keep track of the group for which it is sending us contact names.
 	 */
 	char *current_list15_grp;
+	GHashTable *peers;	/*information about p2p data*/
 };
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (255)
