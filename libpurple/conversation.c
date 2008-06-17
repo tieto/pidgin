@@ -1621,7 +1621,7 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 		}
 
 		quiet = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_conversations_get_handle(),
-						 "chat-buddy-joining", conv, user, flag)) |
+						 "chat-buddy-joining", conv, user, flag)) ||
 				purple_conv_chat_is_user_ignored(chat, user);
 
 		cbuddy = purple_conv_chat_cb_new(user, alias, flag);
