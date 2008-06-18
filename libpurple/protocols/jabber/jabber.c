@@ -375,9 +375,9 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	g_free(txt);
 }
 
-static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer timeout) 
+static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer unused)
 {
-	purple_timeout_remove(GPOINTER_TO_INT(timeout));
+	purple_timeout_remove(js->keepalive_timeout);
 	js->keepalive_timeout = -1;
 }
 
@@ -401,7 +401,7 @@ void jabber_keepalive(PurpleConnection *gc)
 		xmlnode_set_namespace(ping, "urn:xmpp:ping");
 		
 		js->keepalive_timeout = purple_timeout_add_seconds(120, (GSourceFunc)(jabber_pong_timeout), gc);
-		jabber_iq_set_callback(iq, jabber_pong_cb, GINT_TO_POINTER(js->keepalive_timeout));
+		jabber_iq_set_callback(iq, jabber_pong_cb, NULL);
 		jabber_iq_send(iq);
 	}
 }
