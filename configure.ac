@@ -2223,9 +2223,11 @@ AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
 
 # sys/sysctl.h on OpenBSD 4.2 requires sys/param.h
+# sys/sysctl.h on FreeBSD requires sys/types.h
 AC_CHECK_HEADERS(sys/param.h)
 AC_CHECK_HEADERS(sys/sysctl.h, [], [],
 	[[
+		#include <sys/types.h>
 		#ifdef HAVE_PARAM_H
 		# include <sys/param.h>
 		#endif

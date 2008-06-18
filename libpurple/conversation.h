@@ -32,11 +32,17 @@
 /**************************************************************************/
 
 
+/** @copydoc _PurpleConversationUiOps */
 typedef struct _PurpleConversationUiOps PurpleConversationUiOps;
+/** @copydoc _PurpleConversation */
 typedef struct _PurpleConversation      PurpleConversation;
+/** @copydoc _PurpleConvIm */
 typedef struct _PurpleConvIm            PurpleConvIm;
+/** @copydoc _PurpleConvChat */
 typedef struct _PurpleConvChat          PurpleConvChat;
+/** @copydoc _PurpleConvChatBuddy */
 typedef struct _PurpleConvChatBuddy     PurpleConvChatBuddy;
+/** @copydoc _PurpleConvMessage */
 typedef struct _PurpleConvMessage       PurpleConvMessage;
 
 /**

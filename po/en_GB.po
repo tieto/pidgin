@@ -2911,7 +2911,7 @@ msgid "Your current password is different from the one that you specified."
 msgstr "Your current password is different from the one that you specified."
 
 msgid "Unable to change password. Error occurred.\n"
-msgstr "Unable to change password. An error occured.\n"
+msgstr "Unable to change password. An error occurred.\n"
 
 msgid "Change password for the Gadu-Gadu account"
 msgstr "Change password for the Gadu-Gadu account"
@@ -5270,7 +5270,7 @@ msgid "Message could not be sent because the user is offline:"
 msgstr "Message could not be sent because the user is offline:"
 
 msgid "Message could not be sent because a connection error occurred:"
-msgstr "Message could not be sent because a connection error occured:"
+msgstr "Message could not be sent because a connection error occurred:"
 
 msgid "Message could not be sent because we are sending too quickly:"
 msgstr "Message could not be sent because we are sending too quickly:"

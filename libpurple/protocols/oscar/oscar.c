@@ -1977,7 +1977,17 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	}
 	else
 	{
-		purple_prpl_got_user_status(account, info->sn, status_id, NULL);
+		PurpleBuddy *b = purple_find_buddy(account, info->sn);
+		PurplePresence *presence = purple_buddy_get_presence(b);
+		PurpleStatus *old_status = purple_presence_get_active_status(presence);
+		PurpleStatus *new_status = purple_presence_get_status(presence, status_id);
+		
+		/* If our status_id would change with this update, pass it to the core.
+		 * However, if our status_id would not change, do nothing, as we would clear out any existing
+		 * attributes on the status prematurely. purple_got_infoblock() will update the message as needed.
+		 */
+		if (old_status != new_status)
+			purple_prpl_got_user_status(account, info->sn, status_id, NULL);
 	}
 
 	/* Login time stuff */
