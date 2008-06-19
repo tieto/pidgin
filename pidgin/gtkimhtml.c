@@ -461,6 +461,7 @@ gtk_imhtml_tip (gpointer data)
 			tmp);
 		g_free(tmp);
 
+		g_object_unref(layout);
 		return FALSE;
 	}
 
@@ -498,6 +499,7 @@ gtk_imhtml_tip (gpointer data)
 	gtk_widget_show (imhtml->tip_window);
 
 	pango_font_metrics_unref(font_metrics);
+	g_object_unref(font);
 	g_object_unref(layout);
 
 	return FALSE;
