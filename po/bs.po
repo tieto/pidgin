@@ -8869,7 +8869,7 @@ msgstr[1] "Propustili ste %hu poruke od %s, jer nisu bile validne."
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] "Propustili ste %hu poruku od %s, jer je bila prevelika."
-msgstr[1] "Propustili ste %hu poruke, jer su bile prevelike."
+msgstr[1] "Propustili ste %hu poruke od %s, jer su bile prevelike."
 
 #: ../libpurple/protocols/oscar/oscar.c:2614
 #, c-format

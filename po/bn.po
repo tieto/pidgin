@@ -6319,8 +6319,9 @@ msgid ""
 "%s on the local list is inside the group \"%s\" but not on the server list. "
 "Do you want this buddy to be added?"
 msgstr ""
-"স্থানীয় তালিকার %s গ্রুপ এ আছেন কিন্তু সার্ভার তালিকায় নেই।আপনি কি এই বন্ধুটিকে যোগ "
-"করতে চান?"
+#msgstr ""
+#"স্থানীয় তালিকার %s গ্রুপ এ আছেন কিন্তু সার্ভার তালিকায় নেই।আপনি কি এই বন্ধুটিকে যোগ "
+#"করতে চান?"
 
 #: ../libpurple/protocols/msn/dialog.c:124
 #, c-format
@@ -7856,7 +7857,8 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:705
 #, c-format
 msgid "Could not get details for user %s (%s)."
-msgstr "ব্যবহারকারী %s এর বিবরন পাওয়া যাচ্ছে না"
+msgstr ""
+#msgstr "ব্যবহারকারী %s এর বিবরন পাওয়া যাচ্ছে না"
 
 #: ../libpurple/protocols/novell/novell.c:751
 #: ../libpurple/protocols/novell/novell.c:897
@@ -13753,8 +13755,8 @@ msgstr "/টুল/আসর তালিকা"
 #, c-format
 msgid "%d unread message from %s\n"
 msgid_plural "%d unread messages from %s\n"
-msgstr[0] "%s এর %d টি না পড়া বার্তা রয়েছে\n"
-msgstr[1] "%s এর %d টি না পড়া বার্তা রয়েছে\n"
+msgstr[0] "%2$s এর %1$d টি না পড়া বার্তা রয়েছে\n"
+msgstr[1] "%2$s এর %1$d টি না পড়া বার্তা রয়েছে\n"
 
 #: ../pidgin/gtkblist.c:3822
 msgid "Manually"

@@ -16502,7 +16502,6 @@ msgid ""
 "<span foreground=\"red\" weight=\"bold\">Error: %s\n"
 "Check the plugin website for an update.</span>"
 msgstr ""
-"%s\n"
 "<span foreground=\"red\" weight=\"bold\">Virhe: %s\n"
 "Tarkista onko liitännäisen WWW-sivustolla päivitystä.</span>"
 
