@@ -946,11 +946,6 @@ static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 				FALSE, yahoo_got_photo, info2_data);
 		if (url_data != NULL)
 			yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
-		else {
-			g_free(info2_data->info_data->name);
-			g_free(info2_data->info_data);
-			g_free(info2_data);
-		}
 	} else {
 		/* Emulate a callback */
 		yahoo_got_photo(NULL, info2_data, NULL, 0, NULL);
@@ -1286,10 +1281,6 @@ void yahoo_get_info(PurpleConnection *gc, const char *name)
 	url_data = purple_util_fetch_url(url, TRUE, NULL, FALSE, yahoo_got_info, data);
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
-	else {
-		g_free(data->name);
-		g_free(data);
-	}
 
 	g_free(url);
 }
