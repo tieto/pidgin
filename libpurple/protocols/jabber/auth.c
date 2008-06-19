@@ -697,7 +697,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		} else if(js->stream_id && xmlnode_get_child(query, "crammd5")) {
 			const char *challenge;
 			guchar digest[16];
-			char h[17], *p;
+			char h[33], *p;
 			int i;
 
 			challenge = xmlnode_get_attrib(xmlnode_get_child(query, "crammd5"), "challenge");
