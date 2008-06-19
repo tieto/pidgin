@@ -4,8 +4,9 @@ version 2.4.3 (??/??/2008):
 	libpurple:
 	* Yahoo! Japan now uses UTF-8, matching the behavior of official clients
 	  and restoring compatibility with the web messenger (Yusuke Odate)
+	* Setting your buddy icon once again works for Yahoo! accounts.
 
-version 2.x.x:
+version 2.4.2 (05/17/2008):
 	libpurple:
 	* In MySpaceIM, messages from spambots are discarded (Justin Williams)
 	* Strip mIRC formatting codes from quit and part messages.

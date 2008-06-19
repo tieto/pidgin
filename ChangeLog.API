@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.x.x:
+version 2.4.2 (05/17/2008):
 	perl:
 		Added:
 		* Purple::Prefs::get_children_names.
