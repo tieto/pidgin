@@ -49,6 +49,7 @@ void yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias
 struct callback_data {
 	PurpleConnection *gc;
 	gchar *id;
+	gchar *who;
 };
 
 
@@ -80,6 +81,7 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 
 		if (contacts == NULL) {
 			purple_debug_error("yahoo", "Badly formed Alias XML\n");
+			g_free(cb->who);
 			g_free(cb->id);
 			g_free(cb);
 			return;
@@ -130,8 +132,6 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 						yahoo_update_alias(cb->gc, yid, buddy_alias);
 						purple_debug_info("yahoo", "Sent updated alias '%s'\n", buddy_alias);
 					}
-				} else {
-					purple_debug_info("yahoo", "Bizarre, received alias for %s, but they are not on your list...\n", yid);
 				}
 
 				g_free(full_name);
@@ -141,6 +141,7 @@ yahoo_fetch_aliases_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, con
 		xmlnode_free(contacts);
 	}
 
+	g_free(cb->who);
 	g_free(cb->id);
 	g_free(cb);
 }
@@ -205,8 +206,10 @@ yahoo_update_alias_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, cons
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
 	if (len == 0 || error_message != NULL) {
-		purple_debug_info("yahoo", "Error updating alias: %s\n",
-						  error_message ? error_message : "");
+		purple_debug_info("yahoo", "Error updating alias for %s: %s\n",
+				  cb->who,
+				  error_message ? error_message : "");
+		g_free(cb->who);
 		g_free(cb->id);
 		g_free(cb);
 		return;
@@ -214,25 +217,42 @@ yahoo_update_alias_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, cons
 
 	result = xmlnode_from_str(url_text, -1);
 
-	purple_debug_info("yahoo", "ID: %s, Return data: %s\n", cb->id, url_text);
-
 	if (result == NULL) {
-		purple_debug_error("yahoo", "Alias update failed: Badly formed response\n");
+		purple_debug_error("yahoo", "Alias update for %s failed: Badly formed response\n",
+				   cb->who);
+		g_free(cb->who);
 		g_free(cb->id);
 		g_free(cb);
 		return;
 	}
 
 	if ((node = xmlnode_get_child(result, "ct"))) {
-		const char *update_id = xmlnode_get_attrib(node, "id");
-		if (g_ascii_strncasecmp(update_id, cb->id, strlen(cb->id)) == 0)
-			purple_debug_info("yahoo", "Alias update succeeded\n");
-		else
-			purple_debug_error("yahoo", "Alias update failed (Contact record return mismatch)\n");
-	} else {
-		purple_debug_info("yahoo", "Alias update failed (No contact record returned)\n");
-	}
+		if (cb->id == NULL) {
+			const char *new_id = xmlnode_get_attrib(node, "id");
+			if (new_id != NULL) {
+				/* We now have an addressbook id for the friend; we should save it */
+				YahooFriend *f = yahoo_friend_find(cb->gc, cb->who);
 
+				purple_debug_info("yahoo", "Alias creation for %s succeeded\n", cb->who);
+
+				if (f)
+					yahoo_friend_set_alias_id(f, new_id);
+				else
+					purple_debug_error("yahoo", "Missing YahooFriend. Unable to store new addressbook id.\n");
+			} else
+				purple_debug_error("yahoo", "Missing new addressbook id in add response for %s (weird).\n",
+						   cb->who);
+		} else {
+			if (g_ascii_strncasecmp(xmlnode_get_attrib(node, "id"), cb->id, strlen(cb->id))==0)
+				purple_debug_info("yahoo", "Alias update for %s succeeded\n", cb->who);
+			else
+				purple_debug_error("yahoo", "Alias update for %s failed (Contact record return mismatch)\n",
+						   cb->who);
+		}
+	} else
+		purple_debug_info("yahoo", "Alias update for %s failed (No contact record returned)\n", cb->who);
+
+	g_free(cb->who);
 	g_free(cb->id);
 	g_free(cb);
 	xmlnode_free(result);
@@ -242,7 +262,7 @@ void
 yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 {
 	struct yahoo_data *yd;
-	const char *url, *alias_id;
+	const char *url;
 	gchar *content, *request, *webpage, *webaddress;
 	struct callback_data *cb;
 	PurpleUtilFetchUrlData *url_data;
@@ -260,17 +280,9 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 	if (alias == NULL)
 		alias = "";
 
-	purple_debug_info("yahoo", "Sending '%s' as new alias for user '%s'.\n", alias, who);
-
 	f = yahoo_friend_find(gc, who);
 	if (f == NULL) {
 		purple_debug_error("yahoo", "Missing YahooFriend. Unable to set server alias.\n");
-		return;
-	}
-
-	alias_id = yahoo_friend_get_alias_id(f);
-	if (alias_id == NULL) {
-		purple_debug_error("yahoo", "Missing Yahoo Alias ID (get_yahoo_aliases must have failed), bailing out\n");
 		return;
 	}
 
@@ -278,29 +290,55 @@ yahoo_update_alias(PurpleConnection *gc, const char *who, const char *alias)
 
 	/* Using callback_data so I have access to gc in the callback function */
 	cb = g_new0(struct callback_data, 1);
-	cb->id = g_strdup(alias_id);
+	cb->who = g_strdup(who);
+	cb->id = g_strdup(yahoo_friend_get_alias_id(f));
 	cb->gc = gc;
 
 	/*  Build all the info to make the web request */
 	url = yd->jp ? YAHOOJP_ALIAS_UPDATE_URL: YAHOO_ALIAS_UPDATE_URL;
 	purple_url_parse(url, &webaddress, NULL, &webpage, NULL, NULL);
 
-	if (yd->jp) {
-		gchar *alias_jp = g_convert(alias, -1, "EUC-JP", "UTF-8", NULL, NULL, NULL);
-		gchar *converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
-		content = g_strdup_printf("<ab k=\"%s\" cc=\"1\">\n"
-					  "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-					   purple_account_get_username(gc->account),
-					   who, alias_id, converted_alias_jp);
-		free(converted_alias_jp);
-		g_free(alias_jp);
+	if (cb->id == NULL) {
+		/* No id for this buddy, so create an address book entry */
+		purple_debug_info("yahoo", "Creating '%s' as new alias for user '%s'\n", alias, who);
+
+		if (yd->jp) {
+			gchar *alias_jp = g_convert(alias, -1, "EUC-JP", "UTF-8", NULL, NULL, NULL);
+			gchar *converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
+			content = g_strdup_printf("<ab k=\"%s\" cc=\"9\">\n"
+						  "<ct a=\"1\" yi='%s' nn='%s' />\n</ab>\r\n",
+						  purple_account_get_username(gc->account),
+						  who, converted_alias_jp);
+			free(converted_alias_jp);
+			g_free(alias_jp);
+		} else {
+			gchar *escaped_alias = g_markup_escape_text(alias, -1);
+			content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"9\">\n"
+						  "<ct a=\"1\" yi='%s' nn='%s' />\n</ab>\r\n",
+						  purple_account_get_username(gc->account),
+						  who, escaped_alias);
+			g_free(escaped_alias);
+		}
 	} else {
-		gchar *escaped_alias = g_markup_escape_text(alias, -1);
-		content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
-					  "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
-					  purple_account_get_username(gc->account),
-					  who, alias_id, escaped_alias);
-		g_free(escaped_alias);
+		purple_debug_info("yahoo", "Updating '%s' as new alias for user '%s'\n", alias, who);
+
+		if (yd->jp) {
+			gchar *alias_jp = g_convert(alias, -1, "EUC-JP", "UTF-8", NULL, NULL, NULL);
+			gchar *converted_alias_jp = yahoo_convert_to_numeric(alias_jp);
+			content = g_strdup_printf("<ab k=\"%s\" cc=\"1\">\n"
+						  "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
+						  purple_account_get_username(gc->account),
+						  who, cb->id, converted_alias_jp);
+			free(converted_alias_jp);
+			g_free(alias_jp);
+		} else {
+			gchar *escaped_alias = g_markup_escape_text(alias, -1);
+			content = g_strdup_printf("<?xml version=\"1.0\" encoding=\"utf-8\"?><ab k=\"%s\" cc=\"1\">\n"
+						  "<ct e=\"1\"  yi='%s' id='%s' nn='%s' pr='0' />\n</ab>\r\n",
+						  purple_account_get_username(gc->account),
+						  who, cb->id, escaped_alias);
+			g_free(escaped_alias);
+		}
 	}
 
 	request = g_strdup_printf("POST %s%s/%s HTTP/1.1\r\n"
