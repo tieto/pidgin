@@ -936,6 +936,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 					_("Invalid challenge from server"));
 			}
 			g_free(js->expected_rspauth);
+			js->expected_rspauth = NULL;
 		} else {
 			/* assemble a response, and send it */
 			/* see RFC 2831 */
