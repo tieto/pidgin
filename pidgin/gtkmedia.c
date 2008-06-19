@@ -166,22 +166,11 @@ pidgin_media_init (PidginMedia *media)
 	media->priv->hangup = gtk_button_new_with_label("Hangup");
 	media->priv->accept = gtk_button_new_with_label("Accept");
 	media->priv->reject = gtk_button_new_with_label("Reject");
-	media->priv->send_progress = gtk_progress_bar_new();
-	media->priv->recv_progress = gtk_progress_bar_new();
-
-	gtk_widget_set_size_request(media->priv->send_progress, 70, 5);
-	gtk_widget_set_size_request(media->priv->recv_progress, 70, 5);
 
 	gtk_box_pack_start(GTK_BOX(media), media->priv->calling, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(media), media->priv->hangup, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(media), media->priv->accept, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(media), media->priv->reject, FALSE, FALSE, 0);
-
-	gtk_box_pack_start(GTK_BOX(media), media->priv->send_progress, FALSE, FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(media), media->priv->recv_progress, FALSE, FALSE, 6);
-
-	gtk_widget_show(media->priv->send_progress);
-	gtk_widget_show(media->priv->recv_progress);
 
 	gtk_widget_show_all(media->priv->accept);
 	gtk_widget_show_all(media->priv->reject);
@@ -330,6 +319,7 @@ static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	GstElement *element = purple_media_get_pipeline(media);
+	GtkWidget *send_widget = NULL, *recv_widget = NULL;
 
 	GstElement *audiosendbin = NULL, *audiosendlevel = NULL;
 	GstElement *audiorecvbin = NULL, *audiorecvlevel = NULL;
@@ -364,6 +354,15 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 				       NULL);
 	}
 
+	send_widget = gtk_hbox_new(FALSE, 0);
+	recv_widget = gtk_hbox_new(FALSE, 0);
+
+	gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display), send_widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display), recv_widget, TRUE, TRUE, 0);
+
+	gtk_widget_show(send_widget);
+	gtk_widget_show(recv_widget);
+
 	if (videorecvbin || videosendbin) {
 		GtkWidget *aspect;
 		GtkWidget *remote_video;
@@ -373,7 +372,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
-		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display), aspect, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(send_widget), aspect, TRUE, TRUE, 0);
 
 		remote_video = gtk_drawing_area_new();
 		gtk_container_add(GTK_CONTAINER(aspect), remote_video);
@@ -383,7 +382,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
-		gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display), aspect, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(recv_widget), aspect, TRUE, TRUE, 0);
 
 		local_video = gtk_drawing_area_new();
 		gtk_container_add(GTK_CONTAINER(aspect), local_video);
@@ -392,6 +391,29 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 
 		gtkmedia->priv->local_video = local_video;
 		gtkmedia->priv->remote_video = remote_video;
+	}
+
+	if (audiorecvbin || audiosendbin) {
+		gtk_widget_show(gtkmedia->priv->display);
+
+		gtkmedia->priv->send_progress = gtk_progress_bar_new();
+		gtkmedia->priv->recv_progress = gtk_progress_bar_new();
+
+		gtk_widget_set_size_request(gtkmedia->priv->send_progress, 5, 70);
+		gtk_widget_set_size_request(gtkmedia->priv->recv_progress, 5, 70);
+
+		gtk_progress_bar_set_orientation(GTK_PROGRESS_BAR(gtkmedia->priv->send_progress),
+						 GTK_PROGRESS_BOTTOM_TO_TOP);
+		gtk_progress_bar_set_orientation(GTK_PROGRESS_BAR(gtkmedia->priv->recv_progress),
+						 GTK_PROGRESS_BOTTOM_TO_TOP);
+
+		gtk_box_pack_start(GTK_BOX(send_widget),
+				   gtkmedia->priv->send_progress, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(recv_widget),
+				   gtkmedia->priv->recv_progress, FALSE, FALSE, 0);
+
+		gtk_widget_show(gtkmedia->priv->send_progress);
+		gtk_widget_show(gtkmedia->priv->recv_progress);
 	}
 
 	bus = gst_pipeline_get_bus(GST_PIPELINE(element));
