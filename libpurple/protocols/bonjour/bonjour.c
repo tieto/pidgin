@@ -91,7 +91,7 @@ bonjour_login(PurpleAccount *account)
 		purple_connection_error_reason(gc,
 			PURPLE_CONNECTION_ERROR_OTHER_ERROR,
 			_("The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: "
-			  "http://developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging"
+			  "http://d.pidgin.im/BonjourWindows"
 			  " for more information."));
 		return;
 	}
