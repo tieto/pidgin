@@ -748,6 +748,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\pidginrc.dll"
     Delete "$INSTDIR\plugins\psychic.dll"
     Delete "$INSTDIR\plugins\relnot.dll"
+    Delete "$INSTDIR\plugins\sendbutton.dll"
     Delete "$INSTDIR\plugins\spellchk.dll"
     Delete "$INSTDIR\plugins\ssl-nss.dll"
     Delete "$INSTDIR\plugins\ssl.dll"
