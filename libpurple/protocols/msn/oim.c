@@ -480,7 +480,7 @@ msn_oim_parse_timestamp(const char *timestamp)
 				long sys_tzoff;
 #endif
 
-				if (!offset_positive)
+				if (offset_positive)
 					tzoff *= -1;
 
 				t.tm_year -= 1900;
@@ -490,7 +490,7 @@ msn_oim_parse_timestamp(const char *timestamp)
 					tzoff += sys_tzoff;
 #else
 #ifdef HAVE_TM_GMTOFF
-				tzoff -= t.tm_gmtoff;
+				tzoff += t.tm_gmtoff;
 #else
 #	ifdef HAVE_TIMEZONE
 				tzset();    /* making sure */
