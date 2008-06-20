@@ -232,6 +232,6 @@ void msn_session_finish_login(MsnSession *session);
 
 /*post message to User*/
 void msn_session_report_user(MsnSession *session,const char *passport,
-							char *msg,PurpleMessageFlags flags);
+							const char *msg,PurpleMessageFlags flags);
 
 #endif /* _MSN_SESSION_H_ */

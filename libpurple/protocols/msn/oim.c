@@ -333,6 +333,32 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 						g_queue_push_head(oim->send_queue, msg);
 						msn_oim_send_msg(oim);
 					}
+				} else {
+					/* Report the error */
+					const char *str_reason;
+
+					if (g_str_equal(faultcode_str, "q0:SystemUnavailable")) {
+						str_reason = _("Message was not sent because the system is "
+						               "unavailable. This normally happens when the "
+						               "user is blocked or does not exist.");
+
+					} else if (g_str_equal(faultcode_str, "q0:SenderThrottleLimitExceeded")) {
+						str_reason = _("Message was not sent because messages "
+						               "are being sent too quickly.");
+
+					} else if (g_str_equal(faultcode_str, "q0:InvalidContent")) {
+						str_reason = _("Message was not sent because an unknown "
+						               "encoding error occured.");
+
+					} else {
+						str_reason = _("Message was not sent because an unknown "
+						               "error occured.");
+					}
+					
+					msn_session_report_user(oim->session, msg->to_member, 
+						str_reason, PURPLE_MESSAGE_ERROR);
+					msn_session_report_user(oim->session, msg->to_member,
+						msg->oim_msg, PURPLE_MESSAGE_RAW);
 				}
 
 				g_free(faultcode_str);

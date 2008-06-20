@@ -192,7 +192,7 @@ msn_session_get_conv(MsnSession *session,const char *passport)
  * 	passport - the one want to talk to you
  */
 void
-msn_session_report_user(MsnSession *session,const char *passport,char *msg,PurpleMessageFlags flags)
+msn_session_report_user(MsnSession *session,const char *passport,const char *msg,PurpleMessageFlags flags)
 {
 	PurpleConversation * conv;
 
