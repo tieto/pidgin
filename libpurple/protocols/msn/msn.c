@@ -1095,6 +1095,8 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 {
 	PurpleAccount *account;
 	PurpleBuddy *buddy = purple_find_buddy(gc->account, who);
+	MsnSession *session;
+	MsnSwitchBoard *swboard;
 	MsnMessage *msg;
 	char *msgformat;
 	char *msgtext;
@@ -1103,6 +1105,9 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	purple_debug_info("MSNP14","send IM {%s} to %s\n",message,who);
 	account = purple_connection_get_account(gc);
 	username = purple_account_get_username(account);
+
+	session = gc->proto_data;
+	swboard = msn_session_find_swboard(session, who);
 
 	if (buddy) {
 		PurplePresence *p = purple_buddy_get_presence(buddy);
@@ -1115,13 +1120,12 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	}
 
 	msn_import_html(message, &msgformat, &msgtext);
-	/* this is incorrect, we should try to initiate a connection to the
-	   buddy first, and only falls back if that fails. Otherwise we can
-	   only send offline message to invisible buddies */
 	if (msn_user_is_online(account, who)||
-		msn_user_is_yahoo(account, who)){
-		/*User online,then send Online Instant Message*/
-
+		msn_user_is_yahoo(account, who) ||
+		swboard != NULL){
+		/*User online or have a swboard open because it's invisible
+		 * and sent us a message,then send Online Instant Message*/
+ 
 		if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
 		{
 			g_free(msgformat);
@@ -1140,13 +1144,10 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		purple_debug_info("MSNP14","prepare to send online Message\n");
 		if (g_ascii_strcasecmp(who, username))
 		{
-			MsnSession *session;
-			MsnSwitchBoard *swboard;
 			MsnEmoticon *smile;
 			GSList *smileys;
 			GString *emoticons = NULL;
 
-			session = gc->proto_data;
 			if(msn_user_is_yahoo(account,who)){
 				/*we send the online and offline Message to Yahoo User via UBM*/
 				purple_debug_info("MSNP14","send to Yahoo User\n");
@@ -1203,11 +1204,9 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		msn_message_destroy(msg);
 	} else {
 		/*send Offline Instant Message,only to MSN Passport User*/
-		MsnSession *session;
 		char *friendname;
 
 		purple_debug_info("MSNP14","prepare to send offline Message\n");
-		session = gc->proto_data;
 
 		friendname = msn_encode_mime(account->username);
 		msn_oim_prep_send_msg_info(session->oim,
