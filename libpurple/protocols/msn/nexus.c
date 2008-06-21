@@ -267,6 +267,8 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 	if (token_str == NULL)
 		return FALSE;
 
+	g_hash_table_remove_all(nexus->tokens[id].token);
+
 	elems = g_strsplit(token_str, "&", 0);
 
 	for (cur = elems; *cur != NULL; cur++) {
@@ -296,30 +298,37 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 }
 
 static gboolean
-nexus_parse_response(MsnNexus *nexus, xmlnode *xml)
+nexus_parse_collection(MsnNexus *nexus, int id, xmlnode *collection)
 {
 	xmlnode *node;
-	xmlnode *cipher;
-	xmlnode *secret;
-	char *data;
 	gboolean result;
 
-	node = xmlnode_get_child(xml, "Body/RequestSecurityTokenResponseCollection/RequestSecurityTokenResponse");
+	node = xmlnode_get_child(collection, "RequestSecurityTokenResponse");
 
 	if (!node)
 		return FALSE;
 
-	/* The first node contains the stuff for updating tokens. */
-	cipher = xmlnode_get_child(node, "RequestedSecurityToken/EncryptedData/CipherData/CipherValue");
-	nexus->cipher = xmlnode_get_data(cipher);
-	secret = xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
-	data = xmlnode_get_data(secret);
-	nexus->secret = (char *)purple_base64_decode(data, NULL);
-	g_free(data);
-
 	result = TRUE;
-	for (node = node->next; node && result; node = node->next)
-		result = nexus_parse_token(nexus, -1, node);
+	for (; node && result; node = node->next) {
+		xmlnode *endpoint = xmlnode_get_child(node, "AppliesTo/EndpointReference/Address");
+		char *address = xmlnode_get_data(endpoint);
+
+		if (g_str_equal(address, "http://Passport.NET/tb")) {
+			/* This node contains the stuff for updating tokens. */
+			char *data;
+			xmlnode *cipher = xmlnode_get_child(node, "RequestedSecurityToken/EncryptedData/CipherData/CipherValue");
+			xmlnode *secret = xmlnode_get_child(node, "RequestedProofToken/BinarySecret");
+
+			nexus->cipher = xmlnode_get_data(cipher);
+			data = xmlnode_get_data(secret);
+			nexus->secret = (char *)purple_base64_decode(data, NULL);
+			g_free(data);
+
+		} else {
+			result = nexus_parse_token(nexus, id, node);
+		}
+		g_free(address);
+	}
 
 	return result;
 }
@@ -337,7 +346,9 @@ nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		return;
 	}
 
-	if (!nexus_parse_response(nexus, resp->xml)) {
+	if (!nexus_parse_collection(nexus, -1,
+	                            xmlnode_get_child(resp->xml,
+	                                              "Body/RequestSecurityTokenResponseCollection"))) {
 		msn_session_set_error(session, MSN_ERROR_SERVCONN, _("Windows Live ID authentication:Invalid response"));
 		return;
 	}
@@ -452,8 +463,10 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		purple_debug_info("msnp15", "Got Response Body EncryptedData: %s\n", decrypted_data);
 
 		rstresponse = xmlnode_from_str(decrypted_data, -1);
-		g_hash_table_remove_all(nexus->tokens[ud->id].token);
-		nexus_parse_token(nexus, ud->id, rstresponse);
+		if (g_str_equal(rstresponse->name, "RequestSecurityTokenResponse"))
+			nexus_parse_token(nexus, ud->id, rstresponse);
+		else
+			nexus_parse_collection(nexus, ud->id, rstresponse);
 		g_free(decrypted_data);
 	}
 
