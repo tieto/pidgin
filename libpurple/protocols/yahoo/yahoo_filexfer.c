@@ -1203,22 +1203,36 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 		cookies = yahoo_get_cookies(xd->gc);
 		if(purple_xfer_get_type(xfer) == PURPLE_XFER_SEND && xd->status_15 == ACCEPTED)
 		{
-			xd->txbuf = g_strdup_printf("POST /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nContent-Length: %ld\r\nCache-Control: no-cache\r\n\r\n",
+			if(xd->info_val_249 == 2)
+				{
+				/*sending file via p2p, we are connected as client*/
+				xd->txbuf = g_strdup_printf("POST /%s HTTP/1.1\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nContent-Length: %ld\r\nCache-Control: no-cache\r\n\r\n",
+										xd->path,
+										xd->host,
+										(long int)xfer->size);	/*to do, add Referer*/
+				}
+			else
+				{
+				/*sending file via relaying*/
+				xd->txbuf = g_strdup_printf("POST /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nContent-Length: %ld\r\nCache-Control: no-cache\r\n\r\n",
 										purple_url_encode(xd->xfer_idstring_for_relay),
 										purple_normalize(account, purple_account_get_username(account)),
 										xfer->who,
 										cookies,
 										xd->host,
 										(long int)xfer->size);
+				}
 		}
 		else if(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE && xd->status_15 == STARTED)
 		{	
-			if(xd->info_val_249 == 1)	/*receiving file via p2p, if xd->info_val_249 is 1*/
+			if(xd->info_val_249 == 1)
 				{
+				/*receiving file via p2p, connected as client*/
 				xd->txbuf = g_strdup_printf("HEAD /%s HTTP/1.1\r\nAccept:*/*\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nContent-Length: 0\r\nCache-Control: no-cache\r\n\r\n",xd->path,xd->host);
 			}
-			else	/*receiving file via relaying*/
+			else
 				{
+				/*receiving file via relaying*/
 				xd->txbuf = g_strdup_printf("HEAD /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nAccept:*/*\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost:%s\r\nContent-Length: 0\r\nCache-Control: no-cache\r\n\r\n",
 										purple_url_encode(xd->xfer_idstring_for_relay),
 										purple_normalize(account, purple_account_get_username(account)),
@@ -1229,12 +1243,14 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 		}
 		else if(purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE && xd->status_15 == HEAD_REPLY_RECEIVED)
 		{
-			if(xd->info_val_249 == 1)	/*receiving file via p2p*/
+			if(xd->info_val_249 == 1)
 				{
+				/*receiving file via p2p, connected as client*/
 				xd->txbuf = g_strdup_printf("GET /%s HTTP/1.1\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nConnection: Keep-Alive\r\n\r\n",xd->path,xd->host);
 			}
-			else		/*receiving file via relaying*/
+			else
 				{
+				/*receiving file via relaying*/
 				xd->txbuf = g_strdup_printf("GET /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost:%s\r\nConnection: Keep-Alive\r\n\r\n",
 										purple_url_encode(xd->xfer_idstring_for_relay),
 										purple_normalize(account, purple_account_get_username(account)),
@@ -1260,6 +1276,36 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 			yahoo_xfer_send_cb_15, xfer);
 		yahoo_xfer_send_cb_15(xfer, source, PURPLE_INPUT_WRITE);
 	}
+}
+
+/*send (p2p) file transfer information when we are connected as client*/
+static void yahoo_p2p_client_send_ft_info(PurpleConnection *gc, PurpleXfer *xfer)
+{
+	struct yahoo_xfer_data *xd;
+	struct yahoo_packet *pkt;
+	PurpleAccount *account;
+	struct yahoo_data *yd;
+	gchar *filename;
+
+	if (!(xd = xfer->data))
+		return;
+
+	account = purple_connection_get_account(gc);
+	yd = gc->proto_data;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANS_INFO_15, YAHOO_STATUS_AVAILABLE, yd->session_id);
+	filename = g_path_get_basename(purple_xfer_get_local_filename(xfer));
+
+	yahoo_packet_hash(pkt, "ssssi",
+		1, purple_normalize(account, purple_account_get_username(account)),
+		5, xfer->who,
+		265, xd->xfer_peer_idstring,
+		27,  filename,
+		249, 2);	/*249= 2:we are connected as p2p client, and sending file*/
+	xd->info_val_249 = 2;
+
+	g_free(filename);
+	yahoo_packet_send_and_free(pkt, yd);
 }
 
 void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
@@ -1342,6 +1388,14 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 		*	so, purple dnsquery is used... but retries, trying with next ip
 		*	address etc. is not implemented..TODO
 		*/
+		
+		/*p2p connection exists, we being p2p client*/
+		if( g_hash_table_lookup(yd->peers, from) )	{
+			/*send p2p file transfer information when we are connected as client*/
+			yahoo_p2p_client_send_ft_info(gc, xfer);
+			return;
+		}
+
 		if (yd->jp)
 		{
 			purple_dnsquery_a(YAHOOJP_XFER_RELAY_HOST, YAHOOJP_XFER_RELAY_PORT,
@@ -1470,7 +1524,7 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 			break;
 		case 249:
 			val_249 = strtol(pair->value, NULL, 10);
-			/* 249 has value 1 when doing p2p transfer and value 3 when relaying through yahoo server */
+			/* 249 has value 1 or 2 when doing p2p transfer and value 3 when relaying through yahoo server */
 			break;
 		case 250:
 			url = pair->value;
@@ -1537,6 +1591,8 @@ void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *p
 	GSList *l;
 	PurpleAccount *account;
 	long val_66 = 0;
+	gchar *url = NULL;
+	int val_249;
 
 	yd = gc->proto_data;
 	for (l = pkt->hash; l; l = l->next) {
@@ -1551,19 +1607,35 @@ void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *p
 			break;
 		case 66:
 			val_66 = atol(pair->value);
+			break;
+		case 249:
+			val_249 = atol(pair->value);
+			break;
+		case 250:
+			url = pair->value;	/*we get a p2p url here when sending file, connected as client*/
+			break;
 		}
 	}
 
 	xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map, xfer_peer_idstring);
 	if(!xfer) return;
 
-	if(val_66 == -1 || !(xfer_idstring_for_relay))
+	if(val_66 == -1 || ( (!(xfer_idstring_for_relay)) && (val_249 != 2) ))
+	{
+		purple_xfer_cancel_remote(xfer);
+		return;
+	}
+
+	if( (val_249 == 2) && (!(url)) )
 	{
 		purple_xfer_cancel_remote(xfer);
 		return;
 	}
 
 	xfer_data = xfer->data;
+	if(url)
+		purple_url_parse(url, &(xfer_data->host), &(xfer_data->port), &(xfer_data->path), NULL, NULL);
+		
 	xfer_data->xfer_idstring_for_relay = g_strdup(xfer_idstring_for_relay);
 	xfer_data->status_15 = ACCEPTED;
 	account = purple_connection_get_account(gc);
