@@ -52,7 +52,7 @@ purple_theme_manager_get_type (void)
       NULL,   /* Value Table */
     };
     type = g_type_register_static (G_TYPE_OBJECT,
-                                   "PurpleThemeManagerType",
+                                   "PurpleThemeManager",
                                    &info, 0);
   }
   return type;

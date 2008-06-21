@@ -50,7 +50,7 @@ typedef struct _PurpleSoundThemeClass   PurpleSoundThemeClass;
 
 struct _PurpleSoundTheme
 {
-	PurpleTheme *parent;
+	PurpleTheme parent;
 	gpointer priv;
 };
 

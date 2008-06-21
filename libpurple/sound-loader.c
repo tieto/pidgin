@@ -70,14 +70,14 @@ purple_sound_loader_build(const gchar *dir)
 	/* Parse the tree */
 	theme = g_object_new(PURPLE_TYPE_SOUND_THEME, "type", "sound", NULL);
 		
-	purple_theme_set_name(theme->parent, xmlnode_get_attrib(root_node, THEME_NAME));
-	purple_theme_set_author(theme->parent, xmlnode_get_attrib(root_node, THEME_AUTHOR));
+	purple_theme_set_name(PURPLE_THEME(theme), xmlnode_get_attrib(root_node, THEME_NAME));
+	purple_theme_set_author(PURPLE_THEME(theme), xmlnode_get_attrib(root_node, THEME_AUTHOR));
 
 	image = g_build_filename(dir, xmlnode_get_attrib(root_node, THEME_IMAGE), NULL);
 	
 	sub_node = xmlnode_get_child(root_node, THEME_DESCRIPTION);
 	data = xmlnode_get_data(sub_node);
-	purple_theme_set_description(theme->parent, data);
+	purple_theme_set_description(PURPLE_THEME(theme), data);
 	xmlnode_free(sub_node);
 
 	while ((sub_node = xmlnode_get_child(root_node, THEME_SOUND_EVENT)) != NULL){
@@ -127,7 +127,7 @@ purple_sound_theme_loader_get_type (void)
       NULL,   /* value table */
     };
     type = g_type_register_static (G_TYPE_OBJECT,
-                                   "PurpleSoundThemeLoaderType",
+                                   "PurpleSoundThemeLoader",
                                    &info, 0);
   }
   return type;

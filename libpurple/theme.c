@@ -194,7 +194,7 @@ purple_theme_class_init (PurpleThemeClass *klass)
 	/* PREVIEW IMAGE */
 	pspec = g_param_spec_pointer(PROP_IMAGE_S, "Image",
 				    "A preview image of the theme",
-				    G_PARAM_READABLE);
+				    G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_IMAGE, pspec);
 }
 
@@ -217,7 +217,7 @@ purple_theme_get_type (void)
       NULL,   /* value table */
     };
     type = g_type_register_static (G_TYPE_OBJECT,
-                                   "PurpleThemeType",
+                                   "PurpleTheme",
                                    &info, G_TYPE_FLAG_ABSTRACT);
   }
   return type;

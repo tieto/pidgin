@@ -43,7 +43,6 @@ static GObjectClass *parent_class = NULL;
 /******************************************************************************
  * Enums
  *****************************************************************************/
-#define PROP_TYPE_S "type"
 
 enum {
 	PROP_ZERO = 0,
@@ -109,10 +108,10 @@ purple_theme_loader_class_init (PurpleThemeLoaderClass *klass)
 	obj_class->finalize = purple_theme_loader_finalize;
 
 	/* TYPE STRING (read only) */
-	pspec = g_param_spec_string(PROP_TYPE_S, "Type",
+	pspec = g_param_spec_string("type", "Type",
 				    "The string represtenting the type of the theme",
 				    NULL,
-				    G_PARAM_READABLE | G_PARAM_CONSTRUCT_ONLY);
+				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property(obj_class, PROP_TYPE, pspec);
 }
 

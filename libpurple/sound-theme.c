@@ -103,8 +103,8 @@ purple_sound_theme_get_type (void)
       purple_sound_theme_init,    /* instance_init */
       NULL,   /* value table */
     };
-    type = g_type_register_static (G_TYPE_OBJECT,
-                                   "PurpleSoundThemeType",
+    type = g_type_register_static (PURPLE_TYPE_THEME,
+                                   "PurpleSoundTheme",
                                    &info, 0);
   }
   return type;
@@ -136,9 +136,9 @@ purple_sound_theme_get_file_full(PurpleSoundTheme *theme,
 
 	g_return_val_if_fail(PURPLE_IS_SOUND_THEME(theme), NULL);
 
-	dir = purple_theme_get_dir(theme->parent);
+	dir = purple_theme_get_dir(PURPLE_THEME(theme));
 	fname = purple_sound_theme_get_file(theme, event);
-	full = g_strconcat (dir, '/',fname, NULL);
+	full = g_build_filename(dir, fname, NULL);
 
 	g_free(dir);
 	g_free(fname);
