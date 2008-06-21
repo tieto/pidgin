@@ -841,7 +841,6 @@ msn_soap_post_request(MsnSoapConn *soapconn, MsnSoapReq *request)
 					"POST %s HTTP/1.1\r\n"
 					"SOAPAction: %s\r\n"
 					"Content-Type:text/xml; charset=utf-8\r\n"
-					"Cookie: MSPAuth=%s\r\n"
 					"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
 					"Accept: */*\r\n"
 					"Host: %s\r\n"
@@ -851,7 +850,6 @@ msn_soap_post_request(MsnSoapConn *soapconn, MsnSoapReq *request)
 					"%s",
 					request->login_path,
 					request->soap_action,
-					soapconn->session->passport_info.mspauth,
 					request->login_host,
 					strlen(request->body),
 					request->body

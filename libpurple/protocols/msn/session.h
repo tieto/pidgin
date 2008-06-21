@@ -38,7 +38,6 @@ typedef struct _MsnSession MsnSession;
 #include "cmdproc.h"
 #include "nexus.h"
 #include "httpconn.h"
-#include "contact.h"
 #include "oim.h"
 
 #include "userlist.h"
@@ -96,7 +95,6 @@ struct _MsnSession
 
 	MsnNotification *notification;
 	MsnNexus *nexus;
-	MsnContact *contact;
 	MsnOim		*oim;
 	MsnSync *sync;
 
@@ -109,12 +107,10 @@ struct _MsnSession
 	/*psm info*/
 	char *psm;
 
+	char *blocked_text;
+
 	struct
 	{
-		/*t and p, get via USR TWN*/
-		char *t;
-		char *p;
-
 		char *kv;
 		char *sid;
 		char *mspauth;
@@ -236,6 +232,6 @@ void msn_session_finish_login(MsnSession *session);
 
 /*post message to User*/
 void msn_session_report_user(MsnSession *session,const char *passport,
-							char *msg,PurpleMessageFlags flags);
+							const char *msg,PurpleMessageFlags flags);
 
 #endif /* _MSN_SESSION_H_ */
