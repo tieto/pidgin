@@ -135,15 +135,15 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	gpointer req_data)
 {
 	MsnOimRequestData *data = (MsnOimRequestData *)req_data;
-	xmlnode *xml;
-	xmlnode *faultcode;
-	gchar *faultcode_str;
+	xmlnode *fault = NULL;
+	xmlnode *faultcode = NULL;
 
-	xml = response->xml;
-	faultcode = xmlnode_get_child(xml, "Body/Fault/faultcode");
+	fault = xmlnode_get_child(response->xml, "Body/Fault");
+	if (fault)
+		faultcode = xmlnode_get_child(fault, "faultcode");
 
-	if (faultcode != NULL) {
-		faultcode_str = xmlnode_get_data(faultcode);
+	if (faultcode) {
+		gchar *faultcode_str = xmlnode_get_data(faultcode);
 
 		if (faultcode_str && g_str_equal(faultcode_str, "q0:BadContextToken")) {
 			purple_debug_error("msnp15", "OIM Request Error, Updating token now.");
@@ -152,6 +152,16 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 				(GSourceFunc)msn_oim_request_helper, data);
 			g_free(faultcode_str);
 			return;
+
+		} else if (faultcode_str && g_str_equal(faultcode_str, "q0:AuthenticationFailed")) {
+			if (xmlnode_get_child(fault, "detail/RequiredAuthPolicy") != NULL) {
+				purple_debug_error("msnp15", "OIM Request Error, Updating token now.");
+				msn_nexus_update_token(data->oim->session->nexus,
+					data->send ? MSN_AUTH_LIVE_SECURE : MSN_AUTH_MESSENGER_WEB,
+					(GSourceFunc)msn_oim_request_helper, data);
+				g_free(faultcode_str);
+				return;
+			}
 		}
 		g_free(faultcode_str);
 	}
