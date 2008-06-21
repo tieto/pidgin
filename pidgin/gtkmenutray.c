@@ -98,8 +98,9 @@ pidgin_menu_tray_finalize(GObject *obj)
 		gtk_widget_destroy(GTK_WIDGET(tray->tray));
 #endif
 
-	if (tray->tooltips)
-		g_object_ref_sink(G_OBJECT(tray->tooltips));
+	if (tray->tooltips) {
+		gtk_object_sink(GTK_OBJECT(tray->tooltips));
+	}
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
