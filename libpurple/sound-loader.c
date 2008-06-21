@@ -22,6 +22,7 @@
  */
 
 #include "sound-loader.h"
+#include "sound-theme.h"
 #include "util.h"
 #include "xmlnode.h"
 
@@ -102,9 +103,9 @@ purple_sound_loader_build(const gchar *dir)
 static void
 purple_sound_theme_loader_class_init (PurpleSoundThemeLoaderClass *klass)
 {
-	parent_class = g_type_class_peek_parent (klass);
-	
-	parent_class->purple_theme_loader_build = purple_sound_loader_build;
+	PurpleThemeLoaderClass *loader_klass = PURPLE_THEME_LOADER_CLASS(klass);
+
+	loader_klass->purple_theme_loader_build = purple_sound_loader_build;
 }
 
 

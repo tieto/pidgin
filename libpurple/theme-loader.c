@@ -90,7 +90,7 @@ purple_theme_loader_finalize(GObject *obj)
 {
 	PurpleThemeLoader *loader = PURPLE_THEME_LOADER(obj);	
 	PurpleThemeLoaderPrivate *priv = PURPLE_THEME_LOADER_GET_PRIVATE(loader);
-	
+
 	g_free(priv->type);
 
 	parent_class->finalize (obj);
@@ -101,13 +101,13 @@ purple_theme_loader_class_init (PurpleThemeLoaderClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 	GParamSpec *pspec;
-
+	
 	parent_class = g_type_class_peek_parent (klass);
 
 	obj_class->get_property = purple_theme_loader_get_property;
 	obj_class->set_property = purple_theme_loader_set_property;
 	obj_class->finalize = purple_theme_loader_finalize;
-	
+
 	/* TYPE STRING (read only) */
 	pspec = g_param_spec_string(PROP_TYPE_S, "Type",
 				    "The string represtenting the type of the theme",

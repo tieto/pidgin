@@ -28,7 +28,7 @@
  * Globals
  *****************************************************************************/
 
-static GHashTable *theme_table;
+static GHashTable *theme_table = NULL;
 
 /*****************************************************************************
  * GObject Stuff                                                     
@@ -147,7 +147,7 @@ purple_theme_manager_init (PurpleThemeLoader *loader1, ...)
 	va_list args;
 	PurpleThemeLoader *loader;
 
-	g_return_if_fail(theme_table != NULL);
+	/*g_return_if_fail(theme_table != NULL);*/
 
 	theme_table = g_hash_table_new_full (g_str_hash,
                	                             g_str_equal,
@@ -160,7 +160,7 @@ purple_theme_manager_init (PurpleThemeLoader *loader1, ...)
 	va_end(args);
 
 	/* TODO: add themes properly */
-	purple_theme_manager_build_dir(NULL);
+	purple_theme_manager_build_dir("/usr/share/themes");
 }
 
 void 
@@ -171,7 +171,7 @@ purple_theme_manager_refresh()
                 	             NULL);	
 	
 	/* TODO: this also needs to be fixed the same as new */
-	purple_theme_manager_build_dir(NULL);
+	purple_theme_manager_build_dir("/usr/share/themes");
 
 }
 
@@ -189,14 +189,12 @@ purple_theme_manager_register_type(PurpleThemeLoader *loader)
 
 	g_return_if_fail(PURPLE_IS_THEME_LOADER(loader));
 
-	type = purple_theme_loader_get_type_string(loader);
+	type = g_strdup(purple_theme_loader_get_type_string(loader));
 	g_return_if_fail(type);
 
 	/* if something is already there do nothing */
 	if (! g_hash_table_lookup (theme_table, type)) 
 		g_hash_table_insert(theme_table, type, loader);
-	
-	g_free(type);
 }
 
 void

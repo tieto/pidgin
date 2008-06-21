@@ -69,6 +69,8 @@ static GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
 static GtkTreeRowReference *previous_smiley_row = NULL;
 
+static GtkListStore *sound_themes;
+
 /*
  * PROTOTYPES
  */
@@ -1832,7 +1834,7 @@ static GtkWidget *
 sound_page(void)
 {
 	GtkWidget *ret;
-	GtkWidget *vbox, *sw, *button;
+	GtkWidget *vbox, *sw, *button, *combo_box;
 	GtkSizeGroup *sg;
 	GtkTreeIter iter;
 	GtkWidget *event_view;
@@ -1845,6 +1847,8 @@ sound_page(void)
 	int j;
 	const char *file;
 	char *pref;
+	GtkCellRenderer *cell_rend;
+	GdkPixbuf *pixbuf;
 #ifndef _WIN32
 	GtkWidget *dd;
 	GtkWidget *entry;
@@ -1922,7 +1926,6 @@ sound_page(void)
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/method",
 								sound_changed2_cb, vbox);
 #endif
-
 	vbox = pidgin_make_frame(ret, _("Sound Events"));
 
 	/* The following is an ugly hack to make the frame expand so the
@@ -1934,6 +1937,26 @@ sound_page(void)
 	gtk_box_set_child_packing(GTK_BOX(vbox->parent->parent->parent),
 			vbox->parent->parent, TRUE, TRUE, 0, GTK_PACK_START);
 
+	/* SOUND THEMES */
+	sound_themes = gtk_list_store_new (2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
+
+	combo_box = gtk_combo_box_new_with_model (GTK_TREE_MODEL (sound_themes));
+	gtk_box_pack_start (GTK_BOX (vbox), combo_box, FALSE, FALSE, 0);
+
+	cell_rend = gtk_cell_renderer_pixbuf_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "pixbuf", 0, NULL);
+	
+	cell_rend = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "text", 1, NULL);
+	
+	pixbuf = gdk_pixbuf_new_from_file (NULL, NULL);
+	gtk_list_store_append (sound_themes, &iter);
+	gtk_list_store_set (sound_themes, &iter, 0, pixbuf, 1, _("(Default)"), -1);
+	gdk_pixbuf_unref (pixbuf);
+
+	/* SOUND SELECTION */
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_widget_set_size_request(sw, -1, 100);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
