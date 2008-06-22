@@ -523,26 +523,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnTransaction *trans;
 	char buf[33];
 
-#if 0
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, (const guchar *)cmd->params[1],
-							   strlen(cmd->params[1]));
-	challenge_resp = MSNP15_WLM_PRODUCT_KEY;
-
-	purple_cipher_context_append(context, (const guchar *)challenge_resp,
-							   strlen(challenge_resp));
-	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	purple_cipher_context_destroy(context);
-
-	for (i = 0; i < 16; i++)
-	{
-		g_snprintf(buf + (i*2), 3, "%02x", digest[i]);
-	}
-#else
 	msn_handle_chl(cmd->params[1], buf);
-#endif
-//	purple_debug_info("MSNP14","<<challenge:{%s}:{%s}\n",cmd->params[1],buf);
 	trans = msn_transaction_new(cmdproc, "QRY", "%s 32", MSNP15_WLM_PRODUCT_ID);
 
 	msn_transaction_set_payload(trans, buf, 32);
