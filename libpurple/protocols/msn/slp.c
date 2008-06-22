@@ -44,7 +44,7 @@ static void send_ok(MsnSlpCall *slpcall, const char *branch,
 static void send_decline(MsnSlpCall *slpcall, const char *branch,
 						 const char *type, const char *content);
 
-void msn_request_user_display(MsnUser *user);
+static void request_user_display(MsnUser *user);
 
 /**************************************************************************
  * Util
@@ -930,7 +930,7 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 		username = user->passport;
 
 		userlist->buddy_icon_window--;
-		msn_request_user_display(user);
+		request_user_display(user);
 
 #ifdef MSN_DEBUG_UD
 		purple_debug_info("msn", "msn_release_buddy_icon_request(): buddy_icon_window-- yields =%d\n",
@@ -1066,8 +1066,8 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 														  msn_release_buddy_icon_request_timeout, userlist);
 }
 
-void
-msn_request_user_display(MsnUser *user)
+static void
+request_user_display(MsnUser *user)
 {
 	PurpleAccount *account;
 	MsnSession *session;
@@ -1115,7 +1115,7 @@ msn_request_user_display(MsnUser *user)
 		session->userlist->buddy_icon_window++;
 
 #ifdef MSN_DEBUG_UD
-		purple_debug_info("msn", "msn_request_user_display(): buddy_icon_window++ yields =%d\n",
+		purple_debug_info("msn", "request_user_display(): buddy_icon_window++ yields =%d\n",
 						session->userlist->buddy_icon_window);
 #endif
 
