@@ -32,11 +32,13 @@ typedef struct _JabberCapsIdentity {
 	char *category;
 	char *type;
 	char *name;
+	char *lang;
 } JabberCapsIdentity;
 
 struct _JabberCapsClientInfo {
 	GList *identities; /* JabberCapsIdentity */
 	GList *features; /* char * */
+	GList *forms; /* xmlnode * */
 };
 
 typedef void (*jabber_caps_get_info_cb)(JabberCapsClientInfo *info, gpointer user_data);
@@ -46,12 +48,29 @@ void jabber_caps_init(void);
 void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *ext, jabber_caps_get_info_cb cb, gpointer user_data);
 void jabber_caps_free_clientinfo(JabberCapsClientInfo *clientinfo);
 
+/**
+ *	Processes a query-node and returns a JabberCapsClientInfo object with all relevant info.
+ *	
+ *	@param 	query 	A query object.
+ *	@return 		A JabberCapsClientInfo object.
+ */
+JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query);
 
-void jabber_caps_calculate_hash();
+/**
+ *	Takes a JabberCapsClientInfo pointer and returns the caps hash according to
+ *	XEP-0115 Version 1.5.
+ *
+ *	@param info A JabberCapsClientInfo pointer.
+ *	@return		The base64 encoded SHA-1 hash; needs to be freed if not needed 
+ *				any furthermore. 
+ */
+gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info);
+
+void jabber_caps_calculate_own_hash();
 
 /** Get the current caps hash.
  * 	@ret hash
 **/
-const gchar* jabber_caps_get_hash();
+const gchar* jabber_caps_get_own_hash();
 
 #endif /* _PURPLE_JABBER_CAPS_H_ */
