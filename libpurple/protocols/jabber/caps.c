@@ -569,12 +569,17 @@ static gint jabber_caps_jabber_identity_compare(gconstpointer a, gconstpointer b
 	const JabberIdentity *ac;
 	const JabberIdentity *bc;
 	gint cat_cmp;
+	gint typ_cmp;
 	
 	ac = a;
 	bc = b;
 	
 	if ((cat_cmp = strcmp(ac->category, bc->category)) == 0) {
-		return strcmp(ac->type, bc->type);
+		if ((typ_cmp = strcmp(ac->type, bc->type)) == 0) {
+			return strcmp(ac->lang, bc->lang);
+		} else {
+			return typ_cmp;
+		}
 	} else {
 		return cat_cmp;
 	}
