@@ -980,7 +980,7 @@ fln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	/* Tell libpurple that the user has signed off */
 	user = msn_userlist_find_user(cmdproc->session->userlist, cmd->params[0]);
-	user->status = "offline";
+	msn_user_set_state(user, NULL);
 	msn_user_update(user);
 
 	/* If we have an open MsnSlpLink with the user then close it */
