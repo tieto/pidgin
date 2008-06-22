@@ -216,6 +216,7 @@ typedef struct _JabberIdentity
 	gchar *category;
 	gchar *type;
 	gchar *name;
+	gchar *lang;
 } JabberIdentity;
 
 typedef struct _JabberBytestreamsStreamhost {

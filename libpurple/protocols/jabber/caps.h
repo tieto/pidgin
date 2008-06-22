@@ -28,12 +28,7 @@ typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 
 /* Implementation of XEP-0115 */
 
-typedef struct _JabberCapsIdentity {
-	char *category;
-	char *type;
-	char *name;
-	char *lang;
-} JabberCapsIdentity;
+typedef struct _JabberIdentity JabberCapsIdentity;
 
 struct _JabberCapsClientInfo {
 	GList *identities; /* JabberCapsIdentity */

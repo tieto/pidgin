@@ -595,6 +595,42 @@ static gint jabber_caps_jabber_feature_compare(gconstpointer a, gconstpointer b)
 	return strcmp(ac->namespace, bc->namespace);
 }
 
+static gint jabber_caps_string_compare(gconstpointer a, gconstpointer b) {
+	const gchar *ac;
+	const gchar *bc;
+	
+	ac = a;
+	bc = b;
+	
+	return strcmp(ac, bc);
+}
+
+static gint jabber_caps_jabber_xdata_compare(gconstpointer a, gconstpointer b) {
+	const xmlnode *ac;
+	const xmlnode *bc;
+	xmlnode *aformtypefield;
+	xmlnode *bformtypefield;
+	char *aformtype;
+	char *bformtype;
+	int result;
+	
+	ac = a;
+	bc = b;
+
+	aformtypefield = xmlnode_get_child(ac, "field");
+	while (aformtypefield && strcmp(xmlnode_get_attrib(aformtypefield, "var"), "FORM_TYPE")) aformtypefield = xmlnode_get_next_twin(aformtypefield);
+	aformtype = xmlnode_get_data(aformtypefield);
+	
+	bformtypefield = xmlnode_get_child(bc, "field");
+	while (bformtypefield && strcmp(xmlnode_get_attrib(bformtypefield, "var"), "FORM_TYPE")) bformtypefield = xmlnode_get_next_twin(bformtypefield);
+	bformtype = xmlnode_get_data(bformtypefield);
+	
+	result = strcmp(aformtype, bformtype);
+	g_free(aformtype);
+	g_free(bformtype);
+	return result;
+}
+
 JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query) {
 	xmlnode *child;
 	
@@ -636,6 +672,10 @@ JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query) {
 gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info) {
 	if (!info) return 0;
 	
+	/* sort identities, features and x-data forms */
+	info->identities = g_list_sort(info->identities, jabber_caps_jabber_identity_compare);
+	info->features = g_list_sort(info->features, jabber_caps_string_compare);
+	info->forms = g_list_sort(info->forms, jabber_caps_jabber_xdata_compare);
 }
 
 void jabber_caps_calculate_own_hash() {
