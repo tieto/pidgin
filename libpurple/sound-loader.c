@@ -29,9 +29,6 @@
 /******************************************************************************
  * Globals
  *****************************************************************************/
-
-static PurpleThemeLoaderClass *parent_class = NULL;
-
 /*****************************************************************************
  * Sound Theme Builder                                                      
  *****************************************************************************/
@@ -126,7 +123,7 @@ purple_sound_theme_loader_get_type (void)
       NULL,    /* instance_init */
       NULL,   /* value table */
     };
-    type = g_type_register_static (G_TYPE_OBJECT,
+    type = g_type_register_static (PURPLE_TYPE_THEME_LOADER,
                                    "PurpleSoundThemeLoader",
                                    &info, 0);
   }

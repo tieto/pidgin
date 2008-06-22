@@ -149,7 +149,7 @@ purple_core_init(const char *ui)
 	/* Accounts use status, buddy icons and connection signals, so
 	 * initialize these before accounts
 	 */
-	purple_theme_manager_init(g_object_new(PURPLE_TYPE_SOUND_THEME_LOADER, NULL), NULL);
+	purple_theme_manager_init(g_object_new(PURPLE_TYPE_SOUND_THEME_LOADER, "type", "sound", NULL), NULL);
 	purple_status_init();
 	purple_buddy_icons_init();
 	purple_connections_init();

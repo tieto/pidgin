@@ -49,12 +49,6 @@ static GObjectClass *parent_class = NULL;
 /******************************************************************************
  * Enums
  *****************************************************************************/
-#define PROP_NAME_S "name"
-#define PROP_DESCRIPION_S "description"
-#define PROP_AUTHOR_S "author"
-#define PROP_TYPE_S "type"
-#define PROP_DIR_S "dir"
-#define PROP_IMAGE_S "image"
 
 enum {
 	PROP_ZERO = 0,
@@ -65,7 +59,6 @@ enum {
 	PROP_DIR,
 	PROP_IMAGE
 };
-
 
 /******************************************************************************
  * GObject Stuff                                                              *
@@ -134,6 +127,13 @@ purple_theme_set_property(GObject *obj, guint param_id, const GValue *value,
 }
 
 static void
+purple_theme_init(GTypeInstance *instance,
+			gpointer klass)
+{
+	(PURPLE_THEME(instance))->priv = g_new0(PurpleThemePrivate, 1);
+}
+
+static void
 purple_theme_finalize(GObject *obj)
 {
 	PurpleTheme *theme = PURPLE_THEME(obj);	
@@ -162,37 +162,37 @@ purple_theme_class_init (PurpleThemeClass *klass)
 	obj_class->finalize = purple_theme_finalize;
 	
 	/* NAME */
-	pspec = g_param_spec_string(PROP_NAME_S, "Name",
+	pspec = g_param_spec_string("name", "Name",
 				    "The name of the theme",
 				    NULL,
 				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 	g_object_class_install_property(obj_class, PROP_NAME, pspec);
 	/* DESCRIPION */
-	pspec = g_param_spec_string(PROP_DESCRIPION_S, "Description",
+	pspec = g_param_spec_string("description", "Description",
 				    "The description of the theme",
 				    NULL,
 				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 	g_object_class_install_property(obj_class, PROP_DESCRIPION, pspec);
 	/* AUTHOR */
-	pspec = g_param_spec_string(PROP_AUTHOR_S, "Author",
+	pspec = g_param_spec_string("author", "Author",
 				    "The author of the theme",
 				    NULL,
 				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 	g_object_class_install_property(obj_class, PROP_AUTHOR, pspec);
 	/* TYPE STRING (read only) */
-	pspec = g_param_spec_string(PROP_TYPE_S, "Type",
+	pspec = g_param_spec_string("type", "Type",
 				    "The string represtenting the type of the theme",
 				    NULL,
-				    G_PARAM_READABLE | G_PARAM_CONSTRUCT_ONLY);
+				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 	g_object_class_install_property(obj_class, PROP_TYPE, pspec);
 	/* DIRECTORY */
-	pspec = g_param_spec_string(PROP_DIR_S, "Directory",
+	pspec = g_param_spec_string("directory", "Directory",
 				    "The directory that contains the theme and all its files",
 				    NULL,
 				    G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 	g_object_class_install_property(obj_class, PROP_DIR, pspec);
 	/* PREVIEW IMAGE */
-	pspec = g_param_spec_pointer(PROP_IMAGE_S, "Image",
+	pspec = g_param_spec_pointer("image", "Image",
 				    "A preview image of the theme",
 				    G_PARAM_READWRITE);
 	g_object_class_install_property(obj_class, PROP_IMAGE, pspec);
@@ -213,7 +213,7 @@ purple_theme_get_type (void)
       NULL,   /* class_data */
       sizeof (PurpleTheme),
       0,      /* n_preallocs */
-      NULL,    /* instance_init */
+      purple_theme_init,    /* instance_init */
       NULL,   /* value table */
     };
     type = g_type_register_static (G_TYPE_OBJECT,

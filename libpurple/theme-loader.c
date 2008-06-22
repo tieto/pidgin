@@ -85,6 +85,13 @@ purple_theme_loader_set_property(GObject *obj, guint param_id, const GValue *val
 }
 
 static void
+purple_theme_loader_init(GTypeInstance *instance,
+			gpointer klass)
+{
+	(PURPLE_THEME_LOADER(instance))->priv = g_new0(PurpleThemeLoaderPrivate, 1);
+}
+
+static void
 purple_theme_loader_finalize(GObject *obj)
 {
 	PurpleThemeLoader *loader = PURPLE_THEME_LOADER(obj);	
@@ -130,11 +137,11 @@ purple_theme_loader_get_type (void)
       NULL,   /* class_data */
       sizeof (PurpleThemeLoader),
       0,      /* n_preallocs */
-      NULL,    /* instance_init */
+      purple_theme_loader_init,    /* instance_init */
       NULL,   /* value table */
     };
     type = g_type_register_static (G_TYPE_OBJECT,
-                                   "PurpleThemeLoaderType",
+                                   "PurpleThemeLoader",
                                    &info, G_TYPE_FLAG_ABSTRACT);
   }
   return type;

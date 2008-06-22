@@ -54,9 +54,10 @@ purple_sound_theme_init(GTypeInstance *instance,
 			gpointer klass)
 {
 	PurpleSoundThemePrivate *priv;
-	GObject *obj = (GObject *)instance;
 
-	priv = PURPLE_SOUND_THEME_GET_PRIVATE(obj);
+	(PURPLE_SOUND_THEME(instance))->priv = g_new0(PurpleSoundThemePrivate, 1);
+
+	priv = PURPLE_SOUND_THEME_GET_PRIVATE(instance);
 
 	priv->sound_files = g_hash_table_new_full (g_str_hash,
 						   g_str_equal,

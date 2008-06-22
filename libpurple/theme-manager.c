@@ -65,9 +65,9 @@ purple_theme_manager_get_type (void)
 static gchar *
 purple_theme_manager_make_key(const gchar *name, const gchar *type)
 {
-	g_return_val_if_fail(name, NULL);	
+	g_return_val_if_fail(name, NULL);
 	g_return_val_if_fail(type, NULL);		
-	return g_strconcat(type, '/', name, NULL);
+	return g_strconcat(type, "/", name, NULL);
 }
 
 /* returns TRUE if theme is of type "user_data" */ 
@@ -76,7 +76,7 @@ purple_theme_manager_is_theme_type(gchar *key,
                   gpointer value,
                   gchar *user_data)
 {
-	return g_str_has_prefix (key, g_strconcat(user_data, '/', NULL));
+	return g_str_has_prefix (key, g_strconcat(user_data, "/", NULL));
 }
 
 static gboolean
@@ -244,7 +244,7 @@ purple_theme_manager_add_theme(PurpleTheme *theme)
 	g_return_if_fail(key);
 	
 	/* if something is already there do nothing */
-	if (! g_hash_table_lookup (theme_table, key)) 
+	if (g_hash_table_lookup (theme_table, key) == NULL) 
 		g_hash_table_insert(theme_table, key, theme);
 	
 	g_free(key);	
