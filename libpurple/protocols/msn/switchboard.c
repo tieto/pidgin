@@ -1114,13 +1114,9 @@ cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	}
 
 	purple_debug_warning("msn", "cal_error: command %s gave error %i\n", trans->command, error);
-	purple_debug_warning("msn", "Will Use Offline Message to sendit\n");
-
-//	cal_error_helper(trans, reason);
-	/*offline Message send Process*/
 
 	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL){
-		purple_debug_warning("MSNP14","offline msg to send:{%s}\n",msg->body);
+		purple_debug_warning("MSNP14", "Unable to send msg: {%s}\n", msg->body);
 		/* The messages could not be sent due to a switchboard error */
 		swboard->error = MSN_SB_ERROR_USER_OFFLINE;
 		msg_error_helper(swboard->cmdproc, msg,
