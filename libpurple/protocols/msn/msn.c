@@ -2551,11 +2551,11 @@ init_plugin(PurplePlugin *plugin)
 	PurpleAccountOption *option;
 
 	option = purple_account_option_string_new(_("Server"), "server",
-											WLM_SERVER);
+											MSN_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	option = purple_account_option_int_new(_("Port"), "port", WLM_PORT);
+	option = purple_account_option_int_new(_("Port"), "port", MSN_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 

@@ -251,7 +251,7 @@ static void
 got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			   const char *euf_guid, const char *context)
 {
-	if (!strcmp(euf_guid, "A4268EEC-FEC5-49E5-95C3-F126696BDBF6"))
+	if (!strcmp(euf_guid, MSN_OBJ_GUID))
 	{
 		/* Emoticon or UserDisplay */
 		char *content;
@@ -332,7 +332,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		msn_slplink_queue_slpmsg(slplink, slpmsg);
 		purple_imgstore_unref(img);
 	}
-	else if (!strcmp(euf_guid, "5D3E02AB-6190-11D3-BBBB-00C04F795683"))
+	else if (!strcmp(euf_guid, MSN_FT_GUID))
 	{
 		/* File Transfer */
 		PurpleAccount *account;
@@ -384,7 +384,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			purple_xfer_request(xfer);
 		}
-	}
+	} else
+		purple_debug_warning("msn", "SLP SessionReq with unknown EUF-GUID: %s\n", euf_guid);
 }
 
 void
