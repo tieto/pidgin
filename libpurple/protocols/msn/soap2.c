@@ -80,8 +80,9 @@ static void msn_soap_message_send_internal(MsnSession *session,
 	MsnSoapMessage *message, const char *host, const char *path,
 	MsnSoapCallback cb, gpointer cb_data, gboolean first);
 
-static void msn_soap_request_destroy(MsnSoapRequest *req);
+static void msn_soap_request_destroy(MsnSoapRequest *req, gboolean keep_message);
 static void msn_soap_connection_sanitize(MsnSoapConnection *conn, gboolean disconnect);
+static gboolean msn_soap_write_cb_internal(gpointer data, gint fd, PurpleInputCondition cond, gboolean initial);
 static void msn_soap_process(MsnSoapConnection *conn);
 
 static gboolean
@@ -182,23 +183,15 @@ msn_soap_error_cb(PurpleSslConnection *ssl, PurpleSslErrorType error,
 static gboolean
 msn_soap_handle_redirect(MsnSoapConnection *conn, const char *url)
 {
-	char *c;
+	char *host;
+	char *path;
 
-	/* Skip the http:// */
-	if ((c = strchr(url, '/')) != NULL)
-		url += 2;
-
-	if ((c = strchr(url, '/')) != NULL) {
-		char *host, *path;
-
-		host = g_strndup(url, c - url);
-		path = g_strdup(c);
-
+	if (purple_url_parse(url, &host, NULL, &path, NULL, NULL)) {
 		msn_soap_message_send_internal(conn->session,
 			conn->current_request->message,	host, path,
 			conn->current_request->cb, conn->current_request->cb_data, TRUE);
 
-		msn_soap_request_destroy(conn->current_request);
+		msn_soap_request_destroy(conn->current_request, TRUE);
 		conn->current_request = NULL;
 
 		g_free(host);
@@ -223,7 +216,7 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 			char *faultdata = xmlnode_get_data(faultcode);
 
 			if (g_str_equal(faultdata, "psf:Redirect")) {
-				xmlnode *url = xmlnode_get_child(body, "redirectUrl");
+				xmlnode *url = xmlnode_get_child(fault, "redirectUrl");
 
 				if (url) {
 					char *urldata = xmlnode_get_data(url);
@@ -232,9 +225,10 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 				}
 
 				g_free(faultdata);
+				msn_soap_message_destroy(response);
 				return TRUE;
 			} else if (g_str_equal(faultdata, "wsse:FailedAuthentication")) {
-				xmlnode *reason = xmlnode_get_child(body, "faultstring");
+				xmlnode *reason = xmlnode_get_child(fault, "faultstring");
 				char *reasondata = xmlnode_get_data(reason);
 
 				msn_soap_connection_sanitize(conn, TRUE);
@@ -243,6 +237,7 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 
 				g_free(reasondata);
 				g_free(faultdata);
+				msn_soap_message_destroy(response);
 				return FALSE;
 			}
 
@@ -255,7 +250,8 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 		conn->current_request = NULL;
 		request->cb(request->message, response,
 			request->cb_data);
-		msn_soap_request_destroy(request);
+		msn_soap_message_destroy(response);
+		msn_soap_request_destroy(request, FALSE);
 	}
 
 	return TRUE;
@@ -406,10 +402,8 @@ msn_soap_process(MsnSoapConnection *conn) {
 				message->xml = node;
 
 				if (!msn_soap_handle_body(conn, message)) {
-					msn_soap_message_destroy(message);
 					return;
 				}
-				msn_soap_message_destroy(message);
 			}
 
 			msn_soap_connection_handle_next(conn);
@@ -426,27 +420,34 @@ msn_soap_process(MsnSoapConnection *conn) {
 static void
 msn_soap_write_cb(gpointer data, gint fd, PurpleInputCondition cond)
 {
+	msn_soap_write_cb_internal(data, fd, cond, FALSE);
+}
+
+static gboolean
+msn_soap_write_cb_internal(gpointer data, gint fd, PurpleInputCondition cond,
+		gboolean initial)
+{
 	MsnSoapConnection *conn = data;
 	int written;
 
-	g_return_if_fail(cond == PURPLE_INPUT_WRITE);
+	if (cond != PURPLE_INPUT_WRITE) return TRUE;
 
 	written = purple_ssl_write(conn->ssl, conn->buf->str + conn->handled_len,
 		conn->buf->len - conn->handled_len);
 
 	if (written < 0 && errno == EAGAIN)
-		return;
+		return TRUE;
 	else if (written <= 0) {
 		purple_ssl_close(conn->ssl);
 		conn->ssl = NULL;
-		msn_soap_connection_handle_next(conn);
-		return;
+		if (!initial) msn_soap_connection_handle_next(conn);
+		return FALSE;
 	}
 
 	conn->handled_len += written;
 
 	if (conn->handled_len < conn->buf->len)
-		return;
+		return TRUE;
 
 	/* we are done! */
 	g_string_free(conn->buf, TRUE);
@@ -460,6 +461,7 @@ msn_soap_write_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	purple_input_remove(conn->event_handle);
 	conn->event_handle = purple_input_add(conn->ssl->fd, PURPLE_INPUT_READ,
 		msn_soap_read_cb, conn);
+	return TRUE;
 }
 
 static gboolean
@@ -478,22 +480,15 @@ msn_soap_connection_run(gpointer data)
 			int len = -1;
 			char *body = xmlnode_to_str(req->message->xml, &len);
 			GSList *iter;
-			char *authstr = NULL;
 
 			g_queue_pop_head(conn->queue);
 
 			conn->buf = g_string_new("");
 
-			if (conn->session->passport_info.mspauth)
-				authstr = g_strdup_printf("Cookie: MSPAuth=%s\r\n",
-					conn->session->passport_info.mspauth);
-
-
 			g_string_append_printf(conn->buf,
-				"POST %s HTTP/1.1\r\n"
+				"POST /%s HTTP/1.1\r\n"
 				"SOAPAction: %s\r\n"
 				"Content-Type:text/xml; charset=utf-8\r\n"
-				"%s"
 				"User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)\r\n"
 				"Accept: */*\r\n"
 				"Host: %s\r\n"
@@ -501,7 +496,7 @@ msn_soap_connection_run(gpointer data)
 				"Connection: Keep-Alive\r\n"
 				"Cache-Control: no-cache\r\n",
 				req->path, req->message->action ? req->message->action : "",
-				authstr ? authstr : "",	conn->host, len);
+				conn->host, len);
 
 			for (iter = req->message->headers; iter; iter = iter->next) {
 				g_string_append(conn->buf, (char *)iter->data);
@@ -518,9 +513,18 @@ msn_soap_connection_run(gpointer data)
 
 			conn->event_handle = purple_input_add(conn->ssl->fd,
 				PURPLE_INPUT_WRITE, msn_soap_write_cb, conn);
-			msn_soap_write_cb(conn, conn->ssl->fd, PURPLE_INPUT_WRITE);
+			if (!msn_soap_write_cb_internal(conn, conn->ssl->fd, PURPLE_INPUT_WRITE, TRUE)) {
+				/* Not connected => reconnect and retry */
+				purple_debug_info("soap", "not connected, reconnecting");
+				
+				conn->connected = FALSE;
+				conn->current_request = NULL;
+				msn_soap_connection_sanitize(conn, FALSE);
+				
+				g_queue_push_head(conn->queue, req);
+				conn->event_handle = purple_timeout_add(0, msn_soap_connection_run, conn);
+			}
 
-			g_free(authstr);
 			g_free(body);
 		}
 	}
@@ -585,7 +589,7 @@ msn_soap_connection_sanitize(MsnSoapConnection *conn, gboolean disconnect)
 	}
 
 	if (conn->current_request) {
-		msn_soap_request_destroy(conn->current_request);
+		msn_soap_request_destroy(conn->current_request, FALSE);
 		conn->current_request = NULL;
 	}
 }
@@ -612,7 +616,7 @@ msn_soap_connection_destroy_foreach_cb(gpointer item, gpointer data)
 	if (req->cb)
 		req->cb(req->message, NULL, req->cb_data);
 
-	msn_soap_request_destroy(req);
+	msn_soap_request_destroy(req, FALSE);
 }
 
 static void
@@ -666,28 +670,11 @@ msn_soap_message_add_header(MsnSoapMessage *message,
 }
 
 static void
-msn_soap_request_destroy(MsnSoapRequest *req)
+msn_soap_request_destroy(MsnSoapRequest *req, gboolean keep_message)
 {
 	g_free(req->path);
-	msn_soap_message_destroy(req->message);
+	if (!keep_message)
+		msn_soap_message_destroy(req->message);
 	g_free(req);
-}
-
-xmlnode *
-msn_soap_xml_get(xmlnode *parent, const char *node)
-{
-	xmlnode *ret = NULL;
-	char **tokens = g_strsplit(node, "/", -1);
-	int i;
-
-	for (i = 0; tokens[i]; i++) {
-		if ((ret = xmlnode_get_child(parent, tokens[i])) != NULL)
-			parent = ret;
-		else
-			break;
-	}
-
-	g_strfreev(tokens);
-	return ret;
 }
 

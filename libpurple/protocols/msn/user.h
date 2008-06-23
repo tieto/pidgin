@@ -33,14 +33,14 @@ typedef struct _MsnUser  MsnUser;
 
 typedef enum
 {
-	MSN_USER_TYPE_UNKNOWN  = 0x00,
-	MSN_USER_TYPE_PASSPORT = 0x01,
-	MSN_USER_TYPE_UNKNOWN1 = 0x02,
-	MSN_USER_TYPE_MOBILE   = 0x04,
-	MSN_USER_TYPE_UNKNOWN2 = 0x08,
-	MSN_USER_TYPE_UNKNOWN3 = 0x10,
-	MSN_USER_TYPE_YAHOO    = 0x20
-} MsnUserType;
+	MSN_NETWORK_UNKNOWN      = 0x00,
+	MSN_NETWORK_PASSPORT     = 0x01,
+	MSN_NETWORK_COMMUNICATOR = 0x02,
+	MSN_NETWORK_MOBILE       = 0x04,
+	MSN_NETWORK_MNI          = 0x08,
+	MSN_NETWORK_SMTP         = 0x10,
+	MSN_NETWORK_YAHOO        = 0x20
+} MsnNetwork;
 
 /**
  * Current media.
@@ -60,7 +60,6 @@ struct _MsnUser
 	MsnUserList *userlist;
 
 	char *passport;         /**< The passport account.          */
-	char *store_name;       /**< The name stored in the server. */
 	char *friendly_name;    /**< The friendly name.             */
 
 	char * uid;				/*< User Id							*/
@@ -88,7 +87,9 @@ struct _MsnUser
 
 	GHashTable *clientcaps; /**< The client's capabilities.     */
 
-	MsnUserType type;       /**< The user type                  */
+	guint clientid;         /**< The client's ID                */
+
+	MsnNetwork networkid;   /**< The user's network             */
 
 	int list_op;            /**< Which lists the user is in     */
 
@@ -111,7 +112,7 @@ struct _MsnUser
  * @return A new user structure.
  */
 MsnUser *msn_user_new(MsnUserList *userlist, const char *passport,
-					  const char *store_name);
+					  const char *friendly_name);
 
 /**
  * Destroys a user structure.
@@ -171,14 +172,6 @@ void msn_user_set_passport(MsnUser *user, const char *passport);
 void msn_user_set_friendly_name(MsnUser *user, const char *name);
 
 /**
- * Sets the store name for a user.
- *
- * @param user The user.
- * @param name The store name.
- */
-void msn_user_set_store_name(MsnUser *user, const char *name);
-
-/**
  * Sets the buddy icon for a local user.
  *
  * @param user     The user.
@@ -227,7 +220,22 @@ void msn_user_set_home_phone(MsnUser *user, const char *number);
 void msn_user_set_work_phone(MsnUser *user, const char *number);
 
 void msn_user_set_uid(MsnUser *user, const char *uid);
-void msn_user_set_type(MsnUser *user, MsnUserType type);
+
+/**
+ * Sets the client id for a user.
+ *
+ * @param user     The user.
+ * @param clientid The client id.
+ */
+void msn_user_set_clientid(MsnUser *user, guint clientid);
+
+/**
+ * Sets the network id for a user.
+ *
+ * @param user    The user.
+ * @param network The network id.
+ */
+void msn_user_set_network(MsnUser *user, MsnNetwork network);
 
 /**
  * Sets the mobile phone number for a user.
@@ -273,15 +281,6 @@ const char *msn_user_get_passport(const MsnUser *user);
 const char *msn_user_get_friendly_name(const MsnUser *user);
 
 /**
- * Returns the store name for a user.
- *
- * @param user The user.
- *
- * @return The store name.
- */
-const char *msn_user_get_store_name(const MsnUser *user);
-
-/**
  * Returns the home phone number for a user.
  *
  * @param user The user.
@@ -307,6 +306,24 @@ const char *msn_user_get_work_phone(const MsnUser *user);
  * @return The user's mobile phone number.
  */
 const char *msn_user_get_mobile_phone(const MsnUser *user);
+
+/**
+ * Returns the client id for a user.
+ *
+ * @param user    The user.
+ *
+ * @return The user's client id.
+ */
+guint msn_user_get_clientid(const MsnUser *user);
+
+/**
+ * Returns the network id for a user.
+ *
+ * @param user    The user.
+ *
+ * @return The user's network id.
+ */
+MsnNetwork msn_user_get_network(const MsnUser *user);
 
 /**
  * Returns the MSNObject for a user.

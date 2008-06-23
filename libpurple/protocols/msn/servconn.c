@@ -203,7 +203,7 @@ connect_cb(gpointer data, gint source, const char *error_message)
 }
 
 gboolean
-msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
+msn_servconn_connect(MsnServConn *servconn, const char *host, int port, gboolean force)
 {
 	MsnSession *session;
 
@@ -223,7 +223,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 	{
 		/* HTTP Connection. */
 
-		if (!servconn->httpconn->connected)
+		if (!servconn->httpconn->connected || force)
 			if (!msn_httpconn_connect(servconn->httpconn, host, port))
 				return FALSE;
 

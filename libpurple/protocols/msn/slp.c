@@ -44,7 +44,7 @@ static void send_ok(MsnSlpCall *slpcall, const char *branch,
 static void send_decline(MsnSlpCall *slpcall, const char *branch,
 						 const char *type, const char *content);
 
-void msn_request_user_display(MsnUser *user);
+static void request_user_display(MsnUser *user);
 
 /**************************************************************************
  * Util
@@ -251,7 +251,7 @@ static void
 got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			   const char *euf_guid, const char *context)
 {
-	if (!strcmp(euf_guid, "A4268EEC-FEC5-49E5-95C3-F126696BDBF6"))
+	if (!strcmp(euf_guid, MSN_OBJ_GUID))
 	{
 		/* Emoticon or UserDisplay */
 		char *content;
@@ -332,7 +332,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		msn_slplink_queue_slpmsg(slplink, slpmsg);
 		purple_imgstore_unref(img);
 	}
-	else if (!strcmp(euf_guid, "5D3E02AB-6190-11D3-BBBB-00C04F795683"))
+	else if (!strcmp(euf_guid, MSN_FT_GUID))
 	{
 		/* File Transfer */
 		PurpleAccount *account;
@@ -384,7 +384,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			purple_xfer_request(xfer);
 		}
-	}
+	} else
+		purple_debug_warning("msn", "SLP SessionReq with unknown EUF-GUID: %s\n", euf_guid);
 }
 
 void
@@ -930,7 +931,7 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 		username = user->passport;
 
 		userlist->buddy_icon_window--;
-		msn_request_user_display(user);
+		request_user_display(user);
 
 #ifdef MSN_DEBUG_UD
 		purple_debug_info("msn", "msn_release_buddy_icon_request(): buddy_icon_window-- yields =%d\n",
@@ -1066,8 +1067,23 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 														  msn_release_buddy_icon_request_timeout, userlist);
 }
 
-void
-msn_request_user_display(MsnUser *user)
+static void
+next_buddy_request(MsnUserList *userlist)
+{
+	/* Free one window slot */
+	userlist->buddy_icon_window++;
+
+#ifdef MSN_DEBUG_UD
+	purple_debug_info("msn", "request_user_display(): buddy_icon_window++ yields =%d\n",
+		userlist->buddy_icon_window);
+#endif
+
+	/* Request the next one */
+	msn_release_buddy_icon_request(userlist);
+}
+
+static void
+request_user_display(MsnUser *user)
 {
 	PurpleAccount *account;
 	MsnSession *session;
@@ -1081,6 +1097,19 @@ msn_request_user_display(MsnUser *user)
 	slplink = msn_session_get_slplink(session, user->passport);
 
 	obj = msn_user_get_object(user);
+
+	/* Changed while in the queue. */
+	if (obj == NULL) {
+		purple_buddy_icons_set_for_user(account, user->passport, NULL, 0, NULL);
+		next_buddy_request(session->userlist);
+		return;
+	}
+
+	/* The user went offline. */
+	if (user->status == NULL) {
+		next_buddy_request(session->userlist);
+		return;
+	}
 
 	info = msn_object_get_sha1(obj);
 
@@ -1111,14 +1140,7 @@ msn_request_user_display(MsnUser *user)
 
 		purple_buddy_icons_set_for_user(account, user->passport, g_memdup(data, len), len, info);
 
-		/* Free one window slot */
-		session->userlist->buddy_icon_window++;
-
-#ifdef MSN_DEBUG_UD
-		purple_debug_info("msn", "msn_request_user_display(): buddy_icon_window++ yields =%d\n",
-						session->userlist->buddy_icon_window);
-#endif
-
-		msn_release_buddy_icon_request(session->userlist);
+		next_buddy_request(session->userlist);
 	}
 }
+
