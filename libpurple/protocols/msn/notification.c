@@ -132,7 +132,7 @@ msn_notification_connect(MsnNotification *notification, const char *host, int po
 	servconn = notification->servconn;
 
 	msn_servconn_set_connect_cb(servconn, connect_cb);
-	notification->in_use = msn_servconn_connect(servconn, host, port);
+	notification->in_use = msn_servconn_connect(servconn, host, port, TRUE);
 
 	return notification->in_use;
 }
