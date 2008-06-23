@@ -960,17 +960,40 @@ clientcaps_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 }
 
 static void
-nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
-	MsnSwitchBoard *swboard;
-	PurpleAccount *account;
-	const char *user;
+	GHashTable *body;
+	const char *id;
+	body = msn_message_get_hashtable_from_body(msg);
 
-	swboard = cmdproc->data;
-	account = cmdproc->session->account;
-	user = msg->remote_user;
+	id = g_hash_table_lookup(body, "ID");
 
-	serv_got_attention(account->gc, user, MSN_NUDGE);
+	if (!strcmp(id, "1")) {
+		/* Nudge */
+		MsnSwitchBoard *swboard;
+		PurpleAccount *account;
+		const char *user;
+
+		swboard = cmdproc->data;
+		account = cmdproc->session->account;
+		user = msg->remote_user;
+
+		serv_got_attention(account->gc, user, MSN_NUDGE);
+
+	} else if (!strcmp(id, "2")) {
+		/* Wink */
+
+	} else if (!strcmp(id, "3")) {
+		/* Voiceclip */
+
+	} else if (!strcmp(id, "4")) {
+		/* Action */
+
+	} else {
+		purple_debug_warning("msn", "Got unknown datacast with ID %s.\n", id);
+	}
+
+	g_hash_table_destroy(body);
 }
 
 /**************************************************************************
@@ -1309,7 +1332,7 @@ msn_switchboard_init(void)
 	msn_table_add_msg_type(cbs_table, "text/x-mms-animemoticon",
 	                                           msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",
-						   nudge_msg);
+						   datacast_msg);
 #if 0
 	msn_table_add_msg_type(cbs_table, "text/x-msmmsginvite",
 						   msn_invite_msg);
