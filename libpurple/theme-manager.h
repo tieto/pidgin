@@ -31,7 +31,7 @@
 #include "theme.h"
 #include "theme-loader.h"
 
-typedef void (*PTFunc) (PurpleTheme *theme);
+typedef void (*PTFunc) (PurpleTheme *);
 
 typedef struct _PurpleThemeManager PurpleThemeManager;
 typedef struct _PurpleThemeManagerClass PurpleThemeManagerClass;

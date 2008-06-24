@@ -32,63 +32,62 @@
 /*****************************************************************************
  * Sound Theme Builder                                                      
  *****************************************************************************/
-#define THEME_SUFFIX		".xml"
-#define THEME_NAME		"name"
-#define THEME_AUTHOR		"author"
-#define THEME_IMAGE		"image"
-#define THEME_DESCRIPTION	"description"
-#define THEME_SOUND_EVENT	"event"
-#define THEME_EVENT_NAME	"name"
-#define THEME_EVENT_FILE	"file"
 
 static gpointer
 purple_sound_loader_build(const gchar *dir)
 {
 	xmlnode *root_node, *sub_node;
-	gchar *filename, *filename_full, *image, *data;
+	gchar *filename, *filename_full, *imagefile, *data;
 	GDir *gdir;
 	PurpleSoundTheme *theme;
+	PurpleStoredImage *preview;
+
 
 	/* Find the theme file */
 	gdir = g_dir_open(dir, 0, NULL);
 	g_return_val_if_fail(gdir != NULL, NULL);
 
-	while ((filename = g_strdup(g_dir_read_name(gdir))) != NULL && ! g_str_has_suffix(filename, THEME_SUFFIX))
+	while ((filename = g_strdup(g_dir_read_name(gdir))) != NULL && ! g_str_has_suffix(filename, ".xml"))
 		g_free(filename);
 	
 	g_return_val_if_fail(filename != NULL, NULL);
 	
 	/* Build the xml tree */
 	filename_full = g_build_filename(dir, filename, NULL);
-	
+
 	root_node = xmlnode_from_file(dir, filename, "sound themes", "sound-loader");
 	g_return_val_if_fail(root_node != NULL, NULL);
 
 	/* Parse the tree */
-	theme = g_object_new(PURPLE_TYPE_SOUND_THEME, "type", "sound", NULL);
-		
-	purple_theme_set_name(PURPLE_THEME(theme), xmlnode_get_attrib(root_node, THEME_NAME));
-	purple_theme_set_author(PURPLE_THEME(theme), xmlnode_get_attrib(root_node, THEME_AUTHOR));
-
-	image = g_build_filename(dir, xmlnode_get_attrib(root_node, THEME_IMAGE), NULL);
+	/* TODO: fix image and add description */
+	imagefile = g_build_filename(dir, xmlnode_get_attrib(root_node, "image"), NULL);
+	preview = purple_imgstore_new_from_file(imagefile);
 	
-	sub_node = xmlnode_get_child(root_node, THEME_DESCRIPTION);
+	sub_node = xmlnode_get_child(root_node, "description");
 	data = xmlnode_get_data(sub_node);
-	purple_theme_set_description(PURPLE_THEME(theme), data);
+
+	theme = g_object_new(PURPLE_TYPE_SOUND_THEME,
+			    "type", "sound",
+			    "name", xmlnode_get_attrib(root_node, "name"),
+			    "author", xmlnode_get_attrib(root_node, "author"),
+			    "image", preview,
+			    "description", data, NULL);
+	
 	xmlnode_free(sub_node);
 
-	while ((sub_node = xmlnode_get_child(root_node, THEME_SOUND_EVENT)) != NULL){
+	while ((sub_node = xmlnode_get_child(root_node, "event")) != NULL){
 		purple_sound_theme_set_file(theme,
-					    xmlnode_get_attrib(root_node, THEME_EVENT_NAME),
-					    xmlnode_get_attrib(root_node, THEME_EVENT_FILE));
+					    xmlnode_get_attrib(root_node, "name"),
+					    xmlnode_get_attrib(root_node, "file"));
 
 		xmlnode_free(sub_node);
 	}
 
+	purple_imgstore_ref(preview);
 	xmlnode_free(root_node);	
 	g_dir_close(gdir);
 	g_free(filename_full);
-	g_free(image);
+	g_free(imagefile);
 	g_free(data);
 	return theme;
 }
