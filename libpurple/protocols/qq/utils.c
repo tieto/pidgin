@@ -22,7 +22,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#include "cipher.h"
 #include "limits.h"
 #include "stdlib.h"
 #include "string.h"
@@ -113,26 +112,6 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	return segments;
 }
 
-/* generate a md5 key using uid and session_key */
-guint8 *_gen_session_md5(gint uid, guint8 *session_key)
-{
-	guint8 *src, md5_str[QQ_KEY_LENGTH];
-	PurpleCipher *cipher;
-	PurpleCipherContext *context;
-
-	src = g_newa(guint8, 20);
-	memcpy(src, &uid, 4);
-	memcpy(src, session_key, QQ_KEY_LENGTH);
-
-	cipher = purple_ciphers_find_cipher("md5");
-	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, src, 20);
-	purple_cipher_context_digest(context, sizeof(md5_str), md5_str, NULL);
-	purple_cipher_context_destroy(context);
-
-	return g_memdup(md5_str, QQ_KEY_LENGTH);
-}
-
 /* given a four-byte ip data, convert it into a human readable ip string
  * the return needs to be freed */
 gchar *gen_ip_str(guint8 *ip)
@@ -194,7 +173,7 @@ gchar *chat_name_to_purple_name(const gchar *const name)
 }
 
 /* try to dump the data as GBK */
-void try_dump_as_gbk(const guint8 *const data, gint len)
+gchar* try_dump_as_gbk(const guint8 *const data, gint len)
 {
 	gint i;
 	guint8 *incoming;
@@ -215,8 +194,8 @@ void try_dump_as_gbk(const guint8 *const data, gint len)
 
 	if (msg_utf8 != NULL) {
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Try extract GB msg: %s\n", msg_utf8);
-		g_free(msg_utf8);
 	}
+	return msg_utf8;
 }
 
 /* strips whitespace */
@@ -354,6 +333,26 @@ void qq_hex_dump(PurpleDebugLevel level, const char *category,
 	phex = hex_dump_to_str(pdata, bytes);
 	purple_debug(level, category, "%s - (len %d)\n%s", arg_s, bytes, phex);
 	g_free(phex);
+}
+
+void qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
+{
+	/*
+	   char buf1[8*len+2], buf2[10];
+	   int i;
+	   buf1[0] = 0;
+	   for (i = 0; i < len; i++) {
+	   sprintf(buf2, " %02x(%d)", buf[i] & 0xff, buf[i] & 0xff);
+	   strcat(buf1, buf2);
+	   }
+	   strcat(buf1, "\n");
+	   purple_debug(PURPLE_DEBUG_INFO, desc, "%s", buf1);
+	   */
+
+	/* modified by s3e, 20080424 */
+	qq_hex_dump(PURPLE_DEBUG_INFO, desc,
+		buf, len,
+		"");
 }
 
 /* convert face num from packet (0-299) to local face (1-100) */

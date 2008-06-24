@@ -34,7 +34,7 @@
 #include "crypt.h"
 #include "header_info.h"
 #include "keep_alive.h"
-#include "send_core.h"
+#include "qq_network.h"
 
 #define QQ_PRIMARY_INFORMATION _("Primary Information")
 #define QQ_ADDITIONAL_INFORMATION _("Additional Information")

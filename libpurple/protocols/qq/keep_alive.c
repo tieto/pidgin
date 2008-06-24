@@ -40,7 +40,7 @@
 #include "header_info.h"
 #include "keep_alive.h"
 #include "packet_parse.h"
-#include "send_core.h"
+#include "qq_network.h"
 #include "utils.h"
 
 #define QQ_UPDATE_ONLINE_INTERVAL   300	/* in sec */

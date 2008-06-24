@@ -1,5 +1,5 @@
 /**
- * @file send_core.h
+ * @file qq_network.h
  *
  * purple
  *
@@ -22,16 +22,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _QQ_SEND_CORE_H_
-#define _QQ_SEND_CORE_H_
+#ifndef _QQ_PROXY_H
+#define _QQ_PROXY_H
 
 #include <glib.h>
 #include "connection.h"
 
+#include "qq.h"
+
+#define QQ_CONNECT_STEPS    2	/* steps in connection */
+
+void qq_connect(PurpleAccount *account);
+void qq_disconnect(PurpleConnection *gc);
+
+gint qq_send_data(PurpleConnection *gc, guint16 cmd, guint8 *data, gint datalen);
 gint qq_send_cmd(PurpleConnection *gc, guint16 cmd, gboolean is_auto_seq, guint16 seq, 
-		gboolean need_ack, guint8 *data, gint len);
-gint _qq_send_packet(PurpleConnection * gc, guint8 *buf, gint len, guint16 cmd);
-gint _create_packet_head_seq(guint8 *buf, PurpleConnection *gc,
-		guint16 cmd, gboolean is_auto_seq, guint16 *seq);
+		gboolean need_ack, guint8 *data, gint datalen);
 
 #endif

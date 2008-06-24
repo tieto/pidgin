@@ -55,16 +55,15 @@
 #include "login_logout.h"
 #include "packet_parse.h"
 #include "qq.h"
-#include "qq_proxy.h"
-#include "send_core.h"
+#include "qq_network.h"
 #include "send_file.h"
 #include "utils.h"
 #include "version.h"
 
 #define OPENQ_AUTHOR            "Puzzlebird"
 #define OPENQ_WEBSITE            "http://openq.sourceforge.net"
-#define QQ_TCP_QUERY_PORT       "8000"
-#define QQ_UDP_PORT             "8000"
+#define QQ_TCP_PORT       		8000
+#define QQ_UDP_PORT             	8000
 
 const gchar *udp_server_list[] = {
 	"sz.tencent.com",
@@ -90,13 +89,61 @@ const gchar *tcp_server_list[] = {
 };
 const gint tcp_server_amount = (sizeof(tcp_server_list) / sizeof(tcp_server_list[0]));
 
-static void _qq_login(PurpleAccount *account)
+static void srv_resolved(PurpleSrvResponse *resp, int results, gpointer account)
 {
-	const gchar *qq_server, *qq_port;
+	PurpleConnection *gc;
 	qq_data *qd;
+	gchar *hostname;
+	int port;
+
+	gc = purple_account_get_connection(account);
+	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
+	qd = (qq_data *) gc->proto_data;
+
+	qd->srv_query_data = NULL;
+
+	/* find the host to connect to */
+	port = purple_account_get_int(account, "port", 0);
+	if (port == 0) {
+		if (qd->use_tcp) {
+			port = QQ_TCP_PORT;
+		} else {
+			port = QQ_UDP_PORT;
+		}
+	}
+
+	if(results) {
+		hostname = g_strdup(resp->hostname);
+		if(!port)
+			port = resp->port;
+		g_free(resp);
+	} else {
+		if(!purple_account_get_bool(account, "useproxy", FALSE)) {
+			hostname = g_strdup(qd->server_name);
+		} else {
+			hostname = g_strdup(purple_account_get_string(account,
+				"proxy", qd->server_name));
+		}
+	}
+
+	/*
+	purple_debug(PURPLE_DEBUG_INFO, "QQ",
+		"using with server %s and port %d\n", hostname, port);
+	*/
+	qd->real_hostname = g_strdup(hostname);
+	qd->real_port = port;
+	qq_connect(account);
+
+	g_free(hostname);
+}
+
+static void qq_login(PurpleAccount *account)
+{
+	const gchar *userserver;
+	qq_data *qd;
+	gchar *host2connect;
 	PurpleConnection *gc;
 	PurplePresence *presence;
-	gboolean use_tcp;
 
 	g_return_if_fail(account != NULL);
 
@@ -109,13 +156,7 @@ static void _qq_login(PurpleAccount *account)
 	qd->gc = gc;
 	gc->proto_data = qd;
 
-	qq_server = purple_account_get_string(account, "server", NULL);
-	qq_port = purple_account_get_string(account, "port", NULL);
-	use_tcp = purple_account_get_bool(account, "use_tcp", FALSE);
 	presence = purple_account_get_presence(account);
-
-	qd->use_tcp = use_tcp;
-
 	if(purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE)) {
 		qd->login_mode = QQ_LOGIN_MODE_HIDDEN;
 	} else if(purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_AWAY)
@@ -125,26 +166,54 @@ static void _qq_login(PurpleAccount *account)
 		qd->login_mode = QQ_LOGIN_MODE_NORMAL;
 	}
 
-	if (qq_server == NULL || strlen(qq_server) == 0)
-		qq_server = use_tcp ?
-		    tcp_server_list[random() % tcp_server_amount] :
-		    udp_server_list[random() % udp_server_amount];
+	userserver = purple_account_get_string(account, "server", NULL);
+	qd->use_tcp = purple_account_get_bool(account, "use_tcp", TRUE);
 
-	if (qq_port == NULL || strtol(qq_port, NULL, 10) == 0)
-		qq_port = use_tcp ? QQ_TCP_QUERY_PORT : QQ_UDP_PORT;
+	if (userserver == NULL || strlen(userserver) == 0) {
+		if (qd->use_tcp) {
+			qd->server_name = g_strdup(tcp_server_list[random() % tcp_server_amount]);
+		} else {
+			qd->server_name = g_strdup(udp_server_list[random() % udp_server_amount]);
+		}
+	} else {
+		qd->server_name = g_strdup(userserver);
+	}
 
 	purple_connection_update_progress(gc, _("Connecting"), 0, QQ_CONNECT_STEPS);
 
-	if (qq_connect(account, qq_server, strtol(qq_port, NULL, 10), use_tcp, FALSE) < 0)
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Unable to connect."));
+	if(!purple_account_get_bool(account, "useproxy", FALSE)) {
+		host2connect = g_strdup(qd->server_name);
+	} else {
+		host2connect = g_strdup(purple_account_get_string(account, "proxy", qd->server_name));
+	}
+
+	qd->srv_query_data = purple_srv_resolve("QQ",
+			qd->use_tcp ? "tcp" : "udp", host2connect, srv_resolved, account);
+	g_free(host2connect);
 }
 
-/* directly goes for qq_disconnect */
-static void _qq_close(PurpleConnection *gc)
+/* clean up the given QQ connection and free all resources */
+static void qq_close(PurpleConnection *gc)
 {
+	qq_data *qd;
+
 	g_return_if_fail(gc != NULL);
+	qd = gc->proto_data;
+
 	qq_disconnect(gc);
+
+	if (qd->real_hostname) {
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "free real_hostname\n");
+		g_free(qd->real_hostname);
+		qd->real_hostname = NULL;
+	}
+	if (qd->srv_query_data != NULL)
+		purple_srv_cancel(qd->srv_query_data);
+	
+	g_free(qd->server_name);
+	g_free(qd);
+
+	gc->proto_data = NULL;
 }
 
 /* returns the icon name for a buddy or protocol */
@@ -442,8 +511,9 @@ static void _qq_menu_show_login_info(PurplePluginAction *action)
 
 	g_string_append(info, "<hr>\n");
 
+	g_string_append_printf(info, _("<b>Server</b>: %s: %d<br>\n"), qd->server_name, qd->real_port);
 	g_string_append_printf(info, _("<b>Connection Mode</b>: %s<br>\n"), qd->use_tcp ? "TCP" : "UDP");
-	g_string_append_printf(info, _("<b>Server IP</b>: %s: %d<br>\n"), qd->server_ip, qd->server_port);
+	g_string_append_printf(info, _("<b>Real hostname</b>: %s: %d<br>\n"), qd->real_hostname, qd->real_port);
 	g_string_append_printf(info, _("<b>My Public IP</b>: %s<br>\n"), qd->my_ip);
 
 	g_string_append(info, "<hr>\n");
@@ -594,7 +664,7 @@ static GList *_qq_buddy_menu(PurpleBlistNode * node)
 }
 
 
-static void _qq_keep_alive(PurpleConnection *gc)
+static void qq_keep_alive(PurpleConnection *gc)
 {
 	qq_group *group;
 	qq_data *qd;
@@ -651,8 +721,8 @@ static PurplePluginProtocolInfo prpl_info	= {
 	_qq_buddy_menu,						/* blist_node_menu */
 	qq_chat_info,						/* chat_info */
 	qq_chat_info_defaults,					/* chat_info_defaults */
-	_qq_login,						/* login */
-	_qq_close,						/* close */
+	qq_login,							/* open */
+	qq_close,						/* close */
 	_qq_send_im,						/* send_im */
 	NULL,							/* set_info */
 	NULL,							/* send_typing	*/
@@ -676,7 +746,7 @@ static PurplePluginProtocolInfo prpl_info	= {
 	NULL,							/* chat_leave */
 	NULL,							/* chat_whisper */
 	_qq_chat_send,						/* chat_send */
-	_qq_keep_alive,						/* keepalive */
+	qq_keep_alive,						/* keepalive */
 	NULL,							/* register_user */
 	_qq_get_chat_buddy_info,				/* get_cb_info	*/
 	NULL,							/* get_cb_away	*/
@@ -750,13 +820,13 @@ static void init_plugin(PurplePlugin *plugin)
 {
 	PurpleAccountOption *option;
 
-	option = purple_account_option_bool_new(_("Connect using TCP"), "use_tcp", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
 	option = purple_account_option_string_new(_("Server"), "server", NULL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_string_new(_("Port"), "port", NULL);
+	option = purple_account_option_int_new(_("Port"), "port", 0);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Connect using TCP"), "use_tcp", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	my_protocol = plugin;

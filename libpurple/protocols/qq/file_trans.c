@@ -38,7 +38,7 @@
 #include "im.h"
 #include "packet_parse.h"
 #include "proxy.h"
-#include "send_core.h"
+#include "qq_network.h"
 #include "send_file.h"
 #include "utils.h"
 

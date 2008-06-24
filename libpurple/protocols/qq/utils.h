@@ -35,7 +35,6 @@ gchar *get_index_str_by_name(gchar **array, const gchar *name, gint amount);
 gint qq_string_to_dec_value(const gchar *str);
 
 gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_fields);
-guint8 *_gen_session_md5(gint uid, guint8 *session_key);
 
 gchar *gen_ip_str(guint8 *ip);
 guint8 *str_ip_gen(gchar *str);
@@ -46,8 +45,9 @@ gchar *chat_name_to_purple_name(const gchar *const name);
 
 gchar *face_to_icon_str(gint face);
 
-void try_dump_as_gbk(const guint8 *const data, gint len);
+gchar *try_dump_as_gbk(const guint8 *const data, gint len);
 
+void qq_show_packet(const gchar *desc, const guint8 *buf, gint len);
 void qq_hex_dump(PurpleDebugLevel level, const char *category,
 		const guint8 *pdata, gint bytes,	
 		const char *format, ...);

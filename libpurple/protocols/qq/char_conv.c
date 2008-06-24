@@ -39,9 +39,6 @@
 #define QQ_NULL_MSG           "(NULL)"	/* return this if conversion fails */
 #define QQ_NULL_SMILEY        "(SM)"	/* return this if smiley conversion fails */
 
-/* a debug function */
-void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len);
-
 const gchar qq_smiley_map[QQ_SMILEY_AMOUNT] = {
 	0x41, 0x43, 0x42, 0x44, 0x45, 0x46, 0x47, 0x48,
 	0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x73,
@@ -111,18 +108,19 @@ static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset,
 
 	ret = g_convert(str, len, to_charset, from_charset, &byte_read, &byte_write, &error);
 
-	if (error == NULL)
+	if (error == NULL) {
 		return ret;	/* conversion is OK */
-	else {			/* conversion error */
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "%s\n", error->message);
-
-		qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
-			(guint8 *) str, (len == -1) ? strlen(str) : len,
-			"Dump failed text");
-
-		g_error_free(error);
-		return g_strdup(QQ_NULL_MSG);
 	}
+	
+	/* conversion error */
+	purple_debug(PURPLE_DEBUG_ERROR, "QQ", "%s\n", error->message);
+
+	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
+		(guint8 *) str, (len == -1) ? strlen(str) : len,
+		"Dump failed text");
+
+	g_error_free(error);
+	return g_strdup(QQ_NULL_MSG);
 }
 
 /* take the input as a pascal string and return a converted c-string in UTF-8
@@ -150,8 +148,8 @@ gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg)
 	gchar *font_name, *color_code, *msg_utf8, *tmp, *ret;
 	gint bytes = 0;
 
-	/* checked _qq_show_packet OK */
-	_qq_show_packet("QQ_MESG recv for font style", data, len);
+	/* checked qq_show_packet OK */
+	qq_show_packet("QQ_MESG recv for font style", data, len);
 
 	bytes += qq_get8(&font_attr, data + bytes);
 	bytes += qq_getdata(color, 3, data + bytes);	/* red,green,blue */

@@ -25,6 +25,7 @@
 #include "debug.h"
 #include "internal.h"
 #include "server.h"
+#include "cipher.h"
 
 #include "buddy_info.h"
 #include "buddy_list.h"
@@ -36,8 +37,7 @@
 #include "login_logout.h"
 #include "packet_parse.h"
 #include "qq.h"
-#include "qq_proxy.h"
-#include "send_core.h"
+#include "qq_network.h"
 #include "utils.h"
 
 #define QQ_LOGIN_DATA_LENGTH		    416
@@ -71,31 +71,34 @@ static const guint8 login_23_51[29] = {
 
 /* for QQ 2005? copy from lumaqq */
 // Fixme: change to guint8
-static const gint8 login_23_51[29] = {
-	0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0, 0, 0, -122, 
-	-52, 76, 53, 44, -45, 115, 108, 20, -10, -10, 
-	-81, -61, -6, 51, -92, 1
+static const guint8 login_23_51[29] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x86, 0xcc, 0x4c, 0x35,
+	0x2c, 0xd3, 0x73, 0x6c, 0x14, 0xf6, 0xf6, 0xaf,
+	0xc3, 0xfa, 0x33, 0xa4, 0x01
 };
 
-static const gint8 login_53_68[16] = {
-	-115, -117, -6, -20, -43, 82, 23, 74, -122, -7, 
-	-89, 117, -26, 50, -47, 109
+static const guint8 login_53_68[16] = {
+ 	0x8D, 0x8B, 0xFA, 0xEC, 0xD5, 0x52, 0x17, 0x4A,
+ 	0x86, 0xF9, 0xA7, 0x75, 0xE6, 0x32, 0xD1, 0x6D
 };
 
-static const gint8 login_100_bytes[100] = {
-	64, 
-	11, 4, 2, 0, 1, 0, 0, 0, 0, 0, 
-	3, 9, 0, 0, 0, 0, 0, 0, 0, 1, 
-	-23, 3, 1, 0, 0, 0, 0, 0, 1, -13, 
-	3, 0, 0, 0, 0, 0, 0, 1, -19, 3, 
-	0, 0, 0, 0, 0, 0, 1, -20, 3, 0, 
-	0, 0, 0, 0, 0, 3, 5, 0, 0, 0, 
-	0, 0, 0, 0, 3, 7, 0, 0, 0, 0, 
-	0, 0, 0, 1, -18, 3, 0, 0, 0, 0, 
-	0, 0, 1, -17, 3, 0, 0, 0, 0, 0, 
-	0, 1, -21, 3, 0, 0, 0, 0, 0
+static const guint8 login_100_bytes[100] = {
+	0x40, 0x0B, 0x04, 0x02, 0x00, 0x01, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x03, 0x09, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x01, 0xE9, 0x03, 0x01,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xF3, 0x03,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xED,
+	0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+	0xEC, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x03, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x03, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x01, 0xEE, 0x03, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x01, 0xEF, 0x03, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x01, 0xEB, 0x03, 0x00,
+	0x00, 0x00, 0x00, 0x00
 };
+
 
 /* fixed value, not affected by version, or mac address */
 /*
@@ -139,17 +142,24 @@ struct _qq_login_reply_redirect {
 	guint16 new_server_port;
 };
 
-extern gint			/* defined in send_core.c */
- _create_packet_head_seq(guint8 *buf, PurpleConnection *gc,
- 		guint16 cmd, gboolean is_auto_seq, guint16 *seq);
-extern gint			/* defined in send_core.c */
- _qq_send_packet(PurpleConnection *gc, guint8 *buf, gint len, guint16 cmd);
-
-/* It is fixed to 16 bytes 0x01 for QQ2003, 
- * Any value works (or a random 16 bytes string) */
-static guint8 *_gen_login_key(void)
+/* generate a md5 key using uid and session_key */
+static guint8 *gen_session_md5(gint uid, guint8 *session_key)
 {
-	return (guint8 *) g_strnfill(QQ_KEY_LENGTH, 0x01);
+	guint8 *src, md5_str[QQ_KEY_LENGTH];
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
+
+	src = g_newa(guint8, 20);
+	memcpy(src, &uid, 4);
+	memcpy(src, session_key, QQ_KEY_LENGTH);
+
+	cipher = purple_ciphers_find_cipher("md5");
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, src, 20);
+	purple_cipher_context_digest(context, sizeof(md5_str), md5_str, NULL);
+	purple_cipher_context_destroy(context);
+
+	return g_memdup(md5_str, QQ_KEY_LENGTH);
 }
 
 /* process login reply which says OK */
@@ -211,9 +221,15 @@ static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 			   QQ_LOGIN_REPLY_OK_PACKET_LEN, bytes);
 	}			/* but we still go on as login OK */
 
+	g_return_val_if_fail(qd->session_key == NULL, QQ_LOGIN_REPLY_MISC_ERROR);
 	qd->session_key = lrop.session_key;
-	qd->session_md5 = _gen_session_md5(qd->uid, qd->session_key);
+	
+	g_return_val_if_fail(qd->session_md5 == NULL, QQ_LOGIN_REPLY_MISC_ERROR);
+	qd->session_md5 = gen_session_md5(qd->uid, qd->session_key);
+	
+	g_return_val_if_fail(qd->my_ip == NULL, QQ_LOGIN_REPLY_MISC_ERROR);
 	qd->my_ip = gen_ip_str(lrop.client_ip);
+	
 	qd->my_port = lrop.client_port;
 	qd->login_time = lrop.login_time;
 	qd->last_login_time = lrop.last_login_time;
@@ -245,7 +261,6 @@ static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 static gint _qq_process_login_redirect(PurpleConnection *gc, guint8 *data, gint len)
 {
 	gint bytes, ret;
-	gchar *new_server_str;
 	qq_data *qd;
 	qq_login_reply_redirect_packet lrrp;
 
@@ -265,12 +280,21 @@ static gint _qq_process_login_redirect(PurpleConnection *gc, guint8 *data, gint 
 			   "Fail parsing login redirect packet, expect %d bytes, read %d bytes\n",
 			   QQ_LOGIN_REPLY_REDIRECT_PACKET_LEN, bytes);
 		ret = QQ_LOGIN_REPLY_MISC_ERROR;
-	} else {		/* start new connection */
-		new_server_str = gen_ip_str(lrrp.new_server_ip);
+	} else {
+		// redirect to new server, do not disconnect or connect here
+		// those connect should be called at packet_process
+		if (qd->real_hostname) {
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "free real_hostname\n");
+			g_free(qd->real_hostname);
+			qd->real_hostname = NULL;
+		}
+		qd->real_hostname = gen_ip_str(lrrp.new_server_ip);
+		qd->real_port = lrrp.new_server_port;
+		qd->is_redirect = TRUE;
+
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-			   "Redirected to new server: %s:%d\n", new_server_str, lrrp.new_server_port);
-		qq_connect(gc->account, new_server_str, lrrp.new_server_port, qd->use_tcp, TRUE);
-		g_free(new_server_str);
+			   "Redirected to new server: %s:%d\n", qd->real_hostname, qd->real_port);
+
 		ret = QQ_LOGIN_REPLY_REDIRECT;
 	}
 
@@ -295,50 +319,37 @@ static gint _qq_process_login_wrong_pwd(PurpleConnection *gc, guint8 *data, gint
 void qq_send_packet_request_login_token(PurpleConnection *gc)
 {
 	qq_data *qd;
-	guint8 *buf;
-	guint16 seq_ret;
-	gint bytes, bytes_sent;
+	guint8 buf[16] = {0};
+	gint bytes = 0;
 
+	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
-	buf = g_newa(guint8, MAX_PACKET_SIZE);
 
-	bytes = 0;
-        purple_debug(PURPLE_DEBUG_INFO, "QQ", "=BEGIN= send_packet_request_login, bytes: %d\n", bytes); 
-	bytes += _create_packet_head_seq(buf + bytes, gc, QQ_CMD_REQUEST_LOGIN_TOKEN, TRUE, &seq_ret);
-        purple_debug(PURPLE_DEBUG_INFO, "QQ", "send_packet_request_login, bytes: %d\n", bytes); 
-	if (bytes <= 0) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Fail create request login token packet\n");
-		return;
-	}
-	bytes += qq_put32(buf + bytes, qd->uid);
-        purple_debug(PURPLE_DEBUG_INFO, "QQ", "send_packet_request_login, bytes: %d\n", bytes); 
 	bytes += qq_put8(buf + bytes, 0);
-        purple_debug(PURPLE_DEBUG_INFO, "QQ", "send_packet_request_login, bytes: %d\n", bytes); 
-	bytes += qq_put8(buf + bytes, QQ_PACKET_TAIL);
-        purple_debug(PURPLE_DEBUG_INFO, "QQ", "send_packet_request_login, bytes: %d\n", bytes); 
-        
-        /* debugging info, s3e, 20070628 */
-        bytes_sent = _qq_send_packet(gc, buf, bytes, QQ_CMD_REQUEST_LOGIN_TOKEN);
-        purple_debug(PURPLE_DEBUG_INFO, "QQ", "world<==me %s, %d bytes\n", 
-                qq_get_cmd_desc(QQ_CMD_REQUEST_LOGIN_TOKEN), bytes_sent);
-
+	
+	qq_send_data(gc, QQ_CMD_REQUEST_LOGIN_TOKEN, buf, bytes);
 }
 
 /* send login packet to QQ server */
 static void qq_send_packet_login(PurpleConnection *gc, guint8 token_length, guint8 *token)
 {
 	qq_data *qd;
-	guint8 *buf, *raw_data, *encrypted_data;
-	guint16 seq_ret;
-	gint encrypted_len, bytes;
+	guint8 *buf, *raw_data;
+	gint bytes;
+	guint8 *encrypted_data;
+	gint encrypted_len;
 
+	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 	qd = (qq_data *) gc->proto_data;
-	buf = g_newa(guint8, MAX_PACKET_SIZE);
+
 	raw_data = g_newa(guint8, QQ_LOGIN_DATA_LENGTH);
 	memset(raw_data, 0, QQ_LOGIN_DATA_LENGTH);
 
 	encrypted_data = g_newa(guint8, QQ_LOGIN_DATA_LENGTH + 16);	/* 16 bytes more */
-	qd->inikey = _gen_login_key();
+	if (qd->inikey) {
+		g_free(qd->inikey);
+	}
+	qd->inikey = (guint8 *) g_strnfill(QQ_KEY_LENGTH, 0x01);
 
 	bytes = 0;
 	/* now generate the encrypted data
@@ -357,7 +368,6 @@ static void qq_send_packet_login(PurpleConnection *gc, guint8 token_length, guin
 	bytes += qq_put8(raw_data + bytes, qd->login_mode);
 	/* 053-068, fixed value, maybe related to per machine */
 	bytes += qq_putdata(raw_data + bytes, login_53_68, 16);
-
 	/* 069, login token length */
 	bytes += qq_put8(raw_data + bytes, token_length);
 	/* 070-093, login token, normally 24 bytes */
@@ -368,23 +378,19 @@ static void qq_send_packet_login(PurpleConnection *gc, guint8 token_length, guin
 
 	qq_encrypt(raw_data, QQ_LOGIN_DATA_LENGTH, qd->inikey, encrypted_data, &encrypted_len);
 
+	buf = g_newa(guint8, MAX_PACKET_SIZE);
+	memset(buf, 0, MAX_PACKET_SIZE);
 	bytes = 0;
-	bytes += _create_packet_head_seq(buf, gc, QQ_CMD_LOGIN, TRUE, &seq_ret);
-	if (bytes <= 0) {
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Fail create login packet\n");
-		return;
-	}
-	bytes += qq_put32(buf + bytes, qd->uid);
 	bytes += qq_putdata(buf + bytes, qd->inikey, QQ_KEY_LENGTH);
 	bytes += qq_putdata(buf + bytes, encrypted_data, encrypted_len);
-	bytes += qq_put8(buf + bytes, QQ_PACKET_TAIL);
 
-	_qq_send_packet(gc, buf, bytes, QQ_CMD_LOGIN);
+	qq_send_data(gc, QQ_CMD_LOGIN, buf, bytes);
 }
 
 void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
+	gchar *error_msg;
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
@@ -406,8 +412,14 @@ void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, PurpleConne
 		qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
 				buf, buf_len,
 				">>> [default] decrypt and dump");
-		try_dump_as_gbk(buf, buf_len);
-		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Error requesting login token"));
+		error_msg = try_dump_as_gbk(buf, buf_len);
+		if (error_msg) {
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_msg);
+			g_free(error_msg);
+		} else {
+			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("Error requesting login token"));
+		}
 	}
 }
 
@@ -430,6 +442,7 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	gint len, ret, bytes;
 	guint8 *data;
 	qq_data *qd;
+	gchar* error_msg;
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
@@ -465,8 +478,11 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 				qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
 						data, len,
 						">>> [default] decrypt and dump");
-				try_dump_as_gbk(data, len);
-
+				error_msg = try_dump_as_gbk(data, len);
+				if (error_msg)	{
+					purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, error_msg);
+					g_free(error_msg);
+				}
 				ret = QQ_LOGIN_REPLY_MISC_ERROR;
 			}
 		} else {	/* no idea how to decrypt */

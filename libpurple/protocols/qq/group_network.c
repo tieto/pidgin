@@ -39,7 +39,7 @@
 #include "group_opt.h"
 #include "group_search.h"
 #include "header_info.h"
-#include "send_core.h"
+#include "qq_network.h"
 #include "utils.h"
 
 enum {

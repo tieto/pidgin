@@ -46,7 +46,7 @@ gint qq_getdata(guint8 *data, gint datalen, guint8 *buf);
 gint qq_put8(guint8 *buf, guint8 b);
 gint qq_put16(guint8 *buf, guint16 w);
 gint qq_put32(guint8 *buf, guint32 dw);
-gint qq_putdata(guint8 *buf, guint8 *data, const int datalen);
+gint qq_putdata(guint8 *buf, const guint8 *data, const int datalen);
 
 //gint read_packet_b(guint8 *buf, guint8 **cursor, gint buflen, guint8 *b);
 //gint read_packet_w(guint8 *buf, guint8 **cursor, gint buflen, guint16 *w);

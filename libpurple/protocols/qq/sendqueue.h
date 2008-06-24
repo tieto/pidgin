@@ -28,23 +28,15 @@
 #include <glib.h>
 #include "qq.h"
 
-#define QQ_SENDQUEUE_TIMEOUT 			5000	/* in 1/1000 sec */
+void qq_trans_append(qq_data *qd, guint8 *buf, gint bus_len, guint16 cmd, guint16 seq);
+void qq_trans_remove(qq_data *qd, gpointer data);
+gpointer qq_trans_find(qq_data *qd, guint16 seq);
+void qq_trans_remove_all(qq_data *qd);
 
-typedef struct _qq_sendpacket qq_sendpacket;
+gint qq_trans_scan(qq_data *qd, gint *start, guint8 *buf, gint maxlen, guint16 *cmd, gint *retries);
 
-struct _qq_sendpacket {
-	gint fd;
-	gint len;
-	guint8 *buf;
-	guint16 cmd;
-	guint16 send_seq;
-	gint resend_times;
-	time_t sendtime;
-};
-
-void qq_sendqueue_free(qq_data *qd);
-
-void qq_sendqueue_remove(qq_data *qd, guint16 send_seq);
-gboolean qq_sendqueue_timeout_callback(gpointer data);
+void qq_packet_push(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data, gint data_len);
+gint qq_packet_pop(qq_data *qd, guint16 *cmd, guint16* seq, guint8 *data, gint max_len);
+void qq_packet_remove_all(qq_data *qd);
 
 #endif

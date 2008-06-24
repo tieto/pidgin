@@ -38,13 +38,12 @@
 #include "crypt.h"
 #include "header_info.h"
 #include "keep_alive.h"
-#include "send_core.h"
 #include "group.h"
 #include "group_find.h"
 #include "group_internal.h"
 #include "group_info.h"
 
-#include "qq_proxy.h"
+#include "qq_network.h"
 
 #define QQ_GET_ONLINE_BUDDY_02          0x02
 #define QQ_GET_ONLINE_BUDDY_03          0x03	/* unknown function */
@@ -164,7 +163,7 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConnec
 		return;
 	}
 
-	_qq_show_packet("Get buddies online reply packet", data, len);
+	qq_show_packet("Get buddies online reply packet", data, len);
 
 	bytes = 0;
 	bytes += qq_get8(&position, data + bytes);

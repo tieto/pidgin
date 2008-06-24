@@ -36,7 +36,7 @@
 #include "im.h"
 #include "keep_alive.h"
 #include "packet_parse.h"
-#include "send_core.h"
+#include "qq_network.h"
 #include "utils.h"
 
 enum

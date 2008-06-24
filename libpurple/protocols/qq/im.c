@@ -40,15 +40,12 @@
 #include "header_info.h"
 #include "im.h"
 #include "packet_parse.h"
-#include "send_core.h"
+#include "qq_network.h"
 #include "send_file.h"
 #include "utils.h"
 
 #define QQ_SEND_IM_REPLY_OK       0x00
 #define DEFAULT_FONT_NAME_LEN 	  4
-
-/* a debug function */
-void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len);
 
 enum
 {
@@ -182,7 +179,7 @@ guint8 *qq_get_send_im_tail(const gchar *font_color,
 	send_im_tail[5] = 0x00;
 	send_im_tail[6] = 0x86;
 	send_im_tail[7] = 0x22;	/* encoding, 0x8622=GB, 0x0000=EN, define BIG5 support here */
-	_qq_show_packet("QQ_MESG", send_im_tail, tail_len);
+	qq_show_packet("QQ_MESG", send_im_tail, tail_len);
 	return (guint8 *) send_im_tail;
 }
 
@@ -306,8 +303,6 @@ static void _qq_process_recv_normal_im_text(guint8 *data, gint len, qq_recv_norm
 		} else		/* not im_text->is_there_font_attr */
 			im_text->msg = g_strndup((gchar *)(data + bytes), len - bytes);
 	}			/* if im_text->msg_type */
-	/* XXX  _qq_show_packet here should not be used here */
-	/* _qq_show_packet("QQ_MESG recv", data, *cursor - data); */
 
 	name = uid_to_purple_name(common->sender_uid);
 	if (purple_find_buddy(gc->account, name) == NULL)
@@ -386,11 +381,8 @@ static void _qq_process_recv_normal_im(guint8 *data, gint len, PurpleConnection 
 			im_unprocessed->length = len - bytes;
 			/* a simple process here, maybe more later */
 			purple_debug (PURPLE_DEBUG_WARNING, "QQ",
-					"Normal IM, unprocessed type [0x%04x]\n",
-					common->normal_im_type);
-			purple_debug (PURPLE_DEBUG_WARNING, "QQ",
-				im_unprocessed->unknown, im_unprocessed->length,
-				"Dump unknown part.");
+					"Normal IM, unprocessed type [0x%04x], unknown [0x%02x], len %d\n",
+					common->normal_im_type, im_unprocessed->unknown, im_unprocessed->length);
 			g_free (common->session_md5);
 			return;
 	}
@@ -522,10 +514,10 @@ void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint ty
 	bytes += qq_putdata(raw_data + bytes, (guint8 *) msg_filtered, msg_len);
 	send_im_tail = qq_get_send_im_tail(font_color, font_size, font_name, is_bold,
 			is_italic, is_underline, tail_len);
-	_qq_show_packet("QQ_send_im_tail debug", send_im_tail, tail_len);
+	qq_show_packet("QQ_send_im_tail debug", send_im_tail, tail_len);
 	bytes += qq_putdata(raw_data + bytes, send_im_tail, tail_len);
 
-	_qq_show_packet("QQ_raw_data debug", raw_data, bytes);
+	qq_show_packet("QQ_raw_data debug", raw_data, bytes);
 
 	if (bytes == raw_len)	/* create packet OK */
 		qq_send_cmd(gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data, bytes);

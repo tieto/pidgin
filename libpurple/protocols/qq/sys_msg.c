@@ -35,7 +35,7 @@
 #include "header_info.h"
 #include "packet_parse.h"
 #include "qq.h"
-#include "send_core.h"
+#include "qq_network.h"
 #include "sys_msg.h"
 #include "utils.h"
 

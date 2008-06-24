@@ -31,126 +31,213 @@
 #include "request.h"
 
 #include "header_info.h"
-#include "qq_proxy.h"
+#include "qq_network.h"
 #include "sendqueue.h"
 
 #define QQ_RESEND_MAX               8	/* max resend per packet */
 
-typedef struct _gc_and_packet gc_and_packet;
+typedef struct _transaction {
+	guint16 seq;
+	guint16 cmd;
+	guint8 *buf;
+	gint buf_len;
 
-struct _gc_and_packet {
-	PurpleConnection *gc;
-	qq_sendpacket *packet;
-};
+	gint fd;
+	gint retries;
+	time_t create_time;
+} transaction;
 
-/* Remove a packet with send_seq from sendqueue */
-void qq_sendqueue_remove(qq_data *qd, guint16 send_seq)
+void qq_trans_append(qq_data *qd, guint8 *buf, gint buf_len, guint16 cmd, guint16 seq)
 {
-	GList *list;
-	qq_sendpacket *p;
+	transaction *trans = g_new0(transaction, 1);
 
-	list = qd->sendqueue;
-	while (list != NULL) {
-		p = (qq_sendpacket *) (list->data);
-		if (p->send_seq == send_seq) {
-			qd->sendqueue = g_list_remove(qd->sendqueue, p);
-			g_free(p->buf);
-			g_free(p);
-			break;
-		}
-		list = list->next;
-	}
+	g_return_if_fail(trans != NULL);
+
+	trans->fd = qd->fd;
+	trans->cmd = cmd;
+	trans->seq = seq;
+	trans->retries = QQ_RESEND_MAX;
+	trans->create_time = time(NULL);
+	trans->buf = g_memdup(buf, buf_len);	/* don't use g_strdup, may have 0x00 */
+	trans->buf_len = buf_len;
+
+	purple_debug(PURPLE_DEBUG_ERROR, "QQ",
+			"Add to transaction, seq = %d, buf = %lu, len = %d\n",
+			trans->seq, trans->buf, trans->buf_len);
+	qd->transactions = g_list_append(qd->transactions, trans);
 }
-		
+
+/* Remove a packet with seq from sendqueue */
+void qq_trans_remove(qq_data *qd, gpointer data) 
+{
+	transaction *trans = (transaction *)data;
+
+	g_return_if_fail(qd != NULL && data != NULL);
+	
+	purple_debug(PURPLE_DEBUG_INFO, "QQ",
+				"ack [%05d] %s, remove from sendqueue\n",
+				trans->seq, qq_get_cmd_desc(trans->cmd));
+
+	if (trans->buf)	g_free(trans->buf);
+	qd->transactions = g_list_remove(qd->transactions, trans);
+	g_free(trans);
+}
+
+gpointer qq_trans_find(qq_data *qd, guint16 seq)
+{
+	GList *curr;
+	GList *next;
+	transaction *trans;
+
+	curr = qd->transactions;
+	while(curr) {
+		next = curr->next;
+		trans = (transaction *) (curr->data);
+		if(trans->seq == seq) {
+			return trans;
+		}
+		curr = next;
+	}
+
+	return NULL;
+}
+
 /* clean up sendqueue and free all contents */
-void qq_sendqueue_free(qq_data *qd)
+void qq_trans_remove_all(qq_data *qd)
 {
-	qq_sendpacket *p;
-	gint i;
+	GList *curr;
+	GList *next;
+	transaction *trans;
+	gint count = 0;
 
-	i = 0;
-	while (qd->sendqueue != NULL) {
-		p = (qq_sendpacket *) (qd->sendqueue->data);
-		qd->sendqueue = g_list_remove(qd->sendqueue, p);
-		g_free(p->buf);
-		g_free(p);
-		i++;
+	curr = qd->transactions;
+	while(curr) {
+		next = curr->next;
+		
+		trans = (transaction *) (curr->data);
+		/*
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
+			"Remove to transaction, seq = %d, buf = %lu, len = %d\n",
+			trans->seq, trans->buf, trans->len);
+		*/
+		qq_trans_remove(qd, trans);
+
+		count++;
+		curr = next;
 	}
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "%d packets in sendqueue are freed!\n", i);
+	g_list_free(qd->transactions);
+
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "%d packets in sendqueue are freed!\n", count);
 }
 
-/* FIXME We shouldn't be dropping packets, but for now we have to because
- * somewhere we're generating invalid packets that the server won't ack.
- * Given enough time, a buildup of those packets would crash the client. */
-gboolean qq_sendqueue_timeout_callback(gpointer data)
+gint qq_trans_scan(qq_data *qd, gint *start,
+	guint8 *buf, gint maxlen, guint16 *cmd, gint *retries)
 {
-	PurpleConnection *gc;
-	qq_data *qd;
-	GList *list;
-	qq_sendpacket *p;
-	time_t now;
-	gint wait_time;
+	GList *curr;
+	GList *next = NULL;
+	transaction *trans;
+	gint copylen;
 
-	gc = (PurpleConnection *) data;
-	qd = (qq_data *) gc->proto_data;
-	now = time(NULL);
-	list = qd->sendqueue;
-
-	/* empty queue, return TRUE so that timeout continues functioning */
-	if (qd->sendqueue == NULL)
-		return TRUE;
-
-	while (list != NULL) {	/* remove all packet whose resend_times == -1 */
-		p = (qq_sendpacket *) list->data;
-		if (p->resend_times == -1) {	/* to remove */
-			qd->sendqueue = g_list_remove(qd->sendqueue, p);
-			g_free(p->buf);
-			g_free(p);
-			list = qd->sendqueue;
-		} else {
-			list = list->next;
+	g_return_val_if_fail(qd != NULL && *start >= 0 && maxlen > 0, -1);
+	
+	//purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Scan from %d\n", *start);
+	curr = g_list_nth(qd->transactions, *start);
+	while(curr) {
+		next = curr->next;
+		*start = g_list_position(qd->transactions, next);
+		
+		trans = (transaction *) (curr->data);
+		if (trans->buf == NULL || trans->buf_len <= 0) {
+			qq_trans_remove(qd, trans);
+			curr = next;
+			continue;
 		}
+
+		if (trans->retries < 0) {
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ",
+				"Remove transaction, seq %d, buf %lu, len %d, retries %d, next %d\n",
+				trans->seq, trans->buf, trans->buf_len, trans->retries, *start);
+			qq_trans_remove(qd, trans);
+			curr = next;
+			continue;
+		}
+
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
+				"Resend transaction, seq %d, buf %lu, len %d, retries %d, next %d\n",
+				trans->seq, trans->buf, trans->buf_len, trans->retries, *start);
+		copylen = MIN(trans->buf_len, maxlen);
+		g_memmove(buf, trans->buf, copylen);
+
+		*cmd = trans->cmd;
+		*retries = trans->retries;
+		trans->retries--;
+		return copylen;
 	}
 
-	list = qd->sendqueue;
-	while (list != NULL) {
-		p = (qq_sendpacket *) list->data;
-		if (p->resend_times == QQ_RESEND_MAX) {	/* reach max */
-			switch (p->cmd) {
-			case QQ_CMD_KEEP_ALIVE:
-				if (qd->logged_in) {
-					purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Connection lost!\n");
-					purple_connection_error_reason(gc,
-						PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Connection lost"));
-					qd->logged_in = FALSE;
-				}
-				p->resend_times = -1;
-				break;
-			case QQ_CMD_LOGIN:
-			case QQ_CMD_REQUEST_LOGIN_TOKEN:
-				if (!qd->logged_in)	/* cancel login progress */
-					purple_connection_error_reason(gc,
-						PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Login failed, no reply"));
-				p->resend_times = -1;
-				break;
-			default:{
-				purple_debug(PURPLE_DEBUG_WARNING, "QQ", 
-					"%s packet sent %d times but not acked. Not resending it.\n", 
-					qq_get_cmd_desc(p->cmd), QQ_RESEND_MAX);
-				}
-				p->resend_times = -1;
-			}
-		} else {	/* resend_times < QQ_RESEND_MAX, so sent it again */
-			wait_time = (gint) (QQ_SENDQUEUE_TIMEOUT / 1000);
-			if (difftime(now, p->sendtime) > (wait_time * (p->resend_times + 1))) {
-				qq_proxy_write(qd, p->buf, p->len);
-				p->resend_times++;
-				purple_debug(PURPLE_DEBUG_INFO,
-					   "QQ", "<<< [%05d] send again for %d times!\n", 
-					   p->send_seq, p->resend_times);
-			}
-		}
-		list = list->next;
+	// purple_debug(PURPLE_DEBUG_INFO, "QQ", "Scan finished\n");
+	return -1;
+}
+
+void qq_packet_push(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data, gint data_len)
+{
+	transaction *trans = g_new0(transaction, 1);
+
+	g_return_if_fail(data != NULL && data_len > 0);
+	g_return_if_fail(trans != NULL);
+
+	trans->cmd = cmd;
+	trans->seq = seq;
+	trans->buf = g_memdup(data, data_len);
+	trans->buf_len = data_len;
+	trans->create_time = time(NULL);
+
+	if (qd->rcv_trans == NULL)
+		qd->rcv_trans = g_queue_new();
+
+	g_queue_push_head(qd->rcv_trans, trans);
+}
+
+gint qq_packet_pop(qq_data *qd, guint16 *cmd, guint16 *seq, guint8 *data, gint max_len)
+{
+	transaction *trans = NULL;
+	gint copy_len;
+
+	g_return_val_if_fail(data != NULL && max_len > 0, -1);
+
+	if (g_queue_is_empty(qd->rcv_trans)) {
+		return -1;
 	}
-	return TRUE;		/* if we return FALSE, the timeout callback stops functioning */
+	trans = (transaction *) g_queue_pop_head(qd->rcv_trans);
+	if (trans == NULL) {
+		return 0;
+	}
+	if (trans->buf == NULL || trans->buf_len <= 0) {
+		return 0;
+	}
+
+	copy_len = MIN(max_len, trans->buf_len);
+	g_memmove(data, trans->buf, copy_len);
+	*cmd = trans->cmd;
+	*seq = trans->seq;
+
+	g_free(trans->buf);
+	g_free(trans);
+	return copy_len;
+}
+
+/* clean up the packets before login */
+void qq_packet_remove_all(qq_data *qd)
+{
+	transaction *trans = NULL;
+
+	g_return_if_fail(qd != NULL);
+
+	/* now clean up my own data structures */
+	if (qd->rcv_trans != NULL) {
+		while (NULL != (trans = g_queue_pop_tail(qd->rcv_trans))) {
+			g_free(trans->buf);
+			g_free(trans);
+		}
+		g_queue_free(qd->rcv_trans);
+	}
 }

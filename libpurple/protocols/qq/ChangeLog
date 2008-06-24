@@ -1,3 +1,31 @@
+2008.05.14 - ccpaging <ecc_hy(at)hotmail.com>
+	* Move function for before login packets storing to sendqueue
+	* Use transaction data structure to store before login packets
+	* Rewrite tcp_pending and packet_process in qq_network.c
+
+2008.05.09 - ccpaging <ecc_hy(at)hotmail.com>
+	* Remove function _create_packet_head_seq in qq_network.c
+	* Create new function encap in qq_netowork.c
+	* Clean code of qq_send_packet_request_login_token and qq_send_packet_login in login_out.c
+
+2008.05.09 - ccpaging <ecc_hy(at)hotmail.com>
+	* Clean code of packet_parse.c, enable PARSER_DEBUG
+	* Rewrite send_queue
+
+2008.05.08 - ccpaging <ecc_hy(at)hotmail.com>
+	* Rewrite qq_network
+	* Add srv resolve function when qq_login
+	* Merge function _qq_common_clean in qq_proxy.c to qq_disconnect
+	* Move orignal qq_disconnect to qq_close
+	* qq_data alloc in qq_open and release in qq_close
+	* Network connect of QQ is created in qq_connect, and release in qq_disconnect
+
+2008.05.05 - ccpaging <ecc_hy(at)hotmail.com>
+	* Merge function _qq_common_clean in qq_proxy.c to qq_disconnect
+	* Move orignal qq_disconnect to qq_close
+	* qq_data alloc in qq_open and release in qq_close
+	* Network connect of QQ is created in qq_connect, and release in qq_disconnect
+
 2008.05.05 - ccpaging <ecc_hy(at)hotmail.com>
 	* Add qq_hex_dump function
 

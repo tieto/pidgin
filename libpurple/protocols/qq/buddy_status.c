@@ -33,10 +33,9 @@
 #include "header_info.h"
 #include "keep_alive.h"
 #include "packet_parse.h"
-#include "send_core.h"
 #include "utils.h"
 
-#include "qq_proxy.h"
+#include "qq_network.h"
 
 #define QQ_MISC_STATUS_HAVING_VIIDEO      0x00000001
 #define QQ_CHANGE_ONLINE_STATUS_REPLY_OK 	0x30	/* ASCII value of "0" */
@@ -57,7 +56,7 @@ void qq_buddy_status_dump_unclear(qq_buddy_status *s)
 	g_string_append_printf(dump, "013-014:     %04x   (client_version)\n", s->client_version);
 	/* g_string_append_printf(dump, "015-030:     %s   (unknown key)\n", s->unknown_key); */
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Buddy status entry, %s", dump->str);
-	_qq_show_packet("Unknown key", s->unknown_key, QQ_KEY_LENGTH);
+	qq_show_packet("Unknown key", s->unknown_key, QQ_KEY_LENGTH);
 	g_string_free(dump, TRUE);
 }
 
