@@ -1,0 +1,11 @@
+2008.05.05 - ccpaging <ecc_hy(at)hotmail.com>
+	* Add qq_hex_dump function
+
+2008.04.25 - ccpaging <ecc_hy(at)hotmail.com>, csyfek <csyfek(at)gmail.com>
+	* Rewrite read_packet and create_packet functions, use qq_put and qq_get functions instead
+	* New logic in accord with protocol models to handle packets, some related functions rewritten
+
+2008.03.24 - ccpaging <ecc_hy(at)hotmail.com>
+	* Remove qq_crypt function in crypt.c, use qq_crypt and qq_decrypt directly
+
+** since pidgin-2.4.0 ***

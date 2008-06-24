@@ -293,7 +293,6 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 	guint8 *raw_data, *encrypted_data;
 	time_t now;
 	ft_info *info;
-	gchar *hex_dump;
 
 	qd = (qq_data *) gc->proto_data;
 	info = (ft_info *) qd->xfer->data;
@@ -355,9 +354,9 @@ void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 
 		return;
 	}
 
-	hex_dump = hex_dump_to_str(raw_data, bytes);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "sending packet[%s]: \n%s", qq_get_file_cmd_desc(packet_type), hex_dump);
-	g_free(hex_dump);
+	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ",
+		raw_data, bytes,
+		"sending packet[%s]:", qq_get_file_cmd_desc(packet_type));
 
 	encrypted_len = bytes + 16;
 	encrypted_data = g_newa(guint8, encrypted_len);
@@ -531,7 +530,6 @@ static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data,
 	guint16 seq;
 	guint8 hellobyte;
 	ft_info *info = (ft_info *) qd->xfer->data;
-	gchar *hex_dump;
 
 	bytes = 0;
 	bytes += _qq_get_file_header(&fh, data + bytes);
@@ -551,9 +549,9 @@ static void _qq_process_recv_file_ctl_packet(PurpleConnection *gc, guint8 *data,
 	decryped_bytes += 4+1+1+19+1;	/* skip something */
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "==> [%d] receive %s packet\n", seq, qq_get_file_cmd_desc(packet_type));
-	hex_dump = hex_dump_to_str(decrypted_data, decrypted_len);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "decrypted control packet received: \n%s", hex_dump);
-	g_free(hex_dump);
+	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ",
+		decrypted_data, decrypted_len,
+		"decrypted control packet received:");
 
 	switch (packet_type) {
 		case QQ_FILE_CMD_NOTIFY_IP_ACK:

@@ -114,10 +114,12 @@ static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset,
 	if (error == NULL)
 		return ret;	/* conversion is OK */
 	else {			/* conversion error */
-		gchar *failed = hex_dump_to_str((guint8 *) str, (len == -1) ? strlen(str) : len);
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "%s\n", error->message);
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Dump failed text\n%s", failed);
-		g_free(failed);
+
+		qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
+			(guint8 *) str, (len == -1) ? strlen(str) : len,
+			"Dump failed text");
+
 		g_error_free(error);
 		return g_strdup(QQ_NULL_MSG);
 	}

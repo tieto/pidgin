@@ -92,11 +92,10 @@ static void _qq_process_packet_default(guint8 *buf, gint buf_len, guint16 cmd, g
 
 	_qq_show_packet("Processing unknown packet", buf, len);
 	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
-		gchar *hex_dump = hex_dump_to_str(data, len);
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-				">>> [%d] %s, %d bytes -> [default] decrypt and dump\n%s",
-				seq, qq_get_cmd_desc(cmd), buf_len, hex_dump);
-		g_free(hex_dump);
+		qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
+				data, len,
+				">>> [%d] %s -> [default] decrypt and dump",
+				seq, qq_get_cmd_desc(cmd));
 		try_dump_as_gbk(data, len);
 	} else {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Fail decrypt packet with default process\n");
@@ -118,10 +117,9 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	bytes_expected = qd->use_tcp ? QQ_TCP_HEADER_LENGTH : QQ_UDP_HEADER_LENGTH;
 
 	if (buf_len < bytes_expected) {
-		gchar *hex_dump = hex_dump_to_str(buf, buf_len);
-		purple_debug(PURPLE_DEBUG_ERROR,
-				"QQ", "Received packet is too short, dump and drop\n%s", hex_dump);
-		g_free(hex_dump);
+		qq_hex_dump(PURPLE_DEBUG_ERROR, "QQ",
+				buf, buf_len,
+				"Received packet is too short, dump and drop");
 		return;
 	}
 
@@ -153,10 +151,9 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	}
 
 	if ((buf[buf_len - 1] != QQ_PACKET_TAIL) || (header.header_tag != QQ_PACKET_TAG)) {
-		gchar *hex_dump = hex_dump_to_str(buf, buf_len);
-		purple_debug(PURPLE_DEBUG_ERROR,
-				"QQ", "Unknown QQ proctocol, dump and drop\n%s", hex_dump);
-		g_free(hex_dump);
+		qq_hex_dump(PURPLE_DEBUG_ERROR, "QQ",
+			buf, buf_len,
+			"Unknown QQ proctocol, dump and drop");
 		return;
 	}
 

@@ -70,9 +70,9 @@ void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
 	   */
 
 	/* modified by s3e, 20080424 */
-	gchar *packet_dump = hex_dump_to_str(buf, len);
-	purple_debug(PURPLE_DEBUG_INFO, desc, "\n%s\n", packet_dump);
-	g_free(packet_dump);
+	qq_hex_dump(PURPLE_DEBUG_INFO, desc,
+		buf, len,
+		"");
 }
 
 /* QQ 2003iii uses double MD5 for the pwkey to get the session key */

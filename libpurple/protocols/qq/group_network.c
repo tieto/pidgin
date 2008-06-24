@@ -98,12 +98,11 @@ static void _qq_process_group_cmd_reply_error_default(guint8 reply, guint8 *data
 /* default process, dump only */
 static void _qq_process_group_cmd_reply_default(guint8 *data, gint len, PurpleConnection *gc)
 {
-	gchar *hex_dump;
 	g_return_if_fail(data != NULL && len > 0);
 
-	hex_dump = hex_dump_to_str(data, len);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Dump unprocessed group cmd reply:\n%s", hex_dump);
-	g_free(hex_dump);
+	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ",
+		data, len, 
+		"Dump unprocessed group cmd reply:");
 }
 
 /* The lower layer command of send group cmd */

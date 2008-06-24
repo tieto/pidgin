@@ -385,7 +385,6 @@ static void qq_send_packet_login(PurpleConnection *gc, guint8 token_length, guin
 void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
-	gchar *hex_dump;
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
@@ -398,20 +397,18 @@ void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, PurpleConne
 			purple_debug(PURPLE_DEBUG_INFO, "QQ",
 					"Attempting to proceed with the actual packet length.\n");
 		}
-		hex_dump = hex_dump_to_str(buf+2, buf_len-2);
-		purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				"<<< got a token with %d bytes -> [default] decrypt and dump\n%s", buf_len-2, hex_dump);
+		qq_hex_dump(PURPLE_DEBUG_INFO, "QQ",
+				buf+2, buf_len-2,
+				"<<< got a token -> [default] decrypt and dump");
 		qq_send_packet_login(gc, buf_len-2, buf+2);
 	} else {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Unknown request login token reply code : %d\n", buf[0]);
-		hex_dump = hex_dump_to_str(buf, buf_len);
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-				">>> %d bytes -> [default] decrypt and dump\n%s",
-				buf_len, hex_dump);
+		qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
+				buf, buf_len,
+				">>> [default] decrypt and dump");
 		try_dump_as_gbk(buf, buf_len);
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, _("Error requesting login token"));
 	}
-	g_free(hex_dump);
 }
 
 /* send logout packets to QQ server */
@@ -433,7 +430,6 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	gint len, ret, bytes;
 	guint8 *data;
 	qq_data *qd;
-	gchar *hex_dump;
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
@@ -466,11 +462,9 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 				break;
 			default:
 				purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Unknown reply code: %d\n", data[0]);
-				hex_dump = hex_dump_to_str(data, len);
-				purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-						">>> %d bytes -> [default] decrypt and dump\n%s",
-						buf_len, hex_dump);
-				g_free(hex_dump);
+				qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
+						data, len,
+						">>> [default] decrypt and dump");
 				try_dump_as_gbk(data, len);
 
 				ret = QQ_LOGIN_REPLY_MISC_ERROR;

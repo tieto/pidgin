@@ -294,7 +294,7 @@ void qq_process_recv_group_im_been_added(guint8 *data, gint len, guint32 interna
 /* recv an IM from a group chat */
 void qq_process_recv_group_im(guint8 *data, gint data_len, guint32 internal_group_id, PurpleConnection *gc, guint16 im_type)
 {
-	gchar *msg_with_purple_smiley, *msg_utf8_encoded, *im_src_name, *hex_dump;
+	gchar *msg_with_purple_smiley, *msg_utf8_encoded, *im_src_name;
 	guint16 unknown;
 	guint32 unknown4;
 	PurpleConversation *conv;
@@ -311,8 +311,9 @@ void qq_process_recv_group_im(guint8 *data, gint data_len, guint32 internal_grou
 
 	qd = (qq_data *) gc->proto_data;
 
-	hex_dump = hex_dump_to_str(data, data_len);
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "group im hex dump\n%s\n", hex_dump);
+	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ",
+		data, data_len,
+		"group im hex dump");
 
 	im_group = g_newa(qq_recv_group_im, 1);
 
@@ -393,7 +394,6 @@ void qq_process_recv_group_im(guint8 *data, gint data_len, guint32 internal_grou
 					(conv)), im_src_name, 0, msg_utf8_encoded, im_group->send_time);
 		g_free(im_src_name);
 	}
-	g_free(hex_dump);
 	g_free(msg_with_purple_smiley);
 	g_free(msg_utf8_encoded);
 	g_free(im_group->msg);

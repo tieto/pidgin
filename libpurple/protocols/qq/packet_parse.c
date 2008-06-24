@@ -81,7 +81,7 @@ gint qq_get8(guint8 *b, guint8 *buf)
 	guint8 b_dest;
 	memcpy(&b_dest, buf, sizeof(b_dest));
 	*b = b_dest;
-        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][get8] buf %d\n", (void *)buf);
+        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][get8] buf %lu\n", (void *)buf);
         purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][get8] b_dest 0x%2x, *b 0x%02x\n", b_dest, *b);
 	return sizeof(b_dest);
 }
@@ -135,7 +135,7 @@ gint qq_get16(guint16 *w, guint8 *buf)
 	guint16 w_dest;
 	memcpy(&w_dest, buf, sizeof(w_dest));
 	*w = g_ntohs(w_dest);
-        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][get16] buf %d\n", (void *)buf);
+        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][get16] buf %lu\n", (void *)buf);
         purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][get16] w_dest 0x%04x, *w 0x%04x\n", w_dest, *w);
 	return sizeof(w_dest);
 }
@@ -183,7 +183,7 @@ gint qq_get32(guint32 *dw, guint8 *buf)
 	guint32 dw_dest;
 	memcpy(&dw_dest, buf, sizeof(dw_dest));
 	*dw = g_ntohl(dw_dest);
-        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][get32] buf %d\n", (void *)buf);
+        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][get32] buf %lu\n", (void *)buf);
         purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][get32] dw_dest 0x%08x, *dw 0x%08x\n", dw_dest, *dw);
 	return sizeof(dw_dest);
 }
@@ -214,7 +214,7 @@ gint read_packet_data(guint8 *buf, guint8 **cursor, gint buflen, guint8 *data, g
 gint qq_getdata(guint8 *data, gint datalen, guint8 *buf)
 {
     memcpy(data, buf, datalen);
-        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][getdata] buf %d\n", (void *)buf);
+        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][getdata] buf %lu\n", (void *)buf);
     return datalen;
 }
 
@@ -237,7 +237,7 @@ gint qq_getime(time_t *t, guint8 *buf)
 {
 	guint32 dw_dest;
 	memcpy(&dw_dest, buf, sizeof(dw_dest));
-        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][getime] buf %d\n", (void *)buf);
+        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][getime] buf %lu\n", (void *)buf);
         purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][getime] dw_dest before 0x%08x\n", dw_dest);
 	dw_dest = g_ntohl(dw_dest);
         purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][getime] dw_dest after 0x%08x\n", dw_dest);
@@ -282,7 +282,7 @@ gint create_packet_b(guint8 *buf, guint8 **cursor, guint8 b)
 gint qq_put8(guint8 *buf, guint8 b)
 {
     memcpy(buf, &b, sizeof(b));
-        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][put8] buf %d\n", (void *)buf);
+        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][put8] buf %lu\n", (void *)buf);
         purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][put8] b 0x%02x\n", b);
     return sizeof(b);
 }
@@ -327,7 +327,7 @@ gint qq_put16(guint8 *buf, guint16 w)
 {
     guint16 w_porter;
     w_porter = g_htons(w);
-        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][put16] buf %d\n", (void *)buf);
+        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][put16] buf %lu\n", (void *)buf);
         purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][put16] w 0x%04x, w_porter 0x%04x\n", w, w_porter);
     memcpy(buf, &w_porter, sizeof(w_porter));
     return sizeof(w_porter);
@@ -370,7 +370,7 @@ gint qq_put32(guint8 *buf, guint32 dw)
 {
     guint32 dw_porter;
     dw_porter = g_htonl(dw);
-        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][put32] buf %d\n", (void *)buf);
+        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][put32] buf %lu\n", (void *)buf);
         purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][put32] dw 0x%08x, dw_porter 0x%08x\n", dw, dw_porter);
     memcpy(buf, &dw_porter, sizeof(dw_porter));
     return sizeof(dw_porter);
@@ -404,7 +404,7 @@ gint create_packet_data(guint8 *buf, guint8 **cursor, guint8 *data, gint datalen
 gint qq_putdata(guint8 *buf, guint8 *data, const int datalen)
 {
     memcpy(buf, data, datalen);
-        purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][putdata] buf %d\n", (void *)buf);
+	purple_debug(PURPLE_DEBUG_ERROR, "QQ", "[DBG][putdata] buf %lu\n", (void *)buf);
     return datalen;
 }
 

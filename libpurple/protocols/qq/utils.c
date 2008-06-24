@@ -294,7 +294,7 @@ guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 
 /* Dumps a chunk of raw data into an ASCII hex string.
  * The return should be freed later. */
-gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
+static gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 {
 	GString *str;
 	gchar *ret;
@@ -329,6 +329,31 @@ gchar *hex_dump_to_str(const guint8 *const buffer, gint bytes)
 	g_string_free(str, FALSE);
 
 	return ret;
+}
+
+void qq_hex_dump(PurpleDebugLevel level, const char *category,
+		const guint8 *pdata, gint bytes,	
+		const char *format, ...)
+{
+	va_list args;
+	char *arg_s = NULL;
+	gchar *phex = NULL;
+
+	g_return_if_fail(level != PURPLE_DEBUG_ALL);
+	g_return_if_fail(format != NULL);
+
+	va_start(args, format);
+	arg_s = g_strdup_vprintf(format, args);
+	va_end(args);
+
+	if (bytes <= 0) {
+		purple_debug(level, category, arg_s);
+		return;
+	}
+
+	phex = hex_dump_to_str(pdata, bytes);
+	purple_debug(level, category, "%s - (len %d)\n%s", arg_s, bytes, phex);
+	g_free(phex);
 }
 
 /* convert face num from packet (0-299) to local face (1-100) */
