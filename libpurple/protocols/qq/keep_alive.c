@@ -49,16 +49,15 @@
 void qq_send_packet_keep_alive(PurpleConnection *gc)
 {
 	qq_data *qd;
-	guint8 *raw_data, *cursor;
+	guint8 raw_data[16] = {0};
+	gint bytes= 0;
 
 	qd = (qq_data *) gc->proto_data;
-	raw_data = g_newa(guint8, 4);
-	cursor = raw_data;
 
 	/* In fact, we can send whatever we like to server
 	 * with this command, server return the same result including
 	 * the amount of online QQ users, my ip and port */
-	create_packet_dw(raw_data, &cursor, qd->uid);
+	bytes += qq_put32(raw_data + bytes, qd->uid);
 
 	qq_send_cmd(gc, QQ_CMD_KEEP_ALIVE, TRUE, 0, TRUE, raw_data, 4);
 }

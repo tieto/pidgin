@@ -142,22 +142,23 @@ gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_chars
 gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg)
 {
 	GString *encoded;
-	guint8 font_attr, font_size, color[3], bar, *cursor;
+	guint8 font_attr, font_size, color[3], bar;
 	gboolean is_bold, is_italic, is_underline;
 	guint16 charset_code;
 	gchar *font_name, *color_code, *msg_utf8, *tmp, *ret;
+	gint bytes = 0;
 
-	cursor = data;
+	/* checked _qq_show_packet OK */
 	_qq_show_packet("QQ_MESG recv for font style", data, len);
 
-	read_packet_b(data, &cursor, len, &font_attr);
-	read_packet_data(data, &cursor, len, color, 3);	/* red,green,blue */
+	bytes += qq_get8(&font_attr, data + bytes);
+	bytes += qq_getdata(color, 3, data + bytes);	/* red,green,blue */
 	color_code = g_strdup_printf("#%02x%02x%02x", color[0], color[1], color[2]);
 
-	read_packet_b(data, &cursor, len, &bar);	/* skip, not sure of its use */
-	read_packet_w(data, &cursor, len, &charset_code);
+	bytes += qq_get8(&bar, data + bytes);	/* skip, not sure of its use */
+	bytes += qq_get16(&charset_code, data + bytes);
 
-	tmp = g_strndup((gchar *) cursor, data + len - cursor);
+	tmp = g_strndup((gchar *)(data + bytes), len - bytes);
 	font_name = qq_to_utf8(tmp, QQ_CHARSET_DEFAULT);
 	g_free(tmp);
 
@@ -177,11 +178,11 @@ gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg)
 	/* Henry: The range QQ sends rounds from 8 to 22, where a font size
 	 * of 10 is equal to 3 in html font tag */
 	g_string_append_printf(encoded,
-			       "<font color=\"%s\"><font face=\"%s\"><font size=\"%d\">",
-			       color_code, font_name, font_size / 3);
+			"<font color=\"%s\"><font face=\"%s\"><font size=\"%d\">",
+			color_code, font_name, font_size / 3);
 	purple_debug(PURPLE_DEBUG_INFO, "QQ_MESG",
-		   "recv <font color=\"%s\"><font face=\"%s\"><font size=\"%d\">\n",
-		   color_code, font_name, font_size / 3);
+			"recv <font color=\"%s\"><font face=\"%s\"><font size=\"%d\">\n",
+			color_code, font_name, font_size / 3);
 	g_string_append(encoded, msg_utf8);
 
 	if (is_bold) {

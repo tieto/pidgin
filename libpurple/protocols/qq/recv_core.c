@@ -94,8 +94,8 @@ static void _qq_process_packet_default(guint8 *buf, gint buf_len, guint16 cmd, g
 	if (qq_decrypt(buf, buf_len, qd->session_key, data, &len)) {
 		gchar *hex_dump = hex_dump_to_str(data, len);
 		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
-			   ">>> [%d] %s, %d bytes -> [default] decrypt and dump\n%s",
-			   seq, qq_get_cmd_desc(cmd), buf_len, hex_dump);
+				">>> [%d] %s, %d bytes -> [default] decrypt and dump\n%s",
+				seq, qq_get_cmd_desc(cmd), buf_len, hex_dump);
 		g_free(hex_dump);
 		try_dump_as_gbk(data, len);
 	} else {
@@ -107,9 +107,8 @@ static void _qq_process_packet_default(guint8 *buf, gint buf_len, guint16 cmd, g
 static void _qq_packet_process(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
-	gint len, bytes_expected, bytes_read;
+	gint bytes_notread, bytes_expected, bytes;
 	guint16 buf_len_read;	/* two bytes in the begining of TCP packet */
-	guint8 *cursor;
 	qq_recv_msg_header header;
 	packet_before_login *b4_packet;
 
@@ -121,51 +120,50 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	if (buf_len < bytes_expected) {
 		gchar *hex_dump = hex_dump_to_str(buf, buf_len);
 		purple_debug(PURPLE_DEBUG_ERROR,
-			   "QQ", "Received packet is too short, dump and drop\n%s", hex_dump);
+				"QQ", "Received packet is too short, dump and drop\n%s", hex_dump);
 		g_free(hex_dump);
 		return;
 	}
-	/* initialize */
-	cursor = buf;
-	bytes_read = 0;
 
+	/* initialize */
+	bytes = 0;
 	/* QQ TCP packet returns first 2 bytes the length of this packet */
 	if (qd->use_tcp) {
-		bytes_read += read_packet_w(buf, &cursor, buf_len, &buf_len_read);
+		bytes += qq_get16(&buf_len_read, buf + bytes);
 		if (buf_len_read != buf_len) {	/* wrong */
 			purple_debug
-			    (PURPLE_DEBUG_ERROR,
-			     "QQ",
-			     "TCP read %d bytes, header says %d bytes, use header anyway\n", buf_len, buf_len_read);
+				(PURPLE_DEBUG_ERROR,
+				 "QQ",
+				 "TCP read %d bytes, header says %d bytes, use header anyway\n", buf_len, buf_len_read);
 			buf_len = buf_len_read;	/* we believe header is more accurate */
 		}
 	}
 
 	/* now goes the normal QQ packet as UDP packet */
-	bytes_read += read_packet_b(buf, &cursor, buf_len, &header.header_tag);
-	bytes_read += read_packet_w(buf, &cursor, buf_len, &header.source_tag);
-	bytes_read += read_packet_w(buf, &cursor, buf_len, &header.cmd);
-	bytes_read += read_packet_w(buf, &cursor, buf_len, &header.seq);
+	bytes += qq_get8(&header.header_tag, buf + bytes);
+	bytes += qq_get16(&header.source_tag, buf + bytes);
+	bytes += qq_get16(&header.cmd, buf + bytes);
+	bytes += qq_get16(&header.seq, buf + bytes);
 
-	if (bytes_read != bytes_expected) {	/* read error */
+	if (bytes != bytes_expected) {	/* read error */
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			   "Fail reading packet header, expect %d bytes, read %d bytes\n", 
-			   bytes_expected, bytes_read);
+				"Fail reading packet header, expect %d bytes, read %d bytes\n", 
+				bytes_expected, bytes);
 		return;
 	}
 
 	if ((buf[buf_len - 1] != QQ_PACKET_TAIL) || (header.header_tag != QQ_PACKET_TAG)) {
 		gchar *hex_dump = hex_dump_to_str(buf, buf_len);
 		purple_debug(PURPLE_DEBUG_ERROR,
-			   "QQ", "Unknown QQ proctocol, dump and drop\n%s", hex_dump);
+				"QQ", "Unknown QQ proctocol, dump and drop\n%s", hex_dump);
 		g_free(hex_dump);
 		return;
 	}
 
 	if (QQ_DEBUG)
 		purple_debug(PURPLE_DEBUG_INFO, "QQ",
-			   "==> [%05d] %s, from (%s)\n",
-			   header.seq, qq_get_cmd_desc(header.cmd), qq_get_source_str(header.source_tag));
+				"==> [%05d] %s, from (%s)\n",
+				header.seq, qq_get_cmd_desc(header.cmd), qq_get_source_str(header.source_tag));
 
 	if (header.cmd != QQ_CMD_LOGIN && header.cmd != QQ_CMD_REQUEST_LOGIN_TOKEN) {
 		if (!qd->logged_in) {	/* packets before login */
@@ -180,7 +178,7 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, PurpleConnection *gc)
 		} else if (!g_queue_is_empty(qd->before_login_packets)) {
 			/* logged_in, but we have packets before login */
 			b4_packet = (packet_before_login *)
-			    g_queue_pop_head(qd->before_login_packets);
+				g_queue_pop_head(qd->before_login_packets);
 			_qq_packet_process(b4_packet->buf, b4_packet->len, gc);
 			/* in fact this is a recursive call,  
 			 * all packets before login will be processed before goes on */
@@ -190,94 +188,94 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, PurpleConnection *gc)
 	}
 
 	/* this is the length of all the encrypted data (also remove tail tag */
-	len = buf_len - (bytes_read) - 1;
+	bytes_notread = buf_len - bytes - 1;
 
 	/* whether it is an ack */
 	switch (header.cmd) {
-	case QQ_CMD_RECV_IM:
-	case QQ_CMD_RECV_MSG_SYS:
-	case QQ_CMD_RECV_MSG_FRIEND_CHANGE_STATUS:
-		/* server intiated packet, we need to send ack and check duplicaion 
-		 * this must be put after processing b4_packet
-		 * as these packets will be passed in twice */
-		if (_qq_check_packet_set_window(header.seq, gc)) {
-			purple_debug(PURPLE_DEBUG_WARNING,
-				   "QQ", "dup [%05d] %s, discard...\n", header.seq, qq_get_cmd_desc(header.cmd));
-			return;
-		}
-		break;
-	default:{	/* ack packet, we need to update sendqueue */
-			/* we do not check duplication for server ack */
-			qq_sendqueue_remove(qd, header.seq);
-			if (QQ_DEBUG)
-				purple_debug(PURPLE_DEBUG_INFO, "QQ",
-					   "ack [%05d] %s, remove from sendqueue\n",
-					   header.seq, qq_get_cmd_desc(header.cmd));
-		}
+		case QQ_CMD_RECV_IM:
+		case QQ_CMD_RECV_MSG_SYS:
+		case QQ_CMD_RECV_MSG_FRIEND_CHANGE_STATUS:
+			/* server intiated packet, we need to send ack and check duplicaion 
+			 * this must be put after processing b4_packet
+			 * as these packets will be passed in twice */
+			if (_qq_check_packet_set_window(header.seq, gc)) {
+				purple_debug(PURPLE_DEBUG_WARNING,
+						"QQ", "dup [%05d] %s, discard...\n", header.seq, qq_get_cmd_desc(header.cmd));
+				return;
+			}
+			break;
+		default:{	/* ack packet, we need to update sendqueue */
+				/* we do not check duplication for server ack */
+				qq_sendqueue_remove(qd, header.seq);
+				if (QQ_DEBUG)
+					purple_debug(PURPLE_DEBUG_INFO, "QQ",
+							"ack [%05d] %s, remove from sendqueue\n",
+							header.seq, qq_get_cmd_desc(header.cmd));
+			}
 	}
 
 	/* now process the packet */
 	switch (header.cmd) {
-	case QQ_CMD_KEEP_ALIVE:
-		qq_process_keep_alive_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_UPDATE_INFO:
-		qq_process_modify_info_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_ADD_FRIEND_WO_AUTH:
-		qq_process_add_buddy_reply(cursor, len, header.seq, gc);
-		break;
-	case QQ_CMD_DEL_FRIEND:
-		qq_process_remove_buddy_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_REMOVE_SELF:
-		qq_process_remove_self_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_BUDDY_AUTH:
-		qq_process_add_buddy_auth_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_GET_USER_INFO:
-		qq_process_get_info_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_CHANGE_ONLINE_STATUS:
-		qq_process_change_status_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_SEND_IM:
-		qq_process_send_im_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_RECV_IM:
-		qq_process_recv_im(cursor, len, header.seq, gc);
-		break;
-	case QQ_CMD_LOGIN:
-		qq_process_login_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_GET_FRIENDS_LIST:
-		qq_process_get_buddies_list_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_GET_FRIENDS_ONLINE:
-		qq_process_get_buddies_online_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_GROUP_CMD:
-		qq_process_group_cmd_reply(cursor, len, header.seq, gc);
-		break;
-	case QQ_CMD_GET_ALL_LIST_WITH_GROUP:
-		qq_process_get_all_list_with_group_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_GET_LEVEL:
-		qq_process_get_level_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_REQUEST_LOGIN_TOKEN:
-		qq_process_request_login_token_reply(cursor, len, gc);
-		break;
-	case QQ_CMD_RECV_MSG_SYS:
-		qq_process_msg_sys(cursor, len, header.seq, gc);
-		break;
-	case QQ_CMD_RECV_MSG_FRIEND_CHANGE_STATUS:
-		qq_process_friend_change_status(cursor, len, gc);
-		break;
-	default:
-		_qq_process_packet_default(cursor, len, header.cmd, header.seq, gc);
-		break;
+		case QQ_CMD_KEEP_ALIVE:
+			qq_process_keep_alive_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_UPDATE_INFO:
+			qq_process_modify_info_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_ADD_FRIEND_WO_AUTH:
+			qq_process_add_buddy_reply(buf + bytes, bytes_notread, header.seq, gc);
+			break;
+		case QQ_CMD_DEL_FRIEND:
+			qq_process_remove_buddy_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_REMOVE_SELF:
+			qq_process_remove_self_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_BUDDY_AUTH:
+			qq_process_add_buddy_auth_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_GET_USER_INFO:
+			qq_process_get_info_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_CHANGE_ONLINE_STATUS:
+			qq_process_change_status_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_SEND_IM:
+			qq_process_send_im_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_RECV_IM:
+			qq_process_recv_im(buf + bytes, bytes_notread, header.seq, gc);
+			break;
+		case QQ_CMD_LOGIN:
+			qq_process_login_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_GET_FRIENDS_LIST:
+			qq_process_get_buddies_list_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_GET_FRIENDS_ONLINE:
+			qq_process_get_buddies_online_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_GROUP_CMD:
+			qq_process_group_cmd_reply(buf + bytes, bytes_notread, header.seq, gc);
+			break;
+		case QQ_CMD_GET_ALL_LIST_WITH_GROUP:
+			qq_process_get_all_list_with_group_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_GET_LEVEL:
+			qq_process_get_level_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_REQUEST_LOGIN_TOKEN:
+			qq_process_request_login_token_reply(buf + bytes, bytes_notread, gc);
+			break;
+		case QQ_CMD_RECV_MSG_SYS:
+			qq_process_msg_sys(buf + bytes, bytes_notread, header.seq, gc);
+			break;
+		case QQ_CMD_RECV_MSG_FRIEND_CHANGE_STATUS:
+			qq_process_friend_change_status(buf + bytes, bytes_notread, gc);
+			break;
+		default:
+			_qq_process_packet_default(buf + bytes, bytes_notread, header.cmd, header.seq, gc);
+			break;
 	}
 }
 
@@ -307,7 +305,7 @@ void qq_input_pending(gpointer data, gint source, PurpleInputCondition cond)
 
 	if(cond != PURPLE_INPUT_READ) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Socket error"));
+				_("Socket error"));
 		return;
 	}
 
@@ -318,7 +316,7 @@ void qq_input_pending(gpointer data, gint source, PurpleInputCondition cond)
 	len = qq_proxy_read(qd, buf, MAX_PACKET_SIZE);
 	if (len <= 0) {
 		purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("Unable to read from socket"));
+				_("Unable to read from socket"));
 		return;
 	} else {
 		_qq_packet_process(buf, len, gc);

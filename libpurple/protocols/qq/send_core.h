@@ -31,7 +31,7 @@
 gint qq_send_cmd(PurpleConnection *gc, guint16 cmd, gboolean is_auto_seq, guint16 seq, 
 		gboolean need_ack, guint8 *data, gint len);
 gint _qq_send_packet(PurpleConnection * gc, guint8 *buf, gint len, guint16 cmd);
-gint _create_packet_head_seq(guint8 *buf, guint8 **cursor,
-		PurpleConnection *gc, guint16 cmd, gboolean is_auto_seq, guint16 *seq);
+gint _create_packet_head_seq(guint8 *buf, PurpleConnection *gc,
+		guint16 cmd, gboolean is_auto_seq, guint16 *seq);
 
 #endif

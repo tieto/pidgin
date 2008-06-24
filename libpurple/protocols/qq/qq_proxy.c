@@ -46,33 +46,40 @@
 
 /* These functions are used only in development phase */
 /*
-static void _qq_show_socket(gchar *desc, gint fd) {
-	struct sockaddr_in sin;
-	socklen_t len = sizeof(sin);
-	getsockname(fd, (struct sockaddr *)&sin, &len);
-	purple_debug(PURPLE_DEBUG_INFO, desc, "%s:%d\n",
-            inet_ntoa(sin.sin_addr), g_ntohs(sin.sin_port));
-}
-*/
+   static void _qq_show_socket(gchar *desc, gint fd) {
+   struct sockaddr_in sin;
+   socklen_t len = sizeof(sin);
+   getsockname(fd, (struct sockaddr *)&sin, &len);
+   purple_debug(PURPLE_DEBUG_INFO, desc, "%s:%d\n",
+   inet_ntoa(sin.sin_addr), g_ntohs(sin.sin_port));
+   }
+   */
 
 void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
 {
-	char buf1[8*len+2], buf2[10];
-	int i;
-	buf1[0] = 0;
-	for (i = 0; i < len; i++) {
-		sprintf(buf2, " %02x(%d)", buf[i] & 0xff, buf[i] & 0xff);
-		strcat(buf1, buf2);
-	}
-	strcat(buf1, "\n");
-	purple_debug(PURPLE_DEBUG_INFO, desc, "%s", buf1);
+	/*
+	   char buf1[8*len+2], buf2[10];
+	   int i;
+	   buf1[0] = 0;
+	   for (i = 0; i < len; i++) {
+	   sprintf(buf2, " %02x(%d)", buf[i] & 0xff, buf[i] & 0xff);
+	   strcat(buf1, buf2);
+	   }
+	   strcat(buf1, "\n");
+	   purple_debug(PURPLE_DEBUG_INFO, desc, "%s", buf1);
+	   */
+
+	/* modified by s3e, 20080424 */
+	gchar *packet_dump = hex_dump_to_str(buf, len);
+	purple_debug(PURPLE_DEBUG_INFO, desc, "\n%s\n", packet_dump);
+	g_free(packet_dump);
 }
 
 /* QQ 2003iii uses double MD5 for the pwkey to get the session key */
 static guint8 *_gen_pwkey(const gchar *pwd)
 {
-        PurpleCipher *cipher;
-        PurpleCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 
 	guchar pwkey_tmp[QQ_KEY_LENGTH];
 
@@ -114,10 +121,10 @@ static void _qq_start_services(PurpleConnection *gc)
 {
 	/* start watching for IMs about to be sent */
 	/*
-	purple_signal_connect(purple_conversations_get_handle(),
-			"sending-im-msg", gc,
-			PURPLE_CALLBACK(qq_sending_im_msg_cb), NULL);
-			*/
+	   purple_signal_connect(purple_conversations_get_handle(),
+	   "sending-im-msg", gc,
+	   PURPLE_CALLBACK(qq_sending_im_msg_cb), NULL);
+	   */
 }
 
 /* the callback function after socket is built
@@ -146,8 +153,8 @@ static void _qq_got_login(gpointer data, gint source, const gchar *error_message
 	qd = (qq_data *) gc->proto_data;
 
 	/*
-	_qq_show_socket("Got login socket", source);
-	*/
+	   _qq_show_socket("Got login socket", source);
+	   */
 
 	/* QQ use random seq, to minimize duplicated packets */
 	srandom(time(NULL));
@@ -209,7 +216,7 @@ static void _qq_common_clean(PurpleConnection *gc)
 
 static void no_one_calls(gpointer data, gint source, PurpleInputCondition cond)
 {
-        struct PHB *phb = data;
+	struct PHB *phb = data;
 	socklen_t len;
 	int error=0, ret;
 
@@ -218,16 +225,16 @@ static void no_one_calls(gpointer data, gint source, PurpleInputCondition cond)
 	len = sizeof(error);
 
 	/*
-	* getsockopt after a non-blocking connect returns -1 if something is
-	* really messed up (bad descriptor, usually). Otherwise, it returns 0 and
-	* error holds what connect would have returned if it blocked until now.
-	* Thus, error == 0 is success, error == EINPROGRESS means "try again",
-	* and anything else is a real error.
-	*
-	* (error == EINPROGRESS can happen after a select because the kernel can
-	* be overly optimistic sometimes. select is just a hint that you might be
-	* able to do something.)
-	*/
+	 * getsockopt after a non-blocking connect returns -1 if something is
+	 * really messed up (bad descriptor, usually). Otherwise, it returns 0 and
+	 * error holds what connect would have returned if it blocked until now.
+	 * Thus, error == 0 is success, error == EINPROGRESS means "try again",
+	 * and anything else is a real error.
+	 *
+	 * (error == EINPROGRESS can happen after a select because the kernel can
+	 * be overly optimistic sometimes. select is just a hint that you might be
+	 * able to do something.)
+	 */
 	ret = getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len);
 	if (ret == 0 && error == EINPROGRESS)
 		return; /* we'll be called again later */
@@ -265,7 +272,7 @@ static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t add
 
 	if (fd < 0) {
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ Redirect", 
-			"Unable to create socket: %s\n", g_strerror(errno));
+				"Unable to create socket: %s\n", g_strerror(errno));
 		return -1;
 	}
 
@@ -294,10 +301,10 @@ static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t add
 		 *    The connection is established asynchronously.
 		 */
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			purple_debug_warning("QQ", "Connect in asynchronous mode.\n");
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Connect in asynchronous mode.\n");
 			phb->inpa = purple_input_add(fd, PURPLE_INPUT_WRITE, no_one_calls, phb);
 		} else {
-			purple_debug_error("QQ", "Connection failed: %s\n", g_strerror(errno));
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Connection failed: %d\n", g_strerror(errno));
 			close(fd);
 			return -1;
 		}		/* if errno */
@@ -349,11 +356,11 @@ static void _qq_server_resolved(GSList *hosts, gpointer data, const char *error_
 					ret = -1;
 				} else {
 					/* as the destination is always QQ server during the session, 
-				 	* we can set dest_sin here, instead of _qq_s5_canread_again */
+					 * we can set dest_sin here, instead of _qq_s5_canread_again */
 					memcpy(&qd->dest_sin, &addr, addr_size);
 					if (purple_dnsquery_a(purple_proxy_info_get_host(phb->gpi),
-							purple_proxy_info_get_port(phb->gpi),
-							_qq_proxy_resolved, phb) == NULL)
+								purple_proxy_info_get_port(phb->gpi),
+								_qq_proxy_resolved, phb) == NULL)
 						ret = -1;
 				}
 				break;
@@ -374,9 +381,9 @@ static void _qq_server_resolved(GSList *hosts, gpointer data, const char *error_
 
 /* returns -1 if dns lookup fails, otherwise returns 0 */
 static gint _qq_udp_proxy_connect(PurpleAccount *account,
-			   const gchar *server, guint16 port, 
-			   void callback(gpointer, gint, const gchar *error_message), 
-			   PurpleConnection *gc)
+		const gchar *server, guint16 port, 
+		void callback(gpointer, gint, const gchar *error_message), 
+		PurpleConnection *gc)
 {
 	PurpleProxyInfo *info;
 	struct PHB *phb;
@@ -496,6 +503,7 @@ gint qq_proxy_write(qq_data *qd, guint8 *data, gint len)
 		errno = 0;
 		ret = send(qd->fd, data, len, 0);
 	}
+
 	if (ret == -1)
 		purple_connection_error_reason(qd->gc, PURPLE_CONNECTION_ERROR_NETWORK_ERROR, g_strerror(errno));
 

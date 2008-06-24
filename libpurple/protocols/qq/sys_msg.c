@@ -120,7 +120,7 @@ static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 /* Send ACK if the sys message needs an ACK */
 static void _qq_send_packet_ack_msg_sys(PurpleConnection *gc, guint8 code, guint32 from, guint16 seq)
 {
-	guint8 bar, *ack, *cursor;
+	guint8 bar, *ack;
 	gchar *str;
 	gint ack_len, bytes;
 
@@ -128,14 +128,13 @@ static void _qq_send_packet_ack_msg_sys(PurpleConnection *gc, guint8 code, guint
 	bar = 0x1e;
 	ack_len = 1 + 1 + strlen(str) + 1 + 2;
 	ack = g_newa(guint8, ack_len);
-	cursor = ack;
-	bytes = 0;
 
-	bytes += create_packet_b(ack, &cursor, code);
-	bytes += create_packet_b(ack, &cursor, bar);
-	bytes += create_packet_data(ack, &cursor, (guint8 *) str, strlen(str));
-	bytes += create_packet_b(ack, &cursor, bar);
-	bytes += create_packet_w(ack, &cursor, seq);
+	bytes = 0;
+	bytes += qq_put8(ack + bytes, code);
+	bytes += qq_put8(ack + bytes, bar);
+	bytes += qq_putdata(ack + bytes, (guint8 *) str, strlen(str));
+	bytes += qq_put8(ack + bytes, bar);
+	bytes += qq_put16(ack + bytes, seq);
 
 	g_free(str);
 
