@@ -1,5 +1,5 @@
 /**
- * @file sendqueue.h
+ * @file qq_trans.h
  *
  * purple
  *
@@ -28,15 +28,15 @@
 #include <glib.h>
 #include "qq.h"
 
-void qq_trans_append(qq_data *qd, guint8 *buf, gint bus_len, guint16 cmd, guint16 seq);
-void qq_trans_remove(qq_data *qd, gpointer data);
-gpointer qq_trans_find(qq_data *qd, guint16 seq);
-void qq_trans_remove_all(qq_data *qd);
+void qq_send_trans_append(qq_data *qd, guint8 *buf, gint bus_len, guint16 cmd, guint16 seq);
+void qq_send_trans_remove(qq_data *qd, gpointer data);
+gpointer qq_send_trans_find(qq_data *qd, guint16 seq);
+void qq_send_trans_remove_all(qq_data *qd);
 
-gint qq_trans_scan(qq_data *qd, gint *start, guint8 *buf, gint maxlen, guint16 *cmd, gint *retries);
+gint qq_send_trans_scan(qq_data *qd, gint *start, guint8 *buf, gint maxlen, guint16 *cmd, gint *retries);
 
-void qq_packet_push(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data, gint data_len);
-gint qq_packet_pop(qq_data *qd, guint16 *cmd, guint16* seq, guint8 *data, gint max_len);
-void qq_packet_remove_all(qq_data *qd);
+void qq_rcv_trans_push(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data, gint data_len);
+gint qq_rcv_trans_pop(qq_data *qd, guint16 *cmd, guint16* seq, guint8 *data, gint max_len);
+void qq_rcv_trans_remove_all(qq_data *qd);
 
 #endif

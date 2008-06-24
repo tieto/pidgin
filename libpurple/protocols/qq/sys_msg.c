@@ -120,10 +120,13 @@ static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 /* Send ACK if the sys message needs an ACK */
 static void _qq_send_packet_ack_msg_sys(PurpleConnection *gc, guint8 code, guint32 from, guint16 seq)
 {
+	qq_data *qd;
 	guint8 bar, *ack;
 	gchar *str;
 	gint ack_len, bytes;
 
+	qd = (qq_data *) gc->proto_data;
+	
 	str = g_strdup_printf("%d", from);
 	bar = 0x1e;
 	ack_len = 1 + 1 + strlen(str) + 1 + 2;
@@ -139,7 +142,7 @@ static void _qq_send_packet_ack_msg_sys(PurpleConnection *gc, guint8 code, guint
 	g_free(str);
 
 	if (bytes == ack_len)	/* creation OK */
-		qq_send_cmd(gc, QQ_CMD_ACK_SYS_MSG, TRUE, 0, FALSE, ack, ack_len);
+		qq_send_cmd_detail(qd, QQ_CMD_ACK_SYS_MSG, 0, FALSE, ack, ack_len);
 	else
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail creating sys msg ACK, expect %d bytes, build %d bytes\n", ack_len, bytes);

@@ -219,7 +219,10 @@ static const gchar *qq_get_recv_im_type_str(gint type)
  * we send an ACK which is the first 16 bytes of incoming packet */
 static void _qq_send_packet_recv_im_ack(PurpleConnection *gc, guint16 seq, guint8 *data)
 {
-	qq_send_cmd(gc, QQ_CMD_RECV_IM, FALSE, seq, FALSE, data, 16);
+	qq_data *qd;
+
+	qd = (qq_data *) gc->proto_data;
+	qq_send_cmd_detail(qd, QQ_CMD_RECV_IM, seq, FALSE, data, 16);
 }
 
 /* read the common parts of the normal_im,
@@ -520,7 +523,7 @@ void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint ty
 	qq_show_packet("QQ_raw_data debug", raw_data, bytes);
 
 	if (bytes == raw_len)	/* create packet OK */
-		qq_send_cmd(gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data, bytes);
+		qq_send_cmd(qd, QQ_CMD_SEND_IM, raw_data, bytes);
 	else
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 				"Fail creating send_im packet, expect %d bytes, build %d bytes\n", raw_len, bytes);

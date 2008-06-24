@@ -56,8 +56,8 @@ QQSOURCES = \
 	qq_network.h \
 	send_file.c \
 	send_file.h \
-	sendqueue.c \
-	sendqueue.h \
+	qq_trans.c \
+	qq_trans.h \
 	sys_msg.c \
 	sys_msg.h \
 	utils.c \

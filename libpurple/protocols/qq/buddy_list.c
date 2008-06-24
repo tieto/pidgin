@@ -81,7 +81,7 @@ void qq_send_packet_get_buddies_online(PurpleConnection *gc, guint8 position)
 	/* 003-004 */
 	bytes += qq_put16(raw_data + bytes, 0x0000);
 
-	qq_send_cmd(gc, QQ_CMD_GET_FRIENDS_ONLINE, TRUE, 0, TRUE, raw_data, 5);
+	qq_send_cmd(qd, QQ_CMD_GET_FRIENDS_ONLINE, raw_data, 5);
 	qd->last_get_online = time(NULL);
 }
 
@@ -89,6 +89,7 @@ void qq_send_packet_get_buddies_online(PurpleConnection *gc, guint8 position)
  * server may return a position tag if list is too long for one packet */
 void qq_send_packet_get_buddies_list(PurpleConnection *gc, guint16 position)
 {
+	qq_data *qd = (qq_data *) gc->proto_data;
 	guint8 raw_data[16] = {0};
 	gint bytes = 0;
 
@@ -101,12 +102,13 @@ void qq_send_packet_get_buddies_list(PurpleConnection *gc, guint16 position)
 	 * March 22, found the 00,00,00 starts to work as well */
 	bytes += qq_put8(raw_data + bytes, 0x00);
 
-	qq_send_cmd(gc, QQ_CMD_GET_FRIENDS_LIST, TRUE, 0, TRUE, raw_data, bytes);
+	qq_send_cmd(qd, QQ_CMD_GET_FRIENDS_LIST, raw_data, bytes);
 }
 
 /* get all list, buddies & Quns with groupsid support */
 void qq_send_packet_get_all_list_with_group(PurpleConnection *gc, guint32 position)
 {
+	qq_data *qd = (qq_data *) gc->proto_data;
 	guint8 raw_data[16] = {0};
 	gint bytes = 0;
 
@@ -118,7 +120,7 @@ void qq_send_packet_get_all_list_with_group(PurpleConnection *gc, guint32 positi
 	bytes += qq_put32(raw_data + bytes, 0x00000000);
 	bytes += qq_put32(raw_data + bytes, position);
 
-	qq_send_cmd(gc, QQ_CMD_GET_ALL_LIST_WITH_GROUP, TRUE, 0, TRUE, raw_data, bytes);
+	qq_send_cmd(qd, QQ_CMD_GET_ALL_LIST_WITH_GROUP, raw_data, bytes);
 }
 
 static void _qq_buddies_online_reply_dump_unclear(qq_friends_online_entry *fe)

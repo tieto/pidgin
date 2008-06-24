@@ -39,6 +39,17 @@
 
 #define QQ_NAME_FORMAT    "%d"
 
+/* These functions are used only in development phase */
+/*
+   static void _qq_show_socket(gchar *desc, gint fd) {
+   struct sockaddr_in sin;
+   socklen_t len = sizeof(sin);
+   getsockname(fd, (struct sockaddr *)&sin, &len);
+   purple_debug(PURPLE_DEBUG_INFO, desc, "%s:%d\n",
+   inet_ntoa(sin.sin_addr), g_ntohs(sin.sin_port));
+   }
+   */
+
 gchar *get_name_by_index_str(gchar **array, const gchar *index_str, gint amount)
 {
 	gint index;

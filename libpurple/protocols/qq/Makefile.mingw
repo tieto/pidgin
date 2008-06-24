@@ -65,7 +65,7 @@ C_SRC = \
 	qq.c \
 	qq_network.c \
 	send_file.c \
-	sendqueue.c \
+	qq_trans.c \
 	sys_msg.c \
 	utils.c
 

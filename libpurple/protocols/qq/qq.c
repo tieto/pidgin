@@ -62,47 +62,22 @@
 
 #define OPENQ_AUTHOR            "Puzzlebird"
 #define OPENQ_WEBSITE            "http://openq.sourceforge.net"
+
 #define QQ_TCP_PORT       		8000
 #define QQ_UDP_PORT             	8000
 
-const gchar *udp_server_list[] = {
-	"sz.tencent.com",
-	"sz2.tencent.com",
-	"sz3.tencent.com",
-	"sz4.tencent.com",
-	"sz5.tencent.com",
-	"sz6.tencent.com",
-	"sz7.tencent.com",
-	"sz8.tencent.com",
-	"sz9.tencent.com"
-};
-const gint udp_server_amount = (sizeof(udp_server_list) / sizeof(udp_server_list[0]));
-
-
-const gchar *tcp_server_list[] = {
-	"tcpconn.tencent.com",
-	"tcpconn2.tencent.com",
-	"tcpconn3.tencent.com",
-	"tcpconn4.tencent.com",
-	"tcpconn5.tencent.com",
-	"tcpconn6.tencent.com"
-};
-const gint tcp_server_amount = (sizeof(tcp_server_list) / sizeof(tcp_server_list[0]));
-
-static void srv_resolved(PurpleSrvResponse *resp, int results, gpointer account)
-{
+static void server_list_create(PurpleAccount *account) {
 	PurpleConnection *gc;
 	qq_data *qd;
-	gchar *hostname;
+	const gchar *user_server;
 	int port;
 
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Create server list\n");
 	gc = purple_account_get_connection(account);
-	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
-	qd = (qq_data *) gc->proto_data;
+	g_return_if_fail(gc != NULL  && gc->proto_data != NULL);
+	qd = gc->proto_data;
 
-	qd->srv_query_data = NULL;
-
-	/* find the host to connect to */
+	qd->use_tcp = purple_account_get_bool(account, "use_tcp", TRUE);
 	port = purple_account_get_int(account, "port", 0);
 	if (port == 0) {
 		if (qd->use_tcp) {
@@ -111,38 +86,62 @@ static void srv_resolved(PurpleSrvResponse *resp, int results, gpointer account)
 			port = QQ_UDP_PORT;
 		}
 	}
+	qd->user_port = port;
 
-	if(results) {
-		hostname = g_strdup(resp->hostname);
-		if(!port)
-			port = resp->port;
-		g_free(resp);
-	} else {
-		if(!purple_account_get_bool(account, "useproxy", FALSE)) {
-			hostname = g_strdup(qd->server_name);
-		} else {
-			hostname = g_strdup(purple_account_get_string(account,
-				"proxy", qd->server_name));
-		}
+ 	g_return_if_fail(qd->user_server == NULL);
+	user_server = purple_account_get_string(account, "server", NULL);
+	if (user_server != NULL && strlen(user_server) > 0) {
+		qd->user_server = g_strdup(user_server);
 	}
 
-	/*
-	purple_debug(PURPLE_DEBUG_INFO, "QQ",
-		"using with server %s and port %d\n", hostname, port);
-	*/
-	qd->real_hostname = g_strdup(hostname);
-	qd->real_port = port;
-	qq_connect(account);
+	if (qd->user_server != NULL) {
+		qd->servers = g_list_append(qd->servers, qd->user_server);
+		return;
+	}
+	if (qd->use_tcp) {
+		qd->servers = g_list_append(qd->servers, "tcpconn.tencent.com");
+		qd->servers = g_list_append(qd->servers, "tcpconn2.tencent.com");
+		qd->servers = g_list_append(qd->servers, "tcpconn3.tencent.com");
+		qd->servers = g_list_append(qd->servers, "tcpconn4.tencent.com");
+		qd->servers = g_list_append(qd->servers, "tcpconn5.tencent.com");
+		qd->servers = g_list_append(qd->servers, "tcpconn6.tencent.com");
+		return;
+    }
+    
+	qd->servers = g_list_append(qd->servers, "sz.tencent.com");
+	qd->servers = g_list_append(qd->servers, "sz2.tencent.com");
+	qd->servers = g_list_append(qd->servers, "sz3.tencent.com");
+	qd->servers = g_list_append(qd->servers, "sz4.tencent.com");
+	qd->servers = g_list_append(qd->servers, "sz5.tencent.com");
+	qd->servers = g_list_append(qd->servers, "sz6.tencent.com");
+	qd->servers = g_list_append(qd->servers, "sz7.tencent.com");
+	qd->servers = g_list_append(qd->servers, "sz8.tencent.com");
+	qd->servers = g_list_append(qd->servers, "sz9.tencent.com");
+}
 
-	g_free(hostname);
+static void server_list_remove_all(qq_data *qd) {
+ 	g_return_if_fail(qd != NULL);
+
+	if (qd->real_hostname) {
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "free real_hostname\n");
+		g_free(qd->real_hostname);
+		qd->real_hostname = NULL;
+	}
+	
+	if (qd->user_server != NULL) {
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "free user_server\n");
+		g_free(qd->user_server);
+		qd->user_server = NULL;
+	}
+
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "free server list\n");
+ 	g_list_free(qd->servers);
 }
 
 static void qq_login(PurpleAccount *account)
 {
-	const gchar *userserver;
-	qq_data *qd;
-	gchar *host2connect;
 	PurpleConnection *gc;
+	qq_data *qd;
 	PurplePresence *presence;
 
 	g_return_if_fail(account != NULL);
@@ -166,30 +165,11 @@ static void qq_login(PurpleAccount *account)
 		qd->login_mode = QQ_LOGIN_MODE_NORMAL;
 	}
 
-	userserver = purple_account_get_string(account, "server", NULL);
-	qd->use_tcp = purple_account_get_bool(account, "use_tcp", TRUE);
+	server_list_create(account);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ",
+		"Server list has %d\n", g_list_length(qd->servers));
 
-	if (userserver == NULL || strlen(userserver) == 0) {
-		if (qd->use_tcp) {
-			qd->server_name = g_strdup(tcp_server_list[random() % tcp_server_amount]);
-		} else {
-			qd->server_name = g_strdup(udp_server_list[random() % udp_server_amount]);
-		}
-	} else {
-		qd->server_name = g_strdup(userserver);
-	}
-
-	purple_connection_update_progress(gc, _("Connecting"), 0, QQ_CONNECT_STEPS);
-
-	if(!purple_account_get_bool(account, "useproxy", FALSE)) {
-		host2connect = g_strdup(qd->server_name);
-	} else {
-		host2connect = g_strdup(purple_account_get_string(account, "proxy", qd->server_name));
-	}
-
-	qd->srv_query_data = purple_srv_resolve("QQ",
-			qd->use_tcp ? "tcp" : "udp", host2connect, srv_resolved, account);
-	g_free(host2connect);
+	qq_connect(account);
 }
 
 /* clean up the given QQ connection and free all resources */
@@ -197,20 +177,13 @@ static void qq_close(PurpleConnection *gc)
 {
 	qq_data *qd;
 
-	g_return_if_fail(gc != NULL);
+	g_return_if_fail(gc != NULL  && gc->proto_data);
 	qd = gc->proto_data;
 
 	qq_disconnect(gc);
 
-	if (qd->real_hostname) {
-		purple_debug(PURPLE_DEBUG_INFO, "QQ", "free real_hostname\n");
-		g_free(qd->real_hostname);
-		qd->real_hostname = NULL;
-	}
-	if (qd->srv_query_data != NULL)
-		purple_srv_cancel(qd->srv_query_data);
+	server_list_remove_all(qd);
 	
-	g_free(qd->server_name);
 	g_free(qd);
 
 	gc->proto_data = NULL;

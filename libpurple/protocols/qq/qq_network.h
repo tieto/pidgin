@@ -30,13 +30,15 @@
 
 #include "qq.h"
 
-#define QQ_CONNECT_STEPS    2	/* steps in connection */
+#define QQ_CONNECT_STEPS    3	/* steps in connection */
 
 void qq_connect(PurpleAccount *account);
 void qq_disconnect(PurpleConnection *gc);
+void qq_connect_later(PurpleConnection *gc);
 
-gint qq_send_data(PurpleConnection *gc, guint16 cmd, guint8 *data, gint datalen);
-gint qq_send_cmd(PurpleConnection *gc, guint16 cmd, gboolean is_auto_seq, guint16 seq, 
-		gboolean need_ack, guint8 *data, gint datalen);
+gint qq_send_data(qq_data *qd, guint16 cmd, guint8 *data, gint datalen);
+gint qq_send_cmd(qq_data *qd, guint16 cmd, guint8 *data, gint datalen);
+gint qq_send_cmd_detail(qq_data *qd, guint16 cmd, guint16 seq, gboolean need_ack,
+	guint8 *data, gint data_len);
 
 #endif

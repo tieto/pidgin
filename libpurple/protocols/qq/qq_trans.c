@@ -1,5 +1,5 @@
 /**
- * @file sendqueue.c
+ * @file qq_trans.c
  *
  * purple
  *
@@ -32,7 +32,7 @@
 
 #include "header_info.h"
 #include "qq_network.h"
-#include "sendqueue.h"
+#include "qq_trans.h"
 
 #define QQ_RESEND_MAX               8	/* max resend per packet */
 
@@ -47,7 +47,7 @@ typedef struct _transaction {
 	time_t create_time;
 } transaction;
 
-void qq_trans_append(qq_data *qd, guint8 *buf, gint buf_len, guint16 cmd, guint16 seq)
+void qq_send_trans_append(qq_data *qd, guint8 *buf, gint buf_len, guint16 cmd, guint16 seq)
 {
 	transaction *trans = g_new0(transaction, 1);
 
@@ -62,34 +62,34 @@ void qq_trans_append(qq_data *qd, guint8 *buf, gint buf_len, guint16 cmd, guint1
 	trans->buf_len = buf_len;
 
 	purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			"Add to transaction, seq = %d, buf = %lu, len = %d\n",
+			"Add to transaction, seq = %d, buf = %p, len = %d\n",
 			trans->seq, trans->buf, trans->buf_len);
-	qd->transactions = g_list_append(qd->transactions, trans);
+	qd->send_trans = g_list_append(qd->send_trans, trans);
 }
 
-/* Remove a packet with seq from sendqueue */
-void qq_trans_remove(qq_data *qd, gpointer data) 
+/* Remove a packet with seq from send trans */
+void qq_send_trans_remove(qq_data *qd, gpointer data) 
 {
 	transaction *trans = (transaction *)data;
 
 	g_return_if_fail(qd != NULL && data != NULL);
 	
 	purple_debug(PURPLE_DEBUG_INFO, "QQ",
-				"ack [%05d] %s, remove from sendqueue\n",
+				"ack [%05d] %s, remove from send tranactions\n",
 				trans->seq, qq_get_cmd_desc(trans->cmd));
 
 	if (trans->buf)	g_free(trans->buf);
-	qd->transactions = g_list_remove(qd->transactions, trans);
+	qd->send_trans = g_list_remove(qd->send_trans, trans);
 	g_free(trans);
 }
 
-gpointer qq_trans_find(qq_data *qd, guint16 seq)
+gpointer qq_send_trans_find(qq_data *qd, guint16 seq)
 {
 	GList *curr;
 	GList *next;
 	transaction *trans;
 
-	curr = qd->transactions;
+	curr = qd->send_trans;
 	while(curr) {
 		next = curr->next;
 		trans = (transaction *) (curr->data);
@@ -102,35 +102,35 @@ gpointer qq_trans_find(qq_data *qd, guint16 seq)
 	return NULL;
 }
 
-/* clean up sendqueue and free all contents */
-void qq_trans_remove_all(qq_data *qd)
+/* clean up send trans and free all contents */
+void qq_send_trans_remove_all(qq_data *qd)
 {
 	GList *curr;
 	GList *next;
 	transaction *trans;
 	gint count = 0;
 
-	curr = qd->transactions;
+	curr = qd->send_trans;
 	while(curr) {
 		next = curr->next;
 		
 		trans = (transaction *) (curr->data);
 		/*
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			"Remove to transaction, seq = %d, buf = %lu, len = %d\n",
+			"Remove to transaction, seq = %d, buf = %p, len = %d\n",
 			trans->seq, trans->buf, trans->len);
 		*/
-		qq_trans_remove(qd, trans);
+		qq_send_trans_remove(qd, trans);
 
 		count++;
 		curr = next;
 	}
-	g_list_free(qd->transactions);
+	g_list_free(qd->send_trans);
 
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "%d packets in sendqueue are freed!\n", count);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "%d packets in send tranactions are freed!\n", count);
 }
 
-gint qq_trans_scan(qq_data *qd, gint *start,
+gint qq_send_trans_scan(qq_data *qd, gint *start,
 	guint8 *buf, gint maxlen, guint16 *cmd, gint *retries)
 {
 	GList *curr;
@@ -140,30 +140,30 @@ gint qq_trans_scan(qq_data *qd, gint *start,
 
 	g_return_val_if_fail(qd != NULL && *start >= 0 && maxlen > 0, -1);
 	
-	//purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Scan from %d\n", *start);
-	curr = g_list_nth(qd->transactions, *start);
+	/* purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Scan from %d\n", *start); */
+	curr = g_list_nth(qd->send_trans, *start);
 	while(curr) {
 		next = curr->next;
-		*start = g_list_position(qd->transactions, next);
+		*start = g_list_position(qd->send_trans, next);
 		
 		trans = (transaction *) (curr->data);
 		if (trans->buf == NULL || trans->buf_len <= 0) {
-			qq_trans_remove(qd, trans);
+			qq_send_trans_remove(qd, trans);
 			curr = next;
 			continue;
 		}
 
 		if (trans->retries < 0) {
 			purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-				"Remove transaction, seq %d, buf %lu, len %d, retries %d, next %d\n",
+				"Remove transaction, seq %d, buf %p, len %d, retries %d, next %d\n",
 				trans->seq, trans->buf, trans->buf_len, trans->retries, *start);
-			qq_trans_remove(qd, trans);
+			qq_send_trans_remove(qd, trans);
 			curr = next;
 			continue;
 		}
 
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-				"Resend transaction, seq %d, buf %lu, len %d, retries %d, next %d\n",
+				"Resend transaction, seq %d, buf %p, len %d, retries %d, next %d\n",
 				trans->seq, trans->buf, trans->buf_len, trans->retries, *start);
 		copylen = MIN(trans->buf_len, maxlen);
 		g_memmove(buf, trans->buf, copylen);
@@ -174,11 +174,11 @@ gint qq_trans_scan(qq_data *qd, gint *start,
 		return copylen;
 	}
 
-	// purple_debug(PURPLE_DEBUG_INFO, "QQ", "Scan finished\n");
+	/* purple_debug(PURPLE_DEBUG_INFO, "QQ", "Scan finished\n"); */
 	return -1;
 }
 
-void qq_packet_push(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data, gint data_len)
+void qq_rcv_trans_push(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data, gint data_len)
 {
 	transaction *trans = g_new0(transaction, 1);
 
@@ -197,7 +197,7 @@ void qq_packet_push(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data, gint da
 	g_queue_push_head(qd->rcv_trans, trans);
 }
 
-gint qq_packet_pop(qq_data *qd, guint16 *cmd, guint16 *seq, guint8 *data, gint max_len)
+gint qq_rcv_trans_pop(qq_data *qd, guint16 *cmd, guint16 *seq, guint8 *data, gint max_len)
 {
 	transaction *trans = NULL;
 	gint copy_len;
@@ -226,9 +226,10 @@ gint qq_packet_pop(qq_data *qd, guint16 *cmd, guint16 *seq, guint8 *data, gint m
 }
 
 /* clean up the packets before login */
-void qq_packet_remove_all(qq_data *qd)
+void qq_rcv_trans_remove_all(qq_data *qd)
 {
 	transaction *trans = NULL;
+	gint count = 0;
 
 	g_return_if_fail(qd != NULL);
 
@@ -237,7 +238,9 @@ void qq_packet_remove_all(qq_data *qd)
 		while (NULL != (trans = g_queue_pop_tail(qd->rcv_trans))) {
 			g_free(trans->buf);
 			g_free(trans);
+			count++;
 		}
 		g_queue_free(qd->rcv_trans);
 	}
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "%d packets in receive tranactions are freed!\n", count);
 }

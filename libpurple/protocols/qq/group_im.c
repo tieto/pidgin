@@ -110,7 +110,7 @@ void qq_process_recv_group_im_apply_join(guint8 *data, gint len, guint32 interna
 
 	g_return_if_fail(internal_group_id > 0 && data != NULL && len > 0);
 
-	// Fixme: check length here
+	/* FIXME: check length here */
 
 	bytes += qq_get32(&external_group_id, data + bytes);
 	bytes += qq_get8(&group_type, data + bytes);
@@ -160,7 +160,7 @@ void qq_process_recv_group_im_been_rejected(guint8 *data, gint len, guint32 inte
 
 	g_return_if_fail(data != NULL && len > 0);
 
-	// Fixme: check length here
+	/* FIXME: check length here */
 
 	bytes += qq_get32(&external_group_id, data + bytes);
 	bytes += qq_get8(&group_type, data + bytes);
@@ -198,7 +198,7 @@ void qq_process_recv_group_im_been_approved(guint8 *data, gint len, guint32 inte
 
 	g_return_if_fail(data != NULL && len > 0);
 
-	// Fixme: check length here
+	/* FIXME: check length here */
 
 	bytes += qq_get32(&external_group_id, data + bytes);
 	bytes += qq_get8(&group_type, data + bytes);
@@ -234,7 +234,7 @@ void qq_process_recv_group_im_been_removed(guint8 *data, gint len, guint32 inter
 
 	g_return_if_fail(data != NULL && len > 0);
 
-	// Fixme: check length here
+	/* FIXME: check length here */
 
 	bytes += qq_get32(&external_group_id, data + bytes);
 	bytes += qq_get8(&group_type, data + bytes);
@@ -265,7 +265,7 @@ void qq_process_recv_group_im_been_added(guint8 *data, gint len, guint32 interna
 
 	g_return_if_fail(data != NULL && len > 0);
 
-	// Fixme: check length here
+	/* FIXME: check length here */
 
 	bytes += qq_get32(&external_group_id, data + bytes);
 	bytes += qq_get8(&group_type, data + bytes);
@@ -307,7 +307,7 @@ void qq_process_recv_group_im(guint8 *data, gint data_len, guint32 internal_grou
 
 	g_return_if_fail(data != NULL && data_len > 0);
 
-	// Fixme: check length here
+	/* FIXME: check length here */
 
 	qd = (qq_data *) gc->proto_data;
 

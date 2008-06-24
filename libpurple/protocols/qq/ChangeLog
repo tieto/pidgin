@@ -1,3 +1,13 @@
+2008.06.07 - ccpaging <ecc_hy(at)hotmail.com>, csyfek <csyfek(at)gmail.com>
+	* Clean code and apply patches from QuLogic
+
+2008.05.19 - ccpaging <ecc_hy(at)hotmail.com>, csyfek <csyfek(at)gmail.com>
+	* Reconnect server 5 time in 5000 ms, when connect failed
+	* Rename sendqueue.c/sendqueue.h to qq_trans.c/qq_trans.h
+	* Rewrite packet_process
+	* Rewrite qq_send_cmd
+	* Create server list, try to connect every server when failed
+
 2008.05.14 - ccpaging <ecc_hy(at)hotmail.com>
 	* Move function for before login packets storing to sendqueue
 	* Use transaction data structure to store before login packets

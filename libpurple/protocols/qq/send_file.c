@@ -476,7 +476,7 @@ static void _qq_send_packet_file_request (PurpleConnection *gc, guint32 to_uid, 
 	bytes += qq_putdata (raw_data + bytes, (guint8 *) filelen_str, filelen_strlen);
 
 	if (packet_len == bytes)
-		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data, bytes);
+		qq_send_cmd (qd, QQ_CMD_SEND_IM, raw_data, bytes);
 	else
 		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file_request",
 			    "%d bytes expected but got %d bytes\n",
@@ -517,7 +517,7 @@ static void _qq_send_packet_file_accept(PurpleConnection *gc, guint32 to_uid)
 	info->local_real_ip = real_ip;
 
 	if (packet_len == bytes)
-		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data, bytes);
+		qq_send_cmd (qd, QQ_CMD_SEND_IM, raw_data, bytes);
 	else
 		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file_accept",
 			    "%d bytes expected but got %d bytes\n",
@@ -544,7 +544,7 @@ static void _qq_send_packet_file_notifyip(PurpleConnection *gc, guint32 to_uid)
 	bytes += _qq_create_packet_file_header(raw_data + bytes, to_uid, QQ_FILE_TRANS_NOTIFY, qd, TRUE);
 	bytes += qq_fill_conn_info(raw_data + bytes, info);
 	if (packet_len == bytes)
-		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data, bytes);
+		qq_send_cmd (qd, QQ_CMD_SEND_IM, raw_data, bytes);
 	else
 		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file_notify",
 			    "%d bytes expected but got %d bytes\n",
@@ -572,7 +572,7 @@ static void _qq_send_packet_file_reject (PurpleConnection *gc, guint32 to_uid)
 	bytes += _qq_create_packet_file_header(raw_data + bytes, to_uid, QQ_FILE_TRANS_DENY_UDP, qd, TRUE);
 
 	if (packet_len == bytes)
-		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data, bytes);
+		qq_send_cmd (qd, QQ_CMD_SEND_IM, raw_data, bytes);
 	else
 		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file",
 			    "%d bytes expected but got %d bytes\n",
@@ -599,7 +599,7 @@ static void _qq_send_packet_file_cancel (PurpleConnection *gc, guint32 to_uid)
 
 	if (packet_len == bytes) {
 		purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_cancel", "before send cmd\n");
-		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data, bytes);
+		qq_send_cmd (qd, QQ_CMD_SEND_IM, raw_data, bytes);
 	}
 	else
 		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file",
@@ -938,7 +938,7 @@ void qq_send_file(PurpleConnection *gc, const char *who, const char *file)
 /*
 static void qq_send_packet_request_key(PurpleConnection *gc, guint8 key)
 {
-	qq_send_cmd(gc, QQ_CMD_REQUEST_KEY, TRUE, 0, TRUE, &key, 1);
+	qq_send_cmd(gc, QQ_CMD_REQUEST_KEY, &key, 1);
 }
 
 static void qq_process_recv_request_key(PurpleConnection *gc)

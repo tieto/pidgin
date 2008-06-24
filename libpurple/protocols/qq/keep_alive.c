@@ -59,7 +59,7 @@ void qq_send_packet_keep_alive(PurpleConnection *gc)
 	 * the amount of online QQ users, my ip and port */
 	bytes += qq_put32(raw_data + bytes, qd->uid);
 
-	qq_send_cmd(gc, QQ_CMD_KEEP_ALIVE, TRUE, 0, TRUE, raw_data, 4);
+	qq_send_cmd(qd, QQ_CMD_KEEP_ALIVE, raw_data, 4);
 }
 
 /* parse the return of keep-alive packet, it includes some system information */

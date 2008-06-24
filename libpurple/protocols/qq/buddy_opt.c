@@ -61,18 +61,19 @@ typedef struct _qq_add_buddy_request {
 /* send packet to remove a buddy from my buddy list */
 static void _qq_send_packet_remove_buddy(PurpleConnection *gc, guint32 uid)
 {
+	qq_data *qd = (qq_data *) gc->proto_data;
 	gchar uid_str[11];
 
 	g_return_if_fail(uid > 0);
 
 	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
-	qq_send_cmd(gc, QQ_CMD_DEL_FRIEND, TRUE, 0, 
-			TRUE, (guint8 *) uid_str, strlen(uid_str));
+	qq_send_cmd(qd, QQ_CMD_DEL_FRIEND, (guint8 *) uid_str, strlen(uid_str));
 }
 
 /* try to remove myself from someone's buddy list */
 static void _qq_send_packet_remove_self_from(PurpleConnection *gc, guint32 uid)
 {
+	qq_data *qd = (qq_data *) gc->proto_data;
 	guint8 raw_data[16] = {0};
 	gint bytes = 0;
 
@@ -80,13 +81,13 @@ static void _qq_send_packet_remove_self_from(PurpleConnection *gc, guint32 uid)
 
 	bytes += qq_put32(raw_data + bytes, uid);
 
-	qq_send_cmd(gc, QQ_CMD_REMOVE_SELF, TRUE, 0, TRUE, raw_data, bytes);
+	qq_send_cmd(qd, QQ_CMD_REMOVE_SELF, raw_data, bytes);
 }
 
 /* try to add a buddy without authentication */
 static void _qq_send_packet_add_buddy(PurpleConnection *gc, guint32 uid)
 {
-	qq_data *qd;
+	qq_data *qd = (qq_data *) gc->proto_data;
 	qq_add_buddy_request *req;
 	gchar uid_str[11];
 
@@ -94,11 +95,9 @@ static void _qq_send_packet_add_buddy(PurpleConnection *gc, guint32 uid)
 
 	/* we need to send the ascii code of this uid to qq server */
 	g_snprintf(uid_str, sizeof(uid_str), "%d", uid);
-	qq_send_cmd(gc, QQ_CMD_ADD_FRIEND_WO_AUTH, TRUE, 0, 
-			TRUE, (guint8 *) uid_str, strlen(uid_str));
+	qq_send_cmd(qd, QQ_CMD_ADD_FRIEND_WO_AUTH, (guint8 *) uid_str, strlen(uid_str));
 
 	/* must be set after sending packet to get the correct send_seq */
-	qd = (qq_data *) gc->proto_data;
 	req = g_new0(qq_add_buddy_request, 1);
 	req->seq = qd->send_seq;
 	req->uid = uid;
@@ -108,6 +107,7 @@ static void _qq_send_packet_add_buddy(PurpleConnection *gc, guint32 uid)
 /* this buddy needs authentication, text conversion is done at lowest level */
 static void _qq_send_packet_buddy_auth(PurpleConnection *gc, guint32 uid, const gchar response, const gchar *text)
 {
+	qq_data *qd = (qq_data *) gc->proto_data;
 	gchar *text_qq, uid_str[11];
 	guint8 bar, *raw_data;
 	gint bytes = 0;
@@ -129,7 +129,7 @@ static void _qq_send_packet_buddy_auth(PurpleConnection *gc, guint32 uid, const 
 		g_free(text_qq);
 	}
 
-	qq_send_cmd(gc, QQ_CMD_BUDDY_AUTH, TRUE, 0, TRUE, raw_data, bytes);
+	qq_send_cmd(qd, QQ_CMD_BUDDY_AUTH, raw_data, bytes);
 }
 
 static void _qq_send_packet_add_buddy_auth_with_gc_and_uid(gc_and_uid *g, const gchar *text)

@@ -171,7 +171,7 @@ void qq_send_packet_change_status(PurpleConnection *gc)
 	bytes += qq_put8(raw_data + bytes, away_cmd);
 	bytes += qq_put32(raw_data + bytes, misc_status);
 
-	qq_send_cmd(gc, QQ_CMD_CHANGE_ONLINE_STATUS, TRUE, 0, TRUE, raw_data, bytes);
+	qq_send_cmd(qd, QQ_CMD_CHANGE_ONLINE_STATUS, raw_data, bytes);
 }
 
 /* parse the reply packet for change_status */

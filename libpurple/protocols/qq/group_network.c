@@ -115,7 +115,7 @@ void qq_send_group_cmd(PurpleConnection *gc, qq_group *group, guint8 *raw_data, 
 
 	qd = (qq_data *) gc->proto_data;
 
-	qq_send_cmd(gc, QQ_CMD_GROUP_CMD, TRUE, 0, TRUE, raw_data, data_len);
+	qq_send_cmd(qd, QQ_CMD_GROUP_CMD, raw_data, data_len);
 
 	p = g_new0(group_packet, 1);
 
