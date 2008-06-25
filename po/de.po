@@ -7,14 +7,13 @@
 #
 # This file is distributed under the same license as the Pidgin package.
 #
-# Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2008.
 msgid ""
 msgstr ""
 "Project-Id-Version: de\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-12 18:33+0200\n"
-"PO-Revision-Date: 2008-06-12 18:32+0200\n"
-"Last-Translator: Jochen Kemnade <jochenkemnade@web.de>\n"
+"POT-Creation-Date: 2008-06-25 23:30+0200\n"
+"PO-Revision-Date: 2008-06-25 23:27+0200\n"
+"Last-Translator: Bjoern Voigt <bjoern@cs.tu-berlin.de>\n"
 "Language-Team: Deutsch <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -622,7 +621,6 @@ msgstr "Einladungsnachricht"
 msgid "Invite"
 msgstr "Einladen"
 
-#, fuzzy
 msgid ""
 "Please enter the name of the user you wish to invite,\n"
 "along with an optional invite message."
@@ -6282,9 +6280,8 @@ msgstr "Live-Video"
 msgid "Camera"
 msgstr "Kamera"
 
-#, fuzzy
 msgid "Screen Sharing"
-msgstr "Screen Sharing"
+msgstr "Gemeinsamer Bildschirm"
 
 msgid "Free For Chat"
 msgstr "Bereit zum Chatten"
@@ -9766,7 +9763,6 @@ msgstr "Die Tastenkombination für den Smiley"
 msgid "Stored Image"
 msgstr "Gespeichertes Bild"
 
-#, fuzzy
 msgid "Stored Image. (that'll have to do for now)"
 msgstr "Gespeichertes Bild. (Das muss erstmal reichen)"
 
@@ -11446,9 +11442,8 @@ msgstr "Farbe des Absendernamens für Aktions-Nachrichten"
 msgid "Color to draw the name of an action message."
 msgstr "Farbe, mit der der Name in einer Aktions-Nachricht dargestellt wird."
 
-#, fuzzy
 msgid "Action Message Name Color for Whispered Message"
-msgstr "Farbe des Absendernamens für Aktions-Nachrichten"
+msgstr "Farbe des Absendernamens für geflüsterte Aktions-Nachrichten"
 
 msgid "Whisper Message Name Color"
 msgstr "Farbe des Absendernamens für Flüster-Nachrichten"
@@ -11523,7 +11518,6 @@ msgstr "Bild speichern"
 msgid "_Save Image..."
 msgstr "Bild _speichern..."
 
-#, fuzzy
 msgid "_Add Custom Smiley..."
 msgstr "Benutzerdefinierten Smiley _hinzufügen..."
 
@@ -11577,7 +11571,6 @@ msgstr ""
 msgid "Smile!"
 msgstr "Lächeln!"
 
-#, fuzzy
 msgid "_Manage custom smileys"
 msgstr "Benutzerdefinierte Smileys _verwalten"
 
