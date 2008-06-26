@@ -354,8 +354,8 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 				       NULL);
 	}
 
-	send_widget = gtk_hbox_new(FALSE, 0);
-	recv_widget = gtk_hbox_new(FALSE, 0);
+	send_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	recv_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display), send_widget, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display), recv_widget, TRUE, TRUE, 0);
