@@ -3891,7 +3891,7 @@ msgid "Unable to detect ActiveTCL installation. If you wish to use TCL plugins, 
 msgstr "ایكٹیو TCL ا نسٹالیشن كی  جانچ  نا ممكن۔ اگر آپ TCL پلگ انس  استعمال كرنا چاہتے ہیں ، ایكٹیوTCL انسٹال كروfrom http://www.activestate.com\n"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:108
-msgid "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging for more information."
+msgid "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d.pidgin.im/BonjourWindows for more information."
 msgstr ""
 
 #: ../libpurple/protocols/bonjour/bonjour.c:127

@@ -3916,7 +3916,7 @@ msgid ""
 "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://"
 "developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-"
 "LocalMessaging for more information."
-msgstr "Không tìm thấy bộ công cụ Apple Bonjour For Windows, xem FAQ (Hỏi Đáp) ở địa chỉ « http://developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging » để tìm chi tiết."
+msgstr "Không tìm thấy bộ công cụ Apple Bonjour For Windows, xem FAQ (Hỏi Đáp) ở địa chỉ « http://d.pidgin.im/BonjourWindows » để tìm chi tiết."
 
 #: ../libpurple/protocols/bonjour/bonjour.c:120
 msgid "Unable to listen for incoming IM connections\n"

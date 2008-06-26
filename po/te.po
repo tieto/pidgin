@@ -4059,7 +4059,7 @@ msgid "Unable to detect ActiveTCL installation. If you wish to use TCL plugins, 
 msgstr "ActiveTCL ఇన్స్టాలేషన్ ను కనుగొనడంలో అశక్తత. మీరు TCL ప్లగ్ ఇన్లను ఉపయోగించాలనుకుంటే http://www.activestate.com\n"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:108
-msgid "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging for more information."
+msgid "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d.pidgin.im/BonjourWindows for more information."
 msgstr ""
 
 #: ../libpurple/protocols/bonjour/bonjour.c:127
