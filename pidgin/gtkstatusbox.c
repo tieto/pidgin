@@ -209,7 +209,8 @@ update_to_reflect_account_status(PidginStatusBox *status_box, PurpleAccount *acc
 	for (l = purple_account_get_status_types(account); l != NULL; l = l->next) {
 		PurpleStatusType *status_type = (PurpleStatusType *)l->data;
 
-		if (!purple_status_type_is_user_settable(status_type))
+		if (!purple_status_type_is_user_settable(status_type) ||
+				purple_status_type_is_independent(status_type))
 			continue;
 		status_no++;
 		if (statustype == status_type)
@@ -769,7 +770,8 @@ find_status_type_by_index(const PurpleAccount *account, gint active)
 
 	for (i = 0; l; l = l->next) {
 		PurpleStatusType *status_type = l->data;
-		if (!purple_status_type_is_user_settable(status_type))
+		if (!purple_status_type_is_user_settable(status_type) ||
+				purple_status_type_is_independent(status_type))
 			continue;
 
 		if (active == i)
@@ -1030,12 +1032,13 @@ add_account_statuses(PidginStatusBox *status_box, PurpleAccount *account)
 		PurpleStatusType *status_type = (PurpleStatusType *)l->data;
 		PurpleStatusPrimitive prim;
 
-		if (!purple_status_type_is_user_settable(status_type))
+		if (!purple_status_type_is_user_settable(status_type) ||
+				purple_status_type_is_independent(status_type))
 			continue;
 
-            	prim = purple_status_type_get_primitive(status_type);
+		prim = purple_status_type_get_primitive(status_type);
 
-                pixbuf = pidgin_status_box_get_pixbuf(status_box, prim);
+		pixbuf = pidgin_status_box_get_pixbuf(status_box, prim);
 
 		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box),
 					PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf,
@@ -1706,6 +1709,48 @@ imhtml_cursor_moved_cb(gpointer data, GtkMovementStep step, gint count, gboolean
 }
 
 static void
+treeview_cursor_changed_cb(GtkTreeView *treeview, gpointer data)
+{
+	GtkTreeSelection *sel = gtk_tree_view_get_selection (treeview);
+	GtkTreeModel *model = GTK_TREE_MODEL (data);
+	GtkTreeIter iter;
+	GtkTreePath *cursor;
+	GtkTreePath *selection;
+	gint cmp;
+
+	if (gtk_tree_selection_get_selected (sel, NULL, &iter)) {
+		if ((selection = gtk_tree_model_get_path (model, &iter)) == NULL) {
+			/* Shouldn't happen, but ignore anyway */
+			return;
+		}
+	} else {
+		/* I don't think this can happen, but we'll just ignore it */
+		return;
+	}
+
+	gtk_tree_view_get_cursor (treeview, &cursor, NULL);
+	if (cursor == NULL) {
+		/* Probably won't happen in a 'cursor-changed' event? */
+		gtk_tree_path_free (selection);
+		return;
+	}
+
+	cmp = gtk_tree_path_compare (cursor, selection);
+	if (cmp < 0) {
+		/* The cursor moved up without moving the selection, so move it up again */
+		gtk_tree_path_prev (cursor);
+		gtk_tree_view_set_cursor (treeview, cursor, NULL, FALSE);
+	} else if (cmp > 0) {
+		/* The cursor moved down without moving the selection, so move it down again */
+		gtk_tree_path_next (cursor);
+		gtk_tree_view_set_cursor (treeview, cursor, NULL, FALSE);
+	}
+
+	gtk_tree_path_free (selection);
+	gtk_tree_path_free (cursor);
+}
+
+static void
 pidgin_status_box_init (PidginStatusBox *status_box)
 {
 	GtkCellRenderer *text_rend;
@@ -1869,6 +1914,8 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 					G_CALLBACK(imhtml_scroll_event_cb), status_box->imhtml);
 	g_signal_connect(G_OBJECT(status_box->popup_window), "button_release_event", G_CALLBACK(treeview_button_release_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->popup_window), "key_press_event", G_CALLBACK(treeview_key_press_event), status_box);
+	g_signal_connect(G_OBJECT(status_box->tree_view), "cursor-changed",
+					 G_CALLBACK(treeview_cursor_changed_cb), status_box->dropdown_store);
 
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_set_row_separator_func(GTK_TREE_VIEW(status_box->tree_view), dropdown_store_row_separator_func, NULL, NULL);

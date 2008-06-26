@@ -107,10 +107,14 @@ struct _PurpleStatus
 	PurpleStatusType *type;
 	PurplePresence *presence;
 
-	const char *title;
-
 	gboolean active;
 
+	/*
+	 * The current values of the attributes for this status.  The
+	 * key is a string containing the name of the attribute.  It is
+	 * a borrowed reference from the list of attrs in the
+	 * PurpleStatusType.  The value is a PurpleValue.
+	 */
 	GHashTable *attr_values;
 };
 
@@ -563,7 +567,7 @@ purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 	status->presence = presence;
 
 	status->attr_values =
-		g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+		g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
 		(GDestroyNotify)purple_value_destroy);
 
 	for (l = purple_status_type_get_attrs(status_type); l != NULL; l = l->next)
@@ -573,7 +577,7 @@ purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 		PurpleValue *new_value = purple_value_dup(value);
 
 		g_hash_table_insert(status->attr_values,
-							g_strdup(purple_status_attr_get_id(attr)),
+							(char *)purple_status_attr_get_id(attr),
 							new_value);
 	}
 

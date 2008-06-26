@@ -745,6 +745,7 @@ static char *yahoo_get_photo_url(const char *url_text, const char *name) {
 				p += 1; /* skip only the ' ' */
 				q = strchr(p, ' ');
 				if (q) {
+					g_free(it);
 					it = g_strndup(p, q - p);
 				}
 			}
@@ -1060,7 +1061,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 	/* extract their Email address and put it in */
 	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->my_email_string, (yd->jp ? 4 : 1), " ", 0,
-			strings->private_string, _("E-Mail"), 0, NULL, NULL);
+			strings->private_string, _("Email"), 0, NULL, NULL);
 
 	/* extract the Nickname if it exists */
 	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,

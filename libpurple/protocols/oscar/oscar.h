@@ -353,7 +353,8 @@ typedef enum
 	OSCAR_CAPABILITY_ICHATAV              = 0x02000000,
 	OSCAR_CAPABILITY_LIVEVIDEO            = 0x04000000,
 	OSCAR_CAPABILITY_CAMERA               = 0x08000000,
-	OSCAR_CAPABILITY_LAST                 = 0x10000000
+	OSCAR_CAPABILITY_ICHAT_SCREENSHARE	  = 0x10000000,
+	OSCAR_CAPABILITY_LAST                 = 0x20000000
 } OscarCapability;
 
 /*
@@ -594,7 +595,7 @@ struct aim_redirect_data
 
 void aim_clientready(OscarData *od, FlapConnection *conn);
 int aim_request_login(OscarData *od, FlapConnection *conn, const char *sn);
-int aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key);
+int aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key, gboolean allow_multiple_logins);
 /* 0x000b */ int aim_auth_securid_send(OscarData *od, const char *securid);
 
 void aim_cleansnacs(OscarData *, int maxage);

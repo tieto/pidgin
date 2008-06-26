@@ -825,7 +825,7 @@ msgid "System Log"
 msgstr "Rendszernapló"
 
 msgid "Emails"
-msgstr "E-mailek"
+msgstr "Emailek"
 
 msgid "You have mail!"
 msgstr "Levele érkezett!"
@@ -843,7 +843,7 @@ msgstr[0] "%s (%s) %d új üzenetet kapott."
 msgstr[1] "%s (%s) %d új üzenetet kapott."
 
 msgid "New Mail"
-msgstr "Új e-mail"
+msgstr "Új email"
 
 #, c-format
 msgid "Info for %s"
@@ -2773,8 +2773,8 @@ msgstr "Utónév"
 msgid "Last name"
 msgstr "Vezetéknév"
 
-msgid "E-Mail"
-msgstr "E-mail"
+msgid "Email"
+msgstr "Email"
 
 msgid "AIM Account"
 msgstr "AIM fiók"
@@ -2797,9 +2797,6 @@ msgstr "Bonjour protokollbővítmény"
 
 msgid "Purple Person"
 msgstr "Purple személy"
-
-msgid "E-mail"
-msgstr "E-mail"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3891,8 +3888,8 @@ msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 "Töltsön ki legalább egy mezőt a megfelelő XMPP felhasználók kereséséhez."
 
-msgid "E-Mail Address"
-msgstr "E-mail cím"
+msgid "Email Address"
+msgstr "Email cím"
 
 msgid "Search for XMPP users"
 msgstr "XMPP felhasználók keresése"
@@ -4625,8 +4622,8 @@ msgid "Syntax Error (probably a client bug)"
 msgstr "Szintaktikai hiba (valószínűleg klienshiba)"
 
 #, c-format
-msgid "Invalid e-mail address"
-msgstr "Érvénytelen e-mail cím"
+msgid "Invalid email address"
+msgstr "Érvénytelen email cím"
 
 #, c-format
 msgid "User does not exist"
@@ -5033,8 +5030,8 @@ msgstr "Személyes mobil"
 msgid "Home Fax"
 msgstr "Otthoni fax"
 
-msgid "Personal E-Mail"
-msgstr "Saját e-mail"
+msgid "Personal Email"
+msgstr "Saját email"
 
 msgid "Personal IM"
 msgstr "Saját azonnali üzenő"
@@ -5076,8 +5073,8 @@ msgstr "Munkahelyi személyhívó"
 msgid "Work Fax"
 msgstr "Munkahelyi fax"
 
-msgid "Work E-Mail"
-msgstr "Munkahelyi e-mail"
+msgid "Work Email"
+msgstr "Munkahelyi email"
 
 msgid "Work IM"
 msgstr "Munkahelyi azonnali üzenő"
@@ -6295,7 +6292,7 @@ msgid ""
 "only letters, numbers and spaces, or contain only numbers."
 msgstr ""
 "Nem lehet belépni: Sikertelen a belépés %s néven, mert a felhasználónév "
-"érvénytelen. A felhasználóneveknek érvényes e-mail címnek kell lennie, vagy "
+"érvénytelen. A felhasználóneveknek érvényes email címnek kell lennie, vagy "
 "betűvel kell kezdődniük és betűket, számokat, szóközöket, vagy csak számokat "
 "tartalmazhatnak."
 
@@ -6437,12 +6434,12 @@ msgstr ""
 
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"ICQ e-mail érkezett a következőtől: %s [%s]\n"
+"ICQ email érkezett a következőtől: %s [%s]\n"
 "\n"
 "Az üzenet:\n"
 "%s"
@@ -6598,11 +6595,11 @@ msgstr[0] "A következő felhasználónév a következőhöz van rendelve: %s"
 msgstr[1] "A következő felhasználónevek a következőhöz vannak rendelve: %s"
 
 #, c-format
-msgid "No results found for e-mail address %s"
-msgstr "Nem található eredmény a(z) %s e-mail címre"
+msgid "No results found for email address %s"
+msgstr "Nem található eredmény a(z) %s email címre"
 
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Kapnia kell egy %s jóváhagyását kérő levelet."
 
 msgid "Account Confirmation Requested"
@@ -6632,26 +6629,26 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
-"Hiba 0x%04x: Nem sikerült megváltoztatni az e-mail címet, mert egy kérés már "
+"Hiba 0x%04x: Nem sikerült megváltoztatni az email címet, mert egy kérés már "
 "függőben van erre a felhasználónévre."
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
-"Hiba 0x%04x: Nem sikerült megváltoztatni az e-mail címet, mert a megadott "
+"Hiba 0x%04x: Nem sikerült megváltoztatni az email címet, mert a megadott "
 "cím túl sok felhasználónévhez van társítva."
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
-"Hiba 0x%04x: Nem sikerült megváltoztatni az e-mail címet, mert a megadott "
+"Hiba 0x%04x: Nem sikerült megváltoztatni az email címet, mert a megadott "
 "cím érvénytelen."
 
 #, c-format
@@ -6662,8 +6659,8 @@ msgid "Error Changing Account Info"
 msgstr "Hiba a fiókinformációk módosításakor"
 
 #, c-format
-msgid "The e-mail address for %s is %s"
-msgstr "%s e-mail címe a következő: %s"
+msgid "The email address for %s is %s"
+msgstr "%s email címe a következő: %s"
 
 msgid "Account Info"
 msgstr "Fiókinformációk"
@@ -6725,7 +6722,7 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 "Nem sikerült %s partner hozzáadása, mert a felhasználónév érvénytelen. A "
-"felhasználóneveknek érvényes e-mail címnek kell lenniük, vagy betűvel kell "
+"felhasználóneveknek érvényes email címnek kell lenniük, vagy betűvel kell "
 "kezdődniük, és betűket, számokat és szóközöket, vagy csak számokból "
 "állhatnak."
 
@@ -6879,14 +6876,14 @@ msgstr ""
 "Újra kérheti engedélyezést ezektől a partnerektől a jobb egérgombbal "
 "kattintva a nevükön, és az „Engedélyezés újra kérése” választásával"
 
-msgid "Find Buddy by E-Mail"
-msgstr "Partnerek keresése e-mail cím szerint"
+msgid "Find Buddy by Email"
+msgstr "Partnerek keresése email cím szerint"
 
-msgid "Search for a buddy by e-mail address"
-msgstr "Partner keresése e-mail cím alapján"
+msgid "Search for a buddy by email address"
+msgstr "Partner keresése email cím alapján"
 
-msgid "Type the e-mail address of the buddy you are searching for."
-msgstr "Adja meg annak a partnernek az e-mail címét, akit keres."
+msgid "Type the email address of the buddy you are searching for."
+msgstr "Adja meg annak a partnernek az email címét, akit keres."
 
 msgid "_Search"
 msgstr "_Keresés"
@@ -6908,17 +6905,17 @@ msgstr "Magánszféra-beállítások..."
 msgid "Confirm Account"
 msgstr "Fiók jóváhagyása"
 
-msgid "Display Currently Registered E-Mail Address"
-msgstr "A jelenleg regisztrált e-mail cím megjelenítése"
+msgid "Display Currently Registered Email Address"
+msgstr "A jelenleg regisztrált email cím megjelenítése"
 
-msgid "Change Currently Registered E-Mail Address..."
-msgstr "A jelenleg regisztrált e-mail cím módosítása..."
+msgid "Change Currently Registered Email Address..."
+msgstr "A jelenleg regisztrált email cím módosítása..."
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Engedélyezésre váró partnerek megjelenítése"
 
-msgid "Search for Buddy by E-Mail Address..."
-msgstr "Partner keresése e-mail cím szerint..."
+msgid "Search for Buddy by Email Address..."
+msgstr "Partner keresése email cím szerint..."
 
 msgid "Search for Buddy by Information"
 msgstr "Partner keresése információ alapján"
@@ -6984,9 +6981,6 @@ msgstr "Vércsoport"
 
 msgid "College"
 msgstr "Főiskola"
-
-msgid "Email"
-msgstr "E-mail"
 
 msgid "Zipcode"
 msgstr "Irányítószám"
@@ -8765,8 +8759,8 @@ msgid "User Name: \t%s\n"
 msgstr "Felhasználónév: \t%s\n"
 
 #, c-format
-msgid "E-Mail: \t\t%s\n"
-msgstr "E-mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
+msgstr "Email: \t\t%s\n"
 
 #, c-format
 msgid "Host Name: \t%s\n"
@@ -9025,8 +9019,8 @@ msgid "Dir service temporarily unavailable."
 msgstr "Könyvtárszolgáltatás átmenetileg nem érhető el."
 
 #, c-format
-msgid "E-mail lookup restricted."
-msgstr "E-mail keresés korlátozva."
+msgid "Email lookup restricted."
+msgstr "Email keresés korlátozva."
 
 #, c-format
 msgid "Keyword ignored."
@@ -11384,8 +11378,8 @@ msgstr "A gépelésértesítés betűkészlete"
 msgid "Enable typing notification"
 msgstr "Gépelésértesítés engedélyezése"
 
-msgid "_Copy E-Mail Address"
-msgstr "E-mail cím _másolása"
+msgid "_Copy Email Address"
+msgstr "Email cím _másolása"
 
 msgid "_Open Link in Browser"
 msgstr "Hivatk_ozás megnyitása böngészőben"
@@ -11736,10 +11730,10 @@ msgstr[0] "%s %d új üzenetet kapott."
 msgstr[1] "%s %d új üzenetet kapott."
 
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
-msgstr[0] "<b>%d új e-mail.</b>"
-msgstr[1] "<b>%d új e-mail.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
+msgstr[0] "<b>%d új email.</b>"
+msgstr[1] "<b>%d új email.</b>"
 
 #, c-format
 msgid "The browser command \"%s\" is invalid."
@@ -12774,22 +12768,22 @@ msgstr "F_elhasználó részletei"
 msgid "_Associate Buddy"
 msgstr "_Partner összerendelése"
 
-msgid "Unable to send e-mail"
-msgstr "Nem küldhető e-mail"
+msgid "Unable to send email"
+msgstr "Nem küldhető email"
 
 msgid "The evolution executable was not found in the PATH."
 msgstr ""
 "Az evolution végrehajtható állomány nem található a PATH változóban megadott "
 "útvonalon."
 
-msgid "An e-mail address was not found for this buddy."
-msgstr "Nem található e-mail cím ehhez a partnerhez."
+msgid "An email address was not found for this buddy."
+msgstr "Nem található email cím ehhez a partnerhez."
 
 msgid "Add to Address Book"
 msgstr "Hozzáadás a címjegyzékhez"
 
-msgid "Send E-Mail"
-msgstr "E-mail küldése"
+msgid "Send Email"
+msgstr "Email küldése"
 
 #. Configuration frame
 msgid "Evolution Integration Configuration"
@@ -12836,8 +12830,8 @@ msgstr "Utónév:"
 msgid "Last name:"
 msgstr "Vezetéknév:"
 
-msgid "E-mail:"
-msgstr "E-mail:"
+msgid "Email:"
+msgstr "Email:"
 
 #. *< type
 #. *< ui_requirement

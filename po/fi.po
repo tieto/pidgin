@@ -3909,7 +3909,7 @@ msgstr "Sukunimi"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:555
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1068
-msgid "E-Mail"
+msgid "Email"
 msgstr "Sähköposti"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:401
@@ -3940,16 +3940,6 @@ msgstr "Bonjour-yhteyskäytäntöliitännäinen"
 #: ../libpurple/protocols/bonjour/bonjour.c:651
 msgid "Purple Person"
 msgstr "Purple-henkilö"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:704
-#: ../libpurple/protocols/gg/gg.c:478
-#: ../libpurple/protocols/jabber/jabber.c:998
-#: ../libpurple/protocols/silc/silc.c:986
-#: ../libpurple/protocols/silc/silc.c:1227
-#: ../libpurple/protocols/silc10/silc.c:687
-#: ../libpurple/protocols/silc10/silc.c:928
-msgid "E-mail"
-msgstr "Sähköposti"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5599,7 +5589,7 @@ msgstr "Täytä yksi tai useampia kentistä etsiäksesi XMPP-käyttäjiä."
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3751
 #: ../libpurple/protocols/oscar/oscar.c:3760
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "Sähköpostiosoite"
 
 #: ../libpurple/protocols/jabber/buddy.c:2470
@@ -6650,7 +6640,7 @@ msgstr "Syntaksivirhe (todennäköisesti ohjelmistovirhe)"
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
 #, c-format
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Epäkelpo sähköpostiosoite"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7310,7 +7300,7 @@ msgstr "Kotifaksi"
 
 #: ../libpurple/protocols/msn/msn.c:1826
 #: ../libpurple/protocols/msnp9/msn.c:1667
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Oma sähköposti"
 
 #: ../libpurple/protocols/msn/msn.c:1827
@@ -7386,7 +7376,7 @@ msgstr "Työfaksi"
 
 #: ../libpurple/protocols/msn/msn.c:1857
 #: ../libpurple/protocols/msnp9/msn.c:1698
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Työsähköposti"
 
 #: ../libpurple/protocols/msn/msn.c:1858
@@ -9217,7 +9207,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2493
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9400,12 +9390,12 @@ msgstr[1] "Seuraavat käyttäjänimet on assosioitu %s kanssa"
 
 #: ../libpurple/protocols/oscar/oscar.c:3985
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "Ei hakutuloksia sähköpostiosoitteelle %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4006
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Sinun tulisi saada sähköpostiviesti %s:n varmistusta varten."
 
 #: ../libpurple/protocols/oscar/oscar.c:4008
@@ -9440,7 +9430,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4047
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
 "Virhe 0x%04x: Sähköpostiosoitetta ei voi muuttaa koska tälle käyttäjänimelle "
@@ -9449,7 +9439,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4049
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
 "Virhe 0x%04x: Sähköpostiosoitetta ei voi muuttaa koska annettu osoite on "
@@ -9458,7 +9448,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4051
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Virhe 0x%04x: Sähköpostiosoitetta ei voi muuttaa koska annettu osoite on "
@@ -9475,7 +9465,7 @@ msgstr "Virhe muutettaessa käyttäjätilin tietoja"
 
 #: ../libpurple/protocols/oscar/oscar.c:4061
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "%s:n sähköpostiosoite on %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4063
@@ -9748,15 +9738,15 @@ msgstr ""
 "nappia heihin ja valitsemalla \"Pyydä valtuutus uudelleen\"."
 
 #: ../libpurple/protocols/oscar/oscar.c:6345
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Etsi tuttava sähköpostiosoitteen perusteella"
 
 #: ../libpurple/protocols/oscar/oscar.c:6346
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Etsi tuttava sähköpostiosoitteen perusteella"
 
 #: ../libpurple/protocols/oscar/oscar.c:6347
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Syötä etsimäsi tuttavan sähköpostiosoite."
 
 #: ../libpurple/protocols/oscar/oscar.c:6350
@@ -9786,11 +9776,11 @@ msgid "Confirm Account"
 msgstr "Vahvista tili"
 
 #: ../libpurple/protocols/oscar/oscar.c:6544
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Näytä tällä hetkellä rekisteröity sähköpostiosoite"
 
 #: ../libpurple/protocols/oscar/oscar.c:6548
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Muuta tällä hetkellä rekisteröityä sähköpostiosoitetta..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6555
@@ -9798,7 +9788,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Näytä tuttavat jotka odottavat valtuutusta"
 
 #: ../libpurple/protocols/oscar/oscar.c:6561
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Etsi tuttavaa sähköpostiosoitteen perusteella..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6566
@@ -9882,10 +9872,6 @@ msgstr "Veriryhmä"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "Yliopisto"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "Sähköposti"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12619,7 +12605,7 @@ msgstr "Käyttäjänimi: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:367
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "Sähköposti: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:369
@@ -12957,7 +12943,7 @@ msgstr "Hakemistopalvelu ei tilapäisesti ole käytettävissä."
 
 #: ../libpurple/protocols/toc/toc.c:530
 #, c-format
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "Sähköpostin katsominen rajoitettu."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -16026,7 +16012,7 @@ msgid "Enable typing notification"
 msgstr "Ota kirjoittamishuomautus käyttöön"
 
 #: ../pidgin/gtkimhtml.c:1688
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Kopioi sähköpostiosoite"
 
 #: ../pidgin/gtkimhtml.c:1700
@@ -16447,8 +16433,8 @@ msgstr[1] "%s:lla on %d uutta viestiä."
 
 #: ../pidgin/gtknotify.c:587
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d uusi sähköposti.</b>"
 msgstr[1] "<b>%d uutta sähköpostia.</b>"
 
@@ -17768,7 +17754,7 @@ msgstr "_Yhdistä tuttava"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:242
 #: ../pidgin/plugins/gevolution/gevolution.c:248
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Sähköpostia ei voi lähettää."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:243
@@ -17776,7 +17762,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "Suoritettava evolution-tiedosto ei löytynyt PATH-muuttujasta."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:249
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "Tälle tuttavalle ei löytynyt sähköpostiosoitetta."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:275
@@ -17784,7 +17770,7 @@ msgid "Add to Address Book"
 msgstr "Lisää osoitekirjaan"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:287
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Lähetä sähköposti"
 
 #. Configuration frame
@@ -17842,7 +17828,7 @@ msgid "Last name:"
 msgstr "Sukunimi:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:380
-msgid "E-mail:"
+msgid "Email:"
 msgstr "Sähköposti:"
 
 #. *< type
@@ -20279,7 +20265,7 @@ msgstr ""
 #~ msgid "Check Mail"
 #~ msgstr "Tarkista posti"
 
-#~ msgid "Check e-mail every X seconds.\n"
+#~ msgid "Check email every X seconds.\n"
 #~ msgstr "Tarkista posti x sekunnin välein.\n"
 
 #~ msgid "Auto-login"

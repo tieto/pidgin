@@ -273,70 +273,10 @@ static void jabber_send_cb(gpointer data, gint source, PurpleInputCondition cond
 	purple_circ_buffer_mark_read(js->write_buffer, ret);
 }
 
-void jabber_send_raw(JabberStream *js, const char *data, int len)
+static gboolean do_jabber_send_raw(JabberStream *js, const char *data, int len)
 {
 	int ret;
-
-	/* because printing a tab to debug every minute gets old */
-	if(strcmp(data, "\t"))
-		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s\n",
-				js->gsc ? " (ssl)" : "", data);
-
-	/* If we've got a security layer, we need to encode the data,
-	 * splitting it on the maximum buffer length negotiated */
-	
-	purple_signal_emit(my_protocol, "jabber-sending-text", js->gc, &data);
-	if (data == NULL)
-		return;
-	
-#ifdef HAVE_CYRUS_SASL
-	if (js->sasl_maxbuf>0) {
-		int pos;
-
-		if (!js->gsc && js->fd<0)
-			return;
-		pos = 0;
-		if (len == -1)
-			len = strlen(data);
-		while (pos < len) {
-			int towrite;
-			const char *out;
-			unsigned olen;
-
-			if ((len - pos) < js->sasl_maxbuf)
-				towrite = len - pos;
-			else
-				towrite = js->sasl_maxbuf;
-
-			sasl_encode(js->sasl, &data[pos], towrite, &out, &olen);
-			pos += towrite;
-
-			if (js->writeh == 0)
-				ret = jabber_do_send(js, out, olen);
-			else {
-				ret = -1;
-				errno = EAGAIN;
-			}
-
-			if (ret < 0 && errno != EAGAIN)
-				purple_connection_error_reason (js->gc,
-					PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-					_("Write error"));
-			else if (ret < olen) {
-				if (ret < 0)
-					ret = 0;
-				if (js->writeh == 0)
-					js->writeh = purple_input_add(
-						js->gsc ? js->gsc->fd : js->fd,
-						PURPLE_INPUT_WRITE,
-						jabber_send_cb, js);
-				purple_circ_buffer_append(js->write_buffer,
-					out + ret, olen - ret);
-			}
-		}
-		return;
-	}
-#endif
+	gboolean success = TRUE;
 
 	if (len == -1)
 		len = strlen(data);
@@ -348,11 +288,12 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		errno = EAGAIN;
 	}
 
-	if (ret < 0 && errno != EAGAIN)
+	if (ret < 0 && errno != EAGAIN) {
 		purple_connection_error_reason (js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("Write error"));
-	else if (ret < len) {
+		success = FALSE;
+	} else if (ret < len) {
 		if (ret < 0)
 			ret = 0;
 		if (js->writeh == 0)
@@ -362,7 +303,53 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		purple_circ_buffer_append(js->write_buffer,
 			data + ret, len - ret);
 	}
-	return;
+
+	return success;
+}
+
+void jabber_send_raw(JabberStream *js, const char *data, int len)
+{
+
+	/* because printing a tab to debug every minute gets old */
+	if(strcmp(data, "\t"))
+		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s\n",
+				js->gsc ? " (ssl)" : "", data);
+
+	/* If we've got a security layer, we need to encode the data,
+	 * splitting it on the maximum buffer length negotiated */
+
+	purple_signal_emit(my_protocol, "jabber-sending-text", js->gc, &data);
+	if (data == NULL)
+		return;
+
+#ifdef HAVE_CYRUS_SASL
+	if (js->sasl_maxbuf>0) {
+		int pos = 0;
+
+		if (!js->gsc && js->fd<0)
+			return;
+
+		if (len == -1)
+			len = strlen(data);
+
+		while (pos < len) {
+			int towrite;
+			const char *out;
+			unsigned olen;
+
+			towrite = MIN((len - pos), js->sasl_maxbuf);
+
+			sasl_encode(js->sasl, &data[pos], towrite, &out, &olen);
+			pos += towrite;
+
+			if (!do_jabber_send_raw(js, out, olen))
+				break;
+		}
+		return;
+	}
+#endif
+
+	do_jabber_send_raw(js, data, len);
 }
 
 int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
@@ -388,9 +375,9 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	g_free(txt);
 }
 
-static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer timeout) 
+static void jabber_pong_cb(JabberStream *js, xmlnode *packet, gpointer unused)
 {
-	purple_timeout_remove(GPOINTER_TO_INT(timeout));
+	purple_timeout_remove(js->keepalive_timeout);
 	js->keepalive_timeout = -1;
 }
 
@@ -414,7 +401,7 @@ void jabber_keepalive(PurpleConnection *gc)
 		xmlnode_set_namespace(ping, "urn:xmpp:ping");
 		
 		js->keepalive_timeout = purple_timeout_add_seconds(120, (GSourceFunc)(jabber_pong_timeout), gc);
-		jabber_iq_set_callback(iq, jabber_pong_cb, GINT_TO_POINTER(js->keepalive_timeout));
+		jabber_iq_set_callback(iq, jabber_pong_cb, NULL);
 		jabber_iq_send(iq);
 	}
 }
@@ -995,7 +982,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		purple_request_field_group_add_field(group, field);
 	}
 	if(xmlnode_get_child(query, "email")) {
-		field = purple_request_field_string_new("email", _("E-mail"), NULL, FALSE);
+		field = purple_request_field_string_new("email", _("Email"), NULL, FALSE);
 		purple_request_field_group_add_field(group, field);
 	}
 	if(xmlnode_get_child(query, "nick")) {
@@ -1504,8 +1491,7 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 
 		if (full) {
 			PurpleStatus *status;
-			PurpleValue *value;
-			
+
 			if(jb->subscription & JABBER_SUB_FROM) {
 				if(jb->subscription & JABBER_SUB_TO)
 					sub = _("Both");
@@ -1521,17 +1507,17 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 				else
 					sub = _("None");
 			}
-			
+
 			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
-			
+
 			status = purple_presence_get_active_status(presence);
-			value = purple_status_get_attr_value(status, "mood");
-			if (value && purple_value_get_type(value) == PURPLE_TYPE_STRING && (mood = purple_value_get_string(value))) {
-				
-				value = purple_status_get_attr_value(status, "moodtext");
-				if(value && purple_value_get_type(value) == PURPLE_TYPE_STRING) {
-					char *moodplustext = g_strdup_printf("%s (%s)",mood,purple_value_get_string(value));
-					
+			mood = purple_status_get_attr_string(status, "mood");
+			if(mood != NULL) {
+				const char *moodtext;
+				moodtext = purple_status_get_attr_string(status, "moodtext");
+				if(moodtext != NULL) {
+					char *moodplustext = g_strdup_printf("%s (%s)", mood, moodtext);
+
 					purple_notify_user_info_add_pair(user_info, _("Mood"), moodplustext);
 					g_free(moodplustext);
 				} else

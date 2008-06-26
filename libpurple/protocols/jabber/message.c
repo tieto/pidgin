@@ -403,12 +403,20 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			const char *code = xmlnode_get_attrib(child, "code");
 			char *code_txt = NULL;
 			char *text = xmlnode_get_data(child);
+			if (!text) {
+				xmlnode *enclosed_text_node;
+				
+				if ((enclosed_text_node = xmlnode_get_child(child, "text")))
+					text = xmlnode_get_data(enclosed_text_node);
+			}
 
 			if(code)
-				code_txt = g_strdup_printf(_(" (Code %s)"), code);
+				code_txt = g_strdup_printf(_("(Code %s)"), code);
 
 			if(!jm->error)
-				jm->error = g_strdup_printf("%s%s", text ? text : "",
+				jm->error = g_strdup_printf("%s%s%s",
+						text ? text : "",
+						text && code_txt ? " " : "",
 						code_txt ? code_txt : "");
 
 			g_free(code_txt);

@@ -3808,7 +3808,7 @@ msgstr "اسم العائلة"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:555
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1068
-msgid "E-Mail"
+msgid "Email"
 msgstr "البريد الإلكتروني"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:401
@@ -3839,16 +3839,6 @@ msgstr "ملحقة بروتوكول بونجور"
 #: ../libpurple/protocols/bonjour/bonjour.c:651
 msgid "Purple Person"
 msgstr "شخص أرجواني"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:704
-#: ../libpurple/protocols/gg/gg.c:478
-#: ../libpurple/protocols/jabber/jabber.c:998
-#: ../libpurple/protocols/silc/silc.c:913
-#: ../libpurple/protocols/silc/silc.c:1154
-#: ../libpurple/protocols/silc10/silc.c:687
-#: ../libpurple/protocols/silc10/silc.c:928
-msgid "E-mail"
-msgstr "البريد الإلكتروني"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5531,7 +5521,7 @@ msgstr "املأ واحدة أو أكثر من الحقول للبحث عن مس
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3761
 #: ../libpurple/protocols/oscar/oscar.c:3770
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "عنوان البريد الالكتروني"
 
 #: ../libpurple/protocols/jabber/buddy.c:2470
@@ -6594,7 +6584,7 @@ msgstr "خطأ نحوي (غالبا علة في العميل)"
 
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "عنوان بريد إلكترونى غير صالح"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7204,7 +7194,7 @@ msgstr "فاكس المنزل"
 
 #: ../libpurple/protocols/msn/msn.c:1826
 #: ../libpurple/protocols/msnp9/msn.c:1667
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "البريد الإلكتروني الشخصي"
 
 #: ../libpurple/protocols/msn/msn.c:1827
@@ -7280,7 +7270,7 @@ msgstr "فاكس العمل"
 
 #: ../libpurple/protocols/msn/msn.c:1857
 #: ../libpurple/protocols/msnp9/msn.c:1698
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "البريد الإلكتروني للعمل"
 
 #: ../libpurple/protocols/msn/msn.c:1858
@@ -9086,7 +9076,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2507
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9293,12 +9283,12 @@ msgstr[5] "أسماء المستخدم التالية مرتبطة ب‍ %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3995
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "لا توجد نتائج لعنوان البريد الإلكتروني %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4016
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "ستتسلم بريدا إلكترونيا يسألك توكيد %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:4018
@@ -9327,14 +9317,14 @@ msgstr "خطأ 0x%04x: تعذّر تنسيق اسم المستخدم لأن اس
 #: ../libpurple/protocols/oscar/oscar.c:4057
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr "خطأ 0x%04x: تعذّر تغيير عنوان البريد الإلكتروني لوجود طلب سابق لهذا الاسم."
 
 #: ../libpurple/protocols/oscar/oscar.c:4059
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
 "خطأ 0x%04x: تعذّر تغيير عنوان البريد الإلكتروني لأن العنوان المعطى توجد أسماء "
@@ -9343,7 +9333,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4061
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr "خطأ 0x%04x: تعذّر تغيير عنوان البريد الإلكتروني لأن العنوان المعطى غير صالح."
 
@@ -9358,7 +9348,7 @@ msgstr "عطل في تغيير معلومات حساب"
 
 #: ../libpurple/protocols/oscar/oscar.c:4071
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "عنوان البريد الإلكتروني لـ %s هو %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4073
@@ -9622,15 +9612,15 @@ msgstr ""
 "اختيار \"أعِد طلب التصريح.\""
 
 #: ../libpurple/protocols/oscar/oscar.c:6361
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "ابحث عن صديق بالبريد"
 
 #: ../libpurple/protocols/oscar/oscar.c:6362
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "ابحث عن صديق بواسطة عنوان بريده الإلكتروني"
 
 #: ../libpurple/protocols/oscar/oscar.c:6363
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "أدخل عنوان البريد الإلكتروني للصديق الذي تبحث عنه."
 
 #: ../libpurple/protocols/oscar/oscar.c:6366
@@ -9660,11 +9650,11 @@ msgid "Confirm Account"
 msgstr "أكّد الحساب"
 
 #: ../libpurple/protocols/oscar/oscar.c:6560
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "اعرض عناوين البريد الإلكتروني المسجلة حاليًا"
 
 #: ../libpurple/protocols/oscar/oscar.c:6564
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "غيّر عناوين البريد الإلكتروني المسجلة حاليًا..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6571
@@ -9672,7 +9662,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "اعرض الأصدقاء الذين ينتظرون تصريحات"
 
 #: ../libpurple/protocols/oscar/oscar.c:6577
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "ابحث عن صديق بواسطة عنوان البريد الإلكتروني..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6582
@@ -9752,10 +9742,6 @@ msgstr "فصيلة الدم"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "الكليّة"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "البريد الإلكتروني"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12503,7 +12489,7 @@ msgstr "اسم المستخدم: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:368
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "البريد الإلكتروني: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:370
@@ -12820,7 +12806,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "خدمة الدليل غير متاحة مؤقتا."
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "البحث في البريد مقيد."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15893,7 +15879,7 @@ msgid "Color to draw the name of an action message."
 msgstr "لون رسم اسم رسالة إجراء."
 
 #: ../pidgin/gtkimhtml.c:1636
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "ا_نسخ عنوان البريد الإلكتروني"
 
 #: ../pidgin/gtkimhtml.c:1648
@@ -16310,8 +16296,8 @@ msgstr[5] "%2$Id رسالة جديدة ل %1$s."
 
 #: ../pidgin/gtknotify.c:575
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>لا بريد جديد.</b>"
 msgstr[1] "<b>لديك رسالة بريد واحدة جديدة.</b>"
 msgstr[2] "<b>لديك رسالتي بريد جديدتين.</b>"
@@ -17597,7 +17583,7 @@ msgstr "ا_ربط الصديق"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:242
 #: ../pidgin/plugins/gevolution/gevolution.c:248
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "تعذّر إرسال بريد إلكتروني"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:243
@@ -17605,7 +17591,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "لم يُعثر على ملف التشغيل لبرمجية إفلوشن في المسار (PATH)"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:249
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "لم يُعثر على عنوان بريد إلكتروني لهذا الصديق."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:275
@@ -17613,7 +17599,7 @@ msgid "Add to Address Book"
 msgstr "أضف إلى دفتر العناوين"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:287
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "أرسل بريدا إلكترونيا"
 
 #. Configuration frame
@@ -17671,7 +17657,7 @@ msgid "Last name:"
 msgstr "الاسم الأخير:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:380
-msgid "E-mail:"
+msgid "Email:"
 msgstr "البريد الإلكتروني:"
 
 #. *< type

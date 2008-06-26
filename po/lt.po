@@ -721,8 +721,11 @@ msgid "Pause"
 msgstr "Pristabdyti"
 
 #, c-format
-msgid "File Transfers - %d%% of %d files"
-msgstr "Failų perdavimai – %d%% iš %d"
+msgid "File Transfers - %d%% of %d file"
+msgid_plural "File Transfers - %d%% of %d files"
+msgstr[0] "Failų perdavimai – %d%% iš %d failo"
+msgstr[1] "Failų perdavimai – %d%% iš %d failų"
+msgstr[2] "Failų perdavimai – %d%% iš %d failų"
 
 #. Create the window.
 msgid "File Transfers"
@@ -2849,7 +2852,7 @@ msgstr "Tikrasis vardas"
 msgid "Last name"
 msgstr "Pavardė"
 
-msgid "E-Mail"
+msgid "Email"
 msgstr "El. paštas"
 
 msgid "AIM Account"
@@ -2873,9 +2876,6 @@ msgstr "Bonjour protokolo papildinys"
 
 msgid "Purple Person"
 msgstr "(nežinomas vardas)"
-
-msgid "E-mail"
-msgstr "El. paštas"
 
 msgid "Bonjour"
 msgstr "Bonjour"
@@ -3261,8 +3261,11 @@ msgid "Bad mode"
 msgstr "Bloga būsena"
 
 #, c-format
-msgid "Ban on %s by %s, set %ld seconds ago"
-msgstr "Vartotojui %s uždraudė prisijungti %s prieš %ld sekundžių"
+msgid "Ban on %s by %s, set %ld second ago"
+msgid_plural "Ban on %s by %s, set %ld seconds ago"
+msgstr[0] "Vartotojui %s uždraudė prisijungti %s prieš %ld sekundę"
+msgstr[1] "Vartotojui %s uždraudė prisijungti %s prieš %ld sekundes"
+msgstr[2] "Vartotojui %s uždraudė prisijungti %s prieš %ld sekundžių"
 
 #, c-format
 msgid "Ban on %s"
@@ -3981,7 +3984,7 @@ msgstr "Serverio instrukcijos: %s"
 msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr "Užpildykite vieną ar daugiau laukų XMPP vartotojų paieškai."
 
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "El. pašto adresas"
 
 msgid "Search for XMPP users"
@@ -4718,7 +4721,7 @@ msgstr "Negalima išanalizuoti pranešimo"
 msgid "Syntax Error (probably a client bug)"
 msgstr "Sintaksės klaida (greičiausiai Gaim riktas)"
 
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Neteisingas el. pašto adresas"
 
 msgid "User does not exist"
@@ -5079,7 +5082,7 @@ msgid "Home Fax"
 msgstr "Namų faksas"
 
 # Ar čia turima omeny „Mr.“, „Ms.“, „Dr.“ ???
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Asmeninis el. pašto adresas"
 
 # Ar čia turima omeny „Mr.“, „Ms.“, „Dr.“ ???
@@ -5123,7 +5126,7 @@ msgstr "Darbo pranešimų gaviklis"
 msgid "Work Fax"
 msgstr "Darbo faksas"
 
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Darbo el. pašto adresas"
 
 msgid "Work IM"
@@ -5442,8 +5445,11 @@ msgid "Logging in"
 msgstr "Prisijungiama"
 
 #, c-format
-msgid "Connection to server lost (no data received within %d seconds)"
-msgstr "Nutrūko ryšys su serveriu (negauta jokių duomenų per %d sekundžių)"
+msgid "Connection to server lost (no data received within %d second)"
+msgid_plural "Connection to server lost (no data received within %d seconds)"
+msgstr[0] "Nutrūko ryšys su serveriu (negauta jokių duomenų per %d sekundę)"
+msgstr[1] "Nutrūko ryšys su serveriu (negauta jokių duomenų per %d sekundes)"
+msgstr[2] "Nutrūko ryšys su serveriu (negauta jokių duomenų per %d sekundžių)"
 
 #. Can't write _()'d strings in array initializers. Workaround.
 msgid "New mail messages"
@@ -5541,9 +5547,18 @@ msgstr "IM draugai"
 
 #, c-format
 msgid ""
+"%d buddy was added or updated from the server (including buddies already on "
+"the server-side list)"
+msgid_plural ""
 "%d buddies were added or updated from the server (including buddies already "
 "on the server-side list)"
-msgstr ""
+msgstr[0] ""
+"%d bičiulis buvo pridėtas ar atnaujintas iš serverio (įskaitant ir "
+"bičiulius, jau esančius serverio sąraše)"
+msgstr[1] ""
+"%d bičiuliai buvo pridėti ar atnaujinti iš serverio (įskaitant ir bičiulius, "
+"jau esančius serverio sąraše)"
+msgstr[2] ""
 "%d bičiulių buvo pridėta ar atnaujinta iš serverio (įskaitant ir bičiulius, "
 "jau esančius serverio sąraše)"
 
@@ -6495,7 +6510,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -6664,11 +6679,11 @@ msgstr[1] "Tolesni naudotojų vardai yra susieti su %s"
 msgstr[2] "Tolesni naudotojų vardai yra susieti su %s"
 
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "Pagal el. pašto adresą %s jokių rezultatų nerasta"
 
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Jūs turėtumėte gauti el. laišką, prašantį patvirtinti %s."
 
 msgid "Account Confirmation Requested"
@@ -6698,7 +6713,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
 "Klaida 0x%04x: neįmanoma pakeisti el. pašto adreso, kadangi šiuo metu laukia "
@@ -6706,7 +6721,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
 "Klaida 0x%04x: neįmanoma pakeisti el. pašto adreso, kadangi duotas adresas "
@@ -6714,7 +6729,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Klaida 0x%04x: neįmanoma pakeisti el. pašto adreso, kadangi duotas adresas "
@@ -6728,7 +6743,7 @@ msgid "Error Changing Account Info"
 msgstr "Abonento informacijos keitimo klaida"
 
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "Vartotojo %s el. pašto adresas yra %s"
 
 msgid "Account Info"
@@ -6956,13 +6971,13 @@ msgstr ""
 "spragtelėdamas dešiniuoju klavišu ant jų ir pasirinkdamas „Iš naujo "
 "paprašyti prieigos teisės“."
 
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Surasti bičiulį pagal el. pašto adresą"
 
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Ieškoti bičiulio pagal el. pašto adresą"
 
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Įveskite bičiulio, kurio ieškote, el. pašto adresą."
 
 msgid "_Search"
@@ -6985,16 +7000,16 @@ msgstr "Nustatyti privatumo parinktis..."
 msgid "Confirm Account"
 msgstr "Patvirtinti abonentą"
 
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Parodyti šiuo metu registruotą el. pašto adresą"
 
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Pakeisti šiuo metu registruotą el. pašto adresą..."
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Parodyti bičiulius, laukiančius prieigos suteikimo"
 
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Ieškoti bičiulio pagal el. pašto adresą..."
 
 msgid "Search for Buddy by Information"
@@ -7059,9 +7074,6 @@ msgstr "Kraujo grupė"
 
 msgid "College"
 msgstr "Koledžas"
-
-msgid "Email"
-msgstr "El. paštas"
 
 msgid "Zipcode"
 msgstr "Pašto kodas"
@@ -8847,7 +8859,7 @@ msgid "User Name: \t%s\n"
 msgstr "Vartotojo vardas: \t%s\n"
 
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "El. paštas: \t\t%s\n"
 
 #, c-format
@@ -9105,7 +9117,7 @@ msgstr "Reikia labiau apibrėžti."
 msgid "Dir service temporarily unavailable."
 msgstr "Katalogo tarnyba laikinai neprieinama."
 
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "El. pašto adresų paieška apribota."
 
 msgid "Keyword ignored."
@@ -11510,7 +11522,7 @@ msgstr "Šriftas pranešimui apie pašnekovo renkamą žinutę"
 msgid "Enable typing notification"
 msgstr "Rodyti pranešimus apie pašnekovų renkamas žinutes"
 
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "Kopijuoti _el. pašto adresą"
 
 msgid "_Open Link in Browser"
@@ -11863,8 +11875,8 @@ msgstr[1] "%s turi %d naujus pranešimus."
 msgstr[2] "%s turi %d naujų pranešimų."
 
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d naujas laiškas.</b>"
 msgstr[1] "<b>%d nauji laiškai.</b>"
 msgstr[2] "<b>%d naujų laiškų.</b>"
@@ -12942,19 +12954,19 @@ msgstr "Vartotojo _duomenys"
 msgid "_Associate Buddy"
 msgstr "_Susieti bičiulį"
 
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Negalima išsiųsti el. laiško"
 
 msgid "The evolution executable was not found in the PATH."
 msgstr "Vykdomasis Evolution failas nerastas PATH kintamajame."
 
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "Nerastas šio bičiulio el. pašto adresas."
 
 msgid "Add to Address Book"
 msgstr "Įtraukti į adresų knygą"
 
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Nusiųsti el. laišką"
 
 #  Configuration frame
@@ -13012,7 +13024,7 @@ msgstr "Vardas:"
 msgid "Last name:"
 msgstr "Pavardė:"
 
-msgid "E-mail:"
+msgid "Email:"
 msgstr "El. pašto adresas:"
 
 #  *< api_version

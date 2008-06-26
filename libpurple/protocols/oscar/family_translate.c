@@ -34,7 +34,7 @@
 int translate_modfirst(OscarData *od, aim_module_t *mod)
 {
 
-	mod->family = 0x000c;
+	mod->family = SNAC_FAMILY_TRANSLATE;
 	mod->version = 0x0001;
 	mod->toolid = 0x0104;
 	mod->toolversion = 0x0001;

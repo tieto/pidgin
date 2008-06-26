@@ -151,7 +151,6 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 	 */
 	auto_reply_pref = purple_prefs_get_string("/purple/away/auto_reply");
 	if((gc->flags & PURPLE_CONNECTION_AUTO_RESP) &&
-			flags & PURPLE_MESSAGE_AUTO_RESP &&
 			!purple_presence_is_available(presence) &&
 			strcmp(auto_reply_pref, "never")) {
 
@@ -659,8 +658,11 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 
 	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
 		/* protocol does not support privacy, handle it ourselves */
-		if (!purple_privacy_check(account, who))
+		if (!purple_privacy_check(account, who)) {
+			purple_signal_emit(purple_conversations_get_handle(), "blocked-im-msg",
+					account, who, msg, flags, (unsigned int)mtime);
 			return;
+		}
 	}
 
 	/*
@@ -725,6 +727,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 		PurpleStatusPrimitive primitive;
 		const gchar *auto_reply_pref;
 		const char *away_msg = NULL;
+		gboolean mobile = FALSE;
 
 		auto_reply_pref = purple_prefs_get_string("/purple/away/auto_reply");
 
@@ -732,9 +735,10 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 		status = purple_presence_get_active_status(presence);
 		status_type = purple_status_get_type(status);
 		primitive = purple_status_type_get_primitive(status_type);
+		mobile = purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE);
 		if ((primitive == PURPLE_STATUS_AVAILABLE) ||
 			(primitive == PURPLE_STATUS_INVISIBLE) ||
-			(primitive == PURPLE_STATUS_MOBILE) ||
+			mobile ||
 		    !strcmp(auto_reply_pref, "never") ||
 		    (!purple_presence_is_idle(presence) && !strcmp(auto_reply_pref, "awayidle")))
 		{
@@ -879,8 +883,11 @@ void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 	account = purple_connection_get_account(gc);
 	if (PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc))->set_permit_deny == NULL) {
 		/* protocol does not support privacy, handle it ourselves */
-		if (!purple_privacy_check(account, who))
+		if (!purple_privacy_check(account, who)) {
+			purple_signal_emit(purple_conversations_get_handle(), "chat-invite-blocked",
+					account, who, name, message, data);
 			return;
+		}
 	}
 
 	plugin_return = GPOINTER_TO_INT(purple_signal_emit_return_1(
@@ -965,6 +972,12 @@ void serv_got_chat_left(PurpleConnection *g, int id)
 	purple_conv_chat_left(PURPLE_CONV_CHAT(conv));
 
 	purple_signal_emit(purple_conversations_get_handle(), "chat-left", conv);
+}
+
+void purple_serv_got_join_chat_failed(PurpleConnection *gc, GHashTable *data)
+{
+	purple_signal_emit(purple_conversations_get_handle(), "chat-join-failed",
+					gc, data);
 }
 
 void serv_got_chat_in(PurpleConnection *g, int id, const char *who,

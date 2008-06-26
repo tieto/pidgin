@@ -197,6 +197,12 @@ char *jabber_get_chat_name(GHashTable *data) {
 	return chat_name;
 }
 
+static void insert_in_hash_table(gpointer key, gpointer value, gpointer user_data)
+{
+	GHashTable *hash_table = (GHashTable *)user_data;
+	g_hash_table_insert(hash_table, g_strdup(key), g_strdup(value));
+}
+
 void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 {
 	JabberChat *chat;
@@ -225,18 +231,21 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 		char *buf = g_strdup_printf(_("%s is not a valid room name"), room);
 		purple_notify_error(gc, _("Invalid Room Name"), _("Invalid Room Name"),
 				buf);
+		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
 		return;
 	} else if(!jabber_nameprep_validate(server)) {
 		char *buf = g_strdup_printf(_("%s is not a valid server name"), server);
 		purple_notify_error(gc, _("Invalid Server Name"),
 				_("Invalid Server Name"), buf);
+		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
 		return;
 	} else if(!jabber_resourceprep_validate(handle)) {
 		char *buf = g_strdup_printf(_("%s is not a valid room handle"), handle);
 		purple_notify_error(gc, _("Invalid Room Handle"),
 				_("Invalid Room Handle"), buf);
+		purple_serv_got_join_chat_failed(gc, data);
 		g_free(buf);
 		return;
 	}
@@ -254,6 +263,11 @@ void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 	chat->room = g_strdup(room);
 	chat->server = g_strdup(server);
 	chat->handle = g_strdup(handle);
+
+	/* Copy the data hash table to chat->components */
+	chat->components = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, g_free);
+	g_hash_table_foreach(data, insert_in_hash_table, chat->components);
 
 	chat->members = g_hash_table_new_full(g_str_hash, g_str_equal, NULL,
 			(GDestroyNotify)jabber_chat_member_free);
@@ -294,7 +308,7 @@ void jabber_chat_leave(PurpleConnection *gc, int id)
 
 	jabber_chat_part(chat, NULL);
 
-	chat->conv = NULL;
+	chat->left = TRUE;
 }
 
 void jabber_chat_destroy(JabberChat *chat)
@@ -315,6 +329,7 @@ void jabber_chat_free(JabberChat *chat)
 	g_free(chat->server);
 	g_free(chat->handle);
 	g_hash_table_destroy(chat->members);
+	g_hash_table_destroy(chat->components);
 	g_free(chat);
 }
 
@@ -327,11 +342,17 @@ char *jabber_chat_buddy_real_name(PurpleConnection *gc, int id, const char *who)
 {
 	JabberStream *js = gc->proto_data;
 	JabberChat *chat;
+	JabberChatMember *jcm;
 
 	chat = jabber_chat_find_by_id(js, id);
 
 	if(!chat)
 		return NULL;
+
+	jcm = g_hash_table_lookup(chat->members, who);
+	if (jcm != NULL && jcm->jid)
+		return g_strdup(jcm->jid);
+	
 
 	return g_strdup_printf("%s@%s/%s", chat->room, chat->server, who);
 }

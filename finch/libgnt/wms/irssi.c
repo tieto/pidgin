@@ -1,8 +1,8 @@
 /**
  * 1. Buddylist is aligned on the left.
  * 2. The rest of the screen is split into MxN grid for conversation windows.
- * 	- M = irssi-split-h in ~/.gntrc:[general]
- * 	- N = irssi-split-v in ~/.gntrc:[general]
+ * 	- M = split-h in ~/.gntrc:[irssi]
+ * 	- N = split-v in ~/.gntrc:[irssi]
  *	- Press alt-shift-k/j/l/h to move the selected window to the frame
  *	  above/below/left/right of the current frame.
  * 3. All the other windows are always centered.
@@ -52,7 +52,8 @@ get_xywh_for_frame(Irssi *irssi, int hor, int vert, int *x, int *y, int *w, int 
 	rx = irssi->buddylistwidth;
 	if (hor)
 		rx += hor * width;
-	rx++;
+	if (rx)
+		rx++;
 
 	ry = 0;
 	if (vert)

@@ -98,7 +98,7 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 	char *displayed = NULL, *sent = NULL;
 	int err = 0;
 
-	if (strlen(message) == 0)
+	if (*message == '\0')
 		return;
 
 	account = purple_conversation_get_account(conv);
@@ -2221,6 +2221,16 @@ purple_conversations_init(void)
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_UINT));
 
+	purple_signal_register(handle, "blocked-im-msg",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT,
+						 NULL, 5,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+							 PURPLE_SUBTYPE_ACCOUNT),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_UINT),
+						 purple_value_new(PURPLE_TYPE_UINT));
+
 	purple_signal_register(handle, "writing-chat-msg",
 						 purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_UINT,
 						 purple_value_new(PURPLE_TYPE_BOOLEAN), 5,
@@ -2376,10 +2386,26 @@ purple_conversations_init(void)
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_POINTER));
 
+	purple_signal_register(handle, "chat-invite-blocked",
+						 purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_POINTER,
+						 NULL, 5,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+							 PURPLE_SUBTYPE_ACCOUNT),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_STRING),
+						 purple_value_new(PURPLE_TYPE_BOXED, "GHashTable *"));
+
 	purple_signal_register(handle, "chat-joined",
 						 purple_marshal_VOID__POINTER, NULL, 1,
 						 purple_value_new(PURPLE_TYPE_SUBTYPE,
 										PURPLE_SUBTYPE_CONVERSATION));
+
+	purple_signal_register(handle, "chat-join-failed",
+						   purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+						   purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CONNECTION),
+						   purple_value_new(PURPLE_TYPE_POINTER));
 
 	purple_signal_register(handle, "chat-left",
 						 purple_marshal_VOID__POINTER, NULL, 1,

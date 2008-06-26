@@ -25,8 +25,8 @@
 #include "util.h"
 
 #ifndef _WIN32
-#include <resolv.h>
 #include <arpa/nameser.h>
+#include <resolv.h>
 #ifdef HAVE_ARPA_NAMESER_COMPAT_H
 #include <arpa/nameser_compat.h>
 #endif

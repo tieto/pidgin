@@ -43,6 +43,7 @@
 #include <notify.h>
 #include <plugin.h>
 #include <request.h>
+#include <savedstatuses.h>
 
 #include "gntaccount.h"
 #include "gntblist.h"
@@ -67,7 +68,7 @@ typedef struct
 	GntWidget *screenname;
 	GntWidget *password;
 	GntWidget *alias;
-	
+
 	GntWidget *splits;
 	GList *split_entries;
 
@@ -76,6 +77,7 @@ typedef struct
 
 	GntWidget *newmail;
 	GntWidget *remember;
+	GntWidget *regserver;
 } AccountEditDialog;
 
 /* This is necessary to close an edit-dialog when an account is deleted */
@@ -125,7 +127,7 @@ save_account_cb(AccountEditDialog *dialog)
 				_("Username of an account must be non-empty."));
 		return;
 	}
-	
+
 	username = g_string_new(value);
 
 	if (prplinfo != NULL)
@@ -183,7 +185,7 @@ save_account_cb(AccountEditDialog *dialog)
 	if (prplinfo)
 	{
 		GList *iter, *entries;
-		
+
 		for (iter = prplinfo->protocol_options, entries = dialog->prpl_entries;
 				iter && entries; iter = iter->next, entries = entries->next)
 		{
@@ -226,6 +228,20 @@ save_account_cb(AccountEditDialog *dialog)
 	if (accounts.window && accounts.tree) {
 		gnt_tree_set_selected(GNT_TREE(accounts.tree), account);
 		gnt_box_give_focus_to_child(GNT_BOX(accounts.window), accounts.tree);
+	}
+
+	if (prplinfo && prplinfo->register_user &&
+			gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->regserver))) {
+		purple_account_register(account);
+	} else if (dialog->account == NULL) {
+		/* This is a new account. Set it to the current status. */
+		/* Xerox from gtkaccount.c :D */
+		const PurpleSavedStatus *saved_status;
+		saved_status = purple_savedstatus_get_current();
+		if (saved_status != NULL) {
+			purple_savedstatus_activate_for_account(saved_status, account);
+			purple_account_set_enabled(account, FINCH_UI, TRUE);
+		}
 	}
 
 	gnt_widget_destroy(dialog->window);
@@ -419,6 +435,11 @@ add_protocol_options(AccountEditDialog *dialog)
 			}
 		}
 	}
+
+	/* Show the registration checkbox only in a new account dialog,
+	 * and when the selected prpl has the support for it. */
+	gnt_widget_set_visible(dialog->regserver, account == NULL &&
+			prplinfo->register_user != NULL);
 }
 
 static void
@@ -558,6 +579,10 @@ edit_account(PurpleAccount *account)
 	update_user_options(dialog);
 	gnt_box_add_widget(GNT_BOX(window), dialog->remember);
 	gnt_box_add_widget(GNT_BOX(window), dialog->newmail);
+
+	/* Register checkbox */
+	dialog->regserver = gnt_check_box_new(_("Create this account on the server"));
+	gnt_box_add_widget(GNT_BOX(window), dialog->regserver);
 
 	gnt_box_add_widget(GNT_BOX(window), gnt_line_new(FALSE));
 

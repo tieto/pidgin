@@ -3614,7 +3614,7 @@ msgstr "अन्तिम नाम:"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "इमेल"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:360
@@ -3649,17 +3649,6 @@ msgstr "याहू प्रोटोकल प्लगइन"
 #, fuzzy
 msgid "Purple Person"
 msgstr "नयाँ व्यक्ति"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:662
-#: ../libpurple/protocols/gg/gg.c:477
-#: ../libpurple/protocols/jabber/jabber.c:932
-#: ../libpurple/protocols/silc/silc.c:770
-#: ../libpurple/protocols/silc/silc.c:1011
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-#, fuzzy
-msgid "E-mail"
-msgstr "इ-मेल:"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5425,7 +5414,7 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:1488
 #: ../libpurple/protocols/oscar/oscar.c:3714
 #: ../libpurple/protocols/oscar/oscar.c:3723
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "इमेल ठेगाना"
 
 #: ../libpurple/protocols/jabber/buddy.c:2410
@@ -6510,7 +6499,7 @@ msgstr "वाक्या संरचना त्रुटि (सम्भ�
 
 #: ../libpurple/protocols/msn/error.c:46
 #, fuzzy, c-format
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "अवैध इमेल ठेगाना"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7074,7 +7063,7 @@ msgstr "गृह पृष्ठ"
 
 #: ../libpurple/protocols/msn/msn.c:1656
 #, fuzzy
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "व्यक्तिगत शीर्षकहरू"
 
 #: ../libpurple/protocols/msn/msn.c:1657
@@ -7143,7 +7132,7 @@ msgstr ""
 
 #: ../libpurple/protocols/msn/msn.c:1687
 #, fuzzy
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "इमेल"
 
 #: ../libpurple/protocols/msn/msn.c:1688
@@ -8824,7 +8813,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2439
 #, fuzzy, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9015,12 +9004,12 @@ msgstr "पर्दा नाम"
 
 #: ../libpurple/protocols/oscar/oscar.c:3948
 #, fuzzy, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "इमेल ठेगानाका लागि परिणाम फेला परेन %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3969
 #, fuzzy, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "तपाईँले %s यकिन गर्न सोधेर एउटा इमेल प्राप्त गर्नुपर्दछ।"
 
 #: ../libpurple/protocols/oscar/oscar.c:3971
@@ -9060,7 +9049,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4014
 #, fuzzy, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "त्रुटि 0x%04x: इमेल ठेगाना परिवर्तन गर्न अक्षम भयो किनभने त्यहाँ पहिल्यै यो पर्दा नामका "
@@ -9069,7 +9058,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4017
 #, fuzzy, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "त्रुटि 0x%04x: इमेल ठेगाना परिवर्तन गर्न अक्षम भयो किनभने दिएको ठेगानामा यो सँग  "
@@ -9078,7 +9067,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4020
 #, fuzzy, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr "त्रुटि 0x%04x: इमेल ठेगाना परिवर्तन गर्न अक्षम भयो किनभने दिएको ठेगाना अवैध छ ।"
 
@@ -9089,7 +9078,7 @@ msgstr "त्रुटि 0x%04x: अज्ञात त्रुटि ।"
 
 #: ../libpurple/protocols/oscar/oscar.c:4033
 #, fuzzy, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "%s का लागि इमेल ठेगाना %s हो"
 
 #: ../libpurple/protocols/oscar/oscar.c:4035
@@ -9367,15 +9356,15 @@ msgstr ""
 
 #: ../libpurple/protocols/oscar/oscar.c:6231
 #, fuzzy
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "इमेल द्वारा साथी फेला पार्नुहोस्"
 
 #: ../libpurple/protocols/oscar/oscar.c:6232
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "इमेल ठेगाना द्वारा एउटा साथी खोजी गर्नुहोस्"
 
 #: ../libpurple/protocols/oscar/oscar.c:6233
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "तपाईँले खोजी रहनु भएको साथिको इमेल ठेगाना टाइप गर्नुहोस् ।"
 
 #: ../libpurple/protocols/oscar/oscar.c:6236
@@ -9408,12 +9397,12 @@ msgstr "खाता यकिन गर्नुहोस्"
 
 #: ../libpurple/protocols/oscar/oscar.c:6430
 #, fuzzy
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "हालै दर्ता गरेको ठेगाना प्रदर्शन गर्नुहोस्"
 
 #: ../libpurple/protocols/oscar/oscar.c:6434
 #, fuzzy
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "हालै दर्ता गरेको ठेगाना परिवर्तन गर्नुहोस्..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6441
@@ -9422,7 +9411,7 @@ msgstr "प्रमाणीकरण प्रतिक्षा गरिर�
 
 #: ../libpurple/protocols/oscar/oscar.c:6447
 #, fuzzy
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "इमेल द्वारा साथीको खोजी गर्नुहोस्..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6452
@@ -9513,10 +9502,6 @@ msgstr ""
 #, fuzzy
 msgid "College"
 msgstr "नष्ट गर्नुहोस्"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "इमेल"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 #, fuzzy
@@ -12360,7 +12345,7 @@ msgstr "प्रयोगकर्ता नाम: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:362
 #: ../libpurple/protocols/silc10/util.c:359
 #, fuzzy, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "इमेल: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:364
@@ -12715,7 +12700,7 @@ msgstr "डाइरेक्टरी सेवा अस्थायी रु
 
 #: ../libpurple/protocols/toc/toc.c:530
 #, fuzzy, c-format
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "इमेल खोजी प्रतिबन्धित भयो ।"
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15727,7 +15712,7 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "हाइपरलिङ्कहरू कोर्न रङ्"
 
 #: ../pidgin/gtkimhtml.c:1598
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "इ-मेल ठेगाना प्रतिलिपि गर्नुहोस्"
 
 #: ../pidgin/gtkimhtml.c:1610
@@ -16143,8 +16128,8 @@ msgstr[1] "%s सँग  %d वटा नयाँ सन्देश छ ।"
 
 #: ../pidgin/gtknotify.c:564
 #, c-format
-msgid "<b>You have %d new e-mail.</b>"
-msgid_plural "<b>You have %d new e-mails.</b>"
+msgid "<b>You have %d new email.</b>"
+msgid_plural "<b>You have %d new emails.</b>"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -17464,7 +17449,7 @@ msgstr "संगठित साथी"
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
 #, fuzzy
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "सन्देश पठाउन अक्षम भयो ।"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -17472,7 +17457,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -17481,7 +17466,7 @@ msgstr "ठेगाना पुस्तकमा थप्नुहोस्"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
 #, fuzzy
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "इमेल"
 
 #. Configuration frame
@@ -17540,7 +17525,7 @@ msgid "Last name:"
 msgstr "अन्तिम नाम:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "इ-मेल:"
 
 #. *< type

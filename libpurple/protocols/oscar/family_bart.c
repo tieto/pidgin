@@ -43,7 +43,7 @@ aim_bart_upload(OscarData *od, const guint8 *icon, guint16 iconlen)
 	ByteStream bs;
 	aim_snacid_t snacid;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0010)) || !icon || !iconlen)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_BART)) || !icon || !iconlen)
 		return -EINVAL;
 
 	byte_stream_new(&bs, 2 + 2 + iconlen);
@@ -55,8 +55,8 @@ aim_bart_upload(OscarData *od, const guint8 *icon, guint16 iconlen)
 	byte_stream_put16(&bs, iconlen);
 	byte_stream_putraw(&bs, icon, iconlen);
 
-	snacid = aim_cachesnac(od, 0x0010, 0x0002, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0010, 0x0002, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_BART, 0x0002, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_BART, 0x0002, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -102,7 +102,7 @@ aim_bart_request(OscarData *od, const char *sn, guint8 iconcsumtype, const guint
 	ByteStream bs;
 	aim_snacid_t snacid;
 
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0010)) || !sn || !strlen(sn) || !iconcsum || !iconcsumlen)
+	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_BART)) || !sn || !strlen(sn) || !iconcsum || !iconcsumlen)
 		return -EINVAL;
 
 	byte_stream_new(&bs, 1+strlen(sn) + 4 + 1+iconcsumlen);
@@ -120,8 +120,8 @@ aim_bart_request(OscarData *od, const char *sn, guint8 iconcsumtype, const guint
 	byte_stream_put8(&bs, iconcsumlen);
 	byte_stream_putraw(&bs, iconcsum, iconcsumlen);
 
-	snacid = aim_cachesnac(od, 0x0010, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0010, 0x0004, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_BART, 0x0004, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_BART, 0x0004, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -174,7 +174,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 int
 bart_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = 0x0010;
+	mod->family = SNAC_FAMILY_BART;
 	mod->version = 0x0001;
 	mod->toolid = 0x0010;
 	mod->toolversion = 0x0629;

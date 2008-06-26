@@ -91,7 +91,7 @@ msgstr "Gebruikersnaam van een acount mag niet leeg zijn."
 
 #: ../finch/gntaccount.c:437
 msgid "New mail notifications"
-msgstr "Nieuwe e-mail meldingen"
+msgstr "Nieuwe email meldingen"
 
 #: ../finch/gntaccount.c:447
 msgid "Remember password"
@@ -1345,11 +1345,11 @@ msgstr "Systeemlogboek"
 
 #: ../finch/gntnotify.c:165
 msgid "Emails"
-msgstr "E-mails"
+msgstr "Emails"
 
 #: ../finch/gntnotify.c:171 ../finch/gntnotify.c:226
 msgid "You have mail!"
-msgstr "Er is e-mail!"
+msgstr "Er is email!"
 
 #: ../finch/gntnotify.c:174 ../pidgin/gtknotify.c:537
 msgid "Sender"
@@ -1368,7 +1368,7 @@ msgstr[1] "%s (%s) heeft %d nieuwe berichten."
 
 #: ../finch/gntnotify.c:226 ../pidgin/gtknotify.c:352
 msgid "New Mail"
-msgstr "Nieuwe e-mail"
+msgstr "Nieuwe email"
 
 #: ../finch/gntnotify.c:291 ../pidgin/gtknotify.c:984
 #, c-format
@@ -3951,8 +3951,8 @@ msgstr "Achternaam"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:555
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1068
-msgid "E-Mail"
-msgstr "E-mail"
+msgid "Email"
+msgstr "Email"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:402
 #: ../libpurple/protocols/bonjour/bonjour.c:708
@@ -3982,16 +3982,6 @@ msgstr "Bonjour-protocol plugin"
 #: ../libpurple/protocols/bonjour/bonjour.c:652
 msgid "Purple Person"
 msgstr "Purple mens"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:705
-#: ../libpurple/protocols/gg/gg.c:487
-#: ../libpurple/protocols/jabber/jabber.c:998
-#: ../libpurple/protocols/silc/silc.c:986
-#: ../libpurple/protocols/silc/silc.c:1227
-#: ../libpurple/protocols/silc10/silc.c:687
-#: ../libpurple/protocols/silc10/silc.c:928
-msgid "E-mail"
-msgstr "E-mail"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5657,8 +5647,8 @@ msgstr "Vul een of meer velden in om naar te zoeken bij Jabber-gebruikers."
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3753
 #: ../libpurple/protocols/oscar/oscar.c:3762
-msgid "E-Mail Address"
-msgstr "E-mailadres"
+msgid "Email Address"
+msgstr "Emailadres"
 
 #: ../libpurple/protocols/jabber/buddy.c:2471
 #: ../libpurple/protocols/jabber/buddy.c:2472
@@ -6711,8 +6701,8 @@ msgstr "Syntaxfout (waarschijnlijk een client-bug)"
 
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
-msgid "Invalid e-mail address"
-msgstr "Ongeldig e-mail adres"
+msgid "Invalid email address"
+msgstr "Ongeldig email adres"
 
 #: ../libpurple/protocols/msn/error.c:49
 #: ../libpurple/protocols/msnp9/error.c:49
@@ -7321,8 +7311,8 @@ msgstr "Fax thuis"
 
 #: ../libpurple/protocols/msn/msn.c:1826
 #: ../libpurple/protocols/msnp9/msn.c:1667
-msgid "Personal E-Mail"
-msgstr "Persoonlijke e-mail"
+msgid "Personal Email"
+msgstr "Persoonlijke email"
 
 #: ../libpurple/protocols/msn/msn.c:1827
 #: ../libpurple/protocols/msnp9/msn.c:1668
@@ -7397,8 +7387,8 @@ msgstr "Fax werk"
 
 #: ../libpurple/protocols/msn/msn.c:1857
 #: ../libpurple/protocols/msnp9/msn.c:1698
-msgid "Work E-Mail"
-msgstr "E-mail werk"
+msgid "Work Email"
+msgstr "Email werk"
 
 #: ../libpurple/protocols/msn/msn.c:1858
 #: ../libpurple/protocols/msnp9/msn.c:1699
@@ -7891,7 +7881,7 @@ msgstr ""
 #. Can't write _()'d strings in array initializers. Workaround.
 #: ../libpurple/protocols/myspace/myspace.c:1374
 msgid "New mail messages"
-msgstr "Nieuwe e-mailberichten"
+msgstr "Nieuwe emailberichten"
 
 #: ../libpurple/protocols/myspace/myspace.c:1375
 msgid "New blog comments"
@@ -9061,7 +9051,7 @@ msgid ""
 "only letters, numbers and spaces, or contain only numbers."
 msgstr ""
 "Kan niet aanmelden: Kan niet aanmelden als %s omdat de gebruikersnaam "
-"ongeldig is. Gebruikersnamen moeten een geldig e-mailadres zijn, of beginnen "
+"ongeldig is. Gebruikersnamen moeten een geldig emailadres zijn, of beginnen "
 "met een letter en slechts cijfers, letters en spaties bevatten, of slechts "
 "nummers bevatten."
 
@@ -9248,12 +9238,12 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2495
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"U heeft een ICQ e-mail ontvangen van %s [%s]\n"
+"U heeft een ICQ email ontvangen van %s [%s]\n"
 "\n"
 "Bericht:\n"
 "%s"
@@ -9439,13 +9429,13 @@ msgstr[1] "De volgende namen worden geassocieerd met %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3987
 #, c-format
-msgid "No results found for e-mail address %s"
-msgstr "Niets gevonden voor e-mailadres %s"
+msgid "No results found for email address %s"
+msgstr "Niets gevonden voor emailadres %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4008
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
-msgstr "U zou een e-mail moeten ontvangen met de vraag om %s te bevestigen."
+msgid "You should receive an email asking to confirm %s."
+msgstr "U zou een email moeten ontvangen met de vraag om %s te bevestigen."
 
 #: ../libpurple/protocols/oscar/oscar.c:4010
 msgid "Account Confirmation Requested"
@@ -9478,28 +9468,28 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4049
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
-"Fout 0x%04x: Kan e-mail adres niet veranderen omdat er al een aanvraag in "
+"Fout 0x%04x: Kan email adres niet veranderen omdat er al een aanvraag in "
 "behandeling is."
 
 #: ../libpurple/protocols/oscar/oscar.c:4051
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
-"Fout 0x%04x: Kan e-mail adres niet veranderen omdat het adres reeds te veel "
+"Fout 0x%04x: Kan email adres niet veranderen omdat het adres reeds te veel "
 "gebruikersnamen toegewezen heeft gekregen."
 
 #: ../libpurple/protocols/oscar/oscar.c:4053
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
-"Fout 0x%04x: Kan e-mail adres niet veranderen omdat het adres ongeldig is."
+"Fout 0x%04x: Kan email adres niet veranderen omdat het adres ongeldig is."
 
 #: ../libpurple/protocols/oscar/oscar.c:4055
 #, c-format
@@ -9512,8 +9502,8 @@ msgstr "Fout bij aanpassen van accountgegevens"
 
 #: ../libpurple/protocols/oscar/oscar.c:4063
 #, c-format
-msgid "The e-mail address for %s is %s"
-msgstr "Het e-mail adres voor %s is %s"
+msgid "The email address for %s is %s"
+msgstr "Het email adres voor %s is %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4065
 msgid "Account Info"
@@ -9586,7 +9576,7 @@ msgid ""
 "numbers and spaces, or contain only numbers."
 msgstr ""
 "Kan het contact %s niet toevoegen omdat de gebruikersnaam ongeldig is. "
-"Gebruikersnamen moeten een geldig e-mailadres zijn, of beginnen met een "
+"Gebruikersnamen moeten een geldig emailadres zijn, of beginnen met een "
 "letter en slechts cijfers en letters bevatten, of slechts nummers bevatten."
 
 #: ../libpurple/protocols/oscar/oscar.c:4666
@@ -9789,16 +9779,16 @@ msgstr ""
 "contacten te klikken en de optie \"Opnieuw toestemming vragen.\" te kiezen."
 
 #: ../libpurple/protocols/oscar/oscar.c:6347
-msgid "Find Buddy by E-Mail"
-msgstr "Contact zoeken op e-mail adres"
+msgid "Find Buddy by Email"
+msgstr "Contact zoeken op email adres"
 
 #: ../libpurple/protocols/oscar/oscar.c:6348
-msgid "Search for a buddy by e-mail address"
-msgstr "Contact zoeken op e-mail adres"
+msgid "Search for a buddy by email address"
+msgstr "Contact zoeken op email adres"
 
 #: ../libpurple/protocols/oscar/oscar.c:6349
-msgid "Type the e-mail address of the buddy you are searching for."
-msgstr "Geef het e-mail adres van de persoon waarnaar u zoekt."
+msgid "Type the email address of the buddy you are searching for."
+msgstr "Geef het email adres van de persoon waarnaar u zoekt."
 
 #: ../libpurple/protocols/oscar/oscar.c:6352
 msgid "_Search"
@@ -9828,20 +9818,20 @@ msgid "Confirm Account"
 msgstr "Account bevestigen"
 
 #: ../libpurple/protocols/oscar/oscar.c:6546
-msgid "Display Currently Registered E-Mail Address"
-msgstr "Huidige geregistreerde e-mailadres weergeven"
+msgid "Display Currently Registered Email Address"
+msgstr "Huidige geregistreerde emailadres weergeven"
 
 #: ../libpurple/protocols/oscar/oscar.c:6550
-msgid "Change Currently Registered E-Mail Address..."
-msgstr "Huidige geregistreerde e-mailadres veranderen..."
+msgid "Change Currently Registered Email Address..."
+msgstr "Huidige geregistreerde emailadres veranderen..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6557
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Contacten weergeven die op toestemming wachten"
 
 #: ../libpurple/protocols/oscar/oscar.c:6563
-msgid "Search for Buddy by E-Mail Address..."
-msgstr "Contact zoeken door middel van e-mail..."
+msgid "Search for Buddy by Email Address..."
+msgstr "Contact zoeken door middel van email..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6568
 msgid "Search for Buddy by Information"
@@ -9922,10 +9912,6 @@ msgstr "Bloedgroep"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "College"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "E-mail"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12675,8 +12661,8 @@ msgstr "Gebruiker: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:367
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
-msgstr "E-mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
+msgstr "Email: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:369
 #: ../libpurple/protocols/silc10/util.c:361
@@ -13002,7 +12988,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Profielen service is momenteel niet toegankelijk."
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "Email zoekfunctie beperkt."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -16077,8 +16063,8 @@ msgid "Enable typing notification"
 msgstr "Schakel typmelding in"
 
 #: ../pidgin/gtkimhtml.c:1688
-msgid "_Copy E-Mail Address"
-msgstr "E-mail adres _kopiëren"
+msgid "_Copy Email Address"
+msgstr "Email adres _kopiëren"
 
 #: ../pidgin/gtkimhtml.c:1700
 msgid "_Open Link in Browser"
@@ -16483,7 +16469,7 @@ msgstr "Alle berichten openen"
 
 #: ../pidgin/gtknotify.c:414
 msgid "<span weight=\"bold\" size=\"larger\">You have mail!</span>"
-msgstr "<span weight=\"bold\" size=\"larger\">U heeft e-mail!</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">U heeft email!</span>"
 
 #: ../pidgin/gtknotify.c:570
 #, c-format
@@ -16494,10 +16480,10 @@ msgstr[1] "%s heeft %d nieuwe berichten."
 
 #: ../pidgin/gtknotify.c:599
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
-msgstr[0] "<b>%d nieuwe e-mail.</b>"
-msgstr[1] "<b>%d nieuwe e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
+msgstr[0] "<b>%d nieuwe email.</b>"
+msgstr[1] "<b>%d nieuwe emails.</b>"
 
 #: ../pidgin/gtknotify.c:1033
 #, c-format
@@ -17485,7 +17471,7 @@ msgstr "Be_werken"
 
 #: ../pidgin/pidginstock.c:94
 msgid "_Open Mail"
-msgstr "E-mail _openen"
+msgstr "Email _openen"
 
 #: ../pidgin/pidginstock.c:95
 msgid "_Pause"
@@ -17834,24 +17820,24 @@ msgstr "Contact _associëren"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:242
 #: ../pidgin/plugins/gevolution/gevolution.c:248
-msgid "Unable to send e-mail"
-msgstr "Kan geen e-mail verzenden"
+msgid "Unable to send email"
+msgstr "Kan geen email verzenden"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:243
 msgid "The evolution executable was not found in the PATH."
 msgstr "Kan evolution niet vinden."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:249
-msgid "An e-mail address was not found for this buddy."
-msgstr "Er is geen e-mailadres gevonden van dit contact"
+msgid "An email address was not found for this buddy."
+msgstr "Er is geen emailadres gevonden van dit contact"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:275
 msgid "Add to Address Book"
 msgstr "Toevoegen aan adresboek"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:287
-msgid "Send E-Mail"
-msgstr "E-mail sturen"
+msgid "Send Email"
+msgstr "Email sturen"
 
 #. Configuration frame
 #: ../pidgin/plugins/gevolution/gevolution.c:432
@@ -17911,8 +17897,8 @@ msgid "Last name:"
 msgstr "Achternaam:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:380
-msgid "E-mail:"
-msgstr "E-mail:"
+msgid "Email:"
+msgstr "Email:"
 
 #. *< type
 #. *< ui_requirement
@@ -17967,11 +17953,11 @@ msgstr ""
 
 #: ../pidgin/plugins/mailchk.c:160
 msgid "Mail Checker"
-msgstr "E-mailcontrole"
+msgstr "Emailcontrole"
 
 #: ../pidgin/plugins/mailchk.c:162
 msgid "Checks for new local mail."
-msgstr "Controleert op lokale e-mail."
+msgstr "Controleert op lokale email."
 
 #: ../pidgin/plugins/mailchk.c:163
 msgid "Adds a small box to the buddy list that shows if you have new mail."
@@ -19065,7 +19051,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ "\n"
 #~ "%s"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">U heeft e-mail!</span>\n"
+#~ "<span weight=\"bold\" size=\"larger\">U heeft email!</span>\n"
 #~ "\n"
 #~ "%s"
 
@@ -19584,16 +19570,16 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgstr "Wanneer je offline wordt geschopt, herstelt dit de verbinding."
 
 #~ msgid "Mail Server"
-#~ msgstr "E-mailserver"
+#~ msgstr "Emailserver"
 
 #~ msgid "%s (%d new/%d total)"
 #~ msgstr "%s (%d nieuw/%d totaal)"
 
 #~ msgid "Check Mail"
-#~ msgstr "E-mail controleren"
+#~ msgstr "Email controleren"
 
 #~ msgid "Check email every X seconds.\n"
-#~ msgstr "E-mail iedere X seconden controleren.\n"
+#~ msgstr "Email iedere X seconden controleren.\n"
 
 #~ msgid "Buddy is offline:"
 #~ msgstr "Contact is off-line:"
@@ -20212,7 +20198,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ "\n"
 #~ "%s%s%s%s"
 #~ msgstr ""
-#~ "<span weight=\"bold\" size=\"larger\">U heeft e-mail!</span>\n"
+#~ "<span weight=\"bold\" size=\"larger\">U heeft email!</span>\n"
 #~ "\n"
 #~ "%s%s%s%s"
 
@@ -20627,9 +20613,6 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "Miscellaneous error"
 #~ msgstr "Onebeknde fout"
 
-#~ msgid "Invalid email address"
-#~ msgstr "Ongeldig e-mail adres"
-
 #~ msgid "Tried to add a contact to a group that doesn't exist"
 #~ msgstr "Probeerde een contact aan een niet bestaande groep toe te voegen"
 
@@ -20736,17 +20719,6 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ "%s"
 
 #~ msgid ""
-#~ "You have received an ICQ email from %s [%s]\n"
-#~ "\n"
-#~ "Message is:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "U heeft een ICQ e-mail ontvangen van %s [%s]\n"
-#~ "\n"
-#~ "Bericht:\n"
-#~ "%s"
-
-#~ msgid ""
 #~ "You have been disconnected because you have signed on with this screen "
 #~ "name at another location."
 #~ msgstr ""
@@ -20759,12 +20731,6 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgid "The following screen names are associated with %s"
 #~ msgstr "De volgende gebruikersnamen zijn geassocieerd met %s"
 
-#~ msgid "No results found for email address %s"
-#~ msgstr "Niets gevonden voor e-mail adres %s"
-
-#~ msgid "You should receive an email asking to confirm %s."
-#~ msgstr "U zou een e-mail moeten ontvangen met de vraag om %s te bevestigen."
-
 #~ msgid ""
 #~ "Error 0x%04x: Unable to format screen name because the requested screen "
 #~ "name ends in a space."
@@ -20776,24 +20742,15 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ "Error 0x%04x: Unable to change email address because there is already a "
 #~ "request pending for this screen name."
 #~ msgstr ""
-#~ "Fout 0x%04x: Kan e-mail adres niet veranderen omdat het adres al is "
+#~ "Fout 0x%04x: Kan email adres niet veranderen omdat het adres al is "
 #~ "aangevraagd door een ander."
 
 #~ msgid ""
 #~ "Error 0x%04x: Unable to change email address because the given address "
 #~ "has too many screen names associated with it."
 #~ msgstr ""
-#~ "Fout 0x%04x: Kan e-mail adres niet veranderen omdat het adres reeds te "
+#~ "Fout 0x%04x: Kan email adres niet veranderen omdat het adres reeds te "
 #~ "veel gebruikersnamen toegewezen heeft gekregen."
-
-#~ msgid ""
-#~ "Error 0x%04x: Unable to change email address because the given address is "
-#~ "invalid."
-#~ msgstr ""
-#~ "Fout 0x%04x: Kan e-mail adres niet veranderen omdat het adres ongeldig is."
-
-#~ msgid "The email address for %s is %s"
-#~ msgstr "Het e-mail adres vor %s is %s"
 
 #~ msgid "Unable to set AIM away message."
 #~ msgstr "Kan geen AIM afwezigheidsbericht instellen."
@@ -20816,9 +20773,6 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ "volgende reden:\n"
 #~ "%s"
 
-#~ msgid "Find Buddy by E-mail"
-#~ msgstr "Contact zoeken op e-mail adres"
-
 #~ msgid "Display Currently Registered Address"
 #~ msgstr "Huidige geregistreerde adres weergeven"
 
@@ -20826,16 +20780,13 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgstr "Huidige geregistreerde adres veranderen..."
 
 #~ msgid "Search for Buddy by Email..."
-#~ msgstr "Contact zoeken door middel van e-mail..."
+#~ msgstr "Contact zoeken door middel van email..."
 
 #~ msgid "Auth host"
 #~ msgstr "Host authoriseren"
 
 #~ msgid "Auth port"
 #~ msgstr "Auth-poort"
-
-#~ msgid "EMail"
-#~ msgstr "E-mail"
 
 #~ msgid "More..."
 #~ msgstr "Meer..."
@@ -20873,10 +20824,7 @@ msgstr "Deze plugin is handig voor het debuggen van XMPP servers of clienten."
 #~ msgstr "SILC Privésleutel"
 
 #~ msgid "EMail: \t\t%s\n"
-#~ msgstr "E-mail: \t\t%s\n"
-
-#~ msgid "Email lookup restricted."
-#~ msgstr "Email zoekfunctie beperkt."
+#~ msgstr "Email: \t\t%s\n"
 
 #~ msgid "TOC host"
 #~ msgstr "TOC host"

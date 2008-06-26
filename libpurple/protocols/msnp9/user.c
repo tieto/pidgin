@@ -153,69 +153,17 @@ msn_user_set_friendly_name(MsnUser *user, const char *name)
 void
 msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img)
 {
-	MsnObject *msnobj = msn_user_get_object(user);
+	MsnObject *msnobj = NULL;
 
 	g_return_if_fail(user != NULL);
 
-	if (img == NULL)
-		msn_user_set_object(user, NULL);
-	else
-	{
-		PurpleCipherContext *ctx;
-		char *buf;
-		gconstpointer data = purple_imgstore_get_data(img);
-		size_t size = purple_imgstore_get_size(img);
-		char *base64;
-		unsigned char digest[20];
+	msnobj = msn_object_new_from_image(img, "TFR2C2.tmp",
+			user->passport, MSN_OBJECT_USERTILE);
 
-		if (msnobj == NULL)
-		{
-			msnobj = msn_object_new();
-			msn_object_set_local(msnobj);
-			msn_object_set_type(msnobj, MSN_OBJECT_USERTILE);
-			msn_object_set_location(msnobj, "TFR2C2.tmp");
-			msn_object_set_creator(msnobj, msn_user_get_passport(user));
+	if(!msnobj)
+		purple_debug_error("msn", "Unable to open buddy icon from %s!\n", user->passport);
 
-			msn_user_set_object(user, msnobj);
-		}
-
-		msn_object_set_image(msnobj, img);
-
-		/* Compute the SHA1D field. */
-		memset(digest, 0, sizeof(digest));
-
-		ctx = purple_cipher_context_new_by_name("sha1", NULL);
-		purple_cipher_context_append(ctx, data, size);
-		purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
-
-		base64 = purple_base64_encode(digest, sizeof(digest));
-		msn_object_set_sha1d(msnobj, base64);
-		g_free(base64);
-
-		msn_object_set_size(msnobj, size);
-
-		/* Compute the SHA1C field. */
-		buf = g_strdup_printf(
-			"Creator%sSize%dType%dLocation%sFriendly%sSHA1D%s",
-			msn_object_get_creator(msnobj),
-			msn_object_get_size(msnobj),
-			msn_object_get_type(msnobj),
-			msn_object_get_location(msnobj),
-			msn_object_get_friendly(msnobj),
-			msn_object_get_sha1d(msnobj));
-
-		memset(digest, 0, sizeof(digest));
-
-		purple_cipher_context_reset(ctx, NULL);
-		purple_cipher_context_append(ctx, (const guchar *)buf, strlen(buf));
-		purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
-		purple_cipher_context_destroy(ctx);
-		g_free(buf);
-
-		base64 = purple_base64_encode(digest, sizeof(digest));
-		msn_object_set_sha1c(msnobj, base64);
-		g_free(base64);
-	}
+	msn_user_set_object(user, msnobj);
 }
 
 void

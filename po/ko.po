@@ -3207,7 +3207,7 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "하이퍼링크 위에 커서가 놓였을 때의 색상입니다."
 
 #: ../gtk/gtkimhtml.c:1516
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "이메일 주소 복사(_C)"
 
 #: ../gtk/gtkimhtml.c:1528
@@ -3602,8 +3602,8 @@ msgstr[0] "%s 에는 %d 개의 새로운 메시지가 있습니다."
 
 #: ../gtk/gtknotify.c:511
 #, c-format
-msgid "<b>You have %d new e-mail.</b>"
-msgid_plural "<b>You have %d new e-mails.</b>"
+msgid "<b>You have %d new email.</b>"
+msgid_plural "<b>You have %d new emails.</b>"
 msgstr[0] "<b>%d 개의 새로운 메시지가 있습니다.</b>"
 #msgstr[1] "<b>%d 개의 새로운 메시지가 있습니다.</b>"
 
@@ -5183,7 +5183,7 @@ msgstr "없음"
 
 #: ../gtk/plugins/gevolution/gevolution.c:239
 #: ../gtk/plugins/gevolution/gevolution.c:245
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "이메일을 보낼 수 없음"
 
 #: ../gtk/plugins/gevolution/gevolution.c:240
@@ -5191,7 +5191,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "환경변수 PATH 로부터 Evolution의 실행 형식을 찾을 수 없습니다."
 
 #: ../gtk/plugins/gevolution/gevolution.c:246
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "이 친구의 이메일 주소가 없습니다."
 
 #: ../gtk/plugins/gevolution/gevolution.c:272
@@ -5199,7 +5199,7 @@ msgid "Add to Address Book"
 msgstr "주소록에 추가"
 
 #: ../gtk/plugins/gevolution/gevolution.c:284
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "이메일 전송"
 
 #. Configuration frame
@@ -5257,7 +5257,7 @@ msgid "Last name:"
 msgstr "성:"
 
 #: ../gtk/plugins/gevolution/new_person_dialog.c:382
-msgid "E-mail:"
+msgid "Email:"
 msgstr "이메일:"
 
 #. *< type
@@ -7249,7 +7249,7 @@ msgstr "성"
 #: ../libgaim/protocols/jabber/jabber.c:797
 #: ../libgaim/protocols/silc/silc.c:695
 #: ../libgaim/protocols/silc/silc.c:935
-msgid "E-mail"
+msgid "Email"
 msgstr "이메일"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:591
@@ -8309,16 +8309,6 @@ msgstr "국가"
 msgid "Telephone"
 msgstr "전화"
 
-#: ../libgaim/protocols/jabber/buddy.c:283
-#: ../libgaim/protocols/jabber/buddy.c:898
-#: ../libgaim/protocols/jabber/buddy.c:906
-#: ../libgaim/protocols/jabber/buddy.c:1564
-#: ../libgaim/protocols/silc/ops.c:1075
-#: ../libgaim/protocols/silc/util.c:553
-#: ../libgaim/protocols/yahoo/yahoo_profile.c:1037
-msgid "E-Mail"
-msgstr "이메일"
-
 #: ../libgaim/protocols/jabber/buddy.c:284
 #: ../libgaim/protocols/jabber/buddy.c:921
 msgid "Organization Name"
@@ -8493,7 +8483,7 @@ msgstr "Jabber 사용자를 검색하려면 하나 이상의 빈 칸을 입력�
 #: ../libgaim/protocols/novell/novell.c:1488
 #: ../libgaim/protocols/oscar/oscar.c:3708
 #: ../libgaim/protocols/oscar/oscar.c:3717
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "이메일 주소"
 
 #: ../libgaim/protocols/jabber/buddy.c:1758
@@ -9181,7 +9171,7 @@ msgid "Syntax Error (probably a client bug)"
 msgstr "문법 오류 (아마 클라이언트의 버그일 수 있습니다.)"
 
 #: ../libgaim/protocols/msn/error.c:42
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "이메일 주소가 잘못되었습니다."
 
 #: ../libgaim/protocols/msn/error.c:45
@@ -9659,7 +9649,7 @@ msgid "Home Fax"
 msgstr "자택 팩스"
 
 #: ../libgaim/protocols/msn/msn.c:1607
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "개인 이메일"
 
 #: ../libgaim/protocols/msn/msn.c:1608
@@ -9720,7 +9710,7 @@ msgid "Work Fax"
 msgstr "회사 팩스"
 
 #: ../libgaim/protocols/msn/msn.c:1638
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "회사 이메일"
 
 #: ../libgaim/protocols/msn/msn.c:1639
@@ -10903,7 +10893,7 @@ msgstr ""
 #: ../libgaim/protocols/oscar/oscar.c:2436
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -11101,12 +11091,12 @@ msgstr "아이디"
 
 #: ../libgaim/protocols/oscar/oscar.c:3923
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "이메일 주소 %s 에 대한 결과를 찾을 수 없습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:3944
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "%s 님을 확인하기 위해 질의 메일을 수신해 주십시오."
 
 #: ../libgaim/protocols/oscar/oscar.c:3946
@@ -11134,17 +11124,17 @@ msgstr "오류 0x%04x: 요구된 아이디가 너무 길어 조형할 수 없습
 
 #: ../libgaim/protocols/oscar/oscar.c:3989
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because there is already a request pending for this screen name."
+msgid "Error 0x%04x: Unable to change email address because there is already a request pending for this screen name."
 msgstr "오류 0x%04x: 이 아이디에 대해 이미 요구가 있었기 때문에 이메일 주소를 변경할 수 없습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:3992
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because the given address has too many screen names associated with it."
+msgid "Error 0x%04x: Unable to change email address because the given address has too many screen names associated with it."
 msgstr "오류 0x%04x: 많은 아이디에 할당되어 있기 때문에, 이 이메일 주소로는 변경할 수 없습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:3995
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because the given address is invalid."
+msgid "Error 0x%04x: Unable to change email address because the given address is invalid."
 msgstr "오류 0x%04x: 이 주소가 상이하기 때문에, 이 이메일 주소로는 변경할 수 없습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:3998
@@ -11168,7 +11158,7 @@ msgstr "계정 정보"
 
 #: ../libgaim/protocols/oscar/oscar.c:4014
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "%s 님의 이메일 주소는 %s 입니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:4189
@@ -11386,15 +11376,15 @@ msgid "You can re-request authorization from these buddies by right-clicking on 
 msgstr "오른쪽 클릭하여 \"승인 재요청\" 을 선택하면, 이들의 친구로부터 인증을 재요청할 수 있습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:6187
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "이메일로부터 친구 찾기"
 
 #: ../libgaim/protocols/oscar/oscar.c:6188
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "이메일 주소로부터 친구를 찾습니다."
 
 #: ../libgaim/protocols/oscar/oscar.c:6189
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "검색할 친구의 이메일 주소를 입력해 주십시오."
 
 #: ../libgaim/protocols/oscar/oscar.c:6192
@@ -11428,11 +11418,11 @@ msgid "Confirm Account"
 msgstr "계정 확인"
 
 #: ../libgaim/protocols/oscar/oscar.c:6401
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "현재 등록되어 있는 이메일 주소 표시"
 
 #: ../libgaim/protocols/oscar/oscar.c:6405
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "현재 등록되어 있는 이메일 주소 변경..."
 
 #: ../libgaim/protocols/oscar/oscar.c:6412
@@ -11440,7 +11430,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "승인을 기다리는 친구 표시"
 
 #: ../libgaim/protocols/oscar/oscar.c:6418
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "이메일로 친구 검색..."
 
 #: ../libgaim/protocols/oscar/oscar.c:6423
@@ -11517,10 +11507,6 @@ msgstr "혈액형"
 #: ../libgaim/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "학력"
-
-#: ../libgaim/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "이메일"
 
 #: ../libgaim/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -13840,7 +13826,7 @@ msgstr "사용자명: \t%s\n"
 
 #: ../libgaim/protocols/silc/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "이메일: \t\t%s\n"
 
 #: ../libgaim/protocols/silc/util.c:361
@@ -14078,7 +14064,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "일시적으로 디렉토리 서비스를 이용할 수 없습니다."
 
 #: ../libgaim/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "이메일 검색이 거부되었습니다."
 
 #: ../libgaim/protocols/toc/toc.c:533

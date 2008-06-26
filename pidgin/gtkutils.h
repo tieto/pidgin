@@ -638,6 +638,7 @@ GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, in
 											 GError **error);
 #endif
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 /**
  * Set or unset a custom buddyicon for a user.
  *
@@ -645,8 +646,10 @@ GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, in
  * @param who       The name of the user.
  * @param filename  The path of the custom icon. If this is @c NULL, then any
  *                  previously set custom buddy icon for the user is removed.
+ * @deprecated See purple_buddy_icons_node_set_custom_icon_from_file()
  */
 void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename);
+#endif
 
 /**
  * Converts "->" and "<-" in strings to Unicode arrow characters, for use in referencing
@@ -689,7 +692,7 @@ typedef void (*PidginUtilMiniDialogCallback)(gpointer user_data, GtkButton *);
  */
 GtkWidget *pidgin_make_mini_dialog(PurpleConnection *handle,
 	const char* stock_id, const char *primary, const char *secondary,
-	void *user_data, ...);
+	void *user_data, ...) G_GNUC_NULL_TERMINATED;
 
 /**
  * This is a callback function to be used for Ctrl+F searching in treeviews.
@@ -808,6 +811,16 @@ gboolean pidgin_auto_parent_window(GtkWidget *window);
  * @since 2.4.0
  */
 GtkWidget *pidgin_add_widget_to_vbox(GtkBox *vbox, const char *widget_label, GtkSizeGroup *sg, GtkWidget *widget, gboolean expand, GtkWidget **p_label);
+
+/**
+ * Create a GdkPixbuf from a PurpleStoredImage.
+ *
+ * @param  image   A PurpleStoredImage.
+ *
+ * @return   A GdkPixbuf created from the stored image.
+ * @since 2.5.0
+ */
+GdkPixbuf * pidgin_pixbuf_from_imgstore(PurpleStoredImage *image);
 
 #endif /* _PIDGINUTILS_H_ */
 

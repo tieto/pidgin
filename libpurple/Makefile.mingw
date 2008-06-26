@@ -65,6 +65,7 @@ C_SRC =	\
 			savedstatuses.c \
 			server.c \
 			signals.c \
+			smiley.c \
 			sound.c \
 			sslconn.c \
 			status.c \
