@@ -3523,7 +3523,7 @@ msgstr "姓"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "电子邮件"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:374
@@ -3554,16 +3554,6 @@ msgstr "Bonjour 协议插件"
 #: ../libpurple/protocols/bonjour/bonjour.c:624
 msgid "Purple Person"
 msgstr "Purple 联系人"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:676
-#: ../libpurple/protocols/gg/gg.c:477
-#: ../libpurple/protocols/jabber/jabber.c:932
-#: ../libpurple/protocols/silc/silc.c:770
-#: ../libpurple/protocols/silc/silc.c:1011
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-msgid "E-mail"
-msgstr "电子邮件"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5217,7 +5207,7 @@ msgstr "填入输入框可以搜索匹配的 Jabber 用户。"
 #: ../libpurple/protocols/novell/novell.c:1490
 #: ../libpurple/protocols/oscar/oscar.c:3729
 #: ../libpurple/protocols/oscar/oscar.c:3738
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "电子邮件地址"
 
 #: ../libpurple/protocols/jabber/buddy.c:2413
@@ -6303,7 +6293,7 @@ msgid "Syntax Error (probably a client bug)"
 msgstr "错误(可能是客户端的 bug)"
 
 #: ../libpurple/protocols/msn/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "无效的电子邮件地址"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -6798,7 +6788,7 @@ msgid "Home Fax"
 msgstr "家庭传真"
 
 #: ../libpurple/protocols/msn/msn.c:1760
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "个人电子邮件"
 
 #: ../libpurple/protocols/msn/msn.c:1761
@@ -6860,7 +6850,7 @@ msgid "Work Fax"
 msgstr "办公传真"
 
 #: ../libpurple/protocols/msn/msn.c:1791
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "办公电子邮件"
 
 #: ../libpurple/protocols/msn/msn.c:1792
@@ -8544,7 +8534,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2454
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8722,12 +8712,12 @@ msgstr "用户名"
 
 #: ../libpurple/protocols/oscar/oscar.c:3963
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "未找到与电子邮件地址 %s 匹配的结果"
 
 #: ../libpurple/protocols/oscar/oscar.c:3984
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "您应当收到询问确认 %s 的邮件。"
 
 #: ../libpurple/protocols/oscar/oscar.c:3986
@@ -8760,21 +8750,21 @@ msgstr "错误 0x%04x：无法格式化用户名，原因是请求的用户名�
 #: ../libpurple/protocols/oscar/oscar.c:4029
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr "错误 0x%04x：无法更改电子邮件地址，原因是此用户名已经有被推后的请求。"
 
 #: ../libpurple/protocols/oscar/oscar.c:4032
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr "错误 0x%04x：无法更改电子邮件地址，原因是给定的地址关联的用户名太多。"
 
 #: ../libpurple/protocols/oscar/oscar.c:4035
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr "错误 0x%04x：无法更改电子邮件地址，原因是给定的地址无效。"
 
@@ -8785,7 +8775,7 @@ msgstr "错误 0x%04x：未知错误。"
 
 #: ../libpurple/protocols/oscar/oscar.c:4048
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "%s 的电子邮件地址为 %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4050
@@ -9041,15 +9031,15 @@ msgstr ""
 "求认证”。"
 
 #: ../libpurple/protocols/oscar/oscar.c:6285
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "按电子邮件查找好友"
 
 #: ../libpurple/protocols/oscar/oscar.c:6286
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "按电子邮件地址搜索好友"
 
 #: ../libpurple/protocols/oscar/oscar.c:6287
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "输入您想要搜索的好友的电子邮件地址。"
 
 #: ../libpurple/protocols/oscar/oscar.c:6290
@@ -9079,11 +9069,11 @@ msgid "Confirm Account"
 msgstr "确认账户"
 
 #: ../libpurple/protocols/oscar/oscar.c:6484
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "显示当前注册的电子邮件地址"
 
 #: ../libpurple/protocols/oscar/oscar.c:6488
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "更改当前注册的电子邮件地址..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6495
@@ -9091,7 +9081,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "显示正在等候认证的好友"
 
 #: ../libpurple/protocols/oscar/oscar.c:6501
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "按电子邮件搜索好友..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6506
@@ -9177,10 +9167,6 @@ msgstr "血型"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "大学"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "电子邮件"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -11860,7 +11846,7 @@ msgstr "用户名:\t%s\n"
 #: ../libpurple/protocols/silc/util.c:362
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "电子邮件:\t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:364
@@ -12184,7 +12170,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "目录服务暂时不可用。"
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "电子邮件查阅被限制。"
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15036,7 +15022,7 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "绘制超级链接悬停时的颜色。"
 
 #: ../pidgin/gtkimhtml.c:1598
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "复制电子邮件地址(_C)"
 
 #: ../pidgin/gtkimhtml.c:1610
@@ -15427,8 +15413,8 @@ msgstr[0] "%s 有 %d 封新邮件。"
 
 #: ../pidgin/gtknotify.c:569
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d 封新邮件。</b>"
 
 #: ../pidgin/gtknotify.c:997
@@ -16646,7 +16632,7 @@ msgstr "关联好友(_A)"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "无法发送电子邮件。"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -16654,7 +16640,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "Evolution 可执行文件未在 PATH 中找到。"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "此好友未发现电子邮件地址。"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -16662,7 +16648,7 @@ msgid "Add to Address Book"
 msgstr "添加到地址簿"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "发送电子邮件"
 
 #. Configuration frame
@@ -16720,7 +16706,7 @@ msgid "Last name:"
 msgstr "姓："
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "电子邮件："
 
 #. *< type

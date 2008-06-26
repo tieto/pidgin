@@ -3972,7 +3972,7 @@ msgstr "Apellidos:"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:555
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1068
-msgid "E-Mail"
+msgid "Email"
 msgstr "Correo electrónico"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:402
@@ -4003,16 +4003,6 @@ msgstr "Complemento de protocolo Bonjour"
 #: ../libpurple/protocols/bonjour/bonjour.c:652
 msgid "Purple Person"
 msgstr "Persona morada"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:705
-#: ../libpurple/protocols/gg/gg.c:478
-#: ../libpurple/protocols/jabber/jabber.c:998
-#: ../libpurple/protocols/silc/silc.c:986
-#: ../libpurple/protocols/silc/silc.c:1227
-#: ../libpurple/protocols/silc10/silc.c:687
-#: ../libpurple/protocols/silc10/silc.c:928
-msgid "E-mail"
-msgstr "Correo electrónico"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5671,7 +5661,7 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3753
 #: ../libpurple/protocols/oscar/oscar.c:3762
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "Dirección de correo electrónico"
 
 #: ../libpurple/protocols/jabber/buddy.c:2471
@@ -6726,7 +6716,7 @@ msgstr "Error de sintaxis (probablemente un error del cliente)"
 
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Dirección de correo electrónico inválida"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7342,7 +7332,7 @@ msgstr "Fax personal"
 
 #: ../libpurple/protocols/msn/msn.c:1826
 #: ../libpurple/protocols/msnp9/msn.c:1667
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Correo-e personal"
 
 #: ../libpurple/protocols/msn/msn.c:1827
@@ -7420,7 +7410,7 @@ msgstr "Fax del trabajo"
 
 #: ../libpurple/protocols/msn/msn.c:1857
 #: ../libpurple/protocols/msnp9/msn.c:1698
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Correo-e del trabajo"
 
 #: ../libpurple/protocols/msn/msn.c:1858
@@ -9264,7 +9254,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2495
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9449,12 +9439,12 @@ msgstr[1] "Los nombres de usuarios siguientes están asociados a %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3987
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "No se encontraron resultados para la dirección de correo %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4008
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Debería recibir un mensaje solicitando confirmación de %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:4010
@@ -9489,7 +9479,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4049
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr ""
 "Error 0x%04x: No se puede cambiar la dirección de correo electrónico porque "
@@ -9498,7 +9488,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4051
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
 "Error 0x%04x: No se puede cambiar la dirección de correo electrónico porque "
@@ -9507,7 +9497,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4053
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Error 0x%04x: No se puede cambiar la dirección de correo electrónico porque "
@@ -9524,7 +9514,7 @@ msgstr "Error cambiando la información de la cuenta"
 
 #: ../libpurple/protocols/oscar/oscar.c:4063
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "La dirección de correo electrónico para %s es %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4065
@@ -9797,15 +9787,15 @@ msgstr ""
 "del ratón sobre ellos y escogiendo «Solicitar autorización otra vez.»"
 
 #: ../libpurple/protocols/oscar/oscar.c:6347
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Buscar un amigo en base a su correo electrónico"
 
 #: ../libpurple/protocols/oscar/oscar.c:6348
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Buscar amigo por la dirección correo electrónico"
 
 #: ../libpurple/protocols/oscar/oscar.c:6349
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr ""
 "Escriba la dirección de correo electrónico del amigo que está buscando."
 
@@ -9836,11 +9826,11 @@ msgid "Confirm Account"
 msgstr "Confirmar cuenta"
 
 #: ../libpurple/protocols/oscar/oscar.c:6546
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Mostrar direcciones de correo registradas actualmente"
 
 #: ../libpurple/protocols/oscar/oscar.c:6550
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Cambiar la dirección de correo registrada actualmente..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6557
@@ -9848,7 +9838,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Mostrar amigos pendientes de autorización"
 
 #: ../libpurple/protocols/oscar/oscar.c:6563
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Buscar un amigo por correo electrónico..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6568
@@ -9930,10 +9920,6 @@ msgstr "Grupo sanguíneo"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "Universidad"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "Correo electrónico"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12684,7 +12670,7 @@ msgstr "Nombre de usuario: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:367
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "Correo electrónico:     %s\n"
 
 #: ../libpurple/protocols/silc/util.c:369
@@ -13010,7 +12996,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Servicio de directorio temporalmente no disponible."
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "Búsqueda de direcciones de correo electrónico restringida."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -16073,7 +16059,7 @@ msgid "Enable typing notification"
 msgstr "Activar la notificación de tecleo"
 
 #: ../pidgin/gtkimhtml.c:1688
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Copiar dirección de correo electrónico"
 
 #: ../pidgin/gtkimhtml.c:1700
@@ -16504,8 +16490,8 @@ msgstr[1] "%s tiene %d nuevos mensajes."
 
 #: ../pidgin/gtknotify.c:599
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>Tiene %d nuevo correo.</b>"
 msgstr[1] "<b>Tiene %d nuevos correos.</b>"
 
@@ -17831,7 +17817,7 @@ msgstr "_Asociar amigo"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:242
 #: ../pidgin/plugins/gevolution/gevolution.c:248
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "No se pudo enviar el correo electrónico"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:243
@@ -17839,7 +17825,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "No se encontró el ejecutable de Evolution en la ruta."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:249
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "No se ha encontrado una dirección de correo para este amigo."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:275
@@ -17847,7 +17833,7 @@ msgid "Add to Address Book"
 msgstr "Añadir a la agenda"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:287
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Enviar correo electrónico"
 
 #. Configuration frame
@@ -17907,7 +17893,7 @@ msgid "Last name:"
 msgstr "Apellidos:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:380
-msgid "E-mail:"
+msgid "Email:"
 msgstr "Correo electrónico:"
 
 #. *< type

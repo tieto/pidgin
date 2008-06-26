@@ -104,7 +104,6 @@ struct _MsnSession
 
 	int servconns_count; /**< The count of server connections. */
 	GList *switches; /**< The list of all the switchboards. */
-	GList *directconns; /**< The list of all the directconnections. */
 	GList *slplinks; /**< The list of all the slplinks. */
 
 	/*psm info*/

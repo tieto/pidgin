@@ -4095,7 +4095,7 @@ msgstr "పేరులోని చివరి భాగం"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "ఇ-మెయిల్ "
 
 # And now for the buttons
@@ -4129,17 +4129,6 @@ msgstr "Bonjour ప్రొటోకాల్ ప్లగ్ ఇన్"
 #: ../libpurple/protocols/bonjour/bonjour.c:629
 msgid "Purple Person"
 msgstr "Purple పర్సన్"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:681
-#: ../libpurple/protocols/gg/gg.c:478
-#: ../libpurple/protocols/jabber/jabber.c:959
-#: ../libpurple/protocols/silc/silc.c:913
-#: ../libpurple/protocols/silc/silc.c:1154
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-#, fuzzy
-msgid "E-mail"
-msgstr "ఇ-మెయిల్:"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5844,7 +5833,7 @@ msgstr "సరిపోలే జాబర్ వినియోగదారు�
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3724
 #: ../libpurple/protocols/oscar/oscar.c:3733
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "ఇ-మెయిల్ అడ్రస్ "
 
 #: ../libpurple/protocols/jabber/buddy.c:2423
@@ -6920,7 +6909,7 @@ msgstr "వాక్యవిన్యాసంలో పొరపాటు (క
 
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "చెల్లని ఇ-మెయిల్ అడ్రస్ "
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7559,7 +7548,7 @@ msgstr "ఇంటిలోని ఫ్యాక్స్"
 
 #: ../libpurple/protocols/msn/msn.c:1804
 #: ../libpurple/protocols/msnp9/msn.c:1657
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "వ్యక్తిగత ఇ-మెయిల్"
 
 #: ../libpurple/protocols/msn/msn.c:1805
@@ -7635,7 +7624,7 @@ msgstr "పనిచేసేదగ్గరి ఫ్యాక్స్ "
 
 #: ../libpurple/protocols/msn/msn.c:1835
 #: ../libpurple/protocols/msnp9/msn.c:1688
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "పనిచేసేదగ్గరి ఇ-మెయిల్"
 
 #: ../libpurple/protocols/msn/msn.c:1836
@@ -9460,7 +9449,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2449
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9648,12 +9637,12 @@ msgstr "_స్క్రీన్ పేరు "
 
 #: ../libpurple/protocols/oscar/oscar.c:3958
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "%s ఇ-మెయిల్ అడ్రస్‌కు ఫలితాలు కనిపించలేదు. "
 
 #: ../libpurple/protocols/oscar/oscar.c:3979
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "%s నిర్ధారించమని కోరుతూ మీరు ఒక ఇ-మెయిల్‌ను స్వీకరించాలి. "
 
 #: ../libpurple/protocols/oscar/oscar.c:3981
@@ -9681,17 +9670,17 @@ msgstr "పొరపాటు 0x%04x: స్క్రీన్‌పేరు  �
 
 #: ../libpurple/protocols/oscar/oscar.c:4024
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because there is already a request pending for this screen name."
+msgid "Error 0x%04x: Unable to change email address because there is already a request pending for this screen name."
 msgstr "పొరపాటు 0x%04x: ఇ-మెయిల్ అడ్రస్‌ను మార్చడం సాధ్యం కాదు, ఎందుకంటే ఇదే స్క్రీన్‌పేరును మరొకరు మీకంటే ముందే కోరినారు. అది పెండింగ్‌లో ఉంది. "
 
 #: ../libpurple/protocols/oscar/oscar.c:4027
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because the given address has too many screen names associated with it."
+msgid "Error 0x%04x: Unable to change email address because the given address has too many screen names associated with it."
 msgstr "పొరపాటు 0x%04x: ఇ-మెయిల్ అడ్రస్‌ను మార్చడం సాధ్యం కాదు, ఎందుకంటే ఇచ్చిన అడ్రసుకు చాలా స్క్రీన్‌పేరులు అనుబంధమై ఉన్నాయి. "
 
 #: ../libpurple/protocols/oscar/oscar.c:4030
 #, c-format
-msgid "Error 0x%04x: Unable to change e-mail address because the given address is invalid."
+msgid "Error 0x%04x: Unable to change email address because the given address is invalid."
 msgstr "పొరపాటు 0x%04x:  ఈ-మెయిల్ అడ్రసును మార్చలేము, ఎందుకంటే ఇచ్చిన అడ్రసుకు విలువ లేదు."
 
 #: ../libpurple/protocols/oscar/oscar.c:4033
@@ -9701,7 +9690,7 @@ msgstr "పొరపాటు 0x%04x: అజ్ఞాత పొరపాటు."
 
 #: ../libpurple/protocols/oscar/oscar.c:4043
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "%s ఇ-మెయిల్ అడ్రస్ %s"
 
 # And now for the buttons
@@ -9928,15 +9917,15 @@ msgid "You can re-request authorization from these buddies by right-clicking on 
 msgstr "ఈ క్రింది మిత్రులనుండి ఆథరైజేషన్ కొసం మీరు మరల మనవి చేయవచ్చును. వారిపేరుపై రైట్‌క్లిక్ చేసి \"ఆథరైజేషన్ కోసం మరోసారి మనవి.\" ని సెలక్ట్ చేయండి. "
 
 #: ../libpurple/protocols/oscar/oscar.c:6281
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "ఇ-మెయిల్ ద్వారా మిత్రుని కనుగొనండి. "
 
 #: ../libpurple/protocols/oscar/oscar.c:6282
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "ఇ-మెయిల్ అడ్రస్‌తో మిత్రుని కనుగొనండి. "
 
 #: ../libpurple/protocols/oscar/oscar.c:6283
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "మీరు అన్వేషిస్తున్న మిత్రుని ఇ-మెయిల్ అడ్రసును టైప్ చేయండి."
 
 # "Search"
@@ -9969,11 +9958,11 @@ msgid "Confirm Account"
 msgstr "అకౌంట్‌ను నిర్ధారించండి. "
 
 #: ../libpurple/protocols/oscar/oscar.c:6480
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "ప్రస్తుతం నమోదైన ఇ -మెయిల్ అడ్రసును చూపండి"
 
 #: ../libpurple/protocols/oscar/oscar.c:6484
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "ప్రస్తుతం నమోదైన ఇ - మెయిల్   అడ్రసును మార్చండి..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6491
@@ -9981,7 +9970,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "ఆథరైజేషన్‌ కోసం ఎదురుచూస్తూ మిత్రులను ప్రదర్శించుము."
 
 #: ../libpurple/protocols/oscar/oscar.c:6497
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "ఇ-మెయిల్ అడ్రసు ద్వారా మిత్రాన్వేషణ ..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6502
@@ -10063,10 +10052,6 @@ msgstr "రక్తం గ్రూపు"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "కళాశాల"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "ఇ-మెయిల్ "
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 #, fuzzy
@@ -12792,7 +12777,7 @@ msgstr "వినియోగదారుని పేరు: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:368
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "ఇ-మెయిల్: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:370
@@ -13115,7 +13100,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "డైరెక్టరీ సేవ తాత్కాలికంగా అందుబాటులో లేదు."
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "ఇ-మెయిల్‌ను చూడటంపై ఆంక్షలు."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -16250,7 +16235,7 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "మౌస్ హైపర్ లింక్ లపై ఉన్నప్పుడు వాటిని చిత్రించడానికి రంగు."
 
 #: ../pidgin/gtkimhtml.c:1581
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_ఇ-మెయిల్ అడ్రసును కాపీ చేయండి. "
 
 #: ../pidgin/gtkimhtml.c:1593
@@ -16676,8 +16661,8 @@ msgstr[1] "%s के %d लिए नये संदेश हैं।"
 
 #: ../pidgin/gtknotify.c:570
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] ""
 msgstr[1] ""
 #msgstr[0] "<b>ప్లగ్ ఇన్ వివరాలు</b>"
@@ -18051,7 +18036,7 @@ msgstr "_సహచర మిత్రుడు "
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "ఇ-మెయిల్ పంపలేక పోతోంది"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -18059,7 +18044,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "PATH లో ఎవల్యూషన్ ఎగ్జిక్యూటేబుల్ కనబడలేదు."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "ఈ మిత్రుడికి సంబంధించి ఇ-మెయిల్ అడ్రస్ కనబడలేదు. "
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -18067,7 +18052,7 @@ msgid "Add to Address Book"
 msgstr "అడ్రస్ బుక్‌కు చేర్చండి."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "ఇ-మెయిల్ పంపించు"
 
 # Configuration frame
@@ -18134,7 +18119,7 @@ msgid "Last name:"
 msgstr "చివరి పేరు:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "ఇ-మెయిల్:"
 
 # *< api_version

@@ -3952,7 +3952,7 @@ msgstr "Họ"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "Địa chỉ thư"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:401
@@ -3983,16 +3983,6 @@ msgstr "Phần bổ sung giao thức Bonjour"
 #: ../libpurple/protocols/bonjour/bonjour.c:651
 msgid "Purple Person"
 msgstr "Người Purple"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:703
-#: ../libpurple/protocols/gg/gg.c:478
-#: ../libpurple/protocols/jabber/jabber.c:982
-#: ../libpurple/protocols/silc/silc.c:913
-#: ../libpurple/protocols/silc/silc.c:1154
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-msgid "E-mail"
-msgstr "Địa chỉ thư"
 
 # Đây là tên của giao thức Apple: đừng dịch.
 #: ../libpurple/protocols/bonjour/bonjour.h:33
@@ -5690,7 +5680,7 @@ msgstr "Điền vào một hay nhiều mục để tìm thông tin về người
 #: ../libpurple/protocols/novell/novell.c:1497
 #: ../libpurple/protocols/oscar/oscar.c:3695
 #: ../libpurple/protocols/oscar/oscar.c:3704
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "Địa chỉ thư"
 
 #: ../libpurple/protocols/jabber/buddy.c:2425
@@ -6736,7 +6726,7 @@ msgstr "Lỗi cú pháp (có thể trình khách bị lỗi)"
 
 #: ../libpurple/protocols/msn/error.c:46
 #: ../libpurple/protocols/msnp9/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Địa chỉ thư điện tử không hợp lệ"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7367,7 +7357,7 @@ msgstr "Điện thư nhà"
 
 #: ../libpurple/protocols/msn/msn.c:1804
 #: ../libpurple/protocols/msnp9/msn.c:1657
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Thư điện tử cá nhân"
 
 #: ../libpurple/protocols/msn/msn.c:1805
@@ -7443,7 +7433,7 @@ msgstr "Điện thư chỗ làm"
 
 #: ../libpurple/protocols/msn/msn.c:1835
 #: ../libpurple/protocols/msnp9/msn.c:1688
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "Thư điện tử việc làm"
 
 #: ../libpurple/protocols/msn/msn.c:1836
@@ -9202,7 +9192,7 @@ msgstr "Bạn đã nhận một trang ICQ\n"
 #: ../libpurple/protocols/oscar/oscar.c:2444
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9379,12 +9369,12 @@ msgstr "Tên hiển thị"
 
 #: ../libpurple/protocols/oscar/oscar.c:3929
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "Không tìm thấy người nào có điạ chỉ thư %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3950
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Bạn sẽ nhận được một thư yêu cầu xác nhận %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:3952
@@ -9417,21 +9407,21 @@ msgstr "Lỗi 0x%04x: Không thể định dạng tên hiển thị bởi vì n�
 #: ../libpurple/protocols/oscar/oscar.c:3995
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr "Lỗi 0x%04x: Không đổi được địa chỉ thư vì đã có một yêu cầu bị hoãn cho tên hiển thị này."
 
 #: ../libpurple/protocols/oscar/oscar.c:3998
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr "Lỗi 0x%04x: Không đổi được địa chỉ thư vì có quá nhiều tên hiển thị có liên quan với địa chỉ này."
 
 #: ../libpurple/protocols/oscar/oscar.c:4001
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr "Lỗi 0x%04x: Không thay đổi được địa chỉ thư vì địa chỉ đưa ra không hợp lệ."
 
@@ -9442,7 +9432,7 @@ msgstr "Lỗi 0x%04x: lỗi không rõ."
 
 #: ../libpurple/protocols/oscar/oscar.c:4014
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "Địa chỉ thư của %s là %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4016
@@ -9683,16 +9673,16 @@ msgid ""
 msgstr "Bạn có thể gửi lại yêu cầu sự cho phép của những bạn chát này bằng cách nhấn chuột phải vào tên người đó và chọn « Yêu cầu lại sự cho phép »."
 
 #: ../libpurple/protocols/oscar/oscar.c:6256
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Tìm bạn chát dựa theo địa chỉ thư"
 
 #: ../libpurple/protocols/oscar/oscar.c:6257
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Tìm kiếm bạn chát bằng địa chỉ thư điện tử"
 
 #: ../libpurple/protocols/oscar/oscar.c:6258
-msgid "Type the e-mail address of the buddy you are searching for."
-msgstr "Hãy nhập địa chỉ e-mail của bạn chát mà bạn cần tìm."
+msgid "Type the email address of the buddy you are searching for."
+msgstr "Hãy nhập địa chỉ email của bạn chát mà bạn cần tìm."
 
 #: ../libpurple/protocols/oscar/oscar.c:6261
 msgid "_Search"
@@ -9721,11 +9711,11 @@ msgid "Confirm Account"
 msgstr "Xác nhận tài khoản"
 
 #: ../libpurple/protocols/oscar/oscar.c:6455
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Hiển thị địa chỉ thư đăng ký hiện thời"
 
 #: ../libpurple/protocols/oscar/oscar.c:6459
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Đổi địa chỉ thư đăng ký hiện thời..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6466
@@ -9733,7 +9723,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Hiển thị các bạn chát chờ sự cho phép"
 
 #: ../libpurple/protocols/oscar/oscar.c:6472
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Tìm kiếm bạn chát theo địa chỉ thư..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6477
@@ -9819,10 +9809,6 @@ msgstr "Loại máu"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "Cao đẳng"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "Địa chỉ thư"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -12529,7 +12515,7 @@ msgstr "Tên người dùng: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:368
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "Địa chỉ thư : \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:370
@@ -12853,7 +12839,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Tạm thời không có dịch vụ danh bạ."
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "Khả năng tra tìm địa chỉ thư điện tử bị hạn chế."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15876,7 +15862,7 @@ msgid "Color to draw the name of an action message."
 msgstr "Màu để vẽ tên của tin nhẳn hành động."
 
 #: ../pidgin/gtkimhtml.c:1630
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Chép địa chỉ thư"
 
 #: ../pidgin/gtkimhtml.c:1642
@@ -16322,8 +16308,8 @@ msgstr[0] "%s có %d tin nhẳn mới."
 
 #: ../pidgin/gtknotify.c:572
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d thư mới.</b>"
 
 #: ../pidgin/gtknotify.c:1004
@@ -17618,7 +17604,7 @@ msgstr "Bạn chát liên qu_an"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Không thể gửi thư."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -17626,7 +17612,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "Không tìm thấy tập tin thực thi Evolution trên đường dẫn hệ thống mặc định (biến PATH)."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "Không tìm thấy địa chỉ thư cho bạn chát này."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -17634,7 +17620,7 @@ msgid "Add to Address Book"
 msgstr "Thêm vào sổ địa chỉ"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Gửi thư"
 
 #.Configuration frame
@@ -17692,7 +17678,7 @@ msgid "Last name:"
 msgstr "Họ :"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "Địa chỉ thư :"
 
 #.*< type

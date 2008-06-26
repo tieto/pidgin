@@ -737,7 +737,7 @@ static int irc_chat_send(PurpleConnection *gc, int id, const char *what, PurpleM
 
 	irc_cmd_privmsg(irc, "msg", NULL, args);
 
-	serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), 0, what, time(NULL));
+	serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), flags, what, time(NULL));
 	g_free(tmp);
 	return 0;
 }
@@ -909,6 +909,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL
 };
 

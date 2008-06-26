@@ -31,13 +31,20 @@
 
 #include <glib.h>
 
+/** @copydoc _PurpleBuddyList */
 typedef struct _PurpleBuddyList PurpleBuddyList;
+/** @copydoc _PurpleBlistUiOps */
 typedef struct _PurpleBlistUiOps PurpleBlistUiOps;
+/** @copydoc _PurpleBlistNode */
 typedef struct _PurpleBlistNode PurpleBlistNode;
 
+/** @copydoc _PurpleChat */
 typedef struct _PurpleChat PurpleChat;
+/** @copydoc _PurpleGroup */
 typedef struct _PurpleGroup PurpleGroup;
+/** @copydoc _PurpleContact */
 typedef struct _PurpleContact PurpleContact;
+/** @copydoc _PurpleBuddy */
 typedef struct _PurpleBuddy PurpleBuddy;
 
 /**************************************************************************/
@@ -317,11 +324,22 @@ void purple_blist_set_visible(gboolean show);
 void purple_blist_update_buddy_status(PurpleBuddy *buddy, PurpleStatus *old_status);
 
 /**
+ * Updates a node's custom icon.
+ *
+ * @param node  The PurpleBlistNode whose custom icon has changed.
+ * @since 2.5.0
+ */
+void purple_blist_update_node_icon(PurpleBlistNode *node);
+
+#ifndef PURPLE_DISABLE_DEPRECATED
+/**
  * Updates a buddy's icon.
  *
  * @param buddy  The buddy whose buddy icon has changed
+ * @deprecated Use purple_blist_update_node_icon() instead.
  */
 void purple_blist_update_buddy_icon(PurpleBuddy *buddy);
+#endif
 
 /**
  * Renames a buddy in the buddy list.

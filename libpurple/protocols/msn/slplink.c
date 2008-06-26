@@ -58,7 +58,7 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
  * Main
  **************************************************************************/
 
-MsnSlpLink *
+static MsnSlpLink *
 msn_slplink_new(MsnSession *session, const char *username)
 {
 	MsnSlpLink *slplink;

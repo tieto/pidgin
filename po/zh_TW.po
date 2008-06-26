@@ -2835,7 +2835,7 @@ msgstr "名"
 msgid "Last name"
 msgstr "姓"
 
-msgid "E-Mail"
+msgid "Email"
 msgstr "電子郵件"
 
 msgid "AIM Account"
@@ -2861,9 +2861,6 @@ msgstr "Bonjour 協定模組"
 #  NOTE 對應 evolution PO 檔之譯法，詳見上面「Local Addressbook」條
 msgid "Purple Person"
 msgstr "連絡人"
-
-msgid "E-mail"
-msgstr "電子郵件"
 
 # NOTE 這是通訊協定名稱，不是問候語
 msgid "Bonjour"
@@ -3982,7 +3979,7 @@ msgstr "伺服器指令：%s"
 msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr "填入一個或多個欄位，以搜尋XMPP使用者。"
 
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "電子郵件"
 
 msgid "Search for XMPP users"
@@ -4806,7 +4803,7 @@ msgstr "無法解析訊息"
 msgid "Syntax Error (probably a client bug)"
 msgstr "語法錯誤（可能是用戶端的 Bug）"
 
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "電子郵件位址無效"
 
 msgid "User does not exist"
@@ -5174,7 +5171,7 @@ msgstr "個人行動電話"
 msgid "Home Fax"
 msgstr "住家傳真"
 
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "個人電子郵件"
 
 msgid "Personal IM"
@@ -5217,7 +5214,7 @@ msgstr "商務呼叫器"
 msgid "Work Fax"
 msgstr "商務傳真"
 
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "商務電子郵件"
 
 msgid "Work IM"
@@ -6590,7 +6587,7 @@ msgstr ""
 
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -6735,11 +6732,11 @@ msgstr[0] "下列是 %s 的帳號"
 msgstr[1] "下列是 %s 的帳號"
 
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "找不到和電子郵件地址 %s 相關的結果"
 
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "您應該會收到一封要求對 %s 進行認證的電子郵件。"
 
 msgid "Account Confirmation Requested"
@@ -6763,20 +6760,20 @@ msgstr "錯誤 0x%04x：無法格式化帳號，因為要求的帳號太長。"
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this username."
 msgstr "錯誤 0x%04x：無法改變電子郵件地址，因為這個帳號尚有要求等待處理。"
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many usernames associated with it."
 msgstr ""
 "錯誤 0x%04x：無法改變電子郵件地址，因為這個電子郵件地址和太多的帳號產生關連。"
 
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr "錯誤 0x%04x：無法改變電子郵件地址，因為這個電子郵件地址是無效的。"
 
@@ -6788,7 +6785,7 @@ msgid "Error Changing Account Info"
 msgstr "更改帳號資訊錯誤"
 
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "%s 的電子郵件地址為 %s"
 
 msgid "Account Info"
@@ -6999,13 +6996,13 @@ msgstr ""
 "您可以重新要求這些好友的認證，只要在好友清單中以滑鼠右鍵點擊他們，然後選擇"
 "「要求重新認證」。"
 
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "以電子郵件地址來找尋好友"
 
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "使用電子郵件地址搜尋好友"
 
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "請輸入對方的電子郵件地址。"
 
 msgid "_Search"
@@ -7029,16 +7026,16 @@ msgstr "設定隱私選項..."
 msgid "Confirm Account"
 msgstr "確認帳號"
 
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "顯示目前所註冊的電子郵件位址"
 
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "修改目前所註冊的電子郵件位址..."
 
 msgid "Show Buddies Awaiting Authorization"
 msgstr "顯示等待認證的好友"
 
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "使用電子郵件地址搜尋好友..."
 
 msgid "Search for Buddy by Information"
@@ -7103,9 +7100,6 @@ msgstr "血型"
 
 msgid "College"
 msgstr "大學／大專"
-
-msgid "Email"
-msgstr "電子郵件"
 
 msgid "Zipcode"
 msgstr "郵遞區號"
@@ -8883,7 +8877,7 @@ msgid "User Name: \t%s\n"
 msgstr "使用者名稱：\t%s\n"
 
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "電子郵件：\t\t%s\n"
 
 #, c-format
@@ -9125,8 +9119,8 @@ msgstr "需輸入更多檢索條件。"
 msgid "Dir service temporarily unavailable."
 msgstr "暫時無法使用目錄服務。"
 
-msgid "E-mail lookup restricted."
-msgstr "禁止 E-Mail 檢查。"
+msgid "Email lookup restricted."
+msgstr "禁止 Email 檢查。"
 
 msgid "Keyword ignored."
 msgstr "關鍵字已被忽略。"
@@ -11567,7 +11561,7 @@ msgstr "用來顯示輸入通知的字型"
 msgid "Enable typing notification"
 msgstr "啟用輸入通知"
 
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "複製電子郵件地址(_C)"
 
 msgid "_Open Link in Browser"
@@ -11911,8 +11905,8 @@ msgstr[0] "%s 有 %d 封新郵件。"
 msgstr[1] "%s 有 %d 封新郵件。"
 
 #, c-format
-msgid "<b>%d new e-mail.</b>"
-msgid_plural "<b>%d new e-mails.</b>"
+msgid "<b>%d new email.</b>"
+msgid_plural "<b>%d new emails.</b>"
 msgstr[0] "<b>%d 封新郵件。</b>"
 msgstr[1] "<b>%d 封新郵件。</b>"
 
@@ -12959,20 +12953,20 @@ msgstr "使用者細節 (_D)"
 msgid "_Associate Buddy"
 msgstr "聯結好友 (_A)"
 
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "無法送出電子郵件"
 
 msgid "The evolution executable was not found in the PATH."
 msgstr "在 PATH 裡找不到可執行的 Evolution 程式。"
 
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "找不到與這個好友相關的電郵地址。"
 
 #  NOTE 注意！evolution 本身的譯法是「目錄服務」而非「通訊錄」
 msgid "Add to Address Book"
 msgstr "增加到通訊錄"
 
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "傳送電子郵件"
 
 #. Configuration frame
@@ -13025,7 +13019,7 @@ msgstr "名："
 msgid "Last name:"
 msgstr "姓："
 
-msgid "E-mail:"
+msgid "Email:"
 msgstr "電子郵件："
 
 #. *< type

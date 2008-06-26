@@ -108,8 +108,8 @@ aim_buddylist_addbuddy(OscarData *od, FlapConnection *conn, const char *sn)
 	byte_stream_put8(&bs, strlen(sn));
 	byte_stream_putstr(&bs, sn);
 
-	snacid = aim_cachesnac(od, 0x0003, 0x0004, 0x0000, sn, strlen(sn)+1);
-	flap_connection_send_snac(od, conn, 0x0003, 0x0004, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_BUDDY, 0x0004, 0x0000, sn, strlen(sn)+1);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_BUDDY, 0x0004, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -159,8 +159,8 @@ aim_buddylist_set(OscarData *od, FlapConnection *conn, const char *buddy_list)
 		tmpptr = strtok(NULL, "&");
 	}
 
-	snacid = aim_cachesnac(od, 0x0003, 0x0004, 0x0000, NULL, 0);
-	flap_connection_send_snac(od, conn, 0x0003, 0x0004, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_BUDDY, 0x0004, 0x0000, NULL, 0);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_BUDDY, 0x0004, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -190,8 +190,8 @@ aim_buddylist_removebuddy(OscarData *od, FlapConnection *conn, const char *sn)
 	byte_stream_put8(&bs, strlen(sn));
 	byte_stream_putstr(&bs, sn);
 
-	snacid = aim_cachesnac(od, 0x0003, 0x0005, 0x0000, sn, strlen(sn)+1);
-	flap_connection_send_snac(od, conn, 0x0003, 0x0005, 0x0000, snacid, &bs);
+	snacid = aim_cachesnac(od, SNAC_FAMILY_BUDDY, 0x0005, 0x0000, sn, strlen(sn)+1);
+	flap_connection_send_snac(od, conn, SNAC_FAMILY_BUDDY, 0x0005, 0x0000, snacid, &bs);
 
 	byte_stream_destroy(&bs);
 
@@ -243,7 +243,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 int
 buddylist_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = 0x0003;
+	mod->family = SNAC_FAMILY_BUDDY;
 	mod->version = 0x0001;
 	mod->toolid = 0x0110;
 	mod->toolversion = 0x0629;

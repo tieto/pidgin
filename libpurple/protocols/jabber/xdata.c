@@ -201,7 +201,7 @@ void *jabber_x_data_request_with_actions(JabberStream *js, xmlnode *packet, GLis
 	xmlnode *fn, *x;
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
-	PurpleRequestField *field;
+	PurpleRequestField *field = NULL;
 
 	char *title = NULL;
 	char *instructions = NULL;

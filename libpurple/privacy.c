@@ -241,6 +241,7 @@ purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 						gboolean restore)
 {
 	GSList *list;
+	PurplePrivacyType type = account->perm_deny;
 
 	switch (account->perm_deny) {
 		case PURPLE_PRIVACY_ALLOW_ALL:
@@ -254,10 +255,12 @@ purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 		case PURPLE_PRIVACY_DENY_ALL:
 			if (!restore) {
 				/* Empty the allow-list. */
+				const char *norm = purple_normalize(account, who);
 				for (list = account->permit; list != NULL;) {
-					char *who = list->data;
+					char *person = list->data;
 					list = list->next;
-					purple_privacy_permit_remove(account, who, local);
+					if (strcmp(norm, person) != 0)
+						purple_privacy_permit_remove(account, person, local);
 				}
 			}
 			purple_privacy_permit_add(account, who, local);
@@ -273,6 +276,10 @@ purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 		default:
 			g_return_if_reached();
 	}
+
+	/* Notify the server if the privacy setting was changed */
+	if (type != account->perm_deny && purple_account_is_connected(account))
+		serv_set_permit_deny(purple_account_get_connection(account));
 }
 
 /*
@@ -286,15 +293,18 @@ purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
 					gboolean restore)
 {
 	GSList *list;
+	PurplePrivacyType type = account->perm_deny;
 
 	switch (account->perm_deny) {
 		case PURPLE_PRIVACY_ALLOW_ALL:
 			if (!restore) {
 				/* Empty the deny-list. */
+				const char *norm = purple_normalize(account, who);
 				for (list = account->deny; list != NULL; ) {
 					char *person = list->data;
 					list = list->next;
-					purple_privacy_deny_remove(account, person, local);
+					if (strcmp(norm, person) != 0)
+						purple_privacy_deny_remove(account, person, local);
 				}
 			}
 			purple_privacy_deny_add(account, who, local);
@@ -318,6 +328,10 @@ purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
 		default:
 			g_return_if_reached();
 	}
+
+	/* Notify the server if the privacy setting was changed */
+	if (type != account->perm_deny && purple_account_is_connected(account))
+		serv_set_permit_deny(purple_account_get_connection(account));
 }
 
 gboolean

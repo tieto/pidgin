@@ -35,7 +35,7 @@ class CheckedAttribute:
             raise "Error: " + self.attr + " " + str(args) + " returned " + str(result)
         return result
             
-def show_help():
+def show_help(requested=False):
     print """This program uses D-Bus to communicate with purple.
 
 Usage:
@@ -66,6 +66,10 @@ Examples of commands:
     PurpleAccountsFindConnected?name=&protocol=prpl-jabber
     PurpleAccountsFindConnected(,prpl-jabber)
 """ % sys.argv[0]
+    if (requested):
+        sys.exit(0)
+    else:
+        sys.exit(1)
 
 cpurple = CheckedObject(purple)
 
@@ -213,10 +217,11 @@ def execute(uri):
                                 raise "Don't know how to handle type \"%s\"" % type
                     return purple.__getattr__(command)(*methodparams)
             show_help()
-            raise "Unknown command: %s" % command
 
 if len(sys.argv) == 1:
     show_help()
+elif (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
+    show_help(True)
 elif (obj == None):
     print "No existing libpurple instance detected."
     sys.exit(1);

@@ -2722,6 +2722,7 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 	PurpleConnection *gc;
 	PurpleChat *chat;
 	GHashTable *hash = NULL;
+	PurpleConversation *conv;
 
 	account = purple_request_fields_get_account(fields, "account");
 	name = purple_request_fields_get_string(fields,  "chat");
@@ -2730,7 +2731,16 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 		return;
 
 	gc = purple_account_get_connection(account);
-	purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
+	/* Create a new conversation now. This will give focus to the new window.
+	 * But it's necessary to pretend that we left the chat, because otherwise
+	 * a new conversation window will pop up when we finally join the chat. */
+	if (!(conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name, account))) {
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
+		purple_conv_chat_left(PURPLE_CONV_CHAT(conv));
+	} else {
+		purple_conversation_present(conv);
+	}
+
 	chat = purple_blist_find_chat(account, name);
 	if (chat == NULL) {
 		PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
@@ -2841,6 +2851,12 @@ view_log_cb(GntMenuItem *item, gpointer n)
 }
 
 static void
+view_all_logs_cb(GntMenuItem *item, gpointer n)
+{
+	finch_log_show(PURPLE_LOG_IM, NULL, NULL);
+}
+
+static void
 menu_add_buddy_cb(GntMenuItem *item, gpointer null)
 {
 	purple_blist_request_add_buddy(NULL, NULL, NULL, NULL);
@@ -2904,6 +2920,11 @@ create_menu(void)
 	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "view-log");
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), view_log_cb, NULL);
+
+	item = gnt_menuitem_new(_("View All Logs"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "view-all-logs");
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), view_all_logs_cb, NULL);
 
 	item = gnt_menuitem_new(_("Show"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
@@ -3011,9 +3032,6 @@ blist_show(PurpleBuddyList *list)
 			purple_prefs_get_int(PREF_ROOT "/size/height"));
 	gnt_widget_set_position(ggblist->window, purple_prefs_get_int(PREF_ROOT "/position/x"),
 			purple_prefs_get_int(PREF_ROOT "/position/y"));
-
-	gnt_tree_set_col_width(GNT_TREE(ggblist->tree), 0,
-			purple_prefs_get_int(PREF_ROOT "/size/width") - 1);
 
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->tree);
 

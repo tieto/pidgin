@@ -51,6 +51,11 @@ gboolean pidgin_themes_smileys_disabled(void);
 
 void pidgin_themes_smiley_themeize(GtkWidget *);
 
+/**
+ * @since 2.5.0
+ */
+void pidgin_themes_smiley_themeize_custom(GtkWidget *);
+
 void pidgin_themes_smiley_theme_probe(void);
 
 void pidgin_themes_load_smiley_theme(const char *file, gboolean load);

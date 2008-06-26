@@ -92,8 +92,10 @@ static GHashTable *icon_data_cache = NULL;
  */
 static GHashTable *icon_file_cache = NULL;
 
-/* This one is used for both custom buddy icons
- * on PurpleContacts and account icons. */
+/**
+ * This hash table is used for both custom buddy icons on PurpleBlistNodes and
+ * account icons.
+ */
 static GHashTable *pointer_icon_cache = NULL;
 
 static char       *cache_dir     = NULL;
@@ -684,14 +686,6 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 	return (icon ? purple_buddy_icon_ref(icon) : NULL);
 }
 
-gboolean
-purple_buddy_icons_has_custom_icon(PurpleContact *contact)
-{
-	g_return_val_if_fail(contact != NULL, FALSE);
-
-	return (purple_blist_node_get_string((PurpleBlistNode*)contact, "custom_buddy_icon") != NULL);
-}
-
 PurpleStoredImage *
 purple_buddy_icons_find_account_icon(PurpleAccount *account)
 {
@@ -807,24 +801,32 @@ purple_buddy_icons_get_account_icon_timestamp(PurpleAccount *account)
 	return ret;
 }
 
-PurpleStoredImage *
-purple_buddy_icons_find_custom_icon(PurpleContact *contact)
+gboolean
+purple_buddy_icons_node_has_custom_icon(PurpleBlistNode *node)
 {
-	PurpleStoredImage *img;
-	const char *custom_icon_file;
-	const char *dirname;
+	g_return_val_if_fail(node != NULL, FALSE);
+
+	return (purple_blist_node_get_string(node, "custom_buddy_icon") != NULL);
+}
+
+PurpleStoredImage *
+purple_buddy_icons_node_find_custom_icon(PurpleBlistNode *node)
+{
 	char *path;
-	guchar *data;
 	size_t len;
+	guchar *data;
+	PurpleStoredImage *img;
+	const char *custom_icon_file, *dirname;
 
-	g_return_val_if_fail(contact != NULL, NULL);
+	g_return_val_if_fail(node != NULL, NULL);
 
-	if ((img = g_hash_table_lookup(pointer_icon_cache, contact)))
+	if ((img = g_hash_table_lookup(pointer_icon_cache, node)))
 	{
 		return purple_imgstore_ref(img);
 	}
 
-	custom_icon_file = purple_blist_node_get_string((PurpleBlistNode*)contact, "custom_buddy_icon");
+	custom_icon_file = purple_blist_node_get_string(node,
+	                                                "custom_buddy_icon");
 
 	if (custom_icon_file == NULL)
 		return NULL;
@@ -836,7 +838,7 @@ purple_buddy_icons_find_custom_icon(PurpleContact *contact)
 	{
 		g_free(path);
 		img = purple_buddy_icon_data_new(data, len, custom_icon_file);
-		g_hash_table_insert(pointer_icon_cache, contact, img);
+		g_hash_table_insert(pointer_icon_cache, node, img);
 		return img;
 	}
 	g_free(path);
@@ -845,66 +847,79 @@ purple_buddy_icons_find_custom_icon(PurpleContact *contact)
 }
 
 PurpleStoredImage *
-purple_buddy_icons_set_custom_icon(PurpleContact *contact,
-                                   guchar *icon_data, size_t icon_len)
+purple_buddy_icons_node_set_custom_icon(PurpleBlistNode *node,
+                                        guchar *icon_data, size_t icon_len)
 {
+	char *old_icon;
 	PurpleStoredImage *old_img;
 	PurpleStoredImage *img = NULL;
-	char *old_icon;
-	PurpleBlistNode *child;
 
-	old_img = g_hash_table_lookup(pointer_icon_cache, contact);
+	g_return_val_if_fail(node != NULL, NULL);
 
-	if (icon_data != NULL && icon_len > 0)
-	{
+	if (!PURPLE_BLIST_NODE_IS_CONTACT(node) &&
+	    !PURPLE_BLIST_NODE_IS_CHAT(node) &&
+	    !PURPLE_BLIST_NODE_IS_GROUP(node)) {
+		return NULL;
+	}
+
+	old_img = g_hash_table_lookup(pointer_icon_cache, node);
+
+	if (icon_data != NULL && icon_len > 0) {
 		img = purple_buddy_icon_data_new(icon_data, icon_len, NULL);
 	}
 
-	old_icon = g_strdup(purple_blist_node_get_string((PurpleBlistNode *)contact,
+	old_icon = g_strdup(purple_blist_node_get_string(node,
 	                                                 "custom_buddy_icon"));
-	if (img && purple_buddy_icons_is_caching())
-	{
+	if (img && purple_buddy_icons_is_caching()) {
 		const char *filename = purple_imgstore_get_filename(img);
-		purple_blist_node_set_string((PurpleBlistNode *)contact,
-		                             "custom_buddy_icon",
+		purple_blist_node_set_string(node, "custom_buddy_icon",
 		                             filename);
 		ref_filename(filename);
-	}
-	else
-	{
-		purple_blist_node_remove_setting((PurpleBlistNode *)contact,
-		                                 "custom_buddy_icon");
+	} else {
+		purple_blist_node_remove_setting(node, "custom_buddy_icon");
 	}
 	unref_filename(old_icon);
 
 	if (img)
-		g_hash_table_insert(pointer_icon_cache, contact, img);
+		g_hash_table_insert(pointer_icon_cache, node, img);
 	else
-		g_hash_table_remove(pointer_icon_cache, contact);
+		g_hash_table_remove(pointer_icon_cache, node);
 
-	for (child = contact->node.child ; child ; child = child->next)
-	{
-		PurpleBuddy *buddy;
-		PurpleConversation *conv;
+	if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
+		PurpleBlistNode *child;
+		for (child = node->child ; child ; child = child->next)
+		{
+			PurpleBuddy *buddy;
+			PurpleConversation *conv;
 
-		if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
-			continue;
+			if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
+				continue;
 
-		buddy = (PurpleBuddy *)child;
+			buddy = (PurpleBuddy *)child;
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
-		                                             purple_buddy_get_name(buddy),
-		                                             purple_buddy_get_account(buddy));
-		if (conv)
+			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, purple_buddy_get_name(buddy), purple_buddy_get_account(buddy));
+			if (conv)
+				purple_conversation_update(conv, PURPLE_CONV_UPDATE_ICON);
+
+			/* Is this call necessary anymore? Can the buddies
+			 * themselves need updating when the custom buddy
+			 * icon changes? */
+			purple_blist_update_node_icon((PurpleBlistNode*)buddy);
+		}
+	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
+		PurpleConversation *conv = NULL;
+
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, purple_chat_get_name((PurpleChat*)node), purple_chat_get_account((PurpleChat*)node));
+		if (conv) {
 			purple_conversation_update(conv, PURPLE_CONV_UPDATE_ICON);
-
-		purple_blist_update_buddy_icon(buddy);
+		}
 	}
 
-	if (old_img)
+	purple_blist_update_node_icon(node);
+
+	if (old_img) {
 		purple_imgstore_unref(old_img);
-	else if (old_icon)
-	{
+	} else if (old_icon) {
 		/* The old icon may not have been loaded into memory.  In that
 		 * case, we'll need to uncache the filename.  The filenames
 		 * are ref-counted, so this is safe. */
@@ -914,6 +929,49 @@ purple_buddy_icons_set_custom_icon(PurpleContact *contact,
 
 	return img;
 }
+
+PurpleStoredImage *
+purple_buddy_icons_node_set_custom_icon_from_file(PurpleBlistNode *node,
+                                                  const gchar *filename)
+{
+	size_t len;
+	guchar *data;
+
+	g_return_val_if_fail(node != NULL, NULL);
+
+	if (!PURPLE_BLIST_NODE_IS_CONTACT(node) &&
+	    !PURPLE_BLIST_NODE_IS_CHAT(node) &&
+	    !PURPLE_BLIST_NODE_IS_GROUP(node)) {
+		return NULL;
+	}
+
+	if (!read_icon_file(filename, &data, &len)) {
+		return NULL;
+	}
+
+	return purple_buddy_icons_node_set_custom_icon(node, data, len);
+}
+
+#ifndef PURPLE_DISABLE_DEPRECATED
+gboolean
+purple_buddy_icons_has_custom_icon(PurpleContact *contact)
+{
+	return purple_buddy_icons_node_has_custom_icon((PurpleBlistNode*)contact);
+}
+
+PurpleStoredImage *
+purple_buddy_icons_find_custom_icon(PurpleContact *contact)
+{
+	return purple_buddy_icons_node_find_custom_icon((PurpleBlistNode*)contact);
+}
+
+PurpleStoredImage *
+purple_buddy_icons_set_custom_icon(PurpleContact *contact, guchar *icon_data,
+                                   size_t icon_len)
+{
+	return purple_buddy_icons_node_set_custom_icon((PurpleBlistNode*)contact, icon_data, icon_len);
+}
+#endif
 
 void
 _purple_buddy_icon_set_old_icons_dir(const char *dirname)
@@ -1138,7 +1196,9 @@ _purple_buddy_icons_blist_loaded_cb()
 				}
 			}
 		}
-		else if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+		else if (PURPLE_BLIST_NODE_IS_CONTACT(node) ||
+		         PURPLE_BLIST_NODE_IS_CHAT(node) ||
+		         PURPLE_BLIST_NODE_IS_GROUP(node))
 		{
 			const char *filename;
 

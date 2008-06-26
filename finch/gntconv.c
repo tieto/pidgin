@@ -38,10 +38,11 @@
 #include "gntdebug.h"
 #include "gntlog.h"
 #include "gntplugin.h"
+#include "gntpounce.h"
 #include "gntprefs.h"
+#include "gntrequest.h"
 #include "gntsound.h"
 #include "gntstatus.h"
-#include "gntpounce.h"
 
 #include "gnt.h"
 #include "gntbox.h"
@@ -140,7 +141,7 @@ static void
 entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 {
 	const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
-	if (*text == '/')
+	if (*text == '/' && *(text + 1) != '/')
 	{
 		PurpleConversation *conv = ggconv->active_conv;
 		PurpleCmdStatus status;
@@ -190,7 +191,7 @@ entry_key_pressed(GntWidget *w, FinchConv *ggconv)
 	}
 	else
 	{
-		char *escape = g_markup_escape_text(text, -1);
+		char *escape = g_markup_escape_text((*text == '/' ? text + 1 : text), -1);
 		char *apos = purple_strreplace(escape, "&apos;", "'");
 		g_free(escape);
 		escape = apos;
@@ -557,6 +558,47 @@ generate_send_to_menu(FinchConv *ggc)
 }
 
 static void
+invite_select_cb(FinchConv *fc, PurpleRequestFields *fields)
+{
+	PurpleConversation *conv = fc->active_conv;
+	const char *buddy = purple_request_fields_get_string(fields,  "screenname");
+	const char *message = purple_request_fields_get_string(fields,  "message");
+	serv_chat_invite(purple_conversation_get_gc(conv),
+		purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)),
+		message, buddy);
+
+}
+
+static void
+invite_cb(GntMenuItem *item, gpointer ggconv)
+{
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+
+	fields = purple_request_fields_new();
+
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_string_new("screenname", _("Name"), NULL, FALSE);
+	purple_request_field_set_type_hint(field, "screenname");
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+	field = purple_request_field_string_new("message", _("Invite message"), NULL, FALSE);
+	purple_request_field_group_add_field(group, field);
+	purple_request_fields(finch_conv_get_handle(), _("Invite"),
+						NULL,
+						_("Please enter the name of the user "
+						  "you wish to invite,\nalong with an optional invite message."),
+						fields,
+						_("OK"), G_CALLBACK(invite_select_cb),
+						_("Cancel"), NULL,
+						NULL, NULL, NULL,
+						ggconv);
+}
+
+static void
 gg_create_menu(FinchConv *ggc)
 {
 	GntWidget *menu, *sub;
@@ -606,6 +648,10 @@ gg_create_menu(FinchConv *ggc)
 		}
 
 		generate_send_to_menu(ggc);
+	} else if (purple_conversation_get_type(ggc->active_conv) == PURPLE_CONV_TYPE_CHAT) {
+		item = gnt_menuitem_new(_("Invite..."));
+		gnt_menu_add_item(GNT_MENU(sub), item);
+		gnt_menuitem_set_callback(item, invite_cb, ggc);
 	}
 
 	item = gnt_menuitem_new(_("View Log..."));
@@ -1195,6 +1241,47 @@ cmd_show_window(PurpleConversation *conv, const char *cmd, char **args, char **e
 }
 
 static PurpleCmdRet
+cmd_message_color(PurpleConversation *conv, const char *cmd, char **args, char **error, gpointer data)
+{
+	int *msgclass  = NULL;
+	int fg, bg;
+
+	if (strcmp(args[0], "receive") == 0)
+		msgclass = &color_message_receive;
+	else if (strcmp(args[0], "send") == 0)
+		msgclass = &color_message_send;
+	else if (strcmp(args[0], "highlight") == 0)
+		msgclass = &color_message_highlight;
+	else if (strcmp(args[0], "action") == 0)
+		msgclass = &color_message_action;
+	else if (strcmp(args[0], "timestamp") == 0)
+		msgclass = &color_timestamp;
+	else {
+		if (error)
+			*error = g_strdup_printf(_("%s is not a valid message class. See '/help msgcolor' for valid message classes."), args[0]);
+		return PURPLE_CMD_STATUS_FAILED;
+	}
+
+	fg = gnt_colors_get_color(args[1]);
+	if (fg == -EINVAL) {
+		if (error)
+			*error = g_strdup_printf(_("%s is not a valid color. See '/help msgcolor' for valid colors."), args[1]);
+		return PURPLE_CMD_STATUS_FAILED;
+	}
+
+	bg = gnt_colors_get_color(args[2]);
+	if (bg == -EINVAL) {
+		if (error)
+			*error = g_strdup_printf(_("%s is not a valid color. See '/help msgcolor' for valid colors."), args[2]);
+		return PURPLE_CMD_STATUS_FAILED;
+	}
+
+	init_pair(*msgclass, fg, bg);
+
+	return PURPLE_CMD_STATUS_OK;
+}
+
+static PurpleCmdRet
 users_command_cb(PurpleConversation *conv, const char *cmd, char **args, char **error, gpointer data)
 {
 	FinchConv *fc = FINCH_GET_DATA(conv);
@@ -1277,6 +1364,16 @@ void finch_conversation_init()
 	purple_cmd_register("status", "", PURPLE_CMD_P_DEFAULT,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
 	                  cmd_show_window, _("statuses: Show the savedstatuses window."), finch_savedstatus_show_all);
+
+	/* Allow customizing the message colors using a command during run-time */
+	purple_cmd_register("msgcolor", "www", PURPLE_CMD_P_DEFAULT,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
+			cmd_message_color, _("msgcolor &lt;class&gt; &lt;foreground&gt; &lt;background&gt;: "
+				                 "Set the color for different classes of messages in the conversation window.<br>"
+				                 "    &lt;class&gt;: receive, send, highlight, action, timestamp<br>"
+				                 "    &lt;foreground/background&gt;: black, red, green, blue, white, gray, darkgray, magenta, cyan, default<br><br>"
+								 "EXAMPLE:<br>    msgcolor send cyan default"),
+			NULL);
 
 	purple_signal_connect(purple_conversations_get_handle(), "buddy-typing", finch_conv_get_handle(),
 					PURPLE_CALLBACK(update_buddy_typing), NULL);

@@ -176,7 +176,7 @@ static PurplePluginInfo info = {
                                    how much to display).
                                  */
 	NULL,                   /* This is where you can put your name and
-                                   e-mail address.
+                                   email address.
                                  */
 	"http://helloworld.tld",/* This is the website for the plugin.  This
                                    tells users where to find new versions,

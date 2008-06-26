@@ -72,7 +72,7 @@ snachandler(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 int
 popups_modfirst(OscarData *od, aim_module_t *mod)
 {
-	mod->family = 0x0008;
+	mod->family = SNAC_FAMILY_POPUP;
 	mod->version = 0x0001;
 	mod->toolid = 0x0104;
 	mod->toolversion = 0x0001;
