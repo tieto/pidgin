@@ -399,8 +399,8 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 		gtkmedia->priv->send_progress = gtk_progress_bar_new();
 		gtkmedia->priv->recv_progress = gtk_progress_bar_new();
 
-		gtk_widget_set_size_request(gtkmedia->priv->send_progress, 5, 70);
-		gtk_widget_set_size_request(gtkmedia->priv->recv_progress, 5, 70);
+		gtk_widget_set_size_request(gtkmedia->priv->send_progress, 10, 70);
+		gtk_widget_set_size_request(gtkmedia->priv->recv_progress, 10, 70);
 
 		gtk_progress_bar_set_orientation(GTK_PROGRESS_BAR(gtkmedia->priv->send_progress),
 						 GTK_PROGRESS_BOTTOM_TO_TOP);
