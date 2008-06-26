@@ -36,7 +36,7 @@
 #include "im.h"
 #include "keep_alive.h"
 #include "packet_parse.h"
-#include "send_core.h"
+#include "qq_network.h"
 #include "utils.h"
 
 enum
@@ -103,6 +103,7 @@ static ssize_t _qq_xfer_udp_send(const char *buf, size_t len, PurpleXfer *xfer)
 	return send(info->sender_fd, buf, len, 0);
 }
 */
+
 static ssize_t _qq_xfer_udp_send(const guint8 *buf, size_t len, PurpleXfer *xfer)
 {
 	struct sockaddr_in sin;
@@ -243,42 +244,45 @@ static void qq_show_conn_info(ft_info *info)
 	g_free(internet_ip_str);
 }
 
-void qq_get_conn_info(guint8 *data, guint8 **cursor, gint data_len, ft_info *info)
+#define QQ_CONN_INFO_LEN	61
+gint qq_get_conn_info(ft_info *info, guint8 *data)
 {
-	read_packet_data(data, cursor, data_len, info->file_session_key, 16);
-	*cursor += 30;
-	read_packet_b(data, cursor, data_len, &info->conn_method);
-	read_packet_dw(data, cursor, data_len, &info->remote_internet_ip);
-	read_packet_w(data, cursor, data_len, &info->remote_internet_port);
-	read_packet_w(data, cursor, data_len, &info->remote_major_port);
-	read_packet_dw(data, cursor, data_len, &info->remote_real_ip);
-	read_packet_w(data, cursor, data_len, &info->remote_minor_port);
+	gint bytes = 0;
+	/* 16 + 30 + 1 + 4 + 2 + 2 + 4 + 2 = 61 */
+	bytes += qq_getdata(info->file_session_key, 16, data + bytes);
+	bytes += 30;	/* skip 30 bytes */
+	bytes += qq_get8(&info->conn_method, data + bytes);
+	bytes += qq_get32(&info->remote_internet_ip, data + bytes);
+	bytes += qq_get16(&info->remote_internet_port, data + bytes);
+	bytes += qq_get16(&info->remote_major_port, data + bytes);
+	bytes += qq_get32(&info->remote_real_ip, data + bytes);
+	bytes += qq_get16(&info->remote_minor_port, data + bytes);
 	qq_show_conn_info(info);
+	return bytes;
 }
 
-gint qq_fill_conn_info(guint8 *raw_data, guint8 **cursor, ft_info *info)
+gint qq_fill_conn_info(guint8 *raw_data, ft_info *info)
 {
-	gint bytes;
-	bytes = 0;
+	gint bytes = 0;
 	/* 064: connection method, UDP 0x00, TCP 0x03 */
-	bytes += create_packet_b (raw_data, cursor, info->conn_method);
+	bytes += qq_put8 (raw_data + bytes, info->conn_method);
 	/* 065-068: outer ip address of sender (proxy address) */
-	bytes += create_packet_dw (raw_data, cursor, info->local_internet_ip);
+	bytes += qq_put32 (raw_data + bytes, info->local_internet_ip);
 	/* 069-070: sender port */
-	bytes += create_packet_w (raw_data, cursor, info->local_internet_port);
+	bytes += qq_put16 (raw_data + bytes, info->local_internet_port);
 	/* 071-072: the first listening port(TCP doesn't have this part) */
-	bytes += create_packet_w (raw_data, cursor, info->local_major_port);
+	bytes += qq_put16 (raw_data + bytes, info->local_major_port);
 	/* 073-076: real ip */
-	bytes += create_packet_dw (raw_data, cursor, info->local_real_ip);
+	bytes += qq_put32 (raw_data + bytes, info->local_real_ip);
 	/* 077-078: the second listening port */
-	bytes += create_packet_w (raw_data, cursor, info->local_minor_port);
+	bytes += qq_put16 (raw_data + bytes, info->local_minor_port);
 	return bytes;
 }
 
 
 /* fill in the common information of file transfer */
 static gint _qq_create_packet_file_header
-(guint8 *raw_data, guint8 **cursor, guint32 to_uid, guint16 message_type, qq_data *qd, gboolean seq_ack)
+(guint8 *raw_data, guint32 to_uid, guint16 message_type, qq_data *qd, gboolean seq_ack)
 {
 	gint bytes;
 	time_t now;
@@ -294,42 +298,42 @@ static gint _qq_create_packet_file_header
 	}
 
 	/* 000-003: receiver uid */
-	bytes += create_packet_dw (raw_data, cursor, qd->uid);
+	bytes += qq_put32 (raw_data + bytes, qd->uid);
 	/* 004-007: sender uid */
-	bytes += create_packet_dw (raw_data, cursor, to_uid);
+	bytes += qq_put32 (raw_data + bytes, to_uid);
 	/* 008-009: sender client version */
-	bytes += create_packet_w (raw_data, cursor, QQ_CLIENT);
+	bytes += qq_put16 (raw_data + bytes, QQ_CLIENT);
 	/* 010-013: receiver uid */
-	bytes += create_packet_dw (raw_data, cursor, qd->uid);
+	bytes += qq_put32 (raw_data + bytes, qd->uid);
 	/* 014-017: sender uid */
-	bytes += create_packet_dw (raw_data, cursor, to_uid);
+	bytes += qq_put32 (raw_data + bytes, to_uid);
 	/* 018-033: md5 of (uid+session_key) */
-	bytes += create_packet_data (raw_data, cursor, qd->session_md5, 16);
+	bytes += qq_putdata (raw_data + bytes, qd->session_md5, 16);
 	/* 034-035: message type */
-	bytes += create_packet_w (raw_data, cursor, message_type);
+	bytes += qq_put16 (raw_data + bytes, message_type);
 	/* 036-037: sequence number */
-	bytes += create_packet_w (raw_data, cursor, seq);
+	bytes += qq_put16 (raw_data + bytes, seq);
 	/* 038-041: send time */
-	bytes += create_packet_dw (raw_data, cursor, (guint32) now);
+	bytes += qq_put32 (raw_data + bytes, (guint32) now);
 	/* 042-042: always 0x00 */
-	bytes += create_packet_b (raw_data, cursor, 0x00);
+	bytes += qq_put8 (raw_data + bytes, 0x00);
 	/* 043-043: sender icon */
-	bytes += create_packet_b (raw_data, cursor, qd->my_icon);
+	bytes += qq_put8 (raw_data + bytes, qd->my_icon);
 	/* 044-046: always 0x00 */
-	bytes += create_packet_w (raw_data, cursor, 0x0000);
-	bytes += create_packet_b (raw_data, cursor, 0x00);
+	bytes += qq_put16 (raw_data + bytes, 0x0000);
+	bytes += qq_put8 (raw_data + bytes, 0x00);
 	/* 047-047: we use font attr */
-	bytes += create_packet_b (raw_data, cursor, 0x01);
+	bytes += qq_put8 (raw_data + bytes, 0x01);
 	/* 048-051: always 0x00 */
-	bytes += create_packet_dw (raw_data, cursor, 0x00000000);
+	bytes += qq_put32 (raw_data + bytes, 0x00000000);
 
 	/* 052-062: always 0x00 */
-	bytes += create_packet_dw (raw_data, cursor, 0x00000000);
-	bytes += create_packet_dw (raw_data, cursor, 0x00000000);
-	bytes += create_packet_w (raw_data, cursor, 0x0000);
-	bytes += create_packet_b (raw_data, cursor, 0x00);
+	bytes += qq_put32 (raw_data + bytes, 0x00000000);
+	bytes += qq_put32 (raw_data + bytes, 0x00000000);
+	bytes += qq_put16 (raw_data + bytes, 0x0000);
+	bytes += qq_put8 (raw_data + bytes, 0x00);
 	/* 063: transfer_type,  0x65: FILE 0x6b: FACE */
-	bytes += create_packet_b (raw_data, cursor, QQ_FILE_TRANSFER_FILE); /* FIXME */
+	bytes += qq_put8 (raw_data + bytes, QQ_FILE_TRANSFER_FILE); /* FIXME */
 
 	return bytes;
 }
@@ -433,7 +437,7 @@ static void _qq_xfer_init_socket(PurpleXfer *xfer)
 static void _qq_send_packet_file_request (PurpleConnection *gc, guint32 to_uid, gchar *filename, gint filesize)
 {
 	qq_data *qd;
-	guint8 *cursor, *raw_data;
+	guint8 *raw_data;
 	gchar *filelen_str;
 	gint filename_len, filelen_strlen, packet_len, bytes;
 	ft_info *info;
@@ -455,27 +459,24 @@ static void _qq_send_packet_file_request (PurpleConnection *gc, guint32 to_uid, 
 
 	packet_len = 82 + filename_len + filelen_strlen;
 	raw_data = g_newa(guint8, packet_len);
-	cursor = raw_data;
+	bytes = 0;
 
-	bytes = _qq_create_packet_file_header(raw_data, &cursor, to_uid, 
+	bytes += _qq_create_packet_file_header(raw_data + bytes, to_uid, 
 			QQ_FILE_TRANS_REQ, qd, FALSE);
-	bytes += qq_fill_conn_info(raw_data, &cursor, info);
+	bytes += qq_fill_conn_info(raw_data + bytes, info);
 	/* 079: 0x20 */
-	bytes += create_packet_b (raw_data, &cursor, 0x20);
+	bytes += qq_put8 (raw_data + bytes, 0x20);
 	/* 080: 0x1f */
-	bytes += create_packet_b (raw_data, &cursor, 0x1f);
+	bytes += qq_put8 (raw_data + bytes, 0x1f);
 	/* undetermined len: filename */
-	bytes += create_packet_data (raw_data, &cursor, (guint8 *) filename,
-				     filename_len);
+	bytes += qq_putdata (raw_data + bytes, (guint8 *) filename, filename_len);
 	/* 0x1f */
-	bytes += create_packet_b (raw_data, &cursor, 0x1f);
+	bytes += qq_put8 (raw_data + bytes, 0x1f);
 	/* file length */
-	bytes += create_packet_data (raw_data, &cursor, (guint8 *) filelen_str,
-				     filelen_strlen);
+	bytes += qq_putdata (raw_data + bytes, (guint8 *) filelen_str, filelen_strlen);
 
 	if (packet_len == bytes)
-		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data,
-			     cursor - raw_data);
+		qq_send_cmd (qd, QQ_CMD_SEND_IM, raw_data, bytes);
 	else
 		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file_request",
 			    "%d bytes expected but got %d bytes\n",
@@ -488,7 +489,7 @@ static void _qq_send_packet_file_request (PurpleConnection *gc, guint32 to_uid, 
 static void _qq_send_packet_file_accept(PurpleConnection *gc, guint32 to_uid)
 {
 	qq_data *qd;
-	guint8 *cursor, *raw_data;
+	guint8 *raw_data;
 	guint16 minor_port;
 	guint32 real_ip;
 	gint packet_len, bytes;
@@ -502,22 +503,21 @@ static void _qq_send_packet_file_accept(PurpleConnection *gc, guint32 to_uid)
 
 	packet_len = 79;
 	raw_data = g_newa (guint8, packet_len);
-	cursor = raw_data;
+	bytes = 0;
 
 	minor_port = info->local_minor_port;
 	real_ip = info->local_real_ip;
 	info->local_minor_port = 0;
 	info->local_real_ip = 0;
 
-	bytes = _qq_create_packet_file_header(raw_data, &cursor, to_uid, QQ_FILE_TRANS_ACC_UDP, qd, TRUE);
-	bytes += qq_fill_conn_info(raw_data, &cursor, info);
+	bytes += _qq_create_packet_file_header(raw_data + bytes, to_uid, QQ_FILE_TRANS_ACC_UDP, qd, TRUE);
+	bytes += qq_fill_conn_info(raw_data + bytes, info);
 
 	info->local_minor_port = minor_port;
 	info->local_real_ip = real_ip;
 
 	if (packet_len == bytes)
-		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data,
-			     cursor - raw_data);
+		qq_send_cmd (qd, QQ_CMD_SEND_IM, raw_data, bytes);
 	else
 		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file_accept",
 			    "%d bytes expected but got %d bytes\n",
@@ -529,7 +529,7 @@ static void _qq_send_packet_file_notifyip(PurpleConnection *gc, guint32 to_uid)
 	PurpleXfer *xfer;
 	ft_info *info;
 	qq_data *qd;
-	guint8 *cursor, *raw_data;
+	guint8 *raw_data;
 	gint packet_len, bytes;
 
 	qd = (qq_data *) gc->proto_data;
@@ -538,14 +538,13 @@ static void _qq_send_packet_file_notifyip(PurpleConnection *gc, guint32 to_uid)
 
 	packet_len = 79;
 	raw_data = g_newa (guint8, packet_len);
-	cursor = raw_data;
+	bytes = 0;
 
 	purple_debug(PURPLE_DEBUG_INFO, "QQ", "<== sending qq file notify ip packet\n");
-	bytes = _qq_create_packet_file_header(raw_data, &cursor, to_uid, QQ_FILE_TRANS_NOTIFY, qd, TRUE);
-	bytes += qq_fill_conn_info(raw_data, &cursor, info);
+	bytes += _qq_create_packet_file_header(raw_data + bytes, to_uid, QQ_FILE_TRANS_NOTIFY, qd, TRUE);
+	bytes += qq_fill_conn_info(raw_data + bytes, info);
 	if (packet_len == bytes)
-		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data,
-			     cursor - raw_data);
+		qq_send_cmd (qd, QQ_CMD_SEND_IM, raw_data, bytes);
 	else
 		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file_notify",
 			    "%d bytes expected but got %d bytes\n",
@@ -560,7 +559,7 @@ static void _qq_send_packet_file_notifyip(PurpleConnection *gc, guint32 to_uid)
 static void _qq_send_packet_file_reject (PurpleConnection *gc, guint32 to_uid)
 {
 	qq_data *qd;
-	guint8 *cursor, *raw_data;
+	guint8 *raw_data;
 	gint packet_len, bytes;
 
 	purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_reject", "start");
@@ -568,14 +567,12 @@ static void _qq_send_packet_file_reject (PurpleConnection *gc, guint32 to_uid)
 
 	packet_len = 64;
 	raw_data = g_newa (guint8, packet_len);
-	cursor = raw_data;
 	bytes = 0;
 
-	bytes = _qq_create_packet_file_header(raw_data, &cursor, to_uid, QQ_FILE_TRANS_DENY_UDP, qd, TRUE);
+	bytes += _qq_create_packet_file_header(raw_data + bytes, to_uid, QQ_FILE_TRANS_DENY_UDP, qd, TRUE);
 
 	if (packet_len == bytes)
-		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data,
-			     cursor - raw_data);
+		qq_send_cmd (qd, QQ_CMD_SEND_IM, raw_data, bytes);
 	else
 		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file",
 			    "%d bytes expected but got %d bytes\n",
@@ -586,7 +583,7 @@ static void _qq_send_packet_file_reject (PurpleConnection *gc, guint32 to_uid)
 static void _qq_send_packet_file_cancel (PurpleConnection *gc, guint32 to_uid)
 {
 	qq_data *qd;
-	guint8 *cursor, *raw_data;
+	guint8 *raw_data;
 	gint packet_len, bytes;
 
 	purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_cancel", "start\n");
@@ -594,17 +591,15 @@ static void _qq_send_packet_file_cancel (PurpleConnection *gc, guint32 to_uid)
 
 	packet_len = 64;
 	raw_data = g_newa (guint8, packet_len);
-	cursor = raw_data;
 	bytes = 0;
 
 	purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_cancel", "before create header\n");
-	bytes = _qq_create_packet_file_header(raw_data, &cursor, to_uid, QQ_FILE_TRANS_CANCEL, qd, TRUE);
+	bytes += _qq_create_packet_file_header(raw_data + bytes, to_uid, QQ_FILE_TRANS_CANCEL, qd, TRUE);
 	purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_cancel", "end create header\n");
 
 	if (packet_len == bytes) {
 		purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_cancel", "before send cmd\n");
-		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data,
-			     cursor - raw_data);
+		qq_send_cmd (qd, QQ_CMD_SEND_IM, raw_data, bytes);
 	}
 	else
 		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file",
@@ -688,7 +683,7 @@ static void _qq_xfer_recv_init(PurpleXfer *xfer)
 }
 
 /* process reject im for file transfer request */
-void qq_process_recv_file_reject (guint8 *data, guint8 **cursor, gint data_len, 
+void qq_process_recv_file_reject (guint8 *data, gint data_len, 
 		guint32 sender_uid, PurpleConnection *gc)
 {
 	gchar *msg, *filename;
@@ -698,11 +693,13 @@ void qq_process_recv_file_reject (guint8 *data, guint8 **cursor, gint data_len,
 	qd = (qq_data *) gc->proto_data;
 	g_return_if_fail (qd->xfer != NULL);
 
+	/*	border has been checked before
 	if (*cursor >= (data + data_len - 1)) {
 		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
 			    "Received file reject message is empty\n");
 		return;
 	}
+	*/
 	filename = strrchr(purple_xfer_get_local_filename(qd->xfer), '/') + 1;
 	msg = g_strdup_printf(_("%d has declined the file %s"),
 		 sender_uid, filename);
@@ -715,7 +712,7 @@ void qq_process_recv_file_reject (guint8 *data, guint8 **cursor, gint data_len,
 }
 
 /* process cancel im for file transfer request */
-void qq_process_recv_file_cancel (guint8 *data, guint8 **cursor, gint data_len, 
+void qq_process_recv_file_cancel (guint8 *data, gint data_len, 
 		guint32 sender_uid, PurpleConnection *gc)
 {
 	gchar *msg, *filename;
@@ -726,11 +723,13 @@ void qq_process_recv_file_cancel (guint8 *data, guint8 **cursor, gint data_len,
 	g_return_if_fail (qd->xfer != NULL
 			&& purple_xfer_get_filename(qd->xfer) != NULL);
 
+	/*	border has been checked before
 	if (*cursor >= (data + data_len - 1)) {
 		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
 			    "Received file reject message is empty\n");
 		return;
 	}
+	*/
 	filename = strrchr(purple_xfer_get_local_filename(qd->xfer), '/') + 1;
 	msg = g_strdup_printf
 		(_("%d canceled the transfer of %s"),
@@ -744,27 +743,26 @@ void qq_process_recv_file_cancel (guint8 *data, guint8 **cursor, gint data_len,
 }
 
 /* process accept im for file transfer request */
-void qq_process_recv_file_accept(guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, PurpleConnection *gc)
+void qq_process_recv_file_accept(guint8 *data, gint data_len, guint32 sender_uid, PurpleConnection *gc)
 {
 	qq_data *qd;
+	gint bytes;
 	ft_info *info;
 	PurpleXfer *xfer;
 
 	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
 	xfer = qd->xfer;
+	info = (ft_info *) qd->xfer->data;
 
-	if (*cursor >= (data + data_len - 1)) {
+	if (data_len <= 30 + QQ_CONN_INFO_LEN) {
 		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
 			    "Received file reject message is empty\n");
 		return;
 	}
 
-	info = (ft_info *) qd->xfer->data;
-
-	*cursor = data + 18 + 12;
-	qq_get_conn_info(data, cursor, data_len, info);
+	bytes = 18 + 12;	/* skip 30 bytes */
+	qq_get_conn_info(info, data + bytes);
 	_qq_xfer_init_socket(qd->xfer);
 
 	_qq_xfer_init_udp_channel(info);
@@ -772,8 +770,7 @@ void qq_process_recv_file_accept(guint8 *data, guint8 **cursor, gint data_len,
 }
 
 /* process request from buddy's im for file transfer request */
-void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, PurpleConnection * gc)
+void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_uid, PurpleConnection * gc)
 {
 	qq_data *qd;
 	PurpleXfer *xfer;
@@ -781,25 +778,27 @@ void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len,
 	ft_info *info;
 	PurpleBuddy *b;
 	qq_buddy *q_bud;
+	gint bytes;
 
 	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
 
-	if (*cursor >= (data + data_len - 1)) {
-		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
-			    "Received file reject message is empty\n");
-		return;
-	}
-
-	info = g_new0(ft_info, 1);
+	info = g_newa(ft_info, 1);
 	info->local_internet_ip = g_ntohl(inet_addr(qd->my_ip));
 	info->local_internet_port = qd->my_port;
 	info->local_real_ip = 0x00000000;
 	info->to_uid = sender_uid;
-	read_packet_w(data, cursor, data_len, &(info->send_seq));
+	
+	if (data_len <= 2 + 30 + QQ_CONN_INFO_LEN) {
+		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
+			    "Received file request message is empty\n");
+		return;
+	}
+	bytes = 0;
+	bytes += qq_get16(&(info->send_seq), data + bytes);
 
-	*cursor = data + 18 + 12;
-	qq_get_conn_info(data, cursor, data_len, info);
+	bytes += 18 + 12;	/* skip 30 bytes */
+	bytes += qq_get_conn_info(info, data + bytes);
 
 	fileinfo = g_strsplit((gchar *) (data + 81 + 12), "\x1f", 2);
 	g_return_if_fail (fileinfo != NULL && fileinfo[0] != NULL && fileinfo[1] != NULL);
@@ -880,9 +879,10 @@ static void _qq_xfer_send_notify_ip_ack(gpointer data, gint source, PurpleInputC
 	*/
 }
 
-void qq_process_recv_file_notify(guint8 *data, guint8 **cursor, gint data_len, 
+void qq_process_recv_file_notify(guint8 *data, gint data_len, 
 		guint32 sender_uid, PurpleConnection *gc)
 {
+	gint bytes;
 	qq_data *qd;
 	ft_info *info;
 	PurpleXfer *xfer;
@@ -890,19 +890,19 @@ void qq_process_recv_file_notify(guint8 *data, guint8 **cursor, gint data_len,
 	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
 
-	if (*cursor >= (data + data_len - 1)) {
+	xfer = qd->xfer;
+	info = (ft_info *) qd->xfer->data;
+	if (data_len <= 2 + 30 + QQ_CONN_INFO_LEN) {
 		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
 			    "Received file notify message is empty\n");
 		return;
 	}
+	
+	bytes = 0;
+	bytes += qq_get16(&(info->send_seq), data + bytes);
 
-	xfer = qd->xfer;
-	info = (ft_info *) qd->xfer->data;
-	/* FIXME */
-	read_packet_w(data, cursor, data_len, &(info->send_seq));
-
-	*cursor = data + 18 + 12;
-	qq_get_conn_info(data, cursor, data_len, info);
+	bytes += 18 + 12;
+	bytes += qq_get_conn_info(info, data + bytes);
 
 	_qq_xfer_init_udp_channel(info);
 
@@ -938,7 +938,7 @@ void qq_send_file(PurpleConnection *gc, const char *who, const char *file)
 /*
 static void qq_send_packet_request_key(PurpleConnection *gc, guint8 key)
 {
-	qq_send_cmd(gc, QQ_CMD_REQUEST_KEY, TRUE, 0, TRUE, &key, 1);
+	qq_send_cmd(gc, QQ_CMD_REQUEST_KEY, &key, 1);
 }
 
 static void qq_process_recv_request_key(PurpleConnection *gc)

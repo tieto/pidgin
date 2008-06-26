@@ -1,5 +1,5 @@
 /**
- * @file qq_proxy.h
+ * @file qq_network.h
  *
  * purple
  *
@@ -26,31 +26,19 @@
 #define _QQ_PROXY_H
 
 #include <glib.h>
-#include "dnsquery.h"
-#include "proxy.h"
+#include "connection.h"
 
 #include "qq.h"
 
-#define QQ_CONNECT_STEPS    2	/* steps in connection */
+#define QQ_CONNECT_STEPS    3	/* steps in connection */
 
-struct PHB {
-	PurpleProxyConnectFunction func;
-	gpointer data;
-	gchar *host;
-	gint port;
-	gint inpa;
-	PurpleProxyInfo *gpi;
-	PurpleAccount *account;
-	gint udpsock;
-	gpointer sockbuf;
-};
-
-gint qq_proxy_read(qq_data *qd, guint8 *data, gint len);
-gint qq_proxy_write(qq_data *qd, guint8 *data, gint len);
-
-gint qq_connect(PurpleAccount *account, const gchar *host, guint16 port, gboolean use_tcp, gboolean is_redirect);
+void qq_connect(PurpleAccount *account);
 void qq_disconnect(PurpleConnection *gc);
+void qq_connect_later(PurpleConnection *gc);
 
-void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len);
+gint qq_send_data(qq_data *qd, guint16 cmd, guint8 *data, gint datalen);
+gint qq_send_cmd(qq_data *qd, guint16 cmd, guint8 *data, gint datalen);
+gint qq_send_cmd_detail(qq_data *qd, guint16 cmd, guint16 seq, gboolean need_ack,
+	guint8 *data, gint data_len);
 
 #endif

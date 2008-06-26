@@ -52,20 +52,14 @@ QQSOURCES = \
 	packet_parse.h \
 	qq.c \
 	qq.h \
-	qq_proxy.c \
-	qq_proxy.h \
-	recv_core.c \
-	recv_core.h \
-	send_core.c \
-	send_core.h \
+	qq_network.c \
+	qq_network.h \
 	send_file.c \
 	send_file.h \
-	sendqueue.c \
-	sendqueue.h \
+	qq_trans.c \
+	qq_trans.h \
 	sys_msg.c \
 	sys_msg.h \
-	udp_proxy_s5.c \
-	udp_proxy_s5.h \
 	utils.c \
 	utils.h
 
