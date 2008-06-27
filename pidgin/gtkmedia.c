@@ -324,14 +324,14 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 				       NULL);
 	}
 
-	send_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	recv_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	send_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
-	gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display), send_widget, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display), recv_widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(gtkmedia->priv->display), send_widget, TRUE, TRUE, 0);
 
-	gtk_widget_show(send_widget);
 	gtk_widget_show(recv_widget);
+	gtk_widget_show(send_widget);
 
 	if (videorecvbin || videosendbin) {
 		GtkWidget *aspect;
@@ -342,7 +342,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
-		gtk_box_pack_start(GTK_BOX(send_widget), aspect, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(recv_widget), aspect, TRUE, TRUE, 0);
 
 		remote_video = gtk_drawing_area_new();
 		gtk_container_add(GTK_CONTAINER(aspect), remote_video);
@@ -352,7 +352,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 
 		aspect = gtk_aspect_frame_new(NULL, 0.5, 0.5, 4.0/3.0, FALSE);
 		gtk_frame_set_shadow_type(GTK_FRAME(aspect), GTK_SHADOW_IN);
-		gtk_box_pack_start(GTK_BOX(recv_widget), aspect, TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(send_widget), aspect, TRUE, TRUE, 0);
 
 		local_video = gtk_drawing_area_new();
 		gtk_container_add(GTK_CONTAINER(aspect), local_video);
