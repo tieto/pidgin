@@ -92,11 +92,11 @@ gchar *purple_sound_theme_get_file_full(PurpleSoundTheme *theme,
  * Sets the filename for a given sound event
  *
  * @param event		the purple sound event to look up
- * @param fname		the name of the file to be used for the event
+ * @param filename		the name of the file to be used for the event
  */
 void purple_sound_theme_set_file(PurpleSoundTheme *theme,
 				const gchar *event, 
-			    	const gchar *fname);
+			    	const gchar *filename);
 
 G_END_DECLS
 #endif /* _PURPLE_SOUND_THEME_H_ */

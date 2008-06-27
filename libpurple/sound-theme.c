@@ -133,16 +133,19 @@ gchar *
 purple_sound_theme_get_file_full(PurpleSoundTheme *theme,
 				 const gchar *event)
 {
-	gchar *dir, *fname, *full;
+	gchar *dir, *filename, *full;
 
 	g_return_val_if_fail(PURPLE_IS_SOUND_THEME(theme), NULL);
 
 	dir = purple_theme_get_dir(PURPLE_THEME(theme));
-	fname = purple_sound_theme_get_file(theme, event);
-	full = g_build_filename(dir, fname, NULL);
+	filename = purple_sound_theme_get_file(theme, event);
+	
+	g_return_val_if_fail(filename, NULL);
+
+	full = g_build_filename(dir, filename, NULL);
 
 	g_free(dir);
-	g_free(fname);
+	g_free(filename);
 
 	return full;
 }
@@ -150,16 +153,16 @@ purple_sound_theme_get_file_full(PurpleSoundTheme *theme,
 void 
 purple_sound_theme_set_file(PurpleSoundTheme *theme,
 			    const gchar *event, 
-			    const gchar *fname)
+			    const gchar *filename)
 {
 	PurpleSoundThemePrivate *priv;
 	g_return_if_fail(PURPLE_IS_SOUND_THEME(theme));
 
 	priv = PURPLE_SOUND_THEME_GET_PRIVATE(theme);
 	
-	if (fname)g_hash_table_replace(priv->sound_files,
+	if (filename)g_hash_table_replace(priv->sound_files,
                  	             g_strdup(event),
-                        	     g_strdup(fname));
+                        	     g_strdup(filename));
 	else g_hash_table_remove(priv->sound_files, event);
 }
 
