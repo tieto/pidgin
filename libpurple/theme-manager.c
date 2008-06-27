@@ -246,8 +246,6 @@ purple_theme_manager_add_theme(PurpleTheme *theme)
 	/* if something is already there do nothing */
 	if (g_hash_table_lookup(theme_table, key) == NULL) 
 		g_hash_table_insert(theme_table, key, theme);
-	
-	g_free(key);	
 }
 
 void
