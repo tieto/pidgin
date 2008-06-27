@@ -490,11 +490,66 @@ purple_media_get_sink(PurpleMedia *media, const gchar *sess_id)
 	return purple_media_get_session(media, sess_id)->src;
 }
 
+static gboolean
+media_bus_call(GstBus *bus, GstMessage *msg, gpointer media)
+{
+	switch(GST_MESSAGE_TYPE(msg)) {
+		case GST_MESSAGE_EOS:
+			purple_debug_info("media", "End of Stream\n");
+			break;
+		case GST_MESSAGE_ERROR: {
+			gchar *debug = NULL;
+			GError *err = NULL;
+
+			gst_message_parse_error(msg, &err, &debug);
+
+			purple_debug_error("media", "gst pipeline error: %s\n", err->message);
+			g_error_free(err);
+
+			if (debug) {
+				purple_debug_error("media", "Debug details: %s\n", debug);
+				g_free (debug);
+			}
+			break;
+		}
+		case GST_MESSAGE_ELEMENT: {
+			if (gst_structure_has_name(msg->structure, "farsight-error")) {
+				gint error_no;
+				gst_structure_get_int(msg->structure, "error-no", &error_no);
+				purple_debug_error("media", "farsight-error: %i: %s\n", error_no,
+						  gst_structure_get_string(msg->structure, "error-msg"));
+			} else {
+				gchar *name, *str;
+				name = gst_object_get_name(GST_MESSAGE_SRC (msg));
+				purple_debug_info("media", "element name: %s\n", name);
+				g_free(name);
+
+				str = gst_structure_to_string(msg->structure);
+				purple_debug_info("media", "structure: %s\n", str);
+				g_free(str);
+			}
+			break;
+		}
+		default:
+			purple_debug_info("media", "gst message type: %s\n",
+					  GST_MESSAGE_TYPE_NAME(msg));
+			return TRUE;
+	}
+
+	return TRUE;
+}
+
 GstElement *
 purple_media_get_pipeline(PurpleMedia *media)
 {
 	if (!media->priv->pipeline) {
+		GstBus *bus;
 		media->priv->pipeline = gst_pipeline_new(media->priv->name);
+		bus = gst_pipeline_get_bus(GST_PIPELINE(media->priv->pipeline));
+		gst_bus_add_signal_watch(GST_BUS(bus));
+		gst_bus_add_watch(bus, media_bus_call, media);
+		gst_object_unref(bus);
+
 		gst_bin_add(GST_BIN(media->priv->pipeline), GST_ELEMENT(media->priv->conference));
 	}
 

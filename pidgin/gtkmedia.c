@@ -261,36 +261,6 @@ pidgin_media_get_display_widget(GtkWidget *gtkmedia)
 }
 
 static gboolean
-media_bus_call(GstBus *bus, GstMessage *msg, gpointer gtkmedia)
-{
-	switch(GST_MESSAGE_TYPE(msg)) {
-		case GST_MESSAGE_EOS:
-			purple_debug_info("gtkmedia", "End of Stream\n");
-			break;
-		case GST_MESSAGE_ERROR: {
-			gchar *debug = NULL;
-			GError *err = NULL;
-
-			gst_message_parse_error(msg, &err, &debug);
-
-			purple_debug_error("gtkmedia", "gst pipeline error: %s\n", err->message);
-			g_error_free(err);
-
-			if (debug) {
-				purple_debug_error("gtkmedia", "Debug details: %s\n", debug);
-				g_free (debug);
-			}
-			break;
-		}
-		default:
-			purple_debug_info("gtkmedia", "gst message type: %i\n", GST_MESSAGE_TYPE(msg));
-			return TRUE;
-	}
-
-	return TRUE;
-}
-
-static gboolean
 create_window (GstBus *bus, GstMessage *message, PidginMedia *gtkmedia)
 {
 	char *name;
@@ -422,7 +392,6 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 			 "message", G_CALLBACK(level_message_cb), gtkmedia);
 	if (videorecvbin || videosendbin)
 		gst_bus_set_sync_handler(bus, (GstBusSyncHandler)create_window, gtkmedia);
-	gst_bus_add_watch(bus, media_bus_call, gtkmedia);
 	gst_object_unref(bus);
 }
 
