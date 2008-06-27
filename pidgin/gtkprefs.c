@@ -1852,6 +1852,8 @@ sound_chosen_cb(void *user_data, const char *filename)
 	 */
 	if (sound == sound_row_sel)
 		gtk_entry_set_text(GTK_ENTRY(sound_entry), filename);
+
+	pref_set_sound_customized();	
 }
 
 static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
@@ -2041,6 +2043,10 @@ sound_page(void)
 	cell_rend = gtk_cell_renderer_text_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "text", 1, NULL);
+
+	cell_rend = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "text", 2, NULL);
 
 	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo_box), &prefs_sound_iter);
 	g_signal_connect(G_OBJECT(combo_box), "changed", (GCallback)prefs_set_sound_theme, NULL);
