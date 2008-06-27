@@ -34,6 +34,13 @@ typedef enum {
 	YAHOO_PRESENCE_PERM_OFFLINE
 } YahooPresenceVisibility;
 
+typedef enum {
+	NOT_CONNECTED = 0,
+	DO_NOT_CONNECT,
+	CONNECTED_AS_SERVER,	/*We are server*/
+	CONNECTED_AS_CLIENT	/*We are client*/
+} YahooP2PStatus;
+
 /* these are called friends instead of buddies mainly so I can use variables
  * named f and not confuse them with variables named b
  */
@@ -50,6 +57,8 @@ typedef struct _YahooFriend {
 	int protocol; /* 1=LCS, 2=MSN*/
 	long int version_id;
 	gchar *alias_id;
+	YahooP2PStatus p2p_status;
+	gboolean p2p_packet_sent;	/*0:not sent, 1=sent*/ 
 } YahooFriend;
 
 YahooFriend *yahoo_friend_find(PurpleConnection *gc, const char *name);
@@ -75,5 +84,8 @@ void yahoo_friend_free(gpointer p);
 void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt);
 void yahoo_friend_update_presence(PurpleConnection *gc, const char *name,
 		YahooPresenceVisibility presence);
+
+void yahoo_friend_set_p2p_status(YahooFriend *f, YahooP2PStatus p2p_status);
+YahooP2PStatus yahoo_friend_get_p2p_status(YahooFriend *f);
 
 #endif /* _YAHOO_FRIEND_H_ */

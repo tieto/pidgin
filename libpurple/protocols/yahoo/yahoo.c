@@ -38,6 +38,7 @@
 #include "server.h"
 #include "util.h"
 #include "version.h"
+#include "network.h"
 
 #include "yahoo.h"
 #include "yahoochat.h"
@@ -515,6 +516,10 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 					purple_blist_add_buddy(b, NULL, g, NULL);
 				}
 				yahoo_do_group_check(account, ht, norm_bud, yd->current_list15_grp);
+				
+				/*set p2p status not connected and no p2p packet sent*/
+				yahoo_friend_set_p2p_status(f, NOT_CONNECTED);
+				f->p2p_packet_sent = 0;
 
 			} else {
 				/* This buddy is on the ignore list (and therefore in no group) */
@@ -629,6 +634,10 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 				}
 
 				yahoo_do_group_check(account, ht, norm_bud, grp);
+				/*set p2p status not connected and no p2p packet sent*/
+				yahoo_friend_set_p2p_status(f, NOT_CONNECTED);
+				f->p2p_packet_sent = 0;
+
 				g_free(norm_bud);
 			}
 			g_strfreev(buddies);
@@ -2176,6 +2185,7 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 	char *buf;
 	YahooFriend *f;
 	GSList *l = pkt->hash;
+	struct yahoo_data *yd = gc->proto_data;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -2203,6 +2213,14 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 	if (!err || (err == 2)) { /* 0 = ok, 2 = already on serv list */
 		f = yahoo_friend_find_or_new(gc, who);
 		yahoo_update_status(gc, who, f);
+		
+		if( !g_hash_table_lookup(yd->peers, who) )	{
+			/*we are not connected as client, so set friend to not connected*/
+			yahoo_friend_set_p2p_status(f, NOT_CONNECTED);
+			f->p2p_packet_sent = 0;
+		}
+		else	/*we are already connected. set friend to CONNECTED_AS_CLIENT*/
+			yahoo_friend_set_p2p_status(f, CONNECTED_AS_CLIENT);
 		return;
 	}
 
@@ -2215,15 +2233,70 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 	g_free(decoded_group);
 }
 
+/*send p2p pkt containing our encoded ip, asking peer to connect to us*/
+static void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13)
+{
+	const char *public_ip;
+	guint32 temp[4];	
+	guint32 ip;
+	char temp_str[100];
+	gchar *base64_ip = NULL;
+	YahooFriend *f;
+	struct yahoo_packet *pkt;
+	PurpleAccount *account;
+	struct yahoo_data *yd = gc->proto_data;
+
+	public_ip = purple_network_get_public_ip();
+	if( (sscanf(public_ip, "%u.%u.%u.%u", &temp[0], &temp[1], &temp[2], &temp[3])) !=4 )
+		return ;
+
+	ip = (temp[3] << 24) | (temp[2] <<16) | (temp[1] << 8) | temp[0];
+	sprintf(temp_str, "%d", ip);
+	base64_ip = purple_base64_encode( (guchar *)temp_str, strlen(temp_str) );
+
+	f = yahoo_friend_find(gc, who);
+	account = purple_connection_get_account(gc);
+
+	/*send packet to only those friends who arent p2p connected and to whom we havent already sent. Do not send if this condition doesn't hold good*/ 
+	if( !( f && (yahoo_friend_get_p2p_status(f) == NOT_CONNECTED) && (f->p2p_packet_sent == 0)) )
+		return;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PEERTOPEER, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, "sssissis",
+		1, purple_normalize(account, purple_account_get_username(account)),
+		4, purple_normalize(account, purple_account_get_username(account)),
+		12, base64_ip,	/*base64 encode ip*/
+		61, 0,		/*To-do : whats 61 for??*/
+		2, "",
+		5, who,
+		13, val_13,		/*Start 13 from 0*/
+		49, "PEERTOPEER");
+	yahoo_packet_send_and_free(pkt, yd);
+
+	f->p2p_packet_sent = 1;	/*set p2p_packet_sent to sent*/ 
+
+	g_free(base64_ip);
+}
+
 /*destroy p2p_data associated with a peer and close p2p connection*/
 static void yahoo_p2p_disconnect_destroy_data(gpointer data)
 {
 	struct yahoo_p2p_data *user_data;
 	struct yahoo_data *yd;
+	YahooFriend *f;
+
 	if(!(user_data = data))
 		return ;
+
+	/*If friend, set him not connected*/
+	f = yahoo_friend_find(user_data->gc, user_data->host_username);
+	if (f)	{
+		yahoo_friend_set_p2p_status(f, NOT_CONNECTED);
+		f->p2p_packet_sent = 0;
+	}
+
 	yd = user_data->gc->proto_data;
-	
+
 	purple_input_remove(user_data->input_event);
 	close(user_data->source);
 	g_free(user_data->host_ip);
@@ -2302,7 +2375,7 @@ static void yahoo_p2p_process_p2pfilexfer(gpointer data, gint source, struct yah
 
 }
 
-/*callback function associated with receiving of data on the source, not considering receipt of multiple YMSG packets in a single TCP packet*/
+/*callback function associated with receiving of data, not considering receipt of multiple YMSG packets in a single TCP packet*/
 static void yahoo_p2p_read_pkt_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	guchar buf[1024];	/*is it safe to assume a fixed array length of 1024 ??*/
@@ -2387,17 +2460,31 @@ static void yahoo_p2p_init_cb(gpointer data, gint source, const gchar *error_mes
 	struct yahoo_p2p_data *user_data;
 	struct yahoo_packet *pkt_to_send;
 	PurpleAccount *account;
+	YahooFriend *f;
+	struct yahoo_data *yd;
+
+	if(!(user_data = data))
+		return ;
+	yd = user_data->gc->proto_data;
 
 	if(error_message != NULL)	{
 		purple_debug_warning("yahoo","p2p: %s\n",error_message);
+		yahoo_send_p2p_pkt(user_data->gc, user_data->host_username, 2);/*send p2p init packet with val_13=2*/
+		
+		yahoo_p2p_disconnect_destroy_data(user_data);
 		return;
 	}
-	if(!(user_data = data))
-		return ;
 
 	/*Add an Input Read event to the file descriptor*/
 	user_data->input_event = purple_input_add(source, PURPLE_INPUT_READ, yahoo_p2p_read_pkt_cb, data);
 	user_data->source = source;
+
+	g_hash_table_insert(yd->peers, g_strdup(user_data->host_username), user_data);
+	
+	/*If the peer is a friend, set him connected*/
+	f = yahoo_friend_find(user_data->gc, user_data->host_username);
+	if (f)
+		yahoo_friend_set_p2p_status(f, CONNECTED_AS_CLIENT);
 
 	account = purple_connection_get_account(user_data->gc);
 
@@ -2416,7 +2503,6 @@ static void yahoo_p2p_init_cb(gpointer data, gint source, const gchar *error_mes
 
 static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
-	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
 	char *who = NULL;
 	char *base64 = NULL;
@@ -2448,7 +2534,7 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 			   after strtol, it's in reversed byte order. Who thought this up?*/
 			break;
 		case 13:
-			val_13 = strtol(pair->value, NULL, 10);		/*Value always 0*/
+			val_13 = strtol(pair->value, NULL, 10);
 			user_data->val_13 = val_13;
 			break;
 		case 11:
@@ -2499,12 +2585,9 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 		user_data->session_id = pkt->id;
 		user_data->gc = gc;
 
-		g_hash_table_insert(yd->peers, g_strdup(who), user_data);
-
 		/*connect to host*/
 		if((purple_proxy_connect(NULL, account, host_ip, YAHOO_PAGER_PORT_P2P, yahoo_p2p_init_cb, user_data))==NULL)
 			purple_debug_info("yahoo","p2p: Connection to %s failed\n", host_ip);
-
 	}
 }
 
@@ -3899,8 +3982,10 @@ static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what
 			yahoo_packet_hash_int(pkt, 11, user_data->val_11);
 			yahoo_p2p_write_pkt(user_data->source, pkt);
 		}
-		else
+		else	{
 			yahoo_packet_send(pkt, yd);
+			yahoo_send_p2p_pkt(gc, who, 0);		/*send p2p packet, with val_13=0*/
+		}
 	}
 	else
 		ret = -E2BIG;
