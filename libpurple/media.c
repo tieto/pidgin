@@ -436,15 +436,22 @@ void
 purple_media_get_elements(PurpleMedia *media, GstElement **audio_src, GstElement **audio_sink,
                                                   GstElement **video_src, GstElement **video_sink)
 {
-	 if (audio_src) 
-		g_object_get(G_OBJECT(media), "audio-src", *audio_src, NULL);
-	 if (audio_sink) 
-		g_object_get(G_OBJECT(media), "audio-sink", *audio_sink, NULL);
-	 if (video_src) 
-		g_object_get(G_OBJECT(media), "video-src", *video_src, NULL);
-	 if (video_sink) 
-		g_object_get(G_OBJECT(media), "video-sink", *video_sink, NULL);
+	GList *values = g_hash_table_get_values(media->priv->sessions);
 
+	for (; values; values = values->next) {
+		PurpleMediaSession *session = (PurpleMediaSession*)values->data;
+
+		if (session->type & PURPLE_MEDIA_SEND_AUDIO && audio_src)
+			*audio_src = session->src;
+		if (session->type & PURPLE_MEDIA_RECV_AUDIO && audio_sink)
+			*audio_sink = session->sink;
+		if (session->type & PURPLE_MEDIA_SEND_VIDEO && video_src)
+			*video_src = session->src;
+		if (session->type & PURPLE_MEDIA_RECV_VIDEO && video_sink)
+			*video_sink = session->sink;
+	}
+
+	g_list_free(values);
 }
 
 void 

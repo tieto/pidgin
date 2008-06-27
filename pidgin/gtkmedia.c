@@ -289,7 +289,6 @@ static void
 pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 {
 	GstElement *element = purple_media_get_pipeline(media);
-	GtkWidget *send_widget = NULL, *recv_widget = NULL;
 
 	GstElement *audiosendbin = NULL, *audiosendlevel = NULL;
 	GstElement *audiorecvbin = NULL, *audiorecvlevel = NULL;
@@ -323,6 +322,39 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 				       "recv-level", audiorecvlevel,
 				       NULL);
 	}
+
+	bus = gst_pipeline_get_bus(GST_PIPELINE(element));
+	gst_bus_add_signal_watch(GST_BUS(bus));
+	g_signal_connect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))),
+			 "message", G_CALLBACK(level_message_cb), gtkmedia);
+	if (videorecvbin || videosendbin)
+		gst_bus_set_sync_handler(bus, (GstBusSyncHandler)create_window, gtkmedia);
+	gst_object_unref(bus);
+}
+
+static void
+pidgin_media_wait_cb(PurpleMedia *media, PidginMedia *gtkmedia)
+{
+	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_WAITING);
+}
+
+/* maybe we should have different callbacks for when we received the accept
+    and we accepted ourselves */
+static void
+pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
+{
+	GtkWidget *send_widget = NULL, *recv_widget = NULL;
+
+	GstElement *audiosendbin = NULL;
+	GstElement *audiorecvbin = NULL;
+	GstElement *videosendbin = NULL;
+	GstElement *videorecvbin = NULL;
+
+	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
+	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
+
+	purple_media_get_elements(media, &audiosendbin, &audiorecvbin,
+				  &videosendbin, &videorecvbin);
 
 	recv_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	send_widget = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -385,29 +417,6 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 		gtk_widget_show(gtkmedia->priv->send_progress);
 		gtk_widget_show(gtkmedia->priv->recv_progress);
 	}
-
-	bus = gst_pipeline_get_bus(GST_PIPELINE(element));
-	gst_bus_add_signal_watch(GST_BUS(bus));
-	g_signal_connect(G_OBJECT(gst_pipeline_get_bus(GST_PIPELINE(element))),
-			 "message", G_CALLBACK(level_message_cb), gtkmedia);
-	if (videorecvbin || videosendbin)
-		gst_bus_set_sync_handler(bus, (GstBusSyncHandler)create_window, gtkmedia);
-	gst_object_unref(bus);
-}
-
-static void
-pidgin_media_wait_cb(PurpleMedia *media, PidginMedia *gtkmedia)
-{
-	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_WAITING);
-}
-
-/* maybe we should have different callbacks for when we received the accept
-    and we accepted ourselves */
-static void
-pidgin_media_accept_cb(PurpleMedia *media, PidginMedia *gtkmedia)
-{
-	pidgin_media_emit_message(gtkmedia, _("Call in progress."));
-	pidgin_media_set_state(gtkmedia, PIDGIN_MEDIA_ACCEPTED);
 }
 
 static void
