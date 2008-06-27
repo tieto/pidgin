@@ -226,8 +226,8 @@ purple_theme_manager_find_theme(const gchar *name,
 	g_return_val_if_fail(name, NULL);
 	g_return_val_if_fail(type, NULL);
 
-	return g_hash_table_lookup (theme_table,
-				    purple_theme_manager_make_key(name, type));
+	return g_hash_table_lookup(theme_table, 
+				   purple_theme_manager_make_key(name, type));
 }
 
 

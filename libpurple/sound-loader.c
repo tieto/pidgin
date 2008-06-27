@@ -71,15 +71,15 @@ purple_sound_loader_build(const gchar *dir)
 			    "name", xmlnode_get_attrib(root_node, "name"),
 			    "author", xmlnode_get_attrib(root_node, "author"),
 			    "image", preview,
+			    "directory", dir,
 			    "description", data, NULL);
 	
 	xmlnode_free(sub_node);
 
 	while ((sub_node = xmlnode_get_child(root_node, "event")) != NULL){
 		purple_sound_theme_set_file(theme,
-					    xmlnode_get_attrib(root_node, "name"),
-					    xmlnode_get_attrib(root_node, "file"));
-
+					    xmlnode_get_attrib(sub_node, "name"),
+					    xmlnode_get_attrib(sub_node, "file"));
 		xmlnode_free(sub_node);
 	}
 

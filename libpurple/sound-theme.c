@@ -144,9 +144,6 @@ purple_sound_theme_get_file_full(PurpleSoundTheme *theme,
 
 	full = g_build_filename(dir, filename, NULL);
 
-	g_free(dir);
-	g_free(filename);
-
 	return full;
 }
 
@@ -157,10 +154,10 @@ purple_sound_theme_set_file(PurpleSoundTheme *theme,
 {
 	PurpleSoundThemePrivate *priv;
 	g_return_if_fail(PURPLE_IS_SOUND_THEME(theme));
-
-	priv = PURPLE_SOUND_THEME_GET_PRIVATE(theme);
 	
-	if (filename)g_hash_table_replace(priv->sound_files,
+	priv = PURPLE_SOUND_THEME_GET_PRIVATE(theme);
+
+	if (filename != NULL)g_hash_table_replace(priv->sound_files,
                  	             g_strdup(event),
                         	     g_strdup(filename));
 	else g_hash_table_remove(priv->sound_files, event);
