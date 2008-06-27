@@ -1,5 +1,5 @@
 /**
- * @file oim.c 
+ * @file oim.c
  * 	get and send MSN offline Instant Message via SOAP request
  *	Author
  * 		MaYuan<mayuan2006@gmail.com>
@@ -91,7 +91,7 @@ msn_oim_new_send_req(const char *from_member, const char*friendname,
 	const char* to_member, const char *msg)
 {
 	MsnOimSendReq *request;
-	
+
 	request = g_new0(MsnOimSendReq, 1);
 	request->from_member	= g_strdup(from_member);
 	request->friendname		= g_strdup(friendname);
@@ -109,7 +109,7 @@ msn_oim_free_send_req(MsnOimSendReq *req)
 	g_free(req->friendname);
 	g_free(req->to_member);
 	g_free(req->oim_msg);
-	
+
 	g_free(req);
 }
 
@@ -121,10 +121,10 @@ static gchar *
 msn_oim_msg_to_str(MsnOim *oim, const char *body)
 {
 	char *oim_body,*oim_base64;
-	
-	purple_debug_info("MSN OIM","encode OIM Message...\n");	
+
+	purple_debug_info("MSN OIM","encode OIM Message...\n");
 	oim_base64 = purple_base64_encode((const guchar *)body, strlen(body));
-	purple_debug_info("MSN OIM","encoded base64 body:{%s}\n",oim_base64);	
+	purple_debug_info("MSN OIM","encoded base64 body:{%s}\n",oim_base64);
 	oim_body = g_strdup_printf(MSN_OIM_MSG_TEMPLATE,
 				oim->run_id,oim->send_seq,oim_base64);
 	g_free(oim_base64);
@@ -199,8 +199,6 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 			}
 		}
 	}
-
-	msn_oim_free_send_req(msg);
 }
 
 void
@@ -215,7 +213,7 @@ msn_oim_prep_send_msg_info(MsnOim *oim, const char *membername,
 }
 
 /*post send single message request to oim server*/
-void 
+void
 msn_oim_send_msg(MsnOim *oim)
 {
 	MsnOimSendReq *oim_request;
@@ -335,7 +333,7 @@ msn_oim_parse_timestamp(const char *timestamp)
 		gboolean offset_positive = TRUE;
 		int tzhrs;
 		int tzmins;
-		
+
 		for (t.tm_mon = 0;
 			 months[t.tm_mon] != NULL &&
 				 strcmp(months[t.tm_mon], month_str) != 0; t.tm_mon++);
@@ -464,7 +462,7 @@ msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	}
 }
 
-/* parse the oim XML data 
+/* parse the oim XML data
  * and post it to the soap server to get the Offline Message
  * */
 void

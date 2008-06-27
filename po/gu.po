@@ -3625,7 +3625,7 @@ msgstr "છેલ્લું નામ"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "ઇ-મેઇલ"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:360
@@ -3659,17 +3659,6 @@ msgstr "Bonjour પ્રોટોકોલ પ્લગઈન"
 #, fuzzy
 msgid "Purple Person"
 msgstr "નવી વ્યક્તિ"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:662
-#: ../libpurple/protocols/gg/gg.c:477
-#: ../libpurple/protocols/jabber/jabber.c:932
-#: ../libpurple/protocols/silc/silc.c:770
-#: ../libpurple/protocols/silc/silc.c:1011
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-#, fuzzy
-msgid "E-mail"
-msgstr "ઈ-મેઈલ:"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5395,7 +5384,7 @@ msgstr "કોઇપણ મળતાં જબાર વપરાશકર્ત
 #: ../libpurple/protocols/novell/novell.c:1488
 #: ../libpurple/protocols/oscar/oscar.c:3714
 #: ../libpurple/protocols/oscar/oscar.c:3723
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "ઇ-મેઇલ સરનામું"
 
 #: ../libpurple/protocols/jabber/buddy.c:2410
@@ -6474,7 +6463,7 @@ msgstr "વાક્યરચના ક્ષતિ (સંભવિત રી�
 
 #: ../libpurple/protocols/msn/error.c:46
 #, c-format
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "અયોગ્ય ઈ-મેઈલ સરનામું"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7038,7 +7027,7 @@ msgstr "ઘર પાનું"
 
 #: ../libpurple/protocols/msn/msn.c:1656
 #, fuzzy
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "ખાનગી શીર્ષક"
 
 #: ../libpurple/protocols/msn/msn.c:1657
@@ -7107,7 +7096,7 @@ msgstr ""
 
 #: ../libpurple/protocols/msn/msn.c:1687
 #, fuzzy
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "ઇ-મેઇલ"
 
 #: ../libpurple/protocols/msn/msn.c:1688
@@ -8786,7 +8775,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2439
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8975,12 +8964,12 @@ msgstr "સ્ક્રીન નામ (_S)"
 
 #: ../libpurple/protocols/oscar/oscar.c:3948
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "ઈ-મેઈલ સરનામા %s માટે કોઈ પરિણામો મળ્યા નથી"
 
 #: ../libpurple/protocols/oscar/oscar.c:3969
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "તમને %s ની ખાતરી કરવા માટે પૂછતો ઈ-મેઈલ મળવો જોઈએ."
 
 #: ../libpurple/protocols/oscar/oscar.c:3971
@@ -9020,7 +9009,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4014
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "ક્ષતિ 0x%04x: ઈ-મેઈલ સરનામું બદલવામાં અસમર્થ કારણ કે આ સ્ક્રીન નામ માટેની અરજી પહેલાથી "
@@ -9029,7 +9018,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4017
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "ક્ષતિ 0x%04x: ઈ-મેઈલ સરનામું બદલવામાં અસમર્થ કારણ કે આપેલ સરનામાના ઘણા સ્ક્રીન નામો "
@@ -9038,7 +9027,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4020
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr "ક્ષતિ 0x%04x: ઈ-મેઈલ સરનામું બદલવામાં અસમર્થ કારણ કે આપેલ સરનામું અગોગ્ય છે."
 
@@ -9049,7 +9038,7 @@ msgstr "ક્ષતિ 0x%04x: અજ્ઞાત ક્ષતિ."
 
 #: ../libpurple/protocols/oscar/oscar.c:4033
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "%s માટેનું ઈ-મેઈલ સરનામું %s છે"
 
 #: ../libpurple/protocols/oscar/oscar.c:4035
@@ -9326,15 +9315,15 @@ msgstr ""
 "પુનઃ-અરજી કરો\" પસંદ કરીને."
 
 #: ../libpurple/protocols/oscar/oscar.c:6231
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "ઈ-મેઈલ દ્વારા વ્યક્તિ શોધો"
 
 #: ../libpurple/protocols/oscar/oscar.c:6232
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "ઈ-મેઈલ સરનામા દ્વારા વ્યક્તિ માટે શોધ"
 
 #: ../libpurple/protocols/oscar/oscar.c:6233
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "તમે જે વ્યક્તિ માટે શોધ કરી રહ્યા હોય તેનું ઈ-મેઈલ સરનામું લખો."
 
 #: ../libpurple/protocols/oscar/oscar.c:6236
@@ -9367,12 +9356,12 @@ msgstr "ખાતાની ખાતરી"
 
 #: ../libpurple/protocols/oscar/oscar.c:6430
 #, fuzzy
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "વર્તમાનમાં રજીસ્ટર થયેલ સરનામાને દર્શાવો"
 
 #: ../libpurple/protocols/oscar/oscar.c:6434
 #, fuzzy
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "વર્તમાનમાં રજીસ્ટર થયેલ સરનામાને બદલો..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6441
@@ -9381,7 +9370,7 @@ msgstr "સત્તાધિકરણ માટે રાહ જોઈ રહ�
 
 #: ../libpurple/protocols/oscar/oscar.c:6447
 #, fuzzy
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "ઈ-મેઈલ દ્વારા વ્યક્તિ માટે શોધ કરો..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6452
@@ -9470,10 +9459,6 @@ msgstr ""
 #, fuzzy
 msgid "College"
 msgstr "ભેગું કરો (_C)"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "ઈમેઈલ"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 #, fuzzy
@@ -12308,7 +12293,7 @@ msgstr "વપરાશકર્તા નામ: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:362
 #: ../libpurple/protocols/silc10/util.c:359
 #, fuzzy, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "ઈમેઈલ: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:364
@@ -12659,7 +12644,7 @@ msgstr "ડિરેક્ટરી સેવા કામચલાઉ રીત
 
 #: ../libpurple/protocols/toc/toc.c:530
 #, c-format
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "ઈ-મેઈલ જોવાનું પ્રતિબંધિત છે."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15623,7 +15608,7 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "જ્યારે માઉસ તેના પર લઇ જવાય ત્યારનો હાયપરલીંકો દોરવા માટેનો રંગ."
 
 #: ../pidgin/gtkimhtml.c:1598
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "ઈ-મેઈલ સરનામાની નકલ કરો (_C)"
 
 #: ../pidgin/gtkimhtml.c:1610
@@ -16055,8 +16040,8 @@ msgstr[1] "%s પાસે %d નવા સંદેશાઓ છે."
 
 #: ../pidgin/gtknotify.c:564
 #, c-format
-msgid "<b>You have %d new e-mail.</b>"
-msgid_plural "<b>You have %d new e-mails.</b>"
+msgid "<b>You have %d new email.</b>"
+msgid_plural "<b>You have %d new emails.</b>"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -17358,7 +17343,7 @@ msgstr "વ્યક્તિ સાંકળો (_A)"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "ઇ-મેલ મોકલવામાં અસમર્થ."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -17366,7 +17351,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "PATHમાં ઇવોલ્યુશન કાર્યક્રમ મળ્યો નહી."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -17374,7 +17359,7 @@ msgid "Add to Address Book"
 msgstr "સરનામા પુસ્તિકામાં ઉમેરો"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "ઇ-મેઇલ મોકલો"
 
 #. Configuration frame
@@ -17432,7 +17417,7 @@ msgid "Last name:"
 msgstr "છેલ્લું નામ:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "ઈ-મેઈલ:"
 
 #. *< type
@@ -19029,7 +19014,7 @@ msgstr ""
 #~ msgid "Check Mail"
 #~ msgstr "મેઈલ ચકાસો"
 
-#~ msgid "Check e-mail every X seconds.\n"
+#~ msgid "Check email every X seconds.\n"
 #~ msgstr "દર X સેકન્ડે ઈ-મેઈલ ચકાસો.\n"
 
 #~ msgid "Auto-login"

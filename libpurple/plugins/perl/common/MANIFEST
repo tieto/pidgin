@@ -28,6 +28,7 @@ SSLConn.xs
 SavedStatuses.xs
 Server.xs
 Signal.xs
+Smiley.xs
 Sound.xs
 Status.xs
 Stringref.xs

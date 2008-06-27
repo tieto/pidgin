@@ -745,8 +745,12 @@ x509_ca_init(void)
 		x509_ca_paths = g_list_append(NULL, g_build_filename(DATADIR,
 						   "ca-certs", NULL));
 #else
+# ifdef SSL_CERTIFICATES_DIR
+		x509_ca_paths = g_list_append(NULL, SSL_CERTIFICATES_DIR);
+# else
 		x509_ca_paths = g_list_append(NULL, g_build_filename(DATADIR,
 						   "purple", "ca-certs", NULL));
+# endif
 #endif
 	}
 
@@ -787,8 +791,7 @@ x509_ca_locate_cert(GList *lst, const gchar *dn)
 
 	for (cur = lst; cur; cur = cur->next) {
 		x509_ca_element *el = cur->data;
-		/* TODO: Unsafe? */
-		if ( !strcmp(dn, el->dn) ) {
+		if (el->dn && !strcmp(dn, el->dn)) {
 			return el;
 		}
 	}

@@ -32,6 +32,9 @@
 #include "prefs.h"
 #include "util.h"
 
+#if (defined(__APPLE__) || defined (__unix__)) && !defined(__osf__)
+#define PURPLE_DNSQUERY_USE_FORK
+#endif
 /**************************************************************************
  * DNS query API
  **************************************************************************/
@@ -47,16 +50,16 @@ struct _PurpleDnsQueryData {
 	gpointer data;
 	guint timeout;
 
-#if defined(__unix__) || defined(__APPLE__)
+#if defined(PURPLE_DNSQUERY_USE_FORK)
 	PurpleDnsQueryResolverProcess *resolver;
-#elif defined _WIN32 /* end __unix__ || __APPLE__ */
+#elif defined _WIN32 /* end PURPLE_DNSQUERY_USE_FORK  */
 	GThread *resolver;
 	GSList *hosts;
 	gchar *error_message;
 #endif
 };
 
-#if defined(__unix__) || defined(__APPLE__)
+#if defined(PURPLE_DNSQUERY_USE_FORK)
 
 #define MAX_DNS_CHILDREN 4
 
@@ -131,7 +134,7 @@ purple_dnsquery_ui_resolve(PurpleDnsQueryData *query_data)
 	return FALSE;
 }
 
-#if defined(__unix__) || defined(__APPLE__)
+#if defined(PURPLE_DNSQUERY_USE_FORK)
 
 /*
  * Unix!
@@ -649,7 +652,7 @@ purple_dnsquery_a(const char *hostname, int port,
 	return query_data;
 }
 
-#elif defined _WIN32 /* end __unix__ || __APPLE__ */
+#elif defined _WIN32 /* end PURPLE_DNSQUERY_USE_FORK  */
 
 /*
  * Windows!
@@ -821,7 +824,7 @@ purple_dnsquery_a(const char *hostname, int port,
 	return query_data;
 }
 
-#else /* not __unix__ or __APPLE__ or _WIN32 */
+#else /* not PURPLE_DNSQUERY_USE_FORK or _WIN32 */
 
 /*
  * We weren't able to do anything fancier above, so use the
@@ -897,7 +900,7 @@ purple_dnsquery_a(const char *hostname, int port,
 	return query_data;
 }
 
-#endif /* not __unix__ or __APPLE__ or _WIN32 */
+#endif /* not PURPLE_DNSQUERY_USE_FORK or _WIN32 */
 
 void
 purple_dnsquery_destroy(PurpleDnsQueryData *query_data)
@@ -907,7 +910,7 @@ purple_dnsquery_destroy(PurpleDnsQueryData *query_data)
 	if (ops && ops->destroy)
 		ops->destroy(query_data);
 
-#if defined(__unix__) || defined(__APPLE__)
+#if defined(PURPLE_DNSQUERY_USE_FORK)
 	queued_requests = g_slist_remove(queued_requests, query_data);
 
 	if (query_data->resolver != NULL)
@@ -918,7 +921,7 @@ purple_dnsquery_destroy(PurpleDnsQueryData *query_data)
 		 * they just don't listen.
 		 */
 		purple_dnsquery_resolver_destroy(query_data->resolver);
-#elif defined _WIN32 /* end __unix__ || __APPLE__ */
+#elif defined _WIN32 /* end PURPLE_DNSQUERY_USE_FORK */
 	if (query_data->resolver != NULL)
 	{
 		/*
@@ -987,7 +990,7 @@ purple_dnsquery_init(void)
 void
 purple_dnsquery_uninit(void)
 {
-#if defined(__unix__) || defined(__APPLE__)
+#if defined(PURPLE_DNSQUERY_USE_FORK)
 	while (free_dns_children != NULL)
 	{
 		purple_dnsquery_resolver_destroy(free_dns_children->data);

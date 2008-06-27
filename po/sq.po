@@ -14,6 +14,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.0.2\n"
 "X-Poedit-Language: Albanian\n"
 "X-Poedit-Country: ALBANIA\n"
@@ -1189,7 +1190,7 @@ msgstr[1] "%s ka %d mesazhe të rinj."
 #: ../finch/gntnotify.c:225 ../pidgin/gtknotify.c:341
 #, fuzzy
 msgid "New Mail"
-msgstr "E-Mail"
+msgstr "Email"
 
 #: ../finch/gntnotify.c:290 ../pidgin/gtknotify.c:940
 #, c-format
@@ -3796,8 +3797,8 @@ msgstr "Mbiemër"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
-msgstr "E-Mail"
+msgid "Email"
+msgstr "Email"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:360
 #: ../libpurple/protocols/bonjour/bonjour.c:665
@@ -3841,17 +3842,6 @@ msgstr "Shtojcë Protokolli Bonjour"
 #, fuzzy
 msgid "Purple Person"
 msgstr "Person i Ri"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:662
-#: ../libpurple/protocols/gg/gg.c:477
-#: ../libpurple/protocols/jabber/jabber.c:932
-#: ../libpurple/protocols/silc/silc.c:770
-#: ../libpurple/protocols/silc/silc.c:1011
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-#, fuzzy
-msgid "E-mail"
-msgstr "E-mail:"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5635,13 +5625,13 @@ msgstr ""
 "Plotësoni një ose më tepër fusha për kërkim të cilitdo përdorues Jabber që "
 "ka përputhje."
 
-#  E-Mail Address
+#  Email Address
 #: ../libpurple/protocols/jabber/buddy.c:2401
 #: ../libpurple/protocols/novell/novell.c:1488
 #: ../libpurple/protocols/oscar/oscar.c:3714
 #: ../libpurple/protocols/oscar/oscar.c:3723
-msgid "E-Mail Address"
-msgstr "Vendndodhje E-Mail"
+msgid "Email Address"
+msgstr "Vendndodhje Email"
 
 #: ../libpurple/protocols/jabber/buddy.c:2410
 #: ../libpurple/protocols/jabber/buddy.c:2411
@@ -6746,8 +6736,8 @@ msgstr "Gabim Sintakse (mundet një e metë Gaim-i)"
 
 #: ../libpurple/protocols/msn/error.c:46
 #, c-format
-msgid "Invalid e-mail address"
-msgstr "Vendndodhje e-mail e pavlefshme"
+msgid "Invalid email address"
+msgstr "Vendndodhje email e pavlefshme"
 
 #: ../libpurple/protocols/msn/error.c:49
 #, c-format
@@ -7312,7 +7302,7 @@ msgstr "Faqe Hyrëse"
 
 #: ../libpurple/protocols/msn/msn.c:1656
 #, fuzzy
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Titullin Vetjak"
 
 #: ../libpurple/protocols/msn/msn.c:1657
@@ -7381,8 +7371,8 @@ msgstr ""
 
 #: ../libpurple/protocols/msn/msn.c:1687
 #, fuzzy
-msgid "Work E-Mail"
-msgstr "E-Mail"
+msgid "Work Email"
+msgstr "Email"
 
 #: ../libpurple/protocols/msn/msn.c:1688
 msgid "Work IM"
@@ -9131,12 +9121,12 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2439
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"Keni marrë një e-mail ICQ prej %s [%s]\n"
+"Keni marrë një email ICQ prej %s [%s]\n"
 "\n"
 "Mesazhi thotë:\n"
 "%s"
@@ -9326,13 +9316,13 @@ msgstr "Emër në ekran:"
 
 #: ../libpurple/protocols/oscar/oscar.c:3948
 #, c-format
-msgid "No results found for e-mail address %s"
-msgstr "Nuk u gjetën përfundime për vendndodhje e-mail %s"
+msgid "No results found for email address %s"
+msgstr "Nuk u gjetën përfundime për vendndodhje email %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3969
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
-msgstr "Duht t'ju vijë një e-mail me kërkesën për ripohim të %s."
+msgid "You should receive an email asking to confirm %s."
+msgstr "Duht t'ju vijë një email me kërkesën për ripohim të %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:3971
 msgid "Account Confirmation Requested"
@@ -9370,28 +9360,28 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4014
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
-"Gabim 0x%04x: I pazoti të ndryshoj vendndodhje e-mail sepse për këtë emër "
+"Gabim 0x%04x: I pazoti të ndryshoj vendndodhje email sepse për këtë emër "
 "ekrani ka tashmë një kërkesë në pritje."
 
 #: ../libpurple/protocols/oscar/oscar.c:4017
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
-"Gabim 0x%04x: I pazoti të ndryshoj vendndodhje e-mail sepse vendndodhja e "
+"Gabim 0x%04x: I pazoti të ndryshoj vendndodhje email sepse vendndodhja e "
 "dhënë ka shumë emra ekrani shoqëruar asaj."
 
 #: ../libpurple/protocols/oscar/oscar.c:4020
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
-"Gabim 0x%04x: I pazoti të ndryshoj vendndodhje e-mail sepse vendndodhja e "
+"Gabim 0x%04x: I pazoti të ndryshoj vendndodhje email sepse vendndodhja e "
 "dhënë është e pavlefshme."
 
 #: ../libpurple/protocols/oscar/oscar.c:4023
@@ -9401,8 +9391,8 @@ msgstr "Gabim 0x%04x: Gabim i panjohur."
 
 #: ../libpurple/protocols/oscar/oscar.c:4033
 #, c-format
-msgid "The e-mail address for %s is %s"
-msgstr "Vendndodhja e-mail për %s është %s"
+msgid "The email address for %s is %s"
+msgstr "Vendndodhja email për %s është %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4035
 msgid "Account Info"
@@ -9687,16 +9677,16 @@ msgstr ""
 "dhe përzgjedhur \"Rikërko Autorizim.\""
 
 #: ../libpurple/protocols/oscar/oscar.c:6231
-msgid "Find Buddy by E-Mail"
-msgstr "Gjej Shok nga E-mail-i"
+msgid "Find Buddy by Email"
+msgstr "Gjej Shok nga Email-i"
 
 #: ../libpurple/protocols/oscar/oscar.c:6232
-msgid "Search for a buddy by e-mail address"
-msgstr "Kërko një shok me vendndodhje e-mail"
+msgid "Search for a buddy by email address"
+msgstr "Kërko një shok me vendndodhje email"
 
 #: ../libpurple/protocols/oscar/oscar.c:6233
-msgid "Type the e-mail address of the buddy you are searching for."
-msgstr "Shtypni vendndodhjen e-mail të shokut që po kërkoni."
+msgid "Type the email address of the buddy you are searching for."
+msgstr "Shtypni vendndodhjen email të shokut që po kërkoni."
 
 #: ../libpurple/protocols/oscar/oscar.c:6236
 #, fuzzy
@@ -9728,12 +9718,12 @@ msgstr "Ripohoni Llogari"
 
 #: ../libpurple/protocols/oscar/oscar.c:6430
 #, fuzzy
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Shfaq Vendndodhje të Regjistruar për Çastin"
 
 #: ../libpurple/protocols/oscar/oscar.c:6434
 #, fuzzy
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Ndrysho Vendndodhje të Regjistruar për Çastin..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6441
@@ -9742,8 +9732,8 @@ msgstr "Shfaq Shokë që Presin Autorizim"
 
 #: ../libpurple/protocols/oscar/oscar.c:6447
 #, fuzzy
-msgid "Search for Buddy by E-Mail Address..."
-msgstr "Kërko për Shokë sipas E-mail-i..."
+msgid "Search for Buddy by Email Address..."
+msgstr "Kërko për Shokë sipas Email-i..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6452
 msgid "Search for Buddy by Information"
@@ -9833,10 +9823,6 @@ msgstr ""
 #, fuzzy
 msgid "College"
 msgstr "_Tkurr"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "Email"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 #, fuzzy
@@ -12715,7 +12701,7 @@ msgstr "Emër Përdoruesi: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:362
 #: ../libpurple/protocols/silc10/util.c:359
 #, fuzzy, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "EMail: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:364
@@ -13088,8 +13074,8 @@ msgstr "Shërbim drejtorish përkohësisht i pamundur."
 
 #: ../libpurple/protocols/toc/toc.c:530
 #, c-format
-msgid "E-mail lookup restricted."
-msgstr "Kërkim e-mail-i i ndaluar."
+msgid "Email lookup restricted."
+msgstr "Kërkim email-i i ndaluar."
 
 #: ../libpurple/protocols/toc/toc.c:533
 #, c-format
@@ -16128,8 +16114,8 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "Ngjyrë për vizatim tejlidhjesh kur mbi to kalon miu."
 
 #: ../pidgin/gtkimhtml.c:1598
-msgid "_Copy E-Mail Address"
-msgstr "_Kopjo Vendndodhje E-Mail"
+msgid "_Copy Email Address"
+msgstr "_Kopjo Vendndodhje Email"
 
 #: ../pidgin/gtkimhtml.c:1610
 msgid "_Open Link in Browser"
@@ -16568,8 +16554,8 @@ msgstr[1] "%s ka %d mesazhe të rinj."
 
 #: ../pidgin/gtknotify.c:564
 #, c-format
-msgid "<b>You have %d new e-mail.</b>"
-msgid_plural "<b>You have %d new e-mails.</b>"
+msgid "<b>You have %d new email.</b>"
+msgid_plural "<b>You have %d new emails.</b>"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -17913,15 +17899,15 @@ msgstr "_Shoqëro Shok"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
-msgstr "I pazoti të dërgoj e-mail."
+msgid "Unable to send email"
+msgstr "I pazoti të dërgoj email."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
 msgid "The evolution executable was not found in the PATH."
 msgstr "I ekzekutueshmi për Evolution nuk u gjet në PATH."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -17929,8 +17915,8 @@ msgid "Add to Address Book"
 msgstr "Shto te Libër Vendndodhjesh"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
-msgstr "Dërgo E-Mail"
+msgid "Send Email"
+msgstr "Dërgo Email"
 
 #. Configuration frame
 #: ../pidgin/plugins/gevolution/gevolution.c:412
@@ -17999,8 +17985,8 @@ msgid "Last name:"
 msgstr "Mbiemër:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
-msgstr "E-mail:"
+msgid "Email:"
+msgstr "Email:"
 
 #  *< api_version
 #  *< type

@@ -1072,7 +1072,7 @@ silcpurple_whois_more(SilcClientEntry client_entry, gint id)
 			for (i = 0; i < vcard.num_emails; i++) {
 				if (vcard.emails[i].address)
 					g_string_append_printf(s, "%s:\t\t%s\n",
-							       _("E-Mail"),
+							       _("Email"),
 							       vcard.emails[i].address);
 			}
 			if (vcard.note)

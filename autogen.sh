@@ -79,7 +79,7 @@ run_or_die () { # beotch
 	CMD=$1
 	shift
 
-	OUTPUT=`mktemp autogen-XXXX`
+	OUTPUT=`mktemp autogen-XXXXXX`
 
 	printf "%s" "running ${CMD} ${@}... "
 	${CMD} ${@} >${OUTPUT} 2>&1
@@ -91,9 +91,7 @@ run_or_die () { # beotch
 		exit 1
 	else
 		echo "done."
-		if [ `stat --printf="%s" ${OUTPUT}` -ge 0 ] ; then
-			cat ${OUTPUT}
-		fi
+		cat ${OUTPUT}
 
 		rm -f ${OUTPUT}
 	fi

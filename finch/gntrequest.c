@@ -104,7 +104,8 @@ action_performed(GntWidget *button, gpointer data)
 static GntWidget *
 setup_button_box(GntWidget *win, gpointer userdata, gpointer cb, gpointer data, ...)
 {
-	GntWidget *box, *button;
+	GntWidget *box;
+	GntWidget *button = NULL;
 	va_list list;
 	const char *text;
 	gpointer callback;
@@ -124,7 +125,8 @@ setup_button_box(GntWidget *win, gpointer userdata, gpointer cb, gpointer data, 
 		g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(cb), data);
 	}
 
-	g_object_set_data(G_OBJECT(button), "cancellation-function", GINT_TO_POINTER(TRUE));
+	if (button)
+		g_object_set_data(G_OBJECT(button), "cancellation-function", GINT_TO_POINTER(TRUE));
 
 	va_end(list);
 	return box;

@@ -1,6 +1,42 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.x.x:
+version 2.5.0 (??/??/2008):
+	libpurple:
+		Added:
+		* Connection flag PURPLE_CONNECTION_ALLOW_CUSTOM_SMILEY to indicate
+		  that the connection supports sending and receiving custom smileys.
+		* PurpleSmiley and the Smiley API.
+		* purple_serv_got_join_chat_failed
+		* chat-join-failed signal (see conversation-signals.dox)
+		* chat-invite-blocked and blocked-im-msg signals (see
+		  converation-signals.dox) (Thanks to Stefan Ott)
+		* purple_blist_update_node_icon
+		* purple_buddy_icons_node_has_custom_icon
+		* purple_buddy_icons_node_find_custom_icon
+		* purple_buddy_icons_node_set_custom_icon
+		* purple_buddy_icons_node_set_custom_icon_from_file
+		* purple_notify_user_info_prepend_section_break
+		* purple_notify_user_info_prepend_section_header
+
+		Deprecated:
+		* purple_blist_update_buddy_icon
+		* purple_buddy_icons_has_custom_icon
+		* purple_buddy_icons_find_custom_icon
+		* purple_buddy_icons_set_custom_icon
+		* pidgin_set_custom_buddy_icon
+
+	pidgin:
+		Added:
+		* gtk_imhtml_smiley_create, gtk_imhtml_smiley_reload and
+		  gtk_imhtml_smiley_destroy to deal with GtkIMHtmlSmiley's.
+		* pidgin_pixbuf_from_imgstore to create a GdkPixbuf from a
+		  PurpleStoredImage.
+		* pidgin_themes_smiley_themeize_custom to associate custom smileys to
+		  a GtkIMHtml widget.
+		* GTK_IMHTML_CUSTOM_SMILEY flag for GtkIMHtml.
+		* GTK+ Custom Smiley API.
+
+version 2.4.2 (05/17/2008):
 	perl:
 		Added:
 		* Purple::Prefs::get_children_names.
@@ -11,6 +47,9 @@ version 2.x.x:
 		* Callbacks to Purple::Util::fetch_url and the
 		  Purple::Request::* functions can now be specified as both
 		  strings (the name of the callback function) and as coderefs.
+	Finch:
+		libgnt:
+		* Added gnt_bindable_check_key to check if a keystroke is bound.
 
 version 2.4.0 (02/29/2008):
 	libpurple:

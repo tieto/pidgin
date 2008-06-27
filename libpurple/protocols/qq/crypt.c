@@ -296,3 +296,20 @@ gint qq_decrypt(const guint8 *const instr, gint instrlen,
 	}
 	return 1;
 }
+
+/* return 1 is succeed, otherwise return 0
+gint qq_crypt(gint flag,
+		const guint8 *const instr, gint instrlen, 
+		const guint8 *const key, 
+		guint8 *outstr, gint *outstrlen_ptr)
+{
+	if (flag == DECRYPT)
+		return qq_decrypt(instr, instrlen, key, outstr, outstrlen_ptr);
+	else if (flag == ENCRYPT)
+		qq_encrypt(instr, instrlen, key, outstr, outstrlen_ptr);
+	else 
+		return 0;
+
+	return 1;
+}
+*/

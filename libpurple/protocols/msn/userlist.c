@@ -48,7 +48,7 @@ msn_accept_add_cb(gpointer data)
 	{
 		MsnSession *session = pa->gc->proto_data;
 		MsnUserList *userlist = session->userlist;
-		
+
 		msn_userlist_add_buddy_to_list(userlist, pa->who, MSN_LIST_AL);
 
 		msn_del_contact_from_list(session->contact, NULL, pa->who, MSN_LIST_PL);
@@ -127,7 +127,7 @@ msn_userlist_user_is_in_list(MsnUser *user, MsnListId list_id)
 
 	if (user == NULL)
 		return FALSE;
-	
+
 	list_op = 1 << list_id;
 
 	if (user->list_op & list_op)
@@ -237,7 +237,7 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
  		if (convo) {
  			PurpleBuddy *buddy;
  			char *msg;
- 
+
  			buddy = purple_find_buddy(account, passport);
  			msg = g_strdup_printf(
  				_("%s has added you to his or her buddy list."),
@@ -246,7 +246,7 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
  				PURPLE_MESSAGE_SYSTEM, time(NULL));
  			g_free(msg);
  		}
- 
+
 		if (!(user->list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP)))
 		{
 			/*
@@ -341,7 +341,7 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 
 	passport = msn_user_get_passport(user);
 	store = msn_user_get_store_name(user);
-	
+
 	msn_user_set_op(user, list_op);
 
 	if (list_op & MSN_LIST_FL_OP)
@@ -407,7 +407,7 @@ msn_userlist_new(MsnSession *session)
 
 	userlist->session = session;
 	userlist->buddy_icon_requests = g_queue_new();
-	
+
 	/* buddy_icon_window is the number of allowed simultaneous buddy icon requests.
 	 * XXX With smarter rate limiting code, we could allow more at once... 5 was the limit set when
 	 * we weren't retrieiving any more than 5 per MSN session. */
@@ -644,12 +644,12 @@ void
 msn_userlist_rem_buddy(MsnUserList *userlist, const char *who)
 {
 	MsnUser *user = NULL;
-	
+
 	g_return_if_fail(userlist != NULL);
 	g_return_if_fail(userlist->session != NULL);
 	g_return_if_fail(userlist->session->contact != NULL);
 	g_return_if_fail(who != NULL);
-	
+
 	user = msn_userlist_find_user(userlist, who);
 
 	msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_FL);
@@ -669,9 +669,9 @@ msn_userlist_rem_buddy_from_list(MsnUserList *userlist, const char *who,
 	MsnListOp list_op = 1 << list_id;
 
 	user = msn_userlist_find_user(userlist, who);
-	
+
 	g_return_if_fail(user != NULL);
-	
+
 	if ( !msn_userlist_user_is_in_list(user, list_id)) {
 		list = lists[list_id];
 		purple_debug_info("MSN Userlist", "User %s is not in list %s, not removing.\n", who, list);
@@ -690,14 +690,14 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 	MsnUser *user;
 	MsnCallbackState *state = NULL;
 	const char *group_id = NULL, *new_group_name;
-	
+
 	new_group_name = group_name == NULL ? MSN_INDIVIDUALS_GROUP_NAME : group_name;
 
-	
+
 	g_return_if_fail(userlist != NULL);
 	g_return_if_fail(userlist->session != NULL);
 
-	
+
 	purple_debug_info("MSN Userlist", "Add user: %s to group: %s\n", who, new_group_name);
 
 	state = msn_callback_state_new(userlist->session);
@@ -709,9 +709,9 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 		/* only notify the user about problems adding to the friends list
 		 * maybe we should do something else for other lists, but it probably
 		 * won't cause too many problems if we just ignore it */
-		
+
 		char *str = g_strdup_printf(_("Unable to add \"%s\"."), who);
-		
+
 		purple_notify_error(NULL, NULL, str,
 				  _("The username specified is invalid."));
 		g_free(str);
@@ -725,7 +725,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 	{
 		/* Whoa, we must add that group first. */
 		purple_debug_info("MSN Userlist", "Adding user %s to a new group, creating group %s first\n", who, new_group_name);
-		
+
 		msn_callback_state_set_action(state, MSN_ADD_BUDDY);
 
 		msn_add_group(userlist->session, state, new_group_name);
@@ -733,9 +733,9 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 	} else {
 		msn_callback_state_set_guid(state, group_id);
 	}
-	
+
 	/* XXX: adding user here may not be correct (should add them in the
- 	 * ACK to the ADL command), but for now we need to make sure they exist  
+ 	 * ACK to the ADL command), but for now we need to make sure they exist
 	 * early enough that the ILN command doesn't screw us up */
 
 	user = msn_userlist_find_add_user(userlist, who, who);
@@ -751,7 +751,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 			return;
 		}
 	}
-			
+
 	purple_debug_info("MSN Userlist", "Adding user: %s to group id: %s\n", who, group_id);
 
 	msn_callback_state_set_action(state, MSN_ADD_BUDDY);
@@ -762,7 +762,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 }
 
 void
-msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who, 
+msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who,
 							MsnListId list_id)
 {
 	MsnUser *user = NULL;
@@ -770,9 +770,9 @@ msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who,
 	MsnListOp list_op = 1 << list_id;
 
 	g_return_if_fail(userlist != NULL);
-	
+
 	user = msn_userlist_find_add_user(userlist, who, who);
-	
+
 	/* First we're going to check if it's already there. */
 	if (msn_userlist_user_is_in_list(user, list_id))
 	{
@@ -780,16 +780,16 @@ msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who,
 		purple_debug_info("MSN Userlist", "User '%s' is already in list: %s\n", who, list);
 		return;
 	}
-	
+
 	//store_name = (user != NULL) ? get_store_name(user) : who;
-	
+
 	//purple_debug_info("MSN Userlist", "store_name = %s\n", store_name);
-	
+
 	/* XXX: see XXX above, this should really be done when we get the response from
 		the server */
-	
+
 	msn_user_set_op(user, list_op);
-	
+
 	msn_notification_add_buddy_to_list(userlist->session->notification, list_id, who);
 }
 
@@ -799,7 +799,7 @@ msn_userlist_add_buddy_to_group(MsnUserList *userlist, const char *who,
 {
 	MsnUser *user;
 	gchar * group_id;
-	
+
 	g_return_val_if_fail(userlist != NULL, FALSE);
 	g_return_val_if_fail(group_name != NULL, FALSE);
 	g_return_val_if_fail(who != NULL, FALSE);
@@ -815,7 +815,7 @@ msn_userlist_add_buddy_to_group(MsnUserList *userlist, const char *who,
 		purple_debug_error("MSN Userlist", "User %s not found!", who);
 		return FALSE;
 	}
-	
+
 	msn_user_add_group_id(user, group_id);
 
 	return TRUE;
@@ -832,7 +832,7 @@ msn_userlist_rem_buddy_from_group(MsnUserList *userlist, const char *who,
 	g_return_val_if_fail(userlist != NULL, FALSE);
 	g_return_val_if_fail(group_name != NULL, FALSE);
 	g_return_val_if_fail(who != NULL, FALSE);
-	
+
 	purple_debug_info("MSN Userlist","Removing buddy with passport %s from group %s\n", who, group_name);
 
 	if ( (group_id = msn_userlist_find_group_id(userlist, group_name)) == NULL) {
@@ -856,7 +856,7 @@ msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 {
 	const char *new_group_id;
 	MsnCallbackState *state;
-	
+
 	g_return_if_fail(userlist != NULL);
 	g_return_if_fail(userlist->session != NULL);
 	g_return_if_fail(userlist->session->contact != NULL);
@@ -870,11 +870,11 @@ msn_userlist_move_buddy(MsnUserList *userlist, const char *who,
 	new_group_id = msn_userlist_find_group_id(userlist, new_group_name);
 
 	if (new_group_id == NULL)
-	{		
+	{
 		msn_add_group(userlist->session, state, new_group_name);
 		return;
 	}
-	
+
 	/* add the contact to the new group, and remove it from the old one in
 	 * the callback
 	*/
@@ -928,6 +928,6 @@ msn_userlist_load(MsnSession *session)
 						(char *)l->data,NULL);
 		msn_user_set_op(user, MSN_LIST_BL_OP);
 	}
-	
+
 }
 

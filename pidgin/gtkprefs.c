@@ -879,9 +879,6 @@ escape_closes_conversation_cb(GtkWidget *w,
 	 */
 	if(!changed)
 		purple_debug_warning("gtkprefs", "Escape accel failed to change\n");
-
-	/* TODO: create pidgin_accels_schedule_save */
-	pidgin_save_accels_cb(NULL, 0, 0, NULL, NULL);
 }
 
 
@@ -919,8 +916,8 @@ keyboard_shortcuts(GtkWidget *page)
 	escape_closes_conversation_cb_id = g_signal_connect(checkbox,
 		"clicked", G_CALLBACK(escape_closes_conversation_cb), NULL);
 
-	g_signal_connect(map, "changed::" CONVERSATION_CLOSE_ACCEL_PATH,
-		G_CALLBACK(conversation_close_accel_changed_cb), checkbox);
+	g_signal_connect_object(map, "changed::" CONVERSATION_CLOSE_ACCEL_PATH,
+		G_CALLBACK(conversation_close_accel_changed_cb), checkbox, (GConnectFlags)0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), checkbox, FALSE, FALSE, 0);
 }
@@ -2004,16 +2001,16 @@ sound_page(void)
 	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 
-	button = gtk_button_new_with_label(_("Test"));
+	button = gtk_button_new_with_mnemonic(_("_Browse..."));
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(select_sound), NULL);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
+
+	button = gtk_button_new_with_mnemonic(_("Pre_view"));
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(test_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 
-	button = gtk_button_new_with_label(_("Reset"));
+	button = gtk_button_new_with_mnemonic(_("_Reset"));
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(reset_sound), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
-
-	button = gtk_button_new_with_label(_("Choose..."));
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(select_sound), NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 1);
 
 	gtk_widget_show_all(ret);

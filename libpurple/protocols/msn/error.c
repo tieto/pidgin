@@ -43,7 +43,7 @@ msn_error_get_text(unsigned int type, gboolean *debug)
 			break;
 		case 201:
 			g_snprintf(msg, sizeof(msg),
-					   _("Invalid e-mail address"));
+					   _("Invalid email address"));
 			break;
 		case 205:
 			g_snprintf(msg, sizeof(msg), _("User does not exist"));
@@ -259,7 +259,7 @@ msn_error_handle(MsnSession *session, unsigned int type)
 {
 	char buf[MSN_BUF_LEN];
 	gboolean debug;
-	
+
 	g_snprintf(buf, sizeof(buf), _("MSN Error: %s\n"),
 			   msn_error_get_text(type, &debug));
 	if (debug)

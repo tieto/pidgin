@@ -1028,13 +1028,13 @@ finch_sounds_show_all(void)
 
 	for (i = 0; i < PURPLE_NUM_SOUNDS; i++) {
 		FinchSoundEvent * event = &sounds[i];
-		
+
 		if (event->label == NULL) {
 			continue;
 		}
 
 		gnt_tree_add_choice(GNT_TREE(tree), GINT_TO_POINTER(i),
-			gnt_tree_create_row(GNT_TREE(tree), "", ""),
+			gnt_tree_create_row(GNT_TREE(tree), event->label, event->def),
 			NULL, NULL);
 	}
 

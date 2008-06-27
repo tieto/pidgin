@@ -102,7 +102,7 @@
 #include <gmodule.h>
 
 #ifdef PURPLE_PLUGINS
-# ifndef _WIN32
+# ifdef HAVE_DLFCN_H 
 #  include <dlfcn.h>
 # endif
 #endif
@@ -138,6 +138,14 @@
 #include <glib.h>
 #if !GLIB_CHECK_VERSION(2,4,0)
 #	define G_MAXUINT32 ((guint32) 0xffffffff)
+#endif
+
+#ifndef G_MAXSIZE
+#	if GLIB_SIZEOF_LONG == 8
+#		define G_MAXSIZE ((gsize) 0xffffffffffffffff)
+#	else
+#		define G_MAXSIZE ((gsize) 0xffffffff)
+#	endif
 #endif
 
 #if GLIB_CHECK_VERSION(2,6,0)

@@ -565,6 +565,7 @@ TOOLBAR_16 = \
 		toolbar/16/message-new.png \
 		toolbar/16/plugins.png \
 		toolbar/16/send-file.png \
+		toolbar/16/transfer.png \
 		toolbar/16/unblock.png
 
 TOOLBAR_22_SCALABLE = \

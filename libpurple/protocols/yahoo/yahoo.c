@@ -777,6 +777,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 				list = g_slist_append(list, im);
 				im->from = pair->value;
 				im->time = time(NULL);
+				im->utf8 = TRUE;
 			}
 			if (pair->key == 97)
 				if (im)
@@ -4383,7 +4384,7 @@ static PurplePluginProtocolInfo prpl_info =
 	yahoo_send_attention,
 	yahoo_attention_types,
 
-	/* padding */
+	sizeof(PurplePluginProtocolInfo),       /* struct_size */
 	NULL
 };
 

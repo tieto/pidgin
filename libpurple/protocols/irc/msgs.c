@@ -122,7 +122,11 @@ static void irc_connected(struct irc_conn *irc, const char *nick)
 
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	purple_debug(PURPLE_DEBUG_INFO, "irc", "Unrecognized message: %s\n", args[0]);
+	char *clean;
+        /* This, too, should be escaped somehow (smarter) */
+        clean = purple_utf8_salvage(args[0]);
+	purple_debug(PURPLE_DEBUG_INFO, "irc", "Unrecognized message: %s\n", clean);
+        g_free(clean);
 }
 
 void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, char **args)
@@ -211,7 +215,9 @@ void irc_msg_ban(struct irc_conn *irc, const char *name, const char *from, char 
 			/* This is an extended syntax, not in RFC 1459 */
 			int t1 = atoi(args[4]);
 			time_t t2 = time(NULL);
-			msg = g_strdup_printf(_("Ban on %s by %s, set %ld seconds ago"),
+			msg = g_strdup_printf(ngettext("Ban on %s by %s, set %ld second ago",
+						       "Ban on %s by %s, set %ld seconds ago",
+						       t2 - t1),
 			                      args[2], args[3], t2 - t1);
 		} else {
 			msg = g_strdup_printf(_("Ban on %s"), args[2]);
@@ -937,6 +943,8 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 	GSList *chats;
 	char *nick = irc_mask_nick(from);
 
+	irc->nickused = FALSE;
+
 	if (!gc) {
 		g_free(nick);
 		return;
@@ -985,17 +993,23 @@ void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, 
 	if (!args || !args[1])
 		return;
 
-	newnick = g_strdup(args[1]);
+	if (strlen(args[1]) < strlen(irc->reqnick) || irc->nickused)
+		newnick = g_strdup(args[1]);
+	else
+		newnick = g_strdup_printf("%s0", args[1]);
 	end = newnick + strlen(newnick) - 1;
 	/* try fallbacks */
 	if((*end < '9') && (*end >= '1')) {
 			*end = *end + 1;
 	} else *end = '1';
 
+	g_free(irc->reqnick);
+	irc->reqnick = newnick;
+	irc->nickused = TRUE;
+
 	buf = irc_format(irc, "vn", "NICK", newnick);
 	irc_send(irc, buf);
 	g_free(buf);
-	g_free(newnick);
 }
 
 void irc_msg_notice(struct irc_conn *irc, const char *name, const char *from, char **args)

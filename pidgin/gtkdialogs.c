@@ -67,16 +67,16 @@ struct artist {
 	char *email;
 };
 
-/* Order: Lead Developer, then Alphabetical by Last Name */
+/* Order: Alphabetical by Last Name */
 static const struct developer developers[] = {
-	{"Sean Egan",					N_("lead developer"), "sean.egan@gmail.com"},
 	{"Daniel 'datallah' Atallah",	N_("developer"), NULL},
 	{"John 'rekkanoryo' Bailey",	N_("developer"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
 	{"Thomas Butter",				N_("developer"), NULL},
 	{"Ka-Hing Cheung",				N_("developer"), NULL},
 	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
-	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
+	{"Mark 'KingAnt' Doliner",		N_("developer"), "mark@kingant.net"},
+	{"Sean Egan",					N_("developer"), "sean.egan@gmail.com"},
 	{"Casey Harkins",               N_("developer"),   NULL},
 	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
 	{"Richard 'rlaager' Laager",	N_("developer"), NULL},
@@ -102,6 +102,7 @@ static const struct developer patch_writers[] = {
 	{"Peter 'Fmoo' Ruibal",		NULL,	NULL},
 	{"Elliott 'QuLogic' Sales de Andrade",	NULL,	NULL},
 	{"Gabriel 'Nix' Schulhof", 	NULL, 	NULL},
+	{"Jorge 'Masca' Villaseñor", 	NULL, 	NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -131,6 +132,7 @@ static const struct developer retired_patch_writers[] = {
 
 /* Order: Code, then Alphabetical by Last Name */
 static const struct translator current_translators[] = {
+	{N_("Afrikaans"),           "af", "Samuel Murray", "afrikaans@gmail.com"},
 	{N_("Afrikaans"),           "af", "Friedel Wolff", "friedel@translate.org.za"},
 	{N_("Arabic"),              "ar", "Khaled Hosny", "khaledhosny@eglug.org"},
 	{N_("Belarusian Latin"),    "be@latin", "Ihar Hrachyshka", "ihar.hrachyshka@gmail.com"},
@@ -192,12 +194,13 @@ static const struct translator current_translators[] = {
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
 	{N_("Norwegian Nynorsk"),   "nn", "Yngve Spjeld Landro", "nynorsk@strilen.net"},
+	{N_("Occitan"),             "oc", "Yannig Marchegay", "yannig@marchegay.org"},
 	{N_("Punjabi"),             "pa", "Amanpreet Singh Alam", "aalam@users.sf.net"},
 	{N_("Polish"),              "pl", "Emil Nowak", "emil5@go2.pl"},
 	{N_("Polish"),              "pl", "Paweł Godlewski", "pawel@bajk.pl"},
 	{N_("Polish"),              "pl", "Krzysztof Foltman", "krzysztof@foltman.com"},
 	{N_("Portuguese"),          "pt", "Duarte Henriques", "duarte_henriques@myrealbox.com"},
-	{N_("Portuguese-Brazil"),   "pt_BR", "Maurício de Lemos Rodrigues Collares Neto", "mauricioc@gmail.com"},
+	{N_("Portuguese-Brazil"),   "pt_BR", "Rodrigo Luiz Marques Flores", "rodrigomarquesflores@gmail.com"},
 	{N_("Pashto"),              "ps", "Kashif Masood", "masudmails@yahoo.com"},
 	{N_("Romanian"),            "ro", "Mişu Moldovan", "dumol@gnome.ro"},
 	{N_("Russian"),             "ru", "Dmitry Beloglazov", "dmaa@users.sf.net"},
@@ -260,6 +263,7 @@ static const struct translator past_translators[] = {
 	{N_("Bokmål Norwegian"),    "nb", "Hallvard Glad", "hallvard.glad@gmail.com"},
 	{N_("Bokmål Norwegian"),    "nb", "Petter Johan Olsen", NULL},
 	{N_("Polish"),              "pl", "Przemysław Sułek", NULL},
+	{N_("Portuguese-Brazil"),   "pt_BR", "Maurício de Lemos Rodrigues Collares Neto", "mauricioc@gmail.com"},
 	{N_("Russian"),             "ru", "Alexandre Prokoudine", NULL},
 	{N_("Russian"),             "ru", "Sergey Volozhanin", NULL},
 	{N_("Slovak"),              "sk", "Daniel Režný", NULL},
@@ -628,7 +632,7 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 #endif
 
 #ifndef _WIN32
-#ifdef HAVE_LIBNM
+#ifdef HAVE_NETWORKMANAGER
 	g_string_append(str, "    <b>NetworkManager:</b> Enabled<br/>");
 #else
 	g_string_append(str, "    <b>NetworkManager:</b> Disabled<br/>");
@@ -682,7 +686,7 @@ if (purple_plugins_find_with_id("core-tcl") != NULL) {
 #ifdef LIBZEPHYR_EXT
 	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> External<br/>");
 #else
-	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> Not External<br/>");
+	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> Internal<br/>");
 #endif
 
 #ifdef ZEPHYR_USES_KERBEROS
