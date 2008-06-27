@@ -253,7 +253,9 @@ jabber_jingle_session_destroy(JingleSession *sess)
 	GList *contents = g_hash_table_get_values(sess->contents);
 	g_hash_table_remove(sess->js->sessions, sess->id);
 	g_free(sess->id);
-	g_object_unref(sess->media);
+
+	if (sess->media)
+		g_object_unref(sess->media);
 
 	for (; contents; contents = contents->next)
 		jabber_jingle_session_destroy_content(contents->data);
@@ -1187,10 +1189,13 @@ jabber_jingle_session_handle_session_accept(JabberStream *js, xmlnode *packet)
 
 		purple_debug_info("jingle", "Setting remote codecs on stream\n");
 
-		purple_media_set_remote_codecs(session->media,
-					       xmlnode_get_attrib(content, "name"),
-					       jabber_jingle_session_get_remote_jid(session),
-					       remote_codecs);
+		if (!purple_media_set_remote_codecs(session->media,
+						    xmlnode_get_attrib(content, "name"),
+						    jabber_jingle_session_get_remote_jid(session),
+						    remote_codecs)) {
+			purple_media_reject(jabber_jingle_session_get_media(session));
+			return;
+		}
 
 		codec_intersection = purple_media_get_negotiated_codecs(session->media,
 									xmlnode_get_attrib(content, "name"));

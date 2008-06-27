@@ -134,7 +134,8 @@ void purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id
 GList *purple_media_get_local_candidates(PurpleMedia *media, const gchar *sess_id, const gchar *name);
 FsCandidate *purple_media_get_local_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name);
 FsCandidate *purple_media_get_remote_candidate(PurpleMedia *media, const gchar *sess_id, const gchar *name);
-void purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id, const gchar *name, GList *codecs);
+gboolean purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id,
+					const gchar *name, GList *codecs);
 
 gboolean purple_media_candidates_prepared(PurpleMedia *media, const gchar *name);
 

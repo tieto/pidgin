@@ -379,15 +379,30 @@ purple_media_add_session(PurpleMedia *media, PurpleMediaSession *session)
 	g_hash_table_insert(media->priv->sessions, g_strdup(session->id), session);
 }
 
+static gboolean
+purple_media_remove_session(PurpleMedia *media, PurpleMediaSession *session)
+{
+	return g_hash_table_remove(media->priv->sessions, session->id);
+}
+
 static FsParticipant *
 purple_media_add_participant(PurpleMedia *media, const gchar *name)
 {
 	FsParticipant *participant = purple_media_get_participant(media, name);
+	GError *err = NULL;
 
 	if (participant)
 		return participant;
 
-	participant = fs_conference_new_participant(media->priv->conference, g_strdup(name), NULL);
+	participant = fs_conference_new_participant(media->priv->conference,
+						    g_strdup(name), &err);
+
+	if (err) {
+		purple_debug_error("media", "Error creating participant: %s\n",
+				   err->message);
+		g_error_free(err);
+		return NULL;
+	}
 
 	if (!media->priv->participants) {
 		purple_debug_info("media", "Creating hash table for participants\n");
@@ -988,13 +1003,31 @@ purple_media_add_stream_internal(PurpleMedia *media, const gchar *sess_id,
 		purple_media_add_session(media, session);
 	}
 
-	participant = purple_media_add_participant(media, who);
+	if (!(participant = purple_media_add_participant(media, who))) {
+		purple_media_remove_session(media, session);
+		g_free(session);
+		return FALSE;
+	}
 
 	stream = purple_media_session_get_stream(session, who);
 
 	if (!stream) {
+		GError *err = NULL;
+
 		stream = fs_session_new_stream(session->session, participant, 
-					       type_direction, transmitter, 0, NULL, NULL);
+					       type_direction, transmitter, 0,
+					       NULL, &err);
+
+		if (err) {
+			purple_debug_error("media", "Error creating stream: %s\n",
+					   err->message);
+			g_error_free(err);
+			g_object_unref(participant);
+			purple_media_remove_session(media, session);
+			g_free(session);
+			return FALSE;
+		}
+
 		purple_media_insert_stream(session, who, stream);
 		/* callback for new local candidate (new local candidate retreived) */
 		g_signal_connect(G_OBJECT(stream),
@@ -1091,8 +1124,16 @@ purple_media_add_remote_candidates(PurpleMedia *media, const gchar *sess_id,
 	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
 	FsStream *stream = purple_media_session_get_stream(session, name);
 	GList *candidates = remote_candidates;
-	for (; candidates; candidates = candidates->next)
-		fs_stream_add_remote_candidate(stream, candidates->data, NULL);
+	for (; candidates; candidates = candidates->next) {
+		GError *err = NULL;
+		fs_stream_add_remote_candidate(stream, candidates->data, &err);
+
+		if (err) {
+			purple_debug_error("media", "Error adding remote candidate: %s\n",
+					   err->message);
+			g_error_free(err);
+		}
+	}
 }
 
 FsCandidate *
@@ -1109,12 +1150,22 @@ purple_media_get_remote_candidate(PurpleMedia *media, const gchar *sess_id, cons
 	return session->remote_candidate;
 }
 
-void
+gboolean
 purple_media_set_remote_codecs(PurpleMedia *media, const gchar *sess_id, const gchar *name, GList *codecs)
 {
 	PurpleMediaSession *session = purple_media_get_session(media, sess_id);
 	FsStream *stream = purple_media_session_get_stream(session, name);
-	fs_stream_set_remote_codecs(stream, codecs, NULL);
+	GError *err = NULL;
+
+	fs_stream_set_remote_codecs(stream, codecs, &err);
+
+	if (err) {
+		purple_debug_error("media", "Error setting remote codecs: %s\n",
+				   err->message);
+		g_error_free(err);
+		return FALSE;
+	}
+	return TRUE;
 }
 
 gboolean

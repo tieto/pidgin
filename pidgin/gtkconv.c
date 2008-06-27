@@ -7707,7 +7707,8 @@ menu_initiate_video_call_cb(gpointer data, guint action, GtkWidget *widget)
 				    purple_conversation_get_name(conv),
 				    PURPLE_MEDIA_VIDEO);
 
-	purple_media_wait(media);
+	if (media)
+		purple_media_wait(media);
 }
 
 static void
@@ -7722,7 +7723,8 @@ menu_initiate_audio_video_call_cb(gpointer data, guint action, GtkWidget *widget
 				    purple_conversation_get_name(conv),
 				    PURPLE_MEDIA_AUDIO | PURPLE_MEDIA_VIDEO);
 
-	purple_media_wait(media);
+	if (media)
+		purple_media_wait(media);
 }
 
 static void
