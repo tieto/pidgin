@@ -2301,7 +2301,7 @@ static void yahoo_p2p_disconnect_destroy_data(gpointer data)
 	close(user_data->source);
 	g_free(user_data->host_ip);
 	g_free(user_data->host_username);
-	g_free(user_data);	
+	g_free(user_data);
 }
 
 /*write pkt to the source*/
@@ -2495,7 +2495,7 @@ static void yahoo_p2p_init_cb(gpointer data, gint source, const gchar *error_mes
 		5, user_data->host_username,
 		241, 0,		/*Protocol identifier*/
 		49, "PEERTOPEER",
-		13, 1);		/*we receive key13=0, we send key13=1*/
+		13, 1);		/*we receive key13= 0 or 2, we send key13=1*/
 
 	yahoo_p2p_write_pkt(source, pkt_to_send);	/*build raw packet and send*/
 	yahoo_packet_free(pkt_to_send);
@@ -2509,9 +2509,9 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 	guchar *decoded;
 	gsize len;
 	gint val_13 = 0;
-	gint val_11;
+	gint val_11 = 0;
 	PurpleAccount *account;
-	struct yahoo_p2p_data *user_data = g_new0(struct yahoo_p2p_data, 1);
+	YahooFriend *f;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -2521,9 +2521,7 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 			/* our identity */
 			break;
 		case 4:
-			who = (char *)g_malloc(strlen(pair->value));
-			strcpy(who, pair->value);
-			user_data->host_username = who;
+			who = pair->value;
 			break;
 		case 1:
 			/* who again, the master identity this time? */
@@ -2535,11 +2533,11 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 13:
 			val_13 = strtol(pair->value, NULL, 10);
-			user_data->val_13 = val_13;
 			break;
 		case 11:
-			val_11 = strtol(pair->value, NULL, 10);		/*sent with IMs and notifications over p2p*/
-			user_data->val_11 = val_11;
+			val_11 = strtol(pair->value, NULL, 10);		/*p2p identity of peer*/
+			if( (f = yahoo_friend_find(gc, who)) )
+				f->val_11 = val_11;
 			break;
 		/*
 			TODO: figure these out
@@ -2560,6 +2558,7 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 		char *tmp2;
 		YahooFriend *f;
 		char *host_ip;
+		struct yahoo_p2p_data *user_data = g_new0(struct yahoo_p2p_data, 1);
 
 		decoded = purple_base64_decode(base64, &len);
 		if (len) {
@@ -2581,6 +2580,17 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 		account = purple_connection_get_account(gc);
 
+		if(val_11==0)	{
+			if(!f)
+				return;
+			else
+				val_11 = f->val_11;
+		}
+
+		user_data->host_username = (char *)g_malloc(strlen(who));
+		strcpy(user_data->host_username, who);		
+		user_data->val_13 = val_13;
+		user_data->val_11 = val_11;
 		user_data->host_ip = host_ip;
 		user_data->session_id = pkt->id;
 		user_data->gc = gc;
@@ -2749,7 +2759,8 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_P2PFILEXFER:
 		/* This case had no break and continued; thus keeping it this way.*/
-		yahoo_process_p2pfilexfer(gc, pkt);
+		yahoo_process_p2p(gc, pkt);	/*P2PFILEXFER handled the same way as process_p2p*/
+		yahoo_process_p2pfilexfer(gc, pkt);	/*redundant ??, need to have a break now*/
 	case YAHOO_SERVICE_FILETRANSFER:
 		yahoo_process_filetransfer(gc, pkt);
 		break;
@@ -3369,10 +3380,10 @@ static void yahoo_close(PurpleConnection *gc) {
 	if (yd->in_chat)
 		yahoo_c_leave(gc, 1); /* 1 = YAHOO_CHAT_ID */
 
+	g_hash_table_destroy(yd->peers);
 	g_hash_table_destroy(yd->friends);
 	g_hash_table_destroy(yd->imvironments);
 	g_hash_table_destroy(yd->xfer_peer_idstring_map);
-	g_hash_table_destroy(yd->peers);
 	g_free(yd->chat_name);
 
 	g_free(yd->cookie_y);
