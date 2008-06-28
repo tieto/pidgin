@@ -22,7 +22,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 #include "msn.h"
-#include "soap2.h"
+#include "soap.h"
 #include "nexus.h"
 #include "notification.h"
 

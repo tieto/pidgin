@@ -24,7 +24,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "msn.h"
-#include "soap2.h"
+#include "soap.h"
 #include "oim.h"
 #include "msnutils.h"
 

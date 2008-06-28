@@ -670,7 +670,5 @@ void msn_add_contact_to_list(MsnSession *session, MsnCallbackState *state,
 void msn_del_contact_from_list(MsnSession *session, MsnCallbackState *state,
 			       const gchar *passport, const MsnListId list);
 
-void msn_contact_connect_init(MsnSoapConn *soapconn);
-
 #endif /* _MSN_CONTACT_H_ */
 
