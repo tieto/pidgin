@@ -48,6 +48,11 @@ struct _PurpleMediaSession
 	GHashTable *streams;		/* FsStream list map to participant's name */
 	PurpleMediaStreamType type;
 	GHashTable *local_candidates;	/* map to participant's name? */
+
+	/*
+	 * These will need to be per stream when sessions with multiple
+	 * streams are supported.
+	 */
 	FsCandidate *local_candidate;
 	FsCandidate *remote_candidate;
 };
