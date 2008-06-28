@@ -35,7 +35,7 @@
 #include "header_info.h"
 #include "packet_parse.h"
 #include "qq.h"
-#include "send_core.h"
+#include "qq_network.h"
 #include "sys_msg.h"
 #include "utils.h"
 
@@ -120,27 +120,29 @@ static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 /* Send ACK if the sys message needs an ACK */
 static void _qq_send_packet_ack_msg_sys(PurpleConnection *gc, guint8 code, guint32 from, guint16 seq)
 {
-	guint8 bar, *ack, *cursor;
+	qq_data *qd;
+	guint8 bar, *ack;
 	gchar *str;
 	gint ack_len, bytes;
 
+	qd = (qq_data *) gc->proto_data;
+	
 	str = g_strdup_printf("%d", from);
 	bar = 0x1e;
 	ack_len = 1 + 1 + strlen(str) + 1 + 2;
 	ack = g_newa(guint8, ack_len);
-	cursor = ack;
-	bytes = 0;
 
-	bytes += create_packet_b(ack, &cursor, code);
-	bytes += create_packet_b(ack, &cursor, bar);
-	bytes += create_packet_data(ack, &cursor, (guint8 *) str, strlen(str));
-	bytes += create_packet_b(ack, &cursor, bar);
-	bytes += create_packet_w(ack, &cursor, seq);
+	bytes = 0;
+	bytes += qq_put8(ack + bytes, code);
+	bytes += qq_put8(ack + bytes, bar);
+	bytes += qq_putdata(ack + bytes, (guint8 *) str, strlen(str));
+	bytes += qq_put8(ack + bytes, bar);
+	bytes += qq_put16(ack + bytes, seq);
 
 	g_free(str);
 
 	if (bytes == ack_len)	/* creation OK */
-		qq_send_cmd(gc, QQ_CMD_ACK_SYS_MSG, TRUE, 0, FALSE, ack, ack_len);
+		qq_send_cmd_detail(qd, QQ_CMD_ACK_SYS_MSG, 0, FALSE, ack, ack_len);
 	else
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail creating sys msg ACK, expect %d bytes, build %d bytes\n", ack_len, bytes);

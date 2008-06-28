@@ -5,8 +5,6 @@ version 2.5.0 (??/??/2008):
 	* Ability to create custom smileys (currently only the MSN protocol
 	  utilizes the feature). (Thanks to Mauro Sérgio Ferreira Brasil,
 	  Marcus Lundblad, Jorge Villaseñor and other contributors)
-	* Yahoo! Japan now uses UTF-8, matching the behavior of official clients
-	  and restoring compatibility with the web messenger (Yusuke Odate)
 	* Add a configure option, --with-system-ssl-certs to allow packagers
 	  to specify a system-wide SSL CA certificates directory.  When set,
 	  we don't install our SSL CA certs, so it's important that the
@@ -30,6 +28,12 @@ version 2.5.0 (??/??/2008):
 	  logs.
 	* Added '/msgcolor' command to change colors of different classes of
 	  messages in a conversation. See '/help msgcolor' for details.
+
+version 2.4.3 (??/??/2008):
+	libpurple:
+	* Yahoo! Japan now uses UTF-8, matching the behavior of official clients
+	  and restoring compatibility with the web messenger (Yusuke Odate)
+	* Setting your buddy icon once again works for Yahoo! accounts.
 
 version 2.4.2 (05/17/2008):
 	libpurple:

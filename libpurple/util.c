@@ -3599,7 +3599,7 @@ purple_util_fetch_url_error(PurpleUtilFetchUrlData *gfud, const char *format, ..
 static void url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message);
 
 static gboolean
-parse_redirect(const char *data, size_t data_len, gint sock,
+parse_redirect(const char *data, size_t data_len,
 			   PurpleUtilFetchUrlData *gfud)
 {
 	gchar *s;
@@ -3773,7 +3773,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 					header_len, gfud->webdata);
 
 				/* See if we can find a redirect. */
-				if(parse_redirect(gfud->webdata, header_len, source, gfud))
+				if(parse_redirect(gfud->webdata, header_len, gfud))
 					return;
 
 				gfud->got_headers = TRUE;

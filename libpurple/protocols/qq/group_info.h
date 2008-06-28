@@ -32,8 +32,8 @@
 void qq_send_cmd_group_get_group_info(PurpleConnection *gc, qq_group *group);
 void qq_send_cmd_group_get_online_members(PurpleConnection *gc, qq_group *group);
 void qq_send_cmd_group_get_members_info(PurpleConnection *gc, qq_group *group);
-void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
-void qq_process_group_cmd_get_online_members(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
-void qq_process_group_cmd_get_members_info(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
+void qq_process_group_cmd_get_group_info(guint8 *data, gint len, PurpleConnection *gc);
+void qq_process_group_cmd_get_online_members(guint8 *data, gint len, PurpleConnection *gc);
+void qq_process_group_cmd_get_members_info(guint8 *data, gint len, PurpleConnection *gc);
 
 #endif
