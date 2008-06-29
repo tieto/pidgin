@@ -782,16 +782,13 @@ static void
 got_emoticon(MsnSlpCall *slpcall,
 			 const guchar *data, gsize size)
 {
-
 	PurpleConversation *conv;
-	PurpleConnection *gc;
-	const char *who;
+	MsnSwitchBoard *swboard;
 
-	gc = slpcall->slplink->session->account->gc;
-	who = slpcall->slplink->remote_user;
+	swboard = slpcall->slplink->swboard;
+	conv = swboard->conv;
 
-	if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, gc->account))) {
-
+	if (conv) {
 		/* FIXME: it would be better if we wrote the data as we received it
 		   instead of all at once, calling write multiple times and
 		   close once at the very end
@@ -809,6 +806,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSession *session;
 	MsnSlpLink *slplink;
+	MsnSwitchBoard *swboard;
 	MsnObject *obj;
 	char **tokens;
 	char *smile, *body_str;
@@ -848,8 +846,9 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 		slplink = msn_session_get_slplink(session, who);
 
-		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who,
-												   session->account);
+		swboard = cmdproc->data;
+		slplink->swboard = swboard;
+		conv = swboard->conv;
 
 		/* If the conversation doesn't exist then this is a custom smiley
 		 * used in the first message in a MSN conversation: we need to create
