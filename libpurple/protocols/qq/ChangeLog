@@ -1,3 +1,14 @@
+2008.06.29 - csyfek <csyfek(at)gmail.com>
+	* Minor bug fix
+	* Add some doxygen syntax for preparing development documentation
+	* References #6199
+
+2008.06.28 - ccpaging <ecc_hy(at)hotmail.com>, moo <phpxcache(at)gmail.com>
+	* Patches from moo<phpxcache@gmail.com> and ccpaging<ccpaging@foxmail.com>.
+	* Tickets:
+	* Fixes #4956.
+	* Fixes #2998.
+
 2008.06.07 - ccpaging <ecc_hy(at)hotmail.com>, csyfek <csyfek(at)gmail.com>
 	* Clean code and apply patches from QuLogic
 
