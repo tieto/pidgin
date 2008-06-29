@@ -36,6 +36,11 @@ struct _JabberCapsClientInfo {
 	GList *forms; /* xmlnode * */
 };
 
+typedef struct _JabberDataFormField {
+	gchar *var;
+	GList *values;
+} JabberDataFormField;
+
 typedef void (*jabber_caps_get_info_cb)(JabberCapsClientInfo *info, gpointer user_data);
 
 void jabber_caps_init(void);
