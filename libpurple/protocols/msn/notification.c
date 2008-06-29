@@ -328,7 +328,9 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 out_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	if (!g_ascii_strcasecmp(cmd->params[0], "OTH"))
+	if (cmd->param_count == 0)
+		msn_session_set_error(cmdproc->session, -1, NULL);
+	else if (!g_ascii_strcasecmp(cmd->params[0], "OTH"))
 		msn_session_set_error(cmdproc->session, MSN_ERROR_SIGN_OTHER,
 							  NULL);
 	else if (!g_ascii_strcasecmp(cmd->params[0], "SSD"))
