@@ -297,6 +297,20 @@ xmlnode *xmlnode_copy(const xmlnode *src);
  */
 void xmlnode_free(xmlnode *node);
 
+/**
+ * Creates a node from a XML File.  Calling this on the
+ * root node of an XML document will parse the entire document
+ * into a tree of nodes, and return the xmlnode of the root.
+ *
+ * @param str  The string of xml.
+ * @param description  The description of the file being parsed
+ * @process  The utility that is calling xmlnode_from_file
+ *
+ * @return The new node.
+ */
+xmlnode *xmlnode_from_file(const char *dir, const char *filename, 
+			   const char *description, const char *process);
+
 #ifdef __cplusplus
 }
 #endif

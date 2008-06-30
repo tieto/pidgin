@@ -35,6 +35,8 @@
 #include "request.h"
 #include "savedstatuses.h"
 #include "sound.h"
+#include "sound-theme.h"
+#include "theme-manager.h"
 #include "util.h"
 #include "network.h"
 
@@ -68,6 +70,10 @@ static GtkWidget *prefs = NULL;
 static GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
 static GtkTreeRowReference *previous_smiley_row = NULL;
+
+static gboolean prefs_themes_unsorted = TRUE;
+static GtkListStore *prefs_sound_themes;
+static GtkTreeIter prefs_sound_iter;
 
 /*
  * PROTOTYPES
@@ -544,6 +550,101 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	}
 
 	gtk_drag_finish(dc, FALSE, FALSE, t);
+}
+
+/* sets the current sound theme to customized or NULL */
+static void
+pref_set_sound_customized()
+{
+	if (pidgin_sound_is_customized())
+		gtk_list_store_set(prefs_sound_themes, &prefs_sound_iter, 2, "(Custom)", -1);
+	else gtk_list_store_set(prefs_sound_themes, &prefs_sound_iter, 2, NULL, -1);
+}
+
+/* adds the themes to the theme list from the manager so they can be sisplayed in prefs */
+static void
+prefs_themes_sort(PurpleTheme *theme)
+{
+	GdkPixbuf *pixbuf = NULL;
+	GtkTreeIter iter;
+	gchar *image_full;
+	
+	if (PURPLE_IS_SOUND_THEME(theme)){
+		/* TODO: string leaks? */
+		const gchar *pref = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
+		
+		image_full = purple_theme_get_image_full(theme);
+		if (image_full != NULL){
+			pixbuf = gdk_pixbuf_new_from_file(image_full, NULL);
+			g_free(image_full);
+		}
+		else pixbuf = NULL; 
+
+		gtk_list_store_append (prefs_sound_themes, &iter);
+		gtk_list_store_set (prefs_sound_themes, &iter, 0, pixbuf, 1, purple_theme_get_name(theme), 2, NULL, -1);
+
+		if (pixbuf != NULL)
+			gdk_pixbuf_unref(pixbuf);
+
+		if (pref && strlen(pref) && !strcmp(purple_theme_get_name(theme), pref))
+			prefs_sound_iter = iter;
+
+	}
+}
+
+/* init all the theme variables so that the themes can be sorted later and used by pref pages */
+static void
+prefs_themes_init(void)
+{
+	GdkPixbuf *pixbuf = NULL;
+	gchar *filename;
+
+	/* sound themes */
+	prefs_sound_themes = gtk_list_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
+
+	filename = g_build_filename(DATADIR, "icons", "hicolor", "16x16", "apps", "pidgin.png", NULL);
+	pixbuf= gdk_pixbuf_new_from_file(filename, NULL);
+	g_free(filename);
+
+	gtk_list_store_append (prefs_sound_themes, &prefs_sound_iter);
+
+	gtk_list_store_set (prefs_sound_themes, &prefs_sound_iter, 0, pixbuf, 1, _("(Default)"), 2, NULL, -1);
+
+	gdk_pixbuf_unref (pixbuf);
+}
+
+/* sets the current sound theme */
+static void
+prefs_set_sound_theme(GtkComboBox *combo_box, gpointer user_data)
+{
+	gint i;
+	gchar *pref;
+	gchar *theme_name; 
+	
+	/* remove "(custom)" */
+	gtk_list_store_set(prefs_sound_themes, &prefs_sound_iter, 2, NULL, -1);
+
+	g_return_if_fail(gtk_combo_box_get_active_iter(combo_box, &prefs_sound_iter));
+
+	gtk_tree_model_get(GTK_TREE_MODEL(prefs_sound_themes), &prefs_sound_iter, 1, &theme_name, -1);
+
+	if (strcmp(theme_name, "(Default)") == 0){
+		g_free(theme_name);
+		theme_name = g_strdup("");
+	}
+
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/sound/theme", theme_name);
+
+	for(i=0; i <  PURPLE_NUM_SOUNDS; i++){
+		pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s",
+					pidgin_sound_get_event_option(i));
+		purple_prefs_set_path(pref, "");
+		g_free(pref);
+	}
+
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), _("(default)"));
+
+	g_free(theme_name);
 }
 
 /* Does same as normal sort, except "none" is sorted first */
@@ -1736,6 +1837,8 @@ reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
 	g_free(pref);
 
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), _("(default)"));
+
+	pref_set_sound_customized();
 }
 
 static void
@@ -1758,6 +1861,8 @@ sound_chosen_cb(void *user_data, const char *filename)
 	 */
 	if (sound == sound_row_sel)
 		gtk_entry_set_text(GTK_ENTRY(sound_entry), filename);
+
+	pref_set_sound_customized();	
 }
 
 static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
@@ -1826,13 +1931,15 @@ static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	if (sound_entry)
 		gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : _("(default)"));
 	g_value_unset (&val);
+
+	pref_set_sound_customized();
 }
 
 static GtkWidget *
 sound_page(void)
 {
 	GtkWidget *ret;
-	GtkWidget *vbox, *sw, *button;
+	GtkWidget *vbox, *sw, *button, *combo_box;
 	GtkSizeGroup *sg;
 	GtkTreeIter iter;
 	GtkWidget *event_view;
@@ -1845,6 +1952,7 @@ sound_page(void)
 	int j;
 	const char *file;
 	char *pref;
+	GtkCellRenderer *cell_rend;
 #ifndef _WIN32
 	GtkWidget *dd;
 	GtkWidget *entry;
@@ -1922,7 +2030,6 @@ sound_page(void)
 	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/method",
 								sound_changed2_cb, vbox);
 #endif
-
 	vbox = pidgin_make_frame(ret, _("Sound Events"));
 
 	/* The following is an ugly hack to make the frame expand so the
@@ -1934,6 +2041,28 @@ sound_page(void)
 	gtk_box_set_child_packing(GTK_BOX(vbox->parent->parent->parent),
 			vbox->parent->parent, TRUE, TRUE, 0, GTK_PACK_START);
 
+	/* SOUND THEMES */
+	combo_box = gtk_combo_box_new_with_model(GTK_TREE_MODEL (prefs_sound_themes));
+	gtk_box_pack_start (GTK_BOX (vbox), combo_box, FALSE, FALSE, 0);
+
+	cell_rend = gtk_cell_renderer_pixbuf_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "pixbuf", 0, NULL);
+	
+	cell_rend = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "text", 1, NULL);
+
+	cell_rend = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell_rend, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell_rend, "text", 2, NULL);
+
+	gtk_combo_box_set_active_iter(GTK_COMBO_BOX(combo_box), &prefs_sound_iter);
+	g_signal_connect(G_OBJECT(combo_box), "changed", (GCallback)prefs_set_sound_theme, NULL);
+
+	pref_set_sound_customized();
+
+	/* SOUND SELECTION */
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_widget_set_size_request(sw, -1, 100);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
@@ -2166,6 +2295,12 @@ void pidgin_prefs_show(void)
 		gtk_window_present(GTK_WINDOW(prefs));
 		return;
 	}
+	
+	/* add everthing in the thmeme manager before the window is loaded */
+	if (prefs_themes_unsorted){
+		purple_theme_manager_for_each_theme(prefs_themes_sort);
+		prefs_themes_unsorted = FALSE;
+	}
 
 	/* copy the preferences to tmp values...
 	 * I liked "take affect immediately" Oh well :-( */
@@ -2260,6 +2395,9 @@ pidgin_prefs_init(void)
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/filelocations/last_save_folder", "");
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/filelocations/last_open_folder", "");
 	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/filelocations/last_icon_folder", "");
+
+	/* Themes */
+	prefs_themes_init();
 
 	/* Smiley Themes */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/smileys");
