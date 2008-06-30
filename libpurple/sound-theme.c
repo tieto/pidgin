@@ -116,7 +116,7 @@ purple_sound_theme_get_type (void)
  * Public API functions                                                      
  *****************************************************************************/
 
-gchar *
+const gchar *
 purple_sound_theme_get_file(PurpleSoundTheme *theme,
 			    const gchar *event)
 {
@@ -133,18 +133,15 @@ gchar *
 purple_sound_theme_get_file_full(PurpleSoundTheme *theme,
 				 const gchar *event)
 {
-	gchar *dir, *filename, *full;
+	gchar *filename;
 
 	g_return_val_if_fail(PURPLE_IS_SOUND_THEME(theme), NULL);
 
-	dir = purple_theme_get_dir(PURPLE_THEME(theme));
 	filename = purple_sound_theme_get_file(theme, event);
 	
 	g_return_val_if_fail(filename, NULL);
 
-	full = g_build_filename(dir, filename, NULL);
-
-	return full;
+	return g_build_filename(purple_theme_get_dir(PURPLE_THEME(theme)), filename, NULL);
 }
 
 void 

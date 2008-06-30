@@ -77,7 +77,7 @@ GType purple_sound_theme_get_type(void);
  *
  * @returns the filename of the sound event
  */
-gchar *purple_sound_theme_get_file(PurpleSoundTheme *theme,
+const gchar *purple_sound_theme_get_file(PurpleSoundTheme *theme,
 				   const gchar *event);
 /**
  * Returns a copy of the directory and filename for the sound event

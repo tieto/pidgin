@@ -37,11 +37,9 @@ static gpointer
 purple_sound_loader_build(const gchar *dir)
 {
 	xmlnode *root_node, *sub_node;
-	gchar *filename, *filename_full, *imagefile, *data;
+	gchar *filename, *filename_full, *data;
 	GDir *gdir;
 	PurpleSoundTheme *theme;
-	PurpleStoredImage *preview;
-
 
 	/* Find the theme file */
 	gdir = g_dir_open(dir, 0, NULL);
@@ -58,11 +56,7 @@ purple_sound_loader_build(const gchar *dir)
 	root_node = xmlnode_from_file(dir, filename, "sound themes", "sound-loader");
 	g_return_val_if_fail(root_node != NULL, NULL);
 
-	/* Parse the tree */
-	/* TODO: fix image and add description */
-	imagefile = g_build_filename(dir, xmlnode_get_attrib(root_node, "image"), NULL);
-	preview = purple_imgstore_new_from_file(imagefile);
-	
+	/* Parse the tree */	
 	sub_node = xmlnode_get_child(root_node, "description");
 	data = xmlnode_get_data(sub_node);
 
@@ -70,7 +64,7 @@ purple_sound_loader_build(const gchar *dir)
 			    "type", "sound",
 			    "name", xmlnode_get_attrib(root_node, "name"),
 			    "author", xmlnode_get_attrib(root_node, "author"),
-			    "image", preview,
+			    "image", xmlnode_get_attrib(root_node, "image"),
 			    "directory", dir,
 			    "description", data, NULL);
 	
@@ -83,11 +77,9 @@ purple_sound_loader_build(const gchar *dir)
 		xmlnode_free(sub_node);
 	}
 
-	purple_imgstore_ref(preview);
 	xmlnode_free(root_node);	
 	g_dir_close(gdir);
 	g_free(filename_full);
-	g_free(imagefile);
 	g_free(data);
 	return theme;
 }

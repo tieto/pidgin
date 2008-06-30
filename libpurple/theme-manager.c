@@ -76,7 +76,7 @@ purple_theme_manager_is_theme_type(gchar *key,
                   gpointer value,
                   gchar *user_data)
 {
-	return g_str_has_prefix (key, g_strconcat(user_data, "/", NULL));
+	return g_str_has_prefix(key, g_strconcat(user_data, "/", NULL));
 }
 
 static gboolean
@@ -223,11 +223,18 @@ PurpleTheme *
 purple_theme_manager_find_theme(const gchar *name,
 				const gchar *type)
 {
-	g_return_val_if_fail(name, NULL);
-	g_return_val_if_fail(type, NULL);
+	gchar *key;
+	PurpleTheme *theme;
 
-	return g_hash_table_lookup(theme_table, 
-				   purple_theme_manager_make_key(name, type));
+	key = purple_theme_manager_make_key(name, type);
+
+	g_return_val_if_fail(key, NULL);
+
+	theme = g_hash_table_lookup(theme_table, key);
+
+	g_free(key);
+
+	return theme;
 }
 
 

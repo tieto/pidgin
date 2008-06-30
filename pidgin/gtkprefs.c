@@ -558,7 +558,7 @@ pref_set_sound_customized()
 {
 	if (pidgin_sound_is_customized())
 		gtk_list_store_set(prefs_sound_themes, &prefs_sound_iter, 2, "(Custom)", -1);
-	else    gtk_list_store_set(prefs_sound_themes, &prefs_sound_iter, 2, NULL, -1);
+	else gtk_list_store_set(prefs_sound_themes, &prefs_sound_iter, 2, NULL, -1);
 }
 
 /* adds the themes to the theme list from the manager so they can be sisplayed in prefs */
@@ -567,15 +567,24 @@ prefs_themes_sort(PurpleTheme *theme)
 {
 	GdkPixbuf *pixbuf = NULL;
 	GtkTreeIter iter;
+	gchar *image_full;
 	
 	if (PURPLE_IS_SOUND_THEME(theme)){
 		/* TODO: string leaks? */
-		gchar *pref = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
+		const gchar *pref = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/theme");
+		
+		image_full = purple_theme_get_image_full(theme);
+		if (image_full != NULL){
+			pixbuf = gdk_pixbuf_new_from_file(image_full, NULL);
+			g_free(image_full);
+		}
+		else pixbuf = NULL; 
 
-		pixbuf = pidgin_pixbuf_from_imgstore(purple_theme_get_image(theme));
 		gtk_list_store_append (prefs_sound_themes, &iter);
 		gtk_list_store_set (prefs_sound_themes, &iter, 0, pixbuf, 1, purple_theme_get_name(theme), 2, NULL, -1);
-		gdk_pixbuf_unref(pixbuf);
+
+		if (pixbuf != NULL)
+			gdk_pixbuf_unref(pixbuf);
 
 		if (pref && strlen(pref) && !strcmp(purple_theme_get_name(theme), pref))
 			prefs_sound_iter = iter;
@@ -594,7 +603,7 @@ prefs_themes_init(void)
 	prefs_sound_themes = gtk_list_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
 
 	filename = g_build_filename(DATADIR, "icons", "hicolor", "16x16", "apps", "pidgin.png", NULL);
-	pixbuf= gdk_pixbuf_new_from_file (filename, NULL);
+	pixbuf= gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 
 	gtk_list_store_append (prefs_sound_themes, &prefs_sound_iter);

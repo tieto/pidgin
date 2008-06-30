@@ -75,7 +75,7 @@ GType purple_theme_get_type(void);
  *
  * @return The string representating the name of the theme
  */
-gchar *purple_theme_get_name(PurpleTheme *theme);
+const gchar *purple_theme_get_name(PurpleTheme *theme);
 
 /**
  * Sets the name of the PurpleTheme object
@@ -92,7 +92,7 @@ void purple_theme_set_name(PurpleTheme *theme, const gchar *name);
  *
  * @return A short description of the theme
  */
-gchar *purple_theme_get_description(PurpleTheme *theme);
+const gchar *purple_theme_get_description(PurpleTheme *theme);
 
 /**
  * Sets the description of the PurpleTheme object
@@ -109,7 +109,7 @@ void purple_theme_set_description(PurpleTheme *theme, const gchar *description);
  *
  * @return The author of the theme
  */
-gchar *purple_theme_get_author(PurpleTheme *theme);
+const gchar *purple_theme_get_author(PurpleTheme *theme);
 
 /**
  * Sets the author of the PurpleTheme object
@@ -126,7 +126,7 @@ void purple_theme_set_author(PurpleTheme *theme, const gchar *author);
  *
  * @return The string represtenting the type
  */
-gchar *purple_theme_get_type_string(PurpleTheme *theme);
+const gchar *purple_theme_get_type_string(PurpleTheme *theme);
 
 /**
  * Returns the directory of the PurpleTheme object
@@ -135,7 +135,7 @@ gchar *purple_theme_get_type_string(PurpleTheme *theme);
  *
  * @return The string represtenting the theme directory 
  */
-gchar *purple_theme_get_dir(PurpleTheme *theme);
+const gchar *purple_theme_get_dir(PurpleTheme *theme);
 
 /**
  * Sets the directory of the PurpleTheme object
@@ -150,9 +150,18 @@ void purple_theme_set_dir(PurpleTheme *theme, const gchar *dir);
  * 
  * @param theme 	the purple theme
  *
- * @return The PurpleStoredImage preview of the PurpleTheme object
+ * @return The image preview of the PurpleTheme object
  */
-PurpleStoredImage *purple_theme_get_image(PurpleTheme *theme);
+const gchar *purple_theme_get_image(PurpleTheme *theme);
+
+/**
+ * Returns the image preview and directory of the PurpleTheme object
+ * 
+ * @param theme 	the purple theme
+ *
+ * @return The image preview of the PurpleTheme object
+ */
+gchar *purple_theme_get_image_full(PurpleTheme *theme);
 
 /**
  * Sets the directory of the PurpleTheme object
@@ -160,7 +169,7 @@ PurpleStoredImage *purple_theme_get_image(PurpleTheme *theme);
  * @param theme 	the purple theme
  * @param img		the image preview of the PurpleTheme object
  */
-void purple_theme_set_image(PurpleTheme *theme, PurpleStoredImage *img);
+void purple_theme_set_image(PurpleTheme *theme, const gchar *img);
 
 G_END_DECLS
 #endif /* _PURPLE_THEME_H_ */

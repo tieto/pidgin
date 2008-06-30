@@ -77,7 +77,7 @@ GType purple_theme_loader_get_type(void);
  *
  * @returns 		the string represting this type
  */
-gchar *purple_theme_loader_get_type_string(PurpleThemeLoader *self);
+const gchar *purple_theme_loader_get_type_string(PurpleThemeLoader *self);
 
 /**
  * Creates a new PurpleTheme

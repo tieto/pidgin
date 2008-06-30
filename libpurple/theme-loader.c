@@ -88,7 +88,8 @@ static void
 purple_theme_loader_init(GTypeInstance *instance,
 			gpointer klass)
 {
-	(PURPLE_THEME_LOADER(instance))->priv = g_new0(PurpleThemeLoaderPrivate, 1);
+	PurpleThemeLoader *loader = PURPLE_THEME_LOADER(instance);
+	loader->priv = g_new0(PurpleThemeLoaderPrivate, 1);
 }
 
 static void
@@ -153,7 +154,7 @@ purple_theme_loader_get_type (void)
  *****************************************************************************/
 
 
-gchar *
+const gchar *
 purple_theme_loader_get_type_string (PurpleThemeLoader *theme_loader)
 {
 	PurpleThemeLoaderPrivate *priv = NULL;
@@ -175,7 +176,7 @@ purple_theme_loader_set_type_string(PurpleThemeLoader *loader, const gchar *type
 	priv = PURPLE_THEME_LOADER_GET_PRIVATE(loader);
 
 	g_free(priv->type);
-	priv->type = g_strdup (type);
+	priv->type = g_strdup(type);
 }
 
 gpointer
