@@ -11,7 +11,6 @@ version 2.4.3 (07/01/2008):
 	* Always use UTF-8 for Yahoo! (#5973)
 	* Fix a crash when the given jabber id is invalid.
 	* Make the IRC "unknown message" debugging messages UTF-8 safe.
-	* Fix setting buddy icons on yahoo.
 	* Fix connecting to ICQ
 	* Fix a memleak when handling jabber xforms.
 
