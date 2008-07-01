@@ -5,6 +5,19 @@ version 2.4.3 (??/??/2008):
 	* Yahoo! Japan now uses UTF-8, matching the behavior of official clients
 	  and restoring compatibility with the web messenger (Yusuke Odate)
 	* Setting your buddy icon once again works for Yahoo! accounts.
+	* Fixes in the Yahoo! protocol to prevent a double free, crashes on
+	  aliases, and alias functionality
+	* Fix crashes in the bonjour protocol
+	* Always use UTF-8 for Yahoo! (#5973)
+	* Fix a crash when the given jabber id is invalid.
+	* Make the IRC "unknown message" debugging messages UTF-8 safe.
+	* Fix setting buddy icons on yahoo.
+	* Fix connecting to ICQ
+	* Fix a memleak when handling jabber xforms.
+
+	Pidgin:
+	* Include the send button plugin in the win32 build
+	* Various memory leak fixes
 
 version 2.4.2 (05/17/2008):
 	libpurple:
