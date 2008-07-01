@@ -45,7 +45,10 @@ typedef void (*jabber_caps_get_info_cb)(JabberCapsClientInfo *info, gpointer use
 
 void jabber_caps_init(void);
 
-void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *ext, jabber_caps_get_info_cb cb, gpointer user_data);
+/**
+ *	Main entity capabilites function to get the capabilities of a contact.
+ */
+void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *hash, jabber_caps_get_info_cb cb, gpointer user_data);
 void jabber_caps_free_clientinfo(JabberCapsClientInfo *clientinfo);
 
 /**

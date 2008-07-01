@@ -750,16 +750,17 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			jbr = jabber_buddy_track_resource(jb, jid->resource, priority,
 					state, status);
 			if(caps) {
+				/* handle XEP-0115 */
 				const char *node = xmlnode_get_attrib(caps,"node");
 				const char *ver = xmlnode_get_attrib(caps,"ver");
-				const char *ext = xmlnode_get_attrib(caps,"ext");
+				const char *hash = xmlnode_get_attrib(caps,"hash");
 				
-				if(node && ver) {
+				if(node && ver && hash) {
 					JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
 					userdata->js = js;
 					userdata->jb = jb;
 					userdata->from = g_strdup(from);
-					jabber_caps_get_info(js, from, node, ver, ext, jabber_presence_set_capabilities, userdata);
+					jabber_caps_get_info(js, from, node, ver, hash, jabber_presence_set_capabilities, userdata);
 				}
 			}
 		}

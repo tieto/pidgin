@@ -351,6 +351,7 @@ typedef struct _jabber_caps_cbplususerdata {
 	char *node;
 	char *ver;
 	GList *ext;
+	char *hash;
 	unsigned extOutstanding;
 } jabber_caps_cbplususerdata;
 
@@ -446,8 +447,15 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 	jabber_caps_cbplususerdata *userdata = data;
 
 	/* TODO: Better error checking! */
-	printf("\n\tjabber_caps_client_iqcb for %s", xmlnode_get_attrib(packet, "from"));
 	if (query) {
+		// check hash
+		JabberCapsClientInfo *info = jabber_caps_parse_client_info(query);
+		gchar *sha_hash = jabber_caps_calcualte_hash(info);
+		
+		#warning INSERT HASH CHECKING CODE HERE! ONLY ADD TO CACHE IF HASH IS THE SAME.
+		
+		g_free(info);
+		g_free(sha_hash);
 		
 		JabberCapsValue *value = g_new0(JabberCapsValue, 1);
 		JabberCapsKey *key = g_new0(JabberCapsKey, 1);
@@ -501,7 +509,7 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 	jabber_caps_get_info_check_completion(userdata);
 }
 
-void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *ext, jabber_caps_get_info_cb cb, gpointer user_data) {
+void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *hash, jabber_caps_get_info_cb cb, gpointer user_data) {
 	JabberCapsValue *client;
 	JabberCapsKey *key = g_new0(JabberCapsKey, 1);
 	jabber_caps_cbplususerdata *userdata = g_new0(jabber_caps_cbplususerdata, 1);
@@ -510,6 +518,7 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, c
 	userdata->who = g_strdup(who);
 	userdata->node = g_strdup(node);
 	userdata->ver = g_strdup(ver);
+	userdata->hash = g_strdup(hash);
 
 	key->node = (char *)node;
 	key->ver = (char *)ver;
@@ -745,7 +754,7 @@ gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info) {
 	
 	/* concat features to the verification string */
 	for(features = info->features; features; features = features->next) {
-		feature_string = g_strdup_printf("%s<", (gchar*)features->data);
+		feature_string = g_strdup_printf("%s", (gchar*)features->data);
 		verification = jabber_caps_verification_append(verification, feature_string);
 		g_free(feature_string);
 	}
@@ -761,7 +770,7 @@ gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info) {
 		
 		for(fields = jabber_caps_xdata_get_fields((xmlnode*)(xdata->data)); fields != 0; fields = fields->next) {
 			GList *value;
-			JabberDataFormField *field = (JabberDataFormField*)fields; 
+			JabberDataFormField *field = (JabberDataFormField*)fields->data; 
 			if(strcmp(field->var, "FORM_TYPE")) {
 				/* Append the value of the "var" attribute, followed by the '<' character. */
 				verification = jabber_caps_verification_append(verification, field->var);
@@ -778,7 +787,7 @@ gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info) {
 		}
 		g_list_free(fields);
 	}
-	
+		
 	/* generate SHA-1 hash */
 	context = purple_cipher_context_new_by_name("sha1", NULL);
 	if (context == NULL) {
@@ -796,7 +805,6 @@ gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info) {
 	
 	g_free(verification);
 	verification = purple_base64_encode(checksum, checksum_size);
-	printf("\n%s", verification);
 	
 	if (caps_hash != 0) g_free(caps_hash);
 	return verification;
