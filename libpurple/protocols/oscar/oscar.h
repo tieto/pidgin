@@ -258,6 +258,15 @@ struct _ClientInfo
 	"us", "en", \
 }
 
+#define CLIENTINFO_ICQ6_6_0_6059 { \
+	"ICQ Client", \
+	0x010a, \
+	0x0006, 0x0000, \
+	0x0000, 0x17ab, \
+	0x00007535, \
+	"us", "en", \
+}
+
 #define CLIENTINFO_ICQBASIC_14_3_1068 { \
 	"ICQBasic", \
 	0x010a, \
@@ -302,9 +311,9 @@ struct _ClientInfo
 #define CLIENTINFO_PURPLE_ICQ { \
 	"Purple/" VERSION, \
 	0x010a, \
-	0x0014, 0x0034, \
-	0x0000, 0x0bb8, \
-	0x0000043d, \
+	0x0006, 0x0000, \
+	0x0000, 0x17ab, \
+	0x00007535, \
 	"us", "en", \
 }
 
