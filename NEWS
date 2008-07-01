@@ -1,6 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-2.4.2 (5/XX/2008):
+2.4.3 (07/01/2008):
+	Richard: This release includes important bug fixes.  I'm just cutting
+	the release.  Thank you to the real heroes who did the fixing!
+
+2.4.2 (5/17/2008):
 	Sadrul: We added some usability changes in this release, including the
 	typing notification, buddyicon and input area size in the conversation
 	windows, escape to close conversation windows etc. These changes should
