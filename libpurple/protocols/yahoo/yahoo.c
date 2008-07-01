@@ -1997,7 +1997,7 @@ static void yahoo_process_auth(PurpleConnection *gc, struct yahoo_packet *pkt)
 		default:
 			buf = g_strdup_printf(_("The Yahoo server has requested the use of an unrecognized "
 						"authentication method.  You will probably not be able "
-						"to successfully sign on to Yahoo.  Check %s for updates."), CLIENT_WEBSITE);
+						"to successfully sign on to Yahoo.  Check %s for updates."), PURPLE_WEBSITE);
 			purple_notify_error(gc, "", _("Failed Yahoo! Authentication"),
 					  buf);
 			g_free(buf);

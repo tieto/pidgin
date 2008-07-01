@@ -1411,7 +1411,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			break;
 		case 0x1c:
 			/* client too old */
-			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"), CLIENT_WEBSITE);
+			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"), PURPLE_WEBSITE);
 			purple_connection_error_reason(gc, PURPLE_CONNECTION_ERROR_OTHER_ERROR, buf);
 			break;
 		case 0x1d:
@@ -1532,7 +1532,7 @@ static void damn_you(gpointer data, gint source, PurpleInputCondition c)
 	if (in != '\n') {
 		char buf[256];
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
-			"this is fixed.  Check %s for updates."), CLIENT_WEBSITE);
+			"this is fixed.  Check %s for updates."), PURPLE_WEBSITE);
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid AIM login hash."),
 							buf);
@@ -1576,7 +1576,7 @@ straight_to_hell(gpointer data, gint source, const gchar *error_message)
 
 	if (source < 0) {
 		buf = g_strdup_printf(_("You may be disconnected shortly.  "
-				"Check %s for updates."), CLIENT_WEBSITE);
+				"Check %s for updates."), PURPLE_WEBSITE);
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid AIM login hash."),
 							buf);
@@ -1675,7 +1675,7 @@ int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 		g_free(pos->modname);
 		g_free(pos);
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
-			"Check %s for updates."), CLIENT_WEBSITE);
+			"Check %s for updates."), PURPLE_WEBSITE);
 		purple_notify_warning(pos->gc, NULL,
 							_("Unable to get a valid login hash."),
 							buf);

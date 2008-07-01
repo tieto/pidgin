@@ -674,7 +674,7 @@ silcpurple_close(PurpleConnection *gc)
 
 	/* Send QUIT */
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", "Download " PACKAGE ": " CLIENT_WEBSITE,
+				 "QUIT", "Download Pidgin: " PURPLE_WEBSITE,
 				 NULL);
 
 	if (sg->conn)
@@ -1828,7 +1828,7 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", (args && args[0]) ? args[0] : "Download " PACKAGE ": " CLIENT_WEBSITE, NULL);
+				 "QUIT", (args && args[0]) ? args[0] : "Download Pidgin: " PURPLE_WEBSITE, NULL);
 
 	return PURPLE_CMD_RET_OK;
 }
