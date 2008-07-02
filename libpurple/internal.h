@@ -140,6 +140,14 @@
 #	define G_MAXUINT32 ((guint32) 0xffffffff)
 #endif
 
+#ifndef G_MAXSIZE
+#	if GLIB_SIZEOF_LONG == 8
+#		define G_MAXSIZE ((gsize) 0xffffffffffffffff)
+#	else
+#		define G_MAXSIZE ((gsize) 0xffffffff)
+#	endif
+#endif
+
 #if GLIB_CHECK_VERSION(2,6,0)
 #	include <glib/gstdio.h>
 #endif

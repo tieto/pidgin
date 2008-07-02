@@ -9,13 +9,13 @@
 #define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "2.4.2"|sed -e 's/dev.*//; s/beta.*//')
+%define pidginver %(echo "2.4.3"|sed -e 's/dev.*//; s/beta.*//')
 %else
-%define pidginver 2.4.2
+%define pidginver 2.4.3
 %endif
 
 # define the minimum API version required, so we can use it for plugin deps
-%define apiver %(echo "2.4.2"|awk -F. '{print $1"."$2}')
+%define apiver %(echo "2.4.3"|awk -F. '{print $1"."$2}')
 
 Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       pidgin
@@ -24,7 +24,7 @@ Release:    0%{?beta:.beta%{beta}}
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Source:     %{name}-2.4.2.tar.bz2
+Source:     %{name}-2.4.3.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
@@ -215,7 +215,7 @@ and plugins.
 %endif
 
 %prep
-%setup -q -n %{name}-2.4.2
+%setup -q -n %{name}-2.4.3
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -228,6 +228,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --disable-schemas-install \
                                     %{!?_with_dbus:--disable-dbus} \
                                     %{!?_with_avahi:--disable-avahi} \
+                                    %{!?_with_meanwhile:--disable-meanwhile} \
                                     %{?_without_gstreamer:--disable-gstreamer} \
                                     %{?_without_gtkspell:--disable-gtkspell} \
                                     %{?_without_nm:--disable-nm} \
@@ -473,6 +474,9 @@ fi
 %endif
 
 %changelog
+* Mon May 19 2008 Stu Tomlinson <stu@nosnilmot.com>
+- Fix building without meanwhile support
+
 * Fri May 16 2008 Stu Tomlinson <stu@nosnilmot.com>
 - Add "--without nm" support to build without NetworkManager
 

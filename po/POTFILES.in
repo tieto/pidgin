@@ -143,12 +143,9 @@ libpurple/protocols/qq/im.c
 libpurple/protocols/qq/keep_alive.c
 libpurple/protocols/qq/login_logout.c
 libpurple/protocols/qq/qq.c
-libpurple/protocols/qq/qq_proxy.c
-libpurple/protocols/qq/recv_core.c
+libpurple/protocols/qq/qq_network.c
 libpurple/protocols/qq/send_file.c
-libpurple/protocols/qq/sendqueue.c
 libpurple/protocols/qq/sys_msg.c
-libpurple/protocols/qq/udp_proxy_s5.c
 libpurple/protocols/sametime/sametime.c
 libpurple/protocols/silc/buddy.c
 libpurple/protocols/silc/chat.c

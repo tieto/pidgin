@@ -66,20 +66,15 @@ typedef struct _ft_info {
 	gboolean use_major;
 } ft_info;
 
-void qq_process_recv_file_accept(guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, PurpleConnection *gc);
-void qq_process_recv_file_reject(guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, PurpleConnection *gc);
-void qq_process_recv_file_cancel(guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, PurpleConnection *gc);
-void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, PurpleConnection *gc);
-void qq_process_recv_file_notify(guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, PurpleConnection *gc);
+void qq_process_recv_file_accept(guint8 *data, gint data_len, guint32 sender_uid, PurpleConnection *gc);
+void qq_process_recv_file_reject(guint8 *data, gint data_len, guint32 sender_uid, PurpleConnection *gc);
+void qq_process_recv_file_cancel(guint8 *data, gint data_len, guint32 sender_uid, PurpleConnection *gc);
+void qq_process_recv_file_request(guint8 *data, gint data_len, guint32 sender_uid, PurpleConnection *gc);
+void qq_process_recv_file_notify(guint8 *data, gint data_len, guint32 sender_uid, PurpleConnection *gc);
 gboolean qq_can_receive_file(PurpleConnection *gc, const char *who);
 void qq_send_file(PurpleConnection *gc, const char *who, const char *file);
-void qq_get_conn_info(guint8 *data, guint8 **cursor, gint data_len, ft_info *info);
-gint qq_fill_conn_info(guint8 *data, guint8 **cursor, ft_info *info);
+gint qq_get_conn_info(ft_info *info, guint8 *data);
+gint qq_fill_conn_info(guint8 *data, ft_info *info);
 gssize _qq_xfer_write(const guint8 *buf, size_t len, PurpleXfer *xfer);
 
 #endif

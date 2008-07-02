@@ -1,3 +1,9 @@
+version 2.4.3 (07/01/2008):
+	* No changes
+
+version 2.4.2 (05/17/2008):
+	* No changes
+
 version 2.4.1 (03/31/2008):
 	* Fix an issue preventing the Buddy List being raised when pidgin.exe
 	  is run for a second time.
@@ -10,7 +16,6 @@ version 2.4.0 (02/29/2008):
 	  https://sourceforge.net/tracker/?func=detail&atid=656718&aid=1626349&group_id=110565
 	* Build the xmpp protocol with SASL support (and include Cyrus SASL
 	  2.1.22).
-
 
 version 2.3.1 (12/7/2007):
 	* No changes

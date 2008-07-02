@@ -3916,7 +3916,7 @@ msgid ""
 "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://"
 "developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-"
 "LocalMessaging for more information."
-msgstr "Không tìm thấy bộ công cụ Apple Bonjour For Windows, xem FAQ (Hỏi Đáp) ở địa chỉ « http://developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging » để tìm chi tiết."
+msgstr "Không tìm thấy bộ công cụ Apple Bonjour For Windows, xem FAQ (Hỏi Đáp) ở địa chỉ « http://d.pidgin.im/BonjourWindows » để tìm chi tiết."
 
 #: ../libpurple/protocols/bonjour/bonjour.c:120
 msgid "Unable to listen for incoming IM connections\n"
@@ -5870,7 +5870,8 @@ msgstr "Đăng ký thành công %s@%s"
 #: ../libpurple/protocols/jabber/jabber.c:710
 #, c-format
 msgid "Registration to %s successful"
-msgstr "Đăng ký thành công với %s@%"
+msgstr ""
+#msgstr "Đăng ký thành công với %s@%"
 
 #: ../libpurple/protocols/jabber/jabber.c:712
 #: ../libpurple/protocols/jabber/jabber.c:713
@@ -11682,7 +11683,7 @@ msgstr "<I>%s</I> đã gỡ  bỏ tất cả các chế độ của <I>%s's</I>"
 #: ../libpurple/protocols/silc10/ops.c:712
 #, c-format
 msgid "You have been kicked off <I>%s</I> by <I>%s</I> (%s)"
-msgstr "Bạn đã bị <I>%2$s</I> đã khỏi <I>%1$s</I> (%s)"
+msgstr "Bạn đã bị <I>%2$s</I> đã khỏi <I>%1$s</I> (%3$s)"
 
 #: ../libpurple/protocols/silc/ops.c:718
 #: ../libpurple/protocols/silc/ops.c:723

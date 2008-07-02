@@ -627,7 +627,7 @@ jabber_login(PurpleAccount *account)
 	js->write_buffer = purple_circ_buffer_new(512);
 	js->old_length = 0;
 	js->keepalive_timeout = -1;
-	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user->domain);
+	js->certificate_CN = g_strdup(connect_server[0] ? connect_server : js->user ? js->user->domain : NULL);
 
 	if(!js->user) {
 		purple_connection_error_reason (gc,

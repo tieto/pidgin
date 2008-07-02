@@ -247,13 +247,12 @@ void yahoo_process_picture_upload(PurpleConnection *gc, struct yahoo_packet *pkt
 	}
 
 	if (url) {
-		if (yd->picture_url)
-			g_free(yd->picture_url);
+		g_free(yd->picture_url);
 		yd->picture_url = g_strdup(url);
 		purple_account_set_string(account, YAHOO_PICURL_SETTING, url);
 		purple_account_set_int(account, YAHOO_PICCKSUM_SETTING, yd->picture_checksum);
-		yahoo_send_picture_update(gc, 2);
 		yahoo_send_picture_checksum(gc);
+		yahoo_send_picture_update(gc, 2);
 	}
 }
 
@@ -405,8 +404,15 @@ static void yahoo_buddy_icon_upload_reading(gpointer data, gint source, PurpleIn
 
 	if (ret < 0 && errno == EAGAIN)
 		return;
-	else if (ret <= 0)
+	else if (ret <= 0) {
+		purple_debug_info("yahoo", "Buddy icon upload response (%d) bytes (> ~400 indicates failure):\n%.*s\n",
+			d->str->len, d->str->len, d->str->str);
+
 		yahoo_buddy_icon_upload_data_free(d);
+		return;
+	}
+
+	g_string_append_len(d->str, buf, ret);
 }
 
 static void yahoo_buddy_icon_upload_pending(gpointer data, gint source, PurpleInputCondition condition)
@@ -424,6 +430,7 @@ static void yahoo_buddy_icon_upload_pending(gpointer data, gint source, PurpleIn
 	if (wrote < 0 && errno == EAGAIN)
 		return;
 	if (wrote <= 0) {
+		purple_debug_info("yahoo", "Error uploading buddy icon.\n");
 		yahoo_buddy_icon_upload_data_free(d);
 		return;
 	}
@@ -431,6 +438,9 @@ static void yahoo_buddy_icon_upload_pending(gpointer data, gint source, PurpleIn
 	if (d->pos >= d->str->len) {
 		purple_debug_misc("yahoo", "Finished uploading buddy icon.\n");
 		purple_input_remove(d->watcher);
+		/* Clean out the sent buffer and reuse it to read the result */
+		g_string_free(d->str, TRUE);
+		d->str = g_string_new("");
 		d->watcher = purple_input_add(d->fd, PURPLE_INPUT_READ, yahoo_buddy_icon_upload_reading, d);
 	}
 }
@@ -439,16 +449,16 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 {
 	struct yahoo_buddy_icon_upload_data *d = data;
 	struct yahoo_packet *pkt;
-	gchar *size, *header;
+	gchar *tmp, *header;
 	guchar *pkt_buf;
 	const char *host;
 	int port;
-	size_t content_length, pkt_buf_len;
-	PurpleConnection *gc;
+	gsize pkt_buf_len;
+	PurpleConnection *gc = d->gc;
 	PurpleAccount *account;
 	struct yahoo_data *yd;
+	gboolean use_whole_url = FALSE;
 
-	gc = d->gc;
 	account = purple_connection_get_account(gc);
 	yd = gc->proto_data;
 
@@ -460,43 +470,54 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, const 
 		yahoo_buddy_icon_upload_data_free(d);
 		return;
 	}
+	/* use whole URL if using HTTP Proxy */
+	if ((gc->account->proxy_info)
+	    	&& (gc->account->proxy_info->type == PURPLE_PROXY_HTTP))
+		use_whole_url = TRUE;
 
-	pkt = yahoo_packet_new(0xc2, YAHOO_STATUS_AVAILABLE, yd->session_id);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPLOAD, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
-	size = g_strdup_printf("%" G_GSIZE_FORMAT, d->str->len);
+	tmp = g_strdup_printf("%" G_GSIZE_FORMAT, d->str->len);
 	/* 1 = me, 38 = expire time(?), 0 = me, 28 = size, 27 = filename, 14 = NULL, 29 = data */
 	yahoo_packet_hash_str(pkt, 1, purple_connection_get_display_name(gc));
 	yahoo_packet_hash_str(pkt, 38, "604800"); /* time til expire */
 	purple_account_set_int(account, YAHOO_PICEXPIRE_SETTING, time(NULL) + 604800);
 	yahoo_packet_hash_str(pkt, 0, purple_connection_get_display_name(gc));
-	yahoo_packet_hash_str(pkt, 28, size);
-	g_free(size);
+	yahoo_packet_hash_str(pkt, 28, tmp);
+	g_free(tmp);
 	yahoo_packet_hash_str(pkt, 27, d->filename);
 	yahoo_packet_hash_str(pkt, 14, "");
+	/* 4 padding for the 29 key name */
+	pkt_buf_len = yahoo_packet_build(pkt, 4, FALSE, yd->jp, &pkt_buf);
+	yahoo_packet_free(pkt);
 
-	content_length = YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt);
+	/* header + packet + "29" + 0xc0 + 0x80) + pictureblob */
 
 	host = purple_account_get_string(account, "xfer_host", YAHOO_XFER_HOST);
 	port = purple_account_get_int(account, "xfer_port", YAHOO_XFER_PORT);
-	header = g_strdup_printf(
-		"POST http://%s:%d/notifyft HTTP/1.0\r\n"
-		"Content-length: %" G_GSIZE_FORMAT "\r\n"
-		"Host: %s:%d\r\n"
-		"Cookie: Y=%s; T=%s\r\n"
-		"\r\n",
-		host, port, content_length + 4 + d->str->len,
-		host, port, yd->cookie_y, yd->cookie_t);
+	tmp = g_strdup_printf("%s:%d", host, port);
+	header = g_strdup_printf("POST %s%s/notifyft HTTP/1.1\r\n"
+		"User-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\n"
+		"Cookie: T=%s; Y=%s\r\n"
+		"Host: %s\r\n"
+		"Content-Length: %" G_GSIZE_FORMAT "\r\n"
+		"Cache-Control: no-cache\r\n\r\n",
+		use_whole_url ? "http://" : "", use_whole_url ? tmp : "",
+		yd->cookie_t, yd->cookie_y, 
+		tmp,
+		pkt_buf_len + 4 + d->str->len);
+	g_free(tmp);
 
 	/* There's no magic here, we just need to prepend in reverse order */
 	g_string_prepend(d->str, "29\xc0\x80");
 
-	pkt_buf_len = yahoo_packet_build(pkt, 8, FALSE, yd->jp, &pkt_buf);
-	yahoo_packet_free(pkt);
 	g_string_prepend_len(d->str, (char *)pkt_buf, pkt_buf_len);
 	g_free(pkt_buf);
 
 	g_string_prepend(d->str, header);
 	g_free(header);
+
+	purple_debug_info("yahoo", "Buddy icon upload data:\n%.*s\n", d->str->len, d->str->str);
 
 	d->fd = source;
 	d->watcher = purple_input_add(d->fd, PURPLE_INPUT_WRITE, yahoo_buddy_icon_upload_pending, d);
@@ -528,6 +549,28 @@ void yahoo_buddy_icon_upload(PurpleConnection *gc, struct yahoo_buddy_icon_uploa
 	}
 }
 
+static int yahoo_buddy_icon_calculate_checksum(const guchar *data, gsize len)
+{
+	/* This code is borrowed from Kopete, which seems to be managing to calculate
+	   checksums in such a manner that Yahoo!'s servers are happy */
+
+	const guchar *p = data;
+	int checksum = 0, g, i = len;
+
+	while(i--) {
+		checksum = (checksum << 4) + *p++;
+
+		if((g = (checksum & 0xf0000000)) != 0)
+			checksum ^= g >> 23;
+
+		checksum &= ~g;
+	}
+
+	purple_debug_misc("yahoo", "Calculated buddy icon checksum: %d", checksum);
+
+	return checksum;
+} 
+
 void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	struct yahoo_data *yd = gc->proto_data;
@@ -536,6 +579,8 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	if (img == NULL) {
 		g_free(yd->picture_url);
 		yd->picture_url = NULL;
+
+		/* TODO: don't we have to clear it on the server too?! */
 
 		purple_account_set_string(account, YAHOO_PICURL_SETTING, NULL);
 		purple_account_set_int(account, YAHOO_PICCKSUM_SETTING, 0);
@@ -552,14 +597,8 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 		int oldcksum = purple_account_get_int(account, YAHOO_PICCKSUM_SETTING, 0);
 		int expire = purple_account_get_int(account, YAHOO_PICEXPIRE_SETTING, 0);
 		const char *oldurl = purple_account_get_string(account, YAHOO_PICURL_SETTING, NULL);
-		char *iconfile;
 
-		/* TODO: At some point, it'd be nice to fix this for real, or
-		 * TODO: at least change it to be something like:
-		 * TODO: purple_imgstore_get_filename(img);
-		 * TODO: But it would be great if we knew how to calculate the
-		 * TODO: Checksum correctly. */
-		yd->picture_checksum = g_string_hash(s);
+		yd->picture_checksum = yahoo_buddy_icon_calculate_checksum(data, len);
 
 		if ((yd->picture_checksum == oldcksum) &&
 			(expire > (time(NULL) + 60*60*24)) && oldurl)
@@ -572,12 +611,11 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 		}
 
 		/* We use this solely for sending a filename to the server */
-		iconfile = g_strdup(purple_imgstore_get_filename(img));
 		d = g_new0(struct yahoo_buddy_icon_upload_data, 1);
 		d->gc = gc;
 		d->str = s;
 		d->fd = -1;
-		d->filename = iconfile;
+		d->filename = g_strdup(purple_imgstore_get_filename(img));
 
 		if (!yd->logged_in) {
 			yd->picture_upload_todo = d;

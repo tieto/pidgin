@@ -462,22 +462,19 @@ msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	}
 }
 
-/* parse the oim XML data 
- * and post it to the soap server to get the Offline Message
- * */
-void
-msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
+static void
+msn_parse_oim_xml(MsnOim *oim, xmlnode *node)
 {
-	xmlnode *node, *mNode;
+ 	xmlnode *mNode;
 	xmlnode *iu_node;
 	MsnSession *session = oim->session;
 
-	purple_debug_info("MSNP14:OIM", "%s\n", xmlmsg);
+ 	g_return_if_fail(node != NULL);
 
-	node = xmlnode_from_str(xmlmsg, -1);
 	if (strcmp(node->name, "MD") != 0) {
+ 		char *xmlmsg = xmlnode_to_str(node, NULL);
 		purple_debug_info("msnoim", "WTF is this? %s\n", xmlmsg);
-		xmlnode_free(node);
+		g_free(xmlmsg);
 		return;
 	}
 
@@ -528,8 +525,27 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		g_free(rtime);
 		g_free(nickname);
 	}
+}
 
-	xmlnode_free(node);
+/* parse the oim XML data
+ * and post it to the soap server to get the Offline Message
+ * */
+void
+msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
+{
+	xmlnode *node;
+
+	purple_debug_info("MSNP14:OIM", "%s\n", xmlmsg);
+
+	if (!strcmp(xmlmsg, "too-large")) {
+		/* Too many OIM's to send via NS, so we need to request them
+		 * via SOAP. */
+		purple_debug_info("msnoim", "too many OIMs, not supported yet\n");
+	} else {
+		node = xmlnode_from_str(xmlmsg, -1);
+		msn_parse_oim_xml(oim, node);
+		xmlnode_free(node);
+	}
 }
 
 /*Post to get the Offline Instant Message*/

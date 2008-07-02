@@ -39,9 +39,6 @@
 #define QQ_NULL_MSG           "(NULL)"	/* return this if conversion fails */
 #define QQ_NULL_SMILEY        "(SM)"	/* return this if smiley conversion fails */
 
-/* a debug function */
-void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len);
-
 const gchar qq_smiley_map[QQ_SMILEY_AMOUNT] = {
 	0x41, 0x43, 0x42, 0x44, 0x45, 0x46, 0x47, 0x48,
 	0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x73,
@@ -111,21 +108,29 @@ static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset,
 
 	ret = g_convert(str, len, to_charset, from_charset, &byte_read, &byte_write, &error);
 
-	if (error == NULL)
+	if (error == NULL) {
 		return ret;	/* conversion is OK */
-	else {			/* conversion error */
-		gchar *failed = hex_dump_to_str((guint8 *) str, (len == -1) ? strlen(str) : len);
-		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "%s\n", error->message);
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Dump failed text\n%s", failed);
-		g_free(failed);
-		g_error_free(error);
-		return g_strdup(QQ_NULL_MSG);
 	}
+	
+	/* conversion error */
+	purple_debug(PURPLE_DEBUG_ERROR, "QQ", "%s\n", error->message);
+
+	qq_hex_dump(PURPLE_DEBUG_WARNING, "QQ",
+		(guint8 *) str, (len == -1) ? strlen(str) : len,
+		"Dump failed text");
+
+	g_error_free(error);
+	return g_strdup(QQ_NULL_MSG);
 }
 
-/* take the input as a pascal string and return a converted c-string in UTF-8
+/**
+ * @brief 把输入作为一个pascal字符串并返回一个用UFT-8转换的c-字符串.\n
+ * 返回已读入的字节数,或者当遇到错误时返回-1.该完成转换的UTF-8字符串被保存到ret中
+ *
+ * take the input as a pascal string and return a converted c-string in UTF-8
  * returns the number of bytes read, return -1 if fatal error
- * the converted UTF-8 will be saved in ret */
+ * the converted UTF-8 will be saved in ret
+ */ 
 gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_charset) 
 {
 	guint8 len;
@@ -142,22 +147,23 @@ gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_chars
 gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg)
 {
 	GString *encoded;
-	guint8 font_attr, font_size, color[3], bar, *cursor;
+	guint8 font_attr, font_size, color[3], bar;
 	gboolean is_bold, is_italic, is_underline;
 	guint16 charset_code;
 	gchar *font_name, *color_code, *msg_utf8, *tmp, *ret;
+	gint bytes = 0;
 
-	cursor = data;
-	_qq_show_packet("QQ_MESG recv for font style", data, len);
+	/* checked qq_show_packet OK */
+	qq_show_packet("QQ_MESG recv for font style", data, len);
 
-	read_packet_b(data, &cursor, len, &font_attr);
-	read_packet_data(data, &cursor, len, color, 3);	/* red,green,blue */
+	bytes += qq_get8(&font_attr, data + bytes);
+	bytes += qq_getdata(color, 3, data + bytes);	/* red,green,blue */
 	color_code = g_strdup_printf("#%02x%02x%02x", color[0], color[1], color[2]);
 
-	read_packet_b(data, &cursor, len, &bar);	/* skip, not sure of its use */
-	read_packet_w(data, &cursor, len, &charset_code);
+	bytes += qq_get8(&bar, data + bytes);	/* skip, not sure of its use */
+	bytes += qq_get16(&charset_code, data + bytes);
 
-	tmp = g_strndup((gchar *) cursor, data + len - cursor);
+	tmp = g_strndup((gchar *)(data + bytes), len - bytes);
 	font_name = qq_to_utf8(tmp, QQ_CHARSET_DEFAULT);
 	g_free(tmp);
 
@@ -177,11 +183,11 @@ gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg)
 	/* Henry: The range QQ sends rounds from 8 to 22, where a font size
 	 * of 10 is equal to 3 in html font tag */
 	g_string_append_printf(encoded,
-			       "<font color=\"%s\"><font face=\"%s\"><font size=\"%d\">",
-			       color_code, font_name, font_size / 3);
+			"<font color=\"%s\"><font face=\"%s\"><font size=\"%d\">",
+			color_code, font_name, font_size / 3);
 	purple_debug(PURPLE_DEBUG_INFO, "QQ_MESG",
-		   "recv <font color=\"%s\"><font face=\"%s\"><font size=\"%d\">\n",
-		   color_code, font_name, font_size / 3);
+			"recv <font color=\"%s\"><font face=\"%s\"><font size=\"%d\">\n",
+			color_code, font_name, font_size / 3);
 	g_string_append(encoded, msg_utf8);
 
 	if (is_bold) {

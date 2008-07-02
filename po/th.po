@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../finch/finch.c:64 ../finch/finch.c:301 ../finch/finch.c:330
 #: ../finch/finch.c:418
@@ -15031,8 +15031,9 @@ msgid ""
 "\n"
 "%s"
 msgstr ""
-"เกิดข้อผิดพลาดขณะบันทึกรูป: %s\n"
-"%s"
+#msgstr ""
+#"เกิดข้อผิดพลาดขณะบันทึกรูป: %s\n"
+#"%s"
 
 #: ../pidgin/gtkimhtml.c:3482 ../pidgin/gtkimhtml.c:3494
 msgid "Save Image"

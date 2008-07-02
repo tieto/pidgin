@@ -47,9 +47,8 @@ static unsigned int next_id = 0;
 static void
 xep_ft_si_reject(BonjourData *bd, const char *id, const char *to, const char *error_code, const char *error_type)
 {
-	xmlnode *error_node = NULL;
-	xmlnode *tmp_node = NULL;
-	XepIq *iq = NULL;
+	xmlnode *error_node;
+	XepIq *iq;
 
 	g_return_if_fail(error_code != NULL);
 	g_return_if_fail(error_type != NULL);
@@ -68,14 +67,14 @@ xep_ft_si_reject(BonjourData *bd, const char *id, const char *to, const char *er
 
 	/* TODO: Make this better */
 	if (!strcmp(error_code, "403")) {
-		tmp_node = xmlnode_new_child(error_node, "forbidden");
+		xmlnode *tmp_node = xmlnode_new_child(error_node, "forbidden");
 		xmlnode_set_namespace(tmp_node, "urn:ietf:params:xml:ns:xmpp-stanzas");
 
 		tmp_node = xmlnode_new_child(error_node, "text");
 		xmlnode_set_namespace(tmp_node, "urn:ietf:params:xml:ns:xmpp-stanzas");
 		xmlnode_insert_data(tmp_node, "Offer Declined", -1);
 	} else if (!strcmp(error_code, "404")) {
-		tmp_node = xmlnode_new_child(error_node, "item-not-found");
+		xmlnode *tmp_node = xmlnode_new_child(error_node, "item-not-found");
 		xmlnode_set_namespace(tmp_node, "urn:ietf:params:xml:ns:xmpp-stanzas");
 	}
 
@@ -90,11 +89,10 @@ static void bonjour_xfer_cancel_send(PurpleXfer *xfer)
 
 static void bonjour_xfer_request_denied(PurpleXfer *xfer)
 {
-	XepXfer *xf = NULL;
+	XepXfer *xf = xfer->data;
 
 	purple_debug_info("bonjour", "Bonjour-xfer-request-denied.\n");
 
-	xf = xfer->data;
 	if(xf)
 		xep_ft_si_reject(xf->data, xf->sid, xfer->who, "403", "cancel");
 
@@ -149,9 +147,9 @@ static void bonjour_xfer_end(PurpleXfer *xfer)
 static PurpleXfer*
 bonjour_si_xfer_find(BonjourData *bd, const char *sid, const char *from)
 {
-	GSList *xfers = NULL;
-	PurpleXfer *xfer = NULL;
-	XepXfer *xf = NULL;
+	GSList *xfers;
+	PurpleXfer *xfer;
+	XepXfer *xf;
 
 	if(!sid || !from || !bd)
 		return NULL;
@@ -179,19 +177,12 @@ bonjour_si_xfer_find(BonjourData *bd, const char *sid, const char *from)
 static void
 xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 {
-	xmlnode *si_node = NULL;
-	xmlnode *feature = NULL;
-	xmlnode *field = NULL;
-	xmlnode *option = NULL;
-	xmlnode *value = NULL;
-	xmlnode *file = NULL;
-	xmlnode *x = NULL;
-	XepIq *iq = NULL;
-	XepXfer *xf = NULL;
+	xmlnode *si_node, *feature, *field, *file, *x;
+	XepIq *iq;
+	XepXfer *xf = xfer->data;
 	BonjourData *bd = NULL;
 	char buf[32];
 
-	xf = xfer->data;
 	if(!xf)
 		return;
 
@@ -234,13 +225,13 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 	xmlnode_set_attrib(field, "type", "list-single");
 
 	if (xf->mode & XEP_BYTESTREAMS) {
-		option = xmlnode_new_child(field, "option");
-		value = xmlnode_new_child(option, "value");
+		xmlnode *option = xmlnode_new_child(field, "option");
+		xmlnode *value = xmlnode_new_child(option, "value");
 		xmlnode_insert_data(value, "http://jabber.org/protocol/bytestreams", -1);
 	}
 	if (xf->mode & XEP_IBB) {
-		option = xmlnode_new_child(field, "option");
-		value = xmlnode_new_child(option, "value");
+		xmlnode *option = xmlnode_new_child(field, "option");
+		xmlnode *value = xmlnode_new_child(option, "value");
 		xmlnode_insert_data(value, "http://jabber.org/protocol/ibb", -1);
 	}
 
@@ -250,13 +241,9 @@ xep_ft_si_offer(PurpleXfer *xfer, const gchar *to)
 static void
 xep_ft_si_result(PurpleXfer *xfer, char *to)
 {
-	xmlnode *si_node = NULL;
-	xmlnode *feature = NULL;
-	xmlnode *field = NULL;
-	xmlnode *value = NULL;
-	xmlnode *x = NULL;
-	XepIq *iq = NULL;
-	XepXfer *xf = NULL;
+	xmlnode *si_node, *feature, *field, *value, *x;
+	XepIq *iq;
+	XepXfer *xf;
 	BonjourData *bd;
 
 	if(!to || !xfer)
@@ -295,8 +282,7 @@ xep_ft_si_result(PurpleXfer *xfer, char *to)
 static void
 bonjour_free_xfer(PurpleXfer *xfer)
 {
-	XepXfer *xf = NULL;
-	BonjourData *bd = NULL;
+	XepXfer *xf;
 
 	if(xfer == NULL) {
 		purple_debug_info("bonjour", "bonjour-free-xfer-null.\n");
@@ -307,7 +293,7 @@ bonjour_free_xfer(PurpleXfer *xfer)
 
 	xf = (XepXfer*)xfer->data;
 	if(xf != NULL) {
-		bd = (BonjourData*)xf->data;
+		BonjourData *bd = (BonjourData*)xf->data;
 		if(bd != NULL) {
 			bd->xfer_lists = g_slist_remove(bd->xfer_lists, xfer);
 			purple_debug_info("bonjour", "B free xfer from lists(%p).\n", bd->xfer_lists);
@@ -332,8 +318,8 @@ PurpleXfer *
 bonjour_new_xfer(PurpleConnection *gc, const char *who)
 {
 	PurpleXfer *xfer;
-	XepXfer *xep_xfer = NULL;
-	BonjourData *bd = NULL;
+	XepXfer *xep_xfer;
+	BonjourData *bd;
 
 	if(who == NULL || gc == NULL)
 		return NULL;
@@ -367,7 +353,7 @@ bonjour_new_xfer(PurpleConnection *gc, const char *who)
 void
 bonjour_send_file(PurpleConnection *gc, const char *who, const char *file)
 {
-	PurpleXfer *xfer = NULL;
+	PurpleXfer *xfer;
 
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
@@ -386,9 +372,9 @@ bonjour_send_file(PurpleConnection *gc, const char *who, const char *file)
 static void
 bonjour_xfer_init(PurpleXfer *xfer)
 {
-	PurpleBuddy *buddy = NULL;
-	BonjourBuddy *bb = NULL;
-	XepXfer *xf = NULL;
+	PurpleBuddy *buddy;
+	BonjourBuddy *bb;
+	XepXfer *xf;
 
 	xf = (XepXfer*)xfer->data;
 	if(xf == NULL)
@@ -398,7 +384,7 @@ bonjour_xfer_init(PurpleXfer *xfer)
 
 	buddy = purple_find_buddy(xfer->account, xfer->who);
 	/* this buddy is offline. */
-	if (buddy == NULL)
+	if (buddy == NULL || buddy->proto_data == NULL)
 		return;
 
 	bb = (BonjourBuddy *)buddy->proto_data;
@@ -420,8 +406,8 @@ void
 xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 {
 	const char *type, *id;
-	BonjourData *bd = NULL;
-	PurpleXfer *xfer = NULL;
+	BonjourData *bd;
+	PurpleXfer *xfer;
 
 	if(pc == NULL || packet == NULL || pb == NULL)
 		return;
@@ -496,12 +482,9 @@ xep_si_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 void
 xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 {
-	const char *type = NULL, *from = NULL;
-	xmlnode *query = NULL, *streamhost = NULL;
-	BonjourData *bd = NULL;
-	PurpleXfer *xfer = NULL;
-	XepXfer *xf = NULL;
-	int portnum;
+	const char *type, *from;
+	xmlnode *query;
+	BonjourData *bd;
 
 	if(pc == NULL || packet == NULL || pb == NULL)
 		return;
@@ -519,6 +502,7 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 		if(!strcmp(type, "set")) {
 			const char *iq_id, *sid;
 			gboolean found = FALSE;
+			PurpleXfer *xfer;
 
 			purple_debug_info("bonjour", "bytestream offer Message type - SET.\n");
 
@@ -529,6 +513,9 @@ xep_bytestreams_parse(PurpleConnection *pc, xmlnode *packet, PurpleBuddy *pb)
 
 			if(xfer) {
 				const char *jid, *host, *port;
+				xmlnode *streamhost;
+				int portnum;
+				XepXfer *xf = NULL;
 
 				xf = (XepXfer*)xfer->data;
 				for(streamhost = xmlnode_get_child(query, "streamhost");
@@ -577,9 +564,9 @@ static void
 bonjour_xfer_receive(PurpleConnection *pc, const char *id, const char *sid, const char *from,
 		     const int filesize, const char *filename, int option)
 {
-	PurpleXfer *xfer = NULL;
-	XepXfer *xf = NULL;
-	BonjourData *bd = NULL;
+	PurpleXfer *xfer;
+	XepXfer *xf;
+	BonjourData *bd;
 
 	if(pc == NULL || id == NULL || from == NULL)
 		return;
@@ -614,11 +601,10 @@ static void
 bonjour_sock5_request_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PurpleXfer *xfer = data;
-	XepXfer *xf = NULL;
+	XepXfer *xf = xfer->data;
 	int acceptfd;
 	int len = 0;
 
-	xf = xfer->data;
 	if(xf == NULL)
 		return;
 
@@ -745,10 +731,9 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 	XepXfer *xf;
 	XepIq *iq;
 	xmlnode *query, *streamhost;
-	char *port;
-	const char *next_ip;
-	const char *local_ip = NULL;
-	char token [] = ";";
+	gchar *port;
+	const char *next_ip, *local_ip;
+	const char token [] = ";";
 	BonjourData *bd;
 
 	purple_debug_info("bonjour", "Bonjour-bytestreams-listen. sock=%d.\n", sock);
@@ -793,7 +778,7 @@ bonjour_bytestreams_listen(int sock, gpointer data)
 static void
 bonjour_bytestreams_init(PurpleXfer *xfer)
 {
-	XepXfer *xf = NULL;
+	XepXfer *xf;
 	if(xfer == NULL)
 		return;
 	purple_debug_info("bonjour", "Bonjour-bytestreams-init.\n");
@@ -813,7 +798,7 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 {
 	PurpleXfer *xfer = data;
 	XepXfer *xf = xfer->data;
-	XepIq *iq = NULL;
+	XepIq *iq;
 	xmlnode *q_node, *tmp_node;
 	BonjourData *bd;
 
@@ -849,10 +834,10 @@ bonjour_bytestreams_connect_cb(gpointer data, gint source, const gchar *error_me
 static void
 bonjour_bytestreams_connect(PurpleXfer *xfer, PurpleBuddy *pb)
 {
-	XepXfer *xf = NULL;
+	XepXfer *xf;
 	char dstaddr[41];
 	unsigned char hashval[20];
-	char *p = NULL;
+	char *p;
 	int i;
 
 	if(xfer == NULL)

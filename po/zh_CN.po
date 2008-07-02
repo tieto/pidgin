@@ -13397,7 +13397,7 @@ msgstr ""
 msgid "You have %d contact named %s. Would you like to merge them?"
 msgid_plural ""
 "You currently have %d contacts named %s. Would you like to merge them?"
-msgstr[0] "您已经有名为 %s 的 %d 位联系人。您是否想要合并？"
+msgstr[0] "您已经有名为 %2$s 的 %1$d 位联系人。您是否想要合并？"
 
 #: ../pidgin/gtkblist.c:525
 msgid ""

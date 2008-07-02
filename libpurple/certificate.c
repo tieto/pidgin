@@ -787,8 +787,7 @@ x509_ca_locate_cert(GList *lst, const gchar *dn)
 
 	for (cur = lst; cur; cur = cur->next) {
 		x509_ca_element *el = cur->data;
-		/* TODO: Unsafe? */
-		if ( !strcmp(dn, el->dn) ) {
+		if (el->dn && !strcmp(dn, el->dn)) {
 			return el;
 		}
 	}

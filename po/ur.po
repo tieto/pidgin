@@ -13,6 +13,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Translate Toolkit 0.10\n"
 "X-Poedit-Language: Urdu\n"
 "X-Poedit-SourceCharset: utf.8\n"
@@ -1398,8 +1399,10 @@ msgstr "مضمون"
 #, c-format
 msgid "%s (%s) has %d new message."
 msgid_plural "%s (%s) has %d new messages."
-msgstr[0] "%s کے پاس %dنیا پیام ہے۔"
-msgstr[1] "%sک ےپاس    %dنئے پیامات ہیں۔"
+msgstr[0] ""
+msgstr[1] ""
+#msgstr[0] "%s کے پاس %dنیا پیام ہے۔"
+#msgstr[1] "%sک ےپاس    %dنئے پیامات ہیں۔"
 
 #: ../finch/gntnotify.c:226
 #: ../pidgin/gtknotify.c:342
@@ -2466,7 +2469,8 @@ msgstr ""
 #: ../libpurple/certificate.c:1185
 #, c-format
 msgid "Accept certificate for %s?"
-msgstr "دعوت گفتگو قبول ؟"
+msgstr ""
+#msgstr "دعوت گفتگو قبول ؟"
 
 #. TODO: Find what the handle ought to be
 #: ../libpurple/certificate.c:1191
@@ -3083,7 +3087,8 @@ msgstr "گائم آپ کا پلگ ان لوڈ کرنے میں ناقابل تھ�
 #: ../libpurple/plugin.c:663
 #, c-format
 msgid "%s requires %s, but it failed to unload."
-msgstr "انحصاری پلگ ان%sان لوڈہونے میں ناكام ہوا۔"
+msgstr ""
+#msgstr "انحصاری پلگ ان%sان لوڈہونے میں ناكام ہوا۔"
 
 #: ../libpurple/plugins/autoaccept.c:23
 #, fuzzy
@@ -3099,7 +3104,8 @@ msgstr "%s سے ٹرانسفردرخواست فائل قبول؟"
 #: ../libpurple/plugins/autoaccept.c:80
 #, c-format
 msgid "Autoaccepted file transfer of \"%s\" from \"%s\" completed."
-msgstr "%s سے ٹرانسفردرخواست فائل قبول؟"
+msgstr ""
+#msgstr "%s سے ٹرانسفردرخواست فائل قبول؟"
 
 #: ../libpurple/plugins/autoaccept.c:82
 msgid "Autoaccept complete"
@@ -3885,7 +3891,7 @@ msgid "Unable to detect ActiveTCL installation. If you wish to use TCL plugins, 
 msgstr "ایكٹیو TCL ا نسٹالیشن كی  جانچ  نا ممكن۔ اگر آپ TCL پلگ انس  استعمال كرنا چاہتے ہیں ، ایكٹیوTCL انسٹال كروfrom http://www.activestate.com\n"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:108
-msgid "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging for more information."
+msgid "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d.pidgin.im/BonjourWindows for more information."
 msgstr ""
 
 #: ../libpurple/protocols/bonjour/bonjour.c:127
@@ -4035,7 +4041,8 @@ msgstr "بڈی فہرست کامیابی سے محفوظ ہوئی!"
 #: ../libpurple/protocols/gg/gg.c:278
 #, c-format
 msgid "Couldn't write buddy list for %s to %s"
-msgstr "بڈّی لسٹ لوڈ نہیں كرسكا"
+msgstr ""
+#msgstr "بڈّی لسٹ لوڈ نہیں كرسكا"
 
 #: ../libpurple/protocols/gg/gg.c:303
 #: ../libpurple/protocols/gg/gg.c:304
@@ -4831,7 +4838,8 @@ msgstr "PING ری پلاے-- لیگ: %lu سیکنڈس"
 #: ../libpurple/protocols/irc/msgs.c:1113
 #, c-format
 msgid "Cannot join %s: Registration is required."
-msgstr "رجسٹریشن کی ضروت تھی"
+msgstr ""
+#msgstr "رجسٹریشن کی ضروت تھی"
 
 #: ../libpurple/protocols/irc/msgs.c:1114
 #: ../libpurple/protocols/silc/ops.c:1093
@@ -5038,7 +5046,8 @@ msgstr "سرور کو ان اینکریپٹیڈ اسٹریم پر سادہ مت�
 #: ../libpurple/protocols/jabber/auth.c:518
 #, c-format
 msgid "%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"
-msgstr "اس سرور کو ان اینکریپٹیڈ کنیکشن پر سادہ متن تصدیق کی ضرورت ہے ۔ اس کو اجازت  ہے اور تصدیق جاری رکھنا ہے؟"
+msgstr ""
+#msgstr "اس سرور کو ان اینکریپٹیڈ کنیکشن پر سادہ متن تصدیق کی ضرورت ہے ۔ اس کو اجازت  ہے اور تصدیق جاری رکھنا ہے؟"
 
 #: ../libpurple/protocols/jabber/auth.c:325
 #: ../libpurple/protocols/jabber/auth.c:326
@@ -5799,7 +5808,7 @@ msgstr "کا رجسٹریشن %s@%s کامیاب"
 #: ../libpurple/protocols/jabber/jabber.c:689
 #, c-format
 msgid "Registration to %s successful"
-msgstr "کا رجسٹریشن %s@%s کامیاب"
+msgstr "کا رجسٹریشن %s کامیاب"
 
 #: ../libpurple/protocols/jabber/jabber.c:691
 #: ../libpurple/protocols/jabber/jabber.c:692
@@ -5814,7 +5823,7 @@ msgstr "رجسٹریشن نا کام ہوا"
 #: ../libpurple/protocols/jabber/jabber.c:719
 #, c-format
 msgid "Registration from %s successfully removed"
-msgstr "کا رجسٹریشن %s@%s کامیاب"
+msgstr "کا رجسٹریشن %s کامیاب"
 
 #: ../libpurple/protocols/jabber/jabber.c:721
 #: ../libpurple/protocols/jabber/jabber.c:722
@@ -5890,7 +5899,8 @@ msgstr " %sکے لئے صارف معلومات تبدیل کریں"
 #: ../libpurple/protocols/jabber/jabber.c:1040
 #, c-format
 msgid "Register New Account at %s"
-msgstr "نیا مہمل اکاؤنٹ رجسٹر کریں"
+msgstr ""
+#msgstr "نیا مہمل اکاؤنٹ رجسٹر کریں"
 
 #: ../libpurple/protocols/jabber/jabber.c:1043
 msgid "Change Registration"
@@ -6352,7 +6362,8 @@ msgstr "Buzz!!"
 #: ../libpurple/protocols/yahoo/yahoo.c:4131
 #, c-format
 msgid "%s has buzzed you!"
-msgstr "%s has added you [%s]"
+msgstr ""
+#msgstr "%s has added you [%s]"
 
 #: ../libpurple/protocols/jabber/jabber.c:2281
 #: ../libpurple/protocols/yahoo/yahoo.c:4132
@@ -6945,7 +6956,8 @@ msgstr ""
 #: ../libpurple/protocols/msnp9/msn.c:131
 #, c-format
 msgid "%s has nudged you!"
-msgstr "%s has added you [%s]"
+msgstr ""
+#msgstr "%s has added you [%s]"
 
 #: ../libpurple/protocols/msn/msn.c:132
 #: ../libpurple/protocols/msnp9/msn.c:132
@@ -7505,7 +7517,8 @@ msgstr "%sنے ابھی آپ کو نج بھیجا!"
 #: ../libpurple/protocols/msn/notification.c:836
 #, c-format
 msgid "Unknown error (%d)"
-msgstr "نامعلوم خامی "
+msgstr ""
+#msgstr "نامعلوم خامی "
 
 #: ../libpurple/protocols/msn/notification.c:837
 #: ../libpurple/protocols/sametime/sametime.c:4471
@@ -7874,7 +7887,8 @@ msgstr ""
 #: ../libpurple/protocols/myspace/myspace.c:1794
 #, c-format
 msgid "Protocol error, code %d: %s"
-msgstr "پروسیس لوٹایا گيا خامی کوڈ %d"
+msgstr ""
+#msgstr "پروسیس لوٹایا گيا خامی کوڈ %d"
 
 #: ../libpurple/protocols/myspace/myspace.c:1990
 #: ../libpurple/protocols/myspace/myspace.c:2024
@@ -7933,7 +7947,8 @@ msgstr "پیام  کی تصریف میں ناقابل"
 #: ../libpurple/protocols/myspace/myspace.c:2499
 #, c-format
 msgid "Couldn't connect to host: %s (%d)"
-msgstr "ہاسٹ سے کنیکٹ نہیں ہو سکا"
+msgstr ""
+#msgstr "ہاسٹ سے کنیکٹ نہیں ہو سکا"
 
 #: ../libpurple/protocols/myspace/myspace.c:2670
 #, fuzzy
@@ -8738,7 +8753,8 @@ msgstr "(اس پیام كو حاصل كرنے میں كچھ رخنہ تھا۔ہ�
 #: ../libpurple/protocols/oscar/oscar.c:457
 #, c-format
 msgid "(There was an error receiving this message.  Either you and %s have different encodings selected, or %s has a buggy client.)"
-msgstr "(پیام موصول ہونے میں خامی تھی۔  جس بڈی سے آپ بات کررہے تھے بہت حد تک قیاس ہے کہ کلائنٹ بگی تھا۔)"
+msgstr ""
+#msgstr "(پیام موصول ہونے میں خامی تھی۔  جس بڈی سے آپ بات کررہے تھے بہت حد تک قیاس ہے کہ کلائنٹ بگی تھا۔)"
 
 #. Label
 #: ../libpurple/protocols/oscar/oscar.c:639
@@ -9133,22 +9149,24 @@ msgstr "_گھٹاؤ"
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
-msgstr[0] "آپ نے %huپیام"
-msgstr[1] "آپ نے "
+msgstr[0] ""
+msgstr[1] ""
+#msgstr[0] "آپ نے %huپیام"
+#msgstr[1] "آپ نے "
 
 #: ../libpurple/protocols/oscar/oscar.c:2615
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
-msgstr[0] "آپ نے %sسے %hu پیام کو مس کردیا کیونکہ یہ بہت بڑا تھا۔"
-msgstr[1] "آپ نے %sسے %hu پیامات کو مس کردیا کیونکہ یہ بہت بڑےتھے۔"
+msgstr[0] "آپ نے %2$sسے %1$hu پیام کو مس کردیا کیونکہ یہ بہت بڑا تھا۔"
+msgstr[1] "آپ نے %2$sسے %1$hu پیامات کو مس کردیا کیونکہ یہ بہت بڑےتھے۔"
 
 #: ../libpurple/protocols/oscar/oscar.c:2624
 #, c-format
 msgid "You missed %hu message from %s because the rate limit has been exceeded."
 msgid_plural "You missed %hu messages from %s because the rate limit has been exceeded."
-msgstr[0] "آپ نے %sسے  %huپیام مس کردیا کیونکہ قیمت حد گذر گئی۔"
-msgstr[1] "آپ نے%sسے  %hu پیامات مس کردیئے کیونکہ قیمت حد گذر گئی۔"
+msgstr[0] "آپ نے %2$sسے  %1$huپیام مس کردیا کیونکہ قیمت حد گذر گئی۔"
+msgstr[1] "آپ نے%2$sسے  %1$hu پیامات مس کردیئے کیونکہ قیمت حد گذر گئی۔"
 
 #: ../libpurple/protocols/oscar/oscar.c:2633
 #, c-format
@@ -9161,15 +9179,15 @@ msgstr[1] "You missed %hu messages from %s because he/she was too evil."
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
-msgstr[0] "آپ نے  %sسے%huپیام مس کردیا کیونکہ آپ  بہت  ناشائستہ ہیں۔"
-msgstr[1] "آپ نے  %sسے%huپیامات مس کردیئے کیونکہ آپ  بہت   ناشائستہ  ہیں ۔"
+msgstr[0] "آپ نے  %2$sسے%1$huپیام مس کردیا کیونکہ آپ  بہت  ناشائستہ ہیں۔"
+msgstr[1] "آپ نے  %2$sسے%1$huپیامات مس کردیئے کیونکہ آپ  بہت   ناشائستہ  ہیں ۔"
 
 #: ../libpurple/protocols/oscar/oscar.c:2651
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
-msgstr[0] " آپ نے نا معلوم وجہ کےلئے %sسے%hu پیام مس کردیا ۔"
-msgstr[1] " آپ نے نا معلوم وجہ کےلئے %sسے%hu پیامات مس کردیئے ۔"
+msgstr[0] " آپ نے نا معلوم وجہ کےلئے %2$sسے%1$hu پیام مس کردیا ۔"
+msgstr[1] " آپ نے نا معلوم وجہ کےلئے %2$sسے%1$hu پیامات مس کردیئے ۔"
 
 # Data is assumed to be the destination sn
 #. Data is assumed to be the destination sn
@@ -9415,7 +9433,8 @@ msgstr "(کوئی نام نہیں)"
 #: ../libpurple/protocols/oscar/oscar.c:5109
 #, c-format
 msgid "Could not add the buddy %s for an unknown reason."
-msgstr "آپ کا کمانڈ نا معلوم سبب کے لئے ناکام ہوا۔"
+msgstr ""
+#msgstr "آپ کا کمانڈ نا معلوم سبب کے لئے ناکام ہوا۔"
 
 #: ../libpurple/protocols/oscar/oscar.c:5226
 #, c-format
@@ -9824,7 +9843,8 @@ msgstr "آپ كی معلومات اپ ڈیٹ كی گئی ہے"
 #: ../libpurple/protocols/qq/buddy_info.c:601
 #, c-format
 msgid "Setting custom faces is not currently supported. Please choose an image from %s."
-msgstr "آپ كسٹم فیس سیٹ كرنے كی كوشش كررہے ہیں ۔ گائم  جاری طورپر صرف معیاری فیسیس كو اجازت دیتا ہے۔ براہ كرم ایك امیج منتخب كیجیے"
+msgstr ""
+#msgstr "آپ كسٹم فیس سیٹ كرنے كی كوشش كررہے ہیں ۔ گائم  جاری طورپر صرف معیاری فیسیس كو اجازت دیتا ہے۔ براہ كرم ایك امیج منتخب كیجیے"
 
 #: ../libpurple/protocols/qq/buddy_info.c:618
 #: ../libpurple/protocols/qq/buddy_info.c:631
@@ -10285,7 +10305,8 @@ msgstr "كیا آپ انھیں ملانا چاہتے ہیں ؟"
 #: ../libpurple/protocols/qq/sys_msg.c:176
 #, c-format
 msgid "%s has added you [%s] to his or her buddy list"
-msgstr "%sنے آپ كواپنی بڈی لسٹ میں شامل كردیا۔"
+msgstr ""
+#msgstr "%sنے آپ كواپنی بڈی لسٹ میں شامل كردیا۔"
 
 #: ../libpurple/protocols/qq/sys_msg.c:192
 #, c-format
@@ -12911,8 +12932,9 @@ msgid ""
 "Lost connection with %s:\n"
 "%s"
 msgstr ""
-"سرور كے ساتھ كنیكشن گم ہوا:\n"
-"%s"
+#msgstr ""
+#"سرور كے ساتھ كنیكشن گم ہوا:\n"
+#"%s"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2733
 #, c-format
@@ -12920,8 +12942,9 @@ msgid ""
 "Could not establish a connection with %s:\n"
 "%s"
 msgstr ""
-"سرور كے ساتھ كوئی كنیكشن اسٹابلیش نہیں كیا جاسكتا:\n"
-"%s"
+#msgstr ""
+#"سرور كے ساتھ كوئی كنیكشن اسٹابلیش نہیں كیا جاسكتا:\n"
+#"%s"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3092
 #: ../libpurple/protocols/yahoo/yahoo.c:3778
@@ -13565,12 +13588,12 @@ msgstr ""
 #: ../libpurple/status.c:610
 #, c-format
 msgid "%s changed status from %s to %s"
-msgstr "%s changed status from %s to %s"
+msgstr ""
 
 #: ../libpurple/status.c:613
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
-msgstr "%s changed status from %s to %s"
+msgstr ""
 
 #: ../libpurple/status.c:624
 #, c-format
@@ -13580,7 +13603,8 @@ msgstr "%sابھی ہے %s"
 #: ../libpurple/status.c:626
 #, c-format
 msgid "%s (%s) is now %s"
-msgstr "%sابھی ہے %s"
+msgstr ""
+#msgstr "%sابھی ہے %s"
 
 #: ../libpurple/status.c:632
 #, c-format
@@ -13590,7 +13614,8 @@ msgstr "%s اوریادہ نہیں ہےr %s"
 #: ../libpurple/status.c:634
 #, c-format
 msgid "%s (%s) is no longer %s"
-msgstr "%s اوریادہ نہیں ہےr %s"
+msgstr ""
+#msgstr "%s اوریادہ نہیں ہےr %s"
 
 #: ../libpurple/status.c:1247
 #, c-format
@@ -13687,7 +13712,8 @@ msgstr ""
 #: ../libpurple/util.c:3943
 #, c-format
 msgid "Unable to connect to %s"
-msgstr "ہوسٹ سےكنیكٹ ہونے میں نااہل"
+msgstr ""
+#msgstr "ہوسٹ سےكنیكٹ ہونے میں نااہل"
 
 #: ../libpurple/util.c:3770
 #, c-format
@@ -13703,7 +13729,8 @@ msgstr ""
 #: ../libpurple/util.c:3861
 #, c-format
 msgid "Unable to connect to %s: %s"
-msgstr "ہوسٹ سےكنیكٹ ہونے میں نااہل"
+msgstr ""
+#msgstr "ہوسٹ سےكنیكٹ ہونے میں نااہل"
 
 #: ../pidgin.desktop.in.h:1
 msgid "Internet Messenger"
@@ -13887,11 +13914,12 @@ msgid ""
 "\n"
 "You can come back to this window to add, edit, or remove accounts from <b>Accounts->Add/Edit</b> in the Buddy List window"
 msgstr ""
-"<span size='larger' weight='bold'> گائم میں خوش آمدید!</span>\n"
-"\n"
-"آپ كوئي ہیئت والاIM اكاؤنٹس نہیں ركھتے ہیں ۔ گائم كے ساتھ   جوڑنا شروع كرنے كے لیے <b>ملاؤ</b> بٹن پر نیچے كلك  كیجیےا ور آپ كا پہلا اكاؤنٹ كو  ہیئت دیجیے۔  اگر آپ گائم كو متعدد IM اكاؤنٹس میں  چاہتے ہیں ، مال كو ہیئت دینے كے لیے دوبارہ <b>ملاؤ</b>  پر كلك كیجیے۔\n"
-"\n"
-"آپ ملانے ، مرتب، یا  اكاؤنٹس نكالنے كے لیے اس ونڈو كو  واپس جاسكتے ہیں ،بڈی فہرست  ونڈو میں <b>اكاؤنٹس->ملاؤ/مرتب</b>"
+#msgstr ""
+#"<span size='larger' weight='bold'> گائم میں خوش آمدید!</span>\n"
+#"\n"
+#"آپ كوئي ہیئت والاIM اكاؤنٹس نہیں ركھتے ہیں ۔ گائم كے ساتھ   جوڑنا شروع كرنے كے لیے <b>ملاؤ</b> بٹن پر نیچے كلك  كیجیےا ور آپ كا پہلا اكاؤنٹ كو  ہیئت دیجیے۔  اگر آپ گائم كو متعدد IM اكاؤنٹس میں  چاہتے ہیں ، مال كو ہیئت دینے كے لیے دوبارہ <b>ملاؤ</b>  پر كلك كیجیے۔\n"
+#"\n"
+#"آپ ملانے ، مرتب، یا  اكاؤنٹس نكالنے كے لیے اس ونڈو كو  واپس جاسكتے ہیں ،بڈی فہرست  ونڈو میں <b>اكاؤنٹس->ملاؤ/مرتب</b>"
 
 #: ../pidgin/gtkblist.c:543
 #, c-format
@@ -14217,7 +14245,7 @@ msgstr "راك ان"
 #: ../pidgin/gtkblist.c:3693
 #, c-format
 msgid "Idle %dd %dh %02dm"
-msgstr "Idle %dh %02dm"
+msgstr ""
 
 #: ../pidgin/gtkblist.c:3695
 #, c-format
@@ -14292,7 +14320,8 @@ msgstr "%s  منقطع کیا گیا"
 #: ../pidgin/gtkblist.c:4494
 #, c-format
 msgid "%s disabled"
-msgstr "نااہل كیاگیا"
+msgstr ""
+#msgstr "نااہل كیاگیا"
 
 #: ../pidgin/gtkblist.c:4498
 msgid "Reconnect"
@@ -14314,8 +14343,10 @@ msgstr "نظراندازکرو"
 #, c-format
 msgid "%d account was disabled because you signed on from another location."
 msgid_plural "%d accounts were disabled because you signed on from another location."
-msgstr[0] "آپ نے دوسرے لوکیشن سے سائنڈ آن کیا ہے۔"
-msgstr[1] "آپ نے دوسرے لوکیشن سے سائنڈ آن کیا ہے۔"
+msgstr[0] ""
+msgstr[1] ""
+#msgstr[0] "آپ نے دوسرے لوکیشن سے سائنڈ آن کیا ہے۔"
+#msgstr[1] "آپ نے دوسرے لوکیشن سے سائنڈ آن کیا ہے۔"
 
 #: ../pidgin/gtkblist.c:4860
 msgid "<b>Username:</b>"
@@ -14341,9 +14372,10 @@ msgid ""
 "\n"
 "You have no accounts enabled. Enable your IM accounts from the <b>Accounts</b> window at <b>Accounts->Manage</b>. Once you enable accounts, you'll be able to sign on, set your status, and talk to your friends."
 msgstr ""
-"<span weight='bold' size='larger'>گائم كو خوش آمدید!</span>\n"
-"\n"
-" آپ كوئی اكاؤنٹ ممكن نہيں ركھتے ہیں ۔<b>Accounts</b> اكاؤنٹس<b>Accounts->Add/Edit</b>ونڈو سے آپ كا  IM اكاؤنٹس ممكن كرو۔ایك  بار آپ  اكاؤنٹس  ممكن كرتے ہیں ،آپ سائن آن كو قابل كرتے ہیں ،آپ كا اسٹیٹس سیٹ كیجیے ، اورآپ كے فرینڈس سے بات  كیجیے۔"
+#msgstr ""
+#"<span weight='bold' size='larger'>گائم كو خوش آمدید!</span>\n"
+#"\n"
+#" آپ كوئی اكاؤنٹ ممكن نہيں ركھتے ہیں ۔<b>Accounts</b> اكاؤنٹس<b>Accounts->Add/Edit</b>ونڈو سے آپ كا  IM اكاؤنٹس ممكن كرو۔ایك  بار آپ  اكاؤنٹس  ممكن كرتے ہیں ،آپ سائن آن كو قابل كرتے ہیں ،آپ كا اسٹیٹس سیٹ كیجیے ، اورآپ كے فرینڈس سے بات  كیجیے۔"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
@@ -14770,8 +14802,9 @@ msgstr "0 لوگ کمرہ میں"
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
-msgstr[0] "%d فرد کمرے میں"
+msgstr[0] ""
 msgstr[1] ""
+#msgstr[0] "%d فرد کمرے میں"
 
 #: ../pidgin/gtkconv.c:6574
 #: ../pidgin/gtkstatusbox.c:660
@@ -15324,12 +15357,14 @@ msgstr "Amharic"
 #: ../pidgin/gtkdialogs.c:368
 #, c-format
 msgid "About %s"
-msgstr "گائم کےبارےمیں"
+msgstr ""
+#msgstr "گائم کےبارےمیں"
 
 #: ../pidgin/gtkdialogs.c:411
 #, c-format
 msgid "%s is a graphical modular messaging client based on libpurple which is capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, MySpaceIM, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
-msgstr "گائم AIM, MSN, Yahoo!,  كو استعمال كرتے ہوئے ایك ماڈیولر میسیجینگ كلائںٹ  كیبل ہے ۔Jabber, ICQ, IRC, SILC, SIP/SIMPLE, ناول  گروپ وائس، لوٹس مشابہ ٹائم،بونزور، زیفیر،گڈو گڈو، اورQQایك بار میں ۔یہ GTK+.<BR><BR> استعمال كرتے ہوئے لكھا جاتا ہے  آپ ترمیم كرینگے  اور  پروگرام كوGPL شرطوں كے ماتحٹ دوبارہ تقسیم كرینگے (version 2 or later).GPLكی ایك كاپی  'COPYING' فائل میں ركھتی ہے گائم سے تقسیم كی جاتی ہے۔ گائم  اسے شراكت داروں سے   كاپی رائٹیڈ ہے ۔ شراكت داروں كی مكمل فہرست كے لیے   گائم كی 'COPYRIGHT'   فائل دیكھیے۔ ہم اس پروگرام كے لیے كوئي وارنٹی مہیا نہیں كرتے ہیں ۔<BR><BR>"
+msgstr ""
+#msgstr "گائم AIM, MSN, Yahoo!,  كو استعمال كرتے ہوئے ایك ماڈیولر میسیجینگ كلائںٹ  كیبل ہے ۔Jabber, ICQ, IRC, SILC, SIP/SIMPLE, ناول  گروپ وائس، لوٹس مشابہ ٹائم،بونزور، زیفیر،گڈو گڈو، اورQQایك بار میں ۔یہ GTK+.<BR><BR> استعمال كرتے ہوئے لكھا جاتا ہے  آپ ترمیم كرینگے  اور  پروگرام كوGPL شرطوں كے ماتحٹ دوبارہ تقسیم كرینگے (version 2 or later).GPLكی ایك كاپی  'COPYING' فائل میں ركھتی ہے گائم سے تقسیم كی جاتی ہے۔ گائم  اسے شراكت داروں سے   كاپی رائٹیڈ ہے ۔ شراكت داروں كی مكمل فہرست كے لیے   گائم كی 'COPYRIGHT'   فائل دیكھیے۔ ہم اس پروگرام كے لیے كوئي وارنٹی مہیا نہیں كرتے ہیں ۔<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:429
 #, fuzzy
@@ -15912,17 +15947,18 @@ msgstr "كیا آپ واقعی %s for %sپرجھپٹنا خارج كرناچاہ
 #: ../pidgin/gtklog.c:309
 #, c-format
 msgid "Are you sure you want to permanently delete the system log which started at %s?"
-msgstr "كیا آپ واقعی %s for %sپرجھپٹنا خارج كرناچاہتےہیں؟"
+msgstr ""
+#msgstr "كیا آپ واقعی %s for %sپرجھپٹنا خارج كرناچاہتےہیں؟"
 
 #: ../pidgin/gtklog.c:453
 #, c-format
 msgid "<span size='larger' weight='bold'>Conversation in %s on %s</span>"
-msgstr "<span size='larger' weight='bold'>Conversation in %s on %s</span>"
+msgstr ""
 
 #: ../pidgin/gtklog.c:456
 #, c-format
 msgid "<span size='larger' weight='bold'>Conversation with %s on %s</span>"
-msgstr "<span size='larger' weight='bold'>Conversation with %s on %s</span>"
+msgstr ""
 
 #: ../pidgin/gtklog.c:503
 msgid "%B %Y"
@@ -15971,7 +16007,7 @@ msgstr "سسٹم لاگ"
 #: ../pidgin/gtkmain.c:398
 #, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
-msgstr "%s. كوشش `%s -h' مزید معلومات كے لیے.\n"
+msgstr "%s %s. كوشش `%s -h' مزید معلومات كے لیے.\n"
 
 #: ../pidgin/gtkmain.c:400
 #, c-format
@@ -15989,16 +16025,6 @@ msgid ""
 "  --display=DISPLAY   X display to use\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
-"Gaim %s\n"
-"Usage: %s [OPTION]...\n"
-"\n"
-"  -c, --config=DIR    use DIR for config files\n"
-"  -d, --debug         print debugging messages to stdout\n"
-"  -h, --help          display this help and exit\n"
-"  -n, --nologin       don't automatically login\n"
-"  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
-"                      account(s) to use, separated by commas)\n"
-"  -v, --version       display the current version and exit\n"
 
 #: ../pidgin/gtkmain.c:528
 #, c-format
@@ -16021,23 +16047,24 @@ msgid ""
 "on other protocols is at\n"
 "%swiki/DeveloperPages\n"
 msgstr ""
-"گائم سیگافالٹ ہوگیاہےاوراہم فائل كوپھینكنےكی كوشش كی۔ \n"
-"یہ سافٹ وئرمیں بگ ہے اوراس كے ذریعے ہواہے \n"
-"آپ كی كوئی غلطی نہیں۔\n"
-"\n"
-"اگرآپ دوبارہ كریش پروڈیوس كرسكتے ہیں تو، براہ كرم گائم\n"
-"ڈیولپرز كو بگ كی رپورٹ كریں\n"
-"%sbug.php\n"
-"\n"
-"اس بات كا خیال ركھیں یہ بتانانہ بھولیں كہ آپ اس وقت كیاكررہےتھے\n"
-"اور اہم فائل سےبیك ٹریس پوسٹ كریں۔ اگرآپ كو معلوم نہیں ہے \n"
-"بیك ٹریس كس طرح حاصل كریں تو،براہ كرم ہدایات پڑھیں\n"
-"%sgdb.php\n"
-"\n"
-"اگرآپ كومزیدمددكی ضرورت ہےتو، براہ كرم IM either SeanEgn or \n"
-"LSchiere (via AIM)٫  سین اورلیوك معلومات كےلیےرابطہ كریں  \n"
-"دیگرپروٹوكالزہے\n"
-"%scontactinfo.php\n"
+#msgstr ""
+#"گائم سیگافالٹ ہوگیاہےاوراہم فائل كوپھینكنےكی كوشش كی۔ \n"
+#"یہ سافٹ وئرمیں بگ ہے اوراس كے ذریعے ہواہے \n"
+#"آپ كی كوئی غلطی نہیں۔\n"
+#"\n"
+#"اگرآپ دوبارہ كریش پروڈیوس كرسكتے ہیں تو، براہ كرم گائم\n"
+#"ڈیولپرز كو بگ كی رپورٹ كریں\n"
+#"%sbug.php\n"
+#"\n"
+#"اس بات كا خیال ركھیں یہ بتانانہ بھولیں كہ آپ اس وقت كیاكررہےتھے\n"
+#"اور اہم فائل سےبیك ٹریس پوسٹ كریں۔ اگرآپ كو معلوم نہیں ہے \n"
+#"بیك ٹریس كس طرح حاصل كریں تو،براہ كرم ہدایات پڑھیں\n"
+#"%sgdb.php\n"
+#"\n"
+#"اگرآپ كومزیدمددكی ضرورت ہےتو، براہ كرم IM either SeanEgn or \n"
+#"LSchiere (via AIM)٫  سین اورلیوك معلومات كےلیےرابطہ كریں  \n"
+#"دیگرپروٹوكالزہے\n"
+#"%scontactinfo.php\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -16066,8 +16093,8 @@ msgstr[1] "%sک ےپاس    %dنئے پیامات ہیں۔"
 #, c-format
 msgid "<b>%d new e-mail.</b>"
 msgid_plural "<b>%d new e-mails.</b>"
-msgstr[0] "<b>Plugin Details</b>"
-msgstr[1] "<b>Plugin Details</b>"
+msgstr[0] ""
+msgstr[1] ""
 
 #: ../pidgin/gtknotify.c:998
 #, c-format
@@ -16905,7 +16932,8 @@ msgstr "فولڈر نہیں بھیج سکتا%s۔"
 #: ../pidgin/gtkutils.c:1501
 #, c-format
 msgid "%s cannot transfer a folder. You will need to send the files within individually."
-msgstr "گائم فولڈ رٹرانسفر نہیں کر سکا ۔آپ کو انفرادی طور پر فائلیں بھیجنے کی ضرورت ہے"
+msgstr ""
+#msgstr "گائم فولڈ رٹرانسفر نہیں کر سکا ۔آپ کو انفرادی طور پر فائلیں بھیجنے کی ضرورت ہے"
 
 #: ../pidgin/gtkutils.c:1535
 #: ../pidgin/gtkutils.c:1547
@@ -17820,7 +17848,8 @@ msgstr "آپ متن بیسڈ- پروٹوکالس کے لئے ڈراؤ ان پٹ 
 #: ../pidgin/plugins/relnot.c:71
 #, c-format
 msgid "You are using %s version %s.  The current version is %s.  You can get it from <a href=\"%s\">%s</a><hr>"
-msgstr "آپ گائم ورجن %s استعمال کررہے ہیں۔حالیہ ورجن ہے%s.<hr>"
+msgstr ""
+#msgstr "آپ گائم ورجن %s استعمال کررہے ہیں۔حالیہ ورجن ہے%s.<hr>"
 
 #: ../pidgin/plugins/relnot.c:79
 #, c-format
@@ -18105,7 +18134,8 @@ msgstr "شروع کرو"
 #: ../pidgin/plugins/win32/winprefs/winprefs.c:312
 #, c-format
 msgid "_Start %s on Windows startup"
-msgstr "_ ونڈوز اسٹارٹ اپ پر گائم شروع کریں"
+msgstr ""
+#msgstr "_ ونڈوز اسٹارٹ اپ پر گائم شروع کریں"
 
 #: ../pidgin/plugins/win32/winprefs/winprefs.c:327
 msgid "_Dockable Buddy List"

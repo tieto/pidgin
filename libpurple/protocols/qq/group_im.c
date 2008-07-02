@@ -58,7 +58,7 @@ typedef struct _qq_recv_group_im {
 void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar *msg)
 {
 	gint data_len, bytes;
-	guint8 *raw_data, *cursor, *send_im_tail;
+	guint8 *raw_data, *send_im_tail;
 	guint16 msg_len;
 	gchar *msg_filtered;
 
@@ -67,19 +67,19 @@ void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar 
 	msg_filtered = purple_markup_strip_html(msg);
 	purple_debug_info("QQ_MESG", "filterd qq qun mesg: %s\n", msg_filtered);
 	msg_len = strlen(msg_filtered);
+
 	data_len = 7 + msg_len + QQ_SEND_IM_AFTER_MSG_LEN;
 	raw_data = g_newa(guint8, data_len);
-	cursor = raw_data;
 
 	bytes = 0;
-	bytes += create_packet_b(raw_data, &cursor, QQ_GROUP_CMD_SEND_MSG);
-	bytes += create_packet_dw(raw_data, &cursor, group->internal_group_id);
-	bytes += create_packet_w(raw_data, &cursor, msg_len + QQ_SEND_IM_AFTER_MSG_LEN);
-	bytes += create_packet_data(raw_data, &cursor, (guint8 *) msg_filtered, msg_len);
+	bytes += qq_put8(raw_data + bytes, QQ_GROUP_CMD_SEND_MSG);
+	bytes += qq_put32(raw_data + bytes, group->internal_group_id);
+	bytes += qq_put16(raw_data + bytes, msg_len + QQ_SEND_IM_AFTER_MSG_LEN);
+	bytes += qq_putdata(raw_data + bytes, (guint8 *) msg_filtered, msg_len);
 	send_im_tail = qq_get_send_im_tail(NULL, NULL, NULL,
-						   FALSE, FALSE, FALSE,
-						   QQ_SEND_IM_AFTER_MSG_LEN);
-	bytes += create_packet_data(raw_data, &cursor, send_im_tail, QQ_SEND_IM_AFTER_MSG_LEN);
+			FALSE, FALSE, FALSE,
+			QQ_SEND_IM_AFTER_MSG_LEN);
+	bytes += qq_putdata(raw_data + bytes, send_im_tail, QQ_SEND_IM_AFTER_MSG_LEN);
 	g_free(send_im_tail);
 	g_free(msg_filtered);
 
@@ -87,11 +87,11 @@ void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar 
 		qq_send_group_cmd(gc, group, raw_data, data_len);
 	else
 		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
-			   "Fail creating group_im packet, expect %d bytes, build %d bytes\n", data_len, bytes);
+				"Fail creating group_im packet, expect %d bytes, build %d bytes\n", data_len, bytes);
 }
 
 /* this is the ACK */
-void qq_process_group_cmd_im(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc) 
+void qq_process_group_cmd_im(guint8 *data, gint len, PurpleConnection *gc) 
 {
 	/* return should be the internal group id
 	 * but we have nothing to do with it */
@@ -99,29 +99,26 @@ void qq_process_group_cmd_im(guint8 *data, guint8 **cursor, gint len, PurpleConn
 }
 
 /* receive an application to join the group */
-void qq_process_recv_group_im_apply_join
-    (guint8 *data, guint8 **cursor, gint len, guint32 internal_group_id, PurpleConnection *gc)
+void qq_process_recv_group_im_apply_join(guint8 *data, gint len, guint32 internal_group_id, PurpleConnection *gc)
 {
 	guint32 external_group_id, user_uid;
 	guint8 group_type;
 	gchar *reason_utf8, *msg, *reason;
 	group_member_opt *g;
 	gchar *nombre;
+	gint bytes = 0;
 
 	g_return_if_fail(internal_group_id > 0 && data != NULL && len > 0);
 
-	if (*cursor >= (data + len - 1)) {
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Received group msg apply_join is empty\n");
-		return;
-	}
+	/* FIXME: check length here */
 
-	read_packet_dw(data, cursor, len, &external_group_id);
-	read_packet_b(data, cursor, len, &group_type);
-	read_packet_dw(data, cursor, len, &user_uid);
+	bytes += qq_get32(&external_group_id, data + bytes);
+	bytes += qq_get8(&group_type, data + bytes);
+	bytes += qq_get32(&user_uid, data + bytes);
 
 	g_return_if_fail(external_group_id > 0 && user_uid > 0);
 
-	convert_as_pascal_string(*cursor, &reason_utf8, QQ_CHARSET_DEFAULT);
+	bytes += convert_as_pascal_string(data + bytes, &reason_utf8, QQ_CHARSET_DEFAULT);
 
 	msg = g_strdup_printf(_("User %d requested to join group %d"), user_uid, external_group_id);
 	reason = g_strdup_printf(_("Reason: %s"), reason_utf8);
@@ -134,17 +131,17 @@ void qq_process_recv_group_im_apply_join
 	nombre = uid_to_purple_name(user_uid);
 
 	purple_request_action(gc, _("QQ Qun Operation"),
-			    msg, reason,
-			    PURPLE_DEFAULT_ACTION_NONE,
-				purple_connection_get_account(gc), nombre, NULL,
-				g, 3,
-			    _("Approve"),
-			    G_CALLBACK
-			    (qq_group_approve_application_with_struct),
-			    _("Reject"),
-			    G_CALLBACK
-			    (qq_group_reject_application_with_struct),
-			    _("Search"), G_CALLBACK(qq_group_search_application_with_struct));
+			msg, reason,
+			PURPLE_DEFAULT_ACTION_NONE,
+			purple_connection_get_account(gc), nombre, NULL,
+			g, 3,
+			_("Approve"),
+			G_CALLBACK
+			(qq_group_approve_application_with_struct),
+			_("Reject"),
+			G_CALLBACK
+			(qq_group_reject_application_with_struct),
+			_("Search"), G_CALLBACK(qq_group_search_application_with_struct));
 
 	g_free(nombre);
 	g_free(reason);
@@ -153,31 +150,28 @@ void qq_process_recv_group_im_apply_join
 }
 
 /* the request to join a group is rejected */
-void qq_process_recv_group_im_been_rejected
-    (guint8 *data, guint8 **cursor, gint len, guint32 internal_group_id, PurpleConnection *gc)
+void qq_process_recv_group_im_been_rejected(guint8 *data, gint len, guint32 internal_group_id, PurpleConnection *gc)
 {
 	guint32 external_group_id, admin_uid;
 	guint8 group_type;
 	gchar *reason_utf8, *msg, *reason;
 	qq_group *group;
+	gint bytes = 0;
 
 	g_return_if_fail(data != NULL && len > 0);
 
-	if (*cursor >= (data + len - 1)) {
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Received group msg been_rejected is empty\n");
-		return;
-	}
+	/* FIXME: check length here */
 
-	read_packet_dw(data, cursor, len, &external_group_id);
-	read_packet_b(data, cursor, len, &group_type);
-	read_packet_dw(data, cursor, len, &admin_uid);
+	bytes += qq_get32(&external_group_id, data + bytes);
+	bytes += qq_get8(&group_type, data + bytes);
+	bytes += qq_get32(&admin_uid, data + bytes);
 
 	g_return_if_fail(external_group_id > 0 && admin_uid > 0);
 
-	convert_as_pascal_string(*cursor, &reason_utf8, QQ_CHARSET_DEFAULT);
+	bytes += convert_as_pascal_string(data + bytes, &reason_utf8, QQ_CHARSET_DEFAULT);
 
 	msg = g_strdup_printf
-	    (_("Your request to join group %d has been rejected by admin %d"), external_group_id, admin_uid);
+		(_("Your request to join group %d has been rejected by admin %d"), external_group_id, admin_uid);
 	reason = g_strdup_printf(_("Reason: %s"), reason_utf8);
 
 	purple_notify_warning(gc, _("QQ Qun Operation"), msg, reason);
@@ -194,31 +188,28 @@ void qq_process_recv_group_im_been_rejected
 }
 
 /* the request to join a group is approved */
-void qq_process_recv_group_im_been_approved
-    (guint8 *data, guint8 **cursor, gint len, guint32 internal_group_id, PurpleConnection *gc)
+void qq_process_recv_group_im_been_approved(guint8 *data, gint len, guint32 internal_group_id, PurpleConnection *gc)
 {
 	guint32 external_group_id, admin_uid;
 	guint8 group_type;
 	gchar *reason_utf8, *msg;
 	qq_group *group;
+	gint bytes = 0;
 
 	g_return_if_fail(data != NULL && len > 0);
 
-	if (*cursor >= (data + len - 1)) {
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Received group msg been_approved is empty\n");
-		return;
-	}
+	/* FIXME: check length here */
 
-	read_packet_dw(data, cursor, len, &external_group_id);
-	read_packet_b(data, cursor, len, &group_type);
-	read_packet_dw(data, cursor, len, &admin_uid);
+	bytes += qq_get32(&external_group_id, data + bytes);
+	bytes += qq_get8(&group_type, data + bytes);
+	bytes += qq_get32(&admin_uid, data + bytes);
 
 	g_return_if_fail(external_group_id > 0 && admin_uid > 0);
 	/* it is also a "无" here, so do not display */
-	convert_as_pascal_string(*cursor, &reason_utf8, QQ_CHARSET_DEFAULT);
+	bytes += convert_as_pascal_string(data + bytes, &reason_utf8, QQ_CHARSET_DEFAULT);
 
 	msg = g_strdup_printf
-	    (_("Your request to join group %d has been approved by admin %d"), external_group_id, admin_uid);
+		(_("Your request to join group %d has been approved by admin %d"), external_group_id, admin_uid);
 
 	purple_notify_warning(gc, _("QQ Qun Operation"), msg, NULL);
 
@@ -233,24 +224,21 @@ void qq_process_recv_group_im_been_approved
 }
 
 /* process the packet when removed from a group */
-void qq_process_recv_group_im_been_removed
-    (guint8 *data, guint8 **cursor, gint len, guint32 internal_group_id, PurpleConnection *gc)
+void qq_process_recv_group_im_been_removed(guint8 *data, gint len, guint32 internal_group_id, PurpleConnection *gc)
 {
 	guint32 external_group_id, uid;
 	guint8 group_type;
 	gchar *msg;
 	qq_group *group;
+	gint bytes = 0;
 
 	g_return_if_fail(data != NULL && len > 0);
 
-	if (*cursor >= (data + len - 1)) {
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Received group msg been_removed is empty\n");
-		return;
-	}
+	/* FIXME: check length here */
 
-	read_packet_dw(data, cursor, len, &external_group_id);
-	read_packet_b(data, cursor, len, &group_type);
-	read_packet_dw(data, cursor, len, &uid);
+	bytes += qq_get32(&external_group_id, data + bytes);
+	bytes += qq_get8(&group_type, data + bytes);
+	bytes += qq_get32(&uid, data + bytes);
 
 	g_return_if_fail(external_group_id > 0 && uid > 0);
 
@@ -267,24 +255,21 @@ void qq_process_recv_group_im_been_removed
 }
 
 /* process the packet when added to a group */
-void qq_process_recv_group_im_been_added
-    (guint8 *data, guint8 **cursor, gint len, guint32 internal_group_id, PurpleConnection *gc)
+void qq_process_recv_group_im_been_added(guint8 *data, gint len, guint32 internal_group_id, PurpleConnection *gc)
 {
 	guint32 external_group_id, uid;
 	guint8 group_type;
 	qq_group *group;
 	gchar *msg;
+	gint bytes = 0;
 
 	g_return_if_fail(data != NULL && len > 0);
 
-	if (*cursor >= (data + len - 1)) {
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Received group msg been_added is empty\n");
-		return;
-	}
+	/* FIXME: check length here */
 
-	read_packet_dw(data, cursor, len, &external_group_id);
-	read_packet_b(data, cursor, len, &group_type);
-	read_packet_dw(data, cursor, len, &uid);
+	bytes += qq_get32(&external_group_id, data + bytes);
+	bytes += qq_get8(&group_type, data + bytes);
+	bytes += qq_get32(&uid, data + bytes);
 
 	g_return_if_fail(external_group_id > 0 && uid > 0);
 
@@ -307,10 +292,9 @@ void qq_process_recv_group_im_been_added
 }
 
 /* recv an IM from a group chat */
-void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 internal_group_id, PurpleConnection *gc, guint16 im_type)
+void qq_process_recv_group_im(guint8 *data, gint data_len, guint32 internal_group_id, PurpleConnection *gc, guint16 im_type)
 {
-	gchar *msg_with_purple_smiley, *msg_utf8_encoded, *im_src_name, *hex_dump;
+	gchar *msg_with_purple_smiley, *msg_utf8_encoded, *im_src_name;
 	guint16 unknown;
 	guint32 unknown4;
 	PurpleConversation *conv;
@@ -319,32 +303,32 @@ void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len,
 	qq_group *group;
 	qq_recv_group_im *im_group;
 	gint skip_len;
+	gint bytes = 0;
 
 	g_return_if_fail(data != NULL && data_len > 0);
+
+	/* FIXME: check length here */
+
 	qd = (qq_data *) gc->proto_data;
 
-	hex_dump = hex_dump_to_str(*cursor, data_len - (*cursor - data));
-	purple_debug(PURPLE_DEBUG_INFO, "QQ", "group im hex dump\n%s\n", hex_dump);
-
-	if (*cursor >= (data + data_len - 1)) {
-		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Received group im_group is empty\n");
-		return;
-	}
+	qq_hex_dump(PURPLE_DEBUG_INFO, "QQ",
+		data, data_len,
+		"group im hex dump");
 
 	im_group = g_newa(qq_recv_group_im, 1);
 
-	read_packet_dw(data, cursor, data_len, &(im_group->external_group_id));
-	read_packet_b(data, cursor, data_len, &(im_group->group_type));
+	bytes += qq_get32(&(im_group->external_group_id), data + bytes);
+	bytes += qq_get8(&(im_group->group_type), data + bytes);
 
 	if(QQ_RECV_IM_TEMP_QUN_IM == im_type) {
-		read_packet_dw(data, cursor, data_len, &(internal_group_id));
+		bytes += qq_get32(&(internal_group_id), data + bytes);
 	}
 
-	read_packet_dw(data, cursor, data_len, &(im_group->member_uid));
-	read_packet_w(data, cursor, data_len, &unknown);	/* 0x0001? */
-	read_packet_w(data, cursor, data_len, &(im_group->msg_seq));
-	read_packet_time(data, cursor, data_len, &im_group->send_time);
-	read_packet_dw(data, cursor, data_len, &unknown4);	/* versionID */
+	bytes += qq_get32(&(im_group->member_uid), bytes + data);
+	bytes += qq_get16(&unknown, data + bytes);	/* 0x0001? */
+	bytes += qq_get16(&(im_group->msg_seq), data + bytes);
+	bytes += qq_getime(&im_group->send_time, data + bytes);
+	bytes += qq_get32(&unknown4, data + bytes);	/* versionID */
 	/*
 	 * length includes font_attr
 	 * this msg_len includes msg and font_attr
@@ -355,7 +339,7 @@ void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len,
 	 * 3. font_attr
 	 */
 
-	read_packet_w(data, cursor, data_len, &(im_group->msg_len));
+	bytes += qq_get16(&(im_group->msg_len), data + bytes);
 	g_return_if_fail(im_group->msg_len > 0);
 
 	/*
@@ -371,14 +355,14 @@ void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len,
 		skip_len = 10;
 	else
 		skip_len = 0;
-	*cursor += skip_len;
+	bytes += skip_len;
 
-	im_group->msg = g_strdup((gchar *) *cursor);
-	*cursor += strlen(im_group->msg) + 1;
+	im_group->msg = g_strdup((gchar *) data + bytes);
+	bytes += strlen(im_group->msg) + 1;
 	/* there might not be any font_attr, check it */
 	im_group->font_attr_len = im_group->msg_len - strlen(im_group->msg) - 1 - skip_len;
 	if (im_group->font_attr_len > 0)
-		im_group->font_attr = g_memdup(*cursor, im_group->font_attr_len);
+		im_group->font_attr = g_memdup(data + bytes, im_group->font_attr_len);
 	else
 		im_group->font_attr = NULL;
 
@@ -386,7 +370,7 @@ void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len,
 	msg_with_purple_smiley = qq_smiley_to_purple(im_group->msg);
 	if (im_group->font_attr_len > 0)
 		msg_utf8_encoded = qq_encode_to_purple(im_group->font_attr,
-						     im_group->font_attr_len, msg_with_purple_smiley);
+				im_group->font_attr_len, msg_with_purple_smiley);
 	else
 		msg_utf8_encoded = qq_to_utf8(msg_with_purple_smiley, QQ_CHARSET_DEFAULT);
 
@@ -406,11 +390,10 @@ void qq_process_recv_group_im(guint8 *data, guint8 **cursor, gint data_len,
 		else
 			im_src_name = g_strdup(member->nickname);
 		serv_got_chat_in(gc,
-				 purple_conv_chat_get_id(PURPLE_CONV_CHAT
-						       (conv)), im_src_name, 0, msg_utf8_encoded, im_group->send_time);
+				purple_conv_chat_get_id(PURPLE_CONV_CHAT
+					(conv)), im_src_name, 0, msg_utf8_encoded, im_group->send_time);
 		g_free(im_src_name);
 	}
-	g_free(hex_dump);
 	g_free(msg_with_purple_smiley);
 	g_free(msg_utf8_encoded);
 	g_free(im_group->msg);

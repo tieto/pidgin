@@ -1,5 +1,5 @@
 Fix an earlier screwup where we set /pidgin/browsers/command as a string when
-it should've been a path, so it was never recognized properly and prevenedt
+it should've been a path, so it was never recognized properly and prevented
 people from using a custom browser if they had run 2.3.1-1.
 This can be removed after lenny is released.
 diff -Nur pidgin-2.4.0/pidgin/gtkprefs.c pidgin-2.4.0.new/pidgin/gtkprefs.c

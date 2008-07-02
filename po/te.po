@@ -9,6 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Translate Toolkit 0.10\n"
 "X-Poedit-Language: Telugu\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -349,7 +350,7 @@ msgstr "సవరించు"
 #: ../pidgin/gtkaccount.c:2447
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
-msgstr " %s%s%s తన మిత్రుడు లేదా స్నేహితురాలు %s%s  గా  %s ను  చేర్చుకున్నారు "
+msgstr "%s%s%s%s తన మిత్రుడు లేదా స్నేహితురాలు %s%s  గా  %s ను  చేర్చుకున్నారు "
 
 #: ../finch/gntaccount.c:884
 #: ../pidgin/gtkaccount.c:2499
@@ -1044,7 +1045,7 @@ msgid ""
 msgstr ""
 "%s\n"
 "\n"
-"%s లోపాన్ని సరిచేసి అకౌంటును తిరిగి క్రియాశీలం చేసేదాకా అకౌంటుకు మళ్ళీ కనెక్ట్ చేయడానికి ప్రయత్నించదు."
+"లోపాన్ని సరిచేసి అకౌంటును తిరిగి క్రియాశీలం చేసేదాకా అకౌంటుకు మళ్ళీ కనెక్ట్ చేయడానికి ప్రయత్నించదు."
 
 #: ../finch/gntconn.c:138
 msgid "Re-enable Account"
@@ -1427,8 +1428,8 @@ msgstr "విషయం"
 #, c-format
 msgid "%s (%s) has %d new message."
 msgid_plural "%s (%s) has %d new messages."
-msgstr[0] "%s has %d new message."
-msgstr[1] "%s के %d लिए नये संदेश हैं।"
+msgstr[0] "%s (%s) has %d new message."
+msgstr[1] "%s (%s) के %d लिए नये संदेश हैं।"
 
 #: ../finch/gntnotify.c:226
 #: ../pidgin/gtknotify.c:342
@@ -2496,7 +2497,8 @@ msgstr ""
 #: ../libpurple/certificate.c:1185
 #, c-format
 msgid "Accept certificate for %s?"
-msgstr "సంభాషణ ఆహ్వానాన్ని అంగీకరించారా?"
+msgstr ""
+#msgstr "సంభాషణ ఆహ్వానాన్ని అంగీకరించారా?"
 
 #. TODO: Find what the handle ought to be
 #: ../libpurple/certificate.c:1191
@@ -3122,7 +3124,8 @@ msgstr "మీ ప్లగ్ ఇన్ ను లోడ్ చేయలేక�
 #: ../libpurple/plugin.c:663
 #, c-format
 msgid "%s requires %s, but it failed to unload."
-msgstr "%s డిపెండర్ ప్లగ్ ఇన్ అన్ లోడ్ కావడంలో వైఫల్యం."
+msgstr ""
+#msgstr "%s డిపెండర్ ప్లగ్ ఇన్ అన్ లోడ్ కావడంలో వైఫల్యం."
 
 #: ../libpurple/plugins/autoaccept.c:23
 msgid "Autoaccept"
@@ -3508,7 +3511,7 @@ msgstr "ఆటో-రెస్పాన్స్ పంపబడినది:"
 #: ../libpurple/plugins/statenotify.c:80
 #, c-format
 msgid "%s has signed off."
-msgstr "%s సైన్ ఆఫ్ చేశారు. (%s)"
+msgstr "%s సైన్ ఆఫ్ చేశారు."
 
 #: ../libpurple/plugins/log_reader.c:1587
 msgid "One or more messages may have been undeliverable."
@@ -4056,7 +4059,7 @@ msgid "Unable to detect ActiveTCL installation. If you wish to use TCL plugins, 
 msgstr "ActiveTCL ఇన్స్టాలేషన్ ను కనుగొనడంలో అశక్తత. మీరు TCL ప్లగ్ ఇన్లను ఉపయోగించాలనుకుంటే http://www.activestate.com\n"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:108
-msgid "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://developer.pidgin.im/wiki/Using%20Pidgin#CanIusePidginforBonjourLink-LocalMessaging for more information."
+msgid "The Apple Bonjour For Windows toolkit wasn't found, see the FAQ at: http://d.pidgin.im/BonjourWindows for more information."
 msgstr ""
 
 #: ../libpurple/protocols/bonjour/bonjour.c:127
@@ -4208,7 +4211,8 @@ msgstr "మిత్రుల జాబితా విజయవంతంగా 
 #: ../libpurple/protocols/gg/gg.c:278
 #, c-format
 msgid "Couldn't write buddy list for %s to %s"
-msgstr "మిత్రుల జాబితాను లోడ్ చేయలేకపోతోంది"
+msgstr ""
+#msgstr "మిత్రుల జాబితాను లోడ్ చేయలేకపోతోంది"
 
 #: ../libpurple/protocols/gg/gg.c:303
 #: ../libpurple/protocols/gg/gg.c:304
@@ -5035,7 +5039,8 @@ msgstr "PING సమాధానం -- Lag: %lu సెకండ్లు"
 #: ../libpurple/protocols/irc/msgs.c:1113
 #, c-format
 msgid "Cannot join %s: Registration is required."
-msgstr "నమోదు అవసరం"
+msgstr ""
+#msgstr "నమోదు అవసరం"
 
 #: ../libpurple/protocols/irc/msgs.c:1114
 #: ../libpurple/protocols/silc/ops.c:1093
@@ -5245,7 +5250,8 @@ msgstr "సర్వర్‌కు సంకేతభాషకన్నా స�
 #: ../libpurple/protocols/jabber/auth.c:518
 #, c-format
 msgid "%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"
-msgstr "ఈ సర్వర్‌కు ఎన్ క్రిప్ట్ కాని కనెక్షన్ కన్నా సాధారణ టెక్స్ట్ ప్రమాణీకరణ అవసరం. దీనికి అనుమతించి ప్రమాణీకరణను కొనసాగించమంటారా?"
+msgstr ""
+#msgstr "ఈ సర్వర్‌కు ఎన్ క్రిప్ట్ కాని కనెక్షన్ కన్నా సాధారణ టెక్స్ట్ ప్రమాణీకరణ అవసరం. దీనికి అనుమతించి ప్రమాణీకరణను కొనసాగించమంటారా?"
 
 #: ../libpurple/protocols/jabber/auth.c:325
 #: ../libpurple/protocols/jabber/auth.c:326
@@ -6018,7 +6024,8 @@ msgstr "%s@%s నమోదు విజయవంతమైనది"
 #: ../libpurple/protocols/jabber/jabber.c:689
 #, c-format
 msgid "Registration to %s successful"
-msgstr "%s@%s నమోదు విజయవంతమైనది"
+msgstr ""
+#msgstr "%s@%s నమోదు విజయవంతమైనది"
 
 #: ../libpurple/protocols/jabber/jabber.c:691
 #: ../libpurple/protocols/jabber/jabber.c:692
@@ -6033,7 +6040,8 @@ msgstr " నమోదు విఫలమైనది"
 #: ../libpurple/protocols/jabber/jabber.c:719
 #, c-format
 msgid "Registration from %s successfully removed"
-msgstr "%s@%s నమోదు విజయవంతమైనది"
+msgstr ""
+#msgstr "%s@%s నమోదు విజయవంతమైనది"
 
 #: ../libpurple/protocols/jabber/jabber.c:721
 #: ../libpurple/protocols/jabber/jabber.c:722
@@ -6112,7 +6120,8 @@ msgstr "%s కోసం వినియోగదారు సమాచారా�
 #: ../libpurple/protocols/jabber/jabber.c:1040
 #, c-format
 msgid "Register New Account at %s"
-msgstr "కొత్త జాబర్ అకౌంట్‌ను నమోదు చేయండి"
+msgstr ""
+#msgstr "కొత్త జాబర్ అకౌంట్‌ను నమోదు చేయండి"
 
 #: ../libpurple/protocols/jabber/jabber.c:1043
 msgid "Change Registration"
@@ -6593,7 +6602,8 @@ msgstr "బజ్!!"
 #: ../libpurple/protocols/yahoo/yahoo.c:4131
 #, c-format
 msgid "%s has buzzed you!"
-msgstr "%s మీకు [%s] ను చేర్చారు"
+msgstr ""
+#msgstr "%s మీకు [%s] ను చేర్చారు"
 
 #: ../libpurple/protocols/jabber/jabber.c:2281
 #: ../libpurple/protocols/yahoo/yahoo.c:4132
@@ -7196,7 +7206,8 @@ msgstr ""
 #: ../libpurple/protocols/msnp9/msn.c:131
 #, c-format
 msgid "%s has nudged you!"
-msgstr "%s మీకు [%s] ను చేర్చారు"
+msgstr ""
+#msgstr "%s మీకు [%s] ను చేర్చారు"
 
 #: ../libpurple/protocols/msn/msn.c:132
 #: ../libpurple/protocols/msnp9/msn.c:132
@@ -7778,7 +7789,8 @@ msgstr "%s ఇప్పుడే మీకొక పలకరింపును 
 #: ../libpurple/protocols/msn/notification.c:836
 #, c-format
 msgid "Unknown error (%d)"
-msgstr "అజ్ఞాత పొరపాటు"
+msgstr ""
+#msgstr "అజ్ఞాత పొరపాటు"
 
 #: ../libpurple/protocols/msn/notification.c:837
 #: ../libpurple/protocols/sametime/sametime.c:4471
@@ -8162,7 +8174,8 @@ msgstr ""
 #: ../libpurple/protocols/myspace/myspace.c:1794
 #, c-format
 msgid "Protocol error, code %d: %s"
-msgstr "లోపం కోడ్ %d ను ప్రక్రియ తిప్పి పంపింది "
+msgstr ""
+#msgstr "లోపం కోడ్ %d ను ప్రక్రియ తిప్పి పంపింది "
 
 #: ../libpurple/protocols/myspace/myspace.c:1990
 #: ../libpurple/protocols/myspace/myspace.c:2024
@@ -8222,7 +8235,8 @@ msgstr "సందేశాన్ని పద విశ్లేషణ చేయ
 #: ../libpurple/protocols/myspace/myspace.c:2499
 #, c-format
 msgid "Couldn't connect to host: %s (%d)"
-msgstr "హోస్ట్‌కు కనెక్ట్ చేయలేదు"
+msgstr ""
+#msgstr "హోస్ట్‌కు కనెక్ట్ చేయలేదు"
 
 #: ../libpurple/protocols/myspace/myspace.c:2670
 #, fuzzy
@@ -9514,8 +9528,10 @@ msgstr[1] "మీరు %hu  సందేశాన్ని  %s నుండి 
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
-msgstr[0] "అజ్ఞాత కారణములచేత మీరు %hu సందేశాలను %s నుండి  కోల్పోయినారు. "
-msgstr[1] "आपको अज्ञात कारनों से साइन-ऑफ करा गया है।"
+msgstr[0] ""
+msgstr[1] ""
+#msgstr[0] "అజ్ఞాత కారణములచేత మీరు %hu సందేశాలను %s నుండి  కోల్పోయినారు. "
+#msgstr[1] "आपको अज्ञात कारनों से साइन-ऑफ करा गया है।"
 
 # Data is assumed to be the destination sn
 #. Data is assumed to be the destination sn
@@ -9768,7 +9784,8 @@ msgstr "(పేరు లేదు)"
 #: ../libpurple/protocols/oscar/oscar.c:5109
 #, c-format
 msgid "Could not add the buddy %s for an unknown reason."
-msgstr "అజ్ఞాత కారణంవల్ల మీ కమాండ్ విఫలమైనది."
+msgstr ""
+#msgstr "అజ్ఞాత కారణంవల్ల మీ కమాండ్ విఫలమైనది."
 
 #: ../libpurple/protocols/oscar/oscar.c:5226
 #, c-format
@@ -10184,7 +10201,8 @@ msgstr "మీ సమాచారం నవీకరించబడింది"
 #: ../libpurple/protocols/qq/buddy_info.c:601
 #, c-format
 msgid "Setting custom faces is not currently supported. Please choose an image from %s."
-msgstr "మీకిష్టమైన ముఖారవిందాలను సెట్ చేయడానికి ఇప్పుడు అవకాశంలేదు. ఇక్కడున్న బొమ్మల్లో  ఒకదాన్ని దయచేసి ఎంపికచేసుకోండి"
+msgstr ""
+#msgstr "మీకిష్టమైన ముఖారవిందాలను సెట్ చేయడానికి ఇప్పుడు అవకాశంలేదు. ఇక్కడున్న బొమ్మల్లో  ఒకదాన్ని దయచేసి ఎంపికచేసుకోండి"
 
 #: ../libpurple/protocols/qq/buddy_info.c:618
 #: ../libpurple/protocols/qq/buddy_info.c:631
@@ -10613,7 +10631,7 @@ msgstr "సాకెట్‌ నుంచి రీడ్ చేయడం   స
 #: ../libpurple/protocols/qq/send_file.c:707
 #, c-format
 msgid "%d has declined the file %s"
-msgstr "ఫైలు %s ను %d నిరాకరించింది "
+msgstr "ఫైలు %2$s ను %1$d నిరాకరించింది "
 
 #: ../libpurple/protocols/qq/send_file.c:710
 #: ../libpurple/protocols/qq/send_file.c:739
@@ -10623,7 +10641,8 @@ msgstr "ఫైలును పంపడంజరిగింది"
 #: ../libpurple/protocols/qq/send_file.c:736
 #, c-format
 msgid "%d canceled the transfer of %s"
-msgstr "%sను ట్రాన్స్‌ఫర్ చేయడాన్ని %s రద్దు చేశారు."
+msgstr ""
+#msgstr "%sను ట్రాన్స్‌ఫర్ చేయడాన్ని %s రద్దు చేశారు."
 
 #: ../libpurple/protocols/qq/sendqueue.c:124
 msgid "Connection lost"
@@ -10652,7 +10671,8 @@ msgstr "వీరిని మీరు చేర్చదలచుకున్�
 #: ../libpurple/protocols/qq/sys_msg.c:176
 #, c-format
 msgid "%s has added you [%s] to his or her buddy list"
-msgstr "%s మిమ్మల్ని తన మిత్రుల జాబితాలో చేర్చారు."
+msgstr ""
+#msgstr "%s మిమ్మల్ని తన మిత్రుల జాబితాలో చేర్చారు."
 
 #: ../libpurple/protocols/qq/sys_msg.c:192
 #, c-format
@@ -13333,8 +13353,9 @@ msgid ""
 "Lost connection with %s:\n"
 "%s"
 msgstr ""
-"సర్వర్ తో కనెక్షన్ పోయింది:\n"
-"%s"
+#msgstr ""
+#"సర్వర్ తో కనెక్షన్ పోయింది:\n"
+#"%s"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:2733
 #, c-format
@@ -13342,8 +13363,9 @@ msgid ""
 "Could not establish a connection with %s:\n"
 "%s"
 msgstr ""
-"సర్వర్ తో కనెక్షన్ సాధ్యపడలేదు: \n"
-"%s"
+#msgstr ""
+#"సర్వర్ తో కనెక్షన్ సాధ్యపడలేదు: \n"
+#"%s"
 
 #: ../libpurple/protocols/yahoo/yahoo.c:3092
 #: ../libpurple/protocols/yahoo/yahoo.c:3778
@@ -13851,7 +13873,8 @@ msgstr "చూపించుము."
 msgid ""
 "Unable to create socket:\n"
 "%s"
-msgstr "సాకెట్‌ను సృష్టించలేదు. "
+msgstr ""
+#msgstr "సాకెట్‌ను సృష్టించలేదు. "
 
 #: ../libpurple/proxy.c:662
 #, c-format
@@ -14027,7 +14050,8 @@ msgstr "%s స్థితిని %s నుంచి %s కు మార్చ
 #: ../libpurple/status.c:613
 #, c-format
 msgid "%s (%s) changed status from %s to %s"
-msgstr "%s స్థితిని %s నుంచి %s కు మార్చబడింది"
+msgstr ""
+#msgstr "%s స్థితిని %s నుంచి %s కు మార్చబడింది"
 
 #: ../libpurple/status.c:624
 #, c-format
@@ -14037,17 +14061,20 @@ msgstr "%s ఇప్పుడు %s"
 #: ../libpurple/status.c:626
 #, c-format
 msgid "%s (%s) is now %s"
-msgstr "%s ఇప్పుడు %s"
+msgstr ""
+#msgstr "%s ఇప్పుడు %s"
 
 #: ../libpurple/status.c:632
 #, c-format
 msgid "%s is no longer %s"
-msgstr "ఇప్పుడు %s  దూరంలో లేరు/దు."
+msgstr ""
+#msgstr "ఇప్పుడు %s  దూరంలో లేరు/దు."
 
 #: ../libpurple/status.c:634
 #, c-format
 msgid "%s (%s) is no longer %s"
-msgstr "ఇప్పుడు %s  దూరంలో లేరు/దు."
+msgstr ""
+#msgstr "ఇప్పుడు %s  దూరంలో లేరు/దు."
 
 #: ../libpurple/status.c:1247
 #, c-format
@@ -14146,7 +14173,8 @@ msgstr ""
 #: ../libpurple/util.c:3943
 #, c-format
 msgid "Unable to connect to %s"
-msgstr ",ర్వర్‌కు కనెక్ట్‌చేయలేని స్థితి. "
+msgstr ""
+#msgstr ",ర్వర్‌కు కనెక్ట్‌చేయలేని స్థితి. "
 
 #: ../libpurple/util.c:3770
 #, c-format
@@ -14166,7 +14194,8 @@ msgstr "%sకు రాయడంలో లోపం: %s"
 #: ../libpurple/util.c:3861
 #, c-format
 msgid "Unable to connect to %s: %s"
-msgstr "సర్వర్‌కు కనెక్ట్‌చేయలేని స్థితి. "
+msgstr ""
+#msgstr "సర్వర్‌కు కనెక్ట్‌చేయలేని స్థితి. "
 
 #: ../pidgin.desktop.in.h:1
 msgid "Internet Messenger"
@@ -14360,9 +14389,10 @@ msgid ""
 "\n"
 "You can come back to this window to add, edit, or remove accounts from <b>Accounts->Add/Edit</b> in the Buddy List window"
 msgstr ""
-"<స్పాన్ పరిమాణం='పెద్ద' బరువు='బోల్డ్'>స్వాగతం %s!</స్పాన్>\n"
-"\n"
-"మీ IM అకౌంట్లు కన్ఫిగర్ కాలేదు. %s తో కనెక్ట్ కావడం ప్రారంభించడానికి  <b>Add</b> ప్రెస్ చేయండి"
+#msgstr ""
+#"<స్పాన్ పరిమాణం='పెద్ద' బరువు='బోల్డ్'>స్వాగతం %s!</స్పాన్>\n"
+#"\n"
+#"మీ IM అకౌంట్లు కన్ఫిగర్ కాలేదు. %s తో కనెక్ట్ కావడం ప్రారంభించడానికి  <b>Add</b> ప్రెస్ చేయండి"
 
 #: ../pidgin/gtkblist.c:543
 #, c-format
@@ -14694,7 +14724,8 @@ msgstr "సుదృఢం"
 #: ../pidgin/gtkblist.c:3693
 #, c-format
 msgid "Idle %dd %dh %02dm"
-msgstr "ఖాళీ %dh %02dm"
+msgstr ""
+#msgstr "ఖాళీ %dh %02dm"
 
 #: ../pidgin/gtkblist.c:3695
 #, c-format
@@ -14769,7 +14800,8 @@ msgstr "%s డిస్కనెక్ట్అయింది"
 #: ../pidgin/gtkblist.c:4494
 #, c-format
 msgid "%s disabled"
-msgstr "కమాండ్ పని చేయడం లేదు"
+msgstr ""
+#msgstr "కమాండ్ పని చేయడం లేదు"
 
 #: ../pidgin/gtkblist.c:4498
 msgid "Reconnect"
@@ -14793,8 +14825,10 @@ msgstr "ఉపేక్ష "
 #, c-format
 msgid "%d account was disabled because you signed on from another location."
 msgid_plural "%d accounts were disabled because you signed on from another location."
-msgstr[0] "మీరు మరో ప్రదేశంనుండి సైన్ ఆన్ చేశారు."
-msgstr[1] "మీరు మరో ప్రదేశంనుండి సైన్ ఆన్ చేశారు."
+msgstr[0] ""
+msgstr[1] ""
+#msgstr[0] "మీరు మరో ప్రదేశంనుండి సైన్ ఆన్ చేశారు."
+#msgstr[1] "మీరు మరో ప్రదేశంనుండి సైన్ ఆన్ చేశారు."
 
 #: ../pidgin/gtkblist.c:4860
 msgid "<b>Username:</b>"
@@ -15292,8 +15326,10 @@ msgstr "గదిలో 0 మంది ఉన్నారు"
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
-msgstr[0] "గదిలో %d మనుషులున్నారు "
-msgstr[1] "कक्ष में 0 लोग हैं"
+msgstr[0] ""
+msgstr[1] ""
+#msgstr[0] "గదిలో %d మనుషులున్నారు "
+#msgstr[1] "कक्ष में 0 लोग हैं"
 
 #: ../pidgin/gtkconv.c:6574
 #: ../pidgin/gtkstatusbox.c:660
@@ -16560,7 +16596,7 @@ msgstr "సిస్టం లాగ్"
 #: ../pidgin/gtkmain.c:398
 #, c-format
 msgid "%s %s. Try `%s -h' for more information.\n"
-msgstr "Gaim %s. ఇంకా వివరములకు `%s -h' ప్రయత్నించండి.\n"
+msgstr "%s %s. ఇంకా వివరములకు `%s -h' ప్రయత్నించండి.\n"
 
 #: ../pidgin/gtkmain.c:400
 #, c-format
@@ -16610,23 +16646,6 @@ msgid ""
 "on other protocols is at\n"
 "%swiki/DeveloperPages\n"
 msgstr ""
-"%s has segfaulted and attempted to dump a core file.\n"
-"This is a bug in the software and has happened through\n"
-"no fault of your own.\n"
-"\n"
-"If you can reproduce the crash, please notify the Pidgin\n"
-"developers by reporting a bug at\n"
-"%sbug.php\n"
-"\n"
-"Please make sure to specify what you were doing at the time\n"
-"and post the backtrace from the core file.  If you do not know\n"
-"how to get the backtrace, please read the instructions at\n"
-"%sgdb.php\n"
-"\n"
-"If you need further assistance, please IM either SeanEgn or \n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \n"
-"on other protocols is at\n"
-"%scontactinfo.php\n"
 
 #. Translators may want to transliterate the name.
 #. It is not to be translated.
@@ -16659,8 +16678,10 @@ msgstr[1] "%s के %d लिए नये संदेश हैं।"
 #, c-format
 msgid "<b>%d new e-mail.</b>"
 msgid_plural "<b>%d new e-mails.</b>"
-msgstr[0] "<b>ప్లగ్ ఇన్ వివరాలు</b>"
-msgstr[1] "<b>ప్లగ్ ఇన్ వివరాలు</b>"
+msgstr[0] ""
+msgstr[1] ""
+#msgstr[0] "<b>ప్లగ్ ఇన్ వివరాలు</b>"
+#msgstr[1] "<b>ప్లగ్ ఇన్ వివరాలు</b>"
 
 #: ../pidgin/gtknotify.c:998
 #, c-format
@@ -18151,8 +18172,8 @@ msgid ""
 "\n"
 "<b>Buddy Note</b>: %s"
 msgstr ""
-"\n"
-"<b>సోమరి:</b>"
+#"\n"
+#"<b>సోమరి:</b>"
 
 #: ../pidgin/plugins/history.c:195
 msgid "History"
@@ -18575,7 +18596,8 @@ msgstr "టెక్‌స్ట్‌పై ఆధారపడిన ప్ర�
 #: ../pidgin/plugins/relnot.c:71
 #, c-format
 msgid "You are using %s version %s.  The current version is %s.  You can get it from <a href=\"%s\">%s</a><hr>"
-msgstr "మీరు %s వెర్షన్‌ అనువాదాన్ని ఉపయోగిస్తున్నారు. ప్రస్తుత వెర్షన్ %s.<hr>"
+msgstr ""
+#msgstr "మీరు %s వెర్షన్‌ అనువాదాన్ని ఉపయోగిస్తున్నారు. ప్రస్తుత వెర్షన్ %s.<hr>"
 
 #: ../pidgin/plugins/relnot.c:79
 #, c-format
