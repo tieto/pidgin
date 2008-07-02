@@ -26,6 +26,7 @@
 #include "internal.h"
 #include "cipher.h"
 #include "certificate.h"
+#include "cmds.h"
 #include "connection.h"
 #include "conversation.h"
 #include "core.h"
@@ -169,6 +170,7 @@ purple_core_init(const char *ui)
 	purple_xfers_init();
 	purple_idle_init();
 	purple_smileys_init();
+	purple_cmds_init();
 
 	/*
 	 * Call this early on to try to auto-detect our IP address and
@@ -197,6 +199,7 @@ purple_core_quit(void)
 	purple_connections_disconnect_all();
 
 	/* Save .xml files, remove signals, etc. */
+	purple_cmds_uninit();
 	purple_smileys_uninit();
 	purple_idle_uninit();
 	purple_ssl_uninit();

@@ -18,6 +18,8 @@ version 2.5.0 (??/??/2008):
 		* purple_notify_user_info_prepend_section_break
 		* purple_notify_user_info_prepend_section_header
 		* "website" and "dev_website" items to the ui_info hash table
+		* purple_cmds_get_handle, purple_cmds_init, purple_cmds_uninit
+		* cmd-added and cmd-removed signals
 
 		Deprecated:
 		* purple_blist_update_buddy_icon
