@@ -66,7 +66,7 @@ struct _MsnSoapReq{
 	char *soap_action;
 
 	char *body;
-	
+
 	gpointer data_cb;
 	MsnSoapReadCbFunction read_cb;
 	MsnSoapWrittenCbFunction written_cb;

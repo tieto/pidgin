@@ -169,7 +169,7 @@ msn_encode_mime(const char *str)
 	gchar *base64, *retval;
 
 	g_return_val_if_fail(str != NULL, NULL);
-	
+
 	base64 = purple_base64_encode((guchar *)str, strlen(str));
 	retval = g_strdup_printf("=?utf-8?B?%s?=", base64);
 	g_free(base64);
@@ -509,7 +509,7 @@ msn_convert_iso8601(const char *timestr,struct tm tm_time)
  *This algorithm reference with http://msnpiki.msnfanatic.com/index.php/MSNP11:Challenges
  */
 #define BUFSIZE	256
-void 
+void
 msn_handle_chl(char *input, char *output)
 {
 		PurpleCipher *cipher;
@@ -538,7 +538,7 @@ msn_handle_chl(char *input, char *output)
 
 		/* Split it into four integers */
 		md5Parts = (unsigned int *)md5Hash;
-		for(i=0; i<4; i++){  
+		for(i=0; i<4; i++){
 				/* adjust endianess */
 				md5Parts[i] = GUINT_TO_LE(md5Parts[i]);
 
@@ -578,7 +578,7 @@ msn_handle_chl(char *input, char *output)
 
 		/* adjust endianness */
 		for(i=0; i<4; i++)
-				newHashParts[i] = GUINT_TO_LE(newHashParts[i]); 
+				newHashParts[i] = GUINT_TO_LE(newHashParts[i]);
 
 		/* make a string of the parts */
 		newHash = (unsigned char *)newHashParts;

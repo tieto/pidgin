@@ -116,12 +116,14 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 
 		if ((path = g_find_program_in_path("gconftool-2"))) {
 			char *font = NULL;
+			char *err = NULL;
 			g_free(path);
 			if (g_spawn_command_line_sync(
 					"gconftool-2 -g /desktop/gnome/interface/document_font_name",
-					&font, NULL, NULL, NULL)) {
+					&font, &err, NULL, NULL)) {
 				desc = pango_font_description_from_string(font);
 			}
+			g_free(err);
 			g_free(font);
 		}
 	}
@@ -999,13 +1001,14 @@ void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name,
 	}
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(conn->prpl);
+	if (prpl_info != NULL && prpl_info->get_cb_real_name)
+		who = prpl_info->get_cb_real_name(conn, chat, name);
 	if (prpl_info == NULL || prpl_info->get_cb_info == NULL) {
-		pidgin_retrieve_user_info(conn, name);
+		pidgin_retrieve_user_info(conn, who ? who : name);
+		g_free(who);
 		return;
 	}
 
-	if (prpl_info->get_cb_real_name)
-		who = prpl_info->get_cb_real_name(conn, chat, name);
 	show_retrieveing_info(conn, who ? who : name);
 	prpl_info->get_cb_info(conn, chat, name);
 	g_free(who);
@@ -1434,7 +1437,7 @@ typedef struct {
 
 static void dnd_image_ok_callback(_DndData *data, int choice)
 {
-	char *filedata;
+	gchar *filedata;
 	size_t size;
 	struct stat st;
 	GError *err = NULL;
@@ -1442,6 +1445,8 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 	PidginConversation *gtkconv;
 	GtkTextIter iter;
 	int id;
+	PurpleBuddy *buddy;
+	PurpleContact *contact;
 	switch (choice) {
 	case DND_BUDDY_ICON:
 		if (g_stat(data->filename, &st)) {
@@ -1457,7 +1462,13 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			return;
 		}
 
-		pidgin_set_custom_buddy_icon(data->account, data->who, data->filename);
+		buddy = purple_find_buddy(data->account, data->who);
+		if (!buddy) {
+			purple_debug_info("custom-icon", "You can only set custom icons for people on your buddylist.\n");
+			break;
+		}
+		contact = purple_buddy_get_contact(buddy);
+		purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, data->filename);
 		break;
 	case DND_FILE_TRANSFER:
 		serv_send_file(purple_account_get_connection(data->account), data->who, data->filename);
@@ -2867,12 +2878,11 @@ gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
 }
 #endif /* ! Gtk 2.6.0 */
 
+#ifndef PURPLE_DISABLE_DEPRECATED
 void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename)
 {
 	PurpleBuddy *buddy;
 	PurpleContact *contact;
-	gpointer data = NULL;
-	size_t len = 0;
 
 	buddy = purple_find_buddy(account, who);
 	if (!buddy) {
@@ -2881,20 +2891,9 @@ void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const
 	}
 
 	contact = purple_buddy_get_contact(buddy);
-
-	if (filename) {
-		const char *prpl_id = purple_account_get_protocol_id(account);
-		PurplePlugin *prpl = purple_find_prpl(prpl_id);
-
-		data = pidgin_convert_buddy_icon(prpl, filename, &len);
-
-		/* We don't want to delete the old icon if the new one didn't load. */
-		if (data == NULL)
-			return;
-	}
-
-	purple_buddy_icons_set_custom_icon(contact, data, len);
+	purple_buddy_icons_node_set_custom_icon_from_file((PurpleBlistNode*)contact, filename);
 }
+#endif
 
 char *pidgin_make_pretty_arrows(const char *str)
 {
@@ -3465,5 +3464,19 @@ gboolean pidgin_auto_parent_window(GtkWidget *widget)
 #endif
 	return FALSE;
 #endif
+}
+
+GdkPixbuf * pidgin_pixbuf_from_imgstore(PurpleStoredImage *image)
+{
+	GdkPixbuf *pixbuf;
+	GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+	gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(image),
+			purple_imgstore_get_size(image), NULL);
+	gdk_pixbuf_loader_close(loader, NULL);
+	pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+	if (pixbuf)
+		g_object_ref(pixbuf);
+	g_object_unref(loader);
+	return pixbuf;
 }
 

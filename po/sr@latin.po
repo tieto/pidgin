@@ -3533,7 +3533,7 @@ msgstr "Prezime"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "E-pošta"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:360
@@ -3564,16 +3564,6 @@ msgstr "Dodatak za Bonžur protokol"
 #: ../libpurple/protocols/bonjour/bonjour.c:610
 msgid "Purple Person"
 msgstr "Osoba"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:662
-#: ../libpurple/protocols/gg/gg.c:477
-#: ../libpurple/protocols/jabber/jabber.c:932
-#: ../libpurple/protocols/silc/silc.c:770
-#: ../libpurple/protocols/silc/silc.c:1011
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-msgid "E-mail"
-msgstr "E-pošta"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5244,7 +5234,7 @@ msgstr "Popunite jedno ili više polja da biste tražili Džaber korisnike."
 #: ../libpurple/protocols/novell/novell.c:1488
 #: ../libpurple/protocols/oscar/oscar.c:3707
 #: ../libpurple/protocols/oscar/oscar.c:3716
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "Adresa e-pošte"
 
 #: ../libpurple/protocols/jabber/buddy.c:2411
@@ -6294,7 +6284,7 @@ msgid "Syntax Error (probably a client bug)"
 msgstr "Sintaksna greška (verovatno greška u programu)"
 
 #: ../libpurple/protocols/msn/error.c:46
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "Neispravna el. adresa"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -6789,7 +6779,7 @@ msgid "Home Fax"
 msgstr "Faks"
 
 #: ../libpurple/protocols/msn/msn.c:1656
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "E-pošta"
 
 #: ../libpurple/protocols/msn/msn.c:1657
@@ -6851,7 +6841,7 @@ msgid "Work Fax"
 msgstr "Faks na poslu"
 
 #: ../libpurple/protocols/msn/msn.c:1687
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "E-pošta na poslu"
 
 #: ../libpurple/protocols/msn/msn.c:1688
@@ -8499,7 +8489,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2432
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8692,12 +8682,12 @@ msgstr "Korisničko ime:"
 
 #: ../libpurple/protocols/oscar/oscar.c:3941
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "Nije pronađeno niti jedno poklapanje za adresu e-pošte %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3962
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Trebate da primite e-poštu radi potvrđivanja %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:3964
@@ -8734,7 +8724,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4007
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "Greška 0x%04x: Ne mogu promeniti adresu e-pošte zato što je već poslat "
@@ -8743,7 +8733,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4010
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "Greška 0x%04x: Ne mogu promeniti adresu e-pošte zato što je previše "
@@ -8752,7 +8742,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4013
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Greška 0x%04x: Ne mogu promeniti adresu e-pošte zato što je uneta adresa "
@@ -8765,7 +8755,7 @@ msgstr "Greška 0x%04x: Nepoznata greška."
 
 #: ../libpurple/protocols/oscar/oscar.c:4026
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "Adresa e-pošte za %s je %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4028
@@ -9049,15 +9039,15 @@ msgstr ""
 "izborom „Ponovi zahtev za ovlašćenje“."
 
 #: ../libpurple/protocols/oscar/oscar.c:6215
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Pronađi drugara pomoću adrese e-pošte"
 
 #: ../libpurple/protocols/oscar/oscar.c:6216
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Pronađi drugara pomoću adrese e-pošte"
 
 #: ../libpurple/protocols/oscar/oscar.c:6217
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Ukucajte e-poštansku adresu drugara koga tražite."
 
 #: ../libpurple/protocols/oscar/oscar.c:6220
@@ -9087,11 +9077,11 @@ msgid "Confirm Account"
 msgstr "Potvrdite nalog"
 
 #: ../libpurple/protocols/oscar/oscar.c:6414
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Prikaži trenutno registrovanu adresu e-pošte"
 
 #: ../libpurple/protocols/oscar/oscar.c:6418
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Izmeni trenutno registrovanu adresu e-pošte..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6425
@@ -9099,7 +9089,7 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Prikaži drugare za koje se čeka ovlašćenje"
 
 #: ../libpurple/protocols/oscar/oscar.c:6431
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Pronađi drugara prema adresi e-pošte..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6436
@@ -9186,10 +9176,6 @@ msgstr "Krvna grupa"
 #: ../libpurple/protocols/qq/buddy_info.c:54
 msgid "College"
 msgstr "Fakultet"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "E-pošta"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 msgid "Zipcode"
@@ -11920,7 +11906,7 @@ msgstr "Korisničko ime: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:362
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "E-pošta: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:364
@@ -12247,7 +12233,7 @@ msgid "Dir service temporarily unavailable."
 msgstr "Usluge imenika trenutno nisu dostupne."
 
 #: ../libpurple/protocols/toc/toc.c:530
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "Ograničena pretraga prema adresi e-pošte."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15149,7 +15135,7 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "Boja za iscrtavanje nad-veza kad je miš iznad njih."
 
 #: ../pidgin/gtkimhtml.c:1598
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Kopiraj adresu e-pošte"
 
 #: ../pidgin/gtkimhtml.c:1610
@@ -15572,8 +15558,8 @@ msgstr[2] "%s je primio %d novih poruka."
 
 #: ../pidgin/gtknotify.c:533
 #, c-format
-msgid "<b>You have %d new e-mail.</b>"
-msgid_plural "<b>You have %d new e-mails.</b>"
+msgid "<b>You have %d new email.</b>"
+msgid_plural "<b>You have %d new emails.</b>"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
@@ -16817,7 +16803,7 @@ msgstr "Pridruži drugara"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Ne mogu da pošaljem e-poruku."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -16825,7 +16811,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "Program Evolucija nije nađen na stazi."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr "Adresa e-pošte nije nađena za ovog drugara."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -16833,7 +16819,7 @@ msgid "Add to Address Book"
 msgstr "Dodaj u adresar"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "Pošalji e-poruku"
 
 #. Configuration frame
@@ -16891,7 +16877,7 @@ msgid "Last name:"
 msgstr "Prezime:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "E-pošta"
 
 #. *< type

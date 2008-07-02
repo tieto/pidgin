@@ -21,10 +21,13 @@
 #ifndef _DNS_SD_PROXY
 #define _DNS_SD_PROXY
 
+
+#ifndef _MSC_VER
 #include <stdint.h>
+#endif
 
 /* fixup to make pidgin compile against win32 bonjour */
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_MSC_VER)
 #define _MSL_STDINT_H
 #endif
 

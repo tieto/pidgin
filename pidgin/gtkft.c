@@ -226,8 +226,10 @@ update_title_progress(PidginXferDialog *dialog)
 			total_pct = 100 * total_bytes_xferred / total_file_size;
 		}
 
-		title = g_strdup_printf(_("File Transfers - %d%% of %d files"),
-				total_pct, num_active_xfers);
+		title = g_strdup_printf(ngettext("File Transfers - %d%% of %d file",
+						 "File Transfers - %d%% of %d files",
+						 num_active_xfers),
+					total_pct, num_active_xfers);
 		gtk_window_set_title(GTK_WINDOW(dialog->window), title);
 		g_free(title);
 	} else {

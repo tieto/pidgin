@@ -256,6 +256,9 @@ int irc_cmd_nick(struct irc_conn *irc, const char *cmd, const char *target, cons
 		return 0;
 
 	buf = irc_format(irc, "v:", "NICK", args[0]);
+	g_free(irc->reqnick);
+	irc->reqnick = g_strdup(args[0]);
+	irc->nickused = FALSE;
 	irc_send(irc, buf);
 	g_free(buf);
 

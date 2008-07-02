@@ -274,6 +274,7 @@ msn_session_sync_users(MsnSession *session)
 {
 	PurpleBlistNode *gnode, *cnode, *bnode;
 	PurpleConnection *gc = purple_account_get_connection(session->account);
+	GList *to_remove = NULL;
 
 	g_return_if_fail(gc != NULL);
 
@@ -316,15 +317,28 @@ msn_session_sync_users(MsnSession *session)
 						}
 					}
 
+					/* We don't care if they're in a different group, as long as they're on the
+					 * list somewhere. If we check for the group, we cause pain, agony and
+					 * suffering for people who decide to re-arrange their buddy list elsewhere.
+					 */
 					if (!found)
 					{
-						/* The user was not on the server list or not in that group
-						 * on the server list */
-						msn_show_sync_issue(session, purple_buddy_get_name(b), group_name);
+						if ((remote_user == NULL) || !(remote_user->list_op & MSN_LIST_FL_OP)) {
+							/* The user is not on the server list */
+							msn_show_sync_issue(session, purple_buddy_get_name(b), group_name);
+						} else {
+							/* The user is not in that group on the server list */
+							to_remove = g_list_prepend(to_remove, b);
+						}
 					}
 				}
 			}
 		}
+	}
+
+	if (to_remove != NULL) {
+		g_list_foreach(to_remove, (GFunc)purple_blist_remove_buddy, NULL);
+		g_list_free(to_remove);
 	}
 }
 

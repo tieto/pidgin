@@ -61,8 +61,12 @@ static guint log_viewer_hash(gconstpointer data)
 	if (viewer->contact != NULL)
 		return g_direct_hash(viewer->contact);
 
-	return g_str_hash(viewer->screenname) +
-		g_str_hash(purple_account_get_username(viewer->account));
+	if (viewer->account) {
+		return g_str_hash(viewer->screenname) +
+			g_str_hash(purple_account_get_username(viewer->account));
+	}
+
+	return (guint)viewer;
 }
 
 static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
@@ -84,10 +88,14 @@ static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
 			return FALSE;
 	}
 
-	normal = g_strdup(purple_normalize(a->account, a->screenname));
-	ret = (a->account == b->account) &&
-		!strcmp(normal, purple_normalize(b->account, b->screenname));
-	g_free(normal);
+	if (a->screenname && b->screenname) {
+		normal = g_strdup(purple_normalize(a->account, a->screenname));
+		ret = (a->account == b->account) &&
+			!strcmp(normal, purple_normalize(b->account, b->screenname));
+		g_free(normal);
+	} else {
+		ret = (a == b);
+	}
 
 	return ret;
 }
@@ -139,7 +147,8 @@ static void search_cb(GntWidget *button, FinchLogViewer *lv)
 
 }
 
-static void destroy_cb(GntWidget *w, struct log_viewer_hash_t *ht) {
+static void destroy_cb(GntWidget *w, struct log_viewer_hash_t *ht)
+{
 	FinchLogViewer *lv = syslog_viewer;
 
 	if (ht != NULL) {
@@ -162,12 +171,12 @@ static void destroy_cb(GntWidget *w, struct log_viewer_hash_t *ht) {
 	gnt_widget_destroy(w);
 }
 
-static void log_select_cb(GntWidget *w, gpointer old, gpointer new, FinchLogViewer *viewer) {
+static void log_select_cb(GntWidget *w, gpointer old, gpointer new, FinchLogViewer *viewer)
+{
 	GntTree *tree = GNT_TREE(w);
 	PurpleLog *log = NULL;
 	PurpleLogReadFlags flags;
 	char *read = NULL, *strip, *newline;
-	int h;
 
 	if (!viewer->search && !gnt_tree_get_parent_key(tree, new))
 		return;
@@ -204,8 +213,6 @@ static void log_select_cb(GntWidget *w, gpointer old, gpointer new, FinchLogView
 
 	gnt_text_view_clear(GNT_TEXT_VIEW(viewer->text));
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(viewer->text), strip, GNT_TEXT_FLAG_NORMAL);
-	gnt_widget_get_size(viewer->text, NULL, &h);
-	gnt_text_view_scroll(GNT_TEXT_VIEW(viewer->text), h - 2);
 	g_free(read);
 	g_free(strip);
 }
@@ -303,7 +310,7 @@ static FinchLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *l
 
 	/* Label ************/
 	text = g_strdup_printf("%s", title);
-	lv->label = gnt_label_new(text);
+	lv->label = gnt_label_new_with_format(text, GNT_TEXT_FLAG_BOLD);
 	g_free(text);
 	gnt_box_add_widget(GNT_BOX(vbox), lv->label);
 
@@ -321,6 +328,7 @@ static FinchLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *l
 	/* Viewer ************/
 	lv->text = gnt_text_view_new();
 	gnt_box_add_widget(GNT_BOX(hbox), lv->text);
+	gnt_text_view_set_flag(GNT_TEXT_VIEW(lv->text), GNT_TEXT_VIEW_TOP_ALIGN);
 
 	hbox = gnt_hbox_new(FALSE);
 	gnt_box_add_widget(GNT_BOX(vbox), hbox);
@@ -348,14 +356,28 @@ static FinchLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *l
 	return lv;
 }
 
-void finch_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account) {
+static void
+our_logging_blows(PurpleLogSet *set, PurpleLogSet *setagain, GList **list)
+{
+	/* The iteration happens on the first list. So we use the shorter list in front */
+	if (set->type != PURPLE_LOG_IM)
+		return;
+	*list = g_list_concat(purple_log_get_logs(PURPLE_LOG_IM, set->name, set->account), *list);
+}
+
+void finch_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account)
+{
 	struct log_viewer_hash_t *ht;
 	FinchLogViewer *lv = NULL;
 	const char *name = screenname;
 	char *title;
+	GList *logs = NULL;
+	int size = 0;
 
-	g_return_if_fail(account != NULL);
-	g_return_if_fail(screenname != NULL);
+	if (type != PURPLE_LOG_IM) {
+		g_return_if_fail(account != NULL);
+		g_return_if_fail(screenname != NULL);
+	}
 
 	ht = g_new0(struct log_viewer_hash_t, 1);
 
@@ -383,20 +405,35 @@ void finch_log_show(PurpleLogType type, const char *screenname, PurpleAccount *a
 	} else {
 		PurpleBuddy *buddy;
 
-		buddy = purple_find_buddy(account, screenname);
-		if (buddy != NULL)
-			name = purple_buddy_get_contact_alias(buddy);
-
-		title = g_strdup_printf(_("Conversations with %s"), name);
+		if (screenname) {
+			buddy = purple_find_buddy(account, screenname);
+			if (buddy != NULL)
+				name = purple_buddy_get_contact_alias(buddy);
+			title = g_strdup_printf(_("Conversations with %s"), name);
+		} else {
+			title = g_strdup(_("All Conversations"));
+		}
 	}
 
-	display_log_viewer(ht, purple_log_get_logs(type, screenname, account),
-			title, purple_log_get_total_size(type, screenname, account));
+	if (screenname) {
+		logs = purple_log_get_logs(type, screenname, account);
+		size = purple_log_get_total_size(type, screenname, account);
+	} else {
+		/* This will happen only for IMs */
+		GHashTable *table = purple_log_get_log_sets();
+		g_hash_table_foreach(table, (GHFunc)our_logging_blows, &logs);
+		g_hash_table_destroy(table);
+		logs = g_list_sort(logs, purple_log_compare);
+		size = 0;
+	}
+
+	display_log_viewer(ht, logs, title, size);
 
 	g_free(title);
 }
 
-void finch_log_show_contact(PurpleContact *contact) {
+void finch_log_show_contact(PurpleContact *contact)
+{
 	struct log_viewer_hash_t *ht;
 	PurpleBlistNode *child;
 	FinchLogViewer *lv = NULL;

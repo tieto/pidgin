@@ -29,6 +29,7 @@
 
 #include <glib.h>
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -168,7 +169,7 @@ gnt_colors_get_color(char *key)
 		color = -1;
 	else {
 		g_warning("Invalid color name: %s\n", key);
-		color = -1;
+		color = -EINVAL;
 	}
 	return color;
 }

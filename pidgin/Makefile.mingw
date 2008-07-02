@@ -20,8 +20,6 @@ WINAPP := -mwindows
 
 LDFLAGS := $(WINAPP)
 
-#CFLAGS += -DWINPIDGIN_USE_GLIB_IO_CHANNEL=1
-
 ##
 ## INCLUDE PATHS
 ##
@@ -86,6 +84,7 @@ PIDGIN_C_SRC =	\
 			gtkroomlist.c \
 			gtksavedstatuses.c \
 			gtkscrollbook.c \
+			gtksmiley.c \
 			gtksound.c \
 			gtksourceiter.c \
 			gtksourceundomanager.c \

@@ -527,7 +527,7 @@ static char *show_error_message()
 			g_snprintf(buf, sizeof(buf), _("Dir service temporarily unavailable."));
 			break;
 		case 974:
-			g_snprintf(buf, sizeof(buf), _("E-mail lookup restricted."));
+			g_snprintf(buf, sizeof(buf), _("Email lookup restricted."));
 			break;
 		case 975:
 			g_snprintf(buf, sizeof(buf), _("Keyword ignored."));
@@ -546,7 +546,7 @@ static char *show_error_message()
 			g_snprintf(buf, sizeof(buf), _("Failure unknown: %s."), w);
 			break;
 		case 980:
-			g_snprintf(buf, sizeof(buf), _("Incorrect screen name or password."));
+			g_snprintf(buf, sizeof(buf), _("Incorrect username or password."));
 			break;
 		case 981:
 			g_snprintf(buf, sizeof(buf), _("The service is temporarily unavailable."));

@@ -551,10 +551,10 @@ del_to_end(GntBindable *bind, GList *null)
 	return TRUE;
 }
 
-#define SAME(a,b)    ((g_unichar_isalpha(a) && g_unichar_isalpha(b)) || \
-				(g_unichar_isdigit(a) && g_unichar_isdigit(b)) || \
+#define SAME(a,b)    ((g_unichar_isalnum(a) && g_unichar_isalnum(b)) || \
 				(g_unichar_isspace(a) && g_unichar_isspace(b)) || \
-				(g_unichar_iswide(a) && g_unichar_iswide(b)))
+				(g_unichar_iswide(a) && g_unichar_iswide(b)) || \
+				(g_unichar_ispunct(a) && g_unichar_ispunct(b)))
 
 static const char *
 begin_word(const char *text, const char *begin)
@@ -580,11 +580,13 @@ next_begin_word(const char *text, const char *end)
 	while (text && text < end && g_unichar_isspace(g_utf8_get_char(text)))
 		text = g_utf8_find_next_char(text, end);
 
-	ch = g_utf8_get_char(text);
-	while ((text = g_utf8_find_next_char(text, end)) != NULL && text <= end) {
-		gunichar cur = g_utf8_get_char(text);
-		if (!SAME(ch, cur))
-			break;
+	if (text) {
+		ch = g_utf8_get_char(text);
+		while ((text = g_utf8_find_next_char(text, end)) != NULL && text <= end) {
+			gunichar cur = g_utf8_get_char(text);
+			if (!SAME(ch, cur))
+				break;
+		}
 	}
 	return (text ? text : end);
 }
@@ -839,6 +841,17 @@ gnt_entry_lost_focus(GntWidget *widget)
 	entry_redraw(widget);
 }
 
+static gboolean
+gnt_entry_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
+{
+	if (event == GNT_MIDDLE_MOUSE_DOWN) {
+		clipboard_paste(GNT_BINDABLE(widget), NULL);
+		return TRUE;
+	}
+	return FALSE;
+
+}
+
 static void
 gnt_entry_class_init(GntEntryClass *klass)
 {
@@ -846,6 +859,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 	char s[2] = {erasechar(), 0};
 
 	parent_class = GNT_WIDGET_CLASS(klass);
+	parent_class->clicked = gnt_entry_clicked;
 	parent_class->destroy = gnt_entry_destroy;
 	parent_class->draw = gnt_entry_draw;
 	parent_class->map = gnt_entry_map;

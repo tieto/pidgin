@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Country: INDIA\n"
 "X-Generator: KBabel 1.11.4\n"
 "X-Poedit-Bookmarks: -1,-1,-1,-1,-1,-1,-1,-1,-1,1715\n"
@@ -3635,7 +3635,7 @@ msgstr "கடைசிப்பெயர்"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "மின்னஞ்சல்"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:360
@@ -3669,16 +3669,6 @@ msgstr "போன்ஜு நெறிமுறை சொருகுபொர�
 #, fuzzy
 msgid "Purple Person"
 msgstr "புதிய நபர்"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:662
-#: ../libpurple/protocols/gg/gg.c:477
-#: ../libpurple/protocols/jabber/jabber.c:932
-#: ../libpurple/protocols/silc/silc.c:770
-#: ../libpurple/protocols/silc/silc.c:1011
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-msgid "E-mail"
-msgstr "மின் அஞ்சல்"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5387,7 +5377,7 @@ msgstr "ஜாப்பர் பயனாளர்களை தேட ஒன்
 #: ../libpurple/protocols/novell/novell.c:1488
 #: ../libpurple/protocols/oscar/oscar.c:3714
 #: ../libpurple/protocols/oscar/oscar.c:3723
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "மின்னஞ்சல்"
 
 #: ../libpurple/protocols/jabber/buddy.c:2410
@@ -6459,7 +6449,7 @@ msgstr "இலக்கணப்பிழை (அனேகமாக கெய்
 
 #: ../libpurple/protocols/msn/error.c:46
 #, c-format
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "செல்லாத மின்னஞ்சல் முகவரி"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7006,7 +6996,7 @@ msgid "Home Fax"
 msgstr "வீட்டு தொலைநகலி"
 
 #: ../libpurple/protocols/msn/msn.c:1656
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "சொந்த மின்னஞ்சல்"
 
 #: ../libpurple/protocols/msn/msn.c:1657
@@ -7069,7 +7059,7 @@ msgid "Work Fax"
 msgstr "அலுவலக தொலைநகலி"
 
 #: ../libpurple/protocols/msn/msn.c:1687
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "அலுவலக மின்னஞ்சல்"
 
 #: ../libpurple/protocols/msn/msn.c:1688
@@ -8748,7 +8738,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2439
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8936,12 +8926,12 @@ msgstr "திரைப்பெயர்:"
 
 #: ../libpurple/protocols/oscar/oscar.c:3948
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "மின்னஞ்சல் %s க்கு எந்த முடிவும் இல்லை"
 
 #: ../libpurple/protocols/oscar/oscar.c:3969
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "%s ஐ உறுதி செய்யக்கோரி உங்களுக்கு மின்அஞ்சல் வரும்."
 
 #: ../libpurple/protocols/oscar/oscar.c:3971
@@ -8979,7 +8969,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4014
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "பிழை 0x%04x: மின்னஞ்சலை மாற்ற இயலவில்லை ஏனென்றால் இந்த திரைப்பயருக்கு ஏற்கனவே ஒரு "
@@ -8988,7 +8978,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4017
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "பிழை 0x%04x: மின்னஞ்சலை மாற்ற இயலவில்லை ஏனென்றால் இந்த மின்னஞ்சலுக்கு நிறைய "
@@ -8997,7 +8987,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4020
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr "பிழை 0x%04x: மின்னஞ்சலை மாற்ற இயலவில்லை ஏனென்றால் அந்த முகவரி செல்லாதது."
 
@@ -9008,7 +8998,7 @@ msgstr "பிழை0x%04x:  தெரியாத.பிழை."
 
 #: ../libpurple/protocols/oscar/oscar.c:4033
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "%s யின் மின்அஞ்சல் முகவரி %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4035
@@ -9288,15 +9278,15 @@ msgstr ""
 "மீண்டும் கோருக.\" ஐ தேர்வு செய்யவும்."
 
 #: ../libpurple/protocols/oscar/oscar.c:6231
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "தோழரை மின்னஞ்சல் கொண்டு தேடு"
 
 #: ../libpurple/protocols/oscar/oscar.c:6232
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "மின்னஞ்சல் முகவரி மூலம் தோழரை தேடு"
 
 #: ../libpurple/protocols/oscar/oscar.c:6233
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "நீங்கள் தேடும் நண்பரின் மின்னஞ்சல் முகவரியை கொடுக்கவும்.."
 
 #: ../libpurple/protocols/oscar/oscar.c:6236
@@ -9328,12 +9318,12 @@ msgstr "கணக்கை உறுதிப்படுத்து"
 
 #: ../libpurple/protocols/oscar/oscar.c:6430
 #, fuzzy
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "தற்போதைய பதிவுசெய்த முகவரிகளை காட்டு"
 
 #: ../libpurple/protocols/oscar/oscar.c:6434
 #, fuzzy
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "தற்போது பதியப்பட்ட முகவரிகளை மாற்று..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6441
@@ -9342,7 +9332,7 @@ msgstr "உறுதியாக்கலுக்கு காத்திர�
 
 #: ../libpurple/protocols/oscar/oscar.c:6447
 #, fuzzy
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "தோழரை மின்னஞ்சல் மூலம் தேடுக..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6452
@@ -9434,11 +9424,6 @@ msgstr ""
 #, fuzzy
 msgid "College"
 msgstr "_ச சுருக்கு"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-#, fuzzy
-msgid "Email"
-msgstr "மின் அஞ்சல்"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 #, fuzzy
@@ -12241,7 +12226,7 @@ msgstr "பயனாளர் பெயர்: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:362
 #: ../libpurple/protocols/silc10/util.c:359
 #, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "மின்னஞ்சல்: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:364
@@ -12585,7 +12570,7 @@ msgstr "அடைவு சேவை தற்காலிகமாக கிட
 
 #: ../libpurple/protocols/toc/toc.c:530
 #, c-format
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "மின்னஞ்சலை பார்ப்பது தடைசெய்யப்பட்டது."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15508,7 +15493,7 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "சுட்டி மீத்தொடர்பின் மீது இருக்கும்பொழுது மீத்தொடர்பை வரைவதற்கான நிறம்"
 
 #: ../pidgin/gtkimhtml.c:1598
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "மின்னஞ்சல் முகவரியை _நகலெடு"
 
 #: ../pidgin/gtkimhtml.c:1610
@@ -15948,8 +15933,8 @@ msgstr[1] "%s க்கு %d புதிய செய்திகள் வந
 
 #: ../pidgin/gtknotify.c:564
 #, fuzzy, c-format
-msgid "<b>You have %d new e-mail.</b>"
-msgid_plural "<b>You have %d new e-mails.</b>"
+msgid "<b>You have %d new email.</b>"
+msgid_plural "<b>You have %d new emails.</b>"
 msgstr[0] "<b>சொருகுபொருள் விவரம்</b>"
 msgstr[1] "<b>சொருகுபொருள் விவரம்</b>"
 
@@ -17223,7 +17208,7 @@ msgstr "_சக நண்பரை சேர்க்க"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "மின்னஞ்சல் அனுப்ப இயலவில்லை"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -17231,7 +17216,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr "எவல்யூஷன் செயலி பாதையில் இல்லை."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -17239,7 +17224,7 @@ msgid "Add to Address Book"
 msgstr "முகவரி புத்தகத்தில் சேர்க்கவும்"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "மின்னஞ்சல் அனுப்புக"
 
 #. Configuration frame
@@ -17297,7 +17282,7 @@ msgid "Last name:"
 msgstr "கடைசிப்பெயர்:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "மின்னஞ்சல்:"
 
 #. *< type

@@ -149,6 +149,16 @@ void gnt_bindable_register_binding(GntBindableClass *klass, const char *name, co
 gboolean gnt_bindable_perform_action_key(GntBindable *bindable, const char *keys);
 
 /**
+ * Discover if a key is bound.
+ *
+ * @param bindable  The bindable object.
+ * @param keys      The key to check for.
+ *
+ * @return  @c TRUE if the the key has an action associated with it.
+ */
+gboolean gnt_bindable_check_key(GntBindable *bindable, const char *keys);
+
+/**
  * Perform an action on a bindable object.
  *
  * @param bindable  The bindable object.

@@ -380,6 +380,27 @@ get_blist_node_flag(PurpleBlistNode *node)
 		fnode = FINCH_GET_DATA(node);
 		if (fnode && fnode->signed_timer)
 			flag |= GNT_TEXT_FLAG_BLINK;
+	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
+		/* If the node is collapsed, then check to see if any of the priority buddies of
+		 * any of the contacts within this group recently signed on/off, and set the blink
+		 * flag appropriately. */
+		/* XXX: Refs #5444 */
+		/* XXX: there's no way I can ask if the node is expanded or not? *sigh*
+		 * API addition would be necessary */
+#if 0
+		if (!gnt_tree_get_expanded(GNT_TREE(ggblist->tree), node)) {
+			for (node = purple_blist_node_get_first_child(node); node;
+					node = purple_blist_node_get_sibling_next(node)) {
+				PurpleBlistNode *pnode;
+				pnode = purple_contact_get_priority_buddy((PurpleContact*)node);
+				fnode = FINCH_GET_DATA(node);
+				if (fnode && fnode->signed_timer) {
+					flag |= GNT_TEXT_FLAG_BLINK;
+					break;
+				}
+			}
+		}
+#endif
 	}
 
 	return flag;
@@ -560,7 +581,7 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 	PurpleBuddy *buddy;
 
 	if (!username)
-		error = _("You must provide a screename for the buddy.");
+		error = _("You must provide a username for the buddy.");
 	else if (!group)
 		error = _("You must provide a group.");
 	else if (!account)
@@ -598,7 +619,7 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 
 	purple_request_fields_add_group(fields, group);
 
-	field = purple_request_field_string_new("screenname", _("Screen Name"), username, FALSE);
+	field = purple_request_field_string_new("screenname", _("Username"), username, FALSE);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("alias", _("Alias (optional)"), alias, FALSE);
@@ -620,6 +641,32 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 			_("Cancel"), NULL,
 			account, NULL, NULL,
 			NULL);
+}
+
+static void
+join_chat(PurpleChat *chat)
+{
+	PurpleAccount *account = purple_chat_get_account(chat);
+	const char *name;
+	PurpleConversation *conv;
+	const char *alias;
+
+	/* This hack here is to work around the fact that there's no good way of
+	 * getting the actual name of a chat. I don't understand why we return
+	 * the alias for a chat when all we want is the name. */
+	alias = chat->alias;
+	chat->alias = NULL;
+	name = purple_chat_get_name(chat);
+	conv = purple_find_conversation_with_account(
+			PURPLE_CONV_TYPE_CHAT, name, account);
+	chat->alias = (char *)alias;
+
+	if (!conv || purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv))) {
+		serv_join_chat(purple_account_get_connection(account),
+				purple_chat_get_components(chat));
+	} else if (conv) {
+		purple_conversation_present(conv);
+	}
 }
 
 static void
@@ -661,8 +708,9 @@ add_chat_cb(void *data, PurpleRequestFields *allfields)
 		purple_blist_add_chat(chat, grp, NULL);
 		purple_blist_alias_chat(chat, alias);
 		purple_blist_node_set_bool((PurpleBlistNode*)chat, "gnt-autojoin", autojoin);
-		if (autojoin)
-			serv_join_chat(purple_account_get_connection(purple_chat_get_account(chat)), purple_chat_get_components(chat));
+		if (autojoin) {
+			join_chat(chat);
+		}
 	}
 }
 
@@ -689,6 +737,7 @@ finch_request_add_chat(PurpleAccount *account, PurpleGroup *grp, const char *ali
 
 	field = purple_request_field_string_new("group", _("Group"), grp ? purple_group_get_name(grp) : NULL, FALSE);
 	purple_request_field_group_add_field(group, field);
+	purple_request_field_set_type_hint(field, "group");
 
 	field = purple_request_field_bool_new("autojoin", _("Auto-join"), FALSE);
 	purple_request_field_group_add_field(group, field);
@@ -923,7 +972,7 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 
 	if (!node)
 		return;
-	
+
 	if (PURPLE_BLIST_NODE_IS_CONTACT(node))
 		node = (PurpleBlistNode*)purple_contact_get_priority_buddy((PurpleContact*)node);
 
@@ -946,8 +995,7 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 	}
 	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
 	{
-		PurpleChat *chat = (PurpleChat*)node;
-		serv_join_chat(purple_account_get_connection(purple_chat_get_account(chat)), purple_chat_get_components(chat));
+		join_chat((PurpleChat*)node);
 	}
 }
 
@@ -1034,7 +1082,11 @@ chat_components_edit_ok(PurpleChat *chat, PurpleRequestFields *allfields)
 			else
 				val = g_strdup(purple_request_field_string_get_value(field));
 
-			g_hash_table_replace(purple_chat_get_components(chat), g_strdup(id), val);  /* val should not be free'd */
+			if (!val) {
+				g_hash_table_remove(purple_chat_get_components(chat), id);
+			} else {
+				g_hash_table_replace(purple_chat_get_components(chat), g_strdup(id), val);  /* val should not be free'd */
+			}
 		}
 	}
 }
@@ -1065,7 +1117,12 @@ chat_components_edit(PurpleBlistNode *selected, PurpleChat *chat)
 		} else {
 			field = purple_request_field_string_new(pce->identifier, pce->label,
 					g_hash_table_lookup(purple_chat_get_components(chat), pce->identifier), FALSE);
+			if (pce->secret)
+				purple_request_field_string_set_masked(field, TRUE);
 		}
+
+		if (pce->required)
+			purple_request_field_set_required(field, TRUE);
 
 		purple_request_field_group_add_field(group, field);
 		g_free(pce);
@@ -2597,7 +2654,7 @@ block_select(GntMenuItem *item, gpointer n)
 
 	purple_request_fields(purple_get_blist(), _("Block/Unblock"),
 						NULL,
-						_("Please enter the screen name or alias of the person "
+						_("Please enter the username or alias of the person "
 						  "you would like to Block/Unblock."),
 						fields,
 						_("OK"), G_CALLBACK(block_select_cb),
@@ -2648,7 +2705,7 @@ send_im_select(GntMenuItem *item, gpointer n)
 
 	purple_request_fields(purple_get_blist(), _("New Instant Message"),
 						NULL,
-						_("Please enter the screen name or alias of the person "
+						_("Please enter the username or alias of the person "
 						  "you would like to IM."),
 						fields,
 						_("OK"), G_CALLBACK(send_im_select_cb),
@@ -2665,6 +2722,7 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 	PurpleConnection *gc;
 	PurpleChat *chat;
 	GHashTable *hash = NULL;
+	PurpleConversation *conv;
 
 	account = purple_request_fields_get_account(fields, "account");
 	name = purple_request_fields_get_string(fields,  "chat");
@@ -2673,7 +2731,16 @@ join_chat_select_cb(gpointer data, PurpleRequestFields *fields)
 		return;
 
 	gc = purple_account_get_connection(account);
-	purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
+	/* Create a new conversation now. This will give focus to the new window.
+	 * But it's necessary to pretend that we left the chat, because otherwise
+	 * a new conversation window will pop up when we finally join the chat. */
+	if (!(conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name, account))) {
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_CHAT, account, name);
+		purple_conv_chat_left(PURPLE_CONV_CHAT(conv));
+	} else {
+		purple_conversation_present(conv);
+	}
+
 	chat = purple_blist_find_chat(account, name);
 	if (chat == NULL) {
 		PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_connection_get_prpl(gc));
@@ -2719,6 +2786,74 @@ join_chat_select(GntMenuItem *item, gpointer n)
 						_("Cancel"), NULL,
 						NULL, NULL, NULL,
 						NULL);
+}
+
+static void
+view_log_select_cb(gpointer data, PurpleRequestFields *fields)
+{
+	PurpleAccount *account;
+	const char *name;
+	PurpleBuddy *buddy;
+	PurpleContact *contact;
+
+	account = purple_request_fields_get_account(fields, "account");
+	name = purple_request_fields_get_string(fields,  "screenname");
+
+	buddy = purple_find_buddy(account, name);
+	if (buddy) {
+		contact = purple_buddy_get_contact(buddy);
+	} else {
+		contact = NULL;
+	}
+
+	if (contact) {
+		finch_log_show_contact(contact);
+	} else {
+		finch_log_show(PURPLE_LOG_IM, name, account);
+	}
+}
+
+static void
+view_log_cb(GntMenuItem *item, gpointer n)
+{
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+
+	fields = purple_request_fields_new();
+
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_string_new("screenname", _("Name"), NULL, FALSE);
+	purple_request_field_set_type_hint(field, "screenname-all");
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+
+	field = purple_request_field_account_new("account", _("Account"), NULL);
+	purple_request_field_set_type_hint(field, "account");
+	purple_request_field_set_visible(field,
+		(purple_accounts_get_all() != NULL &&
+		 purple_accounts_get_all()->next != NULL));
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+	purple_request_field_account_set_show_all(field, TRUE);
+
+	purple_request_fields(purple_get_blist(), _("View Log"),
+						NULL,
+						_("Please enter the username or alias of the person "
+						  "whose log you would like to view."),
+						fields,
+						_("OK"), G_CALLBACK(view_log_select_cb),
+						_("Cancel"), NULL,
+						NULL, NULL, NULL,
+						NULL);
+}
+
+static void
+view_all_logs_cb(GntMenuItem *item, gpointer n)
+{
+	finch_log_show(PURPLE_LOG_IM, NULL, NULL);
 }
 
 static void
@@ -2780,6 +2915,16 @@ create_menu(void)
 	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "join-chat");
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), join_chat_select, NULL);
+
+	item = gnt_menuitem_new(_("View Log..."));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "view-log");
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), view_log_cb, NULL);
+
+	item = gnt_menuitem_new(_("View All Logs"));
+	gnt_menuitem_set_id(GNT_MENU_ITEM(item), "view-all-logs");
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), view_all_logs_cb, NULL);
 
 	item = gnt_menuitem_new(_("Show"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
@@ -2887,9 +3032,6 @@ blist_show(PurpleBuddyList *list)
 			purple_prefs_get_int(PREF_ROOT "/size/height"));
 	gnt_widget_set_position(ggblist->window, purple_prefs_get_int(PREF_ROOT "/position/x"),
 			purple_prefs_get_int(PREF_ROOT "/position/y"));
-
-	gnt_tree_set_col_width(GNT_TREE(ggblist->tree), 0,
-			purple_prefs_get_int(PREF_ROOT "/size/width") - 1);
 
 	gnt_box_add_widget(GNT_BOX(ggblist->window), ggblist->tree);
 

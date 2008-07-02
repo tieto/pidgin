@@ -90,10 +90,16 @@ void set_bonjour_buddy_value(BonjourBuddy *buddy, const char *record_key, const 
 gboolean bonjour_buddy_check(BonjourBuddy *buddy);
 
 /**
- * If the buddy doesn't previoulsy exists, it is created. Else, its data is changed (???)
+ * If the buddy doesn't previously exists, it is created. Else, its data is changed (???)
  * purple_buddy is optional; it saves an additional lookup if we already have it
  */
 void bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy, PurpleBuddy *purple_buddy);
+
+/**
+ * The buddy has signed off Bonjour.
+ * If the buddy is being saved, mark as offline, otherwise delete
+ */
+void bonjour_buddy_signed_off(PurpleBuddy *purple_buddy);
 
 /**
  * We got the buddy icon data; deal with it

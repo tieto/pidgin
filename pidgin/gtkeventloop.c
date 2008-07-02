@@ -87,6 +87,12 @@ static guint pidgin_input_add(gint fd, PurpleInputCondition condition, PurpleInp
 	PidginIOClosure *closure = g_new0(PidginIOClosure, 1);
 	GIOChannel *channel;
 	GIOCondition cond = 0;
+#ifdef _WIN32
+	static int use_glib_io_channel = -1;
+
+	if (use_glib_io_channel == -1)
+		use_glib_io_channel = (g_getenv("PIDGIN_GLIB_IO_CHANNEL") != NULL) ? 1 : 0;
+#endif
 
 	closure->function = function;
 	closure->data = data;
@@ -97,10 +103,12 @@ static guint pidgin_input_add(gint fd, PurpleInputCondition condition, PurpleInp
 		cond |= PIDGIN_WRITE_COND;
 
 #ifdef _WIN32
-	channel = wpurple_g_io_channel_win32_new_socket(fd);
-#else
-	channel = g_io_channel_unix_new(fd);
+	if (use_glib_io_channel == 0)
+		channel = wpurple_g_io_channel_win32_new_socket(fd);
+	else
 #endif
+	channel = g_io_channel_unix_new(fd);
+
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
 					      pidgin_io_invoke, closure, pidgin_io_destroy);
 

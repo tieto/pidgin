@@ -44,47 +44,6 @@
 #define QQ_ICON_PREFIX "qq_"
 #define QQ_ICON_SUFFIX ".png"
 
-typedef struct _contact_info {
-        gchar *uid;
-        gchar *nick;
-        gchar *country;
-        gchar *province;
-        gchar *zipcode;
-        gchar *address;
-        gchar *tel;
-        gchar *age;
-        gchar *gender;
-        gchar *name;
-        gchar *email;
-        gchar *pager_sn;
-        gchar *pager_num;
-        gchar *pager_sp;
-        gchar *pager_base_num;
-        gchar *pager_type;
-        gchar *occupation;
-        gchar *homepage;
-        gchar *auth_type;
-        gchar *unknown1;
-        gchar *unknown2;
-        gchar *face;
-        gchar *hp_num;
-        gchar *hp_type;
-        gchar *intro;
-        gchar *city;
-        gchar *unknown3;
-        gchar *unknown4;
-        gchar *unknown5;
-        gchar *is_open_hp;
-        gchar *is_open_contact;
-        gchar *college;
-        gchar *horoscope;
-        gchar *zodiac;
-        gchar *blood;
-        gchar *qq_show;
-        gchar *unknown6;        /* always 0x2D */
-} contact_info;
-
-void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc);
 void qq_send_packet_get_info(PurpleConnection *gc, guint32 uid, gboolean show_window);
 void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img);
 void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const gchar *icon_num, const gchar *iconfile);

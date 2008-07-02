@@ -87,7 +87,8 @@ gboolean
 msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
 {
 	char **cmedia_array;
-	int strings;
+	int strings = 0;
+	gboolean parsed = FALSE;
 
 	if ((cmedia == NULL) || (*cmedia == '\0')) {
 		purple_debug_info("msn", "No currentmedia string\n");
@@ -108,31 +109,39 @@ msn_parse_currentmedia(const char *cmedia, CurrentMedia *media)
 	 * 6: Album
 	 * 7: ?
 	 */
-	strings = 0;
+#if GLIB_CHECK_VERSION(2,6,0)
+	strings  = g_strv_length(cmedia_array);
+#else
 	while (cmedia_array[++strings] != NULL);
+#endif
 
-	if (strings < 4)
-		return FALSE;
-	if (strcmp(cmedia_array[2], "1"))
-		return FALSE;
+	if (strings >= 4 && !strcmp(cmedia_array[2], "1")) {
+		parsed = TRUE;
 
-	if (strings == 4) {
-		media->title = g_strdup(cmedia_array[3]);
-	} else {
-		media->title = g_strdup(cmedia_array[4]);
+		g_free(media->title);
+		if (strings == 4) {
+			media->title = g_strdup(cmedia_array[3]);
+		} else {
+			media->title = g_strdup(cmedia_array[4]);
+		}
+
+		g_free(media->artist);
+		if (strings > 5)
+			media->artist = g_strdup(cmedia_array[5]);
+		else
+			media->artist = NULL;
+
+		g_free(media->album);
+		if (strings > 6)
+			media->album = g_strdup(cmedia_array[6]);
+		else
+			media->album = NULL;
+
 	}
 
-	if (strings > 5)
-		media->artist = g_strdup(cmedia_array[5]);
-	else
-		media->artist = NULL;
+	g_strfreev(cmedia_array);
 
-	if (strings > 6)
-		media->album = g_strdup(cmedia_array[6]);
-	else
-		media->album = NULL;
-
-	return TRUE;
+	return parsed;
 }
 
 /* get the CurrentMedia info from the XML string */
@@ -141,7 +150,7 @@ msn_get_currentmedia(char *xml_str, gsize len)
 {
 	xmlnode *payloadNode, *currentmediaNode;
 	char *currentmedia;
-	
+
 	purple_debug_info("msn","msn get CurrentMedia\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
 	if (!payloadNode){
@@ -167,7 +176,7 @@ msn_get_psm(char *xml_str, gsize len)
 {
 	xmlnode *payloadNode, *psmNode;
 	char *psm;
-	
+
 	purple_debug_info("MSNP14","msn get PSM\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
 	if (!payloadNode){
@@ -208,7 +217,7 @@ create_media_string(PurplePresence *presence)
 	return ret;
 }
 
-/* set the MSN's PSM info,Currently Read from the status Line 
+/* set the MSN's PSM info,Currently Read from the status Line
  * Thanks for Cris Code
  */
 void
@@ -241,7 +250,7 @@ msn_set_psm(MsnSession *session)
 
 	payload = session->psm;
 	purple_debug_misc("MSNP14","Sending UUX command with payload: %s\n",payload);
-	trans = msn_transaction_new(cmdproc, "UUX", "%d", strlen(payload));
+	trans = msn_transaction_new(cmdproc, "UUX", "%" G_GSIZE_FORMAT, strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);
 

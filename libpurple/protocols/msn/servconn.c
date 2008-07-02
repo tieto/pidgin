@@ -323,10 +323,10 @@ servconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 	purple_circ_buffer_mark_read(servconn->tx_buf, ret);
 }
 
-ssize_t
+gssize
 msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 {
-	ssize_t ret = 0;
+	gssize ret = 0;
 
 	g_return_val_if_fail(servconn != NULL, 0);
 
@@ -396,15 +396,15 @@ read_cb(gpointer data, gint source, PurpleInputCondition cond)
 	if (len <= 0) {
 		switch (errno) {
 
-			case 0:	
+			case 0:
 
 			case EBADF:
 			case EAGAIN: return;
-	
+
 			default: purple_debug_error("msn", "servconn read error,"
 						"len: %d, errno: %d, error: %s\n",
 						len, errno, g_strerror(errno));
-				 msn_servconn_got_error(servconn, 
+				 msn_servconn_got_error(servconn,
 						 MSN_SERVCONN_ERROR_READ);
 				 return;
 		}

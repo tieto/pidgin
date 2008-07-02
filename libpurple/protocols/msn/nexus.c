@@ -52,6 +52,7 @@ msn_nexus_destroy(MsnNexus *nexus)
 	if (nexus->challenge_data != NULL)
 		g_hash_table_destroy(nexus->challenge_data);
 
+	g_free(nexus->challenge_data_str);
 	g_free(nexus);
 }
 
@@ -101,13 +102,10 @@ nexus_got_response_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 			msn_twn_p = g_hash_table_lookup(nexus->challenge_data, "p");
 
 			/*setup the t and p parameter for session*/
-			if (session->passport_info.t != NULL){
-				g_free(session->passport_info.t);
-			}
+			g_free(session->passport_info.t);
 			session->passport_info.t = g_strdup(msn_twn_t);
 
-			if (session->passport_info.p != NULL)
-				g_free(session->passport_info.p);
+			g_free(session->passport_info.p);
 			session->passport_info.p = g_strdup(msn_twn_p);
 
 			cert_str = g_strdup_printf("t=%s&p=%s",msn_twn_t,msn_twn_p);
@@ -133,7 +131,8 @@ msn_nexus_connect(MsnNexus *nexus)
 	MsnSession *session = nexus->session;
 	char *ru,*lc,*id,*tw,*ct,*kpp,*kv,*ver,*rn,*tpf;
 	char *fs0,*fs;
-	char *username, *password;
+	const char *username;
+	char *password;
 	char *tail;
 #ifdef NEXUS_LOGIN_TWN
 	char *challenge_str;
@@ -147,7 +146,7 @@ msn_nexus_connect(MsnNexus *nexus)
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
 	/*prepare the Windows Live ID authentication token*/
-	username = g_strdup(purple_account_get_username(session->account));
+	username = purple_account_get_username(session->account);
 	password = g_strndup(purple_connection_get_password(session->account->gc), 16);
 
 	lc =	(char *)g_hash_table_lookup(nexus->challenge_data, "lc");
@@ -170,7 +169,6 @@ msn_nexus_connect(MsnNexus *nexus)
 	if(!(lc && id && tw && ru && ct && kpp && kv && ver && tpf)){
 		purple_debug_error("MSN Nexus","WLM Authenticate Key Error!\n");
 		msn_session_set_error(session, MSN_ERROR_AUTH, _("Windows Live ID authentication Failed"));
-		g_free(username);
 		g_free(password);
 		msn_nexus_destroy(nexus);
 		session->nexus = NULL;

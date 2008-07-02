@@ -1,21 +1,87 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.x.x:
+version 2.5.0 (??/??/2008):
+	libpurple:
+	* Ability to create custom smileys (currently only the MSN protocol
+	  utilizes the feature). (Thanks to Mauro Sérgio Ferreira Brasil,
+	  Marcus Lundblad, Jorge Villaseñor and other contributors)
+	* Add a configure option, --with-system-ssl-certs to allow packagers
+	  to specify a system-wide SSL CA certificates directory.  When set,
+	  we don't install our SSL CA certs, so it's important that the
+	  libpurple package depend on the CA certificates.
+
+	Pidgin:
+	* Custom buddy icons can now be added to and removed from buddy list
+	  entries via the buddy list entry right-click menu.
+	* Resize large incoming custom smileys to a maximum of 96px on either
+	  side.
+	* Offer to add new buddies into the same contact as existing buddies
+          in the same group if the alias given is the same.
+
+	General:
+	* Group and Chat buddy list entries can now be given custom buddy
+	  icons.
+
+	Finch:
+	* Added "Invite..." menu to chats.
+	* Added "View All Logs" menu in the buddylist to display a list of all IM
+	  logs.
+	* Added '/msgcolor' command to change colors of different classes of
+	  messages in a conversation. See '/help msgcolor' for details.
+
+version 2.4.3 (??/??/2008):
+	libpurple:
+	* Yahoo! Japan now uses UTF-8, matching the behavior of official clients
+	  and restoring compatibility with the web messenger (Yusuke Odate)
+	* Setting your buddy icon once again works for Yahoo! accounts.
+
+version 2.4.2 (05/17/2008):
 	libpurple:
 	* In MySpaceIM, messages from spambots are discarded (Justin Williams)
 	* Strip mIRC formatting codes from quit and part messages.
 	* IRC now displays ban lists in-channel for joined channels.
 	* Fixed a bug where the list of loaded plugins would get removed when
 	  switching between different operating systems.
+	* Fix reception of IRC PART without a part message on Undernet
+	  (fixes a problem with litter in the channel user list).
+	* IRC no longer crashes on /list on servers which erroneously omit
+	  RPL_LISTSTART.
+	* Update the NetworkManager support to use D-Bus directly, instead of
+	  libnm-glib.  Hopefully it's stable now.  It will now compile by
+	  default if you have D-Bus support and NetworkManager.h. (Elliott
+	  Sales de Andrade)
+	* MSN buddy list synchronization is now more forgiving, only asking
+	  about buddies who have disappeared completely from the server list
+	  and not those that have simply moved groups.
+	* IRC will now try to append 1-9 to your nick if it is in use, instead
+	  of substituting the last character with 1-9 where possible.
+	* Bonjour buddies will be saved persistently if they're moved out of
+	  the "Bonjour" group. (Eion Robb)
 
 	Pidgin:
 	* The typing notification in the conversation history can be disabled or
 	  customized (font, color etc.) in .gtkrc-2.0.
-	* Added a plugin (not built by default) which adds a Send button back
-	  to the conversation window. People without physical keyboards have a
-	  hard time with the lack of the button.
-	* Clicking on the buddyicon in the conversation window toggles the size of
-	  the icon between small and large.
+	* Added a plugin (not installed by default) which adds a Send button
+	  back to the conversation window. People without physical keyboards
+	  have a hard time with the lack of the button.
+	* Clicking on the buddyicon in the conversation window toggles the
+	  size of the icon between small and large.
+	* The settings of a chat (e.g. Handle in an XMPP chat, or Exchange in
+	  an AIM chat) can be edited from its context menu in the buddy list.
+	* Add a "Present conversation window" preference to the Message
+	  Notification plugin; the "Raise conversation window" option does not
+	  unminimize windows or draw attention to them when they are on other
+	  workspaces--the "Present" option should.
+	* Add a preference to set Escape as the keyboard shortcut for closing
+	  the conversation window.
+	* Add an option in the context menu to disable smileys in the selected
+	  text in the conversation history/log viewer. This should help people
+	  who regularly paste code in conversations.
+	* Add a preference to choose the minimum size of the text input area in
+	  lines.
+	* Moved the "Local alias" field in the Modify Account dialog to be below
+	  the "User Options" heading on the "Basic" tab.
+	* Number of room occupants is now shown in chat tooltips where possible
 
 	General:
 	* The configure script now dies on more absent dependencies.  The
@@ -27,6 +93,12 @@ version 2.x.x:
 	  the --enable-gevolution argument to configure to enable it.
 	* The Contact Availability Prediction plugin must now be explicitly
 	  enabled.  Use the --enable-cap argument to configure to enable it.
+
+	Finch:
+	* New default binding ctrl+x to open context menus.
+	* Menu triggers and other bindings will no longer conflict.
+	* Middle click pastes the internal clipboard (when mouse support is
+	  enabled).
 
 version 2.4.1 (03/31/2008):
 	http://developer.pidgin.im/query?status=closed&milestone=2.4.1

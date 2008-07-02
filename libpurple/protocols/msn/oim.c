@@ -1,5 +1,5 @@
 /**
- * @file oim.c 
+ * @file oim.c
  * 	get and send MSN offline Instant Message via SOAP request
  *	Author
  * 		MaYuan<mayuan2006@gmail.com>
@@ -58,7 +58,7 @@ msn_oim_new(MsnSession *session)
 
 	oim = g_new0(MsnOim, 1);
 	oim->session = session;
-	oim->oim_list	= NULL;
+	oim->oim_list = NULL;
 	oim->run_id = rand_guid();
 	oim->challenge = NULL;
 	oim->send_queue = g_queue_new();
@@ -71,16 +71,18 @@ void
 msn_oim_destroy(MsnOim *oim)
 {
 	MsnOimSendReq *request;
-	
-	purple_debug_info("OIM","destroy the OIM \n");
+
+	purple_debug_info("OIM", "destroy the OIM %p\n", oim);
 	g_free(oim->run_id);
 	g_free(oim->challenge);
-	
+
 	while((request = g_queue_pop_head(oim->send_queue)) != NULL){
 		msn_oim_free_send_req(request);
 	}
+
 	g_queue_free(oim->send_queue);
-	
+	g_list_free(oim->oim_list);
+
 	g_free(oim);
 }
 
@@ -89,9 +91,9 @@ msn_oim_new_send_req(const char *from_member, const char*friendname,
 	const char* to_member, const char *msg)
 {
 	MsnOimSendReq *request;
-	
+
 	request = g_new0(MsnOimSendReq, 1);
-	request->from_member	=g_strdup(from_member);
+	request->from_member	= g_strdup(from_member);
 	request->friendname		= g_strdup(friendname);
 	request->to_member		= g_strdup(to_member);
 	request->oim_msg		= g_strdup(msg);
@@ -107,7 +109,7 @@ msn_oim_free_send_req(MsnOimSendReq *req)
 	g_free(req->friendname);
 	g_free(req->to_member);
 	g_free(req->oim_msg);
-	
+
 	g_free(req);
 }
 
@@ -119,10 +121,10 @@ static gchar *
 msn_oim_msg_to_str(MsnOim *oim, const char *body)
 {
 	char *oim_body,*oim_base64;
-	
-	purple_debug_info("MSN OIM","encode OIM Message...\n");	
+
+	purple_debug_info("MSN OIM","encode OIM Message...\n");
 	oim_base64 = purple_base64_encode((const guchar *)body, strlen(body));
-	purple_debug_info("MSN OIM","encoded base64 body:{%s}\n",oim_base64);	
+	purple_debug_info("MSN OIM","encoded base64 body:{%s}\n",oim_base64);
 	oim_body = g_strdup_printf(MSN_OIM_MSG_TEMPLATE,
 				oim->run_id,oim->send_seq,oim_base64);
 	g_free(oim_base64);
@@ -170,7 +172,6 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 								msg->oim_msg);
 							g_queue_push_head(oim->send_queue, msg);
 							msn_oim_send_msg(oim);
-							return;
 						} else {
 							purple_debug_info("msnoim",
 								"can't find lock key for OIM: %s\n",
@@ -191,14 +192,13 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 						purple_debug_info("MSNP14","resending OIM: %s\n", msg->oim_msg);
 						g_queue_push_head(oim->send_queue, msg);
 						msn_oim_send_msg(oim);
-						return;
 					}
 				}
+
+				g_free(faultcode_str);
 			}
 		}
 	}
-
-	msn_oim_free_send_req(msg);
 }
 
 void
@@ -213,7 +213,7 @@ msn_oim_prep_send_msg_info(MsnOim *oim, const char *membername,
 }
 
 /*post send single message request to oim server*/
-void 
+void
 msn_oim_send_msg(MsnOim *oim)
 {
 	MsnOimSendReq *oim_request;
@@ -333,7 +333,7 @@ msn_oim_parse_timestamp(const char *timestamp)
 		gboolean offset_positive = TRUE;
 		int tzhrs;
 		int tzmins;
-		
+
 		for (t.tm_mon = 0;
 			 months[t.tm_mon] != NULL &&
 				 strcmp(months[t.tm_mon], month_str) != 0; t.tm_mon++);
@@ -462,7 +462,7 @@ msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	}
 }
 
-/* parse the oim XML data 
+/* parse the oim XML data
  * and post it to the soap server to get the Offline Message
  * */
 void
@@ -472,7 +472,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 	xmlnode *iu_node;
 	MsnSession *session = oim->session;
 
-	purple_debug_info("MSNP14:OIM", "%s", xmlmsg);
+	purple_debug_info("MSNP14:OIM", "%s\n", xmlmsg);
 
 	node = xmlnode_from_str(xmlmsg, -1);
 	if (strcmp(node->name, "MD") != 0) {

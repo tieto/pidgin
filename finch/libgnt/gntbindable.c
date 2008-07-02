@@ -339,6 +339,13 @@ gnt_bindable_perform_action_key(GntBindable *bindable, const char *keys)
 	return FALSE;
 }
 
+gboolean
+gnt_bindable_check_key(GntBindable *bindable, const char *keys) {
+	GntBindableClass *klass = GNT_BINDABLE_CLASS(GNT_BINDABLE_GET_CLASS(bindable));
+	GntBindableActionParam *param = g_hash_table_lookup(klass->bindings, keys);
+	return (param && param->action);
+}
+
 static void
 register_binding(GntBindableClass *klass, const char *name, const char *trigger, GList *list)
 {

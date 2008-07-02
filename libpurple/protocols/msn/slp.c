@@ -31,6 +31,8 @@
 #include "user.h"
 #include "switchboard.h"
 
+#include "smiley.h"
+
 /* ms to delay between sending buddy icon requests to the server. */
 #define BUDDY_ICON_DELAY 20000
 /*debug SLP*/
@@ -278,22 +280,31 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		type = msn_object_get_type(obj);
 		g_free(msnobj_data);
 
-		if (!(type == MSN_OBJECT_USERTILE))
+		if ((type != MSN_OBJECT_USERTILE) && (type != MSN_OBJECT_EMOTICON))
 		{
 			purple_debug_error("msn", "Wrong object?\n");
 			msn_object_destroy(obj);
 			g_return_if_reached();
 		}
 
-		img = msn_object_get_image(obj);
+		if (type == MSN_OBJECT_EMOTICON) {
+			char *path;
+			path = g_build_filename(purple_smileys_get_storing_dir(),
+					obj->location, NULL);
+			img = purple_imgstore_new_from_file(path);
+			g_free(path);
+		} else {
+			img = msn_object_get_image(obj);
+			if (img)
+				purple_imgstore_ref(img);
+		}
+		msn_object_destroy(obj);
+
 		if (img == NULL)
 		{
 			purple_debug_error("msn", "Wrong object.\n");
-			msn_object_destroy(obj);
 			g_return_if_reached();
 		}
-
-		msn_object_destroy(obj);
 
 		slpsession = msn_slplink_find_slp_session(slplink,
 												  slpcall->session_id);
@@ -319,6 +330,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 #endif
 		msn_slpmsg_set_image(slpmsg, img);
 		msn_slplink_queue_slpmsg(slplink, slpmsg);
+		purple_imgstore_unref(img);
 	}
 	else if (!strcmp(euf_guid, "5D3E02AB-6190-11D3-BBBB-00C04F795683"))
 	{
@@ -359,6 +371,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			g_free(bin);
 
 			purple_xfer_set_filename(xfer, file_name);
+			g_free(file_name);
 			purple_xfer_set_size(xfer, file_size);
 			purple_xfer_set_init_fnc(xfer, msn_xfer_init);
 			purple_xfer_set_request_denied_fnc(xfer, msn_xfer_cancel);
@@ -934,15 +947,15 @@ static gboolean
 msn_release_buddy_icon_request_timeout(gpointer data)
 {
 	MsnUserList *userlist = (MsnUserList *)data;
-	
+
 	/* Free one window slot */
-	userlist->buddy_icon_window++;	
-	
+	userlist->buddy_icon_window++;
+
 	/* Clear the tag for our former request timer */
 	userlist->buddy_icon_request_timer = 0;
-	
+
 	msn_release_buddy_icon_request(userlist);
-	
+
 	return FALSE;
 }
 
@@ -1049,7 +1062,7 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 	}
 
 	/* Wait BUDDY_ICON_DELAY ms before freeing our window slot and requesting the next icon. */
-	userlist->buddy_icon_request_timer = purple_timeout_add(BUDDY_ICON_DELAY, 
+	userlist->buddy_icon_request_timer = purple_timeout_add(BUDDY_ICON_DELAY,
 														  msn_release_buddy_icon_request_timeout, userlist);
 }
 

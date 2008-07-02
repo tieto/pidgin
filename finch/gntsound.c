@@ -103,7 +103,7 @@ static FinchSoundEvent sounds[PURPLE_NUM_SOUNDS] = {
 	{PURPLE_SOUND_CHAT_YOU_SAY, N_("You talk in chat"), "send_chat_msg", "send.wav", NULL},
 	{PURPLE_SOUND_CHAT_SAY,     N_("Others talk in chat"), "chat_msg_recv", "receive.wav", NULL},
 	{PURPLE_SOUND_POUNCE_DEFAULT, NULL, "pounce_default", "alert.wav", NULL},
-	{PURPLE_SOUND_CHAT_NICK,    N_("Someone says your screen name in chat"), "nick_said", "alert.wav", NULL}
+	{PURPLE_SOUND_CHAT_NICK,    N_("Someone says your username in chat"), "nick_said", "alert.wav", NULL}
 };
 
 const char *
@@ -1028,13 +1028,13 @@ finch_sounds_show_all(void)
 
 	for (i = 0; i < PURPLE_NUM_SOUNDS; i++) {
 		FinchSoundEvent * event = &sounds[i];
-		
+
 		if (event->label == NULL) {
 			continue;
 		}
 
 		gnt_tree_add_choice(GNT_TREE(tree), GINT_TO_POINTER(i),
-			gnt_tree_create_row(GNT_TREE(tree), "", ""),
+			gnt_tree_create_row(GNT_TREE(tree), event->label, event->def),
 			NULL, NULL);
 	}
 

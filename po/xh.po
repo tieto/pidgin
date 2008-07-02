@@ -3644,7 +3644,7 @@ msgstr "iFani:"
 #: ../libpurple/protocols/silc10/ops.c:1075
 #: ../libpurple/protocols/silc10/util.c:551
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1061
-msgid "E-Mail"
+msgid "Email"
 msgstr "I-imeyile"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:360
@@ -3679,17 +3679,6 @@ msgstr "Imithetho yokuSebenza yoNgeniso lweYahoo"
 #, fuzzy
 msgid "Purple Person"
 msgstr "Umntu omTsha"
-
-#: ../libpurple/protocols/bonjour/bonjour.c:662
-#: ../libpurple/protocols/gg/gg.c:477
-#: ../libpurple/protocols/jabber/jabber.c:932
-#: ../libpurple/protocols/silc/silc.c:770
-#: ../libpurple/protocols/silc/silc.c:1011
-#: ../libpurple/protocols/silc10/silc.c:681
-#: ../libpurple/protocols/silc10/silc.c:922
-#, fuzzy
-msgid "E-mail"
-msgstr "I-imeyile:"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:33
 msgid "Bonjour"
@@ -5470,7 +5459,7 @@ msgstr ""
 #: ../libpurple/protocols/novell/novell.c:1488
 #: ../libpurple/protocols/oscar/oscar.c:3714
 #: ../libpurple/protocols/oscar/oscar.c:3723
-msgid "E-Mail Address"
+msgid "Email Address"
 msgstr "Idilesi ye-iMeyili"
 
 #: ../libpurple/protocols/jabber/buddy.c:2410
@@ -6560,7 +6549,7 @@ msgstr "Impazamo yokwakheka kwezivakalisi (mhlawumbi sisiphene sikaGaim)"
 
 #: ../libpurple/protocols/msn/error.c:46
 #, c-format
-msgid "Invalid e-mail address"
+msgid "Invalid email address"
 msgstr "IDilesi ye-imeyile engasebenziyo"
 
 #: ../libpurple/protocols/msn/error.c:49
@@ -7127,7 +7116,7 @@ msgstr "iPhepha lokuQala"
 
 #: ../libpurple/protocols/msn/msn.c:1656
 #, fuzzy
-msgid "Personal E-Mail"
+msgid "Personal Email"
 msgstr "Isihloko Sobuqu"
 
 #: ../libpurple/protocols/msn/msn.c:1657
@@ -7196,7 +7185,7 @@ msgstr ""
 
 #: ../libpurple/protocols/msn/msn.c:1687
 #, fuzzy
-msgid "Work E-Mail"
+msgid "Work Email"
 msgstr "I-imeyile"
 
 #: ../libpurple/protocols/msn/msn.c:1688
@@ -8904,7 +8893,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:2439
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\n"
+"You have received an ICQ email from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -9099,12 +9088,12 @@ msgstr "iGama le_skrini"
 
 #: ../libpurple/protocols/oscar/oscar.c:3948
 #, c-format
-msgid "No results found for e-mail address %s"
+msgid "No results found for email address %s"
 msgstr "Akukho ziphumo zifunyenweyo zedilesi ye-imeyile %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:3969
 #, c-format
-msgid "You should receive an e-mail asking to confirm %s."
+msgid "You should receive an email asking to confirm %s."
 msgstr "Uza kufumana i-imeyile ecela ukuba ungqine %s."
 
 #: ../libpurple/protocols/oscar/oscar.c:3971
@@ -9144,7 +9133,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4014
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because there is already a "
+"Error 0x%04x: Unable to change email address because there is already a "
 "request pending for this screen name."
 msgstr ""
 "Impazamo 0x%04x: Akukwazeki ukutshintsha idilesi ye-imeyile ngenxa yokuba "
@@ -9153,7 +9142,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4017
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address has "
+"Error 0x%04x: Unable to change email address because the given address has "
 "too many screen names associated with it."
 msgstr ""
 "Impazamo 0x%04x: Akukwazeki ukutshintsha idilesi ye-imeyile ngenxa yokuba "
@@ -9162,7 +9151,7 @@ msgstr ""
 #: ../libpurple/protocols/oscar/oscar.c:4020
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change e-mail address because the given address is "
+"Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr ""
 "Impazamo 0x%04x: Akukwazeki ukutshintsha idilesi ye-imeyile ngenxa yokuba "
@@ -9175,7 +9164,7 @@ msgstr "Impazamo 0x%04x: Impazamo engaziwayo."
 
 #: ../libpurple/protocols/oscar/oscar.c:4033
 #, c-format
-msgid "The e-mail address for %s is %s"
+msgid "The email address for %s is %s"
 msgstr "Idilesi ye-imeyili ye %s yile %s"
 
 #: ../libpurple/protocols/oscar/oscar.c:4035
@@ -9463,15 +9452,15 @@ msgstr ""
 "nokukhetha \"Isicelo soGunyaziso Kwakhona.\""
 
 #: ../libpurple/protocols/oscar/oscar.c:6231
-msgid "Find Buddy by E-Mail"
+msgid "Find Buddy by Email"
 msgstr "Fumana umHlobo ngeI-meyile"
 
 #: ../libpurple/protocols/oscar/oscar.c:6232
-msgid "Search for a buddy by e-mail address"
+msgid "Search for a buddy by email address"
 msgstr "Zingela umhlobo ngedilesi ye-imeyile"
 
 #: ../libpurple/protocols/oscar/oscar.c:6233
-msgid "Type the e-mail address of the buddy you are searching for."
+msgid "Type the email address of the buddy you are searching for."
 msgstr "Chwetheza idilesi ye-imeyile yomhlobo omzingelayo."
 
 #: ../libpurple/protocols/oscar/oscar.c:6236
@@ -9504,12 +9493,12 @@ msgstr "Qinisekisa i-Akhawunti"
 
 #: ../libpurple/protocols/oscar/oscar.c:6430
 #, fuzzy
-msgid "Display Currently Registered E-Mail Address"
+msgid "Display Currently Registered Email Address"
 msgstr "Bonisa iDilesi eBhalisiweyo ngeli thuba"
 
 #: ../libpurple/protocols/oscar/oscar.c:6434
 #, fuzzy
-msgid "Change Currently Registered E-Mail Address..."
+msgid "Change Currently Registered Email Address..."
 msgstr "Tshintsha iDilesi eBhaliweyo Ngeli thuba..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6441
@@ -9518,7 +9507,7 @@ msgstr "Bonisa Abahlobo abaLindele uGunyaziso"
 
 #: ../libpurple/protocols/oscar/oscar.c:6447
 #, fuzzy
-msgid "Search for Buddy by E-Mail Address..."
+msgid "Search for Buddy by Email Address..."
 msgstr "Zingela umHlobo nge-Imeyile..."
 
 #: ../libpurple/protocols/oscar/oscar.c:6452
@@ -9610,10 +9599,6 @@ msgstr ""
 #, fuzzy
 msgid "College"
 msgstr "_Ukudilika"
-
-#: ../libpurple/protocols/qq/buddy_info.c:55
-msgid "Email"
-msgstr "I-imeyile"
 
 #: ../libpurple/protocols/qq/buddy_info.c:57
 #, fuzzy
@@ -12487,7 +12472,7 @@ msgstr "iGama lomSebenzisi: \t%s\n"
 #: ../libpurple/protocols/silc/util.c:362
 #: ../libpurple/protocols/silc10/util.c:359
 #, fuzzy, c-format
-msgid "E-Mail: \t\t%s\n"
+msgid "Email: \t\t%s\n"
 msgstr "I-iMeyile: \t\t%s\n"
 
 #: ../libpurple/protocols/silc/util.c:364
@@ -12844,7 +12829,7 @@ msgstr "Inkonzo yovimba weefayili ayifumaneki okwethutyana."
 
 #: ../libpurple/protocols/toc/toc.c:530
 #, c-format
-msgid "E-mail lookup restricted."
+msgid "Email lookup restricted."
 msgstr "Ukukhangela i-imeyile kunezithintelo."
 
 #: ../libpurple/protocols/toc/toc.c:533
@@ -15877,7 +15862,7 @@ msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "Umbala wokuzoba uqhagamshelwano."
 
 #: ../pidgin/gtkimhtml.c:1598
-msgid "_Copy E-Mail Address"
+msgid "_Copy Email Address"
 msgstr "_Kopa iDilesi ye-iMeyile"
 
 #: ../pidgin/gtkimhtml.c:1610
@@ -16284,8 +16269,8 @@ msgstr[1] "%s zine %d imiyalezo emitsha."
 
 #: ../pidgin/gtknotify.c:564
 #, c-format
-msgid "<b>You have %d new e-mail.</b>"
-msgid_plural "<b>You have %d new e-mails.</b>"
+msgid "<b>You have %d new email.</b>"
+msgid_plural "<b>You have %d new emails.</b>"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -17609,7 +17594,7 @@ msgstr "_Umhlobo oliQabane"
 #: ../pidgin/plugins/gevolution/gevolution.c:240
 #: ../pidgin/plugins/gevolution/gevolution.c:246
 #, fuzzy
-msgid "Unable to send e-mail"
+msgid "Unable to send email"
 msgstr "Akukwazeki ukuthumela umyalezo."
 
 #: ../pidgin/plugins/gevolution/gevolution.c:241
@@ -17617,7 +17602,7 @@ msgid "The evolution executable was not found in the PATH."
 msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:247
-msgid "An e-mail address was not found for this buddy."
+msgid "An email address was not found for this buddy."
 msgstr ""
 
 #: ../pidgin/plugins/gevolution/gevolution.c:273
@@ -17626,7 +17611,7 @@ msgstr "Yongeza kwiNcwadi yeDilesi"
 
 #: ../pidgin/plugins/gevolution/gevolution.c:285
 #, fuzzy
-msgid "Send E-Mail"
+msgid "Send Email"
 msgstr "I-imeyile"
 
 #. Configuration frame
@@ -17685,7 +17670,7 @@ msgid "Last name:"
 msgstr "iFani:"
 
 #: ../pidgin/plugins/gevolution/new_person_dialog.c:376
-msgid "E-mail:"
+msgid "Email:"
 msgstr "I-imeyile:"
 
 #. *< type
@@ -19289,7 +19274,7 @@ msgstr ""
 #~ msgid "Check Mail"
 #~ msgstr "Khangela iMeyile"
 
-#~ msgid "Check e-mail every X seconds.\n"
+#~ msgid "Check email every X seconds.\n"
 #~ msgstr "Khangela i-imeyile njalo ngemizuzwana X.\n"
 
 #~ msgid "Auto-login"

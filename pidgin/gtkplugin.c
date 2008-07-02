@@ -136,8 +136,8 @@ update_plugin_list(void *data)
 		gtk_list_store_append (ls, &iter);
 
 		name = g_markup_escape_text(plug->info->name ? _(plug->info->name) : g_basename(plug->path), -1);
-		version = g_markup_escape_text(plug->info->version, -1);
-		summary = g_markup_escape_text(_(plug->info->summary), -1);
+		version = g_markup_escape_text(purple_plugin_get_version(plug), -1);
+		summary = g_markup_escape_text(purple_plugin_get_summary(plug), -1);
 
 		desc = g_strdup_printf("<b>%s</b> %s\n%s", name,
 				       version,
@@ -285,7 +285,7 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 				PurplePlugin *dep_plugin = purple_plugins_find_with_id(dep_name);
 				g_return_if_fail(dep_plugin != NULL);
 
-				g_string_append_printf(tmp, "\n\t%s\n", _(dep_plugin->info->name));
+				g_string_append_printf(tmp, "\n\t%s\n", purple_plugin_get_name(dep_plugin));
 			}
 
 			cb_data = g_new(gpointer, 3);
@@ -344,14 +344,14 @@ static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, Gt
 
 	if (plug->error != NULL)
 	{
-		gchar *name = g_markup_escape_text(_(plug->info->name), -1);
+		gchar *name = g_markup_escape_text(purple_plugin_get_name(plug), -1);
 
 		gchar *error = g_markup_escape_text(plug->error, -1);
 		gchar *text;
 
 		text = g_strdup_printf(
 			"<b>%s</b> %s\n<span weight=\"bold\" color=\"red\"%s</span>",
-			plug->info->name, plug->info->version, error);
+			purple_plugin_get_name(plug), purple_plugin_get_version(plug), error);
 		gtk_list_store_set(GTK_LIST_STORE (model), iter,
 				   1, text,
 				   -1);
@@ -414,21 +414,23 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	plug = g_value_get_pointer(&val);
 
-	name = g_markup_escape_text(_(plug->info->name), -1);
-	version = g_markup_escape_text(plug->info->version, -1);
+	name = g_markup_escape_text(purple_plugin_get_name(plug), -1);
+	version = g_markup_escape_text(purple_plugin_get_version(plug), -1);
 	buf = g_strdup_printf(
 		"<span size=\"larger\" weight=\"bold\">%s</span> "
 		"<span size=\"smaller\">%s</span>",
 		name, version);
 	gtk_label_set_markup(plugin_name, buf);
+	g_free(name);
+	g_free(version);
 	g_free(buf);
 
-	gtk_text_buffer_set_text(plugin_desc, plug->info->description, -1);
-	gtk_label_set_text(plugin_author, plug->info->author);
+	gtk_text_buffer_set_text(plugin_desc, purple_plugin_get_description(plug), -1);
+	gtk_label_set_text(plugin_author, purple_plugin_get_author(plug));
 	gtk_label_set_text(plugin_filename, plug->path);
 
 	g_free(plugin_website_uri);
-	plugin_website_uri = g_strdup(plug->info->homepage);
+	plugin_website_uri = g_strdup(purple_plugin_get_homepage(plug));
 	if (plugin_website_uri)
 	{
 		tmp = g_markup_escape_text(plugin_website_uri, -1);
@@ -693,6 +695,8 @@ create_details()
 		GTK_WIDGET(plugin_filename), TRUE, &label);
 	gtk_label_set_markup(GTK_LABEL(label), _("<b>Filename:</b>"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+
+	g_object_unref(sg);
 
 	return GTK_WIDGET(vbox);
 }

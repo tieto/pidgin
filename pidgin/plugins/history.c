@@ -43,6 +43,7 @@ static void historize(PurpleConversation *c)
 	char *header;
 	char *protocol;
 	char *escaped_alias;
+	const char *header_date;
 
 	convtype = purple_conversation_get_type(c);
 	gtkconv = PIDGIN_CONVERSATION(c);
@@ -122,8 +123,13 @@ static void historize(PurpleConversation *c)
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", options);
 
 	escaped_alias = g_markup_escape_text(alias, -1);
-	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), escaped_alias,
-							 purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
+
+	if (((PurpleLog *)logs->data)->tm)
+		header_date = purple_date_format_full(((PurpleLog *)logs->data)->tm);
+	else
+		header_date = purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time));
+
+	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), escaped_alias, header_date);
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options);
 	g_free(header);
 	g_free(escaped_alias);

@@ -95,6 +95,7 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 		msg->nak_cb = NULL;
 		msg->ack_data = NULL;
 	}
+	g_list_free(slpmsg->msgs);
 
 	slplink->slp_msgs = g_list_remove(slplink->slp_msgs, slpmsg);
 

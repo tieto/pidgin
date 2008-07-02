@@ -92,7 +92,7 @@ silcpurple_chat_getinfo(PurpleConnection *gc, GHashTable *components)
 {
 	SilcPurple sg = gc->proto_data;
 	const char *chname;
-	char *buf, tmp[256], *tmp2;
+	char tmp[256], *tmp2;
 	GString *s;
 	SilcChannelEntry channel;
 	SilcHashTableList htl;
@@ -173,9 +173,8 @@ silcpurple_chat_getinfo(PurpleConnection *gc, GHashTable *components)
 		}
 	}
 
-	buf = g_string_free(s, FALSE);
-	purple_notify_formatted(gc, NULL, _("Channel Information"), NULL, buf, NULL, NULL);
-	g_free(buf);
+	purple_notify_formatted(gc, NULL, _("Channel Information"), NULL, s->str, NULL, NULL);
+	g_string_free(s, TRUE);
 }
 
 
@@ -671,7 +670,7 @@ silcpurple_chat_permanent(PurpleBlistNode *node, gpointer data)
 
 typedef struct {
 	SilcPurple sg;
-	const char *channel;
+	char *channel;
 } *SilcPurpleChatInput;
 
 static void
@@ -689,17 +688,20 @@ silcpurple_chat_ulimit_cb(SilcPurpleChatInput s, const char *limit)
 
 	if (!limit || !(*limit) || *limit == '0') {
 		if (limit && ulimit == channel->user_limit) {
+			g_free(s->channel);
 			silc_free(s);
 			return;
 		}
 		silc_client_command_call(s->sg->client, s->sg->conn, NULL, "CMODE",
 					 s->channel, "-l", NULL);
 
+		g_free(s->channel);
 		silc_free(s);
 		return;
 	}
 
 	if (ulimit == channel->user_limit) {
+		g_free(s->channel);
 		silc_free(s);
 		return;
 	}
@@ -708,6 +710,7 @@ silcpurple_chat_ulimit_cb(SilcPurpleChatInput s, const char *limit)
 	silc_client_command_call(s->sg->client, s->sg->conn, NULL, "CMODE",
 				 s->channel, "+l", limit, NULL);
 
+	g_free(s->channel);
 	silc_free(s);
 }
 
@@ -720,7 +723,7 @@ silcpurple_chat_ulimit(PurpleBlistNode *node, gpointer data)
 
 	SilcPurpleChatInput s;
 	SilcChannelEntry channel;
-	const char *ch;
+	char *ch;
 	char tmp[32];
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
@@ -1312,7 +1315,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 			g_free(tmp);
 
 			if (ret)
-				  serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), 0, msg, time(NULL));
+				  serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), msgflags, msg, time(NULL));
 			return ret;
 		}
 	}
@@ -1323,7 +1326,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 					       (unsigned char *)msg2,
 					       strlen(msg2));
 	if (ret) {
-		serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), 0, msg,
+		serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), msgflags, msg,
 				 time(NULL));
 	}
 	g_free(tmp);

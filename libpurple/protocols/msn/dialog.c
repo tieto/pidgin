@@ -112,7 +112,7 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 
 	data        = g_new0(MsnAddRemData, 1);
 	data->who   = g_strdup(passport);
-	data->group = group_name != NULL ? g_strdup(group_name) : NULL;
+	data->group = g_strdup(group_name);
 	data->gc    = gc;
 
 	msg = g_strdup_printf(_("Buddy list synchronization issue in %s (%s)"),
@@ -135,7 +135,7 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 								 passport);
 	}
 
-	purple_request_action(gc, NULL, msg, reason, PURPLE_DEFAULT_ACTION_NONE, 
+	purple_request_action(gc, NULL, msg, reason, PURPLE_DEFAULT_ACTION_NONE,
 						purple_connection_get_account(gc), data->who, NULL,
 						data, 2,
 						_("Yes"), G_CALLBACK(msn_add_cb),

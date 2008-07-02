@@ -33,7 +33,9 @@
 #include "xmlnode.h"
 
 #include <glib.h>
+#if !defined(_WIN32) || !defined(_WINERROR_)
 #include <error.h>
+#endif
 
 #define SOAP_TIMEOUT (5 * 60)
 
@@ -80,6 +82,7 @@ static void msn_soap_message_send_internal(MsnSession *session,
 
 static void msn_soap_request_destroy(MsnSoapRequest *req);
 static void msn_soap_connection_sanitize(MsnSoapConnection *conn, gboolean disconnect);
+static void msn_soap_process(MsnSoapConnection *conn);
 
 static gboolean
 msn_soap_cleanup_each(gpointer key, gpointer value, gpointer data)
@@ -261,46 +264,54 @@ msn_soap_handle_body(MsnSoapConnection *conn, MsnSoapMessage *response)
 static void
 msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 {
-    MsnSoapConnection *conn = data;
-	int count = 0, cnt;
-	char buf[8192];
-	char *linebreak;
-	char *cursor;
-	gboolean handled = FALSE;
+	MsnSoapConnection *conn = data;
+	int count = 0, cnt, perrno;
+	/* This buffer needs to be larger than any packets received from
+		login.live.com or Adium will fail to receive the packet
+		(something weird with the login.live.com server). With NSS it works
+		fine, so I believe it's some bug with OS X */ 
+	char buf[16 * 1024];
 
 	if (conn->message == NULL) {
 		conn->message = msn_soap_message_new(NULL, NULL);
 	}
 
+	if (conn->buf == NULL) {
+		conn->buf = g_string_new_len(buf, 0);
+	}
+	
 	while ((cnt = purple_ssl_read(conn->ssl, buf, sizeof(buf))) > 0) {
 		purple_debug_info("soap", "read %d bytes\n", cnt);
 		count += cnt;
-		if (conn->buf == NULL) {
-			conn->buf = g_string_new_len(buf, cnt);
-		} else {
-			g_string_append_len(conn->buf, buf, cnt);
-		}
+		g_string_append_len(conn->buf, buf, cnt);
 	}
 
-	if (cnt < 0) {
-		if (errno != EAGAIN) {
-			purple_debug_info("soap", "read: %s\n", g_strerror(errno));
+	/* && count is necessary for Adium, on OS X the last read always
+	   return an error, so we want to proceed anyway. See #5212 for
+	   discussion on this and the above buffer size issues */
+	if(cnt < 0 && errno == EAGAIN && count == 0)
+		return;
+
+	// msn_soap_process could alter errno
+	perrno = errno;
+	msn_soap_process(conn);
+	
+	if (cnt < 0 && perrno != EAGAIN) {
+		purple_debug_info("soap", "read: %s\n", g_strerror(perrno));
+		// It's possible msn_soap_process closed the ssl connection
+		if (conn->ssl) {
 			purple_ssl_close(conn->ssl);
 			conn->ssl = NULL;
 			msn_soap_connection_handle_next(conn);
-			return;
-		} else if (count == 0) {
-			return;
 		}
 	}
+}
 
-	if (cnt == 0 && count == 0) {
-		purple_debug_info("soap", "msn_soap_read_cb() called, but no data available?\n");
-		purple_ssl_close(conn->ssl);
-		conn->ssl = NULL;
-		msn_soap_connection_handle_next(conn);
-		return;
-	}
+static void
+msn_soap_process(MsnSoapConnection *conn) {
+	gboolean handled = FALSE;
+	char *cursor;
+	char *linebreak;
 
 	purple_debug_info("soap", "current %s\n", conn->buf->str);
 
@@ -382,7 +393,7 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	}
 
 	if (!handled && conn->headers_done) {
-		if (conn->buf->len - conn->handled_len >= 
+		if (conn->buf->len - conn->handled_len >=
 			conn->body_len) {
 			xmlnode *node = xmlnode_from_str(cursor, conn->body_len);
 
@@ -394,8 +405,11 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 				conn->message = NULL;
 				message->xml = node;
 
-				if (!msn_soap_handle_body(conn, message))
+				if (!msn_soap_handle_body(conn, message)) {
+					msn_soap_message_destroy(message);
 					return;
+				}
+				msn_soap_message_destroy(message);
 			}
 
 			msn_soap_connection_handle_next(conn);
@@ -508,7 +522,7 @@ msn_soap_connection_run(gpointer data)
 
 			g_free(authstr);
 			g_free(body);
-		}		
+		}
 	}
 
 	return FALSE;
@@ -643,12 +657,12 @@ msn_soap_message_destroy(MsnSoapMessage *message)
 }
 
 void
-msn_soap_message_add_header(MsnSoapMessage *req,
+msn_soap_message_add_header(MsnSoapMessage *message,
 		const char *name, const char *value)
 {
 	char *header = g_strdup_printf("%s: %s\r\n", name, value);
 
-	req->headers = g_slist_prepend(req->headers, header);
+	message->headers = g_slist_prepend(message->headers, header);
 }
 
 static void

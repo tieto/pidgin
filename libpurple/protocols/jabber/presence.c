@@ -49,7 +49,7 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 	xmlnode *presence = user_data;
 	char *chat_full_jid;
 
-	if(!chat->conv)
+	if(!chat->conv || chat->left)
 		return;
 
 	chat_full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server,
@@ -369,17 +369,29 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 
 typedef struct _JabberPresenceCapabilities {
 	JabberStream *js;
-	JabberBuddyResource *jbr;
+	JabberBuddy *jb;
 	char *from;
 } JabberPresenceCapabilities;
 
 static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, gpointer user_data) {
 	JabberPresenceCapabilities *userdata = user_data;
+	JabberID *jid;
+	JabberBuddyResource *jbr;
 	GList *iter;
 
-	if(userdata->jbr->caps)
-		jabber_caps_free_clientinfo(userdata->jbr->caps);
-	userdata->jbr->caps = info;
+	jid = jabber_id_new(userdata->from);
+	jbr = jabber_buddy_find_resource(userdata->jb, jid->resource);
+	jabber_id_free(jid);
+
+	if(!jbr) {
+		g_free(userdata->from);
+		g_free(userdata);
+		return;
+	}
+
+	if(jbr->caps)
+		jabber_caps_free_clientinfo(jbr->caps);
+	jbr->caps = info;
 
 	if (info) {
 		for(iter = info->features; iter; iter = g_list_next(iter)) {
@@ -569,12 +581,13 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		if(state == JABBER_BUDDY_STATE_ERROR) {
 			char *title, *msg = jabber_parse_error(js, packet, NULL);
 
-			if(chat->conv) {
+			if (!chat->conv) {
+				title = g_strdup_printf(_("Error joining chat %s"), from);
+				purple_serv_got_join_chat_failed(js->gc, chat->components);
+			} else {
 				title = g_strdup_printf(_("Error in chat %s"), from);
 				if (g_hash_table_size(chat->members) == 0)
 					serv_got_chat_left(js->gc, chat->id);
-			} else {
-				title = g_strdup_printf(_("Error joining chat %s"), from);
 			}
 			purple_notify_error(js->gc, title, title, msg);
 			g_free(title);
@@ -596,8 +609,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 			/* If we haven't joined the chat yet, we don't care that someone
 			 * left, or it was us leaving after we closed the chat */
-			if(!chat->conv) {
-				if(jid->resource && chat->handle && !strcmp(jid->resource, chat->handle))
+			if (!chat->conv || chat->left) {
+				if (chat->left &&
+						jid->resource && chat->handle && !strcmp(jid->resource, chat->handle))
 					jabber_chat_destroy(chat);
 				jabber_id_free(jid);
 				g_free(status);
@@ -741,7 +755,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				if(node && ver) {
 					JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
 					userdata->js = js;
-					userdata->jbr = jbr;
+					userdata->jb = jb;
 					userdata->from = g_strdup(from);
 					jabber_caps_get_info(js, from, node, ver, ext, jabber_presence_set_capabilities, userdata);
 				}

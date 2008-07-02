@@ -29,6 +29,7 @@
 #include <gntlabel.h>
 #include <gnttree.h>
 #include <gntutils.h>
+#include <gntwindow.h>
 
 #include "finch.h"
 
@@ -66,8 +67,7 @@ finch_notify_message(PurpleNotifyMsgType type, const char *title,
 			break;
 	}
 
-	window = gnt_box_new(FALSE, TRUE);
-	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
+	window = gnt_window_box_new(FALSE, TRUE);
 	gnt_box_set_title(GNT_BOX(window), title);
 	gnt_box_set_fill(GNT_BOX(window), FALSE);
 	gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
@@ -208,8 +208,10 @@ finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 	else
 	{
 		char *to;
+		gboolean newwin = (emaildialog.window == NULL);
 
-		setup_email_dialog();
+		if (newwin)
+			setup_email_dialog();
 
 		to = g_strdup_printf("%s (%s)", tos ? *tos : purple_account_get_username(account),
 					purple_account_get_protocol_name(account));
@@ -219,7 +221,10 @@ finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 					*subjects),
 				NULL, NULL);
 		g_free(to);
-		gnt_widget_show(emaildialog.window);
+		if (newwin)
+			gnt_widget_show(emaildialog.window);
+		else
+			gnt_window_present(emaildialog.window);
 		return NULL;
 	}
 
@@ -420,6 +425,12 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 	return tree;
 }
 
+static void *
+finch_notify_uri(const char *url)
+{
+	return finch_notify_message(PURPLE_NOTIFY_URI, _("URI"), url, NULL);
+}
+
 static PurpleNotifyUiOps ops = 
 {
 	finch_notify_message,
@@ -429,7 +440,7 @@ static PurpleNotifyUiOps ops =
 	finch_notify_searchresults,
 	finch_notify_sr_new_rows,
 	finch_notify_userinfo,
-	NULL,                     /* notify_uri is of low-priority to me. --sadrul */
+	finch_notify_uri,
 	finch_close_notify,       /* The rest of the notify-uiops return a GntWidget.
                                      These widgets should be destroyed from here. */
 	NULL,
