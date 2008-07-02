@@ -22,6 +22,7 @@
 #include "silcpurple.h"
 #include "version.h"
 #include "wb.h"
+#include "core.h"
 
 extern SilcClientOperations ops;
 static PurplePlugin *silc_plugin = NULL;
