@@ -16,7 +16,7 @@ version 2.5.0 (??/??/2008):
 	* Resize large incoming custom smileys to a maximum of 96px on either
 	  side.
 	* Offer to add new buddies into the same contact as existing buddies
-          in the same group if the alias given is the same.
+	  in the same group if the alias given is the same.
 
 	General:
 	* Group and Chat buddy list entries can now be given custom buddy
@@ -28,6 +28,7 @@ version 2.5.0 (??/??/2008):
 	  logs.
 	* Added '/msgcolor' command to change colors of different classes of
 	  messages in a conversation. See '/help msgcolor' for details.
+	* Added tab-completion for commands in conversation windows.
 
 version 2.4.3 (07/01/2008):
 	libpurple:
