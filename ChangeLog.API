@@ -17,6 +17,7 @@ version 2.5.0 (??/??/2008):
 		* purple_buddy_icons_node_set_custom_icon_from_file
 		* purple_notify_user_info_prepend_section_break
 		* purple_notify_user_info_prepend_section_header
+	    * "website" and "dev_website" items to the ui_info hash table
 
 		Deprecated:
 		* purple_blist_update_buddy_icon
@@ -37,10 +38,6 @@ version 2.5.0 (??/??/2008):
 		* GTK+ Custom Smiley API.
 
 version 2.4.2 (05/17/2008):
-version 2.x.x:
-	libpurple:
-	   Added:
-	   * "website" and "dev_website" items to the ui_info hash table
 	perl:
 		Added:
 		* Purple::Prefs::get_children_names.
