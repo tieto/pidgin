@@ -117,12 +117,12 @@ struct yahoo_buddy_icon_upload_data {
 struct yahoo_p2p_data	{
 	PurpleConnection *gc;
 	char *host_ip;
-	int session_id;
 	char *host_username;
 	int val_13;
 	guint input_event;
 	gint source;
 	int val_11;
+	gboolean connection_type;	/* 0: peer is server, 1: we are server*/
 };
 
 struct _YchtConn;
@@ -189,6 +189,8 @@ struct yahoo_data {
 	 */
 	char *current_list15_grp;
 	GHashTable *peers;	/*information about p2p data*/
+	int yahoo_local_p2p_server_fd;
+	int yahoo_p2p_server_watcher;
 };
 
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (255)
