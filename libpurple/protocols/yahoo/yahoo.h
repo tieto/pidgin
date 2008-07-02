@@ -81,6 +81,9 @@
 #define YAHOOJP_CLIENT_VERSION_ID "524223"
 #define YAHOOJP_CLIENT_VERSION "7,0,1,1"
 
+/*Packet sources: yahoo server and p2p*/
+#define PKT_YAHOOSERVER 0
+#define PKT_P2P 1
 
 /* Index into attention types list. */
 #define YAHOO_BUZZ 0
@@ -121,7 +124,7 @@ struct yahoo_p2p_data	{
 	int val_13;
 	guint input_event;
 	gint source;
-	int val_11;
+	int session_id;
 	gboolean connection_type;	/* 0: peer is server, 1: we are server*/
 };
 
