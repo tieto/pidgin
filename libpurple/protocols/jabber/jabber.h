@@ -64,7 +64,7 @@ typedef struct _JabberStream JabberStream;
 #include <sasl/sasl.h>
 #endif
 
-#define CAPS0115_NODE "http://pidgin.im/caps"
+#define CAPS0115_NODE "http://pidgin.im/"
 
 /* Index into attention_types list */
 #define JABBER_BUZZ 0
