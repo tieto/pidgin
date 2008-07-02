@@ -1,6 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.x.x:
+	libpurple:
+	   Added:
+	   * "website" and "dev_website" items to the ui_info hash table
 	perl:
 		Added:
 		* Purple::Prefs::get_children_names.
