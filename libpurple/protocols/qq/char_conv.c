@@ -123,9 +123,14 @@ static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset,
 	return g_strdup(QQ_NULL_MSG);
 }
 
-/* take the input as a pascal string and return a converted c-string in UTF-8
+/**
+ * @brief 把输入作为一个pascal字符串并返回一个用UFT-8转换的c-字符串.\n
+ * 返回已读入的字节数,或者当遇到错误时返回-1.该完成转换的UTF-8字符串被保存到ret中
+ *
+ * take the input as a pascal string and return a converted c-string in UTF-8
  * returns the number of bytes read, return -1 if fatal error
- * the converted UTF-8 will be saved in ret */
+ * the converted UTF-8 will be saved in ret
+ */ 
 gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_charset) 
 {
 	guint8 len;
