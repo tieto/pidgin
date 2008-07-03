@@ -371,7 +371,7 @@ account_to_xmlnode(PurpleAccount *account)
 	child = xmlnode_new_child(node, "name");
 	xmlnode_insert_data(child, purple_account_get_username(account), -1);
 
-	if (purple_account_get_remember_password(account) &&
+	if (purple_account_get_remember_password(account) &&			//  FIXME : fix this so it asks the plugin for the node
 		((tmp = purple_account_get_password(account)) != NULL))
 	{
 		child = xmlnode_new_child(node, "password");
@@ -794,7 +794,7 @@ parse_account(xmlnode *node)
 	g_free(protocol_id);
 
 	/* Read the password */
-	child = xmlnode_get_child(node, "password");
+	child = xmlnode_get_child(node, "password");					// FIXME : call plugin here
 	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
 	{
 		purple_account_set_remember_password(ret, TRUE);
