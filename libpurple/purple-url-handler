@@ -205,12 +205,16 @@ def irc(uri):
             key, value = extendlist(param.split("=", 1), 2, "")
             params[key] = urllib.unquote_plus(value)
 
-    account = findaccount(protocol)
+    def correct_server(account):
+        username = cpurple.PurpleAccountGetUsername(account)
+        return (server == (username.split("@"))[1])
+
+    account = findaccount(protocol, matcher=correct_server)
 
     if (target != ""):
         if (isnick):
             goim(account, urllib.unquote_plus(target.split(",")[0]), params.get("msg"))
-	else:
+        else:
             channel = urllib.unquote_plus(target.split(",")[0])
             if channel[0] != "#":
                 channel = "#" + channel
