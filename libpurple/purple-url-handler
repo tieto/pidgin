@@ -244,9 +244,9 @@ def msnim(uri):
         addbuddy(account, screenname)
 
 def myim(uri):
-	protocol = "prpl-myspace"
-	print "TODO: send uri: ", uri
-	assert False, "Not implemented"
+        protocol = "prpl-myspace"
+        print "TODO: send uri: ", uri
+        assert False, "Not implemented"
 
 def sip(uri):
     protocol = "prpl-simple"
