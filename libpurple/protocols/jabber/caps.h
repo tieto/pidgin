@@ -64,10 +64,11 @@ JabberCapsClientInfo *jabber_caps_parse_client_info(xmlnode *query);
  *	XEP-0115 Version 1.5.
  *
  *	@param info A JabberCapsClientInfo pointer.
+ *	@param hash Hash cipher to be used. Either sha-1 or md5.
  *	@return		The base64 encoded SHA-1 hash; needs to be freed if not needed 
  *				any furthermore. 
  */
-gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info);
+gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info, const char *hash);
 
 void jabber_caps_calculate_own_hash();
 

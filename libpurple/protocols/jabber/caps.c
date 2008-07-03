@@ -42,6 +42,7 @@ typedef struct _JabberCapsKey {
 typedef struct _JabberCapsValueExt {
 	GList *identities; /* JabberCapsIdentity */
 	GList *features; /* char * */
+	GList *xdatas; /* xmlnode * */
 } JabberCapsValueExt;
 
 typedef struct _JabberCapsValue {
@@ -61,7 +62,7 @@ static guint jabber_caps_hash(gconstpointer key) {
 static gboolean jabber_caps_compare(gconstpointer v1, gconstpointer v2) {
 	const JabberCapsKey *name1 = v1;
 	const JabberCapsKey *name2 = v2;
-
+	
 	return strcmp(name1->node,name2->node) == 0 && strcmp(name1->ver,name2->ver) == 0;
 }
 
@@ -447,15 +448,35 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 	jabber_caps_cbplususerdata *userdata = data;
 
 	/* TODO: Better error checking! */
+	if (!strcmp(xmlnode_get_attrib(packet, "type"), "error"))return;
 	if (query) {
 		// check hash
 		JabberCapsClientInfo *info = jabber_caps_parse_client_info(query);
-		gchar *sha_hash = jabber_caps_calcualte_hash(info);
+		gchar *hash = 0;
+		if (!strcmp(userdata->hash, "sha-1")) {
+			hash = jabber_caps_calcualte_hash(info, "sha1");
+		} else if (!strcmp(userdata->hash, "md5")) {
+			hash = jabber_caps_calcualte_hash(info, "md5");
+		} else {
+			// clean up
+			return;	
+		}
 		
-		#warning INSERT HASH CHECKING CODE HERE! ONLY ADD TO CACHE IF HASH IS THE SAME.
+		printf("\n\tfrom:            %s", xmlnode_get_attrib(packet, "from"));
+		printf("\n\tnode:            %s", xmlnode_get_attrib(query, "node"));
+		printf("\n\tcalculated key:  %s", hash);
+		printf("\n\thash:            %s", userdata->hash);
+		printf("\n");
 		
+		if (strcmp(hash, userdata->ver)) {
+			g_free(info);
+			g_free(hash);
+			printf("\n! ! ! invalid hash ! ! !");
+			return;
+		}
+
 		g_free(info);
-		g_free(sha_hash);
+		g_free(hash);
 		
 		JabberCapsValue *value = g_new0(JabberCapsValue, 1);
 		JabberCapsKey *key = g_new0(JabberCapsKey, 1);
@@ -477,7 +498,9 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 				const char *category = xmlnode_get_attrib(child, "category");
 				const char *type = xmlnode_get_attrib(child, "type");
 				const char *name = xmlnode_get_attrib(child, "name");
-
+				
+				if (category == 0 || type == 0 || name == 0) printf("\nMISSING");
+				
 				JabberCapsIdentity *id = g_new0(JabberCapsIdentity, 1);
 				id->category = g_strdup(category);
 				id->type = g_strdup(type);
@@ -486,8 +509,9 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 				value->identities = g_list_append(value->identities,id);
 			}
 		}
-		g_hash_table_replace(capstable, key, value);
-		jabber_caps_store();
+
+		//g_hash_table_replace(capstable, key, value);
+		//jabber_caps_store();
 	}
 
 	/* fetch all exts */
@@ -722,7 +746,7 @@ gchar *jabber_caps_verification_append(gchar *verification_string, gchar *string
 	return verification;
 }
 
-gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info) {
+gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info, const char *hash) {
 	GList *identities;
 	GList *features;
 	GList *xdata;
@@ -788,16 +812,16 @@ gchar *jabber_caps_calcualte_hash(JabberCapsClientInfo *info) {
 		g_list_free(fields);
 	}
 		
-	/* generate SHA-1 hash */
-	context = purple_cipher_context_new_by_name("sha1", NULL);
+	/* generate hash */
+	context = purple_cipher_context_new_by_name(hash, NULL);
 	if (context == NULL) {
-		purple_debug_error("jabber", "Could not find sha1 cipher\n");
+		//purple_debug_error("jabber", "Could not find cipher\n");
 		return 0;
 	}
 	purple_cipher_context_append(context, verification, strlen(verification));
 	
 	if (!purple_cipher_context_digest(context, strlen(verification), checksum, &checksum_size)) {
-		purple_debug_error("util", "Failed to get SHA-1 digest.\n");
+		//purple_debug_error("util", "Failed to get digest.\n");
 	}
 	purple_cipher_context_destroy(context);
 	
