@@ -6,7 +6,15 @@ import sys
 import time
 import urllib
 
-obj = dbus.SessionBus().get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+bus = dbus.SessionBus()
+obj = None
+try:
+    obj = bus.get_object("im.pidgin.purple.PurpleService",
+                         "/im/pidgin/purple/PurpleObject")
+except dbus.DBusException, e:
+    if e._dbus_error_name == "org.freedesktop.DBus.Error.ServiceUnknown":
+        print "Error: no libpurple-powered client is running. Try starting Pidgin or Finch."
+        sys.exit(1)
 purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
 class CheckedObject:
@@ -328,9 +336,9 @@ def main(argv=sys.argv):
             ymsgr(uri)
         else:
             print "Unknown protocol: %s" % type
-    except dbus.dbus_bindings.DBusException:
-        print "ERROR: Is there a libpurple-powered client (e.g. Pidgin or Finch) running?"
-
+    except dbus.DBusException, e:
+        print "Error: %s" % (e.message)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
