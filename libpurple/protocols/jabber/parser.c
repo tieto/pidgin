@@ -209,9 +209,15 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 	} else if ((ret = xmlParseChunk(js->context, buf, len, 0)) != XML_ERR_OK) {
 		purple_debug_error("jabber", "xmlParseChunk returned error %i", ret);
 
-		purple_connection_error_reason (js->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("XML Parse error"));
+		if ((ret >= XML_ERR_INVALID_HEX_CHARREF) && (ret <= XML_ERR_INVALID_CHAR)) {
+			/* If the error involves an invalid character, just drop this message.
+			 * We'll create a new parser next time it's needed. */
+			jabber_parser_free(js);
+		} else {
+			purple_connection_error_reason (js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("XML Parse error"));
+		}
 	}
 }
 
