@@ -132,6 +132,18 @@ jabber_parser_element_text_libxml(void *user_data, const xmlChar *text, int text
 	xmlnode_insert_data(js->current, (const char*) text, text_len);
 }
 
+static void
+jabber_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
+{
+	JabberStream *js = user_data;
+
+	purple_debug_error("jabber", "XML parser error for JabberStream %p: "
+								 "Domain %i, code %i, level %i: %s\n",
+					   js,
+					   error->domain, error->code, error->level,
+					   (error->message ? error->message : "(null)"));
+}
+
 static xmlSAXHandler jabber_parser_libxml = {
 	NULL,									/*internalSubset*/
 	NULL,									/*isStandalone*/
@@ -164,7 +176,7 @@ static xmlSAXHandler jabber_parser_libxml = {
 	NULL,									/*_private*/
 	jabber_parser_element_start_libxml,		/*startElementNs*/
 	jabber_parser_element_end_libxml,		/*endElementNs*/
-	NULL									/*serror*/
+	jabber_parser_structured_error_handler	/*serror*/
 };
 
 void
