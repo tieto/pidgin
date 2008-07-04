@@ -199,12 +199,16 @@ void jabber_parser_free(JabberStream *js) {
 
 void jabber_parser_process(JabberStream *js, const char *buf, int len)
 {
+	int ret;
+
 	if (js->context ==  NULL) {
 		/* libxml inconsistently starts parsing on creating the
 		 * parser, so do a ParseChunk right afterwards to force it. */
 		js->context = xmlCreatePushParserCtxt(&jabber_parser_libxml, js, buf, len, NULL);
 		xmlParseChunk(js->context, "", 0, 0);
-	} else if (xmlParseChunk(js->context, buf, len, 0) < 0) {
+	} else if ((ret = xmlParseChunk(js->context, buf, len, 0)) != XML_ERR_OK) {
+		purple_debug_error("jabber", "xmlParseChunk returned error %i", ret);
+
 		purple_connection_error_reason (js->gc,
 			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
 			_("XML Parse error"));
