@@ -259,9 +259,8 @@ init_plugin(PurplePlugin *plugin)
 	
 	jabber_iq_init();
 	jabber_pep_init();
-	
-	jabber_tune_init();
 	jabber_caps_init();
+	jabber_tune_init();
 
 	#warning implement adding and retrieving own features via IPC API
 
