@@ -2449,6 +2449,15 @@ void jabber_register_commands(void)
 }
 
 /* IPC fucntions*/
+
+/*
+ * IPC function for checking wheather a client at a full JID supports a certain feature.
+ * 
+ * @param fulljid 	The full JID of the client.
+ * @param featrure 	The feature's namespace.
+ * 
+ * @return TRUE if supports feature; else FALSE.
+ */
 static gboolean
 jabber_ipc_contact_has_feature(gchar *fulljid, gchar *feature)
 {
