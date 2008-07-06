@@ -27,60 +27,137 @@
 #ifndef _PURPLE_KEYRING_H_
 #define _PURPLE_KEYRING_H_
 
-#include <whatever>		// FIXME
+#include <glib.h>
 #include "account.h"
 
 /********************************************************
  * DATA STRUCTURES **************************************
  ********************************************************/
 
+typedef struct _PurpleKeyring PurpleKeyring;	/* TODO : move back as public struct */
+typedef struct _PurpleKeyringPasswordNode PurpleKeyringPasswordNode;	/* opaque struct */
 
-/* maybe strip a couple GError* if they're not used */
 
+	/* XXX maybe strip a couple GError* if they're not used */
+/* callbacks */
 typedef void (*PurpleKeyringReadCallback)(const PurpleAccount * account, gchar * password, GError * error, gpointer data);
 typedef void (*PurpleKeyringSaveCallback)(const PurpleAccount * account, GError * error, gpointer data);
-typedef void (*PurpleKeyringCloseCallback)(int result, Gerror * error, gpointer data);	/* async just so we can check for errors */
 typedef void (*PurpleKeyringChangeMasterCallback)(int result, Gerror * error, gpointer data);
+typedef void (*PurpleKeyringImportCallback)(GError * error, gpointer data);	/* XXX add a gboolean result or just use error ? */
+typedef void (*PurpleKeyringExportCallback)(PurpleKeyringPasswordNode * result, GError * error, gpointer data);
 
+//gboolean purple_keyring_import_password(const PurpleKeyringPasswordNode * passwordnode);
+
+/* pointers to the keyring's functions */
 typedef void (*PurpleKeyringRead)(const PurpleAccount * account, GError ** error, PurpleKeyringReadCallback cb, gpointer data);
 typedef void (*PurpleKeyringSave)(const PurpleAccount * account, gchar * password, GError ** error, PurpleKeyringSaveCallback cb, gpointer data);
-typedef void (*PurpleKeyringClose)(GError ** error, gpointer data);
-typedef void (*PurpleKeyringChangeMaster)(gchar * oldpassword, gchar * newpassword, GError ** error, PurpleKeyringChangeMasterCallback cb, gpointer data);
+typedef void (*PurpleKeyringClose)(GError ** error);
+typedef void (*PurpleKeyringChangeMaster)(GError ** error, PurpleKeyringChangeMasterCallback cb, gpointer data);
 typedef void (*PurpleKeyringFree)(gchar * password, GError ** error);
 
-typedef xmlnode * (*PurpleKeyringExportXml)(const PurpleAccount * account);
-typedef void * (*PurpleKeyringImportXml)(const PurpleAccount * account, xmlnode * passwordnode);
-
-typedef struct _PurpleKeyringInfo {
-	PurpleKeyringRead read_password;
-	PurpleKeyringSave save_password;
-	PurpleKeyringClose close_keyring;
-	PurpleKeyringFree free_password;
-	PurpleKeyringChangeMaster change_master;
-	PurpleKeyringImportXml import_xml;
-	PurpleKeyringExportXml export_xml;
-	int capabilities;
-	gpointer r1;	/* RESERVED */
-	gpointer r2;	/* RESERVED */
-	gpointer r3;	/* RESERVED */
-} PurpleKeyringInfo;
+/**
+ * TODO : 
+ *  - add GErrors in there
+ *  - add callback, it needs to be async
+ *  - typedefs for callbacks
+ */
+typedef gboolean (*PurpleKeyringImportPassword)(PurpleKeyringPasswordNode * nodeinfo);
+typedef PurpleKeyringPasswordNode * (*PurpleKeyringExportPassword)(PurpleAccount * account);
 
 
 /***************************************/
-/** @name Keyring API                  */
+/** @name Keyring plugin wrapper API   */
 /***************************************/
 
-void purple_plugin_keyring_register(PurpleKeyringInfo * info) /* do we need a callback ? */
+/* manipulate keyring list, used by config interface */
+const GList * purple_keyring_get_keyringlist(void);
+const PurpleKeyringInfo * purple_keyring_get_inuse(void);
+void purple_keyring_set_inuse(PurpleKeyringInfo *);	/* changes keyring to use, lots of code involved */
 
+/* register a keyring plugin */
+// TODO : function to unregister a keyring ?
+void purple_plugin_keyring_register(PurpleKeyring * info);
+
+/* used by account.c while reading a password from xml */
+gboolean purple_keyring_import_password(const PurpleKeyringPasswordNode * passwordnode, 
+					PurpleKeyringImportCallback cb, 
+					GError * error, 
+					gpointer data);   );
+/**
+ * used by account.c while syncing accounts
+ *  returned data must be g_free()'d
+ */
+void purple_keyring_export_password(PurpleAccount * account,
+				    PurpleKeyringPasswordNode * result,
+				    PurpleKeyringImportCallback cb,
+				    GError * error,
+				    gpointer data);
+
+/* functions called from the code to access passwords (account.h):
+	purple_account_get_password()	<- TODO : rewrite these functions :)
+	purple_account_set_password()
+so these functions will call : */
+/* FIXME : callback of course */
+void purple_keyring_get_password(const PurpleAccount *account, GError ** error, PurpleKeyringReadCallback cb, gpointer data);
+void purple_keyring_set_password(PurpleAccount *account, const char *password);
+
+/* accessors for data structure fields */
+	/* PurpleKeyringInfo */
+/*
+ * TODO : constructor/destructor
+ *	  move it back as public. It would actually make much more sense
+ * 	  since devs could build static structure
+ */
+const char *  purple_keyring_get_name(PurpleKeyringInfo * info);
+const PurpleKeyringRead purple_keyring_get_read_password(PurpleKeyringInfo * info);
+const PurpleKeyringSave purple_keyring_get_save_password(PurpleKeyringInfo * info);
+const PurpleKeyringClose purple_keyring_get_close_keyring(PurpleKeyringInfo * info);
+const PurpleKeyringFree purple_keyring_get_free_password(PurpleKeyringInfo * info);
+const PurpleKeyringChangeMaster purple_keyring_get_change_master(PurpleKeyringInfo * info);
+const PurpleKeyringImportPassword purple_keyring_get_import_password(PurpleKeyringInfo * info);
+const PurpleKeyringExportPassword purple_keyring_get_export_password(PurpleKeyringInfo * info);
+
+void purple_keyring_set_name(PurpleKeyringInfo * info, char * name);		/* must be static, will not be auto-freed upon destruction */
+void purple_keyring_set_read_password(PurpleKeyringInfo * info, PurpleKeyringRead read);
+void purple_keyring_set_save_password(PurpleKeyringInfo * info, PurpleKeyringSave save);
+void purple_keyring_set_close_keyring(PurpleKeyringInfo * info, PurpleKeyringClose close);
+void purple_keyring_set_free_password(PurpleKeyringInfo * info, PurpleKeyringFree free);
+void purple_keyring_set_change_master(PurpleKeyringInfo * info, PurpleKeyringChangeMaster change_master);
+void purple_keyring_set_import_password(PurpleKeyringInfo * info, PurpleKeyringImportPassword import_password);
+void purple_keyring_set_export_password(PurpleKeyringInfo * info, PurpleKeyringExportPassword export_password);
+
+	/* PurpleKeyringPasswordNode */
+
+PurpleKeyringPasswordNode * purple_keyring_password_node_new(void);
+void purple_keyring_password_node_new(PurpleKeyringPasswordNode * node);
+
+const PurpleAccount * purple_keyring_password_node_get_account(PurpleKeyringPasswordNode * info);
+const char * purple_keyring_password_node_get_encryption(PurpleKeyringPasswordNode * info);		/* info to be kept must be copied */
+const char * purple_keyring_password_node_get_mode(PurpleKeyringPasswordNode * info);			/* strings will be freed after use*/
+const char * purple_keyring_password_node_get_data(PurpleKeyringPasswordNode * info);			/* (in most cases) */
+
+void purple_keyring_password_node_set_account(PurpleKeyringPasswordNode * info, PurpleAccount * account);
+void purple_keyring_password_node_set_encryption(PurpleKeyringPasswordNode * info, const char * encryption);
+void purple_keyring_password_node_set_mode(PurpleKeyringPasswordNode * info, const char * mode);
+void purple_keyring_password_node_set_data(PurpleKeyringPasswordNode * info, const char * data);
+
+/* prepare some stuff at startup */
+void purple_keyring_init();
 
 /***************************************/
 /** @name Error Codes                  */
 /***************************************/
 
-ERR_PIDGINKEYRING	/* error domain */
+#define ERR_PIDGINKEYRING	/* error domain FIXME: has to be a GQuark, not just a define
+				 * this should be done in void purple_keyring_init()
+                                 */
 
-ERR_NOPASSWD		/* no stored password */
-ERR_NOACCOUNT		/* account not found */
-ERR_WRONGPASS		/* user submitted wrong password */
-ERR_WRONGFORMAT
-
+enum
+{
+	ERR_OK = 0			/* no error */
+	ERR_NOPASSWD = 1,		/* no stored password */
+	ERR_NOACCOUNT,		/* account not found */
+	ERR_WRONGPASS,		/* user submitted wrong password when prompted */
+	ERR_WRONGFORMAT,	/* data passed is not in suitable format*/
+	ERR_NOKEYRING		/* no keyring configured */
+} PurpleKeyringError;
