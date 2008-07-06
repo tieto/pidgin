@@ -39,6 +39,7 @@
 #include "version.h"
 #include "xmlnode.h"
 
+#include "caps.h"
 #include "auth.h"
 #include "buddy.h"
 #include "chat.h"
@@ -2445,6 +2446,20 @@ void jabber_register_commands(void)
 					  _("buzz: Buzz a user to get their attention"), NULL);
 }
 
+static void
+jabber_client_info_destroy_key(gpointer key) {
+	gchar *s = key;
+	g_free(s);
+}
+
+static gboolean 
+jabber_client_info_compare(gconstpointer v1, gconstpointer v2) {
+	const gchar *name1 = v1;
+	const gchar *name2 = v2;
+	
+	return strcmp(name1,name2) == 0;
+}
+
 void
 jabber_init_plugin(PurplePlugin *plugin)
 {
@@ -2471,4 +2486,6 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("http://jabber.org/protocol/si/profile/file-transfer", 0);
 	jabber_add_feature("http://jabber.org/protocol/xhtml-im", 0);
 	jabber_add_feature("urn:xmpp:ping", 0);
+	
+	//jabber_contact_info = g_hash_table_new_full(g_str_hash, jabber_client_info_compare, jabber_client_info_destroy_key, jabber_caps_destroy_key);
 }

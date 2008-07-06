@@ -34,12 +34,6 @@
 static GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsValue */
 static gchar *caps_hash = NULL;
 
-typedef struct _JabberCapsKey {
-	char *node;
-	char *ver;
-	char *hash;
-} JabberCapsKey;
-
 #if 0
 typedef struct _JabberCapsValue {
 	GList *identities; /* JabberCapsIdentity */
@@ -53,18 +47,18 @@ static guint jabber_caps_hash(gconstpointer key) {
 	const JabberCapsKey *name = key;
 	guint nodehash = g_str_hash(name->node);
 	guint verhash = g_str_hash(name->ver);
-	
-	return nodehash ^ verhash;
+	guint hashhash = g_str_hash(name->hash);
+	return nodehash ^ verhash ^ hashhash;
 }
 
 static gboolean jabber_caps_compare(gconstpointer v1, gconstpointer v2) {
 	const JabberCapsKey *name1 = v1;
 	const JabberCapsKey *name2 = v2;
 	
-	return strcmp(name1->node,name2->node) == 0 && strcmp(name1->ver,name2->ver) == 0;
+	return strcmp(name1->node,name2->node) == 0 && strcmp(name1->ver,name2->ver) == 0 && strcmp(name1->hash,name2->hash) == 0;
 }
 
-static void jabber_caps_destroy_key(gpointer key) {
+void jabber_caps_destroy_key(gpointer key) {
 	JabberCapsKey *keystruct = key;
 	g_free(keystruct->node);
 	g_free(keystruct->ver);
@@ -412,8 +406,6 @@ static void jabber_caps_ext_iqcb(JabberStream *js, xmlnode *packet, gpointer dat
 				value->identities = g_list_append(value->identities,id);
 			}
 		}
-		//g_hash_table_replace(client->ext, g_strdup(key), value);
-
 		jabber_caps_store();
 	}
 

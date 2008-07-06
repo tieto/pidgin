@@ -43,9 +43,17 @@ typedef struct _JabberDataFormField {
 	GList *values;
 } JabberDataFormField;
 
+typedef struct _JabberCapsKey {
+	char *node;
+	char *ver;
+	char *hash;
+} JabberCapsKey;
+
 typedef void (*jabber_caps_get_info_cb)(JabberCapsClientInfo *info, gpointer user_data);
 
 void jabber_caps_init(void);
+
+void jabber_caps_destroy_key(gpointer value);
 
 /**
  *	Main entity capabilites function to get the capabilities of a contact.
