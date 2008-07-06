@@ -143,13 +143,13 @@ purple_core_init(const char *ui)
 
 	purple_plugins_probe(G_MODULE_SUFFIX);
 
+	purple_theme_manager_init();
 	/* The buddy icon code uses the imgstore, so init it early. */
 	purple_imgstore_init();
 
 	/* Accounts use status, buddy icons and connection signals, so
 	 * initialize these before accounts
 	 */
-	purple_theme_manager_init(g_object_new(PURPLE_TYPE_SOUND_THEME_LOADER, "type", "sound", NULL), NULL);
 	purple_status_init();
 	purple_buddy_icons_init();
 	purple_connections_init();
@@ -172,7 +172,6 @@ purple_core_init(const char *ui)
 	purple_xfers_init();
 	purple_idle_init();
 	purple_smileys_init();
-		
 	/*
 	 * Call this early on to try to auto-detect our IP address and
 	 * hopefully save some time later.
@@ -182,6 +181,7 @@ purple_core_init(const char *ui)
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();
 	
+	purple_theme_manager_refresh();
 
 	return TRUE;
 }

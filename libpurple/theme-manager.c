@@ -142,25 +142,12 @@ purple_theme_manager_build_dir(const gchar *root)
  *****************************************************************************/
 
 void
-purple_theme_manager_init (PurpleThemeLoader *loader1, ...)
+purple_theme_manager_init (void)
 {
-	va_list args;
-	PurpleThemeLoader *loader;
-
-	/*g_return_if_fail(theme_table != NULL);*/
-
 	theme_table = g_hash_table_new_full (g_str_hash,
                	                             g_str_equal,
                	                             g_free,
                	                             g_object_unref);
-
-	va_start(args, loader1);
-	for (loader = loader1; loader != NULL; loader = va_arg(args, PurpleThemeLoader *))
-		purple_theme_manager_register_type(loader);
-	va_end(args);
-
-	/* TODO: add themes properly */
-	purple_theme_manager_build_dir("/usr/share/themes");
 }
 
 void 
@@ -170,7 +157,7 @@ purple_theme_manager_refresh()
                 	             (GHRFunc) purple_theme_manager_is_theme,
                 	             NULL);	
 	
-	/* TODO: this also needs to be fixed the same as new */
+	/* TODO: add correct directories to parse */
 	purple_theme_manager_build_dir("/usr/share/themes");
 
 }
@@ -200,7 +187,7 @@ purple_theme_manager_register_type(PurpleThemeLoader *loader)
 void
 purple_theme_manager_unregister_type(PurpleThemeLoader *loader)
 {
-	gchar *type;
+	const gchar *type;
 
 	g_return_if_fail(PURPLE_IS_THEME_LOADER(loader));
 
@@ -215,8 +202,6 @@ purple_theme_manager_unregister_type(PurpleThemeLoader *loader)
                 	                     (GHRFunc) purple_theme_manager_is_theme_type,
                 	                     type);		
 	}/* only free if given registered loader */
-
-	g_free(type);
 }
 
 PurpleTheme *
