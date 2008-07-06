@@ -178,9 +178,9 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 		js->old_avatarhash = g_strdup(js->avatar_hash);
 		js->old_state = state;
 		js->old_priority = priority;
-		g_free(stripped);
 	}
-					  	
+	g_free(stripped);
+
 	/* next, check if there are any changes to the tune values */
 	tune = purple_presence_get_status(p, "tune");
 	if (tune && purple_status_is_active(tune)) {
