@@ -1007,6 +1007,9 @@ void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, 
 	irc->reqnick = newnick;
 	irc->nickused = TRUE;
 
+	purple_connection_set_display_name(
+		purple_account_get_connection(irc->account), newnick);
+
 	buf = irc_format(irc, "vn", "NICK", newnick);
 	irc_send(irc, buf);
 	g_free(buf);
