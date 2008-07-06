@@ -27,6 +27,7 @@ typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 #include "jabber.h"
 
 /* Implementation of XEP-0115 */
+extern GHashTable *capstable;
 
 typedef struct _JabberIdentity JabberCapsIdentity;
 

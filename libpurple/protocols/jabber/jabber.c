@@ -65,6 +65,8 @@ static PurplePlugin *my_protocol = NULL;
 GList *jabber_features = NULL;
 GList *jabber_identities = NULL;
 
+GHashTable *jabber_contact_info = NULL;
+
 static void jabber_unregister_account_cb(JabberStream *js);
 
 static void jabber_stream_init(JabberStream *js)
@@ -2446,18 +2448,20 @@ void jabber_register_commands(void)
 					  _("buzz: Buzz a user to get their attention"), NULL);
 }
 
-static void
-jabber_client_info_destroy_key(gpointer key) {
-	gchar *s = key;
-	g_free(s);
-}
-
-static gboolean 
-jabber_client_info_compare(gconstpointer v1, gconstpointer v2) {
-	const gchar *name1 = v1;
-	const gchar *name2 = v2;
+/* IPC fucntions*/
+static gboolean
+jabber_ipc_contact_has_feature(gchar *fulljid, gchar *feature)
+{
+	JabberCapsKey *caps_info = NULL;
+	JabberCapsValueExt *capabilities = NULL;
 	
-	return strcmp(name1,name2) == 0;
+	caps_info = g_hash_table_lookup(jabber_contact_info, fulljid);
+	
+	if (!caps_info) return FALSE;
+	capabilities = g_hash_table_lookup(capstable, caps_info);
+	
+	if (g_list_find(capabilities->features, feature) == NULL) return FALSE ;
+	return TRUE;
 }
 
 void
@@ -2467,7 +2471,7 @@ jabber_init_plugin(PurplePlugin *plugin)
 
 	jabber_add_identity("client", "pc", PACKAGE);
 
-	// initialize jabber_features list
+	/* initialize jabber_features list */
 	jabber_add_feature("jabber:iq:last", 0);
 	jabber_add_feature("jabber:iq:oob", 0);
 	jabber_add_feature("jabber:iq:time", 0);
@@ -2487,5 +2491,12 @@ jabber_init_plugin(PurplePlugin *plugin)
 	jabber_add_feature("http://jabber.org/protocol/xhtml-im", 0);
 	jabber_add_feature("urn:xmpp:ping", 0);
 	
-	//jabber_contact_info = g_hash_table_new_full(g_str_hash, jabber_client_info_compare, jabber_client_info_destroy_key, jabber_caps_destroy_key);
+	jabber_contact_info = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, jabber_caps_destroy_key);
+	
+	/* IPC functions */
+	purple_plugin_ipc_register(plugin, "contact_has_feature", PURPLE_CALLBACK(jabber_ipc_contact_has_feature),
+							 purple_marshal_BOOLEAN__POINTER_POINTER,
+							 purple_value_new(PURPLE_TYPE_BOOLEAN), 2,
+							 purple_value_new(PURPLE_TYPE_STRING),
+							 purple_value_new(PURPLE_TYPE_STRING));
 }

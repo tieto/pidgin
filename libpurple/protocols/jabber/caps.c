@@ -31,7 +31,7 @@
 
 #define JABBER_CAPS_FILENAME "xmpp-caps.xml"
 
-static GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsValue */
+GHashTable *capstable = NULL; /* JabberCapsKey -> JabberCapsValue */
 static gchar *caps_hash = NULL;
 
 #if 0
@@ -528,7 +528,9 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, c
 	
 	client = g_hash_table_lookup(capstable, key);
 
-	g_free(key);
+	//g_free(key);
+
+	g_hash_table_replace(jabber_contact_info, g_strdup(who), key);
 
 	if(!client) {
 		JabberIq *iq = jabber_iq_new_query(js,JABBER_IQ_GET,"http://jabber.org/protocol/disco#info");
