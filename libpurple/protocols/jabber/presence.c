@@ -141,6 +141,11 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	/* check for buzz support */
 	allowBuzz = purple_status_get_attr_boolean(status,"buzz");
 	/* changing the buzz state has to trigger a re-broadcasting of the presence for caps */
+
+	if (js->googletalk && stripped == NULL && purple_presence_is_status_primitive_active(p, PURPLE_STATUS_TUNE)) {
+		tune = purple_presence_get_status(p, "tune");
+		stripped = jabber_google_presence_outgoing(tune);
+	}
 	
 #define CHANGED(a,b) ((!a && b) || (a && a[0] == '\0' && b && b[0] != '\0') || \
 					  (a && !b) || (a && a[0] != '\0' && b && b[0] == '\0') || (a && b && strcmp(a,b)))
@@ -148,11 +153,6 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	if (allowBuzz != js->allowBuzz || js->old_state != state || CHANGED(js->old_msg, stripped) ||
 		js->old_priority != priority || CHANGED(js->old_avatarhash, js->avatar_hash)) {
 		js->allowBuzz = allowBuzz;
-
-		if (js->googletalk && stripped == NULL && purple_presence_is_status_primitive_active(p, PURPLE_STATUS_TUNE)) {
-			tune = purple_presence_get_status(p, "tune");
-			stripped = jabber_google_presence_outgoing(tune);
-		}
 
 		presence = jabber_presence_create_js(js, state, stripped, priority);
 
