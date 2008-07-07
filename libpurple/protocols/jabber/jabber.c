@@ -2473,6 +2473,14 @@ jabber_ipc_contact_has_feature(gchar *fulljid, gchar *feature)
 	return TRUE;
 }
 
+static void
+jabber_ipc_add_feature(gchar *feature) 
+{
+	if (feature == 0) return;
+	
+	jabber_add_feature(feature, 0);
+}
+
 void
 jabber_init_plugin(PurplePlugin *plugin)
 {
