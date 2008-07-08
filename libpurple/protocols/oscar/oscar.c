@@ -4928,11 +4928,6 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	purple_debug_info("oscar",
 			   "ssi: syncing local list and server list\n");
 
-	if ((timestamp == 0) || (numitems == 0)) {
-		purple_debug_info("oscar", "Got AIM SSI with a 0 timestamp or 0 numitems--not syncing.  This probably means your buddy list is empty.\n");
-		return 1;
-	}
-
 	/* Clean the buddy list */
 	aim_ssi_cleanlist(od);
 
