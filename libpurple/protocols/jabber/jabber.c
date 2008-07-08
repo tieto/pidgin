@@ -2477,8 +2477,9 @@ static void
 jabber_ipc_add_feature(gchar *feature) 
 {
 	if (feature == 0) return;
-	
 	jabber_add_feature(feature, 0);
+	
+	// send presence with new caps info for all connected accounts
 }
 
 void
@@ -2515,5 +2516,9 @@ jabber_init_plugin(PurplePlugin *plugin)
 							 purple_marshal_BOOLEAN__POINTER_POINTER,
 							 purple_value_new(PURPLE_TYPE_BOOLEAN), 2,
 							 purple_value_new(PURPLE_TYPE_STRING),
+							 purple_value_new(PURPLE_TYPE_STRING));
+	purple_plugin_ipc_register(plugin, "add_feature", PURPLE_CALLBACK(jabber_ipc_add_feature),
+							 purple_marshal_VOID__POINTER,
+							 NULL, 1,
 							 purple_value_new(PURPLE_TYPE_STRING));
 }

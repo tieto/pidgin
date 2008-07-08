@@ -227,11 +227,12 @@ static void jabber_caps_store_client(gpointer key, gpointer value, gpointer user
 
 static void jabber_caps_store(void) {
 	char *str;
+	int length = 0;
 	xmlnode *root = xmlnode_new("capabilities");
 	g_hash_table_foreach(capstable, jabber_caps_store_client, root);
-	str = xmlnode_to_formatted_str(root, NULL);
+	str = xmlnode_to_formatted_str(root, &length);
 	xmlnode_free(root);
-	purple_util_write_data_to_file(JABBER_CAPS_FILENAME, str, -1);
+	purple_util_write_data_to_file(JABBER_CAPS_FILENAME, str, length);
 	g_free(str);
 }
 
@@ -535,7 +536,6 @@ void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, c
 	client = g_hash_table_lookup(capstable, key);
 
 	g_hash_table_replace(jabber_contact_info, g_strdup(who), key);
-	g_free(key);
 	
 	if(!client) {
 		JabberIq *iq = jabber_iq_new_query(js,JABBER_IQ_GET,"http://jabber.org/protocol/disco#info");
