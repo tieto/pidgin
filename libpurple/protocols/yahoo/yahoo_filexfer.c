@@ -1330,7 +1330,7 @@ static void yahoo_p2p_ft_HEAD_GET_cb(gpointer data, gint source, PurpleInputCond
 
 	url_head = g_strdup_printf("HEAD %s", xd->xfer_url);
 	url_get = g_strdup_printf("GET %s", xd->xfer_url);
-	
+
 	if( strncmp(url_head, (char *)buf, strlen(url_head)) == 0 )
 		xd->status_15 = P2P_HEAD_REQUESTED;
 	else if( strncmp(url_get, (char *)buf, strlen(url_get)) == 0 )
@@ -1405,6 +1405,8 @@ static void yahoo_p2p_ft_server_listen_cb(int listenfd, gpointer data)
 	gchar *filename;
 	const char *local_ip;
 	gchar *url_to_send = NULL;
+	char **split;
+	char *filename_without_spaces = NULL;
 
 	xfer = data;
 	if ( !( (xd = xfer->data) || (listenfd != -1) ) )	{
@@ -1422,7 +1424,10 @@ static void yahoo_p2p_ft_server_listen_cb(int listenfd, gpointer data)
 
 		local_ip = purple_network_get_my_ip(listenfd);
 		xd->yahoo_local_p2p_ft_server_port = purple_network_get_port_from_fd(listenfd);
-		xd->xfer_url = g_strdup_printf("/Messenger.%s.%d000%s?AppID=Messenger&UserID=%s&K=lc9lu2u89gz1llmplwksajkjx", xfer->who, (int)time(NULL), filename, xfer->who);
+
+		split = g_strsplit(filename, " ", 0);
+		filename_without_spaces = g_strjoinv("+", split);
+		xd->xfer_url = g_strdup_printf("/Messenger.%s.%d000%s?AppID=Messenger&UserID=%s&K=lc9lu2u89gz1llmplwksajkjx", xfer->who, (int)time(NULL), filename_without_spaces, xfer->who);
 		url_to_send = g_strdup_printf("http://%s:%d%s", local_ip, xd->yahoo_local_p2p_ft_server_port, xd->xfer_url);
 		xd->info_val_249 = 1;	/* 249=1: we are p2p server */
 
@@ -1437,6 +1442,8 @@ static void yahoo_p2p_ft_server_listen_cb(int listenfd, gpointer data)
 
 		g_free(filename);
 		g_free(url_to_send);
+		g_strfreev(split);
+		g_free(filename_without_spaces);
 	}
 
 	/* Add an Input Read event to the file descriptor */
