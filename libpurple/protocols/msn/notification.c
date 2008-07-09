@@ -1016,7 +1016,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_user_set_friendly_name(user, friendly);
 
-	if (cmd->param_count == 8)
+	if (cmd->param_count == 7)
 	{
 		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[6]));
 		msn_user_set_object(user, msnobj);
@@ -1128,7 +1128,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_user_set_friendly_name(user, friendly);
 	}
 
-	if (cmd->param_count == 7)
+	if (cmd->param_count == 6)
 	{
 		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[5]));
 		msn_user_set_object(user, msnobj);
