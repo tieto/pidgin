@@ -132,6 +132,18 @@ jabber_parser_element_text_libxml(void *user_data, const xmlChar *text, int text
 	xmlnode_insert_data(js->current, (const char*) text, text_len);
 }
 
+static void
+jabber_parser_structured_error_handler(void *user_data, xmlErrorPtr error)
+{
+	JabberStream *js = user_data;
+
+	purple_debug_error("jabber", "XML parser error for JabberStream %p: "
+								 "Domain %i, code %i, level %i: %s\n",
+					   js,
+					   error->domain, error->code, error->level,
+					   (error->message ? error->message : "(null)"));
+}
+
 static xmlSAXHandler jabber_parser_libxml = {
 	NULL,									/*internalSubset*/
 	NULL,									/*isStandalone*/
@@ -164,7 +176,7 @@ static xmlSAXHandler jabber_parser_libxml = {
 	NULL,									/*_private*/
 	jabber_parser_element_start_libxml,		/*startElementNs*/
 	jabber_parser_element_end_libxml,		/*endElementNs*/
-	NULL									/*serror*/
+	jabber_parser_structured_error_handler	/*serror*/
 };
 
 void
@@ -187,15 +199,25 @@ void jabber_parser_free(JabberStream *js) {
 
 void jabber_parser_process(JabberStream *js, const char *buf, int len)
 {
-	if (js->context ==  NULL) {
+	int ret;
+
+	if (js->context == NULL) {
 		/* libxml inconsistently starts parsing on creating the
 		 * parser, so do a ParseChunk right afterwards to force it. */
 		js->context = xmlCreatePushParserCtxt(&jabber_parser_libxml, js, buf, len, NULL);
 		xmlParseChunk(js->context, "", 0, 0);
-	} else if (xmlParseChunk(js->context, buf, len, 0) < 0) {
-		purple_connection_error_reason (js->gc,
-			PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
-			_("XML Parse error"));
+	} else if ((ret = xmlParseChunk(js->context, buf, len, 0)) != XML_ERR_OK) {
+		purple_debug_error("jabber", "xmlParseChunk returned error %i", ret);
+
+		if ((ret >= XML_ERR_INVALID_HEX_CHARREF) && (ret <= XML_ERR_INVALID_CHAR)) {
+			/* If the error involves an invalid character, just drop this message.
+			 * We'll create a new parser next time it's needed. */
+			jabber_parser_free(js);
+		} else {
+			purple_connection_error_reason (js->gc,
+				PURPLE_CONNECTION_ERROR_NETWORK_ERROR,
+				_("XML Parse error"));
+		}
 	}
 }
 

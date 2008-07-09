@@ -16,7 +16,7 @@ version 2.5.0 (??/??/2008):
 	* Resize large incoming custom smileys to a maximum of 96px on either
 	  side.
 	* Offer to add new buddies into the same contact as existing buddies
-          in the same group if the alias given is the same.
+	  in the same group if the alias given is the same.
 
 	General:
 	* Group and Chat buddy list entries can now be given custom buddy
@@ -28,12 +28,25 @@ version 2.5.0 (??/??/2008):
 	  logs.
 	* Added '/msgcolor' command to change colors of different classes of
 	  messages in a conversation. See '/help msgcolor' for details.
+	* Added tab-completion for commands in conversation windows.
 
-version 2.4.3 (??/??/2008):
+version 2.4.3 (07/01/2008):
 	libpurple:
 	* Yahoo! Japan now uses UTF-8, matching the behavior of official clients
 	  and restoring compatibility with the web messenger (Yusuke Odate)
 	* Setting your buddy icon once again works for Yahoo! accounts.
+	* Fixes in the Yahoo! protocol to prevent a double free, crashes on
+	  aliases, and alias functionality
+	* Fix crashes in the bonjour protocol
+	* Always use UTF-8 for Yahoo! (#5973)
+	* Fix a crash when the given jabber id is invalid.
+	* Make the IRC "unknown message" debugging messages UTF-8 safe.
+	* Fix connecting to ICQ
+	* Fix a memleak when handling jabber xforms.
+
+	Pidgin:
+	* Include the send button plugin in the win32 build
+	* Various memory leak fixes
 
 version 2.4.2 (05/17/2008):
 	libpurple:

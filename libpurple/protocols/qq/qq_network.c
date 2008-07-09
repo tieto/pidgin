@@ -933,7 +933,7 @@ static void udp_host_resolved(GSList *hosts, gpointer data, const char *error_me
 			return;
 		}
 
-	purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Connection failed: %d\n", g_strerror(errno));
+	purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Connection failed: %s\n", g_strerror(errno));
 	close(fd);
 }
 
