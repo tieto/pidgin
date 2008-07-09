@@ -752,7 +752,7 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 static void
 msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	cmdproc->servconn->payload_len = atoi(cmd->params[2]);
+	cmd->payload_len = atoi(cmd->params[2]);
 	cmdproc->last_cmd->payload_cb = msg_cmd_post;
 }
 
@@ -760,7 +760,7 @@ static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_misc("MSNP14","get UBM...\n");
-	cmdproc->servconn->payload_len = atoi(cmd->params[4]);
+	cmd->payload_len = atoi(cmd->params[4]);
 	cmdproc->last_cmd->payload_cb = msg_cmd_post;
 }
 

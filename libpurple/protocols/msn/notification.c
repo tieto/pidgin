@@ -376,14 +376,12 @@ static void
 msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_info("MSNP14","Processing MSG... \n");
-	if (cmd->payload_len == 0) {
-		return;
-	}
+
 	/* NOTE: cmd is not always cmdproc->last_cmd, sometimes cmd is a queued
 	 * command and we are processing it */
 	if (cmd->payload == NULL) {
 		cmdproc->last_cmd->payload_cb  = msg_cmd_post;
-		cmdproc->servconn->payload_len = atoi(cmd->params[2]);
+		cmd->payload_len = atoi(cmd->params[2]);
 
 	} else {
 		g_return_if_fail(cmd->payload_cb != NULL);
@@ -499,14 +497,12 @@ static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_info("MSNP14","Processing UBM... \n");
-	if (cmd->payload_len == 0) {
-		return;
-	}
+
 	/* NOTE: cmd is not always cmdproc->last_cmd, sometimes cmd is a queued
 	 * command and we are processing it */
-	if (cmd->payload == NULL ){
-		cmdproc->last_cmd->payload_cb  = msg_cmd_post;
-		cmdproc->servconn->payload_len = atoi(cmd->params[4]);
+	if (cmd->payload == NULL) {
+		cmdproc->last_cmd->payload_cb = msg_cmd_post;
+		cmd->payload_len = atoi(cmd->params[4]);
 	} else {
 		g_return_if_fail(cmd->payload_cb != NULL);
 
@@ -771,11 +767,12 @@ adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	session = cmdproc->session;
 
-	if ( !strcmp(cmd->params[1], "OK")) {
+	if (!strcmp(cmd->params[1], "OK")) {
 		/* ADL ack */
 		msn_session_finish_login(session);
 	} else {
 		cmdproc->last_cmd->payload_cb = adl_cmd_parse;
+		cmd->payload_len = atoi(cmd->params[1]);
 	}
 
 	return;
@@ -814,24 +811,23 @@ fqy_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_info("MSNP14","Process FQY\n");
 	cmdproc->last_cmd->payload_cb = fqy_cmd_post;
+	cmd->payload_len = atoi(cmd->params[1]);
+}
+
+static void
+rml_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
+			 size_t len)
+{
+	if (payload != NULL)
+		purple_debug_info("msn", "Received RML:\n%s\n", payload);
 }
 
 static void
 rml_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-#if 0
-	MsnTransaction *trans;
-	char * payload;
-#endif
-
 	purple_debug_info("MSNP14","Process RML\n");
-#if 0
-	trans = msn_transaction_new(cmdproc, "RML","");
-
-	msn_transaction_set_payload(trans, payload, strlen(payload));
-
-	msn_cmdproc_send_trans(cmdproc, trans);
-#endif
+	cmd->payload_len = atoi(cmd->params[1]);
+	cmdproc->last_cmd->payload_cb = rml_cmd_post;
 }
 
 static void
@@ -1098,7 +1094,7 @@ ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 static void
 ipg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	cmdproc->servconn->payload_len = atoi(cmd->params[0]);
+	cmd->payload_len = atoi(cmd->params[0]);
 	cmdproc->last_cmd->payload_cb = ipg_cmd_post;
 }
 
@@ -1640,8 +1636,9 @@ static void
 gcf_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_info("MSNP14","Processing GCF command\n");
+
 	cmdproc->last_cmd->payload_cb  = gcf_cmd_post;
-	return;
+	cmd->payload_len = atoi(cmd->params[1]);
 }
 
 static void
@@ -1697,16 +1694,25 @@ static void
 ubx_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_misc("MSNP14","UBX received.\n");
-	if(cmd->payload_len == 0){
-		return;
-	}
 	cmdproc->last_cmd->payload_cb  = ubx_cmd_post;
+	cmd->payload_len = atoi(cmd->params[2]);
+}
+
+static void
+uux_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
+			 size_t len)
+{
+	/* Do Nothing, right now. */
+	if (payload != NULL)
+		purple_debug_info("msn", "UUX payload:\n%s\n", payload);
 }
 
 static void
 uux_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_misc("MSNP14","UUX received.\n");
+	purple_debug_misc("msn", "UUX received.\n");
+	cmdproc->last_cmd->payload_cb = uux_cmd_post;
+	cmd->payload_len = atoi(cmd->params[1]);
 }
 
 /**************************************************************************
