@@ -138,10 +138,8 @@ struct _MsnOim
 {
 	MsnSession *session;
 
-	MsnSoapConn *retrieveconn;
 	GList * oim_list;
 
-	MsnSoapConn *sendconn;
 	char *challenge;
 	char *run_id;
 	gint send_seq;

@@ -132,7 +132,7 @@ msn_notification_connect(MsnNotification *notification, const char *host, int po
 	servconn = notification->servconn;
 
 	msn_servconn_set_connect_cb(servconn, connect_cb);
-	notification->in_use = msn_servconn_connect(servconn, host, port);
+	notification->in_use = msn_servconn_connect(servconn, host, port, TRUE);
 
 	return notification->in_use;
 }
@@ -328,7 +328,9 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 out_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	if (!g_ascii_strcasecmp(cmd->params[0], "OTH"))
+	if (cmd->param_count == 0)
+		msn_session_set_error(cmdproc->session, -1, NULL);
+	else if (!g_ascii_strcasecmp(cmd->params[0], "OTH"))
 		msn_session_set_error(cmdproc->session, MSN_ERROR_SIGN_OTHER,
 							  NULL);
 	else if (!g_ascii_strcasecmp(cmd->params[0], "SSD"))
@@ -360,7 +362,7 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
-	msn_message_parse_payload(msg, payload, len,MSG_LINE_DEM,MSG_BODY_DEM);
+	msn_message_parse_payload(msg, payload, len, MSG_LINE_DEM, MSG_BODY_DEM);
 #ifdef MSN_DEBUG_NS
 	msn_message_show_readable(msg, "Notification", TRUE);
 #endif
@@ -374,18 +376,16 @@ static void
 msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_info("MSNP14","Processing MSG... \n");
-	if(cmd->payload_len == 0){
+	if (cmd->payload_len == 0) {
 		return;
 	}
 	/* NOTE: cmd is not always cmdproc->last_cmd, sometimes cmd is a queued
 	 * command and we are processing it */
-	if (cmd->payload == NULL)
-	{
+	if (cmd->payload == NULL) {
 		cmdproc->last_cmd->payload_cb  = msg_cmd_post;
 		cmdproc->servconn->payload_len = atoi(cmd->params[2]);
-	}
-	else
-	{
+
+	} else {
 		g_return_if_fail(cmd->payload_cb != NULL);
 
 #if 0 /* glib on win32 doesn't correctly support precision modifiers for a string */
@@ -418,6 +418,7 @@ uum_send_msg(MsnSession *session,MsnMessage *msg)
 	msn_cmdproc_send_trans(cmdproc, trans);
 }
 
+#if 0
 static void
 ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 			 size_t len)
@@ -491,25 +492,26 @@ ubm_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	}
 	msn_message_destroy(msg);
 }
+#endif
 
 /*Yahoo msg process*/
 static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_info("MSNP14","Processing UBM... \n");
-	if(cmd->payload_len == 0){
+	if (cmd->payload_len == 0) {
 		return;
 	}
 	/* NOTE: cmd is not always cmdproc->last_cmd, sometimes cmd is a queued
 	 * command and we are processing it */
-	if (cmd->payload == NULL){
-		cmdproc->last_cmd->payload_cb  = ubm_cmd_post;
-		cmdproc->servconn->payload_len = atoi(cmd->params[2]);
-	}else{
+	if (cmd->payload == NULL ){
+		cmdproc->last_cmd->payload_cb  = msg_cmd_post;
+		cmdproc->servconn->payload_len = atoi(cmd->params[4]);
+	} else {
 		g_return_if_fail(cmd->payload_cb != NULL);
 
 		purple_debug_info("MSNP14", "UBM payload:{%.*s}\n", (guint)(cmd->payload_len), cmd->payload);
-		ubm_cmd_post(cmdproc, cmd, cmd->payload, cmd->payload_len);
+		msg_cmd_post(cmdproc, cmd, cmd->payload, cmd->payload_len);
 	}
 }
 

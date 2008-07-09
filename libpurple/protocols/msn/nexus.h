@@ -24,8 +24,6 @@
 #ifndef _MSN_NEXUS_H_
 #define _MSN_NEXUS_H_
 
-#include "soap.h"
-
 /* Index into ticket_tokens in nexus.c Keep updated! */
 typedef enum
 {

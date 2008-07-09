@@ -960,17 +960,40 @@ clientcaps_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 }
 
 static void
-nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+datacast_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
-	MsnSwitchBoard *swboard;
-	PurpleAccount *account;
-	const char *user;
+	GHashTable *body;
+	const char *id;
+	body = msn_message_get_hashtable_from_body(msg);
 
-	swboard = cmdproc->data;
-	account = cmdproc->session->account;
-	user = msg->remote_user;
+	id = g_hash_table_lookup(body, "ID");
 
-	serv_got_attention(account->gc, user, MSN_NUDGE);
+	if (!strcmp(id, "1")) {
+		/* Nudge */
+		MsnSwitchBoard *swboard;
+		PurpleAccount *account;
+		const char *user;
+
+		swboard = cmdproc->data;
+		account = cmdproc->session->account;
+		user = msg->remote_user;
+
+		serv_got_attention(account->gc, user, MSN_NUDGE);
+
+	} else if (!strcmp(id, "2")) {
+		/* Wink */
+
+	} else if (!strcmp(id, "3")) {
+		/* Voiceclip */
+
+	} else if (!strcmp(id, "4")) {
+		/* Action */
+
+	} else {
+		purple_debug_warning("msn", "Got unknown datacast with ID %s.\n", id);
+	}
+
+	g_hash_table_destroy(body);
 }
 
 /**************************************************************************
@@ -1059,7 +1082,7 @@ msn_switchboard_connect(MsnSwitchBoard *swboard, const char *host, int port)
 	msn_servconn_set_connect_cb(swboard->servconn, connect_cb);
 	msn_servconn_set_disconnect_cb(swboard->servconn, disconnect_cb);
 
-	return msn_servconn_connect(swboard->servconn, host, port);
+	return msn_servconn_connect(swboard->servconn, host, port, FALSE);
 }
 
 void
@@ -1114,13 +1137,9 @@ cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	}
 
 	purple_debug_warning("msn", "cal_error: command %s gave error %i\n", trans->command, error);
-	purple_debug_warning("msn", "Will Use Offline Message to sendit\n");
-
-//	cal_error_helper(trans, reason);
-	/*offline Message send Process*/
 
 	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL){
-		purple_debug_warning("MSNP14","offline msg to send:{%s}\n",msg->body);
+		purple_debug_warning("MSNP14", "Unable to send msg: {%s}\n", msg->body);
 		/* The messages could not be sent due to a switchboard error */
 		swboard->error = MSN_SB_ERROR_USER_OFFLINE;
 		msg_error_helper(swboard->cmdproc, msg,
@@ -1313,7 +1332,7 @@ msn_switchboard_init(void)
 	msn_table_add_msg_type(cbs_table, "text/x-mms-animemoticon",
 	                                           msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",
-						   nudge_msg);
+						   datacast_msg);
 #if 0
 	msn_table_add_msg_type(cbs_table, "text/x-msmmsginvite",
 						   msn_invite_msg);

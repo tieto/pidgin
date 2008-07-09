@@ -1,5 +1,5 @@
 /**
- * @file udp_proxy_s5.h
+ * @file qq_trans.h
  *
  * purple
  *
@@ -22,13 +22,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
-#ifndef _QQ_UDP_PROXY_S5_H_
-#define _QQ_UDP_PROXY_S5_H_
+#ifndef _QQ_SEND_QUEUE_H_
+#define _QQ_SEND_QUEUE_H_
 
-#include "internal.h"		/* for socket stuff */
+#include <glib.h>
+#include "qq.h"
 
-#include "qq_proxy.h"
+void qq_send_trans_append(qq_data *qd, guint8 *buf, gint bus_len, guint16 cmd, guint16 seq);
+void qq_send_trans_remove(qq_data *qd, gpointer data);
+gpointer qq_send_trans_find(qq_data *qd, guint16 seq);
+void qq_send_trans_remove_all(qq_data *qd);
 
-gint qq_proxy_socks5(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen);
+gint qq_send_trans_scan(qq_data *qd, gint *start, guint8 *buf, gint maxlen, guint16 *cmd, gint *retries);
+
+void qq_rcv_trans_push(qq_data *qd, guint16 cmd, guint16 seq, guint8 *data, gint data_len);
+gint qq_rcv_trans_pop(qq_data *qd, guint16 *cmd, guint16* seq, guint8 *data, gint max_len);
+void qq_rcv_trans_remove_all(qq_data *qd);
 
 #endif

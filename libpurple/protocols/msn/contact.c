@@ -28,7 +28,7 @@
 #include "contact.h"
 #include "xmlnode.h"
 #include "group.h"
-#include "soap2.h"
+#include "soap.h"
 #include "nexus.h"
 
 const char *MsnSoapPartnerScenarioText[] =
@@ -78,7 +78,7 @@ msn_callback_state_dup(MsnCallbackState *state)
 	/* The rest should be made new */
 
 	return new_state;
-}	
+}
 
 void
 msn_callback_state_free(MsnCallbackState *state)
