@@ -72,6 +72,8 @@ typedef PurpleKeyringPasswordNode * (*PurpleKeyringExportPassword)(PurpleAccount
 /* manipulate keyring list, used by config interface */
 const GList * purple_keyring_get_keyringlist(void);
 const PurpleKeyringInfo * purple_keyring_get_inuse(void);
+
+// FIXME : needs to be async
 void purple_keyring_set_inuse(PurpleKeyringInfo *);	/* changes keyring to use, lots of code involved */
 
 /* register a keyring plugin */
@@ -80,26 +82,33 @@ void purple_plugin_keyring_register(PurpleKeyring * info);
 
 /* used by account.c while reading a password from xml */
 gboolean purple_keyring_import_password(const PurpleKeyringPasswordNode * passwordnode, 
+					GError ** error, 
 					PurpleKeyringImportCallback cb, 
-					GError * error, 
-					gpointer data);   );
+					gpointer data);
 /**
  * used by account.c while syncing accounts
  *  returned data must be g_free()'d
  */
 void purple_keyring_export_password(PurpleAccount * account,
-				    PurpleKeyringPasswordNode * result,
+				    GError ** error,
 				    PurpleKeyringImportCallback cb,
-				    GError * error,
 				    gpointer data);
+
 
 /* functions called from the code to access passwords (account.h):
 	purple_account_get_password()	<- TODO : rewrite these functions :)
 	purple_account_set_password()
 so these functions will call : */
 /* FIXME : callback of course */
-void purple_keyring_get_password(const PurpleAccount *account, GError ** error, PurpleKeyringReadCallback cb, gpointer data);
-void purple_keyring_set_password(PurpleAccount *account, const char *password);
+void purple_keyring_get_password(const PurpleAccount *account,
+				 GError ** error,
+				 PurpleKeyringReadCallback cb,
+				 gpointer data);
+void purple_keyring_set_password(const PurpleAccount * account, 
+				 gchar * password, 
+				 GError ** error, 
+				 PurpleKeyringSaveCallback cb,
+				 gpointer data);
 
 /* accessors for data structure fields */
 	/* PurpleKeyringInfo */
@@ -154,10 +163,13 @@ void purple_keyring_init();
 
 enum
 {
-	ERR_OK = 0			/* no error */
-	ERR_NOPASSWD = 1,		/* no stored password */
+	ERR_OK = 0		/* no error */
+	ERR_NOPASSWD = 1,	/* no stored password */
 	ERR_NOACCOUNT,		/* account not found */
 	ERR_WRONGPASS,		/* user submitted wrong password when prompted */
 	ERR_WRONGFORMAT,	/* data passed is not in suitable format*/
 	ERR_NOKEYRING		/* no keyring configured */
 } PurpleKeyringError;
+
+
+#endif /* _PURPLE_KEYRING_H_ */
