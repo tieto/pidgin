@@ -8,6 +8,7 @@
 
 #include <glib.h>
 #include <string.h>
+#include "version.h"
 #include "keyring.h"
 #include "account.h"
 
@@ -15,26 +16,22 @@
 /** Macros and constants      */
 /******************************/
 
+#define KEYRINGNAME			"internalkeyring"
 #define INTERNALKEYRING_VERSION		"0.2a"
-#define INTERNALKEYRING_ID		"???"
+#define INTERNALKEYRING_ID		"core-scrouaf-internalkeyring"
 #define INTERNALKEYRING_AUTHOR		"Vivien Bernet-Rollande <vbernetr@etu.utc.fr>"
 #define INTERNALKEYRING_DESCRIPTION	\
 	"This keyring plugin offers a password storage backend compatible with the former storage system."
-
-#define IS_VALID_CLEARTEXT_INFO(nodeinfo)							\
-	(((nodeinfo->encryption == NULL) || (strcpy(nodeinfo->encryption, KEYRINGNAME) == 0))	\
-	&& ((nodeinfo->mode == NULL) || (strcpy(nodeinfo->mode, "cleartext") == 0))		\
-	&& (nodeinfo->data != NULL) && (nodeinfo->account != NULL))
 
 
 /******************************/
 /** Data Structures           */
 /******************************/
 
-typedef stuct _InternalKeyring_PasswordInfo InternalKeyring_PasswordInfo;
+typedef struct _InternalKeyring_PasswordInfo InternalKeyring_PasswordInfo;
 
 struct _InternalKeyring_PasswordInfo {
-	PurpleAccount * account;
+	const PurpleAccount * account;
 	gchar * password;
 };
 
@@ -53,13 +50,14 @@ GList * InternalKeyring_passwordlist = NULL;		/* use hashtable ? */
  * retrieve the InternalKeyring_PasswordInfo structure for an account
  * TODO : rewrite this to use hashtables rather than GList
  */
-PasswordInfo * InternalKeyring_get_account_info(PurpleAccount * account)
+InternalKeyring_PasswordInfo * 
+InternalKeyring_get_account_info(const PurpleAccount * account)
 {
 	GList * p;
-	InternalKeyring_PasswordInfo i;
+	InternalKeyring_PasswordInfo * i;
 
-	for (p = InternalKeyring_passworlist; p != NULL; p = p->next)  {
-		i = (PasswordInfo)(p->data)
+	for (p = InternalKeyring_passwordlist; p != NULL; p = p->next)  {
+		i = (InternalKeyring_PasswordInfo*)(p->data);
 		if (i->account == account)
 			return i;
 	}
@@ -68,8 +66,8 @@ PasswordInfo * InternalKeyring_get_account_info(PurpleAccount * account)
 
 /**
  * Free or create an InternalKeyring_PasswordInfo structure and all pointed data.
- * /!\ Update this when adding fields to InternalKeyring_PasswordInfo
- * TODO : rewrite this to use hashtables rather than GList
+ * XXX /!\ Update this when adding fields to InternalKeyring_PasswordInfo
+ * XXX : rewrite this to use hashtables rather than GList
  *        (fix InternalKeyring_Close() as well)
  */
 void
@@ -83,11 +81,49 @@ void
 InternalKeyring_free_passwordinfo(InternalKeyring_PasswordInfo * info)
 {
 	g_free(info->password);
-	g_list_remove(InternalKeyring_passwordlist, info);
+	InternalKeyring_passwordlist = g_list_remove(InternalKeyring_passwordlist, info);
 	g_free(info);
 	return;
 }
 
+/**
+ * wrapper so we can use it in close
+ * TODO : find a more elegant way
+ */
+void
+InternalKeyring_free_passwordinfo_from_g_list(gpointer info, gpointer data)
+{
+	InternalKeyring_free_passwordinfo((InternalKeyring_PasswordInfo*)info);
+	return;
+}
+
+
+gboolean
+InternalKeyring_is_valid_cleartext(PurpleKeyringPasswordNode * node)
+{
+	const char * enc;
+	const char * mode;
+	const char * data;
+	const PurpleAccount * account;	
+
+	enc = purple_keyring_password_node_get_encryption(node);
+	mode = purple_keyring_password_node_get_mode(node);
+	data = purple_keyring_password_node_get_data(node);
+	account = purple_keyring_password_node_get_account(node);
+
+	if (((enc == NULL) || (strcmp(enc, KEYRINGNAME) == 0))
+	  &&((mode == NULL) || (strcmp(mode, "cleartext") == 0))
+	  &&(data != NULL)
+	  &&(account != NULL)) {
+
+		return TRUE;
+
+	} else {
+
+		return FALSE;
+
+	}
+}
 
 /******************************/
 /** Keyring interface         */
@@ -134,11 +170,11 @@ InternalKeyring_read(const PurpleAccount * account,
 void
 InternalKeyring_save(const PurpleAccount * account, 
 		     gchar * password,
-		     GError ** error, import
+		     GError ** error,
 		     PurpleKeyringSaveCallback cb,
 		     gpointer data)
 {
-	InternalKeyring_PasswordInfo info;
+	InternalKeyring_PasswordInfo * info;
 
 	info = InternalKeyring_get_account_info(account);
 
@@ -159,7 +195,7 @@ InternalKeyring_save(const PurpleAccount * account,
 
 	} else {	/* password != NULL */
 
-		if ( info == null ) {
+		if ( info == NULL ) {
 			info = g_malloc0(sizeof (InternalKeyring_PasswordInfo));
 			InternalKeyring_add_passwordinfo(info);
 		}
@@ -184,8 +220,8 @@ InternalKeyring_save(const PurpleAccount * account,
 void 
 InternalKeyring_Close(GError ** error)
 {
-	g_list_foreach(InternalKeyring_passwordlist, InternalKeyring_free_passwordinfo,
-		NULL);
+	g_list_foreach(InternalKeyring_passwordlist,
+		InternalKeyring_free_passwordinfo_from_g_list, NULL);
 	return;
 }
 
@@ -211,16 +247,18 @@ gboolean
 InternalKeyring_import_password(PurpleKeyringPasswordNode * nodeinfo)
 {
 	InternalKeyring_PasswordInfo * pwinfo;
+	const char * data;
 
-	if (IS_VALID_CLEARTEXT_INFO(nodeinfo) {
+	if (InternalKeyring_is_valid_cleartext(nodeinfo)) {
 
 		pwinfo = g_malloc0(sizeof(InternalKeyring_PasswordInfo));
 		InternalKeyring_add_passwordinfo(pwinfo);
 
-		pwinfo->password = g_malloc(strlen(nodeinfo->data) + 1);
-		strcpy(pwinfo->password, nodeinfo->data);
+		data = purple_keyring_password_node_get_data(nodeinfo);		
+		pwinfo->password = g_malloc(strlen(data) + 1);
+		strcpy(pwinfo->password, data);
 
-		pwinfo->account = nodeinfo->account;
+		pwinfo->account = purple_keyring_password_node_get_account(nodeinfo);
 
 		return TRUE;
 
@@ -241,8 +279,8 @@ InternalKeyring_import_password(PurpleKeyringPasswordNode * nodeinfo)
 PurpleKeyringPasswordNode * 
 InternalKeyring_export_password(PurpleAccount * account)
 {
-	PurpleKeyringPasswordNode * nodeinfo
-	InternalKeyring_PasswordInfo pwinfo;
+	PurpleKeyringPasswordNode * nodeinfo;
+	InternalKeyring_PasswordInfo * pwinfo;
 
 	nodeinfo = purple_keyring_password_node_new();
 	pwinfo = InternalKeyring_get_account_info(account);
@@ -252,7 +290,7 @@ InternalKeyring_export_password(PurpleAccount * account)
 	else {
 		purple_keyring_password_node_set_encryption(nodeinfo, KEYRINGNAME);
 		purple_keyring_password_node_set_mode(nodeinfo, "cleartext");
-		purple_keyring_password_node_set_data(nodeinfo, password);
+		purple_keyring_password_node_set_data(nodeinfo, pwinfo->password);
 
 		return nodeinfo;
 	}
@@ -266,7 +304,7 @@ InternalKeyring_export_password(PurpleAccount * account)
 gboolean 
 InternalKeyring_load(PurplePlugin *plugin)
 {
-	purple_plugin_keyring_register(InternalKeyring_KeyringInfo);
+//	purple_plugin_keyring_register(InternalKeyring_KeyringInfo);	/* FIXME : structure doesn't exist yet */
 	return TRUE;
 }
 

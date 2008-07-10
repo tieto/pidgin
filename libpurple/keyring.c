@@ -32,13 +32,13 @@
  *
  * TODO :
  *  - use accessors
- *  - compare header with this file
  *  - purple_keyring_init()
  *  - purple_keyring_set_inuse() needs to be async for error checking an reversability.
  *
  * Questions :
- *  - use accessors internally
  *  - cleanup
+ *  - warning
+ *  - breaking API
  */
 
 #include <glib.h>
@@ -48,24 +48,6 @@
 /*******************************/
 /* opaque structures           */
 /*******************************/
-
-/* information about a keyring */
-// FIXME : This should actually probably a public structure
-struct _PurpleKeyring
-{
-	char *  name;
-	PurpleKeyringRead read_password;
-	PurpleKeyringSave save_password;
-	PurpleKeyringClose close_keyring;
-	PurpleKeyringFree free_password;
-	PurpleKeyringChangeMaster change_master;
-	PurpleKeyringImportPassword import_password;
-	PurpleKeyringExportPassword export_password;
-	gpointer r1;	/* RESERVED */
-	gpointer r2;	/* RESERVED */
-	gpointer r3;	/* RESERVED */
-};
-
 
 /* used to import and export password info */
 struct _PurpleKeyringPasswordNode
@@ -153,18 +135,22 @@ purple_keyring_set_inuse_got_pw_cb(const PurpleAccount * account,
 			 gpointer data)
 {
 	PurpleKeyring * new;
-
+	PurpleKeyringSave save;
 	new = (PurpleKeyring *)data;
 	/* XXX check for read error or just forward ? */
 
 	/* XXX change to use accessor */
-	new->save_password(account, password, error,
-		purple_keyring_set_inuse_check_error_cb, NULL);
+
+	//typedef void (*PurpleKeyringSave)(const PurpleAccount * account, gchar * password, GError ** error, PurpleKeyringSaveCallback cb, gpointer data);
+
+	save = purple_keyring_get_save_password(new);
+	save(account, password, error, purple_keyring_set_inuse_check_error_cb, 
+		NULL);
 
 	return;
 }
 
-
+/* FIXME : needs to be async and cancelable */
 void 
 purple_keyring_set_inuse(PurpleKeyring * new,
 			 GError ** error)
@@ -172,6 +158,8 @@ purple_keyring_set_inuse(PurpleKeyring * new,
 
 	GList * cur;
 	const PurpleKeyring * old;
+	PurpleKeyringClose close;
+	PurpleKeyringRead read;
 
 	if (purple_keyring_inuse != NULL) {
 
@@ -179,15 +167,16 @@ purple_keyring_set_inuse(PurpleKeyring * new,
 
 		for (cur = purple_accounts_get_all(); cur != NULL; cur = cur->next)
 		{
-			old->read_password(cur->data, NULL, purple_keyring_set_inuse_got_pw_cb, (void*)new);
-//typedef void (*PurpleKeyringRead)(const PurpleAccount * account, GError ** error, PurpleKeyringReadCallback cb, gpointer data);
+			read = purple_keyring_get_read_password(old);
+			read(cur->data, NULL, purple_keyring_set_inuse_got_pw_cb, (void*)new);
 		}
 
 		/* FIXME :
 		 * What happens if safe is closed before passwords have been successfully stored ? 
 		 */
 
-		old->close_keyring(error);	/* should automatically free all passwords */
+		close = purple_keyring_get_close_keyring(old);
+		close(error);	/* should automatically free all passwords */
 	}
 
 	purple_keyring_inuse = new;
@@ -217,12 +206,14 @@ purple_plugin_keyring_register(PurpleKeyring * info)
  * might not really need to be async.
  * TODO : rewrite InternalKeyring as async
  */
-gboolean 
+void
 purple_keyring_import_password(const PurpleKeyringPasswordNode * passwordnode,
 				GError ** error,
 				PurpleKeyringImportCallback cb,
 				gpointer data)
 {
+	PurpleKeyringImportPassword import;
+
 	if (purple_keyring_inuse == NULL) {
 
 		g_set_error(error, ERR_PIDGINKEYRING, ERR_NOKEYRING, 
@@ -230,7 +221,8 @@ purple_keyring_import_password(const PurpleKeyringPasswordNode * passwordnode,
 		cb(error, data);
 
 	} else {
-		purple_keyring_inuse->import_password(passwordnode, error, cb, data);
+		import = purple_keyring_get_import_password(purple_keyring_inuse);
+		import(passwordnode, error, cb, data);
 	}
 	return;
 }
@@ -245,6 +237,8 @@ purple_keyring_export_password(PurpleAccount * account,
 			       PurpleKeyringImportCallback cb,
 			       gpointer data)
 {
+	PurpleKeyringExportPassword export;
+
 	if (purple_keyring_inuse == NULL) {
 
 		g_set_error(error, ERR_PIDGINKEYRING, ERR_NOKEYRING, 
@@ -252,8 +246,8 @@ purple_keyring_export_password(PurpleAccount * account,
 		cb(error, data);
 
 	} else {
-		// FIXME : use accessor
-		purple_keyring_inuse->export_password(account, error, cb, data);
+		export = purple_keyring_get_export_password(purple_keyring_inuse);
+		export(account, error, cb, data);
 	}
 	return;
 }
@@ -261,7 +255,7 @@ purple_keyring_export_password(PurpleAccount * account,
 
 /** 
  * functions called from the code to access passwords (account.h):
- *	purple_account_get_password()	<- TODO : rewrite these functions :)
+ *	purple_account_get_password()	<- TODO : rewrite these functions as asynch, as well as functions calling them. Will most likely break API compatibility.
  *	purple_account_set_password()
  * so these functions will call : 
  */
@@ -271,6 +265,8 @@ purple_keyring_get_password(const PurpleAccount *account,
 			    PurpleKeyringReadCallback cb,
 			    gpointer data)
 {
+	PurpleKeyringRead read;
+
 	if (purple_keyring_inuse == NULL) {
 
 		g_set_error(error, ERR_PIDGINKEYRING, ERR_NOKEYRING, 
@@ -278,7 +274,10 @@ purple_keyring_get_password(const PurpleAccount *account,
 		cb(account, NULL, error, data);
 
 	} else {
-		purple_keyring_inuse->read_password(account, error, cb, data);
+
+		read = purple_keyring_get_read_password(purple_keyring_inuse);
+		read(account, error, cb, data);
+
 	}
 	return;
 }
@@ -290,6 +289,8 @@ purple_keyring_set_password(const PurpleAccount * account,
 			    PurpleKeyringSaveCallback cb,
 			    gpointer data)
 {
+	PurpleKeyringSave save;
+
 	if (purple_keyring_inuse == NULL) {
 
 		g_set_error(error, ERR_PIDGINKEYRING, ERR_NOKEYRING, 
@@ -297,7 +298,8 @@ purple_keyring_set_password(const PurpleAccount * account,
 		cb(account, error, data);
 
 	} else {
-		purple_keyring_inuse->save_password(account, password, error, cb, data);
+		save = purple_keyring_get_save_password(purple_keyring_inuse);
+		save(account, password, error, cb, data);
 	}
 	return;
 }
@@ -310,43 +312,43 @@ purple_keyring_get_name(const PurpleKeyring * info)
 	return info->name;
 }
 
-const PurpleKeyringRead 
+PurpleKeyringRead 
 purple_keyring_get_read_password(const PurpleKeyring * info)
 {
 	return info->read_password;
 }
 
-const PurpleKeyringSave
+PurpleKeyringSave
 purple_keyring_get_save_password(const PurpleKeyring * info)
 {
 	return info->save_password;
 }
 
-const PurpleKeyringClose 
+PurpleKeyringClose 
 purple_keyring_get_close_keyring(const PurpleKeyring * info)
 {
 	return info->close_keyring;
 }
 
-const PurpleKeyringFree 
+PurpleKeyringFree 
 purple_keyring_get_free_password(const PurpleKeyring * info)
 {
 	return info->free_password;
 }
 
-const PurpleKeyringChangeMaster 
+PurpleKeyringChangeMaster 
 purple_keyring_get_change_master(const PurpleKeyring * info)
 {
 	return info->change_master;
 }
 
-const PurpleKeyringImportPassword
+PurpleKeyringImportPassword
 purple_keyring_get_import_password(const PurpleKeyring * info)
 {
 	return info->import_password;
 }
 
-const PurpleKeyringExportPassword 
+PurpleKeyringExportPassword 
 purple_keyring_get_export_password(const PurpleKeyring * info)
 {
 	return info->export_password;

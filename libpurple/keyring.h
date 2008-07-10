@@ -38,9 +38,18 @@ typedef struct _PurpleKeyring PurpleKeyring;	/* TODO : move back as public struc
 typedef struct _PurpleKeyringPasswordNode PurpleKeyringPasswordNode;	/* opaque struct */
 
 
-	/* XXX maybe strip a couple GError* if they're not used */
+
+/**
+ * XXX maybe strip a couple GError* if they're not used 
+ * since they should only be interresting for the callback
+ *  --> ability to forward errors ?
+ */
+
 /* callbacks */
-typedef void (*PurpleKeyringReadCallback)(const PurpleAccount * account, gchar * password, GError ** error, gpointer data);
+typedef void (*PurpleKeyringReadCallback)(const PurpleAccount * account,
+					  gchar * password,
+					  GError ** error,
+					  gpointer data);
 typedef void (*PurpleKeyringSaveCallback)(const PurpleAccount * account, GError ** error, gpointer data);
 typedef void (*PurpleKeyringChangeMasterCallback)(int result, GError * error, gpointer data);
 typedef void (*PurpleKeyringImportCallback)(GError ** error, gpointer data);	/* XXX add a gboolean result or just use error ? */
@@ -63,9 +72,27 @@ typedef void (*PurpleKeyringFree)(gchar * password, GError ** error);
  *  - add callback, it needs to be async
  *  - typedefs for callbacks
  */
-typedef gboolean (*PurpleKeyringImportPassword)(const PurpleKeyringPasswordNode * nodeinfo, GError ** error, PurpleKeyringImportCallback cb, gpointer data);
+typedef void (*PurpleKeyringImportPassword)(const PurpleKeyringPasswordNode * nodeinfo, GError ** error, PurpleKeyringImportCallback cb, gpointer data);
 
 typedef PurpleKeyringPasswordNode * (*PurpleKeyringExportPassword)(PurpleAccount * account,GError ** error, PurpleKeyringImportCallback cb,     gpointer data);
+
+/* information about a keyring */
+struct _PurpleKeyring
+{
+	char *  name;
+	PurpleKeyringRead read_password;
+	PurpleKeyringSave save_password;
+	PurpleKeyringClose close_keyring;
+	PurpleKeyringFree free_password;
+	PurpleKeyringChangeMaster change_master;
+	PurpleKeyringImportPassword import_password;
+	PurpleKeyringExportPassword export_password;
+	gpointer r1;	/* RESERVED */
+	gpointer r2;	/* RESERVED */
+	gpointer r3;	/* RESERVED */
+};
+
+
 
 
 /***************************************/
@@ -124,13 +151,13 @@ void purple_keyring_set_password(const PurpleAccount * account,
  * 	  since devs could build static structure
  */
 const char * purple_keyring_get_name(const PurpleKeyring * info);
-const PurpleKeyringRead purple_keyring_get_read_password(const PurpleKeyring * info);
-const PurpleKeyringSave purple_keyring_get_save_password(const PurpleKeyring * info);
-const PurpleKeyringClose purple_keyring_get_close_keyring(const PurpleKeyring * info);
-const PurpleKeyringFree purple_keyring_get_free_password(const PurpleKeyring * info);
-const PurpleKeyringChangeMaster purple_keyring_get_change_master(const PurpleKeyring * info);
-const PurpleKeyringImportPassword purple_keyring_get_import_password(const PurpleKeyring * info);
-const PurpleKeyringExportPassword purple_keyring_get_export_password(const PurpleKeyring * info);
+PurpleKeyringRead purple_keyring_get_read_password(const PurpleKeyring * info);
+PurpleKeyringSave purple_keyring_get_save_password(const PurpleKeyring * info);
+PurpleKeyringClose purple_keyring_get_close_keyring(const PurpleKeyring * info);
+PurpleKeyringFree purple_keyring_get_free_password(const PurpleKeyring * info);
+PurpleKeyringChangeMaster purple_keyring_get_change_master(const PurpleKeyring * info);
+PurpleKeyringImportPassword purple_keyring_get_import_password(const PurpleKeyring * info);
+PurpleKeyringExportPassword purple_keyring_get_export_password(const PurpleKeyring * info);
 
 void purple_keyring_set_name(PurpleKeyring * info, char * name);		/* must be static, will not be auto-freed upon destruction */
 void purple_keyring_set_read_password(PurpleKeyring * info, PurpleKeyringRead read);
