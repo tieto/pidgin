@@ -1120,7 +1120,7 @@ jabber_jingle_session_terminate_sessions(JabberStream *js)
 	g_list_free(values);
 }
 
-void
+static void
 jabber_jingle_session_handle_content_replace(JabberStream *js, xmlnode *packet)
 {
 #if 0
@@ -1149,7 +1149,7 @@ jabber_jingle_session_handle_content_replace(JabberStream *js, xmlnode *packet)
 #endif
 }
 
-void
+static void
 jabber_jingle_session_handle_session_accept(JabberStream *js, xmlnode *packet)
 {
 	JabberIq *result = jabber_iq_new(js, JABBER_IQ_RESULT);
@@ -1243,14 +1243,14 @@ jabber_jingle_session_handle_session_accept(JabberStream *js, xmlnode *packet)
 	jabber_jingle_session_set_state(session, ACTIVE);
 }
 
-void
+static void
 jabber_jingle_session_handle_session_info(JabberStream *js, xmlnode *packet)
 {
 	purple_debug_info("jingle", "got session-info\n");
 	jabber_iq_send(jabber_jingle_session_create_ack(js, packet));
 }
 
-void 
+static void 
 jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet)
 {
 	JingleSession *session = NULL;
@@ -1344,7 +1344,7 @@ jabber_jingle_session_handle_session_initiate(JabberStream *js, xmlnode *packet)
 	purple_media_got_request(jabber_jingle_session_get_media(session));
 }
 
-void
+static void
 jabber_jingle_session_handle_session_terminate(JabberStream *js, xmlnode *packet)
 {
 	xmlnode *jingle = xmlnode_get_child(packet, "jingle");
@@ -1365,7 +1365,7 @@ jabber_jingle_session_handle_session_terminate(JabberStream *js, xmlnode *packet
 	jabber_jingle_session_destroy(session);
 }
 
-void
+static void
 jabber_jingle_session_handle_transport_info(JabberStream *js, xmlnode *packet)
 {
 	JabberIq *result = jabber_iq_new(js, JABBER_IQ_RESULT);
