@@ -33,6 +33,8 @@
 
 G_BEGIN_DECLS
 
+void jabber_jingle_session_parse(JabberStream *js, xmlnode *packet);
+
 PurpleMedia *jabber_jingle_session_initiate_media(JabberStream *js,
 						  const char *who,
 						  PurpleMediaStreamType type);

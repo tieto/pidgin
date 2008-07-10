@@ -360,31 +360,9 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	}
 	
 #ifdef USE_VV
-	/* handle session initiate XEP 0167 */
-	if (type && !strcmp(type, "set")) {
-		/* is this a Jingle package? */
-		xmlnode *jingle = xmlnode_get_child(packet, "jingle");
-		if (jingle) {
-			const char *action = xmlnode_get_attrib(jingle, "action");
-			purple_debug_info("jabber", "got Jingle package action = %s\n",
-							  action);
-			if (!strcmp(action, "session-initiate")) {
-				jabber_jingle_session_handle_session_initiate(js, packet);
-			} else if (!strcmp(action, "session-accept")
-					   || !strcmp(action, "content-accept")) {
-				jabber_jingle_session_handle_session_accept(js, packet);
-			} else if (!strcmp(action, "session-info")) {
-				jabber_jingle_session_handle_session_info(js, packet);
-			} else if (!strcmp(action, "session-terminate")) {
-				jabber_jingle_session_handle_session_terminate(js, packet);
-			} else if (!strcmp(action, "transport-info")) {
-				jabber_jingle_session_handle_transport_info(js, packet);
-			} else if (!strcmp(action, "content-replace")) {
-				jabber_jingle_session_handle_content_replace(js, packet);
-			}
-
-			return;
-		}
+	if (xmlnode_get_child_with_namespace(packet, "jingle", "urn:xmpp:tmp:jingle")) {
+		jabber_jingle_session_parse(js, packet);
+		return;
 	}
 #endif
 
@@ -427,6 +405,7 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("http://jabber.org/protocol/disco#items", jabber_disco_items_parse);
 	jabber_iq_register_handler("jabber:iq:register", jabber_register_parse);
 	jabber_iq_register_handler("urn:xmpp:ping", urn_xmpp_ping_parse);
+	jabber_iq_register_handler("urn:xmpp:tmp:jingle", jabber_jingle_session_parse);
 }
 
 void jabber_iq_uninit(void)

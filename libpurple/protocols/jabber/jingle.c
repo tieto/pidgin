@@ -1394,5 +1394,37 @@ jabber_jingle_session_handle_transport_info(JabberStream *js, xmlnode *packet)
 	}
 }
 
+void
+jabber_jingle_session_parse(JabberStream *js, xmlnode *packet)
+{
+	const gchar *type = xmlnode_get_attrib(packet, "type");
+
+	if (type && !strcmp(type, "set")) {
+		/* is this a Jingle package? */
+		xmlnode *jingle = xmlnode_get_child(packet, "jingle");
+		if (jingle) {
+			const char *action = xmlnode_get_attrib(jingle, "action");
+			purple_debug_info("jabber", "got Jingle package action = %s\n",
+							  action);
+			if (!strcmp(action, "session-initiate")) {
+				jabber_jingle_session_handle_session_initiate(js, packet);
+			} else if (!strcmp(action, "session-accept")
+					   || !strcmp(action, "content-accept")) {
+				jabber_jingle_session_handle_session_accept(js, packet);
+			} else if (!strcmp(action, "session-info")) {
+				jabber_jingle_session_handle_session_info(js, packet);
+			} else if (!strcmp(action, "session-terminate")) {
+				jabber_jingle_session_handle_session_terminate(js, packet);
+			} else if (!strcmp(action, "transport-info")) {
+				jabber_jingle_session_handle_transport_info(js, packet);
+			} else if (!strcmp(action, "content-replace")) {
+				jabber_jingle_session_handle_content_replace(js, packet);
+			}
+
+			return;
+		}
+	}
+}
+
 #endif /* USE_VV */
 
