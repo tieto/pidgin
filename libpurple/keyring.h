@@ -53,7 +53,7 @@ typedef void (*PurpleKeyringReadCallback)(const PurpleAccount * account,
 typedef void (*PurpleKeyringSaveCallback)(const PurpleAccount * account, GError ** error, gpointer data);
 typedef void (*PurpleKeyringChangeMasterCallback)(int result, GError * error, gpointer data);
 typedef void (*PurpleKeyringImportCallback)(GError ** error, gpointer data);	/* XXX add a gboolean result or just use error ? */
-typedef void (*PurpleKeyringExportCallback)(PurpleKeyringPasswordNode * result, GError * error, gpointer data);
+typedef void (*PurpleKeyringExportCallback)(PurpleKeyringPasswordNode * result, GError ** error, gpointer data);
 
 //gboolean purple_keyring_import_password(const PurpleKeyringPasswordNode * passwordnode);
 
@@ -74,7 +74,7 @@ typedef void (*PurpleKeyringFree)(gchar * password, GError ** error);
  */
 typedef void (*PurpleKeyringImportPassword)(const PurpleKeyringPasswordNode * nodeinfo, GError ** error, PurpleKeyringImportCallback cb, gpointer data);
 
-typedef PurpleKeyringPasswordNode * (*PurpleKeyringExportPassword)(PurpleAccount * account,GError ** error, PurpleKeyringImportCallback cb,     gpointer data);
+typedef void (*PurpleKeyringExportPassword)(const PurpleAccount * account,GError ** error, PurpleKeyringExportCallback cb,     gpointer data);
 
 /* information about a keyring */
 struct _PurpleKeyring
@@ -176,9 +176,9 @@ void purple_keyring_password_node_delete(PurpleKeyringPasswordNode * node);
 const PurpleAccount * 
 purple_keyring_password_node_get_account(const PurpleKeyringPasswordNode * info);
 
-const char * purple_keyring_password_node_get_encryption(PurpleKeyringPasswordNode * info);		/* info to be kept must be copied */
-const char * purple_keyring_password_node_get_mode(PurpleKeyringPasswordNode * info);			/* strings will be freed after use*/
-const char * purple_keyring_password_node_get_data(PurpleKeyringPasswordNode * info);			/* (in most cases) */
+const char * purple_keyring_password_node_get_encryption(const PurpleKeyringPasswordNode * info);		/* info to be kept must be copied */
+const char * purple_keyring_password_node_get_mode(const PurpleKeyringPasswordNode * info);			/* strings will be freed after use*/
+const char * purple_keyring_password_node_get_data(const PurpleKeyringPasswordNode * info);			/* (in most cases) */
 
 void purple_keyring_password_node_set_account(PurpleKeyringPasswordNode * info, PurpleAccount * account);
 void purple_keyring_password_node_set_encryption(PurpleKeyringPasswordNode * info, const char * encryption);

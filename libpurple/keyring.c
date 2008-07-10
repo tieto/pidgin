@@ -436,19 +436,19 @@ purple_keyring_password_node_get_account(const PurpleKeyringPasswordNode * info)
 }
 
 const char * 
-purple_keyring_password_node_get_encryption(PurpleKeyringPasswordNode * info)
+purple_keyring_password_node_get_encryption(const PurpleKeyringPasswordNode * info)
 {
 	return info->encryption;
 }
 
 const char * 
-purple_keyring_password_node_get_mode(PurpleKeyringPasswordNode * info)
+purple_keyring_password_node_get_mode(const PurpleKeyringPasswordNode * info)
 {
 	return info->mode;
 }
 
 const char * 
-purple_keyring_password_node_get_data(PurpleKeyringPasswordNode * info)
+purple_keyring_password_node_get_data(const PurpleKeyringPasswordNode * info)
 {
 	return info->data;
 }

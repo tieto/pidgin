@@ -99,7 +99,7 @@ InternalKeyring_free_passwordinfo_from_g_list(gpointer info, gpointer data)
 
 
 gboolean
-InternalKeyring_is_valid_cleartext(PurpleKeyringPasswordNode * node)
+InternalKeyring_is_valid_cleartext(const PurpleKeyringPasswordNode * node)
 {
 	const char * enc;
 	const char * mode;
@@ -218,7 +218,7 @@ InternalKeyring_save(const PurpleAccount * account,
  * TODO : rewrite using Hashtable
  */
 void 
-InternalKeyring_Close(GError ** error)
+InternalKeyring_close(GError ** error)
 {
 	g_list_foreach(InternalKeyring_passwordlist,
 		InternalKeyring_free_passwordinfo_from_g_list, NULL);
@@ -243,8 +243,11 @@ InternalKeyring_free(gchar * password,
  *	  use accessors for PurpleKeyringPasswordNode (FIXME)
  *	  FIXME : REWRITE AS ASYNC
  */
-gboolean 
-InternalKeyring_import_password(PurpleKeyringPasswordNode * nodeinfo)
+void
+InternalKeyring_import_password(const PurpleKeyringPasswordNode * nodeinfo,
+				GError ** error,
+				PurpleKeyringImportCallback cb,
+				gpointer cbdata)
 {
 	InternalKeyring_PasswordInfo * pwinfo;
 	const char * data;
@@ -260,11 +263,11 @@ InternalKeyring_import_password(PurpleKeyringPasswordNode * nodeinfo)
 
 		pwinfo->account = purple_keyring_password_node_get_account(nodeinfo);
 
-		return TRUE;
+		//return TRUE;
 
 	} else {
 		/* invalid input */
-		return FALSE;
+		//return FALSE;
 	}		
 }
 
@@ -276,8 +279,11 @@ InternalKeyring_import_password(PurpleKeyringPasswordNode * nodeinfo)
  *	  use accessors for PurpleKeyringPasswordNode (FIXME)
  *	  FIXME : REWRITE AS ASYNC
  */
-PurpleKeyringPasswordNode * 
-InternalKeyring_export_password(PurpleAccount * account)
+void
+InternalKeyring_export_password(const PurpleAccount * account,
+				GError ** error,
+				PurpleKeyringExportCallback cb,
+				gpointer data)
 {
 	PurpleKeyringPasswordNode * nodeinfo;
 	InternalKeyring_PasswordInfo * pwinfo;
@@ -285,14 +291,19 @@ InternalKeyring_export_password(PurpleAccount * account)
 	nodeinfo = purple_keyring_password_node_new();
 	pwinfo = InternalKeyring_get_account_info(account);
 
-	if (pwinfo->password == NULL)
-		return NULL;
-	else {
+	if (pwinfo->password == NULL) {
+
+		cb(NULL, error, data);
+		return;
+
+	} else {
+
 		purple_keyring_password_node_set_encryption(nodeinfo, KEYRINGNAME);
 		purple_keyring_password_node_set_mode(nodeinfo, "cleartext");
 		purple_keyring_password_node_set_data(nodeinfo, pwinfo->password);
 
-		return nodeinfo;
+		cb(nodeinfo, error, data);
+		return;
 	}
 }
 
@@ -315,20 +326,37 @@ InternalKeyring_load(PurplePlugin *plugin)
 gboolean 
 InternalKeyring_unload(PurplePlugin *plugin)
 {
-	InternalKeyring_Close(NULL);
+	InternalKeyring_close(NULL);
 	return TRUE;
 }
 
 void 
 InternalKeyring_destroy(PurplePlugin *plugin)
 {
-	InternalKeyring_Close(NULL);
+	InternalKeyring_close(NULL);
 	return;
 }
 
 /******************************/
 /** Generic plugin stuff      */
 /******************************/
+
+PurpleKeyring InternalKeyring_KeyringInfo =
+{
+	"internalkeyring",
+	InternalKeyring_read,
+	InternalKeyring_save,
+	InternalKeyring_close,
+	InternalKeyring_free,
+	NULL,				/* change_master */
+	InternalKeyring_import_password,
+	InternalKeyring_export_password,
+	NULL,				/* RESERVED */
+	NULL,				/* RESERVED */
+	NULL				/* RESERVED */
+};
+
+
 
 PurplePluginInfo plugininfo =
 {
@@ -349,7 +377,7 @@ PurplePluginInfo plugininfo =
 	"N/A",								/* homepage */
 	InternalKeyring_load,						/* load */
 	InternalKeyring_unload,						/* unload */
-	InternalKeyring_destroy,						/* destroy */
+	InternalKeyring_destroy,					/* destroy */
 	NULL,								/* ui_info */
 	NULL,								/* extra_info */
 	NULL,								/* prefs_info */
