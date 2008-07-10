@@ -78,6 +78,8 @@ pidgin_SOURCES = \
 	pidginstock.c \
 	gtkaccount.c \
 	gtkblist.c \
+	gtkblist-loader.c \
+	gtkblist-theme.c \
 	gtkcelllayout.c \
 	gtkcellrendererexpander.c \
 	gtkcellrendererprogress.c \
@@ -127,6 +129,8 @@ pidgin_headers = \
 	eggtrayicon.h \
 	gtkaccount.h \
 	gtkblist.h \
+	gtkblist-loader.h \
+	gtkblist-theme.h \
 	gtkcelllayout.h \
 	gtkcellrendererexpander.h \
 	gtkcellrendererprogress.h \

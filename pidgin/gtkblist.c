@@ -38,6 +38,8 @@
 #include "request.h"
 #include "signals.h"
 #include "pidginstock.h"
+#include "theme-loader.h"
+#include "theme-manager.h"
 #include "util.h"
 
 #include "gtkaccount.h"
@@ -121,6 +123,8 @@ typedef struct
 	 *  is showing; @c NULL otherwise.
 	 */
 	PidginMiniDialog *signed_on_elsewhere;
+
+	PidginBuddyListTheme *current_theme;
 } PidginBuddyListPrivate;
 
 #define PIDGIN_BUDDY_LIST_GET_PRIVATE(list) \
@@ -5255,6 +5259,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist = PIDGIN_BLIST(list);
 	priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
 
+	priv->current_theme = PIDGIN_BUDDY_LIST_THEME(purple_theme_manager_find_theme(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/blist/theme"), "blist"));
+
 	gtkblist->empty_avatar = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
 	gdk_pixbuf_fill(gtkblist->empty_avatar, 0x00000000);
 
@@ -5287,8 +5293,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtk_item_factory_create_items(gtkblist->ift, sizeof(blist_menu) / sizeof(*blist_menu),
 								  blist_menu, NULL);
 	pidgin_load_accels();
-	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
-														G_CALLBACK(pidgin_save_accels_cb), NULL);
+	g_signal_connect(G_OBJECT(accel_group), "accel-changed", G_CALLBACK(pidgin_save_accels_cb), NULL);
+
 	menu = gtk_item_factory_get_widget(gtkblist->ift, "<PurpleMain>");
 	gtkblist->menutray = pidgin_menu_tray_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtkblist->menutray);
@@ -5438,11 +5444,13 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(gtkblist->treeview), FALSE);
 
+	/* columns */
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
 	gtk_tree_view_column_set_visible(column, FALSE);
 	gtk_tree_view_set_expander_column(GTK_TREE_VIEW(gtkblist->treeview), column);
 
+	/* group */
 	gtkblist->text_column = column = gtk_tree_view_column_new ();
 	rend = pidgin_cell_renderer_expander_new();
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
@@ -5455,6 +5463,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 #endif
 					    NULL);
 
+	/* contact */
 	rend = pidgin_cell_renderer_expander_new();
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_set_attributes(column, rend,
@@ -5466,6 +5475,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 					    "visible", CONTACT_EXPANDER_VISIBLE_COLUMN,
 					    NULL);
 
+	/* status icons */
 	rend = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_set_attributes(column, rend,
@@ -5477,14 +5487,15 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 					    NULL);
 	g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
 
+	/* name */
 	gtkblist->text_rend = rend = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start (column, rend, TRUE);
 	gtk_tree_view_column_set_attributes(column, rend,
 #if GTK_CHECK_VERSION(2,6,0)
-					    	    "cell-background-gdk", BGCOLOR_COLUMN,
+					    "cell-background-gdk", BGCOLOR_COLUMN,
 #endif
-										"markup", NAME_COLUMN,
-										NULL);
+					    "markup", NAME_COLUMN,
+					    NULL);
 #if GTK_CHECK_VERSION(2,6,0)
 	g_signal_connect(G_OBJECT(rend), "editing-started", G_CALLBACK(gtk_blist_renderer_editing_started_cb), NULL);
 	g_signal_connect(G_OBJECT(rend), "editing-canceled", G_CALLBACK(gtk_blist_renderer_editing_cancelled_cb), list);
@@ -5496,6 +5507,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 #endif
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
 
+	/* idle */
 	rend = gtk_cell_renderer_text_new();
 	g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
@@ -5507,6 +5519,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 #endif
 					    NULL);
 
+	/* emblem */
 	rend = gtk_cell_renderer_pixbuf_new();
 	g_object_set(rend, "xalign", 1.0, "yalign", 0.5, "ypad", 0, "xpad", 3, NULL);
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
@@ -5516,6 +5529,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 #endif
 							  "visible", EMBLEM_VISIBLE_COLUMN, NULL);
 
+	/* protocol icon */
 	rend = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_set_attributes(column, rend,
@@ -5527,6 +5541,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 					  NULL);
 	g_object_set(rend, "xalign", 0.0, "xpad", 3, "ypad", 0, NULL);
 
+	/* buddy icon */
 	rend = gtk_cell_renderer_pixbuf_new();
 	g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
@@ -5971,6 +5986,10 @@ static void pidgin_blist_update_group(PurpleBuddyList *list,
 
 		bgcolor = gtkblist->treeview->style->bg[GTK_STATE_ACTIVE];
 
+/*		gdk_color_parse("red", &bgcolor);
+		gdk_colormap_alloc_color(gdk_colormap_get_system(), &bgcolor, TRUE, FALSE);
+g_print("\n\n%s\n\n", gdk_color_to_string(&bgcolor));*/
+
 		path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 		expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(gtkblist->treeview), path);
 		gtk_tree_path_free(path);
@@ -5987,7 +6006,7 @@ static void pidgin_blist_update_group(PurpleBuddyList *list,
 				   STATUS_ICON_COLUMN, NULL,
 				   NAME_COLUMN, title,
 				   NODE_COLUMN, gnode,
-	/*			   BGCOLOR_COLUMN, &bgcolor,     */
+				   BGCOLOR_COLUMN, &bgcolor,
 				   GROUP_EXPANDER_COLUMN, TRUE,
 				   GROUP_EXPANDER_VISIBLE_COLUMN, TRUE,
 				   CONTACT_EXPANDER_VISIBLE_COLUMN, FALSE,
@@ -7159,6 +7178,25 @@ static void buddy_signonoff_cb(PurpleBuddy *buddy)
 			(GSourceFunc)buddy_signonoff_timeout_cb, buddy);
 }
 
+void 
+pidgin_blist_set_theme(PidginBuddyListTheme *theme)
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);
+	
+	g_return_if_fail(PIDGIN_IS_BUDDY_LIST_THEME(theme));	
+	
+	priv->current_theme = theme;
+}
+
+
+PidginBuddyListTheme *
+pidgin_blist_get_theme()
+{
+	PidginBuddyListPrivate *priv = PIDGIN_BUDDY_LIST_GET_PRIVATE(gtkblist);	
+	
+	return priv->current_theme;
+}
+
 void pidgin_blist_init(void)
 {
 	void *gtk_blist_handle = pidgin_blist_get_handle();
@@ -7184,6 +7222,7 @@ void pidgin_blist_init(void)
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/width", 250); /* Golden ratio, baby */
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/height", 405); /* Golden ratio, baby */
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/tooltip_delay", 500);
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/blist/theme", "");
 
 	/* Register our signals */
 	purple_signal_register(gtk_blist_handle, "gtkblist-hiding",

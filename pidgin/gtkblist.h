@@ -59,6 +59,7 @@ typedef enum {
 
 #include "pidgin.h"
 #include "blist.h"
+#include "gtkblist-theme.h"
 
 /**************************************************************************
  * @name Structures
@@ -250,6 +251,19 @@ void pidgin_blist_visibility_manager_remove(void);
  */
 void pidgin_blist_add_alert(GtkWidget *widget);
 
+/**
+ * Sets the current theme for Pidgin to use
+ *
+ * @param theme	the new theme to use
+ */
+void pidgin_blist_set_theme(PidginBuddyListTheme *theme);
+
+/**
+ * Gets Pidgin's current buddy list theme
+ *
+ * @returns	the current theme 
+ */
+PidginBuddyListTheme *pidgin_blist_get_theme(void);
 
 /**************************************************************************
  * @name GTK+ Buddy List sorting functions
