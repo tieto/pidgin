@@ -34,13 +34,11 @@
  *  - use accessors
  *  - compare header with this file
  *  - purple_keyring_init()
- *  - purple_keyring_set_inuse()
+ *  - purple_keyring_set_inuse() needs to be async for error checking an reversability.
  *
  * Questions :
  *  - use accessors internally
  *  - cleanup
- *  - public/opaque struct
- *  - wrapper for g_list_foreach ?
  */
 
 #include <glib.h>
@@ -73,9 +71,13 @@ struct _PurpleKeyring
 struct _PurpleKeyringPasswordNode
 {
 	PurpleAccount * account;
-	char * encryption;
-	char * mode;
-	char * data;
+	const char * encryption;
+	const char * mode;
+	const char * data;
+/**
+ * strings cannot be modified.
+ * all are static excpet data
+ */
 };
 
 
@@ -95,7 +97,6 @@ PurpleKeyring * purple_keyring_inuse = NULL;	/* keyring being used		*/
 
 const GList * 
 purple_keyring_get_keyringlist(void)
-/* XXX add some more abstraction so we can change from GList to anything ? */
 {
 	return purple_keyring_keyringlist;
 }
@@ -107,85 +108,96 @@ purple_keyring_get_inuse(void)
 }
 
 
-/* change keyring to use */
-struct keyringchangeloop
+//typedef void (*PurpleKeyringSaveCallback)(const PurpleAccount * account, GError ** error, gpointer data);
+void
+purple_keyring_set_inuse_check_error_cb(const PurpleAccount * account,
+					GError ** error,
+					gpointer data)
 {
-	/*FIXME : type*/ cb;
-	gpointer data;
-	PurpleKeyring * new;
-	PurpleKeyring * old;
-	GList * cur;	// the account we're playing with
-	char * pass;
-	GError * error;
-};
 
-void 
-purple_keyring_set_inuse_loop_read(struct keyringchangeloop * info)
-{
-	GList * cur;
-	PurpleAccount * account;
+	const char * name;
 
-	cur = info->cur;
+	name = purple_account_get_username(account);
 
-	if (cur == NULL) {
+	if ((error != NULL) && ((**error).domain == ERR_PIDGINKEYRING)) {
 
-		/* we are done, trigger callback */
-		cur->cb(cur->error,cur->data);
+		switch((**error).code) {
 
-	} else {
+			case ERR_NOPASSWD :
+				g_debug("No password found while changing keyring for account %s", name);
+				break;
 
-		account = cur->data;
+			case ERR_NOACCOUNT :
+				g_debug("No info on account %s found while changing keyring", name);
+				break;
 
-		info->pass
-		/* FIXME :
-			-read with callback purple_keyring_set_inuse_loop_save()
-		*/
+			case ERR_NOCHANNEL :
+				g_debug("Failed to communicate with backend while changing keyring for account %s", name);
+				break;
+				/* FIXME : this should somehow abort the whole procedure */
+
+			default :
+				g_debug("Unknown error while changing keyring for account %s", name);
+				break;
+		}
 	}
+
+	return;
+}
+
+//typedef void (*PurpleKeyringReadCallback)(const PurpleAccount * account, gchar * password, GError * error, gpointer data);
+void
+purple_keyring_set_inuse_got_pw_cb(const PurpleAccount * account, 
+			 gchar * password, 
+			 GError ** error, 
+			 gpointer data)
+{
+	PurpleKeyring * new;
+
+	new = (PurpleKeyring *)data;
+	/* XXX check for read error or just forward ? */
+
+	/* XXX change to use accessor */
+	new->save_password(account, password, error,
+		purple_keyring_set_inuse_check_error_cb, NULL);
+
+	return;
 }
 
 
-
-/* FIXME : needs to be async !!! */
 void 
 purple_keyring_set_inuse(PurpleKeyring * new,
-			 GError ** error,
-			 /*FIXME : type*/ cb,
-			 gpointer data);
+			 GError ** error)
 {
 
 	GList * cur;
-	PurpleKeyring * old;
-	char * password;
-
+	const PurpleKeyring * old;
 
 	if (purple_keyring_inuse != NULL) {
 
-		/* XXX use a wrapper for g_list_foreach ? */
-		/* PSEUDOCODE (FIXME):
-			for all accounts
-				read password from old safe
-				store it in new safe
-			close old safe
-		*/
 		old = purple_keyring_get_inuse();
 
 		for (cur = purple_accounts_get_all(); cur != NULL; cur = cur->next)
 		{
-// FIXME MOAR HERE	password = old->read(cur)
+			old->read_password(cur->data, NULL, purple_keyring_set_inuse_got_pw_cb, (void*)new);
+//typedef void (*PurpleKeyringRead)(const PurpleAccount * account, GError ** error, PurpleKeyringReadCallback cb, gpointer data);
 		}
 
-		old->close();
+		/* FIXME :
+		 * What happens if safe is closed before passwords have been successfully stored ? 
+		 */
+
+		old->close_keyring(error);	/* should automatically free all passwords */
 	}
 
-	purple_keyring_inuse = keyring;
+	purple_keyring_inuse = new;
 	return;
-
 }
 
 /* register a keyring plugin */
 /**
- * TODO : function to unregister a keyring ?
- *	  validate input ? add magix field ?
+ * XXX : function to unregister a keyring ?
+ *	 validate input ? add magix field ?
  */
 void 
 purple_plugin_keyring_register(PurpleKeyring * info)
@@ -203,11 +215,11 @@ purple_plugin_keyring_register(PurpleKeyring * info)
 /** 
  * used by account.c while reading a password from xml
  * might not really need to be async.
- * TODO : use PurpleKeyringPasswordNode instead of xmlnode ?
+ * TODO : rewrite InternalKeyring as async
  */
 gboolean 
 purple_keyring_import_password(const PurpleKeyringPasswordNode * passwordnode,
-				GError ** error,			// FIXME : re-order arguments in header
+				GError ** error,
 				PurpleKeyringImportCallback cb,
 				gpointer data)
 {
@@ -229,7 +241,7 @@ purple_keyring_import_password(const PurpleKeyringPasswordNode * passwordnode,
  */
 void
 purple_keyring_export_password(PurpleAccount * account,
-			       GError ** error,				// FIXME : re-order arguments in header
+			       GError ** error,
 			       PurpleKeyringImportCallback cb,
 			       gpointer data)
 {
@@ -237,11 +249,11 @@ purple_keyring_export_password(PurpleAccount * account,
 
 		g_set_error(error, ERR_PIDGINKEYRING, ERR_NOKEYRING, 
 			"No Keyring configured.");
-		cb(NULL, error, data);
+		cb(error, data);
 
 	} else {
 		// FIXME : use accessor
-		purple_keyring_inuse->export_password(passwordnode, error, cb, data);
+		purple_keyring_inuse->export_password(account, error, cb, data);
 	}
 	return;
 }
@@ -266,7 +278,7 @@ purple_keyring_get_password(const PurpleAccount *account,
 		cb(account, NULL, error, data);
 
 	} else {
-		purple_keyring_inuse->read(account, error, cb, data);
+		purple_keyring_inuse->read_password(account, error, cb, data);
 	}
 	return;
 }
@@ -285,7 +297,7 @@ purple_keyring_set_password(const PurpleAccount * account,
 		cb(account, error, data);
 
 	} else {
-		purple_keyring_inuse->save(account, password, error, cb, data);
+		purple_keyring_inuse->save_password(account, password, error, cb, data);
 	}
 	return;
 }
@@ -293,49 +305,49 @@ purple_keyring_set_password(const PurpleAccount * account,
 /* accessors for data structure fields */
 	/* PurpleKeyring */
 const char *
-purple_keyring_get_name(PurpleKeyring * info)
+purple_keyring_get_name(const PurpleKeyring * info)
 {
 	return info->name;
 }
 
-PurpleKeyringRead 
+const PurpleKeyringRead 
 purple_keyring_get_read_password(const PurpleKeyring * info)
 {
 	return info->read_password;
 }
 
-PurpleKeyringSave
+const PurpleKeyringSave
 purple_keyring_get_save_password(const PurpleKeyring * info)
 {
 	return info->save_password;
 }
 
-PurpleKeyringClose 
+const PurpleKeyringClose 
 purple_keyring_get_close_keyring(const PurpleKeyring * info)
 {
 	return info->close_keyring;
 }
 
-PurpleKeyringFree 
+const PurpleKeyringFree 
 purple_keyring_get_free_password(const PurpleKeyring * info)
 {
 	return info->free_password;
 }
 
-PurpleKeyringChangeMaster 
+const PurpleKeyringChangeMaster 
 purple_keyring_get_change_master(const PurpleKeyring * info)
 {
 	return info->change_master;
 }
 
-PurpleKeyringImportPassword
+const PurpleKeyringImportPassword
 purple_keyring_get_import_password(const PurpleKeyring * info)
 {
 	return info->import_password;
 }
 
-PurpleKeyringExportPassword 
-purple_keyring_get_export_password(constPurpleKeyring * info)
+const PurpleKeyringExportPassword 
+purple_keyring_get_export_password(const PurpleKeyring * info)
 {
 	return info->export_password;
 }
@@ -411,12 +423,12 @@ purple_keyring_password_node_new(void)
 void 
 purple_keyring_password_node_free(PurpleKeyringPasswordNode * node)
 {
-	g_free(PurpleKeyringPasswordNode * node);
+	g_free(node);
 	return;
 }
 
-PurpleAccount * 
-purple_keyring_password_node_get_account(PurpleKeyringPasswordNode * info)
+const PurpleAccount * 
+purple_keyring_password_node_get_account(const PurpleKeyringPasswordNode * info)
 {
 	return info->account;
 }
@@ -434,7 +446,7 @@ purple_keyring_password_node_get_mode(PurpleKeyringPasswordNode * info)
 }
 
 const char * 
-purple_keyring_password_node_get_data(PurpleKeyringPasswordNode * info);
+purple_keyring_password_node_get_data(PurpleKeyringPasswordNode * info)
 {
 	return info->data;
 }
@@ -472,6 +484,11 @@ purple_keyring_password_node_set_data(PurpleKeyringPasswordNode * info,
 	return;
 }
 
+GQuark
+purple_keyring_error_domain(void)
+{
+	return g_quark_from_static_string("Libpurple keyring");
+}
 
 /**
  * prepare stuff (called at startup)
