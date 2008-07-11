@@ -250,17 +250,17 @@ jabber_jingle_session_get_id(const JingleSession *sess)
 static void
 jabber_jingle_session_destroy(JingleSession *sess)
 {
-	GList *contents = g_hash_table_get_values(sess->contents);
+	GList *contents;
 	g_hash_table_remove(sess->js->sessions, sess->id);
 	g_free(sess->id);
 
 	if (sess->media)
 		g_object_unref(sess->media);
 
-	for (; contents; contents = contents->next)
+	for (contents = g_hash_table_get_values(sess->contents); contents;
+			contents = g_list_delete_link(contents, contents))
 		jabber_jingle_session_destroy_content(contents->data);
 
-	g_list_free(contents);
 	g_free(sess);
 }
 
@@ -278,11 +278,10 @@ static JingleSession *
 jabber_jingle_session_find_by_jid(JabberStream *js, const char *jid)
 {
 	GList *values = g_hash_table_get_values(js->sessions);
-	GList *iter = values;
 	gboolean use_bare = strchr(jid, '/') == NULL;
 
-	for (; iter; iter = iter->next) {
-		JingleSession *session = (JingleSession *)iter->data;
+	for (; values; values = g_list_delete_link(values, values)) {
+		JingleSession *session = (JingleSession *)values->data;
 		gchar *cmp_jid = use_bare ? jabber_get_bare_jid(session->remote_jid)
 					  : g_strdup(session->remote_jid);
 		if (!strcmp(jid, cmp_jid)) {
@@ -293,7 +292,6 @@ jabber_jingle_session_find_by_jid(JabberStream *js, const char *jid)
 		g_free(cmp_jid);
 	}
 
-	g_list_free(values);
 	return NULL;	
 }
 
@@ -947,7 +945,7 @@ jabber_jingle_session_initiate_media_internal(JingleSession *session,
 		return FALSE;
 	}
 
-	for (; contents; contents = contents->next) {
+	for (; contents; contents = g_list_delete_link(contents, contents)) {
 		JingleSessionContent *jsc = contents->data;
 		gboolean result = FALSE;
 
@@ -969,7 +967,6 @@ jabber_jingle_session_initiate_media_internal(JingleSession *session,
 			return FALSE;
 		}
 	}
-	g_list_free(contents);
 
 	jabber_jingle_session_set_remote_jid(session, remote_jid);
 	jabber_jingle_session_set_initiator(session, initiator);
@@ -1115,12 +1112,10 @@ jabber_jingle_session_terminate_sessions(JabberStream *js)
 	GList *values = js->sessions ?
 			g_hash_table_get_values(js->sessions) : NULL;
 
-	for (; values; values = values->next) {
+	for (; values; values = g_list_delete_link(values, values)) {
 		JingleSession *session = (JingleSession *)values->data;
 		purple_media_hangup(session->media);
 	}
-
-	g_list_free(values);
 }
 
 static void

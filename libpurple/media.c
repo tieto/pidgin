@@ -337,12 +337,11 @@ purple_media_get_overall_type(PurpleMedia *media)
 	GList *values = g_hash_table_get_values(media->priv->sessions);
 	PurpleMediaStreamType type = PURPLE_MEDIA_NONE;
 
-	for (; values; values = values->next) {
+	for (; values; values = g_list_delete_link(values, values)) {
 		PurpleMediaSession *session = values->data;
 		type |= session->type;
 	}
 
-	g_list_free(values);
 	return type;
 }
 
@@ -458,7 +457,7 @@ purple_media_get_elements(PurpleMedia *media, GstElement **audio_src, GstElement
 {
 	GList *values = g_hash_table_get_values(media->priv->sessions);
 
-	for (; values; values = values->next) {
+	for (; values; values = g_list_delete_link(values, values)) {
 		PurpleMediaSession *session = (PurpleMediaSession*)values->data;
 
 		if (session->type & PURPLE_MEDIA_SEND_AUDIO && audio_src)
@@ -470,8 +469,6 @@ purple_media_get_elements(PurpleMedia *media, GstElement **audio_src, GstElement
 		if (session->type & PURPLE_MEDIA_RECV_VIDEO && video_sink)
 			*video_sink = session->sink;
 	}
-
-	g_list_free(values);
 }
 
 void 

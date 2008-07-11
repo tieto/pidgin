@@ -298,7 +298,7 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 	GList *sessions = purple_media_get_session_names(media);
 	GstBus *bus;
 
-	for (; sessions; sessions = sessions->next) {
+	for (; sessions; sessions = g_list_delete_link(sessions, sessions)) {
 		if (purple_media_get_session_type(media, sessions->data) & PURPLE_MEDIA_AUDIO) {
 			if (!audiosendbin)
 				purple_media_audio_init_src(&audiosendbin, &audiosendlevel);
@@ -315,7 +315,6 @@ pidgin_media_ready_cb(PurpleMedia *media, PidginMedia *gtkmedia)
 			purple_media_set_sink(media, sessions->data, videorecvbin);
 		}
 	}
-	g_list_free(sessions);
 
 	if (audiosendlevel && audiorecvlevel) {
 		g_object_set(gtkmedia, "send-level", audiosendlevel,
