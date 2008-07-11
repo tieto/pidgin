@@ -1059,9 +1059,12 @@ finch_chat_add_users(PurpleConversation *conv, GList *users, gboolean new_arriva
 	if (!new_arrivals)
 	{
 		/* Print the list of users in the room */
-		GString *string = g_string_new(_("List of users:\n"));
+		GString *string = g_string_new(NULL);
 		GList *iter;
+		int count = g_list_length(users);
 
+		g_string_printf(string,
+				ngettext("List of %d user:\n", "List of %d users:\n", count), count);
 		for (iter = users; iter; iter = iter->next)
 		{
 			PurpleConvChatBuddy *cbuddy = iter->data;
