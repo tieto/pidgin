@@ -68,7 +68,7 @@ typedef struct
 
 typedef struct
 {
-	gint icon;
+	gint buddy_icon;
 	gint text;
 	gint status_icon;
 	gint protocol_icon;

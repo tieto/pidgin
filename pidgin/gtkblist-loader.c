@@ -34,8 +34,18 @@
 static gpointer
 pidgin_buddy_list_loader_build(const gchar *dir)
 {
-	xmlnode *root_node, *sub_node;
+	xmlnode *root_node, *sub_node, *sub_sub_node;
 	gchar *filename, *filename_full, *data;
+	const gchar *icon_theme, *bgcolor, *expanded_bgcolor, *minimized_bgcolor, *buddy_bgcolor1, *buddy_bgcolor2;
+	font_color_pair *expanded = g_new0(font_color_pair, 1), 
+			*minimized = g_new0(font_color_pair, 1), 
+			*online = g_new0(font_color_pair, 1),
+			*away = g_new0(font_color_pair, 1),
+			*offline = g_new0(font_color_pair, 1), 
+			*message = g_new0(font_color_pair, 1), 
+			*status = g_new0(font_color_pair, 1);
+	gdouble transparency;
+	blist_layout *layout = g_new0(blist_layout, 1);
 	GDir *gdir;
 	PidginBuddyListTheme *theme;
 
@@ -58,13 +68,84 @@ pidgin_buddy_list_loader_build(const gchar *dir)
 	sub_node = xmlnode_get_child(root_node, "description");
 	data = xmlnode_get_data(sub_node);
 
+	/* <inon_theme> */
+	sub_node = xmlnode_get_child(root_node, "icon_theme");
+	icon_theme = xmlnode_get_attrib(sub_node, "name");
+
+	/* <buddy_list> */
+	sub_node = xmlnode_get_child(root_node, "buddy_list");
+	bgcolor = xmlnode_get_attrib(sub_node, "color");
+	transparency = atof(xmlnode_get_attrib(sub_node, "transparency"));
+
+	/* <groups> */
+	sub_node = xmlnode_get_child(root_node, "groups");
+	sub_sub_node = xmlnode_get_child(root_node, "expanded");
+	expanded->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+	expanded->color = g_strdup(xmlnode_get_attrib(sub_sub_node, "color"));
+	expanded_bgcolor = g_strdup(xmlnode_get_attrib(sub_sub_node, "background"));
+
+	sub_sub_node = xmlnode_get_child(root_node, "minimized");
+	minimized->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+	minimized->color = g_strdup(xmlnode_get_attrib(sub_sub_node, "color"));
+	minimized_bgcolor = xmlnode_get_attrib(sub_sub_node, "background");
+
+	/* <buddys> */
+	sub_node = xmlnode_get_child(root_node, "buddys");
+	sub_sub_node = xmlnode_get_child(root_node, "placement");
+	layout->buddy_icon = atoi(xmlnode_get_attrib(sub_sub_node, "status_icon"));
+	layout->text = atoi(xmlnode_get_attrib(sub_sub_node, "name"));
+	layout->buddy_icon = atoi(xmlnode_get_attrib(sub_sub_node, "buddy_icon"));
+	layout->protocol_icon = atoi(xmlnode_get_attrib(sub_sub_node, "protocol_icon"));
+	layout->emblem = atoi(xmlnode_get_attrib(sub_sub_node, "emblem"));
+	layout->show_status = (gboolean) atoi(xmlnode_get_attrib(sub_sub_node, "status_icon"));
+
+	sub_sub_node = xmlnode_get_child(root_node, "background");
+	buddy_bgcolor1 = xmlnode_get_attrib(sub_sub_node, "color1");
+	buddy_bgcolor2 = xmlnode_get_attrib(sub_sub_node, "color2");
+
+	sub_sub_node = xmlnode_get_child(root_node, "online_text");
+	online->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+	online->color = g_strdup(xmlnode_get_attrib(sub_sub_node, "color"));
+
+	sub_sub_node = xmlnode_get_child(root_node, "away_text");
+	away->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+	away->color = g_strdup(xmlnode_get_attrib(sub_sub_node, "color"));
+	
+	sub_sub_node = xmlnode_get_child(root_node, "offline_text");
+	offline->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+	offline->color = g_strdup(xmlnode_get_attrib(sub_sub_node, "color"));
+	
+	sub_sub_node = xmlnode_get_child(root_node, "message_text");
+	message->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+	message->color =	g_strdup(xmlnode_get_attrib(sub_sub_node, "color"));
+	
+	sub_sub_node = xmlnode_get_child(root_node, "status_text");
+	status->font = g_strdup(xmlnode_get_attrib(sub_sub_node, "font"));
+	status->color = g_strdup(xmlnode_get_attrib(sub_sub_node, "color"));
+
+	/* the new theme */
 	theme = g_object_new(PIDGIN_TYPE_BUDDY_LIST_THEME,
 			    "type", "blist",
 			    "name", xmlnode_get_attrib(root_node, "name"),
 			    "author", xmlnode_get_attrib(root_node, "author"),
 			    "image", xmlnode_get_attrib(root_node, "image"),
 			    "directory", dir,
-			    "description", data, NULL);
+			    "description", data,
+			    "icon-theme", icon_theme,
+			    "background-color", bgcolor,
+			    "opacity", transparency,
+			    "layout", layout,
+			    "expanded-color", expanded_bgcolor,
+			    "expanded-text", expanded,
+			    "minimized-color", minimized_bgcolor,
+			    "minimized-text", minimized,
+			    "buddy-bgcolor1", buddy_bgcolor1,
+			    "buddy-bgcolor2", buddy_bgcolor2,
+			    "online", online,
+			    "away", away,
+			    "offline", offline,
+			    "message", message,
+			    "status", status, NULL);
 	
 	xmlnode_free(sub_node);
 
