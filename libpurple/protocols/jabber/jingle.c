@@ -590,7 +590,7 @@ jabber_jingle_session_create_ack(JingleSession *session, xmlnode *jingle)
 	JabberIq *result = jabber_iq_new(
 			jabber_jingle_session_get_js(session),
 			JABBER_IQ_RESULT);
-	xmlnode *packet = jingle->parent;
+	xmlnode *packet = xmlnode_get_parent(jingle);
 	jabber_iq_set_id(result, xmlnode_get_attrib(packet, "id"));
 	xmlnode_set_attrib(result->node, "from", xmlnode_get_attrib(packet, "to"));
 	xmlnode_set_attrib(result->node, "to", xmlnode_get_attrib(packet, "from"));
@@ -1361,7 +1361,7 @@ jabber_jingle_session_handle_transport_info(JingleSession *session, xmlnode *jin
 	if (g_list_length(remote_candidates) > 0) {
 		purple_media_add_remote_candidates(session->media,
 						   xmlnode_get_attrib(content, "name"),
-						   xmlnode_get_attrib(jingle->parent, "from"),
+						   xmlnode_get_attrib(xmlnode_get_parent(jingle), "from"),
 						   remote_candidates);
 		fs_candidate_list_destroy(remote_candidates);
 	}
