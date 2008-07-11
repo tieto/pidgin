@@ -1,6 +1,8 @@
 /**
  * @file keyring.h Keyring plugin API
  * @ingroup core
+ *
+ * @todo
  */
 
 /* purple
@@ -20,7 +22,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
+ * along with this program ; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111-1301  USA
  */
 
@@ -34,24 +36,63 @@
  * DATA STRUCTURES **************************************
  ********************************************************/
 
-typedef struct _PurpleKeyring PurpleKeyring;	/* TODO : move back as public struct */
+typedef struct _PurpleKeyring PurpleKeyring;				/* public (for now) */
 typedef struct _PurpleKeyringPasswordNode PurpleKeyringPasswordNode;	/* opaque struct */
 
-
-
-/**
- * XXX maybe strip a couple GError* if they're not used 
+/*
+ * XXX maybe strip a couple GError* if they're not used,
  * since they should only be interresting for the callback
  *  --> ability to forward errors ?
+ *
  */
 
-/* callbacks */
+/*********************************************************/
+/** @name Callbacks for basic keyring operation          */
+/*********************************************************/
+
+/**
+ * Callback for once a password is read. If there was a problem, the password should
+ * be NULL, and the error set.
+ *
+ * @param account The account of which the password was asked.
+ * @param password The password that was read
+ * @param error Error that could have occured. Must be freed if non NULL.
+ * @param data Data passed to the callback.
+ */
 typedef void (*PurpleKeyringReadCallback)(const PurpleAccount * account,
 					  gchar * password,
 					  GError ** error,
 					  gpointer data);
-typedef void (*PurpleKeyringSaveCallback)(const PurpleAccount * account, GError ** error, gpointer data);
-typedef void (*PurpleKeyringChangeMasterCallback)(int result, GError * error, gpointer data);
+
+/**
+ * Callback for once a password has been stored. If there was a problem, the error will be set.
+ *
+ * @param account The account of which the password was saved.
+ * @param error Error that could have occured. Must be freed if non NULL.
+ * @param data Data passed to the callback.
+ */
+typedef void (*PurpleKeyringSaveCallback)(const PurpleAccount * account, 
+					  GError ** error,
+					  gpointer data);
+
+/**
+ * Callback for once the master password for a keyring has been changed.
+ *
+ * @param result Will be TRUE if the password has been changed, false otherwise.
+ * @param error Error that has occured. Must be freed if non NULL.
+ * @param data Data passed to the callback.
+ */
+typedef void (*PurpleKeyringChangeMasterCallback)(gboolean result,
+						  GError ** error,
+						  gpointer data);
+
+/**
+ * Callback for once the master password for a keyring has been changed.
+ *
+ * @param result Will be TRUE if the password has been changed, false otherwise.
+ * @param error Error that has occured. Must be freed if non NULL.
+ * @param data Data passed to the callback.
+ */
 typedef void (*PurpleKeyringImportCallback)(GError ** error, gpointer data);	/* XXX add a gboolean result or just use error ? */
 typedef void (*PurpleKeyringExportCallback)(PurpleKeyringPasswordNode * result, GError ** error, gpointer data);
 
@@ -66,14 +107,7 @@ typedef void (*PurpleKeyringClose)(GError ** error);
 typedef void (*PurpleKeyringChangeMaster)(GError ** error, PurpleKeyringChangeMasterCallback cb, gpointer data);
 typedef void (*PurpleKeyringFree)(gchar * password, GError ** error);
 
-/**
- * TODO : 
- *  - add GErrors in there
- *  - add callback, it needs to be async
- *  - typedefs for callbacks
- */
 typedef void (*PurpleKeyringImportPassword)(const PurpleKeyringPasswordNode * nodeinfo, GError ** error, PurpleKeyringImportCallback cb, gpointer data);
-
 typedef void (*PurpleKeyringExportPassword)(const PurpleAccount * account,GError ** error, PurpleKeyringExportCallback cb,     gpointer data);
 
 /* information about a keyring */
@@ -100,8 +134,8 @@ struct _PurpleKeyring
 /***************************************/
 
 /* manipulate keyring list, used by config interface */
-const GList * purple_keyring_get_keyringlist(void);
-const PurpleKeyring * purple_keyring_get_inuse(void);
+const GList * purple_keyring_get_keyringlist();
+const PurpleKeyring * purple_keyring_get_inuse();
 
 // FIXME : needs to be async so it can detect errors and undo changes
 void
@@ -115,7 +149,7 @@ purple_keyring_set_inuse_got_pw_cb(const PurpleAccount * account,
 void purple_plugin_keyring_register(PurpleKeyring * info);
 
 /* used by account.c while reading a password from xml */
-gboolean purple_keyring_import_password(const PurpleKeyringPasswordNode * passwordnode, 
+void purple_keyring_import_password(const PurpleKeyringPasswordNode * passwordnode, 
 					GError ** error, 
 					PurpleKeyringImportCallback cb, 
 					gpointer data);
@@ -125,7 +159,7 @@ gboolean purple_keyring_import_password(const PurpleKeyringPasswordNode * passwo
  */
 void purple_keyring_export_password(PurpleAccount * account,
 				    GError ** error,
-				    PurpleKeyringImportCallback cb,
+				    PurpleKeyringExportCallback cb,
 				    gpointer data);
 
 
@@ -170,7 +204,7 @@ void purple_keyring_set_export_password(PurpleKeyring * info, PurpleKeyringExpor
 
 	/* PurpleKeyringPasswordNode */
 
-PurpleKeyringPasswordNode * purple_keyring_password_node_new(void);
+PurpleKeyringPasswordNode * purple_keyring_password_node_new();
 void purple_keyring_password_node_delete(PurpleKeyringPasswordNode * node);
 
 const PurpleAccount * 
@@ -192,19 +226,25 @@ void purple_keyring_init();
 /** @name Error Codes                  */
 /***************************************/
 
+/**
+ * Error domain GQuark. 
+ * See @ref purple_keyring_error_domain .
+ */
 #define ERR_PIDGINKEYRING 	purple_keyring_error_domain()
-GQuark purple_keyring_error_domain(void);
+/** stuff here too */
+GQuark purple_keyring_error_domain();
 
-enum
+/** error codes for keyrings. */
+enum PurpleKeyringError
 {
-	ERR_OK = 0,		/* no error */
-	ERR_NOPASSWD = 1,	/* no stored password */
-	ERR_NOACCOUNT,		/* account not found */
-	ERR_WRONGPASS,		/* user submitted wrong password when prompted */
-	ERR_WRONGFORMAT,	/* data passed is not in suitable format*/
-	ERR_NOKEYRING,		/* no keyring configured */
+	ERR_OK = 0,		/**< no error. */
+	ERR_NOPASSWD = 1,	/**< no stored password. */
+	ERR_NOACCOUNT,		/**< account not found. */
+	ERR_WRONGPASS,		/**< user submitted wrong password when prompted. */
+	ERR_WRONGFORMAT,	/**< data passed is not in suitable format. */
+	ERR_NOKEYRING,		/**< no keyring configured. */
 	ERR_NOCHANNEL
-} PurpleKeyringError;
+};
 
 
 #endif /* _PURPLE_KEYRING_H_ */

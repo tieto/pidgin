@@ -1,9 +1,8 @@
 /* TODO
  - fix error reporting
- - uses accessors for PurpleKeyringPasswordNode
  - use hashtable instead of Glib
  - plugin interface
- - keyring info struct
+ - move keyring info struct upwards
 */
 
 #include <glib.h>
@@ -275,9 +274,7 @@ InternalKeyring_import_password(const PurpleKeyringPasswordNode * nodeinfo,
 /**
  * Exports password info to a PurpleKeyringPasswordNode structure
  * (called for each account when accounts are synced)
- * TODO : add error reporting 
- *	  use accessors for PurpleKeyringPasswordNode (FIXME)
- *	  FIXME : REWRITE AS ASYNC
+ * TODO : add proper error reporting 
  */
 void
 InternalKeyring_export_password(const PurpleAccount * account,
@@ -293,6 +290,7 @@ InternalKeyring_export_password(const PurpleAccount * account,
 
 	if (pwinfo->password == NULL) {
 
+		// FIXME : error
 		cb(NULL, error, data);
 		return;
 
