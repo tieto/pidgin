@@ -59,6 +59,25 @@ struct _PidginBuddyListThemeClass
 	PurpleThemeClass parent_class;
 };
 
+typedef struct
+{
+	gchar *font;
+	gchar *color;
+
+} font_color_pair;
+
+typedef struct
+{
+	gint icon;
+	gint text;
+	gint status_icon;
+	gint protocol_icon;
+	gint emblem;
+	gboolean show_status; 
+
+} blist_layout;
+
+
 /**************************************************************************/
 /** @name Purple Sound Theme API                                          */
 /**************************************************************************/
@@ -70,6 +89,104 @@ G_BEGIN_DECLS
  */
 GType pidgin_buddy_list_theme_get_type(void);
 
+/**
+ * Returns the icon theme to be used with the buddy list theme
+ *
+ * @returns 	the icon theme
+ */
+const gchar *pidgin_buddy_list_theme_get_icon_theme(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the opacity of the buddy list window
+ * (0.0 or clear to 1.0 fully Opaque)
+ *
+ * @returns 	the opacity
+ */
+gdouble pidgin_buddy_list_theme_get_opacity(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the layout to be used with the buddy list
+ *
+ * @returns 	the buddy list layout
+ */
+const blist_layout *pidgin_buddy_list_theme_get_layout(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the background color to be used with expanded groups
+ *
+ * @returns 	a color
+ */
+const gchar *pidgin_buddy_list_theme_get_expanded_background_color(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the text font and color to be used with expanded groups
+ *
+ * @returns 	a font and color pair
+ */
+const font_color_pair *pidgin_buddy_list_theme_get_expanded_text_info(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the background color to be used with minimized groups
+ *
+ * @returns 	a color
+ */
+const gchar *pidgin_buddy_list_theme_get_minimized_background_color(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the text font and color to be used with minimized groups
+ *
+ * @returns 	a font and color pair
+ */
+const font_color_pair *pidgin_buddy_list_theme_get_minimized_text_info(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the 1st color to be used for buddys
+ *
+ * @returns 	a color
+ */
+const gchar *pidgin_buddy_list_theme_get_buddy_color_1(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the 2nd color to be used for buddies
+ *
+ * @returns 	a color
+ */
+const gchar *pidgin_buddy_list_theme_get_buddy_color_2(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the text font and color to be used for online buddies
+ *
+ * @returns 	a font and color pair
+ */
+const font_color_pair *pidgin_buddy_list_theme_get_online_text_info(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the text font and color to be used for away and idle buddies
+ *
+ * @returns 	a font and color pair
+ */
+const font_color_pair *pidgin_buddy_list_theme_get_away_text_info(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the text font and color to be used for offline buddies
+ *
+ * @returns 	a font and color pair
+ */
+const font_color_pair *pidgin_buddy_list_theme_get_offline_text_info(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the text font and color to be used for buddies with unread messages
+ *
+ * @returns 	a font and color pair
+ */
+const font_color_pair *pidgin_buddy_list_theme_get_unread_message_text_info(PidginBuddyListTheme *theme);
+
+/**
+ * Returns the text font and color to be used for a buddy's status message 
+ *
+ * @returns 	a font and color pair
+ */
+const font_color_pair *pidgin_buddy_list_theme_get_status_text_info(PidginBuddyListTheme *theme);
 
 G_END_DECLS
 #endif /* _PIDGIN_BUDDY_LIST_THEME_H_ */

@@ -7185,6 +7185,8 @@ pidgin_blist_set_theme(PidginBuddyListTheme *theme)
 	
 	g_return_if_fail(PIDGIN_IS_BUDDY_LIST_THEME(theme));	
 	
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/blist/theme", 
+				purple_theme_get_name(PURPLE_THEME(theme)));
 	priv->current_theme = theme;
 }
 
