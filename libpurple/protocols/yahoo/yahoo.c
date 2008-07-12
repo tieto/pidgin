@@ -696,8 +696,8 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 	yahoo_fetch_aliases(gc);
 }
 
-/*pkt_type is PKT_YAHOOSERVER if pkt arrives from yahoo server, PKT_P2P if pkt arrives through p2p*/ 
-static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt, int pkt_type)
+/*pkt_type is YAHOO_PKT_TYPE_SERVER if pkt arrives from yahoo server, YAHOO_PKT_TYPE_P2P if pkt arrives through p2p*/
+static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt, yahoo_pkt_type pkt_type)
 {
 	PurpleAccount *account;
 	char *msg = NULL;
@@ -730,7 +730,7 @@ static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt,
 		return;
 
 	/*disconnect the peer if connected through p2p and sends wrong value for session id*/
-	if( (pkt_type == PKT_P2P) && (val_11 != yd->session_id) ) {
+	if( (pkt_type == YAHOO_PKT_TYPE_P2P) && (val_11 != yd->session_id) ) {
 		purple_debug_warning("yahoo","p2p: %s sent us notify with wrong session id. Disconnecting p2p connection to peer\n", from);
 		/*remove from p2p connection lists, also calls yahoo_p2p_disconnect_destroy_data*/
 		g_hash_table_remove(yd->peers, from);
@@ -781,8 +781,8 @@ struct _yahoo_im {
 	char *msg;
 };
 
-/*pkt_type is PKT_YAHOOSERVER if pkt arrives from yahoo server, PKT_P2P if pkt arrives through p2p*/ 
-static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt, int pkt_type)
+/*pkt_type is YAHOO_PKT_TYPE_SERVER if pkt arrives from yahoo server, YAHOO_PKT_TYPE_P2P if pkt arrives through p2p*/
+static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt, yahoo_pkt_type pkt_type)
 {
 	PurpleAccount *account;
 	struct yahoo_data *yd = gc->proto_data;
@@ -836,7 +836,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 	}
 
 	/*disconnect the peer if connected through p2p and sends wrong value for session id*/
-	if( (pkt_type == PKT_P2P) && (val_11 != yd->session_id) ) {
+	if( (pkt_type == YAHOO_PKT_TYPE_P2P) && (val_11 != yd->session_id) ) {
 		purple_debug_warning("yahoo","p2p: %s sent us message with wrong session id. Disconnecting p2p connection to peer\n", im->from);
 		/*remove from p2p connection lists, also calls yahoo_p2p_disconnect_destroy_data*/
 		g_hash_table_remove(yd->peers, im->from);
@@ -2432,10 +2432,10 @@ static void yahoo_p2p_read_pkt_cb(gpointer data, gint source, PurpleInputConditi
 			yahoo_p2p_process_p2pfilexfer(data, source, pkt);
 			break;
 		case YAHOO_SERVICE_MESSAGE:
-			yahoo_process_message(p2p_data->gc, pkt, PKT_P2P);
+			yahoo_process_message(p2p_data->gc, pkt, YAHOO_PKT_TYPE_P2P);
 			break;
 		case YAHOO_SERVICE_NOTIFY:
-			yahoo_process_notify(p2p_data->gc, pkt, PKT_P2P);
+			yahoo_process_notify(p2p_data->gc, pkt, YAHOO_PKT_TYPE_P2P);
 			break;
 		default:
 			purple_debug_warning("yahoo","p2p: p2p service %d Unhandled\n",pkt->service);
@@ -2782,12 +2782,12 @@ static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 		yahoo_process_status(gc, pkt);
 		break;
 	case YAHOO_SERVICE_NOTIFY:
-		yahoo_process_notify(gc, pkt, PKT_YAHOOSERVER);
+		yahoo_process_notify(gc, pkt, YAHOO_PKT_TYPE_SERVER);
 		break;
 	case YAHOO_SERVICE_MESSAGE:
 	case YAHOO_SERVICE_GAMEMSG:
 	case YAHOO_SERVICE_CHATMSG:
-		yahoo_process_message(gc, pkt, PKT_YAHOOSERVER);
+		yahoo_process_message(gc, pkt, YAHOO_PKT_TYPE_SERVER);
 		break;
 	case YAHOO_SERVICE_SYSMESSAGE:
 		yahoo_process_sysmessage(gc, pkt);

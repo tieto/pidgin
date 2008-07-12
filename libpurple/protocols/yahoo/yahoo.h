@@ -81,12 +81,13 @@
 #define YAHOOJP_CLIENT_VERSION_ID "524223"
 #define YAHOOJP_CLIENT_VERSION "7,0,1,1"
 
-/*Packet sources: yahoo server and p2p*/
-#define PKT_YAHOOSERVER 0
-#define PKT_P2P 1
-
 /* Index into attention types list. */
 #define YAHOO_BUZZ 0
+
+typedef enum {
+	YAHOO_PKT_TYPE_SERVER = 0,
+	YAHOO_PKT_TYPE_P2P
+} yahoo_pkt_type;
 
 enum yahoo_status {
 	YAHOO_STATUS_AVAILABLE = 0,
