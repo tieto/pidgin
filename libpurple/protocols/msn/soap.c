@@ -288,13 +288,13 @@ msn_soap_read_cb(gpointer data, gint fd, PurpleInputCondition cond)
 	if(cnt < 0 && errno == EAGAIN && count == 0)
 		return;
 
-	// msn_soap_process could alter errno
+	/* msn_soap_process could alter errno */
 	perrno = errno;
 	msn_soap_process(conn);
 	
 	if (cnt < 0 && perrno != EAGAIN) {
 		purple_debug_info("soap", "read: %s\n", g_strerror(perrno));
-		// It's possible msn_soap_process closed the ssl connection
+		/* It's possible msn_soap_process closed the ssl connection */
 		if (conn->ssl) {
 			purple_ssl_close(conn->ssl);
 			conn->ssl = NULL;

@@ -186,14 +186,14 @@ typedef enum
 typedef struct _MsnUsrKey MsnUsrKey;
 struct _MsnUsrKey
 {
-	int size; // 28. Does not count data
-	int crypt_mode; // CRYPT_MODE_CBC (1)
-	int cipher_type; // TripleDES (0x6603)
-	int hash_type; // SHA1 (0x8004)
-	int iv_len;    // 8
-	int hash_len;  // 20
-	int cipher_len; // 72
-	// Data
+	int size; /* 28. Does not count data */
+	int crypt_mode; /* CRYPT_MODE_CBC (1) */
+	int cipher_type; /* TripleDES (0x6603) */
+	int hash_type; /* SHA1 (0x8004) */
+	int iv_len;    /* 8 */
+	int hash_len;  /* 20 */
+	int cipher_len; /* 72 */
+	/* Data */
 	char iv[8];
 	char hash[20];
 	char cipher[72];

@@ -23,7 +23,6 @@
  */
 #include "msn.h"
 #include "msnutils.h"
-#include "time.h"
 
 #include "cipher.h"
 
@@ -476,30 +475,6 @@ msn_parse_socket(const char *str, char **ret_host, int *ret_port)
 	*ret_host = host;
 	*ret_port = port;
 }
-/***************************************************************************
- * MSN Time Related Funciton
- ***************************************************************************/
-#if 0
-int
-msn_convert_iso8601(const char *timestr,struct tm tm_time)
-{
-	char temp[64];
-	struct tm ctime;
-	time_t ts;
-
-	purple_debug_info("msn", "convert string is{%s}\n", timestr);
-	tzset();
-	/*copy string first*/
-	memset(temp, 0, sizeof(temp));
-	strncpy(temp, timestr, strlen(timestr));
-
-	/*convert via strptime()*/
-	memset(&ctime, 0, sizeof(struct tm));
-	strptime(temp, "%d %b %Y %T %Z", &ctime);
-	ts = mktime(&ctime) - timezone;
-	localtime_r(&ts, tm_time);
-}
-#endif
 
 /***************************************************************************
  * MSN Challenge Computing Function

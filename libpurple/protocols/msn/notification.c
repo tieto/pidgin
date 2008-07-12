@@ -228,16 +228,7 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (!g_ascii_strcasecmp(cmd->params[1], "OK"))
 	{
 		/* authenticate OK */
-		/* friendly name part no longer true in msnp11 */
-#if 0
-		const char *friendly = purple_url_decode(cmd->params[3]);
-
-		purple_connection_set_display_name(gc, friendly);
-#endif
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_SYN);
-
-//		msn_cmdproc_send(cmdproc, "SYN", "%s", "0");
-		//TODO we should use SOAP contact to fetch contact list
 	}
 	else if (!g_ascii_strcasecmp(cmd->params[1], "SSO"))
 	{
@@ -315,8 +306,6 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	 * to see the Local ID
 	 */
 	msn_cmdproc_send(cmdproc, "CVR",
-//					 "0x0409 winnt 5.1 i386 MSG80BETA 8.0.0689 msmsgs %s",
-//					"0x0804 winnt 5.1 i386 MSNMSGR 8.0.0792 msmsgs %s",
 					"0x0409 winnt 5.1 i386 MSNMSGR 8.5.1288 msmsgs %s",
 					 purple_account_get_username(account));
 }
@@ -722,33 +711,18 @@ adl_cmd_parse(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 		domain = xmlnode_get_attrib(domain_node, "n");
 
 		for (contact_node = xmlnode_get_child(domain_node, "c"); contact_node; contact_node = xmlnode_get_next_twin(contact_node)) {
-//			gchar *name = NULL, *friendlyname = NULL, *passport= NULL;
 			const gchar *list;
 			gint list_op = 0;
 
-//			name = xmlnode_get_attrib(contact_node, "n");
 			list = xmlnode_get_attrib(contact_node, "l");
 			if (list != NULL) {
 				list_op = atoi(list);
 			}
-//			friendlyname = xmlnode_get_attrib(contact_node, "f");
-
-//			passport = g_strdup_printf("%s@%s", name, domain);
-
-//			if (friendlyname != NULL) {
-//				decoded_friendlyname = g_strdup(purple_url_decode(friendlyname));
-//			} else {
-//				decoded_friendlyname = g_strdup(passport);
-//			}
 
 			if (list_op & MSN_LIST_RL_OP) {
 				/* someone is adding us */
-//				got_new_entry(cmdproc->session->account->gc, passport, decoded_friendly_name);
 				msn_get_contact_list(cmdproc->session, MSN_PS_PENDING_LIST, NULL);
 			}
-
-//			g_free(decoded_friendly_name);
-//			g_free(passport);
 		}
 	}
 
@@ -802,8 +776,8 @@ fqy_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 {
 	purple_debug_info("msn", "FQY payload:\n%s\n", payload);
 	g_return_if_fail(cmdproc->session != NULL);
-//	msn_notification_post_adl(cmdproc, payload, len);
-//	msn_get_address_book(cmdproc->session, MSN_AB_SAVE_CONTACT, NULL, NULL);
+/*	msn_notification_post_adl(cmdproc, payload, len); */
+/*	msn_get_address_book(cmdproc->session, MSN_AB_SAVE_CONTACT, NULL, NULL); */
 }
 
 static void
@@ -936,7 +910,7 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			msn_userlist_move_buddy(userlist, data->who, data->old_group_name, group_name);
 			g_free(data->old_group_name);
 		} else {
-			// msn_add_contact_to_group(userlist, data, data->who, group_name);
+			/* msn_add_contact_to_group(userlist, data, data->who, group_name); */
 		}
 	}
 }
@@ -1191,35 +1165,6 @@ not_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	cmdproc->servconn->payload_len = atoi(cmd->params[0]);
 	cmdproc->last_cmd->payload_cb = not_cmd_post;
-}
-
-static void
-rea_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
-{
-	MsnSession *session;
-	PurpleAccount *account;
-	PurpleConnection *gc;
-	const char *friendly;
-	char *username;
-
-	session = cmdproc->session;
-	account = session->account;
-	username = g_strdup(purple_normalize(account,
-						purple_account_get_username(account)));
-
-	/* Only set display name if our *own* friendly name changed! */
-	if (strcmp(username, purple_normalize(account, cmd->params[2])))
-	{
-		g_free(username);
-		return;
-	}
-
-	g_free(username);
-
-	gc = account->gc;
-	friendly = purple_url_decode(cmd->params[3]);
-
-	purple_connection_set_display_name(gc, friendly);
 }
 
 static void
@@ -1845,10 +1790,6 @@ initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		/* This isn't an official message. */
 		return;
 
-	/*new a oim session*/
-//	session->oim = msn_oim_new(session);
-//	msn_oim_connect(session->oim);
-
 	table = msn_message_get_hashtable_from_body(msg);
 
 	mdata = g_hash_table_lookup(table, "Mail-Data");
@@ -2069,25 +2010,19 @@ msn_notification_rem_buddy_from_list(MsnNotification *notification, MsnListId li
 void
 msn_notification_init(void)
 {
-	/* TODO: check prp, blp */
-
 	cbs_table = msn_table_new();
 
 	/* Synchronous */
 	msn_table_add_cmd(cbs_table, "CHG", "CHG", NULL);
 	msn_table_add_cmd(cbs_table, "CHG", "ILN", iln_cmd);
 	msn_table_add_cmd(cbs_table, "ADL", "ILN", iln_cmd);
-//	msn_table_add_cmd(cbs_table, "REM", "REM", rem_cmd);	/* Removed as of MSNP13 */
 	msn_table_add_cmd(cbs_table, "USR", "USR", usr_cmd);
 	msn_table_add_cmd(cbs_table, "USR", "XFR", xfr_cmd);
 	msn_table_add_cmd(cbs_table, "USR", "GCF", gcf_cmd);
-//	msn_table_add_cmd(cbs_table, "SYN", "SYN", syn_cmd);	/* Removed as of MSNP13 */
 	msn_table_add_cmd(cbs_table, "CVR", "CVR", cvr_cmd);
 	msn_table_add_cmd(cbs_table, "VER", "VER", ver_cmd);
-	msn_table_add_cmd(cbs_table, "REA", "REA", rea_cmd);
 	msn_table_add_cmd(cbs_table, "PRP", "PRP", prp_cmd);
 	msn_table_add_cmd(cbs_table, "BLP", "BLP", blp_cmd);
-//	msn_table_add_cmd(cbs_table, "BLP", "BLP", NULL);
 	msn_table_add_cmd(cbs_table, "REG", "REG", reg_cmd);
 	msn_table_add_cmd(cbs_table, "ADG", "ADG", adg_cmd);
 	msn_table_add_cmd(cbs_table, "RMG", "RMG", rmg_cmd);
@@ -2125,7 +2060,6 @@ msn_notification_init(void)
 	msn_table_add_error(cbs_table, "ADL", adl_error);
 	msn_table_add_error(cbs_table, "REG", reg_error);
 	msn_table_add_error(cbs_table, "RMG", rmg_error);
-	/* msn_table_add_error(cbs_table, "REA", rea_error); */
 	msn_table_add_error(cbs_table, "USR", usr_error);
 
 	msn_table_add_msg_type(cbs_table,

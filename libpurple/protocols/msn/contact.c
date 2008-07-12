@@ -939,8 +939,9 @@ msn_add_contact_read_cb(MsnSoapMessage *req, MsnSoapMessage *resp,
 
 	purple_debug_info("msn", "Contact added successfully\n");
 
-	// the code this block is replacing didn't send ADL for yahoo contacts,
-	// but i haven't confirmed this is WLM's behaviour wrt yahoo contacts
+	/* the code this block is replacing didn't send ADL for yahoo contacts,
+	 * but i haven't confirmed this is WLM's behaviour wrt yahoo contacts
+	 */
 	if ( !msn_user_is_yahoo(session->account, state->who) ) {
 		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_AL);
 		msn_userlist_add_buddy_to_list(userlist, state->who, MSN_LIST_FL);
@@ -1562,7 +1563,7 @@ msn_del_group(MsnSession *session, const gchar *group_name)
 	}
 
 	if ( !strcmp(guid, MSN_INDIVIDUALS_GROUP_ID) || !strcmp(guid, MSN_NON_IM_GROUP_ID) ) {
-		// XXX add back PurpleGroup since it isn't really removed in the server?
+		/* XXX add back PurpleGroup since it isn't really removed in the server? */
 		return;
 	}
 
@@ -1608,7 +1609,7 @@ msn_contact_rename_group(MsnSession *session, const char *old_group_name, const 
 	if ( !strcmp(guid, MSN_INDIVIDUALS_GROUP_ID) || !strcmp(guid, MSN_NON_IM_GROUP_ID) ) {
 		MsnCallbackState *new_state = msn_callback_state_dup(state);
 		msn_add_group(session, new_state, new_group_name);
-		// XXX move every buddy there (we probably need to fix concurrent SOAP reqs first)
+		/* XXX move every buddy there (we probably need to fix concurrent SOAP reqs first) */
 	}
 
 	msn_callback_state_set_action(state, MSN_RENAME_GROUP);
