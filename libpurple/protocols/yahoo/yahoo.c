@@ -2550,7 +2550,7 @@ static void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13
 	p2p_data->host_username = (char *)g_malloc(strlen(who));
 	strcpy(p2p_data->host_username, who);
 	p2p_data->val_13 = val_13;
-	p2p_data->connection_type = 1;		/*0:we are server*/
+	p2p_data->connection_type = YAHOO_P2P_WE_ARE_SERVER;
 
 	purple_network_listen(YAHOO_PAGER_PORT_P2P, SOCK_STREAM, yahoo_p2p_server_listen_cb, p2p_data);
 
@@ -2696,7 +2696,7 @@ static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 		p2p_data->session_id = val_11;
 		p2p_data->host_ip = host_ip;
 		p2p_data->gc = gc;
-		p2p_data->connection_type = 0;		/*0:peer is server*/
+		p2p_data->connection_type = YAHOO_P2P_WE_ARE_CLIENT;
 
 		/*connect to host*/
 		if((purple_proxy_connect(NULL, account, host_ip, YAHOO_PAGER_PORT_P2P, yahoo_p2p_init_cb, p2p_data))==NULL)	{

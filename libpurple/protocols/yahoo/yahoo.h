@@ -89,6 +89,11 @@ typedef enum {
 	YAHOO_PKT_TYPE_P2P
 } yahoo_pkt_type;
 
+typedef enum {
+	YAHOO_P2P_WE_ARE_CLIENT =0,
+	YAHOO_P2P_WE_ARE_SERVER
+} yahoo_p2p_connection_type;
+
 enum yahoo_status {
 	YAHOO_STATUS_AVAILABLE = 0,
 	YAHOO_STATUS_BRB,
@@ -126,7 +131,7 @@ struct yahoo_p2p_data	{
 	guint input_event;
 	gint source;
 	int session_id;
-	gboolean connection_type;	/* 0: peer is server, 1: we are server*/
+	yahoo_p2p_connection_type connection_type;
 };
 
 struct _YchtConn;
