@@ -291,7 +291,7 @@ nexus_parse_token(MsnNexus *nexus, int id, xmlnode *node)
 		FALSE, NULL, NULL, NULL);
 	g_free(expiry_str);
 
-	purple_debug_info("msnp15", "Updated ticket for domain '%s', expires at %" G_GINT64_FORMAT ".\n",
+	purple_debug_info("msn", "Updated ticket for domain '%s', expires at %" G_GINT64_FORMAT ".\n",
 	                  ticket_domains[id][SSO_VALID_TICKET_DOMAIN],
 	                  (gint64)nexus->tokens[id].expiry);
 	return TRUE;
@@ -372,13 +372,13 @@ msn_nexus_connect(MsnNexus *nexus)
 
 	MsnSoapMessage *soap;
 
-	purple_debug_info("MSN Nexus","Starting Windows Live ID authentication\n");
+	purple_debug_info("msn", "Starting Windows Live ID authentication\n");
 	msn_session_set_login_step(session, MSN_LOGIN_STEP_GET_COOKIE);
 
 	username = purple_account_get_username(session->account);
 	password = g_strndup(purple_connection_get_password(session->account->gc), 16);
 
-	purple_debug_info("msnp15", "Logging on %s, with policy '%s', nonce '%s'\n",
+	purple_debug_info("msn", "Logging on %s, with policy '%s', nonce '%s'\n",
 	                  username, nexus->policy, nexus->nonce);
 
 	domains = g_string_new(NULL);
@@ -418,7 +418,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 #endif
 	char *decrypted_data;
 
-	purple_debug_info("msnp15", "Got Update Response for %s.\n", ticket_domains[ud->id][SSO_VALID_TICKET_DOMAIN]);
+	purple_debug_info("msn", "Got Update Response for %s.\n", ticket_domains[ud->id][SSO_VALID_TICKET_DOMAIN]);
 
 	enckey = xmlnode_get_child(resp->xml, "Header/Security/DerivedKeyToken");
 	while (enckey) {
@@ -427,7 +427,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 		enckey = xmlnode_get_next_twin(enckey);
 	}
 	if (!enckey) {
-		purple_debug_info("msnp15", "Invalid Response.\n");
+		purple_debug_error("msn", "Invalid response in token update.\n");
 		return;
 	}
 
@@ -444,7 +444,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 	if (tmp) {
 		decrypted_pp = des3_cbc(key, iv, tmp, len, TRUE);
 		g_free(tmp);
-		purple_debug_info("msnp15", "Got Response Header EncryptedPP: %s\n", decrypted_pp);
+		purple_debug_info("msn", "Got Response Header EncryptedPP: %s\n", decrypted_pp);
 		g_free(decrypted_pp);
 	}
 #endif
@@ -460,7 +460,7 @@ nexus_got_update_cb(MsnSoapMessage *req, MsnSoapMessage *resp, gpointer data)
 
 		decrypted_data = des3_cbc(key, iv, unescaped, len, TRUE);
 		g_free(unescaped);
-		purple_debug_info("msnp15", "Got Response Body EncryptedData: %s\n", decrypted_data);
+		purple_debug_info("msn", "Got Response Body EncryptedData: %s\n", decrypted_data);
 
 		rstresponse = xmlnode_from_str(decrypted_data, -1);
 		if (g_str_equal(rstresponse->name, "RequestSecurityTokenResponse"))
@@ -507,7 +507,7 @@ msn_nexus_update_token(MsnNexus *nexus, int id, GSourceFunc cb, gpointer data)
 	char *request;
 	MsnSoapMessage *soap;
 
-	purple_debug_info("msnp15",
+	purple_debug_info("msn",
 	                  "Updating ticket for user '%s' on domain '%s'\n",
 	                  purple_account_get_username(session->account),
 	                  ticket_domains[id][SSO_VALID_TICKET_DOMAIN]);

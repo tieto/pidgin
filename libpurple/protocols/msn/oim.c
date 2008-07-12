@@ -73,7 +73,7 @@ msn_oim_destroy(MsnOim *oim)
 {
 	MsnOimSendReq *request;
 
-	purple_debug_info("OIM", "destroy the OIM %p\n", oim);
+	purple_debug_info("msn", "destroy the OIM %p\n", oim);
 	g_free(oim->run_id);
 	g_free(oim->challenge);
 
@@ -146,7 +146,7 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 		gchar *faultcode_str = xmlnode_get_data(faultcode);
 
 		if (faultcode_str && g_str_equal(faultcode_str, "q0:BadContextToken")) {
-			purple_debug_error("msnp15", "OIM Request Error, Updating token now.");
+			purple_debug_warning("msn", "OIM Request Error, Updating token now.");
 			msn_nexus_update_token(data->oim->session->nexus,
 				data->send ? MSN_AUTH_LIVE_SECURE : MSN_AUTH_MESSENGER_WEB,
 				(GSourceFunc)msn_oim_request_helper, data);
@@ -155,7 +155,7 @@ msn_oim_request_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 
 		} else if (faultcode_str && g_str_equal(faultcode_str, "q0:AuthenticationFailed")) {
 			if (xmlnode_get_child(fault, "detail/RequiredAuthPolicy") != NULL) {
-				purple_debug_error("msnp15", "OIM Request Error, Updating token now.");
+				purple_debug_warning("msn", "OIM Request Error, Updating token now.");
 				msn_nexus_update_token(data->oim->session->nexus,
 					data->send ? MSN_AUTH_LIVE_SECURE : MSN_AUTH_MESSENGER_WEB,
 					(GSourceFunc)msn_oim_request_helper, data);
@@ -272,9 +272,9 @@ msn_oim_msg_to_str(MsnOim *oim, const char *body)
 {
 	char *oim_body,*oim_base64;
 
-	purple_debug_info("MSN OIM","encode OIM Message...\n");
+	purple_debug_info("msn", "encode OIM Message...\n");
 	oim_base64 = purple_base64_encode((const guchar *)body, strlen(body));
-	purple_debug_info("MSN OIM","encoded base64 body:{%s}\n",oim_base64);
+	purple_debug_info("msn", "encoded base64 body:{%s}\n", oim_base64);
 	oim_body = g_strdup_printf(MSN_OIM_MSG_TEMPLATE,
 				oim->run_id,oim->send_seq,oim_base64);
 	g_free(oim_base64);
@@ -296,13 +296,13 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	g_return_if_fail(msg != NULL);
 
 	if (response == NULL) {
-		purple_debug_info("MSNP14", "cannot send OIM: %s\n", msg->oim_msg);
+		purple_debug_info("msn", "cannot send OIM: %s\n", msg->oim_msg);
 	} else {
 		xmlnode	*faultNode = xmlnode_get_child(response->xml, "Body/Fault");
 
 		if (faultNode == NULL) {
 			/*Send OK! return*/
-			purple_debug_info("MSNP14", "sent OIM: %s\n", msg->oim_msg);
+			purple_debug_info("msn", "sent OIM: %s\n", msg->oim_msg);
 		} else {
 			xmlnode *faultcode = xmlnode_get_child(faultNode, "faultcode");
 
@@ -318,13 +318,13 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 							g_free(oim->challenge);
 							oim->challenge = NULL;
 
-							purple_debug_info("msnoim","resending OIM: %s\n",
+							purple_debug_info("msn", "Resending OIM: %s\n",
 								msg->oim_msg);
 							g_queue_push_head(oim->send_queue, msg);
 							msn_oim_send_msg(oim);
 						} else {
-							purple_debug_info("msnoim",
-								"can't find lock key for OIM: %s\n",
+							purple_debug_info("msn",
+								"Can't find lock key for OIM: %s\n",
 								msg->oim_msg);
 						}
 					} else {
@@ -336,10 +336,10 @@ msn_oim_send_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 						g_free(oim->challenge);
 						oim->challenge = g_strndup(buf, sizeof(buf));
 						g_free(challenge);
-						purple_debug_info("MSNP14","lockkey:{%s}\n",oim->challenge);
+						purple_debug_info("msn", "Found lockkey:{%s}\n", oim->challenge);
 
 						/*repost the send*/
-						purple_debug_info("MSNP14","resending OIM: %s\n", msg->oim_msg);
+						purple_debug_info("msn", "Resending OIM: %s\n", msg->oim_msg);
 						g_queue_push_head(oim->send_queue, msg);
 						msn_oim_send_msg(oim);
 					}
@@ -400,13 +400,13 @@ msn_oim_send_msg(MsnOim *oim)
 	oim_request = g_queue_peek_head(oim->send_queue);
 	g_return_if_fail(oim_request != NULL);
 
-	purple_debug_info("MSNP14","sending OIM: %s\n", oim_request->oim_msg);
+	purple_debug_info("msn", "Sending OIM: %s\n", oim_request->oim_msg);
 
 	/* if we got the challenge lock key, we compute it
 	 * else we go for the SOAP fault and resend it.
 	 */
-	if(oim->challenge == NULL){
-		purple_debug_info("MSNP14","no lock key challenge, wait for SOAP Fault and Resend\n");
+	if (oim->challenge == NULL){
+		purple_debug_info("msn", "No lock key challenge, waiting for SOAP Fault and Resend\n");
 	}
 
 	msg_body = msn_oim_msg_to_str(oim, oim_request->oim_msg);
@@ -442,12 +442,12 @@ msn_oim_delete_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 	MsnOimRecvData *rdata = data;
 
 	if (response && xmlnode_get_child(response->xml, "Body/Fault") == NULL) {
-		purple_debug_info("msnoim", "delete OIM success\n");
+		purple_debug_info("msn", "Delete OIM success\n");
 		rdata->oim->oim_list = g_list_remove(rdata->oim->oim_list,
 			rdata->msg_id);
 		g_free(rdata->msg_id);
 	} else {
-		purple_debug_info("msnoim", "delete OIM failed\n");
+		purple_debug_info("msn", "Delete OIM failed\n");
 	}
 
 	g_free(rdata);
@@ -461,7 +461,7 @@ msn_oim_post_delete_msg(MsnOimRecvData *rdata)
 	char *msgid = rdata->msg_id;
 	char *soap_body;
 
-	purple_debug_info("MSNP14","Delete single OIM Message {%s}\n",msgid);
+	purple_debug_info("msn", "Delete single OIM Message {%s}\n",msgid);
 
 	soap_body = g_strdup_printf(MSN_OIM_DEL_TEMPLATE, msgid);
 
@@ -540,7 +540,7 @@ msn_oim_parse_timestamp(const char *timestamp)
 		}
 	}
 
-	purple_debug_info("MSNP14:OIM", "Can't parse timestamp %s\n", timestamp);
+	purple_debug_info("msn", "Can't parse timestamp %s\n", timestamp);
 	return tval;
 }
 
@@ -561,30 +561,30 @@ msn_oim_report_to_user(MsnOimRecvData *rdata, const char *msg_str)
 
 	msn_message_parse_payload(message, msg_str, strlen(msg_str),
 							  MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
-	purple_debug_info("MSNP14","oim body:{%s}\n",message->body);
+	purple_debug_info("msn", "oim body:{%s}\n", message->body);
 	decode_msg = (char *)purple_base64_decode(message->body,&body_len);
 	date =	(char *)g_hash_table_lookup(message->attr_table, "Date");
 	from =	(char *)g_hash_table_lookup(message->attr_table, "From");
-	if(strstr(from," ")){
+	if (strstr(from," ")) {
 		has_nick = 1;
 	}
-	if(has_nick){
+	if (has_nick) {
 		tokens = g_strsplit(from , " " , 2);
 		passport_str = g_strdup(tokens[1]);
-		purple_debug_info("MSNP14","oim Date:{%s},nickname:{%s},tokens[1]:{%s} passport{%s}\n",
-							date,tokens[0],tokens[1],passport_str);
+		purple_debug_info("msn", "oim Date:{%s},nickname:{%s},tokens[1]:{%s} passport{%s}\n",
+							date, tokens[0], tokens[1], passport_str);
 		g_strfreev(tokens);
-	}else{
+	} else {
 		passport_str = g_strdup(from);
-		purple_debug_info("MSNP14","oim Date:{%s},passport{%s}\n",
-					date,passport_str);
+		purple_debug_info("msn", "oim Date:{%s},passport{%s}\n",
+					date, passport_str);
 	}
 	start = strstr(passport_str,"<");
 	start += 1;
 	end = strstr(passport_str,">");
 	passport = g_strndup(start,end - start);
 	g_free(passport_str);
-	purple_debug_info("MSN OIM","oim Date:{%s},passport{%s}\n",date,passport);
+	purple_debug_info("msn", "oim Date:{%s},passport{%s}\n", date, passport);
 
 	stamp = msn_oim_parse_timestamp(date);
 
@@ -619,11 +619,11 @@ msn_oim_get_read_cb(MsnSoapMessage *request, MsnSoapMessage *response,
 			g_free(msg_str);
 		} else {
 			char *str = xmlnode_to_str(response->xml, NULL);
-			purple_debug_info("msnoim", "Unknown response: %s\n", str);
+			purple_debug_info("msn", "Unknown OIM response: %s\n", str);
 			g_free(str);
 		}
 	} else {
-		purple_debug_info("msnoim", "Failed to get OIM\n");
+		purple_debug_info("msn", "Failed to get OIM\n");
 	}
 }
 
@@ -635,7 +635,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 {
 	xmlnode *node;
 
-	purple_debug_info("MSNP14:OIM", "%s\n", xmlmsg);
+	purple_debug_info("msn", "%s\n", xmlmsg);
 
 	if (!strcmp(xmlmsg, "too-large")) {
 		/* Too many OIM's to send via NS, so we need to request them via SOAP. */
@@ -658,7 +658,7 @@ msn_parse_oim_xml(MsnOim *oim, xmlnode *node)
 
 	if (strcmp(node->name, "MD") != 0) {
 		char *xmlmsg = xmlnode_to_str(node, NULL);
-		purple_debug_info("msnoim", "WTF is this? %s\n", xmlmsg);
+		purple_debug_info("msn", "WTF is this? %s\n", xmlmsg);
 		g_free(xmlmsg);
 		return;
 	}
@@ -697,7 +697,7 @@ msn_parse_oim_xml(MsnOim *oim, xmlnode *node)
 		if (rt_node != NULL) {
 			rtime = xmlnode_get_data(rt_node);
 		}
-/*		purple_debug_info("msnoim","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime); */
+/*		purple_debug_info("msn", "E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime); */
 
 		if (!g_list_find_custom(oim->oim_list, msgid, (GCompareFunc)strcmp)) {
 			oim->oim_list = g_list_append(oim->oim_list, msgid);
@@ -719,7 +719,7 @@ msn_oim_post_single_get_msg(MsnOim *oim, char *msgid)
 	char *soap_body;
 	MsnOimRecvData *data = g_new0(MsnOimRecvData, 1);
 
-	purple_debug_info("MSNP14","Get single OIM Message\n");
+	purple_debug_info("msn", "Get single OIM Message\n");
 
 	data->oim = oim;
 	data->msg_id = msgid;

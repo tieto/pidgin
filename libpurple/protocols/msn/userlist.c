@@ -44,7 +44,7 @@ msn_accept_add_cb(gpointer data)
 {
 	MsnPermitAdd *pa = data;
 
-	purple_debug_misc("MSN Userlist", "Accepted the new buddy: %s\n", pa->who);
+	purple_debug_misc("msn", "Accepted the new buddy: %s\n", pa->who);
 
 	if (PURPLE_CONNECTION_IS_VALID(pa->gc))
 	{
@@ -66,7 +66,7 @@ msn_cancel_add_cb(gpointer data)
 {
 	MsnPermitAdd *pa = data;
 
-	purple_debug_misc("MSN Userlist", "Denied the new buddy: %s\n", pa->who);
+	purple_debug_misc("msn", "Denied the new buddy: %s\n", pa->who);
 
 	if (PURPLE_CONNECTION_IS_VALID(pa->gc))
 	{
@@ -196,7 +196,7 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 	const char *passport;
 	const char *friendly;
 
-	purple_debug_info("MSNP14","got add user...\n");
+	purple_debug_info("msn", "got add user...\n");
 	account = session->account;
 
 	passport = msn_user_get_passport(user);
@@ -484,11 +484,9 @@ msn_userlist_find_user(MsnUserList *userlist, const char *passport)
 	{
 		MsnUser *user = (MsnUser *)l->data;
 
-//		purple_debug_info("MsnUserList","user passport:%s,passport:%s\n",user->passport,passport);
 		g_return_val_if_fail(user->passport != NULL, NULL);
 
 		if (!g_strcasecmp(passport, user->passport)){
-//			purple_debug_info("MsnUserList","return:%p\n",user);
 			return user;
 		}
 	}
@@ -675,7 +673,7 @@ msn_userlist_rem_buddy_from_list(MsnUserList *userlist, const char *who,
 
 	if ( !msn_userlist_user_is_in_list(user, list_id)) {
 		list = lists[list_id];
-		purple_debug_info("MSN Userlist", "User %s is not in list %s, not removing.\n", who, list);
+		purple_debug_info("msn", "User %s is not in list %s, not removing.\n", who, list);
 		return;
 	}
 
@@ -697,7 +695,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 	g_return_if_fail(userlist != NULL);
 	g_return_if_fail(userlist->session != NULL);
 
-	purple_debug_info("MSN Userlist", "Add user: %s to group: %s\n", who, new_group_name);
+	purple_debug_info("msn", "Add user: %s to group: %s\n", who, new_group_name);
 
 	if (!purple_email_is_valid(who))
 	{
@@ -723,7 +721,7 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 	if (group_id == NULL)
 	{
 		/* Whoa, we must add that group first. */
-		purple_debug_info("MSN Userlist", "Adding user %s to a new group, creating group %s first\n", who, new_group_name);
+		purple_debug_info("msn", "Adding user %s to a new group, creating group %s first\n", who, new_group_name);
 
 		msn_callback_state_set_action(state, MSN_ADD_BUDDY);
 
@@ -741,18 +739,18 @@ msn_userlist_add_buddy(MsnUserList *userlist, const char *who, const char *group
 
 	if ( msn_userlist_user_is_in_list(user, MSN_LIST_FL) ) {
 
-		purple_debug_info("MSN Userlist", "User %s already exists\n", who);
+		purple_debug_info("msn", "User %s already exists\n", who);
 
 		msn_userlist_rem_buddy_from_list(userlist, who, MSN_LIST_BL);
 
 		if (msn_userlist_user_is_in_group(user, group_id)) {
-			purple_debug_info("MSN Userlist", "User %s is already in group %s, returning\n", who, new_group_name);
+			purple_debug_info("msn", "User %s is already in group %s, returning\n", who, new_group_name);
 			msn_callback_state_free(state);
 			return;
 		}
 	}
 
-	purple_debug_info("MSN Userlist", "Adding user: %s to group id: %s\n", who, group_id);
+	purple_debug_info("msn", "Adding user: %s to group id: %s\n", who, group_id);
 
 	msn_callback_state_set_action(state, MSN_ADD_BUDDY);
 
@@ -777,13 +775,13 @@ msn_userlist_add_buddy_to_list(MsnUserList *userlist, const char *who,
 	if (msn_userlist_user_is_in_list(user, list_id))
 	{
 		list = lists[list_id];
-		purple_debug_info("MSN Userlist", "User '%s' is already in list: %s\n", who, list);
+		purple_debug_info("msn", "User '%s' is already in list: %s\n", who, list);
 		return;
 	}
 
 	//friendly_name = (user != NULL) ? get_friendly_name(user) : who;
 
-	//purple_debug_info("MSN Userlist", "store_name = %s\n", store_name);
+	//purple_debug_info("msn", "store_name = %s\n", store_name);
 
 	/* XXX: see XXX above, this should really be done when we get the response from
 		the server */
@@ -804,15 +802,15 @@ msn_userlist_add_buddy_to_group(MsnUserList *userlist, const char *who,
 	g_return_val_if_fail(group_name != NULL, FALSE);
 	g_return_val_if_fail(who != NULL, FALSE);
 
-	purple_debug_info("MSN Userlist","Adding buddy with passport %s to group %s\n", who, group_name);
+	purple_debug_info("msn", "Adding buddy with passport %s to group %s\n", who, group_name);
 
 	if ( (group_id = (gchar *)msn_userlist_find_group_id(userlist, group_name)) == NULL) {
-		purple_debug_error("MSN Userlist", "Group %s has no guid!\n", group_name);
+		purple_debug_error("msn", "Group %s has no guid!\n", group_name);
 		return FALSE;
 	}
 
 	if ( (user = msn_userlist_find_user(userlist, who)) == NULL) {
-		purple_debug_error("MSN Userlist", "User %s not found!", who);
+		purple_debug_error("msn", "User %s not found!", who);
 		return FALSE;
 	}
 
@@ -833,15 +831,15 @@ msn_userlist_rem_buddy_from_group(MsnUserList *userlist, const char *who,
 	g_return_val_if_fail(group_name != NULL, FALSE);
 	g_return_val_if_fail(who != NULL, FALSE);
 
-	purple_debug_info("MSN Userlist","Removing buddy with passport %s from group %s\n", who, group_name);
+	purple_debug_info("msn", "Removing buddy with passport %s from group %s\n", who, group_name);
 
 	if ( (group_id = msn_userlist_find_group_id(userlist, group_name)) == NULL) {
-		purple_debug_error("MSN Userlist", "Group %s has no guid!\n", group_name);
+		purple_debug_error("msn", "Group %s has no guid!\n", group_name);
 		return FALSE;
 	}
 
 	if ( (user = msn_userlist_find_user(userlist, who)) == NULL) {
-		purple_debug_error("MSN Userlist", "User %s not found!", who);
+		purple_debug_error("msn", "User %s not found!", who);
 		return FALSE;
 	}
 

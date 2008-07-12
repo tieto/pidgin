@@ -487,7 +487,7 @@ msn_convert_iso8601(const char *timestr,struct tm tm_time)
 	struct tm ctime;
 	time_t ts;
 
-	purple_debug_info("MSNP14","convert string is{%s}\n",timestr);
+	purple_debug_info("msn", "convert string is{%s}\n", timestr);
 	tzset();
 	/*copy string first*/
 	memset(temp, 0, sizeof(temp));

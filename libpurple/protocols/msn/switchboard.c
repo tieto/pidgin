@@ -338,7 +338,7 @@ swboard_error_helper(MsnSwitchBoard *swboard, int reason, const char *passport)
 {
 	g_return_if_fail(swboard != NULL);
 
-	purple_debug_warning("msg", "Error: Unable to call the user %s for reason %i\n",
+	purple_debug_warning("msn", "Error: Unable to call the user %s for reason %i\n",
 					   passport ? passport : "(null)", reason);
 
 	/* TODO: if current_users > 0, this is probably a chat and an invite failed,
@@ -540,7 +540,7 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	payload = msn_message_gen_payload(msg, &payload_len);
 
 #ifdef MSN_DEBUG_SB
-	purple_debug_info("MSNP14","SB length:{%d}",payload_len);
+	purple_debug_info("msn", "SB length:{%d}", payload_len);
 	msn_message_show_readable(msg, "SB SEND", FALSE);
 #endif
 
@@ -628,7 +628,7 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg,
 	g_return_if_fail(swboard != NULL);
 	g_return_if_fail(msg     != NULL);
 
-	purple_debug_info("MSNP14","switchboard send msg..\n");
+	purple_debug_info("msn", "switchboard send msg..\n");
 	if (msn_switchboard_can_send(swboard))
 		release_msg(swboard, msg);
 	else if (queue)
@@ -662,7 +662,7 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	g_return_if_fail(swboard != NULL);
 
 	if (!(swboard->flag & MSN_SB_FLAG_IM) && (swboard->conv != NULL))
-		purple_debug_error("msn_switchboard", "bye_cmd: helper bug\n");
+		purple_debug_error("msn", "bye_cmd: helper bug\n");
 
 	if (swboard->conv == NULL)
 	{
@@ -759,7 +759,7 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	purple_debug_misc("MSNP14","get UBM...\n");
+	purple_debug_misc("msn", "get UBM...\n");
 	cmd->payload_len = atoi(cmd->params[4]);
 	cmdproc->last_cmd->payload_cb = msg_cmd_post;
 }
@@ -1139,7 +1139,7 @@ cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 	purple_debug_warning("msn", "cal_error: command %s gave error %i\n", trans->command, error);
 
 	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL){
-		purple_debug_warning("MSNP14", "Unable to send msg: {%s}\n", msg->body);
+		purple_debug_warning("msn", "Unable to send msg: {%s}\n", msg->body);
 		/* The messages could not be sent due to a switchboard error */
 		swboard->error = MSN_SB_ERROR_USER_OFFLINE;
 		msg_error_helper(swboard->cmdproc, msg,
@@ -1189,7 +1189,7 @@ got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* The conversation window was closed. */
 		return;
 
-	purple_debug_info("MSNP14","Switchboard:auth:{%s} socket:{%s}\n",cmd->params[4],cmd->params[2]);
+	purple_debug_info("msn", "Switchboard:auth:{%s} socket:{%s}\n", cmd->params[4], cmd->params[2]);
 	msn_switchboard_set_auth_key(swboard, cmd->params[4]);
 
 	msn_parse_socket(cmd->params[2], &host, &port);
