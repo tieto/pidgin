@@ -35,8 +35,6 @@ static YahooFriend *yahoo_friend_new(void)
 	ret = g_new0(YahooFriend, 1);
 	ret->status = YAHOO_STATUS_OFFLINE;
 	ret->presence = YAHOO_PRESENCE_DEFAULT;
-	ret->p2p_packet_sent = 0;
-	ret->p2p_status = NOT_CONNECTED;
 
 	return ret;
 }
