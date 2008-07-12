@@ -51,7 +51,7 @@ struct yahoo_xfer_data {
 	guint rxlen;
 	gchar *xfer_peer_idstring;
 	gchar *xfer_idstring_for_relay;
-	int version; /*0 for old, 15 for Y7(YMSG 15)*/
+	int version; /* 0 for old, 15 for Y7(YMSG 15) */
 	int info_val_249;
 
 	enum {
@@ -68,7 +68,7 @@ struct yahoo_xfer_data {
 	/* contains all filenames, in case of multiple transfers, with the first
 	 * one in the list being the current file's name (ymsg15) */
 	GSList *filename_list;
-	GSList *size_list; /*corresponds to filename_list, with size as **STRING** */
+	GSList *size_list; /* corresponds to filename_list, with size as **STRING** */
 	gboolean firstoflist;
 	gchar *xfer_url;	/* url of the file, used when we are p2p server */
 	int yahoo_local_p2p_ft_server_fd;
@@ -87,14 +87,14 @@ static void yahoo_xfer_data_free(struct yahoo_xfer_data *xd)
 	gc = xd->gc;
 	yd = gc->proto_data;
 
-	/*remove entry from map*/
+	/* remove entry from map */
 	if(xd->xfer_peer_idstring) {
 		xfer = g_hash_table_lookup(yd->xfer_peer_idstring_map, xd->xfer_peer_idstring);
 		if(xfer)
 			g_hash_table_remove(yd->xfer_peer_idstring_map, xd->xfer_peer_idstring);
 	}
 
-	/*empty file & filesize list*/
+	/* empty file & filesize list */
 	for (l = xd->filename_list; l; l = l->next) {
 		g_free(l->data);
 		l->data=NULL;
@@ -693,7 +693,7 @@ static void yahoo_xfer_end(PurpleXfer *xfer_old)
 				purple_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
 				purple_xfer_set_request_denied_fnc(xfer,yahoo_xfer_cancel_recv);
 
-				/*update map to current xfer*/
+				/* update map to current xfer */
 				g_hash_table_remove(yd->xfer_peer_idstring_map, xfer_data->xfer_peer_idstring);
 				g_hash_table_insert(yd->xfer_peer_idstring_map, xfer_data->xfer_peer_idstring, xfer);
 
@@ -989,7 +989,7 @@ static void yahoo_xfer_dns_connected_15(GSList *hosts, gpointer data, const char
 		return;
 	}
 	
-	/*TODO:actually, u must try with addr no.1 , if its not working addr no.2 .....*/
+	/* TODO:actually, u must try with addr no.1 , if its not working addr no.2 ..... */
 	addr = hosts->data;
 	actaddr = addr->sin_addr.s_addr;
 	d = actaddr % 256;
@@ -1071,7 +1071,7 @@ void yahoo_send_file(PurpleConnection *gc, const char *who, const char *file)
 }
 
 static void yahoo_p2p_ft_server_listen_cb(int listenfd, gpointer data);	/* using this in yahoo_xfer_send_cb_15 */
-static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *error_message);/*using this in recv_cb*/
+static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *error_message);/* using this in recv_cb */
 
 static void yahoo_xfer_recv_cb_15(gpointer data, gint source, PurpleInputCondition condition)
 {
@@ -1112,7 +1112,7 @@ static void yahoo_xfer_recv_cb_15(gpointer data, gint source, PurpleInputConditi
 
 	if(xd->status_15 == HEAD_REQUESTED) {
 		xd->status_15 = HEAD_REPLY_RECEIVED;
-		close(source);/*Is this required?*/
+		close(source);/* Is this required? */
 		g_free(xd->txbuf);
 		xd->txbuf = NULL;
 		if (purple_proxy_connect(NULL, account, xd->host, xd->port, yahoo_xfer_connected_15, xfer) == NULL)
@@ -1227,15 +1227,15 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 		{
 			if(xd->info_val_249 == 2)
 				{
-				/*sending file via p2p, we are connected as client*/
+				/* sending file via p2p, we are connected as client */
 				xd->txbuf = g_strdup_printf("POST /%s HTTP/1.1\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nContent-Length: %ld\r\nCache-Control: no-cache\r\n\r\n",
 										xd->path,
 										xd->host,
-										(long int)xfer->size);	/*to do, add Referer*/
+										(long int)xfer->size);	/* to do, add Referer */
 				}
 			else
 				{
-				/*sending file via relaying*/
+				/* sending file via relaying */
 				xd->txbuf = g_strdup_printf("POST /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nContent-Length: %ld\r\nCache-Control: no-cache\r\n\r\n",
 										purple_url_encode(xd->xfer_idstring_for_relay),
 										purple_normalize(account, purple_account_get_username(account)),
@@ -1249,12 +1249,12 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 		{	
 			if(xd->info_val_249 == 1)
 				{
-				/*receiving file via p2p, connected as client*/
+				/* receiving file via p2p, connected as client */
 				xd->txbuf = g_strdup_printf("HEAD /%s HTTP/1.1\r\nAccept:*/*\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nContent-Length: 0\r\nCache-Control: no-cache\r\n\r\n",xd->path,xd->host);
 			}
 			else
 				{
-				/*receiving file via relaying*/
+				/* receiving file via relaying */
 				xd->txbuf = g_strdup_printf("HEAD /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nAccept:*/*\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost:%s\r\nContent-Length: 0\r\nCache-Control: no-cache\r\n\r\n",
 										purple_url_encode(xd->xfer_idstring_for_relay),
 										purple_normalize(account, purple_account_get_username(account)),
@@ -1267,12 +1267,12 @@ static void yahoo_xfer_connected_15(gpointer data, gint source, const gchar *err
 		{
 			if(xd->info_val_249 == 1)
 				{
-				/*receiving file via p2p, connected as client*/
+				/* receiving file via p2p, connected as client */
 				xd->txbuf = g_strdup_printf("GET /%s HTTP/1.1\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost: %s\r\nConnection: Keep-Alive\r\n\r\n",xd->path,xd->host);
 			}
 			else
 				{
-				/*receiving file via relaying*/
+				/* receiving file via relaying */
 				xd->txbuf = g_strdup_printf("GET /relay?token=%s&sender=%s&recver=%s HTTP/1.1\r\nCookie:%s\r\nUser-Agent: Mozilla/4.0 (compatible; MSIE 5.5)\r\nHost:%s\r\nConnection: Keep-Alive\r\n\r\n",
 										purple_url_encode(xd->xfer_idstring_for_relay),
 										purple_normalize(account, purple_account_get_username(account)),
@@ -1398,17 +1398,17 @@ static void yahoo_p2p_ft_server_send_connected_cb(gpointer data, gint source, Pu
 	else if(acceptfd == -1) {
 		purple_debug_warning("yahoo","yahoo_p2p_server_send_connected_cb: accept: %s\n", g_strerror(errno));
 		purple_xfer_cancel_remote(xfer);
-		/*remove watcher and close p2p ft server*/
+		/* remove watcher and close p2p ft server */
 		purple_input_remove(xd->yahoo_p2p_ft_server_watcher);
 		close(xd->yahoo_local_p2p_ft_server_fd);
 		return;
 	}
 
-	/*remove watcher and close p2p ft server*/
+	/* remove watcher and close p2p ft server */
 	purple_input_remove(xd->yahoo_p2p_ft_server_watcher);
 	close(xd->yahoo_local_p2p_ft_server_fd);
 
-	/*Add an Input Read event to the file descriptor*/
+	/* Add an Input Read event to the file descriptor */
 	xfer->fd = acceptfd;
 	if(xfer->type == PURPLE_XFER_RECEIVE)
 		xd->input_event = purple_input_add(acceptfd, PURPLE_INPUT_READ, yahoo_p2p_ft_POST_cb, data);
@@ -1566,14 +1566,14 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 			/* 1=send, 2=cancel, 3=accept, 4=reject */ 
 			break;
 
-		/*check for p2p and imviron .... not sure it comes by this service packet. Since it was bundled with filexfer in old ymsg version, still keeping it.*/
+		/* check for p2p and imviron .... not sure it comes by this service packet. Since it was bundled with filexfer in old ymsg version, still keeping it. */
 		case 49:
 			service = pair->value;
 			break;
 		case 63:
 			imv = pair->value;
 			break;
-		/*end check*/
+		/* end check */
 
 		}
 	}
@@ -1604,7 +1604,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 		
 		/* To send through p2p */
 		if( g_hash_table_lookup(yd->peers, from) )	{
-			/*send p2p file transfer information */
+			/* send p2p file transfer information */
 			yahoo_p2p_client_send_ft_info(gc, xfer);
 			return;
 		}
@@ -1622,7 +1622,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 		return;
 	}
 
-	/*processing for p2p and imviron .... not sure it comes by this service packet. Since it was bundled with filexfer in old ymsg version, still keeping it.*/
+	/* processing for p2p and imviron .... not sure it comes by this service packet. Since it was bundled with filexfer in old ymsg version, still keeping it. */
 	/*
 	* The remote user has changed their IMVironment.  We
 	* record it for later use.
@@ -1638,7 +1638,7 @@ void yahoo_process_filetrans_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 			return;
 		}
 	}
-	/*end processing*/
+	/* end processing */
 
 	if(!filename_list)
 		return;
@@ -1807,7 +1807,7 @@ void yahoo_process_filetrans_info_15(PurpleConnection *gc, struct yahoo_packet *
 	}
 }
 
-/*TODO: Check filename etc. No probs till some hacker comes in the way*/
+/* TODO: Check filename etc. No probs till some hacker comes in the way */
 void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	gchar *xfer_peer_idstring = NULL;
@@ -1839,7 +1839,7 @@ void yahoo_process_filetrans_acc_15(PurpleConnection *gc, struct yahoo_packet *p
 			val_249 = atol(pair->value);
 			break;
 		case 250:
-			url = pair->value;	/*we get a p2p url here when sending file, connected as client*/
+			url = pair->value;	/* we get a p2p url here when sending file, connected as client */
 			break;
 		}
 	}

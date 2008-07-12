@@ -58,8 +58,8 @@ typedef struct _YahooFriend {
 	long int version_id;
 	gchar *alias_id;
 	YahooP2PStatus p2p_status;
-	gboolean p2p_packet_sent;	/*0:not sent, 1=sent*/
-	gint session_id;	/*session id of friend*/
+	gboolean p2p_packet_sent;	/* 0:not sent, 1=sent */
+	gint session_id;	/* session id of friend */
 } YahooFriend;
 
 YahooFriend *yahoo_friend_find(PurpleConnection *gc, const char *name);
