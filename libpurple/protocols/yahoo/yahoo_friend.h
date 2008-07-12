@@ -35,10 +35,10 @@ typedef enum {
 } YahooPresenceVisibility;
 
 typedef enum {
-	NOT_CONNECTED = 0,
-	DO_NOT_CONNECT,
-	CONNECTED_AS_SERVER,	/*We are server*/
-	CONNECTED_AS_CLIENT	/*We are client*/
+	YAHOO_P2PSTATUS_NOT_CONNECTED = 0,
+	YAHOO_P2PSTATUS_DO_NOT_CONNECT,
+	YAHOO_P2PSTATUS_WE_ARE_SERVER,
+	YAHOO_P2PSTATUS_WE_ARE_CLIENT
 } YahooP2PStatus;
 
 /* these are called friends instead of buddies mainly so I can use variables

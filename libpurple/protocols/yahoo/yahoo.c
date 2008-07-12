@@ -520,7 +520,7 @@ static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt
 				yahoo_do_group_check(account, ht, norm_bud, yd->current_list15_grp);
 				
 				/*set p2p status not connected and no p2p packet sent*/
-				yahoo_friend_set_p2p_status(f, NOT_CONNECTED);
+				yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_NOT_CONNECTED);
 				f->p2p_packet_sent = 0;
 
 			} else {
@@ -637,7 +637,7 @@ static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 
 				yahoo_do_group_check(account, ht, norm_bud, grp);
 				/*set p2p status not connected and no p2p packet sent*/
-				yahoo_friend_set_p2p_status(f, NOT_CONNECTED);
+				yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_NOT_CONNECTED);
 				f->p2p_packet_sent = 0;
 
 				g_free(norm_bud);
@@ -2245,11 +2245,11 @@ static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pk
 		
 		if( !g_hash_table_lookup(yd->peers, who) )	{
 			/*we are not connected as client, so set friend to not connected*/
-			yahoo_friend_set_p2p_status(f, NOT_CONNECTED);
+			yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_NOT_CONNECTED);
 			f->p2p_packet_sent = 0;
 		}
-		else	/*we are already connected. set friend to CONNECTED_AS_CLIENT*/
-			yahoo_friend_set_p2p_status(f, CONNECTED_AS_CLIENT);
+		else	/*we are already connected. set friend to YAHOO_P2PSTATUS_WE_ARE_CLIENT*/
+			yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_WE_ARE_CLIENT);
 		return;
 	}
 
@@ -2276,7 +2276,7 @@ static void yahoo_p2p_disconnect_destroy_data(gpointer data)
 	/*If friend, set him not connected*/
 	f = yahoo_friend_find(p2p_data->gc, p2p_data->host_username);
 	if (f)
-		yahoo_friend_set_p2p_status(f, NOT_CONNECTED);
+		yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_NOT_CONNECTED);
 
 	if(p2p_data->source >= 0)
 		close(p2p_data->source);
@@ -2471,7 +2471,7 @@ static void yahoo_p2p_server_send_connected_cb(gpointer data, gint source, Purpl
 
 	if( (f = yahoo_friend_find(p2p_data->gc, p2p_data->host_username)) )	{
 		p2p_data->session_id = f->session_id;
-		yahoo_friend_set_p2p_status(f, CONNECTED_AS_SERVER);
+		yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_WE_ARE_SERVER);
 	}
 
 	/*Add an Input Read event to the file descriptor*/
@@ -2528,7 +2528,7 @@ static void yahoo_send_p2p_pkt(PurpleConnection *gc, const char *who, int val_13
 	account = purple_connection_get_account(gc);
 
 	/*send packet to only those friends who arent p2p connected and to whom we havent already sent. Do not send if this condition doesn't hold good*/ 
-	if( !( f && (yahoo_friend_get_p2p_status(f) == NOT_CONNECTED) && (f->p2p_packet_sent == 0)) )
+	if( !( f && (yahoo_friend_get_p2p_status(f) == YAHOO_P2PSTATUS_NOT_CONNECTED) && (f->p2p_packet_sent == 0)) )
 		return;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PEERTOPEER, YAHOO_STATUS_AVAILABLE, 0);
@@ -2587,7 +2587,7 @@ static void yahoo_p2p_init_cb(gpointer data, gint source, const gchar *error_mes
 	/*If the peer is a friend, set him connected*/
 	f = yahoo_friend_find(p2p_data->gc, p2p_data->host_username);
 	if (f)
-		yahoo_friend_set_p2p_status(f, CONNECTED_AS_CLIENT);
+		yahoo_friend_set_p2p_status(f, YAHOO_P2PSTATUS_WE_ARE_CLIENT);
 
 	account = purple_connection_get_account(p2p_data->gc);
 
