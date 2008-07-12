@@ -774,8 +774,7 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 
 	context = gen_context(fn, fp);
 
-	msn_slp_call_invite(slpcall, "5D3E02AB-6190-11D3-BBBB-00C04F795683", 2,
-						context);
+	msn_slp_call_invite(slpcall, MSN_FT_GUID, 2, context);
 
 	g_free(context);
 }
@@ -805,8 +804,7 @@ msn_slplink_request_object(MsnSlpLink *slplink,
 	slpcall->cb = cb;
 	slpcall->end_cb = end_cb;
 
-	msn_slp_call_invite(slpcall, "A4268EEC-FEC5-49E5-95C3-F126696BDBF6", 1,
-						msnobj_base64);
+	msn_slp_call_invite(slpcall, MSN_OBJ_GUID, 1, msnobj_base64);
 
 	g_free(msnobj_base64);
 }
