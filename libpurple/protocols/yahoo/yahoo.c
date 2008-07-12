@@ -2278,7 +2278,7 @@ static void yahoo_p2p_disconnect_destroy_data(gpointer data)
 	if (f)
 		yahoo_friend_set_p2p_status(f, NOT_CONNECTED);
 
-	if(p2p_data->source)
+	if(p2p_data->source >= 0)
 		close(p2p_data->source);
 	purple_input_remove(p2p_data->input_event);
 	g_free(p2p_data->host_ip);
