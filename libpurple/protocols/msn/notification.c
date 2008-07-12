@@ -1645,9 +1645,6 @@ static void
 sbs_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_info("msn", "Processing SBS... \n");
-	if(cmd->payload_len == 0){
-		return;
-	}
 	/*get the payload content*/
 }
 
